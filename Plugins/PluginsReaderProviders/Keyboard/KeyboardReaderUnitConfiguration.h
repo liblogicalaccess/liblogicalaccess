@@ -1,0 +1,85 @@
+/**
+ * \file KeyboardReaderUnitConfiguration.h
+ * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \brief Keyboard Reader unit configuration.
+ */
+
+#ifndef LOGICALACCESS_KEYBOARDREADERUNITCONFIGURATION_H
+#define LOGICALACCESS_KEYBOARDREADERUNITCONFIGURATION_H
+
+#include "logicalaccess/ReaderProviders/ReaderUnitConfiguration.h"
+
+
+namespace LOGICALACCESS
+{	
+	/**
+	 * \brief The Keyboard reader unit configuration base class.
+	 */
+	class LIBLOGICALACCESS_API KeyboardReaderUnitConfiguration : public ReaderUnitConfiguration
+	{
+		public:
+
+			/**
+			 * \brief Constructor.
+			 */
+			KeyboardReaderUnitConfiguration();
+
+			/**
+			 * \brief Destructor.
+			 */
+			virtual ~KeyboardReaderUnitConfiguration();
+
+			/**
+			 * \brief Reset the configuration to default values
+			 */
+			virtual void resetConfiguration();
+
+			/**
+			 * \brief Serialize the current object to XML.
+			 * \param parentNode The parent node.
+			 */
+			virtual void serialize(boost::property_tree::ptree& parentNode);
+
+			/**
+			 * \brief UnSerialize a XML node to the current object.
+			 * \param node The XML node.
+			 */
+			virtual void unSerialize(boost::property_tree::ptree& node);
+
+			/**
+			 * \brief Get the default Xml Node name for this object.
+			 * \return The Xml node name.
+			 */
+			virtual std::string getDefaultXmlNodeName() const;
+
+
+			std::string getPrefix() const;
+
+			void setPrefix(const std::string& prefix);
+
+			std::string getSuffix() const;
+
+			void setSuffix(const std::string& suffix);
+
+			bool getIsDecimalNumber() const;
+
+			void setIsDecimalNumber(bool isDecimal);
+
+			std::string getKeyboardLayout() const;
+
+			void setKeyboardLayout(const std::string& klayout);
+
+		protected:
+
+			std::string d_prefix;
+
+			std::string d_suffix;
+
+			bool d_isDecimalNumber;
+
+			// Force the keyboard layout to use (ex: US English = 00000409)
+			std::string d_klayout;
+	};
+}
+
+#endif

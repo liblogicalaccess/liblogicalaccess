@@ -1,0 +1,127 @@
+/**
+ * \file des_cipher.cpp
+ * \author Julien KAUFFMANN <julien.kauffmann@islog.eu>
+ * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \brief DES cipher classes.
+ */
+
+#include "logicalaccess/crypto/des_cipher.h"
+#include "logicalaccess/crypto/symmetric_key.h"
+
+#include <cassert>
+
+namespace LOGICALACCESS
+{
+	namespace openssl
+	{
+		const EVP_CIPHER* DESCipher::getEVPCipher(const SymmetricKey& key) const
+		{
+			const EVP_CIPHER* evpCipher = NULL;
+
+			size_t desbytes = key.data().size();
+
+			switch (desbytes)
+			{
+				case 8:
+					{
+						switch (mode())
+						{
+							case ENC_MODE_CBC:
+								evpCipher = EVP_des_cbc();
+								break;
+
+							case ENC_MODE_CFB:
+								evpCipher = EVP_des_cfb();
+								break;
+
+							case ENC_MODE_CFB1:
+								evpCipher = EVP_des_cfb1();
+								break;
+
+							case ENC_MODE_CFB8:
+								evpCipher = EVP_des_cfb8();
+								break;
+
+							case ENC_MODE_ECB:
+								evpCipher = EVP_des_ecb();
+								break;
+
+							case ENC_MODE_OFB:
+								evpCipher = EVP_des_ofb();
+								break;
+						}
+
+						break;
+					}
+				case 16:
+					{
+						switch (mode())
+						{
+							case ENC_MODE_CBC:
+								evpCipher = EVP_des_ede_cbc();
+								break;
+
+							case ENC_MODE_CFB:
+								evpCipher = EVP_des_ede_cfb();
+								break;
+
+							case ENC_MODE_ECB:
+								evpCipher = EVP_des_ede_ecb();
+								break;
+
+							case ENC_MODE_OFB:
+								evpCipher = EVP_des_ede_ofb();
+								break;
+
+							case ENC_MODE_CFB1:
+								evpCipher = NULL;
+								break;
+
+							case ENC_MODE_CFB8:
+								evpCipher = NULL;
+								break;
+						}
+
+						break;
+					}
+				case 24:
+					{
+						switch (mode())
+						{
+							case ENC_MODE_CBC:
+								evpCipher = EVP_des_ede3_cbc();
+								break;
+
+							case ENC_MODE_CFB:
+								evpCipher = EVP_des_ede3_cfb();
+								break;
+
+							case ENC_MODE_CFB1:
+								evpCipher = EVP_des_ede3_cfb1();
+								break;
+
+							case ENC_MODE_CFB8:
+								evpCipher = EVP_des_ede3_cfb8();
+								break;
+
+							case ENC_MODE_ECB:
+								evpCipher = EVP_des_ede3_ecb();
+								break;
+
+							case ENC_MODE_OFB:
+								evpCipher = EVP_des_ede3_ofb();
+								break;
+						}
+
+						break;
+					}
+				default:
+					{
+						assert(false);
+					}
+			}
+
+			return evpCipher;
+		}
+	}
+}
