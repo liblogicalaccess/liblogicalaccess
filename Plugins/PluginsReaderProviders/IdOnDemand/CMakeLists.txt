@@ -44,7 +44,7 @@ add_library(
   
 set(LINK_OPT)
 if (UNIX)
-  set(LINK_OPT boost_system boost_system)
+  set(LINK_OPT boost_system boost_system boost_filesystem)
 endif()
   
 target_link_libraries(

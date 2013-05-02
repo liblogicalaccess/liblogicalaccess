@@ -133,8 +133,6 @@ add_library(
   LICENSE.LibLogicalAccess.txt
 )
 
-SET_TARGET_PROPERTIES(liblogicalaccess PROPERTIES VERSION 2.0.3)
-
 if (WIN32)
 
   set(SCLIB_ENDNAME)

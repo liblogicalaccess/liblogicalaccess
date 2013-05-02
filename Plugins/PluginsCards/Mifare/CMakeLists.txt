@@ -12,6 +12,8 @@ add_library(
 	${INCLUDE}
   )
 
+SET_TARGET_PROPERTIES(liblogicalaccess PROPERTIES VERSION 2.0.3)
+
 set(LINK_OPT)
 if (UNIX)
   set(LINK_OPT crypto)
