@@ -72,11 +72,14 @@ namespace LOGICALACCESS
 		fnSetLUID = (SetLUID)GetProcAddress( hWejAPIDLL, "SetLUID" );
 		fnGetQueuedID = (GetQueuedID)GetProcAddress( hWejAPIDLL, "GetQueuedID" );
 		fnGetQueuedID_index = (GetQueuedID_index)GetProcAddress( hWejAPIDLL, "GetQueuedID_index" );
+		fnSetConnectProduct = (SetConnectProduct)( hWejAPIDLL, "SetConnectProduct" );
+		fnSetDevTypeSrch = (SetDevTypeSrch)( hWejAPIDLL, "SetDevTypeSrch" );
 
 		if ((fnGetLibVersion == NULL) || (fnSetComSrchRange == NULL) || (fnCOMConnect == NULL) || (fnCOMDisconnect == NULL) ||
 			(fnUSBConnect == NULL) || (fnUSBDisconnect == NULL) || (fnGetLastLibErr == NULL) || (fnReadCfg == NULL) ||
 			(fnWriteCfg == NULL) || (fnGetFlags == NULL) || (fnSetFlags == NULL) || (fnGetActiveID == NULL) || (fnGetActiveID32 == NULL) ||
-			(fnGetDevCnt == NULL) || (fnSetActDev == NULL) || (fnSetLUID == NULL) || (fnGetQueuedID == NULL) || (fnGetQueuedID_index == NULL))
+			(fnGetDevCnt == NULL) || (fnSetActDev == NULL) || (fnSetLUID == NULL) || (fnGetQueuedID == NULL) || (fnGetQueuedID_index == NULL)
+			|| (fnSetConnectProduct == NULL) || (fnSetDevTypeSrch == NULL))
 		{
 			uninitExternFct();
 			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Can't initialize RFIDeas library functions pointer");
@@ -95,6 +98,9 @@ namespace LOGICALACCESS
 	void RFIDeasReaderUnit::initReaderCnx()
 	{
 #ifdef _WINDOWS
+		SetConnectProduct(PRODUCT_PCPROX);
+        SetDevTypeSrch(PRXDEVTYP_USB);
+
 		if (fnUSBConnect(&d_deviceId) == 0)
 		{
 			fnSetComSrchRange(1, 15);

@@ -214,6 +214,8 @@ namespace LOGICALACCESS
 			SetLUID fnSetLUID;
 			GetQueuedID fnGetQueuedID;
 			GetQueuedID_index fnGetQueuedID_index;
+			SetConnectProduct fnSetConnectProduct;
+			SetDevTypeSrch fnSetDevTypeSrch;
 
 			HMODULE hWejAPIDLL;
 #endif
