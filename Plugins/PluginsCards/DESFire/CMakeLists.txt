@@ -12,6 +12,8 @@ add_library(
 	${INCLUDE}
   )
 
+SET_TARGET_PROPERTIES(DESFireCards PROPERTIES VERSION 2.0.3)
+
 set(OPT_LIBS)
 if (WIN32)
   set(OPT_LIBS zlib libeay32)

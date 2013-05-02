@@ -12,6 +12,8 @@ add_library(
 	${INCLUDE}
   )
 
+SET_TARGET_PROPERTIES(ISO7816Cards PROPERTIES VERSION 2.0.3)
+
 target_link_libraries(
 	ISO7816Cards
 	liblogicalaccess

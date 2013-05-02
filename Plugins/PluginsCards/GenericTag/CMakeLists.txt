@@ -12,6 +12,8 @@ add_library(
 	${INCLUDE}
   )
 
+SET_TARGET_PROPERTIES(GenericTagCards PROPERTIES VERSION 2.0.3)
+
 target_link_libraries(
 	GenericTagCards
 	liblogicalaccess

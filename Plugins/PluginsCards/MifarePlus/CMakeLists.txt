@@ -26,6 +26,8 @@ add_library(
 	${include_mplus}
   )
 
+SET_TARGET_PROPERTIES(MifarePlusCards PROPERTIES VERSION 2.0.3)
+
 target_link_libraries(
 	MifarePlusCards
 	liblogicalaccess

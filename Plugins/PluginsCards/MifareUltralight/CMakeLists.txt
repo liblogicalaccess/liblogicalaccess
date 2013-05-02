@@ -12,6 +12,8 @@ add_library(
 	${INCLUDE}
   )
 
+SET_TARGET_PROPERTIES(MifareUltralightCards PROPERTIES VERSION 2.0.3)
+
 target_link_libraries(
 	MifareUltralightCards
 	liblogicalaccess

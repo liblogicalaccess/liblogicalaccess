@@ -12,6 +12,8 @@ add_library(
 	${INCLUDE}
   )
 
+SET_TARGET_PROPERTIES(ProxCards PROPERTIES VERSION 2.0.3)
+
 target_link_libraries(
 	ProxCards
 	liblogicalaccess
