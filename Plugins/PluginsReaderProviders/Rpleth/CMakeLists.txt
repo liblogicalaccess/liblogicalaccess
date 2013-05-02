@@ -20,8 +20,16 @@ add_library(
 	${SOURCE_LIB}
 	${INCLUDE_LIB}
   )
+
+set(LINK_OPT)
+if (UNIX)
+  set(LINK_OPT pthread)
+endif()
   
 target_link_libraries(
 	RplethReaders
 	liblogicalaccess
+	boost_system
+	boost_filesystem
+	${LINK_OPT}
 )

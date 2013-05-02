@@ -25,4 +25,6 @@ add_library(
 target_link_libraries(
 	PromagReaders
 	liblogicalaccess
+	boost_system
+	boost_filesystem
 )

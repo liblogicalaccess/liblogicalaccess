@@ -15,6 +15,8 @@ add_library(
 set(OPT_LIBS)
 if (WIN32)
   set(OPT_LIBS zlib libeay32)
+else()
+  set(OPT_LIBS crypto z)
 endif()
 
 target_link_libraries(

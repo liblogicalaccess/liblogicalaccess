@@ -24,4 +24,6 @@ add_library(
 target_link_libraries(
 	GunneboReaders
 	liblogicalaccess
+	boost_system
+	boost_filesystem
 )

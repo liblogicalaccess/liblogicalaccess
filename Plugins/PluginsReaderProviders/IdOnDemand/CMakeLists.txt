@@ -46,4 +46,6 @@ target_link_libraries(
 	IdOnDemandReaders
 	liblogicalaccess
 	GenericTagCards
+	boost_system
+	boost_filesystem
 )

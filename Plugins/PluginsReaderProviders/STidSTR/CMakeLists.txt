@@ -48,6 +48,8 @@ add_library(
 set(OPT_LIBS)
 if(WIN32)
   set(OPT_LIBS libeay32)
+else()
+  set(OPT_LIBS crypto)
 endif()
   
 target_link_libraries(
@@ -56,5 +58,7 @@ target_link_libraries(
 	logicalaccess-cryptolib
 	MifareCards
 	DESFireCards
+	boost_system
+	boost_filesystem
 	${OPT_LIBS}
 )

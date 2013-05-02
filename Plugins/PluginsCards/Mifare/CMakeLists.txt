@@ -12,7 +12,13 @@ add_library(
 	${INCLUDE}
   )
 
+set(LINK_OPT)
+if (UNIX)
+  set(LINK_OPT crypto)
+endif()
+
 target_link_libraries(
 	MifareCards
 	liblogicalaccess
+	${LINK_OPT}
 )

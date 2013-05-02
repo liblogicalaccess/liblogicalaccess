@@ -60,6 +60,7 @@ LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsRe
 				${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsCards/ISO15693/bin
 				${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsCards/Twic/bin
 				${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsCards/Prox/bin)
+set(LINK_OPT pcsclite crypto)
 else()
 LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsReaderProviders/ISO7816/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
 				${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsCards/DESFire/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
@@ -94,5 +95,8 @@ target_link_libraries(
 	ISO7816Cards
 	ISO15693Cards
 	ProxCards
+	boost_date_time
+	boost_system
+	boost_filesystem
 	${LINK_OPT}
 )

@@ -20,9 +20,17 @@ add_library(
 	${SOURCE_LIB}
 	${INCLUDE_LIB}
   )
+
+set(LINK_OPT)
+if (UNIX)
+  set(LINK_OPT crypto)
+endif()
   
 target_link_libraries(
 	DeisterReaders
 	liblogicalaccess
 	logicalaccess-cryptolib
+	boost_system
+	boost_filesystem
+	${LINK_OPT}
 )

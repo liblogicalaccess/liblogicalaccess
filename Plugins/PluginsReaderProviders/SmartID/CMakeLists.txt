@@ -55,4 +55,6 @@ target_link_libraries(
 	liblogicalaccess
 	ISO7816Readers
 	MifareCards
+	boost_filesystem
+	boost_system
 )

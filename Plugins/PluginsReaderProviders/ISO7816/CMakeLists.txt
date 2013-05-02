@@ -54,10 +54,12 @@ add_library(
 	${INCLUDE_LIB}
   )
   
- set(LINK_LIB)
- if (WIN32)
-	set(LINK_LIB libeay32)
- endif()
+set(LINK_LIB)
+if (WIN32)
+  set(LINK_LIB libeay32)
+else()
+  set(LINK_LIB crypto)
+endif()
   
 target_link_libraries(
 	ISO7816Readers
@@ -65,6 +67,6 @@ target_link_libraries(
 	DESFireCards
 	logicalaccess-cryptolib
 	ISO7816Cards
-	TwicCards
+
 	${LINK_LIB}
 )
