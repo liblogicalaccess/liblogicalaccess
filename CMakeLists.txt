@@ -133,7 +133,7 @@ add_library(
   LICENSE.LibLogicalAccess.txt
 )
 
-SET_TARGET_PROPERTIES(liblogicalaccess PROPERTIES VERSION 2.0.3)
+SET_TARGET_PROPERTIES(liblogicalaccess PROPERTIES VERSION 2.0.3 PREFIX "")
 
 if (WIN32)
 
