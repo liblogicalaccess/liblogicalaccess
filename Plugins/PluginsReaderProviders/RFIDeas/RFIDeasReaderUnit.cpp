@@ -72,8 +72,8 @@ namespace LOGICALACCESS
 		fnSetLUID = (SetLUID)GetProcAddress( hWejAPIDLL, "SetLUID" );
 		fnGetQueuedID = (GetQueuedID)GetProcAddress( hWejAPIDLL, "GetQueuedID" );
 		fnGetQueuedID_index = (GetQueuedID_index)GetProcAddress( hWejAPIDLL, "GetQueuedID_index" );
-		fnSetConnectProduct = (SetConnectProduct)( hWejAPIDLL, "SetConnectProduct" );
-		fnSetDevTypeSrch = (SetDevTypeSrch)( hWejAPIDLL, "SetDevTypeSrch" );
+		fnSetConnectProduct = (SetConnectProduct)GetProcAddress( hWejAPIDLL, "SetConnectProduct" );
+		fnSetDevTypeSrch = (SetDevTypeSrch)GetProcAddress( hWejAPIDLL, "SetDevTypeSrch" );
 
 		if ((fnGetLibVersion == NULL) || (fnSetComSrchRange == NULL) || (fnCOMConnect == NULL) || (fnCOMDisconnect == NULL) ||
 			(fnUSBConnect == NULL) || (fnUSBDisconnect == NULL) || (fnGetLastLibErr == NULL) || (fnReadCfg == NULL) ||
