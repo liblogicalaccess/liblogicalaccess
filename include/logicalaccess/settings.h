@@ -9,6 +9,7 @@
 
 #include <string>
 #include <sstream>
+#include <vector>
 #ifndef LIBLOGICALACCESS_API
 #ifdef _MSC_VER
 #include "msliblogicalaccess.h"
@@ -45,6 +46,7 @@ namespace LOGICALACCESS
 
 			/* Default Reader */
 			std::string DefaultReader;
+			std::vector<std::string> PluginFolders;
 
 		protected:
 

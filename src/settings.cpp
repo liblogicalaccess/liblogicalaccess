@@ -10,6 +10,7 @@
 #include "logicalaccess/settings.h"
 #include "logicalaccess/logs.h"
 
+#include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -99,6 +100,20 @@ namespace LOGICALACCESS
 			ConfigurationRetryTimeout = pt.get<long int>("config.retrySerialConfiguration.timeout", 500);
 
 			DefaultReader = pt.get<std::string>("config.reader.default", "PCSC");
+
+			PluginFolders.clear();
+			BOOST_FOREACH(ptree::value_type const& v, pt.get_child("config.PluginFolders"))
+			{
+				if (v.first == "Folder")
+				{
+					std::string folder = v.second.get<std::string>("");
+					if (folder == "$current")
+						folder = getDllPath();
+					PluginFolders.push_back(folder);
+				}
+			}
+			if (PluginFolders.size() == 0)
+				PluginFolders.push_back(getDllPath());
 		}
 		catch (...) { }
 	}
@@ -124,6 +139,9 @@ namespace LOGICALACCESS
 			pt.put("config.retrySerialConfiguration.enabled", IsConfigurationRetryEnabled);
 			pt.put("config.retrySerialConfiguration.timeout", ConfigurationRetryTimeout);
    
+			pt.put("config.reader.default", "PCSC");
+
+
 			// Write the property tree to the XML file.
 			write_xml((getDllPath() + "\\liblogicalaccess.config"), pt);
 		}
@@ -144,6 +162,8 @@ namespace LOGICALACCESS
 		IsConfigurationRetryEnabled = false;  
 		ConfigurationRetryTimeout = 500;
 		DefaultReader = "PCSC";
+		PluginFolders.clear();
+		PluginFolders.push_back(getDllPath());
 	}
 
 	std::string Settings::getDllPath()
