@@ -10,7 +10,7 @@
 #include "logicalaccess/ReaderProviders/ReaderUnit.h"
 #include "logicalaccess/ReaderProviders/SerialPortXml.h"
 #include "RplethReaderUnitConfiguration.h"
-#include <boost\asio\ip\tcp.hpp>
+#include <boost/asio/ip/tcp.hpp>
 
 namespace LOGICALACCESS
 {
