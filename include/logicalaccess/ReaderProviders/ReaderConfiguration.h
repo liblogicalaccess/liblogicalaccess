@@ -72,7 +72,7 @@ namespace LOGICALACCESS
 			 * \brief Set the reader provider.
 			 * \param provider The reader provider.
 			 */
-			void setReaderProvider(boost::shared_ptr<ReaderProvider>& provider);
+			void setReaderProvider(boost::shared_ptr<ReaderProvider> provider);
 
 			/*
 			 * \brief Set the reader unit.

@@ -9,7 +9,6 @@
 #include "logicalaccess/Cards/AccessInfo.h"
 #include "logicalaccess/DynLibrary/IDynLibrary.h"
 #include <boost/filesystem.hpp>
-//#include "logicalaccess/ReaderProviders/PCSC/PCSCReaderProvider.h"
 #include "logicalaccess/DynLibrary/LibraryManager.h"
 
 #include "logicalaccess/logs.h"
@@ -71,11 +70,9 @@ namespace LOGICALACCESS
 		return d_readerProvider;
 	}
 
-	void ReaderConfiguration::setReaderProvider(boost::shared_ptr<ReaderProvider>& provider)
+	void ReaderConfiguration::setReaderProvider(boost::shared_ptr<ReaderProvider> provider)
 	{
-		if (d_readerProvider)
-			d_readerProvider.reset();
-		d_readerProvider = std::move(provider);
+		d_readerProvider = provider;
 	}
 
 	boost::shared_ptr<ReaderUnit> ReaderConfiguration::getReaderUnit() const
