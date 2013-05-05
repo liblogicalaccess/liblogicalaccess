@@ -56,7 +56,7 @@ add_library(
   
 set(LINK_LIB)
 if (WIN32)
-  set(LINK_LIB libeay32)
+  set(LINK_LIB libeay32 TwicCards)
 else()
   set(LINK_LIB crypto)
 endif()

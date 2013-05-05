@@ -30,6 +30,7 @@ SOURCE_GROUP("Source Files\\Commands" FILES ${source_commands})
 set(INCLUDE_LIB ${include} ${include_core} ${include_readercardadapters} ${include_commands})
 set(SOURCE_LIB ${SRCS} ${source_readercardadapters} ${source_commands})
 
+set(LINK_OPT)
 if (WIN32)
 LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsCards/Mifare/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
 										${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsCards/DESFire/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
@@ -40,6 +41,8 @@ LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsCa
 										${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsCards/DESFire/bin
 										${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsCards/ISO7816/bin
 										${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsCards/Twic/bin)
+										
+set(LINK_OPT boost_system boost_filesystem)
 endif()
 										
 add_library(
@@ -55,6 +58,5 @@ target_link_libraries(
 	liblogicalaccess
 	ISO7816Readers
 	MifareCards
-	boost_filesystem
-	boost_system
+	${LINK_OPT}
 )

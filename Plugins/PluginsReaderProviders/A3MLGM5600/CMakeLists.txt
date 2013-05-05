@@ -24,12 +24,11 @@ add_library(
 
 set(LINK_OPT)
 if (UNIX)
-  set(LINK_OPT pthread)
+  set(LINK_OPT pthread boost_system)
 endif()
 
 target_link_libraries(
     A3MLGM5600Readers
     liblogicalaccess
-    boost_system
     ${LINK_OPT}
 )

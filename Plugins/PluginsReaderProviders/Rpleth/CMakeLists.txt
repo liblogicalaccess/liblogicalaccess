@@ -23,13 +23,11 @@ add_library(
 
 set(LINK_OPT)
 if (UNIX)
-  set(LINK_OPT pthread)
+  set(LINK_OPT pthread boost_system boost_filesystem)
 endif()
   
 target_link_libraries(
 	RplethReaders
 	liblogicalaccess
-	boost_system
-	boost_filesystem
 	${LINK_OPT}
 )

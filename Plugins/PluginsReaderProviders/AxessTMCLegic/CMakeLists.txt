@@ -20,10 +20,15 @@ add_library(
 	${SOURCE_LIB}
 	${INCLUDE_LIB}
   )
+
+set(OPT_LINK)
+if (UNIX)
+	set(OPT_LINK boost_system boost_filesystem)
+endif()
+  
   
 target_link_libraries(
 	AxessTMCLegicReaders
 	liblogicalaccess
-	boost_system
-	boost_filesystem
+	${OPT_LINK}
 )

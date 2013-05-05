@@ -23,14 +23,12 @@ add_library(
 
 set(LINK_OPT)
 if (UNIX)
-  set(LINK_OPT crypto)
+  set(LINK_OPT crypto boost_system boost_system)
 endif()
   
 target_link_libraries(
 	DeisterReaders
 	liblogicalaccess
 	logicalaccess-cryptolib
-	boost_system
-	boost_filesystem
 	${LINK_OPT}
 )
