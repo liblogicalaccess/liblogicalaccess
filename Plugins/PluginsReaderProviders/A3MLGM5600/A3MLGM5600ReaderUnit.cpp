@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <sstream>
 
+#include "ReaderCardAdapters/A3MLGM5600ReaderCardAdapter.h"
 #include "logicalaccess/ReaderProviders/ReaderUnitConfiguration.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/filesystem.hpp>
