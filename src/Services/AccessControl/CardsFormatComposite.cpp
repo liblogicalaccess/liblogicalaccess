@@ -190,9 +190,11 @@ namespace LOGICALACCESS
 
 	void CardsFormatComposite::unSerialize(boost::property_tree::ptree& node)
 	{
+		INFO_SIMPLE_("Unserializing cards format composite...");
+
 		EXCEPTION_ASSERT_WITH_LOG(getReaderUnit(), LibLOGICALACCESSException, "A reader unit must be associated to the object.");
 
-		BOOST_FOREACH(boost::property_tree::ptree::value_type const& v, node.get_child(getDefaultXmlNodeName()))
+		BOOST_FOREACH(boost::property_tree::ptree::value_type const& v, node)
 		{
 			if(v.first == "Card" )
 			{
