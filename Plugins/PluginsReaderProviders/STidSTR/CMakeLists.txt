@@ -56,5 +56,5 @@ target_link_libraries(
 	logicalaccess-cryptolib
 	MifareCards
 	DESFireCards
-	${OPT_LIBS}
+	${LINK_OPT}
 )

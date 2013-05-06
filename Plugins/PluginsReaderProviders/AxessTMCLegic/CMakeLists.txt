@@ -29,5 +29,5 @@ endif()
 
 target_link_libraries(
 	AxessTMCLegicReaders
-	${OPT_LINK}
+	${LINK_OPT}
 )

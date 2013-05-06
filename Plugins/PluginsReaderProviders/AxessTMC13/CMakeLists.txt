@@ -29,5 +29,5 @@ endif()
   
 target_link_libraries(
 	AxessTMC13Readers
-	${OPT_LINK}
+	${LINK_OPT}
 )

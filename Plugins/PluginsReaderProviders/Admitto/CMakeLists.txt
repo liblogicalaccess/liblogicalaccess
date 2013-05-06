@@ -30,5 +30,5 @@ endif()
 
 target_link_libraries(
 	AdmittoReaders
-	${OPT_LINK}
+	${LINK_OPT}
 )
