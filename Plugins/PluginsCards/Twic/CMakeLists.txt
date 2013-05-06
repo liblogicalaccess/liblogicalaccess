@@ -11,9 +11,15 @@ add_library(
 	${SRCS}
 	${INCLUDE}
   )
+
+if (WIN32)
+  set(LINK_OPT liblogicalaccess)
+else()
+  set(LINK_OPT logicalaccess)
+endif()
   
 target_link_libraries(
 	TwicCards
 	ISO7816Cards
-	liblogicalaccess
+	${LINK_OPT}
 )

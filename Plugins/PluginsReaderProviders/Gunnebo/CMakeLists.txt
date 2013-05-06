@@ -21,13 +21,13 @@ add_library(
 	${INCLUDE_LIB}
   )
 
-set(LINK_OPT)
-if (UNIX)
-  set(LINK_OPT boost_system boost_system boost_filesystem)
+if (WIN32)
+  set(LINK_OPT liblogicalaccess)
+else()
+  set(LINK_OPT logicalaccess boost_system boost_system boost_filesystem)
 endif()
   
 target_link_libraries(
 	GunneboReaders
-	liblogicalaccess
 	${LINK_OPT}
 )

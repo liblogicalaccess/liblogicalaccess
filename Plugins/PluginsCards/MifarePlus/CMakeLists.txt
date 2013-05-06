@@ -26,11 +26,17 @@ add_library(
 	${include_mplus}
   )
 
+if (WIN32)
+  set(LINK_OPT liblogicalaccess)
+else()
+  set(LINK_OPT logicalaccess)
+endif()
+
 SET_TARGET_PROPERTIES(MifarePlusCards PROPERTIES VERSION 2.0.3)
 
 target_link_libraries(
 	MifarePlusCards
-	liblogicalaccess
+	${LINK_OPT}
 	MifareCards
 	DESFireCards
 )

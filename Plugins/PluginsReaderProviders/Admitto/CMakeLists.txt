@@ -20,14 +20,15 @@ add_library(
 	${SOURCE_LIB}
 	${INCLUDE_LIB}
 	)
-	
-set(OPT_LINK)
-if (UNIX)
-	set(OPT_LINK boost_system boost_filesystem)
+
+
+if (WIN32)
+  set(LINK_OPT liblogicalaccess)
+else()
+  set(LINK_OPT logicalaccess boost_system boost_filesystem)
 endif()
 
 target_link_libraries(
 	AdmittoReaders
-	liblogicalaccess
 	${OPT_LINK}
 )

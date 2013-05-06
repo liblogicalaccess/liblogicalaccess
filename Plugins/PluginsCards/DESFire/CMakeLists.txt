@@ -16,15 +16,14 @@ SET_TARGET_PROPERTIES(DESFireCards PROPERTIES VERSION 2.0.3)
 
 set(OPT_LIBS)
 if (WIN32)
-  set(OPT_LIBS zlib libeay32)
+  set(OPT_LIBS zlib libeay32 liblogicalaccess)
 else()
-  set(OPT_LIBS crypto z)
+  set(OPT_LIBS crypto z logicalaccess)
 endif()
 
 target_link_libraries(
 	DESFireCards
 	logicalaccess-cryptolib
-	liblogicalaccess
 	${OPT_LIBS}
 )
 if (WIN32)

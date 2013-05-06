@@ -45,16 +45,14 @@ add_library(
 	${INCLUDE_LIB}
   )
 
-set(OPT_LIBS)
-if(WIN32)
-  set(OPT_LIBS libeay32)
+if (WIN32)
+  set(LINK_OPT liblogicalaccess libeay32)
 else()
-  set(OPT_LIBS crypto boost_filesystem boost_system)
+  set(LINK_OPT logicalaccess  crypto boost_filesystem boost_system)
 endif()
   
 target_link_libraries(
 	STidSTRReaders
-	liblogicalaccess
 	logicalaccess-cryptolib
 	MifareCards
 	DESFireCards

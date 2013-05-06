@@ -60,7 +60,7 @@ LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsRe
 				${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsCards/ISO15693/bin
 				${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsCards/Twic/bin
 				${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsCards/Prox/bin)
-set(LINK_OPT pcsclite crypto boost_date_time boost_system boost_filesystem)
+set(LINK_OPT pcsclite crypto boost_date_time boost_system boost_filesystem logicalaccess)
 else()
 LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsReaderProviders/ISO7816/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
 				${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsCards/DESFire/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
@@ -72,7 +72,7 @@ LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsRe
 				${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsCards/Twic/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
 				${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsCards/Prox/bin/${TARGET_ARCH}/${VC_FOLDER_NAME})
 		
-set(LINK_OPT winscard)
+set(LINK_OPT winscard liblogicalaccess)
 endif()
 
 
@@ -86,7 +86,6 @@ add_library(
   
 target_link_libraries(
 	PCSCReaders
-	liblogicalaccess
 	DESFireCards
 	MifareCards
 	MifarePlusCards
