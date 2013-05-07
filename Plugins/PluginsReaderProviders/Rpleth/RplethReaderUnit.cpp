@@ -23,6 +23,8 @@ namespace LOGICALACCESS
 	RplethReaderUnit::RplethReaderUnit()
 		: ReaderUnit()
 	{
+		boost::asio::io_service ios;
+		s_socket = new boost::asio::ip::tcp::socket (ios);
 		d_readerUnitConfig.reset(new RplethReaderUnitConfiguration());
 		d_defaultReaderCardAdapter.reset(new RplethReaderCardAdapter());
 		d_card_type = "UNKNOWN";
@@ -64,9 +66,7 @@ namespace LOGICALACCESS
 
 		do
 		{
-			cout << "While" << endl;
 			boost::shared_ptr<Chip> chip = getChipInAir();
-			std::cout << "insertion" << std::endl;
 			if (chip)
 			{
 				d_insertedChip = chip;
@@ -139,12 +139,9 @@ namespace LOGICALACCESS
 	{
 		boost::shared_ptr<Chip> chip;
 
-		std::cout << "GetChipInAir" << std::endl;
 		std::vector<unsigned char> buf = badge();
-		std::cout << "Size of buf" << buf.size() << std::endl;
 		if (buf.size() > 0)
 		{
-
 			chip = createChip((d_card_type == "UNKNOWN") ? "GenericTag" : d_card_type);
 			chip->setChipIdentifier(buf);
 		}
@@ -208,69 +205,36 @@ namespace LOGICALACCESS
 		return (d_insertedChip);
 	}
 
-	// didn't work
 	bool RplethReaderUnit::connectToReader()
 	{
-		INFO_("Begin of connectToReader");
 		if (!d_socket)
 		{
-			boost::asio::io_service ios;
 			boost::asio::ip::tcp::endpoint endpoint;
 			endpoint.address(boost::asio::ip::address::from_string(getRplethConfiguration()->getReaderAddress()));
 			endpoint.port(getRplethConfiguration()->getPort());
-			d_socket.reset(new boost::asio::ip::tcp::socket(ios));
+			d_socket.reset(s_socket);
 			try
 			{
 				d_socket->connect(endpoint);
-				if (d_socket->is_open())
-					INFO_("in try : Well connected");
-				else
-					INFO_("in try : Bad connected");
-				
-	#ifdef _WINDOWS
-				Sleep(1000);
-	#elif defined(LINUX)
-				usleep(1000000);
-	#endif
-				if (d_socket->is_open())
-					INFO_("in try : Well connected after 1000 millis");
-				else
-					INFO_("in try : Bad connected after 1000 millis");
 			}
 			catch(boost::system::system_error& ex)
 			{
 				ERROR_("Socket connection error: %s", ex.what());
 				d_socket.reset();
 			}
-			if (d_socket->is_open())
-				INFO_("in if : socket open");
-			else
-				INFO_("in if : socket close");
-			if (d_socket)
-				INFO_("in if : socket true");
-			else
-				INFO_("in if : socket false");
 		}
-		if (d_socket->is_open())
-			INFO_("out if : socket open");
-		else
-			INFO_("out if : socket close");
-		if (d_socket)
-			INFO_("out if : socket true");
-		else
-			INFO_("out if : socket false");
-		INFO_("End of connectToReader");
 		return (d_socket);
 	}
 
 	void RplethReaderUnit::disconnectFromReader()
 	{
-		if (d_socket)
+		if (d_socket->is_open())
 		{
-			INFO_SIMPLE_ ("Disconnection"); 
+			d_socket->shutdown(d_socket->shutdown_both);
 			d_socket->close();
-			d_socket.reset();
 		}
+		if (d_socket)
+			d_socket.reset();
 	}
 
 	void RplethReaderUnit::serialize(boost::property_tree::ptree& parentNode)
@@ -439,7 +403,6 @@ namespace LOGICALACCESS
 
 	std::vector<unsigned char> RplethReaderUnit::badge(long int timeout)
 	{
-		cout << "Badge" << endl;
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> res;
 		command.push_back (static_cast<unsigned char>(Device::HID));

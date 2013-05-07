@@ -123,7 +123,8 @@ namespace LOGICALACCESS
 	bool A3MLGM5600ReaderCardAdapter::receiveCommand(std::vector<unsigned char>& buf, long int timeout)
 	{
 		boost::shared_ptr<boost::asio::ip::udp::socket> socket = getA3MLGM5600ReaderUnit()->getSocket();
-		std::vector<unsigned char> bufrcv;
+		// provisional size
+		std::vector<unsigned char> bufrcv(1024);
 		std::vector<unsigned char> msg(1024);
 
 		struct timeval tv;		

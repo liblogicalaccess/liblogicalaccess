@@ -274,6 +274,7 @@ namespace LOGICALACCESS
 			
 			/**
 			 * \brief Request the last badge.
+			 * \param timeout The time to wait.
 			 * \return The last badge.
 			 */
 			std::vector<unsigned char> badge(long int timeout = 2000);
@@ -284,6 +285,8 @@ namespace LOGICALACCESS
 			 * \brief Client socket use to communicate with the reader.
 			 */
 			boost::shared_ptr<boost::asio::ip::tcp::socket> d_socket;
+
+			boost::asio::ip::tcp::socket * s_socket;
 
 			/**
 			 * \brief Send a command to the reader.

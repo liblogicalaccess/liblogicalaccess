@@ -1,4 +1,4 @@
-/**
+/**	
  * \file RplethReaderCardAdapter.cpp
  * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
  * \brief Rpleth reader/card adapter.
@@ -21,24 +21,20 @@ namespace LOGICALACCESS
 
 	std::vector<unsigned char> RplethReaderCardAdapter::sendCommand(const std::vector<unsigned char>& command, long int timeout)
 	{
-		std::cout << "SendCommand" << std::endl;
 		INFO_SIMPLE_("SendCommand");
 		std::vector<unsigned char> res;
 		std::vector<unsigned char> cmd = command;
 		cmd.push_back (calcChecksum(command));
 		if (cmd.size() > 0)
 		{ 
-			std::cout << "Try to get the socket" << std::endl;
 			boost::shared_ptr<boost::asio::ip::tcp::socket> socket = getRplethReaderUnit()->getSocket();
-			std::cout << "Try to open the socket" << std::endl;
 			if (socket->is_open())
 				INFO_SIMPLE_("Socket open");
 			else
 				INFO_SIMPLE_("Socket close but when ?");
 			INFO_SIMPLE_("Before send");
-			socket->send(boost::asio::buffer(command));
+			socket->send(boost::asio::buffer(cmd));
 			INFO_SIMPLE_("After send");
-			std::cout << "Receive" << std::endl;
 			res = receiveAnwser(command, timeout);
 		}
 		return res;
@@ -46,7 +42,7 @@ namespace LOGICALACCESS
 
 	std::vector<unsigned char> RplethReaderCardAdapter::receiveAnwser(const std::vector<unsigned char>& command, long int timeout)
 	{
-		std::vector<unsigned char> res;
+		std::vector<unsigned char> res(4);
 		boost::shared_ptr<boost::asio::ip::tcp::socket> socket = getRplethReaderUnit()->getSocket();
 		long int currentWait = 0;
 		while (socket->available() == 0 && (timeout == 0 || currentWait < timeout))
@@ -60,9 +56,14 @@ namespace LOGICALACCESS
 		}
 		try
 		{
-			socket->receive (boost::asio::buffer(res));
-			if (res.size() > 0)
-				res = handleAnswerBuffer (command, res);
+			size_t byte_read = socket->receive (boost::asio::buffer(res));
+			if (byte_read == 4)
+			{
+				std::vector<unsigned char> data (static_cast<int> (res[3]+1));
+				size_t byte_read = socket->receive (boost::asio::buffer(data));
+				res.insert(res.end(), data.begin(), data.begin()+byte_read);
+				res = handleAnswerBuffer (command, std::vector<unsigned char>(res.begin(), res.begin() + 4 + byte_read));
+			}
 		}
 		catch (std::invalid_argument&)
 		{
