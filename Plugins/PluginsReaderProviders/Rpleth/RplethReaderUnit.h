@@ -132,7 +132,7 @@ namespace LOGICALACCESS
 			 * \brief Get the current chip in air.
 			 * \return The chip in air.
 			 */
-			boost::shared_ptr<Chip> getChipInAir();
+			boost::shared_ptr<Chip> getChipInAir(unsigned int maxwait = 2000);
 
 			/**
 			 * \brief Get the default Elatec reader/card adapter.

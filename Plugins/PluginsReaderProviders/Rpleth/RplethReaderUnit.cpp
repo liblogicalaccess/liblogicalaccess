@@ -60,27 +60,12 @@ namespace LOGICALACCESS
 	bool RplethReaderUnit::waitInsertion(unsigned int maxwait)
 	{
 		bool inserted = false;
-		unsigned int currentWait = 0;
-
-		do
+		boost::shared_ptr<Chip> chip = getChipInAir(maxwait);
+		if (chip)
 		{
-			boost::shared_ptr<Chip> chip = getChipInAir();
-			if (chip)
-			{
-				d_insertedChip = chip;
-				inserted = true;
-			}
-
-			if (!inserted)
-			{
-	#ifdef _WINDOWS
-				Sleep(100);
-	#elif defined(LINUX)
-				usleep(100000);
-	#endif
-				currentWait += 100;
-			}
-		} while (!inserted && (maxwait == 0 || currentWait < maxwait));
+			d_insertedChip = chip;
+			inserted = true;
+		}
 
 		return inserted;
 	}
@@ -93,32 +78,20 @@ namespace LOGICALACCESS
 
 		if (d_insertedChip)
 		{
-			do
+			boost::shared_ptr<Chip> chip = getChipInAir(maxwait);
+			if (chip)
 			{
-				boost::shared_ptr<Chip> chip = getChipInAir();
-				if (chip)
-				{
-					if (chip->getChipIdentifier() != d_insertedChip->getChipIdentifier())
-					{
-						d_insertedChip.reset();
-						removed = true;
-					}
-				}
-				else
+				if (chip->getChipIdentifier() != d_insertedChip->getChipIdentifier())
 				{
 					d_insertedChip.reset();
 					removed = true;
 				}
-				if (!removed)
-				{
-	#ifdef _WINDOWS
-					Sleep(100);
-	#elif defined(LINUX)
-					usleep(100000);
-	#endif
-					currentWait += 100;
-				}
-			} while (!removed && (maxwait == 0 || currentWait < maxwait));
+			}
+			else
+			{
+				d_insertedChip.reset();
+				removed = true;
+			}
 		}
 
 		return removed;
@@ -133,11 +106,11 @@ namespace LOGICALACCESS
 	{
 	}
 
-	boost::shared_ptr<Chip> RplethReaderUnit::getChipInAir()
+	boost::shared_ptr<Chip> RplethReaderUnit::getChipInAir(unsigned int maxwait)
 	{
 		boost::shared_ptr<Chip> chip;
 
-		std::vector<unsigned char> buf = badge();
+		std::vector<unsigned char> buf = badge(maxwait);
 		if (buf.size() > 0)
 		{
 			chip = createChip((d_card_type == "UNKNOWN") ? "GenericTag" : d_card_type);
