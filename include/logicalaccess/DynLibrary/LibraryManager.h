@@ -47,6 +47,17 @@ namespace LOGICALACCESS
 		boost::shared_ptr<CardProvider> getCardProvider(const std::string& cardtype);
 		boost::shared_ptr<Commands> getCommands(const std::string& extendedtype);
 
+		std::vector<std::string> getAvailableCards();
+
+		std::vector<std::string> getAvailableReaders();
+
+		void scanPlugins();
+
+	protected:
+
+		std::vector<std::string> getAvailablePlugins(LibraryType libraryType);
+		void getAvailablePlugins(std::vector<std::string>& plugins, getobjectinfoat objectinfoptr);
+
 	private:
 		std::map<std::string, IDynLibrary*> libLoaded;
 		static const std::string enumType[3];

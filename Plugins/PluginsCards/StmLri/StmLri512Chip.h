@@ -19,6 +19,8 @@ using std::ostream;
 
 namespace LOGICALACCESS
 {
+	#define CHIP_STMLRI512	"StmLri512"
+
 	/**
 	 * \brief The STM LRI512 base chip class.
 	 */
@@ -40,7 +42,7 @@ namespace LOGICALACCESS
 			 * \brief Get the generic card type.
 			 * \return The generic card type.
 			 */
-			virtual std::string getGenericCardType() const { return "StmLri"; };			
+			virtual std::string getGenericCardType() const { return CHIP_STMLRI512; };			
 
 			/**
 			 * \brief Get the root location node.

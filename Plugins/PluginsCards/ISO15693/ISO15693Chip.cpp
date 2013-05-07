@@ -31,7 +31,7 @@ namespace LOGICALACCESS
 	}
 
 	ISO15693Chip::ISO15693Chip()
-		: Chip("ISO15693")
+		: Chip(CHIP_ISO15693)
 	{
 		d_profile.reset(new ISO15693Profile());
 	}

@@ -21,6 +21,8 @@ using std::ostream;
 
 namespace LOGICALACCESS
 {
+	#define CHIP_TWIC		"Twic"
+
 	/**
 	 * \brief The Twic base chip class.
 	 */

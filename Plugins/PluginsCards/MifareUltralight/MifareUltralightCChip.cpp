@@ -23,7 +23,7 @@ using std::istringstream;
 namespace LOGICALACCESS
 {
 	MifareUltralightCChip::MifareUltralightCChip()
-		: MifareUltralightChip("MifareUltralightC")
+		: MifareUltralightChip(CHIP_MIFAREULTRALIGHTC)
 	{
 		d_profile.reset(new MifareUltralightCProfile());
 	}

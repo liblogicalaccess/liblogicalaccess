@@ -44,4 +44,24 @@ extern "C"
 			boost::dynamic_pointer_cast<LOGICALACCESS::GenericTagChip>(*chip)->setTagIdBitsLength(bits);
 		}
 	}
+
+	LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char* chipname, size_t chipnamelen, void** getterfct)
+	{
+		bool ret = false;
+		if (chipname != NULL && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
+		{
+			switch (index)
+			{
+			case 0:
+				{
+					*getterfct = &getGenericTagChip;
+					sprintf(chipname, CHIP_GENERICTAG);
+					ret = true;
+					break;
+				}
+			}
+		}
+
+		return ret;
+	}
 }

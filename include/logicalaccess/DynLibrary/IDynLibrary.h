@@ -21,6 +21,7 @@ namespace LOGICALACCESS
 	typedef void (CDECL_WIN32_ *getcardprovider)(boost::shared_ptr<CardProvider>*);
 	typedef void (CDECL_WIN32_ *getcommands)(boost::shared_ptr<Commands>*);
 	typedef void (CDECL_WIN32_ *setcryptocontext)(boost::shared_ptr<Commands>*, boost::shared_ptr<Chip>*);
+	typedef bool (CDECL_WIN32_ *getobjectinfoat)(unsigned int, char*, size_t, void**);
 
   class	IDynLibrary
   {

@@ -20,7 +20,9 @@ using std::vector;
 
 
 namespace LOGICALACCESS
-{	
+{
+	#define READER_SMARTID		"SmartID"
+
 	/**
 	 * \brief SmartID Reader Provider class.
 	 */
@@ -42,7 +44,7 @@ namespace LOGICALACCESS
 			 * \brief Get the reader provider type.
 			 * \return The reader provider type.
 			 */
-			virtual std::string getRPType() const { return "SmartID"; };
+			virtual std::string getRPType() const { return READER_SMARTID; };
 
 			/**
 			 * \brief Get the reader provider name.

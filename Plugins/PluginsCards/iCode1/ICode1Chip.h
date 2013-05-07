@@ -19,6 +19,8 @@ using std::ostream;
 
 namespace LOGICALACCESS
 {
+	#define CHIP_ICODE1		"iCode1"
+
 	/**
 	 * \brief The iCode1 base chip class.
 	 */

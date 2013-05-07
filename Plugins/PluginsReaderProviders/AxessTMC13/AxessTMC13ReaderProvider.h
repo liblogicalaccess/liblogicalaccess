@@ -21,6 +21,8 @@ using std::vector;
 
 namespace LOGICALACCESS
 {	
+	#define READER_AXESSTMC13		"AxessTMC13"
+
 	/**
 	 * \brief AxessTMC13 Reader Provider class.
 	 */
@@ -42,7 +44,7 @@ namespace LOGICALACCESS
 			 * \brief Get the reader provider type.
 			 * \return The reader provider type.
 			 */
-			virtual std::string getRPType() const { return "AxessTMC13"; };
+			virtual std::string getRPType() const { return READER_AXESSTMC13; };
 
 			/**
 			 * \brief Get the reader provider name.

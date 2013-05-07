@@ -14,6 +14,8 @@
 
 namespace LOGICALACCESS
 {	
+	#define	CHIP_DESFIRE_EV1		"DESFireEV1"
+
 	/**
 	 * \brief The DESFire EV1 base chip class.
 	 */

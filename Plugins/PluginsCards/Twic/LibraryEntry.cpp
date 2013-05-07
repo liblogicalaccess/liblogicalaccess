@@ -36,4 +36,24 @@ extern "C"
 			*cp = boost::shared_ptr<LOGICALACCESS::TwicCardProvider>(new LOGICALACCESS::TwicCardProvider());
 		}
 	}
+
+	LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char* chipname, size_t chipnamelen, void** getterfct)
+	{
+		bool ret = false;
+		if (chipname != NULL && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
+		{
+			switch (index)
+			{
+			case 0:
+				{
+					*getterfct = &getTwicChip;
+					sprintf(chipname, CHIP_TWIC);
+					ret = true;
+					break;
+				}
+			}
+		}
+
+		return ret;
+	}
 }

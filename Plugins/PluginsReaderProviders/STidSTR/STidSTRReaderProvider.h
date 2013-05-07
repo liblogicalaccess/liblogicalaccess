@@ -20,6 +20,8 @@ using std::vector;
 
 namespace LOGICALACCESS
 {	
+	#define READER_STIDSTR		"STidSTR"
+
 	/**
 	 * \brief STidSTR Reader Provider class.
 	 */
@@ -41,7 +43,7 @@ namespace LOGICALACCESS
 			 * \brief Get the reader provider type.
 			 * \return The reader provider type.
 			 */
-			virtual std::string getRPType() const { return "STidSTR"; };
+			virtual std::string getRPType() const { return READER_STIDSTR; };
 
 			/**
 			 * \brief Get the reader provider name.

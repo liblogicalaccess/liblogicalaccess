@@ -22,6 +22,8 @@ using std::ostream;
 
 namespace LOGICALACCESS
 {
+	#define CHIP_MIFAREULTRALIGHTC		"MifareUltralightC"
+
 	/**
 	 * \brief The Mifare Ultralight C base chip class.
 	 */

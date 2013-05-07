@@ -23,7 +23,7 @@ using std::istringstream;
 namespace LOGICALACCESS
 {
 	GenericTagChip::GenericTagChip()
-		: Chip("GenericTag")
+		: Chip(CHIP_GENERICTAG)
 	{
 		d_tagIdBitsLength = 0;
 	}

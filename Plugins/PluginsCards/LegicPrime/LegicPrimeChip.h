@@ -19,6 +19,8 @@ using std::ostream;
 
 namespace LOGICALACCESS
 {
+	#define CHIP_LEGICPRIME		"LegicPrime"
+
 	/**
 	 * \brief The Legic Prime base chip class.
 	 */
@@ -40,7 +42,7 @@ namespace LOGICALACCESS
 			 * \brief Get the generic card type.
 			 * \return The generic card type.
 			 */
-			virtual std::string getGenericCardType() const { return "LegicPrime"; };			
+			virtual std::string getGenericCardType() const { return CHIP_LEGICPRIME; };			
 
 			/**
 			 * \brief Get the root location node.

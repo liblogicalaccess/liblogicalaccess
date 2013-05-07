@@ -11,7 +11,7 @@
 namespace LOGICALACCESS
 {
 	DESFireEV1Chip::DESFireEV1Chip() : 
-		DESFireChip("DESFireEV1")
+		DESFireChip(CHIP_DESFIRE_EV1)
 	{
 		d_profile.reset(new DESFireEV1Profile());
 	}

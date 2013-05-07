@@ -53,4 +53,32 @@ extern "C"
 			*cp = boost::shared_ptr<LOGICALACCESS::DESFireCardProvider>(new LOGICALACCESS::DESFireCardProvider());
 		}
 	}
+
+	LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char* chipname, size_t chipnamelen, void** getterfct)
+	{
+		bool ret = false;
+		if (chipname != NULL && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
+		{
+			switch (index)
+			{
+			case 0:
+				{
+					*getterfct = &getDESFireChip;
+					sprintf(chipname, CHIP_DESFIRE);
+					ret = true;
+					break;
+				}
+
+			case 1:
+				{
+					*getterfct = &getDESFireEV1Chip;
+					sprintf(chipname, CHIP_DESFIRE_EV1);
+					ret = true;
+					break;
+				}
+			}
+		}
+
+		return ret;
+	}
 }

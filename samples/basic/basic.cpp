@@ -24,13 +24,19 @@ int main(int , char**)
 {
 	try
 	{
-		std::string readerSerialPort;
+		std::vector<std::string> readerList = LOGICALACCESS::LibraryManager::getInstance()->getAvailableReaders();
+		std::cout << "Available reader plug-ins ("<< readerList.size() <<"):" << std::endl;
+		for (std::vector<std::string>::iterator it = readerList.begin(); it != readerList.end(); ++it)
+		{
+			std::cout << "\t" << (*it) << std::endl;
+		}
 
-#ifdef LINUX
-		readerSerialPort = "/dev/ttyUSB1";
-#else
-		readerSerialPort = "COM1";
-#endif
+		std::vector<std::string> cardList = LOGICALACCESS::LibraryManager::getInstance()->getAvailableCards();
+		std::cout << "Available card plug-ins ("<< cardList.size() <<"):" << std::endl;
+		for (std::vector<std::string>::iterator it = cardList.begin(); it != cardList.end(); ++it)
+		{
+			std::cout << "\t" << (*it) << std::endl;
+		}
 
 		// Reader configuration object to store reader provider and reader unit selection.
 		boost::shared_ptr<LOGICALACCESS::ReaderConfiguration> readerConfig(new LOGICALACCESS::ReaderConfiguration());

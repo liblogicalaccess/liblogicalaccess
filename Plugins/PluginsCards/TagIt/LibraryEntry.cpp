@@ -36,4 +36,24 @@ extern "C"
 			*cp = boost::shared_ptr<LOGICALACCESS::TagItCardProvider>(new LOGICALACCESS::TagItCardProvider());
 		}
 	}
+
+	LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char* chipname, size_t chipnamelen, void** getterfct)
+	{
+		bool ret = false;
+		if (chipname != NULL && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
+		{
+			switch (index)
+			{
+			case 0:
+				{
+					*getterfct = &getTagItChip;
+					sprintf(chipname, CHIP_TAGIT);
+					ret = true;
+					break;
+				}
+			}
+		}
+
+		return ret;
+	}
 }

@@ -21,6 +21,8 @@ using std::vector;
 
 namespace LOGICALACCESS
 {	
+	#define READER_RFIDEAS		"RFIDeas"
+
 	/**
 	 * \brief RFIDeas Reader Provider class.
 	 */
@@ -42,7 +44,7 @@ namespace LOGICALACCESS
 			 * \brief Get the reader provider type.
 			 * \return The reader provider type.
 			 */
-			virtual std::string getRPType() const { return "RFIDeas"; };
+			virtual std::string getRPType() const { return READER_RFIDEAS; };
 
 			/**
 			 * \brief Get the reader provider name.

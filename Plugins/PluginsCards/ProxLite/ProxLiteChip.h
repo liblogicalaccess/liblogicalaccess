@@ -19,6 +19,8 @@ using std::ostream;
 
 namespace LOGICALACCESS
 {
+	#define CHIP_PROXLITE	"ProxLite"
+
 	/**
 	 * \brief The Prox Lite base chip class.
 	 */
@@ -40,7 +42,7 @@ namespace LOGICALACCESS
 			 * \brief Get the generic card type.
 			 * \return The generic card type.
 			 */
-			virtual std::string getGenericCardType() const { return "ProxLite"; };			
+			virtual std::string getGenericCardType() const { return CHIP_PROXLITE; };			
 
 			/**
 			 * \brief Get the root location node.

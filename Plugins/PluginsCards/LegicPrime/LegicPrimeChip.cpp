@@ -23,7 +23,7 @@ using std::istringstream;
 namespace LOGICALACCESS
 {
 	LegicPrimeChip::LegicPrimeChip()
-		: Chip("LegicPrime")
+		: Chip(CHIP_LEGICPRIME)
 	{
 	}
 

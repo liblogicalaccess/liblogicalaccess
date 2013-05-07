@@ -19,6 +19,8 @@ using std::ostream;
 
 namespace LOGICALACCESS
 {
+	#define CHIP_INFINEONMYD	"InfineonMYD"
+
 	/**
 	 * \brief The Infineon My-D base chip class.
 	 */

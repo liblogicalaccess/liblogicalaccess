@@ -9,7 +9,7 @@
 namespace LOGICALACCESS
 {
 	Mifare1KChip::Mifare1KChip()
-		: MifareChip("Mifare1K", 16)
+		: MifareChip(CHIP_MIFARE1K, 16)
 	{
 		
 	}

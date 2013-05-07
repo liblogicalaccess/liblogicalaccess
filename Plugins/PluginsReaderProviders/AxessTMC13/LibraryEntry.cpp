@@ -28,4 +28,24 @@ extern "C"
 			*rp = LOGICALACCESS::AxessTMC13ReaderProvider::getSingletonInstance();
 		}
 	}
+
+	LIBLOGICALACCESS_API bool getReaderInfoAt(unsigned int index, char* readername, size_t readernamelen, void** getterfct)
+	{
+		bool ret = false;
+		if (readername != NULL && readernamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
+		{
+			switch (index)
+			{
+			case 0:
+				{
+					*getterfct = &getAxessTMC13Reader;
+					sprintf(readername, READER_AXESSTMC13);
+					ret = true;
+					break;
+				}
+			}
+		}
+
+		return ret;
+	}
 }

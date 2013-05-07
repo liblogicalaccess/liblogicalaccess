@@ -29,7 +29,7 @@ namespace LOGICALACCESS
 	}
 
 	MifareUltralightChip::MifareUltralightChip()
-		: Chip("MifareUltralight")
+		: Chip(CHIP_MIFAREULTRALIGHT)
 	{
 		d_profile.reset(new MifareUltralightProfile());
 	}

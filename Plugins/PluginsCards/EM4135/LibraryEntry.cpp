@@ -28,4 +28,24 @@ extern "C"
 			*chip = boost::shared_ptr<LOGICALACCESS::EM4135Chip>(new LOGICALACCESS::EM4135Chip());
 		}
 	}
+
+	LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char* chipname, size_t chipnamelen, void** getterfct)
+	{
+		bool ret = false;
+		if (chipname != NULL && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
+		{
+			switch (index)
+			{
+			case 0:
+				{
+					*getterfct = &getEM4135Chip;
+					sprintf(chipname, CHIP_EM4135);
+					ret = true;
+					break;
+				}
+			}
+		}
+
+		return ret;
+	}
 }

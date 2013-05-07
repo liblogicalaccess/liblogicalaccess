@@ -35,6 +35,7 @@ namespace LOGICALACCESS
 			bool SeeWaitInsertionLog;
 			bool SeeWaitRemovalLog;
 			bool SeeCommunicationLog;
+			bool SeePluginLog;
 
 			/* Auto-Detection */
 			bool IsAutoDetectEnabled;

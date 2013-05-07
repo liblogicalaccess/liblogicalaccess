@@ -11,6 +11,8 @@
 
 namespace LOGICALACCESS
 {
+	#define CHIP_MIFARE4K	"Mifare4K"
+
 	/**
 	 * \brief The 4k Mifare base chip class.
 	 */

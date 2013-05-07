@@ -28,4 +28,24 @@ extern "C"
 			*rp = LOGICALACCESS::RFIDeasReaderProvider::getSingletonInstance();
 		}
 	}
+
+	LIBLOGICALACCESS_API bool getReaderInfoAt(unsigned int index, char* readername, size_t readernamelen, void** getterfct)
+	{
+		bool ret = false;
+		if (readername != NULL && readernamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
+		{
+			switch (index)
+			{
+			case 0:
+				{
+					*getterfct = &getRFIDeasReader;
+					sprintf(readername, READER_RFIDEAS);
+					ret = true;
+					break;
+				}
+			}
+		}
+
+		return ret;
+	}
 }

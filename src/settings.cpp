@@ -92,6 +92,7 @@ namespace LOGICALACCESS
 			SeeWaitInsertionLog = pt.get("config.log.seewaitinsertion", false);
 			SeeWaitRemovalLog = pt.get("config.log.seewaitremoval", false);
 			SeeCommunicationLog = pt.get("config.log.seecommunication", false);
+			SeePluginLog = pt.get("config.log.seeplugin", false);
 
 			IsAutoDetectEnabled = pt.get("config.autodetect.enabled", false);
 			AutoDetectionTimeout = pt.get<long int>("config.autodetect.timeout", 400);
@@ -132,6 +133,7 @@ namespace LOGICALACCESS
 			pt.put("config.log.seewaitinsertion", SeeWaitInsertionLog);
 			pt.put("config.log.seewaitremoval", SeeWaitRemovalLog);
 			pt.put("config.log.seecommunication", SeeCommunicationLog);
+			pt.put("config.log.seeplugin", SeePluginLog);
 
 			pt.put("config.autodetect.enabled", IsAutoDetectEnabled);
 			pt.put("config.autodetect.timeout", AutoDetectionTimeout);
@@ -154,7 +156,8 @@ namespace LOGICALACCESS
 		LogFileName = "liblogicalaccess.log";  
 		SeeWaitInsertionLog = false;  
 		SeeWaitRemovalLog = false;  
-		SeeCommunicationLog = false;  
+		SeeCommunicationLog = false;
+		SeePluginLog = false;
  
 		IsAutoDetectEnabled = false;  
 		AutoDetectionTimeout = 400;  

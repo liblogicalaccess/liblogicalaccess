@@ -31,6 +31,7 @@
 #define WARNING_(x, ...) LOGICALACCESS::Logs::WARNING_LOG(__FILE__, __LINE__, __FUNCTION__, x, ##__VA_ARGS__)
 #define INFO_(x, ...) LOGICALACCESS::Logs::INFO_LOG(__FILE__, __LINE__, __FUNCTION__, x, ##__VA_ARGS__)
 #define COM_(x, ...) LOGICALACCESS::Logs::COM_LOG(__FILE__, __LINE__, __FUNCTION__, x, ##__VA_ARGS__)
+#define PLUGIN_(x, ...) LOGICALACCESS::Logs::PLUGIN_LOG(__FILE__, __LINE__, __FUNCTION__, x, ##__VA_ARGS__)
 
 /**
  * \brief Convenient alias to throw an exception with logs.
@@ -54,6 +55,7 @@
 #define WARNING_(x, ...) ((void) 0)
 #define INFO_(x, ...) ((void) 0)
 #define COM_(x, ...) ((void) 0)
+#define PLUGIN_(x, ...) ((void) 0)
 
 #define THROW_EXCEPTION_WITH_LOG(type, msg) { throw EXCEPTION(type, msg); }
 #define EXCEPTION_ASSERT_WITH_LOG(condition, type, msg) if (!(condition)) { THROW_EXCEPTION_WITH_LOG(type, msg); }
@@ -69,6 +71,7 @@
 #define WARNING_SIMPLE_(x) WARNING_(x, NULL)
 #define INFO_SIMPLE_(x) INFO_(x, NULL)
 #define COM_SIMPLE_(x) COM_(x, NULL)
+#define PLUGIN_SIMPLE_(x) PLUGIN_(x, NULL)
 
 #include "settings.h"
 #include <fstream>
@@ -88,6 +91,7 @@ namespace LOGICALACCESS
 			static void WARNING_LOG(const char* file, int line, const char* function, const char* format, ...);
 			static void INFO_LOG(const char* file, int line, const char* function, const char* format, ...);
 			static void COM_LOG(const char* file, int line, const char* function, const char* format, ...);
+			static void PLUGIN_LOG(const char* file, int line, const char* function, const char* format, ...);
 
 			static std::ofstream logfile;
 

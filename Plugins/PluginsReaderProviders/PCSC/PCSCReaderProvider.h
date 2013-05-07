@@ -20,6 +20,8 @@ using std::vector;
 
 namespace LOGICALACCESS
 {	
+	#define READER_PCSC		"PCSC"
+
 	/**
 	 * \brief PC/SC Reader Provider class.
 	 */
@@ -49,7 +51,7 @@ namespace LOGICALACCESS
 			 * \brief Get the reader provider type.
 			 * \return The reader provider type.
 			 */
-			virtual std::string getRPType() const { return "PCSC"; };
+			virtual std::string getRPType() const { return READER_PCSC; };
 
 			/**
 			 * \brief Get the reader provider name.

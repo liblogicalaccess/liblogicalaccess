@@ -23,7 +23,7 @@ using std::istringstream;
 namespace LOGICALACCESS
 {
 	TagItChip::TagItChip()
-		: ISO15693Chip("TagIt")
+		: ISO15693Chip(CHIP_TAGIT)
 	{
 
 	}

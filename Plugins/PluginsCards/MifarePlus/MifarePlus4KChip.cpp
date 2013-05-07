@@ -9,7 +9,7 @@
 namespace LOGICALACCESS
 {
 	MifarePlus4KChip::MifarePlus4KChip()
-		: MifarePlusChip("MifarePlus4K", 40)
+		: MifarePlusChip(CHIP_MIFAREPLUS4K, 40)
 	{
 		d_nbSectors = 40;
 	}

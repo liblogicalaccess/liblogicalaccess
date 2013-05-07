@@ -29,7 +29,7 @@ namespace LOGICALACCESS
 	}
 
 	ISO7816Chip::ISO7816Chip()
-		: Chip("ISO7816")
+		: Chip(CHIP_ISO7816)
 	{
 		d_profile.reset(new ISO7816Profile());
 	}

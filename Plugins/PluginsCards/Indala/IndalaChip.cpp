@@ -23,7 +23,7 @@ using std::istringstream;
 namespace LOGICALACCESS
 {
 	IndalaChip::IndalaChip()
-		: Chip("Indala")
+		: Chip(CHIP_INDALA)
 	{
 	}
 

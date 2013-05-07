@@ -24,7 +24,7 @@ using std::istringstream;
 namespace LOGICALACCESS
 {
 	TwicChip::TwicChip()
-		: ISO7816Chip("Twic")
+		: ISO7816Chip(CHIP_TWIC)
 	{
 		d_profile.reset(new TwicProfile());
 	}

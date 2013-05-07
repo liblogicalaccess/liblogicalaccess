@@ -23,7 +23,7 @@ using std::istringstream;
 namespace LOGICALACCESS
 {
 	StmLri512Chip::StmLri512Chip()
-		: Chip("StmLri")
+		: Chip(CHIP_STMLRI512)
 	{
 	}
 

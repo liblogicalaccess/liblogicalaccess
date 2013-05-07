@@ -18,7 +18,7 @@ namespace LOGICALACCESS
 	}
 
 	DESFireChip::DESFireChip() : 
-		Chip("DESFire")
+		Chip(CHIP_DESFIRE)
 	{
 		d_profile.reset(new DESFireProfile());
 	}

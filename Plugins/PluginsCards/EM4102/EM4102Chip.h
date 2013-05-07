@@ -19,6 +19,7 @@ using std::ostream;
 
 namespace LOGICALACCESS
 {
+	#define	CHIP_EM4102			"EM4102"
 	/**
 	 * \brief The EM4102 base chip class.
 	 */
@@ -40,7 +41,7 @@ namespace LOGICALACCESS
 			 * \brief Get the generic card type.
 			 * \return The generic card type.
 			 */
-			virtual std::string getGenericCardType() const { return "EM4102"; };			
+			virtual std::string getGenericCardType() const { return CHIP_EM4102; };			
 
 			/**
 			 * \brief Get the root location node.

@@ -23,7 +23,7 @@ using std::istringstream;
 namespace LOGICALACCESS
 {
 	ProxLiteChip::ProxLiteChip()
-		: Chip("ProxLite")
+		: Chip(CHIP_PROXLITE)
 	{
 	}
 

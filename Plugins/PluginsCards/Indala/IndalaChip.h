@@ -19,6 +19,8 @@ using std::ostream;
 
 namespace LOGICALACCESS
 {
+	#define CHIP_INDALA		"Indala"
+
 	/**
 	 * \brief The Indala base chip class.
 	 */
@@ -40,7 +42,7 @@ namespace LOGICALACCESS
 			 * \brief Get the generic card type.
 			 * \return The generic card type.
 			 */
-			virtual std::string getGenericCardType() const { return "Indala"; };			
+			virtual std::string getGenericCardType() const { return CHIP_INDALA; };			
 
 			/**
 			 * \brief Get the root location node.

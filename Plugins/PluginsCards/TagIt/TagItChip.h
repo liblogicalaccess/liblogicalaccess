@@ -20,6 +20,8 @@ using std::ostream;
 
 namespace LOGICALACCESS
 {
+	#define	CHIP_TAGIT		"TagIt"
+
 	/**
 	 * \brief The Tag-It base chip class.
 	 */

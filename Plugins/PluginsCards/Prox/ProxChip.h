@@ -21,6 +21,8 @@ using std::ostream;
 
 namespace LOGICALACCESS
 {
+	#define CHIP_PROX		"Prox"
+
 	/**
 	 * \brief The HID Prox base chip class.
 	 */
@@ -42,7 +44,7 @@ namespace LOGICALACCESS
 			 * \brief Get the generic card type.
 			 * \return The generic card type.
 			 */
-			virtual std::string getGenericCardType() const { return "Prox"; };
+			virtual std::string getGenericCardType() const { return CHIP_PROX; };
 
 			/**
 			 * \brief Get the root location node.

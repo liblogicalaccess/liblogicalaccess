@@ -18,7 +18,7 @@ extern "C"
 {
 	LIBLOGICALACCESS_API char *getLibraryName()
 	{
-		return (char *)"StmLri";
+		return (char *)"StmLri512";
 	}
 	
 	LIBLOGICALACCESS_API void getStmLri512Chip(boost::shared_ptr<LOGICALACCESS::Chip>* chip)
@@ -27,5 +27,25 @@ extern "C"
 		{
 			*chip = boost::shared_ptr<LOGICALACCESS::StmLri512Chip>(new LOGICALACCESS::StmLri512Chip());
 		}
+	}
+
+	LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char* chipname, size_t chipnamelen, void** getterfct)
+	{
+		bool ret = false;
+		if (chipname != NULL && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
+		{
+			switch (index)
+			{
+			case 0:
+				{
+					*getterfct = &getStmLri512Chip;
+					sprintf(chipname, CHIP_STMLRI512);
+					ret = true;
+					break;
+				}
+			}
+		}
+
+		return ret;
 	}
 }

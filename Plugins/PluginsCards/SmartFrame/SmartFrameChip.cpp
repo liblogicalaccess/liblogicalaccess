@@ -23,7 +23,7 @@ using std::istringstream;
 namespace LOGICALACCESS
 {
 	SmartFrameChip::SmartFrameChip()
-		: Chip("SmartFrame")
+		: Chip(CHIP_SMARTFRAME)
 	{
 	}
 

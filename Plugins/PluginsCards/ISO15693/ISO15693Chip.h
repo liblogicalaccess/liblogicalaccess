@@ -22,6 +22,8 @@ using std::ostream;
 
 namespace LOGICALACCESS
 {
+	#define	CHIP_ISO15693	"ISO15693"
+
 	/**
 	 * \brief The ISO15693 base chip class.
 	 */
@@ -48,7 +50,7 @@ namespace LOGICALACCESS
 			 * \brief Get the generic card type.
 			 * \return The generic card type.
 			 */
-			virtual std::string getGenericCardType() const { return "ISO15693"; };			
+			virtual std::string getGenericCardType() const { return CHIP_ISO15693; };			
 
 			/**
 			 * \brief Get the root location node.

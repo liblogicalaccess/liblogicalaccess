@@ -28,4 +28,24 @@ extern "C"
 			*chip = boost::shared_ptr<LOGICALACCESS::ICode1Chip>(new LOGICALACCESS::ICode1Chip());
 		}
 	}
+
+	LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char* chipname, size_t chipnamelen, void** getterfct)
+	{
+		bool ret = false;
+		if (chipname != NULL && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
+		{
+			switch (index)
+			{
+			case 0:
+				{
+					*getterfct = &getiCode1Chip;
+					sprintf(chipname, CHIP_ICODE1);
+					ret = true;
+					break;
+				}
+			}
+		}
+
+		return ret;
+	}
 }

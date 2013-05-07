@@ -21,6 +21,8 @@ using std::vector;
 
 namespace LOGICALACCESS
 {	
+	#define READER_SCIEL		"SCIEL"
+
 	/**
 	 * \brief SCIEL Reader Provider class.
 	 */
@@ -42,7 +44,7 @@ namespace LOGICALACCESS
 			 * \brief Get the reader provider type.
 			 * \return The reader provider type.
 			 */
-			virtual std::string getRPType() const { return "SCIEL"; };
+			virtual std::string getRPType() const { return READER_SCIEL; };
 
 			/**
 			 * \brief Get the reader provider name.

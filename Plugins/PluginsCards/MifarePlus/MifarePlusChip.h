@@ -21,6 +21,8 @@ using std::ostream;
 
 namespace LOGICALACCESS
 {	
+	#define	CHIP_MIFAREPLUS4K			"MifarePlus4K"
+
 	/**
 	 * \brief The Mifare base chip class.
 	 */
@@ -42,7 +44,7 @@ namespace LOGICALACCESS
 			 * \brief Get the generic card type.
 			 * \return The generic card type.
 			 */
-			virtual std::string getGenericCardType() const { return "MifarePlus4K"; };					
+			virtual std::string getGenericCardType() const { return CHIP_MIFAREPLUS4K; };					
 
 			/**
 			 * \brief Get the root location node.

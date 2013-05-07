@@ -21,6 +21,8 @@ using std::vector;
 
 namespace LOGICALACCESS
 {	
+	#define READER_A3MLGM5600		"A3MLGM5600"
+
 	/**
 	 * \brief A3MLGM5600 Reader Provider class.
 	 */
@@ -42,7 +44,7 @@ namespace LOGICALACCESS
 			 * \brief Get the reader provider type.
 			 * \return The reader provider type.
 			 */
-			virtual std::string getRPType() const { return "A3MLGM5600"; };
+			virtual std::string getRPType() const { return READER_A3MLGM5600; };
 
 			/**
 			 * \brief Get the reader provider name.

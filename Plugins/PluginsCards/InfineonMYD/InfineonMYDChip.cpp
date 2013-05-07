@@ -23,7 +23,7 @@ using std::istringstream;
 namespace LOGICALACCESS
 {
 	InfineonMYDChip::InfineonMYDChip()
-		: ISO15693Chip("InfineonMYD")
+		: ISO15693Chip(CHIP_INFINEONMYD)
 	{
 	}
 

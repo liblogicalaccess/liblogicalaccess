@@ -22,6 +22,8 @@ using std::ostream;
 
 namespace LOGICALACCESS
 {	
+	#define	CHIP_DESFIRE		"DESFire"
+
 	/**
 	 * \brief The DESFire base chip class.
 	 */
@@ -49,7 +51,7 @@ namespace LOGICALACCESS
 			 * \brief Get the generic card type.
 			 * \return The generic card type.
 			 */
-			virtual std::string getGenericCardType() const { return "DESFire"; };				
+			virtual std::string getGenericCardType() const { return CHIP_DESFIRE; };				
 
 			/**
 			 * \brief Get the root location node.

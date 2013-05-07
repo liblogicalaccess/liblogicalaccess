@@ -23,7 +23,7 @@ using std::istringstream;
 namespace LOGICALACCESS
 {
 	ICode2Chip::ICode2Chip()
-		: ISO15693Chip("iCode2")
+		: ISO15693Chip(CHIP_ICODE2)
 	{
 	}
 

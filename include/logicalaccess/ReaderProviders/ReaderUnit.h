@@ -17,6 +17,8 @@
 #include <PCSC/wintypes.h>
 #endif
 
+#define	PLUGINOBJECT_MAXLEN		64
+
 namespace LOGICALACCESS
 {
 	/**

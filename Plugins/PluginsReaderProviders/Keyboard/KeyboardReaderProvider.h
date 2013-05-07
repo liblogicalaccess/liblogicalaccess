@@ -19,6 +19,8 @@
 
 namespace LOGICALACCESS
 {	
+	#define READER_KEYBOARD		"Keyboard"
+
 #ifdef _WINDOWS
 	#define SessionHookMap std::map<DWORD, DWORD>
 
@@ -55,7 +57,7 @@ namespace LOGICALACCESS
 			 * \brief Get the reader provider type.
 			 * \return The reader provider type.
 			 */
-			virtual std::string getRPType() const { return "Keyboard"; };
+			virtual std::string getRPType() const { return READER_KEYBOARD; };
 
 			/**
 			 * \brief Get the reader provider name.

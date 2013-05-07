@@ -28,4 +28,24 @@ extern "C"
 			*rp = LOGICALACCESS::A3MLGM5600ReaderProvider::getSingletonInstance();
 		}
 	}
+
+	LIBLOGICALACCESS_API bool getReaderInfoAt(unsigned int index, char* readername, size_t readernamelen, void** getterfct)
+	{
+		bool ret = false;
+		if (readername != NULL && readernamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
+		{
+			switch (index)
+			{
+			case 0:
+				{
+					*getterfct = &getA3MLGM5600Reader;
+					sprintf(readername, READER_A3MLGM5600);
+					ret = true;
+					break;
+				}
+			}
+		}
+
+		return ret;
+	}
 }

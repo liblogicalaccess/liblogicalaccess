@@ -21,6 +21,8 @@ using std::vector;
 
 namespace LOGICALACCESS
 {	
+	#define READER_PROMAG		"Promag"
+
 	/**
 	 * \brief Promag Reader Provider class.
 	 */
@@ -42,7 +44,7 @@ namespace LOGICALACCESS
 			 * \brief Get the reader provider type.
 			 * \return The reader provider type.
 			 */
-			virtual std::string getRPType() const { return "Promag"; };
+			virtual std::string getRPType() const { return READER_PROMAG; };
 
 			/**
 			 * \brief Get the reader provider name.

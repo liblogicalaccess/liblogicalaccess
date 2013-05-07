@@ -21,6 +21,8 @@ using std::vector;
 
 namespace LOGICALACCESS
 {	
+	#define READER_RPLETH		"Rpleth"
+
 	/**
 	 * \brief Rpleth Reader Provider class.
 	 */
@@ -47,7 +49,7 @@ namespace LOGICALACCESS
 			 * \brief Get the reader provider type.
 			 * \return The reader provider type.
 			 */
-			virtual std::string getRPType() const { return "Rpleth"; };
+			virtual std::string getRPType() const { return READER_RPLETH; };
 
 			/**
 			 * \brief Get the reader provider name.

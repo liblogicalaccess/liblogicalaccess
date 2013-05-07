@@ -37,4 +37,31 @@ extern "C"
 			*chip = boost::shared_ptr<LOGICALACCESS::MifareUltralightChip>(new LOGICALACCESS::MifareUltralightChip());
 		}
 	}
+
+	LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char* chipname, size_t chipnamelen, void** getterfct)
+	{
+		bool ret = false;
+		if (chipname != NULL && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
+		{
+			switch (index)
+			{
+			case 0:
+				{
+					*getterfct = &getMifareUltralightChip;
+					sprintf(chipname, CHIP_MIFAREULTRALIGHT);
+					ret = true;
+					break;
+				}
+			case 1:
+				{
+					*getterfct = &getMifareUltralightCChip;
+					sprintf(chipname, CHIP_MIFAREULTRALIGHTC);
+					ret = true;
+					break;
+				}
+			}
+		}
+
+		return ret;
+	}
 }

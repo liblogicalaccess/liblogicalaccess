@@ -54,4 +54,31 @@ extern "C"
 			*cp = boost::shared_ptr<LOGICALACCESS::MifareCardProvider>(new LOGICALACCESS::MifareCardProvider());
 		}
 	}
+
+	LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char* chipname, size_t chipnamelen, void** getterfct)
+	{
+		bool ret = false;
+		if (chipname != NULL && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
+		{
+			switch (index)
+			{
+			case 0:
+				{
+					*getterfct = &getMifare1KChip;
+					sprintf(chipname, CHIP_MIFARE1K);
+					ret = true;
+					break;
+				}
+			case 1:
+				{
+					*getterfct = &getMifare1KChip;
+					sprintf(chipname, CHIP_MIFARE4K);
+					ret = true;
+					break;
+				}
+			}
+		}
+
+		return ret;
+	}
 }
