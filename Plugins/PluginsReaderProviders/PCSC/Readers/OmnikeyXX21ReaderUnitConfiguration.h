@@ -1,6 +1,6 @@
 /**
  * \file OmnikeyXX21ReaderUnitConfiguration.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Omnikey XX21 Reader unit configuration.
  */
 

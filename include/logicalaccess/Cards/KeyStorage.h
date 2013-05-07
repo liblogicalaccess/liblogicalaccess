@@ -1,6 +1,6 @@
 /**
  * \file KeyStorage.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Key storage description.
  */
 

@@ -1,6 +1,6 @@
 /**
  * \file SmartIDReaderProvider.cpp
- * \author Julien KAUFFMANN <julien.kauffmann@islog.eu>, Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Julien K. <julien-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
  * \brief Reader Provider SmartID.
  */
 

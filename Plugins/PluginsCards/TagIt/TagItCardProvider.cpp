@@ -1,6 +1,6 @@
 /**
  * \file TagItCardProvider.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Tag-It card profiles.
  */
 

@@ -1,6 +1,6 @@
 /**
  * \file AxessTMC13ReaderProvider.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief AxessTMC13 card reader provider. 
  */
 

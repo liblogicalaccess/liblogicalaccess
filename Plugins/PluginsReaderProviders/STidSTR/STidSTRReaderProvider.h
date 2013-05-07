@@ -1,6 +1,6 @@
 /**
  * \file STidSTRReaderProvider.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief STidSTR card reader provider. 
  */
 

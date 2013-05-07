@@ -1,6 +1,6 @@
 /**
  * \file LittleEndianDataRepresentation.cpp
- * \author Arnaud HUMILIER <arnaud.humilier@islog.eu>
+ * \author Arnaud H <arnaud-dev@islog.com>
  * \brief LittleEndian Data Representation.
  */
 

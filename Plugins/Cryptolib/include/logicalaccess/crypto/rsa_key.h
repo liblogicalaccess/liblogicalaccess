@@ -1,6 +1,6 @@
 /**
  * \file rsa_key.hpp
- * \author Julien KAUFFMANN <julien.kauffmann@islog.eu>
+ * \author Julien K. <julien-dev@islog.com>
  * \brief RSA key base class.
  */
 

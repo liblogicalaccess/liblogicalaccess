@@ -1,7 +1,7 @@
 /**
  * \file serialportxml.h
  * \brief A serial port class.
- * \author Julien KAUFFMANN <julien.kauffmann@islog.eu>, Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Julien K. <julien-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
  */
 
 #ifndef SERIALPORTXML_H

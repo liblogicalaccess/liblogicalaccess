@@ -1,6 +1,6 @@
 /**
  * \file SCIELReaderProvider.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief SCIEL card reader provider. 
  */
 

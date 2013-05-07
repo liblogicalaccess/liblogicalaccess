@@ -1,6 +1,6 @@
 /**
  * \file GunneboReaderUnitConfiguration.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief  Gunnebo reader unit configuration.
  */
 

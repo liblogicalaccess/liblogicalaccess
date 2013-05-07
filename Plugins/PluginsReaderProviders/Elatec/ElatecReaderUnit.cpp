@@ -1,6 +1,6 @@
 /**
  * \file ElatecReaderUnit.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Elatec reader unit.
  */
 

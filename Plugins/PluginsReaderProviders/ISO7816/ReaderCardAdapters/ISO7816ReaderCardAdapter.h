@@ -1,6 +1,6 @@
 /**
  * \file ISO7816ReaderCardAdapter.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Default ISO7816 reader/card adapter. 
  */
 

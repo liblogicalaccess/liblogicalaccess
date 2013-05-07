@@ -1,6 +1,6 @@
 /**
  * \file GenericTagIdOnDemandCardProvider.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Generic tag IdOnDemand card provider.
  */
 

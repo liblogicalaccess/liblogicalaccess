@@ -1,6 +1,6 @@
 /**
  * \file GenericTagIdOnDemandAccessControlCardService.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Generic Tag IdOnDemand Access Control Card service.
  */
 

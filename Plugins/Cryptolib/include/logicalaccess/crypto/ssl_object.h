@@ -1,6 +1,6 @@
 /**
  * \file ssl_object.hpp
- * \author Julien KAUFFMANN <julien.kauffmann@islog.eu>
+ * \author Julien K. <julien-dev@islog.com>
  * \brief A ssl object class.
  */
 

@@ -1,6 +1,6 @@
 /**
  * \file Getronik40BitFormat.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Getronik 40-Bit Format.
  */
 

@@ -1,6 +1,6 @@
 /**
  * \file PCSCReaderUnitConfiguration.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief PC/SC Reader unit configuration.
  */
 

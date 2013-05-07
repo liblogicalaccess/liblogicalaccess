@@ -1,6 +1,6 @@
 /**
  * \file asymmetric_cipher.hpp
- * \author Julien KAUFFMANN <julien.kauffmann@islog.eu>
+ * \author Julien K. <julien-dev@islog.com>
  * \brief The base class for all asymmetric ciphers.
  */
 

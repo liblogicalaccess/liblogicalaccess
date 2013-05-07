@@ -1,6 +1,6 @@
 /**
  * \file RplethReaderUnitConfiguration.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief  Rpleth reader unit configuration.
  */
 

@@ -1,6 +1,6 @@
 /**
  * \file GenericTagCardProvider.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Generic tag card card provider.
  */
 

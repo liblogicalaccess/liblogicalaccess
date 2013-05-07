@@ -1,6 +1,6 @@
 /**
  * \file RplethReaderProvider.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Rpleth card reader provider. 
  */
 

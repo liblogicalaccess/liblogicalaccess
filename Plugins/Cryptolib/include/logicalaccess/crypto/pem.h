@@ -1,6 +1,6 @@
 /**
  * \file pem.hpp
- * \author Julien KAUFFMANN <julien.kauffmann@islog.eu>
+ * \author Julien K. <julien-dev@islog.com>
  * \brief PEM functions.
  */
 

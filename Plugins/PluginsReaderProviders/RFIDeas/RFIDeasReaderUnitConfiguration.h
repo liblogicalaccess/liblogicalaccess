@@ -1,6 +1,6 @@
 /**
  * \file RFIDeasReaderUnitConfiguration.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief RFIDeas Reader unit configuration.
  */
 

@@ -1,6 +1,6 @@
 /**
  * \file StaticFormat.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Static Format.
  */
 

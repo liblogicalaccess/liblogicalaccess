@@ -1,6 +1,6 @@
 /**
  * \file des_symmetric_key.cpp
- * \author Julien KAUFFMANN <julien.kauffmann@islog.eu>
+ * \author Julien K. <julien-dev@islog.com>
  * \brief DES symmetric key class.
  */
 

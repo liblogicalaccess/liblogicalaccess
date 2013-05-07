@@ -1,6 +1,6 @@
 /**
  * \file GenericTagAccessControlCardService.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief GenericTag Access Control Card service.
  */
 

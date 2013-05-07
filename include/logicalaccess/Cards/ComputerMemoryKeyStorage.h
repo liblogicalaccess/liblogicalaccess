@@ -1,6 +1,6 @@
 /**
  * \file ComputerMemoryKeyStorage.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Computer memory key storage description.
  */
 

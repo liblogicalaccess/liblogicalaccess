@@ -1,6 +1,6 @@
 /**
  * \file ISO7816Location.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Location informations for ISO7816 card.
  */
 

@@ -1,6 +1,6 @@
 /**
  * \file DESFireISO7816Commands.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief DESFire ISO7816 commands.
  */
 

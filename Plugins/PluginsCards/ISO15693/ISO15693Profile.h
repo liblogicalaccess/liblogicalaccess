@@ -1,6 +1,6 @@
 /**
  * \file ISO15693Profile.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief ISO15693 card profiles.
  */
 

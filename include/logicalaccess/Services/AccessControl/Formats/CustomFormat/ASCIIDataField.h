@@ -1,6 +1,6 @@
 /**
  * \file ASCIIDataField.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Ascii data field.
  */
 

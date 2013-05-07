@@ -1,6 +1,6 @@
 /**
  * \file ParityDataField.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Parity data field. The parity is calculate using other fields.
  */
 

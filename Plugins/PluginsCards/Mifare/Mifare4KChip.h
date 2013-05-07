@@ -1,6 +1,6 @@
 /**
  * \file Mifare4KChip.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Mifare 4k chip.
  */
 

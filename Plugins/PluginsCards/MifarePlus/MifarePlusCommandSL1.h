@@ -1,6 +1,6 @@
 /**
  * \file MifarePlusCommandsSL1.h
- * \author Xavier SCHMERBER <xavier.schmerber@gmail.com>
+ * \author Xavier S. <xavier.schmerber@gmail.com>
  * \brief MifarePlus SL1 commands.
  */
 

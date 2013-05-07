@@ -1,6 +1,6 @@
 /**
  * \file SCMReaderUnit.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief SCM reader unit.
  */
 

@@ -1,6 +1,6 @@
 /**
  * \file evp_pkey.hpp
- * \author Julien KAUFFMANN <julien.kauffmann@islog.eu>
+ * \author Julien K. <julien-dev@islog.com>
  * \brief An EVP PKEY class.
  */
 

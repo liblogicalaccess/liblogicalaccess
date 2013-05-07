@@ -1,6 +1,6 @@
 /**
  * \file DESFireCrypto.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief DESFire cryptographic functions.
  */
 

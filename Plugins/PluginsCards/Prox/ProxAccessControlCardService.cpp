@@ -1,6 +1,6 @@
 /**
  * \file ProxAccessControlCardService.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Prox Access Control Card service.
  */
 

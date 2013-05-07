@@ -1,7 +1,7 @@
 /**
  * \file openssl_asymmetric_cipher.hpp
- * \author Julien KAUFFMANN <julien.kauffmann@islog.eu>
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Julien K. <julien-dev@islog.com>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief OpenSSL asymmetric cipher base class.
  */
 

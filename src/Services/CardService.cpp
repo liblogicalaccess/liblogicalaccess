@@ -1,6 +1,6 @@
 /**
  * \file CardService.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Card service.
  */
 

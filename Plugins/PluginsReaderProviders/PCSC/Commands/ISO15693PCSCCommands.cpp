@@ -1,6 +1,6 @@
 /**
  * \file ISO15693PCSCCommands.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief ISO 15693 commands for PC/SC readers.
  */
 

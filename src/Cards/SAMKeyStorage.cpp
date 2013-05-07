@@ -1,6 +1,6 @@
 /**
  * \file SAMKeyStorage.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime@islog.com>
  * \brief SAM key storage.
  */
 

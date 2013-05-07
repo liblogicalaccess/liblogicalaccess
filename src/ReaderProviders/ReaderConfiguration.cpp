@@ -1,6 +1,6 @@
 /**
  * \file ReaderConfiguration.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Reader configuration.
  */
 

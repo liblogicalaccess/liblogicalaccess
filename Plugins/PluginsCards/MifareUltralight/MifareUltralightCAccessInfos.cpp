@@ -1,6 +1,6 @@
 /**
  * \file MifareUltralightCAccessInfo.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Access informations for Mifare Ultralight C card.
  */
 

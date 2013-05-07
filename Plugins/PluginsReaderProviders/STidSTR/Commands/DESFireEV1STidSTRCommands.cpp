@@ -1,6 +1,6 @@
 /**
  * \file DESFireEV1STidSTRCommands.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief DESFireEV1 STidSTR commands.
  */
 

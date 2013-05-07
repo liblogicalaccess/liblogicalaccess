@@ -1,6 +1,6 @@
 /**
  * \file ISO15693Chip.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief ISO15693 chip.
  */
 

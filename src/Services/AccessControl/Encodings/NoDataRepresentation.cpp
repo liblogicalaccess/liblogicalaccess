@@ -1,6 +1,6 @@
 /**
  * \file NoDataRepresentation.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Data Representation which do nothing.
  */
 

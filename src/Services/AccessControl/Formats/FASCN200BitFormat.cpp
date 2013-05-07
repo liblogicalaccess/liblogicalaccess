@@ -1,6 +1,6 @@
 /**
  * \file FASCN200BitFormat.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief FASC-N 200 Bit format.
  */
 

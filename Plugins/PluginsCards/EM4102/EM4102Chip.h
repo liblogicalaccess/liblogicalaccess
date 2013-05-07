@@ -1,6 +1,6 @@
 /**
  * \file EM4102Chip.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief EM4102 chip.
  */
 

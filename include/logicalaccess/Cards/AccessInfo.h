@@ -1,6 +1,6 @@
 /**
  * \file AccessInfo.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief AccessInfo.
  */
 

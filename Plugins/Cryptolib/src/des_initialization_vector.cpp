@@ -1,6 +1,6 @@
 /**
  * \file des_initialization_vector.cpp
- * \author Julien KAUFFMANN <julien.kauffmann@islog.eu>
+ * \author Julien K. <julien-dev@islog.com>
  * \brief DES initialization vector class.
  */
 

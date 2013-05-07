@@ -1,6 +1,6 @@
 /**
  * \file SmartIDReaderCardAdapter.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief SmartID reader/card adapter.
  */
 

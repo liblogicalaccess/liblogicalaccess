@@ -1,6 +1,6 @@
 /**
  * \file A3MLGM5600LEDBuzzerDisplay.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief A3MLGM5600 LED/Buzzer Display.
  */
 

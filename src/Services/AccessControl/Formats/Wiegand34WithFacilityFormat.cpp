@@ -1,6 +1,6 @@
 /**
  * \file Wiegand34WithFacilityFormat.cpp
- * \author Arnaud HUMILIER <arnaud.humilier@islog.eu>
+ * \author Arnaud H <arnaud-dev@islog.com>
  * \brief Wiegand 34 With Facility Format.
  */
 

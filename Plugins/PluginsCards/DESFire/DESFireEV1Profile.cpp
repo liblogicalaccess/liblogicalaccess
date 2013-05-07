@@ -1,6 +1,6 @@
 /**
  * \file DESFireEV1Profile.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief DESFire EV1 card profiles.
  */
 

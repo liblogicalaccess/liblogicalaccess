@@ -1,6 +1,6 @@
 /**
  * \file AdmittoReaderUnitConfiguration.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief  Admitto reader unit configuration.
  */
 

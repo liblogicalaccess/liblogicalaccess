@@ -1,6 +1,6 @@
 /**
  * \file AxessTMC13ReaderUnit.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief AxessTMC 13Mhz reader unit.
  */
 

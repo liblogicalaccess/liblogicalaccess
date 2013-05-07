@@ -1,6 +1,6 @@
 /**
  * \file StmLri512Chip.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief STM LRI512 chip.
  */
 

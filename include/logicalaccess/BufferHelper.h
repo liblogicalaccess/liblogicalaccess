@@ -1,6 +1,6 @@
 /**
  * \file BufferHelper.h
- * \author Maxime Chamley <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Buffer Helper class.
  */
 

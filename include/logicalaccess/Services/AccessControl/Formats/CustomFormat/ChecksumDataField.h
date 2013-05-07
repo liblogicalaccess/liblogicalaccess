@@ -1,6 +1,6 @@
 /**
  * \file ChecksumDataField.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Checksum data field. The parity is calculate using other fields.
  */
 

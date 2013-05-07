@@ -1,6 +1,6 @@
 /**
  * \file SCIELReaderUnitConfiguration.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief SCIEL reader unit configuration.
  */
 

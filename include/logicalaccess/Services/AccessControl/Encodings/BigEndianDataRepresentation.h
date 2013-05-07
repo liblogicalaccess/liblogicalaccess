@@ -1,6 +1,6 @@
 /**
  * \file BigEndianDataRepresentation.h
- * \author Arnaud HUMILIER <arnaud.humilier@islog.eu>, Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Arnaud H <arnaud-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
  * \brief BigEndianDataRepresentation.
  */
 

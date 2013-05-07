@@ -1,6 +1,6 @@
 /**
  * \file rsa_cipher.cpp
- * \author Julien KAUFFMANN <julien.kauffmann@islog.eu>
+ * \author Julien K. <julien-dev@islog.com>
  * \brief RSA cipher class.
  */
 

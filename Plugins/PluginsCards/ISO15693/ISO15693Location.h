@@ -1,6 +1,6 @@
 /**
  * \file ISO15693Location.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief ISO15693 location.
  */
 

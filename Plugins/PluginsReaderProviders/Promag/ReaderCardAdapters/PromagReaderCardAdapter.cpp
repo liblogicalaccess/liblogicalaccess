@@ -1,6 +1,6 @@
 /**
  * \file PromagReaderCardAdapter.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Promag reader/card adapter.
  */
 

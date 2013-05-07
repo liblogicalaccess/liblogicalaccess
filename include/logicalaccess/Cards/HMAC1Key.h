@@ -1,6 +1,6 @@
 /**
  * \file HMAC1Key.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief HMAC1 key.
  */
 

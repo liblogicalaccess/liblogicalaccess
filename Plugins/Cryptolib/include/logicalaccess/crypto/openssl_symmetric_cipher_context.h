@@ -1,6 +1,6 @@
 /**
  * \file openssl_symmetric_cipher_context.hpp
- * \author Julien KAUFFMANN <julien.kauffmann@islog.eu>
+ * \author Julien K. <julien-dev@islog.com>
  * \brief OpenSSL symmetric cipher context base class.
  */
 

@@ -1,6 +1,6 @@
 /**
  * \file DESFireLocation.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Location informations for DESFire card.
  */
 

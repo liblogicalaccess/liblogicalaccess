@@ -1,6 +1,6 @@
 /**
  * \file symmetric_cipher.hpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Symmetric cipher base class.
  */
 

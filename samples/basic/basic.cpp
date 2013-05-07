@@ -1,6 +1,6 @@
 /**
  * \file main.cpp
- * \author Maxime Chamley <maxime.chamley@islog.com>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Main file for the basic sample of the liblogicalaccess.
  */
 

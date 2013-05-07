@@ -1,6 +1,6 @@
 /**
  * \file AdmittoReaderCardAdapter.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Default Admitto reader/card adapter. 
  */
 

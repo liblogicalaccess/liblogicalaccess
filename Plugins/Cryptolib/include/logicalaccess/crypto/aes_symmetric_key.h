@@ -1,6 +1,6 @@
 /**
  * \file aes_symmetric_key.hpp
- * \author Julien KAUFFMANN <julien.kauffmann@islog.eu>
+ * \author Julien K. <julien-dev@islog.com>
  * \brief AES symmetric key class.
  */
 

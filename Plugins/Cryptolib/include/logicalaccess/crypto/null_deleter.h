@@ -1,6 +1,6 @@
 /**
  * \file null_deleter.hpp
- * \author Julien KAUFFMANN <julien.kauffmann@islog.eu>
+ * \author Julien K. <julien-dev@islog.com>
  * \brief A null deleter class.
  */
 

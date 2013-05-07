@@ -1,6 +1,6 @@
 /**
  * \file AdmittoReaderCardAdapter.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Admitto reader/card adapter.
  */
 

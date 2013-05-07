@@ -1,6 +1,6 @@
 /**
  * \file ISO7816ISO7816Commands.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief ISO7816 commands.
  */
 

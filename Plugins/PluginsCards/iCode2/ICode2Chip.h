@@ -1,6 +1,6 @@
 /**
  * \file ICode2Chip.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief iCode2 chip.
  */
 

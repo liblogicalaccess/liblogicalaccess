@@ -1,6 +1,6 @@
 /**
  * \file ISO7816Profile.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief ISO7816 card profiles.
  */
 

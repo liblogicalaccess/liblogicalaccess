@@ -1,6 +1,6 @@
 /**
  * \file des_cipher.hpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief DES cipher class.
  */
 

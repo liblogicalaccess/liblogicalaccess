@@ -1,6 +1,6 @@
 /**
  * \file SmartIDReaderProvider.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>, Julien KAUFFMANN <julien.kauffmann@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>, Julien K. <julien-dev@islog.com>
  * \brief SmartID card reader provider. 
  */
 

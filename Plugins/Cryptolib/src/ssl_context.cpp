@@ -1,6 +1,6 @@
 /**
  * \file ssl_context.cpp
- * \author Julien KAUFFMANN <julien.kauffmann@islog.eu>
+ * \author Julien K. <julien-dev@islog.com>
  * \brief A SSL context class.
  */
 

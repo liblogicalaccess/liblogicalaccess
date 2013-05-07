@@ -1,6 +1,6 @@
 /**
  * \file RplethReaderCardAdapter.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Default Rpleth reader/card adapter. 
  */
 

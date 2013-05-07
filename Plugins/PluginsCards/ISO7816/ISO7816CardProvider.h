@@ -1,6 +1,6 @@
 /**
  * \file ISO7816CardProvider.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief ISO7816 card provider. See http://www.cardwerk.com/smartcards/smartcard_standard_ISO7816-4.aspx
  */
 

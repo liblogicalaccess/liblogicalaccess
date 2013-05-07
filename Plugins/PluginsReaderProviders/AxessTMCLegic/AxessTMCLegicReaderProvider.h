@@ -1,6 +1,6 @@
 /**
  * \file AxessTMCLegicReaderProvider.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief AxessTMCLegic card reader provider. 
  */
 

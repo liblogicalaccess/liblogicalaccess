@@ -1,6 +1,6 @@
 /**
  * \file linearizable.h
- * \author Julien Kauffmann <julien.kauffmann@islog.eu>
+ * \author Julien K. <julien-dev@islog.com>
  * \brief Linearizable base class.
  */
 

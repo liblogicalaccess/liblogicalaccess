@@ -1,6 +1,6 @@
 /**
  * \file Getronik40BitFormat.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Getronik40BitFormat.
  */
 

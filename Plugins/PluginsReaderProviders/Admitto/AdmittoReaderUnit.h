@@ -1,6 +1,6 @@
 /**
  * \file AdmittoReaderUnit.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Admitto Reader unit.
  */
 

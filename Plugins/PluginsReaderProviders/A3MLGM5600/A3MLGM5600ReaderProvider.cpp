@@ -1,6 +1,6 @@
 /**
  * \file A3MLGM5600ReaderProvider.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Reader Provider A3MLGM5600.
  */
 

@@ -1,6 +1,6 @@
 /**
  * \file DataRepresentation.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief A Data Representation.
  */
 

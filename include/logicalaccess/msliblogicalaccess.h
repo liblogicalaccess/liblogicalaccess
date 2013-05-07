@@ -1,6 +1,6 @@
 /**
  * \file msliblogicalaccess.h
- * \author Maxime Chamley <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief A Visual Studio needed file.
  * The following ifdef block is the standard way of creating macros which make exporting from a DLL simpler.
  *

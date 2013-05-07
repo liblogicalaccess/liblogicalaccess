@@ -1,6 +1,6 @@
 /**
  * \file MifareKey.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Mifare Key.
  */
 

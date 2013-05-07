@@ -1,6 +1,6 @@
 /**
  * \file ISO14443AReaderCommunication.h
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief ISO14443-3A Reader communication. 
  */
 

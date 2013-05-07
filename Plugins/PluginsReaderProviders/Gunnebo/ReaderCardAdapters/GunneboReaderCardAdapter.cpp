@@ -1,6 +1,6 @@
 /**
  * \file GunneboReaderCardAdapter.cpp
- * \author Maxime CHAMLEY <maxime.chamley@islog.eu>
+ * \author Maxime C. <maxime-dev@islog.com>
  * \brief Gunnebo reader/card adapter.
  */
 
