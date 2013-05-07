@@ -286,7 +286,10 @@ namespace LOGICALACCESS
 			 */
 			boost::shared_ptr<boost::asio::ip::tcp::socket> d_socket;
 
-			boost::asio::ip::tcp::socket * s_socket;
+			/**
+			 * \brief Provides core I/O functionality
+			 */
+			boost::asio::io_service ios;
 
 			/**
 			 * \brief Send a command to the reader.

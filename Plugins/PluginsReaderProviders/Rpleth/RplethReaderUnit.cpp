@@ -23,8 +23,6 @@ namespace LOGICALACCESS
 	RplethReaderUnit::RplethReaderUnit()
 		: ReaderUnit()
 	{
-		boost::asio::io_service ios;
-		s_socket = new boost::asio::ip::tcp::socket (ios);
 		d_readerUnitConfig.reset(new RplethReaderUnitConfiguration());
 		d_defaultReaderCardAdapter.reset(new RplethReaderCardAdapter());
 		d_card_type = "UNKNOWN";
@@ -212,7 +210,9 @@ namespace LOGICALACCESS
 			boost::asio::ip::tcp::endpoint endpoint;
 			endpoint.address(boost::asio::ip::address::from_string(getRplethConfiguration()->getReaderAddress()));
 			endpoint.port(getRplethConfiguration()->getPort());
-			d_socket.reset(s_socket);
+			
+			d_socket.reset(new boost::asio::ip::tcp::socket (ios));
+
 			try
 			{
 				d_socket->connect(endpoint);

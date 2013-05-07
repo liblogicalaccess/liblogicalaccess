@@ -203,11 +203,11 @@ namespace LOGICALACCESS
 			 * \brief Client socket use to communicate with the reader.
 			 */
 			boost::shared_ptr<boost::asio::ip::udp::socket> d_socket;
-
+			
 			/**
-			 * \brief Client socket use to communicate with the reader.
+			 * \brief Provides core I/O functionality
 			 */
-			boost::asio::ip::udp::socket * s_socket;
+			boost::asio::io_service ios;
 	};
 }
 
