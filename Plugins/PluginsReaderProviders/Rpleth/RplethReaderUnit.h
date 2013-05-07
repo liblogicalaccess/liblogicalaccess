@@ -132,7 +132,7 @@ namespace LOGICALACCESS
 			 * \brief Get the current chip in air.
 			 * \return The chip in air.
 			 */
-			boost::shared_ptr<Chip> getChipInAir();
+			boost::shared_ptr<Chip> getChipInAir(unsigned int maxwait = 2000);
 
 			/**
 			 * \brief Get the default Elatec reader/card adapter.
@@ -274,6 +274,7 @@ namespace LOGICALACCESS
 			
 			/**
 			 * \brief Request the last badge.
+			 * \param timeout The time to wait.
 			 * \return The last badge.
 			 */
 			std::vector<unsigned char> badge(long int timeout = 2000);
@@ -284,6 +285,11 @@ namespace LOGICALACCESS
 			 * \brief Client socket use to communicate with the reader.
 			 */
 			boost::shared_ptr<boost::asio::ip::tcp::socket> d_socket;
+
+			/**
+			 * \brief Provides core I/O functionality
+			 */
+			boost::asio::io_service ios;
 
 			/**
 			 * \brief Send a command to the reader.

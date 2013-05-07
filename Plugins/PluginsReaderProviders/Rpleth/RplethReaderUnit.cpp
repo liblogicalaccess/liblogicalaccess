@@ -15,6 +15,8 @@
 #include "logicalaccess/Cards/Chip.h"
 #include "ReaderCardAdapters/RplethReaderCardAdapter.h"
 #include <boost/filesystem.hpp>
+using std::cout;
+using std::endl;
 
 namespace LOGICALACCESS
 {
@@ -58,29 +60,12 @@ namespace LOGICALACCESS
 	bool RplethReaderUnit::waitInsertion(unsigned int maxwait)
 	{
 		bool inserted = false;
-		unsigned int currentWait = 0;
-
-		do
+		boost::shared_ptr<Chip> chip = getChipInAir(maxwait);
+		if (chip)
 		{
-			EXCEPTION_ASSERT_WITH_LOG(false, std::invalid_argument, "Fuck");
-			boost::shared_ptr<Chip> chip = getChipInAir();
-			std::cout << "insertion" << std::endl;
-			if (chip)
-			{
-				d_insertedChip = chip;
-				inserted = true;
-			}
-
-			if (!inserted)
-			{
-	#ifdef _WINDOWS
-				Sleep(100);
-	#elif defined(LINUX)
-				usleep(100000);
-	#endif
-				currentWait += 100;
-			}
-		} while (!inserted && (maxwait == 0 || currentWait < maxwait));
+			d_insertedChip = chip;
+			inserted = true;
+		}
 
 		return inserted;
 	}
@@ -93,32 +78,20 @@ namespace LOGICALACCESS
 
 		if (d_insertedChip)
 		{
-			do
+			boost::shared_ptr<Chip> chip = getChipInAir(maxwait);
+			if (chip)
 			{
-				boost::shared_ptr<Chip> chip = getChipInAir();
-				if (chip)
-				{
-					if (chip->getChipIdentifier() != d_insertedChip->getChipIdentifier())
-					{
-						d_insertedChip.reset();
-						removed = true;
-					}
-				}
-				else
+				if (chip->getChipIdentifier() != d_insertedChip->getChipIdentifier())
 				{
 					d_insertedChip.reset();
 					removed = true;
 				}
-				if (!removed)
-				{
-	#ifdef _WINDOWS
-					Sleep(100);
-	#elif defined(LINUX)
-					usleep(100000);
-	#endif
-					currentWait += 100;
-				}
-			} while (!removed && (maxwait == 0 || currentWait < maxwait));
+			}
+			else
+			{
+				d_insertedChip.reset();
+				removed = true;
+			}
 		}
 
 		return removed;
@@ -133,15 +106,13 @@ namespace LOGICALACCESS
 	{
 	}
 
-	boost::shared_ptr<Chip> RplethReaderUnit::getChipInAir()
+	boost::shared_ptr<Chip> RplethReaderUnit::getChipInAir(unsigned int maxwait)
 	{
 		boost::shared_ptr<Chip> chip;
 
-		std::cout << "GetChipInAir" << std::endl;
-		std::vector<unsigned char> buf = badge();
+		std::vector<unsigned char> buf = badge(maxwait);
 		if (buf.size() > 0)
 		{
-
 			chip = createChip((d_card_type == "UNKNOWN") ? "GenericTag" : d_card_type);
 			chip->setChipIdentifier(buf);
 		}
@@ -209,31 +180,34 @@ namespace LOGICALACCESS
 	{
 		if (!d_socket)
 		{
-			boost::asio::io_service ios;
 			boost::asio::ip::tcp::endpoint endpoint;
 			endpoint.address(boost::asio::ip::address::from_string(getRplethConfiguration()->getReaderAddress()));
 			endpoint.port(getRplethConfiguration()->getPort());
-			d_socket.reset(new boost::asio::ip::tcp::socket(ios));
+			
+			d_socket.reset(new boost::asio::ip::tcp::socket (ios));
+
 			try
 			{
 				d_socket->connect(endpoint);
 			}
-			catch(boost::system::system_error&)
+			catch(boost::system::system_error& ex)
 			{
+				ERROR_("Socket connection error: %s", ex.what());
 				d_socket.reset();
 			}
 		}
-
 		return (d_socket);
 	}
 
 	void RplethReaderUnit::disconnectFromReader()
 	{
-		if (d_socket)
+		if (d_socket->is_open())
 		{
+			d_socket->shutdown(d_socket->shutdown_both);
 			d_socket->close();
-			d_socket.reset();
 		}
+		if (d_socket)
+			d_socket.reset();
 	}
 
 	void RplethReaderUnit::serialize(boost::property_tree::ptree& parentNode)
@@ -269,7 +243,7 @@ namespace LOGICALACCESS
 		command.push_back(static_cast<unsigned char>(Device::RPLETH));
 		command.push_back(static_cast<unsigned char>(RplethCommand::STATEDHCP));
 		command.push_back(static_cast<unsigned char>(0x00));
-		answer = d_defaultReaderCardAdapter->sendCommand (command, 0);
+		answer = getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
 		if (answer.size() > 0)
 			res = answer[0] != 0x00;
 		return res;
@@ -282,7 +256,7 @@ namespace LOGICALACCESS
 		command.push_back(static_cast<unsigned char>(RplethCommand::DHCP));
 		command.push_back(static_cast<unsigned char>(0x01));
 		command.push_back(static_cast<unsigned char>(status));
-		d_defaultReaderCardAdapter->sendCommand (command, 0);
+		getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
 	}
 
 	void RplethReaderUnit::setReaderIp(std::vector<unsigned char> address)
@@ -297,7 +271,7 @@ namespace LOGICALACCESS
 			{
 				command.push_back(static_cast<unsigned char>(address[i]));
 			}
-			d_defaultReaderCardAdapter->sendCommand (command, 0);
+			getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
 		}
 	}
 
@@ -313,7 +287,7 @@ namespace LOGICALACCESS
 			{
 				command.push_back(static_cast<unsigned char>(address[i]));
 			}
-			d_defaultReaderCardAdapter->sendCommand (command, 0);
+			getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
 		}
 	}
 	
@@ -329,7 +303,7 @@ namespace LOGICALACCESS
 			{
 				command.push_back (static_cast<unsigned char>(address[i]));
 			}
-			d_defaultReaderCardAdapter->sendCommand (command, 0);
+			getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
 		}
 	}
 	
@@ -345,7 +319,7 @@ namespace LOGICALACCESS
 			{
 				command.push_back (static_cast<unsigned char>(address[i]));
 			}
-			d_defaultReaderCardAdapter->sendCommand (command, 0);
+			getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
 		}
 	}
 
@@ -357,7 +331,7 @@ namespace LOGICALACCESS
 		command.push_back (static_cast<unsigned char>(0x02));
 		command.push_back (static_cast<unsigned char>(port << 8));
 		command.push_back (static_cast<unsigned char>(port & 0xff));
-		d_defaultReaderCardAdapter->sendCommand (command, 0);
+		getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
 	}
 
 	void RplethReaderUnit::setConfWiegand(unsigned char offset, unsigned char lenght, unsigned char tramSize)
@@ -369,7 +343,7 @@ namespace LOGICALACCESS
 		command.push_back (static_cast<unsigned char>(offset));
 		command.push_back (static_cast<unsigned char>(lenght));
 		command.push_back (static_cast<unsigned char>(tramSize));
-		d_defaultReaderCardAdapter->sendCommand (command, 0);
+		getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
 	}
 
 	void RplethReaderUnit::resetReader()
@@ -378,7 +352,7 @@ namespace LOGICALACCESS
 		command.push_back (static_cast<unsigned char>(Device::RPLETH));
 		command.push_back (static_cast<unsigned char>(RplethCommand::RESET));
 		command.push_back (static_cast<unsigned char>(0x00));
-		d_defaultReaderCardAdapter->sendCommand (command, 0);
+		getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
 	}
 
 	void RplethReaderUnit::setReaderMessage(std::string message)
@@ -388,7 +362,7 @@ namespace LOGICALACCESS
 		command.push_back (static_cast<unsigned char>(RplethCommand::MESSAGE));
 		command.push_back (static_cast<unsigned char>(message.size()));
 		command.insert(command.end(), message.begin(), message.end());
-		d_defaultReaderCardAdapter->sendCommand (command, 0);
+		getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
 	}
 
 	void RplethReaderUnit::nop()
@@ -397,7 +371,7 @@ namespace LOGICALACCESS
 		command.push_back (static_cast<unsigned char>(Device::HID));
 		command.push_back (static_cast<unsigned char>(HidCommand::NOP));
 		command.push_back (static_cast<unsigned char>(0x00));
-		d_defaultReaderCardAdapter->sendCommand (command, 0);
+		getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
 	}
 
 	std::vector<unsigned char> RplethReaderUnit::badge(long int timeout)
@@ -407,7 +381,7 @@ namespace LOGICALACCESS
 		command.push_back (static_cast<unsigned char>(Device::HID));
 		command.push_back (static_cast<unsigned char>(HidCommand::BADGE));
 		command.push_back (static_cast<unsigned char>(0x00));
-		d_defaultReaderCardAdapter->sendCommand(command, 0);
+		getDefaultRplethReaderCardAdapter()->sendCommand(command, 0);
 		res = receiveBadge(timeout);
 		return res;
 	}

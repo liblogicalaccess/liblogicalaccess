@@ -37,14 +37,14 @@ namespace LOGICALACCESS
 			 * \brief Write a message on screen.
 			 * \param message The message to show.
 			 */
-			virtual void setMessage(std::string message);
+			virtual void setMessage(string message);
 
 			/**
 			 * \brief Write a message on screen during a time.
 			 * \param message The message to show.
 			 * \param time The time to show the message
 			 */
-			virtual void setMessage(std::string message, int time);
+			virtual void setMessage(string message, int time);
 
 			/**
 			 * \brief Set the default time to display a message.

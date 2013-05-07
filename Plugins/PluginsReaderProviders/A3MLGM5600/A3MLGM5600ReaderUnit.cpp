@@ -26,7 +26,7 @@ namespace LOGICALACCESS
 {
 	A3MLGM5600ReaderUnit::A3MLGM5600ReaderUnit()
 		: ReaderUnit()
-	{
+{
 		d_readerUnitConfig.reset(new A3MLGM5600ReaderUnitConfiguration());
 		d_defaultReaderCardAdapter.reset(new A3MLGM5600ReaderCardAdapter());
 		d_ledBuzzerDisplay.reset(new A3MLGM5600LEDBuzzerDisplay());
@@ -168,7 +168,6 @@ namespace LOGICALACCESS
 	{
 		if (!d_socket)
 		{
-			boost::asio::io_service ios;
 			boost::asio::ip::udp::endpoint endpoint(boost::asio::ip::address::from_string(getA3MLGM5600Configuration()->getReaderIpAddress()), 7171);
 			d_socket.reset(new boost::asio::ip::udp::socket(ios));
 
