@@ -133,16 +133,20 @@ add_library(
   LICENSE.LibLogicalAccess.txt
 )
 
+SET_TARGET_PROPERTIES(liblogicalaccess PROPERTIES OUTPUT_NAME "liblogicalaccess" PREFIX "" VERSION 2.0.3)
 
 if (WIN32)
 
-set(SCLIB_ENDNAME)
-if (TARGET_ARCH STREQUAL "x64")
+  set(SCLIB_ENDNAME)
+  if (TARGET_ARCH STREQUAL "x64")
 	set (SCLIB_ENDNAME "x64")
-endif()
+  endif()
 
-target_link_libraries(liblogicalaccess winscard zlib libeay32 ssleay32 scardsyn${SCLIB_ENDNAME} Winmm ws2_32 delayimp logicalaccess-cryptolib)
+  target_link_libraries(liblogicalaccess winscard zlib libeay32 ssleay32 scardsyn${SCLIB_ENDNAME} Winmm ws2_32 delayimp logicalaccess-cryptolib)
 
+elseif (UNIX)
+
+  target_link_libraries(liblogicalaccess logicalaccess-cryptolib crypto boost_filesystem boost_date_time boost_system dl)
 endif()
 
 add_subdirectory(Plugins/Cryptolib)

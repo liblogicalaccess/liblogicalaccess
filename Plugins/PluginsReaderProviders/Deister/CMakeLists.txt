@@ -20,9 +20,15 @@ add_library(
 	${SOURCE_LIB}
 	${INCLUDE_LIB}
   )
+
+if (WIN32)
+  set(LINK_OPT liblogicalaccess)
+else()
+  set(LINK_OPT logicalaccess crypto boost_system boost_system boost_filesystem)
+endif()
   
 target_link_libraries(
 	DeisterReaders
-	liblogicalaccess
 	logicalaccess-cryptolib
+	${LINK_OPT}
 )

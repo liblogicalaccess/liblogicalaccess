@@ -41,9 +41,15 @@ add_library(
 	${SOURCE_LIB}
 	${INCLUDE_LIB}
   )
-  
+
+if (WIN32)
+  set(LINK_OPT liblogicalaccess)
+else()
+  set(LINK_OPT logicalaccess boost_system boost_system boost_filesystem)
+endif()
+
 target_link_libraries(
 	IdOnDemandReaders
-	liblogicalaccess
 	GenericTagCards
+	${LINK_OPT}
 )

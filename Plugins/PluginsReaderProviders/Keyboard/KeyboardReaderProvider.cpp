@@ -25,7 +25,7 @@ namespace LOGICALACCESS
 		INFO_SIMPLE_("Creating new KeyboardReaderProvider instance...");
 
 #ifdef _WINDOWS
-		sharedGuid = "test";
+		//sharedGuid = "test";
 		createKbdFileMapping();
 		createKbdEvent();
 		startAndWatchOnActiveConsole();
@@ -346,7 +346,7 @@ namespace LOGICALACCESS
 					INFO_("Current try - Winlogon in Session Id {%d}", winlogonSessId);
 					if (winlogonSessId == destSessionId)
 					{
-						ERROR_SIMPLE_("Winlogon process found !");
+						INFO_SIMPLE_("Winlogon process found !");
 						winlogonPid = procEntry.th32ProcessID;
 						break;
 					}

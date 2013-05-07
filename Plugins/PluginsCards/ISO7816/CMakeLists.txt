@@ -12,7 +12,15 @@ add_library(
 	${INCLUDE}
   )
 
+if (WIN32)
+  set(LINK_OPT liblogicalaccess)
+else()
+  set(LINK_OPT logicalaccess)
+endif()
+
+SET_TARGET_PROPERTIES(ISO7816Cards PROPERTIES VERSION 2.0.3)
+
 target_link_libraries(
 	ISO7816Cards
-	liblogicalaccess
+	${LINK_OPT}
 )

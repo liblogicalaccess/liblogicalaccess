@@ -318,6 +318,8 @@ namespace LOGICALACCESS
 
 	void KeyboardReaderUnit::unSerialize(boost::property_tree::ptree& node)
 	{
+		INFO_SIMPLE_("Unserialize Keyboard reader unit...");
+
 		d_devicename = node.get_child("DeviceName").get_value<std::string>();
 		d_readerUnitConfig->unSerialize(node.get_child(d_readerUnitConfig->getDefaultXmlNodeName()));
 	}

@@ -30,16 +30,20 @@ SOURCE_GROUP("Source Files\\Commands" FILES ${source_commands})
 set(INCLUDE_LIB ${include} ${include_core} ${include_readercardadapters} ${include_commands})
 set(SOURCE_LIB ${SRCS} ${source_readercardadapters} ${source_commands})
 
+set(LINK_OPT)
 if (WIN32)
 LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsCards/Mifare/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
 										${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsCards/DESFire/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
 										${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsCards/ISO7816/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
 										${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsCards/Twic/bin/${TARGET_ARCH}/${VC_FOLDER_NAME})
+set(LINK_OPT liblogicalaccess)
 else()
 LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsCards/Mifare/bin
 										${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsCards/DESFire/bin
 										${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsCards/ISO7816/bin
 										${CMAKE_CURRENT_SOURCE_DIR}/../../PluginsCards/Twic/bin)
+										
+set(LINK_OPT boost_system boost_filesystem logicalaccess)
 endif()
 										
 add_library(
@@ -52,7 +56,7 @@ add_library(
   
 target_link_libraries(
 	SmartIDReaders
-	liblogicalaccess
 	ISO7816Readers
 	MifareCards
+	${LINK_OPT}
 )

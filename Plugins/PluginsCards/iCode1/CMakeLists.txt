@@ -12,13 +12,14 @@ add_library(
 	${INCLUDE}
   )
 
-set(OPT_LIBS)
-if(WIN32)
-	set(OPT_LIBS ISO15693Cards)
+if (WIN32)
+  set(LINK_OPT liblogicalaccess)
+else()
+  set(LINK_OPT logicalaccess)
 endif()
-  
+
 target_link_libraries(
 	iCode1Cards
-	${OPT_LIBS}
-	liblogicalaccess
+	ISO15693Cards
+	${LINK_OPT}
 )

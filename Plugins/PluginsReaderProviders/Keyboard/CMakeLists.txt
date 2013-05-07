@@ -21,9 +21,15 @@ add_library(
 	${SOURCE_LIB}
 	${INCLUDE_LIB}
   )
+
+if (WIN32)
+  set(LINK_OPT liblogicalaccess)
+else()
+  set(LINK_OPT logicalaccess)
+endif()
   
 target_link_libraries(
 	KeyboardReaders
-	liblogicalaccess
+	${LINK_OPT}
 	UserEnv
 )

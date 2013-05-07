@@ -19,10 +19,9 @@ namespace LOGICALACCESS
 	void* LibraryManager::getFctFromName(std::string fctname, LibraryType libraryType)
 	{
 		void *fct;
-		boost::filesystem::path pluginDir(boost::filesystem::current_path());
 		boost::filesystem::directory_iterator end_iter;
 		std::string extension = EXTENSION_LIB;
-
+		Settings setting = Settings::getInstance();
 
 		for (std::map<std::string, IDynLibrary*>::iterator it = libLoaded.begin(); it != libLoaded.end(); ++it)
 		{
@@ -34,34 +33,37 @@ namespace LOGICALACCESS
 			catch (...) {}
 		}
 
-
-		if (boost::filesystem::exists(pluginDir) && boost::filesystem::is_directory(pluginDir))
+		for (std::vector<std::string>::iterator it = setting.PluginFolders.begin(); it != setting.PluginFolders.end(); ++it)
 		{
-			for (boost::filesystem::directory_iterator dir_iter(pluginDir) ; dir_iter != end_iter ; ++dir_iter)
+			boost::filesystem::path pluginDir(*it);
+			if (boost::filesystem::exists(pluginDir) && boost::filesystem::is_directory(pluginDir))
 			{
-				if (boost::filesystem::is_regular_file(dir_iter->status())
-					&& dir_iter->path().extension() == extension && libLoaded[dir_iter->path().filename().string()] == NULL
-					&& (hasEnding(dir_iter->path().filename().string(), enumType[libraryType] + extension)
-					|| hasEnding(dir_iter->path().filename().string(), "Unified" + extension)))
+				for (boost::filesystem::directory_iterator dir_iter(pluginDir) ; dir_iter != end_iter ; ++dir_iter)
 				{
-					try
+					if (boost::filesystem::is_regular_file(dir_iter->status())
+						&& dir_iter->path().extension() == extension && libLoaded[dir_iter->path().filename().string()] == NULL
+						&& (hasEnding(dir_iter->path().filename().string(), enumType[libraryType] + extension)
+						|| hasEnding(dir_iter->path().filename().string(), "Unified" + extension)))
 					{
-						IDynLibrary* lib = newDynLibrary(dir_iter->path().string());
-						fct = lib->getSymbol(fctname.c_str());
-						if (fct != NULL)
+						try
 						{
-							libLoaded[dir_iter->path().filename().string()] = lib;
-							return fct;
+							IDynLibrary* lib = newDynLibrary(dir_iter->path().string());
+							fct = lib->getSymbol(fctname.c_str());
+							if (fct != NULL)
+							{
+								libLoaded[dir_iter->path().filename().string()] = lib;
+								return fct;
+							}
+							else
+								delete lib;
 						}
-						else
-							delete lib;
+						catch (...) {}
 					}
-					catch (...) {}
 				}
 			}
+			else
+				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "No Plugins Folder found");
 		}
-		else
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "No Plugins Folder found");
 		return NULL;
 	}
 

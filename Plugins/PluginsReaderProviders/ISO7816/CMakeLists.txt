@@ -53,18 +53,22 @@ add_library(
 	${SOURCE_LIB}
 	${INCLUDE_LIB}
   )
+
+SET_TARGET_PROPERTIES(ISO7816Readers PROPERTIES VERSION 2.0.3)
   
- set(LINK_LIB)
- if (WIN32)
-	set(LINK_LIB libeay32)
- endif()
+set(LINK_LIB)
+if (WIN32)
+  set(LINK_LIB libeay32 TwicCards liblogicalaccess)
+else()
+  set(LINK_LIB crypto logicalaccess)
+endif()
+
   
 target_link_libraries(
 	ISO7816Readers
-	liblogicalaccess
 	DESFireCards
 	logicalaccess-cryptolib
 	ISO7816Cards
-	TwicCards
+
 	${LINK_LIB}
 )

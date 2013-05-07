@@ -21,8 +21,14 @@ add_library(
 	${SOURCE_LIB}
 	${INCLUDE_LIB}
   )
-  
+
+if (WIN32)
+  set(LINK_OPT liblogicalaccess)
+else()
+  set(LINK_OPT logicalaccess pthread boost_system boost_filesystem)
+endif()
+
 target_link_libraries(
     A3MLGM5600Readers
-    liblogicalaccess
+    ${LINK_OPT}
 )
