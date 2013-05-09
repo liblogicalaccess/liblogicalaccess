@@ -38,11 +38,11 @@ extern "C"
 			{
 			case 0:
 				{
-					*getterfct = &getRFIDeasReader;
+					*getterfct = (void*)&getRFIDeasReader;
 					sprintf(readername, READER_RFIDEAS);
 					ret = true;
-					break;
 				}
+				break;
 			}
 		}
 

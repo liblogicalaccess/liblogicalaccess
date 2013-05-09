@@ -54,11 +54,11 @@ extern "C"
 			{
 			case 0:
 				{
-					*getterfct = &getGenericTagChip;
+					*getterfct = (void*)&getGenericTagChip;
 					sprintf(chipname, CHIP_GENERICTAG);
 					ret = true;
-					break;
 				}
+				break;
 			}
 		}
 

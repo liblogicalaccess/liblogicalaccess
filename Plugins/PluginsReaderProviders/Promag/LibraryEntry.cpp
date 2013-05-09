@@ -38,11 +38,11 @@ extern "C"
 			{
 			case 0:
 				{
-					*getterfct = &getPromagReader;
+					*getterfct = (void*)&getPromagReader;
 					sprintf(readername, READER_PROMAG);
 					ret = true;
-					break;
 				}
+				break;
 			}
 		}
 

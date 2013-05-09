@@ -38,11 +38,11 @@ extern "C"
 			{
 			case 0:
 				{
-					*getterfct = &getKeyboardReader;
+					*getterfct = (void*)&getKeyboardReader;
 					sprintf(readername, READER_KEYBOARD);
 					ret = true;
-					break;
 				}
+				break;
 			}
 		}
 

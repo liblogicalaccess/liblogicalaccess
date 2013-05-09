@@ -38,11 +38,11 @@ extern "C"
 			{
 			case 0:
 				{
-					*getterfct = &getSmartFrameChip;
+					*getterfct = (void*)&getSmartFrameChip;
 					sprintf(chipname, CHIP_SMARTFRAME);
 					ret = true;
-					break;
 				}
+				break;
 			}
 		}
 

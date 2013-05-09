@@ -38,11 +38,11 @@ extern "C"
 			{
 			case 0:
 				{
-					*getterfct = &getRplethReader;
+					*getterfct = (void*)&getRplethReader;
 					sprintf(readername, READER_RPLETH);
 					ret = true;
-					break;
 				}
+				break;
 			}
 		}
 

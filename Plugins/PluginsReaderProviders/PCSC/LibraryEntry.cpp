@@ -38,11 +38,11 @@ extern "C"
 			{
 			case 0:
 				{
-					*getterfct = &getPCSCReader;
+					*getterfct = (void*)&getPCSCReader;
 					sprintf(readername, READER_PCSC);
 					ret = true;
-					break;
 				}
+				break;
 			}
 		}
 

@@ -64,18 +64,18 @@ extern "C"
 			{
 			case 0:
 				{
-					*getterfct = &getMifare1KChip;
+					*getterfct = (void*)&getMifare1KChip;
 					sprintf(chipname, CHIP_MIFARE1K);
 					ret = true;
-					break;
 				}
+				break;
 			case 1:
 				{
-					*getterfct = &getMifare1KChip;
+					*getterfct = (void*)&getMifare1KChip;
 					sprintf(chipname, CHIP_MIFARE4K);
 					ret = true;
-					break;
 				}
+				break;
 			}
 		}
 

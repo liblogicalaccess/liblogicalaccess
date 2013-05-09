@@ -38,11 +38,11 @@ extern "C"
 			{
 			case 0:
 				{
-					*getterfct = &getSTidSTRReader;
+					*getterfct = (void*)&getSTidSTRReader;
 					sprintf(readername, READER_STIDSTR);
 					ret = true;
-					break;
 				}
+				break;
 			}
 		}
 

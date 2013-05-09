@@ -38,11 +38,11 @@ extern "C"
 			{
 			case 0:
 				{
-					*getterfct = &getSmartIDReader;
+					*getterfct = (void*)&getSmartIDReader;
 					sprintf(readername, READER_SMARTID);
 					ret = true;
-					break;
 				}
+				break;
 			}
 		}
 

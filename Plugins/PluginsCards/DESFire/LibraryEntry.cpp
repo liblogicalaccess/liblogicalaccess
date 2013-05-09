@@ -63,19 +63,19 @@ extern "C"
 			{
 			case 0:
 				{
-					*getterfct = &getDESFireChip;
+					*getterfct = (void*)&getDESFireChip;
 					sprintf(chipname, CHIP_DESFIRE);
 					ret = true;
-					break;
 				}
+				break;
 
 			case 1:
 				{
-					*getterfct = &getDESFireEV1Chip;
+					*getterfct = (void*)&getDESFireEV1Chip;
 					sprintf(chipname, CHIP_DESFIRE_EV1);
 					ret = true;
-					break;
 				}
+				break;
 			}
 		}
 

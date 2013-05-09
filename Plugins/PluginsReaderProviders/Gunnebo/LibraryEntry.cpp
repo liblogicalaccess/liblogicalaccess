@@ -38,11 +38,11 @@ extern "C"
 			{
 			case 0:
 				{
-					*getterfct = &getGunneboReader;
+					*getterfct = (void*)&getGunneboReader;
 					sprintf(readername, READER_GUNNEBO);
 					ret = true;
-					break;
 				}
+				break;
 			}
 		}
 

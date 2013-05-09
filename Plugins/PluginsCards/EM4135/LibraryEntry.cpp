@@ -38,11 +38,11 @@ extern "C"
 			{
 			case 0:
 				{
-					*getterfct = &getEM4135Chip;
+					*getterfct = (void*)&getEM4135Chip;
 					sprintf(chipname, CHIP_EM4135);
 					ret = true;
-					break;
 				}
+				break;
 			}
 		}
 

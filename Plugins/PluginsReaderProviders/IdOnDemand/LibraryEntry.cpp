@@ -38,11 +38,11 @@ extern "C"
 			{
 			case 0:
 				{
-					*getterfct = &getIdOnDemandReader;
+					*getterfct = (void*)&getIdOnDemandReader;
 					sprintf(readername, READER_IDONDEMAND);
 					ret = true;
-					break;
 				}
+				break;
 			}
 		}
 

@@ -47,18 +47,18 @@ extern "C"
 			{
 			case 0:
 				{
-					*getterfct = &getMifareUltralightChip;
+					*getterfct = (void*)&getMifareUltralightChip;
 					sprintf(chipname, CHIP_MIFAREULTRALIGHT);
 					ret = true;
-					break;
 				}
+				break;
 			case 1:
 				{
-					*getterfct = &getMifareUltralightCChip;
+					*getterfct = (void*)&getMifareUltralightCChip;
 					sprintf(chipname, CHIP_MIFAREULTRALIGHTC);
 					ret = true;
-					break;
 				}
+				break;
 			}
 		}
 

@@ -38,11 +38,11 @@ extern "C"
 			{
 			case 0:
 				{
-					*getterfct = &getAxessTMC13Reader;
+					*getterfct = (void*)&getAxessTMC13Reader;
 					sprintf(readername, READER_AXESSTMC13);
 					ret = true;
-					break;
 				}
+				break;
 			}
 		}
 

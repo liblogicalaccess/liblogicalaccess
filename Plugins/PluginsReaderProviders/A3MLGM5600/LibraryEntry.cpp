@@ -38,11 +38,11 @@ extern "C"
 			{
 			case 0:
 				{
-					*getterfct = &getA3MLGM5600Reader;
+					*getterfct = (void*)&getA3MLGM5600Reader;
 					sprintf(readername, READER_A3MLGM5600);
 					ret = true;
-					break;
 				}
+				break;
 			}
 		}
 

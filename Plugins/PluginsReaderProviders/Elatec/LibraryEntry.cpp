@@ -38,11 +38,11 @@ extern "C"
 			{
 			case 0:
 				{
-					*getterfct = &getElatecReader;
+					*getterfct = (void*)&getElatecReader;
 					sprintf(readername, READER_ELATEC);
 					ret = true;
-					break;
 				}
+				break;
 			}
 		}
 

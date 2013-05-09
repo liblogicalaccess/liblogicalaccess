@@ -46,11 +46,11 @@ extern "C"
 			{
 			case 0:
 				{
-					*getterfct = &getISO15693Chip;
+					*getterfct = (void*)&getISO15693Chip;
 					sprintf(chipname, CHIP_ISO15693);
 					ret = true;
-					break;
 				}
+				break;
 			}
 		}
 

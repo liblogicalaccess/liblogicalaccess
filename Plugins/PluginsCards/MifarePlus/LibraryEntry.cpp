@@ -38,11 +38,11 @@ extern "C"
 			{
 			case 0:
 				{
-					*getterfct = &getMifarePlus4KChip;
+					*getterfct = (void*)&getMifarePlus4KChip;
 					sprintf(chipname, CHIP_MIFAREPLUS4K);
 					ret = true;
-					break;
 				}
+				break;
 			}
 		}
 

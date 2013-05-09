@@ -38,11 +38,11 @@ extern "C"
 			{
 			case 0:
 				{
-					*getterfct = &getProxChip;
+					*getterfct = (void*)&getProxChip;
 					sprintf(chipname, CHIP_PROX);
 					ret = true;
-					break;
 				}
+				break;
 			}
 		}
 
