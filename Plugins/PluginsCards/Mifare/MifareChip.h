@@ -21,6 +21,8 @@ using std::ostream;
 
 namespace LOGICALACCESS
 {	
+	#define CHIP_MIFARE4K	"Mifare"
+
 	/**
 	 * \brief The Mifare base chip class.
 	 */

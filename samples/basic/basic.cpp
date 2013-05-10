@@ -49,10 +49,7 @@ int main(int , char**)
 			std::cerr << "No readers on this system." << std::endl;
 			return EXIT_FAILURE;
 		}
-		else
-		{
-			std::cout << readerConfig->getReaderProvider()->getReaderList().size() << " readers on this system." << std::endl;			
-		}
+		std::cout << readerConfig->getReaderProvider()->getReaderList().size() << " readers on this system." << std::endl;
 
 		// Create the default reader unit. On PC/SC, we will listen on all readers.
 		readerConfig->setReaderUnit(readerConfig->getReaderProvider()->createReaderUnit());
