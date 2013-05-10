@@ -4,7 +4,7 @@
  * \brief STidSTR reader unit configuration.
  */
 
-#include "../STidSTRReaderUnitConfiguration.h"
+#include "STidSTRReaderUnitConfiguration.h"
 
 namespace LOGICALACCESS
 {

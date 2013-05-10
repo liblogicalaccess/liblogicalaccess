@@ -4,7 +4,7 @@
  * \brief STidSTR reader/card adapter.
  */
 
-#include "ReaderCardAdapters/STidSTRReaderCardAdapter.h"
+#include "STidSTRReaderCardAdapter.h"
 #include "logicalaccess/crypto/tomcrypt.h"
 #include <openssl/evp.h>
 #include <openssl/hmac.h>
