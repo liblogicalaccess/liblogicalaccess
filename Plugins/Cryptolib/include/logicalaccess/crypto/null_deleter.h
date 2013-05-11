@@ -7,7 +7,7 @@
 #ifndef NULL_DELETER_HPP
 #define NULL_DELETER_HPP
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	namespace openssl
 	{

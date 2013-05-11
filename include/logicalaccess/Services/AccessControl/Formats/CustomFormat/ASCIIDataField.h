@@ -10,7 +10,7 @@
 #include "logicalaccess/Services/AccessControl/Formats/CustomFormat/ValueDataField.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A ascii data field.

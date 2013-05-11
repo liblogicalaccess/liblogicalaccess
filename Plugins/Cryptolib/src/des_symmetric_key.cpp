@@ -6,7 +6,7 @@
 
 #include "logicalaccess/crypto/des_symmetric_key.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	namespace openssl
 	{

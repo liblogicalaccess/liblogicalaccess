@@ -12,7 +12,7 @@
 #include "logicalaccess/Cards/HMAC1Key.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	/**
 	 * \brief The STidSRT communication type.

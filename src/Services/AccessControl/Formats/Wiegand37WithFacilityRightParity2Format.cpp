@@ -11,7 +11,7 @@
 #include "logicalaccess/Services/AccessControl/Encodings/NoDataRepresentation.h"
 #include "logicalaccess/Services/AccessControl/Formats/CustomFormat/NumberDataField.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	Wiegand37WithFacilityRightParity2Format::Wiegand37WithFacilityRightParity2Format()
 		: StaticFormat()

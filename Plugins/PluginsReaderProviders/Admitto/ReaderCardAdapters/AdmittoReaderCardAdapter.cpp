@@ -6,7 +6,7 @@
 
 #include "AdmittoReaderCardAdapter.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {			
 	const unsigned char AdmittoReaderCardAdapter::CR = 0x0d;
 	const unsigned char AdmittoReaderCardAdapter::LF = 0x0a;

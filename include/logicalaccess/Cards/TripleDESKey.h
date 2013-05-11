@@ -15,7 +15,7 @@
  */
 #define TRIPLEDES_KEY_SIZE 16
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A triple DES class.

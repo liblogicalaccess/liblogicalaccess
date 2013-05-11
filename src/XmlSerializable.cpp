@@ -13,7 +13,7 @@
 #include <cstring>
 #include <boost/algorithm/string.hpp>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	unsigned long long XmlSerializable::atoull(const std::string& str)
 	{

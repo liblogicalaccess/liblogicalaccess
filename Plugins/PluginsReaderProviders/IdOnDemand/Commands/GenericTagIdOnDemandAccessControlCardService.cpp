@@ -21,7 +21,7 @@
 
 #include "logicalaccess/Services/AccessControl/Formats/Format.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	GenericTagIdOnDemandAccessControlCardService::GenericTagIdOnDemandAccessControlCardService(boost::shared_ptr<CardProvider> cardProvider)
 		: GenericTagAccessControlCardService(cardProvider)

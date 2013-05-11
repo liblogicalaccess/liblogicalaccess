@@ -19,7 +19,7 @@ using std::ostream;
 using std::map;
 using std::pair;
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	/**
 	 * \brief A reader configuration class. Contains the reader provider and selected reader unit.

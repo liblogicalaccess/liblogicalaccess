@@ -10,7 +10,7 @@
 #include "MifareUltralightProfile.h"
 #include "logicalaccess/Cards/TripleDESKey.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief The Mifare Ultralight C base profile class.

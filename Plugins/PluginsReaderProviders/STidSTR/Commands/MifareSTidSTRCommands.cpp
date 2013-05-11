@@ -11,7 +11,7 @@
 #include "logicalaccess/Cards/ReaderMemoryKeyStorage.h"
 #include "logicalaccess/Cards/SAMKeyStorage.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	MifareSTidSTRCommands::MifareSTidSTRCommands()
 		: MifareCommands()

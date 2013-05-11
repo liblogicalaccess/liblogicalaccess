@@ -18,7 +18,7 @@ using std::vector;
 #include "logicalaccess/logs.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A A3MLGM5600 LCD Display class.

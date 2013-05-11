@@ -18,7 +18,7 @@
 #include "logicalaccess/DynLibrary/LibraryManager.h"
 #include "logicalaccess/DynLibrary/IDynLibrary.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/*
 	 *

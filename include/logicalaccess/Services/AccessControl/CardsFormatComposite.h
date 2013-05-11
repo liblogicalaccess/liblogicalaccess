@@ -11,7 +11,7 @@
 
 #include <map>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief Format information for a card type.

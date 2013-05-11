@@ -16,7 +16,7 @@
 
 #include <cstring>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	namespace openssl
 	{

@@ -9,7 +9,7 @@
 #include "logicalaccess/BufferHelper.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	std::vector<unsigned char> PCSCReaderCardAdapter::sendCommand(const std::vector<unsigned char>& command, long int /*timeout*/)
 	{

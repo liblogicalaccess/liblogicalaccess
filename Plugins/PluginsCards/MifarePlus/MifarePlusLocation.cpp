@@ -6,7 +6,7 @@
 
 #include "MifarePlusLocation.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	MifarePlusLocation::MifarePlusLocation()
 		: MifareLocation()

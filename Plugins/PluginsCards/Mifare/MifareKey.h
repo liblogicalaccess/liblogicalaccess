@@ -15,7 +15,7 @@
  */
 #define MIFARE_KEY_SIZE 6
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A Mifare Key class.

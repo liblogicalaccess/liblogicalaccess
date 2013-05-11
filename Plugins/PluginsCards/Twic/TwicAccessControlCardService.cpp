@@ -16,7 +16,7 @@
 #include <cstring>
 #endif
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	TwicAccessControlCardService::TwicAccessControlCardService(boost::shared_ptr<CardProvider> cardProvider)
 		: AccessControlCardService(cardProvider)

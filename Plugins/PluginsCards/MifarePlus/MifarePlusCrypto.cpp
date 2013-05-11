@@ -19,7 +19,7 @@
 #include "logicalaccess/crypto/des_symmetric_key.h"
 #include "logicalaccess/crypto/des_initialization_vector.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {		
 	MifarePlusCrypto::MifarePlusCrypto()
 	{

@@ -14,7 +14,7 @@
 #include "logicalaccess/Cards/Commands.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	class AccessInfo;	
 

@@ -15,7 +15,7 @@
 #include <wintypes.h>
 #endif
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	class CardProvider;
 

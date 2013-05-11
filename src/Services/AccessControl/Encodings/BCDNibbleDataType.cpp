@@ -9,7 +9,7 @@
 
 #include <cstring>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	BCDNibbleDataType::BCDNibbleDataType()
 		: DataType()

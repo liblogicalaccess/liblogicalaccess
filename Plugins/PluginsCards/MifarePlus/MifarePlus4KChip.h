@@ -9,7 +9,7 @@
 
 #include "MifarePlusChip.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief The 4k MifarePlus base chip class.

@@ -8,7 +8,7 @@
 
 #include <cstring>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	unsigned int BitHelper::align(void* linedData, size_t linedDataLengthBytes, const void* data, size_t dataLengthBytes, unsigned int dataLengthBits)
 	{

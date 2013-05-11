@@ -11,7 +11,7 @@
 #include <sstream>
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	ReaderUnitConfiguration::ReaderUnitConfiguration(std::string rpt)
 		: XmlSerializable(), d_readerProviderType(rpt)

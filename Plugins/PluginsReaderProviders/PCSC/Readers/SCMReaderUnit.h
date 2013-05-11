@@ -13,7 +13,7 @@
 #include <vector>
 #include <iostream>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief The SCM reader unit class.

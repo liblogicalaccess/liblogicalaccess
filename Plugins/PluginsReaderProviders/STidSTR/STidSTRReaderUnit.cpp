@@ -34,7 +34,7 @@
 #include "logicalaccess/DynLibrary/LibraryManager.h"
 #include "logicalaccess/DynLibrary/IDynLibrary.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	STidSTRReaderUnit::STidSTRReaderUnit(boost::shared_ptr<SerialPortXml> port)
 		: ReaderUnit()

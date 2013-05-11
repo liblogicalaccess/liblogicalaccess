@@ -6,7 +6,7 @@
 
 #include "DESFireKey.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	DESFireKey::DESFireKey()
 		: Key()

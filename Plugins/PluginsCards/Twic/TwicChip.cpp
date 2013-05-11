@@ -21,7 +21,7 @@ using std::istringstream;
 
 #include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	TwicChip::TwicChip()
 		: ISO7816Chip(CHIP_TWIC)

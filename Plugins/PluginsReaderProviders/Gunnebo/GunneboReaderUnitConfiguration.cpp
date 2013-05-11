@@ -8,7 +8,7 @@
 
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	GunneboReaderUnitConfiguration::GunneboReaderUnitConfiguration()
 		: ReaderUnitConfiguration("Gunnebo")

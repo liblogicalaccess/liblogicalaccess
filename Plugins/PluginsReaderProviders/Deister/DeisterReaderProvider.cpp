@@ -17,7 +17,7 @@
 #include "DeisterReaderUnit.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	DeisterReaderProvider::DeisterReaderProvider() :
 		ReaderProvider()

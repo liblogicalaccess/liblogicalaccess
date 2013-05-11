@@ -6,7 +6,7 @@
 
 #include "DESFireEV1Location.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	DESFireEV1Location::DESFireEV1Location()
 		: DESFireLocation()

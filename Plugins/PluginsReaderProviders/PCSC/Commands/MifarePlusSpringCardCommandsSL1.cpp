@@ -8,7 +8,7 @@
 #include "../PCSCReaderProvider.h"
 #include "MifarePlusChip.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	MifarePlusSpringCardCommandsSL1::MifarePlusSpringCardCommandsSL1()
 		: MifarePlusSpringCardCommands()

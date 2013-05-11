@@ -11,7 +11,7 @@
 #include "logicalaccess/crypto/symmetric_cipher.h"
 #include <openssl/evp.h>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	namespace openssl
 	{

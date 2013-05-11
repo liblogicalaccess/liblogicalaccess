@@ -10,7 +10,7 @@
 #include "GenericTagAccessControlCardService.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	class GenericTagCardProvider;
 

@@ -15,7 +15,7 @@
 #include <boost/shared_ptr.hpp>
 #include <openssl/evp.h>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	namespace openssl
 	{

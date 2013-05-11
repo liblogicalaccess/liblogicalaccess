@@ -13,7 +13,7 @@
 #include <list>
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A custom format.

@@ -6,7 +6,7 @@
 
 #include "MifareKey.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	MifareKey::MifareKey()
 		: Key()

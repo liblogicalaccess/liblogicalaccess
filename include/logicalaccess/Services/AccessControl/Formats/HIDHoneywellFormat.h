@@ -9,7 +9,7 @@
 
 #include "logicalaccess/Services/AccessControl/Formats/StaticFormat.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A HID Honeywell format class.

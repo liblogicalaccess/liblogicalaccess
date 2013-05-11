@@ -11,7 +11,7 @@
 #include "MifareUltralightCCommands.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	class MifareUltralightCChip;
 

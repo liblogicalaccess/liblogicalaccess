@@ -28,7 +28,7 @@
 #include "logicalaccess/BufferHelper.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	Format::Format()
 	{

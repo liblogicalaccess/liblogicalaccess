@@ -12,7 +12,7 @@
 #include "SmartIDReaderUnitConfiguration.h"
 #include "logicalaccess/Cards/Chip.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	class Profile;
 	class SmartIDReaderCardAdapter;

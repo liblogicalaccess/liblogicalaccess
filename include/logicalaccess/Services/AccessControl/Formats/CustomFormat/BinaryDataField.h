@@ -10,7 +10,7 @@
 #include "logicalaccess/Services/AccessControl/Formats/CustomFormat/ValueDataField.h"
 #include "logicalaccess/Key.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	class LIBLOGICALACCESS_API BinaryFieldValue : public Key
 	{

@@ -11,7 +11,7 @@
 #include "ISO15693Location.h"
 #include "logicalaccess/Cards/Commands.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief The ISO15693 commands class.

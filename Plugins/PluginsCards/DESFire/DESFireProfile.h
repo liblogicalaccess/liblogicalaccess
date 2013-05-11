@@ -20,7 +20,7 @@ using std::vector;
 using std::ostream;
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	/**
 	 * \brief The DESFire base profile class.

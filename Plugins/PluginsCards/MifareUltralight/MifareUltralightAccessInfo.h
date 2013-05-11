@@ -18,7 +18,7 @@ using std::vector;
 using std::ostream;
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A Mifare Ultralight access informations.

@@ -17,7 +17,7 @@
 #include "PromagReaderUnit.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	PromagReaderProvider::PromagReaderProvider() :
 		ReaderProvider()

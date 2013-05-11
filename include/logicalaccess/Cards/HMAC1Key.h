@@ -15,7 +15,7 @@
  */
 #define HMAC1_KEY_SIZE 10
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A hmac-1 key class.

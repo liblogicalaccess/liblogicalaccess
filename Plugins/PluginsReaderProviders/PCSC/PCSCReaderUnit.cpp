@@ -55,7 +55,7 @@
 #include <sys/time.h>
 #endif
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	PCSCReaderUnit::PCSCReaderUnit(const std::string& name)
 		: ReaderUnit()

@@ -10,7 +10,7 @@
 #include "logicalaccess/Cards/Location.h"
 #include "DESFireKey.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief The file communication mode (or encryption mode)

@@ -22,7 +22,7 @@ using std::istringstream;
 #include "../ISO7816/ISO7816Location.h"
 #include "logicalaccess/Services/AccessControl/Formats/FASCN200BitFormat.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	TwicProfile::TwicProfile()
 		: ISO7816Profile()

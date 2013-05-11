@@ -13,7 +13,7 @@
 #include "logicalaccess/Cards/AccessInfo.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief The base access control card service class for all access control services.

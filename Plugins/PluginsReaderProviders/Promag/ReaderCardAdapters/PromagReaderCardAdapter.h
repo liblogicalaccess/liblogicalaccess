@@ -17,7 +17,7 @@ using std::vector;
 
 #include "logicalaccess/logs.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	/**
 	 * \brief A default Promag reader/card adapter class.

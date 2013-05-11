@@ -18,7 +18,7 @@ using std::string;
 using std::vector;
 using std::ostream;
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief The Generic Tag card provider class.

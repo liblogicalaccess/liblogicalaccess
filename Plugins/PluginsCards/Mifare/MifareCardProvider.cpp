@@ -11,7 +11,7 @@
 #define PREFIX_PATTERN 0xE3
 #define POLYNOM_PATTERN 0x1D
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	MifareCardProvider::MifareCardProvider()
 		: CardProvider()

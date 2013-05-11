@@ -17,7 +17,7 @@
 #include "AdmittoReaderUnit.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	AdmittoReaderProvider::AdmittoReaderProvider() :
 		ReaderProvider()

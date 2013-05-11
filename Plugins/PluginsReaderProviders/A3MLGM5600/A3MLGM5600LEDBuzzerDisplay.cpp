@@ -10,7 +10,7 @@
 #include <iomanip>
 #include <sstream>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	A3MLGM5600LEDBuzzerDisplay::A3MLGM5600LEDBuzzerDisplay()
 		: LEDBuzzerDisplay()

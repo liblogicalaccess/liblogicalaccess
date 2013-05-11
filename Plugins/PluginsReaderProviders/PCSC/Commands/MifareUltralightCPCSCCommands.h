@@ -11,7 +11,7 @@
 #include "MifareUltralightCCommands.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief The Mifare Ultralight C commands class for PCSC reader.

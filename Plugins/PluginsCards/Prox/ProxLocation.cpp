@@ -6,7 +6,7 @@
 
 #include "ProxLocation.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	ProxLocation::ProxLocation()
 	{

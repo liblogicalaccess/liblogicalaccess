@@ -11,7 +11,7 @@
 #include "DESFireCommands.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	class DESFireChip;
 

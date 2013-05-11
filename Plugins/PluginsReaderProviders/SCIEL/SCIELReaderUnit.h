@@ -18,7 +18,7 @@
 #include <map>
 #include <list>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	class Profile;
 	class SCIELReaderCardAdapter;

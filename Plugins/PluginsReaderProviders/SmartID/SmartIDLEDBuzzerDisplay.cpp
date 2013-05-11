@@ -6,7 +6,7 @@
 
 #include "SmartIDLEDBuzzerDisplay.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	SmartIDLEDBuzzerDisplay::SmartIDLEDBuzzerDisplay()
 		: LEDBuzzerDisplay()

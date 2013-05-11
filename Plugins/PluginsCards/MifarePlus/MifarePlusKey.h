@@ -9,7 +9,7 @@
 
 #include "logicalaccess/Key.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A MifarePlus Key class.

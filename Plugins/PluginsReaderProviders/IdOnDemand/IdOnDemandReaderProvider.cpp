@@ -16,7 +16,7 @@
 
 #include "IdOnDemandReaderUnit.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	IdOnDemandReaderProvider::IdOnDemandReaderProvider() :
 		ReaderProvider()

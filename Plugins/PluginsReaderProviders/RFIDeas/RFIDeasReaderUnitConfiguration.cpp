@@ -7,7 +7,7 @@
 #include "RFIDeasReaderUnitConfiguration.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	RFIDeasReaderUnitConfiguration::RFIDeasReaderUnitConfiguration()
 		: ReaderUnitConfiguration("RFIDeas")

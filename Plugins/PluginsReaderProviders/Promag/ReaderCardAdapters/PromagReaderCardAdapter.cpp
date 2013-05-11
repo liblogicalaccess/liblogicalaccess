@@ -6,7 +6,7 @@
 
 #include "PromagReaderCardAdapter.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {		
 	const unsigned char PromagReaderCardAdapter::STX = 0x02;
 	const unsigned char PromagReaderCardAdapter::ESC = 0x1b;

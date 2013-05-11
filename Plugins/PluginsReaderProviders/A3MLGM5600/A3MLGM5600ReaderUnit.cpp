@@ -22,7 +22,7 @@
 #include "A3MLGM5600LCDDisplay.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	A3MLGM5600ReaderUnit::A3MLGM5600ReaderUnit()
 		: ReaderUnit()

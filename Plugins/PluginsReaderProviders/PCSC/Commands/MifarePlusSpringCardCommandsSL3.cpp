@@ -11,7 +11,7 @@
 #include "../PCSCReaderProvider.h"
 #include "MifarePlusChip.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	MifarePlusSpringCardCommandsSL3::MifarePlusSpringCardCommandsSL3()
 		: MifarePlusSpringCardCommands()

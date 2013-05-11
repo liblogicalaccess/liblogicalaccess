@@ -7,7 +7,7 @@
 #include "AxessTMCLegicReaderCardAdapter.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	AxessTMCLegicReaderCardAdapter::AxessTMCLegicReaderCardAdapter()
 		: ReaderCardAdapter()

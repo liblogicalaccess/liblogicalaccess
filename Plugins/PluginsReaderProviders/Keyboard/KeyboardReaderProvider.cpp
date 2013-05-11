@@ -17,7 +17,7 @@ EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 #endif
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	KeyboardReaderProvider::KeyboardReaderProvider() :
 		ReaderProvider()

@@ -13,7 +13,7 @@
 
 using std::string;
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A BCD Nibble data type class.

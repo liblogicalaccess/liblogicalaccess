@@ -16,7 +16,7 @@
 #include <sstream>
 #include <iomanip>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	AccessInfo::AccessInfo()
 	{

@@ -9,7 +9,7 @@
 
 #include "logicalaccess/Cards/Location.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A  Prox location informations.

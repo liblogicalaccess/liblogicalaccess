@@ -16,7 +16,7 @@
 #endif
 #endif
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	class LIBLOGICALACCESS_API_DLL LibraryManager
 	{

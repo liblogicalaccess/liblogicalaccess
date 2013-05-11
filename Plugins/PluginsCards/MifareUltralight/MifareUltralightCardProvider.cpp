@@ -8,7 +8,7 @@
 #include "MifareUltralightChip.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	bool MifareUltralightCardProvider::erase(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse)
 	{

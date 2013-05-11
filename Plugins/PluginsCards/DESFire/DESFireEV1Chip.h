@@ -12,7 +12,7 @@
 #include "DESFireEV1Profile.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	#define	CHIP_DESFIRE_EV1		"DESFireEV1"
 

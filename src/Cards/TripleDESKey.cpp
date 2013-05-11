@@ -6,7 +6,7 @@
 
 #include "logicalaccess/Cards/TripleDESKey.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	TripleDESKey::TripleDESKey()
 		: Key()

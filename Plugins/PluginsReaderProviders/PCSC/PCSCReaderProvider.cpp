@@ -25,7 +25,7 @@ using std::setfill;
 #include "PCSCReaderUnit.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	PCSCReaderProvider::PCSCReaderProvider() :
 		ReaderProvider()

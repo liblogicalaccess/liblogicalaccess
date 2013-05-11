@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_COMMANDS_H
 #define LOGICALACCESS_COMMANDS_H
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief The base commands class for all card commands.

@@ -22,7 +22,7 @@ using std::istringstream;
 
 #define MIFARE_PLUS_2K_SECTOR_NB 32
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	MifarePlusChip::MifarePlusChip()
 		: Chip("MifarePlus4K"), d_nbSectors(MIFARE_PLUS_2K_SECTOR_NB)

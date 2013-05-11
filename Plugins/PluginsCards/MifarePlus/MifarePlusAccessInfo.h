@@ -10,7 +10,7 @@
 #include "logicalaccess/Cards/AccessInfo.h"
 #include "MifarePlusKey.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 
 #define MIFARE_PLUS_AES_KEY_SIZE		0x10

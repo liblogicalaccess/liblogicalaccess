@@ -11,7 +11,7 @@
 # include <unistd.h>
 #endif
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	SmartIDReaderUnitConfiguration::SmartIDReaderUnitConfiguration()
 		: ReaderUnitConfiguration("SmartID")

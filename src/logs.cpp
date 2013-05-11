@@ -12,7 +12,7 @@
 
 #include <boost/date_time.hpp>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	std::ofstream Logs::logfile;
 

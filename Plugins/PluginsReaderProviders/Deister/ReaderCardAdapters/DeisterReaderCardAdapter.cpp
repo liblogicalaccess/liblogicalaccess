@@ -8,7 +8,7 @@
 #include "logicalaccess/crypto/tomcrypt.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	const unsigned char DeisterReaderCardAdapter::SHFT = 0xF8;
 	const unsigned char DeisterReaderCardAdapter::SOM = 0xFB;

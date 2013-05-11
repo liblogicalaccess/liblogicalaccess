@@ -7,7 +7,7 @@
 #include "DeisterReaderUnitConfiguration.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	DeisterReaderUnitConfiguration::DeisterReaderUnitConfiguration()
 		: ReaderUnitConfiguration("Deister")

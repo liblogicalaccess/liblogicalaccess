@@ -11,7 +11,7 @@
 #include "logicalaccess/Services/AccessControl/Encodings/DataType.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A parity data field.

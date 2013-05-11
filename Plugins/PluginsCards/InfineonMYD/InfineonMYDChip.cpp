@@ -20,7 +20,7 @@ using std::istringstream;
 
 #include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	InfineonMYDChip::InfineonMYDChip()
 		: ISO15693Chip(CHIP_INFINEONMYD)

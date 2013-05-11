@@ -22,7 +22,7 @@
 #include "logicalaccess/Services/AccessControl/Formats/RawFormat.h"
 #include "ProxAccessControlCardService.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	ProxCardProvider::ProxCardProvider()
 		: CardProvider()

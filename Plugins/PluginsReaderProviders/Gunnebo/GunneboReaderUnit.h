@@ -11,7 +11,7 @@
 #include "logicalaccess/ReaderProviders/SerialPortXml.h"
 #include "GunneboReaderUnitConfiguration.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	class Profile;
 	class GunneboReaderCardAdapter;

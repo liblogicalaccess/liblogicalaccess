@@ -9,7 +9,7 @@
 #include "logicalaccess/Cards/CardProvider.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	AccessControlCardService::AccessControlCardService(boost::shared_ptr<CardProvider> cardProvider)
 		: CardService(cardProvider)

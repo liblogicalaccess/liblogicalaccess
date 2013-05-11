@@ -22,7 +22,7 @@
 #include "logicalaccess/DynLibrary/IDynLibrary.h"
 #include "MifareCardProvider.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	SmartIDReaderUnit::SmartIDReaderUnit(boost::shared_ptr<SerialPortXml> port)
 		: ReaderUnit()

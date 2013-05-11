@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_KEYBOARDSHAREDSTRUCT_H
 #define LOGICALACCESS_KEYBOARDSHAREDSTRUCT_H
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	#define KEYBOARD_SHAREDDATA			"Global\\ISLOGKbdHook"
 	#define KEYBOARD_EVENT				"Global\\ISLOGKbdEvent"

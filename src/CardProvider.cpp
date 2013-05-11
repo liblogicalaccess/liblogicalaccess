@@ -9,7 +9,7 @@
 #include "logicalaccess/Cards/ReaderCardAdapter.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	CardProvider::CardProvider()
 	{

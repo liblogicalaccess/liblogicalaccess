@@ -11,7 +11,7 @@
 #include <sstream>
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	SCMReaderUnit::SCMReaderUnit(const std::string& name)
 		: PCSCReaderUnit(name)

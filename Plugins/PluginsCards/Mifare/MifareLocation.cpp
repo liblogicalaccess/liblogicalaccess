@@ -6,7 +6,7 @@
 
 #include "MifareLocation.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	MifareLocation::MifareLocation() :
 		sector(1),

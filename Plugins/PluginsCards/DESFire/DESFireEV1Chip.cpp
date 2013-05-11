@@ -8,7 +8,7 @@
 
 #include <cstring>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	DESFireEV1Chip::DESFireEV1Chip() : 
 		DESFireChip(CHIP_DESFIRE_EV1)

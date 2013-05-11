@@ -7,7 +7,7 @@
 #ifndef ASYMETRICKEY_HPP
 #define ASYMETRICKEY_HPP
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	namespace openssl
 	{

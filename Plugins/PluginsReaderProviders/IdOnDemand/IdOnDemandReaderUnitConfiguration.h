@@ -10,7 +10,7 @@
 #include "logicalaccess/ReaderProviders/ReaderUnitConfiguration.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	/**
 	 * \brief The IdOnDemand reader unit configuration base class.

@@ -7,7 +7,7 @@
 #include "SCIELReaderCardAdapter.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	const unsigned char SCIELReaderCardAdapter::STX = 0x5b;	// [
 	const unsigned char SCIELReaderCardAdapter::ETX = 0x5d;	// ]

@@ -18,7 +18,7 @@
 #include "Commands/GenericTagIdOnDemandAccessControlCardService.h"
 #include <boost/filesystem.hpp>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	IdOnDemandReaderUnit::IdOnDemandReaderUnit(boost::shared_ptr<SerialPortXml> port)
 		: ReaderUnit()

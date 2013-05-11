@@ -11,7 +11,7 @@
 #include <sstream>
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	CherryReaderUnit::CherryReaderUnit(const std::string& name)
 		: PCSCReaderUnit(name)

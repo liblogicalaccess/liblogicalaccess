@@ -11,7 +11,7 @@
 #include "logicalaccess/DynLibrary/LibraryManager.h"
 #include "logicalaccess/logs.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	ReaderProvider::ReaderProvider()
 	{

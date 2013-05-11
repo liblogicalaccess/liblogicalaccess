@@ -13,7 +13,7 @@
 #include <vector>
 #include <iostream>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief The Omnikey XX25 reader unit class.

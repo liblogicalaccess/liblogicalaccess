@@ -11,7 +11,7 @@
 #include "MifarePlusAccessInfo.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief The MifarePlus SL3 commands class.

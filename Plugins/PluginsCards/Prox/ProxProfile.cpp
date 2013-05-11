@@ -16,7 +16,7 @@
 #include "logicalaccess/Services/AccessControl/Formats/Wiegand37WithFacilityFormat.h"
 #include "logicalaccess/Services/AccessControl/Formats/RawFormat.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	ProxProfile::ProxProfile()
 		: Profile()

@@ -6,7 +6,7 @@
 
 #include "logicalaccess/Cards/SAMKeyStorage.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	SAMKeyStorage::SAMKeyStorage()
 	{

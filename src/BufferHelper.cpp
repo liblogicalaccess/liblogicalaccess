@@ -15,7 +15,7 @@
 #include "logicalaccess/logs.h"
 #include "logicalaccess/MyException.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 		* \brief Encode a chunk of data into base 64.

@@ -9,7 +9,7 @@
 
 #include "DESFireLocation.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A DESFire EV1 location informations.

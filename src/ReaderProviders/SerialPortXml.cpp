@@ -13,7 +13,7 @@
 
 #include "logicalaccess/logs.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	SerialPortXml::SerialPortXml()
 	{

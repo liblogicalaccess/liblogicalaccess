@@ -10,7 +10,7 @@
 #include "logicalaccess/Services/AccessControl/Formats/Format.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	/**
 	 * \brief A static format.

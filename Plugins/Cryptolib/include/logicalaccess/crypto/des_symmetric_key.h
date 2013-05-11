@@ -9,7 +9,7 @@
 
 #include "logicalaccess/crypto/symmetric_key.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	namespace openssl
 	{

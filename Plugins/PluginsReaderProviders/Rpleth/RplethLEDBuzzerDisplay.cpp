@@ -10,7 +10,7 @@
 #include <iomanip>
 #include <sstream>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	RplethLEDBuzzerDisplay::RplethLEDBuzzerDisplay()
 		: LEDBuzzerDisplay()

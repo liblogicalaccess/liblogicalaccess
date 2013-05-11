@@ -10,7 +10,7 @@
 #include "logicalaccess/Services/AccessControl/Formats/WiegandFormat.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A Wiegand 26 format class.

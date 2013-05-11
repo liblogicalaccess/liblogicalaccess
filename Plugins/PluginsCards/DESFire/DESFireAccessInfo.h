@@ -10,7 +10,7 @@
 #include "logicalaccess/Cards/AccessInfo.h"
 #include "DESFireKey.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A DESFire access informations.

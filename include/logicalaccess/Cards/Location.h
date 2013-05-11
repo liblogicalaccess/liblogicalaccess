@@ -11,7 +11,7 @@
 #include "logicalaccess/linearizable.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A location informations.

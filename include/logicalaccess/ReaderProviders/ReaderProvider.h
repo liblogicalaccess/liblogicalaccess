@@ -10,7 +10,7 @@
 #include "logicalaccess/ReaderProviders/ReaderUnit.h"
 #include <map>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {		
 	/**
 	 * \brief A reader unit list.

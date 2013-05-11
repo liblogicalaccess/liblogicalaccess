@@ -11,7 +11,7 @@
 #include <sstream>
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	SpringCardReaderUnit::SpringCardReaderUnit(const std::string& name)
 		: PCSCReaderUnit(name)

@@ -9,7 +9,7 @@
 
 #include <cstring>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	LittleEndianDataRepresentation::LittleEndianDataRepresentation()
 	{

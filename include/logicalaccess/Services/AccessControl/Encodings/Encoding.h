@@ -14,7 +14,7 @@ using std::string;
 #include "logicalaccess/logs.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief Encoding type

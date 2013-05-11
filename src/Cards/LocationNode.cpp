@@ -11,7 +11,7 @@ using std::string;
 using std::vector;
 using std::ostream;
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	LocationNode::LocationNode()
 		: d_needAuthentication(false), d_hasProperties(false), d_length(0), d_unit(1)

@@ -10,7 +10,7 @@
 
 #include "logicalaccess/crypto/openssl_asymmetric_cipher.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	namespace openssl
 	{

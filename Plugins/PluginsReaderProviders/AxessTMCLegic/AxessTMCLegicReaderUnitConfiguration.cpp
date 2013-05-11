@@ -7,7 +7,7 @@
 #include "AxessTMCLegicReaderUnitConfiguration.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	AxessTMCLegicReaderUnitConfiguration::AxessTMCLegicReaderUnitConfiguration()
 		: ReaderUnitConfiguration("AxessTMCLegic")

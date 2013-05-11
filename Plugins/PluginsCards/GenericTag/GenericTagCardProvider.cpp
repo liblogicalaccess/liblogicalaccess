@@ -8,7 +8,7 @@
 #include "GenericTagChip.h"
 #include "GenericTagAccessControlCardService.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	GenericTagCardProvider::GenericTagCardProvider()
 		: CardProvider()

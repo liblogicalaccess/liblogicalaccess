@@ -6,7 +6,7 @@
 
 #include "A3MLGM5600LCDDisplay.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	A3MLGM5600LCDDisplay::A3MLGM5600LCDDisplay()
 	{

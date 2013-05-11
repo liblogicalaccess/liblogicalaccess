@@ -16,7 +16,7 @@
 #include "ReaderCardAdapters/AxessTMCLegicReaderCardAdapter.h"
 #include <boost/filesystem.hpp>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	AxessTMCLegicReaderUnit::AxessTMCLegicReaderUnit(boost::shared_ptr<SerialPortXml> port)
 		: ReaderUnit()

@@ -10,7 +10,7 @@
 #include "GenericTagCardProvider.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief The Generic Tag IdOnDemand card provider class.

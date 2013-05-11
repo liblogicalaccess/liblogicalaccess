@@ -11,7 +11,7 @@
 #include "logicalaccess/ReaderProviders/SerialPortXml.h"
 #include "STidSTRReaderUnitConfiguration.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	class Profile;
 	class STidSTRReaderCardAdapter;

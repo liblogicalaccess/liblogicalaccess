@@ -11,7 +11,7 @@
 #include <cstring>
 #endif
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	BigEndianDataRepresentation::BigEndianDataRepresentation()
 	{

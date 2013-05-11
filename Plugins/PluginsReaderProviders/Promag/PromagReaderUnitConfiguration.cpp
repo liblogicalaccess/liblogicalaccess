@@ -7,7 +7,7 @@
 #include "PromagReaderUnitConfiguration.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	PromagReaderUnitConfiguration::PromagReaderUnitConfiguration()
 		: ReaderUnitConfiguration("Promag")

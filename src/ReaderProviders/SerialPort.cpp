@@ -21,7 +21,7 @@
 using std::string;
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	SerialPort::SerialPort() :
 #ifdef UNIX

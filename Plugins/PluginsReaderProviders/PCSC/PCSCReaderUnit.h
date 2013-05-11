@@ -11,7 +11,7 @@
 #include "PCSCReaderUnitConfiguration.h"
 #include "logicalaccess/Cards/ReaderMemoryKeyStorage.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	class Chip;
 	class PCSCReaderCardAdapter;

@@ -9,7 +9,7 @@
 
 #include "logicalaccess/ReaderProviders/ReaderProvider.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief The key storage types.

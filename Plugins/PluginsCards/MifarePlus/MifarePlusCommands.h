@@ -18,7 +18,7 @@
 #include "logicalaccess/crypto/aes_symmetric_key.h"
 #include "logicalaccess/crypto/aes_initialization_vector.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	* \brief The Mifare Plus commands class.

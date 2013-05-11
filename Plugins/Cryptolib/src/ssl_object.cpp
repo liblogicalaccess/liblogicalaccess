@@ -8,7 +8,7 @@
 #include "logicalaccess/crypto/ssl_context.h"
 #include "logicalaccess/crypto/null_deleter.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	namespace openssl
 	{

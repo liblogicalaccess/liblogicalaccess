@@ -11,7 +11,7 @@
 #include "logicalaccess/Cards/TripleDESKey.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A Mifare Ultralight C access informations.

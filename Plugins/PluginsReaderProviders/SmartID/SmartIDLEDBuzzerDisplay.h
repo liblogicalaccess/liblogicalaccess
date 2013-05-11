@@ -16,7 +16,7 @@ using std::vector;
 
 #include "logicalaccess/logs.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A SmartID LED/Buzzer Display class.

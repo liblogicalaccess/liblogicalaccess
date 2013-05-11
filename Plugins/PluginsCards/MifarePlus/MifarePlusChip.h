@@ -19,7 +19,7 @@ using std::string;
 using std::vector;
 using std::ostream;
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	#define	CHIP_MIFAREPLUS4K			"MifarePlus4K"
 

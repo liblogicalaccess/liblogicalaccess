@@ -15,7 +15,7 @@
  */
 #define AES128_KEY_SIZE 16
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A AES128 key class.

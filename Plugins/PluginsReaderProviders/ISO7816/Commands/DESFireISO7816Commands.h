@@ -20,7 +20,7 @@ using std::vector;
 using std::ostream;
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {		
 	#define DESFIRE_CLEAR_DATA_LENGTH_CHUNK	32
 	/**

@@ -13,7 +13,7 @@
 #include "logicalaccess/Services/AccessControl/Formats/CustomFormat/BinaryDataField.h"
 #include "logicalaccess/BufferHelper.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	RawFormat::RawFormat()
 		: StaticFormat()

@@ -18,7 +18,7 @@
 #include "logicalaccess/Cards/ComputerMemoryKeyStorage.h"
 #include "logicalaccess/Cards/ReaderMemoryKeyStorage.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	DESFireEV1STidSTRCommands::DESFireEV1STidSTRCommands()
 	{

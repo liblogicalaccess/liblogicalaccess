@@ -9,7 +9,7 @@
 
 #include "MifarePlusCardProviderSL3.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	MifarePlusProfileSL3::MifarePlusProfileSL3()
 		: MifarePlusProfile()

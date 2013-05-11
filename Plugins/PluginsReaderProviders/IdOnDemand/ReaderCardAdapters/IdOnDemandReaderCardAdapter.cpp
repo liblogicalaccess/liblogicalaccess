@@ -6,7 +6,7 @@
 
 #include "IdOnDemandReaderCardAdapter.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {		
 	IdOnDemandReaderCardAdapter::IdOnDemandReaderCardAdapter()
 		: ReaderCardAdapter()

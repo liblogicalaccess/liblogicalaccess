@@ -7,7 +7,7 @@
 #include "DESFireProfile.h"
 #include "DESFireCrypto.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	DESFireProfile::DESFireProfile() : 
 		Profile()

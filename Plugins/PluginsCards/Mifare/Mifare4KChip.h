@@ -9,7 +9,7 @@
 
 #include "MifareChip.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	#define CHIP_MIFARE4K	"Mifare4K"
 

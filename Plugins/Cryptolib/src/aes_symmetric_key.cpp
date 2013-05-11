@@ -8,7 +8,7 @@
 #include "logicalaccess/crypto/aes_symmetric_key.h"
 #include "logicalaccess/crypto/sha.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	namespace openssl
 	{

@@ -17,7 +17,7 @@
 #include "GunneboReaderUnit.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	GunneboReaderProvider::GunneboReaderProvider() :
 		ReaderProvider()

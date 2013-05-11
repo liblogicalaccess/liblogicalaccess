@@ -10,7 +10,7 @@
 #include "logicalaccess/Services/AccessControl/AccessControlCardService.h"
 #include <boost/foreach.hpp>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	CardsFormatComposite::CardsFormatComposite()
 	{

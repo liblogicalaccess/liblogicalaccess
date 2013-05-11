@@ -20,7 +20,7 @@ using std::ofstream;
 using std::ifstream;
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	Profile::Profile()
 	{

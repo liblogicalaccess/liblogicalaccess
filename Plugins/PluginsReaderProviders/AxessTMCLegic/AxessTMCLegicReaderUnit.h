@@ -11,7 +11,7 @@
 #include "logicalaccess/ReaderProviders/SerialPortXml.h"
 #include "AxessTMCLegicReaderUnitConfiguration.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	class Profile;
 	class AxessTMCLegicReaderCardAdapter;

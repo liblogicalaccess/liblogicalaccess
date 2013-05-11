@@ -11,7 +11,7 @@
 
 #include "logicalaccess/Services/AccessControl/Formats/CustomFormat/ASCIIDataField.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	ASCIIFormat::ASCIIFormat()
 		: StaticFormat()

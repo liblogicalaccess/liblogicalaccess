@@ -23,7 +23,7 @@ using std::setw;
 using std::ostringstream;
 using std::istringstream;
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	MifarePlusCardProviderSL3::MifarePlusCardProviderSL3()
 		: CardProvider()

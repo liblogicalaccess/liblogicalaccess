@@ -11,7 +11,7 @@
 #include <string>
 #include "logicalaccess/MyException.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	namespace openssl
 	{

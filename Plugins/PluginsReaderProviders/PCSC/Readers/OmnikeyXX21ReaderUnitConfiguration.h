@@ -10,7 +10,7 @@
 #include "../PCSCReaderUnitConfiguration.h"
 #include "logicalaccess/Cards/TripleDESKey.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief HID iClass data encryption mode for the secure mode.

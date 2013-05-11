@@ -6,7 +6,7 @@
 
 #include "MifarePlus2KChip.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	MifarePlus2KChip::MifarePlus2KChip()
 		: MifarePlusChip("MifarePlus2K", 32)

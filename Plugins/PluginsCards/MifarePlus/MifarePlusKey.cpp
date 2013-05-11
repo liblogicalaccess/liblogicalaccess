@@ -6,7 +6,7 @@
 
 #include "MifarePlusKey.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	MifarePlusKey::MifarePlusKey(size_t keySize)
 		: Key()

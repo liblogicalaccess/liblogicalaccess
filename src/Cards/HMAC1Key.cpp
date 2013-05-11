@@ -6,7 +6,7 @@
 
 #include "logicalaccess/Cards/HMAC1Key.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	HMAC1Key::HMAC1Key()
 		: Key()

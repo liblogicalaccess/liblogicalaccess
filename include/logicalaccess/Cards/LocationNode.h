@@ -15,7 +15,7 @@
 
 #include <boost/shared_ptr.hpp>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A location node description. This describe a location on a hierachical view.

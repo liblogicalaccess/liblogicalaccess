@@ -13,7 +13,7 @@
 #include <stdlib.h>
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	ValueDataField::ValueDataField()
 		: DataField()

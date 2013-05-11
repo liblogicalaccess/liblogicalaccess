@@ -76,7 +76,7 @@
 #include "settings.h"
 #include <fstream>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	class LIBLOGICALACCESS_API Logs
 	{

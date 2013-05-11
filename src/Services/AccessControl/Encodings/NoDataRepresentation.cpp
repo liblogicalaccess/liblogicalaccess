@@ -8,7 +8,7 @@
 #include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
 #include <cstring>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	NoDataRepresentation::NoDataRepresentation()
 	{

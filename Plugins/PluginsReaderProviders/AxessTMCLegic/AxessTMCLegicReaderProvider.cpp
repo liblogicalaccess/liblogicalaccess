@@ -17,7 +17,7 @@
 #include "AxessTMCLegicReaderUnit.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	AxessTMCLegicReaderProvider::AxessTMCLegicReaderProvider() :
 		ReaderProvider()

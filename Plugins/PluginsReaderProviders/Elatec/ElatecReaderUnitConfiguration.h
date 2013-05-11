@@ -10,7 +10,7 @@
 #include "logicalaccess/ReaderProviders/ReaderUnitConfiguration.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	/**
 	 * \brief The Elatec reader unit configuration base class.

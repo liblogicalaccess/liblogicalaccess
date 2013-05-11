@@ -6,7 +6,7 @@
 
 #include "MifarePlusAccessInfo.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	MifarePlusAccessInfo::MifarePlusAccessInfo(size_t sectorKeySize)
 	{

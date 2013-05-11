@@ -7,7 +7,7 @@
 #include "AxessTMC13ReaderUnitConfiguration.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	AxessTMC13ReaderUnitConfiguration::AxessTMC13ReaderUnitConfiguration()
 		: ReaderUnitConfiguration("AxessTMC13")

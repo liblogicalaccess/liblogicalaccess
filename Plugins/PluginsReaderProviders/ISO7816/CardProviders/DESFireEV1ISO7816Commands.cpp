@@ -17,7 +17,7 @@
 #include "DESFireEV1Location.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	DESFireEV1ISO7816Commands::DESFireEV1ISO7816Commands()
 		: DESFireISO7816Commands()

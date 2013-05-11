@@ -16,7 +16,7 @@
 #include "ReaderCardAdapters/ElatecReaderCardAdapter.h"
 #include <boost/filesystem.hpp>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	ElatecReaderUnit::ElatecReaderUnit(boost::shared_ptr<SerialPortXml> port)
 		: ReaderUnit()

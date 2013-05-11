@@ -21,7 +21,7 @@ using std::istringstream;
 #include "../PCSCReaderProvider.h"
 #include "MifareChip.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	MifareCherryCommands::MifareCherryCommands()
 		: MifarePCSCCommands()

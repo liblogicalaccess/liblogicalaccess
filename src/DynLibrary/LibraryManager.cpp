@@ -1,7 +1,7 @@
 #include "logicalaccess/DynLibrary/LibraryManager.h"
 #include <boost/filesystem.hpp>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	const std::string LibraryManager::enumType[3] = {"Readers", "Cards", "Unified"};
 

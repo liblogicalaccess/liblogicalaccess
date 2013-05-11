@@ -7,7 +7,7 @@
 #include "RplethReaderUnitConfiguration.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	RplethReaderUnitConfiguration::RplethReaderUnitConfiguration()
 		: ReaderUnitConfiguration("Rpleth")

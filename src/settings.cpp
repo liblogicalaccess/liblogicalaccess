@@ -21,7 +21,7 @@
 extern "C" IMAGE_DOS_HEADER __ImageBase;
 #endif
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	Settings Settings::instance;
 

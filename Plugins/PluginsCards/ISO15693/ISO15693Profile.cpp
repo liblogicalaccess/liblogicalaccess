@@ -6,7 +6,7 @@
 
 #include "ISO15693Profile.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	ISO15693Profile::ISO15693Profile()
 		: Profile()

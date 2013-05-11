@@ -17,7 +17,7 @@
 #include "RFIDeasReaderUnit.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	RFIDeasReaderProvider::RFIDeasReaderProvider() :
 		ReaderProvider()

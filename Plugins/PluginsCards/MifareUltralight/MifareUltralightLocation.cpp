@@ -6,7 +6,7 @@
 
 #include "MifareUltralightLocation.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	MifareUltralightLocation::MifareUltralightLocation() :
 		page(4),

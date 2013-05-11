@@ -11,7 +11,7 @@
 #include "MifareUltralightLocation.h"
 #include "logicalaccess/Cards/Commands.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief The Mifare Ultralight commands class.

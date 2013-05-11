@@ -9,7 +9,7 @@
 
 #include <cstring>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	DESFireISO7816Commands::DESFireISO7816Commands()
 		: DESFireCommands()

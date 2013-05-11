@@ -10,7 +10,7 @@
 #include "logicalaccess/ReaderProviders/ReaderUnitConfiguration.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	/**
 	 * \brief The A3MLGM5600 reader unit configuration base class.

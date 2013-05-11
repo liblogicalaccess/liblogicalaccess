@@ -10,7 +10,7 @@
 #include <cstring>
 #include <stdlib.h>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	namespace openssl
 	{

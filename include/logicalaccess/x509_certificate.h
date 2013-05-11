@@ -16,7 +16,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	namespace openssl
 	{

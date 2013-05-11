@@ -12,7 +12,7 @@
 #include "RplethReaderUnitConfiguration.h"
 #include <boost/asio/ip/tcp.hpp>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	class Profile;
 	class RplethReaderCardAdapter;

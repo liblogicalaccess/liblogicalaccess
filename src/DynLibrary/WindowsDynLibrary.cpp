@@ -2,7 +2,7 @@
 #include "logicalaccess/logs.h"
 #include "logicalaccess/ReaderProviders/ReaderUnit.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	IDynLibrary* newDynLibrary(const std::string& dlName)
 	{ return new WindowsDynLibrary(dlName); }

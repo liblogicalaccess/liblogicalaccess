@@ -6,7 +6,7 @@
 
 #include "TwicLocation.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	TwicLocation::TwicLocation()
 	{

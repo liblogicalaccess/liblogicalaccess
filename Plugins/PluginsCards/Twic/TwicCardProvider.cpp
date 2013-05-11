@@ -8,7 +8,7 @@
 #include "TwicAccessControlCardService.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	TwicCardProvider::TwicCardProvider()
 	{

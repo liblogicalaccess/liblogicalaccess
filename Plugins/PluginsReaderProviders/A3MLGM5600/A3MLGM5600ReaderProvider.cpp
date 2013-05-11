@@ -14,7 +14,7 @@
 #include <sstream>
 #include <iomanip>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	A3MLGM5600ReaderProvider::A3MLGM5600ReaderProvider() :
 		ReaderProvider()

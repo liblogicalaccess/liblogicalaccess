@@ -14,7 +14,7 @@
 #include <cstring>
 #endif
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	ProxAccessControlCardService::ProxAccessControlCardService(boost::shared_ptr<CardProvider> cardProvider)
 		: AccessControlCardService(cardProvider)

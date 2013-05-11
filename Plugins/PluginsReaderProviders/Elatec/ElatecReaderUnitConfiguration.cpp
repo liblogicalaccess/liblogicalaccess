@@ -7,7 +7,7 @@
 #include "ElatecReaderUnitConfiguration.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	ElatecReaderUnitConfiguration::ElatecReaderUnitConfiguration()
 		: ReaderUnitConfiguration("Elatec")

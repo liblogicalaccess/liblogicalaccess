@@ -8,7 +8,7 @@
 #include "logicalaccess/DynLibrary/IDynLibrary.h"
 #include "logicalaccess/DynLibrary/WinClass.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	class WindowsDynLibrary : public IDynLibrary, private WinClass
 	{

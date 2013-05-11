@@ -20,7 +20,7 @@ using std::vector;
 using std::ostream;
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	#define	CHIP_ISO15693	"ISO15693"
 

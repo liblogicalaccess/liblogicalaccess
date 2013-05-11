@@ -20,7 +20,7 @@
 #include "logicalaccess/Services/AccessControl/Formats/CustomFormat/DataField.h"
 #include <list>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief Format type

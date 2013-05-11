@@ -8,7 +8,7 @@
 
 #include <cstring>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	const unsigned char SmartIDReaderCardAdapter::DLE = 0x10;
 	const unsigned char SmartIDReaderCardAdapter::STX = 0x02;

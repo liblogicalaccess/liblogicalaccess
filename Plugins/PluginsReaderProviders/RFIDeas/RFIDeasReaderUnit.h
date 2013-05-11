@@ -14,7 +14,7 @@
 #include <rfideas/pcProxAPI.h>
 #endif
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	class Profile;
 	class RFIDeasReaderCardAdapter;

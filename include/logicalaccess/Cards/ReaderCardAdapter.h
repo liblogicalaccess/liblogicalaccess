@@ -16,7 +16,7 @@ using std::vector;
 
 #include "logicalaccess/logs.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A reader/card adapter base class. It provide an abstraction layer between the card and the reader to send chip command.

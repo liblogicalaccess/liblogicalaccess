@@ -17,7 +17,7 @@ using std::vector;
 
 #include "logicalaccess/logs.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	/**
 	 * \brief A default Deister reader/card adapter class.

@@ -10,7 +10,7 @@
 #include "logicalaccess/logs.h"
 #include "logicalaccess/crypto/openssl_exception.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	namespace openssl
 	{

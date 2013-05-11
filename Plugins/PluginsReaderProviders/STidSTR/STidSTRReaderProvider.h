@@ -18,7 +18,7 @@ using std::vector;
 
 #include "logicalaccess/logs.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	#define READER_STIDSTR		"STidSTR"
 

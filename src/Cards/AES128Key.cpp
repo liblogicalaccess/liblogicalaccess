@@ -6,7 +6,7 @@
 
 #include "logicalaccess/Cards/AES128Key.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	AES128Key::AES128Key()
 		: Key()

@@ -14,7 +14,7 @@
 #include <cstring>
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	GenericTagIdOnDemandCardProvider::GenericTagIdOnDemandCardProvider()
 		: GenericTagCardProvider()

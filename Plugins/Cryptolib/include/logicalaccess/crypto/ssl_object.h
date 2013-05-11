@@ -13,7 +13,7 @@
 
 #include <openssl/ssl.h>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	namespace openssl
 	{

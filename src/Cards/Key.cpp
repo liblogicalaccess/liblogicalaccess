@@ -21,7 +21,7 @@
 
 #include <openssl/rand.h>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	const std::string Key::secureAiKey = "Obscurity is not security Julien would say. But...";
 

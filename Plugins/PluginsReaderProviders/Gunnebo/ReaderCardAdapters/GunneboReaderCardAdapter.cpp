@@ -6,7 +6,7 @@
 
 #include "GunneboReaderCardAdapter.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {			
 	const unsigned char GunneboReaderCardAdapter::STX = 0x02;
 	const unsigned char GunneboReaderCardAdapter::ETX = 0x03;

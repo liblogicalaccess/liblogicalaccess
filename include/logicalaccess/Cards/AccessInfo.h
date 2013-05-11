@@ -19,7 +19,7 @@ using std::string;
 using std::vector;
 using std::ostream;
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A Access informations. Describe key used of authentication and access rights for a specific or a group of operati

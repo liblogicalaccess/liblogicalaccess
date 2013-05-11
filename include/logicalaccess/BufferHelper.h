@@ -23,7 +23,7 @@
 #include <vector>
 #include <string>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A buffer helper class.

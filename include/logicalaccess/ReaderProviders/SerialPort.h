@@ -27,7 +27,7 @@
 
 #include "logicalaccess/ReaderProviders/ReaderUnit.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A class that represents a serial (COM) port.

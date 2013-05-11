@@ -19,7 +19,7 @@ using std::vector;
 #include "logicalaccess/logs.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	#define READER_A3MLGM5600		"A3MLGM5600"
 

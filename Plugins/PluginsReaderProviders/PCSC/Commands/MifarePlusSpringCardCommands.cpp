@@ -20,7 +20,7 @@ using std::setw;
 using std::ostringstream;
 using std::istringstream;
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	MifarePlusSpringCardCommands::MifarePlusSpringCardCommands()
 		: MifarePlusCommands()

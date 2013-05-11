@@ -13,7 +13,7 @@
 #define EXTENSION_LIB ".dll"
 #endif
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	typedef char* (*getlibname)();
 	typedef void (CDECL_WIN32_ *getprovider)(boost::shared_ptr<ReaderProvider>*);

@@ -6,7 +6,7 @@
 
 #include "ElatecReaderCardAdapter.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {		
 	ElatecReaderCardAdapter::ElatecReaderCardAdapter()
 		: ReaderCardAdapter()

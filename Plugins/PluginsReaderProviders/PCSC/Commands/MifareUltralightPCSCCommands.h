@@ -19,7 +19,7 @@ using std::vector;
 using std::ostream;
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief The Mifare Ultralight commands class for PCSC reader.

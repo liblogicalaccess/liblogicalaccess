@@ -17,7 +17,7 @@
 #include "logicalaccess/logs.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	#define READER_KEYBOARD		"Keyboard"
 

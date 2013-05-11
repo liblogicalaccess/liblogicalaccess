@@ -15,7 +15,7 @@
 #include <cstring>
 #endif
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	GenericTagAccessControlCardService::GenericTagAccessControlCardService(boost::shared_ptr<CardProvider> cardProvider)
 		: AccessControlCardService(cardProvider)

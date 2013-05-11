@@ -19,7 +19,7 @@ using std::string;
 using std::vector;
 using std::ostream;
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief The ISO7816 base profile class.

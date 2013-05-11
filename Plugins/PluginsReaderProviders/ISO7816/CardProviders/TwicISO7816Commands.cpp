@@ -24,7 +24,7 @@ using std::istringstream;
 #include "TwicProfile.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	TwicISO7816Commands::TwicISO7816Commands()
 	{

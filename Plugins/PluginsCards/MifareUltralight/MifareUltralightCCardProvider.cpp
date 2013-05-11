@@ -7,7 +7,7 @@
 #include "MifareUltralightCCardProvider.h"
 #include "MifareUltralightCChip.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	boost::shared_ptr<MifareUltralightCChip> MifareUltralightCCardProvider::getMifareUltralightCChip()
 	{

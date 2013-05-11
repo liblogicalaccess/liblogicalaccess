@@ -7,7 +7,7 @@
 #include "TagItCardProvider.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	TagItCardProvider::TagItCardProvider()
 	{

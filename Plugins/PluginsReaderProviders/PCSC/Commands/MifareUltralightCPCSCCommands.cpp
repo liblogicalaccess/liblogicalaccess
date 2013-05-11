@@ -30,7 +30,7 @@ using std::istringstream;
 #include "logicalaccess/crypto/des_initialization_vector.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	MifareUltralightCPCSCCommands::MifareUltralightCPCSCCommands()
 		: MifareUltralightPCSCCommands()

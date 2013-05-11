@@ -6,7 +6,7 @@
 
 #include "MifarePlus4KChip.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	MifarePlus4KChip::MifarePlus4KChip()
 		: MifarePlusChip(CHIP_MIFAREPLUS4K, 40)

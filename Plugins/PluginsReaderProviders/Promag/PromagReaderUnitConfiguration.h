@@ -11,7 +11,7 @@
 
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	/**
 	 * \brief The Promag reader unit configuration base class.

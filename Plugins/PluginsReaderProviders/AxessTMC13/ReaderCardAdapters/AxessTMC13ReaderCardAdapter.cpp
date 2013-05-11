@@ -6,7 +6,7 @@
 
 #include "AxessTMC13ReaderCardAdapter.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {		
 	const unsigned char AxessTMC13ReaderCardAdapter::START0 = 'N';
 	const unsigned char AxessTMC13ReaderCardAdapter::START1 = 'F';

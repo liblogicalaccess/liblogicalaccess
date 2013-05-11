@@ -6,7 +6,7 @@
 
 #include "RplethLCDDisplay.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	RplethLCDDisplay::RplethLCDDisplay()
 	{

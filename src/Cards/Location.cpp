@@ -8,7 +8,7 @@
 #include <time.h>
 #include <stdlib.h>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	bool Location::operator==(const Location& location) const
 	{

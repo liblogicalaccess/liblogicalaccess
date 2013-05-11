@@ -13,7 +13,7 @@
 #endif
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	BinaryFieldValue::BinaryFieldValue()
 		: Key()

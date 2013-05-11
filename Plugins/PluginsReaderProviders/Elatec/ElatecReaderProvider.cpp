@@ -17,7 +17,7 @@
 #include "ElatecReaderUnit.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	ElatecReaderProvider::ElatecReaderProvider() :
 		ReaderProvider()

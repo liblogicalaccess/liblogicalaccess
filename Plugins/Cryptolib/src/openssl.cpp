@@ -9,7 +9,7 @@
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	namespace openssl
 	{

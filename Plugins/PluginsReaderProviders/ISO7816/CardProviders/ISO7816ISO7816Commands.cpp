@@ -8,7 +8,7 @@
 
 #include <cstring>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	ISO7816ISO7816Commands::ISO7816ISO7816Commands()
 		: ISO7816Commands()

@@ -17,7 +17,7 @@ using std::string;
 using std::vector;
 using std::ostream;
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A  MifarePlus location informations.

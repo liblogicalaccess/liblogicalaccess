@@ -9,7 +9,7 @@
 
 #include "logicalaccess/Services/AccessControl/Formats/Wiegand34Format.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A Wiegand 34 with Facility format class.

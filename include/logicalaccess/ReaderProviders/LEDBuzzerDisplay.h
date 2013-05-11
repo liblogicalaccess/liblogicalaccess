@@ -11,7 +11,7 @@
 
 #include "logicalaccess/logs.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	class ReaderCardAdapter;
 

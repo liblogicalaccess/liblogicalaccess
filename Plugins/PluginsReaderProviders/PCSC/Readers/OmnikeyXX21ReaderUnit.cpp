@@ -20,7 +20,7 @@
 #define CM_IOCTL_GET_SET_RFID_BAUDRATE								SCARD_CTL_CODE(3215)
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	OmnikeyXX21ReaderUnit::OmnikeyXX21ReaderUnit(const std::string& name)
 		: OmnikeyReaderUnit(name)

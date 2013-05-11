@@ -8,7 +8,7 @@
 #include "logicalaccess/crypto/aes_initialization_vector.h"
 #include <cassert>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	namespace openssl
 	{

@@ -3,7 +3,7 @@
 
 #include "logicalaccess/DynLibrary/WinClass.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	std::string WinClass::_getErrorMess(int errCode)
 	{

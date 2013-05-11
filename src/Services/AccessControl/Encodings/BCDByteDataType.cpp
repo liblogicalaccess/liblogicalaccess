@@ -8,7 +8,7 @@
 
 #include <cstring>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	BCDByteDataType::BCDByteDataType()
 		: DataType()

@@ -9,7 +9,7 @@
 
 #include "logicalaccess/BufferHelper.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A linearizable base class. Add binary serialization to a class.

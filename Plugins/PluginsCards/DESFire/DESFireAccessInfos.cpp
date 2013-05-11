@@ -7,7 +7,7 @@
 #include "DESFireAccessInfo.h"
 #include "DESFireProfile.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	DESFireAccessInfo::DESFireAccessInfo()
 	{

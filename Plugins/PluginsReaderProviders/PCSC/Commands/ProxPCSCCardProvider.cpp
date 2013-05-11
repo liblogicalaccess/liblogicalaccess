@@ -27,7 +27,7 @@ using std::istringstream;
 #include "logicalaccess/Services/AccessControl/Formats/Wiegand37Format.h"
 #include "logicalaccess/Services/AccessControl/Formats/Wiegand37WithFacilityFormat.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	ProxPCSCCardProvider::ProxPCSCCardProvider()
 		: ProxCardProvider()

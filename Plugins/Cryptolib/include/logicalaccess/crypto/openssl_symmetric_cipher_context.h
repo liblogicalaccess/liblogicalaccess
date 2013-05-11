@@ -14,7 +14,7 @@
 
 #include <boost/noncopyable.hpp>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	namespace openssl
 	{

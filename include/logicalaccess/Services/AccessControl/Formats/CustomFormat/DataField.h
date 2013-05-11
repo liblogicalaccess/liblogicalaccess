@@ -19,7 +19,7 @@ enum ParityType { PARITY_EVEN, PARITY_ODD, PARITY_NONE };
 #endif
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A data field base class.

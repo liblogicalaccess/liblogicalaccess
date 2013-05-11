@@ -7,7 +7,7 @@
 #include "../Readers/OmnikeyXX21ReaderUnitConfiguration.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	OmnikeyXX21ReaderUnitConfiguration::OmnikeyXX21ReaderUnitConfiguration()
 		: PCSCReaderUnitConfiguration()

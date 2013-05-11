@@ -17,7 +17,7 @@
 #include "ReaderCardAdapters/AxessTMC13ReaderCardAdapter.h"
 #include <boost/filesystem.hpp>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	AxessTMC13ReaderUnit::AxessTMC13ReaderUnit(boost::shared_ptr<SerialPortXml> port)
 		: ReaderUnit()

@@ -18,7 +18,7 @@
 
 #include <boost/foreach.hpp>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	CustomFormat::CustomFormat()
 		: Format()

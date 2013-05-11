@@ -22,7 +22,7 @@ using std::istringstream;
 #include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	ISO15693Chip::ISO15693Chip(std::string ct)
 		: Chip(ct)

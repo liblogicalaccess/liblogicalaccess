@@ -11,7 +11,7 @@
 
 #include <cstring>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	WiegandFormat::WiegandFormat()
 		: StaticFormat()

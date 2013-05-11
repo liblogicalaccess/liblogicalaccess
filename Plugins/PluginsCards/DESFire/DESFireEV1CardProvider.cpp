@@ -7,7 +7,7 @@
 #include "DESFireEV1CardProvider.h"
 #include "DESFireEV1Chip.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	boost::shared_ptr<DESFireEV1Chip> DESFireEV1CardProvider::getDESFireEV1Chip()
 	{

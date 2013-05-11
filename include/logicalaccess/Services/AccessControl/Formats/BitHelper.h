@@ -13,7 +13,7 @@
 #include <wintypes.h>
 #endif
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A Bit Helper.

@@ -13,7 +13,7 @@
 
 #include "logicalaccess/BufferHelper.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	std::map<std::string, bool> OmnikeyReaderUnit::d_isSecureConnectionMode;
 

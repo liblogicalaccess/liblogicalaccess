@@ -16,7 +16,7 @@
 #include "ReaderCardAdapters/DeisterReaderCardAdapter.h"
 #include <boost/filesystem.hpp>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	DeisterReaderUnit::DeisterReaderUnit(boost::shared_ptr<SerialPortXml> port)
 		: ReaderUnit()

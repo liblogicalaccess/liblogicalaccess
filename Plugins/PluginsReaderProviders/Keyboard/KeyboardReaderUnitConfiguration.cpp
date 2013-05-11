@@ -7,7 +7,7 @@
 #include "KeyboardReaderUnitConfiguration.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	KeyboardReaderUnitConfiguration::KeyboardReaderUnitConfiguration()
 		: ReaderUnitConfiguration("Keyboard")

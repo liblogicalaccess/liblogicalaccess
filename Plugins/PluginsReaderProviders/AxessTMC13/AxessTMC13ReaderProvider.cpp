@@ -17,7 +17,7 @@
 #include "AxessTMC13ReaderUnit.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	AxessTMC13ReaderProvider::AxessTMC13ReaderProvider() :
 		ReaderProvider()

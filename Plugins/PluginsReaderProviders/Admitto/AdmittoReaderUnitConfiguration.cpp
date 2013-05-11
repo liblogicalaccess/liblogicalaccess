@@ -8,7 +8,7 @@
 
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	AdmittoReaderUnitConfiguration::AdmittoReaderUnitConfiguration()
 		: ReaderUnitConfiguration("Admitto")

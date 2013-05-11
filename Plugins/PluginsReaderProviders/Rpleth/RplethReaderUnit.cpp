@@ -18,7 +18,7 @@
 using std::cout;
 using std::endl;
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	RplethReaderUnit::RplethReaderUnit()
 		: ReaderUnit()

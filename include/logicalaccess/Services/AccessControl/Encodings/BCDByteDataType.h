@@ -14,7 +14,7 @@
 
 using std::string;
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A BCD Byte encoder data type class.

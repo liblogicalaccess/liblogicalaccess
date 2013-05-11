@@ -14,7 +14,7 @@
 #include <iostream>
 #include <map>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief The Omnikey reader unit base class.

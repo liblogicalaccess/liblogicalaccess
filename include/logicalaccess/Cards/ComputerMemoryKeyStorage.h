@@ -10,7 +10,7 @@
 #include "logicalaccess/Cards/KeyStorage.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A computer memory key storage class.

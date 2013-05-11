@@ -14,7 +14,7 @@
 
 using std::string;
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A Little Endian data representation class.

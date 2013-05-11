@@ -8,7 +8,7 @@
 #include "logicalaccess/Cards/CardProvider.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	CardService::CardService(boost::shared_ptr<CardProvider> cardProvider)
 	{

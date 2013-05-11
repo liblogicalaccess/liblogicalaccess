@@ -14,7 +14,7 @@
 
 #include <vector>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	namespace openssl
 	{

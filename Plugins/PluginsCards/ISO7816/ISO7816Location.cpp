@@ -13,7 +13,7 @@
 #include <boost/foreach.hpp>
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	ISO7816Location::ISO7816Location()
 	{

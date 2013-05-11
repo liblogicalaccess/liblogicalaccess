@@ -16,7 +16,7 @@
 #include "ReaderCardAdapters/PromagReaderCardAdapter.h"
 #include <boost/filesystem.hpp>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	PromagReaderUnit::PromagReaderUnit(boost::shared_ptr<SerialPortXml> port)
 		: ReaderUnit()

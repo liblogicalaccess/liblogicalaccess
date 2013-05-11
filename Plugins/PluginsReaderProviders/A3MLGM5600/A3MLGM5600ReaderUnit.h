@@ -13,7 +13,7 @@
 
 #include <boost/asio.hpp>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	class Profile;
 	class A3MLGM5600ReaderCardAdapter;

@@ -7,7 +7,7 @@
 #include "A3MLGM5600ReaderUnitConfiguration.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	A3MLGM5600ReaderUnitConfiguration::A3MLGM5600ReaderUnitConfiguration()
 		: ReaderUnitConfiguration("A3MLGM5600")

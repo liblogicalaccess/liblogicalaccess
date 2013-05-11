@@ -9,7 +9,7 @@
 
 #include "logicalaccess/XmlSerializable.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief The reader unit configuration base class. Describe the configuration for a reader unit.

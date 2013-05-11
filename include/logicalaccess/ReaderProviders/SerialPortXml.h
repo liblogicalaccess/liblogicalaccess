@@ -14,7 +14,7 @@
 #include <string>
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	class LIBLOGICALACCESS_API SerialPortXml : public XmlSerializable
 	{

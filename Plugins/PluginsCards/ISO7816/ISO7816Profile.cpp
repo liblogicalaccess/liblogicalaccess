@@ -7,7 +7,7 @@
 #include "ISO7816Profile.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	ISO7816Profile::ISO7816Profile()
 		: Profile()

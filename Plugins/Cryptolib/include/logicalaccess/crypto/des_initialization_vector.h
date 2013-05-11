@@ -9,7 +9,7 @@
 
 #include "logicalaccess/crypto/initialization_vector.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	namespace openssl
 	{

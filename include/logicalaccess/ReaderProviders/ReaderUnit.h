@@ -19,7 +19,7 @@
 
 #define	PLUGINOBJECT_MAXLEN		64
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A liblogicalaccess exception class.

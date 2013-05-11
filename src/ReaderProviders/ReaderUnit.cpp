@@ -25,7 +25,7 @@
 #include <map>
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	ReaderUnit::ReaderUnit()
 		: XmlSerializable()

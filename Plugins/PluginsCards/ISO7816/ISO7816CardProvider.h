@@ -11,7 +11,7 @@
 #include "ISO7816Commands.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	class ISO7816Chip;
 

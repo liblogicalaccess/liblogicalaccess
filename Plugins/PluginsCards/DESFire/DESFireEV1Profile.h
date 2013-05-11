@@ -11,7 +11,7 @@
 #include "DESFireEV1Location.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	/**
 	 * \brief The DESFire EV1 base profile class.

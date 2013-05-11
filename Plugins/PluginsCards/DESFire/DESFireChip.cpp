@@ -9,7 +9,7 @@
 
 #include <cstring>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	DESFireChip::DESFireChip(std::string ct) : 
 		Chip(ct)

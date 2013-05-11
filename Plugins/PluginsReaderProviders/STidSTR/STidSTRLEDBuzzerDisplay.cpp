@@ -6,7 +6,7 @@
 
 #include "STidSTRLEDBuzzerDisplay.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	STidSTRLEDBuzzerDisplay::STidSTRLEDBuzzerDisplay()
 		: LEDBuzzerDisplay()

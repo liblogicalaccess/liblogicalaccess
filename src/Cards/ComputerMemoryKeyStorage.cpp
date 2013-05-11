@@ -6,7 +6,7 @@
 
 #include "logicalaccess/Cards/ComputerMemoryKeyStorage.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	KeyStorageType ComputerMemoryKeyStorage::getType() const
 	{

@@ -9,7 +9,7 @@
 #include <stdlib.h>
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	MifarePlusCommands::MifarePlusCommands()
 	{

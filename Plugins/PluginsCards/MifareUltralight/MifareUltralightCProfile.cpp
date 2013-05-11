@@ -10,7 +10,7 @@
 #include "MifareUltralightLocation.h"
 #include "MifareUltralightCAccessInfo.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	MifareUltralightCProfile::MifareUltralightCProfile()
 		: MifareUltralightProfile()

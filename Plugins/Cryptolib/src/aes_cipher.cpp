@@ -10,7 +10,7 @@
 
 #include <cassert>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	namespace openssl
 	{

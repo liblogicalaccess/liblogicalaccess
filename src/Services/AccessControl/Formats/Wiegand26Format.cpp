@@ -8,7 +8,7 @@
 
 #include "logicalaccess/Services/AccessControl/Formats/CustomFormat/NumberDataField.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	Wiegand26Format::Wiegand26Format()
 		: WiegandFormat()

@@ -6,7 +6,7 @@
 
 #include "RplethReaderCardAdapter.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {		
 	RplethReaderCardAdapter::RplethReaderCardAdapter()
 		: ReaderCardAdapter()

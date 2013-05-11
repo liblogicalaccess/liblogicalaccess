@@ -22,7 +22,7 @@ using std::istringstream;
 #include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	MifareChip::MifareChip()
 		: Chip("Mifare"), d_nbSectors(16)

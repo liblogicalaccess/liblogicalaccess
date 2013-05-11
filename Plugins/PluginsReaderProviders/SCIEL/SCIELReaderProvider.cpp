@@ -17,7 +17,7 @@
 #include "SCIELReaderUnit.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	SCIELReaderProvider::SCIELReaderProvider() :
 		ReaderProvider()

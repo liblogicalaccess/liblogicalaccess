@@ -8,7 +8,7 @@
 #include "ISO15693Location.h"
 #include "ISO15693Chip.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	ISO15693CardProvider::ISO15693CardProvider()
 		: CardProvider()

@@ -16,7 +16,7 @@
 #include "ReaderCardAdapters/SCIELReaderCardAdapter.h"
 #include <boost/filesystem.hpp>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	SCIELReaderUnit::SCIELReaderUnit(boost::shared_ptr<SerialPortXml> port)
 		: ReaderUnit()

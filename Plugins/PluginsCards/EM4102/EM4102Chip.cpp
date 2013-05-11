@@ -20,7 +20,7 @@ using std::istringstream;
 
 #include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	EM4102Chip::EM4102Chip()
 		: Chip(CHIP_EM4102)

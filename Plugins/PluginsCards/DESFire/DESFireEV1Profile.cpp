@@ -9,7 +9,7 @@
 
 #include <cstring>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	DESFireEV1Profile::DESFireEV1Profile() : 
 		DESFireProfile()

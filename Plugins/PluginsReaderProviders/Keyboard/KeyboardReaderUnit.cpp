@@ -15,7 +15,7 @@
 #include <boost/filesystem.hpp>
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	KeyboardReaderUnit::KeyboardReaderUnit()
 		: ReaderUnit()

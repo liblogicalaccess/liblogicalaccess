@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	class WinClass
 	{

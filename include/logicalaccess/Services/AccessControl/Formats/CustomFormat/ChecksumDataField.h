@@ -10,7 +10,7 @@
 #include "logicalaccess/Services/AccessControl/Formats/CustomFormat/DataField.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A checksum data field. Not implemented yet.

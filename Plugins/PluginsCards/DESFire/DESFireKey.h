@@ -25,7 +25,7 @@
  */
 #define DESFIRE_MAXKEY_SIZE 24
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief The DESFire key type.

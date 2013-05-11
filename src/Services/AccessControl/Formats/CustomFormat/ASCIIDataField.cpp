@@ -7,7 +7,7 @@
 #include "logicalaccess/Services/AccessControl/Formats/CustomFormat/ASCIIDataField.h"
 #include "logicalaccess/BufferHelper.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	ASCIIDataField::ASCIIDataField()
 		: ValueDataField()

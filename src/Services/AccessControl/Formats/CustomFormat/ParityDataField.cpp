@@ -11,7 +11,7 @@
 #include <boost/foreach.hpp>
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	ParityDataField::ParityDataField()
 		: DataField()

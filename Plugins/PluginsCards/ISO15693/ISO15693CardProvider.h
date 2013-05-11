@@ -11,7 +11,7 @@
 #include "ISO15693Commands.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	class ISO15693Chip;
 

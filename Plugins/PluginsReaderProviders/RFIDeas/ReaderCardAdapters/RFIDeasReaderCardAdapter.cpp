@@ -7,7 +7,7 @@
 #include "RFIDeasReaderCardAdapter.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	RFIDeasReaderCardAdapter::RFIDeasReaderCardAdapter()
 		: ReaderCardAdapter()

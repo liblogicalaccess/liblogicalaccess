@@ -17,7 +17,7 @@
 #include "SmartIDReaderUnit.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	SmartIDReaderProvider::SmartIDReaderProvider() :
 		ReaderProvider()

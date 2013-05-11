@@ -7,7 +7,7 @@
 #include "logicalaccess/Services/AccessControl/Formats/CustomFormat/NumberDataField.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	NumberDataField::NumberDataField()
 		: ValueDataField()

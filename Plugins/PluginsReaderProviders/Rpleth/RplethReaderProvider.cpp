@@ -17,7 +17,7 @@
 #include "RplethReaderUnit.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	RplethReaderProvider::RplethReaderProvider() :
 		ReaderProvider()

@@ -10,7 +10,7 @@
 #include <stdlib.h>
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	DataField::DataField()
 	{

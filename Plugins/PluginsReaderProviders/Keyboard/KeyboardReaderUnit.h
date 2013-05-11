@@ -11,7 +11,7 @@
 #include "KeyboardReaderUnitConfiguration.h"
 #include "KeyboardSharedStruct.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	class Profile;
 	class KeyboardReaderProvider;

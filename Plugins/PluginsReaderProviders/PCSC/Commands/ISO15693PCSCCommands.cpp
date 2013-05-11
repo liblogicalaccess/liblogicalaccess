@@ -13,7 +13,7 @@
 #include "ISO15693Chip.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	ISO15693PCSCCommands::ISO15693PCSCCommands()
 		: ISO15693Commands()

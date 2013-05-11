@@ -9,7 +9,7 @@
 
 #include "logicalaccess/Cards/KeyStorage.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A Key base class. The key object is used to describe key chip information used for authentication on secured memory area or for restricted operation.

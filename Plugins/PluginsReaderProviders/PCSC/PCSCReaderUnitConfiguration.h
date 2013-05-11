@@ -26,7 +26,7 @@
 #include <winscard.h>
 #endif
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief Share mode enumeration.

@@ -16,7 +16,7 @@
 using std::string;
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief FASC-N Organizational category

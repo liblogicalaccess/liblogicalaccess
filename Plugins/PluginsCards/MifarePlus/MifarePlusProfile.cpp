@@ -12,7 +12,7 @@
 
 #include "MifarePlusCardProviderSL1.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	MifarePlusProfile::MifarePlusProfile()
 		: Profile()

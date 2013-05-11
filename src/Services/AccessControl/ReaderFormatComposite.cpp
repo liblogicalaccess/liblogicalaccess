@@ -8,7 +8,7 @@
 #include "logicalaccess/Cards/AccessInfo.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	ReaderFormatComposite::ReaderFormatComposite()
 	{

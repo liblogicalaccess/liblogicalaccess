@@ -11,7 +11,7 @@
 #define NOEXCEPT
 #endif
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
   namespace Exception
   {

@@ -16,7 +16,7 @@
 
 #include "STidSTRReaderUnit.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	STidSTRReaderProvider::STidSTRReaderProvider() :
 		ReaderProvider()

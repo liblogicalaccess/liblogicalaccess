@@ -9,7 +9,7 @@
 #include "logicalaccess/Cards/SAMKeyStorage.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	boost::shared_ptr<KeyStorage> KeyStorage::getKeyStorageFromType(KeyStorageType kst)
 	{

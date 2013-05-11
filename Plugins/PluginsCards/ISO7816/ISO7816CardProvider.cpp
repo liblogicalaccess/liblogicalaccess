@@ -9,7 +9,7 @@
 #include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
 #include "ISO7816Location.h"
 #include "ISO7816Chip.h"
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	ISO7816CardProvider::ISO7816CardProvider()
 		: CardProvider()

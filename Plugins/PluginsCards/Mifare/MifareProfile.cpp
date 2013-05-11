@@ -8,7 +8,7 @@
 
 #include "MifareCardProvider.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	MifareProfile::MifareProfile()
 		: Profile()

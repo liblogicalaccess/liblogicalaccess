@@ -9,7 +9,7 @@
 #include "logicalaccess/Services/AccessControl/AccessControlCardService.h"
 #include "DESFireEV1Location.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	bool DESFireCardProvider::erase()
 	{

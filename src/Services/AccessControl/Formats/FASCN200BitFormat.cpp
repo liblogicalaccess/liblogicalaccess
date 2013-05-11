@@ -12,7 +12,7 @@
 #include "logicalaccess/Services/AccessControl/Formats/CustomFormat/NumberDataField.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	const unsigned char FASCN200BitFormat::FASCN_SS = 0x0B;
 	const unsigned char FASCN200BitFormat::FASCN_FS = 0x0D;

@@ -6,7 +6,7 @@
 
 #include "logicalaccess/Cards/ReaderMemoryKeyStorage.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	ReaderMemoryKeyStorage::ReaderMemoryKeyStorage()
 	{

@@ -27,7 +27,7 @@ using std::ostream;
 */
 #define MIFARE_PLUS_MAC_SIZE		0x08
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief DESFire cryptographic functions.

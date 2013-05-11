@@ -24,7 +24,7 @@ using std::vector;
 #include <wintypes.h>
 #endif
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief The power status.

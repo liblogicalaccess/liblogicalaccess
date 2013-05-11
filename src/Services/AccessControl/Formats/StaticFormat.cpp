@@ -9,7 +9,7 @@
 
 #include "logicalaccess/Services/AccessControl/Formats/CustomFormat/NumberDataField.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	StaticFormat::StaticFormat() :
 		d_uid(0)

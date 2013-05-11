@@ -6,7 +6,7 @@
 
 #include "logicalaccess/linearizable.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	Linearizable::~Linearizable()
 	{

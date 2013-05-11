@@ -14,7 +14,7 @@
 using std::string;
 using std::vector;
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A ISO15693 reader communication base class.

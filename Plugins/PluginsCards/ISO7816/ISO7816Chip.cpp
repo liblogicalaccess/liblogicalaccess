@@ -20,7 +20,7 @@ using std::ostringstream;
 using std::istringstream;
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	ISO7816Chip::ISO7816Chip(std::string ct)
 		: Chip(ct)

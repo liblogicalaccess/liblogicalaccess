@@ -8,7 +8,7 @@
 
 #include <openssl/evp.h>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	namespace openssl
 	{

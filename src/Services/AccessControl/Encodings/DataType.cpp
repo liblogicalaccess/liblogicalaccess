@@ -13,7 +13,7 @@
 
 #include <cstring>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	DataType::DataType()
 		: d_leftParityType(PT_NONE), d_rightParityType(PT_NONE), d_bitDataRepresentationType(ET_BIGENDIAN)

@@ -7,7 +7,7 @@
 #include "IdOnDemandReaderUnitConfiguration.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	IdOnDemandReaderUnitConfiguration::IdOnDemandReaderUnitConfiguration()
 		: ReaderUnitConfiguration("idOnDemand")

@@ -12,7 +12,7 @@
 #include <boost/optional.hpp>
 #include <boost/array.hpp>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	A3MLGM5600ReaderCardAdapter::A3MLGM5600ReaderCardAdapter()
 		: ReaderCardAdapter()

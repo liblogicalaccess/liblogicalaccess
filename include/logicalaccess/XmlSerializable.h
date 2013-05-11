@@ -60,7 +60,7 @@
 #include <boost/property_tree/ptree.hpp>
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A Xml Serializable base class. Add Xml serialization to a class.

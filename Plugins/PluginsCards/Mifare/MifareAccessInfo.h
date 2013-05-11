@@ -11,7 +11,7 @@
 #include "MifareKey.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief Mifare Key Type.

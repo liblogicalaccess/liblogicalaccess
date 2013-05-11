@@ -10,7 +10,7 @@
 #include "logicalaccess/ReaderProviders/ReaderConfiguration.h"
 #include "logicalaccess/Services/AccessControl/CardsFormatComposite.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A reader format composite class. This is a card format composite associated to a specific reader configuration.

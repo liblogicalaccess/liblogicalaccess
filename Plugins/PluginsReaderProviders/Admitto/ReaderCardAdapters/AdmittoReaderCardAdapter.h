@@ -18,7 +18,7 @@ using std::vector;
 #include "logicalaccess/logs.h"
 #include "logicalaccess/BufferHelper.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	/**
 	 * \brief A default Admitto reader/card adapter class.

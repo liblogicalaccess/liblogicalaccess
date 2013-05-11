@@ -10,7 +10,7 @@
 #include "DESFireCommands.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 #ifndef DFEV1_INS
 	#define DFEV1_INS

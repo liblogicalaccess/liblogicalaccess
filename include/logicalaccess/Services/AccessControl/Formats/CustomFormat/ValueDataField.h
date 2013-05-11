@@ -12,7 +12,7 @@
 #include "logicalaccess/Services/AccessControl/Encodings/DataType.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	/**
 	 * \brief A value data field base class.

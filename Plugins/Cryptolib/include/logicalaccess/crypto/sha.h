@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	namespace openssl
 	{

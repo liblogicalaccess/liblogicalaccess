@@ -7,7 +7,7 @@
 #ifndef PEM_HPP
 #define PEM_HPP
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	namespace openssl
 	{

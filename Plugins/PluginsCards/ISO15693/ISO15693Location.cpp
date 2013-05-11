@@ -6,7 +6,7 @@
 
 #include "ISO15693Location.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	ISO15693Location::ISO15693Location()
 	{

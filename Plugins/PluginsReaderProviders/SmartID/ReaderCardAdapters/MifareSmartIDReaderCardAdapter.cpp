@@ -8,7 +8,7 @@
 
 #include <cstring>
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	std::vector<unsigned char> MifareSmartIDReaderCardAdapter::sendCommand(unsigned char cmd, const std::vector<unsigned char>& command, long int timeout)
 	{

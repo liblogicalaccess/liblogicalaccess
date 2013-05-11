@@ -10,7 +10,7 @@
 #include "logicalaccess/Services/AccessControl/AccessControlCardService.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	class TwicCardProvider;
 

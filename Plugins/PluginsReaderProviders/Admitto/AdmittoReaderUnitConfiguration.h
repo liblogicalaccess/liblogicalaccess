@@ -9,7 +9,7 @@
 
 #include "logicalaccess/ReaderProviders/ReaderUnitConfiguration.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	/**
 	 * \brief The Admitto reader unit configuration base class.

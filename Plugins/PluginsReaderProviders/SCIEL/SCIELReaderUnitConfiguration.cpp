@@ -11,7 +11,7 @@
 # include <unistd.h>
 #endif
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	SCIELReaderUnitConfiguration::SCIELReaderUnitConfiguration()
 		: ReaderUnitConfiguration("SCIEL")

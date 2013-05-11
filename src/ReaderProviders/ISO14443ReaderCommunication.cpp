@@ -7,7 +7,7 @@
 #include "logicalaccess/ReaderProviders/ISO14443ReaderCommunication.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	ISO14443ReaderCommunication::ISO14443ReaderCommunication() :
 		ISO14443AReaderCommunication(), ISO14443BReaderCommunication(), d_rcMode(IM_UNKNOWN)

@@ -6,7 +6,7 @@
 
 #include "MifareUltralightCAccessInfo.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	MifareUltralightCAccessInfo::MifareUltralightCAccessInfo()
 		: MifareUltralightAccessInfo()

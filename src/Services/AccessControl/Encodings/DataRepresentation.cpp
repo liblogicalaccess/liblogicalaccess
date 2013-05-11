@@ -9,7 +9,7 @@
 #include "logicalaccess/Services/AccessControl/Encodings/LittleEndianDataRepresentation.h"
 #include "logicalaccess/Services/AccessControl/Encodings/NoDataRepresentation.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	DataRepresentation* DataRepresentation::getByEncodingType(EncodingType type)
 	{

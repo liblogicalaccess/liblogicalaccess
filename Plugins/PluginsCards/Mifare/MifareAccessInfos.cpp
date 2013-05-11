@@ -6,7 +6,7 @@
 
 #include "MifareAccessInfo.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	size_t MifareAccessInfo::SectorAccessBits::toArray(void* buf, size_t buflen) const
 	{

@@ -20,7 +20,7 @@ using std::istringstream;
 
 #include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	TagItChip::TagItChip()
 		: ISO15693Chip(CHIP_TAGIT)

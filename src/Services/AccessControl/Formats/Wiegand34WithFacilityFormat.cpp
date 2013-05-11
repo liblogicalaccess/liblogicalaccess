@@ -7,7 +7,7 @@
 #include "logicalaccess/Services/AccessControl/Formats/Wiegand34WithFacilityFormat.h"
 #include "logicalaccess/Services/AccessControl/Formats/CustomFormat/NumberDataField.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	Wiegand34WithFacilityFormat::Wiegand34WithFacilityFormat()
 		: Wiegand34Format()

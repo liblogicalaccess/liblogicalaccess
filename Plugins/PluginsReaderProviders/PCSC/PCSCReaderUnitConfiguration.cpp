@@ -7,7 +7,7 @@
 #include "PCSCReaderUnitConfiguration.h"
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	PCSCReaderUnitConfiguration::PCSCReaderUnitConfiguration()
 		: ReaderUnitConfiguration("PCSC")

@@ -11,7 +11,7 @@
 #include <sstream>
 
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	OmnikeyXX25ReaderUnit::OmnikeyXX25ReaderUnit(const std::string& name)
 		: OmnikeyReaderUnit(name)

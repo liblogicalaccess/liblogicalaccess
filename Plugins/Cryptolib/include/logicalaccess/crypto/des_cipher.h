@@ -9,7 +9,7 @@
 
 #include "logicalaccess/crypto/openssl_symmetric_cipher.h"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	namespace openssl
 	{
