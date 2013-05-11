@@ -1,10 +1,10 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "stdafx.h"
-#include "logicalaccess/ReaderProviders/ReaderProvider.h"
-#include "logicalaccess/crypto/tomcrypt.h"
+#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include "logicalaccess/crypto/tomcrypt.hpp"
 
-#include "logicalaccess/settings.h"
-#include "logicalaccess/logs.h"
+#include "logicalaccess/settings.hpp"
+#include "logicalaccess/logs.hpp"
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID /*lpReserved*/)
 {
@@ -23,12 +23,12 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID /*lpRes
 		}
 #endif
 
-		LOGICALACCESS::Settings::getInstance().Initialize();  
+		logicalaccess::Settings::getInstance().Initialize();  
 		INFO_("Process attached !");  
 		break;
 	case DLL_PROCESS_DETACH:
 		INFO_("Process detached !");
-		LOGICALACCESS::Settings::getInstance().Uninitialize();  
+		logicalaccess::Settings::getInstance().Uninitialize();  
 		
 		unregister_cipher(&des3_desc);
 		unregister_cipher(&des_desc);

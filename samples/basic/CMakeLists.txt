@@ -21,7 +21,7 @@ add_executable(
 )
 
 if(UNIX)
-  link_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../packages/lib" "${CMAKE_CURRENT_SOURCE_DIR}/../../native/Plugins/Cryptolib")
+  link_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../packages/lib" "${CMAKE_CURRENT_SOURCE_DIR}/../../plugins/cryptolib")
 else()
   link_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../bin/${VC_FOLDER_NAME}")
 endif()

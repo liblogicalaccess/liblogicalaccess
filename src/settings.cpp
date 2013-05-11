@@ -7,8 +7,8 @@
 #ifdef _MSC_VER
 #include <Windows.h>
 #endif
-#include "logicalaccess/settings.h"
-#include "logicalaccess/logs.h"
+#include "logicalaccess/settings.hpp"
+#include "logicalaccess/logs.hpp"
 
 #include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>

@@ -4,10 +4,10 @@
  * \brief Main file for the basic sample of the liblogicalaccess.
  */
 
-#include "logicalaccess/DynLibrary/IDynLibrary.h"
-#include "logicalaccess/DynLibrary/LibraryManager.h"
-#include "logicalaccess/ReaderProviders/ReaderConfiguration.h"
-#include "logicalaccess/Cards/CardProvider.h"
+#include "logicalaccess/dynlibrary/idynlibrary.hpp"
+#include "logicalaccess/dynlibrary/librarymanager.hpp"
+#include "logicalaccess/readerproviders/readerconfiguration.hpp"
+#include "logicalaccess/cards/cardprovider.hpp"
 
 #include <iostream>
 #include <string>
@@ -24,14 +24,14 @@ int main(int , char**)
 {
 	try
 	{
-		std::vector<std::string> readerList = LOGICALACCESS::LibraryManager::getInstance()->getAvailableReaders();
+		std::vector<std::string> readerList = logicalaccess::LibraryManager::getInstance()->getAvailableReaders();
 		std::cout << "Available reader plug-ins ("<< readerList.size() <<"):" << std::endl;
 		for (std::vector<std::string>::iterator it = readerList.begin(); it != readerList.end(); ++it)
 		{
 			std::cout << "\t" << (*it) << std::endl;
 		}
 
-		std::vector<std::string> cardList = LOGICALACCESS::LibraryManager::getInstance()->getAvailableCards();
+		std::vector<std::string> cardList = logicalaccess::LibraryManager::getInstance()->getAvailableCards();
 		std::cout << "Available card plug-ins ("<< cardList.size() <<"):" << std::endl;
 		for (std::vector<std::string>::iterator it = cardList.begin(); it != cardList.end(); ++it)
 		{
@@ -39,10 +39,10 @@ int main(int , char**)
 		}
 
 		// Reader configuration object to store reader provider and reader unit selection.
-		boost::shared_ptr<LOGICALACCESS::ReaderConfiguration> readerConfig(new LOGICALACCESS::ReaderConfiguration());
+		boost::shared_ptr<logicalaccess::ReaderConfiguration> readerConfig(new logicalaccess::ReaderConfiguration());
 
 		// PC/SC
-		readerConfig->setReaderProvider(LOGICALACCESS::LibraryManager::getInstance()->getReaderProvider("PCSC"));
+		readerConfig->setReaderProvider(logicalaccess::LibraryManager::getInstance()->getReaderProvider("PCSC"));
 
 		if (readerConfig->getReaderProvider()->getRPType() == "PCSC" && readerConfig->getReaderProvider()->getReaderList().size() == 0)
 		{
@@ -74,21 +74,21 @@ int main(int , char**)
 				{
 					std::cout << "Card inserted on reader \"" << readerConfig->getReaderUnit()->getConnectedName() << "\"." << std::endl;
 
-					boost::shared_ptr<LOGICALACCESS::Chip> chip = readerConfig->getReaderUnit()->getSingleChip();
+					boost::shared_ptr<logicalaccess::Chip> chip = readerConfig->getReaderUnit()->getSingleChip();
 					std::cout << "Card type: " << chip->getCardType() << std::endl;
 
 					std::vector<unsigned char> csn = readerConfig->getReaderUnit()->getNumber(chip);
-					std::cout << "Card Serial Number : " << LOGICALACCESS::BufferHelper::getHex(csn) << std::endl;	
+					std::cout << "Card Serial Number : " << logicalaccess::BufferHelper::getHex(csn) << std::endl;	
 
 					std::cout << "Chip list:" << std::endl;
-					std::vector<boost::shared_ptr<LOGICALACCESS::Chip>> chipList = readerConfig->getReaderUnit()->getChipList();
-					for(std::vector<boost::shared_ptr<LOGICALACCESS::Chip>>::iterator i = chipList.begin(); i != chipList.end(); ++i)
+					std::vector<boost::shared_ptr<logicalaccess::Chip>> chipList = readerConfig->getReaderUnit()->getChipList();
+					for(std::vector<boost::shared_ptr<logicalaccess::Chip>>::iterator i = chipList.begin(); i != chipList.end(); ++i)
 					{
-						std::cout << "\t" << LOGICALACCESS::BufferHelper::getHex(readerConfig->getReaderUnit()->getNumber((*i))) << std::endl;
+						std::cout << "\t" << logicalaccess::BufferHelper::getHex(readerConfig->getReaderUnit()->getNumber((*i))) << std::endl;
 					}
 
-					boost::shared_ptr<LOGICALACCESS::CardProvider> cp = chip->getCardProvider();
-					boost::shared_ptr<LOGICALACCESS::Profile> profile = chip->getProfile();
+					boost::shared_ptr<logicalaccess::CardProvider> cp = chip->getCardProvider();
+					boost::shared_ptr<logicalaccess::Profile> profile = chip->getProfile();
 
 					// DO SOMETHING HERE
 					// DO SOMETHING HERE

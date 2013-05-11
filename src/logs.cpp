@@ -4,7 +4,7 @@
  * \brief Base class logs informations. 
  */
  
-#include "logicalaccess/logs.h"
+#include "logicalaccess/logs.hpp"
 
 #include <string>
 #include <sstream>
