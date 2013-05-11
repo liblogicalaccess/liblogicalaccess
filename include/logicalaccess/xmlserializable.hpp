@@ -4,8 +4,8 @@
  * \brief Xml Serializable.
  */
 
-#ifndef LOGICALACCESS_XMLSERIALIZABLE_H
-#define LOGICALACCESS_XMLSERIALIZABLE_H
+#ifndef LOGICALACCESS_XMLSERIALIZABLE_HPP
+#define LOGICALACCESS_XMLSERIALIZABLE_HPP
 
 // Bug number 621653 reported on Microsoft Connect
 #ifdef _MSC_VER
@@ -53,7 +53,7 @@
 #endif
 #endif
 
-#include "logicalaccess/logs.h"
+#include "logicalaccess/logs.hpp"
 
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -151,4 +151,4 @@ namespace logicalaccess
 	};	
 }
 
-#endif /* LOGICALACCESS_XMLSERIALIZABLE_H */
+#endif /* LOGICALACCESS_XMLSERIALIZABLE_HPP */

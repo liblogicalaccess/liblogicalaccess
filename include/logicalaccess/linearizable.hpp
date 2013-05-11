@@ -1,13 +1,13 @@
 /**
- * \file linearizable.h
+ * \file linearizable.hpp
  * \author Julien K. <julien-dev@islog.com>
  * \brief Linearizable base class.
  */
 
-#ifndef LINEARIZABLE_H
-#define LINEARIZABLE_H
+#ifndef LINEARIZABLE_HPP
+#define LINEARIZABLE_HPP
 
-#include "logicalaccess/BufferHelper.h"
+#include "logicalaccess/bufferhelper.hpp"
 
 namespace logicalaccess
 {
@@ -38,4 +38,4 @@ namespace logicalaccess
 	};	
 }
 
-#endif /* LINEARIZABLE_H */
+#endif /* LINEARIZABLE_HPP */

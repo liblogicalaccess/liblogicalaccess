@@ -4,8 +4,8 @@
  * \brief Reader unit.
  */
 
-#ifndef LOGICALACCESS_READERUNIT_H
-#define LOGICALACCESS_READERUNIT_H
+#ifndef LOGICALACCESS_READERUNIT_HPP
+#define LOGICALACCESS_READERUNIT_HPP
 
 #include "logicalaccess/readerproviders/readerunitconfiguration.hpp"
 #include "logicalaccess/readerproviders/lcddisplay.hpp"

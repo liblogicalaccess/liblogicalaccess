@@ -4,8 +4,8 @@
  * \brief ISO14443-3 Reader communication. 
  */
 
-#ifndef LOGICALACCESS_ISO14443READERCOMMUNICATION_H
-#define LOGICALACCESS_ISO14443READERCOMMUNICATION_H
+#ifndef LOGICALACCESS_ISO14443READERCOMMUNICATION_HPP
+#define LOGICALACCESS_ISO14443READERCOMMUNICATION_HPP
 
 #include "logicalaccess/readerproviders/iso14443areadercommunication.hpp"
 #include "logicalaccess/readerproviders/iso14443breadercommunication.hpp"
@@ -75,5 +75,5 @@ namespace logicalaccess
 
 }
 
-#endif /* LOGICALACCESS_ISO14443READERCOMMUNICATION_H */
+#endif /* LOGICALACCESS_ISO14443READERCOMMUNICATION_HPP */
 

@@ -4,8 +4,8 @@
  * \brief LED/Buzzer Display. 
  */
 
-#ifndef LOGICALACCESS_LEDBUZZERDISPLAY_H
-#define LOGICALACCESS_LEDBUZZERDISPLAY_H
+#ifndef LOGICALACCESS_LEDBUZZERDISPLAY_HPP
+#define LOGICALACCESS_LEDBUZZERDISPLAY_HPP
 
 #include "logicalaccess/xmlserializable.hpp"
 
@@ -62,5 +62,5 @@ namespace logicalaccess
 	};
 }
 
-#endif /* LOGICALACCESS_LEDBUZZERDISPLAY_H */
+#endif /* LOGICALACCESS_LEDBUZZERDISPLAY_HPP */
 

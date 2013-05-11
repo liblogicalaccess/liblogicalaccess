@@ -1,13 +1,13 @@
 /**
- * \file Key.h
+ * \file Key.hpp
  * \author Julien K. <julien-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
  * \brief Key card.
  */
 
-#ifndef LOGICALACCESS_KEY_H
-#define LOGICALACCESS_KEY_H
+#ifndef LOGICALACCESS_KEY_HPP
+#define LOGICALACCESS_KEY_HPP
 
-#include "logicalaccess/Cards/KeyStorage.h"
+#include "logicalaccess/cards/keystorage.h"
 
 namespace logicalaccess
 {
@@ -185,5 +185,5 @@ namespace logicalaccess
 	LIBLOGICALACCESS_API std::ostream& operator<<(std::ostream& os, const Key& key);
 }
 
-#endif /* LOGICALACCESS_KEY_H */
+#endif /* LOGICALACCESS_KEY_HPP */
 

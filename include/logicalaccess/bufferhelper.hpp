@@ -1,11 +1,11 @@
 /**
- * \file BufferHelper.h
+ * \file bufferhelper.hpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Buffer Helper class.
  */
 
-#ifndef BUFFERHELPER_H
-#define BUFFERHELPER_H
+#ifndef BUFFERHELPER_HPP
+#define BUFFERHELPER_HPP
 
 #include <stdint.h>
 
@@ -60,4 +60,4 @@ namespace logicalaccess
 	};	
 }
 
-#endif /* BUFFERHELPER_H */
+#endif /* BUFFERHELPER_HPP */

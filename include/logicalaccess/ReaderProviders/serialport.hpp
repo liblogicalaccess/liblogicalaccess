@@ -5,8 +5,8 @@
  * \brief A serial port class.
  */
 
-#ifndef SERIALPORT_H
-#define SERIALPORT_H
+#ifndef SERIALPORT_HPP
+#define SERIALPORT_HPP
 
 #include <iostream>
 #include <string>
@@ -226,4 +226,4 @@ namespace logicalaccess
 	};
 }
 
-#endif /* SERIALPORT_H */
+#endif /* SERIALPORT_HPP */

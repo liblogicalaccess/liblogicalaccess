@@ -4,8 +4,8 @@
  * \brief Reader provider. 
  */
 
-#ifndef LOGICALACCESS_READER_PROVIDER_H
-#define LOGICALACCESS_READER_PROVIDER_H
+#ifndef LOGICALACCESS_READER_PROVIDER_HPP
+#define LOGICALACCESS_READER_PROVIDER_HPP
 
 #include "logicalaccess/readerproviders/readerunit.hpp"
 #include <map>
@@ -78,5 +78,5 @@ namespace logicalaccess
 
 }
 
-#endif /* LOGICALACCESS_READER_PROVIDER_H */
+#endif /* LOGICALACCESS_READER_PROVIDER_HPP */
 

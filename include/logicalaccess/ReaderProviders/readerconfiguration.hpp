@@ -4,8 +4,8 @@
  * \brief Reader configuration.
  */
 
-#ifndef LOGICALACCESS_READERCONFIGURATION_H
-#define LOGICALACCESS_READERCONFIGURATION_H
+#ifndef LOGICALACCESS_READERCONFIGURATION_HPP
+#define LOGICALACCESS_READERCONFIGURATION_HPP
 
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 
@@ -94,4 +94,4 @@ namespace logicalaccess
 	};	
 }
 
-#endif /* LOGICALACCESS_READERCONFIGURATION_H */
+#endif /* LOGICALACCESS_READERCONFIGURATION_HPP */

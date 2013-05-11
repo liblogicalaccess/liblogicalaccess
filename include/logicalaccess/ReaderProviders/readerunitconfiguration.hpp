@@ -4,8 +4,8 @@
  * \brief Reader unit configuration.
  */
 
-#ifndef LOGICALACCESS_ReaderUnitCONFIGURATION_H
-#define LOGICALACCESS_ReaderUnitCONFIGURATION_H
+#ifndef LOGICALACCESS_READERUNITCONFIGURATION_HPP
+#define LOGICALACCESS_READERUNITCONFIGURATION_HPP
 
 #include "logicalaccess/xmlserializable.hpp"
 

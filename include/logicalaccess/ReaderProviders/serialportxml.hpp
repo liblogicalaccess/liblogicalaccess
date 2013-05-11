@@ -4,8 +4,8 @@
  * \author Julien K. <julien-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
  */
 
-#ifndef SERIALPORTXML_H
-#define SERIALPORTXML_H
+#ifndef SERIALPORTXML_HPP
+#define SERIALPORTXML_HPP
 
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "logicalaccess/readerproviders/serialport.hpp"
@@ -69,5 +69,5 @@ namespace logicalaccess
 	};
 }
 
-#endif /* SERIALPORTXML_H */
+#endif /* SERIALPORTXML_HPP */
 

@@ -4,8 +4,8 @@
  * \brief LCD Display. 
  */
 
-#ifndef LOGICALACCESS_LCDDISPLAY_H
-#define LOGICALACCESS_LCDDISPLAY_H
+#ifndef LOGICALACCESS_LCDDISPLAY_HPP
+#define LOGICALACCESS_LCDDISPLAY_HPP
 
 #include "logicalaccess/xmlserializable.hpp"
 
@@ -57,5 +57,5 @@ namespace logicalaccess
 	};
 }
 
-#endif /* LOGICALACCESS_LCDDISPLAY_H */
+#endif /* LOGICALACCESS_LCDDISPLAY_HPP */
 

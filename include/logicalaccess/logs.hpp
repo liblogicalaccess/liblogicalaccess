@@ -1,11 +1,11 @@
 /**
- * \file logs.h
+ * \file logs.hpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Logging header
  */
 
-#ifndef LOGICALACCESS_LOGS_H
-#define LOGICALACCESS_LOGS_H
+#ifndef LOGICALACCESS_LOGS_HPP
+#define LOGICALACCESS_LOGS_HPP
 
 /**
  * \brief Convenient alias to create an exception.
@@ -73,7 +73,7 @@
 #define COM_SIMPLE_(x) COM_(x, NULL)
 #define PLUGIN_SIMPLE_(x) PLUGIN_(x, NULL)
 
-#include "settings.h"
+#include "settings.hpp"
 #include <fstream>
 
 namespace logicalaccess

@@ -4,8 +4,8 @@
  * \brief Reader communication. 
  */
 
-#ifndef LOGICALACCESS_READERCOMMUNICATION_H
-#define LOGICALACCESS_READERCOMMUNICATION_H
+#ifndef LOGICALACCESS_READERCOMMUNICATION_HPP
+#define LOGICALACCESS_READERCOMMUNICATION_HPP
 
 #include "logicalaccess/readerproviders/readerunit.hpp"
 
@@ -47,5 +47,5 @@ namespace logicalaccess
 
 }
 
-#endif /* LOGICALACCESS_READERCOMMUNICATION_H */
+#endif /* LOGICALACCESS_READERCOMMUNICATION_HPP */
 
