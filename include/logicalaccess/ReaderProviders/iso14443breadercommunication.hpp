@@ -1,5 +1,5 @@
 /**
- * \file ISO14443BReaderCommunication.h
+ * \file iso14443breadercommunication.hpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief ISO14443-3B Reader communication. 
  */
@@ -7,14 +7,14 @@
 #ifndef LOGICALACCESS_ISO14443BREADERCOMMUNICATION_H
 #define LOGICALACCESS_ISO14443BREADERCOMMUNICATION_H
 
-#include "logicalaccess/ReaderProviders/ReaderCommunication.h"
+#include "logicalaccess/readerproviders/readercommunication.hpp"
 
 #include <string>
 #include <vector>
 using std::string;
 using std::vector;
 
-#include "logicalaccess/logs.h"
+#include "logicalaccess/logs.hpp"
 
 namespace logicalaccess
 {

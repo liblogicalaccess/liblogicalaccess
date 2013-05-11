@@ -1,5 +1,5 @@
 /**
- * \file ReaderCommunication.h
+ * \file readercommunication.hpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Reader communication. 
  */
@@ -7,14 +7,14 @@
 #ifndef LOGICALACCESS_READERCOMMUNICATION_H
 #define LOGICALACCESS_READERCOMMUNICATION_H
 
-#include "logicalaccess/ReaderProviders/ReaderUnit.h"
+#include "logicalaccess/readerproviders/readerunit.hpp"
 
 #include <string>
 #include <vector>
 using std::string;
 using std::vector;
 
-#include "logicalaccess/logs.h"
+#include "logicalaccess/logs.hpp"
 
 namespace logicalaccess
 {

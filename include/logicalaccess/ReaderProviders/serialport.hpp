@@ -1,6 +1,6 @@
 /**
- * \file SerialPort.hpp
- * \author Julien KAUFFMANN <julien.kauffmann@freelan.org>
+ * \file serialport.hpp
+ * \author Julien KAUFFMANN <julien-dev@islog.com>
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief A serial port class.
  */
@@ -25,7 +25,7 @@
 #include <boost/utility.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-#include "logicalaccess/ReaderProviders/ReaderUnit.h"
+#include "logicalaccess/readerproviders/readerunit.hpp"
 
 namespace logicalaccess
 {

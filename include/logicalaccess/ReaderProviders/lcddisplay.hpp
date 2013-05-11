@@ -1,5 +1,5 @@
 /**
- * \file LCDDisplay.h
+ * \file lcddisplay.hpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief LCD Display. 
  */
@@ -7,9 +7,9 @@
 #ifndef LOGICALACCESS_LCDDISPLAY_H
 #define LOGICALACCESS_LCDDISPLAY_H
 
-#include "logicalaccess/XmlSerializable.h"
+#include "logicalaccess/xmlserializable.hpp"
 
-#include "logicalaccess/logs.h"
+#include "logicalaccess/logs.hpp"
 
 namespace logicalaccess
 {

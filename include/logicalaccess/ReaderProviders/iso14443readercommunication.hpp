@@ -1,5 +1,5 @@
 /**
- * \file ISO14443ReaderCommunication.h
+ * \file iso14443readercommunication.hpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief ISO14443-3 Reader communication. 
  */
@@ -7,8 +7,8 @@
 #ifndef LOGICALACCESS_ISO14443READERCOMMUNICATION_H
 #define LOGICALACCESS_ISO14443READERCOMMUNICATION_H
 
-#include "logicalaccess/ReaderProviders/ISO14443AReaderCommunication.h"
-#include "logicalaccess/ReaderProviders/ISO14443BReaderCommunication.h"
+#include "logicalaccess/readerproviders/iso14443areadercommunication.hpp"
+#include "logicalaccess/readerproviders/iso14443breadercommunication.hpp"
 
 #include <string>
 #include <vector>

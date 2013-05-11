@@ -1,5 +1,5 @@
 /**
- * \file ReaderUnitConfiguration.h
+ * \file readerunitconfiguration.hpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Reader unit configuration.
  */
@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_ReaderUnitCONFIGURATION_H
 #define LOGICALACCESS_ReaderUnitCONFIGURATION_H
 
-#include "logicalaccess/XmlSerializable.h"
+#include "logicalaccess/xmlserializable.hpp"
 
 namespace logicalaccess
 {

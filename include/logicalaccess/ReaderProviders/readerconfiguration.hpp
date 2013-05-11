@@ -1,5 +1,5 @@
 /**
- * \file ReaderConfiguration.h
+ * \file readerconfiguration.hpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Reader configuration.
  */
@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_READERCONFIGURATION_H
 #define LOGICALACCESS_READERCONFIGURATION_H
 
-#include "logicalaccess/ReaderProviders/ReaderProvider.h"
+#include "logicalaccess/readerproviders/readerprovider.hpp"
 
 #include <string>
 #include <vector>

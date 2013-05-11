@@ -1,16 +1,16 @@
 /**
- * \file ReaderUnit.h
+ * \file readerunit.hpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Reader unit.
  */
 
-#ifndef LOGICALACCESS_ReaderUnit_H
-#define LOGICALACCESS_ReaderUnit_H
+#ifndef LOGICALACCESS_READERUNIT_H
+#define LOGICALACCESS_READERUNIT_H
 
-#include "logicalaccess/ReaderProviders/ReaderUnitConfiguration.h"
-#include "logicalaccess/ReaderProviders/LCDDisplay.h"
-#include "logicalaccess/ReaderProviders/LEDBuzzerDisplay.h"
-#include "logicalaccess/MyException.h"
+#include "logicalaccess/readerproviders/readerunitconfiguration.hpp"
+#include "logicalaccess/readerproviders/lcddisplay.hpp"
+#include "logicalaccess/readerproviders/ledbuzzerdisplay.hpp"
+#include "logicalaccess/myexception.hpp"
 #include <map>
 
 #ifdef UNIX
@@ -24,10 +24,10 @@ namespace logicalaccess
 	/**
 	 * \brief A liblogicalaccess exception class.
 	 */
-	class LIBLOGICALACCESS_API LibLOGICALACCESSException : public Exception::exception
+	class LIBLOGICALACCESS_API LibLogicalAccessException : public Exception::exception
 	{
 	public:
-		LibLOGICALACCESSException(const std::string& message)
+		LibLogicalAccessException(const std::string& message)
 		  : exception(message)
 		{};
 		};
@@ -35,11 +35,11 @@ namespace logicalaccess
 	/**
 	 * \brief A card exception class.
 	 */
-	class LIBLOGICALACCESS_API CardException : public LibLOGICALACCESSException
+	class LIBLOGICALACCESS_API CardException : public LibLogicalAccessException
 	{
 	public:
 		CardException(const std::string& message)
-			: LibLOGICALACCESSException(message)
+			: LibLogicalAccessException(message)
 		{};
 	};
 

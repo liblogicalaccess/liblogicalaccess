@@ -1,5 +1,5 @@
 /**
- * \file LEDBuzzerDisplay.h
+ * \file ledbuzzerdisplay.hpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief LED/Buzzer Display. 
  */
@@ -7,9 +7,9 @@
 #ifndef LOGICALACCESS_LEDBUZZERDISPLAY_H
 #define LOGICALACCESS_LEDBUZZERDISPLAY_H
 
-#include "logicalaccess/XmlSerializable.h"
+#include "logicalaccess/xmlserializable.hpp"
 
-#include "logicalaccess/logs.h"
+#include "logicalaccess/logs.hpp"
 
 namespace logicalaccess
 {

@@ -1,13 +1,13 @@
 /**
- * \file ReaderProvider.h
+ * \file readerprovider.hpp
  * \author Maxime C. <maxime-dev@islog.com>
- * \brief Card reader provider. 
+ * \brief Reader provider. 
  */
 
 #ifndef LOGICALACCESS_READER_PROVIDER_H
 #define LOGICALACCESS_READER_PROVIDER_H
 
-#include "logicalaccess/ReaderProviders/ReaderUnit.h"
+#include "logicalaccess/readerproviders/readerunit.hpp"
 #include <map>
 
 namespace logicalaccess

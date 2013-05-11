@@ -1,5 +1,5 @@
 /**
- * \file serialportxml.h
+ * \file serialportxml.hpp
  * \brief A serial port class.
  * \author Julien K. <julien-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
  */
@@ -7,8 +7,8 @@
 #ifndef SERIALPORTXML_H
 #define SERIALPORTXML_H
 
-#include "logicalaccess/ReaderProviders/ReaderProvider.h"
-#include "logicalaccess/ReaderProviders/SerialPort.h"
+#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include "logicalaccess/readerproviders/serialport.hpp"
 
 #include <iostream>
 #include <string>
