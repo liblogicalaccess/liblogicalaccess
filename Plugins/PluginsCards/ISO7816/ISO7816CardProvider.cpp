@@ -1,14 +1,14 @@
 /**
- * \file ISO7816CardProvider.cpp
+ * \file iso7816cardprovider.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief ISO7816 card profiles.
  */
 
-#include "ISO7816CardProvider.h"
+#include "iso7816cardprovider.hpp"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include "iso7816location.hpp"
+#include "iso7816chip.hpp"
 
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
-#include "ISO7816Location.h"
-#include "ISO7816Chip.h"
 namespace logicalaccess
 {
 	ISO7816CardProvider::ISO7816CardProvider()

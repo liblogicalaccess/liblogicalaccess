@@ -1,24 +1,14 @@
 /**
- * \file SmartFrameChip.cpp
+ * \file smartframechip.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief SmartFrame chip.
  */
 
-#include "SmartFrameChip.h"
+#include "smartframechip.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-
-using std::endl;
-using std::dec;
-using std::hex;
-using std::setfill;
-using std::setw;
-using std::ostringstream;
-using std::istringstream;
-
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
 
 namespace logicalaccess
 {

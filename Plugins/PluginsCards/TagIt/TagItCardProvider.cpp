@@ -1,10 +1,10 @@
 /**
- * \file TagItCardProvider.cpp
+ * \file tagitcardprovider.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Tag-It card profiles.
  */
 
-#include "TagItCardProvider.h"
+#include "tagitcardprovider.hpp"
 
 
 namespace logicalaccess

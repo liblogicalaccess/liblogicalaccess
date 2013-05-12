@@ -1,7 +1,7 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include "logicalaccess/ReaderProviders/ReaderProvider.h"
-#include "ProxChip.h"
+#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include "proxchip.hpp"
 
 #ifdef _MSC_VER
 #include "logicalaccess/msliblogicalaccess.h"
@@ -21,11 +21,11 @@ extern "C"
 		return (char *)"Prox";
 	}
 	
-	LIBLOGICALACCESS_API void getProxChip(boost::shared_ptr<LOGICALACCESS::Chip>* chip)
+	LIBLOGICALACCESS_API void getProxChip(boost::shared_ptr<logicalaccess::Chip>* chip)
 	{
 		if (chip != NULL)
 		{
-			*chip = boost::shared_ptr<LOGICALACCESS::ProxChip>(new LOGICALACCESS::ProxChip());
+			*chip = boost::shared_ptr<logicalaccess::ProxChip>(new logicalaccess::ProxChip());
 		}
 	}
 

@@ -1,24 +1,16 @@
 /**
- * \file MifareChip.cpp
+ * \file mifarechip.cpp
  * \author Xavier SCHMERBER <xavier.schmerber@gmail.com>
  * \brief Mifare chip.
  */
 
-#include "MifarePlusChip.h"
+#include "mifarepluschip.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-using std::endl;
-using std::dec;
-using std::hex;
-using std::setfill;
-using std::setw;
-using std::ostringstream;
-using std::istringstream;
-
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 
 #define MIFARE_PLUS_2K_SECTOR_NB 32
 

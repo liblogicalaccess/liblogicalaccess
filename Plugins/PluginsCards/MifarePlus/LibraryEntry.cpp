@@ -1,7 +1,7 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include "logicalaccess/ReaderProviders/ReaderProvider.h"
-#include "MifarePlus4KChip.h"
+#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include "mifareplus4kchip.hpp"
 
 #ifdef _MSC_VER
 #include "logicalaccess/msliblogicalaccess.h"
@@ -21,11 +21,11 @@ extern "C"
 		return (char *)"MifarePlus";
 	}	
 	
-	LIBLOGICALACCESS_API void getMifarePlus4KChip(boost::shared_ptr<LOGICALACCESS::Chip>* chip)
+	LIBLOGICALACCESS_API void getMifarePlus4KChip(boost::shared_ptr<logicalaccess::Chip>* chip)
 	{
 		if (chip != NULL)
 		{
-			*chip = boost::shared_ptr<LOGICALACCESS::MifarePlus4KChip>(new LOGICALACCESS::MifarePlus4KChip());
+			*chip = boost::shared_ptr<logicalaccess::MifarePlus4KChip>(new logicalaccess::MifarePlus4KChip());
 		}
 	}
 

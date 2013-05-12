@@ -1,11 +1,11 @@
 /**
- * \file DESFireCrypto.cpp
+ * \file desfirecrypto.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief DESFire cryptographic functions.
  */
 
-#include "DESFireCardProvider.h"
-#include "DESFireCrypto.h"
+#include "desfirecardprovider.hpp"
+#include "desfirecrypto.hpp"
 #include "logicalaccess/crypto/tomcrypt.h"
 #include <zlib.h>
 #include <ctime>
@@ -14,12 +14,12 @@
 #include <cstring>
 
 #include <openssl/rand.h>
-#include "logicalaccess/logs.h"
-#include "logicalaccess/crypto/symmetric_key.h"
-#include "logicalaccess/crypto/aes_symmetric_key.h"
-#include "logicalaccess/crypto/aes_initialization_vector.h"
-#include "logicalaccess/crypto/des_symmetric_key.h"
-#include "logicalaccess/crypto/des_initialization_vector.h"
+#include "logicalaccess/logs.hpp"
+#include "logicalaccess/crypto/symmetric_key.hpp"
+#include "logicalaccess/crypto/aes_symmetric_key.hpp"
+#include "logicalaccess/crypto/aes_initialization_vector.hpp"
+#include "logicalaccess/crypto/des_symmetric_key.hpp"
+#include "logicalaccess/crypto/des_initialization_vector.hpp"
 
 
 namespace logicalaccess

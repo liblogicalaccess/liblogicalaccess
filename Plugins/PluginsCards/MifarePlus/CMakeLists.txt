@@ -15,7 +15,7 @@ INCLUDE_DIRECTORIES(${INCLUDE_FOLDER})
 
 
 file(GLOB_RECURSE SRCS *.cpp)
-file(GLOB_RECURSE include_mplus *.h)
+file(GLOB_RECURSE include_mplus *.hpp)
 
 add_library(
 	MifarePlusCards

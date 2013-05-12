@@ -1,10 +1,10 @@
 /**
- * \file Mifare1KChipe.cpp
+ * \file mifare1kchipe.cpp
  * \author Xavier SCHMERBER <xavier.schmerber@gmail.com>
  * \brief MifarePlus 2k chip.
  */
 
-#include "MifarePlus2KChip.h"
+#include "mifareplus2kchip.hpp"
 
 namespace logicalaccess
 {

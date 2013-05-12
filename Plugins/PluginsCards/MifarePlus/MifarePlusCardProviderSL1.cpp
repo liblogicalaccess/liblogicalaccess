@@ -1,13 +1,13 @@
 /**
- * \file MifarePlusCardProviderSL1.cpp
+ * \file mifarepluscardprovidersl1.cpp
  * \author Xavier SCHMERBER <xavier.schmerber@gmail.com>
  * \brief MifarePlus SL1 card provider.
  */
 
-#include "MifarePlusCardProviderSL1.h"
-#include "MifarePlusChip.h"
-#include "logicalaccess/Services/AccessControl/AccessControlCardService.h"
-#include "MifarePlusKey.h"
+#include "mifarepluscardprovidersl1.hpp"
+#include "mifarepluschip.hpp"
+#include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
+#include "mifarepluskey.hpp"
 
 #define PREFIX_PATTERN 0xE3
 #define POLYNOM_PATTERN 0x1D

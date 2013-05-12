@@ -1,16 +1,16 @@
 /**
- * \file MifarePlusProfile.cpp
+ * \file mifareplusprofile.cpp
  * \author Xavier SCHMERBER <xavier.schmerber@gmail.com>
  * \brief MifarePlus card profiles.
  */
 
-#include "MifarePlusProfile.h"
+#include "mifareplusprofile.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-#include "MifarePlusCardProviderSL1.h"
+#include "mifarepluscardprovidersl1.hpp"
 
 namespace logicalaccess
 {	

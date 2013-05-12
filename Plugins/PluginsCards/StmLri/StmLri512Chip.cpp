@@ -1,24 +1,14 @@
 /**
- * \file StmLri512Chip.cpp
+ * \file stmlri512chip.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief StmLri512 chip.
  */
 
-#include "StmLri512Chip.h"
+#include "stmlri512chip.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-
-using std::endl;
-using std::dec;
-using std::hex;
-using std::setfill;
-using std::setw;
-using std::ostringstream;
-using std::istringstream;
-
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
 
 namespace logicalaccess
 {

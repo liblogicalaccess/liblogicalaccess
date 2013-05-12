@@ -1,10 +1,10 @@
 /**
- * \file ISO15693Location.cpp
+ * \file iso15693location.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Location informations for ISO15693 card.
  */
 
-#include "ISO15693Location.h"
+#include "iso15693location.hpp"
 
 namespace logicalaccess
 {

@@ -1,9 +1,9 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include "logicalaccess/ReaderProviders/ReaderProvider.h"
-#include "Mifare1KChip.h"
-#include "Mifare4KChip.h"
-#include "MifareChip.h"
+#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include "mifare1kchip.hpp"
+#include "mifare4kchip.hpp"
+#include "mifarechip.hpp"
 
 #ifdef _MSC_VER
 #include "logicalaccess/msliblogicalaccess.h"
@@ -23,35 +23,35 @@ extern "C"
 		return (char *)"Mifare";
 	}
 	
-	LIBLOGICALACCESS_API void getMifare1KChip(boost::shared_ptr<LOGICALACCESS::Chip>* chip)
+	LIBLOGICALACCESS_API void getMifare1KChip(boost::shared_ptr<logicalaccess::Chip>* chip)
 	{
 		if (chip != NULL)
 		{
-			*chip = boost::shared_ptr<LOGICALACCESS::Mifare1KChip>(new LOGICALACCESS::Mifare1KChip());
+			*chip = boost::shared_ptr<logicalaccess::Mifare1KChip>(new logicalaccess::Mifare1KChip());
 		}
 	}
 
-	LIBLOGICALACCESS_API void getMifare4KChip(boost::shared_ptr<LOGICALACCESS::Chip>* chip)
+	LIBLOGICALACCESS_API void getMifare4KChip(boost::shared_ptr<logicalaccess::Chip>* chip)
 	{
 		if (chip != NULL)
 		{
-			*chip = boost::shared_ptr<LOGICALACCESS::Mifare4KChip>(new LOGICALACCESS::Mifare4KChip());
+			*chip = boost::shared_ptr<logicalaccess::Mifare4KChip>(new logicalaccess::Mifare4KChip());
 		}
 	}
 
-	LIBLOGICALACCESS_API void getMifareChip(boost::shared_ptr<LOGICALACCESS::Chip>* chip)
+	LIBLOGICALACCESS_API void getMifareChip(boost::shared_ptr<logicalaccess::Chip>* chip)
 	{
 		if (chip != NULL)
 		{
-			*chip = boost::shared_ptr<LOGICALACCESS::MifareChip>(new LOGICALACCESS::MifareChip());
+			*chip = boost::shared_ptr<logicalaccess::MifareChip>(new logicalaccess::MifareChip());
 		}
 	}
 
-	LIBLOGICALACCESS_API void getMifareCardProvider(boost::shared_ptr<LOGICALACCESS::CardProvider>* cp)
+	LIBLOGICALACCESS_API void getMifareCardProvider(boost::shared_ptr<logicalaccess::CardProvider>* cp)
 	{
 		if (cp != NULL)
 		{
-			*cp = boost::shared_ptr<LOGICALACCESS::MifareCardProvider>(new LOGICALACCESS::MifareCardProvider());
+			*cp = boost::shared_ptr<logicalaccess::MifareCardProvider>(new logicalaccess::MifareCardProvider());
 		}
 	}
 

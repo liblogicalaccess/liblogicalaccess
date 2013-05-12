@@ -1,11 +1,11 @@
 /**
- * \file ISO7816Location.cpp
+ * \file iso7816location.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Location informations for ISO7816 card.
  */
 
-#include "ISO7816Location.h"
-#include "logicalaccess/BufferHelper.h"
+#include "iso7816location.hpp"
+#include "logicalaccess/bufferhelper.hpp"
 
 #include <cstdlib>
 #include <cstring>

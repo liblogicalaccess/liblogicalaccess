@@ -1,14 +1,14 @@
 /**
- * \file MifareUltralightCProfile.cpp
+ * \file mifareultralightcprofile.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Mifare Ultralight C card profiles.
  */
 
-#include "MifareUltralightCProfile.h"
+#include "mifareultralightcprofile.hpp"
 
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
-#include "MifareUltralightLocation.h"
-#include "MifareUltralightCAccessInfo.h"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include "mifareultralightlocation.hpp"
+#include "mifareultralightcaccessinfo.hpp"
 
 namespace logicalaccess
 {

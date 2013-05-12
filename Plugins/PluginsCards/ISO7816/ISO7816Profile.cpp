@@ -1,10 +1,10 @@
 /**
- * \file ISO7816Profile.cpp
+ * \file iso7816profile.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief ISO7816 card profiles.
  */
 
-#include "ISO7816Profile.h"
+#include "iso7816profile.hpp"
 
 
 namespace logicalaccess

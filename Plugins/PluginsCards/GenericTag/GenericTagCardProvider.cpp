@@ -1,12 +1,12 @@
 /**
- * \file GenericTagCardProvider.cpp
+ * \file generictagcardprovider.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Generic tag card card provider.
  */
 
-#include "GenericTagCardProvider.h"
-#include "GenericTagChip.h"
-#include "GenericTagAccessControlCardService.h"
+#include "generictagcardprovider.hpp"
+#include "generictagchip.hpp"
+#include "generictagaccesscontrolcardservice.hpp"
 
 namespace logicalaccess
 {

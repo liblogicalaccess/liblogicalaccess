@@ -1,7 +1,7 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include "logicalaccess/ReaderProviders/ReaderProvider.h"
-#include "TagItChip.h"
+#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include "tagitchip.hpp"
 
 #ifdef _MSC_VER
 #include "logicalaccess/msliblogicalaccess.h"
@@ -21,19 +21,19 @@ extern "C"
 		return (char *)"TagIt";
 	}
 	
-	LIBLOGICALACCESS_API void getTagItChip(boost::shared_ptr<LOGICALACCESS::Chip>* chip)
+	LIBLOGICALACCESS_API void getTagItChip(boost::shared_ptr<logicalaccess::Chip>* chip)
 	{
 		if (chip != NULL)
 		{
-			*chip = boost::shared_ptr<LOGICALACCESS::TagItChip>(new LOGICALACCESS::TagItChip());
+			*chip = boost::shared_ptr<logicalaccess::TagItChip>(new logicalaccess::TagItChip());
 		}
 	}
 
-	LIBLOGICALACCESS_API void getTagItCardProvider(boost::shared_ptr<LOGICALACCESS::CardProvider>* cp)
+	LIBLOGICALACCESS_API void getTagItCardProvider(boost::shared_ptr<logicalaccess::CardProvider>* cp)
 	{
 		if (cp != NULL)
 		{
-			*cp = boost::shared_ptr<LOGICALACCESS::TagItCardProvider>(new LOGICALACCESS::TagItCardProvider());
+			*cp = boost::shared_ptr<logicalaccess::TagItCardProvider>(new logicalaccess::TagItCardProvider());
 		}
 	}
 

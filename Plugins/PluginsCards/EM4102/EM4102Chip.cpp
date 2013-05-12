@@ -1,10 +1,10 @@
 /**
- * \file EM4102Chip.cpp
+ * \file em4102chip.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief EM4102 chip.
  */
 
-#include "EM4102Chip.h"
+#include "em4102chip.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -18,7 +18,7 @@ using std::setw;
 using std::ostringstream;
 using std::istringstream;
 
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 
 namespace logicalaccess
 {

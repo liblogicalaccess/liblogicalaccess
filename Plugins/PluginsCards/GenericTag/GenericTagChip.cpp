@@ -1,24 +1,14 @@
 /**
- * \file GenericTagChip.cpp
+ * \file generictagchip.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Generic tag chip.
  */
 
-#include "GenericTagChip.h"
+#include "generictagchip.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-
-using std::endl;
-using std::dec;
-using std::hex;
-using std::setfill;
-using std::setw;
-using std::ostringstream;
-using std::istringstream;
-
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
 
 namespace logicalaccess
 {

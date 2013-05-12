@@ -1,25 +1,17 @@
 /**
- * \file MifareChip.cpp
+ * \file mifarechip.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Mifare chip.
  */
 
-#include "MifareChip.h"
-#include "MifareProfile.h"
+#include "mifarechip.hpp"
+#include "mifareprofile.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-using std::endl;
-using std::dec;
-using std::hex;
-using std::setfill;
-using std::setw;
-using std::ostringstream;
-using std::istringstream;
-
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 
 
 namespace logicalaccess

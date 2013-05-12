@@ -1,27 +1,19 @@
 /**
- * \file MifarePlusCardProviderSL3.cpp
+ * \file mifarepluscardprovidersl3.cpp
  * \author Xavier SCHMERBER <xavier.schmerber@gmail.com>
  * \brief MifarePlus SL3 card provider.
  */
 
-#include "MifarePlusCardProviderSL3.h"
-#include "MifarePlusChip.h"
-#include "logicalaccess/Services/AccessControl/AccessControlCardService.h"
-#include "MifarePlusKey.h"
+#include "mifarepluscardprovidersl3.hpp"
+#include "mifarepluschip.hpp"
+#include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
+#include "mifarepluskey.hpp"
 
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 #include <cstring>
-
-using std::endl;
-using std::dec;
-using std::hex;
-using std::setfill;
-using std::setw;
-using std::ostringstream;
-using std::istringstream;
 
 namespace logicalaccess
 {	

@@ -1,24 +1,16 @@
 /**
- * \file MifareUltralightChip.cpp
+ * \file mifareultralightchip.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Mifare Ultralight chip.
  */
 
-#include "MifareUltralightChip.h"
+#include "mifareultralightchip.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-using std::endl;
-using std::dec;
-using std::hex;
-using std::setfill;
-using std::setw;
-using std::ostringstream;
-using std::istringstream;
-
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 
 namespace logicalaccess
 {

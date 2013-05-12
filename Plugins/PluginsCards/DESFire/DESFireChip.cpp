@@ -1,11 +1,11 @@
 /**
- * \file DESFireChip.cpp
+ * \file desfirechip.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief DESFire chip.
  */
 
-#include "DESFireChip.h"
-#include "DESFireProfile.h"
+#include "desfirechip.hpp"
+#include "desfireprofile.hpp"
 
 #include <cstring>
 

@@ -1,24 +1,14 @@
 /**
- * \file ICode2Chip.cpp
+ * \file icode2chip.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief iCode2 chip.
  */
 
-#include "ICode2Chip.h"
+#include "icode2chip.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-
-using std::endl;
-using std::dec;
-using std::hex;
-using std::setfill;
-using std::setw;
-using std::ostringstream;
-using std::istringstream;
-
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
 
 namespace logicalaccess
 {

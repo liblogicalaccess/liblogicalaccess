@@ -1,11 +1,11 @@
 /**
- * \file DESFireEV1CardProvider.cpp
+ * \file desfireev1cardprovider.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief DESFire EV1 card provider.
  */
 
-#include "DESFireEV1CardProvider.h"
-#include "DESFireEV1Chip.h"
+#include "desfireev1cardprovider.hpp"
+#include "desfireev1chip.hpp"
 
 namespace logicalaccess
 {

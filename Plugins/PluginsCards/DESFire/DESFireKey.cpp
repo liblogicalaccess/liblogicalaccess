@@ -1,10 +1,10 @@
 /**
- * \file DESFireKey.cpp
+ * \file desfirekey.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief DESFire Key.
  */
 
-#include "DESFireKey.h"
+#include "desfirekey.hpp"
 
 namespace logicalaccess
 {

@@ -1,11 +1,11 @@
 /**
- * \file MifareUltralightCardProvider.cpp
+ * \file mifareultralightcardprovider.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Mifare Ultralight card provider.
  */
 
-#include "MifareUltralightCardProvider.h"
-#include "MifareUltralightChip.h"
+#include "mifareultralightcardprovider.hpp"
+#include "mifareultralightchip.hpp"
 
 
 namespace logicalaccess

@@ -1,10 +1,10 @@
 /**
- * \file TwicLocation.cpp
+ * \file twiclocation.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Location informations for Twic card.
  */
 
-#include "TwicLocation.h"
+#include "twiclocation.hpp"
 
 namespace logicalaccess
 {

@@ -1,10 +1,10 @@
 /**
- * \file DESFireEV1Profile.cpp
+ * \file desfireev1profile.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief DESFire EV1 card profiles.
  */
 
-#include "DESFireEV1Profile.h"
+#include "desfireev1profile.hpp"
 
 
 #include <cstring>

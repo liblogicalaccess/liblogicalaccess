@@ -1,7 +1,7 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include "logicalaccess/ReaderProviders/ReaderProvider.h"
-#include "GenericTagChip.h"
+#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include "generictagchip.hpp"
 
 #ifdef _MSC_VER
 #include "logicalaccess/msliblogicalaccess.h"
@@ -21,27 +21,27 @@ extern "C"
 		return (char*)"GenericTag";
 	}
 	
-	LIBLOGICALACCESS_API void getGenericTagChip(boost::shared_ptr<LOGICALACCESS::Chip>* chip)
+	LIBLOGICALACCESS_API void getGenericTagChip(boost::shared_ptr<logicalaccess::Chip>* chip)
 	{
 		if (chip != NULL)
 		{
-			*chip = boost::shared_ptr<LOGICALACCESS::GenericTagChip>(new LOGICALACCESS::GenericTagChip());
+			*chip = boost::shared_ptr<logicalaccess::GenericTagChip>(new logicalaccess::GenericTagChip());
 		}
 	}
 
-	LIBLOGICALACCESS_API void getGenericTagCardProvider(boost::shared_ptr<LOGICALACCESS::CardProvider>* cp)
+	LIBLOGICALACCESS_API void getGenericTagCardProvider(boost::shared_ptr<logicalaccess::CardProvider>* cp)
 	{
 		if (cp != NULL)
 		{
-			*cp = boost::shared_ptr<LOGICALACCESS::GenericTagCardProvider>(new LOGICALACCESS::GenericTagCardProvider());
+			*cp = boost::shared_ptr<logicalaccess::GenericTagCardProvider>(new logicalaccess::GenericTagCardProvider());
 		}
 	}
 
-	LIBLOGICALACCESS_API void setTagIdBitsLengthOfGenericTagChip(boost::shared_ptr<LOGICALACCESS::Chip>* chip, unsigned int bits)
+	LIBLOGICALACCESS_API void setTagIdBitsLengthOfGenericTagChip(boost::shared_ptr<logicalaccess::Chip>* chip, unsigned int bits)
 	{
 		if (chip != NULL)
 		{
-			boost::dynamic_pointer_cast<LOGICALACCESS::GenericTagChip>(*chip)->setTagIdBitsLength(bits);
+			boost::dynamic_pointer_cast<logicalaccess::GenericTagChip>(*chip)->setTagIdBitsLength(bits);
 		}
 	}
 

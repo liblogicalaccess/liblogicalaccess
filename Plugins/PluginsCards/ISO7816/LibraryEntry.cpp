@@ -1,7 +1,7 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include "logicalaccess/ReaderProviders/ReaderProvider.h"
-#include "ISO7816Chip.h"
+#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include "iso7816chip.hpp"
 
 #ifdef _MSC_VER
 #include "logicalaccess/msliblogicalaccess.h"
@@ -21,11 +21,11 @@ extern "C"
 		return (char *)"ISO7816";
 	}
 	
-	LIBLOGICALACCESS_API void getISO7816Chip(boost::shared_ptr<LOGICALACCESS::Chip>* chip)
+	LIBLOGICALACCESS_API void getISO7816Chip(boost::shared_ptr<logicalaccess::Chip>* chip)
 	{
 		if (chip != NULL)
 		{
-			*chip = boost::shared_ptr<LOGICALACCESS::ISO7816Chip>(new LOGICALACCESS::ISO7816Chip());
+			*chip = boost::shared_ptr<logicalaccess::ISO7816Chip>(new logicalaccess::ISO7816Chip());
 		}
 	}
 

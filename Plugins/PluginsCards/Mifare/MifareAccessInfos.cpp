@@ -1,10 +1,10 @@
 /**
- * \file MifareAccessInfo.cpp
+ * \file mifareaccessinfo.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Access informations for mifare card.
  */
 
-#include "MifareAccessInfo.h"
+#include "mifareaccessinfo.hpp"
 
 namespace logicalaccess
 {

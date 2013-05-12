@@ -1,10 +1,10 @@
 /**
- * \file MifarePlusCrypto.cpp
+ * \file mifarepluscrypto.cpp
  * \author Xavier SCHMERBER <xavier.schmerber@gmail.com>
  * \brief MifarePlus cryptographic functions.
  */
 
-#include "MifarePlusCrypto.h"
+#include "mifarepluscrypto.hpp"
 #include "logicalaccess/crypto/tomcrypt.h"
 #include <zlib.h>
 #include <ctime>
@@ -13,11 +13,11 @@
 #include <cstring>
 
 #include <openssl/rand.h>
-#include "logicalaccess/crypto/symmetric_key.h"
-#include "logicalaccess/crypto/aes_symmetric_key.h"
-#include "logicalaccess/crypto/aes_initialization_vector.h"
-#include "logicalaccess/crypto/des_symmetric_key.h"
-#include "logicalaccess/crypto/des_initialization_vector.h"
+#include "logicalaccess/crypto/symmetric_key.hpp"
+#include "logicalaccess/crypto/aes_symmetric_key.hpp"
+#include "logicalaccess/crypto/aes_initialization_vector.hpp"
+#include "logicalaccess/crypto/des_symmetric_key.hpp"
+#include "logicalaccess/crypto/des_initialization_vector.hpp"
 
 namespace logicalaccess
 {		

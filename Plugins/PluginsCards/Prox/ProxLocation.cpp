@@ -1,10 +1,10 @@
 /**
- * \file ProxLocation.cpp
+ * \file proxlocation.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Location informations for Prox card.
  */
 
-#include "ProxLocation.h"
+#include "proxlocation.hpp"
 
 namespace logicalaccess
 {

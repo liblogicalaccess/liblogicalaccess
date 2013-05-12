@@ -1,11 +1,11 @@
 /**
- * \file TwicCardProvider.cpp
+ * \file twiccardprovider.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Twic card profiles.
  */
 
-#include "TwicCardProvider.h"
-#include "TwicAccessControlCardService.h"
+#include "twiccardprovider.hpp"
+#include "twicaccesscontrolcardservice.hpp"
 
 
 namespace logicalaccess

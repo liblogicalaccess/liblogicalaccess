@@ -1,14 +1,14 @@
 /**
- * \file GenericTagAccessControlCardService.cpp
+ * \file generictagaccesscontrolcardservice.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief GenericTag Access Control Card service.
  */
 
-#include "GenericTagAccessControlCardService.h"
-#include "GenericTagCardProvider.h"
-#include "GenericTagChip.h"
-#include "logicalaccess/Cards/ReaderCardAdapter.h"
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
+#include "generictagaccesscontrolcardservice.hpp"
+#include "generictagcardprovider.hpp"
+#include "generictagchip.hpp"
+#include "logicalaccess/cards/readercardadapter.hpp"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 
 
 #ifdef __linux__

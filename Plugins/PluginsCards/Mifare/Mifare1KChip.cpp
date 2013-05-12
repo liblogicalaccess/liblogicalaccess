@@ -1,10 +1,10 @@
 /**
- * \file Mifare1KChipe.cpp
+ * \file mifare1kchipe.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Mifare 1k chip.
  */
 
-#include "Mifare1KChip.h"
+#include "mifare1kchip.hpp"
 
 namespace logicalaccess
 {

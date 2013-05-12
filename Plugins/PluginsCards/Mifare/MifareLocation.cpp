@@ -1,10 +1,10 @@
 /**
- * \file MifareLocation.cpp
+ * \file mifarelocation.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Location informations for Mifare card.
  */
 
-#include "MifareLocation.h"
+#include "mifarelocation.hpp"
 
 namespace logicalaccess
 {

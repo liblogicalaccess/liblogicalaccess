@@ -40,16 +40,16 @@ endif()
 if (UNIX)
   INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/../../packages/include"
 			"${CMAKE_CURRENT_SOURCE_DIR}/../../include"
-			"${CMAKE_CURRENT_SOURCE_DIR}/../Cryptolib/include")
+			"${CMAKE_CURRENT_SOURCE_DIR}/../cryptolib/include")
   LINK_DIRECTORIES(${LINK_DIRECTORIES} "${CMAKE_CURRENT_SOURCE_DIR}/../../packages/lib"
 					"${CMAKE_CURRENT_SOURCE_DIR}/../../bin"
-					"${CMAKE_CURRENT_SOURCE_DIR}/../Cryptolib/bin")
+					"${CMAKE_CURRENT_SOURCE_DIR}/../cryptolib/bin")
 else()
   INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}/../../packages/include"
 			"${CMAKE_CURRENT_SOURCE_DIR}/../../include"
-			"${CMAKE_CURRENT_SOURCE_DIR}/../Cryptolib/include")
+			"${CMAKE_CURRENT_SOURCE_DIR}/../cryptolib/include")
   LINK_DIRECTORIES(${LINK_DIRECTORIES} "${CMAKE_CURRENT_SOURCE_DIR}/../../packages/lib/${TARGET_ARCH}"
-					"${CMAKE_CURRENT_SOURCE_DIR}/../Cryptolib/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}"
+					"${CMAKE_CURRENT_SOURCE_DIR}/../cryptolib/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}"
 					"${CMAKE_CURRENT_SOURCE_DIR}/../../bin/${TARGET_ARCH}/${VC_FOLDER_NAME}")
 endif()
 

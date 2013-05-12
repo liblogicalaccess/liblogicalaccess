@@ -1,8 +1,8 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include "logicalaccess/ReaderProviders/ReaderProvider.h"
-#include "MifareUltralightCChip.h"
-#include "MifareUltralightChip.h"
+#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include "mifareultralightcchip.hpp"
+#include "mifareultralightchip.hpp"
 
 #ifdef _MSC_VER
 #include "logicalaccess/msliblogicalaccess.h"
@@ -22,19 +22,19 @@ extern "C"
 		return (char *)"MifareUltralight";
 	}
 	
-	LIBLOGICALACCESS_API void getMifareUltralightCChip(boost::shared_ptr<LOGICALACCESS::Chip>* chip)
+	LIBLOGICALACCESS_API void getMifareUltralightCChip(boost::shared_ptr<logicalaccess::Chip>* chip)
 	{
 		if (chip != NULL)
 		{
-			*chip = boost::shared_ptr<LOGICALACCESS::MifareUltralightCChip>(new LOGICALACCESS::MifareUltralightCChip());
+			*chip = boost::shared_ptr<logicalaccess::MifareUltralightCChip>(new logicalaccess::MifareUltralightCChip());
 		}
 	}
 	
-	LIBLOGICALACCESS_API void getMifareUltralightChip(boost::shared_ptr<LOGICALACCESS::Chip>* chip)
+	LIBLOGICALACCESS_API void getMifareUltralightChip(boost::shared_ptr<logicalaccess::Chip>* chip)
 	{
 		if (chip != NULL)
 		{
-			*chip = boost::shared_ptr<LOGICALACCESS::MifareUltralightChip>(new LOGICALACCESS::MifareUltralightChip());
+			*chip = boost::shared_ptr<logicalaccess::MifareUltralightChip>(new logicalaccess::MifareUltralightChip());
 		}
 	}
 

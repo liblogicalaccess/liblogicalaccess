@@ -1,15 +1,15 @@
 /**
- * \file TwicAccessControlCardService.cpp
+ * \file twicaccesscontrolcardservice.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Twic Access Control Card service.
  */
 
-#include "TwicAccessControlCardService.h"
-#include "TwicCardProvider.h"
-#include "TwicChip.h"
-#include "logicalaccess/Cards/ReaderCardAdapter.h"
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
-#include "logicalaccess/Services/AccessControl/Formats/FASCN200BitFormat.h"
+#include "twicaccesscontrolcardservice.hpp"
+#include "twiccardprovider.hpp"
+#include "twicchip.hpp"
+#include "logicalaccess/cards/readercardadapter.hpp"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include "logicalaccess/services/accesscontrol/formats/fascn200bitformat.hpp"
 
 
 #ifdef __linux__

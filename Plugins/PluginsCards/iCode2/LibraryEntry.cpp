@@ -1,7 +1,7 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include "logicalaccess/ReaderProviders/ReaderProvider.h"
-#include "ICode2Chip.h"
+#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include "icode2chip.hpp"
 
 #ifdef _MSC_VER
 #include "logicalaccess/msliblogicalaccess.h"
@@ -21,11 +21,11 @@ extern "C"
 		return (char*)"iCode2";
 	}
 	
-	LIBLOGICALACCESS_API void getiCode2Chip(boost::shared_ptr<LOGICALACCESS::Chip>* chip)
+	LIBLOGICALACCESS_API void getiCode2Chip(boost::shared_ptr<logicalaccess::Chip>* chip)
 	{
 		if (chip != NULL)
 		{
-			*chip = boost::shared_ptr<LOGICALACCESS::ICode2Chip>(new LOGICALACCESS::ICode2Chip());
+			*chip = boost::shared_ptr<logicalaccess::ICode2Chip>(new logicalaccess::ICode2Chip());
 		}
 	}
 

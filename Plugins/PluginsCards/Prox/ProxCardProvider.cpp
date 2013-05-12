@@ -1,26 +1,26 @@
 /**
- * \file ProxCardProvider.cpp
+ * \file proxcardprovider.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Prox card profiles.
  */
 
-#include "ProxCardProvider.h"
+#include "proxcardprovider.hpp"
 
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
-#include "ProxLocation.h"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include "proxlocation.hpp"
 
-#include "logicalaccess/Services/AccessControl/Formats/Wiegand26Format.h"
-#include "logicalaccess/Services/AccessControl/Formats/Wiegand34Format.h"
-#include "logicalaccess/Services/AccessControl/Formats/Wiegand34WithFacilityFormat.h"
-#include "logicalaccess/Services/AccessControl/Formats/Wiegand37Format.h"
-#include "logicalaccess/Services/AccessControl/Formats/Wiegand37WithFacilityFormat.h"
-#include "logicalaccess/Services/AccessControl/Formats/Corporate1000Format.h"
-#include "logicalaccess/Services/AccessControl/Formats/DataClockFormat.h"
-#include "logicalaccess/Services/AccessControl/Formats/Getronik40BitFormat.h"
-#include "logicalaccess/Services/AccessControl/Formats/HIDHoneywellFormat.h"
-#include "logicalaccess/Services/AccessControl/Formats/BariumFerritePCSCFormat.h"
-#include "logicalaccess/Services/AccessControl/Formats/RawFormat.h"
-#include "ProxAccessControlCardService.h"
+#include "logicalaccess/services/accesscontrol/formats/wiegand26format.hpp"
+#include "logicalaccess/services/accesscontrol/formats/wiegand34format.hpp"
+#include "logicalaccess/services/accesscontrol/formats/wiegand34withfacilityformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/wiegand37format.hpp"
+#include "logicalaccess/services/accesscontrol/formats/wiegand37withfacilityformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/corporate1000format.hpp"
+#include "logicalaccess/services/accesscontrol/formats/dataclockformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/getronik40bitformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/hidhoneywellformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/bariumferritepcscformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/rawformat.hpp"
+#include "proxaccesscontrolcardservice.hpp"
 
 namespace logicalaccess
 {

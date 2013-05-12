@@ -1,7 +1,7 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include "logicalaccess/ReaderProviders/ReaderProvider.h"
-#include "StmLri512Chip.h"
+#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include "stmlri512chip.hpp"
 
 #ifdef _MSC_VER
 #include "logicalaccess/msliblogicalaccess.h"
@@ -21,11 +21,11 @@ extern "C"
 		return (char *)"StmLri512";
 	}
 	
-	LIBLOGICALACCESS_API void getStmLri512Chip(boost::shared_ptr<LOGICALACCESS::Chip>* chip)
+	LIBLOGICALACCESS_API void getStmLri512Chip(boost::shared_ptr<logicalaccess::Chip>* chip)
 	{
 		if (chip != NULL)
 		{
-			*chip = boost::shared_ptr<LOGICALACCESS::StmLri512Chip>(new LOGICALACCESS::StmLri512Chip());
+			*chip = boost::shared_ptr<logicalaccess::StmLri512Chip>(new logicalaccess::StmLri512Chip());
 		}
 	}
 

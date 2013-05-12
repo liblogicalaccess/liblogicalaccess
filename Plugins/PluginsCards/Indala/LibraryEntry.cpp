@@ -1,7 +1,7 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include "logicalaccess/ReaderProviders/ReaderProvider.h"
-#include "IndalaChip.h"
+#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include "indalachip.hpp"
 
 #ifdef _MSC_VER
 #include "logicalaccess/msliblogicalaccess.h"
@@ -21,11 +21,11 @@ extern "C"
 		return (char *)"Indala";
 	}
 	
-	LIBLOGICALACCESS_API void getIndalaChip(boost::shared_ptr<LOGICALACCESS::Chip>* chip)
+	LIBLOGICALACCESS_API void getIndalaChip(boost::shared_ptr<logicalaccess::Chip>* chip)
 	{
 		if (chip != NULL)
 		{
-			*chip = boost::shared_ptr<LOGICALACCESS::IndalaChip>(new LOGICALACCESS::IndalaChip());
+			*chip = boost::shared_ptr<logicalaccess::IndalaChip>(new logicalaccess::IndalaChip());
 		}
 	}
 

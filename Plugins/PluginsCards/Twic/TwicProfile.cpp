@@ -1,26 +1,17 @@
 /**
- * \file TwicProfile.cpp
+ * \file twicprofile.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Twic card profiles.
  */
 
-#include "TwicProfile.h"
+#include "twicprofile.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-using std::endl;
-using std::dec;
-using std::hex;
-using std::setfill;
-using std::setw;
-using std::ostringstream;
-using std::istringstream;
-
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
-#include "../ISO7816/ISO7816Location.h"
-#include "logicalaccess/Services/AccessControl/Formats/FASCN200BitFormat.h"
+#include "../iso7816/iso7816location.hpp"
+#include "logicalaccess/services/accesscontrol/formats/fascn200bitformat.hpp"
 
 namespace logicalaccess
 {

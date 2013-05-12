@@ -1,24 +1,14 @@
 /**
- * \file TagItChip.cpp
+ * \file tagitchip.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Tag-It chip.
  */
 
-#include "TagItChip.h"
+#include "tagitchip.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-
-using std::endl;
-using std::dec;
-using std::hex;
-using std::setfill;
-using std::setw;
-using std::ostringstream;
-using std::istringstream;
-
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
 
 namespace logicalaccess
 {

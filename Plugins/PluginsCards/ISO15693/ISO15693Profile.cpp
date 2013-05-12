@@ -1,10 +1,10 @@
 /**
- * \file ISO15693Profile.cpp
+ * \file iso15693profile.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief ISO15693 card profiles.
  */
 
-#include "ISO15693Profile.h"
+#include "iso15693profile.hpp"
 
 namespace logicalaccess
 {	

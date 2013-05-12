@@ -1,12 +1,12 @@
 /**
- * \file MifareCardProvider.cpp
+ * \file mifarecardprovider.cpp
  * \author Julien K. <julien-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
  * \brief Mifare card provider.
  */
 
-#include "MifareCardProvider.h"
-#include "MifareChip.h"
-#include "logicalaccess/Services/AccessControl/AccessControlCardService.h"
+#include "mifarecardprovider.hpp"
+#include "mifarechip.hpp"
+#include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
 
 #define PREFIX_PATTERN 0xE3
 #define POLYNOM_PATTERN 0x1D

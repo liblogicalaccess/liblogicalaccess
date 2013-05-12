@@ -1,12 +1,12 @@
 /**
- * \file ISO15693CardProvider.cpp
+ * \file iso15693cardprovider.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief ISO15693 card profiles.
  */
 
-#include "ISO15693CardProvider.h"
-#include "ISO15693Location.h"
-#include "ISO15693Chip.h"
+#include "iso15693cardprovider.hpp"
+#include "iso15693location.hpp"
+#include "iso15693chip.hpp"
 
 namespace logicalaccess
 {

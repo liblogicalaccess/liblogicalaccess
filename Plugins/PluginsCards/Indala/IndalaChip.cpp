@@ -1,24 +1,14 @@
 /**
- * \file IndalaChip.cpp
+ * \file indalachip.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Indala chip.
  */
 
-#include "IndalaChip.h"
+#include "indalachip.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-
-using std::endl;
-using std::dec;
-using std::hex;
-using std::setfill;
-using std::setw;
-using std::ostringstream;
-using std::istringstream;
-
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
 
 namespace logicalaccess
 {

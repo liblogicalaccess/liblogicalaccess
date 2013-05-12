@@ -1,12 +1,12 @@
 /**
- * \file ProxAccessControlCardService.cpp
+ * \file proxaccesscontrolcardservice.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Prox Access Control Card service.
  */
 
-#include "ProxAccessControlCardService.h"
-#include "ProxCardProvider.h"
-#include "logicalaccess/Cards/ReaderCardAdapter.h"
+#include "proxaccesscontrolcardservice.hpp"
+#include "proxcardprovider.hpp"
+#include "logicalaccess/cards/readercardadapter.hpp"
 
 
 

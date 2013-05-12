@@ -1,10 +1,10 @@
 /**
- * \file MifarePlusCommands.cpp
+ * \file mifarepluscommands.cpp
  * \author Xavier SCHMERBER <xavier.schmerber@gmail.com>
  * \brief Commands for MifarePlus card.
  */
 
-#include "MifarePlusCommands.h"
+#include "mifarepluscommands.hpp"
 
 #include <stdlib.h>
 

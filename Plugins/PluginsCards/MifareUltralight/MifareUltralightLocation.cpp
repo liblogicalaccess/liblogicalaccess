@@ -1,10 +1,10 @@
 /**
- * \file MifareUltralightLocation.cpp
+ * \file mifareultralightlocation.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Location informations for Mifare Ultralight card.
  */
 
-#include "MifareUltralightLocation.h"
+#include "mifareultralightlocation.hpp"
 
 namespace logicalaccess
 {

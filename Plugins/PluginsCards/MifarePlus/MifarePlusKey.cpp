@@ -1,10 +1,10 @@
 /**
- * \file MifarePlusKey.cpp
+ * \file mifarepluskey.cpp
  * \author Xavier SCHMERBER <xavier.schmerber@gmail.com>
  * \brief MifarePlus Key.
  */
 
-#include "MifarePlusKey.h"
+#include "mifarepluskey.hpp"
 
 namespace logicalaccess
 {

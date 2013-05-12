@@ -1,7 +1,7 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include "logicalaccess/ReaderProviders/ReaderProvider.h"
-#include "TwicChip.h"
+#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include "twicchip.hpp"
 
 #ifdef _MSC_VER
 #include "logicalaccess/msliblogicalaccess.h"
@@ -21,19 +21,19 @@ extern "C"
 		return (char *)"Twic";
 	}
 	
-	LIBLOGICALACCESS_API void getTwicChip(boost::shared_ptr<LOGICALACCESS::Chip>* chip)
+	LIBLOGICALACCESS_API void getTwicChip(boost::shared_ptr<logicalaccess::Chip>* chip)
 	{
 		if (chip != NULL)
 		{
-			*chip = boost::shared_ptr<LOGICALACCESS::TwicChip>(new LOGICALACCESS::TwicChip());
+			*chip = boost::shared_ptr<logicalaccess::TwicChip>(new logicalaccess::TwicChip());
 		}
 	}
 
-	LIBLOGICALACCESS_API void getTwicCardProvider(boost::shared_ptr<LOGICALACCESS::CardProvider>* cp)
+	LIBLOGICALACCESS_API void getTwicCardProvider(boost::shared_ptr<logicalaccess::CardProvider>* cp)
 	{
 		if (cp != NULL)
 		{
-			*cp = boost::shared_ptr<LOGICALACCESS::TwicCardProvider>(new LOGICALACCESS::TwicCardProvider());
+			*cp = boost::shared_ptr<logicalaccess::TwicCardProvider>(new logicalaccess::TwicCardProvider());
 		}
 	}
 

@@ -1,10 +1,10 @@
 /**
- * \file DESFireEV1Location.cpp
+ * \file desfireev1location.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Location informations for DESFire EV1 card.
  */
 
-#include "DESFireEV1Location.h"
+#include "desfireev1location.hpp"
 
 namespace logicalaccess
 {

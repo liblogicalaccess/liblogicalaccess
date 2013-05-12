@@ -1,7 +1,7 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include "logicalaccess/ReaderProviders/ReaderProvider.h"
-#include "ISO15693Chip.h"
+#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include "iso15693chip.hpp"
 
 #ifdef _MSC_VER
 #include "logicalaccess/msliblogicalaccess.h"
@@ -21,19 +21,19 @@ extern "C"
 		return (char *)"ISO15693";
 	}
 	
-	LIBLOGICALACCESS_API void getISO15693Chip(boost::shared_ptr<LOGICALACCESS::Chip>* chip)
+	LIBLOGICALACCESS_API void getISO15693Chip(boost::shared_ptr<logicalaccess::Chip>* chip)
 	{
 		if (chip != NULL)
 		{
-			*chip = boost::shared_ptr<LOGICALACCESS::ISO15693Chip>(new LOGICALACCESS::ISO15693Chip());
+			*chip = boost::shared_ptr<logicalaccess::ISO15693Chip>(new logicalaccess::ISO15693Chip());
 		}
 	}
 
-	LIBLOGICALACCESS_API void getISO15693CardProvider(boost::shared_ptr<LOGICALACCESS::CardProvider>* cp)
+	LIBLOGICALACCESS_API void getISO15693CardProvider(boost::shared_ptr<logicalaccess::CardProvider>* cp)
 	{
 		if (cp != NULL)
 		{
-			*cp = boost::shared_ptr<LOGICALACCESS::ISO15693CardProvider>(new LOGICALACCESS::ISO15693CardProvider());
+			*cp = boost::shared_ptr<logicalaccess::ISO15693CardProvider>(new logicalaccess::ISO15693CardProvider());
 		}
 	}
 

@@ -1,20 +1,20 @@
 /**
- * \file ProxProfile.cpp
+ * \file proxprofile.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Prox card profiles.
  */
 
-#include "ProxProfile.h"
+#include "proxprofile.hpp"
 
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
-#include "ProxLocation.h"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include "proxlocation.hpp"
 
-#include "logicalaccess/Services/AccessControl/Formats/Wiegand26Format.h"
-#include "logicalaccess/Services/AccessControl/Formats/Wiegand34Format.h"
-#include "logicalaccess/Services/AccessControl/Formats/Wiegand34WithFacilityFormat.h"
-#include "logicalaccess/Services/AccessControl/Formats/Wiegand37Format.h"
-#include "logicalaccess/Services/AccessControl/Formats/Wiegand37WithFacilityFormat.h"
-#include "logicalaccess/Services/AccessControl/Formats/RawFormat.h"
+#include "logicalaccess/services/accesscontrol/formats/wiegand26format.hpp"
+#include "logicalaccess/services/accesscontrol/formats/wiegand34format.hpp"
+#include "logicalaccess/services/accesscontrol/formats/wiegand34withfacilityformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/wiegand37format.hpp"
+#include "logicalaccess/services/accesscontrol/formats/wiegand37withfacilityformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/rawformat.hpp"
 
 namespace logicalaccess
 {

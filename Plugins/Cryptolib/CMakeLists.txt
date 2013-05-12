@@ -23,6 +23,7 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_D
 
 file(GLOB_RECURSE SRCS src/*.cpp)
 file(GLOB_RECURSE HDRS include/*.h)
+file(GLOB_RECURSE HDPPRS include/*.hpp)
 
 add_library(
 	logicalaccess-cryptolib
@@ -30,4 +31,5 @@ add_library(
 
 	${SRCS}
 	${HDRS}
+        ${HDPPRS}
   )

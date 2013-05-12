@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.6)
 project(DESFireCards)
 
 file(GLOB_RECURSE SRCS *.cpp)
-file(GLOB_RECURSE INCLUDE *.h)
+file(GLOB_RECURSE INCLUDE *.hpp)
 
 add_library(
 	DESFireCards

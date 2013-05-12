@@ -1,12 +1,11 @@
 /**
- * \file MifareProfile.cpp
+ * \file mifareprofile.cpp
  * \author Julien K. <julien-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
  * \brief Mifare card profiles.
  */
 
-#include "MifareProfile.h"
-
-#include "MifareCardProvider.h"
+#include "mifareprofile.hpp"
+#include "mifarecardprovider.hpp"
 
 namespace logicalaccess
 {	

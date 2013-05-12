@@ -1,11 +1,11 @@
 /**
- * \file DESFireAccessInfo.cpp
+ * \file desfireaccessinfo.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Access informations for DESFire card.
  */
 
-#include "DESFireAccessInfo.h"
-#include "DESFireProfile.h"
+#include "desfireaccessinfo.hpp"
+#include "desfireprofile.hpp"
 
 namespace logicalaccess
 {	

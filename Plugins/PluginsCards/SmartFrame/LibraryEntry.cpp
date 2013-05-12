@@ -1,7 +1,7 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include "logicalaccess/ReaderProviders/ReaderProvider.h"
-#include "SmartFrameChip.h"
+#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include "smartframechip.hpp"
 
 #ifdef _MSC_VER
 #include "logicalaccess/msliblogicalaccess.h"
@@ -21,11 +21,11 @@ extern "C"
 		return (char *)"SmartFrame";
 	}
 	
-	LIBLOGICALACCESS_API void getSmartFrameChip(boost::shared_ptr<LOGICALACCESS::Chip>* chip)
+	LIBLOGICALACCESS_API void getSmartFrameChip(boost::shared_ptr<logicalaccess::Chip>* chip)
 	{
 		if (chip != NULL)
 		{
-			*chip = boost::shared_ptr<LOGICALACCESS::SmartFrameChip>(new LOGICALACCESS::SmartFrameChip());
+			*chip = boost::shared_ptr<logicalaccess::SmartFrameChip>(new logicalaccess::SmartFrameChip());
 		}
 	}
 

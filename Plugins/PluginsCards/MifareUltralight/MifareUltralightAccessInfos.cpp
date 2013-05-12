@@ -1,10 +1,10 @@
 /**
- * \file MifareUltralightAccessInfo.cpp
+ * \file mifareultralightaccessinfo.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Access informations for Mifare Ultralight card.
  */
 
-#include "MifareUltralightAccessInfo.h"
+#include "mifareultralightaccessinfo.hpp"
 
 
 namespace logicalaccess

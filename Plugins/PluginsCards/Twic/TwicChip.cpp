@@ -1,25 +1,15 @@
 /**
- * \file TwicChip.cpp
+ * \file twicchip.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Twic chip.
  */
 
-#include "TwicChip.h"
-#include "TwicProfile.h"
+#include "twicchip.hpp"
+#include "twicprofile.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-
-using std::endl;
-using std::dec;
-using std::hex;
-using std::setfill;
-using std::setw;
-using std::ostringstream;
-using std::istringstream;
-
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
 
 namespace logicalaccess
 {

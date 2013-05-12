@@ -1,10 +1,10 @@
 /**
- * \file MifareKey.cpp
+ * \file mifarekey.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Mifare Key.
  */
 
-#include "MifareKey.h"
+#include "mifarekey.hpp"
 
 namespace logicalaccess
 {

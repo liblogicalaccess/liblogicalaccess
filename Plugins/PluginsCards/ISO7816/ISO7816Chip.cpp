@@ -1,23 +1,15 @@
 /**
- * \file ISO7816Chip.cpp
+ * \file iso7816chip.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief ISO7816 chip.
  */
 
-#include "ISO7816Chip.h"
-#include "ISO7816Profile.h"
+#include "iso7816chip.hpp"
+#include "iso7816profile.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-
-using std::endl;
-using std::dec;
-using std::hex;
-using std::setfill;
-using std::setw;
-using std::ostringstream;
-using std::istringstream;
 
 
 namespace logicalaccess

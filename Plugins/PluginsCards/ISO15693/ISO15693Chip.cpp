@@ -1,25 +1,17 @@
 /**
- * \file ISO15693Chip.cpp
+ * \file iso15693chip.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief ISO15693 chip.
  */
 
-#include "ISO15693Chip.h"
-#include "ISO15693Profile.h"
+#include "iso15693chip.hpp"
+#include "iso15693profile.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-using std::endl;
-using std::dec;
-using std::hex;
-using std::setfill;
-using std::setw;
-using std::ostringstream;
-using std::istringstream;
-
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 
 
 namespace logicalaccess

@@ -1,24 +1,14 @@
 /**
- * \file LegicPrimeChip.cpp
+ * \file legicprimechip.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Legic Prime chip.
  */
 
-#include "LegicPrimeChip.h"
+#include "legicprimechip.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-
-using std::endl;
-using std::dec;
-using std::hex;
-using std::setfill;
-using std::setw;
-using std::ostringstream;
-using std::istringstream;
-
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
 
 namespace logicalaccess
 {

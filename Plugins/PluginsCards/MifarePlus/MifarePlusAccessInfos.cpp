@@ -4,7 +4,7 @@
  * \brief Access informations for mifarePlus card.
  */
 
-#include "MifarePlusAccessInfo.h"
+#include "mifareplusaccessinfo.hpp"
 
 namespace logicalaccess
 {
