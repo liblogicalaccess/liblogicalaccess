@@ -104,7 +104,7 @@
 						<phase>compile</phase>
 						<configuration>
 							<executable>cmake</executable>
-							<workingDirectory>./Plugins/PluginsCards/</workingDirectory>
+							<workingDirectory>./plugins/pluginscards/</workingDirectory>
 							<arguments>
 								<argument>-DCMAKE_BUILD_TYPE=Release</argument>
 								<argument>-DTARGET_ARCH=Win32</argument>
@@ -122,7 +122,7 @@
 						<phase>compile</phase>
 						<configuration>
 							<executable>cmake</executable>
-							<workingDirectory>./Plugins/PluginsReaderProviders/</workingDirectory>
+							<workingDirectory>./plugins/pluginsreaderproviders/</workingDirectory>
 							<arguments>
 								<argument>-DCMAKE_BUILD_TYPE=Release</argument>
 								<argument>-DTARGET_ARCH=Win32</argument>
@@ -154,7 +154,7 @@
 						<id>clean-cards-sln</id>
 						<phase>clean</phase>
 						<configuration>
-							<workingDirectory>./Plugins/PluginsCards/</workingDirectory>
+							<workingDirectory>./plugins/pluginscards/</workingDirectory>
 							<successCodes>
 								<successCode>1</successCode>
 								<successCode>0</successCode>
@@ -173,7 +173,7 @@
 						<id>clean-readers-sln</id>
 						<phase>clean</phase>
 						<configuration>
-							<workingDirectory>./Plugins/PluginsReaderProviders/</workingDirectory>
+							<workingDirectory>./plugins/pluginsreaderproviders/</workingDirectory>
 							<successCodes>
 								<successCode>1</successCode>
 								<successCode>0</successCode>
@@ -192,7 +192,7 @@
 						<id>build-cards-Win32</id>
 						<phase>compile</phase>
 						<configuration>
-							<workingDirectory>./Plugins/PluginsCards/</workingDirectory>
+							<workingDirectory>./plugins/pluginscards/</workingDirectory>
 							<arguments>
 								<argument>pluginscards-liblogicalaccess.sln</argument>
 								<argument>/p:Configuration=Release</argument>
@@ -208,7 +208,7 @@
 						<id>build-readers-Win32</id>
 						<phase>compile</phase>
 						<configuration>
-							<workingDirectory>./Plugins/PluginsReaderProviders/</workingDirectory>
+							<workingDirectory>./plugins/pluginsreaderproviders/</workingDirectory>
 							<arguments>
 								<argument>pluginsreaders-liblogicalaccess.sln</argument>
 								<argument>/p:Configuration=Release</argument>
@@ -224,7 +224,7 @@
 						<id>build-kbdhook-Win32</id>
 						<phase>compile</phase>
 						<configuration>
-							<workingDirectory>./Plugins/PluginsReaderProviders/Keyboard</workingDirectory>
+							<workingDirectory>./plugins/pluginsreaderproviders/keyboard</workingDirectory>
 							<arguments>
 								<argument>islogkbdhook.sln</argument>
 								<argument>/p:Configuration=Release</argument>
@@ -268,7 +268,7 @@
 						<phase>compile</phase>
 						<configuration>
 							<executable>cmake</executable>
-							<workingDirectory>./Plugins/PluginsCards/</workingDirectory>
+							<workingDirectory>./plugins/pluginscards/</workingDirectory>
 							<arguments>
 								<argument>-DCMAKE_BUILD_TYPE=Release</argument>
 								<argument>-DTARGET_ARCH=x64</argument>
@@ -286,7 +286,7 @@
 						<phase>compile</phase>
 						<configuration>
 							<executable>cmake</executable>
-							<workingDirectory>./Plugins/PluginsReaderProviders/</workingDirectory>
+							<workingDirectory>./plugins/pluginsreaderproviders/</workingDirectory>
 							<arguments>
 								<argument>-DCMAKE_BUILD_TYPE=Release</argument>
 								<argument>-DTARGET_ARCH=x64</argument>
@@ -318,7 +318,7 @@
 						<id>build-cards-x64</id>
 						<phase>compile</phase>
 						<configuration>
-							<workingDirectory>./Plugins/PluginsCards/</workingDirectory>
+							<workingDirectory>./plugins/pluginscards/</workingDirectory>
 							<arguments>
 								<argument>pluginscards-liblogicalaccess.sln</argument>
 								<argument>/p:Configuration=Release</argument>
@@ -334,7 +334,7 @@
 						<id>build-readers-x64</id>
 						<phase>compile</phase>
 						<configuration>
-							<workingDirectory>./Plugins/PluginsReaderProviders/</workingDirectory>
+							<workingDirectory>./plugins/pluginsreaderproviders/</workingDirectory>
 							<arguments>
 								<argument>pluginsreaders-liblogicalaccess.sln</argument>
 								<argument>/p:Configuration=Release</argument>
@@ -350,7 +350,7 @@
 						<id>build-kbdhook-x64</id>
 						<phase>compile</phase>
 						<configuration>
-							<workingDirectory>./Plugins/PluginsReaderProviders/Keyboard</workingDirectory>
+							<workingDirectory>./plugins/pluginsreaderproviders/keyboard</workingDirectory>
 							<arguments>
 								<argument>islogkbdhook.sln</argument>
 								<argument>/p:Configuration=Release</argument>
@@ -447,28 +447,28 @@
 						<configuration>
 							<tasks>
 								<copy todir="${project.basedir}/bin/Win32/Release" flatten="true">
-									<fileset dir="${project.basedir}/Plugins/PluginsCards">
+									<fileset dir="${project.basedir}/plugins/pluginscards">
 										<include name="**/bin/Win32/Release/*.lib"/>
 										<include name="**/bin/Win32/Release/*.dll"/>
 										<include name="**/bin/Win32/Release/*.exe"/>
 									</fileset>
 								</copy>
 								<copy todir="${project.basedir}/bin/Win32/Release" flatten="true">
-									<fileset dir="${project.basedir}/Plugins/PluginsReaderProviders">
+									<fileset dir="${project.basedir}/plugins/pluginsreaderproviders">
 										<include name="**/bin/Win32/Release/*.lib"/>
 										<include name="**/bin/Win32/Release/*.dll"/>
 										<include name="**/bin/Win32/Release/*.exe"/>
 									</fileset>
 								</copy>
 								<copy todir="${project.basedir}/bin/x64/Release" flatten="true">
-									<fileset dir="${project.basedir}/Plugins/PluginsCards">
+									<fileset dir="${project.basedir}/plugins/pluginscards">
 										<include name="**/bin/x64/Release/*.lib"/>
 										<include name="**/bin/x64/Release/*.dll"/>
 										<include name="**/bin/x64/Release/*.exe"/>
 									</fileset>
 								</copy>
 								<copy todir="${project.basedir}/bin/x64/Release" flatten="true">
-									<fileset dir="${project.basedir}/Plugins/PluginsReaderProviders">
+									<fileset dir="${project.basedir}/plugins/pluginsreaderproviders">
 										<include name="**/bin/x64/Release/*.lib"/>
 										<include name="**/bin/x64/Release/*.dll"/>
 										<include name="**/bin/x64/Release/*.exe"/>
