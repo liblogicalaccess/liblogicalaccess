@@ -174,28 +174,28 @@ namespace logicalaccess
 		{
 			if (dataLengthBytes*8 < getDataLength())
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Data length too small.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Data length too small.");
 			}
 
 			size_t pos = 1;
 			unsigned char parity = getLeftParity2(data, dataLengthBytes);
 			if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != parity)
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Left parity 2 format error.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Left parity 2 format error.");
 			}
 
 			pos = 34;
 			parity = getRightParity(data, dataLengthBytes);
 			if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != parity)
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Right parity format error.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Right parity format error.");
 			}
 
 			pos = 0;
 			parity = getLeftParity1(data, dataLengthBytes);
 			if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != parity)
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Left parity 1 format error.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Left parity 1 format error.");
 			}
 		}
 	}

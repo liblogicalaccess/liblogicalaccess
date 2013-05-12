@@ -113,7 +113,7 @@ namespace logicalaccess
 				THROW_EXCEPTION_WITH_LOG(CardException, "No response received");
 			}
 
-			EXCEPTION_ASSERT_WITH_LOG(sta == RET_OK, LibLOGICALACCESSException, "Negative reponse");
+			EXCEPTION_ASSERT_WITH_LOG(sta == RET_OK, LibLogicalAccessException, "Negative reponse");
 			d_lastResult = r;
 		}
 

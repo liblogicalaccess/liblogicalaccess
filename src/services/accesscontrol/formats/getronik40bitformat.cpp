@@ -137,7 +137,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasWriteFormatAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -166,7 +166,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasReadFormatAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -176,7 +176,7 @@ namespace logicalaccess
 		{
 			if (dataLengthBytes*8 < getDataLength())
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Data length too small.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Data length too small.");
 			}
 
 			BitHelper::extract(&fixedValue, 1, data, dataLengthBytes, static_cast<unsigned int>(dataLengthBytes * 8), pos, 8);
@@ -184,7 +184,7 @@ namespace logicalaccess
 			{
 				char exceptionmsg[256];
 				sprintf(exceptionmsg, "Getronik 40-Bit: fixed left value doesn't match (%x != %x).", fixedValue, 0x2E);
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, exceptionmsg);
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, exceptionmsg);
 			}
 			pos = 39;
 			fixedValue = 0x00;
@@ -194,7 +194,7 @@ namespace logicalaccess
 			{
 				char exceptionmsg[256];
 				sprintf(exceptionmsg, "Getronik 40-Bit: fixed right value doesn't match (%x != %x).", fixedValue, 0x01);
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, exceptionmsg);
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, exceptionmsg);
 			}
 		}
 		pos = 8;
@@ -206,7 +206,7 @@ namespace logicalaccess
 			unsigned char parity = getRightParity(data, dataLengthBytes);
 			if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != parity)
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Right parity format error.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Right parity format error.");
 			}
 		}
 	}

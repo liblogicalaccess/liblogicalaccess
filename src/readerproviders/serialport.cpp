@@ -55,7 +55,7 @@ namespace logicalaccess
 		DWORD dwError = GetLastError();
 		if (dwError == ERROR_FILE_NOT_FOUND)
 		{
-			throw EXCEPTION(LibLOGICALACCESSException, "Can't find the serial port.");
+			throw EXCEPTION(LibLogicalAccessException, "Can't find the serial port.");
 		}
 #endif
 	}
@@ -106,7 +106,7 @@ namespace logicalaccess
 
 		if (!GetCommState(d_file, &options))
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Cannot get the communication state.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot get the communication state.");
 		}
 
 		return options;
@@ -116,14 +116,14 @@ namespace logicalaccess
 	{
 		if (!SetCommState(d_file, &options))
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Cannot set the communication state.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot set the communication state.");
 		}
 	}
 #endif
 
 	size_t SerialPort::read(std::vector<unsigned char>& buf, size_t cnt) const
 	{
-		EXCEPTION_ASSERT(isOpen(), LibLOGICALACCESSException, "Cannot read on a closed device");
+		EXCEPTION_ASSERT(isOpen(), LibLogicalAccessException, "Cannot read on a closed device");
 
 		if (cnt == 0)
 		{
@@ -139,7 +139,7 @@ namespace logicalaccess
 		{
 			if (errno != EAGAIN)
 			{
-				throw EXCEPTION(LibLOGICALACCESSException, "Cannot read data.");
+				throw EXCEPTION(LibLogicalAccessException, "Cannot read data.");
 			}
 			else
 			{
@@ -160,7 +160,7 @@ namespace logicalaccess
 		timeouts.WriteTotalTimeoutMultiplier = 0;
 		timeouts.WriteTotalTimeoutConstant = 0;
 
-		EXCEPTION_ASSERT(SetCommTimeouts(d_file, &timeouts), LibLOGICALACCESSException, "Cannot set serial port timeout");
+		EXCEPTION_ASSERT(SetCommTimeouts(d_file, &timeouts), LibLogicalAccessException, "Cannot set serial port timeout");
 
 		DWORD r = 0;
 		BOOL result = ReadFile(d_file, buf.data(), static_cast<int>(buf.size()), &r, NULL);
@@ -168,7 +168,7 @@ namespace logicalaccess
 		if (result == FALSE)
 		{
 			// DWORD er = GetLastError();
-			throw EXCEPTION(LibLOGICALACCESSException, "Cannot read data.");
+			throw EXCEPTION(LibLogicalAccessException, "Cannot read data.");
 			//EXCEPTION_THROW_LAST_SYSTEM_ERROR();
 		}
 
@@ -193,14 +193,14 @@ namespace logicalaccess
 
 	size_t SerialPort::write(const std::vector<unsigned char>& buf) const
 	{
-		EXCEPTION_ASSERT(isOpen(), LibLOGICALACCESSException, "Cannot write on a closed device");
+		EXCEPTION_ASSERT(isOpen(), LibLogicalAccessException, "Cannot write on a closed device");
 
 #ifdef UNIX
 		ssize_t r = ::write(d_file, &buf[0], buf.size());
 
 		if (r < 0)
 		{
-			throw EXCEPTION(LibLOGICALACCESSException, "Cannot write data.");
+			throw EXCEPTION(LibLogicalAccessException, "Cannot write data.");
 		}
 
 		return r;
@@ -218,7 +218,7 @@ namespace logicalaccess
 
 		if (result != TRUE)
 		{
-			throw EXCEPTION(LibLOGICALACCESSException, "Cannot write data.");
+			throw EXCEPTION(LibLogicalAccessException, "Cannot write data.");
 		}
 
 		return r;
@@ -227,7 +227,7 @@ namespace logicalaccess
 
 	bool SerialPort::select(boost::posix_time::time_duration timeout)
 	{
-		EXCEPTION_ASSERT(isOpen(), LibLOGICALACCESSException, "Cannot select on a closed device");
+		EXCEPTION_ASSERT(isOpen(), LibLogicalAccessException, "Cannot select on a closed device");
 
 		bool ret = false;
 
@@ -255,7 +255,7 @@ namespace logicalaccess
 
 		if (retval < 0)
 		{
-			throw EXCEPTION(LibLOGICALACCESSException, "Cannot select the device.");
+			throw EXCEPTION(LibLogicalAccessException, "Cannot select the device.");
 		}
 #else
 
@@ -282,7 +282,7 @@ namespace logicalaccess
 					BOOL result = ReadFile(d_file, &d_readBuf[0], static_cast<DWORD>(d_readBuf.size()), &r, NULL);
 					if (result == FALSE)
 					{
-						throw EXCEPTION(LibLOGICALACCESSException, "Cannot select the device.");
+						throw EXCEPTION(LibLogicalAccessException, "Cannot select the device.");
 					}
 					if (r < 1)
 					{

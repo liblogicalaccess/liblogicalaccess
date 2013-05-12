@@ -40,14 +40,14 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasReadFormatAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 		
 		boost::shared_ptr<Format> formatret;
 		if (format)
 		{
-			formatret = LOGICALACCESS::Format::getByFormatType(format->getType());
+			formatret = Format::getByFormatType(format->getType());
 			formatret->unSerialize(format->serialize(), "");
 		}
 		else

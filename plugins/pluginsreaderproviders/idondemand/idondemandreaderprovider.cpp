@@ -4,7 +4,7 @@
  * \brief IdOnDemand reader provider.
  */
 
-#include "idondemandreaderprovider.hpp
+#include "idondemandreaderprovider.hpp"
 
 #ifdef LINUX
 #include <stdlib.h>
@@ -58,7 +58,7 @@ namespace logicalaccess
 		d_readers.clear();		
 
 		std::vector<boost::shared_ptr<SerialPortXml> > ports;
-		EXCEPTION_ASSERT_WITH_LOG(SerialPortXml::EnumerateUsingCreateFile(ports), LibLOGICALACCESSException, "Can't enumerate the serial port list.");
+		EXCEPTION_ASSERT_WITH_LOG(SerialPortXml::EnumerateUsingCreateFile(ports), LibLogicalAccessException, "Can't enumerate the serial port list.");
 
 		for (std::vector<boost::shared_ptr<SerialPortXml> >::iterator i = ports.begin(); i != ports.end(); ++i)
 		{

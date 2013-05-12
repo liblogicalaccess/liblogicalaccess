@@ -7,8 +7,8 @@
 #ifndef LOGICALACCESS_DESFIREEV1ISO7816COMMANDS_HPP
 #define LOGICALACCESS_DESFIREEV1ISO7816COMMANDS_HPP
 
-#include "desfireiso7816commands.h"
-#include "desfireev1commands.h"
+#include "desfireiso7816commands.hpp"
+#include "desfireev1commands.hpp"
 
 #include <string>
 #include <vector>

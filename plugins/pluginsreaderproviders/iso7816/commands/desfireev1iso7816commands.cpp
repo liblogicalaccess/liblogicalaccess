@@ -408,10 +408,10 @@ namespace logicalaccess
 		std::vector<unsigned char> RPCD1;
 		RPCD1.resize(le);
 		RAND_seed(&keyno, sizeof(keyno));
-		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLOGICALACCESSException, "Insufficient enthropy source");
+		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
 		if (RAND_bytes(&RPCD1[0], static_cast<int>(RPCD1.size())) != 1)
 		{
-			throw LibLOGICALACCESSException("Cannot retrieve cryptographically strong bytes");
+			throw LibLogicalAccessException("Cannot retrieve cryptographically strong bytes");
 		}
 		std::vector<unsigned char> makecrypt1;
 		makecrypt1.insert(makecrypt1.end(), RPCD1.begin(), RPCD1.end());
@@ -431,10 +431,10 @@ namespace logicalaccess
 		std::vector<unsigned char> RPCD2;
 		RPCD2.resize(le);
 		RAND_seed(&keyno, sizeof(keyno));
-		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLOGICALACCESSException, "Insufficient enthropy source");
+		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
 		if (RAND_bytes(&RPCD2[0], static_cast<int>(RPCD2.size())) != 1)
 		{
-			throw LibLOGICALACCESSException("Cannot retrieve cryptographically strong bytes");
+			throw LibLogicalAccessException("Cannot retrieve cryptographically strong bytes");
 		}
 		cryptogram = iso_internalAuthenticate(algorithm, isMasterCardKey, keyno, RPCD2, 2*le);
 		std::vector<unsigned char> response;
@@ -443,7 +443,7 @@ namespace logicalaccess
 		std::vector<unsigned char> RPICC2 = std::vector<unsigned char>(response.begin(), response.begin() + le);
 		std::vector<unsigned char> RPCD2a = std::vector<unsigned char>(response.begin() + le, response.end());
 
-		EXCEPTION_ASSERT_WITH_LOG(RPCD2 == RPCD2a, LibLOGICALACCESSException, "Integrity error : host part of mutual authentication");
+		EXCEPTION_ASSERT_WITH_LOG(RPCD2 == RPCD2a, LibLogicalAccessException, "Integrity error : host part of mutual authentication");
 
 		d_crypto.d_currentKeyNo = keyno;
 
@@ -524,7 +524,7 @@ namespace logicalaccess
 		std::vector<unsigned char> encRndB = DESFireISO7816Commands::transmit(DFEV1_INS_AUTHENTICATE_ISO, data);
 		unsigned char err = encRndB.back();
 		encRndB.resize(encRndB.size() - 2);
-		EXCEPTION_ASSERT_WITH_LOG(err == DF_INS_ADDITIONAL_FRAME, LibLOGICALACCESSException, "No additional frame for ISO authentication.");
+		EXCEPTION_ASSERT_WITH_LOG(err == DF_INS_ADDITIONAL_FRAME, LibLogicalAccessException, "No additional frame for ISO authentication.");
 
 		std::vector<unsigned char> response = d_crypto.iso_authenticate_PICC1(keyno, diversify, encRndB, random_len);
 		std::vector<unsigned char> encRndA1 = DESFireISO7816Commands::transmit(DF_INS_ADDITIONAL_FRAME, response);
@@ -547,7 +547,7 @@ namespace logicalaccess
 		std::vector<unsigned char> encRndB = DESFireISO7816Commands::transmit(DFEV1_INS_AUTHENTICATE_AES, data);
 		unsigned char err = encRndB.back();
 		encRndB.resize(encRndB.size() - 2);
-		EXCEPTION_ASSERT_WITH_LOG(err == DF_INS_ADDITIONAL_FRAME, LibLOGICALACCESSException, "No additional frame for ISO authentication.");
+		EXCEPTION_ASSERT_WITH_LOG(err == DF_INS_ADDITIONAL_FRAME, LibLogicalAccessException, "No additional frame for ISO authentication.");
 
 		std::vector<unsigned char> response = d_crypto.aes_authenticate_PICC1(keyno, diversify, encRndB);
 		std::vector<unsigned char> encRndA1 = DESFireISO7816Commands::transmit(DF_INS_ADDITIONAL_FRAME, response);
@@ -600,7 +600,7 @@ namespace logicalaccess
 				{
 					if (!d_crypto.verifyMAC(true, ret))
 					{
-						THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "MAC data doesn't match.");
+						THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC data doesn't match.");
 					}
 					ret.resize(ret.size() - d_crypto.d_mac_size);
 				}
@@ -611,7 +611,7 @@ namespace logicalaccess
 			{
 				if (!d_crypto.verifyMAC(true, ret))
 				{
-					THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "MAC data doesn't match.");
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC data doesn't match.");
 				}
 				ret.resize(ret.size() - d_crypto.d_mac_size);
 			}
@@ -971,7 +971,7 @@ namespace logicalaccess
 			if (dd.size() > 0 && keyno != 0)
 			{
 				std::vector<unsigned char> CMAC = d_crypto.desfire_cmac(std::vector<unsigned char>(&err, &err + 1));
-				EXCEPTION_ASSERT_WITH_LOG(dd == CMAC, LibLOGICALACCESSException, "Wrong CMAC.")
+				EXCEPTION_ASSERT_WITH_LOG(dd == CMAC, LibLogicalAccessException, "Wrong CMAC.")
 			}
 		}
 
@@ -1122,7 +1122,7 @@ namespace logicalaccess
 	{
 		if (defaultKey->getLength() < 24)
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The default key length must be 24-byte long.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The default key length must be 24-byte long.");
 		}
 
 		unsigned char command[25];
@@ -1169,7 +1169,7 @@ namespace logicalaccess
 
 			CMAC = d_crypto.desfire_cmac(response);
 
-			EXCEPTION_ASSERT_WITH_LOG(std::vector<unsigned char>(r.end() - 10, r.end() - 2) == CMAC, LibLOGICALACCESSException, "Wrong CMAC.");
+			EXCEPTION_ASSERT_WITH_LOG(std::vector<unsigned char>(r.end() - 10, r.end() - 2) == CMAC, LibLogicalAccessException, "Wrong CMAC.");
 		}
 		
 		return r;

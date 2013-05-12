@@ -76,7 +76,7 @@ namespace logicalaccess
 			}
 		}
 		else
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The command is not recognized by the MACing process");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The command is not recognized by the MACing process");
 		//fonction conforme aux specifications NIST 800-38B
 		std::vector<unsigned char> iv;
 		iv.resize(MIFARE_PLUS_BLOCK_SIZE, 0x00);
@@ -140,7 +140,7 @@ namespace logicalaccess
 			data.insert(data.end(), d_ti.begin(), d_ti.end());
 		}
 		else
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The command is not recognized by the MACing process");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The command is not recognized by the MACing process");
 		//fonction conforme aux specifications NIST 800-38B
 		std::vector<unsigned char> iv;
 		iv.resize(MIFARE_PLUS_BLOCK_SIZE, 0x00);

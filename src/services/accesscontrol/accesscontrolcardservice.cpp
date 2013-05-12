@@ -33,7 +33,7 @@ namespace logicalaccess
 		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location parameter can't be null.");
 
 		// By default duplicate the format. Other kind of implementation should override this current method.
-		boost::shared_ptr<Format> formatret = LOGICALACCESS::Format::getByFormatType(format->getType());
+		boost::shared_ptr<Format> formatret = Format::getByFormatType(format->getType());
 		formatret->unSerialize(format->serialize(), "");
 
 		size_t length = (formatret->getDataLength() + 7) / 8;

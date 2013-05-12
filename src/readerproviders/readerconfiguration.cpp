@@ -51,7 +51,7 @@ namespace logicalaccess
 
 		d_readerProvider = ReaderProvider::getReaderProviderFromRPType(rpType);
 
-		EXCEPTION_ASSERT_WITH_LOG(d_readerProvider, LibLOGICALACCESSException, "Unknown reader provider type.");
+		EXCEPTION_ASSERT_WITH_LOG(d_readerProvider, LibLogicalAccessException, "Unknown reader provider type.");
 
 		d_ReaderUnit = d_readerProvider->createReaderUnit();
 		if (!d_ReaderUnit->unSerialize(node, ""))

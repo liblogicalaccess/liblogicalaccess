@@ -60,7 +60,7 @@ namespace logicalaccess
 			 * \brief Generate pseudo-random Mifare access informations for a given card serial number.
 			 * \param csn The card serial number.
 			 */
-			virtual void generateInfos(const string& csn);
+			virtual void generateInfos(const std::string& csn);
 
 			/**
 			 * \brief Export DESFire location informations to a buffer.
@@ -84,7 +84,7 @@ namespace logicalaccess
 			 * \brief Get the card type for this access infos.
 			 * \return The card type.
 			 */
-			virtual std::string getCardType() { return "MifarePlus4K"; }
+			virtual std::string getCardType() const;
 
 			/**
 			 * \brief Serialize the current object to XML.

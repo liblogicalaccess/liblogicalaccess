@@ -38,7 +38,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasReadFormatAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -46,7 +46,7 @@ namespace logicalaccess
 		if (format)
 		{
 			boost::shared_ptr<ProxLocation> pLocation;
-			formatret = LOGICALACCESS::Format::getByFormatType(format->getType());
+			formatret = Format::getByFormatType(format->getType());
 			formatret->unSerialize(format->serialize(), "");
 			unsigned int dataLengthBits = formatret->getDataLength();
 			unsigned int atrLengthBits = getProxCardProvider()->readData(pLocation, NULL, 0, dataLengthBits);			

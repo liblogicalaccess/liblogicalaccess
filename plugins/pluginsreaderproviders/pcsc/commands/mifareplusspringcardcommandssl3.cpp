@@ -76,7 +76,7 @@ namespace logicalaccess
 
 		ret = AESSendCommand(data, true, 1000);
 		if (ret.size() != 3)
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Authentication reset failed\n");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Authentication reset failed\n");
 	}
 
 	size_t MifarePlusSpringCardCommandsSL3::readBinary(short blockno, char len, bool encrypted, bool macOnCommand, bool macOnResponse, void* buf, size_t buflen)
@@ -107,7 +107,7 @@ namespace logicalaccess
 		if (encrypted && GetCrypto()->d_Kenc.size() > 0)
 			res = GetCrypto()->AESUncipher(res, GetCrypto()->d_Kenc, true);
 		else if (encrypted)
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Session encryption key is null, you must set it first. Maybe the authentication failed\n");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Session encryption key is null, you must set it first. Maybe the authentication failed\n");
 
 		if (res.size() < buflen)
 			buflen = res.size();
@@ -134,7 +134,7 @@ namespace logicalaccess
 		if (encrypted && GetCrypto()->d_Kenc.size() > 0)
 			data = GetCrypto()->AESCipher(data, GetCrypto()->d_Kenc, true);
 		else if (encrypted)
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Session encryption key is null, you must set it first. Maybe the authentication failed\n");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Session encryption key is null, you must set it first. Maybe the authentication failed\n");
 		command.insert(command.end(), data.begin(), data.end());
 
 		std::vector<unsigned char> mac = getMAC(command);
@@ -213,7 +213,7 @@ namespace logicalaccess
 		}
 
 		if (mac != GetCrypto()->GetMacOnResponse(res, command))
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "MAC on card response does not correspond to the command. This may result of a security problem\n");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC on card response does not correspond to the command. This may result of a security problem\n");
 
 		res.resize(res.size() - 8);
 		return (res);
@@ -243,7 +243,7 @@ namespace logicalaccess
 		if (GetCrypto()->d_Kenc.size() > 0)
 			data = GetCrypto()->AESCipher(data, GetCrypto()->d_Kenc, true);
 		else
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Session encryption key is null, you must set it first. Maybe the authentication failed\n");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Session encryption key is null, you must set it first. Maybe the authentication failed\n");
 		command.insert(command.end(), data.begin(), data.end());
 		//add MAC
 		std::vector<unsigned char> mac = getMAC(command);
@@ -286,7 +286,7 @@ namespace logicalaccess
 		if (GetCrypto()->d_Kenc.size() > 0)
 			data = GetCrypto()->AESCipher(data, GetCrypto()->d_Kenc, true);
 		else
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Session encryption key is null, you must set it first. Maybe the authentication failed\n");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Session encryption key is null, you must set it first. Maybe the authentication failed\n");
 		command.insert(command.end(), data.begin(), data.end());
 		//add MAC
 		std::vector<unsigned char> mac = getMAC(command);
@@ -359,7 +359,7 @@ namespace logicalaccess
 		if (GetCrypto()->d_Kenc.size() > 0)
 			data = GetCrypto()->AESCipher(data, GetCrypto()->d_Kenc, true);
 		else
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Session encryption key is null, you must set it first. Maybe the authentication failed\n");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Session encryption key is null, you must set it first. Maybe the authentication failed\n");
 		command.insert(command.end(), data.begin(), data.end());
 		//add MAC
 		std::vector<unsigned char> mac = getMAC(command);
@@ -404,7 +404,7 @@ namespace logicalaccess
 		if (GetCrypto()->d_Kenc.size() > 0)
 			data = GetCrypto()->AESCipher(data, GetCrypto()->d_Kenc, true);
 		else
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Session encryption key is null, you must set it first. Maybe the authentication failed\n");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Session encryption key is null, you must set it first. Maybe the authentication failed\n");
 		command.insert(command.end(), data.begin(), data.end());
 		//add MAC
 		std::vector<unsigned char> mac = getMAC(command);

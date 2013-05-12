@@ -54,7 +54,7 @@ namespace logicalaccess
 		}
 		else
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The Key Block Number must be wrong or bad formatted, card didn't respond correctly");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The Key Block Number must be wrong or bad formatted, card didn't respond correctly");
 		}
 
 		// authentication command containing RndA and RndB with AES encryption
@@ -98,7 +98,7 @@ namespace logicalaccess
 				}
 			}
 		}
-		THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Authentication failed, verify the AES key");
+		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Authentication failed, verify the AES key");
 
 		return false;
 	}

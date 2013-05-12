@@ -593,7 +593,7 @@ namespace logicalaccess
 				{
 					d_insertedChip->setChipIdentifier(getCardSerialNumber());
 				}
-				catch (LibLOGICALACCESSException& e)
+				catch (LibLogicalAccessException& e)
 				{
 					ERROR_("Exception while getting card serial number {%s}", e.what());
 					d_insertedChip->setChipIdentifier(std::vector<unsigned char>());
@@ -918,7 +918,7 @@ namespace logicalaccess
 
 	std::string PCSCReaderUnit::getGenericCardTypeFromATR(const unsigned char* atr, size_t atrlen)
 	{
-		EXCEPTION_ASSERT_WITH_LOG(atrlen >= 2, LibLOGICALACCESSException, "The ATR length must be at least 2 bytes long (TS + T0).");
+		EXCEPTION_ASSERT_WITH_LOG(atrlen >= 2, LibLogicalAccessException, "The ATR length must be at least 2 bytes long (TS + T0).");
 
 		std::vector<unsigned char> sb(atr, atr + atrlen);
 		INFO_("Getting generic card type for ATR %s Len {%d}...", BufferHelper::getHex(sb).c_str(), atrlen);
@@ -941,7 +941,7 @@ namespace logicalaccess
 				bool hasTA1 = ((T0 & 0x10) == 0x10);
 				if (hasTA1)
 				{
-					EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLOGICALACCESSException, "Bad buffer. Too short to retrieve TA1.");
+					EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLogicalAccessException, "Bad buffer. Too short to retrieve TA1.");
 					/*unsigned char TA1 = atr[y++]; */
 					y++;
 					// Analyze TA1 here
@@ -949,7 +949,7 @@ namespace logicalaccess
 				bool hasTB1 = ((T0 & 0x20) == 0x20);
 				if (hasTB1)
 				{
-					EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLOGICALACCESSException, "Bad buffer. Too short to retrieve TB1.");
+					EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLogicalAccessException, "Bad buffer. Too short to retrieve TB1.");
 					/*unsigned char TB1 = atr[y++];*/
 					y++;
 					// Analyze TB1 here
@@ -957,7 +957,7 @@ namespace logicalaccess
 				bool hasTC1 = ((T0 & 0x40) == 0x40);
 				if (hasTC1)
 				{
-					EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLOGICALACCESSException, "Bad buffer. Too short to retrieve TC1.");
+					EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLogicalAccessException, "Bad buffer. Too short to retrieve TC1.");
 					/*unsigned char TC1 = atr[y++]; */
 					y++;
 					// Analyze TC1 here
@@ -966,13 +966,13 @@ namespace logicalaccess
 
 				if (hasTD1)
 				{
-					EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLOGICALACCESSException, "Bad buffer. Too short to retrieve TD1.");
+					EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLogicalAccessException, "Bad buffer. Too short to retrieve TD1.");
 					unsigned char TD1 = atr[y++];
 					//isTEqual0Supported = (TD1 & 0x0f) == 0;
 					bool hasTA2 = ((TD1 & 0x10) == 0x10);
 					if (hasTA2)
 					{
-						EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLOGICALACCESSException, "Bad buffer. Too short to retrieve TA2.");
+						EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLogicalAccessException, "Bad buffer. Too short to retrieve TA2.");
 						/*unsigned char TA2 = atr[y++]; */
 						y++;
 						// Analyze TA2 here
@@ -980,7 +980,7 @@ namespace logicalaccess
 					bool hasTB2 = ((TD1 & 0x20) == 0x20);
 					if (hasTB2)
 					{
-						EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLOGICALACCESSException, "Bad buffer. Too short to retrieve TB2.");
+						EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLogicalAccessException, "Bad buffer. Too short to retrieve TB2.");
 						/*unsigned char TB2 = atr[y++]; */
 						y++;
 						// Analyze TB2 here
@@ -988,7 +988,7 @@ namespace logicalaccess
 					bool hasTC2 = ((TD1 & 0x40) == 0x40);
 					if (hasTC2)
 					{
-						EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLOGICALACCESSException, "Bad buffer. Too short to retrieve TC2.");
+						EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLogicalAccessException, "Bad buffer. Too short to retrieve TC2.");
 						/*unsigned char TC2 = atr[y++];*/
 						y++;
 						// Analyze TC2 here
@@ -997,13 +997,13 @@ namespace logicalaccess
 
 					if (hasTD2)
 					{
-						EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLOGICALACCESSException, "Bad buffer. Too short to retrieve TD2.");
+						EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLogicalAccessException, "Bad buffer. Too short to retrieve TD2.");
 						unsigned char TD2 = atr[y++];
 						//isTEqual1Supported = (TD2 & 0x0f) == 1;
 						bool hasTA3 = ((TD2 & 0x10) == 0x10);
 						if (hasTA3)
 						{
-							EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLOGICALACCESSException, "Bad buffer. Too short to retrieve TA3.");
+							EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLogicalAccessException, "Bad buffer. Too short to retrieve TA3.");
 							/*unsigned char TA3 = atr[y++];*/
 							y++;
 							// Analyze TA3 here
@@ -1011,7 +1011,7 @@ namespace logicalaccess
 						bool hasTB3 = ((TD2 & 0x20) == 0x20);
 						if (hasTB3)
 						{
-							EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLOGICALACCESSException, "Bad buffer. Too short to retrieve TB3.");
+							EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLogicalAccessException, "Bad buffer. Too short to retrieve TB3.");
 							/*unsigned char TB3 = atr[y++];*/
 							y++;
 							// Analyze TB3 here
@@ -1019,7 +1019,7 @@ namespace logicalaccess
 						bool hasTC3 = ((TD2 & 0x40) == 0x40);
 						if (hasTC3)
 						{
-							EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLOGICALACCESSException, "Bad buffer. Too short to retrieve TC3.");
+							EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLogicalAccessException, "Bad buffer. Too short to retrieve TC3.");
 							/*unsigned char TC3 = atr[y++];*/
 							y++;
 							// Analyze TC3 here
@@ -1028,7 +1028,7 @@ namespace logicalaccess
 
 						if (hasTD3)
 						{
-							EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLOGICALACCESSException, "Bad buffer. Too short to retrieve TD3.");
+							EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLogicalAccessException, "Bad buffer. Too short to retrieve TD3.");
 							/*unsigned char TD3 = atr[y++];*/
 							y++;
 							// Analyze TD3 here
@@ -1044,20 +1044,20 @@ namespace logicalaccess
 					try
 					{				
 						unsigned int x = 0;
-						EXCEPTION_ASSERT_WITH_LOG(x < historicalBytesLength, LibLOGICALACCESSException, "Bad historical buffer. Too short to retrieve Category Indicator.");
+						EXCEPTION_ASSERT_WITH_LOG(x < historicalBytesLength, LibLogicalAccessException, "Bad historical buffer. Too short to retrieve Category Indicator.");
 						/*unsigned char categoryIndicator = atr[y + x++]; // See ISO7816-4, 8.2*/
 						x++;
 
-						EXCEPTION_ASSERT_WITH_LOG(x < historicalBytesLength, LibLOGICALACCESSException, "Bad historical buffer. Too short to retrieve Application Identifier Presence Indicator.");
+						EXCEPTION_ASSERT_WITH_LOG(x < historicalBytesLength, LibLogicalAccessException, "Bad historical buffer. Too short to retrieve Application Identifier Presence Indicator.");
 						unsigned char aidIndicator = atr[y + x++];
 
-						EXCEPTION_ASSERT_WITH_LOG(x < historicalBytesLength, LibLOGICALACCESSException, "Bad historical buffer. Too short to retrieve length from historical bytes.");
+						EXCEPTION_ASSERT_WITH_LOG(x < historicalBytesLength, LibLogicalAccessException, "Bad historical buffer. Too short to retrieve length from historical bytes.");
 						unsigned char length = atr[y + x++];
 
 						unsigned int w = 0;
 						if (aidIndicator == 0x4F)
 						{						
-							EXCEPTION_ASSERT_WITH_LOG(length >= 5, LibLOGICALACCESSException, "Bad internal historical buffer. Too short to retrieve the RID.");
+							EXCEPTION_ASSERT_WITH_LOG(length >= 5, LibLogicalAccessException, "Bad internal historical buffer. Too short to retrieve the RID.");
 							unsigned char pcscRID[5] = {0xA0, 0x00, 0x00, 0x03, 0x06};
 							unsigned char rid[5];
 							memcpy(rid, &atr[y + x + w], sizeof(rid));
@@ -1065,7 +1065,7 @@ namespace logicalaccess
 
 							if (memcmp(pcscRID, rid, sizeof(rid)) == 0)
 							{
-								EXCEPTION_ASSERT_WITH_LOG(w < length, LibLOGICALACCESSException, "Bad internal historical buffer. Too short to retrieve the SS.");
+								EXCEPTION_ASSERT_WITH_LOG(w < length, LibLogicalAccessException, "Bad internal historical buffer. Too short to retrieve the SS.");
 								unsigned char SS = atr[y + x + w++];
 
 								switch(SS)
@@ -1078,7 +1078,7 @@ namespace logicalaccess
 									break;
 								}
 
-								EXCEPTION_ASSERT_WITH_LOG(w+1 < length, LibLOGICALACCESSException, "Bad internal historical buffer. Too short to retrieve the Card Name.");
+								EXCEPTION_ASSERT_WITH_LOG(w+1 < length, LibLogicalAccessException, "Bad internal historical buffer. Too short to retrieve the Card Name.");
 								unsigned char cardName[2];
 								memcpy(cardName, &atr[y + x + w], sizeof(cardName));
 								w += sizeof(cardName);
@@ -1087,7 +1087,7 @@ namespace logicalaccess
 							}
 						}
 					}
-					catch(LibLOGICALACCESSException&)
+					catch(LibLogicalAccessException&)
 					{
 						isStorageCard = false;
 					}
@@ -1106,7 +1106,7 @@ namespace logicalaccess
 						else
 						{
 							unsigned int x = 0;
-							EXCEPTION_ASSERT_WITH_LOG(x < historicalBytesLength, LibLOGICALACCESSException, "Bad historical buffer. Too short to retrieve Category Indicator.");
+							EXCEPTION_ASSERT_WITH_LOG(x < historicalBytesLength, LibLogicalAccessException, "Bad historical buffer. Too short to retrieve Category Indicator.");
 							/*unsigned char categoryIndicator = atr[y + x++];	// See ISO7816-4, 8.2*/
 							x++;
 
@@ -1120,14 +1120,14 @@ namespace logicalaccess
 				/* TODO: Disabled now because contact smart cards doesn't have a checksum. Need to fix that ! */
 
 				// Check ATR checksum
-				/*EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLOGICALACCESSException, "Bad buffer. Too short to retrieve Checksum.");
+				/*EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLogicalAccessException, "Bad buffer. Too short to retrieve Checksum.");
 				unsigned char calcchecksum = 0x00;
 				for (unsigned int i = 1; i < y; ++i)
 				{
 					calcchecksum ^= atr[i];
 				}
 				unsigned char checksum = atr[y++];
-				EXCEPTION_ASSERT_WITH_LOG(checksum == calcchecksum, LibLOGICALACCESSException, "Bad buffer. The checksum doesn't match.");*/
+				EXCEPTION_ASSERT_WITH_LOG(checksum == calcchecksum, LibLogicalAccessException, "Bad buffer. The checksum doesn't match.");*/
 			}
 			break;
 		}		

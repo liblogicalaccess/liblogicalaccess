@@ -140,7 +140,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasWriteFormatAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -169,7 +169,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasReadFormatAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -179,7 +179,7 @@ namespace logicalaccess
 		{
 			if (dataLengthBytes*8 < getDataLength())
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Data length too small.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Data length too small.");
 			}
 
 			BitHelper::extract(&fixedValue, 1, data, dataLengthBytes, static_cast<unsigned int>(dataLengthBytes * 8), pos, 4);
@@ -189,7 +189,7 @@ namespace logicalaccess
 			{
 				char exceptionmsg[256];
 				sprintf(exceptionmsg, "HID Honeywell 40-Bit: fixed value doesn't match (%x != %x).", fixedValue, 0x0F);
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, exceptionmsg);
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, exceptionmsg);
 			}
 		}
 		else
@@ -208,7 +208,7 @@ namespace logicalaccess
 				{
 					char buftmp[64];
 					sprintf(buftmp, "Right parity %u format error.", i);
-					THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, buftmp);
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, buftmp);
 				}
 			}
 		}

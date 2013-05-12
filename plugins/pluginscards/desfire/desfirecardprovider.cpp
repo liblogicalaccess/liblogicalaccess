@@ -89,7 +89,7 @@ namespace logicalaccess
 	{
 		if (!getDESFireCommands()->selectApplication(location->aid))
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_SELECTAPPLICATION);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_SELECTAPPLICATION);
 		}
 	}
 
@@ -97,7 +97,7 @@ namespace logicalaccess
 	{
 		if (!getDESFireCommands()->createApplication(location->aid, settings, maxNbKeys))
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Can't create the application.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't create the application.");
 		}
 	}
 
@@ -105,7 +105,7 @@ namespace logicalaccess
 	{
 		if (!getDESFireCommands()->createStdDataFile(location->file, location->securityLevel, accessRights, fileSize))
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Can't create the file.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't create the file.");
 		}
 	}
 

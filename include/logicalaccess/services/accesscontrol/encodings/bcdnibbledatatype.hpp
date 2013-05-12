@@ -7,8 +7,8 @@
 #ifndef LOGICALACCESS_BCDNIBBLEDATATYPE_HPP
 #define LOGICALACCESS_BCDNIBBLEDATATYPE_HPP
 
-#include "logicalaccess/Services/AccessControl/Encodings/DataType.h"
-#include "logicalaccess/Services/AccessControl/Encodings/Encoding.h"
+#include "logicalaccess/services/accesscontrol/encodings/datatype.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/encoding.hpp"
 
 namespace logicalaccess
 {

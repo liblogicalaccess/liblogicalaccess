@@ -37,7 +37,7 @@ namespace logicalaccess
 			 * \brief Generate pseudo-random DESFire access informations for a given card serial number.
 			 * \param csn The card serial number.
 			 */
-			virtual void generateInfos(const string& csn);
+			virtual void generateInfos(const std::string& csn);
 
 			/**
 			 * \brief Export access informations to a buffer.
@@ -61,7 +61,7 @@ namespace logicalaccess
 			 * \brief Get the card type for this access infos.
 			 * \return The card type.
 			 */
-			virtual std::string getCardType() { return "DESFire"; }
+			virtual std::string getCardType() const;
 
 			/**
 			 * \brief Serialize the current object to XML.

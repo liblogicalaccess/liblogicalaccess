@@ -5,8 +5,8 @@
  * \brief AES cipher class.
  */
 
-#include "logicalaccess/crypto/aes_cipher.h"
-#include "logicalaccess/crypto/symmetric_key.h"
+#include "logicalaccess/crypto/aes_cipher.hpp"
+#include "logicalaccess/crypto/symmetric_key.hpp"
 
 #include <cassert>
 

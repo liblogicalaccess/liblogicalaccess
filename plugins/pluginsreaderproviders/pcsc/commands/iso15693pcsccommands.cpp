@@ -153,7 +153,7 @@ namespace logicalaccess
 			systeminfo.hasAFI = true;
 			systeminfo.AFI = result[0];
 		}
-		catch(LibLOGICALACCESSException&)
+		catch(LibLogicalAccessException&)
 		{
 			systeminfo.hasAFI = false;
 		}
@@ -167,7 +167,7 @@ namespace logicalaccess
 			systeminfo.hasDSFID = true;
 			systeminfo.DSFID = result[0];
 		}
-		catch(LibLOGICALACCESSException&)
+		catch(LibLogicalAccessException&)
 		{
 			systeminfo.hasDSFID = false;
 		}
@@ -182,7 +182,7 @@ namespace logicalaccess
 			systeminfo.blockSize = (result[1] & 0x1f) + 1;
 			systeminfo.nbBlocks = result[0] + 1;
 		}
-		catch(LibLOGICALACCESSException&)
+		catch(LibLogicalAccessException&)
 		{
 			systeminfo.hasVICCMemorySize = false;
 		}
@@ -196,7 +196,7 @@ namespace logicalaccess
 			systeminfo.hasICReference = true;
 			systeminfo.ICReference = result[0];
 		}
-		catch(LibLOGICALACCESSException&)
+		catch(LibLogicalAccessException&)
 		{
 			systeminfo.hasICReference = false;
 		}

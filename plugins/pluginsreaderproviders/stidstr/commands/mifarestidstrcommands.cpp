@@ -99,12 +99,12 @@ namespace logicalaccess
 			// Don't load the key when reader memory, except if specified
 			if (!key->isEmpty())
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "It's not possible to change a key at specific index through host/reader connection. Please use SKB configuration card instead.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "It's not possible to change a key at specific index through host/reader connection. Please use SKB configuration card instead.");
 			}
 		}
 		else
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The key storage type is not supported for this card/reader.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The key storage type is not supported for this card/reader.");
 		}
 	}
 
@@ -133,7 +133,7 @@ namespace logicalaccess
 		}
 		else
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The key storage type is not supported for this card/reader.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The key storage type is not supported for this card/reader.");
 		}
 		d_lastKeyType = keytype;
 	}
@@ -150,7 +150,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasReadDataAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -172,8 +172,8 @@ namespace logicalaccess
 		std::vector<unsigned char> sbuf = getSTidSTRReaderCardAdapter()->sendCommand(0x00B2, command, statusCode);
 
 		INFO_("Read binary buffer returned %s len {%d}", BufferHelper::getHex(sbuf).c_str(), sbuf.size());
-		EXCEPTION_ASSERT_WITH_LOG(sbuf.size() == 16, LibLOGICALACCESSException, "The read value should always be 16 bytes long");
-		EXCEPTION_ASSERT_WITH_LOG(sbuf.size() <= buflen, LibLOGICALACCESSException, "Buffer is too small to get all response value");
+		EXCEPTION_ASSERT_WITH_LOG(sbuf.size() == 16, LibLogicalAccessException, "The read value should always be 16 bytes long");
+		EXCEPTION_ASSERT_WITH_LOG(sbuf.size() <= buflen, LibLogicalAccessException, "Buffer is too small to get all response value");
 
 		memcpy(buf, &sbuf[0], sbuf.size());
 
@@ -197,8 +197,8 @@ namespace logicalaccess
 		unsigned char statusCode;
 		std::vector<unsigned char> sbuf = getSTidSTRReaderCardAdapter()->sendCommand(0x00B1, command, statusCode);
 
-		EXCEPTION_ASSERT_WITH_LOG(sbuf.size() == 16, LibLOGICALACCESSException, "The read value should always be 16 bytes long");
-		EXCEPTION_ASSERT_WITH_LOG(buflen >= sbuf.size(), LibLOGICALACCESSException, "The buffer is too short to store the result.");
+		EXCEPTION_ASSERT_WITH_LOG(sbuf.size() == 16, LibLogicalAccessException, "The read value should always be 16 bytes long");
+		EXCEPTION_ASSERT_WITH_LOG(buflen >= sbuf.size(), LibLogicalAccessException, "The buffer is too short to store the result.");
 
 		memcpy(buf, &sbuf[0], sbuf.size());
 
@@ -217,7 +217,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasWriteDataAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 

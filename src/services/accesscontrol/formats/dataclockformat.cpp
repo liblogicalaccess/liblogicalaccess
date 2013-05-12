@@ -97,7 +97,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasWriteFormatAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -121,7 +121,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasReadFormatAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -134,28 +134,28 @@ namespace logicalaccess
 			unsigned char parity = getRightParity1(data, dataLengthBytes);
 			if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != parity)
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Right parity 1 format error.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Right parity 1 format error.");
 			}
 
 			pos = 33;
 			parity = getRightParity2(data, dataLengthBytes);
 			if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != parity)
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Right parity 2 format error.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Right parity 2 format error.");
 			}
 
 			pos = 34;
 			parity = getRightParity3(data, dataLengthBytes);
 			if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != parity)
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Right parity 3 format error.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Right parity 3 format error.");
 			}
 
 			pos = 35;
 			parity = getRightParity4(data, dataLengthBytes);
 			if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != parity)
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Right parity 4 format error.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Right parity 4 format error.");
 			}
 		}
 	}

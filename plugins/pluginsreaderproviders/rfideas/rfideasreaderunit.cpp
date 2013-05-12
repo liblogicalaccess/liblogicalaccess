@@ -51,7 +51,7 @@ namespace logicalaccess
 	{
 #ifdef _WINDOWS
 		hWejAPIDLL = (HMODULE)LoadLibrary("pcProxAPI.DLL");
-		EXCEPTION_ASSERT_WITH_LOG(hWejAPIDLL != NULL, LibLOGICALACCESSException, "Can't load the RFIDeas library");
+		EXCEPTION_ASSERT_WITH_LOG(hWejAPIDLL != NULL, LibLogicalAccessException, "Can't load the RFIDeas library");
 
 		fnGetLibVersion = (GetLibVersion)GetProcAddress( hWejAPIDLL, "GetLibVersion" );
 		fnCOMConnect = (ComConnect)GetProcAddress( hWejAPIDLL, "ComConnect" );
@@ -81,7 +81,7 @@ namespace logicalaccess
 			|| (fnSetConnectProduct == NULL) || (fnSetDevTypeSrch == NULL))
 		{
 			uninitExternFct();
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Can't initialize RFIDeas library functions pointer");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't initialize RFIDeas library functions pointer");
 		}
 #endif
 	}
@@ -103,7 +103,7 @@ namespace logicalaccess
 		if (fnUSBConnect(&d_deviceId) == 0)
 		{
 			fnSetComSrchRange(1, 15);
-			EXCEPTION_ASSERT_WITH_LOG(fnCOMConnect(&d_deviceId) != 0, LibLOGICALACCESSException, "Can't connect to the RFIDeas device. Please be sure a reader is plugged");
+			EXCEPTION_ASSERT_WITH_LOG(fnCOMConnect(&d_deviceId) != 0, LibLogicalAccessException, "Can't connect to the RFIDeas device. Please be sure a reader is plugged");
 			isCOMConnection = false;
 		}
 		else

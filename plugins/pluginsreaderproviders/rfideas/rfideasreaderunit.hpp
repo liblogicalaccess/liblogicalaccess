@@ -20,7 +20,7 @@ namespace logicalaccess
 	class RFIDeasReaderCardAdapter;
 	class RFIDeasReaderProvider;	
 
-	typedef void (*setTagIdBitsLengthFct)(boost::shared_ptr<LOGICALACCESS::Chip>*, unsigned int);
+	typedef void (*setTagIdBitsLengthFct)(boost::shared_ptr<Chip>*, unsigned int);
 
 	/**
 	 * \brief The RFIDeas reader unit class.

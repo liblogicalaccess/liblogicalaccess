@@ -44,13 +44,13 @@ namespace logicalaccess
 		if (init != NULL)
 			RAND_seed(init, sizeof(init));
 		
-		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLOGICALACCESSException, "Insufficient enthropy source");
+		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
 		
 		rand.clear();
 		rand.resize(size);
 		if (RAND_bytes(&rand[0], static_cast<int>(rand.size())) != 1)
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Cannot retrieve cryptographically strong bytes");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
 		}
 
 		return (rand);

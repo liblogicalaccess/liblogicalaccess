@@ -4,7 +4,7 @@
  * \brief Mifare Ultralight C PC/SC commands.
  */
 
-#include "../commands/mifareultralightcpcsccommands.h"
+#include "../commands/mifareultralightcpcsccommands.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -54,13 +54,13 @@ namespace logicalaccess
 		cipher.decipher(encRndB, rndB, deskey, desiv, false);
 		
 		RAND_seed(result, 8);
-		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLOGICALACCESSException, "Insufficient enthropy source");
+		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
 
 		std::vector<unsigned char> rndA;
 		rndA.resize(8);
 		if (RAND_bytes(&rndA[0], static_cast<int>(rndA.size())) != 1)
 		{
-			throw LibLOGICALACCESSException("Cannot retrieve cryptographically strong bytes");
+			throw LibLogicalAccessException("Cannot retrieve cryptographically strong bytes");
 		}
 
 		std::vector<unsigned char> rndAB;

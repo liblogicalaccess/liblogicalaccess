@@ -11,7 +11,7 @@
 #include <unistd.h>
 #endif
 
-#include "logicalaccess/logs.h"
+#include "logicalaccess/logs.hpp"
 
 namespace logicalaccess
 {

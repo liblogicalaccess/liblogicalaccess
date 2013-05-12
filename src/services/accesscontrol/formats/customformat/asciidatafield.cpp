@@ -44,7 +44,7 @@ namespace logicalaccess
 	{
 		if ((dataLengthBytes * 8) < (d_length + *pos))
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The data length is too short.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
 		}
 
 		size_t fieldDataLengthBytes = (d_length + 7) / 8;
@@ -54,7 +54,7 @@ namespace logicalaccess
 		memcpy_s(paddedBuffer, fieldDataLengthBytes, d_value.c_str(), d_value.size());
 #else
 		if (fieldDataLengthBytes < d_value.size())
-		  throw new EXCEPTION(LibLOGICALACCESSException, "The size of the dest buffer is too small for memcpy");
+		  throw new EXCEPTION(LibLogicalAccessException, "The size of the dest buffer is too small for memcpy");
 		memcpy(paddedBuffer, d_value.c_str(), d_value.size());
 #endif
 
@@ -77,7 +77,7 @@ namespace logicalaccess
 	{
 		if ((dataLengthBytes * 8) < (d_length + *pos))
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The data length is too short.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
 		}
 		
 		size_t fieldDataLengthBytes = (d_length + 7) / 8;

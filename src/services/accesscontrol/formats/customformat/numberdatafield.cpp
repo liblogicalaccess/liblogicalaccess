@@ -34,7 +34,7 @@ namespace logicalaccess
 	{
 		if ((dataLengthBytes * 8) < (d_length + *pos))
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The data length is too short.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
 		}
 
 		convertNumericData(data, dataLengthBytes, pos, d_value, d_length);
@@ -44,7 +44,7 @@ namespace logicalaccess
 	{
 		if ((dataLengthBytes * 8) < (d_length + *pos))
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The data length is too short.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
 		}
 
 		d_value = revertNumericData(data, dataLengthBytes, pos, d_length);

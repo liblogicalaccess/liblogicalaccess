@@ -5,6 +5,7 @@
  */
 
 #include "mifareultralightcaccessinfo.hpp"
+#include "mifareultralightcchip.hpp"
 
 namespace logicalaccess
 {
@@ -18,6 +19,11 @@ namespace logicalaccess
 	{		
 	}
 
+	std::string MifareUltralightCAccessInfo::getCardType() const
+	{
+		return CHIP_MIFAREULTRALIGHTC;
+	}
+
 	void MifareUltralightCAccessInfo::generateInfos()
 	{		
 		MifareUltralightAccessInfo::generateInfos();
@@ -25,7 +31,7 @@ namespace logicalaccess
 		key->fromString(generateSimpleKey(0, TRIPLEDES_KEY_SIZE));
 	}
 
-	void MifareUltralightCAccessInfo::generateInfos(const string& csn)
+	void MifareUltralightCAccessInfo::generateInfos(const std::string& csn)
 	{
 		MifareUltralightAccessInfo::generateInfos(csn);
 

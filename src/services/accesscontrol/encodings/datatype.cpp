@@ -94,7 +94,7 @@ namespace logicalaccess
 	{
 		if ((buflen % blocklen) != 0 && (leftParity != PT_NONE || rightParity != PT_NONE))
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The buffer length is not block length aligned. If you use parity on data type, it must be aligned.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The buffer length is not block length aligned. If you use parity on data type, it must be aligned.");
 		}
 
 		unsigned int nbblocks = static_cast<unsigned int>(buflen / blocklen);
@@ -142,7 +142,7 @@ namespace logicalaccess
 		{
 			char tmpmsg[64];
 			sprintf(tmpmsg, "The buffer length (%d) without parity is not block length aligned. If you use parity on data type, it must be aligned.", static_cast<int>(buflen));
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, tmpmsg);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, tmpmsg);
 		}
 
 		if (buf != NULL && procbuf != NULL && procbuflen >= newsize)
@@ -167,7 +167,7 @@ namespace logicalaccess
 
 						if (parityToCheck != parity)
 						{
-							THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Bad left parity on DataType.");
+							THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Bad left parity on DataType.");
 						}
 					}
 
@@ -184,7 +184,7 @@ namespace logicalaccess
 
 						if (parityToCheck != parity)
 						{
-							THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Bad right parity on DataType.");
+							THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Bad right parity on DataType.");
 						}
 					}
 				}

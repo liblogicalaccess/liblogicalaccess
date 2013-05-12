@@ -15,7 +15,7 @@
 
 #include <iomanip>
 
-#include "pcscreaderunit.h"
+#include "pcscreaderunit.hpp"
 
 
 namespace logicalaccess
@@ -30,7 +30,7 @@ namespace logicalaccess
 			char tmpbuf[128];
 			memset(tmpbuf, 0x00, sizeof(tmpbuf));
 			sprintf(tmpbuf, "Can't establish the context for PC/SC service (%x).", static_cast<unsigned int>(scres));
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, tmpbuf);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, tmpbuf);
 		}
 	}
 
@@ -67,7 +67,7 @@ namespace logicalaccess
 				while (rdname[0] != '\0')
 				{
 					size_t f = strlen(rdname);
-					string t(rdname, f);
+					std::string t(rdname, f);
 					boost::shared_ptr<PCSCReaderUnit> unit = PCSCReaderUnit::createPCSCReaderUnit(t);
 					unit->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
 					d_system_readers.push_back(unit);
@@ -107,7 +107,7 @@ namespace logicalaccess
 				while (rdname[0] != '\0')
 				{
 					size_t f = strlen(rdname);
-					string t(rdname, f);
+					std::string t(rdname, f);
 					groupList.push_back(t);
 
 					rdname += strlen(rdname) + 1;

@@ -88,10 +88,10 @@ namespace logicalaccess
 
 	bool SCIELReaderUnit::waitInsertion(unsigned int maxwait)
 	{
-		bool oldValue = LOGICALACCESS::Settings::getInstance().IsLogEnabled;
-		if (oldValue && !LOGICALACCESS::Settings::getInstance().SeeWaitInsertionLog)
+		bool oldValue = Settings::getInstance().IsLogEnabled;
+		if (oldValue && !Settings::getInstance().SeeWaitInsertionLog)
 		{
-			LOGICALACCESS::Settings::getInstance().IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
+			Settings::getInstance().IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
 		}
 
 		INFO_("Waiting insertion... max wait {%u}", maxwait);
@@ -122,17 +122,17 @@ namespace logicalaccess
 		} while (!inserted && (maxwait == 0 || currentWait < maxwait));
 
 		INFO_("Returns card inserted ? {%d} function timeout expired ? {%d}", inserted, (maxwait != 0 && currentWait >= maxwait));
-		LOGICALACCESS::Settings::getInstance().IsLogEnabled = oldValue;
+		Settings::getInstance().IsLogEnabled = oldValue;
 
 		return inserted;
 	}
 
 	bool SCIELReaderUnit::waitRemoval(unsigned int maxwait)
 	{
-		bool oldValue = LOGICALACCESS::Settings::getInstance().IsLogEnabled;
-		if (oldValue && !LOGICALACCESS::Settings::getInstance().SeeWaitRemovalLog)
+		bool oldValue = Settings::getInstance().IsLogEnabled;
+		if (oldValue && !Settings::getInstance().SeeWaitRemovalLog)
 		{
-			LOGICALACCESS::Settings::getInstance().IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
+			Settings::getInstance().IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
 		}
 
 		INFO_("Waiting removal... max wait {%u}", maxwait);
@@ -168,7 +168,7 @@ namespace logicalaccess
 
 		INFO_("Returns card removed ? {%d} - function timeout expired ? {%d}", removed, (maxwait != 0 && currentWait >= maxwait));
 
-		LOGICALACCESS::Settings::getInstance().IsLogEnabled = oldValue;
+		Settings::getInstance().IsLogEnabled = oldValue;
 
 		return removed;
 	}
@@ -695,8 +695,8 @@ namespace logicalaccess
 
 		startAutoDetect();
 
-		EXCEPTION_ASSERT_WITH_LOG(getSerialPort(), LibLOGICALACCESSException, "No serial port configured !");
-		EXCEPTION_ASSERT_WITH_LOG(getSerialPort()->getSerialPort()->deviceName() != "", LibLOGICALACCESSException, "Serial port name is empty ! Auto-detect failed !");
+		EXCEPTION_ASSERT_WITH_LOG(getSerialPort(), LibLogicalAccessException, "No serial port configured !");
+		EXCEPTION_ASSERT_WITH_LOG(getSerialPort()->getSerialPort()->deviceName() != "", LibLogicalAccessException, "Serial port name is empty ! Auto-detect failed !");
 
 		if (!getSerialPort()->getSerialPort()->isOpen())
 		{
@@ -728,7 +728,7 @@ namespace logicalaccess
 	{
 		if (d_port && d_port->getSerialPort()->deviceName() == "")
 		{
-			if (!LOGICALACCESS::Settings::getInstance().IsAutoDetectEnabled)
+			if (!Settings::getInstance().IsAutoDetectEnabled)
 			{
 				INFO_SIMPLE_("Auto detection is disabled through settings !");
 				return;
@@ -759,7 +759,7 @@ namespace logicalaccess
 						cmd.push_back(static_cast<unsigned char>(0x30));
 						cmd.push_back(static_cast<unsigned char>(0x30));
 
-						std::vector<unsigned char> r = testingCardAdapter->sendCommand(cmd, LOGICALACCESS::Settings::getInstance().AutoDetectionTimeout);
+						std::vector<unsigned char> r = testingCardAdapter->sendCommand(cmd, Settings::getInstance().AutoDetectionTimeout);
 						if (r.size() >= 2)
 						{
 							INFO_SIMPLE_("Reader found ! Using this COM port !");
@@ -800,13 +800,13 @@ namespace logicalaccess
 
 	void SCIELReaderUnit::configure()
 	{
-		configure(getSerialPort(), LOGICALACCESS::Settings::getInstance().IsConfigurationRetryEnabled);
+		configure(getSerialPort(), Settings::getInstance().IsConfigurationRetryEnabled);
 	}
 
 	void SCIELReaderUnit::configure(boost::shared_ptr<SerialPortXml> port, bool retryConfiguring)
 	{
-		EXCEPTION_ASSERT_WITH_LOG(port, LibLOGICALACCESSException, "No serial port configured !");
-		EXCEPTION_ASSERT_WITH_LOG(port->getSerialPort()->deviceName() != "", LibLOGICALACCESSException, "Serial port name is empty ! Auto-detect failed !");
+		EXCEPTION_ASSERT_WITH_LOG(port, LibLogicalAccessException, "No serial port configured !");
+		EXCEPTION_ASSERT_WITH_LOG(port->getSerialPort()->deviceName() != "", LibLogicalAccessException, "Serial port name is empty ! Auto-detect failed !");
 
 		try
 		{
@@ -882,11 +882,11 @@ namespace logicalaccess
 				// Strange stuff is going here... by waiting and reopening the COM port (maybe for system cleanup), it's working !
 				std::string portn = port->getSerialPort()->deviceName();
 				WARNING_("Exception received {%s} ! Sleeping {%d} milliseconds -> Reopen serial port {%s} -> Finally retry  to configure...",
-							e.what(), LOGICALACCESS::Settings::getInstance().ConfigurationRetryTimeout, portn.c_str());
+							e.what(), Settings::getInstance().ConfigurationRetryTimeout, portn.c_str());
 #ifndef __linux__
-				Sleep(LOGICALACCESS::Settings::getInstance().ConfigurationRetryTimeout);
+				Sleep(Settings::getInstance().ConfigurationRetryTimeout);
 #else
-				sleep(LOGICALACCESS::Settings::getInstance().ConfigurationRetryTimeout);
+				sleep(Settings::getInstance().ConfigurationRetryTimeout);
 #endif
 				port->getSerialPort()->reopen();
 				configure(getSerialPort(), false);
@@ -934,7 +934,7 @@ namespace logicalaccess
 			cmd.push_back(static_cast<unsigned char>(0x30));
 
 			std::vector<unsigned char> r = getDefaultSCIELReaderCardAdapter()->sendCommand(cmd);
-			EXCEPTION_ASSERT_WITH_LOG(r.size() >= 2, LibLOGICALACCESSException, "Bad response getting SCIEL reader identifier.");
+			EXCEPTION_ASSERT_WITH_LOG(r.size() >= 2, LibLogicalAccessException, "Bad response getting SCIEL reader identifier.");
 
 			d_scielIdentifier = std::vector<unsigned char>(r.end() - 2 , r.end());
 
@@ -963,9 +963,9 @@ namespace logicalaccess
 		cmd.push_back(d_scielIdentifier[1]);
 
 		std::vector<unsigned char> r = getDefaultSCIELReaderCardAdapter()->sendCommand(cmd);
-		EXCEPTION_ASSERT_WITH_LOG(r.size() >= 6, LibLOGICALACCESSException, "Bad response getting SCIEL removal time. Bad response length.");
-		EXCEPTION_ASSERT_WITH_LOG(r[0] == cmd[0] && r[1] == cmd[1], LibLOGICALACCESSException, "Bad response getting SCIEL removal time. Bad command response identifier.");
-		EXCEPTION_ASSERT_WITH_LOG(r[4] == d_scielIdentifier[0] && r[5] == d_scielIdentifier[1], LibLOGICALACCESSException, "Bad response getting SCIEL removal time. Bad reader response identifier.");
+		EXCEPTION_ASSERT_WITH_LOG(r.size() >= 6, LibLogicalAccessException, "Bad response getting SCIEL removal time. Bad response length.");
+		EXCEPTION_ASSERT_WITH_LOG(r[0] == cmd[0] && r[1] == cmd[1], LibLogicalAccessException, "Bad response getting SCIEL removal time. Bad command response identifier.");
+		EXCEPTION_ASSERT_WITH_LOG(r[4] == d_scielIdentifier[0] && r[5] == d_scielIdentifier[1], LibLogicalAccessException, "Bad response getting SCIEL removal time. Bad reader response identifier.");
 
 		timeRemoval = static_cast<unsigned char>(strtoul(BufferHelper::getStdString(std::vector<unsigned char>(r.end() - 2, r.end())).c_str(), NULL, 16));
 
@@ -985,10 +985,10 @@ namespace logicalaccess
 		cmd.push_back(d_scielIdentifier[1]);
 
 		std::vector<unsigned char> r = getDefaultSCIELReaderCardAdapter()->sendCommand(cmd);
-		EXCEPTION_ASSERT_WITH_LOG(r.size() >= 8, LibLOGICALACCESSException, "Bad response setting SCIEL removal time. Bad response length.");
-		EXCEPTION_ASSERT_WITH_LOG(r[0] == 'O' && r[1] == 'K', LibLOGICALACCESSException, "Bad response setting SCIEL removal time. Bad response status.");
-		EXCEPTION_ASSERT_WITH_LOG(r[2] == cmd[0] && r[3] == cmd[1], LibLOGICALACCESSException, "Bad response setting SCIEL removal time. Bad command response identifier.");
-		EXCEPTION_ASSERT_WITH_LOG(r[6] == d_scielIdentifier[0] && r[7] == d_scielIdentifier[1], LibLOGICALACCESSException, "Bad response setting SCIEL removal time. Bad reader response identifier.");
+		EXCEPTION_ASSERT_WITH_LOG(r.size() >= 8, LibLogicalAccessException, "Bad response setting SCIEL removal time. Bad response length.");
+		EXCEPTION_ASSERT_WITH_LOG(r[0] == 'O' && r[1] == 'K', LibLogicalAccessException, "Bad response setting SCIEL removal time. Bad response status.");
+		EXCEPTION_ASSERT_WITH_LOG(r[2] == cmd[0] && r[3] == cmd[1], LibLogicalAccessException, "Bad response setting SCIEL removal time. Bad command response identifier.");
+		EXCEPTION_ASSERT_WITH_LOG(r[6] == d_scielIdentifier[0] && r[7] == d_scielIdentifier[1], LibLogicalAccessException, "Bad response setting SCIEL removal time. Bad reader response identifier.");
 	}
 
 	unsigned char SCIELReaderUnit::getReceptionLevel()
@@ -1004,9 +1004,9 @@ namespace logicalaccess
 		cmd.push_back(d_scielIdentifier[1]);
 
 		std::vector<unsigned char> r = getDefaultSCIELReaderCardAdapter()->sendCommand(cmd);
-		EXCEPTION_ASSERT_WITH_LOG(r.size() >= 6, LibLOGICALACCESSException, "Bad response getting SCIEL reception level. Bad response length.");
-		EXCEPTION_ASSERT_WITH_LOG(r[0] == cmd[0] && r[1] == cmd[1], LibLOGICALACCESSException, "Bad response getting SCIEL reception level. Bad command response identifier.");
-		EXCEPTION_ASSERT_WITH_LOG(r[4] == d_scielIdentifier[0] && r[5] == d_scielIdentifier[1], LibLOGICALACCESSException, "Bad response getting SCIEL reception level. Bad reader response identifier.");
+		EXCEPTION_ASSERT_WITH_LOG(r.size() >= 6, LibLogicalAccessException, "Bad response getting SCIEL reception level. Bad response length.");
+		EXCEPTION_ASSERT_WITH_LOG(r[0] == cmd[0] && r[1] == cmd[1], LibLogicalAccessException, "Bad response getting SCIEL reception level. Bad command response identifier.");
+		EXCEPTION_ASSERT_WITH_LOG(r[4] == d_scielIdentifier[0] && r[5] == d_scielIdentifier[1], LibLogicalAccessException, "Bad response getting SCIEL reception level. Bad reader response identifier.");
 
 		level = static_cast<unsigned char>(strtoul(BufferHelper::getStdString(std::vector<unsigned char>(r.end() - 2, r.end())).c_str(), NULL, 16));
 
@@ -1026,10 +1026,10 @@ namespace logicalaccess
 		cmd.push_back(d_scielIdentifier[1]);
 
 		std::vector<unsigned char> r = getDefaultSCIELReaderCardAdapter()->sendCommand(cmd);
-		EXCEPTION_ASSERT_WITH_LOG(r.size() >= 8, LibLOGICALACCESSException, "Bad response setting SCIEL reception level. Bad response length.");
-		EXCEPTION_ASSERT_WITH_LOG(r[0] == 'O' && r[1] == 'K', LibLOGICALACCESSException, "Bad response setting SCIEL reception level. Bad response status.");
-		EXCEPTION_ASSERT_WITH_LOG(r[2] == cmd[0] && r[3] == cmd[1], LibLOGICALACCESSException, "Bad response setting SCIEL reception level. Bad command response identifier.");
-		EXCEPTION_ASSERT_WITH_LOG(r[6] == d_scielIdentifier[0] && r[7] == d_scielIdentifier[1], LibLOGICALACCESSException, "Bad response setting SCIEL reception level. Bad reader response identifier.");
+		EXCEPTION_ASSERT_WITH_LOG(r.size() >= 8, LibLogicalAccessException, "Bad response setting SCIEL reception level. Bad response length.");
+		EXCEPTION_ASSERT_WITH_LOG(r[0] == 'O' && r[1] == 'K', LibLogicalAccessException, "Bad response setting SCIEL reception level. Bad response status.");
+		EXCEPTION_ASSERT_WITH_LOG(r[2] == cmd[0] && r[3] == cmd[1], LibLogicalAccessException, "Bad response setting SCIEL reception level. Bad command response identifier.");
+		EXCEPTION_ASSERT_WITH_LOG(r[6] == d_scielIdentifier[0] && r[7] == d_scielIdentifier[1], LibLogicalAccessException, "Bad response setting SCIEL reception level. Bad reader response identifier.");
 	}
 
 	unsigned char SCIELReaderUnit::getADConvertorValue()
@@ -1046,9 +1046,9 @@ namespace logicalaccess
 		cmd.push_back(d_scielIdentifier[1]);
 
 		std::vector<unsigned char> r = getDefaultSCIELReaderCardAdapter()->sendCommand(cmd);
-		EXCEPTION_ASSERT_WITH_LOG(r.size() >= 6, LibLOGICALACCESSException, "Bad response getting SCIEL AD convertor value. Bad response length.");
-		EXCEPTION_ASSERT_WITH_LOG(r[0] == cmd[0] && r[1] == cmd[1], LibLOGICALACCESSException, "Bad response getting SCIEL AD convertor value. Bad command response identifier.");
-		EXCEPTION_ASSERT_WITH_LOG(r[4] == d_scielIdentifier[0] && r[5] == d_scielIdentifier[1], LibLOGICALACCESSException, "Bad response getting SCIEL AD convertor value. Bad reader response identifier.");
+		EXCEPTION_ASSERT_WITH_LOG(r.size() >= 6, LibLogicalAccessException, "Bad response getting SCIEL AD convertor value. Bad response length.");
+		EXCEPTION_ASSERT_WITH_LOG(r[0] == cmd[0] && r[1] == cmd[1], LibLogicalAccessException, "Bad response getting SCIEL AD convertor value. Bad command response identifier.");
+		EXCEPTION_ASSERT_WITH_LOG(r[4] == d_scielIdentifier[0] && r[5] == d_scielIdentifier[1], LibLogicalAccessException, "Bad response getting SCIEL AD convertor value. Bad reader response identifier.");
 
 		convertorValue = static_cast<unsigned char>(strtoul(BufferHelper::getStdString(std::vector<unsigned char>(r.end() - 2, r.end())).c_str(), NULL, 16));
 

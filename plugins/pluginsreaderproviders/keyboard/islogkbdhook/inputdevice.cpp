@@ -2,9 +2,9 @@
 
 namespace KBDHOOK
 {
-	std::vector<LOGICALACCESS::KeyboardEntry> InputDevice::getDeviceList()
+	std::vector<logicalaccess::KeyboardEntry> InputDevice::getDeviceList()
 	{
-		std::vector<LOGICALACCESS::KeyboardEntry> deviceList;
+		std::vector<logicalaccess::KeyboardEntry> deviceList;
 
 		std::string root1 = "\\\\?\\Root";
 		std::string root2 = "\\??\\Root";
@@ -22,7 +22,7 @@ namespace KBDHOOK
 				{
 					if ((*it).dwType == RIM_TYPEKEYBOARD)
 					{
-						LOGICALACCESS::KeyboardEntry entry;
+						logicalaccess::KeyboardEntry entry;
 						memset(&entry, 0x00, sizeof(entry));
 						entry.handle = (*it).hDevice;
 

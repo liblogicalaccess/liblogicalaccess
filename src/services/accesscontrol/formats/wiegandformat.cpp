@@ -57,7 +57,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasWriteFormatAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -82,13 +82,13 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasReadFormatAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
 		if (dataLengthBytes*8 < getDataLength())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Data length too small.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Data length too small.");
 		}
 
 		setLinearDataWithoutParity(data, dataLengthBytes);
@@ -100,7 +100,7 @@ namespace logicalaccess
 			par = getLeftParity();
 			if ((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] >> 7) != par)
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Left parity format error.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Left parity format error.");
 			}
 		}
 
@@ -111,7 +111,7 @@ namespace logicalaccess
 			par = getRightParity();
 			if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != par)
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Left parity format error.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Left parity format error.");
 				return;
 			}
 		}

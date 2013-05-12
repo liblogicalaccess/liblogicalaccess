@@ -178,7 +178,7 @@ namespace logicalaccess
 			 * \return The count of read bytes. buf.size() is also set, accordingly. Return value is 0 if no data is available.
 			 * \warning If buf contains data, it will be discarded, even if the call fails.
 			 *
-			 * The serial port must be open before the call or an LibLOGICALACCESSException will be thrown.
+			 * The serial port must be open before the call or an LibLogicalAccessException will be thrown.
 			 * The call may also throw a std::exception in case of failure.
 			 */
 			size_t read(std::vector<unsigned char>& buf, size_t cnt) const;
@@ -188,7 +188,7 @@ namespace logicalaccess
 			 * \param buf The data to write to the serial port.
 			 * \return The count of bytes written.
 			 *
-			 * The serial port must be open before the call or an LibLOGICALACCESSException will be thrown.
+			 * The serial port must be open before the call or an LibLogicalAccessException will be thrown.
 			 * The call may also throw a std::exception in case of failure.
 			 */
 			size_t write(const std::vector<unsigned char>& buf) const;

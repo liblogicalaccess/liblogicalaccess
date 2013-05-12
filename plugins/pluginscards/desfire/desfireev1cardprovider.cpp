@@ -31,7 +31,7 @@ namespace logicalaccess
 		{
 			if (!getDESFireEV1Commands()->createApplication(location->aid, settings, maxNbKeys, evlocation->useISO7816 ? FIDS_ISO_FID : FIDS_NO_ISO_FID, evlocation->cryptoMethod, evlocation->useISO7816 ? evlocation->applicationFID : 0))
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Can't create the application.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't create the application.");
 			}
 		}
 		else
@@ -47,7 +47,7 @@ namespace logicalaccess
 		{
 			if (!getDESFireEV1Commands()->createStdDataFile(location->file, location->securityLevel, accessRights, fileSize, evlocation->useISO7816 ? evlocation->fileFID : 0))
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Can't create the file.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't create the file.");
 			}	
 		}
 		else

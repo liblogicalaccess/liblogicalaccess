@@ -80,7 +80,7 @@ namespace logicalaccess
 		}
 		else
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The key storage type is not supported for this card/reader.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The key storage type is not supported for this card/reader.");
 		}
 	}
 
@@ -116,7 +116,7 @@ namespace logicalaccess
 		}
 		else
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The key storage type is not supported for this card/reader.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The key storage type is not supported for this card/reader.");
 		}
 	}
 

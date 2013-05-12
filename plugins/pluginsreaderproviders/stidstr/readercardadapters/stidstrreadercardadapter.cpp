@@ -14,7 +14,7 @@
 #include "logicalaccess/crypto/aes_initialization_vector.hpp"
 #include "logicalaccess/crypto/aes_symmetric_key.hpp"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {	
 	const unsigned char STidSTRReaderCardAdapter::SOF = 0x02;
 
@@ -162,13 +162,13 @@ namespace LOGICALACCESS
 		{
 			RAND_seed(&d_lastCommandCode, sizeof(d_lastCommandCode));
 
-			EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLOGICALACCESSException, "Insufficient enthropy source");
+			EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
 
 			d_lastIV.resize(16);
 			if (RAND_bytes(&d_lastIV[0], static_cast<int>(d_lastIV.size())) != 1)
 			{
 				COM_SIMPLE_("Cannot retrieve cryptographically strong bytes");
-				throw LibLOGICALACCESSException("Cannot retrieve cryptographically strong bytes");
+				throw LibLogicalAccessException("Cannot retrieve cryptographically strong bytes");
 			}
 		}
 		return d_lastIV;
@@ -284,7 +284,7 @@ namespace LOGICALACCESS
 					buf = handleCommandBuffer(res, statusCode);
 					return true;
 				}
-				catch(LibLOGICALACCESSException& e)
+				catch(LibLogicalAccessException& e)
 				{
 					COM_("Exception {%s}", e.what());
 					throw;
@@ -333,9 +333,9 @@ namespace LOGICALACCESS
 		if ((readerConfig->getCommunicationMode() & STID_CM_SIGNED) == STID_CM_SIGNED)
 		{
 			COM_SIMPLE_("Need to check for signed data...");
-			EXCEPTION_ASSERT_WITH_LOG(data.size() >= 10, LibLOGICALACCESSException, "The buffer is too short to contains the message HMAC.");
+			EXCEPTION_ASSERT_WITH_LOG(data.size() >= 10, LibLogicalAccessException, "The buffer is too short to contains the message HMAC.");
 			tmpData = std::vector<unsigned char>(data.begin(), data.end() - 10);
-			EXCEPTION_ASSERT_WITH_LOG(std::vector<unsigned char>(data.end() - 10, data.end()) == calculateHMAC(tmpData), LibLOGICALACCESSException, "Wrong HMAC.");
+			EXCEPTION_ASSERT_WITH_LOG(std::vector<unsigned char>(data.end() - 10, data.end()) == calculateHMAC(tmpData), LibLogicalAccessException, "Wrong HMAC.");
 			COM_("Data after removing signed data %s", BufferHelper::getHex(tmpData).c_str());
 		}
 
@@ -343,7 +343,7 @@ namespace LOGICALACCESS
 		if ((readerConfig->getCommunicationMode() & STID_CM_CIPHERED) == STID_CM_CIPHERED)
 		{
 			COM_SIMPLE_("Need to check for ciphered data...");
-			EXCEPTION_ASSERT_WITH_LOG(tmpData.size() >= 16, LibLOGICALACCESSException, "The buffer is too short to contains the IV.");
+			EXCEPTION_ASSERT_WITH_LOG(tmpData.size() >= 16, LibLogicalAccessException, "The buffer is too short to contains the IV.");
 
 			std::vector<unsigned char> iv = std::vector<unsigned char>(tmpData.end() - 16, tmpData.end());
 			tmpData.resize(tmpData.size() - 16);
@@ -363,17 +363,17 @@ namespace LOGICALACCESS
 			COM_("Data after removing ciphered data %s", BufferHelper::getHex(tmpData).c_str());
 		}
 		
-		EXCEPTION_ASSERT_WITH_LOG(tmpData.size() >= 6, LibLOGICALACCESSException, "The plain response message should be at least 6 bytes long.");
+		EXCEPTION_ASSERT_WITH_LOG(tmpData.size() >= 6, LibLogicalAccessException, "The plain response message should be at least 6 bytes long.");
 
 		size_t offset = 0;
 		unsigned short ack = (tmpData[offset++] << 8) | tmpData[offset++];
 		COM_("Acquiment value {0x%x(%u)}", ack, ack);
-		EXCEPTION_ASSERT_WITH_LOG(ack == d_lastCommandCode, LibLOGICALACCESSException, "ACK doesn't match the last command code.");
+		EXCEPTION_ASSERT_WITH_LOG(ack == d_lastCommandCode, LibLogicalAccessException, "ACK doesn't match the last command code.");
 
 		unsigned short msglength = (tmpData[offset++] << 8) | tmpData[offset++];
 		COM_("Plain data length {%u}", msglength);
 
-		EXCEPTION_ASSERT_WITH_LOG(static_cast<unsigned int>(msglength + 2) <= tmpData.size(), LibLOGICALACCESSException, "The buffer is too short to contains the complete plain message.");
+		EXCEPTION_ASSERT_WITH_LOG(static_cast<unsigned int>(msglength + 2) <= tmpData.size(), LibLogicalAccessException, "The buffer is too short to contains the complete plain message.");
 
 		std::vector<unsigned char> plainData = std::vector<unsigned char>(tmpData.begin() + offset, tmpData.begin() + offset + msglength);
 		offset += msglength;
@@ -381,7 +381,7 @@ namespace LOGICALACCESS
 		STidCmdType statusType = static_cast<STidCmdType>(tmpData[offset++]);
 		COM_("Status type {0x%x(%d)}", statusType, statusType);
 
-		EXCEPTION_ASSERT_WITH_LOG(statusType == d_adapterType, LibLOGICALACCESSException, "Bad message type for this reader/card adapter.");
+		EXCEPTION_ASSERT_WITH_LOG(statusType == d_adapterType, LibLogicalAccessException, "Bad message type for this reader/card adapter.");
 
 		statusCode = tmpData[offset++];
 		COM_("Plain data status code {0x%x(%u)}", statusCode, statusCode);

@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_MIFARE1KCHIP_HPP
 #define LOGICALACCESS_MIFARE1KCHIP_HPP
 
-#include "mifarechip.hpp'
+#include "mifarechip.hpp"
 
 namespace logicalaccess
 {

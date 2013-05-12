@@ -111,7 +111,7 @@ namespace logicalaccess
 					buf = handleCommandBuffer(res);
 					return true;
 				}
-				catch(LibLOGICALACCESSException& e)
+				catch(LibLogicalAccessException& e)
 				{
 					COM_("Exception {%s}", e.what());
 					throw;

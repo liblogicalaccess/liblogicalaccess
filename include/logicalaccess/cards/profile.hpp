@@ -24,7 +24,7 @@ namespace logicalaccess
 	/**
 	 * \brief A format list.
 	 */
-	typedef vector<boost::shared_ptr<Format> > FormatList;
+	typedef std::vector<boost::shared_ptr<Format> > FormatList;
 
 	/**
 	 * \brief The base profile class for all profiles. Most of the time, a profile only contains key mapping for a chip.

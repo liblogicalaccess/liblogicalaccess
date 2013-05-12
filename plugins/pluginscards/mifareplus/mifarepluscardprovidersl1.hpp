@@ -10,7 +10,7 @@
 #include "logicalaccess/key.hpp"
 #include "mifarepluslocation.hpp"
 #include "logicalaccess/cards/cardprovider.hpp"
-#include "mifarepluscommandsl1.hpp"
+#include "mifarepluscommandssl1.hpp"
 #include "mifarepluskey.hpp"
 #include "mifareplusaccessinfo.hpp"
 

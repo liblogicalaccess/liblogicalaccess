@@ -4,7 +4,7 @@
  * \brief Mifare Ultralight PC/SC commands.
  */
 
-#include "../commands/mifareultralightpcsccommands.h"
+#include "../commands/mifareultralightpcsccommands.hpp"
 
 #include <iostream>
 #include <iomanip>

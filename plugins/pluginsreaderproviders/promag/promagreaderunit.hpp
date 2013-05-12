@@ -9,7 +9,7 @@
 
 #include "logicalaccess/ReaderProviders/readerunit.hpp"
 #include "logicalaccess/ReaderProviders/serialportxml.hpp"
-#include "promagreaderunitconfiguration.hpp
+#include "promagreaderunitconfiguration.hpp"
 
 namespace logicalaccess
 {

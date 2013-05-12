@@ -8,7 +8,7 @@
 #define LOGICALACCESS_PCSCREADERUNIT_HPP
 
 #include "logicalaccess/readerproviders/readerunit.hpp"
-#include "pcscreaderunitconfiguration.hppp"
+#include "pcscreaderunitconfiguration.hpp"
 #include "logicalaccess/cards/readermemorykeystorage.hpp"
 
 namespace logicalaccess

@@ -21,11 +21,11 @@ extern "C"
 		return (char *)"Admitto";
 	}
 
-	LIBLOGICALACCESS_API void getAdmittoReader(boost::shared_ptr<LOGICALACCESS::ReaderProvider>* rp)
+	LIBLOGICALACCESS_API void getAdmittoReader(boost::shared_ptr<logicalaccess::ReaderProvider>* rp)
 	{
 		if (rp != NULL)
 		{
-			*rp = LOGICALACCESS::AdmittoReaderProvider::getSingletonInstance();
+			*rp = logicalaccess::AdmittoReaderProvider::getSingletonInstance();
 		}
 	}
 

@@ -31,14 +31,14 @@ namespace logicalaccess
 		RAND_screen();
 #endif
 
-		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLOGICALACCESSException, "Insufficient enthropy source");
+		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
 
 		std::vector<unsigned char> buf;
 		buf.resize(keySize, 0x00);
 
 		if (RAND_bytes(&buf[0], static_cast<int>(keySize)) != 1)
 		{
-			throw LibLOGICALACCESSException("Cannot retrieve cryptographically strong bytes");
+			throw LibLogicalAccessException("Cannot retrieve cryptographically strong bytes");
 		}
 		
 		for (size_t i = 0; i < buf.size(); ++i)
@@ -63,14 +63,14 @@ namespace logicalaccess
 		RAND_screen();
 #endif
 
-		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLOGICALACCESSException, "Insufficient enthropy source");
+		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
 
 		std::vector<unsigned char> buf;
 		buf.resize(keySize, 0x00);
 
 		if (RAND_bytes(&buf[0], static_cast<int>(keySize)) != 1)
 		{
-			throw LibLOGICALACCESSException("Cannot retrieve cryptographically strong bytes");
+			throw LibLogicalAccessException("Cannot retrieve cryptographically strong bytes");
 		}
 		
 		for (size_t i = 0; i < buf.size(); ++i)

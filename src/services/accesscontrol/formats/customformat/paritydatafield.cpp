@@ -70,7 +70,7 @@ namespace logicalaccess
 	{
 		if ((dataLengthBytes * 8) < (d_length + *pos))
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The data length is too short.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
 		}
 
 		unsigned int* positions = new unsigned int[d_bitsUsePositions.size()];
@@ -87,7 +87,7 @@ namespace logicalaccess
 	{
 		if ((dataLengthBytes * 8) < (d_length + *pos))
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The data length is too short.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
 		}
 
 		unsigned int* positions = new unsigned int[d_bitsUsePositions.size()];
@@ -101,7 +101,7 @@ namespace logicalaccess
 
 		if (parity != currentParity)
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The parity " + getName() + " doesn't match.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The parity " + getName() + " doesn't match.");
 		}
 	}
 

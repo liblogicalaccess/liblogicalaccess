@@ -110,10 +110,10 @@ namespace logicalaccess
 
 	bool STidSTRReaderUnit::waitInsertion(unsigned int maxwait)
 	{
-		bool oldValue = LOGICALACCESS::Settings::getInstance().IsLogEnabled;
-		if (oldValue && !LOGICALACCESS::Settings::getInstance().SeeWaitInsertionLog)
+		bool oldValue = Settings::getInstance().IsLogEnabled;
+		if (oldValue && !Settings::getInstance().SeeWaitInsertionLog)
 		{
-			LOGICALACCESS::Settings::getInstance().IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
+			Settings::getInstance().IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
 		}
 
 		INFO_("Waiting insertion... max wait {%u}", maxwait);
@@ -150,22 +150,22 @@ namespace logicalaccess
 		}
 		catch(...)
 		{
-			LOGICALACCESS::Settings::getInstance().IsLogEnabled = oldValue;
+			Settings::getInstance().IsLogEnabled = oldValue;
 			throw;
 		}
 
 		INFO_("Returns card inserted ? {%d} function timeout expired ? {%d}", inserted, (maxwait != 0 && currentWait >= maxwait));
-		LOGICALACCESS::Settings::getInstance().IsLogEnabled = oldValue;
+		Settings::getInstance().IsLogEnabled = oldValue;
 
 		return inserted;
 	}
 
 	bool STidSTRReaderUnit::waitRemoval(unsigned int maxwait)
 	{
-		bool oldValue = LOGICALACCESS::Settings::getInstance().IsLogEnabled;
-		if (oldValue && !LOGICALACCESS::Settings::getInstance().SeeWaitRemovalLog)
+		bool oldValue = Settings::getInstance().IsLogEnabled;
+		if (oldValue && !Settings::getInstance().SeeWaitRemovalLog)
 		{
-			LOGICALACCESS::Settings::getInstance().IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
+			Settings::getInstance().IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
 		}
 
 		INFO_("Waiting removal... max wait {%u}", maxwait);
@@ -214,13 +214,13 @@ namespace logicalaccess
 		}
 		catch(...)
 		{
-			LOGICALACCESS::Settings::getInstance().IsLogEnabled = oldValue;
+			Settings::getInstance().IsLogEnabled = oldValue;
 			throw;
 		}
 
 		INFO_("Returns card removed ? {%d} - function timeout expired ? {%d}", removed, (maxwait != 0 && currentWait >= maxwait));
 
-		LOGICALACCESS::Settings::getInstance().IsLogEnabled = oldValue;
+		Settings::getInstance().IsLogEnabled = oldValue;
 
 		return removed;
 	}
@@ -243,8 +243,8 @@ namespace logicalaccess
 
 		startAutoDetect();
 
-		EXCEPTION_ASSERT_WITH_LOG(getSerialPort(), LibLOGICALACCESSException, "No serial port configured !");
-		EXCEPTION_ASSERT_WITH_LOG(getSerialPort()->getSerialPort()->deviceName() != "", LibLOGICALACCESSException, "Serial port name is empty ! Auto-detect failed !");
+		EXCEPTION_ASSERT_WITH_LOG(getSerialPort(), LibLogicalAccessException, "No serial port configured !");
+		EXCEPTION_ASSERT_WITH_LOG(getSerialPort()->getSerialPort()->deviceName() != "", LibLogicalAccessException, "Serial port name is empty ! Auto-detect failed !");
 
 		if (!getSerialPort()->getSerialPort()->isOpen())
 		{
@@ -289,7 +289,7 @@ namespace logicalaccess
 	{
 		if (d_port && d_port->getSerialPort()->deviceName() == "")
 		{
-			if (!LOGICALACCESS::Settings::getInstance().IsAutoDetectEnabled)
+			if (!Settings::getInstance().IsAutoDetectEnabled)
 			{
 				INFO_SIMPLE_("Auto detection is disabled through settings !");
 				return;
@@ -314,7 +314,7 @@ namespace logicalaccess
 						
 						// Sending GetInfos() command to check if a reader is on the COM Port
 						unsigned char statusCode;
-						std::vector<unsigned char> response = testingCardAdapter->sendCommand(0x0008, std::vector<unsigned char>(), statusCode, LOGICALACCESS::Settings::getInstance().AutoDetectionTimeout);
+						std::vector<unsigned char> response = testingCardAdapter->sendCommand(0x0008, std::vector<unsigned char>(), statusCode, Settings::getInstance().AutoDetectionTimeout);
 
 						if (response.size() >= 5)
 						{
@@ -447,14 +447,14 @@ namespace logicalaccess
 
 	void STidSTRReaderUnit::configure()
 	{
-		configure(getSerialPort(), LOGICALACCESS::Settings::getInstance().IsConfigurationRetryEnabled);
+		configure(getSerialPort(), Settings::getInstance().IsConfigurationRetryEnabled);
 	}
 
 	void STidSTRReaderUnit::configure(boost::shared_ptr<SerialPortXml> port, bool retryConfiguring)
 	{
 		INFO_SIMPLE_("Configuring serial port...");
-		EXCEPTION_ASSERT_WITH_LOG(port, LibLOGICALACCESSException, "No serial port configured !");
-		EXCEPTION_ASSERT_WITH_LOG(port->getSerialPort()->deviceName() != "", LibLOGICALACCESSException, "Serial port name is empty ! Auto-detect failed !");
+		EXCEPTION_ASSERT_WITH_LOG(port, LibLogicalAccessException, "No serial port configured !");
+		EXCEPTION_ASSERT_WITH_LOG(port->getSerialPort()->deviceName() != "", LibLogicalAccessException, "Serial port name is empty ! Auto-detect failed !");
 
 		try
 		{
@@ -527,11 +527,11 @@ namespace logicalaccess
 				// Strange stuff is going here... by waiting and reopening the COM port (maybe for system cleanup), it's working !
 				std::string portn = port->getSerialPort()->deviceName();
 				WARNING_("Sleeping {%d} milliseconds -> Reopen serial port {%s} -> Finally retry  to configure...",
-							e.what(), LOGICALACCESS::Settings::getInstance().ConfigurationRetryTimeout, portn.c_str());
+							e.what(), Settings::getInstance().ConfigurationRetryTimeout, portn.c_str());
 #ifndef __linux__
-				Sleep(LOGICALACCESS::Settings::getInstance().ConfigurationRetryTimeout);
+				Sleep(Settings::getInstance().ConfigurationRetryTimeout);
 #else
-				sleep(LOGICALACCESS::Settings::getInstance().ConfigurationRetryTimeout);
+				sleep(Settings::getInstance().ConfigurationRetryTimeout);
 #endif
 				port->getSerialPort()->reopen();
 				configure(port, false);
@@ -786,7 +786,7 @@ namespace logicalaccess
 		INFO_SIMPLE_("Authenticating HMAC (signed communication)...");
 
 		RAND_seed(d_port.get(), sizeof(d_port.get()));
-		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLOGICALACCESSException, "Insufficient enthropy source");
+		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
 
 		std::vector<unsigned char> buf1;
 		boost::shared_ptr<HMAC1Key> key = getSTidSTRConfiguration()->getHMACKey();
@@ -804,7 +804,7 @@ namespace logicalaccess
 		rndB.resize(16);
 		if (RAND_bytes(&rndB[0], static_cast<int>(rndB.size())) != 1)
 		{
-			throw LibLOGICALACCESSException("Cannot retrieve cryptographically strong bytes");
+			throw LibLogicalAccessException("Cannot retrieve cryptographically strong bytes");
 		}
 
 		openssl::AESInitializationVector aesiv = openssl::AESInitializationVector::createNull();
@@ -832,10 +832,10 @@ namespace logicalaccess
 
 		std::vector<unsigned char> buf3;
 		cipher.decipher(encbuf3, buf3, aeskey, aesiv, false);
-		EXCEPTION_ASSERT_WITH_LOG(buf3.size()  == 32, LibLOGICALACCESSException, "Bad second reader response length.");
+		EXCEPTION_ASSERT_WITH_LOG(buf3.size()  == 32, LibLogicalAccessException, "Bad second reader response length.");
 
 		std::vector<unsigned char> rndB2 = std::vector<unsigned char>(buf3.begin(), buf3.begin() + 16);
-		EXCEPTION_ASSERT_WITH_LOG(rndB2  == rndB, LibLOGICALACCESSException, "Cannot negotiate the session: RndB'' != RndB.");
+		EXCEPTION_ASSERT_WITH_LOG(rndB2  == rndB, LibLogicalAccessException, "Cannot negotiate the session: RndB'' != RndB.");
 		std::vector<unsigned char> rndC= std::vector<unsigned char>(buf3.begin() + 16, buf3.begin() + 16 + 16);
 
 		d_sessionKey_hmac.clear();
@@ -856,13 +856,13 @@ namespace logicalaccess
 		INFO_SIMPLE_("Authenticating AES (ciphered communication)...");
 
 		RAND_seed(d_port.get(), sizeof(d_port.get()));
-		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLOGICALACCESSException, "Insufficient enthropy source");
+		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
 
 		std::vector<unsigned char> rndB;
 		rndB.resize(16);
 		if (RAND_bytes(&rndB[0], static_cast<int>(rndB.size())) != 1)
 		{
-			throw LibLOGICALACCESSException("Cannot retrieve cryptographically strong bytes");
+			throw LibLogicalAccessException("Cannot retrieve cryptographically strong bytes");
 		}
 
 		boost::shared_ptr<AES128Key> key = getSTidSTRConfiguration()->getAESKey();
@@ -893,7 +893,7 @@ namespace logicalaccess
 		std::vector<unsigned char> encrndB2 = authenticateReader2(encbuf1);
 
 		cipher.decipher(encrndB2, rndB2, aeskey, aesiv, false);
-		EXCEPTION_ASSERT_WITH_LOG(rndB2  == rndB, LibLOGICALACCESSException, "Cannot negotiate the session: RndB'' != RndB.");
+		EXCEPTION_ASSERT_WITH_LOG(rndB2  == rndB, LibLogicalAccessException, "Cannot negotiate the session: RndB'' != RndB.");
 
 		d_sessionKey_aes.clear();
 		d_sessionKey_aes.push_back(rndA[0]);
@@ -974,13 +974,13 @@ namespace logicalaccess
 		unsigned char keyMode = 0x00;
 		if (key_hmac.size() > 0)
 		{
-			EXCEPTION_ASSERT_WITH_LOG(key_hmac.size() == 10, LibLOGICALACCESSException, "The authentication HMAC key must be 10-byte long.");
+			EXCEPTION_ASSERT_WITH_LOG(key_hmac.size() == 10, LibLogicalAccessException, "The authentication HMAC key must be 10-byte long.");
 			keyMode |= 0x01;
 			command.insert(command.end(), key_hmac.begin(), key_hmac.end());
 		}
 		if (key_aes.size() > 0)
 		{
-			EXCEPTION_ASSERT_WITH_LOG(key_aes.size() == 16, LibLOGICALACCESSException, "The enciphering AES key must be 16-byte long.");
+			EXCEPTION_ASSERT_WITH_LOG(key_aes.size() == 16, LibLogicalAccessException, "The enciphering AES key must be 16-byte long.");
 			keyMode |= 0x02;
 			command.insert(command.end(), key_aes.begin(), key_aes.end());
 		}
@@ -1004,7 +1004,7 @@ namespace logicalaccess
 		INFO_("Setting RS485 address... address {0x%x(%u)}", address, address);
 		unsigned char statusCode;
 		std::vector<unsigned char> command;
-		EXCEPTION_ASSERT_WITH_LOG(address <= 127, LibLOGICALACCESSException, "The RS485 address should be between 0 and 127.");
+		EXCEPTION_ASSERT_WITH_LOG(address <= 127, LibLogicalAccessException, "The RS485 address should be between 0 and 127.");
 		command.push_back(address);
 		getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0006, command, statusCode);
 	}
@@ -1015,7 +1015,7 @@ namespace logicalaccess
 		unsigned char statusCode;
 		std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0008, std::vector<unsigned char>(), statusCode);
 
-		EXCEPTION_ASSERT_WITH_LOG(response.size() >= 5, LibLOGICALACCESSException, "The GetInfos response should be 5-byte long.");
+		EXCEPTION_ASSERT_WITH_LOG(response.size() >= 5, LibLogicalAccessException, "The GetInfos response should be 5-byte long.");
 
 		STidSTRInformation readerInfo;
 		readerInfo.version = response[0];
@@ -1062,7 +1062,7 @@ namespace logicalaccess
 		unsigned char statusCode;
 		std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000C, std::vector<unsigned char>(), statusCode);
 
-		EXCEPTION_ASSERT_WITH_LOG(response.size() >= 3, LibLOGICALACCESSException, "The GetTamperSwitchInfos response should be 3-byte long.");
+		EXCEPTION_ASSERT_WITH_LOG(response.size() >= 3, LibLogicalAccessException, "The GetTamperSwitchInfos response should be 3-byte long.");
 
 		useTamperSwitch = (response[0] == 0x01);
 		behavior = static_cast<STidTamperSwitchBehavior>(response[1]);
@@ -1077,6 +1077,6 @@ namespace logicalaccess
 		unsigned char statusCode;
 		std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000E, std::vector<unsigned char>(), statusCode);
 
-		EXCEPTION_ASSERT_WITH_LOG(response.size() == 0, LibLOGICALACCESSException, "Unable to load the SKB values. An unknown error occured.");
+		EXCEPTION_ASSERT_WITH_LOG(response.size() == 0, LibLogicalAccessException, "Unable to load the SKB values. An unknown error occured.");
 	}
 }

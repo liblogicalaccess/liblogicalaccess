@@ -26,7 +26,7 @@ namespace logicalaccess
 		bool ret = true;
 
 		boost::shared_ptr<LocationNode> rootNode = getISO15693Chip()->getRootLocationNode();
-		vector<boost::shared_ptr<LocationNode> > childs = rootNode->getChildrens();
+		std::vector<boost::shared_ptr<LocationNode> > childs = rootNode->getChildrens();
 
 		for (size_t i = 0; i < childs.size() && ret; ++i)
 		{
@@ -62,7 +62,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasWriteDataAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -88,7 +88,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasReadDataAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 

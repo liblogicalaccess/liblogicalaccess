@@ -479,7 +479,7 @@ namespace logicalaccess
 				ll--;
 			}
 
-			EXCEPTION_ASSERT_WITH_LOG(ret[ll] == 0x80, LibLOGICALACCESSException, "Incorrect FLT result");
+			EXCEPTION_ASSERT_WITH_LOG(ret[ll] == 0x80, LibLogicalAccessException, "Incorrect FLT result");
 
 			ll -= 2;
 		}
@@ -494,7 +494,7 @@ namespace logicalaccess
 		char computationError[128];
 		memset(computationError, 0x00, 128);
 		sprintf(computationError, "Error in crc computation: (crc1: %04x, crc2: %04x)", crc1, crc2);
-		EXCEPTION_ASSERT_WITH_LOG(crc1 == crc2, LibLOGICALACCESSException, computationError);
+		EXCEPTION_ASSERT_WITH_LOG(crc1 == crc2, LibLogicalAccessException, computationError);
 
 		ret.resize(ll);
 		return ret;
@@ -513,13 +513,13 @@ namespace logicalaccess
 
 		RAND_seed(&keyno, sizeof(keyno));
 
-		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLOGICALACCESSException, "Insufficient enthropy source");
+		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
 
 		d_rndA.clear();
 		d_rndA.resize(8);
 		if (RAND_bytes(&d_rndA[0], static_cast<int>(d_rndA.size())) != 1)
 		{
-			throw LibLOGICALACCESSException("Cannot retrieve cryptographically strong bytes");
+			throw LibLogicalAccessException("Cannot retrieve cryptographically strong bytes");
 		}
 
 		std::vector<unsigned char> rndAB;
@@ -585,12 +585,12 @@ namespace logicalaccess
 				}
 				else
 				{
-					THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Diversification for this key type is not implemented yet.");
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Diversification for this key type is not implemented yet.");
 				}
 			}
 			else
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Diversification for this key type is not implemented yet.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Diversification for this key type is not implemented yet.");
 			}
 		}
 		else
@@ -752,13 +752,13 @@ namespace logicalaccess
 
 		RAND_seed(&keyno, sizeof(keyno));
 
-		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLOGICALACCESSException, "Insufficient enthropy source");
+		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
 
 		d_rndA.clear();
 		d_rndA.resize(randomlen);
 		if (RAND_bytes(&d_rndA[0], static_cast<int>(d_rndA.size())) != 1)
 		{
-			throw LibLOGICALACCESSException("Cannot retrieve cryptographically strong bytes");
+			throw LibLogicalAccessException("Cannot retrieve cryptographically strong bytes");
 		}
 
 		std::vector<unsigned char> rndAB;
@@ -845,13 +845,13 @@ namespace logicalaccess
 
 		RAND_seed(&keyno, sizeof(keyno));
 
-		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLOGICALACCESSException, "Insufficient enthropy source");
+		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
 
 		d_rndA.clear();
 		d_rndA.resize(16);
 		if (RAND_bytes(&d_rndA[0], static_cast<int>(d_rndA.size())) != 1)
 		{
-			throw LibLOGICALACCESSException("Cannot retrieve cryptographically strong bytes");
+			throw LibLogicalAccessException("Cannot retrieve cryptographically strong bytes");
 		}
 
 		std::vector<unsigned char> rndAB;
@@ -1087,7 +1087,7 @@ namespace logicalaccess
 				ll--;
 			}
 
-			EXCEPTION_ASSERT_WITH_LOG(decdata[ll] == 0x80, LibLOGICALACCESSException, "Incorrect FLT result");
+			EXCEPTION_ASSERT_WITH_LOG(decdata[ll] == 0x80, LibLogicalAccessException, "Incorrect FLT result");
 
 			ll -= 4;
 		}
@@ -1110,7 +1110,7 @@ namespace logicalaccess
 		char computationError[128];
 		memset(computationError, 0x00, 128);
 		sprintf(computationError, "Error in crc computation: (crc1: %04x, crc2: %04x) or padding", static_cast<unsigned int>(crc1), static_cast<unsigned int>(crc2));
-		EXCEPTION_ASSERT_WITH_LOG(crc1 == crc2 && padding == padding1, LibLOGICALACCESSException, computationError);
+		EXCEPTION_ASSERT_WITH_LOG(crc1 == crc2 && padding == padding1, LibLogicalAccessException, computationError);
 
 		decdata.resize(ll);
 		return decdata;

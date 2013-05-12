@@ -255,8 +255,8 @@ namespace logicalaccess
 
 		startAutoDetect();
 
-		EXCEPTION_ASSERT_WITH_LOG(getSerialPort(), LibLOGICALACCESSException, "No serial port configured !");
-		EXCEPTION_ASSERT_WITH_LOG(getSerialPort()->getSerialPort()->deviceName() != "", LibLOGICALACCESSException, "Serial port name is empty ! Auto-detect failed !");
+		EXCEPTION_ASSERT_WITH_LOG(getSerialPort(), LibLogicalAccessException, "No serial port configured !");
+		EXCEPTION_ASSERT_WITH_LOG(getSerialPort()->getSerialPort()->deviceName() != "", LibLogicalAccessException, "Serial port name is empty ! Auto-detect failed !");
 
 		if (!getSerialPort()->getSerialPort()->isOpen())
 		{
@@ -284,7 +284,7 @@ namespace logicalaccess
 	{
 		if (d_port && d_port->getSerialPort()->deviceName() == "")
 		{
-			if (!LOGICALACCESS::Settings::getInstance().IsAutoDetectEnabled)
+			if (!Settings::getInstance().IsAutoDetectEnabled)
 			{
 				INFO_SIMPLE_("Auto detection is disabled through settings !");
 				return;
@@ -310,7 +310,7 @@ namespace logicalaccess
 						std::vector<unsigned char> cmd;
 						cmd.push_back(static_cast<unsigned char>('N'));
 
-						std::vector<unsigned char> r = testingCardAdapter->sendCommand(cmd, LOGICALACCESS::Settings::getInstance().AutoDetectionTimeout);
+						std::vector<unsigned char> r = testingCardAdapter->sendCommand(cmd, Settings::getInstance().AutoDetectionTimeout);
 
 						if (r.size() > 0)
 						{
@@ -352,13 +352,13 @@ namespace logicalaccess
 
 	void PromagReaderUnit::configure()
 	{
-		configure(getSerialPort(), LOGICALACCESS::Settings::getInstance().IsConfigurationRetryEnabled);
+		configure(getSerialPort(), Settings::getInstance().IsConfigurationRetryEnabled);
 	}
 
 	void PromagReaderUnit::configure(boost::shared_ptr<SerialPortXml> port, bool retryConfiguring)
 	{
-		EXCEPTION_ASSERT_WITH_LOG(port, LibLOGICALACCESSException, "No serial port configured !");
-		EXCEPTION_ASSERT_WITH_LOG(port->getSerialPort()->deviceName() != "", LibLOGICALACCESSException, "Serial port name is empty ! Auto-detect failed !");
+		EXCEPTION_ASSERT_WITH_LOG(port, LibLogicalAccessException, "No serial port configured !");
+		EXCEPTION_ASSERT_WITH_LOG(port->getSerialPort()->deviceName() != "", LibLogicalAccessException, "Serial port name is empty ! Auto-detect failed !");
 
 		try
 		{
@@ -430,11 +430,11 @@ namespace logicalaccess
 				// Strange stuff is going here... by waiting and reopening the COM port (maybe for system cleanup), it's working !
 				std::string portn = port->getSerialPort()->deviceName();
 				WARNING_("Exception received {%s} ! Sleeping {%d} milliseconds -> Reopen serial port {%s} -> Finally retry  to configure...",
-							e.what(), LOGICALACCESS::Settings::getInstance().ConfigurationRetryTimeout, portn.c_str());
+							e.what(), Settings::getInstance().ConfigurationRetryTimeout, portn.c_str());
 #ifndef __linux__
-				Sleep(LOGICALACCESS::Settings::getInstance().ConfigurationRetryTimeout);
+				Sleep(Settings::getInstance().ConfigurationRetryTimeout);
 #else
-				sleep(LOGICALACCESS::Settings::getInstance().ConfigurationRetryTimeout);
+				sleep(Settings::getInstance().ConfigurationRetryTimeout);
 #endif
 				port->getSerialPort()->reopen();
 				configure(getSerialPort(), false);

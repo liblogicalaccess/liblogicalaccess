@@ -7,7 +7,7 @@
 #include "logicalaccess/services/accesscontrol/formats/wiegand37withfacilityrightparity2format.hpp"
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 #include "logicalaccess/services/accesscontrol/encodings/binarydatatype.hpp"
-#include "logicalaccess/services/accesscontrol/encodings/bigdndianratarepresentation.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp"
 #include "logicalaccess/services/accesscontrol/encodings/nodatarepresentation.hpp"
 #include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
 
@@ -86,7 +86,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasWriteFormatAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif		
 
@@ -111,7 +111,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasReadFormatAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -124,21 +124,21 @@ namespace logicalaccess
 			unsigned char parity = getLeftParity(data, dataLengthBytes);
 			if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != parity)
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Left parity format error.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Left parity format error.");
 			}
 
 			pos = 35;
 			parity = getRightParity1(data, dataLengthBytes);
 			if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != parity)
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Right parity 1 format error.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Right parity 1 format error.");
 			}
 
 			pos = 36;
 			parity = getRightParity2(data, dataLengthBytes);
 			if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != parity)
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Right parity 1 format error.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Right parity 1 format error.");
 			}
 		}
 	}

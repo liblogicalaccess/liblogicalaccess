@@ -31,7 +31,7 @@ namespace logicalaccess
 		std::vector<unsigned char> data;
 		data.resize(14, 0x00);
 
-		data[0] = ((keytype == LOGICALACCESS::KT_KEY_A) ? 0 : 4) | 3;
+		data[0] = ((keytype == KT_KEY_A) ? 0 : 4) | 3;
 		data[1] = keyno;
 		memcpy(&(data[8]), key, keylen);
 
@@ -67,7 +67,7 @@ namespace logicalaccess
 		}
 		else
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The key storage type is not supported for this card/reader.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The key storage type is not supported for this card/reader.");
 		}
 	}
 
@@ -78,7 +78,7 @@ namespace logicalaccess
 		std::vector<unsigned char> data;
 		data.resize(3, 0x00);
 
-		data[0] = ((keytype == LOGICALACCESS::KT_KEY_A) ? 0 : 4) | 3;
+		data[0] = ((keytype == KT_KEY_A) ? 0 : 4) | 3;
 		data[1] = keyno;
 		data[2] = blockno;
 
@@ -101,7 +101,7 @@ namespace logicalaccess
 		}
 		else
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The key storage type is not supported for this card/reader.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The key storage type is not supported for this card/reader.");
 		}
 	}
 
@@ -115,7 +115,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasReadDataAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -125,7 +125,7 @@ namespace logicalaccess
 		std::vector<unsigned char> sbuf;
 		sbuf = getMifareSmartIDReaderCardAdapter()->sendCommand(0x46, data);
 
-		EXCEPTION_ASSERT_WITH_LOG(sbuf.size() == 16, LibLOGICALACCESSException, "The read value should always be 16 bytes long");
+		EXCEPTION_ASSERT_WITH_LOG(sbuf.size() == 16, LibLogicalAccessException, "The read value should always be 16 bytes long");
 
 		memcpy(buf, &sbuf[0], sbuf.size());
 
@@ -142,7 +142,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasWriteDataAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 

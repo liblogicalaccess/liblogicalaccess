@@ -96,7 +96,7 @@ namespace logicalaccess
 		vector<DFName> dfnames;		
 		
 		ERROR_SIMPLE_("Function not available with this reader.");
-		THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Function not available with this reader.");
+		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
 
 		return dfnames;
 	}
@@ -106,7 +106,7 @@ namespace logicalaccess
 		vector<unsigned short> fileids;		
 
 		ERROR_SIMPLE_("Function not available with this reader.");
-		THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Function not available with this reader.");
+		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
 
 		return fileids;
 	}
@@ -126,7 +126,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasWriteDataAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -138,11 +138,11 @@ namespace logicalaccess
 
 		if (isoFID != 0x00)
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "isoFID parameter not available with this reader.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "isoFID parameter not available with this reader.");
 		}
 		if (isoDFName != NULL)
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "isoDFName parameter not available with this reader.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "isoDFName parameter not available with this reader.");
 		}
 
 		unsigned char statusCode;
@@ -165,7 +165,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasWriteDataAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 		DESFireLocation::convertIntToAid(aid, command);
@@ -205,7 +205,7 @@ namespace logicalaccess
 		unsigned char statusCode;
 		std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x0045, std::vector<unsigned char>(), statusCode);
 
-		EXCEPTION_ASSERT_WITH_LOG(r.size() >= 3, LibLOGICALACCESSException, "The response length should be at least 3-byte long");
+		EXCEPTION_ASSERT_WITH_LOG(r.size() >= 3, LibLogicalAccessException, "The response length should be at least 3-byte long");
 
 		settings = static_cast<DESFireKeySettings>(r[0]);
 		maxNbKeys = r[1] & 0x0F;
@@ -222,7 +222,7 @@ namespace logicalaccess
 		unsigned char statusCode;
 		std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x0064, command, statusCode);
 
-		EXCEPTION_ASSERT_WITH_LOG(r.size() >= 1, LibLOGICALACCESSException, "The response length should be at least 1-byte long");
+		EXCEPTION_ASSERT_WITH_LOG(r.size() >= 1, LibLogicalAccessException, "The response length should be at least 1-byte long");
 
 		return r[0];
 	}
@@ -249,7 +249,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasWriteDataAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -259,7 +259,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(fileno));
 		if (isoFID != 0)
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "isoFID parameter not available with this reader.");		
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "isoFID parameter not available with this reader.");		
 		}
 		command.push_back(static_cast<unsigned char>(comSettings));
 		BufferHelper::setUShort(command, ar);
@@ -310,7 +310,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasWriteDataAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -320,7 +320,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(fileno));
 		if (isoFID != 0)
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "isoFID parameter not available with this reader.");		
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "isoFID parameter not available with this reader.");		
 		}
 		command.push_back(static_cast<unsigned char>(comSettings));
 		BufferHelper::setUShort(command, ar);
@@ -344,7 +344,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasWriteDataAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -379,7 +379,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasWriteDataAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -389,7 +389,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(fileno));
 		if (isoFID != 0)
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "isoFID parameter not available with this reader.");			
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "isoFID parameter not available with this reader.");			
 		}
 		command.push_back(static_cast<unsigned char>(comSettings));
 		BufferHelper::setUShort(command, ar);
@@ -419,7 +419,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasWriteDataAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -449,34 +449,34 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::iso_selectFile(unsigned short /*fid*/)
 	{
-		THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Function not available with this reader.");
+		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
 	}
 
 	std::vector<unsigned char> DESFireEV1STidSTRCommands::iso_readRecords(unsigned short /*fid*/, unsigned char /*start_record*/, DESFireRecords /*record_number*/)
 	{
-		THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Function not available with this reader.");
+		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
 		return std::vector<unsigned char>();
 	}
 
 	void DESFireEV1STidSTRCommands::iso_appendrecord(const std::vector<unsigned char>& /*data*/, unsigned short /*fid*/)
 	{
-		THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Function not available with this reader.");
+		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
 	}
 
 	std::vector<unsigned char> DESFireEV1STidSTRCommands::iso_getChallenge(unsigned int /*length*/)
 	{
-		THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Function not available with this reader.");
+		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
 		return std::vector<unsigned char>();
 	}
 
 	void DESFireEV1STidSTRCommands::iso_externalAuthenticate(DESFireISOAlgorithm /*algorithm*/, bool /*isMasterCardKey*/, unsigned char /*keyno*/, const std::vector<unsigned char>& /*data*/)
 	{
-		THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Function not available with this reader.");
+		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
 	}
 
 	std::vector<unsigned char> DESFireEV1STidSTRCommands::iso_internalAuthenticate(DESFireISOAlgorithm /*algorithm*/, bool /*isMasterCardKey*/, unsigned char /*keyno*/, const std::vector<unsigned char>& /*RPCD2*/, unsigned int /*length*/)
 	{
-		THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Function not available with this reader.");
+		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
 		return std::vector<unsigned char>();
 	}
 
@@ -497,14 +497,14 @@ namespace logicalaccess
 		}
 		else
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The key storage type is not supported for this card/reader.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The key storage type is not supported for this card/reader.");
 		}
 	}
 
 	void DESFireEV1STidSTRCommands::loadKey(std::vector<unsigned char> key, bool /*diversify*/, bool /*isVolatile*/)
 	{
 		INFO_("Loading key in reader memory... key size {%d}", key.size());
-		EXCEPTION_ASSERT_WITH_LOG(key.size() == 16, LibLOGICALACCESSException, "The key length must be 16-byte long");
+		EXCEPTION_ASSERT_WITH_LOG(key.size() == 16, LibLogicalAccessException, "The key length must be 16-byte long");
 
 		std::vector<unsigned char> command;
 		command.push_back(0x00); //(isVolatile ? 0x00 : 0x01);  Always use the Reader RAM Memory (0x00) (if want to write in EEPROM, use 0x01)
@@ -558,13 +558,13 @@ namespace logicalaccess
 	void DESFireEV1STidSTRCommands::authenticateISO(unsigned char /*keyno*/, DESFireISOAlgorithm /*algorithm*/)
 	{
 		ERROR_SIMPLE_("Function not available with this reader.");
-		THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Function not available with this reader.");
+		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
 	}
 
 	void DESFireEV1STidSTRCommands::authenticateAES(unsigned char /*keyno*/)
 	{
 		ERROR_SIMPLE_("Function not available with this reader.");
-		THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Function not available with this reader.");
+		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
 	}
 
 	size_t DESFireEV1STidSTRCommands::readData(int fileno, size_t offset, size_t length, void* data, EncryptionMode mode)
@@ -734,7 +734,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasWriteDataAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -761,7 +761,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasWriteDataAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -860,7 +860,7 @@ namespace logicalaccess
 		unsigned char statusCode;
 		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x0060, std::vector<unsigned char>(), statusCode);
 
-		EXCEPTION_ASSERT_WITH_LOG(result.size() >= 28, LibLOGICALACCESSException, "The response length should be at least 28-byte long");
+		EXCEPTION_ASSERT_WITH_LOG(result.size() >= 28, LibLogicalAccessException, "The response length should be at least 28-byte long");
 
 		memcpy(reinterpret_cast<char*>(&dataVersion), &result[0], 28);
 		r = true;
@@ -898,7 +898,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasWriteDataAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -998,7 +998,7 @@ namespace logicalaccess
 	void DESFireEV1STidSTRCommands::iso_selectApplication(std::vector<unsigned char> /*isoaid*/)
 	{
 		ERROR_SIMPLE_("Function not available with this reader.");
-		THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Function not available with this reader.");
+		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
 	}
 
 	void DESFireEV1STidSTRCommands::setConfiguration(bool formatCardEnabled, bool randomIdEnabled)
@@ -1016,7 +1016,7 @@ namespace logicalaccess
 	{
 		if (defaultKey->getLength() < 24)
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The default key length must be 24-byte long.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The default key length must be 24-byte long.");
 		}
 
 		std::vector<unsigned char> command;

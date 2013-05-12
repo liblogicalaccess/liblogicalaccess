@@ -7,8 +7,8 @@
 #ifndef LOGICALACCESS_MIFARECHERRYCOMMANDS_HPP
 #define LOGICALACCESS_MIFARECHERRYCOMMANDS_HPP
 
-#include "mifarepcsccommands.h"
-#include "../readercardadapters/pcscreadercardadapter.h"
+#include "mifarepcsccommands.hpp"
+#include "../readercardadapters/pcscreadercardadapter.hpp"
 
 #include <string>
 #include <vector>

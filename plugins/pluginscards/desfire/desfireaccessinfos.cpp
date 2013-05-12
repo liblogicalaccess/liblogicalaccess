@@ -6,6 +6,7 @@
 
 #include "desfireaccessinfo.hpp"
 #include "desfireprofile.hpp"
+#include "desfirechip.hpp"
 
 namespace logicalaccess
 {	
@@ -23,6 +24,11 @@ namespace logicalaccess
 
 	DESFireAccessInfo::~DESFireAccessInfo()
 	{		
+	}
+
+	std::string DESFireAccessInfo::getCardType() const
+	{
+		return CHIP_DESFIRE;
 	}
 
 	void DESFireAccessInfo::generateInfos()

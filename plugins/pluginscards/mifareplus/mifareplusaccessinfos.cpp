@@ -5,6 +5,7 @@
  */
 
 #include "mifareplusaccessinfo.hpp"
+#include "mifarepluschip.hpp"
 
 namespace logicalaccess
 {
@@ -42,6 +43,11 @@ namespace logicalaccess
 
 	MifarePlusAccessInfo::~MifarePlusAccessInfo()
 	{		
+	}
+
+	std::string MifarePlusAccessInfo::getCardType() const
+	{
+		return CHIP_MIFAREPLUS4K;
 	}
 
 	void MifarePlusAccessInfo::generateInfos()

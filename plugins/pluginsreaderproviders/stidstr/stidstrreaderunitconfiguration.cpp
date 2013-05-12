@@ -4,9 +4,10 @@
  * \brief STidSTR reader unit configuration.
  */
 
-#include "STidSTRReaderUnitConfiguration.h"
+#include "stidstrreaderunitconfiguration.hpp"
+#include "stidstrreaderprovider.hpp"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
 	STidSTRReaderUnitConfiguration::STidSTRReaderUnitConfiguration()
 		: ReaderUnitConfiguration(READER_STIDSTR)

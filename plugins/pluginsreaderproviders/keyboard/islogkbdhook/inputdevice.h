@@ -12,7 +12,7 @@ namespace KBDHOOK
 	{
 		public:
 
-			static std::vector<LOGICALACCESS::KeyboardEntry> getDeviceList();
+			static std::vector<logicalaccess::KeyboardEntry> getDeviceList();
 	};
 }
 

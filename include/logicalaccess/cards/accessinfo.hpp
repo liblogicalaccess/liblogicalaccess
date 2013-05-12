@@ -35,7 +35,7 @@ namespace logicalaccess
 			 * \brief Generate pseudo-random access informations for a given card serial number.
 			 * \param csn The card serial number, as a salt (no diversification here).
 			 */
-			virtual void generateInfos(const string& csn) = 0;
+			virtual void generateInfos(const std::string& csn) = 0;
 
 			/**
 			 * \brief Access informations data size.
@@ -46,7 +46,7 @@ namespace logicalaccess
 			 * \brief Get the card type for this access infos.
 			 * \return The card type.
 			 */
-			virtual std::string getCardType() = 0;
+			virtual std::string getCardType() const = 0;
 
 			/**
 			 * \brief Generate a key data.

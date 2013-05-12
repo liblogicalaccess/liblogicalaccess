@@ -56,7 +56,7 @@ namespace logicalaccess
 		//activate T=Cl mode
 		if (!TurnOnTCL())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Error while turning on the TCL mode, or TCL already in use\n");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Error while turning on the TCL mode, or TCL already in use\n");
 		}
 
 		return (MifarePlusSpringCardCommands::GenericAESAuthentication(0x9002, key, true, false));
@@ -67,7 +67,7 @@ namespace logicalaccess
 		//activate T=Cl mode
 		if (!TurnOnTCL())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Error while turning on the TCL mode, or TCL already in use\n");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Error while turning on the TCL mode, or TCL already in use\n");
 		}
 
 		return (MifarePlusSpringCardCommands::GenericAESAuthentication(0x9003, key, true, false));

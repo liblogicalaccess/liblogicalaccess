@@ -129,9 +129,9 @@ namespace logicalaccess
 			if (itct != ctList.end())
 			{
 				INFO_SIMPLE_("Configuration found in the composite ! Retrieving format for card...");
-				boost::shared_ptr<LOGICALACCESS::AccessInfo> ai;
-				boost::shared_ptr<LOGICALACCESS::Location> loc;
-				boost::shared_ptr<LOGICALACCESS::Format> format;
+				boost::shared_ptr<AccessInfo> ai;
+				boost::shared_ptr<Location> loc;
+				boost::shared_ptr<Format> format;
 				composite->retrieveFormatForCard(useCardType, &format, &loc, &ai);
 
 				if (format)

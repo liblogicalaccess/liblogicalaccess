@@ -316,13 +316,13 @@ namespace logicalaccess
 
 		if (!readData(loc, ai, madbuf, sizeof(madbuf), CB_DEFAULT))
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Can't read the MAD.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't read the MAD.");
 		}
 		
 		unsigned char madcrc = calculateMADCrc(madbuf, sizeof(madbuf));
 		if (madcrc != madbuf[0])
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Bad MAD CRC.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Bad MAD CRC.");
 		}
 		
 		sector = findReferencedSector(aid, madbuf, sizeof(madbuf));
@@ -336,13 +336,13 @@ namespace logicalaccess
 
 			if (!readData(loc, ai, madbuf2, sizeof(madbuf2), CB_DEFAULT))
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Can't read the MAD2.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't read the MAD2.");
 			}
 
 			unsigned char mad2crc = calculateMADCrc(madbuf2, sizeof(madbuf2));
 			if (mad2crc != madbuf2[0])
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Bad MAD2 CRC.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Bad MAD2 CRC.");
 			}
 
 			sector = findReferencedSector(aid, madbuf2, sizeof(madbuf2));
@@ -378,7 +378,7 @@ namespace logicalaccess
 		{
 			if (sector == 0)
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Can't make reference to the MAD itself.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't make reference to the MAD itself.");
 			}
 
 			loc->sector = 0;
@@ -389,7 +389,7 @@ namespace logicalaccess
 
 			if (!readData(loc, ai, madbuf, sizeof(madbuf), CB_DEFAULT))
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Can't read the MAD.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't read the MAD.");
 			}
 			
 			madbuf[(sector*2)] = aid & 0xff;
@@ -402,14 +402,14 @@ namespace logicalaccess
 
 			if (!writeData(loc, ai, boost::shared_ptr<AccessInfo>(), madbuf, sizeof(madbuf), CB_DEFAULT))
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Can't write the MAD.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't write the MAD.");
 			}
 		}
 		else
 		{
 			if (sector == 16)
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Can't make reference to the MAD2 itself.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't make reference to the MAD2 itself.");
 			}
 
 			loc->sector = 16;
@@ -420,7 +420,7 @@ namespace logicalaccess
 
 			if (!readData(loc, ai, madbuf2, sizeof(madbuf2), CB_DEFAULT))
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Can't read the MAD2.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't read the MAD2.");
 			}
 
 			sector -= 16;
@@ -430,7 +430,7 @@ namespace logicalaccess
 
 			if (!writeData(loc, ai, boost::shared_ptr<AccessInfo>(), madbuf2, sizeof(madbuf2), CB_DEFAULT))
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Can't write the MAD2.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't write the MAD2.");
 			}
 		}
 	}
@@ -610,7 +610,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasWriteDataAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -785,7 +785,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasReadDataAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -810,7 +810,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasWriteDataAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 

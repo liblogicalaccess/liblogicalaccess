@@ -107,13 +107,13 @@ namespace logicalaccess
 			 * \brief Get the ISO DF-Names of all active application.
 			 * \return The DF-Names list.
 			 */
-			virtual vector<DFName> getDFNames() = 0;
+			virtual std::vector<DFName> getDFNames() = 0;
 
 			/**
 			 * \brief Get the ISO FID of all active files within the currently selected application.
 			 * \return The ISO FID list.
 			 */
-			virtual vector<unsigned short> getISOFileIDs() = 0;		
+			virtual std::vector<unsigned short> getISOFileIDs() = 0;		
 
 			/**
 			 * \brief Create a new application.

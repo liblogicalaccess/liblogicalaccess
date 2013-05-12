@@ -42,7 +42,7 @@ namespace logicalaccess
 	void Logs::DEBUG_LOG(const char* file, int line, const char* function, const char* format, ...)
 	{
 //#ifdef DEBUG
-		if (!LOGICALACCESS::Settings::getInstance().IsLogEnabled)
+		if (!Settings::getInstance().IsLogEnabled)
 			return;
 
 		char buffer[2048];
@@ -61,7 +61,7 @@ namespace logicalaccess
 
 	void Logs::ALERT_LOG(const char* file, int line, const char* function, const char* format, ...)
 	{
-		if (!LOGICALACCESS::Settings::getInstance().IsLogEnabled)
+		if (!Settings::getInstance().IsLogEnabled)
 			return;
 
 		char buffer[2048];
@@ -79,7 +79,7 @@ namespace logicalaccess
 
 	void Logs::CRITICAL_LOG(const char* file, int line, const char* function, const char* format, ...)
 	{
-		if (!LOGICALACCESS::Settings::getInstance().IsLogEnabled)
+		if (!Settings::getInstance().IsLogEnabled)
 			return;
 
 		char buffer[2048];
@@ -97,7 +97,7 @@ namespace logicalaccess
 
 	void Logs::EMERGENCY_LOG(const char* file, int line, const char* function, const char* format, ...)
 	{
-		if (!LOGICALACCESS::Settings::getInstance().IsLogEnabled)
+		if (!Settings::getInstance().IsLogEnabled)
 			return;
 
 		char buffer[2048];
@@ -120,7 +120,7 @@ namespace logicalaccess
 
 	void Logs::ERROR_LOG(const char* file, int line, const char* function, const char* format, ...)
 	{
-		if (!LOGICALACCESS::Settings::getInstance().IsLogEnabled)
+		if (!Settings::getInstance().IsLogEnabled)
 			return;
 
 		char buffer[2048];
@@ -138,7 +138,7 @@ namespace logicalaccess
 
 	void Logs::NOTICE_LOG(const char* file, int line, const char* function, const char* format, ...)
 	{
-		if (!LOGICALACCESS::Settings::getInstance().IsLogEnabled)
+		if (!Settings::getInstance().IsLogEnabled)
 			return;
 
 		char buffer[2048];
@@ -156,7 +156,7 @@ namespace logicalaccess
 
 	void Logs::WARNING_LOG(const char* file, int line, const char* function, const char* format, ...)
 	{
-		if (!LOGICALACCESS::Settings::getInstance().IsLogEnabled)
+		if (!Settings::getInstance().IsLogEnabled)
 			return;
 
 		char buffer[2048];
@@ -174,7 +174,7 @@ namespace logicalaccess
 
 	void Logs::INFO_LOG(const char* file, int line, const char* function, const char* format, ...)
 	{
-		if (!LOGICALACCESS::Settings::getInstance().IsLogEnabled)
+		if (!Settings::getInstance().IsLogEnabled)
 			return;
 
 		char buffer[2048];
@@ -192,7 +192,7 @@ namespace logicalaccess
 
 	void Logs::COM_LOG(const char* file, int line, const char* function, const char* format, ...)
 	{
-		if (LOGICALACCESS::Settings::getInstance().IsLogEnabled && LOGICALACCESS::Settings::getInstance().SeeCommunicationLog)
+		if (Settings::getInstance().IsLogEnabled && Settings::getInstance().SeeCommunicationLog)
 		{
 			char buffer[2048];
 			memset(buffer, 0x00, sizeof(buffer));
@@ -210,7 +210,7 @@ namespace logicalaccess
 
 	void Logs::PLUGIN_LOG(const char* file, int line, const char* function, const char* format, ...)
 	{
-		if (LOGICALACCESS::Settings::getInstance().IsLogEnabled && LOGICALACCESS::Settings::getInstance().SeePluginLog)
+		if (Settings::getInstance().IsLogEnabled && Settings::getInstance().SeePluginLog)
 		{
 			char buffer[2048];
 			memset(buffer, 0x00, sizeof(buffer));

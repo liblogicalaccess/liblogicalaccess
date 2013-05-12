@@ -28,7 +28,7 @@ std::string sharedname;
 std::string klayout;
 
 HANDLE shKeyboard;
-LOGICALACCESS::KeyboardSharedStruct* sKeyboard;
+logicalaccess::KeyboardSharedStruct* sKeyboard;
 HANDLE hKbdEvent;
 HANDLE hKbdEventProcessed;
 HANDLE hHostEvent;
@@ -41,7 +41,7 @@ HHOOK hKbdHook_ll;
 HHOOK hKbdHook;
 bool skipKey;
 
-std::vector<LOGICALACCESS::KeyboardEntry> hidDevices;
+std::vector<logicalaccess::KeyboardEntry> hidDevices;
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -129,7 +129,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 		hidDevices = KBDHOOK::InputDevice::getDeviceList();
 		int i = 0;
-		for (std::vector<LOGICALACCESS::KeyboardEntry>::iterator it = hidDevices.begin(); it != hidDevices.end(); ++it, ++i)
+		for (std::vector<logicalaccess::KeyboardEntry>::iterator it = hidDevices.begin(); it != hidDevices.end(); ++it, ++i)
 		{
 			if (i < MAX_KEYBOARD_DEVICES)
 			{
@@ -352,7 +352,7 @@ long LoadKbdFileMapping()
 	}
 	else
 	{
-		sKeyboard = (LOGICALACCESS::KeyboardSharedStruct*)MapViewOfFile(shKeyboard, FILE_MAP_ALL_ACCESS, 0, 0, 0);
+		sKeyboard = (logicalaccess::KeyboardSharedStruct*)MapViewOfFile(shKeyboard, FILE_MAP_ALL_ACCESS, 0, 0, 0);
 		if (!sKeyboard)
 		{
 			ret = GetLastError();
@@ -491,7 +491,7 @@ bool ProcessRawInputMessage(HRAWINPUT rawInputHeader)
 				sizeof(RAWINPUTHEADER)) == size)
 		{ 
 			// Device filtering
-			for (std::vector<LOGICALACCESS::KeyboardEntry>::iterator it = hidDevices.begin(); it != hidDevices.end() && !handled; ++it)
+			for (std::vector<logicalaccess::KeyboardEntry>::iterator it = hidDevices.begin(); it != hidDevices.end() && !handled; ++it)
 			{
 				if (std::string(sKeyboard->selectedDeviceName) == std::string(it->name))
 				{

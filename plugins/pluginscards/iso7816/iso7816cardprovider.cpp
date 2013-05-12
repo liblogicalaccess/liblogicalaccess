@@ -34,7 +34,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasWriteDataAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -69,11 +69,11 @@ namespace logicalaccess
 		case IFT_LINEAR_FIXED:
 		case IFT_LINEAR_VARIABLE:
 		case IFT_CYCLIC:
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Not implemented yet.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not implemented yet.");
 			break;
 
 		default:
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Doesn't know how to write on this file.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Doesn't know how to write on this file.");
 			break;
 		}
 
@@ -87,7 +87,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasWriteDataAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -124,7 +124,7 @@ namespace logicalaccess
 				}
 				else
 				{
-					THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Please specify a data object.");
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Please specify a data object.");
 				}
 			}
 			break;
@@ -139,11 +139,11 @@ namespace logicalaccess
 		case IFT_LINEAR_FIXED:
 		case IFT_LINEAR_VARIABLE:
 		case IFT_CYCLIC:
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Not implemented yet.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not implemented yet.");
 			break;
 
 		default:
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Doesn't know how to write on this file.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Doesn't know how to write on this file.");
 			break;
 		}
 
@@ -157,7 +157,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasReadDataAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 
@@ -193,7 +193,7 @@ namespace logicalaccess
 			}
 			else
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Please specify a data object.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Please specify a data object.");
 			}
 			break;
 
@@ -204,11 +204,11 @@ namespace logicalaccess
 		case IFT_LINEAR_FIXED:
 		case IFT_LINEAR_VARIABLE:
 		case IFT_CYCLIC:
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Not implemented yet.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not implemented yet.");
 			break;
 
 		default:
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Doesn't know how to read on this file.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Doesn't know how to read on this file.");
 			break;
 		}
 

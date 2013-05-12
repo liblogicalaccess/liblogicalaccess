@@ -206,9 +206,9 @@ namespace logicalaccess
 		return ret;
 	}
 
-	vector<string> Format::getValuesFieldList() const
+	std::vector<std::string> Format::getValuesFieldList() const
 	{
-		vector<string> fields;
+		std::vector<std::string> fields;
 		for (std::list<boost::shared_ptr<DataField> >::const_iterator i = d_fieldList.begin(); i != d_fieldList.end(); ++i)
 		{
 			boost::shared_ptr<ValueDataField> vfield = boost::dynamic_pointer_cast<ValueDataField>(*i);

@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_SMARTIDREADERUNITCONFIGURATION_HPP
 #define LOGICALACCESS_SMARTIDREADERUNITCONFIGURATION_HPP
 
-#include "logicalaccess/readerproviders/readerunitconfiguration.h"
+#include "logicalaccess/readerproviders/readerunitconfiguration.hpp"
 
 
 namespace logicalaccess

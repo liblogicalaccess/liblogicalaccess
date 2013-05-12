@@ -103,7 +103,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<Format> CardsFormatComposite::readFormat()
 	{
-		EXCEPTION_ASSERT_WITH_LOG(getReaderUnit(), LibLOGICALACCESSException, "A reader unit must be associated to the object.");
+		EXCEPTION_ASSERT_WITH_LOG(getReaderUnit(), LibLogicalAccessException, "A reader unit must be associated to the object.");
 
 		boost::shared_ptr<Format> fcopy;
 		boost::shared_ptr<Chip> chip = getReaderUnit()->getSingleChip();
@@ -192,7 +192,7 @@ namespace logicalaccess
 	{
 		INFO_SIMPLE_("Unserializing cards format composite...");
 
-		EXCEPTION_ASSERT_WITH_LOG(getReaderUnit(), LibLOGICALACCESSException, "A reader unit must be associated to the object.");
+		EXCEPTION_ASSERT_WITH_LOG(getReaderUnit(), LibLogicalAccessException, "A reader unit must be associated to the object.");
 
 		BOOST_FOREACH(boost::property_tree::ptree::value_type const& v, node)
 		{
@@ -201,7 +201,7 @@ namespace logicalaccess
 				string type = v.second.get_child("<xmlattr>.type").get_value<std::string>();
 
 				boost::shared_ptr<Chip> chip = getReaderUnit()->createChip(type);
-				EXCEPTION_ASSERT_WITH_LOG(chip, LibLOGICALACCESSException, "Unknow card type.");
+				EXCEPTION_ASSERT_WITH_LOG(chip, LibLogicalAccessException, "Unknow card type.");
 
 				FormatInfos finfos;
 				if (boost::shared_ptr<Format> format = Format::getByFormatType(static_cast<FormatType>(v.second.get_child("SelectedFormat").get_value<unsigned int>())))

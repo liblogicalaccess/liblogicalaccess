@@ -78,8 +78,8 @@ namespace logicalaccess
 			buf = std::vector<unsigned char>(buf.begin() + cuti, buf.end());
 		}
 
-		EXCEPTION_ASSERT_WITH_LOG(buf.size() >= 2, LibLOGICALACCESSException, "A valid command buffer size must be at least 2 bytes long");
-		EXCEPTION_ASSERT_WITH_LOG(buf[0] == STX, LibLOGICALACCESSException, "The supplied command buffer is not valid");
+		EXCEPTION_ASSERT_WITH_LOG(buf.size() >= 2, LibLogicalAccessException, "A valid command buffer size must be at least 2 bytes long");
+		EXCEPTION_ASSERT_WITH_LOG(buf[0] == STX, LibLogicalAccessException, "The supplied command buffer is not valid");
 		
 		std::vector<unsigned char> data;
 
@@ -91,7 +91,7 @@ namespace logicalaccess
 		}
 		buf = std::vector<unsigned char>(buf.begin() + i, buf.end());
 
-		EXCEPTION_ASSERT_WITH_LOG(buf.size() > 0 && buf[0] == ETX, LibLOGICALACCESSException, "Missing end of command message");
+		EXCEPTION_ASSERT_WITH_LOG(buf.size() > 0 && buf[0] == ETX, LibLogicalAccessException, "Missing end of command message");
 
 		buf = std::vector<unsigned char>(buf.begin() + 1, buf.end());
 		d_trashedData = buf;
@@ -128,9 +128,9 @@ namespace logicalaccess
 					buf = handleCommandBuffer(res);
 					return true;
 				}
-				catch(LibLOGICALACCESSException& e)
+				catch(LibLogicalAccessException& e)
 				{
-					COM_("LibLOGICALACCESSException {%s}", e.what());
+					COM_("LibLogicalAccessException {%s}", e.what());
 					/*throw;*/
 				}
 				catch (std::invalid_argument& e)
@@ -209,9 +209,9 @@ namespace logicalaccess
 							tagsList.push_back(buf);
 						}
 					}
-					catch(LibLOGICALACCESSException& e)
+					catch(LibLogicalAccessException& e)
 					{
-						COM_("LibLOGICALACCESSException {%s}", e.what());
+						COM_("LibLogicalAccessException {%s}", e.what());
 						throw;
 					}
 					catch (std::invalid_argument& e)

@@ -4,7 +4,7 @@
  * \brief Gunnebo reader unit.
  */
 
-#include "gunneboreaderunit.h"
+#include "gunneboreaderunit.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -97,10 +97,10 @@ namespace logicalaccess
 
 	bool GunneboReaderUnit::waitInsertion(unsigned int maxwait)
 	{
-		bool oldValue = LOGICALACCESS::Settings::getInstance().IsLogEnabled;
-		if (oldValue && !LOGICALACCESS::Settings::getInstance().SeeWaitInsertionLog)
+		bool oldValue = Settings::getInstance().IsLogEnabled;
+		if (oldValue && !Settings::getInstance().SeeWaitInsertionLog)
 		{
-			LOGICALACCESS::Settings::getInstance().IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
+			Settings::getInstance().IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
 		}
 
 		INFO_("Waiting insertion... max wait {%u}", maxwait);
@@ -159,24 +159,24 @@ namespace logicalaccess
 		}
 		catch(...)
 		{
-			LOGICALACCESS::Settings::getInstance().IsLogEnabled = oldValue;
+			Settings::getInstance().IsLogEnabled = oldValue;
 			throw;
 		}
 
 		removalIdentifier.clear();
 
 		INFO_("Returns card inserted ? {%d} function timeout expired ? {%d}", inserted, (maxwait != 0 && currentWait >= maxwait));
-		LOGICALACCESS::Settings::getInstance().IsLogEnabled = oldValue;
+		Settings::getInstance().IsLogEnabled = oldValue;
 
 		return inserted;
 	}
 
 	bool GunneboReaderUnit::waitRemoval(unsigned int maxwait)
 	{
-		bool oldValue = LOGICALACCESS::Settings::getInstance().IsLogEnabled;
-		if (oldValue && !LOGICALACCESS::Settings::getInstance().SeeWaitRemovalLog)
+		bool oldValue = Settings::getInstance().IsLogEnabled;
+		if (oldValue && !Settings::getInstance().SeeWaitRemovalLog)
 		{
-			LOGICALACCESS::Settings::getInstance().IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
+			Settings::getInstance().IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
 		}
 
 		INFO_("Waiting removal... max wait {%u}", maxwait);
@@ -228,13 +228,13 @@ namespace logicalaccess
 		}
 		catch(...)
 		{
-			LOGICALACCESS::Settings::getInstance().IsLogEnabled = oldValue;
+			Settings::getInstance().IsLogEnabled = oldValue;
 			throw;
 		}
 
 		INFO_("Returns card removed ? {%d} - function timeout expired ? {%d}", removed, (maxwait != 0 && currentWait >= maxwait));
 
-		LOGICALACCESS::Settings::getInstance().IsLogEnabled = oldValue;
+		Settings::getInstance().IsLogEnabled = oldValue;
 
 		return removed;
 	}
@@ -343,8 +343,8 @@ namespace logicalaccess
 
 		startAutoDetect();
 
-		EXCEPTION_ASSERT_WITH_LOG(getSerialPort(), LibLOGICALACCESSException, "No serial port configured !");
-		EXCEPTION_ASSERT_WITH_LOG(getSerialPort()->getSerialPort()->deviceName() != "", LibLOGICALACCESSException, "Serial port name is empty ! Auto-detect failed !");
+		EXCEPTION_ASSERT_WITH_LOG(getSerialPort(), LibLogicalAccessException, "No serial port configured !");
+		EXCEPTION_ASSERT_WITH_LOG(getSerialPort()->getSerialPort()->deviceName() != "", LibLogicalAccessException, "Serial port name is empty ! Auto-detect failed !");
 
 		if (!getSerialPort()->getSerialPort()->isOpen())
 		{
@@ -375,7 +375,7 @@ namespace logicalaccess
 	{
 		if (d_port && d_port->getSerialPort()->deviceName() == "")
 		{
-			if (!LOGICALACCESS::Settings::getInstance().IsAutoDetectEnabled)
+			if (!Settings::getInstance().IsAutoDetectEnabled)
 			{
 				INFO_SIMPLE_("Auto detection is disabled through settings !");
 				return;
@@ -401,13 +401,13 @@ namespace logicalaccess
 						std::vector<unsigned char> cmd;
 						cmd.push_back(0xff);	// trick
 
-						std::vector<unsigned char> tmpASCIIId = testingCardAdapter->sendCommand(cmd, LOGICALACCESS::Settings::getInstance().AutoDetectionTimeout);
+						std::vector<unsigned char> tmpASCIIId = testingCardAdapter->sendCommand(cmd, Settings::getInstance().AutoDetectionTimeout);
 
 						INFO_SIMPLE_("Reader found ! Using this COM port !");
 						d_port = (*i);
 						found = true;
 					}
-					catch (LibLOGICALACCESSException& e)
+					catch (LibLogicalAccessException& e)
 					{
 						ERROR_("Exception {%s}", e.what());
 					}
@@ -440,13 +440,13 @@ namespace logicalaccess
 
 	void GunneboReaderUnit::configure()
 	{
-		configure(getSerialPort(), LOGICALACCESS::Settings::getInstance().IsConfigurationRetryEnabled);
+		configure(getSerialPort(), Settings::getInstance().IsConfigurationRetryEnabled);
 	}
 
 	void GunneboReaderUnit::configure(boost::shared_ptr<SerialPortXml> port, bool retryConfiguring)
 	{
-		EXCEPTION_ASSERT_WITH_LOG(port, LibLOGICALACCESSException, "No serial port configured !");
-		EXCEPTION_ASSERT_WITH_LOG(port->getSerialPort()->deviceName() != "", LibLOGICALACCESSException, "Serial port name is empty ! Auto-detect failed !");
+		EXCEPTION_ASSERT_WITH_LOG(port, LibLogicalAccessException, "No serial port configured !");
+		EXCEPTION_ASSERT_WITH_LOG(port->getSerialPort()->deviceName() != "", LibLogicalAccessException, "Serial port name is empty ! Auto-detect failed !");
 
 		try
 		{
@@ -518,9 +518,9 @@ namespace logicalaccess
 				// Strange stuff is going here... by waiting and reopening the COM port (maybe for system cleanup), it's working !
 				std::string portn = port->getSerialPort()->deviceName();
 				WARNING_("Exception received {%s} ! Sleeping {%d} milliseconds -> Reopen serial port {%s} -> Finally retry  to configure...",
-							e.what(), LOGICALACCESS::Settings::getInstance().ConfigurationRetryTimeout, portn.c_str());
+							e.what(), Settings::getInstance().ConfigurationRetryTimeout, portn.c_str());
 #ifndef __linux__
-				Sleep(LOGICALACCESS::Settings::getInstance().ConfigurationRetryTimeout);
+				Sleep(Settings::getInstance().ConfigurationRetryTimeout);
 #else
 				sleep(LOGICALACCESS::Settings::getInstance().ConfigurationRetryTimeout);
 #endif

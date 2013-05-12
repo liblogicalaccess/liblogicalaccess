@@ -7,7 +7,7 @@
 #ifndef X509_CERTIFICATE_HPP
 #define X509_CERTIFICATE_HPP
 
-#include "logicalaccess/crypto/pem.h"
+#include "logicalaccess/crypto/pem.hpp"
 
 #include <string>
 

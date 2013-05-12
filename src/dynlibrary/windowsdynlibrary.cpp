@@ -13,7 +13,7 @@ namespace logicalaccess
 		if ((_handle = ::LoadLibrary(dlName.c_str())) == NULL)
 		{
 			ERROR_("Cannot load library %s.", dlName.c_str());
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, _getErrorMess(::GetLastError()));
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, _getErrorMess(::GetLastError()));
 		}
 	}
 
@@ -26,7 +26,7 @@ namespace logicalaccess
 		if (!sym)
 		{
 			ERROR_("Cannot get symbol %s on library %s.", symName, _name.c_str());
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, _getErrorMess(::GetLastError()));
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, _getErrorMess(::GetLastError()));
 		}
 		return sym;
 	}

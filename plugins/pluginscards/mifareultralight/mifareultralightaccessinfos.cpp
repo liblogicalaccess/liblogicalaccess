@@ -5,7 +5,7 @@
  */
 
 #include "mifareultralightaccessinfo.hpp"
-
+#include "mifareultralightchip.hpp"
 
 namespace logicalaccess
 {
@@ -18,12 +18,17 @@ namespace logicalaccess
 	{		
 	}
 
+	std::string MifareUltralightAccessInfo::getCardType() const
+	{
+		return CHIP_MIFAREULTRALIGHT;
+	}
+
 	void MifareUltralightAccessInfo::generateInfos()
 	{		
 		
 	}
 
-	void MifareUltralightAccessInfo::generateInfos(const string& /*csn*/)
+	void MifareUltralightAccessInfo::generateInfos(const std::string& /*csn*/)
 	{
 		
 	}

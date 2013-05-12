@@ -17,7 +17,7 @@
 namespace logicalaccess
 {	
 	MifarePlusChip::MifarePlusChip()
-		: Chip("MifarePlus4K"), d_nbSectors(MIFARE_PLUS_2K_SECTOR_NB)
+		: Chip(CHIP_MIFAREPLUS4K), d_nbSectors(MIFARE_PLUS_2K_SECTOR_NB)
 	{
 		d_profile.reset();
 	}

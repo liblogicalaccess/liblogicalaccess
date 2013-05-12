@@ -87,7 +87,7 @@ namespace logicalaccess
 					inserted = true;
 				}
 			}
-			catch (LibLOGICALACCESSException&)
+			catch (LibLogicalAccessException&)
 			{
 				inserted = false;
 			}

@@ -11,7 +11,7 @@
 #include "logicalaccess/services/accesscontrol/formats/customformat/asciidatafield.hpp"
 #include "logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp"
 #include "logicalaccess/services/accesscontrol/formats/customformat/binarydatafield.hpp"
-#include "logicalaccess/bufferhelper.h"
+#include "logicalaccess/bufferhelper.hpp"
 
 namespace logicalaccess
 {

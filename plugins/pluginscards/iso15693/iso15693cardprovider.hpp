@@ -7,8 +7,8 @@
 #ifndef LOGICALACCESS_ISO15693CARDPROVIDER_HPP
 #define LOGICALACCESS_ISO15693CARDPROVIDER_HPP
 
-#include "logicalaccess/cards/cardprovider.h"
-#include "iso15693commands.h"
+#include "logicalaccess/cards/cardprovider.hpp"
+#include "iso15693commands.hpp"
 
 
 namespace logicalaccess

@@ -236,7 +236,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasWriteFormatAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 		unsigned int pos = 0;
@@ -266,7 +266,7 @@ namespace logicalaccess
 #ifdef _LICENSE_SYSTEM
 		if (!d_license.hasReadFormatAccess())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, EXCEPTION_MSG_LICENSENOACCESS);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
 		}
 #endif
 		unsigned int pos = 0;
@@ -274,7 +274,7 @@ namespace logicalaccess
 
 		if (dataLengthBytes*8 < getDataLength())
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "Data length too small.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Data length too small.");
 		}
 
 		c = (unsigned char)revertField(data, dataLengthBytes, &pos, 4);
@@ -282,42 +282,42 @@ namespace logicalaccess
 		{
 			char tmpmsg[64];
 			sprintf(tmpmsg, "The FASC-N Start Sentinel doesn't match (%x).", c);
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, tmpmsg);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, tmpmsg);
 		}
 
 		setAgencyCode((unsigned short)revertField(data, dataLengthBytes, &pos, 16));
 		c = (unsigned char)revertField(data, dataLengthBytes, &pos, 4);
 		if (c != FASCN_FS)
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The FASC-N Field Separator doesn't match after the Agency Code.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The FASC-N Field Separator doesn't match after the Agency Code.");
 		}
 
 		setSystemCode((unsigned short)revertField(data, dataLengthBytes, &pos, 16));
 		c = (unsigned char)revertField(data, dataLengthBytes, &pos, 4);
 		if (c != FASCN_FS)
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The FASC-N Field Separator doesn't match after the System Code.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The FASC-N Field Separator doesn't match after the System Code.");
 		}
 
 		setUid(revertField(data, dataLengthBytes, &pos, 24));
 		c = (unsigned char)revertField(data, dataLengthBytes, &pos, 4);
 		if (c != FASCN_FS)
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The FASC-N Field Separator doesn't match after the Credential.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The FASC-N Field Separator doesn't match after the Credential.");
 		}
 
 		setSerieCode((unsigned char)revertField(data, dataLengthBytes, &pos, 4));
 		c = (unsigned char)revertField(data, dataLengthBytes, &pos, 4);
 		if (c != FASCN_FS)
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The FASC-N Field Separator doesn't match after the Credential Series.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The FASC-N Field Separator doesn't match after the Credential Series.");
 		}
 
 		setCredentialCode((unsigned char)revertField(data, dataLengthBytes, &pos, 4));
 		c = (unsigned char)revertField(data, dataLengthBytes, &pos, 4);
 		if (c != FASCN_FS)
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The FASC-N Field Separator doesn't match after the Credential Issue.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The FASC-N Field Separator doesn't match after the Credential Issue.");
 		}
 
 		setPersonIdentifier(revertField(data, dataLengthBytes, &pos, 40));
@@ -329,7 +329,7 @@ namespace logicalaccess
 		c = (unsigned char)revertField(data, dataLengthBytes, &pos, 4);
 		if (c != FASCN_ES)
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The End Sentinel doesn't match.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The End Sentinel doesn't match.");
 		}
 
 		unsigned char lrc = calculateLRC(data, pos);
@@ -337,7 +337,7 @@ namespace logicalaccess
 
 		if (c != lrc)
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLOGICALACCESSException, "The FASC-N LRC seems wrong.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The FASC-N LRC seems wrong.");
 		}
 	}
 
