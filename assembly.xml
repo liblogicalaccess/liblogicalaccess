@@ -12,7 +12,7 @@
             </includes>
         </fileSet>
 		<fileSet>
-            <directory>/Plugins/Cryptolib/bin/Win32/Release</directory>
+            <directory>/plugins/cryptolib/bin/Win32/Release</directory>
             <outputDirectory>/lib/Win32/</outputDirectory>
             <includes>
 				<include>*.lib</include>
@@ -26,7 +26,7 @@
             </includes>
         </fileSet>
 		<fileSet>
-            <directory>/Plugins/Cryptolib/bin/x64/Release</directory>
+            <directory>/plugins/cryptolib/bin/x64/Release</directory>
             <outputDirectory>/lib/x64/</outputDirectory>
             <includes>
 				<include>*.lib</include>
@@ -67,6 +67,7 @@
             <outputDirectory>/include</outputDirectory>
             <includes>
                 <include>**/*.h</include>
+				<include>**/*.hpp</include>
             </includes>
         </fileSet>
 		<fileSet>
@@ -77,24 +78,27 @@
             </includes>
         </fileSet>
 		<fileSet>
-            <directory>/Plugins/Cryptolib/include/logicalaccess</directory>
+            <directory>/plugins/cryptolib/include/logicalaccess</directory>
             <outputDirectory>/include/logicalaccess</outputDirectory>
             <includes>
                 <include>**/*.h</include>
+				<include>**/*.hpp</include>
             </includes>
         </fileSet>
 		<fileSet>
-            <directory>/Plugins/PluginsCards</directory>
-            <outputDirectory>/include/logicalaccess/Plugins/Cards</outputDirectory>
+            <directory>/plugins/pluginscards</directory>
+            <outputDirectory>/include/logicalaccess/plugins/cards</outputDirectory>
             <includes>
                 <include>**/*.h</include>
+				<include>**/*.hpp</include>
             </includes>
         </fileSet>
 		<fileSet>
-            <directory>/Plugins/PluginsReaderProviders</directory>
-            <outputDirectory>/include/logicalaccess/Plugins/Readers</outputDirectory>
+            <directory>/plugins/pluginsreaderproviders</directory>
+            <outputDirectory>/include/logicalaccess/plugins/readers</outputDirectory>
             <includes>
                 <include>**/*.h</include>
+				<include>**/*.hpp</include>
             </includes>
         </fileSet>
 		<fileSet>
