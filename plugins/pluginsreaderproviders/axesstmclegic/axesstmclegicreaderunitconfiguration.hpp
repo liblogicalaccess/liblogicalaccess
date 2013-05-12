@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_AXESSTMCLEGICREADERUNITCONFIGURATION_HPP
 #define LOGICALACCESS_AXESSTMCLEGICREADERUNITCONFIGURATION_HPP
 
-#include "logicalaccess/ReaderProviders/readerunitconfiguration.hpp"
+#include "logicalaccess/readerproviders/readerunitconfiguration.hpp"
 
 
 namespace logicalaccess

@@ -4,7 +4,7 @@
  * \brief Mifare Plus Springcard commands.
  */
 
-#include "MifarePlusSpringCardCommands.hpp"
+#include "mifareplusspringcardcommands.hpp"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 

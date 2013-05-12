@@ -7,8 +7,7 @@
 #ifndef LOGICALACCESS_PROMAGREADERUNITCONFIGURATION_HPP
 #define LOGICALACCESS_PROMAGREADERUNITCONFIGURATION_HPP
 
-#include "logicalaccess/ReaderProviders/readerunitconfiguration.hpp"
-
+#include "logicalaccess/readerproviders/readerunitconfiguration.hpp"
 
 
 namespace logicalaccess

@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_READERAXESSTMC13_PROVIDER_H
 #define LOGICALACCESS_READERAXESSTMC13_PROVIDER_H
 
-#include "logicalaccess/ReaderProviders/readerprovider.hpp"
+#include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "axesstmc13readerunit.hpp"
 
 #include <string>

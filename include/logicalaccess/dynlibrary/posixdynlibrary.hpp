@@ -5,7 +5,7 @@
 
 #include "idynlibrary.hpp"
 
-namespace LOGICALACCESS
+namespace logicalaccess
 {
   class	PosixDynLibrary : public IDynLibrary
   {

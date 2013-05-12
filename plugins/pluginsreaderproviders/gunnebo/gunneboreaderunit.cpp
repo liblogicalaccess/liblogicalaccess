@@ -522,7 +522,7 @@ namespace logicalaccess
 #ifndef __linux__
 				Sleep(Settings::getInstance().ConfigurationRetryTimeout);
 #else
-				sleep(LOGICALACCESS::Settings::getInstance().ConfigurationRetryTimeout);
+				sleep(Settings::getInstance().ConfigurationRetryTimeout);
 #endif
 				port->getSerialPort()->reopen();
 				configure(getSerialPort(), false);

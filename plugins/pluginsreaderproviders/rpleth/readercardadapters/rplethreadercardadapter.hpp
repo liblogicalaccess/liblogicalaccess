@@ -72,7 +72,7 @@ namespace logicalaccess
 			 * \param cmdbuf The answer buffer.
 			 * \return The data buffer.
 			 */
-			std::vector<unsigned char> handleAnswerBuffer(const std::vector<unsigned char>& cmdbuf, std::vector<unsigned char>& ansbuf);		
+			std::vector<unsigned char> handleAnswerBuffer(const std::vector<unsigned char>& cmdbuf, std::vector<unsigned char> ansbuf);		
 	};
 
 }

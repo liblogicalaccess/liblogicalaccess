@@ -7,8 +7,8 @@
 #ifndef LOGICALACCESS_PROMAGREADERUNIT_HPP
 #define LOGICALACCESS_PROMAGREADERUNIT_HPP
 
-#include "logicalaccess/ReaderProviders/readerunit.hpp"
-#include "logicalaccess/ReaderProviders/serialportxml.hpp"
+#include "logicalaccess/readerproviders/readerunit.hpp"
+#include "logicalaccess/readerproviders/serialportxml.hpp"
 #include "promagreaderunitconfiguration.hpp"
 
 namespace logicalaccess

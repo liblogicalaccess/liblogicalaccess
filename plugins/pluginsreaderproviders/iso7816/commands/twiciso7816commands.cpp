@@ -4,7 +4,7 @@
  * \brief Twic ISO7816 commands.
  */
 
-#include "../Commands/twiciso7816commands.hpp"
+#include "../commands/twiciso7816commands.hpp"
 #include "logicalaccess/services/accesscontrol/formats/fascn200bitformat.hpp"
 
 #include <iostream>

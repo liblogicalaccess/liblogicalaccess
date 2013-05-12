@@ -15,9 +15,9 @@ set(INCLUDE_FOLDER 	${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifareultralight
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifareplus
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816
-					/usr/include/pcsc)
+					/usr/include/PCSC)
 if (UNIX)
-  set(INCLUDE_FOLDER ${INCLUDE_FOLDER} "/usr/local/include/pcsc/")
+  set(INCLUDE_FOLDER ${INCLUDE_FOLDER} "/usr/local/include/PCSC/")
 endif()
 
 INCLUDE_DIRECTORIES(${INCLUDE_FOLDER})
