@@ -1,16 +1,16 @@
 /**
- * \file ISO15693PCSCCommands.cpp
+ * \file iso15693pcsccommands.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief ISO 15693 commands for PC/SC readers.
  */
 
-#include "../Commands/ISO15693PCSCCommands.h"
+#include "../commands/iso15693pcsccommands.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-#include "ISO15693Chip.h"
+#include "iso15693chip.hpp"
 
 
 namespace logicalaccess

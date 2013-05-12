@@ -1,10 +1,10 @@
 /**
- * \file DeisterReaderCardAdapter.cpp
+ * \file deisterreadercardadapter.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Deister reader/card adapter.
  */
 
-#include "DeisterReaderCardAdapter.h"
+#include "deisterreadercardadapter.hpp"
 #include "logicalaccess/crypto/tomcrypt.h"
 
 

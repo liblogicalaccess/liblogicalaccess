@@ -1,10 +1,10 @@
 /**
- * \file ElatecReaderProvider.cpp
+ * \file elatecreaderprovider.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Elatec reader provider.
  */
 
-#include "ElatecReaderProvider.h"
+#include "elatecreaderprovider.hpp"
 
 #ifdef LINUX
 #include <stdlib.h>
@@ -14,7 +14,7 @@
 #include <sstream>
 #include <iomanip>
 
-#include "ElatecReaderUnit.h"
+#include "elatecreaderunit.hpp"
 
 
 namespace logicalaccess

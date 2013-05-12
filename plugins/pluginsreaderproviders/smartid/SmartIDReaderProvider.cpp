@@ -1,10 +1,10 @@
 /**
- * \file SmartIDReaderProvider.cpp
+ * \file smartidreaderprovider.cpp
  * \author Julien K. <julien-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
  * \brief Reader Provider SmartID.
  */
 
-#include "SmartIDReaderProvider.h"
+#include "smartidreaderprovider.hpp"
 
 #ifdef LINUX
 #include <stdlib.h>
@@ -14,7 +14,7 @@
 #include <sstream>
 #include <iomanip>
 
-#include "SmartIDReaderUnit.h"
+#include "smartidreaderunit.hpp"
 
 
 namespace logicalaccess

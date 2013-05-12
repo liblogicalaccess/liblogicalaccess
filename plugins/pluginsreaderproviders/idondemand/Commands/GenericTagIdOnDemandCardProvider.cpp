@@ -1,11 +1,11 @@
 /**
- * \file GenericTagIdOnDemandCardProvider.cpp
+ * \file generictagidondemandcardprovider.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Generic tag IdOnDemand card card provider.
  */
 
-#include "GenericTagIdOnDemandCardProvider.h"
-#include "GenericTagIdOnDemandAccessControlCardService.h"
+#include "generictagidondemandcardprovider.hpp"
+#include "generictagidondemandaccesscontrolcardservice.hpp"
 
 #include <iostream>
 #include <iomanip>

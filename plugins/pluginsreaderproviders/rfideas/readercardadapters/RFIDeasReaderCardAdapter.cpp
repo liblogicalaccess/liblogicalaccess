@@ -1,10 +1,10 @@
 /**
- * \file RFIDeasReaderCardAdapter.cpp
+ * \file rfideasreadercardadapter.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief RFIDeas reader/card adapter.
  */
 
-#include "RFIDeasReaderCardAdapter.h"
+#include "rfideasreadercardadapter.hpp"
 
 
 namespace logicalaccess

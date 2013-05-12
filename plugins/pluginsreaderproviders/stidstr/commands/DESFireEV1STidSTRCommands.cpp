@@ -1,34 +1,33 @@
 /**
- * \file DESFireEV1STidSTRCommands.cpp
+ * \file desfireev1stidstrcommands.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief DESFireEV1 STidSTR commands.
  */
 
-#include "DESFireEV1STidSTRCommands.h"
-#include "DESFireChip.h"
+#include "desfireev1stidstrcommands.hpp"
+#include "desfirechip.hpp"
 #include <openssl/rand.h>
-#include "logicalaccess/logs.h"
-#include "logicalaccess/crypto/aes_cipher.h"
-#include "logicalaccess/crypto/aes_symmetric_key.h"
-#include "logicalaccess/crypto/aes_initialization_vector.h"
-#include "logicalaccess/crypto/des_cipher.h"
-#include "logicalaccess/crypto/des_symmetric_key.h"
-#include "logicalaccess/crypto/des_initialization_vector.h"
-#include "DESFireProfile.h"
-#include "logicalaccess/Cards/ComputerMemoryKeyStorage.h"
-#include "logicalaccess/Cards/ReaderMemoryKeyStorage.h"
+#include "logicalaccess/logs.hpp"
+#include "logicalaccess/crypto/aes_cipher.hpp"
+#include "logicalaccess/crypto/aes_symmetric_key.hpp"
+#include "logicalaccess/crypto/aes_initialization_vector.hpp"
+#include "logicalaccess/crypto/des_cipher.hpp"
+#include "logicalaccess/crypto/des_symmetric_key.hpp"
+#include "logicalaccess/crypto/des_initialization_vector.hpp"
+#include "desfireprofile.hpp"
+#include "logicalaccess/cards/computermemorykeystorage.hpp"
+#include "logicalaccess/cards/readermemorykeystorage.hpp"
 
 namespace logicalaccess
 {
 	DESFireEV1STidSTRCommands::DESFireEV1STidSTRCommands()
 	{
-		//INFO_SIMPLE_("Constructor");
 		d_currentAid = 0;
 	}
 
 	DESFireEV1STidSTRCommands::~DESFireEV1STidSTRCommands()
 	{
-		//INFO_SIMPLE_("Destructor");
+		
 	}
 
 	std::vector<unsigned char> DESFireEV1STidSTRCommands::scanDESFire()

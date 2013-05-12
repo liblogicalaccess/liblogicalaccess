@@ -1,17 +1,17 @@
 /**
- * \file OmnikeyXX21ReaderUnit.cpp
+ * \file omnikeyxx21readerunit.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Omnikey XX21 reader unit.
  */
 
-#include "../Readers/OmnikeyXX21ReaderUnit.h"
+#include "../readers/omnikeyxx21readerunit.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-#include "../Readers/OmnikeyXX21ReaderUnitConfiguration.h"
-#include "../ReaderCardAdapters/PCSCReaderCardAdapter.h"
+#include "../readers/omnikeyxx21readerunitconfiguration.hpp"
+#include "../readercardadapters/pcscreadercardadapter.hpp"
 
 #ifdef __linux__
 #include <PCSC/reader.h>

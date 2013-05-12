@@ -1,19 +1,19 @@
 /**
- * \file ElatecReaderUnit.cpp
+ * \file elatecreaderunit.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Elatec reader unit.
  */
 
-#include "ElatecReaderUnit.h"
+#include "elatecreaderunit.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-#include "ElatecReaderProvider.h"
-#include "logicalaccess/Services/AccessControl/CardsFormatComposite.h"
-#include "logicalaccess/Cards/Chip.h"
-#include "ReaderCardAdapters/ElatecReaderCardAdapter.h"
+#include "elatecreaderprovider.hpp"
+#include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
+#include "logicalaccess/cards/chip.hpp"
+#include "readercardadapters/elatecreadercardadapter.hpp"
 #include <boost/filesystem.hpp>
 
 namespace logicalaccess

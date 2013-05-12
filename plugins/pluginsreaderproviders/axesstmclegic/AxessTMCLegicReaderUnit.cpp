@@ -1,19 +1,19 @@
 /**
- * \file AxessTMCLegicReaderUnit.cpp
+ * \file axesstmclegicreaderunit.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief AxessTMCLegic reader unit.
  */
 
-#include "AxessTMCLegicReaderUnit.h"
+#include "axesstmclegicreaderunit.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-#include "AxessTMCLegicReaderProvider.h"
-#include "logicalaccess/Services/AccessControl/CardsFormatComposite.h"
-#include "logicalaccess/Cards/Chip.h"
-#include "ReaderCardAdapters/AxessTMCLegicReaderCardAdapter.h"
+#include "axesstmclegicreaderprovider.hpp"
+#include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
+#include "logicalaccess/cards/chip.hpp"
+#include "readercardadapters/axesstmclegicreadercardadapter.hpp"
 #include <boost/filesystem.hpp>
 
 namespace logicalaccess

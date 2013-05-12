@@ -1,19 +1,19 @@
 /**
- * \file PromagReaderUnit.cpp
+ * \file promagreaderunit.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Promag reader unit.
  */
 
-#include "PromagReaderUnit.h"
+#include "promagreaderunit.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-#include "PromagReaderProvider.h"
-#include "logicalaccess/Services/AccessControl/CardsFormatComposite.h"
-#include "logicalaccess/Cards/Chip.h"
-#include "ReaderCardAdapters/PromagReaderCardAdapter.h"
+#include "promagreaderprovider.hpp"
+#include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
+#include "logicalaccess/cards/chip.hpp"
+#include "readercardadapters/promagreadercardadapter.hpp"
 #include <boost/filesystem.hpp>
 
 namespace logicalaccess

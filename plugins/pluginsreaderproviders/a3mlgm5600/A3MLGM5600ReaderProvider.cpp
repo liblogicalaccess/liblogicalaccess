@@ -1,10 +1,10 @@
 /**
- * \file A3MLGM5600ReaderProvider.cpp
+ * \file a3mlgm5600readerprovider.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Reader Provider A3MLGM5600.
  */
 
-#include "A3MLGM5600ReaderProvider.h"
+#include "a3mlgm5600readerprovider.hpp"
 
 #ifdef LINUX
 #include <stdlib.h>

@@ -1,10 +1,10 @@
 /**
- * \file SmartIDReaderCardAdapter.cpp
+ * \file smartidreadercardadapter.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief SmartID reader/card adapter.
  */
 
-#include "SmartIDReaderCardAdapter.h"
+#include "smartidreadercardadapter.hpp"
 
 #include <cstring>
 

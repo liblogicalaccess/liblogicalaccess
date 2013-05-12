@@ -1,20 +1,20 @@
 /**
- * \file AxessTMC13ReaderUnit.cpp
+ * \file axesstmc13readerunit.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief AxessTMC 13Mhz reader unit.
  */
 
-#include "AxessTMC13ReaderUnit.h"
+#include "axesstmc13readerunit.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-#include "AxessTMC13ReaderProvider.h"
-#include "logicalaccess/Services/AccessControl/CardsFormatComposite.h"
-#include "logicalaccess/Cards/Chip.h"
-#include "logicalaccess/ReaderProviders/SerialPort.h"
-#include "ReaderCardAdapters/AxessTMC13ReaderCardAdapter.h"
+#include "axesstmc13readerprovider.hpp"
+#include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
+#include "logicalaccess/cards/chip.hpp"
+#include "logicalaccess/readerproviders/serialport.hpp"
+#include "readercardadapters/axesstmc13readercardadapter.hpp"
 #include <boost/filesystem.hpp>
 
 namespace logicalaccess

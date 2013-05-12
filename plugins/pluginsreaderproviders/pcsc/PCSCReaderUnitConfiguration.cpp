@@ -1,16 +1,17 @@
 /**
- * \file PCSCReaderUnitConfiguration.cpp
+ * \file pcscreaderunitconfiguration.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief PC/SC reader unit configuration.
  */
 
-#include "PCSCReaderUnitConfiguration.h"
+#include "pcscreaderunitconfiguration.hpp"
+#include "pcscreaderprovider.hpp"
 
 
 namespace logicalaccess
 {
 	PCSCReaderUnitConfiguration::PCSCReaderUnitConfiguration()
-		: ReaderUnitConfiguration("PCSC")
+		: ReaderUnitConfiguration(READER_PCSC)
 	{
 		resetConfiguration();
 	}

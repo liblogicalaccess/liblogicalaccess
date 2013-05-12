@@ -1,16 +1,16 @@
 /**
- * \file RFIDeasReaderUnitConfiguration.cpp
+ * \file rfideasreaderunitconfiguration.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief RFIDeas reader unit configuration.
  */
 
-#include "RFIDeasReaderUnitConfiguration.h"
-
+#include "rfideasreaderunitconfiguration.hpp"
+#include "rfideasreaderprovider.hpp"
 
 namespace logicalaccess
 {
 	RFIDeasReaderUnitConfiguration::RFIDeasReaderUnitConfiguration()
-		: ReaderUnitConfiguration("RFIDeas")
+		: ReaderUnitConfiguration(READER_RFIDEAS)
 	{
 		resetConfiguration();
 	}

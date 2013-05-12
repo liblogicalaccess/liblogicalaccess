@@ -1,10 +1,10 @@
 /**
- * \file SpringCardReaderUnit.cpp
+ * \file springcardreaderunit.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief SpringCard reader unit.
  */
 
-#include "../Readers/SpringCardReaderUnit.h"
+#include "../readers/springcardreaderunit.hpp"
 
 #include <iostream>
 #include <iomanip>

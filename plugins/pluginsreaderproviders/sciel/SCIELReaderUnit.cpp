@@ -1,19 +1,19 @@
 /**
- * \file SCIELReaderUnit.cpp
+ * \file scielreaderunit.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief SCIEL reader unit.
  */
 
-#include "SCIELReaderUnit.h"
+#include "scielreaderunit.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-#include "SCIELReaderProvider.h"
-#include "logicalaccess/Services/AccessControl/CardsFormatComposite.h"
-#include "logicalaccess/Cards/Chip.h"
-#include "ReaderCardAdapters/SCIELReaderCardAdapter.h"
+#include "scielreaderprovider.hpp"
+#include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
+#include "logicalaccess/cards/chip.hpp"
+#include "readercardadapters/scielreadercardadapter.hpp"
 #include <boost/filesystem.hpp>
 
 namespace logicalaccess

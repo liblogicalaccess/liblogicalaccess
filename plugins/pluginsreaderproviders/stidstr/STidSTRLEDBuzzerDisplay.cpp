@@ -1,10 +1,10 @@
 /**
- * \file STidSTRLEDBuzzerDisplay.cpp
+ * \file stidstrledbuzzerdisplay.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief STidSTR LED/Buzzer Display.
  */
 
-#include "STidSTRLEDBuzzerDisplay.h"
+#include "stidstrledbuzzerdisplay.hpp"
 
 namespace logicalaccess
 {

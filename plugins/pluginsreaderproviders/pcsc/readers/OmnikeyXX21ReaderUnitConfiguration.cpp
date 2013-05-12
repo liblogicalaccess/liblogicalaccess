@@ -1,10 +1,10 @@
 /**
- * \file OmnikeyXX21ReaderUnitConfiguration.cpp
+ * \file omnikeyxx21readerunitconfiguration.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Omnikey XX21 reader unit configuration.
  */
 
-#include "../Readers/OmnikeyXX21ReaderUnitConfiguration.h"
+#include "../readers/omnikeyxx21readerunitconfiguration.hpp"
 
 
 namespace logicalaccess

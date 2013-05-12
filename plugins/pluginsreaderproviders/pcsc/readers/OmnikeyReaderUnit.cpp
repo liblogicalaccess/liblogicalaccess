@@ -1,17 +1,17 @@
 /**
- * \file OmnikeyReaderUnit.cpp
+ * \file omnikeyreaderunit.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Omnikey reader unit.
  */
 
-#include "../Readers/OmnikeyReaderUnit.h"
-#include "../ReaderCardAdapters/PCSCReaderCardAdapter.h"
+#include "../readers/omnikeyreaderunit.hpp"
+#include "../readercardadapters/pcscreadercardadapter.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-#include "logicalaccess/BufferHelper.h"
+#include "logicalaccess/bufferhelper.hpp"
 
 namespace logicalaccess
 {

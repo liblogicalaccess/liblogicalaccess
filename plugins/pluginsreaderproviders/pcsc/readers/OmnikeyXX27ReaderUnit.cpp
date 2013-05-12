@@ -1,10 +1,10 @@
 /**
- * \file OmnikeyXX27ReaderUnit.cpp
+ * \file omnikeyxx27readerunit.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Omnikey XX27 reader unit.
  */
 
-#include "../Readers/OmnikeyXX27ReaderUnit.h"
+#include "../readers/omnikeyxx27readerunit.hpp"
 
 #include <iostream>
 #include <iomanip>

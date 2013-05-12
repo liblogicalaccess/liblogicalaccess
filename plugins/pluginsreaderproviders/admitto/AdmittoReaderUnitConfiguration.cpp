@@ -1,17 +1,16 @@
 /**
- * \file AdmittoReaderUnitConfiguration.cpp
+ * \file admittoreaderunitconfiguration.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief  Admitto reader unit configuration.
  */
 
-#include "AdmittoReaderUnitConfiguration.h"
-
-
+#include "admittoreaderunitconfiguration.hpp"
+#include "admittoreaderprovider.hpp"
 
 namespace logicalaccess
 {
 	AdmittoReaderUnitConfiguration::AdmittoReaderUnitConfiguration()
-		: ReaderUnitConfiguration("Admitto")
+		: ReaderUnitConfiguration(READER_ADMITTO)
 	{
 		resetConfiguration();
 	}

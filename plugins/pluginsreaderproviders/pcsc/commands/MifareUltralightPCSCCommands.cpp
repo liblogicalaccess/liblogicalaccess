@@ -1,28 +1,20 @@
 /**
- * \file MifareUltralightPCSCCommands.cpp
+ * \file mifareultralightpcsccommands.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Mifare Ultralight PC/SC commands.
  */
 
-#include "../Commands/MifareUltralightPCSCCommands.h"
+#include "../commands/mifareultralightpcsccommands.h"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-using std::endl;
-using std::dec;
-using std::hex;
-using std::setfill;
-using std::setw;
-using std::ostringstream;
-using std::istringstream;
-
-#include "../PCSCReaderProvider.h"
-#include "MifareUltralightChip.h"
-#include "logicalaccess/Cards/ComputerMemoryKeyStorage.h"
-#include "logicalaccess/Cards/ReaderMemoryKeyStorage.h"
-#include "logicalaccess/Cards/SAMKeyStorage.h"
+#include "../pcscreaderprovider.hpp"
+#include "mifareultralightchip.hpp"
+#include "logicalaccess/cards/computermemorykeystorage.hpp"
+#include "logicalaccess/cards/readermemorykeystorage.hpp"
+#include "logicalaccess/cards/samkeystorage.hpp"
 
 namespace logicalaccess
 {	

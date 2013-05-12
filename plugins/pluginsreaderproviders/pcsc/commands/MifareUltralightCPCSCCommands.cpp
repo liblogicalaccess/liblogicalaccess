@@ -1,33 +1,25 @@
 /**
- * \file MifareUltralightCPCSCCommands.cpp
+ * \file mifareultralightcpcsccommands.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Mifare Ultralight C PC/SC commands.
  */
 
-#include "../Commands/MifareUltralightCPCSCCommands.h"
+#include "../commands/mifareultralightcpcsccommands.h"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-using std::endl;
-using std::dec;
-using std::hex;
-using std::setfill;
-using std::setw;
-using std::ostringstream;
-using std::istringstream;
-
-#include "../PCSCReaderProvider.h"
-#include "MifareUltralightCChip.h"
-#include "logicalaccess/Cards/ComputerMemoryKeyStorage.h"
-#include "logicalaccess/Cards/ReaderMemoryKeyStorage.h"
-#include "logicalaccess/Cards/SAMKeyStorage.h"
+#include "../pcscreaderprovider.hpp"
+#include "mifareultralightcchip.hpp"
+#include "logicalaccess/cards/computermemorykeystorage.hpp"
+#include "logicalaccess/cards/readermemorykeystorage.hpp"
+#include "logicalaccess/cards/samkeystorage.hpp"
 
 #include <openssl/rand.h>
-#include "logicalaccess/crypto/des_cipher.h"
-#include "logicalaccess/crypto/des_symmetric_key.h"
-#include "logicalaccess/crypto/des_initialization_vector.h"
+#include "logicalaccess/crypto/des_cipher.hpp"
+#include "logicalaccess/crypto/des_symmetric_key.hpp"
+#include "logicalaccess/crypto/des_initialization_vector.hpp"
 
 
 namespace logicalaccess

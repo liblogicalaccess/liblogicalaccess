@@ -1,7 +1,7 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include "logicalaccess/ReaderProviders/ReaderProvider.h"
-#include "AxessTMCLegicReaderProvider.h"
+#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include "axesstmclegicreaderprovider.hpp"
 
 #ifdef _MSC_VER
 #include "logicalaccess/msliblogicalaccess.h"
@@ -21,11 +21,11 @@ extern "C"
 		return (char *)"AxessTMCLegic";
 	}
 
-	LIBLOGICALACCESS_API void getAxessTMCLegicReader(boost::shared_ptr<LOGICALACCESS::ReaderProvider>* rp)
+	LIBLOGICALACCESS_API void getAxessTMCLegicReader(boost::shared_ptr<logicalaccess::ReaderProvider>* rp)
 	{
 		if (rp != NULL)
 		{
-			*rp = LOGICALACCESS::AxessTMCLegicReaderProvider::getSingletonInstance();
+			*rp = logicalaccess::AxessTMCLegicReaderProvider::getSingletonInstance();
 		}
 	}
 

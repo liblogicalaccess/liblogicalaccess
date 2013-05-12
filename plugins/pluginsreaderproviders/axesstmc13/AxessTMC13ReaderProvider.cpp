@@ -1,10 +1,10 @@
 /**
- * \file AxessTMC13ReaderProvider.cpp
+ * \file axesstmc13readerprovider.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief AxessTMC 13Mhz reader provider.
  */
 
-#include "AxessTMC13ReaderProvider.h"
+#include "axesstmc13readerprovider.hpp"
 
 #ifdef LINUX
 #include <stdlib.h>
@@ -14,7 +14,7 @@
 #include <sstream>
 #include <iomanip>
 
-#include "AxessTMC13ReaderUnit.h"
+#include "axesstmc13readerunit.hpp"
 
 
 namespace logicalaccess

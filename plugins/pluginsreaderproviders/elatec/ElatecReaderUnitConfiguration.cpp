@@ -1,16 +1,17 @@
 /**
- * \file ElatecReaderUnitConfiguration.cpp
+ * \file elatecreaderunitconfiguration.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief  Elatec reader unit configuration.
  */
 
-#include "ElatecReaderUnitConfiguration.h"
+#include "elatecreaderunitconfiguration.hpp"
+#include "elatecreaderprovider.hpp"
 
 
 namespace logicalaccess
 {
 	ElatecReaderUnitConfiguration::ElatecReaderUnitConfiguration()
-		: ReaderUnitConfiguration("Elatec")
+		: ReaderUnitConfiguration(READER_ELATEC)
 	{
 		resetConfiguration();
 	}

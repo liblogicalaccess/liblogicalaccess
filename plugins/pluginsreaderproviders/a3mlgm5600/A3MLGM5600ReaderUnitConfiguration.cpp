@@ -1,16 +1,17 @@
 /**
- * \file A3MLGM5600ReaderUnitConfiguration.cpp
+ * \file a3mlgm5600readerunitconfiguration.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief A3MLGM5600 reader unit configuration.
  */
 
-#include "A3MLGM5600ReaderUnitConfiguration.h"
+#include "a3mlgm5600readerunitconfiguration.hpp"
+#include "a3mlgm5600readerprovider.hpp"
 
 
 namespace logicalaccess
 {
 	A3MLGM5600ReaderUnitConfiguration::A3MLGM5600ReaderUnitConfiguration()
-		: ReaderUnitConfiguration("A3MLGM5600")
+		: ReaderUnitConfiguration(READER_A3MLGM5600)
 	{
 		resetConfiguration();
 	}

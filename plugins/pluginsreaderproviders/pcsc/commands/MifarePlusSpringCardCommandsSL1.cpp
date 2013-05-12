@@ -1,12 +1,12 @@
 /**
- * \file MifarePlusSpringCardCommandsSL1.cpp
+ * \file mifareplusspringcardcommandssl1.cpp
  * \author Xavier SCHMERBER <xavier.schmerber@gmail.com>
  * \brief Mifare Plus SpringCard commands SL1.
  */
 
-#include "MifarePlusSpringCardCommandsSL1.h"
-#include "../PCSCReaderProvider.h"
-#include "MifarePlusChip.h"
+#include "mifareplusspringcardcommandssl1.hpp"
+#include "../pcscreaderprovider.hpp"
+#include "mifarepluschip.hpp"
 
 namespace logicalaccess
 {	

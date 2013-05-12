@@ -1,10 +1,10 @@
 /**
- * \file IdOnDemandReaderProvider.cpp
+ * \file idondemandreaderprovider.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief IdOnDemand reader provider.
  */
 
-#include "IdOnDemandReaderProvider.h"
+#include "idondemandreaderprovider.hpp
 
 #ifdef LINUX
 #include <stdlib.h>
@@ -14,7 +14,7 @@
 #include <sstream>
 #include <iomanip>
 
-#include "IdOnDemandReaderUnit.h"
+#include "idondemandreaderunit.hpp"
 
 namespace logicalaccess
 {

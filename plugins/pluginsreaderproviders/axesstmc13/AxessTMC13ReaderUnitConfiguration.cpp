@@ -1,16 +1,16 @@
 /**
- * \file AxessTMC13ReaderUnitConfiguration.cpp
+ * \file axesstmc13readerunitconfiguration.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief  AxessTMC 13Mhz reader unit configuration.
  */
 
-#include "AxessTMC13ReaderUnitConfiguration.h"
-
+#include "axesstmc13readerunitconfiguration.hpp"
+#include "axesstmc13readerprovider.hpp"
 
 namespace logicalaccess
 {
 	AxessTMC13ReaderUnitConfiguration::AxessTMC13ReaderUnitConfiguration()
-		: ReaderUnitConfiguration("AxessTMC13")
+		: ReaderUnitConfiguration(READER_AXESSTMC13)
 	{
 		resetConfiguration();
 	}

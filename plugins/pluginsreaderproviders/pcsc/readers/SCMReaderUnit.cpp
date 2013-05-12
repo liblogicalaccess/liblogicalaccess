@@ -1,10 +1,10 @@
 /**
- * \file SCMReaderUnit.cpp
+ * \file scmreaderunit.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief SCM reader unit.
  */
 
-#include "../Readers/SCMReaderUnit.h"
+#include "../readers/scmreaderunit.hpp"
 
 #include <iostream>
 #include <iomanip>

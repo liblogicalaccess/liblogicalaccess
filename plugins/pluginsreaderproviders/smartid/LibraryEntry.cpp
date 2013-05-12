@@ -1,7 +1,7 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include "logicalaccess/ReaderProviders/ReaderProvider.h"
-#include "SmartIDReaderProvider.h"
+#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include "smartidreaderprovider.hpp"
 
 #ifdef _MSC_VER
 #include "logicalaccess/msliblogicalaccess.h"
@@ -21,11 +21,11 @@ extern "C"
 		return (char *)"SmartID";
 	}
 
-	LIBLOGICALACCESS_API void getSmartIDReader(boost::shared_ptr<LOGICALACCESS::ReaderProvider>* rp)
+	LIBLOGICALACCESS_API void getSmartIDReader(boost::shared_ptr<logicalaccess::ReaderProvider>* rp)
 	{
 		if (rp != NULL)
 		{
-			*rp = LOGICALACCESS::SmartIDReaderProvider::getSingletonInstance();
+			*rp = logicalaccess::SmartIDReaderProvider::getSingletonInstance();
 		}
 	}
 

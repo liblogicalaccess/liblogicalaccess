@@ -1,10 +1,10 @@
 /**
- * \file PromagReaderProvider.cpp
+ * \file promagreaderprovider.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Promag reader provider.
  */
 
-#include "PromagReaderProvider.h"
+#include "promagreaderprovider.hpp"
 
 #ifdef LINUX
 #include <stdlib.h>
@@ -14,7 +14,7 @@
 #include <sstream>
 #include <iomanip>
 
-#include "PromagReaderUnit.h"
+#include "promagreaderunit.hpp"
 
 
 namespace logicalaccess

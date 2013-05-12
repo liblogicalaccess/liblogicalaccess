@@ -1,10 +1,10 @@
 /**
- * \file RplethReaderProvider.cpp
+ * \file rplethreaderprovider.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Rpleth reader provider.
  */
 
-#include "RplethReaderProvider.h"
+#include "rplethreaderprovider.hpp"
 
 #ifdef LINUX
 #include <stdlib.h>
@@ -14,7 +14,7 @@
 #include <sstream>
 #include <iomanip>
 
-#include "RplethReaderUnit.h"
+#include "RplethReaderUnit.hpp"
 
 
 namespace logicalaccess

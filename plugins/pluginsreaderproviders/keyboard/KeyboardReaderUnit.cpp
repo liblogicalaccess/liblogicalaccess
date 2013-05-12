@@ -1,17 +1,17 @@
 /**
- * \file KeyboardReaderUnit.cpp
+ * \file keyboardreaderunit.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Keyboard reader unit.
  */
 
-#include "KeyboardReaderUnit.h"
+#include "keyboardreaderunit.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-#include "KeyboardReaderProvider.h"
-#include "logicalaccess/Cards/Chip.h"
+#include "keyboardreaderprovider.hpp"
+#include "logicalaccess/cards/chip.hpp"
 #include <boost/filesystem.hpp>
 
 

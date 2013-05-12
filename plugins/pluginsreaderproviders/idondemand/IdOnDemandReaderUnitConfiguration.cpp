@@ -1,16 +1,17 @@
 /**
- * \file IdOnDemandReaderUnitConfiguration.cpp
+ * \file idondemandreaderunitconfiguration.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief  IdOnDemand reader unit configuration.
  */
 
-#include "IdOnDemandReaderUnitConfiguration.h"
+#include "idondemandreaderunitconfiguration.hpp"
+#include "idondemandreaderprovider.hpp"
 
 
 namespace logicalaccess
 {
 	IdOnDemandReaderUnitConfiguration::IdOnDemandReaderUnitConfiguration()
-		: ReaderUnitConfiguration("idOnDemand")
+		: ReaderUnitConfiguration(READER_IDONDEMAND)
 	{
 		resetConfiguration();
 	}

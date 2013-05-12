@@ -1,7 +1,7 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include "logicalaccess/ReaderProviders/ReaderProvider.h"
-#include "RplethReaderProvider.h"
+#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include "rplethreaderprovider.hpp"
 
 #ifdef _MSC_VER
 #include "logicalaccess/msliblogicalaccess.h"
@@ -21,11 +21,11 @@ extern "C"
 		return (char *)"Rpleth";
 	}
 
-	LIBLOGICALACCESS_API void getRplethReader(boost::shared_ptr<LOGICALACCESS::ReaderProvider>* rp)
+	LIBLOGICALACCESS_API void getRplethReader(boost::shared_ptr<logicalaccess::ReaderProvider>* rp)
 	{
 		if (rp != NULL)
 		{
-			*rp = LOGICALACCESS::RplethReaderProvider::getSingletonInstance();
+			*rp = logicalaccess::RplethReaderProvider::getSingletonInstance();
 		}
 	}
 

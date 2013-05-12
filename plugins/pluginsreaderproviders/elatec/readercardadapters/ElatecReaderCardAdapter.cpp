@@ -1,10 +1,10 @@
 /**
- * \file ElatecReaderCardAdapter.cpp
+ * \file elatecreadercardadapter.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Elatec reader/card adapter.
  */
 
-#include "ElatecReaderCardAdapter.h"
+#include "elatecreadercardadapter.hpp"
 
 namespace logicalaccess
 {		

@@ -1,18 +1,18 @@
 /**
- * \file STidSTRReaderCardAdapter.cpp
+ * \file stidstrreadercardadapter.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief STidSTR reader/card adapter.
  */
 
-#include "STidSTRReaderCardAdapter.h"
+#include "stidstrreadercardadapter.hpp"
 #include "logicalaccess/crypto/tomcrypt.h"
 #include <openssl/evp.h>
 #include <openssl/hmac.h>
 #include <openssl/sha.h>
 #include <openssl/rand.h>
-#include "logicalaccess/crypto/aes_cipher.h"
-#include "logicalaccess/crypto/aes_initialization_vector.h"
-#include "logicalaccess/crypto/aes_symmetric_key.h"
+#include "logicalaccess/crypto/aes_cipher.hpp"
+#include "logicalaccess/crypto/aes_initialization_vector.hpp"
+#include "logicalaccess/crypto/aes_symmetric_key.hpp"
 
 namespace LOGICALACCESS
 {	

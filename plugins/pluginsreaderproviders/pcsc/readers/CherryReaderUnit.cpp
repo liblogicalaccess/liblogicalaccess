@@ -1,10 +1,10 @@
 /**
- * \file CherryReaderUnit.cpp
+ * \file cherryreaderunit.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Cherry reader unit.
  */
 
-#include "../Readers/CherryReaderUnit.h"
+#include "../readers/cherryreaderunit.hpp"
 
 #include <iostream>
 #include <iomanip>

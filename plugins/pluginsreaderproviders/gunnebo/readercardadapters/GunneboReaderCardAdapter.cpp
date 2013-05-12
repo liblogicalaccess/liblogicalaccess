@@ -1,10 +1,10 @@
 /**
- * \file GunneboReaderCardAdapter.cpp
+ * \file gunneboreadercardadapter.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Gunnebo reader/card adapter.
  */
 
-#include "GunneboReaderCardAdapter.h"
+#include "gunneboreadercardadapter.hpp"
 
 namespace logicalaccess
 {			

@@ -1,10 +1,10 @@
 /**
- * \file A3MLGM5600LEDBuzzerDisplay.cpp
+ * \file a3mlgm5600ledbuzzerdisplay.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief A3MLGM5600 LED/Buzzer Display.
  */
 
-#include "A3MLGM5600LEDBuzzerDisplay.h"
+#include "a3mlgm5600ledbuzzerdisplay.hpp"
 
 #include <iostream>
 #include <iomanip>

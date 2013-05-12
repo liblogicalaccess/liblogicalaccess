@@ -1,10 +1,10 @@
 /**
- * \file A3MLGM5600LCDDisplay.cpp
+ * \file a3mlgm5600lcddisplay.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief A3MLGM5600 LCD Display.
  */
 
-#include "A3MLGM5600LCDDisplay.h"
+#include "a3mlgm5600lcddisplay.hpp"
 
 namespace logicalaccess
 {

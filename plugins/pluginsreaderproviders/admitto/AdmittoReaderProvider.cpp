@@ -1,10 +1,10 @@
 /**
- * \file AdmittoReaderProvider.cpp
+ * \file admittoreaderprovider.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Admitto reader provider.
  */
 
-#include "AdmittoReaderProvider.h"
+#include "admittoreaderprovider.hpp"
 
 #ifdef LINUX
 #include <stdlib.h>
@@ -14,7 +14,7 @@
 #include <sstream>
 #include <iomanip>
 
-#include "AdmittoReaderUnit.h"
+#include "admittoreaderunit.hpp"
 
 
 namespace logicalaccess

@@ -1,10 +1,10 @@
 /**
- * \file SCIELReaderProvider.cpp
+ * \file scielreaderprovider.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Reader Provider SCIEL.
  */
 
-#include "SCIELReaderProvider.h"
+#include "scielreaderprovider.hpp"
 
 #ifdef LINUX
 #include <stdlib.h>
@@ -14,7 +14,7 @@
 #include <sstream>
 #include <iomanip>
 
-#include "SCIELReaderUnit.h"
+#include "scielreaderunit.hpp"
 
 
 namespace logicalaccess

@@ -1,10 +1,10 @@
 /**
- * \file AxessTMC13ReaderCardAdapter.cpp
+ * \file axesstmc13readercardadapter.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief AxessTMC 13Mhz reader/card adapter.
  */
 
-#include "AxessTMC13ReaderCardAdapter.h"
+#include "axesstmc13readercardadapter.hpp"
 
 namespace logicalaccess
 {		

@@ -1,10 +1,10 @@
 /**
- * \file SCIELReaderCardAdapter.cpp
+ * \file scielreadercardadapter.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief SCIEL reader/card adapter.
  */
 
-#include "SCIELReaderCardAdapter.h"
+#include "scielreadercardadapter.hpp"
 
 
 namespace logicalaccess

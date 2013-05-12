@@ -1,12 +1,12 @@
 /**
- * \file PCSCReaderCardAdapter.cpp
+ * \file pcscreadercardadapter.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief PC/SC reader/card adapter.
  */
 
-#include "PCSCReaderCardAdapter.h"
-#include "../PCSCReaderUnit.h"
-#include "logicalaccess/BufferHelper.h"
+#include "pcscreadercardadapter.hpp"
+#include "../pcscreaderunit.hpp"
+#include "logicalaccess/bufferhelper.hpp"
 
 
 namespace logicalaccess

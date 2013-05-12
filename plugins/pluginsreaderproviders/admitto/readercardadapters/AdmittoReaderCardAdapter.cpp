@@ -1,10 +1,10 @@
 /**
- * \file AdmittoReaderCardAdapter.cpp
+ * \file admittoreadercardadapter.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Admitto reader/card adapter.
  */
 
-#include "AdmittoReaderCardAdapter.h"
+#include "admittoreadercardadapter.hpp"
 
 namespace logicalaccess
 {			

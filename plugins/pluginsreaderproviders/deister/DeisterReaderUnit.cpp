@@ -1,19 +1,19 @@
 /**
- * \file DeisterReaderUnit.cpp
+ * \file deisterreaderunit.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Deister reader unit.
  */
 
-#include "DeisterReaderUnit.h"
+#include "deisterreaderunit.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-#include "DeisterReaderProvider.h"
-#include "logicalaccess/Services/AccessControl/CardsFormatComposite.h"
-#include "logicalaccess/Cards/Chip.h"
-#include "ReaderCardAdapters/DeisterReaderCardAdapter.h"
+#include "deisterreaderprovider.hpp"
+#include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
+#include "logicalaccess/cards/chip.hpp"
+#include "readercardadapters/deisterreadercardadapter.hpp"
 #include <boost/filesystem.hpp>
 
 namespace logicalaccess

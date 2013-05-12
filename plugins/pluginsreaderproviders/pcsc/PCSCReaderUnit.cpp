@@ -1,54 +1,54 @@
 /**
- * \file PCSCReaderUnit.cpp
+ * \file pcscreaderunit.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief PC/SC reader unit.
  */
 
-#include "PCSCReaderUnit.h"
+#include "pcscreaderunit.hpp"
 
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-#include "PCSCReaderProvider.h"
-#include "logicalaccess/Services/AccessControl/CardsFormatComposite.h"
-#include "logicalaccess/Cards/Chip.h"
-#include "logicalaccess/DynLibrary/LibraryManager.h"
-#include "logicalaccess/DynLibrary/IDynLibrary.h"
+#include "pcscreaderprovider.hpp"
+#include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
+#include "logicalaccess/cards/chip.hpp"
+#include "logicalaccess/dynlibrary/librarymanager.hpp"
+#include "logicalaccess/dynlibrary/idynlibrary.hpp"
 
-#include "DESFireEV1CardProvider.h"
-#include "Commands/DESFireEV1ISO7816Commands.h"
-#include "MifareCardProvider.h"
-#include "Commands/MifarePCSCCommands.h"
-#include "Commands/MifareSCMCommands.h"
-#include "Commands/MifareCherryCommands.h"
-#include "Commands/MifareSpringCardCommands.h"
-#include "Commands/ProxPCSCCardProvider.h"
-#include "ISO15693CardProvider.h"
-#include "Commands/ISO15693PCSCCommands.h"
-#include "Commands/ISO7816ISO7816Commands.h"
-#include "Commands/TwicISO7816Commands.h"
-#include "MifareUltralightCardProvider.h"
-#include "Commands/MifareUltralightPCSCCommands.h"
-#include "MifareUltralightCCardProvider.h"
-#include "Commands/MifareUltralightCPCSCCommands.h"
-#include "ReaderCardAdapters/PCSCReaderCardAdapter.h"
-#include "MifarePlusCardProviderSL1.h"
-#include "MifarePlusProfileSL1.h"
-#include "Commands/MifarePlusSpringCardCommandsSL1.h"
-#include "MifarePlusCardProviderSL3.h"
-#include "MifarePlusProfileSL3.h"
-#include "Commands/MifarePlusSpringCardCommandsSL3.h"
+#include "desfireev1cardprovider.hpp"
+#include "commands/desfireev1iso7816commands.hpp"
+#include "mifarecardprovider.hpp"
+#include "commands/mifarepcsccommands.hpp"
+#include "commands/mifarescmcommands.hpp"
+#include "commands/mifarecherrycommands.hpp"
+#include "commands/mifarespringcardcommands.hpp"
+#include "commands/proxpcsccardprovider.hpp"
+#include "iso15693cardprovider.hpp"
+#include "commands/iso15693pcsccommands.hpp"
+#include "commands/iso7816iso7816commands.hpp"
+#include "commands/twiciso7816commands.hpp"
+#include "mifareultralightcardprovider.hpp"
+#include "commands/mifareultralightpcsccommands.hpp"
+#include "mifareultralightccardprovider.hpp"
+#include "commands/mifareultralightcpcsccommands.hpp"
+#include "readercardadapters/pcscreadercardadapter.hpp"
+#include "mifarepluscardprovidersl1.hpp"
+#include "mifareplusprofilesl1.hpp"
+#include "commands/mifareplusspringcardcommandssl1.hpp"
+#include "mifarepluscardprovidersl3.hpp"
+#include "mifareplusprofilesl3.hpp"
+#include "commands/mifareplusspringcardcommandssl3.hpp"
 
-#include "Readers/OmnikeyXX21ReaderUnit.h"
-#include "Readers/OmnikeyXX25ReaderUnit.h"
-#include "Readers/OmnikeyXX27ReaderUnit.h"
-#include "Readers/CherryReaderUnit.h"
-#include "Readers/SCMReaderUnit.h"
-#include "Readers/SpringCardReaderUnit.h"
+#include "readers/omnikeyxx21readerunit.hpp"
+#include "readers/omnikeyxx25readerunit.hpp"
+#include "readers/omnikeyxx27readerunit.hpp"
+#include "readers/cherryreaderunit.hpp"
+#include "readers/scmreaderunit.hpp"
+#include "readers/springcardreaderunit.hpp"
 
-#include "DESFireChip.h"
+#include "desfirechip.hpp"
 #include <boost/filesystem.hpp>
 
 #ifdef UNIX

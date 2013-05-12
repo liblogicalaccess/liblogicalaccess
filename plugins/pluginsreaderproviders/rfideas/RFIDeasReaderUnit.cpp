@@ -1,24 +1,23 @@
 /**
- * \file RFIDeasReaderUnit.cpp
+ * \file rfideasreaderunit.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief RFIDeas reader unit.
  */
 
-#include "RFIDeasReaderUnit.h"
+#include "rfideasreaderunit.hpp"
 
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-#include "RFIDeasReaderProvider.h"
-#include "logicalaccess/Services/AccessControl/CardsFormatComposite.h"
-#include "logicalaccess/Cards/Chip.h"
-#include "ReaderCardAdapters/RFIDeasReaderCardAdapter.h"
-//#include "GenericTagChip.h"
+#include "rfideasreaderprovider.hpp"
+#include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
+#include "logicalaccess/cards/chip.hpp"
+#include "readercardadapters/rfideasreadercardadapter.hpp"
 #include <boost/filesystem.hpp>
-#include "logicalaccess/DynLibrary/LibraryManager.h"
-#include "logicalaccess/DynLibrary/IDynLibrary.h"
+#include "logicalaccess/dynlibrary/librarymanager.hpp"
+#include "logicalaccess/dynlibrary/idynlibrary.hpp"
 
 namespace logicalaccess
 {

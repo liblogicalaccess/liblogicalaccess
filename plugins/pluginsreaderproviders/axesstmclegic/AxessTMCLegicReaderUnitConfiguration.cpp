@@ -1,16 +1,17 @@
 /**
- * \file AxessTMCLegicReaderUnitConfiguration.cpp
+ * \file axesstmclegicreaderunitconfiguration.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief  AxessTMCLegic reader unit configuration.
  */
 
-#include "AxessTMCLegicReaderUnitConfiguration.h"
+#include "axesstmclegicreaderunitconfiguration.hpp"
+#include "axesstmclegicreaderprovider.hpp"
 
 
 namespace logicalaccess
 {
 	AxessTMCLegicReaderUnitConfiguration::AxessTMCLegicReaderUnitConfiguration()
-		: ReaderUnitConfiguration("AxessTMCLegic")
+		: ReaderUnitConfiguration(READER_AXESSTMCLEGIC)
 	{
 		resetConfiguration();
 	}

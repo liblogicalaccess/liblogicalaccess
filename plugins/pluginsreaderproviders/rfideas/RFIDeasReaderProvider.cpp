@@ -4,7 +4,7 @@
  * \brief Reader Provider RFIDeas.
  */
 
-#include "RFIDeasReaderProvider.h"
+#include "rfideasreaderprovider.hpp"
 
 #ifdef LINUX
 #include <stdlib.h>
@@ -14,7 +14,7 @@
 #include <sstream>
 #include <iomanip>
 
-#include "RFIDeasReaderUnit.h"
+#include "rfideasreaderunit.hpp"
 
 
 namespace logicalaccess

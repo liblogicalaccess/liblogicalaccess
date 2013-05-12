@@ -1,10 +1,10 @@
 /**
- * \file KeyboardReaderProvider.cpp
+ * \file keyboardreaderprovider.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Keyboard reader provider.
  */
 
-#include "KeyboardReaderProvider.h"
+#include "keyboardreaderprovider.hpp"
 
 #include <sstream>
 #include <iomanip>

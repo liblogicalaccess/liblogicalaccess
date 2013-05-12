@@ -1,15 +1,15 @@
 /**
- * \file MifarePlusSpringCardCommandsSL3.cpp
+ * \file mifareplusspringcardcommandssl3.cpp
  * \author Xavier SCHMERBER <xavier.schmerber@gmail.com>
  * \brief Mifare Plus SpringCard commands SL3.
  */
 
-#include "MifarePlusSpringCardCommandsSL3.h"
+#include "mifareplusspringcardcommandssl3.hpp"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-#include "../PCSCReaderProvider.h"
-#include "MifarePlusChip.h"
+#include "../pcscreaderprovider.hpp"
+#include "mifarepluschip.hpp"
 
 namespace logicalaccess
 {	

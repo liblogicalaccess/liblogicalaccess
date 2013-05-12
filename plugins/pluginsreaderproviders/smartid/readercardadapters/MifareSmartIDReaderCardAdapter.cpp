@@ -1,10 +1,10 @@
 /**
- * \file MifareSmartIDReaderCardAdapter.cpp
+ * \file mifaresmartidreadercardadapter.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Mifare SmartID reader/card adapter.
  */
 
-#include "MifareSmartIDReaderCardAdapter.h"
+#include "mifaresmartidreadercardadapter.hpp"
 
 #include <cstring>
 

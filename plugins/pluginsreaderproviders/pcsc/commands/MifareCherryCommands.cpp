@@ -1,25 +1,17 @@
 /**
- * \file MifareCherryCommands.cpp
+ * \file mifarecherrycommands.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Mifare Cherry commands.
  */
 
-#include "../Commands/MifareCherryCommands.h"
+#include "../commands/mifarecherrycommands.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-using std::endl;
-using std::dec;
-using std::hex;
-using std::setfill;
-using std::setw;
-using std::ostringstream;
-using std::istringstream;
-
-#include "../PCSCReaderProvider.h"
-#include "MifareChip.h"
+#include "../pcscreaderprovider.hpp"
+#include "mifarechip.hpp"
 
 namespace logicalaccess
 {	

@@ -1,16 +1,17 @@
 /**
- * \file DeisterReaderUnitConfiguration.cpp
+ * \file deisterreaderunitconfiguration.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Deister reader unit configuration.
  */
 
-#include "DeisterReaderUnitConfiguration.h"
+#include "deisterreaderunitconfiguration.hpp"
+#include "deisterreaderprovider.hpp"
 
 
 namespace logicalaccess
 {
 	DeisterReaderUnitConfiguration::DeisterReaderUnitConfiguration()
-		: ReaderUnitConfiguration("Deister")
+		: ReaderUnitConfiguration(READER_DEISTER)
 	{
 		resetConfiguration();
 	}

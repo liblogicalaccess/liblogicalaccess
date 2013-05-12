@@ -1,24 +1,16 @@
 /**
- * \file MifarePlusSpringCardCommands.cpp
+ * \file mifareplusspringcardcommands.cpp
  * \author Xavier SCHMERBER <xavier.schmerber@gmail.com>
  * \brief Mifare Plus Springcard commands.
  */
 
-#include "MifarePlusSpringCardCommands.h"
+#include "MifarePlusSpringCardCommands.hpp"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-
-using std::endl;
-using std::dec;
-using std::hex;
-using std::setfill;
-using std::setw;
-using std::ostringstream;
-using std::istringstream;
 
 namespace logicalaccess
 {	

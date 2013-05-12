@@ -1,26 +1,26 @@
 /**
- * \file SmartIDReaderUnit.cpp
+ * \file smartidreaderunit.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief SmartID reader unit.
  */
 
-#include "SmartIDReaderUnit.h"
+#include "smartidreaderunit.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 #include <cstring>
 
-#include "SmartIDReaderProvider.h"
-#include "logicalaccess/Services/AccessControl/CardsFormatComposite.h"
-#include "logicalaccess/Cards/Chip.h"
-#include "Commands/MifareSmartIDCommands.h"
-#include "ReaderCardAdapters/SmartIDReaderCardAdapter.h"
-#include "SmartIDLEDBuzzerDisplay.h"
+#include "smartidreaderprovider.hpp"
+#include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
+#include "logicalaccess/cards/chip.hpp"
+#include "commands/mifaresmartidcommands.hpp"
+#include "readercardadapters/smartidreadercardadapter.hpp"
+#include "smartidledbuzzerdisplay.hpp"
 #include <boost/filesystem.hpp>
-#include "logicalaccess/DynLibrary/LibraryManager.h"
-#include "logicalaccess/DynLibrary/IDynLibrary.h"
-#include "MifareCardProvider.h"
+#include "logicalaccess/dynlibrary/librarymanager.hpp"
+#include "logicalaccess/dynlibrary/idynlibrary.hpp"
+#include "mifarecardprovider.hpp"
 
 namespace logicalaccess
 {

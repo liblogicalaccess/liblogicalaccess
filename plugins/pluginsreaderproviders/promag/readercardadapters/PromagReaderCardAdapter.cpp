@@ -1,10 +1,10 @@
 /**
- * \file PromagReaderCardAdapter.cpp
+ * \file promagreadercardadapter.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Promag reader/card adapter.
  */
 
-#include "PromagReaderCardAdapter.h"
+#include "promagreadercardadapter.hpp"
 
 namespace logicalaccess
 {		

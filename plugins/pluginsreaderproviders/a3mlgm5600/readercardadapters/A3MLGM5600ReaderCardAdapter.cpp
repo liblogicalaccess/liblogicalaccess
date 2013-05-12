@@ -1,10 +1,10 @@
 /**
- * \file A3MLGM5600ReaderCardAdapter.cpp
+ * \file a3mlgm5600readercardadapter.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief A3MLGM5600 reader/card adapter.
  */
 
-#include "A3MLGM5600ReaderCardAdapter.h"
+#include "a3mlgm5600readercardadapter.hpp"
 #include "logicalaccess/crypto/tomcrypt.h"
 #include <ctime>
 

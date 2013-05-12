@@ -1,10 +1,10 @@
 /**
- * \file GunneboReaderProvider.cpp
+ * \file gunneboreaderprovider.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Gunnebo reader provider.
  */
 
-#include "GunneboReaderProvider.h"
+#include "gunneboreaderprovider.hpp"
 
 #ifdef LINUX
 #include <stdlib.h>
@@ -14,7 +14,7 @@
 #include <sstream>
 #include <iomanip>
 
-#include "GunneboReaderUnit.h"
+#include "gunneboreaderunit.hpp"
 
 
 namespace logicalaccess

@@ -1,10 +1,10 @@
 /**
- * \file IdOnDemandReaderCardAdapter.cpp
+ * \file idondemandreadercardadapter.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief IdOnDemand reader/card adapter.
  */
 
-#include "IdOnDemandReaderCardAdapter.h"
+#include "idondemandreadercardadapter.hpp"
 
 namespace logicalaccess
 {		

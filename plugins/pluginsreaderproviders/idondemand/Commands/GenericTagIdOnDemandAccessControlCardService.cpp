@@ -1,25 +1,25 @@
 /**
- * \file GenericTagIdOnDemandAccessControlCardService.cpp
+ * \file generictagidondemandaccesscontrolcardservice.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Generic Tag IdOnDemand Access Control Card service.
  */
 
-#include "GenericTagIdOnDemandAccessControlCardService.h"
-#include "GenericTagIdOnDemandCardProvider.h"
-#include "GenericTagCardProvider.h"
-#include "GenericTagChip.h"
-#include "logicalaccess/Cards/ReaderCardAdapter.h"
+#include "generictagidondemandaccesscontrolcardservice.hpp"
+#include "generictagidondemandcardprovider.hpp"
+#include "generictagcardprovider.hpp"
+#include "generictagchip.hpp"
+#include "logicalaccess/cards/readercardadapter.hpp"
 
-#include "../ReaderCardAdapters/IdOnDemandReaderCardAdapter.h"
-#include "logicalaccess/Services/AccessControl/Formats/Wiegand26Format.h"
-#include "logicalaccess/Services/AccessControl/Formats/Wiegand34WithFacilityFormat.h"
-#include "logicalaccess/Services/AccessControl/Formats/Corporate1000Format.h"
-#include "logicalaccess/Services/AccessControl/Formats/Wiegand37Format.h"
-#include "logicalaccess/Services/AccessControl/Formats/Wiegand37WithFacilityFormat.h"
-#include "logicalaccess/Services/AccessControl/Formats/CustomFormat/CustomFormat.h"
-#include "logicalaccess/Services/AccessControl/Formats/CustomFormat/NumberDataField.h"
+#include "../readercardadapters/idondemandreadercardadapter.hpp"
+#include "logicalaccess/services/accesscontrol/formats/wiegand26format.hpp"
+#include "logicalaccess/services/accesscontrol/formats/wiegand34withfacilityformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/corporate1000format.hpp"
+#include "logicalaccess/services/accesscontrol/formats/wiegand37format.hpp"
+#include "logicalaccess/services/accesscontrol/formats/wiegand37withfacilityformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/customformat/customformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
 
-#include "logicalaccess/Services/AccessControl/Formats/Format.h"
+#include "logicalaccess/services/accesscontrol/formats/format.hpp"
 
 namespace logicalaccess
 {

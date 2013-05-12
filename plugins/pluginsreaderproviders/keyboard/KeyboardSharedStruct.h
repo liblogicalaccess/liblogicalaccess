@@ -1,5 +1,5 @@
 /**
- * \file KeyboardSharedStruct.h
+ * \file keyboardsharedstruct.h
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Keyboard shared struct. 
  */

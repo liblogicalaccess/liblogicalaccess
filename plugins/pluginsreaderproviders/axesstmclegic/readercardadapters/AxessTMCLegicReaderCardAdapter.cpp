@@ -1,10 +1,10 @@
 /**
- * \file AxessTMCLegicReaderCardAdapter.cpp
+ * \file axesstmclegicreadercardadapter.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief AxessTMCLegic reader/card adapter.
  */
 
-#include "AxessTMCLegicReaderCardAdapter.h"
+#include "axesstmclegicreadercardadapter.hpp"
 
 
 namespace logicalaccess

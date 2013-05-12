@@ -1,10 +1,10 @@
 /**
- * \file PCSCReaderProvider.cpp
+ * \file pcscreaderprovider.cpp
  * \author Julien K. <julien-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
  * \brief Reader Proviser PC/SC.
  */
 
-#include "PCSCReaderProvider.h"
+#include "pcscreaderprovider.hpp"
 
 #ifdef __linux__
 #include <stdlib.h>
@@ -13,16 +13,9 @@
 
 #include <sstream>
 
-using std::ostringstream;
-using std::istringstream;
-
 #include <iomanip>
 
-using std::hex;
-using std::setw;
-using std::setfill;
-
-#include "PCSCReaderUnit.h"
+#include "pcscreaderunit.h"
 
 
 namespace logicalaccess

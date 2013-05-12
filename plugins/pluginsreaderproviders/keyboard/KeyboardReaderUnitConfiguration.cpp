@@ -1,16 +1,16 @@
 /**
- * \file KeyboardReaderUnitConfiguration.cpp
+ * \file keyboardreaderunitconfiguration.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Keyboard reader unit configuration.
  */
 
-#include "KeyboardReaderUnitConfiguration.h"
-
+#include "keyboardreaderunitconfiguration.hpp"
+#include "keyboardreaderprovider.hpp"
 
 namespace logicalaccess
 {
 	KeyboardReaderUnitConfiguration::KeyboardReaderUnitConfiguration()
-		: ReaderUnitConfiguration("Keyboard")
+		: ReaderUnitConfiguration(READER_KEYBOARD)
 	{
 		resetConfiguration();
 	}

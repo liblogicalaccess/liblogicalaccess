@@ -1,22 +1,22 @@
 /**
- * \file GunneboReaderUnit.cpp
+ * \file gunneboreaderunit.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Gunnebo reader unit.
  */
 
-#include "GunneboReaderUnit.h"
+#include "gunneboreaderunit.h"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-#include "GunneboReaderProvider.h"
-#include "logicalaccess/Services/AccessControl/CardsFormatComposite.h"
-#include "logicalaccess/Cards/Chip.h"
-#include "ReaderCardAdapters/GunneboReaderCardAdapter.h"
+#include "gunneboreaderprovider.hpp"
+#include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
+#include "logicalaccess/cards/chip.hpp"
+#include "readercardadapters/gunneboreadercardadapter.hpp"
 #include <boost/filesystem.hpp>
-#include "logicalaccess/DynLibrary/LibraryManager.h"
-#include "logicalaccess/DynLibrary/IDynLibrary.h"
+#include "logicalaccess/dynlibrary/librarymanager.hpp"
+#include "logicalaccess/dynlibrary/idynlibrary.hpp"
 
 namespace logicalaccess
 {

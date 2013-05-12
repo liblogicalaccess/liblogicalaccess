@@ -1,7 +1,7 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include "logicalaccess/ReaderProviders/ReaderProvider.h"
-#include "RFIDeasReaderProvider.h"
+#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include "rfideasreaderprovider.hpp"
 
 #ifdef _MSC_VER
 #include "logicalaccess/msliblogicalaccess.h"
@@ -21,11 +21,11 @@ extern "C"
 		return (char *)"RFIDeas";
 	}
 
-	LIBLOGICALACCESS_API void getRFIDeasReader(boost::shared_ptr<LOGICALACCESS::ReaderProvider>* rp)
+	LIBLOGICALACCESS_API void getRFIDeasReader(boost::shared_ptr<logicalaccess::ReaderProvider>* rp)
 	{
 		if (rp != NULL)
 		{
-			*rp = LOGICALACCESS::RFIDeasReaderProvider::getSingletonInstance();
+			*rp = logicalaccess::RFIDeasReaderProvider::getSingletonInstance();
 		}
 	}
 

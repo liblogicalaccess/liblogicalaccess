@@ -1,10 +1,10 @@
 /**
- * \file SmartIDLEDBuzzerDisplay.cpp
+ * \file smartidledbuzzerdisplay.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief SmartID LED/Buzzer Display.
  */
 
-#include "SmartIDLEDBuzzerDisplay.h"
+#include "smartidledbuzzerdisplay.hpp"
 
 namespace logicalaccess
 {

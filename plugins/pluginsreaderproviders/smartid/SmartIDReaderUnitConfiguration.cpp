@@ -1,10 +1,11 @@
 /**
- * \file SmartIDReaderUnitConfiguration.cpp
+ * \file smartidreaderunitconfiguration.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief SmartID reader unit configuration.
  */
 
-#include "SmartIDReaderUnitConfiguration.h"
+#include "smartidreaderunitconfiguration.hpp"
+#include "smartidreaderprovider.hpp"
 
 #ifdef UNIX
 # include <termios.h>
@@ -14,7 +15,7 @@
 namespace logicalaccess
 {
 	SmartIDReaderUnitConfiguration::SmartIDReaderUnitConfiguration()
-		: ReaderUnitConfiguration("SmartID")
+		: ReaderUnitConfiguration(READER_SMARTID)
 	{
 		resetConfiguration();
 	}

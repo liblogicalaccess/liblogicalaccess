@@ -1,15 +1,15 @@
 /**
- * \file MifareSmartIDCommands.cpp
+ * \file mifaresmartidcommands.cpp
  * \author Julien K. <julien-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
  * \brief Mifare SmartID commands.
  */
 
-#include "MifareSmartIDCommands.h"
-#include "../SmartIDReaderProvider.h"
-#include "MifareChip.h"
-#include "logicalaccess/Cards/ComputerMemoryKeyStorage.h"
-#include "logicalaccess/Cards/ReaderMemoryKeyStorage.h"
-#include "logicalaccess/Cards/SAMKeyStorage.h"
+#include "mifaresmartidcommands.hpp"
+#include "../smartidreaderprovider.hpp"
+#include "mifarechip.hpp"
+#include "logicalaccess/cards/computermemorykeystorage.hpp"
+#include "logicalaccess/cards/readermemorykeystorage.hpp"
+#include "logicalaccess/cards/samkeystorage.hpp"
 
 namespace logicalaccess
 {	

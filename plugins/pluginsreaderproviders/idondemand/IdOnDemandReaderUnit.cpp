@@ -1,21 +1,21 @@
 /**
- * \file IdOnDemandReaderUnit.cpp
+ * \file idondemandreaderunit.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief IdOnDemand reader unit.
  */
 
-#include "IdOnDemandReaderUnit.h"
+#include "idondemandreaderunit.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-#include "IdOnDemandReaderProvider.h"
-#include "logicalaccess/Services/AccessControl/CardsFormatComposite.h"
-#include "logicalaccess/Cards/Chip.h"
-#include "ReaderCardAdapters/IdOnDemandReaderCardAdapter.h"
-#include "Commands/GenericTagIdOnDemandCardProvider.h"
-#include "Commands/GenericTagIdOnDemandAccessControlCardService.h"
+#include "idondemandreaderprovider.hpp"
+#include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
+#include "logicalaccess/cards/chip.hpp"
+#include "readercardadapters/idondemandreadercardadapter.hpp"
+#include "commands/generictagidondemandcardprovider.hpp"
+#include "commands/generictagidondemandaccesscontrolcardservice.hpp"
 #include <boost/filesystem.hpp>
 
 namespace logicalaccess

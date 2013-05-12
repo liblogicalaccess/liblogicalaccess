@@ -1,22 +1,21 @@
 /**
- * \file MifareSTidSTRCommands.cpp
+ * \file mifarestidstrcommands.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Mifare STidSTR commands.
  */
 
-#include "MifareSTidSTRCommands.h"
-#include "../STidSTRReaderProvider.h"
-#include "MifareChip.h"
-#include "logicalaccess/Cards/ComputerMemoryKeyStorage.h"
-#include "logicalaccess/Cards/ReaderMemoryKeyStorage.h"
-#include "logicalaccess/Cards/SAMKeyStorage.h"
+#include "mifarestidstrcommands.hpp"
+#include "../stidstrreaderprovider.hpp"
+#include "mifarechip.hpp"
+#include "logicalaccess/cards/computermemorykeystorage.hpp"
+#include "logicalaccess/cards/readermemorykeystorage.hpp"
+#include "logicalaccess/cards/samkeystorage.hpp"
 
 namespace logicalaccess
 {	
 	MifareSTidSTRCommands::MifareSTidSTRCommands()
 		: MifareCommands()
 	{
-		//INFO_SIMPLE_("Constructor");
 		d_useSKB = false;
 		d_skbIndex = 0;
 		d_lastKeyType = KT_KEY_A;
@@ -24,7 +23,7 @@ namespace logicalaccess
 
 	MifareSTidSTRCommands::~MifareSTidSTRCommands()
 	{
-		//INFO_SIMPLE_("Destructor");
+		
 	}
 
 	std::vector<unsigned char> MifareSTidSTRCommands::scanMifare()

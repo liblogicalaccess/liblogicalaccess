@@ -1,25 +1,25 @@
 /**
- * \file A3MLGM5600ReaderUnit.cpp
+ * \file a3mlgm5600readerunit.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief A3MLGM5600 reader unit.
  */
 
-#include "A3MLGM5600ReaderUnit.h"
+#include "a3mlgm5600readerunit.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-#include "ReaderCardAdapters/A3MLGM5600ReaderCardAdapter.h"
-#include "logicalaccess/ReaderProviders/ReaderUnitConfiguration.h"
+#include "readercardadapters/a3mlgm5600readercardadapter.hpp"
+#include "logicalaccess/readerproviders/readerunitconfiguration.hpp"
 #include <boost/shared_ptr.hpp>
 #include <boost/filesystem.hpp>
-#include "logicalaccess/ReaderProviders/ReaderUnit.h"
-#include "A3MLGM5600ReaderProvider.h"
-#include "logicalaccess/Services/AccessControl/CardsFormatComposite.h"
-#include "logicalaccess/Cards/Chip.h"
-#include "A3MLGM5600LEDBuzzerDisplay.h"
-#include "A3MLGM5600LCDDisplay.h"
+#include "logicalaccess/readerproviders/readerunit.hpp"
+#include "a3mlgm5600readerprovider.hpp"
+#include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
+#include "logicalaccess/cards/chip.hpp"
+#include "a3mlgm5600ledbuzzerdisplay.hpp"
+#include "a3mlgm5600lcddisplay.hpp"
 
 
 namespace logicalaccess

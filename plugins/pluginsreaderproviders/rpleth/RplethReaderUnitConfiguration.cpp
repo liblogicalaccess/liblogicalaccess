@@ -1,16 +1,17 @@
 /**
- * \file RplethReaderUnitConfiguration.cpp
+ * \file rplethreaderunitconfiguration.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief  Rpleth reader unit configuration.
  */
 
-#include "RplethReaderUnitConfiguration.h"
+#include "rplethreaderunitconfiguration.hpp"
+#include "rplethreaderprovider.hpp"
 
 
 namespace logicalaccess
 {
 	RplethReaderUnitConfiguration::RplethReaderUnitConfiguration()
-		: ReaderUnitConfiguration("Rpleth")
+		: ReaderUnitConfiguration(READER_RPLETH)
 	{
 		resetConfiguration();
 	}

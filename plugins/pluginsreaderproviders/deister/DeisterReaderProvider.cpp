@@ -1,10 +1,10 @@
 /**
- * \file DeisterReaderProvider.cpp
+ * \file deisterreaderprovider.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Reader Provider Deister.
  */
 
-#include "DeisterReaderProvider.h"
+#include "deisterreaderprovider.hpp"
 
 #ifdef LINUX
 #include <stdlib.h>
@@ -14,7 +14,7 @@
 #include <sstream>
 #include <iomanip>
 
-#include "DeisterReaderUnit.h"
+#include "deisterreaderunit.hpp"
 
 
 namespace logicalaccess

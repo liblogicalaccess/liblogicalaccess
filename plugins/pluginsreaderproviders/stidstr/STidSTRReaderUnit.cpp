@@ -1,11 +1,11 @@
 /**
- * \file STidSTRReaderUnit.cpp
+ * \file stidstrreaderunit.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief STidSTR reader unit.
  */
 
-#include "STidSTRReaderUnit.h"
-#include "STidSTRReaderProvider.h"
+#include "stidstrreaderunit.hpp"
+#include "stidstrreaderprovider.hpp"
 
 
 #include <iostream>
@@ -16,23 +16,23 @@
 #include <openssl/hmac.h>
 #include <openssl/sha.h>
 #include <openssl/rand.h>
-#include "logicalaccess/crypto/aes_cipher.h"
-#include "logicalaccess/crypto/aes_initialization_vector.h"
-#include "logicalaccess/crypto/aes_symmetric_key.h"
+#include "logicalaccess/crypto/aes_cipher.hpp"
+#include "logicalaccess/crypto/aes_initialization_vector.hpp"
+#include "logicalaccess/crypto/aes_symmetric_key.hpp"
 
-#include "logicalaccess/Services/AccessControl/CardsFormatComposite.h"
-#include "logicalaccess/Cards/Chip.h"
-#include "ReaderCardAdapters/STidSTRReaderCardAdapter.h"
-#include "STidSTRLEDBuzzerDisplay.h"
+#include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
+#include "logicalaccess/cards/chip.hpp"
+#include "readercardadapters/stidstrreadercardadapter.hpp"
+#include "stidstrledbuzzerdisplay.hpp"
 
-#include "DESFireEV1CardProvider.h"
-#include "Commands/DESFireEV1STidSTRCommands.h"
-#include "MifareCardProvider.h"
-#include "Commands/MifareSTidSTRCommands.h"
-#include "DESFireProfile.h"
+#include "desfireev1cardprovider.hpp"
+#include "commands/desfireev1stidstrcommands.hpp"
+#include "mifarecardprovider.hpp"
+#include "commands/mifarestidstrcommands.hpp"
+#include "desfireprofile.hpp"
 #include <boost/filesystem.hpp>
-#include "logicalaccess/DynLibrary/LibraryManager.h"
-#include "logicalaccess/DynLibrary/IDynLibrary.h"
+#include "logicalaccess/dynlibrary/librarymanager.hpp"
+#include "logicalaccess/dynlibrary/idynlibrary.hpp"
 
 namespace logicalaccess
 {

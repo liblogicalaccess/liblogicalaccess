@@ -1,16 +1,16 @@
 /**
- * \file PromagReaderUnitConfiguration.cpp
+ * \file promagreaderunitconfiguration.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief  Promag reader unit configuration.
  */
 
-#include "PromagReaderUnitConfiguration.h"
-
+#include "promagreaderunitconfiguration.hpp"
+#include "promagreaderprovider.hpp"
 
 namespace logicalaccess
 {
 	PromagReaderUnitConfiguration::PromagReaderUnitConfiguration()
-		: ReaderUnitConfiguration("Promag")
+		: ReaderUnitConfiguration(READER_PROMAG)
 	{
 		resetConfiguration();
 	}

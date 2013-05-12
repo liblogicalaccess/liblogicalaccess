@@ -1,22 +1,22 @@
 /**
- * \file AdmittoReaderUnit.cpp
+ * \file admittoreaderunit.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Admitto reader unit.
  */
 
-#include "AdmittoReaderUnit.h"
+#include "admittoreaderunit.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-#include "AdmittoReaderProvider.h"
-#include "logicalaccess/Services/AccessControl/CardsFormatComposite.h"
-#include "logicalaccess/Cards/Chip.h"
-#include "ReaderCardAdapters/AdmittoReaderCardAdapter.h"
+#include "admittoreaderprovider.hpp"
+#include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
+#include "logicalaccess/cards/chip.hpp"
+#include "readercardadapters/admittoreadercardadapter.hpp"
 #include <boost/filesystem.hpp>
-#include "logicalaccess/DynLibrary/LibraryManager.h"
-#include "logicalaccess/DynLibrary/IDynLibrary.h"
+#include "logicalaccess/dynlibrary/librarymanager.hpp"
+#include "logicalaccess/dynlibrary/idynlibrary.hpp"
 
 namespace logicalaccess
 {

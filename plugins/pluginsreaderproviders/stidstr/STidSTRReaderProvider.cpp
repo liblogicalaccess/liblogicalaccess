@@ -1,10 +1,10 @@
 /**
- * \file STidSTRReaderProvider.cpp
+ * \file stidstrreaderprovider.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Reader Provider STidSTR.
  */
 
-#include "STidSTRReaderProvider.h"
+#include "stidstrreaderprovider.hpp"
 
 #ifdef LINUX
 #include <stdlib.h>
@@ -14,7 +14,7 @@
 #include <sstream>
 #include <iomanip>
 
-#include "STidSTRReaderUnit.h"
+#include "stidstrreaderunit.hpp"
 
 namespace logicalaccess
 {

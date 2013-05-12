@@ -3,13 +3,13 @@ project(A3MLGM5600Readers)
 
 
 file(GLOB SRCS *.cpp)
-file(GLOB include *.h)
+file(GLOB include *.hpp)
 
-file(GLOB include_readercardadapters ${CMAKE_CURRENT_SOURCE_DIR}/ReaderCardAdapters/*.h)
-SOURCE_GROUP("Header Files\\ReaderCardAdapters" FILES ${include_readercardadapters})
+file(GLOB include_readercardadapters ${CMAKE_CURRENT_SOURCE_DIR}/readercardadapters/*.hpp)
+SOURCE_GROUP("Header Files\\readercardadapters" FILES ${include_readercardadapters})
 
-file(GLOB source_readercardadapters ${CMAKE_CURRENT_SOURCE_DIR}/ReaderCardAdapters/*.cpp)
-SOURCE_GROUP("Source Files\\ReaderCardAdapters" FILES ${source_readercardadapters})
+file(GLOB source_readercardadapters ${CMAKE_CURRENT_SOURCE_DIR}/readercardadapters/*.cpp)
+SOURCE_GROUP("Source Files\\readercardadapters" FILES ${source_readercardadapters})
 
 set(INCLUDE_LIB ${include} ${include_core} ${include_readercardadapters})
 set(SOURCE_LIB ${SRCS} ${source_readercardadapters})

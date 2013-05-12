@@ -1,10 +1,10 @@
 /**
- * \file AxessTMCLegicReaderProvider.cpp
+ * \file axesstmclegicreaderprovider.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief AxessTMC Legic reader provider.
  */
 
-#include "AxessTMCLegicReaderProvider.h"
+#include "axesstmclegicreaderprovider.hpp"
 
 #ifdef LINUX
 #include <stdlib.h>
@@ -14,7 +14,7 @@
 #include <sstream>
 #include <iomanip>
 
-#include "AxessTMCLegicReaderUnit.h"
+#include "axesstmclegicreaderunit.hpp"
 
 
 namespace logicalaccess

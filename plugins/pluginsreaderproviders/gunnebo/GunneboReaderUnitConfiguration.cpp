@@ -1,17 +1,16 @@
 /**
- * \file GunneboReaderUnitConfiguration.cpp
+ * \file gunneboreaderunitconfiguration.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief  Gunnebo reader unit configuration.
  */
 
-#include "GunneboReaderUnitConfiguration.h"
-
-
+#include "gunneboreaderunitconfiguration.hpp"
+#include "gunneboreaderprovider.hpp"
 
 namespace logicalaccess
 {
 	GunneboReaderUnitConfiguration::GunneboReaderUnitConfiguration()
-		: ReaderUnitConfiguration("Gunnebo")
+		: ReaderUnitConfiguration(READER_GUNNEBO)
 	{
 		resetConfiguration();
 	}

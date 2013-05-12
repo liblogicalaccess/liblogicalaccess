@@ -1,22 +1,20 @@
 /**
- * \file RplethReaderUnit.cpp
+ * \file rplethreaderunit.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Rpleth reader unit.
  */
 
-#include "RplethReaderUnit.h"
+#include "rplethreaderunit.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 
-#include "RplethReaderProvider.h"
-#include "logicalaccess/Services/AccessControl/CardsFormatComposite.h"
-#include "logicalaccess/Cards/Chip.h"
-#include "ReaderCardAdapters/RplethReaderCardAdapter.h"
+#include "rplethreaderprovider.hpp"
+#include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
+#include "logicalaccess/cards/chip.hpp"
+#include "readercardadapters/rplethreadercardadapter.hpp"
 #include <boost/filesystem.hpp>
-using std::cout;
-using std::endl;
 
 namespace logicalaccess
 {

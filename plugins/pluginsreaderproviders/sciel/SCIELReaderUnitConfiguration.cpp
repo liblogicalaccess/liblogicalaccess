@@ -1,10 +1,11 @@
 /**
- * \file SCIELReaderUnitConfiguration.cpp
+ * \file scielreaderunitconfiguration.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief SCIEL reader unit configuration.
  */
 
-#include "SCIELReaderUnitConfiguration.h"
+#include "scielreaderunitconfiguration.hpp"
+#include "scielreaderprovider.hpp"
 
 #ifdef UNIX
 # include <termios.h>
@@ -14,7 +15,7 @@
 namespace logicalaccess
 {
 	SCIELReaderUnitConfiguration::SCIELReaderUnitConfiguration()
-		: ReaderUnitConfiguration("SCIEL")
+		: ReaderUnitConfiguration(READER_SCIEL)
 	{
 		resetConfiguration();
 	}

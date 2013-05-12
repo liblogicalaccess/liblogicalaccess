@@ -1,10 +1,10 @@
 /**	
- * \file RplethReaderCardAdapter.cpp
+ * \file rplethreadercardadapter.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Rpleth reader/card adapter.
  */
 
-#include "RplethReaderCardAdapter.h"
+#include "rplethreadercardadapter.hpp"
 
 namespace logicalaccess
 {		
