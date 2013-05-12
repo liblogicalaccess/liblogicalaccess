@@ -3,7 +3,7 @@
 
 namespace logicalaccess
 {
-	const std::string LibraryManager::enumType[3] = {"Readers", "Cards", "Unified"};
+	const std::string LibraryManager::enumType[3] = {"readers", "cards", "unified"};
 
 	bool LibraryManager::hasEnding(std::string const &fullString, std::string ending)
 	{
