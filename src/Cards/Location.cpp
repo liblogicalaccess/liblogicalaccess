@@ -1,10 +1,10 @@
 /**
- * \file Location.cpp
+ * \file location.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Base class location.
  */
 
-#include "logicalaccess/Cards/Location.h"
+#include "logicalaccess/cards/location.hpp"
 #include <time.h>
 #include <stdlib.h>
 

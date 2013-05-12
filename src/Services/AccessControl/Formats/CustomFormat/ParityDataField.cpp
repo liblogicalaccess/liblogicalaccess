@@ -1,12 +1,12 @@
 /**
- * \file ParityDataField.cpp
+ * \file paritydatafield.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Parity Data field.
  */
 
-#include "logicalaccess/Services/AccessControl/Formats/CustomFormat/ParityDataField.h"
-#include "logicalaccess/Services/AccessControl/Formats/Format.h"
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
+#include "logicalaccess/services/accesscontrol/formats/customformat/paritydatafield.hpp"
+#include "logicalaccess/services/accesscontrol/formats/format.hpp"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 
 #include <boost/foreach.hpp>
 

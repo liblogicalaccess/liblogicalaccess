@@ -1,13 +1,13 @@
 /**
- * \file DataRepresentation.cpp
+ * \file datarepresentation.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief A Data Representation.
  */
 
-#include "logicalaccess/Services/AccessControl/Encodings/DataRepresentation.h"
-#include "logicalaccess/Services/AccessControl/Encodings/BigEndianDataRepresentation.h"
-#include "logicalaccess/Services/AccessControl/Encodings/LittleEndianDataRepresentation.h"
-#include "logicalaccess/Services/AccessControl/Encodings/NoDataRepresentation.h"
+#include "logicalaccess/services/accesscontrol/encodings/datarepresentation.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/littleendiandatarepresentation.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/nodatarepresentation.hpp"
 
 namespace logicalaccess
 {

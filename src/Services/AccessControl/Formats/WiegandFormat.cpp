@@ -1,13 +1,13 @@
 /**
- * \file WiegandFormat.cpp
+ * \file wiegandformat.cpp
  * \author Arnaud H <arnaud-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
  * \brief Wiegand Format Base.
  */
 
-#include "logicalaccess/Services/AccessControl/Formats/WiegandFormat.h"
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
-#include "logicalaccess/Services/AccessControl/Encodings/BinaryDataType.h"
-#include "logicalaccess/Services/AccessControl/Encodings/BigEndianDataRepresentation.h"
+#include "logicalaccess/services/accesscontrol/formats/wiegandformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/binarydatatype.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp"
 
 #include <cstring>
 

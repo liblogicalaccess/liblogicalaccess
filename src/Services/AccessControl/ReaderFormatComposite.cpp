@@ -1,11 +1,11 @@
 /**
- * \file ReaderFormatComposite.cpp
+ * \file readerformatcomposite.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Reader format composite.
  */
 
-#include "logicalaccess/Services/AccessControl/ReaderFormatComposite.h"
-#include "logicalaccess/Cards/AccessInfo.h"
+#include "logicalaccess/services/accesscontrol/readerformatcomposite.hpp"
+#include "logicalaccess/cards/accessinfo.hpp"
 
 
 namespace logicalaccess

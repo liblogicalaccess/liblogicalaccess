@@ -8,7 +8,7 @@
 #ifndef OPENSSL_SYMETRIC_CIPHER_HPP
 #define OPENSSL_SYMETRIC_CIPHER_HPP
 
-#include "logicalaccess/crypto/symmetric_cipher.h"
+#include "logicalaccess/crypto/symmetric_cipher.hpp"
 #include <openssl/evp.h>
 
 namespace logicalaccess

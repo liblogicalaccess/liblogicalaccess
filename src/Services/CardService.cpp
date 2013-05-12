@@ -1,11 +1,11 @@
 /**
- * \file CardService.cpp
+ * \file cardservice.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Card service.
  */
 
-#include "logicalaccess/Services/CardService.h"
-#include "logicalaccess/Cards/CardProvider.h"
+#include "logicalaccess/services/cardservice.hpp"
+#include "logicalaccess/cards/cardprovider.hpp"
 
 
 namespace logicalaccess

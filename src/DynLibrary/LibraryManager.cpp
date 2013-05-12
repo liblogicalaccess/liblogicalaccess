@@ -1,4 +1,4 @@
-#include "logicalaccess/DynLibrary/LibraryManager.h"
+#include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include <boost/filesystem.hpp>
 
 namespace logicalaccess

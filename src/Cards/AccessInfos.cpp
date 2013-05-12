@@ -1,15 +1,15 @@
 /**
- * \file AccessInfo.cpp
+ * \file accessinfo.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Base class access informations. 
  */
  
-#include "logicalaccess/Cards/AccessInfo.h"
-#include "logicalaccess/Services/AccessControl/Formats/Format.h"
+#include "logicalaccess/cards/accessinfo.hpp"
+#include "logicalaccess/services/accesscontrol/formats/format.hpp"
 #include <time.h>
 #include <stdlib.h>
 
-#include "logicalaccess/logs.h"
+#include "logicalaccess/logs.hpp"
 
 #include <openssl/rand.h>
 

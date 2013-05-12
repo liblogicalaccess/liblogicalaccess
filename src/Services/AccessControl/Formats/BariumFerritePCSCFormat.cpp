@@ -1,15 +1,15 @@
 /**
- * \file BariumFerritePCSCFormat.cpp
+ * \file bariumferritepcscformat.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Barium Ferrite PCSC Format.
  */
 
-#include "logicalaccess/Services/AccessControl/Formats/BariumFerritePCSCFormat.h"
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
-#include "logicalaccess/Services/AccessControl/Encodings/BinaryDataType.h"
-#include "logicalaccess/Services/AccessControl/Encodings/BigEndianDataRepresentation.h"
+#include "logicalaccess/services/accesscontrol/formats/bariumferritepcscformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/binarydatatype.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp"
 
-#include "logicalaccess/Services/AccessControl/Formats/CustomFormat/NumberDataField.h"
+#include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
 
 
 namespace logicalaccess

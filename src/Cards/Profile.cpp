@@ -1,18 +1,18 @@
 /**
- * \file Profile.cpp
+ * \file profile.cpp
  * \author Julien K. <julien-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
  * \brief Card profiles.
  */
 
-#include "logicalaccess/Cards/Profile.h"
+#include "logicalaccess/cards/profile.hpp"
 
-#include "logicalaccess/Services/AccessControl/Formats/Wiegand26Format.h"
-#include "logicalaccess/Services/AccessControl/Formats/Wiegand34Format.h"
-#include "logicalaccess/Services/AccessControl/Formats/Wiegand34WithFacilityFormat.h"
-#include "logicalaccess/Services/AccessControl/Formats/Wiegand37Format.h"
-#include "logicalaccess/Services/AccessControl/Formats/Wiegand37WithFacilityFormat.h"
-#include "logicalaccess/Services/AccessControl/Formats/Corporate1000Format.h"
-#include "logicalaccess/Services/AccessControl/Formats/DataClockFormat.h"
+#include "logicalaccess/services/accesscontrol/formats/wiegand26format.hpp"
+#include "logicalaccess/services/accesscontrol/formats/wiegand34format.hpp"
+#include "logicalaccess/services/accesscontrol/formats/wiegand34withfacilityformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/wiegand37format.hpp"
+#include "logicalaccess/services/accesscontrol/formats/wiegand37withfacilityformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/corporate1000format.hpp"
+#include "logicalaccess/services/accesscontrol/formats/dataclockformat.hpp"
 
 #include <fstream>
 

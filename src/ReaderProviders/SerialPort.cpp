@@ -1,11 +1,11 @@
 /**
- * \file SerialPort.cpp
+ * \file serialport.cpp
  * \author Julien KAUFFMANN <julien.kauffmann@freelan.org>
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief A serial port class.
  */
 
-#include "logicalaccess/ReaderProviders/SerialPort.h"
+#include "logicalaccess/readerproviders/serialport.hpp"
 
 #ifdef UNIX
 #include <fcntl.h>

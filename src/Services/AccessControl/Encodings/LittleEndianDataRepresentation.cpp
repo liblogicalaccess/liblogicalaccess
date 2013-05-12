@@ -1,11 +1,11 @@
 /**
- * \file LittleEndianDataRepresentation.cpp
+ * \file littleendiandatarepresentation.cpp
  * \author Arnaud H <arnaud-dev@islog.com>
  * \brief LittleEndian Data Representation.
  */
 
-#include "logicalaccess/Services/AccessControl/Encodings/LittleEndianDataRepresentation.h"
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
+#include "logicalaccess/services/accesscontrol/encodings/littleendiandatarepresentation.hpp"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 
 #include <cstring>
 

@@ -7,7 +7,7 @@
 #ifndef DES_SYMETRICKEY_HPP
 #define DES_SYMETRICKEY_HPP
 
-#include "logicalaccess/crypto/symmetric_key.h"
+#include "logicalaccess/crypto/symmetric_key.hpp"
 
 namespace logicalaccess
 {

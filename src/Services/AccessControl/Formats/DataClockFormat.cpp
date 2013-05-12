@@ -1,15 +1,15 @@
 /**
- * \file DataClockFormat.cpp
+ * \file dataclockformat.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Data clock Format.
  */
 
-#include "logicalaccess/Services/AccessControl/Formats/DataClockFormat.h"
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
-#include "logicalaccess/Services/AccessControl/Encodings/BCDNibbleDataType.h"
-#include "logicalaccess/Services/AccessControl/Encodings/LittleEndianDataRepresentation.h"
+#include "logicalaccess/services/accesscontrol/formats/dataclockformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/bcdnibbledatatype.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/littleendiandatarepresentation.hpp"
 
-#include "logicalaccess/Services/AccessControl/Formats/CustomFormat/NumberDataField.h"
+#include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
 
 namespace logicalaccess
 {

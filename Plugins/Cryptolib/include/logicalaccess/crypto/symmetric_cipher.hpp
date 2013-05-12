@@ -7,7 +7,7 @@
 #ifndef SYMETRICCIPHER_HPP
 #define SYMETRICCIPHER_HPP
 
-#include "logicalaccess/crypto/initialization_vector.h"
+#include "logicalaccess/crypto/initialization_vector.hpp"
 
 namespace logicalaccess
 {

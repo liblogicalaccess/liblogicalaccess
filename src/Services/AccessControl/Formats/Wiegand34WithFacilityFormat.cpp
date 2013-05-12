@@ -1,11 +1,11 @@
 /**
- * \file Wiegand34WithFacilityFormat.cpp
+ * \file wiegand34withfacilityformat.cpp
  * \author Arnaud H <arnaud-dev@islog.com>
  * \brief Wiegand 34 With Facility Format.
  */
 
-#include "logicalaccess/Services/AccessControl/Formats/Wiegand34WithFacilityFormat.h"
-#include "logicalaccess/Services/AccessControl/Formats/CustomFormat/NumberDataField.h"
+#include "logicalaccess/services/accesscontrol/formats/wiegand34withfacilityformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
 
 namespace logicalaccess
 {

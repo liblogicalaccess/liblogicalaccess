@@ -1,17 +1,17 @@
 /**
- * \file RawFormat.cpp
+ * \file rawformat.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Raw Format.
  */
 
-#include "logicalaccess/Services/AccessControl/Formats/RawFormat.h"
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
-#include "logicalaccess/Services/AccessControl/Encodings/BinaryDataType.h"
-#include "logicalaccess/Services/AccessControl/Encodings/BigEndianDataRepresentation.h"
-#include "logicalaccess/Services/AccessControl//Formats/CustomFormat/ASCIIDataField.h"
-#include "logicalaccess/Services/AccessControl/Encodings/BigEndianDataRepresentation.h"
-#include "logicalaccess/Services/AccessControl/Formats/CustomFormat/BinaryDataField.h"
-#include "logicalaccess/BufferHelper.h"
+#include "logicalaccess/services/accesscontrol/formats/rawformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/binarydatatype.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp"
+#include "logicalaccess/services/accesscontrol/formats/customformat/asciidatafield.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp"
+#include "logicalaccess/services/accesscontrol/formats/customformat/binarydatafield.hpp"
+#include "logicalaccess/bufferhelper.h"
 
 namespace logicalaccess
 {

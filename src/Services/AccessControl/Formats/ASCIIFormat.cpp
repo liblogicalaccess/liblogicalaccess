@@ -1,15 +1,15 @@
 /**
- * \file ASCIIFormat.cpp
+ * \file asciiformat.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief ASCII Format.
  */
 
-#include "logicalaccess/Services/AccessControl/Formats/ASCIIFormat.h"
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
-#include "logicalaccess/Services/AccessControl/Encodings/BinaryDataType.h"
-#include "logicalaccess/Services/AccessControl/Encodings/BigEndianDataRepresentation.h"
+#include "logicalaccess/services/accesscontrol/formats/asciiformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/binarydatatype.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp"
 
-#include "logicalaccess/Services/AccessControl/Formats/CustomFormat/ASCIIDataField.h"
+#include "logicalaccess/services/accesscontrol/formats/customformat/asciidatafield.hpp"
 
 namespace logicalaccess
 {

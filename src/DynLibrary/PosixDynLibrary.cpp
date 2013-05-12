@@ -1,6 +1,6 @@
 #include <dlfcn.h>
 
-#include "logicalaccess/DynLibrary/PosixDynLibrary.h"
+#include "logicalaccess/dynlibrary/posixdynlibrary.hpp"
 
 namespace LOGICALACCESS
 {

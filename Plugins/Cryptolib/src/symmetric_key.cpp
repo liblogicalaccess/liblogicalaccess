@@ -5,7 +5,7 @@
  * \brief Symmetric key class.
  */
 
-#include "logicalaccess/crypto/symmetric_key.h"
+#include "logicalaccess/crypto/symmetric_key.hpp"
 
 #include <cstring>
 #include <stdlib.h>

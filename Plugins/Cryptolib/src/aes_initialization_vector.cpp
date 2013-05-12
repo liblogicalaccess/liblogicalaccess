@@ -5,7 +5,7 @@
  * \brief AES initialization vector class.
  */
 
-#include "logicalaccess/crypto/aes_initialization_vector.h"
+#include "logicalaccess/crypto/aes_initialization_vector.hpp"
 #include <cassert>
 
 namespace logicalaccess

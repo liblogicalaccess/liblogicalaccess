@@ -1,15 +1,15 @@
 /**
- * \file FASCN200BitFormat.cpp
+ * \file fascn200bitformat.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief FASC-N 200 Bit format.
  */
 
-#include "logicalaccess/Services/AccessControl/Formats/FASCN200BitFormat.h"
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
-#include "logicalaccess/Services/AccessControl/Encodings/BCDNibbleDataType.h"
-#include "logicalaccess/Services/AccessControl/Encodings/NoDataRepresentation.h"
+#include "logicalaccess/services/accesscontrol/formats/fascn200bitformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/bcdnibbledatatype.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/nodatarepresentation.hpp"
 
-#include "logicalaccess/Services/AccessControl/Formats/CustomFormat/NumberDataField.h"
+#include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
 
 
 namespace logicalaccess

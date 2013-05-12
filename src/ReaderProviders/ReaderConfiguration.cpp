@@ -1,17 +1,17 @@
 /**
- * \file ReaderConfiguration.cpp
+ * \file readerconfiguration.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Reader configuration.
  */
 
-#include "logicalaccess/ReaderProviders/ReaderProvider.h"
-#include "logicalaccess/ReaderProviders/ReaderConfiguration.h"
-#include "logicalaccess/Cards/AccessInfo.h"
-#include "logicalaccess/DynLibrary/IDynLibrary.h"
+#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include "logicalaccess/readerproviders/readerconfiguration.hpp"
+#include "logicalaccess/cards/accessinfo.hpp"
+#include "logicalaccess/dynlibrary/idynlibrary.hpp"
 #include <boost/filesystem.hpp>
-#include "logicalaccess/DynLibrary/LibraryManager.h"
+#include "logicalaccess/dynlibrary/librarymanager.hpp"
 
-#include "logicalaccess/logs.h"
+#include "logicalaccess/logs.hpp"
 
 namespace logicalaccess
 {

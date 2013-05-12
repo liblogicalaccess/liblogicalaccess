@@ -4,7 +4,7 @@
  * \brief DES initialization vector class.
  */
 
-#include "logicalaccess/crypto/des_initialization_vector.h"
+#include "logicalaccess/crypto/des_initialization_vector.hpp"
 #include <cassert>
 
 namespace logicalaccess

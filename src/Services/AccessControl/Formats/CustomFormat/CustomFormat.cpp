@@ -1,17 +1,17 @@
 /**
- * \file CustomFormat.cpp
+ * \file customformat.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Custom Format.
  */
 
-#include "logicalaccess/Services/AccessControl/Formats/CustomFormat/CustomFormat.h"
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
-#include "logicalaccess/Services/AccessControl/Formats/CustomFormat/ASCIIDataField.h"
-#include "logicalaccess/Services/AccessControl/Encodings/BigEndianDataRepresentation.h"
-#include "logicalaccess/Services/AccessControl/Formats/CustomFormat/NumberDataField.h"
-#include "logicalaccess/Services/AccessControl/Formats/CustomFormat/ParityDataField.h"
-#include "logicalaccess/Services/AccessControl/Formats/CustomFormat/BinaryDataField.h"
-#include "logicalaccess/BufferHelper.h"
+#include "logicalaccess/services/accesscontrol/formats/customformat/customformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include "logicalaccess/services/accesscontrol/formats/customformat/asciidatafield.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp"
+#include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
+#include "logicalaccess/services/accesscontrol/formats/customformat/paritydatafield.hpp"
+#include "logicalaccess/services/accesscontrol/formats/customformat/binarydatafield.hpp"
+#include "logicalaccess/bufferhelper.hpp"
 
 #include <cstring>
 #include <stdlib.h>

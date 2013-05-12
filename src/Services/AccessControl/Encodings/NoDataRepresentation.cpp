@@ -1,11 +1,11 @@
 /**
- * \file NoDataRepresentation.cpp
+ * \file nodatarepresentation.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Data Representation which do nothing.
  */
 
-#include "logicalaccess/Services/AccessControl/Encodings/NoDataRepresentation.h"
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
+#include "logicalaccess/services/accesscontrol/encodings/nodatarepresentation.hpp"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 #include <cstring>
 
 namespace logicalaccess

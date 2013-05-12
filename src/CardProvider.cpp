@@ -1,12 +1,12 @@
 /**
- * \file CardProvider.cpp
+ * \file cardprovider.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Card provider.
  */
 
-#include "logicalaccess/Cards/CardProvider.h"
-#include "logicalaccess/Services/AccessControl/CardsFormatComposite.h"
-#include "logicalaccess/Cards/ReaderCardAdapter.h"
+#include "logicalaccess/cards/cardprovider.hpp"
+#include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
+#include "logicalaccess/cards/readercardadapter.hpp"
 
 
 namespace logicalaccess

@@ -1,13 +1,13 @@
 /**
- * \file CardsFormatComposite.cpp
+ * \file cardsformatcomposite.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Cards format composite.
  */
 
-#include "logicalaccess/Services/AccessControl/CardsFormatComposite.h"
-#include "logicalaccess/Cards/AccessInfo.h"
-#include "logicalaccess/Cards/Chip.h"
-#include "logicalaccess/Services/AccessControl/AccessControlCardService.h"
+#include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
+#include "logicalaccess/cards/accessinfo.hpp"
+#include "logicalaccess/cards/chip.hpp"
+#include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
 #include <boost/foreach.hpp>
 
 namespace logicalaccess

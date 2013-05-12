@@ -7,8 +7,8 @@
 #ifndef RSA_KEY_HPP
 #define RSA_KEY_HPP
 
-#include "logicalaccess/crypto/asymmetric_key.h"
-#include "logicalaccess/crypto/pem.h"
+#include "logicalaccess/crypto/asymmetric_key.hpp"
+#include "logicalaccess/crypto/pem.hpp"
 
 #include <vector>
 

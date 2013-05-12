@@ -1,13 +1,13 @@
 /**
- * \file ValueDataField.cpp
+ * \file valuedatafield.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Value Data field.
  */
 
-#include "logicalaccess/Services/AccessControl/Formats/CustomFormat/ValueDataField.h"
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
-#include "logicalaccess/Services/AccessControl/Encodings/BigEndianDataRepresentation.h"
-#include "logicalaccess/Services/AccessControl/Encodings/BinaryDataType.h"
+#include "logicalaccess/services/accesscontrol/formats/customformat/valuedatafield.hpp"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/binarydatatype.hpp"
 
 #include <cstring>
 #include <stdlib.h>

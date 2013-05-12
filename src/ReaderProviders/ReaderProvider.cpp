@@ -1,15 +1,15 @@
 /**
- * \file ReaderProvider.cpp
+ * \file readerprovider.cpp
  * \author Julien K. <julien-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
  * \brief Reader provider.
  */
 
-#include "logicalaccess/ReaderProviders/ReaderProvider.h"
-#include "logicalaccess/DynLibrary/IDynLibrary.h"
+#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include "logicalaccess/dynlibrary/idynlibrary.hpp"
 #include <boost/filesystem.hpp>
 #include <map>
-#include "logicalaccess/DynLibrary/LibraryManager.h"
-#include "logicalaccess/logs.h"
+#include "logicalaccess/dynlibrary/librarymanager.hpp"
+#include "logicalaccess/logs.hpp"
 
 namespace logicalaccess
 {	

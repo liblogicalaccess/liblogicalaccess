@@ -4,7 +4,7 @@
  * \brief Triple DES Key.
  */
 
-#include "logicalaccess/Cards/TripleDESKey.h"
+#include "logicalaccess/cards/tripledeskey.hpp"
 
 namespace logicalaccess
 {

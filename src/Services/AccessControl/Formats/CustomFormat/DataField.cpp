@@ -1,11 +1,11 @@
 /**
- * \file DataField.cpp
+ * \file datafield.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Data field.
  */
 
-#include "logicalaccess/Services/AccessControl/Formats/CustomFormat/DataField.h"
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
+#include "logicalaccess/services/accesscontrol/formats/customformat/datafield.hpp"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 
 #include <stdlib.h>
 

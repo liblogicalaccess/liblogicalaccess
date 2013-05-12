@@ -4,11 +4,11 @@
  * \brief A SSL context class.
  */
 
-#include "logicalaccess/crypto/ssl_context.h"
-#include "logicalaccess/x509_certificate.h"
-#include "logicalaccess/crypto/rsa_key.h"
-#include "logicalaccess/logs.h"
-#include "logicalaccess/crypto/openssl_exception.h"
+#include "logicalaccess/crypto/ssl_context.hpp"
+#include "logicalaccess/x509_certificate.hpp"
+#include "logicalaccess/crypto/rsa_key.hpp"
+#include "logicalaccess/logs.hpp"
+#include "logicalaccess/crypto/openssl_exception.hpp"
 
 namespace logicalaccess
 {

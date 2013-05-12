@@ -1,15 +1,15 @@
 /**
- * \file Getronik40BitFormat.cpp
+ * \file getronik40bitformat.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Getronik 40-Bit Format.
  */
 
-#include "logicalaccess/Services/AccessControl/Formats/Getronik40BitFormat.h"
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
-#include "logicalaccess/Services/AccessControl/Encodings/BinaryDataType.h"
-#include "logicalaccess/Services/AccessControl/Encodings/BigEndianDataRepresentation.h"
+#include "logicalaccess/services/accesscontrol/formats/getronik40bitformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/binarydatatype.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp"
 
-#include "logicalaccess/Services/AccessControl/Formats/CustomFormat/NumberDataField.h"
+#include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
 
 namespace logicalaccess
 {

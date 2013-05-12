@@ -4,10 +4,10 @@
  * \brief An EVP PKEY class.
  */
 
-#include "logicalaccess/crypto/evp_pkey.h"
-#include "logicalaccess/crypto/rsa_key.h"
-#include "logicalaccess/logs.h"
-#include "logicalaccess/MyException.h"
+#include "logicalaccess/crypto/evp_pkey.hpp"
+#include "logicalaccess/crypto/rsa_key.hpp"
+#include "logicalaccess/logs.hpp"
+#include "logicalaccess/myexception.hpp"
 
 #include <cassert>
 #include <cstring>

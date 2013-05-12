@@ -1,10 +1,10 @@
 /**
- * \file BitHelper.cpp
+ * \file bithelper.cpp
  * \author Arnaud H <arnaud-dev@islog.com>
  * \brief BitHelper Base.
  */
 
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 
 #include <cstring>
 

@@ -1,10 +1,10 @@
 /**
- * \file ReaderUnit.cpp
+ * \file readerunit.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Reader unit.
  */
 
-#include "logicalaccess/ReaderProviders/ReaderUnit.h"
+#include "logicalaccess/readerproviders/readerunit.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -13,13 +13,13 @@
 #include <cstring>
 #include <boost/date_time.hpp>
 #include <boost/filesystem.hpp>
-#include "logicalaccess/ReaderProviders/ReaderProvider.h"
-#include "logicalaccess/Cards/ReaderCardAdapter.h"
-#include "logicalaccess/Services/AccessControl/CardsFormatComposite.h"
-#include "logicalaccess/Services/AccessControl/Formats/StaticFormat.h"
-#include "logicalaccess/Cards/Chip.h"
-#include "logicalaccess/DynLibrary/IDynLibrary.h"
-#include "logicalaccess/DynLibrary/LibraryManager.h"
+#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include "logicalaccess/cards/readercardadapter.hpp"
+#include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
+#include "logicalaccess/services/accesscontrol/formats/staticformat.hpp"
+#include "logicalaccess/cards/chip.hpp"
+#include "logicalaccess/dynlibrary/idynlibrary.hpp"
+#include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
 #include <map>

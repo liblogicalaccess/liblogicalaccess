@@ -9,7 +9,7 @@
 
 #include <exception>
 #include <string>
-#include "logicalaccess/MyException.h"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {

@@ -1,10 +1,10 @@
 /**
- * \file ISO14443ReaderCommunication.cpp
+ * \file iso14443readercommunication.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief ISO14443-3 Reader communication.
  */
 
-#include "logicalaccess/ReaderProviders/ISO14443ReaderCommunication.h"
+#include "logicalaccess/readerproviders/iso14443readercommunication.hpp"
 
 
 namespace logicalaccess

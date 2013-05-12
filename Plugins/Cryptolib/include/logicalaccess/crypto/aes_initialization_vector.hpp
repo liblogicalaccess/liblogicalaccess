@@ -8,7 +8,7 @@
 #ifndef AES_INITIALIZATION_VECTOR_HPP
 #define AES_INITIALIZATION_VECTOR_HPP
 
-#include "logicalaccess/crypto/initialization_vector.h"
+#include "logicalaccess/crypto/initialization_vector.hpp"
 
 namespace logicalaccess
 {

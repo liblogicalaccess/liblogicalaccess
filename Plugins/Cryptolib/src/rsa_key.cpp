@@ -4,10 +4,10 @@
  * \brief RSA key class.
  */
 
-#include "logicalaccess/crypto/rsa_key.h"
-#include "logicalaccess/logs.h"
-#include "logicalaccess/crypto/openssl_exception.h"
-#include "logicalaccess/MyException.h"
+#include "logicalaccess/crypto/rsa_key.hpp"
+#include "logicalaccess/logs.hpp"
+#include "logicalaccess/crypto/openssl_exception.hpp"
+#include "logicalaccess/myexception.hpp"
 
 #include <openssl/evp.h>
 #include <openssl/buffer.h>

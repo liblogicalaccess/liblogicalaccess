@@ -1,10 +1,10 @@
 /**
- * \file HMAC1Key.cpp
+ * \file hmac1key.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief HMAC1 Key.
  */
 
-#include "logicalaccess/Cards/HMAC1Key.h"
+#include "logicalaccess/cards/hmac1key.hpp"
 
 namespace logicalaccess
 {

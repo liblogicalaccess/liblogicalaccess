@@ -7,7 +7,7 @@
 #ifndef DES_CIPHER_HPP
 #define DES_CIPHER_HPP
 
-#include "logicalaccess/crypto/openssl_symmetric_cipher.h"
+#include "logicalaccess/crypto/openssl_symmetric_cipher.hpp"
 
 namespace logicalaccess
 {

@@ -4,9 +4,9 @@
  * \brief A SSL object class.
  */
 
-#include "logicalaccess/crypto/ssl_object.h"
-#include "logicalaccess/crypto/ssl_context.h"
-#include "logicalaccess/crypto/null_deleter.h"
+#include "logicalaccess/crypto/ssl_object.hpp"
+#include "logicalaccess/crypto/ssl_context.hpp"
+#include "logicalaccess/crypto/null_deleter.hpp"
 
 namespace logicalaccess
 {

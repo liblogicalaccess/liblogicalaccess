@@ -1,12 +1,11 @@
 /**
- * \file AccessControlCardService.cpp
+ * \file accesscontrolcardservice.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Access Control Card service.
  */
 
-#include "logicalaccess/Services/AccessControl/AccessControlCardService.h"
-#include "logicalaccess/Services/AccessControl/AccessControlCardService.h"
-#include "logicalaccess/Cards/CardProvider.h"
+#include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
+#include "logicalaccess/cards/cardprovider.hpp"
 
 
 namespace logicalaccess

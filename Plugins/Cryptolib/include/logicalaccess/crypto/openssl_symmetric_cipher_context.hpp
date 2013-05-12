@@ -7,7 +7,7 @@
 #ifndef OPENSSL_SYMETRIC_CIPHER_CONTEXT_HPP
 #define OPENSSL_SYMETRIC_CIPHER_CONTEXT_HPP
 
-#include "logicalaccess/crypto/openssl_symmetric_cipher.h"
+#include "logicalaccess/crypto/openssl_symmetric_cipher.hpp"
 #include <boost/shared_ptr.hpp>
 
 #include <openssl/evp.h>

@@ -1,10 +1,10 @@
 /**
- * \file LocationNode.cpp
+ * \file locationnode.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Location node.
  */
 
-#include "logicalaccess/Cards/LocationNode.h"
+#include "logicalaccess/cards/locationnode.hpp"
 #include <stdlib.h>
 
 using std::string;

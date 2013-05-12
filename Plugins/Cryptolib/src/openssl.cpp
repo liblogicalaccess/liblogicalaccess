@@ -4,7 +4,7 @@
  * \brief OpenSSL global functions.
  */
 
-#include "logicalaccess/crypto/openssl.h"
+#include "logicalaccess/crypto/openssl.hpp"
 
 #include <openssl/ssl.h>
 #include <openssl/err.h>

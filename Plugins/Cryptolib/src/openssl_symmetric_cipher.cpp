@@ -6,13 +6,13 @@
  */
 
 #include <stdexcept>
-#include "logicalaccess/crypto/openssl_symmetric_cipher.h"
-#include "logicalaccess/crypto/openssl_symmetric_cipher_context.h"
-#include "logicalaccess/crypto/symmetric_key.h"
-#include "logicalaccess/logs.h"
-#include "logicalaccess/MyException.h"
-#include "logicalaccess/crypto/openssl_exception.h"
-#include "logicalaccess/crypto/sha.h"
+#include "logicalaccess/crypto/openssl_symmetric_cipher.hpp"
+#include "logicalaccess/crypto/openssl_symmetric_cipher_context.hpp"
+#include "logicalaccess/crypto/symmetric_key.hpp"
+#include "logicalaccess/logs.hpp"
+#include "logicalaccess/myexception.hpp"
+#include "logicalaccess/crypto/openssl_exception.hpp"
+#include "logicalaccess/crypto/sha.hpp"
 
 #include <cstring>
 

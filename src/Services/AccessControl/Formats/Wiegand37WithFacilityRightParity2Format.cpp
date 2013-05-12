@@ -1,15 +1,15 @@
 /**
- * \file Wiegand37WithFacilityRightParity2Format.cpp
+ * \file wiegand37withfacilityrightparity2format.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Wiegand 37 With Facility and right parity * 2 Format.
  */
 
-#include "logicalaccess/Services/AccessControl/Formats/Wiegand37WithFacilityRightParity2Format.h"
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
-#include "logicalaccess/Services/AccessControl/Encodings/BinaryDataType.h"
-#include "logicalaccess/Services/AccessControl/Encodings/BigEndianDataRepresentation.h"
-#include "logicalaccess/Services/AccessControl/Encodings/NoDataRepresentation.h"
-#include "logicalaccess/Services/AccessControl/Formats/CustomFormat/NumberDataField.h"
+#include "logicalaccess/services/accesscontrol/formats/wiegand37withfacilityrightparity2format.hpp"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/binarydatatype.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/bigdndianratarepresentation.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/nodatarepresentation.hpp"
+#include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
 
 namespace logicalaccess
 {

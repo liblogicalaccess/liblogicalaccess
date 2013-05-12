@@ -1,11 +1,11 @@
 /**
- * \file BigEndianDataRepresentation.cpp
+ * \file bigendiandatarepresentation.cpp
  * \author Arnaud H <arnaud-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
  * \brief BigEndian Data Representation.
  */
 
-#include "logicalaccess/Services/AccessControl/Encodings/BigEndianDataRepresentation.h"
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
+#include "logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 
 #ifdef __linux__
 #include <cstring>

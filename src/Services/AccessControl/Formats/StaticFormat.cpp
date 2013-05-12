@@ -1,13 +1,13 @@
 /**
- * \file StaticFormat.cpp
+ * \file staticformat.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Static Format Base.
  */
 
-#include "logicalaccess/Services/AccessControl/Formats/StaticFormat.h"
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
+#include "logicalaccess/services/accesscontrol/formats/staticformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 
-#include "logicalaccess/Services/AccessControl/Formats/CustomFormat/NumberDataField.h"
+#include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
 
 namespace logicalaccess
 {

@@ -5,7 +5,7 @@
  * \brief Initialization vector base class.
  */
 
-#include "logicalaccess/crypto/initialization_vector.h"
+#include "logicalaccess/crypto/initialization_vector.hpp"
 
 #include <cstring>
 #include <openssl/evp.h>

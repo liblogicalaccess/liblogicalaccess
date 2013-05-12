@@ -1,10 +1,10 @@
 /**
- * \file XmlSerializable.cpp
+ * \file xmlserializable.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Xml Serializable.
  */
 
-#include "logicalaccess/XmlSerializable.h"
+#include "logicalaccess/xmlserializable.hpp"
 #include <stdlib.h>
 #include <fstream>
 #include <iostream>

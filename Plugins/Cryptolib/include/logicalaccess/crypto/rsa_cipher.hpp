@@ -8,7 +8,7 @@
 #ifndef RSA_CIPHER_HPP
 #define RSA_CIPHER_HPP
 
-#include "logicalaccess/crypto/openssl_asymmetric_cipher.h"
+#include "logicalaccess/crypto/openssl_asymmetric_cipher.hpp"
 
 namespace logicalaccess
 {

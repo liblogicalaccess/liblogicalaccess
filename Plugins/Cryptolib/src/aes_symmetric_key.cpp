@@ -5,8 +5,8 @@
  * \brief AES symmetric key class.
  */
 
-#include "logicalaccess/crypto/aes_symmetric_key.h"
-#include "logicalaccess/crypto/sha.h"
+#include "logicalaccess/crypto/aes_symmetric_key.hpp"
+#include "logicalaccess/crypto/sha.hpp"
 
 namespace logicalaccess
 {

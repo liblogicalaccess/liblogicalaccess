@@ -7,7 +7,7 @@
 #ifndef EVP_PKEY_HPP
 #define EVP_PKEY_HPP
 
-#include "logicalaccess/crypto/pem.h"
+#include "logicalaccess/crypto/pem.hpp"
 
 #include <string>
 #include <iostream>

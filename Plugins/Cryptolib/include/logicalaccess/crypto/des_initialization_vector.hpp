@@ -7,7 +7,7 @@
 #ifndef DES_INITIALIZATION_VECTOR_HPP
 #define DES_INITIALIZATION_VECTOR_HPP
 
-#include "logicalaccess/crypto/initialization_vector.h"
+#include "logicalaccess/crypto/initialization_vector.hpp"
 
 namespace logicalaccess
 {

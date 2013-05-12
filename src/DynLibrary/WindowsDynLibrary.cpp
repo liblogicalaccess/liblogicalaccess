@@ -1,6 +1,6 @@
-#include "logicalaccess/DynLibrary/WindowsDynLibrary.h"
-#include "logicalaccess/logs.h"
-#include "logicalaccess/ReaderProviders/ReaderUnit.h"
+#include "logicalaccess/dynlibrary/windowsdynlibrary.hpp"
+#include "logicalaccess/logs.hpp"
+#include "logicalaccess/readerproviders/readerunit.hpp"
 
 namespace logicalaccess
 {

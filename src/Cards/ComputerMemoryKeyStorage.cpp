@@ -1,10 +1,10 @@
 /**
- * \file ComputerMemoryKeyStorage.cpp
+ * \file computermemorykeystorage.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Computer memory key storage.
  */
 
-#include "logicalaccess/Cards/ComputerMemoryKeyStorage.h"
+#include "logicalaccess/cards/computermemorykeystorage.hpp"
 
 namespace logicalaccess
 {

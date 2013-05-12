@@ -4,7 +4,7 @@
  * \brief SHA hash functions.
  */
 
-#include "logicalaccess/crypto/sha.h"
+#include "logicalaccess/crypto/sha.hpp"
 
 #include <openssl/evp.h>
 

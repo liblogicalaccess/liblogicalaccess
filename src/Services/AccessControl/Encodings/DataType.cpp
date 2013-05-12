@@ -1,15 +1,15 @@
 /**
- * \file DataType.cpp
+ * \file datatype.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief A Data Type.
  */
 
-#include "logicalaccess/Services/AccessControl/Encodings/DataType.h"
-#include "logicalaccess/Services/AccessControl/Encodings/BCDByteDataType.h"
-#include "logicalaccess/Services/AccessControl/Encodings/BCDNibbleDataType.h"
-#include "logicalaccess/Services/AccessControl/Encodings/BinaryDataType.h"
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
-#include "logicalaccess/Services/AccessControl/Formats/StaticFormat.h"
+#include "logicalaccess/services/accesscontrol/encodings/datatype.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/bcdbytedatatype.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/bcdnibbledatatype.hpp"
+#include "logicalaccess/services/accesscontrol/encodings/binarydatatype.hpp"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include "logicalaccess/services/accesscontrol/formats/staticformat.hpp"
 
 #include <cstring>
 

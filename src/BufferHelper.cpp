@@ -1,10 +1,10 @@
 /**
- * \file BufferHelper.cpp
+ * \file bufferhelper.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Buffer Helper class.
  */
 
-#include "logicalaccess/BufferHelper.h"
+#include "logicalaccess/bufferhelper.hpp"
 #include <iostream>
 #include <algorithm>
 #include <sstream>
@@ -12,8 +12,8 @@
 #include <iterator>
 #include <stdexcept>
 #include <string.h>
-#include "logicalaccess/logs.h"
-#include "logicalaccess/MyException.h"
+#include "logicalaccess/logs.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {

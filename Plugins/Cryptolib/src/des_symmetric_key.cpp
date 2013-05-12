@@ -4,7 +4,7 @@
  * \brief DES symmetric key class.
  */
 
-#include "logicalaccess/crypto/des_symmetric_key.h"
+#include "logicalaccess/crypto/des_symmetric_key.hpp"
 
 namespace logicalaccess
 {

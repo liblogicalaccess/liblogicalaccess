@@ -1,12 +1,12 @@
 /**
- * \file KeyStorage.cpp
+ * \file keystorage.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Key storage base class.
  */
 
-#include "logicalaccess/Cards/ComputerMemoryKeyStorage.h"
-#include "logicalaccess/Cards/ReaderMemoryKeyStorage.h"
-#include "logicalaccess/Cards/SAMKeyStorage.h"
+#include "logicalaccess/cards/computermemorykeystorage.hpp"
+#include "logicalaccess/cards/readermemorykeystorage.hpp"
+#include "logicalaccess/cards/samkeystorage.hpp"
 
 
 namespace logicalaccess

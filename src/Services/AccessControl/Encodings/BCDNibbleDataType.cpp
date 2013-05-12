@@ -1,11 +1,11 @@
 /**
- * \file BCDNibbleDataType.cpp
+ * \file bcdnibbledatatype.cpp
  * \author Arnaud H <arnaud-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
  * \brief BCD Nibble Data Type.
  */
 
-#include "logicalaccess/Services/AccessControl/Encodings/BCDNibbleDataType.h"
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
+#include "logicalaccess/services/accesscontrol/encodings/bcdnibbledatatype.hpp"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 
 #include <cstring>
 

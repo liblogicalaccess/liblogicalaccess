@@ -1,10 +1,10 @@
 /**
- * \file BCDByteDataType.cpp
+ * \file bcdbytedatatype.cpp
  * \author Arnaud H <arnaud-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
  * \brief BCD Byte Data Type.
  */
 
-#include "logicalaccess/Services/AccessControl/Encodings/BCDByteDataType.h"
+#include "logicalaccess/services/accesscontrol/encodings/bcdbytedatatype.hpp"
 
 #include <cstring>
 

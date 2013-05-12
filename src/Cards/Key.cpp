@@ -1,23 +1,23 @@
 /**
- * \file Key.cpp
+ * \file key.cpp
  * \author Julien K. <julien-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
  * \brief Key.
  */
 
-#include "logicalaccess/Key.h"
-#include "logicalaccess/Cards/ComputerMemoryKeyStorage.h"
+#include "logicalaccess/key.hpp"
+#include "logicalaccess/cards/computermemorykeystorage.hpp"
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 #include <cstring>
 
-#include "logicalaccess/logs.h"
-#include "logicalaccess/crypto/aes_cipher.h"
-#include "logicalaccess/crypto/aes_symmetric_key.h"
-#include "logicalaccess/crypto/aes_initialization_vector.h"
-#include "logicalaccess/crypto/sha.h"
-#include "logicalaccess/BufferHelper.h"
+#include "logicalaccess/logs.hpp"
+#include "logicalaccess/crypto/aes_cipher.hpp"
+#include "logicalaccess/crypto/aes_symmetric_key.hpp"
+#include "logicalaccess/crypto/aes_initialization_vector.hpp"
+#include "logicalaccess/crypto/sha.hpp"
+#include "logicalaccess/bufferhelper.hpp"
 
 #include <openssl/rand.h>
 

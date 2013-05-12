@@ -1,12 +1,12 @@
 /**
- * \file BinaryDataField.cpp
+ * \file binarydatafield.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Binary Data field.
  */
 
-#include "logicalaccess/Services/AccessControl/Encodings/BigEndianDataRepresentation.h"
-#include "logicalaccess/Services/AccessControl/Formats/BitHelper.h"
-#include "logicalaccess/Services/AccessControl/Formats/CustomFormat/BinaryDataField.h"
+#include "logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include "logicalaccess/services/accesscontrol/formats/customformat/binarydatafield.hpp"
 
 #ifdef __linux__
 #include <cstring>

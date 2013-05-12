@@ -1,10 +1,10 @@
 /**
- * \file ReaderMemoryKeyStorage.cpp
+ * \file readermemorykeystorage.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Reader memory key storage.
  */
 
-#include "logicalaccess/Cards/ReaderMemoryKeyStorage.h"
+#include "logicalaccess/cards/readermemorykeystorage.hpp"
 
 namespace logicalaccess
 {

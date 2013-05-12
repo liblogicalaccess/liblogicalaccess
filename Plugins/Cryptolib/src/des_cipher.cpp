@@ -5,8 +5,8 @@
  * \brief DES cipher classes.
  */
 
-#include "logicalaccess/crypto/des_cipher.h"
-#include "logicalaccess/crypto/symmetric_key.h"
+#include "logicalaccess/crypto/des_cipher.hpp"
+#include "logicalaccess/crypto/symmetric_key.hpp"
 
 #include <cassert>
 

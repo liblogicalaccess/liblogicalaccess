@@ -1,10 +1,10 @@
 /**
- * \file ReaderUnitConfiguration.cpp
+ * \file readerunitconfiguration.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Reader unit configuration.
  */
 
-#include "logicalaccess/ReaderProviders/ReaderUnitConfiguration.h"
+#include "logicalaccess/readerproviders/readerunitconfiguration.hpp"
 
 #include <iostream>
 #include <iomanip>

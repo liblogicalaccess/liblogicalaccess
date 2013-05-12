@@ -1,10 +1,10 @@
 /**
- * \file Chip.cpp
+ * \file chip.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Card chip.
  */
 
-#include "logicalaccess/Cards/Chip.h"
+#include "logicalaccess/cards/chip.hpp"
 
 #include <fstream>
 

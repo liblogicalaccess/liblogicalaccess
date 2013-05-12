@@ -4,7 +4,7 @@
  * \author Julien K. <julien-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
  */
 
-#include "logicalaccess/ReaderProviders/SerialPortXml.h"
+#include "logicalaccess/readerproviders/serialportxml.hpp"
 
 #ifdef UNIX
 #include <fcntl.h>

@@ -5,9 +5,9 @@
  * \brief Open SSL symmetric cipher base class.
  */
 
-#include "logicalaccess/crypto/openssl_symmetric_cipher_context.h"
-#include "logicalaccess/crypto/symmetric_key.h"
-#include "logicalaccess/crypto/sha.h"
+#include "logicalaccess/crypto/openssl_symmetric_cipher_context.hpp"
+#include "logicalaccess/crypto/symmetric_key.hpp"
+#include "logicalaccess/crypto/sha.hpp"
 
 #include <cstring>
 

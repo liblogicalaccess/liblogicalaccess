@@ -1,10 +1,10 @@
 /**
- * \file SAMKeyStorage.cpp
+ * \file samkeystorage.cpp
  * \author Maxime C. <maxime@islog.com>
  * \brief SAM key storage.
  */
 
-#include "logicalaccess/Cards/SAMKeyStorage.h"
+#include "logicalaccess/cards/samkeystorage.hpp"
 
 namespace logicalaccess
 {
