@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-project(PromagReaders)
+project(promagreaders)
 
 file(GLOB SRCS *.cpp)
 file(GLOB include *.hpp)
@@ -15,7 +15,7 @@ set(SOURCE_LIB ${SRCS} ${source_readercardadapters})
 
 
 add_library(
-	PromagReaders
+	promagreaders
 	SHARED
 	
 	${SOURCE_LIB}
@@ -29,6 +29,6 @@ else()
 endif()
   
 target_link_libraries(
-	PromagReaders
+	promagreaders
 	${LINK_OPT}
 )

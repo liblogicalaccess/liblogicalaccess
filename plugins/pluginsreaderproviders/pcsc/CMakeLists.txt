@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-project(PCSCReaders)
+project(pcscreaders)
 
 if (NOT TARGET_ARCH)
 	set(TARGET_ARCH "Win32")
@@ -77,7 +77,7 @@ endif()
 
 
 add_library(
-	PCSCReaders
+	pcscreaders
 	SHARED
 	
 	${SOURCE_LIB}
@@ -85,14 +85,14 @@ add_library(
   )
   
 target_link_libraries(
-	PCSCReaders
-	DESFireCards
-	MifareCards
-	MifarePlusCards
-	MifareUltralightCards
-	ISO7816Readers
-	ISO7816Cards
-	ISO15693Cards
-	ProxCards
+	pcscreaders
+	desfirecards
+	mifarecards
+	mifarepluscards
+	mifareultralightcards
+	iso7816readers
+	iso7816cards
+	iso15693cards
+	proxcards
 	${LINK_OPT}
 )

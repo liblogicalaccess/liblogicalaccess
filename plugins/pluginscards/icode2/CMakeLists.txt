@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
-project(iCode2Cards)
+project(icode2cards)
 
 file(GLOB_RECURSE SRCS *.cpp)
 file(GLOB_RECURSE INCLUDE *.hpp)
 
 add_library(
-	iCode2Cards
+	icode2cards
 	SHARED
 
 	${SRCS}
@@ -19,7 +19,7 @@ else()
 endif()
 
 target_link_libraries(
-	iCode2Cards
-	ISO15693Cards
+	icode2cards
+	iso15693cards
 	${LINK_OPT}
 )

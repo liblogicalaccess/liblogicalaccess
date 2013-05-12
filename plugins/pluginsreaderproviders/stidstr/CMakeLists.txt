@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-project(STidSTRReaders)
+project(stidstrreaders)
 
 if (NOT TARGET_ARCH)
 	set(TARGET_ARCH "Win32")
@@ -38,7 +38,7 @@ LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsca
 endif()
 
 add_library(
-	STidSTRReaders
+	stidstrreaders
 	SHARED
 	
 	${SOURCE_LIB}
@@ -52,9 +52,9 @@ else()
 endif()
   
 target_link_libraries(
-	STidSTRReaders
+	stidstrreaders
 	logicalaccess-cryptolib
-	MifareCards
-	DESFireCards
+	mifarecards
+	desfirecards
 	${LINK_OPT}
 )

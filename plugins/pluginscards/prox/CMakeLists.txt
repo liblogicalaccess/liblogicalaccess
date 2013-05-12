@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
-project(ProxCards)
+project(proxcards)
 
 file(GLOB_RECURSE SRCS *.cpp)
 file(GLOB_RECURSE INCLUDE *.hpp)
 
 add_library(
-	ProxCards
+	proxcards
 	SHARED
 
 	${SRCS}
@@ -18,9 +18,9 @@ else()
   set(LINK_OPT logicalaccess)
 endif()
 
-SET_TARGET_PROPERTIES(ProxCards PROPERTIES VERSION 2.0.3)
+SET_TARGET_PROPERTIES(proxcards PROPERTIES VERSION 2.0.3)
 
 target_link_libraries(
-	ProxCards
+	proxcards
 	${LINK_OPT}
 )

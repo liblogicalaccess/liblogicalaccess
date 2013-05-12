@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-project(AxessTMCLegicReaders)
+project(axesstmclegicreaders)
 
 file(GLOB SRCS *.cpp)
 file(GLOB include *.hpp)
@@ -14,7 +14,7 @@ set(INCLUDE_LIB ${include} ${include_core} ${include_readercardadapters})
 set(SOURCE_LIB ${SRCS} ${source_readercardadapters})
 
 add_library(
-	AxessTMCLegicReaders
+	axesstmclegicreaders
 	SHARED
 	
 	${SOURCE_LIB}
@@ -28,6 +28,6 @@ else()
 endif()
 
 target_link_libraries(
-	AxessTMCLegicReaders
+	axesstmclegicreaders
 	${LINK_OPT}
 )

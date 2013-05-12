@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
-project(MifareUltralightCards)
+project(mifareultralightcards)
 
 file(GLOB_RECURSE SRCS *.cpp)
 file(GLOB_RECURSE INCLUDE *.hpp)
 
 add_library(
-	MifareUltralightCards
+	mifareultralightcards
 	SHARED
 
 	${SRCS}
@@ -18,9 +18,9 @@ else()
   set(LINK_OPT logicalaccess)
 endif()
 
-SET_TARGET_PROPERTIES(MifareUltralightCards PROPERTIES VERSION 2.0.3)
+SET_TARGET_PROPERTIES(mifareultralightcards PROPERTIES VERSION 2.0.3)
 
 target_link_libraries(
-	MifareUltralightCards
+	mifareultralightcards
 	${LINK_OPT}
 )

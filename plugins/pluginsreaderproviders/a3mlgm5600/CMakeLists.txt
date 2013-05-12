@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-project(A3MLGM5600Readers)
+project(a3mlgm5600readers)
 
 
 file(GLOB SRCS *.cpp)
@@ -15,7 +15,7 @@ set(INCLUDE_LIB ${include} ${include_core} ${include_readercardadapters})
 set(SOURCE_LIB ${SRCS} ${source_readercardadapters})
 
 add_library(
-	A3MLGM5600Readers
+	a3mlgm5600readers
 	SHARED
 	
 	${SOURCE_LIB}
@@ -29,6 +29,6 @@ else()
 endif()
 
 target_link_libraries(
-    A3MLGM5600Readers
+    a3mlgm5600readers
     ${LINK_OPT}
 )

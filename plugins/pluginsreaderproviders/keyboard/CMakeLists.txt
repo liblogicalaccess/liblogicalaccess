@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-project(KeyboardReaders)
+project(keyboardreaders)
 
 file(GLOB SRCS *.cpp)
 file(GLOB include *.h)
@@ -11,12 +11,12 @@ SOURCE_GROUP("Header Files\\readercardadapters" FILES ${include_readercardadapte
 file(GLOB source_readercardadapters ${CMAKE_CURRENT_SOURCE_DIR}/readercardadapters/*.cpp)
 SOURCE_GROUP("Source Files\\readercardadapters" FILES ${source_readercardadapters})
 
-set(INCLUDE_LIB ${include} {includepp} ${include_core} ${include_readercardadapters})
+set(INCLUDE_LIB ${include} ${includepp} ${include_core} ${include_readercardadapters})
 set(SOURCE_LIB ${SRCS} ${source_readercardadapters})
 
 
 add_library(
-	KeyboardReaders
+	keyboardreaders
 	SHARED
 	
 	${SOURCE_LIB}
@@ -30,7 +30,7 @@ else()
 endif()
   
 target_link_libraries(
-	KeyboardReaders
+	keyboardreaders
 	${LINK_OPT}
 	UserEnv
 )

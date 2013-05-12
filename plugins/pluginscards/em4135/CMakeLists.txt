@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
-project(EM4135Cards)
+project(em4135cards)
 
 file(GLOB_RECURSE SRCS *.cpp)
 file(GLOB_RECURSE INCLUDE *.hpp)
 
 add_library(
-	EM4135Cards
+	em4135cards
 	SHARED
 
 	${SRCS}
@@ -19,6 +19,6 @@ else()
 endif()
 
 target_link_libraries(
-	EM4135Cards
+	em4135cards
 	${LINK_OPT}
 )

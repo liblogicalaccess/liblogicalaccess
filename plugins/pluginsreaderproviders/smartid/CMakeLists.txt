@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-project(SmartIDReaders)
+project(smartidreaders)
 
 if (NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "Debug")
@@ -47,7 +47,7 @@ set(LINK_OPT boost_system boost_filesystem logicalaccess)
 endif()
 										
 add_library(
-	SmartIDReaders
+	smartidreaders
 	SHARED
 	
 	${SOURCE_LIB}
@@ -55,8 +55,8 @@ add_library(
   )
   
 target_link_libraries(
-	SmartIDReaders
-	ISO7816Readers
-	MifareCards
+	smartidreaders
+	iso7816readers
+	mifarecards
 	${LINK_OPT}
 )

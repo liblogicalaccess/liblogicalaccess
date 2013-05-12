@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
-project(GenericTagCards)
+project(generictagcards)
 
 file(GLOB_RECURSE SRCS *.cpp)
 file(GLOB_RECURSE INCLUDE *.hpp)
 
 add_library(
-	GenericTagCards
+	generictagcards
 	SHARED
 
 	${SRCS}
@@ -18,9 +18,9 @@ else()
   set(LINK_OPT logicalaccess)
 endif()
 
-SET_TARGET_PROPERTIES(GenericTagCards PROPERTIES VERSION 2.0.3)
+SET_TARGET_PROPERTIES(generictagcards PROPERTIES VERSION 2.0.3)
 
 target_link_libraries(
-	GenericTagCards
+	generictagcards
 	${LINK_OPT}
 )

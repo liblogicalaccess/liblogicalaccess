@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-project(AdmittoReaders)
+project(admittoreaders)
 
 file(GLOB SRCS *.cpp)
 file(GLOB include *.hpp)
@@ -14,7 +14,7 @@ set(INCLUDE_LIB ${include} ${include_core} ${include_readercardadapters})
 set(SOURCE_LIB ${SRCS} ${source_readercardadapters})
 
 add_library(
-	AdmittoReaders
+	admittoreaders
 	SHARED
 	
 	${SOURCE_LIB}
@@ -29,6 +29,6 @@ else()
 endif()
 
 target_link_libraries(
-	AdmittoReaders
+	admittoreaders
 	${LINK_OPT}
 )

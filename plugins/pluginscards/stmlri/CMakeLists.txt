@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
-project(StmLri512Cards)
+project(stmlri512cards)
 
 file(GLOB_RECURSE SRCS *.cpp)
 file(GLOB_RECURSE INCLUDE *.hpp)
 
 add_library(
-	StmLri512Cards
+	stmlri512cards
 	SHARED
 
 	${SRCS}
@@ -19,6 +19,6 @@ else()
 endif()
 
 target_link_libraries(
-	StmLri512Cards
+	stmlri512cards
 	${LINK_OPT}
 )

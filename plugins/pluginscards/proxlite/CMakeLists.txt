@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
-project(ProxLiteCards)
+project(proxlitecards)
 
 file(GLOB_RECURSE SRCS *.cpp)
 file(GLOB_RECURSE INCLUDE *.hpp)
 
 add_library(
-	ProxLiteCards
+	proxlitecards
 	SHARED
 
 	${SRCS}
@@ -19,6 +19,6 @@ else()
 endif()
 
 target_link_libraries(
-	ProxLiteCards
+	proxlitecards
 	${LINK_OPT}
 )

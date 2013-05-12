@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-project(IdOnDemandReaders)
+project(idondemandreaders)
 
 if (NOT TARGET_ARCH)
 	set(TARGET_ARCH "Win32")
@@ -35,7 +35,7 @@ else()
 endif()
 
 add_library(
-	IdOnDemandReaders
+	idondemandreaders
 	SHARED
 	
 	${SOURCE_LIB}
@@ -49,7 +49,7 @@ else()
 endif()
 
 target_link_libraries(
-	IdOnDemandReaders
-	GenericTagCards
+	idondemandreaders
+	generictagcards
 	${LINK_OPT}
 )

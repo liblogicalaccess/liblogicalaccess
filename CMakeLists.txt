@@ -87,7 +87,7 @@ if(UNIX)
 
 file(GLOB source_dynlibrary ${NATIVE_SOURCE}/dynlibrary/posixdynlibrary.cpp ${NATIVE_SOURCE}/dynlibrary/librarymanager.cpp)
 INCLUDE_DIRECTORIES("/usr/local/include")
-file(GLOB include_dynlibrary ${NATIVE_INCLUDE}/logicalaccess/dynlibrary/posixdynLibrary.hpp ${NATIVE_INCLUDE}/logicalaccess/dynlibrary/idynlibrary.hpp ${NATIVE_INCLUDE}/logicalaccess/dynlibrary/librarymanager.hpp)
+file(GLOB include_dynlibrary ${NATIVE_INCLUDE}/logicalaccess/dynlibrary/posixdynlibrary.hpp ${NATIVE_INCLUDE}/logicalaccess/dynlibrary/idynlibrary.hpp ${NATIVE_INCLUDE}/logicalaccess/dynlibrary/librarymanager.hpp)
 
 else()
 
@@ -150,5 +150,5 @@ elseif (UNIX)
   target_link_libraries(liblogicalaccess logicalaccess-cryptolib crypto boost_filesystem boost_date_time boost_system dl)
 endif()
 
-add_subdirectory(Plugins/Cryptolib)
+add_subdirectory(plugins/cryptolib)
 add_subdirectory(samples/basic)

@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
-project(TagItCards)
+project(tagitcards)
 
 file(GLOB_RECURSE SRCS *.cpp)
 file(GLOB_RECURSE INCLUDE *.hpp)
 
 add_library(
-	TagItCards
+	tagitcards
 	SHARED
 
 	${SRCS}
@@ -19,7 +19,7 @@ else()
 endif()
 
 target_link_libraries(
-	TagItCards
-	ISO15693Cards
+	tagitcards
+	iso15693cards
 	${LINK_OPT}
 )

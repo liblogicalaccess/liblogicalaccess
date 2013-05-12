@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
-project(ISO15693Cards)
+project(iso15693cards)
 
 file(GLOB_RECURSE SRCS *.cpp)
 file(GLOB_RECURSE INCLUDE *.hpp)
 
 add_library(
-	ISO15693Cards
+	iso15693cards
 	SHARED
 
 	${SRCS}
@@ -18,9 +18,9 @@ else()
   set(LINK_OPT logicalaccess)
 endif()
 
-SET_TARGET_PROPERTIES(ISO15693Cards PROPERTIES VERSION 2.0.3)
+SET_TARGET_PROPERTIES(iso15693cards PROPERTIES VERSION 2.0.3)
 
 target_link_libraries(
-	ISO15693Cards
+	iso15693cards
 	${LINK_OPT}
 )

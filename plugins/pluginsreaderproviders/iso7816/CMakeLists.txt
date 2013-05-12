@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-project(ISO7816Readers)
+project(iso7816readers)
 
 if (NOT TARGET_ARCH)
 	set(TARGET_ARCH "Win32")
@@ -41,14 +41,14 @@ else()
 endif()
 
 add_library(
-	ISO7816Readers
+	iso7816readers
 	SHARED
 	
 	${SOURCE_LIB}
 	${INCLUDE_LIB}
   )
 
-SET_TARGET_PROPERTIES(ISO7816Readers PROPERTIES VERSION 2.0.3)
+SET_TARGET_PROPERTIES(iso7816readers PROPERTIES VERSION 2.0.3)
   
 set(LINK_LIB)
 if (WIN32)
@@ -59,10 +59,10 @@ endif()
 
   
 target_link_libraries(
-	ISO7816Readers
-	DESFireCards
+	iso7816readers
+	desfirecards
 	logicalaccess-cryptolib
-	ISO7816Cards
+	iso7816cards
 
 	${LINK_LIB}
 )

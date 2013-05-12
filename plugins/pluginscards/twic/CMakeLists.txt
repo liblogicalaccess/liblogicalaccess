@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
-project(TwicCards)
+project(twiccards)
 
 file(GLOB_RECURSE SRCS *.cpp)
 file(GLOB_RECURSE INCLUDE *.hpp)
 
 add_library(
-	TwicCards
+	twiccards
 	SHARED
 
 	${SRCS}
@@ -19,7 +19,7 @@ else()
 endif()
   
 target_link_libraries(
-	TwicCards
-	ISO7816Cards
+	twiccards
+	iso7816cards
 	${LINK_OPT}
 )

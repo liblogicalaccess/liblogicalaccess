@@ -1,18 +1,18 @@
 cmake_minimum_required(VERSION 2.6)
-project(DESFireCards)
+project(desfirecards)
 
 file(GLOB_RECURSE SRCS *.cpp)
 file(GLOB_RECURSE INCLUDE *.hpp)
 
 add_library(
-	DESFireCards
+	desfirecards
 	SHARED
 
 	${SRCS}
 	${INCLUDE}
   )
 
-SET_TARGET_PROPERTIES(DESFireCards PROPERTIES VERSION 2.0.3)
+SET_TARGET_PROPERTIES(desfirecards PROPERTIES VERSION 2.0.3)
 
 set(OPT_LIBS)
 if (WIN32)
@@ -22,10 +22,10 @@ else()
 endif()
 
 target_link_libraries(
-	DESFireCards
+	desfirecards
 	logicalaccess-cryptolib
 	${OPT_LIBS}
 )
 if (WIN32)
-  SET_TARGET_PROPERTIES(DESFireCards PROPERTIES LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt.lib")
+  SET_TARGET_PROPERTIES(desfirecards PROPERTIES LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt.lib")
 endif()

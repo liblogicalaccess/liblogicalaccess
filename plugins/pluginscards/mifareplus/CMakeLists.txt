@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-project(MifarePlusCards)
+project(mifarepluscards)
 
 if (NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "Debug")
@@ -18,7 +18,7 @@ file(GLOB_RECURSE SRCS *.cpp)
 file(GLOB_RECURSE include_mplus *.hpp)
 
 add_library(
-	MifarePlusCards
+	mifarepluscards
 	SHARED
 
 	${SRCS}
@@ -32,11 +32,11 @@ else()
   set(LINK_OPT logicalaccess)
 endif()
 
-SET_TARGET_PROPERTIES(MifarePlusCards PROPERTIES VERSION 2.0.3)
+SET_TARGET_PROPERTIES(mifarepluscards PROPERTIES VERSION 2.0.3)
 
 target_link_libraries(
-	MifarePlusCards
+	mifarepluscards
 	${LINK_OPT}
-	MifareCards
-	DESFireCards
+	mifarecards
+	desfirecards
 )
