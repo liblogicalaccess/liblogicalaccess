@@ -41,6 +41,8 @@ namespace logicalaccess
 			 */
 			virtual void setConfiguration(const std::string& readerAddress, int port);
 
+			void setWiegandConfiguration (byte offset, byte lenght);
+
 			/**
 			 * \brief Serialize the current object to XML.
 			 * \param parentNode The parent node.
@@ -67,11 +69,23 @@ namespace logicalaccess
 
 			void setPort(int port);
 
+			byte getOffset() const;
+
+			void setOffset(byte offset);
+			
+			byte getLenght() const;
+
+			void setLenght(byte lenght);
+
 		protected:
 
 			std::string d_readerAddress;
 
 			int d_port;
+
+			byte d_offset;
+
+			byte d_lenght;
 	};
 }
 

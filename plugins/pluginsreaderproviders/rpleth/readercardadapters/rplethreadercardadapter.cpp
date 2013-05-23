@@ -21,20 +21,13 @@ namespace logicalaccess
 
 	std::vector<unsigned char> RplethReaderCardAdapter::sendCommand(const std::vector<unsigned char>& command, long int timeout)
 	{
-		INFO_SIMPLE_("SendCommand");
 		std::vector<unsigned char> res;
 		std::vector<unsigned char> cmd = command;
 		cmd.push_back (calcChecksum(command));
-		if (cmd.size() > 0)
+		if (cmd.size() > 0) 
 		{ 
 			boost::shared_ptr<boost::asio::ip::tcp::socket> socket = getRplethReaderUnit()->getSocket();
-			if (socket->is_open())
-				INFO_SIMPLE_("Socket open");
-			else
-				INFO_SIMPLE_("Socket close but when ?");
-			INFO_SIMPLE_("Before send");
 			socket->send(boost::asio::buffer(cmd));
-			INFO_SIMPLE_("After send");
 			res = receiveAnwser(command, timeout);
 		}
 		return res;

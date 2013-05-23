@@ -41,11 +41,12 @@ namespace logicalaccess
 
 	typedef enum
 	{
-		BEEP = 0x01,
-        BLINKLED1 = 0x02,
-        BLINKLED2 = 0x03,
-        NOP = 0x04,
-        BADGE = 0x05
+		BEEP = 0x00,
+        BLINKLED1 = 0x01,
+        BLINKLED2 = 0x02,
+        NOP = 0x03,
+        BADGE = 0x04,
+		COM = 0x05
 	} HidCommand;
 
 	typedef enum
@@ -279,6 +280,8 @@ namespace logicalaccess
 			 */
 			std::vector<unsigned char> badge(long int timeout = 2000);
 
+			std::vector<unsigned char> sendCommand(std::string command);
+
 		protected:
 			
 			/**
@@ -298,6 +301,13 @@ namespace logicalaccess
 			 * \return The result of the command.
 			 */
 			std::vector<unsigned char> receiveBadge (long int timeout = 2000);
+
+			/**
+			 * \brief Take the csn from wiegand full trame.
+			 * \param trame The wiegnad full trame.			 
+			 * \return The csn contains into the wiegand trame.
+			 */
+			std::vector<unsigned char> getCsn (std::vector<unsigned char> trame);
 	};
 }
 

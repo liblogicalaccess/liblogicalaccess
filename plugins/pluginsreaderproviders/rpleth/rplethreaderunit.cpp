@@ -391,6 +391,33 @@ namespace logicalaccess
 		cmd.push_back(static_cast<unsigned char>(Device::HID));
 		cmd.push_back(static_cast<unsigned char>(HidCommand::BADGE));
 		res = getDefaultRplethReaderCardAdapter()->receiveAnwser(cmd, timeout);
+		// res contains full wiegand trame, it need to take the csn
+		res = getCsn (res);
 		return res;
+	}
+
+	std::vector<unsigned char> RplethReaderUnit::sendCommand(std::string command)
+	{
+		std::vector<unsigned char> cmd;
+		std::vector<unsigned char> res;
+		cmd.push_back (static_cast<unsigned char>(Device::HID));
+		cmd.push_back (static_cast<unsigned char>(HidCommand::COM));
+		cmd.push_back (static_cast<unsigned char>(command.size()));
+		cmd.insert(cmd.end(), command.begin(), command.end());
+		getDefaultRplethReaderCardAdapter()->sendCommand (cmd, 0);
+		res = getDefaultRplethReaderCardAdapter()->receiveAnwser(cmd, 0);
+		return res;
+	}
+
+	std::vector<unsigned char> RplethReaderUnit::getCsn (std::vector<unsigned char> trame)
+	{
+		std::vector<unsigned char> result;
+		boost::shared_ptr<RplethReaderUnitConfiguration> conf = boost::dynamic_pointer_cast<RplethReaderUnitConfiguration>(d_readerUnitConfig);
+		for (int i = 0; i < conf->getOffset(); i++)
+		{
+			trame.pop_back ();
+		}
+		result.insert (result.begin(), trame.begin()+(trame.size() - conf->getLenght()), trame.end());
+		return result;
 	}
 }

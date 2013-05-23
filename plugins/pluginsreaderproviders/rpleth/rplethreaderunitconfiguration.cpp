@@ -24,12 +24,20 @@ namespace logicalaccess
 	{
 		d_readerAddress = "192.168.1.100";
 		d_port = 2000;
+		d_offset = 1;
+		d_lenght = 16;
 	}
 
 	void RplethReaderUnitConfiguration::setConfiguration(const std::string& readerAddress, int port)
 	{
 		d_readerAddress = readerAddress;
 		d_port = port;
+	}
+
+	void RplethReaderUnitConfiguration::setWiegandConfiguration (byte offset, byte lenght)
+	{
+		d_offset = offset;
+		d_lenght = lenght;
 	}
 
 	void RplethReaderUnitConfiguration::serialize(boost::property_tree::ptree& parentNode)
@@ -69,5 +77,25 @@ namespace logicalaccess
 	void RplethReaderUnitConfiguration::setPort(int port)
 	{
 		d_port = port;
+	}
+
+	byte RplethReaderUnitConfiguration::getOffset() const
+	{
+		return d_offset;
+	}
+
+	void RplethReaderUnitConfiguration::setOffset(byte offset)
+	{
+		d_offset = offset;
+	}
+			
+	byte RplethReaderUnitConfiguration::getLenght() const
+	{
+		return d_lenght;
+	}
+
+	void RplethReaderUnitConfiguration::setLenght(byte lenght)
+	{
+		d_lenght = lenght;
 	}
 }
