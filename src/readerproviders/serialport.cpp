@@ -51,7 +51,7 @@ namespace logicalaccess
 #ifdef UNIX
 		d_file = ::open(d_dev.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
 #else
-		d_file = CreateFileA(d_dev.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, 0);
+		d_file = CreateFileA(("\\\\.\\" + d_dev).c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
 		DWORD dwError = GetLastError();
 		if (dwError == ERROR_FILE_NOT_FOUND)
 		{
@@ -178,13 +178,16 @@ namespace logicalaccess
 		}
 		else
 		{
-			buf.resize(0);
+			buf.clear();
 			r = 0;
 		}
 
-		buf.insert(buf.begin(), d_readBuf.begin(), d_readBuf.end());
-		r += static_cast<int>(d_readBuf.size());
-		d_readBuf.clear();
+		if (d_readBuf.size() > 0)
+		{
+			buf.insert(buf.begin(), d_readBuf.begin(), d_readBuf.end());
+			r += static_cast<int>(d_readBuf.size());
+			d_readBuf.clear();
+		}
 
 		return r;
 #endif
@@ -282,6 +285,7 @@ namespace logicalaccess
 					BOOL result = ReadFile(d_file, &d_readBuf[0], static_cast<DWORD>(d_readBuf.size()), &r, NULL);
 					if (result == FALSE)
 					{
+						d_readBuf.clear();
 						throw EXCEPTION(LibLogicalAccessException, "Cannot select the device.");
 					}
 					if (r < 1)

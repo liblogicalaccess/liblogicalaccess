@@ -366,11 +366,13 @@ namespace logicalaccess
 		EXCEPTION_ASSERT_WITH_LOG(tmpData.size() >= 6, LibLogicalAccessException, "The plain response message should be at least 6 bytes long.");
 
 		size_t offset = 0;
-		unsigned short ack = (tmpData[offset++] << 8) | tmpData[offset++];
+		unsigned short ack = (tmpData[offset] << 8) | tmpData[offset+1];
+		offset += 2;
 		COM_("Acquiment value {0x%x(%u)}", ack, ack);
 		EXCEPTION_ASSERT_WITH_LOG(ack == d_lastCommandCode, LibLogicalAccessException, "ACK doesn't match the last command code.");
 
-		unsigned short msglength = (tmpData[offset++] << 8) | tmpData[offset++];
+		unsigned short msglength = (tmpData[offset] << 8) | tmpData[offset+1];
+		offset += 2;
 		COM_("Plain data length {%u}", msglength);
 
 		EXCEPTION_ASSERT_WITH_LOG(static_cast<unsigned int>(msglength + 2) <= tmpData.size(), LibLogicalAccessException, "The buffer is too short to contains the complete plain message.");
