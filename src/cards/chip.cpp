@@ -41,7 +41,10 @@ namespace logicalaccess
 	void Chip::setCardProvider(boost::shared_ptr<CardProvider> provider)
 	{
 		d_cardprovider = provider;
-		provider->setChip(shared_from_this());
+		if (provider)
+		{
+			provider->setChip(shared_from_this());
+		}
 	}
 
 	boost::shared_ptr<LocationNode> Chip::getRootLocationNode()
