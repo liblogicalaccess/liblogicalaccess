@@ -208,7 +208,7 @@ namespace logicalaccess
 				{
 					boost::shared_ptr<Profile> profile = chip->getProfile();
 					boost::property_tree::ptree childrenRootNode = v.second.get_child("FormatConfiguration");
-					format->unSerialize(childrenRootNode);
+					format->unSerialize(childrenRootNode, "");
 
 					if (profile)
 					{
