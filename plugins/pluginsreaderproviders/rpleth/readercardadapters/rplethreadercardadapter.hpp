@@ -55,7 +55,6 @@ namespace logicalaccess
 			 * \return The Rpleth reader unit.
 			 */
 			boost::shared_ptr<RplethReaderUnit> getRplethReaderUnit() const { return boost::dynamic_pointer_cast<RplethReaderUnit>(getReaderUnit()); };			
-
 			
 
 		protected:

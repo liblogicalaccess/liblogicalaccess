@@ -65,5 +65,5 @@ namespace logicalaccess
 
 }
 
-#endif /* D3L_PCSC_A3MLGM5600LCDDISPLAY_H */
+#endif /* D3L_PCSC_RPLETHLCDDISPLAY_HPP */
 

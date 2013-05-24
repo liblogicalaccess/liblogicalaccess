@@ -129,6 +129,10 @@ namespace logicalaccess
 
 			if (type == "GenericTag")
 				rca = getDefaultReaderCardAdapter();
+			else if (type == "DESFire")
+			{
+				rca.reset(new ISO7816RplethReaderCardAdapter());
+			}
 			else
 				return chip;
 
