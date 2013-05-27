@@ -1,7 +1,7 @@
 /**
- * \file a3mlgm5600lcddisplay.cpp
+ * \file rplethlcddisplay.cpp
  * \author Maxime C. <maxime-dev@islog.com>
- * \brief A3MLGM5600 LCD Display.
+ * \brief Rpleth LCD Display.
  */
 
 #include "rplethlcddisplay.hpp"

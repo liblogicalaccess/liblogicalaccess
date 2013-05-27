@@ -1,7 +1,7 @@
 /**
- * \file a3mlgm5600ledbuzzerdisplay.hpp
+ * \file rpleth.hpp
  * \author Maxime C. <maxime-dev@islog.com>
- * \brief A3MLGM5600 LED/Buzzer Display. 
+ * \brief Rpleth LED/Buzzer Display. 
  */
 
 #ifndef D3L_PCSC_RPLETHLEDBUZZERDISPLAY_HPP
@@ -17,7 +17,7 @@
 namespace logicalaccess
 {
 	/**
-	 * \brief A A3MLGM5600 LED/Buzzer Display class.
+	 * \brief A Rplet LED/Buzzer Display class.
 	 */
 	class LIBLOGICALACCESS_API RplethLEDBuzzerDisplay : public LEDBuzzerDisplay
 	{

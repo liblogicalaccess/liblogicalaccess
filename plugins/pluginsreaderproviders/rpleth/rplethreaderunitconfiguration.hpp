@@ -41,6 +41,11 @@ namespace logicalaccess
 			 */
 			virtual void setConfiguration(const std::string& readerAddress, int port);
 
+			/**
+			 * \brief Set the wiegand configuration to param values
+			 * \param offset The offset in wiegand communication
+			 * \param lenght The lenght of csn in wiegand communication
+			 */
 			void setWiegandConfiguration (byte offset, byte lenght);
 
 			/**
@@ -61,20 +66,53 @@ namespace logicalaccess
 			 */
 			virtual std::string getDefaultXmlNodeName() const;
 
+			/**
+			 * \brief Get the reader address.
+			 * \return The reader address.
+			 */
 			std::string getReaderAddress() const;
 
+			
+			/**
+			 * \brief Set the reader address.
+			 * \param readerAddress The new reader address.
+			 */
 			void setReaderAddress(const std::string& readerAddress);
-
+			
+			/**
+			 * \brief Get the reader port.
+			 * \return The reader port.
+			 */
 			int getPort() const;
 
+			/**
+			 * \brief Set the reader port.
+			 * \param port The new reader port.
+			 */
 			void setPort(int port);
-
+			
+			/**
+			 * \brief Get the offset in wiegand communication.
+			 * \return The offset in wiegand communication.
+			 */
 			byte getOffset() const;
 
+			/**
+			 * \brief Set the offset in wiegand communication.
+			 * \param offset The new offset in wiegand communication.
+			 */
 			void setOffset(byte offset);
 			
+			/**
+			 * \brief Get the lenght of csn in wiegand communication.
+			 * \return The lenght of csn in wiegand communication.
+			 */
 			byte getLenght() const;
 
+			/**
+			 * \brief Set the lenght of csn in wiegand communication.
+			 * \param lenght The new lenght of csn in wiegand communication.
+			 */
 			void setLenght(byte lenght);
 
 		protected:

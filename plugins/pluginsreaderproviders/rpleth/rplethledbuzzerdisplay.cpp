@@ -1,7 +1,7 @@
 /**
- * \file a3mlgm5600ledbuzzerdisplay.cpp
+ * \file rplethledbuzzerdisplay.cpp
  * \author Maxime C. <maxime-dev@islog.com>
- * \brief A3MLGM5600 LED/Buzzer Display.
+ * \brief Rpleth LED/Buzzer Display.
  */
 
 #include "rplethledbuzzerdisplay.hpp"
