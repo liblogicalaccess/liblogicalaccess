@@ -38,18 +38,8 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>('b'));
 		command.push_back(static_cast<unsigned char>(blockno));
 		answer = getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
-		for (int i = 0; i < 16-len; i++)
-		{
-			answer.pop_back();
-		}
+		memcpy(buf, &answer[0], answer.size());
 		buflen = answer.size();
-		char * tmp = malloc(buflen * sizeof(char));
-		for (int i = 0; i < answer.size(); i++)
-		{
-			tmp[i] = answer[i];
-		}
-		memcpy (buf, tmp, buflen);
-		free (tmp);
 		res = buflen;
 		return res;
 	}
