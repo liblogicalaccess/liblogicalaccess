@@ -40,7 +40,7 @@
 					<executable>msbuild</executable>
 				</configuration>
 				<executions>
-					<execution>
+					<!--<execution>
 						<id>changeversion</id>
 						<phase>compile</phase>
 						<configuration>
@@ -53,7 +53,7 @@
 						<goals>
 							<goal>exec</goal>
 						</goals>
-					</execution>
+					</execution>-->
 					<execution>
 						<id>clean-sln</id>
 						<phase>clean</phase>
