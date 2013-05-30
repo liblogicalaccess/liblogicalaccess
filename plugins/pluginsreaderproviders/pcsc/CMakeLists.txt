@@ -24,7 +24,7 @@ INCLUDE_DIRECTORIES(${INCLUDE_FOLDER})
 
 
 file(GLOB SRCS *.cpp)
-file(GLOB include *.h)
+file(GLOB include *.hpp)
 
 file(GLOB include_readercardadapters ${CMAKE_CURRENT_SOURCE_DIR}/readercardadapters/*.hpp)
 SOURCE_GROUP("Header Files\\readercardadapters" FILES ${include_readercardadapters})
