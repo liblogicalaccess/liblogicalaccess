@@ -418,22 +418,18 @@ namespace logicalaccess
 	{
 		std::vector<unsigned char> result;
 		boost::shared_ptr<RplethReaderUnitConfiguration> conf = boost::dynamic_pointer_cast<RplethReaderUnitConfiguration>(d_readerUnitConfig);
-		if (conf->getLenght() != 0)
+		if (conf->getLength() != 0)
 		{
 			for (int i = 0; i < conf->getOffset(); i++)
 			{
 				trame.pop_back ();
 			}
-			result.insert (result.begin(), trame.begin()+(trame.size() - conf->getLenght()), trame.end());
+			result.insert (result.begin(), trame.begin()+(trame.size() - conf->getLength()), trame.end());
 		}
 		else
 		{
 			result.insert (result.begin(), trame.begin(), trame.end());
 		}
-<<<<<<< HEAD
-=======
-		result.insert (result.begin(), trame.begin()+(trame.size() - conf->getLength()), trame.end());
->>>>>>> 83528210a94b9676b03101d5b15e68a16ffc42b4
 		return result;
 	}
 }
