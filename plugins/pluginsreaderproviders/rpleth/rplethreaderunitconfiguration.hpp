@@ -104,16 +104,16 @@ namespace logicalaccess
 			void setOffset(unsigned char offset);
 			
 			/**
-			 * \brief Get the lenght of csn in wiegand communication.
-			 * \return The lenght of csn in wiegand communication.
+			 * \brief Get the length of csn in wiegand communication.
+			 * \return The length of csn in wiegand communication.
 			 */
-			unsigned char getLenght() const;
+			unsigned char getLength() const;
 
 			/**
 			 * \brief Set the lenght of csn in wiegand communication.
-			 * \param lenght The new lenght of csn in wiegand communication.
+			 * \param length The new length of csn in wiegand communication.
 			 */
-			void setLenght(unsigned char lenght);
+			void setLength(unsigned char length);
 
 		protected:
 
@@ -123,7 +123,7 @@ namespace logicalaccess
 
 			unsigned char d_offset;
 
-			unsigned char d_lenght;
+			unsigned char d_length;
 	};
 }
 

@@ -337,14 +337,14 @@ namespace logicalaccess
 		getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
 	}
 
-	void RplethReaderUnit::setConfWiegand(unsigned char offset, unsigned char lenght, unsigned char tramSize)
+	void RplethReaderUnit::setConfWiegand(unsigned char offset, unsigned char length, unsigned char tramSize)
 	{
 		std::vector<unsigned char> command;
 		command.push_back (static_cast<unsigned char>(Device::RPLETH));
 		command.push_back (static_cast<unsigned char>(RplethCommand::WIEGAND));
 		command.push_back (static_cast<unsigned char>(0x03));
 		command.push_back (static_cast<unsigned char>(offset));
-		command.push_back (static_cast<unsigned char>(lenght));
+		command.push_back (static_cast<unsigned char>(length));
 		command.push_back (static_cast<unsigned char>(tramSize));
 		getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
 	}
@@ -430,6 +430,10 @@ namespace logicalaccess
 		{
 			result.insert (result.begin(), trame.begin(), trame.end());
 		}
+<<<<<<< HEAD
+=======
+		result.insert (result.begin(), trame.begin()+(trame.size() - conf->getLength()), trame.end());
+>>>>>>> 83528210a94b9676b03101d5b15e68a16ffc42b4
 		return result;
 	}
 }
