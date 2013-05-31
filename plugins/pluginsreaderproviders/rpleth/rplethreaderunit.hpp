@@ -42,20 +42,20 @@ namespace logicalaccess
 	typedef enum
 	{
 		BEEP = 0x00,
-        BLINKLED1 = 0x01,
-        BLINKLED2 = 0x02,
-        NOP = 0x03,
-        BADGE = 0x04,
+		BLINKLED1 = 0x01,
+		BLINKLED2 = 0x02,
+		NOP = 0x03,
+		BADGE = 0x04,
 		COM = 0x05
 	} HidCommand;
 
 	typedef enum
 	{
 		DISPLAY = 0x00,
-        DISPLAYT = 0X01,
-        BLINK = 0X02,
-        SCROLL = 0X03,
-        DISPLAYTIME = 0x04
+		DISPLAYT = 0X01,
+		BLINK = 0X02,
+		SCROLL = 0X03,
+		DISPLAYTIME = 0x04
 	} LcdCommand;
 
 	/**
@@ -252,10 +252,10 @@ namespace logicalaccess
 			/**
 			 * \brief Set the Rpleth port.
 			 * \param offset The offset in wiegand trame.
-			 * \param lenght The lenght of code in wiegand.
+			 * \param length The length of code in wiegand.
 			 * \param tramSize The size of wiegand trame.
 			 */
-			void setConfWiegand(unsigned char offset, unsigned char lenght, unsigned char tramSize);
+			void setConfWiegand(unsigned char offset, unsigned char length, unsigned char tramSize);
 			
 			/**
 			 * \brief Reset the Rpleth reader.

@@ -25,7 +25,7 @@ namespace logicalaccess
 		d_readerAddress = "192.168.1.100";
 		d_port = 2000;
 		d_offset = 1;
-		d_lenght = 16;
+		d_length = 16;
 	}
 
 	void RplethReaderUnitConfiguration::setConfiguration(const std::string& readerAddress, int port)
@@ -34,10 +34,10 @@ namespace logicalaccess
 		d_port = port;
 	}
 
-	void RplethReaderUnitConfiguration::setWiegandConfiguration (unsigned char offset, unsigned char lenght)
+	void RplethReaderUnitConfiguration::setWiegandConfiguration (unsigned char offset, unsigned char length)
 	{
 		d_offset = offset;
-		d_lenght = lenght;
+		d_length = length;
 	}
 
 	void RplethReaderUnitConfiguration::serialize(boost::property_tree::ptree& parentNode)
@@ -45,6 +45,8 @@ namespace logicalaccess
 		boost::property_tree::ptree node;
 		node.put("ReaderAddress", d_readerAddress);
 		node.put("Port", d_port);
+		node.put("Offset", d_offset);
+		node.put("Length", d_length);
 		parentNode.add_child(getDefaultXmlNodeName(), node);
 	}
 
@@ -52,6 +54,8 @@ namespace logicalaccess
 	{
 		d_readerAddress = node.get_child("ReaderAddress").get_value<std::string>();
 		d_port = node.get_child("Port").get_value<int>();
+		d_offset = node.get_child("Offset").get_value<unsigned char>();
+		d_length = node.get_child("Length").get_value<unsigned char>();
 	}
 
 	std::string RplethReaderUnitConfiguration::getDefaultXmlNodeName() const
@@ -89,13 +93,13 @@ namespace logicalaccess
 		d_offset = offset;
 	}
 			
-	unsigned char RplethReaderUnitConfiguration::getLenght() const
+	unsigned char RplethReaderUnitConfiguration::getLength() const
 	{
-		return d_lenght;
+		return d_length;
 	}
 
-	void RplethReaderUnitConfiguration::setLenght(unsigned char lenght)
+	void RplethReaderUnitConfiguration::setLength(unsigned char length)
 	{
-		d_lenght = lenght;
+		d_length = length;
 	}
 }
