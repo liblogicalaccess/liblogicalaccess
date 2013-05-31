@@ -36,10 +36,14 @@ namespace logicalaccess
 		{
 			n = pt.get_child(rootNode);
 		}
+		else
+		{
+			n = pt.front().second;
+		}
 
 		if (!n.empty())
 		{
-			FormatType type = static_cast<FormatType>(n.get_child("type").get_value<unsigned int>());
+			FormatType type = static_cast<FormatType>(n.get_child("<xmlattr>.type").get_value<unsigned int>());
 			ret = Format::getByFormatType(type);
 			ret->unSerialize(n);
 		}
