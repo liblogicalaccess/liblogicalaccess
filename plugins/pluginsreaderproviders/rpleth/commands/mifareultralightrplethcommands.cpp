@@ -1,7 +1,7 @@
 /**
  * \file mifareultralightrplethcommands.cpp
  * \author Maxime C. <maxime-dev@islog.com>
- * \brief Mifaire Ultralight commands for Rpleth readers.
+ * \brief Mifare Ultralight commands for Rpleth readers.
  */
 
 #include "../commands/mifareultralightrplethcommands.hpp"
@@ -37,7 +37,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>('r'));
 		command.push_back(static_cast<unsigned char>('b'));
 		command.push_back(static_cast<unsigned char>(page));
-		answer = getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
+		answer = getRplethReaderCardAdapter()->sendCommand (command, 0);
 		memcpy(buf, &answer[0], answer.size());
 		result = answer.size();
 		return result;
@@ -54,12 +54,11 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>('w'));
 		command.push_back(static_cast<unsigned char>('b'));
 		command.push_back(static_cast<unsigned char>(page));
-		for (int i = 0; i < buflen; i++)
+		for (size_t i = 0; i < buflen; i++)
 		{
-			command.push_back(static_cast<unsigned char>(buf[i]));
+			command.push_back(static_cast<unsigned char>(((char*)buf)[i]));
 		}
-		answer = getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
-		memcpy(buf, &answer[0], answer.size());
+		answer = getRplethReaderCardAdapter()->sendCommand (command, 0);
 		result = answer.size();
 		return result;
 	}

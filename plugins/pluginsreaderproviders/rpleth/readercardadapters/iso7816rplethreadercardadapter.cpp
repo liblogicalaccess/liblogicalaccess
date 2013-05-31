@@ -20,7 +20,7 @@ namespace logicalaccess
 		
 	}
 
-	std::vector<unsigned char> ISO7816RplethReaderCardAdapter::sendCommand(const std::vector<unsigned char>& command, long int timeout)
+	std::vector<unsigned char> ISO7816RplethReaderCardAdapter::sendCommand(std::vector<unsigned char>& command, long int timeout)
 	{
 		command[2] ++;
 		command.emplace (command.begin()+3, 't');

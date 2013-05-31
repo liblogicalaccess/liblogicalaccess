@@ -14,6 +14,7 @@
 #include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
 #include "logicalaccess/cards/chip.hpp"
 #include "readercardadapters/rplethreadercardadapter.hpp"
+#include "readercardadapters/iso7816rplethreadercardadapter.hpp"
 #include <boost/filesystem.hpp>
 
 namespace logicalaccess

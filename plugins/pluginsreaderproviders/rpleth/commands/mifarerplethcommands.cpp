@@ -4,7 +4,7 @@
  * \brief Mifaire commands for Rpleth readers.
  */
 
-#include "../commands/mifarerplethcommands.hpp"
+#include "mifarerplethcommands.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -37,7 +37,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>('r'));
 		command.push_back(static_cast<unsigned char>('b'));
 		command.push_back(static_cast<unsigned char>(blockno));
-		answer = getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
+		answer = getRplethReaderCardAdapter()->sendCommand (command, 0);
 		memcpy(buf, &answer[0], answer.size());
 		buflen = answer.size();
 		res = buflen;
@@ -46,10 +46,12 @@ namespace logicalaccess
 	
 	size_t MifareRplethCommands::updateBinary(unsigned char blockno, const void* buf, size_t buflen)
 	{
-		
+		size_t result = 0;
+		return result;
 	}
 	
-	bool MifareRplethCommands::loadKey(unsigned char keyno, MifareKeyType keytype, const void* key, size_t keylen, bool vol = false)
+	// in progress
+	bool MifareRplethCommands::loadKey(unsigned char keyno, MifareKeyType keytype, const void* key, size_t keylen, bool vol)
 	{
 		bool r = false;
 
@@ -59,11 +61,11 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(HidCommand::COM));
 		command.push_back(static_cast<unsigned char>(0x05));
 		command.push_back(static_cast<unsigned char>('l'));
-		command.push_back(static_cast<unsigned char>(blockno));
+		command.push_back(static_cast<unsigned char>(keyno));
 		command.push_back(static_cast<unsigned char>(keytype));
 		command.push_back(static_cast<unsigned char>(keytype));
 		command.push_back(static_cast<unsigned char>(keyno));
-		answer = getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
+		answer = getRplethReaderCardAdapter()->sendCommand (command, 0);
 		unsigned char result[256];
 		size_t resultlen = 256;
 		
@@ -82,11 +84,13 @@ namespace logicalaccess
 		return r;
 	}
 	
+	// in progress
 	void MifareRplethCommands::loadKey(boost::shared_ptr<Location> location, boost::shared_ptr<Key> key, MifareKeyType keytype)
 	{
 		
 	}
 	
+	// in progress
 	bool MifareRplethCommands::authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype)
 	{
 		bool res = false;
@@ -99,15 +103,15 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(blockno));
 		command.push_back(static_cast<unsigned char>(keytype));
 		command.push_back(static_cast<unsigned char>(keyno));
-		answer = getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
+		answer = getRplethReaderCardAdapter()->sendCommand (command, 0);
 		if (answer[0] == 'L')
 			res = true;
 		return res;
 	}
 	
+	// in progress
 	void MifareRplethCommands::authenticate(unsigned char blockno, boost::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype)
 	{
-		bool res = false;
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> answer;
 		command.push_back(static_cast<unsigned char>(Device::HID));
@@ -117,11 +121,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(blockno));
 		command.push_back(static_cast<unsigned char>(keytype));
 		command.push_back(static_cast<unsigned char>(keytype));
-		command.push_back(static_cast<unsigned char>(keyno));
-		answer = getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
-		if (answer[0] == 'L')
-			res = true;
-		return res;
+		answer = getRplethReaderCardAdapter()->sendCommand (command, 0);
 	}
 }
 

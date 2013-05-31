@@ -34,7 +34,7 @@ namespace logicalaccess
 		d_port = port;
 	}
 
-	void RplethReaderUnitConfiguration::setWiegandConfiguration (byte offset, byte lenght)
+	void RplethReaderUnitConfiguration::setWiegandConfiguration (unsigned char offset, unsigned char lenght)
 	{
 		d_offset = offset;
 		d_lenght = lenght;
@@ -79,22 +79,22 @@ namespace logicalaccess
 		d_port = port;
 	}
 
-	byte RplethReaderUnitConfiguration::getOffset() const
+	unsigned char RplethReaderUnitConfiguration::getOffset() const
 	{
 		return d_offset;
 	}
 
-	void RplethReaderUnitConfiguration::setOffset(byte offset)
+	void RplethReaderUnitConfiguration::setOffset(unsigned char offset)
 	{
 		d_offset = offset;
 	}
 			
-	byte RplethReaderUnitConfiguration::getLenght() const
+	unsigned char RplethReaderUnitConfiguration::getLenght() const
 	{
 		return d_lenght;
 	}
 
-	void RplethReaderUnitConfiguration::setLenght(byte lenght)
+	void RplethReaderUnitConfiguration::setLenght(unsigned char lenght)
 	{
 		d_lenght = lenght;
 	}

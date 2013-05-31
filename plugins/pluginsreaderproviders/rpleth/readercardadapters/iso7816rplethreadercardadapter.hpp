@@ -7,13 +7,11 @@
 #ifndef LOGICALACCESS_ISO7816RPLETHREADERCARDADAPTER_HPP
 #define LOGICALACCESS_ISO7816RPLETHREADERCARDADAPTER_HPP
 
-#include "logicalaccess/cards/readercardadapter.hpp"
-#include "../rplethreaderunit.hpp"
+#include "rplethreadercardadapter.hpp"
 
 #include <string>
 #include <vector>
 
-#include "logicalaccess/logs.hpp"
 
 namespace logicalaccess
 {	
@@ -40,7 +38,7 @@ namespace logicalaccess
 			 * \param timeout The command timeout.
 			 * \return The result of the command.
 			 */
-			std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long int timeout = 2000);
+			std::vector<unsigned char> sendCommand(std::vector<unsigned char>& command, long int timeout = 2000);
 			
 		protected:
 			

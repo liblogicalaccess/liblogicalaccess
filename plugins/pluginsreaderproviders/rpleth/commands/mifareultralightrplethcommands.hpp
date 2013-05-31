@@ -54,7 +54,7 @@ namespace logicalaccess
 			 * \brief Get the Rpleth reader/card adapter.
 			 * \return The Rpleth reader/card adapter.
 			 */
-			virtual boost::shared_ptr<RplehtReaderCardAdapter> getRplethReaderCardAdapter() { return boost::dynamic_pointer_cast<RplehtReaderCardAdapter>(getReaderCardAdapter()); };
+			virtual boost::shared_ptr<RplethReaderCardAdapter> getRplethReaderCardAdapter() { return boost::dynamic_pointer_cast<RplethReaderCardAdapter>(getReaderCardAdapter()); };
 	};	
 }
 

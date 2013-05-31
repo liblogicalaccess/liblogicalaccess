@@ -46,7 +46,7 @@ namespace logicalaccess
 			 * \param offset The offset in wiegand communication
 			 * \param lenght The lenght of csn in wiegand communication
 			 */
-			void setWiegandConfiguration (byte offset, byte lenght);
+			void setWiegandConfiguration (unsigned char offset, unsigned char lenght);
 
 			/**
 			 * \brief Serialize the current object to XML.
@@ -95,25 +95,25 @@ namespace logicalaccess
 			 * \brief Get the offset in wiegand communication.
 			 * \return The offset in wiegand communication.
 			 */
-			byte getOffset() const;
+			unsigned char getOffset() const;
 
 			/**
 			 * \brief Set the offset in wiegand communication.
 			 * \param offset The new offset in wiegand communication.
 			 */
-			void setOffset(byte offset);
+			void setOffset(unsigned char offset);
 			
 			/**
 			 * \brief Get the lenght of csn in wiegand communication.
 			 * \return The lenght of csn in wiegand communication.
 			 */
-			byte getLenght() const;
+			unsigned char getLenght() const;
 
 			/**
 			 * \brief Set the lenght of csn in wiegand communication.
 			 * \param lenght The new lenght of csn in wiegand communication.
 			 */
-			void setLenght(byte lenght);
+			void setLenght(unsigned char lenght);
 
 		protected:
 
@@ -121,9 +121,9 @@ namespace logicalaccess
 
 			int d_port;
 
-			byte d_offset;
+			unsigned char d_offset;
 
-			byte d_lenght;
+			unsigned char d_lenght;
 	};
 }
 
