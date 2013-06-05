@@ -40,14 +40,7 @@ namespace logicalaccess
 		if (format)
 		{
 			formatret = Format::getByFormatType(format->getType());
-			try
-			{
-				formatret->unSerialize(format->serialize(), "");
-			}catch(std::exception& ex)
-			{
-				INFO_("fxml error: %s", ex.what());
-				throw ex;
-			}
+			formatret->unSerialize(format->serialize(), "");
 			unsigned int dataLengthBits = static_cast<unsigned int>(getCardProvider()->getChip()->getChipIdentifier().size()) * 8;
 	
 			if (dataLengthBits > 0)
