@@ -36,18 +36,18 @@ namespace logicalaccess
 	{
 		bool ret = false;
 
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasReadFormatAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		boost::shared_ptr<Format> formatret;
 		if (format)
 		{
 			formatret = Format::getByFormatType(format->getType());
-			formatret->unSerialize(format->serialize(), "");
+			try
+			{
+				formatret->unSerialize(format->serialize(), "");
+			}catch(std::exception& ex)
+			{
+				INFO_("fxml error: %s", ex.what());
+				throw ex;
+			}
 			unsigned int dataLengthBits = static_cast<unsigned int>(getCardProvider()->getChip()->getChipIdentifier().size()) * 8;
 	
 			if (dataLengthBits > 0)
@@ -66,7 +66,7 @@ namespace logicalaccess
 						unsigned int realDataLengthBits = boost::dynamic_pointer_cast<GenericTagChip>(getCardProvider()->getChip())->getTagIdBitsLength();
 						if (realDataLengthBits == 0)
 						{
-							realDataLengthBits = length;
+							realDataLengthBits = length * 8;
 						}
 
 						if (realDataLengthBits >= formatret->getDataLength())
@@ -75,6 +75,10 @@ namespace logicalaccess
 							BitHelper::writeToBit(formatBuf, formatlength, &writePosBit, databuf, length, dataLengthBits, dataLengthBits - realDataLengthBits, realDataLengthBits);
 							formatret->setLinearData(formatBuf, formatlength);
 							ret = true;
+						}
+						else
+						{
+							ERROR_("Cannot read the format: format length (%d) bigger than the total available bits (%d).", formatret->getDataLength(), realDataLengthBits);
 						}
 					}
 				}

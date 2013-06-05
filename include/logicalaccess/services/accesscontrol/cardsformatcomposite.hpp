@@ -108,6 +108,13 @@ namespace logicalaccess
 			boost::shared_ptr<Format> readFormat();
 
 			/**
+			 * \brief Read format from a card.
+			 * \param chip The chip object.
+			 * \return The format.
+			 */
+			boost::shared_ptr<Format> readFormat(boost::shared_ptr<Chip> chip);
+
+			/**
 			 * \brief Serialize the current object to XML.
 			 * \param parentNode The parent node.
 			 */

@@ -107,10 +107,15 @@ namespace logicalaccess
 
 	boost::shared_ptr<Format> CardsFormatComposite::readFormat()
 	{
+		return readFormat(getReaderUnit()->getSingleChip());
+	}
+
+	boost::shared_ptr<Format> CardsFormatComposite::readFormat(boost::shared_ptr<Chip> chip)
+	{
 		EXCEPTION_ASSERT_WITH_LOG(getReaderUnit(), LibLogicalAccessException, "A reader unit must be associated to the object.");
 
 		boost::shared_ptr<Format> fcopy;
-		boost::shared_ptr<Chip> chip = getReaderUnit()->getSingleChip();
+		
 		if (chip)
 		{			
 			FormatInfos finfos;
@@ -148,6 +153,10 @@ namespace logicalaccess
 						fcopy.reset();
 					}
 				}
+			}
+			else
+			{
+				INFO_SIMPLE_("Cannot found any configured format for this chip.");
 			}
 		}
 		return fcopy;

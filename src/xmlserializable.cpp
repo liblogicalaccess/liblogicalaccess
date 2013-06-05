@@ -108,13 +108,18 @@ namespace logicalaccess
 
 	std::string XmlSerializable::serialize()
 	{
+		return XmlSerializable::removeXmlDeclaration(serializeWithHeaders());
+	}
+
+	std::string XmlSerializable::serializeWithHeaders()
+	{
 		std::ostringstream oss;
 		boost::property_tree::ptree pt;
 
 		serialize(pt);
 
 		boost::property_tree::xml_parser::write_xml(oss, pt);
-		return XmlSerializable::removeXmlDeclaration(oss.str());
+		return oss.str();
 	}
 
 	bool XmlSerializable::unSerialize(const std::string& xmlstring, const std::string& rootNode)

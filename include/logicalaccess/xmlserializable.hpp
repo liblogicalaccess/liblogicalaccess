@@ -75,6 +75,12 @@ namespace logicalaccess
 			virtual std::string serialize();
 
 			/**
+			 * \brief Serialize object to Xml Node string, with xml headers.
+			 * \return The serialized object.
+			 */
+			virtual std::string serializeWithHeaders();
+
+			/**
 			 * \brief Serialize object to Xml Node.
 			 * \param os The XML stream.
 			 */
@@ -122,7 +128,7 @@ namespace logicalaccess
 			 * \param filename The Xml file.
 			 * \return True on success, false otherwise.
 			 */
-			virtual bool unSerializeFromFile(const std::string& filename);
+			virtual bool unSerializeFromFile(const std::string& filename);		
 
 			/**
 			 * \brief Get the default Xml Node name for this object.

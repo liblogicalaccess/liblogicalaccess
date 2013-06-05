@@ -111,7 +111,7 @@ namespace logicalaccess
 
 		if (composite)
 		{
-			INFO_("Composite used to find the chip identifier {%s}", dynamic_cast<XmlSerializable*>(&(*composite))->serialize().c_str());
+			INFO_("Composite used to find the chip identifier {%s}", boost::dynamic_pointer_cast<XmlSerializable>(composite)->serialize().c_str());
 			composite->setReaderUnit(shared_from_this());
 
 			CardTypeList ctList = composite->getConfiguredCardTypes();
@@ -137,7 +137,7 @@ namespace logicalaccess
 				if (format)
 				{
 					INFO_SIMPLE_("Format retrieved successfully ! Reading the format...");
-					format = composite->readFormat();	// Read format on chip
+					format = composite->readFormat(chip);	// Read format on chip
 
 					if (format)
 					{
@@ -173,20 +173,8 @@ namespace logicalaccess
 
 	std::vector<unsigned char> ReaderUnit::getNumber(boost::shared_ptr<Chip> chip)
 	{
-		INFO_("Started for chip type {0x%s(%s)}.", chip->getGenericCardType().c_str(), chip->getGenericCardType().c_str());
-
-#ifdef _LICENSE_SYSTEM
-		INFO_SIMPLE_("Licence system activated ! Getting card format composite from license...");
-#endif
-
 		// Read encoded format if specified in the license.
-		return getNumber(chip,
-#ifdef _LICENSE_SYSTEM
-			d_license->getCardsFormatComposite(shared_from_this())
-#else
-			boost::shared_ptr<CardsFormatComposite>()
-#endif
-		);		
+		return getNumber(chip, boost::shared_ptr<CardsFormatComposite>());
 	}
 
 	uint64_t ReaderUnit::getFormatedNumber(const std::vector<unsigned char>& number, int padding)
