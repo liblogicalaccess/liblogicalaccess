@@ -224,6 +224,14 @@ namespace logicalaccess
 		{
 			ret.reset(new Chip(type));
 		}
+		else
+		{
+			boost::shared_ptr<CardProvider> cp = LibraryManager::getInstance()->getCardProvider(type);
+			if (cp)
+			{
+				ret->setCardProvider(cp);
+			}
+		}
 
 		return ret;
 	}

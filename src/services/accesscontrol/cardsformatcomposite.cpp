@@ -115,9 +115,11 @@ namespace logicalaccess
 		EXCEPTION_ASSERT_WITH_LOG(getReaderUnit(), LibLogicalAccessException, "A reader unit must be associated to the object.");
 
 		boost::shared_ptr<Format> fcopy;
-		
+
 		if (chip)
 		{			
+			INFO_("Read format using card format composite on a chip (%s)...", BufferHelper::getHex(chip->getChipIdentifier()).c_str());
+
 			FormatInfos finfos;
 			std::string ct = chip->getCardType();
 			FormatInfosList::iterator it = formatsList.find(ct);
@@ -138,14 +140,26 @@ namespace logicalaccess
 					// Make a manual format copy to preserve integrity.
 					try
 					{
-						boost::shared_ptr<AccessControlCardService> acService = boost::dynamic_pointer_cast<AccessControlCardService>(chip->getCardProvider()->getService(CST_ACCESS_CONTROL));
-						if (acService)
+						INFO_SIMPLE_("Getting access control service from chip...");
+						if (chip->getCardProvider())
 						{
-							fcopy = acService->readFormat(finfos.format, finfos.location, finfos.aiToUse);
-							if (fcopy && !finfos.format->checkSkeleton(fcopy))
+							boost::shared_ptr<AccessControlCardService> acService = boost::dynamic_pointer_cast<AccessControlCardService>(chip->getCardProvider()->getService(CST_ACCESS_CONTROL));
+							if (acService)
 							{
-								fcopy.reset();
+								fcopy = acService->readFormat(finfos.format, finfos.location, finfos.aiToUse);
+								if (fcopy && !finfos.format->checkSkeleton(fcopy))
+								{
+									fcopy.reset();
+								}
 							}
+							else
+							{
+								ERROR_("Cannot found any access control service for this chip.");
+							}
+						}
+						else
+						{
+							ERROR_("No card provider on this chip.");
 						}
 					}
 					catch(std::exception&)
@@ -159,6 +173,16 @@ namespace logicalaccess
 				INFO_SIMPLE_("Cannot found any configured format for this chip.");
 			}
 		}
+
+		if (fcopy)
+		{
+			INFO_SIMPLE_("Format found, return.");
+		}
+		else
+		{
+			INFO_SIMPLE_("No format found, return.");
+		}
+
 		return fcopy;
 	}
 
