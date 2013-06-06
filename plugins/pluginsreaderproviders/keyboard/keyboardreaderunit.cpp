@@ -222,7 +222,7 @@ namespace logicalaccess
 		bool ret = false;
 
 #ifdef _WINDOWS
-		DWORD res = WaitForSingleObject(getKeyboardReaderProvider()->hKbdEvent, maxwait);
+		DWORD res = WaitForSingleObject(getKeyboardReaderProvider()->hKbdEvent, (maxwait == 0) ? INFINITE : maxwait);
 		if (res == WAIT_OBJECT_0)
 		{
 			ResetEvent(getKeyboardReaderProvider()->hKbdEvent);
