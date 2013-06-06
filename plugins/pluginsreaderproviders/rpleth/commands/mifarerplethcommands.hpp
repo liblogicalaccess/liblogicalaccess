@@ -57,7 +57,7 @@ namespace logicalaccess
 			 * \param keytype The key type.
 			 * \param key The key byte array.
 			 * \param keylen The key byte array length.
-			 * \param vol Use volatile memory.
+			 * \param vol Use volatile memory, not used by this reader.
 			 * \return true on success, false otherwise.
 			 */
 			bool loadKey(unsigned char keyno, MifareKeyType keytype, const void* key, size_t keylen, bool vol = false);

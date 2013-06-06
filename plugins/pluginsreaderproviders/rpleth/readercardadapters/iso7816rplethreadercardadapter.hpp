@@ -8,6 +8,7 @@
 #define LOGICALACCESS_ISO7816RPLETHREADERCARDADAPTER_HPP
 
 #include "rplethreadercardadapter.hpp"
+#include "readercardadapters/iso7816readercardadapter.hpp"
 
 #include <string>
 #include <vector>
@@ -18,7 +19,7 @@ namespace logicalaccess
 	/**
 	 * \brief A default Rpleth reader/card adapter class.
 	 */
-	class LIBLOGICALACCESS_API ISO7816RplethReaderCardAdapter : public RplethReaderCardAdapter
+	class LIBLOGICALACCESS_API ISO7816RplethReaderCardAdapter : public ISO7816ReaderCardAdapter
 	{
 		public:
 
@@ -38,10 +39,23 @@ namespace logicalaccess
 			 * \param timeout The command timeout.
 			 * \return The result of the command.
 			 */
-			std::vector<unsigned char> sendCommand(std::vector<unsigned char>& command, long int timeout = 2000);
+			virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long int timeout = 2000);
+
+			/**
+			 * \brief Get the reader unit.
+			 * \return The reader unit.
+			 */
+			virtual boost::shared_ptr<ReaderUnit> getReaderUnit();
+
+			/**
+			 * \brief Set the reader unit.
+			 * \param unit The reader unit.
+			 */
+			virtual void setReaderUnit(boost::weak_ptr<ReaderUnit> unit);
 			
 		protected:
 			
+			boost::shared_ptr<RplethReaderCardAdapter> d_rpleth_reader_card_adapter;
 	};
 
 }

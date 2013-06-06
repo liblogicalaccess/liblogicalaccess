@@ -31,12 +31,15 @@ namespace logicalaccess
 		size_t result;
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> answer;
+		char buffer [2];
 		command.push_back(static_cast<unsigned char>(Device::HID));
 		command.push_back(static_cast<unsigned char>(HidCommand::COM));
-		command.push_back(static_cast<unsigned char>(0x03));
+		command.push_back(static_cast<unsigned char>(0x04));
 		command.push_back(static_cast<unsigned char>('r'));
 		command.push_back(static_cast<unsigned char>('b'));
-		command.push_back(static_cast<unsigned char>(page));
+		sprintf (buffer, "%x%x", page>>4, page&0xf);
+		command.push_back(static_cast<unsigned char>(buffer[0]));
+		command.push_back(static_cast<unsigned char>(buffer[1]));
 		answer = getRplethReaderCardAdapter()->sendCommand (command, 0);
 		memcpy(buf, &answer[0], answer.size());
 		result = answer.size();
@@ -48,18 +51,21 @@ namespace logicalaccess
 		size_t result;
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> answer;
+		char buffer [2];
 		command.push_back(static_cast<unsigned char>(Device::HID));
 		command.push_back(static_cast<unsigned char>(HidCommand::COM));
-		command.push_back(static_cast<unsigned char>(buflen+0x03));
+		command.push_back(static_cast<unsigned char>(buflen+0x04));
 		command.push_back(static_cast<unsigned char>('w'));
 		command.push_back(static_cast<unsigned char>('b'));
-		command.push_back(static_cast<unsigned char>(page));
+		sprintf (buffer, "%x%x", page>>4, page&0xf);
+		command.push_back(static_cast<unsigned char>(buffer[0]));
+		command.push_back(static_cast<unsigned char>(buffer[1]));
 		for (size_t i = 0; i < buflen; i++)
 		{
 			command.push_back(static_cast<unsigned char>(((char*)buf)[i]));
 		}
 		answer = getRplethReaderCardAdapter()->sendCommand (command, 0);
-		result = answer.size();
+		result = buflen;
 		return result;
 	}
 }

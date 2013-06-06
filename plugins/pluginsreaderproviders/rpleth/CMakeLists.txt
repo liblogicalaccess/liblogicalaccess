@@ -6,7 +6,10 @@ if (NOT TARGET_ARCH)
 endif()
 
 set(INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare
-		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifareultralight)
+		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso7816
+		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifareultralight
+		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire
+		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816)
 if (UNIX)
   set(INCLUDE_FOLDER ${INCLUDE_FOLDER} "/usr/local/include/Rpleth/")
 endif()
@@ -34,11 +37,17 @@ set(SOURCE_LIB ${SRCS} ${source_readercardadapters} ${source_commands})
 set (LINK_OPT)
 if (UNIX)
 LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare/bin
-				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifareultralight/bin)
+				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifareultralight/bin
+				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire/bin
+				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso7816/bin
+				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816/bin)
 set(LINK_OPT winscard liblogicalaccess)
 else()
 LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
-				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifareultralight/bin/${TARGET_ARCH}/${VC_FOLDER_NAME})
+				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso7816/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
+				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifareultralight/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
+				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
+				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire/bin/${TARGET_ARCH}/${VC_FOLDER_NAME})
 endif()
 
 
@@ -60,5 +69,8 @@ target_link_libraries(
 	rplethreaders
 	mifarecards
 	mifareultralightcards
+	desfirecards
+	iso7816readers
+	iso7816cards
 	${LINK_OPT}
 )

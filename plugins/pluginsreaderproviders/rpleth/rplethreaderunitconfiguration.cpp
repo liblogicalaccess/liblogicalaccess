@@ -26,6 +26,7 @@ namespace logicalaccess
 		d_port = 2000;
 		d_offset = 1;
 		d_length = 16;
+		d_type = ReaderType::WIEGAND;
 	}
 
 	void RplethReaderUnitConfiguration::setConfiguration(const std::string& readerAddress, int port)
@@ -101,5 +102,15 @@ namespace logicalaccess
 	void RplethReaderUnitConfiguration::setLength(unsigned char length)
 	{
 		d_length = length;
+	}
+
+	unsigned char RplethReaderUnitConfiguration::getType() const
+	{
+		return d_type;
+	}
+
+	void RplethReaderUnitConfiguration::setType(unsigned char type)
+	{
+		d_type = type;
 	}
 }

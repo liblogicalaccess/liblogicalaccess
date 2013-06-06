@@ -39,7 +39,7 @@ namespace logicalaccess
 			 * \param buflen The length of buffer. Must be at least 4 bytes long or the call will fail.
 			 * \return The number of bytes red, or a negative value on error.
 			 */
-			virtual size_t readPage(int page, void* buf, size_t buflen) = 0;
+			virtual size_t readPage(int page, void* buf, size_t buflen);
 
 			/**
 			 * \brief Write a whole page.
@@ -48,7 +48,7 @@ namespace logicalaccess
 			 * \param buflen The length of buffer. Must be at least 4 bytes long or the call will fail.
 			 * \return The number of bytes written, or a negative value on error.
 			 */
-			virtual size_t writePage(int page, const void* buf, size_t buflen) = 0;
+			virtual size_t writePage(int page, const void* buf, size_t buflen);
 			
 			/**
 			 * \brief Get the Rpleth reader/card adapter.

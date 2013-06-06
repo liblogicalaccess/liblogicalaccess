@@ -12,6 +12,12 @@
 
 namespace logicalaccess
 {	
+	typedef enum
+	{
+		WIEGAND = 0x01,
+		RS = 0x02
+	} ReaderType;
+
 	/**
 	 * \brief The Rpleth reader unit configuration base class.
 	 */
@@ -115,6 +121,18 @@ namespace logicalaccess
 			 */
 			void setLength(unsigned char length);
 
+			/**
+			 * \brief Get the type of the reader.
+			 * \return The type of the reader.
+			 */
+			unsigned char getType() const;
+
+			/**
+			 * \brief Set the type of the reader.
+			 * \param type The new type of the reader.
+			 */
+			void setType(unsigned char type);
+
 		protected:
 
 			std::string d_readerAddress;
@@ -124,6 +142,8 @@ namespace logicalaccess
 			unsigned char d_offset;
 
 			unsigned char d_length;
+
+			unsigned char d_type;
 	};
 }
 

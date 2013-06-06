@@ -35,8 +35,7 @@ namespace logicalaccess
 		GATEWAY = 0x06,
 		PORT = 0x07,
 		MESSAGE = 0x08,
-		WIEGAND = 0x09,
-		RESET = 0x0A
+		RESET = 0x09
 	} RplethCommand;
 
 	typedef enum
@@ -57,6 +56,13 @@ namespace logicalaccess
 		SCROLL = 0X03,
 		DISPLAYTIME = 0x04
 	} LcdCommand;
+
+	typedef enum
+	{
+		MIFARE = '2',
+		MIFAREULTRALIGHT = '5',
+		DESFIRE = '6'
+	} ChipType;
 
 	/**
 	 * \brief The Rpleth reader unit class.
@@ -280,7 +286,14 @@ namespace logicalaccess
 			 */
 			std::vector<unsigned char> badge(long int timeout = 2000);
 
-			std::vector<unsigned char> sendCommand(std::string command);
+			/**
+			 * \brief Send a command.
+			 * \param command The command to send.
+			 * \return The answer.
+			 */
+			std::vector<unsigned char> sendCommandCom(std::string command);
+
+			std::vector<unsigned char> AsciiToHex (std::vector<unsigned char> source);
 
 		protected:
 			

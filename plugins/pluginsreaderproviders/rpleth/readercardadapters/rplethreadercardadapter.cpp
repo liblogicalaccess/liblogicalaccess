@@ -5,6 +5,7 @@
  */
 
 #include "rplethreadercardadapter.hpp"
+#include "logicalaccess/bufferhelper.hpp"
 
 namespace logicalaccess
 {		
@@ -21,6 +22,8 @@ namespace logicalaccess
 
 	std::vector<unsigned char> RplethReaderCardAdapter::sendCommand(const std::vector<unsigned char>& command, long int timeout)
 	{
+		COM_("Sending data: %s", BufferHelper::getHex(command).c_str());
+
 		std::vector<unsigned char> res;
 		std::vector<unsigned char> cmd = command;
 		cmd.push_back (calcChecksum(command));
@@ -30,6 +33,8 @@ namespace logicalaccess
 			socket->send(boost::asio::buffer(cmd));
 			res = receiveAnwser(command, timeout);
 		}
+
+		COM_("Answer: %s", BufferHelper::getHex(res).c_str());
 		return res;
 	}
 
@@ -53,8 +58,15 @@ namespace logicalaccess
 			if (byte_read == 4)
 			{
 				std::vector<unsigned char> data (static_cast<int> (res[3]+1));
+				// wait to receive the full frame
+		#ifdef _WINDOWS
+				Sleep(100);
+		#elif defined(LINUX)
+				usleep(100000);
+		#endif
 				size_t byte_read = socket->receive (boost::asio::buffer(data));
 				res.insert(res.end(), data.begin(), data.begin()+byte_read);
+				COM_("Answer without computation: %s", BufferHelper::getHex(res).c_str());
 				res = handleAnswerBuffer (command, std::vector<unsigned char>(res.begin(), res.begin() + 4 + byte_read));
 			}
 		}
