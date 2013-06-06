@@ -183,17 +183,14 @@ namespace logicalaccess
 		(*pos) += readSizeBits;
 	}
 
-	void ValueDataField::serialize(boost::property_tree::ptree& parentNode)
-	{
-		boost::property_tree::ptree node;
-		
+	void ValueDataField::serialize(boost::property_tree::ptree& node)
+	{		
+		DataField::serialize(node);
 		node.put("IsFixedField", d_isFixedField);
 		node.put("IsIdentifier", d_isIdentifier);
 		node.put("DataRepresentation", d_dataRepresentation->getType());
 		node.put("DataType", d_dataType->getType());
 		node.put("Length", d_length);
-
-		parentNode.add_child(getDefaultXmlNodeName(), node);
 	}
 
 	void ValueDataField::unSerialize(boost::property_tree::ptree& node)

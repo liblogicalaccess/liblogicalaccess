@@ -1160,7 +1160,7 @@ namespace logicalaccess
 		if (chip)
 		{
 			boost::shared_ptr<ReaderCardAdapter> rca = getReaderCardAdapter(type);
-			boost::shared_ptr<CardProvider> cp;
+			boost::shared_ptr<CardProvider> cp = chip->getCardProvider();
 			boost::shared_ptr<Commands> commands;
 
 			if (type ==  "Mifare1K" || type == " Mifare4K" || type == " Mifare")
@@ -1250,11 +1250,6 @@ namespace logicalaccess
 						commands.reset(new MifarePlusSpringCardCommandsSL3());
 					}
 				}
-			}
-
-			if (!cp)
-			{
-				cp = LibraryManager::getInstance()->getCardProvider(type);
 			}
 
 			rca->setReaderUnit(shared_from_this());

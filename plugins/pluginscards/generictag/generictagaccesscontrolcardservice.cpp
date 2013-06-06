@@ -36,56 +36,65 @@ namespace logicalaccess
 	{
 		bool ret = false;
 
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasReadFormatAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
+		INFO_SIMPLE_("Try to read a format from Generic Tag...");
 
 		boost::shared_ptr<Format> formatret;
 		if (format)
 		{
-			formatret = Format::getByFormatType(format->getType());
-			formatret->unSerialize(format->serialize(), "");
-			unsigned int dataLengthBits = static_cast<unsigned int>(getCardProvider()->getChip()->getChipIdentifier().size()) * 8;
-	
-			if (dataLengthBits > 0)
+			try
 			{
-				unsigned int length = (dataLengthBits + 7) / 8;
-				unsigned formatlength = (formatret->getDataLength() + 7) / 8;
-				unsigned char *databuf = new unsigned char[length]; 
-				unsigned char *formatBuf = new unsigned char[formatlength];				
-				memset(databuf, 0x00, length);
-				memset(formatBuf, 0x00, formatlength);
-
-				try
+				formatret = Format::getByFormatType(format->getType());
+				formatret->unSerialize(format->serialize(), "");
+				unsigned int dataLengthBits = static_cast<unsigned int>(getCardProvider()->getChip()->getChipIdentifier().size()) * 8;
+	
+				if (dataLengthBits > 0)
 				{
-					if (getCardProvider()->readData(boost::shared_ptr<Location>(), boost::shared_ptr<AccessInfo>(), databuf, length, CB_DEFAULT))
-					{
-						unsigned int realDataLengthBits = boost::dynamic_pointer_cast<GenericTagChip>(getCardProvider()->getChip())->getTagIdBitsLength();
-						if (realDataLengthBits == 0)
-						{
-							realDataLengthBits = length;
-						}
+					unsigned int length = (dataLengthBits + 7) / 8;
+					unsigned formatlength = (formatret->getDataLength() + 7) / 8;
+					unsigned char *databuf = new unsigned char[length]; 
+					unsigned char *formatBuf = new unsigned char[formatlength];				
+					memset(databuf, 0x00, length);
+					memset(formatBuf, 0x00, formatlength);
 
-						if (realDataLengthBits >= formatret->getDataLength())
+					try
+					{
+						INFO_SIMPLE_("Reading data from Generic Tag...");
+						if (getCardProvider()->readData(boost::shared_ptr<Location>(), boost::shared_ptr<AccessInfo>(), databuf, length, CB_DEFAULT))
 						{
-							unsigned int writePosBit = 0;
-							BitHelper::writeToBit(formatBuf, formatlength, &writePosBit, databuf, length, dataLengthBits, dataLengthBits - realDataLengthBits, realDataLengthBits);
-							formatret->setLinearData(formatBuf, formatlength);
-							ret = true;
+							unsigned int realDataLengthBits = boost::dynamic_pointer_cast<GenericTagChip>(getCardProvider()->getChip())->getTagIdBitsLength();
+							if (realDataLengthBits == 0)
+							{
+								realDataLengthBits = length * 8;
+							}
+
+							if (realDataLengthBits >= formatret->getDataLength())
+							{
+								INFO_SIMPLE_("Converting data to format...");
+								unsigned int writePosBit = 0;
+								BitHelper::writeToBit(formatBuf, formatlength, &writePosBit, databuf, length, dataLengthBits, dataLengthBits - realDataLengthBits, realDataLengthBits);
+								formatret->setLinearData(formatBuf, formatlength);
+								ret = true;
+							}
+							else
+							{
+								ERROR_("Cannot read the format: format length (%d) bigger than the total available bits (%d).", formatret->getDataLength(), realDataLengthBits);
+							}
 						}
 					}
-				}
-				catch(std::exception&)
-				{
+					catch(std::exception&)
+					{
+						delete[] databuf;
+						delete[] formatBuf;
+						throw;
+					}
 					delete[] databuf;
 					delete[] formatBuf;
-					throw;
 				}
-				delete[] databuf;
-				delete[] formatBuf;
+			}
+			catch(std::exception& ex)
+			{
+				ERROR_("Error on read format: %s", ex.what());
+				throw ex;
 			}
 		}
 
