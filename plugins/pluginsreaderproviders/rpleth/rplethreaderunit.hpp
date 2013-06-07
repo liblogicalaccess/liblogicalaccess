@@ -287,12 +287,17 @@ namespace logicalaccess
 			std::vector<unsigned char> badge(long int timeout = 2000);
 
 			/**
-			 * \brief Send a command.
-			 * \param command The command to send.
-			 * \return The answer.
+			 * \brief Convert a Ascii vector in a Hex vector.
+			 * \param source The vector to convert.
+			 * \return The vector converted.
 			 */
+			std::vector<unsigned char> asciiToHex (std::vector<unsigned char> source);
 
-			std::vector<unsigned char> AsciiToHex (std::vector<unsigned char> source);
+			/**
+			 * \brief Send a reqA.
+			 * \return The answer of the card.
+			 */
+			std::vector<unsigned char> reqA ();
 
 		protected:
 			

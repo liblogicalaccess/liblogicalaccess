@@ -56,6 +56,8 @@ namespace logicalaccess
 		protected:
 			
 			boost::shared_ptr<RplethReaderCardAdapter> d_rpleth_reader_card_adapter;
+
+			std::vector<unsigned char> handleAnswer (std::vector<unsigned char> answer);
 	};
 
 }

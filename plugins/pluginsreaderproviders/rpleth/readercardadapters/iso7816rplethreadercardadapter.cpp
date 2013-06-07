@@ -33,9 +33,6 @@ namespace logicalaccess
 
 	std::vector<unsigned char> ISO7816RplethReaderCardAdapter::sendCommand(const std::vector<unsigned char>& command, long int timeout)
 	{
-		COM_("Sending binary data: %s", BufferHelper::getHex(command).c_str());
-		
-		COM_("Command size: %d", command.size());
 		char tmp [3];
 		std::vector<unsigned char> data;
 		data.push_back(static_cast<unsigned char>(Device::HID));
@@ -50,18 +47,34 @@ namespace logicalaccess
 			data.push_back(static_cast<unsigned char>(tmp[0]));
 			data.push_back(static_cast<unsigned char>(tmp[1]));
 		}
-		for (size_t i = 0; i < data.size(); i++)
-		{
-			std::cout << (int)data[i];
-		}
-		std::cout << std::endl;
 		std::vector<unsigned char> answer = d_rpleth_reader_card_adapter->sendCommand (data, timeout);
 		boost::shared_ptr<RplethReaderUnit> readerUnit = boost::dynamic_pointer_cast<RplethReaderUnit>(d_rpleth_reader_card_adapter->getReaderUnit());
 
-		answer = readerUnit->AsciiToHex (answer);
+		answer = readerUnit->asciiToHex (answer);
 
-		COM_("Binary answer: %s", BufferHelper::getHex(answer).c_str());
+		answer = handleAnswer (answer);
+		// add check in the answer size (first byte)
 
 		return answer;
+	}
+
+	std::vector<unsigned char> ISO7816RplethReaderCardAdapter::handleAnswer (std::vector<unsigned char> answer)
+	{
+		std::vector<unsigned char> res;
+		if (res.size() > 1)
+		{
+			if (res[0] == res.size()-1)
+			{
+				res.erase (res.begin());
+			}
+			else
+				res.clear();
+		}
+		else
+		{
+			res.clear();
+		}
+
+		return res;
 	}
 }

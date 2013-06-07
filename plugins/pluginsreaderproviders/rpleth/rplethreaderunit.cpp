@@ -119,6 +119,11 @@ namespace logicalaccess
 
 	bool RplethReaderUnit::connect()
 	{
+		if (d_card_type == "DESFire")
+		{
+			reqA();
+			reqA();
+		}
 		return (d_insertedChip);
 	}
 
@@ -130,13 +135,14 @@ namespace logicalaccess
 	{
 		boost::shared_ptr<Chip> chip;
 		std::vector<unsigned char> buf;
+		bool desfire_chip = false;
 		if (getRplethConfiguration()->getType() == ReaderType::WIEGAND)
 		{
 			buf = badge(maxwait);
 			if (buf.size() > 0)
 			{
 				chip = createChip((d_card_type == "UNKNOWN") ? "GenericTag" : d_card_type);
-				chip->setChipIdentifier(AsciiToHex (buf));
+				chip->setChipIdentifier(asciiToHex (buf));
 			}
 		}
 		else
@@ -144,26 +150,42 @@ namespace logicalaccess
 			unsigned int currentWait = 0;
 			while (!chip && (maxwait == 0 || currentWait < maxwait))
 			{
-				buf = getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("s");
-				if (buf.size () > 1)
+				if (getSingleChip ())	
 				{
-					if (buf[1] == ChipType::MIFARE)
+					if (getSingleChip()->getCardType() == "DESFire")
 					{
-						chip = createChip ("Mifare");
-						buf.erase (buf.begin(), buf.begin()+2);
-						chip->setChipIdentifier(AsciiToHex (buf));
+						buf = reqA ();
+						if (buf.size () == 2)
+						{
+							chip = createChip ("DESFire");
+							chip->setChipIdentifier(getSingleChip()->getChipIdentifier());
+						}
+						desfire_chip = true;
 					}
-					else if (buf[1] == ChipType::DESFIRE)
+				}
+				if (!desfire_chip)
+				{
+					buf = getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("s");
+					if (buf.size () > 1)
 					{
-						chip = createChip ("DESFire");
-						buf.erase (buf.begin(), buf.begin()+2);
-						chip->setChipIdentifier(AsciiToHex (buf));
-					}
-					else if (buf[1] == ChipType::MIFAREULTRALIGHT)
-					{
-						chip = createChip ("MifareUltralight");
-						buf.erase (buf.begin(), buf.begin()+2);
-						chip->setChipIdentifier(AsciiToHex (buf));
+						if (buf[1] == ChipType::MIFARE)
+						{
+							chip = createChip ("Mifare");
+							buf.erase (buf.begin(), buf.begin()+2);
+							chip->setChipIdentifier(asciiToHex (buf));
+						}
+						else if (buf[1] == ChipType::DESFIRE)
+						{
+							chip = createChip ("DESFire");
+							buf.erase (buf.begin(), buf.begin()+2);
+							chip->setChipIdentifier(asciiToHex (buf));
+						}
+						else if (buf[1] == ChipType::MIFAREULTRALIGHT)
+						{
+							chip = createChip ("MifareUltralight");
+							buf.erase (buf.begin(), buf.begin()+2);
+							chip->setChipIdentifier(asciiToHex (buf));
+						}
 					}
 				}
 				if (!chip)
@@ -497,7 +519,7 @@ namespace logicalaccess
 		return result;
 	}
 
-	std::vector<unsigned char> RplethReaderUnit::AsciiToHex (std::vector<unsigned char> source)
+	std::vector<unsigned char> RplethReaderUnit::asciiToHex (std::vector<unsigned char> source)
 	{
 		std::vector<unsigned char> res;
 		char tmp [3];
@@ -509,5 +531,25 @@ namespace logicalaccess
 			res.push_back (static_cast<unsigned char>(strtoul (tmp, NULL, 16)));
 		}
 		return res;
+	}
+
+	std::vector<unsigned char> RplethReaderUnit::reqA ()
+	{
+		std::vector<unsigned char> answer = getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("t01E326");
+		answer = asciiToHex (answer);
+		if (answer.size () > 1)
+		{
+			if (answer[0] == answer.size()-1)
+			{
+				answer.erase (answer.begin());
+			}
+			else
+				answer.clear();
+		}
+		else
+		{
+			answer.clear();
+		}
+		return answer;
 	}
 }
