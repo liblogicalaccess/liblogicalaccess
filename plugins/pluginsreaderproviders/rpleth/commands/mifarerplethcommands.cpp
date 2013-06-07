@@ -53,8 +53,16 @@ namespace logicalaccess
 			tmp [2] = '\0';
 			answer_hex.push_back (static_cast<unsigned char>(strtoul (tmp, NULL, 16)));
 		}
-		memcpy(buf, &answer_hex[0], min (len, answer_hex.size()));
-		res = min (len, answer.size());
+		res = (len < answer_hex.size()) ? len : answer_hex.size();
+		if (res <= buflen)
+		{
+			memcpy(buf, &answer_hex[0], res);
+		}
+		else
+		{
+			res = 0;
+		}
+
 		return res;
 	}
 	
@@ -84,7 +92,7 @@ namespace logicalaccess
 		return result;
 	}
 	
-	bool MifareRplethCommands::loadKey(unsigned char keyno, MifareKeyType keytype, const void* key, size_t keylen, bool vol)
+	bool MifareRplethCommands::loadKey(unsigned char keyno, MifareKeyType /*keytype*/, const void* key, size_t keylen, bool vol)
 	{
 		bool r = true;
 		if (!vol)
