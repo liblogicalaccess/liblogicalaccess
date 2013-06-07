@@ -38,6 +38,18 @@ namespace logicalaccess
 		return res;
 	}
 
+	std::vector<unsigned char> RplethReaderCardAdapter::sendAsciiCommand(const std::string command, long int timeout)
+	{
+		std::vector<unsigned char> cmd;
+		std::vector<unsigned char> res;
+		cmd.push_back (static_cast<unsigned char>(Device::HID));
+		cmd.push_back (static_cast<unsigned char>(HidCommand::COM));
+		cmd.push_back (static_cast<unsigned char>(command.size()));
+		cmd.insert(cmd.end(), command.begin(), command.end());
+		res = sendCommand (cmd, timeout);
+		return res;
+	}
+
 	std::vector<unsigned char> RplethReaderCardAdapter::receiveAnwser(const std::vector<unsigned char>& command, long int timeout)
 	{
 		std::vector<unsigned char> res(4);

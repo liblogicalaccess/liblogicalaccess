@@ -144,7 +144,7 @@ namespace logicalaccess
 			unsigned int currentWait = 0;
 			while (!chip && (maxwait == 0 || currentWait < maxwait))
 			{
-				buf = sendCommandCom ("s");
+				buf = getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("s");
 				if (buf.size () > 1)
 				{
 					if (buf[1] == ChipType::MIFARE)
@@ -475,18 +475,6 @@ namespace logicalaccess
 		res = getDefaultRplethReaderCardAdapter()->receiveAnwser(cmd, timeout);
 		// res contains full wiegand trame, it need to take the csn
 		res = getCsn (res);
-		return res;
-	}
-
-	std::vector<unsigned char> RplethReaderUnit::sendCommandCom(std::string command)
-	{
-		std::vector<unsigned char> cmd;
-		std::vector<unsigned char> res;
-		cmd.push_back (static_cast<unsigned char>(Device::HID));
-		cmd.push_back (static_cast<unsigned char>(HidCommand::COM));
-		cmd.push_back (static_cast<unsigned char>(command.size()));
-		cmd.insert(cmd.end(), command.begin(), command.end());
-		res = getDefaultRplethReaderCardAdapter()->sendCommand (cmd, 0);
 		return res;
 	}
 

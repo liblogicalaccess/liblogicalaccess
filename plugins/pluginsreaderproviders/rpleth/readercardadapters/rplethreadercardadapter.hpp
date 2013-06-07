@@ -43,6 +43,14 @@ namespace logicalaccess
 			virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long int timeout = 2000);
 			
 			/**
+			 * \brief Send a command in ascci to the reader.
+			 * \param command The command buffer.			 
+			 * \param timeout The command timeout.
+			 * \return The result of the command.
+			 */
+			virtual std::vector<unsigned char> sendAsciiCommand(const std::string command, long int timeout = 2000);
+
+			/**
 			 * \brief Receive the reader answer.
 			 * \param command The sand command buffer.		 
 			 * \param timeout The answer timeout.

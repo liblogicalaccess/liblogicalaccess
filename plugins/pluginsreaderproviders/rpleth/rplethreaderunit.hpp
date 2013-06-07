@@ -291,7 +291,6 @@ namespace logicalaccess
 			 * \param command The command to send.
 			 * \return The answer.
 			 */
-			std::vector<unsigned char> sendCommandCom(std::string command);
 
 			std::vector<unsigned char> AsciiToHex (std::vector<unsigned char> source);
 
