@@ -9,10 +9,8 @@ set(INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare
 		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso7816
 		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifareultralight
 		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire
+		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic
 		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816)
-if (UNIX)
-  set(INCLUDE_FOLDER ${INCLUDE_FOLDER} "/usr/local/include/rpleth/")
-endif()
 
 INCLUDE_DIRECTORIES(${INCLUDE_FOLDER})
 
@@ -39,6 +37,7 @@ if (UNIX)
 LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare/bin
 				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifareultralight/bin
 				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire/bin
+				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic/bin
 				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso7816/bin
 				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816/bin)
 set(LINK_OPT winscard liblogicalaccess)
@@ -46,8 +45,9 @@ else()
 LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
 				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso7816/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
 				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifareultralight/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
-				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
-				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire/bin/${TARGET_ARCH}/${VC_FOLDER_NAME})
+				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
+				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
+				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816/bin/${TARGET_ARCH}/${VC_FOLDER_NAME})
 endif()
 
 
@@ -70,6 +70,7 @@ target_link_libraries(
 	mifarecards
 	mifareultralightcards
 	desfirecards
+	twiccards
 	iso7816readers
 	iso7816cards
 	${LINK_OPT}
