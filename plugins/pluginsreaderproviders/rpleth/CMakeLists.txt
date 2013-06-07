@@ -11,7 +11,7 @@ set(INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare
 		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire
 		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816)
 if (UNIX)
-  set(INCLUDE_FOLDER ${INCLUDE_FOLDER} "/usr/local/include/Rpleth/")
+  set(INCLUDE_FOLDER ${INCLUDE_FOLDER} "/usr/local/include/rpleth/")
 endif()
 
 INCLUDE_DIRECTORIES(${INCLUDE_FOLDER})

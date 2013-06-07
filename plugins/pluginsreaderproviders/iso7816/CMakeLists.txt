@@ -52,7 +52,7 @@ SET_TARGET_PROPERTIES(iso7816readers PROPERTIES VERSION 2.0.3)
   
 set(LINK_LIB)
 if (WIN32)
-  set(LINK_LIB libeay32 TwicCards liblogicalaccess)
+  set(LINK_LIB libeay32 twiccards liblogicalaccess)
 else()
   set(LINK_LIB crypto logicalaccess)
 endif()
