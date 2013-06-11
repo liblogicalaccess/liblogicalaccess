@@ -26,7 +26,7 @@ namespace logicalaccess
 		d_port = 2000;
 		d_offset = 1;
 		d_length = 16;
-		d_mode = RplethMode::WIEGAND;
+		d_mode = RplethMode::RS;
 	}
 
 	void RplethReaderUnitConfiguration::setConfiguration(const std::string& readerAddress, int port)
