@@ -12,7 +12,6 @@ namespace logicalaccess
 	RplethReaderCardAdapter::RplethReaderCardAdapter()
 		: ReaderCardAdapter()
 	{
-		
 	}
 
 	RplethReaderCardAdapter::~RplethReaderCardAdapter()
@@ -25,13 +24,15 @@ namespace logicalaccess
 		COM_("Sending data: %s", BufferHelper::getHex(command).c_str());
 
 		std::vector<unsigned char> res;
-		std::vector<unsigned char> cmd = command;
-		cmd.push_back (calcChecksum(command));
+		std::vector<unsigned char> cmd;
+		cmd.insert (cmd.begin(), command.begin(), command.end());
+		cmd.push_back (calcChecksum(cmd));
 		if (cmd.size() > 0) 
 		{ 
 			boost::shared_ptr<boost::asio::ip::tcp::socket> socket = getRplethReaderUnit()->getSocket();
 			socket->send(boost::asio::buffer(cmd));
-			res = receiveAnwser(command, timeout);
+
+			res = receiveAnwser(cmd, timeout);
 		}
 
 		COM_("Answer: %s", BufferHelper::getHex(res).c_str());
@@ -53,6 +54,12 @@ namespace logicalaccess
 	std::vector<unsigned char> RplethReaderCardAdapter::receiveAnwser(const std::vector<unsigned char>& command, long int timeout)
 	{
 		std::vector<unsigned char> res(4);
+		// wait to receive the full frame
+	#ifdef _WINDOWS
+			Sleep(100);
+	#elif defined(LINUX)
+			usleep(100000);
+	#endif
 		boost::shared_ptr<boost::asio::ip::tcp::socket> socket = getRplethReaderUnit()->getSocket();
 		long int currentWait = 0;
 		while (socket->available() == 0 && (timeout == 0 || currentWait < timeout))
@@ -71,19 +78,15 @@ namespace logicalaccess
 			{
 				std::vector<unsigned char> data (static_cast<int> (res[3]+1));
 				// wait to receive the full frame
-		#ifdef _WINDOWS
-				Sleep(100);
-		#elif defined(LINUX)
-				usleep(100000);
-		#endif
 				size_t byte_read = socket->receive (boost::asio::buffer(data));
 				res.insert(res.end(), data.begin(), data.begin()+byte_read);
-				COM_("Answer without computation: %s", BufferHelper::getHex(res).c_str());
 				res = handleAnswerBuffer (command, std::vector<unsigned char>(res.begin(), res.begin() + 4 + byte_read));
 			}
 		}
 		catch (std::invalid_argument&)
 		{
+			std::cout << "BUG" << std::endl;
+			res.clear();
 		}
 		return res;
 	}

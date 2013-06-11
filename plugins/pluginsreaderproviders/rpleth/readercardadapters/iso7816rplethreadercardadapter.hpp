@@ -34,6 +34,51 @@ namespace logicalaccess
 			virtual ~ISO7816RplethReaderCardAdapter();
 
 			/**
+			 * \brief Send an APDU command to the reader.
+			 */
+			virtual void sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const unsigned char* data, size_t datalen, unsigned char le, unsigned char* result, size_t* resultlen);
+
+			/**
+			 * \brief Send an APDU command to the reader.
+			 */
+			virtual void sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const unsigned char* data, size_t datalen, unsigned char* result, size_t* resultlen);
+
+			/**
+			 * \brief Send an APDU command to the reader.
+			 */
+			virtual void sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, const unsigned char* data, size_t datalen, unsigned char* result, size_t* resultlen);
+
+			/**
+			 * \brief Send an APDU command to the reader without result.
+			 */
+			virtual void sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const unsigned char* data, size_t datalen, unsigned char le);
+
+			/**
+			 * \brief Send an APDU command to the reader without result.
+			 */
+			virtual void sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const unsigned char* data, size_t datalen);
+
+			/**
+			 * \brief Send an APDU command to the reader without data and result.
+			 */
+			virtual void sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char le);
+
+			/**
+			 * \brief Send an APDU command to the reader without data.
+			 */
+			virtual void sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, unsigned char le, unsigned char* result, size_t* resultlen);
+
+			/**
+			 * \brief Send an APDU command to the reader without data.
+			 */
+			virtual void sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char le, unsigned char* result, size_t* resultlen);
+
+			/**
+			 * \brief Send an APDU command to the reader without data.
+			 */
+			virtual void sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char* result, size_t* resultlen);
+
+			/**
 			 * \brief Send a command to the reader.
 			 * \param command The command buffer.			 
 			 * \param timeout The command timeout.
@@ -57,7 +102,11 @@ namespace logicalaccess
 			
 			boost::shared_ptr<RplethReaderCardAdapter> d_rpleth_reader_card_adapter;
 
-			std::vector<unsigned char> handleAnswer (std::vector<unsigned char> answer);
+			std::vector<unsigned char> handleAnswer (const std::vector<unsigned char>& answer);
+
+			std::vector<unsigned char> answerReverse (const std::vector<unsigned char>& answer);
+
+			bool d_prefix;
 	};
 
 }

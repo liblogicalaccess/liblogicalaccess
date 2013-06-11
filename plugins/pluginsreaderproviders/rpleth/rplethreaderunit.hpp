@@ -299,6 +299,12 @@ namespace logicalaccess
 			 */
 			std::vector<unsigned char> reqA ();
 
+			/**
+			 * \brief Send a rats.
+			 * \return The answer of the card.
+			 */
+			std::vector<unsigned char> rats ();
+
 		protected:
 			
 			/**
