@@ -129,7 +129,7 @@ namespace logicalaccess
 
 	void RplethReaderUnit::disconnect()
 	{
-		if (getRplethConfiguration()->getType() == ReaderType::RS)
+		if (getRplethConfiguration()->getMode() == RplethMode::RS)
 		{
 			getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("x");
 			getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("v");
