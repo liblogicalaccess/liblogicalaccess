@@ -140,7 +140,7 @@ namespace logicalaccess
 	{
 		boost::shared_ptr<Chip> chip;
 		std::vector<unsigned char> buf;
-		if (getRplethConfiguration()->getType() == ReaderType::WIEGAND)
+		if (getRplethConfiguration()->getMode() == RplethMode::WIEGAND)
 		{
 			buf = badge(maxwait);
 			if (buf.size() > 0)

@@ -26,7 +26,7 @@ namespace logicalaccess
 		d_port = 2000;
 		d_offset = 1;
 		d_length = 16;
-		d_type = ReaderType::RS;
+		d_mode = RplethMode::RS;
 	}
 
 	void RplethReaderUnitConfiguration::setConfiguration(const std::string& readerAddress, int port)
@@ -104,13 +104,13 @@ namespace logicalaccess
 		d_length = length;
 	}
 
-	unsigned char RplethReaderUnitConfiguration::getType() const
+	RplethMode RplethReaderUnitConfiguration::getMode() const
 	{
-		return d_type;
+		return d_mode;
 	}
 
-	void RplethReaderUnitConfiguration::setType(unsigned char type)
+	void RplethReaderUnitConfiguration::setMode(RplethMode mode)
 	{
-		d_type = type;
+		d_mode = mode;
 	}
 }
