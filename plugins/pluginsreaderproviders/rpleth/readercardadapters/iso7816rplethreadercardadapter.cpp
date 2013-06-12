@@ -161,7 +161,7 @@ namespace logicalaccess
 
 		std::vector<unsigned char> answer = d_rpleth_reader_card_adapter->sendCommand (data, timeout);
 
-		boost::shared_ptr<RplethReaderUnit> readerUnit = boost::dynamic_pointer_cast<RplethReaderUnit>(getReaderUnit());
+		boost::shared_ptr<RplethReaderUnit> readerUnit = boost::dynamic_pointer_cast<RplethReaderUnit>(d_rpleth_reader_card_adapter->getReaderUnit());
 		answer = readerUnit->asciiToHex (answer);
 		answer = handleAnswer (answer);
 		answer = answerReverse (answer);

@@ -59,9 +59,9 @@ namespace logicalaccess
 
 	typedef enum
 	{
-		MIFARE = '2',
-		MIFAREULTRALIGHT = '5',
-		DESFIRE = '6'
+		MIFARE = 0x02,
+		MIFAREULTRALIGHT = 0x05,
+		DESFIRE = 0x06
 	} ChipType;
 
 	/**
@@ -229,25 +229,25 @@ namespace logicalaccess
 			 * \brief Set the Rpleth IP Address.
 			 * \param readerAddress The new Rpleth IP Address.
 			 */
-			void setReaderIp(std::vector<unsigned char> address);
+			void setReaderIp(const std::vector<unsigned char>& address);
 			
 			/**
 			 * \brief Set the Rpleth MAC Address.
 			 * \param readerAddress The new Rpleth MAC Address.
 			 */
-			void setReaderMac(std::vector<unsigned char> address);
+			void setReaderMac(const std::vector<unsigned char>& address);
 
 			/**
 			 * \brief Set the Rpleth Subnet mask.
 			 * \param readerAddress The new Rpleth Subnet Subnet.
 			 */
-			void setReaderSubnet(std::vector<unsigned char> address);
+			void setReaderSubnet(const std::vector<unsigned char>& address);
 			
 			/**
 			 * \brief Set the Rpleth Gateway Address.
 			 * \param readerAddress The new Rpleth Gateway Address.
 			 */
-			void setReaderGateway(std::vector<unsigned char> address);
+			void setReaderGateway(const std::vector<unsigned char>& address);
 
 			/**
 			 * \brief Set the Rpleth port.
@@ -272,7 +272,7 @@ namespace logicalaccess
 			 * \brief Set the Rpleth default message.
 			 * \param message The new default message.
 			 */
-			void setReaderMessage(std::string message);
+			void setReaderMessage(const std::string& message);
 
 			/**
 			 * \brief Send a nop.
@@ -291,7 +291,7 @@ namespace logicalaccess
 			 * \param source The vector to convert.
 			 * \return The vector converted.
 			 */
-			std::vector<unsigned char> asciiToHex (std::vector<unsigned char> source);
+			std::vector<unsigned char> asciiToHex (const std::vector<unsigned char>& source);
 
 			/**
 			 * \brief Send a reqA.
@@ -330,7 +330,7 @@ namespace logicalaccess
 			 * \param trame The wiegnad full trame.			 
 			 * \return The csn contains into the wiegand trame.
 			 */
-			std::vector<unsigned char> getCsn (std::vector<unsigned char> trame);
+			std::vector<unsigned char> getCsn (const std::vector<unsigned char>& trame);
 	};
 }
 

@@ -129,6 +129,11 @@ namespace logicalaccess
 
 	void RplethReaderUnit::disconnect()
 	{
+		if (getRplethConfiguration()->getType() == ReaderType::RS)
+		{
+			getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("x");
+			getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("v");
+		}
 	}
 
 	boost::shared_ptr<Chip> RplethReaderUnit::getChipInAir(unsigned int maxwait)
@@ -150,25 +155,26 @@ namespace logicalaccess
 			while (!chip && (maxwait == 0 || currentWait < maxwait))
 			{
 				buf = getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("s");
-				if (buf.size () > 1)
+				buf = asciiToHex (buf);
+				if (buf.size () > 0)
 				{
-					if (buf[1] == ChipType::MIFARE)
+					if (buf[0] == ChipType::MIFARE)
 					{
 						chip = createChip ("Mifare");
-						buf.erase (buf.begin(), buf.begin()+2);
-						chip->setChipIdentifier(asciiToHex (buf));
+						buf.erase (buf.begin());
+						chip->setChipIdentifier(buf);
 					}
-					else if (buf[1] == ChipType::DESFIRE)
+					else if (buf[0] == ChipType::DESFIRE)
 					{
 						chip = createChip ("DESFire");
-						buf.erase (buf.begin(), buf.begin()+2);
-						chip->setChipIdentifier(asciiToHex (buf));
+						buf.erase (buf.begin());
+						chip->setChipIdentifier(buf);
 					}
-					else if (buf[1] == ChipType::MIFAREULTRALIGHT)
+					else if (buf[0] == ChipType::MIFAREULTRALIGHT)
 					{
 						chip = createChip ("MifareUltralight");
-						buf.erase (buf.begin(), buf.begin()+2);
-						chip->setChipIdentifier(asciiToHex (buf));
+						buf.erase (buf.begin());
+						chip->setChipIdentifier(buf);
 					}
 				}
 				if (!chip)
@@ -356,7 +362,7 @@ namespace logicalaccess
 		getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
 	}
 
-	void RplethReaderUnit::setReaderIp(std::vector<unsigned char> address)
+	void RplethReaderUnit::setReaderIp(const std::vector<unsigned char>& address)
 	{
 		if (address.size() == 4)
 		{
@@ -372,7 +378,7 @@ namespace logicalaccess
 		}
 	}
 
-	void RplethReaderUnit::setReaderMac(std::vector<unsigned char> address)
+	void RplethReaderUnit::setReaderMac(const std::vector<unsigned char>& address)
 	{
 		if (address.size() == 4)
 		{
@@ -388,7 +394,7 @@ namespace logicalaccess
 		}
 	}
 	
-	void RplethReaderUnit::setReaderSubnet(std::vector<unsigned char> address)
+	void RplethReaderUnit::setReaderSubnet(const std::vector<unsigned char>& address)
 	{
 		if (address.size() == 4)
 		{
@@ -404,7 +410,7 @@ namespace logicalaccess
 		}
 	}
 	
-	void RplethReaderUnit::setReaderGateway(std::vector<unsigned char> address)
+	void RplethReaderUnit::setReaderGateway(const std::vector<unsigned char>& address)
 	{
 		if (address.size() == 4)
 		{
@@ -440,7 +446,7 @@ namespace logicalaccess
 		getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
 	}
 
-	void RplethReaderUnit::setReaderMessage(std::string message)
+	void RplethReaderUnit::setReaderMessage(const std::string& message)
 	{
 		std::vector<unsigned char> command;
 		command.push_back (static_cast<unsigned char>(Device::RPLETH));
@@ -483,17 +489,13 @@ namespace logicalaccess
 		return res;
 	}
 
-	std::vector<unsigned char> RplethReaderUnit::getCsn (std::vector<unsigned char> trame)
+	std::vector<unsigned char> RplethReaderUnit::getCsn (const std::vector<unsigned char>& trame)
 	{
 		std::vector<unsigned char> result;
 		boost::shared_ptr<RplethReaderUnitConfiguration> conf = boost::dynamic_pointer_cast<RplethReaderUnitConfiguration>(d_readerUnitConfig);
 		if (conf->getLength() != 0)
 		{
-			for (int i = 0; i < conf->getOffset(); i++)
-			{
-				trame.pop_back ();
-			}
-			result.insert (result.begin(), trame.begin()+(trame.size() - conf->getLength()), trame.end());
+			result.insert (result.begin(), trame.begin()+(trame.size() - conf->getLength()), trame.end()-conf->getOffset());
 		}
 		else
 		{
@@ -502,7 +504,7 @@ namespace logicalaccess
 		return result;
 	}
 
-	std::vector<unsigned char> RplethReaderUnit::asciiToHex (std::vector<unsigned char> source)
+	std::vector<unsigned char> RplethReaderUnit::asciiToHex (const std::vector<unsigned char>& source)
 	{
 		std::vector<unsigned char> res;
 		char tmp [3];
