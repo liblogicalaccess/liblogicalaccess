@@ -75,11 +75,11 @@ namespace logicalaccess
 
 	void OmnikeyReaderUnit::disconnect()
 	{
-		if (getIsSecureConnectionMode())
+		/*if (getIsSecureConnectionMode())
 		{
-			//SecureModeCloseSession(getHandle());
+			SecureModeCloseSession(getHandle());
 			setIsSecureConnectionMode(false);
-		}
+		}*/
 
 		PCSCReaderUnit::disconnect();		
 	}
