@@ -29,7 +29,7 @@ namespace logicalaccess
 
 		if (command.size() > 0)
 		{
-			COM_("Sending command: %s", BufferHelper::getHex(command));
+			COM_("Sending command: %s", BufferHelper::getHex(command).c_str());
 
 			getAxessTMCLegicReaderUnit()->connectToReader();
 
