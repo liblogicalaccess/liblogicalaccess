@@ -27,10 +27,6 @@ namespace logicalaccess
 		cmd.push_back (calcChecksum(cmd));
 		if (cmd.size() > 0) 
 		{
-			if (getRplethReaderUnit())
-				std::cout << "RplethReaderUnit not null" << std::endl;
-			else
-				std::cout << "RplethReaderUnit null" << std::endl;
 			boost::shared_ptr<boost::asio::ip::tcp::socket> socket = getRplethReaderUnit()->getSocket();
 			socket->send(boost::asio::buffer(cmd));
 
@@ -87,7 +83,7 @@ namespace logicalaccess
 		{
 			std::cout << "BUG : " << std::endl;
 			if (res.size() > 0)
-				std::cout << res[0] << std::endl;
+				std::cout << (int)res[0] << std::endl;
 			else
 				std::cout << "No answer" << std::endl;
 			res.clear();

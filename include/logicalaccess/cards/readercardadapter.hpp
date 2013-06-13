@@ -29,13 +29,13 @@ namespace logicalaccess
 			 * \brief Get the reader unit.
 			 * \return The reader unit.
 			 */
-			boost::shared_ptr<ReaderUnit> getReaderUnit() const { return d_ReaderUnit.lock(); };
+			virtual boost::shared_ptr<ReaderUnit> getReaderUnit() const { return d_ReaderUnit.lock(); };
 
 			/**
 			 * \brief Set the reader unit.
 			 * \param unit The reader unit.
 			 */
-			void setReaderUnit(boost::weak_ptr<ReaderUnit> unit){ d_ReaderUnit = unit; };
+			virtual void setReaderUnit(boost::weak_ptr<ReaderUnit> unit){ d_ReaderUnit = unit; };
 
 			/**
 			 * \brief Send a command to the reader.
