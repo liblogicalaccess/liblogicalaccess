@@ -85,7 +85,10 @@ namespace logicalaccess
 
 	PCSCReaderUnit::~PCSCReaderUnit()
 	{
-		disconnect();
+		if (isConnected())
+		{
+			disconnect();
+		}
 	}
 
 	std::string PCSCReaderUnit::getName() const
@@ -110,11 +113,6 @@ namespace logicalaccess
 
 	const SCARDHANDLE& PCSCReaderUnit::getHandle() const
 	{
-		if (d_proxyReaderUnit)
-		{
-			return d_proxyReaderUnit->getHandle();
-		}
-
 		return d_sch;
 	}
 
@@ -575,6 +573,12 @@ namespace logicalaccess
 		{
 			INFO_SIMPLE_("Need to use a proxy reader !");
 			ret = d_proxyReaderUnit->connect(share_mode);
+			if (ret)
+			{
+				d_sch = d_proxyReaderUnit->getHandle();
+				d_ap = d_proxyReaderUnit->getActiveProtocol();
+				d_share_mode = share_mode;
+			}
 		}
 		else
 		{
@@ -678,6 +682,8 @@ namespace logicalaccess
 
 	void PCSCReaderUnit::disconnect()
 	{
+		INFO_SIMPLE_("Disconnecting from the chip.");
+
 		if (d_proxyReaderUnit)
 		{
 			d_proxyReaderUnit->disconnect();
@@ -1159,6 +1165,8 @@ namespace logicalaccess
 		boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 		if (chip)
 		{
+			INFO_SIMPLE_("Chip created, creating other associated objects...");
+
 			boost::shared_ptr<ReaderCardAdapter> rca = getReaderCardAdapter(type);
 			boost::shared_ptr<CardProvider> cp = chip->getCardProvider();
 			boost::shared_ptr<Commands> commands;
@@ -1187,6 +1195,18 @@ namespace logicalaccess
 			{
 				// HID iClass cards have a lot of restriction on license use from HID Global, so we try to load it dynamically if the dynamic library is side by side, otherwise we don't mind.
 				cp = LibraryManager::getInstance()->getCardProvider("HIDiClass");
+				if (cp)
+				{
+					commands = cp->getCommands();
+					if (commands)
+					{
+						rca = commands->getReaderCardAdapter();
+					}
+				}
+				else
+				{
+					WARNING_SIMPLE_("Cannot found HIDiClass card provider.");
+				}
 			}
 			else if (type == "DESFireEV1")
 			{
@@ -1252,7 +1272,12 @@ namespace logicalaccess
 				}
 			}
 
-			rca->setReaderUnit(shared_from_this());
+			INFO_("Other objects created, making association (ReaderCardAdapter empty? %d - Commands empty? %d - Cardprovider empty? %d)...", !rca, !commands, !cp);
+
+			if (rca)
+			{
+				rca->setReaderUnit(shared_from_this());
+			}
 			if (commands)
 			{
 				commands->setReaderCardAdapter(rca);
@@ -1262,6 +1287,8 @@ namespace logicalaccess
 				cp->setCommands(commands);
 			}
 			chip->setCardProvider(cp);
+
+			INFO_SIMPLE_("Object creation done.");
 		}
 		return chip;
 	}
