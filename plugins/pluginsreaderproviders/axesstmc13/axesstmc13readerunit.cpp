@@ -23,7 +23,7 @@ namespace logicalaccess
 		: ReaderUnit()
 	{
 		d_readerUnitConfig.reset(new AxessTMC13ReaderUnitConfiguration());
-		d_defaultReaderCardAdapter.reset(new AxessTMC13ReaderCardAdapter());
+		setDefaultReaderCardAdapter (boost::shared_ptr<AxessTMC13ReaderCardAdapter> (new AxessTMC13ReaderCardAdapter()));
 		d_port = port;
 		d_card_type = "UNKNOWN";
 

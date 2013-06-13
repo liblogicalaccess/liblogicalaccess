@@ -22,7 +22,7 @@ namespace logicalaccess
 		: ReaderUnit()
 	{
 		d_readerUnitConfig.reset(new ElatecReaderUnitConfiguration());
-		d_defaultReaderCardAdapter.reset(new ElatecReaderCardAdapter());
+		setDefaultReaderCardAdapter (boost::shared_ptr<ElatecReaderCardAdapter> (new ElatecReaderCardAdapter()));
 		d_port = port;
 		d_card_type = "UNKNOWN";
 

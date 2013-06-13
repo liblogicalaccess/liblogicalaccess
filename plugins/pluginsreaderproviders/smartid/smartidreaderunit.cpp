@@ -28,7 +28,7 @@ namespace logicalaccess
 		: ReaderUnit()
 	{
 		d_readerUnitConfig.reset(new SmartIDReaderUnitConfiguration());
-		d_defaultReaderCardAdapter.reset(new SmartIDReaderCardAdapter());
+		setDefaultReaderCardAdapter (boost::shared_ptr<SmartIDReaderCardAdapter> (new SmartIDReaderCardAdapter()));
 		d_ledBuzzerDisplay.reset(new SmartIDLEDBuzzerDisplay());
 		d_port = port;
 		d_card_type = "UNKNOWN";

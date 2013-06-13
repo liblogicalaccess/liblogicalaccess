@@ -35,7 +35,6 @@ namespace logicalaccess
 		char tmp [3];
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> answer;
-		std::vector<unsigned char> answer_hex;
 		command.push_back(static_cast<unsigned char>(Device::HID));
 		command.push_back(static_cast<unsigned char>(HidCommand::COM));
 		command.push_back(static_cast<unsigned char>(0x04));
@@ -46,17 +45,12 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(tmp[1]));
 		answer = getRplethReaderCardAdapter()->sendCommand (command, 0);
 		// convert ascii in hexa
-		for (size_t i = 0; i < answer.size ()-2; i+=2)
-		{
-			tmp [0] = answer[i];
-			tmp [1] = answer[i+1];
-			tmp [2] = '\0';
-			answer_hex.push_back (static_cast<unsigned char>(strtoul (tmp, NULL, 16)));
-		}
-		res = (len < answer_hex.size()) ? len : answer_hex.size();
+		boost::shared_ptr<RplethReaderUnit> readerUnit = boost::dynamic_pointer_cast<RplethReaderUnit>(getRplethReaderCardAdapter()->getReaderUnit());
+		answer = readerUnit->asciiToHex (answer);
+		res = (len < answer.size()) ? len : answer.size();
 		if (res <= buflen)
 		{
-			memcpy(buf, &answer_hex[0], res);
+			memcpy(buf, &answer[0], res);
 		}
 		else
 		{
@@ -69,12 +63,12 @@ namespace logicalaccess
 	size_t MifareRplethCommands::updateBinary(unsigned char blockno, const void* buf, size_t buflen)
 	{
 		size_t result = 0;
-		char tmp [2];
+		char tmp [3];
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> answer;
 		command.push_back(static_cast<unsigned char>(Device::HID));
 		command.push_back(static_cast<unsigned char>(HidCommand::COM));
-		command.push_back(static_cast<unsigned char>(0x04+buflen));
+		command.push_back(static_cast<unsigned char>(0x04+(buflen*2)));
 		command.push_back(static_cast<unsigned char>('w'));
 		command.push_back(static_cast<unsigned char>('b'));
 		sprintf (tmp, "%.2X", blockno);
@@ -82,7 +76,9 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(tmp[1]));
 		for (size_t i = 0; i < buflen; i++)
 		{
-			command.push_back(static_cast<unsigned char>(((char *)buf)[i]));
+			sprintf (tmp, "%.2X", ((char *)buf)[i]);
+			command.push_back(static_cast<unsigned char>(tmp[0]));
+			command.push_back(static_cast<unsigned char>(tmp[1]));
 		}
 		answer = getRplethReaderCardAdapter()->sendCommand (command, 0);
 		if (answer.size () > 1)
@@ -97,12 +93,12 @@ namespace logicalaccess
 		bool r = true;
 		if (!vol)
 		{
-			char buf [2];
+			char buf [3];
 			std::vector<unsigned char> command;
 			std::vector<unsigned char> answer;
 			command.push_back(static_cast<unsigned char>(Device::HID));
 			command.push_back(static_cast<unsigned char>(HidCommand::COM));
-			command.push_back(static_cast<unsigned char>(0x04+keylen));
+			command.push_back(static_cast<unsigned char>(0x04+(keylen*2)));
 			command.push_back(static_cast<unsigned char>('w'));
 			command.push_back(static_cast<unsigned char>('m'));
 			sprintf (buf, "%.2X", keyno);
@@ -110,7 +106,9 @@ namespace logicalaccess
 			command.push_back(static_cast<unsigned char>(buf[1]));
 			for (size_t i = 0; i < keylen; i++)
 			{
-				command.push_back(static_cast<unsigned char>(((char *)key)[i]));
+				sprintf (buf, "%.2X", ((char *)key)[i]);
+				command.push_back(static_cast<unsigned char>(buf[0]));
+				command.push_back(static_cast<unsigned char>(buf[1]));
 			}
 			answer = getRplethReaderCardAdapter()->sendCommand (command, 0);
 			if (answer.size () < 2)
@@ -157,16 +155,16 @@ namespace logicalaccess
 		bool res = false;
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> answer;
-		char buf [2];
+		char buf [3];
 		command.push_back(static_cast<unsigned char>(Device::HID));
 		command.push_back(static_cast<unsigned char>(HidCommand::COM));
 		command.push_back(static_cast<unsigned char>(0x05));
 		command.push_back(static_cast<unsigned char>('l'));
 		unsigned char sector = blockno / 4;
-		sprintf (buf, "%x%x", sector>>4, sector&0xf);
+		sprintf (buf, "%.2X", sector);
 		command.push_back(static_cast<unsigned char>(buf[0]));
 		command.push_back(static_cast<unsigned char>(buf[1]));
-		sprintf (buf, "%x%x", keyno>>4, keyno&0xf);
+		sprintf (buf, "%.2X", keyno);
 		if (keytype == KT_KEY_A)
 			buf [0] += 1;
 		else
@@ -185,12 +183,6 @@ namespace logicalaccess
 	{
 		if (boost::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key_storage))
 		{
-			/*
-			char tmp [3];
-			sprintf (tmp, "%x%x", blockno>>4, blockno&0xf);
-			tmp[2] = '\0';
-			std::cout << "blockno : " << tmp << std::endl;
-			*/
 			authenticate(blockno, 0, keytype);
 		}
 		else if (boost::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage))

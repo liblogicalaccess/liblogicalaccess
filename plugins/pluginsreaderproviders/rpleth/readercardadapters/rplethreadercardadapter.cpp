@@ -20,26 +20,26 @@ namespace logicalaccess
 	}
 
 	std::vector<unsigned char> RplethReaderCardAdapter::sendCommand(const std::vector<unsigned char>& command, long int timeout)
-	{
-		COM_("Sending data: %s", BufferHelper::getHex(command).c_str());
-
+	{	
 		std::vector<unsigned char> res;
 		std::vector<unsigned char> cmd;
 		cmd.insert (cmd.begin(), command.begin(), command.end());
 		cmd.push_back (calcChecksum(cmd));
 		if (cmd.size() > 0) 
-		{ 
+		{
+			if (getRplethReaderUnit())
+				std::cout << "RplethReaderUnit not null" << std::endl;
+			else
+				std::cout << "RplethReaderUnit null" << std::endl;
 			boost::shared_ptr<boost::asio::ip::tcp::socket> socket = getRplethReaderUnit()->getSocket();
 			socket->send(boost::asio::buffer(cmd));
 
 			res = receiveAnwser(cmd, timeout);
 		}
-
-		COM_("Answer: %s", BufferHelper::getHex(res).c_str());
 		return res;
 	}
 
-	std::vector<unsigned char> RplethReaderCardAdapter::sendAsciiCommand(const std::string command, long int timeout)
+	std::vector<unsigned char> RplethReaderCardAdapter::sendAsciiCommand(const std::string& command, long int timeout)
 	{
 		std::vector<unsigned char> cmd;
 		std::vector<unsigned char> res;
@@ -73,19 +73,23 @@ namespace logicalaccess
 		}
 		try
 		{
-			size_t byte_read = socket->receive (boost::asio::buffer(res));
-			if (byte_read == 4)
+			size_t frameLength = socket->receive (boost::asio::buffer(res));
+			if (frameLength == 4)
 			{
+				// +1 for checksum
 				std::vector<unsigned char> data (static_cast<int> (res[3]+1));
-				// wait to receive the full frame
-				size_t byte_read = socket->receive (boost::asio::buffer(data));
-				res.insert(res.end(), data.begin(), data.begin()+byte_read);
-				res = handleAnswerBuffer (command, std::vector<unsigned char>(res.begin(), res.begin() + 4 + byte_read));
+				size_t dataLength = socket->receive (boost::asio::buffer(data));
+				res.insert(res.end(), data.begin(), data.begin()+dataLength);
+				res = handleAnswerBuffer (command, std::vector<unsigned char>(res.begin(), res.begin() + 4 + dataLength));
 			}
 		}
 		catch (std::invalid_argument&)
 		{
-			std::cout << "BUG" << std::endl;
+			std::cout << "BUG : " << std::endl;
+			if (res.size() > 0)
+				std::cout << res[0] << std::endl;
+			else
+				std::cout << "No answer" << std::endl;
 			res.clear();
 		}
 		return res;

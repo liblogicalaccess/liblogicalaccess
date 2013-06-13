@@ -22,7 +22,7 @@ namespace logicalaccess
 		: ReaderUnit()
 	{
 		d_readerUnitConfig.reset(new DeisterReaderUnitConfiguration());
-		d_defaultReaderCardAdapter.reset(new DeisterReaderCardAdapter());
+		setDefaultReaderCardAdapter (boost::shared_ptr<DeisterReaderCardAdapter> (new DeisterReaderCardAdapter()));
 		d_port = port;
 		d_card_type = "UNKNOWN";
 

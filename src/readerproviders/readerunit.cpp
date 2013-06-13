@@ -242,6 +242,11 @@ namespace logicalaccess
 		return d_defaultReaderCardAdapter;
 	}
 
+	void ReaderUnit::setDefaultReaderCardAdapter(boost::shared_ptr<ReaderCardAdapter> defaultRca)
+	{
+		d_defaultReaderCardAdapter = defaultRca;
+	}
+
 	boost::shared_ptr<ReaderUnitConfiguration> ReaderUnit::getConfiguration()
 	{
 		//INFO_SIMPLE_("Getting reader unit configuration...");

@@ -149,22 +149,20 @@ namespace logicalaccess
 			data.push_back('3');
 			d_prefix = !d_prefix;
 		}
-		// add this with version 1.2 of hid reader, think to change data length
-		//data.push_back('0');
-		//data.push_back('0');
 		for (size_t i = 0; i < command.size(); i++)
 		{
 			sprintf(tmp, "%.2X", command[i]);
 			data.push_back(static_cast<unsigned char>(tmp[0]));
 			data.push_back(static_cast<unsigned char>(tmp[1]));
 		}
-
+		std::cout << "DESFire Data : " << BufferHelper::getHex (data) << std::endl;
 		std::vector<unsigned char> answer = d_rpleth_reader_card_adapter->sendCommand (data, timeout);
-
-		boost::shared_ptr<RplethReaderUnit> readerUnit = boost::dynamic_pointer_cast<RplethReaderUnit>(d_rpleth_reader_card_adapter->getReaderUnit());
+		std::cout << "DESFire answer before all : " << BufferHelper::getHex (answer) << std::endl;
+		boost::shared_ptr<RplethReaderUnit> readerUnit = boost::dynamic_pointer_cast<RplethReaderUnit>(getReaderUnit());
 		answer = readerUnit->asciiToHex (answer);
 		answer = handleAnswer (answer);
 		answer = answerReverse (answer);
+		std::cout << "DESFire answer after all : " << BufferHelper::getHex (answer) << std::endl;
 		return answer;
 	}
 

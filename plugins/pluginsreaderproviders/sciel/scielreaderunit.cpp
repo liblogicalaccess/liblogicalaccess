@@ -22,7 +22,7 @@ namespace logicalaccess
 		: ReaderUnit()
 	{
 		d_readerUnitConfig.reset(new SCIELReaderUnitConfiguration());
-		d_defaultReaderCardAdapter.reset(new SCIELReaderCardAdapter());
+		setDefaultReaderCardAdapter (boost::shared_ptr<SCIELReaderCardAdapter> (new SCIELReaderCardAdapter()));
 		d_port = port;
 		d_card_type = "UNKNOWN";
 

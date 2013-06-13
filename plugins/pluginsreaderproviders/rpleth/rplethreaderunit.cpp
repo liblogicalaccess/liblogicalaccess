@@ -34,7 +34,7 @@ namespace logicalaccess
 		: ReaderUnit()
 	{
 		d_readerUnitConfig.reset(new RplethReaderUnitConfiguration());
-		d_defaultReaderCardAdapter.reset(new RplethReaderCardAdapter());
+		setDefaultReaderCardAdapter (boost::shared_ptr<RplethReaderCardAdapter> (new RplethReaderCardAdapter()));
 		d_card_type = "UNKNOWN";
 
 		try
@@ -155,9 +155,9 @@ namespace logicalaccess
 			while (!chip && (maxwait == 0 || currentWait < maxwait))
 			{
 				buf = getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("s");
-				buf = asciiToHex (buf);
-				if (buf.size () > 0)
+				if (buf.size () > 1)
 				{
+					buf = asciiToHex (buf);
 					if (buf[0] == ChipType::MIFARE)
 					{
 						chip = createChip ("Mifare");
@@ -224,24 +224,24 @@ namespace logicalaccess
 				commands.reset(new DESFireISO7816Commands());
 				boost::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->getCrypto().setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(chip->getProfile()), chip->getChipIdentifier());
 			}
-			else
+
+			if (rca)
 			{
-				return chip;
+				rca->setReaderUnit(shared_from_this());
+				if (commands)
+				{
+					commands->setReaderCardAdapter(rca);
+				}
+				if (cp)
+				{
+					cp->setCommands(commands);
+				}
+				else
+				{
+					cp = LibraryManager::getInstance()->getCardProvider(type);
+				}
+				chip->setCardProvider(cp);
 			}
-			rca->setReaderUnit(shared_from_this());
-			if (commands)
-			{
-				commands->setReaderCardAdapter(rca);
-			}
-			if (cp)
-			{
-				cp->setCommands(commands);
-			}
-			else
-			{
-				cp = LibraryManager::getInstance()->getCardProvider(type);
-			}
-			chip->setCardProvider(cp);
 		}
 		return chip;
 	}

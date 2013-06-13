@@ -28,45 +28,49 @@ namespace logicalaccess
 	
 	size_t MifareUltralightRplethCommands::readPage(int page, void* buf, size_t buflen)
 	{
-		size_t result;
+		size_t res;
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> answer;
-		char buffer [2];
+		char buffer [3];
 		command.push_back(static_cast<unsigned char>(Device::HID));
 		command.push_back(static_cast<unsigned char>(HidCommand::COM));
 		command.push_back(static_cast<unsigned char>(0x04));
 		command.push_back(static_cast<unsigned char>('r'));
 		command.push_back(static_cast<unsigned char>('b'));
-		sprintf (buffer, "%x%x", page>>4, page&0xf);
+		sprintf (buffer, "%.2X", page);
 		command.push_back(static_cast<unsigned char>(buffer[0]));
 		command.push_back(static_cast<unsigned char>(buffer[1]));
 		answer = getRplethReaderCardAdapter()->sendCommand (command, 0);
-		memcpy(buf, &answer[0], answer.size());
-		result = answer.size();
-		return result;
+		boost::shared_ptr<RplethReaderUnit> readerUnit = boost::dynamic_pointer_cast<RplethReaderUnit>(getRplethReaderCardAdapter()->getReaderUnit());
+		answer = readerUnit->asciiToHex(answer);
+		res = (buflen <= answer.size()) ?  buflen : answer.size();
+		memcpy(buf, &answer[0], res);
+		return res;
 	}
 	
 	size_t MifareUltralightRplethCommands::writePage(int page, const void* buf, size_t buflen)
 	{
-		size_t result;
+		size_t res;
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> answer;
-		char buffer [2];
+		char buffer [3];
 		command.push_back(static_cast<unsigned char>(Device::HID));
 		command.push_back(static_cast<unsigned char>(HidCommand::COM));
-		command.push_back(static_cast<unsigned char>(buflen+0x04));
+		command.push_back(static_cast<unsigned char>((buflen*2)+0x04));
 		command.push_back(static_cast<unsigned char>('w'));
 		command.push_back(static_cast<unsigned char>('b'));
-		sprintf (buffer, "%x%x", page>>4, page&0xf);
+		sprintf (buffer, "%.2X", page);
 		command.push_back(static_cast<unsigned char>(buffer[0]));
 		command.push_back(static_cast<unsigned char>(buffer[1]));
 		for (size_t i = 0; i < buflen; i++)
 		{
-			command.push_back(static_cast<unsigned char>(((char*)buf)[i]));
+			sprintf (buffer, "%.2X", ((char*)buf)[i]);
+			command.push_back(static_cast<unsigned char>(buffer[0]));
+			command.push_back(static_cast<unsigned char>(buffer[1]));
 		}
 		answer = getRplethReaderCardAdapter()->sendCommand (command, 0);
-		result = buflen;
-		return result;
+		res = buflen;
+		return res;
 	}
 }
 

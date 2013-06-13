@@ -22,7 +22,7 @@ namespace logicalaccess
 		: ReaderUnit()
 	{
 		d_readerUnitConfig.reset(new PromagReaderUnitConfiguration());
-		d_defaultReaderCardAdapter.reset(new PromagReaderCardAdapter());
+		setDefaultReaderCardAdapter (boost::shared_ptr<PromagReaderCardAdapter> (new PromagReaderCardAdapter()));
 		d_port = port;
 		d_card_type = "UNKNOWN";
 

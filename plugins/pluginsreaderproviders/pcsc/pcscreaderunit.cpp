@@ -80,7 +80,7 @@ namespace logicalaccess
 
 		d_proxyReaderUnit.reset();
 		d_readerUnitConfig.reset(new PCSCReaderUnitConfiguration());
-		d_defaultReaderCardAdapter.reset(new PCSCReaderCardAdapter());
+		setDefaultReaderCardAdapter (boost::shared_ptr<PCSCReaderCardAdapter> (new PCSCReaderCardAdapter()));
 	}
 
 	PCSCReaderUnit::~PCSCReaderUnit()

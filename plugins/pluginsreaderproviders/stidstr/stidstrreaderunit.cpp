@@ -41,7 +41,7 @@ namespace logicalaccess
 	{
 		//INFO_SIMPLE_("Constructor");
 		d_readerUnitConfig.reset(new STidSTRReaderUnitConfiguration());
-		d_defaultReaderCardAdapter.reset(new STidSTRReaderCardAdapter(STID_CMD_READER));
+		setDefaultReaderCardAdapter (boost::shared_ptr<STidSTRReaderCardAdapter> (new STidSTRReaderCardAdapter(STID_CMD_READER)));
 		d_ledBuzzerDisplay.reset(new STidSTRLEDBuzzerDisplay());
 		d_port = port;
 		d_card_type = "UNKNOWN";

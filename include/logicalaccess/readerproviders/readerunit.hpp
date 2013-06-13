@@ -229,6 +229,12 @@ namespace logicalaccess
 			virtual boost::shared_ptr<ReaderCardAdapter> getDefaultReaderCardAdapter();
 
 			/**
+			 * \brief Set the default reader/card adapter.
+			 * \param defaultRca The default reader/card adapter.
+			 */
+			virtual void setDefaultReaderCardAdapter(boost::shared_ptr<ReaderCardAdapter> defaultRca);
+
+			/**
 			 * \brief Get a string hexadecimal representation of the reader serial number
 			 * \return The reader serial number or an empty string on error.
 			 */
@@ -287,12 +293,7 @@ namespace logicalaccess
 			/**
 			 * \brief The reader unit configuration.
 			 */
-			boost::shared_ptr<ReaderUnitConfiguration> d_readerUnitConfig;
-
-			/**
-			 * \brief The default reader/card adapter.
-			 */
-			boost::shared_ptr<ReaderCardAdapter> d_defaultReaderCardAdapter;
+			boost::shared_ptr<ReaderUnitConfiguration> d_readerUnitConfig;	
 
 			/**
 			 * \brief The inserted chip.
@@ -308,6 +309,13 @@ namespace logicalaccess
 			 * \brief The inserted chip.
 			 */
 			boost::shared_ptr<LEDBuzzerDisplay> d_ledBuzzerDisplay;
+
+		private:
+
+			/**
+			 * \brief The default reader/card adapter.
+			 */
+			boost::shared_ptr<ReaderCardAdapter> d_defaultReaderCardAdapter;
 	};
 }
 

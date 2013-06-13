@@ -25,7 +25,7 @@ namespace logicalaccess
 		: ReaderUnit()
 	{
 		d_readerUnitConfig.reset(new RFIDeasReaderUnitConfiguration());
-		d_defaultReaderCardAdapter.reset(new RFIDeasReaderCardAdapter());
+		setDefaultReaderCardAdapter (boost::shared_ptr<RFIDeasReaderCardAdapter> (new RFIDeasReaderCardAdapter()));
 		d_card_type = "GenericTag";
 
 		try

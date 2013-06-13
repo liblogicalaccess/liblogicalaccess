@@ -30,7 +30,7 @@ namespace logicalaccess
 		: ReaderUnit()
 	{
 		d_readerUnitConfig.reset(new GunneboReaderUnitConfiguration());
-		d_defaultReaderCardAdapter.reset(new GunneboReaderCardAdapter());
+		setDefaultReaderCardAdapter (boost::shared_ptr<GunneboReaderCardAdapter> (new GunneboReaderCardAdapter()));
 		d_port = port;
 		d_card_type = "UNKNOWN";
 

@@ -31,7 +31,7 @@ namespace logicalaccess
 		: ReaderUnit()
 	{
 		d_readerUnitConfig.reset(new AdmittoReaderUnitConfiguration());
-		d_defaultReaderCardAdapter.reset(new AdmittoReaderCardAdapter());
+		setDefaultReaderCardAdapter (boost::shared_ptr<AdmittoReaderCardAdapter> (new AdmittoReaderCardAdapter()));
 		d_port = port;
 		d_card_type = "UNKNOWN";
 

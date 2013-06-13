@@ -28,7 +28,7 @@ namespace logicalaccess
 		: ReaderUnit()
 {
 		d_readerUnitConfig.reset(new A3MLGM5600ReaderUnitConfiguration());
-		d_defaultReaderCardAdapter.reset(new A3MLGM5600ReaderCardAdapter());
+		setDefaultReaderCardAdapter (boost::shared_ptr<A3MLGM5600ReaderCardAdapter> (new A3MLGM5600ReaderCardAdapter()));
 		d_ledBuzzerDisplay.reset(new A3MLGM5600LEDBuzzerDisplay());
 		d_lcdDisplay.reset(new A3MLGM5600LCDDisplay());
 		d_card_type = "UNKNOWN";

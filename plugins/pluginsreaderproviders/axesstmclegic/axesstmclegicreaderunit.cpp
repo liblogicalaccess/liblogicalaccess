@@ -22,7 +22,7 @@ namespace logicalaccess
 		: ReaderUnit()
 	{		
 		d_readerUnitConfig.reset(new AxessTMCLegicReaderUnitConfiguration());
-		d_defaultReaderCardAdapter.reset(new AxessTMCLegicReaderCardAdapter());
+		setDefaultReaderCardAdapter (boost::shared_ptr<AxessTMCLegicReaderCardAdapter> (new AxessTMCLegicReaderCardAdapter()));
 		d_port = port;
 		d_card_type = "UNKNOWN";
 
