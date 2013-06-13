@@ -5,6 +5,7 @@
  */
 
 #include "axesstmclegicreadercardadapter.hpp"
+#include "logicalaccess/bufferhelper.hpp"
 
 
 namespace logicalaccess
@@ -28,6 +29,8 @@ namespace logicalaccess
 
 		if (command.size() > 0)
 		{
+			COM_("Sending command: %s", BufferHelper::getHex(command));
+
 			getAxessTMCLegicReaderUnit()->connectToReader();
 
 			boost::shared_ptr<SerialPortXml> port = getAxessTMCLegicReaderUnit()->getSerialPort();
