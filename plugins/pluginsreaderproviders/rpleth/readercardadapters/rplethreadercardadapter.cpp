@@ -72,6 +72,7 @@ namespace logicalaccess
 	#endif
 			currentWait += 250;
 		}
+
 		try
 		{
 			size_t frameLength = socket->receive (boost::asio::buffer(res));
@@ -80,12 +81,19 @@ namespace logicalaccess
 				// +1 for checksum
 				std::vector<unsigned char> data (static_cast<int> (res[3]+1));
 				size_t dataLength = socket->receive (boost::asio::buffer(data));
-				res.insert(res.end(), data.begin(), data.begin()+dataLength);
-				res = handleAnswerBuffer (command, std::vector<unsigned char>(res.begin(), res.begin() + 4 + dataLength));
-				COM_("Reiceve answer: %s", BufferHelper::getHex(res).c_str());
+				if (dataLength == data.size())
+				{
+					res.insert(res.end(), data.begin(), data.begin() + dataLength);
+					res = handleAnswerBuffer (command, res);
+					COM_("Reiceve answer: %s", BufferHelper::getHex(res).c_str());
+				}
+				else
+				{
+					ERROR_("Unexcepted buffer size (%d != %d)", dataLength, data.size());
+				}
 			}
 		}
-		catch (std::invalid_argument&)
+		catch (std::exception&)
 		{
 			if (res.size() > 0)
 				ERROR_("Error when handling the answer: %d", (int)res[0]);
@@ -109,7 +117,7 @@ namespace logicalaccess
 		return bcc;
 	}
 
-	std::vector<unsigned char> RplethReaderCardAdapter::handleAnswerBuffer(const std::vector<unsigned char>& cmdbuf, std::vector<unsigned char> ansbuf)
+	std::vector<unsigned char> RplethReaderCardAdapter::handleAnswerBuffer(const std::vector<unsigned char>& cmdbuf, const std::vector<unsigned char>& ansbuf)
 	{
 		EXCEPTION_ASSERT_WITH_LOG(ansbuf.size() > 4, std::invalid_argument, "A valid answer buffer size must be at least 4 bytes long");
 		EXCEPTION_ASSERT_WITH_LOG(ansbuf[0] != 0x01, std::invalid_argument, "The supplied answer buffer get the stat : Command failure");
@@ -120,11 +128,20 @@ namespace logicalaccess
 		EXCEPTION_ASSERT_WITH_LOG(ansbuf[1] == cmdbuf [0] && ansbuf[2] == cmdbuf [1], std::invalid_argument, "The supplied answer buffer is not corresponding with command send");
 
 		std::vector<unsigned char> res;
+		std::vector<unsigned char> bufnoc = std::vector<unsigned char>(ansbuf.begin(), ansbuf.end() - 1);
 		unsigned char checksum_receive = ansbuf[ansbuf.size()-1];
-		ansbuf.pop_back();
-		EXCEPTION_ASSERT_WITH_LOG(calcChecksum(ansbuf) == checksum_receive, std::invalid_argument, "The supplied answer buffer get the stat : Bad checksum in answer");
-		if (ansbuf.size() > 4)
-			res = std::vector<unsigned char> (ansbuf.begin()+4, ansbuf.end());
+		EXCEPTION_ASSERT_WITH_LOG(calcChecksum(bufnoc) == checksum_receive, std::invalid_argument, "The supplied answer buffer get the stat : Bad checksum in answer");
+		if (bufnoc.size() > 4)
+		{
+			res = std::vector<unsigned char> (bufnoc.begin()+4, bufnoc.end());
+			if (res.size() == 3)
+			{
+				if (res[1] == '\r' && res[2] == '\n')
+				{
+					EXCEPTION_ASSERT_WITH_LOG(res[0] != 'N', LibLogicalAccessException, "No tag present in rfid field.");
+				}
+			}
+		}
 		return res;
 	}
 }

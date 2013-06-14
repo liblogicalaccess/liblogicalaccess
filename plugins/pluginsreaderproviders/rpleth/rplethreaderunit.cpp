@@ -119,12 +119,24 @@ namespace logicalaccess
 
 	bool RplethReaderUnit::connect()
 	{
+		INFO_SIMPLE_("Starting connect...");
 		if (getSingleChip())
 		{
 			if (getSingleChip()->getCardType() == "DESFire")
-				rats ();
+			{
+				std::vector<unsigned char> tmp = rats();
+				if (tmp.size() == 0)
+				{
+					d_insertedChip = getChipInAir();
+					tmp = rats();
+					if (tmp.size() == 0)
+					{
+						d_insertedChip.reset();
+					}
+				}
+			}
 		}
-		INFO_SIMPLE_("Connected to the chip");
+
 		return (d_insertedChip);
 	}
 
@@ -135,12 +147,14 @@ namespace logicalaccess
 			getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("x");
 			getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("v");
 		}
+
 		INFO_SIMPLE_("Disconnected from the chip");
 	}
 
 	boost::shared_ptr<Chip> RplethReaderUnit::getChipInAir(unsigned int maxwait)
 	{
-		INFO_SIMPLE_("GetChipInAir");
+		INFO_SIMPLE_("Starting get chip in air...");
+
 		boost::shared_ptr<Chip> chip;
 		std::vector<unsigned char> buf;
 		if (getRplethConfiguration()->getMode() == RplethMode::WIEGAND)
@@ -191,12 +205,13 @@ namespace logicalaccess
 				}
 			}
 		}
+
 		return chip;
 	}
 	
 	boost::shared_ptr<Chip> RplethReaderUnit::createChip(std::string type)
 	{
-		INFO_SIMPLE_("CreateChip");
+		INFO_("Create chip %s", type.c_str());
 		boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 
 		if (chip)
@@ -303,7 +318,8 @@ namespace logicalaccess
 				d_socket.reset();
 			}
 		}
-		INFO_SIMPLE_("Connect to reader");
+		INFO_SIMPLE_("Exit connect to reader");
+
 		return (d_socket);
 	}
 
@@ -316,7 +332,8 @@ namespace logicalaccess
 		}
 		if (d_socket)
 			d_socket.reset();
-		INFO_SIMPLE_("Disconnect to reader");
+
+		INFO_SIMPLE_("Exit disconnect to reader");
 	}
 
 	void RplethReaderUnit::serialize(boost::property_tree::ptree& parentNode)
@@ -501,12 +518,20 @@ namespace logicalaccess
 		boost::shared_ptr<RplethReaderUnitConfiguration> conf = boost::dynamic_pointer_cast<RplethReaderUnitConfiguration>(d_readerUnitConfig);
 		if (conf->getLength() != 0)
 		{
-			result.insert (result.begin(), trame.begin()+(trame.size() - conf->getLength()), trame.end()-conf->getOffset());
+			if (trame.size() >= (conf->getLength() + conf->getOffset()))
+			{
+			result.insert (result.begin(), trame.begin()+(trame.size() - conf->getLength()), trame.end() - conf->getOffset());
+			}
+			else
+			{
+				WARNING_("Wrong trame length (%d < (%d + %d))", trame.size(), conf->getLength(), conf->getOffset());
+			}
 		}
 		else
 		{
 			result.insert (result.begin(), trame.begin(), trame.end());
 		}
+
 		return result;
 	}
 
@@ -514,15 +539,18 @@ namespace logicalaccess
 	{
 		std::vector<unsigned char> res;
 		char tmp [3];
-		for (size_t i = 0; i < source.size ()-2; i+=2)
+		if (source.size() > 1)
 		{
-			tmp [0] = source[i];
-			if (source.size()%2 == 1 && i == source.size()-1)
-				tmp [1] = '\0';
-			else
-				tmp [1] = source[i+1];
-			tmp [2] = '\0';
-			res.push_back (static_cast<unsigned char>(strtoul (tmp, NULL, 16)));
+			for (size_t i = 0; i < source.size() - 2; i+=2)
+			{
+				tmp [0] = source[i];
+				if (source.size()%2 == 1 && i == source.size()-1)
+					tmp [1] = '\0';
+				else
+					tmp [1] = source[i+1];
+				tmp [2] = '\0';
+				res.push_back (static_cast<unsigned char>(strtoul (tmp, NULL, 16)));
+			}
 		}
 		return res;
 	}

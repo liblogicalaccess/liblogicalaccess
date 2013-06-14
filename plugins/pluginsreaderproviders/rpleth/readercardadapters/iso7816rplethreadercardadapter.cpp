@@ -155,11 +155,13 @@ namespace logicalaccess
 			data.push_back(static_cast<unsigned char>(tmp[0]));
 			data.push_back(static_cast<unsigned char>(tmp[1]));
 		}
+		
 		std::vector<unsigned char> answer = d_rpleth_reader_card_adapter->sendCommand (data, timeout);
 		boost::shared_ptr<RplethReaderUnit> readerUnit = boost::dynamic_pointer_cast<RplethReaderUnit>(getReaderUnit());
-		answer = readerUnit->asciiToHex (answer);
-		answer = handleAnswer (answer);
-		answer = answerReverse (answer);
+		answer = readerUnit->asciiToHex(answer);
+		answer = handleAnswer(answer);
+		answer = answerReverse(answer);
+
 		return answer;
 	}
 
