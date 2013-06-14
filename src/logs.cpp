@@ -226,6 +226,24 @@ namespace logicalaccess
 		}
 	}
 
+	void Logs::PLUGIN_ERROR(const char* file, int line, const char* function, const char* format, ...)
+	{
+		if (Settings::getInstance().IsLogEnabled && Settings::getInstance().SeePluginLog)
+		{
+			char buffer[2048];
+			memset(buffer, 0x00, sizeof(buffer));
+			va_list args;
+			va_start (args, format);
+	#ifdef __linux__
+			vsnprintf(buffer, sizeof(buffer) - 1, format, args);
+	#else
+			_vsnprintf_s(buffer, sizeof(buffer) - 1, format, args);
+	#endif
+			log_ERROR(processLog(file, line, function, buffer));
+			va_end(args);
+		}
+	}
+
 	void Logs::log(std::string message)
 	{
 		if (logfile)

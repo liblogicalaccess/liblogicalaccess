@@ -124,6 +124,7 @@ namespace logicalaccess
 			if (getSingleChip()->getCardType() == "DESFire")
 				rats ();
 		}
+		INFO_SIMPLE_("Connected to the chip");
 		return (d_insertedChip);
 	}
 
@@ -134,10 +135,12 @@ namespace logicalaccess
 			getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("x");
 			getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("v");
 		}
+		INFO_SIMPLE_("Disconnected from the chip");
 	}
 
 	boost::shared_ptr<Chip> RplethReaderUnit::getChipInAir(unsigned int maxwait)
 	{
+		INFO_SIMPLE_("GetChipInAir");
 		boost::shared_ptr<Chip> chip;
 		std::vector<unsigned char> buf;
 		if (getRplethConfiguration()->getMode() == RplethMode::WIEGAND)
@@ -193,6 +196,7 @@ namespace logicalaccess
 	
 	boost::shared_ptr<Chip> RplethReaderUnit::createChip(std::string type)
 	{
+		INFO_SIMPLE_("CreateChip");
 		boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 
 		if (chip)
@@ -299,6 +303,7 @@ namespace logicalaccess
 				d_socket.reset();
 			}
 		}
+		INFO_SIMPLE_("Connect to reader");
 		return (d_socket);
 	}
 
@@ -311,6 +316,7 @@ namespace logicalaccess
 		}
 		if (d_socket)
 			d_socket.reset();
+		INFO_SIMPLE_("Disconnect to reader");
 	}
 
 	void RplethReaderUnit::serialize(boost::property_tree::ptree& parentNode)
@@ -543,6 +549,7 @@ namespace logicalaccess
 
 	std::vector<unsigned char> RplethReaderUnit::rats ()
 	{
+		INFO_("Sending a RATS");
 		std::vector<unsigned char> answer = getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("t020FE020");
 		answer = asciiToHex (answer);
 		if (answer.size () > 1)

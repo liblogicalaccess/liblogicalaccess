@@ -21,6 +21,11 @@ namespace logicalaccess
 
 	std::vector<unsigned char> RplethReaderCardAdapter::sendCommand(const std::vector<unsigned char>& command, long int timeout)
 	{	
+		if (command[0] == 0x01 && command[1] == 0x05)
+			COM_("Sending command: %s", BufferHelper::getStdString(command).c_str());
+		else
+			COM_("Sending command: %s", BufferHelper::getHex(command).c_str());
+
 		std::vector<unsigned char> res;
 		std::vector<unsigned char> cmd;
 		cmd.insert (cmd.begin(), command.begin(), command.end());
@@ -77,15 +82,16 @@ namespace logicalaccess
 				size_t dataLength = socket->receive (boost::asio::buffer(data));
 				res.insert(res.end(), data.begin(), data.begin()+dataLength);
 				res = handleAnswerBuffer (command, std::vector<unsigned char>(res.begin(), res.begin() + 4 + dataLength));
+				COM_("Reiceve answer: %s", BufferHelper::getHex(res).c_str());
 			}
 		}
 		catch (std::invalid_argument&)
 		{
-			std::cout << "BUG : " << std::endl;
 			if (res.size() > 0)
-				std::cout << (int)res[0] << std::endl;
+				ERROR_("Error when handling the answer: %d", (int)res[0]);
 			else
-				std::cout << "No answer" << std::endl;
+				ERROR_SIMPLE_("Error when handling the answer: no answer");
+
 			res.clear();
 		}
 		return res;
