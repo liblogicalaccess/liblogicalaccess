@@ -32,7 +32,7 @@ namespace logicalaccess
 		d_rpleth_reader_card_adapter->setReaderUnit(unit);
 	}
 
-	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen, unsigned char le, unsigned char* result, size_t* resultlen)
+	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen, unsigned char /*le*/, unsigned char* result, size_t* resultlen)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(ins);
@@ -85,7 +85,7 @@ namespace logicalaccess
 	}
 
 
-	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const unsigned char* data, size_t datalen, unsigned char le)
+	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen, unsigned char /*le*/)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(ins);
@@ -96,7 +96,7 @@ namespace logicalaccess
 		ISO7816ReaderCardAdapter::sendAPDUCommand(command, NULL, NULL);
 	}
 
-	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const unsigned char* data, size_t datalen)
+	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(ins);
@@ -107,7 +107,7 @@ namespace logicalaccess
 		ISO7816ReaderCardAdapter::sendAPDUCommand(command, NULL, NULL);
 	}
 
-	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char le)
+	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*le*/)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(ins);
@@ -115,7 +115,7 @@ namespace logicalaccess
 	}
 
 
-	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char* result, size_t* resultlen)
+	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char* result, size_t* resultlen)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(ins);
