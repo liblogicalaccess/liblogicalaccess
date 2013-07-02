@@ -28,9 +28,9 @@ namespace logicalaccess
 		
 	}
 
-	string OmnikeyReaderUnit::getReaderSerialNumber()
+	std::string OmnikeyReaderUnit::getReaderSerialNumber()
 	{
-		string ret;
+		std::string ret;
 		
 		unsigned char ucReceivedData[66];
 		size_t ulNoOfDataReceived = sizeof(ucReceivedData);

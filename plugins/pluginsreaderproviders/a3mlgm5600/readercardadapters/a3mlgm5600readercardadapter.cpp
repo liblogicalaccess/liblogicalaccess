@@ -38,124 +38,57 @@ namespace logicalaccess
 		return bcc;
 	}
 
-	bool A3MLGM5600ReaderCardAdapter::sendCommandWithoutResponse(unsigned char cmd, const std::vector<unsigned char>& data)
+	std::vector<unsigned char> A3MLGM5600ReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& data)
 	{
-		bool ret = false;
+		EXCEPTION_ASSERT_WITH_LOG(data.size() >= 1, std::invalid_argument, "A valid command buffer size must be at least 1 byte long");
+
 		std::vector<unsigned char> command;		
 		command.push_back((1 << 7) | (d_seq << 4));	//SEQ
 		command.push_back(0);	//DADD
-		command.push_back(cmd);	//CMD
-		command.push_back(static_cast<unsigned char>(1 + data.size()));	//DATALENGTH
+		command.push_back(data[0]);	//CMD
+		command.push_back(static_cast<unsigned char>(data.size()));	//DATALENGTH
 		command.push_back(0); //TIME
-		command.insert(command.end(), data.begin(), data.end());	//DATA
+		command.insert(command.end(), data.begin() + 1, data.end());	//DATA
 		command.push_back(calcBCC(command));
 		command.insert(command.begin(), &STX, &STX + 1);	//STX
 		command.push_back(ETX);	//ETX
-		d_lastCommand = command;
-		d_lastResult.clear();
 
-		if (command.size() > 0)
+		d_seq++;
+		if (d_seq > 7)
 		{
-			getA3MLGM5600ReaderUnit()->connectToReader();
-
-			boost::shared_ptr<boost::asio::ip::udp::socket> socket = getA3MLGM5600ReaderUnit()->getSocket();
-			socket->send(boost::asio::buffer(command));
-
-			d_seq++;
-			if (d_seq > 7)
-			{
-				d_seq = 0;
-			}
-
-			ret = true;
+			d_seq = 0;
 		}
 
-		return ret;
-	}
-
-	std::vector<unsigned char> A3MLGM5600ReaderCardAdapter::sendCommand(const std::vector<unsigned char>& command, long int timeout)
-	{		
-		return sendCommand(command[0], std::vector<unsigned char>(command.begin(), command.end() - 1), timeout);
+		return command;
 	}
 
 	std::vector<unsigned char> A3MLGM5600ReaderCardAdapter::sendCommand(unsigned char cmd, const std::vector<unsigned char>& data, long int timeout)
 	{
-		std::vector<unsigned char> r;
-		if (sendCommandWithoutResponse(cmd, data))
-		{
-			if (!receiveCommand(r, timeout))
-			{
-				THROW_EXCEPTION_WITH_LOG(CardException, "No response received");
-			}
+		std::vector<unsigned char> command = data;
+		command.insert(command.begin(), cmd);
 
-			d_lastResult = r;
-		}
-
-		return r;
+		return ReaderCardAdapter::sendCommand(command, timeout);
 	}
 
-	std::vector<unsigned char> A3MLGM5600ReaderCardAdapter::handleCommandBuffer(const std::vector<unsigned char>& cmdbuf)
+	std::vector<unsigned char> A3MLGM5600ReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
 	{
-		EXCEPTION_ASSERT_WITH_LOG(cmdbuf.size() >= 7, std::invalid_argument, "A valid command buffer size must be at least 7 bytes long");
-		EXCEPTION_ASSERT_WITH_LOG(cmdbuf[0] == STX, std::invalid_argument, "The supplied command buffer is not valid (bad STX byte)");
+		EXCEPTION_ASSERT_WITH_LOG(answer.size() >= 7, std::invalid_argument, "A valid buffer size must be at least 7 bytes long");
+		EXCEPTION_ASSERT_WITH_LOG(answer[0] == STX, std::invalid_argument, "The supplied buffer is not valid (bad STX byte)");
 		
-		std::vector<unsigned char> buf = std::vector<unsigned char>(cmdbuf.begin() + 1, cmdbuf.end());
+		std::vector<unsigned char> buf = std::vector<unsigned char>(answer.begin() + 1, answer.end());
 		unsigned char datalen = buf[2];
 		d_command_status = buf[3];		
 
 		EXCEPTION_ASSERT_WITH_LOG(static_cast<unsigned char>((4 + datalen - 1)) <= (buf.size() - 2), std::invalid_argument, "The supplied command buffer is not valid (bad command length)");		
-		EXCEPTION_ASSERT_WITH_LOG(buf[4 + datalen] == ETX, std::invalid_argument, "The supplied command buffer is not valid (bad ETX byte)");
+		EXCEPTION_ASSERT_WITH_LOG(buf[4 + datalen] == ETX, std::invalid_argument, "The supplied buffer is not valid (bad ETX byte)");
 		buf.resize(buf.size() - 1);
 		unsigned char cmdBcc = buf.back();
 		buf.pop_back();
 		unsigned char bcc = calcBCC(buf);
 		buf = std::vector<unsigned char>(buf.begin() + 4, buf.end());
-		EXCEPTION_ASSERT_WITH_LOG(cmdBcc == bcc, std::invalid_argument, "The supplied command buffer is not valid (bad BCC byte)");					
+		EXCEPTION_ASSERT_WITH_LOG(cmdBcc == bcc, std::invalid_argument, "The supplied buffer is not valid (bad BCC byte)");					
 
 		return buf;
-	}
-
-	void set_result(boost::optional<boost::system::error_code>* a, boost::system::error_code b) 
-	{ 
-		a->reset(b); 
-	}
-
-	bool A3MLGM5600ReaderCardAdapter::receiveCommand(std::vector<unsigned char>& buf, long int timeout)
-	{
-		boost::shared_ptr<boost::asio::ip::udp::socket> socket = getA3MLGM5600ReaderUnit()->getSocket();
-		// provisional size
-		std::vector<unsigned char> bufrcv(1024);
-		std::vector<unsigned char> msg(1024);
-
-		struct timeval tv;		
-		tv.tv_usec = 0;
-		tv.tv_sec = static_cast<int>(timeout / 1000);
-
-		try
-		{
-			boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
-			boost::posix_time::ptime nowend = now + boost::posix_time::milliseconds(timeout);
-
-			boost::array<char, 128> recv_buf;
-			boost::asio::ip::udp::endpoint sender_endpoint;
-			// TODO: Need to set up a timeout here !
-			size_t len = socket->receive_from(boost::asio::buffer(recv_buf), sender_endpoint);
-
-			try
-			{
-				buf = handleCommandBuffer(std::vector<unsigned char>(recv_buf.begin(), recv_buf.begin() + len));
-
-				return true;
-			}
-			catch (std::invalid_argument&)
-			{
-			}
-		}
-		catch(...)
-		{
-		}
-
-		return false;
 	}
 
 	std::vector<unsigned char> A3MLGM5600ReaderCardAdapter::requestA()

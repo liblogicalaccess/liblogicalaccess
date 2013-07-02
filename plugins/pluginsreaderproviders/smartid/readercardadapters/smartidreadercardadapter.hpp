@@ -55,35 +55,26 @@ namespace logicalaccess
 
 			/**
 			 * \brief Send a command to the reader.
-			 * \param command The command buffer.			 
-			 * \param timeout The command timeout.
-			 * \return The result of the command.
-			 */
-			virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long int timeout = 2000);
-
-			/**
-			 * \brief Send a command to the reader.
 			 * \param cmd The command code.
 			 * \param command The command buffer.
 			 * \param timeout The command timeout. Default is 2000 ms.
 			 * \return The result of the command.
 			 */
-			virtual std::vector<unsigned char> sendCommand(unsigned char cmd, const std::vector<unsigned char>& command, long int timeout = 2000);
-					
-			/**
-			 * \brief Get the SmartID reader unit.
-			 * \return The SmartID reader unit.
-			 */
-			boost::shared_ptr<SmartIDReaderUnit> getSmartIDReaderUnit() const { return boost::dynamic_pointer_cast<SmartIDReaderUnit>(getReaderUnit()); };			
+			virtual std::vector<unsigned char> sendCommand(unsigned char cmd, const std::vector<unsigned char>& command, long int timeout = 2000);		
 
 			/**
-			 * \brief Wait for a command.
-			 * \param buf The buffer into which to put the received data.
-			 * \param sta The received status code.
-			 * \param timeout The timeout value, in milliseconds. If timeout is negative, the call never times out.
-			 * \return true if a command was received, false otherwise.
+			 * \brief Adapt the command to send to the reader.
+			 * \param command The command to send.
+			 * \return The adapted command to send.
 			 */
-			bool receiveCommand(std::vector<unsigned char>& buf, unsigned char& sta, long int timeout = 1000);
+			virtual std::vector<unsigned char> adaptCommand(const std::vector<unsigned char>& command);
+
+			/**
+			 * \brief Adapt the asnwer received from the reader.
+			 * \param answer The answer received.
+			 * \return The adapted answer received.
+			 */
+			virtual std::vector<unsigned char> adaptAnswer(const std::vector<unsigned char>& answer);
 
 			/**
 			 * \brief Send a halt command.

@@ -23,81 +23,23 @@ namespace logicalaccess
 		
 	}
 
-	bool AxessTMC13ReaderCardAdapter::sendCommandWithoutResponse(const std::vector<unsigned char>& command)
+	std::vector<unsigned char> AxessTMC13ReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
 	{
-		bool ret = false;
-		d_lastCommand = command;
-		d_lastResult.clear();
-
-		if (command.size() > 0)
-		{
-			getAxessTMC13ReaderUnit()->connectToReader();
-
-			boost::shared_ptr<SerialPortXml> port = getAxessTMC13ReaderUnit()->getSerialPort();
-			port->getSerialPort()->write(command);
-
-			ret = true;
-		}
-
-		return ret;
+		return command;
 	}
 
-	std::vector<unsigned char> AxessTMC13ReaderCardAdapter::sendCommand(const std::vector<unsigned char>& command, long int timeout)
-	{
-		std::vector<unsigned char> r;
-		if (sendCommandWithoutResponse(command))
-		{
-			if (!receiveCommand(r, timeout))
-			{
-				THROW_EXCEPTION_WITH_LOG(CardException, "No response received");
-			}
-
-			d_lastResult = r;
-		}
-
-		return r;
-	}
-
-	std::vector<unsigned char> AxessTMC13ReaderCardAdapter::handleCommandBuffer(const std::vector<unsigned char>& cmdbuf)
+	std::vector<unsigned char> AxessTMC13ReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
 	{		
 		size_t i = 0;
-		for (; i < cmdbuf.size(); ++i)
+		for (; i < answer.size(); ++i)
 		{
-			if (cmdbuf[i] == CR)
+			if (answer[i] == CR)
 			{
 				break;
 			}
 		}
-		EXCEPTION_ASSERT_WITH_LOG(i < cmdbuf.size(), std::invalid_argument, "The supplied command buffer is not valid (no stop byte)");		
+		EXCEPTION_ASSERT_WITH_LOG(i < answer.size(), std::invalid_argument, "The supplied buffer is not valid (no stop byte)");		
 		
-		return std::vector<unsigned char>(cmdbuf.begin(), cmdbuf.begin() + i);
+		return std::vector<unsigned char>(answer.begin(), answer.begin() + i);
 	}
-
-	bool AxessTMC13ReaderCardAdapter::receiveCommand(std::vector<unsigned char>& buf, long int timeout)
-	{		
-		std::vector<unsigned char> res;
-		boost::shared_ptr<SerialPortXml> port = getAxessTMC13ReaderUnit()->getSerialPort();
-		boost::posix_time::time_duration ptimeout = boost::posix_time::milliseconds(timeout);
-		while (port->getSerialPort()->select(ptimeout))
-		{
-			std::vector<unsigned char> tmpbuf;
-
-			while (port->getSerialPort()->read(tmpbuf, 256) > 0)
-			{
-				res.insert(res.end(), tmpbuf.begin(), tmpbuf.end());
-
-				try
-				{
-					buf = handleCommandBuffer(res);
-
-					return true;
-				}
-				catch (std::invalid_argument&)
-				{
-				}
-			}
-		}
-
-		return false;
-	}	
 }

@@ -19,25 +19,13 @@ namespace logicalaccess
 		
 	}
 
-	std::vector<unsigned char> RplethReaderCardAdapter::sendCommand(const std::vector<unsigned char>& command, long int timeout)
+	std::vector<unsigned char> RplethReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
 	{	
-		if (command[0] == 0x01 && command[1] == 0x05)
-			COM_("Sending command: %s", BufferHelper::getStdString(command).c_str());
-		else
-			COM_("Sending command: %s", BufferHelper::getHex(command).c_str());
-
-		std::vector<unsigned char> res;
 		std::vector<unsigned char> cmd;
 		cmd.insert (cmd.begin(), command.begin(), command.end());
 		cmd.push_back (calcChecksum(cmd));
-		if (cmd.size() > 0) 
-		{
-			boost::shared_ptr<boost::asio::ip::tcp::socket> socket = getRplethReaderUnit()->getSocket();
-			socket->send(boost::asio::buffer(cmd));
 
-			res = receiveAnwser(cmd, timeout);
-		}
-		return res;
+		return cmd;
 	}
 
 	std::vector<unsigned char> RplethReaderCardAdapter::sendAsciiCommand(const std::string& command, long int timeout)
@@ -52,7 +40,7 @@ namespace logicalaccess
 		return res;
 	}
 
-	std::vector<unsigned char> RplethReaderCardAdapter::receiveAnwser(const std::vector<unsigned char>& command, long int timeout)
+	std::vector<unsigned char> RplethReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
 	{
 		std::vector<unsigned char> res(4);
 		// wait to receive the full frame

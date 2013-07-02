@@ -77,26 +77,6 @@ namespace logicalaccess
 			 * \brief Send an APDU command to the reader without data.
 			 */
 			virtual void sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char* result, size_t* resultlen);
-
-			/**
-			 * \brief Send a command to the reader.
-			 * \param command The command buffer.			 
-			 * \param timeout The command timeout.
-			 * \return The result of the command.
-			 */
-			virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long int timeout = 2000);
-
-			/**
-			 * \brief Get the reader unit.
-			 * \return The reader unit.
-			 */
-			virtual boost::shared_ptr<ReaderUnit> getReaderUnit();
-
-			/**
-			 * \brief Set the reader unit.
-			 * \param unit The reader unit.
-			 */
-			virtual void setReaderUnit(boost::weak_ptr<ReaderUnit> unit);
 			
 		protected:
 			

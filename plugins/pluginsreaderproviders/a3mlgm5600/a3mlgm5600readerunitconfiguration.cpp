@@ -22,29 +22,7 @@ namespace logicalaccess
 
 	void A3MLGM5600ReaderUnitConfiguration::resetConfiguration()
 	{
-		d_readerIpAddress = "192.168.1.100";
-		d_readerPort = 2000;
 		d_localPort = 2000;
-	}
-
-	std::string A3MLGM5600ReaderUnitConfiguration::getReaderIpAddress() const
-	{
-		return d_readerIpAddress;
-	}
-
-	void A3MLGM5600ReaderUnitConfiguration::setReaderIpAddress(std::string ipAddress)
-	{
-		d_readerIpAddress = ipAddress;
-	}
-
-	int A3MLGM5600ReaderUnitConfiguration::getReaderPort() const
-	{
-		return d_readerPort;
-	}
-
-	void A3MLGM5600ReaderUnitConfiguration::setReaderPort(int port)
-	{
-		d_readerPort = port;
 	}
 
 	int A3MLGM5600ReaderUnitConfiguration::getLocalPort() const
@@ -61,8 +39,6 @@ namespace logicalaccess
 	{
 		boost::property_tree::ptree node;
 
-		node.put("ReaderIpAddress", d_readerIpAddress);
-		node.put("ReaderPort", d_readerPort);
 		node.put("LocalPort", d_localPort);
 
 		parentNode.add_child(getDefaultXmlNodeName(), node);
@@ -70,8 +46,6 @@ namespace logicalaccess
 
 	void A3MLGM5600ReaderUnitConfiguration::unSerialize(boost::property_tree::ptree& node)
 	{
-		d_readerIpAddress = node.get_child("ReaderIpAddress").get_value<std::string>();
-		d_readerPort = node.get_child("ReaderPort").get_value<int>();
 		d_localPort = node.get_child("LocalPort").get_value<int>();
 	}
 

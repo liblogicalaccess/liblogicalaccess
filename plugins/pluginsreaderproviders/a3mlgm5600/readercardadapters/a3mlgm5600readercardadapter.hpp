@@ -8,7 +8,6 @@
 #define LOGICALACCESS_DEFAULTA3MLGM5600READERCARDADAPTER_HPP
 
 #include "logicalaccess/cards/readercardadapter.hpp"
-#include "../a3mlgm5600readerunit.hpp"
 #include "logicalaccess/readerproviders/iso14443readercommunication.hpp"
 
 #include <string>
@@ -37,22 +36,20 @@ namespace logicalaccess
 
 			static const unsigned char STX = 0x02; /**< \brief The start value. */
 			static const unsigned char ETX = 0x03; /**< \brief The stop value. */
-			
-			/**
-			 * \brief Send a command to the reader without waiting for a response.
-			 * \param cmd The command code.
-			 * \param data The command data buffer.
-			 * \return True if the command was send successfully, false otherwise.
-			 */
-			bool sendCommandWithoutResponse(unsigned char cmd, const std::vector<unsigned char>& data);
 
 			/**
-			 * \brief Send a command to the reader.
-			 * \param command The command buffer.			 
-			 * \param timeout The command timeout.
-			 * \return The result of the command.
+			 * \brief Adapt the command to send to the reader.
+			 * \param command The command to send.
+			 * \return The adapted command to send.
 			 */
-			virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long int timeout = 3000);
+			virtual std::vector<unsigned char> adaptCommand(const std::vector<unsigned char>& command);
+
+			/**
+			 * \brief Adapt the asnwer received from the reader.
+			 * \param answer The answer received.
+			 * \return The adapted answer received.
+			 */
+			virtual std::vector<unsigned char> adaptAnswer(const std::vector<unsigned char>& answer);
 
 			/**
 			 * \brief Send a command to the reader.
@@ -62,20 +59,6 @@ namespace logicalaccess
 			 * \return The result of the command.
 			 */
 			virtual std::vector<unsigned char> sendCommand(unsigned char cmd, const std::vector<unsigned char>& data, long int timeout = 3000);
-
-			/**
-			 * \brief Wait for a command.
-			 * \param buf The buffer into which to put the received data.
-			 * \param timeout The timeout value, in milliseconds. If timeout is negative, the call never times out.
-			 * \return true if a command was received, false otherwise.
-			 */
-			bool receiveCommand(std::vector<unsigned char>& buf, long int timeout = 2000);
-			
-			/**
-			 * \brief Get the A3MLGM5600 reader unit.
-			 * \return The A3MLGM5600 reader unit.
-			 */
-			boost::shared_ptr<A3MLGM5600ReaderUnit> getA3MLGM5600ReaderUnit() const { return boost::dynamic_pointer_cast<A3MLGM5600ReaderUnit>(getReaderUnit()); };			
 		
 			/**
 			 * \brief Send a REQA command from the PCD to the PICC.
@@ -132,14 +115,7 @@ namespace logicalaccess
 			 * \param data The data to calculate checksum
 			 * \return The checksum.
 			 */
-			unsigned char calcBCC(const std::vector<unsigned char>& data);
-			
-			/**
-			 * \brief Handle a command buffer and give the associated data buffer.
-			 * \param cmdbuf The command buffer.
-			 * \return The data buffer.
-			 */
-			std::vector<unsigned char> handleCommandBuffer(const std::vector<unsigned char>& cmdbuf);		
+			unsigned char calcBCC(const std::vector<unsigned char>& data);		
 
 			/**
 			 * \brief The current sequence number.

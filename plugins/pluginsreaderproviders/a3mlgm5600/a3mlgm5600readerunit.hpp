@@ -11,8 +11,6 @@
 #include "logicalaccess/readerproviders/serialportxml.hpp"
 #include "a3mlgm5600readerunitconfiguration.hpp"
 
-#include <boost/asio.hpp>
-
 namespace logicalaccess
 {
 	class Profile;
@@ -164,11 +162,6 @@ namespace logicalaccess
 			virtual void unSerialize(boost::property_tree::ptree& node);
 
 			/**
-			 * \brief Get the client socket.
-			 */
-			boost::shared_ptr<boost::asio::ip::udp::socket> getSocket();
-
-			/**
 			 * \brief Reset the RF field.
 			 * \param offtime The offtime, in 100 milliseconds. Default is 1.
 			 */
@@ -198,16 +191,6 @@ namespace logicalaccess
 			 * \brief The device address.
 			 */
 			unsigned char d_deviceAddress;
-
-			/**
-			 * \brief Client socket use to communicate with the reader.
-			 */
-			boost::shared_ptr<boost::asio::ip::udp::socket> d_socket;
-			
-			/**
-			 * \brief Provides core I/O functionality
-			 */
-			boost::asio::io_service ios;
 	};
 }
 

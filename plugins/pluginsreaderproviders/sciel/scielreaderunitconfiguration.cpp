@@ -33,11 +33,6 @@ namespace logicalaccess
 		d_timeBeforeTagOut = 2000;
 		d_timeBeforeSafety = 2000;
 		d_timeRemoval = 2;
-#ifndef UNIX
-		d_portBaudRate = CBR_9600;
-#else
-		d_portBaudRate = B9600;
-#endif
 	}
 
 	void SCIELReaderUnitConfiguration::serialize(boost::property_tree::ptree& parentNode)
@@ -51,7 +46,6 @@ namespace logicalaccess
 		node.put("TimeBeforeTagOut", d_timeBeforeTagOut);
 		node.put("TimeBeforeSafety", d_timeBeforeSafety);
 		node.put("TimeRemoval", d_timeRemoval);
-		node.put("PortBaudRate", d_portBaudRate);
 
 		parentNode.add_child(getDefaultXmlNodeName(), node);
 	}
@@ -65,7 +59,6 @@ namespace logicalaccess
 		d_timeBeforeTagOut = node.get_child("TimeBeforeTagOut").get_value<unsigned short>();
 		d_timeBeforeSafety = node.get_child("TimeBeforeSafety").get_value<unsigned short>();
 		d_timeRemoval = node.get_child("TimeRemoval").get_value<unsigned char>();
-		d_portBaudRate = node.get_child("PortBaudRate").get_value<unsigned long>();
 	}
 
 	std::string SCIELReaderUnitConfiguration::getDefaultXmlNodeName() const
