@@ -717,7 +717,7 @@ namespace logicalaccess
 			switch (mode)
 			{
 			case CM_PLAIN:
-				edata = std::vector<unsigned char>(data.begin(), data.begin() + DESFIRE_CLEAR_DATA_LENGTH_CHUNK);
+				edata = std::vector<unsigned char>(data.begin(), data.begin() + DESFIRE_CLEAR_DATA_LENGTH_CHUNK - 8);
 				if (d_crypto.d_auth_method != CM_LEGACY) // CMAC needs to be recalculated
 				{
 					std::vector<unsigned char> apdu_command;
@@ -765,7 +765,7 @@ namespace logicalaccess
 			pos += DESFIRE_CLEAR_DATA_LENGTH_CHUNK - 8;
 			while (ret && err == DF_INS_ADDITIONAL_FRAME) // && pos < dataLength
 			{
-				pkSize = ((data.size() - pos) >= DESFIRE_CLEAR_DATA_LENGTH_CHUNK) ? DESFIRE_CLEAR_DATA_LENGTH_CHUNK : (data.size() - pos);
+				pkSize = ((data.size() - pos) >= DESFIRE_CLEAR_DATA_LENGTH_CHUNK - 8) ? DESFIRE_CLEAR_DATA_LENGTH_CHUNK - 8 : (data.size() - pos);
 
 				switch (mode)
 				{
