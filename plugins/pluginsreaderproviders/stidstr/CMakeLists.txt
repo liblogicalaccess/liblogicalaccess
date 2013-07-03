@@ -50,7 +50,9 @@ if (WIN32)
 else()
   set(LINK_OPT logicalaccess  crypto boost_filesystem boost_system)
 endif()
-  
+
+SET_TARGET_PROPERTIES(stidstrreaders PROPERTIES VERSION 1.65)  
+
 target_link_libraries(
 	stidstrreaders
 	logicalaccess-cryptolib

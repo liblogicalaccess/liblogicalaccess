@@ -26,6 +26,8 @@ if (WIN32)
 else()
   set(LINK_OPT logicalaccess  boost_system boost_filesystem)
 endif()
+
+SET_TARGET_PROPERTIES(scielreaders PROPERTIES VERSION 1.65)
   
 target_link_libraries(
 	scielreaders

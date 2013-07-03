@@ -18,6 +18,8 @@ else()
   set(LINK_OPT logicalaccess)
 endif()
 
+SET_TARGET_PROPERTIES(em4102cards PROPERTIES VERSION 1.65)
+
 target_link_libraries(
 	em4102cards
 	${LINK_OPT}

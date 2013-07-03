@@ -26,6 +26,8 @@ if (WIN32)
 else()
   set(LINK_OPT logicalaccess crypto boost_system boost_system boost_filesystem)
 endif()
+
+SET_TARGET_PROPERTIES(deisterreaders PROPERTIES VERSION 1.65)
   
 target_link_libraries(
 	deisterreaders

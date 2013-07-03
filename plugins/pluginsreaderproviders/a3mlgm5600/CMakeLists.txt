@@ -28,6 +28,8 @@ else()
   set(LINK_OPT logicalaccess pthread boost_system boost_filesystem)
 endif()
 
+SET_TARGET_PROPERTIES(a3mlgm5600readers PROPERTIES VERSION 1.65)
+
 target_link_libraries(
     a3mlgm5600readers
     ${LINK_OPT}
