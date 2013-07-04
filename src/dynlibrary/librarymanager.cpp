@@ -185,7 +185,7 @@ namespace logicalaccess
 				for (boost::filesystem::directory_iterator dir_iter(pluginDir) ; dir_iter != end_iter ; ++dir_iter)
 				{
 					PLUGIN_("Checking library %s...", dir_iter->path().filename().string().c_str());
-					if (boost::filesystem::is_regular_file(dir_iter->status())
+					if ((boost::filesystem::is_regular_file(dir_iter->status()) || boost::filesystem::is_symlink(dir_iter->status()))
 						&& dir_iter->path().extension() == extension
 						&& (hasEnding(dir_iter->path().filename().string(), enumType[LibraryManager::CARDS_TYPE] + extension)
 						|| hasEnding(dir_iter->path().filename().string(), enumType[LibraryManager::READERS_TYPE] + extension)
