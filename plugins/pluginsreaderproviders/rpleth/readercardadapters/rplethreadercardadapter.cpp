@@ -53,6 +53,7 @@ namespace logicalaccess
 			if (answer[1] == '\r' && answer[2] == '\n')
 			{
 				EXCEPTION_ASSERT_WITH_LOG(answer[0] != 'N', LibLogicalAccessException, "No tag present in rfid field.");
+				EXCEPTION_ASSERT_WITH_LOG(answer[0] != 'F', LibLogicalAccessException, "Fail to execute the command.");
 			}
 		}
 
