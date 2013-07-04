@@ -106,8 +106,6 @@ namespace logicalaccess
 
 			bool d_isConnected;
 
-		private:
-
 			std::vector<unsigned char> d_response;
 	};
 

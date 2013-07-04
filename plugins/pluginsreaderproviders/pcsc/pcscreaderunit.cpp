@@ -82,8 +82,6 @@ namespace logicalaccess
 
 		d_proxyReaderUnit.reset();
 		d_readerUnitConfig.reset(new PCSCReaderUnitConfiguration());
-		boost::shared_ptr<PCSCDataTransport> dataTransport(new PCSCDataTransport());
-		setDataTransport(dataTransport);
 		setDefaultReaderCardAdapter (boost::shared_ptr<PCSCReaderCardAdapter> (new PCSCReaderCardAdapter()));
 	}
 

@@ -70,14 +70,15 @@ namespace logicalaccess
 
 			CheckCardError(errorFlag);
 			d_response = std::vector<unsigned char>(returnedData, returnedData + ulNoOfDataReceived);
-			COM_("APDU response: %s", BufferHelper::getHex(d_response).c_str());
-			CheckResult(returnedData, ulNoOfDataReceived);
 		}
 	}
 
 	std::vector<unsigned char> PCSCDataTransport::receive(long int /*timeout*/)
 	{
 		std::vector<unsigned char> r = d_response;
+		COM_("APDU response: %s", BufferHelper::getHex(r).c_str());
+		CheckResult(&r[0], r.size());
+
 		d_response.clear();
 		return r;
 	}
