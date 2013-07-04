@@ -29,7 +29,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 if(UNIX)
-  set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra -g")
+  set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra")
   add_definitions(-DUNIX -DLOGICALACCESS_LOGS)
 else()
   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
@@ -134,7 +134,7 @@ add_library(
   LICENSE.LibLogicalAccess.txt
 )
 
-SET_TARGET_PROPERTIES(liblogicalaccess PROPERTIES OUTPUT_NAME "liblogicalaccess" PREFIX "" VERSION 2.0.3)
+SET_TARGET_PROPERTIES(liblogicalaccess PROPERTIES OUTPUT_NAME "liblogicalaccess" PREFIX "" VERSION 1.65)
 
 if (WIN32)
 
