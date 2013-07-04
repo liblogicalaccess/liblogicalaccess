@@ -47,24 +47,10 @@ namespace logicalaccess
 			 * \return The adapted answer received.
 			 */
 			virtual std::vector<unsigned char> adaptAnswer(const std::vector<unsigned char>& answer);
-			
-			/**
-			 * \brief Send a command in ascci to the reader.
-			 * \param command The command buffer.			 
-			 * \param timeout The command timeout.
-			 * \return The result of the command.
-			 */
-			virtual std::vector<unsigned char> sendAsciiCommand(const std::string& command, long int timeout = 2000);
-			
 
-		protected:
+			std::vector<unsigned char> sendAsciiCommand(const std::string& command, long int timeout = 2000);
 
-			/**
-			 * \brief Calculate command checksum.
-			 * \param data The data to calculate checksum
-			 * \return The checksum.
-			 */
-			unsigned char calcChecksum(const std::vector<unsigned char>& data);	
+			std::vector<unsigned char> sendRplethCommand(const std::vector<unsigned char>& data, long timeout = 2000);
 	};
 
 }

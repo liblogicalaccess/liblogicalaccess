@@ -77,6 +77,20 @@ namespace logicalaccess
 			 * \brief Send an APDU command to the reader without data.
 			 */
 			virtual void sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char* result, size_t* resultlen);
+
+			/**
+			 * \brief Adapt the command to send to the reader.
+			 * \param command The command to send.
+			 * \return The adapted command to send.
+			 */
+			virtual std::vector<unsigned char> adaptCommand(const std::vector<unsigned char>& command);
+
+			/**
+			 * \brief Adapt the asnwer received from the reader.
+			 * \param answer The answer received.
+			 * \return The adapted answer received.
+			 */
+			virtual std::vector<unsigned char> adaptAnswer(const std::vector<unsigned char>& answer);
 			
 		protected:
 			

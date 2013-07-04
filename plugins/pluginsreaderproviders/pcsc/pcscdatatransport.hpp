@@ -98,11 +98,11 @@ namespace logicalaccess
 			 */
 			virtual void CheckResult(const void* data, size_t datalen) const;
 
-		protected:
-
 			virtual void send(const std::vector<unsigned char>& data);
 
 			virtual std::vector<unsigned char> receive(long int timeout);
+
+		protected:
 
 			bool d_isConnected;
 

@@ -107,11 +107,11 @@ namespace logicalaccess
 			 */
 			void setPort(int port);
 
-		protected:
-
 			virtual void send(const std::vector<unsigned char>& data);
 
 			virtual std::vector<unsigned char> receive(long int timeout);
+
+		protected:
 
 			/**
 			 * \brief Client socket use to communicate with the reader.

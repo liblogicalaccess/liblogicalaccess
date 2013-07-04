@@ -111,11 +111,11 @@ namespace logicalaccess
 
 			void setSerialPort(boost::shared_ptr<SerialPortXml> port) { d_port = port; };
 
-		protected:
-
 			virtual void send(const std::vector<unsigned char>& data);
 
 			virtual std::vector<unsigned char> receive(long int timeout);
+
+		protected:
 
 			/**
 			 * \brief The auto-detected status

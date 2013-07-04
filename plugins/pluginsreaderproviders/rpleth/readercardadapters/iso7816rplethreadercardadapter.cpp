@@ -114,13 +114,10 @@ namespace logicalaccess
 
 
 
-	std::vector<unsigned char> ISO7816RplethReaderCardAdapter::sendCommand(const std::vector<unsigned char>& command, long int timeout)
+	std::vector<unsigned char> ISO7816RplethReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
 	{
 		char tmp [3];
 		std::vector<unsigned char> data;
-		data.push_back(static_cast<unsigned char>(Device::HID));
-		data.push_back(static_cast<unsigned char>(HidCommand::COM));
-		data.push_back(static_cast<unsigned char>((command.size()*2)+7));
 		data.push_back(static_cast<unsigned char>('t'));
 		sprintf(tmp, "%.2X",command.size()+1);
 		data.push_back(static_cast<unsigned char>(tmp[0]));
@@ -145,13 +142,13 @@ namespace logicalaccess
 			data.push_back(static_cast<unsigned char>(tmp[0]));
 			data.push_back(static_cast<unsigned char>(tmp[1]));
 		}
-		
-		std::vector<unsigned char> answer = d_rpleth_reader_card_adapter->sendCommand (data, timeout);
-		answer = RplethReaderUnit::asciiToHex(answer);
-		answer = handleAnswer(answer);
-		answer = answerReverse(answer);
 
-		return answer;
+		return d_rpleth_reader_card_adapter->adaptCommand(data);
+	}
+
+	std::vector<unsigned char> ISO7816RplethReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
+	{
+		return answerReverse(handleAnswer(RplethReaderUnit::asciiToHex(d_rpleth_reader_card_adapter->adaptAnswer(answer))));
 	}
 
 	std::vector<unsigned char> ISO7816RplethReaderCardAdapter::answerReverse (const std::vector<unsigned char>& answer)

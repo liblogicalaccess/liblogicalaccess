@@ -292,7 +292,7 @@ namespace logicalaccess
 	{
 		node.put("<xmlattr>.type", getReaderProvider()->getRPType());
 		d_readerUnitConfig->serialize(node);
-		if (getDataTransport)
+		if (getDataTransport())
 		{
 			node.put("TransportType", getDataTransport()->getTransportType());
 			getDataTransport()->serialize(node);

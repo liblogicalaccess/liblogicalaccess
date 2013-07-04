@@ -101,16 +101,28 @@ namespace logicalaccess
 		std::vector<unsigned char> res;
 		boost::shared_ptr<boost::asio::ip::udp::socket> socket = getSocket();
 
-		try
+		long int currentWait = 0;
+		size_t lenav = socket->available();
+		while (lenav == 0 && (timeout == 0 || currentWait < timeout))
+		{  
+
+	#ifdef _WINDOWS
+			Sleep(250);
+	#elif defined(LINUX)
+			usleep(250000);
+	#endif
+			currentWait += 250;
+
+			lenav = socket->available();
+		}
+
+		if (lenav > 0)
 		{
 			boost::array<char, 128> recv_buf;
 			boost::asio::ip::udp::endpoint sender_endpoint;
 			// TODO: Need to set up a timeout here !
 			size_t len = socket->receive_from(boost::asio::buffer(recv_buf), sender_endpoint);
 			res = std::vector<unsigned char>(recv_buf.begin(), recv_buf.begin() + len);
-		}
-		catch(...)
-		{
 		}
 
 		return res;

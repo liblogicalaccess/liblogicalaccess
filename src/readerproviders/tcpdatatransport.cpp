@@ -101,16 +101,27 @@ namespace logicalaccess
 		std::vector<unsigned char> res;
 
 		boost::shared_ptr<boost::asio::ip::tcp::socket> socket = getSocket();
-		std::vector<unsigned char> bufrcv(1024);
 
-		try
+		long int currentWait = 0;
+		size_t lenav = socket->available();
+		while (lenav == 0 && (timeout == 0 || currentWait < timeout))
+		{  
+
+	#ifdef _WINDOWS
+			Sleep(250);
+	#elif defined(LINUX)
+			usleep(250000);
+	#endif
+			currentWait += 250;
+
+			lenav = socket->available();
+		}
+
+		if (lenav > 0)
 		{
-			// TODO: Need to set up a timeout here !
+			std::vector<unsigned char> bufrcv(1024);
 			size_t len = socket->receive(boost::asio::buffer(bufrcv));
 			res = std::vector<unsigned char>(bufrcv.begin(), bufrcv.begin() + len);
-		}
-		catch(...)
-		{
 		}
 
 		return res;

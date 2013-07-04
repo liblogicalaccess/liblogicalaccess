@@ -38,22 +38,25 @@ namespace logicalaccess
 			virtual std::string getTransportType() const { return TRANSPORT_RPLETH; };
 
 			/**
-			 * \brief Get the data transport endpoint name.
-			 * \return The data transport endpoint name.
-			 */
-			virtual std::string getName() const;
-
-			/**
 			 * \brief Get the default Xml Node name for this object.
 			 * \return The Xml node name.
 			 */
 			virtual std::string getDefaultXmlNodeName() const;
 
-		protected:
+			void sendll(const std::vector<unsigned char>& data);
 
 			virtual void send(const std::vector<unsigned char>& data);
 
 			virtual std::vector<unsigned char> receive(long int timeout);
+
+		protected:
+
+			/**
+			 * \brief Calculate command checksum.
+			 * \param data The data to calculate checksum
+			 * \return The checksum.
+			 */
+			unsigned char calcChecksum(const std::vector<unsigned char>& data);	
 	};
 
 }
