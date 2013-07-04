@@ -18,7 +18,7 @@ else()
   set(LINK_OPT logicalaccess)
 endif()
 
-SET_TARGET_PROPERTIES(iso7816cards PROPERTIES VERSION 2.0.3)
+SET_TARGET_PROPERTIES(iso7816cards PROPERTIES VERSION 1.65)
 
 target_link_libraries(
 	iso7816cards

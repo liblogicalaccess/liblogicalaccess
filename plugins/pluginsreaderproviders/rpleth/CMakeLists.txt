@@ -64,6 +64,8 @@ if (WIN32)
 else()
   set(LINK_OPT logicalaccess pthread boost_system boost_filesystem)
 endif()
+
+SET_TARGET_PROPERTIES(rplethreaders PROPERTIES VERSION 1.65)
   
 target_link_libraries(
 	rplethreaders

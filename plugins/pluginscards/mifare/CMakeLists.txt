@@ -12,13 +12,15 @@ add_library(
 	${INCLUDE}
   )
 
-SET_TARGET_PROPERTIES(mifarecards PROPERTIES VERSION 2.0.3)
+SET_TARGET_PROPERTIES(mifarecards PROPERTIES VERSION 1.65)
 
 if (WIN32)
   set(LINK_OPT liblogicalaccess)
 else()
   set(LINK_OPT logicalaccess crypto)
 endif()
+
+SET_TARGET_PROPERTIES(mifarecards PROPERTIES VERSION 1.65)
 
 target_link_libraries(
 	mifarecards

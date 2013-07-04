@@ -18,6 +18,8 @@ else()
   set(LINK_OPT logicalaccess)
 endif()
 
+SET_TARGET_PROPERTIES(tagitcards PROPERTIES VERSION 1.65)
+
 target_link_libraries(
 	tagitcards
 	iso15693cards

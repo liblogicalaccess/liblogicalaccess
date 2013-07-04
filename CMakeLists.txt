@@ -134,7 +134,7 @@ add_library(
   LICENSE.LibLogicalAccess.txt
 )
 
-SET_TARGET_PROPERTIES(liblogicalaccess PROPERTIES OUTPUT_NAME "liblogicalaccess" PREFIX "" VERSION 2.0.3)
+SET_TARGET_PROPERTIES(liblogicalaccess PROPERTIES OUTPUT_NAME "liblogicalaccess" PREFIX "" VERSION 1.65)
 
 if (WIN32)
 
