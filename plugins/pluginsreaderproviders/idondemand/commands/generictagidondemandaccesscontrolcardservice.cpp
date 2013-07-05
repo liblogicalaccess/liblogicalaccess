@@ -190,7 +190,7 @@ namespace logicalaccess
 				boost::shared_ptr<IdOnDemandReaderCardAdapter> adapter = boost::dynamic_pointer_cast<IdOnDemandReaderCardAdapter>(idCardProvider->getReaderCardAdapter());
 				if (adapter)
 				{
-					boost::shared_ptr<IdOnDemandReaderUnit> idReaderUnit = boost::dynamic_pointer_cast<IdOnDemandReaderUnit>(adapter->getReaderUnit());
+					boost::shared_ptr<IdOnDemandReaderUnit> idReaderUnit = boost::dynamic_pointer_cast<IdOnDemandReaderUnit>(adapter->getDataTransport()->getReaderUnit());
 
 					if (idReaderUnit)
 					{

@@ -291,7 +291,7 @@ namespace logicalaccess
 			 * \param source The vector to convert.
 			 * \return The vector converted.
 			 */
-			std::vector<unsigned char> asciiToHex (const std::vector<unsigned char>& source);
+			static std::vector<unsigned char> asciiToHex (const std::vector<unsigned char>& source);
 
 			/**
 			 * \brief Send a reqA.

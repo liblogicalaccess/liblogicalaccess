@@ -8,7 +8,6 @@
 #define LOGICALACCESS_SCIELREADERUNIT_HPP
 
 #include "logicalaccess/readerproviders/readerunit.hpp"
-#include "logicalaccess/readerproviders/serialportxml.hpp"
 #include "scielreaderunitconfiguration.hpp"
 #include "logicalaccess/cards/chip.hpp"
 
@@ -34,7 +33,7 @@ namespace logicalaccess
 			/**
 			 * \brief Constructor.
 			 */
-			SCIELReaderUnit(boost::shared_ptr<SerialPortXml> port);
+			SCIELReaderUnit();
 
 			/**
 			 * \brief Destructor.
@@ -52,18 +51,6 @@ namespace logicalaccess
 			 * \return The connected reader unit name.
 			 */
 			virtual std::string getConnectedName();
-
-			/**
-			 * \brief Get the serial port information.
-			 * \return The serial port.
-			 */
-			virtual boost::shared_ptr<SerialPortXml> getSerialPort();
-
-			/**
-			 * \brief Set the serial port information.
-			 * \param port The serial port.
-			 */
-			virtual void setSerialPort(boost::shared_ptr<SerialPortXml> port);
 
 			/**
 			 * \brief Set the card type.
@@ -187,21 +174,10 @@ namespace logicalaccess
 			boost::shared_ptr<SCIELReaderProvider> getSCIELReaderProvider() const;
 
 			/**
-			 * \brief Configure the current serial port.
+			 * \brief Get the reader ping command.
+			 * \return The ping command.
 			 */
-			void configure();
-
-			/**
-			 * \brief Configure the given serial port.
-			 * \param port The COM port to configure.
-			 * \param retryConfiguring On error, the function wait some milliseconds and retry another time to configure the serial port.
-			 */
-			void configure(boost::shared_ptr<SerialPortXml> port, bool retryConfiguring);
-
-			/**
-			 * \brief Start to auto-detect the first serial port with a reader. Update serial port when found.
-			 */
-			void startAutoDetect();
+			virtual std::vector<unsigned char> getPingCommand() const;
 
 			/**
 			 * \brief Retrieve reader identifier. 
@@ -248,11 +224,6 @@ namespace logicalaccess
 		protected:
 
 			/**
-			 * \brief The auto-detected status
-			 */
-			bool d_isAutoDetected;
-
-			/**
 			 * \brief Get the ELA tag power status from flag.
 			 * \param flag The flag.
 			 * \return The tag power status.
@@ -264,12 +235,7 @@ namespace logicalaccess
 			 * \param buffer The buffer.
 			 * \return The chip object.
 			 */
-			boost::shared_ptr<Chip> createChipFromBuffer(std::vector<unsigned char> buffer);
-
-			/**
-			 * \brief The serial port.
-			 */
-			boost::shared_ptr<SerialPortXml> d_port;			
+			boost::shared_ptr<Chip> createChipFromBuffer(std::vector<unsigned char> buffer);			
 
 			/**
 			 * \brief The SCIEL reader identifier.

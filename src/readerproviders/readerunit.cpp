@@ -15,6 +15,7 @@
 #include <boost/filesystem.hpp>
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "logicalaccess/cards/readercardadapter.hpp"
+#include "logicalaccess/readerproviders/datatransport.hpp"
 #include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
 #include "logicalaccess/services/accesscontrol/formats/staticformat.hpp"
 #include "logicalaccess/cards/chip.hpp"
@@ -43,6 +44,11 @@ namespace logicalaccess
 
 	ReaderUnit::~ReaderUnit()
 	{
+	}
+
+	std::vector<unsigned char> ReaderUnit::getPingCommand() const
+	{
+		return std::vector<unsigned char>();
 	}
 
 	boost::shared_ptr<LCDDisplay> ReaderUnit::getLCDDisplay()
@@ -238,13 +244,22 @@ namespace logicalaccess
 
 	boost::shared_ptr<ReaderCardAdapter> ReaderUnit::getDefaultReaderCardAdapter()
 	{
-		d_defaultReaderCardAdapter->setReaderUnit(shared_from_this());
 		return d_defaultReaderCardAdapter;
 	}
 
 	void ReaderUnit::setDefaultReaderCardAdapter(boost::shared_ptr<ReaderCardAdapter> defaultRca)
 	{
 		d_defaultReaderCardAdapter = defaultRca;
+	}
+
+	boost::shared_ptr<DataTransport> ReaderUnit::getDataTransport() const
+	{
+		return d_dataTransport;
+	}
+
+	void ReaderUnit::setDataTransport(boost::shared_ptr<DataTransport> dataTransport)
+	{
+		d_dataTransport = dataTransport;
 	}
 
 	boost::shared_ptr<ReaderUnitConfiguration> ReaderUnit::getConfiguration()
@@ -273,6 +288,33 @@ namespace logicalaccess
 		return "ReaderUnit";
 	}
 
+	void ReaderUnit::serialize(boost::property_tree::ptree& node)
+	{
+		node.put("<xmlattr>.type", getReaderProvider()->getRPType());
+		d_readerUnitConfig->serialize(node);
+		if (getDataTransport())
+		{
+			node.put("TransportType", getDataTransport()->getTransportType());
+			getDataTransport()->serialize(node);
+		}
+		else
+		{
+			node.put("TransportType", "");
+		}
+	}
+
+	void ReaderUnit::unSerialize(boost::property_tree::ptree& node)
+	{
+		disconnectFromReader();
+		d_readerUnitConfig->unSerialize(node.get_child(d_readerUnitConfig->getDefaultXmlNodeName()));
+		boost::shared_ptr<DataTransport> dataTransport = LibraryManager::getInstance()->getDataTransport(node.get_child("TransportType").get_value<std::string>());
+		if (dataTransport)
+		{
+			dataTransport->unSerialize(node.get_child(dataTransport->getDefaultXmlNodeName()));
+			setDataTransport(dataTransport);
+		}
+	}
+
 	bool ReaderUnit::unSerialize(boost::property_tree::ptree& node, const std::string& rootNode)
 	{
 		try
@@ -285,7 +327,7 @@ namespace logicalaccess
 					if (static_cast<std::string>(v.second.get_child("<xmlattr>.type").get_value<std::string>()) == getReaderProvider()->getRPType())
 					{
 						boost::property_tree::ptree r = v.second;
-						dynamic_cast<XmlSerializable*>(this)->unSerialize(r);
+						unSerialize(r);
 						
 						return true;
 					}

@@ -48,6 +48,8 @@
 #include "readers/scmreaderunit.hpp"
 #include "readers/springcardreaderunit.hpp"
 
+#include "pcscdatatransport.hpp"
+
 #include "desfirechip.hpp"
 #include <boost/filesystem.hpp>
 
@@ -1223,7 +1225,7 @@ namespace logicalaccess
 			else if (type == "Prox")
 			{
 				cp.reset(new ProxPCSCCardProvider());
-				boost::dynamic_pointer_cast<ProxPCSCCardProvider>(cp)->setReaderCardAdapter(boost::dynamic_pointer_cast<PCSCReaderCardAdapter>(rca));
+				boost::dynamic_pointer_cast<ProxPCSCCardProvider>(cp)->setDataTransport(boost::dynamic_pointer_cast<PCSCDataTransport>(rca->getDataTransport()));
 			}
 			else if (type == "ISO15693")
 			{
@@ -1276,8 +1278,19 @@ namespace logicalaccess
 
 			if (rca)
 			{
-				rca->setReaderUnit(shared_from_this());
+				boost::shared_ptr<DataTransport> dt = getDataTransport();
+				if (dt)
+				{
+					rca->setDataTransport(dt);
+				}
+
+				dt = rca->getDataTransport();
+				if (dt)
+				{
+					dt->setReaderUnit(shared_from_this());
+				}
 			}
+
 			if (commands)
 			{
 				commands->setReaderCardAdapter(rca);
@@ -1312,12 +1325,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<PCSCReaderCardAdapter> PCSCReaderUnit::getDefaultPCSCReaderCardAdapter()
 	{
-		boost::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
-		if (d_proxyReaderUnit)
-		{
-			adapter->setReaderUnit(d_proxyReaderUnit);
-		}
-		return boost::dynamic_pointer_cast<PCSCReaderCardAdapter>(adapter);
+		return boost::dynamic_pointer_cast<PCSCReaderCardAdapter>(getDefaultReaderCardAdapter());
 	}
 
 	string PCSCReaderUnit::getReaderSerialNumber()

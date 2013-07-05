@@ -65,12 +65,14 @@ namespace logicalaccess
 
 	void DESFireLocation::serialize(boost::property_tree::ptree& parentNode)
 	{
-		boost::property_tree::ptree node = parentNode.add(getDefaultXmlNodeName(), "");
+		boost::property_tree::ptree node;		
 
 		node.put("AID", aid);
 		node.put("File", file);
 		node.put("Byte", byte);
 		node.put("SecurityLevel", securityLevel);
+
+		parentNode.add_child(DESFireLocation::getDefaultXmlNodeName(), node);
 	}
 
 	void DESFireLocation::unSerialize(boost::property_tree::ptree& node)

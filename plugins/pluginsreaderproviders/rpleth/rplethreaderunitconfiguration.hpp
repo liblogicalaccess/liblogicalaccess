@@ -41,13 +41,6 @@ namespace logicalaccess
 			virtual void resetConfiguration();
 
 			/**
-			 * \brief Set the configuration to param values
-			 * \param readerAddress The reader address
-			 * \param port The reader port
-			 */
-			virtual void setConfiguration(const std::string& readerAddress, int port);
-
-			/**
 			 * \brief Set the wiegand configuration to param values
 			 * \param offset The offset in wiegand communication
 			 * \param lenght The lenght of csn in wiegand communication
@@ -71,31 +64,6 @@ namespace logicalaccess
 			 * \return The Xml node name.
 			 */
 			virtual std::string getDefaultXmlNodeName() const;
-
-			/**
-			 * \brief Get the reader address.
-			 * \return The reader address.
-			 */
-			std::string getReaderAddress() const;
-
-			
-			/**
-			 * \brief Set the reader address.
-			 * \param readerAddress The new reader address.
-			 */
-			void setReaderAddress(const std::string& readerAddress);
-			
-			/**
-			 * \brief Get the reader port.
-			 * \return The reader port.
-			 */
-			int getPort() const;
-
-			/**
-			 * \brief Set the reader port.
-			 * \param port The new reader port.
-			 */
-			void setPort(int port);
 			
 			/**
 			 * \brief Get the offset in wiegand communication.
@@ -134,10 +102,6 @@ namespace logicalaccess
 			void setMode(RplethMode mode);
 
 		protected:
-
-			std::string d_readerAddress;
-
-			int d_port;
 
 			unsigned char d_offset;
 

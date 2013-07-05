@@ -27,6 +27,7 @@
 #include "commands/mifarerplethcommands.hpp"
 #include "commands/mifareultralightrplethcommands.hpp"
 #include <boost/filesystem.hpp>
+#include "logicalaccess/readerproviders/tcpdatatransport.hpp"
 
 namespace logicalaccess
 {
@@ -35,6 +36,10 @@ namespace logicalaccess
 	{
 		d_readerUnitConfig.reset(new RplethReaderUnitConfiguration());
 		setDefaultReaderCardAdapter (boost::shared_ptr<RplethReaderCardAdapter> (new RplethReaderCardAdapter()));
+		boost::shared_ptr<TcpDataTransport> dataTransport(new TcpDataTransport());
+		dataTransport->setIpAddress("192.168.1.100");
+		dataTransport->setPort(23);
+		setDataTransport(dataTransport);
 		d_card_type = "UNKNOWN";
 
 		try
@@ -246,7 +251,7 @@ namespace logicalaccess
 
 			if (rca)
 			{
-				rca->setReaderUnit(shared_from_this());
+				rca->setDataTransport(getDataTransport());
 				if (commands)
 				{
 					commands->setReaderCardAdapter(rca);
@@ -300,40 +305,12 @@ namespace logicalaccess
 
 	bool RplethReaderUnit::connectToReader()
 	{
-		if (!d_socket)
-		{
-			boost::asio::ip::tcp::endpoint endpoint;
-			endpoint.address(boost::asio::ip::address::from_string(getRplethConfiguration()->getReaderAddress()));
-			endpoint.port(getRplethConfiguration()->getPort());
-			
-			d_socket.reset(new boost::asio::ip::tcp::socket (ios));
-
-			try
-			{
-				d_socket->connect(endpoint);
-			}
-			catch(boost::system::system_error& ex)
-			{
-				ERROR_("Socket connection error: %s", ex.what());
-				d_socket.reset();
-			}
-		}
-		INFO_SIMPLE_("Exit connect to reader");
-
-		return (d_socket);
+		return getDataTransport()->connect();
 	}
 
 	void RplethReaderUnit::disconnectFromReader()
 	{
-		if (d_socket->is_open())
-		{
-			d_socket->shutdown(d_socket->shutdown_both);
-			d_socket->close();
-		}
-		if (d_socket)
-			d_socket.reset();
-
-		INFO_SIMPLE_("Exit disconnect to reader");
+		getDataTransport()->disconnect();
 	}
 
 	void RplethReaderUnit::serialize(boost::property_tree::ptree& parentNode)
@@ -369,7 +346,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(Device::RPLETH));
 		command.push_back(static_cast<unsigned char>(RplethCommand::STATEDHCP));
 		command.push_back(static_cast<unsigned char>(0x00));
-		answer = getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
+		answer = getDefaultRplethReaderCardAdapter()->sendRplethCommand (command, 0);
 		if (answer.size() > 0)
 			res = answer[0] != 0x00;
 		return res;
@@ -382,7 +359,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(RplethCommand::DHCP));
 		command.push_back(static_cast<unsigned char>(0x01));
 		command.push_back(static_cast<unsigned char>(status));
-		getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
+		getDefaultRplethReaderCardAdapter()->sendRplethCommand (command, 0);
 	}
 
 	void RplethReaderUnit::setReaderIp(const std::vector<unsigned char>& address)
@@ -397,7 +374,7 @@ namespace logicalaccess
 			{
 				command.push_back(static_cast<unsigned char>(address[i]));
 			}
-			getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
+			getDefaultRplethReaderCardAdapter()->sendRplethCommand (command, 0);
 		}
 	}
 
@@ -413,7 +390,7 @@ namespace logicalaccess
 			{
 				command.push_back(static_cast<unsigned char>(address[i]));
 			}
-			getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
+			getDefaultRplethReaderCardAdapter()->sendRplethCommand (command, 0);
 		}
 	}
 	
@@ -429,7 +406,7 @@ namespace logicalaccess
 			{
 				command.push_back (static_cast<unsigned char>(address[i]));
 			}
-			getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
+			getDefaultRplethReaderCardAdapter()->sendRplethCommand (command, 0);
 		}
 	}
 	
@@ -445,7 +422,7 @@ namespace logicalaccess
 			{
 				command.push_back (static_cast<unsigned char>(address[i]));
 			}
-			getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
+			getDefaultRplethReaderCardAdapter()->sendRplethCommand (command, 0);
 		}
 	}
 
@@ -457,7 +434,7 @@ namespace logicalaccess
 		command.push_back (static_cast<unsigned char>(0x02));
 		command.push_back (static_cast<unsigned char>(port << 8));
 		command.push_back (static_cast<unsigned char>(port & 0xff));
-		getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
+		getDefaultRplethReaderCardAdapter()->sendRplethCommand (command, 0);
 	}
 
 	void RplethReaderUnit::resetReader()
@@ -466,7 +443,7 @@ namespace logicalaccess
 		command.push_back (static_cast<unsigned char>(Device::RPLETH));
 		command.push_back (static_cast<unsigned char>(RplethCommand::RESET));
 		command.push_back (static_cast<unsigned char>(0x00));
-		getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
+		getDefaultRplethReaderCardAdapter()->sendRplethCommand (command, 0);
 	}
 
 	void RplethReaderUnit::setReaderMessage(const std::string& message)
@@ -476,7 +453,7 @@ namespace logicalaccess
 		command.push_back (static_cast<unsigned char>(RplethCommand::MESSAGE));
 		command.push_back (static_cast<unsigned char>(message.size()));
 		command.insert(command.end(), message.begin(), message.end());
-		getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
+		getDefaultRplethReaderCardAdapter()->sendRplethCommand (command, 0);
 	}
 
 	void RplethReaderUnit::nop()
@@ -495,7 +472,7 @@ namespace logicalaccess
 		command.push_back (static_cast<unsigned char>(Device::HID));
 		command.push_back (static_cast<unsigned char>(HidCommand::BADGE));
 		command.push_back (static_cast<unsigned char>(0x00));
-		getDefaultRplethReaderCardAdapter()->sendCommand(command, 0);
+		getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, 0);
 		res = receiveBadge(timeout);
 		return res;
 	}
@@ -506,7 +483,7 @@ namespace logicalaccess
 		std::vector<unsigned char> cmd;
 		cmd.push_back(static_cast<unsigned char>(Device::HID));
 		cmd.push_back(static_cast<unsigned char>(HidCommand::BADGE));
-		res = getDefaultRplethReaderCardAdapter()->receiveAnwser(cmd, timeout);
+		res = getDefaultRplethReaderCardAdapter()->sendRplethCommand(cmd, timeout);
 		// res contains full wiegand trame, it need to take the csn
 		res = getCsn (res);
 		return res;
@@ -518,7 +495,7 @@ namespace logicalaccess
 		boost::shared_ptr<RplethReaderUnitConfiguration> conf = boost::dynamic_pointer_cast<RplethReaderUnitConfiguration>(d_readerUnitConfig);
 		if (conf->getLength() != 0)
 		{
-			if (trame.size() >= (conf->getLength() + conf->getOffset()))
+			if (trame.size() >= static_cast<size_t>(conf->getLength() + conf->getOffset()))
 			{
 			result.insert (result.begin(), trame.begin()+(trame.size() - conf->getLength()), trame.end() - conf->getOffset());
 			}

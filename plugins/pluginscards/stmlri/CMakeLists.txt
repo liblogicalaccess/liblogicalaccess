@@ -18,6 +18,8 @@ else()
   set(LINK_OPT logicalaccess)
 endif()
 
+SET_TARGET_PROPERTIES(stmlri512cards PROPERTIES VERSION 1.65)
+
 target_link_libraries(
 	stmlri512cards
 	${LINK_OPT}

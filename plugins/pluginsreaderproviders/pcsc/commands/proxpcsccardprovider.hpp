@@ -16,7 +16,7 @@
 
 namespace logicalaccess
 {
-	class PCSCReaderProvider;
+	class PCSCDataTransport;
 
 	/**
 	 * \brief The HID Prox PC/SC card provider class.
@@ -45,11 +45,11 @@ namespace logicalaccess
 			 */
 			virtual unsigned int readData(boost::shared_ptr<ProxLocation> location, void* data, size_t dataLength, unsigned int dataLengthBits);
 
-			void setReaderCardAdapter(boost::shared_ptr<PCSCReaderCardAdapter> cardAdapter) { d_cardAdapter = cardAdapter; };
+			void setDataTransport(boost::shared_ptr<PCSCDataTransport> dataTransport) { d_dataTransport = dataTransport; };
 
 		protected:
 
-			boost::shared_ptr<PCSCReaderCardAdapter> d_cardAdapter;
+			boost::shared_ptr<PCSCDataTransport> d_dataTransport;
 	};
 }
 

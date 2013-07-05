@@ -33,17 +33,24 @@
 #include <boost/filesystem.hpp>
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
+#include "logicalaccess/readerproviders/serialportdatatransport.hpp"
 
 namespace logicalaccess
 {
-	STidSTRReaderUnit::STidSTRReaderUnit(boost::shared_ptr<SerialPortXml> port)
+	STidSTRReaderUnit::STidSTRReaderUnit()
 		: ReaderUnit()
 	{
 		//INFO_SIMPLE_("Constructor");
 		d_readerUnitConfig.reset(new STidSTRReaderUnitConfiguration());
 		setDefaultReaderCardAdapter (boost::shared_ptr<STidSTRReaderCardAdapter> (new STidSTRReaderCardAdapter(STID_CMD_READER)));
 		d_ledBuzzerDisplay.reset(new STidSTRLEDBuzzerDisplay());
-		d_port = port;
+		boost::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
+#ifndef _WINDOWS
+		dataTransport->setPortBaudRate(B38400);
+#else
+		dataTransport->setPortBaudRate(CBR_38400);
+#endif
+		setDataTransport(dataTransport);
 		d_card_type = "UNKNOWN";
 
 		try
@@ -53,12 +60,6 @@ namespace logicalaccess
 			d_card_type = pt.get("config.cardType", "UNKNOWN");
 		}
 		catch (...) { }
-
-		if (!d_port)
-		{
-			d_port.reset(new SerialPortXml(""));
-		}
-		d_isAutoDetected = false;
 	}
 
 	STidSTRReaderUnit::~STidSTRReaderUnit()
@@ -67,39 +68,14 @@ namespace logicalaccess
 		disconnectFromReader();
 	}
 
-	boost::shared_ptr<SerialPortXml> STidSTRReaderUnit::getSerialPort()
-	{
-		//INFO_SIMPLE_("Getting serial port...");
-		return d_port;
-	}
-
-	void STidSTRReaderUnit::setSerialPort(boost::shared_ptr<SerialPortXml> port)
-	{
-		if (port)
-		{
-			INFO_("Setting serial port {%s}...", port->getSerialPort()->deviceName().c_str());
-			d_port = port;
-		}
-	}
-
 	std::string STidSTRReaderUnit::getName() const
 	{
-		string ret;
-		if (d_port && !d_isAutoDetected)
-		{
-			ret = d_port->getSerialPort()->deviceName();
-		}
-		return ret;
+		return getDataTransport()->getName();
 	}
 
 	std::string STidSTRReaderUnit::getConnectedName()
 	{
-		string ret;
-		if (d_port)
-		{
-			ret = d_port->getSerialPort()->deviceName();
-		}
-		return ret;
+		return getName();
 	}
 
 	void STidSTRReaderUnit::setCardType(std::string cardType)
@@ -238,20 +214,9 @@ namespace logicalaccess
 
 	bool STidSTRReaderUnit::connectToReader()
 	{
-		INFO_SIMPLE_("Connecting to reader...");
-		bool ret = false;
-
-		startAutoDetect();
-
-		EXCEPTION_ASSERT_WITH_LOG(getSerialPort(), LibLogicalAccessException, "No serial port configured !");
-		EXCEPTION_ASSERT_WITH_LOG(getSerialPort()->getSerialPort()->deviceName() != "", LibLogicalAccessException, "Serial port name is empty ! Auto-detect failed !");
-
-		if (!getSerialPort()->getSerialPort()->isOpen())
+		bool ret = getDataTransport()->connect();
+		if (ret)
 		{
-			INFO_SIMPLE_("Serial port closed ! Opening it...");
-			getSerialPort()->getSerialPort()->open();
-			configure();
-
 			// Negotiate sessions according to communication options
 			if ((getSTidSTRConfiguration()->getCommunicationMode() & STID_CM_SIGNED) == STID_CM_SIGNED)
 			{
@@ -263,13 +228,6 @@ namespace logicalaccess
 				INFO_SIMPLE_("Ciphered communication required, negotiating AES...");
 				authenticateAES();
 			}
-
-			ret = true;
-		}
-		else
-		{
-			INFO_SIMPLE_("Serial port already opened !");
-			ret = true;
 		}
 
 		return ret;
@@ -277,82 +235,17 @@ namespace logicalaccess
 
 	void STidSTRReaderUnit::disconnectFromReader()
 	{
-		INFO_SIMPLE_("Disconnecting from reader...");
-		if (getSerialPort()->getSerialPort()->isOpen())
-		{
-			//ResetAuthenticate();
-			getSerialPort()->getSerialPort()->close();
-		}
+		getDataTransport()->disconnect();
 	}
 
-	void STidSTRReaderUnit::startAutoDetect()
+	std::vector<unsigned char> STidSTRReaderUnit::getPingCommand() const
 	{
-		if (d_port && d_port->getSerialPort()->deviceName() == "")
-		{
-			if (!Settings::getInstance().IsAutoDetectEnabled)
-			{
-				INFO_SIMPLE_("Auto detection is disabled through settings !");
-				return;
-			}
+		std::vector<unsigned char> buffer;
 
-			INFO_SIMPLE_("Serial port is empty ! Starting Auto COM Port Detection...");
-			std::vector<boost::shared_ptr<SerialPortXml> > ports;
-			if (SerialPortXml::EnumerateUsingCreateFile(ports) && !ports.empty())
-			{
-				bool found = false;
-				for (std::vector<boost::shared_ptr<SerialPortXml> >::iterator i  = ports.begin(); i != ports.end() && !found; ++i)
-				{
-					try
-					{
-						INFO_("Processing port {%s}...", (*i)->getSerialPort()->deviceName().c_str());
-						(*i)->getSerialPort()->open();
-						configure((*i), false);
+		buffer.push_back(0x00);
+		buffer.push_back(0x08);
 
-						boost::shared_ptr<STidSTRReaderUnit> testingReaderUnit(new STidSTRReaderUnit(*i));
-						boost::shared_ptr<STidSTRReaderCardAdapter> testingCardAdapter(new STidSTRReaderCardAdapter(STID_CMD_READER));
-						testingCardAdapter->setReaderUnit(testingReaderUnit);
-						
-						// Sending GetInfos() command to check if a reader is on the COM Port
-						unsigned char statusCode;
-						std::vector<unsigned char> response = testingCardAdapter->sendCommand(0x0008, std::vector<unsigned char>(), statusCode, Settings::getInstance().AutoDetectionTimeout);
-
-						if (response.size() >= 5)
-						{
-							// If no exception, the reader has been detected !
-							INFO_SIMPLE_("Reader found ! Using this COM port !");
-							d_port = (*i);
-							found = true;
-						}
-					}
-					catch (std::exception& e)
-					{
-						ERROR_("Exception {%s}", e.what());
-					}
-					catch (...)
-					{
-						ERROR_SIMPLE_("Exception received !");
-					}
-
-					if ((*i)->getSerialPort()->isOpen())
-					{
-						(*i)->getSerialPort()->close();
-					}
-				}
-
-				if (!found)
-				{
-					INFO_SIMPLE_("NO Reader found on COM port...");
-				}
-				else
-				{
-					d_isAutoDetected = true;
-				}
-			}
-			else
-			{
-				WARNING_SIMPLE_("No COM Port detected !");
-			}
-		}
+		return buffer;
 	}
 
 	boost::shared_ptr<Chip> STidSTRReaderUnit::createChip(std::string type)
@@ -385,7 +278,7 @@ namespace logicalaccess
 			else
 				return chip;
 
-			rca->setReaderUnit(shared_from_this());
+			rca->setDataTransport(getDataTransport());
 			if (commands)
 			{
 				commands->setReaderCardAdapter(rca);
@@ -445,116 +338,16 @@ namespace logicalaccess
 		return (d_insertedChip);
 	}
 
-	void STidSTRReaderUnit::configure()
-	{
-		configure(getSerialPort(), Settings::getInstance().IsConfigurationRetryEnabled);
-	}
-
-	void STidSTRReaderUnit::configure(boost::shared_ptr<SerialPortXml> port, bool retryConfiguring)
-	{
-		INFO_SIMPLE_("Configuring serial port...");
-		EXCEPTION_ASSERT_WITH_LOG(port, LibLogicalAccessException, "No serial port configured !");
-		EXCEPTION_ASSERT_WITH_LOG(port->getSerialPort()->deviceName() != "", LibLogicalAccessException, "Serial port name is empty ! Auto-detect failed !");
-
-		try
-		{
-#ifndef _WINDOWS
-			struct termios options = port->getSerialPort()->configuration();
-
-			/* Set speed */
-			cfsetispeed(&options, B38400);
-			cfsetospeed(&options, B38400);
-
-			/* Enable the receiver and set local mode */
-			options.c_cflag |= (CLOCAL | CREAD);
-
-			/* Set character size and parity check */
-			/* 8N1 */
-			options.c_cflag &= ~PARENB;
-			options.c_cflag &= ~CSTOPB;
-			options.c_cflag &= ~CSIZE;
-			options.c_cflag |= CS8;
-
-			/* Disable parity check and fancy stuff */
-			options.c_iflag &= ~ICRNL;
-			options.c_iflag &= ~INPCK;
-			options.c_iflag &= ~ISTRIP;
-
-			/* Disable software flow control */
-			options.c_iflag &= ~(IXON | IXOFF | IXANY);
-
-			/* RAW input */
-			options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
-
-			/* RAW output */
-			options.c_oflag &= ~OPOST;
-
-			/* Timeouts */
-			options.c_cc[VMIN] = 1;
-			options.c_cc[VTIME] = 5;
-
-			port->getSerialPort()->setConfiguration(options);
-#else
-			DCB options = port->getSerialPort()->configuration();
-			options.BaudRate = CBR_38400;
-			options.fBinary = TRUE;               // Binary mode; no EOF check
-			options.fParity = FALSE;               // Enable parity checking
-			options.fOutxCtsFlow = FALSE;         // No CTS output flow control
-			options.fOutxDsrFlow = FALSE;         // No DSR output flow control
-			options.fDtrControl = DTR_CONTROL_DISABLE;
-													// DTR flow control type
-			options.fDsrSensitivity = FALSE;      // DSR sensitivity
-			options.fTXContinueOnXoff = TRUE;     // XOFF continues Tx
-			options.fOutX = FALSE;                // No XON/XOFF out flow control
-			options.fInX = FALSE;                 // No XON/XOFF in flow control
-			options.fErrorChar = FALSE;           // Disable error replacement
-			options.fNull = FALSE;                // Disable null stripping
-			options.fRtsControl = RTS_CONTROL_DISABLE;
-													// RTS flow control
-			options.fAbortOnError = FALSE;        // Do not abort reads/writes on
-													// error
-			options.ByteSize = 8;                 // Number of bits/byte, 4-8
-			options.Parity = NOPARITY;            // 0-4=no,odd,even,mark,space
-			options.StopBits = ONESTOPBIT;        // 0,1,2 = 1, 1.5, 2
-			port->getSerialPort()->setConfiguration(options);
-#endif
-		}
-		catch(std::exception& e)
-		{
-			WARNING_("Exception received {%s} !", e.what());
-			if (retryConfiguring)
-			{
-				// Strange stuff is going here... by waiting and reopening the COM port (maybe for system cleanup), it's working !
-				std::string portn = port->getSerialPort()->deviceName();
-				WARNING_("Sleeping {%d} milliseconds -> Reopen serial port {%s} -> Finally retry  to configure...",
-							e.what(), Settings::getInstance().ConfigurationRetryTimeout, portn.c_str());
-#ifndef __linux__
-				Sleep(Settings::getInstance().ConfigurationRetryTimeout);
-#else
-				sleep(Settings::getInstance().ConfigurationRetryTimeout);
-#endif
-				port->getSerialPort()->reopen();
-				configure(port, false);
-			}
-		}
-	}
-
 	void STidSTRReaderUnit::serialize(boost::property_tree::ptree& parentNode)
 	{
 		boost::property_tree::ptree node;
-
-		node.put("<xmlattr>.type", getReaderProvider()->getRPType());
-		d_port->serialize(node);
-		d_readerUnitConfig->serialize(node);
-
+		ReaderUnit::serialize(node);
 		parentNode.add_child(getDefaultXmlNodeName(), node);
 	}
 
 	void STidSTRReaderUnit::unSerialize(boost::property_tree::ptree& node)
 	{
-		d_port.reset(new SerialPortXml());
-		d_port->unSerialize(node.get_child(d_port->getDefaultXmlNodeName()));
-		d_readerUnitConfig->unSerialize(node.get_child(d_readerUnitConfig->getDefaultXmlNodeName()));
+		ReaderUnit::unSerialize(node);
 	}
 
 	boost::shared_ptr<STidSTRReaderProvider> STidSTRReaderUnit::getSTidSTRReaderProvider() const
@@ -785,7 +578,7 @@ namespace logicalaccess
 	{
 		INFO_SIMPLE_("Authenticating HMAC (signed communication)...");
 
-		RAND_seed(d_port.get(), sizeof(d_port.get()));
+		RAND_seed(getDataTransport().get(), sizeof(getDataTransport().get()));
 		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
 
 		std::vector<unsigned char> buf1;
@@ -855,7 +648,7 @@ namespace logicalaccess
 	{
 		INFO_SIMPLE_("Authenticating AES (ciphered communication)...");
 
-		RAND_seed(d_port.get(), sizeof(d_port.get()));
+		RAND_seed(getDataTransport().get(), sizeof(getDataTransport().get()));
 		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
 
 		std::vector<unsigned char> rndB;

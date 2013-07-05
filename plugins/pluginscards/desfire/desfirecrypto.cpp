@@ -966,9 +966,12 @@ namespace logicalaccess
 		if (pad > 0)
 		{
 			padded_data.push_back(0x80);
-			for (int i = 0; i < pad; ++i)
+			if (pad > 1)
 			{
-				padded_data.push_back(0x00);
+				for (int i = 0; i < (pad - 1); ++i)
+				{
+					padded_data.push_back(0x00);
+				}
 			}
 		}
 

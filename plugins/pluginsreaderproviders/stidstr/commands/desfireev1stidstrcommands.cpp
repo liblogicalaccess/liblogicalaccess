@@ -34,8 +34,7 @@ namespace logicalaccess
 	{
 		INFO_SIMPLE_("Scanning DESFire card...");
 		std::vector<unsigned char> uid;
-		unsigned char statusCode;
-		std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x0001, std::vector<unsigned char>(), statusCode);
+		std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x0001, std::vector<unsigned char>());
 
 		bool hasCard = (r[0] == 0x01);
 		if (hasCard)
@@ -57,26 +56,23 @@ namespace logicalaccess
 	void DESFireEV1STidSTRCommands::releaseRFIDField()
 	{
 		INFO_SIMPLE_("Releasing RFID field...");
-		unsigned char statusCode;
-		getSTidSTRReaderCardAdapter()->sendCommand(0x0002, std::vector<unsigned char>(), statusCode);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x0002, std::vector<unsigned char>());
 	}
 
 	void DESFireEV1STidSTRCommands::changePPS(STidDESFireBaudrate readerToChipKbps, STidDESFireBaudrate chipToReaderKbps)
 	{
 		INFO_SIMPLE_("Changing PPS (communication speed between the chip and reader)...");
-		unsigned char statusCode;
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(readerToChipKbps));
 		command.push_back(static_cast<unsigned char>(chipToReaderKbps));
-		getSTidSTRReaderCardAdapter()->sendCommand(0x0003, command, statusCode);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x0003, command);
 	}
 
 	unsigned int DESFireEV1STidSTRCommands::getFreeMem()
 	{
 		INFO_SIMPLE_("Getting free memory of card (number of bytes free available)...");
 		unsigned int freemem = 0;
-		unsigned char statusCode;
-		std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x006E, std::vector<unsigned char>(), statusCode);
+		std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x006E, std::vector<unsigned char>());
 
 		if (r.size() == 3)
 		{
@@ -145,8 +141,7 @@ namespace logicalaccess
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "isoDFName parameter not available with this reader.");
 		}
 
-		unsigned char statusCode;
-		getSTidSTRReaderCardAdapter()->sendCommand(0x00CA, command, statusCode);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x00CA, command);
 
 		for (unsigned char i = 0; i < maxNbKeys; ++i)
 		{
@@ -170,8 +165,7 @@ namespace logicalaccess
 #endif
 		DESFireLocation::convertIntToAid(aid, command);
 
-		unsigned char statusCode;
-		getSTidSTRReaderCardAdapter()->sendCommand(0x00DA, std::vector<unsigned char>(command, command + sizeof(command)), statusCode);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x00DA, std::vector<unsigned char>(command, command + sizeof(command)));
 		r = true;
 
 		return r;
@@ -184,8 +178,7 @@ namespace logicalaccess
 		unsigned char command[3];
 		DESFireLocation::convertIntToAid(aid, command);
 
-		unsigned char statusCode;
-		getSTidSTRReaderCardAdapter()->sendCommand(0x005A, std::vector<unsigned char>(command, command + sizeof(command)), statusCode);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x005A, std::vector<unsigned char>(command, command + sizeof(command)));
 		r = true;
 
 		d_currentAid = aid;
@@ -202,8 +195,7 @@ namespace logicalaccess
 	void DESFireEV1STidSTRCommands::getKeySettings(DESFireKeySettings& settings, unsigned int& maxNbKeys, DESFireKeyType& keyType)
 	{
 		INFO_SIMPLE_("Retrieving key settings...");
-		unsigned char statusCode;
-		std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x0045, std::vector<unsigned char>(), statusCode);
+		std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x0045, std::vector<unsigned char>());
 
 		EXCEPTION_ASSERT_WITH_LOG(r.size() >= 3, LibLogicalAccessException, "The response length should be at least 3-byte long");
 
@@ -219,8 +211,7 @@ namespace logicalaccess
 		INFO_("Retrieving key version for key number {%u}...", keyno);
 		std::vector<unsigned char> command;
 		command.push_back(keyno);
-		unsigned char statusCode;
-		std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x0064, command, statusCode);
+		std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x0064, command);
 
 		EXCEPTION_ASSERT_WITH_LOG(r.size() >= 1, LibLogicalAccessException, "The response length should be at least 1-byte long");
 
@@ -230,8 +221,7 @@ namespace logicalaccess
 	std::vector<unsigned char> DESFireEV1STidSTRCommands::getCardUID()
 	{
 		INFO_SIMPLE_("Retrieving card uid...");
-		unsigned char statusCode;
-		std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x0051, std::vector<unsigned char>(), statusCode);
+		std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x0051, std::vector<unsigned char>());
 
 		return r;
 	}
@@ -267,8 +257,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(fileSize & 0xff00) >> 8));
 		command.push_back(static_cast<unsigned char>(static_cast<unsigned int>(fileSize & 0xff0000) >> 16));
 
-		unsigned char statusCode;
-		getSTidSTRReaderCardAdapter()->sendCommand(0x00CD, command, statusCode);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x00CD, command);
 
 		return true;
 	}
@@ -278,8 +267,7 @@ namespace logicalaccess
 		INFO_SIMPLE_("Committing transaction...");
 		bool r = false;
 
-		unsigned char statusCode;
-		getSTidSTRReaderCardAdapter()->sendCommand(0x00C7, std::vector<unsigned char>(), statusCode);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x00C7, std::vector<unsigned char>());
 		r = true;
 
 		return r;
@@ -289,9 +277,8 @@ namespace logicalaccess
 	{
 		INFO_SIMPLE_("Aborting transaction...");
 		bool r = false;
-		
-		unsigned char statusCode;
-		getSTidSTRReaderCardAdapter()->sendCommand(0x00A7, std::vector<unsigned char>(), statusCode);
+
+		getSTidSTRReaderCardAdapter()->sendCommand(0x00A7, std::vector<unsigned char>());
 		r = true;
 
 		return r;
@@ -328,8 +315,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(fileSize & 0xff00) >> 8));
 		command.push_back(static_cast<unsigned char>(static_cast<unsigned int>(fileSize & 0xff0000) >> 16));
 
-		unsigned char statusCode;
-		getSTidSTRReaderCardAdapter()->sendCommand(0x00CB, command, statusCode);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x00CB, command);
 
 		return true;
 	}
@@ -359,8 +345,7 @@ namespace logicalaccess
 		BufferHelper::setInt32(command, value);
 		command.push_back(limitedCreditEnabled ? 0x01 : 0x00);
 
-		unsigned char statusCode;
-		getSTidSTRReaderCardAdapter()->sendCommand(0x00CC, command, statusCode);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x00CC, command);
 		r = true;
 
 		return r;
@@ -400,8 +385,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(maxNumberOfRecords & 0xff00) >> 8));
 		command.push_back(static_cast<unsigned char>(static_cast<unsigned int>(maxNumberOfRecords & 0xff0000) >> 16));
 
-		unsigned char statusCode;
-		getSTidSTRReaderCardAdapter()->sendCommand(0x00C1, command, statusCode);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x00C1, command);
 
 		return true;
 	}
@@ -441,8 +425,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(maxNumberOfRecords & 0xff00) >> 8));
 		command.push_back(static_cast<unsigned char>(static_cast<unsigned int>(maxNumberOfRecords & 0xff0000) >> 16));
 
-		unsigned char statusCode;
-		getSTidSTRReaderCardAdapter()->sendCommand(0x00C0, command, statusCode);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x00C0, command);
 
 		return true;
 	}
@@ -511,8 +494,7 @@ namespace logicalaccess
 		command.insert(command.end(), key.begin(), key.end());
 		command.push_back(0x00);	// Diversify, not supported yet.
 
-		unsigned char statusCode;
-		getSTidSTRReaderCardAdapter()->sendCommand(0x00D0, command, statusCode);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x00D0, command);
 	}
 
 	void DESFireEV1STidSTRCommands::authenticate(STidKeyLocationType keylocation, unsigned char keyno, DESFireKeyType cryptoMethod, unsigned char keyindex)
@@ -527,8 +509,7 @@ namespace logicalaccess
 		command.push_back((cryptoMethod == DF_KEY_AES) ? 0x02 : 0x00);
 		command.push_back(keyindex);
 
-		unsigned char statusCode;
-		getSTidSTRReaderCardAdapter()->sendCommand(0x000B, command, statusCode);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x000B, command);
 	}
 
 	bool DESFireEV1STidSTRCommands::authenticate(unsigned char keyno)
@@ -586,8 +567,7 @@ namespace logicalaccess
 			command.insert(command.end(), (unsigned char*)&trunloffset, (unsigned char*)&trunloffset + 3);
 			command.insert(command.end(), (unsigned char*)&trunklength, (unsigned char*)&trunklength + 3);
 
-			unsigned char statusCode;
-			std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x00BD, command, statusCode);
+			std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x00BD, command);
 
 			memcpy(reinterpret_cast<unsigned char*>(data) + i, &result[0], result.size());
 			ret += result.size();
@@ -615,8 +595,7 @@ namespace logicalaccess
 			command.insert(command.end(), (unsigned char*)&trunklength, (unsigned char*)&trunklength + 3);
 			command.insert(command.end(), reinterpret_cast<const unsigned char*>(data) + i, reinterpret_cast<const unsigned char*>(data) + i + trunklength);
 
-			unsigned char statusCode;
-			getSTidSTRReaderCardAdapter()->sendCommand(0x003D, command, statusCode);
+			getSTidSTRReaderCardAdapter()->sendCommand(0x003D, command);
 		}
 		
 		return true;
@@ -630,8 +609,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(fileno));
 		BufferHelper::setInt32(command, value);
 
-		unsigned char statusCode;
-		getSTidSTRReaderCardAdapter()->sendCommand(0x000C, command, statusCode);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x000C, command);
 		
 		return true;
 	}
@@ -644,8 +622,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(fileno));
 		BufferHelper::setInt32(command, value);
 
-		unsigned char statusCode;
-		getSTidSTRReaderCardAdapter()->sendCommand(0x00DC, command, statusCode);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x00DC, command);
 		
 		return true;
 	}
@@ -658,8 +635,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(fileno));
 		BufferHelper::setInt32(command, value);
 
-		unsigned char statusCode;
-		getSTidSTRReaderCardAdapter()->sendCommand(0x001C, command, statusCode);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x001C, command);
 		
 		return true;
 	}
@@ -683,8 +659,7 @@ namespace logicalaccess
 			command.insert(command.end(), (unsigned char*)&trunklength, (unsigned char*)&trunklength + 3);
 			command.insert(command.end(), reinterpret_cast<const unsigned char*>(data) + i, reinterpret_cast<const unsigned char*>(data) + i + trunklength);
 
-			unsigned char statusCode;
-			getSTidSTRReaderCardAdapter()->sendCommand(0x003B, command, statusCode);
+			getSTidSTRReaderCardAdapter()->sendCommand(0x003B, command);
 		}
 		
 		return true;
@@ -703,8 +678,7 @@ namespace logicalaccess
 		command.insert(command.end(), (unsigned char*)&offset, (unsigned char*)&offset + 3);
 		command.insert(command.end(), (unsigned char*)&nbrecords, (unsigned char*)&nbrecords + 3);
 
-		unsigned char statusCode;
-		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x00BB, command, statusCode);
+		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x00BB, command);
 
 		memcpy(reinterpret_cast<unsigned char*>(data), &result[0], result.size());
 
@@ -719,8 +693,7 @@ namespace logicalaccess
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(fileno));
 
-		unsigned char statusCode;
-		getSTidSTRReaderCardAdapter()->sendCommand(0x00EB, command, statusCode);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x00EB, command);
 
 		return true;
 	}
@@ -746,8 +719,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(comSettings));
 		BufferHelper::setUShort(command, ar);
 
-		unsigned char statusCode;
-		getSTidSTRReaderCardAdapter()->sendCommand(0x005F, command, statusCode);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x005F, command);
 		ret = true;
 
 		return ret;
@@ -768,8 +740,7 @@ namespace logicalaccess
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(fileno));
 
-		unsigned char statusCode;
-		getSTidSTRReaderCardAdapter()->sendCommand(0x00DF, command, statusCode);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x00DF, command);
 		r = true;
 
 		return r;
@@ -782,8 +753,7 @@ namespace logicalaccess
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(settings));
 
-		unsigned char statusCode;
-		getSTidSTRReaderCardAdapter()->sendCommand(0x0054, command, statusCode);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x0054, command);
 		ret = true;
 		
 		return ret;
@@ -821,8 +791,7 @@ namespace logicalaccess
 				keydata = oldKey->getData();
 				command.insert(command.end(), keydata, keydata + oldKey->getLength());	
 
-				unsigned char statusCode;
-				getSTidSTRReaderCardAdapter()->sendCommand(0x00C4, command, statusCode);
+				getSTidSTRReaderCardAdapter()->sendCommand(0x00C4, command);
 			}
 		}
 		else
@@ -849,16 +818,14 @@ namespace logicalaccess
 		command.push_back(oldkeyindex);
 		command.push_back(0x00); // RFU
 
-		unsigned char statusCode;
-		getSTidSTRReaderCardAdapter()->sendCommand(0x00C5, command, statusCode);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x00C5, command);
 	}
 
 	bool DESFireEV1STidSTRCommands::getVersion(DESFireCommands::DESFireCardVersion& dataVersion)
 	{
 		INFO_SIMPLE_("Retrieving version...");
 		bool r = false;
-		unsigned char statusCode;
-		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x0060, std::vector<unsigned char>(), statusCode);
+		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x0060, std::vector<unsigned char>());
 
 		EXCEPTION_ASSERT_WITH_LOG(result.size() >= 28, LibLogicalAccessException, "The response length should be at least 28-byte long");
 
@@ -873,8 +840,7 @@ namespace logicalaccess
 		INFO_SIMPLE_("Retrieving all application ids...");
 		std::vector<int> aids;
 
-		unsigned char statusCode;
-		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x006A, std::vector<unsigned char>(), statusCode);
+		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x006A, std::vector<unsigned char>());
 
 		unsigned nbaids = result[0];
 		for (size_t i = 0; i < nbaids; ++i)
@@ -907,8 +873,7 @@ namespace logicalaccess
 			if (authenticate(0))
 			{
 				INFO_SIMPLE_("Select and Authenticate returned successfully ! Erasing...");
-				unsigned char statusCode;
-				getSTidSTRReaderCardAdapter()->sendCommand(0x00FC, std::vector<unsigned char>(), statusCode);
+				getSTidSTRReaderCardAdapter()->sendCommand(0x00FC, std::vector<unsigned char>());
 				// Reset Master Card Key
 				if (resetKey)
 				{
@@ -937,8 +902,7 @@ namespace logicalaccess
 	std::vector<int> DESFireEV1STidSTRCommands::getFileIDs()
 	{
 		INFO_SIMPLE_("Retrieving all files ids...");
-		unsigned char statusCode;
-		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x006F, std::vector<unsigned char>(), statusCode);
+		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x006F, std::vector<unsigned char>());
 
 		unsigned char nbfiles = result[0];
 
@@ -964,8 +928,7 @@ namespace logicalaccess
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(fileno));
 
-		unsigned char statusCode;
-		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x00F5, command, statusCode);
+		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x00F5, command);
 		memcpy(&fileSetting, &result[0], result.size());
 		r = true;
 
@@ -981,8 +944,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(mode));
 		command.push_back(static_cast<unsigned char>(fileno));
 
-		unsigned char statusCode;
-		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x00F5, command, statusCode);
+		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x00F5, command);
 
 		if (result.size() >= 4)
 		{
@@ -1008,8 +970,7 @@ namespace logicalaccess
 		command.push_back(0x01);
 		command.push_back(0x00 | ((formatCardEnabled) ? 0x00 : 0x01) | ((randomIdEnabled) ? 0x02 : 0x00));
 
-		unsigned char statusCode;
-		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x005C, command, statusCode);
+		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x005C, command);
 	}
 
 	void DESFireEV1STidSTRCommands::setConfiguration(boost::shared_ptr<DESFireKey> defaultKey)
@@ -1026,8 +987,7 @@ namespace logicalaccess
 		command.insert(command.end(), keydata, keydata + 24);
 		command.push_back(defaultKey->getKeyVersion());
 
-		unsigned char statusCode;
-		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x005C, command, statusCode);
+		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x005C, command);
 	}
 
 	void DESFireEV1STidSTRCommands::setConfiguration(const std::vector<unsigned char>& ats)
@@ -1036,9 +996,8 @@ namespace logicalaccess
 		command.push_back(0x02);
 		command.push_back(static_cast<unsigned char>(ats.size()));
 		command.insert(command.end(), ats.begin(), ats.end());
-		
-		unsigned char statusCode;
-		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x005C, command, statusCode);
+
+		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x005C, command);
 	}
 
 	std::string DESFireEV1STidSTRCommands::STidKeyLocationTypeStr(STidKeyLocationType t)

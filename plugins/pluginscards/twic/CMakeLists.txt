@@ -17,6 +17,8 @@ if (WIN32)
 else()
   set(LINK_OPT logicalaccess)
 endif()
+
+SET_TARGET_PROPERTIES(twiccards PROPERTIES VERSION 1.65)
   
 target_link_libraries(
 	twiccards

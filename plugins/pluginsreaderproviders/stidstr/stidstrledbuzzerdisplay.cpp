@@ -41,8 +41,7 @@ namespace logicalaccess
 		data.push_back(0xFF); // LED duration
 		data.push_back((d_buzzer) ? 0xFF : 0x00); // Buzzer duration
 
-		unsigned char statusCode;
-		getSTidSTRReaderCardAdapter()->sendCommand(0x0007, data, statusCode);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x0007, data);
 	}
 
 	void STidSTRLEDBuzzerDisplay::setPort(bool red, bool green, bool buzzer)

@@ -30,13 +30,21 @@ namespace logicalaccess
 		//INFO_SIMPLE_("Destructor");
 	}
 
-	bool STidSTRReaderCardAdapter::sendCommandWithoutResponse(unsigned short commandCode, const std::vector<unsigned char>& command)
+	boost::shared_ptr<STidSTRReaderUnit> STidSTRReaderCardAdapter::getSTidSTRReaderUnit() const
 	{
-		COM_("Sending command with command code {0x%x(%u)} command %s command size {%d}...", commandCode, commandCode, BufferHelper::getHex(command).c_str(), command.size());
+		return boost::dynamic_pointer_cast<STidSTRReaderUnit>(getDataTransport()->getReaderUnit());
+	}
+
+	std::vector<unsigned char> STidSTRReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
+	{
+		COM_("Sending command command %s command size {%d}...", BufferHelper::getHex(command).c_str(), command.size());
 		bool ret = false;
 		std::vector<unsigned char> cmd;
 		boost::shared_ptr<STidSTRReaderUnitConfiguration> readerConfig = getSTidSTRReaderUnit()->getSTidSTRConfiguration();
 		//INFO_("Reader configuration {%s}", dynamic_cast<XmlSerializable*>(&(*readerConfig))->serialize().c_str());
+
+		EXCEPTION_ASSERT_WITH_LOG(command.size() >= 2, LibLogicalAccessException, "The command size must be at least 2 byte long.");
+		unsigned short commandCode = command[0] << 8 | command[1];
 
 		cmd.push_back(SOF);
 		std::vector<unsigned char> commandEncapsuled = sendMessage(commandCode, command);
@@ -54,29 +62,9 @@ namespace logicalaccess
 		unsigned char first, second;
 		ComputeCrcCCITT(0xFFFF, &cmd[1], cmd.size() - 1, &first, &second);
 		cmd.push_back(second);
-		cmd.push_back(first);		
-		d_lastCommand = cmd;
-		d_lastResult.clear();
+		cmd.push_back(first);
 
-		if (cmd.size() > 0)
-		{
-			COM_("Writing command %s command size {%d}...", BufferHelper::getHex(cmd).c_str(), cmd.size());
-			getSTidSTRReaderUnit()->connectToReader();
-
-			boost::shared_ptr<SerialPortXml> port = getSTidSTRReaderUnit()->getSerialPort();
-			d_lastCommandCode = commandCode;
-			port->getSerialPort()->write(cmd);
-
-			ret = true;
-		}
-		else
-		{
-			COM_SIMPLE_("Command size is 0 !");
-		}
-
-		COM_("Command written on serial port ? {%d}", ret);
-
-		return ret;
+		return cmd;
 	}
 
 	std::vector<unsigned char> STidSTRReaderCardAdapter::sendMessage(unsigned short commandCode, const std::vector<unsigned char>& command)
@@ -174,137 +162,59 @@ namespace logicalaccess
 		return d_lastIV;
 	}
 
-	std::vector<unsigned char> STidSTRReaderCardAdapter::sendCommand(const std::vector<unsigned char>& command, long int timeout)
-	{
-		COM_("Sending command %s command size {%d} timeout {%d}...", BufferHelper::getHex(command).c_str(), command.size(), timeout);
-
-		EXCEPTION_ASSERT_WITH_LOG(command.size() >= 2, std::invalid_argument, "A valid command buffer size including command code must be at least 2 bytes long");
-		size_t offset = 0;
-		unsigned short commandCode = BufferHelper::getUShort(command, offset);
-		unsigned char statusCode;
-
-		return sendCommand(commandCode, command, statusCode, timeout);
-	}
-
-	std::vector<unsigned char> STidSTRReaderCardAdapter::sendCommand(unsigned short commandCode, const std::vector<unsigned char>& command, unsigned char& statusCode, long int timeout)
+	std::vector<unsigned char> STidSTRReaderCardAdapter::sendCommand(unsigned short commandCode, const std::vector<unsigned char>& command, long int timeout)
 	{
 		COM_("Sending command with command code {0x%x(%u)} command %s command size {%d} timeout {%d}...", commandCode, commandCode, BufferHelper::getHex(command).c_str(), command.size(), timeout);
 
-		std::vector<unsigned char> r;
-		if (sendCommandWithoutResponse(commandCode, command))
-		{
-			if (!receiveCommand(r, statusCode, timeout))
-			{
-				COM_SIMPLE_("No response received !");
-				r.clear();
-				THROW_EXCEPTION_WITH_LOG(CardException, "No response received");
-			}
-			else
-			{
-				COM_SIMPLE_("Response received successfully !");
-				COM_("Response %s size {%d} status code {0x%x(%u)}", BufferHelper::getHex(r).c_str(), r.size(), statusCode, statusCode);
-			}
+		std::vector<unsigned char> buffer;
+		buffer.push_back(static_cast<unsigned char>((commandCode & 0xff00) >> 8));
+		buffer.push_back(static_cast<unsigned char>(commandCode & 0xff));
+		buffer.insert(buffer.end(), command.begin(), command.end());
 
-			d_lastResult = r;
-		}
-		else
-		{
-			COM_SIMPLE_("Unable to send command without response !");
-		}
-
-		return r;
+		return ReaderCardAdapter::sendCommand(buffer, timeout);;
 	}
 
-	std::vector<unsigned char> STidSTRReaderCardAdapter::handleCommandBuffer(const std::vector<unsigned char>& cmdbuf, unsigned char& statusCode)
+	std::vector<unsigned char> STidSTRReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
 	{
-		COM_("Processing the received command buffer %s command size {%d}...", BufferHelper::getHex(cmdbuf).c_str(), cmdbuf.size());
+		COM_("Processing the received buffer %s size {%d}...", BufferHelper::getHex(answer).c_str(), answer.size());
+		unsigned char statusCode = 0x00;
 
-		COM_("Command size {%d}", cmdbuf.size());
-		EXCEPTION_ASSERT_WITH_LOG(cmdbuf.size() >= 7, std::invalid_argument, "A valid command buffer size must be at least 7 bytes long");
+		COM_("Command size {%d}", answer.size());
+		EXCEPTION_ASSERT_WITH_LOG(answer.size() >= 7, std::invalid_argument, "A valid buffer size must be at least 7 bytes long");
 
-		COM_("Command SOF {0x%x(%u)}", cmdbuf[0], cmdbuf[0]);
-		EXCEPTION_ASSERT_WITH_LOG(cmdbuf[0] == SOF, std::invalid_argument, "The supplied command buffer is not valid (bad SOF byte)");
+		COM_("Command SOF {0x%x(%u)}", answer[0], answer[0]);
+		EXCEPTION_ASSERT_WITH_LOG(answer[0] == SOF, std::invalid_argument, "The supplied buffer is not valid (bad SOF byte)");
 
-		unsigned short messageSize = (cmdbuf[1] << 8) | cmdbuf[2];
+		unsigned short messageSize = (answer[1] << 8) | answer[2];
 
 		COM_("Inside message size {%u}", messageSize);
-		EXCEPTION_ASSERT_WITH_LOG(static_cast<unsigned int>(messageSize + 7) <= cmdbuf.size(), std::invalid_argument, "The buffer is too small to contains the complete message.");
+		EXCEPTION_ASSERT_WITH_LOG(static_cast<unsigned int>(messageSize + 7) <= answer.size(), std::invalid_argument, "The buffer is too small to contains the complete message.");
 
 		boost::shared_ptr<STidSTRReaderUnitConfiguration> readerConfig = getSTidSTRReaderUnit()->getSTidSTRConfiguration();
 
-		STidCommunicationType ctype = static_cast<STidCommunicationType>(cmdbuf[3] & 0x01);
+		STidCommunicationType ctype = static_cast<STidCommunicationType>(answer[3] & 0x01);
 		COM_("Communication response type {0x%x(%d)}", ctype, ctype);
 		EXCEPTION_ASSERT_WITH_LOG(ctype == readerConfig->getCommunicationType(), std::invalid_argument, "The communication type doesn't match.");
 
 		if (ctype == STID_RS485)
 		{
-			unsigned char rs485Address = static_cast<unsigned char>((cmdbuf[3] & 0xfe) >> 1);
+			unsigned char rs485Address = static_cast<unsigned char>((answer[3] & 0xfe) >> 1);
 			COM_("Communication response rs485 address {0x%x(%u)}", rs485Address, rs485Address);
 			EXCEPTION_ASSERT_WITH_LOG(rs485Address == readerConfig->getRS485Address(), std::invalid_argument, "The rs485 reader address doesn't match.");
 		}
 
-		STidCommunicationMode cmode = static_cast<STidCommunicationMode>(cmdbuf[4]);
+		STidCommunicationMode cmode = static_cast<STidCommunicationMode>(answer[4]);
 		COM_("Communication response mode {0x%x(%d)}", cmode, cmode);
 		EXCEPTION_ASSERT_WITH_LOG(cmode == readerConfig->getCommunicationMode() || readerConfig->getCommunicationMode() == STID_CM_RESERVED, std::invalid_argument, "The communication type doesn't match.");
 		
-		std::vector<unsigned char> data = std::vector<unsigned char>(cmdbuf.begin() + 5, cmdbuf.begin() + 5 + messageSize);
+		std::vector<unsigned char> data = std::vector<unsigned char>(answer.begin() + 5, answer.begin() + 5 + messageSize);
 		COM_("Communication response data %s", BufferHelper::getHex(data).c_str());
 
 		unsigned char first, second;
-		ComputeCrcCCITT(0xFFFF, &cmdbuf[1], 4 + messageSize, &first, &second);
-		EXCEPTION_ASSERT_WITH_LOG(cmdbuf[5 + messageSize] == second && cmdbuf[5 + messageSize + 1] == first, std::invalid_argument, "The supplied command buffer is not valid (CRC missmatch)");		
+		ComputeCrcCCITT(0xFFFF, &answer[1], 4 + messageSize, &first, &second);
+		EXCEPTION_ASSERT_WITH_LOG(answer[5 + messageSize] == second && answer[5 + messageSize + 1] == first, std::invalid_argument, "The supplied buffer is not valid (CRC missmatch)");		
 
 		return receiveMessage(data, statusCode);
-	}
-
-	bool STidSTRReaderCardAdapter::receiveCommand(std::vector<unsigned char>& buf, unsigned char& statusCode, long int timeout)
-	{
-		COM_("Beginning receiving response... Timeout configured {%d}", timeout);
-
-		std::vector<unsigned char> res;
-		boost::shared_ptr<SerialPortXml> port = getSTidSTRReaderUnit()->getSerialPort();
-		bool timeoutOccured = true;
-
-		boost::posix_time::time_duration ptimeout = boost::posix_time::milliseconds(timeout);
-		//COM_SIMPLE_("Starting receive now !");
-		while (port->getSerialPort()->select(ptimeout))
-		{
-			//COM_SIMPLE_("Info received now !");
-			std::vector<unsigned char> tmpbuf;
-			timeoutOccured = false;
-
-			while (port->getSerialPort()->read(tmpbuf, 256) > 0)
-			{
-				COM_("Data read on the serial port %s", BufferHelper::getHex(tmpbuf).c_str());
-				res.insert(res.end(), tmpbuf.begin(), tmpbuf.end());
-				tmpbuf.clear();
-
-				try
-				{
-					buf = handleCommandBuffer(res, statusCode);
-					return true;
-				}
-				catch(LibLogicalAccessException& e)
-				{
-					COM_("Exception {%s}", e.what());
-					throw;
-				}
-				catch (std::invalid_argument& e)
-				{
-					COM_("Exception {%s}", e.what());
-				}
-			}
-		}
-
-		if (timeoutOccured)
-		{
-			COM_SIMPLE_("Timeout reached !");
-		}
-		else
-		{
-			COM_SIMPLE_("Reponse command not received !");
-		}
-		return false;
 	}
 
 	std::vector<unsigned char> STidSTRReaderCardAdapter::calculateHMAC(const std::vector<unsigned char>& buf) const
@@ -398,124 +308,124 @@ namespace logicalaccess
 			return;
 
 		char conv[64];
-		string message = string("Communication error: ");
+		std::string message = std::string("Communication error: ");
 		sprintf(conv, "%x", statusCode);
-		message += string(conv);
-		message += string(". ");
-		string msg = "";
+		message += std::string(conv);
+		message += std::string(". ");
+		std::string msg = "";
 
 		switch (d_adapterType)
 		{
 			case STID_CMD_DESFIRE:
 			{
-				message += string("DESFire - ");
+				message += std::string("DESFire - ");
 				switch (statusCode)
 				{
 				case 0x01:
-					msg = string("More than one tag in the RFID field.");
+					msg = std::string("More than one tag in the RFID field.");
 					break;
 				case 0x02:
-					msg = string("Incorrect tag type.");
+					msg = std::string("Incorrect tag type.");
 					break;
 				case 0x0C:
-					msg = string("No change made to backup files.");
+					msg = std::string("No change made to backup files.");
 					break;
 				case 0x0E:
-					msg = string("Not enough EEPROM memory.");
+					msg = std::string("Not enough EEPROM memory.");
 					break;
 				case 0x1C:
-					msg = string("Incorrect Command code.");
+					msg = std::string("Incorrect Command code.");
 					break;
 				case 0x1E:
-					msg = string("DESFire integrity error.");
+					msg = std::string("DESFire integrity error.");
 					break;
 				case 0x40:
-					msg = string("Key does not exist.");
+					msg = std::string("Key does not exist.");
 					break;
 				case 0x7E:
-					msg = string("Incorrect length.");
+					msg = std::string("Incorrect length.");
 					break;
 				case 0x9D:
-					msg = string("Permission denied.");
+					msg = std::string("Permission denied.");
 					break;
 				case 0x9E:
-					msg = string("Incorrect setting.");
+					msg = std::string("Incorrect setting.");
 					break;
 				case 0xA0:
-					msg = string("Application not found.");
+					msg = std::string("Application not found.");
 					break;
 				case 0xA1:
-					msg = string("Application integrity error.");
+					msg = std::string("Application integrity error.");
 					break;
 				case 0xAE:
-					msg = string("Authentication error.");
+					msg = std::string("Authentication error.");
 					break;
 				case 0xAF:
-					msg = string("Frame expected.");
+					msg = std::string("Frame expected.");
 					break;
 				case 0xBE:
-					msg = string("Limit exceeded.");
+					msg = std::string("Limit exceeded.");
 					break;
 				case 0xC1:
-					msg = string("Card integrity error.");
+					msg = std::string("Card integrity error.");
 					break;
 				case 0xCA:
-					msg = string("Command aborted.");
+					msg = std::string("Command aborted.");
 					break;
 				case 0xCD:
-					msg = string("Card disabled.");
+					msg = std::string("Card disabled.");
 					break;
 				case 0xCE:
-					msg = string("Maximum number of applications reached.");
+					msg = std::string("Maximum number of applications reached.");
 					break;
 				case 0xDE:
-					msg = string("Duplicate AIDs or files.");
+					msg = std::string("Duplicate AIDs or files.");
 					break;
 				case 0xEE:
-					msg = string("EEPROM error.");
+					msg = std::string("EEPROM error.");
 					break;
 				case 0xF0:
-					msg = string("File not found.");
+					msg = std::string("File not found.");
 					break;
 				case 0xF1:
-					msg = string("File integrity error.");
+					msg = std::string("File integrity error.");
 					break;
 				default:
-					msg = string("Unknown error");
+					msg = std::string("Unknown error");
 				}
 				break;
 			}
 			case STID_CMD_MIFARE_CLASSIC:
 			{
-				message += string("Mifare - ");
+				message += std::string("Mifare - ");
 				switch (statusCode)
 				{
 				case 0x01:
-					msg = string("MIFARE® time out error.");
+					msg = std::string("MIFARE® time out error.");
 					break;
 				case 0x02:
-					msg = string("More than one tag in the RFID field.");
+					msg = std::string("More than one tag in the RFID field.");
 					break;
 				case 0x03:
-					msg = string("Incorrect tag type.");
+					msg = std::string("Incorrect tag type.");
 					break;
 				case 0x05:
-					msg = string("MIFARE® frame error.");
+					msg = std::string("MIFARE® frame error.");
 					break;
 				case 0x06:
-					msg = string("Incorrect settings error.");
+					msg = std::string("Incorrect settings error.");
 					break;
 				case 0x13:
-					msg = string("MIFARE® data format error.");
+					msg = std::string("MIFARE® data format error.");
 					break;
 				case 0x14:
-					msg = string("MIFARE® authentication error.");
+					msg = std::string("MIFARE® authentication error.");
 					break;
 				case 0x27:
-					msg = string("Invalid command error.");
+					msg = std::string("Invalid command error.");
 					break;
 				default:
-					msg = string("Unknown error");
+					msg = std::string("Unknown error");
 				}
 				break;
 			}
@@ -524,40 +434,40 @@ namespace logicalaccess
 				switch (statusCode)
 				{
 				case 0x01:
-					msg = string("Authentication error with reader.");
+					msg = std::string("Authentication error with reader.");
 					break;
 				case 0x02:
-					msg = string("Incorrect data setting.");
+					msg = std::string("Incorrect data setting.");
 					break;
 				case 0x03:
-					msg = string("CRC error on the frame.");
+					msg = std::string("CRC error on the frame.");
 					break;
 				case 0x04:
-					msg = string("Incorrect frame length received.");
+					msg = std::string("Incorrect frame length received.");
 					break;
 				case 0x05:
-					msg = string("Signature error at authentication.");
+					msg = std::string("Signature error at authentication.");
 					break;
 				case 0x06:
-					msg = string("Time out error.");
+					msg = std::string("Time out error.");
 					break;
 				case 0x07:
-					msg = string("Incorrect Command code.");
+					msg = std::string("Incorrect Command code.");
 					break;
 				case 0x08:
-					msg = string("Incorrect command type.");
+					msg = std::string("Incorrect command type.");
 					break;
 				case 0x11:
-					msg = string("Communication mode not allowed with the reader.");
+					msg = std::string("Communication mode not allowed with the reader.");
 					break;
 				case 0xF3:
-					msg = string("Incorrect tag.");
+					msg = std::string("Incorrect tag.");
 					break;
 				case 0xF4:
-					msg = string("No SKB tag.");
+					msg = std::string("No SKB tag.");
 					break;
 				default:
-					msg = string("Unknown error");
+					msg = std::string("Unknown error");
 				}
 				break;
 			}

@@ -35,9 +35,6 @@ namespace logicalaccess
 		char tmp [3];
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> answer;
-		command.push_back(static_cast<unsigned char>(Device::HID));
-		command.push_back(static_cast<unsigned char>(HidCommand::COM));
-		command.push_back(static_cast<unsigned char>(0x04));
 		command.push_back(static_cast<unsigned char>('r'));
 		command.push_back(static_cast<unsigned char>('b'));
 		sprintf (tmp, "%.2X", blockno);
@@ -45,8 +42,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(tmp[1]));
 		answer = getRplethReaderCardAdapter()->sendCommand (command, 0);
 		// convert ascii in hexa
-		boost::shared_ptr<RplethReaderUnit> readerUnit = boost::dynamic_pointer_cast<RplethReaderUnit>(getRplethReaderCardAdapter()->getReaderUnit());
-		answer = readerUnit->asciiToHex (answer);
+		answer = RplethReaderUnit::asciiToHex (answer);
 		res = (len < answer.size()) ? len : answer.size();
 		if (res <= buflen)
 		{
@@ -66,9 +62,6 @@ namespace logicalaccess
 		char tmp [3];
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> answer;
-		command.push_back(static_cast<unsigned char>(Device::HID));
-		command.push_back(static_cast<unsigned char>(HidCommand::COM));
-		command.push_back(static_cast<unsigned char>(0x04+(buflen*2)));
 		command.push_back(static_cast<unsigned char>('w'));
 		command.push_back(static_cast<unsigned char>('b'));
 		sprintf (tmp, "%.2X", blockno);
@@ -96,9 +89,6 @@ namespace logicalaccess
 			char buf [3];
 			std::vector<unsigned char> command;
 			std::vector<unsigned char> answer;
-			command.push_back(static_cast<unsigned char>(Device::HID));
-			command.push_back(static_cast<unsigned char>(HidCommand::COM));
-			command.push_back(static_cast<unsigned char>(0x04+(keylen*2)));
 			command.push_back(static_cast<unsigned char>('w'));
 			command.push_back(static_cast<unsigned char>('m'));
 			sprintf (buf, "%.2X", keyno);
@@ -156,9 +146,6 @@ namespace logicalaccess
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> answer;
 		char buf [3];
-		command.push_back(static_cast<unsigned char>(Device::HID));
-		command.push_back(static_cast<unsigned char>(HidCommand::COM));
-		command.push_back(static_cast<unsigned char>(0x05));
 		command.push_back(static_cast<unsigned char>('l'));
 		unsigned char sector = blockno / 4;
 		sprintf (buf, "%.2X", sector);

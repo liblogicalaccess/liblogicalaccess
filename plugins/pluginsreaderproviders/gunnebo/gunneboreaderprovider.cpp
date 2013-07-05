@@ -5,6 +5,7 @@
  */
 
 #include "gunneboreaderprovider.hpp"
+#include "logicalaccess/readerproviders/serialportdatatransport.hpp"
 
 #ifdef LINUX
 #include <stdlib.h>
@@ -45,10 +46,7 @@ namespace logicalaccess
 	{
 		INFO_SIMPLE_("Creating new reader unit with empty port... (Serial port auto-detect will be used when connecting to reader)");
 
-		boost::shared_ptr<GunneboReaderUnit> ret;
-		boost::shared_ptr<SerialPortXml> port;
-		port.reset(new SerialPortXml(""));
-		ret.reset(new GunneboReaderUnit(port));
+		boost::shared_ptr<GunneboReaderUnit> ret(new GunneboReaderUnit());
 		ret->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
 
 		//INFO_("Created reader unit {%s}", dynamic_cast<XmlSerializable*>(&(*ret))->serialize().c_str());
@@ -65,7 +63,9 @@ namespace logicalaccess
 
 		for (std::vector<boost::shared_ptr<SerialPortXml> >::iterator i = ports.begin(); i != ports.end(); ++i)
 		{
-			boost::shared_ptr<GunneboReaderUnit> unit(new GunneboReaderUnit(*i));
+			boost::shared_ptr<GunneboReaderUnit> unit(new GunneboReaderUnit());
+			boost::shared_ptr<SerialPortDataTransport> dataTransport = boost::dynamic_pointer_cast<SerialPortDataTransport>(unit->getDataTransport());
+			dataTransport->setSerialPort(*i);
 			unit->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
 			d_readers.push_back(unit);
 		}

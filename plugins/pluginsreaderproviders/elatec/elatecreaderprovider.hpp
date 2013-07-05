@@ -13,8 +13,6 @@
 #include <string>
 #include <vector>
 
-#include "logicalaccess/logs.hpp"
-
 
 namespace logicalaccess
 {

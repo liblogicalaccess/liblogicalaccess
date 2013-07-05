@@ -18,6 +18,7 @@
 #include "logicalaccess/services/accesscontrol/formats/wiegand34withfacilityformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/wiegand37format.hpp"
 #include "logicalaccess/services/accesscontrol/formats/wiegand37withfacilityformat.hpp"
+#include "../pcscdatatransport.hpp"
 
 namespace logicalaccess
 {
@@ -49,10 +50,10 @@ namespace logicalaccess
 			location->bit = 0;
 		}
 
-		if (d_cardAdapter)
+		if (d_dataTransport)
 		{
 			unsigned char atr[64];
-			size_t atrLength = d_cardAdapter->getPCSCReaderUnit()->getATR(atr, sizeof(atr));
+			size_t atrLength = d_dataTransport->getPCSCReaderUnit()->getATR(atr, sizeof(atr));
 
 			if (data != NULL && ((dataLengthBits + (location->bit + 7)) / 8) <= atrLength)
 			{

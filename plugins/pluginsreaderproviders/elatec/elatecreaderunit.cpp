@@ -15,15 +15,17 @@
 #include "logicalaccess/cards/chip.hpp"
 #include "readercardadapters/elatecreadercardadapter.hpp"
 #include <boost/filesystem.hpp>
+#include "logicalaccess/readerproviders/serialportdatatransport.hpp"
 
 namespace logicalaccess
 {
-	ElatecReaderUnit::ElatecReaderUnit(boost::shared_ptr<SerialPortXml> port)
+	ElatecReaderUnit::ElatecReaderUnit()
 		: ReaderUnit()
 	{
 		d_readerUnitConfig.reset(new ElatecReaderUnitConfiguration());
 		setDefaultReaderCardAdapter (boost::shared_ptr<ElatecReaderCardAdapter> (new ElatecReaderCardAdapter()));
-		d_port = port;
+		boost::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
+		setDataTransport(dataTransport);
 		d_card_type = "UNKNOWN";
 
 		try
@@ -33,12 +35,6 @@ namespace logicalaccess
 			d_card_type = pt.get("config.cardType", "UNKNOWN");
 		}
 		catch (...) { }
-
-		if (!d_port)
-		{
-			d_port.reset(new SerialPortXml(""));
-		}
-		d_isAutoDetected = false;
 	}
 
 	ElatecReaderUnit::~ElatecReaderUnit()
@@ -46,38 +42,14 @@ namespace logicalaccess
 		disconnectFromReader();
 	}
 
-	boost::shared_ptr<SerialPortXml> ElatecReaderUnit::getSerialPort()
-	{
-		return d_port;
-	}
-
-	void ElatecReaderUnit::setSerialPort(boost::shared_ptr<SerialPortXml> port)
-	{
-		if (port)
-		{
-			INFO_("Setting serial port {%s}...", port->getSerialPort()->deviceName().c_str());
-			d_port = port;
-		}
-	}
-
 	std::string ElatecReaderUnit::getName() const
 	{
-		string ret;
-		if (d_port && !d_isAutoDetected)
-		{
-			ret = d_port->getSerialPort()->deviceName();
-		}
-		return ret;
+		return getDataTransport()->getName();
 	}
 
 	std::string ElatecReaderUnit::getConnectedName()
 	{
-		string ret;
-		if (d_port)
-		{
-			ret = d_port->getSerialPort()->deviceName();
-		}
-		return ret;
+		return getName();
 	}
 
 	void ElatecReaderUnit::setCardType(std::string cardType)
@@ -191,7 +163,7 @@ namespace logicalaccess
 			else
 				return chip;
 
-			rca->setReaderUnit(shared_from_this());
+			rca->setDataTransport(getDataTransport());
 			if(cp)
 			{
 				chip->setCardProvider(cp);
@@ -237,207 +209,34 @@ namespace logicalaccess
 
 	bool ElatecReaderUnit::connectToReader()
 	{
-		bool ret = false;
-
-		startAutoDetect();
-
-		EXCEPTION_ASSERT_WITH_LOG(getSerialPort(), LibLogicalAccessException, "No serial port configured !");
-		EXCEPTION_ASSERT_WITH_LOG(getSerialPort()->getSerialPort()->deviceName() != "", LibLogicalAccessException, "Serial port name is empty ! Auto-detect failed !");
-
-		if (!getSerialPort()->getSerialPort()->isOpen())
-		{
-			getSerialPort()->getSerialPort()->open();
-			configure();
-			ret = true;
-		}
-		else
-		{
-			ret = true;
-		}
-
-		return ret;
+		getDataTransport()->setReaderUnit(shared_from_this());
+		return getDataTransport()->connect();
 	}
 
 	void ElatecReaderUnit::disconnectFromReader()
 	{
-		if (getSerialPort()->getSerialPort()->isOpen())
-		{
-			getSerialPort()->getSerialPort()->close();
-		}
+		getDataTransport()->disconnect();
 	}
 
-	void ElatecReaderUnit::startAutoDetect()
+	std::vector<unsigned char> ElatecReaderUnit::getPingCommand() const
 	{
-		if (d_port && d_port->getSerialPort()->deviceName() == "")
-		{
-			if (!Settings::getInstance().IsAutoDetectEnabled)
-			{
-				INFO_SIMPLE_("Auto detection is disabled through settings !");
-				return;
-			}
+		std::vector<unsigned char> cmd;
 
-			INFO_SIMPLE_("Serial port is empty ! Starting Auto COM Port Detection...");
-			std::vector<boost::shared_ptr<SerialPortXml> > ports;
-			if (SerialPortXml::EnumerateUsingCreateFile(ports) && !ports.empty())
-			{
-				bool found = false;
-				for (std::vector<boost::shared_ptr<SerialPortXml> >::iterator i  = ports.begin(); i != ports.end() && !found; ++i)
-				{
-					try
-					{
-						INFO_("Processing port {%s}...", (*i)->getSerialPort()->deviceName().c_str());
-						(*i)->getSerialPort()->open();
-						configure((*i), false);
+		cmd.push_back(0x11);
 
-						boost::shared_ptr<ElatecReaderUnit> testingReaderUnit(new ElatecReaderUnit(*i));
-						boost::shared_ptr<ElatecReaderCardAdapter> testingCardAdapter(new ElatecReaderCardAdapter());
-						testingCardAdapter->setReaderUnit(testingReaderUnit);
-						
-						std::vector<unsigned char> result = testingCardAdapter->sendCommand(0x11, std::vector<unsigned char>(), Settings::getInstance().AutoDetectionTimeout);
-
-						INFO_SIMPLE_("Reader found ! Using this COM port !");
-						d_port = (*i);
-						found = true;
-					}
-					catch (std::exception& e)
-					{
-						ERROR_("Exception {%s}", e.what());
-					}
-					catch (...)
-					{
-						ERROR_SIMPLE_("Exception received !");
-					}
-
-					if ((*i)->getSerialPort()->isOpen())
-					{
-						(*i)->getSerialPort()->close();
-					}
-				}
-
-				if (!found)
-				{
-					INFO_SIMPLE_("NO Reader found on COM port...");
-				}
-				else
-				{
-					d_isAutoDetected = true;
-				}
-			}
-			else
-			{
-				WARNING_SIMPLE_("No COM Port detected !");
-			}
-		}
-	}
-
-	void ElatecReaderUnit::configure()
-	{
-		configure(getSerialPort(), Settings::getInstance().IsConfigurationRetryEnabled);
-	}
-
-	void ElatecReaderUnit::configure(boost::shared_ptr<SerialPortXml> port, bool retryConfiguring)
-	{
-		EXCEPTION_ASSERT_WITH_LOG(port, LibLogicalAccessException, "No serial port configured !");
-		EXCEPTION_ASSERT_WITH_LOG(port->getSerialPort()->deviceName() != "", LibLogicalAccessException, "Serial port name is empty ! Auto-detect failed !");
-
-		try
-		{
-#ifndef _WINDOWS
-			struct termios options = port->getSerialPort()->configuration();
-
-			/* Set speed */
-			cfsetispeed(&options, B9600);
-			cfsetospeed(&options, B9600);
-
-			/* Enable the receiver and set local mode */
-			options.c_cflag |= (CLOCAL | CREAD);
-
-			/* Set character size and parity check */
-			/* 8N1 */
-			options.c_cflag &= ~PARENB;
-			options.c_cflag &= ~CSTOPB;
-			options.c_cflag &= ~CSIZE;
-			options.c_cflag |= CS8;
-
-			/* Disable parity check and fancy stuff */
-			options.c_iflag &= ~ICRNL;
-			options.c_iflag &= ~INPCK;
-			options.c_iflag &= ~ISTRIP;
-
-			/* Disable software flow control */
-			options.c_iflag &= ~(IXON | IXOFF | IXANY);
-
-			/* RAW input */
-			options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
-
-			/* RAW output */
-			options.c_oflag &= ~OPOST;
-
-			/* Timeouts */
-			options.c_cc[VMIN] = 1;
-			options.c_cc[VTIME] = 5;
-
-			port->getSerialPort()->setConfiguration(options);
-#else
-			DCB options = port->getSerialPort()->configuration();
-			options.BaudRate = CBR_9600;
-			options.fBinary = TRUE;               // Binary mode; no EOF check
-			options.fParity = FALSE;               // Enable parity checking
-			options.fOutxCtsFlow = FALSE;         // No CTS output flow control
-			options.fOutxDsrFlow = FALSE;         // No DSR output flow control
-			options.fDtrControl = DTR_CONTROL_DISABLE;
-													// DTR flow control type
-			options.fDsrSensitivity = FALSE;      // DSR sensitivity
-			options.fTXContinueOnXoff = TRUE;     // XOFF continues Tx
-			options.fOutX = FALSE;                // No XON/XOFF out flow control
-			options.fInX = FALSE;                 // No XON/XOFF in flow control
-			options.fErrorChar = FALSE;           // Disable error replacement
-			options.fNull = FALSE;                // Disable null stripping
-			options.fRtsControl = RTS_CONTROL_DISABLE;
-													// RTS flow control
-			options.fAbortOnError = FALSE;        // Do not abort reads/writes on
-													// error
-			options.ByteSize = 8;                 // Number of bits/byte, 4-8
-			options.Parity = NOPARITY;            // 0-4=no,odd,even,mark,space
-			options.StopBits = ONESTOPBIT;        // 0,1,2 = 1, 1.5, 2
-			port->getSerialPort()->setConfiguration(options);
-#endif
-		}
-		catch(std::exception& e)
-		{
-			if (retryConfiguring)
-			{
-				// Strange stuff is going here... by waiting and reopening the COM port (maybe for system cleanup), it's working !
-				std::string portn = port->getSerialPort()->deviceName();
-				WARNING_("Exception received {%s} ! Sleeping {%d} milliseconds -> Reopen serial port {%s} -> Finally retry  to configure...",
-							e.what(), Settings::getInstance().ConfigurationRetryTimeout, portn.c_str());
-#ifndef __linux__
-				Sleep(Settings::getInstance().ConfigurationRetryTimeout);
-#else
-				sleep(Settings::getInstance().ConfigurationRetryTimeout);
-#endif
-				port->getSerialPort()->reopen();
-				configure(getSerialPort(), false);
-			}
-		}
+		return cmd;
 	}
 
 	void ElatecReaderUnit::serialize(boost::property_tree::ptree& parentNode)
 	{
 		boost::property_tree::ptree node;
-		
-		node.put("<xmlattr>.type", getReaderProvider()->getRPType());
-		d_port->serialize(node);
-		d_readerUnitConfig->serialize(node);
-
+		ReaderUnit::serialize(node);
 		parentNode.add_child(getDefaultXmlNodeName(), node);
 	}
 
 	void ElatecReaderUnit::unSerialize(boost::property_tree::ptree& node)
 	{
-		d_port.reset(new SerialPortXml());
-		d_port->unSerialize(node.get_child(d_port->getDefaultXmlNodeName()));
-		d_readerUnitConfig->unSerialize(node.get_child(d_readerUnitConfig->getDefaultXmlNodeName()));
+		ReaderUnit::unSerialize(node);
 	}
 
 	boost::shared_ptr<ElatecReaderProvider> ElatecReaderUnit::getElatecReaderProvider() const
