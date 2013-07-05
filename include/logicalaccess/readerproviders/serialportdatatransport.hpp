@@ -23,8 +23,9 @@ namespace logicalaccess
 
 			/**
 			 * \brief Constructor.
+			 * \param portname The serial port name.
 			 */
-			SerialPortDataTransport();
+			SerialPortDataTransport(const std::string& portname = "");
 
 			/**
 			 * \brief Destructor.

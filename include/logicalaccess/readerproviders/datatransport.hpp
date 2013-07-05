@@ -67,7 +67,7 @@ namespace logicalaccess
 			 * \param timeout The command timeout.
 			 * \return the result of the command.
 			 */
-			virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long int timeout);
+			virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long int timeout = 2000);
 
 			/**
 			 * \brief Get the last command.
