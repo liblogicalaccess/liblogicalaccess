@@ -290,6 +290,8 @@ namespace logicalaccess
 	boost::shared_ptr<RplethReaderCardAdapter> RplethReaderUnit::getDefaultRplethReaderCardAdapter()
 	{
 		boost::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
+		if (!adapter->getDataTransport())
+			adapter->setDataTransport(getDataTransport());
 		return boost::dynamic_pointer_cast<RplethReaderCardAdapter>(adapter);
 	}
 

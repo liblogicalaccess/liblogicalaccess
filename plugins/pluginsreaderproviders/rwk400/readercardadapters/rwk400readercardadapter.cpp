@@ -17,7 +17,6 @@ namespace logicalaccess
 
 	Rwk400ReaderCardAdapter::~Rwk400ReaderCardAdapter()
 	{
-		
 	}
 
 	std::vector<unsigned char> Rwk400ReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)

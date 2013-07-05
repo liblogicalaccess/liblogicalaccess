@@ -140,7 +140,7 @@ namespace logicalaccess
 						res.push_back(tmp);
 					}
 				}
-				if (res.size() > 1)
+				if (res.size() > 0)
 					res.erase(res.end()-1);
 			}
 		}
@@ -204,6 +204,8 @@ namespace logicalaccess
 						res.push_back(tmp);
 					}
 				}
+				if (res.size() > 0)
+					res.erase(res.end()-1);
 			}
 		}
 		catch(std::exception&)

@@ -166,8 +166,6 @@ namespace logicalaccess
 			{
 				rca = getDefaultRwk400ReaderCardAdapter();
 			}
-			else
-				return chip;
 
 			if (rca)
 			{
@@ -210,6 +208,8 @@ namespace logicalaccess
 	boost::shared_ptr<Rwk400ReaderCardAdapter> Rwk400ReaderUnit::getDefaultRwk400ReaderCardAdapter()
 	{
 		boost::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
+		if (!adapter->getDataTransport())
+			adapter->setDataTransport(getDataTransport());
 		return boost::dynamic_pointer_cast<Rwk400ReaderCardAdapter>(adapter);
 	}
 
