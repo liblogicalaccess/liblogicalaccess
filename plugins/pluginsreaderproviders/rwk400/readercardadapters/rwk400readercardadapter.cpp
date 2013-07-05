@@ -20,73 +20,25 @@ namespace logicalaccess
 		
 	}
 
-	std::vector<unsigned char> Rwk400ReaderCardAdapter::sendCommand(const std::vector<unsigned char>& command, long int timeout)
+	std::vector<unsigned char> Rwk400ReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
 	{
-		COM_ ("SendCommand : %s", BufferHelper::getHex(command).c_str());
-		std::vector<unsigned char> res;
-		std::vector<unsigned char> cmd;
-		boost::shared_ptr<Rwk400ReaderUnit> readerUnit = boost::dynamic_pointer_cast<Rwk400ReaderUnit>(getReaderUnit());
-		boost::shared_ptr<SerialPort> port = readerUnit->getSerialPort()->getSerialPort();
-		port->write (command);
-		try
-		{
-			receiveAnwser (res, timeout);
-		}
-		catch(std::invalid_argument&)
-		{
-			THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "No answer received");
-		}
-		return res;
+		return command;
 	}
 
-	bool Rwk400ReaderCardAdapter::receiveAnwser(std::vector<unsigned char>& buf, long int timeout)
-	{	
-		#ifdef _WINDOWS
-			Sleep(500);
-		#elif defined(LINUX)
-			usleep(500000);
-		#endif
-		std::vector<unsigned char> res;
-		boost::shared_ptr<SerialPortXml> port = getRwk400ReaderUnit()->getSerialPort();
-
-		boost::posix_time::time_duration ptimeout = boost::posix_time::milliseconds(timeout + 500);
-		while (port->getSerialPort()->select(ptimeout))
-		{
-			std::vector<unsigned char> tmpbuf;
-			while (port->getSerialPort()->read(tmpbuf, 256) > 0)
-			{
-				res.insert(res.end(), tmpbuf.begin(), tmpbuf.end());
-
-				try
-				{
-					buf = handleAnswerBuffer(res);
-					return true;
-				}
-				catch (std::invalid_argument&)
-				{
-					THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "No answer received");
-				}
-			}
-		}
-
-		return false;
-	}
-
-
-	std::vector<unsigned char> Rwk400ReaderCardAdapter::handleAnswerBuffer(const std::vector<unsigned char>& ansbuf)
+	std::vector<unsigned char> Rwk400ReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
 	{
-		COM_("Answer brute %s and his size is : %d", BufferHelper::getHex(ansbuf).c_str(), ansbuf.size());
+		COM_("Raw answer %s and his size is : %d", BufferHelper::getHex(answer).c_str(), answer.size());
 		std::vector<unsigned char> data;
-		if (ansbuf.size () == 1)
+		if (answer.size () == 1)
 		{
-			EXCEPTION_ASSERT_WITH_LOG(isRWK400Commands (ansbuf[0]) , std::invalid_argument, "Invalid ACK receive");	
-			data.push_back (ansbuf[0]);
+			EXCEPTION_ASSERT_WITH_LOG(isRWK400Commands (answer[0]) , std::invalid_argument, "Invalid ACK receive");	
+			data.push_back (answer[0]);
 		}
 		else
 		{
-			EXCEPTION_ASSERT_WITH_LOG(ansbuf.size ()>1, std::invalid_argument, "Anwser size cannot be smaller than 2 bytes");	
-			unsigned char sw1 = ansbuf[ansbuf.size()-2];
-			unsigned char sw2 = ansbuf[ansbuf.size()-1];
+			EXCEPTION_ASSERT_WITH_LOG(answer.size ()>1, std::invalid_argument, "Anwser size cannot be smaller than 2 bytes");	
+			unsigned char sw1 = answer[answer.size()-2];
+			unsigned char sw2 = answer[answer.size()-1];
 			EXCEPTION_ASSERT_WITH_LOG(sw1 != 0x67 || sw2 != 0x00 , std::invalid_argument, "P3 incorrect");	
 			EXCEPTION_ASSERT_WITH_LOG(sw1 != 0x6B || sw2 != 0x00 , std::invalid_argument, "P1,P2 Incorrect");
 			EXCEPTION_ASSERT_WITH_LOG(sw1 != 0x6D || sw2 != 0x00 , std::invalid_argument, "Invalid instruction");
@@ -97,18 +49,19 @@ namespace logicalaccess
 			EXCEPTION_ASSERT_WITH_LOG(sw1 != 0x98 || sw2 != 0x35 , std::invalid_argument, "Command Flow Incorrect");
 			EXCEPTION_ASSERT_WITH_LOG(sw1 != 0x3B || sw2 != 0x00 , std::invalid_argument, "Reader Reset");
 			EXCEPTION_ASSERT_WITH_LOG(sw1 == 0x90 && sw2 == 0x00 , std::invalid_argument, "Anwser is corrupted");
-			if (ansbuf.size() > 3)
+			if (answer.size() > 3)
 			{
 
-				if (isRWK400Commands (ansbuf[1]))
+				if (isRWK400Commands (answer[1]))
 				{
-					if (ansbuf.size() > 4)
-						data.insert(data.end(), ansbuf.begin()+2, ansbuf.end()-2);
+					if (answer.size() > 4)
+						data.insert(data.end(), answer.begin()+2, answer.end()-2);
 				}
 				else
-					data.insert(data.end(), ansbuf.begin()+1, ansbuf.end()-2);
+					data.insert(data.end(), answer.begin()+1, answer.end()-2);
 			}
 		}
+
 		return data;
 	}
 

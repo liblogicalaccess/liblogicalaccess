@@ -56,26 +56,24 @@ namespace logicalaccess
 			virtual ~Rwk400ReaderCardAdapter();
 
 			/**
-			 * \brief Send a command to the reader.
-			 * \param command The command buffer.			 
-			 * \param timeout The command timeout.
-			 * \return The result of the command.
+			 * \brief Adapt the command to send to the reader.
+			 * \param command The command to send.
+			 * \return The adapted command to send.
 			 */
-			virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long int timeout = 2000);
+			virtual std::vector<unsigned char> adaptCommand(const std::vector<unsigned char>& command);
 
 			/**
-			 * \brief Receive the reader answer.
-			 * \param buf The sand command buffer.		 
-			 * \param timeout The answer timeout.
-			 * \return The answer.
+			 * \brief Adapt the asnwer received from the reader.
+			 * \param answer The answer received.
+			 * \return The adapted answer received.
 			 */
-			bool receiveAnwser(std::vector<unsigned char>& buf, long int timeout);
+			virtual std::vector<unsigned char> adaptAnswer(const std::vector<unsigned char>& answer);
 			
 			/**
 			 * \brief Get the Rpleth reader unit.
 			 * \return The Rpleth reader unit.
 			 */
-			boost::shared_ptr<Rwk400ReaderUnit> getRwk400ReaderUnit() const { return boost::dynamic_pointer_cast<Rwk400ReaderUnit>(getReaderUnit()); };			
+			boost::shared_ptr<Rwk400ReaderUnit> getRwk400ReaderUnit() const { return boost::dynamic_pointer_cast<Rwk400ReaderUnit>(getDataTransport()->getReaderUnit()); };			
 			
 			/**
 			 * \brief Send a REQA command from the PCD to the PICC.
@@ -125,13 +123,6 @@ namespace logicalaccess
 			virtual std::vector<unsigned char> anticollisionB(unsigned char afi = 0x00);
 
 		protected:
-						
-			/**
-			 * \brief Handle a answer and give the associated data buffer.
-			 * \param ansbuf The answer buffer.
-			 * \return The data buffer.
-			 */
-			std::vector<unsigned char> handleAnswerBuffer(const std::vector<unsigned char>& ansbuf);
 
 			bool isRWK400Commands (unsigned char source);
 

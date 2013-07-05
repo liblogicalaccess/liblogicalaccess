@@ -9,8 +9,6 @@
 
 #include "rwk400readerunitconfiguration.hpp"
 #include "logicalaccess/readerproviders/readerunit.hpp"
-#include "logicalaccess/readerproviders/serialportxml.hpp"
-#include <boost/asio/ip/tcp.hpp>
 
 #define RWK400_MAFARE_DESFIRE_CHIP 0x08
 
@@ -31,7 +29,7 @@ namespace logicalaccess
 			/**
 			 * \brief Constructor.
 			 */
-			Rwk400ReaderUnit(boost::shared_ptr<SerialPortXml> port);
+			Rwk400ReaderUnit();
 
 			/**
 			 * \brief Destructor.
@@ -49,17 +47,6 @@ namespace logicalaccess
 			 * \return The connected reader unit name.
 			 */
 			virtual std::string getConnectedName();
-/**
-			 * \brief Get the serial port information.
-			 * \return The serial port.
-			 */
-			virtual boost::shared_ptr<SerialPortXml> getSerialPort();
-
-			/**
-			 * \brief Set the serial port information.
-			 * \param port The serial port.
-			 */
-			virtual void setSerialPort(boost::shared_ptr<SerialPortXml> port);
 
 			/**
 			 * \brief Set the card type.
@@ -113,6 +100,12 @@ namespace logicalaccess
 			 * \return The chip list.
 			 */
 			virtual std::vector<boost::shared_ptr<Chip> > getChipList();
+
+			/**
+			 * \brief Get the reader ping command.
+			 * \return The ping command.
+			 */
+			virtual std::vector<unsigned char> getPingCommand() const;
 
 			/**
 			 * \brief Get the card serial number.
@@ -190,23 +183,6 @@ namespace logicalaccess
 			boost::shared_ptr<Rwk400ReaderProvider> getRwk400ReaderProvider() const;
 
 			/**
-			 * \brief Configure the current serial port.
-			 */
-			void configure();
-
-			/**
-			 * \brief Configure the given serial port.
-			 * \param port The COM port to configure.
-			 * \param retryConfiguring On error, the function wait some milliseconds and retry another time to configure the serial port.
-			 */
-			void configure(boost::shared_ptr<SerialPortXml> port, bool retryConfiguring);
-
-			/**
-			 * \brief Start to auto-detect the first serial port with a reader. Update serial port when found.
-			 */
-			void startAutoDetect();
-
-			/**
 			 * \brief Select the card in the RFID Field.
 			 * \return The card type (first byte) and his CSN.
 			 */
@@ -225,16 +201,6 @@ namespace logicalaccess
 			bool rats();
 
 		protected:
-
-			/**
-			 * \brief The auto-detected status
-			 */
-			bool d_isAutoDetected;
-
-			/**
-			 * \brief The serial port.
-			 */
-			boost::shared_ptr<SerialPortXml> d_port;
 
 			/**
 			 * \brief The reader communication.
