@@ -153,19 +153,17 @@ namespace logicalaccess
 	bool DesfireRwk400Commands::changeKey(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
 	{
 		bool res = false;
-
+		key->getData();
 		return res;
 	}
 
 	void DesfireRwk400Commands::getKeySettings(DESFireKeySettings& settings, unsigned int& maxNbKeys)
 	{
-
 	}
 
 	bool DesfireRwk400Commands::changeKeySettings(DESFireKeySettings settings)
 	{
 		bool res = false;
-
 		return res;
 	}
 
@@ -430,7 +428,30 @@ namespace logicalaccess
 	bool DesfireRwk400Commands::authenticate(unsigned char keyno)
 	{
 		bool res = false;
-
+		if (d_chip)
+		{
+			boost::shared_ptr<DESFireKey> key = d_chip->getDESFireProfile()->getDefaultKey(DESFireKeyType::DF_KEY_DES);
+			std::vector<unsigned char> permutedKey = premutationKey(key->getData(), key->getLength());
+			std::vector<unsigned char> answer;
+			std::vector<unsigned char> command;
+			std::vector<unsigned char> checksum;
+			command.push_back(0x80);
+			command.push_back(0xD8);
+			command.push_back(0x00);
+			command.push_back(keyno);
+			command.push_back(0x0C);
+			command.push_back(0x00);
+			command.push_back(0x00);
+			command.push_back(0x00);
+			command.push_back(0x00);
+			command.push_back(0x00);
+			command.push_back(0x00);
+			command.push_back(0x00);
+			command.push_back(0x00);
+			checksum = computeChecksum (command, permutedKey);
+			command.insert(command.end(), checksum.begin(), checksum.end());
+			answer = getReaderCardAdapter()->sendCommand(command, 0);
+		}
 		return res;
 	}
 
@@ -439,6 +460,55 @@ namespace logicalaccess
 	{
 		bool res = false;
 
+		return res;
+	}
+
+	void DesfireRwk400Commands::setChip(boost::shared_ptr<DESFireChip> chip)
+	{
+		d_chip = chip;
+	}
+
+	std::vector<unsigned char> DesfireRwk400Commands::premutationKey(const unsigned char * key, size_t keylength)
+	{
+		std::vector<unsigned char> res;
+		unsigned char tmp = 0;
+		if (keylength == 8)
+		{
+			for (int i = 7; i > 0; i--)
+			{
+				tmp = 0;
+				for (int j = 7; j >= 0; j--)
+				{
+					tmp <<= 1;
+					tmp |= key[j] >> i & 0x1;
+				}
+				res.push_back(tmp);
+			}
+			tmp = 0;
+			for (int i = 0; i < res.size(); i++)
+			{
+				tmp ^= res[i];
+			}
+			res.push_back(static_cast<unsigned char>(~tmp));
+		}
+		return res;
+	}
+
+	std::vector<unsigned char> DesfireRwk400Commands::computeChecksum (std::vector<unsigned char> command, std::vector<unsigned char> permutedKey)
+	{
+		std::vector<unsigned char> res;
+		std::vector<unsigned char> tmp;
+		if (command.size() > 7 && permutedKey.size() > 7)
+		{
+			for (int i = 0; i < 8; i++)
+			{
+				tmp.push_back(command[i] ^ permutedKey[i]);
+			}
+			for (int i = 0; i < 4; i++)
+			{
+				res.push_back(tmp[i] ^ tmp[i+4]);
+			}
+		}
 		return res;
 	}
 }

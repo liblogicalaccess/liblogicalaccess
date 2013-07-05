@@ -9,6 +9,7 @@
 
 #include "desfirecommands.hpp"
 #include "desfirecrypto.hpp"
+#include "desfirechip.hpp"
 #include "../readercardadapters/rwk400readercardadapter.hpp"
 
 #include <string>
@@ -296,12 +297,21 @@ namespace logicalaccess
 			 */
 			virtual bool getVersion(DESFireCardVersion& dataVersion);
 
+			std::vector<unsigned char> premutationKey(const unsigned char * key, size_t keylength);
+
+			std::vector<unsigned char> computeChecksum (std::vector<unsigned char> command, std::vector<unsigned char> permutedKey);
+
+			void setChip(boost::shared_ptr<DESFireChip> chip);
+
+
 		protected:
 
 			/**
 			 * \brief Crypto instance for security manipulation.
 			 */
 			DESFireCrypto d_crypto;
+
+			boost::shared_ptr<DESFireChip> d_chip;
 	};	
 }
 
