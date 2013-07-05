@@ -99,9 +99,9 @@ namespace logicalaccess
 					else
 					{
 		#ifdef _WINDOWS
-						Sleep(250);
+						Sleep(100);
 		#elif defined(LINUX)
-						usleep(250000);
+						usleep(100000);
 		#endif
 						currentWait += 250;
 					}
