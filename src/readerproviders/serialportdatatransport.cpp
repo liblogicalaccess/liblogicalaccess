@@ -10,9 +10,9 @@
 
 namespace logicalaccess
 {
-	SerialPortDataTransport::SerialPortDataTransport()
+	SerialPortDataTransport::SerialPortDataTransport(const std::string& portname)
 	{
-		d_port.reset(new SerialPortXml(""));
+		d_port.reset(new SerialPortXml(portname));
 
 #ifndef UNIX
 		d_portBaudRate = CBR_9600;

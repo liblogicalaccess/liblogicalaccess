@@ -52,7 +52,7 @@ namespace logicalaccess
 	{
 		if (!d_socket)
 		{
-			boost::asio::ip::udp::endpoint endpoint(boost::asio::ip::address::from_string(getIpAddress()), 7171);
+			boost::asio::ip::udp::endpoint endpoint(boost::asio::ip::address::from_string(getIpAddress()), getPort());
 			d_socket.reset(new boost::asio::ip::udp::socket(ios));
 
 			try
