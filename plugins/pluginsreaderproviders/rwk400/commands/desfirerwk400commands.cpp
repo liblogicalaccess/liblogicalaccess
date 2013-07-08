@@ -436,21 +436,58 @@ namespace logicalaccess
 			std::vector<unsigned char> command;
 			std::vector<unsigned char> checksum;
 			command.push_back(0x80);
-			command.push_back(0xD8);
+			command.push_back(RWK400Commands::LOAD_KEY);
 			command.push_back(0x00);
 			command.push_back(keyno);
 			command.push_back(0x0C);
-			command.push_back(0x00);
-			command.push_back(0x00);
-			command.push_back(0x00);
-			command.push_back(0x00);
-			command.push_back(0x00);
-			command.push_back(0x00);
-			command.push_back(0x00);
-			command.push_back(0x00);
+			for (int i = 0; i < 8; i++)
+			{
+				command.push_back(0x00);
+			}
 			checksum = computeChecksum (command, permutedKey);
+			command.erase(command.begin()+5, command.end());
+			command.insert(command.end(), permutedKey.begin(), permutedKey.end());
 			command.insert(command.end(), checksum.begin(), checksum.end());
-			answer = getReaderCardAdapter()->sendCommand(command, 0);
+			try
+			{
+				// load_key
+				answer = getReaderCardAdapter()->sendCommand(command, 0);
+				// select current key
+				command.clear();
+				command.push_back(0x80);
+				command.push_back(RWK400Commands::SELECT_CURRENT_KEY);
+				command.push_back(0x00);
+				command.push_back(keyno+0x01);
+				command.push_back(0x08);
+				for (int i = 0; i < 8; i++)
+				{
+					command.push_back(0x00);
+				}
+				answer = getReaderCardAdapter()->sendCommand(command, 0);
+				// select_card
+				command.clear();
+				command.push_back(0x80);
+				command.push_back(RWK400Commands::SELECT_CARD);
+				command.push_back(0x30);
+				command.push_back(0x0A);
+				command.push_back(0x09);
+				answer = getReaderCardAdapter()->sendCommand(command, 0);
+				// rats
+				command.clear();
+				command.push_back (0x80);
+				command.push_back (RWK400Commands::TRANSMIT);
+				command.push_back (0xF7);
+				command.push_back (0x06);
+				command.push_back (0x02);
+				command.push_back (0xE0);
+				command.push_back (0x80);
+				answer = getReaderCardAdapter()->sendCommand(command, 0);
+				res = true;
+			}
+			catch(std::invalid_argument&)
+			{
+
+			}
 		}
 		return res;
 	}

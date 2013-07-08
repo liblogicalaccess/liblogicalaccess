@@ -71,7 +71,8 @@ namespace logicalaccess
 
 	std::vector<unsigned char> Rwk400ReaderCardAdapter::requestATS()
 	{
-		getRwk400ReaderUnit()->rats();
+		if (!getRwk400ReaderUnit()->rats())
+			THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Invalide requestATS");
 		return std::vector<unsigned char>();
 	}
 
