@@ -430,26 +430,26 @@ namespace logicalaccess
 		bool res = false;
 		if (d_chip)
 		{
-			boost::shared_ptr<DESFireKey> key = d_chip->getDESFireProfile()->getDefaultKey(DESFireKeyType::DF_KEY_DES);
-			std::vector<unsigned char> permutedKey = premutationKey(key->getData(), key->getLength());
-			std::vector<unsigned char> answer;
-			std::vector<unsigned char> command;
-			std::vector<unsigned char> checksum;
-			command.push_back(0x80);
-			command.push_back(RWK400Commands::LOAD_KEY);
-			command.push_back(0x00);
-			command.push_back(keyno);
-			command.push_back(0x0C);
-			for (int i = 0; i < 8; i++)
-			{
-				command.push_back(0x00);
-			}
-			checksum = computeChecksum (command, permutedKey);
-			command.erase(command.begin()+5, command.end());
-			command.insert(command.end(), permutedKey.begin(), permutedKey.end());
-			command.insert(command.end(), checksum.begin(), checksum.end());
 			try
 			{
+				boost::shared_ptr<DESFireKey> key = d_chip->getDESFireProfile()->getDefaultKey(DESFireKeyType::DF_KEY_DES);
+				std::vector<unsigned char> permutedKey = premutationKey(key->getData(), key->getLength());
+				std::vector<unsigned char> answer;
+				std::vector<unsigned char> command;
+				std::vector<unsigned char> checksum;
+				command.push_back(0x80);
+				command.push_back(RWK400Commands::LOAD_KEY);
+				command.push_back(0x00);
+				command.push_back(keyno);
+				command.push_back(0x0C);
+				for (int i = 0; i < 8; i++)
+				{
+					command.push_back(0x00);
+				}
+				checksum = computeChecksum (command, permutedKey);
+				command.erase(command.begin()+5, command.end());
+				command.insert(command.end(), permutedKey.begin(), permutedKey.end());
+				command.insert(command.end(), checksum.begin(), checksum.end());
 				// load_key
 				answer = getReaderCardAdapter()->sendCommand(command, 0);
 				// select current key
