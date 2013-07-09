@@ -452,37 +452,40 @@ namespace logicalaccess
 				command.insert(command.end(), checksum.begin(), checksum.end());
 				// load_key
 				answer = getReaderCardAdapter()->sendCommand(command, 0);
-				// select current key
-				command.clear();
-				command.push_back(0x80);
-				command.push_back(RWK400Commands::SELECT_CURRENT_KEY);
-				command.push_back(0x00);
-				command.push_back(keyno+0x01);
-				command.push_back(0x08);
-				for (int i = 0; i < 8; i++)
+				if (answer.size() > 1)
 				{
+					// select current key
+					command.clear();
+					command.push_back(0x80);
+					command.push_back(RWK400Commands::SELECT_CURRENT_KEY);
 					command.push_back(0x00);
+					command.push_back(keyno+0x01);
+					command.push_back(0x08);
+					for (int i = 0; i < 8; i++)
+					{
+						command.push_back(0x00);
+					}
+					answer = getReaderCardAdapter()->sendCommand(command, 0);
+					// select_card
+					command.clear();
+					command.push_back(0x80);
+					command.push_back(RWK400Commands::SELECT_CARD);
+					command.push_back(0x30);
+					command.push_back(0x0A);
+					command.push_back(0x09);
+					answer = getReaderCardAdapter()->sendCommand(command, 0);
+					// rats
+					command.clear();
+					command.push_back (0x80);
+					command.push_back (RWK400Commands::TRANSMIT);
+					command.push_back (0xF7);
+					command.push_back (0x06);
+					command.push_back (0x02);
+					command.push_back (0xE0);
+					command.push_back (0x80);
+					answer = getReaderCardAdapter()->sendCommand(command, 0);
+					res = true;
 				}
-				answer = getReaderCardAdapter()->sendCommand(command, 0);
-				// select_card
-				command.clear();
-				command.push_back(0x80);
-				command.push_back(RWK400Commands::SELECT_CARD);
-				command.push_back(0x30);
-				command.push_back(0x0A);
-				command.push_back(0x09);
-				answer = getReaderCardAdapter()->sendCommand(command, 0);
-				// rats
-				command.clear();
-				command.push_back (0x80);
-				command.push_back (RWK400Commands::TRANSMIT);
-				command.push_back (0xF7);
-				command.push_back (0x06);
-				command.push_back (0x02);
-				command.push_back (0xE0);
-				command.push_back (0x80);
-				answer = getReaderCardAdapter()->sendCommand(command, 0);
-				res = true;
 			}
 			catch(std::invalid_argument&)
 			{
@@ -509,7 +512,7 @@ namespace logicalaccess
 	{
 		std::vector<unsigned char> res;
 		unsigned char tmp = 0;
-		if (keylength == 8)
+		if (keylength > 7)
 		{
 			for (int i = 7; i > 0; i--)
 			{

@@ -307,6 +307,12 @@ namespace logicalaccess
 
 	bool RplethReaderUnit::connectToReader()
 	{
+		boost::shared_ptr<DataTransport> dataTransport = getDataTransport();
+		if (!dataTransport->getReaderUnit())
+		{
+			dataTransport->setReaderUnit(shared_from_this());
+			setDataTransport(dataTransport);
+		}
 		return getDataTransport()->connect();
 	}
 
