@@ -36,6 +36,11 @@ namespace logicalaccess
 		getRplethReaderCardAdapter()->sendRplethCommand (command, 0);
 	}
 
+	void RplethLCDDisplay::setMessage(unsigned char rowid, std::string message)
+	{
+		setMessage(message);
+	}
+
 	void RplethLCDDisplay::setDisplayTime(int time)
 	{
 		std::vector<unsigned char> command;
