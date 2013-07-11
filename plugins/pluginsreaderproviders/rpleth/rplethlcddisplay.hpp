@@ -45,6 +45,13 @@ namespace logicalaccess
 			virtual void setMessage(std::string message, int time);
 
 			/**
+			 * \brief Write a message on screen.
+			 * \param rowid The row id for the message.
+			 * \param message The message to show.
+			 */
+			virtual void setMessage(unsigned char rowid, std::string message);
+
+			/**
 			 * \brief Set the default time to display a message.
 			 * \param time The time to show the message
 			 */

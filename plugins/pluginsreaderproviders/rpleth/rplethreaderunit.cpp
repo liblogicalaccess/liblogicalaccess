@@ -24,6 +24,9 @@
 #include "commands/mifareultralightrplethcommands.hpp"
 #include <boost/filesystem.hpp>
 #include "logicalaccess/readerproviders/tcpdatatransport.hpp"
+#include "rplethledbuzzerdisplay.hpp"
+#include "rplethlcddisplay.hpp"
+#include "rplethdatatransport.hpp"
 
 namespace logicalaccess
 {
@@ -32,11 +35,14 @@ namespace logicalaccess
 	{
 		d_readerUnitConfig.reset(new RplethReaderUnitConfiguration());
 		setDefaultReaderCardAdapter (boost::shared_ptr<RplethReaderCardAdapter> (new RplethReaderCardAdapter()));
-		boost::shared_ptr<TcpDataTransport> dataTransport(new TcpDataTransport());
+		
+		boost::shared_ptr<RplethDataTransport> dataTransport(new RplethDataTransport());
 		dataTransport->setIpAddress("192.168.1.100");
 		dataTransport->setPort(23);
 		setDataTransport(dataTransport);
 		d_card_type = "UNKNOWN";
+		d_lcdDisplay.reset(new RplethLCDDisplay());
+		d_ledBuzzerDisplay.reset(new RplethLEDBuzzerDisplay());
 
 		try
 		{
@@ -164,7 +170,7 @@ namespace logicalaccess
 			if (buf.size() > 0)
 			{
 				chip = createChip((d_card_type == "UNKNOWN") ? "GenericTag" : d_card_type);
-				chip->setChipIdentifier(asciiToHex (buf));
+				chip->setChipIdentifier(buf);
 			}
 		}
 		else
@@ -291,6 +297,12 @@ namespace logicalaccess
 
 	bool RplethReaderUnit::connectToReader()
 	{
+		boost::shared_ptr<DataTransport> dataTransport = getDataTransport();
+		if (!dataTransport->getReaderUnit())
+		{
+			dataTransport->setReaderUnit(shared_from_this());
+			setDataTransport(dataTransport);
+		}
 		return getDataTransport()->connect();
 	}
 
@@ -458,36 +470,67 @@ namespace logicalaccess
 		command.push_back (static_cast<unsigned char>(Device::HID));
 		command.push_back (static_cast<unsigned char>(HidCommand::BADGE));
 		command.push_back (static_cast<unsigned char>(0x00));
-		getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, 0);
-		res = receiveBadge(timeout);
+		try
+		{
+			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, 0);
+			res = receiveBadge(timeout);
+		}
+		catch(std::invalid_argument& e)
+		{
+			std::cout << e.what() << std::endl;
+		}
 		return res;
 	}
 
 	std::vector<unsigned char> RplethReaderUnit::receiveBadge (long int timeout)
 	{
+		COM_SIMPLE_("receiveBadge");
 		std::vector<unsigned char> res;
 		std::vector<unsigned char> cmd;
-		cmd.push_back(static_cast<unsigned char>(Device::HID));
-		cmd.push_back(static_cast<unsigned char>(HidCommand::BADGE));
-		res = getDefaultRplethReaderCardAdapter()->sendRplethCommand(cmd, timeout);
-		// res contains full wiegand trame, it need to take the csn
-		res = getCsn (res);
+		long int currentWait = 0;
+		try
+		{
+			res = getDefaultRplethReaderCardAdapter()->sendRplethCommand(cmd, timeout);
+			// res contains full wiegand trame, it need to take the csn
+			if (res.size() > 0)
+				res = getCsn (res);
+		}
+		catch (std::invalid_argument&)
+		{
+
+		}
 		return res;
 	}
 
 	std::vector<unsigned char> RplethReaderUnit::getCsn (const std::vector<unsigned char>& trame)
 	{
 		std::vector<unsigned char> result;
+		long long tmp = 0;
 		boost::shared_ptr<RplethReaderUnitConfiguration> conf = boost::dynamic_pointer_cast<RplethReaderUnitConfiguration>(d_readerUnitConfig);
 		if (conf->getLength() != 0)
 		{
-			if (trame.size() >= static_cast<size_t>(conf->getLength() + conf->getOffset()))
+			if (trame.size()*8 >= static_cast<size_t>(conf->getLength() + conf->getOffset()))
 			{
-			result.insert (result.begin(), trame.begin()+(trame.size() - conf->getLength()), trame.end() - conf->getOffset());
+				for (int i = 0; i < static_cast<int>(trame.size()); i++)
+				{
+					tmp <<= 8;
+					tmp |= trame[i];
+				}
+				tmp >>= conf->getOffset();
+				tmp &= static_cast<int>(pow(2, conf->getLength())-1);
+				int size = 0;
+				if (conf->getLength()%8==0)
+					size = conf->getLength()/8;
+				else
+					size = conf->getLength()/8+1;
+				for (int i = 0, j = 0; i < size; i++, j += 8)
+				{
+					result.insert(result.begin(), (tmp >> j) & 0xff);
+				}
 			}
 			else
 			{
-				WARNING_("Wrong trame length (%d < (%d + %d))", trame.size(), conf->getLength(), conf->getOffset());
+				WARNING_("Wrong trame length (%d < (%d + %d))", trame.size()*8, conf->getLength(), conf->getOffset());
 			}
 		}
 		else

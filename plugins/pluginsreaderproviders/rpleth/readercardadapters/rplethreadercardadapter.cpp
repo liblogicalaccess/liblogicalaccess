@@ -22,12 +22,13 @@ namespace logicalaccess
 
 	std::vector<unsigned char> RplethReaderCardAdapter::sendRplethCommand(const std::vector<unsigned char>& data, long timeout)
 	{
+		COM_("Send Rpleth Command : %s", BufferHelper::getHex(data).c_str());
 		std::vector<unsigned char> res;
-
 		boost::shared_ptr<RplethDataTransport> dt = boost::dynamic_pointer_cast<RplethDataTransport>(getDataTransport());
 		if (dt)
 		{
-			dt->sendll(adaptCommand(data));
+			if (adaptCommand(data).size() > 0)
+				dt->sendll(adaptCommand(data));
 			res = adaptAnswer(dt->receive(timeout));
 		}
 
