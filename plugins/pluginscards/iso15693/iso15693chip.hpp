@@ -8,7 +8,7 @@
 #define LOGICALACCESS_ISO15693CHIP_HPP
 
 #include "logicalaccess/cards/chip.hpp"
-#include "iso15693cardprovider.hpp"
+#include "iso15693commands.hpp"
 #include "iso15693profile.hpp"
 
 #include <string>
@@ -55,10 +55,17 @@ namespace logicalaccess
 			virtual boost::shared_ptr<LocationNode> getRootLocationNode();
 
 			/**
+			 * \brief Get a card service for this chip.
+			 * \param serviceType The card service type.
+			 * \return The card service.
+			 */
+			virtual boost::shared_ptr<CardService> getService(CardServiceType serviceType);
+
+			/**
 			 * \brief Get the ISO15693 card provider for I/O access.
 			 * \return The ISO15693 card provider.
 			 */
-			boost::shared_ptr<ISO15693CardProvider> getISO15693CardProvider() { return boost::dynamic_pointer_cast<ISO15693CardProvider>(getCardProvider()); };
+			boost::shared_ptr<ISO15693Commands> getISO15693Commands() { return boost::dynamic_pointer_cast<ISO15693Commands>(getCommands()); };
 
 			/**
 			 * \brief Get the ISO15693 profile.

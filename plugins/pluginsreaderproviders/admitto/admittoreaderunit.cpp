@@ -242,19 +242,16 @@ namespace logicalaccess
 		{
 			INFO_SIMPLE_("Chip created successfully !");
 			boost::shared_ptr<ReaderCardAdapter> rca;
-			boost::shared_ptr<CardProvider> cp;
 
 			if (type == "GenericTag")
 			{
 				INFO_SIMPLE_("Generic tag Chip created");
 				rca = getDefaultReaderCardAdapter();
-				cp = LibraryManager::getInstance()->getCardProvider("GenericTag");
 			}
 			else
 				return chip;
 
 			rca->setDataTransport(getDataTransport());
-			chip->setCardProvider(cp);
 		}
 		return chip;
 	}

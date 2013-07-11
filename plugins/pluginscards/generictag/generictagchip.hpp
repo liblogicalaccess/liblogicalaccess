@@ -8,7 +8,6 @@
 #define LOGICALACCESS_GENERICTAGCHIP_HPP
 
 #include "logicalaccess/cards/chip.hpp"
-#include "generictagcardprovider.hpp"
 
 #include <string>
 #include <vector>
@@ -47,15 +46,16 @@ namespace logicalaccess
 			 */
 			virtual boost::shared_ptr<LocationNode> getRootLocationNode();
 
-			/**
-			 * \brief Get the Generic Tag card provider for I/O access.
-			 * \return The Generic Tag card provider.
-			 */
-			boost::shared_ptr<GenericTagCardProvider> getGenericTagCardProvider() { return boost::dynamic_pointer_cast<GenericTagCardProvider>(getCardProvider()); };
-
 			void setTagIdBitsLength(unsigned int length) { d_tagIdBitsLength = length; };
 
 			unsigned int getTagIdBitsLength() const { return d_tagIdBitsLength; };
+
+			/**
+			 * \brief Get a card service for this card provider.
+			 * \param serviceType The card service type.
+			 * \return The card service.
+			 */
+			virtual boost::shared_ptr<CardService> getService(CardServiceType serviceType);
 
 		protected:
 

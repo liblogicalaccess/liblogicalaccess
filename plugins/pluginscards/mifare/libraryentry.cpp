@@ -47,14 +47,6 @@ extern "C"
 		}
 	}
 
-	LIBLOGICALACCESS_API void getMifareCardProvider(boost::shared_ptr<logicalaccess::CardProvider>* cp)
-	{
-		if (cp != NULL)
-		{
-			*cp = boost::shared_ptr<logicalaccess::MifareCardProvider>(new logicalaccess::MifareCardProvider());
-		}
-	}
-
 	LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char* chipname, size_t chipnamelen, void** getterfct)
 	{
 		bool ret = false;

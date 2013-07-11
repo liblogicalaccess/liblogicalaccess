@@ -616,7 +616,6 @@ namespace logicalaccess
 		if (chip)
 		{
 			boost::shared_ptr<ReaderCardAdapter> rca;
-			boost::shared_ptr<CardProvider> cp;
 
 			if (type == "GenericTag")
 				rca = getDefaultReaderCardAdapter();
@@ -624,10 +623,6 @@ namespace logicalaccess
 				return chip;
 
 			rca->setDataTransport(getDataTransport());
-			if(cp)
-			{
-				chip->setCardProvider(cp);
-			}
 		}
 		return chip;
 	}

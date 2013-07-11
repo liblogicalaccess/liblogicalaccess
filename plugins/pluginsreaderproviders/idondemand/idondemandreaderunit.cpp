@@ -14,10 +14,11 @@
 #include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
 #include "logicalaccess/cards/chip.hpp"
 #include "readercardadapters/idondemandreadercardadapter.hpp"
-#include "commands/generictagidondemandcardprovider.hpp"
+#include "generictagidondemandchip.hpp"
 #include "commands/generictagidondemandaccesscontrolcardservice.hpp"
 #include <boost/filesystem.hpp>
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
+#include "commands/generictagidondemandcommands.hpp"
 
 namespace logicalaccess
 {
@@ -245,29 +246,22 @@ namespace logicalaccess
 	
 	boost::shared_ptr<Chip> IdOnDemandReaderUnit::createChip(std::string type)
 	{
-		boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
-
-		if (chip)
+		boost::shared_ptr<Chip> chip;
+		boost::shared_ptr<ReaderCardAdapter> rca;
+		if (type == "GenericTag")
 		{
-			boost::shared_ptr<ReaderCardAdapter> rca;
-			boost::shared_ptr<CardProvider> cp;
-
-			if (type == "GenericTag")
-			{
-				rca = getDefaultReaderCardAdapter();
-				cp.reset(new GenericTagIdOnDemandCardProvider());
-			}
-			else
-					return chip;
-
+			chip.reset(new GenericTagIdOnDemandChip());
+			boost::shared_ptr<Commands> commands(new GenericTagIdOnDemandCommands());
+			chip->setCommands(commands);
+			rca = getDefaultReaderCardAdapter();
 			rca->setDataTransport(getDataTransport());
-			if (cp)
-			{
-				chip->setCardProvider(cp);
-				boost::dynamic_pointer_cast<GenericTagIdOnDemandCardProvider>(cp)->setReaderCardAdapter(rca);
-			}
-			
+			commands->setReaderCardAdapter(rca);
 		}
+		else
+		{
+			chip = ReaderUnit::createChip(type);
+		}
+
 		return chip;
 	}
 

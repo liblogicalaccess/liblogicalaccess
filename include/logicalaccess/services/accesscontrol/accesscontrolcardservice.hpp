@@ -24,9 +24,9 @@ namespace logicalaccess
 
 			/**
 			 * \brief Constructor.
-			 * \param cardProvider The associated card provider.
+			 * \param cardProvider The associated chip.
 			 */
-			AccessControlCardService(boost::shared_ptr<CardProvider> cardProvider);
+			AccessControlCardService(boost::shared_ptr<Chip> chip);
 
 			/**
 			 * \brief Destructor.

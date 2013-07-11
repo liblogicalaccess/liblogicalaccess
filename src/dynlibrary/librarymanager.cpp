@@ -78,21 +78,6 @@ namespace logicalaccess
 		return ret;
 	}
 
-	boost::shared_ptr<CardProvider> LibraryManager::getCardProvider(const std::string& cardtype)
-	{
-		boost::shared_ptr<CardProvider> ret;
-		std::string fctname = "get" + cardtype + "CardProvider";
-
-		getcardprovider getcardproviderfct;
-		*(void**)(&getcardproviderfct) = getFctFromName(fctname, LibraryManager::CARDS_TYPE);
-		if (getcardproviderfct)
-		{
-			getcardproviderfct(&ret);
-		}
-
-		return ret;
-	}
-
 	boost::shared_ptr<Commands> LibraryManager::getCommands(const std::string& extendedtype)
 	{
 		boost::shared_ptr<Commands> ret;

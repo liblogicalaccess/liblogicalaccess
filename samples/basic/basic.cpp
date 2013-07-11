@@ -87,7 +87,6 @@ int main(int , char**)
 						std::cout << "\t" << logicalaccess::BufferHelper::getHex(readerConfig->getReaderUnit()->getNumber((*i))) << std::endl;
 					}
 
-					boost::shared_ptr<logicalaccess::CardProvider> cp = chip->getCardProvider();
 					boost::shared_ptr<logicalaccess::Profile> profile = chip->getProfile();
 
 					// DO SOMETHING HERE

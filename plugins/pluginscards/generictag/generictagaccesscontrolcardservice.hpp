@@ -7,6 +7,7 @@
 #ifndef LOGICALACCESS_GENERICTAGACCESSCONTROLCARDSERVICE_HPP
 #define LOGICALACCESS_GENERICTAGACCESSCONTROLCARDSERVICE_HP
 
+#include "generictagchip.hpp"
 #include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
 
 
@@ -23,9 +24,9 @@ namespace logicalaccess
 
 			/**
 			 * \brief Constructor.
-			 * \param cardProvider The associated card provider.
+			 * \param chip The chip.
 			 */
-			GenericTagAccessControlCardService(boost::shared_ptr<CardProvider> cardProvider);
+			GenericTagAccessControlCardService(boost::shared_ptr<Chip> chip);
 
 			/**
 			 * \brief Destructor.
@@ -51,7 +52,7 @@ namespace logicalaccess
 			 */
 			virtual bool writeFormat(boost::shared_ptr<Format> format, boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite);
 
-			boost::shared_ptr<GenericTagCardProvider> getGenericTagCardProvider();
+			boost::shared_ptr<GenericTagChip> getGenericTagChip() { return boost::dynamic_pointer_cast<GenericTagChip>(getChip()); };
 
 		protected:
 	};

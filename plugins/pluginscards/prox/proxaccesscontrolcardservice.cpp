@@ -5,10 +5,9 @@
  */
 
 #include "proxaccesscontrolcardservice.hpp"
-#include "proxcardprovider.hpp"
 #include "logicalaccess/cards/readercardadapter.hpp"
-
-
+#include "proxchip.hpp"
+#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 
 #ifdef __linux__
 #include <cstring>
@@ -16,19 +15,14 @@
 
 namespace logicalaccess
 {
-	ProxAccessControlCardService::ProxAccessControlCardService(boost::shared_ptr<CardProvider> cardProvider)
-		: AccessControlCardService(cardProvider)
+	ProxAccessControlCardService::ProxAccessControlCardService(boost::shared_ptr<Chip> chip)
+		: AccessControlCardService(chip)
 	{
 		
 	}
 
 	ProxAccessControlCardService::~ProxAccessControlCardService()
 	{
-	}
-
-	boost::shared_ptr<ProxCardProvider> ProxAccessControlCardService::getProxCardProvider()
-	{
-		return boost::dynamic_pointer_cast<ProxCardProvider>(getCardProvider());
 	}
 
 	boost::shared_ptr<Format> ProxAccessControlCardService::readFormat(boost::shared_ptr<Format> format, boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> /*aiToUse*/)
@@ -49,7 +43,7 @@ namespace logicalaccess
 			formatret = Format::getByFormatType(format->getType());
 			formatret->unSerialize(format->serialize(), "");
 			unsigned int dataLengthBits = formatret->getDataLength();
-			unsigned int atrLengthBits = getProxCardProvider()->readData(pLocation, NULL, 0, dataLengthBits);			
+			unsigned int atrLengthBits = static_cast<unsigned int>(getChip()->getChipIdentifier().size() * 8);
 			if (dataLengthBits == 0)
 			{
 				dataLengthBits = atrLengthBits;
@@ -75,11 +69,9 @@ namespace logicalaccess
 					memset(formatBuf, 0x00, length);
 					try
 					{
-						if (getProxCardProvider()->readData(pLocation, formatBuf, length, dataLengthBits))
-						{
-							formatret->setLinearData(formatBuf, length);
-							ret = true;
-						}
+						BitHelper::writeToBit(formatBuf, length, 0, &getChip()->getChipIdentifier()[0], pLocation->bit, dataLengthBits);
+						formatret->setLinearData(formatBuf, length);
+						ret = true;
 					}
 					catch(std::exception&)
 					{
@@ -106,19 +98,7 @@ namespace logicalaccess
 
 	std::vector<unsigned char> ProxAccessControlCardService::getPACSBits()
 	{
-		std::vector<unsigned char> pacsBits;
-		unsigned char atr[255];
-		memset(atr, 0x00, sizeof(atr));
-
-		unsigned int atrLengthBits = getProxCardProvider()->readData(boost::shared_ptr<ProxLocation>(), NULL, 0, 0);
-		if (atrLengthBits > (2*8))
-		{
-			getProxCardProvider()->readData(boost::shared_ptr<ProxLocation>(), atr, sizeof(atr), atrLengthBits);
-			pacsBits.insert(pacsBits.end(), atr + 2, atr + ((atrLengthBits + 7) / 8));
-		}
-
-
-		return pacsBits;
+		return getChip()->getChipIdentifier();
 	}
 }
 

@@ -44,7 +44,6 @@ namespace logicalaccess
 
 		boost::shared_ptr<ReaderProvider> getReaderProvider(const std::string& readertype);
 		boost::shared_ptr<Chip> getCard(const std::string& cardtype);
-		boost::shared_ptr<CardProvider> getCardProvider(const std::string& cardtype);
 		boost::shared_ptr<Commands> getCommands(const std::string& extendedtype);
 		boost::shared_ptr<DataTransport> getDataTransport(const std::string& transporttype);
 

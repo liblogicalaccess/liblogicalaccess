@@ -238,7 +238,6 @@ namespace logicalaccess
 		if (chip)
 		{
 			boost::shared_ptr<ReaderCardAdapter> rca;
-			boost::shared_ptr<CardProvider> cp;
 
 			if (type == "Mifare1K" || type == "Mifare4K" || type == "Mifare")
 				rca = getDefaultReaderCardAdapter();
@@ -246,10 +245,6 @@ namespace logicalaccess
 				return chip;
 
 			rca->setDataTransport(getDataTransport());
-			if(cp)
-			{
-				chip->setCardProvider(cp);
-			}
 		}
 		return chip;
 	}

@@ -8,8 +8,10 @@
 #define LOGICALACCESS_MIFAREPLUSCHIP_HPP
 
 #include "logicalaccess/cards/chip.hpp"
-#include "mifarepluscardprovidersl1.hpp"
-#include "mifareplusprofilesl1.hpp"
+#include "mifareplussl1commands.hpp"
+#include "mifareplussl3commands.hpp"
+#include "mifareplussl1profile.hpp"
+#include "mifareplussl3profile.hpp"
 
 #include <string>
 #include <vector>
@@ -60,24 +62,21 @@ namespace logicalaccess
 			 */
 			void addSectorNode(boost::shared_ptr<LocationNode> rootNode, int sector);
 
+			boost::shared_ptr<CardService> getService(CardServiceType serviceType);
+
 			/**
 			 * \brief Get the Mifare card provider for I/O access.
 			 * \return The Mifare card provider.
 			 */
-			boost::shared_ptr<MifarePlusCardProviderSL1> getMifarePlusCardProviderSL1() { return boost::dynamic_pointer_cast<MifarePlusCardProviderSL1>(getCardProvider()); };
-/*
-			boost::shared_ptr<MifarePlusCardProviderSL2> getMifarePlusCardProviderSL2() { return boost::dynamic_pointer_cast<MifarePlusCardProviderSL2>(getCardProvider()); };
-			boost::shared_ptr<MifarePlusCardProviderSL3> getMifarePlusCardProviderSL3() { return boost::dynamic_pointer_cast<MifarePlusCardProviderSL3>(getCardProvider()); };
-			boost::shared_ptr<MifarePlusCardProviderSL0> getMifarePlusCardProviderSL0() { return boost::dynamic_pointer_cast<MifarePlusCardProviderSL0>(getCardProvider()); };
-			*/
+			boost::shared_ptr<MifarePlusSL1Commands> getMifarePlusSL1Commands() { return boost::dynamic_pointer_cast<MifarePlusSL1Commands>(getCommands()); };
+			boost::shared_ptr<MifarePlusSL3Commands> getMifarePlusSL3Commands() { return boost::dynamic_pointer_cast<MifarePlusSL3Commands>(getCommands()); };
+			
 			/**
 			 * \brief Get the Mifare profile.
 			 * \return The Mifare profile.
 			 */
-			inline boost::shared_ptr<MifarePlusProfileSL1> getMifarePlusProfileSL1() { return boost::dynamic_pointer_cast<MifarePlusProfileSL1>(getProfile()); };
-/*			inline boost::shared_ptr<MifarePlusProfileSL2> getMifarePlusProfileSL2() { return boost::dynamic_pointer_cast<MifarePlusProfileSL2>(getProfile()); };
-			inline boost::shared_ptr<MifarePlusProfileSL3> getMifarePlusProfileSL3() { return boost::dynamic_pointer_cast<MifarePlusProfileSL3>(getProfile()); };
-			inline boost::shared_ptr<MifarePlusProfileSL0> getMifarePlusProfileSL0() { return boost::dynamic_pointer_cast<MifarePlusProfileSL0>(getProfile()); };*/
+			inline boost::shared_ptr<MifarePlusSL1Profile> getMifarePlusSL1Profile() { return boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getProfile()); };
+			inline boost::shared_ptr<MifarePlusSL3Profile> getMifarePlusSL3Profile() { return boost::dynamic_pointer_cast<MifarePlusSL3Profile>(getProfile()); };
 
 		protected:
 

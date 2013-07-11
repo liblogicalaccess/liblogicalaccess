@@ -29,14 +29,6 @@ extern "C"
 		}
 	}
 
-	LIBLOGICALACCESS_API void getGenericTagCardProvider(boost::shared_ptr<logicalaccess::CardProvider>* cp)
-	{
-		if (cp != NULL)
-		{
-			*cp = boost::shared_ptr<logicalaccess::GenericTagCardProvider>(new logicalaccess::GenericTagCardProvider());
-		}
-	}
-
 	LIBLOGICALACCESS_API void setTagIdBitsLengthOfGenericTagChip(boost::shared_ptr<logicalaccess::Chip>* chip, unsigned int bits)
 	{
 		if (chip != NULL)

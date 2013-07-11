@@ -12,6 +12,7 @@
 #include <sstream>
 
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include "iso15693storagecardservice.hpp"
 
 
 namespace logicalaccess
@@ -47,9 +48,9 @@ namespace logicalaccess
 		rootLocation->block = static_cast<int>(-1);
 		rootNode->setLocation(rootLocation);	
 
-		if (d_cardprovider)
+		if (getCommands())
 		{
-			ISO15693Commands::SystemInformation sysinfo = getISO15693CardProvider()->getISO15693Commands()->getSystemInformation();
+			ISO15693Commands::SystemInformation sysinfo = getISO15693Commands()->getSystemInformation();
 			if (sysinfo.hasVICCMemorySize)
 			{
 				char tmpName[255];
@@ -76,5 +77,19 @@ namespace logicalaccess
 		}
 
 		return rootNode;
+	}
+
+	boost::shared_ptr<CardService> ISO15693Chip::getService(CardServiceType serviceType)
+	{
+		boost::shared_ptr<CardService> service;
+
+		switch (serviceType)
+		{
+		case CST_STORAGE:
+			service.reset(new ISO15693StorageCardService(shared_from_this()));
+			break;
+		}
+
+		return service;
 	}
 }

@@ -141,25 +141,18 @@ namespace logicalaccess
 					try
 					{
 						INFO_SIMPLE_("Getting access control service from chip...");
-						if (chip->getCardProvider())
+						boost::shared_ptr<AccessControlCardService> acService = boost::dynamic_pointer_cast<AccessControlCardService>(chip->getService(CST_ACCESS_CONTROL));
+						if (acService)
 						{
-							boost::shared_ptr<AccessControlCardService> acService = boost::dynamic_pointer_cast<AccessControlCardService>(chip->getCardProvider()->getService(CST_ACCESS_CONTROL));
-							if (acService)
+							fcopy = acService->readFormat(finfos.format, finfos.location, finfos.aiToUse);
+							if (fcopy && !finfos.format->checkSkeleton(fcopy))
 							{
-								fcopy = acService->readFormat(finfos.format, finfos.location, finfos.aiToUse);
-								if (fcopy && !finfos.format->checkSkeleton(fcopy))
-								{
-									fcopy.reset();
-								}
-							}
-							else
-							{
-								ERROR_("Cannot found any access control service for this chip.");
+								fcopy.reset();
 							}
 						}
 						else
 						{
-							ERROR_("No card provider on this chip.");
+							ERROR_("Cannot found any access control service for this chip.");
 						}
 					}
 					catch(std::exception&)

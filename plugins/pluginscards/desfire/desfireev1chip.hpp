@@ -8,7 +8,7 @@
 #define LOGICALACCESS_DESFIREEV1CHIP_HPP
 
 #include "desfirechip.hpp"
-#include "desfireev1cardprovider.hpp"
+#include "desfireev1commands.hpp"
 #include "desfireev1profile.hpp"
 
 
@@ -49,7 +49,7 @@ namespace logicalaccess
 			 * \brief Get the DESFire card provider for I/O access.
 			 * \return The DESFire card provider.
 			 */
-			boost::shared_ptr<DESFireEV1CardProvider> getDESFireEV1CardProvider() { return boost::dynamic_pointer_cast<DESFireEV1CardProvider>(getCardProvider()); };
+			boost::shared_ptr<DESFireEV1Commands> getDESFireEV1Commands() { return boost::dynamic_pointer_cast<DESFireEV1Commands>(getCommands()); };
 
 			/**
 			 * \brief Get the DESFire EV1 profile.

@@ -7,6 +7,7 @@
 #ifndef LOGICALACCESS_TWICACCESSCONTROLCARDSERVICE_HPP
 #define LOGICALACCESS_TWICACCESSCONTROLCARDSERVICE_HPP
 
+#include "twicchip.hpp"
 #include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
 
 
@@ -23,9 +24,9 @@ namespace logicalaccess
 
 			/**
 			 * \brief Constructor.
-			 * \param cardProvider The associated card provider.
+			 * \param chip The associated chip.
 			 */
-			TwicAccessControlCardService(boost::shared_ptr<CardProvider> cardProvider);
+			TwicAccessControlCardService(boost::shared_ptr<Chip> chip);
 
 			/**
 			 * \brief Destructor.
@@ -51,9 +52,9 @@ namespace logicalaccess
 			 */
 			virtual bool writeFormat(boost::shared_ptr<Format> format, boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite);
 
-			boost::shared_ptr<TwicCardProvider> getTwicCardProvider();
-
 		protected:
+
+			boost::shared_ptr<TwicChip> getTwicChip() { return boost::dynamic_pointer_cast<TwicChip>(getChip()); };
 	};
 }
 

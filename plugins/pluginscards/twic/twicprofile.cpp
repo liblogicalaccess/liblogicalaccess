@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <sstream>
 
+#include "twiclocation.hpp"
 #include "../iso7816/iso7816location.hpp"
 #include "logicalaccess/services/accesscontrol/formats/fascn200bitformat.hpp"
 

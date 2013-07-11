@@ -8,7 +8,6 @@
 #define LOGICALACCESS_PROXCHIP_HPP
 
 #include "logicalaccess/cards/chip.hpp"
-#include "proxcardprovider.hpp"
 #include "proxprofile.hpp"
 
 #include <string>
@@ -49,10 +48,11 @@ namespace logicalaccess
 			virtual boost::shared_ptr<LocationNode> getRootLocationNode();
 
 			/**
-			 * \brief Get the Prox card provider for I/O access.
-			 * \return The Prox card provider.
+			 * \brief Get a card service for this card provider.
+			 * \param serviceType The card service type.
+			 * \return The card service.
 			 */
-			boost::shared_ptr<ProxCardProvider> getProxCardProvider() { return boost::dynamic_pointer_cast<ProxCardProvider>(getCardProvider()); };
+			virtual boost::shared_ptr<CardService> getService(CardServiceType serviceType);
 
 			/**
 			 * \brief Get the Prox profile.

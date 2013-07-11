@@ -25,15 +25,15 @@
 #include "readercardadapters/stidstrreadercardadapter.hpp"
 #include "stidstrledbuzzerdisplay.hpp"
 
-#include "desfireev1cardprovider.hpp"
 #include "commands/desfireev1stidstrcommands.hpp"
-#include "mifarecardprovider.hpp"
 #include "commands/mifarestidstrcommands.hpp"
 #include "desfireprofile.hpp"
 #include <boost/filesystem.hpp>
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
+#include "desfireev1chip.hpp"
+#include "mifarechip.hpp"
 
 namespace logicalaccess
 {
@@ -257,21 +257,18 @@ namespace logicalaccess
 		{
 			INFO_SIMPLE_("Chip created successfully !");
 			boost::shared_ptr<ReaderCardAdapter> rca;
-			boost::shared_ptr<CardProvider> cp;
 			boost::shared_ptr<Commands> commands;
 
 			if (type == "Mifare1K" || type == "Mifare4K" || type == "Mifare")
 			{
 				INFO_SIMPLE_("Mifare classic Chip created");
 				rca.reset(new STidSTRReaderCardAdapter(STID_CMD_MIFARE_CLASSIC));
-				cp.reset(new MifareCardProvider());
 				commands.reset(new MifareSTidSTRCommands());
 			}
 			else if (type == "DESFire" || type == "DESFireEV1")
 			{
 				INFO_SIMPLE_("Mifare DESFire Chip created");
 				rca.reset(new STidSTRReaderCardAdapter(STID_CMD_DESFIRE));
-				cp.reset(new DESFireEV1CardProvider());
 				commands.reset(new DESFireEV1STidSTRCommands());
 				boost::dynamic_pointer_cast<DESFireEV1STidSTRCommands>(commands)->setProfile(boost::dynamic_pointer_cast<DESFireProfile>(chip->getProfile()));
 			}
@@ -282,12 +279,8 @@ namespace logicalaccess
 			if (commands)
 			{
 				commands->setReaderCardAdapter(rca);
+				chip->setCommands(commands);
 			}
-			if (cp)
-			{
-				cp->setCommands(commands);
-			}
-			chip->setCardProvider(cp);
 		}
 		else
 		{
@@ -407,13 +400,13 @@ namespace logicalaccess
 					// Scan for specific chip type, mandatory for STid reader...
 					if (cardType == "DESFire" || cardType == "DESFireEV1")
 					{
-						boost::shared_ptr<DESFireEV1CardProvider> chipcp = boost::dynamic_pointer_cast<DESFireEV1CardProvider>(chip->getCardProvider());
-						boost::dynamic_pointer_cast<DESFireEV1STidSTRCommands>(chipcp->getDESFireEV1Commands())->scanDESFire();
+						boost::shared_ptr<DESFireEV1Chip> dchip = boost::dynamic_pointer_cast<DESFireEV1Chip>(chip);
+						boost::dynamic_pointer_cast<DESFireEV1STidSTRCommands>(dchip->getDESFireEV1Commands())->scanDESFire();
 					}
 					else if (cardType == "Mifare" || cardType == "Mifare1K" || cardType == "Mifare4K")
 					{
-						boost::shared_ptr<MifareCardProvider> chipcp = boost::dynamic_pointer_cast<MifareCardProvider>(chip->getCardProvider());
-						boost::dynamic_pointer_cast<MifareSTidSTRCommands>(chipcp->getMifareCommands())->scanMifare();
+						boost::shared_ptr<MifareChip> mchip = boost::dynamic_pointer_cast<MifareChip>(chip);
+						boost::dynamic_pointer_cast<MifareSTidSTRCommands>(mchip->getMifareCommands())->scanMifare();
 					}
 				}
 				else

@@ -17,28 +17,20 @@
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
 
-#include "desfireev1cardprovider.hpp"
 #include "commands/desfireev1iso7816commands.hpp"
-#include "mifarecardprovider.hpp"
 #include "commands/mifarepcsccommands.hpp"
 #include "commands/mifarescmcommands.hpp"
 #include "commands/mifarecherrycommands.hpp"
 #include "commands/mifarespringcardcommands.hpp"
-#include "commands/proxpcsccardprovider.hpp"
-#include "iso15693cardprovider.hpp"
 #include "commands/iso15693pcsccommands.hpp"
 #include "commands/iso7816iso7816commands.hpp"
 #include "commands/twiciso7816commands.hpp"
-#include "mifareultralightcardprovider.hpp"
 #include "commands/mifareultralightpcsccommands.hpp"
-#include "mifareultralightccardprovider.hpp"
 #include "commands/mifareultralightcpcsccommands.hpp"
 #include "readercardadapters/pcscreadercardadapter.hpp"
-#include "mifarepluscardprovidersl1.hpp"
-#include "mifareplusprofilesl1.hpp"
+#include "mifareplussl1profile.hpp"
 #include "commands/mifareplusspringcardcommandssl1.hpp"
-#include "mifarepluscardprovidersl3.hpp"
-#include "mifareplusprofilesl3.hpp"
+#include "mifareplussl3profile.hpp"
 #include "commands/mifareplusspringcardcommandssl3.hpp"
 
 #include "readers/omnikeyxx21readerunit.hpp"
@@ -352,7 +344,7 @@ namespace logicalaccess
 				usleep(100000);
 #endif
 									DESFireCommands::DESFireCardVersion cardversion;
-									if (boost::dynamic_pointer_cast<DESFireChip>(d_insertedChip)->getDESFireCardProvider()->getDESFireCommands()->getVersion(cardversion))
+									if (boost::dynamic_pointer_cast<DESFireChip>(d_insertedChip)->getDESFireCommands()->getVersion(cardversion))
 									{
 										// No UID from regular PC/SC commands ? Set from the version
 
@@ -597,7 +589,17 @@ namespace logicalaccess
 				d_share_mode = share_mode;
 				try
 				{
-					d_insertedChip->setChipIdentifier(getCardSerialNumber());
+					if (d_insertedChip->getCardType() == "Prox")
+					{
+						if (d_atrLength > 2)
+						{
+							d_insertedChip->setChipIdentifier(std::vector<unsigned char>(d_atr, d_atr + d_atrLength - 2));
+						}
+					}
+					else
+					{
+						d_insertedChip->setChipIdentifier(getCardSerialNumber());
+					}
 				}
 				catch (LibLogicalAccessException& e)
 				{
@@ -1170,12 +1172,10 @@ namespace logicalaccess
 			INFO_SIMPLE_("Chip created, creating other associated objects...");
 
 			boost::shared_ptr<ReaderCardAdapter> rca = getReaderCardAdapter(type);
-			boost::shared_ptr<CardProvider> cp = chip->getCardProvider();
 			boost::shared_ptr<Commands> commands;
 
 			if (type ==  "Mifare1K" || type == " Mifare4K" || type == " Mifare")
 			{
-				cp.reset(new MifareCardProvider());
 				if (getPCSCType() == PCSC_RUT_SCM_SDI010)
 				{
 					commands.reset(new MifareSCMCommands());
@@ -1196,14 +1196,10 @@ namespace logicalaccess
 			else if (type == "HIDiClass16KS" || type == "HIDiClass2KS" || type == "HIDiClass32KS_16_16" || type == "HIDiClass32KS_16_8x2" || type == "HIDiClass32KS_8x2_16" || type == "HIDiClass32KS_8x2_8x2" || type == "HIDiClass8x2KS" || type == "HIDiClass")
 			{
 				// HID iClass cards have a lot of restriction on license use from HID Global, so we try to load it dynamically if the dynamic library is side by side, otherwise we don't mind.
-				cp = LibraryManager::getInstance()->getCardProvider("HIDiClass");
-				if (cp)
+				commands = chip->getCommands();
+				if (commands)
 				{
-					commands = cp->getCommands();
-					if (commands)
-					{
-						rca = commands->getReaderCardAdapter();
-					}
+					rca = commands->getReaderCardAdapter();
 				}
 				else
 				{
@@ -1212,24 +1208,16 @@ namespace logicalaccess
 			}
 			else if (type == "DESFireEV1")
 			{
-				cp.reset(new DESFireEV1CardProvider());
 				commands.reset(new DESFireEV1ISO7816Commands());
 				boost::dynamic_pointer_cast<DESFireEV1ISO7816Commands>(commands)->getCrypto().setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(chip->getProfile()), chip->getChipIdentifier());
 			}
 			else if (type == "DESFire")
 			{
-				cp.reset(new DESFireCardProvider());
 				commands.reset(new DESFireISO7816Commands());
 				boost::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->getCrypto().setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(chip->getProfile()), chip->getChipIdentifier());
 			}
-			else if (type == "Prox")
-			{
-				cp.reset(new ProxPCSCCardProvider());
-				boost::dynamic_pointer_cast<ProxPCSCCardProvider>(cp)->setDataTransport(boost::dynamic_pointer_cast<PCSCDataTransport>(rca->getDataTransport()));
-			}
 			else if (type == "ISO15693")
 			{
-				cp.reset(new ISO15693CardProvider());
 				commands.reset(new ISO15693PCSCCommands());
 			}
 			else if (type == "TagIt")
@@ -1242,12 +1230,10 @@ namespace logicalaccess
 			}
 			else if (type == "MifareUltralight")
 			{
-				cp.reset(new MifareUltralightCardProvider());
 				commands.reset(new MifareUltralightPCSCCommands());
 			}
 			else if (type == "MifareUltralightC")
 			{
-				cp.reset(new MifareUltralightCCardProvider());
 				commands.reset(new MifareUltralightCPCSCCommands());
 			}
 			else if (type == "MifarePlus4K")
@@ -1256,8 +1242,7 @@ namespace logicalaccess
 				std::string ct = getCardTypeFromATR(d_atr, d_atrLength);
 				if (ct != "Mifare")
 				{
-					cp.reset(new MifarePlusCardProviderSL1());
-					chip->setProfile(boost::shared_ptr<MifarePlusProfileSL1>(new MifarePlusProfileSL1()));
+					chip->setProfile(boost::shared_ptr<MifarePlusSL1Profile>(new MifarePlusSL1Profile()));
 					if (getPCSCType() == PCSC_RUT_SPRINGCARD)
 					{
 						commands.reset(new MifarePlusSpringCardCommandsSL1());
@@ -1265,8 +1250,7 @@ namespace logicalaccess
 				}
 				else /* A MODIFIER */
 				{
-					cp.reset(new MifarePlusCardProviderSL3());
-					chip->setProfile(boost::shared_ptr<MifarePlusProfileSL3>(new MifarePlusProfileSL3()));
+					chip->setProfile(boost::shared_ptr<MifarePlusSL3Profile>(new MifarePlusSL3Profile()));
 					if (getPCSCType() == PCSC_RUT_SPRINGCARD)
 					{
 						commands.reset(new MifarePlusSpringCardCommandsSL3());
@@ -1274,7 +1258,7 @@ namespace logicalaccess
 				}
 			}
 
-			INFO_("Other objects created, making association (ReaderCardAdapter empty? %d - Commands empty? %d - Cardprovider empty? %d)...", !rca, !commands, !cp);
+			INFO_("Other objects created, making association (ReaderCardAdapter empty? %d - Commands empty? %d)...", !rca, !commands);
 
 			if (rca)
 			{
@@ -1294,12 +1278,8 @@ namespace logicalaccess
 			if (commands)
 			{
 				commands->setReaderCardAdapter(rca);
+				chip->setCommands(commands);
 			}
-			if (cp)
-			{
-				cp->setCommands(commands);
-			}
-			chip->setCardProvider(cp);
 
 			INFO_SIMPLE_("Object creation done.");
 		}

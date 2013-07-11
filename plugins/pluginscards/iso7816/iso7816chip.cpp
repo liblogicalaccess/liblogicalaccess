@@ -6,6 +6,7 @@
 
 #include "iso7816chip.hpp"
 #include "iso7816profile.hpp"
+#include "iso7816storagecardservice.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -37,5 +38,19 @@ namespace logicalaccess
 		rootNode->setName("ISO 7816");		
 
 		return rootNode;
+	}
+
+	boost::shared_ptr<CardService> ISO7816Chip::getService(CardServiceType serviceType)
+	{
+		boost::shared_ptr<CardService> service;
+
+		switch (serviceType)
+		{
+		case CST_STORAGE:
+			service.reset(new ISO7816StorageCardService(shared_from_this()));
+			break;
+		}
+
+		return service;
 	}
 }
