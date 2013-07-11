@@ -7,7 +7,6 @@
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/readerproviders/readerconfiguration.hpp"
-#include "logicalaccess/cards/cardprovider.hpp"
 
 #include <iostream>
 #include <string>
