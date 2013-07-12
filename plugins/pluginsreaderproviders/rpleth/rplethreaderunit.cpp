@@ -253,6 +253,7 @@ namespace logicalaccess
 				if (commands)
 				{
 					commands->setReaderCardAdapter(rca);
+					commands->setChip(chip);
 					chip->setCommands(commands);
 				}
 			}

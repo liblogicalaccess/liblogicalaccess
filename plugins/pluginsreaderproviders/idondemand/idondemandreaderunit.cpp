@@ -252,6 +252,7 @@ namespace logicalaccess
 		{
 			chip.reset(new GenericTagIdOnDemandChip());
 			boost::shared_ptr<Commands> commands(new GenericTagIdOnDemandCommands());
+			commands->setChip(chip);
 			chip->setCommands(commands);
 			rca = getDefaultReaderCardAdapter();
 			rca->setDataTransport(getDataTransport());

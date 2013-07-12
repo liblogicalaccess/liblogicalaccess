@@ -7,6 +7,7 @@
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/readerproviders/readerconfiguration.hpp"
+#include "logicalaccess/services/storage/storagecardservice.hpp"
 
 #include <iostream>
 #include <string>
@@ -87,6 +88,9 @@ int main(int , char**)
 					}
 
 					boost::shared_ptr<logicalaccess::Profile> profile = chip->getProfile();
+
+					boost::shared_ptr<logicalaccess::StorageCardService> storage = boost::dynamic_pointer_cast<logicalaccess::StorageCardService>(chip->getService(logicalaccess::CST_STORAGE));
+					storage->readData(profile->createLocation(), profile->createAccessInfo(), data, 0x30, logicalaccess::CB_DEFAULT);
 
 					// DO SOMETHING HERE
 					// DO SOMETHING HERE
