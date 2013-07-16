@@ -256,6 +256,25 @@ namespace logicalaccess
 			virtual void getT_CL_ISOType(bool& isTypeA, bool& isTypeB);
 
 
+			/**
+			 * \brief Find the type of SAM from the reader set.
+			 */
+			SAMType AutoSelectSAMType();
+
+
+			/**
+			 * \brief Set the SAM PCSCReaderUnit.
+			 * \param t The SAM PCSCReaderUnit.
+			 */
+			void setSAMReaderUnit(boost::shared_ptr<PCSCReaderUnit> t);
+			
+			/**
+			 * \brief get the SAM PCSCReaderUnit.
+			 */
+			boost::shared_ptr<PCSCReaderUnit> getSAMReaderUnit();
+
+			bool   createSAMReaderUnit();
+
 		protected:
 
 			/**
@@ -325,7 +344,12 @@ namespace logicalaccess
 			/**
 			 * \brief The proxy reader unit.
 			 */
-			boost::shared_ptr<PCSCReaderUnit> d_proxyReaderUnit;			
+			boost::shared_ptr<PCSCReaderUnit> d_proxyReaderUnit;
+
+			/**
+			 * \brief The PCSCReaderUnit used for the SAM.
+			 */
+			boost::shared_ptr<PCSCReaderUnit> d_SAM_readerunit;
 	};
 }
 
