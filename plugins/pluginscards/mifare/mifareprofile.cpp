@@ -116,11 +116,11 @@ namespace logicalaccess
 		{
 			case KT_KEY_A:
 				{
-					return (d_key[index * 2]);
+					return bool(d_key[index * 2]);
 				}
 			case KT_KEY_B:
 				{
-					return (d_key[index * 2 + 1]);
+					return bool(d_key[index * 2 + 1]);
 				}
 			default:
 				{
