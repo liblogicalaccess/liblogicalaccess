@@ -248,7 +248,7 @@ namespace logicalaccess
 			unsigned long long l = atoull(BufferHelper::getStdString(rawSerialData));
 			char bufTmpId[128];
 			memset(bufTmpId, 0x00, sizeof(bufTmpId));
-#ifndef __linux__
+#if !defined(__unix__)
 			sprintf_s(bufTmpId, sizeof(bufTmpId), "%012llx", l);
 #else
 			sprintf(bufTmpId, "%012llx", l);
@@ -333,7 +333,7 @@ namespace logicalaccess
 			INFO_SIMPLE_("Is connected {1}");
 		else
 			INFO_SIMPLE_("Is connected {0}");
-		return (d_insertedChip);
+		return bool(d_insertedChip);
 	}
 
 	bool GunneboReaderUnit::connectToReader()
@@ -519,7 +519,7 @@ namespace logicalaccess
 				std::string portn = port->getSerialPort()->deviceName();
 				WARNING_("Exception received {%s} ! Sleeping {%d} milliseconds -> Reopen serial port {%s} -> Finally retry  to configure...",
 							e.what(), Settings::getInstance().ConfigurationRetryTimeout, portn.c_str());
-#ifndef __linux__
+#if !defined(__unix__)
 				Sleep(Settings::getInstance().ConfigurationRetryTimeout);
 #else
 				sleep(Settings::getInstance().ConfigurationRetryTimeout);

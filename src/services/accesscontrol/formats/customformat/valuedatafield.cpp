@@ -167,7 +167,7 @@ namespace logicalaccess
 		{
 			if ((tmp = d_dataRepresentation->revertBinary(extractData, extractedSizeBytes, tmp, revertedTemporaryData, revertedTemporarySizeBytes)) > 0)
 			{
-#ifndef __linux__
+#if !defined(__unix__)
 				memcpy_s(revertedData, revertedDataLengthBytes, revertedTemporaryData, revertedTemporarySizeBytes);
 #else
 				if (revertedDataLengthBytes < revertedTemporarySizeBytes)

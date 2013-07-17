@@ -104,7 +104,7 @@ namespace logicalaccess
 		unsigned char* paddedBuffer = new unsigned char[fieldDataLengthBytes];
 		memset(paddedBuffer, d_padding, fieldDataLengthBytes);
 
-#ifdef __linux__
+#if defined(__unix__)
 		if (fieldDataLengthBytes < d_value.getLength())
 		  throw new EXCEPTION(LibLogicalAccessException, "The size of the dest buffer is too small for memcpy");
 		memcpy(paddedBuffer, d_value.getData(), d_value.getLength());

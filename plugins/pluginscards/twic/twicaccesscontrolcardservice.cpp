@@ -12,7 +12,7 @@
 #include "logicalaccess/services/accesscontrol/formats/fascn200bitformat.hpp"
 
 
-#ifdef __linux__
+#if defined(__unix__)
 #include <cstring>
 #endif
 

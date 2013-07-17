@@ -12,7 +12,7 @@
 
 #define DEVICE_TYPE_SMARTCARD /**< \brief Set device type to smart card */
 
-#ifdef __linux__
+#if defined(__unix__)
 #include <pcsclite.h>
 #endif
 
