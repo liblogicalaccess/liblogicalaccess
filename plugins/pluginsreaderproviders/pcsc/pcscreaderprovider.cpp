@@ -6,7 +6,7 @@
 
 #include "pcscreaderprovider.hpp"
 
-#ifdef __linux__
+#if defined(__unix__)
 #include <stdlib.h>
 #include <sys/time.h>
 #endif

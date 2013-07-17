@@ -124,7 +124,7 @@ namespace logicalaccess
 			if (getSingleChip()->getCardType() == "DESFire")
 				rats ();
 		}
-		return (d_insertedChip);
+		return bool(d_insertedChip);
 	}
 
 	void RplethReaderUnit::disconnect()
@@ -276,7 +276,7 @@ namespace logicalaccess
 
 	bool RplethReaderUnit::isConnected()
 	{
-		return (d_insertedChip);
+		return bool(d_insertedChip);
 	}
 
 	bool RplethReaderUnit::connectToReader()
@@ -299,7 +299,7 @@ namespace logicalaccess
 				d_socket.reset();
 			}
 		}
-		return (d_socket);
+		return bool(d_socket);
 	}
 
 	void RplethReaderUnit::disconnectFromReader()
