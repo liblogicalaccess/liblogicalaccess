@@ -154,7 +154,7 @@ namespace logicalaccess
 
 	bool ElatecReaderUnit::connect()
 	{
-		return (d_insertedChip);
+		return bool(d_insertedChip);
 	}
 
 	void ElatecReaderUnit::disconnect()
@@ -232,7 +232,7 @@ namespace logicalaccess
 
 	bool ElatecReaderUnit::isConnected()
 	{
-		return (d_insertedChip);
+		return bool(d_insertedChip);
 	}
 
 	bool ElatecReaderUnit::connectToReader()
@@ -411,7 +411,7 @@ namespace logicalaccess
 				std::string portn = port->getSerialPort()->deviceName();
 				WARNING_("Exception received {%s} ! Sleeping {%d} milliseconds -> Reopen serial port {%s} -> Finally retry  to configure...",
 							e.what(), Settings::getInstance().ConfigurationRetryTimeout, portn.c_str());
-#ifndef __linux__
+#if !defined(__unix__)
 				Sleep(Settings::getInstance().ConfigurationRetryTimeout);
 #else
 				sleep(Settings::getInstance().ConfigurationRetryTimeout);

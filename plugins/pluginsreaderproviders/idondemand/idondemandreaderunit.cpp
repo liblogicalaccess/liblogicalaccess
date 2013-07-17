@@ -96,7 +96,7 @@ namespace logicalaccess
 	void IdOnDemandReaderUnit::authenticateSDK(std::string authCode)
 	{
 		char cmd[64];
-#ifndef __linux__
+#if !defined(__unix__)
 		sprintf_s(cmd, sizeof(cmd), "AUTH %s", authCode.c_str());
 #else
 		sprintf(cmd, "AUTH %s", authCode.c_str());
@@ -251,7 +251,7 @@ namespace logicalaccess
 
 	bool IdOnDemandReaderUnit::connect()
 	{
-		return (d_insertedChip);
+		return bool(d_insertedChip);
 	}
 
 	void IdOnDemandReaderUnit::disconnect()
@@ -331,7 +331,7 @@ namespace logicalaccess
 
 	bool IdOnDemandReaderUnit::isConnected()
 	{
-		return (d_insertedChip);
+		return bool(d_insertedChip);
 	}
 
 	bool IdOnDemandReaderUnit::connectToReader()
@@ -533,7 +533,7 @@ namespace logicalaccess
 				std::string portn = port->getSerialPort()->deviceName();
 				WARNING_("Sleeping {%d} milliseconds -> Reopen serial port {%s} -> Finally retry  to configure...",
 							e.what(), Settings::getInstance().ConfigurationRetryTimeout, portn.c_str());
-#ifndef __linux__
+#if !defined(__unix__)
 				Sleep(Settings::getInstance().ConfigurationRetryTimeout);
 #else
 				sleep(Settings::getInstance().ConfigurationRetryTimeout);

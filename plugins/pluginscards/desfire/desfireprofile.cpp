@@ -60,7 +60,7 @@ namespace logicalaccess
 			return false;
 		}
 
-		return (d_key[index]);
+		return bool(d_key[index]);
 	}
 
 	void DESFireProfile::setKeyUsage(size_t index, bool used)

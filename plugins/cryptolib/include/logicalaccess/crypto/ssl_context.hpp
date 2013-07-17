@@ -144,7 +144,7 @@ namespace logicalaccess
 				 */
 				inline bool boolean_test() const
 				{
-					return d_ctx;
+					return bool(d_ctx);
 				}
 
 				/**

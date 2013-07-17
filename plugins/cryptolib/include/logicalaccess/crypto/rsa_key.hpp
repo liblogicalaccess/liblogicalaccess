@@ -185,7 +185,7 @@ namespace logicalaccess
 				 */
 				inline bool boolean_test() const
 				{
-					return d_rsa;
+					return bool(d_rsa);
 				}
 
 				/**

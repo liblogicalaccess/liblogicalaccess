@@ -146,8 +146,7 @@ if (WIN32)
   target_link_libraries(liblogicalaccess winscard zlib libeay32 ssleay32 scardsyn${SCLIB_ENDNAME} Winmm ws2_32 delayimp logicalaccess-cryptolib)
 
 elseif (UNIX)
-
-  target_link_libraries(liblogicalaccess logicalaccess-cryptolib crypto boost_filesystem boost_date_time boost_system dl)
+	target_link_libraries(liblogicalaccess logicalaccess-cryptolib crypto boost_filesystem boost_date_time boost_system ${CMAKE_DL_LIBS})
 endif()
 
 add_subdirectory(plugins/cryptolib)
