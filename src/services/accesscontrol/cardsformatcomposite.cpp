@@ -22,7 +22,7 @@ namespace logicalaccess
 
 	}
 
-	boost::shared_ptr<Format> CardsFormatComposite::createFormatFromXml(const string& xmlstring, const string& rootNode)
+	boost::shared_ptr<Format> CardsFormatComposite::createFormatFromXml(const std::string& xmlstring, const std::string& rootNode)
 	{
 		boost::shared_ptr<Format> ret;
 
