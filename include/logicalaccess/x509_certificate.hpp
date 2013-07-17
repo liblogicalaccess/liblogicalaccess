@@ -208,7 +208,7 @@ namespace logicalaccess
 				 */
 				inline bool boolean_test() const
 				{
-					return d_cert;
+					return bool(d_cert);
 				}
 
 				/**
