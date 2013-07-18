@@ -229,7 +229,7 @@ namespace logicalaccess
 		std::cout << "Called Done" << std::endl;
 	}
 
-	SAMType			SAMAV2ISO7816Commands::GetSAMTypeFromSAM()
+	std::string			SAMAV2ISO7816Commands::GetSAMTypeFromSAM()
 	{
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
@@ -239,10 +239,10 @@ namespace logicalaccess
 		if (resultlen > 3)
 		{
 			if (result[resultlen - 3] == 0xA1)
-				return SAM_AV1;
+				return "SAM_AV1";
 			else if (result[resultlen - 3] == 0xA2)
-				return SAM_AV2;
+				return "SAM_AV2";
 		}
-		return SAM_NONE;
+		return "SAM_NONE";
 	}
 }

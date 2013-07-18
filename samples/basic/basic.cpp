@@ -60,7 +60,7 @@ int main(int , char**)
 		boost::shared_ptr<logicalaccess::PCSCReaderUnit> readerunit = boost::dynamic_pointer_cast<logicalaccess::PCSCReaderUnit>(readerConfig->getReaderUnit());
 		
 		readerunit->setName("OMNIKEY 6321-CL 0");
-		readerunit->getPCSCConfiguration()->setSAMType(logicalaccess::SAMType::SAM_AV1);
+		readerunit->getPCSCConfiguration()->setSAMType("SAM_AV2");
 		readerunit->getPCSCConfiguration()->setSAMReaderName("OMNIKEY 6321 0");
 
 

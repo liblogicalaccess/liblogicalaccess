@@ -374,35 +374,6 @@ namespace logicalaccess
 								// Doesn't care about bad communication here, stay DESFire.
 							}
 						}
-						else if (d_insertedChip && d_insertedChip->getCardType() == "SAMAV2")
-						{
-							try
-							{
-								if (connect())
-								{
-#ifdef _WINDOWS
-									Sleep(100);
-#elif defined(LINUX)
-									usleep(100000);
-#endif
-									std::cout << getPCSCConfiguration()->getSAMType() << std::endl;
-									boost::shared_ptr<SAMAV2Chip> samav2chip = boost::dynamic_pointer_cast<SAMAV2Chip>(d_insertedChip);
-									if ((getPCSCConfiguration()->getSAMType() == SAM_AUTO_R && static_cast<SAMType>(boost::dynamic_pointer_cast<SAMAV2ISO7816Commands>(samav2chip->getSAMAV2Commands())->GetSAMTypeFromSAM() + 3) == SAM_AV1_R
-										|| getPCSCConfiguration()->getSAMType() == SAM_AV1_R))
-									{
-										d_insertedChip = createChip("SAMAV1");
-										if (d_proxyReaderUnit)
-										{
-											d_proxyReaderUnit->setSingleChip(d_insertedChip);
-										}
-									}
-									disconnect();
-								}
-							}
-							catch(std::exception&)
-							{
-							}
-						}
 					}
 				}
 
@@ -738,9 +709,9 @@ namespace logicalaccess
 
 	bool PCSCReaderUnit::connectToReader()
 	{
-		if (getPCSCConfiguration()->getSAMType() != SAM_NONE && getPCSCConfiguration()->getSAMType() < SAM_AV1_R && getPCSCConfiguration()->getSAMReaderName() == "")
+		if (getPCSCConfiguration()->getSAMType() != "SAM_NONE" && getPCSCConfiguration()->getSAMReaderName() == "")
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Sam type specified without specifying SAM Reader Name");
-		if (getPCSCConfiguration()->getSAMType() != SAM_NONE && getPCSCConfiguration()->getSAMType() < SAM_AV1_R)
+		if (getPCSCConfiguration()->getSAMType() != "SAM_NONE")
 			{
 				if (getReaderProvider()->getReaderList().size() < 2)
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not Enough reader on the system to us SAM");
@@ -759,12 +730,17 @@ namespace logicalaccess
 
 				ret.reset(new PCSCReaderUnit(getPCSCConfiguration()->getSAMReaderName()));
 				ret->setReaderProvider(getReaderProvider());
-				ret->getPCSCConfiguration()->setSAMType(static_cast<SAMType>(getPCSCConfiguration()->getSAMType() + 3));
 				ret->connectToReader();
 
 				if (!ret->waitInsertion(1))
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "No SAM detected on the reader");
-				boost::shared_ptr<ISO7816ISO7816Commands> com = boost::dynamic_pointer_cast<ISO7816ISO7816Commands>(ret->getSingleChip()->getCommands());
+
+				std::string a = ret->getSingleChip()->getCardType();
+				std::string b = getPCSCConfiguration()->getSAMType();
+				if (getPCSCConfiguration()->getSAMType() != "SAM_AUTO" && ret->getSingleChip()->getCardType() != getPCSCConfiguration()->getSAMType()) 
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM on the reader is not the same type as selected.");				
+
+				boost::shared_ptr<SAMAV2ISO7816Commands> com = boost::dynamic_pointer_cast<SAMAV2ISO7816Commands>(ret->getSingleChip()->getCommands());
 				com->setSAMReaderUnit(ret);
 				
 
@@ -902,12 +878,12 @@ namespace logicalaccess
 				if (atrlen == 28 && !memcmp(atr, atrTagITP1, sizeof(atrTagITP1)))
 				{
 					std::cout << "NXP SAM AV2 module FOUND" << std::endl;
-					return "SAMAV2";
+					return "SAM_AV2";
 				}
 				else if (atrlen == 27 && !memcmp(atr, atrTagITP2, sizeof(atrTagITP2)))
 				{
 					std::cout << "Mifare SAM AV2 FOUND" << std::endl;
-					return "SAMAV2";
+					return "SAM_AV2";
 				}
 			}
 			else
@@ -1320,11 +1296,11 @@ namespace logicalaccess
 			{
 				commands.reset(new MifareUltralightCPCSCCommands());
 			}
-			else if (type == "SAMAV1")
+			else if (type == "SAM_AV1")
 			{
 				commands.reset(new SAMAV2ISO7816Commands());
 			}
-			else if (type == "SAMAV2")
+			else if (type == "SAM_AV2")
 			{
 				commands.reset(new SAMAV2ISO7816Commands());
 			}

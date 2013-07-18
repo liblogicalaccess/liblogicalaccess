@@ -48,7 +48,7 @@ namespace logicalaccess
 
 			boost::shared_ptr<ISO7816ReaderCardAdapter> getISO7816ReaderCardAdapter() { return boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter()); };
 
-			SAMType				GetSAMTypeFromSAM();
+			std::string				GetSAMTypeFromSAM();
 
 		protected:
 

@@ -11,19 +11,6 @@
 
 namespace logicalaccess
 {
-	/**
-	 *\brief The SAM unit types.
-	 */
-	typedef enum {
-		SAM_NONE = 1,
-		SAM_AV1 = 2,
-		SAM_AV2 = 3,
-		SAM_AUTO = 4,
-		SAM_AV1_R = 5,
-		SAM_AV2_R = 6,
-		SAM_AUTO_R = 7
-	} SAMType;
-
 	#define READER_ISO7816 "iso7816"
 
 	/**
@@ -53,12 +40,12 @@ namespace logicalaccess
 			 * \brief Set the SAM type.
 			 * \param t The SAM type.
 			 */
-			void setSAMType(SAMType t);
+			void setSAMType(std::string t);
 			
 			/**
 			 * \brief get the SAM type.
 			 */
-			SAMType getSAMType();
+			std::string getSAMType();
 
 			/**
 			 * \brief Set the SAM reader name.
@@ -94,7 +81,7 @@ namespace logicalaccess
 			/**
 			 * \brief The SAM type.
 			 */
-			SAMType d_sam_type;
+			std::string d_sam_type;
 
 			/**
 			 * \brief The SAM reader name.

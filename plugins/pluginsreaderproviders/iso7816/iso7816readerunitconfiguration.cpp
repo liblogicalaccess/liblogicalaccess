@@ -21,7 +21,7 @@ namespace logicalaccess
 
 	void ISO7816ReaderUnitConfiguration::resetConfiguration()
 	{
-		d_sam_type = SAM_NONE;
+		d_sam_type = "SAM_NONE";
 		d_sam_reader_name = "";
 	}
 
@@ -33,7 +33,7 @@ namespace logicalaccess
 
 	void ISO7816ReaderUnitConfiguration::unSerialize(boost::property_tree::ptree& node)
 	{
-		d_sam_type = static_cast<SAMType>(node.get_child("SAMType").get_value<unsigned int>());
+		d_sam_type = static_cast<std::string>(node.get_child("SAMType").get_value<std::string>());
 		d_sam_reader_name = node.get_child("SAMReaderName").get_value<std::string>();
 	}
 
@@ -42,12 +42,12 @@ namespace logicalaccess
 		return "ISO7816ReaderUnitConfiguration";
 	}
 
-	void ISO7816ReaderUnitConfiguration::setSAMType(SAMType t)
+	void ISO7816ReaderUnitConfiguration::setSAMType(std::string t)
 	{
 		d_sam_type = t;
 	}
 
-	SAMType ISO7816ReaderUnitConfiguration::getSAMType()
+	std::string ISO7816ReaderUnitConfiguration::getSAMType()
 	{
 		return d_sam_type;
 	}

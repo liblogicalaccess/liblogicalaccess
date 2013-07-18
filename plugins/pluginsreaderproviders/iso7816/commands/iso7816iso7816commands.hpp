@@ -137,7 +137,7 @@ namespace logicalaccess
 			/**
 			 * \brief Find the type of SAM from the reader set.
 			 */
-			SAMType AutoSelectSAMType();
+			std::string AutoSelectSAMType();
 
 		protected:
 
