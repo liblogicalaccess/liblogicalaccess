@@ -54,13 +54,6 @@ namespace logicalaccess
 
 	void WiegandFormat::getLinearData(void* data, size_t dataLengthBytes) const
 	{
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasWriteFormatAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		getLinearDataWithoutParity(data, dataLengthBytes);
 		unsigned int pos = 0;
 
@@ -79,13 +72,6 @@ namespace logicalaccess
 
 	void WiegandFormat::setLinearData(const void* data, size_t dataLengthBytes)
 	{
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasReadFormatAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		if (dataLengthBytes*8 < getDataLength())
 		{
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Data length too small.");

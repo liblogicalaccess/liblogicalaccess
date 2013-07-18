@@ -32,13 +32,6 @@ namespace logicalaccess
 	boost::shared_ptr<Format> TwicAccessControlCardService::readFormat(boost::shared_ptr<Format> format, boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> /*aiToUse*/)
 	{
 		bool ret = false;
-
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasReadFormatAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
 		
 		boost::shared_ptr<Format> formatret;
 		if (format)

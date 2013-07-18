@@ -83,13 +83,6 @@ namespace logicalaccess
 	{
 		unsigned int pos = 1;
 
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasWriteFormatAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif		
-
 		convertField(data, dataLengthBytes, &pos, getFacilityCode(), 16);
 		convertField(data, dataLengthBytes, &pos, getUid(), 18);
 
@@ -107,13 +100,6 @@ namespace logicalaccess
 	void Wiegand37WithFacilityRightParity2Format::setLinearData(const void* data, size_t dataLengthBytes)
 	{
 		unsigned int pos = 1;
-
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasReadFormatAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
 
 		setFacilityCode((short)revertField(data, dataLengthBytes, &pos, 16));
 		setUid(revertField(data, dataLengthBytes, &pos, 18));

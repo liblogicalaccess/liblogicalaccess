@@ -303,13 +303,6 @@ namespace logicalaccess
 
 	size_t MifarePlusSL1Commands::readSector(int sector, int start_block, void* buf, size_t buflen, const MifarePlusAccessInfo::SectorAccessBits& sab)
 	{
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasReadDataAccess())
-		{
-			throw EXCEPTION(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		size_t retlen = 0;
 
 		if (buf == NULL || buflen < (getNbBlocks(sector)-static_cast<unsigned int>(start_block))*16)
@@ -328,13 +321,6 @@ namespace logicalaccess
 
 	size_t MifarePlusSL1Commands::writeSector(int sector, int start_block, const void* buf, size_t buflen, const MifarePlusAccessInfo::SectorAccessBits& sab, unsigned char userbyte, MifarePlusAccessInfo::SectorAccessBits* newsab)
 	{
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasWriteDataAccess())
-		{
-			throw EXCEPTION(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		size_t retlen = 0;
 
 		if (buf == NULL || buflen < (getNbBlocks(sector)-static_cast<unsigned int>(start_block))*16)

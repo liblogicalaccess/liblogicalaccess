@@ -233,12 +233,6 @@ namespace logicalaccess
 
 	void FASCN200BitFormat::getLinearData(void* data, size_t dataLengthBytes) const
 	{
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasWriteFormatAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
 		unsigned int pos = 0;
 
 		convertField(data, dataLengthBytes, &pos, FASCN_SS, 4);
@@ -262,13 +256,7 @@ namespace logicalaccess
 	}
 
 	void FASCN200BitFormat::setLinearData(const void* data, size_t dataLengthBytes)
-	{		
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasReadFormatAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
+	{
 		unsigned int pos = 0;
 		unsigned char c;
 

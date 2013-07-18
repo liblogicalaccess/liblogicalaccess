@@ -29,13 +29,6 @@ namespace logicalaccess
 	{
 		bool ret = false;
 
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasReadFormatAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		boost::shared_ptr<Format> formatret;
 		if (format)
 		{

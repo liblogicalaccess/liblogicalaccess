@@ -77,13 +77,6 @@ namespace logicalaccess
 	{
 		bool ret = false;
 
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasWriteDataAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 		EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
 
@@ -146,13 +139,6 @@ namespace logicalaccess
 	bool ISO7816StorageCardService::readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> /*aiToUse*/, void* data, size_t dataLength, CardBehavior /*behaviorFlags*/)
 	{
 		bool ret = false;
-
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasReadDataAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
 
 		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 		EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");

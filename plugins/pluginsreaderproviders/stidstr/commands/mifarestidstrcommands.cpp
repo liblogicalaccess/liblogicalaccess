@@ -30,8 +30,7 @@ namespace logicalaccess
 	{
 		INFO_SIMPLE_("Scanning mifare card...");
 		std::vector<unsigned char> uid;
-		unsigned char statusCode;
-		std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x00A0, std::vector<unsigned char>(), statusCode);
+		std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x00A0, std::vector<unsigned char>());
 
 		bool hasCard = (r[0] == 0x01);
 		if (hasCard)
@@ -53,8 +52,7 @@ namespace logicalaccess
 	void MifareSTidSTRCommands::releaseRFIDField()
 	{
 		INFO_SIMPLE_("Releasing RFID field...");
-		unsigned char statusCode;
-		getSTidSTRReaderCardAdapter()->sendCommand(0x00A1, std::vector<unsigned char>(), statusCode);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x00A1, std::vector<unsigned char>());
 	}
 
 	bool MifareSTidSTRCommands::loadKey(unsigned char keyno, MifareKeyType keytype, const void* key, size_t keylen, bool vol)
@@ -67,8 +65,7 @@ namespace logicalaccess
 		command.insert(command.end(), (unsigned char*)key, (unsigned char*)key + keylen);
 		command.push_back(0x00);	// Diversify ?
 
-		unsigned char statusCode;
-		getSTidSTRReaderCardAdapter()->sendCommand(0x00D0, command, statusCode);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x00D0, command);
 
 		return true;
 	}
@@ -147,13 +144,6 @@ namespace logicalaccess
 			THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter.");
 		}
 
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasReadDataAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		if (d_useSKB)
 		{
 			INFO_SIMPLE_("Need to use reader memory key storage (SKB) !");
@@ -168,8 +158,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(d_lastKeyType));
 		command.push_back(blockno);
 
-		unsigned char statusCode;
-		std::vector<unsigned char> sbuf = getSTidSTRReaderCardAdapter()->sendCommand(0x00B2, command, statusCode);
+		std::vector<unsigned char> sbuf = getSTidSTRReaderCardAdapter()->sendCommand(0x00B2, command);
 
 		INFO_("Read binary buffer returned %s len {%d}", BufferHelper::getHex(sbuf).c_str(), sbuf.size());
 		EXCEPTION_ASSERT_WITH_LOG(sbuf.size() == 16, LibLogicalAccessException, "The read value should always be 16 bytes long");
@@ -194,8 +183,7 @@ namespace logicalaccess
 		command.push_back(keyindex);
 		command.push_back(blockno);
 
-		unsigned char statusCode;
-		std::vector<unsigned char> sbuf = getSTidSTRReaderCardAdapter()->sendCommand(0x00B1, command, statusCode);
+		std::vector<unsigned char> sbuf = getSTidSTRReaderCardAdapter()->sendCommand(0x00B1, command);
 
 		EXCEPTION_ASSERT_WITH_LOG(sbuf.size() == 16, LibLogicalAccessException, "The read value should always be 16 bytes long");
 		EXCEPTION_ASSERT_WITH_LOG(buflen >= sbuf.size(), LibLogicalAccessException, "The buffer is too short to store the result.");
@@ -214,13 +202,6 @@ namespace logicalaccess
 			THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter.");
 		}
 
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasWriteDataAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		if (d_useSKB)
 		{
 			INFO_SIMPLE_("Need to use reader memory key storage (SKB) !");
@@ -238,8 +219,7 @@ namespace logicalaccess
 			command.push_back(blockno);
 			command.insert(command.end(), (unsigned char*)buf, (unsigned char*)buf + buflen);
 
-			unsigned char statusCode;
-			getSTidSTRReaderCardAdapter()->sendCommand(0x00D2, command, statusCode);
+			getSTidSTRReaderCardAdapter()->sendCommand(0x00D2, command);
 		}
 
 		INFO_("Returns final [out] buffer len {%d}", buflen);
@@ -262,8 +242,7 @@ namespace logicalaccess
 			command.push_back(blockno);
 			command.insert(command.end(), (unsigned char*)buf, (unsigned char*)buf + buflen);
 
-			unsigned char statusCode;
-			getSTidSTRReaderCardAdapter()->sendCommand(0x00D3, command, statusCode);
+			getSTidSTRReaderCardAdapter()->sendCommand(0x00D3, command);
 		}
 
 		INFO_("Returns final [out] buffer len {%d}", buflen);

@@ -715,21 +715,13 @@ namespace logicalaccess
 
 	std::vector<unsigned char> PCSCReaderUnit::getCardSerialNumber()
 	{
-		std::vector<unsigned char> csn;
 		unsigned char ucReceivedData[255];
 		size_t ulNoOfDataReceived = sizeof(ucReceivedData);	// max csn len 64 (+ SW1 and SW2)
 
-#ifdef _LICENSE_SYSTEM
-		if (d_license->hasReadDataAccess())
-#endif
-		{
-			memset(ucReceivedData, 0x00, sizeof(ucReceivedData));
-			getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xCA, 0x00, 0x00, 0x00, ucReceivedData, &ulNoOfDataReceived);
+		memset(ucReceivedData, 0x00, sizeof(ucReceivedData));
+		getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xCA, 0x00, 0x00, 0x00, ucReceivedData, &ulNoOfDataReceived);
 
-			csn = std::vector<unsigned char>(ucReceivedData, ucReceivedData + (ulNoOfDataReceived - 2));
-		}
-
-		return csn;
+		return std::vector<unsigned char>(ucReceivedData, ucReceivedData + (ulNoOfDataReceived - 2));
 	}
 
 	size_t PCSCReaderUnit::getATR(void* atr, size_t atrLength)

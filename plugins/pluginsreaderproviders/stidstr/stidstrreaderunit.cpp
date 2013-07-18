@@ -353,8 +353,7 @@ namespace logicalaccess
 	{
 		INFO_SIMPLE_("Scanning 14443A chips...");
 		boost::shared_ptr<Chip> chip;
-		unsigned char statusCode;
-		std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0002, std::vector<unsigned char>(), statusCode);
+		std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0002, std::vector<unsigned char>());
 		if (response.size() > 0)
 		{
 			bool haveCard = (response[0] == 0x01);
@@ -436,11 +435,10 @@ namespace logicalaccess
 	{
 		INFO_SIMPLE_("Scanning 14443A RAW chips...");
 		boost::shared_ptr<Chip> chip;
-		unsigned char statusCode;
 		std::vector<unsigned char> command;
 		command.push_back(0x00);
 
-		std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000F, command, statusCode);
+		std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000F, command);
 		if (response.size() > 0)
 		{
 			bool haveCard = (response[0] == 0x01);
@@ -530,8 +528,7 @@ namespace logicalaccess
 	{
 		INFO_SIMPLE_("Scanning 14443B chips...");
 		boost::shared_ptr<Chip> chip;
-		unsigned char statusCode;
-		std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0009, std::vector<unsigned char>(), statusCode);
+		std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0009, std::vector<unsigned char>());
 		if (response.size() > 0)
 		{
 			bool haveCard = (response[0] == 0x01);
@@ -711,8 +708,7 @@ namespace logicalaccess
 		getSTidSTRConfiguration()->setCommunicationMode(STID_CM_RESERVED);
 		try
 		{
-			unsigned char statusCode;
-			ret = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0001, command, statusCode);
+			ret = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0001, command);
 		}
 		catch(std::exception& e)
 		{
@@ -733,8 +729,7 @@ namespace logicalaccess
 		getSTidSTRConfiguration()->setCommunicationMode(STID_CM_RESERVED);
 		try
 		{
-			unsigned char statusCode;
-			ret = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0001, data, statusCode);
+			ret = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0001, data);
 		}
 		catch(std::exception& e)
 		{
@@ -750,8 +745,7 @@ namespace logicalaccess
 	void STidSTRReaderUnit::ResetAuthenticate()
 	{
 		INFO_SIMPLE_("Reseting authentication...");
-		unsigned char statusCode;
-		getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000D, std::vector<unsigned char>(), statusCode);
+		getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000D, std::vector<unsigned char>());
 	}
 
 	void STidSTRReaderUnit::ChangeReaderKeys(const std::vector<unsigned char>& key_hmac, const std::vector<unsigned char>& key_aes)
@@ -773,34 +767,30 @@ namespace logicalaccess
 		}
 		command.insert(command.begin(), &keyMode, &keyMode + 1);
 
-		unsigned char statusCode;
-		getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0003, command, statusCode);
+		getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0003, command);
 	}
 
 	void STidSTRReaderUnit::setBaudRate(STidBaudrate baudrate)
 	{
 		INFO_("Setting baudrate... baudrate {0x%x(%d)}", baudrate, baudrate);
-		unsigned char statusCode;
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(baudrate));
-		getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0005, command, statusCode);
+		getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0005, command);
 	}
 
 	void STidSTRReaderUnit::set485Address(unsigned char address)
 	{
 		INFO_("Setting RS485 address... address {0x%x(%u)}", address, address);
-		unsigned char statusCode;
 		std::vector<unsigned char> command;
 		EXCEPTION_ASSERT_WITH_LOG(address <= 127, LibLogicalAccessException, "The RS485 address should be between 0 and 127.");
 		command.push_back(address);
-		getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0006, command, statusCode);
+		getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0006, command);
 	}
 
 	STidSTRReaderUnit::STidSTRInformation STidSTRReaderUnit::getReaderInformaton()
 	{
 		INFO_SIMPLE_("Getting reader information...");
-		unsigned char statusCode;
-		std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0008, std::vector<unsigned char>(), statusCode);
+		std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0008, std::vector<unsigned char>());
 
 		EXCEPTION_ASSERT_WITH_LOG(response.size() >= 5, LibLogicalAccessException, "The GetInfos response should be 5-byte long.");
 
@@ -820,7 +810,6 @@ namespace logicalaccess
 	void STidSTRReaderUnit::setAllowedCommModes(bool plainComm, bool signedComm, bool cipheredComm)
 	{
 		INFO_("Setting allowed communication modes... plain comm {%d} signed comm {%d} ciphered comm {%d}", plainComm, signedComm, cipheredComm);
-		unsigned char statusCode;
 		std::vector<unsigned char> command;
 		unsigned char allowedModes = 0x08 |
 			((plainComm) ? 0x01 : 0x00) |
@@ -828,19 +817,18 @@ namespace logicalaccess
 			((cipheredComm) ? 0x04 : 0x00);
 
 		command.push_back(allowedModes);
-		getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000A, command, statusCode);
+		getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000A, command);
 	}
 
 	void STidSTRReaderUnit::setTamperSwitchSettings(bool useTamperSwitch, STidTamperSwitchBehavior behavior)
 	{
 		INFO_("Setting tamper switch settings... use tamper {%d} tamper behavior {0x%x(%u)}", useTamperSwitch, behavior, behavior);
-		unsigned char statusCode;
 		std::vector<unsigned char> command;
 
 		command.push_back((useTamperSwitch) ? 0x01 : 0x00);
 		command.push_back(static_cast<unsigned char>(behavior));
 
-		getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000B, command, statusCode);
+		getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000B, command);
 	}
 
 	void STidSTRReaderUnit::getTamperSwitchInfos(bool& useTamperSwitch, STidTamperSwitchBehavior& behavior, bool& swChanged)

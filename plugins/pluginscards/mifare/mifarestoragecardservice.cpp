@@ -380,13 +380,6 @@ namespace logicalaccess
 		unsigned char zeroblock[16];
 		unsigned char trailerblock[16];
 
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasWriteDataAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		memset(zeroblock, 0x00, 16);
 		memset(trailerblock, 0xFF, 16);
 

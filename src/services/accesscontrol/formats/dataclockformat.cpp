@@ -94,13 +94,6 @@ namespace logicalaccess
 	void DataClockFormat::getLinearData(void* data, size_t dataLengthBytes) const
 	{
 		unsigned int pos = 0;
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasWriteFormatAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		convertField(data, dataLengthBytes, &pos, getUid(), 32);
 		
 		if (data != NULL)
@@ -118,13 +111,6 @@ namespace logicalaccess
 
 	void DataClockFormat::setLinearData(const void* data, size_t dataLengthBytes)
 	{
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasReadFormatAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		unsigned int pos = 0;
 		setUid(revertField(data, dataLengthBytes, &pos, 32));
 		

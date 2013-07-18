@@ -24,13 +24,6 @@ namespace logicalaccess
 	{
 		bool ret = false;
 
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasReadDataAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 		EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
 

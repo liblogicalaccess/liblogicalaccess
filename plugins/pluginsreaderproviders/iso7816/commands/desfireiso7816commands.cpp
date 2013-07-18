@@ -29,13 +29,6 @@ namespace logicalaccess
 	{		
 		bool r = false;
 
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasWriteDataAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		if (selectApplication(0))
 		{
 			if (authenticate(0))
@@ -117,13 +110,6 @@ namespace logicalaccess
 		bool r = false;
 		unsigned char command[5];
 
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasWriteDataAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		DESFireLocation::convertIntToAid(aid, command);
 		command[3] = static_cast<unsigned char>(settings);
 		command[4] = static_cast<unsigned char>(maxNbKeys);
@@ -139,12 +125,6 @@ namespace logicalaccess
 		bool r = false;
 		unsigned char command[3];
 
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasWriteDataAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
 		DESFireLocation::convertIntToAid(aid, command);
 
 		transmit(DF_INS_DELETE_APPLICATION, command, sizeof(command));
@@ -248,13 +228,6 @@ namespace logicalaccess
 
 	std::vector<unsigned char> DESFireISO7816Commands::handleReadData(unsigned char err, const std::vector<unsigned char>& firstMsg, size_t length, EncryptionMode mode)
 	{
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasReadDataAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		std::vector<unsigned char> ret, data;
 
 		if ((err == DF_INS_ADDITIONAL_FRAME || err == 0x00))
@@ -330,15 +303,7 @@ namespace logicalaccess
 	}
 
 	bool DESFireISO7816Commands::handleWriteData(unsigned char cmd, void* parameters, size_t paramLength, const std::vector<unsigned char> data, EncryptionMode mode)
-	{		
-
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasWriteDataAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
+	{
 		std::vector<unsigned char> edata;
 		unsigned char command[64];
 		size_t p = 0;
@@ -468,13 +433,6 @@ namespace logicalaccess
 	{
 		bool r = false;
 
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasWriteDataAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		std::vector<unsigned char> command;
 		short ar = AccessRightsInMemory(accessRights);
 		
@@ -501,13 +459,6 @@ namespace logicalaccess
 	{
 		bool r = false;
 
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasWriteDataAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		std::vector<unsigned char> command;
 		short ar = AccessRightsInMemory(accessRights);
 
@@ -527,13 +478,6 @@ namespace logicalaccess
 	bool DESFireISO7816Commands::createBackupFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize)
 	{
 		bool r = false;
-
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasWriteDataAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
 
 		std::vector<unsigned char> command;
 		short ar = AccessRightsInMemory(accessRights);
@@ -555,13 +499,6 @@ namespace logicalaccess
 	{
 		bool r = false;
 
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasWriteDataAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		std::vector<unsigned char> command;
 		short ar = AccessRightsInMemory(accessRights);
 
@@ -582,13 +519,6 @@ namespace logicalaccess
 	bool DESFireISO7816Commands::createLinearRecordFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize, int maxNumberOfRecords)
 	{
 		bool r = false;
-
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasWriteDataAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
 
 		std::vector<unsigned char> command;
 		short ar = AccessRightsInMemory(accessRights);
@@ -613,13 +543,6 @@ namespace logicalaccess
 	{
 		bool r = false;
 
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasWriteDataAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		std::vector<unsigned char> command;
 		short ar = AccessRightsInMemory(accessRights);
 
@@ -642,13 +565,6 @@ namespace logicalaccess
 	bool DESFireISO7816Commands::deleteFile(int fileno)
 	{
 		bool r = false;
-
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasWriteDataAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
 
 		unsigned char command[1];
 
