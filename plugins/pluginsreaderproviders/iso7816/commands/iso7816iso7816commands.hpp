@@ -8,6 +8,8 @@
 #define LOGICALACCESS_ISO7816ISO7816COMMANDS_HPP
 
 #include "iso7816commands.hpp"
+#include "../iso7816readerunit.hpp"
+#include "../iso7816readerunitconfiguration.hpp"
 #include "../readercardadapters/iso7816readercardadapter.hpp"
 
 #include <string>
@@ -120,6 +122,23 @@ namespace logicalaccess
 			 */
 			boost::shared_ptr<ISO7816ReaderCardAdapter> getISO7816ReaderCardAdapter() { return boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter()); };
 
+
+			/**
+			 * \brief Set the SAM PCSCReaderUnit.
+			 * \param t The SAM PCSCReaderUnit.
+			 */
+			void setSAMReaderUnit(boost::shared_ptr<ISO7816ReaderUnit> t);
+			
+			/**
+			 * \brief get the SAM PCSCReaderUnit.
+			 */
+			boost::shared_ptr<ISO7816ReaderUnit> getSAMReaderUnit();
+
+			/**
+			 * \brief Find the type of SAM from the reader set.
+			 */
+			SAMType AutoSelectSAMType();
+
 		protected:
 
 			/**
@@ -130,6 +149,11 @@ namespace logicalaccess
 			 * \param p2 The parameter 2.
 			 */
 			void setP1P2(size_t offset, short efid, unsigned char& p1, unsigned char& p2);
+
+			/**
+			 * \brief The PCSCReaderUnit used for the SAM.
+			 */
+			boost::shared_ptr<ISO7816ReaderUnit> d_SAM_readerunit;
 	};
 }
 

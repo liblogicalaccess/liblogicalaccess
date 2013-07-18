@@ -6,7 +6,7 @@ if (NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "Debug")
 endif()
 
-include_directories("../../include")
+include_directories("../../include" "../../plugins/pluginsreaderproviders/iso7816" "../../plugins/pluginsreaderproviders/pcsc")
 
 if(UNIX)
   set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra")
@@ -23,7 +23,7 @@ add_executable(
 if(UNIX)
   link_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../packages/lib" "${CMAKE_CURRENT_SOURCE_DIR}/../../plugins/cryptolib")
 else()
-  link_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../bin/${VC_FOLDER_NAME}")
+  link_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../bin/${TARGET_ARCH}/${VC_FOLDER_NAME}")
 endif()
 
 remove_definitions(-DLIBLOGICALACCESS_EXPORTS -DLIBLOGICALACCESS_EXPORTS_DLL)
@@ -47,5 +47,7 @@ endif()
 target_link_libraries(
         basic
         liblogicalaccess
+		pcscreaders
+		iso7816readers
 	${LIB_OPT}
 )

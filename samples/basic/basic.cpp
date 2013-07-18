@@ -7,7 +7,10 @@
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/readerproviders/readerconfiguration.hpp"
-#include "logicalaccess/services/storage/storagecardservice.hpp"
+#include "pcscreaderunit.hpp"
+#include "pcscreaderunitconfiguration.hpp"
+#include "iso7816readerunit.hpp"
+#include "iso7816readerunitconfiguration.hpp"
 
 #include <iostream>
 #include <string>
@@ -54,6 +57,13 @@ int main(int , char**)
 		// Create the default reader unit. On PC/SC, we will listen on all readers.
 		readerConfig->setReaderUnit(readerConfig->getReaderProvider()->createReaderUnit());
 
+		boost::shared_ptr<logicalaccess::PCSCReaderUnit> readerunit = boost::dynamic_pointer_cast<logicalaccess::PCSCReaderUnit>(readerConfig->getReaderUnit());
+		
+		readerunit->setName("OMNIKEY 6321-CL 0");
+		readerunit->getPCSCConfiguration()->setSAMType(logicalaccess::SAMType::SAM_AV1);
+		readerunit->getPCSCConfiguration()->setSAMReaderName("OMNIKEY 6321 0");
+
+
 		unsigned char data[2048];
 		memset(data, 0x00, sizeof(data));				
 
@@ -87,10 +97,10 @@ int main(int , char**)
 						std::cout << "\t" << logicalaccess::BufferHelper::getHex(readerConfig->getReaderUnit()->getNumber((*i))) << std::endl;
 					}
 
-					boost::shared_ptr<logicalaccess::Profile> profile = chip->getProfile();
+					//boost::shared_ptr<logicalaccess::Profile> profile = chip->getProfile();
 
-					boost::shared_ptr<logicalaccess::StorageCardService> storage = boost::dynamic_pointer_cast<logicalaccess::StorageCardService>(chip->getService(logicalaccess::CST_STORAGE));
-					storage->readData(profile->createLocation(), profile->createAccessInfo(), data, 0x30, logicalaccess::CB_DEFAULT);
+					boost::shared_ptr<logicalaccess::PCSCReaderUnit> storage = boost::dynamic_pointer_cast<logicalaccess::PCSCReaderUnit>(readerConfig->getReaderUnit());
+					
 
 					// DO SOMETHING HERE
 					// DO SOMETHING HERE

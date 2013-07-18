@@ -7,6 +7,7 @@ endif()
 
 set(INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic
+					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816)
 INCLUDE_DIRECTORIES(${INCLUDE_FOLDER})
 
@@ -30,11 +31,13 @@ set(SOURCE_LIB ${SRCS} ${source_readercardadapters} ${source_readercardadapters}
 
 if (WIN32)
   LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../cryptolib/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
+										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
 										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
 										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
 										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic/bin/${TARGET_ARCH}/${VC_FOLDER_NAME})
 else()
   LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../cryptolib
+										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2/bin
 										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire/bin
 										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816/bin
 										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic/bin)
@@ -64,6 +67,7 @@ target_link_libraries(
 	desfirecards
 	logicalaccess-cryptolib
 	iso7816cards
-
+	samav2cards
+	
 	${LINK_LIB}
 )

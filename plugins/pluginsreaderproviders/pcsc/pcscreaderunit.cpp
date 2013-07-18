@@ -17,6 +17,7 @@
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
 
+#include "commands/samav2iso7816commands.hpp"
 #include "commands/desfireev1iso7816commands.hpp"
 #include "commands/mifarepcsccommands.hpp"
 #include "commands/mifarescmcommands.hpp"
@@ -32,6 +33,7 @@
 #include "commands/mifareplusspringcardcommandssl1.hpp"
 #include "mifareplussl3profile.hpp"
 #include "commands/mifareplusspringcardcommandssl3.hpp"
+#include "samav2chip.hpp"
 
 #include "readers/omnikeyxx21readerunit.hpp"
 #include "readers/omnikeyxx25readerunit.hpp"
@@ -52,7 +54,7 @@
 namespace logicalaccess
 {
 	PCSCReaderUnit::PCSCReaderUnit(const std::string& name)
-		: ReaderUnit()
+		: ISO7816ReaderUnit()
 	{
 		d_name = name;
 		d_connectedName = d_name;
@@ -370,6 +372,35 @@ namespace logicalaccess
 							catch(std::exception&)
 							{
 								// Doesn't care about bad communication here, stay DESFire.
+							}
+						}
+						else if (d_insertedChip && d_insertedChip->getCardType() == "SAMAV2")
+						{
+							try
+							{
+								if (connect())
+								{
+#ifdef _WINDOWS
+									Sleep(100);
+#elif defined(LINUX)
+									usleep(100000);
+#endif
+									std::cout << getPCSCConfiguration()->getSAMType() << std::endl;
+									boost::shared_ptr<SAMAV2Chip> samav2chip = boost::dynamic_pointer_cast<SAMAV2Chip>(d_insertedChip);
+									if ((getPCSCConfiguration()->getSAMType() == SAM_AUTO_R && static_cast<SAMType>(boost::dynamic_pointer_cast<SAMAV2ISO7816Commands>(samav2chip->getSAMAV2Commands())->GetSAMTypeFromSAM() + 3) == SAM_AV1_R
+										|| getPCSCConfiguration()->getSAMType() == SAM_AV1_R))
+									{
+										d_insertedChip = createChip("SAMAV1");
+										if (d_proxyReaderUnit)
+										{
+											d_proxyReaderUnit->setSingleChip(d_insertedChip);
+										}
+									}
+									disconnect();
+								}
+							}
+							catch(std::exception&)
+							{
 							}
 						}
 					}
@@ -707,9 +738,9 @@ namespace logicalaccess
 
 	bool PCSCReaderUnit::connectToReader()
 	{
-		if (getPCSCConfiguration()->getSAMType() != SAM_NONE && getPCSCConfiguration()->getSAMReaderName() == "")
+		if (getPCSCConfiguration()->getSAMType() != SAM_NONE && getPCSCConfiguration()->getSAMType() < SAM_AV1_R && getPCSCConfiguration()->getSAMReaderName() == "")
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Sam type specified without specifying SAM Reader Name");
-		if (getPCSCConfiguration()->getSAMType() != SAM_NONE)
+		if (getPCSCConfiguration()->getSAMType() != SAM_NONE && getPCSCConfiguration()->getSAMType() < SAM_AV1_R)
 			{
 				if (getReaderProvider()->getReaderList().size() < 2)
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not Enough reader on the system to us SAM");
@@ -728,12 +759,15 @@ namespace logicalaccess
 
 				ret.reset(new PCSCReaderUnit(getPCSCConfiguration()->getSAMReaderName()));
 				ret->setReaderProvider(getReaderProvider());
-				setSAMReaderUnit(ret);
-
+				ret->getPCSCConfiguration()->setSAMType(static_cast<SAMType>(getPCSCConfiguration()->getSAMType() + 3));
 				ret->connectToReader();
 
 				if (!ret->waitInsertion(1))
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "No SAM detected on the reader");
+				boost::shared_ptr<ISO7816ISO7816Commands> com = boost::dynamic_pointer_cast<ISO7816ISO7816Commands>(ret->getSingleChip()->getCommands());
+				com->setSAMReaderUnit(ret);
+				
+
 				ret->connect();
 			}
 		return true;
@@ -857,7 +891,7 @@ namespace logicalaccess
 				}
 				return "UNKNOWN";
 			}
-			else if (atrlen == 28)
+			else if (atrlen == 28 || atrlen == 27)
 			{
 				std::cout << BufferHelper::getHex(std::vector<unsigned char>(atr, atr + atrlen)) << std::endl;
 				// 3B DF 18 FF 81 F1 FE 43 00 3F 03 83 4D 49 46 41 52 45 20 50 6C 75 73 20 53 41 4D 3B NXP SAM AV2 module
@@ -865,10 +899,15 @@ namespace logicalaccess
 				unsigned char atrTagITP1[] = { 0x3B, 0xDF, 0x18, 0xFF, 0x81, 0xF1, 0xFE, 0x43, 0x00, 0x3F, 0x03, 0x83, 0x4D, 0x49, 0x46, 0x41, 0x52, 0x45, 0x20, 0x50, 0x6C, 0x75, 0x73, 0x20, 0x53, 0x41, 0x4D, 0x3B};
 				unsigned char atrTagITP2[] = { 0x3B, 0xDF, 0x18, 0xFF, 0x81, 0xF1, 0xFE, 0x43, 0x00, 0x1F, 0x03, 0x4D, 0x49, 0x46, 0x41, 0x52, 0x45, 0x20, 0x50, 0x6C, 0x75, 0x73, 0x20, 0x53, 0x41, 0x4D, 0x98};
 
-				if (!memcmp(atr, atrTagITP1, sizeof(atrTagITP1)) || !memcmp(atr, atrTagITP2, sizeof(atrTagITP2)))
+				if (atrlen == 28 && !memcmp(atr, atrTagITP1, sizeof(atrTagITP1)))
 				{
-					std::cout << "SAMAV2 FIND" << std::endl;
-					return"SAMAV2";
+					std::cout << "NXP SAM AV2 module FOUND" << std::endl;
+					return "SAMAV2";
+				}
+				else if (atrlen == 27 && !memcmp(atr, atrTagITP2, sizeof(atrTagITP2)))
+				{
+					std::cout << "Mifare SAM AV2 FOUND" << std::endl;
+					return "SAMAV2";
 				}
 			}
 			else
@@ -1281,6 +1320,14 @@ namespace logicalaccess
 			{
 				commands.reset(new MifareUltralightCPCSCCommands());
 			}
+			else if (type == "SAMAV1")
+			{
+				commands.reset(new SAMAV2ISO7816Commands());
+			}
+			else if (type == "SAMAV2")
+			{
+				commands.reset(new SAMAV2ISO7816Commands());
+			}
 			else if (type == "MifarePlus4K")
 			{
 				//TODO : find the SL without ATR
@@ -1334,7 +1381,11 @@ namespace logicalaccess
 
 	boost::shared_ptr<Chip> PCSCReaderUnit::getSingleChip()
 	{
-		boost::shared_ptr<Chip> chip = d_insertedChip;
+		boost::shared_ptr<Chip> chip;
+		if (d_proxyReaderUnit)
+			chip = d_proxyReaderUnit->getSingleChip();
+		else
+			chip = d_insertedChip;
 		return chip;
 	}
 
@@ -1430,45 +1481,5 @@ namespace logicalaccess
 			isTypeA = false;
 			isTypeB = false;
 		}
-	}
-
-	void PCSCReaderUnit::setSAMReaderUnit(boost::shared_ptr<PCSCReaderUnit> t)
-	{
-		d_SAM_readerunit = t;
-	}
-			
-
-	boost::shared_ptr<PCSCReaderUnit> PCSCReaderUnit::getSAMReaderUnit()
-	{
-		return d_SAM_readerunit;
-	}
-
-	SAMType			PCSCReaderUnit::AutoSelectSAMType()
-	{
-		unsigned char result[255];
-		size_t resultlen = sizeof(result);
-
-		if (getSAMReaderUnit() == NULL)
-		{
-			getPCSCConfiguration()->setSAMType(SAM_NONE);
-			return SAM_NONE;
-		}
-
-		getSAMReaderUnit()->getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0x80, 0x60, 0x00, 0x00, 0x00, result, &resultlen);
-
-		if (resultlen > 3)
-		{
-			if (result[resultlen - 3] == 0xA1)
-			{
-				getPCSCConfiguration()->setSAMType(SAM_AV1);
-				return SAM_AV1;
-			}
-			else if (result[resultlen - 3] == 0xA2)
-			{
-				getPCSCConfiguration()->setSAMType(SAM_AV2);
-				return SAM_AV2;
-			}
-		}
-		return SAM_NONE;
 	}
 }

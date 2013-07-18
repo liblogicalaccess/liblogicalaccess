@@ -8,6 +8,7 @@
 #define LOGICALACCESS_PCSCREADERUNITCONFIGURATION_HPP
 
 #include "logicalaccess/readerproviders/readerunitconfiguration.hpp"
+#include "iso7816readerunitconfiguration.hpp"
 
 
 #define DEVICE_TYPE_SMARTCARD /**< \brief Set device type to smart card */
@@ -45,21 +46,10 @@ namespace logicalaccess
 		PCSC_RUT_SPRINGCARD = 0x0005, /**< SpringCard PC/SC reader unit */
 		PCSC_RUT_OMNIKEY_XX27 = 0x0006 /**< Omnikey PC/SC reader unit */
 	} PCSCReaderUnitType;
-
-	/**
-	 *\brief The SAM unit types.
-	 */
-	typedef enum {
-		SAM_AUTO = 0,
-		SAM_NONE = 1,
-		SAM_AV1 = 2,
-		SAM_AV2 = 3
-	} SAMType;
-
 	/**
 	 * \brief The PC/SC reader unit configuration base class.
 	 */
-	class LIBLOGICALACCESS_API PCSCReaderUnitConfiguration : public ReaderUnitConfiguration
+	class LIBLOGICALACCESS_API PCSCReaderUnitConfiguration : public ISO7816ReaderUnitConfiguration
 	{
 		public:
 			
@@ -126,28 +116,6 @@ namespace logicalaccess
 			 */
 			virtual PCSCReaderUnitType getPCSCType() const { return PCSC_RUT_DEFAULT; };
 
-			/**
-			 * \brief Set the SAM type.
-			 * \param t The SAM type.
-			 */
-			void setSAMType(SAMType t);
-			
-			/**
-			 * \brief get the SAM type.
-			 */
-			SAMType getSAMType();
-
-			/**
-			 * \brief Set the SAM reader name.
-			 * \param t The SAM reader name.
-			 */
-			void setSAMReaderName(std::string t);
-			
-			/**
-			 * \brief get the SAM reader name.
-			 */
-			std::string getSAMReaderName();
-
 		protected:
 
 			/**
@@ -159,16 +127,6 @@ namespace logicalaccess
 			 * \brief The share mode used when connecting to a card.
 			 */
 			PCSCShareMode d_share_mode;
-
-			/**
-			 * \brief The SAM type.
-			 */
-			SAMType d_sam_type;
-
-			/**
-			 * \brief The SAM reader name.
-			 */
-			std::string d_sam_reader_name;
 	};
 }
 

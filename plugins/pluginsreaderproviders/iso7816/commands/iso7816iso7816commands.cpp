@@ -126,4 +126,16 @@ namespace logicalaccess
 	{
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xA4, p1, p2, static_cast<unsigned char>(datalen), data, datalen);
 	}
+
+	
+	void ISO7816ISO7816Commands::setSAMReaderUnit(boost::shared_ptr<ISO7816ReaderUnit> t)
+	{
+		d_SAM_readerunit = t;
+	}
+			
+
+	boost::shared_ptr<ISO7816ReaderUnit> ISO7816ISO7816Commands::getSAMReaderUnit()
+	{
+		return d_SAM_readerunit;
+	}
 }
