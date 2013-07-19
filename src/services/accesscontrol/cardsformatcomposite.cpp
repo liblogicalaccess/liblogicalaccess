@@ -228,7 +228,7 @@ namespace logicalaccess
 		{
 			if(v.first == "Card" )
 			{
-				string type = v.second.get_child("<xmlattr>.type").get_value<std::string>();
+				string type = v.second.get_child("type").get_value<std::string>();
 
 				boost::shared_ptr<Chip> chip = getReaderUnit()->createChip(type);
 				EXCEPTION_ASSERT_WITH_LOG(chip, LibLogicalAccessException, "Unknow card type.");
@@ -245,25 +245,46 @@ namespace logicalaccess
 						boost::shared_ptr<Location> location = profile->createLocation();
 						if (location)
 						{
-							location->unSerialize(childrenRootNode);
+							try
+							{
+								location->unSerialize(childrenRootNode);
+							}
+							catch(std::exception ex)
+							{
+								ERROR_("Cannot unserialize location.");
+							}
 						}
 						finfos.location = location;
 
 						boost::shared_ptr<AccessInfo> aiToUse = profile->createAccessInfo();
 						if (aiToUse)
 						{
-							aiToUse->unSerialize(childrenRootNode);
+							try
+							{
+								aiToUse->unSerialize(childrenRootNode);
+							}
+							catch(std::exception ex)
+							{
+								ERROR_("Cannot unserialize access info to use.");
+							}
 						}
 						finfos.aiToUse = aiToUse;
 
 						boost::shared_ptr<AccessInfo> aiToWrite;
-						boost::property_tree::ptree writeNode = childrenRootNode.get_child("WriteInfo");
+						boost::property_tree::ptree writeNode = v.second.get_child("WriteInfo");
 						if (!writeNode.empty())
 						{
 							aiToWrite = profile->createAccessInfo();
 							if (aiToWrite)
 							{
-								aiToWrite->unSerialize(writeNode);
+								try
+								{
+									aiToWrite->unSerialize(writeNode);
+								}
+								catch(std::exception ex)
+								{
+									ERROR_("Cannot unserialize access info to write.");
+								}
 							}
 						}
 						finfos.aiToWrite = aiToWrite;
