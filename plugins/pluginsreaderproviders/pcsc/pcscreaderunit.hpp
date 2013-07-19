@@ -10,6 +10,7 @@
 #include "logicalaccess/readerproviders/readerunit.hpp"
 #include "pcscreaderunitconfiguration.hpp"
 #include "iso7816readerunit.hpp"
+#include "samchip.hpp"
 #include "logicalaccess/cards/readermemorykeystorage.hpp"
 
 namespace logicalaccess
@@ -256,7 +257,17 @@ namespace logicalaccess
 			 */
 			virtual void getT_CL_ISOType(bool& isTypeA, bool& isTypeB);
 
+			boost::shared_ptr<SAMChip> getSAMChip() { return d_sam_chip; };
+
+			void setSAMChip(boost::shared_ptr<SAMChip> t) {	d_sam_chip = t; };
+
 		protected:
+
+
+			/**
+			 * \brief The SAM reader unit.
+			 */
+			boost::shared_ptr<SAMChip> d_sam_chip;
 
 			/**
 			 * \brief The reader unit name.

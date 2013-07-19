@@ -9,16 +9,17 @@
 
 #include "logicalaccess/cards/chip.hpp"
 #include "samav2commands.hpp"
+#include "samchip.hpp"
 
 
 namespace logicalaccess
 {	
-	#define CHIP_SAMAV2	"SAMAV2"
+	#define CHIP_SAMAV2	"SAM_AV2"
 
 	/**
 	 * \brief The SAMAV2 chip class.
 	 */
-	class  SAMAV2Chip : public Chip
+	class  SAMAV2Chip : public SAMChip
 	{
 		public:
 

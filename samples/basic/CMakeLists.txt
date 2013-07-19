@@ -6,7 +6,7 @@ if (NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "Debug")
 endif()
 
-include_directories("../../include" "../../plugins/pluginsreaderproviders/iso7816" "../../plugins/pluginsreaderproviders/pcsc")
+include_directories("../../include" "../../plugins/pluginsreaderproviders/iso7816" "../../plugins/pluginsreaderproviders/pcsc" "../../plugins/pluginscards/samav2")
 
 if(UNIX)
   set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra")

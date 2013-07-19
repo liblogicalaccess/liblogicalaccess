@@ -734,17 +734,12 @@ namespace logicalaccess
 
 				if (!ret->waitInsertion(1))
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "No SAM detected on the reader");
-
-				std::string a = ret->getSingleChip()->getCardType();
-				std::string b = getPCSCConfiguration()->getSAMType();
 				if (getPCSCConfiguration()->getSAMType() != "SAM_AUTO" && ret->getSingleChip()->getCardType() != getPCSCConfiguration()->getSAMType()) 
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM on the reader is not the same type as selected.");				
-
-				boost::shared_ptr<SAMAV2ISO7816Commands> com = boost::dynamic_pointer_cast<SAMAV2ISO7816Commands>(ret->getSingleChip()->getCommands());
-				com->setSAMReaderUnit(ret);
-				
-
 				ret->connect();
+
+				setSAMChip(boost::dynamic_pointer_cast<SAMChip>(ret->getSingleChip())); 
+
 			}
 		return true;
 	}
@@ -1275,6 +1270,7 @@ namespace logicalaccess
 			{
 				commands.reset(new DESFireISO7816Commands());
 				boost::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->getCrypto().setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(chip->getProfile()), chip->getChipIdentifier());
+				boost::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(getSAMChip());
 			}
 			else if (type == "ISO15693")
 			{
@@ -1398,6 +1394,7 @@ namespace logicalaccess
 	void PCSCReaderUnit::makeProxy(boost::shared_ptr<PCSCReaderUnit> readerUnit, boost::shared_ptr<PCSCReaderUnitConfiguration> readerUnitConfig)
 	{
 		d_card_type = readerUnit->getCardType();
+		d_sam_chip = readerUnit->getSAMChip();
 		d_readerProvider = readerUnit->getReaderProvider();
 		if (getPCSCConfiguration()->getPCSCType() == readerUnitConfig->getPCSCType())
 		{

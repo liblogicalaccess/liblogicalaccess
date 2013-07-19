@@ -11,13 +11,13 @@
 namespace logicalaccess
 {
 	SAMAV2Chip::SAMAV2Chip(std::string ct) : 
-		Chip(ct)
+		SAMChip(ct)
 	{
 		
 	}
 
 	SAMAV2Chip::SAMAV2Chip() : 
-		Chip(CHIP_SAMAV2)
+		SAMChip(CHIP_SAMAV2)
 	{
 	}
 

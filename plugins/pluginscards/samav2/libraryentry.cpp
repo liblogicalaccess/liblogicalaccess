@@ -19,10 +19,10 @@ extern "C"
 {
 	LIBLOGICALACCESS_API char *getLibraryName()
 	{
-		return (char *)"SAMAV2";
+		return (char *)"SAM";
 	}
 	
-	LIBLOGICALACCESS_API void getSAMAV2Chip(boost::shared_ptr<logicalaccess::Chip>* chip)
+	LIBLOGICALACCESS_API void getSAM_AV2Chip(boost::shared_ptr<logicalaccess::Chip>* chip)
 	{
 		if (chip != NULL)
 		{
@@ -39,7 +39,7 @@ extern "C"
 			{
 			case 0:
 				{
-					*getterfct = (void*)&getSAMAV2Chip;
+					*getterfct = (void*)&getSAM_AV2Chip;
 					sprintf(chipname, CHIP_SAMAV2);
 					ret = true;
 				}
