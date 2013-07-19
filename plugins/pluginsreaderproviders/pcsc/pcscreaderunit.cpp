@@ -734,11 +734,24 @@ namespace logicalaccess
 
 				if (!ret->waitInsertion(1))
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "No SAM detected on the reader");
-				if (getPCSCConfiguration()->getSAMType() != "SAM_AUTO" && ret->getSingleChip()->getCardType() != getPCSCConfiguration()->getSAMType()) 
-					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM on the reader is not the same type as selected.");				
+
 				ret->connect();
 
+				std::string config = getPCSCConfiguration()->getSAMType();
+
+				std::string conf = getPCSCConfiguration()->getSAMType();
+				std::string card = ret->getSingleChip()->getCardType();
+				std::string detect =  boost::dynamic_pointer_cast<SAMAV2Commands>(ret->getSingleChip()->getCommands())->GetSAMTypeFromSAM();
+				if (getPCSCConfiguration()->getSAMType() != "SAM_AUTO" && ret->getSingleChip()->getCardType() != getPCSCConfiguration()->getSAMType()
+					&& (ret->getSingleChip()->getCardType() == "SAM_AV1"
+					|| (ret->getSingleChip()->getCardType() == "SAM_AV2"
+					&& getPCSCConfiguration()->getSAMType() != boost::dynamic_pointer_cast<SAMAV2Commands>(ret->getSingleChip()->getCommands())->GetSAMTypeFromSAM())))
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM on the reader is not the same type as selected.");
+			
+				//If SAM_AUTO and SAM_AV2 dected - > force GetSAMTypeFromSAM
+
 				setSAMChip(boost::dynamic_pointer_cast<SAMChip>(ret->getSingleChip())); 
+				setSAMReaderUnit(ret);
 
 			}
 		return true;
@@ -746,6 +759,10 @@ namespace logicalaccess
 
 	void PCSCReaderUnit::disconnectFromReader()
 	{
+		if (d_sam_readerunit)
+		{
+			d_sam_readerunit->disconnect();
+		}
 	}
 
 	std::vector<unsigned char> PCSCReaderUnit::getCardSerialNumber()

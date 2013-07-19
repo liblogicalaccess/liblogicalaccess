@@ -23,31 +23,61 @@ namespace logicalaccess
 	{
 	}
 
+	struct SAMManufactureInformation
+	{
+		unsigned char	uniqueserialnumber[7];
+		unsigned char	productionbatchnumber[5];
+		unsigned char	dayofproduction;
+		unsigned char	monthofproduction;
+		unsigned char	yearofproduction;
+		unsigned char	globalcryptosettings;
+		unsigned char	modecompatibility;
+	};
+
+	struct SAMVersionInformation
+	{
+		unsigned char	vendorid;
+		unsigned char	type;
+		unsigned char	subtype;
+		unsigned char	majorversion;
+		unsigned char	minorversion;
+		unsigned char	storagesize;
+		unsigned char	protocoltype;
+	};
+
+	struct SAMVersion
+	{
+		SAMVersionInformation		hardware;
+		SAMVersionInformation		software;
+		SAMManufactureInformation	manufacture;
+	};
+
 	void		SAMAV2ISO7816Commands::GetVersion()
 	{
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
+		SAMVersion	info;
 
 		std::cout << "GetVersion Commands Called" << std::endl;
 
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0x60, 0x00, 0x00, 0x00, result, &resultlen);
 
+
 		if (resultlen == 33 && result[31] == 0x90 && result[32] == 0x00)
 		{
-			std::cout << BufferHelper::getHex(std::vector<unsigned char>(result, result + resultlen)) << std::endl;
-			std::cout << std::endl;
-			if (result[0] == 0x04)
+			memcpy(&info, result, sizeof(info));
+			
+			if (info.hardware.vendorid == 0x04)
 				std::cout << "Vendor: NXP" << std::endl;
-			std::cout << "Type: " << (int)(result[1]) << std::endl;
-			std::cout << "SubType: " << (int)(result[2]) << std::endl;
-			if (result[3] == 0x03)
+			if (info.hardware.majorversion == 0x03)
 				std::cout << "Major version: T1AD2060" << std::endl;
-			else if (result[4] == 0x04)
+			if (info.hardware.minorversion == 0x04)
 				std::cout << "Major version: T1AR1070" << std::endl;
-			std::cout << "Minor version: " << (int)(result[4]) << std::endl;
-			std::cout << "Storage size: " << (int)(result[5]) << std::endl;
-			std::cout << "Communication protocol type : " << (int)(result[6]) << std::endl;
+			std::cout << "Storage size: " << info.hardware.storagesize << std::endl;
+			std::cout << "Communication protocol type : " << info.hardware.protocoltype << std::endl;
 		}
+		else
+			std::cout << "GetVersion has failed" << std::endl;
 		std::cout << "Called Done" << std::endl;
 	}
 
@@ -239,9 +269,15 @@ namespace logicalaccess
 		if (resultlen > 3)
 		{
 			if (result[resultlen - 3] == 0xA1)
+			{
+				std::cout << "GetVersion say that the SAM is AV1" << std::endl;
 				return "SAM_AV1";
+			}
 			else if (result[resultlen - 3] == 0xA2)
+			{
+				std::cout << "GetVersion say that the SAM is AV2" << std::endl;
 				return "SAM_AV2";
+			}
 		}
 		return "SAM_NONE";
 	}

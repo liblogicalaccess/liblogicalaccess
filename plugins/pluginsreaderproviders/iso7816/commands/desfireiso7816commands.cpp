@@ -6,6 +6,7 @@
 
 #include "../commands/desfireiso7816commands.hpp"
 #include "desfirechip.hpp"
+#include "samav2iso7816commands.hpp"
 
 #include <cstring>
 
@@ -860,6 +861,8 @@ namespace logicalaccess
 	{
 		unsigned char command[16];
 
+
+		boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(getSAMChip()->getCommands())->GetVersion();
 		bool r = false;
 		unsigned char diversify[16];
 		if (d_crypto.getDiversify(diversify))

@@ -11,6 +11,7 @@
 #include "pcscreaderunitconfiguration.hpp"
 #include "iso7816readerunit.hpp"
 #include "iso7816readerunitconfiguration.hpp"
+#include "commands/desfireiso7816commands.hpp"
 
 #include <iostream>
 #include <string>
@@ -101,7 +102,7 @@ int main(int , char**)
 
 					boost::shared_ptr<logicalaccess::PCSCReaderUnit> storage = boost::dynamic_pointer_cast<logicalaccess::PCSCReaderUnit>(readerConfig->getReaderUnit());
 					
-
+					boost::dynamic_pointer_cast<logicalaccess::DESFireISO7816Commands>(readerConfig->getReaderUnit()->getSingleChip()->getCommands())->authenticate();
 					// DO SOMETHING HERE
 					// DO SOMETHING HERE
 					// DO SOMETHING HERE
@@ -125,6 +126,8 @@ int main(int , char**)
 			{
 				std::cout << "No card inserted." << std::endl;
 			}
+
+			readerConfig->getReaderUnit()->disconnectFromReader();
 		}
 	}
 	catch (std::exception& ex)

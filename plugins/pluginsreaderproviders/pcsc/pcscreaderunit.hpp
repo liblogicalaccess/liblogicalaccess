@@ -261,6 +261,10 @@ namespace logicalaccess
 
 			void setSAMChip(boost::shared_ptr<SAMChip> t) {	d_sam_chip = t; };
 
+			boost::shared_ptr<PCSCReaderUnit> getSAMReaderUnit() { return d_sam_readerunit; };
+
+			void setSAMReaderUnit(boost::shared_ptr<PCSCReaderUnit> t) {	d_sam_readerunit = t; };
+
 		protected:
 
 
@@ -337,6 +341,8 @@ namespace logicalaccess
 			 * \brief The proxy reader unit.
 			 */
 			boost::shared_ptr<PCSCReaderUnit> d_proxyReaderUnit;
+
+			boost::shared_ptr<PCSCReaderUnit> d_sam_readerunit;
 	};
 }
 

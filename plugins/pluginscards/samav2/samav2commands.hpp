@@ -20,6 +20,7 @@ namespace logicalaccess
 			virtual void		ChangeKeyEntry() = 0;
 			virtual void		ActiveAV2Mode() = 0;
 			virtual void		AuthentificationHost() = 0;
+			virtual std::string		GetSAMTypeFromSAM() = 0;
 		protected:
 			
 	};
