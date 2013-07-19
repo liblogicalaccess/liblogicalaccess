@@ -23,11 +23,11 @@ extern "C" IMAGE_DOS_HEADER __ImageBase;
 
 namespace logicalaccess
 {
-	Settings Settings::instance;
+	Settings* Settings::instance = NULL;
 
 	Settings::Settings()
 	{
-		reset();
+		
 	}
 	
 	void Settings::Initialize()
@@ -37,22 +37,19 @@ namespace logicalaccess
 		if (alreadyInit == true)
 			return;
 		alreadyInit = true;
+
 		try
 		{
 			LoadSettings();
 
-			if (!Logs::logfile.is_open())
+			INFO_("Log [enabled {%d} filename {%s} seewaitinsertion {%d} seewaitremoval {%d}]",
+				IsLogEnabled, LogFileName.c_str(), SeeWaitInsertionLog, SeeWaitRemovalLog);
+			INFO_("Auto-detection [enabled {%d} timeout {%d}]", IsAutoDetectEnabled, AutoDetectionTimeout);
+			INFO_("Retry serial port configuration [enabled {%d} timeout {%d}]", IsConfigurationRetryEnabled, ConfigurationRetryTimeout);
+
+			if (IsLogEnabled && !Logs::logfile.is_open())
 			{
 				Logs::logfile.open((getDllPath() + "/" + LogFileName), std::ios::out | std::ios::app);
-				
-				INFO_("Log [enabled {%d} filename {%s} seewaitinsertion {%d} seewaitremoval {%d}]",
-					IsLogEnabled, LogFileName.c_str(), SeeWaitInsertionLog, SeeWaitRemovalLog);
-				INFO_("Auto-detection [enabled {%d} timeout {%d}]", IsAutoDetectEnabled, AutoDetectionTimeout);
-				INFO_("Retry serial port configuration [enabled {%d} timeout {%d}]", IsConfigurationRetryEnabled, ConfigurationRetryTimeout);
-			}
-			else
-			{
-				reset();
 			}
 		}
 		catch(...) { reset(); }
@@ -66,9 +63,14 @@ namespace logicalaccess
 		}
 	}
 
-	Settings& Settings::getInstance()
+	Settings* Settings::getInstance()
 	{
-		instance.Initialize();
+		if (instance == NULL)
+		{
+			instance = new Settings();
+			INFO_SIMPLE_("New settings instance created.");
+		}
+		instance->Initialize();
 		return instance;
 	}
 
@@ -113,10 +115,14 @@ namespace logicalaccess
 					PluginFolders.push_back(folder);
 				}
 			}
-			if (PluginFolders.size() == 0)
-				PluginFolders.push_back(getDllPath());
 		}
-		catch (...) { }
+		catch (...) 
+		{
+			PluginFolders.clear();
+		}
+
+		if (PluginFolders.size() == 0)
+				PluginFolders.push_back(getDllPath());
 	}
 
 	void Settings::SaveSettings()
@@ -152,12 +158,12 @@ namespace logicalaccess
 	
 	void Settings::reset()  
 	{  
-		IsLogEnabled = false;  
+		IsLogEnabled = true;  
 		LogFileName = "liblogicalaccess.log";  
 		SeeWaitInsertionLog = false;  
 		SeeWaitRemovalLog = false;  
 		SeeCommunicationLog = false;
-		SeePluginLog = false;
+		SeePluginLog = true;
  
 		IsAutoDetectEnabled = false;  
 		AutoDetectionTimeout = 400;  
@@ -172,25 +178,45 @@ namespace logicalaccess
 	std::string Settings::getDllPath()
 	{
 #ifdef _MSC_VER
-		std::string path;
-	
 		char szAppPath[MAX_PATH];
 		memset(szAppPath, 0x00, sizeof(szAppPath));
+		static std::string path = ".";
 
-		GetModuleFileNameA((HINSTANCE)&__ImageBase, szAppPath, sizeof(szAppPath)-1);
-		if (GetLastError() == ERROR_SUCCESS)
+		if (path == ".")
 		{
-			std::string tmp(szAppPath);
-			size_t index = tmp.find_last_of("/\\");
-			if (index != std::string::npos)
+			GetModuleFileNameA((HMODULE)&__ImageBase, szAppPath, sizeof(szAppPath)-1);
+			DWORD error = GetLastError();
+		
+			if (error == ERROR_INVALID_HANDLE)
 			{
-				tmp = tmp.substr(0, index);
+				WARNING_("Cannot get module file name. Last error code: %d. Trying with hmodule (%d) from dllmain...", error, __hLibLogicalAccessModule);
+				if (__hLibLogicalAccessModule == NULL)
+				{
+					WARNING_("hmodule from dllmain is null.");
+				}
+				else
+				{
+					GetModuleFileNameA(__hLibLogicalAccessModule, szAppPath, sizeof(szAppPath)-1);
+					error = GetLastError();
+				}
 			}
-			path = tmp;
-		}
-		else
-		{
-			path = ".";
+
+			if (error == ERROR_SUCCESS)
+			{
+				std::string tmp(szAppPath);
+				size_t index = tmp.find_last_of("/\\");
+				if (index != std::string::npos)
+				{
+					tmp = tmp.substr(0, index);
+				}
+				path = tmp;
+			}
+			else
+			{
+				WARNING_("Still cannot get module file name. Last error code: %d.", error);
+			}
+
+			INFO_("Current dll path is: %s.", path.c_str());
 		}
 
 		return path;

@@ -6,22 +6,25 @@
 #include "logicalaccess/settings.hpp"
 #include "logicalaccess/logs.hpp"
 
+HMODULE __hLibLogicalAccessModule;
+
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID /*lpReserved*/)
 {
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH:
+		__hLibLogicalAccessModule = hModule;
 		DisableThreadLibraryCalls(hModule);
 
 		register_cipher(&des_desc);
 		register_cipher(&des3_desc);
 
-		logicalaccess::Settings::getInstance().Initialize();  
-		INFO_("Process attached !");  
+		logicalaccess::Settings::getInstance()->getDllPath();
+		INFO_("Process attached ! HMODULE: %d", hModule);  
 		break;
 	case DLL_PROCESS_DETACH:
-		INFO_("Process detached !");
-		logicalaccess::Settings::getInstance().Uninitialize();  
+		INFO_SIMPLE_("Process detached !");
+		logicalaccess::Settings::getInstance()->Uninitialize();  
 		
 		unregister_cipher(&des3_desc);
 		unregister_cipher(&des_desc);

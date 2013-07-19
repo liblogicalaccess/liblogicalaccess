@@ -18,13 +18,18 @@
 #endif
 #endif
 
+#ifdef _MSC_VER
+#include <Windows.h>
+extern HMODULE __hLibLogicalAccessModule;
+#endif
+
 namespace logicalaccess
 {
 	class LIBLOGICALACCESS_API Settings
 	{
 		public:
 
-			static Settings& getInstance();
+			static Settings* getInstance();
 			
 			void Initialize();  
 			void Uninitialize();  
@@ -49,6 +54,8 @@ namespace logicalaccess
 			std::string DefaultReader;
 			std::vector<std::string> PluginFolders;
 
+			std::string getDllPath();
+
 		protected:
 
 			Settings();
@@ -56,12 +63,11 @@ namespace logicalaccess
 			void LoadSettings();
 			void SaveSettings();
 
-			static Settings instance;
+			static Settings* instance;
 			
 		private:
 		
 			void reset();
-			std::string getDllPath();
 	};
 }
 

@@ -26,7 +26,6 @@ namespace logicalaccess
 		void *fct;
 		boost::filesystem::directory_iterator end_iter;
 		std::string extension = EXTENSION_LIB;
-		Settings setting = Settings::getInstance();
 
 		if (libLoaded.size() == 0)
 		{
@@ -140,7 +139,6 @@ namespace logicalaccess
 		void* fct = NULL;
 		boost::filesystem::directory_iterator end_iter;
 		std::string extension = EXTENSION_LIB;
-		Settings setting = Settings::getInstance();
 		std::string fctname;
 		
 		if (libraryType == LibraryManager::CARDS_TYPE)
@@ -194,15 +192,15 @@ namespace logicalaccess
 		void* fct = NULL;
 		boost::filesystem::directory_iterator end_iter;
 		std::string extension = EXTENSION_LIB;
-		Settings setting = Settings::getInstance();
+		Settings* setting = Settings::getInstance();
 		std::string fctname = "getLibraryName";
 
-		for (std::vector<std::string>::iterator it = setting.PluginFolders.begin(); it != setting.PluginFolders.end(); ++it)
+		for (std::vector<std::string>::iterator it = setting->PluginFolders.begin(); it != setting->PluginFolders.end(); ++it)
 		{
 			boost::filesystem::path pluginDir(*it);
 			if (boost::filesystem::exists(pluginDir) && boost::filesystem::is_directory(pluginDir))
 			{
-				PLUGIN_("Scanning library folder %s...", pluginDir.string().c_str());
+				PLUGIN_("Scanning library folder %s ...", pluginDir.string().c_str());
 				for (boost::filesystem::directory_iterator dir_iter(pluginDir) ; dir_iter != end_iter ; ++dir_iter)
 				{
 					PLUGIN_("Checking library %s...", dir_iter->path().filename().string().c_str());
