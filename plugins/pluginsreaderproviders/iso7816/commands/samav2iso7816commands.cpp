@@ -23,35 +23,6 @@ namespace logicalaccess
 	{
 	}
 
-	struct SAMManufactureInformation
-	{
-		unsigned char	uniqueserialnumber[7];
-		unsigned char	productionbatchnumber[5];
-		unsigned char	dayofproduction;
-		unsigned char	monthofproduction;
-		unsigned char	yearofproduction;
-		unsigned char	globalcryptosettings;
-		unsigned char	modecompatibility;
-	};
-
-	struct SAMVersionInformation
-	{
-		unsigned char	vendorid;
-		unsigned char	type;
-		unsigned char	subtype;
-		unsigned char	majorversion;
-		unsigned char	minorversion;
-		unsigned char	storagesize;
-		unsigned char	protocoltype;
-	};
-
-	struct SAMVersion
-	{
-		SAMVersionInformation		hardware;
-		SAMVersionInformation		software;
-		SAMManufactureInformation	manufacture;
-	};
-
 	void		SAMAV2ISO7816Commands::GetVersion()
 	{
 		unsigned char result[255];

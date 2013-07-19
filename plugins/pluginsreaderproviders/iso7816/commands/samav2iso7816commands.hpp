@@ -18,7 +18,36 @@
 
 namespace logicalaccess
 {		
-	#define DESFIRE_CLEAR_DATA_LENGTH_CHUNK	32
+
+	struct SAMManufactureInformation
+	{
+		unsigned char	uniqueserialnumber[7];
+		unsigned char	productionbatchnumber[5];
+		unsigned char	dayofproduction;
+		unsigned char	monthofproduction;
+		unsigned char	yearofproduction;
+		unsigned char	globalcryptosettings;
+		unsigned char	modecompatibility;
+	};
+
+	struct SAMVersionInformation
+	{
+		unsigned char	vendorid;
+		unsigned char	type;
+		unsigned char	subtype;
+		unsigned char	majorversion;
+		unsigned char	minorversion;
+		unsigned char	storagesize;
+		unsigned char	protocoltype;
+	};
+
+	struct SAMVersion
+	{
+		SAMVersionInformation		hardware;
+		SAMVersionInformation		software;
+		SAMManufactureInformation	manufacture;
+	};
+	
 	/**
 	 * \brief The DESFire base commands class.
 	 */
