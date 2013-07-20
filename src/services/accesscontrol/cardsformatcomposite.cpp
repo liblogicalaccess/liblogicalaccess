@@ -252,6 +252,7 @@ namespace logicalaccess
 							catch(std::exception ex)
 							{
 								ERROR_("Cannot unserialize location.");
+								location.reset();
 							}
 						}
 						finfos.location = location;
@@ -266,6 +267,7 @@ namespace logicalaccess
 							catch(std::exception ex)
 							{
 								ERROR_("Cannot unserialize access info to use.");
+								aiToUse.reset();
 							}
 						}
 						finfos.aiToUse = aiToUse;
@@ -284,6 +286,7 @@ namespace logicalaccess
 								catch(std::exception ex)
 								{
 									ERROR_("Cannot unserialize access info to write.");
+									aiToWrite.reset();
 								}
 							}
 						}
