@@ -19,7 +19,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID /*lpRes
 		register_cipher(&des_desc);
 		register_cipher(&des3_desc);
 
-		logicalaccess::Settings::getInstance()->getDllPath();
+		logicalaccess::Settings::getInstance()->Initialize();
 		INFO_("Process attached ! HMODULE: %d", hModule);  
 		break;
 	case DLL_PROCESS_DETACH:

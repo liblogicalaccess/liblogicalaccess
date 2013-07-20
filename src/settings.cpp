@@ -158,12 +158,12 @@ namespace logicalaccess
 	
 	void Settings::reset()  
 	{  
-		IsLogEnabled = true;  
+		IsLogEnabled = false;  
 		LogFileName = "liblogicalaccess.log";  
 		SeeWaitInsertionLog = false;  
 		SeeWaitRemovalLog = false;  
 		SeeCommunicationLog = false;
-		SeePluginLog = true;
+		SeePluginLog = false;
  
 		IsAutoDetectEnabled = false;  
 		AutoDetectionTimeout = 400;  
@@ -184,10 +184,11 @@ namespace logicalaccess
 
 		if (path == ".")
 		{
-			GetModuleFileNameA((HMODULE)&__ImageBase, szAppPath, sizeof(szAppPath)-1);
+			DWORD size = GetModuleFileNameA((HMODULE)&__ImageBase, szAppPath, sizeof(szAppPath)-1);
 			DWORD error = GetLastError();
 		
-			if (error == ERROR_INVALID_HANDLE)
+			// Return ERROR_FILE_NOT_FOUND on Windows XP with COM layer ever on success... Cannot found any similar issue so ignore it for now...
+			if (error != ERROR_SUCCESS && error != ERROR_FILE_NOT_FOUND)
 			{
 				WARNING_("Cannot get module file name. Last error code: %d. Trying with hmodule (%d) from dllmain...", error, __hLibLogicalAccessModule);
 				if (__hLibLogicalAccessModule == NULL)
@@ -201,7 +202,7 @@ namespace logicalaccess
 				}
 			}
 
-			if (error == ERROR_SUCCESS)
+			if (error == ERROR_SUCCESS || error == ERROR_FILE_NOT_FOUND)
 			{
 				std::string tmp(szAppPath);
 				size_t index = tmp.find_last_of("/\\");
