@@ -1161,12 +1161,12 @@ namespace logicalaccess
 		boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 		if (chip)
 		{
-			INFO_SIMPLE_("Chip created, creating other associated objects...");
+			INFO_("Chip (%s) created, creating other associated objects...", type);
 
 			boost::shared_ptr<ReaderCardAdapter> rca = getReaderCardAdapter(type);
 			boost::shared_ptr<Commands> commands;
 
-			if (type ==  "Mifare1K" || type == " Mifare4K" || type == " Mifare")
+			if (type ==  "Mifare1K" || type == "Mifare4K" || type == "Mifare")
 			{
 				if (getPCSCType() == PCSC_RUT_SCM_SDI010)
 				{
@@ -1185,7 +1185,7 @@ namespace logicalaccess
 					commands.reset(new MifarePCSCCommands());
 				}
 			}
-			else if (type == "HIDiClass16KS" || type == "HIDiClass2KS" || type == "HIDiClass32KS_16_16" || type == "HIDiClass32KS_16_8x2" || type == "HIDiClass32KS_8x2_16" || type == "HIDiClass32KS_8x2_8x2" || type == "HIDiClass8x2KS" || type == "HIDiClass")
+			else if (chip->getGenericCardType() == "HIDiClass")
 			{
 				// HID iClass cards have a lot of restriction on license use from HID Global, so we try to load it dynamically if the dynamic library is side by side, otherwise we don't mind.
 				commands = chip->getCommands();
@@ -1195,7 +1195,7 @@ namespace logicalaccess
 				}
 				else
 				{
-					WARNING_SIMPLE_("Cannot found HIDiClass card provider.");
+					WARNING_SIMPLE_("Cannot found HIDiClass commands.");
 				}
 			}
 			else if (type == "DESFireEV1")
@@ -1257,6 +1257,7 @@ namespace logicalaccess
 				boost::shared_ptr<DataTransport> dt = getDataTransport();
 				if (dt)
 				{
+					INFO_SIMPLE_("Data transport forced to a specific one.");
 					rca->setDataTransport(dt);
 				}
 
@@ -1298,7 +1299,13 @@ namespace logicalaccess
 
 	boost::shared_ptr<PCSCReaderCardAdapter> PCSCReaderUnit::getDefaultPCSCReaderCardAdapter()
 	{
-		return boost::dynamic_pointer_cast<PCSCReaderCardAdapter>(getDefaultReaderCardAdapter());
+		boost::shared_ptr<PCSCReaderCardAdapter> rca = boost::dynamic_pointer_cast<PCSCReaderCardAdapter>(getDefaultReaderCardAdapter());
+		if (rca->getDataTransport())
+		{
+			rca->getDataTransport()->setReaderUnit(shared_from_this());
+		}
+
+		return rca;
 	}
 
 	string PCSCReaderUnit::getReaderSerialNumber()
