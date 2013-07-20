@@ -47,7 +47,9 @@ namespace logicalaccess
 		if (!instance)
 		{
 			instance.reset(new KeyboardReaderProvider());
+#ifdef _WINDOWS
 			instance->startAndWatchOnActiveConsole();
+#endif
 			instance->refreshReaderList();
 		}
 

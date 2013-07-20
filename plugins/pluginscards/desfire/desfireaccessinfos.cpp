@@ -61,7 +61,7 @@ namespace logicalaccess
 		std::vector<unsigned char> data(128);
 		
 		data.push_back(static_cast<unsigned char>(readKey->getKeyType()));
-		data.push_back(readKey->isEmpty() ? 0 : 1);
+		data.push_back(static_cast<unsigned char>(readKey->isEmpty() ? 0 : 1));
 
 		if (!readKey->isEmpty())
 		{
@@ -76,11 +76,11 @@ namespace logicalaccess
 			}
 		}
 		data.push_back(readKey->getKeyVersion());
-		data.push_back(readKey->getDiversify() ? 1 : 0);
+		data.push_back(static_cast<unsigned char>(readKey->getDiversify() ? 1 : 0));
 		data.push_back(readKeyno);
 
 		data.push_back(static_cast<unsigned char>(writeKey->getKeyType()));
-		data.push_back(writeKey->isEmpty() ? 0 : 1);
+		data.push_back(static_cast<unsigned char>(writeKey->isEmpty() ? 0 : 1));
 
 		if (!writeKey->isEmpty())
 		{
@@ -95,11 +95,11 @@ namespace logicalaccess
 			}
 		}
 		data.push_back(writeKey->getKeyVersion());
-		data.push_back(writeKey->getDiversify() ? 1 : 0);
+		data.push_back(static_cast<unsigned char>(writeKey->getDiversify() ? 1 : 0));
 		data.push_back(writeKeyno);
 		
 		data.push_back(static_cast<unsigned char>(masterApplicationKey->getKeyType()));
-		data.push_back(masterApplicationKey->isEmpty() ? 0 : 1);
+		data.push_back(static_cast<unsigned char>(masterApplicationKey->isEmpty() ? 0 : 1));
 
 		if (!masterApplicationKey->isEmpty())
 		{
@@ -114,10 +114,10 @@ namespace logicalaccess
 			}
 		}
 		data.push_back(masterApplicationKey->getKeyVersion());
-		data.push_back(masterApplicationKey->getDiversify() ? 1 : 0);
+		data.push_back(static_cast<unsigned char>(masterApplicationKey->getDiversify() ? 1 : 0));
 
 		data.push_back(static_cast<unsigned char>(masterCardKey->getKeyType()));
-		data.push_back(masterCardKey->isEmpty() ? 0 : 1);
+		data.push_back(static_cast<unsigned char>(masterCardKey->isEmpty() ? 0 : 1));
 
 		if (!masterCardKey->isEmpty())
 		{
@@ -132,7 +132,7 @@ namespace logicalaccess
 			}
 		}
 		data.push_back(masterCardKey->getKeyVersion());
-		data.push_back(masterCardKey->getDiversify() ? 1 : 0);
+		data.push_back(static_cast<unsigned char>(masterCardKey->getDiversify() ? 1 : 0));
 
 		return data;
 	}
