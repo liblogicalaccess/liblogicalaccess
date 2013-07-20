@@ -247,7 +247,7 @@ namespace logicalaccess
 						{
 							try
 							{
-								location->unSerialize(childrenRootNode);
+								location->unSerialize(childrenRootNode, "");
 							}
 							catch(std::exception ex)
 							{
@@ -261,7 +261,7 @@ namespace logicalaccess
 						{
 							try
 							{
-								aiToUse->unSerialize(childrenRootNode);
+								aiToUse->unSerialize(childrenRootNode, "");
 							}
 							catch(std::exception ex)
 							{
@@ -279,7 +279,7 @@ namespace logicalaccess
 							{
 								try
 								{
-									aiToWrite->unSerialize(writeNode);
+									aiToWrite->unSerialize(writeNode, "");
 								}
 								catch(std::exception ex)
 								{

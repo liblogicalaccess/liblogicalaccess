@@ -28,7 +28,6 @@ namespace logicalaccess
 		//sharedGuid = "test";
 		createKbdFileMapping();
 		createKbdEvent();
-		startAndWatchOnActiveConsole();
 #endif
 	}
 
@@ -48,6 +47,7 @@ namespace logicalaccess
 		if (!instance)
 		{
 			instance.reset(new KeyboardReaderProvider());
+			instance->startAndWatchOnActiveConsole();
 			instance->refreshReaderList();
 		}
 
@@ -228,13 +228,13 @@ namespace logicalaccess
 	void KeyboardReaderProvider::startAndWatchOnActiveConsole()
 	{
 		watchSessions = true;
-		hWatchThrd = CreateThread(NULL, 0, WatchThread, this, 0, NULL);
+		hWatchThrd = CreateThread(NULL, 0, WatchThread, NULL, 0, NULL);
 	}
 
 	// Watch current session active console and start hook on it if it changed and not yet started for this session
 	DWORD WINAPI WatchThread(LPVOID lpThreadParameter)
 	{
-		KeyboardReaderProvider* readerProvider = reinterpret_cast<KeyboardReaderProvider*>(lpThreadParameter);
+		boost::shared_ptr<KeyboardReaderProvider> readerProvider = KeyboardReaderProvider::getSingletonInstance();
 
 		if (readerProvider != NULL)
 		{
@@ -282,6 +282,10 @@ namespace logicalaccess
 	void KeyboardReaderProvider::stopWatchingActiveConsole()
 	{
 		watchSessions = false;
+
+		INFO_SIMPLE_("Waiting for listening thread to exit...");
+		WaitForSingleObject(hWatchThrd, INFINITE);
+		INFO_SIMPLE_("Listening thread exited.");
 
 		for (SessionHookMap::iterator it; it != processHookedSessions.end(); ++it)
 		{

@@ -112,7 +112,7 @@ namespace logicalaccess
 
 	std::vector<unsigned char> ReaderUnit::getNumber(boost::shared_ptr<Chip> chip, boost::shared_ptr<CardsFormatComposite> composite)
 	{
-		INFO_("Started for chip type {0x%s(%s)}", chip->getGenericCardType().c_str(), chip->getGenericCardType().c_str());
+		INFO_("Started for chip type {0x%s(%s)}", chip->getCardType().c_str(), chip->getGenericCardType().c_str());
 		std::vector<unsigned char> ret;
 
 		if (composite)
@@ -121,12 +121,19 @@ namespace logicalaccess
 			composite->setReaderUnit(shared_from_this());
 
 			CardTypeList ctList = composite->getConfiguredCardTypes();
-			std::string useCardType = chip->getGenericCardType();
+			std::string useCardType = chip->getCardType();
 			CardTypeList::iterator itct = std::find(ctList.begin(), ctList.end(), useCardType);
+			// Try to use the generic card type
+			if (itct == ctList.end())
+			{
+				useCardType = chip->getGenericCardType();
+				INFO_("No configuration found for the chip type ! Looking for the generic type (%s) configuration...", useCardType);
+				itct = std::find(ctList.begin(), ctList.end(), useCardType);
+			}
 			// Try to use the configuration for all card (= generic tag), because the card type isn't configured
 			if (itct == ctList.end())
 			{
-				WARNING_SIMPLE_("No configuration found for the chip type ! Looking for \"GenericTag\" configuration...");
+				INFO_SIMPLE_("No configuration found for the chip type ! Looking for \"GenericTag\" configuration...");
 				useCardType = "GenericTag";
 				itct = std::find(ctList.begin(), ctList.end(), useCardType);
 			}
