@@ -223,7 +223,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<Chip> ReaderUnit::createChip(std::string type, const std::vector<unsigned char>& identifier)
 	{
-		INFO_("Creating chip for card type {0x%s(%s)} and identifier %s...", type.c_str(), type.c_str(), BufferHelper::getHex(identifier).c_str());
+		INFO_("Creating chip for card type {%s} and identifier %s...", type.c_str(), BufferHelper::getHex(identifier).c_str());
 		boost::shared_ptr<Chip> chip = createChip(type);
 		chip->setChipIdentifier(identifier);
 		return chip;
@@ -243,6 +243,18 @@ namespace logicalaccess
 
 	boost::shared_ptr<ReaderCardAdapter> ReaderUnit::getDefaultReaderCardAdapter()
 	{
+		if (d_defaultReaderCardAdapter)
+		{
+			if (getDataTransport())
+			{
+				d_defaultReaderCardAdapter->setDataTransport(getDataTransport());
+			}
+
+			if (d_defaultReaderCardAdapter->getDataTransport())
+			{
+				d_defaultReaderCardAdapter->getDataTransport()->setReaderUnit(shared_from_this());
+			}
+		}
 		return d_defaultReaderCardAdapter;
 	}
 

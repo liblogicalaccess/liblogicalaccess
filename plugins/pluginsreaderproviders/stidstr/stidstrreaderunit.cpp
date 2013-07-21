@@ -250,7 +250,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<Chip> STidSTRReaderUnit::createChip(std::string type)
 	{
-		INFO_("Creating chip... chip type {0x%s(%s)}", type.c_str());
+		INFO_("Creating chip... chip type {%s}", type.c_str());
 		boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 
 		if (chip)

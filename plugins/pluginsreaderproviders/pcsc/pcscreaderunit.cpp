@@ -1299,13 +1299,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<PCSCReaderCardAdapter> PCSCReaderUnit::getDefaultPCSCReaderCardAdapter()
 	{
-		boost::shared_ptr<PCSCReaderCardAdapter> rca = boost::dynamic_pointer_cast<PCSCReaderCardAdapter>(getDefaultReaderCardAdapter());
-		if (rca->getDataTransport())
-		{
-			rca->getDataTransport()->setReaderUnit(shared_from_this());
-		}
-
-		return rca;
+		return boost::dynamic_pointer_cast<PCSCReaderCardAdapter>(getDefaultReaderCardAdapter());
 	}
 
 	string PCSCReaderUnit::getReaderSerialNumber()

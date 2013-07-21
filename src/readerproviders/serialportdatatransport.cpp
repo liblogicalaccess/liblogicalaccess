@@ -113,7 +113,7 @@ namespace logicalaccess
 		{
 			unsigned long baudrate = getPortBaudRate();
 
-			DEBUG_("Configuring serial port - Baudrate {%ul}...", baudrate);
+			DEBUG_("Configuring serial port %s - Baudrate {%ul}...", port->getSerialPort()->deviceName().c_str(), baudrate);
 
 #ifndef _WINDOWS
 			struct termios options = port->getSerialPort()->configuration();

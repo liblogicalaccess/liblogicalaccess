@@ -171,6 +171,7 @@ namespace logicalaccess
 		buffer.push_back(static_cast<unsigned char>(commandCode & 0xff));
 		buffer.insert(buffer.end(), command.begin(), command.end());
 
+		d_lastCommandCode = commandCode;
 		return ReaderCardAdapter::sendCommand(buffer, timeout);;
 	}
 
@@ -291,7 +292,7 @@ namespace logicalaccess
 		offset += msglength;
 
 		STidCmdType statusType = static_cast<STidCmdType>(tmpData[offset++]);
-		COM_("Status type {0x%x(%d)}", statusType, statusType);
+		COM_("Status type {%d != %d}", statusType, d_adapterType);
 
 		EXCEPTION_ASSERT_WITH_LOG(statusType == d_adapterType, LibLogicalAccessException, "Bad message type for this reader/card adapter.");
 
