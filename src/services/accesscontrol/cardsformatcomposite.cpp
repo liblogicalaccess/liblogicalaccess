@@ -155,8 +155,9 @@ namespace logicalaccess
 							ERROR_("Cannot found any access control service for this chip.");
 						}
 					}
-					catch(std::exception&)
+					catch(std::exception& ex)
 					{
+						WARNING_("Read format failed: %s", ex.what());
 						fcopy.reset();
 					}
 				}
