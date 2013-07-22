@@ -493,13 +493,13 @@ namespace logicalaccess
 					// Scan for specific chip type, mandatory for STid reader...
 					if (cardType == "DESFire" || cardType == "DESFireEV1")
 					{
-					//	boost::shared_ptr<DESFireEV1CardProvider> chipcp = boost::dynamic_pointer_cast<DESFireEV1CardProvider>(chip->getCardProvider());
-					//	boost::dynamic_pointer_cast<DESFireEV1STidSTRCommands>(chipcp->getDESFireEV1Commands())->scanDESFire();
+						boost::shared_ptr<DESFireEV1Commands> chipcmd = boost::dynamic_pointer_cast<DESFireEV1Commands>(chip->getCommands());
+						boost::dynamic_pointer_cast<DESFireEV1STidSTRCommands>(chipcmd)->scanDESFire();
 					}
 					else if (cardType == "Mifare" || cardType == "Mifare1K" || cardType == "Mifare4K")
 					{
-					//	boost::shared_ptr<MifareCardProvider> chipcp = boost::dynamic_pointer_cast<MifareCardProvider>(chip->getCardProvider());
-					//	boost::dynamic_pointer_cast<MifareSTidSTRCommands>(chipcp->getMifareCommands())->scanMifare();
+						boost::shared_ptr<MifareCommands> chipcmd = boost::dynamic_pointer_cast<MifareCommands>(chip->getCommands());
+						boost::dynamic_pointer_cast<MifareSTidSTRCommands>(chipcmd)->scanMifare();
 					}
 				}
 				else
@@ -834,8 +834,7 @@ namespace logicalaccess
 	void STidSTRReaderUnit::getTamperSwitchInfos(bool& useTamperSwitch, STidTamperSwitchBehavior& behavior, bool& swChanged)
 	{
 		INFO_SIMPLE_("Getting tamper switch infos...");
-		unsigned char statusCode;
-		std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000C, std::vector<unsigned char>(), statusCode);
+		std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000C, std::vector<unsigned char>());
 
 		EXCEPTION_ASSERT_WITH_LOG(response.size() >= 3, LibLogicalAccessException, "The GetTamperSwitchInfos response should be 3-byte long.");
 

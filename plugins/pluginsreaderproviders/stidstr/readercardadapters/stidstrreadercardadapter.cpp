@@ -47,7 +47,7 @@ namespace logicalaccess
 		unsigned short commandCode = command[0] << 8 | command[1];
 
 		cmd.push_back(SOF);
-		std::vector<unsigned char> commandEncapsuled = sendMessage(commandCode, command);
+		std::vector<unsigned char> commandEncapsuled = sendMessage(commandCode, std::vector<unsigned char>(command.begin() + 2, command.end()));
 		cmd.push_back((commandEncapsuled.size() & 0xff00) >> 8);
 		cmd.push_back(commandEncapsuled.size() & 0xff);
 		unsigned char CTRL1 = static_cast<unsigned char>(readerConfig->getCommunicationType());
