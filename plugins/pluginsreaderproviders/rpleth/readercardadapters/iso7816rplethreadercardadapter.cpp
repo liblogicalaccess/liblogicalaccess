@@ -172,12 +172,15 @@ namespace logicalaccess
 
 		if (answer.size() > 2)
 		{
-			if (answer[0] == answer.size()-1)
+			if (answer[0] == answer.size())
 			{
 				res.insert(res.begin(), answer.begin()+2, answer.end());
 			}
+			else
+			{
+				THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "The supply answer size is not good.");
+			}
 		}
-
 		return res;
 	}
 }
