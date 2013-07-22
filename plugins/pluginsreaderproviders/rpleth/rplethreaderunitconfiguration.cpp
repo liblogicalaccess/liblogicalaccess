@@ -38,6 +38,7 @@ namespace logicalaccess
 		boost::property_tree::ptree node;
 		node.put("Offset", d_offset);
 		node.put("Length", d_length);
+		node.put("Mode", d_mode);
 		parentNode.add_child(getDefaultXmlNodeName(), node);
 	}
 
@@ -45,6 +46,7 @@ namespace logicalaccess
 	{
 		d_offset = node.get_child("Offset").get_value<unsigned char>();
 		d_length = node.get_child("Length").get_value<unsigned char>();
+		d_mode = static_cast<RplethMode>(node.get_child("Mode").get_value<unsigned char>());
 	}
 
 	std::string RplethReaderUnitConfiguration::getDefaultXmlNodeName() const
