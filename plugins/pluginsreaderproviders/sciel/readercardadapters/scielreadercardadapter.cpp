@@ -24,16 +24,26 @@ namespace logicalaccess
 	std::vector<unsigned char> SCIELReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
 	{
 		std::vector<unsigned char> cmd;
-		cmd.push_back(STX);
-		cmd.insert(cmd.end(), command.begin(), command.end());
-		cmd.push_back(ETX);
+		// Ignore empty command
+		if (command.size()  > 0)
+		{
+			cmd.push_back(STX);
+			cmd.insert(cmd.end(), command.begin(), command.end());
+			cmd.push_back(ETX);
+		}
 
 		return cmd;
 	}
 
 	std::vector<unsigned char> SCIELReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
 	{
-		std::vector<unsigned char> buf = answer;
+		std::vector<unsigned char> buf;
+		if (d_trashedData.size() > 0)
+		{
+			COM_("Adding existing trashed data: %s", BufferHelper::getHex(d_trashedData).c_str());
+			buf = d_trashedData;
+		}
+		buf.insert(buf.end(), answer.begin(), answer.end());
 
 		// Remove CR/LF (some response have it ?!)
 		while (buf.size() >= 2 && buf[0] == 0x0d)
@@ -79,8 +89,7 @@ namespace logicalaccess
 		std::vector<unsigned char> tag = sendCommand(command, timeout);
 		bool done = false;
 		while (!done && tag.size() > 0)
-		{
-			tag = sendCommand(std::vector<unsigned char>(), timeout);
+		{	
 			// When whole list is sent, the reader send [5b nb_tags id_reader 5d]
 			if (tag.size() == 2)
 			{
@@ -90,6 +99,15 @@ namespace logicalaccess
 			else
 			{
 				tagsList.push_back(tag);
+			}
+
+			// Next time are optional
+			try
+			{
+				tag = sendCommand(std::vector<unsigned char>(), timeout);
+			}
+			catch(std::exception&)
+			{
 			}
 		}
 

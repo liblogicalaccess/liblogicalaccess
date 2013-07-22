@@ -188,11 +188,12 @@ namespace logicalaccess
 				}
 			}
 		}
-		catch(...)
+		catch(std::exception& ex)
 		{
+			ERROR_("Error retrieving reader chip list: %s", ex.what());
 		}
 
-		INFO_SIMPLE_("Chip list retrieved!");
+		INFO_("Chip list retrieved (%d chips)!", chipList.size());
 		return chipList;
 	}
 
@@ -658,7 +659,17 @@ namespace logicalaccess
 
 	bool SCIELReaderUnit::connectToReader()
 	{
-		return getDataTransport()->connect();
+		bool ret = getDataTransport()->connect();
+		if (ret)
+		{
+			ret = retrieveReaderIdentifier();
+			if (!ret)
+			{
+				getDataTransport()->disconnect();
+			}
+		}
+
+		return ret;
 	}
 
 	void SCIELReaderUnit::disconnectFromReader()
@@ -887,6 +898,10 @@ namespace logicalaccess
 			}
 			buffer.resize(buffer.size() - 1);
 			chip->setChipIdentifier(buffer);
+		}
+		else
+		{
+			WARNING_("Buffer too small to be valid for a chip.");
 		}
 
 		return chip;
