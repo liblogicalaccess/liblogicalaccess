@@ -10,8 +10,6 @@
 #include <iomanip>
 #include <sstream>
 
-#include "mifarepluscardprovidersl1.hpp"
-
 namespace logicalaccess
 {	
 	MifarePlusProfile::MifarePlusProfile()

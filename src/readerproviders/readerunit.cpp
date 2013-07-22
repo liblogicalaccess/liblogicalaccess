@@ -112,7 +112,7 @@ namespace logicalaccess
 
 	std::vector<unsigned char> ReaderUnit::getNumber(boost::shared_ptr<Chip> chip, boost::shared_ptr<CardsFormatComposite> composite)
 	{
-		INFO_("Started for chip type {0x%s(%s)}", chip->getGenericCardType().c_str(), chip->getGenericCardType().c_str());
+		INFO_("Started for chip type {0x%s(%s)}", chip->getCardType().c_str(), chip->getGenericCardType().c_str());
 		std::vector<unsigned char> ret;
 
 		if (composite)
@@ -121,12 +121,19 @@ namespace logicalaccess
 			composite->setReaderUnit(shared_from_this());
 
 			CardTypeList ctList = composite->getConfiguredCardTypes();
-			std::string useCardType = chip->getGenericCardType();
+			std::string useCardType = chip->getCardType();
 			CardTypeList::iterator itct = std::find(ctList.begin(), ctList.end(), useCardType);
+			// Try to use the generic card type
+			if (itct == ctList.end())
+			{
+				useCardType = chip->getGenericCardType();
+				INFO_("No configuration found for the chip type ! Looking for the generic type (%s) configuration...", useCardType);
+				itct = std::find(ctList.begin(), ctList.end(), useCardType);
+			}
 			// Try to use the configuration for all card (= generic tag), because the card type isn't configured
 			if (itct == ctList.end())
 			{
-				WARNING_SIMPLE_("No configuration found for the chip type ! Looking for \"GenericTag\" configuration...");
+				INFO_SIMPLE_("No configuration found for the chip type ! Looking for \"GenericTag\" configuration...");
 				useCardType = "GenericTag";
 				itct = std::find(ctList.begin(), ctList.end(), useCardType);
 			}
@@ -216,7 +223,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<Chip> ReaderUnit::createChip(std::string type, const std::vector<unsigned char>& identifier)
 	{
-		INFO_("Creating chip for card type {0x%s(%s)} and identifier %s...", type.c_str(), type.c_str(), BufferHelper::getHex(identifier).c_str());
+		INFO_("Creating chip for card type {%s} and identifier %s...", type.c_str(), BufferHelper::getHex(identifier).c_str());
 		boost::shared_ptr<Chip> chip = createChip(type);
 		chip->setChipIdentifier(identifier);
 		return chip;
@@ -230,20 +237,24 @@ namespace logicalaccess
 		{
 			ret.reset(new Chip(type));
 		}
-		else
-		{
-			boost::shared_ptr<CardProvider> cp = LibraryManager::getInstance()->getCardProvider(type);
-			if (cp)
-			{
-				ret->setCardProvider(cp);
-			}
-		}
 
 		return ret;
 	}
 
 	boost::shared_ptr<ReaderCardAdapter> ReaderUnit::getDefaultReaderCardAdapter()
 	{
+		if (d_defaultReaderCardAdapter)
+		{
+			if (getDataTransport())
+			{
+				d_defaultReaderCardAdapter->setDataTransport(getDataTransport());
+			}
+
+			if (d_defaultReaderCardAdapter->getDataTransport())
+			{
+				d_defaultReaderCardAdapter->getDataTransport()->setReaderUnit(shared_from_this());
+			}
+		}
 		return d_defaultReaderCardAdapter;
 	}
 

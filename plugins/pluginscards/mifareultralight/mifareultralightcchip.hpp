@@ -9,7 +9,7 @@
 
 #include "mifareultralightchip.hpp"
 
-#include "mifareultralightccardprovider.hpp"
+#include "mifareultralightccommands.hpp"
 #include "mifareultralightcprofile.hpp"
 
 #include <string>
@@ -44,16 +44,23 @@ namespace logicalaccess
 			virtual boost::shared_ptr<LocationNode> getRootLocationNode();
 
 			/**
+			 * \brief Get a card service for this chip.
+			 * \param serviceType The card service type.
+			 * \return The card service.
+			 */
+			virtual boost::shared_ptr<CardService> getService(CardServiceType serviceType);
+
+			/**
 			 * \brief Get the Mifare Ultralight C card provider for I/O access.
 			 * \return The Mifare Ultralight C card provider.
 			 */
-			boost::shared_ptr<MifareUltralightCCardProvider> getMifareUltralightCCardProvider() { return boost::dynamic_pointer_cast<MifareUltralightCCardProvider>(getMifareUltralightCardProvider()); };
+			boost::shared_ptr<MifareUltralightCCommands> getMifareUltralightCCommands() { return boost::dynamic_pointer_cast<MifareUltralightCCommands>(getMifareUltralightCommands()); };
 
 			/**
 			 * \brief Get the Mifare Ultralight C profile.
 			 * \return The Mifare Ultralight C profile.
 			 */
-			boost::shared_ptr<MifareUltralightCProfile> getMifareUltralightCProfile() { return boost::dynamic_pointer_cast<MifareUltralightCProfile>(getMifareUltralightCardProvider()); };
+			boost::shared_ptr<MifareUltralightCProfile> getMifareUltralightCProfile() { return boost::dynamic_pointer_cast<MifareUltralightCProfile>(getMifareUltralightProfile()); };
 
 		protected:
 	};

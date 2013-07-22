@@ -84,7 +84,7 @@ namespace logicalaccess
 	{
 		std::vector<unsigned char> data;
 		
-		data.push_back(keyA->isEmpty() ? 0 : 1);
+		data.push_back(static_cast<unsigned char>(keyA->isEmpty() ? 0 : 1));
 
 		if (!keyA->isEmpty())
 		{
@@ -99,7 +99,7 @@ namespace logicalaccess
 			}
 		}
 
-		data.push_back(keyB->isEmpty() ? 0 : 1);
+		data.push_back(static_cast<unsigned char>(keyB->isEmpty() ? 0 : 1));
 
 		if (!keyB->isEmpty())
 		{
@@ -114,7 +114,7 @@ namespace logicalaccess
 			}
 		}
 
-		data.push_back(keyOriginality->isEmpty() ? 0 : 1);
+		data.push_back(static_cast<unsigned char>(keyOriginality->isEmpty() ? 0 : 1));
 
 		if (!keyOriginality->isEmpty())
 		{
@@ -129,7 +129,7 @@ namespace logicalaccess
 			}
 		}
 
-		data.push_back(keyMastercard->isEmpty() ? 0 : 1);
+		data.push_back(static_cast<unsigned char>(keyMastercard->isEmpty() ? 0 : 1));
 
 		if (!keyMastercard->isEmpty())
 		{
@@ -144,7 +144,7 @@ namespace logicalaccess
 			}
 		}
 
-		data.push_back(keyConfiguration->isEmpty() ? 0 : 1);
+		data.push_back(static_cast<unsigned char>(keyConfiguration->isEmpty() ? 0 : 1));
 
 		if (!keyConfiguration->isEmpty())
 		{
@@ -159,7 +159,7 @@ namespace logicalaccess
 			}
 		}
 
-		data.push_back(keySwitchL2->isEmpty() ? 0 : 1);
+		data.push_back(static_cast<unsigned char>(keySwitchL2->isEmpty() ? 0 : 1));
 
 		if (!keySwitchL2->isEmpty())
 		{
@@ -174,7 +174,7 @@ namespace logicalaccess
 			}
 		}
 
-		data.push_back(keySwitchL3->isEmpty() ? 0 : 1);
+		data.push_back(static_cast<unsigned char>(keySwitchL3->isEmpty() ? 0 : 1));
 
 		if (!keySwitchL3->isEmpty())
 		{
@@ -189,7 +189,7 @@ namespace logicalaccess
 			}
 		}
 
-		data.push_back(keyAuthenticateSL1AES->isEmpty() ? 0 : 1);
+		data.push_back(static_cast<unsigned char>(keyAuthenticateSL1AES->isEmpty() ? 0 : 1));
 
 		if (!keyAuthenticateSL1AES->isEmpty())
 		{
@@ -210,7 +210,7 @@ namespace logicalaccess
 		data.insert(data.end(), sabbuf, sabbuf + sizeof(sabbuf));
 		data.push_back(useMAD ? 0x01 : 0x00);
 
-		data.push_back(madKeyA->isEmpty() ? 0 : 1);
+		data.push_back(static_cast<unsigned char>(madKeyA->isEmpty() ? 0 : 1));
 
 		if (!madKeyA->isEmpty())
 		{
@@ -225,7 +225,7 @@ namespace logicalaccess
 			}
 		}
 
-		data.push_back(madKeyB->isEmpty() ? 0 : 1);
+		data.push_back(static_cast<unsigned char>(madKeyB->isEmpty() ? 0 : 1));
 
 		if (!madKeyB->isEmpty())
 		{

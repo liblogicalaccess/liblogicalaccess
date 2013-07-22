@@ -19,8 +19,6 @@
 #include "logicalaccess/cards/chip.hpp"
 #include "readercardadapters/rwk400readercardadapter.hpp"
 #include "commands/desfirerwk400commands.hpp"
-#include "desfirecardprovider.hpp"
-#include "desfireev1cardprovider.hpp"
 #include "commands/desfireev1iso7816commands.hpp"
 #include <boost/filesystem.hpp>
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
@@ -152,13 +150,11 @@ namespace logicalaccess
 		if (chip)
 		{
 			boost::shared_ptr<ReaderCardAdapter> rca;
-			boost::shared_ptr<CardProvider> cp;
 			boost::shared_ptr<Commands> commands;
 
 			if (type == "DESFire")
 			{
 				rca = getDefaultRwk400ReaderCardAdapter();
-				cp.reset(new DESFireCardProvider());
 				commands.reset(new DesfireRwk400Commands());
 				boost::dynamic_pointer_cast<DesfireRwk400Commands>(commands)->getCrypto().setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(chip->getProfile()), chip->getChipIdentifier());
 			}
@@ -173,16 +169,9 @@ namespace logicalaccess
 				if (commands)
 				{
 					commands->setReaderCardAdapter(rca);
+					commands->setChip(chip);
+					chip->setCommands(commands);
 				}
-				if (cp)
-				{
-					cp->setCommands(commands);
-				}
-				else
-				{
-					cp = LibraryManager::getInstance()->getCardProvider(type);
-				}
-				chip->setCardProvider(cp);
 			}
 		}
 		return chip;

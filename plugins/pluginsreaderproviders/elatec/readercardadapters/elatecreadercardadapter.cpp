@@ -35,14 +35,13 @@ namespace logicalaccess
 	{
 		EXCEPTION_ASSERT_WITH_LOG(command.size() >= 1, std::invalid_argument, "A valid command buffer size must be at least 1 byte long");
 
-		unsigned char tmpcmd[3];
-		tmpcmd[0] = command[0];
-		tmpcmd[1] = 0xFF;	// all readers
-		tmpcmd[2] = static_cast<unsigned char>(command.size() + 2);
-		std::vector<unsigned char> cmd(tmpcmd, tmpcmd + 3);
+		std::vector<unsigned char> cmd;
+		cmd.push_back(static_cast<unsigned char>(command.size() + 3));
+		cmd.push_back(0xFF);	// all readers
+		cmd.push_back(command[0]);
 		cmd.insert(cmd.end(), command.begin() + 1, command.end());
 		cmd.push_back(calcChecksum(cmd));
-		d_last_cmdcode = tmpcmd[0];	
+		d_last_cmdcode = command[0];	
 
 		return cmd;
 	}

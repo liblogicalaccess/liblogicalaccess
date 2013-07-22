@@ -38,15 +38,6 @@ namespace logicalaccess
 		return d_cardtype;
 	}
 
-	void Chip::setCardProvider(boost::shared_ptr<CardProvider> provider)
-	{
-		d_cardprovider = provider;
-		if (provider)
-		{
-			provider->setChip(shared_from_this());
-		}
-	}
-
 	boost::shared_ptr<LocationNode> Chip::getRootLocationNode()
 	{
 		boost::shared_ptr<LocationNode> rootNode;
@@ -55,6 +46,11 @@ namespace logicalaccess
 		rootNode->setName("Unknown");
 
 		return rootNode;
+	}
+
+	boost::shared_ptr<CardService> Chip::getService(CardServiceType /*serviceType*/)
+	{
+		return boost::shared_ptr<CardService>();
 	}
 }
 

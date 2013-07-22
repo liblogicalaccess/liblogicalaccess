@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_ISO7816ISO7816COMMANDS_HPP
 #define LOGICALACCESS_ISO7816ISO7816COMMANDS_HPP
 
-#include "iso7816cardprovider.hpp"
+#include "iso7816commands.hpp"
 #include "../readercardadapters/iso7816readercardadapter.hpp"
 
 #include <string>

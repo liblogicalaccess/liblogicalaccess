@@ -11,6 +11,7 @@
 #include <sstream>
 
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include "mifareultralightstoragecardservice.hpp"
 
 namespace logicalaccess
 {
@@ -64,5 +65,19 @@ namespace logicalaccess
 		sectorNode->setLocation(location);
 		sectorNode->setParent(rootNode);
 		rootNode->getChildrens().push_back(sectorNode);
+	}
+
+	boost::shared_ptr<CardService> MifareUltralightChip::getService(CardServiceType serviceType)
+	{
+		boost::shared_ptr<CardService> service;
+
+		switch (serviceType)
+		{
+		case CST_STORAGE:
+			service.reset(new MifareUltralightStorageCardService(shared_from_this()));
+			break;
+		}
+
+		return service;
 	}
 }

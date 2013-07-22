@@ -38,7 +38,7 @@ namespace logicalaccess
 			DESFireKeySettings keySettings;
 			unsigned int maxNbkeys = 0;
 			DESFireKeyType keyType;
-			getDESFireEV1CardProvider()->getDESFireEV1Commands()->getKeySettings(keySettings, maxNbkeys, keyType);
+			getDESFireEV1Commands()->getKeySettings(keySettings, maxNbkeys, keyType);
 
 			if (keyType != DF_KEY_DES)
 			{

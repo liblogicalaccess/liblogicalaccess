@@ -70,10 +70,10 @@ namespace logicalaccess
 
 	bool GunneboReaderUnit::waitInsertion(unsigned int maxwait)
 	{
-		bool oldValue = Settings::getInstance().IsLogEnabled;
-		if (oldValue && !Settings::getInstance().SeeWaitInsertionLog)
+		bool oldValue = Settings::getInstance()->IsLogEnabled;
+		if (oldValue && !Settings::getInstance()->SeeWaitInsertionLog)
 		{
-			Settings::getInstance().IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
+			Settings::getInstance()->IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
 		}
 
 		INFO_("Waiting insertion... max wait {%u}", maxwait);
@@ -132,24 +132,24 @@ namespace logicalaccess
 		}
 		catch(...)
 		{
-			Settings::getInstance().IsLogEnabled = oldValue;
+			Settings::getInstance()->IsLogEnabled = oldValue;
 			throw;
 		}
 
 		removalIdentifier.clear();
 
 		INFO_("Returns card inserted ? {%d} function timeout expired ? {%d}", inserted, (maxwait != 0 && currentWait >= maxwait));
-		Settings::getInstance().IsLogEnabled = oldValue;
+		Settings::getInstance()->IsLogEnabled = oldValue;
 
 		return inserted;
 	}
 
 	bool GunneboReaderUnit::waitRemoval(unsigned int maxwait)
 	{
-		bool oldValue = Settings::getInstance().IsLogEnabled;
-		if (oldValue && !Settings::getInstance().SeeWaitRemovalLog)
+		bool oldValue = Settings::getInstance()->IsLogEnabled;
+		if (oldValue && !Settings::getInstance()->SeeWaitRemovalLog)
 		{
-			Settings::getInstance().IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
+			Settings::getInstance()->IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
 		}
 
 		INFO_("Waiting removal... max wait {%u}", maxwait);
@@ -201,13 +201,13 @@ namespace logicalaccess
 		}
 		catch(...)
 		{
-			Settings::getInstance().IsLogEnabled = oldValue;
+			Settings::getInstance()->IsLogEnabled = oldValue;
 			throw;
 		}
 
 		INFO_("Returns card removed ? {%d} - function timeout expired ? {%d}", removed, (maxwait != 0 && currentWait >= maxwait));
 
-		Settings::getInstance().IsLogEnabled = oldValue;
+		Settings::getInstance()->IsLogEnabled = oldValue;
 
 		return removed;
 	}
@@ -253,19 +253,16 @@ namespace logicalaccess
 		{
 			INFO_SIMPLE_("Chip created successfully !");
 			boost::shared_ptr<ReaderCardAdapter> rca;
-			boost::shared_ptr<CardProvider> cp;
 
 			if (type == "GenericTag")
 			{
 				INFO_SIMPLE_("Generic tag Chip created");
 				rca = getDefaultReaderCardAdapter();
-				cp = LibraryManager::getInstance()->getCardProvider("GenericTag");
 			}
 			else
 				return chip;
 
 			rca->setDataTransport(getDataTransport());
-			chip->setCardProvider(cp);
 		}
 		return chip;
 	}

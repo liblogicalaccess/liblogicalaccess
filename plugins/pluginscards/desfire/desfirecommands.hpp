@@ -10,10 +10,11 @@
 #include "desfireaccessinfo.hpp"
 #include "desfirelocation.hpp"
 #include "logicalaccess/cards/commands.hpp"
-
+#include <vector>
 
 namespace logicalaccess
 {
+	#define EXCEPTION_MSG_SELECTAPPLICATION			"Select application failed." /**< \brief The select application exception message */
 
 #ifndef DF_INS
 	#define DF_INS
@@ -122,6 +123,8 @@ namespace logicalaccess
 		);
 	}
 
+	class DESFireChip;
+
 	/**
 	 * \brief The DESFire commands class.
 	 */
@@ -206,6 +209,45 @@ namespace logicalaccess
 				unsigned char cwProd; /**< \brief The production id */
 				unsigned char yearProd; /**< \brief The production year */
 			};
+
+			/**
+			 * \brief Select an application.
+			 * \param location The DESFire location
+			 */
+			virtual void selectApplication(boost::shared_ptr<DESFireLocation> location);
+
+			/**
+			 * \brief Create a new application.
+			 * \param location The DESFire location
+			 * \param settings Key settings
+			 * \param maxNbKeys Maximum number of keys
+			 */
+			virtual void createApplication(boost::shared_ptr<DESFireLocation> location, DESFireKeySettings settings, int maxNbKeys);
+
+			/**
+			 * \brief Create a new data file in the current application.
+			 * \param location The DESFire location
+			 * \param accessRights The file access rights
+			 * \param fileSize The file size.
+			 */
+			virtual void createStdDataFile(boost::shared_ptr<DESFireLocation> location, DESFireAccessRights accessRights, int fileSize);
+
+			/**
+			 * \brief Get the communication mode for a file.
+			 * \param aiToUse DESFire access information to use
+			 * \param fileno The file number
+		     * \param isReadMode Is read or write mode
+			 * \param needLoadKey Set if it's necessary to be authenticate for the access.
+			 * \return The communication mode.
+			 */
+			virtual EncryptionMode getEncryptionMode(boost::shared_ptr<AccessInfo> aiToUse, unsigned char fileno, bool isReadMode, bool* needLoadKey);
+
+			/**
+			 * \brief Get the length of a file.
+			 * \param fileno The file number
+			 * \return The length.
+			 */
+			virtual size_t getFileLength(unsigned char fileno);
 
 			/**
 			 * \brief Select an application.
@@ -457,6 +499,10 @@ namespace logicalaccess
 			 * \return True on success, false otherwise.
 			 */
 			virtual bool getVersion(DESFireCardVersion& dataVersion) = 0;
+
+		protected:
+
+			boost::shared_ptr<DESFireChip> getDESFireChip() const;
 	};
 }
 

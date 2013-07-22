@@ -144,7 +144,7 @@ namespace logicalaccess
 	{
 		std::vector<unsigned char> data;
 		
-		data.push_back(keyA->isEmpty() ? 0 : 1);
+		data.push_back(static_cast<unsigned char>(keyA->isEmpty() ? 0 : 1));
 
 		if (!keyA->isEmpty())
 		{
@@ -159,7 +159,7 @@ namespace logicalaccess
 			}
 		}
 
-		data.push_back(keyB->isEmpty() ? 0 : 1);
+		data.push_back(static_cast<unsigned char>(keyB->isEmpty() ? 0 : 1));
 
 		if (!keyB->isEmpty())
 		{
@@ -180,7 +180,7 @@ namespace logicalaccess
 		data.insert(data.end(), sabbuf, sabbuf + sizeof(sabbuf));
 		data.push_back(useMAD ? 0x01 : 0x00);
 
-		data.push_back(madKeyA->isEmpty() ? 0 : 1);
+		data.push_back(static_cast<unsigned char>(madKeyA->isEmpty() ? 0 : 1));
 
 		if (!madKeyA->isEmpty())
 		{
@@ -195,7 +195,7 @@ namespace logicalaccess
 			}
 		}
 
-		data.push_back(madKeyB->isEmpty() ? 0 : 1);
+		data.push_back(static_cast<unsigned char>(madKeyB->isEmpty() ? 0 : 1));
 
 		if (!madKeyB->isEmpty())
 		{

@@ -9,7 +9,7 @@
 
 #include "logicalaccess/cards/chip.hpp"
 
-#include "mifareultralightcardprovider.hpp"
+#include "mifareultralightcommands.hpp"
 #include "mifareultralightprofile.hpp"
 
 #include <string>
@@ -56,10 +56,17 @@ namespace logicalaccess
 			virtual boost::shared_ptr<LocationNode> getRootLocationNode();
 
 			/**
-			 * \brief Get the Mifare Ultralight card provider for I/O access.
-			 * \return The Mifare Ultralight card provider.
+			 * \brief Get a card service for this chip.
+			 * \param serviceType The card service type.
+			 * \return The card service.
 			 */
-			boost::shared_ptr<MifareUltralightCardProvider> getMifareUltralightCardProvider() { return boost::dynamic_pointer_cast<MifareUltralightCardProvider>(getCardProvider()); };
+			virtual boost::shared_ptr<CardService> getService(CardServiceType serviceType);
+
+			/**
+			 * \brief Get the Mifare Ultralight commands.
+			 * \return The Mifare Ultralight commands.
+			 */
+			boost::shared_ptr<MifareUltralightCommands> getMifareUltralightCommands() { return boost::dynamic_pointer_cast<MifareUltralightCommands>(getCommands()); };
 
 			/**
 			 * \brief Get the Mifare Ultralight profile.

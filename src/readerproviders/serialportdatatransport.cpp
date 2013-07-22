@@ -101,7 +101,7 @@ namespace logicalaccess
 
 	void SerialPortDataTransport::configure()
 	{
-		configure(d_port, Settings::getInstance().IsConfigurationRetryEnabled);
+		configure(d_port, Settings::getInstance()->IsConfigurationRetryEnabled);
 	}
 
 	void SerialPortDataTransport::configure(boost::shared_ptr<SerialPortXml> port, bool retryConfiguring)
@@ -113,7 +113,7 @@ namespace logicalaccess
 		{
 			unsigned long baudrate = getPortBaudRate();
 
-			DEBUG_("Configuring serial port - Baudrate {%ul}...", baudrate);
+			DEBUG_("Configuring serial port %s - Baudrate {%ul}...", port->getSerialPort()->deviceName().c_str(), baudrate);
 
 #ifndef _WINDOWS
 			struct termios options = port->getSerialPort()->configuration();
@@ -183,9 +183,9 @@ namespace logicalaccess
 				// Strange stuff is going here... by waiting and reopening the COM port (maybe for system cleanup), it's working !
 				std::string portn = port->getSerialPort()->deviceName();
 				WARNING_("Exception received {%s} ! Sleeping {%d} milliseconds -> Reopen serial port {%s} -> Finally retry  to configure...",
-							e.what(), Settings::getInstance().ConfigurationRetryTimeout, portn.c_str());
+							e.what(), Settings::getInstance()->ConfigurationRetryTimeout, portn.c_str());
 #ifndef __linux__
-				Sleep(Settings::getInstance().ConfigurationRetryTimeout);
+				Sleep(Settings::getInstance()->ConfigurationRetryTimeout);
 #else
 				sleep(Settings::getInstance().ConfigurationRetryTimeout);
 #endif
@@ -199,7 +199,7 @@ namespace logicalaccess
 	{
 		if (d_port && d_port->getSerialPort()->deviceName() == "")
 		{
-			if (!Settings::getInstance().IsAutoDetectEnabled)
+			if (!Settings::getInstance()->IsAutoDetectEnabled)
 			{
 				INFO_SIMPLE_("Auto detection is disabled through settings !");
 				return;
@@ -226,7 +226,7 @@ namespace logicalaccess
 							
 							
 							d_port = (*i);
-							std::vector<unsigned char> r = sendCommand(wrappedcmd, Settings::getInstance().AutoDetectionTimeout);
+							std::vector<unsigned char> r = sendCommand(wrappedcmd, Settings::getInstance()->AutoDetectionTimeout);
 							if (r.size() > 0)
 							{
 								INFO_SIMPLE_("Reader found ! Using this COM port !");

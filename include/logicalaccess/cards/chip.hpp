@@ -9,8 +9,9 @@
 
 #include "logicalaccess/readerproviders/readerunit.hpp"
 #include "logicalaccess/cards/profile.hpp"
-#include "logicalaccess/cards/cardprovider.hpp"
 #include "logicalaccess/cards/locationnode.hpp"
+#include "logicalaccess/services/cardservice.hpp"
+#include "logicalaccess/cards/commands.hpp"
 
 #include "logicalaccess/logs.hpp"
 
@@ -72,16 +73,16 @@ namespace logicalaccess
 			virtual boost::shared_ptr<LocationNode> getRootLocationNode();
 
 			/**
-			 * \brief Get the card provider for I/O access.
-			 * \return The card provider.
+			 * \brief Get the commands.
+			 * \return The commands.
 			 */
-			boost::shared_ptr<CardProvider> getCardProvider() const { return d_cardprovider; };
+			boost::shared_ptr<Commands> getCommands() const { return d_commands; };
 
 			/**
-			 * \brief Set the card provider for I/O access.
-			 * \param provider The card provider.
+			 * \brief Set commands.
+			 * \param commands The commands.
 			 */
-			void setCardProvider(boost::shared_ptr<CardProvider> provider);
+			void setCommands(boost::shared_ptr<Commands> commands) { d_commands = commands; };
 
 			/**
 			 * \brief Get the profile.
@@ -131,6 +132,13 @@ namespace logicalaccess
 			 */
 			void setReceptionLevel(unsigned char receptionLevel) { d_receptionLevel = receptionLevel; };
 
+			/**
+			 * \brief Get a card service for this chip.
+			 * \param serviceType The card service type.
+			 * \return The card service.
+			 */
+			virtual boost::shared_ptr<CardService> getService(CardServiceType serviceType);
+
 			bool operator < (const Chip& chip)
 			{
 				return d_receptionLevel < chip.getReceptionLevel();
@@ -154,9 +162,9 @@ namespace logicalaccess
 			ChipPowerStatus d_powerStatus;
 
 			/**
-			 * \brief The card provider.
+			 * \brief Commands object.
 			 */
-			boost::shared_ptr<CardProvider> d_cardprovider;
+			boost::shared_ptr<Commands> d_commands;
 
 			/**
 			 * \brief The profile.

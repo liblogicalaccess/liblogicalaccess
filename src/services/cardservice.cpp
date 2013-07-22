@@ -5,19 +5,14 @@
  */
 
 #include "logicalaccess/services/cardservice.hpp"
-#include "logicalaccess/cards/cardprovider.hpp"
+#include "logicalaccess/cards/chip.hpp"
 
 
 namespace logicalaccess
 {
-	CardService::CardService(boost::shared_ptr<CardProvider> cardProvider)
+	CardService::CardService(boost::shared_ptr<Chip> chip)
 	{
-		d_cardProvider = cardProvider;
-	}
-
-	boost::shared_ptr<CardProvider> CardService::getCardProvider()
-	{
-		return d_cardProvider;
+		d_chip = chip;
 	}
 }
 

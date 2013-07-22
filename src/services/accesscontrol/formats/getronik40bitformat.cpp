@@ -134,13 +134,6 @@ namespace logicalaccess
 	{
 		unsigned int pos = 0;
 
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasWriteFormatAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		if(data != NULL)
 		{
 			BitHelper::writeToBit(data, dataLengthBytes, &pos, 0x2E, 0, 8);
@@ -163,13 +156,6 @@ namespace logicalaccess
 
 	void Getronik40BitFormat::setLinearData(const void* data, size_t dataLengthBytes)
 	{
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasReadFormatAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		unsigned int pos = 0;
 		unsigned char fixedValue = 0x00;
 		if (data != NULL)

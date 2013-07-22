@@ -37,7 +37,7 @@ namespace logicalaccess
 			virtual void authenticate(boost::shared_ptr<TripleDESKey> authkey);
 
 		
-		protected:						
+		protected:
 					
 	};	
 }

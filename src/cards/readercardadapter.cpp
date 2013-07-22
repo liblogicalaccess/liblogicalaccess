@@ -26,6 +26,10 @@ namespace logicalaccess
 		{
 			res = adaptAnswer(d_dataTransport->sendCommand(adaptCommand(command), timeout));
 		}
+		else
+		{
+			ERROR_SIMPLE_("Cannot transmit the command, data transport is not set!");
+		}
 
 		return res;
 	}

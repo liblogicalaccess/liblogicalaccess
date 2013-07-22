@@ -9,7 +9,7 @@
 
 #include "mifareplusspringcardcommands.hpp"
 #include "../readercardadapters/pcscreadercardadapter.hpp"
-#include "mifarepluscommandssl1.hpp"
+#include "mifareplussl1commands.hpp"
 #include "mifarespringcardcommands.hpp"
 
 
@@ -23,7 +23,7 @@ namespace logicalaccess
 	/**
 	 * \brief The Mifare Plus commands SL1 class for SpringCard reader.
 	 */
-	class LIBLOGICALACCESS_API MifarePlusSpringCardCommandsSL1 : public MifarePlusCommandsSL1, public MifarePlusSpringCardCommands, public MifareSpringCardCommands
+	class LIBLOGICALACCESS_API MifarePlusSpringCardCommandsSL1 : public MifarePlusSL1Commands, public MifarePlusSpringCardCommands, public MifareSpringCardCommands
 	{
 		public:			
 

@@ -5,11 +5,12 @@
  */
 
 #include "twicaccesscontrolcardservice.hpp"
-#include "twiccardprovider.hpp"
 #include "twicchip.hpp"
+#include "twiclocation.hpp"
 #include "logicalaccess/cards/readercardadapter.hpp"
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 #include "logicalaccess/services/accesscontrol/formats/fascn200bitformat.hpp"
+#include "logicalaccess/services/storage/storagecardservice.hpp"
 
 
 #ifdef __linux__
@@ -18,8 +19,8 @@
 
 namespace logicalaccess
 {
-	TwicAccessControlCardService::TwicAccessControlCardService(boost::shared_ptr<CardProvider> cardProvider)
-		: AccessControlCardService(cardProvider)
+	TwicAccessControlCardService::TwicAccessControlCardService(boost::shared_ptr<Chip> chip)
+		: AccessControlCardService(chip)
 	{
 		
 	}
@@ -28,21 +29,9 @@ namespace logicalaccess
 	{
 	}
 
-	boost::shared_ptr<TwicCardProvider> TwicAccessControlCardService::getTwicCardProvider()
-	{
-		return boost::dynamic_pointer_cast<TwicCardProvider>(getCardProvider());
-	}
-
 	boost::shared_ptr<Format> TwicAccessControlCardService::readFormat(boost::shared_ptr<Format> format, boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> /*aiToUse*/)
 	{
 		bool ret = false;
-
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasReadFormatAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
 		
 		boost::shared_ptr<Format> formatret;
 		if (format)
@@ -77,10 +66,14 @@ namespace logicalaccess
 			memset(formatBuf, 0x00, length);
 			try
 			{
-				if (getCardProvider()->readData(pLocation, boost::shared_ptr<AccessInfo>(), formatBuf, length, CB_DEFAULT))
+				boost::shared_ptr<StorageCardService> storage = boost::dynamic_pointer_cast<StorageCardService>(getTwicChip()->getService(CST_STORAGE));
+				if (storage)
 				{
-					formatret->setLinearData(formatBuf, length);
-					ret = true;
+					if (storage->readData(pLocation, boost::shared_ptr<AccessInfo>(), formatBuf, length, CB_DEFAULT))
+					{
+						formatret->setLinearData(formatBuf, length);
+						ret = true;
+					}
 				}
 			}
 			catch(std::exception&)

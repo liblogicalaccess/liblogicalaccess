@@ -8,7 +8,7 @@
 #define LOGICALACCESS_TWICCHIP_HPP
 
 #include "../iso7816/iso7816chip.hpp"
-#include "twiccardprovider.hpp"
+#include "twiccommands.hpp"
 #include "twicprofile.hpp"
 
 #include <string>
@@ -43,10 +43,17 @@ namespace logicalaccess
 			virtual boost::shared_ptr<LocationNode> getRootLocationNode();
 
 			/**
-			 * \brief Get the Twic card provider for I/O access.
-			 * \return The Twic card provider.
+			 * \brief Get a card service for this chip.
+			 * \param serviceType The card service type.
+			 * \return The card service.
 			 */
-			boost::shared_ptr<TwicCardProvider> getTwicCardProvider() { return boost::dynamic_pointer_cast<TwicCardProvider>(getISO7816CardProvider()); };
+			virtual boost::shared_ptr<CardService> getService(CardServiceType serviceType);
+
+			/**
+			 * \brief Get the Twic commands.
+			 * \return The Twic commands.
+			 */
+			boost::shared_ptr<TwicCommands> getTwicCommands() { return boost::dynamic_pointer_cast<TwicCommands>(getISO7816Commands()); };
 
 			/**
 			 * \brief Get the Twic profile.

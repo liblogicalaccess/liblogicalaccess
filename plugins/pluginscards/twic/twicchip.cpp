@@ -6,6 +6,9 @@
 
 #include "twicchip.hpp"
 #include "twicprofile.hpp"
+#include "twiclocation.hpp"
+#include "twicaccesscontrolcardservice.hpp"
+#include "twicstoragecardservice.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -44,7 +47,7 @@ namespace logicalaccess
 		ucuiLocation->dataObject = 0x5FC104;
 		ucuiNode->setLocation(ucuiLocation);
 		ucuiNode->setNeedAuthentication(true);
-		ucuiNode->setLength(getTwicCardProvider()->getDataObjectLength(ucuiLocation->dataObject, true));
+		ucuiNode->setLength(getTwicCommands()->getDataObjectLength(ucuiLocation->dataObject, true));
 		ucuiNode->setParent(applNode);		
 		applNode->getChildrens().push_back(ucuiNode);
 
@@ -56,7 +59,7 @@ namespace logicalaccess
 		tpkLocation->dataObject = 0xDFC101;
 		tpkNode->setLocation(tpkLocation);
 		tpkNode->setNeedAuthentication(true);
-		tpkNode->setLength(getTwicCardProvider()->getDataObjectLength(tpkLocation->dataObject, true));
+		tpkNode->setLength(getTwicCommands()->getDataObjectLength(tpkLocation->dataObject, true));
 		tpkNode->setParent(applNode);
 		applNode->getChildrens().push_back(tpkNode);
 
@@ -68,7 +71,7 @@ namespace logicalaccess
 		cuiLocation->dataObject = 0x5FC102;
 		cuiNode->setLocation(cuiLocation);
 		cuiNode->setNeedAuthentication(true);
-		cuiNode->setLength(getTwicCardProvider()->getDataObjectLength(cuiLocation->dataObject, true));
+		cuiNode->setLength(getTwicCommands()->getDataObjectLength(cuiLocation->dataObject, true));
 		cuiNode->setParent(applNode);
 		applNode->getChildrens().push_back(cuiNode);
 
@@ -80,7 +83,7 @@ namespace logicalaccess
 		cfLocation->dataObject = 0xDFC103;
 		cfNode->setLocation(cfLocation);
 		cfNode->setNeedAuthentication(true);
-		cfNode->setLength(getTwicCardProvider()->getDataObjectLength(cfLocation->dataObject, true));
+		cfNode->setLength(getTwicCommands()->getDataObjectLength(cfLocation->dataObject, true));
 		cfNode->setParent(applNode);
 		applNode->getChildrens().push_back(cfNode);
 
@@ -92,10 +95,38 @@ namespace logicalaccess
 		soLocation->dataObject = 0xDFC10F;
 		soNode->setLocation(soLocation);
 		soNode->setNeedAuthentication(true);
-		soNode->setLength(getTwicCardProvider()->getDataObjectLength(soLocation->dataObject, true));
+		soNode->setLength(getTwicCommands()->getDataObjectLength(soLocation->dataObject, true));
 		soNode->setParent(applNode);
 		applNode->getChildrens().push_back(soNode);
 
 		return rootNode;
+	}
+
+	boost::shared_ptr<CardService> TwicChip::getService(CardServiceType serviceType)
+	{
+		boost::shared_ptr<CardService> service;
+
+		switch (serviceType)
+		{
+		case CST_ACCESS_CONTROL:
+			{
+				service.reset(new TwicAccessControlCardService(shared_from_this()));
+			}
+			break;
+		case CST_STORAGE:
+			{
+				service.reset(new TwicStorageCardService(shared_from_this()));
+			}
+			break;
+		case CST_NFC_TAG:
+		  break;
+		}
+
+		if (!service)
+		{
+			service = ISO7816Chip::getService(serviceType);
+		}
+
+		return service;
 	}
 }

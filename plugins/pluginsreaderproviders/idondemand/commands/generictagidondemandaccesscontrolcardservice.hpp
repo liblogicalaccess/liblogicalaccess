@@ -23,9 +23,9 @@ namespace logicalaccess
 
 			/**
 			 * \brief Constructor.
-			 * \param cardProvider The associated card provider.
+			 * \param chip The chip.
 			 */
-			GenericTagIdOnDemandAccessControlCardService(boost::shared_ptr<CardProvider> cardProvider);
+			GenericTagIdOnDemandAccessControlCardService(boost::shared_ptr<Chip> chip);
 
 			/**
 			 * \brief Destructor.

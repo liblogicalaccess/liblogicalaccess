@@ -164,7 +164,6 @@ namespace logicalaccess
 		if (pollBuf.size() > 0)
 		{
 			std::vector<unsigned char> tmpId;
-			std::vector<unsigned char> pollBuf = getDefaultDeisterReaderCardAdapter()->sendCommand(std::vector<unsigned char>());
 			if (pollBuf.size() > 0)
 			{
 				EXCEPTION_ASSERT_WITH_LOG(pollBuf[0] == 0x00, LibLogicalAccessException, "Bad polling answer, LOC byte");
@@ -238,7 +237,6 @@ namespace logicalaccess
 		if (chip)
 		{
 			boost::shared_ptr<ReaderCardAdapter> rca;
-			boost::shared_ptr<CardProvider> cp;
 
 			if (type == "Mifare1K" || type == "Mifare4K" || type == "Mifare")
 				rca = getDefaultReaderCardAdapter();
@@ -246,10 +244,6 @@ namespace logicalaccess
 				return chip;
 
 			rca->setDataTransport(getDataTransport());
-			if(cp)
-			{
-				chip->setCardProvider(cp);
-			}
 		}
 		return chip;
 	}

@@ -5,6 +5,7 @@
  */
 
 #include "mifareultralightcchip.hpp"
+#include "mifareultralightcstoragecardservice.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -35,5 +36,19 @@ namespace logicalaccess
 		}
 
 		return rootNode;
+	}
+
+	boost::shared_ptr<CardService> MifareUltralightCChip::getService(CardServiceType serviceType)
+	{
+		boost::shared_ptr<CardService> service;
+
+		switch (serviceType)
+		{
+		case CST_STORAGE:
+			service.reset(new MifareUltralightCStorageCardService(shared_from_this()));
+			break;
+		}
+
+		return service;
 	}
 }

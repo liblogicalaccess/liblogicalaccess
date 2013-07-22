@@ -8,7 +8,7 @@
 #define LOGICALACCESS_ISO7816CHIP_HPP
 
 #include "logicalaccess/cards/chip.hpp"
-#include "iso7816cardprovider.hpp"
+#include "iso7816commands.hpp"
 #include "iso7816profile.hpp"
 
 #include <string>
@@ -54,10 +54,17 @@ namespace logicalaccess
 			virtual boost::shared_ptr<LocationNode> getRootLocationNode();
 
 			/**
-			 * \brief Get the ISO7816 card provider for I/O access.
-			 * \return The ISO7816 card provider.
+			 * \brief Get a card service for this chip.
+			 * \param serviceType The card service type.
+			 * \return The card service.
 			 */
-			boost::shared_ptr<ISO7816CardProvider> getISO7816CardProvider() { return boost::dynamic_pointer_cast<ISO7816CardProvider>(getCardProvider()); };
+			virtual boost::shared_ptr<CardService> getService(CardServiceType serviceType);
+
+			/**
+			 * \brief Get the ISO7816 commands.
+			 * \return The ISO7816 commands.
+			 */
+			boost::shared_ptr<ISO7816Commands> getISO7816Commands() { return boost::dynamic_pointer_cast<ISO7816Commands>(getCommands()); };
 
 			/**
 			 * \brief Get the ISO7816 profile.

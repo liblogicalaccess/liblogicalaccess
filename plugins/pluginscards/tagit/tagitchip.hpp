@@ -8,7 +8,7 @@
 #define LOGICALACCESS_TAGITCHIP_HPP
 
 #include "../iso15693/iso15693chip.hpp"
-#include "tagitcardprovider.hpp"
+#include "tagitcommands.hpp"
 
 #include <string>
 #include <vector>
@@ -42,10 +42,10 @@ namespace logicalaccess
 			virtual boost::shared_ptr<LocationNode> getRootLocationNode();
 
 			/**
-			 * \brief Get the Tag-It card provider for I/O access.
-			 * \return The Tag-It card provider.
+			 * \brief Get the Tag-It commands.
+			 * \return The Tag-It commands.
 			 */
-			boost::shared_ptr<TagItCardProvider> getTagItCardProvider() { return boost::dynamic_pointer_cast<TagItCardProvider>(getISO15693CardProvider()); };
+			boost::shared_ptr<TagItCommands> getTagItCommands() { return boost::dynamic_pointer_cast<TagItCommands>(getISO15693Commands()); };
 
 		protected:
 

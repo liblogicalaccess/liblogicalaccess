@@ -19,10 +19,6 @@
 #include "logicalaccess/cards/chip.hpp"
 #include "readercardadapters/rplethreadercardadapter.hpp"
 #include "readercardadapters/iso7816rplethreadercardadapter.hpp"
-#include "mifarecardprovider.hpp"
-#include "mifareultralightcardprovider.hpp"
-#include "desfirecardprovider.hpp"
-#include "desfireev1cardprovider.hpp"
 #include "commands/desfireev1iso7816commands.hpp"
 #include "commands/mifarerplethcommands.hpp"
 #include "commands/mifareultralightrplethcommands.hpp"
@@ -228,18 +224,15 @@ namespace logicalaccess
 		if (chip)
 		{
 			boost::shared_ptr<ReaderCardAdapter> rca;
-			boost::shared_ptr<CardProvider> cp;
 			boost::shared_ptr<Commands> commands;
 
 			if (type ==  "Mifare1K" || type == "Mifare4K" || type == "Mifare")
 			{
-				cp.reset(new MifareCardProvider());
 				commands.reset(new MifareRplethCommands);
 				rca = getDefaultReaderCardAdapter();
 			}
 			else if (type ==  "MifareUltralight")
 			{
-				cp.reset(new MifareUltralightCardProvider());
 				commands.reset(new MifareUltralightRplethCommands());
 				rca = getDefaultReaderCardAdapter();
 			}
@@ -250,7 +243,6 @@ namespace logicalaccess
 			else if (type == "DESFire")
 			{
 				rca.reset(new ISO7816RplethReaderCardAdapter());
-				cp.reset(new DESFireCardProvider());
 				commands.reset(new DESFireISO7816Commands());
 				boost::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->getCrypto().setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(chip->getProfile()), chip->getChipIdentifier());
 			}
@@ -261,16 +253,9 @@ namespace logicalaccess
 				if (commands)
 				{
 					commands->setReaderCardAdapter(rca);
+					commands->setChip(chip);
+					chip->setCommands(commands);
 				}
-				if (cp)
-				{
-					cp->setCommands(commands);
-				}
-				else
-				{
-					cp = LibraryManager::getInstance()->getCardProvider(type);
-				}
-				chip->setCardProvider(cp);
 			}
 		}
 		return chip;

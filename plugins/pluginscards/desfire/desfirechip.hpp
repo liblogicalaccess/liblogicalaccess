@@ -8,7 +8,7 @@
 #define LOGICALACCESS_DESFIRECHIP_HPP
 
 #include "logicalaccess/cards/chip.hpp"
-#include "desfirecardprovider.hpp"
+#include "desfirecommands.hpp"
 #include "desfireprofile.hpp"
 
 #include <string>
@@ -66,10 +66,17 @@ namespace logicalaccess
 			virtual boost::shared_ptr<DESFireLocation> getApplicationLocation();
 
 			/**
-			 * \brief Get the DESFire card provider for I/O access.
-			 * \return The DESFire card provider.
+			 * \brief Get a card service for this card provider.
+			 * \param serviceType The card service type.
+			 * \return The card service.
 			 */
-			boost::shared_ptr<DESFireCardProvider> getDESFireCardProvider() { return boost::dynamic_pointer_cast<DESFireCardProvider>(getCardProvider()); };
+			virtual boost::shared_ptr<CardService> getService(CardServiceType serviceType);
+
+			/**
+			 * \brief Get the DESFire commands.
+			 * \return The DESFire commands.
+			 */
+			boost::shared_ptr<DESFireCommands> getDESFireCommands() { return boost::dynamic_pointer_cast<DESFireCommands>(getCommands()); };
 
 			/**
 			 * \brief Get the DESFire profile.

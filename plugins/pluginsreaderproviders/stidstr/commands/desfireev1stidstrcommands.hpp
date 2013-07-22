@@ -39,7 +39,7 @@ namespace logicalaccess
 	/**
 	 * \brief The DESFire EV1 base commands class for STidSTR reader.
 	 */
-	class LIBLOGICALACCESS_API DESFireEV1STidSTRCommands : public DESFireCommands, public DESFireEV1Commands
+	class LIBLOGICALACCESS_API DESFireEV1STidSTRCommands : public DESFireEV1Commands
 	{
 		public:
 

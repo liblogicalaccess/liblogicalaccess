@@ -20,7 +20,6 @@
 #include <boost/filesystem.hpp>
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
-#include "mifarecardprovider.hpp"
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
 
 namespace logicalaccess
@@ -204,19 +203,16 @@ namespace logicalaccess
 		if (chip)
 		{
 			boost::shared_ptr<ReaderCardAdapter> rca;
-			boost::shared_ptr<CardProvider> cp;
 			boost::shared_ptr<Commands> commands;
 
 			if (type == "Mifare1K" || type == "Mifare4K" || type == "Mifare")
 			{
 				rca.reset(new MifareSmartIDReaderCardAdapter());
-				cp.reset(new MifareCardProvider());
 				commands.reset(new MifareSmartIDCommands());
 			}
 			else if (type == "DESFireEV1")
 			{
 				rca = getDefaultReaderCardAdapter();
-				cp = LibraryManager::getInstance()->getCardProvider("DESFireEV1");
 				commands = LibraryManager::getInstance()->getCommands("DESFireEV1ISO7816");
 				*(void**)(&setcryptocontextfct) = LibraryManager::getInstance()->getFctFromName("setCryptoContextDESFireEV1ISO7816Commands", LibraryManager::READERS_TYPE);
 				setcryptocontextfct(&commands, &chip);
@@ -224,7 +220,6 @@ namespace logicalaccess
 			else if (type == "DESFire")
 			{
 				rca = getDefaultReaderCardAdapter();
-				cp = LibraryManager::getInstance()->getCardProvider("DESFire");
 				commands = LibraryManager::getInstance()->getCommands("DESFireISO7816");
 				*(void**)(&setcryptocontextfct) = LibraryManager::getInstance()->getFctFromName("setCryptoContextDESFireEV1ISO7816Commands", LibraryManager::READERS_TYPE);
 				setcryptocontextfct(&commands, &chip);
@@ -232,7 +227,6 @@ namespace logicalaccess
 			else if (type == "Twic")
 			{
 				rca = getDefaultReaderCardAdapter();
-				cp = LibraryManager::getInstance()->getCardProvider("Twic");
 				commands = LibraryManager::getInstance()->getCommands("TwicISO7816");
 			}
 			else
@@ -242,12 +236,9 @@ namespace logicalaccess
 			if (commands)
 			{
 				commands->setReaderCardAdapter(rca);
+				commands->setChip(chip);
+				chip->setCommands(commands);
 			}
-			if (cp)
-			{
-				cp->setCommands(commands);
-			}
-			chip->setCardProvider(cp);
 		}
 		return chip;
 	}

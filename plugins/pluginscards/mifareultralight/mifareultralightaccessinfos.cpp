@@ -37,7 +37,7 @@ namespace logicalaccess
 	{
 		std::vector<unsigned char> data;
 		
-		data.push_back(lockPage ? 1 : 0);
+		data.push_back(static_cast<unsigned char>(lockPage ? 1 : 0));
 
 		return data;
 	}

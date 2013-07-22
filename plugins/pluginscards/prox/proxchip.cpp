@@ -10,6 +10,9 @@
 #include <iomanip>
 #include <sstream>
 
+#include "proxaccesscontrolcardservice.hpp"
+
+
 namespace logicalaccess
 {
 	ProxChip::ProxChip()
@@ -30,5 +33,28 @@ namespace logicalaccess
 		rootNode->setName("HID Prox");
 
 		return rootNode;
+	}
+
+	boost::shared_ptr<CardService> ProxChip::getService(CardServiceType serviceType)
+	{
+		boost::shared_ptr<CardService> service;
+
+		switch (serviceType)
+		{
+		case CST_ACCESS_CONTROL:
+			{
+				service.reset(new ProxAccessControlCardService(shared_from_this()));
+			}
+			break;
+		case CST_NFC_TAG:
+		  break;
+		}
+
+		if (!service)
+		{
+			service = Chip::getService(serviceType);
+		}
+
+		return service;
 	}
 }

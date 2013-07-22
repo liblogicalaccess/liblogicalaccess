@@ -5,7 +5,6 @@
  */
 
 #include "mifareprofile.hpp"
-#include "mifarecardprovider.hpp"
 
 namespace logicalaccess
 {	

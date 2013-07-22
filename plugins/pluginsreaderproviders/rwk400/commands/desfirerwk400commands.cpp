@@ -126,7 +126,7 @@ namespace logicalaccess
 				answer.erase(answer.begin(), answer.begin()+3);
 			if (answer.size() == 86)
 			{
-				for (int i = 0; i < answer.size(); i+=3)
+				for (unsigned int i = 0; i < answer.size(); i+=3)
 				{	
 					tmp = answer[i+2];
 					tmp <<= 8;
@@ -188,7 +188,7 @@ namespace logicalaccess
 				answer.erase(answer.begin(), answer.begin()+2);
 			if (answer.size () % 3 == 0 && answer.size() > 0)
 			{
-				for (int i = 0; i < answer.size(); i+=3)
+				for (unsigned int i = 0; i < answer.size(); i+=3)
 				{	
 					tmp = answer[i+2];
 					tmp <<= 8;
@@ -525,7 +525,7 @@ namespace logicalaccess
 				res.push_back(tmp);
 			}
 			tmp = 0;
-			for (int i = 0; i < res.size(); i++)
+			for (unsigned int i = 0; i < res.size(); i++)
 			{
 				tmp ^= res[i];
 			}
