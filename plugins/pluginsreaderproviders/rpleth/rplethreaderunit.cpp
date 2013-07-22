@@ -149,11 +149,12 @@ namespace logicalaccess
 
 	void RplethReaderUnit::disconnect()
 	{
+		/*
 		if (getRplethConfiguration()->getMode() == RplethMode::RS)
 		{
 			getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("x");
 			getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("v");
-		}
+		}*/
 
 		INFO_SIMPLE_("Disconnected from the chip");
 	}
