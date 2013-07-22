@@ -308,8 +308,13 @@ namespace logicalaccess
 			 * \brief Get the internal DESFire crypto.
 			 * \return The internal DESFire crypto.
 			 */
-			DESFireCrypto& getCrypto();
+			boost::shared_ptr<DESFireCrypto> getCrypto();
 
+			/**
+			 * \brief Get the internal DESFire crypto.
+			 * \return The internal DESFire crypto.
+			 */
+			void setCrypto(boost::shared_ptr<DESFireCrypto> t);
 
 			/**
 			 * \brief Set the SAM Chip.
@@ -380,7 +385,7 @@ namespace logicalaccess
 			/**
 			 * \brief Crypto instance for security manipulation.
 			 */
-			DESFireCrypto d_crypto;
+			boost::shared_ptr<DESFireCrypto> d_crypto;
 
 			/**
 			 * \brief The SAMChip used for the SAM Commands.

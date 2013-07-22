@@ -11,7 +11,11 @@
 #include "pcscreaderunitconfiguration.hpp"
 #include "iso7816readerunit.hpp"
 #include "iso7816readerunitconfiguration.hpp"
+#include "commands/samav2iso7816commands.hpp"
 #include "commands/desfireiso7816commands.hpp"
+#include "desfirechip.hpp"
+#include "samchip.hpp"
+#include "logicalaccess/cards/samkeystorage.hpp"
 
 #include <iostream>
 #include <string>
@@ -87,6 +91,12 @@ int main(int , char**)
 
 					boost::shared_ptr<logicalaccess::Chip> chip = readerConfig->getReaderUnit()->getSingleChip();
 					std::cout << "Card type: " << chip->getCardType() << std::endl;
+					//set storage key SAM
+					boost::shared_ptr<logicalaccess::DESFireLocation> location(new logicalaccess::DESFireLocation());
+					boost::shared_ptr<logicalaccess::DESFireKey> key(new logicalaccess::DESFireKey("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02"));
+					boost::shared_ptr<logicalaccess::KeyStorage> samstorage(new logicalaccess::SAMKeyStorage());
+					key->setKeyStorage(samstorage);
+					boost::dynamic_pointer_cast<logicalaccess::DESFireProfile>(chip->getProfile())->setKey(1313, 1, key); 
 
 					std::vector<unsigned char> csn = readerConfig->getReaderUnit()->getNumber(chip);
 					std::cout << "Card Serial Number : " << logicalaccess::BufferHelper::getHex(csn) << std::endl;	
@@ -102,7 +112,10 @@ int main(int , char**)
 
 					boost::shared_ptr<logicalaccess::PCSCReaderUnit> storage = boost::dynamic_pointer_cast<logicalaccess::PCSCReaderUnit>(readerConfig->getReaderUnit());
 					
-					boost::dynamic_pointer_cast<logicalaccess::DESFireISO7816Commands>(readerConfig->getReaderUnit()->getSingleChip()->getCommands())->authenticate();
+					boost::shared_ptr<logicalaccess::DESFireISO7816Commands> desfirecommand = boost::dynamic_pointer_cast<logicalaccess::DESFireISO7816Commands>(readerConfig->getReaderUnit()->getSingleChip()->getCommands());
+					boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->GetVersion();
+
+					desfirecommand->authenticate();
 					// DO SOMETHING HERE
 					// DO SOMETHING HERE
 					// DO SOMETHING HERE

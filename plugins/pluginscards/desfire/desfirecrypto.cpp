@@ -1161,15 +1161,19 @@ namespace logicalaccess
 
 	bool DESFireCrypto::getDiversify(unsigned char* diversify)
 	{
-		diversify[0] = 0xFF;
-		memcpy(diversify + 1, &d_identifier[0], d_identifier.size());
-		diversify[8] = 0x00;
-		memcpy(diversify + 9, &d_identifier[0], d_identifier.size());
-		for (unsigned char i = 0; i < 7; ++i)
+		if (d_identifier.size() > 0)
 		{
-			diversify[9 + i] ^= 0xFF;
+			diversify[0] = 0xFF;
+			memcpy(diversify + 1, &d_identifier[0], d_identifier.size());
+			diversify[8] = 0x00;
+			memcpy(diversify + 9, &d_identifier[0], d_identifier.size());
+			for (unsigned char i = 0; i < 7; ++i)
+			{
+				diversify[9 + i] ^= 0xFF;
+			}
 		}
-
+		else
+			return false;
 		return true;
 	}
 

@@ -10,6 +10,7 @@
 #include "samav2commands.hpp"
 #include "../readercardadapters/iso7816readercardadapter.hpp"
 #include "../iso7816readerunitconfiguration.hpp"
+#include "samcrypto.hpp"
 
 #include <string>
 #include <vector>
@@ -82,7 +83,6 @@ namespace logicalaccess
 		protected:
 
 			std::vector<unsigned char> sessionkey;
-
 	};
 }
 

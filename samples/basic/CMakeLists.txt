@@ -21,9 +21,12 @@ add_executable(
 )
 
 if(UNIX)
-  link_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../packages/lib" "${CMAKE_CURRENT_SOURCE_DIR}/../../plugins/cryptolib")
+	set(${LINK_DIRECTORY} "${CMAKE_CURRENT_SOURCE_DIR}/../../bin/${TARGET_ARCH}/${VC_FOLDER_NAME}" "../../plugins/pluginscards/desfire")
+  link_directories(${LINK_DIRECTORY})
 else()
-  link_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../bin/${TARGET_ARCH}/${VC_FOLDER_NAME}")
+	set(${LINK_DIRECTORY} "${CMAKE_CURRENT_SOURCE_DIR}/../../bin/${TARGET_ARCH}/${VC_FOLDER_NAME}" 				"${CMAKE_CURRENT_SOURCE_DIR}/../../plugins/pluginscards/desfire/${TARGET_ARCH}/${VC_FOLDER_NAME}"
+	"${CMAKE_CURRENT_SOURCE_DIR}/../../plugins/pluginsreaderproviders/pcsc/${TARGET_ARCH}/${VC_FOLDER_NAME}")
+  link_directories(${LINK_DIRECTORY})
 endif()
 
 remove_definitions(-DLIBLOGICALACCESS_EXPORTS -DLIBLOGICALACCESS_EXPORTS_DLL)
@@ -49,5 +52,6 @@ target_link_libraries(
         liblogicalaccess
 		pcscreaders
 		iso7816readers
+		desfirecards
 	${LIB_OPT}
 )

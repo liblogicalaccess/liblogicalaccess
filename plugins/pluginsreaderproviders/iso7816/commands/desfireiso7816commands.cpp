@@ -21,9 +21,14 @@ namespace logicalaccess
 	{
 	}
 
-	DESFireCrypto& DESFireISO7816Commands::getCrypto()
+	boost::shared_ptr<DESFireCrypto> DESFireISO7816Commands::getCrypto()
 	{
 		return d_crypto;
+	}
+
+	void DESFireISO7816Commands::setCrypto(boost::shared_ptr<DESFireCrypto> t)
+	{
+		d_crypto = t;
 	}
 
 	bool DESFireISO7816Commands::erase(bool resetKey)
@@ -107,7 +112,7 @@ namespace logicalaccess
 
 		transmit(DF_INS_SELECT_APPLICATION, command, sizeof(command));
 
-		d_crypto.selectApplication(aid);
+		d_crypto->selectApplication(aid);
 		r = true;
 
 		return r;
@@ -184,11 +189,11 @@ namespace logicalaccess
 		bool r = false;
 
 		unsigned char diversify[16];
-		if (!key->getDiversify() || d_crypto.getDiversify(diversify))
+		if (!key->getDiversify() || d_crypto->getDiversify(diversify))
 		{
 			unsigned char command[25];
 			command[0] = keyno;
-			std::vector<unsigned char> cryptogram = d_crypto.changeKey_PICC(keyno, key, diversify);
+			std::vector<unsigned char> cryptogram = d_crypto->changeKey_PICC(keyno, key, diversify);
 			memcpy(&command[1], &cryptogram[0], cryptogram.size());
 
 			std::vector<unsigned char> result = transmit(DF_INS_CHANGE_KEY, command, sizeof(command));
@@ -227,7 +232,7 @@ namespace logicalaccess
 	{
 		unsigned char command[1];
 		command[0] = static_cast<unsigned char>(settings);
-		std::vector<unsigned char> cryptogram = d_crypto.desfireEncrypt(std::vector<unsigned char>(command, command + sizeof(command)));
+		std::vector<unsigned char> cryptogram = d_crypto->desfireEncrypt(std::vector<unsigned char>(command, command + sizeof(command)));
 		transmit(DF_INS_CHANGE_KEY_SETTINGS, cryptogram);
 
 		return true;
@@ -262,14 +267,14 @@ namespace logicalaccess
 		{
 			if (mode == CM_ENCRYPT)
 			{
-				d_crypto.decipherData1(length, firstMsg);
+				d_crypto->decipherData1(length, firstMsg);
 			}
 			else
 			{
 				ret = data = firstMsg;
 				if (mode == CM_MAC)
 				{
-					d_crypto.initBuf(length + 4);
+					d_crypto->initBuf(length + 4);
 				}
 			}
 		}		
@@ -278,7 +283,7 @@ namespace logicalaccess
 		{
 			if (mode == CM_MAC)
 			{
-				if (!d_crypto.verifyMAC(false, data))
+				if (!d_crypto->verifyMAC(false, data))
 				{
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC data doesn't match.");
 				}
@@ -290,7 +295,7 @@ namespace logicalaccess
 
 			if (mode == CM_ENCRYPT)
 			{
-				d_crypto.decipherData2(data);
+				d_crypto->decipherData2(data);
 			}
 			else
 			{
@@ -308,7 +313,7 @@ namespace logicalaccess
 
 		case CM_MAC:
 			{
-				if (!d_crypto.verifyMAC(true, data))
+				if (!d_crypto->verifyMAC(true, data))
 				{
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC data doesn't match.");
 				}
@@ -317,7 +322,7 @@ namespace logicalaccess
 			break;
 		case CM_ENCRYPT:
 			{
-				ret = d_crypto.decipherData(length);
+				ret = d_crypto->decipherData(length);
 			}
 			break;
 		case CM_UNKNOWN:
@@ -347,7 +352,7 @@ namespace logicalaccess
 		size_t pkSize = 0;
 		bool ret = false;
 
-		d_crypto.initBuf(data.size());
+		d_crypto->initBuf(data.size());
 
 		if (data.size() <= DESFIRE_CLEAR_DATA_LENGTH_CHUNK)
 		{
@@ -361,7 +366,7 @@ namespace logicalaccess
 
 			case CM_MAC:
 				{
-					std::vector<unsigned char> mac = d_crypto.generateMAC(data);
+					std::vector<unsigned char> mac = d_crypto->generateMAC(data);
 					edata = data;
 					edata.insert(edata.end(), mac.begin(), mac.end());
 				}
@@ -369,7 +374,7 @@ namespace logicalaccess
 
 			case CM_ENCRYPT:
 				{
-					edata = d_crypto.desfireEncrypt(data);
+					edata = d_crypto->desfireEncrypt(data);
 				}
 				break;
 
@@ -387,11 +392,11 @@ namespace logicalaccess
 
 			case CM_MAC:
 				edata =std::vector<unsigned char>(data.begin(), data.begin() + DESFIRE_CLEAR_DATA_LENGTH_CHUNK);
-				d_crypto.bufferingForGenerateMAC(edata);
+				d_crypto->bufferingForGenerateMAC(edata);
 				break;
 
 			case CM_ENCRYPT:
-				edata = d_crypto.encipherData(false, std::vector<unsigned char>(data.begin(), data.begin() + DESFIRE_CLEAR_DATA_LENGTH_CHUNK));
+				edata = d_crypto->encipherData(false, std::vector<unsigned char>(data.begin(), data.begin() + DESFIRE_CLEAR_DATA_LENGTH_CHUNK));
 				break;
 
 			default:
@@ -428,23 +433,23 @@ namespace logicalaccess
 					edata =  std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize);
 					if (pos + pkSize == data.size())
 					{
-						std::vector<unsigned char> mac = d_crypto.generateMAC(edata);
+						std::vector<unsigned char> mac = d_crypto->generateMAC(edata);
 						edata.insert(edata.end(), mac.begin(), mac.end());								
 					}
 					else
 					{
-						d_crypto.bufferingForGenerateMAC(edata);
+						d_crypto->bufferingForGenerateMAC(edata);
 					}
 					break;
 
 				case CM_ENCRYPT:
 					if (pos + pkSize == data.size())
 					{
-						edata = d_crypto.encipherData(true, std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize));
+						edata = d_crypto->encipherData(true, std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize));
 					}
 					else
 					{
-						edata = d_crypto.encipherData(false, std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize));
+						edata = d_crypto->encipherData(false, std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize));
 					}
 					break;
 
@@ -487,7 +492,7 @@ namespace logicalaccess
 			std::vector<unsigned char> param;
 			param.push_back(DF_INS_CHANGE_FILE_SETTINGS);
 			param.push_back(static_cast<unsigned char>(fileno));
-			command = d_crypto.desfireEncrypt(command, param);
+			command = d_crypto->desfireEncrypt(command, param);
 		}
 		unsigned char fc = static_cast<unsigned char>(fileno);
 		command.insert(command.begin(), &fc, &fc + 1);
@@ -861,29 +866,32 @@ namespace logicalaccess
 	{
 		unsigned char command[16];
 
+		unsigned char kv = 0x00;
+		boost::shared_ptr<DESFireKey> key = d_crypto->getKey(keyno);
+		if (key)
+		{
+			kv = key->getKeyVersion();
+		}
 
-		boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(getSAMChip()->getCommands())->GetVersion();
 		bool r = false;
 		unsigned char diversify[16];
-		if (d_crypto.getDiversify(diversify))
+		if (d_crypto->getDiversify(diversify))
 		{
 			command[0] = keyno;
-
 			std::vector<unsigned char> result = DESFireISO7816Commands::transmit(DF_INS_AUTHENTICATE, command, 1);
 			if (result[result.size() - 1] == DF_INS_ADDITIONAL_FRAME && (result.size()-2) >= 8)
 			{
 				result.resize(8);
-				std::vector<unsigned char> rndAB = d_crypto.authenticate_PICC1(keyno, diversify, result);
+				std::vector<unsigned char> rndAB = d_crypto->authenticate_PICC1(keyno, diversify, result);
 				result = DESFireISO7816Commands::transmit(DF_INS_ADDITIONAL_FRAME, &rndAB[0], 16);
 				if ((result.size()-2) >= 8)
 				{
 					result.resize(result.size() - 2);
-					d_crypto.authenticate_PICC2(keyno, result);
+					d_crypto->authenticate_PICC2(keyno, result);
 					r = true;
 				}
 			}
 		}
-
 		return r;
 	}
 

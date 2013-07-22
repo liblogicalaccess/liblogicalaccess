@@ -8,7 +8,7 @@
 #include "../commands/samav2iso7816commands.hpp"
 #include "../iso7816readerunitconfiguration.hpp"
 #include "samav2chip.hpp"
-#include "samav2crypto.hpp"
+#include "samcrypto.hpp"
 #include <openssl/rand.h>
 
 #include <cstring>
@@ -44,8 +44,8 @@ namespace logicalaccess
 				std::cout << "Major version: T1AD2060" << std::endl;
 			if (info.hardware.minorversion == 0x04)
 				std::cout << "Major version: T1AR1070" << std::endl;
-			std::cout << "Storage size: " << info.hardware.storagesize << std::endl;
-			std::cout << "Communication protocol type : " << info.hardware.protocoltype << std::endl;
+			std::cout << "Storage size: " << (unsigned int)info.hardware.storagesize << std::endl;
+			std::cout << "Communication protocol type : " << (unsigned int)info.hardware.protocoltype << std::endl;
 		}
 		else
 			std::cout << "GetVersion has failed" << std::endl;
@@ -104,7 +104,7 @@ namespace logicalaccess
 
 		std::vector<unsigned char> vectordata(data, data + 60);
 
-		std::vector<unsigned char> encdatalittle = SAMAV2Crypto::desfire_encrypt(sessionkey, vectordata);
+		std::vector<unsigned char> encdatalittle;// = SAMAV2Crypto::desfire_encrypt(sessionkey, vectordata);
 
 
 		//std::vector<unsigned char> encdata = SAMAV2Crypto::desfire_CBC_send(sessionkey, iv, encdatalittle);
@@ -164,7 +164,7 @@ namespace logicalaccess
 
 		std::cout << BufferHelper::getHex(encRNB) << std::endl;
 		//dec RNB
-		std::vector<unsigned char> RndB = SAMAV2Crypto::desfire_CBC_send(key, iv, encRNB);
+		std::vector<unsigned char> RndB;// = SAMAV2Crypto::desfire_CBC_send(key, iv, encRNB);
 
 		std::cout << BufferHelper::getHex(RndB) << std::endl;
 		//Create RNB'
@@ -190,7 +190,7 @@ namespace logicalaccess
 
 		std::cout << BufferHelper::getHex(rndAB) << std::endl;
 		//enc rndAB
-		std::vector<unsigned char> encRndAB = SAMAV2Crypto::desfire_CBC_send(key, iv, rndAB);
+		std::vector<unsigned char> encRndAB;// = SAMAV2Crypto::desfire_CBC_send(key, iv, rndAB);
 
 		unsigned char encRndABdata[16];
 		for (int i = 0; i < 16; ++i)
@@ -204,7 +204,7 @@ namespace logicalaccess
 		std::cout << "YOLO P2: " << BufferHelper::getHex(std::vector<unsigned char>(result, result + resultlen)) << std::endl;
 
 		std::vector<unsigned char> encRNA(result, result + resultlen - 2);
-		std::vector<unsigned char> dencRndA = SAMAV2Crypto::desfire_CBC_send(key, iv, encRNA);
+		std::vector<unsigned char> dencRndA;// = SAMAV2Crypto::desfire_CBC_send(key, iv, encRNA);
 
 		//create rndA'
 		std::vector<unsigned char> rndA1;

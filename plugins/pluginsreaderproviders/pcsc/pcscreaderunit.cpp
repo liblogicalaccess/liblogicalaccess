@@ -349,12 +349,8 @@ namespace logicalaccess
 									DESFireCommands::DESFireCardVersion cardversion;
 									if (boost::dynamic_pointer_cast<DESFireChip>(d_insertedChip)->getDESFireCommands()->getVersion(cardversion))
 									{
-										// No UID from regular PC/SC commands ? Set from the version
-
-										if (d_insertedChip->getChipIdentifier().size() < 1)
-										{
-											d_insertedChip->setChipIdentifier(std::vector<unsigned char>(cardversion.uid, cardversion.uid + sizeof(cardversion.uid)));
-										}
+										// Set from the version
+										d_insertedChip->setChipIdentifier(std::vector<unsigned char>(cardversion.uid, cardversion.uid + sizeof(cardversion.uid)));
 
 										// DESFire EV1 and not regular DESFire
 										if (cardversion.softwareMjVersion >= 1)
@@ -590,25 +586,39 @@ namespace logicalaccess
 				INFO_SIMPLE_("SCardConnect Success !");
 
 				d_share_mode = share_mode;
-				try
+				if (d_insertedChip->getChipIdentifier().size() == 0)
 				{
-					if (d_insertedChip->getCardType() == "Prox")
+					try
 					{
-						if (d_atrLength > 2)
+						if (d_insertedChip->getCardType() == "Prox")
 						{
-							d_insertedChip->setChipIdentifier(std::vector<unsigned char>(d_atr, d_atr + d_atrLength - 2));
+							if (d_atrLength > 2)
+							{
+								d_insertedChip->setChipIdentifier(std::vector<unsigned char>(d_atr, d_atr + d_atrLength - 2));
+							}
+						}
+						else
+						{
+							d_insertedChip->setChipIdentifier(getCardSerialNumber());
 						}
 					}
-					else
+					catch (LibLogicalAccessException& e)
 					{
-						d_insertedChip->setChipIdentifier(getCardSerialNumber());
+						ERROR_("Exception while getting card serial number {%s}", e.what());
+						d_insertedChip->setChipIdentifier(std::vector<unsigned char>());
 					}
 				}
-				catch (LibLogicalAccessException& e)
+
+				if (d_insertedChip->getCardType() == "DESFire")
 				{
-					ERROR_("Exception while getting card serial number {%s}", e.what());
-					d_insertedChip->setChipIdentifier(std::vector<unsigned char>());
+					//check keystorage if sam
+					boost::shared_ptr<DESFireCrypto> crypto(new SAMDESfireCrypto());
+					boost::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->setCrypto(crypto);
+
+					boost::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->getCrypto()->setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(d_insertedChip->getProfile()), d_insertedChip->getChipIdentifier());
 				}
+				else if (d_insertedChip->getCardType() == "DESFireEV1")
+					boost::dynamic_pointer_cast<DESFireEV1ISO7816Commands>(d_insertedChip->getCommands())->getCrypto()->setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(d_insertedChip->getProfile()), d_insertedChip->getChipIdentifier());
 
 				ret = true;
 			}
@@ -737,11 +747,6 @@ namespace logicalaccess
 
 				ret->connect();
 
-				std::string config = getPCSCConfiguration()->getSAMType();
-
-				std::string conf = getPCSCConfiguration()->getSAMType();
-				std::string card = ret->getSingleChip()->getCardType();
-				std::string detect =  boost::dynamic_pointer_cast<SAMAV2Commands>(ret->getSingleChip()->getCommands())->GetSAMTypeFromSAM();
 				if (getPCSCConfiguration()->getSAMType() != "SAM_AUTO" && ret->getSingleChip()->getCardType() != getPCSCConfiguration()->getSAMType()
 					&& (ret->getSingleChip()->getCardType() == "SAM_AV1"
 					|| (ret->getSingleChip()->getCardType() == "SAM_AV2"
@@ -1281,12 +1286,10 @@ namespace logicalaccess
 			else if (type == "DESFireEV1")
 			{
 				commands.reset(new DESFireEV1ISO7816Commands());
-				boost::dynamic_pointer_cast<DESFireEV1ISO7816Commands>(commands)->getCrypto().setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(chip->getProfile()), chip->getChipIdentifier());
 			}
 			else if (type == "DESFire")
 			{
 				commands.reset(new DESFireISO7816Commands());
-				boost::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->getCrypto().setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(chip->getProfile()), chip->getChipIdentifier());
 				boost::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(getSAMChip());
 			}
 			else if (type == "ISO15693")

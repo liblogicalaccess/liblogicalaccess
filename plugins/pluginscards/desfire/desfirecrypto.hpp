@@ -268,14 +268,14 @@ namespace logicalaccess
 			 * \param encRndB The encrypted random number B
 			 * \return The random number A+B 1.
 			 */
-			std::vector<unsigned char> authenticate_PICC1(unsigned char  keyno, unsigned char* diversify, const std::vector<unsigned char>& encRndB);
+			virtual std::vector<unsigned char> authenticate_PICC1(unsigned char  keyno, unsigned char* diversify, const std::vector<unsigned char>& encRndB);
 
 			/**
 			 * \brief Authenticate on the card, step 2 for mutual authentication.
 			 * \param keyno The key number to use
 			 * \param encRndA The encrypted random number A
 			 */
-			void authenticate_PICC2(unsigned char  keyno, const std::vector<unsigned char>& encRndA);
+			virtual void authenticate_PICC2(unsigned char  keyno, const std::vector<unsigned char>& encRndA);
 
 			/**
 			 * \brief Authenticate on the card, step 1 for mutual authentication using ISO command.
