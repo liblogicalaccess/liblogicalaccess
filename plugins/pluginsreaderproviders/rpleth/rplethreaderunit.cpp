@@ -180,6 +180,7 @@ namespace logicalaccess
 			while (!chip && (maxwait == 0 || currentWait < maxwait))
 			{
 				buf = getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("s");
+				d_successedRATS.clear();
 				if (buf.size () > 1)
 				{
 					buf = asciiToHex (buf);
@@ -584,23 +585,36 @@ namespace logicalaccess
 
 	std::vector<unsigned char> RplethReaderUnit::rats ()
 	{
-		INFO_("Sending a RATS");
-		std::vector<unsigned char> answer = getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("t020FE020");
-		answer = asciiToHex (answer);
-		if (answer.size () > 1)
+		std::vector<unsigned char> answer;
+
+		// Sending two RATS is not supported without a new Select. Doesn't send another one if the first successed.
+		if (d_successedRATS.size() == 0)
 		{
-			if (answer[0] == answer.size())
+			INFO_("Sending a RATS");
+			answer = getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("t020FE020");
+			answer = asciiToHex (answer);
+			if (answer.size () > 1)
 			{
-				answer.erase (answer.begin());
+				if (answer[0] == answer.size())
+				{
+					answer.erase (answer.begin());
+				}
+				else
+					answer.clear();
 			}
 			else
+			{
 				answer.clear();
+				THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "No tag present in rfid field");
+			}
+
+			d_successedRATS = answer;
 		}
 		else
 		{
-			answer.clear();
-			THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "No tag present in rfid field");
+			answer = d_successedRATS;
 		}
+
 		return answer;
 	}
 }

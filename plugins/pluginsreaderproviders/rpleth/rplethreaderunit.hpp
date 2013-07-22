@@ -331,6 +331,11 @@ namespace logicalaccess
 			 * \return The csn contains into the wiegand trame.
 			 */
 			std::vector<unsigned char> getCsn (const std::vector<unsigned char>& trame);
+
+			/**
+			 * \brief Last successed RATS result.
+			 */
+			std::vector<unsigned char> d_successedRATS;
 	};
 }
 
