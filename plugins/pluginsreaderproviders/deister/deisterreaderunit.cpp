@@ -164,7 +164,6 @@ namespace logicalaccess
 		if (pollBuf.size() > 0)
 		{
 			std::vector<unsigned char> tmpId;
-			std::vector<unsigned char> pollBuf = getDefaultDeisterReaderCardAdapter()->sendCommand(std::vector<unsigned char>());
 			if (pollBuf.size() > 0)
 			{
 				EXCEPTION_ASSERT_WITH_LOG(pollBuf[0] == 0x00, LibLogicalAccessException, "Bad polling answer, LOC byte");
