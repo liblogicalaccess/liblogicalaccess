@@ -589,9 +589,7 @@ namespace logicalaccess
 	{
 		INFO_("Sending a RATS");
 		std::vector<unsigned char> answer = getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("t020FE020");
-		INFO_("Answer rats %s", BufferHelper::getHex(answer).c_str());
 		answer = asciiToHex (answer);
-		INFO_("Answer rats %s", BufferHelper::getHex(answer).c_str());
 		if (answer.size () > 1)
 		{
 			if (answer[0] == answer.size())
@@ -604,6 +602,7 @@ namespace logicalaccess
 		else
 		{
 			answer.clear();
+			THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "No tag present in rfid field");
 		}
 		return answer;
 	}
