@@ -144,7 +144,7 @@ namespace logicalaccess
 			}
 		}
 
-		return (d_insertedChip);
+		return bool(d_insertedChip);
 	}
 
 	void RplethReaderUnit::disconnect()
@@ -298,6 +298,7 @@ namespace logicalaccess
 
 	bool RplethReaderUnit::connectToReader()
 	{
+		INFO_SIMPLE_("Starting connection to reader...");
 		boost::shared_ptr<DataTransport> dataTransport = getDataTransport();
 		if (!dataTransport->getReaderUnit())
 		{
@@ -309,6 +310,7 @@ namespace logicalaccess
 
 	void RplethReaderUnit::disconnectFromReader()
 	{
+		INFO_SIMPLE_("Starting disconnection to reader...");
 		getDataTransport()->disconnect();
 	}
 
@@ -583,10 +585,12 @@ namespace logicalaccess
 	{
 		INFO_("Sending a RATS");
 		std::vector<unsigned char> answer = getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("t020FE020");
+		INFO_("Answer rats %s", BufferHelper::getHex(answer).c_str());
 		answer = asciiToHex (answer);
+		INFO_("Answer rats %s", BufferHelper::getHex(answer).c_str());
 		if (answer.size () > 1)
 		{
-			if (answer[0] == answer.size()-1)
+			if (answer[0] == answer.size())
 			{
 				answer.erase (answer.begin());
 			}

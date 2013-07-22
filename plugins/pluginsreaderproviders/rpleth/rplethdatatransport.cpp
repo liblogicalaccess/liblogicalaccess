@@ -60,9 +60,13 @@ namespace logicalaccess
 
 	std::vector<unsigned char> RplethDataTransport::receive(long int timeout)
 	{
+		#ifdef _WINDOWS
+						Sleep(200);
+		#elif defined(LINUX)
+						usleep(200000);
+		#endif
 		std::vector<unsigned char> ansbuf = TcpDataTransport::receive(timeout);
-
-		COM_("Receiving data : %s", BufferHelper::getHex(ansbuf).c_str());
+		COM_("Answer from reader %s", BufferHelper::getHex(ansbuf).c_str());
 
 		EXCEPTION_ASSERT_WITH_LOG(ansbuf.size() >= 4, std::invalid_argument, "A valid answer buffer size must be at least 4 bytes long");
 		EXCEPTION_ASSERT_WITH_LOG(ansbuf[0] != 0x01, std::invalid_argument, "The supplied answer buffer get the state : Command failure");
