@@ -58,9 +58,11 @@ namespace logicalaccess
 			try
 			{
 				d_socket->connect(endpoint);
+				INFO_("Connected to %s on port %d.", getIpAddress().c_str(), getPort());
 			}
-			catch(boost::system::system_error&)
+			catch(boost::system::system_error& ex)
 			{
+				ERROR_("Cannot establish connection: %s", ex.what());
 				d_socket.reset();
 			}
 		}

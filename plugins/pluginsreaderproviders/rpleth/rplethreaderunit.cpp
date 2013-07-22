@@ -315,16 +315,13 @@ namespace logicalaccess
 	void RplethReaderUnit::serialize(boost::property_tree::ptree& parentNode)
 	{
 		boost::property_tree::ptree node;
-		
-		node.put("<xmlattr>.type", getReaderProvider()->getRPType());
-		d_readerUnitConfig->serialize(node);
-
+		ReaderUnit::serialize(node);
 		parentNode.add_child(getDefaultXmlNodeName(), node);
 	}
 
 	void RplethReaderUnit::unSerialize(boost::property_tree::ptree& node)
 	{
-		d_readerUnitConfig->unSerialize(node.get_child(d_readerUnitConfig->getDefaultXmlNodeName()));
+		ReaderUnit::unSerialize(node);
 	}
 
 	boost::shared_ptr<RplethReaderProvider> RplethReaderUnit::getRplethReaderProvider() const
@@ -337,7 +334,7 @@ namespace logicalaccess
 		return d_socket;
 	}
 
-	bool RplethReaderUnit::getDhcpState ()
+	bool RplethReaderUnit::getDhcpState()
 	{
 		bool res = false;
 		std::vector<unsigned char> command;
@@ -351,7 +348,7 @@ namespace logicalaccess
 		return res;
 	}
 
-	void RplethReaderUnit::setDhcpState (bool status)
+	void RplethReaderUnit::setDhcpState(bool status)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(Device::RPLETH));

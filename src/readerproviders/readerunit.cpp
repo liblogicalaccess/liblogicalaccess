@@ -286,12 +286,7 @@ namespace logicalaccess
 
 	void ReaderUnit::setConfiguration(boost::shared_ptr<ReaderUnitConfiguration> config)
 	{
-		INFO_SIMPLE_("Setting reader unit configuration...");
 		d_readerUnitConfig = config;
-		if (d_readerUnitConfig)
-		{
-			INFO_("Reader unit configuration {%s}", d_readerUnitConfig->serialize().c_str());
-		}
 	}
 
 	std::string ReaderUnit::getDefaultXmlNodeName() const
@@ -318,8 +313,14 @@ namespace logicalaccess
 	{
 		disconnectFromReader();
 		d_readerUnitConfig->unSerialize(node.get_child(d_readerUnitConfig->getDefaultXmlNodeName()));
-		boost::shared_ptr<DataTransport> dataTransport = LibraryManager::getInstance()->getDataTransport(node.get_child("TransportType").get_value<std::string>());
-		if (dataTransport)
+		std::string transportType = node.get_child("TransportType").get_value<std::string>();
+		boost::shared_ptr<DataTransport> dataTransport = LibraryManager::getInstance()->getDataTransport(transportType);
+		// Cannot create data transport instance from xml, use default one
+		if (!dataTransport)
+		{
+			dataTransport = getDataTransport();
+		}
+		if (dataTransport && transportType == dataTransport->getTransportType())
 		{
 			dataTransport->unSerialize(node.get_child(dataTransport->getDefaultXmlNodeName()));
 			setDataTransport(dataTransport);

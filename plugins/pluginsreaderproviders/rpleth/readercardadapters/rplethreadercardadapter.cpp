@@ -49,6 +49,8 @@ namespace logicalaccess
 
 	std::vector<unsigned char> RplethReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
 	{
+		COM_("Processing response : %s", BufferHelper::getHex(answer).c_str());
+
 		if (answer.size() == 3)
 		{
 			if (answer[1] == '\r' && answer[2] == '\n')
