@@ -127,7 +127,7 @@ namespace logicalaccess
 			if (itct == ctList.end())
 			{
 				useCardType = chip->getGenericCardType();
-				INFO_("No configuration found for the chip type ! Looking for the generic type (%s) configuration...", useCardType);
+				INFO_("No configuration found for the chip type ! Looking for the generic type (%s) configuration...", useCardType.c_str());
 				itct = std::find(ctList.begin(), ctList.end(), useCardType);
 			}
 			// Try to use the configuration for all card (= generic tag), because the card type isn't configured

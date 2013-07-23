@@ -38,6 +38,8 @@ namespace logicalaccess
 			break;
 		case CST_NFC_TAG:
 		  break;
+		case CST_STORAGE:
+		  break;
 		}
 
 		if (!service)
