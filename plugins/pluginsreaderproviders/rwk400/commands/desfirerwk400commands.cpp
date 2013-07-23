@@ -17,6 +17,8 @@
 #include "logicalaccess/cards/samkeystorage.hpp"
 
 
+#define UNUSED(x) (void)(x)
+
 namespace logicalaccess
 {
 	DesfireRwk400Commands::DesfireRwk400Commands()
@@ -38,7 +40,7 @@ namespace logicalaccess
 	bool DesfireRwk400Commands::erase(bool resetKey)
 	{
 		bool res = false;
-
+		UNUSED(resetKey);
 		return res;
 	}
 	
@@ -101,7 +103,7 @@ namespace logicalaccess
 	bool DesfireRwk400Commands::deleteApplication(int aid)
 	{
 		bool res = false;
-
+		UNUSED(aid);
 		return res;
 	}
 
@@ -154,16 +156,20 @@ namespace logicalaccess
 	{
 		bool res = false;
 		key->getData();
+		UNUSED(keyno);
 		return res;
 	}
 
 	void DesfireRwk400Commands::getKeySettings(DESFireKeySettings& settings, unsigned int& maxNbKeys)
 	{
+	  UNUSED(settings);
+	  UNUSED(maxNbKeys);
 	}
 
 	bool DesfireRwk400Commands::changeKeySettings(DESFireKeySettings settings)
 	{
 		bool res = false;
+		UNUSED(settings);
 		return res;
 	}
 
@@ -215,14 +221,18 @@ namespace logicalaccess
 	bool DesfireRwk400Commands::getFileSettings(int fileno, DESFireCommands::FileSetting& fileSetting)
 	{
 		bool res = false;
-
+		UNUSED(fileno);
+		UNUSED(fileSetting);
 		return res;
 	}
 
 	bool DesfireRwk400Commands::changeFileSettings(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, bool plain)
 	{
 		bool res = false;
-
+		UNUSED(fileno);
+		UNUSED(comSettings);
+		UNUSED(accessRights);
+		UNUSED(plain);
 		return res;
 	}
 
@@ -262,28 +272,45 @@ namespace logicalaccess
 	bool DesfireRwk400Commands::createBackupFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize)
 	{
 		bool res = false;
-
+		UNUSED(fileno);
+		UNUSED(comSettings);
+		UNUSED(accessRights);
+		UNUSED(fileSize);
 		return res;
 	}
 
 	bool DesfireRwk400Commands::createValueFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int lowerLimit, unsigned int upperLimit, int value, bool limitedCreditEnabled)
 	{
 		bool res = false;
-
+		UNUSED(fileno);
+		UNUSED(comSettings);
+		UNUSED(accessRights);
+		UNUSED(lowerLimit);
+		UNUSED(upperLimit);
+		UNUSED(value);
+		UNUSED(limitedCreditEnabled);
 		return res;
 	}
 
 	bool DesfireRwk400Commands::createLinearRecordFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize, int maxNumberOfRecords)
 	{
 		bool res = false;
-
+		UNUSED(fileno);
+		UNUSED(comSettings);
+		UNUSED(accessRights);
+		UNUSED(fileSize);
+		UNUSED(maxNumberOfRecords);
 		return res;
 	}
 
 	bool DesfireRwk400Commands::createCyclicRecordFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize, int maxNumberOfRecords)
 	{
 		bool res = false;
-
+		UNUSED(fileno);
+		UNUSED(comSettings);
+		UNUSED(accessRights);
+		UNUSED(fileSize);
+		UNUSED(maxNumberOfRecords);
 		return res;
 	}
 
@@ -291,12 +318,13 @@ namespace logicalaccess
 	bool DesfireRwk400Commands::deleteFile(int fileno)
 	{
 		bool res = false;
-
+		UNUSED(fileno);
 		return res;
 	}
 
 	size_t DesfireRwk400Commands::readData(int fileno, size_t offset, size_t length, void* data, EncryptionMode mode)
 	{
+		 UNUSED(mode);
 		size_t res = 0;
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> answer;
@@ -330,6 +358,7 @@ namespace logicalaccess
 
 	bool DesfireRwk400Commands::writeData(int fileno, size_t offset, size_t length, const void* data, EncryptionMode mode)
 	{
+		UNUSED(mode);
 		bool res = false;
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> answer;
@@ -365,49 +394,65 @@ namespace logicalaccess
 	bool DesfireRwk400Commands::getValue(int fileno, EncryptionMode mode, int& value)
 	{
 		bool res = false;
-
+		UNUSED(fileno);
+		UNUSED(mode);
+		UNUSED(value);
 		return res;
 	}
 
 	bool DesfireRwk400Commands::credit(int fileno, int value, EncryptionMode mode)
 	{
 		bool res = false;
-
+		UNUSED(fileno);
+		UNUSED(value);
+		UNUSED(mode);
 		return res;
 	}
 
 	bool DesfireRwk400Commands::debit(int fileno, int value, EncryptionMode mode)
 	{
 		bool res = false;
-
+		UNUSED(fileno);
+		UNUSED(value);
+		UNUSED(mode);
 		return res;
 	}
 
 	bool DesfireRwk400Commands::limitedCredit(int fileno, int value, EncryptionMode mode) 
 	{
 		bool res = false;
-
+		UNUSED(fileno);
+		UNUSED(value);
+		UNUSED(mode);
 		return res;
 	}
 
 	bool DesfireRwk400Commands::writeRecord(int fileno, size_t offset, size_t length, const void* data, EncryptionMode mode)
 	{
 		bool res = false;
-
+		UNUSED(fileno);
+		UNUSED(offset);
+		UNUSED(length);
+		UNUSED(data);
+		UNUSED(mode);
 		return res;
 	}
 
 	size_t DesfireRwk400Commands::readRecords(int fileno, size_t offset, size_t length, void* data, EncryptionMode mode)
 	{
 		size_t res = 0;
-
+		UNUSED(fileno);
+		UNUSED(offset);
+		UNUSED(length);
+		UNUSED(data);
+		UNUSED(mode);
 		return res;
 	}
 
 	bool DesfireRwk400Commands::clearRecordFile(int fileno)
 	{
 		bool res = false;
-
+		UNUSED(fileno);
 		return res;
 	}
 
@@ -499,7 +544,7 @@ namespace logicalaccess
 	bool DesfireRwk400Commands::getVersion(DESFireCommands::DESFireCardVersion& dataVersion)
 	{
 		bool res = false;
-
+		UNUSED(dataVersion);
 		return res;
 	}
 

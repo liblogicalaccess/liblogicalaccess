@@ -1158,7 +1158,7 @@ namespace logicalaccess
 		boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 		if (chip)
 		{
-			INFO_("Chip (%s) created, creating other associated objects...", type);
+			INFO_("Chip (%s) created, creating other associated objects...", type.c_str());
 
 			boost::shared_ptr<ReaderCardAdapter> rca = getReaderCardAdapter(type);
 			boost::shared_ptr<Commands> commands;

@@ -71,7 +71,7 @@ namespace logicalaccess
 		buffer.push_back(cmd);
 		buffer.push_back(static_cast<unsigned char>(commandsize));
 
-		if (command.size() - 1 == DLE)
+		if (commandsize == DLE)
 		{
 			buffer.push_back(static_cast<unsigned char>(commandsize));
 		}
@@ -104,12 +104,14 @@ namespace logicalaccess
 		buffer.push_back(DLE);
 		buffer.push_back(ETX);
 
-		return command;
+		return buffer;
 	}
 
 	std::vector<unsigned char> SmartIDReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
 	{
 		unsigned char sta = 0x00;
+
+		EXCEPTION_ASSERT_WITH_LOG(answer.size() > 4, std::invalid_argument, "A valid buffer size must be at least 5 bytes long");
 
 		if (answer[0] == NAK)
 		{
@@ -118,7 +120,6 @@ namespace logicalaccess
 			return std::vector<unsigned char>();
 		}
 
-		EXCEPTION_ASSERT_WITH_LOG(answer.size() > 4, std::invalid_argument, "A valid buffer size must be at least 5 bytes long");
 		EXCEPTION_ASSERT_WITH_LOG((answer[0] == DLE) && (answer[1] == STX), std::invalid_argument, "The supplied buffer is not valid");
 
 		sta = answer[2];

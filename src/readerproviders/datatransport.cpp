@@ -22,10 +22,10 @@ namespace logicalaccess
 			connect();
 
 			send(command);
-			d_lastCommand = res;
 		}
 
 		res = receive(timeout);
+		d_lastResult = res;
 		COM_("Response received successfully ! Reponse: %s size {%d}", BufferHelper::getHex(res).c_str(), res.size());
 
 		return res;

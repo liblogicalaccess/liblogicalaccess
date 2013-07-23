@@ -7,7 +7,6 @@
 #ifndef LOGICALACCESS_READERCARDADAPTER_HPP
 #define LOGICALACCESS_READERCARDADAPTER_HPP
 
-#include "logicalaccess/msliblogicalaccess.h"
 #include "logicalaccess/readerproviders/datatransport.hpp"
 
 namespace logicalaccess
