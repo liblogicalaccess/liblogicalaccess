@@ -60,28 +60,57 @@ namespace logicalaccess
 
 	std::vector<unsigned char> RplethDataTransport::receive(long int timeout)
 	{
-		#ifdef _WINDOWS
-						Sleep(200);
-		#elif defined(LINUX)
-						usleep(200000);
-		#endif
+		std::vector<unsigned char> buf;
+		if (d_trashedData.size() > 0)
+		{
+			COM_("Adding existing trashed data: %s", BufferHelper::getHex(d_trashedData).c_str());
+			buf = d_trashedData;
+		}
+	#ifdef _WINDOWS
+		Sleep(100);
+	#elif defined(LINUX)
+		usleep(100000);
+	#endif
 		std::vector<unsigned char> ansbuf = TcpDataTransport::receive(timeout);
 		COM_("Answer from reader %s", BufferHelper::getHex(ansbuf).c_str());
 
-		EXCEPTION_ASSERT_WITH_LOG(ansbuf.size() >= 4, std::invalid_argument, "A valid answer buffer size must be at least 4 bytes long");
-		EXCEPTION_ASSERT_WITH_LOG(ansbuf[0] != 0x01, std::invalid_argument, "The supplied answer buffer get the state : Command failure");
-		EXCEPTION_ASSERT_WITH_LOG(ansbuf[0] != 0x02, std::invalid_argument, "The supplied answer buffer get the state : Bad checksum in command");
-		EXCEPTION_ASSERT_WITH_LOG(ansbuf[0] != 0x03, std::invalid_argument, "The supplied answer buffer get the state : Timeout");
-		EXCEPTION_ASSERT_WITH_LOG(ansbuf[0] != 0x04, std::invalid_argument, "The supplied answer buffer get the state : Bad size of command");
-		EXCEPTION_ASSERT_WITH_LOG(ansbuf[0] != 0x05, std::invalid_argument, "The supplied answer buffer get the state : Bad device in command");
-		//EXCEPTION_ASSERT_WITH_LOG(ansbuf[1] == cmdbuf [0] && ansbuf[2] == cmdbuf [1], std::invalid_argument, "The supplied answer buffer is not corresponding with command send");
+		buf.insert(buf.end(), ansbuf.begin(), ansbuf.end());
+		if (buf.size() < 4)
+		{
+			d_trashedData.clear();
+			d_trashedData.insert(d_trashedData.end(), buf.begin(), buf.end());
+			EXCEPTION_ASSERT_WITH_LOG(buf.size() >= 4, std::invalid_argument, "A valid answer buffer size must be at least 4 bytes long");
+		}
+		EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x01, std::invalid_argument, "The supplied answer buffer get the state : Command failure");
+		EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x02, std::invalid_argument, "The supplied answer buffer get the state : Bad checksum in command");
+		EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x03, std::invalid_argument, "The supplied answer buffer get the state : Timeout");
+		EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x04, std::invalid_argument, "The supplied answer buffer get the state : Bad size of command");
+		EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x05, std::invalid_argument, "The supplied answer buffer get the state : Bad device in command");
+		EXCEPTION_ASSERT_WITH_LOG(buf[0] == 0x00, std::invalid_argument, "The supplied answer buffer is corrupted");
 
-		size_t exceptedlen = 4 + ansbuf[3] + 1;
-		EXCEPTION_ASSERT_WITH_LOG(ansbuf.size() >= exceptedlen, std::invalid_argument, "The answer buffer doesn't match the excepted data length.");
+		size_t exceptedlen = 4 + buf[3] + 1;
+		if (buf.size() > exceptedlen)
+		{
+			d_trashedData.clear();
+			d_trashedData.insert(d_trashedData.end(), buf.begin()+exceptedlen, buf.end());
+
+			buf.erase(buf.begin()+exceptedlen, buf.end());
+			COM_("	-> Actual trashed data %s...", BufferHelper::getHex(d_trashedData).c_str());
+		}
+		else if (buf.size() < exceptedlen)
+		{
+			d_trashedData.clear();
+			d_trashedData.insert(d_trashedData.end(), buf.begin(), buf.end());
+			THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "The answer buffer doesn't match the excepted data length.");
+		}
+		else
+		{
+			d_trashedData.clear();
+		}
 
 		std::vector<unsigned char> res;
-		std::vector<unsigned char> bufnoc = std::vector<unsigned char>(ansbuf.begin(), ansbuf.end() - 1);
-		unsigned char checksum_receive = ansbuf[ansbuf.size()-1];
+		std::vector<unsigned char> bufnoc = std::vector<unsigned char>(buf.begin(), buf.end() - 1);
+		unsigned char checksum_receive = buf[buf.size()-1];
 		EXCEPTION_ASSERT_WITH_LOG(calcChecksum(bufnoc) == checksum_receive, std::invalid_argument, "The supplied answer buffer get the state : Bad checksum in answer");
 		if (bufnoc.size() > 4)
 		{

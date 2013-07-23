@@ -167,11 +167,16 @@ namespace logicalaccess
 		std::vector<unsigned char> buf;
 		if (getRplethConfiguration()->getMode() == RplethMode::WIEGAND)
 		{
-			buf = badge(maxwait);
+			buf = receiveBadge(maxwait);
+			//buf = badge(maxwait);
 			if (buf.size() > 0)
 			{
 				chip = createChip((d_card_type == "UNKNOWN") ? "GenericTag" : d_card_type);
 				chip->setChipIdentifier(buf);
+			}
+			else
+			{
+				chip = d_insertedChip;
 			}
 		}
 		else

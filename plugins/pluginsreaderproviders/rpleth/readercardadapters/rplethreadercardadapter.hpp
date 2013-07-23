@@ -51,6 +51,7 @@ namespace logicalaccess
 			std::vector<unsigned char> sendAsciiCommand(const std::string& command, long int timeout = 2000);
 
 			std::vector<unsigned char> sendRplethCommand(const std::vector<unsigned char>& data, long timeout = 2000);
+
 	};
 
 }

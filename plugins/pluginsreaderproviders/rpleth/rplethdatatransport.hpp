@@ -57,6 +57,8 @@ namespace logicalaccess
 			 * \return The checksum.
 			 */
 			unsigned char calcChecksum(const std::vector<unsigned char>& data);	
+
+			std::vector<unsigned char> d_trashedData;
 	};
 
 }
