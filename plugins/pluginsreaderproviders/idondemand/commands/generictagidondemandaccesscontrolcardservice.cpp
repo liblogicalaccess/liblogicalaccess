@@ -5,8 +5,7 @@
  */
 
 #include "generictagidondemandaccesscontrolcardservice.hpp"
-#include "generictagidondemandcardprovider.hpp"
-#include "generictagcardprovider.hpp"
+#include "generictagidondemandcommands.hpp"
 #include "generictagchip.hpp"
 #include "logicalaccess/cards/readercardadapter.hpp"
 
@@ -23,8 +22,8 @@
 
 namespace logicalaccess
 {
-	GenericTagIdOnDemandAccessControlCardService::GenericTagIdOnDemandAccessControlCardService(boost::shared_ptr<CardProvider> cardProvider)
-		: GenericTagAccessControlCardService(cardProvider)
+	GenericTagIdOnDemandAccessControlCardService::GenericTagIdOnDemandAccessControlCardService(boost::shared_ptr<Chip> chip)
+		: GenericTagAccessControlCardService(chip)
 	{
 	}
 
@@ -184,13 +183,13 @@ namespace logicalaccess
 		{
 			INFO_("Writing format {%s}", cmdstr.c_str());
 
-			boost::shared_ptr<GenericTagIdOnDemandCardProvider> idCardProvider = boost::dynamic_pointer_cast<GenericTagIdOnDemandCardProvider>(getCardProvider());
-			if (idCardProvider)
+			boost::shared_ptr<GenericTagIdOnDemandCommands> commands = boost::dynamic_pointer_cast<GenericTagIdOnDemandCommands>(getGenericTagChip()->getCommands());
+			if (commands)
 			{
-				boost::shared_ptr<IdOnDemandReaderCardAdapter> adapter = boost::dynamic_pointer_cast<IdOnDemandReaderCardAdapter>(idCardProvider->getReaderCardAdapter());
+				boost::shared_ptr<IdOnDemandReaderCardAdapter> adapter = boost::dynamic_pointer_cast<IdOnDemandReaderCardAdapter>(commands->getReaderCardAdapter());
 				if (adapter)
 				{
-					boost::shared_ptr<IdOnDemandReaderUnit> idReaderUnit = boost::dynamic_pointer_cast<IdOnDemandReaderUnit>(adapter->getReaderUnit());
+					boost::shared_ptr<IdOnDemandReaderUnit> idReaderUnit = boost::dynamic_pointer_cast<IdOnDemandReaderUnit>(adapter->getDataTransport()->getReaderUnit());
 
 					if (idReaderUnit)
 					{
@@ -216,7 +215,7 @@ namespace logicalaccess
 			}
 			else
 			{
-				ERROR_SIMPLE_("Unable to retrieve the Card Provider !");
+				ERROR_SIMPLE_("Unable to retrieve the Chip !");
 			}
 		}
 

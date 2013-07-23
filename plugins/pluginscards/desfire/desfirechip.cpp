@@ -6,6 +6,8 @@
 
 #include "desfirechip.hpp"
 #include "desfireprofile.hpp"
+#include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
+#include "desfirestoragecardservice.hpp"
 
 #include <cstring>
 
@@ -42,21 +44,21 @@ namespace logicalaccess
 		rootLocation->file = (unsigned int)-1;
 		rootNode->setLocation(rootLocation);
 
-		if (d_cardprovider)
+		if (getCommands())
 		{
-			getDESFireCardProvider()->getDESFireCommands()->selectApplication(0);
+			getDESFireCommands()->selectApplication(0);
 
 			// Try authentication.
 			try
 			{
-				getDESFireCardProvider()->getDESFireCommands()->authenticate(0);
+				getDESFireCommands()->authenticate(0);
 			}
 			catch(CardException&)
 			{
 
 			}
 
-			std::vector<int> aids = getDESFireCardProvider()->getDESFireCommands()->getApplicationIDs();
+			std::vector<int> aids = getDESFireCommands()->getApplicationIDs();
 
 			for (std::vector<int>::const_iterator aid = aids.begin(); aid != aids.end(); aid++)
 			{
@@ -70,12 +72,12 @@ namespace logicalaccess
 				aidLocation->file = static_cast<unsigned int>(-1);
 				aidNode->setLocation(aidLocation);
 
-				if (getDESFireCardProvider()->getDESFireCommands()->selectApplication(*aid))
+				if (getDESFireCommands()->selectApplication(*aid))
 				{
 					// Try authentication.
 					try
 					{
-						getDESFireCardProvider()->getDESFireCommands()->authenticate(0);
+						getDESFireCommands()->authenticate(0);
 					}
 					catch(CardException&)
 					{
@@ -84,7 +86,7 @@ namespace logicalaccess
 
 					try
 					{
-						std::vector<int> files = getDESFireCardProvider()->getDESFireCommands()->getFileIDs();
+						std::vector<int> files = getDESFireCommands()->getFileIDs();
 					
 						for (std::vector<int>::const_iterator file = files.begin(); file != files.end(); ++file)
 						{
@@ -101,7 +103,7 @@ namespace logicalaccess
 							try
 							{
 								DESFireCommands::FileSetting settings;
-								if (getDESFireCardProvider()->getDESFireCommands()->getFileSettings(*file, settings))
+								if (getDESFireCommands()->getFileSettings(*file, settings))
 								{
 									location->securityLevel = (EncryptionMode)settings.comSett;
 									switch (settings.fileType)
@@ -165,5 +167,33 @@ namespace logicalaccess
 		boost::shared_ptr<DESFireLocation> location(new DESFireLocation());		
 
 		return location;
+	}
+
+	boost::shared_ptr<CardService> DESFireChip::getService(CardServiceType serviceType)
+	{
+		boost::shared_ptr<CardService> service;
+
+		switch (serviceType)
+		{
+		case CST_ACCESS_CONTROL:
+			{
+				service.reset(new AccessControlCardService(shared_from_this()));
+			}
+			break;
+		case CST_STORAGE:
+			{
+				service.reset(new DESFireStorageCardService(shared_from_this()));
+			}
+			break;
+		case CST_NFC_TAG:
+		  break;
+		}
+
+		if (!service)
+		{
+			service = Chip::getService(serviceType);
+		}
+
+		return service;
 	}
 }

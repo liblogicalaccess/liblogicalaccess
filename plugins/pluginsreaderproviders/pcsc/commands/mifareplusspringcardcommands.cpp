@@ -110,9 +110,9 @@ namespace logicalaccess
 		std::vector<unsigned char> r;
 
 		if (t_cl)
-			boost::dynamic_pointer_cast<PCSCReaderUnit>(getReaderCardAdapter()->getReaderUnit())->getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xFE, 0x00, 0x00, static_cast<unsigned char>(command.size()), reinterpret_cast<const unsigned char*>(&command[0]), command.size(), result, &resultlen);
+			boost::dynamic_pointer_cast<PCSCReaderUnit>(getReaderCardAdapter()->getDataTransport()->getReaderUnit())->getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xFE, 0x00, 0x00, static_cast<unsigned char>(command.size()), reinterpret_cast<const unsigned char*>(&command[0]), command.size(), result, &resultlen);
 		else
-			boost::dynamic_pointer_cast<PCSCReaderUnit>(getReaderCardAdapter()->getReaderUnit())->getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xFE, 0x01, 0x07, static_cast<unsigned char>(command.size()), reinterpret_cast<const unsigned char*>(&command[0]), command.size(), result, &resultlen);
+			boost::dynamic_pointer_cast<PCSCReaderUnit>(getReaderCardAdapter()->getDataTransport()->getReaderUnit())->getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xFE, 0x01, 0x07, static_cast<unsigned char>(command.size()), reinterpret_cast<const unsigned char*>(&command[0]), command.size(), result, &resultlen);
 		
 		r.insert(r.end(), result, result + resultlen);
 		// temp

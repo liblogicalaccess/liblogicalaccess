@@ -79,24 +79,18 @@ namespace logicalaccess
 			virtual void sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char* result, size_t* resultlen);
 
 			/**
-			 * \brief Send a command to the reader.
-			 * \param command The command buffer.			 
-			 * \param timeout The command timeout.
-			 * \return The result of the command.
+			 * \brief Adapt the command to send to the reader.
+			 * \param command The command to send.
+			 * \return The adapted command to send.
 			 */
-			virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long int timeout = 2000);
+			virtual std::vector<unsigned char> adaptCommand(const std::vector<unsigned char>& command);
 
 			/**
-			 * \brief Get the reader unit.
-			 * \return The reader unit.
+			 * \brief Adapt the asnwer received from the reader.
+			 * \param answer The answer received.
+			 * \return The adapted answer received.
 			 */
-			virtual boost::shared_ptr<ReaderUnit> getReaderUnit();
-
-			/**
-			 * \brief Set the reader unit.
-			 * \param unit The reader unit.
-			 */
-			virtual void setReaderUnit(boost::weak_ptr<ReaderUnit> unit);
+			virtual std::vector<unsigned char> adaptAnswer(const std::vector<unsigned char>& answer);
 			
 		protected:
 			

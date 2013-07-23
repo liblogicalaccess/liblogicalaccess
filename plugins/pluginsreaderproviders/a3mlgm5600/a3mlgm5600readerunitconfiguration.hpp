@@ -53,30 +53,6 @@ namespace logicalaccess
 			virtual std::string getDefaultXmlNodeName() const;
 
 			/**
-			 * \brief Get the reader ip address.
-			 * \return The reader ip address.
-			 */
-			std::string getReaderIpAddress() const;
-
-			/**
-			 * \brief Set the reader ip address.
-			 * \param ipAddress The reader ip address.
-			 */
-			void setReaderIpAddress(std::string ipAddress);
-
-			/**
-			 * \brief Get the reader port.
-			 * \return The reader port.
-			 */
-			int getReaderPort() const;
-
-			/**
-			 * \brief Set the reader port.
-			 * \param port The reader port.
-			 */
-			void setReaderPort(int port);
-
-			/**
 			 * \brief Get the local port.
 			 * \return The local port.
 			 */
@@ -89,16 +65,6 @@ namespace logicalaccess
 			void setLocalPort(int port);
 
 		protected:
-
-			/**
-			 * \brief The reader ip address
-			 */
-			std::string d_readerIpAddress;
-
-			/**
-			 * \brief The reader listening port.
-			 */
-			int d_readerPort;
 
 			/**
 			 * \brief The location listening port.

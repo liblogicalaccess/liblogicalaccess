@@ -9,7 +9,7 @@
 
 #include "logicalaccess/cards/accessinfo.hpp"
 #include "logicalaccess/cards/commands.hpp"
-#include "logicalaccess/cards/location.hpp"
+#include "twiclocation.hpp"
 
 
 namespace logicalaccess
@@ -20,6 +20,24 @@ namespace logicalaccess
 	class LIBLOGICALACCESS_API TwicCommands : public virtual Commands
 	{
 		public:
+
+			size_t getMinimumBytesRepresentation(size_t value);
+
+			size_t getMaximumDataObjectLength(int64_t dataObject);
+
+			size_t getMaximumTagLength(int64_t dataObject, unsigned char tag);
+
+			size_t getValueFromBytes(unsigned char* data, size_t datalength);
+
+			/**
+			 * \brief Get the current length for a data object.
+			 * \param dataObject The data object.
+			 * \param withObjectLength Add header that describe the object length to the total number, or not.
+			 * \return The current data object length.
+			 */
+			size_t getDataObjectLength(int64_t dataObject, bool withObjectLength = false);
+
+			bool getTagData(boost::shared_ptr<TwicLocation> location, void* data, size_t datalen, void* datatag, size_t& datataglen);
 
 			/**
 			 * \brief Select the TWIC application.

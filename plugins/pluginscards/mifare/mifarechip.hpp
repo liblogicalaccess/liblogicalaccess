@@ -8,7 +8,7 @@
 #define LOGICALACCESS_MIFARECHIP_HPP
 
 #include "logicalaccess/cards/chip.hpp"
-#include "mifarecardprovider.hpp"
+#include "mifarecommands.hpp"
 #include "mifareprofile.hpp"
 
 #include <string>
@@ -61,10 +61,17 @@ namespace logicalaccess
 			void addSectorNode(boost::shared_ptr<LocationNode> rootNode, int sector);
 
 			/**
-			 * \brief Get the Mifare card provider for I/O access.
-			 * \return The Mifare card provider.
+			 * \brief Get a card service for this card provider.
+			 * \param serviceType The card service type.
+			 * \return The card service.
 			 */
-			boost::shared_ptr<MifareCardProvider> getMifareCardProvider() { return boost::dynamic_pointer_cast<MifareCardProvider>(getCardProvider()); };
+			virtual boost::shared_ptr<CardService> getService(CardServiceType serviceType);
+
+			/**
+			 * \brief Get the Mifare commands.
+			 * \return The Mifare commands.
+			 */
+			boost::shared_ptr<MifareCommands> getMifareCommands() { return boost::dynamic_pointer_cast<MifareCommands>(getCommands()); };
 
 			/**
 			 * \brief Get the Mifare profile.

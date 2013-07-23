@@ -4,7 +4,7 @@
  * \brief DESFire cryptographic functions.
  */
 
-#include "desfirecardprovider.hpp"
+#include "desfirecommands.hpp"
 #include "desfirecrypto.hpp"
 #include "logicalaccess/crypto/tomcrypt.h"
 #include <zlib.h>

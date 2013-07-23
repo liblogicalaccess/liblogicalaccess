@@ -10,7 +10,6 @@
 #include "logicalaccess/cards/accessinfo.hpp"
 #include "../iso7816/iso7816location.hpp"
 #include "../iso7816/iso7816profile.hpp"
-#include "twiccardprovider.hpp"
 
 #include <string>
 #include <vector>

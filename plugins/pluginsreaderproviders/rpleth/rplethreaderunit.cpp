@@ -19,14 +19,14 @@
 #include "logicalaccess/cards/chip.hpp"
 #include "readercardadapters/rplethreadercardadapter.hpp"
 #include "readercardadapters/iso7816rplethreadercardadapter.hpp"
-#include "mifarecardprovider.hpp"
-#include "mifareultralightcardprovider.hpp"
-#include "desfirecardprovider.hpp"
-#include "desfireev1cardprovider.hpp"
 #include "commands/desfireev1iso7816commands.hpp"
 #include "commands/mifarerplethcommands.hpp"
 #include "commands/mifareultralightrplethcommands.hpp"
 #include <boost/filesystem.hpp>
+#include "logicalaccess/readerproviders/tcpdatatransport.hpp"
+#include "rplethledbuzzerdisplay.hpp"
+#include "rplethlcddisplay.hpp"
+#include "rplethdatatransport.hpp"
 
 namespace logicalaccess
 {
@@ -35,7 +35,14 @@ namespace logicalaccess
 	{
 		d_readerUnitConfig.reset(new RplethReaderUnitConfiguration());
 		setDefaultReaderCardAdapter (boost::shared_ptr<RplethReaderCardAdapter> (new RplethReaderCardAdapter()));
+		
+		boost::shared_ptr<RplethDataTransport> dataTransport(new RplethDataTransport());
+		dataTransport->setIpAddress("192.168.1.100");
+		dataTransport->setPort(23);
+		setDataTransport(dataTransport);
 		d_card_type = "UNKNOWN";
+		d_lcdDisplay.reset(new RplethLCDDisplay());
+		d_ledBuzzerDisplay.reset(new RplethLEDBuzzerDisplay());
 
 		try
 		{
@@ -70,11 +77,21 @@ namespace logicalaccess
 	bool RplethReaderUnit::waitInsertion(unsigned int maxwait)
 	{
 		bool inserted = false;
-		boost::shared_ptr<Chip> chip = getChipInAir(maxwait);
-		if (chip)
+		if (removalIdentifier.size() > 0)
 		{
-			d_insertedChip = chip;
+			d_insertedChip = createChip((d_card_type == "UNKNOWN") ? "GenericTag" : d_card_type);
+			d_insertedChip->setChipIdentifier(removalIdentifier);
+			removalIdentifier.clear();
 			inserted = true;
+		}
+		else
+		{
+			boost::shared_ptr<Chip> chip = getChipInAir(maxwait);
+			if (chip)
+			{
+				d_insertedChip = chip;
+				inserted = true;
+			}
 		}
 
 		return inserted;
@@ -84,6 +101,7 @@ namespace logicalaccess
 	{
 		bool removed = false;
 		unsigned int currentWait = 0;
+		removalIdentifier.clear();
 		if (d_insertedChip)
 		{
 			while (!removed && ((currentWait < maxwait) || maxwait == 0))
@@ -91,17 +109,19 @@ namespace logicalaccess
 				boost::shared_ptr<Chip> chip = getChipInAir(250);
 				if (chip)
 				{
-					if (chip->getChipIdentifier() != d_insertedChip->getChipIdentifier())
+					std::vector<unsigned char> tmpId = chip->getChipIdentifier();
+					if (tmpId != d_insertedChip->getChipIdentifier())
 					{
 						d_insertedChip.reset();
+						removalIdentifier = tmpId;
 						removed = true;
 					}
 					else
 					{
 		#ifdef _WINDOWS
-						Sleep(250);
+						Sleep(100);
 		#elif defined(LINUX)
-						usleep(250000);
+						usleep(100000);
 		#endif
 						currentWait += 250;
 					}
@@ -119,34 +139,57 @@ namespace logicalaccess
 
 	bool RplethReaderUnit::connect()
 	{
+		INFO_SIMPLE_("Starting connect...");
 		if (getSingleChip())
 		{
 			if (getSingleChip()->getCardType() == "DESFire")
-				rats ();
+			{
+				std::vector<unsigned char> tmp = rats();
+				if (tmp.size() == 0)
+				{
+					d_insertedChip = getChipInAir();
+					tmp = rats();
+					if (tmp.size() == 0)
+					{
+						d_insertedChip.reset();
+					}
+				}
+			}
 		}
+		
 		return bool(d_insertedChip);
 	}
 
 	void RplethReaderUnit::disconnect()
 	{
+		/*
 		if (getRplethConfiguration()->getMode() == RplethMode::RS)
 		{
 			getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("x");
 			getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("v");
-		}
+		}*/
+
+		INFO_SIMPLE_("Disconnected from the chip");
 	}
 
 	boost::shared_ptr<Chip> RplethReaderUnit::getChipInAir(unsigned int maxwait)
 	{
+		INFO_SIMPLE_("Starting get chip in air...");
+
 		boost::shared_ptr<Chip> chip;
 		std::vector<unsigned char> buf;
 		if (getRplethConfiguration()->getMode() == RplethMode::WIEGAND)
 		{
-			buf = badge(maxwait);
+			buf = receiveBadge(maxwait);
+			//buf = badge(maxwait);
 			if (buf.size() > 0)
 			{
 				chip = createChip((d_card_type == "UNKNOWN") ? "GenericTag" : d_card_type);
-				chip->setChipIdentifier(asciiToHex (buf));
+				chip->setChipIdentifier(buf);
+			}
+			else
+			{
+				chip = d_insertedChip;
 			}
 		}
 		else
@@ -155,6 +198,7 @@ namespace logicalaccess
 			while (!chip && (maxwait == 0 || currentWait < maxwait))
 			{
 				buf = getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("s");
+				d_successedRATS.clear();
 				if (buf.size () > 1)
 				{
 					buf = asciiToHex (buf);
@@ -188,28 +232,27 @@ namespace logicalaccess
 				}
 			}
 		}
+
 		return chip;
 	}
 	
 	boost::shared_ptr<Chip> RplethReaderUnit::createChip(std::string type)
 	{
+		INFO_("Create chip %s", type.c_str());
 		boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 
 		if (chip)
 		{
 			boost::shared_ptr<ReaderCardAdapter> rca;
-			boost::shared_ptr<CardProvider> cp;
 			boost::shared_ptr<Commands> commands;
 
 			if (type ==  "Mifare1K" || type == "Mifare4K" || type == "Mifare")
 			{
-				cp.reset(new MifareCardProvider());
 				commands.reset(new MifareRplethCommands);
 				rca = getDefaultReaderCardAdapter();
 			}
 			else if (type ==  "MifareUltralight")
 			{
-				cp.reset(new MifareUltralightCardProvider());
 				commands.reset(new MifareUltralightRplethCommands());
 				rca = getDefaultReaderCardAdapter();
 			}
@@ -220,27 +263,19 @@ namespace logicalaccess
 			else if (type == "DESFire")
 			{
 				rca.reset(new ISO7816RplethReaderCardAdapter());
-				cp.reset(new DESFireCardProvider());
 				commands.reset(new DESFireISO7816Commands());
 				boost::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->getCrypto().setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(chip->getProfile()), chip->getChipIdentifier());
 			}
 
 			if (rca)
 			{
-				rca->setReaderUnit(shared_from_this());
+				rca->setDataTransport(getDataTransport());
 				if (commands)
 				{
 					commands->setReaderCardAdapter(rca);
+					commands->setChip(chip);
+					chip->setCommands(commands);
 				}
-				if (cp)
-				{
-					cp->setCommands(commands);
-				}
-				else
-				{
-					cp = LibraryManager::getInstance()->getCardProvider(type);
-				}
-				chip->setCardProvider(cp);
 			}
 		}
 		return chip;
@@ -266,6 +301,8 @@ namespace logicalaccess
 	boost::shared_ptr<RplethReaderCardAdapter> RplethReaderUnit::getDefaultRplethReaderCardAdapter()
 	{
 		boost::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
+		if (!adapter->getDataTransport())
+			adapter->setDataTransport(getDataTransport());
 		return boost::dynamic_pointer_cast<RplethReaderCardAdapter>(adapter);
 	}
 
@@ -281,51 +318,33 @@ namespace logicalaccess
 
 	bool RplethReaderUnit::connectToReader()
 	{
-		if (!d_socket)
+		INFO_SIMPLE_("Starting connection to reader...");
+		boost::shared_ptr<DataTransport> dataTransport = getDataTransport();
+		if (!dataTransport->getReaderUnit())
 		{
-			boost::asio::ip::tcp::endpoint endpoint;
-			endpoint.address(boost::asio::ip::address::from_string(getRplethConfiguration()->getReaderAddress()));
-			endpoint.port(getRplethConfiguration()->getPort());
-			
-			d_socket.reset(new boost::asio::ip::tcp::socket (ios));
-
-			try
-			{
-				d_socket->connect(endpoint);
-			}
-			catch(boost::system::system_error& ex)
-			{
-				ERROR_("Socket connection error: %s", ex.what());
-				d_socket.reset();
-			}
+			dataTransport->setReaderUnit(shared_from_this());
+			setDataTransport(dataTransport);
 		}
-		return bool(d_socket);
+		
+		return getDataTransport()->connect();
 	}
 
 	void RplethReaderUnit::disconnectFromReader()
 	{
-		if (d_socket->is_open())
-		{
-			d_socket->shutdown(d_socket->shutdown_both);
-			d_socket->close();
-		}
-		if (d_socket)
-			d_socket.reset();
+		INFO_SIMPLE_("Starting disconnection to reader...");
+		getDataTransport()->disconnect();
 	}
 
 	void RplethReaderUnit::serialize(boost::property_tree::ptree& parentNode)
 	{
 		boost::property_tree::ptree node;
-		
-		node.put("<xmlattr>.type", getReaderProvider()->getRPType());
-		d_readerUnitConfig->serialize(node);
-
+		ReaderUnit::serialize(node);
 		parentNode.add_child(getDefaultXmlNodeName(), node);
 	}
 
 	void RplethReaderUnit::unSerialize(boost::property_tree::ptree& node)
 	{
-		d_readerUnitConfig->unSerialize(node.get_child(d_readerUnitConfig->getDefaultXmlNodeName()));
+		ReaderUnit::unSerialize(node);
 	}
 
 	boost::shared_ptr<RplethReaderProvider> RplethReaderUnit::getRplethReaderProvider() const
@@ -338,7 +357,7 @@ namespace logicalaccess
 		return d_socket;
 	}
 
-	bool RplethReaderUnit::getDhcpState ()
+	bool RplethReaderUnit::getDhcpState()
 	{
 		bool res = false;
 		std::vector<unsigned char> command;
@@ -346,20 +365,20 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(Device::RPLETH));
 		command.push_back(static_cast<unsigned char>(RplethCommand::STATEDHCP));
 		command.push_back(static_cast<unsigned char>(0x00));
-		answer = getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
+		answer = getDefaultRplethReaderCardAdapter()->sendRplethCommand (command, 0);
 		if (answer.size() > 0)
 			res = answer[0] != 0x00;
 		return res;
 	}
 
-	void RplethReaderUnit::setDhcpState (bool status)
+	void RplethReaderUnit::setDhcpState(bool status)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(Device::RPLETH));
 		command.push_back(static_cast<unsigned char>(RplethCommand::DHCP));
 		command.push_back(static_cast<unsigned char>(0x01));
 		command.push_back(static_cast<unsigned char>(status));
-		getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
+		getDefaultRplethReaderCardAdapter()->sendRplethCommand (command, 0);
 	}
 
 	void RplethReaderUnit::setReaderIp(const std::vector<unsigned char>& address)
@@ -374,7 +393,7 @@ namespace logicalaccess
 			{
 				command.push_back(static_cast<unsigned char>(address[i]));
 			}
-			getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
+			getDefaultRplethReaderCardAdapter()->sendRplethCommand (command, 0);
 		}
 	}
 
@@ -390,7 +409,7 @@ namespace logicalaccess
 			{
 				command.push_back(static_cast<unsigned char>(address[i]));
 			}
-			getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
+			getDefaultRplethReaderCardAdapter()->sendRplethCommand (command, 0);
 		}
 	}
 	
@@ -406,7 +425,7 @@ namespace logicalaccess
 			{
 				command.push_back (static_cast<unsigned char>(address[i]));
 			}
-			getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
+			getDefaultRplethReaderCardAdapter()->sendRplethCommand (command, 0);
 		}
 	}
 	
@@ -422,7 +441,7 @@ namespace logicalaccess
 			{
 				command.push_back (static_cast<unsigned char>(address[i]));
 			}
-			getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
+			getDefaultRplethReaderCardAdapter()->sendRplethCommand (command, 0);
 		}
 	}
 
@@ -434,7 +453,7 @@ namespace logicalaccess
 		command.push_back (static_cast<unsigned char>(0x02));
 		command.push_back (static_cast<unsigned char>(port << 8));
 		command.push_back (static_cast<unsigned char>(port & 0xff));
-		getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
+		getDefaultRplethReaderCardAdapter()->sendRplethCommand (command, 0);
 	}
 
 	void RplethReaderUnit::resetReader()
@@ -443,7 +462,7 @@ namespace logicalaccess
 		command.push_back (static_cast<unsigned char>(Device::RPLETH));
 		command.push_back (static_cast<unsigned char>(RplethCommand::RESET));
 		command.push_back (static_cast<unsigned char>(0x00));
-		getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
+		getDefaultRplethReaderCardAdapter()->sendRplethCommand (command, 0);
 	}
 
 	void RplethReaderUnit::setReaderMessage(const std::string& message)
@@ -453,7 +472,7 @@ namespace logicalaccess
 		command.push_back (static_cast<unsigned char>(RplethCommand::MESSAGE));
 		command.push_back (static_cast<unsigned char>(message.size()));
 		command.insert(command.end(), message.begin(), message.end());
-		getDefaultRplethReaderCardAdapter()->sendCommand (command, 0);
+		getDefaultRplethReaderCardAdapter()->sendRplethCommand (command, 0);
 	}
 
 	void RplethReaderUnit::nop()
@@ -472,35 +491,74 @@ namespace logicalaccess
 		command.push_back (static_cast<unsigned char>(Device::HID));
 		command.push_back (static_cast<unsigned char>(HidCommand::BADGE));
 		command.push_back (static_cast<unsigned char>(0x00));
-		getDefaultRplethReaderCardAdapter()->sendCommand(command, 0);
-		res = receiveBadge(timeout);
+		try
+		{
+			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, 0);
+			res = receiveBadge(timeout);
+		}
+		catch(std::invalid_argument& e)
+		{
+			std::cout << e.what() << std::endl;
+		}
 		return res;
 	}
 
 	std::vector<unsigned char> RplethReaderUnit::receiveBadge (long int timeout)
 	{
+		COM_SIMPLE_("receiveBadge");
 		std::vector<unsigned char> res;
 		std::vector<unsigned char> cmd;
-		cmd.push_back(static_cast<unsigned char>(Device::HID));
-		cmd.push_back(static_cast<unsigned char>(HidCommand::BADGE));
-		res = getDefaultRplethReaderCardAdapter()->receiveAnwser(cmd, timeout);
-		// res contains full wiegand trame, it need to take the csn
-		res = getCsn (res);
+		long int currentWait = 0;
+		try
+		{
+			res = getDefaultRplethReaderCardAdapter()->sendRplethCommand(cmd, timeout);
+			// res contains full wiegand trame, it need to take the csn
+			if (res.size() > 0)
+				res = getCsn (res);
+		}
+		catch (std::invalid_argument&)
+		{
+
+		}
 		return res;
 	}
 
 	std::vector<unsigned char> RplethReaderUnit::getCsn (const std::vector<unsigned char>& trame)
 	{
 		std::vector<unsigned char> result;
+		long long tmp = 0;
 		boost::shared_ptr<RplethReaderUnitConfiguration> conf = boost::dynamic_pointer_cast<RplethReaderUnitConfiguration>(d_readerUnitConfig);
 		if (conf->getLength() != 0)
 		{
-			result.insert (result.begin(), trame.begin()+(trame.size() - conf->getLength()), trame.end()-conf->getOffset());
+			if (trame.size()*8 >= static_cast<size_t>(conf->getLength() + conf->getOffset()))
+			{
+				for (int i = 0; i < static_cast<int>(trame.size()); i++)
+				{
+					tmp <<= 8;
+					tmp |= trame[i];
+				}
+				tmp >>= conf->getOffset();
+				tmp &= static_cast<int>(pow(2, conf->getLength())-1);
+				int size = 0;
+				if (conf->getLength()%8==0)
+					size = conf->getLength()/8;
+				else
+					size = conf->getLength()/8+1;
+				for (int i = 0, j = 0; i < size; i++, j += 8)
+				{
+					result.insert(result.begin(), (tmp >> j) & 0xff);
+				}
+			}
+			else
+			{
+				WARNING_("Wrong trame length (%d < (%d + %d))", trame.size()*8, conf->getLength(), conf->getOffset());
+			}
 		}
 		else
 		{
 			result.insert (result.begin(), trame.begin(), trame.end());
 		}
+
 		return result;
 	}
 
@@ -508,15 +566,18 @@ namespace logicalaccess
 	{
 		std::vector<unsigned char> res;
 		char tmp [3];
-		for (size_t i = 0; i < source.size ()-2; i+=2)
+		if (source.size() > 1)
 		{
-			tmp [0] = source[i];
-			if (source.size()%2 == 1 && i == source.size()-1)
-				tmp [1] = '\0';
-			else
-				tmp [1] = source[i+1];
-			tmp [2] = '\0';
-			res.push_back (static_cast<unsigned char>(strtoul (tmp, NULL, 16)));
+			for (size_t i = 0; i < source.size() - 2; i+=2)
+			{
+				tmp [0] = source[i];
+				if (source.size()%2 == 1 && i == source.size()-1)
+					tmp [1] = '\0';
+				else
+					tmp [1] = source[i+1];
+				tmp [2] = '\0';
+				res.push_back (static_cast<unsigned char>(strtoul (tmp, NULL, 16)));
+			}
 		}
 		return res;
 	}
@@ -543,21 +604,36 @@ namespace logicalaccess
 
 	std::vector<unsigned char> RplethReaderUnit::rats ()
 	{
-		std::vector<unsigned char> answer = getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("t020FE020");
-		answer = asciiToHex (answer);
-		if (answer.size () > 1)
+		std::vector<unsigned char> answer;
+
+		// Sending two RATS is not supported without a new Select. Doesn't send another one if the first successed.
+		if (d_successedRATS.size() == 0)
 		{
-			if (answer[0] == answer.size()-1)
+			INFO_("Sending a RATS");
+			answer = getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("t020FE020");
+			answer = asciiToHex (answer);
+			if (answer.size () > 1)
 			{
-				answer.erase (answer.begin());
+				if (answer[0] == answer.size())
+				{
+					answer.erase (answer.begin());
+				}
+				else
+					answer.clear();
 			}
 			else
+			{
 				answer.clear();
+				THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "No tag present in rfid field");
+			}
+
+			d_successedRATS = answer;
 		}
 		else
 		{
-			answer.clear();
+			answer = d_successedRATS;
 		}
+
 		return answer;
 	}
 }

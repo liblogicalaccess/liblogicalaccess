@@ -12,8 +12,6 @@
 
 namespace logicalaccess
 {
-	class ProxCardProvider;
-
 	/**
 	 * \brief The Prox access control card service class.
 	 */
@@ -25,7 +23,7 @@ namespace logicalaccess
 			 * \brief Constructor.
 			 * \param cardProvider The associated card provider.
 			 */
-			ProxAccessControlCardService(boost::shared_ptr<CardProvider> cardProvider);
+			ProxAccessControlCardService(boost::shared_ptr<Chip> chip);
 
 			/**
 			 * \brief Destructor.
@@ -56,8 +54,6 @@ namespace logicalaccess
 			 * \return The PACS bits.
 			 */
 			std::vector<unsigned char> getPACSBits();
-
-			boost::shared_ptr<ProxCardProvider> getProxCardProvider();
 
 		protected:
 

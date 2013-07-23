@@ -38,22 +38,6 @@ extern "C"
 		}
 	}
 
-	LIBLOGICALACCESS_API void getDESFireEV1CardProvider(boost::shared_ptr<logicalaccess::CardProvider>* cp)
-	{
-		if (cp != NULL)
-		{
-			*cp = boost::shared_ptr<logicalaccess::DESFireEV1CardProvider>(new logicalaccess::DESFireEV1CardProvider());
-		}
-	}
-
-	LIBLOGICALACCESS_API void getDESFireCardProvider(boost::shared_ptr<logicalaccess::CardProvider>* cp)
-	{
-		if (cp != NULL)
-		{
-			*cp = boost::shared_ptr<logicalaccess::DESFireCardProvider>(new logicalaccess::DESFireCardProvider());
-		}
-	}
-
 	LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char* chipname, size_t chipnamelen, void** getterfct)
 	{
 		bool ret = false;

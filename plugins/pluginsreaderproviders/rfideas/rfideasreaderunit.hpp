@@ -90,13 +90,7 @@ namespace logicalaccess
 			 * \brief Get the tag id.
 			 * \return The tag id.
 			 */
-			std::vector<unsigned char> getTagId();
-
-			/**
-			 * \brief Get the default RFIDeas reader/card adapter.
-			 * \return The default RFIDeas reader/card adapter.
-			 */
-			virtual boost::shared_ptr<RFIDeasReaderCardAdapter> getDefaultRFIDeasReaderCardAdapter();			
+			std::vector<unsigned char> getTagId();			
 
 			/**
 			 * \brief Connect to the card.

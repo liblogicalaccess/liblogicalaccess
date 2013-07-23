@@ -22,17 +22,7 @@ namespace logicalaccess
 		
 	}
 
-	boost::shared_ptr<ReaderUnit> ISO7816RplethReaderCardAdapter::getReaderUnit()
-	{
-		return d_rpleth_reader_card_adapter->getReaderUnit();
-	}
-
-	void ISO7816RplethReaderCardAdapter::setReaderUnit(boost::weak_ptr<ReaderUnit> unit)
-	{
-		d_rpleth_reader_card_adapter->setReaderUnit(unit);
-	}
-
-	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen, unsigned char le, unsigned char* result, size_t* resultlen)
+	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen, unsigned char /*le*/, unsigned char* result, size_t* resultlen)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(ins);
@@ -85,7 +75,7 @@ namespace logicalaccess
 	}
 
 
-	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const unsigned char* data, size_t datalen, unsigned char le)
+	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen, unsigned char /*le*/)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(ins);
@@ -96,7 +86,7 @@ namespace logicalaccess
 		ISO7816ReaderCardAdapter::sendAPDUCommand(command, NULL, NULL);
 	}
 
-	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const unsigned char* data, size_t datalen)
+	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(ins);
@@ -107,7 +97,7 @@ namespace logicalaccess
 		ISO7816ReaderCardAdapter::sendAPDUCommand(command, NULL, NULL);
 	}
 
-	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char le)
+	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*le*/)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(ins);
@@ -115,7 +105,7 @@ namespace logicalaccess
 	}
 
 
-	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char* result, size_t* resultlen)
+	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char* result, size_t* resultlen)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(ins);
@@ -124,13 +114,10 @@ namespace logicalaccess
 
 
 
-	std::vector<unsigned char> ISO7816RplethReaderCardAdapter::sendCommand(const std::vector<unsigned char>& command, long int timeout)
+	std::vector<unsigned char> ISO7816RplethReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
 	{
 		char tmp [3];
 		std::vector<unsigned char> data;
-		data.push_back(static_cast<unsigned char>(Device::HID));
-		data.push_back(static_cast<unsigned char>(HidCommand::COM));
-		data.push_back(static_cast<unsigned char>((command.size()*2)+7));
 		data.push_back(static_cast<unsigned char>('t'));
 		sprintf(tmp, "%.2X",command.size()+1);
 		data.push_back(static_cast<unsigned char>(tmp[0]));
@@ -155,12 +142,14 @@ namespace logicalaccess
 			data.push_back(static_cast<unsigned char>(tmp[0]));
 			data.push_back(static_cast<unsigned char>(tmp[1]));
 		}
-		std::vector<unsigned char> answer = d_rpleth_reader_card_adapter->sendCommand (data, timeout);
-		boost::shared_ptr<RplethReaderUnit> readerUnit = boost::dynamic_pointer_cast<RplethReaderUnit>(getReaderUnit());
-		answer = readerUnit->asciiToHex (answer);
-		answer = handleAnswer (answer);
-		answer = answerReverse (answer);
-		return answer;
+
+		return d_rpleth_reader_card_adapter->adaptCommand(data);
+	}
+
+	std::vector<unsigned char> ISO7816RplethReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
+	{
+		COM_("Processing response : %s", BufferHelper::getHex(answer).c_str());
+		return answerReverse(handleAnswer(RplethReaderUnit::asciiToHex(d_rpleth_reader_card_adapter->adaptAnswer(answer))));
 	}
 
 	std::vector<unsigned char> ISO7816RplethReaderCardAdapter::answerReverse (const std::vector<unsigned char>& answer)
@@ -183,12 +172,15 @@ namespace logicalaccess
 
 		if (answer.size() > 2)
 		{
-			if (answer[0] == answer.size()-1)
+			if (answer[0] == answer.size())
 			{
 				res.insert(res.begin(), answer.begin()+2, answer.end());
 			}
+			else
+			{
+				THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "The supply answer size is not good.");
+			}
 		}
-
 		return res;
 	}
 }

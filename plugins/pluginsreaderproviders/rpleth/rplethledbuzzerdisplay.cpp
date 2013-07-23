@@ -41,7 +41,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(HidCommand::BEEP));
 		command.push_back(static_cast<unsigned char>(0x01));
 		command.push_back(static_cast<unsigned char>(status));
-		getRplethReaderCardAdapter()->sendCommand(command);
+		getRplethReaderCardAdapter()->sendRplethCommand(command);
 	}
 
 	void RplethLEDBuzzerDisplay::setLED()
@@ -53,6 +53,6 @@ namespace logicalaccess
 		else
 			command.push_back(static_cast<unsigned char>(HidCommand::BLINKLED2));
 		command.push_back(static_cast<unsigned char>(0x00));
-		getRplethReaderCardAdapter()->sendCommand(command);
+		getRplethReaderCardAdapter()->sendRplethCommand(command);
 	}
 }

@@ -15,6 +15,7 @@
 #include <boost/filesystem.hpp>
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "logicalaccess/cards/readercardadapter.hpp"
+#include "logicalaccess/readerproviders/datatransport.hpp"
 #include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
 #include "logicalaccess/services/accesscontrol/formats/staticformat.hpp"
 #include "logicalaccess/cards/chip.hpp"
@@ -43,6 +44,11 @@ namespace logicalaccess
 
 	ReaderUnit::~ReaderUnit()
 	{
+	}
+
+	std::vector<unsigned char> ReaderUnit::getPingCommand() const
+	{
+		return std::vector<unsigned char>();
 	}
 
 	boost::shared_ptr<LCDDisplay> ReaderUnit::getLCDDisplay()
@@ -106,7 +112,7 @@ namespace logicalaccess
 
 	std::vector<unsigned char> ReaderUnit::getNumber(boost::shared_ptr<Chip> chip, boost::shared_ptr<CardsFormatComposite> composite)
 	{
-		INFO_("Started for chip type {0x%s(%s)}", chip->getGenericCardType().c_str(), chip->getGenericCardType().c_str());
+		INFO_("Started for chip type {0x%s(%s)}", chip->getCardType().c_str(), chip->getGenericCardType().c_str());
 		std::vector<unsigned char> ret;
 
 		if (composite)
@@ -115,12 +121,19 @@ namespace logicalaccess
 			composite->setReaderUnit(shared_from_this());
 
 			CardTypeList ctList = composite->getConfiguredCardTypes();
-			std::string useCardType = chip->getGenericCardType();
+			std::string useCardType = chip->getCardType();
 			CardTypeList::iterator itct = std::find(ctList.begin(), ctList.end(), useCardType);
+			// Try to use the generic card type
+			if (itct == ctList.end())
+			{
+				useCardType = chip->getGenericCardType();
+				INFO_("No configuration found for the chip type ! Looking for the generic type (%s) configuration...", useCardType.c_str());
+				itct = std::find(ctList.begin(), ctList.end(), useCardType);
+			}
 			// Try to use the configuration for all card (= generic tag), because the card type isn't configured
 			if (itct == ctList.end())
 			{
-				WARNING_SIMPLE_("No configuration found for the chip type ! Looking for \"GenericTag\" configuration...");
+				INFO_SIMPLE_("No configuration found for the chip type ! Looking for \"GenericTag\" configuration...");
 				useCardType = "GenericTag";
 				itct = std::find(ctList.begin(), ctList.end(), useCardType);
 			}
@@ -210,7 +223,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<Chip> ReaderUnit::createChip(std::string type, const std::vector<unsigned char>& identifier)
 	{
-		INFO_("Creating chip for card type {0x%s(%s)} and identifier %s...", type.c_str(), type.c_str(), BufferHelper::getHex(identifier).c_str());
+		INFO_("Creating chip for card type {%s} and identifier %s...", type.c_str(), BufferHelper::getHex(identifier).c_str());
 		boost::shared_ptr<Chip> chip = createChip(type);
 		chip->setChipIdentifier(identifier);
 		return chip;
@@ -224,27 +237,40 @@ namespace logicalaccess
 		{
 			ret.reset(new Chip(type));
 		}
-		else
-		{
-			boost::shared_ptr<CardProvider> cp = LibraryManager::getInstance()->getCardProvider(type);
-			if (cp)
-			{
-				ret->setCardProvider(cp);
-			}
-		}
 
 		return ret;
 	}
 
 	boost::shared_ptr<ReaderCardAdapter> ReaderUnit::getDefaultReaderCardAdapter()
 	{
-		d_defaultReaderCardAdapter->setReaderUnit(shared_from_this());
+		if (d_defaultReaderCardAdapter)
+		{
+			if (getDataTransport())
+			{
+				d_defaultReaderCardAdapter->setDataTransport(getDataTransport());
+			}
+
+			if (d_defaultReaderCardAdapter->getDataTransport())
+			{
+				d_defaultReaderCardAdapter->getDataTransport()->setReaderUnit(shared_from_this());
+			}
+		}
 		return d_defaultReaderCardAdapter;
 	}
 
 	void ReaderUnit::setDefaultReaderCardAdapter(boost::shared_ptr<ReaderCardAdapter> defaultRca)
 	{
 		d_defaultReaderCardAdapter = defaultRca;
+	}
+
+	boost::shared_ptr<DataTransport> ReaderUnit::getDataTransport() const
+	{
+		return d_dataTransport;
+	}
+
+	void ReaderUnit::setDataTransport(boost::shared_ptr<DataTransport> dataTransport)
+	{
+		d_dataTransport = dataTransport;
 	}
 
 	boost::shared_ptr<ReaderUnitConfiguration> ReaderUnit::getConfiguration()
@@ -260,17 +286,45 @@ namespace logicalaccess
 
 	void ReaderUnit::setConfiguration(boost::shared_ptr<ReaderUnitConfiguration> config)
 	{
-		INFO_SIMPLE_("Setting reader unit configuration...");
 		d_readerUnitConfig = config;
-		if (d_readerUnitConfig)
-		{
-			INFO_("Reader unit configuration {%s}", d_readerUnitConfig->serialize().c_str());
-		}
 	}
 
 	std::string ReaderUnit::getDefaultXmlNodeName() const
 	{
 		return "ReaderUnit";
+	}
+
+	void ReaderUnit::serialize(boost::property_tree::ptree& node)
+	{
+		node.put("<xmlattr>.type", getReaderProvider()->getRPType());
+		d_readerUnitConfig->serialize(node);
+		if (getDataTransport())
+		{
+			node.put("TransportType", getDataTransport()->getTransportType());
+			getDataTransport()->serialize(node);
+		}
+		else
+		{
+			node.put("TransportType", "");
+		}
+	}
+
+	void ReaderUnit::unSerialize(boost::property_tree::ptree& node)
+	{
+		disconnectFromReader();
+		d_readerUnitConfig->unSerialize(node.get_child(d_readerUnitConfig->getDefaultXmlNodeName()));
+		std::string transportType = node.get_child("TransportType").get_value<std::string>();
+		boost::shared_ptr<DataTransport> dataTransport = LibraryManager::getInstance()->getDataTransport(transportType);
+		// Cannot create data transport instance from xml, use default one
+		if (!dataTransport)
+		{
+			dataTransport = getDataTransport();
+		}
+		if (dataTransport && transportType == dataTransport->getTransportType())
+		{
+			dataTransport->unSerialize(node.get_child(dataTransport->getDefaultXmlNodeName()));
+			setDataTransport(dataTransport);
+		}
 	}
 
 	bool ReaderUnit::unSerialize(boost::property_tree::ptree& node, const std::string& rootNode)
@@ -285,7 +339,7 @@ namespace logicalaccess
 					if (static_cast<std::string>(v.second.get_child("<xmlattr>.type").get_value<std::string>()) == getReaderProvider()->getRPType())
 					{
 						boost::property_tree::ptree r = v.second;
-						dynamic_cast<XmlSerializable*>(this)->unSerialize(r);
+						unSerialize(r);
 						
 						return true;
 					}

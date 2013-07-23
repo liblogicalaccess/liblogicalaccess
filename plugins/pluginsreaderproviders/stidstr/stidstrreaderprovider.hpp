@@ -10,11 +10,6 @@
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "stidstrreaderunit.hpp"
 
-#include <string>
-#include <vector>
-
-#include "logicalaccess/logs.hpp"
-
 namespace logicalaccess
 {	
 	#define READER_STIDSTR		"STidSTR"

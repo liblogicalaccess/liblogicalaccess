@@ -43,7 +43,7 @@ namespace logicalaccess
 	{
 		std::vector<unsigned char> data = MifareUltralightAccessInfo::getLinearData();
 
-		data.push_back(key->isEmpty() ? 0 : 1);
+		data.push_back(static_cast<unsigned char>(key->isEmpty() ? 0 : 1));
 
 		if (!key->isEmpty())
 		{

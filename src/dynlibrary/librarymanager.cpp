@@ -1,6 +1,11 @@
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include <boost/filesystem.hpp>
 
+// TODO: Data transport should also be through plug-in
+#include "logicalaccess/readerproviders/serialportdatatransport.hpp"
+#include "logicalaccess/readerproviders/tcpdatatransport.hpp"
+#include "logicalaccess/readerproviders/udpdatatransport.hpp"
+
 namespace logicalaccess
 {
 	const std::string LibraryManager::enumType[3] = {"readers", "cards", "unified"};
@@ -21,7 +26,6 @@ namespace logicalaccess
 		void *fct;
 		boost::filesystem::directory_iterator end_iter;
 		std::string extension = EXTENSION_LIB;
-		Settings setting = Settings::getInstance();
 
 		if (libLoaded.size() == 0)
 		{
@@ -73,21 +77,6 @@ namespace logicalaccess
 		return ret;
 	}
 
-	boost::shared_ptr<CardProvider> LibraryManager::getCardProvider(const std::string& cardtype)
-	{
-		boost::shared_ptr<CardProvider> ret;
-		std::string fctname = "get" + cardtype + "CardProvider";
-
-		getcardprovider getcardproviderfct;
-		*(void**)(&getcardproviderfct) = getFctFromName(fctname, LibraryManager::CARDS_TYPE);
-		if (getcardproviderfct)
-		{
-			getcardproviderfct(&ret);
-		}
-
-		return ret;
-	}
-
 	boost::shared_ptr<Commands> LibraryManager::getCommands(const std::string& extendedtype)
 	{
 		boost::shared_ptr<Commands> ret;
@@ -103,6 +92,26 @@ namespace logicalaccess
 		return ret;
 	}
 
+	boost::shared_ptr<DataTransport> LibraryManager::getDataTransport(const std::string& transporttype)
+	{
+		boost::shared_ptr<DataTransport> ret;
+		
+		if (transporttype == TRANSPORT_SERIALPORT)
+		{
+			ret.reset(new SerialPortDataTransport());
+		}
+		else if (transporttype == TRANSPORT_UDP)
+		{
+			ret.reset(new UdpDataTransport());
+		}
+		else if (transporttype == TRANSPORT_TCP)
+		{
+			ret.reset(new TcpDataTransport());
+		}
+
+		return ret;
+	}
+
 	std::vector<std::string> LibraryManager::getAvailableCards()
 	{
 		return getAvailablePlugins(LibraryManager::CARDS_TYPE);
@@ -113,13 +122,23 @@ namespace logicalaccess
 		return getAvailablePlugins(LibraryManager::READERS_TYPE);
 	}
 
+	std::vector<std::string> LibraryManager::getAvailableDataTransports()
+	{
+		std::vector<std::string> list;
+
+		list.push_back(TRANSPORT_SERIALPORT);
+		list.push_back(TRANSPORT_UDP);
+		list.push_back(TRANSPORT_TCP);
+
+		return list;
+	}
+
 	std::vector<std::string> LibraryManager::getAvailablePlugins(LibraryType libraryType)
 	{
 		std::vector<std::string> plugins;
 		void* fct = NULL;
 		boost::filesystem::directory_iterator end_iter;
 		std::string extension = EXTENSION_LIB;
-		Settings setting = Settings::getInstance();
 		std::string fctname;
 		
 		if (libraryType == LibraryManager::CARDS_TYPE)
@@ -173,15 +192,15 @@ namespace logicalaccess
 		void* fct = NULL;
 		boost::filesystem::directory_iterator end_iter;
 		std::string extension = EXTENSION_LIB;
-		Settings setting = Settings::getInstance();
+		Settings* setting = Settings::getInstance();
 		std::string fctname = "getLibraryName";
 
-		for (std::vector<std::string>::iterator it = setting.PluginFolders.begin(); it != setting.PluginFolders.end(); ++it)
+		for (std::vector<std::string>::iterator it = setting->PluginFolders.begin(); it != setting->PluginFolders.end(); ++it)
 		{
 			boost::filesystem::path pluginDir(*it);
 			if (boost::filesystem::exists(pluginDir) && boost::filesystem::is_directory(pluginDir))
 			{
-				PLUGIN_("Scanning library folder %s...", pluginDir.string().c_str());
+				PLUGIN_("Scanning library folder %s ...", pluginDir.string().c_str());
 				for (boost::filesystem::directory_iterator dir_iter(pluginDir) ; dir_iter != end_iter ; ++dir_iter)
 				{
 					PLUGIN_("Checking library %s...", dir_iter->path().filename().string().c_str());

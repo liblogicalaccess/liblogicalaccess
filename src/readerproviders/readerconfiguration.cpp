@@ -17,9 +17,9 @@ namespace logicalaccess
 {
 	ReaderConfiguration::ReaderConfiguration()
 	{
-		Settings config = Settings::getInstance();
+		Settings* config = Settings::getInstance();
 	
-		d_readerProvider = LibraryManager::getInstance()->getReaderProvider(config.DefaultReader);				
+		d_readerProvider = LibraryManager::getInstance()->getReaderProvider(config->DefaultReader);				
 	}
 
 	ReaderConfiguration::~ReaderConfiguration()

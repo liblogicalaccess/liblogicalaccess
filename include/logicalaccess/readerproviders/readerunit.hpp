@@ -50,6 +50,7 @@ namespace logicalaccess
 	class Chip;
 	class Profile;
 	class ReaderCardAdapter;
+	class DataTransport;
 	class CardsFormatComposite;
 	class ReaderFormatComposite;
 	class ReaderProvider;
@@ -74,6 +75,12 @@ namespace logicalaccess
 			 * \brief Destructor.
 			 */
 			virtual ~ReaderUnit();
+
+			/**
+			 * \brief Get the reader ping command.
+			 * \return The ping command.
+			 */
+			virtual std::vector<unsigned char> getPingCommand() const;
 
 			/**
 			 * \brief Wait for a card insertion.
@@ -235,6 +242,18 @@ namespace logicalaccess
 			virtual void setDefaultReaderCardAdapter(boost::shared_ptr<ReaderCardAdapter> defaultRca);
 
 			/**
+			 * \brief Get the data transport layer.
+			 * \return The data transport layer.
+			 */
+			virtual boost::shared_ptr<DataTransport> getDataTransport() const;
+
+			/**
+			 * \brief Set the data transport layer.
+			 * \param dataTransport The data transport layer.
+			 */
+			virtual void setDataTransport(boost::shared_ptr<DataTransport> dataTransport);
+
+			/**
 			 * \brief Get a string hexadecimal representation of the reader serial number
 			 * \return The reader serial number or an empty string on error.
 			 */
@@ -245,6 +264,18 @@ namespace logicalaccess
 			 * \return The Xml node name.
 			 */
 			virtual std::string getDefaultXmlNodeName() const;
+
+			/**
+			 * \brief Serialize the current object to XML.
+			 * \param parentNode The parent node.
+			 */
+			virtual void serialize(boost::property_tree::ptree& node);
+
+			/**
+			 * \brief UnSerialize a XML node to the current object.
+			 * \param node The XML node.
+			 */
+			virtual void unSerialize(boost::property_tree::ptree& node);
 
 			/**
 			 * \brief UnSerialize object from a Xml node.
@@ -316,6 +347,11 @@ namespace logicalaccess
 			 * \brief The default reader/card adapter.
 			 */
 			boost::shared_ptr<ReaderCardAdapter> d_defaultReaderCardAdapter;
+
+			/**
+			 * \brief The data transport layer.
+			 */
+			boost::shared_ptr<DataTransport> d_dataTransport;
 	};
 }
 

@@ -20,6 +20,8 @@
 #include "logicalaccess/cards/chip.hpp"
 #include "a3mlgm5600ledbuzzerdisplay.hpp"
 #include "a3mlgm5600lcddisplay.hpp"
+#include "logicalaccess/dynlibrary/librarymanager.hpp"
+#include "logicalaccess/readerproviders/udpdatatransport.hpp"
 
 
 namespace logicalaccess
@@ -29,6 +31,10 @@ namespace logicalaccess
 {
 		d_readerUnitConfig.reset(new A3MLGM5600ReaderUnitConfiguration());
 		setDefaultReaderCardAdapter (boost::shared_ptr<A3MLGM5600ReaderCardAdapter> (new A3MLGM5600ReaderCardAdapter()));
+		boost::shared_ptr<UdpDataTransport> dataTransport(new UdpDataTransport());
+		dataTransport->setIpAddress("192.168.1.100");
+		dataTransport->setPort(2000);
+		setDataTransport(dataTransport);
 		d_ledBuzzerDisplay.reset(new A3MLGM5600LEDBuzzerDisplay());
 		d_lcdDisplay.reset(new A3MLGM5600LCDDisplay());
 		d_card_type = "UNKNOWN";
@@ -63,11 +69,6 @@ namespace logicalaccess
 	void A3MLGM5600ReaderUnit::setCardType(std::string cardType)
 	{
 		d_card_type = cardType;
-	}
-
-	boost::shared_ptr<boost::asio::ip::udp::socket> A3MLGM5600ReaderUnit::getSocket()
-	{
-		return d_socket;
 	}
 
 	bool A3MLGM5600ReaderUnit::waitInsertion(unsigned int maxwait)
@@ -166,31 +167,13 @@ namespace logicalaccess
 
 	bool A3MLGM5600ReaderUnit::connectToReader()
 	{
-		if (!d_socket)
-		{
-			boost::asio::ip::udp::endpoint endpoint(boost::asio::ip::address::from_string(getA3MLGM5600Configuration()->getReaderIpAddress()), 7171);
-			d_socket.reset(new boost::asio::ip::udp::socket(ios));
-
-			try
-			{
-				d_socket->connect(endpoint);
-			}
-			catch(boost::system::system_error&)
-			{
-				d_socket.reset();
-			}
-		}
-
-		return bool(d_socket);
+		getDataTransport()->setReaderUnit(shared_from_this());
+		return getDataTransport()->connect();
 	}
 
 	void A3MLGM5600ReaderUnit::disconnectFromReader()
 	{
-		if (d_socket)
-		{
-			d_socket->close();
-			d_socket.reset();
-		}
+		getDataTransport()->disconnect();
 	}
 
 	boost::shared_ptr<Chip> A3MLGM5600ReaderUnit::createChip(std::string type)
@@ -200,18 +183,13 @@ namespace logicalaccess
 		if (chip)
 		{
 			boost::shared_ptr<ReaderCardAdapter> rca;
-			boost::shared_ptr<CardProvider> cp;
 
 			if (type == "GenericTag")
 				rca = getDefaultReaderCardAdapter();
 			else
 				return chip;
 
-			rca->setReaderUnit(shared_from_this());
-			if(cp)
-			{
-				chip->setCardProvider(cp);
-			}
+			rca->setDataTransport(getDataTransport());
 		}
 		return chip;
 	}
@@ -255,17 +233,13 @@ namespace logicalaccess
 	void A3MLGM5600ReaderUnit::serialize(boost::property_tree::ptree& parentNode)
 	{
 		boost::property_tree::ptree node;
-
-		node.put("<xmlattr>.type", getReaderProvider()->getRPType());
-		d_readerUnitConfig->serialize(node);
-
+		ReaderUnit::serialize(node);
 		parentNode.add_child(getDefaultXmlNodeName(), node);
 	}
 
 	void A3MLGM5600ReaderUnit::unSerialize(boost::property_tree::ptree& node)
 	{
-		disconnectFromReader();
-		d_readerUnitConfig->unSerialize(node.get_child(d_readerUnitConfig->getDefaultXmlNodeName()));
+		ReaderUnit::unSerialize(node);
 	}
 
 	boost::shared_ptr<A3MLGM5600ReaderProvider> A3MLGM5600ReaderUnit::getA3MLGM5600ReaderProvider() const

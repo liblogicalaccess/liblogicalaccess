@@ -291,7 +291,7 @@ namespace logicalaccess
 			 * \param source The vector to convert.
 			 * \return The vector converted.
 			 */
-			std::vector<unsigned char> asciiToHex (const std::vector<unsigned char>& source);
+			static std::vector<unsigned char> asciiToHex (const std::vector<unsigned char>& source);
 
 			/**
 			 * \brief Send a reqA.
@@ -331,6 +331,16 @@ namespace logicalaccess
 			 * \return The csn contains into the wiegand trame.
 			 */
 			std::vector<unsigned char> getCsn (const std::vector<unsigned char>& trame);
+
+			/**
+			 * \brief Last successed RATS result.
+			 */
+			std::vector<unsigned char> d_successedRATS;
+
+			/**
+			 * \brief The new identifier that will be used for the next waitInsertion after the waitRemoval.
+			 */
+			std::vector<unsigned char> removalIdentifier;
 	};
 }
 

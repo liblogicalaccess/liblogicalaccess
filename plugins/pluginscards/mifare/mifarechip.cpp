@@ -10,7 +10,8 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-
+#include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
+#include "mifarestoragecardservice.hpp"
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 
 
@@ -70,7 +71,7 @@ namespace logicalaccess
 		rootLocation->sector = (unsigned int)-1;
 		rootNode->setLocation(rootLocation);
 
-		if (d_cardprovider)
+		if (getCommands())
 		{
 			for (int i = 0; i < 16; i++)
 			{
@@ -79,6 +80,34 @@ namespace logicalaccess
 		}
 
 		return rootNode;
+	}
+
+	boost::shared_ptr<CardService> MifareChip::getService(CardServiceType serviceType)
+	{
+		boost::shared_ptr<CardService> service;
+
+		switch (serviceType)
+		{
+		case CST_ACCESS_CONTROL:
+			{
+				service.reset(new AccessControlCardService(shared_from_this()));
+			}
+			break;
+		case CST_STORAGE:
+			{
+				service.reset(new MifareStorageCardService(shared_from_this()));
+			}
+			break;
+		case CST_NFC_TAG:
+		  break;
+		}
+
+		if (!service)
+		{
+			service = Chip::getService(serviceType);
+		}
+
+		return service;
 	}
 }
 

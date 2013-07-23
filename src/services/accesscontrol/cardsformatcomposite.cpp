@@ -22,7 +22,7 @@ namespace logicalaccess
 
 	}
 
-	boost::shared_ptr<Format> CardsFormatComposite::createFormatFromXml(const string& xmlstring, const string& rootNode)
+	boost::shared_ptr<Format> CardsFormatComposite::createFormatFromXml(const std::string& xmlstring, const std::string& rootNode)
 	{
 		boost::shared_ptr<Format> ret;
 
@@ -141,29 +141,23 @@ namespace logicalaccess
 					try
 					{
 						INFO_SIMPLE_("Getting access control service from chip...");
-						if (chip->getCardProvider())
+						boost::shared_ptr<AccessControlCardService> acService = boost::dynamic_pointer_cast<AccessControlCardService>(chip->getService(CST_ACCESS_CONTROL));
+						if (acService)
 						{
-							boost::shared_ptr<AccessControlCardService> acService = boost::dynamic_pointer_cast<AccessControlCardService>(chip->getCardProvider()->getService(CST_ACCESS_CONTROL));
-							if (acService)
+							fcopy = acService->readFormat(finfos.format, finfos.location, finfos.aiToUse);
+							if (fcopy && !finfos.format->checkSkeleton(fcopy))
 							{
-								fcopy = acService->readFormat(finfos.format, finfos.location, finfos.aiToUse);
-								if (fcopy && !finfos.format->checkSkeleton(fcopy))
-								{
-									fcopy.reset();
-								}
-							}
-							else
-							{
-								ERROR_("Cannot found any access control service for this chip.");
+								fcopy.reset();
 							}
 						}
 						else
 						{
-							ERROR_("No card provider on this chip.");
+							ERROR_("Cannot found any access control service for this chip.");
 						}
 					}
-					catch(std::exception&)
+					catch(std::exception& ex)
 					{
+						WARNING_("Read format failed: %s", ex.what());
 						fcopy.reset();
 					}
 				}
@@ -235,7 +229,7 @@ namespace logicalaccess
 		{
 			if(v.first == "Card" )
 			{
-				string type = v.second.get_child("<xmlattr>.type").get_value<std::string>();
+				string type = v.second.get_child("type").get_value<std::string>();
 
 				boost::shared_ptr<Chip> chip = getReaderUnit()->createChip(type);
 				EXCEPTION_ASSERT_WITH_LOG(chip, LibLogicalAccessException, "Unknow card type.");
@@ -252,25 +246,49 @@ namespace logicalaccess
 						boost::shared_ptr<Location> location = profile->createLocation();
 						if (location)
 						{
-							location->unSerialize(childrenRootNode);
+							try
+							{
+								location->unSerialize(childrenRootNode, "");
+							}
+							catch(std::exception ex)
+							{
+								ERROR_("Cannot unserialize location.");
+								location.reset();
+							}
 						}
 						finfos.location = location;
 
 						boost::shared_ptr<AccessInfo> aiToUse = profile->createAccessInfo();
 						if (aiToUse)
 						{
-							aiToUse->unSerialize(childrenRootNode);
+							try
+							{
+								aiToUse->unSerialize(childrenRootNode, "");
+							}
+							catch(std::exception ex)
+							{
+								ERROR_("Cannot unserialize access info to use.");
+								aiToUse.reset();
+							}
 						}
 						finfos.aiToUse = aiToUse;
 
 						boost::shared_ptr<AccessInfo> aiToWrite;
-						boost::property_tree::ptree writeNode = childrenRootNode.get_child("WriteInfo");
+						boost::property_tree::ptree writeNode = v.second.get_child("WriteInfo");
 						if (!writeNode.empty())
 						{
 							aiToWrite = profile->createAccessInfo();
 							if (aiToWrite)
 							{
-								aiToWrite->unSerialize(writeNode);
+								try
+								{
+									aiToWrite->unSerialize(writeNode, "");
+								}
+								catch(std::exception ex)
+								{
+									ERROR_("Cannot unserialize access info to write.");
+									aiToWrite.reset();
+								}
 							}
 						}
 						finfos.aiToWrite = aiToWrite;

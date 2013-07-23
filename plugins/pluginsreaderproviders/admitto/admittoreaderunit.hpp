@@ -27,7 +27,7 @@ namespace logicalaccess
 			/**
 			 * \brief Constructor.
 			 */
-			AdmittoReaderUnit(boost::shared_ptr<SerialPortXml> port);
+			AdmittoReaderUnit();
 
 			/**
 			 * \brief Destructor.
@@ -45,18 +45,6 @@ namespace logicalaccess
 			 * \return The connected reader unit name.
 			 */
 			virtual std::string getConnectedName();
-
-			/**
-			 * \brief Get the serial port information.
-			 * \return The serial port.
-			 */
-			virtual boost::shared_ptr<SerialPortXml> getSerialPort();
-
-			/**
-			 * \brief Set the serial port information.
-			 * \param port The serial port.
-			 */
-			virtual void setSerialPort(boost::shared_ptr<SerialPortXml> port);
 
 			/**
 			 * \brief Set the card type.
@@ -138,6 +126,12 @@ namespace logicalaccess
 			virtual void disconnectFromReader();
 
 			/**
+			 * \brief Get the reader ping command.
+			 * \return The ping command.
+			 */
+			virtual std::vector<unsigned char> getPingCommand() const;
+
+			/**
 			 * \brief Get a string hexadecimal representation of the reader serial number
 			 * \return The reader serial number or an empty string on error.
 			 */
@@ -167,34 +161,7 @@ namespace logicalaccess
 			 */
 			boost::shared_ptr<AdmittoReaderProvider> getAdmittoReaderProvider() const;
 
-			/**
-			 * \brief Configure the current serial port.
-			 */
-			void configure();
-
-			/**
-			 * \brief Configure the given serial port.
-			 * \param port The COM port to configure.
-			 * \param retryConfiguring On error, the function wait some milliseconds and retry another time to configure the serial port.
-			 */
-			void configure(boost::shared_ptr<SerialPortXml> port, bool retryConfiguring);
-
-			/**
-			 * \brief Start to auto-detect the first serial port with a reader. Update serial port when found.
-			 */
-			void startAutoDetect();
-
-		protected:
-
-			/**
-			 * \brief The auto-detected status
-			 */
-			bool d_isAutoDetected;
-
-			/**
-			 * \brief The serial port.
-			 */
-			boost::shared_ptr<SerialPortXml> d_port;	
+		protected:	
 	};
 }
 

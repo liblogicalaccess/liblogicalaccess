@@ -19,10 +19,11 @@
 namespace logicalaccess
 {		
 	#define DESFIRE_CLEAR_DATA_LENGTH_CHUNK	32
+
 	/**
 	 * \brief The DESFire base commands class.
 	 */
-	class LIBLOGICALACCESS_API DESFireISO7816Commands : public DESFireCommands
+	class LIBLOGICALACCESS_API DESFireISO7816Commands : public virtual DESFireCommands
 	{
 		public:
 

@@ -12,8 +12,8 @@ namespace logicalaccess
 	{
 		if ((_handle = ::LoadLibrary(dlName.c_str())) == NULL)
 		{
-			ERROR_("Cannot load library %s.", dlName.c_str());
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, _getErrorMess(::GetLastError()));
+			PLUGIN_ERROR_("Cannot load library %s.", dlName.c_str());
+			throw EXCEPTION(LibLogicalAccessException, _getErrorMess(::GetLastError()));
 		}
 	}
 
@@ -25,8 +25,8 @@ namespace logicalaccess
 		sym = ::GetProcAddress(_handle, symName);
 		if (!sym)
 		{
-			ERROR_("Cannot get symbol %s on library %s.", symName, _name.c_str());
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, _getErrorMess(::GetLastError()));
+			PLUGIN_ERROR_("Cannot get symbol %s on library %s.", symName, _name.c_str());
+			throw EXCEPTION(LibLogicalAccessException, _getErrorMess(::GetLastError()));
 		}
 		return sym;
 	}

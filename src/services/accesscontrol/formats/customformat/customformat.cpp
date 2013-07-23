@@ -165,13 +165,6 @@ namespace logicalaccess
 
 	size_t CustomFormat::getSkeletonLinearData(void* data, size_t dataLengthBytes) const
 	{
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasWriteFormatAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		std::string xmlstr = const_cast<XmlSerializable*>(dynamic_cast<const XmlSerializable*>(this))->serialize();
 		std::vector<unsigned char> xmlbuf(xmlstr.begin(), xmlstr.end());
 
@@ -189,13 +182,6 @@ namespace logicalaccess
 
 	void CustomFormat::setSkeletonLinearData(const void* data, size_t dataLengthBytes)
 	{
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasReadFormatAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		std::vector<unsigned char> xmlbuf((unsigned char*)data, (unsigned char*)data + dataLengthBytes);
 		std::string xmlstr = BufferHelper::getStdString(xmlbuf);
 		dynamic_cast<XmlSerializable*>(this)->unSerialize(xmlstr, "");

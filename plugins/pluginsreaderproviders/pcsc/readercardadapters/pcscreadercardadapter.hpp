@@ -25,31 +25,28 @@ namespace logicalaccess
 		public:
 
 			/**
-			 * \brief Send a command to the reader.
-			 * \param command The command buffer.
-			 * \param timeout The timeout.
-			 * \return the result of the command.
+			 *\ brief Constructor.
 			 */
-			virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long int timeout);
+			PCSCReaderCardAdapter();
 
 			/**
-			 * \brief Get the PC/SC reader unit.
-			 * \return The PC/SC reader unit.
+			 * \brief Destructor.
 			 */
-			boost::shared_ptr<PCSCReaderUnit> getPCSCReaderUnit() const { return boost::dynamic_pointer_cast<PCSCReaderUnit>(getReaderUnit()); };
+			virtual ~PCSCReaderCardAdapter();
 
 			/**
-			 * \brief Check the card error and throw exception if needed.
-			 * \param errorFlag The error flag.
+			 * \brief Adapt the command to send to the reader.
+			 * \param command The command to send.
+			 * \return The adapted command to send.
 			 */
-			virtual void CheckCardError(unsigned int errorFlag) const;
+			virtual std::vector<unsigned char> adaptCommand(const std::vector<unsigned char>& command);
 
 			/**
-			 * \brief Check the command result and throw exception if needed.
-			 * \param data The result buffer.
-			 * \param datalen The result buffer length.
+			 * \brief Adapt the asnwer received from the reader.
+			 * \param answer The answer received.
+			 * \return The adapted answer received.
 			 */
-			virtual void CheckResult(const void* data, size_t datalen) const;
+			virtual std::vector<unsigned char> adaptAnswer(const std::vector<unsigned char>& answer);
 
 		protected:
 			

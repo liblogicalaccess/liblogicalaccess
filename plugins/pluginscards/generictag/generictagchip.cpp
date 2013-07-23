@@ -5,6 +5,7 @@
  */
 
 #include "generictagchip.hpp"
+#include "generictagaccesscontrolcardservice.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -30,5 +31,30 @@ namespace logicalaccess
 		rootNode->setName("RFID Tag");
 
 		return rootNode;
+	}
+
+	boost::shared_ptr<CardService> GenericTagChip::getService(CardServiceType serviceType)
+	{
+		boost::shared_ptr<CardService> service;
+
+		switch (serviceType)
+		{
+		case CST_ACCESS_CONTROL:
+			{
+				service.reset(new GenericTagAccessControlCardService(shared_from_this()));
+			}
+			break;
+		case CST_NFC_TAG:
+		  break;
+		case CST_STORAGE:
+		  break;
+		}
+
+		if (!service)
+		{
+			service = Chip::getService(serviceType);
+		}
+
+		return service;
 	}
 }

@@ -136,18 +136,6 @@ namespace logicalaccess
 			 */
 			void setTimeRemoval(unsigned char timeRemoval) { d_timeRemoval = timeRemoval; };
 
-			/**
-			 * \brief Get the serial port baudrate.
-			 * \return The Baudrate.
-			 */
-			unsigned long getPortBaudRate() { return d_portBaudRate; };
-
-			/**
-			 * \brief Set the serial port baudrate.
-			 * \param baudRate The Baudrate (9600, 19200, 38400, 57600, 115200).
-			 */
-			void setPortBaudRate(unsigned long baudRate) { d_portBaudRate = baudRate; };
-
 		protected:
 
 			/**
@@ -184,11 +172,6 @@ namespace logicalaccess
 			 * \brief The time before a tag is removed from the stack.
 			 */
 			unsigned char d_timeRemoval;
-
-			/**
-			 * \brief The baudrate to use when configuring the serial port.
-			 */
-			unsigned long d_portBaudRate;
 	};
 }
 

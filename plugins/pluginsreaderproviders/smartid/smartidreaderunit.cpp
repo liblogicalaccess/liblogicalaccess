@@ -20,17 +20,23 @@
 #include <boost/filesystem.hpp>
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
-#include "mifarecardprovider.hpp"
+#include "logicalaccess/readerproviders/serialportdatatransport.hpp"
 
 namespace logicalaccess
 {
-	SmartIDReaderUnit::SmartIDReaderUnit(boost::shared_ptr<SerialPortXml> port)
+	SmartIDReaderUnit::SmartIDReaderUnit()
 		: ReaderUnit()
 	{
 		d_readerUnitConfig.reset(new SmartIDReaderUnitConfiguration());
 		setDefaultReaderCardAdapter (boost::shared_ptr<SmartIDReaderCardAdapter> (new SmartIDReaderCardAdapter()));
 		d_ledBuzzerDisplay.reset(new SmartIDLEDBuzzerDisplay());
-		d_port = port;
+		boost::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
+#ifndef _WINDOWS
+		dataTransport->setPortBaudRate(B115200);
+#else
+		dataTransport->setPortBaudRate(CBR_115200);
+#endif
+		setDataTransport(dataTransport);
 		d_card_type = "UNKNOWN";
 
 		try
@@ -40,12 +46,6 @@ namespace logicalaccess
 			d_card_type = pt.get("config.cardType", "UNKNOWN");
 		}
 		catch (...) { }
-
-		if (!d_port)
-		{
-			d_port.reset(new SerialPortXml(""));
-		}
-		d_isAutoDetected = false;
 	}
 
 	SmartIDReaderUnit::~SmartIDReaderUnit()
@@ -53,45 +53,21 @@ namespace logicalaccess
 		disconnectFromReader();
 	}
 
-	boost::shared_ptr<SerialPortXml> SmartIDReaderUnit::getSerialPort()
-	{
-		return d_port;
-	}
-
-	void SmartIDReaderUnit::setSerialPort(boost::shared_ptr<SerialPortXml> port)
-	{
-		if (port)
-		{
-			INFO_("Setting serial port {%s}...", port->getSerialPort()->deviceName().c_str());
-			d_port = port;
-		}
-	}
-
 	std::string SmartIDReaderUnit::getName() const
 	{
-		string ret;
-		if (d_port && !d_isAutoDetected)
-		{
-			ret = d_port->getSerialPort()->deviceName();
-		}
-		return ret;
+		return getDataTransport()->getName();
 	}
 
 	std::string SmartIDReaderUnit::getConnectedName()
 	{
-		string ret;
-		if (d_port)
-		{
-			ret = d_port->getSerialPort()->deviceName();
-		}
-		return ret;
+		return getName();
 	}
 
 	void SmartIDReaderUnit::setCardType(std::string cardType)
 	{
 		d_card_type = cardType;
 		d_readerCommunication = getReaderCommunication(cardType);
-		boost::dynamic_pointer_cast<ReaderCardAdapter>(d_readerCommunication)->setReaderUnit(shared_from_this());
+		boost::dynamic_pointer_cast<ReaderCardAdapter>(d_readerCommunication)->setDataTransport(getDataTransport());
 	}
 
 	boost::shared_ptr<ReaderCommunication> SmartIDReaderUnit::getReaderCommunication(std::string cardType)
@@ -227,19 +203,16 @@ namespace logicalaccess
 		if (chip)
 		{
 			boost::shared_ptr<ReaderCardAdapter> rca;
-			boost::shared_ptr<CardProvider> cp;
 			boost::shared_ptr<Commands> commands;
 
 			if (type == "Mifare1K" || type == "Mifare4K" || type == "Mifare")
 			{
 				rca.reset(new MifareSmartIDReaderCardAdapter());
-				cp.reset(new MifareCardProvider());
 				commands.reset(new MifareSmartIDCommands());
 			}
 			else if (type == "DESFireEV1")
 			{
 				rca = getDefaultReaderCardAdapter();
-				cp = LibraryManager::getInstance()->getCardProvider("DESFireEV1");
 				commands = LibraryManager::getInstance()->getCommands("DESFireEV1ISO7816");
 				*(void**)(&setcryptocontextfct) = LibraryManager::getInstance()->getFctFromName("setCryptoContextDESFireEV1ISO7816Commands", LibraryManager::READERS_TYPE);
 				setcryptocontextfct(&commands, &chip);
@@ -247,7 +220,6 @@ namespace logicalaccess
 			else if (type == "DESFire")
 			{
 				rca = getDefaultReaderCardAdapter();
-				cp = LibraryManager::getInstance()->getCardProvider("DESFire");
 				commands = LibraryManager::getInstance()->getCommands("DESFireISO7816");
 				*(void**)(&setcryptocontextfct) = LibraryManager::getInstance()->getFctFromName("setCryptoContextDESFireEV1ISO7816Commands", LibraryManager::READERS_TYPE);
 				setcryptocontextfct(&commands, &chip);
@@ -255,22 +227,18 @@ namespace logicalaccess
 			else if (type == "Twic")
 			{
 				rca = getDefaultReaderCardAdapter();
-				cp = LibraryManager::getInstance()->getCardProvider("Twic");
 				commands = LibraryManager::getInstance()->getCommands("TwicISO7816");
 			}
 			else
 				return chip;
 
-			rca->setReaderUnit(shared_from_this());
+			rca->setDataTransport(getDataTransport());
 			if (commands)
 			{
 				commands->setReaderCardAdapter(rca);
+				commands->setChip(chip);
+				chip->setCommands(commands);
 			}
-			if (cp)
-			{
-				cp->setCommands(commands);
-			}
-			chip->setCardProvider(cp);
 		}
 		return chip;
 	}
@@ -312,100 +280,21 @@ namespace logicalaccess
 
 	bool SmartIDReaderUnit::connectToReader()
 	{
-		bool ret = false;
-
-		startAutoDetect();
-
-		EXCEPTION_ASSERT_WITH_LOG(getSerialPort(), LibLogicalAccessException, "No serial port configured !");
-		EXCEPTION_ASSERT_WITH_LOG(getSerialPort()->getSerialPort()->deviceName() != "", LibLogicalAccessException, "Serial port name is empty ! Auto-detect failed !");
-
-		if (!getSerialPort()->getSerialPort()->isOpen())
-		{
-			getSerialPort()->getSerialPort()->open();
-			configure();
-			ret = true;
-		}
-		else
-		{
-			ret = true;
-		}
-
-		return ret;
+		return getDataTransport()->connect();
 	}
 
 	void SmartIDReaderUnit::disconnectFromReader()
 	{
-		if (getSerialPort()->getSerialPort()->isOpen())
-		{
-			getSerialPort()->getSerialPort()->close();
-		}
+		getDataTransport()->disconnect();
 	}
 
-	void SmartIDReaderUnit::startAutoDetect()
+	std::vector<unsigned char> SmartIDReaderUnit::getPingCommand() const
 	{
-		if (d_port && d_port->getSerialPort()->deviceName() == "")
-		{
-			if (!Settings::getInstance().IsAutoDetectEnabled)
-			{
-				INFO_SIMPLE_("Auto detection is disabled through settings !");
-				return;
-			}
+		std::vector<unsigned char> cmd;
 
-			INFO_SIMPLE_("Serial port is empty ! Starting Auto COM Port Detection...");
-			std::vector<boost::shared_ptr<SerialPortXml> > ports;
-			if (SerialPortXml::EnumerateUsingCreateFile(ports) && !ports.empty())
-			{
-				bool found = false;
-				for (std::vector<boost::shared_ptr<SerialPortXml> >::iterator i  = ports.begin(); i != ports.end() && !found; ++i)
-				{
-					try
-					{
-						INFO_("Processing port {%s}...", (*i)->getSerialPort()->deviceName().c_str());
-						(*i)->getSerialPort()->open();
-						configure((*i), false);
+		cmd.push_back(static_cast<unsigned char>(0x4f));
 
-						boost::shared_ptr<SmartIDReaderUnit> testingReaderUnit(new SmartIDReaderUnit(*i));
-						boost::shared_ptr<SmartIDReaderCardAdapter> testingCardAdapter(new SmartIDReaderCardAdapter());
-						testingCardAdapter->setReaderUnit(testingReaderUnit);
-
-						std::vector<unsigned char> r = testingCardAdapter->sendCommand(0x4F, std::vector<unsigned char>(), Settings::getInstance().AutoDetectionTimeout);
-
-						if (r.size() > 0)
-						{
-							INFO_SIMPLE_("Reader found ! Using this COM port !");
-							d_port = (*i);
-							found = true;
-						}
-					}
-					catch (std::exception& e)
-					{
-						ERROR_("Exception {%s}", e.what());
-					}
-					catch (...)
-					{
-						ERROR_SIMPLE_("Exception received !");
-					}
-
-					if ((*i)->getSerialPort()->isOpen())
-					{
-						(*i)->getSerialPort()->close();
-					}
-				}
-
-				if (!found)
-				{
-					INFO_SIMPLE_("NO Reader found on COM port...");
-				}
-				else
-				{
-					d_isAutoDetected = true;
-				}
-			}
-			else
-			{
-				WARNING_SIMPLE_("No COM Port detected !");
-			}
-		}
+		return cmd;
 	}
 
 	std::string SmartIDReaderUnit::getInformation()
@@ -435,114 +324,16 @@ namespace logicalaccess
 		getDefaultSmartIDReaderCardAdapter()->sendCommand(0x4E, data, 1000 + offtime);
 	}
 
-	void SmartIDReaderUnit::configure()
-	{
-		configure(getSerialPort(), Settings::getInstance().IsConfigurationRetryEnabled);
-	}
-
-	void SmartIDReaderUnit::configure(boost::shared_ptr<SerialPortXml> port, bool retryConfiguring)
-	{
-		EXCEPTION_ASSERT_WITH_LOG(port, LibLogicalAccessException, "No serial port configured !");
-		EXCEPTION_ASSERT_WITH_LOG(port->getSerialPort()->deviceName() != "", LibLogicalAccessException, "Serial port name is empty ! Auto-detect failed !");
-
-		try
-		{
-#ifndef _WINDOWS
-			struct termios options = port->getSerialPort()->configuration();
-
-			/* Set speed */
-			cfsetispeed(&options, getSmartIDConfiguration()->getSystemBaudrate());
-			cfsetospeed(&options, getSmartIDConfiguration()->getSystemBaudrate());
-
-			/* Enable the receiver and set local mode */
-			options.c_cflag |= (CLOCAL | CREAD);
-
-			/* Set character size and parity check */
-			/* 8N1 */
-			options.c_cflag &= ~PARENB;
-			options.c_cflag &= ~CSTOPB;
-			options.c_cflag &= ~CSIZE;
-			options.c_cflag |= CS8;
-
-			/* Disable parity check and fancy stuff */
-			options.c_iflag &= ~ICRNL;
-			options.c_iflag &= ~INPCK;
-			options.c_iflag &= ~ISTRIP;
-
-			/* Disable software flow control */
-			options.c_iflag &= ~(IXON | IXOFF | IXANY);
-
-			/* RAW input */
-			options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
-
-			/* RAW output */
-			options.c_oflag &= ~OPOST;
-
-			/* Timeouts */
-			options.c_cc[VMIN] = 1;
-			options.c_cc[VTIME] = 5;
-
-			port->getSerialPort()->setConfiguration(options);
-#else
-			DCB options = port->getSerialPort()->configuration();
-			options.BaudRate = getSmartIDConfiguration()->getSystemBaudrate();
-			options.fBinary = TRUE;               // Binary mode; no EOF check
-			options.fParity = FALSE;               // Enable parity checking
-			options.fOutxCtsFlow = FALSE;         // No CTS output flow control
-			options.fOutxDsrFlow = FALSE;         // No DSR output flow control
-			options.fDtrControl = DTR_CONTROL_DISABLE;
-													// DTR flow control type
-			options.fDsrSensitivity = FALSE;      // DSR sensitivity
-			options.fTXContinueOnXoff = TRUE;     // XOFF continues Tx
-			options.fOutX = FALSE;                // No XON/XOFF out flow control
-			options.fInX = FALSE;                 // No XON/XOFF in flow control
-			options.fErrorChar = FALSE;           // Disable error replacement
-			options.fNull = FALSE;                // Disable null stripping
-			options.fRtsControl = RTS_CONTROL_DISABLE;
-													// RTS flow control
-			options.fAbortOnError = FALSE;        // Do not abort reads/writes on
-													// error
-			options.ByteSize = 8;                 // Number of bits/byte, 4-8
-			options.Parity = NOPARITY;            // 0-4=no,odd,even,mark,space
-			options.StopBits = ONESTOPBIT;        // 0,1,2 = 1, 1.5, 2
-			port->getSerialPort()->setConfiguration(options);
-#endif
-		}
-		catch(std::exception& e)
-		{
-			if (retryConfiguring)
-			{
-				// Strange stuff is going here... by waiting and reopening the COM port (maybe for system cleanup), it's working !
-				std::string portn = port->getSerialPort()->deviceName();
-				WARNING_("Exception received {%s} ! Sleeping {%d} milliseconds -> Reopen serial port {%s} -> Finally retry  to configure...",
-							e.what(), Settings::getInstance().ConfigurationRetryTimeout, portn.c_str());
-#if !defined(__unix__)
-				Sleep(Settings::getInstance().ConfigurationRetryTimeout);
-#else
-				sleep(Settings::getInstance().ConfigurationRetryTimeout);
-#endif
-				port->getSerialPort()->reopen();
-				configure(getSerialPort(), false);
-			}
-		}
-	}
-
 	void SmartIDReaderUnit::serialize(boost::property_tree::ptree& parentNode)
 	{
 		boost::property_tree::ptree node;
-
-		node.put("<xmlattr>.type", getReaderProvider()->getRPType());
-		d_port->serialize(node);
-		d_readerUnitConfig->serialize(node);
-
+		ReaderUnit::serialize(node);
 		parentNode.add_child(getDefaultXmlNodeName(), node);
 	}
 
 	void SmartIDReaderUnit::unSerialize(boost::property_tree::ptree& node)
 	{
-		d_port.reset(new SerialPortXml());
-		d_port->unSerialize(node.get_child(d_port->getDefaultXmlNodeName()));
-		d_readerUnitConfig->unSerialize(node.get_child(d_readerUnitConfig->getDefaultXmlNodeName()));
+		ReaderUnit::unSerialize(node);
 	}
 
 	boost::shared_ptr<SmartIDReaderProvider> SmartIDReaderUnit::getSmartIDReaderProvider() const

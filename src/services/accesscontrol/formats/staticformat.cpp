@@ -171,13 +171,6 @@ namespace logicalaccess
 		size_t index = 0;
 		size_t length;
 
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasWriteFormatAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		if (data != NULL)
 		{
 			index += getFormatLinearData(data, dataLengthBytes)  * 8;
@@ -198,13 +191,6 @@ namespace logicalaccess
 	void StaticFormat::setSkeletonLinearData(const void* data, size_t /*dataLengthBytes*/)
 	{
 		size_t indexByte = 0;
-
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasReadFormatAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
 
 		setFormatLinearData(data, &indexByte);
 		setEncodingLinearData(data, &indexByte);		

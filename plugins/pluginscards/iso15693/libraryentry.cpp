@@ -29,14 +29,6 @@ extern "C"
 		}
 	}
 
-	LIBLOGICALACCESS_API void getISO15693CardProvider(boost::shared_ptr<logicalaccess::CardProvider>* cp)
-	{
-		if (cp != NULL)
-		{
-			*cp = boost::shared_ptr<logicalaccess::ISO15693CardProvider>(new logicalaccess::ISO15693CardProvider());
-		}
-	}
-
 	LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char* chipname, size_t chipnamelen, void** getterfct)
 	{
 		bool ret = false;

@@ -32,69 +32,39 @@ namespace logicalaccess
 		
 	}
 
-	bool DeisterReaderCardAdapter::sendCommandWithoutResponse(const std::vector<unsigned char>& command)
+	std::vector<unsigned char> DeisterReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
 	{
 		bool ret = false;
-		unsigned char tmpcmd[3];
-		tmpcmd[0] = d_source;
-		tmpcmd[1] = d_destination;
-		tmpcmd[2] = SOC;
-		std::vector<unsigned char> cmd = prepareDataForDevice(command);		
-		cmd.insert(cmd.begin(), tmpcmd, tmpcmd + 3);
+		std::vector<unsigned char> cmd;
+		cmd.push_back(Dummy);
+		cmd.push_back(Dummy);
+		cmd.push_back(SOC);
+		cmd.push_back(d_destination);
+		cmd.push_back(d_source);
+		std::vector<unsigned char> preparedCmd = prepareDataForDevice(command);
+		cmd.insert(cmd.end(), preparedCmd.begin(), preparedCmd.end());
 		unsigned char first, second;
-		ComputeCrcKermit(&cmd[0], cmd.size(), &first, &second);
-		tmpcmd[0] = Dummy;
-		tmpcmd[1] = Dummy;
-		cmd.insert(cmd.begin(), tmpcmd, tmpcmd + 2);
+		ComputeCrcKermit(&cmd[2], cmd.size() - 2, &first, &second);
 		cmd.push_back(first);
 		cmd.push_back(second);
 		cmd.push_back(STOP);
-		d_lastCommand = cmd;
-		d_lastResult.clear();
 
-		if (command.size() > 0)
-		{
-			getDeisterReaderUnit()->connectToReader();
-
-			boost::shared_ptr<SerialPortXml> port = getDeisterReaderUnit()->getSerialPort();
-			port->getSerialPort()->write(cmd);
-
-			ret = true;
-		}
-
-		return ret;
+		return cmd;
 	}
 
-	std::vector<unsigned char> DeisterReaderCardAdapter::sendCommand(const std::vector<unsigned char>& command, long int timeout)
+	std::vector<unsigned char> DeisterReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
 	{
-		std::vector<unsigned char> r;
-		if (sendCommandWithoutResponse(command))
-		{
-			if (!receiveCommand(r, timeout))
-			{
-				r.clear();
-				//THROW_EXCEPTION_WITH_LOG(CardException, "No response received");
-			}
-
-			d_lastResult = r;
-		}
-
-		return r;
-	}
-
-	std::vector<unsigned char> DeisterReaderCardAdapter::handleCommandBuffer(const std::vector<unsigned char>& cmdbuf)
-	{
-		EXCEPTION_ASSERT_WITH_LOG(cmdbuf.size() >= 10, std::invalid_argument, "A valid command buffer size must be at least 10 bytes long");
-		EXCEPTION_ASSERT_WITH_LOG(cmdbuf[0] == Dummy, std::invalid_argument, "The supplied command buffer is not valid (bad dummy byte)");
-		EXCEPTION_ASSERT_WITH_LOG(cmdbuf[1] == Dummy, std::invalid_argument, "The supplied command buffer is not valid (bad dummy byte)");
-		EXCEPTION_ASSERT_WITH_LOG(cmdbuf[2] == SOM, std::invalid_argument, "The supplied command buffer is not valid (bad start message byte)");
-		EXCEPTION_ASSERT_WITH_LOG(cmdbuf[3] == d_source, std::invalid_argument, "The destination address is not valid");
-		EXCEPTION_ASSERT_WITH_LOG(cmdbuf[4] == d_destination, std::invalid_argument, "The source address is not valid");
+		EXCEPTION_ASSERT_WITH_LOG(answer.size() >= 10, std::invalid_argument, "A valid buffer size must be at least 10 bytes long");
+		EXCEPTION_ASSERT_WITH_LOG(answer[0] == Dummy, std::invalid_argument, "The supplied buffer is not valid (bad dummy byte)");
+		EXCEPTION_ASSERT_WITH_LOG(answer[1] == Dummy, std::invalid_argument, "The supplied buffer is not valid (bad dummy byte)");
+		EXCEPTION_ASSERT_WITH_LOG(answer[2] == SOM, std::invalid_argument, "The supplied buffer is not valid (bad start message byte)");
+		EXCEPTION_ASSERT_WITH_LOG(answer[3] == d_source, std::invalid_argument, "The destination address is not valid");
+		EXCEPTION_ASSERT_WITH_LOG(answer[4] == d_destination, std::invalid_argument, "The source address is not valid");
 		//unsigned char cmd = cmdbuf.constData()[5];
-		unsigned  char errorcode = cmdbuf[6];
+		unsigned  char errorcode = answer[6];
 		EXCEPTION_ASSERT_WITH_LOG(errorcode == 0x00 || errorcode == 0x10, std::invalid_argument, "The command return an error");
 		
-		std::vector<unsigned char> buf = std::vector<unsigned char>(cmdbuf.begin() + 7, cmdbuf.end());
+		std::vector<unsigned char> buf = std::vector<unsigned char>(answer.begin() + 7, answer.end());
 		size_t i = 0;
 		for (; i < buf.size(); ++i)
 		{
@@ -103,48 +73,18 @@ namespace logicalaccess
 				break;
 			}
 		}
-		EXCEPTION_ASSERT_WITH_LOG(i < buf.size(), std::invalid_argument, "The supplied command buffer is not valid (no stop byte)");
+		EXCEPTION_ASSERT_WITH_LOG(i < buf.size(), std::invalid_argument, "The supplied buffer is not valid (no stop byte)");
 		buf.resize(i);
 		std::vector<unsigned char> data = prepareDataFromDevice(buf);
-		EXCEPTION_ASSERT_WITH_LOG(data.size() >= 2, std::invalid_argument, "The supplied command buffer is not valid (no CRC)");
-		data.insert(data.begin(), cmdbuf.begin() + 2, cmdbuf.begin() + 2 + 5);
+		EXCEPTION_ASSERT_WITH_LOG(data.size() >= 2, std::invalid_argument, "The supplied buffer is not valid (no CRC)");
+		data.insert(data.begin(), answer.begin() + 2, answer.begin() + 2 + 5);
 		unsigned char first, second;
 		ComputeCrcKermit(&data[0], data.size() - 2, &first, &second);
-		EXCEPTION_ASSERT_WITH_LOG(data[data.size()-2] == first && data[data.size()-1] == second, std::invalid_argument, "The supplied command buffer is not valid (CRC missmatch)");		
+		EXCEPTION_ASSERT_WITH_LOG(data[data.size()-2] == first && data[data.size()-1] == second, std::invalid_argument, "The supplied buffer is not valid (CRC missmatch)");		
 		// Remove header and CRC
 		data = std::vector<unsigned char>(data.begin() + 5, data.end() - 2);
 
 		return data;
-	}
-
-	bool DeisterReaderCardAdapter::receiveCommand(std::vector<unsigned char>& buf, long int timeout)
-	{		
-		std::vector<unsigned char> res;
-		boost::shared_ptr<SerialPortXml> port = getDeisterReaderUnit()->getSerialPort();
-
-		boost::posix_time::time_duration ptimeout = boost::posix_time::milliseconds(timeout);
-		while (port->getSerialPort()->select(ptimeout))
-		{
-			std::vector<unsigned char> tmpbuf;
-
-			while (port->getSerialPort()->read(tmpbuf, 256) > 0)
-			{
-				res.insert(res.end(), tmpbuf.begin(), tmpbuf.end());
-				tmpbuf.clear();
-
-				try
-				{
-					buf = handleCommandBuffer(res);
-
-					return true;
-				}
-				catch (std::invalid_argument&)
-				{
-				}
-			}
-		}
-
-		return false;
 	}
 
 	std::vector<unsigned char> DeisterReaderCardAdapter::prepareDataForDevice(const std::vector<unsigned char>& data) const

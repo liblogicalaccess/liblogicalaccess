@@ -17,6 +17,7 @@
 #include <boost/filesystem.hpp>
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
+#include "logicalaccess/readerproviders/serialportdatatransport.hpp"
 
 namespace logicalaccess
 {
@@ -27,12 +28,13 @@ namespace logicalaccess
 	 *
 	 */
 
-	AdmittoReaderUnit::AdmittoReaderUnit(boost::shared_ptr<SerialPortXml> port)
+	AdmittoReaderUnit::AdmittoReaderUnit()
 		: ReaderUnit()
 	{
 		d_readerUnitConfig.reset(new AdmittoReaderUnitConfiguration());
 		setDefaultReaderCardAdapter (boost::shared_ptr<AdmittoReaderCardAdapter> (new AdmittoReaderCardAdapter()));
-		d_port = port;
+		boost::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
+		setDataTransport(dataTransport);
 		d_card_type = "UNKNOWN";
 
 		try
@@ -42,12 +44,6 @@ namespace logicalaccess
 			d_card_type = pt.get("config.cardType", "UNKNOWN");
 		}
 		catch (...) { }
-
-		if (!d_port)
-		{
-			d_port.reset(new SerialPortXml(""));
-		}
-		d_isAutoDetected = false;
 	}
 
 	AdmittoReaderUnit::~AdmittoReaderUnit()
@@ -55,38 +51,14 @@ namespace logicalaccess
 		disconnectFromReader();
 	}
 
-	boost::shared_ptr<SerialPortXml> AdmittoReaderUnit::getSerialPort()
-	{
-		return d_port;
-	}
-
-	void AdmittoReaderUnit::setSerialPort(boost::shared_ptr<SerialPortXml> port)
-	{
-		if (port)
-		{
-			INFO_("Setting serial port {%s}...", port->getSerialPort()->deviceName().c_str());
-			d_port = port;
-		}
-	}
-
 	std::string AdmittoReaderUnit::getName() const
 	{
-		std::string ret;
-		if (d_port && !d_isAutoDetected)
-		{
-			ret = d_port->getSerialPort()->deviceName();
-		}
-		return ret;
+		return getDataTransport()->getName();
 	}
 
 	std::string AdmittoReaderUnit::getConnectedName()
 	{
-		std::string ret;
-		if (d_port)
-		{
-			ret = d_port->getSerialPort()->deviceName();
-		}
-		return ret;
+		return getName();
 	}
 
 	void AdmittoReaderUnit::setCardType(std::string cardType)
@@ -97,10 +69,10 @@ namespace logicalaccess
 
 	bool AdmittoReaderUnit::waitInsertion(unsigned int maxwait)
 	{
-		bool oldValue = Settings::getInstance().IsLogEnabled;
-		if (oldValue && !Settings::getInstance().SeeWaitInsertionLog)
+		bool oldValue = Settings::getInstance()->IsLogEnabled;
+		if (oldValue && !Settings::getInstance()->SeeWaitInsertionLog)
 		{
-			Settings::getInstance().IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
+			Settings::getInstance()->IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
 		}
 
 		INFO_("Waiting insertion... max wait {%u}", maxwait);
@@ -158,22 +130,22 @@ namespace logicalaccess
 		}
 		catch(...)
 		{
-			Settings::getInstance().IsLogEnabled = oldValue;
+			Settings::getInstance()->IsLogEnabled = oldValue;
 			throw;
 		}
 
 		INFO_("Returns card inserted ? {%d} function timeout expired ? {%d}", inserted, (maxwait != 0 && currentWait >= maxwait));
-		Settings::getInstance().IsLogEnabled = oldValue;
+		Settings::getInstance()->IsLogEnabled = oldValue;
 
 		return inserted;
 	}
 
 	bool AdmittoReaderUnit::waitRemoval(unsigned int maxwait)
 	{
-		bool oldValue = Settings::getInstance().IsLogEnabled;
-		if (oldValue && !Settings::getInstance().SeeWaitRemovalLog)
+		bool oldValue = Settings::getInstance()->IsLogEnabled;
+		if (oldValue && !Settings::getInstance()->SeeWaitRemovalLog)
 		{
-			Settings::getInstance().IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
+			Settings::getInstance()->IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
 		}
 
 		INFO_("Waiting removal... max wait {%u}", maxwait);
@@ -239,13 +211,13 @@ namespace logicalaccess
 		}
 		catch(...)
 		{
-			Settings::getInstance().IsLogEnabled = oldValue;
+			Settings::getInstance()->IsLogEnabled = oldValue;
 			throw;
 		}
 
 		INFO_("Returns card removed ? {%d} - function timeout expired ? {%d}", removed, (maxwait != 0 && currentWait >= maxwait));
 
-		Settings::getInstance().IsLogEnabled = oldValue;
+		Settings::getInstance()->IsLogEnabled = oldValue;
 
 		return removed;
 	}
@@ -270,19 +242,16 @@ namespace logicalaccess
 		{
 			INFO_SIMPLE_("Chip created successfully !");
 			boost::shared_ptr<ReaderCardAdapter> rca;
-			boost::shared_ptr<CardProvider> cp;
 
 			if (type == "GenericTag")
 			{
 				INFO_SIMPLE_("Generic tag Chip created");
 				rca = getDefaultReaderCardAdapter();
-				cp = LibraryManager::getInstance()->getCardProvider("GenericTag");
 			}
 			else
 				return chip;
 
-			rca->setReaderUnit(shared_from_this());
-			chip->setCardProvider(cp);
+			rca->setDataTransport(getDataTransport());
 		}
 		return chip;
 	}
@@ -328,116 +297,23 @@ namespace logicalaccess
 
 	bool AdmittoReaderUnit::connectToReader()
 	{
-		INFO_SIMPLE_("Connecting to reader...");
-		bool ret = false;
-
-		startAutoDetect();
-
-		EXCEPTION_ASSERT_WITH_LOG(getSerialPort(), LibLogicalAccessException, "No serial port configured !");
-		EXCEPTION_ASSERT_WITH_LOG(getSerialPort()->getSerialPort()->deviceName() != "", LibLogicalAccessException, "Serial port name is empty ! Auto-detect failed !");
-
-		if (!getSerialPort()->getSerialPort()->isOpen())
-		{
-			INFO_SIMPLE_("Serial port closed ! Opening it...");
-			getSerialPort()->getSerialPort()->open();
-			configure();
-			ret = true;
-		}
-		else
-		{
-			INFO_SIMPLE_("Serial port already opened !");
-			ret = true;
-		}
-
-		return ret;
+		getDataTransport()->setReaderUnit(shared_from_this());
+		return getDataTransport()->connect();
 	}
 
 	void AdmittoReaderUnit::disconnectFromReader()
 	{
 		INFO_SIMPLE_("Disconnecting from reader...");
-		if (getSerialPort()->getSerialPort()->isOpen())
-		{
-			getSerialPort()->getSerialPort()->close();
-		}
+		getDataTransport()->disconnect();
 	}
 
-	void AdmittoReaderUnit::startAutoDetect()
+	std::vector<unsigned char> AdmittoReaderUnit::getPingCommand() const
 	{
-		if (d_port && d_port->getSerialPort()->deviceName() == "")
-		{
-			if (!Settings::getInstance().IsAutoDetectEnabled)
-			{
-				INFO_SIMPLE_("Auto detection is disabled through settings !");
-				return;
-			}
+		std::vector<unsigned char> cmd;
 
-			INFO_SIMPLE_("Serial port is empty ! Starting Auto COM Port Detection...");
-			std::vector<boost::shared_ptr<SerialPortXml> > ports;
-			if (SerialPortXml::EnumerateUsingCreateFile(ports) && !ports.empty())
-			{
-				bool found = false;
-				for (std::vector<boost::shared_ptr<SerialPortXml> >::iterator i  = ports.begin(); i != ports.end() && !found; ++i)
-				{
-					try
-					{
-						INFO_("Processing port {%s}...", (*i)->getSerialPort()->deviceName().c_str());
-						(*i)->getSerialPort()->open();
-						configure((*i), false);
+		cmd.push_back(0xff);
 
-						boost::shared_ptr<AdmittoReaderUnit> testingReaderUnit(new AdmittoReaderUnit(*i));
-						boost::shared_ptr<AdmittoReaderCardAdapter> testingCardAdapter(new AdmittoReaderCardAdapter());
-						testingCardAdapter->setReaderUnit(testingReaderUnit);
-						
-						std::vector<unsigned char> cmd;
-						cmd.push_back(0xff);	// trick
-
-						std::vector<unsigned char> tmpASCIIId = testingCardAdapter->sendCommand(cmd, Settings::getInstance().AutoDetectionTimeout);
-
-						INFO_SIMPLE_("Reader found ! Using this COM port !");
-						d_port = (*i);
-						found = true;
-					}
-					catch (std::exception& e)
-					{
-						ERROR_("Exception {%s}", e.what());
-					}
-					catch (...)
-					{
-						ERROR_SIMPLE_("Exception received !");
-					}
-
-					if ((*i)->getSerialPort()->isOpen())
-					{
-						(*i)->getSerialPort()->close();
-					}
-				}
-
-				if (!found)
-				{
-					INFO_SIMPLE_("NO Reader found on COM port...");
-				}
-				else
-				{
-					d_isAutoDetected = true;
-				}
-			}
-			else
-			{
-				WARNING_SIMPLE_("No COM Port detected !");
-			}
-		}
-	}
-
-	void AdmittoReaderUnit::configure()
-	{
-		configure(getSerialPort(), Settings::getInstance().IsConfigurationRetryEnabled);
-	}
-
-	void AdmittoReaderUnit::configure(boost::shared_ptr<SerialPortXml> port, bool retryConfiguring)
-	{
-		EXCEPTION_ASSERT_WITH_LOG(port, LibLogicalAccessException, "No serial port configured !");
-		EXCEPTION_ASSERT_WITH_LOG(port->getSerialPort()->deviceName() != "", LibLogicalAccessException, "Serial port name is empty ! Auto-detect failed !");
-
+<<<<<<< HEAD
 		try
 		{
 #ifndef _WINDOWS
@@ -518,24 +394,21 @@ namespace logicalaccess
 				configure(getSerialPort(), false);
 			}
 		}
+=======
+		return cmd;
+>>>>>>> develop
 	}
 
 	void AdmittoReaderUnit::serialize(boost::property_tree::ptree& parentNode)
 	{
 		boost::property_tree::ptree node;
-
-		node.put("<xmlattr>.type", getReaderProvider()->getRPType());
-		d_port->serialize(node);
-		d_readerUnitConfig->serialize(node);
-
+		ReaderUnit::serialize(node);
 		parentNode.add_child(getDefaultXmlNodeName(), node);
 	}
 
 	void AdmittoReaderUnit::unSerialize(boost::property_tree::ptree& node)
 	{
-		d_port.reset(new SerialPortXml());
-		d_port->unSerialize(node.get_child(d_port->getDefaultXmlNodeName()));
-		d_readerUnitConfig->unSerialize(node.get_child(d_readerUnitConfig->getDefaultXmlNodeName()));
+		ReaderUnit::unSerialize(node);
 	}
 
 	boost::shared_ptr<AdmittoReaderProvider> AdmittoReaderUnit::getAdmittoReaderProvider() const

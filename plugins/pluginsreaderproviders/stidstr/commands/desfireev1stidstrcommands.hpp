@@ -39,7 +39,7 @@ namespace logicalaccess
 	/**
 	 * \brief The DESFire EV1 base commands class for STidSTR reader.
 	 */
-	class LIBLOGICALACCESS_API DESFireEV1STidSTRCommands : public DESFireCommands, public DESFireEV1Commands
+	class LIBLOGICALACCESS_API DESFireEV1STidSTRCommands : public DESFireEV1Commands
 	{
 		public:
 
@@ -81,13 +81,13 @@ namespace logicalaccess
 			 * \brief Get the ISO DF-Names of all active application.
 			 * \return The DF-Names list.
 			 */
-			virtual vector<DFName> getDFNames();
+			virtual std::vector<DFName> getDFNames();
 
 			/**
 			 * \brief Get the ISO FID of all active files within the currently selected application.
 			 * \return The ISO FID list.
 			 */
-			virtual vector<unsigned short> getISOFileIDs();		
+			virtual std::vector<unsigned short> getISOFileIDs();		
 
 			/**
 			 * \brief Erase the card.

@@ -37,6 +37,7 @@ namespace logicalaccess
 			static void INFO_LOG(const char* file, int line, const char* function, const char* format, ...);
 			static void COM_LOG(const char* file, int line, const char* function, const char* format, ...);
 			static void PLUGIN_LOG(const char* file, int line, const char* function, const char* format, ...);
+			static void PLUGIN_ERROR(const char* file, int line, const char* function, const char* format, ...);
 
 			static std::ofstream logfile;
 
@@ -69,6 +70,7 @@ namespace logicalaccess
 	#define INFO_(x, ...) logicalaccess::Logs::INFO_LOG(__FILE__, __LINE__, __FUNCTION__, x, ##__VA_ARGS__)
 	#define COM_(x, ...) logicalaccess::Logs::COM_LOG(__FILE__, __LINE__, __FUNCTION__, x, ##__VA_ARGS__)
 	#define PLUGIN_(x, ...) logicalaccess::Logs::PLUGIN_LOG(__FILE__, __LINE__, __FUNCTION__, x, ##__VA_ARGS__)
+	#define PLUGIN_ERROR_(x, ...) logicalaccess::Logs::PLUGIN_ERROR(__FILE__, __LINE__, __FUNCTION__, x, ##__VA_ARGS__)
 
 	/**
 	 * \brief Convenient alias to throw an exception with logs.
@@ -93,6 +95,7 @@ namespace logicalaccess
 	#define INFO_(x, ...) ((void) 0)
 	#define COM_(x, ...) ((void) 0)
 	#define PLUGIN_(x, ...) ((void) 0)
+	#define PLUGIN_ERROR_(x, ...) ((void) 0)
 
 	#define THROW_EXCEPTION_WITH_LOG(type, msg) { throw EXCEPTION(type, msg); }
 	#define EXCEPTION_ASSERT_WITH_LOG(condition, type, msg) if (!(condition)) { THROW_EXCEPTION_WITH_LOG(type, msg); }

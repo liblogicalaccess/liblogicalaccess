@@ -7,14 +7,7 @@
 #ifndef LOGICALACCESS_READERCARDADAPTER_HPP
 #define LOGICALACCESS_READERCARDADAPTER_HPP
 
-#include "logicalaccess/readerproviders/readerprovider.hpp"
-
-#include <string>
-#include <vector>
-using std::string;
-using std::vector;
-
-#include "logicalaccess/logs.hpp"
+#include "logicalaccess/readerproviders/datatransport.hpp"
 
 namespace logicalaccess
 {
@@ -26,53 +19,28 @@ namespace logicalaccess
 		public:
 
 			/**
-			 * \brief Get the reader unit.
-			 * \return The reader unit.
+			 * \brief Adapt the command to send to the reader.
+			 * \param command The command to send.
+			 * \return The adapted command to send.
 			 */
-			virtual boost::shared_ptr<ReaderUnit> getReaderUnit() const { return d_ReaderUnit.lock(); };
+			virtual std::vector<unsigned char> adaptCommand(const std::vector<unsigned char>& command);
 
 			/**
-			 * \brief Set the reader unit.
-			 * \param unit The reader unit.
+			 * \brief Adapt the answer received from the reader.
+			 * \param answer The answer received.
+			 * \return The adapted answer received.
 			 */
-			virtual void setReaderUnit(boost::weak_ptr<ReaderUnit> unit){ d_ReaderUnit = unit; };
+			virtual std::vector<unsigned char> adaptAnswer(const std::vector<unsigned char>& answer);
 
-			/**
-			 * \brief Send a command to the reader.
-			 * \param command The command buffer.			 
-			 * \param timeout The command timeout.
-			 * \return the result of the command.
-			 */
-			virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long int timeout) = 0;
+			boost::shared_ptr<DataTransport> getDataTransport() const { return d_dataTransport; };
 
-			/**
-			 * \brief Get the last command.
-			 * \return The last command.
-			 */
-			virtual std::vector<unsigned char> getLastCommand() { return d_lastCommand; };
+			void setDataTransport(boost::shared_ptr<DataTransport> dataTransport) { d_dataTransport = dataTransport; };
 
-			/**
-			 * \brief Get the last command result.
-			 * \return The last command result.
-			 */
-			virtual std::vector<unsigned char> getLastResult() { return d_lastResult; };
+			virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long timeout = 3000);
 
 		protected:
 			
-			/**
-			 * \brief The reader unit.
-			 */
-			boost::weak_ptr<ReaderUnit> d_ReaderUnit;
-
-			/**
-			 * \brief The last result.
-			 */
-			std::vector<unsigned char> d_lastResult;
-
-			/**
-			 * \brief The last command.
-			 */
-			std::vector<unsigned char> d_lastCommand;
+			boost::shared_ptr<DataTransport> d_dataTransport;
 	};
 
 }

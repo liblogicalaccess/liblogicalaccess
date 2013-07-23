@@ -5,7 +5,7 @@
  */
 
 #include "rfideasreaderunit.hpp"
-
+#include "logicalaccess/cards/readercardadapter.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -14,7 +14,6 @@
 #include "rfideasreaderprovider.hpp"
 #include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
 #include "logicalaccess/cards/chip.hpp"
-#include "readercardadapters/rfideasreadercardadapter.hpp"
 #include <boost/filesystem.hpp>
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
@@ -25,7 +24,6 @@ namespace logicalaccess
 		: ReaderUnit()
 	{
 		d_readerUnitConfig.reset(new RFIDeasReaderUnitConfiguration());
-		setDefaultReaderCardAdapter (boost::shared_ptr<RFIDeasReaderCardAdapter> (new RFIDeasReaderCardAdapter()));
 		d_card_type = "GenericTag";
 
 		try
@@ -98,7 +96,7 @@ namespace logicalaccess
 	{
 #ifdef _WINDOWS
 		SetConnectProduct(PRODUCT_PCPROX);
-        SetDevTypeSrch(PRXDEVTYP_USB);
+		SetDevTypeSrch(PRXDEVTYP_USB);
 
 		if (fnUSBConnect(&d_deviceId) == 0)
 		{
@@ -278,12 +276,10 @@ namespace logicalaccess
 		if (chip)
 		{
 			boost::shared_ptr<ReaderCardAdapter> rca;
-			boost::shared_ptr<CardProvider> cp;
 
 			if (type == "GenericTag")
 			{
 				rca = getDefaultReaderCardAdapter();
-				cp = LibraryManager::getInstance()->getCardProvider(type);
 
 				*(void**)(&setagfct) = LibraryManager::getInstance()->getFctFromName("setTagIdBitsLengthOfGenericTagChip", LibraryManager::CARDS_TYPE);
 				setagfct(&chip, d_lastTagIdBitsLength);
@@ -292,10 +288,9 @@ namespace logicalaccess
 				return chip;
 
 
-			rca->setReaderUnit(shared_from_this());
-			if(cp)
+			if (rca)
 			{
-				chip->setCardProvider(cp);
+				rca->setDataTransport(getDataTransport());
 			}
 		}
 		return chip;
@@ -316,12 +311,6 @@ namespace logicalaccess
 			chipList.push_back(singleChip);
 		}
 		return chipList;
-	}
-
-	boost::shared_ptr<RFIDeasReaderCardAdapter> RFIDeasReaderUnit::getDefaultRFIDeasReaderCardAdapter()
-	{
-		boost::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
-		return boost::dynamic_pointer_cast<RFIDeasReaderCardAdapter>(adapter);
 	}
 
 	string RFIDeasReaderUnit::getReaderSerialNumber()

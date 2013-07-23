@@ -35,51 +35,23 @@ namespace logicalaccess
 			virtual ~RplethReaderCardAdapter();
 
 			/**
-			 * \brief Send a command to the reader.
-			 * \param command The command buffer.			 
-			 * \param timeout The command timeout.
-			 * \return The result of the command.
+			 * \brief Adapt the command to send to the reader.
+			 * \param command The command to send.
+			 * \return The adapted command to send.
 			 */
-			virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long int timeout = 2000);
-			
-			/**
-			 * \brief Send a command in ascci to the reader.
-			 * \param command The command buffer.			 
-			 * \param timeout The command timeout.
-			 * \return The result of the command.
-			 */
-			virtual std::vector<unsigned char> sendAsciiCommand(const std::string& command, long int timeout = 2000);
+			virtual std::vector<unsigned char> adaptCommand(const std::vector<unsigned char>& command);
 
 			/**
-			 * \brief Receive the reader answer.
-			 * \param command The sand command buffer.		 
-			 * \param timeout The answer timeout.
-			 * \return The answer.
+			 * \brief Adapt the asnwer received from the reader.
+			 * \param answer The answer received.
+			 * \return The adapted answer received.
 			 */
-			std::vector<unsigned char> receiveAnwser(const std::vector<unsigned char>& command, long int timeout = 2000);
-			
-			/**
-			 * \brief Get the Rpleth reader unit.
-			 * \return The Rpleth reader unit.
-			 */
-			boost::shared_ptr<RplethReaderUnit> getRplethReaderUnit() const { return boost::dynamic_pointer_cast<RplethReaderUnit>(getReaderUnit()); };			
-			
+			virtual std::vector<unsigned char> adaptAnswer(const std::vector<unsigned char>& answer);
 
-		protected:
+			std::vector<unsigned char> sendAsciiCommand(const std::string& command, long int timeout = 2000);
 
-			/**
-			 * \brief Calculate command checksum.
-			 * \param data The data to calculate checksum
-			 * \return The checksum.
-			 */
-			unsigned char calcChecksum(const std::vector<unsigned char>& data);
-			
-			/**
-			 * \brief Handle a answer and give the associated data buffer.
-			 * \param cmdbuf The answer buffer.
-			 * \return The data buffer.
-			 */
-			std::vector<unsigned char> handleAnswerBuffer(const std::vector<unsigned char>& cmdbuf, std::vector<unsigned char> ansbuf);		
+			std::vector<unsigned char> sendRplethCommand(const std::vector<unsigned char>& data, long timeout = 2000);
+
 	};
 
 }

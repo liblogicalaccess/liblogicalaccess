@@ -112,13 +112,6 @@ namespace logicalaccess
 			THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter.");
 		}
 
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasReadDataAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
-
 		std::vector<unsigned char> data;
 		data.push_back(blockno);
 
@@ -138,13 +131,6 @@ namespace logicalaccess
 		{
 			THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter.");
 		}
-
-#ifdef _LICENSE_SYSTEM
-		if (!d_license.hasWriteDataAccess())
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_LICENSENOACCESS);
-		}
-#endif
 
 		if (blockno != 0)
 		{
