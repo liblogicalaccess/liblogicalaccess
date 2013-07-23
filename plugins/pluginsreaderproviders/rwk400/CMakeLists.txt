@@ -58,6 +58,8 @@ if (WIN32)
 else()
   set(LINK_OPT logicalaccess pthread boost_system boost_filesystem)
 endif()
+
+SET_TARGET_PROPERTIES(deisterreaders PROPERTIES VERSION 1.66)
   
 target_link_libraries(
 	rwk400readers
