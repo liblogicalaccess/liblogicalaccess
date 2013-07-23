@@ -336,6 +336,11 @@ namespace logicalaccess
 			 * \brief Last successed RATS result.
 			 */
 			std::vector<unsigned char> d_successedRATS;
+
+			/**
+			 * \brief The new identifier that will be used for the next waitInsertion after the waitRemoval.
+			 */
+			std::vector<unsigned char> removalIdentifier;
 	};
 }
 
