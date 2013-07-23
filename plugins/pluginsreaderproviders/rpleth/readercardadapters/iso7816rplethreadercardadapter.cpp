@@ -119,7 +119,7 @@ namespace logicalaccess
 		char tmp [3];
 		std::vector<unsigned char> data;
 		data.push_back(static_cast<unsigned char>('t'));
-		sprintf(tmp, "%.2X",command.size()+1);
+		sprintf(tmp, "%.2X",(unsigned int)(command.size() + 1));
 		data.push_back(static_cast<unsigned char>(tmp[0]));
 		data.push_back(static_cast<unsigned char>(tmp[1]));
 		data.push_back('0');
