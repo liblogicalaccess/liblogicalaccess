@@ -687,6 +687,8 @@ namespace logicalaccess
 		cmd.push_back(static_cast<unsigned char>(0x30));
 		cmd.push_back(static_cast<unsigned char>(0x30));
 		cmd.push_back(static_cast<unsigned char>(0x30));
+
+		return cmd;
 	}
 
 	void SCIELReaderUnit::serialize(boost::property_tree::ptree& parentNode)
