@@ -26,9 +26,10 @@
 
 
 namespace logicalaccess
-{		
+{	
 	SAMDESfireCrypto::SAMDESfireCrypto()
 	{
+		
 	}
 
 	SAMDESfireCrypto::~SAMDESfireCrypto()
@@ -38,10 +39,11 @@ namespace logicalaccess
 
 	std::vector<unsigned char> SAMDESfireCrypto::authenticate_PICC1(unsigned char keyno, unsigned char *diversify, const std::vector<unsigned char>& encRndB)
 	{
-		/*d_sessionKey.clear();
+	//	boost::shared_ptr<DESFireKey> key = d_profile->getKey(
+		d_sessionKey.clear();
 		d_authkey.resize(16);
 		d_profile->getKey(d_currentAid, keyno, diversify, d_authkey);
-		d_rndB = desfire_CBC_send(d_authkey, std::vector<unsigned char>(), encRndB);
+		/*d_rndB = sam_CBC_send(d_authkey, std::vector<unsigned char>(), encRndB);
 		
 		std::vector<unsigned char> rndB1;
 		rndB1.insert(rndB1.end(), d_rndB.begin() + 1, d_rndB.begin() + 8);
@@ -60,10 +62,13 @@ namespace logicalaccess
 
 		std::vector<unsigned char> rndAB;
 		rndAB.insert(rndAB.end(), d_rndA.begin(), d_rndA.end());
-		rndAB.insert(rndAB.end(), rndB1.begin(), rndB1.end());
+		rndAB.insert(rndAB.end(), rndB1.begin(), rndB1.end());*/
+		
+		std::vector<unsigned char> rndAB;
 
-		return sam_CBC_send(d_authkey, std::vector<unsigned char>(), rndAB);*/
-		return std::vector<unsigned char>();
+
+		return sam_CBC_send(d_authkey, std::vector<unsigned char>(), rndAB);
+	//	return std::vector<unsigned char>();
 	}
 
 	void SAMDESfireCrypto::authenticate_PICC2(unsigned char keyno, const std::vector<unsigned char>& encRndA1)
