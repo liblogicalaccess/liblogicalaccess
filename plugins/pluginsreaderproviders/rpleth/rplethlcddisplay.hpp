@@ -67,6 +67,10 @@ namespace logicalaccess
 			 */
 			void autoScroll();
 
+			/**
+			 * \brief Get the rpleth reader card adapter.
+			 * \return The rpleth reader card adapter.
+			 */
 			boost::shared_ptr<RplethReaderCardAdapter> getRplethReaderCardAdapter() { return boost::dynamic_pointer_cast<RplethReaderCardAdapter>(getReaderCardAdapter()); };
 	};
 

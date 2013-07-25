@@ -94,12 +94,28 @@ namespace logicalaccess
 			
 		protected:
 			
+			/**
+			 * \brief Reader card adapter used to send command..
+			 */
 			boost::shared_ptr<RplethReaderCardAdapter> d_rpleth_reader_card_adapter;
 
+			/**
+			 * \brief Handle the asnwer received from the reader.
+			 * \param answer The answer received.
+			 * \return The handled answer.
+			 */
 			std::vector<unsigned char> handleAnswer (const std::vector<unsigned char>& answer);
 
+			/**
+			 * \brief Reverse the asnwer received from the reader.
+			 * \param answer The answer received.
+			 * \return The reversed answer.
+			 */
 			std::vector<unsigned char> answerReverse (const std::vector<unsigned char>& answer);
 
+			/**
+			 * \brief Represent stat of prefix in desfire command. (0x02 of 0x03).
+			 */
 			bool d_prefix;
 	};
 

@@ -12,6 +12,9 @@
 
 namespace logicalaccess
 {	
+	/**
+	 * \brief Represent the rpleth firmware version.
+	 */
 	typedef enum
 	{
 		WIEGAND = 0x01,
@@ -103,10 +106,19 @@ namespace logicalaccess
 
 		protected:
 
+			/**
+			 * \brief Represent offset use to compute the CSN.
+			 */
 			unsigned char d_offset;
 
+			/**
+			 * \brief Represent length of CSN.
+			 */
 			unsigned char d_length;
 
+			/**
+			 * \brief Represent the Rpleth firmware version currently use.
+			 */
 			RplethMode d_mode;
 	};
 }

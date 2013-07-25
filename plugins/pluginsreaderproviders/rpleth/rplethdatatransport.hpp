@@ -43,10 +43,23 @@ namespace logicalaccess
 			 */
 			virtual std::string getDefaultXmlNodeName() const;
 
+			/**
+			 * \brief Send the data without computation.
+			 * \param data The data to send.
+			 */
 			void sendll(const std::vector<unsigned char>& data);
 
+			/**
+			 * \brief Send the data using rpleth protocol computation.
+			 * \param data The data to send.
+			 */
 			virtual void send(const std::vector<unsigned char>& data);
 
+			/**
+			 * \brief Receive data from reader.
+			 * \param timeout The time to wait data.
+			 * \return The data from reader.
+			 */
 			virtual std::vector<unsigned char> receive(long int timeout);
 
 		protected:
@@ -58,6 +71,9 @@ namespace logicalaccess
 			 */
 			unsigned char calcChecksum(const std::vector<unsigned char>& data);	
 
+			/**
+			 * \brief Trashed data from last command response.
+			 */
 			std::vector<unsigned char> d_trashedData;
 	};
 

@@ -18,6 +18,9 @@ namespace logicalaccess
 	class RplethReaderCardAdapter;
 	class RplethReaderProvider;
 
+	/**
+	 * \brief Device code in Rpleth protocol.
+	 */
 	typedef enum
 	{
 		RPLETH = 0x00,
@@ -25,6 +28,9 @@ namespace logicalaccess
 		LCD = 0x02
 	} Device;
 
+	/**
+	 * \brief RplethCommand code in Rpleth protocol.
+	 */
 	typedef enum
 	{
 		STATEDHCP = 0x01,
@@ -38,6 +44,9 @@ namespace logicalaccess
 		RESET = 0x09
 	} RplethCommand;
 
+	/**
+	 * \brief HidCommand code in Rpleth protocol.
+	 */
 	typedef enum
 	{
 		BEEP = 0x00,
@@ -48,6 +57,9 @@ namespace logicalaccess
 		COM = 0x05
 	} HidCommand;
 
+	/**
+	 * \brief LcdCommand code in Rpleth protocol.
+	 */
 	typedef enum
 	{
 		DISPLAY = 0x00,
@@ -57,6 +69,9 @@ namespace logicalaccess
 		DISPLAYTIME = 0x04
 	} LcdCommand;
 
+	/**
+	 * \brief ChipType code in Rpleth protocol.
+	 */
 	typedef enum
 	{
 		MIFARE = 0x02,
