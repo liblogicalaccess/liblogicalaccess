@@ -50,14 +50,14 @@ namespace logicalaccess
 	std::vector<unsigned char> RplethReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
 	{
 		COM_("Processing response : %s", BufferHelper::getHex(answer).c_str());
-
-		if (answer.size() == 3)
+		if (answer.size() == 1)
 		{
-			if (answer[1] == '\r' && answer[2] == '\n')
-			{
-				EXCEPTION_ASSERT_WITH_LOG(answer[0] != 'N', LibLogicalAccessException, "No tag present in rfid field.");
-				EXCEPTION_ASSERT_WITH_LOG(answer[0] != 'F', LibLogicalAccessException, "Fail to execute the command.");
-			}
+			EXCEPTION_ASSERT_WITH_LOG(answer[0] != 'N', LibLogicalAccessException, "No tag present in rfid field.");
+			EXCEPTION_ASSERT_WITH_LOG(answer[0] != 'F', LibLogicalAccessException, "Fail to execute the command.");
+		}
+		else if (answer.size() >= 5)
+		{
+			EXCEPTION_ASSERT_WITH_LOG(answer[0] != 'M' || answer[1] != 'i' || answer[2] != 'f' || answer[3] != 'a' || answer[4] != 'r', LibLogicalAccessException, "The reader as reboot.");
 		}
 
 		return answer;

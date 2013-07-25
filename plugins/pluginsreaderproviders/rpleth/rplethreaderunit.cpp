@@ -197,9 +197,16 @@ namespace logicalaccess
 			unsigned int currentWait = 0;
 			while (!chip && (maxwait == 0 || currentWait < maxwait))
 			{
-				buf = getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("s");
+				try
+				{
+					buf = getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("s");
+				}
+				catch (std::exception&)
+				{
+					buf.clear();
+				}
 				d_successedRATS.clear();
-				if (buf.size () > 1)
+				if (buf.size () > 0)
 				{
 					buf = asciiToHex (buf);
 					if (buf[0] == ChipType::MIFARE)
