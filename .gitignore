@@ -160,3 +160,7 @@ ZERO_CHECK.vcxproj.filters
 /Plugins/PluginsReaderProviders/Keyboard/islogkbdhooklib/islogkbdhooklib
 /Plugins/PluginsReaderProviders/Keyboard/islogkbdhook/islogkbdhook
 /Plugins/PluginsReaderProviders/pluginsreaders-liblogicalaccess.sln
+
+/plugins/pluginsreaderproviders/rwk400/rwk400readers.sln
+/plugins/pluginsreaderproviders/rwk400/rwk400readers.vcxproj
+/plugins/pluginsreaderproviders/rwk400/rwk400readers.vcxproj.filters

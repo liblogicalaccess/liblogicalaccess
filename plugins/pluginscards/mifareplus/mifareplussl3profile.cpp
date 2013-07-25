@@ -130,23 +130,23 @@ namespace logicalaccess
 		{
 			case KT_KEY_AES_A:
 				{
-					return (d_sectorKeys[index * 2]);
+					return bool(d_sectorKeys[index * 2]);
 				}
 			case KT_KEY_AES_B:
 				{
-					return (d_sectorKeys[index * 2 + 1]);
+					return bool(d_sectorKeys[index * 2 + 1]);
 				}
 			case KT_KEY_ORIGINALITY:
 				{
-					return (d_originalityKey);
+					return bool(d_originalityKey);
 				}
 			case KT_KEY_MASTERCARD:
 				{
-					return (d_masterCardKey);
+					return bool(d_masterCardKey);
 				}
 			case KT_KEY_CONFIGURATION:
 				{
-					return (d_configurationKey);
+					return bool(d_configurationKey);
 				}
 			default:
 				{

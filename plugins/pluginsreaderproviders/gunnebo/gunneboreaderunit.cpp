@@ -221,7 +221,7 @@ namespace logicalaccess
 			unsigned long long l = atoull(BufferHelper::getStdString(rawSerialData));
 			char bufTmpId[128];
 			memset(bufTmpId, 0x00, sizeof(bufTmpId));
-#ifndef __linux__
+#if !defined(__unix__)
 			sprintf_s(bufTmpId, sizeof(bufTmpId), "%012llx", l);
 #else
 			sprintf(bufTmpId, "%012llx", l);
@@ -303,7 +303,7 @@ namespace logicalaccess
 			INFO_SIMPLE_("Is connected {1}");
 		else
 			INFO_SIMPLE_("Is connected {0}");
-		return (d_insertedChip);
+		return bool(d_insertedChip);
 	}
 
 	bool GunneboReaderUnit::connectToReader()
@@ -322,7 +322,7 @@ namespace logicalaccess
 		std::vector<unsigned char> cmd;
 
 		cmd.push_back(0xff);
-
+		
 		return cmd;
 	}
 

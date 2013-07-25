@@ -275,7 +275,7 @@ namespace logicalaccess
 
 	bool SmartIDReaderUnit::isConnected()
 	{
-		return (d_insertedChip);
+		return bool(d_insertedChip);
 	}
 
 	bool SmartIDReaderUnit::connectToReader()

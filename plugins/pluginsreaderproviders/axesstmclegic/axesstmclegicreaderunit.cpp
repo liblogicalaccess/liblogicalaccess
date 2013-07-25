@@ -245,7 +245,7 @@ namespace logicalaccess
 
 	bool AxessTMCLegicReaderUnit::isConnected()
 	{
-		return (d_insertedChip);
+		return bool(d_insertedChip);
 	}
 
 	void AxessTMCLegicReaderUnit::serialize(boost::property_tree::ptree& parentNode)

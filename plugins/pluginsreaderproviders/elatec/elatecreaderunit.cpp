@@ -126,7 +126,7 @@ namespace logicalaccess
 
 	bool ElatecReaderUnit::connect()
 	{
-		return (d_insertedChip);
+		return bool(d_insertedChip);
 	}
 
 	void ElatecReaderUnit::disconnect()
@@ -199,7 +199,7 @@ namespace logicalaccess
 
 	bool ElatecReaderUnit::isConnected()
 	{
-		return (d_insertedChip);
+		return bool(d_insertedChip);
 	}
 
 	bool ElatecReaderUnit::connectToReader()

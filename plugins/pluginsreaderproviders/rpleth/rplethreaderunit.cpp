@@ -77,11 +77,21 @@ namespace logicalaccess
 	bool RplethReaderUnit::waitInsertion(unsigned int maxwait)
 	{
 		bool inserted = false;
-		boost::shared_ptr<Chip> chip = getChipInAir(maxwait);
-		if (chip)
+		if (removalIdentifier.size() > 0)
 		{
-			d_insertedChip = chip;
+			d_insertedChip = createChip((d_card_type == "UNKNOWN") ? "GenericTag" : d_card_type);
+			d_insertedChip->setChipIdentifier(removalIdentifier);
+			removalIdentifier.clear();
 			inserted = true;
+		}
+		else
+		{
+			boost::shared_ptr<Chip> chip = getChipInAir(maxwait);
+			if (chip)
+			{
+				d_insertedChip = chip;
+				inserted = true;
+			}
 		}
 
 		return inserted;
@@ -91,6 +101,7 @@ namespace logicalaccess
 	{
 		bool removed = false;
 		unsigned int currentWait = 0;
+		removalIdentifier.clear();
 		if (d_insertedChip)
 		{
 			while (!removed && ((currentWait < maxwait) || maxwait == 0))
@@ -98,9 +109,11 @@ namespace logicalaccess
 				boost::shared_ptr<Chip> chip = getChipInAir(250);
 				if (chip)
 				{
-					if (chip->getChipIdentifier() != d_insertedChip->getChipIdentifier())
+					std::vector<unsigned char> tmpId = chip->getChipIdentifier();
+					if (tmpId != d_insertedChip->getChipIdentifier())
 					{
 						d_insertedChip.reset();
+						removalIdentifier = tmpId;
 						removed = true;
 					}
 					else
@@ -143,7 +156,7 @@ namespace logicalaccess
 				}
 			}
 		}
-
+		
 		return bool(d_insertedChip);
 	}
 
@@ -300,7 +313,7 @@ namespace logicalaccess
 
 	bool RplethReaderUnit::isConnected()
 	{
-		return (d_insertedChip);
+		return bool(d_insertedChip);
 	}
 
 	bool RplethReaderUnit::connectToReader()
@@ -312,6 +325,7 @@ namespace logicalaccess
 			dataTransport->setReaderUnit(shared_from_this());
 			setDataTransport(dataTransport);
 		}
+		
 		return getDataTransport()->connect();
 	}
 

@@ -69,7 +69,7 @@ namespace logicalaccess
 	void IdOnDemandReaderUnit::authenticateSDK(std::string authCode)
 	{
 		char cmd[64];
-#ifndef __linux__
+#if !defined(__unix__)
 		sprintf_s(cmd, sizeof(cmd), "AUTH %s", authCode.c_str());
 #else
 		sprintf(cmd, "AUTH %s", authCode.c_str());
@@ -224,7 +224,7 @@ namespace logicalaccess
 
 	bool IdOnDemandReaderUnit::connect()
 	{
-		return (d_insertedChip);
+		return bool(d_insertedChip);
 	}
 
 	void IdOnDemandReaderUnit::disconnect()
@@ -298,7 +298,7 @@ namespace logicalaccess
 
 	bool IdOnDemandReaderUnit::isConnected()
 	{
-		return (d_insertedChip);
+		return bool(d_insertedChip);
 	}
 
 	bool IdOnDemandReaderUnit::connectToReader()

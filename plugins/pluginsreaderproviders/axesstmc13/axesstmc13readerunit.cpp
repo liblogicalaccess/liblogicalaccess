@@ -241,7 +241,7 @@ namespace logicalaccess
 
 	bool AxessTMC13ReaderUnit::isConnected()
 	{
-		return (d_insertedChip);
+		return bool(d_insertedChip);
 	}
 
 	void AxessTMC13ReaderUnit::serialize(boost::property_tree::ptree& parentNode)

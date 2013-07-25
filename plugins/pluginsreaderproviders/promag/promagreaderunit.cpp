@@ -222,7 +222,7 @@ namespace logicalaccess
 
 	bool PromagReaderUnit::isConnected()
 	{
-		return (d_insertedChip);
+		return bool(d_insertedChip);
 	}
 
 	bool PromagReaderUnit::connectToReader()

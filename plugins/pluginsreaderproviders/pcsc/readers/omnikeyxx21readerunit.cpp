@@ -13,7 +13,7 @@
 #include "../readers/omnikeyxx21readerunitconfiguration.hpp"
 #include "../readercardadapters/pcscreadercardadapter.hpp"
 
-#ifdef __linux__
+#if defined(__unix__)
 #include <PCSC/reader.h>
 #endif
 

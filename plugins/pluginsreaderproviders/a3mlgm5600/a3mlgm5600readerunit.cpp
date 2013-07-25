@@ -227,7 +227,7 @@ namespace logicalaccess
 
 	bool A3MLGM5600ReaderUnit::isConnected()
 	{
-		return (d_insertedChip);
+		return bool(d_insertedChip);
 	}	
 
 	void A3MLGM5600ReaderUnit::serialize(boost::property_tree::ptree& parentNode)

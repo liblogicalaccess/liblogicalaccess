@@ -10,7 +10,7 @@
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 
 
-#ifdef __linux__
+#if defined(__unix__)
 #include <cstring>
 #endif
 

@@ -13,7 +13,7 @@
 #include "logicalaccess/services/storage/storagecardservice.hpp"
 
 
-#ifdef __linux__
+#if defined(__unix__)
 #include <cstring>
 #endif
 

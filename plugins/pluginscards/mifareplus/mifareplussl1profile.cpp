@@ -132,23 +132,23 @@ namespace logicalaccess
 		{
 			case KT_KEY_CRYPTO1_A:
 				{
-					return (d_sectorKeys[index * 2]);
+					return bool(d_sectorKeys[index * 2]);
 				}
 			case KT_KEY_CRYPTO1_B:
 				{
-					return (d_sectorKeys[index * 2 + 1]);
+					return bool(d_sectorKeys[index * 2 + 1]);
 				}
 			case KT_KEY_SWITCHL2:
 				{
-					return (d_switchL2Key);
+					return bool(d_switchL2Key);
 				}
 			case KT_KEY_SWITCHL3:
 				{
-					return (d_switchL3Key);
+					return bool(d_switchL3Key);
 				}
 			case KT_KEY_AESSL1:
 				{
-					return (d_SL1AesKey);
+					return bool(d_SL1AesKey);
 				}
 			default:
 				{

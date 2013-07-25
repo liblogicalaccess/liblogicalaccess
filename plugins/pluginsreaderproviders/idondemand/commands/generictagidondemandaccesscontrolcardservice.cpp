@@ -51,7 +51,7 @@ namespace logicalaccess
 			case FT_WIEGAND26:
 			{
 				boost::shared_ptr<Wiegand26Format> wf = boost::dynamic_pointer_cast<Wiegand26Format>(format);
-#ifdef __linux__
+#if defined(__unix__)
 				sprintf(tmp, "Hid26 %d %llud", wf->getFacilityCode(), wf->getUid());
 #else
 				sprintf(tmp, "Hid26 %d %d", wf->getFacilityCode(), wf->getUid());
@@ -62,7 +62,7 @@ namespace logicalaccess
 			case FT_WIEGAND34FACILITY:
 			{
 				boost::shared_ptr<Wiegand34WithFacilityFormat> wf = boost::dynamic_pointer_cast<Wiegand34WithFacilityFormat>(format);
-#ifdef __linux__
+#if defined(__unix__)
 				sprintf(tmp, "Hid34 %d %llud", wf->getFacilityCode(), wf->getUid());
 #else
 				sprintf(tmp, "Hid34 %d %d 0", wf->getFacilityCode(), wf->getUid());
@@ -73,7 +73,7 @@ namespace logicalaccess
 			case FT_CORPORATE1000:
 			{
 				boost::shared_ptr<Corporate1000Format> wf = boost::dynamic_pointer_cast<Corporate1000Format>(format);
-#ifdef __linux__
+#if defined(__unix__)
 				sprintf(tmp, "Hid35 %d %llud 3", wf->getCompanyCode(), wf->getUid());
 #else
 				sprintf(tmp, "Hid35 %d %d 3", wf->getCompanyCode(), wf->getUid());
@@ -84,7 +84,7 @@ namespace logicalaccess
 			case FT_WIEGAND37FACILITY:
 			{
 				boost::shared_ptr<Wiegand37WithFacilityFormat> wf = boost::dynamic_pointer_cast<Wiegand37WithFacilityFormat>(format);
-#ifdef __linux__
+#if defined(__unix__)
 				sprintf(tmp, "Hid37 %d %lld 2", wf->getFacilityCode(), wf->getUid());
 #else
 				sprintf(tmp, "Hid37 %d %d 2", wf->getFacilityCode(), wf->getUid());
@@ -95,7 +95,7 @@ namespace logicalaccess
 			case FT_WIEGAND37:
 			{
 				boost::shared_ptr<Wiegand37Format> wf = boost::dynamic_pointer_cast<Wiegand37Format>(format);
-#ifdef __linux__
+#if defined(__unix__)
 				sprintf(tmp, "Hid37 0 %llud 1", wf->getUid());
 #else
 				sprintf(tmp, "Hid37 0 %d 1", wf->getUid());
@@ -111,7 +111,7 @@ namespace logicalaccess
 
 				if (format->getName() == "Wiegand 32")
 				{
-#ifdef __linux__
+#if defined(__unix__)
 					sprintf(tmp, "Hid32 %llud %llud", fieldFacility->getValue(), fieldUid->getValue());
 #else
 					sprintf(tmp, "Hid32 %d %d", fieldFacility->getValue(), fieldUid->getValue());
@@ -120,7 +120,7 @@ namespace logicalaccess
 				}
 				else if (format->getName() == "Wiegand 37 With 13-bit Facility")
 				{
-#ifdef __linux__
+#if defined(__unix__)
 					sprintf(tmp, "Hid37 %llud %llud 3", fieldFacility->getValue(), fieldUid->getValue());
 #else
 					sprintf(tmp, "Hid37 %d %d 3", fieldFacility->getValue(), fieldUid->getValue());
@@ -129,7 +129,7 @@ namespace logicalaccess
 				}
 				else if (format->getName() == "Wiegand 40")
 				{
-#ifdef __linux__
+#if defined(__unix__)
 					sprintf(tmp, "Hid40 %llud %llud", fieldFacility->getValue(), fieldUid->getValue());
 #else
 					sprintf(tmp, "Hid40 %d %d", fieldFacility->getValue(), fieldUid->getValue());
@@ -138,7 +138,7 @@ namespace logicalaccess
 				}
 				else if (format->getName() == "Wiegand 42 (HID10313C compatible)")
 				{
-#ifdef __linux__
+#if defined(__unix__)
 					sprintf(tmp, "Hid42 %llud %llud", fieldFacility->getValue(), fieldUid->getValue());
 #else
 					sprintf(tmp, "Hid42 %d %d", fieldFacility->getValue(), fieldUid->getValue());
@@ -147,7 +147,7 @@ namespace logicalaccess
 				}
 				else if (format->getName() == "Honeywell")
 				{
-#ifdef __linux__
+#if defined(__unix__)
 					sprintf(tmp, "Honeywell %llud", fieldUid->getValue());
 #else
 					sprintf(tmp, "Honeywell %d", fieldUid->getValue());

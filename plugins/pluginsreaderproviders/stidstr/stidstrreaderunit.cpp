@@ -329,9 +329,9 @@ namespace logicalaccess
 			INFO_SIMPLE_("Is connected {1}");
 		else
 			INFO_SIMPLE_("Is connected {0}");
-		return (d_insertedChip);
+		return bool(d_insertedChip);
 	}
-
+	
 	void STidSTRReaderUnit::serialize(boost::property_tree::ptree& parentNode)
 	{
 		boost::property_tree::ptree node;
