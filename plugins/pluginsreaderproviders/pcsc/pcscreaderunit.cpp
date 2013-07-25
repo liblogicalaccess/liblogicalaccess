@@ -611,15 +611,16 @@ namespace logicalaccess
 
 				if (d_insertedChip->getCardType() == "DESFire")
 				{
-					//check keystorage if sam
+					//No need to check if using SAM because it is already done on SAMDESfireCrypto function by checking the keystorage type
 					boost::shared_ptr<DESFireCrypto> crypto(new SAMDESfireCrypto());
 					boost::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->setCrypto(crypto);
 
 					boost::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->getCrypto()->setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(d_insertedChip->getProfile()), d_insertedChip->getChipIdentifier());
 				}
 				else if (d_insertedChip->getCardType() == "DESFireEV1")
+				{
 					boost::dynamic_pointer_cast<DESFireEV1ISO7816Commands>(d_insertedChip->getCommands())->getCrypto()->setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(d_insertedChip->getProfile()), d_insertedChip->getChipIdentifier());
-
+				}
 				ret = true;
 			}
 			else

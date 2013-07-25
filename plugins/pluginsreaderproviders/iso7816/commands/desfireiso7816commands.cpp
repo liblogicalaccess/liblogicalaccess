@@ -7,6 +7,7 @@
 #include "../commands/desfireiso7816commands.hpp"
 #include "desfirechip.hpp"
 #include "samav2iso7816commands.hpp"
+#include "logicalaccess/cards/samkeystorage.hpp"
 
 #include <cstring>
 
@@ -883,47 +884,57 @@ namespace logicalaccess
 			{
 				result.resize(8);
 				std::vector<unsigned char> rndAB;
-				// = d_crypto->authenticate_PICC1(keyno, diversify, result);
-				//boost::dynamic_pointer_cast<SAMAV2Commands>(getSAMChip()->getCommands())->getReaderCardAdapter()->sendCommand
-				//if SAM
-				boost::shared_ptr<SAMAV2Commands> samav2commands = boost::dynamic_pointer_cast<SAMAV2Commands>(getSAMChip()->getCommands());
-				boost::shared_ptr<ISO7816ReaderCardAdapter> readercardadapter = boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(samav2commands->getReaderCardAdapter());
 
-				unsigned char apduresult[255];
-				size_t apduresultlen = sizeof(apduresult);
-
-				unsigned char data[0x0a];
-				data[0] = 1;
-				data[1] = 1;
-				memcpy(data + 2, &result[0], 8);
-				//memcpy(data + 10, diversify, 16);
-
-				readercardadapter->sendAPDUCommand(0x80, 0x0a, 0x00, 0x00, 0x0a, data, 0x0a, 0x00, apduresult, &apduresultlen);
-				if (apduresultlen <= 2)
+				if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
 				{
-					std::cout << "DESFire authentication failed PICC1" << std::endl;
-					return false;
-				}
+					boost::shared_ptr<SAMAV2Commands> samav2commands = boost::dynamic_pointer_cast<SAMAV2Commands>(getSAMChip()->getCommands());
+					boost::shared_ptr<ISO7816ReaderCardAdapter> readercardadapter = boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(samav2commands->getReaderCardAdapter());
 
-				rndAB.insert(rndAB.begin(), apduresult, apduresult + 16);
-				//else
-				// rndAB = d_crypto->authenticate_PICC1(keyno, diversify, result);
+					unsigned char apduresult[255];
+					size_t apduresultlen = sizeof(apduresult);
+
+					unsigned char data[0x0a];
+					data[0] = 1;
+					data[1] = 1;
+					memcpy(data + 2, &result[0], 8);
+
+					readercardadapter->sendAPDUCommand(0x80, 0x0a, 0x00, 0x00, 0x0a, data, 0x0a, 0x00, apduresult, &apduresultlen);
+					if (apduresultlen <= 2)
+					{
+						std::cout << "DESFire authentication failed PICC1" << std::endl;
+						return false;
+					}
+
+					rndAB.insert(rndAB.begin(), apduresult, apduresult + 16);
+				}
+				else
+				 rndAB = d_crypto->authenticate_PICC1(keyno, diversify, result);
+
 				result = DESFireISO7816Commands::transmit(DF_INS_ADDITIONAL_FRAME, &rndAB[0], 16);
-				if ((result.size()-2) >= 8)
+
+				if ((result.size() - 2) >= 8)
 				{
 					result.resize(result.size() - 2);
 					
-					//if sam key storage
-					apduresultlen = 255;
-					readercardadapter->sendAPDUCommand(0x80, 0x0a, 0x00, 0x00, 0x08, &result[0], 0x08, apduresult, &apduresultlen);
-
-					if (apduresultlen != 2 || apduresult[0] != 0x90 || apduresult[1] != 0x00)
+					if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
 					{
-						std::cout << "DESFire authentication failed PICC2" << std::endl;
-						return false;
+						boost::shared_ptr<SAMAV2Commands> samav2commands = boost::dynamic_pointer_cast<SAMAV2Commands>(getSAMChip()->getCommands());
+						boost::shared_ptr<ISO7816ReaderCardAdapter> readercardadapter = boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(samav2commands->getReaderCardAdapter());
+
+						unsigned char apduresult[255];
+						size_t apduresultlen = sizeof(apduresult);
+
+						apduresultlen = 255;
+						readercardadapter->sendAPDUCommand(0x80, 0x0a, 0x00, 0x00, 0x08, &result[0], 0x08, apduresult, &apduresultlen);
+
+						if (apduresultlen != 2 || apduresult[0] != 0x90 || apduresult[1] != 0x00)
+						{
+							std::cout << "DESFire authentication failed PICC2" << std::endl;
+							return false;
+						}
 					}
-					//else
-					///d_crypto->authenticate_PICC2(keyno, result);
+					else
+						d_crypto->authenticate_PICC2(keyno, result);
 
 					std::cout << "DESFire authentication SUCCEEDED !!" << std::endl;
 					r = true;

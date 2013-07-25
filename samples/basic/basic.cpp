@@ -93,7 +93,7 @@ int main(int , char**)
 					std::cout << "Card type: " << chip->getCardType() << std::endl;
 					//set storage key SAM
 					boost::shared_ptr<logicalaccess::DESFireLocation> location(new logicalaccess::DESFireLocation());
-					boost::shared_ptr<logicalaccess::DESFireKey> key(new logicalaccess::DESFireKey("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02"));
+					boost::shared_ptr<logicalaccess::DESFireKey> key(new logicalaccess::DESFireKey());
 					boost::shared_ptr<logicalaccess::KeyStorage> samstorage(new logicalaccess::SAMKeyStorage());
 					key->setKeyStorage(samstorage);
 					boost::dynamic_pointer_cast<logicalaccess::DESFireProfile>(chip->getProfile())->setKey(1313, 1, key); 
@@ -115,7 +115,9 @@ int main(int , char**)
 					boost::shared_ptr<logicalaccess::DESFireISO7816Commands> desfirecommand = boost::dynamic_pointer_cast<logicalaccess::DESFireISO7816Commands>(readerConfig->getReaderUnit()->getSingleChip()->getCommands());
 					boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->GetVersion();
 
-					desfirecommand->authenticate();
+
+					desfirecommand->selectApplication(1313);
+					desfirecommand->authenticate(1);
 					// DO SOMETHING HERE
 					// DO SOMETHING HERE
 					// DO SOMETHING HERE
