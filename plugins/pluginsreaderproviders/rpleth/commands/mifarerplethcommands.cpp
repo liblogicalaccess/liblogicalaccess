@@ -40,7 +40,7 @@ namespace logicalaccess
 		sprintf (tmp, "%.2X", blockno);
 		command.push_back(static_cast<unsigned char>(tmp[0]));
 		command.push_back(static_cast<unsigned char>(tmp[1]));
-		answer = getRplethReaderCardAdapter()->sendCommand (command, 0);
+		answer = getRplethReaderCardAdapter()->sendCommand (command);
 		// convert ascii in hexa
 		answer = RplethReaderUnit::asciiToHex (answer);
 		res = (len < answer.size()) ? len : answer.size();
@@ -73,7 +73,7 @@ namespace logicalaccess
 			command.push_back(static_cast<unsigned char>(tmp[0]));
 			command.push_back(static_cast<unsigned char>(tmp[1]));
 		}
-		answer = getRplethReaderCardAdapter()->sendCommand (command, 0);
+		answer = getRplethReaderCardAdapter()->sendCommand (command);
 		if (answer.size () > 1)
 			buflen = answer.size();
 		else
@@ -100,7 +100,7 @@ namespace logicalaccess
 				command.push_back(static_cast<unsigned char>(buf[0]));
 				command.push_back(static_cast<unsigned char>(buf[1]));
 			}
-			answer = getRplethReaderCardAdapter()->sendCommand (command, 0);
+			answer = getRplethReaderCardAdapter()->sendCommand (command);
 			if (answer.size () < 2)
 				r = false;
 		}
@@ -157,7 +157,7 @@ namespace logicalaccess
 			buf [0] += 3;
 		command.push_back(static_cast<unsigned char>(buf[0]));
 		command.push_back(static_cast<unsigned char>(buf[1]));
-		answer = getRplethReaderCardAdapter()->sendCommand (command, 0);
+		answer = getRplethReaderCardAdapter()->sendCommand (command);
 		if (answer.size() > 0)
 			if (answer[0] == 'L')
 				res = true;

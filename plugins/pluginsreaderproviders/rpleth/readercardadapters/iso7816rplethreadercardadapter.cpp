@@ -157,11 +157,15 @@ namespace logicalaccess
 		COM_("Reversing response : %s", BufferHelper::getHex(answer).c_str());
 		std::vector<unsigned char> res;
 
-		if (answer.size() > 0)
+		if (answer.size() > 1)
 		{
 			res = std::vector<unsigned char>(answer.begin() + 1, answer.end());
 			res.push_back (0x00);
 			res.push_back (answer[0]);
+		}
+		else if (answer.size() == 1)
+		{
+			res.push_back(answer[0]);
 		}
 		
 		return res;

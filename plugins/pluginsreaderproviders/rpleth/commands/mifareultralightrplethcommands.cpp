@@ -37,7 +37,7 @@ namespace logicalaccess
 		sprintf (buffer, "%.2X", page);
 		command.push_back(static_cast<unsigned char>(buffer[0]));
 		command.push_back(static_cast<unsigned char>(buffer[1]));
-		answer = getRplethReaderCardAdapter()->sendCommand (command, 0);
+		answer = getRplethReaderCardAdapter()->sendCommand (command);
 		answer = RplethReaderUnit::asciiToHex(answer);
 		res = (buflen <= answer.size()) ?  buflen : answer.size();
 		memcpy(buf, &answer[0], res);
@@ -61,7 +61,7 @@ namespace logicalaccess
 			command.push_back(static_cast<unsigned char>(buffer[0]));
 			command.push_back(static_cast<unsigned char>(buffer[1]));
 		}
-		answer = getRplethReaderCardAdapter()->sendCommand (command, 0);
+		answer = getRplethReaderCardAdapter()->sendCommand (command);
 		res = buflen;
 		return res;
 	}

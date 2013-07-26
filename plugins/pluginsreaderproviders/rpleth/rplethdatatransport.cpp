@@ -12,6 +12,8 @@
 #include <boost/foreach.hpp>
 #include <boost/optional.hpp>
 #include <boost/array.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <ctime>
 
 namespace logicalaccess
 {
@@ -60,35 +62,53 @@ namespace logicalaccess
 
 	std::vector<unsigned char> RplethDataTransport::receive(long int timeout)
 	{
+		timeout = 2000;
+		INFO_("Receiving... %d", timeout);
 		std::vector<unsigned char> buf;
 		if (d_trashedData.size() > 0)
 		{
 			COM_("Adding existing trashed data: %s", BufferHelper::getHex(d_trashedData).c_str());
 			buf = d_trashedData;
 		}
-	#ifdef _WINDOWS
-		Sleep(100);
+	/*#ifdef _WINDOWS
+		Sleep(200);
 	#elif defined(LINUX)
-		usleep(100000);
-	#endif
-		std::vector<unsigned char> ansbuf = TcpDataTransport::receive(timeout);
-		COM_("Answer from reader %s", BufferHelper::getHex(ansbuf).c_str());
-
-		buf.insert(buf.end(), ansbuf.begin(), ansbuf.end());
-		if (buf.size() < 4)
+		usleep(200000);
+	#endif*/
+		
+		std::clock_t begin;
+		std::vector<unsigned char> ansbuf;
+		std::clock_t end;
+		long diff = 0;
+		size_t exceptedlen = 0;
+		while (timeout > 0 && exceptedlen == 0)
 		{
-			d_trashedData.clear();
-			d_trashedData.insert(d_trashedData.end(), buf.begin(), buf.end());
-			EXCEPTION_ASSERT_WITH_LOG(buf.size() >= 4, std::invalid_argument, "A valid answer buffer size must be at least 4 bytes long");
+			ansbuf.clear();
+			begin = std::clock();
+			ansbuf = TcpDataTransport::receive(timeout);
+			COM_("Answer from reader %s", BufferHelper::getHex(ansbuf).c_str());
+			end = std::clock();
+			diff = end - begin;
+			buf.insert(buf.end(), ansbuf.begin(), ansbuf.end());
+			if (buf.size() >= 4)
+			{
+				exceptedlen = 4 + buf[3] + 1;
+				if (buf.size() < exceptedlen)
+				{
+					exceptedlen = 0;
+				}
+			}
+			if (diff >= 0 && diff < timeout)
+			{
+				timeout -= diff;
+			}
+			else
+			{
+				timeout = 0;
+			}
+			//EXCEPTION_ASSERT_WITH_LOG(buf.size() >= 4, std::invalid_argument, "A valid answer buffer size must be at least 4 bytes long");
 		}
-		EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x01, std::invalid_argument, "The supplied answer buffer get the state : Command failure");
-		EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x02, std::invalid_argument, "The supplied answer buffer get the state : Bad checksum in command");
-		EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x03, std::invalid_argument, "The supplied answer buffer get the state : Timeout");
-		EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x04, std::invalid_argument, "The supplied answer buffer get the state : Bad size of command");
-		EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x05, std::invalid_argument, "The supplied answer buffer get the state : Bad device in command");
-		EXCEPTION_ASSERT_WITH_LOG(buf[0] == 0x00, std::invalid_argument, "The supplied answer buffer is corrupted");
 
-		size_t exceptedlen = 4 + buf[3] + 1;
 		if (buf.size() > exceptedlen)
 		{
 			d_trashedData.clear();
@@ -99,6 +119,7 @@ namespace logicalaccess
 		}
 		else if (buf.size() < exceptedlen)
 		{
+			std::cout << "Buf size : " << buf.size()<< "exceptedlen" << exceptedlen << std::endl;
 			d_trashedData.clear();
 			d_trashedData.insert(d_trashedData.end(), buf.begin(), buf.end());
 			THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "The answer buffer doesn't match the excepted data length.");
@@ -107,6 +128,13 @@ namespace logicalaccess
 		{
 			d_trashedData.clear();
 		}
+
+		EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x01, std::invalid_argument, "The supplied answer buffer get the state : Command failure");
+		EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x02, std::invalid_argument, "The supplied answer buffer get the state : Bad checksum in command");
+		EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x03, std::invalid_argument, "The supplied answer buffer get the state : Timeout");
+		EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x04, std::invalid_argument, "The supplied answer buffer get the state : Bad size of command");
+		EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x05, std::invalid_argument, "The supplied answer buffer get the state : Bad device in command");
+		EXCEPTION_ASSERT_WITH_LOG(buf[0] == 0x00, std::invalid_argument, "The supplied answer buffer is corrupted");
 
 		std::vector<unsigned char> res;
 		std::vector<unsigned char> bufnoc = std::vector<unsigned char>(buf.begin(), buf.end() - 1);

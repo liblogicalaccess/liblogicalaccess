@@ -121,7 +121,7 @@ namespace logicalaccess
 
 		if (lenav > 0)
 		{
-			std::vector<unsigned char> bufrcv(1024);
+			std::vector<unsigned char> bufrcv(lenav);
 			size_t len = socket->receive(boost::asio::buffer(bufrcv));
 			res = std::vector<unsigned char>(bufrcv.begin(), bufrcv.begin() + len);
 		}

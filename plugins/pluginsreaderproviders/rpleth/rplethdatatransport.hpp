@@ -60,7 +60,7 @@ namespace logicalaccess
 			 * \param timeout The time to wait data.
 			 * \return The data from reader.
 			 */
-			virtual std::vector<unsigned char> receive(long int timeout);
+			virtual std::vector<unsigned char> receive(long int timeout = 2000);
 
 		protected:
 
