@@ -107,7 +107,6 @@ namespace logicalaccess
 		return r;
 	}
 	
-	// in progress
 	void MifareRplethCommands::loadKey(boost::shared_ptr<Location> location, boost::shared_ptr<Key> key, MifareKeyType keytype)
 	{
 		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");

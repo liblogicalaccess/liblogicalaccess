@@ -575,16 +575,17 @@ namespace logicalaccess
 		char tmp [3];
 		if (source.size() > 1)
 		{
-			for (size_t i = 0; i < source.size() - 2; i+=2)
+			for (size_t i = 0; i <= source.size() - 2; i+=2)
 			{
 				tmp [0] = source[i];
-				if (source.size()%2 == 1 && i == source.size()-1)
-					tmp [1] = '\0';
-				else
-					tmp [1] = source[i+1];
+				tmp [1] = source[i+1];
 				tmp [2] = '\0';
 				res.push_back (static_cast<unsigned char>(strtoul (tmp, NULL, 16)));
 			}
+		}
+		else
+		{
+			res = source;
 		}
 		return res;
 	}
@@ -621,7 +622,7 @@ namespace logicalaccess
 			answer = asciiToHex (answer);
 			if (answer.size () > 1)
 			{
-				if (answer[0] == answer.size())
+				if (answer[0] == answer.size()-1)
 				{
 					answer.erase (answer.begin());
 				}

@@ -149,11 +149,12 @@ namespace logicalaccess
 	std::vector<unsigned char> ISO7816RplethReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
 	{
 		COM_("Processing response : %s", BufferHelper::getHex(answer).c_str());
-		return answerReverse(handleAnswer(RplethReaderUnit::asciiToHex(d_rpleth_reader_card_adapter->adaptAnswer(answer))));
+		return answerReverse(handleAnswer(d_rpleth_reader_card_adapter->adaptAnswer(RplethReaderUnit::asciiToHex(answer))));
 	}
 
 	std::vector<unsigned char> ISO7816RplethReaderCardAdapter::answerReverse (const std::vector<unsigned char>& answer)
 	{
+		COM_("Reversing response : %s", BufferHelper::getHex(answer).c_str());
 		std::vector<unsigned char> res;
 
 		if (answer.size() > 0)
@@ -168,11 +169,12 @@ namespace logicalaccess
 
 	std::vector<unsigned char> ISO7816RplethReaderCardAdapter::handleAnswer (const std::vector<unsigned char>& answer)
 	{
+		COM_("Handling response : %s", BufferHelper::getHex(answer).c_str());
 		std::vector<unsigned char> res;
 
 		if (answer.size() > 2)
 		{
-			if (answer[0] == answer.size())
+			if (answer[0] == answer.size()-1)
 			{
 				res.insert(res.begin(), answer.begin()+2, answer.end());
 			}
