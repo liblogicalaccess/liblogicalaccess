@@ -9,6 +9,7 @@
 #include "../iso7816readerunitconfiguration.hpp"
 #include "samav2chip.hpp"
 #include "samcrypto.hpp"
+#include "samav2keyentry.hpp"
 #include <openssl/rand.h>
 
 #include <cstring>
@@ -52,16 +53,49 @@ namespace logicalaccess
 		std::cout << "Called Done" << std::endl;
 	}
 
-	void		SAMAV2ISO7816Commands::GetKeyEntry()
+	boost::shared_ptr<SAMAV2KeyEntry>	SAMAV2ISO7816Commands::GetKeyEntry(unsigned int keyno)
 	{
+		unsigned char result[255];
+		size_t resultlen = sizeof(result);
+		boost::shared_ptr<SAMAV2KeyEntry> keyentry;
+		boost::shared_ptr<KeyEntryInformation> keyentryinformation(new KeyEntryInformation);
+
 		std::cout << "GetKeyEntry Commands Called" << std::endl;
 
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0x64, keyno, 0x00, 0x00, result, &resultlen);
 
+		if (resultlen >= 14 &&  result[resultlen - 2] == 0x90 && result[resultlen - 1] == 0x00)
+		{
+			keyentry.reset(new SAMAV2KeyEntry());
+			unsigned short set;
 
+			set = result[resultlen - 4];
+			set <<= 8;
+			set += result[resultlen - 3];
+			keyentry->setSET(set);
+
+			keyentryinformation->kuc = result[resultlen - 5];
+			keyentryinformation->cekv =  result[resultlen - 6];
+			keyentryinformation->cekno =  result[resultlen - 7];
+			keyentryinformation->desfirekeyno =  result[resultlen - 8];
+
+			memcpy(keyentryinformation->desfireAid, result + resultlen - 11, 3);
+
+			keyentryinformation->verc =  result[resultlen - 12];
+			keyentryinformation->verb =  result[resultlen - 13];
+			keyentryinformation->vera =  result[resultlen - 14];
+
+			keyentry->setKeyEntryInformation(keyentryinformation);
+
+			std::cout << "GetKeyEntry SUCCED" << std::endl;
+		}
+		else
+			std::cout << "GetKeyEntry FAILED" << std::endl;
 		std::cout << "Called Done" << std::endl;
+		return keyentry;
 	}
 
-	void		SAMAV2ISO7816Commands::ChangeKeyEntry()
+	void		SAMAV2ISO7816Commands::ChangeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KeyEntry> key)
 	{
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
@@ -69,48 +103,41 @@ namespace logicalaccess
 		std::cout << "ChangeKeyEntry Commands Called" << std::endl;
 
 		unsigned char proMas = 0;
-		/*struct keyentry {
-			unsigned char  keyA[16];
-			unsigned char  keyB[16];
-			unsigned char  keyC[16];
-			unsigned char  DF_AID[3];
-			unsigned char  DF_KeyNo;
-			unsigned char  keyNoCEK;
-			unsigned char  keyVCEK;
-			unsigned char  refNoKUC;
-			short SET;
-			unsigned char VerA;
-			unsigned char VerB;
-			unsigned char VerC;
-			unsigned char padding[4];
-		};
-		
-		keyentry  kentry;
-		memset(&kentry, 0, sizeof(kentry));*/
 
-		proMas = 0x81;
+		//proMas = 0x81;
 
-		/*krntry.keyA[15] = 1;
-		kentry.VerA = 1;*/
+		proMas = key->getUpdateMask();
+
 
 		unsigned char data[60];
-		//memcpy(data, &kentry, 64);
 		memset(data, 0, 60);
-		data[15] = 1;
-		data[57] = 1;
+
+		if (key->getKeyType() == SAMAV2_DES_KEY_SIZE)
+		{
+			memcpy(data, key->getKeyA(), 16);
+			memcpy(data + 16, key->getKeyB(), 16);
+			memcpy(data + 32, key->getKeyC(), 16);
+		}
+		//data[48] = 
+		memcpy(data + 48, key->getKeyEntryInformation().get(), sizeof(KeyEntryInformation));
+		
+	//	data[15] = 1;
+	//	data[57] = 1;
 		//data[54] = 0xff;
 		std::vector<unsigned char> iv;
 		iv.resize(16, 0x00);
 
 		std::vector<unsigned char> vectordata(data, data + 60);
+		
+		std::vector<unsigned char> encdatalittle = DESFireCrypto::desfire_encrypt(sessionkey, vectordata);
 
-		std::vector<unsigned char> encdatalittle;// = SAMAV2Crypto::desfire_encrypt(sessionkey, vectordata);
-
-
-		//std::vector<unsigned char> encdata = SAMAV2Crypto::desfire_CBC_send(sessionkey, iv, encdatalittle);
 
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xc1, 0x01, proMas, 0x40, &encdatalittle[0], encdatalittle.size(), result, &resultlen);
 
+		if (resultlen >= 2 &&  result[resultlen - 2] == 0x90 && result[resultlen - 1] == 0x00)
+			std::cout << "SUCCED !!" << std::endl;
+		else
+			std::cout << "Failed :(" << std::endl;
 
 		std::cout << BufferHelper::getHex(std::vector<unsigned char>(result, result + resultlen)) << std::endl;
 

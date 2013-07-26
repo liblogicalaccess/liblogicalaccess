@@ -11,6 +11,7 @@
 #include "../readercardadapters/iso7816readercardadapter.hpp"
 #include "../iso7816readerunitconfiguration.hpp"
 #include "samcrypto.hpp"
+#include "samav2keyentry.hpp"
 
 #include <string>
 #include <vector>
@@ -68,9 +69,9 @@ namespace logicalaccess
 
 			virtual void		GetVersion();
 
-			virtual void		GetKeyEntry();
+			virtual boost::shared_ptr<SAMAV2KeyEntry>		GetKeyEntry(unsigned int keyno);
 
-			virtual void		ChangeKeyEntry();
+			virtual void		ChangeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KeyEntry> key);
 
 			virtual void		ActiveAV2Mode();
 

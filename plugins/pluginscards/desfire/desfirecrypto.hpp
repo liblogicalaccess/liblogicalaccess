@@ -178,7 +178,7 @@ namespace logicalaccess
 			 * \param data The data source buffer to encrypt
 			 * \return The data encrypted buffer
 			 */
-			std::vector<unsigned char> desfire_encrypt(const std::vector<unsigned char>& key, std::vector<unsigned char> data);
+			static std::vector<unsigned char> desfire_encrypt(const std::vector<unsigned char>& key, std::vector<unsigned char> data);
 
 			/**
 			 * \brief  Return data part for the encrypted communication mode for WriteData / WriteRecord.

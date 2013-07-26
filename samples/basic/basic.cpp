@@ -15,6 +15,7 @@
 #include "commands/desfireiso7816commands.hpp"
 #include "desfirechip.hpp"
 #include "samchip.hpp"
+#include "samav2keyentry.hpp"
 #include "logicalaccess/cards/samkeystorage.hpp"
 
 #include <iostream>
@@ -113,6 +114,8 @@ int main(int , char**)
 					boost::shared_ptr<logicalaccess::PCSCReaderUnit> storage = boost::dynamic_pointer_cast<logicalaccess::PCSCReaderUnit>(readerConfig->getReaderUnit());
 					
 					boost::shared_ptr<logicalaccess::DESFireISO7816Commands> desfirecommand = boost::dynamic_pointer_cast<logicalaccess::DESFireISO7816Commands>(readerConfig->getReaderUnit()->getSingleChip()->getCommands());
+					
+					
 					boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->GetVersion();
 
 
@@ -121,6 +124,9 @@ int main(int , char**)
 					// DO SOMETHING HERE
 					// DO SOMETHING HERE
 					// DO SOMETHING HERE
+					boost::shared_ptr<logicalaccess::SAMAV2KeyEntry> keyentry = boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->GetKeyEntry(1);
+
+
 
 					readerConfig->getReaderUnit()->disconnect();
 				}
