@@ -12,6 +12,7 @@
 #include "../iso7816readerunitconfiguration.hpp"
 #include "samcrypto.hpp"
 #include "samav2keyentry.hpp"
+#include "samcrypto.hpp"
 
 #include <string>
 #include <vector>
@@ -75,7 +76,7 @@ namespace logicalaccess
 
 			virtual void		ActiveAV2Mode();
 
-			virtual void		AuthentificationHost();
+			virtual void		AuthentificationHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
 
 			boost::shared_ptr<ISO7816ReaderCardAdapter> getISO7816ReaderCardAdapter() { return boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter()); };
 

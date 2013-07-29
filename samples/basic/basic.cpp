@@ -93,7 +93,7 @@ int main(int , char**)
 					boost::shared_ptr<logicalaccess::Chip> chip = readerConfig->getReaderUnit()->getSingleChip();
 					std::cout << "Card type: " << chip->getCardType() << std::endl;
 					//set storage key SAM
-					boost::shared_ptr<logicalaccess::DESFireLocation> location(new logicalaccess::DESFireLocation());
+				//	boost::shared_ptr<logicalaccess::DESFireLocation> location(new logicalaccess::DESFireLocation());
 					boost::shared_ptr<logicalaccess::DESFireKey> key(new logicalaccess::DESFireKey());
 					boost::shared_ptr<logicalaccess::KeyStorage> samstorage(new logicalaccess::SAMKeyStorage());
 					key->setKeyStorage(samstorage);
@@ -120,14 +120,24 @@ int main(int , char**)
 
 
 					desfirecommand->selectApplication(1313);
+					//Auth to Desfire With SAM
 					desfirecommand->authenticate(1);
-					// DO SOMETHING HERE
-					// DO SOMETHING HERE
-					// DO SOMETHING HERE
+
+					//GetKeyEntry SAM
 					boost::shared_ptr<logicalaccess::SAMAV2KeyEntry> keyentry = boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->GetKeyEntry(1);
 
 
+					boost::shared_ptr<logicalaccess::DESFireKey> keySamMaster(new logicalaccess::DESFireKey("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"));
+					boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->AuthentificationHost(keySamMaster, 0);
 
+					logicalaccess::UpdateSettings t;
+					memset(&t, 0, sizeof(t));
+					t.keyVa = 1;
+					t.keyversionsentseparatly = 1;
+
+					keyentry->setUpdateSettings(t);
+					
+					boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->ChangeKeyEntry(1, keyentry);
 					readerConfig->getReaderUnit()->disconnect();
 				}
 				else

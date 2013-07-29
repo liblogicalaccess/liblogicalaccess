@@ -24,8 +24,10 @@ if(UNIX)
 	set(${LINK_DIRECTORY} "${CMAKE_CURRENT_SOURCE_DIR}/../../bin/${TARGET_ARCH}/${VC_FOLDER_NAME}" "../../plugins/pluginscards/desfire")
   link_directories(${LINK_DIRECTORY})
 else()
-	set(${LINK_DIRECTORY} "${CMAKE_CURRENT_SOURCE_DIR}/../../bin/${TARGET_ARCH}/${VC_FOLDER_NAME}" 				"${CMAKE_CURRENT_SOURCE_DIR}/../../plugins/pluginscards/desfire/${TARGET_ARCH}/${VC_FOLDER_NAME}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/../../plugins/pluginsreaderproviders/pcsc/${TARGET_ARCH}/${VC_FOLDER_NAME}")
+	set(${LINK_DIRECTORY} "${CMAKE_CURRENT_SOURCE_DIR}/../../bin/${TARGET_ARCH}/${VC_FOLDER_NAME}" 
+	"${CMAKE_CURRENT_SOURCE_DIR}/../../plugins/pluginscards/desfire/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}"
+	"${CMAKE_CURRENT_SOURCE_DIR}/../../plugins/pluginscards/samav2/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}"
+	"${CMAKE_CURRENT_SOURCE_DIR}/../../plugins/pluginsreaderproviders/pcsc/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}")
   link_directories(${LINK_DIRECTORY})
 endif()
 
@@ -53,5 +55,6 @@ target_link_libraries(
 		pcscreaders
 		iso7816readers
 		desfirecards
+		samav2cards
 	${LIB_OPT}
 )

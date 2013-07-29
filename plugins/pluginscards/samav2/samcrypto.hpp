@@ -46,6 +46,8 @@ namespace logicalaccess
 			virtual std::vector<unsigned char> authenticate_PICC1(unsigned char  keyno, unsigned char* diversify, const std::vector<unsigned char>& encRndB);
 
 			virtual void authenticate_PICC2(unsigned char  keyno, const std::vector<unsigned char>& encRndA);
+
+			static std::vector<unsigned char> desfire_encrypt(const std::vector<unsigned char>& key, std::vector<unsigned char> data);
 	};	
 }
 
