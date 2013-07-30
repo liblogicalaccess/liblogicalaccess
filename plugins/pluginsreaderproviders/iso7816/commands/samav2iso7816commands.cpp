@@ -58,7 +58,7 @@ namespace logicalaccess
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
 		boost::shared_ptr<SAMAV2KeyEntry> keyentry;
-		KeyEntryInformation *keyentryinformation = new KeyEntryInformation;
+		boost::shared_ptr<KeyEntryInformation> keyentryinformation(new KeyEntryInformation);
 
 		std::cout << "GetKeyEntry Commands Called" << std::endl;
 
@@ -67,15 +67,11 @@ namespace logicalaccess
 		if (resultlen >= 14 &&  result[resultlen - 2] == 0x90 && result[resultlen - 1] == 0x00)
 		{
 			keyentry.reset(new SAMAV2KeyEntry());
-			unsigned short set;
+			unsigned short *set;
 
-			set = result[resultlen - 4];
-
-			keyentryinformation->set[0] = result[resultlen - 4];
-			set <<= 8;
-			set += result[resultlen - 3];
-			keyentryinformation->set[1] = result[resultlen - 3];
-			keyentry->setSET(result + resultlen - 4);
+			set = reinterpret_cast<unsigned short*>(result + resultlen - 4);
+			memcpy(keyentryinformation->set, result + resultlen - 4, 2);
+			keyentry->setSET(keyentryinformation->set);
 
 			keyentryinformation->kuc = result[resultlen - 5];
 			keyentryinformation->cekv =  result[resultlen - 6];
@@ -123,9 +119,8 @@ namespace logicalaccess
 			memcpy(data + 16, key->getKeyB(), 16);
 			memcpy(data + 32, key->getKeyC(), 16);
 	//	}
-		KeyEntryInformation* l = key->getKeyEntryInformation();
-		std::cout << sizeof(l->set) << std::endl;
-		memcpy(data + 48, key->getKeyEntryInformation(), sizeof(KeyEntryInformation));
+			KeyEntryInformation *l = &*(key->getKeyEntryInformation());
+		memcpy(data + 48, &*(key->getKeyEntryInformation()), sizeof(KeyEntryInformation));
 		
 	//	data[15] = 1;
 	//	data[57] = 1;
@@ -144,8 +139,6 @@ namespace logicalaccess
 			std::cout << "SUCCED !!" << std::endl;
 		else
 			std::cout << "Failed :(" << std::endl;
-
-		std::cout << BufferHelper::getHex(std::vector<unsigned char>(result, result + resultlen)) << std::endl;
 
 		std::cout << "Called Done" << std::endl;
 	}
@@ -299,4 +292,90 @@ namespace logicalaccess
 		}
 		return "SAM_NONE";
 	}
+
+	 boost::shared_ptr<SAMAV2KUCEntry>		SAMAV2ISO7816Commands::GetKUCEntry(unsigned int keyno)
+	 {
+		std::cout << std::endl << "GetKUCEntry Commands Called" << std::endl;
+		boost::shared_ptr<SAMAV2KUCEntry> kucentry(new SAMAV2KUCEntry);
+		unsigned char result[255];
+		size_t resultlen = sizeof(result);
+
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0x6c, keyno, 0x00, 0x00, result, &resultlen);
+
+		if (resultlen == 12 &&  result[resultlen - 2] == 0x90 && result[resultlen - 1] == 0x00)
+		{
+			std::cout << "SUCCED !!" << std::endl;
+			memcpy(&*(kucentry), result, sizeof(SAMAV2KUCEntry));
+		}
+		else
+		{
+			std::cout << "Failed :(" << std::endl;
+		}
+
+		std::cout << "Called Done" << std::endl;
+		return kucentry;
+	 }
+
+	 void									SAMAV2ISO7816Commands::ChangeKUCEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KUCEntry> key)
+	 {
+		std::cout << std::endl << "ChangeKUCEntry Commands Called" << std::endl;
+
+		unsigned char result[255];
+		size_t resultlen = sizeof(result);
+
+		unsigned char data[10];
+
+		memcpy(data, &*key, 10);
+
+		std::vector<unsigned char> iv;
+		iv.resize(16, 0x00);
+
+		std::vector<unsigned char> vectordata(data, data + 10);
+		
+		std::vector<unsigned char> encdatalittle = SAMDESfireCrypto::desfire_encrypt(sessionkey, vectordata);
+
+		int proMas = 0;
+
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xcc, keyno, proMas, 0x10, &encdatalittle[0], encdatalittle.size(), result, &resultlen);
+
+		if (resultlen >= 2 &&  result[resultlen - 2] == 0x90 && result[resultlen - 1] == 0x00)
+			std::cout << "SUCCED !!" << std::endl;
+		else
+			std::cout << "Failed :(" << std::endl;
+		 std::cout << "Called Done" << std::endl;
+	 }
+
+	 void									SAMAV2ISO7816Commands::DisableKeyEntry(unsigned char keyno) 
+	 {
+		std::cout << std::endl << "DisableKeyEntry Commands Called" << std::endl;
+
+		unsigned char result[255];
+		size_t resultlen = sizeof(result);
+
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xd8, keyno, 0x00, result, &resultlen);
+
+		if (resultlen >= 2 &&  result[resultlen - 2] == 0x90 && result[resultlen - 1] == 0x00)
+			std::cout << "SUCCED !!" << std::endl;
+		else
+			std::cout << "Failed :(" << std::endl;
+
+		 std::cout << "Called Done" << std::endl;
+	 }
+
+	 void									SAMAV2ISO7816Commands::SelectApplication(unsigned char *aid)
+	 {
+		 std::cout << std::endl << "SelectApplication Commands Called" << std::endl;
+
+		unsigned char result[255];
+		size_t resultlen = sizeof(result);
+
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0x5a, 0x00, 0x00, 0x03, aid, 0x03, result, &resultlen);
+
+		if (resultlen >= 2 &&  result[resultlen - 2] == 0x90 && result[resultlen - 1] == 0x00)
+			std::cout << "SUCCED !!" << std::endl;
+		else
+			std::cout << "Failed :(" << std::endl;
+
+		 std::cout << "Called Done" << std::endl;
+	 }
 }

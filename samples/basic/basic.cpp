@@ -134,10 +134,27 @@ int main(int , char**)
 					memset(&t, 0, sizeof(t));
 					t.keyVa = 1;
 					t.keyversionsentseparatly = 1;
-
-					keyentry->setUpdateSettings(t);
 					
+					keyentry->setUpdateSettings(t);
+					keyentry->getKeyEntryInformation()->vera = 1;
+					keyentry->getKeyEntryInformation()->set[0] = 0;
+					keyentry->getKeyEntryInformation()->set[1] = 0;
+					unsigned char *keya = keyentry->getDataA();
+					keya[15] = 1;
+
+					//ChangeKeyEntry
 					boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->ChangeKeyEntry(1, keyentry);
+					
+					//GetKUCEntry
+					boost::shared_ptr<logicalaccess::SAMAV2KUCEntry> kucentry = boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->GetKUCEntry(0);
+
+				//	boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->DisableKeyEntry(1);
+
+					//unsigned char aid[3] = {}; 
+				//	boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->SelectApplication(aid);
+
+					boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->ChangeKUCEntry(1, kucentry);
+
 					readerConfig->getReaderUnit()->disconnect();
 				}
 				else
