@@ -71,28 +71,23 @@ namespace logicalaccess
 			virtual void		GetVersion();
 
 			virtual boost::shared_ptr<SAMAV2KeyEntry>		GetKeyEntry(unsigned int keyno);
+			virtual boost::shared_ptr<SAMAV2KucEntry>		GetKUCEntry(unsigned int keyno);
 
+			virtual void		ChangeKUCEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KucEntry> key);
 			virtual void		ChangeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KeyEntry> key);
 
 			virtual void		ActiveAV2Mode();
-
+			virtual void		SelectApplication(unsigned char *aid);
 			virtual void		AuthentificationHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
-
-			virtual boost::shared_ptr<SAMAV2KUCEntry>		GetKUCEntry(unsigned int keyno);
-
-			boost::shared_ptr<ISO7816ReaderCardAdapter> getISO7816ReaderCardAdapter() { return boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter()); };
-
-			virtual std::string				GetSAMTypeFromSAM();
-
-			virtual void					ChangeKUCEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KUCEntry> key);
-
 			virtual void									DisableKeyEntry(unsigned char keyno);
 
-			virtual void									SelectApplication(unsigned char *aid);
+			boost::shared_ptr<ISO7816ReaderCardAdapter>		getISO7816ReaderCardAdapter() { return boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter()); };
+			virtual std::string								GetSAMTypeFromSAM();
+
 
 		protected:
 
-			std::vector<unsigned char> sessionkey;
+			std::vector<unsigned char> d_sessionkey;
 	};
 }
 

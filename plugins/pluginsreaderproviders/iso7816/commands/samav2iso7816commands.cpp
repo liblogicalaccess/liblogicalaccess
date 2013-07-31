@@ -10,6 +10,7 @@
 #include "samav2chip.hpp"
 #include "samcrypto.hpp"
 #include "samav2keyentry.hpp"
+#include "samav2kucentry.hpp"
 #include <openssl/rand.h>
 
 #include <cstring>
@@ -98,10 +99,14 @@ namespace logicalaccess
 
 	void		SAMAV2ISO7816Commands::ChangeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KeyEntry> key)
 	{
+		std::cout << "ChangeKeyEntry Commands Called" << std::endl;
+		if (d_sessionkey.size() == 0)
+		{
+			std::cout << "Failed: AuthentificationHost have to be done before use such command." << std::endl;
+			return;
+		}
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
-
-		std::cout << "ChangeKeyEntry Commands Called" << std::endl;
 
 		unsigned char proMas = 0;
 
@@ -130,7 +135,7 @@ namespace logicalaccess
 
 		std::vector<unsigned char> vectordata(data, data + 60);
 		
-		std::vector<unsigned char> encdatalittle = SAMDESfireCrypto::desfire_encrypt(sessionkey, vectordata);
+		std::vector<unsigned char> encdatalittle = SAMDESfireCrypto::desfire_encrypt(d_sessionkey, vectordata);
 
 
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xc1, keyno, proMas, 0x40, &encdatalittle[0], encdatalittle.size(), result, &resultlen);
@@ -260,12 +265,12 @@ namespace logicalaccess
 			return;
 		}
 
-		sessionkey.clear();
+		d_sessionkey.clear();
 
-		sessionkey.insert(sessionkey.end(), rndA.begin(), rndA.begin() + 4);
-		sessionkey.insert(sessionkey.end(), RndB.begin(), RndB.begin() + 4);
-		sessionkey.insert(sessionkey.end(), rndA.begin(), rndA.begin() + 4);
-		sessionkey.insert(sessionkey.end(), RndB.begin(), RndB.begin() + 4);
+		d_sessionkey.insert(d_sessionkey.end(), rndA.begin(), rndA.begin() + 4);
+		d_sessionkey.insert(d_sessionkey.end(), RndB.begin(), RndB.begin() + 4);
+		d_sessionkey.insert(d_sessionkey.end(), rndA.begin(), rndA.begin() + 4);
+		d_sessionkey.insert(d_sessionkey.end(), RndB.begin(), RndB.begin() + 4);
 
 		std::cout << "Called Done" << std::endl;
 	}
@@ -293,10 +298,10 @@ namespace logicalaccess
 		return "SAM_NONE";
 	}
 
-	 boost::shared_ptr<SAMAV2KUCEntry>		SAMAV2ISO7816Commands::GetKUCEntry(unsigned int keyno)
+	 boost::shared_ptr<SAMAV2KucEntry>		SAMAV2ISO7816Commands::GetKUCEntry(unsigned int keyno)
 	 {
 		std::cout << std::endl << "GetKUCEntry Commands Called" << std::endl;
-		boost::shared_ptr<SAMAV2KUCEntry> kucentry(new SAMAV2KUCEntry);
+		boost::shared_ptr<SAMAV2KucEntry> kucentry(new SAMAV2KucEntry);
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
 
@@ -305,7 +310,7 @@ namespace logicalaccess
 		if (resultlen == 12 &&  result[resultlen - 2] == 0x90 && result[resultlen - 1] == 0x00)
 		{
 			std::cout << "SUCCED !!" << std::endl;
-			memcpy(&*(kucentry), result, sizeof(SAMAV2KUCEntry));
+			memcpy(&*(kucentry->getKucEntryStruct()), result, sizeof(SAMAV2KUCEntryStruct));
 		}
 		else
 		{
@@ -315,26 +320,32 @@ namespace logicalaccess
 		std::cout << "Called Done" << std::endl;
 		return kucentry;
 	 }
-
-	 void									SAMAV2ISO7816Commands::ChangeKUCEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KUCEntry> key)
+	 
+	 void									SAMAV2ISO7816Commands::ChangeKUCEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KucEntry> key)
 	 {
 		std::cout << std::endl << "ChangeKUCEntry Commands Called" << std::endl;
+		if (d_sessionkey.size() == 0)
+		{
+			std::cout << "Failed: AuthentificationHost have to be done before use such command." << std::endl;
+			return;
+		}
+
 
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
 
 		unsigned char data[10];
 
-		memcpy(data, &*key, 10);
+		memcpy(data, &*(key->getKucEntryStruct()), 10);
 
 		std::vector<unsigned char> iv;
 		iv.resize(16, 0x00);
 
 		std::vector<unsigned char> vectordata(data, data + 10);
 		
-		std::vector<unsigned char> encdatalittle = SAMDESfireCrypto::desfire_encrypt(sessionkey, vectordata);
+		std::vector<unsigned char> encdatalittle = SAMDESfireCrypto::desfire_encrypt(d_sessionkey, vectordata);
 
-		int proMas = 0;
+		int proMas = key->getUpdateMask();
 
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xcc, keyno, proMas, 0x10, &encdatalittle[0], encdatalittle.size(), result, &resultlen);
 
