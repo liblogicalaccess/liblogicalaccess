@@ -133,7 +133,7 @@ int main(int , char**)
 
 
 					boost::shared_ptr<logicalaccess::KeyEntryUpdateSettings> t(new logicalaccess::KeyEntryUpdateSettings);
-					memset(&*t, 0, sizeof(t));
+					memset(&*(t), 0, sizeof(logicalaccess::KeyEntryUpdateSettings));
 					t->keyVa = 1;
 					t->keyversionsentseparatly = 1;
 					
@@ -155,7 +155,13 @@ int main(int , char**)
 					//unsigned char aid[3] = {}; 
 				//	boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->SelectApplication(aid);
 
-					boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->ChangeKUCEntry(1, kucentry);
+					kucentry->setUpdateMask(128);
+					kucentry->getKucEntryStruct()->limit[0] = 0;
+					kucentry->getKucEntryStruct()->limit[1] = 0;
+					kucentry->getKucEntryStruct()->limit[2] = 0;
+					kucentry->getKucEntryStruct()->limit[3] = 1;
+
+					boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->ChangeKUCEntry(0, kucentry);
 
 					readerConfig->getReaderUnit()->disconnect();
 				}

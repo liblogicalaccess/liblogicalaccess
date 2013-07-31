@@ -38,13 +38,13 @@ namespace logicalaccess
 			/**
 			 * \brief Build an empty DESFire key.
 			 */
-			SAMAV2KucEntry() : d_kucentry(new SAMAV2KUCEntryStruct) {};
+			SAMAV2KucEntry() : d_updatemask(0), d_kucentry(new SAMAV2KUCEntryStruct) { memset(&*d_kucentry, 0, sizeof(SAMAV2KUCEntryStruct)); };
 
 			/**
 			 * \brief Build a DESFire key given a string representation of it.
 			 * \param str The string representation.
 			 */
-			SAMAV2KucEntry(boost::shared_ptr<SAMAV2KUCEntryStruct> k) : d_kucentry(k) {};
+			SAMAV2KucEntry(boost::shared_ptr<SAMAV2KUCEntryStruct> k) : d_updatemask(0), d_kucentry(k) {};
 
 			unsigned char	getUpdateMask() { return d_updatemask; };
 			void			setUpdateMask(unsigned char c) { d_updatemask = c; };

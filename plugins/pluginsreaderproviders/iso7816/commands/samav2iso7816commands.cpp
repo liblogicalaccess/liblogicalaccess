@@ -334,20 +334,20 @@ namespace logicalaccess
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
 
-		unsigned char data[10];
+		unsigned char data[6] = {};
 
-		memcpy(data, &*(key->getKucEntryStruct()), 10);
+		memcpy(data, &*(key->getKucEntryStruct()), 6);
 
 		std::vector<unsigned char> iv;
 		iv.resize(16, 0x00);
 
-		std::vector<unsigned char> vectordata(data, data + 10);
+		std::vector<unsigned char> vectordata(data, data + 6);
 		
 		std::vector<unsigned char> encdatalittle = SAMDESfireCrypto::desfire_encrypt(d_sessionkey, vectordata);
 
 		int proMas = key->getUpdateMask();
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xcc, keyno, proMas, 0x10, &encdatalittle[0], encdatalittle.size(), result, &resultlen);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xcc, keyno, proMas, 0x08, &encdatalittle[0], encdatalittle.size(), result, &resultlen);
 
 		if (resultlen >= 2 &&  result[resultlen - 2] == 0x90 && result[resultlen - 1] == 0x00)
 			std::cout << "SUCCED !!" << std::endl;
