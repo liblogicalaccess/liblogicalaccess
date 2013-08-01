@@ -97,7 +97,9 @@ int main(int , char**)
 				//	boost::shared_ptr<logicalaccess::DESFireLocation> location(new logicalaccess::DESFireLocation());
 					boost::shared_ptr<logicalaccess::DESFireKey> key(new logicalaccess::DESFireKey());
 					boost::shared_ptr<logicalaccess::KeyStorage> samstorage(new logicalaccess::SAMKeyStorage());
+					boost::dynamic_pointer_cast<logicalaccess::SAMKeyStorage>(samstorage)->setKeySlot(1);
 					key->setKeyStorage(samstorage);
+					key->setKeyVersion(1);
 					boost::dynamic_pointer_cast<logicalaccess::DESFireProfile>(chip->getProfile())->setKey(1313, 1, key); 
 
 					std::vector<unsigned char> csn = readerConfig->getReaderUnit()->getNumber(chip);
@@ -113,7 +115,6 @@ int main(int , char**)
 					//boost::shared_ptr<logicalaccess::Profile> profile = chip->getProfile();
 
 					boost::shared_ptr<logicalaccess::PCSCReaderUnit> storage = boost::dynamic_pointer_cast<logicalaccess::PCSCReaderUnit>(readerConfig->getReaderUnit());
-					
 					boost::shared_ptr<logicalaccess::DESFireISO7816Commands> desfirecommand = boost::dynamic_pointer_cast<logicalaccess::DESFireISO7816Commands>(readerConfig->getReaderUnit()->getSingleChip()->getCommands());
 					
 					
@@ -125,7 +126,7 @@ int main(int , char**)
 					desfirecommand->authenticate(1);
 
 					//GetKeyEntry SAM
-					boost::shared_ptr<logicalaccess::SAMAV2KeyEntry> keyentry = boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->GetKeyEntry(1);
+					boost::shared_ptr<logicalaccess::SAMAV2KeyEntry> keyentry = boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->GetKeyEntry(2);
 
 
 					boost::shared_ptr<logicalaccess::DESFireKey> keySamMaster(new logicalaccess::DESFireKey("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"));
@@ -136,30 +137,35 @@ int main(int , char**)
 					memset(&*(t), 0, sizeof(logicalaccess::KeyEntryUpdateSettings));
 					t->keyVa = 1;
 					t->keyversionsentseparatly = 1;
-					
+					t->updateset = 1;
+					t->df_aid_keyno = 1;
 					keyentry->setUpdateSettings(t);
 					keyentry->getKeyEntryInformation()->vera = 1;
 					keyentry->getKeyEntryInformation()->set[0] = 0;
 					keyentry->getKeyEntryInformation()->set[1] = 0;
+					keyentry->getKeyEntryInformation()->desfireAid[0] = 0x00;
+					keyentry->getKeyEntryInformation()->desfireAid[1] = 0x05;
+					keyentry->getKeyEntryInformation()->desfireAid[2] = 0x21;
+					keyentry->getKeyEntryInformation()->desfirekeyno = 1;
 					unsigned char *keya = keyentry->getDataA();
 					keya[15] = 1;
 
 					//ChangeKeyEntry
-					boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->ChangeKeyEntry(1, keyentry);
+					boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->ChangeKeyEntry(2, keyentry);
 					
 					//GetKUCEntry
 					boost::shared_ptr<logicalaccess::SAMAV2KucEntry> kucentry = boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->GetKUCEntry(0);
 
-				//	boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->DisableKeyEntry(1);
+					boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->DisableKeyEntry(1);
 
 					//unsigned char aid[3] = {}; 
 				//	boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->SelectApplication(aid);
 
 					kucentry->setUpdateMask(128);
-					kucentry->getKucEntryStruct()->limit[0] = 0;
-					kucentry->getKucEntryStruct()->limit[1] = 0;
-					kucentry->getKucEntryStruct()->limit[2] = 0;
-					kucentry->getKucEntryStruct()->limit[3] = 1;
+					kucentry->getKucEntryStruct()->limit[0] = 0xff;
+					kucentry->getKucEntryStruct()->limit[1] = 0xff;
+					kucentry->getKucEntryStruct()->limit[2] = 0xff;
+					kucentry->getKucEntryStruct()->limit[3] = 0xff;
 
 					boost::dynamic_pointer_cast<logicalaccess::SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->ChangeKUCEntry(0, kucentry);
 

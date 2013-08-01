@@ -37,16 +37,6 @@ namespace logicalaccess
 		
 	}
 
-	std::vector<unsigned char> SAMDESfireCrypto::authenticate_PICC1(unsigned char keyno, unsigned char *diversify, const std::vector<unsigned char>& encRndB)
-	{
-		return DESFireCrypto::authenticate_PICC1(keyno, diversify, encRndB);
-	}
-
-	void SAMDESfireCrypto::authenticate_PICC2(unsigned char keyno, const std::vector<unsigned char>& encRndA1)
-	{
-		DESFireCrypto::authenticate_PICC2(keyno, encRndA1);
-	}
-
 	std::vector<unsigned char> SAMDESfireCrypto::desfire_encrypt(const std::vector<unsigned char>& key, std::vector<unsigned char> data)
 	{
 		int pad = (8 - ((data.size() + 2) % 8)) % 8;

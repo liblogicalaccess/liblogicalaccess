@@ -153,7 +153,7 @@ namespace logicalaccess
 		return boost::shared_ptr<KeyEntryUpdateSettings>(settings);
 	}
 
-	void	SAMAV2KeyEntry::setUpdateSettings(boost::shared_ptr<KeyEntryUpdateSettings> t)
+	void SAMAV2KeyEntry::setUpdateSettings(boost::shared_ptr<KeyEntryUpdateSettings> t)
 	{
 		bool *x = (bool*)&*t;
 		d_updatemask = 0;
@@ -184,7 +184,7 @@ namespace logicalaccess
 		return boost::shared_ptr<SET>(set);
 	}
 
-	void	SAMAV2KeyEntry::setSET(SET t)
+	void SAMAV2KeyEntry::setSET(SET t)
 	{
 		bool *x = (bool*)&t;
 		memset(d_keyentryinformation->set, 0, 2);

@@ -68,21 +68,21 @@ namespace logicalaccess
 			 */
 			virtual ~SAMAV2ISO7816Commands();			
 
-			virtual void		GetVersion();
+			virtual void GetVersion();
 
-			virtual boost::shared_ptr<SAMAV2KeyEntry>		GetKeyEntry(unsigned int keyno);
-			virtual boost::shared_ptr<SAMAV2KucEntry>		GetKUCEntry(unsigned int keyno);
+			virtual boost::shared_ptr<SAMAV2KeyEntry> GetKeyEntry(unsigned int keyno);
+			virtual boost::shared_ptr<SAMAV2KucEntry> GetKUCEntry(unsigned int keyno);
 
-			virtual void		ChangeKUCEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KucEntry> key);
-			virtual void		ChangeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KeyEntry> key);
+			virtual void ChangeKUCEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KucEntry> key);
+			virtual void ChangeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KeyEntry> key);
 
-			virtual void		ActiveAV2Mode();
-			virtual void		SelectApplication(unsigned char *aid);
-			virtual void		AuthentificationHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
-			virtual void									DisableKeyEntry(unsigned char keyno);
+			virtual void ActiveAV2Mode();
+			virtual void SelectApplication(unsigned char *aid);
+			virtual void AuthentificationHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
+			virtual void DisableKeyEntry(unsigned char keyno);
 
-			boost::shared_ptr<ISO7816ReaderCardAdapter>		getISO7816ReaderCardAdapter() { return boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter()); };
-			virtual std::string								GetSAMTypeFromSAM();
+			boost::shared_ptr<ISO7816ReaderCardAdapter> getISO7816ReaderCardAdapter() { return boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter()); };
+			virtual std::string GetSAMTypeFromSAM();
 
 
 		protected:

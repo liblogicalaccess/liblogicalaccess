@@ -113,6 +113,19 @@ namespace logicalaccess
 
 		transmit(DF_INS_SELECT_APPLICATION, command, sizeof(command));
 
+		if (getSAMChip())
+		{
+			boost::shared_ptr<SAMAV2Commands> samav2commands = boost::dynamic_pointer_cast<SAMAV2Commands>(getSAMChip()->getCommands());
+			unsigned char t_aid[3] = {};
+			int saveaid = aid;
+			for (char x = 2; x >= 0; --x)
+			{
+				t_aid[x] = saveaid & 0xff;
+				saveaid >>= 8;
+			}
+			samav2commands->SelectApplication(t_aid);
+		}
+
 		d_crypto->selectApplication(aid);
 		r = true;
 
@@ -867,13 +880,7 @@ namespace logicalaccess
 	{
 		unsigned char command[16];
 
-		unsigned char kv = 0x00;
 		boost::shared_ptr<DESFireKey> key = d_crypto->getKey(keyno);
-		if (key)
-		{
-			kv = key->getKeyVersion();
-		}
-
 		bool r = false;
 		unsigned char diversify[16];
 		if (d_crypto->getDiversify(diversify))
@@ -894,11 +901,11 @@ namespace logicalaccess
 					size_t apduresultlen = sizeof(apduresult);
 
 					unsigned char data[0x0a];
-					data[0] = 1;
-					data[1] = 1;
+					data[0] = keyno;
+					data[1] = key->getKeyVersion();
 					memcpy(data + 2, &result[0], 8);
 
-					readercardadapter->sendAPDUCommand(0x80, 0x0a, 0x00, 0x00, 0x0a, data, 0x0a, 0x00, apduresult, &apduresultlen);
+					readercardadapter->sendAPDUCommand(0x80, 0x0a, 0x02, 0x00, 0x0a, data, 0x0a, 0x00, apduresult, &apduresultlen);
 					if (apduresultlen <= 2)
 					{
 						std::cout << "DESFire authentication failed PICC1" << std::endl;
@@ -908,7 +915,7 @@ namespace logicalaccess
 					rndAB.insert(rndAB.begin(), apduresult, apduresult + 16);
 				}
 				else
-				 rndAB = d_crypto->authenticate_PICC1(keyno, diversify, result);
+					rndAB = d_crypto->authenticate_PICC1(keyno, diversify, result);
 
 				result = DESFireISO7816Commands::transmit(DF_INS_ADDITIONAL_FRAME, &rndAB[0], 16);
 
