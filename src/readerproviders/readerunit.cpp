@@ -53,13 +53,19 @@ namespace logicalaccess
 
 	boost::shared_ptr<LCDDisplay> ReaderUnit::getLCDDisplay()
 	{
-		d_lcdDisplay->setReaderCardAdapter(getDefaultReaderCardAdapter());
+		if (d_lcdDisplay)
+		{
+			d_lcdDisplay->setReaderCardAdapter(getDefaultReaderCardAdapter());
+		}
 		return d_lcdDisplay;
 	}
 
 	boost::shared_ptr<LEDBuzzerDisplay> ReaderUnit::getLEDBuzzerDisplay()
 	{
-		d_ledBuzzerDisplay->setReaderCardAdapter(getDefaultReaderCardAdapter());
+		if (d_ledBuzzerDisplay)
+		{
+			d_ledBuzzerDisplay->setReaderCardAdapter(getDefaultReaderCardAdapter());
+		}
 		return d_ledBuzzerDisplay;
 	}
 
