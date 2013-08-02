@@ -11,9 +11,8 @@ namespace logicalaccess
 	SAMAV2KeyEntry::SAMAV2KeyEntry() : d_updatemask(0)
 	{
 		d_keyType = SAMAV2_KEY_DES;
-		d_keyA.resize(getLength());
-		d_keyB.resize(getLength());
-		d_keyC.resize(getLength());
+		d_key = new unsigned char[getLength()];
+		memset(d_key, 0, getLength());
 		d_diversify = false;
 		d_updatemask = 0;
 		d_keyentryinformation.reset(new KeyEntryInformation());
@@ -24,9 +23,8 @@ namespace logicalaccess
 	SAMAV2KeyEntry::SAMAV2KeyEntry(const std::string& str, const std::string& str1, const std::string& str2) : d_updatemask(0)
 	{
 		d_keyType = SAMAV2_KEY_DES;
-		d_keyA.resize(getLength());
-		d_keyB.resize(getLength());
-		d_keyC.resize(getLength());
+		d_key = new unsigned char[getLength()];
+		memset(d_key, 0, getLength());
 		d_diversify = false;
 		d_updatemask = 0;
 		d_keyentryinformation.reset(new KeyEntryInformation());
@@ -37,9 +35,8 @@ namespace logicalaccess
 	SAMAV2KeyEntry::SAMAV2KeyEntry(const void** buf, size_t buflen, char numberkey) : d_updatemask(0)
 	{
 		d_keyType = SAMAV2_KEY_DES;
-		d_keyA.resize(getLength());
-		d_keyB.resize(getLength());
-		d_keyC.resize(getLength());
+		d_key = new unsigned char[getLength()];
+		memset(d_key, 0, getLength());
 		d_diversify = false;
 		d_updatemask = 0;
 		d_keyentryinformation.reset(new KeyEntryInformation());
@@ -51,24 +48,24 @@ namespace logicalaccess
 			{
 				if (numberkey >= 1)
 				{
-					d_keyA.clear();
-					d_keyA.insert(d_keyA.end(), reinterpret_cast<const unsigned char*>(buf[0]), reinterpret_cast<const unsigned char*>(buf[0]) + getLength());
+					memset(d_key, 0, getLength());
+					memcpy(d_key, buf[0], getSingleLength());
 				}
 				if (numberkey >= 2)
 				{
-					d_keyB.clear();
-					d_keyB.insert(d_keyA.end(), reinterpret_cast<const unsigned char*>(buf[1]), reinterpret_cast<const unsigned char*>(buf[1]) + getLength());
+					memset(d_key, 0, getLength());
+					memcpy(d_key + getSingleLength(), buf[1], getSingleLength());
 				}
 				if (numberkey >= 3)
 				{
-					d_keyC.clear();
-					d_keyC.insert(d_keyA.end(), reinterpret_cast<const unsigned char*>(buf[2]), reinterpret_cast<const unsigned char*>(buf[2]) + getLength());
+					memset(d_key, 0, getLength());
+					memcpy(d_key + (getSingleLength() * 2), buf[2], getSingleLength());
 				}
 			}
 		}
 	}
 
-	size_t SAMAV2KeyEntry::getLength() const
+	size_t SAMAV2KeyEntry::getSingleLength() const
 	{
 		size_t length = 0;
 
@@ -88,6 +85,70 @@ namespace logicalaccess
 		}
 
 		return length;
+	}
+
+	size_t SAMAV2KeyEntry::getLength() const
+	{
+		size_t length = 0;
+
+		switch (d_keyType)
+		{
+		case SAMAV2_KEY_DES:
+			length = SAMAV2_DES_KEY_SIZE * 3;
+			break;
+
+		case SAMAV2_KEY_3K3DES:
+			length = SAMAV2_MAXKEY_SIZE * 2;
+			break;
+
+		case SAMAV2_KEY_AES:
+			length = SAMAV2_AES_KEY_SIZE * 3;
+			break;
+		}
+
+		return length;
+	}
+
+	unsigned char** SAMAV2KeyEntry::getKey()
+	{
+		unsigned char **keys;
+		size_t keysize = getSingleLength();
+		unsigned char keynb = 3;
+
+		if (d_keyType == SAMAV2_MAXKEY_SIZE)
+		{
+			keynb = 2;
+			keys = new unsigned char*[2];
+		}
+		else
+			keys = new unsigned char*[3];
+
+		for (unsigned char x = 0; x < keynb; ++x)
+		{
+			keys[x] = new unsigned char[keysize];
+			memcpy(keys[x], d_key + (x * keysize), keysize); 
+		}
+		return keys;
+	}
+
+	void		SAMAV2KeyEntry::setKeyTypeFromSET()
+	{
+		char keytype = 0x1c & d_keyentryinformation->set[1];
+
+		switch (keytype)
+		{
+		case SAMAV2_KEY_DES:
+			d_keyType = SAMAV2_KEY_DES;
+			break;
+
+		case SAMAV2_KEY_3K3DES:
+			d_keyType = SAMAV2_KEY_3K3DES;
+			break;
+
+		case SAMAV2_KEY_AES:
+			d_keyType = SAMAV2_KEY_AES;
+			break;
+		}
 	}
 
 	void SAMAV2KeyEntry::serialize(boost::property_tree::ptree& parentNode)
@@ -113,16 +174,14 @@ namespace logicalaccess
 
 	bool SAMAV2KeyEntry::operator==(const SAMAV2KeyEntry& key) const
 	{
-		if (d_keyA != key.d_keyA || d_keyB != key.d_keyB || d_keyC != key.d_keyC)
-		{
-			return false;
-		}
-
 		if (d_keyType != key.d_keyType)
 		{
 			return false;
 		}
-
+		if (memcmp(d_key, key.d_key, getLength()) == 0)
+		{
+			return false;
+		}
 		return true;
 	}
 

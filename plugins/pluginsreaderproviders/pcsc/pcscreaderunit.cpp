@@ -619,6 +619,8 @@ namespace logicalaccess
 				}
 				else if (d_insertedChip->getCardType() == "DESFireEV1")
 				{
+					boost::shared_ptr<DESFireCrypto> crypto(new SAMDESfireCrypto());
+					boost::dynamic_pointer_cast<DESFireEV1ISO7816Commands>(d_insertedChip->getCommands())->setCrypto(crypto);
 					boost::dynamic_pointer_cast<DESFireEV1ISO7816Commands>(d_insertedChip->getCommands())->getCrypto()->setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(d_insertedChip->getProfile()), d_insertedChip->getChipIdentifier());
 				}
 				ret = true;
@@ -1289,6 +1291,7 @@ namespace logicalaccess
 			else if (type == "DESFireEV1")
 			{
 				commands.reset(new DESFireEV1ISO7816Commands());
+				boost::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(getSAMChip());
 			}
 			else if (type == "DESFire")
 			{

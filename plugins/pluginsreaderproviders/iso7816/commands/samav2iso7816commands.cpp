@@ -65,7 +65,7 @@ namespace logicalaccess
 
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0x64, keyno, 0x00, 0x00, result, &resultlen);
 
-		if (resultlen >= 14 &&  result[resultlen - 2] == 0x90 && result[resultlen - 1] == 0x00)
+		if ((resultlen == 14 || resultlen == 13) &&  result[resultlen - 2] == 0x90 && result[resultlen - 1] == 0x00)
 		{
 			keyentry.reset(new SAMAV2KeyEntry());
 			unsigned short *set;
@@ -75,18 +75,27 @@ namespace logicalaccess
 			keyentry->setSET(keyentryinformation->set);
 
 			keyentryinformation->kuc = result[resultlen - 5];
-			keyentryinformation->cekv =  result[resultlen - 6];
-			keyentryinformation->cekno =  result[resultlen - 7];
+			keyentryinformation->cekv = result[resultlen - 6];
+			keyentryinformation->cekno = result[resultlen - 7];
 			keyentryinformation->desfirekeyno =  result[resultlen - 8];
 
 			memcpy(keyentryinformation->desfireAid, result + resultlen - 11, 3);
 
-			keyentryinformation->verc =  result[resultlen - 12];
-			keyentryinformation->verb =  result[resultlen - 13];
-			keyentryinformation->vera =  result[resultlen - 14];
+
+			if (resultlen == 13)
+			{
+				keyentryinformation->verb = result[resultlen - 12];
+				keyentryinformation->vera = result[resultlen - 13];
+			}
+			else
+			{
+				keyentryinformation->verc = result[resultlen - 12];
+				keyentryinformation->verb = result[resultlen - 13];
+				keyentryinformation->vera = result[resultlen - 14];
+			}
 
 			keyentry->setKeyEntryInformation(keyentryinformation);
-
+			keyentry->setKeyTypeFromSET();
 			keyentry->setUpdateMask(0);
 
 			std::cout << "GetKeyEntry SUCCED" << std::endl;
@@ -114,17 +123,11 @@ namespace logicalaccess
 
 		proMas = key->getUpdateMask();
 
+		size_t buffer_size = key->getLength() + sizeof(KeyEntryInformation);
+		unsigned char *data = new unsigned char[buffer_size];
+		memset(data, 0, buffer_size);
 
-		unsigned char data[60];
-		memset(data, 0, 60);
-
-	//	if (key->getKeyType() == SAMAV2_DES_KEY_SIZE)
-	//	{
-			memcpy(data, key->getKeyA(), 16);
-			memcpy(data + 16, key->getKeyB(), 16);
-			memcpy(data + 32, key->getKeyC(), 16);
-	//	}
-			KeyEntryInformation *l = &*(key->getKeyEntryInformation());
+		memcpy(data, key->getData(), key->getLength());
 		memcpy(data + 48, &*(key->getKeyEntryInformation()), sizeof(KeyEntryInformation));
 		
 	//	data[15] = 1;
@@ -133,12 +136,12 @@ namespace logicalaccess
 		std::vector<unsigned char> iv;
 		iv.resize(16, 0x00);
 
-		std::vector<unsigned char> vectordata(data, data + 60);
+		std::vector<unsigned char> vectordata(data, data + buffer_size);
 		
 		std::vector<unsigned char> encdatalittle = SAMDESfireCrypto::desfire_encrypt(d_sessionkey, vectordata);
 
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xc1, keyno, proMas, 0x40, &encdatalittle[0], encdatalittle.size(), result, &resultlen);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xc1, keyno, proMas, (unsigned char)(encdatalittle.size()), &encdatalittle[0], encdatalittle.size(), result, &resultlen);
 
 		if (resultlen >= 2 &&  result[resultlen - 2] == 0x90 && result[resultlen - 1] == 0x00)
 			std::cout << "SUCCED !!" << std::endl;
@@ -194,6 +197,7 @@ namespace logicalaccess
 		}
 
 		std::vector<unsigned char> keyvec(key->getData(), key->getData() + 16);
+		
 		std::vector<unsigned char> iv(16);
 		memset(&iv[0], 0, 16);
 

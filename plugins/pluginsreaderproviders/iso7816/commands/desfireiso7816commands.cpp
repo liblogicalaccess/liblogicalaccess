@@ -22,16 +22,6 @@ namespace logicalaccess
 	{
 	}
 
-	boost::shared_ptr<DESFireCrypto> DESFireISO7816Commands::getCrypto()
-	{
-		return d_crypto;
-	}
-
-	void DESFireISO7816Commands::setCrypto(boost::shared_ptr<DESFireCrypto> t)
-	{
-		d_crypto = t;
-	}
-
 	bool DESFireISO7816Commands::erase(bool resetKey)
 	{		
 		bool r = false;

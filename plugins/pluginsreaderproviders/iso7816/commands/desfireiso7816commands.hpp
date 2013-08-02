@@ -308,29 +308,24 @@ namespace logicalaccess
 			 * \brief Get the internal DESFire crypto.
 			 * \return The internal DESFire crypto.
 			 */
-			boost::shared_ptr<DESFireCrypto> getCrypto();
+			boost::shared_ptr<DESFireCrypto> getCrypto() { return d_crypto; };
 
 			/**
 			 * \brief Get the internal DESFire crypto.
 			 * \return The internal DESFire crypto.
 			 */
-			void setCrypto(boost::shared_ptr<DESFireCrypto> t);
+			void setCrypto(boost::shared_ptr<DESFireCrypto> t) { d_crypto = t; };
 
 			/**
 			 * \brief Set the SAM Chip.
 			 * \param t The SAM Chip.
 			 */
-			void DESFireISO7816Commands::setSAMChip(boost::shared_ptr<SAMChip> t) {	d_SAM_chip = t;	}
+			void setSAMChip(boost::shared_ptr<SAMChip> t) {	d_SAM_chip = t;	}
 			
 			/**
 			 * \brief get the SAM Chip.
 			 */
-			boost::shared_ptr<SAMChip> DESFireISO7816Commands::getSAMChip() { return d_SAM_chip; }
-
-			/**
-			 * \brief Find the type of SAM from the reader set.
-			 */
-		//	std::string AutoSelectSAMType();
+			boost::shared_ptr<SAMChip> getSAMChip() { return d_SAM_chip; }
 
 		protected:			
 

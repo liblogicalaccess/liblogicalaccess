@@ -33,8 +33,8 @@ namespace logicalaccess
 	typedef enum 
 	{
 		SAMAV2_KEY_DES = 0x00,
-		SAMAV2_KEY_3K3DES = 0x40,
-		SAMAV2_KEY_AES = 0x80
+		SAMAV2_KEY_3K3DES = 0x0c,
+		SAMAV2_KEY_AES = 0x10
 	}				SAMAV2KeyType;
 
 	typedef struct  s_KeyEntryUpdateSettings
@@ -114,16 +114,13 @@ namespace logicalaccess
 			 * \brief Get the key data.
 			 * \return The key data.
 			 */
-			inline const unsigned char* getKeyA() const { return &d_keyA[0]; };
-			inline const unsigned char* getKeyB() const { return &d_keyB[0]; };
-			inline const unsigned char* getKeyC() const { return &d_keyC[0]; };
+			unsigned char** getKey();
+
 			/**
 			 * \brief Get the key data.
 			 * \return The key data.
 			 */
-			inline unsigned char* getDataA() { return &d_keyA[0]; };
-			inline unsigned char* getDataB() { return &d_keyB[0]; };
-			inline unsigned char* getDataC() { return &d_keyC[0]; };
+			inline unsigned char* getData() { return d_key; };
 
 			/**
 			 * \brief Set if the key is diversified on the card.
@@ -187,6 +184,8 @@ namespace logicalaccess
 			 */
 			static std::string SAMAV2KeyEntryTypeStr(SAMAV2KeyType t);
 
+			size_t SAMAV2KeyEntry::getSingleLength() const;
+
 			void	setSET(SET t);
 			void	setSET(unsigned char *t) { memcpy(d_keyentryinformation->set, t, sizeof(*t)); };
 			boost::shared_ptr<SET> getSETStruct();
@@ -199,15 +198,14 @@ namespace logicalaccess
 			boost::shared_ptr<KeyEntryInformation> getKeyEntryInformation() { return d_keyentryinformation; } ;
 
 			void		setKeyEntryInformation(boost::shared_ptr<KeyEntryInformation> t) { d_keyentryinformation = t; };
+			void		setKeyTypeFromSET();
 
 		private:
 
 			/**
 			 * \brief The key bytes;
 			 */
-			std::vector<unsigned char> d_keyA;
-			std::vector<unsigned char> d_keyB;
-			std::vector<unsigned char> d_keyC;
+			unsigned char *d_key;
 
 			/**
 			 * \brief Diversify the key on the card.

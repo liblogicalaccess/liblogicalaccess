@@ -374,8 +374,8 @@ namespace logicalaccess
 			 */
 			virtual std::vector<unsigned char> transmit_nomacv(unsigned char cmd, const void* buf = NULL, size_t buflen = 0x00, bool forceLc = false);
 
-
 		protected:
+
 	};
 }
 
