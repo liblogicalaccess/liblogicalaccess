@@ -11,8 +11,8 @@ namespace logicalaccess
 	SAMAV2KeyEntry::SAMAV2KeyEntry() : d_updatemask(0)
 	{
 		d_keyType = SAMAV2_KEY_DES;
-		d_key = new unsigned char[getLength()];
-		memset(d_key, 0, getLength());
+		d_key.reset(new unsigned char[getLength()]);
+		memset(&*d_key, 0, getLength());
 		d_diversify = false;
 		d_updatemask = 0;
 		d_keyentryinformation.reset(new KeyEntryInformation());
@@ -23,8 +23,8 @@ namespace logicalaccess
 	SAMAV2KeyEntry::SAMAV2KeyEntry(const std::string& str, const std::string& str1, const std::string& str2) : d_updatemask(0)
 	{
 		d_keyType = SAMAV2_KEY_DES;
-		d_key = new unsigned char[getLength()];
-		memset(d_key, 0, getLength());
+		d_key.reset(new unsigned char[getLength()]);
+		memset(&*d_key, 0, getLength());
 		d_diversify = false;
 		d_updatemask = 0;
 		d_keyentryinformation.reset(new KeyEntryInformation());
@@ -35,8 +35,8 @@ namespace logicalaccess
 	SAMAV2KeyEntry::SAMAV2KeyEntry(const void** buf, size_t buflen, char numberkey) : d_updatemask(0)
 	{
 		d_keyType = SAMAV2_KEY_DES;
-		d_key = new unsigned char[getLength()];
-		memset(d_key, 0, getLength());
+		d_key.reset(new unsigned char[getLength()]);
+		memset(&*d_key, 0, getLength());
 		d_diversify = false;
 		d_updatemask = 0;
 		d_keyentryinformation.reset(new KeyEntryInformation());
@@ -48,18 +48,18 @@ namespace logicalaccess
 			{
 				if (numberkey >= 1)
 				{
-					memset(d_key, 0, getLength());
-					memcpy(d_key, buf[0], getSingleLength());
+					memset(&*d_key, 0, getLength());
+					memcpy(&*d_key, buf[0], getSingleLength());
 				}
 				if (numberkey >= 2)
 				{
-					memset(d_key, 0, getLength());
-					memcpy(d_key + getSingleLength(), buf[1], getSingleLength());
+					memset(&*d_key, 0, getLength());
+					memcpy(&*d_key + getSingleLength(), buf[1], getSingleLength());
 				}
 				if (numberkey >= 3)
 				{
-					memset(d_key, 0, getLength());
-					memcpy(d_key + (getSingleLength() * 2), buf[2], getSingleLength());
+					memset(&*d_key, 0, getLength());
+					memcpy(&*d_key + (getSingleLength() * 2), buf[2], getSingleLength());
 				}
 			}
 		}
@@ -126,7 +126,7 @@ namespace logicalaccess
 		for (unsigned char x = 0; x < keynb; ++x)
 		{
 			keys[x] = new unsigned char[keysize];
-			memcpy(keys[x], d_key + (x * keysize), keysize); 
+			memcpy(keys[x], &*d_key + (x * keysize), keysize); 
 		}
 		return keys;
 	}
@@ -134,6 +134,7 @@ namespace logicalaccess
 	void		SAMAV2KeyEntry::setKeyTypeFromSET()
 	{
 		char keytype = 0x1c & d_keyentryinformation->set[1];
+		size_t oldsize = getLength();
 
 		switch (keytype)
 		{
@@ -149,6 +150,12 @@ namespace logicalaccess
 			d_keyType = SAMAV2_KEY_AES;
 			break;
 		}
+
+		unsigned char *tmp = new unsigned char[getLength()];
+		if (getLength() < oldsize)
+			oldsize = getLength();
+		memcpy(tmp, &*d_key, oldsize);
+		d_key.reset(tmp);
 	}
 
 	void SAMAV2KeyEntry::serialize(boost::property_tree::ptree& parentNode)
@@ -178,7 +185,7 @@ namespace logicalaccess
 		{
 			return false;
 		}
-		if (memcmp(d_key, key.d_key, getLength()) == 0)
+		if (memcmp(&*d_key, &*(key.d_key), getLength()) == 0)
 		{
 			return false;
 		}

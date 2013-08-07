@@ -120,7 +120,7 @@ namespace logicalaccess
 			 * \brief Get the key data.
 			 * \return The key data.
 			 */
-			inline unsigned char* getData() { return d_key; };
+			inline boost::shared_ptr<unsigned char> getData() { return d_key; };
 
 			/**
 			 * \brief Set if the key is diversified on the card.
@@ -205,7 +205,7 @@ namespace logicalaccess
 			/**
 			 * \brief The key bytes;
 			 */
-			unsigned char *d_key;
+			boost::shared_ptr<unsigned char> d_key;
 
 			/**
 			 * \brief Diversify the key on the card.

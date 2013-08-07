@@ -15,6 +15,7 @@
 #include "logicalaccess/crypto/des_symmetric_key.hpp"
 #include "logicalaccess/crypto/des_initialization_vector.hpp"
 #include "desfireev1location.hpp"
+#include "logicalaccess/cards/samkeystorage.hpp"
 
 
 namespace logicalaccess
@@ -404,6 +405,21 @@ namespace logicalaccess
 		}
 
 		std::vector<unsigned char> RPICC1 = iso_getChallenge(le);
+
+		if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
+		{
+			boost::shared_ptr<SAMAV2Commands> samav2commands = boost::dynamic_pointer_cast<SAMAV2Commands>(getSAMChip()->getCommands());
+			boost::shared_ptr<ISO7816ReaderCardAdapter> readercardadapter = boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(samav2commands->getReaderCardAdapter());
+
+			unsigned char apduresult[255];
+			size_t apduresultlen = sizeof(apduresult);
+			std::vector<unsigned char> data(2 + RPICC1.size());
+			data[0] = keyno;
+			data[1] = key->getKeyVersion();
+			memcpy(&data[0] + 2, &RPICC1[0], RPICC1.size());
+
+			readercardadapter->sendAPDUCommand(0x80, 0x8e, 0x02, 0x00, (unsigned char)(data.size()), &data[0], data.size(), 0x00, apduresult, &apduresultlen);
+		}
 
 		std::vector<unsigned char> RPCD1;
 		RPCD1.resize(le);

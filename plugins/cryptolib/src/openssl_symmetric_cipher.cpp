@@ -125,7 +125,7 @@ namespace logicalaccess
 			if (r != 1)
 			{
 				delete[] buf;
-				THROW_EXCEPTION_WITH_LOG(OpenSSLException, "");
+				THROW_EXCEPTION_WITH_LOG(OpenSSLException, "OpenSSL Error.");
 			}
 
 			context.data().insert(context.data().end(), buf, buf + outlen);

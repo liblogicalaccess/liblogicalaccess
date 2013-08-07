@@ -12,6 +12,9 @@
 #include "samav2keyentry.hpp"
 #include "samav2kucentry.hpp"
 #include <openssl/rand.h>
+#include "logicalaccess/crypto/symmetric_key.hpp"
+#include "logicalaccess/crypto/aes_symmetric_key.hpp"
+#include "logicalaccess/crypto/aes_initialization_vector.hpp"
 
 #include <cstring>
 
@@ -106,10 +109,10 @@ namespace logicalaccess
 		return keyentry;
 	}
 
-	void		SAMAV2ISO7816Commands::ChangeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KeyEntry> key)
+	void		SAMAV2ISO7816Commands::ChangeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KeyEntry> keyentry, boost::shared_ptr<DESFireKey> key)
 	{
 		std::cout << "ChangeKeyEntry Commands Called" << std::endl;
-		if (d_sessionkey.size() == 0)
+		if (d_crypto->d_sessionKey.size() == 0)
 		{
 			std::cout << "Failed: AuthentificationHost have to be done before use such command." << std::endl;
 			return;
@@ -121,14 +124,14 @@ namespace logicalaccess
 
 		//proMas = 0x81;
 
-		proMas = key->getUpdateMask();
+		proMas = keyentry->getUpdateMask();
 
-		size_t buffer_size = key->getLength() + sizeof(KeyEntryInformation);
+		size_t buffer_size = keyentry->getLength() + sizeof(KeyEntryInformation);
 		unsigned char *data = new unsigned char[buffer_size];
 		memset(data, 0, buffer_size);
 
-		memcpy(data, key->getData(), key->getLength());
-		memcpy(data + 48, &*(key->getKeyEntryInformation()), sizeof(KeyEntryInformation));
+		memcpy(data, &*(keyentry->getData()), keyentry->getLength());
+		memcpy(data + 48, &*(keyentry->getKeyEntryInformation()), sizeof(KeyEntryInformation));
 		
 	//	data[15] = 1;
 	//	data[57] = 1;
@@ -138,8 +141,12 @@ namespace logicalaccess
 
 		std::vector<unsigned char> vectordata(data, data + buffer_size);
 		
-		std::vector<unsigned char> encdatalittle = SAMDESfireCrypto::desfire_encrypt(d_sessionkey, vectordata);
-
+		std::vector<unsigned char> encdatalittle;
+		
+		if (key->getKeyType() == DF_KEY_DES)
+			encdatalittle = d_crypto->sam_encrypt(d_crypto->d_sessionKey, vectordata);
+		else
+			encdatalittle = d_crypto->sam_aes_encrypt(d_crypto->d_sessionKey, vectordata);
 
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xc1, keyno, proMas, (unsigned char)(encdatalittle.size()), &encdatalittle[0], encdatalittle.size(), result, &resultlen);
 
@@ -172,18 +179,77 @@ namespace logicalaccess
 		std::cout << "Called Done" << std::endl;
 	}
 
-	void			SAMAV2ISO7816Commands::AuthentificationHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno)
+	void			SAMAV2ISO7816Commands::AuthentificateHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno)
+	{
+		std::cout << std::endl << "AuthentificateHost Commands Called" << std::endl;
+
+		if (key->getKeyType() == DF_KEY_DES)
+			AuthentificateHostDES(key, keyno);
+		else
+			AuthentificateHost_AES_3K3DES(key, keyno);
+
+		std::cout << "Called Done" << std::endl;
+	}
+
+	void SAMAV2ISO7816Commands::AuthentificateHost_AES_3K3DES(boost::shared_ptr<DESFireKey> key, unsigned char keyno)
 	{
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
-		std::cout << std::endl << "AuthentificationHost Commands Called" << std::endl;
+		std::cout << std::endl << "AuthentificateHostAES Commands Called" << std::endl;
 		unsigned char authMode = 0x00;
 		unsigned char data[2];
+		size_t keylength = key->getLength();
 
 		memset(data, 0, sizeof(data));
 		data[0] = keyno;
 		data[1] = key->getKeyVersion();
-		key->getData();
+
+
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xa4, authMode, 0x00, 0x02, data, 0x02, 0x00, result, &resultlen);
+		std::cout << "P1 enRndB + result: " << BufferHelper::getHex(std::vector<unsigned char>(result, result + resultlen)) << std::endl;
+		if (resultlen >= 2 &&  result[resultlen - 2] == 0x90 && result[resultlen - 1] == 0xaf)
+			std::cout << "P1 Command to SAM SUCCED !!" << std::endl;
+		else
+		{
+			std::cout << "P1 Failed :(" << std::endl;
+			return;
+		}
+
+		std::vector<unsigned char> encRndB(result, result + resultlen - 2);
+
+		std::vector<unsigned char> encRndAB = d_crypto->authenticateHostP1(key, encRndB, keyno);
+
+		memset(result, 0, sizeof(result));
+		resultlen = sizeof(result);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xa4, 0x00, 0x00, (unsigned char)(encRndAB.size()), &encRndAB[0], encRndAB.size(), 0x00, result, &resultlen);
+		if (resultlen >= 2 &&  result[resultlen - 2] == 0x90 && result[resultlen - 1] == 0x00)
+			std::cout << "P2 Command to SAM SUCCED !!" << std::endl;
+		else
+		{
+			std::cout << "P2 Failed :(" << std::endl;
+			return;
+		}
+
+		std::vector<unsigned char> encRndA1(result, result + resultlen - 2);
+		d_crypto->authenticateHostP2(keyno, encRndA1, key);
+
+
+		std::cout << "Called Done" << std::endl;
+	}
+
+	void SAMAV2ISO7816Commands::AuthentificateHostDES(boost::shared_ptr<DESFireKey> key, unsigned char keyno)
+	{
+		unsigned char result[255];
+		size_t resultlen = sizeof(result);
+		std::cout << std::endl << "AuthentificateHostDES Commands Called" << std::endl;
+		unsigned char authMode = 0x00;
+		unsigned char data[2];
+		size_t keylength = key->getLength();
+
+		memset(data, 0, sizeof(data));
+		data[0] = keyno;
+		data[1] = key->getKeyVersion();
+
 
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xa4, authMode, 0x00, 0x02, data, 0x02, 0x00, result, &resultlen);
 
@@ -196,21 +262,21 @@ namespace logicalaccess
 			return;
 		}
 
-		std::vector<unsigned char> keyvec(key->getData(), key->getData() + 16);
+		std::vector<unsigned char> keyvec(key->getData(), key->getData() + keylength);
 		
-		std::vector<unsigned char> iv(16);
-		memset(&iv[0], 0, 16);
+		std::vector<unsigned char> iv(keylength);
+		memset(&iv[0], 0, keylength);
 
 		//get encRNB
 		std::vector<unsigned char> encRNB(result, result + resultlen - 2);
 
 		//dec RNB
-		std::vector<unsigned char> RndB = DESFireCrypto::desfire_CBC_send(keyvec, iv, encRNB);
+		std::vector<unsigned char> RndB =  d_crypto->desfire_CBC_send(keyvec, iv, encRNB);
 		std::cout << "P1 RndB: " << BufferHelper::getHex(RndB) << std::endl;
 
 		//Create RNB'
 		std::vector<unsigned char> rndB1;
-		rndB1.insert(rndB1.end(), RndB.begin() + 1, RndB.begin() + 8);
+		rndB1.insert(rndB1.end(), RndB.begin() + 1, RndB.begin() + RndB.size());
 		rndB1.push_back(RndB[0]);
 		std::cout << "P1 RndB': " << BufferHelper::getHex(rndB1) << std::endl;
 
@@ -230,13 +296,11 @@ namespace logicalaccess
 		std::cout << "P1 RndAB: " << BufferHelper::getHex(rndAB) << std::endl;
 
 		//enc rndAB
-		std::vector<unsigned char> encRndAB = DESFireCrypto::desfire_CBC_send(keyvec, iv, rndAB);
-		unsigned char encRndABdata[16];
-		memcpy(encRndABdata, &encRndAB[0], 16);
+		std::vector<unsigned char> encRndAB =  d_crypto->desfire_CBC_send(keyvec, iv, rndAB);
 
 		//send enc rndAB
 		resultlen = sizeof(result);
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xa4, 0x00, 0x00, 0x10, encRndABdata, 16, 0x00, result, &resultlen);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xa4, 0x00, 0x00, (unsigned char)(encRndAB.size()), &encRndAB[0], encRndAB.size(), 0x00, result, &resultlen);
 
 		std::cout << "P2 encRndA: " << BufferHelper::getHex(std::vector<unsigned char>(result, result + resultlen)) << std::endl;
 		if (resultlen >= 2 &&  result[resultlen - 2] == 0x90 && result[resultlen - 1] == 0x00)
@@ -249,11 +313,11 @@ namespace logicalaccess
 
 
 		std::vector<unsigned char> encRndA1(result, result + resultlen - 2);
-		std::vector<unsigned char> dencRndA1 = DESFireCrypto::desfire_CBC_send(keyvec, iv, encRndA1);
+		std::vector<unsigned char> dencRndA1 =  d_crypto->desfire_CBC_send(keyvec, iv, encRndA1);
 
 		//create rndA'
 		std::vector<unsigned char> rndA1;
-		rndA1.insert(rndA1.end(), rndA.begin() + 1, rndA.begin() + 8);
+		rndA1.insert(rndA1.end(), rndA.begin() + 1, rndA.begin() + rndA.size());
 		rndA1.push_back(rndA[0]);
 		
 		std::cout << "P2 dencRndA': " << BufferHelper::getHex(dencRndA1) << std::endl;
@@ -269,12 +333,12 @@ namespace logicalaccess
 			return;
 		}
 
-		d_sessionkey.clear();
+		d_crypto->d_sessionKey.clear();
 
-		d_sessionkey.insert(d_sessionkey.end(), rndA.begin(), rndA.begin() + 4);
-		d_sessionkey.insert(d_sessionkey.end(), RndB.begin(), RndB.begin() + 4);
-		d_sessionkey.insert(d_sessionkey.end(), rndA.begin(), rndA.begin() + 4);
-		d_sessionkey.insert(d_sessionkey.end(), RndB.begin(), RndB.begin() + 4);
+		d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), rndA.begin(), rndA.begin() + 4);
+		d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RndB.begin(), RndB.begin() + 4);
+		d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), rndA.begin(), rndA.begin() + 4);
+		d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RndB.begin(), RndB.begin() + 4);
 
 		std::cout << "Called Done" << std::endl;
 	}
@@ -325,10 +389,10 @@ namespace logicalaccess
 		return kucentry;
 	 }
 	 
-	 void									SAMAV2ISO7816Commands::ChangeKUCEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KucEntry> key)
+	 void									SAMAV2ISO7816Commands::ChangeKUCEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KucEntry> keyentry, boost::shared_ptr<DESFireKey> key)
 	 {
 		std::cout << std::endl << "ChangeKUCEntry Commands Called" << std::endl;
-		if (d_sessionkey.size() == 0)
+		if (d_crypto->d_sessionKey.size() == 0)
 		{
 			std::cout << "Failed: AuthentificationHost have to be done before use such command." << std::endl;
 			return;
@@ -340,16 +404,16 @@ namespace logicalaccess
 
 		unsigned char data[6] = {};
 
-		memcpy(data, &*(key->getKucEntryStruct()), 6);
+		memcpy(data, &*(keyentry->getKucEntryStruct()), 6);
 
 		std::vector<unsigned char> iv;
 		iv.resize(16, 0x00);
 
 		std::vector<unsigned char> vectordata(data, data + 6);
 		
-		std::vector<unsigned char> encdatalittle = SAMDESfireCrypto::desfire_encrypt(d_sessionkey, vectordata);
+		std::vector<unsigned char> encdatalittle = d_crypto->sam_encrypt(d_crypto->d_sessionKey, vectordata);
 
-		int proMas = key->getUpdateMask();
+		int proMas = keyentry->getUpdateMask();
 
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xcc, keyno, proMas, 0x08, &encdatalittle[0], encdatalittle.size(), result, &resultlen);
 

@@ -890,12 +890,12 @@ namespace logicalaccess
 					unsigned char apduresult[255];
 					size_t apduresultlen = sizeof(apduresult);
 
-					unsigned char data[0x0a];
+					std::vector<unsigned char> data(2 + result.size());
 					data[0] = keyno;
 					data[1] = key->getKeyVersion();
-					memcpy(data + 2, &result[0], 8);
+					memcpy(&data[0] + 2, &result[0], result.size());
 
-					readercardadapter->sendAPDUCommand(0x80, 0x0a, 0x02, 0x00, 0x0a, data, 0x0a, 0x00, apduresult, &apduresultlen);
+					readercardadapter->sendAPDUCommand(0x80, 0x0a, 0x02, 0x00, (unsigned char)(data.size()), &data[0], data.size(), 0x00, apduresult, &apduresultlen);
 					if (apduresultlen <= 2)
 					{
 						std::cout << "DESFire authentication failed PICC1" << std::endl;

@@ -612,15 +612,20 @@ namespace logicalaccess
 				if (d_insertedChip->getCardType() == "DESFire")
 				{
 					//No need to check if using SAM because it is already done on SAMDESfireCrypto function by checking the keystorage type
-					boost::shared_ptr<DESFireCrypto> crypto(new SAMDESfireCrypto());
-					boost::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->setCrypto(crypto);
-
+					boost::shared_ptr<DESFireCrypto> crypto(new DESFireCrypto());
+					boost::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
+					boost::shared_ptr<DESFireISO7816Commands> desfirecommand = boost::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands()); 
+					desfirecommand->setCrypto(crypto);
+					boost::dynamic_pointer_cast<SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->setCrypto(samcrypto);
 					boost::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->getCrypto()->setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(d_insertedChip->getProfile()), d_insertedChip->getChipIdentifier());
 				}
 				else if (d_insertedChip->getCardType() == "DESFireEV1")
 				{
-					boost::shared_ptr<DESFireCrypto> crypto(new SAMDESfireCrypto());
-					boost::dynamic_pointer_cast<DESFireEV1ISO7816Commands>(d_insertedChip->getCommands())->setCrypto(crypto);
+					boost::shared_ptr<DESFireCrypto> crypto(new DESFireCrypto());
+					boost::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
+					boost::shared_ptr<DESFireEV1ISO7816Commands> desfirecommand = boost::dynamic_pointer_cast<DESFireEV1ISO7816Commands>(d_insertedChip->getCommands()); 
+					desfirecommand->setCrypto(crypto);
+					boost::dynamic_pointer_cast<SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->setCrypto(samcrypto);
 					boost::dynamic_pointer_cast<DESFireEV1ISO7816Commands>(d_insertedChip->getCommands())->getCrypto()->setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(d_insertedChip->getProfile()), d_insertedChip->getChipIdentifier());
 				}
 				ret = true;

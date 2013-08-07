@@ -21,10 +21,10 @@ namespace logicalaccess
 			virtual void									GetVersion() = 0;
 			virtual boost::shared_ptr<SAMAV2KeyEntry>		GetKeyEntry(unsigned int keyno) = 0;
 			virtual boost::shared_ptr<SAMAV2KucEntry>		GetKUCEntry(unsigned int keyno) = 0;
-			virtual void									ChangeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KeyEntry> key) = 0;
-			virtual void									ChangeKUCEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KucEntry> key) = 0;
+			virtual void									ChangeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KeyEntry> keyentry, boost::shared_ptr<DESFireKey> key) = 0;
+			virtual void									ChangeKUCEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KucEntry> keyentry, boost::shared_ptr<DESFireKey> key) = 0;
 			virtual void									ActiveAV2Mode() = 0;
-			virtual void									AuthentificationHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno) = 0;
+			virtual void									AuthentificateHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno) = 0;
 			virtual std::string								GetSAMTypeFromSAM() = 0;
 			virtual void									DisableKeyEntry(unsigned char keyno) = 0;
 			virtual void									SelectApplication(unsigned char *aid) = 0;

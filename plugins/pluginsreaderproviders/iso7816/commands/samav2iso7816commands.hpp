@@ -73,21 +73,24 @@ namespace logicalaccess
 			virtual boost::shared_ptr<SAMAV2KeyEntry> GetKeyEntry(unsigned int keyno);
 			virtual boost::shared_ptr<SAMAV2KucEntry> GetKUCEntry(unsigned int keyno);
 
-			virtual void ChangeKUCEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KucEntry> key);
-			virtual void ChangeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KeyEntry> key);
+			virtual void ChangeKUCEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KucEntry> keyentry, boost::shared_ptr<DESFireKey> key);
+			virtual void ChangeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KeyEntry> keyentry, boost::shared_ptr<DESFireKey> key);
 
 			virtual void ActiveAV2Mode();
 			virtual void SelectApplication(unsigned char *aid);
-			virtual void AuthentificationHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
+			virtual void AuthentificateHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
+			void AuthentificateHost_AES_3K3DES(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
+			void AuthentificateHostDES(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
 			virtual void DisableKeyEntry(unsigned char keyno);
 
 			boost::shared_ptr<ISO7816ReaderCardAdapter> getISO7816ReaderCardAdapter() { return boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter()); };
 			virtual std::string GetSAMTypeFromSAM();
 
+			boost::shared_ptr<SAMDESfireCrypto> getCrypto() { return d_crypto; };
+			void setCrypto(boost::shared_ptr<SAMDESfireCrypto> t) { d_crypto = t; };
 
 		protected:
-
-			std::vector<unsigned char> d_sessionkey;
+			boost::shared_ptr<SAMDESfireCrypto> d_crypto;
 	};
 }
 

@@ -833,6 +833,7 @@ namespace logicalaccess
 		d_sessionKey.clear();		
 		d_profile->getKey(d_currentAid, keyno, diversify, d_authkey);
 		d_cipher.reset(new openssl::AESCipher());
+				d_cipher.reset(new openssl::AESCipher());
 		openssl::AESSymmetricKey aeskey = openssl::AESSymmetricKey::createFromData(d_authkey);
 		openssl::AESInitializationVector iv = openssl::AESInitializationVector::createNull();
 		d_rndB.clear();		
@@ -880,12 +881,14 @@ namespace logicalaccess
 		if (d_rndA == checkRndA)
 		{
 			d_sessionKey.insert(d_sessionKey.end(), d_rndA.begin(), d_rndA.begin() + 4);
-			d_sessionKey.insert(d_sessionKey.end(), d_rndB.begin(), d_rndA.begin() + 4);
+			d_sessionKey.insert(d_sessionKey.end(), d_rndB.begin(), d_rndB.begin() + 4);
 			d_sessionKey.insert(d_sessionKey.end(), d_rndA.begin() + 12, d_rndA.begin() + 16);
-			d_sessionKey.insert(d_sessionKey.end(), d_rndB.begin() + 12, d_rndA.begin() + 16);
+			d_sessionKey.insert(d_sessionKey.end(), d_rndB.begin() + 12, d_rndB.begin() + 16);
 
 			d_currentKeyNo = keyno;
 		}
+		else
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "AES Authenticate PICC 2 Failed!");
 
 		d_cipher.reset(new openssl::AESCipher());
 		d_auth_method = CM_ISO;
