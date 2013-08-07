@@ -54,7 +54,14 @@ namespace logicalaccess
 		EXCEPTION_ASSERT_WITH_LOG(d_readerProvider, LibLogicalAccessException, "Unknown reader provider type.");
 
 		d_ReaderUnit = d_readerProvider->createReaderUnit();
-		if (!d_ReaderUnit->unSerialize(node, ""))
+		try
+		{
+			if (!d_ReaderUnit->unSerialize(node, ""))
+			{
+				d_ReaderUnit.reset();
+			}
+		}
+		catch(std::exception&)
 		{
 			d_ReaderUnit.reset();
 		}
