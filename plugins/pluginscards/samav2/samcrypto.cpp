@@ -9,6 +9,7 @@
 #include <zlib.h>
 #include <ctime>
 #include <cstdlib>
+#include <climits>
 
 #ifndef UNIX
 #include "logicalaccess/msliblogicalaccess.h"
@@ -124,16 +125,37 @@ namespace logicalaccess
 	}
 
 
-	std::vector<unsigned char> SAMDESfireCrypto::sam_aes_encrypt(std::vector<unsigned char> d_sessionKey, std::vector<unsigned char> vectordata)
+	std::vector<unsigned char> SAMDESfireCrypto::sam_crc_encrypt(std::vector<unsigned char> d_sessionKey, std::vector<unsigned char> vectordata, boost::shared_ptr<DESFireKey> key)
 	{
 		std::vector<unsigned char> ret;
+		boost::shared_ptr<openssl::SymmetricKey> cipherkey;
+		boost::shared_ptr<openssl::InitializationVector> iv;
+		long crc;
+		char crc_size;
 
-		openssl::AESSymmetricKey cipherkey = openssl::AESSymmetricKey::createFromData(d_sessionKey);
-		openssl::AESInitializationVector iv = openssl::AESInitializationVector::createNull();
+		if (key->getKeyType() == DF_KEY_AES)
+		{
+			cipherkey.reset(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_sessionKey)));
+			iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createNull()));
+			crc = desfire_crc32(&vectordata[0], vectordata.size());
+			crc_size = 4;
+		}
+		else
+		{
+			cipherkey.reset(new openssl::DESSymmetricKey(openssl::DESSymmetricKey::createFromData(d_sessionKey)));
+			iv.reset(new openssl::DESInitializationVector(openssl::DESInitializationVector::createNull()));
+			crc = desfire_crc16(&vectordata[0], vectordata.size());
+			crc_size = 2;
+		}
 
-
-		vectordata.resize(64, 0x00);
-		d_cipher->cipher(vectordata, ret, cipherkey, iv, false);
+		for (char x = 0; x < crc_size; ++x)
+		{
+			vectordata.push_back(static_cast<unsigned char>(crc & 0xff));
+			crc >>= 8;
+		}
+		if (vectordata.size() % d_block_size != 0)
+			vectordata.resize(vectordata.size() + (d_block_size - (vectordata.size() % d_block_size)), 0x00);
+		d_cipher->cipher(vectordata, ret, *cipherkey, *iv, false);
 		return ret;
 	}
 }

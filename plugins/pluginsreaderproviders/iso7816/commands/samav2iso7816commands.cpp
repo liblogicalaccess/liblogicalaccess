@@ -146,7 +146,7 @@ namespace logicalaccess
 		if (key->getKeyType() == DF_KEY_DES)
 			encdatalittle = d_crypto->sam_encrypt(d_crypto->d_sessionKey, vectordata);
 		else
-			encdatalittle = d_crypto->sam_aes_encrypt(d_crypto->d_sessionKey, vectordata);
+			encdatalittle = d_crypto->sam_crc_encrypt(d_crypto->d_sessionKey, vectordata, key);
 
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xc1, keyno, proMas, (unsigned char)(encdatalittle.size()), &encdatalittle[0], encdatalittle.size(), result, &resultlen);
 
@@ -411,7 +411,12 @@ namespace logicalaccess
 
 		std::vector<unsigned char> vectordata(data, data + 6);
 		
-		std::vector<unsigned char> encdatalittle = d_crypto->sam_encrypt(d_crypto->d_sessionKey, vectordata);
+		std::vector<unsigned char> encdatalittle;
+
+		if (key->getKeyType() == DF_KEY_DES)
+			encdatalittle = d_crypto->sam_encrypt(d_crypto->d_sessionKey, vectordata);
+		else
+			encdatalittle = d_crypto->sam_crc_encrypt(d_crypto->d_sessionKey, vectordata, key);
 
 		int proMas = keyentry->getUpdateMask();
 
