@@ -216,7 +216,8 @@ namespace logicalaccess
 				{
 					chip = createChip ("DESFire");
 					buf.erase (buf.begin());
-					chip->setChipIdentifier(buf);
+					chip->setChipIdentifier(buf);					
+					boost::dynamic_pointer_cast<DESFireISO7816Commands>(chip->getCommands())->getCrypto()->setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(chip->getProfile()), chip->getChipIdentifier());
 				}
 				else if (buf[0] == ChipType::MIFAREULTRALIGHT)
 				{
@@ -267,7 +268,6 @@ namespace logicalaccess
 			{
 				rca.reset(new ISO7816OK5553ReaderCardAdapter());
 				commands.reset(new DESFireISO7816Commands());
-				boost::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->getCrypto()->setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(chip->getProfile()), chip->getChipIdentifier());
 			}
 
 			if (rca)

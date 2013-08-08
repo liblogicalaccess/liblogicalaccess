@@ -93,6 +93,8 @@ namespace logicalaccess
 	{
 		bool ret = false;
 
+		INFO_SIMPLE_("Starting write data...");
+
 		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 		EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
 
@@ -296,6 +298,7 @@ namespace logicalaccess
 		// Write access informations too
 		if (ret && aiToWrite)
 		{
+			INFO_SIMPLE_("Starting to change keys...");
 			if ((appKeySettings & KS_CHANGE_KEY_WITH_TARGETED_KEYNO) || getDESFireChip()->getDESFireCommands()->authenticate(0))
 			{							
 				if (!dfAiToWrite->writeKey->isEmpty() && dfAiToUse->writeKey != dfAiToWrite->writeKey && dfAiToWrite->writeKeyno != 0x00)
@@ -307,6 +310,7 @@ namespace logicalaccess
 							getDESFireChip()->getDESFireCommands()->authenticate(dfAiToWrite->writeKeyno);
 						}
 
+						INFO_("Changing writeKey. div? %d", dfAiToWrite->writeKey->getDiversify());
 						if (!getDESFireChip()->getDESFireCommands()->changeKey(dfAiToWrite->writeKeyno, dfAiToWrite->writeKey))
 						{
 							THROW_EXCEPTION_WITH_LOG(CardException, string(EXCEPTION_MSG_CHANGEKEY));
@@ -327,6 +331,7 @@ namespace logicalaccess
 							getDESFireChip()->getDESFireCommands()->authenticate(dfAiToWrite->readKeyno);
 						}
 
+						INFO_("Changing readKey. div? %d", dfAiToWrite->readKey->getDiversify());
 						if (!getDESFireChip()->getDESFireCommands()->changeKey(dfAiToWrite->readKeyno, dfAiToWrite->readKey))
 						{
 							THROW_EXCEPTION_WITH_LOG(CardException, string(EXCEPTION_MSG_CHANGEKEY));
@@ -347,6 +352,7 @@ namespace logicalaccess
 							getDESFireChip()->getDESFireCommands()->authenticate(0);
 						}
 
+						INFO_("Changing masterApplicationKey. div? %d", dfAiToWrite->masterApplicationKey->getDiversify());
 						if (!getDESFireChip()->getDESFireCommands()->changeKey(0, dfAiToWrite->masterApplicationKey))
 						{
 							THROW_EXCEPTION_WITH_LOG(CardException, string(EXCEPTION_MSG_CHANGEKEY));
@@ -366,6 +372,7 @@ namespace logicalaccess
 						{
 							if (getDESFireChip()->getDESFireCommands()->authenticate(0))
 							{
+								INFO_("Changing masterCardKey. div? %d", dfAiToWrite->masterCardKey->getDiversify());
 								if (!getDESFireChip()->getDESFireCommands()->changeKey(0, dfAiToWrite->masterCardKey))
 								{
 									THROW_EXCEPTION_WITH_LOG(CardException, string(EXCEPTION_MSG_CHANGEKEY));
@@ -379,6 +386,10 @@ namespace logicalaccess
 					}
 				}
 			}
+		}
+		else
+		{
+			INFO_("Change keys skipped. ret: %d", ret);
 		}
 
 		return ret;

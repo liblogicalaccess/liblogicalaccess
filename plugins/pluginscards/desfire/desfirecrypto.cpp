@@ -566,6 +566,8 @@ namespace logicalaccess
 
 	void DESFireCrypto::getKey(boost::shared_ptr<DESFireKey> key, unsigned char* diversify, std::vector<unsigned char>& keydiv)
 	{
+		INFO_("Init key from crypto. Diversify activated? %d - Diversification buffer? %d...", key->getDiversify(), (diversify != NULL));
+
 		keydiv.clear();
 		if (key->getDiversify() && diversify != NULL)
 		{
@@ -573,6 +575,8 @@ namespace logicalaccess
 			{
 				if (key->getLength() == 16)
 				{
+					INFO_("Using key diversification with div : %s", BufferHelper::getHex(std::vector<unsigned char>(diversify, diversify + 16)).c_str());
+
 					// Sagem diversification algo. Should be an option with SAM diversifiction soon...
 					std::vector<unsigned char> iv;
 					// Two time, to have ECB and not CBC mode (laazzyyy to create new function :))
@@ -632,6 +636,7 @@ namespace logicalaccess
 
 	std::vector<unsigned char> DESFireCrypto::changeKey_PICC(unsigned char keyno, boost::shared_ptr<DESFireKey> newkey, unsigned char* diversify)
 	{
+		INFO_SIMPLE_("Init change key on PICC...");
 		std::vector<unsigned char> cryptogram;
 		std::vector<unsigned char> oldkeydiv, newkeydiv;
 		oldkeydiv.resize(16, 0x00);
@@ -1177,6 +1182,7 @@ namespace logicalaccess
 		}
 		else
 			return false;
+
 		return true;
 	}
 

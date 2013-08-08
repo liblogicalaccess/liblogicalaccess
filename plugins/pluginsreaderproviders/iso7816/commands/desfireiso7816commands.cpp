@@ -434,7 +434,10 @@ namespace logicalaccess
 		}
 
 		ret = (err == 0x00);
-
+		if (!ret)
+		{
+			COM_("Return an error: %x", err);
+		}
 
 		return ret;
 	}
