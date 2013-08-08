@@ -4,14 +4,14 @@
  * \brief PC/SC reader unit configuration.
  */
 
+#include "iso7816readerunitconfiguration.hpp"
 #include "pcscreaderunitconfiguration.hpp"
 #include "pcscreaderprovider.hpp"
-
+#include "pcscreaderunit.hpp"
 
 namespace logicalaccess
 {
 	PCSCReaderUnitConfiguration::PCSCReaderUnitConfiguration()
-		: ReaderUnitConfiguration(READER_PCSC)
 	{
 		resetConfiguration();
 	}
@@ -49,7 +49,8 @@ namespace logicalaccess
 	void PCSCReaderUnitConfiguration::serialize(boost::property_tree::ptree& parentNode)
 	{
 		boost::property_tree::ptree node;
-		
+		ISO7816ReaderUnitConfiguration::serialize(node);
+
 		node.put("TransmissionProtocol", d_protocol);
 		node.put("ShareMode", d_share_mode);
 
@@ -58,6 +59,8 @@ namespace logicalaccess
 
 	void PCSCReaderUnitConfiguration::unSerialize(boost::property_tree::ptree& node)
 	{
+		ISO7816ReaderUnitConfiguration::unSerialize(node);
+
 		d_protocol = node.get_child("TransmissionProtocol").get_value<unsigned int>();
 		d_share_mode = static_cast<PCSCShareMode>(node.get_child("ShareMode").get_value<unsigned int>());
 	}
@@ -66,4 +69,5 @@ namespace logicalaccess
 	{
 		return "PCSCReaderUnitConfiguration";
 	}
+
 }

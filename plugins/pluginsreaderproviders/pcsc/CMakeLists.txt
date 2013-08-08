@@ -15,6 +15,7 @@ set(INCLUDE_FOLDER 	${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifareultralight
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifareplus
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816
+					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2
 					/usr/include/PCSC)
 if (UNIX)
   set(INCLUDE_FOLDER ${INCLUDE_FOLDER} "/usr/local/include/PCSC/")
@@ -59,6 +60,7 @@ LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsre
 				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816/bin
 				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso15693/bin
 				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic/bin
+				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2/bin
 				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/prox/bin)
 set(LINK_OPT pcsclite crypto boost_date_time boost_system boost_filesystem logicalaccess)
 else()
@@ -69,6 +71,7 @@ LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsre
 				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifareultralight/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
 				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
 				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso15693/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
+				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
 				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
 				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/prox/bin/${TARGET_ARCH}/${VC_FOLDER_NAME})
 		

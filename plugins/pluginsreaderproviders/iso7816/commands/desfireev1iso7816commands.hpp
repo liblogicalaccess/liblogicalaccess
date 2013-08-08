@@ -296,6 +296,8 @@ namespace logicalaccess
 			 */
 			virtual void setConfiguration(const std::vector<unsigned char>& ats);
 
+			virtual void sam_iso_authenticate(boost::shared_ptr<DESFireKey> key, DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno);
+
 		protected:						
 
 			/**
@@ -374,8 +376,8 @@ namespace logicalaccess
 			 */
 			virtual std::vector<unsigned char> transmit_nomacv(unsigned char cmd, const void* buf = NULL, size_t buflen = 0x00, bool forceLc = false);
 
-
 		protected:
+
 	};
 }
 
