@@ -19,7 +19,6 @@
 #include "logicalaccess/cards/chip.hpp"
 #include "readercardadapters/rwk400readercardadapter.hpp"
 #include "commands/desfirerwk400commands.hpp"
-#include "commands/desfireev1iso7816commands.hpp"
 #include <boost/filesystem.hpp>
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
 

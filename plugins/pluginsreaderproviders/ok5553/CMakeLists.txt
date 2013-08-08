@@ -10,7 +10,8 @@ set(INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare
 		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifareultralight
 		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire
 		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic
-		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816)
+		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816
+		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2)
 
 INCLUDE_DIRECTORIES(${INCLUDE_FOLDER})
 
@@ -39,7 +40,8 @@ LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsca
 				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire/bin
 				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic/bin
 				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso7816/bin
-				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816/bin)
+				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816/bin
+				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2/bin)
 set(LINK_OPT winscard liblogicalaccess)
 else()
 LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
@@ -47,7 +49,8 @@ LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsca
 				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifareultralight/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
 				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
 				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
-				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816/bin/${TARGET_ARCH}/${VC_FOLDER_NAME})
+				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
+				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2/bin/${TARGET_ARCH}/${VC_FOLDER_NAME})
 endif()
 
 

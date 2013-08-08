@@ -168,3 +168,7 @@ ZERO_CHECK.vcxproj.filters
 /plugins/pluginsreaderproviders/ok5553/ok5553readers.sln
 /plugins/pluginsreaderproviders/ok5553/ok5553readers.vcxproj
 /plugins/pluginsreaderproviders/ok5553/ok5553readers.vcxproj.filters
+
+/plugins/pluginscards/samav2/samav2cards.sln
+/plugins/pluginscards/samav2/samav2cards.vcxproj
+/plugins/pluginscards/samav2/samav2cards.vcxproj.filters

@@ -267,7 +267,7 @@ namespace logicalaccess
 			{
 				rca.reset(new ISO7816OK5553ReaderCardAdapter());
 				commands.reset(new DESFireISO7816Commands());
-				boost::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->getCrypto().setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(chip->getProfile()), chip->getChipIdentifier());
+				boost::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->getCrypto()->setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(chip->getProfile()), chip->getChipIdentifier());
 			}
 
 			if (rca)
