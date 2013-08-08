@@ -113,7 +113,7 @@ namespace logicalaccess
 				t_aid[x] = saveaid & 0xff;
 				saveaid >>= 8;
 			}
-			samav2commands->SelectApplication(t_aid);
+			samav2commands->selectApplication(t_aid);
 		}
 
 		d_crypto->selectApplication(aid);
@@ -897,10 +897,7 @@ namespace logicalaccess
 
 					readercardadapter->sendAPDUCommand(0x80, 0x0a, 0x02, 0x00, (unsigned char)(data.size()), &data[0], data.size(), 0x00, apduresult, &apduresultlen);
 					if (apduresultlen <= 2)
-					{
-						std::cout << "DESFire authentication failed PICC1" << std::endl;
-						return false;
-					}
+						THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam authenticate DES P1 failed.");
 
 					rndAB.insert(rndAB.begin(), apduresult, apduresult + 16);
 				}
@@ -925,15 +922,12 @@ namespace logicalaccess
 						readercardadapter->sendAPDUCommand(0x80, 0x0a, 0x00, 0x00, 0x08, &result[0], 0x08, apduresult, &apduresultlen);
 
 						if (apduresultlen != 2 || apduresult[0] != 0x90 || apduresult[1] != 0x00)
-						{
-							std::cout << "DESFire authentication failed PICC2" << std::endl;
-							return false;
-						}
+							THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam authenticate DES P2 failed.");
+						d_crypto->d_sessionKey = samav2commands->dumpSessionKey();
 					}
 					else
 						d_crypto->authenticate_PICC2(keyno, result);
 
-					std::cout << "DESFire authentication SUCCEEDED !!" << std::endl;
 					r = true;
 				}
 			}

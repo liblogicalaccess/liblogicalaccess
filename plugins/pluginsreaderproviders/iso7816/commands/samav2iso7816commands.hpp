@@ -68,23 +68,24 @@ namespace logicalaccess
 			 */
 			virtual ~SAMAV2ISO7816Commands();			
 
-			virtual void GetVersion();
+			virtual void getVersion();
 
-			virtual boost::shared_ptr<SAMAV2KeyEntry> GetKeyEntry(unsigned int keyno);
-			virtual boost::shared_ptr<SAMAV2KucEntry> GetKUCEntry(unsigned int keyno);
+			virtual boost::shared_ptr<SAMAV2KeyEntry> getKeyEntry(unsigned int keyno);
+			virtual boost::shared_ptr<SAMAV2KucEntry> getKUCEntry(unsigned int keyno);
 
-			virtual void ChangeKUCEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KucEntry> keyentry, boost::shared_ptr<DESFireKey> key);
-			virtual void ChangeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KeyEntry> keyentry, boost::shared_ptr<DESFireKey> key);
+			virtual void changeKUCEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KucEntry> keyentry, boost::shared_ptr<DESFireKey> key);
+			virtual void changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMAV2KeyEntry> keyentry, boost::shared_ptr<DESFireKey> key);
 
-			virtual void ActiveAV2Mode();
-			virtual void SelectApplication(unsigned char *aid);
-			virtual void AuthentificateHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
-			void AuthentificateHost_AES_3K3DES(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
-			void AuthentificateHostDES(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
-			virtual void DisableKeyEntry(unsigned char keyno);
+			virtual void activeAV2Mode();
+			virtual void selectApplication(unsigned char *aid);
+			virtual void authentificateHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
+			void authentificateHost_AES_3K3DES(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
+			void authentificateHostDES(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
+			virtual void disableKeyEntry(unsigned char keyno);
+			virtual std::vector<unsigned char> dumpSessionKey();
 
 			boost::shared_ptr<ISO7816ReaderCardAdapter> getISO7816ReaderCardAdapter() { return boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter()); };
-			virtual std::string GetSAMTypeFromSAM();
+			virtual std::string getSAMTypeFromSAM();
 
 			boost::shared_ptr<SAMDESfireCrypto> getCrypto() { return d_crypto; };
 			void setCrypto(boost::shared_ptr<SAMDESfireCrypto> t) { d_crypto = t; };

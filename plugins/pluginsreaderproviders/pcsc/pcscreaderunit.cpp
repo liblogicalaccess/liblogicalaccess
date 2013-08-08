@@ -758,7 +758,7 @@ namespace logicalaccess
 				if (getPCSCConfiguration()->getSAMType() != "SAM_AUTO" && ret->getSingleChip()->getCardType() != getPCSCConfiguration()->getSAMType()
 					&& (ret->getSingleChip()->getCardType() == "SAM_AV1"
 					|| (ret->getSingleChip()->getCardType() == "SAM_AV2"
-					&& getPCSCConfiguration()->getSAMType() != boost::dynamic_pointer_cast<SAMAV2Commands>(ret->getSingleChip()->getCommands())->GetSAMTypeFromSAM())))
+					&& getPCSCConfiguration()->getSAMType() != boost::dynamic_pointer_cast<SAMAV2Commands>(ret->getSingleChip()->getCommands())->getSAMTypeFromSAM())))
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM on the reader is not the same type as selected.");
 			
 				//If SAM_AUTO and SAM_AV2 dected - > force GetSAMTypeFromSAM

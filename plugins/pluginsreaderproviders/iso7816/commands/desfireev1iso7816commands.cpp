@@ -345,6 +345,14 @@ namespace logicalaccess
 		
 		boost::shared_ptr<DESFireKey> key = d_crypto->getKey(keyno);
 
+		if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()) && key->getKeyType() != DF_KEY_DES)
+		{
+			if (key->getKeyType() == DF_KEY_3K3DES)
+				sam_iso_authenticate(key, DF_ALG_3K3DES, (d_crypto->d_currentAid == 0 && keyno == 0), keyno);
+			else
+				sam_iso_authenticate(key, DF_ALG_AES, (d_crypto->d_currentAid == 0 && keyno == 0), keyno);
+		}
+
 		switch (key->getKeyType())
 		{
 		case DF_KEY_DES:
@@ -363,6 +371,53 @@ namespace logicalaccess
 		}
 
 		return r;
+	}
+
+	void DESFireEV1ISO7816Commands::sam_iso_authenticate(boost::shared_ptr<DESFireKey> key, DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno)
+	{
+		boost::shared_ptr<SAMAV2Commands> samav2commands = boost::dynamic_pointer_cast<SAMAV2Commands>(getSAMChip()->getCommands());
+		boost::shared_ptr<ISO7816ReaderCardAdapter> readercardadapter = boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(samav2commands->getReaderCardAdapter());
+		unsigned char apduresult[255];
+		size_t apduresultlen = sizeof(apduresult);
+
+		std::vector<unsigned char> RPICC1 = iso_getChallenge(16);
+
+		std::vector<unsigned char> data(2 + RPICC1.size());
+		data[0] = keyno;
+		data[1] = key->getKeyVersion();
+		memcpy(&data[0] + 2, &RPICC1[0], RPICC1.size());
+
+		readercardadapter->sendAPDUCommand(0x80, 0x8e, 0x02, 0x00, (unsigned char)(data.size()), &data[0], data.size(), 0x00, apduresult, &apduresultlen);
+		if (apduresultlen <= 2 && apduresult[apduresultlen - 2] != 0x90 && apduresult[apduresultlen - 2] != 0xaf)
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam_iso_authenticate P1 failed.");
+
+		std::vector<unsigned char> encRPCD1RPICC1(apduresult, apduresult + apduresultlen - 2 - 16);
+		std::vector<unsigned char> RPCD2(apduresult + apduresultlen - 16 - 2, apduresult + apduresultlen - 2);
+
+		iso_externalAuthenticate(algorithm, isMasterCardKey, keyno, encRPCD1RPICC1);
+		std::vector<unsigned char> encRPICC2RPCD2a = iso_internalAuthenticate(algorithm, isMasterCardKey, keyno, RPCD2, 2 * 16);
+
+
+		readercardadapter->sendAPDUCommand(0x80, 0x8e, 0x00, 0x00, (unsigned char)(encRPICC2RPCD2a.size()), &encRPICC2RPCD2a[0], encRPICC2RPCD2a.size(), apduresult, &apduresultlen);
+		if (apduresultlen <= 2 && apduresult[apduresultlen - 2] != 0x90 && apduresult[apduresultlen - 2] != 0x00)
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam_iso_authenticate P2 failed.");
+
+		d_crypto->d_sessionKey = samav2commands->dumpSessionKey();
+
+		if (key->getKeyType() == DF_ALG_3K3DES)
+		{
+			d_crypto->d_cipher.reset(new openssl::DESCipher());
+			d_crypto->d_block_size = 8;
+			d_crypto->d_mac_size = 8;
+		}
+		else
+		{
+			d_crypto->d_cipher.reset(new openssl::AESCipher());
+			d_crypto->d_block_size = 16;
+			d_crypto->d_mac_size = 8;
+		}
+		d_crypto->d_lastIV.clear();
+		d_crypto->d_lastIV.resize(d_crypto->d_block_size, 0x00);
 	}
 
 	void DESFireEV1ISO7816Commands::iso_authenticate(boost::shared_ptr<DESFireKey> key, DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno)
@@ -405,21 +460,6 @@ namespace logicalaccess
 		}
 
 		std::vector<unsigned char> RPICC1 = iso_getChallenge(le);
-
-		if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
-		{
-			boost::shared_ptr<SAMAV2Commands> samav2commands = boost::dynamic_pointer_cast<SAMAV2Commands>(getSAMChip()->getCommands());
-			boost::shared_ptr<ISO7816ReaderCardAdapter> readercardadapter = boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(samav2commands->getReaderCardAdapter());
-
-			unsigned char apduresult[255];
-			size_t apduresultlen = sizeof(apduresult);
-			std::vector<unsigned char> data(2 + RPICC1.size());
-			data[0] = keyno;
-			data[1] = key->getKeyVersion();
-			memcpy(&data[0] + 2, &RPICC1[0], RPICC1.size());
-
-			readercardadapter->sendAPDUCommand(0x80, 0x8e, 0x02, 0x00, (unsigned char)(data.size()), &data[0], data.size(), 0x00, apduresult, &apduresultlen);
-		}
 
 		std::vector<unsigned char> RPCD1;
 		RPCD1.resize(le);
