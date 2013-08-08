@@ -6,7 +6,7 @@ if (NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "Debug")
 endif()
 
-include_directories("../../include" "../../plugins/pluginsreaderproviders/iso7816" "../../plugins/pluginsreaderproviders/pcsc" "../../plugins/pluginscards/samav2" "../../plugins/pluginscards/desfire")
+include_directories("../../include")
 
 if(UNIX)
   set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra")
@@ -21,14 +21,9 @@ add_executable(
 )
 
 if(UNIX)
-	set(${LINK_DIRECTORY} "${CMAKE_CURRENT_SOURCE_DIR}/../../bin/${TARGET_ARCH}/${VC_FOLDER_NAME}" "../../plugins/pluginscards/desfire")
-  link_directories(${LINK_DIRECTORY})
+  link_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../packages/lib" "${CMAKE_CURRENT_SOURCE_DIR}/../../plugins/cryptolib")
 else()
-	set(${LINK_DIRECTORY} "${CMAKE_CURRENT_SOURCE_DIR}/../../bin/${TARGET_ARCH}/${VC_FOLDER_NAME}" 
-	"${CMAKE_CURRENT_SOURCE_DIR}/../../plugins/pluginscards/desfire/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/../../plugins/pluginscards/samav2/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}"
-	"${CMAKE_CURRENT_SOURCE_DIR}/../../plugins/pluginsreaderproviders/pcsc/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}")
-  link_directories(${LINK_DIRECTORY})
+  link_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../bin/${VC_FOLDER_NAME}")
 endif()
 
 remove_definitions(-DLIBLOGICALACCESS_EXPORTS -DLIBLOGICALACCESS_EXPORTS_DLL)
@@ -52,9 +47,5 @@ endif()
 target_link_libraries(
         basic
         liblogicalaccess
-		pcscreaders
-		iso7816readers
-		desfirecards
-		samav2cards
 	${LIB_OPT}
 )
