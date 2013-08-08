@@ -17,6 +17,7 @@
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
 
+#include "commands/samav2iso7816commands.hpp"
 #include "commands/desfireev1iso7816commands.hpp"
 #include "commands/mifarepcsccommands.hpp"
 #include "commands/mifarescmcommands.hpp"
@@ -32,6 +33,7 @@
 #include "commands/mifareplusspringcardcommandssl1.hpp"
 #include "mifareplussl3profile.hpp"
 #include "commands/mifareplusspringcardcommandssl3.hpp"
+#include "samav2chip.hpp"
 
 #include "readers/omnikeyxx21readerunit.hpp"
 #include "readers/omnikeyxx25readerunit.hpp"
@@ -52,7 +54,7 @@
 namespace logicalaccess
 {
 	PCSCReaderUnit::PCSCReaderUnit(const std::string& name)
-		: ReaderUnit()
+		: ISO7816ReaderUnit()
 	{
 		d_name = name;
 		d_connectedName = d_name;
@@ -241,6 +243,7 @@ namespace logicalaccess
 					readers[0].dwCurrentState = SCARD_STATE_UNAWARE;
 					readers[0].dwEventState = SCARD_STATE_UNAWARE;
 					readers[0].szReader = reinterpret_cast<const char*>(readers_names[0]);
+
 				} else
 				{
 					for (int i = 0; i < readers_count; ++i)
@@ -343,12 +346,8 @@ namespace logicalaccess
 									DESFireCommands::DESFireCardVersion cardversion;
 									if (boost::dynamic_pointer_cast<DESFireChip>(d_insertedChip)->getDESFireCommands()->getVersion(cardversion))
 									{
-										// No UID from regular PC/SC commands ? Set from the version
-
-										if (d_insertedChip->getChipIdentifier().size() < 1)
-										{
-											d_insertedChip->setChipIdentifier(std::vector<unsigned char>(cardversion.uid, cardversion.uid + sizeof(cardversion.uid)));
-										}
+										// Set from the version
+										d_insertedChip->setChipIdentifier(std::vector<unsigned char>(cardversion.uid, cardversion.uid + sizeof(cardversion.uid)));
 
 										// DESFire EV1 and not regular DESFire
 										if (cardversion.softwareMjVersion >= 1)
@@ -584,26 +583,48 @@ namespace logicalaccess
 				INFO_SIMPLE_("SCardConnect Success !");
 
 				d_share_mode = share_mode;
-				try
+				if (d_insertedChip->getChipIdentifier().size() == 0)
 				{
-					if (d_insertedChip->getCardType() == "Prox")
+					try
 					{
-						if (d_atrLength > 2)
+						if (d_insertedChip->getCardType() == "Prox")
 						{
-							d_insertedChip->setChipIdentifier(std::vector<unsigned char>(d_atr, d_atr + d_atrLength - 2));
+							if (d_atrLength > 2)
+							{
+								d_insertedChip->setChipIdentifier(std::vector<unsigned char>(d_atr, d_atr + d_atrLength - 2));
+							}
+						}
+						else
+						{
+							d_insertedChip->setChipIdentifier(getCardSerialNumber());
 						}
 					}
-					else
+					catch (LibLogicalAccessException& e)
 					{
-						d_insertedChip->setChipIdentifier(getCardSerialNumber());
+						ERROR_("Exception while getting card serial number {%s}", e.what());
+						d_insertedChip->setChipIdentifier(std::vector<unsigned char>());
 					}
 				}
-				catch (LibLogicalAccessException& e)
-				{
-					ERROR_("Exception while getting card serial number {%s}", e.what());
-					d_insertedChip->setChipIdentifier(std::vector<unsigned char>());
-				}
 
+				if (d_insertedChip->getCardType() == "DESFire")
+				{
+					//No need to check if using SAM because it is already done on SAMDESfireCrypto function by checking the keystorage type
+					boost::shared_ptr<DESFireCrypto> crypto(new DESFireCrypto());
+					boost::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
+					boost::shared_ptr<DESFireISO7816Commands> desfirecommand = boost::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands()); 
+					desfirecommand->setCrypto(crypto);
+					boost::dynamic_pointer_cast<SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->setCrypto(samcrypto);
+					boost::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->getCrypto()->setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(d_insertedChip->getProfile()), d_insertedChip->getChipIdentifier());
+				}
+				else if (d_insertedChip->getCardType() == "DESFireEV1")
+				{
+					boost::shared_ptr<DESFireCrypto> crypto(new DESFireCrypto());
+					boost::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
+					boost::shared_ptr<DESFireEV1ISO7816Commands> desfirecommand = boost::dynamic_pointer_cast<DESFireEV1ISO7816Commands>(d_insertedChip->getCommands()); 
+					desfirecommand->setCrypto(crypto);
+					boost::dynamic_pointer_cast<SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->setCrypto(samcrypto);
+					boost::dynamic_pointer_cast<DESFireEV1ISO7816Commands>(d_insertedChip->getCommands())->getCrypto()->setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(d_insertedChip->getProfile()), d_insertedChip->getChipIdentifier());
+				}
 				ret = true;
 			}
 			else
@@ -703,11 +724,57 @@ namespace logicalaccess
 
 	bool PCSCReaderUnit::connectToReader()
 	{
+		if (getPCSCConfiguration()->getSAMType() != "SAM_NONE" && getPCSCConfiguration()->getSAMReaderName() == "")
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Sam type specified without specifying SAM Reader Name");
+		if (getPCSCConfiguration()->getSAMType() != "SAM_NONE")
+			{
+				if (getReaderProvider()->getReaderList().size() < 2)
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not Enough reader on the system to us SAM");
+
+				int i = 0;
+				for (; i < getReaderProvider()->getReaderList().size(); ++i)
+				{
+					if (getReaderProvider()->getReaderList()[i]->getName() == getPCSCConfiguration()->getSAMReaderName())
+						break;
+				}
+
+				if (i == getReaderProvider()->getReaderList().size())
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The SAM Reader specified has not been find.");
+
+				boost::shared_ptr<PCSCReaderUnit> ret;
+
+				ret.reset(new PCSCReaderUnit(getPCSCConfiguration()->getSAMReaderName()));
+				ret->setReaderProvider(getReaderProvider());
+				ret->connectToReader();
+
+				if (!ret->waitInsertion(1))
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "No SAM detected on the reader");
+
+				ret->connect();
+
+				if (getPCSCConfiguration()->getSAMType() != "SAM_AUTO" && ret->getSingleChip()->getCardType() != getPCSCConfiguration()->getSAMType()
+					&& (ret->getSingleChip()->getCardType() == "SAM_AV1"
+					|| (ret->getSingleChip()->getCardType() == "SAM_AV2"
+					&& getPCSCConfiguration()->getSAMType() != boost::dynamic_pointer_cast<SAMAV2Commands>(ret->getSingleChip()->getCommands())->getSAMTypeFromSAM())))
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM on the reader is not the same type as selected.");
+			
+				//If SAM_AUTO and SAM_AV2 dected - > force GetSAMTypeFromSAM
+			//	if (getPCSCConfiguration()->getSAMType() == "SAM_AUTO" && boost::dynamic_pointer_cast<SAMAV2Commands>(ret->getSingleChip()->getCommands())->GetSAMTypeFromSAM() == "SAM_AV1")
+					//new Card SAM_AV1
+
+				setSAMChip(boost::dynamic_pointer_cast<SAMChip>(ret->getSingleChip())); 
+				setSAMReaderUnit(ret);
+
+			}
 		return true;
 	}
 
 	void PCSCReaderUnit::disconnectFromReader()
 	{
+		if (d_sam_readerunit)
+		{
+			d_sam_readerunit->disconnect();
+		}
 	}
 
 	std::vector<unsigned char> PCSCReaderUnit::getCardSerialNumber()
@@ -815,7 +882,27 @@ namespace logicalaccess
 					return "Mifare1K";
 				}
 				return "UNKNOWN";
-			} else
+			}
+			else if (atrlen == 28 || atrlen == 27)
+			{
+				std::cout << BufferHelper::getHex(std::vector<unsigned char>(atr, atr + atrlen)) << std::endl;
+				// 3B DF 18 FF 81 F1 FE 43 00 3F 03 83 4D 49 46 41 52 45 20 50 6C 75 73 20 53 41 4D 3B NXP SAM AV2 module
+				// 3B DF 18 FF 81 F1 FE 43 00 1F 03 4D 49 46 41 52 45 20 50 6C 75 73 20 53 41 4D 98 Mifare SAM AV2
+				unsigned char atrTagITP1[] = { 0x3B, 0xDF, 0x18, 0xFF, 0x81, 0xF1, 0xFE, 0x43, 0x00, 0x3F, 0x03, 0x83, 0x4D, 0x49, 0x46, 0x41, 0x52, 0x45, 0x20, 0x50, 0x6C, 0x75, 0x73, 0x20, 0x53, 0x41, 0x4D, 0x3B};
+				unsigned char atrTagITP2[] = { 0x3B, 0xDF, 0x18, 0xFF, 0x81, 0xF1, 0xFE, 0x43, 0x00, 0x1F, 0x03, 0x4D, 0x49, 0x46, 0x41, 0x52, 0x45, 0x20, 0x50, 0x6C, 0x75, 0x73, 0x20, 0x53, 0x41, 0x4D, 0x98};
+
+				if (atrlen == 28 && !memcmp(atr, atrTagITP1, sizeof(atrTagITP1)))
+				{
+					std::cout << "NXP SAM AV2 module FOUND" << std::endl;
+					return "SAM_AV2";
+				}
+				else if (atrlen == 27 && !memcmp(atr, atrTagITP2, sizeof(atrTagITP2)))
+				{
+					std::cout << "Mifare SAM AV2 FOUND" << std::endl;
+					return "SAM_AV2";
+				}
+			}
+			else
 			{
 				if (atrlen == 20)
 				{
@@ -1198,12 +1285,12 @@ namespace logicalaccess
 			else if (type == "DESFireEV1")
 			{
 				commands.reset(new DESFireEV1ISO7816Commands());
-				boost::dynamic_pointer_cast<DESFireEV1ISO7816Commands>(commands)->getCrypto().setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(chip->getProfile()), chip->getChipIdentifier());
+				boost::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(getSAMChip());
 			}
 			else if (type == "DESFire")
 			{
 				commands.reset(new DESFireISO7816Commands());
-				boost::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->getCrypto().setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(chip->getProfile()), chip->getChipIdentifier());
+				boost::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(getSAMChip());
 			}
 			else if (type == "ISO15693")
 			{
@@ -1224,6 +1311,14 @@ namespace logicalaccess
 			else if (type == "MifareUltralightC")
 			{
 				commands.reset(new MifareUltralightCPCSCCommands());
+			}
+			else if (type == "SAM_AV1")
+			{
+				commands.reset(new SAMAV2ISO7816Commands());
+			}
+			else if (type == "SAM_AV2")
+			{
+				commands.reset(new SAMAV2ISO7816Commands());
 			}
 			else if (type == "MifarePlus4K")
 			{
@@ -1279,7 +1374,11 @@ namespace logicalaccess
 
 	boost::shared_ptr<Chip> PCSCReaderUnit::getSingleChip()
 	{
-		boost::shared_ptr<Chip> chip = d_insertedChip;
+		boost::shared_ptr<Chip> chip;
+		if (d_proxyReaderUnit)
+			chip = d_proxyReaderUnit->getSingleChip();
+		else
+			chip = d_insertedChip;
 		return chip;
 	}
 
@@ -1316,6 +1415,7 @@ namespace logicalaccess
 	void PCSCReaderUnit::makeProxy(boost::shared_ptr<PCSCReaderUnit> readerUnit, boost::shared_ptr<PCSCReaderUnitConfiguration> readerUnitConfig)
 	{
 		d_card_type = readerUnit->getCardType();
+		d_sam_chip = readerUnit->getSAMChip();
 		d_readerProvider = readerUnit->getReaderProvider();
 		if (getPCSCConfiguration()->getPCSCType() == readerUnitConfig->getPCSCType())
 		{

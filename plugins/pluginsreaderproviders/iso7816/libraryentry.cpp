@@ -44,7 +44,7 @@ extern "C"
 	{
 		if (commands != NULL && chip != NULL)
 		{
-			boost::dynamic_pointer_cast<logicalaccess::DESFireISO7816Commands>(*commands)->getCrypto().setCryptoContext(boost::dynamic_pointer_cast<logicalaccess::DESFireProfile>((*chip)->getProfile()), (*chip)->getChipIdentifier());
+			boost::dynamic_pointer_cast<logicalaccess::DESFireISO7816Commands>(*commands)->getCrypto()->setCryptoContext(boost::dynamic_pointer_cast<logicalaccess::DESFireProfile>((*chip)->getProfile()), (*chip)->getChipIdentifier());
 		}
 	}
 
@@ -60,7 +60,7 @@ extern "C"
 	{
 		if (commands != NULL && chip != NULL)
 		{
-			boost::dynamic_pointer_cast<logicalaccess::DESFireEV1ISO7816Commands>(*commands)->getCrypto().setCryptoContext(boost::dynamic_pointer_cast<logicalaccess::DESFireProfile>((*chip)->getProfile()), (*chip)->getChipIdentifier());
+			boost::dynamic_pointer_cast<logicalaccess::DESFireEV1ISO7816Commands>(*commands)->getCrypto()->setCryptoContext(boost::dynamic_pointer_cast<logicalaccess::DESFireProfile>((*chip)->getProfile()), (*chip)->getChipIdentifier());
 		}
 	}
 }

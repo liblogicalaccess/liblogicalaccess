@@ -8,6 +8,7 @@
 #define LOGICALACCESS_PCSCREADERUNITCONFIGURATION_HPP
 
 #include "logicalaccess/readerproviders/readerunitconfiguration.hpp"
+#include "iso7816readerunitconfiguration.hpp"
 
 
 #define DEVICE_TYPE_SMARTCARD /**< \brief Set device type to smart card */
@@ -45,11 +46,10 @@ namespace logicalaccess
 		PCSC_RUT_SPRINGCARD = 0x0005, /**< SpringCard PC/SC reader unit */
 		PCSC_RUT_OMNIKEY_XX27 = 0x0006 /**< Omnikey PC/SC reader unit */
 	} PCSCReaderUnitType;
-
 	/**
 	 * \brief The PC/SC reader unit configuration base class.
 	 */
-	class LIBLOGICALACCESS_API PCSCReaderUnitConfiguration : public ReaderUnitConfiguration
+	class LIBLOGICALACCESS_API PCSCReaderUnitConfiguration : public ISO7816ReaderUnitConfiguration
 	{
 		public:
 			

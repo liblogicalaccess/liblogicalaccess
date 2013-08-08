@@ -833,6 +833,7 @@ namespace logicalaccess
 		d_sessionKey.clear();		
 		d_profile->getKey(d_currentAid, keyno, diversify, d_authkey);
 		d_cipher.reset(new openssl::AESCipher());
+				d_cipher.reset(new openssl::AESCipher());
 		openssl::AESSymmetricKey aeskey = openssl::AESSymmetricKey::createFromData(d_authkey);
 		openssl::AESInitializationVector iv = openssl::AESInitializationVector::createNull();
 		d_rndB.clear();		
@@ -880,12 +881,14 @@ namespace logicalaccess
 		if (d_rndA == checkRndA)
 		{
 			d_sessionKey.insert(d_sessionKey.end(), d_rndA.begin(), d_rndA.begin() + 4);
-			d_sessionKey.insert(d_sessionKey.end(), d_rndB.begin(), d_rndA.begin() + 4);
+			d_sessionKey.insert(d_sessionKey.end(), d_rndB.begin(), d_rndB.begin() + 4);
 			d_sessionKey.insert(d_sessionKey.end(), d_rndA.begin() + 12, d_rndA.begin() + 16);
-			d_sessionKey.insert(d_sessionKey.end(), d_rndB.begin() + 12, d_rndA.begin() + 16);
+			d_sessionKey.insert(d_sessionKey.end(), d_rndB.begin() + 12, d_rndB.begin() + 16);
 
 			d_currentKeyNo = keyno;
 		}
+		else
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "AES Authenticate PICC 2 Failed!");
 
 		d_cipher.reset(new openssl::AESCipher());
 		d_auth_method = CM_ISO;
@@ -1161,15 +1164,19 @@ namespace logicalaccess
 
 	bool DESFireCrypto::getDiversify(unsigned char* diversify)
 	{
-		diversify[0] = 0xFF;
-		memcpy(diversify + 1, &d_identifier[0], d_identifier.size());
-		diversify[8] = 0x00;
-		memcpy(diversify + 9, &d_identifier[0], d_identifier.size());
-		for (unsigned char i = 0; i < 7; ++i)
+		if (d_identifier.size() > 0)
 		{
-			diversify[9 + i] ^= 0xFF;
+			diversify[0] = 0xFF;
+			memcpy(diversify + 1, &d_identifier[0], d_identifier.size());
+			diversify[8] = 0x00;
+			memcpy(diversify + 9, &d_identifier[0], d_identifier.size());
+			for (unsigned char i = 0; i < 7; ++i)
+			{
+				diversify[9 + i] ^= 0xFF;
+			}
 		}
-
+		else
+			return false;
 		return true;
 	}
 

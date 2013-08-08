@@ -10,6 +10,8 @@
 #include "desfirecommands.hpp"
 #include "desfirecrypto.hpp"
 #include "../readercardadapters/iso7816readercardadapter.hpp"
+#include "../iso7816readerunit.hpp"
+#include "samchip.hpp"
 
 #include <string>
 #include <vector>
@@ -306,7 +308,24 @@ namespace logicalaccess
 			 * \brief Get the internal DESFire crypto.
 			 * \return The internal DESFire crypto.
 			 */
-			DESFireCrypto& getCrypto();
+			boost::shared_ptr<DESFireCrypto> getCrypto() { return d_crypto; };
+
+			/**
+			 * \brief Get the internal DESFire crypto.
+			 * \return The internal DESFire crypto.
+			 */
+			void setCrypto(boost::shared_ptr<DESFireCrypto> t) { d_crypto = t; };
+
+			/**
+			 * \brief Set the SAM Chip.
+			 * \param t The SAM Chip.
+			 */
+			void setSAMChip(boost::shared_ptr<SAMChip> t) {	d_SAM_chip = t;	}
+			
+			/**
+			 * \brief get the SAM Chip.
+			 */
+			boost::shared_ptr<SAMChip> getSAMChip() { return d_SAM_chip; }
 
 		protected:			
 
@@ -361,7 +380,12 @@ namespace logicalaccess
 			/**
 			 * \brief Crypto instance for security manipulation.
 			 */
-			DESFireCrypto d_crypto;
+			boost::shared_ptr<DESFireCrypto> d_crypto;
+
+			/**
+			 * \brief The SAMChip used for the SAM Commands.
+			 */
+			boost::shared_ptr<SAMChip> d_SAM_chip;
 	};
 }
 

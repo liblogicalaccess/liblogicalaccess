@@ -78,9 +78,7 @@ namespace logicalaccess
 		std::vector<unsigned char> r = d_response;
 		COM_("APDU response: %s", BufferHelper::getHex(r).c_str());
 		if (r.size() > 0)
-		{
 			CheckResult(&r[0], r.size());
-		}
 
 		d_response.clear();
 		return r;

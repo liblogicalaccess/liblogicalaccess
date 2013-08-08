@@ -9,6 +9,8 @@
 
 #include "logicalaccess/readerproviders/readerunit.hpp"
 #include "pcscreaderunitconfiguration.hpp"
+#include "iso7816readerunit.hpp"
+#include "samchip.hpp"
 #include "logicalaccess/cards/readermemorykeystorage.hpp"
 
 namespace logicalaccess
@@ -21,7 +23,7 @@ namespace logicalaccess
 	/**
 	 * \brief The PC/SC reader unit class.
 	 */
-	class LIBLOGICALACCESS_API PCSCReaderUnit : public ReaderUnit
+	class LIBLOGICALACCESS_API PCSCReaderUnit : public ISO7816ReaderUnit
 	{
 		public:			
 
@@ -255,8 +257,21 @@ namespace logicalaccess
 			 */
 			virtual void getT_CL_ISOType(bool& isTypeA, bool& isTypeB);
 
+			boost::shared_ptr<SAMChip> getSAMChip() { return d_sam_chip; };
+
+			void setSAMChip(boost::shared_ptr<SAMChip> t) {	d_sam_chip = t; };
+
+			boost::shared_ptr<PCSCReaderUnit> getSAMReaderUnit() { return d_sam_readerunit; };
+
+			void setSAMReaderUnit(boost::shared_ptr<PCSCReaderUnit> t) {	d_sam_readerunit = t; };
 
 		protected:
+
+
+			/**
+			 * \brief The SAM reader unit.
+			 */
+			boost::shared_ptr<SAMChip> d_sam_chip;
 
 			/**
 			 * \brief The reader unit name.
@@ -325,7 +340,9 @@ namespace logicalaccess
 			/**
 			 * \brief The proxy reader unit.
 			 */
-			boost::shared_ptr<PCSCReaderUnit> d_proxyReaderUnit;			
+			boost::shared_ptr<PCSCReaderUnit> d_proxyReaderUnit;
+
+			boost::shared_ptr<PCSCReaderUnit> d_sam_readerunit;
 	};
 }
 
