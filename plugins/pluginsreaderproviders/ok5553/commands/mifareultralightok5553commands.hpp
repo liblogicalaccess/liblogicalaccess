@@ -1,14 +1,14 @@
 /**
- * \file mifareultralightrplethcommands.hpp
+ * \file mifareultralightok5553commands.hpp
  * \author Maxime C. <maxime-dev@islog.com>
- * \brief Mifare Ultralight Rpleth Commands
+ * \brief Mifare Ultralight OK5553 Commands
  */
 
-#ifndef LOGICALACCESS_MIFAREULTRALIGHTRPLETHCOMMANDS_HPP
-#define LOGICALACCESS_MIFAREULTRALIGHTRPLETHCOMMANDS_HPP
+#ifndef LOGICALACCESS_MIFAREULTRALIGHTOK5553COMMANDS_HPP
+#define LOGICALACCESS_MIFAREULTRALIGHTOK5553COMMANDS_HPP
 
 #include "mifareultralightcommands.hpp"
-#include "../readercardadapters/rplethreadercardadapter.hpp"
+#include "../readercardadapters/ok5553readercardadapter.hpp"
 
 #include <string>
 #include <vector>
@@ -17,20 +17,20 @@
 namespace logicalaccess
 {
 	/**
-	 * \brief A Mifare Ultraligth Rpleth commands base class.
+	 * \brief A Mifare Ultraligth OK5553 commands base class.
 	 */
-	class LIBLOGICALACCESS_API MifareUltralightRplethCommands : public MifareUltralightCommands
+	class LIBLOGICALACCESS_API MifareUltralightOK5553Commands : public MifareUltralightCommands
 	{
 	public:
 			/**
 			 * \brief Constructor.
 			 */
-			MifareUltralightRplethCommands();
+			MifareUltralightOK5553Commands();
 
 			/**
 			 * \brief Destructor.
 			 */
-			virtual ~MifareUltralightRplethCommands();
+			virtual ~MifareUltralightOK5553Commands();
 			
 			/**
 			 * \brief Read a whole page.
@@ -51,12 +51,12 @@ namespace logicalaccess
 			virtual size_t writePage(int page, const void* buf, size_t buflen);
 			
 			/**
-			 * \brief Get the Rpleth reader/card adapter.
-			 * \return The Rpleth reader/card adapter.
+			 * \brief Get the OK5553 reader/card adapter.
+			 * \return The OK5553 reader/card adapter.
 			 */
-			virtual boost::shared_ptr<RplethReaderCardAdapter> getRplethReaderCardAdapter() { return boost::dynamic_pointer_cast<RplethReaderCardAdapter>(getReaderCardAdapter()); };
+			virtual boost::shared_ptr<OK5553ReaderCardAdapter> getOK5553ReaderCardAdapter() { return boost::dynamic_pointer_cast<OK5553ReaderCardAdapter>(getReaderCardAdapter()); };
 	};	
 }
 
-#endif /* LOGICALACCESS_MIFAREULTRALIGHTRPLETHCOMMANDS_HPP */
+#endif /* LOGICALACCESS_MIFAREULTRALIGHTOK5553COMMANDS_HPP */
 

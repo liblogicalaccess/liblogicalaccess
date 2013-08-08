@@ -1,10 +1,10 @@
 /**
- * \file mifarerplethcommands.cpp
+ * \file mifareok5553commands.cpp
  * \author Maxime C. <maxime-dev@islog.com>
- * \brief Mifaire commands for Rpleth readers.
+ * \brief Mifaire commands for OK5553 readers.
  */
 
-#include "mifarerplethcommands.hpp"
+#include "mifareok5553commands.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -18,18 +18,18 @@
 
 namespace logicalaccess
 {
-	MifareRplethCommands::MifareRplethCommands()
+	MifareOK5553Commands::MifareOK5553Commands()
 		: MifareCommands()
 	{
 
 	}
 
-	MifareRplethCommands::~MifareRplethCommands()
+	MifareOK5553Commands::~MifareOK5553Commands()
 	{
 		
 	}	
 	
-	size_t MifareRplethCommands::readBinary(unsigned char blockno, size_t len, void* buf, size_t buflen)
+	size_t MifareOK5553Commands::readBinary(unsigned char blockno, size_t len, void* buf, size_t buflen)
 	{
 		size_t res = 0;
 		char tmp [3];
@@ -40,9 +40,9 @@ namespace logicalaccess
 		sprintf (tmp, "%.2X", blockno);
 		command.push_back(static_cast<unsigned char>(tmp[0]));
 		command.push_back(static_cast<unsigned char>(tmp[1]));
-		answer = getRplethReaderCardAdapter()->sendCommand (command);
+		answer = getOK5553ReaderCardAdapter()->sendCommand (command);
 		// convert ascii in hexa
-		answer = RplethReaderUnit::asciiToHex (answer);
+		answer = OK5553ReaderUnit::asciiToHex (answer);
 		res = (len < answer.size()) ? len : answer.size();
 		if (res <= buflen)
 		{
@@ -56,7 +56,7 @@ namespace logicalaccess
 		return res;
 	}
 	
-	size_t MifareRplethCommands::updateBinary(unsigned char blockno, const void* buf, size_t buflen)
+	size_t MifareOK5553Commands::updateBinary(unsigned char blockno, const void* buf, size_t buflen)
 	{
 		size_t result = 0;
 		char tmp [3];
@@ -73,7 +73,7 @@ namespace logicalaccess
 			command.push_back(static_cast<unsigned char>(tmp[0]));
 			command.push_back(static_cast<unsigned char>(tmp[1]));
 		}
-		answer = getRplethReaderCardAdapter()->sendCommand (command);
+		answer = getOK5553ReaderCardAdapter()->sendCommand (command);
 		if (answer.size () > 1)
 			buflen = answer.size();
 		else
@@ -81,7 +81,7 @@ namespace logicalaccess
 		return result;
 	}
 	
-	bool MifareRplethCommands::loadKey(unsigned char keyno, MifareKeyType /*keytype*/, const void* key, size_t keylen, bool vol)
+	bool MifareOK5553Commands::loadKey(unsigned char keyno, MifareKeyType /*keytype*/, const void* key, size_t keylen, bool vol)
 	{
 		bool r = true;
 		if (!vol)
@@ -100,14 +100,14 @@ namespace logicalaccess
 				command.push_back(static_cast<unsigned char>(buf[0]));
 				command.push_back(static_cast<unsigned char>(buf[1]));
 			}
-			answer = getRplethReaderCardAdapter()->sendCommand (command);
+			answer = getOK5553ReaderCardAdapter()->sendCommand (command);
 			if (answer.size () < 2)
 				r = false;
 		}
 		return r;
 	}
 	
-	void MifareRplethCommands::loadKey(boost::shared_ptr<Location> location, boost::shared_ptr<Key> key, MifareKeyType keytype)
+	void MifareOK5553Commands::loadKey(boost::shared_ptr<Location> location, boost::shared_ptr<Key> key, MifareKeyType keytype)
 	{
 		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 		EXCEPTION_ASSERT_WITH_LOG(key, std::invalid_argument, "key cannot be null.");
@@ -139,7 +139,7 @@ namespace logicalaccess
 		}
 	}
 	
-	bool MifareRplethCommands::authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype)
+	bool MifareOK5553Commands::authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype)
 	{
 		bool res = false;
 		std::vector<unsigned char> command;
@@ -157,7 +157,7 @@ namespace logicalaccess
 			buf [0] += 3;
 		command.push_back(static_cast<unsigned char>(buf[0]));
 		command.push_back(static_cast<unsigned char>(buf[1]));
-		answer = getRplethReaderCardAdapter()->sendCommand (command);
+		answer = getOK5553ReaderCardAdapter()->sendCommand (command);
 		if (answer.size() > 0)
 			if (answer[0] == 'L')
 				res = true;
@@ -165,7 +165,7 @@ namespace logicalaccess
 	}
 	
 	// in progress
-	void MifareRplethCommands::authenticate(unsigned char blockno, boost::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype)
+	void MifareOK5553Commands::authenticate(unsigned char blockno, boost::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype)
 	{
 		if (boost::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key_storage))
 		{

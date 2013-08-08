@@ -111,13 +111,13 @@ namespace logicalaccess
 
 			virtual std::vector<unsigned char> receive(long int timeout);
 
-		protected:
-
 			/**
 			 * \brief Client socket use to communicate with the reader.
 			 */
 			boost::shared_ptr<boost::asio::ip::tcp::socket> d_socket;
-			
+
+		protected:	
+
 			/**
 			 * \brief Provides core I/O functionality
 			 */

@@ -1,14 +1,14 @@
 /**
- * \file mifarerplethcommands.hpp
+ * \file mifareok5553commands.hpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Mifare Rpleth Commands
  */
 
-#ifndef LOGICALACCESS_MIFARERPLETHCOMMANDS_HPP
-#define LOGICALACCESS_MIFARERPLETHCOMMANDS_HPP
+#ifndef LOGICALACCESS_MIFAREOK5553COMMANDS_HPP
+#define LOGICALACCESS_MIFAREOK5553COMMANDS_HPP
 
 #include "mifarecommands.hpp"
-#include "../readercardadapters/rplethreadercardadapter.hpp"
+#include "../readercardadapters/ok5553readercardadapter.hpp"
 
 #include <string>
 #include <vector>
@@ -17,20 +17,20 @@
 namespace logicalaccess
 {
 	/**
-	 * \brief A Mifare Rpleth commands base class.
+	 * \brief A Mifare OK5553 commands base class.
 	 */
-	class LIBLOGICALACCESS_API MifareRplethCommands : public MifareCommands
+	class LIBLOGICALACCESS_API MifareOK5553Commands : public MifareCommands
 	{
 	public:
 			/**
 			 * \brief Constructor.
 			 */
-			MifareRplethCommands();
+			MifareOK5553Commands();
 
 			/**
 			 * \brief Destructor.
 			 */
-			virtual ~MifareRplethCommands();
+			virtual ~MifareOK5553Commands();
 			
 			/**
 			 * \brief Read bytes from the card.
@@ -89,12 +89,12 @@ namespace logicalaccess
 			void authenticate(unsigned char blockno, boost::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype);
 			
 			/**
-			 * \brief Get the Rpleth reader/card adapter.
-			 * \return The Rpleth reader/card adapter.
+			 * \brief Get the OK5553 reader/card adapter.
+			 * \return The OK5553 reader/card adapter.
 			 */
-			virtual boost::shared_ptr<RplethReaderCardAdapter> getRplethReaderCardAdapter() { return boost::dynamic_pointer_cast<RplethReaderCardAdapter>(getReaderCardAdapter()); };
+			virtual boost::shared_ptr<OK5553ReaderCardAdapter> getOK5553ReaderCardAdapter() { return boost::dynamic_pointer_cast<OK5553ReaderCardAdapter>(getReaderCardAdapter()); };
 	};	
 }
 
-#endif /* LOGICALACCESS_MIFARERPLETHCOMMANDS_HPP */
+#endif /* LOGICALACCESS_MIFAREOK5553COMMANDS_HPP */
 

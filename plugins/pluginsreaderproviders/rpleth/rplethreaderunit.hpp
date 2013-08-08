@@ -10,6 +10,7 @@
 #include "logicalaccess/readerproviders/readerunit.hpp"
 #include "logicalaccess/readerproviders/serialportxml.hpp"
 #include "rplethreaderunitconfiguration.hpp"
+#include "readercardadapters/rplethreadercardadapter.hpp"
 #include <boost/asio/ip/tcp.hpp>
 
 namespace logicalaccess
@@ -54,7 +55,12 @@ namespace logicalaccess
 		BLINKLED2 = 0x02,
 		NOP = 0x03,
 		BADGE = 0x04,
-		COM = 0x05
+		COM = 0x05,
+		WAIT_INSERTION = 0x06,
+		WAIT_REMOVAL = 0x07,
+		CONNECT = 0x08,
+		DISCONNECT = 0x09,
+		GET_READERTYPE = 0x0A
 	} HidCommand;
 
 	/**
@@ -68,16 +74,6 @@ namespace logicalaccess
 		SCROLL = 0X03,
 		DISPLAYTIME = 0x04
 	} LcdCommand;
-
-	/**
-	 * \brief ChipType code in Rpleth protocol.
-	 */
-	typedef enum
-	{
-		MIFARE = 0x02,
-		MIFAREULTRALIGHT = 0x05,
-		DESFIRE = 0x06
-	} ChipType;
 
 	/**
 	 * \brief The Rpleth reader unit class.
@@ -226,11 +222,6 @@ namespace logicalaccess
 			boost::shared_ptr<RplethReaderProvider> getRplethReaderProvider() const;
 
 			/**
-			 * \brief Get the client socket.
-			 */
-			boost::shared_ptr<boost::asio::ip::tcp::socket> getSocket();
-
-			/**
 			 * \brief Get reader dhcp state.
 			 */
 			bool getDhcpState();
@@ -302,13 +293,6 @@ namespace logicalaccess
 			std::vector<unsigned char> badge(long int timeout = 2000);
 
 			/**
-			 * \brief Convert a Ascii vector in a Hex vector.
-			 * \param source The vector to convert.
-			 * \return The vector converted.
-			 */
-			static std::vector<unsigned char> asciiToHex (const std::vector<unsigned char>& source);
-
-			/**
 			 * \brief Send a reqA.
 			 * \return The answer of the card.
 			 */
@@ -320,17 +304,11 @@ namespace logicalaccess
 			 */
 			std::vector<unsigned char> rats ();
 
-		protected:
-			
-			/**
-			 * \brief Client socket use to communicate with the reader.
-			 */
-			boost::shared_ptr<boost::asio::ip::tcp::socket> d_socket;
+			std::string getProxyReaderType();
 
-			/**
-			 * \brief Provides core I/O functionality
-			 */
-			boost::asio::io_service ios;
+		protected:
+
+			boost::shared_ptr<RplethReaderCardAdapter> getRplethReaderCardAdapter() { return boost::dynamic_pointer_cast<RplethReaderCardAdapter>(getDefaultReaderCardAdapter()); };
 
 			/**
 			 * \brief Send a command to the reader.
@@ -356,6 +334,8 @@ namespace logicalaccess
 			 * \brief The new identifier that will be used for the next waitInsertion after the waitRemoval.
 			 */
 			std::vector<unsigned char> removalIdentifier;
+
+			boost::shared_ptr<ReaderUnit> d_proxyReader;
 	};
 }
 

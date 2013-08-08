@@ -1,14 +1,14 @@
 /**
- * \file rplethreadercardadapter.hpp
+ * \file ok5553readercardadapter.hpp
  * \author Maxime C. <maxime-dev@islog.com>
- * \brief Default Rpleth reader/card adapter. 
+ * \brief Default OK5553 reader/card adapter. 
  */
 
-#ifndef LOGICALACCESS_DEFAULTRPLETHREADERCARDADAPTER_HPP
-#define LOGICALACCESS_DEFAULTRPLETHREADERCARDADAPTER_HPP
+#ifndef LOGICALACCESS_DEFAULTOK5553READERCARDADAPTER_HPP
+#define LOGICALACCESS_DEFAULTOK5553READERCARDADAPTER_HPP
 
 #include "logicalaccess/cards/readercardadapter.hpp"
-#include "../rplethreaderunit.hpp"
+#include "../ok5553readerunit.hpp"
 
 #include <string>
 #include <vector>
@@ -18,21 +18,21 @@
 namespace logicalaccess
 {	
 	/**
-	 * \brief A default Rpleth reader/card adapter class.
+	 * \brief A default OK5553 reader/card adapter class.
 	 */
-	class LIBLOGICALACCESS_API RplethReaderCardAdapter : public ReaderCardAdapter
+	class LIBLOGICALACCESS_API OK5553ReaderCardAdapter : public ReaderCardAdapter
 	{
 		public:
 
 			/**
 			 * \brief Constructor.
 			 */
-			RplethReaderCardAdapter();
+			OK5553ReaderCardAdapter();
 
 			/**
 			 * \brief Destructor.
 			 */
-			virtual ~RplethReaderCardAdapter();
+			virtual ~OK5553ReaderCardAdapter();
 
 			/**
 			 * \brief Adapt the command to send to the reader.
@@ -48,12 +48,11 @@ namespace logicalaccess
 			 */
 			virtual std::vector<unsigned char> adaptAnswer(const std::vector<unsigned char>& answer);
 
-			std::vector<unsigned char> sendRplethCommand(const std::vector<unsigned char>& data, long timeout = 2000);
-
+			std::vector<unsigned char> sendAsciiCommand(const std::string& command, long int timeout = 2000);
 	};
 
 }
 
-#endif /* LOGICALACCESS_DEFAULTRPLETHREADERCARDADAPTER_HPP */
+#endif /* LOGICALACCESS_DEFAULTOK5553READERCARDADAPTER_HPP */
 
  

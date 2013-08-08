@@ -18,7 +18,7 @@ namespace logicalaccess
 	typedef enum
 	{
 		WIEGAND = 0x01,
-		RS = 0x02
+		PROXY = 0x02
 	} RplethMode;
 
 	/**

@@ -1,13 +1,13 @@
 /**
- * \file rplethreadercardadapter.hpp
+ * \file iso7816ok5553readercardadapter.hpp
  * \author Maxime C. <maxime-dev@islog.com>
- * \brief Default Rpleth reader/card adapter. 
+ * \brief ISO7816 OK5553 reader/card adapter. 
  */
 
-#ifndef LOGICALACCESS_ISO7816RPLETHREADERCARDADAPTER_HPP
-#define LOGICALACCESS_ISO7816RPLETHREADERCARDADAPTER_HPP
+#ifndef LOGICALACCESS_ISO7816OK5553READERCARDADAPTER_HPP
+#define LOGICALACCESS_ISO7816OK5553READERCARDADAPTER_HPP
 
-#include "rplethreadercardadapter.hpp"
+#include "ok5553readercardadapter.hpp"
 #include "readercardadapters/iso7816readercardadapter.hpp"
 
 #include <string>
@@ -17,21 +17,21 @@
 namespace logicalaccess
 {	
 	/**
-	 * \brief A default Rpleth reader/card adapter class.
+	 * \brief A ISO7816 OK5553 reader/card adapter class.
 	 */
-	class LIBLOGICALACCESS_API ISO7816RplethReaderCardAdapter : public ISO7816ReaderCardAdapter
+	class LIBLOGICALACCESS_API ISO7816OK5553ReaderCardAdapter : public ISO7816ReaderCardAdapter
 	{
 		public:
 
 			/**
 			 * \brief Constructor.
 			 */
-			ISO7816RplethReaderCardAdapter();
+			ISO7816OK5553ReaderCardAdapter();
 
 			/**
 			 * \brief Destructor.
 			 */
-			virtual ~ISO7816RplethReaderCardAdapter();
+			virtual ~ISO7816OK5553ReaderCardAdapter();
 
 			/**
 			 * \brief Send an APDU command to the reader.
@@ -97,7 +97,7 @@ namespace logicalaccess
 			/**
 			 * \brief Reader card adapter used to send command..
 			 */
-			boost::shared_ptr<RplethReaderCardAdapter> d_rpleth_reader_card_adapter;
+			boost::shared_ptr<OK5553ReaderCardAdapter> d_ok5553_reader_card_adapter;
 
 			/**
 			 * \brief Handle the asnwer received from the reader.
@@ -121,7 +121,7 @@ namespace logicalaccess
 
 }
 
-#endif /* LOGICALACCESS_ISO7816RPLETHREADERCARDADAPTER_HPP */
+#endif /* LOGICALACCESS_ISO7816OK5553READERCARDADAPTER_HPP */
 
  
 

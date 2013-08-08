@@ -24,7 +24,7 @@ namespace logicalaccess
 	{
 		d_offset = 1;
 		d_length = 16;
-		d_mode = RplethMode::RS;
+		d_mode = RplethMode::PROXY;
 	}
 
 	void RplethReaderUnitConfiguration::setWiegandConfiguration (unsigned char offset, unsigned char length)

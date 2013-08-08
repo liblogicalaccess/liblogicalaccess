@@ -1,28 +1,28 @@
 
 /**	
- * \file rplethreadercardadapter.cpp
+ * \file ok5553readercardadapter.cpp
  * \author Maxime C. <maxime-dev@islog.com>
- * \brief Rpleth reader/card adapter.
+ * \brief OK5553 reader/card adapter.
  */
 
-#include "iso7816rplethreadercardadapter.hpp"
+#include "iso7816ok5553readercardadapter.hpp"
 #include "logicalaccess/bufferhelper.hpp"
 
 namespace logicalaccess
 {		
-	ISO7816RplethReaderCardAdapter::ISO7816RplethReaderCardAdapter()
+	ISO7816OK5553ReaderCardAdapter::ISO7816OK5553ReaderCardAdapter()
 		: ISO7816ReaderCardAdapter()
 	{
 		d_prefix = true;
-		d_rpleth_reader_card_adapter.reset(new RplethReaderCardAdapter ());
+		d_ok5553_reader_card_adapter.reset(new OK5553ReaderCardAdapter ());
 	}
 
-	ISO7816RplethReaderCardAdapter::~ISO7816RplethReaderCardAdapter()
+	ISO7816OK5553ReaderCardAdapter::~ISO7816OK5553ReaderCardAdapter()
 	{
 		
 	}
 
-	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen, unsigned char /*le*/, unsigned char* result, size_t* resultlen)
+	void ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen, unsigned char /*le*/, unsigned char* result, size_t* resultlen)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(ins);
@@ -34,7 +34,7 @@ namespace logicalaccess
 		ISO7816ReaderCardAdapter::sendAPDUCommand(command, result, resultlen);
 	}
 
-	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen, unsigned char* result, size_t* resultlen)
+	void ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen, unsigned char* result, size_t* resultlen)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(ins);
@@ -46,7 +46,7 @@ namespace logicalaccess
 		ISO7816ReaderCardAdapter::sendAPDUCommand(command, result, resultlen);
 	}	
 
-	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, const unsigned char* data, size_t datalen, unsigned char* result, size_t* resultlen)
+	void ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, const unsigned char* data, size_t datalen, unsigned char* result, size_t* resultlen)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(ins);
@@ -58,7 +58,7 @@ namespace logicalaccess
 		ISO7816ReaderCardAdapter::sendAPDUCommand(command, result, resultlen);
 	}
 
-	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*le*/, unsigned char* result, size_t* resultlen)
+	void ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*le*/, unsigned char* result, size_t* resultlen)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(ins);
@@ -66,7 +66,7 @@ namespace logicalaccess
 		ISO7816ReaderCardAdapter::sendAPDUCommand(command, result, resultlen);
 	}
 
-	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, unsigned char /*le*/, unsigned char* result, size_t* resultlen)
+	void ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, unsigned char /*le*/, unsigned char* result, size_t* resultlen)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(ins);
@@ -75,7 +75,7 @@ namespace logicalaccess
 	}
 
 
-	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen, unsigned char /*le*/)
+	void ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen, unsigned char /*le*/)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(ins);
@@ -86,7 +86,7 @@ namespace logicalaccess
 		ISO7816ReaderCardAdapter::sendAPDUCommand(command, NULL, NULL);
 	}
 
-	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen)
+	void ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(ins);
@@ -97,7 +97,7 @@ namespace logicalaccess
 		ISO7816ReaderCardAdapter::sendAPDUCommand(command, NULL, NULL);
 	}
 
-	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*le*/)
+	void ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*le*/)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(ins);
@@ -105,7 +105,7 @@ namespace logicalaccess
 	}
 
 
-	void ISO7816RplethReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char* result, size_t* resultlen)
+	void ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char* result, size_t* resultlen)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(ins);
@@ -114,7 +114,7 @@ namespace logicalaccess
 
 
 
-	std::vector<unsigned char> ISO7816RplethReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
+	std::vector<unsigned char> ISO7816OK5553ReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
 	{
 		char tmp [3];
 		std::vector<unsigned char> data;
@@ -143,16 +143,16 @@ namespace logicalaccess
 			data.push_back(static_cast<unsigned char>(tmp[1]));
 		}
 
-		return d_rpleth_reader_card_adapter->adaptCommand(data);
+		return d_ok5553_reader_card_adapter->adaptCommand(data);
 	}
 
-	std::vector<unsigned char> ISO7816RplethReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
+	std::vector<unsigned char> ISO7816OK5553ReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
 	{
 		COM_("Processing response : %s", BufferHelper::getHex(answer).c_str());
-		return answerReverse(handleAnswer(d_rpleth_reader_card_adapter->adaptAnswer(RplethReaderUnit::asciiToHex(answer))));
+		return answerReverse(handleAnswer(d_ok5553_reader_card_adapter->adaptAnswer(OK5553ReaderUnit::asciiToHex(answer))));
 	}
 
-	std::vector<unsigned char> ISO7816RplethReaderCardAdapter::answerReverse (const std::vector<unsigned char>& answer)
+	std::vector<unsigned char> ISO7816OK5553ReaderCardAdapter::answerReverse (const std::vector<unsigned char>& answer)
 	{
 		COM_("Reversing response : %s", BufferHelper::getHex(answer).c_str());
 		std::vector<unsigned char> res;
@@ -171,7 +171,7 @@ namespace logicalaccess
 		return res;
 	}
 
-	std::vector<unsigned char> ISO7816RplethReaderCardAdapter::handleAnswer (const std::vector<unsigned char>& answer)
+	std::vector<unsigned char> ISO7816OK5553ReaderCardAdapter::handleAnswer (const std::vector<unsigned char>& answer)
 	{
 		COM_("Handling response : %s", BufferHelper::getHex(answer).c_str());
 		std::vector<unsigned char> res;

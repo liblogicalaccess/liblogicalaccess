@@ -1,14 +1,14 @@
 /**
- * \file rplethreaderprovider.hpp
+ * \file ok5553readerprovider.hpp
  * \author Maxime C. <maxime-dev@islog.com>
- * \brief Rpleth card reader provider. 
+ * \brief OK5553 card reader provider. 
  */
 
-#ifndef LOGICALACCESS_READERRPLETH_PROVIDER_HPP
-#define LOGICALACCESS_READERRPLETH_PROVIDER_HPP
+#ifndef LOGICALACCESS_READEROK5553_PROVIDER_HPP
+#define LOGICALACCESS_READEROK5553_PROVIDER_HPP
 
 #include "logicalaccess/readerproviders/readerprovider.hpp"
-#include "rplethreaderunit.hpp"
+#include "ok5553readerunit.hpp"
 
 #include <string>
 #include <vector>
@@ -18,41 +18,41 @@
 
 namespace logicalaccess
 {	
-	#define READER_RPLETH		"Rpleth"
+	#define READER_OK5553		"OK5553"
 
 	/**
-	 * \brief Rpleth Reader Provider class.
+	 * \brief OK5553 Reader Provider class.
 	 */
-	class LIBLOGICALACCESS_API RplethReaderProvider : public ReaderProvider
+	class LIBLOGICALACCESS_API OK5553ReaderProvider : public ReaderProvider
 	{
 		public:
 
 			/**
-			 * \brief Get the RplethReaderProvider instance. Singleton because we can only have one TCP communication, and Rpleth can't have shared access, so we share the same reader unit.
+			 * \brief Get the OK5553ReaderProvider instance.
 			 */
-			static boost::shared_ptr<RplethReaderProvider> getSingletonInstance();
+			static boost::shared_ptr<OK5553ReaderProvider> getSingletonInstance();
 
 			/**
-			 * \brief Get a new RplethReaderProvider instance.
+			 * \brief Get a new OK5553ReaderProvider instance.
 			 */
-			boost::shared_ptr<RplethReaderProvider> createInstance();
+			boost::shared_ptr<OK5553ReaderProvider> createInstance();
 
 			/**
 			 * \brief Destructor.
 			 */
-			~RplethReaderProvider();
+			~OK5553ReaderProvider();
 
 			/**
 			 * \brief Get the reader provider type.
 			 * \return The reader provider type.
 			 */
-			virtual std::string getRPType() const { return READER_RPLETH; };
+			virtual std::string getRPType() const { return READER_OK5553; };
 
 			/**
 			 * \brief Get the reader provider name.
 			 * \return The reader provider name.
 			 */
-			virtual std::string getRPName() const { return "Rpleth"; };
+			virtual std::string getRPName() const { return "OK5553"; };
 
 			/**
 			 * \brief List all readers of the system.
@@ -79,7 +79,7 @@ namespace logicalaccess
 			/**
 			 * \brief Constructor.
 			 */
-			RplethReaderProvider();			
+			OK5553ReaderProvider();			
 
 			/**
 			 * \brief The reader list.
@@ -89,5 +89,5 @@ namespace logicalaccess
 
 }
 
-#endif /* LOGICALACCESS_READERRPLETH_PROVIDER_HPP */
+#endif /* LOGICALACCESS_READEROK5553_PROVIDER_HPP */
 
