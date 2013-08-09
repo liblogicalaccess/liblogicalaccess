@@ -6,7 +6,8 @@ if (NOT CMAKE_BUILD_TYPE)
 endif()
 
 set(INCLUDE_FOLDER 	${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso7816
-					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare)
+					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare
+					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2)
 					
 INCLUDE_DIRECTORIES(${INCLUDE_FOLDER})
 
@@ -35,13 +36,15 @@ if (WIN32)
 LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
 										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
 										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
-										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic/bin/${TARGET_ARCH}/${VC_FOLDER_NAME})
+										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
+										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2/bin/${TARGET_ARCH}/${VC_FOLDER_NAME})
 set(LINK_OPT liblogicalaccess)
 else()
 LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare/bin
 										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire/bin
 										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816/bin
-										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic/bin)
+										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic/bin
+										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2/bin)
 										
 set(LINK_OPT boost_system boost_filesystem logicalaccess)
 endif()
