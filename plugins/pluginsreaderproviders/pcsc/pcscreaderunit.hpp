@@ -9,8 +9,7 @@
 
 #include "logicalaccess/readerproviders/readerunit.hpp"
 #include "pcscreaderunitconfiguration.hpp"
-#include "iso7816readerunit.hpp"
-#include "samchip.hpp"
+#include "../iso7816/iso7816readerunit.hpp"
 #include "logicalaccess/cards/readermemorykeystorage.hpp"
 
 namespace logicalaccess
@@ -18,6 +17,7 @@ namespace logicalaccess
 	class Chip;
 	class PCSCReaderCardAdapter;
 	class PCSCReaderProvider;
+	class SAMChip;
 
 
 	/**

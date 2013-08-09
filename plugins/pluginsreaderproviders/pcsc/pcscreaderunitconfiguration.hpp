@@ -8,7 +8,7 @@
 #define LOGICALACCESS_PCSCREADERUNITCONFIGURATION_HPP
 
 #include "logicalaccess/readerproviders/readerunitconfiguration.hpp"
-#include "iso7816readerunitconfiguration.hpp"
+#include "../iso7816/iso7816readerunitconfiguration.hpp"
 
 
 #define DEVICE_TYPE_SMARTCARD /**< \brief Set device type to smart card */

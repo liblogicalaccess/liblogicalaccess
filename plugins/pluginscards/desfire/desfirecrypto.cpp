@@ -1070,6 +1070,7 @@ namespace logicalaccess
 		std::vector<unsigned char> decdata;
 		boost::shared_ptr<openssl::SymmetricKey> isokey;
 		boost::shared_ptr<openssl::InitializationVector> iv;
+
 		if (boost::dynamic_pointer_cast<openssl::AESCipher>(cipher))
 		{
 			isokey.reset(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(key)));
@@ -1080,6 +1081,8 @@ namespace logicalaccess
 			isokey.reset(new openssl::DESSymmetricKey(openssl::DESSymmetricKey::createFromData(key)));
 			iv.reset(new openssl::DESInitializationVector(openssl::DESInitializationVector::createFromData(d_lastIV)));
 		}
+
+		//INFO_("FUCK: key: %s - iv: %s - blocksize: %d", BufferHelper::getHex(key).c_str(), BufferHelper::getHex(d_lastIV).c_str(), d_block_size);
 
 		cipher->decipher(data, decdata, *isokey, *iv, false);
 		if (cipher == d_cipher)

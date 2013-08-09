@@ -351,6 +351,7 @@ namespace logicalaccess
 				sam_iso_authenticate(key, DF_ALG_3K3DES, (d_crypto->d_currentAid == 0 && keyno == 0), keyno);
 			else
 				sam_iso_authenticate(key, DF_ALG_AES, (d_crypto->d_currentAid == 0 && keyno == 0), keyno);
+			return true;
 		}
 
 		switch (key->getKeyType())
@@ -402,7 +403,10 @@ namespace logicalaccess
 		if (apduresultlen <= 2 && apduresult[apduresultlen - 2] != 0x90 && apduresult[apduresultlen - 2] != 0x00)
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam_iso_authenticate P2 failed.");
 
+		d_crypto->d_currentKeyNo = keyno;
 		d_crypto->d_sessionKey = samav2commands->dumpSessionKey();
+
+		INFO_("Session key length: %d", d_crypto->d_sessionKey.size());
 
 		if (key->getKeyType() == DF_ALG_3K3DES)
 		{
@@ -418,6 +422,7 @@ namespace logicalaccess
 		}
 		d_crypto->d_lastIV.clear();
 		d_crypto->d_lastIV.resize(d_crypto->d_block_size, 0x00);
+		d_crypto->d_auth_method = CM_ISO;
 	}
 
 	void DESFireEV1ISO7816Commands::iso_authenticate(boost::shared_ptr<DESFireKey> key, DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno)

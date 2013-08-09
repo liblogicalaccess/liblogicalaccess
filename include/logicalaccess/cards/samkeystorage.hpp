@@ -31,18 +31,6 @@ namespace logicalaccess
 			virtual KeyStorageType getType() const;
 
 			/**
-			 * \brief Set the key slot.
-			 * \param key_slot The key slot.
-			 */
-			void setKeySlot(unsigned char key_slot);
-
-			/**
-			 * \brief Get the key slot.
-			 * \return The key slot.
-			 */
-			unsigned char getKeySlot() const;
-
-			/**
 			 * \brief Serialize the current object to XML.
 			 * \param parentNode The parent node.
 			 * \return The XML string.

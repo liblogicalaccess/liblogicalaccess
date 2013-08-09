@@ -4,7 +4,6 @@
  * \brief PC/SC reader unit configuration.
  */
 
-#include "iso7816readerunitconfiguration.hpp"
 #include "pcscreaderunitconfiguration.hpp"
 #include "pcscreaderprovider.hpp"
 #include "pcscreaderunit.hpp"
@@ -12,6 +11,7 @@
 namespace logicalaccess
 {
 	PCSCReaderUnitConfiguration::PCSCReaderUnitConfiguration()
+		: ISO7816ReaderUnitConfiguration(READER_PCSC)
 	{
 		resetConfiguration();
 	}

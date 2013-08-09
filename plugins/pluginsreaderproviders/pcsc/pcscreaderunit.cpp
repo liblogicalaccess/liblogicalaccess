@@ -114,10 +114,17 @@ namespace logicalaccess
 
 	void PCSCReaderUnit::serialize(boost::property_tree::ptree& parentNode)
 	{
-		boost::property_tree::ptree node;
-		ReaderUnit::serialize(node);
-		node.put("Name", d_name);
-		parentNode.add_child(getDefaultXmlNodeName(), node);
+		if (d_proxyReaderUnit)
+		{
+			d_proxyReaderUnit->serialize(parentNode);
+		}
+		else
+		{
+			boost::property_tree::ptree node;
+			ReaderUnit::serialize(node);
+			node.put("Name", d_name);
+			parentNode.add_child(getDefaultXmlNodeName(), node);
+		}
 	}
 
 	void PCSCReaderUnit::unSerialize(boost::property_tree::ptree& node)
@@ -135,7 +142,14 @@ namespace logicalaccess
 			d_proxyReaderUnit->makeProxy(boost::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);								
 		}
 		
-		ReaderUnit::unSerialize(node);
+		if (d_proxyReaderUnit)
+		{
+			d_proxyReaderUnit->unSerialize(node);
+		}
+		else
+		{
+			ReaderUnit::unSerialize(node);
+		}
 	}
 
 	boost::shared_ptr<PCSCReaderUnit> PCSCReaderUnit::createPCSCReaderUnit(std::string& readerName)

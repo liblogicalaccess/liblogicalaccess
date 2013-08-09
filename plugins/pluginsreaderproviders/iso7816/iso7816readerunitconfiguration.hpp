@@ -26,6 +26,12 @@ namespace logicalaccess
 			ISO7816ReaderUnitConfiguration();
 
 			/**
+			 * \brief Constructor.
+			 * \param rpt Reader provider type.
+			 */
+			ISO7816ReaderUnitConfiguration(std::string rpt);
+
+			/**
 			 * \brief Destructor.
 			 */
 			virtual ~ISO7816ReaderUnitConfiguration();
