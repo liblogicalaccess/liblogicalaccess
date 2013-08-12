@@ -90,6 +90,9 @@ namespace logicalaccess
 			boost::shared_ptr<SAMDESfireCrypto> getCrypto() { return d_crypto; };
 			void setCrypto(boost::shared_ptr<SAMDESfireCrypto> t) { d_crypto = t; };
 
+			virtual std::vector<unsigned char> decipherData(std::vector<unsigned char> data, bool islastdata);
+			virtual std::vector<unsigned char> encipherData(std::vector<unsigned char> data, bool islastdata);
+
 		protected:
 			boost::shared_ptr<SAMDESfireCrypto> d_crypto;
 	};

@@ -29,6 +29,8 @@ namespace logicalaccess
 			virtual void disableKeyEntry(unsigned char keyno) = 0;
 			virtual void selectApplication(unsigned char *aid) = 0;
 			virtual std::vector<unsigned char> dumpSessionKey() = 0;
+			virtual std::vector<unsigned char> decipherData(std::vector<unsigned char> data, bool islastdata) = 0;
+			virtual std::vector<unsigned char> encipherData(std::vector<unsigned char> data, bool islastdata) = 0;
 		protected:
 			
 	};

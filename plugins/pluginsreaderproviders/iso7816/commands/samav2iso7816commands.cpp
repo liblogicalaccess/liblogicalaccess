@@ -357,4 +357,49 @@ namespace logicalaccess
 
 		return std::vector<unsigned char>(result, result + resultlen - 2);
 	 }
+
+
+	 std::vector<unsigned char> SAMAV2ISO7816Commands::decipherData(std::vector<unsigned char> data, bool islastdata)
+	 {
+		unsigned char result[255];
+		size_t resultlen = sizeof(result);
+		unsigned char p1 = 0x00;
+		std::vector<unsigned char> datawithlength(3);
+
+		if (!islastdata)
+			p1 = 0xaf;
+		else
+		{
+			datawithlength[0] = (unsigned char)(data.size() & 0xff0000);
+			datawithlength[1] = (unsigned char)(data.size() & 0x00ff00);
+			datawithlength[2] = (unsigned char)(data.size() & 0x0000ff);
+		}
+		datawithlength.insert(datawithlength.end(), data.begin(), data.end());
+
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xdd, p1, 0x00, (unsigned char)(datawithlength.size()), &datawithlength[0], datawithlength.size(), 0x00, result, &resultlen);
+
+		if (resultlen >= 2 &&  result[resultlen - 2] != 0x90 &&
+			((p1 == 0x00 && result[resultlen - 1] != 0x00) || (p1 == 0xaf && result[resultlen - 1] != 0xaf)))
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "decipherData failed.");
+
+		return std::vector<unsigned char>(result, result + resultlen - 2);
+	 }
+
+	 std::vector<unsigned char> SAMAV2ISO7816Commands::encipherData(std::vector<unsigned char> data, bool islastdata)
+	 {
+		 unsigned char result[255];
+		size_t resultlen = sizeof(result);
+		unsigned char p1 = 0x00;
+
+		if (!islastdata)
+			p1 = 0xaf;
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xed, p1, 0x00, (unsigned char)(data.size()), &data[0], data.size(), 0x00, result, &resultlen);
+
+		if (resultlen >= 2 &&  result[resultlen - 2] != 0x90 &&
+			((p1 == 0x00 && result[resultlen - 1] != 0x00) || (p1 == 0xaf && result[resultlen - 1] != 0xaf)))
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "encipherData failed.");
+
+		return std::vector<unsigned char>(result, result + resultlen - 2);
+	 }
+
 }
