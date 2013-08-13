@@ -665,10 +665,10 @@ namespace logicalaccess
 			for (unsigned char i = 0; i < 8; i++)
 			{
 				keyversioned[7 - i] = (unsigned char)((unsigned char)(keydiv[7 - i] & 0xFE) | (unsigned char)((version >> i) & 0x01));
-				keyversioned[i + 8] = ((unsigned char)(keydiv[i + 8] & 0xFE));
+				keyversioned[15 - i] = (unsigned char)((unsigned char)(keydiv[15 - i] & 0xFE) | (unsigned char)((version >> i) & 0x01));
 				if (key->getLength() == 24)
 				{
-					keyversioned[i + 16] = ((unsigned char)(keydiv[i + 16] & 0xFE));
+					keyversioned[23 - i] = (unsigned char)((unsigned char)(keydiv[23 - i] & 0xFE) | (unsigned char)((version >> i) & 0x01));
 				}
 			}
 			keydiv.clear();
