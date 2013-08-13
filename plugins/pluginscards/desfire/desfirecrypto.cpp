@@ -319,8 +319,21 @@ namespace logicalaccess
 
 		std::vector<unsigned char> ret;
 
+		bool is3des = false;
+		if (memcmp(&key[0], &key[8], 8))
+		{
+			is3des = true;
+		}
+
 		// Set encryption keys
-		des3_setup(&key[0], 16, 0, &skey);
+		if (is3des)
+		{
+			des3_setup(&key[0], 16, 0, &skey);
+		}
+		else
+		{
+			des_setup(&key[0], 8, 0, &skey);
+		}
 
 		// clear buffers
 		memset(in, 0x00, 8);
@@ -333,8 +346,14 @@ namespace logicalaccess
 			// copy 8 bytes from input buffer to in
 			memcpy(in, &data[i*8], 8);
 			
-			// 3DES encryption
-			des3_ecb_decrypt(in, out, &skey);
+			if (is3des)
+			{
+				des3_ecb_decrypt(in, out, &skey);
+			}
+			else
+			{
+				des_ecb_decrypt(in, out, &skey);
+			}
 
 			if (i == 0)
 			{
@@ -360,7 +379,14 @@ namespace logicalaccess
 			ret.insert(ret.end(), out, out + 8);
 		}
 
-		des3_done(&skey);
+		if (is3des)
+		{
+			des3_done(&skey);
+		}
+		else
+		{
+			des_done(&skey);
+		}
 
 		return ret;
 	}
@@ -380,7 +406,21 @@ namespace logicalaccess
 
 		std::vector<unsigned char> ret;
 
-		des3_setup(&key[0], 16, 0, &skey);
+		bool is3des = false;
+		if (memcmp(&key[0], &key[8], 8))
+		{
+			is3des = true;
+		}
+
+		// Set encryption keys
+		if (is3des)
+		{
+			des3_setup(&key[0], 16, 0, &skey);
+		}
+		else
+		{
+			des_setup(&key[0], 8, 0, &skey);
+		}
 
 		// clear buffers
 		memset(in, 0x00, 8);
@@ -410,14 +450,27 @@ namespace logicalaccess
 				}
 			}
 			
-			// 3DES encryption
-			des3_ecb_encrypt(in, out, &skey);
+			if (is3des)
+			{
+				des3_ecb_encrypt(in, out, &skey);
+			}
+			else
+			{
+				des_ecb_encrypt(in, out, &skey);
+			}
 
 			// copy encrypted block to output
 			ret.insert(ret.end(), out, out + 8);
 		}
 
-		des3_done(&skey);
+		if (is3des)
+		{
+			des3_done(&skey);
+		}
+		else
+		{
+			des_done(&skey);
+		}
 
 		return ret;
 	}
