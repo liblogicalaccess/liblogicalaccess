@@ -891,7 +891,6 @@ namespace logicalaccess
 		d_sessionKey.clear();		
 		d_profile->getKey(d_currentAid, keyno, diversify, d_authkey);
 		d_cipher.reset(new openssl::AESCipher());
-				d_cipher.reset(new openssl::AESCipher());
 		openssl::AESSymmetricKey aeskey = openssl::AESSymmetricKey::createFromData(d_authkey);
 		openssl::AESInitializationVector iv = openssl::AESInitializationVector::createNull();
 		d_rndB.clear();		
