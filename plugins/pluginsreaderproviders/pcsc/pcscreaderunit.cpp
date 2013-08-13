@@ -621,22 +621,7 @@ namespace logicalaccess
 				}
 
 				if (d_insertedChip->getGenericCardType() == "DESFire")
-				{
-					//No need to check if using SAM because it is already done on SAMDESfireCrypto function by checking the keystorage type
-					boost::shared_ptr<DESFireISO7816Commands> desfirecommand = boost::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands()); 
-
-					if (!desfirecommand->getCrypto())
-					{
-						boost::shared_ptr<DESFireCrypto> crypto(new DESFireCrypto());
-						desfirecommand->setCrypto(crypto);
-						if (desfirecommand->getSAMChip())
-						{
-							boost::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
-							boost::dynamic_pointer_cast<SAMAV2ISO7816Commands>(desfirecommand->getSAMChip()->getCommands())->setCrypto(samcrypto);
-						}
-						boost::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->getCrypto()->setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(d_insertedChip->getProfile()), d_insertedChip->getChipIdentifier());
-					}
-				}
+					boost::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->getCrypto()->setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(d_insertedChip->getProfile()), d_insertedChip->getChipIdentifier());
 				ret = true;
 			}
 			else
@@ -1351,6 +1336,18 @@ namespace logicalaccess
 					{
 						commands.reset(new MifarePlusSpringCardCommandsSL3());
 					}
+				}
+			}
+
+			if (type == "DESFire" || type == "DESFireEV1")
+			{
+				boost::shared_ptr<DESFireISO7816Commands> dcmd = boost::dynamic_pointer_cast<DESFireISO7816Commands>(commands);
+				boost::shared_ptr<DESFireCrypto> crypto(new DESFireCrypto());
+				dcmd->setCrypto(crypto);
+				if (dcmd->getSAMChip())
+				{
+					boost::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
+					boost::dynamic_pointer_cast<SAMAV2ISO7816Commands>(dcmd->getSAMChip()->getCommands())->setCrypto(samcrypto);
 				}
 			}
 
