@@ -179,7 +179,7 @@ namespace logicalaccess
 		memset(result, 0, sizeof(result));
 		resultlen = sizeof(result);
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xa4, 0x00, 0x00, (unsigned char)(encRndAB.size()), &encRndAB[0], encRndAB.size(), 0x00, result, &resultlen);
-		if (resultlen >= 2 &&  result[resultlen - 2] != 0x90 && result[resultlen - 1] != 0x00)
+		if (resultlen >= 2 &&  (result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0x00))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHost_AES_3K3DES P2 failed.");
 
 		std::vector<unsigned char> encRndA1(result, result + resultlen - 2);

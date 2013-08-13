@@ -398,7 +398,6 @@ namespace logicalaccess
 		iso_externalAuthenticate(algorithm, isMasterCardKey, keyno, encRPCD1RPICC1);
 		std::vector<unsigned char> encRPICC2RPCD2a = iso_internalAuthenticate(algorithm, isMasterCardKey, keyno, RPCD2, 2 * 16);
 
-
 		readercardadapter->sendAPDUCommand(0x80, 0x8e, 0x00, 0x00, (unsigned char)(encRPICC2RPCD2a.size()), &encRPICC2RPCD2a[0], encRPICC2RPCD2a.size(), apduresult, &apduresultlen);
 		if (apduresultlen <= 2 && apduresult[apduresultlen - 2] != 0x90 && apduresult[apduresultlen - 2] != 0x00)
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam_iso_authenticate P2 failed.");

@@ -891,7 +891,6 @@ namespace logicalaccess
 		d_sessionKey.clear();		
 		d_profile->getKey(d_currentAid, keyno, diversify, d_authkey);
 		d_cipher.reset(new openssl::AESCipher());
-				d_cipher.reset(new openssl::AESCipher());
 		openssl::AESSymmetricKey aeskey = openssl::AESSymmetricKey::createFromData(d_authkey);
 		openssl::AESInitializationVector iv = openssl::AESInitializationVector::createNull();
 		d_rndB.clear();		
@@ -1134,8 +1133,6 @@ namespace logicalaccess
 			isokey.reset(new openssl::DESSymmetricKey(openssl::DESSymmetricKey::createFromData(key)));
 			iv.reset(new openssl::DESInitializationVector(openssl::DESInitializationVector::createFromData(d_lastIV)));
 		}
-
-		//INFO_("FUCK: key: %s - iv: %s - blocksize: %d", BufferHelper::getHex(key).c_str(), BufferHelper::getHex(d_lastIV).c_str(), d_block_size);
 
 		cipher->decipher(data, decdata, *isokey, *iv, false);
 		if (cipher == d_cipher)
