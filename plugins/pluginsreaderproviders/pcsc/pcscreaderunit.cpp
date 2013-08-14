@@ -749,16 +749,12 @@ namespace logicalaccess
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "No SAM detected on the reader");
 
 				ret->connect();
-				std::cout << "Config: " << getPCSCConfiguration()->getSAMType() << std::endl;
-				std::cout << "CardType Detected: " << ret->getSingleChip()->getCardType() << std::endl;
-				std::cout << "CardType Get From SAM: " << boost::dynamic_pointer_cast<SAMCommands>(ret->getSingleChip()->getCommands())->getSAMTypeFromSAM()  << std::endl;
-
 
 				//No Backward AV2 => AV1
 				if (getPCSCConfiguration()->getSAMType() == "SAM_AV2" && ret->getSingleChip()->getCardType() != "SAM_AV1")
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM on the reader is not the same type as selected.");
 				//Check Backward AV1 => AV2 is active
-				if (ret->getSingleChip()->getCardType() == "SAM_AV2" && getPCSCConfiguration()->getSAMType() != boost::dynamic_pointer_cast<SAMCommands>(ret->getSingleChip()->getCommands())->getSAMTypeFromSAM())
+				if (getPCSCConfiguration()->getSAMType() != "SAM_AUTO" && ret->getSingleChip()->getCardType() == "SAM_AV2" && getPCSCConfiguration()->getSAMType() != boost::dynamic_pointer_cast<SAMCommands>(ret->getSingleChip()->getCommands())->getSAMTypeFromSAM())
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM on the reader is not the same type as selected.");
 			
 				setSAMChip(boost::dynamic_pointer_cast<SAMChip>(ret->getSingleChip())); 
