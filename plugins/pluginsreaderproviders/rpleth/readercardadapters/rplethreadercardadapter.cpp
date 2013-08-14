@@ -34,12 +34,19 @@ namespace logicalaccess
 	{
 		COM_("Send Rpleth Command : %s", BufferHelper::getHex(data).c_str());
 		std::vector<unsigned char> res;
+
 		boost::shared_ptr<RplethDataTransport> dt = boost::dynamic_pointer_cast<RplethDataTransport>(getDataTransport());
 		if (dt)
 		{
 			if (adaptCommand(data).size() > 0)
+			{
 				dt->sendll(adaptCommand(data));
+			}
 			res = adaptAnswer(dt->receive(timeout));
+		}
+		else
+		{
+			ERROR_SIMPLE_("Not a Rpleth data transport.");
 		}
 
 		return res;

@@ -44,7 +44,6 @@ namespace logicalaccess
 		std::vector<unsigned char> cmd;
 		cmd.insert (cmd.end(), data.begin(), data.end());
 		cmd.push_back (calcChecksum(cmd));
-
 		TcpDataTransport::send(cmd);
 	}
 
@@ -62,7 +61,11 @@ namespace logicalaccess
 
 	std::vector<unsigned char> RplethDataTransport::receive(long int timeout)
 	{
-		timeout = 2000;
+		// Force timeout minimum
+		if (timeout < 2000)
+		{
+			timeout = 2000;
+		}
 		INFO_("Receiving... %d", timeout);
 		std::vector<unsigned char> buf;
 		if (d_trashedData.size() > 0)
@@ -131,7 +134,7 @@ namespace logicalaccess
 
 		EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x01, std::invalid_argument, "The supplied answer buffer get the state : Command failure");
 		EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x02, std::invalid_argument, "The supplied answer buffer get the state : Bad checksum in command");
-		EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x03, std::invalid_argument, "The supplied answer buffer get the state : Timeout");
+		EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x03, LibLogicalAccessException, "The supplied answer buffer get the state : Timeout");
 		EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x04, std::invalid_argument, "The supplied answer buffer get the state : Bad size of command");
 		EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x05, std::invalid_argument, "The supplied answer buffer get the state : Bad device in command");
 		EXCEPTION_ASSERT_WITH_LOG(buf[0] == 0x00, std::invalid_argument, "The supplied answer buffer is corrupted");
