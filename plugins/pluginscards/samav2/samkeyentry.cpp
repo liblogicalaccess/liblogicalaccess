@@ -4,13 +4,13 @@
  * \brief DESFire Key.
  */
 
-#include "samav2keyentry.hpp"
+#include "samkeyentry.hpp"
 
 namespace logicalaccess
 {
-	SAMAV2KeyEntry::SAMAV2KeyEntry() : d_updatemask(0)
+	SAMKeyEntry::SAMKeyEntry() : d_updatemask(0)
 	{
-		d_keyType = SAMAV2_KEY_DES;
+		d_keyType = SAM_KEY_DES;
 		d_key.reset(new unsigned char[getLength()]);
 		memset(&*d_key, 0, getLength());
 		d_diversify = false;
@@ -20,9 +20,9 @@ namespace logicalaccess
 		memset(d_keyentryinformation->set, 0 , 2);
 	}
 
-	SAMAV2KeyEntry::SAMAV2KeyEntry(const std::string& str, const std::string& str1, const std::string& str2) : d_updatemask(0)
+	SAMKeyEntry::SAMKeyEntry(const std::string& str, const std::string& str1, const std::string& str2) : d_updatemask(0)
 	{
-		d_keyType = SAMAV2_KEY_DES;
+		d_keyType = SAM_KEY_DES;
 		d_key.reset(new unsigned char[getLength()]);
 		memset(&*d_key, 0, getLength());
 		d_diversify = false;
@@ -32,9 +32,9 @@ namespace logicalaccess
 		memset(d_keyentryinformation->set, 0 , 2);
 	}
 
-	SAMAV2KeyEntry::SAMAV2KeyEntry(const void** buf, size_t buflen, char numberkey) : d_updatemask(0)
+	SAMKeyEntry::SAMKeyEntry(const void** buf, size_t buflen, char numberkey) : d_updatemask(0)
 	{
-		d_keyType = SAMAV2_KEY_DES;
+		d_keyType = SAM_KEY_DES;
 		d_key.reset(new unsigned char[getLength()]);
 		memset(&*d_key, 0, getLength());
 		d_diversify = false;
@@ -65,57 +65,57 @@ namespace logicalaccess
 		}
 	}
 
-	size_t SAMAV2KeyEntry::getSingleLength() const
+	size_t SAMKeyEntry::getSingleLength() const
 	{
 		size_t length = 0;
 
 		switch (d_keyType)
 		{
-		case SAMAV2_KEY_DES:
-			length = SAMAV2_DES_KEY_SIZE;
+		case SAM_KEY_DES:
+			length = SAM_DES_KEY_SIZE;
 			break;
 
-		case SAMAV2_KEY_3K3DES:
-			length = SAMAV2_MAXKEY_SIZE;
+		case SAM_KEY_3K3DES:
+			length = SAM_MAXKEY_SIZE;
 			break;
 
-		case SAMAV2_KEY_AES:
-			length = SAMAV2_AES_KEY_SIZE;
+		case SAM_KEY_AES:
+			length = SAM_AES_KEY_SIZE;
 			break;
 		}
 
 		return length;
 	}
 
-	size_t SAMAV2KeyEntry::getLength() const
+	size_t SAMKeyEntry::getLength() const
 	{
 		size_t length = 0;
 
 		switch (d_keyType)
 		{
-		case SAMAV2_KEY_DES:
-			length = SAMAV2_DES_KEY_SIZE * 3;
+		case SAM_KEY_DES:
+			length = SAM_DES_KEY_SIZE * 3;
 			break;
 
-		case SAMAV2_KEY_3K3DES:
-			length = SAMAV2_MAXKEY_SIZE * 2;
+		case SAM_KEY_3K3DES:
+			length = SAM_MAXKEY_SIZE * 2;
 			break;
 
-		case SAMAV2_KEY_AES:
-			length = SAMAV2_AES_KEY_SIZE * 3;
+		case SAM_KEY_AES:
+			length = SAM_AES_KEY_SIZE * 3;
 			break;
 		}
 
 		return length;
 	}
 
-	unsigned char** SAMAV2KeyEntry::getKey()
+	unsigned char** SAMKeyEntry::getKey()
 	{
 		unsigned char **keys;
 		size_t keysize = getSingleLength();
 		unsigned char keynb = 3;
 
-		if (d_keyType == SAMAV2_MAXKEY_SIZE)
+		if (d_keyType == SAM_MAXKEY_SIZE)
 		{
 			keynb = 2;
 			keys = new unsigned char*[2];
@@ -131,23 +131,23 @@ namespace logicalaccess
 		return keys;
 	}
 
-	void		SAMAV2KeyEntry::setKeyTypeFromSET()
+	void		SAMKeyEntry::setKeyTypeFromSET()
 	{
 		char keytype = 0x1c & d_keyentryinformation->set[1];
 		size_t oldsize = getLength();
 
 		switch (keytype)
 		{
-		case SAMAV2_KEY_DES:
-			d_keyType = SAMAV2_KEY_DES;
+		case SAM_KEY_DES:
+			d_keyType = SAM_KEY_DES;
 			break;
 
-		case SAMAV2_KEY_3K3DES:
-			d_keyType = SAMAV2_KEY_3K3DES;
+		case SAM_KEY_3K3DES:
+			d_keyType = SAM_KEY_3K3DES;
 			break;
 
-		case SAMAV2_KEY_AES:
-			d_keyType = SAMAV2_KEY_AES;
+		case SAM_KEY_AES:
+			d_keyType = SAM_KEY_AES;
 			break;
 		}
 
@@ -158,7 +158,7 @@ namespace logicalaccess
 		d_key.reset(tmp);
 	}
 
-	void SAMAV2KeyEntry::serialize(boost::property_tree::ptree& parentNode)
+	void SAMKeyEntry::serialize(boost::property_tree::ptree& parentNode)
 	{
 		boost::property_tree::ptree node;
 
@@ -168,18 +168,18 @@ namespace logicalaccess
 		parentNode.add_child(getDefaultXmlNodeName(), node);
 	}
 
-	void SAMAV2KeyEntry::unSerialize(boost::property_tree::ptree& node)
+	void SAMKeyEntry::unSerialize(boost::property_tree::ptree& node)
 	{
-		d_keyType = static_cast<SAMAV2KeyType>(node.get_child("KeyType").get_value<unsigned int>());
+		d_keyType = static_cast<SAMKeyType>(node.get_child("KeyType").get_value<unsigned int>());
 		d_diversify = node.get_child("Diversify").get_value<bool>();
 	}
 
-	std::string SAMAV2KeyEntry::getDefaultXmlNodeName() const
+	std::string SAMKeyEntry::getDefaultXmlNodeName() const
 	{
-		return "SAMAV2KeyEntry";
+		return "SAMKeyEntry";
 	}
 
-	bool SAMAV2KeyEntry::operator==(const SAMAV2KeyEntry& key) const
+	bool SAMKeyEntry::operator==(const SAMKeyEntry& key) const
 	{
 		if (d_keyType != key.d_keyType)
 		{
@@ -192,17 +192,17 @@ namespace logicalaccess
 		return true;
 	}
 
-	std::string SAMAV2KeyEntry::SAMAV2KeyEntryTypeStr(SAMAV2KeyType t)
+	std::string SAMKeyEntry::SAMKeyEntryTypeStr(SAMKeyType t)
 	{
 		switch (t) {
-			case SAMAV2_KEY_DES: return "SAMAV2_KEY_DES";
-			case SAMAV2_KEY_3K3DES: return "SAMAV2_KEY_3K3DES";
-			case SAMAV2_KEY_AES: return "SAMAV2_KEY_AES";
+			case SAM_KEY_DES: return "SAM_KEY_DES";
+			case SAM_KEY_3K3DES: return "SAM_KEY_3K3DES";
+			case SAM_KEY_AES: return "SAM_KEY_AES";
 			default: return "Unknown";
 		}
 	}
 
-	boost::shared_ptr<KeyEntryUpdateSettings> SAMAV2KeyEntry::getUpdateSettings()
+	boost::shared_ptr<KeyEntryUpdateSettings> SAMKeyEntry::getUpdateSettings()
 	{
 		KeyEntryUpdateSettings *settings = new KeyEntryUpdateSettings;
 
@@ -219,7 +219,7 @@ namespace logicalaccess
 		return boost::shared_ptr<KeyEntryUpdateSettings>(settings);
 	}
 
-	void SAMAV2KeyEntry::setUpdateSettings(boost::shared_ptr<KeyEntryUpdateSettings> t)
+	void SAMKeyEntry::setUpdateSettings(boost::shared_ptr<KeyEntryUpdateSettings> t)
 	{
 		bool *x = (bool*)&*t;
 		d_updatemask = 0;
@@ -231,7 +231,7 @@ namespace logicalaccess
 		}
 	}
 
-	boost::shared_ptr<SET> SAMAV2KeyEntry::getSETStruct()
+	boost::shared_ptr<SET> SAMKeyEntry::getSETStruct()
 	{
 		SET *set = new SET;
 		bool *x = (bool*)set;
@@ -250,7 +250,7 @@ namespace logicalaccess
 		return boost::shared_ptr<SET>(set);
 	}
 
-	void SAMAV2KeyEntry::setSET(SET t)
+	void SAMKeyEntry::setSET(SET t)
 	{
 		bool *x = (bool*)&t;
 		memset(d_keyentryinformation->set, 0, 2);

@@ -4,8 +4,8 @@
  * \brief DESFire key.
  */
 
-#ifndef LOGICALACCESS_SAMAV2KUCENTRY_HPP
-#define LOGICALACCESS_SAMAV2KUCENTRY_HPP
+#ifndef LOGICALACCESS_SAMKUCENTRY_HPP
+#define LOGICALACCESS_SAMKUCENTRY_HPP
 
 #include "logicalaccess/key.hpp"
 
@@ -20,31 +20,31 @@ namespace logicalaccess
 	}				KucEntryUpdateSettings;
 
 
-	typedef struct s_SAMAV2KUCEntry
+	typedef struct s_SAMKUCEntry
 	{
 		unsigned char	limit[4];
 		unsigned char	keynockuc;
 		unsigned char	keyvckuc;
 		unsigned char	curval[4];
-	}				SAMAV2KUCEntryStruct;
+	}				SAMKUCEntryStruct;
 
 	/**
 	 * \brief A DESFire Key class.
 	 */
-	class LIBLOGICALACCESS_API SAMAV2KucEntry
+	class LIBLOGICALACCESS_API SAMKucEntry
 	{
 		public:
 
 			/**
 			 * \brief Build an empty DESFire key.
 			 */
-			SAMAV2KucEntry() : d_updatemask(0), d_kucentry(new SAMAV2KUCEntryStruct) { memset(&*d_kucentry, 0, sizeof(SAMAV2KUCEntryStruct)); };
+			SAMKucEntry() : d_updatemask(0), d_kucentry(new SAMKUCEntryStruct) { memset(&*d_kucentry, 0, sizeof(SAMKUCEntryStruct)); };
 
 			/**
 			 * \brief Build a DESFire key given a string representation of it.
 			 * \param str The string representation.
 			 */
-			SAMAV2KucEntry(boost::shared_ptr<SAMAV2KUCEntryStruct> k) : d_updatemask(0), d_kucentry(k) {};
+			SAMKucEntry(boost::shared_ptr<SAMKUCEntryStruct> k) : d_updatemask(0), d_kucentry(k) {};
 
 			unsigned char	getUpdateMask() { return d_updatemask; };
 			void			setUpdateMask(unsigned char c) { d_updatemask = c; };
@@ -52,14 +52,14 @@ namespace logicalaccess
 			boost::shared_ptr<KucEntryUpdateSettings> getUpdateSettings();
 			void	setUpdateSettings(boost::shared_ptr<KucEntryUpdateSettings> t);
 
-			boost::shared_ptr<SAMAV2KUCEntryStruct> getKucEntryStruct() { return d_kucentry; };
-			void									setKucEntryStruct(boost::shared_ptr<SAMAV2KUCEntryStruct> t) { d_kucentry = t; };
+			boost::shared_ptr<SAMKUCEntryStruct> getKucEntryStruct() { return d_kucentry; };
+			void									setKucEntryStruct(boost::shared_ptr<SAMKUCEntryStruct> t) { d_kucentry = t; };
 
 	private:
 
 			unsigned char d_updatemask;
 
-			boost::shared_ptr<SAMAV2KUCEntryStruct> d_kucentry;
+			boost::shared_ptr<SAMKUCEntryStruct> d_kucentry;
 	};
 }
 

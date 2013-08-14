@@ -4,8 +4,8 @@
  * \brief DESFire key.
  */
 
-#ifndef LOGICALACCESS_SAMAV2KEYENTRY_HPP
-#define LOGICALACCESS_SAMAV2KEYENTRY_HPP
+#ifndef LOGICALACCESS_SAMKEYENTRY_HPP
+#define LOGICALACCESS_SAMKEYENTRY_HPP
 
 #include "logicalaccess/key.hpp"
 
@@ -13,17 +13,17 @@
 /**
  * \brief The SAM DES key size
  */
-#define SAMAV2_DES_KEY_SIZE 16
+#define SAM_DES_KEY_SIZE 16
 
 /**
  * \brief The SAM AES key size
  */
-#define SAMAV2_AES_KEY_SIZE 16
+#define SAM_AES_KEY_SIZE 16
 
 /**
  * \brief The SAM max key size
  */
-#define SAMAV2_MAXKEY_SIZE 24
+#define SAM_MAXKEY_SIZE 24
 
 namespace logicalaccess
 {
@@ -32,10 +32,10 @@ namespace logicalaccess
 	 */
 	typedef enum 
 	{
-		SAMAV2_KEY_DES = 0x00,
-		SAMAV2_KEY_3K3DES = 0x0c,
-		SAMAV2_KEY_AES = 0x10
-	}				SAMAV2KeyType;
+		SAM_KEY_DES = 0x00,
+		SAM_KEY_3K3DES = 0x0c,
+		SAM_KEY_AES = 0x10
+	}				SAMKeyType;
 
 	typedef struct  s_KeyEntryUpdateSettings
 	{
@@ -82,27 +82,27 @@ namespace logicalaccess
 	/**
 	 * \brief A DESFire Key class.
 	 */
-	class LIBLOGICALACCESS_API SAMAV2KeyEntry
+	class LIBLOGICALACCESS_API SAMKeyEntry
 	{
 		public:
 
 			/**
 			 * \brief Build an empty DESFire key.
 			 */
-			SAMAV2KeyEntry();
+			SAMKeyEntry();
 
 			/**
 			 * \brief Build a DESFire key given a string representation of it.
 			 * \param str The string representation.
 			 */
-			SAMAV2KeyEntry(const std::string& str, const std::string& str1 = "", const std::string& str2 = "");
+			SAMKeyEntry(const std::string& str, const std::string& str1 = "", const std::string& str2 = "");
 
 			/**
 			 * \brief Build a DESFire key given a buffer.
 			 * \param buf The buffer.
 			 * \param buflen The buffer length.
 			 */
-			SAMAV2KeyEntry(const void** buf, size_t buflen, char numberkey);
+			SAMKeyEntry(const void** buf, size_t buflen, char numberkey);
 
 			/**
 			 * \brief Get the key length.
@@ -138,13 +138,13 @@ namespace logicalaccess
 			 * \brief Set the key type.
 			 * \param keyType The key type.
 			 */
-			void setKeyType(SAMAV2KeyType keyType) { d_keyType = keyType; };
+			void setKeyType(SAMKeyType keyType) { d_keyType = keyType; };
 
 			/**
 			 * \brief Get the key type.
 			 * \return The key type.
 			 */
-			SAMAV2KeyType getKeyType() const { return d_keyType; };
+			SAMKeyType getKeyType() const { return d_keyType; };
 
 			/**
 			 * \brief Serialize the current object to XML.
@@ -169,22 +169,22 @@ namespace logicalaccess
 			 * \param ai DESFire key to compare.
 			 * \return True if equals, false otherwise.
 			 */
-			virtual bool operator==(const SAMAV2KeyEntry& key) const;
+			virtual bool operator==(const SAMKeyEntry& key) const;
 
 			/**
 			 * \brief Inequality operator
 			 * \param ai DESFire key to compare.
 			 * \return True if inequals, false otherwise.
 			 */
-			inline bool operator!=(const SAMAV2KeyEntry& key) const { return !operator==(key); };
+			inline bool operator!=(const SAMKeyEntry& key) const { return !operator==(key); };
 
 			/**
 			 * \brief Get the DESFire Key Type in string format.
 			 * \return The key type in string.
 			 */
-			static std::string SAMAV2KeyEntryTypeStr(SAMAV2KeyType t);
+			static std::string SAMKeyEntryTypeStr(SAMKeyType t);
 
-			size_t SAMAV2KeyEntry::getSingleLength() const;
+			size_t SAMKeyEntry::getSingleLength() const;
 
 			void	setSET(SET t);
 			void	setSET(unsigned char *t) { memcpy(d_keyentryinformation->set, t, sizeof(*t)); };
@@ -215,7 +215,7 @@ namespace logicalaccess
 			/**
 			 * \brief The DESFire key type.
 			 */
-			SAMAV2KeyType d_keyType;
+			SAMKeyType d_keyType;
 
 			unsigned char d_updatemask;
 

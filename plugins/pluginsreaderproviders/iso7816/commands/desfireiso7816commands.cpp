@@ -6,7 +6,7 @@
 
 #include "../commands/desfireiso7816commands.hpp"
 #include "desfirechip.hpp"
-#include "samav2iso7816commands.hpp"
+#include "samav1iso7816commands.hpp"
 #include "logicalaccess/cards/samkeystorage.hpp"
 
 #include <cstring>
@@ -98,7 +98,7 @@ namespace logicalaccess
 
 		if (getSAMChip())
 		{
-			boost::shared_ptr<SAMAV2Commands> samav2commands = boost::dynamic_pointer_cast<SAMAV2Commands>(getSAMChip()->getCommands());
+			boost::shared_ptr<SAMCommands> samcommands = boost::dynamic_pointer_cast<SAMCommands>(getSAMChip()->getCommands());
 			unsigned char t_aid[3] = {};
 			int saveaid = aid;
 			for (char x = 2; x >= 0; --x)
@@ -106,7 +106,7 @@ namespace logicalaccess
 				t_aid[x] = saveaid & 0xff;
 				saveaid >>= 8;
 			}
-			samav2commands->selectApplication(t_aid);
+			samcommands->selectApplication(t_aid);
 		}
 
 		d_crypto->selectApplication(aid);
@@ -790,6 +790,10 @@ namespace logicalaccess
 		unsigned char command[16];
 
 		boost::shared_ptr<DESFireKey> key = d_crypto->getKey(keyno);
+
+		if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()) && !getSAMChip())
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAMKeyStorage set on the key but not SAM reader has been set.");
+
 		bool r = false;
 		unsigned char diversify[16];
 		if (d_crypto->getDiversify(diversify))
@@ -803,8 +807,8 @@ namespace logicalaccess
 
 				if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
 				{
-					boost::shared_ptr<SAMAV2Commands> samav2commands = boost::dynamic_pointer_cast<SAMAV2Commands>(getSAMChip()->getCommands());
-					boost::shared_ptr<ISO7816ReaderCardAdapter> readercardadapter = boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(samav2commands->getReaderCardAdapter());
+					boost::shared_ptr<SAMCommands> samcommands = boost::dynamic_pointer_cast<SAMCommands>(getSAMChip()->getCommands());
+					boost::shared_ptr<ISO7816ReaderCardAdapter> readercardadapter = boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(samcommands->getReaderCardAdapter());
 
 					unsigned char apduresult[255];
 					size_t apduresultlen = sizeof(apduresult);
@@ -831,8 +835,8 @@ namespace logicalaccess
 					
 					if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
 					{
-						boost::shared_ptr<SAMAV2Commands> samav2commands = boost::dynamic_pointer_cast<SAMAV2Commands>(getSAMChip()->getCommands());
-						boost::shared_ptr<ISO7816ReaderCardAdapter> readercardadapter = boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(samav2commands->getReaderCardAdapter());
+						boost::shared_ptr<SAMCommands> samcommands = boost::dynamic_pointer_cast<SAMCommands>(getSAMChip()->getCommands());
+						boost::shared_ptr<ISO7816ReaderCardAdapter> readercardadapter = boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(samcommands->getReaderCardAdapter());
 
 						unsigned char apduresult[255];
 						size_t apduresultlen = sizeof(apduresult);
@@ -842,7 +846,7 @@ namespace logicalaccess
 
 						if (apduresultlen != 2 || apduresult[0] != 0x90 || apduresult[1] != 0x00)
 							THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam authenticate DES P2 failed.");
-						d_crypto->d_sessionKey = samav2commands->dumpSessionKey();
+						d_crypto->d_sessionKey = samcommands->dumpSessionKey();
 					}
 					else
 						d_crypto->authenticate_PICC2(keyno, result);

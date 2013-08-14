@@ -345,6 +345,10 @@ namespace logicalaccess
 		
 		boost::shared_ptr<DESFireKey> key = d_crypto->getKey(keyno);
 
+		if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()) && !getSAMChip())
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAMKeyStorage set on the key but not SAM reader has been set.");
+
+
 		if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()) && key->getKeyType() != DF_KEY_DES)
 		{
 			if (key->getKeyType() == DF_KEY_3K3DES)
@@ -376,8 +380,8 @@ namespace logicalaccess
 
 	void DESFireEV1ISO7816Commands::sam_iso_authenticate(boost::shared_ptr<DESFireKey> key, DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno)
 	{
-		boost::shared_ptr<SAMAV2Commands> samav2commands = boost::dynamic_pointer_cast<SAMAV2Commands>(getSAMChip()->getCommands());
-		boost::shared_ptr<ISO7816ReaderCardAdapter> readercardadapter = boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(samav2commands->getReaderCardAdapter());
+		boost::shared_ptr<SAMCommands> samcommands = boost::dynamic_pointer_cast<SAMCommands>(getSAMChip()->getCommands());
+		boost::shared_ptr<ISO7816ReaderCardAdapter> readercardadapter = boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(samcommands->getReaderCardAdapter());
 		unsigned char apduresult[255];
 		size_t apduresultlen = sizeof(apduresult);
 
@@ -403,7 +407,8 @@ namespace logicalaccess
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam_iso_authenticate P2 failed.");
 
 		d_crypto->d_currentKeyNo = keyno;
-		d_crypto->d_sessionKey = samav2commands->dumpSessionKey();
+		d_crypto->d_sessionKey = samcommands->dumpSessionKey();
+		d_crypto->d_auth_method = CM_ISO;
 
 		INFO_("Session key length: %d", d_crypto->d_sessionKey.size());
 
@@ -421,7 +426,6 @@ namespace logicalaccess
 		}
 		d_crypto->d_lastIV.clear();
 		d_crypto->d_lastIV.resize(d_crypto->d_block_size, 0x00);
-		d_crypto->d_auth_method = CM_ISO;
 	}
 
 	void DESFireEV1ISO7816Commands::iso_authenticate(boost::shared_ptr<DESFireKey> key, DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno)

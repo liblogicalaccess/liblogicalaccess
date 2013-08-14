@@ -8,7 +8,7 @@
 #define LOGICALACCESS_SAMCHIP_HPP
 
 #include "logicalaccess/cards/chip.hpp"
-#include "samav2commands.hpp"
+#include "samcommands.hpp"
 
 
 namespace logicalaccess

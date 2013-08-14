@@ -17,6 +17,7 @@
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
 
+#include "commands/samav1iso7816commands.hpp"
 #include "commands/samav2iso7816commands.hpp"
 #include "commands/desfireev1iso7816commands.hpp"
 #include "commands/mifarepcsccommands.hpp"
@@ -33,7 +34,7 @@
 #include "commands/mifareplusspringcardcommandssl1.hpp"
 #include "mifareplussl3profile.hpp"
 #include "commands/mifareplusspringcardcommandssl3.hpp"
-#include "samav2chip.hpp"
+#include "samav1chip.hpp"
 
 #include "readers/omnikeyxx21readerunit.hpp"
 #include "readers/omnikeyxx25readerunit.hpp"
@@ -748,17 +749,18 @@ namespace logicalaccess
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "No SAM detected on the reader");
 
 				ret->connect();
+				std::cout << "Config: " << getPCSCConfiguration()->getSAMType() << std::endl;
+				std::cout << "CardType Detected: " << ret->getSingleChip()->getCardType() << std::endl;
+				std::cout << "CardType Get From SAM: " << boost::dynamic_pointer_cast<SAMCommands>(ret->getSingleChip()->getCommands())->getSAMTypeFromSAM()  << std::endl;
 
-				if (getPCSCConfiguration()->getSAMType() != "SAM_AUTO" && ret->getSingleChip()->getCardType() != getPCSCConfiguration()->getSAMType()
-					&& (ret->getSingleChip()->getCardType() == "SAM_AV1"
-					|| (ret->getSingleChip()->getCardType() == "SAM_AV2"
-					&& getPCSCConfiguration()->getSAMType() != boost::dynamic_pointer_cast<SAMAV2Commands>(ret->getSingleChip()->getCommands())->getSAMTypeFromSAM())))
+
+				//No Backward AV2 => AV1
+				if (getPCSCConfiguration()->getSAMType() == "SAM_AV2" && ret->getSingleChip()->getCardType() != "SAM_AV1")
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM on the reader is not the same type as selected.");
+				//Check Backward AV1 => AV2 is active
+				if (ret->getSingleChip()->getCardType() == "SAM_AV2" && getPCSCConfiguration()->getSAMType() != boost::dynamic_pointer_cast<SAMCommands>(ret->getSingleChip()->getCommands())->getSAMTypeFromSAM())
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM on the reader is not the same type as selected.");
 			
-				//If SAM_AUTO and SAM_AV2 dected - > force GetSAMTypeFromSAM
-			//	if (getPCSCConfiguration()->getSAMType() == "SAM_AUTO" && boost::dynamic_pointer_cast<SAMAV2Commands>(ret->getSingleChip()->getCommands())->GetSAMTypeFromSAM() == "SAM_AV1")
-					//new Card SAM_AV1
-
 				setSAMChip(boost::dynamic_pointer_cast<SAMChip>(ret->getSingleChip())); 
 				setSAMReaderUnit(ret);
 
@@ -1311,7 +1313,7 @@ namespace logicalaccess
 			}
 			else if (type == "SAM_AV1")
 			{
-				commands.reset(new SAMAV2ISO7816Commands());
+				commands.reset(new SAMAV1ISO7816Commands());
 			}
 			else if (type == "SAM_AV2")
 			{
@@ -1347,7 +1349,7 @@ namespace logicalaccess
 				if (dcmd->getSAMChip())
 				{
 					boost::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
-					boost::dynamic_pointer_cast<SAMAV2ISO7816Commands>(dcmd->getSAMChip()->getCommands())->setCrypto(samcrypto);
+					boost::dynamic_pointer_cast<SAMAV1ISO7816Commands>(dcmd->getSAMChip()->getCommands())->setCrypto(samcrypto);
 				}
 			}
 
@@ -1425,6 +1427,7 @@ namespace logicalaccess
 	{
 		d_card_type = readerUnit->getCardType();
 		d_sam_chip = readerUnit->getSAMChip();
+		d_sam_readerunit = readerUnit->getSAMReaderUnit();
 		d_readerProvider = readerUnit->getReaderProvider();
 		if (getPCSCConfiguration()->getPCSCType() == readerUnitConfig->getPCSCType())
 		{

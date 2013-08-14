@@ -4,11 +4,11 @@
  * \brief DESFire Key.
  */
 
-#include "samav2kucentry.hpp"
+#include "samkucentry.hpp"
 
 namespace logicalaccess
 {
-	boost::shared_ptr<KucEntryUpdateSettings> SAMAV2KucEntry::getUpdateSettings()
+	boost::shared_ptr<KucEntryUpdateSettings> SAMKucEntry::getUpdateSettings()
 	{
 		KucEntryUpdateSettings *settings = new KucEntryUpdateSettings;
 
@@ -25,7 +25,7 @@ namespace logicalaccess
 		return boost::shared_ptr<KucEntryUpdateSettings>(settings);
 	}
 
-	void	SAMAV2KucEntry::setUpdateSettings(boost::shared_ptr<KucEntryUpdateSettings> t)
+	void	SAMKucEntry::setUpdateSettings(boost::shared_ptr<KucEntryUpdateSettings> t)
 	{
 		bool *x = (bool*)&*t;
 		d_updatemask = 0;
