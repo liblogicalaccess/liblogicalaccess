@@ -60,7 +60,8 @@ namespace logicalaccess
 		WAIT_REMOVAL = 0x07,
 		CONNECT = 0x08,
 		DISCONNECT = 0x09,
-		GET_READERTYPE = 0x0A
+		GET_READERTYPE = 0x0A,
+		GET_CSN = 0x0B
 	} HidCommand;
 
 	/**
@@ -296,19 +297,19 @@ namespace logicalaccess
 			 * \brief Send a reqA.
 			 * \return The answer of the card.
 			 */
-			std::vector<unsigned char> reqA ();
+			std::vector<unsigned char> reqA();
 
 			/**
 			 * \brief Send a rats.
 			 * \return The answer of the card.
 			 */
-			std::vector<unsigned char> rats ();
+			std::vector<unsigned char> rats();
 
 			std::string getProxyReaderType();
 
-		protected:
+			std::vector<unsigned char> getInsertedChipIdentifier();
 
-			boost::shared_ptr<RplethReaderCardAdapter> getRplethReaderCardAdapter() { return boost::dynamic_pointer_cast<RplethReaderCardAdapter>(getDefaultReaderCardAdapter()); };
+		protected:
 
 			/**
 			 * \brief Send a command to the reader.

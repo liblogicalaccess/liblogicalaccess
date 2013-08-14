@@ -74,6 +74,7 @@ namespace logicalaccess
 	{
 		if (d_socket)
 		{
+			INFO_("Disconnected.");
 			d_socket->close();
 			d_socket.reset();
 		}
@@ -94,7 +95,14 @@ namespace logicalaccess
 		if (data.size() > 0)
 		{
 			boost::shared_ptr<boost::asio::ip::tcp::socket> socket = getSocket();
-			socket->send(boost::asio::buffer(data));
+			if (socket->is_open())
+			{
+				socket->send(boost::asio::buffer(data));
+			}
+			else
+			{
+				ERROR_SIMPLE_("TCP socket closed.");
+			}
 		}
 	}
 
@@ -124,6 +132,15 @@ namespace logicalaccess
 			std::vector<unsigned char> bufrcv(lenav);
 			size_t len = socket->receive(boost::asio::buffer(bufrcv));
 			res = std::vector<unsigned char>(bufrcv.begin(), bufrcv.begin() + len);
+		}
+		else
+		{
+			if (currentWait >= timeout)
+			{
+				char buf[64];
+				sprintf(buf, "Socket receive timeout (%d > %d).", currentWait, timeout);
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, buf);
+			}
 		}
 
 		return res;
