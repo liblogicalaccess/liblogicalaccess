@@ -93,7 +93,7 @@ namespace logicalaccess
 			{
 				unsigned char ctypelen = answer[0];
 				EXCEPTION_ASSERT_WITH_LOG(answer.size() >= static_cast<size_t>(1 + ctypelen + 1), LibLogicalAccessException, "Wrong card type length.");
-				std::string ctype = std::string(answer.begin(), answer.begin() + 1 + ctypelen);
+				std::string ctype = std::string(answer.begin() + 1, answer.begin() + 1 + ctypelen);
 				unsigned char csnlen = answer[1 + ctypelen];
 				EXCEPTION_ASSERT_WITH_LOG(answer.size() >= static_cast<size_t>(1 + ctypelen + 1 + csnlen), LibLogicalAccessException, "Wrong csn length.");
 				std::vector<unsigned char> csn = std::vector<unsigned char>(answer.begin() + 1 + ctypelen + 1, answer.end());
@@ -194,7 +194,7 @@ namespace logicalaccess
 		{
 			std::vector<unsigned char> command;
 			command.push_back (static_cast<unsigned char>(Device::HID));
-			command.push_back (static_cast<unsigned char>(HidCommand::DISCONNECT));
+			command.push_back (static_cast<unsigned char>(HidCommand::CONNECT));
 			command.push_back (static_cast<unsigned char>(0x00));
 			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command);
 
