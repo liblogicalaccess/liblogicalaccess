@@ -22,6 +22,8 @@
 #include "rplethledbuzzerdisplay.hpp"
 #include "rplethlcddisplay.hpp"
 #include "rplethdatatransport.hpp"
+#include "desfirechip.hpp"
+#include "commands/desfireiso7816commands.hpp"
 
 namespace logicalaccess
 {
@@ -202,6 +204,9 @@ namespace logicalaccess
 			{
 				d_insertedChip->setChipIdentifier(getInsertedChipIdentifier());
 			}
+
+			if (d_insertedChip->getGenericCardType() == "DESFire")
+					boost::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->getCrypto()->setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(d_insertedChip->getProfile()), d_insertedChip->getChipIdentifier());
 		}
 
 		return true;
