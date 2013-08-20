@@ -29,12 +29,14 @@ if (UNIX)
 LINK_DIRECTORIES(${LINK_DIRECTORIES}	${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso7816/bin
 										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire/bin
 										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816/bin
-										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2/bin)
+										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2/bin
+										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic/bin)
 else()
 LINK_DIRECTORIES(${LINK_DIRECTORIES}	${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso7816/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
 										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
 										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
-										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2/bin/${TARGET_ARCH}/${VC_FOLDER_NAME})
+										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
+										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic/bin/${TARGET_ARCH}/${VC_FOLDER_NAME})
 endif()
 
 add_library(
