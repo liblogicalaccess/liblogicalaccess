@@ -11,7 +11,7 @@ namespace logicalaccess
 	SAMKeyEntry::SAMKeyEntry() : d_updatemask(0)
 	{
 		d_keyType = SAM_KEY_DES;
-		d_key.reset(new unsigned char[getLength()]);
+		d_key = new unsigned char[getLength()];
 		memset(&*d_key, 0, getLength());
 		d_diversify = false;
 		d_updatemask = 0;
@@ -23,7 +23,7 @@ namespace logicalaccess
 	SAMKeyEntry::SAMKeyEntry(const std::string& str, const std::string& str1, const std::string& str2) : d_updatemask(0)
 	{
 		d_keyType = SAM_KEY_DES;
-		d_key.reset(new unsigned char[getLength()]);
+		d_key = new unsigned char[getLength()];
 		memset(&*d_key, 0, getLength());
 		d_diversify = false;
 		d_updatemask = 0;
@@ -35,7 +35,7 @@ namespace logicalaccess
 	SAMKeyEntry::SAMKeyEntry(const void** buf, size_t buflen, char numberkey) : d_updatemask(0)
 	{
 		d_keyType = SAM_KEY_DES;
-		d_key.reset(new unsigned char[getLength()]);
+		d_key = new unsigned char[getLength()];
 		memset(&*d_key, 0, getLength());
 		d_diversify = false;
 		d_updatemask = 0;
@@ -109,31 +109,65 @@ namespace logicalaccess
 		return length;
 	}
 
-	unsigned char** SAMKeyEntry::getKey()
+	std::vector<std::vector<unsigned char> > SAMKeyEntry::getKey()
 	{
-		unsigned char **keys;
+		std::vector<std::vector<unsigned char> > ret;
 		size_t keysize = getSingleLength();
 		unsigned char keynb = 3;
 
 		if (d_keyType == SAM_MAXKEY_SIZE)
-		{
 			keynb = 2;
-			keys = new unsigned char*[2];
-		}
-		else
-			keys = new unsigned char*[3];
 
 		for (unsigned char x = 0; x < keynb; ++x)
-		{
-			keys[x] = new unsigned char[keysize];
-			memcpy(keys[x], &*d_key + (x * keysize), keysize); 
-		}
-		return keys;
+			ret.push_back(std::vector<unsigned char>(d_key + (x * keysize), d_key + (x * keysize) + keysize));
+		return ret;
 	}
 
-	void		SAMKeyEntry::setKeyTypeFromSET()
+	void SAMKeyEntry::setKey(std::vector<std::vector<unsigned char> > keys, SAMKeyType type)
 	{
-		char keytype = 0x1c & d_keyentryinformation->set[1];
+		if (keys.size() == 0)
+			return;
+		unsigned char keynb = 3;
+		d_keyType = type;
+
+		if (d_keyType == SAM_MAXKEY_SIZE)
+			keynb = 2;
+
+		size_t keysize = getSingleLength();
+
+		delete d_key;
+		d_key = new unsigned char[getLength()];
+		for (unsigned char x = 0; x < keynb; ++x)
+		{
+			if (keys[x].size() != keysize)
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "setKey failed because key don't have all the same size.");
+			memcpy(d_key + (x * keysize), &keys[x][0], keysize);
+		}
+		setSETKeyTypeFromKeyType();
+	}
+
+	void SAMKeyEntry::setSETKeyTypeFromKeyType()
+	{
+		unsigned char test = 0x38 & d_keyentryinformation->set[0];
+		d_keyentryinformation->set[0] = d_keyentryinformation->set[0] - (0x1c & d_keyentryinformation->set[0]);
+		switch (d_keyType)
+		{
+		case SAM_KEY_DES:
+			break;
+
+		case SAM_KEY_3K3DES:
+			d_keyentryinformation->set[0] |= 0x18;
+			break;
+
+		case SAM_KEY_AES:
+			d_keyentryinformation->set[0] |= 0x20;
+			break;
+		}
+	}
+
+	void SAMKeyEntry::setKeyTypeFromSET()
+	{
+		char keytype = 0x38 & d_keyentryinformation->set[0];
 		size_t oldsize = getLength();
 
 		switch (keytype)
@@ -155,7 +189,8 @@ namespace logicalaccess
 		if (getLength() < oldsize)
 			oldsize = getLength();
 		memcpy(tmp, &*d_key, oldsize);
-		d_key.reset(tmp);
+		delete d_key;
+		d_key = tmp;
 	}
 
 	void SAMKeyEntry::serialize(boost::property_tree::ptree& parentNode)

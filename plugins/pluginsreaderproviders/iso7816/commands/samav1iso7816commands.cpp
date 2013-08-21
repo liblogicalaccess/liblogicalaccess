@@ -11,6 +11,7 @@
 #include "samcrypto.hpp"
 #include "samkeyentry.hpp"
 #include "samkucentry.hpp"
+#include "samcommands.hpp"
 #include <openssl/rand.h>
 #include "logicalaccess/crypto/symmetric_key.hpp"
 #include "logicalaccess/crypto/aes_symmetric_key.hpp"
@@ -28,11 +29,11 @@ namespace logicalaccess
 	{
 	}
 
-	void		SAMAV1ISO7816Commands::getVersion()
+	boost::shared_ptr<SAMVersion>		SAMAV1ISO7816Commands::getVersion()
 	{
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
-		SAMVersion	info;
+		boost::shared_ptr<SAMVersion>	info(new SAMVersion);
 
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0x60, 0x00, 0x00, 0x00, result, &resultlen);
 
@@ -41,20 +42,21 @@ namespace logicalaccess
 		{
 			memcpy(&info, result, sizeof(info));
 			
-			if (info.hardware.vendorid == 0x04)
+			if (info->hardware.vendorid == 0x04)
 				std::cout << "Vendor: NXP" << std::endl;
-			if (info.hardware.majorversion == 0x03)
+			if (info->hardware.majorversion == 0x03)
 				std::cout << "Major version: T1AD2060" << std::endl;
-			if (info.hardware.minorversion == 0x04)
+			if (info->hardware.minorversion == 0x04)
 				std::cout << "Major version: T1AR1070" << std::endl;
-			std::cout << "Storage size: " << (unsigned int)info.hardware.storagesize << std::endl;
-			std::cout << "Communication protocol type : " << (unsigned int)info.hardware.protocoltype << std::endl;
+			std::cout << "Storage size: " << (unsigned int)info->hardware.storagesize << std::endl;
+			std::cout << "Communication protocol type : " << (unsigned int)info->hardware.protocoltype << std::endl;
 		}
 		else
-		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "getVersion failed.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "getVersion failed.");
+		return info;
 	}
 
-	boost::shared_ptr<SAMKeyEntry>	SAMAV1ISO7816Commands::getKeyEntry(unsigned int keyno)
+	boost::shared_ptr<SAMKeyEntry>	SAMAV1ISO7816Commands::getKeyEntry(unsigned char keyno)
 	{
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
@@ -282,13 +284,13 @@ namespace logicalaccess
 		return "SAM_NONE";
 	}
 
-	 boost::shared_ptr<SAMKucEntry>		SAMAV1ISO7816Commands::getKUCEntry(unsigned int keyno)
+	 boost::shared_ptr<SAMKucEntry>		SAMAV1ISO7816Commands::getKUCEntry(unsigned char kucno)
 	 {
 		boost::shared_ptr<SAMKucEntry> kucentry(new SAMKucEntry);
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0x6c, keyno, 0x00, 0x00, result, &resultlen);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0x6c, kucno, 0x00, 0x00, result, &resultlen);
 
 		if (resultlen == 12 &&  result[resultlen - 2] == 0x90 || result[resultlen - 1] == 0x00)
 			memcpy(&*(kucentry->getKucEntryStruct()), result, sizeof(SAMKUCEntryStruct));
@@ -297,7 +299,7 @@ namespace logicalaccess
 		return kucentry;
 	 }
 	 
-	 void									SAMAV1ISO7816Commands::changeKUCEntry(unsigned char keyno, boost::shared_ptr<SAMKucEntry> keyentry, boost::shared_ptr<DESFireKey> key)
+	 void									SAMAV1ISO7816Commands::changeKUCEntry(unsigned char kucno, boost::shared_ptr<SAMKucEntry> keyentry, boost::shared_ptr<DESFireKey> key)
 	 {
 		if (d_crypto->d_sessionKey.size() == 0)
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Failed: AuthentificationHost have to be done before use such command.");
@@ -317,7 +319,7 @@ namespace logicalaccess
 
 		int proMas = keyentry->getUpdateMask();
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xcc, keyno, proMas, 0x08, &encdatalittle[0], encdatalittle.size(), result, &resultlen);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xcc, kucno, proMas, 0x08, &encdatalittle[0], encdatalittle.size(), result, &resultlen);
 
 		if (resultlen >= 2 &&  result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0x00)
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKUCEntry failed.");

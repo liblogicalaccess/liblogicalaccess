@@ -125,13 +125,18 @@ namespace logicalaccess
 			 * \brief Get the key data.
 			 * \return The key data.
 			 */
-			unsigned char** getKey();
+			std::vector<std::vector<unsigned char> > SAMKeyEntry::getKey();
+
+			/**
+			 * \brief Set the key data.
+			 */
+			void setKey(std::vector<std::vector<unsigned char> > keys, SAMKeyType type);
 
 			/**
 			 * \brief Get the key data.
 			 * \return The key data.
 			 */
-			inline boost::shared_ptr<unsigned char> getData() { return d_key; };
+			inline unsigned char *getData() { return d_key; };
 
 			/**
 			 * \brief Set if the key is diversified on the card.
@@ -212,12 +217,14 @@ namespace logicalaccess
 			void setKeyEntryInformation(boost::shared_ptr<KeyEntryInformation> t) { d_keyentryinformation = t; };
 			void setKeyTypeFromSET();
 
+			void setSETKeyTypeFromKeyType();
+
 		private:
 
 			/**
 			 * \brief The key bytes;
 			 */
-			boost::shared_ptr<unsigned char> d_key;
+			unsigned char* d_key;
 
 			/**
 			 * \brief Diversify the key on the card.

@@ -13,6 +13,7 @@
 #include "samcrypto.hpp"
 #include "samkeyentry.hpp"
 #include "samcrypto.hpp"
+#include "samcommands.hpp"
 
 #include <string>
 #include <vector>
@@ -21,36 +22,6 @@
 
 namespace logicalaccess
 {		
-
-	struct SAMManufactureInformation
-	{
-		unsigned char	uniqueserialnumber[7];
-		unsigned char	productionbatchnumber[5];
-		unsigned char	dayofproduction;
-		unsigned char	monthofproduction;
-		unsigned char	yearofproduction;
-		unsigned char	globalcryptosettings;
-		unsigned char	modecompatibility;
-	};
-
-	struct SAMVersionInformation
-	{
-		unsigned char	vendorid;
-		unsigned char	type;
-		unsigned char	subtype;
-		unsigned char	majorversion;
-		unsigned char	minorversion;
-		unsigned char	storagesize;
-		unsigned char	protocoltype;
-	};
-
-	struct SAMVersion
-	{
-		SAMVersionInformation		hardware;
-		SAMVersionInformation		software;
-		SAMManufactureInformation	manufacture;
-	};
-	
 	/**
 	 * \brief The DESFire base commands class.
 	 */
@@ -68,12 +39,12 @@ namespace logicalaccess
 			 */
 			virtual ~SAMAV1ISO7816Commands();			
 
-			virtual void getVersion();
+			virtual boost::shared_ptr<SAMVersion> getVersion();
 
-			virtual boost::shared_ptr<SAMKeyEntry> getKeyEntry(unsigned int keyno);
-			virtual boost::shared_ptr<SAMKucEntry> getKUCEntry(unsigned int keyno);
+			virtual boost::shared_ptr<SAMKeyEntry> getKeyEntry(unsigned char keyno);
+			virtual boost::shared_ptr<SAMKucEntry> getKUCEntry(unsigned char kucno);
 
-			virtual void changeKUCEntry(unsigned char keyno, boost::shared_ptr<SAMKucEntry> keyentry, boost::shared_ptr<DESFireKey> key);
+			virtual void changeKUCEntry(unsigned char kucno, boost::shared_ptr<SAMKucEntry> keyentry, boost::shared_ptr<DESFireKey> key);
 			virtual void changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry> keyentry, boost::shared_ptr<DESFireKey> key);
 
 			virtual void activeAV2Mode();
