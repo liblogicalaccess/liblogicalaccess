@@ -1,9 +1,12 @@
 #include "InputDevice.h"
+#include "islogkbdlogs.hpp"
 
 namespace KBDHOOK
 {
 	std::vector<logicalaccess::KeyboardEntry> InputDevice::getDeviceList()
 	{
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#getDeviceList# begins.");
+
 		std::vector<logicalaccess::KeyboardEntry> deviceList;
 
 		std::string root1 = "\\\\?\\Root";
@@ -18,6 +21,8 @@ namespace KBDHOOK
 			nDevices = GetRawInputDeviceList(&newlist[0], &nDevices, sizeof(RAWINPUTDEVICELIST));
 			if (nDevices > 0 )
 			{
+				islogkbdlib::KbdLogs::getInstance()->LogEvent("#getDeviceList# {%u} device(s) detected.", nDevices);
+
 				for (std::vector<RAWINPUTDEVICELIST>::const_iterator it = newlist.begin(); it != newlist.end(); ++it)
 				{
 					if ((*it).dwType == RIM_TYPEKEYBOARD)
@@ -38,13 +43,23 @@ namespace KBDHOOK
 						// Skip Terminal Services and Remote Desktop generic keyboards
 						if (memcmp(entry.name, root1.c_str(), root1.size()) != 0 && memcmp(entry.name, root2.c_str(), root2.size()) != 0)
 						{
+							islogkbdlib::KbdLogs::getInstance()->LogEvent("#getDeviceList# Keyboard device found {%s}!", entry.name);
 							deviceList.push_back(entry);
 						}
 					}
 				}
 			}
+			else
+			{
+				islogkbdlib::KbdLogs::getInstance()->LogEvent("#getDeviceList# No devices detected.");
+			}
+		}
+		else
+		{
+			islogkbdlib::KbdLogs::getInstance()->LogEvent("#getDeviceList# Error GetRawInputDeviceList {%d}!", errorCode);
 		}
 
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#getDeviceList# return.");
 		return deviceList;
 	}
 }

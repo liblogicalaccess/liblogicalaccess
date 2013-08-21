@@ -8,10 +8,11 @@
 #include <boost\program_options.hpp>
 
 #include "Resource.h"
-#include "islogkbdhooklib.h"
+#include "islogkbdhooklib.hpp"
+#include "islogkbdlogs.hpp"
+#include "islogkbdsettings.hpp"
 #include "../KeyboardSharedStruct.h"
 #include "InputDevice.h"
-
 
 #define MAX_LOADSTRING 100
 
@@ -55,7 +56,6 @@ void				HookRawInput(HWND hwnd);
 bool				ProcessRawInputMessage(HRAWINPUT rawInputHeader);
 DWORD WINAPI		CheckThread(LPVOID lpThreadParameter);
 
-
 /**
  * \brief The application entry point.
  * \param argc The arguments count.
@@ -63,6 +63,13 @@ DWORD WINAPI		CheckThread(LPVOID lpThreadParameter);
  */
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
+	OutputDebugStringA("#islogkbdhook::_tWinMain# started.");
+
+	islogkbdlib::KbdSettings::getInstance()->Initialize();
+	islogkbdlib::KbdLogs::getInstance()->Initialize();
+
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#_tWinMain# begins.");
+
 	unsigned int wid = 0;
 
 	boost::program_options::options_description desc("Allowed options");
@@ -80,18 +87,20 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	boost::program_options::store(boost::program_options::command_line_parser(args).options(desc).run(), vm);
 	boost::program_options::notify(vm);
 
-	
 	MSG msg;
 	HACCEL hAccelTable;
 
 	// Initialize global strings
 	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
 	LoadString(hInstance, IDC_HOOK, szWindowClass, MAX_LOADSTRING);
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#_tWinMain# Registering class...");
 	MyRegisterClass(hInstance);
 
 	// Perform application initialization:
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#_tWinMain# Initializing instance...");
 	if (!InitInstance (hInstance, (vm.count("own") || vm.count("help")) ? SW_SHOW : SW_HIDE))
 	{
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#_tWinMain# Error. Unable to initialize instance!");
 		return FALSE;
 	}
 
@@ -115,18 +124,31 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		return -3; // Invalid window handle;
 
 	if (msgId != 0)
+	{
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#_tWinMain# Setting hook...");
 		SetHook((HWND)hwnd, msgId);
+	}
 
 	if (msgId_LL != 0)
+	{
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#_tWinMain# Setting Low Level hook...");
 		SetHook_LL((HWND)hwnd, msgId_LL);
+	}
 
 	if (vm.count("shared"))
 	{
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#_tWinMain# \"shared\" command line parameter detected!");
+
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#_tWinMain# Loading file mapping...");
 		LoadKbdFileMapping();
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#_tWinMain# Loading keyboard events...");
 		LoadKbdEvent();
 		continueHostCheck = true;
+
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#_tWinMain# Starting check thread...");
 		hCheckThrd = CreateThread(NULL, 0, CheckThread, NULL, 0, NULL);
 
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#_tWinMain# Getting devices...");
 		hidDevices = KBDHOOK::InputDevice::getDeviceList();
 		int i = 0;
 		for (std::vector<logicalaccess::KeyboardEntry>::iterator it = hidDevices.begin(); it != hidDevices.end(); ++it, ++i)
@@ -159,21 +181,36 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		}
 	}
 
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#_tWinMain# Need to shutdown.");
+
 	if (vm.count("shared"))
 	{
 		//UnhookWindowsHookEx(hKbdHook_ll);
 		sharedname = "";
 
 		continueHostCheck = false;
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#_tWinMain# Releasing keyboard events...");
 		FreeKbdEvent();
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#_tWinMain# Releasing file mapping...");
 		FreeKbdFileMapping();
 	}
 	
 	if (msgId != 0)
+	{
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#_tWinMain# Clearing hook...");
 		ClearHook((HWND)hwnd);
+	}
 
 	if (msgId_LL != 0)
+	{
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#_tWinMain# Clearing Low Level hook...");
 		ClearHook_LL((HWND)hwnd);
+	}
+
+	islogkbdlib::KbdLogs::getInstance()->Uninitialize();
+	islogkbdlib::KbdSettings::getInstance()->Uninitialize(); 
+
+	OutputDebugStringA("#islogkbdhook::_tWinMain# done.");
 
 	return (int) msg.wParam;
 }
@@ -230,6 +267,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    if (!hWnd)
    {
+	  islogkbdlib::KbdLogs::getInstance()->LogEvent("#InitInstance# Unable to create window {%d}.", GetLastError());
 	  return FALSE;
    }
    _hwnd = hWnd;
@@ -259,24 +297,28 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	switch (message)
 	{
 	case WM_COMMAND:
-		wmId    = LOWORD(wParam);
-		wmEvent = HIWORD(wParam);
-		// Parse the menu selections:
-		switch (wmId)
 		{
-		case IDC_SHOWHELP:
+			islogkbdlib::KbdLogs::getInstance()->LogEvent("#WndProc# WM_COMMAND received.");
+			wmId    = LOWORD(wParam);
+			wmEvent = HIWORD(wParam);
+			// Parse the menu selections:
+			switch (wmId)
 			{
-				HDC hdc = GetDC(hWnd);
-				TextOut(hdc, 30, 30, "Help !", 100);
-			}
-			break;
+			case IDC_SHOWHELP:
+				{
+					HDC hdc = GetDC(hWnd);
+					TextOut(hdc, 30, 30, "Help !", 100);
+				}
+				break;
 
-		default:
-			return DefWindowProc(hWnd, message, wParam, lParam);
+			default:
+				return DefWindowProc(hWnd, message, wParam, lParam);
+			}
 		}
 		break;
 	case 0x401:
 		{
+			islogkbdlib::KbdLogs::getInstance()->LogEvent("#WndProc# 0x401 received.");
 			HDC hdc = GetDC(hWnd);
 			LPSTR str = new CHAR[100];
 			memset(str, 0, 100 * sizeof(CHAR));
@@ -292,6 +334,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case 0x402:
 		{
+			islogkbdlib::KbdLogs::getInstance()->LogEvent("#WndProc# 0x402 received.");
 			HDC hdc = GetDC(hWnd);
 			LPSTR str = new CHAR[100];
 			memset(str, 0, 100 * sizeof(CHAR));
@@ -302,6 +345,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_PAINT:
 		{
+			islogkbdlib::KbdLogs::getInstance()->LogEvent("#WndProc# WM_PAINT received.");
 			hdc = BeginPaint(hWnd, &ps);
 
 			LPSTR str = new CHAR[100];
@@ -314,6 +358,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_INPUT:
 		{
+			islogkbdlib::KbdLogs::getInstance()->LogEvent("#WndProc# WM_INPUT received.");
 			if (ProcessRawInputMessage((HRAWINPUT)lParam))
 			{
 				// Could have race condition if the user type on the real keyboard on the same time.
@@ -329,7 +374,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_DESTROY:
-		PostQuitMessage(0);
+		{
+			islogkbdlib::KbdLogs::getInstance()->LogEvent("#WndProc# WM_INPUT received.");
+			PostQuitMessage(0);
+		}
 		break;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
@@ -349,6 +397,7 @@ long LoadKbdFileMapping()
 	if (!shKeyboard)
 	{
 		ret = GetLastError();
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#LoadKbdFileMapping# Error. Unable to open file mapping {%d}.", ret);
 	}
 	else
 	{
@@ -356,6 +405,7 @@ long LoadKbdFileMapping()
 		if (!sKeyboard)
 		{
 			ret = GetLastError();
+			islogkbdlib::KbdLogs::getInstance()->LogEvent("#LoadKbdFileMapping# Error. Unable to map file {%d}.", ret);
 		}
 	}
 	
@@ -364,6 +414,7 @@ long LoadKbdFileMapping()
 
 void FreeKbdFileMapping()
 {
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#FreeKbdFileMapping# begins.");
 	if (sKeyboard != NULL)
 	{
 		UnmapViewOfFile(sKeyboard);
@@ -374,7 +425,8 @@ void FreeKbdFileMapping()
 	{
 		CloseHandle(shKeyboard);
 		shKeyboard = NULL;
-	}	
+	}
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#FreeKbdFileMapping# done.");
 }
 
 long LoadKbdEvent()
@@ -389,6 +441,7 @@ long LoadKbdEvent()
 	if (!hKbdEvent)
 	{
 		ret = GetLastError();
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#LoadKbdEvent# Error. Unable to open event {%s} {%d}.", eventName, ret);
 	}
 	else
 	{
@@ -399,6 +452,7 @@ long LoadKbdEvent()
 		if (!hKbdEventProcessed)
 		{
 			ret = GetLastError();
+			islogkbdlib::KbdLogs::getInstance()->LogEvent("#LoadKbdEvent# Error. Unable to open event {%s} {%d}.", eventName, ret);
 		}
 		else
 		{
@@ -409,6 +463,7 @@ long LoadKbdEvent()
 			if (!hHostEvent)
 			{
 				ret = GetLastError();
+				islogkbdlib::KbdLogs::getInstance()->LogEvent("#LoadKbdEvent# Error. Unable to open event {%s} {%d}.", eventName, ret);
 			}
 			else
 			{
@@ -419,6 +474,7 @@ long LoadKbdEvent()
 				if (!hStillAliveEvent)
 				{
 					ret = GetLastError();
+					islogkbdlib::KbdLogs::getInstance()->LogEvent("#LoadKbdEvent# Error. Unable to open event {%s} {%d}.", eventName, ret);
 				}
 			}
 		}
@@ -429,6 +485,7 @@ long LoadKbdEvent()
 
 void FreeKbdEvent()
 {
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#FreeKbdEvent# begins.");
 	if (hKbdEvent != NULL)
 	{
 		CloseHandle(hKbdEvent);
@@ -452,6 +509,7 @@ void FreeKbdEvent()
 		CloseHandle(hStillAliveEvent);
 		hStillAliveEvent = NULL;
 	}
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#FreeKbdEvent# done.");
 }
 
 void HookRawInput(HWND hwnd)
@@ -468,39 +526,38 @@ void HookRawInput(HWND hwnd)
 
 bool ProcessRawInputMessage(HRAWINPUT rawInputHeader)
 {
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#ProcessRawInputMessage# started.");
 	bool handled = false;
 	unsigned int size = 0;
  
 	// First we call GetRawInputData() to set the value of size, which
-	// we will the nuse to allocate the appropriate amount of memory in
-	// the buffer.
-	if (GetRawInputData(
-			rawInputHeader,
-			RID_INPUT,
-			NULL,
-			&size,
-			sizeof(RAWINPUTHEADER)) == 0)
+	// we will the nuse to allocate the appropriate amount of memory in the buffer.
+	if (GetRawInputData( rawInputHeader, RID_INPUT, NULL, &size, sizeof(RAWINPUTHEADER)) == 0)
 	{
 		RAWINPUT raw;
  
-		if (GetRawInputData(
-				rawInputHeader,
-				RID_INPUT,
-				&raw,
-				&size,
-				sizeof(RAWINPUTHEADER)) == size)
-		{ 
+		if (GetRawInputData( rawInputHeader, RID_INPUT, &raw, &size, sizeof(RAWINPUTHEADER)) == size)
+		{
+			islogkbdlib::KbdLogs::getInstance()->LogEvent("#ProcessRawInputMessage# Raw input data retrieved successfully! Checking keyboard device...");
+
+			islogkbdlib::KbdLogs::getInstance()->LogEvent("#ProcessRawInputMessage# Selected device {%s}", sKeyboard->selectedDeviceName);
+			islogkbdlib::KbdLogs::getInstance()->LogEvent("#ProcessRawInputMessage# - VS - ");
 			// Device filtering
 			for (std::vector<logicalaccess::KeyboardEntry>::iterator it = hidDevices.begin(); it != hidDevices.end() && !handled; ++it)
 			{
+				islogkbdlib::KbdLogs::getInstance()->LogEvent("#ProcessRawInputMessage# Device {%s}", it->name);
+
 				if (std::string(sKeyboard->selectedDeviceName) == std::string(it->name))
 				{
+					islogkbdlib::KbdLogs::getInstance()->LogEvent("#ProcessRawInputMessage# Device found! Checking if same handle...");
 					handled = (raw.header.hDevice == it->handle);
 				}
 			}
  
 			if (handled)
 			{
+				islogkbdlib::KbdLogs::getInstance()->LogEvent("#ProcessRawInputMessage# Raw is coming from the selected keyboard device!");
+
 				if (raw.header.dwType == RIM_TYPEKEYBOARD)
 				{
 					if (raw.data.keyboard.Message == WM_KEYDOWN)
@@ -515,6 +572,8 @@ bool ProcessRawInputMessage(HRAWINPUT rawInputHeader)
 
 								if (!std::string(sKeyboard->keyboardLayout).empty())
 								{
+									islogkbdlib::KbdLogs::getInstance()->LogEvent("#ProcessRawInputMessage# Need to use the configured layout {%s}.", sKeyboard->keyboardLayout);
+
 									char currentLayout[KL_NAMELENGTH];
 									memset(currentLayout, 0x00, sizeof(currentLayout));
 
@@ -535,29 +594,95 @@ bool ProcessRawInputMessage(HRAWINPUT rawInputHeader)
 									if (ToAsciiEx(raw.data.keyboard.VKey, raw.data.keyboard.MakeCode, kstate, (LPWORD)convertedkey, 0, useLayout) == 1)
 									{
 										sKeyboard->enteredKeyChar = convertedkey[0];
+										islogkbdlib::KbdLogs::getInstance()->LogEvent("#ProcessRawInputMessage# Final key char {%c}. Setting event..", convertedkey[0]);
+
 										if (SetEvent(hKbdEvent) == TRUE)
 										{
-											WaitForSingleObject(hKbdEventProcessed, 10000);
+											unsigned long timeout = 1000;
+											islogkbdlib::KbdLogs::getInstance()->LogEvent("#ProcessRawInputMessage# Waiting for event \"hKbdEventProcessed\" to be set by host during timeout {%u}...", timeout);
+											
+											if (WaitForSingleObject(hKbdEventProcessed, timeout) == WAIT_TIMEOUT)
+											{
+												islogkbdlib::KbdLogs::getInstance()->LogEvent("#ProcessRawInputMessage# Timeout reached! Host has not processed the input message...");
+											}
+											else
+											{
+												islogkbdlib::KbdLogs::getInstance()->LogEvent("#ProcessRawInputMessage# Event successfully processed by host...");
+											}
 											ResetEvent(hKbdEventProcessed);
 										}
+										else
+										{
+											islogkbdlib::KbdLogs::getInstance()->LogEvent("#ProcessRawInputMessage# Unable to set event. Error {%d}", GetLastError());
+										}
+									}
+									else
+									{
+										islogkbdlib::KbdLogs::getInstance()->LogEvent("#ProcessRawInputMessage# Error ToAsciiEx {%d}", GetLastError());
 									}
 								}
+								else
+								{
+									islogkbdlib::KbdLogs::getInstance()->LogEvent("#ProcessRawInputMessage# VK_RETURN detected. Ignoring...");
+								}
+							}
+							else
+							{
+								islogkbdlib::KbdLogs::getInstance()->LogEvent("#ProcessRawInputMessage# Shared name is empty. Ignoring...");
 							}
 						}
+						else
+						{
+							islogkbdlib::KbdLogs::getInstance()->LogEvent("#ProcessRawInputMessage# Error GetKeyboardState {%d}", GetLastError());
+						}
+					}
+					else
+					{
+						islogkbdlib::KbdLogs::getInstance()->LogEvent("#ProcessRawInputMessage# raw.data.keyboard.Message != WM_KEYDOWN. dwType {%u}", raw.data.keyboard.Message);
 					}
 				}
+				else
+				{
+					islogkbdlib::KbdLogs::getInstance()->LogEvent("#ProcessRawInputMessage# raw.header.dwType != RIM_TYPEKEYBOARD. dwType {%ul}", raw.header.dwType);
+				}
+			}
+			else
+			{
+				islogkbdlib::KbdLogs::getInstance()->LogEvent("#ProcessRawInputMessage# Keyboard device is not handled. Ignoring...");
 			}
 		}
+		else
+		{
+			islogkbdlib::KbdLogs::getInstance()->LogEvent("#ProcessRawInputMessage# Error GetRawInputData {%d}", GetLastError());
+		}
+	}
+	else
+	{
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#ProcessRawInputMessage# Error GetRawInputData {%d}", GetLastError());
 	}
  
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#ProcessRawInputMessage# returns handled? {%d}", handled);
 	return handled;
 }
 
 DWORD WINAPI CheckThread(LPVOID lpThreadParameter)
 {
-	while (continueHostCheck && WaitForSingleObject(hStillAliveEvent, 10000) == WAIT_OBJECT_0)
+	unsigned long timeout = 5000; 
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#CheckThread# begins. Checking every {%u} milliseconds if host is present...", timeout);
+
+	while (continueHostCheck && WaitForSingleObject(hStillAliveEvent, timeout) == WAIT_OBJECT_0)
 	{
+		//islogkbdlib::KbdLogs::getInstance()->LogEvent("#CheckThread# Host still present!");
 		ResetEvent(hStillAliveEvent);
+	}
+
+	if (continueHostCheck)
+	{
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#CheckThread# Unable to contact host. Exiting...");
+	}
+	else
+	{
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#CheckThread# Thread exiting requested. Exiting...");
 	}
 
 	ExitProcess(0);

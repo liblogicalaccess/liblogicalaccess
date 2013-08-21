@@ -21,7 +21,10 @@
 
 #include "stdafx.h"
 // #define KEYBOARDHOOK_EXPORTS  this is done in the project
-#include "islogkbdhooklib.h"
+#include "islogkbdhooklib.hpp"
+
+#include "islogkbdsettings.hpp"
+#include "islogkbdlogs.hpp"
 
 #pragma data_seg(".KEYBOARDHOOK")
 HWND s_hWndServer = NULL;
@@ -33,7 +36,8 @@ UINT s_message_LL = 0;
 #pragma data_seg()
 #pragma comment(linker, "/section:.KEYBOARDHOOK,rws")
 
-HINSTANCE hInst;
+HMODULE __hKbdHookModule;
+
 HHOOK hook;
 HHOOK hook_LL;
 static LRESULT CALLBACK msghook(UINT nCode, WPARAM wParam, LPARAM lParam);
@@ -43,56 +47,30 @@ static LRESULT CALLBACK msghook_LL(UINT nCode, WPARAM wParam, LPARAM lParam);
 #pragma managed(push, off)
 #endif
 
-
-BOOL APIENTRY DllMain( HINSTANCE hInstance,
-                       DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
-					 )
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID /*lpReserved*/)
 {
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH:
-		hInst = hInstance;
+		OutputDebugStringA("#islogkbdhooklib::DLL_PROCESS_ATTACH# called.");
+		__hKbdHookModule = hModule;
+		islogkbdlib::KbdSettings::getInstance()->Initialize();
+		islogkbdlib::KbdLogs::getInstance()->Initialize();
 		break;
 	case DLL_PROCESS_DETACH:
+		OutputDebugStringA("#islogkbdhooklib::DLL_PROCESS_DETACH# called.");
 		if(s_hWndServer != NULL)
 			ClearHook(s_hWndServer);
+		islogkbdlib::KbdLogs::getInstance()->Uninitialize();
+		islogkbdlib::KbdSettings::getInstance()->Uninitialize(); 
 		break;
 	}
-    return TRUE;
+	return TRUE;
 }
 
 #ifdef _MANAGED
 #pragma managed(pop)
 #endif
-
-KEYBOARDHOOK_API BOOL SetHook(HWND hWnd, UINT message)
-{
-	if (s_hWndServer != NULL)
-		return FALSE; // already hooked
-
-	hook = SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC)msghook, hInst, 0);
-	if (hook == FALSE)
-		return FALSE;
-
-	s_hWndServer = hWnd;
-	s_message = message;
-	return TRUE;
-}
-
-KEYBOARDHOOK_API BOOL ClearHook(HWND hWnd)
-{
-	if ((hWnd == NULL) || (s_hWndServer == NULL) || (hWnd != s_hWndServer))
-		return FALSE;
-
-	BOOL unhooked = UnhookWindowsHookEx(hook);
-	if (unhooked)
-	{
-		s_hWndServer = NULL;
-		s_message = 0;
-	}
-	return unhooked;
-}
 
 union KeyboardProcLParam
 {
@@ -108,22 +86,97 @@ union KeyboardProcLParam
 	} values;
 };
 
+KEYBOARDHOOK_API BOOL SetHook(HWND hWnd, UINT message)
+{
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#SetHook# begins.");
+	if (s_hWndServer != NULL)
+		return FALSE; // already hooked
+
+	hook = SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC)msghook, __hKbdHookModule, 0);
+	if (hook == FALSE)
+	{
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#SetHook# Unable to set hook {%d}!", GetLastError());
+		return FALSE;
+	}
+
+	s_hWndServer = hWnd;
+	s_message = message;
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#SetHook# Hook set successfully.");
+	return TRUE;
+}
+
+/* Low level hook */
+KEYBOARDHOOK_API BOOL SetHook_LL(HWND hWnd, UINT message)
+{
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#SetHook_LL# begins.");
+
+	if (s_hWndServer_LL != NULL)
+		return FALSE; // already hooked
+
+	hook = SetWindowsHookEx(WH_KEYBOARD_LL, (HOOKPROC)msghook_LL, __hKbdHookModule, 0);
+	if (hook == FALSE)
+	{
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#SetHook_LL# Unable to set hook {%d}!", GetLastError());
+		return FALSE;
+	}
+
+	s_hWndServer_LL = hWnd;
+	s_message_LL = message;
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#SetHook_LL# Hook set successfully.");
+	return TRUE;
+}
+
+KEYBOARDHOOK_API BOOL ClearHook(HWND hWnd)
+{
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#ClearHook# begins.");
+	if ((hWnd == NULL) || (s_hWndServer == NULL) || (hWnd != s_hWndServer))
+		return FALSE;
+
+	BOOL unhooked = UnhookWindowsHookEx(hook);
+	if (unhooked)
+	{
+		s_hWndServer = NULL;
+		s_message = 0;
+	}
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#ClearHook# returns {%d}", unhooked);
+	return unhooked;
+}
+
+/* Low level hook */
+KEYBOARDHOOK_API BOOL ClearHook_LL(HWND hWnd)
+{
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#ClearHook_LL# begins.");
+
+	if ((hWnd == NULL) || (s_hWndServer_LL == NULL) || (hWnd != s_hWndServer_LL))
+		return FALSE;
+
+	BOOL unhooked = UnhookWindowsHookEx(hook);
+	if (unhooked)
+	{
+		s_hWndServer_LL = NULL;
+		s_message_LL = 0;
+	}
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#ClearHook_LL# returns {%d}", unhooked);
+	return unhooked;
+}
+
 static LRESULT CALLBACK msghook(UINT nCode, WPARAM wParam, LPARAM lParam)
 {
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#msghook# begins.");
+
 	if (nCode < 0) // The specs say if nCode is < 0 then we just pass straight on.
 	{
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#msghook# nCode < 0. Calling next hook...");
 		CallNextHookEx(hook, nCode, wParam, lParam);
 		return 0;
 	}
 
-	//LPWSTR str = new WCHAR[100];
-	//memset(str, 0, 100);
-	//wsprintf(str, L"msghook: nCode=%i wparam=%#08x %#08x\n", nCode, wParam, lParam);
-	//OutputDebugString(str);
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#msghook# nCode=%i wparam=%#08x %#08x", nCode, wParam, lParam);
 
 	WPARAM newWParam = wParam;
 	if (nCode == HC_NOREMOVE)
 	{
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#msghook# nCode == HC_NOREMOVE. Calling next hook...");
 		// I was originally sending HC_NOREMOVE message to my app, but they weren't necessary and were causing problems
 		// with debugging in visual studio.
 		//newWParam = wParam | 0x80000000;
@@ -136,60 +189,39 @@ static LRESULT CALLBACK msghook(UINT nCode, WPARAM wParam, LPARAM lParam)
 	{
 		if (IsWindow(s_hWndServer) == TRUE)
 		{
+			islogkbdlib::KbdLogs::getInstance()->LogEvent("#msghook# Sending message to window...");
 			LRESULT result;
 			result = ::SendMessage(s_hWndServer, s_message, newWParam, lParam);
 			if (result != 0)
 			{
-				LPWSTR str = new WCHAR[100];
-				memset(str, 0, 100);
-				wsprintf(str, L"blocking: nCode=%i wparam=%#08x %#08x\n", nCode, wParam, lParam);
-				OutputDebugString(str);
+				islogkbdlib::KbdLogs::getInstance()->LogEvent("#msghook# SendMessage error {%d}", result);
 				return -1;
 			}
 		}
+		else
+		{
+			islogkbdlib::KbdLogs::getInstance()->LogEvent("#msghook# Error, server handle is not a window!");
+		}
+	} catch (std::exception& e)
+	{
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#msghook# Error occured {%s}!", e.what());
 	} catch (...)
 	{
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#msghook# Unknown error occured {%d}", GetLastError());
 	}
 
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#msghook# Done. Calling next hook...");
 	return CallNextHookEx(hook, nCode, wParam, lParam);
-
 }
 
-
-
-
-KEYBOARDHOOK_API BOOL SetHook_LL(HWND hWnd, UINT message)
-{
-	if (s_hWndServer_LL != NULL)
-		return FALSE; // already hooked
-
-	hook = SetWindowsHookEx(WH_KEYBOARD_LL, (HOOKPROC)msghook_LL, hInst, 0);
-	if (hook == FALSE)
-		return FALSE;
-
-	s_hWndServer_LL = hWnd;
-	s_message_LL = message;
-	return TRUE;
-}
-
-KEYBOARDHOOK_API BOOL ClearHook_LL(HWND hWnd)
-{
-	if ((hWnd == NULL) || (s_hWndServer_LL == NULL) || (hWnd != s_hWndServer_LL))
-		return FALSE;
-
-	BOOL unhooked = UnhookWindowsHookEx(hook);
-	if (unhooked)
-	{
-		s_hWndServer_LL = NULL;
-		s_message_LL = 0;
-	}
-	return unhooked;
-}
-
+/* Low level hook */
 static LRESULT CALLBACK msghook_LL(UINT nCode, WPARAM wParam, LPARAM lParam)
 {
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#msghook_LL# begins.");
+
 	if (nCode < 0) // The specs say if nCode is < 0 then we just pass straight on.
 	{
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#msghook_LL# nCode < 0. Calling next hook...");
 		CallNextHookEx(hook, nCode, wParam, lParam);
 		return 0;
 	}
@@ -201,6 +233,8 @@ static LRESULT CALLBACK msghook_LL(UINT nCode, WPARAM wParam, LPARAM lParam)
 	//l.lParam = (unsigned int)lParam;
 
 	KBDLLHOOKSTRUCT *pHookStruct = (KBDLLHOOKSTRUCT*)lParam;
+
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#msghook_LL# nCode=%i wparam=%#08x %#08x", nCode, wParam, lParam);
 
 	//{
 	//	LPWSTR str = new WCHAR[100];
@@ -221,6 +255,8 @@ static LRESULT CALLBACK msghook_LL(UINT nCode, WPARAM wParam, LPARAM lParam)
 	{
 		if (IsWindow(s_hWndServer_LL) == TRUE)
 		{
+			islogkbdlib::KbdLogs::getInstance()->LogEvent("#msghook_LL# Sending message to window...");
+
 			int repeatCount = 1;
 			int scanCode = pHookStruct->scanCode & 0xFF;
 			scanCode = scanCode << 16;
@@ -240,15 +276,20 @@ static LRESULT CALLBACK msghook_LL(UINT nCode, WPARAM wParam, LPARAM lParam)
 			result = ::SendMessage(s_hWndServer_LL, s_message_LL, pHookStruct->vkCode, newLParam);
 			if (result != 0)
 			{
-				LPWSTR str = new WCHAR[100];
-				memset(str, 0, 100);
-				wsprintf(str, L"blocking LL: nCode=%i wparam=%#08x %#08x\n", nCode, wParam, lParam);
-				OutputDebugString(str);
+				islogkbdlib::KbdLogs::getInstance()->LogEvent("#msghook_LL# SendMessage error {%d}", result);
 				return -1;
 			}
 		}
+		else
+		{
+			islogkbdlib::KbdLogs::getInstance()->LogEvent("#msghook_LL# Error, server handle is not a window!");
+		}
+	} catch (std::exception& e)
+	{
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#msghook_LL# Error occured {%s}!", e.what());
 	} catch (...)
 	{
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#msghook_LL# Unknown error occured {%d}", GetLastError());
 	}
 
 	//if (IsWindow(s_hWndServer_LL) == TRUE)
@@ -256,6 +297,6 @@ static LRESULT CALLBACK msghook_LL(UINT nCode, WPARAM wParam, LPARAM lParam)
 	//	::PostMessage(s_hWndServer_LL, s_message_LL, newWParam, pHookStruct->vkCode);
 	//}
 
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#msghook_LL# Done. Calling next hook...");
 	return CallNextHookEx(hook, nCode, wParam, lParam);
-
 }

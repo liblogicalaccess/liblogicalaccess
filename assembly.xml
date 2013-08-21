@@ -45,6 +45,7 @@
             <outputDirectory>/dll/Win32/</outputDirectory>
             <includes>
                 <include>liblogicalaccess.config</include>
+				<include>/plugins/pluginsreaderproviders/keyboard/islogkbdsettings.config</include>
             </includes>
         </fileSet>
 		<fileSet>
@@ -60,6 +61,7 @@
             <outputDirectory>/dll/x64/</outputDirectory>
             <includes>
                 <include>liblogicalaccess.config</include>
+				<include>/plugins/pluginsreaderproviders/keyboard/islogkbdsettings.config</include>
             </includes>
         </fileSet>
 		<fileSet>

@@ -9,6 +9,7 @@ output
 *.sdf
 ipch
 *.suo
+*.cache
 bin
 obj
 pom.xml.releaseBackup

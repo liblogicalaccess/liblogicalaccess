@@ -164,6 +164,8 @@ namespace logicalaccess
 			std::string d_devicename;
 
 			std::vector<unsigned char> d_removalIdentifier;
+
+			bool d_instanceConnected;
 	};
 }
 
