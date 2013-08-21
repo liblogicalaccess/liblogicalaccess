@@ -31,6 +31,7 @@ namespace logicalaccess
 			virtual std::vector<unsigned char> dumpSessionKey() = 0;
 			virtual std::vector<unsigned char> decipherData(std::vector<unsigned char> data, bool islastdata) = 0;
 			virtual std::vector<unsigned char> encipherData(std::vector<unsigned char> data, bool islastdata) = 0;
+			virtual std::vector<unsigned char> changeKeyPICC(boost::shared_ptr<changeKeyInfo> info) = 0;
 		protected:
 			
 	};

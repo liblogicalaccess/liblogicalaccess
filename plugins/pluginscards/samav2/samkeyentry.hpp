@@ -51,33 +51,44 @@ namespace logicalaccess
 
 	typedef struct s_SET
 	{
-		char	dumpsessionkey;
-		char	allowcrypto;
-		char	keepIV;
-		char	keytype[3];
-		char	rfu[2];
-		char	authkey;
-		char	disablekeyentry;
-		char	lockkey;
-		char	disablewritekeytopicc;
-		char	disabledecryption;
-		char	disableencryption;
-		char	disableverifymac;
-		char	disablegeneratemac;
-	}				SET;
+		char dumpsessionkey;
+		char allowcrypto;
+		char keepIV;
+		char keytype[3];
+		char rfu[2];
+		char hightcommandsecurity;
+		char disablekeyentry;
+		char hostauthenticationafterreset;
+		char disablewritekeytopicc;
+		char disabledecryption;
+		char disableencryption;
+		char disableverifymac;
+		char disablegeneratemac;
+	}		 		SET;
 
 	typedef struct  s_KeyEntryInformation
 	{
-		unsigned char	desfireAid[3];
-		unsigned char	desfirekeyno;
-		unsigned char	cekno;
-		unsigned char	cekv;
-		unsigned char	kuc;
-		unsigned char	set[2];
-		unsigned char	vera;
-		unsigned char	verb;
-		unsigned char	verc;
+		unsigned char desfireAid[3];
+		unsigned char desfirekeyno;
+		unsigned char cekno;
+		unsigned char cekv;
+		unsigned char kuc;
+		unsigned char set[2];
+		unsigned char vera;
+		unsigned char verb;
+		unsigned char verc;
 	}				KeyEntryInformation;
+
+	typedef struct s_changeKeyInfo
+	{
+		unsigned char desfireNumber;
+		bool isMasterKey;
+		bool oldKeyInvolvement;
+		unsigned char currentKeyNo;
+		unsigned char currentKeyV;
+		unsigned char newKeyNo;
+		unsigned char newKeyV;
+	}				changeKeyInfo;
 
 	/**
 	 * \brief A DESFire Key class.
@@ -186,19 +197,20 @@ namespace logicalaccess
 
 			size_t SAMKeyEntry::getSingleLength() const;
 
-			void	setSET(SET t);
+			void setSET(SET t);
 			void	setSET(unsigned char *t) { memcpy(d_keyentryinformation->set, t, sizeof(*t)); };
 			boost::shared_ptr<SET> getSETStruct();
 
-			unsigned char	getUpdateMask() { return d_updatemask; };
-			void			setUpdateMask(unsigned char c) { d_updatemask = c; };
+			unsigned char getUpdateMask() { return d_updatemask; };
+			void setUpdateMask(unsigned char c) { d_updatemask = c; };
+
 			boost::shared_ptr<KeyEntryUpdateSettings> getUpdateSettings();
-			void	setUpdateSettings(boost::shared_ptr<KeyEntryUpdateSettings> t);
+			void setUpdateSettings(boost::shared_ptr<KeyEntryUpdateSettings> t);
 
 			boost::shared_ptr<KeyEntryInformation> getKeyEntryInformation() { return d_keyentryinformation; } ;
 
-			void		setKeyEntryInformation(boost::shared_ptr<KeyEntryInformation> t) { d_keyentryinformation = t; };
-			void		setKeyTypeFromSET();
+			void setKeyEntryInformation(boost::shared_ptr<KeyEntryInformation> t) { d_keyentryinformation = t; };
+			void setKeyTypeFromSET();
 
 		private:
 

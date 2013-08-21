@@ -93,6 +93,8 @@ namespace logicalaccess
 			virtual std::vector<unsigned char> decipherData(std::vector<unsigned char> data, bool islastdata);
 			virtual std::vector<unsigned char> encipherData(std::vector<unsigned char> data, bool islastdata);
 
+			virtual std::vector<unsigned char> changeKeyPICC(boost::shared_ptr<changeKeyInfo> info);
+
 		protected:
 			boost::shared_ptr<SAMDESfireCrypto> d_crypto;
 	};

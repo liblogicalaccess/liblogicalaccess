@@ -46,14 +46,14 @@ namespace logicalaccess
 			 */
 			SAMKucEntry(boost::shared_ptr<SAMKUCEntryStruct> k) : d_updatemask(0), d_kucentry(k) {};
 
-			unsigned char	getUpdateMask() { return d_updatemask; };
-			void			setUpdateMask(unsigned char c) { d_updatemask = c; };
+			unsigned char getUpdateMask() { return d_updatemask; };
+			void setUpdateMask(unsigned char c) { d_updatemask = c; };
 
 			boost::shared_ptr<KucEntryUpdateSettings> getUpdateSettings();
-			void	setUpdateSettings(boost::shared_ptr<KucEntryUpdateSettings> t);
+			void setUpdateSettings(boost::shared_ptr<KucEntryUpdateSettings> t);
 
 			boost::shared_ptr<SAMKUCEntryStruct> getKucEntryStruct() { return d_kucentry; };
-			void									setKucEntryStruct(boost::shared_ptr<SAMKUCEntryStruct> t) { d_kucentry = t; };
+			void setKucEntryStruct(boost::shared_ptr<SAMKUCEntryStruct> t) { d_kucentry = t; };
 
 	private:
 
