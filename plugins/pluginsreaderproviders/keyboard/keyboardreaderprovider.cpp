@@ -162,6 +162,7 @@ namespace logicalaccess
 
 	void KeyboardReaderProvider::freeKbdFileMapping()
 	{
+		INFO_SIMPLE_("Releasing file mapping...");
 		if (shKeyboard)
 		{
 			CloseHandle(shKeyboard);
@@ -173,6 +174,7 @@ namespace logicalaccess
 
 	void KeyboardReaderProvider::freeKbdEvent()
 	{
+		INFO_SIMPLE_("Releasing kbd events...");
 		if (hKbdEvent)
 		{
 			CloseHandle(hKbdEvent);

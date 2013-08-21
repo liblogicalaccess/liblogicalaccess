@@ -13,6 +13,7 @@
 #include "keyboardreaderprovider.hpp"
 #include "logicalaccess/cards/chip.hpp"
 #include <boost/filesystem.hpp>
+#include "logicalaccess/bufferhelper.hpp"
 
 
 namespace logicalaccess
@@ -22,6 +23,7 @@ namespace logicalaccess
 	{
 		d_readerUnitConfig.reset(new KeyboardReaderUnitConfiguration());
 		d_card_type = "UNKNOWN";
+		d_instanceConnected = false;
 		
 		try
 		{
@@ -92,10 +94,14 @@ namespace logicalaccess
 			std::vector<unsigned char> tmpId = getChipInAir(maxwait);
 			if (tmpId.size() > 0 && (tmpId != d_insertedChip->getChipIdentifier()))
 			{
-				INFO_SIMPLE_("Card found but not same identifier ! The previous card has been removed !");
+				INFO_SIMPLE_("Card found AND not same identifier as previous ! The previous card has been removed !");
 				d_insertedChip.reset();
 				d_removalIdentifier = tmpId;
 				removed = true;
+			}
+			else if (tmpId.size() > 0 && tmpId == d_insertedChip->getChipIdentifier())
+			{
+				INFO_SIMPLE_("Card found but this is the same identifier as previous. Ignoring...");
 			}
 		}
 
@@ -117,6 +123,8 @@ namespace logicalaccess
 				ret.push_back(static_cast<unsigned char>(c));
 				c = 0x00;
 			} while (waitInputChar(c, 250));
+
+			INFO_("Keyboard chars received successfully {%s}-{%s}! Processing...", BufferHelper::getHex(ret).c_str(), BufferHelper::getStdString(ret).c_str());
 
 			process = true;
 		}
@@ -225,6 +233,8 @@ namespace logicalaccess
 		DWORD res = WaitForSingleObject(getKeyboardReaderProvider()->hKbdEvent, (maxwait == 0) ? INFINITE : maxwait);
 		if (res == WAIT_OBJECT_0)
 		{
+			INFO_SIMPLE_("Keyboard event detected!");
+
 			ResetEvent(getKeyboardReaderProvider()->hKbdEvent);
 			c = getKeyboardReaderProvider()->sKeyboard->enteredKeyChar;
 			SetEvent(getKeyboardReaderProvider()->hKbdEventProcessed);
@@ -279,6 +289,7 @@ namespace logicalaccess
 
 	bool KeyboardReaderUnit::connectToReader()
 	{
+		INFO_SIMPLE_("Connecting to reader...");
 		bool ret = false;
 
 #ifdef _WINDOWS
@@ -291,16 +302,22 @@ namespace logicalaccess
 		}
 #endif
 
+		d_instanceConnected = ret;
 		return ret;
 	}
 
 	void KeyboardReaderUnit::disconnectFromReader()
 	{
+		INFO_SIMPLE_("Disconnecting from reader...");
 #ifdef _WINDOWS
-		// Don't really disconnect or close any listening, but remove the device filter if any.
-		if (getKeyboardReaderProvider()->sKeyboard != NULL)
+		if (d_instanceConnected)
 		{
-			memset(getKeyboardReaderProvider()->sKeyboard->selectedDeviceName, 0x00, DEVICE_NAME_MAXLENGTH);
+			// Don't really disconnect or close any listening, but remove the device filter if any.
+			if (getKeyboardReaderProvider()->sKeyboard != NULL)
+			{
+				memset(getKeyboardReaderProvider()->sKeyboard->selectedDeviceName, 0x00, DEVICE_NAME_MAXLENGTH);
+			}
+			d_instanceConnected = false;
 		}
 #endif
 	}

@@ -16,6 +16,7 @@ namespace logicalaccess
 	DESFireISO7816Commands::DESFireISO7816Commands()
 		: DESFireCommands()
 	{
+		d_crypto.reset(new DESFireCrypto());
 	}
 
 	DESFireISO7816Commands::~DESFireISO7816Commands()

@@ -1340,8 +1340,6 @@ namespace logicalaccess
 			if (type == "DESFire" || type == "DESFireEV1")
 			{
 				boost::shared_ptr<DESFireISO7816Commands> dcmd = boost::dynamic_pointer_cast<DESFireISO7816Commands>(commands);
-				boost::shared_ptr<DESFireCrypto> crypto(new DESFireCrypto());
-				dcmd->setCrypto(crypto);
 				if (dcmd->getSAMChip())
 				{
 					boost::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
