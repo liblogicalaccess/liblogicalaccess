@@ -43,14 +43,14 @@ namespace logicalaccess
 		{
 			memcpy(&info, result, sizeof(info));
 			
-			if (info.hardware.vendorid == 0x04)
+			/*if (info.hardware.vendorid == 0x04)
 				std::cout << "Vendor: NXP" << std::endl;
 			if (info.hardware.majorversion == 0x03)
 				std::cout << "Major version: T1AD2060" << std::endl;
 			if (info.hardware.minorversion == 0x04)
 				std::cout << "Major version: T1AR1070" << std::endl;
 			std::cout << "Storage size: " << (unsigned int)info.hardware.storagesize << std::endl;
-			std::cout << "Communication protocol type : " << (unsigned int)info.hardware.protocoltype << std::endl;
+			std::cout << "Communication protocol type : " << (unsigned int)info.hardware.protocoltype << std::endl;*/
 		}
 		else
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "getVersion failed.");
