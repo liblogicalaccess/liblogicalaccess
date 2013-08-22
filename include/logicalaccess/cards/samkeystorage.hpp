@@ -49,10 +49,14 @@ namespace logicalaccess
 			 */
 			virtual std::string getDefaultXmlNodeName() const;
 
+			unsigned char getKeySlot() const { return d_key_slot; };
+
+			void setKeySlot(unsigned char key_slot) { d_key_slot = key_slot; };
+
 	protected:
 				
 			/**
-			 * \brief The key slot.
+			 * \brief The key slot. Optional for most PICC operation, automatically detected
 			 */
 			unsigned char d_key_slot;
 	};

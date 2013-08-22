@@ -172,13 +172,46 @@ namespace logicalaccess
 	bool DESFireISO7816Commands::changeKey(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
 	{
 		bool r = false;
+		std::vector<unsigned char> cryptogram;
 
-		unsigned char diversify[16];
-		if (!key->getDiversify() || d_crypto->getDiversify(diversify))
+		if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
 		{
-			unsigned char command[25];
-			command[0] = keyno;
-			std::vector<unsigned char> cryptogram = d_crypto->changeKey_PICC(keyno, key, diversify);
+			boost::shared_ptr<SAMKeyStorage> samsks = boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
+			boost::shared_ptr<SAMCommands> samcommands = boost::dynamic_pointer_cast<SAMCommands>(getSAMChip()->getCommands());
+			boost::shared_ptr<ISO7816ReaderCardAdapter> readercardadapter = boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(samcommands->getReaderCardAdapter());
+
+			boost::shared_ptr<DESFireProfile> dprofile = boost::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile());
+			boost::shared_ptr<DESFireKey> oldkey = boost::dynamic_pointer_cast<DESFireKey>(dprofile->getKey(d_crypto->d_currentAid, keyno));
+
+			ChangeKeyInfo samck;
+			memset(&samck, 0x00, sizeof(samck));
+			samck.currentKeyNo = d_crypto->d_currentKeyNo;
+			samck.isMasterKey = (d_crypto->d_currentAid == 0x00 && keyno == 0x00);
+			samck.newKeyNo = samsks->getKeySlot();
+			samck.newKeyV = key->getKeyVersion();
+			if (oldkey && boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
+			{
+				boost::shared_ptr<SAMKeyStorage> oldsamks = boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
+				samck.currentKeyNo = oldsamks->getKeySlot();
+				samck.currentKeyV = oldkey->getKeyVersion();
+				samck.oldKeyInvolvement = true;
+			}
+
+			cryptogram = samcommands->changeKeyPICC(samck);
+		}
+		else
+		{
+			unsigned char diversify[16];
+			if (!key->getDiversify() || d_crypto->getDiversify(diversify))
+			{				
+				cryptogram = d_crypto->changeKey_PICC(keyno, key, diversify);
+			}
+		}
+
+		unsigned char command[25];
+		command[0] = keyno;
+		if (cryptogram.size() > 0)
+		{
 			memcpy(&command[1], &cryptogram[0], cryptogram.size());
 
 			std::vector<unsigned char> result = transmit(DF_INS_CHANGE_KEY, command, sizeof(command));
@@ -848,6 +881,7 @@ namespace logicalaccess
 						if (apduresultlen != 2 || apduresult[0] != 0x90 || apduresult[1] != 0x00)
 							THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam authenticate DES P2 failed.");
 						d_crypto->d_sessionKey = samcommands->dumpSessionKey();
+						d_crypto->d_currentKeyNo = keyno;
 					}
 					else
 						d_crypto->authenticate_PICC2(keyno, result);

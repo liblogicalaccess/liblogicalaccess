@@ -730,7 +730,7 @@ namespace logicalaccess
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not Enough reader on the system to us SAM");
 
 				int i = 0;
-				for (; i < getReaderProvider()->getReaderList().size(); ++i)
+				for (; i < static_cast<int>(getReaderProvider()->getReaderList().size()); ++i)
 				{
 					if (getReaderProvider()->getReaderList()[i]->getName() == getPCSCConfiguration()->getSAMReaderName())
 						break;
