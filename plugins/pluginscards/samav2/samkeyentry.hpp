@@ -88,7 +88,7 @@ namespace logicalaccess
 		unsigned char currentKeyV;
 		unsigned char newKeyNo;
 		unsigned char newKeyV;
-	}				changeKeyInfo;
+	}				ChangeKeyInfo;
 
 	/**
 	 * \brief A DESFire Key class.
@@ -101,6 +101,11 @@ namespace logicalaccess
 			 * \brief Build an empty DESFire key.
 			 */
 			SAMKeyEntry();
+
+			/**
+			 * \brief Destructor.
+			 */
+			~SAMKeyEntry();
 
 			/**
 			 * \brief Build a DESFire key given a string representation of it.
@@ -122,15 +127,15 @@ namespace logicalaccess
 			size_t getLength() const;
 
 			/**
-			 * \brief Get the key data.
-			 * \return The key data.
+			 * \brief Get the keys data.
+			 * \return The keys data.
 			 */
-			std::vector<std::vector<unsigned char> > SAMKeyEntry::getKey();
+			std::vector<std::vector<unsigned char> > SAMKeyEntry::getKeysData();
 
 			/**
-			 * \brief Set the key data.
+			 * \brief Set the keys data.
 			 */
-			void setKey(std::vector<std::vector<unsigned char> > keys, SAMKeyType type);
+			void setKeysData(std::vector<std::vector<unsigned char> > keys, SAMKeyType type);
 
 			/**
 			 * \brief Get the key data.
@@ -200,23 +205,22 @@ namespace logicalaccess
 			 */
 			static std::string SAMKeyEntryTypeStr(SAMKeyType t);
 
-			size_t SAMKeyEntry::getSingleLength() const;
+			size_t getSingleLength() const;
 
-			void setSET(SET t);
-			void	setSET(unsigned char *t) { memcpy(d_keyentryinformation->set, t, sizeof(*t)); };
-			boost::shared_ptr<SET> getSETStruct();
+			void setSET(const SET& t);
+			void setSET(unsigned char *t) { memcpy(d_keyentryinformation.set, t, sizeof(*t)); };
+			SET getSETStruct();
 
 			unsigned char getUpdateMask() { return d_updatemask; };
 			void setUpdateMask(unsigned char c) { d_updatemask = c; };
 
-			boost::shared_ptr<KeyEntryUpdateSettings> getUpdateSettings();
-			void setUpdateSettings(boost::shared_ptr<KeyEntryUpdateSettings> t);
+			KeyEntryUpdateSettings getUpdateSettings();
+			void setUpdateSettings(const KeyEntryUpdateSettings& t);
 
-			boost::shared_ptr<KeyEntryInformation> getKeyEntryInformation() { return d_keyentryinformation; } ;
+			KeyEntryInformation getKeyEntryInformation() { return d_keyentryinformation; } ;
+			void setKeyEntryInformation(const KeyEntryInformation& t) { d_keyentryinformation = t; };
 
-			void setKeyEntryInformation(boost::shared_ptr<KeyEntryInformation> t) { d_keyentryinformation = t; };
 			void setKeyTypeFromSET();
-
 			void setSETKeyTypeFromKeyType();
 
 		private:
@@ -238,7 +242,7 @@ namespace logicalaccess
 
 			unsigned char d_updatemask;
 
-			boost::shared_ptr<KeyEntryInformation> d_keyentryinformation;
+			KeyEntryInformation d_keyentryinformation;
 	};
 }
 

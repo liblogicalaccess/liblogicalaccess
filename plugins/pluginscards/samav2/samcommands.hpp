@@ -47,7 +47,7 @@ namespace logicalaccess
 	class LIBLOGICALACCESS_API SAMCommands : public virtual Commands
 	{
 		public:		
-			virtual boost::shared_ptr<SAMVersion> getVersion() = 0;
+			virtual SAMVersion getVersion() = 0;
 			virtual boost::shared_ptr<SAMKeyEntry> getKeyEntry(unsigned char keyno) = 0;
 			virtual boost::shared_ptr<SAMKucEntry> getKUCEntry(unsigned char keyno) = 0;
 			virtual void changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry> keyentry, boost::shared_ptr<DESFireKey> key) = 0;
@@ -60,7 +60,7 @@ namespace logicalaccess
 			virtual std::vector<unsigned char> dumpSessionKey() = 0;
 			virtual std::vector<unsigned char> decipherData(std::vector<unsigned char> data, bool islastdata) = 0;
 			virtual std::vector<unsigned char> encipherData(std::vector<unsigned char> data, bool islastdata) = 0;
-			virtual std::vector<unsigned char> changeKeyPICC(boost::shared_ptr<changeKeyInfo> info) = 0;
+			virtual std::vector<unsigned char> changeKeyPICC(const ChangeKeyInfo& info) = 0;
 		protected:
 			
 	};

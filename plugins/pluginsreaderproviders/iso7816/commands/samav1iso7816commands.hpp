@@ -39,7 +39,7 @@ namespace logicalaccess
 			 */
 			virtual ~SAMAV1ISO7816Commands();			
 
-			virtual boost::shared_ptr<SAMVersion> getVersion();
+			virtual SAMVersion getVersion();
 
 			virtual boost::shared_ptr<SAMKeyEntry> getKeyEntry(unsigned char keyno);
 			virtual boost::shared_ptr<SAMKucEntry> getKUCEntry(unsigned char kucno);
@@ -64,7 +64,7 @@ namespace logicalaccess
 			virtual std::vector<unsigned char> decipherData(std::vector<unsigned char> data, bool islastdata);
 			virtual std::vector<unsigned char> encipherData(std::vector<unsigned char> data, bool islastdata);
 
-			virtual std::vector<unsigned char> changeKeyPICC(boost::shared_ptr<changeKeyInfo> info);
+			virtual std::vector<unsigned char> changeKeyPICC(const ChangeKeyInfo& info);
 
 		protected:
 			boost::shared_ptr<SAMDESfireCrypto> d_crypto;

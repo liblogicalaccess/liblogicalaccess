@@ -29,11 +29,12 @@ namespace logicalaccess
 	{
 	}
 
-	boost::shared_ptr<SAMVersion>		SAMAV1ISO7816Commands::getVersion()
+	SAMVersion SAMAV1ISO7816Commands::getVersion()
 	{
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
-		boost::shared_ptr<SAMVersion>	info(new SAMVersion);
+		SAMVersion	info;
+		memset(&info, 0x00, sizeof(SAMVersion));
 
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0x60, 0x00, 0x00, 0x00, result, &resultlen);
 
@@ -42,17 +43,18 @@ namespace logicalaccess
 		{
 			memcpy(&info, result, sizeof(info));
 			
-			if (info->hardware.vendorid == 0x04)
+			if (info.hardware.vendorid == 0x04)
 				std::cout << "Vendor: NXP" << std::endl;
-			if (info->hardware.majorversion == 0x03)
+			if (info.hardware.majorversion == 0x03)
 				std::cout << "Major version: T1AD2060" << std::endl;
-			if (info->hardware.minorversion == 0x04)
+			if (info.hardware.minorversion == 0x04)
 				std::cout << "Major version: T1AR1070" << std::endl;
-			std::cout << "Storage size: " << (unsigned int)info->hardware.storagesize << std::endl;
-			std::cout << "Communication protocol type : " << (unsigned int)info->hardware.protocoltype << std::endl;
+			std::cout << "Storage size: " << (unsigned int)info.hardware.storagesize << std::endl;
+			std::cout << "Communication protocol type : " << (unsigned int)info.hardware.protocoltype << std::endl;
 		}
 		else
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "getVersion failed.");
+
 		return info;
 	}
 
@@ -61,7 +63,7 @@ namespace logicalaccess
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
 		boost::shared_ptr<SAMKeyEntry> keyentry;
-		boost::shared_ptr<KeyEntryInformation> keyentryinformation(new KeyEntryInformation);
+		KeyEntryInformation keyentryinformation;
 
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0x64, keyno, 0x00, 0x00, result, &resultlen);
 
@@ -71,27 +73,27 @@ namespace logicalaccess
 			unsigned short *set;
 
 			set = reinterpret_cast<unsigned short*>(result + resultlen - 4);
-			memcpy(keyentryinformation->set, result + resultlen - 4, 2);
-			keyentry->setSET(keyentryinformation->set);
+			memcpy(keyentryinformation.set, result + resultlen - 4, 2);
+			keyentry->setSET(keyentryinformation.set);
 
-			keyentryinformation->kuc = result[resultlen - 5];
-			keyentryinformation->cekv = result[resultlen - 6];
-			keyentryinformation->cekno = result[resultlen - 7];
-			keyentryinformation->desfirekeyno =  result[resultlen - 8];
+			keyentryinformation.kuc = result[resultlen - 5];
+			keyentryinformation.cekv = result[resultlen - 6];
+			keyentryinformation.cekno = result[resultlen - 7];
+			keyentryinformation.desfirekeyno =  result[resultlen - 8];
 
-			memcpy(keyentryinformation->desfireAid, result + resultlen - 11, 3);
+			memcpy(keyentryinformation.desfireAid, result + resultlen - 11, 3);
 
 
 			if (resultlen == 13)
 			{
-				keyentryinformation->verb = result[resultlen - 12];
-				keyentryinformation->vera = result[resultlen - 13];
+				keyentryinformation.verb = result[resultlen - 12];
+				keyentryinformation.vera = result[resultlen - 13];
 			}
 			else
 			{
-				keyentryinformation->verc = result[resultlen - 12];
-				keyentryinformation->verb = result[resultlen - 13];
-				keyentryinformation->vera = result[resultlen - 14];
+				keyentryinformation.verc = result[resultlen - 12];
+				keyentryinformation.verb = result[resultlen - 13];
+				keyentryinformation.vera = result[resultlen - 14];
 			}
 
 			keyentry->setKeyEntryInformation(keyentryinformation);
@@ -103,7 +105,7 @@ namespace logicalaccess
 		return keyentry;
 	}
 
-	void		SAMAV1ISO7816Commands::changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry> keyentry, boost::shared_ptr<DESFireKey> key)
+	void SAMAV1ISO7816Commands::changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry> keyentry, boost::shared_ptr<DESFireKey> key)
 	{
 		if (d_crypto->d_sessionKey.size() == 0)
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Failed: AuthentificationHost have to be done before use such command.");
@@ -119,7 +121,7 @@ namespace logicalaccess
 		memset(data, 0, buffer_size);
 
 		memcpy(data, &*(keyentry->getData()), keyentry->getLength());
-		memcpy(data + 48, &*(keyentry->getKeyEntryInformation()), sizeof(KeyEntryInformation));
+		memcpy(data + 48, &keyentry->getKeyEntryInformation(), sizeof(KeyEntryInformation));
 		
 		std::vector<unsigned char> iv;
 		iv.resize(16, 0x00);
@@ -140,7 +142,7 @@ namespace logicalaccess
 	}
 
 
-	void		SAMAV1ISO7816Commands::activeAV2Mode()
+	void SAMAV1ISO7816Commands::activeAV2Mode()
 	{
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
@@ -150,7 +152,7 @@ namespace logicalaccess
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0x10, p1, 0x00, 0x05, data,  0x05, 0x00, result, &resultlen);
 	}
 
-	void			SAMAV1ISO7816Commands::authentificateHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno)
+	void SAMAV1ISO7816Commands::authentificateHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno)
 	{
 		if (key->getKeyType() == DF_KEY_DES)
 			authentificateHostDES(key, keyno);
@@ -267,7 +269,7 @@ namespace logicalaccess
 		d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RndB.begin(), RndB.begin() + 4);
 	}
 
-	std::string			SAMAV1ISO7816Commands::getSAMTypeFromSAM()
+	std::string SAMAV1ISO7816Commands::getSAMTypeFromSAM()
 	{
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
@@ -284,7 +286,7 @@ namespace logicalaccess
 		return "SAM_NONE";
 	}
 
-	 boost::shared_ptr<SAMKucEntry>		SAMAV1ISO7816Commands::getKUCEntry(unsigned char kucno)
+	 boost::shared_ptr<SAMKucEntry> SAMAV1ISO7816Commands::getKUCEntry(unsigned char kucno)
 	 {
 		boost::shared_ptr<SAMKucEntry> kucentry(new SAMKucEntry);
 		unsigned char result[255];
@@ -293,13 +295,17 @@ namespace logicalaccess
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0x6c, kucno, 0x00, 0x00, result, &resultlen);
 
 		if (resultlen == 12 &&  result[resultlen - 2] == 0x90 || result[resultlen - 1] == 0x00)
-			memcpy(&*(kucentry->getKucEntryStruct()), result, sizeof(SAMKUCEntryStruct));
+		{
+			SAMKUCEntryStruct kucentrys;
+			memcpy(&kucentrys, result, sizeof(SAMKUCEntryStruct));
+			kucentry->setKucEntryStruct(kucentrys);
+		}
 		else
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "getKUCEntry failed.");
 		return kucentry;
 	 }
 	 
-	 void									SAMAV1ISO7816Commands::changeKUCEntry(unsigned char kucno, boost::shared_ptr<SAMKucEntry> keyentry, boost::shared_ptr<DESFireKey> key)
+	 void SAMAV1ISO7816Commands::changeKUCEntry(unsigned char kucno, boost::shared_ptr<SAMKucEntry> kucentry, boost::shared_ptr<DESFireKey> key)
 	 {
 		if (d_crypto->d_sessionKey.size() == 0)
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Failed: AuthentificationHost have to be done before use such command.");
@@ -308,7 +314,7 @@ namespace logicalaccess
 		size_t resultlen = sizeof(result);
 
 		unsigned char data[6] = {};
-		memcpy(data, &*(keyentry->getKucEntryStruct()), 6);
+		memcpy(data, &kucentry->getKucEntryStruct(), 6);
 		std::vector<unsigned char> vectordata(data, data + 6);
 		std::vector<unsigned char> encdatalittle;
 
@@ -317,7 +323,7 @@ namespace logicalaccess
 		else
 			encdatalittle = d_crypto->sam_crc_encrypt(d_crypto->d_sessionKey, vectordata, key);
 
-		int proMas = keyentry->getUpdateMask();
+		int proMas = kucentry->getUpdateMask();
 
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xcc, kucno, proMas, 0x08, &encdatalittle[0], encdatalittle.size(), result, &resultlen);
 
@@ -325,7 +331,7 @@ namespace logicalaccess
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKUCEntry failed.");
 	 }
 
-	 void									SAMAV1ISO7816Commands::disableKeyEntry(unsigned char keyno) 
+	 void SAMAV1ISO7816Commands::disableKeyEntry(unsigned char keyno) 
 	 {
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
@@ -336,7 +342,7 @@ namespace logicalaccess
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "disableKeyEntry failed.");
 	 }
 
-	 void									SAMAV1ISO7816Commands::selectApplication(unsigned char *aid)
+	 void SAMAV1ISO7816Commands::selectApplication(unsigned char *aid)
 	 {
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
@@ -405,7 +411,7 @@ namespace logicalaccess
 	 }
 
 
-	 std::vector<unsigned char> SAMAV1ISO7816Commands::changeKeyPICC(boost::shared_ptr<changeKeyInfo> info)
+	 std::vector<unsigned char> SAMAV1ISO7816Commands::changeKeyPICC(const ChangeKeyInfo& info)
 	 {
 		if (d_crypto->d_sessionKey.size() == 0)
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Failed: AuthentificationHost have to be done before use such command.");
@@ -413,17 +419,17 @@ namespace logicalaccess
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
 
-		if (info->oldKeyInvolvement)
+		if (info.oldKeyInvolvement)
 			keyCompMeth = 1;
 
-		unsigned char cfg = info->desfireNumber & 0x7;
-		if (info->isMasterKey)
+		unsigned char cfg = info.desfireNumber & 0x7;
+		if (info.isMasterKey)
 			cfg += 0x8;
 		std::vector<unsigned char> data(4);
-		data[0] = info->currentKeyNo;
-		data[1] = info->currentKeyV;
-		data[2] = info->newKeyNo;
-		data[3] = info->newKeyV;
+		data[0] = info.currentKeyNo;
+		data[1] = info.currentKeyV;
+		data[2] = info.newKeyNo;
+		data[3] = info.newKeyV;
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xc4, keyCompMeth, cfg, (unsigned char)(data.size()), &data[0], data.size(), 0x00, result, &resultlen);
 
 		if (resultlen >= 2 &&  (result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0x00))

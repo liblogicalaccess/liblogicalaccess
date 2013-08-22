@@ -8,26 +8,26 @@
 
 namespace logicalaccess
 {
-	boost::shared_ptr<KucEntryUpdateSettings> SAMKucEntry::getUpdateSettings()
+	KucEntryUpdateSettings SAMKucEntry::getUpdateSettings()
 	{
-		KucEntryUpdateSettings *settings = new KucEntryUpdateSettings;
+		KucEntryUpdateSettings settings;
 
-		bool *x = (bool*)settings;
-		for (unsigned char i = 0; i < sizeof(*settings); ++i)
+		bool *x = (bool*)&settings;
+		for (unsigned char i = 0; i < sizeof(settings); ++i)
 		{
 			if ((d_updatemask & 0x80) == 0x80)
 				x[i] = 1;
 			else
 				x[i] = 0;
-			if (i + 1 < sizeof(*settings))
+			if (i + 1 < sizeof(settings))
 				d_updatemask = d_updatemask << 1;
 		}
-		return boost::shared_ptr<KucEntryUpdateSettings>(settings);
+		return settings;
 	}
 
-	void	SAMKucEntry::setUpdateSettings(boost::shared_ptr<KucEntryUpdateSettings> t)
+	void SAMKucEntry::setUpdateSettings(const KucEntryUpdateSettings& t)
 	{
-		bool *x = (bool*)&*t;
+		bool *x = (bool*)&t;
 		d_updatemask = 0;
 		for (unsigned char i = 0; i < sizeof(t); ++i)
 		{
