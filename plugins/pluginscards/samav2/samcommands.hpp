@@ -11,7 +11,6 @@
 #include "logicalaccess/cards/commands.hpp"
 #include "samkeyentry.hpp"
 #include "samkucentry.hpp"
-#include "desfirekey.hpp"
 
 namespace logicalaccess
 {
@@ -43,6 +42,8 @@ namespace logicalaccess
 		SAMVersionInformation		software;
 		SAMManufactureInformation	manufacture;
 	} SAMVersion;
+
+	class DESFireKey;
 
 	class LIBLOGICALACCESS_API SAMCommands : public virtual Commands
 	{

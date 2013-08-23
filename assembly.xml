@@ -12,6 +12,13 @@
             </includes>
         </fileSet>
 		<fileSet>
+            <directory>/bin/plugins/Win32/Release/</directory>
+            <outputDirectory>/lib/Win32/</outputDirectory>
+            <includes>
+				<include>*.lib</include>
+            </includes>
+        </fileSet>
+		<fileSet>
             <directory>/plugins/cryptolib/bin/Win32/Release</directory>
             <outputDirectory>/lib/Win32/</outputDirectory>
             <includes>
@@ -20,6 +27,13 @@
         </fileSet>
 		<fileSet>
             <directory>/bin/x64/Release/</directory>
+            <outputDirectory>/lib/x64/</outputDirectory>
+            <includes>
+				<include>*.lib</include>
+            </includes>
+        </fileSet>
+		<fileSet>
+            <directory>/bin/plugins/x64/Release/</directory>
             <outputDirectory>/lib/x64/</outputDirectory>
             <includes>
 				<include>*.lib</include>
@@ -41,6 +55,14 @@
             </includes>
         </fileSet>
 		<fileSet>
+            <directory>/bin/plugins/Win32/Release/</directory>
+            <outputDirectory>/dll/Win32/</outputDirectory>
+            <includes>
+                <include>*.dll</include>
+				<include>*.exe</include>
+            </includes>
+        </fileSet>
+		<fileSet>
             <directory>/</directory>
             <outputDirectory>/dll/Win32/</outputDirectory>
             <includes>
@@ -50,6 +72,14 @@
         </fileSet>
 		<fileSet>
             <directory>/bin/x64/Release/</directory>
+            <outputDirectory>/dll/x64/</outputDirectory>
+            <includes>
+                <include>*.dll</include>
+				<include>*.exe</include>
+            </includes>
+        </fileSet>
+		<fileSet>
+            <directory>/bin/plugins/x64/Release/</directory>
             <outputDirectory>/dll/x64/</outputDirectory>
             <includes>
                 <include>*.dll</include>
