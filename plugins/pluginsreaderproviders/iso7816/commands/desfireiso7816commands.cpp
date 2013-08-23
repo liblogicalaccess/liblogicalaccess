@@ -178,7 +178,6 @@ namespace logicalaccess
 		{
 			boost::shared_ptr<SAMKeyStorage> samsks = boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
 			boost::shared_ptr<SAMCommands> samcommands = boost::dynamic_pointer_cast<SAMCommands>(getSAMChip()->getCommands());
-			boost::shared_ptr<ISO7816ReaderCardAdapter> readercardadapter = boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(samcommands->getReaderCardAdapter());
 
 			boost::shared_ptr<DESFireProfile> dprofile = boost::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile());
 			boost::shared_ptr<DESFireKey> oldkey = boost::dynamic_pointer_cast<DESFireKey>(dprofile->getKey(d_crypto->d_currentAid, keyno));

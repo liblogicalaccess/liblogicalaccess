@@ -1014,37 +1014,47 @@ namespace logicalaccess
 
 	bool DESFireEV1ISO7816Commands::changeKey(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
 	{
+		bool ret = false;
 		unsigned char diversify[24];
 		d_crypto->getDiversify(diversify);
 
-		std::vector<unsigned char> cryptogram = d_crypto->changeKey_PICC(keyno, key, diversify);
-		std::vector<unsigned char> data;
-		unsigned char keynobyte = keyno;
-		if (keyno == 0 && d_crypto->d_currentAid == 0)
+		if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
 		{
-			keynobyte |= key->getKeyType();
-		}
-		data.push_back(keynobyte);
-		data.insert(data.end(), cryptogram.begin(), cryptogram.end());
-		if (d_crypto->d_auth_method == CM_LEGACY)
-		{			
-			DESFireISO7816Commands::transmit(DF_INS_CHANGE_KEY, data);
+			ret = DESFireISO7816Commands::changeKey(keyno, key);
 		}
 		else
 		{
-			std::vector<unsigned char> dd = transmit_plain(DF_INS_CHANGE_KEY, data);
-			unsigned char err = dd.back();
-			dd.resize(dd.size() - 2);
-
-			// Don't check CMAC if master key.
-			if (dd.size() > 0 && keyno != 0)
+			std::vector<unsigned char> cryptogram = d_crypto->changeKey_PICC(keyno, key, diversify);
+			std::vector<unsigned char> data;
+			unsigned char keynobyte = keyno;
+			if (keyno == 0 && d_crypto->d_currentAid == 0)
 			{
-				std::vector<unsigned char> CMAC = d_crypto->desfire_cmac(std::vector<unsigned char>(&err, &err + 1));
-				EXCEPTION_ASSERT_WITH_LOG(dd == CMAC, LibLogicalAccessException, "Wrong CMAC.")
+				keynobyte |= key->getKeyType();
 			}
+			data.push_back(keynobyte);
+			data.insert(data.end(), cryptogram.begin(), cryptogram.end());
+			if (d_crypto->d_auth_method == CM_LEGACY)
+			{			
+				DESFireISO7816Commands::transmit(DF_INS_CHANGE_KEY, data);
+			}
+			else
+			{
+				std::vector<unsigned char> dd = transmit_plain(DF_INS_CHANGE_KEY, data);
+				unsigned char err = dd.back();
+				dd.resize(dd.size() - 2);
+
+				// Don't check CMAC if master key.
+				if (dd.size() > 0 && keyno != 0)
+				{
+					std::vector<unsigned char> CMAC = d_crypto->desfire_cmac(std::vector<unsigned char>(&err, &err + 1));
+					EXCEPTION_ASSERT_WITH_LOG(dd == CMAC, LibLogicalAccessException, "Wrong CMAC.")
+				}
+			}
+
+			ret = true;
 		}
 
-		return true;
+		return ret;
 	}
 
 	bool DESFireEV1ISO7816Commands::getVersion(DESFireCommands::DESFireCardVersion& dataVersion)
