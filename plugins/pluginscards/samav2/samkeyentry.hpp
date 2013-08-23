@@ -217,7 +217,7 @@ namespace logicalaccess
 			KeyEntryUpdateSettings getUpdateSettings();
 			void setUpdateSettings(const KeyEntryUpdateSettings& t);
 
-			KeyEntryInformation getKeyEntryInformation() { return d_keyentryinformation; } ;
+			KeyEntryInformation &getKeyEntryInformation() { return d_keyentryinformation; } ;
 			void setKeyEntryInformation(const KeyEntryInformation& t) { d_keyentryinformation = t; };
 
 			void setKeyTypeFromSET();
