@@ -419,7 +419,7 @@ namespace logicalaccess
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
 
-		if (info.oldKeyInvolvement)
+		if (!info.oldKeyInvolvement)
 			keyCompMeth = 1;
 
 		unsigned char cfg = info.desfireNumber & 0x7;
