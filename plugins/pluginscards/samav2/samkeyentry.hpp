@@ -82,8 +82,8 @@ namespace logicalaccess
 	typedef struct s_changeKeyInfo
 	{
 		unsigned char desfireNumber;
-		bool isMasterKey;
-		bool oldKeyInvolvement;
+		unsigned char isMasterKey;
+		unsigned char oldKeyInvolvement;
 		unsigned char currentKeyNo;
 		unsigned char currentKeyV;
 		unsigned char newKeyNo;

@@ -185,7 +185,7 @@ namespace logicalaccess
 			ChangeKeyInfo samck;
 			memset(&samck, 0x00, sizeof(samck));
 			samck.currentKeyNo = d_crypto->d_currentKeyNo;
-			samck.isMasterKey = (d_crypto->d_currentAid == 0x00 && keyno == 0x00);
+			samck.isMasterKey = (d_crypto->d_currentAid == 0x00 && keyno == 0x00) ? 1 : 0;
 			samck.newKeyNo = samsks->getKeySlot();
 			samck.newKeyV = key->getKeyVersion();
 			if (oldkey && boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
@@ -193,7 +193,7 @@ namespace logicalaccess
 				boost::shared_ptr<SAMKeyStorage> oldsamks = boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
 				samck.currentKeyNo = oldsamks->getKeySlot();
 				samck.currentKeyV = oldkey->getKeyVersion();
-				samck.oldKeyInvolvement = true;
+				samck.oldKeyInvolvement = 1;
 			}
 
 			cryptogram = samcommands->changeKeyPICC(samck);
