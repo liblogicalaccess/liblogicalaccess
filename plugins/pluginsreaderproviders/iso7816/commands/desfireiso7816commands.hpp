@@ -327,7 +327,9 @@ namespace logicalaccess
 			 */
 			boost::shared_ptr<SAMChip> getSAMChip() { return d_SAM_chip; }
 
-		protected:			
+		protected:		
+
+			std::vector<unsigned char> getChangeKeySAMCryptogram(unsigned char keyno, boost::shared_ptr<DESFireKey> key);
 
 			/**
 			 * \brief Generic method to read data from a file.
