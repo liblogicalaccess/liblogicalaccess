@@ -156,8 +156,16 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			if (i < MAX_KEYBOARD_DEVICES)
 			{
 				sKeyboard->devices[i] = *it;
+				islogkbdlib::KbdLogs::getInstance()->LogEvent("#_tWinMain# sKeyboard->devices[%d].name = {%s}", i, sKeyboard->devices[i].name);
+			}
+			else
+			{
+				islogkbdlib::KbdLogs::getInstance()->LogEvent("#_tWinMain# To much keyboards... Stopping at limit {%d}.", MAX_KEYBOARD_DEVICES);
+				break;
 			}
 		}
+
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#_tWinMain# Setting host event...");
 		SetEvent(hHostEvent);
 
 		skipKey = false;
@@ -392,6 +400,7 @@ long LoadKbdFileMapping()
 	char sharedFullname[512];
 	memset(sharedFullname, 0x00, sizeof(sharedFullname));
 	sprintf_s(sharedFullname, sizeof(sharedFullname), "%s%s", KEYBOARD_SHAREDDATA, sharedname.c_str());
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#LoadKbdFileMapping# Open file mapping with name {%s}...", sharedFullname);
 
 	shKeyboard = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, sharedFullname);
 	if (!shKeyboard)
@@ -407,6 +416,7 @@ long LoadKbdFileMapping()
 			ret = GetLastError();
 			islogkbdlib::KbdLogs::getInstance()->LogEvent("#LoadKbdFileMapping# Error. Unable to map file {%d}.", ret);
 		}
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#LoadKbdFileMapping# Keyboard structure size {%d}.", sizeof(sKeyboard));
 	}
 	
 	return ret;
@@ -436,6 +446,7 @@ long LoadKbdEvent()
 	char eventName[512];
 	memset(eventName, 0x00, sizeof(eventName));
 	sprintf_s(eventName, sizeof(eventName), "%s%s", KEYBOARD_EVENT, sharedname.c_str());
+	islogkbdlib::KbdLogs::getInstance()->LogEvent("#LoadKbdFileMapping# Opening event name {%s}...", eventName);
 
 	hKbdEvent = OpenEvent(EVENT_ALL_ACCESS, FALSE, eventName);
 	if (!hKbdEvent)
@@ -447,6 +458,7 @@ long LoadKbdEvent()
 	{
 		memset(eventName, 0x00, sizeof(eventName));
 		sprintf_s(eventName, sizeof(eventName), "%s%s", KEYBOARD_EVENTPROCESEED, sharedname.c_str());
+		islogkbdlib::KbdLogs::getInstance()->LogEvent("#LoadKbdFileMapping# Opening event name {%s}...", eventName);
 
 		hKbdEventProcessed = OpenEvent(EVENT_ALL_ACCESS, FALSE, eventName);
 		if (!hKbdEventProcessed)
@@ -458,6 +470,7 @@ long LoadKbdEvent()
 		{
 			memset(eventName, 0x00, sizeof(eventName));
 			sprintf_s(eventName, sizeof(eventName), "%s%s", KEYBOARD_HOSTEVENT, sharedname.c_str());
+			islogkbdlib::KbdLogs::getInstance()->LogEvent("#LoadKbdFileMapping# Opening event name {%s}...", eventName);
 
 			hHostEvent = OpenEvent(EVENT_ALL_ACCESS, FALSE, eventName);
 			if (!hHostEvent)
@@ -469,6 +482,7 @@ long LoadKbdEvent()
 			{
 				memset(eventName, 0x00, sizeof(eventName));
 				sprintf_s(eventName, sizeof(eventName), "%s%s", KEYBOARD_STILLALIVEEVENT, sharedname.c_str());
+				islogkbdlib::KbdLogs::getInstance()->LogEvent("#LoadKbdFileMapping# Opening event name {%s}...", eventName);
 
 				hStillAliveEvent = OpenEvent(EVENT_ALL_ACCESS, FALSE, eventName);
 				if (!hStillAliveEvent)
@@ -550,7 +564,7 @@ bool ProcessRawInputMessage(HRAWINPUT rawInputHeader)
 				if (std::string(sKeyboard->selectedDeviceName) == std::string(it->name))
 				{
 					islogkbdlib::KbdLogs::getInstance()->LogEvent("#ProcessRawInputMessage# Device found! Checking if same handle...");
-					handled = (raw.header.hDevice == it->handle);
+					handled = (raw.header.hDevice == (HANDLE)it->handle);
 				}
 			}
  
@@ -667,7 +681,7 @@ bool ProcessRawInputMessage(HRAWINPUT rawInputHeader)
 
 DWORD WINAPI CheckThread(LPVOID lpThreadParameter)
 {
-	unsigned long timeout = 5000; 
+	unsigned long timeout = 2000; 
 	islogkbdlib::KbdLogs::getInstance()->LogEvent("#CheckThread# begins. Checking every {%u} milliseconds if host is present...", timeout);
 
 	while (continueHostCheck && WaitForSingleObject(hStillAliveEvent, timeout) == WAIT_OBJECT_0)

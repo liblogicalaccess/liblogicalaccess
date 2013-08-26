@@ -20,7 +20,7 @@ namespace logicalaccess
 
 	struct KeyboardEntry
 	{
-		HANDLE handle;
+		unsigned long long handle;
 
 		char name[DEVICE_NAME_MAXLENGTH];
 	};
