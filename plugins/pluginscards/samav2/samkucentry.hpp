@@ -52,7 +52,7 @@ namespace logicalaccess
 			KucEntryUpdateSettings getUpdateSettings();
 			void setUpdateSettings(const KucEntryUpdateSettings& t);
 
-			SAMKUCEntryStruct getKucEntryStruct() { return d_kucentry; };
+			SAMKUCEntryStruct &getKucEntryStruct() { return d_kucentry; };
 			void setKucEntryStruct(const SAMKUCEntryStruct& t) { d_kucentry = t; };
 
 	private:
