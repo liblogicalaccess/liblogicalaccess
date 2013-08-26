@@ -29,15 +29,15 @@ namespace KBDHOOK
 					{
 						logicalaccess::KeyboardEntry entry;
 						memset(&entry, 0x00, sizeof(entry));
-						entry.handle = (*it).hDevice;
+						entry.handle = (unsigned long long) (*it).hDevice;
 
 						UINT nSize = 0;
-						GetRawInputDeviceInfo(entry.handle, RIDI_DEVICENAME, NULL, &nSize);
+						GetRawInputDeviceInfo((HANDLE)entry.handle, RIDI_DEVICENAME, NULL, &nSize);
 
 						if (nSize > 0)
 						{
 							nSize = sizeof(entry.name);
-							errorCode = GetRawInputDeviceInfo(entry.handle, RIDI_DEVICENAME, entry.name, &nSize);
+							errorCode = GetRawInputDeviceInfo((HANDLE)entry.handle, RIDI_DEVICENAME, entry.name, &nSize);
 						}
 
 						// Skip Terminal Services and Remote Desktop generic keyboards

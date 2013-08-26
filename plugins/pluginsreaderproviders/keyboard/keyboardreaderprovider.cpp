@@ -96,6 +96,8 @@ namespace logicalaccess
 		}
 		sKeyboard = (KeyboardSharedStruct *)MapViewOfFile(shKeyboard, FILE_MAP_ALL_ACCESS, 0, 0, 0);
 
+		INFO_("Keyboard structure size {%d}", sizeof(sKeyboard));
+
 		if (sa.lpSecurityDescriptor)
 		{
 			LocalFree(sa.lpSecurityDescriptor);
@@ -276,7 +278,7 @@ namespace logicalaccess
 
 				SetEvent(readerProvider->hStillAliveEvent);
 
-				Sleep(4000);
+				Sleep(500);
 			} while (readerProvider->watchSessions);
 		}
 
@@ -287,17 +289,41 @@ namespace logicalaccess
 	{
 		watchSessions = false;
 
-		INFO_SIMPLE_("Waiting for listening thread to exit...");
-		WaitForSingleObject(hWatchThrd, INFINITE);
-		INFO_SIMPLE_("Listening thread exited.");
+		unsigned int timeout = 2000;
+		INFO_("Waiting for listening thread to exit. Max timeout {%u}...", timeout);
+		
+		if (hWatchThrd != NULL)
+		{
+			DWORD res = WaitForSingleObject(hWatchThrd, timeout);
+			if (res == WAIT_OBJECT_0)
+			{
+				INFO_SIMPLE_("Listening thread exited.");
+			}
+			else
+			{
+				ERROR_SIMPLE_("Listening thread timeout! Killing it!");
+				TerminateThread(hWatchThrd, 0);
+				hWatchThrd = NULL;
+			}
+		}
+		else
+		{
+			ERROR_SIMPLE_("Thread handle is NULL!");
+		}
 
 		for (SessionHookMap::iterator it; it != processHookedSessions.end(); ++it)
 		{
 			INFO_("Terminating hook process {%d}...", (*it).second);
-			terminateProcess((*it).second, 0);
+			bool ret = terminateProcess((*it).second, 0);
+			
+			if (!ret)
+			{
+				INFO_SIMPLE_("Unable to terminate process!");
+			}
 		}
 
 		processHookedSessions.clear();
+		INFO_SIMPLE_("Everything has been stopped successfully!");
 	}
 
 	bool KeyboardReaderProvider::terminateProcess(DWORD dwProcessId, UINT uExitCode)
@@ -578,24 +604,44 @@ namespace logicalaccess
 #ifdef _WINDOWS
 		if (shKeyboard != NULL)
 		{
-			DWORD res = WaitForSingleObject(hHostEvent, 10000);
+			unsigned int timeout = 5000;
+			INFO_("Waiting {%u} milliseconds for host event set...", timeout);
+			DWORD res = WaitForSingleObject(hHostEvent, timeout);
 			if (res == WAIT_OBJECT_0)
 			{
+				//INFO_SIMPLE_("Host event is set! A keyboard hook is started.");
 				for (unsigned int i = 0; i < MAX_KEYBOARD_DEVICES; ++i)
 				{
 					if (sKeyboard->devices[i].handle != NULL)
 					{
-						boost::shared_ptr<KeyboardReaderUnit> ru;
-						ru.reset(new KeyboardReaderUnit());
-						ru->setKeyboard(sKeyboard->devices[i].name);
-						ru->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
+						//INFO_("Keyboard[%u].name = {%s}", i, sKeyboard->devices[i].name);
 
-						INFO_("Reader {%s} added (%d) to the list.", sKeyboard->devices[i].name, sKeyboard->devices[i].handle);
+						if (strncmp(sKeyboard->devices[i].name, "", sizeof(sKeyboard->devices[i].name)))
+						{
+							boost::shared_ptr<KeyboardReaderUnit> ru;
+							ru.reset(new KeyboardReaderUnit());
+							ru->setKeyboard(sKeyboard->devices[i].name);
+							ru->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
 
-						d_readers.push_back(ru);
+							INFO_("Reader {%s} added to the list.", sKeyboard->devices[i].name);
+
+							d_readers.push_back(ru);
+						}
+						else
+						{
+							ERROR_SIMPLE_("Keyboard name is empty! Ignoring...");
+						}
 					}
 				}
 			}
+			else
+			{
+				INFO_SIMPLE_("Timeout reached when waiting for host event... No keyboard hook found.");
+			}
+		}
+		else
+		{
+			ERROR_SIMPLE_("File mapping handle invalid...");
 		}
 #endif
 

@@ -71,6 +71,13 @@
             </includes>
         </fileSet>
 		<fileSet>
+            <directory>/plugins/pluginsreaderproviders/keyboard/</directory>
+            <outputDirectory>/dll/Win32/</outputDirectory>
+            <includes>
+				<include>islogkbdsettings.config</include>
+            </includes>
+        </fileSet>
+		<fileSet>
             <directory>/bin/x64/Release/</directory>
             <outputDirectory>/dll/x64/</outputDirectory>
             <includes>
@@ -91,7 +98,13 @@
             <outputDirectory>/dll/x64/</outputDirectory>
             <includes>
                 <include>liblogicalaccess.config</include>
-				<include>/plugins/pluginsreaderproviders/keyboard/islogkbdsettings.config</include>
+            </includes>
+        </fileSet>
+		<fileSet>
+            <directory>/plugins/pluginsreaderproviders/keyboard/</directory>
+            <outputDirectory>/dll/x64/</outputDirectory>
+            <includes>
+				<include>islogkbdsettings.config</include>
             </includes>
         </fileSet>
 		<fileSet>
