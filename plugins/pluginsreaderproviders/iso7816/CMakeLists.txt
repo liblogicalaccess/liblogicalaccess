@@ -51,7 +51,7 @@ add_library(
 	${INCLUDE_LIB}
   )
 
-SET_TARGET_PROPERTIES(iso7816readers PROPERTIES VERSION 1.65)
+SET_TARGET_PROPERTIES(iso7816readers PROPERTIES VERSION 1.67)
   
 set(LINK_LIB)
 if (WIN32)
@@ -60,7 +60,7 @@ else()
   set(LINK_LIB crypto logicalaccess)
 endif()
 
-SET_TARGET_PROPERTIES(iso7816readers PROPERTIES VERSION 1.65)
+SET_TARGET_PROPERTIES(iso7816readers PROPERTIES VERSION 1.67)
   
 target_link_libraries(
 	iso7816readers

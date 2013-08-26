@@ -87,7 +87,7 @@ add_library(
 	${INCLUDE_LIB}
   )
 
-SET_TARGET_PROPERTIES(pcscreaders PROPERTIES VERSION 1.65)
+SET_TARGET_PROPERTIES(pcscreaders PROPERTIES VERSION 1.67)
   
 target_link_libraries(
 	pcscreaders
