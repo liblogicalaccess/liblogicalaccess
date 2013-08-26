@@ -250,7 +250,7 @@ namespace logicalaccess
 				x[i] = 1;
 			else
 				x[i] = 0;
-			if (i + 1 < sizeof(settings))
+			if (i + (unsigned int)1 < sizeof(settings))
 				d_updatemask = d_updatemask << 1;
 		}
 
@@ -264,7 +264,7 @@ namespace logicalaccess
 		for (unsigned char i = 0; i < sizeof(KeyEntryUpdateSettings); ++i)
 		{
 			d_updatemask += x[i];
-			if (i + 1 < sizeof(KeyEntryUpdateSettings))
+			if (i + (unsigned int)1 < sizeof(KeyEntryUpdateSettings))
 				d_updatemask = d_updatemask << 1;
 		}
 	}
@@ -280,7 +280,7 @@ namespace logicalaccess
 				x[i] = 1;
 			else
 				x[i] = 0;
-			if (i + 1 < sizeof(set))
+			if (i + (unsigned int)1 < sizeof(set))
 				d_keyentryinformation.set[j] = d_keyentryinformation.set[j] << 1;
 			if (i == 8)
 				j++;
@@ -297,7 +297,7 @@ namespace logicalaccess
 		for (unsigned char i = 0; i < sizeof(t); ++i)
 		{
 			d_keyentryinformation.set[j] += (char)x[i];
-			if (i + 1 < sizeof(t))
+			if (i + (unsigned int)1 < sizeof(t))
 				d_keyentryinformation.set[j] = d_keyentryinformation.set[j] << 1;
 			if (i == 8)
 				j++;

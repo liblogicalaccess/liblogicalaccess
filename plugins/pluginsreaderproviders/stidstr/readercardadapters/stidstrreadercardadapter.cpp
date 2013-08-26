@@ -38,7 +38,6 @@ namespace logicalaccess
 	std::vector<unsigned char> STidSTRReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
 	{
 		COM_("Sending command command %s command size {%d}...", BufferHelper::getHex(command).c_str(), command.size());
-		bool ret = false;
 		std::vector<unsigned char> cmd;
 		boost::shared_ptr<STidSTRReaderUnitConfiguration> readerConfig = getSTidSTRReaderUnit()->getSTidSTRConfiguration();
 		//INFO_("Reader configuration {%s}", dynamic_cast<XmlSerializable*>(&(*readerConfig))->serialize().c_str());

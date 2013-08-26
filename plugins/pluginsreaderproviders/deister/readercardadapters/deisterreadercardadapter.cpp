@@ -34,7 +34,6 @@ namespace logicalaccess
 
 	std::vector<unsigned char> DeisterReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
 	{
-		bool ret = false;
 		std::vector<unsigned char> cmd;
 		cmd.push_back(Dummy);
 		cmd.push_back(Dummy);

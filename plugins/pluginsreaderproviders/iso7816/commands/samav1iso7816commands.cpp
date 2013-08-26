@@ -70,9 +70,7 @@ namespace logicalaccess
 		if ((resultlen == 14 || resultlen == 13) &&  result[resultlen - 2] == 0x90 && result[resultlen - 1] == 0x00)
 		{
 			keyentry.reset(new SAMKeyEntry());
-			unsigned short *set;
 
-			set = reinterpret_cast<unsigned short*>(result + resultlen - 4);
 			memcpy(keyentryinformation.set, result + resultlen - 4, 2);
 			keyentry->setSET(keyentryinformation.set);
 
@@ -166,7 +164,6 @@ namespace logicalaccess
 		size_t resultlen = sizeof(result);
 		unsigned char authMode = 0x00;
 		unsigned char data[2];
-		size_t keylength = key->getLength();
 
 		memset(data, 0, sizeof(data));
 		data[0] = keyno;
@@ -294,7 +291,7 @@ namespace logicalaccess
 
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0x6c, kucno, 0x00, 0x00, result, &resultlen);
 
-		if (resultlen == 12 &&  result[resultlen - 2] == 0x90 || result[resultlen - 1] == 0x00)
+		if (resultlen == 12 && (result[resultlen - 2] == 0x90 || result[resultlen - 1] == 0x00))
 		{
 			SAMKUCEntryStruct kucentrys;
 			memcpy(&kucentrys, result, sizeof(SAMKUCEntryStruct));
@@ -327,7 +324,7 @@ namespace logicalaccess
 
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xcc, kucno, proMas, 0x08, &encdatalittle[0], encdatalittle.size(), result, &resultlen);
 
-		if (resultlen >= 2 &&  result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0x00)
+		if (resultlen >= 2 && (result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0x00))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKUCEntry failed.");
 	 }
 

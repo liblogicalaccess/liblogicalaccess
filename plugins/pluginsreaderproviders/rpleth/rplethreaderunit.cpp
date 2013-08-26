@@ -517,7 +517,6 @@ namespace logicalaccess
 		COM_SIMPLE_("receiveBadge");
 		std::vector<unsigned char> res;
 		std::vector<unsigned char> cmd;
-		long int currentWait = 0;
 		try
 		{
 			res = getDefaultRplethReaderCardAdapter()->sendRplethCommand(cmd, timeout);

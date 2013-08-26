@@ -24,12 +24,12 @@ namespace logicalaccess
 			/**
 			 * \brief Constructor.
 			 */
-			SAMChip::SAMChip() : Chip(CHIP_SAM) {};
+			SAMChip() : Chip(CHIP_SAM) {};
 
 			/**
 			 * \brief Constructor.
 			 */
-			SAMChip::SAMChip(std::string t) : Chip(t) {};
+			SAMChip(std::string t) : Chip(t) {};
 
 			/**
 			 * \brief Destructor.
