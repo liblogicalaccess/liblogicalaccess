@@ -18,7 +18,7 @@ else()
   set(LINK_OPT logicalaccess)
 endif()
 
-SET_TARGET_PROPERTIES(indalacards PROPERTIES VERSION 1.65)
+SET_TARGET_PROPERTIES(indalacards PROPERTIES VERSION 1.67)
 
 target_link_libraries(
 	indalacards
