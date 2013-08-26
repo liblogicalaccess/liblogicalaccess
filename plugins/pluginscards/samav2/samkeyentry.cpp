@@ -26,6 +26,13 @@ namespace logicalaccess
 		d_diversify = false;
 		d_updatemask = 0;
 		memset(&d_keyentryinformation, 0x00, sizeof(KeyEntryInformation));
+		if (str != "")
+			memcpy(d_key, str.c_str(), getSingleLength());
+		if (str1 != "")
+			memcpy(d_key, str1.c_str(), getSingleLength());
+		if (str2 != "")
+			memcpy(d_key, str2.c_str(), getSingleLength());
+
 	}
 
 	SAMKeyEntry::SAMKeyEntry(const void** buf, size_t buflen, char numberkey) : d_updatemask(0)
@@ -42,18 +49,15 @@ namespace logicalaccess
 			{
 				if (numberkey >= 1)
 				{
-					memset(&*d_key, 0, getLength());
-					memcpy(&*d_key, buf[0], getSingleLength());
+					memcpy(d_key, buf[0], getSingleLength());
 				}
 				if (numberkey >= 2)
 				{
-					memset(&*d_key, 0, getLength());
-					memcpy(&*d_key + getSingleLength(), buf[1], getSingleLength());
+					memcpy(d_key + getSingleLength(), buf[1], getSingleLength());
 				}
 				if (numberkey >= 3)
 				{
-					memset(&*d_key, 0, getLength());
-					memcpy(&*d_key + (getSingleLength() * 2), buf[2], getSingleLength());
+					memcpy(d_key + (getSingleLength() * 2), buf[2], getSingleLength());
 				}
 			}
 		}
@@ -147,7 +151,6 @@ namespace logicalaccess
 
 	void SAMKeyEntry::setSETKeyTypeFromKeyType()
 	{
-		unsigned char test = 0x38 & d_keyentryinformation.set[0];
 		d_keyentryinformation.set[0] = d_keyentryinformation.set[0] - (0x1c & d_keyentryinformation.set[0]);
 		switch (d_keyType)
 		{
