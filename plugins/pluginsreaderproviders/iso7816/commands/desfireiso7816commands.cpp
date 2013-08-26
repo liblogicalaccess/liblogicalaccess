@@ -175,7 +175,7 @@ namespace logicalaccess
 		boost::shared_ptr<SAMCommands> samcommands = boost::dynamic_pointer_cast<SAMCommands>(getSAMChip()->getCommands());
 
 		boost::shared_ptr<DESFireProfile> dprofile = boost::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile());
-		boost::shared_ptr<DESFireKey> oldkey = boost::dynamic_pointer_cast<DESFireKey>(dprofile->getKey(d_crypto->d_currentAid, keyno));
+		boost::shared_ptr<DESFireKey> oldkey = boost::dynamic_pointer_cast<DESFireKey>(dprofile->getKey(d_crypto->d_currentAid, d_crypto->d_currentKeyNo));
 
 		ChangeKeyInfo samck;
 		memset(&samck, 0x00, sizeof(samck));
@@ -183,6 +183,7 @@ namespace logicalaccess
 		samck.isMasterKey = (d_crypto->d_currentAid == 0x00 && keyno == 0x00) ? 1 : 0;
 		samck.newKeyNo = samsks->getKeySlot();
 		samck.newKeyV = key->getKeyVersion();
+		samck.desfireNumber = keyno;
 		if (oldkey && boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
 		{
 			boost::shared_ptr<SAMKeyStorage> oldsamks = boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());

@@ -1310,10 +1310,14 @@ namespace logicalaccess
 			else if (type == "SAM_AV1")
 			{
 				commands.reset(new SAMAV1ISO7816Commands());
+				boost::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
+				boost::dynamic_pointer_cast<SAMAV1ISO7816Commands>(commands)->setCrypto(samcrypto);
 			}
 			else if (type == "SAM_AV2")
 			{
 				commands.reset(new SAMAV2ISO7816Commands());
+				boost::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
+				boost::dynamic_pointer_cast<SAMAV2ISO7816Commands>(commands)->setCrypto(samcrypto);
 			}
 			else if (type == "MifarePlus4K")
 			{
