@@ -358,19 +358,22 @@ namespace logicalaccess
 #elif defined(LINUX)
 				usleep(100000);
 #endif
-									DESFireCommands::DESFireCardVersion cardversion;
-									if (boost::dynamic_pointer_cast<DESFireChip>(d_insertedChip)->getDESFireCommands()->getVersion(cardversion))
+									if (d_card_type == "UNKNOWN")
 									{
-										// Set from the version
-										d_insertedChip->setChipIdentifier(std::vector<unsigned char>(cardversion.uid, cardversion.uid + sizeof(cardversion.uid)));
-
-										// DESFire EV1 and not regular DESFire
-										if (cardversion.softwareMjVersion >= 1)
+										DESFireCommands::DESFireCardVersion cardversion;
+										if (boost::dynamic_pointer_cast<DESFireChip>(d_insertedChip)->getDESFireCommands()->getVersion(cardversion))
 										{
-											d_insertedChip = createChip("DESFireEV1");
-											if (d_proxyReaderUnit)
+											// Set from the version
+											d_insertedChip->setChipIdentifier(std::vector<unsigned char>(cardversion.uid, cardversion.uid + sizeof(cardversion.uid)));
+
+											// DESFire EV1 and not regular DESFire
+											if (cardversion.softwareMjVersion >= 1)
 											{
-												d_proxyReaderUnit->setSingleChip(d_insertedChip);
+												d_insertedChip = createChip("DESFireEV1");
+												if (d_proxyReaderUnit)
+												{
+													d_proxyReaderUnit->setSingleChip(d_insertedChip);
+												}
 											}
 										}
 									}
