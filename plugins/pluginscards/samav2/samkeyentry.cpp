@@ -133,7 +133,7 @@ namespace logicalaccess
 		unsigned char keynb = 3;
 		d_keyType = type;
 
-		if (d_keyType == SAM_MAXKEY_SIZE)
+		if (d_keyType == SAM_KEY_3K3DES)
 			keynb = 2;
 
 		size_t keysize = getSingleLength();
