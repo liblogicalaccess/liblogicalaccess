@@ -27,6 +27,11 @@ namespace logicalaccess
 
 	GunneboReaderProvider::~GunneboReaderProvider()
 	{
+		release();
+	}
+
+	void GunneboReaderProvider::release()
+	{
 	}
 
 	boost::shared_ptr<GunneboReaderProvider> GunneboReaderProvider::getSingletonInstance()

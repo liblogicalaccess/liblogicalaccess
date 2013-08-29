@@ -26,6 +26,11 @@ namespace logicalaccess
 
 	IdOnDemandReaderProvider::~IdOnDemandReaderProvider()
 	{
+		release();
+	}
+
+	void IdOnDemandReaderProvider::release()
+	{
 	}
 
 	boost::shared_ptr<IdOnDemandReaderProvider> IdOnDemandReaderProvider::getSingletonInstance()

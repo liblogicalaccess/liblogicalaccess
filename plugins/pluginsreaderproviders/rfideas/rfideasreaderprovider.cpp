@@ -44,6 +44,11 @@ namespace logicalaccess
 
 	RFIDeasReaderProvider::~RFIDeasReaderProvider()
 	{
+		release();
+	}
+
+	void RFIDeasReaderProvider::release()
+	{
 	}
 
 	boost::shared_ptr<ReaderUnit> RFIDeasReaderProvider::createReaderUnit()

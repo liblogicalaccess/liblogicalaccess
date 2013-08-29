@@ -39,6 +39,11 @@ namespace logicalaccess
 			~PCSCReaderProvider();
 
 			/**
+			 * \brief Release the provider resources.
+			 */
+			virtual void release();
+
+			/**
 			 * \brief Create a new PC/SC reader provider instance.
 			 * \return The PC/SC reader provider instance.
 			 */

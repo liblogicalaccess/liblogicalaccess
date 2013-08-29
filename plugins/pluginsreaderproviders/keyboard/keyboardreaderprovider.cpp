@@ -33,6 +33,11 @@ namespace logicalaccess
 
 	KeyboardReaderProvider::~KeyboardReaderProvider()
 	{
+		release();
+	}
+
+	void KeyboardReaderProvider::release()
+	{
 #ifdef _WINDOWS
 		freeKbdEvent();
 		freeKbdFileMapping();

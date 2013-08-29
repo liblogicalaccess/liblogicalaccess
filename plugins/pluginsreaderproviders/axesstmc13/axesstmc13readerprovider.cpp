@@ -39,6 +39,12 @@ namespace logicalaccess
 
 	AxessTMC13ReaderProvider::~AxessTMC13ReaderProvider()
 	{
+		release();
+	}
+
+	void AxessTMC13ReaderProvider::release()
+	{
+
 	}
 
 	boost::shared_ptr<ReaderUnit> AxessTMC13ReaderProvider::createReaderUnit()
