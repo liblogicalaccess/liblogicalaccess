@@ -412,7 +412,7 @@ namespace logicalaccess
 
 		INFO_("Session key length: %d", d_crypto->d_sessionKey.size());
 
-		if (key->getKeyType() == DF_ALG_3K3DES)
+		if (key->getKeyType() == DF_KEY_3K3DES)
 		{
 			d_crypto->d_cipher.reset(new openssl::DESCipher());
 			d_crypto->d_block_size = 8;
