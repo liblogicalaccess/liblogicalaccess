@@ -826,9 +826,13 @@ namespace logicalaccess
 
 	bool DESFireISO7816Commands::authenticate(unsigned char keyno)
 	{
-		unsigned char command[16];
-
 		boost::shared_ptr<DESFireKey> key = d_crypto->getKey(keyno);
+		return authenticate(keyno, key);
+	}
+
+	bool DESFireISO7816Commands::authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
+	{
+		unsigned char command[16];
 
 		if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()) && !getSAMChip())
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAMKeyStorage set on the key but not SAM reader has been set.");

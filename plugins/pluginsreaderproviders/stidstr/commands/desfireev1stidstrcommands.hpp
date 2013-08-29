@@ -337,6 +337,14 @@ namespace logicalaccess
 			virtual bool authenticate(unsigned char keyno);
 
 			/**
+			 * \brief Authenticate a block, given a key number.
+			 * \param keyno The key number.
+			 * \param key The key.
+			 * \return true if authenticated, false otherwise.
+			 */
+			virtual bool authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key);
+
+			/**
 			 * \brief AuthenticateISO command.
 			 * \param keyno The key number.
 			 * \param algorithm The ISO algorithm to use for authentication.			 
