@@ -27,7 +27,11 @@ namespace logicalaccess
 
 	STidSTRReaderProvider::~STidSTRReaderProvider()
 	{
-		//INFO_SIMPLE_("Destructor");
+		release();
+	}
+
+	void STidSTRReaderProvider::release()
+	{
 	}
 
 	boost::shared_ptr<STidSTRReaderProvider> STidSTRReaderProvider::getSingletonInstance()

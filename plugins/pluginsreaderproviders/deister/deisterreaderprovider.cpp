@@ -39,6 +39,11 @@ namespace logicalaccess
 
 	DeisterReaderProvider::~DeisterReaderProvider()
 	{
+		release();
+	}
+
+	void DeisterReaderProvider::release()
+	{
 	}
 
 	boost::shared_ptr<ReaderUnit> DeisterReaderProvider::createReaderUnit()

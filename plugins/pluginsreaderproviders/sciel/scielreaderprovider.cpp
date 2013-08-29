@@ -27,6 +27,11 @@ namespace logicalaccess
 
 	SCIELReaderProvider::~SCIELReaderProvider()
 	{
+		release();
+	}
+
+	void SCIELReaderProvider::release()
+	{
 	}
 
 	boost::shared_ptr<SCIELReaderProvider> SCIELReaderProvider::getSingletonInstance()

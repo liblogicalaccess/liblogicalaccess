@@ -39,6 +39,11 @@ namespace logicalaccess
 
 	SmartIDReaderProvider::~SmartIDReaderProvider()
 	{
+		release();
+	}
+
+	void SmartIDReaderProvider::release()
+	{
 	}
 
 	boost::shared_ptr<ReaderUnit> SmartIDReaderProvider::createReaderUnit()

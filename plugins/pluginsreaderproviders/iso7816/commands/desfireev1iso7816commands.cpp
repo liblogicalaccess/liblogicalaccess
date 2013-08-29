@@ -302,7 +302,11 @@ namespace logicalaccess
 
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_GET_CHALLENGE, 0x00, 0x00, static_cast<unsigned char>(length), result, &resultlen);
 
-		std::vector<unsigned char> ret(result, result + resultlen - 2);
+		std::vector<unsigned char> ret;
+		if (result[resultlen-2] == 0x90 && result[resultlen-1] == 0x00)
+		{
+			ret.insert(ret.end(), result, result + resultlen - 2);
+		}
 
 		return ret;
 	}
@@ -333,7 +337,11 @@ namespace logicalaccess
 
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_INTERNAL_AUTHENTICATE, p1, p2, static_cast<unsigned char>(RPCD2.size()), &RPCD2[0], RPCD2.size(), static_cast<unsigned char>(length), result, &resultlen);
 
-		std::vector<unsigned char> ret(result, result + resultlen - 2);
+		std::vector<unsigned char> ret;
+		if (result[resultlen-2] == 0x90 && result[resultlen-1] == 0x00)
+		{
+			ret.insert(ret.end(), result, result + resultlen - 2);
+		}
 
 		return ret;
 	}	
@@ -401,6 +409,9 @@ namespace logicalaccess
 
 		iso_externalAuthenticate(algorithm, isMasterCardKey, keyno, encRPCD1RPICC1);
 		std::vector<unsigned char> encRPICC2RPCD2a = iso_internalAuthenticate(algorithm, isMasterCardKey, keyno, RPCD2, 2 * 16);
+
+		if (encRPICC2RPCD2a.size() < 1)
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam_iso_authenticate wrong internal data.");
 
 		readercardadapter->sendAPDUCommand(0x80, 0x8e, 0x00, 0x00, (unsigned char)(encRPICC2RPCD2a.size()), &encRPICC2RPCD2a[0], encRPICC2RPCD2a.size(), apduresult, &apduresultlen);
 		if (apduresultlen <= 2 && apduresult[apduresultlen - 2] != 0x90 && apduresult[apduresultlen - 2] != 0x00)
@@ -501,6 +512,10 @@ namespace logicalaccess
 			throw LibLogicalAccessException("Cannot retrieve cryptographically strong bytes");
 		}
 		cryptogram = iso_internalAuthenticate(algorithm, isMasterCardKey, keyno, RPCD2, 2*le);
+
+		if (cryptogram.size() < 1)
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "iso_authenticate wrong internal data.");
+
 		std::vector<unsigned char> response;
 		cipher->decipher(cryptogram, response, *isokey.get(), *iv.get(), false);
 
@@ -1014,7 +1029,6 @@ namespace logicalaccess
 
 	bool DESFireEV1ISO7816Commands::changeKey(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
 	{
-		bool ret = false;
 		unsigned char diversify[24];
 		d_crypto->getDiversify(diversify);
 		std::vector<unsigned char> cryptogram;

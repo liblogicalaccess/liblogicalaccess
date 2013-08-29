@@ -104,7 +104,7 @@ namespace logicalaccess
 			int saveaid = aid;
 			for (char x = 2; x >= 0; --x)
 			{
-				t_aid[x] = saveaid & 0xff;
+				t_aid[(unsigned char)x] = saveaid & 0xff;
 				saveaid >>= 8;
 			}
 			samcommands->selectApplication(t_aid);

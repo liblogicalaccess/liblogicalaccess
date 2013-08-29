@@ -48,6 +48,11 @@ namespace logicalaccess
 			~KeyboardReaderProvider();
 
 			/**
+			 * \brief Release the provider resources.
+			 */
+			virtual void release();
+
+			/**
 			 * \brief Get the keyboard reader provider instance.
 			 * \return The Keyboard reader provider instance.
 			 */

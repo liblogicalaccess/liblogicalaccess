@@ -38,7 +38,7 @@ namespace logicalaccess
 		return PCSC_RUT_OMNIKEY_XX21;
 	}
 
-	boost::shared_ptr<ReaderCardAdapter> OmnikeyXX21ReaderUnit::getReaderCardAdapter(std::string type)
+	boost::shared_ptr<ReaderCardAdapter> OmnikeyXX21ReaderUnit::getReaderCardAdapter(std::string /*type*/)
 	{
 		return getDefaultReaderCardAdapter();
 	}

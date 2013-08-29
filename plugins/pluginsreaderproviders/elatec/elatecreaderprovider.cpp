@@ -39,6 +39,11 @@ namespace logicalaccess
 
 	ElatecReaderProvider::~ElatecReaderProvider()
 	{
+		release();
+	}
+
+	void ElatecReaderProvider::release()
+	{
 	}
 
 	boost::shared_ptr<ReaderUnit> ElatecReaderProvider::createReaderUnit()

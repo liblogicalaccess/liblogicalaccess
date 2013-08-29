@@ -38,6 +38,11 @@ namespace logicalaccess
 
 	Rwk400ReaderProvider::~Rwk400ReaderProvider()
 	{
+		release();
+	}
+
+	void Rwk400ReaderProvider::release()
+	{
 	}
 
 	boost::shared_ptr<ReaderUnit> Rwk400ReaderProvider::createReaderUnit()

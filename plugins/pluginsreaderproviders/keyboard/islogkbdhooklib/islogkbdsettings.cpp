@@ -106,23 +106,56 @@ namespace islogkbdlib
 		char szAppPath[MAX_PATH];
 		memset(szAppPath, 0x00, sizeof(szAppPath));
 		static std::string path = ".";
+		char tmp[128];
 
 		if (path == ".")
-		{
-			DWORD size = GetModuleFileNameA((HMODULE)&__ImageBase, szAppPath, sizeof(szAppPath)-1);
-			DWORD error = GetLastError();
-		
-			// Return ERROR_FILE_NOT_FOUND on Windows XP with COM layer ever on success... Cannot found any similar issue so ignore it for now...
-			if (error != ERROR_SUCCESS && error != ERROR_FILE_NOT_FOUND)
+		{		
+			DWORD error = ERROR_SUCCESS;
+			if (!GetModuleFileNameA((HMODULE)&__ImageBase, szAppPath, sizeof(szAppPath)-1))
 			{
-				if (__hKbdHookModule != NULL)
+				error = GetLastError();
+				sprintf(tmp, "Cannot get module file name. Last error code: %d. Trying with GetModuleHandle first...", error);
+				OutputDebugStringA(tmp);
+				HMODULE hm = NULL;
+				if (!GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                        (LPCSTR) &instance, 
+                            &hm))
 				{
-					GetModuleFileNameA(__hKbdHookModule, szAppPath, sizeof(szAppPath)-1);
+					int ret = GetLastError();
+					sprintf(tmp, "GetModuleHandle returned %d\n", ret);
+					OutputDebugStringA(tmp);
+				}				
+
+				if (!GetModuleFileNameA(hm, szAppPath, sizeof(szAppPath)-1))
+				{
 					error = GetLastError();
+					sprintf(tmp, "Cannot get module file name. Last error code: %d. Trying with hmodule (%d) from dllmain...", error, __hKbdHookModule);
+					OutputDebugStringA(tmp);
+					if (__hKbdHookModule == NULL)
+					{
+						sprintf(tmp, "hmodule from dllmain is null.");
+						OutputDebugStringA(tmp);
+					
+					}
+					else
+					{
+						if (!GetModuleFileNameA(__hKbdHookModule, szAppPath, sizeof(szAppPath)-1))
+						{
+							error = GetLastError();
+						}
+						else
+						{
+							error = ERROR_SUCCESS;
+						}
+					}
+				}
+				else
+				{
+					error = ERROR_SUCCESS;
 				}
 			}
 
-			if (error == ERROR_SUCCESS || error == ERROR_FILE_NOT_FOUND)
+			if (error == ERROR_SUCCESS)
 			{
 				std::string tmp(szAppPath);
 				size_t index = tmp.find_last_of("/\\");
@@ -132,6 +165,14 @@ namespace islogkbdlib
 				}
 				path = tmp;
 			}
+			else
+			{
+				sprintf(tmp, "Still cannot get module file name. Last error code: %d.", error);
+				OutputDebugStringA(tmp);
+			}
+
+			sprintf(tmp, "Current dll path is: %s.", path.c_str());
+			OutputDebugStringA(tmp);
 		}
 
 		return path;

@@ -28,7 +28,7 @@ namespace logicalaccess
 			 */
 			SAMAV2Chip();
 
-			SAMAV2Chip::SAMAV2Chip(std::string ct);
+			SAMAV2Chip(std::string ct);
 
 			/**
 			 * \brief Destructor.

@@ -39,6 +39,11 @@ namespace logicalaccess
 
 	PromagReaderProvider::~PromagReaderProvider()
 	{
+		release();
+	}
+
+	void PromagReaderProvider::release()
+	{
 	}
 
 	boost::shared_ptr<ReaderUnit> PromagReaderProvider::createReaderUnit()

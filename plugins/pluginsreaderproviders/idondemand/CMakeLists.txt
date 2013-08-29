@@ -48,7 +48,7 @@ else()
   set(LINK_OPT logicalaccess boost_system boost_system boost_filesystem)
 endif()
 
-SET_TARGET_PROPERTIES(idondemandreaders PROPERTIES VERSION 1.65)
+SET_TARGET_PROPERTIES(idondemandreaders PROPERTIES VERSION 1.67)
 
 target_link_libraries(
 	idondemandreaders

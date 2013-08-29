@@ -138,7 +138,7 @@ namespace logicalaccess
 			if (currentWait >= timeout)
 			{
 				char buf[64];
-				sprintf(buf, "Socket receive timeout (%d > %d).", currentWait, timeout);
+				sprintf(buf, "Socket receive timeout (%ld > %ld).", currentWait, timeout);
 				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, buf);
 			}
 		}

@@ -46,6 +46,11 @@ namespace logicalaccess
 
 	OK5553ReaderProvider::~OK5553ReaderProvider()
 	{
+		release();
+	}
+
+	void OK5553ReaderProvider::release()
+	{
 	}
 
 	boost::shared_ptr<ReaderUnit> OK5553ReaderProvider::createReaderUnit()

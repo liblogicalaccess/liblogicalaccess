@@ -4,7 +4,7 @@
  * \brief PC/SC reader unit configuration.
  */
 
-#include "iso7816ReaderUnitConfiguration.hpp"
+#include "iso7816readerunitconfiguration.hpp"
 #include "iso7816readerunit.hpp"
 
 namespace logicalaccess

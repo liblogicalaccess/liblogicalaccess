@@ -130,7 +130,7 @@ namespace logicalaccess
 			 * \brief Get the keys data.
 			 * \return The keys data.
 			 */
-			std::vector<std::vector<unsigned char> > SAMKeyEntry::getKeysData();
+			std::vector< std::vector<unsigned char> > getKeysData();
 
 			/**
 			 * \brief Set the keys data.

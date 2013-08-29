@@ -736,7 +736,7 @@ namespace logicalaccess
 						break;
 				}
 
-				if (i == getReaderProvider()->getReaderList().size())
+				if (i == (int)(getReaderProvider()->getReaderList().size()))
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The SAM Reader specified has not been find.");
 
 				boost::shared_ptr<PCSCReaderUnit> ret;

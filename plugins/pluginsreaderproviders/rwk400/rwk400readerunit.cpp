@@ -65,7 +65,7 @@ namespace logicalaccess
 		boost::dynamic_pointer_cast<ReaderCardAdapter>(d_readerCommunication)->setDataTransport(getDataTransport());
 	}
 
-	boost::shared_ptr<ReaderCommunication> Rwk400ReaderUnit::getReaderCommunication(std::string cardType)
+	boost::shared_ptr<ReaderCommunication> Rwk400ReaderUnit::getReaderCommunication(std::string /*cardType*/)
 	{
 		boost::shared_ptr<ReaderCommunication> ret;
 

@@ -27,6 +27,12 @@ namespace logicalaccess
 
 	AdmittoReaderProvider::~AdmittoReaderProvider()
 	{
+		release();
+	}
+
+	void AdmittoReaderProvider::release()
+	{
+
 	}
 
 	boost::shared_ptr<AdmittoReaderProvider> AdmittoReaderProvider::getSingletonInstance()

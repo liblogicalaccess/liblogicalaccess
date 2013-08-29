@@ -38,6 +38,11 @@ namespace logicalaccess
 
 	AxessTMCLegicReaderProvider::~AxessTMCLegicReaderProvider()
 	{
+		release();
+	}
+
+	void AxessTMCLegicReaderProvider::release()
+	{
 	}
 
 	boost::shared_ptr<ReaderUnit> AxessTMCLegicReaderProvider::createReaderUnit()

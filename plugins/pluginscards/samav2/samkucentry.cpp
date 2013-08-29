@@ -19,7 +19,7 @@ namespace logicalaccess
 				x[i] = 1;
 			else
 				x[i] = 0;
-			if (i + 1 < sizeof(settings))
+			if (i + (unsigned int)1 < sizeof(settings))
 				d_updatemask = d_updatemask << 1;
 		}
 		return settings;
@@ -32,7 +32,7 @@ namespace logicalaccess
 		for (unsigned char i = 0; i < sizeof(t); ++i)
 		{
 			d_updatemask += x[i];
-			if (i + 1 < sizeof(t))
+			if (i + (unsigned int)1 < sizeof(t))
 				d_updatemask = d_updatemask << 1;
 		}
 	}

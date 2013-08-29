@@ -45,6 +45,11 @@ namespace logicalaccess
 
 	RplethReaderProvider::~RplethReaderProvider()
 	{
+		release();
+	}
+
+	void RplethReaderProvider::release()
+	{
 	}
 
 	boost::shared_ptr<ReaderUnit> RplethReaderProvider::createReaderUnit()

@@ -29,14 +29,14 @@ namespace logicalaccess
 			 * \return True if a card was inserted, false otherwise. If a card was inserted, the name of the reader on which the insertion was detected is accessible with getReader().
 			 * \warning If the card is already connected, then the method always fail.
 			 */
-			virtual bool waitInsertion(unsigned int maxwait) { return true; }
+			virtual bool waitInsertion(unsigned int /*maxwait*/) { return true; }
 
 			/**
 			 * \brief Wait for a card removal.
 			 * \param maxwait The maximum time to wait for, in milliseconds. If maxwait is zero, then the call never times out.
 			 * \return True if a card was removed, false otherwise. If a card was removed, the name of the reader on which the removal was detected is accessible with getReader().
 			 */
-			virtual bool waitRemoval(unsigned int maxwait) { return true; }
+			virtual bool waitRemoval(unsigned int /*maxwait*/) { return true; }
 
 			/**
 			 * \brief Check if the card is connected.
@@ -48,7 +48,7 @@ namespace logicalaccess
 			 * \brief Set the forced card type.
 			 * \param cardType The forced card type.
 			 */
-			virtual void setCardType(std::string cardType) {}
+			virtual void setCardType(std::string /*cardType*/) {}
 
 			/**
 			 * \brief Get the first and/or most accurate chip found.
