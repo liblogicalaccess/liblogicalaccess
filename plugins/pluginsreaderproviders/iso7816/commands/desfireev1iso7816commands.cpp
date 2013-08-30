@@ -346,12 +346,10 @@ namespace logicalaccess
 		return ret;
 	}	
 
-	bool DESFireEV1ISO7816Commands::authenticate(unsigned char keyno)
+	bool DESFireEV1ISO7816Commands::authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
 	{
 		// Get the appropriate authentification method and algorithm according to the key type (for 3DES we use legacy method instead of ISO).
 		bool r = false;
-		
-		boost::shared_ptr<DESFireKey> key = d_crypto->getKey(keyno);
 
 		if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()) && !getSAMChip())
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAMKeyStorage set on the key but not SAM reader has been set.");

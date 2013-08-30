@@ -178,10 +178,11 @@ namespace logicalaccess
 
 			/**
 			 * \brief Authenticate, given a key number.
-			 * \param keyno The key number, previously loaded.
+			 * \param keyno The key number.
+			 * \param key The key.
 			 * \return true if authenticated, false otherwise.
 			 */
-			virtual bool authenticate(unsigned char keyno);
+			virtual bool authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key);
 
 			/**
 			 * \brief AuthenticateISO command.

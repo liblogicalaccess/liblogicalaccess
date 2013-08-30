@@ -465,10 +465,15 @@ namespace logicalaccess
 	}
 
 	bool DESFireEV1STidSTRCommands::authenticate(unsigned char keyno)
-	{	
+	{
+		boost::shared_ptr<DESFireKey> key = d_profile->getKey(d_currentAid, keyno);
+		return authenticate(keyno, key);
+	}
+
+	bool DESFireEV1STidSTRCommands::authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
+	{
 		INFO_("Authenticating... key number {0x%x(%u)}",  keyno, keyno);
 
-		boost::shared_ptr<DESFireKey> key = d_profile->getKey(d_currentAid, keyno);
 		boost::shared_ptr<KeyStorage> key_storage = key->getKeyStorage();
 		STidKeyLocationType keylocation = STID_DF_KEYLOC_RAM;
 		unsigned char keyindex = 0x00;

@@ -291,6 +291,14 @@ namespace logicalaccess
 			virtual bool authenticate(unsigned char keyno = 0);
 
 			/**
+			 * \brief Authenticate a block, given a key number.
+			 * \param keyno The key number.
+			 * \param key The key.
+			 * \return true if authenticated, false otherwise.
+			 */
+			virtual bool authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key);
+
+			/**
 			 * \brief Get the card version information.
 			 * \param dataVersion The card version information structure that will be filled
 			 * \return True on success, false otherwise.

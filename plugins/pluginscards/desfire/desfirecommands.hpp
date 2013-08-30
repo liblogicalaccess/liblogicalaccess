@@ -488,10 +488,18 @@ namespace logicalaccess
 
 			/**
 			 * \brief Authenticate a block, given a key number.
-			 * \param keyno The key number, previously loaded with DESFire::loadKey().
+			 * \param keyno The key number, previously loaded on the profile.
 			 * \return true if authenticated, false otherwise.
 			 */
 			virtual bool authenticate(unsigned char keyno = 0) = 0;
+
+			/**
+			 * \brief Authenticate a block, given a key number.
+			 * \param keyno The key number.
+			 * \param key The key.
+			 * \return true if authenticated, false otherwise.
+			 */
+			virtual bool authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key) = 0;
 
 			/**
 			 * \brief Get the card version information.
