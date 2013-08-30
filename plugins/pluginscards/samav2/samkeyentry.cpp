@@ -272,18 +272,25 @@ namespace logicalaccess
 	SET SAMKeyEntry::getSETStruct()
 	{
 		SET set;
-		bool *x = (bool*)&set;
+		char *x = (char*)&set;
+		
+		unsigned char set_save[2];
 		unsigned char j = 0;
-		for (unsigned char i = 0; i < sizeof(set); ++i)
+
+		memcpy(set_save, d_keyentryinformation.set, 2);
+
+		for (char i = 7; i >= 0; --i)
 		{
-			if ((d_keyentryinformation.set[j] & 0x80) == 0x80)
-				x[i] = 1;
+			if ((set_save[j] & 0x80) == 0x80)
+				x[i + j * 8] = 1;
 			else
-				x[i] = 0;
-			if (i + (unsigned int)1 < sizeof(set))
-				d_keyentryinformation.set[j] = d_keyentryinformation.set[j] << 1;
-			if (i == 8)
+				x[i + j * 8] = 0;
+			set_save[j] = set_save[j] << 1;
+			if (i == 0 && j == 0)
+			{
+				i = 8;
 				j++;
+			}
 		}
 
 		return set;
@@ -291,16 +298,19 @@ namespace logicalaccess
 
 	void SAMKeyEntry::setSET(const SET& t)
 	{
-		bool *x = (bool*)&t;
+		char *x = (char*)&t;
 		memset(d_keyentryinformation.set, 0, 2);
 		unsigned char j = 0;
-		for (unsigned char i = 0; i < sizeof(t); ++i)
+		for (unsigned char i = 7; i >= 0; --i)
 		{
-			d_keyentryinformation.set[j] += (char)x[i];
-			if (i + (unsigned int)1 < sizeof(t))
-				d_keyentryinformation.set[j] = d_keyentryinformation.set[j] << 1;
-			if (i == 8)
+			d_keyentryinformation.set[j] += (char)x[i + j * 8];
+			if (i == 0)
+			{
+				i = 8;
 				j++;
+			}
+			else
+				d_keyentryinformation.set[j] = d_keyentryinformation.set[j] << 1;
 		}
 	}
 }
