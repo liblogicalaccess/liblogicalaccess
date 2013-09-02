@@ -314,7 +314,7 @@ namespace logicalaccess
 	void MifareAccessInfo::unSerialize(boost::property_tree::ptree& node)
 	{
 		boost::dynamic_pointer_cast<XmlSerializable>(keyA)->unSerialize(node.get_child("KeyA"), "");
-		boost::dynamic_pointer_cast<XmlSerializable>(keyB)->unSerialize(node.get_child("keyB"), "");
+		boost::dynamic_pointer_cast<XmlSerializable>(keyB)->unSerialize(node.get_child("KeyB"), "");
 
 		string sabstr = node.get_child("SectorAccessBits").get_value<std::string>();
 		unsigned char buf[3];
