@@ -444,7 +444,7 @@ namespace logicalaccess
 	void MifarePlusAccessInfo::unSerialize(boost::property_tree::ptree& node)
 	{
 		boost::dynamic_pointer_cast<XmlSerializable>(keyA)->unSerialize(node.get_child("KeyA"), "");
-		boost::dynamic_pointer_cast<XmlSerializable>(keyB)->unSerialize(node.get_child("keyB"), "");
+		boost::dynamic_pointer_cast<XmlSerializable>(keyB)->unSerialize(node.get_child("KeyB"), "");
 		boost::dynamic_pointer_cast<XmlSerializable>(keyOriginality)->unSerialize(node.get_child("KeyOriginality"), "");
 		boost::dynamic_pointer_cast<XmlSerializable>(keyMastercard)->unSerialize(node.get_child("KeyMastercard"), "");
 		boost::dynamic_pointer_cast<XmlSerializable>(keyConfiguration)->unSerialize(node.get_child("KeyConfiguration"), "");

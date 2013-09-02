@@ -53,7 +53,7 @@ namespace logicalaccess
 
 	void CardsFormatComposite::addFormatForCard(std::string type, boost::shared_ptr<Format> format, boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite)
 	{
-		INFO_("Add format for card type {%s}...", type);
+		INFO_("Add format for card type {%s}...", type.c_str());
 		FormatInfos finfos;
 		finfos.format = format;
 		finfos.location = location;
@@ -65,7 +65,7 @@ namespace logicalaccess
 
 	void CardsFormatComposite::retrieveFormatForCard(std::string type, boost::shared_ptr<Format>* format, boost::shared_ptr<Location>* location, boost::shared_ptr<AccessInfo>* aiToUse, boost::shared_ptr<AccessInfo>* aiToWrite)
 	{
-		INFO_("Retrieving format for card type {%s}...", type);
+		INFO_("Retrieving format for card type {%s}...", type.c_str());
 		if (formatsList.find(type) != formatsList.end())
 		{
 			INFO_SIMPLE_("Type found int the composite. Retrieving values...");
@@ -165,7 +165,7 @@ namespace logicalaccess
 					}
 					catch(std::exception& ex)
 					{
-						WARNING_("Read format failed: %s", ex.what());
+						WARNING_("Read format failed: {%s}", ex.what());
 						fcopy.reset();
 					}
 				}
@@ -198,7 +198,7 @@ namespace logicalaccess
 			FormatInfosList::iterator it;
 			for (it = formatsList.begin(); it != formatsList.end(); ++it)
 			{
-				INFO_("Serializing type {%d}...", it->first);
+				INFO_("Serializing type {%s}...", it->first.c_str());
 				boost::property_tree::ptree nodecard;
 				nodecard.put("type", it->first);
 				nodecard.put("SelectedFormat", (it->second.format) ? it->second.format->getType() : FT_UNKNOWN);
@@ -263,7 +263,7 @@ namespace logicalaccess
 							}
 							catch(std::exception ex)
 							{
-								ERROR_("Cannot unserialize location.");
+								ERROR_("Cannot unserialize location: {%s}", ex.what());
 								location.reset();
 							}
 						}
@@ -278,7 +278,7 @@ namespace logicalaccess
 							}
 							catch(std::exception ex)
 							{
-								ERROR_("Cannot unserialize access info to use.");
+								ERROR_("Cannot unserialize access info to use: {%s}", ex.what());
 								aiToUse.reset();
 							}
 						}
@@ -297,7 +297,7 @@ namespace logicalaccess
 								}
 								catch(std::exception ex)
 								{
-									ERROR_("Cannot unserialize access info to write.");
+									ERROR_("Cannot unserialize access info to write: {%s}", ex.what());
 									aiToWrite.reset();
 								}
 							}
