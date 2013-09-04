@@ -65,7 +65,7 @@ namespace logicalaccess
 			}
 		}
 
-		return (d_socket);
+		return bool(d_socket);
 	}
 
 	void UdpDataTransport::disconnect()
@@ -79,7 +79,7 @@ namespace logicalaccess
 
 	bool UdpDataTransport::isConnected()
 	{
-		return (d_socket);
+		return bool(d_socket);
 	}
 
 	std::string UdpDataTransport::getName() const

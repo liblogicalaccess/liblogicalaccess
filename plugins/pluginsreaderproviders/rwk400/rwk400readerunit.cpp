@@ -203,7 +203,7 @@ namespace logicalaccess
 
 	bool Rwk400ReaderUnit::isConnected()
 	{
-		return (d_insertedChip);
+		return bool(d_insertedChip);
 	}
 
 	bool Rwk400ReaderUnit::connectToReader()
