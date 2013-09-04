@@ -630,14 +630,22 @@ namespace logicalaccess
 				{
 					INFO_("Using key diversification with div : %s", BufferHelper::getHex(std::vector<unsigned char>(diversify, diversify + 16)).c_str());
 
-					// Sagem diversification algo. Should be an option with SAM diversifiction soon...
+					// Sagem diversification algo. Should be an option with SAM diversification soon...
 					std::vector<unsigned char> iv;
 					// Two time, to have ECB and not CBC mode (laazzyyy to create new function :))
-					unsigned char* keydata = key->getData();
-					std::vector<unsigned char> r = sam_CBC_send(std::vector<unsigned char>(keydata, keydata + key->getLength()), iv, std::vector<unsigned char>(diversify, diversify + 8));
+					std::vector<unsigned char> vkeydata;
+					if (key->isEmpty())
+					{
+						vkeydata.resize(key->getLength(), 0x00);
+					}
+					else
+					{
+						vkeydata.insert(vkeydata.end(), key->getData(), key->getData() + key->getLength());
+					}
+
+					std::vector<unsigned char> r = sam_CBC_send(vkeydata, iv, std::vector<unsigned char>(diversify, diversify + 8));
 					keydiv.insert(keydiv.end(), r.begin(), r.end());
-					keydata = key->getData();
-					std::vector<unsigned char> r2 = sam_CBC_send(std::vector<unsigned char>(keydata, keydata + key->getLength()), iv, std::vector<unsigned char>(diversify + 8, diversify + 16));
+					std::vector<unsigned char> r2 = sam_CBC_send(vkeydata, iv, std::vector<unsigned char>(diversify + 8, diversify + 16));
 					keydiv.insert(keydiv.end(), r2.begin(), r2.end());
 				}
 				else
@@ -652,8 +660,14 @@ namespace logicalaccess
 		}
 		else
 		{
-			unsigned char* keydata = key->getData();
-			keydiv.insert(keydiv.end(), keydata, keydata + key->getLength());
+			if (key->isEmpty())
+			{
+				keydiv.resize(key->getLength(), 0x00);
+			}
+			else
+			{
+				keydiv.insert(keydiv.end(), key->getData(), key->getData() + key->getLength());
+			}
 		}
 
 		if (key->getKeyType() != DF_KEY_AES)

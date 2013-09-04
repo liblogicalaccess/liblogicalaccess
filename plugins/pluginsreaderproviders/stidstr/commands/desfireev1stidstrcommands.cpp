@@ -799,40 +799,12 @@ namespace logicalaccess
 		return aids;
 	}
 
-	bool DESFireEV1STidSTRCommands::erase(bool resetKey)
+	bool DESFireEV1STidSTRCommands::erase()
 	{
 		INFO_SIMPLE_("Erasing card...");
-		bool r = false;
+		getSTidSTRReaderCardAdapter()->sendCommand(0x00FC, std::vector<unsigned char>());
 
-		if (selectApplication(0))
-		{
-			if (authenticate(0))
-			{
-				INFO_SIMPLE_("Select and Authenticate returned successfully ! Erasing...");
-				getSTidSTRReaderCardAdapter()->sendCommand(0x00FC, std::vector<unsigned char>());
-				// Reset Master Card Key
-				if (resetKey)
-				{
-					r = changeKey(0, boost::shared_ptr<DESFireKey>(new DESFireKey(string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
-				}
-				else
-				{
-					r = true;
-				}
-			}
-			else
-			{
-				ERROR_SIMPLE_("Unable to authenticate with key number 0 !");
-				THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_AUTHENTICATE);
-			}
-		}
-		else
-		{
-			ERROR_SIMPLE_("Unable to select application 0 !");
-			THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_SELECTAPPLICATION);
-		}
-
-		return r;
+		return true;
 	}
 
 	std::vector<int> DESFireEV1STidSTRCommands::getFileIDs()

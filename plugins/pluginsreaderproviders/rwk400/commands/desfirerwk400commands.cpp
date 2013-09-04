@@ -37,11 +37,9 @@ namespace logicalaccess
 		return d_crypto;
 	}
 
-	bool DesfireRwk400Commands::erase(bool resetKey)
+	bool DesfireRwk400Commands::erase()
 	{
-		bool res = false;
-		UNUSED(resetKey);
-		return res;
+		return false;
 	}
 	
 	bool DesfireRwk400Commands::selectApplication(int aid)

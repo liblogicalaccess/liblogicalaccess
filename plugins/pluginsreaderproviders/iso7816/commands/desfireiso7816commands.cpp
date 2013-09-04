@@ -23,31 +23,11 @@ namespace logicalaccess
 	{
 	}
 
-	bool DESFireISO7816Commands::erase(bool resetKey)
+	bool DESFireISO7816Commands::erase()
 	{		
-		bool r = false;
-
-		if (selectApplication(0))
-		{
-			if (authenticate(0))
-			{
-				transmit(0xFC);
-				if (resetKey)
-				{
-					r = changeKey(0, boost::shared_ptr<DESFireKey>(new DESFireKey(string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
-				}
-			}
-			else
-			{
-				THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_AUTHENTICATE);
-			}
-		}
-		else
-		{
-			THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_SELECTAPPLICATION);
-		}
-
-		return r;
+		transmit(0xFC);
+				
+		return true;
 	}
 
 	bool DESFireISO7816Commands::getVersion(DESFireCardVersion& dataVersion)
@@ -99,6 +79,7 @@ namespace logicalaccess
 
 		if (getSAMChip())
 		{
+			INFO_("SelectApplication on SAM chip...");
 			boost::shared_ptr<SAMCommands> samcommands = boost::dynamic_pointer_cast<SAMCommands>(getSAMChip()->getCommands());
 			unsigned char t_aid[3] = {};
 			int saveaid = aid;

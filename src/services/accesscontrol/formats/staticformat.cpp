@@ -121,6 +121,7 @@ namespace logicalaccess
 				{
 					size_t convertedDataRepresentationLengthBytes = (convertedDataRepresentationLengthBits + 7) / 8;
 					unsigned char* convertedDataRepresentationData = new unsigned char[convertedDataRepresentationLengthBytes];
+					memset(convertedDataRepresentationData, 0x00, convertedDataRepresentationLengthBytes);
 
 					if (d_dataRepresentation->convertNumeric(convertedDataTypeData, convertedDataTypeLengthBytes, convertedDataTypeLengthBits, convertedDataRepresentationData, convertedDataRepresentationLengthBytes) == convertedDataRepresentationLengthBits)
 					{

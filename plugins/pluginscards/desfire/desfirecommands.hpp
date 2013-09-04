@@ -136,7 +136,7 @@ namespace logicalaccess
 			 * \brief Erase the card.
 			 * \return true if the card was erased, false otherwise. If false, the card may be partially erased.
 			 */
-			virtual bool erase(bool resetKey = true) = 0;
+			virtual bool erase() = 0;
 
 			/**
 			 * \brief Describe setting for Data File type.
