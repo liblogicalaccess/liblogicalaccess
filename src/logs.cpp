@@ -234,7 +234,7 @@ namespace logicalaccess
 			memset(buffer, 0x00, sizeof(buffer));
 			va_list args;
 			va_start (args, format);
-	#ifdef __linux__
+	#if denifed(__unix__)
 			vsnprintf(buffer, sizeof(buffer) - 1, format, args);
 	#else
 			_vsnprintf_s(buffer, sizeof(buffer) - 1, format, args);
