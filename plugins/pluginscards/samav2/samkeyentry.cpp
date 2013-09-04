@@ -151,7 +151,7 @@ namespace logicalaccess
 
 	void SAMKeyEntry::setSETKeyTypeFromKeyType()
 	{
-		d_keyentryinformation.set[0] = d_keyentryinformation.set[0] - (0x1c & d_keyentryinformation.set[0]);
+		d_keyentryinformation.set[0] = d_keyentryinformation.set[0] - (0x38 & d_keyentryinformation.set[0]);
 		switch (d_keyType)
 		{
 		case SAM_KEY_DES:
