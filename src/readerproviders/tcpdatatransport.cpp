@@ -67,7 +67,7 @@ namespace logicalaccess
 			}
 		}
 
-		return (d_socket);
+		return bool(d_socket);
 	}
 
 	void TcpDataTransport::disconnect()
@@ -82,7 +82,7 @@ namespace logicalaccess
 
 	bool TcpDataTransport::isConnected()
 	{
-		return (d_socket);
+		return bool(d_socket);
 	}
 
 	std::string TcpDataTransport::getName() const

@@ -8,7 +8,7 @@
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 #include "logicalaccess/services/accesscontrol/formats/customformat/binarydatafield.hpp"
 
-#ifdef __linux__
+#if defined(__unix__)
 #include <cstring>
 #endif
 
