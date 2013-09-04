@@ -301,7 +301,7 @@ namespace logicalaccess
 		char *x = (char*)&t;
 		memset(d_keyentryinformation.set, 0, 2);
 		unsigned char j = 0;
-		for (unsigned char i = 7; i >= 0; --i)
+		for (char i = 7; i >= 0; --i)
 		{
 			d_keyentryinformation.set[j] += (char)x[i + j * 8];
 			if (i == 0 && j == 0)
