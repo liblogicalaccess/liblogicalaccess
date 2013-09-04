@@ -367,7 +367,7 @@ namespace logicalaccess
 		switch (key->getKeyType())
 		{
 		case DF_KEY_DES:
-			r = DESFireISO7816Commands::authenticate(keyno);
+			r = DESFireISO7816Commands::authenticate(keyno, key);
 			break;
 
 		case DF_KEY_3K3DES:
@@ -442,8 +442,10 @@ namespace logicalaccess
 		unsigned char le;
 		boost::shared_ptr<openssl::SymmetricCipher> cipher;
 		unsigned char diversify[24];
+
 		memset(diversify, 0x00, sizeof(diversify));
 		d_crypto->getDiversify(diversify);
+
 		std::vector<unsigned char> keydiv;
 		d_crypto->getKey(key, diversify, keydiv);
 

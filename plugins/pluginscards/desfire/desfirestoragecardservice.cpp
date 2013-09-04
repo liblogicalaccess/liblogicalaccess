@@ -17,7 +17,28 @@ namespace logicalaccess
 
 	bool DESFireStorageCardService::erase()
 	{
-		return getDESFireChip()->getDESFireCommands()->erase();
+		bool r = false;
+		boost::shared_ptr<DESFireCommands> cmd = getDESFireChip()->getDESFireCommands();
+		if (cmd->selectApplication(0))
+		{
+			if (cmd->authenticate(0))
+			{
+				if (cmd->erase())
+				{
+					r = cmd->changeKey(0, boost::shared_ptr<DESFireKey>(new DESFireKey(string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
+				}
+			}
+			else
+			{
+				THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_AUTHENTICATE);
+			}
+		}
+		else
+		{
+			THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_SELECTAPPLICATION);
+		}
+		
+		return r;
 	}
 
 	bool DESFireStorageCardService::erase(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse)

@@ -141,6 +141,8 @@ namespace logicalaccess
 		d_key_storage = KeyStorage::getKeyStorageFromType(static_cast<KeyStorageType>(node.get_child("<xmlattr>.keyStorageType").get_value<unsigned int>()));
 		d_storeCipheredData = node.get_child("IsCiphered").get_value<bool>(false);
 		uncipherKeyData(node);
+
+		INFO_SIMPLE_("Unserializing Key storage...");
 		d_key_storage->unSerialize(node);
 	}
 
@@ -200,7 +202,7 @@ namespace logicalaccess
 		}
 		else
 		{
-			//INFO_("Data was ciphered ! Unciphering..");
+			INFO_SIMPLE_("Data was ciphered ! Unciphering..");
 			std::string secureKey = ((d_cipherKey == "") ? Key::secureAiKey : d_cipherKey);
 			std::vector<unsigned char> hash = openssl::SHA256Hash(secureKey);
 			openssl::AESSymmetricKey aes = openssl::AESSymmetricKey::createFromData(hash);
