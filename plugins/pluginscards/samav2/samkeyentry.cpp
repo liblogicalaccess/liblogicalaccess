@@ -304,7 +304,7 @@ namespace logicalaccess
 		for (unsigned char i = 7; i >= 0; --i)
 		{
 			d_keyentryinformation.set[j] += (char)x[i + j * 8];
-			if (i == 0)
+			if (i == 0 && j == 0)
 			{
 				i = 8;
 				j++;
