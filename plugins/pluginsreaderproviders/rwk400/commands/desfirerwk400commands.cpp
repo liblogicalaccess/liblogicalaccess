@@ -37,11 +37,9 @@ namespace logicalaccess
 		return d_crypto;
 	}
 
-	bool DesfireRwk400Commands::erase(bool resetKey)
+	bool DesfireRwk400Commands::erase()
 	{
-		bool res = false;
-		UNUSED(resetKey);
-		return res;
+		return false;
 	}
 	
 	bool DesfireRwk400Commands::selectApplication(int aid)
@@ -472,12 +470,17 @@ namespace logicalaccess
 
 	bool DesfireRwk400Commands::authenticate(unsigned char keyno)
 	{
+		boost::shared_ptr<DESFireKey> key = d_chip->getDESFireProfile()->getDefaultKey(DESFireKeyType::DF_KEY_DES);
+		return authenticate(keyno, key);
+	}
+
+	bool DesfireRwk400Commands::authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
+	{
 		bool res = false;
 		if (d_chip)
 		{
 			try
 			{
-				boost::shared_ptr<DESFireKey> key = d_chip->getDESFireProfile()->getDefaultKey(DESFireKeyType::DF_KEY_DES);
 				std::vector<unsigned char> permutedKey = premutationKey(key->getData(), key->getLength());
 				std::vector<unsigned char> answer;
 				std::vector<unsigned char> command;

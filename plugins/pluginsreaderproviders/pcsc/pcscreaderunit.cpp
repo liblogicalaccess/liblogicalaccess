@@ -355,7 +355,7 @@ namespace logicalaccess
 								{
 #ifdef _WINDOWS
 				Sleep(100);
-#elif defined(LINUX)
+#elif defined(__unix__)
 				usleep(100000);
 #endif
 									DESFireCommands::DESFireCardVersion cardversion;
@@ -880,7 +880,6 @@ namespace logicalaccess
 			}
 			else if (atrlen == 28 || atrlen == 27)
 			{
-				std::cout << BufferHelper::getHex(std::vector<unsigned char>(atr, atr + atrlen)) << std::endl;
 				// 3B DF 18 FF 81 F1 FE 43 00 3F 03 83 4D 49 46 41 52 45 20 50 6C 75 73 20 53 41 4D 3B NXP SAM AV2 module
 				// 3B DF 18 FF 81 F1 FE 43 00 1F 03 4D 49 46 41 52 45 20 50 6C 75 73 20 53 41 4D 98 Mifare SAM AV2
 				unsigned char atrTagITP1[] = { 0x3B, 0xDF, 0x18, 0xFF, 0x81, 0xF1, 0xFE, 0x43, 0x00, 0x3F, 0x03, 0x83, 0x4D, 0x49, 0x46, 0x41, 0x52, 0x45, 0x20, 0x50, 0x6C, 0x75, 0x73, 0x20, 0x53, 0x41, 0x4D, 0x3B};
@@ -888,12 +887,10 @@ namespace logicalaccess
 
 				if (atrlen == 28 && !memcmp(atr, atrTagITP1, sizeof(atrTagITP1)))
 				{
-					std::cout << "NXP SAM AV2 module FOUND" << std::endl;
 					return "SAM_AV2";
 				}
 				else if (atrlen == 27 && !memcmp(atr, atrTagITP2, sizeof(atrTagITP2)))
 				{
-					std::cout << "Mifare SAM AV2 FOUND" << std::endl;
 					return "SAM_AV2";
 				}
 			}

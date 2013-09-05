@@ -43,7 +43,7 @@ namespace logicalaccess
 			 * \brief Erase the card.
 			 * \return true if the card was erased, false otherwise. If false, the card may be partially erased.
 			 */
-			virtual bool erase(bool resetKey = true);			
+			virtual bool erase();			
 
 			/**
 			 * \brief Select an application.
@@ -286,10 +286,18 @@ namespace logicalaccess
 
 			/**
 			 * \brief Authenticate, given a key number.
-			 * \param keyno The key number, previously loaded with DESFire::loadKey().
+			 * \param keyno The key number, previously loaded on the profile.
 			 * \return true if authenticated, false otherwise.
 			 */
 			virtual bool authenticate(unsigned char keyno = 0);
+
+			/**
+			 * \brief Authenticate, given a key number.
+			 * \param keyno The key number.
+			 * \param key The key.
+			 * \return true if authenticated, false otherwise.
+			 */
+			virtual bool authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key);
 
 			/**
 			 * \brief Get the card version information.

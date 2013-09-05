@@ -13,10 +13,6 @@
 
 #include "logicalaccess/logs.hpp"
 
-#ifdef LINUX
-#include <wintypes.h>
-#endif
-
 namespace logicalaccess
 {
 	class AccessInfo;	

@@ -7,7 +7,7 @@
 #include "stidstrreaderprovider.hpp"
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
 
-#ifdef LINUX
+#ifdef __unix__
 #include <stdlib.h>
 #include <sys/time.h>
 #endif
@@ -27,7 +27,11 @@ namespace logicalaccess
 
 	STidSTRReaderProvider::~STidSTRReaderProvider()
 	{
-		//INFO_SIMPLE_("Destructor");
+		release();
+	}
+
+	void STidSTRReaderProvider::release()
+	{
 	}
 
 	boost::shared_ptr<STidSTRReaderProvider> STidSTRReaderProvider::getSingletonInstance()

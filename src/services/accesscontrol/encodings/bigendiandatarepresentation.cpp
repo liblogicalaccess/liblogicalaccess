@@ -7,7 +7,7 @@
 #include "logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp"
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 
-#if defined(__unix__)
+#ifdef __unix__
 #include <cstring>
 #endif
 

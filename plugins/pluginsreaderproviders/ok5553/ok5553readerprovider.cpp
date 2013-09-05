@@ -6,7 +6,7 @@
 
 #include "ok5553readerprovider.hpp"
 
-#ifdef LINUX
+#ifdef __unix__
 #include <stdlib.h>
 #include <sys/time.h>
 #endif
@@ -45,6 +45,11 @@ namespace logicalaccess
 	}
 
 	OK5553ReaderProvider::~OK5553ReaderProvider()
+	{
+		release();
+	}
+
+	void OK5553ReaderProvider::release()
 	{
 	}
 

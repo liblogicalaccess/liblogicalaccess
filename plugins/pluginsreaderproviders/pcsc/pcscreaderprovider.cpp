@@ -36,6 +36,11 @@ namespace logicalaccess
 
 	PCSCReaderProvider::~PCSCReaderProvider()
 	{
+		release();
+	}
+
+	void PCSCReaderProvider::release()
+	{
 		if (d_scc != 0)
 		{
 			SCardReleaseContext(d_scc);

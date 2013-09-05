@@ -6,7 +6,7 @@
 
 #include "rfideasreaderprovider.hpp"
 
-#ifdef LINUX
+#ifdef __unix__
 #include <stdlib.h>
 #include <sys/time.h>
 #endif
@@ -43,6 +43,11 @@ namespace logicalaccess
 	}
 
 	RFIDeasReaderProvider::~RFIDeasReaderProvider()
+	{
+		release();
+	}
+
+	void RFIDeasReaderProvider::release()
 	{
 	}
 

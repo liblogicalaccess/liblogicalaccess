@@ -14,7 +14,7 @@
 
 #include "logicalaccess/logs.hpp"
 
-#if defined(__unix__)
+#ifdef __unix__
 enum ParityType { PARITY_EVEN, PARITY_ODD, PARITY_NONE };
 #endif
 

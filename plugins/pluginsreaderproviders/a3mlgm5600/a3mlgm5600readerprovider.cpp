@@ -6,7 +6,7 @@
 
 #include "a3mlgm5600readerprovider.hpp"
 
-#ifdef LINUX
+#ifdef __unix__
 #include <stdlib.h>
 #include <sys/time.h>
 #endif
@@ -34,9 +34,14 @@ namespace logicalaccess
 		return instance;
 	}
 
+	void A3MLGM5600ReaderProvider::release()
+	{
+
+	}
+
 	A3MLGM5600ReaderProvider::~A3MLGM5600ReaderProvider()
 	{
-		
+		release();
 	}
 
 	boost::shared_ptr<ReaderUnit> A3MLGM5600ReaderProvider::createReaderUnit()

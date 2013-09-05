@@ -38,6 +38,11 @@ namespace logicalaccess
 			~SmartIDReaderProvider();
 
 			/**
+			 * \brief Release the provider resources.
+			 */
+			virtual void release();
+
+			/**
 			 * \brief Get the reader provider type.
 			 * \return The reader provider type.
 			 */

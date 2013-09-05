@@ -9,10 +9,6 @@
 
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 
-#ifdef LINUX
-#include <wintypes.h>
-#endif
-
 namespace logicalaccess
 {
 	/**

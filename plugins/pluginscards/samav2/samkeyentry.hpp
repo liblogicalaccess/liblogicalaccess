@@ -159,13 +159,13 @@ namespace logicalaccess
 			 * \brief Set the key type.
 			 * \param keyType The key type.
 			 */
-			void setKeyType(SAMKeyType keyType) { d_keyType = keyType; };
+			void setKeyType(SAMKeyType keyType) { d_keyType = keyType; }; //TODO DELETE IT
 
 			/**
 			 * \brief Get the key type.
 			 * \return The key type.
 			 */
-			SAMKeyType getKeyType() const { return d_keyType; };
+			SAMKeyType getKeyType() const { return d_keyType; }; //TODO DELETE IT
 
 			/**
 			 * \brief Serialize the current object to XML.
@@ -238,7 +238,7 @@ namespace logicalaccess
 			/**
 			 * \brief The DESFire key type.
 			 */
-			SAMKeyType d_keyType;
+			SAMKeyType d_keyType; //TODO DELETE IT
 
 			unsigned char d_updatemask;
 

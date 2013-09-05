@@ -6,7 +6,7 @@
 
 #include "rplethreaderprovider.hpp"
 
-#ifdef LINUX
+#ifdef __unix__
 #include <stdlib.h>
 #include <sys/time.h>
 #endif
@@ -44,6 +44,11 @@ namespace logicalaccess
 	}
 
 	RplethReaderProvider::~RplethReaderProvider()
+	{
+		release();
+	}
+
+	void RplethReaderProvider::release()
 	{
 	}
 

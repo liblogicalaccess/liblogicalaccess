@@ -33,6 +33,11 @@ namespace logicalaccess
 
 	KeyboardReaderProvider::~KeyboardReaderProvider()
 	{
+		release();
+	}
+
+	void KeyboardReaderProvider::release()
+	{
 #ifdef _WINDOWS
 		freeKbdEvent();
 		freeKbdFileMapping();
@@ -207,19 +212,19 @@ namespace logicalaccess
 		PSECURITY_DESCRIPTOR pSD = (PSECURITY_DESCRIPTOR) LocalAlloc(LPTR, SECURITY_DESCRIPTOR_MIN_LENGTH);
 		if (NULL == pSD) 
 		{ 
-			ERROR_("LocalAlloc Error %u\n", GetLastError());
+			ERROR_("LocalAlloc Error {%u}", GetLastError());
 		}
 		else
 		{
 			if (!InitializeSecurityDescriptor(pSD, SECURITY_DESCRIPTOR_REVISION)) 
 			{
-				ERROR_( "InitializeSecurityDescriptor Error %u\n", GetLastError());
+				ERROR_( "InitializeSecurityDescriptor Error {%u}", GetLastError());
 			}
 			else
 			{
 				if (!SetSecurityDescriptorDacl(pSD, TRUE, pACL, FALSE))
 				{
-					ERROR_("SetSecurityDescriptorDacl Error %u\n", GetLastError());
+					ERROR_("SetSecurityDescriptorDacl Error {%u}", GetLastError());
 				}
 				else
 				{
@@ -240,6 +245,7 @@ namespace logicalaccess
 	// Watch current session active console and start hook on it if it changed and not yet started for this session
 	DWORD WINAPI WatchThread(LPVOID lpThreadParameter)
 	{
+		INFO_SIMPLE_("WatchThread begins...");
 		boost::shared_ptr<KeyboardReaderProvider> readerProvider = KeyboardReaderProvider::getSingletonInstance();
 
 		if (readerProvider != NULL)
@@ -247,15 +253,44 @@ namespace logicalaccess
 			DWORD lastSessionId = 0;
 			bool isUserSession = true;
 			DWORD hostSessionId = 0;
-			if (ProcessIdToSessionId(GetCurrentProcessId(), &hostSessionId))
+			DWORD currentProcessSessionID = GetCurrentProcessId();
+			INFO_("Current process ID {%d}", hostSessionId);
+
+			if (ProcessIdToSessionId(currentProcessSessionID, &hostSessionId))
 			{
-				isUserSession = (hostSessionId != 0);
+				INFO_("Current process Session ID {%d}", hostSessionId);
+
+				// On windows XP Session 0 is ok, but on Vist and higher, this is not a valid user session.
+				OSVERSIONINFO osvi;
+				ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
+				osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+				GetVersionEx(&osvi);
+				if (osvi.dwMajorVersion >= 6)
+				{
+					INFO_SIMPLE_("We are on windows Vista or Higher. Need to check for invalid session 0.");
+					isUserSession = (hostSessionId != 0);
+				}
+				else
+				{
+					INFO_SIMPLE_("We are on windows XP or less. Session 0 is valid.");
+					isUserSession = true;
+				}
+			}
+			else
+			{
+				ERROR_("ProcessIdToSessionId Error {%u}", GetLastError());
 			}
 
 			if (isUserSession)
 			{
 				DWORD processId = readerProvider->launchHook();
 				readerProvider->processHookedSessions.insert(readerProvider->processHookedSessions.end(), std::pair<DWORD, DWORD>(hostSessionId, processId));
+
+				INFO_SIMPLE_("User session ID valid. Session ID added to watch list.");
+			}
+			else
+			{
+				ERROR_SIMPLE_("Not user session ID.");
 			}
 
 			do
@@ -264,10 +299,13 @@ namespace logicalaccess
 				{
 					DWORD cSessionId = WTSGetActiveConsoleSessionId();
 
+					INFO_("WTSGetActiveConsoleSessionId = {%d} vs Last session ID {%d}", cSessionId, lastSessionId);
+
 					if (cSessionId != lastSessionId)
 					{
 						if (readerProvider->processHookedSessions.find(cSessionId) == readerProvider->processHookedSessions.end())
 						{
+							INFO_("New session ID detected {%d}. Adding session to watch list...", cSessionId);
 							DWORD cProcessId = readerProvider->launchHookIntoDifferentSession(cSessionId);
 							readerProvider->processHookedSessions.insert(readerProvider->processHookedSessions.end(), std::pair<DWORD, DWORD>(cSessionId, cProcessId));
 						}
@@ -280,6 +318,10 @@ namespace logicalaccess
 
 				Sleep(500);
 			} while (readerProvider->watchSessions);
+		}
+		else
+		{
+			ERROR_SIMPLE_("Reader provider is NULL.");
 		}
 
 		return 0;

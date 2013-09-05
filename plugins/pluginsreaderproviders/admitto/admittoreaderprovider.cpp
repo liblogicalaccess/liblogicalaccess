@@ -7,7 +7,7 @@
 #include "admittoreaderprovider.hpp"
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
 
-#ifdef LINUX
+#ifdef __unix__
 #include <stdlib.h>
 #include <sys/time.h>
 #endif
@@ -27,6 +27,12 @@ namespace logicalaccess
 
 	AdmittoReaderProvider::~AdmittoReaderProvider()
 	{
+		release();
+	}
+
+	void AdmittoReaderProvider::release()
+	{
+
 	}
 
 	boost::shared_ptr<AdmittoReaderProvider> AdmittoReaderProvider::getSingletonInstance()

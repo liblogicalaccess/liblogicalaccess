@@ -6,7 +6,7 @@
 
 #include "rwk400readerprovider.hpp"
 
-#ifdef LINUX
+#ifdef __unix__
 #include <stdlib.h>
 #include <sys/time.h>
 #endif
@@ -37,6 +37,11 @@ namespace logicalaccess
 	}
 
 	Rwk400ReaderProvider::~Rwk400ReaderProvider()
+	{
+		release();
+	}
+
+	void Rwk400ReaderProvider::release()
 	{
 	}
 

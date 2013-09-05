@@ -302,7 +302,11 @@ namespace logicalaccess
 
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_GET_CHALLENGE, 0x00, 0x00, static_cast<unsigned char>(length), result, &resultlen);
 
-		std::vector<unsigned char> ret(result, result + resultlen - 2);
+		std::vector<unsigned char> ret;
+		if (result[resultlen-2] == 0x90 && result[resultlen-1] == 0x00)
+		{
+			ret.insert(ret.end(), result, result + resultlen - 2);
+		}
 
 		return ret;
 	}
@@ -333,17 +337,19 @@ namespace logicalaccess
 
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_INTERNAL_AUTHENTICATE, p1, p2, static_cast<unsigned char>(RPCD2.size()), &RPCD2[0], RPCD2.size(), static_cast<unsigned char>(length), result, &resultlen);
 
-		std::vector<unsigned char> ret(result, result + resultlen - 2);
+		std::vector<unsigned char> ret;
+		if (result[resultlen-2] == 0x90 && result[resultlen-1] == 0x00)
+		{
+			ret.insert(ret.end(), result, result + resultlen - 2);
+		}
 
 		return ret;
 	}	
 
-	bool DESFireEV1ISO7816Commands::authenticate(unsigned char keyno)
+	bool DESFireEV1ISO7816Commands::authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
 	{
 		// Get the appropriate authentification method and algorithm according to the key type (for 3DES we use legacy method instead of ISO).
 		bool r = false;
-		
-		boost::shared_ptr<DESFireKey> key = d_crypto->getKey(keyno);
 
 		if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()) && !getSAMChip())
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAMKeyStorage set on the key but not SAM reader has been set.");
@@ -361,7 +367,7 @@ namespace logicalaccess
 		switch (key->getKeyType())
 		{
 		case DF_KEY_DES:
-			r = DESFireISO7816Commands::authenticate(keyno);
+			r = DESFireISO7816Commands::authenticate(keyno, key);
 			break;
 
 		case DF_KEY_3K3DES:
@@ -402,6 +408,9 @@ namespace logicalaccess
 		iso_externalAuthenticate(algorithm, isMasterCardKey, keyno, encRPCD1RPICC1);
 		std::vector<unsigned char> encRPICC2RPCD2a = iso_internalAuthenticate(algorithm, isMasterCardKey, keyno, RPCD2, 2 * 16);
 
+		if (encRPICC2RPCD2a.size() < 1)
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam_iso_authenticate wrong internal data.");
+
 		readercardadapter->sendAPDUCommand(0x80, 0x8e, 0x00, 0x00, (unsigned char)(encRPICC2RPCD2a.size()), &encRPICC2RPCD2a[0], encRPICC2RPCD2a.size(), apduresult, &apduresultlen);
 		if (apduresultlen <= 2 && apduresult[apduresultlen - 2] != 0x90 && apduresult[apduresultlen - 2] != 0x00)
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam_iso_authenticate P2 failed.");
@@ -433,8 +442,10 @@ namespace logicalaccess
 		unsigned char le;
 		boost::shared_ptr<openssl::SymmetricCipher> cipher;
 		unsigned char diversify[24];
+
 		memset(diversify, 0x00, sizeof(diversify));
 		d_crypto->getDiversify(diversify);
+
 		std::vector<unsigned char> keydiv;
 		d_crypto->getKey(key, diversify, keydiv);
 
@@ -501,6 +512,10 @@ namespace logicalaccess
 			throw LibLogicalAccessException("Cannot retrieve cryptographically strong bytes");
 		}
 		cryptogram = iso_internalAuthenticate(algorithm, isMasterCardKey, keyno, RPCD2, 2*le);
+
+		if (cryptogram.size() < 1)
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "iso_authenticate wrong internal data.");
+
 		std::vector<unsigned char> response;
 		cipher->decipher(cryptogram, response, *isokey.get(), *iv.get(), false);
 

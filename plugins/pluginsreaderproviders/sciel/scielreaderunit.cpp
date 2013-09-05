@@ -86,7 +86,7 @@ namespace logicalaccess
 			{
 #ifdef _WINDOWS
 				Sleep(1000);
-#elif defined(LINUX)
+#elif defined(__unix__)
 				usleep(1000000);
 #endif
 				currentWait += 1000;
@@ -130,7 +130,7 @@ namespace logicalaccess
 				{
 	#ifdef _WINDOWS
 					Sleep(1000);
-	#elif defined(LINUX)
+	#elif defined(__unix__)
 					usleep(1000000);
 	#endif
 					currentWait += 1000;

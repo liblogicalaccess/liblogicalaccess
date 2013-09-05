@@ -37,6 +37,11 @@ namespace logicalaccess
 			virtual ~ReaderProvider();
 
 			/**
+			 * \brief Release the provider resources.
+			 */
+			virtual void release() = 0;
+
+			/**
 			 * \brief List all readers of the system.
 			 * \return True if the list was updated, false otherwise.
 			 */

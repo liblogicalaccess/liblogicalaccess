@@ -7,7 +7,7 @@
 #include "axesstmc13readerprovider.hpp"
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
 
-#ifdef LINUX
+#ifdef __unix__
 #include <stdlib.h>
 #include <sys/time.h>
 #endif
@@ -39,6 +39,12 @@ namespace logicalaccess
 
 	AxessTMC13ReaderProvider::~AxessTMC13ReaderProvider()
 	{
+		release();
+	}
+
+	void AxessTMC13ReaderProvider::release()
+	{
+
 	}
 
 	boost::shared_ptr<ReaderUnit> AxessTMC13ReaderProvider::createReaderUnit()

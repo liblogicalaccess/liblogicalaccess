@@ -7,7 +7,7 @@
 #include "scielreaderprovider.hpp"
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
 
-#ifdef LINUX
+#ifdef __unix__
 #include <stdlib.h>
 #include <sys/time.h>
 #endif
@@ -26,6 +26,11 @@ namespace logicalaccess
 	}
 
 	SCIELReaderProvider::~SCIELReaderProvider()
+	{
+		release();
+	}
+
+	void SCIELReaderProvider::release()
 	{
 	}
 
