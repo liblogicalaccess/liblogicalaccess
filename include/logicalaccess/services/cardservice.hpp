@@ -11,10 +11,6 @@
 
 #include "logicalaccess/logs.hpp"
 
-#ifdef __unix__
-#include <wintypes.h>
-#endif
-
 namespace logicalaccess
 {
 	#define EXCEPTION_MSG_AUTHENTICATE		"Authenticate failed." /**< \brief The authentication exception message */
