@@ -40,7 +40,7 @@ namespace logicalaccess
 			 * \brief Get the generic card type.
 			 * \return The generic card type.
 			 */
-			virtual std::string getGenericCardType() const { return "Mifare"; };					
+			virtual std::string getGenericCardType() const { return CHIP_MIFARE; };					
 
 			/**
 			 * \brief Get the root location node.
