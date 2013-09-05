@@ -75,7 +75,7 @@ namespace logicalaccess
 		}
 	/*#ifdef _WINDOWS
 		Sleep(200);
-	#elif defined(LINUX)
+	#elif defined(__unix__)
 		usleep(200000);
 	#endif*/
 		

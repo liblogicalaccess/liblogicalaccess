@@ -184,7 +184,7 @@ namespace logicalaccess
 				std::string portn = port->getSerialPort()->deviceName();
 				WARNING_("Exception received {%s} ! Sleeping {%d} milliseconds -> Reopen serial port {%s} -> Finally retry  to configure...",
 							e.what(), Settings::getInstance()->ConfigurationRetryTimeout, portn.c_str());
-#ifndef __linux__
+#ifndef __unix__
 				Sleep(Settings::getInstance()->ConfigurationRetryTimeout);
 #else
 				sleep(Settings::getInstance()->ConfigurationRetryTimeout);

@@ -7,7 +7,7 @@
 #include "deisterreaderprovider.hpp"
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
 
-#ifdef LINUX
+#ifdef __unix__
 #include <stdlib.h>
 #include <sys/time.h>
 #endif

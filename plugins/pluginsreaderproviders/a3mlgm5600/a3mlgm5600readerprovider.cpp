@@ -6,7 +6,7 @@
 
 #include "a3mlgm5600readerprovider.hpp"
 
-#ifdef LINUX
+#ifdef __unix__
 #include <stdlib.h>
 #include <sys/time.h>
 #endif

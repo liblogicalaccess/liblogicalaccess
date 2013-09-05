@@ -11,7 +11,7 @@
 
 #include "logicalaccess/logs.hpp"
 
-#ifdef LINUX
+#ifdef __unix__
 #include <wintypes.h>
 #endif
 
