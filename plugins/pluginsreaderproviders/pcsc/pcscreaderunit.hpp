@@ -257,12 +257,24 @@ namespace logicalaccess
 			 */
 			virtual void getT_CL_ISOType(bool& isTypeA, bool& isTypeB);
 
+			/**
+			 * \brief Get The SAM Chip
+			 */
 			boost::shared_ptr<SAMChip> getSAMChip() { return d_sam_chip; };
 
+			/**
+			 * \brief Set the SAM Chip
+			 */
 			void setSAMChip(boost::shared_ptr<SAMChip> t) {	d_sam_chip = t; };
 
+			/**
+			 * \brief Get The SAM ReaderUnit
+			 */
 			boost::shared_ptr<PCSCReaderUnit> getSAMReaderUnit() { return d_sam_readerunit; };
 
+			/**
+			 * \brief Set the SAM ReaderUnit
+			 */
 			void setSAMReaderUnit(boost::shared_ptr<PCSCReaderUnit> t) {	d_sam_readerunit = t; };
 
 		protected:
@@ -342,6 +354,9 @@ namespace logicalaccess
 			 */
 			boost::shared_ptr<PCSCReaderUnit> d_proxyReaderUnit;
 
+			/**
+			 * \brief The SAM ReaderUnit used SAM Authentication
+			 */
 			boost::shared_ptr<PCSCReaderUnit> d_sam_readerunit;
 	};
 }
