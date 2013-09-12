@@ -37,7 +37,12 @@ namespace logicalaccess
 			 * \brief Get the PC/SC reader unit type.
 			 * \return The PC/SC reader unit type.
 			 */
-			virtual PCSCReaderUnitType getPCSCType() const;			
+			virtual PCSCReaderUnitType getPCSCType() const;	
+
+			/**
+			 * \brief Disconnect from the card.
+			 */
+			virtual void disconnect();
 
 			/**
 			 * \brief Get the PC/SC reader/card adapter for a card type.
