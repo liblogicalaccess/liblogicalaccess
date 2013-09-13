@@ -173,7 +173,11 @@ namespace logicalaccess
 			samck.oldKeyInvolvement = 1;
 		}
 
-		return samcommands->changeKeyPICC(samck);
+		std::vector<unsigned char> ret = samcommands->changeKeyPICC(samck);
+		d_crypto->d_lastIV.clear();
+		d_crypto->d_lastIV.resize(d_crypto->d_block_size);
+		std::copy(ret.end() - d_crypto->d_block_size, ret.end(), d_crypto->d_lastIV.begin());
+		return ret;
 	}
 
 	bool DESFireISO7816Commands::changeKey(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
