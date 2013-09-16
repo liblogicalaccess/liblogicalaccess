@@ -207,7 +207,7 @@ namespace logicalaccess
 		}
 
 		DESFireKeySettings appKeySettings = KS_DEFAULT;
-		unsigned int appMaxNbKeys = 3;
+		unsigned char appMaxNbKeys = 3;
 
 		bool needLoadKey = true;
 		createArbo = true;
