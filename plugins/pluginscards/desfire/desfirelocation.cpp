@@ -20,7 +20,7 @@ namespace logicalaccess
 	{
 	}
 
-	int DESFireLocation::convertAidToInt(const void* aid)
+	unsigned int DESFireLocation::convertAidToUInt(const void* aid)
 	{
 		// LSB first
 		int ret = ((static_cast<const unsigned char*>(aid)[0] & 0xff) |
@@ -30,7 +30,7 @@ namespace logicalaccess
 		return ret;
 	}
 
-	void DESFireLocation::convertIntToAid(int i, void* aid)
+	void DESFireLocation::convertUIntToAid(unsigned int i, void* aid)
 	{
 		// LSB first
 		static_cast<unsigned char*>(aid)[0] = i & 0xff;
@@ -42,7 +42,7 @@ namespace logicalaccess
 	{
 		std::vector<unsigned char> data(128);
 
-		BufferHelper::setInt32(data, aid);
+		BufferHelper::setUInt32(data, aid);
 		data.push_back(static_cast<unsigned char>(file));
 		data.push_back(static_cast<unsigned char>(byte));
 		data.push_back(static_cast<unsigned char>(securityLevel));

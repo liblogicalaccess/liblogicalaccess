@@ -16,26 +16,17 @@ namespace logicalaccess
 
 	void DESFireCommands::selectApplication(boost::shared_ptr<DESFireLocation> location)
 	{
-		if (!selectApplication(location->aid))
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, EXCEPTION_MSG_SELECTAPPLICATION);
-		}
+		selectApplication(location->aid);
 	}
 
 	void DESFireCommands::createApplication(boost::shared_ptr<DESFireLocation> location, DESFireKeySettings settings, int maxNbKeys)
 	{
-		if (!createApplication(location->aid, settings, maxNbKeys))
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't create the application.");
-		}
+		createApplication(location->aid, settings, maxNbKeys);
 	}
 
 	void DESFireCommands::createStdDataFile(boost::shared_ptr<DESFireLocation> location, DESFireAccessRights accessRights, int fileSize)
 	{
-		if (!createStdDataFile(location->file, location->securityLevel, accessRights, fileSize))
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't create the file.");
-		}
+		createStdDataFile(location->file, location->securityLevel, accessRights, fileSize);
 	}
 
 	EncryptionMode DESFireCommands::getEncryptionMode(boost::shared_ptr<AccessInfo> aiToUse, unsigned char fileno, bool isReadMode, bool* needLoadKey = NULL)
@@ -44,72 +35,71 @@ namespace logicalaccess
 		DESFireCommands::FileSetting fileSetting;
 		memset(&fileSetting, 0x00, sizeof(fileSetting));
 
-		if (getFileSettings(fileno, fileSetting))
+		getFileSettings(fileno, fileSetting);
+		
+		unsigned char accessRight = (isReadMode) ? (fileSetting.accessRights[0] >> 4) : (fileSetting.accessRights[0] & 0xF);			
+		if (accessRight == 0xE)
 		{
-			unsigned char accessRight = (isReadMode) ? (fileSetting.accessRights[0] >> 4) : (fileSetting.accessRights[0] & 0xF);			
+			accessRight = (fileSetting.accessRights[1] >> 4);
 			if (accessRight == 0xE)
 			{
-				accessRight = (fileSetting.accessRights[1] >> 4);
-				if (accessRight == 0xE)
+				encMode = CM_PLAIN;		
+				if (needLoadKey != NULL)
 				{
-					encMode = CM_PLAIN;		
-					if (needLoadKey != NULL)
-					{
-						*needLoadKey = false;
-					}
-				}
-				else
-				{
-					if (aiToUse != NULL)
-					{
-						encMode = CM_MAC;
-					}
-					else
-					{
-						encMode = CM_PLAIN;
-					}
+					*needLoadKey = false;
 				}
 			}
 			else
 			{
-				switch ((fileSetting.comSett & 0x3))
+				if (aiToUse != NULL)
 				{
-				case 0:
-				case 2:
-					encMode = CM_PLAIN;
-					break;
-
-				case 1:
 					encMode = CM_MAC;
-					break;
-
-				case 3:
-					encMode = CM_ENCRYPT;
-					break;
 				}
+				else
+				{
+					encMode = CM_PLAIN;
+				}
+			}
+		}
+		else
+		{
+			switch ((fileSetting.comSett & 0x3))
+			{
+			case 0:
+			case 2:
+				encMode = CM_PLAIN;
+				break;
+
+			case 1:
+				encMode = CM_MAC;
+				break;
+
+			case 3:
+				encMode = CM_ENCRYPT;
+				break;
 			}
 		}
 
 		return encMode;
 	}	
 	
-	size_t DESFireCommands::getFileLength(unsigned char fileno)
+	unsigned int DESFireCommands::getFileLength(unsigned char fileno)
 	{
-		size_t fileLength = 0x00;
+		unsigned int fileLength = 0x00;
 
 		DESFireCommands::FileSetting fileSetting;
 		memset(&fileSetting, 0x00, sizeof(fileSetting));
-		if (getFileSettings(fileno, fileSetting))
+		getFileSettings(fileno, fileSetting);
+		
+		switch (fileSetting.fileType)
 		{
-			switch (fileSetting.fileType)
-			{
-				case 0:
-					{
-						memcpy(&fileLength, fileSetting.type.dataFile.fileSize, sizeof(fileSetting.type.dataFile.fileSize));
-					}
-					break;
-			}
+			case 0:
+				{
+					memcpy(&fileLength, fileSetting.type.dataFile.fileSize, sizeof(fileSetting.type.dataFile.fileSize));
+				}
+				break;
 		}
+		
 
 		return fileLength;
 	}

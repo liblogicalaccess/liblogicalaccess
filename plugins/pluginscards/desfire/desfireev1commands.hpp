@@ -111,7 +111,7 @@ namespace logicalaccess
 			 * \param settings Key settings
 			 * \param maxNbKeys Maximum number of keys
 			 */
-			virtual void createApplication(boost::shared_ptr<DESFireLocation> location, DESFireKeySettings settings, int maxNbKeys);
+			virtual void createApplication(boost::shared_ptr<DESFireLocation> location, DESFireKeySettings settings, unsigned char maxNbKeys);
 
 			/**
 			 * \brief Create a new data file in the current application.
@@ -119,7 +119,7 @@ namespace logicalaccess
 			 * \param accessRights The file access rights
 			 * \param fileSize The file size.
 			 */
-			virtual void createStdDataFile(boost::shared_ptr<DESFireLocation> location, DESFireAccessRights accessRights, int fileSize);
+			virtual void createStdDataFile(boost::shared_ptr<DESFireLocation> location, DESFireAccessRights accessRights, unsigned int fileSize);
 
 			/**
 			 * \brief Get the value of available bytes.
@@ -144,9 +144,8 @@ namespace logicalaccess
 			 * \param aid The Application ID to create
 			 * \param settings Key settings
 			 * \param maxNbKeys Maximum number of keys
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool createApplication(int aid, DESFireKeySettings settings, size_t maxNbKeys, FidSupport fidSupported = FIDS_NO_ISO_FID, DESFireKeyType cryptoMethod = DF_KEY_DES, unsigned short isoFID = 0x00, const char* isoDFName = NULL) = 0;			
+			virtual void createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, FidSupport fidSupported = FIDS_NO_ISO_FID, DESFireKeyType cryptoMethod = DF_KEY_DES, unsigned short isoFID = 0x00, const char* isoDFName = NULL) = 0;			
 
 			/**
 			 * \brief Get key settings on the current application.
@@ -154,7 +153,7 @@ namespace logicalaccess
 			 * \param maxNbKeys Maximum number of keys
 			 * \param keyType The key type
 			 */
-			virtual void getKeySettings(DESFireKeySettings& settings, unsigned int& maxNbKeys, DESFireKeyType& keyType) = 0;
+			virtual void getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys, DESFireKeyType& keyType) = 0;
 
 			/**
 			 * \brief Get a random card UID.
@@ -168,9 +167,8 @@ namespace logicalaccess
 			 * \param comSettings The file communication setting
 			 * \param accessRights The file access rights
 			 * \param fileSize The file size (in bytes).
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool createStdDataFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize, unsigned short isoFID = 0x00) = 0;
+			virtual void createStdDataFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned short isoFID = 0x00) = 0;
 
 			/**
 			 * \brief Create a new backup file in the current application.
@@ -178,9 +176,8 @@ namespace logicalaccess
 			 * \param comSettings The file communication setting
 			 * \param accessRights The file access rights
 			 * \param fileSize The file size (in bytes).
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool createBackupFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize, unsigned short isoFID = 0x00) = 0;			
+			virtual void createBackupFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned short isoFID = 0x00) = 0;			
 
 			/**
 			 * \brief Create a new linear record file in the current application.
@@ -189,9 +186,8 @@ namespace logicalaccess
 			 * \param accessRights The file access rights
 			 * \param fileSize The file size (in bytes).
 			 * \param maxNumberOfRecords Max number of records in the file.
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool createLinearRecordFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize, int maxNumberOfRecords, unsigned short isoFID = 0x00) = 0;
+			virtual void createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned char maxNumberOfRecords, unsigned short isoFID = 0x00) = 0;
 
 			/**
 			 * \brief Create a new cyclic record file in the current application.
@@ -200,9 +196,8 @@ namespace logicalaccess
 			 * \param accessRights The file access rights
 			 * \param fileSize The file size (in bytes).
 			 * \param maxNumberOfRecords Max number of records in the file.
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool createCyclicRecordFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize, int maxNumberOfRecords, unsigned short isoFID = 0x00) = 0;			
+			virtual void createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned char maxNumberOfRecords, unsigned short isoFID = 0x00) = 0;			
 
 			/**
 			 * \brief Select file under current DF.

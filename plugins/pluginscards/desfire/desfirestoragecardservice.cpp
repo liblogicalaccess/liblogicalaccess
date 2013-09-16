@@ -15,33 +15,17 @@ namespace logicalaccess
 
 	}
 
-	bool DESFireStorageCardService::erase()
+	void DESFireStorageCardService::erase()
 	{
-		bool r = false;
 		boost::shared_ptr<DESFireCommands> cmd = getDESFireChip()->getDESFireCommands();
-		if (cmd->selectApplication(0))
-		{
-			if (cmd->authenticate(0))
-			{
-				if (cmd->erase())
-				{
-					r = cmd->changeKey(0, boost::shared_ptr<DESFireKey>(new DESFireKey(string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
-				}
-			}
-			else
-			{
-				THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_AUTHENTICATE);
-			}
-		}
-		else
-		{
-			THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_SELECTAPPLICATION);
-		}
+		cmd->selectApplication(0);
+		cmd->authenticate(0);
+		cmd->erase();
 		
-		return r;
+		cmd->changeKey(0, boost::shared_ptr<DESFireKey>(new DESFireKey(string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
 	}
 
-	bool DESFireStorageCardService::erase(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse)
+	void DESFireStorageCardService::erase(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse)
 	{
 		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 
@@ -50,44 +34,31 @@ namespace logicalaccess
 
 		EXCEPTION_ASSERT_WITH_LOG(dfLocation, std::invalid_argument, "location must be a DESFireLocation.");
 
-		bool ret = false;
-
 		// Format the card if MCK specified.
 		if (!dfAiToUse->masterCardKey->isEmpty())
 		{
 			getDESFireChip()->getDESFireProfile()->setKey(0, 0, dfAiToUse->masterCardKey);
-			ret = getDESFireChip()->getDESFireCommands()->erase();
+			getDESFireChip()->getDESFireCommands()->erase();
 		}
 		// Format the application if MAK specified.
 		else if (!dfAiToUse->masterApplicationKey->isEmpty())
 		{
 			getDESFireChip()->getDESFireProfile()->setKey(dfLocation->aid, 0, dfAiToUse->masterApplicationKey);
 
-			if (!getDESFireChip()->getDESFireCommands()->selectApplication(dfLocation->aid))
-			{
-				THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_SELECTAPPLICATION);
-			}
+			getDESFireChip()->getDESFireCommands()->selectApplication(dfLocation->aid);
 
-			std::vector<int> files = getDESFireChip()->getDESFireCommands()->getFileIDs();
-			for (std::vector<int>::const_iterator file = files.begin(); (file != files.end()); file++)
+			std::vector<unsigned char> files = getDESFireChip()->getDESFireCommands()->getFileIDs();
+			for (std::vector<unsigned char>::const_iterator file = files.cbegin(); (file != files.cend()); file++)
 			{
 				getDESFireChip()->getDESFireCommands()->deleteFile(*file);
 			}
 
-			if (!getDESFireChip()->getDESFireCommands()->changeKey(0, boost::shared_ptr<DESFireKey>(new DESFireKey(string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00")))))
-			{
-				THROW_EXCEPTION_WITH_LOG(CardException, string(EXCEPTION_MSG_CHANGEKEY));
-			}
-
-			ret = true;
+			getDESFireChip()->getDESFireCommands()->changeKey(0, boost::shared_ptr<DESFireKey>(new DESFireKey(string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
 		}
 		// Otherwise format the file.
 		else
 		{
-			if (!getDESFireChip()->getDESFireCommands()->selectApplication(dfLocation->aid))
-			{
-				THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_SELECTAPPLICATION);
-			}
+			getDESFireChip()->getDESFireCommands()->selectApplication(dfLocation->aid);
 
 			size_t fileLength = getDESFireChip()->getDESFireCommands()->getFileLength(static_cast<unsigned char>(dfLocation->file));
 			unsigned char* buf =  new unsigned char[fileLength];
@@ -96,7 +67,7 @@ namespace logicalaccess
 			boost::shared_ptr<AccessInfo> ai;			
 			try
 			{
-				ret = writeData(location, aiToUse, ai, buf, fileLength, CB_DEFAULT);
+				writeData(location, aiToUse, ai, buf, fileLength, CB_DEFAULT);
 			}
 			catch(std::exception&)
 			{
@@ -106,14 +77,10 @@ namespace logicalaccess
 
 			delete[] buf;			
 		}
-
-		return ret;
 	}
 
-	bool DESFireStorageCardService::writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior /*behaviorFlags*/)
+	void DESFireStorageCardService::writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior /*behaviorFlags*/)
 	{
-		bool ret = false;
-
 		INFO_SIMPLE_("Starting write data...");
 
 		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
@@ -158,11 +125,11 @@ namespace logicalaccess
 			getDESFireChip()->getDESFireCommands()->authenticate(0);
 
 			// Create application if doesn't exist
-			std::vector<int> aids = getDESFireChip()->getDESFireCommands()->getApplicationIDs();
+			std::vector<unsigned int> aids = getDESFireChip()->getDESFireCommands()->getApplicationIDs();
 
 			if (aiToWrite)
 			{
-				for (std::vector<int>::const_iterator aid = aids.begin(); (aid != aids.end()) && createArbo; aid++)
+				for (std::vector<unsigned int>::const_iterator aid = aids.cbegin(); (aid != aids.cend()) && createArbo; aid++)
 				{
 					createArbo = (*aid != dfLocation->aid);
 				}
@@ -249,11 +216,11 @@ namespace logicalaccess
 			getDESFireChip()->getDESFireCommands()->authenticate(0);
 
 			getDESFireChip()->getDESFireCommands()->getKeySettings(appKeySettings, appMaxNbKeys);
-			std::vector<int> files = getDESFireChip()->getDESFireCommands()->getFileIDs();
+			std::vector<unsigned char> files = getDESFireChip()->getDESFireCommands()->getFileIDs();
 
 			if (aiToWrite)
 			{
-				for (std::vector<int>::const_iterator file = files.begin(); (file != files.end()) && createArbo; file++)
+				for (std::vector<unsigned char>::const_iterator file = files.cbegin(); (file != files.cend()) && createArbo; file++)
 				{
 					createArbo = (*file != dfLocation->file);
 				}
@@ -303,13 +270,10 @@ namespace logicalaccess
 
 		if (needLoadKey)
 		{
-			if (!getDESFireChip()->getDESFireCommands()->authenticate(dfAiToUse->writeKeyno))
-			{	
-				THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_AUTHENTICATE);
-			}
+			getDESFireChip()->getDESFireCommands()->authenticate(dfAiToUse->writeKeyno);
 		}
 
-		ret = getDESFireChip()->getDESFireCommands()->writeData(dfLocation->file,
+		getDESFireChip()->getDESFireCommands()->writeData(dfLocation->file,
 			dfLocation->byte,
 			dataLength,
 			data,
@@ -317,11 +281,12 @@ namespace logicalaccess
 		);
 
 		// Write access informations too
-		if (ret && aiToWrite)
+		if (aiToWrite)
 		{
 			INFO_SIMPLE_("Starting to change keys...");
-			if ((appKeySettings & KS_CHANGE_KEY_WITH_TARGETED_KEYNO) || getDESFireChip()->getDESFireCommands()->authenticate(0))
-			{							
+			if ((appKeySettings & KS_CHANGE_KEY_WITH_TARGETED_KEYNO))
+			{		
+				getDESFireChip()->getDESFireCommands()->authenticate(0);
 				if (!dfAiToWrite->writeKey->isEmpty() && dfAiToUse->writeKey != dfAiToWrite->writeKey && dfAiToWrite->writeKeyno != 0x00)
 				{
 					try
@@ -332,10 +297,7 @@ namespace logicalaccess
 						}
 
 						INFO_("Changing writeKey. div? %d", dfAiToWrite->writeKey->getDiversify());
-						if (!getDESFireChip()->getDESFireCommands()->changeKey(dfAiToWrite->writeKeyno, dfAiToWrite->writeKey))
-						{
-							THROW_EXCEPTION_WITH_LOG(CardException, string(EXCEPTION_MSG_CHANGEKEY));
-						}
+						getDESFireChip()->getDESFireCommands()->changeKey(dfAiToWrite->writeKeyno, dfAiToWrite->writeKey);
 					}
 					catch(std::exception& ex)
 					{
@@ -353,10 +315,7 @@ namespace logicalaccess
 						}
 
 						INFO_("Changing readKey. div? %d", dfAiToWrite->readKey->getDiversify());
-						if (!getDESFireChip()->getDESFireCommands()->changeKey(dfAiToWrite->readKeyno, dfAiToWrite->readKey))
-						{
-							THROW_EXCEPTION_WITH_LOG(CardException, string(EXCEPTION_MSG_CHANGEKEY));
-						}
+						getDESFireChip()->getDESFireCommands()->changeKey(dfAiToWrite->readKeyno, dfAiToWrite->readKey);
 					}
 					catch(std::exception& ex)
 					{
@@ -374,10 +333,7 @@ namespace logicalaccess
 						}
 
 						INFO_("Changing masterApplicationKey. div? %d", dfAiToWrite->masterApplicationKey->getDiversify());
-						if (!getDESFireChip()->getDESFireCommands()->changeKey(0, dfAiToWrite->masterApplicationKey))
-						{
-							THROW_EXCEPTION_WITH_LOG(CardException, string(EXCEPTION_MSG_CHANGEKEY));
-						}
+						getDESFireChip()->getDESFireCommands()->changeKey(0, dfAiToWrite->masterApplicationKey);
 					}
 					catch(std::exception& ex)
 					{
@@ -389,17 +345,11 @@ namespace logicalaccess
 				{
 					try
 					{
-						if (getDESFireChip()->getDESFireCommands()->selectApplication(0x00))
-						{
-							if (getDESFireChip()->getDESFireCommands()->authenticate(0))
-							{
-								INFO_("Changing masterCardKey. div? %d", dfAiToWrite->masterCardKey->getDiversify());
-								if (!getDESFireChip()->getDESFireCommands()->changeKey(0, dfAiToWrite->masterCardKey))
-								{
-									THROW_EXCEPTION_WITH_LOG(CardException, string(EXCEPTION_MSG_CHANGEKEY));
-								}
-							}
-						}
+						getDESFireChip()->getDESFireCommands()->selectApplication(0x00);
+						getDESFireChip()->getDESFireCommands()->authenticate(0);
+						
+						INFO_("Changing masterCardKey. div? %d", dfAiToWrite->masterCardKey->getDiversify());
+						getDESFireChip()->getDESFireCommands()->changeKey(0, dfAiToWrite->masterCardKey);
 					}
 					catch(std::exception& ex)
 					{
@@ -408,18 +358,10 @@ namespace logicalaccess
 				}
 			}
 		}
-		else
-		{
-			INFO_("Change keys skipped. ret: %d", ret);
-		}
-
-		return ret;
 	}
 
-	bool DESFireStorageCardService::readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior /*behaviorFlags*/)
+	void DESFireStorageCardService::readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior /*behaviorFlags*/)
 	{
-		bool ret = false;
-
 		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 		EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "location cannot be null.");
 
@@ -455,10 +397,7 @@ namespace logicalaccess
 				getDESFireChip()->getDESFireProfile()->setKey(dfLocation->aid, dfAiToUse->readKeyno, dfAiToUse->readKey);
 			}
 
-			if (!getDESFireChip()->getDESFireCommands()->authenticate(dfAiToUse->readKeyno))
-			{
-				THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_AUTHENTICATE);
-			}
+			getDESFireChip()->getDESFireCommands()->authenticate(dfAiToUse->readKeyno);
 		}
 
 
@@ -467,13 +406,6 @@ namespace logicalaccess
 			dataLength,
 			data,
 			encMode);
-
-		if (dataLength <= static_cast<size_t>(reallen))
-		{
-			ret = true;
-		}
-
-		return ret;
 	}
 
 	size_t DESFireStorageCardService::readDataHeader(boost::shared_ptr<Location> /*location*/, boost::shared_ptr<AccessInfo> /*aiToUse*/, void* /*data*/, size_t /*dataLength*/)
