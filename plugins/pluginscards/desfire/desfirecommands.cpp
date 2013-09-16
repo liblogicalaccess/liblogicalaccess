@@ -19,12 +19,12 @@ namespace logicalaccess
 		selectApplication(location->aid);
 	}
 
-	void DESFireCommands::createApplication(boost::shared_ptr<DESFireLocation> location, DESFireKeySettings settings, int maxNbKeys)
+	void DESFireCommands::createApplication(boost::shared_ptr<DESFireLocation> location, DESFireKeySettings settings, unsigned char maxNbKeys)
 	{
 		createApplication(location->aid, settings, maxNbKeys);
 	}
 
-	void DESFireCommands::createStdDataFile(boost::shared_ptr<DESFireLocation> location, DESFireAccessRights accessRights, int fileSize)
+	void DESFireCommands::createStdDataFile(boost::shared_ptr<DESFireLocation> location, DESFireAccessRights accessRights, unsigned int fileSize)
 	{
 		createStdDataFile(location->file, location->securityLevel, accessRights, fileSize);
 	}

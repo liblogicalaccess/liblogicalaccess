@@ -59,7 +59,7 @@ namespace logicalaccess
 			 * \param settings Key settings
 			 * \param maxNbKeys Maximum number of keys
 			 */
-			virtual void createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, FidSupport fidSupported = FIDS_NO_ISO_FID, DESFireKeyType cryptoMethod = DF_KEY_DES, unsigned short isoFID = 0x00, const char* isoDFName = NULL);
+			virtual void createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, DESFireKeyType cryptoMethod, FidSupport fidSupported = FIDS_NO_ISO_FID, unsigned short isoFID = 0x00, const char* isoDFName = NULL);
 
 			/**
 			 * \brief Get key settings on the current application.
@@ -101,7 +101,7 @@ namespace logicalaccess
 			 * \param fileSize The file size (in bytes).
 			 * \param maxNumberOfRecords Max number of records in the file.
 			 */
-			virtual void createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned char maxNumberOfRecords, unsigned short isoFID);
+			virtual void createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID);
 
 			/**
 			 * \brief Create a new cyclic record file in the current application.
@@ -111,7 +111,7 @@ namespace logicalaccess
 			 * \param fileSize The file size (in bytes).
 			 * \param maxNumberOfRecords Max number of records in the file.
 			 */
-			virtual void createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned char maxNumberOfRecords, unsigned short isoFID);			
+			virtual void createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID);			
 
 			/**
 			 * \brief Select file under current DF.

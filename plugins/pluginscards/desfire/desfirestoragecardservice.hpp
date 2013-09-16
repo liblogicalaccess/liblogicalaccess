@@ -50,9 +50,8 @@ namespace logicalaccess
 			 * \param data Data to write.
 			 * \param dataLength Data's length to write.
 			 * \param behaviorFlags Flags which determines the behavior.
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags);
+			virtual void writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags);
 
 			/**
 			 * \brief Read data on a specific DESFire location, using given DESFire keys.

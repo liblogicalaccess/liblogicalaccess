@@ -150,7 +150,7 @@ namespace logicalaccess
 			 * \param fileSize The file size.
 			 * \param maxNumberOfRecords Max number of records in the file.
 			 */
-			virtual void createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned char maxNumberOfRecords);
+			virtual void createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords);
 
 			/**
 			 * \brief Create a new cyclic record file in the current application.
@@ -160,7 +160,7 @@ namespace logicalaccess
 			 * \param fileSize The file size.
 			 * \param maxNumberOfRecords Max number of records in the file.
 			 */
-			virtual void createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned char maxNumberOfRecords);
+			virtual void createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords);
 
 			/**
 			 * \brief Delete a file in the current application.

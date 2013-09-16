@@ -275,7 +275,7 @@ namespace logicalaccess
 
 		getDESFireChip()->getDESFireCommands()->writeData(dfLocation->file,
 			dfLocation->byte,
-			dataLength,
+			static_cast<unsigned int>(dataLength),
 			data,
 			encMode
 		);
@@ -403,12 +403,12 @@ namespace logicalaccess
 
 		size_t reallen = getDESFireChip()->getDESFireCommands()->readData(dfLocation->file,
 			dfLocation->byte,
-			dataLength,
+			static_cast<unsigned int>(dataLength),
 			data,
 			encMode);
 	}
 
-	size_t DESFireStorageCardService::readDataHeader(boost::shared_ptr<Location> /*location*/, boost::shared_ptr<AccessInfo> /*aiToUse*/, void* /*data*/, size_t /*dataLength*/)
+	unsigned int DESFireStorageCardService::readDataHeader(boost::shared_ptr<Location> /*location*/, boost::shared_ptr<AccessInfo> /*aiToUse*/, void* /*data*/, size_t /*dataLength*/)
 	{
 		return 0;
 	}

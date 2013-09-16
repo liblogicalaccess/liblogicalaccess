@@ -20,12 +20,12 @@ namespace logicalaccess
 		
 	}
 
-	bool MifareStorageCardService::erase(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse)
+	void MifareStorageCardService::erase(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse)
 	{
 		boost::shared_ptr<MifareLocation> mLocation = boost::dynamic_pointer_cast<MifareLocation>(location);
 		if (!mLocation)
 		{
-			return false;
+			return;
 		}
 
 		unsigned int zeroblock_size = getMifareChip()->getMifareCommands()->getNbBlocks(mLocation->sector) * 16;
@@ -70,17 +70,13 @@ namespace logicalaccess
 
 		bool tmpuseMAD = mLocation->useMAD;
 		mLocation->useMAD = false;
-		bool ret = writeData(location, aiToUse, _aiToWrite, zeroblock, zeroblock_size - (mLocation->block * 16), CB_DEFAULT);
+		writeData(location, aiToUse, _aiToWrite, zeroblock, zeroblock_size - (mLocation->block * 16), CB_DEFAULT);
 		mLocation->useMAD = tmpuseMAD;
 		delete[] zeroblock;
-
-		return ret;
 	}	
 
-	bool MifareStorageCardService::writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags)
+	void MifareStorageCardService::writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags)
 	{
-		bool ret = false;
-
 		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 		EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
 
@@ -247,17 +243,11 @@ namespace logicalaccess
 
 			getMifareChip()->getMifareProfile()->setKeyUsage(getMifareChip()->getNbSectors(), KT_KEY_A, false);
 			getMifareChip()->getMifareProfile()->setKeyUsage(getMifareChip()->getNbSectors(), KT_KEY_B, false);
-
-			ret = (reallen >= buflen);
 		}
-
-		return ret;
 	}
 
-	bool MifareStorageCardService::readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags)
+	void MifareStorageCardService::readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags)
 	{
-		bool ret = false;
-
 		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 		EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
 
@@ -321,15 +311,11 @@ namespace logicalaccess
 			if (dataLength <= (reallen - mLocation->byte))
 			{
 				memcpy(static_cast<char*>(data), &dataSectors[0] + mLocation->byte, dataLength);
-
-				ret = true;
 			}
 		}
-
-		return ret;
 	}
 
-	size_t MifareStorageCardService::readDataHeader(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength)
+	unsigned int MifareStorageCardService::readDataHeader(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength)
 	{
 		if (data == NULL || dataLength == 0)
 		{
@@ -370,12 +356,13 @@ namespace logicalaccess
 		if (dataLength >= 16)
 		{
 			getMifareChip()->getMifareCommands()->changeBlock(sab, mLocation->sector, getMifareChip()->getMifareCommands()->getNbBlocks(mLocation->sector), false);
-			return getMifareChip()->getMifareCommands()->readBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(mLocation->sector) + getMifareChip()->getMifareCommands()->getNbBlocks(mLocation->sector)), 16, data, 16);
+			return static_cast<unsigned int>(getMifareChip()->getMifareCommands()->readBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(mLocation->sector) + getMifareChip()->getMifareCommands()->getNbBlocks(mLocation->sector)), 16, data, 16));
 		}
+
 		return 0;
 	}
 
-	bool MifareStorageCardService::erase()
+	void MifareStorageCardService::erase()
 	{
 		unsigned char zeroblock[16];
 		unsigned char trailerblock[16];
@@ -391,8 +378,6 @@ namespace logicalaccess
 		{
 			THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad sector access bits configuration.");
 		}
-		
-		bool result = false;
 
 		for (unsigned int i = 0; i < getMifareChip()->getNbSectors(); ++i)
 		{
@@ -457,17 +442,7 @@ namespace logicalaccess
 					erased = false;
 				}
 			}
-			
-			if (!erased && used)
-			{
-				return false;
-			} else
-			{
-				result = true;
-			}
 		}
-
-		return result;
 	}
 }
 

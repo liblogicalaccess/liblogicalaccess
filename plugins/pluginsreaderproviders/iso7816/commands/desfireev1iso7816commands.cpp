@@ -99,12 +99,12 @@ namespace logicalaccess
 		return fileids;
 	}
 
-	void DESFireEV1ISO7816Commands::createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, FidSupport fidSupported, DESFireKeyType cryptoMethod, unsigned short isoFID, const char* isoDFName)
+	void DESFireEV1ISO7816Commands::createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, DESFireKeyType cryptoMethod, FidSupport fidSupported, unsigned short isoFID, const char* isoDFName)
 	{
 		unsigned char command[128];
 		unsigned int commandlen = 0;
 
-		DESFireLocation::convertIntToAid(aid, command);
+		DESFireLocation::convertUIntToAid(aid, command);
 		commandlen += 3;
 		command[commandlen++] = static_cast<unsigned char>(settings);
 		command[commandlen++] = static_cast<unsigned char>((maxNbKeys & 0x0f) | fidSupported | cryptoMethod);
@@ -193,7 +193,7 @@ namespace logicalaccess
 		DESFireISO7816Commands::transmit(DF_INS_CREATE_BACKUP_DATA_FILE, command);
 	}
 
-	void DESFireEV1ISO7816Commands::createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned char maxNumberOfRecords, unsigned short isoFID)
+	void DESFireEV1ISO7816Commands::createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID)
 	{
 		std::vector<unsigned char> command;
 		short ar = AccessRightsInMemory(accessRights);
@@ -216,7 +216,7 @@ namespace logicalaccess
 		DESFireISO7816Commands::transmit(DF_INS_CREATE_LINEAR_RECORD_FILE, command);
 	}
 
-	void DESFireEV1ISO7816Commands::createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned char maxNumberOfRecords, unsigned short isoFID)
+	void DESFireEV1ISO7816Commands::createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID)
 	{
 		std::vector<unsigned char> command;
 		short ar = AccessRightsInMemory(accessRights);
@@ -889,7 +889,7 @@ namespace logicalaccess
 			}			
 		}
 
-		if (err == 0x00)
+		if (err != 0x00)
 		{
 			char msgtmp[64];
 			sprintf(msgtmp, "Unknown error: %x", err);
@@ -927,9 +927,9 @@ namespace logicalaccess
 			std::vector<unsigned char> result = transmit_nomacv(DF_INS_READ_DATA, command, sizeof(command));
 			unsigned char err = result.back();
 			result.resize(result.size() - 2);
-			result = handleReadData(err, result, trunklength, mode);
+			result = handleReadData(err, result, static_cast<unsigned int>(trunklength), mode);
 			memcpy(reinterpret_cast<unsigned char*>(data) + i, &result[0], result.size());
-			ret += result.size();
+			ret += static_cast<unsigned int>(result.size());
 		}
 
 		return ret;
@@ -949,7 +949,7 @@ namespace logicalaccess
 		result = handleReadData(err, result, length, mode);
 		memcpy(data, &result[0], result.size());
 		
-		return result.size();
+		return static_cast<unsigned int>(result.size());
 	}
 
 	void DESFireEV1ISO7816Commands::changeFileSettings(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, bool plain)

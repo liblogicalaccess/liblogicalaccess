@@ -69,11 +69,10 @@ namespace logicalaccess
 				boost::shared_ptr<StorageCardService> storage = boost::dynamic_pointer_cast<StorageCardService>(getTwicChip()->getService(CST_STORAGE));
 				if (storage)
 				{
-					if (storage->readData(pLocation, boost::shared_ptr<AccessInfo>(), formatBuf, length, CB_DEFAULT))
-					{
-						formatret->setLinearData(formatBuf, length);
-						ret = true;
-					}
+					storage->readData(pLocation, boost::shared_ptr<AccessInfo>(), formatBuf, length, CB_DEFAULT);
+					formatret->setLinearData(formatBuf, length);
+
+					ret = true;
 				}
 			}
 			catch(std::exception&)

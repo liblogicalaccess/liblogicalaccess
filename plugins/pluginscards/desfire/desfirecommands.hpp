@@ -287,7 +287,7 @@ namespace logicalaccess
 			 * \param settings Key settings
 			 * \param maxNbKeys Maximum number of keys
 			 */
-			virtual void getKeySettings(DESFireKeySettings& settings, unsigned int& maxNbKeys) = 0;
+			virtual void getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys) = 0;
 
 			/**
 			 * \brief Change key settings for the current application.
@@ -356,7 +356,7 @@ namespace logicalaccess
 			 * \param fileSize The file size.
 			 * \param maxNumberOfRecords Max number of records in the file.
 			 */
-			virtual void createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned char maxNumberOfRecords) = 0;
+			virtual void createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords) = 0;
 
 			/**
 			 * \brief Create a new cyclic record file in the current application.
@@ -366,7 +366,7 @@ namespace logicalaccess
 			 * \param fileSize The file size.
 			 * \param maxNumberOfRecords Max number of records in the file.
 			 */
-			virtual void createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned char maxNumberOfRecords) = 0;
+			virtual void createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords) = 0;
 
 			/**
 			 * \brief Delete a file in the current application.
@@ -426,9 +426,8 @@ namespace logicalaccess
 			 * \param fileno The file number
 			 * \param value The value to limit credit
 			 * \param mode The communication mode
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool limitedCredit(int fileno, int value, EncryptionMode mode) = 0;
+			virtual void limitedCredit(unsigned char fileno, unsigned int value, EncryptionMode mode) = 0;
 
 			/**
 			 * \brief Write record into a specific record file.

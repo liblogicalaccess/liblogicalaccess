@@ -47,7 +47,7 @@ namespace logicalaccess
 			 * \param behaviorFlags Flags which determines the behavior.
 			 * \return True on success, false otherwise.
 			 */
-			virtual bool readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags);
+			virtual void readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags);
 
 		protected:
 

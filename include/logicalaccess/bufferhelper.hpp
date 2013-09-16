@@ -50,6 +50,8 @@ namespace logicalaccess
 
 			static long getInt32(const std::vector<unsigned char>& buffer, size_t& offset);
 
+			static unsigned long getUInt32(const std::vector<unsigned char>& buffer, size_t& offset);
+
 			static void setUInt32(std::vector<unsigned char>& buffer, const unsigned long& value);
 
 			static void setUInt64(std::vector<unsigned char>& buffer, const unsigned long long& value);
