@@ -221,7 +221,9 @@ namespace logicalaccess
 			THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_CONNECTED);
 		}
 
-		int readers_count = static_cast<int>(getReaderProvider()->getReaderList().size());
+		LONG r = 0;
+		bool usePnp = true;
+		int readers_count = 0;
 
 		string reader = getName();
 		string connectedReader = "";
@@ -231,6 +233,22 @@ namespace logicalaccess
 		{
 			readers_count = 1;
 		}
+		else
+		{
+			readers_count = static_cast<int>(getReaderProvider()->getReaderList().size());
+
+			SCARD_READERSTATE rgReaderStates[1];
+			rgReaderStates[0].szReader = "\\\\?PnP?\\Notification";
+			rgReaderStates[0].dwCurrentState = SCARD_STATE_UNAWARE;
+
+			r = SCardGetStatusChange(getPCSCReaderProvider()->getContext(), 0, rgReaderStates, 1);
+
+			if (rgReaderStates[0].dwEventState & SCARD_STATE_UNKNOWN)
+			{
+				usePnp = false;
+			}
+		}
+
 
 		if (readers_count == 0)
 		{
@@ -246,11 +264,11 @@ namespace logicalaccess
 
 		if (readers_names)
 		{
-			SCARD_READERSTATE* readers = new SCARD_READERSTATE[readers_count];
+			SCARD_READERSTATE* readers = new SCARD_READERSTATE[readers_count + (usePnp ? 1 : 0)];
 
 			if (readers)
 			{
-				memset(readers, 0x00, sizeof(SCARD_READERSTATE) * readers_count);
+				memset(readers, 0x00, sizeof(SCARD_READERSTATE) * (readers_count + (usePnp ? 1 : 0)));
 
 				if (reader != "")
 				{
@@ -269,83 +287,71 @@ namespace logicalaccess
 						readers[i].szReader = reinterpret_cast<const char*>(readers_names[i]);
 					}
 				}
+				if (usePnp)
+				{
+					readers[readers_count].dwCurrentState = SCARD_STATE_UNAWARE;
+					readers[readers_count].dwEventState = SCARD_STATE_UNAWARE;
+					readers[readers_count].szReader = "\\\\?PnP?\\Notification";
+					readers_count++;
+				}
 
-				LONG r = SCardGetStatusChange(getPCSCReaderProvider()->getContext(), ((maxwait == 0) ? INFINITE : maxwait), readers, readers_count);
+				r = SCardGetStatusChange(getPCSCReaderProvider()->getContext(), ((maxwait == 0) ? INFINITE : maxwait), readers, readers_count);
 
 				if (SCARD_S_SUCCESS == r)
 				{
 					for (int i = 0; i < readers_count; ++i)
 					{
-						if ((SCARD_STATE_PRESENT & readers[i].dwEventState) != 0)
-						{
-							cardType = getCardTypeFromATR(readers[i].rgbAtr, readers[i].cbAtr);
-							if (cardType == "UNKNOWN")
-							{
-								cardType = getGenericCardTypeFromATR(readers[i].rgbAtr, readers[i].cbAtr);
-							}
-							connectedReader = string(reinterpret_cast<const char*>(readers[i].szReader));						
-							break;
-						}
-					}
-
-					if (connectedReader == "")
-					{
-						for (int i = 0; i < readers_count; ++i)
+						if ((SCARD_STATE_CHANGED & readers[i].dwEventState) != 0)
 						{
 							readers[i].dwCurrentState = readers[i].dwEventState;
-						}
 
-						r = SCardGetStatusChange(getPCSCReaderProvider()->getContext(), ((maxwait == 0) ? INFINITE : maxwait), readers, readers_count);
-
-						if (SCARD_S_SUCCESS == r)
-						{
-							for (int i = 0; i < readers_count; ++i)
+							if ((SCARD_STATE_PRESENT & readers[i].dwEventState) != 0)
 							{
-								if ((SCARD_STATE_PRESENT & readers[i].dwEventState) != 0)
+								cardType = getCardTypeFromATR(readers[i].rgbAtr, readers[i].cbAtr);
+								if (cardType == "UNKNOWN")
 								{
-									cardType = getCardTypeFromATR(readers[i].rgbAtr, readers[i].cbAtr);
-									if (cardType == "UNKNOWN")
-									{
-										cardType = getGenericCardTypeFromATR(readers[i].rgbAtr, readers[i].cbAtr);
-									}
-									connectedReader = string(reinterpret_cast<const char*>(readers[i].szReader));									
-									break;
+									cardType = getGenericCardTypeFromATR(readers[i].rgbAtr, readers[i].cbAtr);
 								}
+								connectedReader = std::string(reinterpret_cast<const char*>(readers[i].szReader));							
+	
+								boost::shared_ptr<PCSCReaderUnitConfiguration> pcscRUC = getPCSCConfiguration();
+								if (this->getPCSCType() == PCSC_RUT_DEFAULT)
+								{
+									d_proxyReaderUnit = PCSCReaderUnit::createPCSCReaderUnit(connectedReader);
+									if (d_proxyReaderUnit->getPCSCType() == PCSC_RUT_DEFAULT)
+									{
+										d_proxyReaderUnit.reset();
+										d_connectedName = connectedReader;
+									}
+									else
+									{
+										d_proxyReaderUnit->makeProxy(boost::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
+									}
+								}
+								else
+								{
+									// Already a proxy from serialization maybe, just copy instance information to it.
+									if (d_proxyReaderUnit)
+									{
+										d_proxyReaderUnit->makeProxy(boost::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
+									}
+								}
+
+								d_insertedChip = createChip((d_card_type == "UNKNOWN") ? cardType : d_card_type);						
+								if (d_proxyReaderUnit)
+								{
+									d_proxyReaderUnit->setSingleChip(d_insertedChip);
+								}
+
+								break;
 							}
 						}
 					}
+				}
 
-					if (connectedReader != "")
-					{		
-						boost::shared_ptr<PCSCReaderUnitConfiguration> pcscRUC = getPCSCConfiguration();
-						if (this->getPCSCType() == PCSC_RUT_DEFAULT)
-						{
-							d_proxyReaderUnit = PCSCReaderUnit::createPCSCReaderUnit(connectedReader);
-							if (d_proxyReaderUnit->getPCSCType() == PCSC_RUT_DEFAULT)
-							{
-								d_proxyReaderUnit.reset();
-								d_connectedName = connectedReader;
-							}
-							else
-							{
-								d_proxyReaderUnit->makeProxy(boost::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
-							}
-						}
-						else
-						{
-							// Already a proxy from serialization maybe, just copy instance information to it.
-							if (d_proxyReaderUnit)
-							{
-								d_proxyReaderUnit->makeProxy(boost::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
-							}
-						}
-
-						d_insertedChip = createChip((d_card_type == "UNKNOWN") ? cardType : d_card_type);						
-						if (d_proxyReaderUnit)
-						{
-							d_proxyReaderUnit->setSingleChip(d_insertedChip);
-						}
-					}
+				if (usePnp)
+				{
+					readers_count--;
 				}
 
 				for (int i = 0; i < readers_count; ++i)
@@ -555,7 +561,7 @@ namespace logicalaccess
 				disconnect();
 			}
 
-			LONG lReturn = SCardConnect(getPCSCReaderProvider()->getContext(), reinterpret_cast<const char*>(d_name.c_str()), share_mode, getPCSCConfiguration()->getTransmissionProtocol(), &d_sch, &d_ap);
+			LONG lReturn = SCardConnect(getPCSCReaderProvider()->getContext(), reinterpret_cast<const char*>(getConnectedName().c_str()), share_mode, getPCSCConfiguration()->getTransmissionProtocol(), &d_sch, &d_ap);
 			if (SCARD_S_SUCCESS == lReturn)
 			{
 				INFO_SIMPLE_("SCardConnect Success !");
