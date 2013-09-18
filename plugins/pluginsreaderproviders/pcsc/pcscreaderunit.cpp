@@ -345,41 +345,6 @@ namespace logicalaccess
 						{
 							d_proxyReaderUnit->setSingleChip(d_insertedChip);
 						}
-
-						// Specific behavior for DESFire to check if it is not a DESFire EV1
-						if (d_card_type == "UNKNOWN" && d_insertedChip && d_insertedChip->getCardType() == "DESFire")
-						{
-							try
-							{
-								if (connect())
-								{
-#ifdef _WINDOWS
-				Sleep(100);
-#elif defined(__unix__)
-				usleep(100000);
-#endif
-									DESFireCommands::DESFireCardVersion cardversion;
-									boost::dynamic_pointer_cast<DESFireChip>(d_insertedChip)->getDESFireCommands()->getVersion(cardversion);
-									// Set from the version
-									d_insertedChip->setChipIdentifier(std::vector<unsigned char>(cardversion.uid, cardversion.uid + sizeof(cardversion.uid)));
-
-									// DESFire EV1 and not regular DESFire
-									if (cardversion.softwareMjVersion >= 1)
-									{
-										d_insertedChip = createChip("DESFireEV1");
-										if (d_proxyReaderUnit)
-										{
-											d_proxyReaderUnit->setSingleChip(d_insertedChip);
-										}
-									}
-									disconnect();
-								}
-							}
-							catch(std::exception&)
-							{
-								// Doesn't care about bad communication here, stay DESFire.
-							}
-						}
 					}
 				}
 
@@ -605,6 +570,37 @@ namespace logicalaccess
 							if (d_atrLength > 2)
 							{
 								d_insertedChip->setChipIdentifier(std::vector<unsigned char>(d_atr, d_atr + d_atrLength - 2));
+							}
+						}
+						// Specific behavior for DESFire to check if it is not a DESFire EV1
+						else if (d_card_type == "UNKNOWN" && d_insertedChip && d_insertedChip->getCardType() == "DESFire")
+						{
+							try
+							{
+#ifdef _WINDOWS
+				Sleep(100);
+#elif defined(__unix__)
+				usleep(100000);
+#endif
+								DESFireCommands::DESFireCardVersion cardversion;
+								boost::dynamic_pointer_cast<DESFireChip>(d_insertedChip)->getDESFireCommands()->getVersion(cardversion);
+								// Set from the version
+
+								// DESFire EV1 and not regular DESFire
+								if (cardversion.softwareMjVersion >= 1)
+								{
+									d_insertedChip = createChip("DESFireEV1");
+
+									if (d_proxyReaderUnit)
+									{
+										d_proxyReaderUnit->setSingleChip(d_insertedChip);
+									}
+								}
+								d_insertedChip->setChipIdentifier(std::vector<unsigned char>(cardversion.uid, cardversion.uid + sizeof(cardversion.uid)));
+							}
+							catch(std::exception&)
+							{
+								// Doesn't care about bad communication here, stay DESFire.
 							}
 						}
 						else
