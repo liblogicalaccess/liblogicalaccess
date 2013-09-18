@@ -8,11 +8,13 @@
 #define LOGICALACCESS_ISO7816READERUNITCONFIGURATION_HPP
 
 #include "logicalaccess/readerproviders/readerunitconfiguration.hpp"
-#include "desfirekey.hpp"
+
 
 namespace logicalaccess
 {
 	#define READER_ISO7816 "iso7816"
+
+	class DESFireKey;
 
 	/**
 	 * \brief The PC/SC reader unit configuration base class.
