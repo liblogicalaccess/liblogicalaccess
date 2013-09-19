@@ -112,6 +112,12 @@ namespace logicalaccess
 			virtual void disconnect();
 
 			/**
+			 * \brief Disconnect from the card.
+			 * \param action Card action on disconnect.
+			 */
+			virtual void disconnect(unsigned int action);
+
+			/**
 			 * \brief Check if the handle is associated to a card (aka. "connected").
 			 * \return True if the handle is associated to a card, false otherwise.
 			 */

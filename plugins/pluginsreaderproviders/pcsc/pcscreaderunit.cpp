@@ -702,6 +702,18 @@ namespace logicalaccess
 
 	void PCSCReaderUnit::disconnect()
 	{
+		if (d_insertedChip && d_insertedChip->getGenericCardType() == CHIP_SAM)
+		{
+			disconnect(SCARD_UNPOWER_CARD);
+		}
+		else
+		{
+			disconnect(SCARD_LEAVE_CARD);
+		}
+	}
+
+	void PCSCReaderUnit::disconnect(unsigned int action)
+	{
 		INFO_SIMPLE_("Disconnecting from the chip.");
 
 		if (d_proxyReaderUnit)
@@ -712,7 +724,7 @@ namespace logicalaccess
 		{
 			if (isConnected())
 			{			
-				SCardDisconnect(d_sch, SCARD_LEAVE_CARD);
+				SCardDisconnect(d_sch, action);
 			}
 		}
 
@@ -727,7 +739,7 @@ namespace logicalaccess
 		if (getPCSCConfiguration()->getSAMType() != "SAM_NONE")
 			{
 				if (getReaderProvider()->getReaderList().size() < 2)
-					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not Enough reader on the system to us SAM");
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not Enough reader on the system to use SAM");
 
 				int i = 0;
 				for (; i < static_cast<int>(getReaderProvider()->getReaderList().size()); ++i)
