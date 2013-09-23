@@ -444,8 +444,8 @@ namespace logicalaccess
 		unsigned char diversify[24];
 
 		memset(diversify, 0x00, sizeof(diversify));
-		d_crypto->getDiversify(diversify);
-
+		if (key->getKeyDiversification())
+			key->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), NULL);
 		std::vector<unsigned char> keydiv;
 		d_crypto->getKey(key, diversify, keydiv);
 
@@ -598,7 +598,12 @@ namespace logicalaccess
 		data.push_back(keyno);
 
 		unsigned char diversify[24];
-		d_crypto->getDiversify(diversify);
+		boost::shared_ptr<DESFireKey> currentkey = boost::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile())->getKey(d_crypto->d_currentAid, keyno);
+		if (currentkey->getKeyDiversification())
+		{
+			currentkey->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), NULL);
+			//d_crypto->getDiversify(diversify);
+		}
 
 		std::vector<unsigned char> encRndB = DESFireISO7816Commands::transmit(DFEV1_INS_AUTHENTICATE_ISO, data);
 		unsigned char err = encRndB.back();
@@ -621,7 +626,12 @@ namespace logicalaccess
 		data.push_back(keyno);
 
 		unsigned char diversify[24];
-		d_crypto->getDiversify(diversify);
+		boost::shared_ptr<DESFireKey> currentkey = boost::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile())->getKey(d_crypto->d_currentAid, keyno);
+		if (currentkey->getKeyDiversification())
+		{
+			currentkey->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), NULL);
+		//	d_crypto->getDiversify(diversify);
+		}
 
 		std::vector<unsigned char> encRndB = DESFireISO7816Commands::transmit(DFEV1_INS_AUTHENTICATE_AES, data);
 		unsigned char err = encRndB.back();
@@ -1030,7 +1040,12 @@ namespace logicalaccess
 	bool DESFireEV1ISO7816Commands::changeKey(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
 	{
 		unsigned char diversify[24];
-		d_crypto->getDiversify(diversify);
+		boost::shared_ptr<DESFireKey> currentkey = boost::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile())->getKey(d_crypto->d_currentAid, keyno);
+		if (currentkey->getKeyDiversification())
+		{
+			currentkey->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), NULL);
+			//d_crypto->getDiversify(diversify);
+		}
 		std::vector<unsigned char> cryptogram;
 
 		if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))

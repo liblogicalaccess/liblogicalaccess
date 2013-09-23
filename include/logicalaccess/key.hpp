@@ -8,6 +8,7 @@
 #define LOGICALACCESS_KEY_HPP
 
 #include "logicalaccess/cards/keystorage.hpp"
+#include "logicalaccess/cards/keydiversification.hpp"
 
 namespace logicalaccess
 {
@@ -135,6 +136,18 @@ namespace logicalaccess
 			 */
 			bool getStoreCipheredData();
 
+
+			/**
+			 * \brief Set KeyDiversification
+			 */
+			void setKeyDiversification(boost::shared_ptr<KeyDiversification> div) { d_key_diversification = div; };
+
+
+			/**
+			 * \brief Get Diversification
+			 */
+			boost::shared_ptr<KeyDiversification> getKeyDiversification() { return d_key_diversification; };
+
 	private:
 			/**
 			 * \brief The default 'secure' key for ciphering.
@@ -164,6 +177,11 @@ namespace logicalaccess
 			 * \brief The key storage used for this key.
 			 */
 			boost::shared_ptr<KeyStorage> d_key_storage;
+
+			/**
+			 * \brief The key storage used for this key.
+			 */
+			boost::shared_ptr<KeyDiversification> d_key_diversification;
 
 			/**
 			 * \brief The cipher key.

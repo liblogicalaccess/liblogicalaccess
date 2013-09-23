@@ -17,7 +17,7 @@ namespace logicalaccess
 	 * \brief A Access informations. Describe key used of authentication and access rights for a specific or a group of operati
 	 * \remarks Linearizable is depreciated, shouldn't be used anymore in further versions.
 	 */
-	class LIBLOGICALACCESS_API AccessInfo : public Linearizable, public XmlSerializable
+	class LIBLOGICALACCESS_API AccessInfo : public XmlSerializable
 	{
 		public:
 

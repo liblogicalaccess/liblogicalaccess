@@ -1,0 +1,55 @@
+#include "desfirekey.hpp"
+#include "logicalaccess/logs.hpp"
+#include "sagemkeydiversification.hpp"
+#include "boost/shared_ptr.hpp"
+#include "logicalaccess/bufferhelper.hpp"
+#include "desfirecrypto.hpp"
+#include <vector>
+
+namespace logicalaccess
+{
+	bool SagemKeyDiversification::initDiversification(unsigned char *diversify, std::vector<unsigned char> identifier, unsigned char *AID)
+	{
+		if (identifier.size() > 0)
+		{
+			diversify[0] = 0xFF;
+			memcpy(diversify + 1, &identifier[0], identifier.size());
+			diversify[8] = 0x00;
+			memcpy(diversify + 9, &identifier[0], identifier.size());
+			for (unsigned char i = 0; i < 7; ++i)
+			{
+				diversify[9 + i] ^= 0xFF;
+			}
+		}
+		else
+			return false;
+		return true;
+	}
+
+	std::vector<unsigned char> SagemKeyDiversification::getKeyDiversificated(boost::shared_ptr<Key> key, unsigned char* diversify)
+	{
+		INFO_("Using key diversification Sagem with div : %s", BufferHelper::getHex(std::vector<unsigned char>(diversify, diversify + 16)).c_str());
+		std::vector<unsigned char> keydiv;
+
+		boost::shared_ptr<DESFireKey> desfirekey = boost::dynamic_pointer_cast<DESFireKey>(key);
+
+		// Sagem diversification algo. Should be an option with SAM diversification soon...
+		std::vector<unsigned char> iv;
+		// Two time, to have ECB and not CBC mode (laazzyyy to create new function :))
+		std::vector<unsigned char> vkeydata;
+		if (desfirekey->isEmpty())
+		{
+			vkeydata.resize(desfirekey->getLength(), 0x00);
+		}
+		else
+		{
+			vkeydata.insert(vkeydata.end(), desfirekey->getData(), desfirekey->getData() + desfirekey->getLength());
+		}
+
+		std::vector<unsigned char> r = DESFireCrypto::sam_CBC_send(vkeydata, iv, std::vector<unsigned char>(diversify, diversify + 8));
+		keydiv.insert(keydiv.end(), r.begin(), r.end());
+		std::vector<unsigned char> r2 = DESFireCrypto::sam_CBC_send(vkeydata, iv, std::vector<unsigned char>(diversify + 8, diversify + 16));
+		keydiv.insert(keydiv.end(), r2.begin(), r2.end());
+		return keydiv;
+	}
+}

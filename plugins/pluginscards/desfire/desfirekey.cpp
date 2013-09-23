@@ -14,7 +14,6 @@ namespace logicalaccess
 		d_keyType = DF_KEY_DES;
 		d_key.resize(getLength());
 		d_key_version = 0;
-		d_diversify = false;
 		clear();
 	}
 
@@ -23,8 +22,7 @@ namespace logicalaccess
 	{
 		d_keyType = DF_KEY_DES;
 		d_key.resize(getLength());
-		d_key_version = 0;
-		d_diversify = false;		
+		d_key_version = 0;	
 		clear();
 		fromString(str);
 	}
@@ -35,7 +33,6 @@ namespace logicalaccess
 		d_keyType = DF_KEY_DES;
 		d_key.resize(getLength());
 		d_key_version = 0;
-		d_diversify = false;
 		clear();
 
 		if (buf != NULL)
@@ -78,7 +75,6 @@ namespace logicalaccess
 
 		node.put("KeyType", d_keyType);
 		node.put("KeyVersion", d_key_version);
-		node.put("Diversify", d_diversify);
 
 		parentNode.add_child(getDefaultXmlNodeName(), node);
 	}
@@ -88,7 +84,6 @@ namespace logicalaccess
 		Key::unSerialize(node);
 		d_keyType = static_cast<DESFireKeyType>(node.get_child("KeyType").get_value<unsigned int>());
 		d_key_version = node.get_child("KeyVersion").get_value<unsigned char>();
-		d_diversify = node.get_child("Diversify").get_value<bool>();
 	}
 
 	std::string DESFireKey::getDefaultXmlNodeName() const
@@ -112,7 +107,7 @@ namespace logicalaccess
 			return false;
 		}
 
-		return (getDiversify() == key.getDiversify() && getKeyVersion() == key.getKeyVersion() && getKeyType() == key.getKeyType());
+		return (getKeyVersion() == key.getKeyVersion() && getKeyType() == key.getKeyType());
 	}
 
 	std::string DESFireKey::DESFireKeyTypeStr(DESFireKeyType t)

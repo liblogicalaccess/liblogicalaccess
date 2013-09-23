@@ -424,7 +424,7 @@ namespace logicalaccess
 		{
 			INFO_SIMPLE_("Using computer memory key storage...");
 			unsigned char* keydata = key->getData();
-			loadKey(std::vector<unsigned char>(keydata, keydata + key->getLength()), key->getDiversify(), true);
+			loadKey(std::vector<unsigned char>(keydata, keydata + key->getLength()), key->getKeyDiversification() != NULL, true);
 		}
 		else if (boost::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage))
 		{

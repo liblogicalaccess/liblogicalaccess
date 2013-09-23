@@ -20,7 +20,7 @@
 #include "logicalaccess/crypto/aes_initialization_vector.hpp"
 #include "logicalaccess/crypto/des_symmetric_key.hpp"
 #include "logicalaccess/crypto/des_initialization_vector.hpp"
-#include "logicalaccess/crypto/CMAC.hpp"
+#include "logicalaccess/crypto/cmac.hpp"
 
 
 namespace logicalaccess
@@ -620,44 +620,12 @@ namespace logicalaccess
 
 	void DESFireCrypto::getKey(boost::shared_ptr<DESFireKey> key, unsigned char* diversify, std::vector<unsigned char>& keydiv)
 	{
-		INFO_("Init key from crypto. Diversify activated? %d - Diversification buffer? %d...", key->getDiversify(), (diversify != NULL));
+		INFO_SIMPLE_("Init key from crypto.");
 
 		keydiv.clear();
-		if (key->getDiversify() && diversify != NULL)
+		if (key->getKeyDiversification() && diversify != NULL)
 		{
-			if (key->getKeyType() != DF_KEY_AES)
-			{
-				if (key->getLength() == 16)
-				{
-					INFO_("Using key diversification with div : %s", BufferHelper::getHex(std::vector<unsigned char>(diversify, diversify + 16)).c_str());
-
-					// Sagem diversification algo. Should be an option with SAM diversification soon...
-					std::vector<unsigned char> iv;
-					// Two time, to have ECB and not CBC mode (laazzyyy to create new function :))
-					std::vector<unsigned char> vkeydata;
-					if (key->isEmpty())
-					{
-						vkeydata.resize(key->getLength(), 0x00);
-					}
-					else
-					{
-						vkeydata.insert(vkeydata.end(), key->getData(), key->getData() + key->getLength());
-					}
-
-					std::vector<unsigned char> r = sam_CBC_send(vkeydata, iv, std::vector<unsigned char>(diversify, diversify + 8));
-					keydiv.insert(keydiv.end(), r.begin(), r.end());
-					std::vector<unsigned char> r2 = sam_CBC_send(vkeydata, iv, std::vector<unsigned char>(diversify + 8, diversify + 16));
-					keydiv.insert(keydiv.end(), r2.begin(), r2.end());
-				}
-				else
-				{
-					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Diversification for this key type is not implemented yet.");
-				}
-			}
-			else
-			{
-				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Diversification for this key type is not implemented yet.");
-			}
+			keydiv = key->getKeyDiversification()->getKeyDiversificated(key, diversify);
 		}
 		else
 		{
@@ -710,7 +678,7 @@ namespace logicalaccess
 		oldkeydiv.resize(16, 0x00);
 		newkeydiv.resize(16, 0x00);
 		d_profile->getKey(d_currentAid, keyno, diversify, oldkeydiv);
-		getKey(newkey, diversify, newkeydiv);		
+		getKey(newkey, diversify, newkeydiv);	
 
 		std::vector<unsigned char> encCryptogram;
 
@@ -969,6 +937,11 @@ namespace logicalaccess
 		d_lastIV.clear();
 		d_lastIV.resize(d_block_size, 0x00);
 	}
+	
+	std::vector<unsigned char> DESFireCrypto::desfire_cmac(const std::vector<unsigned char>& data)
+	{
+		return desfire_cmac(d_sessionKey, d_cipher, d_block_size, data);
+	}
 
 	std::vector<unsigned char> DESFireCrypto::desfire_cmac(const std::vector<unsigned char>& key, boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const std::vector<unsigned char>& data)
 	{
@@ -1082,13 +1055,11 @@ namespace logicalaccess
 		if (boost::dynamic_pointer_cast<openssl::AESCipher>(cipher))
 		{
 			isokey.reset(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(key)));
-			//iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createNull()));
 			iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastIV)));
 		}
 		else
 		{
 			isokey.reset(new openssl::DESSymmetricKey(openssl::DESSymmetricKey::createFromData(key)));
-			//iv.reset(new openssl::DESInitializationVector(openssl::DESInitializationVector::createNull()));
 			iv.reset(new openssl::DESInitializationVector(openssl::DESInitializationVector::createFromData(d_lastIV)));
 		}
 		cipher->cipher(decdata, encdata, *isokey, *iv, false);
@@ -1098,25 +1069,6 @@ namespace logicalaccess
 		}
 
 		return encdata;
-	}
-
-	bool DESFireCrypto::getDiversify(unsigned char* diversify)
-	{
-		if (d_identifier.size() > 0)
-		{
-			diversify[0] = 0xFF;
-			memcpy(diversify + 1, &d_identifier[0], d_identifier.size());
-			diversify[8] = 0x00;
-			memcpy(diversify + 9, &d_identifier[0], d_identifier.size());
-			for (unsigned char i = 0; i < 7; ++i)
-			{
-				diversify[9 + i] ^= 0xFF;
-			}
-		}
-		else
-			return false;
-
-		return true;
 	}
 
 	void DESFireCrypto::setCryptoContext(boost::shared_ptr<DESFireProfile> profile, std::vector<unsigned char> identifier)

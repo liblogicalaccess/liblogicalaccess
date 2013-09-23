@@ -22,33 +22,6 @@ namespace logicalaccess
 	{
 	}
 
-	std::vector<unsigned char> DESFireEV1Location::getLinearData() const
-	{
-		std::vector<unsigned char> data = DESFireLocation::getLinearData();
-
-		data.push_back((useEV1) ? 1 : 0);
-		data.push_back(static_cast<unsigned char>(cryptoMethod));
-		data.push_back((useISO7816) ? 1 : 0);
-		data.push_back(static_cast<unsigned char>(applicationFID & 0xff));
-		data.push_back(static_cast<unsigned char>((applicationFID & 0xff00) >> 8));
-		data.push_back(static_cast<unsigned char>(fileFID & 0xff));
-		data.push_back(static_cast<unsigned char>((fileFID & 0xff00) >> 8));
-
-		return data;
-	}
-
-	void DESFireEV1Location::setLinearData(const std::vector<unsigned char>& data, size_t offset)
-	{
-		DESFireLocation::setLinearData(data, offset);
-		offset += DESFireLocation::getDataSize();
-
-		useEV1 = (data[offset++] == 1);
-		cryptoMethod = static_cast<DESFireKeyType>(data[offset++]);
-		useISO7816 = (data[offset++] == 1);
-		applicationFID = static_cast<unsigned short>(data[offset++] | (data[offset++] << 8));
-		fileFID = static_cast<unsigned short>(data[offset++] | (data[offset++] << 8));
-	}
-
 	size_t DESFireEV1Location::getDataSize()
 	{
 		return (DESFireLocation::getDataSize() + 1 + sizeof(cryptoMethod) + 1 + sizeof(applicationFID) + sizeof(fileFID));

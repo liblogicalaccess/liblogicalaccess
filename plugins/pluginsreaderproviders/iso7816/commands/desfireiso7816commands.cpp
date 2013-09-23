@@ -192,8 +192,8 @@ namespace logicalaccess
 		else
 		{
 			unsigned char diversify[16];
-			if (!key->getDiversify() || d_crypto->getDiversify(diversify))
-			{				
+			if (key->getKeyDiversification() && key->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), NULL))
+			{	
 				cryptogram = d_crypto->changeKey_PICC(keyno, key, diversify);
 			}
 		}
@@ -824,7 +824,7 @@ namespace logicalaccess
 
 		bool r = false;
 		unsigned char diversify[16];
-		if (d_crypto->getDiversify(diversify))
+		if (key->getKeyDiversification() && key->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), NULL))
 		{
 			command[0] = keyno;
 			std::vector<unsigned char> result = DESFireISO7816Commands::transmit(DF_INS_AUTHENTICATE, command, 1);

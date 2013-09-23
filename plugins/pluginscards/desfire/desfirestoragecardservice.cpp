@@ -331,7 +331,6 @@ namespace logicalaccess
 							getDESFireChip()->getDESFireCommands()->authenticate(dfAiToWrite->writeKeyno);
 						}
 
-						INFO_("Changing writeKey. div? %d", dfAiToWrite->writeKey->getDiversify());
 						if (!getDESFireChip()->getDESFireCommands()->changeKey(dfAiToWrite->writeKeyno, dfAiToWrite->writeKey))
 						{
 							THROW_EXCEPTION_WITH_LOG(CardException, string(EXCEPTION_MSG_CHANGEKEY));
@@ -352,7 +351,7 @@ namespace logicalaccess
 							getDESFireChip()->getDESFireCommands()->authenticate(dfAiToWrite->readKeyno);
 						}
 
-						INFO_("Changing readKey. div? %d", dfAiToWrite->readKey->getDiversify());
+						INFO_SIMPLE_("Changing readKey.");
 						if (!getDESFireChip()->getDESFireCommands()->changeKey(dfAiToWrite->readKeyno, dfAiToWrite->readKey))
 						{
 							THROW_EXCEPTION_WITH_LOG(CardException, string(EXCEPTION_MSG_CHANGEKEY));
@@ -373,7 +372,7 @@ namespace logicalaccess
 							getDESFireChip()->getDESFireCommands()->authenticate(0);
 						}
 
-						INFO_("Changing masterApplicationKey. div? %d", dfAiToWrite->masterApplicationKey->getDiversify());
+						INFO_SIMPLE_("Changing masterApplicationKey.");
 						if (!getDESFireChip()->getDESFireCommands()->changeKey(0, dfAiToWrite->masterApplicationKey))
 						{
 							THROW_EXCEPTION_WITH_LOG(CardException, string(EXCEPTION_MSG_CHANGEKEY));
@@ -393,7 +392,7 @@ namespace logicalaccess
 						{
 							if (getDESFireChip()->getDESFireCommands()->authenticate(0))
 							{
-								INFO_("Changing masterCardKey. div? %d", dfAiToWrite->masterCardKey->getDiversify());
+								INFO_SIMPLE_("Changing masterCardKey.");
 								if (!getDESFireChip()->getDESFireCommands()->changeKey(0, dfAiToWrite->masterCardKey))
 								{
 									THROW_EXCEPTION_WITH_LOG(CardException, string(EXCEPTION_MSG_CHANGEKEY));

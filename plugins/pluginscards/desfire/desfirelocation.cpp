@@ -38,26 +38,6 @@ namespace logicalaccess
 		static_cast<unsigned char*>(aid)[2] = (i >> 16) & 0xff;
 	}
 
-	std::vector<unsigned char> DESFireLocation::getLinearData() const
-	{
-		std::vector<unsigned char> data(128);
-
-		BufferHelper::setInt32(data, aid);
-		data.push_back(static_cast<unsigned char>(file));
-		data.push_back(static_cast<unsigned char>(byte));
-		data.push_back(static_cast<unsigned char>(securityLevel));
-
-		return data;
-	}
-
-	void DESFireLocation::setLinearData(const std::vector<unsigned char>& data, size_t offset)
-	{
-		aid = BufferHelper::getInt32(data, offset);
-		file = data[offset++];
-		byte = data[offset++];
-		securityLevel = static_cast<EncryptionMode>(data[offset++]);
-	}
-
 	size_t DESFireLocation::getDataSize()
 	{
 		return (sizeof(aid) + 1 + 1 + 1);

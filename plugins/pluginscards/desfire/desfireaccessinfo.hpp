@@ -40,19 +40,6 @@ namespace logicalaccess
 			virtual void generateInfos(const std::string& csn);
 
 			/**
-			 * \brief Export access informations to a buffer.
-			 * \param data The buffer.
-			 */
-			virtual std::vector<unsigned char> getLinearData() const;
-
-			/**
-			 * \brief Import access informations from a buffer.
-			 * \param data The buffer.
-			 * \param offset The offset. Default is 0.
-			 */
-			virtual void setLinearData(const std::vector<unsigned char>& data, size_t offset = 0);
-
-			/**
 			 * \brief DESFire access informations data size.
 			 */
 			virtual size_t getDataSize();

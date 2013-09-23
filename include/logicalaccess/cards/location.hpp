@@ -16,7 +16,7 @@ namespace logicalaccess
 	/**
 	 * \brief A location informations.
 	 */
-	class LIBLOGICALACCESS_API Location : public Linearizable, public XmlSerializable
+	class LIBLOGICALACCESS_API Location : public XmlSerializable
 	{
 	public:
 			/**

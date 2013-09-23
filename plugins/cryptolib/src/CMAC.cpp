@@ -13,15 +13,6 @@ namespace logicalaccess
 {
 	namespace openssl
 	{
-		/*CMACCrypto::CMACCrypto(std::vector<unsigned char> sessionKey, std::vector<unsigned char> lastIV, boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size) : d_sessionKey(sessionKey), d_lastIV(lastIV), d_cipher(cipher), d_block_size(block_size)
-		{
-		}
-
-		std::vector<unsigned char> CMACCrypto::cmac(const std::vector<unsigned char>& data)
-		{
-			return cmac(d_sessionKey, d_cipher, d_block_size, data);
-		}*/
-
 		std::vector<unsigned char> CMACCrypto::cmac(const std::vector<unsigned char>& key, boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const std::vector<unsigned char>& data, std::vector<unsigned char> lastIV)
 		{
 			boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherK1K2;

@@ -2,6 +2,9 @@
 #include "boost/shared_ptr.hpp"
 #include "logicalaccess/crypto/openssl_symmetric_cipher.hpp"
 
+#ifndef CMAC_HPP__
+#define CMAC_HPP__
+
 namespace logicalaccess
 {
 	namespace openssl
@@ -10,7 +13,6 @@ namespace logicalaccess
 		{
 		public:
 			CMACCrypto() {};
-		//	CMACCrypto(std::vector<unsigned char> sessionKey, std::vector<unsigned char> lastIV, boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size);
 			~CMACCrypto() {};
 
 			/**
@@ -36,3 +38,5 @@ namespace logicalaccess
 		};
 	}
 }
+
+#endif

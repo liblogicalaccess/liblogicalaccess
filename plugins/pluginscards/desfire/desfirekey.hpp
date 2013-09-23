@@ -93,18 +93,6 @@ namespace logicalaccess
 			unsigned char getKeyVersion() const { return d_key_version; };
 
 			/**
-			 * \brief Set if the key is diversified on the card.
-			 * \param diversify True if the key is diversified on the card, false otherwise.
-			 */
-			void setDiversify(bool diversify) { d_diversify = diversify; };
-
-			/**
-			 * \brief Get if the key is diversified on the card.
-			 * \return True if the key is diversified on the card, false otherwise.
-			 */
-			bool getDiversify() const { return d_diversify; };
-
-			/**
 			 * \brief Set the key type.
 			 * \param keyType The key type.
 			 */
@@ -165,11 +153,6 @@ namespace logicalaccess
 			 * \brief The key version.
 			 */
 			unsigned char d_key_version;
-
-			/**
-			 * \brief Diversify the key on the card.
-			 */
-			bool d_diversify;
 
 			/**
 			 * \brief The DESFire key type.
