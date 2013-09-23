@@ -30,6 +30,7 @@ namespace logicalaccess
 	{
 		d_sam_type = "SAM_NONE";
 		d_sam_reader_name = "";
+		d_keyno_securecheck = 0;
 	}
 
 	void ISO7816ReaderUnitConfiguration::serialize(boost::property_tree::ptree& node)
@@ -54,7 +55,7 @@ namespace logicalaccess
 		try
 		{
 			d_sam_key_securecheck.reset(new DESFireKey());
-			d_sam_key_securecheck->unSerialize(knode);
+			boost::dynamic_pointer_cast<XmlSerializable>(d_sam_key_securecheck)->unSerialize(knode, "");
 		}
 		catch(std::exception& ex)
 		{
