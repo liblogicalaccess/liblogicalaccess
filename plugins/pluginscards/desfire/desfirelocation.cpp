@@ -20,7 +20,7 @@ namespace logicalaccess
 	{
 	}
 
-	int DESFireLocation::convertAidToInt(const void* aid)
+	unsigned int DESFireLocation::convertAidToUInt(const void* aid)
 	{
 		// LSB first
 		int ret = ((static_cast<const unsigned char*>(aid)[0] & 0xff) |
@@ -30,7 +30,7 @@ namespace logicalaccess
 		return ret;
 	}
 
-	void DESFireLocation::convertIntToAid(int i, void* aid)
+	void DESFireLocation::convertUIntToAid(unsigned int i, void* aid)
 	{
 		// LSB first
 		static_cast<unsigned char*>(aid)[0] = i & 0xff;

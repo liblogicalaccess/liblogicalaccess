@@ -8,11 +8,13 @@
 #define LOGICALACCESS_ISO7816READERUNITCONFIGURATION_HPP
 
 #include "logicalaccess/readerproviders/readerunitconfiguration.hpp"
-#include "desfirekey.hpp"
+
 
 namespace logicalaccess
 {
 	#define READER_ISO7816 "iso7816"
+
+	class DESFireKey;
 
 	/**
 	 * \brief The PC/SC reader unit configuration base class.
@@ -86,7 +88,7 @@ namespace logicalaccess
 			/**
 			 * \brief Set the SAM Key and Keyno for check if the SAM is the SAM we are waiting
 			 */
-			void setSAMSecurityCheck(boost::shared_ptr<DESFireKey> key, int keyno) { d_sam_key_securecheck = key; d_keyno_securecheck = keyno; };
+			void setSAMSecurityCheck(boost::shared_ptr<DESFireKey> key, unsigned char keyno) { d_sam_key_securecheck = key; d_keyno_securecheck = keyno; };
 
 			/**
 			 * \brief Get SAM Security Check Key
@@ -97,7 +99,7 @@ namespace logicalaccess
 			/**
 			 * \brief Get SAM Security Check KeyNo
 			 */
-			int getSAMSecuritykeyNo() { return d_keyno_securecheck; };
+			unsigned char getSAMSecuritykeyNo() { return d_keyno_securecheck; };
 
 		protected:
 
@@ -119,7 +121,7 @@ namespace logicalaccess
 			/**
 			 * \brief The SAM Key to see if it is the SAM we are waiting
 			 */
-			int	d_keyno_securecheck;
+			unsigned char d_keyno_securecheck;
 	};
 }
 

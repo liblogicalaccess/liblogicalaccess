@@ -41,7 +41,7 @@ namespace logicalaccess
 
 		boost::shared_ptr<DESFireLocation> rootLocation = boost::dynamic_pointer_cast<DESFireLocation>(getProfile()->createLocation());
 		rootLocation->aid = (unsigned int)-1;
-		rootLocation->file = (unsigned int)-1;
+		rootLocation->file = (unsigned char)-1;
 		rootNode->setLocation(rootLocation);
 
 		if (getCommands())
@@ -58,9 +58,9 @@ namespace logicalaccess
 
 			}
 
-			std::vector<int> aids = getDESFireCommands()->getApplicationIDs();
+			std::vector<unsigned int> aids = getDESFireCommands()->getApplicationIDs();
 
-			for (std::vector<int>::const_iterator aid = aids.begin(); aid != aids.end(); aid++)
+			for (std::vector<unsigned int>::const_iterator aid = aids.cbegin(); aid != aids.cend(); aid++)
 			{
 				boost::shared_ptr<LocationNode> aidNode;
 				aidNode.reset(new LocationNode());
@@ -69,88 +69,81 @@ namespace logicalaccess
 
 				boost::shared_ptr<DESFireLocation> aidLocation = boost::dynamic_pointer_cast<DESFireLocation>(getProfile()->createLocation());
 				aidLocation->aid = *aid;
-				aidLocation->file = static_cast<unsigned int>(-1);
+				aidLocation->file = static_cast<unsigned char>(-1);
 				aidNode->setLocation(aidLocation);
 
-				if (getDESFireCommands()->selectApplication(*aid))
+				getDESFireCommands()->selectApplication(*aid);
+				// Try authentication.
+				try
 				{
-					// Try authentication.
-					try
-					{
-						getDESFireCommands()->authenticate(0);
-					}
-					catch(CardException&)
-					{
+					getDESFireCommands()->authenticate(0);
+				}
+				catch(CardException&)
+				{
 
-					}
+				}
 
-					try
-					{
-						std::vector<int> files = getDESFireCommands()->getFileIDs();
+				try
+				{
+					std::vector<unsigned char> files = getDESFireCommands()->getFileIDs();
 					
-						for (std::vector<int>::const_iterator file = files.begin(); file != files.end(); ++file)
-						{
-							boost::shared_ptr<LocationNode> fileNode;
-							fileNode.reset(new LocationNode());
-							sprintf(tmpName, "File %d", *file);
-							fileNode->setName(tmpName);
-
-							boost::shared_ptr<DESFireLocation> location = getApplicationLocation();
-							location->aid = *aid;
-							location->file = *file;
-							location->byte = 0;							
-
-							try
-							{
-								DESFireCommands::FileSetting settings;
-								if (getDESFireCommands()->getFileSettings(*file, settings))
-								{
-									location->securityLevel = (EncryptionMode)settings.comSett;
-									switch (settings.fileType)
-									{
-									case 0:
-										{
-											size_t fileSize = 0;
-											memcpy(&fileSize, settings.type.dataFile.fileSize, sizeof(settings.type.dataFile.fileSize));
-											fileNode->setLength(fileSize);
-										}
-										break;
-
-									case 1:
-										{
-											//TODO: Write something here ?
-										}
-										break;
-
-									case 2:
-										{
-											size_t recordSize = 0;
-											memcpy(&recordSize, settings.type.recordFile.recordSize, sizeof(settings.type.recordFile.recordSize));
-											fileNode->setLength(recordSize);
-										}
-										break;
-									}
-								}
-								else
-								{
-									location->securityLevel = CM_ENCRYPT;
-								}
-							}
-							catch(std::exception&)
-							{
-								fileNode->setLength(0);
-							}
-															
-							fileNode->setNeedAuthentication(true);
-							fileNode->setHasProperties(true);
-							fileNode->setLocation(location);
-							fileNode->setParent(aidNode);
-							aidNode->getChildrens().push_back(fileNode);
-						}
-					}
-					catch(std::exception&)
+					for (std::vector<unsigned char>::const_iterator file = files.cbegin(); file != files.cend(); ++file)
 					{
+						boost::shared_ptr<LocationNode> fileNode;
+						fileNode.reset(new LocationNode());
+						sprintf(tmpName, "File %d", *file);
+						fileNode->setName(tmpName);
+
+						boost::shared_ptr<DESFireLocation> location = getApplicationLocation();
+						location->aid = *aid;
+						location->file = *file;
+						location->byte = 0;							
+
+						try
+						{
+							DESFireCommands::FileSetting settings;
+							getDESFireCommands()->getFileSettings(*file, settings);
+
+							location->securityLevel = (EncryptionMode)settings.comSett;
+							switch (settings.fileType)
+							{
+							case 0:
+								{
+									size_t fileSize = 0;
+									memcpy(&fileSize, settings.type.dataFile.fileSize, sizeof(settings.type.dataFile.fileSize));
+									fileNode->setLength(fileSize);
+								}
+								break;
+
+							case 1:
+								{
+									//TODO: Write something here ?
+								}
+								break;
+
+							case 2:
+								{
+									size_t recordSize = 0;
+									memcpy(&recordSize, settings.type.recordFile.recordSize, sizeof(settings.type.recordFile.recordSize));
+									fileNode->setLength(recordSize);
+								}
+								break;
+							}
+						}
+						catch(std::exception&)
+						{
+							fileNode->setLength(0);
+						}
+															
+						fileNode->setNeedAuthentication(true);
+						fileNode->setHasProperties(true);
+						fileNode->setLocation(location);
+						fileNode->setParent(aidNode);
+						aidNode->getChildrens().push_back(fileNode);
 					}
+				}
+				catch(std::exception&)
+				{
 				}
 
 				aidNode->setHasProperties(true);

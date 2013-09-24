@@ -25,14 +25,13 @@ namespace logicalaccess
 	{
 	}
 
-	bool MifarePlusSL3StorageCardService::erase()
+	void MifarePlusSL3StorageCardService::erase()
 	{
 		boost::shared_ptr<MifarePlusSL3Profile> profile = boost::dynamic_pointer_cast<MifarePlusSL3Profile>(getChip()->getProfile());
 		unsigned int i;
 		unsigned int j;
 		unsigned char zeroblock[16];
 		bool erased;
-		bool success = true;
 
 		memset(zeroblock, 0x00, 16);
 
@@ -59,22 +58,17 @@ namespace logicalaccess
 					}
 				}
 			}
-			else
-				success = false;
 		}
-
-		return success;
 	}
 
-	bool MifarePlusSL3StorageCardService::erase(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse)
+	void MifarePlusSL3StorageCardService::erase(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse)
 	{
 		unsigned char zeroblock[16];
-		bool success = false;
 
 		memset(zeroblock, 0x00, 16);
 
 		if (!aiToUse || !location)
-			return false;
+			return;
 		boost::shared_ptr<MifarePlusAccessInfo> mAiToUse = boost::dynamic_pointer_cast<MifarePlusAccessInfo>(aiToUse);
 		boost::shared_ptr<MifarePlusLocation> mLocation = boost::dynamic_pointer_cast<MifarePlusLocation>(location);
 
@@ -92,13 +86,9 @@ namespace logicalaccess
 				getMifarePlusChip()->getMifarePlusSL3Commands()->updateBinary(getMifarePlusChip()->getMifarePlusSL3Commands()->getBlockNo(mLocation->sector, mLocation->block), false, true, zeroblock, MIFARE_PLUS_BLOCK_SIZE);
 			}
 		}
-		else
-			success = false;
-
-		return success;
 	}
 
-	bool MifarePlusSL3StorageCardService::writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> /*aiToUse*/, boost::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags)
+	void MifarePlusSL3StorageCardService::writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> /*aiToUse*/, boost::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags)
 	{
 		int i;
 		size_t bufIndex = 0;
@@ -144,7 +134,7 @@ namespace logicalaccess
 			mLocation->sector += 1;
 			mLocation->block = 0;
 			if (!(behaviorFlags & CB_AUTOSWITCHAREA))
-				return true;
+				return;
 		}
 
 		if (bufIndex < dataLength)
@@ -162,11 +152,9 @@ namespace logicalaccess
 			}
 			getMifarePlusChip()->getMifarePlusSL3Commands()->writeSectors(mLocation->sector, stopSector, reinterpret_cast<const char*>(data) + bufIndex, dataLength - bufIndex, mAiToWrite);
 		}
-
-		return true;
 	}
 
-	bool MifarePlusSL3StorageCardService::readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags)
+	void MifarePlusSL3StorageCardService::readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags)
 	{
 		int i;
 		size_t bufIndex = 0;
@@ -212,7 +200,7 @@ namespace logicalaccess
 			mLocation->sector += 1;
 			mLocation->block = 0;
 			if (!(behaviorFlags & CB_AUTOSWITCHAREA))
-				return true;
+				return;
 		}
 
 		if (bufIndex < dataLength)
@@ -230,11 +218,9 @@ namespace logicalaccess
 			}
 			getMifarePlusChip()->getMifarePlusSL3Commands()->readSectors(mLocation->sector, stopSector, reinterpret_cast<char*>(data) + bufIndex, dataLength - bufIndex, mAiToUse);
 		}
-
-		return true;
 	}
 
-	size_t MifarePlusSL3StorageCardService::readDataHeader(boost::shared_ptr<Location> /*location*/, boost::shared_ptr<AccessInfo> /*aiToUse*/, void* /*data*/, size_t /*dataLength*/)
+	unsigned int MifarePlusSL3StorageCardService::readDataHeader(boost::shared_ptr<Location> /*location*/, boost::shared_ptr<AccessInfo> /*aiToUse*/, void* /*data*/, size_t /*dataLength*/)
 	{
 		return 0;
 	}

@@ -107,19 +107,19 @@ namespace logicalaccess
 		return fileids;
 	}
 
-	bool DESFireEV1STidSTRCommands::createApplication(int aid, DESFireKeySettings settings, int maxNbKeys)
+	void DESFireEV1STidSTRCommands::createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys)
 	{
-		return createApplication(aid, settings, static_cast<size_t>(maxNbKeys), FIDS_NO_ISO_FID, DF_KEY_DES, 0, NULL);
+		createApplication(aid, settings, maxNbKeys, DF_KEY_DES, FIDS_NO_ISO_FID, 0, NULL);
 	}
 
-	bool DESFireEV1STidSTRCommands::createApplication(int aid, DESFireKeySettings settings, size_t maxNbKeys, FidSupport /*fidSupported*/, DESFireKeyType cryptoMethod, unsigned short isoFID, const char* isoDFName)
+	void DESFireEV1STidSTRCommands::createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, DESFireKeyType cryptoMethod, FidSupport /*fidSupported*/, unsigned short isoFID, const char* isoDFName)
 	{
 		INFO_("Creating application aid {0x%x(%d)} settings {0x%x(%d)} max nb Keys {%d} key type {0x%x(%d)}", aid, aid, settings, settings, maxNbKeys, cryptoMethod, cryptoMethod);
 
 		unsigned char tmpcmd[3];
 		std::vector<unsigned char> command;
 
-		DESFireLocation::convertIntToAid(aid, tmpcmd);
+		DESFireLocation::convertUIntToAid(aid, tmpcmd);
 		command.insert(command.end(), tmpcmd, tmpcmd + 3);
 		command.push_back(static_cast<unsigned char>(settings));
 		command.push_back(static_cast<unsigned char>(static_cast<unsigned char>(maxNbKeys) & 0x0f));
@@ -140,46 +140,36 @@ namespace logicalaccess
 		{
 			d_profile->setKey(aid, i, d_profile->getDefaultKey(cryptoMethod));
 		}
-		
-		return true;
 	}
 
-	bool DESFireEV1STidSTRCommands::deleteApplication(int aid)
+	void DESFireEV1STidSTRCommands::deleteApplication(unsigned int aid)
 	{
 		INFO_("Deleting application aid {0x%x(%d)}...", aid, aid);
-		bool r = false;
 		unsigned char command[3];
 
-		DESFireLocation::convertIntToAid(aid, command);
+		DESFireLocation::convertUIntToAid(aid, command);
 
 		getSTidSTRReaderCardAdapter()->sendCommand(0x00DA, std::vector<unsigned char>(command, command + sizeof(command)));
-		r = true;
-
-		return r;
 	}
 
-	bool DESFireEV1STidSTRCommands::selectApplication(int aid)
+	void DESFireEV1STidSTRCommands::selectApplication(unsigned int aid)
 	{
 		INFO_("Selecting application aid {0x%x(%d)}", aid, aid);
-		bool r = false;
 		unsigned char command[3];
-		DESFireLocation::convertIntToAid(aid, command);
+		DESFireLocation::convertUIntToAid(aid, command);
 
 		getSTidSTRReaderCardAdapter()->sendCommand(0x005A, std::vector<unsigned char>(command, command + sizeof(command)));
-		r = true;
 
 		d_currentAid = aid;
-
-		return r;
 	}
 
-	void DESFireEV1STidSTRCommands::getKeySettings(DESFireKeySettings& settings, unsigned int& maxNbKeys)
+	void DESFireEV1STidSTRCommands::getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys)
 	{
 		DESFireKeyType keyType;
 		getKeySettings(settings, maxNbKeys, keyType);
 	}
 
-	void DESFireEV1STidSTRCommands::getKeySettings(DESFireKeySettings& settings, unsigned int& maxNbKeys, DESFireKeyType& keyType)
+	void DESFireEV1STidSTRCommands::getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys, DESFireKeyType& keyType)
 	{
 		INFO_SIMPLE_("Retrieving key settings...");
 		std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x0045, std::vector<unsigned char>());
@@ -213,12 +203,12 @@ namespace logicalaccess
 		return r;
 	}
 
-	bool DESFireEV1STidSTRCommands::createStdDataFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize)
+	void DESFireEV1STidSTRCommands::createStdDataFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize)
 	{
-		return createStdDataFile(fileno, comSettings, accessRights, fileSize, 0x00);
+		createStdDataFile(fileno, comSettings, accessRights, fileSize, 0x00);
 	}
 
-	bool DESFireEV1STidSTRCommands::createStdDataFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize, unsigned short isoFID)
+	void DESFireEV1STidSTRCommands::createStdDataFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned short isoFID)
 	{
 		INFO_("Creating standard data file - file number {0x%x(%d)} encryption mode {0x%x(%d)} access right {0x%x(%d)} file size {%d}...",
 			fileno, fileno, comSettings, comSettings, accessRights, accessRights, fileSize);
@@ -238,38 +228,28 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(static_cast<unsigned int>(fileSize & 0xff0000) >> 16));
 
 		getSTidSTRReaderCardAdapter()->sendCommand(0x00CD, command);
-
-		return true;
 	}
 
-	bool DESFireEV1STidSTRCommands::commitTransaction()
+	void DESFireEV1STidSTRCommands::commitTransaction()
 	{
 		INFO_SIMPLE_("Committing transaction...");
-		bool r = false;
 
 		getSTidSTRReaderCardAdapter()->sendCommand(0x00C7, std::vector<unsigned char>());
-		r = true;
-
-		return r;
 	}
 
-	bool DESFireEV1STidSTRCommands::abortTransaction()
+	void DESFireEV1STidSTRCommands::abortTransaction()
 	{
 		INFO_SIMPLE_("Aborting transaction...");
-		bool r = false;
 
 		getSTidSTRReaderCardAdapter()->sendCommand(0x00A7, std::vector<unsigned char>());
-		r = true;
-
-		return r;
 	}
 
-	bool DESFireEV1STidSTRCommands::createBackupFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize)
+	void DESFireEV1STidSTRCommands::createBackupFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize)
 	{
-		return createBackupFile(fileno, comSettings, accessRights, fileSize, 0x00);
+		createBackupFile(fileno, comSettings, accessRights, fileSize, 0x00);
 	}
 
-	bool DESFireEV1STidSTRCommands::createBackupFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize, unsigned short isoFID)
+	void DESFireEV1STidSTRCommands::createBackupFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned short isoFID)
 	{
 		INFO_("Creating backup file - file number {0x%x(%d)} encryption mode {0x%x(%d)} access right {0x%x(%d)} file size {%d}...",
 			fileno, fileno, comSettings, comSettings, accessRights, accessRights, fileSize);
@@ -289,21 +269,17 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(static_cast<unsigned int>(fileSize & 0xff0000) >> 16));
 
 		getSTidSTRReaderCardAdapter()->sendCommand(0x00CB, command);
-
-		return true;
 	}
 
-	bool DESFireEV1STidSTRCommands::createValueFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int lowerLimit, unsigned int upperLimit, int value, bool limitedCreditEnabled)
+	void DESFireEV1STidSTRCommands::createValueFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int lowerLimit, unsigned int upperLimit, unsigned int value, bool limitedCreditEnabled)
 	{
 		INFO_("Creating value file - file number {0x%x(%d)} encryption mode {0x%x(%d)} access right {0x%x(%d)} lower limit {%d} upper limit {%d} value {0x%x(%d)}, limited credit enabled {%d}...",
 			fileno, fileno, comSettings, comSettings, accessRights, accessRights, lowerLimit, upperLimit, value, value, limitedCreditEnabled);
 
-		bool r = false;
-
 		std::vector<unsigned char> command;
 		short ar = AccessRightsInMemory(accessRights);
 
-		command.push_back(static_cast<unsigned char>(fileno));
+		command.push_back(fileno);
 		command.push_back(static_cast<unsigned char>(comSettings));
 		BufferHelper::setUShort(command, ar);
 		BufferHelper::setInt32(command, lowerLimit);
@@ -312,17 +288,14 @@ namespace logicalaccess
 		command.push_back(limitedCreditEnabled ? 0x01 : 0x00);
 
 		getSTidSTRReaderCardAdapter()->sendCommand(0x00CC, command);
-		r = true;
-
-		return r;
 	}
 
-	bool DESFireEV1STidSTRCommands::createLinearRecordFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize, int maxNumberOfRecords)
+	void DESFireEV1STidSTRCommands::createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords)
 	{
-		return createLinearRecordFile(fileno, comSettings, accessRights, fileSize, maxNumberOfRecords, 0x00);
+		createLinearRecordFile(fileno, comSettings, accessRights, fileSize, maxNumberOfRecords, 0x00);
 	}
 
-	bool DESFireEV1STidSTRCommands::createLinearRecordFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize, int maxNumberOfRecords, unsigned short isoFID)
+	void DESFireEV1STidSTRCommands::createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID)
 	{
 		INFO_("Creating linear record file - file number {0x%x(%d)} encryption mode {0x%x(%d)} access right {0x%x(%d)} file size {%d} max number records {%d}...",
 			fileno, fileno, comSettings, comSettings, accessRights, accessRights, fileSize, maxNumberOfRecords);
@@ -330,7 +303,7 @@ namespace logicalaccess
 		std::vector<unsigned char> command;
 		short ar = AccessRightsInMemory(accessRights);
 
-		command.push_back(static_cast<unsigned char>(fileno));
+		command.push_back(fileno);
 		if (isoFID != 0)
 		{
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "isoFID parameter not available with this reader.");			
@@ -345,16 +318,14 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(static_cast<unsigned int>(maxNumberOfRecords & 0xff0000) >> 16));
 
 		getSTidSTRReaderCardAdapter()->sendCommand(0x00C1, command);
-
-		return true;
 	}
 
-	bool DESFireEV1STidSTRCommands::createCyclicRecordFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize, int maxNumberOfRecords)
+	void DESFireEV1STidSTRCommands::createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords)
 	{
-		return createCyclicRecordFile(fileno, comSettings, accessRights, fileSize, maxNumberOfRecords, 0x00);
+		createCyclicRecordFile(fileno, comSettings, accessRights, fileSize, maxNumberOfRecords, 0x00);
 	}
 
-	bool DESFireEV1STidSTRCommands::createCyclicRecordFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize, int maxNumberOfRecords, unsigned short isoFID)
+	void DESFireEV1STidSTRCommands::createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID)
 	{
 		INFO_("Creating cyclic record file - file number {0x%x(%d)} encryption mode {0x%x(%d)} access right {0x%x(%d)} file size {%d} max number records {%d}...",
 			fileno, fileno, comSettings, comSettings, accessRights, accessRights, fileSize, maxNumberOfRecords);
@@ -362,7 +333,7 @@ namespace logicalaccess
 		std::vector<unsigned char> command;
 		short ar = AccessRightsInMemory(accessRights);
 
-		command.push_back(static_cast<unsigned char>(fileno));
+		command.push_back(fileno);
 		if (isoFID != 0)
 		{
 			command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(isoFID & 0xff00) >> 8));
@@ -378,8 +349,6 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(static_cast<unsigned int>(maxNumberOfRecords & 0xff0000) >> 16));
 
 		getSTidSTRReaderCardAdapter()->sendCommand(0x00C0, command);
-
-		return true;
 	}
 
 	void DESFireEV1STidSTRCommands::iso_selectFile(unsigned short /*fid*/)
@@ -464,13 +433,13 @@ namespace logicalaccess
 		getSTidSTRReaderCardAdapter()->sendCommand(0x000B, command);
 	}
 
-	bool DESFireEV1STidSTRCommands::authenticate(unsigned char keyno)
+	void DESFireEV1STidSTRCommands::authenticate(unsigned char keyno)
 	{
 		boost::shared_ptr<DESFireKey> key = d_profile->getKey(d_currentAid, keyno);
-		return authenticate(keyno, key);
+		authenticate(keyno, key);
 	}
 
-	bool DESFireEV1STidSTRCommands::authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
+	void DESFireEV1STidSTRCommands::authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
 	{
 		INFO_("Authenticating... key number {0x%x(%u)}",  keyno, keyno);
 
@@ -489,8 +458,6 @@ namespace logicalaccess
 		}
 		
 		authenticate(keylocation, keyno, key->getKeyType(), keyindex);
-
-		return true;
 	}	
 
 	void DESFireEV1STidSTRCommands::authenticateISO(unsigned char /*keyno*/, DESFireISOAlgorithm /*algorithm*/)
@@ -505,10 +472,10 @@ namespace logicalaccess
 		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
 	}
 
-	size_t DESFireEV1STidSTRCommands::readData(int fileno, size_t offset, size_t length, void* data, EncryptionMode mode)
+	unsigned int DESFireEV1STidSTRCommands::readData(unsigned char fileno, unsigned int offset, unsigned int length, void* data, EncryptionMode mode)
 	{
 		INFO_("Reading data... file number {0x%x(%d)} offset {%d} length {%d} encrypt mode {0x%x(%d)}",  fileno, fileno, offset, length, mode, mode);
-		size_t ret = 0;
+		unsigned int ret = 0;
 		std::vector<unsigned char> command;
 		
 		size_t stidMaxDataSize = 1024; // New to version 1.2 of API (before was limited to 200)
@@ -518,7 +485,7 @@ namespace logicalaccess
 			INFO_("Reading data from index {%d} to {%d}...", i, i+stidMaxDataSize-1);
 			command.clear();
 			command.push_back(static_cast<unsigned char>(mode));
-			command.push_back(static_cast<unsigned char>(fileno));
+			command.push_back(fileno);
 			size_t trunloffset = offset + i;
 			size_t trunklength = ((length - i) > stidMaxDataSize) ? stidMaxDataSize : (length - i);			
 			command.insert(command.end(), (unsigned char*)&trunloffset, (unsigned char*)&trunloffset + 3);
@@ -527,13 +494,14 @@ namespace logicalaccess
 			std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x00BD, command);
 
 			memcpy(reinterpret_cast<unsigned char*>(data) + i, &result[0], result.size());
-			ret += result.size();
+			ret += static_cast<unsigned int>(result.size());
 		}
 		INFO_("Returns data size {%d}", ret);
+
 		return ret;
 	}
 
-	bool DESFireEV1STidSTRCommands::writeData(int fileno, size_t offset, size_t length, const void* data, EncryptionMode mode)
+	void DESFireEV1STidSTRCommands::writeData(unsigned char fileno, unsigned int offset, unsigned int length, const void* data, EncryptionMode mode)
 	{
 		INFO_("Writing data... file number {0x%x(%d)} offset {%d} length {%d} encrypt mode {0x%x(%d)}", fileno, fileno, offset, length, mode, mode);
 		std::vector<unsigned char> command;
@@ -545,7 +513,7 @@ namespace logicalaccess
 			INFO_("Writing data from index {%d} to {%d}...", i, i+stidMaxDataSize-1);
 			command.clear();
 			command.push_back(static_cast<unsigned char>(mode));
-			command.push_back(static_cast<unsigned char>(fileno));
+			command.push_back(fileno);
 			size_t trunloffset = offset + i;
 			size_t trunklength = ((length - i) > stidMaxDataSize) ? stidMaxDataSize : (length - i);			
 			command.insert(command.end(), (unsigned char*)&trunloffset, (unsigned char*)&trunloffset + 3);
@@ -554,50 +522,42 @@ namespace logicalaccess
 
 			getSTidSTRReaderCardAdapter()->sendCommand(0x003D, command);
 		}
-		
-		return true;
 	}
 
-	bool DESFireEV1STidSTRCommands::credit(int fileno, int value, EncryptionMode mode)
+	void DESFireEV1STidSTRCommands::credit(unsigned char fileno, unsigned int value, EncryptionMode mode)
 	{
 		INFO_("Increasing value file... file number {0x%x(%d)} value {0x%x(%d)} encrypt mode {0x%x(%d)}", fileno, fileno, value, value, mode, mode);
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(mode));
-		command.push_back(static_cast<unsigned char>(fileno));
-		BufferHelper::setInt32(command, value);
+		command.push_back(fileno);
+		BufferHelper::setUInt32(command, value);
 
 		getSTidSTRReaderCardAdapter()->sendCommand(0x000C, command);
-		
-		return true;
 	}
 
-	bool DESFireEV1STidSTRCommands::debit(int fileno, int value, EncryptionMode mode)
+	void DESFireEV1STidSTRCommands::debit(unsigned char fileno, unsigned int value, EncryptionMode mode)
 	{
 		INFO_("Decreasing value file... file number {0x%x(%d)} value {0x%x(%d)} encrypt mode {0x%x(%d)}", fileno, fileno, value, value, mode, mode);
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(mode));
-		command.push_back(static_cast<unsigned char>(fileno));
-		BufferHelper::setInt32(command, value);
+		command.push_back(fileno);
+		BufferHelper::setUInt32(command, value);
 
 		getSTidSTRReaderCardAdapter()->sendCommand(0x00DC, command);
-		
-		return true;
 	}
 
-	bool DESFireEV1STidSTRCommands::limitedCredit(int fileno, int value, EncryptionMode mode)
+	void DESFireEV1STidSTRCommands::limitedCredit(unsigned char fileno, unsigned int value, EncryptionMode mode)
 	{
 		INFO_("Increasing value file with limited amount... file number {0x%x(%d)} value {0x%x(%d)} encrypt mode {0x%x(%d)}", fileno, fileno, value, value, mode, mode);
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(mode));
-		command.push_back(static_cast<unsigned char>(fileno));
-		BufferHelper::setInt32(command, value);
+		command.push_back(fileno);
+		BufferHelper::setUInt32(command, value);
 
 		getSTidSTRReaderCardAdapter()->sendCommand(0x001C, command);
-		
-		return true;
 	}
 
-	bool DESFireEV1STidSTRCommands::writeRecord(int fileno, size_t offset, size_t length, const void* data, EncryptionMode mode)
+	void DESFireEV1STidSTRCommands::writeRecord(unsigned char fileno, unsigned int offset, unsigned int length, const void* data, EncryptionMode mode)
 	{
 		INFO_("Writing record... file number {0x%x(%d)} offset {%d} length {%d} encrypt mode {0x%x(%d)}", fileno, fileno, offset, length, mode, mode);
 		std::vector<unsigned char> command;
@@ -609,7 +569,7 @@ namespace logicalaccess
 			INFO_("Writing data from index {%d} to {%d}...", i, i+stidMaxDataSize-1);
 			command.clear();
 			command.push_back(static_cast<unsigned char>(mode));
-			command.push_back(static_cast<unsigned char>(fileno));
+			command.push_back(fileno);
 			size_t trunloffset = offset + i;
 			size_t trunklength = ((length - i) > stidMaxDataSize) ? stidMaxDataSize : (length - i);			
 			command.insert(command.end(), (unsigned char*)&trunloffset, (unsigned char*)&trunloffset + 3);
@@ -618,11 +578,9 @@ namespace logicalaccess
 
 			getSTidSTRReaderCardAdapter()->sendCommand(0x003B, command);
 		}
-		
-		return true;
 	}
 
-	size_t DESFireEV1STidSTRCommands::readRecords(int fileno, size_t offset, size_t nbrecords, void* data, EncryptionMode mode)
+	unsigned int DESFireEV1STidSTRCommands::readRecords(unsigned char fileno, unsigned int offset, unsigned int nbrecords, void* data, EncryptionMode mode)
 	{
 		INFO_("Reading record... file number {0x%x(%d)} offset {%d} nb records {%d} encrypt mode {0x%x(%d)}", fileno, fileno, offset, nbrecords, mode, mode);
 
@@ -631,7 +589,7 @@ namespace logicalaccess
 
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(mode));
-		command.push_back(static_cast<unsigned char>(fileno));	
+		command.push_back(fileno);	
 		command.insert(command.end(), (unsigned char*)&offset, (unsigned char*)&offset + 3);
 		command.insert(command.end(), (unsigned char*)&nbrecords, (unsigned char*)&nbrecords + 3);
 
@@ -640,69 +598,55 @@ namespace logicalaccess
 		memcpy(reinterpret_cast<unsigned char*>(data), &result[0], result.size());
 
 		INFO_("Returns size {%d}", result.size());
-		return result.size();
+		return static_cast<unsigned int>(result.size());
 	}
 
-	bool DESFireEV1STidSTRCommands::clearRecordFile(int fileno)
+	void DESFireEV1STidSTRCommands::clearRecordFile(unsigned char fileno)
 	{
 		INFO_("Clearing record... file number {0x%x(%d)}", fileno, fileno);
 
 		std::vector<unsigned char> command;
-		command.push_back(static_cast<unsigned char>(fileno));
+		command.push_back(fileno);
 
 		getSTidSTRReaderCardAdapter()->sendCommand(0x00EB, command);
-
-		return true;
 	}
 
-	bool DESFireEV1STidSTRCommands::changeFileSettings(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, bool plain)
+	void DESFireEV1STidSTRCommands::changeFileSettings(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, bool plain)
 	{
 		INFO_("Changing file settings... file number {0x%x(%d)} com settings {0x%x(%d)} access rights {0x%x(%d)} plain {%d}",
 				fileno, fileno, comSettings, comSettings, accessRights, accessRights, plain, plain);
-		bool ret = false;
 
 		std::vector<unsigned char> command;
 		short ar = AccessRightsInMemory(accessRights);
 		
-		command.push_back(static_cast<unsigned char>(fileno));
+		command.push_back(fileno);
 		command.push_back(plain ? 0x00 : 0x01);
 		command.push_back(static_cast<unsigned char>(comSettings));
 		BufferHelper::setUShort(command, ar);
 
 		getSTidSTRReaderCardAdapter()->sendCommand(0x005F, command);
-		ret = true;
-
-		return ret;
 	}
 
-	bool DESFireEV1STidSTRCommands::deleteFile(int fileno)
+	void DESFireEV1STidSTRCommands::deleteFile(unsigned char fileno)
 	{
 		INFO_("Deleting file... file number {0x%x(%d)}", fileno, fileno);
-		bool r = false;
 
 		std::vector<unsigned char> command;
-		command.push_back(static_cast<unsigned char>(fileno));
+		command.push_back(fileno);
 
 		getSTidSTRReaderCardAdapter()->sendCommand(0x00DF, command);
-		r = true;
-
-		return r;
 	}
 
-	bool DESFireEV1STidSTRCommands::changeKeySettings(DESFireKeySettings settings)
+	void DESFireEV1STidSTRCommands::changeKeySettings(DESFireKeySettings settings)
 	{
 		INFO_("Changing key settings... settings {0x%x(%d)}", settings, settings);
-		bool ret = false;
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(settings));
 
 		getSTidSTRReaderCardAdapter()->sendCommand(0x0054, command);
-		ret = true;
-		
-		return ret;
 	}
 
-	bool DESFireEV1STidSTRCommands::changeKey(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
+	void DESFireEV1STidSTRCommands::changeKey(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
 	{
 		INFO_("Changing key... key number {0x%x(%u)} new key {%s}", keyno, keyno, boost::dynamic_pointer_cast<XmlSerializable>(key)->serialize().c_str());
 		// Only change the key if new key and old key are not the same.
@@ -741,8 +685,6 @@ namespace logicalaccess
 		{
 			INFO_SIMPLE_("Key was already loaded. Doing nothing.");
 		}
-
-		return true;
 	}
 
 	void DESFireEV1STidSTRCommands::changeKeyIndex(unsigned char keyno, DESFireKeyType cryptoMethod, unsigned char keyversion, unsigned char newkeyindex, unsigned char oldkeyindex)
@@ -764,34 +706,30 @@ namespace logicalaccess
 		getSTidSTRReaderCardAdapter()->sendCommand(0x00C5, command);
 	}
 
-	bool DESFireEV1STidSTRCommands::getVersion(DESFireCommands::DESFireCardVersion& dataVersion)
+	void DESFireEV1STidSTRCommands::getVersion(DESFireCommands::DESFireCardVersion& dataVersion)
 	{
 		INFO_SIMPLE_("Retrieving version...");
-		bool r = false;
 		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x0060, std::vector<unsigned char>());
 
 		EXCEPTION_ASSERT_WITH_LOG(result.size() >= 28, LibLogicalAccessException, "The response length should be at least 28-byte long");
 
 		memcpy(reinterpret_cast<char*>(&dataVersion), &result[0], 28);
-		r = true;
-
-		return r;
 	}
 
-	std::vector<int> DESFireEV1STidSTRCommands::getApplicationIDs()
+	std::vector<unsigned int> DESFireEV1STidSTRCommands::getApplicationIDs()
 	{
 		INFO_SIMPLE_("Retrieving all application ids...");
-		std::vector<int> aids;
+		std::vector<unsigned int> aids;
 
 		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x006A, std::vector<unsigned char>());
 
 		unsigned nbaids = result[0];
 		for (size_t i = 0; i < nbaids; ++i)
 		{
-			aids.push_back(DESFireLocation::convertAidToInt(&result[1 + (i*3)]));
+			aids.push_back(DESFireLocation::convertAidToUInt(&result[1 + (i*3)]));
 		}
 
-		for (std::vector<int>::iterator it = aids.begin(); it != aids.end(); ++it)
+		for (std::vector<unsigned int>::iterator it = aids.begin(); it != aids.end(); ++it)
 		{
 			INFO_("Processing application id {0x%x(%d)}...", *it, *it);
 		}
@@ -799,28 +737,26 @@ namespace logicalaccess
 		return aids;
 	}
 
-	bool DESFireEV1STidSTRCommands::erase()
+	void DESFireEV1STidSTRCommands::erase()
 	{
 		INFO_SIMPLE_("Erasing card...");
 		getSTidSTRReaderCardAdapter()->sendCommand(0x00FC, std::vector<unsigned char>());
-
-		return true;
 	}
 
-	std::vector<int> DESFireEV1STidSTRCommands::getFileIDs()
+	std::vector<unsigned char> DESFireEV1STidSTRCommands::getFileIDs()
 	{
 		INFO_SIMPLE_("Retrieving all files ids...");
 		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x006F, std::vector<unsigned char>());
 
 		unsigned char nbfiles = result[0];
 
-		std::vector<int> files;
+		std::vector<unsigned char> files;
 		for (size_t i = 1; i <= nbfiles; ++i)
 		{
 			files.push_back(result[i]);
 		}
 
-		for (std::vector<int>::iterator it = files.begin(); it != files.end(); ++it)
+		for (std::vector<unsigned char>::iterator it = files.begin(); it != files.end(); ++it)
 		{
 			INFO_("Processing file id {0x%x(%d)}...", *it, *it);
 		}
@@ -828,41 +764,33 @@ namespace logicalaccess
 		return files;
 	}
 
-	bool DESFireEV1STidSTRCommands::getFileSettings(int fileno, FileSetting& fileSetting)
+	void DESFireEV1STidSTRCommands::getFileSettings(unsigned char fileno, FileSetting& fileSetting)
 	{
 		INFO_("Retrieving file settings for file number {0x%x(%d)}", fileno, fileno);
-		bool r = false;
 
 		std::vector<unsigned char> command;
-		command.push_back(static_cast<unsigned char>(fileno));
+		command.push_back(fileno);
 
 		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x00F5, command);
 		memcpy(&fileSetting, &result[0], result.size());
-		r = true;
-
-		return r;
 	}
 
-	bool DESFireEV1STidSTRCommands::getValue(int fileno, EncryptionMode mode, int& value)
+	void DESFireEV1STidSTRCommands::getValue(unsigned char fileno, EncryptionMode mode, unsigned int& value)
 	{
 		INFO_("Retrieving value for file number {0x%x(%d)} encrypt mode {0x%x(%d)}", fileno, fileno, mode, mode);
-		bool ret = false;
 
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(mode));
-		command.push_back(static_cast<unsigned char>(fileno));
+		command.push_back(fileno);
 
 		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x00F5, command);
 
 		if (result.size() >= 4)
 		{
 			size_t offset = 0;
-			value = BufferHelper::getInt32(result, offset);
+			value = BufferHelper::getUInt32(result, offset);
 			INFO_("Result value {0x%x(%d)}", value, value);
-			ret = true;
 		}
-
-		return ret;
 	}
 
 	void DESFireEV1STidSTRCommands::iso_selectApplication(std::vector<unsigned char> /*isoaid*/)

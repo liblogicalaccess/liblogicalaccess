@@ -44,14 +44,14 @@ namespace logicalaccess
 			 * \param aid The Application ID buffer.
 			 * \return The Application ID in 32 bits.
 			 */
-			static int convertAidToInt(const void* aid);
+			static unsigned int convertAidToUInt(const void* aid);
 
 			/**
 			 * \brief Convert an Application ID 32 bits into a buffer.
 			 * \param i The Application ID in 32 bits.
 			 * \param aid The Application ID buffer.
 			 */
-			static void convertIntToAid(int i, void* aid);
+			static void convertUIntToAid(unsigned int i, void* aid);
 
 			/**
 			 * \brief DESFire location informations data size.
@@ -93,17 +93,17 @@ namespace logicalaccess
 			/**
 			 * \brief The application ID.
 			 */
-			int aid;
+			unsigned int aid;
 
 			/**
 			 * \brief The file ID.
 			 */
-			int file;
+			unsigned char file;
 
 			/**
 			 * \brief The byte offset.
 			 */
-			int byte;		
+			unsigned int byte;		
 
 			/**
 			 * \brief The file security level

@@ -62,7 +62,7 @@ namespace logicalaccess
 
 			DFName dfname;
 			memset(&dfname, 0x00, sizeof(dfname));
-			dfname.AID = DESFireLocation::convertAidToInt(&r[0]);
+			dfname.AID = DESFireLocation::convertAidToUInt(&r[0]);
 			dfname.FID = static_cast<unsigned short>((r[3] << 8) | r[4]);
 			memcpy(dfname.DF_Name, &r[5], r.size() - 5);
 			dfnames.push_back(dfname);
@@ -99,15 +99,15 @@ namespace logicalaccess
 		return fileids;
 	}
 
-	bool DESFireEV1ISO7816Commands::createApplication(int aid, DESFireKeySettings settings, size_t maxNbKeys, FidSupport fidSupported, DESFireKeyType cryptoMethod, unsigned short isoFID, const char* isoDFName)
+	void DESFireEV1ISO7816Commands::createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, DESFireKeyType cryptoMethod, FidSupport fidSupported, unsigned short isoFID, const char* isoDFName)
 	{
 		unsigned char command[128];
 		unsigned int commandlen = 0;
 
-		DESFireLocation::convertIntToAid(aid, command);
+		DESFireLocation::convertUIntToAid(aid, command);
 		commandlen += 3;
 		command[commandlen++] = static_cast<unsigned char>(settings);
-		command[commandlen++] = static_cast<unsigned char>((static_cast<unsigned char>(maxNbKeys) & 0x0f) | fidSupported | cryptoMethod);
+		command[commandlen++] = static_cast<unsigned char>((maxNbKeys & 0x0f) | fidSupported | cryptoMethod);
 
 		if (isoFID != 0x00)
 		{
@@ -120,11 +120,9 @@ namespace logicalaccess
 
 		transmit(DF_INS_CREATE_APPLICATION, command, commandlen);
 		d_crypto->createApplication(aid, maxNbKeys, cryptoMethod);
-		
-		return true;
 	}
 
-	void DESFireEV1ISO7816Commands::getKeySettings(DESFireKeySettings& settings, unsigned int& maxNbKeys, DESFireKeyType& keyType)
+	void DESFireEV1ISO7816Commands::getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys, DESFireKeyType& keyType)
 	{
 		std::vector<unsigned char> r = transmit(DF_INS_GET_KEY_SETTINGS);
 		r.resize(r.size() - 2);
@@ -155,7 +153,7 @@ namespace logicalaccess
 		return d_crypto->desfire_iso_decrypt(result, 7);
 	}
 
-	bool DESFireEV1ISO7816Commands::createStdDataFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize, unsigned short isoFID)
+	void DESFireEV1ISO7816Commands::createStdDataFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned short isoFID)
 	{
 		std::vector<unsigned char> command;
 		short ar = AccessRightsInMemory(accessRights);
@@ -173,11 +171,9 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(static_cast<unsigned int>(fileSize & 0xff0000) >> 16));
 
 		DESFireISO7816Commands::transmit(DF_INS_CREATE_STD_DATA_FILE, command);
-
-		return true;
 	}
 
-	bool DESFireEV1ISO7816Commands::createBackupFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize, unsigned short isoFID)
+	void DESFireEV1ISO7816Commands::createBackupFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned short isoFID)
 	{
 		std::vector<unsigned char> command;
 		short ar = AccessRightsInMemory(accessRights);
@@ -195,12 +191,9 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(static_cast<unsigned int>(fileSize & 0xff0000) >> 16));
 
 		DESFireISO7816Commands::transmit(DF_INS_CREATE_BACKUP_DATA_FILE, command);
-
-		return true;
-
 	}
 
-	bool DESFireEV1ISO7816Commands::createLinearRecordFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize, int maxNumberOfRecords, unsigned short isoFID)
+	void DESFireEV1ISO7816Commands::createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID)
 	{
 		std::vector<unsigned char> command;
 		short ar = AccessRightsInMemory(accessRights);
@@ -221,11 +214,9 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(static_cast<unsigned int>(maxNumberOfRecords & 0xff0000) >> 16));
 
 		DESFireISO7816Commands::transmit(DF_INS_CREATE_LINEAR_RECORD_FILE, command);
-
-		return true;
 	}
 
-	bool DESFireEV1ISO7816Commands::createCyclicRecordFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize, int maxNumberOfRecords, unsigned short isoFID)
+	void DESFireEV1ISO7816Commands::createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID)
 	{
 		std::vector<unsigned char> command;
 		short ar = AccessRightsInMemory(accessRights);
@@ -245,9 +236,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(maxNumberOfRecords & 0xff00) >> 8));
 		command.push_back(static_cast<unsigned char>(static_cast<unsigned int>(maxNumberOfRecords & 0xff0000) >> 16));
 
-		DESFireISO7816Commands::transmit(DF_INS_CREATE_CYCLIC_RECORD_FILE, command[0]);
-
-		return true;
+		DESFireISO7816Commands::transmit(DF_INS_CREATE_CYCLIC_RECORD_FILE, command[0]);;
 	}
 
 	void DESFireEV1ISO7816Commands::iso_selectFile(unsigned short fid)
@@ -346,10 +335,9 @@ namespace logicalaccess
 		return ret;
 	}	
 
-	bool DESFireEV1ISO7816Commands::authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
+	void DESFireEV1ISO7816Commands::authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
 	{
 		// Get the appropriate authentification method and algorithm according to the key type (for 3DES we use legacy method instead of ISO).
-		bool r = false;
 
 		if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()) && !getSAMChip())
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAMKeyStorage set on the key but not SAM reader has been set.");
@@ -361,27 +349,24 @@ namespace logicalaccess
 				sam_iso_authenticate(key, DF_ALG_3K3DES, (d_crypto->d_currentAid == 0 && keyno == 0), keyno);
 			else
 				sam_iso_authenticate(key, DF_ALG_AES, (d_crypto->d_currentAid == 0 && keyno == 0), keyno);
-			return true;
 		}
-
-		switch (key->getKeyType())
+		else
 		{
-		case DF_KEY_DES:
-			r = DESFireISO7816Commands::authenticate(keyno, key);
-			break;
+			switch (key->getKeyType())
+			{
+			case DF_KEY_DES:
+				DESFireISO7816Commands::authenticate(keyno, key);
+				break;
 
-		case DF_KEY_3K3DES:
-			iso_authenticate(key, DF_ALG_3K3DES, (d_crypto->d_currentAid == 0 && keyno == 0), keyno);
-			r = true;
-			break;
+			case DF_KEY_3K3DES:
+				iso_authenticate(key, DF_ALG_3K3DES, (d_crypto->d_currentAid == 0 && keyno == 0), keyno);
+				break;
 
-		case DF_KEY_AES:
-			iso_authenticate(key, DF_ALG_AES, (d_crypto->d_currentAid == 0 && keyno == 0), keyno);
-			r = true;
-			break;
+			case DF_KEY_AES:
+				iso_authenticate(key, DF_ALG_AES, (d_crypto->d_currentAid == 0 && keyno == 0), keyno);
+				break;
+			}
 		}
-
-		return r;
 	}
 
 	void DESFireEV1ISO7816Commands::sam_iso_authenticate(boost::shared_ptr<DESFireKey> key, DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno)
@@ -646,7 +631,7 @@ namespace logicalaccess
 		d_crypto->aes_authenticate_PICC2(keyno, encRndA1);
 	}
 
-	std::vector<unsigned char> DESFireEV1ISO7816Commands::handleReadData(unsigned char err, const std::vector<unsigned char>& firstMsg, size_t length, EncryptionMode mode)
+	std::vector<unsigned char> DESFireEV1ISO7816Commands::handleReadData(unsigned char err, const std::vector<unsigned char>& firstMsg, unsigned int length, EncryptionMode mode)
 	{
 		std::vector<unsigned char> ret, data;
 
@@ -720,14 +705,13 @@ namespace logicalaccess
 		return ret;
 	}
 
-	bool DESFireEV1ISO7816Commands::handleWriteData(unsigned char cmd, void* parameters, size_t paramLength, const std::vector<unsigned char> data, EncryptionMode mode)
+	void DESFireEV1ISO7816Commands::handleWriteData(unsigned char cmd, void* parameters, unsigned int paramLength, const std::vector<unsigned char> data, EncryptionMode mode)
 	{
 		std::vector<unsigned char> edata;
 		unsigned char command[64];
 		size_t p = 0;
 		size_t pos = 0;
 		size_t pkSize = 0;
-		bool ret = false;
 
 		d_crypto->initBuf(data.size());
 
@@ -798,7 +782,7 @@ namespace logicalaccess
 				break;
 
 			default:
-				return false;
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Unknown DESFire crypto mode.");
 			}			
 		}
 		else
@@ -833,7 +817,7 @@ namespace logicalaccess
 				break;
 
 			default:
-				return false;
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Unknown DESFire crypto mode.");
 			}			
 		}
 
@@ -850,9 +834,8 @@ namespace logicalaccess
 		unsigned char err = result[result.size() - 1];
 		if (data.size() > DESFIRE_CLEAR_DATA_LENGTH_CHUNK - 8)
 		{
-			ret = true;
 			pos += DESFIRE_CLEAR_DATA_LENGTH_CHUNK - 8;
-			while (ret && err == DF_INS_ADDITIONAL_FRAME) // && pos < dataLength
+			while (err == DF_INS_ADDITIONAL_FRAME) // && pos < dataLength
 			{
 				pkSize = ((data.size() - pos) >= DESFIRE_CLEAR_DATA_LENGTH_CHUNK - 8) ? DESFIRE_CLEAR_DATA_LENGTH_CHUNK - 8 : (data.size() - pos);
 
@@ -906,7 +889,7 @@ namespace logicalaccess
 					break;
 
 				default:
-					return false;
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Unknown DESFire crypto mode.");
 				}
 
 				result = transmit_plain(DF_INS_ADDITIONAL_FRAME, edata);
@@ -916,24 +899,26 @@ namespace logicalaccess
 			}			
 		}
 
-		ret = (err == 0x00);
-		if (ret && result.size() > 2 && (mode == CM_MAC || mode == CM_ENCRYPT || d_crypto->d_auth_method != CM_LEGACY))
+		if (err != 0x00)
+		{
+			char msgtmp[64];
+			sprintf(msgtmp, "Unknown error: %x", err);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, msgtmp);
+		}
+
+		if (err == 0x00 && result.size() > 2 && (mode == CM_MAC || mode == CM_ENCRYPT || d_crypto->d_auth_method != CM_LEGACY))
 		{
 			result.resize(result.size() - 2);
-			ret = d_crypto->verifyMAC(true, result);
+			if (d_crypto->verifyMAC(true, result))
+			{
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC verification failed.");
+			}
 		}
-
-		if (!ret)
-		{
-			COM_("Return an error: %x", err);
-		}
-
-		return ret;
 	}
 
-	size_t DESFireEV1ISO7816Commands::readData(int fileno, size_t offset, size_t length, void* data, EncryptionMode mode)
+	unsigned int DESFireEV1ISO7816Commands::readData(unsigned char fileno, unsigned int offset, unsigned int length, void* data, EncryptionMode mode)
 	{
-		size_t ret = 0;
+		unsigned int ret = 0;
 
 		unsigned char command[7];
 
@@ -952,15 +937,15 @@ namespace logicalaccess
 			std::vector<unsigned char> result = transmit_nomacv(DF_INS_READ_DATA, command, sizeof(command));
 			unsigned char err = result.back();
 			result.resize(result.size() - 2);
-			result = handleReadData(err, result, trunklength, mode);
+			result = handleReadData(err, result, static_cast<unsigned int>(trunklength), mode);
 			memcpy(reinterpret_cast<unsigned char*>(data) + i, &result[0], result.size());
-			ret += result.size();
+			ret += static_cast<unsigned int>(result.size());
 		}
 
 		return ret;
 	}
 
-	size_t DESFireEV1ISO7816Commands::readRecords(int fileno, size_t offset, size_t length, void* data, EncryptionMode mode)
+	unsigned int DESFireEV1ISO7816Commands::readRecords(unsigned char fileno, unsigned int offset, unsigned int length, void* data, EncryptionMode mode)
 	{
 		unsigned char command[7];
 
@@ -974,12 +959,11 @@ namespace logicalaccess
 		result = handleReadData(err, result, length, mode);
 		memcpy(data, &result[0], result.size());
 		
-		return result.size();
+		return static_cast<unsigned int>(result.size());
 	}
 
-	bool DESFireEV1ISO7816Commands::changeFileSettings(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, bool plain)
+	void DESFireEV1ISO7816Commands::changeFileSettings(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, bool plain)
 	{
-		bool ret = false;
 		std::vector<unsigned char> command;
 		short ar = AccessRightsInMemory(accessRights);
 		
@@ -999,21 +983,20 @@ namespace logicalaccess
 		if (d_crypto->d_auth_method == CM_LEGACY && plain)
 		{
 			DESFireISO7816Commands::transmit(DF_INS_CHANGE_FILE_SETTINGS, command);
-			ret = true;
 		}
 		else
 		{
 			std::vector<unsigned char> dd = transmit_plain(DF_INS_CHANGE_FILE_SETTINGS, command);
 			dd.resize(dd.size() - 2);
-			ret = d_crypto->verifyMAC(true, dd);
+			if (!d_crypto->verifyMAC(true, dd))
+			{
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC verification failed.");
+			}
 		}
-
-		return ret;
 	}
 
-	bool DESFireEV1ISO7816Commands::changeKeySettings(DESFireKeySettings settings)
+	void DESFireEV1ISO7816Commands::changeKeySettings(DESFireKeySettings settings)
 	{
-		bool ret = false;
 		unsigned char command[1];
 		command[0] = static_cast<unsigned char>(settings);
 
@@ -1025,19 +1008,19 @@ namespace logicalaccess
 		if (d_crypto->d_auth_method == CM_LEGACY)
 		{
 			DESFireISO7816Commands::transmit(DF_INS_CHANGE_KEY_SETTINGS, cryptogram);
-			ret = true;
 		}
 		else
 		{
 			std::vector<unsigned char> r = transmit_plain(DF_INS_CHANGE_KEY_SETTINGS, cryptogram);
 			r.resize(r.size() - 2);
-			ret = d_crypto->verifyMAC(true, r);
+			if (!d_crypto->verifyMAC(true, r))
+			{
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC verification failed.");
+			}
 		}
-		
-		return ret;
 	}
 
-	bool DESFireEV1ISO7816Commands::changeKey(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
+	void DESFireEV1ISO7816Commands::changeKey(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
 	{
 		unsigned char diversify[24];
 		boost::shared_ptr<DESFireKey> currentkey = boost::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile())->getKey(d_crypto->d_currentAid, keyno);
@@ -1082,13 +1065,10 @@ namespace logicalaccess
 				EXCEPTION_ASSERT_WITH_LOG(dd == CMAC, LibLogicalAccessException, "Wrong CMAC.")
 			}
 		}
-
-		return true;
 	}
 
-	bool DESFireEV1ISO7816Commands::getVersion(DESFireCommands::DESFireCardVersion& dataVersion)
+	void DESFireEV1ISO7816Commands::getVersion(DESFireCommands::DESFireCardVersion& dataVersion)
 	{
-		bool r = false;
 		std::vector<unsigned char> result;
 		std::vector<unsigned char> allresult;
 
@@ -1120,11 +1100,10 @@ namespace logicalaccess
 
 								if (d_crypto->d_auth_method != CM_LEGACY)
 								{
-									r = d_crypto->verifyMAC(true, allresult);
-								}
-								else
-								{
-									r = true;
+									if (!d_crypto->verifyMAC(true, allresult))
+									{
+										THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC verification failed.");
+									}
 								}
 							}
 						}
@@ -1132,13 +1111,11 @@ namespace logicalaccess
 				}
 			}
 		}
-
-		return r;
 	}
 
-	std::vector<int> DESFireEV1ISO7816Commands::getApplicationIDs()
+	std::vector<unsigned int> DESFireEV1ISO7816Commands::getApplicationIDs()
 	{
-		std::vector<int> aids;
+		std::vector<unsigned int> aids;
 		std::vector<unsigned char> result;
 
 		result = transmit(DF_INS_GET_APPLICATION_IDS);
@@ -1147,7 +1124,7 @@ namespace logicalaccess
 		{
 			for (size_t i = 0; i < result.size() - 2; i += 3)
 			{
-				aids.push_back(DESFireLocation::convertAidToInt(&result[i]));
+				aids.push_back(DESFireLocation::convertAidToUInt(&result[i]));
 			}
 
 			result = transmit(DF_INS_ADDITIONAL_FRAME);
@@ -1161,13 +1138,13 @@ namespace logicalaccess
 
 		for (size_t i = 0; i < result.size(); i += 3)
 		{
-			aids.push_back(DESFireLocation::convertAidToInt(&result[i]));
+			aids.push_back(DESFireLocation::convertAidToUInt(&result[i]));
 		}
 
 		return aids;
 	}
 
-	std::vector<int> DESFireEV1ISO7816Commands::getFileIDs()
+	std::vector<unsigned char> DESFireEV1ISO7816Commands::getFileIDs()
 	{
 		std::vector<unsigned char> result = transmit(DF_INS_GET_FILE_IDS);
 		result.resize(result.size() - 2);
@@ -1176,7 +1153,7 @@ namespace logicalaccess
 			result.resize(result.size() - 8); // Remove CMAC
 		}
 
-		std::vector<int> files;
+		std::vector<unsigned char> files;
 		for (size_t i = 0; i < result.size(); ++i)
 		{
 			files.push_back(result[i]);
@@ -1185,10 +1162,8 @@ namespace logicalaccess
 		return files;
 	}
 
-	bool DESFireEV1ISO7816Commands::getValue(int fileno, EncryptionMode mode, int& value)
+	void DESFireEV1ISO7816Commands::getValue(unsigned char fileno, EncryptionMode mode, unsigned int& value)
 	{
-		bool ret = false;
-
 		unsigned char command[1];
 		command[0] = static_cast<unsigned char>(fileno);
 
@@ -1201,10 +1176,7 @@ namespace logicalaccess
 		{
 			size_t offset = 0;
 			value = BufferHelper::getInt32(result, offset);
-			ret = true;
 		}
-		
-		return ret;
 	}
 
 	void DESFireEV1ISO7816Commands::iso_selectApplication(std::vector<unsigned char> isoaid)

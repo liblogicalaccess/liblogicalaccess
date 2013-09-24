@@ -21,24 +21,22 @@ namespace logicalaccess
 
 	}
 
-	bool MifareUltralightStorageCardService::erase(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse)
+	void MifareUltralightStorageCardService::erase(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse)
 	{
 		boost::shared_ptr<MifareUltralightLocation> mLocation = boost::dynamic_pointer_cast<MifareUltralightLocation>(location);
 		if (!mLocation)
 		{
-			return false;
+			return;
 		}
 
 		unsigned char zeroblock[4];
 		memset(zeroblock, 0x00, sizeof(zeroblock));
 
-		return writeData(location, aiToUse, boost::shared_ptr<AccessInfo>(), zeroblock, sizeof(zeroblock), CB_DEFAULT);
+		writeData(location, aiToUse, boost::shared_ptr<AccessInfo>(), zeroblock, sizeof(zeroblock), CB_DEFAULT);
 	}	
 
-	bool MifareUltralightStorageCardService::writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> /*aiToUse*/, boost::shared_ptr<AccessInfo> /*aiToWrite*/, const void* data, size_t dataLength, CardBehavior behaviorFlags)
+	void MifareUltralightStorageCardService::writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> /*aiToUse*/, boost::shared_ptr<AccessInfo> /*aiToWrite*/, const void* data, size_t dataLength, CardBehavior behaviorFlags)
 	{
-		bool ret = false;
-
 		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 		EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
 
@@ -79,9 +77,7 @@ namespace logicalaccess
 				);
 			}
 
-			ret = (reallen >= buflen);
-
-			if (ret && mAi)
+			if ((reallen >= buflen) && mAi)
 			{
 				if (mAi->lockPage)
 				{
@@ -92,14 +88,10 @@ namespace logicalaccess
 				}
 			}
 		}
-
-		return ret;
 	}
 
-	bool MifareUltralightStorageCardService::readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> /*aiToUse*/, void* data, size_t dataLength, CardBehavior behaviorFlags)
+	void MifareUltralightStorageCardService::readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> /*aiToUse*/, void* data, size_t dataLength, CardBehavior behaviorFlags)
 	{
-		bool ret = false;
-
 		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 		EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
 
@@ -133,20 +125,16 @@ namespace logicalaccess
 			if (dataLength <= (reallen - mLocation->byte))
 			{
 				memcpy(static_cast<char*>(data), &dataPages[0] + mLocation->byte, dataLength);
-
-				ret = true;
 			}
 		}
-
-		return ret;
 	}
 
-	size_t MifareUltralightStorageCardService::readDataHeader(boost::shared_ptr<Location> /*location*/, boost::shared_ptr<AccessInfo> /*aiToUse*/, void* /*data*/, size_t /*dataLength*/)
+	unsigned int MifareUltralightStorageCardService::readDataHeader(boost::shared_ptr<Location> /*location*/, boost::shared_ptr<AccessInfo> /*aiToUse*/, void* /*data*/, size_t /*dataLength*/)
 	{
 		return 0;
 	}
 
-	bool MifareUltralightStorageCardService::erase()
+	void MifareUltralightStorageCardService::erase()
 	{
 		unsigned char zeroblock[4];
 
@@ -156,16 +144,6 @@ namespace logicalaccess
 		for (unsigned int i = 4; i < 16; ++i)
 		{
 			bool erased = (getMifareUltralightChip()->getMifareUltralightCommands()->writePage(i, zeroblock, sizeof(zeroblock)) == 4);
-			
-			if (!erased)
-			{
-				return false;
-			} else
-			{
-				result = true;
-			}
 		}
-
-		return result;
 	}
 }

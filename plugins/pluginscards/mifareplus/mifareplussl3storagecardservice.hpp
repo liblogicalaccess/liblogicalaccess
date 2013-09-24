@@ -42,17 +42,15 @@ namespace logicalaccess
 
 			/**
 			 * \brief Erase the card.
-			 * \return true if the card was erased, false otherwise.
 			 */
-			virtual bool erase();			
+			virtual void erase();			
 
 			/**
 			 * \brief Erase a specific location on the card.
 			 * \param location The data location.
 			 * \param aiToUse The key's informations to use to delete.
-			 * \return true if the card was erased, false otherwise.
 			 */
-			virtual bool erase(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse);			
+			virtual void erase(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse);			
 
 			/**
 			 * \brief Write data on a specific location, using given keys.
@@ -62,9 +60,8 @@ namespace logicalaccess
 			 * \param data Data to write.
 			 * \param dataLength Data's length to write.
 			 * \param behaviorFlags Flags which determines the behavior.
-			 * \return True on success, false otherwise.
 			 */
-			virtual	bool writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags);
+			virtual	void writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags);
 
 			/**
 			 * \brief Read data on a specific location, using given keys.
@@ -73,9 +70,8 @@ namespace logicalaccess
 			 * \param data Will contain data after reading.
 			 * \param dataLength Data's length to read.
 			 * \param behaviorFlags Flags which determines the behavior.
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags);
+			virtual void readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags);
 
 			/**
 			 * \brief Read data header on a specific location, using given keys.
@@ -85,7 +81,7 @@ namespace logicalaccess
 			 * \param dataLength Data's length to read.
 			 * \return Data header length.
 			 */
-			virtual size_t readDataHeader(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength);
+			virtual unsigned int readDataHeader(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength);
 
 		protected:
 
