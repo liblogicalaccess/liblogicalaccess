@@ -347,7 +347,7 @@ namespace logicalaccess
 						getDESFireChip()->getDESFireCommands()->selectApplication(0x00);
 						getDESFireChip()->getDESFireCommands()->authenticate(0);
 						
-						INFO_("Changing masterCardKey. div? %d", dfAiToWrite->masterCardKey->getDiversify());
+						INFO_("Changing masterCardKey. div? %d", dfAiToWrite->masterCardKey->getKeyDiversification() == NULL);
 						getDESFireChip()->getDESFireCommands()->changeKey(0, dfAiToWrite->masterCardKey);
 					}
 					catch(std::exception& ex)
