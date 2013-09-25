@@ -10,8 +10,8 @@ namespace logicalaccess
 	class LIBLOGICALACCESS_API SagemKeyDiversification : public KeyDiversification
 	{
 	public:
-		virtual bool initDiversification(unsigned char *diversify, std::vector<unsigned char> identifier, unsigned char *AID);
-		virtual std::vector<unsigned char> getKeyDiversificated(boost::shared_ptr<Key> key, unsigned char* diversify);
+		virtual bool initDiversification(std::vector<unsigned char>& diversify, std::vector<unsigned char> identifier, int AID, boost::shared_ptr<Key> key);
+		virtual std::vector<unsigned char> getKeyDiversificated(boost::shared_ptr<Key> key, std::vector<unsigned char> diversify);
 
 		SagemKeyDiversification() {};
 		~SagemKeyDiversification() {};

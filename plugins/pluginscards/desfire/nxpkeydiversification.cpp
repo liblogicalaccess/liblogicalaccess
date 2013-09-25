@@ -6,73 +6,86 @@
 #include "logicalaccess/crypto/aes_cipher.hpp"
 #include "logicalaccess/crypto/aes_symmetric_key.hpp"
 #include "logicalaccess/crypto/aes_initialization_vector.hpp"
+#include "logicalaccess/crypto/CMAC.hpp"
 #include "desfirecrypto.hpp"
 #include <vector>
 
 namespace logicalaccess
 {
-	bool NXPKeyDiversification::initDiversification(unsigned char *diversify, std::vector<unsigned char> identifier, unsigned char *AID)
+	bool NXPKeyDiversification::initDiversification(std::vector<unsigned char>& diversify, std::vector<unsigned char> identifier, int AID, boost::shared_ptr<Key> key)
 	{
-	//div_constant = BitArray(hex='01')
-	//uid = BitArray(hex='04782E21801D80')
-	//aid = BitArray(hex='3042F5')
-	//sysid = BitArray(hex='4E585020416275')
- 
-	//m = BitArray().join([uid, aid, sysid])
-	//d = BitArray().join([div_constant, m])
- 
+		std::string const_id;
+
+		if (identifier.size() != 0)
+		{
+			if (d_systemidentifier == "")
+				const_id = "NXP Abu";
+			else
+				const_id = d_systemidentifier;
+
+			diversify.push_back(0x01);
+			for (unsigned int x = 0; x < identifier.size(); ++x)
+				diversify.push_back(identifier[x]);
+			
+			unsigned char aidTab[3];
+			for (char x = 2; x >= 0; --x)
+			{
+				aidTab[x] = AID & 0xff;
+				AID >>= 8;
+			}
+			for (char x = 0; x < 3; ++x)
+				diversify.push_back(aidTab[x]);
+
+			std::vector<unsigned char> const_vector = std::vector<unsigned char>(const_id.begin(), const_id.end());
+			if (boost::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_AES)
+				diversify.insert(diversify.end(), const_vector.begin(), const_vector.begin() + 7);
+			else
+				diversify.insert(diversify.end(), const_vector.begin(), const_vector.begin() + 5);
+		}
+		else
+			return false;
 		return true;
 	}
 
-	std::vector<unsigned char> NXPKeyDiversification::XORVector(std::vector<unsigned char> str1, std::vector<unsigned char> str2)
+	std::vector<unsigned char> NXPKeyDiversification::getKeyDiversificated(boost::shared_ptr<Key> key, std::vector<unsigned char> diversify)
 	{
-		std::vector<unsigned char> ret;
-
-		for (unsigned int i = 0; i < str1.size(); ++i)
-			ret.push_back(str1[i] ^ str2[i]);
-		return ret;
-	}
-
-	std::vector<unsigned char> NXPKeyDiversification::getKeyDiversificated(boost::shared_ptr<Key> key, unsigned char* diversify)
-	{
-		INFO_("Using key diversification NXP with div : %s", BufferHelper::getHex(std::vector<unsigned char>(diversify, diversify + 16)).c_str());
-		std::vector<unsigned char> keydiv;
+		INFO_("Using key diversification NXP with div : %s", BufferHelper::getHex(diversify).c_str());
+		int block_size = 0;
+		boost::shared_ptr<openssl::OpenSSLSymmetricCipher> d_cipher;
 		std::vector<unsigned char> keycipher(key->getData(), key->getData() + key->getLength());
+		std::vector<unsigned char> emptyIV, keydiv;
 
-		std::vector<unsigned char> empty, const_rb;
-		std::vector<unsigned char> k0, k1, k2, ktmp;
-		
-		empty.resize(16);
-		const_rb.resize(16);
-		const_rb[15] = 0x80;
+		if (boost::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_DES)
+		{
+			d_cipher.reset(new openssl::DESCipher());
+			block_size = 8;
+		}
+		else if (boost::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_AES)
+		{
+			d_cipher.reset(new openssl::AESCipher());
+			block_size = 16;
+		}
+		else
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "NXP Diversification don't support this security");
 
-		boost::shared_ptr<openssl::OpenSSLSymmetricCipher> d_cipher(new openssl::AESCipher());
-		openssl::AESSymmetricKey aeskey = openssl::AESSymmetricKey::createFromData(keycipher);
-		openssl::AESInitializationVector iv = openssl::AESInitializationVector::createNull();
-
-
-		d_cipher->cipher(empty, k0, aeskey, iv, false);
-		//k1
-		if (k0[2] == '0' && k0[3] == '0')
-			std::copy(k0.begin() + 1, k0.end(), k1.end());
+		emptyIV.resize(block_size);
+		if (boost::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_AES)
+		{
+			std::vector<unsigned char> keydiv_tmp;
+			keydiv_tmp = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV);
+			keydiv.resize(16);
+			std::copy(keydiv_tmp.end() - 16, keydiv_tmp.end(), keydiv.begin());
+		}
 		else
 		{
-			ktmp.resize(16);
-			std::copy(k0.begin() + 1, k0.end(), ktmp.begin());
-			k1 = XORVector(ktmp, const_rb);
+			std::vector<unsigned char> keydiv_tmp_1, keydiv_tmp_2;
+			diversify[0] = 0x21;
+			keydiv_tmp_1 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV);
+			diversify[0] = 0x22;
+			keydiv_tmp_2 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV);
+			keydiv.insert(keydiv.end(), keydiv_tmp_1.begin() + 8, keydiv_tmp_1.end());
+			keydiv.insert(keydiv.end(), keydiv_tmp_2.begin() + 8, keydiv_tmp_2.end());
 		}
-		//k2
-		if (k1[2] == '0' && k1[3] == '0')
-			std::copy(k1.begin() + 1, k1.end(), k2.end());
-		else
-		{
-			ktmp.clear();
-			ktmp.resize(16);
-			std::copy(k1.begin() + 1, k1.end(), ktmp.begin());
-			k2 = XORVector(ktmp, const_rb);
-		}
-
-
 		return keydiv;
 	}
 }

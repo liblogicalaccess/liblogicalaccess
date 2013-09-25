@@ -250,7 +250,7 @@ namespace logicalaccess
 			 * \param encRndB The encrypted random number B
 			 * \return The random number A+B 1.
 			 */
-			virtual std::vector<unsigned char> authenticate_PICC1(unsigned char  keyno, unsigned char* diversify, const std::vector<unsigned char>& encRndB);
+			virtual std::vector<unsigned char> authenticate_PICC1(unsigned char  keyno, std::vector<unsigned char> diversify, const std::vector<unsigned char>& encRndB);
 
 			/**
 			 * \brief Authenticate on the card, step 2 for mutual authentication.
@@ -267,7 +267,7 @@ namespace logicalaccess
 			 * \param randomlen The random length
 			 * \return The random number A+B 1.
 			 */
-			std::vector<unsigned char> iso_authenticate_PICC1(unsigned char keyno, unsigned char *diversify, const std::vector<unsigned char>& encRndB, unsigned int randomlen);
+			std::vector<unsigned char> iso_authenticate_PICC1(unsigned char keyno, std::vector<unsigned char> diversify, const std::vector<unsigned char>& encRndB, unsigned int randomlen);
 
 			/**
 			 * \brief Authenticate on the card, step 2 for mutual authentication using ISO command.
@@ -284,7 +284,7 @@ namespace logicalaccess
 			 * \param encRndB The encrypted random number B
 			 * \return The random number A+B 1.
 			 */
-			std::vector<unsigned char> aes_authenticate_PICC1( unsigned char keyno, unsigned char *diversify, const std::vector<unsigned char>& encRndB);
+			std::vector<unsigned char> aes_authenticate_PICC1( unsigned char keyno, std::vector<unsigned char> diversify, const std::vector<unsigned char>& encRndB);
 
 			/**
 			 * \brief Authenticate on the card, step 2 for mutual authentication using AES.
@@ -305,7 +305,7 @@ namespace logicalaccess
 			 * \param diversify The diversify buffer, NULL if no diversification is needed
 			 * \param keydiv The key data, diversified if a diversify buffer is specified.
 			 */
-			static void getKey(boost::shared_ptr<DESFireKey> key, unsigned char* diversify, std::vector<unsigned char>& keydiv);
+			static void getKey(boost::shared_ptr<DESFireKey> key, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv);
 
 			/**
 			 * \brief Select an application.
@@ -320,7 +320,7 @@ namespace logicalaccess
 			 * \param diversify The diversify buffer, NULL if no diversification is needed
 			 * \return The change key cryptogram.
 			 */
-			std::vector<unsigned char> changeKey_PICC(unsigned char keyno, boost::shared_ptr<DESFireKey> newKey, unsigned char* diversify);
+			std::vector<unsigned char> changeKey_PICC(unsigned char keyno, boost::shared_ptr<DESFireKey> newKey, std::vector<unsigned char> diversify);
 			
 			void setCryptoContext(boost::shared_ptr<DESFireProfile> profile, std::vector<unsigned char> identifier);
 

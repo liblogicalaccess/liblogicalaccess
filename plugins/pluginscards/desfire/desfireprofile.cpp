@@ -169,7 +169,7 @@ namespace logicalaccess
 
 
 
-	bool DESFireProfile::getKey(size_t aid, unsigned char keyno, unsigned char* diversify, std::vector<unsigned char>& keydiv)
+	bool DESFireProfile::getKey(size_t aid, unsigned char keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv)
 	{
 		if (!checkKeyPos(aid, keyno, false))
 		{

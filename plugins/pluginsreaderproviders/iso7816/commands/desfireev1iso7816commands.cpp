@@ -426,11 +426,10 @@ namespace logicalaccess
 	{
 		unsigned char le;
 		boost::shared_ptr<openssl::SymmetricCipher> cipher;
-		unsigned char diversify[24];
+		std::vector<unsigned char> diversify;
 
-		memset(diversify, 0x00, sizeof(diversify));
 		if (key->getKeyDiversification())
-			key->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), NULL);
+			key->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), d_crypto->d_currentAid, key);
 		std::vector<unsigned char> keydiv;
 		d_crypto->getKey(key, diversify, keydiv);
 
@@ -582,11 +581,11 @@ namespace logicalaccess
 		std::vector<unsigned char> data;
 		data.push_back(keyno);
 
-		unsigned char diversify[24];
+		std::vector<unsigned char> diversify;
 		boost::shared_ptr<DESFireKey> currentkey = boost::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile())->getKey(d_crypto->d_currentAid, keyno);
 		if (currentkey->getKeyDiversification())
 		{
-			currentkey->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), NULL);
+			currentkey->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), d_crypto->d_currentAid, currentkey);
 			//d_crypto->getDiversify(diversify);
 		}
 
@@ -610,11 +609,11 @@ namespace logicalaccess
 		std::vector<unsigned char> data;
 		data.push_back(keyno);
 
-		unsigned char diversify[24];
+		std::vector<unsigned char> diversify;
 		boost::shared_ptr<DESFireKey> currentkey = boost::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile())->getKey(d_crypto->d_currentAid, keyno);
 		if (currentkey->getKeyDiversification())
 		{
-			currentkey->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), NULL);
+			currentkey->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), d_crypto->d_currentAid, currentkey);
 		//	d_crypto->getDiversify(diversify);
 		}
 
@@ -1022,11 +1021,11 @@ namespace logicalaccess
 
 	void DESFireEV1ISO7816Commands::changeKey(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
 	{
-		unsigned char diversify[24];
+		std::vector<unsigned char> diversify;
 		boost::shared_ptr<DESFireKey> currentkey = boost::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile())->getKey(d_crypto->d_currentAid, keyno);
 		if (currentkey->getKeyDiversification())
 		{
-			currentkey->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), NULL);
+			currentkey->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), d_crypto->d_currentAid, currentkey);
 			//d_crypto->getDiversify(diversify);
 		}
 		std::vector<unsigned char> cryptogram;

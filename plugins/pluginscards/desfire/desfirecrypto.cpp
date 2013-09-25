@@ -554,7 +554,7 @@ namespace logicalaccess
 		return ret;
 	}
 
-	std::vector<unsigned char> DESFireCrypto::authenticate_PICC1(unsigned char keyno, unsigned char *diversify, const std::vector<unsigned char>& encRndB)
+	std::vector<unsigned char> DESFireCrypto::authenticate_PICC1(unsigned char keyno, std::vector<unsigned char> diversify, const std::vector<unsigned char>& encRndB)
 	{
 		d_sessionKey.clear();
 		d_authkey.resize(16);
@@ -618,12 +618,12 @@ namespace logicalaccess
 		d_mac_size = 4;
 	}
 
-	void DESFireCrypto::getKey(boost::shared_ptr<DESFireKey> key, unsigned char* diversify, std::vector<unsigned char>& keydiv)
+	void DESFireCrypto::getKey(boost::shared_ptr<DESFireKey> key, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv)
 	{
 		INFO_SIMPLE_("Init key from crypto.");
 
 		keydiv.clear();
-		if (key->getKeyDiversification() && diversify != NULL)
+		if (key->getKeyDiversification() && diversify.size() != 0)
 		{
 			keydiv = key->getKeyDiversification()->getKeyDiversificated(key, diversify);
 		}
@@ -670,7 +670,7 @@ namespace logicalaccess
 		d_sessionKey.clear();
 	}
 
-	std::vector<unsigned char> DESFireCrypto::changeKey_PICC(unsigned char keyno, boost::shared_ptr<DESFireKey> newkey, unsigned char* diversify)
+	std::vector<unsigned char> DESFireCrypto::changeKey_PICC(unsigned char keyno, boost::shared_ptr<DESFireKey> newkey, std::vector<unsigned char> diversify)
 	{
 		INFO_SIMPLE_("Init change key on PICC...");
 		std::vector<unsigned char> cryptogram;
@@ -776,7 +776,7 @@ namespace logicalaccess
 		return cryptogram;
 	}	
 
-	std::vector<unsigned char> DESFireCrypto::iso_authenticate_PICC1(unsigned char keyno, unsigned char *diversify, const std::vector<unsigned char>& encRndB, unsigned int randomlen)
+	std::vector<unsigned char> DESFireCrypto::iso_authenticate_PICC1(unsigned char keyno, std::vector<unsigned char> diversify, const std::vector<unsigned char>& encRndB, unsigned int randomlen)
 	{
 		d_sessionKey.clear();		
 		d_profile->getKey(d_currentAid, keyno, diversify, d_authkey);
@@ -869,7 +869,7 @@ namespace logicalaccess
 		d_lastIV.resize(d_block_size, 0x00);
 	}
 
-	std::vector<unsigned char> DESFireCrypto::aes_authenticate_PICC1(unsigned char keyno, unsigned char *diversify, const std::vector<unsigned char>& encRndB)
+	std::vector<unsigned char> DESFireCrypto::aes_authenticate_PICC1(unsigned char keyno, std::vector<unsigned char> diversify, const std::vector<unsigned char>& encRndB)
 	{
 		d_sessionKey.clear();		
 		d_profile->getKey(d_currentAid, keyno, diversify, d_authkey);

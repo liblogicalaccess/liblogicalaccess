@@ -12,8 +12,8 @@ namespace logicalaccess
 	class LIBLOGICALACCESS_API KeyDiversification
 	{
 	public:
-		virtual bool initDiversification(unsigned char *diversify, std::vector<unsigned char> d_identifier, unsigned char *AID) = 0;
-		virtual std::vector<unsigned char> getKeyDiversificated(boost::shared_ptr<Key> key, unsigned char* diversify) = 0;
+		virtual bool initDiversification(std::vector<unsigned char>& diversify, std::vector<unsigned char> d_identifier, int AID, boost::shared_ptr<Key> key) = 0;
+		virtual std::vector<unsigned char> getKeyDiversificated(boost::shared_ptr<Key> key, std::vector<unsigned char> diversify) = 0;
 	};
 }
 
