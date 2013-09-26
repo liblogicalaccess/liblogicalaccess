@@ -15,6 +15,8 @@ namespace logicalaccess
 
 		SagemKeyDiversification() {};
 		~SagemKeyDiversification() {};
+
+		std::string getType() { return "Sagem"; };
 	};
 }
 
