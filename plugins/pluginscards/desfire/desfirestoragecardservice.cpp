@@ -38,6 +38,8 @@ namespace logicalaccess
 		if (!dfAiToUse->masterCardKey->isEmpty())
 		{
 			getDESFireChip()->getDESFireProfile()->setKey(0, 0, dfAiToUse->masterCardKey);
+			getDESFireChip()->getDESFireCommands()->selectApplication(0);
+			getDESFireChip()->getDESFireCommands()->authenticate(0);
 			getDESFireChip()->getDESFireCommands()->erase();
 		}
 		// Format the application if MAK specified.
