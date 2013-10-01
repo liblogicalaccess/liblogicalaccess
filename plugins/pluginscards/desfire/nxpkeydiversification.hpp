@@ -22,6 +22,10 @@ namespace logicalaccess
 		std::string getType() { return "NXP"; };
 
 		std::string d_systemidentifier;
+
+		virtual void serialize(boost::property_tree::ptree& parentNode);
+		virtual void unSerialize(boost::property_tree::ptree& node);
+		virtual std::string getDefaultXmlNodeName() const { return "NXPKeyDiversification"; };
 	};
 }
 

@@ -3,6 +3,9 @@
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "desfireev1chip.hpp"
 #include "desfirechip.hpp"
+#include "sagemkeydiversification.hpp"
+#include "nxpkeydiversification.hpp"
+#include "logicalaccess/cards/keydiversification.hpp"
 
 #ifdef _MSC_VER
 #include "logicalaccess/msliblogicalaccess.h"
@@ -35,6 +38,22 @@ extern "C"
 		if (chip != NULL)
 		{
 			*chip = boost::shared_ptr<logicalaccess::DESFireChip>(new logicalaccess::DESFireChip());
+		}
+	}
+
+	LIBLOGICALACCESS_API void getNXPDiversification(boost::shared_ptr<logicalaccess::KeyDiversification>* keydiversification)
+	{
+		if (keydiversification != NULL)
+		{
+			*keydiversification = boost::shared_ptr<logicalaccess::NXPKeyDiversification>(new logicalaccess::NXPKeyDiversification());
+		}
+	}
+
+	LIBLOGICALACCESS_API void getSagemDiversification(boost::shared_ptr<logicalaccess::KeyDiversification>* keydiversification)
+	{
+		if (keydiversification != NULL)
+		{
+			*keydiversification = boost::shared_ptr<logicalaccess::SagemKeyDiversification>(new logicalaccess::SagemKeyDiversification());
 		}
 	}
 

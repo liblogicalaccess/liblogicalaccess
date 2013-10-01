@@ -9,12 +9,18 @@ namespace logicalaccess
 {
 	class Key;
 
-	class LIBLOGICALACCESS_API KeyDiversification
+	class LIBLOGICALACCESS_API KeyDiversification : public XmlSerializable
 	{
 	public:
 		virtual bool initDiversification(std::vector<unsigned char>& diversify, std::vector<unsigned char> d_identifier, int AID, boost::shared_ptr<Key> key) = 0;
 		virtual std::vector<unsigned char> getKeyDiversificated(boost::shared_ptr<Key> key, std::vector<unsigned char> diversify) = 0;
 		virtual std::string getType() = 0;
+
+		static boost::shared_ptr<KeyDiversification> getKeyDiversificationFromType(std::string kdiv);
+
+		virtual void serialize(boost::property_tree::ptree& parentNode) {};
+		virtual void unSerialize(boost::property_tree::ptree& node) {};
+		virtual std::string getDefaultXmlNodeName() const { return "KeyDiversification"; };
 	};
 }
 

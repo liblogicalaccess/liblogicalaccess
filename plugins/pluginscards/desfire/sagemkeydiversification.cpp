@@ -53,4 +53,13 @@ namespace logicalaccess
 		keydiv.insert(keydiv.end(), r2.begin(), r2.end());
 		return keydiv;
 	}
+
+	void SagemKeyDiversification::serialize(boost::property_tree::ptree& parentNode)
+	{
+		parentNode.put("<xmlattr>.keyDiversificationType", getType());
+	}
+
+	void SagemKeyDiversification::unSerialize(boost::property_tree::ptree& node)
+	{
+	}
 }

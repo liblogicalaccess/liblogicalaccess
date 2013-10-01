@@ -5,6 +5,7 @@
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
 #include "logicalaccess/readerproviders/tcpdatatransport.hpp"
 #include "logicalaccess/readerproviders/udpdatatransport.hpp"
+#include "logicalaccess/cards/keydiversification.hpp"
 
 namespace logicalaccess
 {
@@ -72,6 +73,22 @@ namespace logicalaccess
 		if (getcardfct)
 		{
 			getcardfct(&ret);
+		}
+
+		return ret;
+	}
+
+	boost::shared_ptr<KeyDiversification> LibraryManager::getKeyDiversification(const std::string& keydivtype)
+	{
+		boost::shared_ptr<KeyDiversification> ret;
+		std::string fctname = "get" + keydivtype + "Diversification";
+
+		getdiversification getdiversificationfct;
+		*(void**)(&getdiversificationfct) = getFctFromName(fctname, LibraryManager::CARDS_TYPE);
+
+		if (getdiversificationfct)
+		{
+			getdiversificationfct(&ret);
 		}
 
 		return ret;
