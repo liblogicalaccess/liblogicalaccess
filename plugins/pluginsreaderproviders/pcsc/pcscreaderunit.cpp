@@ -777,7 +777,7 @@ namespace logicalaccess
 					if (getPCSCConfiguration()->getSAMSecurityKey())
 						boost::dynamic_pointer_cast<SAMAV1ISO7816Commands>(getSAMChip()->getCommands())->authentificateHost(getPCSCConfiguration()->getSAMSecurityKey(), getPCSCConfiguration()->getSAMSecuritykeyNo());
 				}
-				catch (std::exception)
+				catch (std::exception&)
 				{
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The SAM Detected is not the SAM waited.");
 				}
@@ -791,6 +791,8 @@ namespace logicalaccess
 		if (d_sam_readerunit)
 		{
 			d_sam_readerunit->disconnect();
+			d_sam_readerunit->disconnectFromReader();
+			setSAMChip(boost::shared_ptr<SAMChip>());
 		}
 	}
 
