@@ -172,7 +172,7 @@ namespace logicalaccess
 		else
 		{
 			std::vector<unsigned char> diversify;
-			if (key->getKeyDiversification() && key->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), d_crypto->d_currentAid, key))
+			if (key->getKeyDiversification() || (key->getKeyDiversification() && key->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), d_crypto->d_currentAid, key)))
 			{	
 				cryptogram = d_crypto->changeKey_PICC(keyno, key, diversify);
 			}
@@ -704,7 +704,7 @@ namespace logicalaccess
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAMKeyStorage set on the key but not SAM reader has been set.");
 
 		std::vector<unsigned char> diversify;
-		if (key->getKeyDiversification() && key->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), d_crypto->d_currentAid, key))
+		if (key->getKeyDiversification() == NULL || (key->getKeyDiversification() && key->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), d_crypto->d_currentAid, key)))
 		{
 			command[0] = keyno;
 			std::vector<unsigned char> result = DESFireISO7816Commands::transmit(DF_INS_AUTHENTICATE, command, 1);

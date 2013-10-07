@@ -586,7 +586,6 @@ namespace logicalaccess
 		if (currentkey->getKeyDiversification())
 		{
 			currentkey->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), d_crypto->d_currentAid, currentkey);
-			//d_crypto->getDiversify(diversify);
 		}
 
 		std::vector<unsigned char> encRndB = DESFireISO7816Commands::transmit(DFEV1_INS_AUTHENTICATE_ISO, data);
@@ -614,7 +613,6 @@ namespace logicalaccess
 		if (currentkey->getKeyDiversification())
 		{
 			currentkey->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), d_crypto->d_currentAid, currentkey);
-		//	d_crypto->getDiversify(diversify);
 		}
 
 		std::vector<unsigned char> encRndB = DESFireISO7816Commands::transmit(DFEV1_INS_AUTHENTICATE_AES, data);
@@ -1026,7 +1024,6 @@ namespace logicalaccess
 		if (currentkey->getKeyDiversification())
 		{
 			currentkey->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), d_crypto->d_currentAid, currentkey);
-			//d_crypto->getDiversify(diversify);
 		}
 		std::vector<unsigned char> cryptogram;
 
