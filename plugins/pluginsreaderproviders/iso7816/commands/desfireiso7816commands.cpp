@@ -172,7 +172,7 @@ namespace logicalaccess
 		else
 		{
 			std::vector<unsigned char> diversify;
-			if (key->getKeyDiversification() || (key->getKeyDiversification() && key->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), d_crypto->d_currentAid, key)))
+			if (key->getKeyDiversification() == NULL || (key->getKeyDiversification() && key->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), d_crypto->d_currentAid, key)))
 			{	
 				cryptogram = d_crypto->changeKey_PICC(keyno, key, diversify);
 			}
