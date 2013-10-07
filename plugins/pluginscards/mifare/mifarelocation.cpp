@@ -21,33 +21,6 @@ namespace logicalaccess
 	{		
 	}
 
-	std::vector<unsigned char> MifareLocation::getLinearData() const
-	{
-		std::vector<unsigned char> data;
-
-		data.push_back(static_cast<unsigned char>(sector));
-		data.push_back(static_cast<unsigned char>(block));
-		data.push_back(static_cast<unsigned char>(byte));
-		data.push_back(useMAD ? 0x01 : 0x00);
-		BufferHelper::setUShort(data, aid);
-
-		return data;
-	}
-
-	void MifareLocation::setLinearData(const std::vector<unsigned char>& data, size_t offset)
-	{
-		sector = static_cast<int>(data[offset++]);
-		block = static_cast<int>(data[offset++]);
-		byte = static_cast<int>(data[offset++]);
-		useMAD = (data[offset++] == 0x01);
-		aid = BufferHelper::getUShort(data, offset);
-	}
-
-	size_t MifareLocation::getDataSize()
-	{
-		return (1 + 1 + 1 + 1 + sizeof(aid));
-	}
-
 	void MifareLocation::serialize(boost::property_tree::ptree& parentNode)
 	{
 		boost::property_tree::ptree node;

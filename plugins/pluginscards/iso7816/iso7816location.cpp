@@ -28,36 +28,6 @@ namespace logicalaccess
 	{		
 	}
 
-	std::vector<unsigned char> ISO7816Location::getLinearData() const
-	{
-		std::vector<unsigned char> data(16);
-
-		data.insert(data.end(), dfname, dfname + sizeof(dfname));
-		data.push_back(static_cast<unsigned char>(dfnamelen));
-		BufferHelper::setUShort(data, fileid);
-		data.push_back(static_cast<unsigned char>(fileType));
-		BufferHelper::setUShort(data, dataObject);
-
-		return data;
-	}
-
-	void ISO7816Location::setLinearData(const std::vector<unsigned char>& data, size_t offset)
-	{
-		EXCEPTION_ASSERT_WITH_LOG(data.size() >= sizeof(dfname), std::invalid_argument, "invalid buffer");
-
-		memcpy(dfname, &data[offset], sizeof(dfname));
-		offset += sizeof(dfname);
-		dfnamelen = static_cast<int>(data[offset++]);
-		fileid = BufferHelper::getUShort(data, offset);
-		fileType = static_cast<ISO7816FileType>(data[offset++]);
-		dataObject = BufferHelper::getUShort(data, offset);
-	}
-
-	size_t ISO7816Location::getDataSize()
-	{
-		return (sizeof(dfname) + sizeof(fileid) + 1 + sizeof(dataObject));
-	}
-
 	void ISO7816Location::serialize(boost::property_tree::ptree& parentNode)
 	{
 		std::vector<unsigned char> buf(dfname, dfname + sizeof(dfnamelen));

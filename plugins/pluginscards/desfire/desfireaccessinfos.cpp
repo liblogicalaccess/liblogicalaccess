@@ -55,11 +55,6 @@ namespace logicalaccess
 		masterCardKey->fromString(generateSimpleKey(lcsn + 3000, masterCardKey->getLength()));
 	}
 
-	size_t DESFireAccessInfo::getDataSize()
-	{
-		return readKey->getLength() + writeKey->getLength() + masterApplicationKey->getLength() + masterCardKey->getLength() + 2 + (4 * (1 + 1 + 1 + 1));
-	}
-
 	void DESFireAccessInfo::serialize(boost::property_tree::ptree& parentNode)
 	{
 		boost::property_tree::ptree node;

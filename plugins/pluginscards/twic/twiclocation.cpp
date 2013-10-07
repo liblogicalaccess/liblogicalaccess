@@ -17,25 +17,6 @@ namespace logicalaccess
 	{		
 	}
 
-	std::vector<unsigned char> TwicLocation::getLinearData() const
-	{
-		std::vector<unsigned char> data;
-
-		BufferHelper::setUInt64(data, dataObject);
-
-		return data;
-	}
-
-	void TwicLocation::setLinearData(const std::vector<unsigned char>& data, size_t offset)
-	{
-		dataObject = BufferHelper::getUInt64(data, offset);
-	}
-
-	size_t TwicLocation::getDataSize()
-	{
-		return (sizeof(dataObject));
-	}
-
 	void TwicLocation::serialize(boost::property_tree::ptree& parentNode)
 	{
 		boost::property_tree::ptree node;

@@ -17,25 +17,6 @@ namespace logicalaccess
 	{		
 	}
 
-	std::vector<unsigned char> ProxLocation::getLinearData() const
-	{
-		std::vector<unsigned char> data;
-
-		data.push_back(static_cast<unsigned char>(bit));
-
-		return data;
-	}
-
-	void ProxLocation::setLinearData(const std::vector<unsigned char>& data, size_t offset)
-	{
-		bit = static_cast<int>(data[offset++]);
-	}
-
-	size_t ProxLocation::getDataSize()
-	{
-		return (1);
-	}
-
 	void ProxLocation::serialize(boost::property_tree::ptree& parentNode)
 	{
 		boost::property_tree::ptree node;

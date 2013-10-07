@@ -18,27 +18,6 @@ namespace logicalaccess
 	{		
 	}
 
-	std::vector<unsigned char> MifareUltralightLocation::getLinearData() const
-	{
-		std::vector<unsigned char> data;
-
-		data.push_back(static_cast<unsigned char>(page));
-		data.push_back(static_cast<unsigned char>(byte));
-
-		return data;
-	}
-
-	void MifareUltralightLocation::setLinearData(const std::vector<unsigned char>& data, size_t offset)
-	{
-		page = static_cast<int>(data[offset++]);
-		byte = static_cast<int>(data[offset++]);
-	}
-
-	size_t MifareUltralightLocation::getDataSize()
-	{
-		return (1 + 1);
-	}
-
 	void MifareUltralightLocation::serialize(boost::property_tree::ptree& parentNode)
 	{
 		boost::property_tree::ptree node;

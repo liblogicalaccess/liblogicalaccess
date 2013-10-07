@@ -28,11 +28,6 @@ namespace logicalaccess
 			virtual ~DESFireEV1Location();
 
 			/**
-			 * \brief DESFire location informations data size.
-			 */
-			virtual size_t getDataSize();
-
-			/**
 			 * \brief Serialize the current object to XML.
 			 * \param parentNode The parent node.
 			 */

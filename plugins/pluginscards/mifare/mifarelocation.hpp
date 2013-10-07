@@ -30,24 +30,6 @@ namespace logicalaccess
 			 * \brief Destructor.
 			 */
 			virtual ~MifareLocation();
-			
-			/**
-			 * \brief Export DESFire location informations to a buffer.
-			 * \return The data.
-			 */
-			virtual std::vector<unsigned char> getLinearData() const;
-
-			/**
-			 * \brief Import DESFire location informations from a buffer.
-			 * \param data The buffer.
-			 * \param offset An offset.
-			 */
-			virtual void setLinearData(const std::vector<unsigned char>&, size_t offset = 0);
-
-			/**
-			 * \brief Mifare location informations data size.
-			 */
-			virtual size_t getDataSize();
 
 			/**
 			 * \brief Serialize the current object to XML.

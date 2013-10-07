@@ -40,11 +40,6 @@ namespace logicalaccess
 			virtual void generateInfos(const std::string& csn);
 
 			/**
-			 * \brief DESFire access informations data size.
-			 */
-			virtual size_t getDataSize();
-
-			/**
 			 * \brief Get the card type for this access infos.
 			 * \return The card type.
 			 */

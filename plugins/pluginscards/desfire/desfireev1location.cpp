@@ -22,11 +22,6 @@ namespace logicalaccess
 	{
 	}
 
-	size_t DESFireEV1Location::getDataSize()
-	{
-		return (DESFireLocation::getDataSize() + 1 + sizeof(cryptoMethod) + 1 + sizeof(applicationFID) + sizeof(fileFID));
-	}
-
 	void DESFireEV1Location::serialize(boost::property_tree::ptree& parentNode)
 	{
 		boost::property_tree::ptree node;

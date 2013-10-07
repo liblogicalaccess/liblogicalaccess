@@ -38,11 +38,6 @@ namespace logicalaccess
 			virtual void generateInfos(const std::string& csn) = 0;
 
 			/**
-			 * \brief Access informations data size.
-			 */
-			virtual size_t getDataSize() = 0;
-
-			/**
 			 * \brief Get the card type for this access infos.
 			 * \return The card type.
 			 */

@@ -33,25 +33,6 @@ namespace logicalaccess
 		
 	}
 
-	std::vector<unsigned char> MifareUltralightAccessInfo::getLinearData() const
-	{
-		std::vector<unsigned char> data;
-		
-		data.push_back(static_cast<unsigned char>(lockPage ? 1 : 0));
-
-		return data;
-	}
-
-	void MifareUltralightAccessInfo::setLinearData(const std::vector<unsigned char>& data, size_t offset)
-	{
-		lockPage = (data[offset++] == 1);
-	}
-
-	size_t MifareUltralightAccessInfo::getDataSize()
-	{
-		return (1);
-	}
-
 	void MifareUltralightAccessInfo::serialize(boost::property_tree::ptree& parentNode)
 	{
 		boost::property_tree::ptree node;

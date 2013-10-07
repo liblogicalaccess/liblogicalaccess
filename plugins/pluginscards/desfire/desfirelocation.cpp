@@ -38,11 +38,6 @@ namespace logicalaccess
 		static_cast<unsigned char*>(aid)[2] = (i >> 16) & 0xff;
 	}
 
-	size_t DESFireLocation::getDataSize()
-	{
-		return (sizeof(aid) + 1 + 1 + 1);
-	}
-
 	void DESFireLocation::serialize(boost::property_tree::ptree& parentNode)
 	{
 		boost::property_tree::ptree node;		

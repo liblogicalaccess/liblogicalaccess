@@ -44,24 +44,6 @@ namespace logicalaccess
 			virtual void generateInfos(const std::string& csn);
 
 			/**
-			 * \brief Export location informations to a buffer.
-			 * \return The data.
-			 */
-			virtual std::vector<unsigned char> getLinearData() const;
-
-			/**
-			 * \brief Import location informations from a buffer.
-			 * \param data The buffer.
-			 * \param offset An offset.
-			 */
-			virtual void setLinearData(const std::vector<unsigned char>&, size_t offset = 0);
-
-			/**
-			 * \brief Mifare access informations data size.
-			 */
-			virtual size_t getDataSize();
-
-			/**
 			 * \brief Get the card type for this access infos.
 			 * \return The card type.
 			 */
