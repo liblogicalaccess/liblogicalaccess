@@ -49,7 +49,7 @@ namespace logicalaccess
 					}
 				default:
 					{
-						throw Exception::exception("Unhandled method");
+						THROW_EXCEPTION_WITH_LOG(Exception::exception, "Unhandled method");
 					}
 			}
 
@@ -83,7 +83,7 @@ namespace logicalaccess
 					}
 				default:
 					{
-						throw Exception::exception("Unhandled method");
+						THROW_EXCEPTION_WITH_LOG(Exception::exception, "Unhandled method");
 					}
 			}
 
@@ -118,7 +118,7 @@ namespace logicalaccess
 					}
 				default:
 					{
-						throw Exception::exception("Unhandled method");
+						THROW_EXCEPTION_WITH_LOG(Exception::exception, "Unhandled method");
 					}
 			}
 

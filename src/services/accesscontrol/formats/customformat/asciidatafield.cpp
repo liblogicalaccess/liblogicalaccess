@@ -54,7 +54,7 @@ namespace logicalaccess
 		memcpy_s(paddedBuffer, fieldDataLengthBytes, d_value.c_str(), d_value.size());
 #else
 		if (fieldDataLengthBytes < d_value.size())
-		  throw new EXCEPTION(LibLogicalAccessException, "The size of the dest buffer is too small for memcpy");
+		  THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The size of the dest buffer is too small for memcpy");
 		memcpy(paddedBuffer, d_value.c_str(), d_value.size());
 #endif
 

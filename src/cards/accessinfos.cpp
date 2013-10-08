@@ -38,7 +38,7 @@ namespace logicalaccess
 
 		if (RAND_bytes(&buf[0], static_cast<int>(keySize)) != 1)
 		{
-			throw LibLogicalAccessException("Cannot retrieve cryptographically strong bytes");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
 		}
 		
 		for (size_t i = 0; i < buf.size(); ++i)
@@ -70,7 +70,7 @@ namespace logicalaccess
 
 		if (RAND_bytes(&buf[0], static_cast<int>(keySize)) != 1)
 		{
-			throw LibLogicalAccessException("Cannot retrieve cryptographically strong bytes");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
 		}
 		
 		for (size_t i = 0; i < buf.size(); ++i)

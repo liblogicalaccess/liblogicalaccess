@@ -42,7 +42,7 @@ namespace logicalaccess
 
 		if (!boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->getKeyUsage(mLocation->sector, keytype))
 		{
-			throw EXCEPTION(CardException, EXCEPTION_MSG_NOKEY);
+			THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_NOKEY);
 		}
 
 		boost::shared_ptr<MifarePlusKey> key = boost::dynamic_pointer_cast<MifarePlusKey>(boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->getKey(mLocation->sector, keytype));
@@ -290,7 +290,7 @@ namespace logicalaccess
 
 		if (!boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->getKeyUsage(sector, keytype))
 		{
-			throw EXCEPTION(CardException, EXCEPTION_MSG_NOKEY);
+			THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_NOKEY);
 		}
 
 		boost::shared_ptr<MifarePlusLocation> location(new MifarePlusLocation());
@@ -359,7 +359,7 @@ namespace logicalaccess
 
 		if ((*newsab).toArray(&trailerblock[MIFARE_PLUS_CRYPTO1_KEY_SIZE], 3) != 3)
 		{
-			throw EXCEPTION(CardException, EXCEPTION_MSG_CHANGEKEY);
+			THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_CHANGEKEY);
 		}
 
 		trailerblock[MIFARE_PLUS_CRYPTO1_KEY_SIZE + 3] = userbyte;
@@ -367,7 +367,7 @@ namespace logicalaccess
 		changeBlock(sab, sector, getNbBlocks(sector), true);
 		if (updateBinary(static_cast<unsigned char>(getSectorStartBlock(sector) + getNbBlocks(sector)), trailerblock, 16) != 16)
 		{
-			throw EXCEPTION(CardException, EXCEPTION_MSG_CHANGEKEY);
+			THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_CHANGEKEY);
 		}
 	}
 

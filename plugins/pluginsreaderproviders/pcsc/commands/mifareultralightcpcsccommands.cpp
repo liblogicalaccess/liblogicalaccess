@@ -60,7 +60,7 @@ namespace logicalaccess
 		rndA.resize(8);
 		if (RAND_bytes(&rndA[0], static_cast<int>(rndA.size())) != 1)
 		{
-			throw LibLogicalAccessException("Cannot retrieve cryptographically strong bytes");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
 		}
 
 		std::vector<unsigned char> rndAB;

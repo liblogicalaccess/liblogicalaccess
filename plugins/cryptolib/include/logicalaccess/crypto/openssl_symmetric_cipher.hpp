@@ -90,7 +90,8 @@ namespace logicalaccess
 				 * \param key The key to use.
 				 * \param iv The initialisation vector.
 				 * \param padding Whether to use padding.
-				 * In case of a failure, the call throw an InvalidCallException.
+				 * In case of a failure, the call 
+				 an InvalidCallException.
 				 */
 				virtual void cipher(const std::vector<unsigned char>& src, std::vector<unsigned char>& dest, const SymmetricKey& key, const InitializationVector& iv, bool padding);
 
@@ -101,7 +102,8 @@ namespace logicalaccess
 				 * \param key The key to use.
 				 * \param iv The initialisation vector.
 				 * \param padding Whether to use padding.
-				 * In case of a failure, the call throw a InvalidCallException.
+				 * In case of a failure, the call 
+				 a InvalidCallException.
 				 */
 				virtual void decipher(const std::vector<unsigned char>& src, std::vector<unsigned char>& dest, const SymmetricKey& key, const InitializationVector& iv, bool padding);
 

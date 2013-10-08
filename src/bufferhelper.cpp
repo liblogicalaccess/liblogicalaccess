@@ -56,7 +56,7 @@ namespace logicalaccess
 			}
 			else
 			{
-				throw Exception::exception("'=' character expected");
+				THROW_EXCEPTION_WITH_LOG(Exception::exception, "'=' character expected");
 			}
 		}
 		else

@@ -203,7 +203,7 @@ namespace logicalaccess
 	{
 		if (buflen < 3)
 		{
-			throw EXCEPTION(std::invalid_argument, "The buffer is too short.");
+			THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "The buffer is too short.");
 		}
 
 		memset(buf, 0x00, 3);
@@ -224,7 +224,7 @@ namespace logicalaccess
 	{
 		if (buflen < 3)
 		{
-			throw EXCEPTION(std::invalid_argument, "The buffer is too short.");
+			THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "The buffer is too short.");
 		}
 
 		SectorAccessBits sab;
