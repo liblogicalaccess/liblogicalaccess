@@ -221,6 +221,8 @@ namespace logicalaccess
 			THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_CONNECTED);
 		}
 
+		INFO_SIMPLE_("Waiting card insertion...");
+
 		LONG r = 0;
 		bool usePnp = true;
 		int readers_count = 0;
@@ -394,6 +396,8 @@ namespace logicalaccess
 		{
 			THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_CONNECTED);
 		}
+
+		INFO_SIMPLE_("Waiting card removal...");
 
 		string reader = getConnectedName();
 
@@ -734,6 +738,13 @@ namespace logicalaccess
 
 	bool PCSCReaderUnit::connectToReader()
 	{
+		INFO_SIMPLE_("Connecting to reader...");
+
+		if (d_proxyReaderUnit)
+		{
+			return d_proxyReaderUnit->connectToReader();
+		}
+
 		if (getPCSCConfiguration()->getSAMType() != "SAM_NONE" && getPCSCConfiguration()->getSAMReaderName() == "")
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Sam type specified without specifying SAM Reader Name");
 		if (getPCSCConfiguration()->getSAMType() != "SAM_NONE")
@@ -788,12 +799,61 @@ namespace logicalaccess
 
 	void PCSCReaderUnit::disconnectFromReader()
 	{
-		if (d_sam_readerunit)
+		INFO_SIMPLE_("Disconnecting from reader...");
+
+		if (d_proxyReaderUnit)
 		{
-			d_sam_readerunit->disconnect();
-			d_sam_readerunit->disconnectFromReader();
-			setSAMChip(boost::shared_ptr<SAMChip>());
+			d_proxyReaderUnit->disconnectFromReader();
 		}
+		else
+		{
+			if (d_sam_readerunit)
+			{
+				d_sam_readerunit->disconnect();
+				d_sam_readerunit->disconnectFromReader();
+				setSAMChip(boost::shared_ptr<SAMChip>());
+			}
+		}
+	}
+
+	boost::shared_ptr<SAMChip> PCSCReaderUnit::getSAMChip()
+	{
+		if (d_proxyReaderUnit)
+		{
+			return d_proxyReaderUnit->getSAMChip();
+		}
+
+		return d_sam_chip;
+	}
+
+	void PCSCReaderUnit::setSAMChip(boost::shared_ptr<SAMChip> t)
+	{
+		if (d_proxyReaderUnit)
+		{
+			d_proxyReaderUnit->setSAMChip(t);
+		}
+
+		d_sam_chip = t;
+	}
+
+	boost::shared_ptr<PCSCReaderUnit> PCSCReaderUnit::getSAMReaderUnit()
+	{
+		if (d_proxyReaderUnit)
+		{
+			return d_proxyReaderUnit->getSAMReaderUnit();
+		}
+
+		return d_sam_readerunit;
+	}
+
+	void PCSCReaderUnit::setSAMReaderUnit(boost::shared_ptr<PCSCReaderUnit> t)
+	{
+		if (d_proxyReaderUnit)
+		{
+			d_proxyReaderUnit->setSAMReaderUnit(t);
+		}
+
+		d_sam_readerunit = t;
 	}
 
 	std::vector<unsigned char> PCSCReaderUnit::getCardSerialNumber()

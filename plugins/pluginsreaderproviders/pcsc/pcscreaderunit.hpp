@@ -266,22 +266,22 @@ namespace logicalaccess
 			/**
 			 * \brief Get The SAM Chip
 			 */
-			boost::shared_ptr<SAMChip> getSAMChip() { return d_sam_chip; };
+			boost::shared_ptr<SAMChip> getSAMChip();
 
 			/**
 			 * \brief Set the SAM Chip
 			 */
-			void setSAMChip(boost::shared_ptr<SAMChip> t) {	d_sam_chip = t; };
+			void setSAMChip(boost::shared_ptr<SAMChip> t);
 
 			/**
 			 * \brief Get The SAM ReaderUnit
 			 */
-			boost::shared_ptr<PCSCReaderUnit> getSAMReaderUnit() { return d_sam_readerunit; };
+			boost::shared_ptr<PCSCReaderUnit> getSAMReaderUnit();
 
 			/**
 			 * \brief Set the SAM ReaderUnit
 			 */
-			void setSAMReaderUnit(boost::shared_ptr<PCSCReaderUnit> t) {	d_sam_readerunit = t; };
+			void setSAMReaderUnit(boost::shared_ptr<PCSCReaderUnit> t);
 
 		protected:
 
