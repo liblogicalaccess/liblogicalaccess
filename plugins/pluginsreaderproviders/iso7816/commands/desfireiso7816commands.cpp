@@ -176,6 +176,9 @@ namespace logicalaccess
 			{	
 				cryptogram = d_crypto->changeKey_PICC(keyno, key, diversify);
 			}
+			else
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Key Diversification has failed.");
+
 		}
 
 		unsigned char command[25];
@@ -762,6 +765,8 @@ namespace logicalaccess
 				}
 			}
 		}
+		else
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Key Diversification has failed.");
 	}
 
 	std::vector<unsigned char> DESFireISO7816Commands::transmit(unsigned char cmd, unsigned char lc)

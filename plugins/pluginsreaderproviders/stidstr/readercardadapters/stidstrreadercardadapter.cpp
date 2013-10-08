@@ -155,7 +155,7 @@ namespace logicalaccess
 			if (RAND_bytes(&d_lastIV[0], static_cast<int>(d_lastIV.size())) != 1)
 			{
 				COM_SIMPLE_("Cannot retrieve cryptographically strong bytes");
-				throw LibLogicalAccessException("Cannot retrieve cryptographically strong bytes");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
 			}
 		}
 		return d_lastIV;

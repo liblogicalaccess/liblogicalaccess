@@ -55,7 +55,7 @@ namespace logicalaccess
 		DWORD dwError = GetLastError();
 		if (dwError == ERROR_FILE_NOT_FOUND)
 		{
-			throw EXCEPTION(LibLogicalAccessException, "Can't find the serial port.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't find the serial port.");
 		}
 #endif
 	}
@@ -139,7 +139,7 @@ namespace logicalaccess
 		{
 			if (errno != EAGAIN)
 			{
-				throw EXCEPTION(LibLogicalAccessException, "Cannot read data.");
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot read data.");
 			}
 			else
 			{
@@ -168,7 +168,7 @@ namespace logicalaccess
 		if (result == FALSE)
 		{
 			// DWORD er = GetLastError();
-			throw EXCEPTION(LibLogicalAccessException, "Cannot read data.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot read data.");
 			//EXCEPTION_THROW_LAST_SYSTEM_ERROR();
 		}
 
@@ -203,7 +203,7 @@ namespace logicalaccess
 
 		if (r < 0)
 		{
-			throw EXCEPTION(LibLogicalAccessException, "Cannot write data.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot write data.");
 		}
 
 		return r;
@@ -221,7 +221,7 @@ namespace logicalaccess
 
 		if (result != TRUE)
 		{
-			throw EXCEPTION(LibLogicalAccessException, "Cannot write data.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot write data.");
 		}
 
 		return r;
@@ -258,7 +258,7 @@ namespace logicalaccess
 
 		if (retval < 0)
 		{
-			throw EXCEPTION(LibLogicalAccessException, "Cannot select the device.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot select the device.");
 		}
 #else
 
@@ -286,7 +286,7 @@ namespace logicalaccess
 					if (result == FALSE)
 					{
 						d_readBuf.clear();
-						throw EXCEPTION(LibLogicalAccessException, "Cannot select the device.");
+						THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot select the device.");
 					}
 					if (r < 1)
 					{

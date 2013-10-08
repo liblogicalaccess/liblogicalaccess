@@ -98,7 +98,7 @@ namespace logicalaccess
 
 		if (data == NULL || dataLength < MIFARE_PLUS_BLOCK_SIZE || dataLength % 16 != 0)
 		{
-			throw EXCEPTION(std::invalid_argument, "Bad buffer parameter. Data length must be multiple of 16.");
+			THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter. Data length must be multiple of 16.");
 		}
 
 		EXCEPTION_ASSERT(location, std::invalid_argument, "location cannot be null.");
@@ -128,7 +128,7 @@ namespace logicalaccess
 			else if (mAiToWrite->keyA && !mAiToWrite->keyA->isEmpty())
 				getMifarePlusChip()->getMifarePlusSL3Commands()->writeSector(mLocation->sector, mLocation->block, data, sectorLen, mAiToWrite->keyA, KT_KEY_AES_A);
 			else
-				throw EXCEPTION(std::invalid_argument, "You must set the writing key using the MifarePlusAccessInfo ");
+				THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "You must set the writing key using the MifarePlusAccessInfo ");
 
 			bufIndex += sectorLen;
 			mLocation->sector += 1;
@@ -164,7 +164,7 @@ namespace logicalaccess
 
 		if (data == NULL || dataLength < MIFARE_PLUS_BLOCK_SIZE || dataLength % 16 != 0)
 		{
-			throw EXCEPTION(std::invalid_argument, "Bad buffer parameter. Data length must be multiple of 16.");
+			THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter. Data length must be multiple of 16.");
 		}
 
 		EXCEPTION_ASSERT(location, std::invalid_argument, "location cannot be null.");
@@ -194,7 +194,7 @@ namespace logicalaccess
 			else if (mAiToUse->keyB && !mAiToUse->keyB->isEmpty())
 				getMifarePlusChip()->getMifarePlusSL3Commands()->readSector(mLocation->sector, mLocation->block, data, sectorLen, mAiToUse->keyB, KT_KEY_AES_B);
 			else
-				throw EXCEPTION(std::invalid_argument, "You must set the read key using the MifarePlusAccessInfo ");
+				THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "You must set the read key using the MifarePlusAccessInfo ");
 
 			bufIndex += sectorLen;
 			mLocation->sector += 1;

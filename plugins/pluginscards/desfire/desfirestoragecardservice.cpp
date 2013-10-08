@@ -286,9 +286,23 @@ namespace logicalaccess
 		if (aiToWrite)
 		{
 			INFO_SIMPLE_("Starting to change keys...");
-			if ((appKeySettings & KS_CHANGE_KEY_WITH_TARGETED_KEYNO))
+
+			bool changeKeys = (appKeySettings & KS_CHANGE_KEY_WITH_TARGETED_KEYNO);
+
+			if (!changeKeys)
+			{
+				try
+				{
+					getDESFireChip()->getDESFireCommands()->authenticate(0);
+					changeKeys = true;
+				}
+				catch (std::exception&)
+				{
+					changeKeys = false;
+				}
+			}
+			if (changeKeys)
 			{		
-				getDESFireChip()->getDESFireCommands()->authenticate(0);
 				if (!dfAiToWrite->writeKey->isEmpty() && dfAiToUse->writeKey != dfAiToWrite->writeKey && dfAiToWrite->writeKeyno != 0x00)
 				{
 					try
