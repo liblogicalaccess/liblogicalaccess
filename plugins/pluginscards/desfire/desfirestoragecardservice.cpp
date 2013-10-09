@@ -287,7 +287,7 @@ namespace logicalaccess
 		{
 			INFO_SIMPLE_("Starting to change keys...");
 
-			bool changeKeys = (appKeySettings & KS_CHANGE_KEY_WITH_TARGETED_KEYNO);
+			bool changeKeys = ((appKeySettings & KS_CHANGE_KEY_WITH_TARGETED_KEYNO) == KS_CHANGE_KEY_WITH_TARGETED_KEYNO);
 
 			if (!changeKeys)
 			{
