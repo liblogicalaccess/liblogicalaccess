@@ -82,6 +82,8 @@ namespace logicalaccess
 
 	PCSCReaderUnit::~PCSCReaderUnit()
 	{
+		INFO_SIMPLE_("Reader unit destruction...");
+
 		if (isConnected())
 		{
 			disconnect();
@@ -233,7 +235,9 @@ namespace logicalaccess
 
 		if (reader != "")
 		{
+			INFO_("Use specific reader: %s.", reader.c_str());
 			readers_count = 1;
+			usePnp = false;
 		}
 		else
 		{
@@ -248,6 +252,7 @@ namespace logicalaccess
 			if (rgReaderStates[0].dwEventState & SCARD_STATE_UNKNOWN)
 			{
 				usePnp = false;
+				INFO_SIMPLE_("No PnP support.");
 			}
 		}
 
@@ -297,59 +302,66 @@ namespace logicalaccess
 					readers_count++;
 				}
 
-				r = SCardGetStatusChange(getPCSCReaderProvider()->getContext(), ((maxwait == 0) ? INFINITE : maxwait), readers, readers_count);
+				bool loop;
 
-				if (SCARD_S_SUCCESS == r)
+#ifndef _WINDOWS
+				struct timeval tv1, tv2;
+				struct timezone tz;
+
+				gettimeofday(&tv1, &tz);
+#else
+				DWORD tc = GetTickCount();
+#endif
+
+				do
 				{
-					for (int i = 0; i < readers_count; ++i)
+					loop = false;
+					r = SCardGetStatusChange(getPCSCReaderProvider()->getContext(), ((maxwait == 0) ? INFINITE : maxwait), readers, readers_count);
+
+					if (SCARD_S_SUCCESS == r)
 					{
-						if ((SCARD_STATE_CHANGED & readers[i].dwEventState) != 0)
+#ifndef _WINDOWS
+						gettimeofday(&tv2, &tz);
+
+						if ((maxwait == 0) || static_cast<unsigned int>((tv2.tv_sec - tv1.tv_sec) * 1000L + (tv2.tv_usec - tv1.tv_usec) / 1000L) < maxwait)
 						{
-							readers[i].dwCurrentState = readers[i].dwEventState;
+							loop = true;
+						}
+#else
+						DWORD ltc = GetTickCount();
 
-							if ((SCARD_STATE_PRESENT & readers[i].dwEventState) != 0)
+						if ((maxwait == 0) || (ltc - tc) < maxwait)
+						{
+							loop = true;
+						}
+#endif
+
+						for (int i = 0; i < readers_count; ++i)
+						{
+							if ((SCARD_STATE_CHANGED & readers[i].dwEventState) != 0)
 							{
-								cardType = getCardTypeFromATR(readers[i].rgbAtr, readers[i].cbAtr);
-								if (cardType == "UNKNOWN")
+								readers[i].dwCurrentState = readers[i].dwEventState;
+
+								if ((SCARD_STATE_PRESENT & readers[i].dwEventState) != 0)
 								{
-									cardType = getGenericCardTypeFromATR(readers[i].rgbAtr, readers[i].cbAtr);
-								}
-								connectedReader = std::string(reinterpret_cast<const char*>(readers[i].szReader));							
+									loop  = false;
+									cardType = getCardTypeFromATR(readers[i].rgbAtr, readers[i].cbAtr);
+									if (cardType == "UNKNOWN")
+									{
+										cardType = getGenericCardTypeFromATR(readers[i].rgbAtr, readers[i].cbAtr);
+									}
+									connectedReader = std::string(reinterpret_cast<const char*>(readers[i].szReader));							
 	
-								boost::shared_ptr<PCSCReaderUnitConfiguration> pcscRUC = getPCSCConfiguration();
-								if (this->getPCSCType() == PCSC_RUT_DEFAULT)
-								{
-									d_proxyReaderUnit = PCSCReaderUnit::createPCSCReaderUnit(connectedReader);
-									if (d_proxyReaderUnit->getPCSCType() == PCSC_RUT_DEFAULT)
-									{
-										d_proxyReaderUnit.reset();
-										d_connectedName = connectedReader;
-									}
-									else
-									{
-										d_proxyReaderUnit->makeProxy(boost::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
-									}
+									break;
 								}
-								else
-								{
-									// Already a proxy from serialization maybe, just copy instance information to it.
-									if (d_proxyReaderUnit)
-									{
-										d_proxyReaderUnit->makeProxy(boost::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
-									}
-								}
-
-								d_insertedChip = createChip((d_card_type == "UNKNOWN") ? cardType : d_card_type);						
-								if (d_proxyReaderUnit)
-								{
-									d_proxyReaderUnit->setSingleChip(d_insertedChip);
-								}
-
-								break;
 							}
 						}
 					}
-				}
+					else
+					{
+						ERROR_("Cannot get status change: %x.", r);
+					}
+				} while(loop);
 
 				if (usePnp)
 				{
@@ -371,6 +383,38 @@ namespace logicalaccess
 
 			delete[] readers_names;
 			readers_names = NULL;
+		}
+
+		if (connectedReader != "")
+		{
+			boost::shared_ptr<PCSCReaderUnitConfiguration> pcscRUC = getPCSCConfiguration();
+			if (this->getPCSCType() == PCSC_RUT_DEFAULT)
+			{
+				d_proxyReaderUnit = PCSCReaderUnit::createPCSCReaderUnit(connectedReader);
+				if (d_proxyReaderUnit->getPCSCType() == PCSC_RUT_DEFAULT)
+				{
+					d_proxyReaderUnit.reset();
+					d_connectedName = connectedReader;
+				}
+				else
+				{
+					d_proxyReaderUnit->makeProxy(boost::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
+				}
+			}
+			else
+			{
+				// Already a proxy from serialization maybe, just copy instance information to it.
+				if (d_proxyReaderUnit)
+				{
+					d_proxyReaderUnit->makeProxy(boost::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
+				}
+			}
+
+			d_insertedChip = createChip((d_card_type == "UNKNOWN") ? cardType : d_card_type);						
+			if (d_proxyReaderUnit)
+			{
+				d_proxyReaderUnit->setSingleChip(d_insertedChip);
+			}
 		}
 
 		return (connectedReader != "");
@@ -773,15 +817,21 @@ namespace logicalaccess
 
 				ret->connect();
 
+				INFO_SIMPLE_("Checking SAM backward...");
+
 				//No Backward AV2 => AV1
 				if (getPCSCConfiguration()->getSAMType() == "SAM_AV2" && ret->getSingleChip()->getCardType() != "SAM_AV1")
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM on the reader is not the same type as selected.");
 				//Check Backward AV1 => AV2 is active
 				if (getPCSCConfiguration()->getSAMType() != "SAM_AUTO" && ret->getSingleChip()->getCardType() == "SAM_AV2" && getPCSCConfiguration()->getSAMType() != boost::dynamic_pointer_cast<SAMCommands>(ret->getSingleChip()->getCommands())->getSAMTypeFromSAM())
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM on the reader is not the same type as selected.");
+
+				INFO_SIMPLE_("SAM backward ended.");
 			
 				setSAMChip(boost::dynamic_pointer_cast<SAMChip>(ret->getSingleChip())); 
 				setSAMReaderUnit(ret);
+
+				INFO_SIMPLE_("Starting SAM Security check...");
 
 				try
 				{
