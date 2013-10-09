@@ -241,6 +241,7 @@ namespace logicalaccess
 		}
 		else
 		{
+			INFO_("Listening on all readers");
 			readers_count = static_cast<int>(getReaderProvider()->getReaderList().size());
 
 			SCARD_READERSTATE rgReaderStates[1];
@@ -341,7 +342,6 @@ namespace logicalaccess
 							if ((SCARD_STATE_CHANGED & readers[i].dwEventState) != 0)
 							{
 								readers[i].dwCurrentState = readers[i].dwEventState;
-
 								if ((SCARD_STATE_PRESENT & readers[i].dwEventState) != 0)
 								{
 									loop  = false;
