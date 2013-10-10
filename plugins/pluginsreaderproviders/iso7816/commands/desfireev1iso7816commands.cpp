@@ -428,8 +428,10 @@ namespace logicalaccess
 		boost::shared_ptr<openssl::SymmetricCipher> cipher;
 		std::vector<unsigned char> diversify;
 
-		if (key->getKeyDiversification() && !key->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), d_crypto->d_currentAid, key))
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Key Diversification has failed.");
+		if (key->getKeyDiversification())
+		{
+			key->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, key, diversify);
+		}
 		std::vector<unsigned char> keydiv;
 		d_crypto->getKey(key, diversify, keydiv);
 
@@ -583,8 +585,10 @@ namespace logicalaccess
 
 		std::vector<unsigned char> diversify;
 		boost::shared_ptr<DESFireKey> currentkey = boost::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile())->getKey(d_crypto->d_currentAid, keyno);
-		if (currentkey->getKeyDiversification() && !currentkey->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), d_crypto->d_currentAid, currentkey))
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Key Diversification has failed.");
+		if (currentkey->getKeyDiversification())
+		{
+			currentkey->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, currentkey, diversify);
+		}
 
 		std::vector<unsigned char> encRndB = DESFireISO7816Commands::transmit(DFEV1_INS_AUTHENTICATE_ISO, data);
 		unsigned char err = encRndB.back();
@@ -608,8 +612,10 @@ namespace logicalaccess
 
 		std::vector<unsigned char> diversify;
 		boost::shared_ptr<DESFireKey> currentkey = boost::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile())->getKey(d_crypto->d_currentAid, keyno);
-		if (currentkey->getKeyDiversification() && !currentkey->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), d_crypto->d_currentAid, currentkey))
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Key Diversification has failed.");
+		if (currentkey->getKeyDiversification())
+		{
+			currentkey->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, currentkey, diversify);
+		}
 
 		std::vector<unsigned char> encRndB = DESFireISO7816Commands::transmit(DFEV1_INS_AUTHENTICATE_AES, data);
 		unsigned char err = encRndB.back();
@@ -1017,8 +1023,10 @@ namespace logicalaccess
 	{
 		std::vector<unsigned char> diversify;
 		boost::shared_ptr<DESFireKey> currentkey = boost::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile())->getKey(d_crypto->d_currentAid, keyno);
-		if (currentkey->getKeyDiversification() && !currentkey->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), d_crypto->d_currentAid, currentkey))
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Key Diversification has failed.");
+		if (currentkey->getKeyDiversification())
+		{
+			currentkey->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, currentkey, diversify);
+		}
 		std::vector<unsigned char> cryptogram;
 
 		if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))

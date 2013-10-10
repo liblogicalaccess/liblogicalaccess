@@ -12,7 +12,7 @@
 
 namespace logicalaccess
 {
-	bool NXPKeyDiversification::initDiversification(std::vector<unsigned char>& diversify, std::vector<unsigned char> identifier, int AID, boost::shared_ptr<Key> key)
+	void NXPKeyDiversification::initDiversification(std::vector<unsigned char> identifier, int AID, boost::shared_ptr<Key> key, std::vector<unsigned char>& diversify)
 	{
 		std::string const_id;
 
@@ -43,11 +43,12 @@ namespace logicalaccess
 				diversify.insert(diversify.end(), const_vector.begin(), const_vector.begin() + 5);
 		}
 		else
-			return false;
-		return true;
+		{
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Chip identifier is required for key diversification.");
+		}
 	}
 
-	std::vector<unsigned char> NXPKeyDiversification::getKeyDiversificated(boost::shared_ptr<Key> key, std::vector<unsigned char> diversify)
+	std::vector<unsigned char> NXPKeyDiversification::getDiversifiedKey(boost::shared_ptr<Key> key, std::vector<unsigned char> diversify)
 	{
 		INFO_("Using key diversification NXP with div : %s", BufferHelper::getHex(diversify).c_str());
 		int block_size = 0;

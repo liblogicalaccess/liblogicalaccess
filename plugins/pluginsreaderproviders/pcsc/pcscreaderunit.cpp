@@ -241,7 +241,7 @@ namespace logicalaccess
 		}
 		else
 		{
-			INFO_("Listening on all readers");
+			INFO_SIMPLE_("Listening on all readers");
 			readers_count = static_cast<int>(getReaderProvider()->getReaderList().size());
 
 			SCARD_READERSTATE rgReaderStates[1];

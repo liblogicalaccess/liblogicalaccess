@@ -625,7 +625,7 @@ namespace logicalaccess
 		keydiv.clear();
 		if (key->getKeyDiversification() && diversify.size() != 0)
 		{
-			keydiv = key->getKeyDiversification()->getKeyDiversificated(key, diversify);
+			keydiv = key->getKeyDiversification()->getDiversifiedKey(key, diversify);
 		}
 		else
 		{

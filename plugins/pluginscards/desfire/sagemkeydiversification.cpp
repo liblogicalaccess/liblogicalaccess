@@ -8,7 +8,7 @@
 
 namespace logicalaccess
 {
-	bool SagemKeyDiversification::initDiversification(std::vector<unsigned char>& diversify, std::vector<unsigned char> identifier, int AID, boost::shared_ptr<Key> key)
+	void SagemKeyDiversification::initDiversification(std::vector<unsigned char> identifier, int AID, boost::shared_ptr<Key> key, std::vector<unsigned char>& diversify)
 	{
 		if (identifier.size() > 0)
 		{
@@ -23,11 +23,12 @@ namespace logicalaccess
 			}
 		}
 		else
-			return false;
-		return true;
+		{
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Chip identifier is required for key diversification.");
+		}
 	}
 
-	std::vector<unsigned char> SagemKeyDiversification::getKeyDiversificated(boost::shared_ptr<Key> key, std::vector<unsigned char> diversify)
+	std::vector<unsigned char> SagemKeyDiversification::getDiversifiedKey(boost::shared_ptr<Key> key, std::vector<unsigned char> diversify)
 	{
 		INFO_("Using key diversification Sagem with div : %s", BufferHelper::getHex(diversify).c_str());
 		std::vector<unsigned char> keydiv;

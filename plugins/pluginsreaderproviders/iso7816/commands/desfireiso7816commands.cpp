@@ -172,13 +172,11 @@ namespace logicalaccess
 		else
 		{
 			std::vector<unsigned char> diversify;
-			if (key->getKeyDiversification() == NULL || (key->getKeyDiversification() && key->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), d_crypto->d_currentAid, key)))
+			if (key->getKeyDiversification())
 			{	
-				cryptogram = d_crypto->changeKey_PICC(keyno, key, diversify);
+				key->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, key, diversify);
 			}
-			else
-				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Key Diversification has failed.");
-
+			cryptogram = d_crypto->changeKey_PICC(keyno, key, diversify);
 		}
 
 		unsigned char command[25];
@@ -707,15 +705,45 @@ namespace logicalaccess
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAMKeyStorage set on the key but not SAM reader has been set.");
 
 		std::vector<unsigned char> diversify;
-		if (key->getKeyDiversification() == NULL || (key->getKeyDiversification() && key->getKeyDiversification()->initDiversification(diversify, d_crypto->getIdentifier(), d_crypto->d_currentAid, key)))
+		if (key->getKeyDiversification())
 		{
-			command[0] = keyno;
-			std::vector<unsigned char> result = DESFireISO7816Commands::transmit(DF_INS_AUTHENTICATE, command, 1);
-			if (result[result.size() - 1] == DF_INS_ADDITIONAL_FRAME && (result.size()-2) >= 8)
-			{
-				result.resize(8);
-				std::vector<unsigned char> rndAB;
+			key->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, key, diversify);
+		}
+		command[0] = keyno;
+		std::vector<unsigned char> result = DESFireISO7816Commands::transmit(DF_INS_AUTHENTICATE, command, 1);
+		if (result[result.size() - 1] == DF_INS_ADDITIONAL_FRAME && (result.size()-2) >= 8)
+		{
+			result.resize(8);
+			std::vector<unsigned char> rndAB;
 
+			if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
+			{
+				boost::shared_ptr<SAMCommands> samcommands = boost::dynamic_pointer_cast<SAMCommands>(getSAMChip()->getCommands());
+				boost::shared_ptr<ISO7816ReaderCardAdapter> readercardadapter = boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(samcommands->getReaderCardAdapter());
+
+				unsigned char apduresult[255];
+				size_t apduresultlen = sizeof(apduresult);
+
+				std::vector<unsigned char> data(2 + result.size());
+				data[0] = keyno;
+				data[1] = key->getKeyVersion();
+				memcpy(&data[0] + 2, &result[0], result.size());
+
+				readercardadapter->sendAPDUCommand(0x80, 0x0a, 0x02, 0x00, (unsigned char)(data.size()), &data[0], data.size(), 0x00, apduresult, &apduresultlen);
+				if (apduresultlen <= 2)
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam authenticate DES P1 failed.");
+
+				rndAB.insert(rndAB.begin(), apduresult, apduresult + 16);
+			}
+			else
+				rndAB = d_crypto->authenticate_PICC1(keyno, diversify, result);
+
+			result = DESFireISO7816Commands::transmit(DF_INS_ADDITIONAL_FRAME, &rndAB[0], 16);
+
+			if ((result.size() - 2) >= 8)
+			{
+				result.resize(result.size() - 2);
+					
 				if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
 				{
 					boost::shared_ptr<SAMCommands> samcommands = boost::dynamic_pointer_cast<SAMCommands>(getSAMChip()->getCommands());
@@ -724,49 +752,18 @@ namespace logicalaccess
 					unsigned char apduresult[255];
 					size_t apduresultlen = sizeof(apduresult);
 
-					std::vector<unsigned char> data(2 + result.size());
-					data[0] = keyno;
-					data[1] = key->getKeyVersion();
-					memcpy(&data[0] + 2, &result[0], result.size());
+					apduresultlen = 255;
+					readercardadapter->sendAPDUCommand(0x80, 0x0a, 0x00, 0x00, 0x08, &result[0], 0x08, apduresult, &apduresultlen);
 
-					readercardadapter->sendAPDUCommand(0x80, 0x0a, 0x02, 0x00, (unsigned char)(data.size()), &data[0], data.size(), 0x00, apduresult, &apduresultlen);
-					if (apduresultlen <= 2)
-						THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam authenticate DES P1 failed.");
-
-					rndAB.insert(rndAB.begin(), apduresult, apduresult + 16);
+					if (apduresultlen != 2 || apduresult[0] != 0x90 || apduresult[1] != 0x00)
+						THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam authenticate DES P2 failed.");
+					d_crypto->d_sessionKey = samcommands->dumpSessionKey();
+					d_crypto->d_currentKeyNo = keyno;
 				}
 				else
-					rndAB = d_crypto->authenticate_PICC1(keyno, diversify, result);
-
-				result = DESFireISO7816Commands::transmit(DF_INS_ADDITIONAL_FRAME, &rndAB[0], 16);
-
-				if ((result.size() - 2) >= 8)
-				{
-					result.resize(result.size() - 2);
-					
-					if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
-					{
-						boost::shared_ptr<SAMCommands> samcommands = boost::dynamic_pointer_cast<SAMCommands>(getSAMChip()->getCommands());
-						boost::shared_ptr<ISO7816ReaderCardAdapter> readercardadapter = boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(samcommands->getReaderCardAdapter());
-
-						unsigned char apduresult[255];
-						size_t apduresultlen = sizeof(apduresult);
-
-						apduresultlen = 255;
-						readercardadapter->sendAPDUCommand(0x80, 0x0a, 0x00, 0x00, 0x08, &result[0], 0x08, apduresult, &apduresultlen);
-
-						if (apduresultlen != 2 || apduresult[0] != 0x90 || apduresult[1] != 0x00)
-							THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam authenticate DES P2 failed.");
-						d_crypto->d_sessionKey = samcommands->dumpSessionKey();
-						d_crypto->d_currentKeyNo = keyno;
-					}
-					else
-						d_crypto->authenticate_PICC2(keyno, result);
-				}
+					d_crypto->authenticate_PICC2(keyno, result);
 			}
 		}
-		else
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Key Diversification has failed.");
 	}
 
 	std::vector<unsigned char> DESFireISO7816Commands::transmit(unsigned char cmd, unsigned char lc)
