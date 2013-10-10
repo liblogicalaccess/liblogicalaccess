@@ -37,10 +37,15 @@ namespace logicalaccess
 				diversify.push_back(aidTab[x]);
 
 			std::vector<unsigned char> const_vector = std::vector<unsigned char>(const_id.begin(), const_id.end());
+			int syssize = 0;
 			if (boost::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_AES)
-				diversify.insert(diversify.end(), const_vector.begin(), const_vector.begin() + 7);
+				syssize = 7;
 			else
-				diversify.insert(diversify.end(), const_vector.begin(), const_vector.begin() + 5);
+				syssize = 5;
+
+			EXCEPTION_ASSERT_WITH_LOG(const_vector.size() >= syssize, LibLogicalAccessException, "System identifier too short for diversification.");
+
+			diversify.insert(diversify.end(), const_vector.begin(), const_vector.begin() + syssize);
 		}
 		else
 		{

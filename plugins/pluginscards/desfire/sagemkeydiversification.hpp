@@ -16,7 +16,7 @@ namespace logicalaccess
 		SagemKeyDiversification() {};
 		~SagemKeyDiversification() {};
 
-		std::string getType() { return "Sagem"; };
+		virtual std::string getType() { return "Sagem"; };
 
 		virtual void serialize(boost::property_tree::ptree& parentNode);
 		virtual void unSerialize(boost::property_tree::ptree& node);

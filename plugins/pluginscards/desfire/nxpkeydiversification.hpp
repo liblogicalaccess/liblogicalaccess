@@ -19,7 +19,7 @@ namespace logicalaccess
 		NXPKeyDiversification(std::string systemidentifier) : d_systemidentifier(systemidentifier) {};
 		~NXPKeyDiversification() {};
 
-		std::string getType() { return "NXP"; };
+		virtual std::string getType() { return "NXP"; };
 
 		std::string d_systemidentifier;
 
