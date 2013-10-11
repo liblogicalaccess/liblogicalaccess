@@ -223,7 +223,10 @@ namespace logicalaccess
 			THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_CONNECTED);
 		}
 
-		INFO_SIMPLE_("Waiting card insertion...");
+		if (Settings::getInstance()->SeeWaitInsertionLog)
+		{
+			INFO_SIMPLE_("Waiting card insertion...");
+		}
 
 		LONG r = 0;
 		bool usePnp = true;
@@ -235,13 +238,19 @@ namespace logicalaccess
 
 		if (reader != "")
 		{
-			INFO_("Use specific reader: %s.", reader.c_str());
+			if (Settings::getInstance()->SeeWaitInsertionLog)
+			{
+				INFO_("Use specific reader: %s.", reader.c_str());
+			}
 			readers_count = 1;
 			usePnp = false;
 		}
 		else
 		{
-			INFO_SIMPLE_("Listening on all readers");
+			if (Settings::getInstance()->SeeWaitInsertionLog)
+			{
+				INFO_SIMPLE_("Listening on all readers");
+			}
 			readers_count = static_cast<int>(getReaderProvider()->getReaderList().size());
 
 			SCARD_READERSTATE rgReaderStates[1];
@@ -253,7 +262,10 @@ namespace logicalaccess
 			if (rgReaderStates[0].dwEventState & SCARD_STATE_UNKNOWN)
 			{
 				usePnp = false;
-				INFO_SIMPLE_("No PnP support.");
+				if (Settings::getInstance()->SeeWaitInsertionLog)
+				{
+					INFO_SIMPLE_("No PnP support.");
+				}
 			}
 		}
 
@@ -361,7 +373,10 @@ namespace logicalaccess
 					{
 						if (r != SCARD_E_TIMEOUT)
 						{
-							ERROR_("Cannot get status change: %x.", r);
+							if (Settings::getInstance()->SeeWaitInsertionLog)
+							{
+								ERROR_("Cannot get status change: %x.", r);
+							}
 							PCSCDataTransport::CheckCardError(r);
 						}
 					}
@@ -445,7 +460,10 @@ namespace logicalaccess
 			THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_CONNECTED);
 		}
 
-		INFO_SIMPLE_("Waiting card removal...");
+		if (Settings::getInstance()->SeeWaitRemovalLog)
+		{
+			INFO_SIMPLE_("Waiting card removal...");
+		}
 
 		string reader = getConnectedName();
 
@@ -558,7 +576,10 @@ namespace logicalaccess
 					{
 						if (r != SCARD_E_TIMEOUT)
 						{
-							ERROR_("Cannot get status change: %x.", r);
+							if (Settings::getInstance()->SeeWaitRemovalLog)
+							{
+								ERROR_("Cannot get status change: %x.", r);
+							}
 							PCSCDataTransport::CheckCardError(r);
 						}
 					}
