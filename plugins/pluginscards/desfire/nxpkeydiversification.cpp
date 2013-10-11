@@ -12,7 +12,7 @@
 
 namespace logicalaccess
 {
-	bool NXPKeyDiversification::initDiversification(std::vector<unsigned char>& diversify, std::vector<unsigned char> identifier, int AID, boost::shared_ptr<Key> key)
+	void NXPKeyDiversification::initDiversification(std::vector<unsigned char> identifier, int AID, boost::shared_ptr<Key> key, std::vector<unsigned char>& diversify)
 	{
 		std::string const_id;
 
@@ -37,17 +37,23 @@ namespace logicalaccess
 				diversify.push_back(aidTab[x]);
 
 			std::vector<unsigned char> const_vector = std::vector<unsigned char>(const_id.begin(), const_id.end());
+			int syssize = 0;
 			if (boost::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_AES)
-				diversify.insert(diversify.end(), const_vector.begin(), const_vector.begin() + 7);
+				syssize = 7;
 			else
-				diversify.insert(diversify.end(), const_vector.begin(), const_vector.begin() + 5);
+				syssize = 5;
+
+			EXCEPTION_ASSERT_WITH_LOG(const_vector.size() >= syssize, LibLogicalAccessException, "System identifier too short for diversification.");
+
+			diversify.insert(diversify.end(), const_vector.begin(), const_vector.begin() + syssize);
 		}
 		else
-			return false;
-		return true;
+		{
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Chip identifier is required for key diversification.");
+		}
 	}
 
-	std::vector<unsigned char> NXPKeyDiversification::getKeyDiversificated(boost::shared_ptr<Key> key, std::vector<unsigned char> diversify)
+	std::vector<unsigned char> NXPKeyDiversification::getDiversifiedKey(boost::shared_ptr<Key> key, std::vector<unsigned char> diversify)
 	{
 		INFO_("Using key diversification NXP with div : %s", BufferHelper::getHex(diversify).c_str());
 		int block_size = 0;

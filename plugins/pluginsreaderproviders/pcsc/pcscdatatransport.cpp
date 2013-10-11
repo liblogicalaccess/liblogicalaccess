@@ -107,7 +107,7 @@ namespace logicalaccess
 		return "PCSCDataTransport";
 	}
 
-	void PCSCDataTransport::CheckCardError(unsigned int errorFlag) const
+	void PCSCDataTransport::CheckCardError(unsigned int errorFlag)
 	{
 		if (errorFlag != SCARD_S_SUCCESS)
 		{

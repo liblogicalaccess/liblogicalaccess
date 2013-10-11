@@ -241,7 +241,7 @@ namespace logicalaccess
 		}
 		else
 		{
-			INFO_("Listening on all readers");
+			INFO_SIMPLE_("Listening on all readers");
 			readers_count = static_cast<int>(getReaderProvider()->getReaderList().size());
 
 			SCARD_READERSTATE rgReaderStates[1];
@@ -359,7 +359,11 @@ namespace logicalaccess
 					}
 					else
 					{
-						ERROR_("Cannot get status change: %x.", r);
+						if (r != SCARD_E_TIMEOUT)
+						{
+							ERROR_("Cannot get status change: %x.", r);
+							PCSCDataTransport::CheckCardError(r);
+						}
 					}
 				} while(loop);
 
@@ -548,6 +552,14 @@ namespace logicalaccess
 								reader = string(reinterpret_cast<const char*>(readers[i].szReader), strlen(reinterpret_cast<const char*>(readers[i].szReader)));
 								break;
 							}
+						}
+					}
+					else
+					{
+						if (r != SCARD_E_TIMEOUT)
+						{
+							ERROR_("Cannot get status change: %x.", r);
+							PCSCDataTransport::CheckCardError(r);
 						}
 					}
 				}

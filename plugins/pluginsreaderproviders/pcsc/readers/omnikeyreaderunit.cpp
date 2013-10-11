@@ -73,7 +73,7 @@ namespace logicalaccess
 		d_isSecureConnectionMode[getConnectedName()] = isSecure;
 	}
 
-	void OmnikeyReaderUnit::disconnect()
+	bool OmnikeyReaderUnit::waitRemoval(unsigned int maxwait)
 	{
 		/*if (getIsSecureConnectionMode())
 		{
@@ -81,6 +81,6 @@ namespace logicalaccess
 			setIsSecureConnectionMode(false);
 		}*/
 
-		PCSCReaderUnit::disconnect();		
+		return PCSCReaderUnit::waitRemoval(maxwait);		
 	}
 }

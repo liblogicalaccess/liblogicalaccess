@@ -89,7 +89,7 @@ namespace logicalaccess
 			 * \brief Check the card error and throw exception if needed.
 			 * \param errorFlag The error flag.
 			 */
-			virtual void CheckCardError(unsigned int errorFlag) const;
+			static void CheckCardError(unsigned int errorFlag);
 
 			/**
 			 * \brief Check the command result and throw exception if needed.
