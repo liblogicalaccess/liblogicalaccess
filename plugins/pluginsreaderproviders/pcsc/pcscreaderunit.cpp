@@ -359,7 +359,11 @@ namespace logicalaccess
 					}
 					else
 					{
-						ERROR_("Cannot get status change: %x.", r);
+						if (r != SCARD_E_TIMEOUT)
+						{
+							ERROR_("Cannot get status change: %x.", r);
+							PCSCDataTransport::CheckCardError(r);
+						}
 					}
 				} while(loop);
 
@@ -548,6 +552,14 @@ namespace logicalaccess
 								reader = string(reinterpret_cast<const char*>(readers[i].szReader), strlen(reinterpret_cast<const char*>(readers[i].szReader)));
 								break;
 							}
+						}
+					}
+					else
+					{
+						if (r != SCARD_E_TIMEOUT)
+						{
+							ERROR_("Cannot get status change: %x.", r);
+							PCSCDataTransport::CheckCardError(r);
 						}
 					}
 				}
