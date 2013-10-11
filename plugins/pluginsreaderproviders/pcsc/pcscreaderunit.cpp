@@ -808,8 +808,13 @@ namespace logicalaccess
 
 				boost::shared_ptr<PCSCReaderUnit> ret;
 
-				ret.reset(new PCSCReaderUnit(getPCSCConfiguration()->getSAMReaderName()));
-				ret->setReaderProvider(getReaderProvider());
+				if (d_sam_readerunit && d_sam_readerunit->getName() == getPCSCConfiguration()->getSAMReaderName())
+					ret = d_sam_readerunit;
+				else
+				{
+					ret.reset(new PCSCReaderUnit(getPCSCConfiguration()->getSAMReaderName()));
+					ret->setReaderProvider(getReaderProvider());
+				}
 				ret->connectToReader();
 
 				if (!ret->waitInsertion(1))
@@ -828,7 +833,7 @@ namespace logicalaccess
 
 				INFO_SIMPLE_("SAM backward ended.");
 			
-				setSAMChip(boost::dynamic_pointer_cast<SAMChip>(ret->getSingleChip())); 
+				setSAMChip(boost::dynamic_pointer_cast<SAMChip>(ret->getSingleChip()));
 				setSAMReaderUnit(ret);
 
 				INFO_SIMPLE_("Starting SAM Security check...");
