@@ -62,7 +62,8 @@ namespace logicalaccess
 					memset(formatBuf, 0x00, length);
 					try
 					{
-						BitHelper::writeToBit(formatBuf, length, 0, &getChip()->getChipIdentifier()[0], pLocation->bit, dataLengthBits);
+						unsigned int pos = 0;
+						BitHelper::writeToBit(formatBuf, length, &pos, &getChip()->getChipIdentifier()[0], pLocation->bit, dataLengthBits);
 						formatret->setLinearData(formatBuf, length);
 						ret = true;
 					}
