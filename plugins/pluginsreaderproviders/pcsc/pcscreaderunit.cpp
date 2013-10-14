@@ -1460,9 +1460,13 @@ namespace logicalaccess
 			{
 				commands.reset(new ISO15693PCSCCommands());
 			}
-			else if (type == "TagIt")
+			else if (type == "ISO15693")
 			{
 				commands.reset(new ISO7816ISO7816Commands());
+			}
+			else if (type == "TagIt")
+			{
+				commands.reset(new ISO15693PCSCCommands());
 			}
 			else if (type ==  "Twic")
 			{
