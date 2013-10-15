@@ -4,7 +4,7 @@ liblogicalaccess
 [Homepage](http://liblogicalaccess.islog.com) | 
 [GitHub-Repository](https://github.com/islog/liblogicalaccess) | 
 [Download binaries](http://liblogicalaccess.islog.com/wiki/doku.php/download) |
-[Issue-Tracker](https://github.com/islog/liblogicalaccess/issues) |
+[Issue-Tracker](https://github.com/islog/liblogicalaccess/issues)
 
 C++ RFID Library for Windows and Linux. For PC/SC, ISO compliant and proprietary hardware.
 
