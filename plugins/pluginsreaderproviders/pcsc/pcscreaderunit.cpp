@@ -656,7 +656,7 @@ namespace logicalaccess
 						{
 							if (d_atrLength > 2)
 							{
-								d_insertedChip->setChipIdentifier(std::vector<unsigned char>(d_atr, d_atr + d_atrLength - 2));
+								d_insertedChip->setChipIdentifier(std::vector<unsigned char>(d_atr, d_atr + d_atrLength));
 							}
 						}
 						// Specific behavior for DESFire to check if it is not a DESFire EV1

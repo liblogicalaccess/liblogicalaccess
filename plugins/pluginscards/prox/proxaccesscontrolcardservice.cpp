@@ -63,7 +63,7 @@ namespace logicalaccess
 					try
 					{
 						unsigned int pos = 0;
-						BitHelper::writeToBit(formatBuf, length, &pos, &getChip()->getChipIdentifier()[0], pLocation->bit, dataLengthBits);
+						BitHelper::writeToBit(formatBuf, length, &pos, &getChip()->getChipIdentifier()[0], getChip()->getChipIdentifier().size(), static_cast<unsigned int>(getChip()->getChipIdentifier().size() * 8), static_cast<unsigned int>(pLocation->bit), dataLengthBits);
 						formatret->setLinearData(formatBuf, length);
 						ret = true;
 					}
