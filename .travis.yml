@@ -1,0 +1,4 @@
+language: cpp
+compiler: gcc
+install: libboost-dev libboost-system-dev libboost-filesystem-dev libboost-date-time-dev libpcsclite-dev libssl-dev
+script: cmake . && make && cd plugins/pluginscards/ && cmake . && make && cd ../pluginsreaderproviders/ && cmake . && make
