@@ -1,7 +1,7 @@
 language: cpp
 compiler: gcc
 before_install:
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y && sudo add-apt-repository ppa:jkeiren/ppa
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y && sudo add-apt-repository ppa:jkeiren/ppa -y
   - sudo apt-get update -qq
   - apt-cache search boost
   - sudo apt-get install -qq libboost1.49-dev libboost-system1.49-dev libboost-filesystem1.49-dev libboost-date-time1.49-dev libpcsclite-dev libssl-dev
