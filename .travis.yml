@@ -1,5 +1,5 @@
 language: cpp
 compiler: gcc
-before_install: sudo apt-get update
-install: sudo apt-get install libboost-dev libboost-system-dev libboost-filesystem-dev libboost-date-time-dev libpcsclite-dev libssl-dev
+before_install: sudo apt-get update -qq
+install: sudo apt-get install -qq libboost-dev libboost-system-dev libboost-filesystem-dev libboost-date-time-dev libpcsclite-dev libssl-dev
 script: cmake . && make && cd plugins/pluginscards/ && cmake . && make && cd ../pluginsreaderproviders/ && cmake . && make
