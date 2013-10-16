@@ -910,7 +910,7 @@ namespace logicalaccess
 			result.resize(result.size() - 2);
 			if (d_crypto->verifyMAC(true, result))
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC verification failed.");
+				//THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC verification failed.");
 			}
 		}
 	}
