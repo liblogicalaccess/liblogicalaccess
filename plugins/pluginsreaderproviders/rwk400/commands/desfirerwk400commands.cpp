@@ -44,7 +44,6 @@ namespace logicalaccess
 	
 	void DesfireRwk400Commands::selectApplication(unsigned int aid)
 	{
-		bool res = true;
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> answer;
 		command.push_back(0x80);
@@ -70,7 +69,6 @@ namespace logicalaccess
 
 	void DesfireRwk400Commands::createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys)
 	{
-		bool res = true;
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> answer;
 		command.push_back(0x80);
@@ -337,7 +335,6 @@ namespace logicalaccess
 	void DesfireRwk400Commands::writeData(unsigned char fileno, unsigned int offset, unsigned int length, const void* data, EncryptionMode mode)
 	{
 		UNUSED(mode);
-		bool res = false;
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> answer;
 		command.push_back(0x80);
@@ -360,7 +357,6 @@ namespace logicalaccess
 		try
 		{
 			answer = getReaderCardAdapter()->sendCommand(command, 0);
-			res = true;
 		}
 		catch(std::exception& ex)
 		{

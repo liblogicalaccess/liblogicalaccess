@@ -33,7 +33,7 @@ namespace logicalaccess
 		EXCEPTION_ASSERT_WITH_LOG(dfLocation, std::invalid_argument, "location must be a DESFireLocation.");
 
 		// Application (File keys are Application keys)
-		if (dfLocation->aid != -1)
+		if (dfLocation->aid != (unsigned int)-1)
 		{
 			for (unsigned char i = 0; i < 14; ++i)
 			{

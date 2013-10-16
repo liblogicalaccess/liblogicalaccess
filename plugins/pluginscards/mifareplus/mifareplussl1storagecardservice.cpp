@@ -212,30 +212,26 @@ namespace logicalaccess
 				}				
 			}
 
-			size_t reallen;			
-
 			if (behaviorFlags & CB_AUTOSWITCHAREA)
 			{
-				reallen = getMifarePlusChip()->getMifarePlusSL1Commands()->writeSectors(mLocation->sector,
-					mLocation->sector + nbSectors - 1,
-					mLocation->block,
-					&dataSectors[0],
-					dataSectors.size(),
-					mAiToUse->sab,
-					mAiToUse->gpb,
-					(mAiToWrite) ? &(mAiToWrite->sab) : NULL
-				);
+				getMifarePlusChip()->getMifarePlusSL1Commands()->writeSectors(mLocation->sector,
+											      mLocation->sector + nbSectors - 1,
+											      mLocation->block,
+											      &dataSectors[0],
+											      dataSectors.size(),
+											      mAiToUse->sab,
+											      mAiToUse->gpb,
+											      (mAiToWrite) ? &(mAiToWrite->sab) : NULL);
 			}
 			else
 			{
-				reallen = getMifarePlusChip()->getMifarePlusSL1Commands()->writeSector(mLocation->sector,
-					mLocation->block,
-					&dataSectors[0],
-					dataSectors.size(),
-					mAiToUse->sab,
-					mAiToUse->gpb,
-					(mAiToWrite) ? &(mAiToWrite->sab) : NULL
-				);
+				getMifarePlusChip()->getMifarePlusSL1Commands()->writeSector(mLocation->sector,
+											     mLocation->block,
+											     &dataSectors[0],
+											     dataSectors.size(),
+											     mAiToUse->sab,
+											     mAiToUse->gpb,
+											     (mAiToWrite) ? &(mAiToWrite->sab) : NULL);
 			}
 
 			boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKeyUsage(getMifarePlusChip()->getNbSectors(), KT_KEY_CRYPTO1_A, false);
@@ -374,8 +370,6 @@ namespace logicalaccess
 		{
 			THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad sector access bits configuration.");
 		}
-		
-		bool result = false;
 
 		for (unsigned int i = 0; i < getMifarePlusChip()->getNbSectors(); ++i)
 		{

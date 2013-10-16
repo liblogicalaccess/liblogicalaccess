@@ -848,7 +848,7 @@ namespace logicalaccess
 	void STidSTRReaderUnit::loadSKB()
 	{
 		INFO_SIMPLE_("Loading SKB...");
-		unsigned char statusCode;
+		unsigned char statusCode = 0;
 		std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000E, std::vector<unsigned char>(), statusCode);
 
 		EXCEPTION_ASSERT_WITH_LOG(response.size() == 0, LibLogicalAccessException, "Unable to load the SKB values. An unknown error occured.");

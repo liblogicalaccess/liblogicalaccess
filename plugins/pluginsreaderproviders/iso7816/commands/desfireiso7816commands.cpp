@@ -638,8 +638,6 @@ namespace logicalaccess
 
 	void DESFireISO7816Commands::writeRecord(unsigned char fileno, unsigned int offset, unsigned int length, const void* data, EncryptionMode mode)
 	{
-		bool ret = false;
-
 		unsigned char parameters[7];
 		parameters[0] = fileno;
 		parameters[1] = static_cast<unsigned char>(offset & 0xff);

@@ -2,7 +2,7 @@
 #include "boost/shared_ptr.hpp"
 #include "logicalaccess/crypto/des_cipher.hpp"
 #include "logicalaccess/crypto/aes_cipher.hpp"
-#include "logicalaccess/crypto/CMAC.hpp"
+#include "logicalaccess/crypto/cmac.hpp"
 #include "logicalaccess/crypto/symmetric_key.hpp"
 #include "logicalaccess/crypto/aes_symmetric_key.hpp"
 #include "logicalaccess/crypto/aes_initialization_vector.hpp"

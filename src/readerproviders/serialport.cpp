@@ -250,7 +250,6 @@ namespace logicalaccess
 			ptv = &tv;
 		}
 
-		struct timeval mtv = tv;
 		int retval;
 		retval = ::select(socketDescriptor() + 1, &rfs, NULL, NULL, ptv);
 

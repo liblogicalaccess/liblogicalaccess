@@ -215,30 +215,26 @@ namespace logicalaccess
 				}
 			}
 
-			size_t reallen;			
-
 			if (behaviorFlags & CB_AUTOSWITCHAREA)
 			{
-				reallen = getMifareChip()->getMifareCommands()->writeSectors(mLocation->sector,
-					mLocation->sector + nbSectors - 1,
-					mLocation->block,
-					&dataSectors[0],
-					dataSectors.size(),
-					mAiToUse->sab,
-					mAiToUse->gpb,
-					(mAiToWrite) ? &(mAiToWrite->sab) : NULL
-				);
+				getMifareChip()->getMifareCommands()->writeSectors(mLocation->sector,
+										   mLocation->sector + nbSectors - 1,
+										   mLocation->block,
+										   &dataSectors[0],
+										   dataSectors.size(),
+										   mAiToUse->sab,
+										   mAiToUse->gpb,
+										   (mAiToWrite) ? &(mAiToWrite->sab) : NULL);
 			}
 			else
 			{
-				reallen = getMifareChip()->getMifareCommands()->writeSector(mLocation->sector,
-					mLocation->block,
-					&dataSectors[0],
-					dataSectors.size(),
-					mAiToUse->sab,
-					mAiToUse->gpb,
-					(mAiToWrite) ? &(mAiToWrite->sab) : NULL
-				);
+				getMifareChip()->getMifareCommands()->writeSector(mLocation->sector,
+										  mLocation->block,
+										  &dataSectors[0],
+										  dataSectors.size(),
+										  mAiToUse->sab,
+										  mAiToUse->gpb,
+										  (mAiToWrite) ? &(mAiToWrite->sab) : NULL);
 			}
 
 			getMifareChip()->getMifareProfile()->setKeyUsage(getMifareChip()->getNbSectors(), KT_KEY_A, false);

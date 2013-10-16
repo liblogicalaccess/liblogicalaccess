@@ -18,8 +18,8 @@ namespace logicalaccess
 
 		static boost::shared_ptr<KeyDiversification> getKeyDiversificationFromType(std::string kdiv);
 
-		virtual void serialize(boost::property_tree::ptree& parentNode) {};
-		virtual void unSerialize(boost::property_tree::ptree& node) {};
+		virtual void serialize(boost::property_tree::ptree& /*parentNode*/) {};
+		virtual void unSerialize(boost::property_tree::ptree& /*node*/) {};
 		virtual std::string getDefaultXmlNodeName() const { return "KeyDiversification"; };
 	};
 }
