@@ -46,6 +46,7 @@ namespace logicalaccess
 		boost::shared_ptr<Chip> getCard(const std::string& cardtype);
 		boost::shared_ptr<Commands> getCommands(const std::string& extendedtype);
 		boost::shared_ptr<DataTransport> getDataTransport(const std::string& transporttype);
+		boost::shared_ptr<KeyDiversification> getKeyDiversification(const std::string& keydivtype);
 
 		std::vector<std::string> getAvailableCards();
 

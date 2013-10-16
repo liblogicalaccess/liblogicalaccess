@@ -56,7 +56,7 @@ namespace logicalaccess
 			}
 			else
 			{
-				throw Exception::exception("'=' character expected");
+				THROW_EXCEPTION_WITH_LOG(Exception::exception, "'=' character expected");
 			}
 		}
 		else
@@ -235,9 +235,14 @@ namespace logicalaccess
 		buffer.push_back(static_cast<unsigned char>((value & 0xff000000) >> 24));
 	}
 
+	unsigned long BufferHelper::getUInt32(const std::vector<unsigned char>& buffer, size_t& offset)
+	{
+		return static_cast<unsigned long>(buffer[offset++] | (buffer[offset++] << 8) | (buffer[offset++] << 16) | (buffer[offset++] << 24));
+	}
+
 	long BufferHelper::getInt32(const std::vector<unsigned char>& buffer, size_t& offset)
 	{
-		return static_cast<unsigned short>(buffer[offset++] | (buffer[offset++] << 8) | (buffer[offset++] << 16) | (buffer[offset++] << 24));
+		return static_cast<long>(buffer[offset++] | (buffer[offset++] << 8) | (buffer[offset++] << 16) | (buffer[offset++] << 24));
 	}
 
 	void BufferHelper::setUInt64(std::vector<unsigned char>& buffer, const unsigned long long& value)

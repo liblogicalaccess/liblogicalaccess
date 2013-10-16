@@ -91,48 +91,43 @@ namespace logicalaccess
 
 			/**
 			 * \brief Erase the card.
-			 * \return true if the card was erased, false otherwise. If false, the card may be partially erased.
 			 */
-			virtual bool erase();
+			virtual void erase();
 
 			/**
 			 * \brief Create a new application.
 			 * \param aid The Application ID to create
 			 * \param settings Key settings
 			 * \param maxNbKeys Maximum number of keys
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool createApplication(int aid, DESFireKeySettings settings, int maxNbKeys);
+			virtual void createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys);
 
 			/**
 			 * \brief Create a new application.
 			 * \param aid The Application ID to create
 			 * \param settings Key settings
 			 * \param maxNbKeys Maximum number of keys
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool createApplication(int aid, DESFireKeySettings settings, size_t maxNbKeys, FidSupport fidSupported = FIDS_NO_ISO_FID, DESFireKeyType cryptoMethod = DF_KEY_DES, unsigned short isoFID = 0x00, const char* isoDFName = NULL);
+			virtual void createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, DESFireKeyType cryptoMethod, FidSupport fidSupported = FIDS_NO_ISO_FID, unsigned short isoFID = 0x00, const char* isoDFName = NULL);
 
 			/**
 			 * \brief Delete an application.
 			 * \param aid The Application ID to delete
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool deleteApplication(int aid);
+			virtual void deleteApplication(unsigned int aid);
 
 			/**
 			 * \brief Select an application.
 			 * \param aid The Application ID
-			 * \return true on success, false otherwise.
 			 */
-			virtual bool selectApplication(int aid);
+			virtual void selectApplication(unsigned int aid);
 
 			/**
 			 * \brief Get key settings on the current application.
 			 * \param settings Key settings
 			 * \param maxNbKeys Maximum number of keys
 			 */
-			virtual void getKeySettings(DESFireKeySettings& settings, unsigned int& maxNbKeys);
+			virtual void getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys);
 
 			/**
 			 * \brief Get key settings on the current application.
@@ -140,7 +135,7 @@ namespace logicalaccess
 			 * \param maxNbKeys Maximum number of keys
 			 * \param keyType The key type
 			 */
-			virtual void getKeySettings(DESFireKeySettings& settings, unsigned int& maxNbKeys, DESFireKeyType& keyType);
+			virtual void getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys, DESFireKeyType& keyType);
 
 			/**
 			 * \brief Get a random card UID.
@@ -154,9 +149,8 @@ namespace logicalaccess
 			 * \param comSettings The file communication setting
 			 * \param accessRights The file access rights
 			 * \param fileSize The file size.
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool createStdDataFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize);
+			virtual void createStdDataFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize);
 
 			/**
 			 * \brief Create a new data file in the current application.
@@ -164,21 +158,18 @@ namespace logicalaccess
 			 * \param comSettings The file communication setting
 			 * \param accessRights The file access rights
 			 * \param fileSize The file size (in bytes).
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool createStdDataFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize, unsigned short isoFID);
+			virtual void createStdDataFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned short isoFID);
 
 			/**
 			 * \brief Commit the transaction.
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool commitTransaction();
+			virtual void commitTransaction();
 
 			/**
 			 * \brief Abort the transaction.
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool abortTransaction();
+			virtual void abortTransaction();
 
 			/**
 			 * \brief Create a new backup file in the current application.
@@ -186,9 +177,8 @@ namespace logicalaccess
 			 * \param comSettings The file communication setting
 			 * \param accessRights The file access rights
 			 * \param fileSize The file size.
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool createBackupFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize);
+			virtual void createBackupFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize);
 
 			/**
 			 * \brief Create a new backup file in the current application.
@@ -196,9 +186,8 @@ namespace logicalaccess
 			 * \param comSettings The file communication setting
 			 * \param accessRights The file access rights
 			 * \param fileSize The file size (in bytes).
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool createBackupFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize, unsigned short isoFID);			
+			virtual void createBackupFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned short isoFID);			
 
 			/**
 			 * \brief Create a new value file in the current application.
@@ -209,9 +198,8 @@ namespace logicalaccess
 			 * \param upperLimit The file size (in bytes)
 			 * \param value The default value
 			 * \param limitedCreditEnabled Set if the limited credit is enabled
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool createValueFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int lowerLimit, unsigned int upperLimit, int value, bool limitedCreditEnabled);
+			virtual void createValueFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int lowerLimit, unsigned int upperLimit, unsigned int value, bool limitedCreditEnabled);
 
 			/**
 			 * \brief Create a new linear record file in the current application.
@@ -220,9 +208,8 @@ namespace logicalaccess
 			 * \param accessRights The file access rights
 			 * \param fileSize The file size.
 			 * \param maxNumberOfRecords Max number of records in the file.
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool createLinearRecordFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize, int maxNumberOfRecords);
+			virtual void createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords);
 			
 			/**
 			 * \brief Create a new linear record file in the current application.
@@ -233,7 +220,7 @@ namespace logicalaccess
 			 * \param maxNumberOfRecords Max number of records in the file.
 			 * \return True on success, false otherwise.
 			 */
-			virtual bool createLinearRecordFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize, int maxNumberOfRecords, unsigned short isoFID);
+			virtual void createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID);
 
 			/**
 			 * \brief Create a new cyclic record file in the current application.
@@ -242,9 +229,8 @@ namespace logicalaccess
 			 * \param accessRights The file access rights
 			 * \param fileSize The file size.
 			 * \param maxNumberOfRecords Max number of records in the file.
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool createCyclicRecordFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize, int maxNumberOfRecords);
+			virtual void createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords);
 
 			/**
 			 * \brief Create a new cyclic record file in the current application.
@@ -253,9 +239,8 @@ namespace logicalaccess
 			 * \param accessRights The file access rights
 			 * \param fileSize The file size (in bytes).
 			 * \param maxNumberOfRecords Max number of records in the file.
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool createCyclicRecordFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize, int maxNumberOfRecords, unsigned short isoFID);			
+			virtual void createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID);			
 
 			/**
 			 * \brief Select file under current DF.
@@ -332,17 +317,15 @@ namespace logicalaccess
 			/**
 			 * \brief Authenticate, given a key number.
 			 * \param keyno The key number.
-			 * \return true if authenticated, false otherwise.
 			 */
-			virtual bool authenticate(unsigned char keyno);
+			virtual void authenticate(unsigned char keyno);
 
 			/**
 			 * \brief Authenticate a block, given a key number.
 			 * \param keyno The key number.
 			 * \param key The key.
-			 * \return true if authenticated, false otherwise.
 			 */
-			virtual bool authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key);
+			virtual void authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key);
 
 			/**
 			 * \brief AuthenticateISO command.
@@ -366,7 +349,7 @@ namespace logicalaccess
 			 * \param mode The communication mode
 			 * \return The number of bytes read.
 			 */
-			virtual size_t readData(int fileno, size_t offset, size_t length, void* data, EncryptionMode mode);	
+			virtual unsigned int readData(unsigned char fileno, unsigned int offset, unsigned int length, void* data, EncryptionMode mode);	
 
 			/**
 			 * \brief Write data into a specific file.
@@ -375,27 +358,24 @@ namespace logicalaccess
 			 * \param length The data length to read
 			 * \param data The data buffer
 			 * \param mode The communication mode
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool writeData(int fileno, size_t offset, size_t length, const void* data, EncryptionMode mode);
+			virtual void writeData(unsigned char fileno, unsigned int offset, unsigned int length, const void* data, EncryptionMode mode);
 			
 			/**
 			 * \brief Credit a specific value file.
 			 * \param fileno The file number
 			 * \param value The value to credit
 			 * \param mode The communication mode
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool credit(int fileno, int value, EncryptionMode mode);
+			virtual void credit(unsigned char fileno, unsigned int value, EncryptionMode mode);
 
 			/**
 			 * \brief Debit a specific value file.
 			 * \param fileno The file number
 			 * \param value The value to debit
 			 * \param mode The communication mode
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool debit(int fileno, int value, EncryptionMode mode);
+			virtual void debit(unsigned char fileno, unsigned int value, EncryptionMode mode);
 
 			/**
 			 * \brief Limit credit on a specific value file.
@@ -405,7 +385,7 @@ namespace logicalaccess
 			 * \param mode The communication mode
 			 * \return True on success, false otherwise.
 			 */
-			virtual bool limitedCredit(int fileno, int value, EncryptionMode mode);
+			virtual void limitedCredit(unsigned char fileno, unsigned int value, EncryptionMode mode);
 
 			/**
 			 * \brief Write record into a specific record file.
@@ -414,9 +394,8 @@ namespace logicalaccess
 			 * \param length The length to write
 			 * \param data The data buffer
 			 * \param mode The communication mode
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool writeRecord(int fileno, size_t offset, size_t length, const void* data, EncryptionMode mode);
+			virtual void writeRecord(unsigned char fileno, unsigned int offset, unsigned int length, const void* data, EncryptionMode mode);
 
 			/**
 			 * \brief Read record from a specific record file.
@@ -427,14 +406,13 @@ namespace logicalaccess
 			 * \param mode The communication mode
 			 * \return The number of bytes read.
 			 */
-			virtual size_t readRecords(int fileno, size_t offset, size_t length, void* data, EncryptionMode mode);
+			virtual unsigned int readRecords(unsigned char fileno, unsigned int offset, unsigned int length, void* data, EncryptionMode mode);
 
 			/**
 			 * \brief Clear a specific record file.
 			 * \param fileno The file number.
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool clearRecordFile(int fileno);		
+			virtual void clearRecordFile(unsigned char fileno);		
 
 			/**
 			 * \brief Change file settings of a specific file in the current application.
@@ -442,31 +420,27 @@ namespace logicalaccess
 			 * \param comSettings The file communication setting
 			 * \param accessRights The file access rights
 			 * \param plain Communication is currently in plain data.
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool changeFileSettings(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, bool plain);
+			virtual void changeFileSettings(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, bool plain);
 
 			/**
 			 * \brief Delete a file in the current application.
 			 * \param fileno The file number to delete
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool deleteFile(int fileno);
+			virtual void deleteFile(unsigned char fileno);
 
 			/**
 			 * \brief Change key settings for the current application.
 			 * \param settings The new key settings
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool changeKeySettings(DESFireKeySettings settings);
+			virtual void changeKeySettings(DESFireKeySettings settings);
 
 			/**
 			 * \brief Change a key in the current application.
 			 * \param keyno The key number to change
 			 * \param key The new key
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool changeKey(unsigned char keyno, boost::shared_ptr<DESFireKey> key);
+			virtual void changeKey(unsigned char keyno, boost::shared_ptr<DESFireKey> key);
 
 			/**
 			 * \brief Change the key indexed keyno by a new index or crypto method.
@@ -488,37 +462,35 @@ namespace logicalaccess
 			/**
 			 * \brief Get the card version information.
 			 * \param dataVersion The card version information structure that will be filled
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool getVersion(DESFireCommands::DESFireCardVersion& dataVersion);	
+			virtual void getVersion(DESFireCommands::DESFireCardVersion& dataVersion);	
 
 			/**
 			 * \brief Get the current application list.
 			 * \return The application list.
 			 */
-			virtual std::vector<int> getApplicationIDs();
+			virtual std::vector<unsigned int> getApplicationIDs();
 
 			/**
 			 * \brief Get the File IDentifiers of all active files within the currently selected application
 			 * \return The file ID list.
 			 */
-			virtual std::vector<int> getFileIDs();
+			virtual std::vector<unsigned char> getFileIDs();
 
 			/**
 			 * \brief Get settings of a specific file in the current application.
 			 * \param fileno The file number
 			 * \param fileSetting The file setting
 			 */
-			virtual bool getFileSettings(int fileno, FileSetting& fileSetting);
+			virtual void getFileSettings(unsigned char fileno, FileSetting& fileSetting);
 
 			/**
 			 * \brief Get value from a specific value file.
 			 * \param fileno The file number
 			 * \param mode The communication mode
 			 * \param value The value stored in the card
-			 * \return True on success, false otherwise.
 			 */
-			virtual bool getValue(int fileno, EncryptionMode mode, int& value);
+			virtual void getValue(unsigned char fileno, EncryptionMode mode, unsigned int& value);
 
 			/**
 			 * \brief ISO select application command.
@@ -561,7 +533,7 @@ namespace logicalaccess
 
 		protected:						
 
-			int d_currentAid;
+			unsigned int d_currentAid;
 
 			boost::shared_ptr<DESFireProfile> d_profile;
 	};

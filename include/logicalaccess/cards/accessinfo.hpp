@@ -17,7 +17,7 @@ namespace logicalaccess
 	 * \brief A Access informations. Describe key used of authentication and access rights for a specific or a group of operati
 	 * \remarks Linearizable is depreciated, shouldn't be used anymore in further versions.
 	 */
-	class LIBLOGICALACCESS_API AccessInfo : public Linearizable, public XmlSerializable
+	class LIBLOGICALACCESS_API AccessInfo : public XmlSerializable
 	{
 		public:
 
@@ -36,11 +36,6 @@ namespace logicalaccess
 			 * \param csn The card serial number, as a salt (no diversification here).
 			 */
 			virtual void generateInfos(const std::string& csn) = 0;
-
-			/**
-			 * \brief Access informations data size.
-			 */
-			virtual size_t getDataSize() = 0;
 
 			/**
 			 * \brief Get the card type for this access infos.

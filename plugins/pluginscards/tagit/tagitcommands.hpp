@@ -10,16 +10,12 @@
 #include "logicalaccess/key.hpp"
 #include "../iso15693/iso15693commands.hpp"
 
-#include <string>
-#include <vector>
-#include <iostream>
-
 namespace logicalaccess
 {
 	/**
 	 * \brief The Tag-It commands base class.
 	 */
-	class LIBLOGICALACCESS_API TagItCommands : public ISO15693Commands
+	class LIBLOGICALACCESS_API TagItCommands
 	{
 		public:
 
@@ -28,10 +24,7 @@ namespace logicalaccess
 			 * \param block The block number.
 			 * \return True if the block is locked, false otherwise.
 			 */
-			virtual bool isLocked(size_t block);
-
-		protected:
-
+			static bool isLocked(boost::shared_ptr<ISO15693Commands> cmd, unsigned char block);
 	};
 }
 

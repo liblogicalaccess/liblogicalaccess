@@ -26,24 +26,6 @@ namespace logicalaccess
 			 * \brief Destructor.
 			 */
 			virtual ~TwicLocation();
-			
-			/**
-			 * \brief Export location informations to a buffer.
-			 * \param data The buffer.
-			 */
-			virtual std::vector<unsigned char> getLinearData() const;
-
-			/**
-			 * \brief Import location informations from a buffer.
-			 * \param data The buffer.
-			 * \param offset The offset.
-			 */
-			virtual void setLinearData(const std::vector<unsigned char>& data, size_t offset);
-
-			/**
-			 * \brief Prox location informations data size.
-			 */
-			virtual size_t getDataSize();
 
 			/**
 			 * \brief Serialize the current object to XML.

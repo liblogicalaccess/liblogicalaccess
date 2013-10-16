@@ -49,10 +49,7 @@ namespace logicalaccess
 					memset(formatBuf, 0x00, length);
 					try
 					{
-						if (!storage->readData(location, aiToUse, formatBuf, length, CB_AUTOSWITCHAREA))
-						{				
-							THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_READ);
-						}
+						storage->readData(location, aiToUse, formatBuf, length, CB_AUTOSWITCHAREA);
 				
 						formatret->setLinearData(formatBuf, length);
 						ret = true;
@@ -91,10 +88,7 @@ namespace logicalaccess
 			format->getLinearData(formatBuf, length);
 			try
 			{
-				if (!storage->writeData(location, aiToUse, aiToWrite, formatBuf, length, CB_AUTOSWITCHAREA))
-				{				
-					THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_WRITE);
-				}
+				storage->writeData(location, aiToUse, aiToWrite, formatBuf, length, CB_AUTOSWITCHAREA);
 			}
 			catch(std::exception&)
 			{

@@ -20,7 +20,7 @@ namespace logicalaccess
 	{
 	}
 
-	int DESFireLocation::convertAidToInt(const void* aid)
+	unsigned int DESFireLocation::convertAidToUInt(const void* aid)
 	{
 		// LSB first
 		int ret = ((static_cast<const unsigned char*>(aid)[0] & 0xff) |
@@ -30,37 +30,12 @@ namespace logicalaccess
 		return ret;
 	}
 
-	void DESFireLocation::convertIntToAid(int i, void* aid)
+	void DESFireLocation::convertUIntToAid(unsigned int i, void* aid)
 	{
 		// LSB first
 		static_cast<unsigned char*>(aid)[0] = i & 0xff;
 		static_cast<unsigned char*>(aid)[1] = (i >> 8) & 0xff;
 		static_cast<unsigned char*>(aid)[2] = (i >> 16) & 0xff;
-	}
-
-	std::vector<unsigned char> DESFireLocation::getLinearData() const
-	{
-		std::vector<unsigned char> data(128);
-
-		BufferHelper::setInt32(data, aid);
-		data.push_back(static_cast<unsigned char>(file));
-		data.push_back(static_cast<unsigned char>(byte));
-		data.push_back(static_cast<unsigned char>(securityLevel));
-
-		return data;
-	}
-
-	void DESFireLocation::setLinearData(const std::vector<unsigned char>& data, size_t offset)
-	{
-		aid = BufferHelper::getInt32(data, offset);
-		file = data[offset++];
-		byte = data[offset++];
-		securityLevel = static_cast<EncryptionMode>(data[offset++]);
-	}
-
-	size_t DESFireLocation::getDataSize()
-	{
-		return (sizeof(aid) + 1 + 1 + 1);
 	}
 
 	void DESFireLocation::serialize(boost::property_tree::ptree& parentNode)

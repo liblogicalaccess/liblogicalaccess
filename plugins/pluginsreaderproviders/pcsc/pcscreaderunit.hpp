@@ -112,6 +112,12 @@ namespace logicalaccess
 			virtual void disconnect();
 
 			/**
+			 * \brief Disconnect from the card.
+			 * \param action Card action on disconnect.
+			 */
+			virtual void disconnect(unsigned int action);
+
+			/**
 			 * \brief Check if the handle is associated to a card (aka. "connected").
 			 * \return True if the handle is associated to a card, false otherwise.
 			 */
@@ -257,13 +263,25 @@ namespace logicalaccess
 			 */
 			virtual void getT_CL_ISOType(bool& isTypeA, bool& isTypeB);
 
-			boost::shared_ptr<SAMChip> getSAMChip() { return d_sam_chip; };
+			/**
+			 * \brief Get The SAM Chip
+			 */
+			boost::shared_ptr<SAMChip> getSAMChip();
 
-			void setSAMChip(boost::shared_ptr<SAMChip> t) {	d_sam_chip = t; };
+			/**
+			 * \brief Set the SAM Chip
+			 */
+			void setSAMChip(boost::shared_ptr<SAMChip> t);
 
-			boost::shared_ptr<PCSCReaderUnit> getSAMReaderUnit() { return d_sam_readerunit; };
+			/**
+			 * \brief Get The SAM ReaderUnit
+			 */
+			boost::shared_ptr<PCSCReaderUnit> getSAMReaderUnit();
 
-			void setSAMReaderUnit(boost::shared_ptr<PCSCReaderUnit> t) {	d_sam_readerunit = t; };
+			/**
+			 * \brief Set the SAM ReaderUnit
+			 */
+			void setSAMReaderUnit(boost::shared_ptr<PCSCReaderUnit> t);
 
 		protected:
 
@@ -342,6 +360,9 @@ namespace logicalaccess
 			 */
 			boost::shared_ptr<PCSCReaderUnit> d_proxyReaderUnit;
 
+			/**
+			 * \brief The SAM ReaderUnit used SAM Authentication
+			 */
 			boost::shared_ptr<PCSCReaderUnit> d_sam_readerunit;
 	};
 }

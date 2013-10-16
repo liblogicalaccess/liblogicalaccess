@@ -36,7 +36,7 @@ namespace logicalaccess
 		try
 		{
 			DESFireKeySettings keySettings;
-			unsigned int maxNbkeys = 0;
+			unsigned char maxNbkeys = 0;
 			DESFireKeyType keyType;
 			getDESFireEV1Commands()->getKeySettings(keySettings, maxNbkeys, keyType);
 

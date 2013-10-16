@@ -38,10 +38,15 @@ namespace logicalaccess
 		return PCSC_RUT_OMNIKEY_XX21;
 	}
 
-	void OmnikeyXX21ReaderUnit::disconnect()
+	bool OmnikeyXX21ReaderUnit::waitRemoval(unsigned int maxwait)
 	{
-		OmnikeyReaderUnit::disconnect();
-		setIsSecureConnectionMode(false);
+		bool removed = OmnikeyReaderUnit::waitRemoval(maxwait);
+		if (removed)
+		{
+			setIsSecureConnectionMode(false);
+		}
+
+		return removed;
 	}
 
 	boost::shared_ptr<ReaderCardAdapter> OmnikeyXX21ReaderUnit::getReaderCardAdapter(std::string /*type*/)

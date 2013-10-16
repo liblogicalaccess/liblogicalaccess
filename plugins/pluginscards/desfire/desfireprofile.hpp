@@ -43,7 +43,7 @@ namespace logicalaccess
 			 * \param keydiv The key data, diversified if a diversify buffer is specified.
 			 * \return True on success, false otherwise.
 			 */
-			bool getKey(size_t aid, unsigned char keyno, unsigned char* diversify, std::vector<unsigned char>& keydiv);
+			bool getKey(size_t aid, unsigned char keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv);
 
 			/**
 			 * \brief Get one of the DESFire keys of this profile.

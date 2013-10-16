@@ -37,14 +37,13 @@ namespace logicalaccess
 		return d_crypto;
 	}
 
-	bool DesfireRwk400Commands::erase()
+	void DesfireRwk400Commands::erase()
 	{
-		return false;
+		
 	}
 	
-	bool DesfireRwk400Commands::selectApplication(int aid)
+	void DesfireRwk400Commands::selectApplication(unsigned int aid)
 	{
-		bool res = true;
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> answer;
 		command.push_back(0x80);
@@ -62,16 +61,14 @@ namespace logicalaccess
 		{
 			answer = getReaderCardAdapter()->sendCommand(command, 0);
 		}
-		catch(std::exception&)
+		catch(std::exception& ex)
 		{
-			res = false;
+			INFO_SIMPLE_(ex.what());
 		}
-		return res;
 	}
 
-	bool DesfireRwk400Commands::createApplication(int aid, DESFireKeySettings settings, int maxNbKeys)
+	void DesfireRwk400Commands::createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys)
 	{
-		bool res = true;
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> answer;
 		command.push_back(0x80);
@@ -91,24 +88,21 @@ namespace logicalaccess
 		{
 			answer = getReaderCardAdapter()->sendCommand(command, 0);
 		}
-		catch(std::exception&)
+		catch(std::exception& ex)
 		{
-			res = false;
+			INFO_SIMPLE_(ex.what());
 		}
-		return res;
 	}
 
-	bool DesfireRwk400Commands::deleteApplication(int aid)
+	void DesfireRwk400Commands::deleteApplication(unsigned int aid)
 	{
-		bool res = false;
 		UNUSED(aid);
-		return res;
 	}
 
-	std::vector<int> DesfireRwk400Commands::getApplicationIDs()
+	std::vector<unsigned int> DesfireRwk400Commands::getApplicationIDs()
 	{
-		std::vector<int> res;
-		int tmp = 0;
+		std::vector<unsigned int> res;
+		unsigned int tmp = 0;
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> answer;
 		command.push_back(0x80);
@@ -134,7 +128,7 @@ namespace logicalaccess
 					tmp <<= 8;
 					tmp |= answer[i];
 					if (tmp == 0)
-						i = static_cast<int>(answer.size());
+						i = static_cast<unsigned int>(answer.size());
 					else
 					{
 						res.push_back(tmp);
@@ -144,37 +138,34 @@ namespace logicalaccess
 					res.erase(res.end()-1);
 			}
 		}
-		catch(std::exception&)
+		catch(std::exception& ex)
 		{
+			INFO_SIMPLE_(ex.what());
 		}
 		return res;
 	}
 
-	bool DesfireRwk400Commands::changeKey(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
+	void DesfireRwk400Commands::changeKey(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
 	{
-		bool res = false;
 		key->getData();
 		UNUSED(keyno);
-		return res;
 	}
 
-	void DesfireRwk400Commands::getKeySettings(DESFireKeySettings& settings, unsigned int& maxNbKeys)
+	void DesfireRwk400Commands::getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys)
 	{
 	  UNUSED(settings);
 	  UNUSED(maxNbKeys);
 	}
 
-	bool DesfireRwk400Commands::changeKeySettings(DESFireKeySettings settings)
+	void DesfireRwk400Commands::changeKeySettings(DESFireKeySettings settings)
 	{
-		bool res = false;
 		UNUSED(settings);
-		return res;
 	}
 
-	std::vector<int> DesfireRwk400Commands::getFileIDs()
+	std::vector<unsigned char> DesfireRwk400Commands::getFileIDs()
 	{
-		std::vector<int> res;
-		int tmp = 0;
+		std::vector<unsigned char> res;
+		unsigned char tmp = 0;
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> answer;
 		command.push_back(0x80);
@@ -200,7 +191,7 @@ namespace logicalaccess
 					tmp <<= 8;
 					tmp |= answer[i];
 					if (tmp == 0)
-						i = static_cast<int>(answer.size());
+						i = static_cast<unsigned int>(answer.size());
 					else
 					{
 						res.push_back(tmp);
@@ -210,33 +201,29 @@ namespace logicalaccess
 					res.erase(res.end()-1);
 			}
 		}
-		catch(std::exception&)
+		catch(std::exception& ex)
 		{
+			INFO_SIMPLE_(ex.what());
 		}
 		return res;
 	}
 
-	bool DesfireRwk400Commands::getFileSettings(int fileno, DESFireCommands::FileSetting& fileSetting)
+	void DesfireRwk400Commands::getFileSettings(unsigned char fileno, DESFireCommands::FileSetting& fileSetting)
 	{
-		bool res = false;
 		UNUSED(fileno);
 		UNUSED(fileSetting);
-		return res;
 	}
 
-	bool DesfireRwk400Commands::changeFileSettings(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, bool plain)
+	void DesfireRwk400Commands::changeFileSettings(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, bool plain)
 	{
-		bool res = false;
 		UNUSED(fileno);
 		UNUSED(comSettings);
 		UNUSED(accessRights);
 		UNUSED(plain);
-		return res;
 	}
 
-	bool DesfireRwk400Commands::createStdDataFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize)
+	void DesfireRwk400Commands::createStdDataFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize)
 	{
-		bool res = true;
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> answer;
 
@@ -260,26 +247,22 @@ namespace logicalaccess
 
 			answer = getReaderCardAdapter()->sendCommand(command, 0);
 		}
-		catch(std::exception&)
+		catch(std::exception& ex)
 		{
-			res = false;
+			INFO_SIMPLE_(ex.what());
 		}
-		return res;
 	}
 
-	bool DesfireRwk400Commands::createBackupFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize)
+	void DesfireRwk400Commands::createBackupFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize)
 	{
-		bool res = false;
 		UNUSED(fileno);
 		UNUSED(comSettings);
 		UNUSED(accessRights);
 		UNUSED(fileSize);
-		return res;
 	}
 
-	bool DesfireRwk400Commands::createValueFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int lowerLimit, unsigned int upperLimit, int value, bool limitedCreditEnabled)
+	void DesfireRwk400Commands::createValueFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int lowerLimit, unsigned int upperLimit, unsigned int value, bool limitedCreditEnabled)
 	{
-		bool res = false;
 		UNUSED(fileno);
 		UNUSED(comSettings);
 		UNUSED(accessRights);
@@ -287,43 +270,36 @@ namespace logicalaccess
 		UNUSED(upperLimit);
 		UNUSED(value);
 		UNUSED(limitedCreditEnabled);
-		return res;
 	}
 
-	bool DesfireRwk400Commands::createLinearRecordFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize, int maxNumberOfRecords)
+	void DesfireRwk400Commands::createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords)
 	{
-		bool res = false;
 		UNUSED(fileno);
 		UNUSED(comSettings);
 		UNUSED(accessRights);
 		UNUSED(fileSize);
 		UNUSED(maxNumberOfRecords);
-		return res;
 	}
 
-	bool DesfireRwk400Commands::createCyclicRecordFile(int fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, int fileSize, int maxNumberOfRecords)
+	void DesfireRwk400Commands::createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords)
 	{
-		bool res = false;
 		UNUSED(fileno);
 		UNUSED(comSettings);
 		UNUSED(accessRights);
 		UNUSED(fileSize);
 		UNUSED(maxNumberOfRecords);
-		return res;
 	}
 
 	
-	bool DesfireRwk400Commands::deleteFile(int fileno)
+	void DesfireRwk400Commands::deleteFile(unsigned char fileno)
 	{
-		bool res = false;
 		UNUSED(fileno);
-		return res;
 	}
 
-	size_t DesfireRwk400Commands::readData(int fileno, size_t offset, size_t length, void* data, EncryptionMode mode)
+	unsigned int DesfireRwk400Commands::readData(unsigned char fileno, unsigned int offset, unsigned int length, void* data, EncryptionMode mode)
 	{
-		 UNUSED(mode);
-		size_t res = 0;
+		UNUSED(mode);
+		unsigned int res = 0;
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> answer;
 		command.push_back(0x80);
@@ -348,16 +324,17 @@ namespace logicalaccess
 				memcpy(data, &answer[0], length);
 			}
 		}
-		catch(std::exception&)
+		catch(std::exception& ex)
 		{
+			INFO_SIMPLE_(ex.what());
 		}
+
 		return res;
 	}
 
-	bool DesfireRwk400Commands::writeData(int fileno, size_t offset, size_t length, const void* data, EncryptionMode mode)
+	void DesfireRwk400Commands::writeData(unsigned char fileno, unsigned int offset, unsigned int length, const void* data, EncryptionMode mode)
 	{
 		UNUSED(mode);
-		bool res = false;
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> answer;
 		command.push_back(0x80);
@@ -380,54 +357,53 @@ namespace logicalaccess
 		try
 		{
 			answer = getReaderCardAdapter()->sendCommand(command, 0);
-			res = true;
 		}
-		catch(std::exception&)
+		catch(std::exception& ex)
 		{
-			res = false;
+			INFO_SIMPLE_(ex.what());
 		}
-		return res;
 	}
 
-	bool DesfireRwk400Commands::getValue(int fileno, EncryptionMode mode, int& value)
+	void DesfireRwk400Commands::getValue(unsigned char fileno, EncryptionMode mode, unsigned int& value)
 	{
-		bool res = false;
 		UNUSED(fileno);
 		UNUSED(mode);
 		UNUSED(value);
-		return res;
 	}
 
-	bool DesfireRwk400Commands::credit(int fileno, int value, EncryptionMode mode)
+	void DesfireRwk400Commands::credit(unsigned char fileno, unsigned int value, EncryptionMode mode)
 	{
-		bool res = false;
 		UNUSED(fileno);
 		UNUSED(value);
 		UNUSED(mode);
-		return res;
 	}
 
-	bool DesfireRwk400Commands::debit(int fileno, int value, EncryptionMode mode)
+	void DesfireRwk400Commands::debit(unsigned char fileno, unsigned int value, EncryptionMode mode)
 	{
-		bool res = false;
 		UNUSED(fileno);
 		UNUSED(value);
 		UNUSED(mode);
-		return res;
 	}
 
-	bool DesfireRwk400Commands::limitedCredit(int fileno, int value, EncryptionMode mode) 
+	void DesfireRwk400Commands::limitedCredit(unsigned char fileno, unsigned int value, EncryptionMode mode) 
 	{
-		bool res = false;
 		UNUSED(fileno);
 		UNUSED(value);
 		UNUSED(mode);
-		return res;
 	}
 
-	bool DesfireRwk400Commands::writeRecord(int fileno, size_t offset, size_t length, const void* data, EncryptionMode mode)
+	void DesfireRwk400Commands::writeRecord(unsigned char fileno, unsigned int offset, unsigned int length, const void* data, EncryptionMode mode)
 	{
-		bool res = false;
+		UNUSED(fileno);
+		UNUSED(offset);
+		UNUSED(length);
+		UNUSED(data);
+		UNUSED(mode);
+	}
+
+	unsigned int DesfireRwk400Commands::readRecords(unsigned char fileno, unsigned int offset, unsigned int length, void* data, EncryptionMode mode)
+	{
+		unsigned int res = 0;
 		UNUSED(fileno);
 		UNUSED(offset);
 		UNUSED(length);
@@ -436,47 +412,29 @@ namespace logicalaccess
 		return res;
 	}
 
-	size_t DesfireRwk400Commands::readRecords(int fileno, size_t offset, size_t length, void* data, EncryptionMode mode)
+	void DesfireRwk400Commands::clearRecordFile(unsigned char fileno)
 	{
-		size_t res = 0;
 		UNUSED(fileno);
-		UNUSED(offset);
-		UNUSED(length);
-		UNUSED(data);
-		UNUSED(mode);
-		return res;
 	}
 
-	bool DesfireRwk400Commands::clearRecordFile(int fileno)
+	void DesfireRwk400Commands::commitTransaction()
 	{
-		bool res = false;
-		UNUSED(fileno);
-		return res;
+	
 	}
 
-	bool DesfireRwk400Commands::commitTransaction()
+	void DesfireRwk400Commands::abortTransaction()
 	{
-		bool res = false;
-
-		return res;
+		
 	}
 
-	bool DesfireRwk400Commands::abortTransaction()
-	{
-		bool res = false;
-
-		return res;
-	}
-
-	bool DesfireRwk400Commands::authenticate(unsigned char keyno)
+	void DesfireRwk400Commands::authenticate(unsigned char keyno)
 	{
 		boost::shared_ptr<DESFireKey> key = d_chip->getDESFireProfile()->getDefaultKey(DESFireKeyType::DF_KEY_DES);
-		return authenticate(keyno, key);
+		authenticate(keyno, key);
 	}
 
-	bool DesfireRwk400Commands::authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
+	void DesfireRwk400Commands::authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
 	{
-		bool res = false;
 		if (d_chip)
 		{
 			try
@@ -532,23 +490,19 @@ namespace logicalaccess
 					command.push_back (0xE0);
 					command.push_back (0x80);
 					answer = getReaderCardAdapter()->sendCommand(command, 0);
-					res = true;
 				}
 			}
-			catch(std::invalid_argument&)
+			catch(std::invalid_argument& ex)
 			{
-
+				INFO_SIMPLE_(ex.what());
 			}
 		}
-		return res;
 	}
 
 
-	bool DesfireRwk400Commands::getVersion(DESFireCommands::DESFireCardVersion& dataVersion)
+	void DesfireRwk400Commands::getVersion(DESFireCommands::DESFireCardVersion& dataVersion)
 	{
-		bool res = false;
 		UNUSED(dataVersion);
-		return res;
 	}
 
 	void DesfireRwk400Commands::setChip(boost::shared_ptr<DESFireChip> chip)

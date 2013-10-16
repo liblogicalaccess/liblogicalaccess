@@ -129,6 +129,12 @@ namespace logicalaccess
 	void Key::serialize(boost::property_tree::ptree& node)
 	{
 		node.put("<xmlattr>.keyStorageType", d_key_storage->getType());
+		if (d_key_diversification)
+		{
+			boost::property_tree::ptree newnode;
+			d_key_diversification->serialize(newnode);
+			node.add_child("KeyDiversification", newnode);
+		}
 		node.put("IsCiphered", (d_storeCipheredData && !d_isEmpty));
 		cipherKeyData(node);
 		d_key_storage->serialize(node);
@@ -139,9 +145,16 @@ namespace logicalaccess
 		INFO_SIMPLE_("Unserializing Key...");
 
 		d_key_storage = KeyStorage::getKeyStorageFromType(static_cast<KeyStorageType>(node.get_child("<xmlattr>.keyStorageType").get_value<unsigned int>()));
+
+		if (node.get_child_optional("KeyDiversification"))
+		{
+			boost::property_tree::ptree keydivnode = node.get_child("KeyDiversification");
+			d_key_diversification = KeyDiversification::getKeyDiversificationFromType(keydivnode.get_child("<xmlattr>.keyDiversificationType").get_value<std::string>());
+			d_key_diversification->unSerialize(keydivnode);
+		}
+
 		d_storeCipheredData = node.get_child("IsCiphered").get_value<bool>(false);
 		uncipherKeyData(node);
-
 		INFO_SIMPLE_("Unserializing Key storage...");
 		d_key_storage->unSerialize(node);
 	}

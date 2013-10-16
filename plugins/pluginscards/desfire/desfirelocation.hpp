@@ -44,32 +44,14 @@ namespace logicalaccess
 			 * \param aid The Application ID buffer.
 			 * \return The Application ID in 32 bits.
 			 */
-			static int convertAidToInt(const void* aid);
+			static unsigned int convertAidToUInt(const void* aid);
 
 			/**
 			 * \brief Convert an Application ID 32 bits into a buffer.
 			 * \param i The Application ID in 32 bits.
 			 * \param aid The Application ID buffer.
 			 */
-			static void convertIntToAid(int i, void* aid);
-			
-			/**
-			 * \brief Export DESFire location informations to a buffer.
-			 * \return The data.
-			 */
-			virtual std::vector<unsigned char> getLinearData() const;
-
-			/**
-			 * \brief Import DESFire location informations from a buffer.
-			 * \param data The buffer.
-			 * \param offset An offset.
-			 */
-			virtual void setLinearData(const std::vector<unsigned char>&, size_t offset = 0);
-
-			/**
-			 * \brief DESFire location informations data size.
-			 */
-			virtual size_t getDataSize();
+			static void convertUIntToAid(unsigned int i, void* aid);
 
 			/**
 			 * \brief Serialize the current object to XML.
@@ -106,17 +88,17 @@ namespace logicalaccess
 			/**
 			 * \brief The application ID.
 			 */
-			int aid;
+			unsigned int aid;
 
 			/**
 			 * \brief The file ID.
 			 */
-			int file;
+			unsigned char file;
 
 			/**
 			 * \brief The byte offset.
 			 */
-			int byte;		
+			unsigned int byte;		
 
 			/**
 			 * \brief The file security level

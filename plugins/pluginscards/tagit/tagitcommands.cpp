@@ -9,9 +9,9 @@
 
 namespace logicalaccess
 {
-	bool TagItCommands::isLocked(size_t block)
+	bool TagItCommands::isLocked(boost::shared_ptr<ISO15693Commands> cmd, unsigned char block)
 	{
-		unsigned char status = getSecurityStatus(block);
+		unsigned char status = cmd->getSecurityStatus(block);
 		
 		return ((status & 0x01) != 0);
 	}

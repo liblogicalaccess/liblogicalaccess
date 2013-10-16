@@ -39,51 +39,6 @@ namespace logicalaccess
 		key->fromString(generateSimpleKey(lcsn, TRIPLEDES_KEY_SIZE));
 	}
 
-	std::vector<unsigned char> MifareUltralightCAccessInfo::getLinearData() const
-	{
-		std::vector<unsigned char> data = MifareUltralightAccessInfo::getLinearData();
-
-		data.push_back(static_cast<unsigned char>(key->isEmpty() ? 0 : 1));
-
-		if (!key->isEmpty())
-		{
-			unsigned char* keydata = key->getData();
-			data.insert(data.end(), keydata, keydata + key->getLength());
-		}
-		else
-		{
-			for (size_t i = 0; i < key->getLength(); ++i)
-			{
-				data.push_back(0x00);
-			}
-		}
-
-		return data;
-	}
-
-	void MifareUltralightCAccessInfo::setLinearData(const std::vector<unsigned char>& data, size_t offset)
-	{
-		MifareUltralightAccessInfo::setLinearData(data, offset);
-		offset += MifareUltralightAccessInfo::getDataSize();
-
-		bool hasKey = (data[offset++] == 1);
-
-		if (hasKey)
-		{
-			key->setData(data, offset);
-		}
-		else
-		{
-			key->setData(std::vector<unsigned char>());
-		}
-		offset += key->getLength();
-	}
-
-	size_t MifareUltralightCAccessInfo::getDataSize()
-	{
-		return (MifareUltralightAccessInfo::getDataSize() + 1 + TRIPLEDES_KEY_SIZE);
-	}
-
 	void MifareUltralightCAccessInfo::serialize(boost::property_tree::ptree& parentNode)
 	{
 		boost::property_tree::ptree node;

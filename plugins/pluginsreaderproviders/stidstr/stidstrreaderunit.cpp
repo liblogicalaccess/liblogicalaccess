@@ -588,7 +588,7 @@ namespace logicalaccess
 		rndB.resize(16);
 		if (RAND_bytes(&rndB[0], static_cast<int>(rndB.size())) != 1)
 		{
-			throw LibLogicalAccessException("Cannot retrieve cryptographically strong bytes");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
 		}
 
 		openssl::AESInitializationVector aesiv = openssl::AESInitializationVector::createNull();
@@ -646,7 +646,7 @@ namespace logicalaccess
 		rndB.resize(16);
 		if (RAND_bytes(&rndB[0], static_cast<int>(rndB.size())) != 1)
 		{
-			throw LibLogicalAccessException("Cannot retrieve cryptographically strong bytes");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
 		}
 
 		boost::shared_ptr<AES128Key> key = getSTidSTRConfiguration()->getAESKey();
@@ -848,7 +848,7 @@ namespace logicalaccess
 	void STidSTRReaderUnit::loadSKB()
 	{
 		INFO_SIMPLE_("Loading SKB...");
-		unsigned char statusCode;
+		unsigned char statusCode = 0;
 		std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000E, std::vector<unsigned char>(), statusCode);
 
 		EXCEPTION_ASSERT_WITH_LOG(response.size() == 0, LibLogicalAccessException, "Unable to load the SKB values. An unknown error occured.");

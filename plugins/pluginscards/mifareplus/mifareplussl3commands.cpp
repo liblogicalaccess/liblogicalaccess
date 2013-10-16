@@ -13,7 +13,7 @@ namespace logicalaccess
 	{
 		if (buf == NULL || buflen < MIFARE_PLUS_BLOCK_SIZE || buflen % MIFARE_PLUS_BLOCK_SIZE != 0 || buflen / MIFARE_PLUS_BLOCK_SIZE + start_block > getNbBlocks(sector))
 		{
-			throw EXCEPTION(std::invalid_argument, "Bad buffer parameter. The minimum buffer's length is 16 bytes.");
+			THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter. The minimum buffer's length is 16 bytes.");
 		}
 
 		if (authenticate(sector, key, keytype))
@@ -38,7 +38,7 @@ namespace logicalaccess
 				test_buflen += getNbBlocks(i) * MIFARE_PLUS_BLOCK_SIZE;
 			}
 			if (test_buflen + MIFARE_PLUS_BLOCK_SIZE != buflen)
-				throw EXCEPTION(std::invalid_argument, "Bad buffer parameter. The buffer must fit the sectors size.");
+				THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter. The buffer must fit the sectors size.");
 
 			test_buflen = 0;
 			for (i = start_sector; i <= stop_sector && test_buflen < buflen; ++i)
@@ -51,7 +51,7 @@ namespace logicalaccess
 				else if (mAiToUse->keyA && !mAiToUse->keyA->isEmpty())
 					writeSector(i, 0, reinterpret_cast<const char*>(buf) + test_buflen, toWriteLen, mAiToUse->keyA, KT_KEY_AES_A);
 				else
-					throw EXCEPTION(std::invalid_argument, "You must set the writing key using the MifarePlusAccessInfo ");
+					THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "You must set the writing key using the MifarePlusAccessInfo ");
 				test_buflen += getNbBlocks(i) * MIFARE_PLUS_BLOCK_SIZE;
 			}
 		}
@@ -61,7 +61,7 @@ namespace logicalaccess
 	{
 		if (buf == NULL || buflen < MIFARE_PLUS_BLOCK_SIZE || buflen % MIFARE_PLUS_BLOCK_SIZE != 0 || buflen / MIFARE_PLUS_BLOCK_SIZE + start_block > getNbBlocks(sector))
 		{
-			throw EXCEPTION(std::invalid_argument, "Bad buffer parameter. The minimum buffer's length is 16 bytes.");
+			THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter. The minimum buffer's length is 16 bytes.");
 		}
 
 		if (authenticate(sector, key, keytype))
@@ -86,7 +86,7 @@ namespace logicalaccess
 				test_buflen += getNbBlocks(i) * MIFARE_PLUS_BLOCK_SIZE;
 			}
 			if (test_buflen + MIFARE_PLUS_BLOCK_SIZE > buflen)
-				throw EXCEPTION(std::invalid_argument, "Bad buffer parameter. The buffer must fit the sectors size.");
+				THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter. The buffer must fit the sectors size.");
 
 			test_buflen = 0;
 			for (i = start_sector; i <= stop_sector && test_buflen < buflen; ++i)
@@ -99,7 +99,7 @@ namespace logicalaccess
 				else if (mAiToUse->keyB && !mAiToUse->keyB->isEmpty())
 					readSector(i, 0, reinterpret_cast<char*>(buf) + test_buflen, toReadLen, mAiToUse->keyB, KT_KEY_AES_B);
 				else
-					throw EXCEPTION(std::invalid_argument, "You must set the writing key using the MifarePlusAccessInfo ");
+					THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "You must set the writing key using the MifarePlusAccessInfo ");
 				test_buflen += getNbBlocks(i) * MIFARE_PLUS_BLOCK_SIZE;
 			}
 		}

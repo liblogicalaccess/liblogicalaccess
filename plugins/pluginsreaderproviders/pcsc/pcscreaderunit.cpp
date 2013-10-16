@@ -82,6 +82,8 @@ namespace logicalaccess
 
 	PCSCReaderUnit::~PCSCReaderUnit()
 	{
+		INFO_SIMPLE_("Reader unit destruction...");
+
 		if (isConnected())
 		{
 			disconnect();
@@ -221,7 +223,14 @@ namespace logicalaccess
 			THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_CONNECTED);
 		}
 
-		int readers_count = static_cast<int>(getReaderProvider()->getReaderList().size());
+		if (Settings::getInstance()->SeeWaitInsertionLog)
+		{
+			INFO_SIMPLE_("Waiting card insertion...");
+		}
+
+		LONG r = 0;
+		bool usePnp = true;
+		int readers_count = 0;
 
 		string reader = getName();
 		string connectedReader = "";
@@ -229,8 +238,37 @@ namespace logicalaccess
 
 		if (reader != "")
 		{
+			if (Settings::getInstance()->SeeWaitInsertionLog)
+			{
+				INFO_("Use specific reader: %s.", reader.c_str());
+			}
 			readers_count = 1;
+			usePnp = false;
 		}
+		else
+		{
+			if (Settings::getInstance()->SeeWaitInsertionLog)
+			{
+				INFO_SIMPLE_("Listening on all readers");
+			}
+			readers_count = static_cast<int>(getReaderProvider()->getReaderList().size());
+
+			SCARD_READERSTATE rgReaderStates[1];
+			rgReaderStates[0].szReader = "\\\\?PnP?\\Notification";
+			rgReaderStates[0].dwCurrentState = SCARD_STATE_UNAWARE;
+
+			r = SCardGetStatusChange(getPCSCReaderProvider()->getContext(), 0, rgReaderStates, 1);
+
+			if (rgReaderStates[0].dwEventState & SCARD_STATE_UNKNOWN)
+			{
+				usePnp = false;
+				if (Settings::getInstance()->SeeWaitInsertionLog)
+				{
+					INFO_SIMPLE_("No PnP support.");
+				}
+			}
+		}
+
 
 		if (readers_count == 0)
 		{
@@ -246,11 +284,11 @@ namespace logicalaccess
 
 		if (readers_names)
 		{
-			SCARD_READERSTATE* readers = new SCARD_READERSTATE[readers_count];
+			SCARD_READERSTATE* readers = new SCARD_READERSTATE[readers_count + (usePnp ? 1 : 0)];
 
 			if (readers)
 			{
-				memset(readers, 0x00, sizeof(SCARD_READERSTATE) * readers_count);
+				memset(readers, 0x00, sizeof(SCARD_READERSTATE) * (readers_count + (usePnp ? 1 : 0)));
 
 				if (reader != "")
 				{
@@ -269,120 +307,84 @@ namespace logicalaccess
 						readers[i].szReader = reinterpret_cast<const char*>(readers_names[i]);
 					}
 				}
-
-				LONG r = SCardGetStatusChange(getPCSCReaderProvider()->getContext(), ((maxwait == 0) ? INFINITE : maxwait), readers, readers_count);
-
-				if (SCARD_S_SUCCESS == r)
+				if (usePnp)
 				{
-					for (int i = 0; i < readers_count; ++i)
-					{
-						if ((SCARD_STATE_PRESENT & readers[i].dwEventState) != 0)
-						{
-							cardType = getCardTypeFromATR(readers[i].rgbAtr, readers[i].cbAtr);
-							if (cardType == "UNKNOWN")
-							{
-								cardType = getGenericCardTypeFromATR(readers[i].rgbAtr, readers[i].cbAtr);
-							}
-							connectedReader = string(reinterpret_cast<const char*>(readers[i].szReader));						
-							break;
-						}
-					}
+					readers[readers_count].dwCurrentState = SCARD_STATE_UNAWARE;
+					readers[readers_count].dwEventState = SCARD_STATE_UNAWARE;
+					readers[readers_count].szReader = "\\\\?PnP?\\Notification";
+					readers_count++;
+				}
 
-					if (connectedReader == "")
+				bool loop;
+
+#ifndef _WINDOWS
+				struct timeval tv1, tv2;
+				struct timezone tz;
+
+				gettimeofday(&tv1, &tz);
+#else
+				DWORD tc = GetTickCount();
+#endif
+
+				do
+				{
+					loop = false;
+					r = SCardGetStatusChange(getPCSCReaderProvider()->getContext(), ((maxwait == 0) ? INFINITE : maxwait), readers, readers_count);
+
+					if (SCARD_S_SUCCESS == r)
 					{
+#ifndef _WINDOWS
+						gettimeofday(&tv2, &tz);
+
+						if ((maxwait == 0) || static_cast<unsigned int>((tv2.tv_sec - tv1.tv_sec) * 1000L + (tv2.tv_usec - tv1.tv_usec) / 1000L) < maxwait)
+						{
+							loop = true;
+						}
+#else
+						DWORD ltc = GetTickCount();
+
+						if ((maxwait == 0) || (ltc - tc) < maxwait)
+						{
+							loop = true;
+						}
+#endif
+
 						for (int i = 0; i < readers_count; ++i)
 						{
-							readers[i].dwCurrentState = readers[i].dwEventState;
-						}
-
-						r = SCardGetStatusChange(getPCSCReaderProvider()->getContext(), ((maxwait == 0) ? INFINITE : maxwait), readers, readers_count);
-
-						if (SCARD_S_SUCCESS == r)
-						{
-							for (int i = 0; i < readers_count; ++i)
+							if ((SCARD_STATE_CHANGED & readers[i].dwEventState) != 0)
 							{
+								readers[i].dwCurrentState = readers[i].dwEventState;
 								if ((SCARD_STATE_PRESENT & readers[i].dwEventState) != 0)
 								{
+									loop  = false;
 									cardType = getCardTypeFromATR(readers[i].rgbAtr, readers[i].cbAtr);
 									if (cardType == "UNKNOWN")
 									{
 										cardType = getGenericCardTypeFromATR(readers[i].rgbAtr, readers[i].cbAtr);
 									}
-									connectedReader = string(reinterpret_cast<const char*>(readers[i].szReader));									
+									connectedReader = std::string(reinterpret_cast<const char*>(readers[i].szReader));							
+	
 									break;
 								}
 							}
 						}
 					}
-
-					if (connectedReader != "")
-					{		
-						boost::shared_ptr<PCSCReaderUnitConfiguration> pcscRUC = getPCSCConfiguration();
-						if (this->getPCSCType() == PCSC_RUT_DEFAULT)
+					else
+					{
+						if (r != SCARD_E_TIMEOUT)
 						{
-							d_proxyReaderUnit = PCSCReaderUnit::createPCSCReaderUnit(connectedReader);
-							if (d_proxyReaderUnit->getPCSCType() == PCSC_RUT_DEFAULT)
+							if (Settings::getInstance()->SeeWaitInsertionLog)
 							{
-								d_proxyReaderUnit.reset();
-								d_connectedName = connectedReader;
+								ERROR_("Cannot get status change: %x.", r);
 							}
-							else
-							{
-								d_proxyReaderUnit->makeProxy(boost::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
-							}
-						}
-						else
-						{
-							// Already a proxy from serialization maybe, just copy instance information to it.
-							if (d_proxyReaderUnit)
-							{
-								d_proxyReaderUnit->makeProxy(boost::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
-							}
-						}
-
-						d_insertedChip = createChip((d_card_type == "UNKNOWN") ? cardType : d_card_type);						
-						if (d_proxyReaderUnit)
-						{
-							d_proxyReaderUnit->setSingleChip(d_insertedChip);
-						}
-
-						// Specific behavior for DESFire to check if it is not a DESFire EV1
-						if (d_card_type == "UNKNOWN" && d_insertedChip && d_insertedChip->getCardType() == "DESFire")
-						{
-							try
-							{
-								if (connect())
-								{
-#ifdef _WINDOWS
-				Sleep(100);
-#elif defined(__unix__)
-				usleep(100000);
-#endif
-									DESFireCommands::DESFireCardVersion cardversion;
-									if (boost::dynamic_pointer_cast<DESFireChip>(d_insertedChip)->getDESFireCommands()->getVersion(cardversion))
-									{
-										// Set from the version
-										d_insertedChip->setChipIdentifier(std::vector<unsigned char>(cardversion.uid, cardversion.uid + sizeof(cardversion.uid)));
-
-										// DESFire EV1 and not regular DESFire
-										if (cardversion.softwareMjVersion >= 1)
-										{
-											d_insertedChip = createChip("DESFireEV1");
-											if (d_proxyReaderUnit)
-											{
-												d_proxyReaderUnit->setSingleChip(d_insertedChip);
-											}
-										}
-									}
-									disconnect();
-								}
-							}
-							catch(std::exception&)
-							{
-								// Doesn't care about bad communication here, stay DESFire.
-							}
+							PCSCDataTransport::CheckCardError(r);
 						}
 					}
+				} while(loop);
+
+				if (usePnp)
+				{
+					readers_count--;
 				}
 
 				for (int i = 0; i < readers_count; ++i)
@@ -400,6 +402,38 @@ namespace logicalaccess
 
 			delete[] readers_names;
 			readers_names = NULL;
+		}
+
+		if (connectedReader != "")
+		{
+			boost::shared_ptr<PCSCReaderUnitConfiguration> pcscRUC = getPCSCConfiguration();
+			if (this->getPCSCType() == PCSC_RUT_DEFAULT)
+			{
+				d_proxyReaderUnit = PCSCReaderUnit::createPCSCReaderUnit(connectedReader);
+				if (d_proxyReaderUnit->getPCSCType() == PCSC_RUT_DEFAULT)
+				{
+					d_proxyReaderUnit.reset();
+					d_connectedName = connectedReader;
+				}
+				else
+				{
+					d_proxyReaderUnit->makeProxy(boost::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
+				}
+			}
+			else
+			{
+				// Already a proxy from serialization maybe, just copy instance information to it.
+				if (d_proxyReaderUnit)
+				{
+					d_proxyReaderUnit->makeProxy(boost::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
+				}
+			}
+
+			d_insertedChip = createChip((d_card_type == "UNKNOWN") ? cardType : d_card_type);						
+			if (d_proxyReaderUnit)
+			{
+				d_proxyReaderUnit->setSingleChip(d_insertedChip);
+			}
 		}
 
 		return (connectedReader != "");
@@ -424,6 +458,11 @@ namespace logicalaccess
 		if (isConnected())
 		{
 			THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_CONNECTED);
+		}
+
+		if (Settings::getInstance()->SeeWaitRemovalLog)
+		{
+			INFO_SIMPLE_("Waiting card removal...");
 		}
 
 		string reader = getConnectedName();
@@ -533,6 +572,17 @@ namespace logicalaccess
 							}
 						}
 					}
+					else
+					{
+						if (r != SCARD_E_TIMEOUT)
+						{
+							if (Settings::getInstance()->SeeWaitRemovalLog)
+							{
+								ERROR_("Cannot get status change: %x.", r);
+							}
+							PCSCDataTransport::CheckCardError(r);
+						}
+					}
 				}
 			}
 		}
@@ -592,7 +642,7 @@ namespace logicalaccess
 				disconnect();
 			}
 
-			LONG lReturn = SCardConnect(getPCSCReaderProvider()->getContext(), reinterpret_cast<const char*>(d_name.c_str()), share_mode, getPCSCConfiguration()->getTransmissionProtocol(), &d_sch, &d_ap);
+			LONG lReturn = SCardConnect(getPCSCReaderProvider()->getContext(), reinterpret_cast<const char*>(getConnectedName().c_str()), share_mode, getPCSCConfiguration()->getTransmissionProtocol(), &d_sch, &d_ap);
 			if (SCARD_S_SUCCESS == lReturn)
 			{
 				INFO_SIMPLE_("SCardConnect Success !");
@@ -606,7 +656,38 @@ namespace logicalaccess
 						{
 							if (d_atrLength > 2)
 							{
-								d_insertedChip->setChipIdentifier(std::vector<unsigned char>(d_atr, d_atr + d_atrLength - 2));
+								d_insertedChip->setChipIdentifier(std::vector<unsigned char>(d_atr, d_atr + d_atrLength));
+							}
+						}
+						// Specific behavior for DESFire to check if it is not a DESFire EV1
+						else if (d_card_type == "UNKNOWN" && d_insertedChip && d_insertedChip->getCardType() == "DESFire")
+						{
+							try
+							{
+#ifdef _WINDOWS
+				Sleep(100);
+#elif defined(__unix__)
+				usleep(100000);
+#endif
+								DESFireCommands::DESFireCardVersion cardversion;
+								boost::dynamic_pointer_cast<DESFireChip>(d_insertedChip)->getDESFireCommands()->getVersion(cardversion);
+								// Set from the version
+
+								// DESFire EV1 and not regular DESFire
+								if (cardversion.softwareMjVersion >= 1)
+								{
+									d_insertedChip = createChip("DESFireEV1");
+
+									if (d_proxyReaderUnit)
+									{
+										d_proxyReaderUnit->setSingleChip(d_insertedChip);
+									}
+								}
+								d_insertedChip->setChipIdentifier(std::vector<unsigned char>(cardversion.uid, cardversion.uid + sizeof(cardversion.uid)));
+							}
+							catch(std::exception&)
+							{
+								// Doesn't care about bad communication here, stay DESFire.
 							}
 						}
 						else
@@ -702,6 +783,18 @@ namespace logicalaccess
 
 	void PCSCReaderUnit::disconnect()
 	{
+		if (d_insertedChip && d_insertedChip->getGenericCardType() == CHIP_SAM)
+		{
+			disconnect(SCARD_UNPOWER_CARD);
+		}
+		else
+		{
+			disconnect(SCARD_LEAVE_CARD);
+		}
+	}
+
+	void PCSCReaderUnit::disconnect(unsigned int action)
+	{
 		INFO_SIMPLE_("Disconnecting from the chip.");
 
 		if (d_proxyReaderUnit)
@@ -712,7 +805,7 @@ namespace logicalaccess
 		{
 			if (isConnected())
 			{			
-				SCardDisconnect(d_sch, SCARD_LEAVE_CARD);
+				SCardDisconnect(d_sch, action);
 			}
 		}
 
@@ -722,12 +815,19 @@ namespace logicalaccess
 
 	bool PCSCReaderUnit::connectToReader()
 	{
+		INFO_SIMPLE_("Connecting to reader...");
+
+		if (d_proxyReaderUnit)
+		{
+			return d_proxyReaderUnit->connectToReader();
+		}
+
 		if (getPCSCConfiguration()->getSAMType() != "SAM_NONE" && getPCSCConfiguration()->getSAMReaderName() == "")
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Sam type specified without specifying SAM Reader Name");
 		if (getPCSCConfiguration()->getSAMType() != "SAM_NONE")
 			{
 				if (getReaderProvider()->getReaderList().size() < 2)
-					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not Enough reader on the system to us SAM");
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not Enough reader on the system to use SAM");
 
 				int i = 0;
 				for (; i < static_cast<int>(getReaderProvider()->getReaderList().size()); ++i)
@@ -741,8 +841,13 @@ namespace logicalaccess
 
 				boost::shared_ptr<PCSCReaderUnit> ret;
 
-				ret.reset(new PCSCReaderUnit(getPCSCConfiguration()->getSAMReaderName()));
-				ret->setReaderProvider(getReaderProvider());
+				if (d_sam_readerunit && d_sam_readerunit->getName() == getPCSCConfiguration()->getSAMReaderName())
+					ret = d_sam_readerunit;
+				else
+				{
+					ret.reset(new PCSCReaderUnit(getPCSCConfiguration()->getSAMReaderName()));
+					ret->setReaderProvider(getReaderProvider());
+				}
 				ret->connectToReader();
 
 				if (!ret->waitInsertion(1))
@@ -750,15 +855,31 @@ namespace logicalaccess
 
 				ret->connect();
 
+				INFO_SIMPLE_("Checking SAM backward...");
+
 				//No Backward AV2 => AV1
 				if (getPCSCConfiguration()->getSAMType() == "SAM_AV2" && ret->getSingleChip()->getCardType() != "SAM_AV1")
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM on the reader is not the same type as selected.");
 				//Check Backward AV1 => AV2 is active
 				if (getPCSCConfiguration()->getSAMType() != "SAM_AUTO" && ret->getSingleChip()->getCardType() == "SAM_AV2" && getPCSCConfiguration()->getSAMType() != boost::dynamic_pointer_cast<SAMCommands>(ret->getSingleChip()->getCommands())->getSAMTypeFromSAM())
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM on the reader is not the same type as selected.");
+
+				INFO_SIMPLE_("SAM backward ended.");
 			
-				setSAMChip(boost::dynamic_pointer_cast<SAMChip>(ret->getSingleChip())); 
+				setSAMChip(boost::dynamic_pointer_cast<SAMChip>(ret->getSingleChip()));
 				setSAMReaderUnit(ret);
+
+				INFO_SIMPLE_("Starting SAM Security check...");
+
+				try
+				{
+					if (getPCSCConfiguration()->getSAMSecurityKey())
+						boost::dynamic_pointer_cast<SAMAV1ISO7816Commands>(getSAMChip()->getCommands())->authentificateHost(getPCSCConfiguration()->getSAMSecurityKey(), getPCSCConfiguration()->getSAMSecuritykeyNo());
+				}
+				catch (std::exception&)
+				{
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The SAM Detected is not the SAM waited.");
+				}
 
 			}
 		return true;
@@ -766,10 +887,61 @@ namespace logicalaccess
 
 	void PCSCReaderUnit::disconnectFromReader()
 	{
-		if (d_sam_readerunit)
+		INFO_SIMPLE_("Disconnecting from reader...");
+
+		if (d_proxyReaderUnit)
 		{
-			d_sam_readerunit->disconnect();
+			d_proxyReaderUnit->disconnectFromReader();
 		}
+		else
+		{
+			if (d_sam_readerunit)
+			{
+				d_sam_readerunit->disconnect();
+				d_sam_readerunit->disconnectFromReader();
+				setSAMChip(boost::shared_ptr<SAMChip>());
+			}
+		}
+	}
+
+	boost::shared_ptr<SAMChip> PCSCReaderUnit::getSAMChip()
+	{
+		if (d_proxyReaderUnit)
+		{
+			return d_proxyReaderUnit->getSAMChip();
+		}
+
+		return d_sam_chip;
+	}
+
+	void PCSCReaderUnit::setSAMChip(boost::shared_ptr<SAMChip> t)
+	{
+		if (d_proxyReaderUnit)
+		{
+			d_proxyReaderUnit->setSAMChip(t);
+		}
+
+		d_sam_chip = t;
+	}
+
+	boost::shared_ptr<PCSCReaderUnit> PCSCReaderUnit::getSAMReaderUnit()
+	{
+		if (d_proxyReaderUnit)
+		{
+			return d_proxyReaderUnit->getSAMReaderUnit();
+		}
+
+		return d_sam_readerunit;
+	}
+
+	void PCSCReaderUnit::setSAMReaderUnit(boost::shared_ptr<PCSCReaderUnit> t)
+	{
+		if (d_proxyReaderUnit)
+		{
+			d_proxyReaderUnit->setSAMReaderUnit(t);
+		}
+
+		d_sam_readerunit = t;
 	}
 
 	std::vector<unsigned char> PCSCReaderUnit::getCardSerialNumber()
@@ -1288,9 +1460,13 @@ namespace logicalaccess
 			{
 				commands.reset(new ISO15693PCSCCommands());
 			}
-			else if (type == "TagIt")
+			else if (type == "ISO15693")
 			{
 				commands.reset(new ISO7816ISO7816Commands());
+			}
+			else if (type == "TagIt")
+			{
+				commands.reset(new ISO15693PCSCCommands());
 			}
 			else if (type ==  "Twic")
 			{

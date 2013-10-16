@@ -300,16 +300,22 @@ namespace logicalaccess
 	}
 
 	
-	size_t MifareCommands::readSector(int sector, int start_block, void* buf, size_t buflen, const MifareAccessInfo::SectorAccessBits& sab)
+	size_t MifareCommands::readSector(int sector, int start_block, void* buf, size_t buflen, const MifareAccessInfo::SectorAccessBits& sab, bool readtrailer)
 	{
 		size_t retlen = 0;
 
-		if (buf == NULL || buflen < (getNbBlocks(sector)-static_cast<unsigned int>(start_block))*16)
+		int nbblocks = getNbBlocks(sector);
+		if (readtrailer)
+		{
+			nbblocks += 1;
+		}
+
+		if (buf == NULL || buflen < (nbblocks-static_cast<unsigned int>(start_block))*16)
 		{
 			THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter. The minimum buffer's length is 48 bytes.");
 		}		
 
-		for (int i = start_block; i < getNbBlocks(sector); i++)
+		for (int i = start_block; i < nbblocks; i++)
 		{
 			changeBlock(sab, sector, i, false);
 			retlen += readBinary(static_cast<unsigned char>(getSectorStartBlock(sector) + i), 16, reinterpret_cast<char*>(buf) + retlen, 16);

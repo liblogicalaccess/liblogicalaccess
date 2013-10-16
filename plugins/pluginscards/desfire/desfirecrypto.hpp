@@ -227,13 +227,6 @@ namespace logicalaccess
 			std::vector<unsigned char> desfire_iso_decrypt(const std::vector<unsigned char>& data, size_t length);
 
 			/**
-			 * \brief Shift a string.
-			 * \param buf The buffer string
-			 * \param xorparam The optional xor for the string.
-			 */
-			static std::vector<unsigned char> shift_string(const std::vector<unsigned char>& buf, unsigned char xorparam = 0x00);
-
-			/**
 			 * \brief  Return data part for the encrypted communication mode.
 			 * \param key The key to use, shall be the session key from the previous authentication
 			 * \param cipher The cypher to use
@@ -242,17 +235,6 @@ namespace logicalaccess
 			 * \return The MAC result for the message.
 			 */
 			std::vector<unsigned char> desfire_cmac(const std::vector<unsigned char>& key, boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const std::vector<unsigned char>& data);
-
-			/**
-			 * \brief  Return data part for the encrypted communication mode.
-			 * \param key The key to use, shall be the session key from the previous authentication
-			 * \param cipher The cypher to use
-			 * \param block_size The bloc size
-			 * \param data The data source buffer to calculate MAC
-			 * \param lastIV The last initialisation vector
-			 * \return The MAC result for the message.
-			 */
-			static std::vector<unsigned char> desfire_cmac_generic(const std::vector<unsigned char>& key, boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const std::vector<unsigned char>& data, std::vector<unsigned char> lastIV);
 
 			/**
 			 * \brief  Return data part for the encrypted communication mode.
@@ -268,7 +250,7 @@ namespace logicalaccess
 			 * \param encRndB The encrypted random number B
 			 * \return The random number A+B 1.
 			 */
-			virtual std::vector<unsigned char> authenticate_PICC1(unsigned char  keyno, unsigned char* diversify, const std::vector<unsigned char>& encRndB);
+			virtual std::vector<unsigned char> authenticate_PICC1(unsigned char  keyno, std::vector<unsigned char> diversify, const std::vector<unsigned char>& encRndB);
 
 			/**
 			 * \brief Authenticate on the card, step 2 for mutual authentication.
@@ -285,7 +267,7 @@ namespace logicalaccess
 			 * \param randomlen The random length
 			 * \return The random number A+B 1.
 			 */
-			std::vector<unsigned char> iso_authenticate_PICC1(unsigned char keyno, unsigned char *diversify, const std::vector<unsigned char>& encRndB, unsigned int randomlen);
+			std::vector<unsigned char> iso_authenticate_PICC1(unsigned char keyno, std::vector<unsigned char> diversify, const std::vector<unsigned char>& encRndB, unsigned int randomlen);
 
 			/**
 			 * \brief Authenticate on the card, step 2 for mutual authentication using ISO command.
@@ -302,7 +284,7 @@ namespace logicalaccess
 			 * \param encRndB The encrypted random number B
 			 * \return The random number A+B 1.
 			 */
-			std::vector<unsigned char> aes_authenticate_PICC1( unsigned char keyno, unsigned char *diversify, const std::vector<unsigned char>& encRndB);
+			std::vector<unsigned char> aes_authenticate_PICC1( unsigned char keyno, std::vector<unsigned char> diversify, const std::vector<unsigned char>& encRndB);
 
 			/**
 			 * \brief Authenticate on the card, step 2 for mutual authentication using AES.
@@ -323,7 +305,7 @@ namespace logicalaccess
 			 * \param diversify The diversify buffer, NULL if no diversification is needed
 			 * \param keydiv The key data, diversified if a diversify buffer is specified.
 			 */
-			static void getKey(boost::shared_ptr<DESFireKey> key, unsigned char* diversify, std::vector<unsigned char>& keydiv);
+			static void getKey(boost::shared_ptr<DESFireKey> key, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv);
 
 			/**
 			 * \brief Select an application.
@@ -338,7 +320,7 @@ namespace logicalaccess
 			 * \param diversify The diversify buffer, NULL if no diversification is needed
 			 * \return The change key cryptogram.
 			 */
-			std::vector<unsigned char> changeKey_PICC(unsigned char keyno, boost::shared_ptr<DESFireKey> newKey, unsigned char* diversify);
+			std::vector<unsigned char> changeKey_PICC(unsigned char keyno, boost::shared_ptr<DESFireKey> newKey, std::vector<unsigned char> diversify);
 			
 			void setCryptoContext(boost::shared_ptr<DESFireProfile> profile, std::vector<unsigned char> identifier);
 
@@ -357,6 +339,8 @@ namespace logicalaccess
 			boost::shared_ptr<DESFireKey> getKey(unsigned char keyno);
 
 			void createApplication(int aid, size_t maxNbKeys, DESFireKeyType cryptoMethod);
+
+			std::vector<unsigned char> getIdentifier() { return d_identifier; };
 
 		public:
 

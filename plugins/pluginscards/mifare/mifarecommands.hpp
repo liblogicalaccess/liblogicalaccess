@@ -30,9 +30,10 @@ namespace logicalaccess
 			 * \param buf A buffer to fill with the data of the sector.
 			 * \param buflen The length of buffer. Must be at least 48 bytes long or the call will fail.
 			 * \param sab The sector access bits.
+			 * \param readtrailer Read the trailer block.
 			 * \return The number of bytes red, or a negative value on error.
 			 */
-			virtual size_t readSector(int sector, int start_block, void* buf, size_t buflen, const MifareAccessInfo::SectorAccessBits& sab);
+			virtual size_t readSector(int sector, int start_block, void* buf, size_t buflen, const MifareAccessInfo::SectorAccessBits& sab, bool readtrailer = false);
 
 			/**
 			 * \brief Write a whole sector.

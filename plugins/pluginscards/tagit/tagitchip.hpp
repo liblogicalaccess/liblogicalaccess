@@ -41,12 +41,6 @@ namespace logicalaccess
 			 */
 			virtual boost::shared_ptr<LocationNode> getRootLocationNode();
 
-			/**
-			 * \brief Get the Tag-It commands.
-			 * \return The Tag-It commands.
-			 */
-			boost::shared_ptr<TagItCommands> getTagItCommands() { return boost::dynamic_pointer_cast<TagItCommands>(getISO15693Commands()); };
-
 		protected:
 
 	};

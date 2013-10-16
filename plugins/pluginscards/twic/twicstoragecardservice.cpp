@@ -20,10 +20,8 @@ namespace logicalaccess
 		
 	}
 
-	bool TwicStorageCardService::readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags)
+	void TwicStorageCardService::readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags)
 	{
-		bool ret = false;
-
 		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 		EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
 
@@ -32,7 +30,8 @@ namespace logicalaccess
 
 		if (icISOLocation)
 		{
-			return ISO7816StorageCardService::readData(location, aiToUse, data, dataLength, behaviorFlags);
+			ISO7816StorageCardService::readData(location, aiToUse, data, dataLength, behaviorFlags);
+			return;
 		}
 		EXCEPTION_ASSERT_WITH_LOG(icLocation, std::invalid_argument, "location must be a TwicLocation or ISO7816Location.");
 
@@ -40,10 +39,7 @@ namespace logicalaccess
 		if (icLocation->tag == 0x00)
 		{
 			size_t dataObjectLength = dataLength;			
-			if (getTwicChip()->getTwicCommands()->getTWICData(data, dataObjectLength, icLocation->dataObject) && dataObjectLength == dataLength)
-			{
-				ret = true;
-			}
+			getTwicChip()->getTwicCommands()->getTWICData(data, dataObjectLength, icLocation->dataObject);
 		}
 		else
 		{
@@ -56,16 +52,11 @@ namespace logicalaccess
 				size_t offset = getTwicChip()->getTwicCommands()->getMinimumBytesRepresentation(getTwicChip()->getTwicCommands()->getMaximumDataObjectLength(icLocation->dataObject)) + 1;
 				if (offset < dataObjectLength)
 				{
-					if (getTwicChip()->getTwicCommands()->getTagData(icLocation, &fulldata[offset], dataObjectLength - offset, data, dataLength))
-					{
-						ret = true;
-					}
+					getTwicChip()->getTwicCommands()->getTagData(icLocation, &fulldata[offset], dataObjectLength - offset, data, dataLength);
 				}
 			}
 
 			delete[] fulldata;
 		}
-
-		return ret;
 	}
 }

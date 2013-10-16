@@ -171,7 +171,7 @@ namespace logicalaccess
 				memcpy_s(revertedData, revertedDataLengthBytes, revertedTemporaryData, revertedTemporarySizeBytes);
 #else
 				if (revertedDataLengthBytes < revertedTemporarySizeBytes)
-				  throw new EXCEPTION(LibLogicalAccessException, "The size of the dest buffer is too small for memcpy");
+				  THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The size of the dest buffer is too small for memcpy");
 				memcpy(revertedData, revertedTemporaryData, revertedTemporarySizeBytes);
 #endif
 			}

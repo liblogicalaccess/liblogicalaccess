@@ -16,13 +16,9 @@ namespace logicalaccess
 	/**
 	 * \brief A location informations.
 	 */
-	class LIBLOGICALACCESS_API Location : public Linearizable, public XmlSerializable
+	class LIBLOGICALACCESS_API Location : public XmlSerializable
 	{
 	public:
-			/**
-			 * \brief Location informations data size.
-			 */
-			virtual size_t getDataSize() = 0;
 
 			/**
 			 * \brief Get the card type for this location.

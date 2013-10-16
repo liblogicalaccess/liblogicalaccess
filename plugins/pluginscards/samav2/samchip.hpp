@@ -35,6 +35,12 @@ namespace logicalaccess
 			 * \brief Destructor.
 			 */
 			~SAMChip() {};
+			
+			/**
+			 * \brief Get the generic card type.
+			 * \return The generic card type.
+			 */
+			virtual std::string getGenericCardType() const { return CHIP_SAM; };
 
 		protected:
 	};

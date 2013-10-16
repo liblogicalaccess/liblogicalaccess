@@ -13,6 +13,7 @@
 #include <cstring>
 
 #include <openssl/rand.h>
+#include "logicalaccess/crypto/cmac.hpp"
 #include "logicalaccess/crypto/symmetric_key.hpp"
 #include "logicalaccess/crypto/aes_symmetric_key.hpp"
 #include "logicalaccess/crypto/aes_initialization_vector.hpp"
@@ -80,7 +81,7 @@ namespace logicalaccess
 		//fonction conforme aux specifications NIST 800-38B
 		std::vector<unsigned char> iv;
 		iv.resize(MIFARE_PLUS_BLOCK_SIZE, 0x00);
-		data = DESFireCrypto::desfire_cmac_generic(d_Kmac, boost::shared_ptr<openssl::OpenSSLSymmetricCipher>(new openssl::AESCipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_CBC)), MIFARE_PLUS_BLOCK_SIZE, data, iv);
+		data = openssl::CMACCrypto::cmac(d_Kmac, boost::shared_ptr<openssl::OpenSSLSymmetricCipher>(new openssl::AESCipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_CBC)), MIFARE_PLUS_BLOCK_SIZE, data, iv);
 		while (data.size() > MIFARE_PLUS_BLOCK_SIZE)
 		{
 			data = std::vector<unsigned char>(data.begin() + MIFARE_PLUS_BLOCK_SIZE, data.end());
@@ -144,7 +145,7 @@ namespace logicalaccess
 		//fonction conforme aux specifications NIST 800-38B
 		std::vector<unsigned char> iv;
 		iv.resize(MIFARE_PLUS_BLOCK_SIZE, 0x00);
-		data = DESFireCrypto::desfire_cmac_generic(d_Kmac, boost::shared_ptr<openssl::OpenSSLSymmetricCipher>(new openssl::AESCipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_CBC)), MIFARE_PLUS_BLOCK_SIZE, data, iv);
+		data = openssl::CMACCrypto::cmac(d_Kmac, boost::shared_ptr<openssl::OpenSSLSymmetricCipher>(new openssl::AESCipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_CBC)), MIFARE_PLUS_BLOCK_SIZE, data, iv);
 		while (data.size() > MIFARE_PLUS_BLOCK_SIZE)
 		{
 			data = std::vector<unsigned char>(data.begin() + MIFARE_PLUS_BLOCK_SIZE, data.end());

@@ -45,6 +45,7 @@ namespace logicalaccess
 		cmd.insert (cmd.end(), data.begin(), data.end());
 		cmd.push_back (calcChecksum(cmd));
 		TcpDataTransport::send(cmd);
+		d_trashedData.clear();
 	}
 
 	unsigned char RplethDataTransport::calcChecksum(const std::vector<unsigned char>& data)

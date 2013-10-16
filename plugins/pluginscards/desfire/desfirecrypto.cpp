@@ -20,6 +20,7 @@
 #include "logicalaccess/crypto/aes_initialization_vector.hpp"
 #include "logicalaccess/crypto/des_symmetric_key.hpp"
 #include "logicalaccess/crypto/des_initialization_vector.hpp"
+#include "logicalaccess/crypto/cmac.hpp"
 
 
 namespace logicalaccess
@@ -553,7 +554,7 @@ namespace logicalaccess
 		return ret;
 	}
 
-	std::vector<unsigned char> DESFireCrypto::authenticate_PICC1(unsigned char keyno, unsigned char *diversify, const std::vector<unsigned char>& encRndB)
+	std::vector<unsigned char> DESFireCrypto::authenticate_PICC1(unsigned char keyno, std::vector<unsigned char> diversify, const std::vector<unsigned char>& encRndB)
 	{
 		d_sessionKey.clear();
 		d_authkey.resize(16);
@@ -572,7 +573,7 @@ namespace logicalaccess
 		d_rndA.resize(8);
 		if (RAND_bytes(&d_rndA[0], static_cast<int>(d_rndA.size())) != 1)
 		{
-			throw LibLogicalAccessException("Cannot retrieve cryptographically strong bytes");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
 		}
 
 		std::vector<unsigned char> rndAB;
@@ -617,46 +618,14 @@ namespace logicalaccess
 		d_mac_size = 4;
 	}
 
-	void DESFireCrypto::getKey(boost::shared_ptr<DESFireKey> key, unsigned char* diversify, std::vector<unsigned char>& keydiv)
+	void DESFireCrypto::getKey(boost::shared_ptr<DESFireKey> key, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv)
 	{
-		INFO_("Init key from crypto. Diversify activated? %d - Diversification buffer? %d...", key->getDiversify(), (diversify != NULL));
+		INFO_SIMPLE_("Init key from crypto.");
 
 		keydiv.clear();
-		if (key->getDiversify() && diversify != NULL)
+		if (key->getKeyDiversification() && diversify.size() != 0)
 		{
-			if (key->getKeyType() != DF_KEY_AES)
-			{
-				if (key->getLength() == 16)
-				{
-					INFO_("Using key diversification with div : %s", BufferHelper::getHex(std::vector<unsigned char>(diversify, diversify + 16)).c_str());
-
-					// Sagem diversification algo. Should be an option with SAM diversification soon...
-					std::vector<unsigned char> iv;
-					// Two time, to have ECB and not CBC mode (laazzyyy to create new function :))
-					std::vector<unsigned char> vkeydata;
-					if (key->isEmpty())
-					{
-						vkeydata.resize(key->getLength(), 0x00);
-					}
-					else
-					{
-						vkeydata.insert(vkeydata.end(), key->getData(), key->getData() + key->getLength());
-					}
-
-					std::vector<unsigned char> r = sam_CBC_send(vkeydata, iv, std::vector<unsigned char>(diversify, diversify + 8));
-					keydiv.insert(keydiv.end(), r.begin(), r.end());
-					std::vector<unsigned char> r2 = sam_CBC_send(vkeydata, iv, std::vector<unsigned char>(diversify + 8, diversify + 16));
-					keydiv.insert(keydiv.end(), r2.begin(), r2.end());
-				}
-				else
-				{
-					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Diversification for this key type is not implemented yet.");
-				}
-			}
-			else
-			{
-				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Diversification for this key type is not implemented yet.");
-			}
+			keydiv = key->getKeyDiversification()->getDiversifiedKey(key, diversify);
 		}
 		else
 		{
@@ -701,7 +670,7 @@ namespace logicalaccess
 		d_sessionKey.clear();
 	}
 
-	std::vector<unsigned char> DESFireCrypto::changeKey_PICC(unsigned char keyno, boost::shared_ptr<DESFireKey> newkey, unsigned char* diversify)
+	std::vector<unsigned char> DESFireCrypto::changeKey_PICC(unsigned char keyno, boost::shared_ptr<DESFireKey> newkey, std::vector<unsigned char> diversify)
 	{
 		INFO_SIMPLE_("Init change key on PICC...");
 		std::vector<unsigned char> cryptogram;
@@ -709,7 +678,7 @@ namespace logicalaccess
 		oldkeydiv.resize(16, 0x00);
 		newkeydiv.resize(16, 0x00);
 		d_profile->getKey(d_currentAid, keyno, diversify, oldkeydiv);
-		getKey(newkey, diversify, newkeydiv);		
+		getKey(newkey, diversify, newkeydiv);	
 
 		std::vector<unsigned char> encCryptogram;
 
@@ -807,7 +776,7 @@ namespace logicalaccess
 		return cryptogram;
 	}	
 
-	std::vector<unsigned char> DESFireCrypto::iso_authenticate_PICC1(unsigned char keyno, unsigned char *diversify, const std::vector<unsigned char>& encRndB, unsigned int randomlen)
+	std::vector<unsigned char> DESFireCrypto::iso_authenticate_PICC1(unsigned char keyno, std::vector<unsigned char> diversify, const std::vector<unsigned char>& encRndB, unsigned int randomlen)
 	{
 		d_sessionKey.clear();		
 		d_profile->getKey(d_currentAid, keyno, diversify, d_authkey);
@@ -830,7 +799,7 @@ namespace logicalaccess
 		d_rndA.resize(randomlen);
 		if (RAND_bytes(&d_rndA[0], static_cast<int>(d_rndA.size())) != 1)
 		{
-			throw LibLogicalAccessException("Cannot retrieve cryptographically strong bytes");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
 		}
 
 		std::vector<unsigned char> rndAB;
@@ -900,7 +869,7 @@ namespace logicalaccess
 		d_lastIV.resize(d_block_size, 0x00);
 	}
 
-	std::vector<unsigned char> DESFireCrypto::aes_authenticate_PICC1(unsigned char keyno, unsigned char *diversify, const std::vector<unsigned char>& encRndB)
+	std::vector<unsigned char> DESFireCrypto::aes_authenticate_PICC1(unsigned char keyno, std::vector<unsigned char> diversify, const std::vector<unsigned char>& encRndB)
 	{
 		d_sessionKey.clear();		
 		d_profile->getKey(d_currentAid, keyno, diversify, d_authkey);
@@ -923,7 +892,7 @@ namespace logicalaccess
 		d_rndA.resize(16);
 		if (RAND_bytes(&d_rndA[0], static_cast<int>(d_rndA.size())) != 1)
 		{
-			throw LibLogicalAccessException("Cannot retrieve cryptographically strong bytes");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
 		}
 
 		std::vector<unsigned char> rndAB;
@@ -968,123 +937,15 @@ namespace logicalaccess
 		d_lastIV.clear();
 		d_lastIV.resize(d_block_size, 0x00);
 	}
-
+	
 	std::vector<unsigned char> DESFireCrypto::desfire_cmac(const std::vector<unsigned char>& data)
 	{
 		return desfire_cmac(d_sessionKey, d_cipher, d_block_size, data);
 	}
 
-	std::vector<unsigned char> DESFireCrypto::desfire_cmac_generic(const std::vector<unsigned char>& key, boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const std::vector<unsigned char>& data, std::vector<unsigned char> lastIV)
-	{
-		boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherK1K2;
-
-		boost::shared_ptr<openssl::SymmetricKey> symkey;
-		boost::shared_ptr<openssl::InitializationVector> iv;
-		// 3DES
-		if (boost::dynamic_pointer_cast<openssl::DESCipher>(cipherMAC))
-		{
-			cipherK1K2.reset(new openssl::DESCipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_ECB));
-
-			symkey.reset(new openssl::DESSymmetricKey(openssl::DESSymmetricKey::createFromData(key)));
-			iv.reset(new openssl::DESInitializationVector(openssl::DESInitializationVector::createNull()));
-		}
-		// AES
-		else
-		{
-			cipherK1K2.reset(new openssl::AESCipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_ECB));
-
-			symkey.reset(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(key)));
-			iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createNull()));
-		}
-
-		unsigned char Rb;
-
-		// TDES
-		if (block_size == 8)
-		{
-			Rb = 0x1b;
-		}
-		// AES
-		else
-		{
-			Rb = 0x87;
-		}
-
-		std::vector<unsigned char> blankbuf;
-		blankbuf.resize(block_size, 0x00);
-		std::vector<unsigned char> L;
-		cipherK1K2->cipher(blankbuf, L, *symkey.get(), *iv.get(), false);
-
-		std::vector<unsigned char> K1;
-		if ((L[0] & 0x80) == 0x00)
-		{
-			K1 = shift_string(L);
-		}
-		else
-		{
-			K1 = shift_string(L, Rb);
-		}
-
-		std::vector<unsigned char> K2;
-		if ((K1[0] & 0x80) == 0x00)
-		{
-			K2 = shift_string(K1);
-		}
-		else
-		{
-			K2 = shift_string(K1, Rb);
-		}
-
-		int pad = (block_size - (data.size() % block_size)) % block_size;
-		std::vector<unsigned char> padded_data = data;
-		if (pad > 0)
-		{
-			padded_data.push_back(0x80);
-			if (pad > 1)
-			{
-				for (int i = 0; i < (pad - 1); ++i)
-				{
-					padded_data.push_back(0x00);
-				}
-			}
-		}
-
-		// XOR with K1
-		if (pad == 0)
-		{
-			for (unsigned int i = 0; i < K1.size(); ++i)
-			{
-				padded_data[padded_data.size() - K1.size() + i] = static_cast<unsigned char>(padded_data[padded_data.size() - K1.size() + i] ^ K1[i]);
-			}
-		}
-		// XOR with K2
-		else
-		{
-			for (unsigned int i = 0; i < K2.size(); ++i)
-			{
-				padded_data[padded_data.size() - K2.size() + i] = static_cast<unsigned char>(padded_data[padded_data.size() - K2.size() + i] ^ K2[i]);
-			}
-		}
-
-		std::vector<unsigned char> ret;
-		// 3DES
-		if (boost::dynamic_pointer_cast<openssl::DESCipher>(cipherMAC))
-		{
-			iv.reset(new openssl::DESInitializationVector(openssl::DESInitializationVector::createFromData(lastIV)));
-		}
-		// AES
-		else
-		{
-			iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(lastIV)));
-		}
-		cipherMAC->cipher(padded_data, ret, *symkey.get(), *iv.get(), false);
-
-		return ret;
-	}
-
 	std::vector<unsigned char> DESFireCrypto::desfire_cmac(const std::vector<unsigned char>& key, boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const std::vector<unsigned char>& data)
 	{
-		std::vector<unsigned char> ret = desfire_cmac_generic(key, cipherMAC, block_size, data, d_lastIV);
+		std::vector<unsigned char> ret = openssl::CMACCrypto::cmac(key, cipherMAC, block_size, data, d_lastIV);
 
 		if (cipherMAC == d_cipher)
 		{
@@ -1099,28 +960,6 @@ namespace logicalaccess
 		else
 		{
 			ret = std::vector<unsigned char>(ret.end() - 16, ret.end() - 8);
-		}
-
-		return ret;
-	}
-
-	std::vector<unsigned char> DESFireCrypto::shift_string(const std::vector<unsigned char>& buf, unsigned char xorparam)
-	{
-		std::vector<unsigned char> ret = buf;
-
-		unsigned int i;
-		for (i = 0; i < ret.size() - 1; ++i)
-		{
-			ret[i] = ret[i] << 1;
-			// add the carry over bit
-			ret[i] = ret[i] | ((ret[i + 1] & 0x80) ? 0x01 : 0x00);
-		}
-
-		ret[ret.size()-1] = ret[ret.size()-1] << 1;
-
-		if (xorparam != 0x00)
-		{
-			ret[ret.size()-1] = static_cast<unsigned char>(ret[ret.size()-1] ^ xorparam);
 		}
 
 		return ret;
@@ -1216,13 +1055,11 @@ namespace logicalaccess
 		if (boost::dynamic_pointer_cast<openssl::AESCipher>(cipher))
 		{
 			isokey.reset(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(key)));
-			//iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createNull()));
 			iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastIV)));
 		}
 		else
 		{
 			isokey.reset(new openssl::DESSymmetricKey(openssl::DESSymmetricKey::createFromData(key)));
-			//iv.reset(new openssl::DESInitializationVector(openssl::DESInitializationVector::createNull()));
 			iv.reset(new openssl::DESInitializationVector(openssl::DESInitializationVector::createFromData(d_lastIV)));
 		}
 		cipher->cipher(decdata, encdata, *isokey, *iv, false);
@@ -1232,25 +1069,6 @@ namespace logicalaccess
 		}
 
 		return encdata;
-	}
-
-	bool DESFireCrypto::getDiversify(unsigned char* diversify)
-	{
-		if (d_identifier.size() > 0)
-		{
-			diversify[0] = 0xFF;
-			memcpy(diversify + 1, &d_identifier[0], d_identifier.size());
-			diversify[8] = 0x00;
-			memcpy(diversify + 9, &d_identifier[0], d_identifier.size());
-			for (unsigned char i = 0; i < 7; ++i)
-			{
-				diversify[9 + i] ^= 0xFF;
-			}
-		}
-		else
-			return false;
-
-		return true;
 	}
 
 	void DESFireCrypto::setCryptoContext(boost::shared_ptr<DESFireProfile> profile, std::vector<unsigned char> identifier)

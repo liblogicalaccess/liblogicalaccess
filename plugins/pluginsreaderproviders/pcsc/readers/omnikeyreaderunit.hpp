@@ -52,9 +52,11 @@ namespace logicalaccess
 			void setIsSecureConnectionMode(bool isSecure);
 
 			/**
-			 * \brief Disconnect from the card.
+			 * \brief Wait for a card removal.
+			 * \param maxwait The maximum time to wait for, in milliseconds. If maxwait is zero, then the call never times out.
+			 * \return True if a card was removed, false otherwise. If a card was removed, the name of the reader on which the removal was detected is accessible with getReader().
 			 */
-			virtual void disconnect();
+			virtual bool waitRemoval(unsigned int maxwait);
 
 			/**
 			 * \brief Is secure connection mode ?
