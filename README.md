@@ -16,11 +16,9 @@ C++ RFID Library for Windows and Linux. For PC/SC, ISO compliant and proprietary
 
 How to install?
 ----------------
-
 See http://liblogicalaccess.islog.com/wiki/doku.php/install
 
 
 How to build?
 ----------------
-
 See http://liblogicalaccess.islog.com/wiki/doku.php/build
