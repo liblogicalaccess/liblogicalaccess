@@ -28,16 +28,16 @@ namespace logicalaccess
 				diversify.push_back(identifier[x]);
 			
 			unsigned char aidTab[3];
-			for (char x = 2; x >= 0; --x)
+			for (unsigned char x = 2; x != (unsigned char)0; --x)
 			{
 				aidTab[x] = AID & 0xff;
 				AID >>= 8;
 			}
-			for (char x = 0; x < 3; ++x)
+			for (unsigned char x = 0; x < 3; ++x)
 				diversify.push_back(aidTab[x]);
 
 			std::vector<unsigned char> const_vector = std::vector<unsigned char>(const_id.begin(), const_id.end());
-			int syssize = 0;
+			unsigned int syssize = 0;
 			if (boost::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_AES)
 				syssize = 7;
 			else
