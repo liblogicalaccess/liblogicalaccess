@@ -4,7 +4,9 @@
  * \brief Xml Serializable.
  */
 
+#include "logicalaccess/myexception.hpp"
 #include "logicalaccess/xmlserializable.hpp"
+#include "logicalaccess/logs.hpp"
 #include <stdlib.h>
 #include <fstream>
 #include <iostream>
@@ -79,6 +81,8 @@ namespace logicalaccess
 			ret = !ofs.bad();
 			ofs.close();
 		}
+		else
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Unable to open the file");
 
 		return ret;
 	}
@@ -92,6 +96,8 @@ namespace logicalaccess
 		{
 			ret = unSerialize(ifs, "");
 		}
+		else
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Unable to open the file");
 
 		return ret;
 	}

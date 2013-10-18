@@ -4,6 +4,7 @@
  * \brief Parity Data field.
  */
 
+#include "logicalaccess/myexception.hpp"
 #include "logicalaccess/services/accesscontrol/formats/customformat/paritydatafield.hpp"
 #include "logicalaccess/services/accesscontrol/formats/format.hpp"
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"

@@ -4,6 +4,7 @@
  * \brief Wiegand 37 With Facility and right parity * 2 Format.
  */
 
+#include "logicalaccess/myexception.hpp"
 #include "logicalaccess/services/accesscontrol/formats/wiegand37withfacilityrightparity2format.hpp"
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 #include "logicalaccess/services/accesscontrol/encodings/binarydatatype.hpp"

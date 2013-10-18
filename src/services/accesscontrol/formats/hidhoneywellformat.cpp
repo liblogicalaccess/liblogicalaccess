@@ -4,6 +4,7 @@
  * \brief HID Honeywell Format.
  */
 
+#include "logicalaccess/myexception.hpp"
 #include "logicalaccess/services/accesscontrol/formats/hidhoneywellformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 #include "logicalaccess/services/accesscontrol/encodings/binarydatatype.hpp"

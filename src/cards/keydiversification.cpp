@@ -4,6 +4,7 @@
  * \brief Key storage base class.
  */
 
+#include "logicalaccess/myexception.hpp"
 #include "logicalaccess/cards/keydiversification.hpp"
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 

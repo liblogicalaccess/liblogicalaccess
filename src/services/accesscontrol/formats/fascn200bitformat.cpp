@@ -4,6 +4,7 @@
  * \brief FASC-N 200 Bit format.
  */
 
+#include "logicalaccess/myexception.hpp"
 #include "logicalaccess/services/accesscontrol/formats/fascn200bitformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 #include "logicalaccess/services/accesscontrol/encodings/bcdnibbledatatype.hpp"

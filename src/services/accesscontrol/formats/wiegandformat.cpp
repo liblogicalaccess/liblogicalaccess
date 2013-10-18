@@ -4,6 +4,7 @@
  * \brief Wiegand Format Base.
  */
 
+#include "logicalaccess/myexception.hpp"
 #include "logicalaccess/services/accesscontrol/formats/wiegandformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 #include "logicalaccess/services/accesscontrol/encodings/binarydatatype.hpp"

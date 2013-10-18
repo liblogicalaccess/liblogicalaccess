@@ -1,3 +1,4 @@
+#include "logicalaccess/myexception.hpp"
 #include "logicalaccess/dynlibrary/windowsdynlibrary.hpp"
 #include "logicalaccess/logs.hpp"
 #include "logicalaccess/readerproviders/readerunit.hpp"

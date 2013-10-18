@@ -4,6 +4,7 @@
  * \brief TCP data transport.
  */
 
+#include "logicalaccess/myexception.hpp"
 #include "logicalaccess/readerproviders/tcpdatatransport.hpp"
 #include "logicalaccess/cards/readercardadapter.hpp"
 

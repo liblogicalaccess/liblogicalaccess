@@ -4,6 +4,7 @@
  * \brief Custom Format.
  */
 
+#include "logicalaccess/myexception.hpp"
 #include "logicalaccess/services/accesscontrol/formats/customformat/customformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 #include "logicalaccess/services/accesscontrol/formats/customformat/asciidatafield.hpp"

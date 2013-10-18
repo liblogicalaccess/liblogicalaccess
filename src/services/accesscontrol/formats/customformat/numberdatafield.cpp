@@ -4,6 +4,7 @@
  * \brief Number Data field.
  */
 
+#include "logicalaccess/myexception.hpp"
 #include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
 
 

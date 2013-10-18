@@ -4,6 +4,7 @@
  * \brief A Data Type.
  */
 
+#include "logicalaccess/myexception.hpp"
 #include "logicalaccess/services/accesscontrol/encodings/datatype.hpp"
 #include "logicalaccess/services/accesscontrol/encodings/bcdbytedatatype.hpp"
 #include "logicalaccess/services/accesscontrol/encodings/bcdnibbledatatype.hpp"
