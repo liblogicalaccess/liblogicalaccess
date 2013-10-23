@@ -5,6 +5,7 @@
  * \brief A serial port class.
  */
 
+#include "logicalaccess/myexception.hpp"
 #include "logicalaccess/readerproviders/serialport.hpp"
 
 #ifdef UNIX

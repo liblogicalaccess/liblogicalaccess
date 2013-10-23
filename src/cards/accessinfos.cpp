@@ -4,6 +4,7 @@
  * \brief Base class access informations. 
  */
  
+#include "logicalaccess/myexception.hpp"
 #include "logicalaccess/cards/accessinfo.hpp"
 #include "logicalaccess/services/accesscontrol/formats/format.hpp"
 #include <time.h>

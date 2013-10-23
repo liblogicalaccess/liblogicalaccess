@@ -4,6 +4,7 @@
  * \brief Serial port data transport.
  */
 
+#include "logicalaccess/myexception.hpp"
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
 #include "logicalaccess/cards/readercardadapter.hpp"
 

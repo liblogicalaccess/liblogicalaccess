@@ -4,6 +4,7 @@
  * \brief Reader configuration.
  */
 
+#include "logicalaccess/myexception.hpp"
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "logicalaccess/readerproviders/readerconfiguration.hpp"
 #include "logicalaccess/cards/accessinfo.hpp"
