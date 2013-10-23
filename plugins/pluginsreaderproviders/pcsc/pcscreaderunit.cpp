@@ -1597,7 +1597,7 @@ namespace logicalaccess
 	void PCSCReaderUnit::makeProxy(boost::shared_ptr<PCSCReaderUnit> readerUnit, boost::shared_ptr<PCSCReaderUnitConfiguration> readerUnitConfig)
 	{
 		d_card_type = readerUnit->getCardType();
-		d_sam_chip = readerUnit->getSAMChip();
+		d_sam_chip = readerUnit->d_sam_chip;
 		d_sam_readerunit = readerUnit->getSAMReaderUnit();
 		d_readerProvider = readerUnit->getReaderProvider();
 		if (getPCSCConfiguration()->getPCSCType() == readerUnitConfig->getPCSCType())

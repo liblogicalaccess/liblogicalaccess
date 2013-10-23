@@ -410,8 +410,9 @@ namespace logicalaccess
 
 	 std::vector<unsigned char> SAMAV1ISO7816Commands::changeKeyPICC(const ChangeKeyInfo& info)
 	 {
-		if (d_crypto->d_sessionKey.size() == 0)
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Failed: AuthentificationHost have to be done before use such command.");
+		//if (d_crypto->d_sessionKey.size() == 0)
+		//	THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Failed: Authentification have to be done before using such command.");
+
 		unsigned char keyCompMeth = 0;
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
@@ -419,9 +420,9 @@ namespace logicalaccess
 		if (!info.oldKeyInvolvement)
 			keyCompMeth = 1;
 
-		unsigned char cfg = info.desfireNumber & 0x7;
+		unsigned char cfg = info.desfireNumber & 0xf;
 		if (info.isMasterKey)
-			cfg += 0x8;
+			cfg |= 0x10;
 		std::vector<unsigned char> data(4);
 		data[0] = info.currentKeyNo;
 		data[1] = info.currentKeyV;
@@ -430,7 +431,11 @@ namespace logicalaccess
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xc4, keyCompMeth, cfg, (unsigned char)(data.size()), &data[0], data.size(), 0x00, result, &resultlen);
 
 		if (resultlen >= 2 &&  (result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0x00))
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKeyPICC failed.");
+        {
+            char tmp[64];
+            sprintf(tmp, "changeKeyPICC failed (%x %x).", result[resultlen - 2], result[resultlen - 1]);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, tmp);
+        }
 
 		return std::vector<unsigned char>(result, result + resultlen - 2);
 	 }

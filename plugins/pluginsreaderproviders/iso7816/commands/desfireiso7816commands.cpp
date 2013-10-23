@@ -137,22 +137,33 @@ namespace logicalaccess
 		boost::shared_ptr<SAMCommands> samcommands = boost::dynamic_pointer_cast<SAMCommands>(getSAMChip()->getCommands());
 
 		boost::shared_ptr<DESFireProfile> dprofile = boost::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile());
-		boost::shared_ptr<DESFireKey> oldkey = boost::dynamic_pointer_cast<DESFireKey>(dprofile->getKey(d_crypto->d_currentAid, d_crypto->d_currentKeyNo));
+		boost::shared_ptr<DESFireKey> oldkey = boost::dynamic_pointer_cast<DESFireKey>(dprofile->getKey(d_crypto->d_currentAid, keyno));
 
 		ChangeKeyInfo samck;
 		memset(&samck, 0x00, sizeof(samck));
-		samck.currentKeyNo = d_crypto->d_currentKeyNo;
-		samck.isMasterKey = (keyno == 0x00) ? 1 : 0;
+		samck.currentKeyNo = 0;
+		samck.isMasterKey = (d_crypto->d_currentAid == 0 && keyno == 0x00) ? 1 : 0;
 		samck.newKeyNo = samsks->getKeySlot();
 		samck.newKeyV = key->getKeyVersion();
 		samck.desfireNumber = keyno;
-		if (oldkey && boost::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage()))
-		{
-			boost::shared_ptr<SAMKeyStorage> oldsamks = boost::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage());
-			samck.currentKeyNo = oldsamks->getKeySlot();
-			samck.currentKeyV = oldkey->getKeyVersion();
-			samck.oldKeyInvolvement = 1;
-		}
+        if ((d_crypto->d_currentKeyNo == 0 && keyno == 0) || (d_crypto->d_currentKeyNo == keyno /* && ChangeKey key == 0xE */))
+        {
+            samck.oldKeyInvolvement = 0;
+        }
+        else
+        {
+		    if (oldkey && boost::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage()))
+		    {
+			    boost::shared_ptr<SAMKeyStorage> oldsamks = boost::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage());
+			    samck.currentKeyNo = oldsamks->getKeySlot();
+			    samck.currentKeyV = oldkey->getKeyVersion();
+			    samck.oldKeyInvolvement = 1;
+		    }
+            else
+            {
+                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Current key required on SAM to change the key.");
+            }
+        }
 
 		std::vector<unsigned char> ret = samcommands->changeKeyPICC(samck);
 		d_crypto->d_lastIV.clear();
