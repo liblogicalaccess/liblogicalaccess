@@ -23,254 +23,254 @@
 
 namespace logicalaccess
 {
-	const std::string Key::secureAiKey = "Obscurity is not security Julien would say. But...";
+    const std::string Key::secureAiKey = "Obscurity is not security Julien would say. But...";
 
-	Key::Key()
-	{
-		d_isEmpty = true;
-		d_key_storage.reset(new ComputerMemoryKeyStorage());
-		d_cipherKey = "";
-		d_storeCipheredData = true;
-	}
+    Key::Key()
+    {
+        d_isEmpty = true;
+        d_key_storage.reset(new ComputerMemoryKeyStorage());
+        d_cipherKey = "";
+        d_storeCipheredData = true;
+    }
 
-	void Key::clear()
-	{		
-		if (getLength() > 0)
-		{
-			memset(getData(), 0x00, getLength());
-		}
-	}
+    void Key::clear()
+    {		
+        if (getLength() > 0)
+        {
+            memset(getData(), 0x00, getLength());
+        }
+    }
 
-	std::string Key::toString(bool withSpace) const
-	{
-		const unsigned char* data = getData();
-		std::ostringstream oss;		
+    std::string Key::toString(bool withSpace) const
+    {
+        const unsigned char* data = getData();
+        std::ostringstream oss;		
 
-		oss << std::setfill('0');
+        oss << std::setfill('0');
 
-		if (!d_isEmpty)
-		{
-			for (size_t i = 0; i < getLength(); ++i)
-			{
-				oss << std::setw(2) << std::hex << static_cast<unsigned int>(data[i]);
+        if (!d_isEmpty)
+        {
+            for (size_t i = 0; i < getLength(); ++i)
+            {
+                oss << std::setw(2) << std::hex << static_cast<unsigned int>(data[i]);
 
-				if (withSpace && i < (getLength() - 1))
-				{
-					oss << " ";
-				}
-			}
-		}
+                if (withSpace && i < (getLength() - 1))
+                {
+                    oss << " ";
+                }
+            }
+        }
 
-		return oss.str();
-	}
+        return oss.str();
+    }
 
-	bool Key::fromString(const std::string& str)
-	{		
-		unsigned char* data = getData();
-		std::istringstream iss(str);
+    bool Key::fromString(const std::string& str)
+    {		
+        unsigned char* data = getData();
+        std::istringstream iss(str);
 
-		if (str == "")
-		{
-			d_isEmpty = true;
-		}
-		else
-		{
-			for (size_t i = 0; i < getLength(); ++i)
-			{
-				unsigned int tmp;
+        if (str == "")
+        {
+            d_isEmpty = true;
+        }
+        else
+        {
+            for (size_t i = 0; i < getLength(); ++i)
+            {
+                unsigned int tmp;
 
-				if (!iss.good())
-				{
-					d_isEmpty = true;
+                if (!iss.good())
+                {
+                    d_isEmpty = true;
 
-					return false;
-				}
+                    return false;
+                }
 
-				iss >> std::hex >> tmp;
+                iss >> std::hex >> tmp;
 
-				data[i] = static_cast<unsigned char>(tmp);
-			}
+                data[i] = static_cast<unsigned char>(tmp);
+            }
 
-			d_isEmpty = false;
-		}
+            d_isEmpty = false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	void Key::setData(const unsigned char* data)
-	{
-		memcpy(getData(), data, getLength());
-		d_isEmpty = false;
-	}
+    void Key::setData(const unsigned char* data)
+    {
+        memcpy(getData(), data, getLength());
+        d_isEmpty = false;
+    }
 
-	void Key::setData(const std::vector<unsigned char>& data, size_t offset)
-	{
-		if (data.size() == 0)
-		{
-			d_isEmpty = true;
-		}
-		else
-		{
-			memcpy(getData(), &data[offset], getLength());
-			d_isEmpty = false;
-		}
-	}
+    void Key::setData(const std::vector<unsigned char>& data, size_t offset)
+    {
+        if (data.size() == 0)
+        {
+            d_isEmpty = true;
+        }
+        else
+        {
+            memcpy(getData(), &data[offset], getLength());
+            d_isEmpty = false;
+        }
+    }
 
-	void Key::setKeyStorage(boost::shared_ptr<KeyStorage> key_storage)
-	{
-		d_key_storage = key_storage;
-	}
+    void Key::setKeyStorage(boost::shared_ptr<KeyStorage> key_storage)
+    {
+        d_key_storage = key_storage;
+    }
 
-	boost::shared_ptr<KeyStorage> Key::getKeyStorage() const
-	{
-		return d_key_storage;
-	}
+    boost::shared_ptr<KeyStorage> Key::getKeyStorage() const
+    {
+        return d_key_storage;
+    }
 
-	void Key::serialize(boost::property_tree::ptree& node)
-	{
-		node.put("<xmlattr>.keyStorageType", d_key_storage->getType());
-		if (d_key_diversification)
-		{
-			boost::property_tree::ptree newnode;
-			d_key_diversification->serialize(newnode);
-			node.add_child("KeyDiversification", newnode);
-		}
-		node.put("IsCiphered", (d_storeCipheredData && !d_isEmpty));
-		cipherKeyData(node);
-		d_key_storage->serialize(node);
-	}
+    void Key::serialize(boost::property_tree::ptree& node)
+    {
+        node.put("<xmlattr>.keyStorageType", d_key_storage->getType());
+        if (d_key_diversification)
+        {
+            boost::property_tree::ptree newnode;
+            d_key_diversification->serialize(newnode);
+            node.add_child("KeyDiversification", newnode);
+        }
+        node.put("IsCiphered", (d_storeCipheredData && !d_isEmpty));
+        cipherKeyData(node);
+        d_key_storage->serialize(node);
+    }
 
-	void Key::unSerialize(boost::property_tree::ptree& node)
-	{
-		INFO_SIMPLE_("Unserializing Key...");
+    void Key::unSerialize(boost::property_tree::ptree& node)
+    {
+        INFO_SIMPLE_("Unserializing Key...");
 
-		d_key_storage = KeyStorage::getKeyStorageFromType(static_cast<KeyStorageType>(node.get_child("<xmlattr>.keyStorageType").get_value<unsigned int>()));
+        d_key_storage = KeyStorage::getKeyStorageFromType(static_cast<KeyStorageType>(node.get_child("<xmlattr>.keyStorageType").get_value<unsigned int>()));
 
-		if (node.get_child_optional("KeyDiversification"))
-		{
-			boost::property_tree::ptree keydivnode = node.get_child("KeyDiversification");
-			d_key_diversification = KeyDiversification::getKeyDiversificationFromType(keydivnode.get_child("<xmlattr>.keyDiversificationType").get_value<std::string>());
-			d_key_diversification->unSerialize(keydivnode);
-		}
+        if (node.get_child_optional("KeyDiversification"))
+        {
+            boost::property_tree::ptree keydivnode = node.get_child("KeyDiversification");
+            d_key_diversification = KeyDiversification::getKeyDiversificationFromType(keydivnode.get_child("<xmlattr>.keyDiversificationType").get_value<std::string>());
+            d_key_diversification->unSerialize(keydivnode);
+        }
 
-		d_storeCipheredData = node.get_child("IsCiphered").get_value<bool>(false);
-		uncipherKeyData(node);
-		INFO_SIMPLE_("Unserializing Key storage...");
-		d_key_storage->unSerialize(node);
-	}
+        d_storeCipheredData = node.get_child("IsCiphered").get_value<bool>(false);
+        uncipherKeyData(node);
+        INFO_SIMPLE_("Unserializing Key storage...");
+        d_key_storage->unSerialize(node, "");
+    }
 
-	void Key::setStoreCipheredData(bool cipher)
-	{
-		d_storeCipheredData = cipher;
-	}
+    void Key::setStoreCipheredData(bool cipher)
+    {
+        d_storeCipheredData = cipher;
+    }
 
-	bool Key::getStoreCipheredData()
-	{
-		return d_storeCipheredData;
-	}
+    bool Key::getStoreCipheredData()
+    {
+        return d_storeCipheredData;
+    }
 
-	void Key::setCipherKey(const std::string& key)
-	{
-		d_cipherKey = key;
-	}
+    void Key::setCipherKey(const std::string& key)
+    {
+        d_cipherKey = key;
+    }
 
-	void Key::cipherKeyData(boost::property_tree::ptree& node)
-	{
-		if (!d_storeCipheredData || d_isEmpty)
-		{
-			node.put("Data", toString());
-		}
-		else
-		{
-			std::string secureKey = ((d_cipherKey == "") ? Key::secureAiKey : d_cipherKey);
-			openssl::AESSymmetricKey aes = openssl::AESSymmetricKey::createFromPassphrase(secureKey);
-			openssl::AESInitializationVector iv = openssl::AESInitializationVector::createNull();
-			openssl::AESCipher aescipher;
+    void Key::cipherKeyData(boost::property_tree::ptree& node)
+    {
+        if (!d_storeCipheredData || d_isEmpty)
+        {
+            node.put("Data", toString());
+        }
+        else
+        {
+            std::string secureKey = ((d_cipherKey == "") ? Key::secureAiKey : d_cipherKey);
+            openssl::AESSymmetricKey aes = openssl::AESSymmetricKey::createFromPassphrase(secureKey);
+            openssl::AESInitializationVector iv = openssl::AESInitializationVector::createNull();
+            openssl::AESCipher aescipher;
 
-			std::vector<unsigned char> divaesbuf;
-			std::string strdata = "Data";
-			std::vector<unsigned char> keynamebuf = std::vector<unsigned char>(strdata.begin(), strdata.end());
-			keynamebuf.resize(32, 0x00);
-			aescipher.cipher(keynamebuf, divaesbuf, aes, iv, false);
-			openssl::AESSymmetricKey divaes = openssl::AESSymmetricKey::createFromData(divaesbuf);
+            std::vector<unsigned char> divaesbuf;
+            std::string strdata = "Data";
+            std::vector<unsigned char> keynamebuf = std::vector<unsigned char>(strdata.begin(), strdata.end());
+            keynamebuf.resize(32, 0x00);
+            aescipher.cipher(keynamebuf, divaesbuf, aes, iv, false);
+            openssl::AESSymmetricKey divaes = openssl::AESSymmetricKey::createFromData(divaesbuf);
 
-			strdata = toString();
-			std::vector<unsigned char> keybuf = std::vector<unsigned char>(strdata.begin(), strdata.end());
-			std::vector<unsigned char> cipheredkey;
-			aescipher.cipher(keybuf, cipheredkey, divaes, iv, true);
+            strdata = toString();
+            std::vector<unsigned char> keybuf = std::vector<unsigned char>(strdata.begin(), strdata.end());
+            std::vector<unsigned char> cipheredkey;
+            aescipher.cipher(keybuf, cipheredkey, divaes, iv, true);
 
-			node.put("Data", BufferHelper::toBase64(cipheredkey));
-		}
-	}
+            node.put("Data", BufferHelper::toBase64(cipheredkey));
+        }
+    }
 
-	void Key::uncipherKeyData(boost::property_tree::ptree& node)
-	{
-		std::string data = node.get_child("Data").get_value<std::string>();
-		//INFO_("Unciphering data... {%s}", data.c_str());
+    void Key::uncipherKeyData(boost::property_tree::ptree& node)
+    {
+        std::string data = node.get_child("Data").get_value<std::string>();
+        //INFO_("Unciphering data... {%s}", data.c_str());
 
-		if (!d_storeCipheredData)
-		{
-			//INFO_("Data was not ciphered ! Retrieving directly data...");
-			fromString(data);
-		}
-		else
-		{
-			INFO_SIMPLE_("Data was ciphered ! Unciphering..");
-			std::string secureKey = ((d_cipherKey == "") ? Key::secureAiKey : d_cipherKey);
-			std::vector<unsigned char> hash = openssl::SHA256Hash(secureKey);
-			openssl::AESSymmetricKey aes = openssl::AESSymmetricKey::createFromData(hash);
-			openssl::AESInitializationVector iv = openssl::AESInitializationVector::createNull();
-			openssl::AESCipher aescipher;
+        if (!d_storeCipheredData)
+        {
+            //INFO_("Data was not ciphered ! Retrieving directly data...");
+            fromString(data);
+        }
+        else
+        {
+            INFO_SIMPLE_("Data was ciphered ! Unciphering..");
+            std::string secureKey = ((d_cipherKey == "") ? Key::secureAiKey : d_cipherKey);
+            std::vector<unsigned char> hash = openssl::SHA256Hash(secureKey);
+            openssl::AESSymmetricKey aes = openssl::AESSymmetricKey::createFromData(hash);
+            openssl::AESInitializationVector iv = openssl::AESInitializationVector::createNull();
+            openssl::AESCipher aescipher;
 
-			std::vector<unsigned char> divaesbuf;
-			std::string strdata = "Data";
-			std::vector<unsigned char> keynamebuf = std::vector<unsigned char>(strdata.begin(), strdata.end());
-			keynamebuf.resize(32, 0x00);
-			aescipher.cipher(keynamebuf, divaesbuf, aes, iv, false);
-			openssl::AESSymmetricKey divaes = openssl::AESSymmetricKey::createFromData(divaesbuf);
+            std::vector<unsigned char> divaesbuf;
+            std::string strdata = "Data";
+            std::vector<unsigned char> keynamebuf = std::vector<unsigned char>(strdata.begin(), strdata.end());
+            keynamebuf.resize(32, 0x00);
+            aescipher.cipher(keynamebuf, divaesbuf, aes, iv, false);
+            openssl::AESSymmetricKey divaes = openssl::AESSymmetricKey::createFromData(divaesbuf);
 
-			std::vector<unsigned char> keybuf(data.begin(), data.end()), uncipheredkey;			
-			aescipher.decipher(BufferHelper::fromBase64(BufferHelper::getStdString(keybuf)), uncipheredkey, divaes, iv, true);		
+            std::vector<unsigned char> keybuf(data.begin(), data.end()), uncipheredkey;			
+            aescipher.decipher(BufferHelper::fromBase64(BufferHelper::getStdString(keybuf)), uncipheredkey, divaes, iv, true);		
 
-			//DEBUG_("Data unciphered: {%s}", uncipheredkey.toStdString().c_str());
+            //DEBUG_("Data unciphered: {%s}", uncipheredkey.toStdString().c_str());
 
-			fromString(BufferHelper::getStdString(uncipheredkey));
-		}
-	}
+            fromString(BufferHelper::getStdString(uncipheredkey));
+        }
+    }
 
-	bool Key::operator==(const Key& key) const
-	{
-		if (isEmpty() && key.isEmpty())
-		{
-			return true;
-		}
+    bool Key::operator==(const Key& key) const
+    {
+        if (isEmpty() && key.isEmpty())
+        {
+            return true;
+        }
 
-		if (getLength() != key.getLength() || isEmpty() || key.isEmpty())
-		{
-			return false;
-		}
+        if (getLength() != key.getLength() || isEmpty() || key.isEmpty())
+        {
+            return false;
+        }
 
-		return (memcmp(getData(), key.getData(), getLength()) == 0);
-	}
+        return (memcmp(getData(), key.getData(), getLength()) == 0);
+    }
 
-	bool Key::operator!=(const Key& key) const
-	{
-		if (isEmpty() && key.isEmpty())
-		{
-			return false;
-		}
+    bool Key::operator!=(const Key& key) const
+    {
+        if (isEmpty() && key.isEmpty())
+        {
+            return false;
+        }
 
-		if (getLength() != key.getLength() || isEmpty() || key.isEmpty())
-		{
-			return true;
-		}
+        if (getLength() != key.getLength() || isEmpty() || key.isEmpty())
+        {
+            return true;
+        }
 
-		return (memcmp(getData(), key.getData(), getLength()) != 0);
-	}
+        return (memcmp(getData(), key.getData(), getLength()) != 0);
+    }
 
-	std::ostream& operator<<(std::ostream& os, const Key& key)
-	{
-		return os << key.toString();
-	}
+    std::ostream& operator<<(std::ostream& os, const Key& key)
+    {
+        return os << key.toString();
+    }
 }
 

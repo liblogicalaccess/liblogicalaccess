@@ -418,6 +418,8 @@ namespace logicalaccess
 				else
 				{
 					d_proxyReaderUnit->makeProxy(boost::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
+                    d_proxyReaderUnit->d_sam_chip = d_sam_chip;
+                    d_proxyReaderUnit->d_sam_readerunit = d_sam_readerunit;
 				}
 			}
 			else
@@ -1596,9 +1598,7 @@ namespace logicalaccess
 
 	void PCSCReaderUnit::makeProxy(boost::shared_ptr<PCSCReaderUnit> readerUnit, boost::shared_ptr<PCSCReaderUnitConfiguration> readerUnitConfig)
 	{
-		d_card_type = readerUnit->getCardType();
-		d_sam_chip = readerUnit->d_sam_chip;
-		d_sam_readerunit = readerUnit->getSAMReaderUnit();
+		d_card_type = readerUnit->getCardType();		
 		d_readerProvider = readerUnit->getReaderProvider();
 		if (getPCSCConfiguration()->getPCSCType() == readerUnitConfig->getPCSCType())
 		{

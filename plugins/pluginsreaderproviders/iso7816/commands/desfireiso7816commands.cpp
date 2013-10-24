@@ -711,7 +711,7 @@ namespace logicalaccess
 		unsigned char command[16];
 
 		if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()) && !getSAMChip())
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAMKeyStorage set on the key but not SAM reader has been set.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAMKeyStorage set on the key but no SAM reader has been set.");
 
 		std::vector<unsigned char> diversify;
 		if (key->getKeyDiversification())
