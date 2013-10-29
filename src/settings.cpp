@@ -27,7 +27,6 @@ namespace logicalaccess
 
 	Settings::Settings()
 	{
-		
 	}
 	
 	void Settings::Initialize()
@@ -49,7 +48,11 @@ namespace logicalaccess
 
 			if (IsLogEnabled && !Logs::logfile.is_open())
 			{
+#ifdef __linux__
+				Logs::logfile.open(("/var/log/" + LogFileName), std::ios::out | std::ios::app);
+#else
 				Logs::logfile.open((getDllPath() + "/" + LogFileName), std::ios::out | std::ios::app);
+#endif
 			}
 		}
 		catch(...) { reset(); }
@@ -87,7 +90,25 @@ namespace logicalaccess
 
 			// Load the XML file into the property tree. If reading fails
 			// (cannot open file, parse error), an exception is thrown.
-			read_xml((getDllPath() + "/liblogicalaccess.config"), pt);
+			std::list<std::string> configfolder;
+			configfolder.push_back(getDllPath() + "/liblogicalaccess.config");
+#ifdef __unix__
+			configfolder.push_back("/etc/liblogicalaccess.config");
+#endif
+			for (std::list<std::string>::iterator it = configfolder.begin(); it != configfolder.end(); ++it)
+			{
+				try
+				{
+					read_xml(*it, pt);
+					break;
+				}
+				catch (boost::property_tree::xml_parser::xml_parser_error &e)
+				{
+					if (e.message() == "cannot open file")
+						continue;
+					throw;
+				}
+			}
 
 			IsLogEnabled = pt.get("config.log.enabled", false);
 			LogFileName = pt.get<std::string>("config.log.filename", "liblogicalaccess.log");
@@ -151,7 +172,7 @@ namespace logicalaccess
 
 
 			// Write the property tree to the XML file.
-			write_xml((getDllPath() + "\\liblogicalaccess.config"), pt);
+			write_xml((getDllPath() + "/liblogicalaccess.config"), pt);
 		}
 		catch (...) { }
 	}
