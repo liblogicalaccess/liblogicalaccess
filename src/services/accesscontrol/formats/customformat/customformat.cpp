@@ -34,7 +34,7 @@ namespace logicalaccess
 	unsigned int CustomFormat::getDataLength() const
 	{
 		unsigned int dataLength = 0;
-		for(std::list<boost::shared_ptr<DataField> >::const_iterator i = d_fieldList.begin(); i != d_fieldList.end(); ++i)
+		for(std::list<boost::shared_ptr<DataField> >::const_iterator i = d_fieldList.cbegin(); i != d_fieldList.cend(); ++i)
 		{
 			unsigned int maxLength = (*i)->getPosition() + (*i)->getDataLength();
 			if (maxLength > dataLength)
@@ -89,7 +89,7 @@ namespace logicalaccess
 		node.put("Name", d_name);
 		
 		boost::property_tree::ptree fnode;
-		for (std::list<boost::shared_ptr<DataField> >::iterator i = d_fieldList.begin(); i != d_fieldList.end(); ++i)
+		for (std::list<boost::shared_ptr<DataField> >::const_iterator i = d_fieldList.cbegin(); i != d_fieldList.cend(); ++i)
 		{
 			(*i)->serialize(fnode);
 		}
@@ -149,7 +149,7 @@ namespace logicalaccess
 				if (fields.size() == d_fieldList.size())
 				{
 					ret = true;
-					for(std::list<boost::shared_ptr<DataField> >::const_iterator i = d_fieldList.begin(), fi = fields.begin(); ret && i != d_fieldList.end() && fi != fields.end(); ++i, ++fi)
+					for(std::list<boost::shared_ptr<DataField> >::const_iterator i = d_fieldList.cbegin(), fi = fields.cbegin(); ret && i != d_fieldList.cend() && fi != fields.cend(); ++i, ++fi)
 					{
 						ret = (*i)->checkSkeleton(*fi);
 					}
@@ -191,7 +191,7 @@ namespace logicalaccess
 	boost::shared_ptr<DataField> CustomFormat::getFieldForPosition(unsigned int position)
 	{
 		boost::shared_ptr<DataField> field;
-		for (std::list<boost::shared_ptr<DataField> >::const_iterator i = d_fieldList.begin(); !field && i != d_fieldList.end(); ++i)
+		for (std::list<boost::shared_ptr<DataField> >::const_iterator i = d_fieldList.cbegin(); !field && i != d_fieldList.cend(); ++i)
 		{
 			if (position >= (*i)->getPosition()  && position < ((*i)->getPosition() + (*i)->getDataLength()))
 			{
