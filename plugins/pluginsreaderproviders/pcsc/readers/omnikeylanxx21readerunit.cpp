@@ -29,7 +29,6 @@ namespace logicalaccess
 
 	OmnikeyLANXX21ReaderUnit::~OmnikeyLANXX21ReaderUnit()
 	{
-		OmnikeyXX21ReaderUnit::~OmnikeyXX21ReaderUnit();
 	}
 
 	PCSCReaderUnitType OmnikeyLANXX21ReaderUnit::getPCSCType() const
