@@ -37,6 +37,7 @@
 #include "samav1chip.hpp"
 
 #include "readers/omnikeyxx21readerunit.hpp"
+#include "readers/omnikeylanxx21readerunit.hpp"
 #include "readers/omnikeyxx25readerunit.hpp"
 #include "readers/omnikeyxx27readerunit.hpp"
 #include "readers/cherryreaderunit.hpp"
@@ -162,7 +163,14 @@ namespace logicalaccess
 		{
 			if (readerName.find(string("x21")) != string::npos || readerName.find(string("5321")) != string::npos || readerName.find(string("6321")) != string::npos)
 			{
-				unit.reset(new OmnikeyXX21ReaderUnit(readerName));
+				if (readerName.find(string("LAN")) != string::npos)
+				{
+					unit.reset(new OmnikeyLANXX21ReaderUnit(readerName));
+				}
+				else
+				{
+					unit.reset(new OmnikeyXX21ReaderUnit(readerName));
+				}
 			}
 			else if (readerName.find(string("x25")) != string::npos)
 			{
@@ -418,8 +426,8 @@ namespace logicalaccess
 				else
 				{
 					d_proxyReaderUnit->makeProxy(boost::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
-                    d_proxyReaderUnit->d_sam_chip = d_sam_chip;
-                    d_proxyReaderUnit->d_sam_readerunit = d_sam_readerunit;
+					d_proxyReaderUnit->d_sam_chip = d_sam_chip;
+					d_proxyReaderUnit->d_sam_readerunit = d_sam_readerunit;
 				}
 			}
 			else

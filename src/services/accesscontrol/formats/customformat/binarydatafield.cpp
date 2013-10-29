@@ -175,11 +175,13 @@ namespace logicalaccess
 
 	void BinaryDataField::serialize(boost::property_tree::ptree& parentNode)
 	{
-		boost::property_tree::ptree node = parentNode.add(getDefaultXmlNodeName(), "");
+		boost::property_tree::ptree node;
 
 		ValueDataField::serialize(node);
 		node.put("Value", d_value.toString());
 		node.put("Padding", d_padding);
+
+		parentNode.add_child(getDefaultXmlNodeName(), node);
 	}
 
 	void BinaryDataField::unSerialize(boost::property_tree::ptree& node)

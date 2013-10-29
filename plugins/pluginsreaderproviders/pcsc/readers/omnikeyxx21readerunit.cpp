@@ -17,7 +17,7 @@
 #include <PCSC/reader.h>
 #endif
 
-#define CM_IOCTL_GET_SET_RFID_BAUDRATE								SCARD_CTL_CODE(3215)
+#define CM_IOCTL_GET_SET_RFID_BAUDRATE				SCARD_CTL_CODE(3215)
 
 
 namespace logicalaccess
