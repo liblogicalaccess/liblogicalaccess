@@ -28,7 +28,7 @@ add_library(
 	${include_commands}
   )
 
-SET_TARGET_PROPERTIES(samav2cards PROPERTIES VERSION 1.67)
+SET_TARGET_PROPERTIES(samav2cards PROPERTIES VERSION 1.70)
 
 set(OPT_LIBS)
 if (WIN32)

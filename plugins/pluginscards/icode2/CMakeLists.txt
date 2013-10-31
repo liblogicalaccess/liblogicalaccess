@@ -18,7 +18,7 @@ else()
   set(LINK_OPT logicalaccess)
 endif()
 
-SET_TARGET_PROPERTIES(icode2cards PROPERTIES VERSION 1.67)
+SET_TARGET_PROPERTIES(icode2cards PROPERTIES VERSION 1.70)
 
 target_link_libraries(
 	icode2cards
