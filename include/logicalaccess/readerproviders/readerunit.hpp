@@ -257,7 +257,7 @@ namespace logicalaccess
 			 * \param rootNode The root node.
 			 * \return True on success, false otherwise.
 			 */
-			virtual bool unSerialize(boost::property_tree::ptree& node, const std::string& rootNode);
+			virtual void unSerialize(boost::property_tree::ptree& node, const std::string& rootNode);
 
 			/**
 			 * \brief Get the associated reader provider.

@@ -238,10 +238,6 @@ namespace logicalaccess
 						{
 							ERROR_("Exception {%s}", e.what());
 						}
-						catch (...)
-						{
-							ERROR_SIMPLE_("Exception received !");
-						}
 
 						if ((*i)->getSerialPort()->isOpen())
 						{

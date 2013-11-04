@@ -57,10 +57,7 @@ namespace logicalaccess
 		d_ReaderUnit = d_readerProvider->createReaderUnit();
 		try
 		{
-			if (!d_ReaderUnit->unSerialize(node, ""))
-			{
-				d_ReaderUnit.reset();
-			}
+			d_ReaderUnit->unSerialize(node, "");
 		}
 		catch(std::exception&)
 		{

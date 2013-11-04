@@ -69,37 +69,27 @@ namespace logicalaccess
 		return buf;
 	}
 
-	bool XmlSerializable::serializeToFile(const std::string& filename)
+	void XmlSerializable::serializeToFile(const std::string& filename)
 	{
-		bool ret = false;
-
 		std::ofstream ofs(filename.c_str(), std::ios_base::binary | std::ios_base::trunc);
 		if (ofs.is_open())
 		{
 			std::string xmlstring = serialize();
 			ofs.write(xmlstring.c_str(), xmlstring.length());
-			ret = !ofs.bad();
 			ofs.close();
+			if (ofs.bad())
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Writing serialize failed.");
 		}
 		else
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Unable to open the file");
-
-		return ret;
 	}
 
-	bool XmlSerializable::unSerializeFromFile(const std::string& filename)
+	void XmlSerializable::unSerializeFromFile(const std::string& filename)
 	{
-		bool ret = false;
-
 		std::ifstream ifs(filename.c_str(), std::ios_base::binary);
-		if (ifs.is_open())
-		{
-			ret = unSerialize(ifs, "");
-		}
-		else
+		if (!ifs.is_open())
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Unable to open the file");
-
-		return ret;
+		unSerialize(ifs, "");
 	}
 
 	std::string XmlSerializable::removeXmlDeclaration(const std::string& xmlstring)
@@ -128,31 +118,26 @@ namespace logicalaccess
 		return oss.str();
 	}
 
-	bool XmlSerializable::unSerialize(const std::string& xmlstring, const std::string& rootNode)
+	void XmlSerializable::unSerialize(const std::string& xmlstring, const std::string& rootNode)
 	{
 		std::istringstream iss(xmlstring);
-		return unSerialize(iss, rootNode);
+		unSerialize(iss, rootNode);
 	}
 
-	bool XmlSerializable::unSerialize(std::istream& is, const std::string& rootNode)
+	void XmlSerializable::unSerialize(std::istream& is, const std::string& rootNode)
 	{
 		boost::property_tree::ptree pt;
 		boost::property_tree::xml_parser::read_xml(is, pt);
 			
-		return unSerialize(pt, rootNode);
+		unSerialize(pt, rootNode);
 	}
 
-	bool XmlSerializable::unSerialize(boost::property_tree::ptree& node, const std::string& rootNode)
+	void XmlSerializable::unSerialize(boost::property_tree::ptree& node, const std::string& rootNode)
 	{
 		boost::property_tree::ptree nodep = node.get_child(rootNode + getDefaultXmlNodeName());
-		if (!nodep.empty())
-		{
-			unSerialize(nodep);
-
-			return true;
-		}
-
-		return false;
+		if (nodep.empty())
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "unSerialize failed (node empty).");
+		unSerialize(nodep);
 	}
 }
 
