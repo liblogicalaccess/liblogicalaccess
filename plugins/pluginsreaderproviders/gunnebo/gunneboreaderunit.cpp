@@ -130,7 +130,7 @@ namespace logicalaccess
 				}
 			} while (!inserted && (maxwait == 0 || currentWait < maxwait));
 		}
-		catch(...)
+		catch (...)
 		{
 			Settings::getInstance()->IsLogEnabled = oldValue;
 			throw;
@@ -199,7 +199,7 @@ namespace logicalaccess
 				} while (!removed && (maxwait == 0 || currentWait < maxwait));
 			}
 		}
-		catch(...)
+		catch (...)
 		{
 			Settings::getInstance()->IsLogEnabled = oldValue;
 			throw;

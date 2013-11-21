@@ -63,7 +63,7 @@ namespace logicalaccess
 			}
 			catch(boost::system::system_error& ex)
 			{
-				ERROR_("Cannot establish connection: %s", ex.what());
+				ERROR_("Cannot establish connection on %s:%d : %s", getIpAddress().c_str(), getPort(), ex.what());
 				d_socket.reset();
 			}
 		}

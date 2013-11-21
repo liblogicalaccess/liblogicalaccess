@@ -333,34 +333,19 @@ namespace logicalaccess
 		}
 	}
 
-	bool ReaderUnit::unSerialize(boost::property_tree::ptree& node, const std::string& rootNode)
+	void ReaderUnit::unSerialize(boost::property_tree::ptree& node, const std::string& rootNode)
 	{
-		try
+		boost::property_tree::ptree parentNode = node.get_child(rootNode);
+		BOOST_FOREACH(boost::property_tree::ptree::value_type const& v, parentNode)
 		{
-			boost::property_tree::ptree parentNode = node.get_child(rootNode);
-			BOOST_FOREACH(boost::property_tree::ptree::value_type const& v, parentNode)
+			if (v.first == getDefaultXmlNodeName())
 			{
-				if (v.first == getDefaultXmlNodeName())
+				if (static_cast<std::string>(v.second.get_child("<xmlattr>.type").get_value<std::string>()) == getReaderProvider()->getRPType())
 				{
-					if (static_cast<std::string>(v.second.get_child("<xmlattr>.type").get_value<std::string>()) == getReaderProvider()->getRPType())
-					{
-						boost::property_tree::ptree r = v.second;
-						unSerialize(r);
-						
-						return true;
-					}
+					boost::property_tree::ptree r = v.second;
+					unSerialize(r);		
 				}
 			}
 		}
-		catch (std::exception& e)
-		{
-			ERROR_("Exception {%s} !", e.what());
-		}
-		catch (...)
-		{
-			ERROR_SIMPLE_("Exception occured !");
-		}
-
-		return false;
 	}
 }

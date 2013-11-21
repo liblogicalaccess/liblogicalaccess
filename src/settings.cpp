@@ -55,7 +55,7 @@ namespace logicalaccess
 #endif
 			}
 		}
-		catch(...) { reset(); }
+		catch (...) { reset(); }
 	}
 	
 	void Settings::Uninitialize()  

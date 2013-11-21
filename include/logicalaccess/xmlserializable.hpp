@@ -91,7 +91,7 @@ namespace logicalaccess
 			 * \param filename The Xml file.
 			 * \return True on success, false otherwise.
 			 */
-			virtual bool serializeToFile(const std::string& filename);
+			virtual void serializeToFile(const std::string& filename);
 
 			/**
 			 * \brief UnSerialize object from a Xml Node.
@@ -105,7 +105,7 @@ namespace logicalaccess
 			 * \param rootNode The root node.
 			 * \return True on success, false otherwise.
 			 */
-			virtual bool unSerialize(const std::string& xmlstring, const std::string& rootNode);
+			virtual void unSerialize(const std::string& xmlstring, const std::string& rootNode);
 
 			/**
 			 * \brief UnSerialize object from a Xml node.
@@ -113,7 +113,7 @@ namespace logicalaccess
 			 * \param rootNode The root node.
 			 * \return True on success, false otherwise.
 			 */
-			virtual bool unSerialize(std::istream& is, const std::string& rootNode);
+			virtual void unSerialize(std::istream& is, const std::string& rootNode);
 
 			/**
 			 * \brief UnSerialize object from a Xml node.
@@ -121,14 +121,14 @@ namespace logicalaccess
 			 * \param rootNode The root node.
 			 * \return True on success, false otherwise.
 			 */
-			virtual bool unSerialize(boost::property_tree::ptree& node, const std::string& rootNode);
+			virtual void unSerialize(boost::property_tree::ptree& node, const std::string& rootNode);
 
 			/**
 			 * \brief UnSerialize object from a Xml file.
 			 * \param filename The Xml file.
 			 * \return True on success, false otherwise.
 			 */
-			virtual bool unSerializeFromFile(const std::string& filename);		
+			virtual void unSerializeFromFile(const std::string& filename);		
 
 			/**
 			 * \brief Get the default Xml Node name for this object.
