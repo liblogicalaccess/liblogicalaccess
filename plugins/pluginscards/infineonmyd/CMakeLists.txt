@@ -18,7 +18,7 @@ else()
   set(LINK_OPT logicalaccess)
 endif()
 
-SET_TARGET_PROPERTIES(infineonmydcards PROPERTIES VERSION 1.67)
+SET_TARGET_PROPERTIES(infineonmydcards PROPERTIES VERSION 1.70)
 
 target_link_libraries(
 	infineonmydcards

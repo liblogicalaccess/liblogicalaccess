@@ -5,6 +5,7 @@
  */
 
 #include "../readers/omnikeylanxx21readerunit.hpp"
+#include "../pcscreaderprovider.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -43,6 +44,12 @@ namespace logicalaccess
 		sendControlMode(CM_IOCTL_READER_CONNECT);
 		INFO_SIMPLE_("Connected successfully to the LAN reader. Now connecting to PC/SC reader with standard method...");
 
+#ifdef _WINDOWS
+		Sleep(500);
+#elif defined(__unix__)
+		usleep(500000);
+#endif
+
 		return OmnikeyXX21ReaderUnit::connectToReader();
 	}
 
@@ -54,14 +61,19 @@ namespace logicalaccess
 		INFO_SIMPLE_("Disconnecting from LAN reader...");
 		sendControlMode(CM_IOCTL_READER_DISCONNECT);
 		INFO_SIMPLE_("Disconnected successfully from the LAN reader.");
+
+#ifdef _WINDOWS
+		Sleep(500);
+#elif defined(__unix__)
+		usleep(500000);
+#endif
 	}
 
 	void OmnikeyLANXX21ReaderUnit::sendControlMode(DWORD dwControlCode)
 	{
-		INFO_("Sending LAN control code {%x} on device {%s}...", dwControlCode, d_name.c_str());
+		INFO_("Sending LAN control code {%d} on device {%s}...", dwControlCode, d_name.c_str());
 
 		SCARDHANDLE hCardHandle;
-		SCARDCONTEXT hContext;
 		unsigned char outBuffer[512];
 		DWORD dwOutBufferSize;
 		unsigned char inBuffer[512];
@@ -77,10 +89,9 @@ namespace logicalaccess
 		dwBytesReturned = 0;
 		dwAP = 0;
 		hCardHandle = 0;
-		hContext = 0;
 
 		// Direct connect to Omnikey LAN reader
-		dwStatus = SCardConnect(hContext, reinterpret_cast<const char*>(d_name.c_str()), SCARD_SHARE_DIRECT, 0, &hCardHandle, &dwAP);
+		dwStatus = SCardConnect(getPCSCReaderProvider()->getContext(), reinterpret_cast<const char*>(d_name.c_str()), SCARD_SHARE_DIRECT, 0, &hCardHandle, &dwAP);
 		if (SCARD_S_SUCCESS != dwStatus)
 		{
 			ERROR_("Error {%x}", dwStatus);
