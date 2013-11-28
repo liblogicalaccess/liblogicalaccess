@@ -144,8 +144,6 @@ namespace logicalaccess
     {
         INFO_SIMPLE_("Unserializing Key...");
 
-        d_key_storage = KeyStorage::getKeyStorageFromType(static_cast<KeyStorageType>(node.get_child("<xmlattr>.keyStorageType").get_value<unsigned int>()));
-
         if (node.get_child_optional("KeyDiversification"))
         {
             boost::property_tree::ptree keydivnode = node.get_child("KeyDiversification");
@@ -156,7 +154,15 @@ namespace logicalaccess
         d_storeCipheredData = node.get_child("IsCiphered").get_value<bool>(false);
         uncipherKeyData(node);
         INFO_SIMPLE_("Unserializing Key storage...");
-        d_key_storage->unSerialize(node, "");
+		d_key_storage = KeyStorage::getKeyStorageFromType(static_cast<KeyStorageType>(node.get_child("<xmlattr>.keyStorageType").get_value<unsigned int>()));
+		if (d_key_storage)
+		{
+			boost::property_tree::ptree ksnode = node.get_child(d_key_storage->getDefaultXmlNodeName());
+			if (!ksnode.empty())
+			{
+				d_key_storage->unSerialize(ksnode);
+			}
+		}
     }
 
     void Key::setStoreCipheredData(bool cipher)
