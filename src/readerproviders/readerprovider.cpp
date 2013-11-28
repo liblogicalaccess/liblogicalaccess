@@ -8,6 +8,7 @@
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
 #include <boost/filesystem.hpp>
 #include <map>
+#include <time.h> 
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/logs.hpp"
 
@@ -26,14 +27,23 @@ namespace logicalaccess
 		return LibraryManager::getInstance()->getReaderProvider(rpt);
 	}
 
-	const std::vector<boost::shared_ptr<ReaderUnit> > ReaderProvider::WaitForReaders(std::vector<std::string> readers, bool all)
+	const std::vector<boost::shared_ptr<ReaderUnit> > ReaderProvider::WaitForReaders(std::vector<std::string> readers, double maxwait, bool all)
 	{
 		std::vector<boost::shared_ptr<ReaderUnit> > ret;
 		bool notfound = true;
+		time_t timer, current_timer;
+
+		time(&timer);
+
 
 		while (notfound)
 		{
 			ret.clear();
+
+			time(&current_timer);
+			if (maxwait != 0 && difftime(current_timer, timer) > maxwait)
+				return ret;
+
 			refreshReaderList();
 			ReaderList rl = getReaderList();
 			for (ReaderList::iterator it = rl.begin(); it != rl.end(); ++it)
