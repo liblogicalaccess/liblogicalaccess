@@ -54,6 +54,12 @@ namespace logicalaccess
 			virtual const ReaderList& getReaderList() = 0;
 
 			/**
+			 * \brief Lock until one or all ready are detected.
+			 * \return The reader list with one or all the ReaderUnit.
+			 */
+			virtual const std::vector<boost::shared_ptr<ReaderUnit> > WaitForReaders(std::vector<std::string> readers, bool all);
+
+			/**
 			 * \brief Get the reader provider type.
 			 * \return The reader provider type.
 			 */
