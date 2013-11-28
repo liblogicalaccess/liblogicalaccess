@@ -61,7 +61,8 @@ namespace logicalaccess
 		CONNECT = 0x08,
 		DISCONNECT = 0x09,
 		GET_READERTYPE = 0x0A,
-		GET_CSN = 0x0B
+		GET_CSN = 0x0B,
+		SET_CARDTYPE = 0x0C
 	} HidCommand;
 
 	/**
