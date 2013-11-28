@@ -888,6 +888,8 @@ namespace logicalaccess
 				}
 				catch (std::exception&)
 				{
+					setSAMChip(boost::shared_ptr<SAMChip>());
+					setSAMReaderUnit(boost::shared_ptr<PCSCReaderUnit>());
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The SAM Detected is not the SAM waited.");
 				}
 
