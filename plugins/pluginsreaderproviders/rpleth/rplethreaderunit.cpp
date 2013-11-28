@@ -69,6 +69,15 @@ namespace logicalaccess
 	void RplethReaderUnit::setCardType(std::string cardType)
 	{
 		d_card_type = cardType;
+		if (getDefaultRplethReaderCardAdapter()->getDataTransport()->isConnected())
+		{
+			std::vector<unsigned char> command;
+			command.push_back (static_cast<unsigned char>(Device::HID));
+			command.push_back (static_cast<unsigned char>(HidCommand::SET_CARDTYPE));
+			command.push_back (static_cast<unsigned char>(cardType.size()));
+			command.insert(command.end(), cardType.begin(), cardType.end());
+			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command);
+		}
 	}
 
 	bool RplethReaderUnit::waitInsertion(unsigned int maxwait)
@@ -95,7 +104,7 @@ namespace logicalaccess
 			{
 				unsigned char ctypelen = answer[0];
 				EXCEPTION_ASSERT_WITH_LOG(answer.size() >= static_cast<size_t>(1 + ctypelen + 1), LibLogicalAccessException, "Wrong card type length.");
-				std::string ctype = std::string(answer.begin() + 1, answer.begin() + 1 + ctypelen);
+				std::string ctype = (d_card_type == "UNKNOWN") ? std::string(answer.begin() + 1, answer.begin() + 1 + ctypelen) : d_card_type;
 				unsigned char csnlen = answer[1 + ctypelen];
 				EXCEPTION_ASSERT_WITH_LOG(answer.size() >= static_cast<size_t>(1 + ctypelen + 1 + csnlen), LibLogicalAccessException, "Wrong csn length.");
 				std::vector<unsigned char> csn = std::vector<unsigned char>(answer.begin() + 1 + ctypelen + 1, answer.end());
