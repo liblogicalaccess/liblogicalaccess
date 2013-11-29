@@ -27,7 +27,7 @@ namespace logicalaccess
 		return LibraryManager::getInstance()->getReaderProvider(rpt);
 	}
 
-	const std::vector<boost::shared_ptr<ReaderUnit> > ReaderProvider::WaitForReaders(std::vector<std::string> readers, double maxwait, bool all)
+	const std::vector<boost::shared_ptr<ReaderUnit> > ReaderProvider::waitForReaders(std::vector<std::string> readers, double maxwait, bool all)
 	{
 		std::vector<boost::shared_ptr<ReaderUnit> > ret;
 		bool notfound = true;
@@ -58,7 +58,7 @@ namespace logicalaccess
 #ifdef _WINDOWS
 				Sleep(1000);
 #elif defined(__unix__)
-				usleep(1000);
+				usleep(1000000);
 #endif
 		}
 		return ret;
