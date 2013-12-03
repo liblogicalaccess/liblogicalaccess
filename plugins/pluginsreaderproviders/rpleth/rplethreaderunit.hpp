@@ -51,8 +51,8 @@ namespace logicalaccess
 	typedef enum
 	{
 		BEEP = 0x00,
-		BLINKLED1 = 0x01,
-		BLINKLED2 = 0x02,
+		GREENLED = 0x01,
+		REDLED = 0x02,
 		NOP = 0x03,
 		BADGE = 0x04,
 		COM = 0x05,

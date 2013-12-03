@@ -50,7 +50,7 @@ namespace logicalaccess
 			 * \see setRedLed
 			 * \see setGreenLed
 			 */
-			void setLED();
+			void setLED(HidCommand led, bool status);
 
 			/**
 			 * \brief Get the rpleth reader card adapter.
