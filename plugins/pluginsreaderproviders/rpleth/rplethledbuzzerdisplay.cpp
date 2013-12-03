@@ -23,13 +23,13 @@ namespace logicalaccess
 	void RplethLEDBuzzerDisplay::setRedLed(bool status)
 	{
 		d_red_led = status;
-		setLED();
+		setLED(REDLED, status);
 	}
 
 	void RplethLEDBuzzerDisplay::setGreenLed(bool status)
 	{
 		d_green_led = status;
-		setLED();
+		setLED(GREENLED, status);
 	}
 
 	void RplethLEDBuzzerDisplay::setBuzzer(bool status)
@@ -44,15 +44,13 @@ namespace logicalaccess
 		getRplethReaderCardAdapter()->sendRplethCommand(command);
 	}
 
-	void RplethLEDBuzzerDisplay::setLED()
+	void RplethLEDBuzzerDisplay::setLED(HidCommand led, bool status)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(Device::HID));
-		if (d_green_led)
-			command.push_back(static_cast<unsigned char>(HidCommand::BLINKLED1));
-		else
-			command.push_back(static_cast<unsigned char>(HidCommand::BLINKLED2));
-		command.push_back(static_cast<unsigned char>(0x00));
+		command.push_back(static_cast<unsigned char>(led));
+		command.push_back(static_cast<unsigned char>(0x01));
+		command.push_back(static_cast<unsigned char>(status));
 		getRplethReaderCardAdapter()->sendRplethCommand(command);
 	}
 }

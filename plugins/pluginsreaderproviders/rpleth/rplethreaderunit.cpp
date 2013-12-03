@@ -124,12 +124,17 @@ namespace logicalaccess
 			}
 			else
 			{
-				boost::shared_ptr<Chip> chip = getChipInAir(maxwait);
-				if (chip)
+				try
 				{
-					d_insertedChip = chip;
-					inserted = true;
+					boost::shared_ptr<Chip> chip = getChipInAir(maxwait);
+					if (chip)
+					{
+						d_insertedChip = chip;
+						inserted = true;
+					}
 				}
+				catch (LibLogicalAccessException&)
+				{}
 			}
 		}
 
@@ -166,7 +171,13 @@ namespace logicalaccess
 			
 				while (!removed && ((currentWait < maxwait) || maxwait == 0))
 				{
-					boost::shared_ptr<Chip> chip = getChipInAir(250);
+					boost::shared_ptr<Chip> chip;
+					try
+					{
+						chip = getChipInAir(250);
+					}
+					catch (LibLogicalAccessException&)
+					{}
 					if (chip)
 					{
 						std::vector<unsigned char> tmpId = chip->getChipIdentifier();
