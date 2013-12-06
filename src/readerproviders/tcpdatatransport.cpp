@@ -51,21 +51,21 @@ namespace logicalaccess
 
 	bool TcpDataTransport::connect()
 	{
-		if (!d_socket)
-		{
-			boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(getIpAddress()), getPort());
-			d_socket.reset(new boost::asio::ip::tcp::socket(ios));
+		if (d_socket)
+			d_socket->close();
 
-			try
-			{
-				d_socket->connect(endpoint);
-				INFO_("Connected to %s on port %d.", getIpAddress().c_str(), getPort());
-			}
-			catch(boost::system::system_error& ex)
-			{
-				ERROR_("Cannot establish connection on %s:%d : %s", getIpAddress().c_str(), getPort(), ex.what());
-				d_socket.reset();
-			}
+		boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(getIpAddress()), getPort());
+		d_socket.reset(new boost::asio::ip::tcp::socket(ios));
+
+		try
+		{
+			d_socket->connect(endpoint);
+			INFO_("Connected to %s on port %d.", getIpAddress().c_str(), getPort());
+		}
+		catch(boost::system::system_error& ex)
+		{
+			ERROR_("Cannot establish connection on %s:%d : %s", getIpAddress().c_str(), getPort(), ex.what());
+			d_socket.reset();
 		}
 
 		return bool(d_socket);
