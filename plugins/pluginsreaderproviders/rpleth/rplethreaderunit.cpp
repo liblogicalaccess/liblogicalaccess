@@ -124,17 +124,12 @@ namespace logicalaccess
 			}
 			else
 			{
-				try
+				boost::shared_ptr<Chip> chip = getChipInAir(maxwait);
+				if (chip)
 				{
-					boost::shared_ptr<Chip> chip = getChipInAir(maxwait);
-					if (chip)
-					{
-						d_insertedChip = chip;
-						inserted = true;
-					}
+					d_insertedChip = chip;
+					inserted = true;
 				}
-				catch (LibLogicalAccessException&)
-				{}
 			}
 		}
 
@@ -273,10 +268,10 @@ namespace logicalaccess
 			chip = createChip((d_card_type == "UNKNOWN") ? "GenericTag" : d_card_type);
 			chip->setChipIdentifier(buf);
 		}
-		else
+		/*else
 		{
 			chip = d_insertedChip;
-		}
+		}*/
 
 		return chip;
 	}

@@ -38,6 +38,10 @@ namespace logicalaccess
 		boost::shared_ptr<RplethDataTransport> dt = boost::dynamic_pointer_cast<RplethDataTransport>(getDataTransport());
 		if (dt)
 		{
+			if (dt->getBuffer().size() == 0 && dt->getSocket()->available() == 0)
+			{
+				dt->sendPing();
+			}
 			if (adaptCommand(data).size() > 0)
 			{
 				dt->sendll(adaptCommand(data));

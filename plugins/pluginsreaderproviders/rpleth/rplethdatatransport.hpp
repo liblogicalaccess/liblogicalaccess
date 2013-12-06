@@ -62,6 +62,17 @@ namespace logicalaccess
 			 */
 			virtual std::vector<unsigned char> receive(long int timeout = 5000);
 
+			/**
+			 * \brief Send the Ping packet.
+			 */
+			void sendPing();
+
+			/**
+			 * \brief Get the buffer.
+			 * \return The buffer.
+			 */
+			const std::vector<unsigned char>& getBuffer() { return d_buffer; };
+
 		protected:
 
 			/**
@@ -74,7 +85,7 @@ namespace logicalaccess
 			/**
 			 * \brief Trashed data from last command response.
 			 */
-			std::vector<unsigned char> d_trashedData;
+			std::vector<unsigned char> d_buffer;
 	};
 
 }

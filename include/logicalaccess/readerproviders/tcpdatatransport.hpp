@@ -107,9 +107,26 @@ namespace logicalaccess
 			 */
 			void setPort(int port);
 
+			/**
+			 * \brief Send data packet
+			 * \param data The packet.
+			 */
 			virtual void send(const std::vector<unsigned char>& data);
 
+			/**
+			 * \brief Receive packet
+			 * \param timeout Time waiting for data.
+			 * \return The data receive.
+			 */
 			virtual std::vector<unsigned char> receive(long int timeout);
+
+			/**
+			 * \brief Send ping and wait the answer
+			 * \param data The Ping packet.
+			 * \param answer The answer packet waited.
+			 * \return The result of the ping.
+			 */
+			bool ping(const std::vector<unsigned char>& data, const std::vector<unsigned char>& answer);
 
 			/**
 			 * \brief Client socket use to communicate with the reader.
