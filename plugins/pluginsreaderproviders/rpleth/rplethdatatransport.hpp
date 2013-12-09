@@ -9,6 +9,7 @@
 
 #include "logicalaccess/readerproviders/tcpdatatransport.hpp"
 #include <boost/asio.hpp>
+#include <list>
 
 namespace logicalaccess
 {
@@ -74,7 +75,11 @@ namespace logicalaccess
 			const std::vector<unsigned char>& getBuffer() { return d_buffer; };
 
 
-			std::list<std::vector<unsigned char> > &getBadges() { return d_badge; };
+			/**
+			 * \brief Get the badges list.
+			 * \return The list of badge.
+			 */
+			std::list<std::vector<unsigned char> > &getBadges() { return d_badges; };
 
 		protected:
 
@@ -91,9 +96,9 @@ namespace logicalaccess
 			std::vector<unsigned char> d_buffer;
 
 			/**
-			 * \brief Trashed data from last command response.
+			 * \brief Badges received from the latest commands response.
 			 */
-			std::list<std::vector<unsigned char> > d_badge;
+			std::list<std::vector<unsigned char> > d_badges;
 	};
 
 }

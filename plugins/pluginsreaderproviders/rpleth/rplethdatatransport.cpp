@@ -105,7 +105,7 @@ namespace logicalaccess
 				if (ret.size() != 0 && buf[1] == Device::HID && buf[2] == HidCommand::BADGE)
 				{
 					//save the badge
-					d_badge.push_back(ret);
+					d_badges.push_back(ret);
 				}
 			}
 		}
