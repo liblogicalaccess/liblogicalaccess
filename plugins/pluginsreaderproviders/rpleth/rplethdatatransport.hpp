@@ -73,6 +73,9 @@ namespace logicalaccess
 			 */
 			const std::vector<unsigned char>& getBuffer() { return d_buffer; };
 
+
+			std::list<std::vector<unsigned char> > &getBadges() { return d_badge; };
+
 		protected:
 
 			/**
@@ -83,9 +86,14 @@ namespace logicalaccess
 			unsigned char calcChecksum(const std::vector<unsigned char>& data);	
 
 			/**
-			 * \brief Trashed data from last command response.
+			 * \brief d_buffer from last commands response.
 			 */
 			std::vector<unsigned char> d_buffer;
+
+			/**
+			 * \brief Trashed data from last command response.
+			 */
+			std::list<std::vector<unsigned char> > d_badge;
 	};
 
 }

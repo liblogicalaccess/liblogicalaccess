@@ -81,9 +81,14 @@ namespace logicalaccess
 			buf = TcpDataTransport::receive(timeout);
 
 		if (d_buffer.size() < 1024)
-			d_buffer.insert(d_buffer.end(), buf.begin(), buf.end());
-		if (d_buffer.size() > 4)
 		{
+			d_buffer.insert(d_buffer.end(), buf.begin(), buf.end());
+			buf.clear();
+		}
+
+		while (ret.size() == 0 && d_buffer.size() > 4)
+		{
+			buf.clear();
 			unsigned int exceptedlen = 4 + d_buffer[3] + 1;
 			if (d_buffer.size() >= exceptedlen)
 			{
@@ -96,10 +101,16 @@ namespace logicalaccess
 				EXCEPTION_ASSERT_WITH_LOG(calcChecksum(bufnoc) == checksum_receive, std::invalid_argument, "The supplied answer buffer get the state : Bad checksum in answer");
 
 				ret.insert(ret.begin(), bufnoc.begin() + 4, bufnoc.end());
+
+				if (ret.size() != 0 && buf[1] == Device::HID && buf[2] == HidCommand::BADGE)
+				{
+					//save the badge
+					d_badge.push_back(ret);
+				}
 			}
 		}
 		diff = (begin + timeout) - std::clock();
-		if (d_buffer.size() < 5 && ret.size() == 0 && diff > 0)
+		if (d_buffer.size() < 5 && ret.size() == 0 && diff > 0 && (buf.size() == 0 || (buf[1] == Device::RPLETH && buf[2] == 0x0A)))
 		{ 
 			while (getSocket()->available() == 0 && diff > 0)
 			{

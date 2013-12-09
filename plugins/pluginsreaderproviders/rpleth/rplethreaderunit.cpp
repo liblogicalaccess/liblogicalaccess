@@ -534,7 +534,21 @@ namespace logicalaccess
 		std::vector<unsigned char> cmd;
 		try
 		{
-			res = getDefaultRplethReaderCardAdapter()->sendRplethCommand(cmd, timeout);
+			boost::shared_ptr<RplethDataTransport> dt = boost::dynamic_pointer_cast<RplethDataTransport>(getDefaultRplethReaderCardAdapter()->getDataTransport());
+
+			if (dt)
+			{
+				std::list<std::vector<unsigned char> > &badges =	dt->getBadges();
+
+				if (badges.size() == 0)
+					getDefaultRplethReaderCardAdapter()->sendRplethCommand(cmd, timeout);
+
+				if (badges.size())
+				{
+					res = badges.front();
+					badges.pop_front();
+				}
+			}
 			// res contains full wiegand trame, it need to take the csn
 			if (res.size() > 0)
 				res = getCsn (res);
