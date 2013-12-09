@@ -30,7 +30,7 @@ namespace logicalaccess
 		return answer;
 	}
 	
-	std::vector<unsigned char> RplethReaderCardAdapter::sendRplethCommand(const std::vector<unsigned char>& data, long timeout)
+	std::vector<unsigned char> RplethReaderCardAdapter::sendRplethCommand(const std::vector<unsigned char>& data, bool waitanswer, long timeout)
 	{
 		COM_("Send Rpleth Command : %s", BufferHelper::getHex(data).c_str());
 		std::vector<unsigned char> res;
@@ -38,7 +38,7 @@ namespace logicalaccess
 		boost::shared_ptr<RplethDataTransport> dt = boost::dynamic_pointer_cast<RplethDataTransport>(getDataTransport());
 		if (dt)
 		{
-			if (dt->getBuffer().size() == 0 && dt->getSocket()->available() == 0)
+			if (waitanswer && dt->getBuffer().size() == 0 && dt->getSocket()->available() == 0)
 			{
 				dt->sendPing();
 			}
@@ -46,7 +46,8 @@ namespace logicalaccess
 			{
 				dt->sendll(adaptCommand(data));
 			}
-			res = adaptAnswer(dt->receive(timeout));
+			if (waitanswer)
+				res = adaptAnswer(dt->receive(timeout));
 		}
 		else
 		{

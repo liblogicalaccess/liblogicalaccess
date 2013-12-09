@@ -48,7 +48,7 @@ namespace logicalaccess
 			 */
 			virtual std::vector<unsigned char> adaptAnswer(const std::vector<unsigned char>& answer);
 
-			std::vector<unsigned char> sendRplethCommand(const std::vector<unsigned char>& data, long timeout = 5000);
+			std::vector<unsigned char> sendRplethCommand(const std::vector<unsigned char>& data, bool waitanswer, long timeout = 5000);
 
 	};
 

@@ -76,7 +76,7 @@ namespace logicalaccess
 			command.push_back (static_cast<unsigned char>(HidCommand::SET_CARDTYPE));
 			command.push_back (static_cast<unsigned char>(cardType.size()));
 			command.insert(command.end(), cardType.begin(), cardType.end());
-			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command);
+			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, false);
 		}
 	}
 
@@ -93,7 +93,7 @@ namespace logicalaccess
 			std::vector<unsigned char> answer;
 			try
 			{
-				answer = getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, maxwait);
+				answer = getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true, maxwait);
 			}
 			catch(LibLogicalAccessException&)
 			{
@@ -151,7 +151,7 @@ namespace logicalaccess
 				std::vector<unsigned char> answer;
 				try
 				{
-					getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, maxwait);
+					getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true, maxwait);
 					d_insertedChip.reset();
 					removed = true;
 				}
@@ -213,7 +213,7 @@ namespace logicalaccess
 			command.push_back (static_cast<unsigned char>(Device::HID));
 			command.push_back (static_cast<unsigned char>(HidCommand::CONNECT));
 			command.push_back (static_cast<unsigned char>(0x00));
-			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command);
+			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, false);
 
 			if (d_insertedChip->getChipIdentifier().size() == 0)
 			{
@@ -235,7 +235,7 @@ namespace logicalaccess
 			command.push_back (static_cast<unsigned char>(Device::HID));
 			command.push_back (static_cast<unsigned char>(HidCommand::DISCONNECT));
 			command.push_back (static_cast<unsigned char>(0x00));
-			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command);
+			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, false);
 		}
 
 		INFO_SIMPLE_("Disconnected from the chip");
@@ -250,7 +250,7 @@ namespace logicalaccess
 			command.push_back (static_cast<unsigned char>(Device::HID));
 			command.push_back (static_cast<unsigned char>(HidCommand::GET_CSN));
 			command.push_back (static_cast<unsigned char>(0x00));
-			csn = getDefaultRplethReaderCardAdapter()->sendRplethCommand(command);
+			csn = getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, false);
 		}
 
 		INFO_SIMPLE_("Inserted chip identifier get");
@@ -389,7 +389,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(Device::RPLETH));
 		command.push_back(static_cast<unsigned char>(RplethCommand::STATEDHCP));
 		command.push_back(static_cast<unsigned char>(0x00));
-		answer = getDefaultRplethReaderCardAdapter()->sendRplethCommand(command);
+		answer = getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true);
 		if (answer.size() > 0)
 			res = answer[0] != 0x00;
 		return res;
@@ -402,7 +402,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(RplethCommand::DHCP));
 		command.push_back(static_cast<unsigned char>(0x01));
 		command.push_back(static_cast<unsigned char>(status));
-		getDefaultRplethReaderCardAdapter()->sendRplethCommand(command);
+		getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, false);
 	}
 
 	void RplethReaderUnit::setReaderIp(const std::vector<unsigned char>& address)
@@ -417,7 +417,7 @@ namespace logicalaccess
 			{
 				command.push_back(static_cast<unsigned char>(address[i]));
 			}
-			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command);
+			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, false);
 		}
 	}
 
@@ -433,7 +433,7 @@ namespace logicalaccess
 			{
 				command.push_back(static_cast<unsigned char>(address[i]));
 			}
-			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command);
+			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, false);
 		}
 	}
 	
@@ -449,7 +449,7 @@ namespace logicalaccess
 			{
 				command.push_back (static_cast<unsigned char>(address[i]));
 			}
-			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command);
+			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, false);
 		}
 	}
 	
@@ -465,7 +465,7 @@ namespace logicalaccess
 			{
 				command.push_back (static_cast<unsigned char>(address[i]));
 			}
-			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command);
+			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, false);
 		}
 	}
 
@@ -477,7 +477,7 @@ namespace logicalaccess
 		command.push_back (static_cast<unsigned char>(0x02));
 		command.push_back (static_cast<unsigned char>(port << 8));
 		command.push_back (static_cast<unsigned char>(port & 0xff));
-		getDefaultRplethReaderCardAdapter()->sendRplethCommand(command);
+		getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, false);
 	}
 
 	void RplethReaderUnit::resetReader()
@@ -486,7 +486,7 @@ namespace logicalaccess
 		command.push_back (static_cast<unsigned char>(Device::RPLETH));
 		command.push_back (static_cast<unsigned char>(RplethCommand::RESET));
 		command.push_back (static_cast<unsigned char>(0x00));
-		getDefaultRplethReaderCardAdapter()->sendRplethCommand(command);
+		getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, false);
 	}
 
 	void RplethReaderUnit::setReaderMessage(const std::string& message)
@@ -496,7 +496,7 @@ namespace logicalaccess
 		command.push_back (static_cast<unsigned char>(RplethCommand::MESSAGE));
 		command.push_back (static_cast<unsigned char>(message.size()));
 		command.insert(command.end(), message.begin(), message.end());
-		getDefaultRplethReaderCardAdapter()->sendRplethCommand(command);
+		getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, false);
 	}
 
 	void RplethReaderUnit::nop()
@@ -505,7 +505,7 @@ namespace logicalaccess
 		command.push_back (static_cast<unsigned char>(Device::HID));
 		command.push_back (static_cast<unsigned char>(HidCommand::NOP));
 		command.push_back (static_cast<unsigned char>(0x00));
-		getDefaultRplethReaderCardAdapter()->sendRplethCommand(command);
+		getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, false);
 	}
 
 	std::vector<unsigned char> RplethReaderUnit::badge(long int timeout)
@@ -517,7 +517,7 @@ namespace logicalaccess
 		command.push_back (static_cast<unsigned char>(0x00));
 		try
 		{
-			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command);
+			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, false);
 			res = receiveBadge(timeout);
 		}
 		catch(std::invalid_argument& e)
@@ -538,10 +538,10 @@ namespace logicalaccess
 
 			if (dt)
 			{
-				std::list<std::vector<unsigned char> > &badges =	dt->getBadges();
+				std::list<std::vector<unsigned char> > &badges = dt->getBadges();
 
 				if (badges.size() == 0)
-					getDefaultRplethReaderCardAdapter()->sendRplethCommand(cmd, timeout);
+					getDefaultRplethReaderCardAdapter()->sendRplethCommand(cmd, true, timeout);
 
 				if (badges.size())
 				{
@@ -606,7 +606,7 @@ namespace logicalaccess
 		command.push_back (static_cast<unsigned char>(Device::HID));
 		command.push_back (static_cast<unsigned char>(HidCommand::GET_READERTYPE));
 		command.push_back (static_cast<unsigned char>(0x00));
-		std::vector<unsigned char> answer = getDefaultRplethReaderCardAdapter()->sendRplethCommand(command);
+		std::vector<unsigned char> answer = getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true);
 		if (answer.size() > 0)
 		{
 			rptype = std::string(answer.begin(), answer.end());
