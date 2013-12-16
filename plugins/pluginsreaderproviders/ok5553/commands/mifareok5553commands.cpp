@@ -139,9 +139,8 @@ namespace logicalaccess
 		}
 	}
 	
-	bool MifareOK5553Commands::authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype)
+	void MifareOK5553Commands::authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype)
 	{
-		bool res = false;
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> answer;
 		char buf [3];
@@ -159,9 +158,12 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(buf[1]));
 		answer = getOK5553ReaderCardAdapter()->sendCommand (command);
 		if (answer.size() > 0)
+		{
 			if (answer[0] == 'L')
-				res = true;
-		return res;
+			{
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Authentication error.");
+			}
+		}
 	}
 	
 	// in progress
