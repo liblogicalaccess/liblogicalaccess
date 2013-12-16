@@ -113,7 +113,7 @@ namespace logicalaccess
 			 * \param location The location.
 			 * \param ai The access infos.
 			 */
-			bool authenticate(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> ai);
+			void authenticate(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> ai);
 
 			/**
 			 * \brief Load a key on a given location.
@@ -177,16 +177,14 @@ namespace logicalaccess
 			 * \param blockno The block number.
 			 * \param keyno The key number, previously loaded with Mifare::loadKey().
 			 * \param keytype The key type.
-			 * \return true if authenticated, false otherwise.
 			 */
-			virtual bool authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype) = 0;
+			virtual void authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype) = 0;
 			
 			/**
 			 * \brief Authenticate a block, given a key number.
 			 * \param blockno The block number.
 			 * \param key_storage The key storage used for authentication.
 			 * \param keytype The key type.
-			 * \return true if authenticated, false otherwise.
 			 */
 			virtual void authenticate(unsigned char blockno, boost::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype) = 0;
 

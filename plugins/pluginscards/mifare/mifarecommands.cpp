@@ -12,7 +12,7 @@
 
 namespace logicalaccess
 {
-	bool MifareCommands::authenticate(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> ai)
+	void MifareCommands::authenticate(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> ai)
 	{
 		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 		EXCEPTION_ASSERT_WITH_LOG(ai, std::invalid_argument, "ai cannot be null.");
@@ -48,8 +48,6 @@ namespace logicalaccess
 		boost::shared_ptr<MifareKey> key = getMifareChip()->getMifareProfile()->getKey(mLocation->sector, keytype);
 		loadKey(location, key, keytype);
 		authenticate(static_cast<unsigned char>(getSectorStartBlock(mLocation->sector)), key->getKeyStorage(), keytype);
-
-		return true;
 	}
 
 	unsigned int MifareCommands::getSectorFromMAD(long aid, boost::shared_ptr<MifareKey> madKeyA)

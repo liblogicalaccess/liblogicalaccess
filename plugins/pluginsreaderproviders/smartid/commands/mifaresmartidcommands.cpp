@@ -71,10 +71,8 @@ namespace logicalaccess
 		}
 	}
 
-	bool MifareSmartIDCommands::authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype)
+	void MifareSmartIDCommands::authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype)
 	{
-		bool r = false;	
-
 		std::vector<unsigned char> data;
 		data.resize(3, 0x00);
 
@@ -83,9 +81,6 @@ namespace logicalaccess
 		data[2] = blockno;
 
 		getMifareSmartIDReaderCardAdapter()->sendCommand(0x56, data);
-		r = true;
-
-		return r;
 	}
 
 	void MifareSmartIDCommands::authenticate(unsigned char blockno, boost::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype)

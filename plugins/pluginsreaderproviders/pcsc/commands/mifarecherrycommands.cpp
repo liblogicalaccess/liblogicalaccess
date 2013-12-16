@@ -45,10 +45,8 @@ namespace logicalaccess
 		return r;
 	}
 
-	bool MifareCherryCommands::authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype)
+	void MifareCherryCommands::authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype)
 	{
-		bool r = false;
-
 		unsigned char command[5];
 		size_t commandlen = sizeof(command);
 
@@ -68,9 +66,6 @@ namespace logicalaccess
 		size_t resultlen = 256;
 
 		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x86, 0x00, 0x00, static_cast<unsigned char>(commandlen), command, commandlen, result, &resultlen);
-		r = true;
-
-		return r;
 	}
 }
 

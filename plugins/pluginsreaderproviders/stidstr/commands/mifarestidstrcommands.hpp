@@ -74,9 +74,8 @@ namespace logicalaccess
 			 * \param blockno The block number.
 			 * \param keyno The key number, previously loaded with Mifare::loadKey().
 			 * \param keytype The key type.
-			 * \return true if authenticated, false otherwise.
 			 */
-			virtual bool authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype);
+			virtual void authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype);
 
 			/**
 			 * \brief Authenticate a block, given a key number.

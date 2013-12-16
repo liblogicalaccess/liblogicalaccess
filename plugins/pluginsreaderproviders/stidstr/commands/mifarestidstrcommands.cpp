@@ -105,11 +105,10 @@ namespace logicalaccess
 		}
 	}
 
-	bool MifareSTidSTRCommands::authenticate(unsigned char /*blockno*/, unsigned char /*keyno*/, MifareKeyType /*keytype*/)
+	void MifareSTidSTRCommands::authenticate(unsigned char /*blockno*/, unsigned char /*keyno*/, MifareKeyType /*keytype*/)
 	{
 		// STid STR doesn't separate authentication and read/write operation.
 		WARNING_SIMPLE_("STid STR doesn't separate authentication and read/write operation.");
-		return true;
 	}
 
 	void MifareSTidSTRCommands::authenticate(unsigned char /*blockno*/, boost::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype)
