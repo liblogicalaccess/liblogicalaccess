@@ -612,6 +612,8 @@ namespace logicalaccess
 			rptype = std::string(answer.begin(), answer.end());
 		}
 
+		COM_("getProxyReaderType returns %s", rptype.c_str());
+
 		return rptype;
 	}
 }

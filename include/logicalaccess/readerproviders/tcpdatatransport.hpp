@@ -121,14 +121,6 @@ namespace logicalaccess
 			virtual std::vector<unsigned char> receive(long int timeout);
 
 			/**
-			 * \brief Send ping and wait the answer
-			 * \param data The Ping packet.
-			 * \param answer The answer packet waited.
-			 * \return The result of the ping.
-			 */
-			bool ping(const std::vector<unsigned char>& data, const std::vector<unsigned char>& answer);
-
-			/**
 			 * \brief Client socket use to communicate with the reader.
 			 */
 			boost::shared_ptr<boost::asio::ip::tcp::socket> d_socket;

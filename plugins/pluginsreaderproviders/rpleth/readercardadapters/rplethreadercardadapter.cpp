@@ -47,7 +47,9 @@ namespace logicalaccess
 				dt->sendll(adaptCommand(data));
 			}
 			if (waitanswer)
+			{
 				res = adaptAnswer(dt->receive(timeout));
+			}
 		}
 		else
 		{

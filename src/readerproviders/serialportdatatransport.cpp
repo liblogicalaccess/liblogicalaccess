@@ -7,6 +7,7 @@
 #include "logicalaccess/myexception.hpp"
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
 #include "logicalaccess/cards/readercardadapter.hpp"
+#include "logicalaccess/bufferhelper.hpp"
 
 
 namespace logicalaccess
@@ -78,6 +79,7 @@ namespace logicalaccess
 	{
 		if (data.size() > 0)
 		{
+			COM_("Send command: %s", BufferHelper::getHex(data).c_str());
 			d_port->getSerialPort()->write(data);
 		}
 	}
@@ -96,6 +98,8 @@ namespace logicalaccess
 				res.insert(res.end(), tmpbuf.begin(), tmpbuf.end());
 			}
 		}
+
+		COM_("Command response: %s", BufferHelper::getHex(res).c_str());
 
 		return res;
 	}

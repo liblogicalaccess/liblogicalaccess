@@ -7,6 +7,7 @@
 #include "logicalaccess/myexception.hpp"
 #include "logicalaccess/readerproviders/tcpdatatransport.hpp"
 #include "logicalaccess/cards/readercardadapter.hpp"
+#include "logicalaccess/bufferhelper.hpp"
 
 #include <boost/foreach.hpp>
 #include <boost/optional.hpp>
@@ -98,6 +99,7 @@ namespace logicalaccess
 			boost::shared_ptr<boost::asio::ip::tcp::socket> socket = getSocket();
 			if (socket->is_open())
 			{
+				COM_("Send command: %s", BufferHelper::getHex(data).c_str());
 				socket->send(boost::asio::buffer(data));
 			}
 			else
@@ -106,38 +108,6 @@ namespace logicalaccess
 			}
 		}
 	}
-
-	bool TcpDataTransport::ping(const std::vector<unsigned char>& data, const std::vector<unsigned char>& answer)
-	{
-		if (getSocket()->available() != 0)
-			return true;
-
-		TcpDataTransport::send(data);
-
-		int currentWait = 0, timeout = 2000;
-		while (currentWait < timeout && getSocket()->available() < answer.size())
-		{
-	#ifdef _WINDOWS
-			Sleep(250);
-	#elif defined(__unix__)
-			usleep(250000);
-	#endif
-			currentWait += 250;
-		}
-
-		char *bufrcv = new char[answer.size()];
-		if (getSocket()->available() >= answer.size())
-		{
-			getSocket()->receive(boost::asio::buffer(bufrcv, answer.size()));
-			std::vector<unsigned char> bufrcv_vector(bufrcv, bufrcv + answer.size());
-
-			if (std::equal(answer.begin(), answer.end(), bufrcv_vector.begin()))
-				return true;
-		}
-		delete[] bufrcv;
-		return true;
-	}
-
 
 	std::vector<unsigned char> TcpDataTransport::receive(long int timeout)
 	{
@@ -148,7 +118,7 @@ namespace logicalaccess
 		long int currentWait = 0;
 		size_t lenav = socket->available();
 		while (lenav == 0 && (timeout == 0 || currentWait < timeout))
-		{  
+		{
 
 	#ifdef _WINDOWS
 			Sleep(250);
@@ -172,6 +142,9 @@ namespace logicalaccess
 			sprintf(buf, "Socket receive timeout (%ld > %ld).", currentWait, timeout);
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, buf);
 		}
+
+		COM_("Command response: %s", BufferHelper::getHex(res).c_str());
+
 		return res;
 	}
 
