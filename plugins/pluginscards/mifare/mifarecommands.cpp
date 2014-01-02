@@ -23,7 +23,7 @@ namespace logicalaccess
 		EXCEPTION_ASSERT_WITH_LOG(mLocation, std::invalid_argument, "location must be a MifareLocation.");
 		EXCEPTION_ASSERT_WITH_LOG(mAi, std::invalid_argument, "ai must be a MifareAccessInfo.");
 		
-		getChip()->getProfile()->clearKeys();
+		getChip()->getProfile()->setDefaultKeysAt(location);
 
 		EXCEPTION_ASSERT_WITH_LOG((!mAi->keyA->isEmpty()) || (!mAi->keyB->isEmpty()), std::invalid_argument, "ai must contain at least one key");
 
