@@ -95,8 +95,8 @@ namespace logicalaccess
 	void RFIDeasReaderUnit::initReaderCnx()
 	{
 #ifdef _WINDOWS
-		SetConnectProduct(PRODUCT_PCPROX);
-		SetDevTypeSrch(PRXDEVTYP_USB);
+		fnSetConnectProduct(PRODUCT_PCPROX);
+		fnSetDevTypeSrch(PRXDEVTYP_USB);
 
 		if (fnUSBConnect(&d_deviceId) == 0)
 		{
