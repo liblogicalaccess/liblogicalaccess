@@ -309,7 +309,7 @@ namespace logicalaccess
 				i = 8;
 				j++;
 			}
-			else
+			else if (i != 0) 
 				d_keyentryinformation.set[j] = d_keyentryinformation.set[j] << 1;
 		}
 	}
