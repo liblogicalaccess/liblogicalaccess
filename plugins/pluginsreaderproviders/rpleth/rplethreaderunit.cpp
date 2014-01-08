@@ -423,13 +423,13 @@ namespace logicalaccess
 
 	void RplethReaderUnit::setReaderMac(const std::vector<unsigned char>& address)
 	{
-		if (address.size() == 4)
+		if (address.size() == 6)
 		{
 			std::vector<unsigned char> command;
 			command.push_back(static_cast<unsigned char>(Device::RPLETH));
 			command.push_back(static_cast<unsigned char>(RplethCommand::MAC));
-			command.push_back(static_cast<unsigned char>(0x04));
-			for (int i = 0; i < 4; i++)
+			command.push_back(static_cast<unsigned char>(0x06));
+			for (int i = 0; i < 6; i++)
 			{
 				command.push_back(static_cast<unsigned char>(address[i]));
 			}
@@ -475,7 +475,7 @@ namespace logicalaccess
 		command.push_back (static_cast<unsigned char>(Device::RPLETH));
 		command.push_back (static_cast<unsigned char>(RplethCommand::PORT));
 		command.push_back (static_cast<unsigned char>(0x02));
-		command.push_back (static_cast<unsigned char>(port << 8));
+		command.push_back (static_cast<unsigned char>(port >> 8));
 		command.push_back (static_cast<unsigned char>(port & 0xff));
 		getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, false);
 	}
