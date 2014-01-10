@@ -99,7 +99,6 @@ namespace logicalaccess
 	void NXPKeyDiversification::serialize(boost::property_tree::ptree& parentNode)
 	{
 		boost::property_tree::ptree node;
-		node.put("<xmlattr>.keyDiversificationType", getType());
 		node.put("SystemIdentifier", d_systemidentifier);
 		parentNode.add_child(getDefaultXmlNodeName(), node);
 	}

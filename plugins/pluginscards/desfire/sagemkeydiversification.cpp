@@ -58,7 +58,6 @@ namespace logicalaccess
 	void SagemKeyDiversification::serialize(boost::property_tree::ptree& parentNode)
 	{
 		boost::property_tree::ptree node;
-		node.put("<xmlattr>.keyDiversificationType", getType());
 		parentNode.add_child(getDefaultXmlNodeName(), node);
 	}
 
