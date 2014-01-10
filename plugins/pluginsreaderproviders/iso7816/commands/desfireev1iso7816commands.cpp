@@ -1022,10 +1022,9 @@ namespace logicalaccess
 	void DESFireEV1ISO7816Commands::changeKey(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
 	{
 		std::vector<unsigned char> diversify;
-		boost::shared_ptr<DESFireKey> currentkey = boost::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile())->getKey(d_crypto->d_currentAid, keyno);
-		if (currentkey->getKeyDiversification())
+		if (key->getKeyDiversification())
 		{
-			currentkey->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, currentkey, diversify);
+			key->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, key, diversify);
 		}
 		std::vector<unsigned char> cryptogram;
 

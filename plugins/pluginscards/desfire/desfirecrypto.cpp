@@ -620,11 +620,12 @@ namespace logicalaccess
 
 	void DESFireCrypto::getKey(boost::shared_ptr<DESFireKey> key, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv)
 	{
-		INFO_SIMPLE_("Init key from crypto.");
+		INFO_("Init key from crypto with diversify set to: %s.", BufferHelper::getHex(diversify).c_str());
 
 		keydiv.clear();
 		if (key->getKeyDiversification() && diversify.size() != 0)
 		{
+			INFO_SIMPLE_("Use key diversification.");
 			keydiv = key->getKeyDiversification()->getDiversifiedKey(key, diversify);
 		}
 		else
