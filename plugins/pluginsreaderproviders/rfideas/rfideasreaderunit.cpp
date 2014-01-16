@@ -95,18 +95,25 @@ namespace logicalaccess
 	void RFIDeasReaderUnit::initReaderCnx()
 	{
 #ifdef _WINDOWS
-		fnSetConnectProduct(PRODUCT_PCPROX);
-		fnSetDevTypeSrch(PRXDEVTYP_USB);
+		BSHRT rfret = fnSetConnectProduct(PRODUCT_PCPROX);
+		INFO_("SetConnectProduct returned %x", rfret);
+		rfret = fnSetDevTypeSrch(PRXDEVTYP_USB);
+		INFO_("SetDevTypeSrch returned %x", rfret);
 
-		if (fnUSBConnect(&d_deviceId) == 0)
+		rfret = fnUSBConnect(&d_deviceId);
+		INFO_("USBConnect returned %x", rfret);
+		if (rfret == 0)
 		{
-			fnSetComSrchRange(1, 15);
-			EXCEPTION_ASSERT_WITH_LOG(fnCOMConnect(&d_deviceId) != 0, LibLogicalAccessException, "Can't connect to the RFIDeas device. Please be sure a reader is plugged");
-			isCOMConnection = false;
+			rfret = fnSetComSrchRange(1, 15);
+			INFO_("SetComSrchRange returned %x", rfret);
+			rfret = fnCOMConnect(&d_deviceId);
+			INFO_("COMConnect returned %x", rfret);
+			EXCEPTION_ASSERT_WITH_LOG(rfret != 0, LibLogicalAccessException, "Can't connect to the RFIDeas device. Please be sure a reader is plugged");
+			isCOMConnection = true;
 		}
 		else
 		{
-			isCOMConnection = true;
+			isCOMConnection = false;
 		}
 #endif
 	}
@@ -116,13 +123,16 @@ namespace logicalaccess
 #ifdef _WINDOWS
 		if (d_deviceId != 0)
 		{
+			BSHRT rfret = 0;
 			if (isCOMConnection)
 			{
-				fnCOMDisconnect();
+				rfret = fnCOMDisconnect();
+				INFO_("COMDisconnect returned %x", rfret);
 			}
 			else
 			{
-				fnUSBDisconnect();
+				rfret = fnUSBDisconnect();
+				INFO_("USBDisconnect returned %x", rfret);
 			}
 		}
 #endif
