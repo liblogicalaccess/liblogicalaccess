@@ -393,7 +393,7 @@ namespace logicalaccess
 			dfAiToUse = boost::dynamic_pointer_cast<DESFireAccessInfo>(getChip()->getProfile()->createAccessInfo());
 		}
 
-		getChip()->getProfile()->clearKeys();		
+		getChip()->getProfile()->setDefaultKeysAt(dfLocation);	
 
 		getDESFireChip()->getDESFireCommands()->selectApplication(dfLocation);
 

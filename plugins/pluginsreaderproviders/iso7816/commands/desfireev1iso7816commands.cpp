@@ -337,6 +337,10 @@ namespace logicalaccess
 
 	void DESFireEV1ISO7816Commands::authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
 	{
+		if (!key) {
+			key = boost::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile())->getDefaultKey(DF_KEY_DES);
+		}
+
 		// Get the appropriate authentification method and algorithm according to the key type (for 3DES we use legacy method instead of ISO).
 
 		if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()) && !getSAMChip())
