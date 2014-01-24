@@ -102,12 +102,19 @@ namespace logicalaccess
 
 				ret.insert(ret.begin(), bufnoc.begin() + 4, bufnoc.end());
 
+				if (ret.size() == 0 && buf[1] == Device::RPLETH && buf[2] == RplethCommand::PING)
+				{
+					ret = receive((begin + timeout) - std::clock());
+				}
+
 				if (ret.size() != 0 && buf[1] == Device::HID && buf[2] == HidCommand::BADGE)
 				{
 					//save the badge
 					d_badges.push_back(ret);
 				}
 			}
+			else
+				break;
 		}
 		diff = (begin + timeout) - std::clock();
 		if (d_buffer.size() < 5 && ret.size() == 0 && diff > 0 && (buf.size() == 0 || (buf[1] == Device::RPLETH && buf[2] == 0x0A)))

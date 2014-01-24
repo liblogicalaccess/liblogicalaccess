@@ -88,8 +88,8 @@ namespace logicalaccess
 			std::vector<unsigned char> command;
 			command.push_back (static_cast<unsigned char>(Device::HID));
 			command.push_back (static_cast<unsigned char>(HidCommand::WAIT_INSERTION));
-			command.push_back (static_cast<unsigned char>(0x01));
-			command.push_back (static_cast<unsigned char>(maxwait));
+			command.push_back (static_cast<unsigned char>(0x04));
+			BufferHelper::setUInt32(command, maxwait);
 			std::vector<unsigned char> answer;
 			try
 			{
@@ -146,8 +146,8 @@ namespace logicalaccess
 				std::vector<unsigned char> command;
 				command.push_back (static_cast<unsigned char>(Device::HID));
 				command.push_back (static_cast<unsigned char>(HidCommand::WAIT_REMOVAL));
-				command.push_back (static_cast<unsigned char>(0x01));
-				command.push_back (static_cast<unsigned char>(maxwait));
+				command.push_back (static_cast<unsigned char>(0x04));
+				BufferHelper::setUInt32(command, maxwait);
 				std::vector<unsigned char> answer;
 				try
 				{
