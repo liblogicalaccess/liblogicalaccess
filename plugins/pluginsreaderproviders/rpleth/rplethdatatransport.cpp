@@ -77,18 +77,20 @@ namespace logicalaccess
 		std::vector<unsigned char> ret, buf;
 		clock_t begin, diff;
 		begin = std::clock();
-		if (getSocket()->available() || d_buffer.size() < 5)
-			buf = TcpDataTransport::receive(timeout);
 
-		if (d_buffer.size() < 1024)
-		{
-			d_buffer.insert(d_buffer.end(), buf.begin(), buf.end());
-			buf.clear();
-		}
-
-		while (ret.size() == 0 && d_buffer.size() > 4)
+		diff = (begin + timeout) - std::clock();
+		while (ret.size() == 0 && diff > 0)
 		{
 			buf.clear();
+			if (getSocket()->available() || d_buffer.size() < 5 || (d_buffer.size() >= 4 && d_buffer.size() < (4 + d_buffer[3] + 1)))
+				buf = TcpDataTransport::receive(timeout);
+
+			if (d_buffer.size() < 1024)
+			{
+				d_buffer.insert(d_buffer.end(), buf.begin(), buf.end());
+				buf.clear();
+			}
+
 			unsigned int exceptedlen = 4 + d_buffer[3] + 1;
 			if (d_buffer.size() >= exceptedlen)
 			{
@@ -96,31 +98,35 @@ namespace logicalaccess
 				buf.insert(buf.begin(), d_buffer.begin(), d_buffer.begin() +  exceptedlen);
 				d_buffer.erase(d_buffer.begin(), d_buffer.begin() +  exceptedlen);
 
+				
+				EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x01, std::invalid_argument, "The supplied answer buffer get the state : Command failure");
+				EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x02, std::invalid_argument, "The supplied answer buffer get the state : Bad checksum in command");
+				EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x03, LibLogicalAccessException, "The supplied answer buffer get the state : Timeout");
+				EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x04, std::invalid_argument, "The supplied answer buffer get the state : Bad size of command");
+				EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x05, std::invalid_argument, "The supplied answer buffer get the state : Bad device in command");
+				EXCEPTION_ASSERT_WITH_LOG(buf[0] == 0x00, std::invalid_argument, "The supplied answer buffer is corrupted"); 
+
 				std::vector<unsigned char> bufnoc = std::vector<unsigned char>(buf.begin(), buf.end() - 1);
 				unsigned char checksum_receive = buf[buf.size() - 1];
 				EXCEPTION_ASSERT_WITH_LOG(calcChecksum(bufnoc) == checksum_receive, std::invalid_argument, "The supplied answer buffer get the state : Bad checksum in answer");
 
 				ret.insert(ret.begin(), bufnoc.begin() + 4, bufnoc.end());
 
+
+
 				if (ret.size() != 0 && buf[1] == Device::HID && buf[2] == HidCommand::BADGE)
 				{
 					//save the badge
 					d_badges.push_back(ret);
 				}
+
+				if (buf[1] != Device::RPLETH && buf[2] != RplethCommand::PING)
+				{
+					break;
+				}
 			}
-		}
-		diff = (begin + timeout) - std::clock();
-		if (d_buffer.size() < 5 && ret.size() == 0 && diff > 0 && (buf.size() == 0 || (buf[1] == Device::RPLETH && buf[2] == 0x0A)))
-		{ 
-			while (getSocket()->available() == 0 && diff > 0)
-			{
-			#ifdef _WINDOWS
-				Sleep(250);
-			#elif defined(__unix__)
-				usleep(250000);
-			#endif
-				diff -= 250;
-			}
+
+			diff = (begin + timeout) - std::clock();
 		}
 		return ret;
 	}

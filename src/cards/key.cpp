@@ -149,7 +149,11 @@ namespace logicalaccess
         {
             boost::property_tree::ptree keydivnode = node.get_child("KeyDiversification");
             d_key_diversification = KeyDiversification::getKeyDiversificationFromType(keydivnode.get_child("<xmlattr>.keyDiversificationType").get_value<std::string>());
-			d_key_diversification->unSerialize(keydivnode, "");
+			boost::property_tree::ptree kdnode = keydivnode.get_child(d_key_diversification->getDefaultXmlNodeName());
+			if (!kdnode.empty())
+			{
+				d_key_diversification->unSerialize(kdnode);
+			}
         }
 
         d_storeCipheredData = node.get_child("IsCiphered").get_value<bool>(false);

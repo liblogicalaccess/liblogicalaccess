@@ -710,6 +710,12 @@ namespace logicalaccess
     {
         unsigned char command[16];
 
+		boost::shared_ptr<DESFireProfile> dprofile = boost::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile());
+		if (!key) {
+			key = dprofile->getDefaultKey(DF_KEY_DES);
+		}
+		dprofile->setKey(d_crypto->d_currentAid, keyno, key);
+
         if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()) && !getSAMChip())
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAMKeyStorage set on the key but no SAM reader has been set.");
 
@@ -719,6 +725,7 @@ namespace logicalaccess
             key->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, key, diversify);
         }
         command[0] = keyno;
+
         std::vector<unsigned char> result = DESFireISO7816Commands::transmit(DF_INS_AUTHENTICATE, command, 1);
         if (result[result.size() - 1] == DF_INS_ADDITIONAL_FRAME && (result.size()-2) >= 8)
         {
@@ -746,9 +753,7 @@ namespace logicalaccess
             }
             else
                 rndAB = d_crypto->authenticate_PICC1(keyno, diversify, result);
-
             result = DESFireISO7816Commands::transmit(DF_INS_ADDITIONAL_FRAME, &rndAB[0], 16);
-
             if ((result.size() - 2) >= 8)
             {
                 result.resize(result.size() - 2);

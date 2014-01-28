@@ -337,6 +337,10 @@ namespace logicalaccess
 
 	void DESFireEV1ISO7816Commands::authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
 	{
+		if (!key) {
+			key = boost::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile())->getDefaultKey(DF_KEY_DES);
+		}
+
 		// Get the appropriate authentification method and algorithm according to the key type (for 3DES we use legacy method instead of ISO).
 
 		if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()) && !getSAMChip())
@@ -390,8 +394,23 @@ namespace logicalaccess
 		std::vector<unsigned char> encRPCD1RPICC1(apduresult, apduresult + apduresultlen - 2 - 16);
 		std::vector<unsigned char> RPCD2(apduresult + apduresultlen - 16 - 2, apduresult + apduresultlen - 2);
 
-		iso_externalAuthenticate(algorithm, isMasterCardKey, keyno, encRPCD1RPICC1);
-		std::vector<unsigned char> encRPICC2RPCD2a = iso_internalAuthenticate(algorithm, isMasterCardKey, keyno, RPCD2, 2 * 16);
+		std::vector<unsigned char> encRPICC2RPCD2a;
+		try
+		{
+			iso_externalAuthenticate(algorithm, isMasterCardKey, keyno, encRPCD1RPICC1);
+			encRPICC2RPCD2a = iso_internalAuthenticate(algorithm, isMasterCardKey, keyno, RPCD2, 2 * 16);
+		}
+		catch (std::exception& ex)
+		{
+			// Cancel SAM authentication with dummy command, but ignore return
+			try
+			{
+				readercardadapter->sendAPDUCommand(0x80, 0xaf, 0x00, 0x00, 0x00);
+			}
+			catch(std::exception&){}
+
+			throw ex;
+		}
 
 		if (encRPICC2RPCD2a.size() < 1)
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam_iso_authenticate wrong internal data.");

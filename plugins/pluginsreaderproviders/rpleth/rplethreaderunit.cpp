@@ -88,8 +88,8 @@ namespace logicalaccess
 			std::vector<unsigned char> command;
 			command.push_back (static_cast<unsigned char>(Device::HID));
 			command.push_back (static_cast<unsigned char>(HidCommand::WAIT_INSERTION));
-			command.push_back (static_cast<unsigned char>(0x01));
-			command.push_back (static_cast<unsigned char>(maxwait));
+			command.push_back (static_cast<unsigned char>(0x04));
+			BufferHelper::setUInt32(command, maxwait);
 			std::vector<unsigned char> answer;
 			try
 			{
@@ -146,13 +146,14 @@ namespace logicalaccess
 				std::vector<unsigned char> command;
 				command.push_back (static_cast<unsigned char>(Device::HID));
 				command.push_back (static_cast<unsigned char>(HidCommand::WAIT_REMOVAL));
-				command.push_back (static_cast<unsigned char>(0x01));
-				command.push_back (static_cast<unsigned char>(maxwait));
+				command.push_back (static_cast<unsigned char>(0x04));
+				BufferHelper::setUInt32(command, maxwait);
 				std::vector<unsigned char> answer;
 				try
 				{
 					getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true, maxwait);
 					d_insertedChip.reset();
+					INFO_SIMPLE_("Card removed");
 					removed = true;
 				}
 				catch(LibLogicalAccessException&)
@@ -213,7 +214,7 @@ namespace logicalaccess
 			command.push_back (static_cast<unsigned char>(Device::HID));
 			command.push_back (static_cast<unsigned char>(HidCommand::CONNECT));
 			command.push_back (static_cast<unsigned char>(0x00));
-			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, false);
+			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true);
 
 			if (d_insertedChip->getChipIdentifier().size() == 0)
 			{
@@ -235,7 +236,7 @@ namespace logicalaccess
 			command.push_back (static_cast<unsigned char>(Device::HID));
 			command.push_back (static_cast<unsigned char>(HidCommand::DISCONNECT));
 			command.push_back (static_cast<unsigned char>(0x00));
-			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, false);
+			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true);
 		}
 
 		INFO_SIMPLE_("Disconnected from the chip");
@@ -250,7 +251,7 @@ namespace logicalaccess
 			command.push_back (static_cast<unsigned char>(Device::HID));
 			command.push_back (static_cast<unsigned char>(HidCommand::GET_CSN));
 			command.push_back (static_cast<unsigned char>(0x00));
-			csn = getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, false);
+			csn = getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true);
 		}
 
 		INFO_SIMPLE_("Inserted chip identifier get");

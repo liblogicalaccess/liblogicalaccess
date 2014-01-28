@@ -42,7 +42,8 @@ namespace logicalaccess
 		GATEWAY = 0x06,
 		PORT = 0x07,
 		MESSAGE = 0x08,
-		RESET = 0x09
+		RESET = 0x09,
+		PING = 0x0a
 	} RplethCommand;
 
 	/**
