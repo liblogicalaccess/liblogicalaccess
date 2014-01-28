@@ -12,7 +12,7 @@ namespace logicalaccess
 {
 	void ISO7816ReaderCardAdapter::sendAPDUCommand(const std::vector<unsigned char>& command, unsigned char* result, size_t* resultlen)
 	{
-		std::vector<unsigned char> res = sendCommand(command, 0);
+		std::vector<unsigned char> res = sendCommand(command);
 
 		if (result != NULL && resultlen != NULL)
 		{
