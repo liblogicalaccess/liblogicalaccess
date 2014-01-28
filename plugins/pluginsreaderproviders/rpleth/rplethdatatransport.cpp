@@ -96,6 +96,14 @@ namespace logicalaccess
 				buf.insert(buf.begin(), d_buffer.begin(), d_buffer.begin() +  exceptedlen);
 				d_buffer.erase(d_buffer.begin(), d_buffer.begin() +  exceptedlen);
 
+				
+				EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x01, std::invalid_argument, "The supplied answer buffer get the state : Command failure");
+				EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x02, std::invalid_argument, "The supplied answer buffer get the state : Bad checksum in command");
+				EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x03, LibLogicalAccessException, "The supplied answer buffer get the state : Timeout");
+				EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x04, std::invalid_argument, "The supplied answer buffer get the state : Bad size of command");
+				EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x05, std::invalid_argument, "The supplied answer buffer get the state : Bad device in command");
+				EXCEPTION_ASSERT_WITH_LOG(buf[0] == 0x00, std::invalid_argument, "The supplied answer buffer is corrupted"); 
+
 				std::vector<unsigned char> bufnoc = std::vector<unsigned char>(buf.begin(), buf.end() - 1);
 				unsigned char checksum_receive = buf[buf.size() - 1];
 				EXCEPTION_ASSERT_WITH_LOG(calcChecksum(bufnoc) == checksum_receive, std::invalid_argument, "The supplied answer buffer get the state : Bad checksum in answer");
