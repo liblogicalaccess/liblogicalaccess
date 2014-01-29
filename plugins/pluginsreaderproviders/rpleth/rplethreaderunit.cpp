@@ -93,7 +93,7 @@ namespace logicalaccess
 			std::vector<unsigned char> answer;
 			try
 			{
-				answer = getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true, maxwait);
+				answer = getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true, maxwait + 2000); //Give More Time To Answer
 			}
 			catch(LibLogicalAccessException&)
 			{

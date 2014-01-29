@@ -81,6 +81,14 @@ namespace logicalaccess
 			 */
 			std::list<std::vector<unsigned char> > &getBadges() { return d_badges; };
 
+			/**
+			 * \brief Send a command to the reader.
+			 * \param command The command buffer.			 
+			 * \param timeout The command timeout.
+			 * \return the result of the command.
+			 */
+			virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long int timeout = 2000);
+
 		protected:
 
 			/**
