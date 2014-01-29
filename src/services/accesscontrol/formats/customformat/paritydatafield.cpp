@@ -167,7 +167,7 @@ namespace logicalaccess
 	{
 		d_bitsUsePositions.clear();
 		DataField::unSerialize(node);
-		d_parityType = static_cast<ParityType>(node.get_child("string(ParityType)").get_value<unsigned int>());
+		d_parityType = static_cast<ParityType>(node.get_child("ParityType").get_value<unsigned int>());
 		BOOST_FOREACH(boost::property_tree::ptree::value_type const& v, node.get_child("BitsPositions"))
 		{
 			unsigned int bit = v.second.get_value<unsigned int>();
