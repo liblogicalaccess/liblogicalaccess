@@ -151,7 +151,7 @@ namespace logicalaccess
 				std::vector<unsigned char> answer;
 				try
 				{
-					getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true, maxwait);
+					getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true, maxwait + 2000);
 					d_insertedChip.reset();
 					INFO_SIMPLE_("Card removed");
 					removed = true;
