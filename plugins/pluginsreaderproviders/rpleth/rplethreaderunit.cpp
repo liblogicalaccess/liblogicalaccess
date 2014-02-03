@@ -274,7 +274,7 @@ namespace logicalaccess
 		else
 		{
 			//We got the Ping but no badge detected so we wait
-			clock_t diff = std::clock() - begin;
+			clock_t diff = maxwait - (std::clock() - begin);
 			if (diff > 0)
 			{
 				#ifdef _WINDOWS

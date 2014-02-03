@@ -119,7 +119,8 @@ namespace logicalaccess
 					if (ret.size() != 0 && buf[1] == Device::HID && buf[2] == HidCommand::BADGE)
 					{
 						//save the badge
-						d_badges.push_back(ret);
+						if (d_badges.size() <= 10)
+							d_badges.push_back(ret);
 					}
 
 					break; //We have a correct answer
