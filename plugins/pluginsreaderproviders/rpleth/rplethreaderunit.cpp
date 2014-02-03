@@ -263,16 +263,27 @@ namespace logicalaccess
 		INFO_SIMPLE_("Starting get chip in air...");
 
 		boost::shared_ptr<Chip> chip;
+		clock_t begin = std::clock();
 		std::vector<unsigned char> buf = receiveBadge(maxwait);
+
 		if (buf.size() > 0)
 		{
 			chip = createChip((d_card_type == "UNKNOWN") ? "GenericTag" : d_card_type);
 			chip->setChipIdentifier(buf);
 		}
-		/*else
+		else
 		{
-			chip = d_insertedChip;
-		}*/
+			//We got the Ping but no badge detected so we wait
+			clock_t diff = std::clock() - begin;
+			if (diff > 0)
+			{
+				#ifdef _WINDOWS
+					Sleep(diff);
+				#elif defined(__unix__)
+					usleep(diff * (double)1000);
+				#endif
+			}
+		}
 
 		return chip;
 	}
@@ -542,7 +553,9 @@ namespace logicalaccess
 				std::list<std::vector<unsigned char> > &badges = dt->getBadges();
 
 				if (badges.size() == 0)
+				{
 					getDefaultRplethReaderCardAdapter()->sendRplethCommand(cmd, false, timeout);
+				}
 
 				if (badges.size())
 				{
