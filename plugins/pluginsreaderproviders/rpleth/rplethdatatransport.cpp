@@ -82,7 +82,7 @@ namespace logicalaccess
 		while (ret.size() == 0 && diff > 0)
 		{
 			buf.clear();
-			if (getSocket()->available() || d_buffer.size() < 5 || (d_buffer.size() >= 4 && d_buffer.size() < (4 + d_buffer[3] + 1)))
+			if (d_buffer.size() < 5 || (d_buffer.size() >= 4 && d_buffer.size() < (4 + d_buffer[3] + 1)))
 				buf = TcpDataTransport::receive(timeout);
 
 			if (d_buffer.size() < 1024)
@@ -120,10 +120,7 @@ namespace logicalaccess
 					d_badges.push_back(ret);
 				}
 
-				if (buf[1] != Device::RPLETH && buf[2] != RplethCommand::PING)
-				{
-					break;
-				}
+				break; //We have a correct answer
 			}
 
 			diff = (begin + timeout) - std::clock();

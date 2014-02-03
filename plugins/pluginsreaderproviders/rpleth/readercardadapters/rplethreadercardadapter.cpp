@@ -38,7 +38,7 @@ namespace logicalaccess
 		boost::shared_ptr<RplethDataTransport> dt = boost::dynamic_pointer_cast<RplethDataTransport>(getDataTransport());
 		if (dt)
 		{
-			if (waitanswer && dt->getBuffer().size() == 0 && dt->getSocket()->available() == 0)
+			if (!waitanswer)
 			{
 				dt->sendPing();
 			}
@@ -46,10 +46,7 @@ namespace logicalaccess
 			{
 				dt->sendll(adaptCommand(data));
 			}
-			if (waitanswer)
-			{
-				res = adaptAnswer(dt->receive(timeout));
-			}
+			res = adaptAnswer(dt->receive(timeout));
 		}
 		else
 		{
