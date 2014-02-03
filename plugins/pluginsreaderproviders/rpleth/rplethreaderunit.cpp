@@ -542,7 +542,7 @@ namespace logicalaccess
 				std::list<std::vector<unsigned char> > &badges = dt->getBadges();
 
 				if (badges.size() == 0)
-					getDefaultRplethReaderCardAdapter()->sendRplethCommand(cmd, true, timeout);
+					getDefaultRplethReaderCardAdapter()->sendRplethCommand(cmd, false, timeout);
 
 				if (badges.size())
 				{
