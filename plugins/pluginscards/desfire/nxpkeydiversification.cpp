@@ -40,7 +40,11 @@ namespace logicalaccess
 			if (const_vector.size() < syssize)
 			{
 				size_t padsize = (syssize - const_vector.size());
-				for (size_t i = 0; i < padsize; ++i)
+				if (padsize > 0)
+				{
+					const_vector.push_back(0x80);
+				}
+				for (size_t i = 1; i < padsize; ++i)
 				{
 					const_vector.push_back(0x00);
 				}
