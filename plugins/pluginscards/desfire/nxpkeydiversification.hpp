@@ -15,7 +15,7 @@ namespace logicalaccess
 		virtual void initDiversification(std::vector<unsigned char> identifier, int AID, boost::shared_ptr<Key> key, std::vector<unsigned char>& diversify);
 		virtual std::vector<unsigned char> getDiversifiedKey(boost::shared_ptr<Key> key, std::vector<unsigned char> diversify);
 
-		NXPKeyDiversification() : d_systemidentifier("") {};
+		NXPKeyDiversification() : d_systemidentifier("NXP Abu") {};
 		NXPKeyDiversification(std::string systemidentifier) : d_systemidentifier(systemidentifier) {};
 		~NXPKeyDiversification() {};
 

@@ -14,15 +14,8 @@ namespace logicalaccess
 {
 	void NXPKeyDiversification::initDiversification(std::vector<unsigned char> identifier, int AID, boost::shared_ptr<Key> key, std::vector<unsigned char>& diversify)
 	{
-		std::string const_id;
-
 		if (identifier.size() != 0)
 		{
-			if (d_systemidentifier == "")
-				const_id = "NXP Abu";
-			else
-				const_id = d_systemidentifier;
-
 			diversify.push_back(0x01);
 			for (unsigned int x = 0; x < identifier.size(); ++x)
 				diversify.push_back(identifier[x]);
@@ -36,14 +29,22 @@ namespace logicalaccess
 			for (unsigned char x = 0; x < 3; ++x)
 				diversify.push_back(aidTab[x]);
 
-			std::vector<unsigned char> const_vector = std::vector<unsigned char>(const_id.begin(), const_id.end());
+			std::vector<unsigned char> const_vector = std::vector<unsigned char>(d_systemidentifier.begin(), d_systemidentifier.end());
 			unsigned int syssize = 0;
 			if (boost::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_AES)
-				syssize = 7;
+				syssize = 20;
 			else
 				syssize = 5;
 
-			EXCEPTION_ASSERT_WITH_LOG(const_vector.size() >= syssize, LibLogicalAccessException, "System identifier too short for diversification.");
+			// Pad system identifier with 0x00 if required to match excepted system identifier size
+			if (const_vector.size() < syssize)
+			{
+				size_t padsize = (syssize - const_vector.size());
+				for (size_t i = 0; i < padsize; ++i)
+				{
+					const_vector.push_back(0x00);
+				}
+			}
 
 			diversify.insert(diversify.end(), const_vector.begin(), const_vector.begin() + syssize);
 		}
