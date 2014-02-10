@@ -229,7 +229,7 @@ namespace logicalaccess
 		if (isConnected())
 		{
 			ERROR_SIMPLE_(EXCEPTION_MSG_CONNECTED);
-			return false;
+			disconnect();
 		}
 
 		if (Settings::getInstance()->SeeWaitInsertionLog)
@@ -281,8 +281,7 @@ namespace logicalaccess
 
 		if (readers_count == 0)
 		{
-			ERROR_SIMPLE_(EXCEPTION_MSG_NOREADER);
-			return false;
+			THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_NOREADER);
 		}
 
 		char** readers_names = new char*[readers_count];
