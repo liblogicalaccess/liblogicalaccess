@@ -228,7 +228,8 @@ namespace logicalaccess
 	{
 		if (isConnected())
 		{
-			THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_CONNECTED);
+			ERROR_SIMPLE_(EXCEPTION_MSG_CONNECTED);
+			disconnect();
 		}
 
 		if (Settings::getInstance()->SeeWaitInsertionLog)
