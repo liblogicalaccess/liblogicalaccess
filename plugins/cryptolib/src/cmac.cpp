@@ -74,7 +74,11 @@ namespace logicalaccess
 				K2 = openssl::CMACCrypto::shift_string(K1, Rb);
 			}
 
+
 			int pad = (block_size - (data.size() % block_size)) % block_size;
+			if (data.size() == 0)
+				pad = block_size;
+
 			std::vector<unsigned char> padded_data = data;
 			if (pad > 0)
 			{

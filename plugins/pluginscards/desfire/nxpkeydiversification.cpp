@@ -21,7 +21,7 @@ namespace logicalaccess
 				diversify.push_back(identifier[x]);
 			
 			unsigned char aidTab[3];
-			for (unsigned char x = 2; x != (unsigned char)0; --x)
+			for (unsigned char x = 2; x != (unsigned char)0xff; --x)
 			{
 				aidTab[x] = AID & 0xff;
 				AID >>= 8;
@@ -30,27 +30,7 @@ namespace logicalaccess
 				diversify.push_back(aidTab[x]);
 
 			std::vector<unsigned char> const_vector = std::vector<unsigned char>(d_systemidentifier.begin(), d_systemidentifier.end());
-			unsigned int syssize = 0;
-			if (boost::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_AES)
-				syssize = 20;
-			else
-				syssize = 5;
-
-			// Pad system identifier with 0x00 if required to match excepted system identifier size
-			if (const_vector.size() < syssize)
-			{
-				size_t padsize = (syssize - const_vector.size());
-				if (padsize > 0)
-				{
-					const_vector.push_back(0x80);
-				}
-				for (size_t i = 1; i < padsize; ++i)
-				{
-					const_vector.push_back(0x00);
-				}
-			}
-
-			diversify.insert(diversify.end(), const_vector.begin(), const_vector.begin() + syssize);
+			diversify.insert(diversify.end(), const_vector.begin(), const_vector.begin() + const_vector.size());
 		}
 		else
 		{
