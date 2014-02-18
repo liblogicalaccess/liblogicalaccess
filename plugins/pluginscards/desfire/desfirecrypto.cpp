@@ -155,8 +155,13 @@ namespace logicalaccess
 		return ret;
 	}
 
-	std::vector<unsigned char> DESFireCrypto::encipherData(bool end, std::vector<unsigned char> data)
+	std::vector<unsigned char> DESFireCrypto::encipherData(bool end, std::vector<unsigned char> data, const std::vector<unsigned char>& param)
 	{
+		if (d_auth_method != CM_LEGACY)
+		{
+			return iso_encipherData(end, data, param);
+		}
+
 		std::vector<unsigned char> ret;
 		d_buf.insert(d_buf.end(), data.begin(), data.end());
 
@@ -1034,8 +1039,64 @@ namespace logicalaccess
 		return decdata;
 	}
 
+	std::vector<unsigned char> DESFireCrypto::iso_encipherData(bool end, const std::vector<unsigned char>& data, const std::vector<unsigned char>& param)
+	{
+		std::vector<unsigned char> encdata;
+		d_buf.insert(d_buf.end(), data.begin(), data.end());
+
+		std::vector<unsigned char> decdata = data;
+		decdata.insert(data.begin(), d_last_left.begin(), d_last_left.end());
+
+		if (end) {
+			std::vector<unsigned char> calconbuf = param;
+			calconbuf.insert(calconbuf.end(), d_buf.begin(), d_buf.end());
+			long crc = desfire_crc32(&calconbuf[0], calconbuf.size());
+			decdata.push_back(static_cast<unsigned char>(crc & 0xff));
+			decdata.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
+			decdata.push_back(static_cast<unsigned char>((crc & 0xff0000) >> 16));
+			decdata.push_back(static_cast<unsigned char>((crc & 0xff000000) >> 24));		
+			int pad = (d_block_size - (decdata.size() % d_block_size)) % d_block_size;
+			for (int i = 0; i < pad; ++i)
+			{
+				decdata.push_back(0x00);
+			}
+		} else {
+			int leave = data.size() % d_block_size;
+			if (leave > 0)
+			{
+				d_last_left.clear();
+				d_last_left.insert(d_last_left.end(), decdata.end() - leave,  decdata.end());
+				decdata.resize(decdata.size() - leave);
+			}
+			else
+			{
+				d_last_left.clear();
+			}
+		}
+
+		if (data.size() > 0)
+		{
+			boost::shared_ptr<openssl::SymmetricKey> isokey;
+			boost::shared_ptr<openssl::InitializationVector> iv;
+			if (boost::dynamic_pointer_cast<openssl::AESCipher>(d_cipher))
+			{
+				isokey.reset(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_sessionKey)));
+				iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastIV)));
+			}
+			else
+			{
+				isokey.reset(new openssl::DESSymmetricKey(openssl::DESSymmetricKey::createFromData(d_sessionKey)));
+				iv.reset(new openssl::DESInitializationVector(openssl::DESInitializationVector::createFromData(d_lastIV)));
+			}
+			d_cipher->cipher(decdata, encdata, *isokey, *iv, false);
+			d_lastIV = std::vector<unsigned char>(encdata.end() - d_block_size, encdata.end());
+		}
+
+		return encdata;
+	}
+
 	std::vector<unsigned char> DESFireCrypto::desfire_iso_encrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size, const std::vector<unsigned char>& param)
-	{		
+	{
 		std::vector<unsigned char> encdata;
 		std::vector<unsigned char> decdata = data;		
 		std::vector<unsigned char> calconbuf = param;

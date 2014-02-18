@@ -102,7 +102,9 @@ namespace logicalaccess
 			 * \param data The data buffer
 			 * \return The encrypted data buffer
 			 */
-			std::vector<unsigned char> encipherData(bool end, std::vector<unsigned char> data);
+			std::vector<unsigned char> encipherData(bool end, std::vector<unsigned char> data, const std::vector<unsigned char>& param = std::vector<unsigned char>());
+
+			std::vector<unsigned char> iso_encipherData(bool end, const std::vector<unsigned char>& data, const std::vector<unsigned char>& param = std::vector<unsigned char>());
 
 			/**
 			 * \brief Calculate ISO14443 Type A compatible CRC-16.

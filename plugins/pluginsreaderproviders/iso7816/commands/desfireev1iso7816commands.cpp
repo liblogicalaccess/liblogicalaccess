@@ -732,8 +732,9 @@ namespace logicalaccess
 		size_t pkSize = 0;
 
 		d_crypto->initBuf(data.size());
+		size_t DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK = (DESFIRE_CLEAR_DATA_LENGTH_CHUNK - 8);
 
-		if (data.size() <= DESFIRE_CLEAR_DATA_LENGTH_CHUNK - 8)
+		if (data.size() <= DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK)
 		{
 			switch (mode)
 			{
@@ -808,7 +809,7 @@ namespace logicalaccess
 			switch (mode)
 			{
 			case CM_PLAIN:
-				edata = std::vector<unsigned char>(data.begin(), data.begin() + DESFIRE_CLEAR_DATA_LENGTH_CHUNK - 8);
+				edata = std::vector<unsigned char>(data.begin(), data.begin() + DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK);
 				if (d_crypto->d_auth_method != CM_LEGACY) // CMAC needs to be recalculated
 				{
 					std::vector<unsigned char> apdu_command;
@@ -826,12 +827,14 @@ namespace logicalaccess
 				break;
 
 			case CM_MAC:
-				edata = std::vector<unsigned char>(data.begin(), data.begin() + DESFIRE_CLEAR_DATA_LENGTH_CHUNK - 8);
+				edata = std::vector<unsigned char>(data.begin(), data.begin() + DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK);
 				d_crypto->bufferingForGenerateMAC(edata);
 				break;
 
 			case CM_ENCRYPT:
-				edata = d_crypto->encipherData(false, std::vector<unsigned char>(data.begin(), data.begin() + DESFIRE_CLEAR_DATA_LENGTH_CHUNK - 8));
+				{
+					edata = d_crypto->encipherData(false, std::vector<unsigned char>(data.begin(), data.begin() + DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK));
+				}
 				break;
 
 			default:
@@ -850,12 +853,12 @@ namespace logicalaccess
 
 		std::vector<unsigned char> result = transmit_plain(cmd, command, (paramLength + edata.size()));
 		unsigned char err = result[result.size() - 1];
-		if (data.size() > DESFIRE_CLEAR_DATA_LENGTH_CHUNK - 8)
+		if (data.size() > DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK)
 		{
-			pos += DESFIRE_CLEAR_DATA_LENGTH_CHUNK - 8;
+			pos += DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK;
 			while (err == DF_INS_ADDITIONAL_FRAME) // && pos < dataLength
 			{
-				pkSize = ((data.size() - pos) >= DESFIRE_CLEAR_DATA_LENGTH_CHUNK - 8) ? DESFIRE_CLEAR_DATA_LENGTH_CHUNK - 8 : (data.size() - pos);
+				pkSize = ((data.size() - pos) >= (DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK)) ? (DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK) : (data.size() - pos);
 
 				switch (mode)
 				{
@@ -898,7 +901,13 @@ namespace logicalaccess
 				case CM_ENCRYPT:
 					if (pos + pkSize == data.size())
 					{
-						edata = d_crypto->encipherData(true, std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize));
+						std::vector<unsigned char> encparameters;
+						encparameters.push_back(cmd);
+						if (parameters != NULL)
+						{
+							encparameters.insert(encparameters.end(), (unsigned char*)parameters, (unsigned char*)parameters + paramLength);
+						}
+						edata = d_crypto->encipherData(true, std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize), encparameters);
 					}
 					else
 					{
