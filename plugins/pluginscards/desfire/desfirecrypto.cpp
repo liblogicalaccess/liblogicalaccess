@@ -1045,7 +1045,7 @@ namespace logicalaccess
 		d_buf.insert(d_buf.end(), data.begin(), data.end());
 
 		std::vector<unsigned char> decdata = data;
-		decdata.insert(data.begin(), d_last_left.begin(), d_last_left.end());
+		decdata.insert(decdata.begin(), d_last_left.begin(), d_last_left.end());
 
 		if (end) {
 			std::vector<unsigned char> calconbuf = param;
@@ -1061,7 +1061,7 @@ namespace logicalaccess
 				decdata.push_back(0x00);
 			}
 		} else {
-			int leave = data.size() % d_block_size;
+			int leave = decdata.size() % d_block_size;
 			if (leave > 0)
 			{
 				d_last_left.clear();
@@ -1074,7 +1074,7 @@ namespace logicalaccess
 			}
 		}
 
-		if (data.size() > 0)
+		if (decdata.size() > 0)
 		{
 			boost::shared_ptr<openssl::SymmetricKey> isokey;
 			boost::shared_ptr<openssl::InitializationVector> iv;
