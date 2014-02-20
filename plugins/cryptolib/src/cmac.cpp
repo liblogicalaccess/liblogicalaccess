@@ -13,7 +13,7 @@ namespace logicalaccess
 {
 	namespace openssl
 	{
-		std::vector<unsigned char> CMACCrypto::cmac(const std::vector<unsigned char>& key, boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const std::vector<unsigned char>& data, std::vector<unsigned char> lastIV)
+		std::vector<unsigned char> CMACCrypto::cmac(const std::vector<unsigned char>& key, boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const std::vector<unsigned char>& data, std::vector<unsigned char> lastIV, unsigned int padding_size)
 		{
 			boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherK1K2;
 
@@ -75,9 +75,9 @@ namespace logicalaccess
 			}
 
 
-			int pad = (block_size - (data.size() % block_size)) % block_size;
+			int pad = (padding_size - (data.size() % padding_size)) % padding_size;
 			if (data.size() == 0)
-				pad = block_size;
+				pad = padding_size;
 
 			std::vector<unsigned char> padded_data = data;
 			if (pad > 0)

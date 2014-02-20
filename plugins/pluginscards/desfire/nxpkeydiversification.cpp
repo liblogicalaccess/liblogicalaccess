@@ -17,6 +17,7 @@ namespace logicalaccess
 		if (identifier.size() != 0)
 		{
 			diversify.push_back(0x01);
+
 			for (unsigned int x = 0; x < identifier.size(); ++x)
 				diversify.push_back(identifier[x]);
 			
@@ -63,7 +64,7 @@ namespace logicalaccess
 		if (boost::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_AES)
 		{
 			std::vector<unsigned char> keydiv_tmp;
-			keydiv_tmp = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV);
+			keydiv_tmp = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, 32);
 			keydiv.resize(16);
 			std::copy(keydiv_tmp.end() - 16, keydiv_tmp.end(), keydiv.begin());
 		}
@@ -71,9 +72,9 @@ namespace logicalaccess
 		{
 			std::vector<unsigned char> keydiv_tmp_1, keydiv_tmp_2;
 			diversify[0] = 0x21;
-			keydiv_tmp_1 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV);
+			keydiv_tmp_1 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, block_size);
 			diversify[0] = 0x22;
-			keydiv_tmp_2 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV);
+			keydiv_tmp_2 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, block_size);
 			keydiv.insert(keydiv.end(), keydiv_tmp_1.begin() + 8, keydiv_tmp_1.end());
 			keydiv.insert(keydiv.end(), keydiv_tmp_2.begin() + 8, keydiv_tmp_2.end());
 		}

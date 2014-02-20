@@ -951,7 +951,7 @@ namespace logicalaccess
 
 	std::vector<unsigned char> DESFireCrypto::desfire_cmac(const std::vector<unsigned char>& key, boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const std::vector<unsigned char>& data)
 	{
-		std::vector<unsigned char> ret = openssl::CMACCrypto::cmac(key, cipherMAC, block_size, data, d_lastIV);
+		std::vector<unsigned char> ret = openssl::CMACCrypto::cmac(key, cipherMAC, block_size, data, d_lastIV, block_size);
 
 		if (cipherMAC == d_cipher)
 		{
