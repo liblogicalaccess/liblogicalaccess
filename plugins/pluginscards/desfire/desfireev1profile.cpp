@@ -26,15 +26,26 @@ namespace logicalaccess
 	{
 		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 
-		boost::shared_ptr<DESFireEV1Location> dfLocation = boost::dynamic_pointer_cast<DESFireEV1Location>(location);
-		EXCEPTION_ASSERT_WITH_LOG(dfLocation, std::invalid_argument, "location must be a DESFireEV1Location.");
+		boost::shared_ptr<DESFireEV1Location> dfEV1Location = boost::dynamic_pointer_cast<DESFireEV1Location>(location);
+		boost::shared_ptr<DESFireLocation> dfLocation = boost::dynamic_pointer_cast<DESFireLocation>(location);
+
+		if (!dfEV1Location)
+			WARNING_SIMPLE_("location is not a DESFireEV1Location.");
+
+		if (dfLocation)
+			WARNING_SIMPLE_("DESFireEV1Profile use DESFireLocation so we force DES Crypto.");
+		else if (!dfEV1Location)
+			EXCEPTION_ASSERT_WITH_LOG(dfEV1Location, std::invalid_argument, "location must be a DESFireEV1Location or DESFireLocation.");
 
 		// Application (File keys are Application keys)
 		if (dfLocation->aid != (unsigned int)-1)
 		{
 			for (unsigned char i = 0; i < 14; ++i)
 			{
-				setKey(dfLocation->aid, i, getDefaultKey(dfLocation->cryptoMethod));
+				if (dfEV1Location)
+					setKey(dfEV1Location->aid, i, getDefaultKey(dfEV1Location->cryptoMethod));
+				else
+					setKey(dfLocation->aid, i, getDefaultKey(DF_KEY_DES));
 			}
 		}
 		// Card
