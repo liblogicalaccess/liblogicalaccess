@@ -59,6 +59,7 @@ namespace logicalaccess
 #endif
 
 		convertBinaryData(paddedBuffer, fieldDataLengthBytes, pos, d_length, data, dataLengthBytes);
+		delete[] paddedBuffer;
 
 		// OLD METHOD WAS NOT HANDLING LSB/MSB CONVERSION
 		/*for (size_t i = 0; i < ((d_length + 7) / 8); ++i)
@@ -87,6 +88,7 @@ namespace logicalaccess
 		revertBinaryData(data, dataLengthBytes, pos, d_length, paddedBuffer, fieldDataLengthBytes);
 
 		std::vector<unsigned char> ret(paddedBuffer, paddedBuffer + fieldDataLengthBytes);
+		delete[] paddedBuffer;
 		d_value = BufferHelper::getStdString(ret);
 	}
 
