@@ -1,7 +1,7 @@
 /**
- * \file desfireiso7816commands.hpp
- * \author Maxime C. <maxime-dev@islog.com>
- * \brief DESFire commands.
+ * \file SAMAV2ISO7816Commands.hpp
+ * \author Adrien J. <adrien.jund@islog.com>
+ * \brief SAMAV2ISO7816Commands commands.
  */
 
 #ifndef LOGICALACCESS_SAMAV2ISO7816CARDPROVIDER_HPP
@@ -42,5 +42,5 @@ namespace logicalaccess
 	};
 }
 
-#endif /* LOGICALACCESS_DESFIREISO7816COMMANDS_HPP */
+#endif /* LOGICALACCESS_SAMAV2ISO7816COMMANDS_HPP */
 

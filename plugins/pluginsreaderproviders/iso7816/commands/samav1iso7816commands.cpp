@@ -1,7 +1,7 @@
 /**
- * \file desfireiso7816commands.cpp
- * \author Maxime C. <maxime-dev@islog.com>
- * \brief DESFire ISO7816 commands.
+ * \file SAMAV1ISO7816Commands.cpp
+ * \author Adrien J. <adrien.jund@islog.com>
+ * \brief SAMAV1ISO7816Commands commands.
  */
 
 #include "../readercardadapters/iso7816readercardadapter.hpp"
@@ -17,16 +17,56 @@
 #include "logicalaccess/crypto/aes_symmetric_key.hpp"
 #include "logicalaccess/crypto/aes_initialization_vector.hpp"
 
+#include <boost/interprocess/shared_memory_object.hpp>
+#include <boost/interprocess/mapped_region.hpp>
+#include <boost/interprocess/sync/named_mutex.hpp>
 #include <cstring>
 
 namespace logicalaccess
 {
 	SAMAV1ISO7816Commands::SAMAV1ISO7816Commands()
 	{
+		d_named_mutex.reset(new boost::interprocess::named_mutex(boost::interprocess::open_or_create, "sam_mutex"));
+		d_named_mutex->lock();
+
+		boost::interprocess::shared_memory_object shm_obj(boost::interprocess::open_or_create, "sam_memory", boost::interprocess::read_write);
+		boost::interprocess::offset_t size = 0;
+		shm_obj.get_size(size);
+		if (size != 4)
+			shm_obj.truncate(4);
+
+		d_region.reset(new boost::interprocess::mapped_region(shm_obj, boost::interprocess::read_write));
+
+		char *addr = (char*)d_region->get_address();
+
+		if (size != 4)
+			std::memset(addr, 0, d_region->get_size());
+
+		unsigned char x = 0;
+		for (; x < d_region->get_size() && addr[x] != 0; ++x);
+
+		if (x < d_region->get_size())
+		{
+			addr[x] = 1;
+			d_cla = DEFAULT_SAM_CLA + x;
+		}
+		else
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "No channel available.");
+
+		d_named_mutex->unlock();
 	}
 
 	SAMAV1ISO7816Commands::~SAMAV1ISO7816Commands()
 	{
+		d_named_mutex->lock();
+		char *addr = (char*)d_region->get_address();
+		addr[d_cla - 0x80] = 0;
+		d_named_mutex->unlock();
+
+		if (!boost::interprocess::shared_memory_object::remove("sam_memory"))
+			INFO_SIMPLE_("SAM Shared Memory removed failed. It is probably still open by a process.");
+
+		//we do not remove named_mutex - it can still be used by another process
 	}
 
 	SAMVersion SAMAV1ISO7816Commands::getVersion()
@@ -36,7 +76,7 @@ namespace logicalaccess
 		SAMVersion	info;
 		memset(&info, 0x00, sizeof(SAMVersion));
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0x60, 0x00, 0x00, 0x00, result, &resultlen);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x60, 0x00, 0x00, 0x00, result, &resultlen);
 
 
 		if (resultlen == 33 && result[31] == 0x90 && result[32] == 0x00)
@@ -65,7 +105,7 @@ namespace logicalaccess
 		boost::shared_ptr<SAMKeyEntry> keyentry;
 		KeyEntryInformation keyentryinformation;
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0x64, keyno, 0x00, 0x00, result, &resultlen);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x64, keyno, 0x00, 0x00, result, &resultlen);
 
 		if ((resultlen == 14 || resultlen == 13) &&  result[resultlen - 2] == 0x90 && result[resultlen - 1] == 0x00)
 		{
@@ -133,7 +173,7 @@ namespace logicalaccess
 		else
 			encdatalittle = d_crypto->sam_crc_encrypt(d_crypto->d_sessionKey, vectordata, key);
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xc1, keyno, proMas, (unsigned char)(encdatalittle.size()), &encdatalittle[0], encdatalittle.size(), result, &resultlen);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xc1, keyno, proMas, (unsigned char)(encdatalittle.size()), &encdatalittle[0], encdatalittle.size(), result, &resultlen);
 
 		if (resultlen >= 2 &&  (result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0x00))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKeyEntry failed.");
@@ -147,7 +187,7 @@ namespace logicalaccess
 		unsigned char data[5];
 		memset(data, 0, sizeof(data));
 		unsigned char p1 = 3;
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0x10, p1, 0x00, 0x05, data,  0x05, 0x00, result, &resultlen);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, p1, 0x00, 0x05, data,  0x05, 0x00, result, &resultlen);
 	}
 
 	void SAMAV1ISO7816Commands::authentificateHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno)
@@ -170,7 +210,7 @@ namespace logicalaccess
 		data[1] = key->getKeyVersion();
 
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xa4, authMode, 0x00, 0x02, data, 0x02, 0x00, result, &resultlen);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xa4, authMode, 0x00, 0x02, data, 0x02, 0x00, result, &resultlen);
 		if (resultlen >= 2 &&  (result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0xaf))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHost_AES_3K3DES P1 failed.");
 
@@ -179,7 +219,7 @@ namespace logicalaccess
 
 		memset(result, 0, sizeof(result));
 		resultlen = sizeof(result);
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xa4, 0x00, 0x00, (unsigned char)(encRndAB.size()), &encRndAB[0], encRndAB.size(), 0x00, result, &resultlen);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xa4, 0x00, 0x00, (unsigned char)(encRndAB.size()), &encRndAB[0], encRndAB.size(), 0x00, result, &resultlen);
 		if (resultlen >= 2 &&  (result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0x00))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHost_AES_3K3DES P2 failed.");
 
@@ -200,7 +240,7 @@ namespace logicalaccess
 		data[1] = key->getKeyVersion();
 
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xa4, authMode, 0x00, 0x02, data, 0x02, 0x00, result, &resultlen);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xa4, authMode, 0x00, 0x02, data, 0x02, 0x00, result, &resultlen);
 
 		if (resultlen >= 2 &&  (result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0xaf))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHostDES P1 failed.");
@@ -240,7 +280,7 @@ namespace logicalaccess
 
 		//send enc rndAB
 		resultlen = sizeof(result);
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xa4, 0x00, 0x00, (unsigned char)(encRndAB.size()), &encRndAB[0], encRndAB.size(), 0x00, result, &resultlen);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xa4, 0x00, 0x00, (unsigned char)(encRndAB.size()), &encRndAB[0], encRndAB.size(), 0x00, result, &resultlen);
 
 		if (resultlen >= 2 &&  (result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0x00))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHostDES P2 failed.");
@@ -271,7 +311,7 @@ namespace logicalaccess
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0x60, 0x00, 0x00, 0x00, result, &resultlen);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x60, 0x00, 0x00, 0x00, result, &resultlen);
 
 		if (resultlen > 3)
 		{
@@ -289,7 +329,7 @@ namespace logicalaccess
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0x6c, kucno, 0x00, 0x00, result, &resultlen);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x6c, kucno, 0x00, 0x00, result, &resultlen);
 
 		if (resultlen == 12 && (result[resultlen - 2] == 0x90 || result[resultlen - 1] == 0x00))
 		{
@@ -322,7 +362,7 @@ namespace logicalaccess
 
 		int proMas = kucentry->getUpdateMask();
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xcc, kucno, proMas, 0x08, &encdatalittle[0], encdatalittle.size(), result, &resultlen);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xcc, kucno, proMas, 0x08, &encdatalittle[0], encdatalittle.size(), result, &resultlen);
 
 		if (resultlen >= 2 && (result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0x00))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKUCEntry failed.");
@@ -333,7 +373,7 @@ namespace logicalaccess
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xd8, keyno, 0x00, result, &resultlen);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xd8, keyno, 0x00, result, &resultlen);
 
 		if (resultlen >= 2 &&  (result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0x00))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "disableKeyEntry failed.");
@@ -344,7 +384,7 @@ namespace logicalaccess
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0x5a, 0x00, 0x00, 0x03, aid, 0x03, result, &resultlen);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x5a, 0x00, 0x00, 0x03, aid, 0x03, result, &resultlen);
 
 		if (resultlen >= 2 &&  (result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0x00))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "selectApplication failed.");
@@ -355,7 +395,7 @@ namespace logicalaccess
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xd5, 0x00, 0x00, 0x00, result, &resultlen);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xd5, 0x00, 0x00, 0x00, result, &resultlen);
 
 		if (resultlen >= 2 &&  (result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0x00))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "dumpSessionKey failed.");
@@ -381,7 +421,7 @@ namespace logicalaccess
 		}
 		datawithlength.insert(datawithlength.end(), data.begin(), data.end());
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xdd, p1, 0x00, (unsigned char)(datawithlength.size()), &datawithlength[0], datawithlength.size(), 0x00, result, &resultlen);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xdd, p1, 0x00, (unsigned char)(datawithlength.size()), &datawithlength[0], datawithlength.size(), 0x00, result, &resultlen);
 
 		if (resultlen >= 2 &&  result[resultlen - 2] != 0x90 &&
 			((p1 == 0x00 && result[resultlen - 1] != 0x00) || (p1 == 0xaf && result[resultlen - 1] != 0xaf)))
@@ -398,7 +438,7 @@ namespace logicalaccess
 
 		if (!islastdata)
 			p1 = 0xaf;
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xed, p1, 0x00, (unsigned char)(data.size()), &data[0], data.size(), 0x00, result, &resultlen);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xed, p1, 0x00, (unsigned char)(data.size()), &data[0], data.size(), 0x00, result, &resultlen);
 
 		if (resultlen >= 2 &&  result[resultlen - 2] != 0x90 &&
 			((p1 == 0x00 && result[resultlen - 1] != 0x00) || (p1 == 0xaf && result[resultlen - 1] != 0xaf)))
@@ -428,14 +468,14 @@ namespace logicalaccess
 		data[1] = info.currentKeyV;
 		data[2] = info.newKeyNo;
 		data[3] = info.newKeyV;
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x80, 0xc4, keyCompMeth, cfg, (unsigned char)(data.size()), &data[0], data.size(), 0x00, result, &resultlen);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xc4, keyCompMeth, cfg, (unsigned char)(data.size()), &data[0], data.size(), 0x00, result, &resultlen);
 
 		if (resultlen >= 2 &&  (result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0x00))
-        {
-            char tmp[64];
-            sprintf(tmp, "changeKeyPICC failed (%x %x).", result[resultlen - 2], result[resultlen - 1]);
+		{
+			char tmp[64];
+			sprintf(tmp, "changeKeyPICC failed (%x %x).", result[resultlen - 2], result[resultlen - 1]);
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, tmp);
-        }
+		}
 
 		return std::vector<unsigned char>(result, result + resultlen - 2);
 	 }

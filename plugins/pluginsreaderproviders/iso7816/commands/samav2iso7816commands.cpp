@@ -1,7 +1,7 @@
 /**
- * \file desfireiso7816commands.cpp
- * \author Maxime C. <maxime-dev@islog.com>
- * \brief DESFire ISO7816 commands.
+ * \file SAMAV2ISO7816Commands.cpp
+ * \author Adrien J. <adrien.jund@islog.com>
+ * \brief SAMAV2ISO7816Commands commands.
  */
 
 #include "../readercardadapters/iso7816readercardadapter.hpp"

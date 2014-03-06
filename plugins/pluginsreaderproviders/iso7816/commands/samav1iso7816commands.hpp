@@ -1,7 +1,7 @@
 /**
- * \file desfireiso7816commands.hpp
- * \author Maxime C. <maxime-dev@islog.com>
- * \brief DESFire commands.
+ * \file SAMAV1ISO7816Commands.hpp
+ * \author Adrien J. <adrien.jund@islog.com>
+ * \brief SAMAV1ISO7816Commands commands.
  */
 
 #ifndef LOGICALACCESS_SAMAV1ISO7816CARDPROVIDER_HPP
@@ -15,15 +15,19 @@
 #include "samcrypto.hpp"
 #include "samcommands.hpp"
 
+#include <boost/interprocess/mapped_region.hpp>
+#include <boost/interprocess/sync/named_mutex.hpp>
+
 #include <string>
 #include <vector>
 #include <iostream>
 
+#define DEFAULT_SAM_CLA 0x80
 
 namespace logicalaccess
 {		
 	/**
-	 * \brief The DESFire base commands class.
+	 * \brief The SAMAV1ISO7816 commands class.
 	 */
 	class LIBLOGICALACCESS_API SAMAV1ISO7816Commands : public SAMCommands
 	{
@@ -68,8 +72,14 @@ namespace logicalaccess
 
 		protected:
 			boost::shared_ptr<SAMDESfireCrypto> d_crypto;
+
+			boost::shared_ptr<boost::interprocess::mapped_region> d_region;
+
+			boost::shared_ptr<boost::interprocess::named_mutex> d_named_mutex;
+
+			unsigned char d_cla;
 	};
 }
 
-#endif /* LOGICALACCESS_DESFIREISO7816COMMANDS_HPP */
+#endif /* LOGICALACCESS_SAMAV1ISO7816COMMANDS_HPP */
 
