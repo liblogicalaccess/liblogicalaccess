@@ -16,18 +16,22 @@
 #include "logicalaccess/crypto/symmetric_key.hpp"
 #include "logicalaccess/crypto/aes_symmetric_key.hpp"
 #include "logicalaccess/crypto/aes_initialization_vector.hpp"
+#include "logicalaccess/crypto/aes_cipher.hpp"
+#include "logicalaccess/crypto/cmac.hpp"
 
 #include <boost/interprocess/shared_memory_object.hpp>
 #include <boost/interprocess/mapped_region.hpp>
 #include <boost/interprocess/sync/named_mutex.hpp>
+#include <boost/thread/thread_time.hpp>
 #include <cstring>
 
 namespace logicalaccess
 {
 	SAMAV1ISO7816Commands::SAMAV1ISO7816Commands()
 	{
+
 		d_named_mutex.reset(new boost::interprocess::named_mutex(boost::interprocess::open_or_create, "sam_mutex"));
-		d_named_mutex->lock();
+		bool locked = d_named_mutex->timed_lock(boost::get_system_time() + boost::posix_time::seconds(5));
 
 		boost::interprocess::shared_memory_object shm_obj(boost::interprocess::open_or_create, "sam_memory", boost::interprocess::read_write);
 		boost::interprocess::offset_t size = 0;
@@ -39,7 +43,7 @@ namespace logicalaccess
 
 		char *addr = (char*)d_region->get_address();
 
-		if (size != 4)
+		if (size != 4 || !locked)
 			std::memset(addr, 0, d_region->get_size());
 
 		unsigned char x = 0;
@@ -180,14 +184,52 @@ namespace logicalaccess
 	}
 
 
-	void SAMAV1ISO7816Commands::activeAV2Mode()
+	void SAMAV1ISO7816Commands::activeAV2Mode(boost::shared_ptr<Key> masterKey, unsigned char masterKeyVersion)
 	{
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
-		unsigned char data[5];
-		memset(data, 0, sizeof(data));
-		unsigned char p1 = 3;
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, p1, 0x00, 0x05, data,  0x05, 0x00, result, &resultlen);
+		unsigned char p1_part1 = 0x03;
+
+		std::vector<unsigned char> maxChainBlocks(3, 0x00);
+
+		std::vector<unsigned char> data_p1(2, 0x00);
+		data_p1[1] = masterKeyVersion;
+
+		data_p1.insert(data_p1.end(), maxChainBlocks.begin(), maxChainBlocks.end());
+
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, p1_part1, 0x00, 0x05, &data_p1[0],  0x05, 0x00, result, &resultlen);
+		if (resultlen == 14 && result[12] == 0x90 && (result[13] == 0x00 || result[13] == 0xAF))
+		{
+			std::vector<unsigned char> keycipher(masterKey->getData(), masterKey->getData() + masterKey->getLength());
+			boost::shared_ptr<openssl::OpenSSLSymmetricCipher> d_cipher(new openssl::AESCipher());
+			std::vector<unsigned char> emptyIV(16), rnd1;
+
+			std::vector<unsigned char>  diversify(result, result + 12); //Rnd2
+			diversify.push_back(p1_part1); //P1_part1
+
+			diversify.insert(diversify.end(), maxChainBlocks.begin(), maxChainBlocks.end()); //MaxChainBlocks - unlimited
+
+			std::vector<unsigned char> macHost = openssl::CMACCrypto::cmac(keycipher, d_cipher, 16, diversify, emptyIV, 16);
+
+			RAND_seed(result, 12);
+			EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
+			rnd1.resize(12);
+			if (RAND_bytes(&rnd1[0], static_cast<int>(rnd1.size())) != 1)
+			{
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
+			}
+
+			std::vector<unsigned char> data_p2;
+			data_p2.insert(data_p2.end(), macHost.begin(), macHost.begin() + 8);
+			data_p2.insert(data_p2.end(), rnd1.begin(), rnd1.end());
+
+			resultlen = sizeof(result);
+			getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, 0x00, 0x00, 0x14, &data_p2[0], 0x14, 0x00, result, &resultlen);
+			if (resultlen == 26 && result[24] == 0x90 && result[25] == 0x00)
+			{
+
+			}
+		}
 	}
 
 	void SAMAV1ISO7816Commands::authentificateHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno)

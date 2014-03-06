@@ -1,7 +1,7 @@
 /**
- * \file desfireev1commands.hpp
- * \author Maxime C. <maxime-dev@islog.com>
- * \brief DESFire EV1 commands.
+ * \file SAMCommands.hpp
+ * \author Adrien J. <adrien.jund@islog.com>
+ * \brief SAMCommands commands.
  */
 
 #ifndef LOGICALACCESS_SAMCOMMANDS_HPP
@@ -53,7 +53,6 @@ namespace logicalaccess
 			virtual boost::shared_ptr<SAMKucEntry> getKUCEntry(unsigned char keyno) = 0;
 			virtual void changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry> keyentry, boost::shared_ptr<DESFireKey> key) = 0;
 			virtual void changeKUCEntry(unsigned char keyno, boost::shared_ptr<SAMKucEntry> keyentry, boost::shared_ptr<DESFireKey> key) = 0;
-			virtual void activeAV2Mode() = 0;
 			virtual void authentificateHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno) = 0;
 			virtual std::string	getSAMTypeFromSAM() = 0;
 			virtual void disableKeyEntry(unsigned char keyno) = 0;
@@ -62,8 +61,8 @@ namespace logicalaccess
 			virtual std::vector<unsigned char> decipherData(std::vector<unsigned char> data, bool islastdata) = 0;
 			virtual std::vector<unsigned char> encipherData(std::vector<unsigned char> data, bool islastdata) = 0;
 			virtual std::vector<unsigned char> changeKeyPICC(const ChangeKeyInfo& info) = 0;
+			virtual void activeAV2Mode(boost::shared_ptr<Key> masterKey, unsigned char masterKeyVersion) = 0;	
 		protected:
-			
 	};
 }
 

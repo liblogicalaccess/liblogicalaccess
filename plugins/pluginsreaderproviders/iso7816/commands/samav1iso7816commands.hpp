@@ -51,7 +51,6 @@ namespace logicalaccess
 			virtual void changeKUCEntry(unsigned char kucno, boost::shared_ptr<SAMKucEntry> keyentry, boost::shared_ptr<DESFireKey> key);
 			virtual void changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry> keyentry, boost::shared_ptr<DESFireKey> key);
 
-			virtual void activeAV2Mode();
 			virtual void selectApplication(unsigned char *aid);
 			virtual void authentificateHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
 			void authentificateHost_AES_3K3DES(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
@@ -70,7 +69,10 @@ namespace logicalaccess
 
 			virtual std::vector<unsigned char> changeKeyPICC(const ChangeKeyInfo& info);
 
+			virtual void activeAV2Mode(boost::shared_ptr<Key> masterKey, unsigned char masterKeyVersion);
+
 		protected:
+
 			boost::shared_ptr<SAMDESfireCrypto> d_crypto;
 
 			boost::shared_ptr<boost::interprocess::mapped_region> d_region;
