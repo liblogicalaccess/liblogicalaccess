@@ -43,6 +43,13 @@ namespace logicalaccess
 		SAMManufactureInformation	manufacture;
 	} SAMVersion;
 
+	enum SAMLockUnlock {
+			Unlock = 0x00,
+			LockWithoutSpecifyingKey = 0x01,
+			LockWithSpecifyingKey = 0x02,
+			SwitchAV2Mode = 0x03
+	};
+
 	class DESFireKey;
 
 	class LIBLOGICALACCESS_API SAMCommands : public virtual Commands
@@ -61,7 +68,7 @@ namespace logicalaccess
 			virtual std::vector<unsigned char> decipherData(std::vector<unsigned char> data, bool islastdata) = 0;
 			virtual std::vector<unsigned char> encipherData(std::vector<unsigned char> data, bool islastdata) = 0;
 			virtual std::vector<unsigned char> changeKeyPICC(const ChangeKeyInfo& info) = 0;
-			virtual void activeAV2Mode(boost::shared_ptr<Key> masterKey, unsigned char masterKeyVersion) = 0;	
+			virtual void lockUnlock(boost::shared_ptr<DESFireKey> masterKey, SAMLockUnlock state, unsigned char keyno) = 0;	
 		protected:
 	};
 }

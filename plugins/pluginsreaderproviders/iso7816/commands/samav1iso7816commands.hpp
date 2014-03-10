@@ -69,7 +69,7 @@ namespace logicalaccess
 
 			virtual std::vector<unsigned char> changeKeyPICC(const ChangeKeyInfo& info);
 
-			virtual void activeAV2Mode(boost::shared_ptr<Key> masterKey, unsigned char masterKeyVersion);
+			virtual void lockUnlock(boost::shared_ptr<DESFireKey> masterKey, SAMLockUnlock state, unsigned char keyno);
 
 		protected:
 
@@ -80,6 +80,9 @@ namespace logicalaccess
 			boost::shared_ptr<boost::interprocess::named_mutex> d_named_mutex;
 
 			unsigned char d_cla;
+
+		private:
+			void truncateMacBuffer(std::vector<unsigned char>& data);
 	};
 }
 

@@ -29,7 +29,6 @@ namespace logicalaccess
 {
 	SAMAV1ISO7816Commands::SAMAV1ISO7816Commands()
 	{
-
 		d_named_mutex.reset(new boost::interprocess::named_mutex(boost::interprocess::open_or_create, "sam_mutex"));
 		bool locked = d_named_mutex->timed_lock(boost::get_system_time() + boost::posix_time::seconds(5));
 
@@ -47,17 +46,21 @@ namespace logicalaccess
 			std::memset(addr, 0, d_region->get_size());
 
 		unsigned char x = 0;
-		for (; x < d_region->get_size() && addr[x] != 0; ++x);
-
-		if (x < d_region->get_size())
+		for (; x < d_region->get_size(); ++x)
 		{
-			addr[x] = 1;
-			d_cla = DEFAULT_SAM_CLA + x;
+			if (addr[x] == 0)
+			{
+				addr[x] = 1;
+				break;
+			}
 		}
-		else
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "No channel available.");
 
 		d_named_mutex->unlock();
+
+		if (x < d_region->get_size())
+			d_cla = DEFAULT_SAM_CLA + x;
+		else
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "No channel available.");
 	}
 
 	SAMAV1ISO7816Commands::~SAMAV1ISO7816Commands()
@@ -183,53 +186,122 @@ namespace logicalaccess
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKeyEntry failed.");
 	}
 
+	void SAMAV1ISO7816Commands::truncateMacBuffer(std::vector<unsigned char>& data)
+	{
+		unsigned char truncateCount = 0;
+		unsigned char count = 1;
 
-	void SAMAV1ISO7816Commands::activeAV2Mode(boost::shared_ptr<Key> masterKey, unsigned char masterKeyVersion)
+		while (count < data.size())
+		{
+			data[truncateCount] = data[count];
+			count += 2;
+			++truncateCount;
+		}
+	}
+
+	void SAMAV1ISO7816Commands::lockUnlock(boost::shared_ptr<DESFireKey> masterKey, SAMLockUnlock state, unsigned char keyno)
 	{
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
 		unsigned char p1_part1 = 0x03;
+		unsigned int le = 2;
 
-		std::vector<unsigned char> maxChainBlocks(3, 0x00);
+		std::vector<unsigned char> maxChainBlocks(3, 0x00); //MaxChainBlocks - unlimited
 
 		std::vector<unsigned char> data_p1(2, 0x00);
-		data_p1[1] = masterKeyVersion;
+		data_p1[0] = keyno;
+		data_p1[1] = masterKey->getKeyVersion();
 
-		data_p1.insert(data_p1.end(), maxChainBlocks.begin(), maxChainBlocks.end());
-
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, p1_part1, 0x00, 0x05, &data_p1[0],  0x05, 0x00, result, &resultlen);
-		if (resultlen == 14 && result[12] == 0x90 && (result[13] == 0x00 || result[13] == 0xAF))
+		if (state == SAMLockUnlock::SwitchAV2Mode)
 		{
-			std::vector<unsigned char> keycipher(masterKey->getData(), masterKey->getData() + masterKey->getLength());
-			boost::shared_ptr<openssl::OpenSSLSymmetricCipher> d_cipher(new openssl::AESCipher());
-			std::vector<unsigned char> emptyIV(16), rnd1;
-
-			std::vector<unsigned char>  diversify(result, result + 12); //Rnd2
-			diversify.push_back(p1_part1); //P1_part1
-
-			diversify.insert(diversify.end(), maxChainBlocks.begin(), maxChainBlocks.end()); //MaxChainBlocks - unlimited
-
-			std::vector<unsigned char> macHost = openssl::CMACCrypto::cmac(keycipher, d_cipher, 16, diversify, emptyIV, 16);
-
-			RAND_seed(result, 12);
-			EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
-			rnd1.resize(12);
-			if (RAND_bytes(&rnd1[0], static_cast<int>(rnd1.size())) != 1)
-			{
-				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
-			}
-
-			std::vector<unsigned char> data_p2;
-			data_p2.insert(data_p2.end(), macHost.begin(), macHost.begin() + 8);
-			data_p2.insert(data_p2.end(), rnd1.begin(), rnd1.end());
-
-			resultlen = sizeof(result);
-			getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, 0x00, 0x00, 0x14, &data_p2[0], 0x14, 0x00, result, &resultlen);
-			if (resultlen == 26 && result[24] == 0x90 && result[25] == 0x00)
-			{
-
-			}
+			le += 3;
+			data_p1.insert(data_p1.end(), maxChainBlocks.begin(), maxChainBlocks.end());
 		}
+
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, p1_part1, 0x00, le, &data_p1[0],  le, 0x00, result, &resultlen);
+		if (resultlen != 14 || result[12] != 0x90 || result[13] != 0xAF)
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P1 Failed.");
+
+		std::vector<unsigned char> keycipher(masterKey->getData(), masterKey->getData() + masterKey->getLength());
+		boost::shared_ptr<openssl::OpenSSLSymmetricCipher> d_cipher(new openssl::AESCipher());
+		std::vector<unsigned char> emptyIV(16), rnd1;
+
+		std::vector<unsigned char>  diversify(result, result + 12); //Rnd2
+		diversify.push_back(p1_part1); //P1_part1
+
+		diversify.insert(diversify.end(), data_p1.begin() + 2, data_p1.end());
+
+		std::vector<unsigned char> macHost = openssl::CMACCrypto::cmac(keycipher, d_cipher, 16, diversify, emptyIV, 16);
+		truncateMacBuffer(macHost);
+
+		RAND_seed(result, 12);
+		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
+		rnd1.resize(12);
+		if (RAND_bytes(&rnd1[0], static_cast<int>(rnd1.size())) != 1)
+		{
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
+		}
+
+		std::vector<unsigned char> data_p2;
+		data_p2.insert(data_p2.end(), macHost.begin(), macHost.begin() + 8);
+		data_p2.insert(data_p2.end(), rnd1.begin(), rnd1.end());
+
+		resultlen = sizeof(result);
+		memset(result, 0, sizeof(result));
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, 0x00, 0x00, 0x14, &data_p2[0], 0x14, 0x00, result, &resultlen);
+		if (resultlen != 26 || result[24] != 0x90 || result[25] != 0xAF)
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P2 Failed.");
+
+		/* Check CMAC */
+		diversify.clear();
+		diversify.insert(diversify.begin(), rnd1.begin(), rnd1.end()); //Rnd1
+		diversify.push_back(p1_part1); //P1_part1
+		diversify.insert(diversify.end(), data_p1.begin() + 2, data_p1.end());
+
+		macHost = openssl::CMACCrypto::cmac(keycipher, d_cipher, 16, diversify, emptyIV, 16);
+		truncateMacBuffer(macHost);
+
+		for (unsigned char x = 0; x < 8; ++x)
+		{
+			if (macHost[x] != result[x])
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P2 CMAC from SAM is Wrong.");
+		}
+
+		boost::shared_ptr<openssl::SymmetricKey> symkey(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(keycipher)));
+		boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
+
+		std::vector<unsigned char> encRndB(result + 8, result + resultlen - 2);
+		std::vector<unsigned char> dencRndB;
+
+		d_cipher->decipher(encRndB, dencRndB, *symkey.get(), *iv.get(), false);
+	//	std::vector<unsigned char> dencRndB =  d_crypto->desfire_CBC_send(keycipher, emptyIV, encRndB);
+
+		//create rndB'
+		std::vector<unsigned char> rndB1;
+		rndB1.insert(rndB1.begin(), dencRndB.begin() + 1, dencRndB.begin() + dencRndB.size());
+		rndB1.push_back(dencRndB[0]);
+
+		//create rndA
+		std::vector<unsigned char> rndA(16);
+		if (RAND_bytes(&rndA[0], static_cast<int>(rndA.size())) != 1)
+		{
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
+		}
+
+		std::vector<unsigned char> dataHost, encHost;
+		dataHost.insert(dataHost.end(), rndA.begin(), rndA.end()); //RndA
+		dataHost.insert(dataHost.end(), rndB1.begin(), rndB1.end()); //Rnd2/RndB'
+
+		d_cipher->cipher(dataHost, encHost, *symkey.get(), *iv.get(), false);
+
+
+		resultlen = sizeof(result);
+		memset(result, 0, sizeof(result));
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, 0x00, 0x00, 0x20, &encHost[0], 0x20, 0x00, result, &resultlen);
+		if (resultlen != 18 || result[24] != 0x90 || result[25] != 0xAF)
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P2 Failed.");
+
+
 	}
 
 	void SAMAV1ISO7816Commands::authentificateHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno)
