@@ -216,7 +216,9 @@ namespace logicalaccess
 
 	unsigned short BufferHelper::getUShort(const std::vector<unsigned char>& buffer, size_t& offset)
 	{
-		return static_cast<unsigned short>(buffer[offset++] | (buffer[offset++] << 8));
+          unsigned short tmp = buffer[offset++];
+          tmp |= (buffer[offset++] << 8);
+		return static_cast<unsigned short>(tmp);
 	}
 
 	void BufferHelper::setInt32(std::vector<unsigned char>& buffer, const long& value)
@@ -237,12 +239,20 @@ namespace logicalaccess
 
 	unsigned long BufferHelper::getUInt32(const std::vector<unsigned char>& buffer, size_t& offset)
 	{
-		return static_cast<unsigned long>(buffer[offset++] | (buffer[offset++] << 8) | (buffer[offset++] << 16) | (buffer[offset++] << 24));
+          unsigned long tmp = buffer[offset++];
+          tmp |= (buffer[offset++] << 8);
+          tmp |= (buffer[offset++] << 16);
+          tmp |= (buffer[offset++] << 24);
+		return static_cast<unsigned long>(tmp);
 	}
 
 	long BufferHelper::getInt32(const std::vector<unsigned char>& buffer, size_t& offset)
 	{
-		return static_cast<long>(buffer[offset++] | (buffer[offset++] << 8) | (buffer[offset++] << 16) | (buffer[offset++] << 24));
+          long tmp = buffer[offset++];
+          tmp |= (buffer[offset++] << 8);
+          tmp |= (buffer[offset++] << 16);
+          tmp |= (buffer[offset++] << 24);
+		return static_cast<long>(tmp);
 	}
 
 	void BufferHelper::setUInt64(std::vector<unsigned char>& buffer, const unsigned long long& value)
@@ -259,7 +269,15 @@ namespace logicalaccess
 
 	uint64_t BufferHelper::getUInt64(const std::vector<unsigned char>& buffer, size_t& offset)
 	{
-		return static_cast<uint64_t>(buffer[offset++] | (buffer[offset++] << 8) | (buffer[offset++] << 16) | (buffer[offset++] << 24) | ((uint64_t)buffer[offset++] << 32) | ((uint64_t)buffer[offset++] << 40) | ((uint64_t)buffer[offset++] << 48) | ((uint64_t)buffer[offset++] << 56));
+          uint64_t tmp = buffer[offset++];
+          tmp |= (buffer[offset++] << 8);
+          tmp |= (buffer[offset++] << 16);
+          tmp |= (buffer[offset++] << 24);
+          tmp |= (buffer[offset++] << 32);
+          tmp |= (buffer[offset++] << 40);
+          tmp |= (buffer[offset++] << 48);
+          tmp |= (buffer[offset++] << 56);
+		return static_cast<uint64_t>(tmp);
 	}
 
 	void BufferHelper::setString(std::vector<unsigned char>& buffer, const std::string& value)
