@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 2.6)
 
 project(liblogicalaccess)
 
+option ( BUILD_SHARED_LIBS "build shared libraries" ON )
+
+
 if (NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "Debug")
 endif()
@@ -144,7 +147,6 @@ LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_CURRENT_SOURCE_DIR}/plugins/crypt
 
 add_library(
   liblogicalaccess
-  SHARED
   ${source}
   ${include}
 )
