@@ -69,7 +69,7 @@ namespace logicalaccess
 
 			virtual std::vector<unsigned char> changeKeyPICC(const ChangeKeyInfo& info);
 
-			virtual void lockUnlock(boost::shared_ptr<DESFireKey> masterKey, SAMLockUnlock state, unsigned char keyno);
+			virtual void lockUnlock(boost::shared_ptr<DESFireKey> masterKey, SAMLockUnlock state, unsigned char keyno, unsigned char unlockkeyno, unsigned char unlockkeyversion);
 
 		protected:
 
@@ -83,6 +83,7 @@ namespace logicalaccess
 
 		private:
 			void truncateMacBuffer(std::vector<unsigned char>& data);
+			std::vector<unsigned char> generateAuthEncKey(std::vector<unsigned char> keycipher, std::vector<unsigned char> rnd1, std::vector<unsigned char> rnd2);
 	};
 }
 

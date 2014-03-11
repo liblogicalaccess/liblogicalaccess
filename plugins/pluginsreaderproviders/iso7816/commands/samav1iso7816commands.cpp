@@ -199,11 +199,35 @@ namespace logicalaccess
 		}
 	}
 
-	void SAMAV1ISO7816Commands::lockUnlock(boost::shared_ptr<DESFireKey> masterKey, SAMLockUnlock state, unsigned char keyno)
+	std::vector<unsigned char> SAMAV1ISO7816Commands::generateAuthEncKey(std::vector<unsigned char> keycipher, std::vector<unsigned char> rnd1, std::vector<unsigned char> rnd2)
+	{
+		std::vector<unsigned char> SV1a(16), SV1b(16), emptyIV(16), sessionKey;
+
+		std::copy(rnd1.begin() + 7, rnd1.begin() + 12, SV1a.begin());
+		std::copy(rnd2.begin() + 7, rnd2.begin() + 12, SV1a.begin() + 5);
+		std::copy(rnd1.begin(), rnd1.begin() + 5, SV1a.begin() + 10);
+
+		for (unsigned char x = 0; x <= 4; ++x)
+		{
+			SV1a[x + 10] ^= rnd2[x];
+		}
+
+		SV1a[15] = 0x91; /* AES 128 */
+
+		boost::shared_ptr<openssl::SymmetricKey> symkey(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(keycipher)));
+		boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
+		boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
+
+		cipher->cipher(SV1a, sessionKey, *symkey.get(), *iv.get(), false);
+
+		return sessionKey;
+	}
+
+	void SAMAV1ISO7816Commands::lockUnlock(boost::shared_ptr<DESFireKey> masterKey, SAMLockUnlock state, unsigned char keyno, unsigned char unlockkeyno, unsigned char unlockkeyversion)
 	{
 		unsigned char result[255];
 		size_t resultlen = sizeof(result);
-		unsigned char p1_part1 = 0x03;
+		unsigned char p1_part1 = state;
 		unsigned int le = 2;
 
 		std::vector<unsigned char> maxChainBlocks(3, 0x00); //MaxChainBlocks - unlimited
@@ -217,21 +241,37 @@ namespace logicalaccess
 			le += 3;
 			data_p1.insert(data_p1.end(), maxChainBlocks.begin(), maxChainBlocks.end());
 		}
+		else if (state == SAMLockUnlock::LockWithSpecifyingKey)
+		{
+			le += 2;
+			data_p1.push_back(unlockkeyno);
+			data_p1.push_back(unlockkeyversion);
+		}
 
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, p1_part1, 0x00, le, &data_p1[0],  le, 0x00, result, &resultlen);
 		if (resultlen != 14 || result[12] != 0x90 || result[13] != 0xAF)
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P1 Failed.");
 
 		std::vector<unsigned char> keycipher(masterKey->getData(), masterKey->getData() + masterKey->getLength());
-		boost::shared_ptr<openssl::OpenSSLSymmetricCipher> d_cipher(new openssl::AESCipher());
+		boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
 		std::vector<unsigned char> emptyIV(16), rnd1;
 
-		std::vector<unsigned char>  diversify(result, result + 12); //Rnd2
-		diversify.push_back(p1_part1); //P1_part1
+		/* Create rnd2 for p3 - CMAC: rnd2 | P2 | other data */
+		std::vector<unsigned char>  rnd2(result, result + 12);
+		rnd2.push_back(p1_part1); //P1_part1
+		rnd2.insert(rnd2.end(), data_p1.begin() + 2, data_p1.end()); //last data
 
-		diversify.insert(diversify.end(), data_p1.begin() + 2, data_p1.end());
+		/* ZeroPad */
+		if (state == SAMLockUnlock::LockWithSpecifyingKey)
+		{
+			rnd2.push_back(0x00);
+		}
+		else if (state != SAMLockUnlock::SwitchAV2Mode)
+		{
+			rnd2.resize(rnd2.size() + 3);
+		}
 
-		std::vector<unsigned char> macHost = openssl::CMACCrypto::cmac(keycipher, d_cipher, 16, diversify, emptyIV, 16);
+		std::vector<unsigned char> macHost = openssl::CMACCrypto::cmac(keycipher, cipher, 16, rnd2, emptyIV, 16);
 		truncateMacBuffer(macHost);
 
 		RAND_seed(result, 12);
@@ -252,13 +292,10 @@ namespace logicalaccess
 		if (resultlen != 26 || result[24] != 0x90 || result[25] != 0xAF)
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P2 Failed.");
 
-		/* Check CMAC */
-		diversify.clear();
-		diversify.insert(diversify.begin(), rnd1.begin(), rnd1.end()); //Rnd1
-		diversify.push_back(p1_part1); //P1_part1
-		diversify.insert(diversify.end(), data_p1.begin() + 2, data_p1.end());
+		/* Check CMAC - Create rnd1 for p3 - CMAC: rnd1 | P1 | other data */
+		rnd1.insert(rnd1.end(), rnd2.begin() + 12, rnd2.end()); //p2 data without rnd2
 
-		macHost = openssl::CMACCrypto::cmac(keycipher, d_cipher, 16, diversify, emptyIV, 16);
+		macHost = openssl::CMACCrypto::cmac(keycipher, cipher, 16, rnd1, emptyIV, 16);
 		truncateMacBuffer(macHost);
 
 		for (unsigned char x = 0; x < 8; ++x)
@@ -267,19 +304,9 @@ namespace logicalaccess
 				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P2 CMAC from SAM is Wrong.");
 		}
 
-		boost::shared_ptr<openssl::SymmetricKey> symkey(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(keycipher)));
-		boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
+		/* Create kxe */
+		std::vector<unsigned char> kxe = generateAuthEncKey(keycipher, rnd1, rnd2);
 
-		std::vector<unsigned char> encRndB(result + 8, result + resultlen - 2);
-		std::vector<unsigned char> dencRndB;
-
-		d_cipher->decipher(encRndB, dencRndB, *symkey.get(), *iv.get(), false);
-	//	std::vector<unsigned char> dencRndB =  d_crypto->desfire_CBC_send(keycipher, emptyIV, encRndB);
-
-		//create rndB'
-		std::vector<unsigned char> rndB1;
-		rndB1.insert(rndB1.begin(), dencRndB.begin() + 1, dencRndB.begin() + dencRndB.size());
-		rndB1.push_back(dencRndB[0]);
 
 		//create rndA
 		std::vector<unsigned char> rndA(16);
@@ -288,20 +315,42 @@ namespace logicalaccess
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
 		}
 
+
+		//decipher rndB
+		boost::shared_ptr<openssl::SymmetricKey> symkey(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(kxe)));
+		boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
+
+		std::vector<unsigned char> encRndB(result + 8, result + resultlen - 2);
+		std::vector<unsigned char> dencRndB;
+
+		cipher->decipher(encRndB, dencRndB, *symkey.get(), *iv.get(), false);
+
+		//create rndB'
+		std::vector<unsigned char> rndB1;
+		rndB1.insert(rndB1.begin(), dencRndB.begin() + 2, dencRndB.begin() + dencRndB.size());
+		rndB1.push_back(dencRndB[0]);
+		rndB1.push_back(dencRndB[1]);
+
 		std::vector<unsigned char> dataHost, encHost;
 		dataHost.insert(dataHost.end(), rndA.begin(), rndA.end()); //RndA
-		dataHost.insert(dataHost.end(), rndB1.begin(), rndB1.end()); //Rnd2/RndB'
+		dataHost.insert(dataHost.end(), rndB1.begin(), rndB1.end()); //RndB'
 
-		d_cipher->cipher(dataHost, encHost, *symkey.get(), *iv.get(), false);
-
+		iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
+		cipher->cipher(dataHost, encHost, *symkey.get(), *iv.get(), false);
 
 		resultlen = sizeof(result);
 		memset(result, 0, sizeof(result));
 		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, 0x00, 0x00, 0x20, &encHost[0], 0x20, 0x00, result, &resultlen);
-		if (resultlen != 18 || result[24] != 0x90 || result[25] != 0xAF)
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P2 Failed.");
+		if (resultlen != 18 || result[16] != 0x90 || result[17] != 0x00)
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P3 Failed.");
 
+		std::vector<unsigned char> encSAMrndA(result, result + resultlen - 2), SAMrndA;
+		iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
+		cipher->decipher(encSAMrndA, SAMrndA, *symkey.get(), *iv.get(), false);
+		SAMrndA.insert(SAMrndA.begin(), SAMrndA.end() - 2, SAMrndA.end());
 
+		if (!std::equal(SAMrndA.begin(), SAMrndA.begin() + 16, rndA.begin()))
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P3 RndA from SAM is invalide.");
 	}
 
 	void SAMAV1ISO7816Commands::authentificateHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno)
