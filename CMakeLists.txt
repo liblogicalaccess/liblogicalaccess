@@ -1,13 +1,14 @@
 cmake_minimum_required(VERSION 2.6)
 
+if (NOT DEFINED CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" )
+endif()
+
+
 project(liblogicalaccess)
 
 option ( BUILD_SHARED_LIBS "build shared libraries" ON )
 
-
-if (NOT CMAKE_BUILD_TYPE)
-	set(CMAKE_BUILD_TYPE "Debug")
-endif()
 
 if (NOT TARGET_ARCH)
 	set(TARGET_ARCH "Win32")
