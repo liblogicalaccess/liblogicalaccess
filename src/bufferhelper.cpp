@@ -216,9 +216,9 @@ namespace logicalaccess
 
 	unsigned short BufferHelper::getUShort(const std::vector<unsigned char>& buffer, size_t& offset)
 	{
-          unsigned short tmp = buffer[offset++];
-          tmp |= (buffer[offset++] << 8);
-		return static_cast<unsigned short>(tmp);
+          unsigned short tmp = static_cast<long>(buffer[offset++]);
+          tmp |= static_cast<long>(buffer[offset++]) << 8;
+	  return tmp;
 	}
 
 	void BufferHelper::setInt32(std::vector<unsigned char>& buffer, const long& value)
@@ -239,20 +239,20 @@ namespace logicalaccess
 
 	unsigned long BufferHelper::getUInt32(const std::vector<unsigned char>& buffer, size_t& offset)
 	{
-          unsigned long tmp = buffer[offset++];
-          tmp |= (buffer[offset++] << 8);
-          tmp |= (buffer[offset++] << 16);
-          tmp |= (buffer[offset++] << 24);
-		return static_cast<unsigned long>(tmp);
+          unsigned long tmp = static_cast<unsigned long>(buffer[offset++]);
+          tmp |= static_cast<unsigned long>(buffer[offset++]) << 8;
+          tmp |= static_cast<unsigned long>(buffer[offset++]) << 16;
+          tmp |= static_cast<unsigned long>(buffer[offset++]) << 24;
+		return tmp;
 	}
 
 	long BufferHelper::getInt32(const std::vector<unsigned char>& buffer, size_t& offset)
 	{
-          long tmp = buffer[offset++];
-          tmp |= (buffer[offset++] << 8);
-          tmp |= (buffer[offset++] << 16);
-          tmp |= (buffer[offset++] << 24);
-		return static_cast<long>(tmp);
+          long tmp = static_cast<long>(buffer[offset++]);
+          tmp |= static_cast<long>(buffer[offset++]) << 8;
+          tmp |= static_cast<long>(buffer[offset++]) << 16;
+          tmp |= static_cast<long>(buffer[offset++]) << 24;
+		return tmp;
 	}
 
 	void BufferHelper::setUInt64(std::vector<unsigned char>& buffer, const unsigned long long& value)
@@ -269,14 +269,14 @@ namespace logicalaccess
 
 	uint64_t BufferHelper::getUInt64(const std::vector<unsigned char>& buffer, size_t& offset)
 	{
-          uint64_t tmp = buffer[offset++];
-          tmp |= (buffer[offset++] << 8);
-          tmp |= (buffer[offset++] << 16);
-          tmp |= (buffer[offset++] << 24);
-          tmp |= (buffer[offset++] << 32);
-          tmp |= (buffer[offset++] << 40);
-          tmp |= (buffer[offset++] << 48);
-          tmp |= (buffer[offset++] << 56);
+          uint64_t tmp = static_cast<long>(buffer[offset++]);
+          tmp |= static_cast<long>(buffer[offset++]) << 8;
+          tmp |= static_cast<long>(buffer[offset++]) << 16;
+          tmp |= static_cast<long>(buffer[offset++]) << 24;
+          tmp |= static_cast<long>(buffer[offset++]) << 32;
+          tmp |= static_cast<long>(buffer[offset++]) << 40;
+          tmp |= static_cast<long>(buffer[offset++]) << 48;
+          tmp |= static_cast<long>(buffer[offset++]) << 56;
 		return static_cast<uint64_t>(tmp);
 	}
 
