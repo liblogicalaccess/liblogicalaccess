@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 2.6)
 
-project(pluginsreaders-liblogicalaccess)
-
-if (NOT CMAKE_BUILD_TYPE)
-	set(CMAKE_BUILD_TYPE "Debug")
+if (NOT DEFINED CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" )
 endif()
+
+project(pluginsreaders-liblogicalaccess)
 
 if (NOT TARGET_ARCH)
 	set(TARGET_ARCH "Win32")
@@ -21,8 +21,9 @@ if(UNIX)
   set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra -g")
   add_definitions(-DUNIX -DLOGICALACCESS_LOGS)
 else()
-  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
-  
+  if (MSVC)
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+  endif ()
   if (TARGET_ARCH STREQUAL "Win32")
     add_definitions(-DWIN32 -D_WIN32)
   else()

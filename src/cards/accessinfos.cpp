@@ -81,7 +81,7 @@ namespace logicalaccess
 				oss << " ";
 			}
 
-			buf.data()[i] = buf[i] & (0xfe | Format::calculateParity(&buf[i], 1, PT_ODD, (size_t)0, 7));
+			buf.data()[i] = buf[i] & (0xfe | Format::calculateParity(&buf[i], 1, PT_ODD, 0, 7));
 
 			oss << std::hex << std::setfill('0') << std::setw(2) << (size_t)buf[i];
 		}
