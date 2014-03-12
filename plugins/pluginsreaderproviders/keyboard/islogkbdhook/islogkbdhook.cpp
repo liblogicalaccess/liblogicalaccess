@@ -11,8 +11,8 @@
 #include "islogkbdhooklib.hpp"
 #include "islogkbdlogs.hpp"
 #include "islogkbdsettings.hpp"
-#include "../KeyboardSharedStruct.h"
-#include "InputDevice.h"
+#include "../keyboardsharedstruct.hpp"
+#include "inputdevice.hpp"
 
 #define MAX_LOADSTRING 100
 
