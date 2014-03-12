@@ -7,7 +7,25 @@ endif()
 
 project(liblogicalaccess)
 
+list ( APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
+
 option ( BUILD_SHARED_LIBS "build shared libraries" ON )
+
+if (UNIX)
+  find_package(Boost 1.49 REQUIRED COMPONENTS filesystem system date_time)
+else ()
+  find_package(Boost 1.49 REQUIRED)
+endif ()
+include_directories(${Boost_INCLUDE_DIRS})
+
+if (UNIX)
+  find_package(OpenSSL REQUIRED)
+  include_directories(${OPENSSL_INCLUDE_DIR})
+endif()
+
+if (UNIX)
+  find_package(PCSCLite REQUIRED)
+endif()
 
 
 if (NOT TARGET_ARCH)
@@ -161,6 +179,7 @@ install ( TARGETS liblogicalaccess
 
 SET_TARGET_PROPERTIES(liblogicalaccess PROPERTIES OUTPUT_NAME "liblogicalaccess" PREFIX "" VERSION 1.70)
 
+target_link_libraries(liblogicalaccess ${OPENSSL_LIBRARIES})
 if (WIN32)
 
   set(SCLIB_ENDNAME)
@@ -168,10 +187,10 @@ if (WIN32)
 	set (SCLIB_ENDNAME "x64")
   endif()
 
-  target_link_libraries(liblogicalaccess winscard zlib libeay32 ssleay32 scardsyn${SCLIB_ENDNAME} Winmm ws2_32 delayimp logicalaccess-cryptolib)
 
+  target_link_libraries(liblogicalaccess winscard zlib scardsyn${SCLIB_ENDNAME} Winmm ws2_32 delayimp logicalaccess-cryptolib)
 elseif (UNIX)
-	target_link_libraries(liblogicalaccess logicalaccess-cryptolib crypto boost_filesystem boost_date_time boost_system ${CMAKE_DL_LIBS})
+	target_link_libraries(liblogicalaccess logicalaccess-cryptolib ${Boost_LIBRARIES} ${CMAKE_DL_LIBS})
 endif()
 
 add_subdirectory(plugins/cryptolib)
