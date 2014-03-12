@@ -273,10 +273,10 @@ namespace logicalaccess
           tmp |= (buffer[offset++] << 8);
           tmp |= (buffer[offset++] << 16);
           tmp |= (buffer[offset++] << 24);
-          tmp |= (buffer[offset++] << 32);
-          tmp |= (buffer[offset++] << 40);
-          tmp |= (buffer[offset++] << 48);
-          tmp |= (buffer[offset++] << 56);
+          tmp |= ((uint64_t)buffer[offset++] << 32);
+          tmp |= ((uint64_t)buffer[offset++] << 40);
+          tmp |= ((uint64_t)buffer[offset++] << 48);
+          tmp |= ((uint64_t)buffer[offset++] << 56);
 		return static_cast<uint64_t>(tmp);
 	}
 
