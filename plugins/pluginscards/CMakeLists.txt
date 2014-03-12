@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 2.6)
 
-project(pluginscards-liblogicalaccess)
-
-if (NOT CMAKE_BUILD_TYPE)
-	set(CMAKE_BUILD_TYPE "Debug")
+if (NOT DEFINED CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" )
 endif()
+
+project(pluginscards-liblogicalaccess)
 
 if (NOT TARGET_ARCH)
 	set(TARGET_ARCH "Win32")
