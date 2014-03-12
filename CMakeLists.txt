@@ -1,10 +1,14 @@
 cmake_minimum_required(VERSION 2.6)
 
+if (NOT DEFINED CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" )
+endif()
+
+
 project(liblogicalaccess)
 
-if (NOT CMAKE_BUILD_TYPE)
-	set(CMAKE_BUILD_TYPE "Debug")
-endif()
+option ( BUILD_SHARED_LIBS "build shared libraries" ON )
+
 
 if (NOT TARGET_ARCH)
 	set(TARGET_ARCH "Win32")
@@ -32,8 +36,9 @@ if(UNIX)
   set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra -g")
   add_definitions(-DUNIX -DLOGICALACCESS_LOGS)
 else()
-  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
-  
+  if (MSVC)
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+  endif ()
   if (TARGET_ARCH STREQUAL "Win32")
     add_definitions(-DWIN32 -D_WIN32)
   else()
@@ -66,8 +71,7 @@ file(GLOB source_nfctag ${NATIVE_SOURCE}/services/nfctag/*.cpp)
 
 			
 #Include Files
-file(GLOB include_root ${NATIVE_INCLUDE}/logicalaccess/*.h)
-file(GLOB include_root ${NATIVE_INCLUDE}/logicalaccess/*.hpp)
+file(GLOB include_root ${NATIVE_INCLUDE}/logicalaccess/*.h*)
 file(GLOB include_cards ${NATIVE_INCLUDE}/logicalaccess/cards/*.hpp)
 file(GLOB include_readerproviders ${NATIVE_INCLUDE}/logicalaccess/readerproviders/*.hpp)
 file(GLOB include_readerproviders_pcsc ${NATIVE_INCLUDE}/logicalaccess/readerProviders/pcsc/*.hpp)
@@ -77,6 +81,7 @@ file(GLOB include_encodings ${NATIVE_INCLUDE}/logicalaccess/services/accesscontr
 file(GLOB include_formats ${NATIVE_INCLUDE}/logicalaccess/services/accesscontrol/formats/*.hpp)
 file(GLOB include_customformat ${NATIVE_INCLUDE}/logicalaccess/services/accesscontrol/formats/customformat/*.hpp)
 file(GLOB include_nfctag ${NATIVE_INCLUDE}/logicalaccess/services/nfctag/*.hpp)
+file(GLOB include_storage ${NATIVE_INCLUDE}/logicalaccess/services/storage/*.hpp)
 
 #Includes Plugins Files
 file(GLOB_RECURSE include_plugins ${CMAKE_CURRENT_SOURCE_DIR}/plugins/*.hpp)
@@ -120,19 +125,39 @@ SOURCE_GROUP("Header Files\\services\\nfctag" FILES ${include_nfctag})
 
 endif()
 
+install ( FILES LICENSE.LibLogicalAccess.txt DESTINATION share/licenses/liblogicalaccess )
+
+install ( FILES ${include_root} DESTINATION include/logicalaccess )
+install ( FILES ${include_cards} DESTINATION include/logicalaccess/cards )
+install ( FILES ${include_readerproviders} DESTINATION include/logicalaccess/readerproviders )
+install ( FILES ${include_readerproviders_pcsc} DESTINATION include/logicalaccess/readerProviders/pcsc )
+install ( FILES ${include_service} DESTINATION include/logicalaccess/services )
+install ( FILES ${include_accesscontrol} DESTINATION include/logicalaccess/accesscontrol )
+install ( FILES ${include_encodings} DESTINATION include/logicalaccess/accesscontrol/encodings )
+install ( FILES ${include_formats} DESTINATION include/logicalaccess/accesscontrol/formats )
+install ( FILES ${include_customformat} DESTINATION include/logicalaccess/accesscontrol/formats/customformat )
+install ( FILES ${include_nfctag} DESTINATION include/logicalaccess/services/nfctag )
+install ( FILES ${include_dynlibrary} DESTINATION include/logicalaccess/dynlibrary )
+install ( FILES ${include_storage} DESTINATION include/logicalaccess/services/storage )
+
+
 set(source ${source_vc} ${source_root} ${source_cards} ${source_crypto} ${source_readerproviders}  ${source_service} ${source_accesscontrol} ${source_encodings} ${source_formats} ${source_customformat} ${source_nfctag} ${source_dynlibrary})
 
-set(include ${include_vc} ${include_root} ${include_cards} ${include_crypto} ${include_readerproviders} ${include_service} ${include_accesscontrol} ${include_encodings} ${include_formats} ${include_customformat} ${include_nfctag} ${include_plugins} ${include_dynlibrary})
+set(include ${include_vc} ${include_root} ${include_cards} ${include_crypto} ${include_readerproviders} ${include_service} ${include_accesscontrol} ${include_encodings} ${include_formats} ${include_customformat} ${include_nfctag} ${include_plugins} ${include_dynlibrary} ${include_storage})
 
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_CURRENT_SOURCE_DIR}/plugins/cryptolib/${VC_FOLDER_NAME}")
 
 add_library(
   liblogicalaccess
-  SHARED
   ${source}
   ${include}
-  LICENSE.LibLogicalAccess.txt
 )
+
+install ( TARGETS liblogicalaccess
+          RUNTIME DESTINATION bin
+          LIBRARY DESTINATION lib${LIB_SUFFIX}
+          ARCHIVE DESTINATION lib${LIB_SUFFIX}
+        )
 
 SET_TARGET_PROPERTIES(liblogicalaccess PROPERTIES OUTPUT_NAME "liblogicalaccess" PREFIX "" VERSION 1.70)
 
