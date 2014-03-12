@@ -44,7 +44,7 @@ namespace logicalaccess
 			 * \param efid The EF identifier to set as current.
 			 * \return True on success, false otherwise.
 			 */
-			virtual bool readBinay(void* data, size_t& dataLength, size_t offset, short efid = 0);
+			virtual std::vector<unsigned char> readBinary(const std::vector<unsigned char> data, size_t offset, short efid);
 
 			/**
 			 * \brief Write binary data.
@@ -54,7 +54,7 @@ namespace logicalaccess
 			 * \param efid The EF identifier to set as current.
 			 * \return True on success, false otherwise.
 			 */
-			virtual void writeBinay(const void* data, size_t dataLength, size_t offset, short efid = 0);
+			virtual std::vector<unsigned char> writeBinary(const std::vector<unsigned char> data, size_t offset, short efid);
 
 			/**
 			 * \brief Update binary data.
@@ -64,7 +64,7 @@ namespace logicalaccess
 			 * \param efid The EF identifier to set as current.
 			 * \return True on success, false otherwise.
 			 */
-			virtual void updateBinay(const void* data, size_t dataLength, size_t offset, short efid = 0);
+			virtual std::vector<unsigned char> updateBinary(const std::vector<unsigned char> data, size_t offset, short efid);
 
 			/**
 			 * \brief Erase binary data.
@@ -72,7 +72,7 @@ namespace logicalaccess
 			 * \param efid The EF identifier to set as current.
 			 * \return True on success, false otherwise.
 			 */
-			virtual void eraseBinay(size_t offset, short efid = 0);
+			virtual std::vector<unsigned char> eraseBinary(size_t offset, short efid);
 
 			/**
 			 * \brief Get data.
@@ -81,7 +81,7 @@ namespace logicalaccess
 			 * \param dataObject The data object to get.
 			 * \return True on success, false otherwise.
 			 */
-			virtual bool getData(void* data, size_t& dataLength, unsigned short dataObject);
+			virtual std::vector<unsigned char> getData(unsigned short dataObject);
 
 			/**
 			 * \brief Put data.
@@ -90,7 +90,7 @@ namespace logicalaccess
 			 * \param dataObject The data object to get.
 			 * \return True on success, false otherwise.
 			 */
-			virtual void putData(const void* data, size_t dataLength, unsigned short dataObject);
+			virtual std::vector<unsigned char> putData(const std::vector<unsigned char> data, unsigned short dataObject);
 
 			/**
 			 * \brief Select a file by the file identifier.
@@ -105,7 +105,7 @@ namespace logicalaccess
 			 * \param dfnamelen The DF name length.
 			 * \return True on success, false otherwise.
 			 */
-			virtual void selectFile(unsigned char* dfname, size_t dfnamelen);
+			virtual void selectFile(const std::vector<unsigned char> data);
 
 			/**
 			 * \brief Select a file.
@@ -114,7 +114,7 @@ namespace logicalaccess
 			 * \param data The data buffer.
 			 * \param datalen The buffer length.
 			 */
-			virtual void selectFile(unsigned char p1, unsigned char p2, unsigned char* data, size_t datalen);
+			virtual void selectFile(unsigned char p1, unsigned char p2, const std::vector<unsigned char> data);
 		
 			/**
 			 * \brief Get the ISO7816 reader/card adapter.

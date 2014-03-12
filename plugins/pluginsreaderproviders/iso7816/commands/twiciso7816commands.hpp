@@ -47,7 +47,7 @@ namespace logicalaccess
 			 * \param dataLength The buffer length.
 			 * \return True on success, false otherwise.
 			 */
-			virtual bool getUnsignedCardholderUniqueIdentifier(void* data, size_t& dataLength);
+			virtual std::vector<unsigned char>  getUnsignedCardholderUniqueIdentifier();
 
 			/**
 			 * \brief Get the TWIC Privacy Key.
@@ -56,7 +56,7 @@ namespace logicalaccess
 			 * \return True on success, false otherwise.
 			 * \remarks Only accessible with the contact chip.
 			 */
-			virtual bool getTWICPrivacyKey(void* data, size_t& dataLength);
+			virtual std::vector<unsigned char>  getTWICPrivacyKey();
 
 			/**
 			 * \brief Get the Cardholder Unique Identifier.
@@ -64,7 +64,7 @@ namespace logicalaccess
 			 * \param dataLength The buffer length.
 			 * \return True on success, false otherwise.
 			 */
-			virtual bool getCardholderUniqueIdentifier(void* data, size_t& dataLength);
+			virtual std::vector<unsigned char>  getCardholderUniqueIdentifier();
 
 			/**
 			 * \brief Get the Cardholder Fingerprints.
@@ -72,7 +72,7 @@ namespace logicalaccess
 			 * \param dataLength The buffer length.
 			 * \return True on success, false otherwise.
 			 */
-			virtual bool getCardHolderFingerprints(void* data, size_t& dataLength);
+			virtual std::vector<unsigned char>  getCardHolderFingerprints();
 
 			/**
 			 * \brief Get the Security Object.
@@ -80,7 +80,7 @@ namespace logicalaccess
 			 * \param dataLength The buffer length.
 			 * \return True on success, false otherwise.
 			 */
-			virtual bool getSecurityObject(void* data, size_t& dataLength);
+			virtual std::vector<unsigned char>  getSecurityObject();
 
 			/**
 			 * \brief Get TWIC data object.
@@ -89,7 +89,7 @@ namespace logicalaccess
 			 * \param dataObject The data object.
 			 * \return True on success, false otherwise.
 			 */
-			virtual bool getTWICData(void* data, size_t& dataLength, int64_t dataObject);
+			virtual std::vector<unsigned char> TwicISO7816Commands::getTWICData(int64_t dataObject);
 
 		protected:
 	

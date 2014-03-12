@@ -73,7 +73,7 @@ namespace logicalaccess
         {
             INFO_("SelectApplication on SAM chip...");
             boost::shared_ptr<SAMCommands> samcommands = boost::dynamic_pointer_cast<SAMCommands>(getSAMChip()->getCommands());
-            unsigned char t_aid[3] = {};
+            std::vector<unsigned char> t_aid(3);
             int saveaid = aid;
             for (char x = 2; x >= 0; --x)
             {
@@ -730,26 +730,24 @@ namespace logicalaccess
         if (result[result.size() - 1] == DF_INS_ADDITIONAL_FRAME && (result.size()-2) >= 8)
         {
             result.resize(8);
-            std::vector<unsigned char> rndAB;
+            std::vector<unsigned char> rndAB, apduresult;
 
             if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
             {
                 boost::shared_ptr<SAMCommands> samcommands = boost::dynamic_pointer_cast<SAMCommands>(getSAMChip()->getCommands());
                 boost::shared_ptr<ISO7816ReaderCardAdapter> readercardadapter = boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(samcommands->getReaderCardAdapter());
 
-                unsigned char apduresult[255];
-                size_t apduresultlen = sizeof(apduresult);
 
                 std::vector<unsigned char> data(2 + result.size());
                 data[0] = keyno;
                 data[1] = key->getKeyVersion();
                 memcpy(&data[0] + 2, &result[0], result.size());
 
-                readercardadapter->sendAPDUCommand(0x80, 0x0a, 0x02, 0x00, (unsigned char)(data.size()), &data[0], data.size(), 0x00, apduresult, &apduresultlen);
-                if (apduresultlen <= 2)
+                apduresult = readercardadapter->sendAPDUCommand(0x80, 0x0a, 0x02, 0x00, static_cast<unsigned char>(data.size()), data, 0x00);
+                if (apduresult.size() <= 2)
                     THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam authenticate DES P1 failed.");
 
-                rndAB.insert(rndAB.begin(), apduresult, apduresult + 16);
+                rndAB.insert(rndAB.begin(), apduresult.begin(), apduresult.begin() + 16);
             }
             else
                 rndAB = d_crypto->authenticate_PICC1(keyno, diversify, result);
@@ -763,13 +761,9 @@ namespace logicalaccess
                     boost::shared_ptr<SAMCommands> samcommands = boost::dynamic_pointer_cast<SAMCommands>(getSAMChip()->getCommands());
                     boost::shared_ptr<ISO7816ReaderCardAdapter> readercardadapter = boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(samcommands->getReaderCardAdapter());
 
-                    unsigned char apduresult[255];
-                    size_t apduresultlen = sizeof(apduresult);
+                    apduresult = readercardadapter->sendAPDUCommand(0x80, 0x0a, 0x00, 0x00, 0x08, result, 0x08);
 
-                    apduresultlen = 255;
-                    readercardadapter->sendAPDUCommand(0x80, 0x0a, 0x00, 0x00, 0x08, &result[0], 0x08, apduresult, &apduresultlen);
-
-                    if (apduresultlen != 2 || apduresult[0] != 0x90 || apduresult[1] != 0x00)
+					if (apduresult.size() != 2 || apduresult[0] != 0x90 || apduresult[1] != 0x00)
                         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam authenticate DES P2 failed.");
                     d_crypto->d_sessionKey = samcommands->dumpSessionKey();
                     d_crypto->d_currentKeyNo = keyno;
@@ -780,34 +774,22 @@ namespace logicalaccess
         }
     }
 
-    std::vector<unsigned char> DESFireISO7816Commands::transmit(unsigned char cmd, unsigned char lc)
+    std::vector<unsigned char> DESFireISO7816Commands::transmit(unsigned char cmd)
     {
-        return transmit(cmd, NULL, lc, true);
+        return transmit(cmd, std::vector<unsigned char>(), true);
     }
 
     std::vector<unsigned char> DESFireISO7816Commands::transmit(unsigned char cmd, const std::vector<unsigned char>& buf, bool forceLc)
     {		
-        return transmit(cmd, &buf[0], buf.size(), forceLc);
-    }
-
-    std::vector<unsigned char> DESFireISO7816Commands::transmit(unsigned char cmd, const void* buf, size_t buflen, bool forceLc)
-    {		
-        unsigned char result[255];
-        size_t resultlen = sizeof(result);
-
-        if (buf != NULL)
+		if (buf.size())
         {
-            getISO7816ReaderCardAdapter()->sendAPDUCommand(DF_CLA_ISO_WRAP, cmd, 0x00, 0x00, static_cast<unsigned char>(buflen), reinterpret_cast<const unsigned char*>(buf), buflen, 0x00, result, &resultlen);
+            return getISO7816ReaderCardAdapter()->sendAPDUCommand(DF_CLA_ISO_WRAP, cmd, 0x00, 0x00, static_cast<unsigned char>(buf.size()), buf, 0x00);
         }
         else if (forceLc)
         {
-            getISO7816ReaderCardAdapter()->sendAPDUCommand(DF_CLA_ISO_WRAP, cmd, 0x00, 0x00, static_cast<unsigned char>(buflen), 0x00, result, &resultlen);
+            return getISO7816ReaderCardAdapter()->sendAPDUCommand(DF_CLA_ISO_WRAP, cmd, 0x00, 0x00, static_cast<unsigned char>(buf.size()), 0x00);
         }
-        else
-        {
-            getISO7816ReaderCardAdapter()->sendAPDUCommand(DF_CLA_ISO_WRAP, cmd, 0x00, 0x00, 0x00, result, &resultlen);
-        }
-        
-        return std::vector<unsigned char>(result, result + resultlen);
+
+        return getISO7816ReaderCardAdapter()->sendAPDUCommand(DF_CLA_ISO_WRAP, cmd, 0x00, 0x00, 0x00);
     }
 }

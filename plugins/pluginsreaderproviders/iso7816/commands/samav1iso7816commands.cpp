@@ -78,17 +78,16 @@ namespace logicalaccess
 
 	SAMVersion SAMAV1ISO7816Commands::getVersion()
 	{
-		unsigned char result[255];
-		size_t resultlen = sizeof(result);
+		std::vector<unsigned char> result;
 		SAMVersion	info;
 		memset(&info, 0x00, sizeof(SAMVersion));
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x60, 0x00, 0x00, 0x00, result, &resultlen);
+		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x60, 0x00, 0x00, 0x00);
 
 
-		if (resultlen == 33 && result[31] == 0x90 && result[32] == 0x00)
+		if (result.size() == 33 && result[31] == 0x90 && result[32] == 0x00)
 		{
-			memcpy(&info, result, sizeof(info));
+			memcpy(&info, &result[0], sizeof(info));
 			
 			/*if (info.hardware.vendorid == 0x04)
 				std::cout << "Vendor: NXP" << std::endl;
@@ -107,38 +106,37 @@ namespace logicalaccess
 
 	boost::shared_ptr<SAMKeyEntry>	SAMAV1ISO7816Commands::getKeyEntry(unsigned char keyno)
 	{
-		unsigned char result[255];
-		size_t resultlen = sizeof(result);
+		std::vector<unsigned char> result;
 		boost::shared_ptr<SAMKeyEntry> keyentry;
 		KeyEntryInformation keyentryinformation;
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x64, keyno, 0x00, 0x00, result, &resultlen);
+		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x64, keyno, 0x00, 0x00);
 
-		if ((resultlen == 14 || resultlen == 13) &&  result[resultlen - 2] == 0x90 && result[resultlen - 1] == 0x00)
+		if ((result.size() == 14 || result.size() == 13) &&  result[result.size() - 2] == 0x90 && result[result.size() - 1] == 0x00)
 		{
 			keyentry.reset(new SAMKeyEntry());
 
-			memcpy(keyentryinformation.set, result + resultlen - 4, 2);
+			memcpy(keyentryinformation.set, &result[result.size() - 4], 2);
 			keyentry->setSET(keyentryinformation.set);
 
-			keyentryinformation.kuc = result[resultlen - 5];
-			keyentryinformation.cekv = result[resultlen - 6];
-			keyentryinformation.cekno = result[resultlen - 7];
-			keyentryinformation.desfirekeyno =  result[resultlen - 8];
+			keyentryinformation.kuc = result[result.size() - 5];
+			keyentryinformation.cekv = result[result.size() - 6];
+			keyentryinformation.cekno = result[result.size() - 7];
+			keyentryinformation.desfirekeyno =  result[result.size() - 8];
 
-			memcpy(keyentryinformation.desfireAid, result + resultlen - 11, 3);
+			memcpy(keyentryinformation.desfireAid, &result[result.size() - 11], 3);
 
 
-			if (resultlen == 13)
+			if (result.size() == 13)
 			{
-				keyentryinformation.verb = result[resultlen - 12];
-				keyentryinformation.vera = result[resultlen - 13];
+				keyentryinformation.verb = result[result.size() - 12];
+				keyentryinformation.vera = result[result.size() - 13];
 			}
 			else
 			{
-				keyentryinformation.verc = result[resultlen - 12];
-				keyentryinformation.verb = result[resultlen - 13];
-				keyentryinformation.vera = result[resultlen - 14];
+				keyentryinformation.verc = result[result.size() - 12];
+				keyentryinformation.verb = result[result.size() - 13];
+				keyentryinformation.vera = result[result.size() - 14];
 			}
 
 			keyentry->setKeyEntryInformation(keyentryinformation);
@@ -155,8 +153,7 @@ namespace logicalaccess
 		if (d_crypto->d_sessionKey.size() == 0)
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Failed: AuthentificationHost have to be done before use such command.");
 
-		unsigned char result[255];
-		size_t resultlen = sizeof(result);
+		std::vector<unsigned char> result;
 
 		unsigned char proMas = 0;
 		proMas = keyentry->getUpdateMask();
@@ -180,9 +177,9 @@ namespace logicalaccess
 		else
 			encdatalittle = d_crypto->sam_crc_encrypt(d_crypto->d_sessionKey, vectordata, key);
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xc1, keyno, proMas, (unsigned char)(encdatalittle.size()), &encdatalittle[0], encdatalittle.size(), result, &resultlen);
+		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xc1, keyno, proMas, (unsigned char)(encdatalittle.size()), encdatalittle);
 
-		if (resultlen >= 2 &&  (result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0x00))
+		if (result.size() >= 2 &&  (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKeyEntry failed.");
 	}
 
@@ -213,6 +210,7 @@ namespace logicalaccess
 		}
 
 		SV1a[15] = 0x91; /* AES 128 */
+		/* TODO AES 192 */
 
 		boost::shared_ptr<openssl::SymmetricKey> symkey(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(keycipher)));
 		boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
@@ -225,8 +223,7 @@ namespace logicalaccess
 
 	void SAMAV1ISO7816Commands::lockUnlock(boost::shared_ptr<DESFireKey> masterKey, SAMLockUnlock state, unsigned char keyno, unsigned char unlockkeyno, unsigned char unlockkeyversion)
 	{
-		unsigned char result[255];
-		size_t resultlen = sizeof(result);
+		std::vector<unsigned char> result;
 		unsigned char p1_part1 = state;
 		unsigned int le = 2;
 
@@ -248,8 +245,8 @@ namespace logicalaccess
 			data_p1.push_back(unlockkeyversion);
 		}
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, p1_part1, 0x00, le, &data_p1[0],  le, 0x00, result, &resultlen);
-		if (resultlen != 14 || result[12] != 0x90 || result[13] != 0xAF)
+		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, p1_part1, 0x00, le, data_p1, 0x00);
+		if (result.size() != 14 || result[12] != 0x90 || result[13] != 0xAF)
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P1 Failed.");
 
 		std::vector<unsigned char> keycipher(masterKey->getData(), masterKey->getData() + masterKey->getLength());
@@ -257,7 +254,7 @@ namespace logicalaccess
 		std::vector<unsigned char> emptyIV(16), rnd1;
 
 		/* Create rnd2 for p3 - CMAC: rnd2 | P2 | other data */
-		std::vector<unsigned char>  rnd2(result, result + 12);
+		std::vector<unsigned char>  rnd2(result.begin(), result.begin() + 12);
 		rnd2.push_back(p1_part1); //P1_part1
 		rnd2.insert(rnd2.end(), data_p1.begin() + 2, data_p1.end()); //last data
 
@@ -274,7 +271,7 @@ namespace logicalaccess
 		std::vector<unsigned char> macHost = openssl::CMACCrypto::cmac(keycipher, cipher, 16, rnd2, emptyIV, 16);
 		truncateMacBuffer(macHost);
 
-		RAND_seed(result, 12);
+		RAND_seed(&result[0], 12);
 		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
 		rnd1.resize(12);
 		if (RAND_bytes(&rnd1[0], static_cast<int>(rnd1.size())) != 1)
@@ -286,10 +283,8 @@ namespace logicalaccess
 		data_p2.insert(data_p2.end(), macHost.begin(), macHost.begin() + 8);
 		data_p2.insert(data_p2.end(), rnd1.begin(), rnd1.end());
 
-		resultlen = sizeof(result);
-		memset(result, 0, sizeof(result));
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, 0x00, 0x00, 0x14, &data_p2[0], 0x14, 0x00, result, &resultlen);
-		if (resultlen != 26 || result[24] != 0x90 || result[25] != 0xAF)
+		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, 0x00, 0x00, 0x14, data_p2, 0x00);
+		if (result.size() != 26 || result[24] != 0x90 || result[25] != 0xAF)
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P2 Failed.");
 
 		/* Check CMAC - Create rnd1 for p3 - CMAC: rnd1 | P1 | other data */
@@ -320,7 +315,7 @@ namespace logicalaccess
 		boost::shared_ptr<openssl::SymmetricKey> symkey(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(kxe)));
 		boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
 
-		std::vector<unsigned char> encRndB(result + 8, result + resultlen - 2);
+		std::vector<unsigned char> encRndB(result.begin() + 8, result.end() - 2);
 		std::vector<unsigned char> dencRndB;
 
 		cipher->decipher(encRndB, dencRndB, *symkey.get(), *iv.get(), false);
@@ -338,13 +333,11 @@ namespace logicalaccess
 		iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
 		cipher->cipher(dataHost, encHost, *symkey.get(), *iv.get(), false);
 
-		resultlen = sizeof(result);
-		memset(result, 0, sizeof(result));
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, 0x00, 0x00, 0x20, &encHost[0], 0x20, 0x00, result, &resultlen);
-		if (resultlen != 18 || result[16] != 0x90 || result[17] != 0x00)
+		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, 0x00, 0x00, 0x20, encHost, 0x00);
+		if (result.size() != 18 || result[16] != 0x90 || result[17] != 0x00)
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P3 Failed.");
 
-		std::vector<unsigned char> encSAMrndA(result, result + resultlen - 2), SAMrndA;
+		std::vector<unsigned char> encSAMrndA(result.begin(), result.end() - 2), SAMrndA;
 		iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
 		cipher->decipher(encSAMrndA, SAMrndA, *symkey.get(), *iv.get(), false);
 		SAMrndA.insert(SAMrndA.begin(), SAMrndA.end() - 2, SAMrndA.end());
@@ -363,49 +356,39 @@ namespace logicalaccess
 
 	void SAMAV1ISO7816Commands::authentificateHost_AES_3K3DES(boost::shared_ptr<DESFireKey> key, unsigned char keyno)
 	{
-		unsigned char result[255];
-		size_t resultlen = sizeof(result);
+		std::vector<unsigned char> result, data;
 		unsigned char authMode = 0x00;
-		unsigned char data[2];
 
-		memset(data, 0, sizeof(data));
-		data[0] = keyno;
-		data[1] = key->getKeyVersion();
+		data.push_back(keyno);
+		data.push_back(key->getKeyVersion());
 
-
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xa4, authMode, 0x00, 0x02, data, 0x02, 0x00, result, &resultlen);
-		if (resultlen >= 2 &&  (result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0xaf))
+		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xa4, authMode, 0x00, 0x02, data, 0x00);
+		if (result.size() >= 2 &&  (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0xaf))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHost_AES_3K3DES P1 failed.");
 
-		std::vector<unsigned char> encRndB(result, result + resultlen - 2);
+		std::vector<unsigned char> encRndB(result.begin(), result.end() - 2);
 		std::vector<unsigned char> encRndAB = d_crypto->authenticateHostP1(key, encRndB, keyno);
 
-		memset(result, 0, sizeof(result));
-		resultlen = sizeof(result);
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xa4, 0x00, 0x00, (unsigned char)(encRndAB.size()), &encRndAB[0], encRndAB.size(), 0x00, result, &resultlen);
-		if (resultlen >= 2 &&  (result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0x00))
+		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xa4, 0x00, 0x00, (unsigned char)(encRndAB.size()), encRndAB, 0x00);
+		if (result.size() >= 2 &&  (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHost_AES_3K3DES P2 failed.");
 
-		std::vector<unsigned char> encRndA1(result, result + resultlen - 2);
+		std::vector<unsigned char> encRndA1(result.begin(), result.end() - 2);
 		d_crypto->authenticateHostP2(keyno, encRndA1, key);
 	}
 
 	void SAMAV1ISO7816Commands::authentificateHostDES(boost::shared_ptr<DESFireKey> key, unsigned char keyno)
 	{
-		unsigned char result[255];
-		size_t resultlen = sizeof(result);
+		std:vector<unsigned char> result, data;
 		unsigned char authMode = 0x00;
-		unsigned char data[2];
 		size_t keylength = key->getLength();
 
-		memset(data, 0, sizeof(data));
-		data[0] = keyno;
-		data[1] = key->getKeyVersion();
+		data.push_back(keyno);
+		data.push_back(key->getKeyVersion());
 
+		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xa4, authMode, 0x00, 0x02, data, 0x00);
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xa4, authMode, 0x00, 0x02, data, 0x02, 0x00, result, &resultlen);
-
-		if (resultlen >= 2 &&  (result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0xaf))
+		if (result.size() >= 2 &&  (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0xaf))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHostDES P1 failed.");
 
 		std::vector<unsigned char> keyvec(key->getData(), key->getData() + keylength);
@@ -414,7 +397,7 @@ namespace logicalaccess
 		memset(&iv[0], 0, keylength);
 
 		//get encRNB
-		std::vector<unsigned char> encRNB(result, result + resultlen - 2);
+		std::vector<unsigned char> encRNB(result.begin(), result.end() - 2);
 
 		//dec RNB
 		std::vector<unsigned char> RndB =  d_crypto->desfire_CBC_send(keyvec, iv, encRNB);
@@ -442,14 +425,12 @@ namespace logicalaccess
 		std::vector<unsigned char> encRndAB =  d_crypto->desfire_CBC_send(keyvec, iv, rndAB);
 
 		//send enc rndAB
-		resultlen = sizeof(result);
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xa4, 0x00, 0x00, (unsigned char)(encRndAB.size()), &encRndAB[0], encRndAB.size(), 0x00, result, &resultlen);
-
-		if (resultlen >= 2 &&  (result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0x00))
+		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xa4, 0x00, 0x00, (unsigned char)(encRndAB.size()), encRndAB, 0x00);
+		if (result.size() >= 2 &&  (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHostDES P2 failed.");
 
 
-		std::vector<unsigned char> encRndA1(result, result + resultlen - 2);
+		std::vector<unsigned char> encRndA1(result.begin(), result.end() - 2);
 		std::vector<unsigned char> dencRndA1 =  d_crypto->desfire_CBC_send(keyvec, iv, encRndA1);
 
 		//create rndA'
@@ -471,16 +452,15 @@ namespace logicalaccess
 
 	std::string SAMAV1ISO7816Commands::getSAMTypeFromSAM()
 	{
-		unsigned char result[255];
-		size_t resultlen = sizeof(result);
+		std::vector<unsigned char> result;
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x60, 0x00, 0x00, 0x00, result, &resultlen);
+		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x60, 0x00, 0x00, 0x00);
 
-		if (resultlen > 3)
+		if (result.size() > 3)
 		{
-			if (result[resultlen - 3] == 0xA1)
+			if (result[result.size() - 3] == 0xA1)
 				return "SAM_AV1";
-			else if (result[resultlen - 3] == 0xA2)
+			else if (result[result.size() - 3] == 0xA2)
 				return "SAM_AV2";
 		}
 		return "SAM_NONE";
@@ -489,15 +469,14 @@ namespace logicalaccess
 	 boost::shared_ptr<SAMKucEntry> SAMAV1ISO7816Commands::getKUCEntry(unsigned char kucno)
 	 {
 		boost::shared_ptr<SAMKucEntry> kucentry(new SAMKucEntry);
-		unsigned char result[255];
-		size_t resultlen = sizeof(result);
+		std::vector<unsigned char> result;
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x6c, kucno, 0x00, 0x00, result, &resultlen);
+		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x6c, kucno, 0x00, 0x00);
 
-		if (resultlen == 12 && (result[resultlen - 2] == 0x90 || result[resultlen - 1] == 0x00))
+		if (result.size() == 12 && (result[result.size() - 2] == 0x90 || result[result.size() - 1] == 0x00))
 		{
 			SAMKUCEntryStruct kucentrys;
-			memcpy(&kucentrys, result, sizeof(SAMKUCEntryStruct));
+			memcpy(&kucentrys, &result[0], sizeof(SAMKUCEntryStruct));
 			kucentry->setKucEntryStruct(kucentrys);
 		}
 		else
@@ -510,8 +489,7 @@ namespace logicalaccess
 		if (d_crypto->d_sessionKey.size() == 0)
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Failed: AuthentificationHost have to be done before use such command.");
 
-		unsigned char result[255];
-		size_t resultlen = sizeof(result);
+		std::vector<unsigned char> result;
 
 		unsigned char data[6] = {};
 		memcpy(data, &kucentry->getKucEntryStruct(), 6);
@@ -525,52 +503,48 @@ namespace logicalaccess
 
 		int proMas = kucentry->getUpdateMask();
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xcc, kucno, proMas, 0x08, &encdatalittle[0], encdatalittle.size(), result, &resultlen);
+		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xcc, kucno, proMas, 0x08, encdatalittle);
 
-		if (resultlen >= 2 && (result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0x00))
+		if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKUCEntry failed.");
 	 }
 
 	 void SAMAV1ISO7816Commands::disableKeyEntry(unsigned char keyno) 
 	 {
-		unsigned char result[255];
-		size_t resultlen = sizeof(result);
+		std::vector<unsigned char> result;
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xd8, keyno, 0x00, result, &resultlen);
+		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xd8, keyno, 0x00);
 
-		if (resultlen >= 2 &&  (result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0x00))
+		if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "disableKeyEntry failed.");
 	 }
 
-	 void SAMAV1ISO7816Commands::selectApplication(unsigned char *aid)
+	 void SAMAV1ISO7816Commands::selectApplication(std::vector<unsigned char> aid)
 	 {
-		unsigned char result[255];
-		size_t resultlen = sizeof(result);
+		std::vector<unsigned char> result;
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x5a, 0x00, 0x00, 0x03, aid, 0x03, result, &resultlen);
+		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x5a, 0x00, 0x00, 0x03, aid);
 
-		if (resultlen >= 2 &&  (result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0x00))
+		if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "selectApplication failed.");
 	 }
 
 	 std::vector<unsigned char> SAMAV1ISO7816Commands::dumpSessionKey()
 	 {
-		unsigned char result[255];
-		size_t resultlen = sizeof(result);
+		std::vector<unsigned char> result;
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xd5, 0x00, 0x00, 0x00, result, &resultlen);
+		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xd5, 0x00, 0x00, 0x00);
 
-		if (resultlen >= 2 &&  (result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0x00))
+		if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "dumpSessionKey failed.");
 
-		return std::vector<unsigned char>(result, result + resultlen - 2);
+		return std::vector<unsigned char>(result.begin(), result.end() - 2);
 	 }
 
 
 	 std::vector<unsigned char> SAMAV1ISO7816Commands::decipherData(std::vector<unsigned char> data, bool islastdata)
 	 {
-		unsigned char result[255];
-		size_t resultlen = sizeof(result);
+		std::vector<unsigned char> result;
 		unsigned char p1 = 0x00;
 		std::vector<unsigned char> datawithlength(3);
 
@@ -584,30 +558,29 @@ namespace logicalaccess
 		}
 		datawithlength.insert(datawithlength.end(), data.begin(), data.end());
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xdd, p1, 0x00, (unsigned char)(datawithlength.size()), &datawithlength[0], datawithlength.size(), 0x00, result, &resultlen);
+		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xdd, p1, 0x00, (unsigned char)(datawithlength.size()), datawithlength, 0x00);
 
-		if (resultlen >= 2 &&  result[resultlen - 2] != 0x90 &&
-			((p1 == 0x00 && result[resultlen - 1] != 0x00) || (p1 == 0xaf && result[resultlen - 1] != 0xaf)))
+		if (result.size() >= 2 &&  result[result.size() - 2] != 0x90 &&
+			((p1 == 0x00 && result[result.size() - 1] != 0x00) || (p1 == 0xaf && result[result.size() - 1] != 0xaf)))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "decipherData failed.");
 
-		return std::vector<unsigned char>(result, result + resultlen - 2);
+		return std::vector<unsigned char>(result.begin(), result.end() - 2);
 	 }
 
 	 std::vector<unsigned char> SAMAV1ISO7816Commands::encipherData(std::vector<unsigned char> data, bool islastdata)
 	 {
-		unsigned char result[255];
-		size_t resultlen = sizeof(result);
+		std::vector<unsigned char> result;
 		unsigned char p1 = 0x00;
 
 		if (!islastdata)
 			p1 = 0xaf;
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xed, p1, 0x00, (unsigned char)(data.size()), &data[0], data.size(), 0x00, result, &resultlen);
+		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xed, p1, 0x00, (unsigned char)(data.size()), data, 0x00);
 
-		if (resultlen >= 2 &&  result[resultlen - 2] != 0x90 &&
-			((p1 == 0x00 && result[resultlen - 1] != 0x00) || (p1 == 0xaf && result[resultlen - 1] != 0xaf)))
+		if (result.size() >= 2 &&  result[result.size() - 2] != 0x90 &&
+			((p1 == 0x00 && result[result.size() - 1] != 0x00) || (p1 == 0xaf && result[result.size() - 1] != 0xaf)))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "encipherData failed.");
 
-		return std::vector<unsigned char>(result, result + resultlen - 2);
+		return std::vector<unsigned char>(result.begin(), result.end() - 2);
 	 }
 
 
@@ -617,8 +590,7 @@ namespace logicalaccess
 		//	THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Failed: Authentification have to be done before using such command.");
 
 		unsigned char keyCompMeth = 0;
-		unsigned char result[255];
-		size_t resultlen = sizeof(result);
+		std::vector<unsigned char> result;
 
 		if (!info.oldKeyInvolvement)
 			keyCompMeth = 1;
@@ -631,15 +603,15 @@ namespace logicalaccess
 		data[1] = info.currentKeyV;
 		data[2] = info.newKeyNo;
 		data[3] = info.newKeyV;
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xc4, keyCompMeth, cfg, (unsigned char)(data.size()), &data[0], data.size(), 0x00, result, &resultlen);
+		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xc4, keyCompMeth, cfg, (unsigned char)(data.size()), data, 0x00);
 
-		if (resultlen >= 2 &&  (result[resultlen - 2] != 0x90 || result[resultlen - 1] != 0x00))
+		if (result.size() >= 2 &&  (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
 		{
 			char tmp[64];
-			sprintf(tmp, "changeKeyPICC failed (%x %x).", result[resultlen - 2], result[resultlen - 1]);
+			sprintf(tmp, "changeKeyPICC failed (%x %x).", result[result.size() - 2], result[result.size() - 1]);
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, tmp);
 		}
 
-		return std::vector<unsigned char>(result, result + resultlen - 2);
+		return std::vector<unsigned char>(result.begin(), result.end() - 2);
 	 }
 }

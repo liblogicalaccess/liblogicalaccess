@@ -338,16 +338,7 @@ namespace logicalaccess
 			 * \param lc Undocumented.
 			 * \return The response.
 			 */
-			virtual std::vector<unsigned char> transmit(unsigned char cmd, unsigned char lc);
-
-			/**
-			 * \brief Transmit a command.
-			 * \param cmd The command code.
-			 * \param buf The command buffer.
-			 * \param forceLc Undocumented.
-			 * \return The response.
-			 */
-			virtual std::vector<unsigned char> transmit(unsigned char cmd, const std::vector<unsigned char>& buf, bool forceLc = false);
+			virtual std::vector<unsigned char> transmit(unsigned char cmd);
 
 			/**
 			 * \brief Transmit a command.
@@ -357,7 +348,7 @@ namespace logicalaccess
 			 * \param forceLc Undocumented.
 			 * \return The response.
 			 */
-			virtual std::vector<unsigned char> transmit(unsigned char cmd, const void* buf = NULL, size_t buflen = 0x00, bool forceLc = false);
+			virtual std::vector<unsigned char> transmit(unsigned char cmd, const std::vector<unsigned char> data, bool forceLc = false);
 
 			/**
 			 * \brief Crypto instance for security manipulation.

@@ -45,9 +45,9 @@ namespace logicalaccess
 		pix[4] = 0x81;
 		pix[5] = 0x01;
 
-		unsigned char command[9];
-		memcpy(command, rid, sizeof(rid));
-		memcpy(&command[sizeof(rid)], pix, 4);
+		std::vector<unsigned char> command;
+		command.insert(command.begin(), rid, rid + sizeof(rid));
+		command.insert(command.end(), pix, rid + 4);
 
 		try
 		{
@@ -62,14 +62,9 @@ namespace logicalaccess
 		}
 	}
 
-	bool TwicISO7816Commands::getTWICData(void* data, size_t& dataLength, int64_t dataObject)
+	std::vector<unsigned char> TwicISO7816Commands::getTWICData(int64_t dataObject)
 	{
-		bool ret = false;
-		unsigned char command[6];
-		size_t commandlen = 0;
-		unsigned char result[4096];
-		size_t resultlen = sizeof(result);
-		unsigned char le = 0x00;
+		std::vector<unsigned char> command, result;
 
 		//// TWIC Card simulation
 		//if (dataObject == 0x5FC104)
@@ -151,60 +146,48 @@ namespace logicalaccess
 		//	return ret;
 		//}
 
-		command[commandlen++] = 0x5C;
-		command[commandlen++] = 0x03;
-		command[commandlen++] = 0xFF & (dataObject >> 16);
-		command[commandlen++] = 0xFF & (dataObject >> 8);
-		command[commandlen++] = 0xFF & dataObject;
-		if (dataLength <= 0xff)
+		command.push_back(0x5C);
+		command.push_back(0x03);
+		command.push_back(0xFF & (dataObject >> 16));
+		command.push_back(0xFF & (dataObject >> 8));
+		command.push_back(0xFF & dataObject);
+
+		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xCB, 0x3F, 0xFF, static_cast<unsigned char>(command.size()), command, static_cast<unsigned char>(command.size()));
+		if (result.size() != 2)
 		{
-			le = (unsigned char)dataLength;
+			return std::vector<unsigned char>(result.begin(), result.end() - 2);
 		}
 
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xCB, 0x3F, 0xFF, static_cast<unsigned char>(commandlen), command, commandlen, le, result, &resultlen);
-		if (data != NULL)
-		{
-			if (dataLength <= (resultlen-2))
-			{			
-				memcpy(data, result, dataLength);
-				ret = true;
-			}
-		}
-		else
-		{
-			dataLength = resultlen-2;
-		}
-
-		return ret;
+		return std::vector<unsigned char>();
 	}
 
-	bool TwicISO7816Commands::getUnsignedCardholderUniqueIdentifier(void* data, size_t& dataLength)
+	std::vector<unsigned char> TwicISO7816Commands::getUnsignedCardholderUniqueIdentifier()
 	{
-		//return getData(data, dataLength, 0x3002);
-		return getTWICData(data, dataLength, 0x5FC104);
+		//return getData(0x3002);
+		return getTWICData( 0x5FC104);
 	}
 
-	bool TwicISO7816Commands::getTWICPrivacyKey(void* data, size_t& dataLength)
+	std::vector<unsigned char>  TwicISO7816Commands::getTWICPrivacyKey()
 	{
-		//return getData(data, dataLength, 0x2001);*
-		return getTWICData(data, dataLength, 0xDFC101);
+		//return getData(0x2001);*
+		return getTWICData(0xDFC101);
 	}
 
-	bool TwicISO7816Commands::getCardholderUniqueIdentifier(void* data, size_t& dataLength)
+	std::vector<unsigned char>  TwicISO7816Commands::getCardholderUniqueIdentifier()
 	{
-		//return getData(data, dataLength, 0x3000);
-		return getTWICData(data, dataLength, 0x5FC102);
+		//return getData(0x3000);
+		return getTWICData(0x5FC102);
 	}
 
-	bool TwicISO7816Commands::getCardHolderFingerprints(void* data, size_t& dataLength)
+	std::vector<unsigned char>  TwicISO7816Commands::getCardHolderFingerprints()
 	{
-		//return getData(data, dataLength, 0x2003);
-		return getTWICData(data, dataLength, 0xDFC103);
+		//return getData(0x2003);
+		return getTWICData(0xDFC103);
 	}
 
-	bool TwicISO7816Commands::getSecurityObject(void* data, size_t& dataLength)
+	std::vector<unsigned char>  TwicISO7816Commands::getSecurityObject()
 	{
-		//return getData(data, dataLength, 0x9000);
-		return getTWICData(data, dataLength, 0xDFC10F);
+		//return getData(0x9000);
+		return getTWICData(0xDFC10F);
 	}
 }
