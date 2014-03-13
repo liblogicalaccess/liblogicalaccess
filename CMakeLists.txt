@@ -215,7 +215,9 @@ install ( FILES ${CMAKE_CURRENT_BINARY_DIR}/LibLogicalAccessConfig.cmake cmake/U
           DESTINATION ${LIBLOGICALACCESS_CMAKE_CONFIG_DIR}
         )
 
-
-
+if (NOT DEFINED SYSCONF_INSTALL_DIR)
+  set ( SYSCONF_INSTALL_DIR etc )
+endif ()
+install ( FILES liblogicalaccess.config DESTINATION ${SYSCONF_INSTALL_DIR} )
 
 
