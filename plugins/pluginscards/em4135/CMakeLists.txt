@@ -7,7 +7,6 @@ file(GLOB_RECURSE INCLUDE *.hpp)
 add_library(
 	em4135cards
 	SHARED
-
 	${SRCS}
 	${INCLUDE}
   )
@@ -24,3 +23,6 @@ target_link_libraries(
 	em4135cards
 	${LINK_OPT}
 )
+
+install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/em4135 )
+install ( TARGETS em4135cards LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

@@ -24,3 +24,6 @@ target_link_libraries(
 	legicprimecards
 	${LINK_OPT}
 )
+
+install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/legicprime )
+install ( TARGETS legicprimecards LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

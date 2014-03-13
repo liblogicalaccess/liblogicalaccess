@@ -24,3 +24,6 @@ target_link_libraries(
 	iso15693cards
 	${LINK_OPT}
 )
+
+install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/iso15693 )
+install ( TARGETS iso15693cards LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

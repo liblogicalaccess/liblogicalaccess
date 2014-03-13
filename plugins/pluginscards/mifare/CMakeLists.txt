@@ -26,3 +26,6 @@ target_link_libraries(
 	mifarecards
 	${LINK_OPT}
 )
+
+install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/mifare )
+install ( TARGETS mifarecards LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

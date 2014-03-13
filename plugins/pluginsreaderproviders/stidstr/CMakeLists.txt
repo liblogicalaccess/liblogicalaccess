@@ -60,3 +60,8 @@ target_link_libraries(
 	desfirecards
 	${LINK_OPT}
 )
+
+install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/stidstr )
+install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/stidstr/readercardadapters )
+install ( FILES ${include_commands} DESTINATION include/logicalaccess/plugins/readers/stidstr/readercardadapters )
+install ( TARGETS stidstrreaders LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

@@ -15,6 +15,7 @@ add_library(
 	desfirecards
         SHARED	
 	${SRCS}
+	${INCLUDE}
   )
 
 SET_TARGET_PROPERTIES(desfirecards PROPERTIES VERSION 1.70)

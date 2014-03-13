@@ -34,3 +34,7 @@ target_link_libraries(
     a3mlgm5600readers
     ${LINK_OPT}
 )
+
+install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/a3mlgm5600 )
+install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/a3mlgm5600/readercardadapters )
+install ( TARGETS a3mlgm5600readers LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

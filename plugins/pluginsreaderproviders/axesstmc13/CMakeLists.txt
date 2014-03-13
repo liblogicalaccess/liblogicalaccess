@@ -33,3 +33,7 @@ target_link_libraries(
 	axesstmc13readers
 	${LINK_OPT}
 )
+
+install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/axesstmc13 )
+install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/axesstmc13/readercardadapters )
+install ( TARGETS axesstmc13readers LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

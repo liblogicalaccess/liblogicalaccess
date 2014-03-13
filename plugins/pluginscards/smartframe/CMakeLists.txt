@@ -24,3 +24,6 @@ target_link_libraries(
 	smartframecards
 	${LINK_OPT}
 )
+
+install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/smartframe )
+install ( TARGETS smartframecards LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

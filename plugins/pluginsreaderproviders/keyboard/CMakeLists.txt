@@ -36,3 +36,7 @@ target_link_libraries(
 	${LINK_OPT}
 	UserEnv
 )
+
+install ( FILES ${include} ${includepp} DESTINATION include/logicalaccess/plugins/readers/keyboard )
+install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/keyboard/readercardadapters )
+install ( TARGETS keyboardreaders LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

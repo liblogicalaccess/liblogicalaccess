@@ -24,3 +24,6 @@ target_link_libraries(
 	proxlitecards
 	${LINK_OPT}
 )
+
+install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/proxlite )
+install ( TARGETS proxlitecards LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

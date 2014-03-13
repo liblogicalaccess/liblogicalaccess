@@ -1,6 +1,13 @@
 cmake_minimum_required(VERSION 2.6)
 project(samav2cards)
 
+find_package(OpenSSL REQUIRED)
+include_directories(${OPENSSL_INCLUDE_DIR})
+
+find_package(ZLIB REQUIRED)
+include_directories(${ZLIB_INCLUDE_DIRS})
+
+
 file(GLOB_RECURSE SRCS *.cpp)
 file(GLOB_RECURSE INCLUDE *.hpp)
 
@@ -32,14 +39,19 @@ SET_TARGET_PROPERTIES(samav2cards PROPERTIES VERSION 1.70)
 
 set(OPT_LIBS)
 if (WIN32)
-  set(OPT_LIBS zlib libeay32 liblogicalaccess)
+  set(OPT_LIBS liblogicalaccess)
 else()
-  set(OPT_LIBS crypto z logicalaccess)
+  set(OPT_LIBS logicalaccess)
 endif()
 
 target_link_libraries(
 	samav2cards
 	desfirecards
 	logicalaccess-cryptolib
+  ${ZLIB_LIBRARIES}
+  ${OPENSSL_LIBRARIES}
 	${OPT_LIBS}
 )
+
+install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/samav2 )
+install ( TARGETS samav2cards LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

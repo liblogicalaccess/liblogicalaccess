@@ -33,3 +33,7 @@ target_link_libraries(
 	gunneboreaders
 	${LINK_OPT}
 )
+
+install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/gunnebo )
+install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/gunnebo/readercardadapters )
+install ( TARGETS gunneboreaders LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

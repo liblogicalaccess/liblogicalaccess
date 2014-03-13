@@ -80,3 +80,10 @@ target_link_libraries(
 	iso7816cards
 	${LINK_OPT}
 )
+
+install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/ok5553 )
+install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/ok5553/readercardadapters )
+install ( FILES ${include_commands} DESTINATION include/logicalaccess/plugins/readers/ok5553/commands )
+install ( TARGETS ok5553readers LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+
+

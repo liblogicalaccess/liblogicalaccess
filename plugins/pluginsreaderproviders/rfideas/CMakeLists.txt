@@ -27,3 +27,6 @@ target_link_libraries(
 	rfideasreaders
 	${LINK_OPT}
 )
+
+install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/rfideas )
+install ( TARGETS rfideasreaders LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

@@ -7,7 +7,6 @@ file(GLOB_RECURSE INCLUDE *.hpp)
 add_library(
 	generictagcards
 	SHARED
-
 	${SRCS}
 	${INCLUDE}
   )
@@ -24,3 +23,6 @@ target_link_libraries(
 	generictagcards
 	${LINK_OPT}
 )
+
+install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/generictag )
+install ( TARGETS generictagcards LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

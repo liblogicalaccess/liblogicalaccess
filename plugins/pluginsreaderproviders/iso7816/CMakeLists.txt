@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.6)
 project(iso7816readers)
 
+find_package(OpenSSL REQUIRED)
+include_directories(${OPENSSL_INCLUDE_DIR})
+
 if (NOT TARGET_ARCH)
 	set(TARGET_ARCH "Win32")
 endif()
@@ -55,9 +58,9 @@ SET_TARGET_PROPERTIES(iso7816readers PROPERTIES VERSION 1.70)
   
 set(LINK_LIB)
 if (WIN32)
-  set(LINK_LIB libeay32 twiccards liblogicalaccess)
+  set(LINK_LIB twiccards liblogicalaccess)
 else()
-  set(LINK_LIB crypto logicalaccess)
+  set(LINK_LIB logicalaccess)
 endif()
 
 SET_TARGET_PROPERTIES(iso7816readers PROPERTIES VERSION 1.70)
@@ -68,6 +71,11 @@ target_link_libraries(
 	logicalaccess-cryptolib
 	iso7816cards
 	samav2cards
-	
+	${OPENSSL_LIBRARIES}
 	${LINK_LIB}
 )
+
+install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/iso7816 )
+install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/iso7816/readercardadapters )
+install ( FILES ${include_commands} DESTINATION include/logicalaccess/plugins/readers/iso7816/commands )
+install ( TARGETS iso7816readers LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

@@ -25,3 +25,6 @@ target_link_libraries(
 	iso15693cards
 	${LINK_OPT}
 )
+
+install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/tagit )
+install ( TARGETS tagitcards LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

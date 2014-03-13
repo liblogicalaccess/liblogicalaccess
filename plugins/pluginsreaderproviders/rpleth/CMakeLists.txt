@@ -62,3 +62,7 @@ target_link_libraries(
 	iso7816cards
 	${LINK_OPT}
 )
+
+install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/rpleth )
+install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/rpleth/readercardadapters )
+install ( TARGETS rplethreaders LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

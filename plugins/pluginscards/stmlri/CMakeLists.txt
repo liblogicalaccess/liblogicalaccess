@@ -24,3 +24,6 @@ target_link_libraries(
 	stmlri512cards
 	${LINK_OPT}
 )
+
+install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/stmlri512 )
+install ( TARGETS stmlri512cards LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

@@ -34,3 +34,7 @@ target_link_libraries(
 	admittoreaders
 	${LINK_OPT}
 )
+
+install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/admitto )
+install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/admitto/readercardadapters )
+install ( TARGETS admittoreaders LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

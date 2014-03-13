@@ -25,3 +25,6 @@ target_link_libraries(
 	iso7816cards
 	${LINK_OPT}
 )
+
+install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/twic )
+install ( TARGETS twiccards LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

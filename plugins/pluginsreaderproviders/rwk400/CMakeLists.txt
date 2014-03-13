@@ -61,3 +61,10 @@ target_link_libraries(
 	iso7816cards
 	${LINK_OPT}
 )
+
+
+install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/rwk400 )
+install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/rwk400/readercardadapters )
+install ( FILES ${include_commands} DESTINATION include/logicalaccess/plugins/readers/rwk400/readercardadapters )
+install ( TARGETS rwk400readers LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+
