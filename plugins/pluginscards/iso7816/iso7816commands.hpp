@@ -29,7 +29,7 @@ namespace logicalaccess
 			 * \param efid The EF identifier to set as current.
 			 * \return True on success, false otherwise.
 			 */
-			virtual std::vector<unsigned char> readBinary(const std::vector<unsigned char> data, size_t offset, short efid) = 0;
+			virtual bool readBinary(void* data, size_t& dataLength, size_t offset, short efid = 0) = 0;
 
 			/**
 			 * \brief Write binary data.
@@ -39,7 +39,7 @@ namespace logicalaccess
 			 * \param efid The EF identifier to set as current.
 			 * \return True on success, false otherwise.
 			 */
-			virtual std::vector<unsigned char>  writeBinary(const std::vector<unsigned char> data, size_t offset, short efid = 0) = 0;
+			virtual void writeBinary(const void* data, size_t dataLength, size_t offset, short efid = 0) = 0;
 
 			/**
 			 * \brief Update binary data.
@@ -49,7 +49,7 @@ namespace logicalaccess
 			 * \param efid The EF identifier to set as current.
 			 * \return True on success, false otherwise.
 			 */
-			virtual std::vector<unsigned char>  updateBinary(const std::vector<unsigned char> data, size_t offset, short efid = 0) = 0;
+			virtual void updateBinary(const void* data, size_t dataLength, size_t offset, short efid = 0) = 0;
 
 			/**
 			 * \brief Erase binary data.
@@ -57,7 +57,7 @@ namespace logicalaccess
 			 * \param efid The EF identifier to set as current.
 			 * \return True on success, false otherwise.
 			 */
-			virtual std::vector<unsigned char>  eraseBinary(size_t offset, short efid = 0) = 0;
+			virtual void eraseBinary(size_t offset, short efid = 0) = 0;
 
 			// Don't implement record management yet.
 
@@ -68,7 +68,7 @@ namespace logicalaccess
 			 * \param dataObject The data object to get.
 			 * \return True on success, false otherwise.
 			 */
-			virtual std::vector<unsigned char> getData(unsigned short dataObject) = 0;
+			virtual bool getData(void* data, size_t& dataLength, unsigned short dataObject) = 0;
 
 			/**
 			 * \brief Put data.
@@ -77,7 +77,7 @@ namespace logicalaccess
 			 * \param dataObject The data object to get.
 			 * \return True on success, false otherwise.
 			 */
-			virtual std::vector<unsigned char> putData(const std::vector<unsigned char> data, unsigned short dataObject) = 0;
+			virtual void putData(const void* data, size_t dataLength, unsigned short dataObject) = 0;
 
 			/**
 			 * \brief Select a file by the file identifier.
@@ -92,7 +92,7 @@ namespace logicalaccess
 			 * \param dfnamelen The DF name length.
 			 * \return True on success, false otherwise.
 			 */
-			virtual void selectFile(const std::vector<unsigned char> data) = 0;
+			virtual void selectFile(unsigned char* dfname, size_t dfnamelen) = 0;
 
 			// Don't implement security management yet.
 	};

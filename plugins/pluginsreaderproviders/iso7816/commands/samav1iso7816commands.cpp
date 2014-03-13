@@ -379,7 +379,7 @@ namespace logicalaccess
 
 	void SAMAV1ISO7816Commands::authentificateHostDES(boost::shared_ptr<DESFireKey> key, unsigned char keyno)
 	{
-		std:vector<unsigned char> result, data;
+		std::vector<unsigned char> result, data;
 		unsigned char authMode = 0x00;
 		size_t keylength = key->getLength();
 

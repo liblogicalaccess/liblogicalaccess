@@ -32,23 +32,19 @@ namespace logicalaccess
 	{
 		std::string ret;
 		
-		unsigned char ucReceivedData[66];
-		size_t ulNoOfDataReceived = sizeof(ucReceivedData);
-		memset(ucReceivedData, 0x00, sizeof(ucReceivedData));
+		std::vector<unsigned char> ucReceivedData;
 
-		getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x9A, 0x01, 0x05, 0x00, ucReceivedData, &ulNoOfDataReceived);
-		size_t le = ulNoOfDataReceived - 2;
+		ucReceivedData = getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x9A, 0x01, 0x05, 0x00);
+		size_t le = ucReceivedData.size() - 2;
 
 		if (le > 0)
 		{
-			std::vector<unsigned char> buf(ucReceivedData, ucReceivedData + le);
-			ret = BufferHelper::getStdString(buf);
+			ret = BufferHelper::getStdString(ucReceivedData);
 		}
 
 		try
-		{
-			ulNoOfDataReceived = sizeof(ucReceivedData);		
-			getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x9A, 0x04, 0x01, ucReceivedData, &ulNoOfDataReceived);
+		{	
+			ucReceivedData = getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x9A, 0x04, 0x01);
 		}
 		catch(std::exception&)
 		{

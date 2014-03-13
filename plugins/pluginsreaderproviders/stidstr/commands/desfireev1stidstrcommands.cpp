@@ -116,11 +116,11 @@ namespace logicalaccess
 	{
 		INFO_("Creating application aid {0x%x(%d)} settings {0x%x(%d)} max nb Keys {%d} key type {0x%x(%d)}", aid, aid, settings, settings, maxNbKeys, cryptoMethod, cryptoMethod);
 
-		unsigned char tmpcmd[3];
+		std::vector<unsigned char> tmpcmd;
 		std::vector<unsigned char> command;
 
 		DESFireLocation::convertUIntToAid(aid, tmpcmd);
-		command.insert(command.end(), tmpcmd, tmpcmd + 3);
+		command.insert(command.end(), tmpcmd.begin(), tmpcmd.end());
 		command.push_back(static_cast<unsigned char>(settings));
 		command.push_back(static_cast<unsigned char>(static_cast<unsigned char>(maxNbKeys) & 0x0f));
 		command.push_back((cryptoMethod == DF_KEY_AES) ? 0x02 : 0x00);
@@ -145,20 +145,20 @@ namespace logicalaccess
 	void DESFireEV1STidSTRCommands::deleteApplication(unsigned int aid)
 	{
 		INFO_("Deleting application aid {0x%x(%d)}...", aid, aid);
-		unsigned char command[3];
+		std::vector<unsigned char> command;
 
 		DESFireLocation::convertUIntToAid(aid, command);
 
-		getSTidSTRReaderCardAdapter()->sendCommand(0x00DA, std::vector<unsigned char>(command, command + sizeof(command)));
+		getSTidSTRReaderCardAdapter()->sendCommand(0x00DA, command);
 	}
 
 	void DESFireEV1STidSTRCommands::selectApplication(unsigned int aid)
 	{
 		INFO_("Selecting application aid {0x%x(%d)}", aid, aid);
-		unsigned char command[3];
+		std::vector<unsigned char> command;
 		DESFireLocation::convertUIntToAid(aid, command);
 
-		getSTidSTRReaderCardAdapter()->sendCommand(0x005A, std::vector<unsigned char>(command, command + sizeof(command)));
+		getSTidSTRReaderCardAdapter()->sendCommand(0x005A, command);
 
 		d_currentAid = aid;
 	}
@@ -726,7 +726,8 @@ namespace logicalaccess
 		unsigned nbaids = result[0];
 		for (size_t i = 0; i < nbaids; ++i)
 		{
-			aids.push_back(DESFireLocation::convertAidToUInt(&result[1 + (i*3)]));
+			std::vector<unsigned char> aid(result[1 + (i * 3)], result[1 + (i * 3) + 3]);
+			aids.push_back(DESFireLocation::convertAidToUInt(aid));
 		}
 
 		for (std::vector<unsigned int>::iterator it = aids.begin(); it != aids.end(); ++it)

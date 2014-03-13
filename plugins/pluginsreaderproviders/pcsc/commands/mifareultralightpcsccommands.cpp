@@ -38,17 +38,16 @@ namespace logicalaccess
 
 		size_t r = 0;
 
-		unsigned char result[256];
-		size_t resultlen = 256;
+		std::vector<unsigned char> result;
 
-		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xB0, 0x00, static_cast<unsigned char>(page), 16, result, &resultlen);
+		result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xB0, 0x00, static_cast<unsigned char>(page), 16);
 
-		r = resultlen - 2;
+		r = result.size() - 2;
 		if (r > buflen)
 		{
 			r = buflen;
 		}
-		memcpy(buf, result, r);
+		memcpy(buf, &result[0], r);
 
 		return r;
 	}
@@ -62,14 +61,12 @@ namespace logicalaccess
 
 		size_t r = 0;
 
-		unsigned char data[16];
-		memset(data, 0x00, sizeof(data));
-		memcpy(data, buf, buflen);
+		std::vector<unsigned char> data;
+		data.insert(data.begin(), (unsigned char*)buf, (unsigned char*)buf + buflen);
 
-		unsigned char result[256];
-		size_t resultlen = sizeof(result);
+		std::vector<unsigned char> result;
 
-		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xD6, 0x00, static_cast<unsigned char>(page), sizeof(data), data, sizeof(data), result, &resultlen);
+		result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xD6, 0x00, static_cast<unsigned char>(page), data.size(), data);
 		r = buflen;
 
 		return r;

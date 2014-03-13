@@ -20,22 +20,22 @@ namespace logicalaccess
 	{
 	}
 
-	unsigned int DESFireLocation::convertAidToUInt(const void* aid)
+	unsigned int DESFireLocation::convertAidToUInt(const std::vector<unsigned char> aid)
 	{
 		// LSB first
-		int ret = ((static_cast<const unsigned char*>(aid)[0] & 0xff) |
-			((((static_cast<const unsigned char*>(aid)[1] & 0xff) << 8) & 0xff00) |
-			(((static_cast<const unsigned char*>(aid)[2] & 0xff)<< 16) & 0xff0000)));
+		int ret = ((aid[0] & 0xff) |
+			((((aid[1] & 0xff) << 8) & 0xff00) |
+			(((aid[2] & 0xff)<< 16) & 0xff0000)));
 
 		return ret;
 	}
 
-	void DESFireLocation::convertUIntToAid(unsigned int i, void* aid)
+	void DESFireLocation::convertUIntToAid(unsigned int i, std::vector<unsigned char> aid)
 	{
 		// LSB first
-		static_cast<unsigned char*>(aid)[0] = i & 0xff;
-		static_cast<unsigned char*>(aid)[1] = (i >> 8) & 0xff;
-		static_cast<unsigned char*>(aid)[2] = (i >> 16) & 0xff;
+		aid.push_back(i & 0xff);
+		aid.push_back((i >> 8) & 0xff);
+		aid.push_back((i >> 16) & 0xff);
 	}
 
 	void DESFireLocation::serialize(boost::property_tree::ptree& parentNode)

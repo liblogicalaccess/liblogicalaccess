@@ -61,7 +61,7 @@ namespace logicalaccess
 			/**
 			 * \brief Send an APDU command to the reader without data and result.
 			 */
-			virtual void sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char le);
+			virtual std::vector<unsigned char> sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char le);
 
 			/**
 			 * \brief Send an APDU command to the reader without data.

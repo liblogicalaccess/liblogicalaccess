@@ -37,69 +37,91 @@ namespace logicalaccess
 		p2 = 0xff & offset;
 	}
 
-	std::vector<unsigned char> ISO7816ISO7816Commands::readBinary(const std::vector<unsigned char> data, size_t offset, short efid)
+	bool ISO7816ISO7816Commands::readBinary(void* data, size_t& dataLength, size_t offset, short efid)
 	{
+		bool ret = false;
+		std::vector<unsigned char> result;
 		unsigned char p1, p2;
 
 		setP1P2(offset, efid, p1, p2);
-		return getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xB0, p1, p2, (unsigned char)data.size(), data);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xB0, p1, p2, static_cast<unsigned char>(dataLength));
+
+		if (dataLength >= result.size() - 2)
+		{			
+			memcpy(data, &result[0], result.size() - 2);
+			ret = true;
+		}
+		dataLength = result.size() - 2;
+
+		return ret;
 	}
 	
-	std::vector<unsigned char>  ISO7816ISO7816Commands::writeBinary(const std::vector<unsigned char> data, size_t offset, short efid)
+	void ISO7816ISO7816Commands::writeBinary(const void* data, size_t dataLength, size_t offset, short efid)
 	{
 		unsigned char p1, p2;
 
 		setP1P2(offset, efid, p1, p2);
-		return getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xD0, p1, p2, (unsigned char)data.size(), data);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xD0, p1, p2, static_cast<unsigned char>(dataLength), std::vector<unsigned char>((unsigned char*)data, (unsigned char*)data + dataLength));
 	}
 
-	std::vector<unsigned char>  ISO7816ISO7816Commands::updateBinary(const std::vector<unsigned char> data, size_t offset, short efid)
+	void ISO7816ISO7816Commands::updateBinary(const void* data, size_t dataLength, size_t offset, short efid)
 	{
 		unsigned char p1, p2;
 
 		setP1P2(offset, efid, p1, p2);
-		return getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xD6, p1, p2, (unsigned char)data.size(), data);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xD6, p1, p2, static_cast<unsigned char>(dataLength), std::vector<unsigned char>((unsigned char*)data, (unsigned char*)data + dataLength));
 	}
 
-	std::vector<unsigned char> ISO7816ISO7816Commands::eraseBinary(size_t offset, short efid)
+	void ISO7816ISO7816Commands::eraseBinary(size_t offset, short efid)
 	{
 		unsigned char p1, p2;
 
 		setP1P2(offset, efid, p1, p2);
-		return getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0x0E, p1, p2, std::vector<unsigned char>());
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0x0E, p1, p2, NULL, NULL);
 	}
 
-	std::vector<unsigned char> ISO7816ISO7816Commands::getData(unsigned short dataObject)
+	bool ISO7816ISO7816Commands::getData(void* data, size_t& dataLength, unsigned short dataObject)
 	{
-		return getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xCA, (0xff & (dataObject >> 8)), (0xff & dataObject));
+		bool ret = false;
+		std::vector<unsigned char> result;
+
+		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xCA, (0xff & (dataObject >> 8)), (0xff & dataObject));
+		if (dataLength >= result.size() - 2)
+		{			
+			memcpy(data, &result[0], result.size() - 2);
+			ret = true;
+		}
+		dataLength = result.size() - 2;
+
+		return ret;
 	}
 
-	std::vector<unsigned char> ISO7816ISO7816Commands::putData(const std::vector<unsigned char> data, unsigned short dataObject)
+	void ISO7816ISO7816Commands::putData(const void* data, size_t dataLength, unsigned short dataObject)
 	{
-		return getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xDA, (0xff & (dataObject >> 8)), (0xff & dataObject), (unsigned char)data.size(), data);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xDA, (0xff & (dataObject >> 8)), (0xff & dataObject), static_cast<unsigned char>(dataLength), std::vector<unsigned char>((unsigned char*)data, (unsigned char*)data + dataLength));
 	}
 
 	void ISO7816ISO7816Commands::selectFile(unsigned short efid)
 	{
 		unsigned char p1 = 0x00;
 		unsigned char p2 = 0x00;
-		std::vector<unsigned char> data;
-		data.push_back(0xff & (efid >> 8));
-		data.push_back(0xff & efid);
+		unsigned char data[2];
+		data[0] = 0xff & (efid >> 8);
+		data[1] = 0xff & efid;
 
-		selectFile(p1, p2, data);
+		selectFile(p1, p2, data, sizeof(data));
 	}
 
-	void ISO7816ISO7816Commands::selectFile(const std::vector<unsigned char> data)
+	void ISO7816ISO7816Commands::selectFile(unsigned char* dfname, size_t dfnamelen)
 	{
 		unsigned char p1 = 0x04;
 		unsigned char p2 = 0x00;
 
-		selectFile(p1, p2, data);
+		selectFile(p1, p2, dfname, dfnamelen);
 	}
 
-	void ISO7816ISO7816Commands::selectFile(unsigned char p1, unsigned char p2, const std::vector<unsigned char> data)
+	void ISO7816ISO7816Commands::selectFile(unsigned char p1, unsigned char p2, unsigned char* data, size_t datalen)
 	{
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xA4, p1, p2, (unsigned char)data.size(), data);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xA4, p1, p2, static_cast<unsigned char>(datalen), std::vector<unsigned char>(data, data + datalen));
 	}
 }

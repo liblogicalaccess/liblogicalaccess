@@ -10,6 +10,20 @@
 
 namespace logicalaccess
 {
+	void ISO7816ReaderCardAdapter::sendAPDUCommand(const std::vector<unsigned char>& command, unsigned char* result, size_t* resultlen)
+	{
+		std::vector<unsigned char> res = sendCommand(command);
+
+		if (result != NULL && resultlen != NULL)
+		{
+			if (*resultlen >= res.size())
+			{
+				*resultlen = res.size();
+				memcpy(result, &res[0], res.size());
+			}
+		}
+	}
+
 	std::vector<unsigned char> ISO7816ReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const std::vector<unsigned char> data, unsigned char le)
 	{
 		std::vector<unsigned char> command;

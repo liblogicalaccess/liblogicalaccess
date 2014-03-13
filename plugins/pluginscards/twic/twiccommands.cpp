@@ -172,20 +172,19 @@ namespace logicalaccess
 		if (encodedlength > 0)
 		{
 			size_t datalength = encodedlength + 1;
-			unsigned char* data = new unsigned char[datalength];
+			std::vector<unsigned char> data;
 			try
 			{
-				if (getTWICData(data, datalength, dataObject))
+				data = getTWICData(dataObject);
+				if (data.size())
 				{
-					length = getValueFromBytes(&data[1], datalength-1);
+					length = getValueFromBytes(&data[1], datalength - 1);
 				}
 			}
 			catch(std::exception&)
 			{
-				delete[] data;
 				return 0;
 			}
-			delete[] data;
 		}
 
 		if (withObjectLength)

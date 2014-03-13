@@ -97,11 +97,12 @@ namespace logicalaccess
 		ISO7816ReaderCardAdapter::sendAPDUCommand(command, NULL, NULL);
 	}
 
-	void ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*le*/)
+	std::vector<unsigned char> ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*le*/)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(ins);
 		ISO7816ReaderCardAdapter::sendAPDUCommand(command, NULL, NULL);
+		return std::vector<unsigned char>();
 	}
 
 
