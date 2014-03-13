@@ -7,6 +7,10 @@ endif()
 
 project(liblogicalaccess)
 
+set(LIBLOGICALACCESS_VERSION_MAJOR 1)
+set(LIBLOGICALACCESS_VERSION_MINOR 70)
+set(LIBLOGICALACCESS_VERSION_STRING ${LIBLOGICALACCESS_VERSION_MAJOR}.${LIBLOGICALACCESS_VERSION_MINOR} )
+
 list ( APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
 
 option ( BUILD_SHARED_LIBS "build shared libraries" ON )
@@ -141,17 +145,19 @@ endif()
 
 install ( FILES LICENSE.LibLogicalAccess.txt DESTINATION share/licenses/liblogicalaccess )
 
-install ( FILES ${include_root} DESTINATION include/logicalaccess )
-install ( FILES ${include_cards} DESTINATION include/logicalaccess/cards )
-install ( FILES ${include_readerproviders} DESTINATION include/logicalaccess/readerproviders )
-install ( FILES ${include_service} DESTINATION include/logicalaccess/services )
-install ( FILES ${include_accesscontrol} DESTINATION include/logicalaccess/accesscontrol )
-install ( FILES ${include_encodings} DESTINATION include/logicalaccess/accesscontrol/encodings )
-install ( FILES ${include_formats} DESTINATION include/logicalaccess/accesscontrol/formats )
-install ( FILES ${include_customformat} DESTINATION include/logicalaccess/accesscontrol/formats/customformat )
-install ( FILES ${include_nfctag} DESTINATION include/logicalaccess/services/nfctag )
-install ( FILES ${include_dynlibrary} DESTINATION include/logicalaccess/dynlibrary )
-install ( FILES ${include_storage} DESTINATION include/logicalaccess/services/storage )
+set(LIBLOGICALACCESS_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include/logicalaccess)
+
+install ( FILES ${include_root} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR} )
+install ( FILES ${include_cards} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/cards )
+install ( FILES ${include_readerproviders} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/readerproviders )
+install ( FILES ${include_service} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/services )
+install ( FILES ${include_accesscontrol} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/accesscontrol )
+install ( FILES ${include_encodings} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/accesscontrol/encodings )
+install ( FILES ${include_formats} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/accesscontrol/formats )
+install ( FILES ${include_customformat} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/accesscontrol/formats/customformat )
+install ( FILES ${include_nfctag} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/services/nfctag )
+install ( FILES ${include_dynlibrary} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/dynlibrary )
+install ( FILES ${include_storage} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/services/storage )
 
 
 set(source ${source_vc} ${source_root} ${source_cards} ${source_crypto} ${source_readerproviders}  ${source_service} ${source_accesscontrol} ${source_encodings} ${source_formats} ${source_customformat} ${source_nfctag} ${source_dynlibrary})
@@ -172,7 +178,9 @@ install ( TARGETS liblogicalaccess
           ARCHIVE DESTINATION lib${LIB_SUFFIX}
         )
 
-SET_TARGET_PROPERTIES(liblogicalaccess PROPERTIES OUTPUT_NAME "liblogicalaccess" PREFIX "" VERSION 1.70)
+set(LIBLOGICALACCESS_LIBRARY liblogicalaccess)
+
+SET_TARGET_PROPERTIES(liblogicalaccess PROPERTIES OUTPUT_NAME ${LIBLOGICALACCESS_LIBRARY} PREFIX "" VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 target_link_libraries(liblogicalaccess ${OPENSSL_LIBRARIES})
 target_link_libraries(liblogicalaccess ${ZLIB_LIBRARIES})
 
@@ -192,3 +200,22 @@ endif()
 
 add_subdirectory(plugins/cryptolib)
 add_subdirectory(samples/basic)
+
+
+if ( NOT DEFINED LIBLOGICALACCESS_CMAKE_CONFIG_DIR )
+  set ( LIBLOGICALACCESS_CMAKE_CONFIG_DIR lib${LIB_SUFFIX}/cmake/liblogicalaccess )
+endif ()
+set ( LIBLOGICALACCESS_INCLUDE_DIRS ${LIBLOGICALACCESS_INCLUDE_DIR} )
+set ( LIBLOGICALACCESS_LIBRARIES ${LIBLOGICALACCESS_LIBRARY} ${OPENSSL_LIBRARIES} ${ZLIB_LIBRARIES} )
+set ( LIBLOGICALACCESS_LIBRARY_DIRS ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX} )
+set ( LIBLOGICALACCESS_USE_FILE ${CMAKE_INSTALL_PREFIX}/${LIBLOGICALACCESS_CMAKE_CONFIG_DIR}/UseLibLogicalAccess.cmake )
+set ( LIBLOGICALACCESS_ROOT_DIR ${CMAKE_INSTALL_PREFIX} )
+configure_file ( cmake/LibLogicalAccessConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/LibLogicalAccessConfig.cmake @ONLY )
+install ( FILES ${CMAKE_CURRENT_BINARY_DIR}/LibLogicalAccessConfig.cmake cmake/UseLibLogicalAccess.cmake
+          DESTINATION ${LIBLOGICALACCESS_CMAKE_CONFIG_DIR}
+        )
+
+
+
+
+

@@ -1,0 +1,38 @@
+#                                               -*- cmake -*-
+#
+#  LibLogicalAccessConfig.cmake(.in)
+
+# Use the following variables to compile and link against LibLogicalAccess:
+#  LIBLOGICALACCESS_FOUND              - True if LibLogicalAccess was found on your system
+#  LIBLOGICALACCESS_USE_FILE           - The file making LibLogicalAccess usable
+#  LIBLOGICALACCESS_DEFINITIONS        - Definitions needed to build with LibLogicalAccess
+#  LIBLOGICALACCESS_INCLUDE_DIR        - Directory where settings.hpp can be found
+#  LIBLOGICALACCESS_INCLUDE_DIRS       - List of directories of LibLogicalAccess and it's dependencies
+#  LIBLOGICALACCESS_LIBRARY            - LibLogicalAccess library location
+#  LIBLOGICALACCESS_LIBRARIES          - List of libraries to link against LibLogicalAccess library
+#  LIBLOGICALACCESS_LIBRARY_DIRS       - List of directories containing LibLogicalAccess' libraries
+#  LIBLOGICALACCESS_ROOT_DIR           - The base directory of LibLogicalAccess
+#  LIBLOGICALACCESS_VERSION_STRING     - A human-readable string containing the version
+#  LIBLOGICALACCESS_VERSION_MAJOR      - The major version of LibLogicalAccess
+#  LIBLOGICALACCESS_VERSION_MINOR      - The minor version of LibLogicalAccess
+#  LIBLOGICALACCESS_VERSION_PATCH      - The patch version of LibLogicalAccess
+
+set ( LIBLOGICALACCESS_FOUND 1 )
+set ( LIBLOGICALACCESS_USE_FILE     "@LIBLOGICALACCESS_USE_FILE@" )
+
+set ( LIBLOGICALACCESS_DEFINITIONS  "@LIBLOGICALACCESS_DEFINITIONS@" )
+set ( LIBLOGICALACCESS_INCLUDE_DIR  "@LIBLOGICALACCESS_INCLUDE_DIR@" )
+set ( LIBLOGICALACCESS_INCLUDE_DIRS "@LIBLOGICALACCESS_INCLUDE_DIRS@" )
+set ( LIBLOGICALACCESS_LIBRARY      "@LIBLOGICALACCESS_LIBRARY@" )
+set ( LIBLOGICALACCESS_LIBRARIES    "@LIBLOGICALACCESS_LIBRARIES@" )
+set ( LIBLOGICALACCESS_STATIC_LIBRARY      "@LIBLOGICALACCESS_STATIC_LIBRARY@" )
+set ( LIBLOGICALACCESS_STATIC_LIBRARIES    "@LIBLOGICALACCESS_STATIC_LIBRARIES@" )
+set ( LIBLOGICALACCESS_LIBRARY_DIRS "@LIBLOGICALACCESS_LIBRARY_DIRS@" )
+set ( LIBLOGICALACCESS_ROOT_DIR     "@LIBLOGICALACCESS_ROOT_DIR@" )
+
+set ( LIBLOGICALACCESS_VERSION_STRING "@LIBLOGICALACCESS_VERSION_STRING@" )
+set ( LIBLOGICALACCESS_VERSION_MAJOR  "@LIBLOGICALACCESS_VERSION_MAJOR@" )
+set ( LIBLOGICALACCESS_VERSION_MINOR  "@LIBLOGICALACCESS_VERSION_MINOR@" )
+set ( LIBLOGICALACCESS_VERSION_PATCH  "@LIBLOGICALACCESS_VERSION_PATCH@" )
+
+
