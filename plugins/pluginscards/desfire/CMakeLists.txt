@@ -13,7 +13,7 @@ file(GLOB_RECURSE INCLUDE *.hpp)
 
 add_library(
 	desfirecards
-	MODULE
+        SHARED	
 	${SRCS}
   )
 
@@ -30,4 +30,4 @@ if (MSVC)
 endif()
 
 install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/desfire )
-install ( TARGETS liblogicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS desfirecards LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
