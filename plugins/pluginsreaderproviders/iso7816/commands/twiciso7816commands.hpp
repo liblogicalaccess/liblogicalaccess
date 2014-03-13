@@ -89,7 +89,7 @@ namespace logicalaccess
 			 * \param dataObject The data object.
 			 * \return True on success, false otherwise.
 			 */
-			virtual std::vector<unsigned char> TwicISO7816Commands::getTWICData(int64_t dataObject);
+			virtual std::vector<unsigned char> getTWICData(int64_t dataObject);
 
 		protected:
 	
