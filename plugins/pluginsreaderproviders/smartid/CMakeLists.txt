@@ -31,39 +31,20 @@ SOURCE_GROUP("Source Files\\commands" FILES ${source_commands})
 set(INCLUDE_LIB ${include} ${include_core} ${include_readercardadapters} ${include_commands})
 set(SOURCE_LIB ${SRCS} ${source_readercardadapters} ${source_commands})
 
-set(LINK_OPT)
-if (WIN32)
-LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
-										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
-										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
-										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
-										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2/bin/${TARGET_ARCH}/${VC_FOLDER_NAME})
-set(LINK_OPT liblogicalaccess)
-else()
-LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare/bin
-										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire/bin
-										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816/bin
-										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic/bin
-										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2/bin)
-										
-set(LINK_OPT boost_system boost_filesystem logicalaccess)
-endif()
-										
+									
 add_library(
 	smartidreaders
 	SHARED
-	
 	${SOURCE_LIB}
-	${INCLUDE_LIB}
   )
 
-SET_TARGET_PROPERTIES(smartidreaders PROPERTIES VERSION 1.70)
+SET_TARGET_PROPERTIES(smartidreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
   
 target_link_libraries(
 	smartidreaders
 	iso7816readers
 	mifarecards
-	${LINK_OPT}
+	logicalaccess
 )
 
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/smartid )

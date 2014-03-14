@@ -46,6 +46,6 @@ endif()
 
 target_link_libraries(
         basic
-        liblogicalaccess
+        logicalaccess
 	${LIB_OPT}
 )

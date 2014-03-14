@@ -28,38 +28,20 @@ SOURCE_GROUP("Source Files\\commands" FILES ${source_commands})
 set(INCLUDE_LIB ${include} ${include_core} ${include_readercardadapters} ${include_commands})
 set(SOURCE_LIB ${SRCS} ${source_readercardadapters} ${source_commands})
 
-set (LINK_OPT)
-if (UNIX)
-LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire/bin
-				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816/bin)
-set(LINK_OPT winscard liblogicalaccess)
-else()
-LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
-				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816/bin/${TARGET_ARCH}/${VC_FOLDER_NAME})
-endif()
-
 
 add_library(
 	rwk400readers
 	SHARED
-	
 	${SOURCE_LIB}
-	${INCLUDE_LIB}
   )
 
-if (WIN32)
-  set(LINK_OPT liblogicalaccess)
-else()
-  set(LINK_OPT logicalaccess pthread boost_system boost_filesystem)
-endif()
-
-SET_TARGET_PROPERTIES(deisterreaders PROPERTIES VERSION 1.70)
+SET_TARGET_PROPERTIES(deisterreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
   
 target_link_libraries(
 	rwk400readers
 	desfirecards
 	iso7816cards
-	${LINK_OPT}
+	logicalaccess
 )
 
 

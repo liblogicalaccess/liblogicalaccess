@@ -16,22 +16,14 @@ set(SOURCE_LIB ${SRCS} ${source_readercardadapters})
 add_library(
 	scielreaders
 	SHARED
-	
 	${SOURCE_LIB}
-	${INCLUDE_LIB}
   )
-  
-if (WIN32)
-  set(LINK_OPT liblogicalaccess)
-else()
-  set(LINK_OPT logicalaccess  boost_system boost_filesystem)
-endif()
 
-SET_TARGET_PROPERTIES(scielreaders PROPERTIES VERSION 1.70)
+SET_TARGET_PROPERTIES(scielreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
   
 target_link_libraries(
 	scielreaders
-	${LINK_OPT}
+	logicalaccess
 )
 
 install ( FILES ${include} ${includepp} DESTINATION include/logicalaccess/plugins/readers/sciel )

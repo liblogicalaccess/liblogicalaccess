@@ -12,18 +12,12 @@ add_library(
 	${INCLUDE}
   )
 
-if (WIN32)
-  set(LINK_OPT liblogicalaccess)
-else()
-  set(LINK_OPT logicalaccess)
-endif()
-
-SET_TARGET_PROPERTIES(tagitcards PROPERTIES VERSION 1.70)
+SET_TARGET_PROPERTIES(tagitcards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 
 target_link_libraries(
 	tagitcards
 	iso15693cards
-	${LINK_OPT}
+	logicalaccess
 )
 
 install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/tagit )

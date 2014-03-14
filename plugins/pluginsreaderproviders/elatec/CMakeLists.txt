@@ -1,11 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 project(elatecreaders)
 
-if (UNIX)
-  find_package(Boost 1.49 REQUIRED COMPONENTS filesystem system)
-  include_directories(${Boost_INCLUDE_DIRS})
-endif ()
-
 file(GLOB SRCS *.cpp)
 file(GLOB include *.hpp)
 
@@ -21,22 +16,14 @@ set(SOURCE_LIB ${SRCS} ${source_readercardadapters})
 add_library(
 	elatecreaders
 	SHARED
-	
 	${SOURCE_LIB}
-	${INCLUDE_LIB}
   )
-  
-if (WIN32)
-  set(LINK_OPT liblogicalaccess)
-else()
-  set(LINK_OPT logicalaccess ${Boost_LIBRARIES})
-endif()
 
-SET_TARGET_PROPERTIES(elatecreaders PROPERTIES VERSION 1.70)
+SET_TARGET_PROPERTIES(elatecreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
   
 target_link_libraries(
 	elatecreaders
-	${LINK_OPT}
+	logicalaccess
 )
 
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/elatec )

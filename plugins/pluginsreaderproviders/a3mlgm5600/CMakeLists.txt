@@ -17,21 +17,15 @@ set(SOURCE_LIB ${SRCS} ${source_readercardadapters})
 add_library(
 	a3mlgm5600readers
 	SHARED
-	
 	${SOURCE_LIB}
-	${INCLUDE_LIB}
   )
 
-if (WIN32)
-  set(LINK_OPT liblogicalaccess)
-else()
-  set(LINK_OPT logicalaccess pthread boost_system boost_filesystem)
-endif()
 
-SET_TARGET_PROPERTIES(a3mlgm5600readers PROPERTIES VERSION 1.70)
+SET_TARGET_PROPERTIES(a3mlgm5600readers PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 
 target_link_libraries(
     a3mlgm5600readers
+    logicalaccess
     ${LINK_OPT}
 )
 

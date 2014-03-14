@@ -33,42 +33,13 @@ SOURCE_GROUP("Source Files\\commands" FILES ${source_commands})
 set(INCLUDE_LIB ${include} ${include_core} ${include_readercardadapters} ${include_commands})
 set(SOURCE_LIB ${SRCS} ${source_readercardadapters} ${source_commands})
 
-set (LINK_OPT)
-if (UNIX)
-LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare/bin
-				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifareultralight/bin
-				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire/bin
-				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic/bin
-				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso7816/bin
-				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816/bin
-				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2/bin)
-set(LINK_OPT winscard liblogicalaccess)
-else()
-LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
-				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso7816/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
-				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifareultralight/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
-				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
-				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
-				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
-				${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2/bin/${TARGET_ARCH}/${VC_FOLDER_NAME})
-endif()
-
-
 add_library(
 	ok5553readers
 	SHARED
-	
 	${SOURCE_LIB}
-	${INCLUDE_LIB}
   )
 
-if (WIN32)
-  set(LINK_OPT liblogicalaccess)
-else()
-  set(LINK_OPT logicalaccess pthread boost_system boost_filesystem)
-endif()
-
-SET_TARGET_PROPERTIES(ok5553readers PROPERTIES VERSION 1.70)
+SET_TARGET_PROPERTIES(ok5553readers PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
   
 target_link_libraries(
 	ok5553readers
@@ -78,7 +49,7 @@ target_link_libraries(
 	twiccards
 	iso7816readers
 	iso7816cards
-	${LINK_OPT}
+	logicalaccess
 )
 
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/ok5553 )

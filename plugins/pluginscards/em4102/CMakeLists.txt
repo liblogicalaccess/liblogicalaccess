@@ -8,20 +8,13 @@ add_library(
 	em4102cards
 	SHARED
 	${SRCS}
-	${INCLUDE}
   )
 
-if (WIN32)
-  set(LINK_OPT liblogicalaccess)
-else()
-  set(LINK_OPT logicalaccess)
-endif()
-
-SET_TARGET_PROPERTIES(em4102cards PROPERTIES VERSION 1.70)
+SET_TARGET_PROPERTIES(em4102cards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 
 target_link_libraries(
 	em4102cards
-	${LINK_OPT}
+	logicalaccess
 )
 
 install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/em4102 )

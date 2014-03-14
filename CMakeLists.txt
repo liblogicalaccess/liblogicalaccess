@@ -176,23 +176,23 @@ set(include ${include_vc} ${include_root} ${include_cards} ${include_crypto} ${i
 
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_CURRENT_SOURCE_DIR}/plugins/cryptolib/${VC_FOLDER_NAME}")
 
+set(LIBLOGICALACCESS_LIBRARY logicalaccess)
+
 add_library(
-  liblogicalaccess
+  logicalaccess
   ${source}
-  ${include}
 )
 
-install ( TARGETS liblogicalaccess
+install ( TARGETS logicalaccess
           RUNTIME DESTINATION bin
           LIBRARY DESTINATION lib${LIB_SUFFIX}
           ARCHIVE DESTINATION lib${LIB_SUFFIX}
         )
 
-set(LIBLOGICALACCESS_LIBRARY liblogicalaccess)
 
-SET_TARGET_PROPERTIES(liblogicalaccess PROPERTIES OUTPUT_NAME ${LIBLOGICALACCESS_LIBRARY} PREFIX "" VERSION ${LIBLOGICALACCESS_VERSION_STRING})
-target_link_libraries(liblogicalaccess ${OPENSSL_LIBRARIES})
-target_link_libraries(liblogicalaccess ${ZLIB_LIBRARIES})
+SET_TARGET_PROPERTIES(logicalaccess PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
+target_link_libraries(logicalaccess ${OPENSSL_LIBRARIES})
+target_link_libraries(logicalaccess ${ZLIB_LIBRARIES})
 
 
 if (WIN32)
@@ -202,15 +202,16 @@ if (WIN32)
 	set (SCLIB_ENDNAME "x64")
   endif()
 
-  target_link_libraries(liblogicalaccess winscard scardsyn${SCLIB_ENDNAME} Winmm ws2_32 delayimp logicalaccess-cryptolib)
+  target_link_libraries(logicalaccess winscard scardsyn${SCLIB_ENDNAME} Winmm ws2_32 delayimp logicalaccess-cryptolib)
 
 elseif (UNIX)
-	target_link_libraries(liblogicalaccess logicalaccess-cryptolib ${Boost_LIBRARIES} ${CMAKE_DL_LIBS})
+	target_link_libraries(logicalaccess logicalaccess-cryptolib ${Boost_LIBRARIES} ${CMAKE_DL_LIBS})
 endif()
 
 add_subdirectory(plugins/cryptolib)
 add_subdirectory(samples/basic)
-
+add_subdirectory(plugins/pluginscards)
+add_subdirectory(plugins/pluginsreaderproviders)
 
 if ( NOT DEFINED LIBLOGICALACCESS_CMAKE_CONFIG_DIR )
   set ( LIBLOGICALACCESS_CMAKE_CONFIG_DIR lib${LIB_SUFFIX}/cmake/liblogicalaccess )

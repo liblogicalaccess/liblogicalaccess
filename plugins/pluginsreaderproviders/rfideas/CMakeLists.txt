@@ -15,17 +15,11 @@ add_library(
 	${INCLUDE_LIB}
   )
 
-if (WIN32)
-  set(LINK_OPT liblogicalaccess)
-else()
-  set(LINK_OPT logicalaccess)
-endif()
-
-SET_TARGET_PROPERTIES(rfideasreaders PROPERTIES VERSION 1.70)  
+SET_TARGET_PROPERTIES(rfideasreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})  
 
 target_link_libraries(
 	rfideasreaders
-	${LINK_OPT}
+	logicalaccess
 )
 
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/rfideas )

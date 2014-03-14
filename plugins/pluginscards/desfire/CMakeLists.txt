@@ -1,13 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 project(desfirecards)
 
-find_package(OpenSSL REQUIRED)
-include_directories(${OPENSSL_INCLUDE_DIR})
-
-find_package(ZLIB REQUIRED)
-include_directories(${ZLIB_INCLUDE_DIRS})
-
-
 file(GLOB_RECURSE SRCS *.cpp)
 file(GLOB_RECURSE INCLUDE *.hpp)
 
@@ -15,16 +8,13 @@ add_library(
 	desfirecards
         SHARED	
 	${SRCS}
-	${INCLUDE}
   )
 
-SET_TARGET_PROPERTIES(desfirecards PROPERTIES VERSION 1.70)
+SET_TARGET_PROPERTIES(desfirecards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 
 target_link_libraries(
 	desfirecards
 	logicalaccess-cryptolib
-	${ZLIB_LIBRARIES}
-	${OPENSSL_LIBRARIES}
 )
 if (MSVC)
   SET_TARGET_PROPERTIES(desfirecards PROPERTIES LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt.lib")
