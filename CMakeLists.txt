@@ -215,7 +215,7 @@ add_subdirectory(plugins/pluginscards)
 add_subdirectory(plugins/pluginsreaderproviders)
 
 if ( NOT DEFINED LIBLOGICALACCESS_CMAKE_CONFIG_DIR )
-  set ( LIBLOGICALACCESS_CMAKE_CONFIG_DIR lib${LIB_SUFFIX}/cmake/liblogicalaccess )
+  set ( LIBLOGICALACCESS_CMAKE_CONFIG_DIR lib${LIB_SUFFIX}/cmake/logicalaccess )
 endif ()
 set(LIBLOGICALACCESS_DEFINITIONS "${CXX11_FLAGS}")
 set ( LIBLOGICALACCESS_INCLUDE_DIRS ${LIBLOGICALACCESS_INCLUDE_DIR} )
