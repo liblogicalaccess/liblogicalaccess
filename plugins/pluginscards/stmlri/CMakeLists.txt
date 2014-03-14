@@ -12,15 +12,12 @@ add_library(
 	${INCLUDE}
   )
 
-if (WIN32)
-  set(LINK_OPT liblogicalaccess)
-else()
-  set(LINK_OPT logicalaccess)
-endif()
-
-SET_TARGET_PROPERTIES(stmlri512cards PROPERTIES VERSION 1.70)
+SET_TARGET_PROPERTIES(stmlri512cards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 
 target_link_libraries(
 	stmlri512cards
-	${LINK_OPT}
+	logicalaccess
 )
+
+install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/stmlri512 )
+install ( TARGETS stmlri512cards LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

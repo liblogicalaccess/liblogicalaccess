@@ -21,15 +21,13 @@ add_library(
 	${INCLUDE_LIB}
   )
 
-if (WIN32)
-  set(LINK_OPT liblogicalaccess)
-else()
-  set(LINK_OPT logicalaccess boost_system boost_system boost_filesystem)
-endif()
-
-SET_TARGET_PROPERTIES(gunneboreaders PROPERTIES VERSION 1.70)
+SET_TARGET_PROPERTIES(gunneboreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
   
 target_link_libraries(
 	gunneboreaders
-	${LINK_OPT}
+	logicalaccess
 )
+
+install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/gunnebo )
+install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/gunnebo/readercardadapters )
+install ( TARGETS gunneboreaders LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

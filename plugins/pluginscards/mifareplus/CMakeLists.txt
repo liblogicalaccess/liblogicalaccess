@@ -7,10 +7,6 @@ endif()
 
 set(INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR})
 			
-if (UNIX)
-	set(INCLUDE_FOLDER ${INCLUDE_FOLDER} /usr/include/PCSC)
-endif()
-
 INCLUDE_DIRECTORIES(${INCLUDE_FOLDER})
 
 
@@ -26,17 +22,14 @@ add_library(
 	${include_mplus}
   )
 
-if (WIN32)
-  set(LINK_OPT liblogicalaccess)
-else()
-  set(LINK_OPT logicalaccess)
-endif()
-
-SET_TARGET_PROPERTIES(mifarepluscards PROPERTIES VERSION 1.70)
+SET_TARGET_PROPERTIES(mifarepluscards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 
 target_link_libraries(
 	mifarepluscards
-	${LINK_OPT}
+	logicalaccess
 	mifarecards
 	desfirecards
 )
+
+install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/mifareplus )
+install ( TARGETS mifarepluscards LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

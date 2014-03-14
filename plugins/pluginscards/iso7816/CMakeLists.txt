@@ -7,20 +7,15 @@ file(GLOB_RECURSE INCLUDE *.hpp)
 add_library(
 	iso7816cards
 	SHARED
-
 	${SRCS}
-	${INCLUDE}
   )
 
-if (WIN32)
-  set(LINK_OPT liblogicalaccess)
-else()
-  set(LINK_OPT logicalaccess)
-endif()
-
-SET_TARGET_PROPERTIES(iso7816cards PROPERTIES VERSION 1.70)
+SET_TARGET_PROPERTIES(iso7816cards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 
 target_link_libraries(
 	iso7816cards
-	${LINK_OPT}
+	logicalaccess
 )
+
+install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/iso7816 )
+install ( TARGETS iso7816cards LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

@@ -7,22 +7,15 @@ file(GLOB_RECURSE INCLUDE *.hpp)
 add_library(
 	mifarecards
 	SHARED
-
 	${SRCS}
-	${INCLUDE}
   )
 
-SET_TARGET_PROPERTIES(mifarecards PROPERTIES VERSION 1.70)
-
-if (WIN32)
-  set(LINK_OPT liblogicalaccess)
-else()
-  set(LINK_OPT logicalaccess crypto)
-endif()
-
-SET_TARGET_PROPERTIES(mifarecards PROPERTIES VERSION 1.70)
+SET_TARGET_PROPERTIES(mifarecards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 
 target_link_libraries(
 	mifarecards
-	${LINK_OPT}
+	logicalaccess
 )
+
+install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/mifare )
+install ( TARGETS mifarecards LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

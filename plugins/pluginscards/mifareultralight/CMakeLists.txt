@@ -12,15 +12,12 @@ add_library(
 	${INCLUDE}
   )
 
-if (WIN32)
-  set(LINK_OPT liblogicalaccess)
-else()
-  set(LINK_OPT logicalaccess)
-endif()
-
-SET_TARGET_PROPERTIES(mifareultralightcards PROPERTIES VERSION 1.70)
+SET_TARGET_PROPERTIES(mifareultralightcards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 
 target_link_libraries(
 	mifareultralightcards
-	${LINK_OPT}
+	logicalaccess
 )
+
+install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/mifareultralight )
+install ( TARGETS mifareultralightcards LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

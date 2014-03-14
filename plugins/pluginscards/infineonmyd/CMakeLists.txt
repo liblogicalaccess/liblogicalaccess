@@ -7,21 +7,16 @@ file(GLOB_RECURSE INCLUDE *.hpp)
 add_library(
 	infineonmydcards
 	SHARED
-
 	${SRCS}
-	${INCLUDE}
   )
 
-if (WIN32)
-  set(LINK_OPT liblogicalaccess)
-else()
-  set(LINK_OPT logicalaccess)
-endif()
-
-SET_TARGET_PROPERTIES(infineonmydcards PROPERTIES VERSION 1.70)
+SET_TARGET_PROPERTIES(infineonmydcards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 
 target_link_libraries(
 	infineonmydcards
 	iso15693cards
-	${LINK_OPT}
+	logicalaccess
 )
+
+install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/infineonmyd )
+install ( TARGETS infineonmydcards LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

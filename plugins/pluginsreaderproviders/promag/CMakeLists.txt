@@ -17,20 +17,16 @@ set(SOURCE_LIB ${SRCS} ${source_readercardadapters})
 add_library(
 	promagreaders
 	SHARED
-	
 	${SOURCE_LIB}
-	${INCLUDE_LIB}
   )
 
-if (WIN32)
-  set(LINK_OPT liblogicalaccess)
-else()
-  set(LINK_OPT logicalaccess  boost_system boost_system boost_filesystem)
-endif()
-
-SET_TARGET_PROPERTIES(promagreaders PROPERTIES VERSION 1.70)
+SET_TARGET_PROPERTIES(promagreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
   
 target_link_libraries(
 	promagreaders
-	${LINK_OPT}
+	logicalaccess
 )
+
+install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/promag )
+install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/promag/readercardadapters )
+install ( TARGETS promagreaders LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

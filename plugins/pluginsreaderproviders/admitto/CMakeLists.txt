@@ -16,21 +16,16 @@ set(SOURCE_LIB ${SRCS} ${source_readercardadapters})
 add_library(
 	admittoreaders
 	SHARED
-	
 	${SOURCE_LIB}
-	${INCLUDE_LIB}
 	)
 
-
-if (WIN32)
-  set(LINK_OPT liblogicalaccess)
-else()
-  set(LINK_OPT logicalaccess boost_system boost_filesystem)
-endif()
-
-SET_TARGET_PROPERTIES(admittoreaders PROPERTIES VERSION 1.70)
+SET_TARGET_PROPERTIES(admittoreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 
 target_link_libraries(
 	admittoreaders
-	${LINK_OPT}
+	logicalaccess
 )
+
+install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/admitto )
+install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/admitto/readercardadapters )
+install ( TARGETS admittoreaders LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

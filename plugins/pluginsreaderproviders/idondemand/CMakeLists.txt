@@ -28,12 +28,6 @@ SOURCE_GROUP("Source Files\\commands" FILES ${source_commands})
 set(INCLUDE_LIB ${include} ${include_core} ${include_readercardadapters} ${include_commands})
 set(SOURCE_LIB ${SRCS} ${source_readercardadapters} ${source_commands})
 
-if (WIN32)
-  LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/generictag/bin/${TARGET_ARCH}/${VC_FOLDER_NAME})
-else()
-  LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/generictag/bin)
-endif()
-
 add_library(
 	idondemandreaders
 	SHARED
@@ -42,16 +36,15 @@ add_library(
 	${INCLUDE_LIB}
   )
 
-if (WIN32)
-  set(LINK_OPT liblogicalaccess)
-else()
-  set(LINK_OPT logicalaccess boost_system boost_system boost_filesystem)
-endif()
-
-SET_TARGET_PROPERTIES(idondemandreaders PROPERTIES VERSION 1.70)
+SET_TARGET_PROPERTIES(idondemandreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 
 target_link_libraries(
 	idondemandreaders
 	generictagcards
-	${LINK_OPT}
+	logicalaccess
 )
+
+install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/idondemand )
+install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/idondemand/readercardadapters )
+install ( FILES ${include_commands} DESTINATION include/logicalaccess/plugins/readers/idondemand/commands )
+install ( TARGETS idondemandreaders LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
