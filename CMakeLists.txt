@@ -33,6 +33,18 @@ if (NOT TARGET_ARCH)
 	set(TARGET_ARCH "Win32")
 endif()
 
+if (MSVC)
+    SET(BOOST_LIBRARYDIR ${CMAKE_CURRENT_SOURCE_DIR}/packages/lib/${TARGET_ARCH})
+    SET(BOOST_INCLUDEDIR ${CMAKE_CURRENT_SOURCE_DIR}/packages/include)
+    SET(Boost_USE_STATIC_LIBS ON)
+
+    SET(OPENSSL_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/packages/lib/${TARGET_ARCH})
+    SET(OPENSSL_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/packages/include)
+
+    SET(ZLIB_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/packages/lib/${TARGET_ARCH}/zlib.lib)
+    SET(ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/packages/include)
+endif()
+
 include_directories(packages/include)
 if(UNIX)
   LINK_DIRECTORIES(${LINK_DIRECTORIES} "${CMAKE_CURRENT_SOURCE_DIR}/packages/lib")
