@@ -1,4 +1,9 @@
+cmake_minimum_required(VERSION 2.8)
 
+project(basic CXX)
+
+find_package(LibLogicalAccess NO_MODULE REQUIRED)
+include(${LIBLOGICALACCESS_USE_FILE})
 
 SET(SOURCE basic.cpp)
 
@@ -7,9 +12,7 @@ add_executable(
     ${SOURCE}
 )
 
-remove_definitions(-DLIBLOGICALACCESS_EXPORTS -DLIBLOGICALACCESS_EXPORTS_DLL)
-
 target_link_libraries(
         basic
-        logicalaccess
+        ${LIBLOGICALACCESS_LIBRARIES}
 )
