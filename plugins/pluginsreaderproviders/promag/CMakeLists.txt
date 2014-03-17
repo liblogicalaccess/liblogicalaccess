@@ -29,4 +29,4 @@ target_link_libraries(
 
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/promag )
 install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/promag/readercardadapters )
-install ( TARGETS promagreaders LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS promagreaders ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

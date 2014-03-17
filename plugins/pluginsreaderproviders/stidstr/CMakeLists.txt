@@ -48,4 +48,4 @@ target_link_libraries(
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/stidstr )
 install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/stidstr/readercardadapters )
 install ( FILES ${include_commands} DESTINATION include/logicalaccess/plugins/readers/stidstr/readercardadapters )
-install ( TARGETS stidstrreaders LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS stidstrreaders ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

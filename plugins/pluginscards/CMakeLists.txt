@@ -1,3 +1,4 @@
+remove_definitions(-DLIBLOGICALACCESS_EXPORTS_DLL)
 
 add_subdirectory(twic)
 add_subdirectory(desfire)

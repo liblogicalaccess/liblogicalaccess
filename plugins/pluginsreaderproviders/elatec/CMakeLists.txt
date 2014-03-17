@@ -28,4 +28,4 @@ target_link_libraries(
 
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/elatec )
 install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/elatec/readercardadapters )
-install ( TARGETS elatecreaders LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS elatecreaders ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

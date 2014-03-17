@@ -23,20 +23,14 @@ add_library(
 	${INCLUDE_LIB}
   )
 
-if (WIN32)
-  set(LINK_OPT liblogicalaccess)
-else()
-  set(LINK_OPT logicalaccess)
-endif()
-
 SET_TARGET_PROPERTIES(keyboardreaders PROPERTIES VERSION 1.70)
   
 target_link_libraries(
 	keyboardreaders
-	${LINK_OPT}
+	logicalaccess
 	UserEnv
 )
 
 install ( FILES ${include} ${includepp} DESTINATION include/logicalaccess/plugins/readers/keyboard )
 install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/keyboard/readercardadapters )
-install ( TARGETS keyboardreaders LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS keyboardreaders ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

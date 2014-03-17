@@ -42,4 +42,4 @@ target_link_libraries(
 
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/rpleth )
 install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/rpleth/readercardadapters )
-install ( TARGETS rplethreaders LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS rplethreaders ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

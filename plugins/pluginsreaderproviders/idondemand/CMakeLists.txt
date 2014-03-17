@@ -47,4 +47,4 @@ target_link_libraries(
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/idondemand )
 install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/idondemand/readercardadapters )
 install ( FILES ${include_commands} DESTINATION include/logicalaccess/plugins/readers/idondemand/commands )
-install ( TARGETS idondemandreaders LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS idondemandreaders ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

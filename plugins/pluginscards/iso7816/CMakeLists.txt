@@ -18,4 +18,4 @@ target_link_libraries(
 )
 
 install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/iso7816 )
-install ( TARGETS iso7816cards LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS iso7816cards ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

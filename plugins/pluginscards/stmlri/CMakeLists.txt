@@ -20,4 +20,4 @@ target_link_libraries(
 )
 
 install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/stmlri512 )
-install ( TARGETS stmlri512cards LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS stmlri512cards ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

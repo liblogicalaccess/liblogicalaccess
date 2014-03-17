@@ -20,4 +20,4 @@ target_link_libraries(
 )
 
 install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/mifareultralight )
-install ( TARGETS mifareultralightcards LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS mifareultralightcards ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

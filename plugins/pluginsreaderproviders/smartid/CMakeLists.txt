@@ -50,4 +50,4 @@ target_link_libraries(
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/smartid )
 install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/smartid/readercardadapters )
 install ( FILES ${include_commands} DESTINATION include/logicalaccess/plugins/readers/smartid/readercardadapters )
-install ( TARGETS smartidreaders LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS smartidreaders ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

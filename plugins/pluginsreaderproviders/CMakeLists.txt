@@ -1,4 +1,6 @@
 
+remove_definitions(-DLIBLOGICALACCESS_EXPORTS_DLL)
+
 option(BUILD_ISO7819 "iso7816" ON)
 if (BUILD_ISO7819)
   add_subdirectory(iso7816)
