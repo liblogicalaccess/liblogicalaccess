@@ -48,5 +48,5 @@ target_link_libraries(
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/rwk400 )
 install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/rwk400/readercardadapters )
 install ( FILES ${include_commands} DESTINATION include/logicalaccess/plugins/readers/rwk400/readercardadapters )
-install ( TARGETS rwk400readers ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS rwk400readers RUNTIME DESTINATION bin ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
 

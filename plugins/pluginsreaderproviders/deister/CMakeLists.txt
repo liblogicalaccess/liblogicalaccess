@@ -29,4 +29,4 @@ target_link_libraries(
 
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/deister )
 install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/deister/readercardadapters )
-install ( TARGETS deisterreaders ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS deisterreaders RUNTIME DESTINATION bin ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )

@@ -26,4 +26,4 @@ if (MSVC)
 endif()
 
 install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/desfire )
-install ( TARGETS desfirecards ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS desfirecards RUNTIME DESTINATION bin ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
