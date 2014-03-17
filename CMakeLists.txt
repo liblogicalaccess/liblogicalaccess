@@ -141,8 +141,7 @@ SOURCE_GROUP("Source Files\\services\\accesscontrol\\encodings" FILES ${source_e
 SOURCE_GROUP("Source Files\\services\\accesscontrol\\formats" FILES ${source_formats})
 SOURCE_GROUP("Source Files\\services\\accesscontrol\\formats\\customformat" FILES ${source_customformat})
 SOURCE_GROUP("Source Files\\services\\nfctag" FILES ${source_nfctag})
-			
-SOURCE_GROUP("Header Plugins" FILES ${include_plugins})
+
 SOURCE_GROUP("Header Files\\cards" FILES ${include_cards})
 SOURCE_GROUP("Header Files\\dynlibrary" FILES ${include_dynlibrary})
 SOURCE_GROUP("Header Files\\readerproviders" FILES ${include_readerproviders})
@@ -183,6 +182,7 @@ set(LIBLOGICALACCESS_LIBRARY logicalaccess)
 add_library(
   logicalaccess
   ${source}
+  ${include}
 )
 
 install ( TARGETS logicalaccess

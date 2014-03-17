@@ -8,6 +8,7 @@ add_library(
 	proxlitecards
 	SHARED
 	${SRCS}
+	${INCLUDE}
   )
 
 SET_TARGET_PROPERTIES(proxlitecards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})

@@ -17,6 +17,8 @@ add_library(
 	logicalaccess-cryptolib
 	STATIC
 	${SRCS}
+	${HDRS}
+	${HDPPRS}
   )
   
  

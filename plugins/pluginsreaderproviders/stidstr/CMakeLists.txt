@@ -33,6 +33,7 @@ add_library(
 	stidstrreaders
 	SHARED
 	${SOURCE_LIB}
+	${INCLUDE_LIB}
   )
 
 SET_TARGET_PROPERTIES(stidstrreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})  

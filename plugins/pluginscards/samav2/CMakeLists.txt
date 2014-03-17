@@ -24,6 +24,8 @@ add_library(
 	SHARED
 	${SRCS}
 	${source_commands}
+	${INCLUDE}
+	${include_commands}
   )
 
 SET_TARGET_PROPERTIES(samav2cards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})

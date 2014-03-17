@@ -8,6 +8,7 @@ add_library(
 	desfirecards
     SHARED	
 	${SRCS}
+	${INCLUDE}
   )
 
 if (WIN32)
