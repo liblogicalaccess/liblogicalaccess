@@ -8,24 +8,26 @@
 
 namespace logicalaccess
 {
-	SAMKeyEntry::SAMKeyEntry() : d_updatemask(0)
+	template <typename T, typename S> 
+	SAMKeyEntry<T, S>::SAMKeyEntry(const SAMType samType) : d_updatemask(0), d_samType(samType)
 	{
 		d_keyType = SAM_KEY_DES;
 		d_key = new unsigned char[getLength()];
 		memset(&*d_key, 0, getLength());
 		d_diversify = false;
 		d_updatemask = 0;
-		memset(&d_keyentryinformation, 0x00, sizeof(KeyEntryInformation));
+		memset(&d_keyentryinformation, 0x00, sizeof(KeyEntryAV1Information));
 	}
 
-	SAMKeyEntry::SAMKeyEntry(const std::string& str, const std::string& str1, const std::string& str2) : d_updatemask(0)
+	template <typename T, typename S> 
+	SAMKeyEntry<T, S>::SAMKeyEntry(const SAMType samType, const std::string& str, const std::string& str1, const std::string& str2) : d_updatemask(0), d_samType(samType)
 	{
 		d_keyType = SAM_KEY_DES;
 		d_key = new unsigned char[getLength()];
 		memset(&*d_key, 0, getLength());
 		d_diversify = false;
 		d_updatemask = 0;
-		memset(&d_keyentryinformation, 0x00, sizeof(KeyEntryInformation));
+		memset(&d_keyentryinformation, 0x00, sizeof(KeyEntryAV1Information));
 		if (str != "")
 			memcpy(d_key, str.c_str(), getSingleLength());
 		if (str1 != "")
@@ -35,14 +37,15 @@ namespace logicalaccess
 
 	}
 
-	SAMKeyEntry::SAMKeyEntry(const void** buf, size_t buflen, char numberkey) : d_updatemask(0)
+	template <typename T, typename S> 
+	SAMKeyEntry<T, S>::SAMKeyEntry(const SAMType samType, const void** buf, size_t buflen, char numberkey) : d_updatemask(0), d_samType(samType)
 	{
 		d_keyType = SAM_KEY_DES;
 		d_key = new unsigned char[getLength()];
 		memset(&*d_key, 0, getLength());
 		d_diversify = false;
 		d_updatemask = 0;
-		memset(&d_keyentryinformation, 0x00, sizeof(KeyEntryInformation));
+		memset(&d_keyentryinformation, 0x00, sizeof(KeyEntryAV1Information));
 		if (buf != NULL)
 		{
 			if (buflen * numberkey  >= getLength())
@@ -63,12 +66,14 @@ namespace logicalaccess
 		}
 	}
 
-	SAMKeyEntry::~SAMKeyEntry()
+	template <typename T, typename S> 
+	SAMKeyEntry<T, S>::~SAMKeyEntry()
 	{
 		delete[] d_key;
 	}
 
-	size_t SAMKeyEntry::getSingleLength() const
+	template <typename T, typename S> 
+	size_t SAMKeyEntry<T, S>::getSingleLength() const
 	{
 		size_t length = 0;
 
@@ -90,7 +95,8 @@ namespace logicalaccess
 		return length;
 	}
 
-	size_t SAMKeyEntry::getLength() const
+	template <typename T, typename S> 
+	size_t SAMKeyEntry<T, S>::getLength() const
 	{
 		size_t length = 0;
 
@@ -112,7 +118,8 @@ namespace logicalaccess
 		return length;
 	}
 
-	std::vector<std::vector<unsigned char> > SAMKeyEntry::getKeysData()
+	template <typename T, typename S> 
+	std::vector<std::vector<unsigned char> > SAMKeyEntry<T, S>::getKeysData()
 	{
 		std::vector<std::vector<unsigned char> > ret;
 		size_t keysize = getSingleLength();
@@ -126,7 +133,8 @@ namespace logicalaccess
 		return ret;
 	}
 
-	void SAMKeyEntry::setKeysData(std::vector<std::vector<unsigned char> > keys, SAMKeyType type)
+	template <typename T, typename S> 
+	void SAMKeyEntry<T, S>::setKeysData(std::vector<std::vector<unsigned char> > keys, SAMKeyType type)
 	{
 		if (keys.size() == 0)
 			return;
@@ -149,7 +157,8 @@ namespace logicalaccess
 		setSETKeyTypeFromKeyType();
 	}
 
-	void SAMKeyEntry::setSETKeyTypeFromKeyType()
+	template <typename T, typename S> 
+	void SAMKeyEntry<T, S>::setSETKeyTypeFromKeyType()
 	{
 		d_keyentryinformation.set[0] = d_keyentryinformation.set[0] - (0x38 & d_keyentryinformation.set[0]);
 		switch (d_keyType)
@@ -167,7 +176,8 @@ namespace logicalaccess
 		}
 	}
 
-	void SAMKeyEntry::setKeyTypeFromSET()
+	template <typename T, typename S> 
+	void SAMKeyEntry<T, S>::setKeyTypeFromSET()
 	{
 		char keytype = 0x38 & d_keyentryinformation.set[0];
 		size_t oldsize = getLength();
@@ -195,7 +205,8 @@ namespace logicalaccess
 		d_key = tmp;
 	}
 
-	void SAMKeyEntry::serialize(boost::property_tree::ptree& parentNode)
+	template <typename T, typename S> 
+	void SAMKeyEntry<T, S>::serialize(boost::property_tree::ptree& parentNode)
 	{
 		boost::property_tree::ptree node;
 
@@ -205,18 +216,21 @@ namespace logicalaccess
 		parentNode.add_child(getDefaultXmlNodeName(), node);
 	}
 
-	void SAMKeyEntry::unSerialize(boost::property_tree::ptree& node)
+	template <typename T, typename S> 
+	void SAMKeyEntry<T, S>::unSerialize(boost::property_tree::ptree& node)
 	{
 		d_keyType = static_cast<SAMKeyType>(node.get_child("KeyType").get_value<unsigned int>());
 		d_diversify = node.get_child("Diversify").get_value<bool>();
 	}
 
-	std::string SAMKeyEntry::getDefaultXmlNodeName() const
+	template <typename T, typename S> 
+	std::string SAMKeyEntry<T, S>::getDefaultXmlNodeName() const
 	{
 		return "SAMKeyEntry";
 	}
 
-	bool SAMKeyEntry::operator==(const SAMKeyEntry& key) const
+	template <typename T, typename S> 
+	bool SAMKeyEntry<T, S>::operator==(const SAMKeyEntry& key) const
 	{
 		if (d_keyType != key.d_keyType)
 		{
@@ -229,7 +243,8 @@ namespace logicalaccess
 		return true;
 	}
 
-	std::string SAMKeyEntry::SAMKeyEntryTypeStr(SAMKeyType t)
+	template <typename T, typename S> 
+	std::string SAMKeyEntry<T, S>::SAMKeyEntryTypeStr(SAMKeyType t)
 	{
 		switch (t) {
 			case SAM_KEY_DES: return "SAM_KEY_DES";
@@ -239,7 +254,8 @@ namespace logicalaccess
 		}
 	}
 
-	KeyEntryUpdateSettings SAMKeyEntry::getUpdateSettings()
+	template <typename T, typename S> 
+	KeyEntryUpdateSettings SAMKeyEntry<T, S>::getUpdateSettings()
 	{
 		KeyEntryUpdateSettings settings;
 
@@ -257,7 +273,8 @@ namespace logicalaccess
 		return settings;
 	}
 
-	void SAMKeyEntry::setUpdateSettings(const KeyEntryUpdateSettings& t)
+	template <typename T, typename S> 
+	void SAMKeyEntry<T, S>::setUpdateSettings(const KeyEntryUpdateSettings& t)
 	{
 		bool *x = (bool*)&t;
 		d_updatemask = 0;
@@ -269,10 +286,16 @@ namespace logicalaccess
 		}
 	}
 
-	SET SAMKeyEntry::getSETStruct()
+	template <typename T, typename S> 
+	S SAMKeyEntry<T, S>::getSETStruct()
 	{
-		SET set;
-		char *x = (char*)&set;
+		S set;
+		if (d_samType == SAMType::SAM_AV1)
+			set = new SETAV1;
+		else
+			set = new SETAV2;
+
+		char *x = (char*)set;
 		
 		unsigned char set_save[2];
 		unsigned char j = 0;
@@ -296,7 +319,8 @@ namespace logicalaccess
 		return set;
 	}
 
-	void SAMKeyEntry::setSET(const SET& t)
+	template <typename T, typename S> 
+	void SAMKeyEntry<T, S>::setSET(const S& t)
 	{
 		char *x = (char*)&t;
 		memset(d_keyentryinformation.set, 0, 2);

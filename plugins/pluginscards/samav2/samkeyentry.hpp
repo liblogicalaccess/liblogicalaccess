@@ -37,36 +37,67 @@ namespace logicalaccess
 		SAM_KEY_AES = 0x10
 	}				SAMKeyType;
 
+	typedef enum 
+	{
+		SAM_AV1,
+		SAM_AV2
+	}				SAMType;
+
 	typedef struct  s_KeyEntryUpdateSettings
 	{
-		char keyVa;
-		char keyVb;
-		char keyVc;
-		char df_aid_keyno;
-		char key_no_v_cek;
-		char refkeykuc;
-		char updateset;
-		char keyversionsentseparatly;
+		unsigned char keyVa;
+		unsigned char keyVb;
+		unsigned char keyVc;
+		unsigned char df_aid_keyno;
+		unsigned char key_no_v_cek;
+		unsigned char refkeykuc;
+		unsigned char updateset;
+		unsigned char keyversionsentseparatly;
 	}				KeyEntryUpdateSettings;
 
-	typedef struct s_SET
+	typedef struct s_SETAV1
 	{
-		char dumpsessionkey;
-		char allowcrypto;
-		char keepIV;
-		char keytype[3];
-		char rfu[2];
-		char hightcommandsecurity;
-		char disablekeyentry;
-		char hostauthenticationafterreset;
-		char disablewritekeytopicc;
-		char disabledecryption;
-		char disableencryption;
-		char disableverifymac;
-		char disablegeneratemac;
-	}		 		SET;
+		unsigned char dumpsessionkey;
+		unsigned char allowcrypto;
+		unsigned char keepIV;
+		unsigned char keytype[3];
+		unsigned char rfu[2];
+		unsigned char hightcommandsecurity;
+		unsigned char disablekeyentry;
+		unsigned char hostauthenticationafterreset;
+		unsigned char disablewritekeytopicc;
+		unsigned char disabledecryption;
+		unsigned char disableencryption;
+		unsigned char disableverifymac;
+		unsigned char disablegeneratemac;
+	}		 		SETAV1;
 
-	typedef struct  s_KeyEntryInformation
+	typedef struct s_SETAV2
+	{
+		unsigned char dumpsessionkey;
+		unsigned char allowcrypto;
+		unsigned char keepIV;
+		unsigned char keytype[3];
+		unsigned char rfu[2];
+		unsigned char authkey;
+		unsigned char disablekeyentry;
+		unsigned char lockey;
+		unsigned char disablewritekeytopicc;
+		unsigned char disabledecryption;
+		unsigned char disableencryption;
+		unsigned char disableverifymac;
+		unsigned char disablegeneratemac;
+	}		 		SETAV2;
+
+	typedef struct s_EXTSET
+	{
+		unsigned char keyclass;
+		unsigned char dumpsessionkey;
+		unsigned char diversifieduse;
+		unsigned char rfu[5];
+	}		 		ExtSET;
+
+	typedef struct  s_KeyEntryAV1Information
 	{
 		unsigned char desfireAid[3];
 		unsigned char desfirekeyno;
@@ -77,7 +108,20 @@ namespace logicalaccess
 		unsigned char vera;
 		unsigned char verb;
 		unsigned char verc;
-	}				KeyEntryInformation;
+	}				KeyEntryAV1Information;
+
+	typedef struct  s_KeyEntryAV2Information
+	{
+		unsigned char desfireAid[3];
+		unsigned char desfirekeyno;
+		unsigned char cekno;
+		unsigned char cekv;
+		unsigned char kuc;
+		unsigned char set[2];
+		unsigned char vera;
+		unsigned char verb;
+		unsigned char verc;
+	}				KeyEntryAV2Information;
 
 	typedef struct s_changeKeyInfo
 	{
@@ -93,6 +137,7 @@ namespace logicalaccess
 	/**
 	 * \brief A DESFire Key class.
 	 */
+	template <typename T, typename S>
 	class LIBLOGICALACCESS_API SAMKeyEntry
 	{
 		public:
@@ -100,7 +145,7 @@ namespace logicalaccess
 			/**
 			 * \brief Build an empty DESFire key.
 			 */
-			SAMKeyEntry();
+			SAMKeyEntry(SAMType samType);
 
 			/**
 			 * \brief Destructor.
@@ -111,14 +156,14 @@ namespace logicalaccess
 			 * \brief Build a DESFire key given a string representation of it.
 			 * \param str The string representation.
 			 */
-			SAMKeyEntry(const std::string& str, const std::string& str1 = "", const std::string& str2 = "");
+			SAMKeyEntry(const SAMType samType, const std::string& str, const std::string& str1 = "", const std::string& str2 = "");
 
 			/**
 			 * \brief Build a DESFire key given a buffer.
 			 * \param buf The buffer.
 			 * \param buflen The buffer length.
 			 */
-			SAMKeyEntry(const void** buf, size_t buflen, char numberkey);
+			SAMKeyEntry(const SAMType samType, const void** buf, size_t buflen, char numberkey);
 
 			/**
 			 * \brief Get the key length.
@@ -207,9 +252,9 @@ namespace logicalaccess
 
 			size_t getSingleLength() const;
 
-			void setSET(const SET& t);
+			void setSET(const S& t);
 			void setSET(unsigned char *t) { memcpy(d_keyentryinformation.set, t, sizeof(*t)); };
-			SET getSETStruct();
+			S getSETStruct();
 
 			unsigned char getUpdateMask() { return d_updatemask; };
 			void setUpdateMask(unsigned char c) { d_updatemask = c; };
@@ -217,8 +262,8 @@ namespace logicalaccess
 			KeyEntryUpdateSettings getUpdateSettings();
 			void setUpdateSettings(const KeyEntryUpdateSettings& t);
 
-			KeyEntryInformation &getKeyEntryInformation() { return d_keyentryinformation; } ;
-			void setKeyEntryInformation(const KeyEntryInformation& t) { d_keyentryinformation = t; };
+			T &getKeyEntryInformation() { return d_keyentryinformation; } ;
+			void setKeyEntryInformation(const T& t) { d_keyentryinformation = t; };
 
 			void setKeyTypeFromSET();
 			void setSETKeyTypeFromKeyType();
@@ -242,7 +287,9 @@ namespace logicalaccess
 
 			unsigned char d_updatemask;
 
-			KeyEntryInformation d_keyentryinformation;
+			T d_keyentryinformation;
+
+			const SAMType d_samType;
 	};
 }
 

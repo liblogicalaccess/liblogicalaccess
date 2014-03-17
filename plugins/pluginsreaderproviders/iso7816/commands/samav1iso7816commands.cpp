@@ -108,13 +108,13 @@ namespace logicalaccess
 	{
 		std::vector<unsigned char> result;
 		boost::shared_ptr<SAMKeyEntry> keyentry;
-		KeyEntryInformation keyentryinformation;
+		KeyEntryAV1Information keyentryinformation;
 
 		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x64, keyno, 0x00, 0x00);
 
 		if ((result.size() == 14 || result.size() == 13) &&  result[result.size() - 2] == 0x90 && result[result.size() - 1] == 0x00)
 		{
-			keyentry.reset(new SAMKeyEntry());
+			keyentry.reset(new SAMKeyEntry(SAMType::SAM_AV1));
 
 			memcpy(keyentryinformation.set, &result[result.size() - 4], 2);
 			keyentry->setSET(keyentryinformation.set);
@@ -158,12 +158,12 @@ namespace logicalaccess
 		unsigned char proMas = 0;
 		proMas = keyentry->getUpdateMask();
 
-		size_t buffer_size = keyentry->getLength() + sizeof(KeyEntryInformation);
+		size_t buffer_size = keyentry->getLength() + sizeof(KeyEntryAV1Information);
 		unsigned char *data = new unsigned char[buffer_size];
 		memset(data, 0, buffer_size);
 
 		memcpy(data, &*(keyentry->getData()), keyentry->getLength());
-		memcpy(data + 48, &keyentry->getKeyEntryInformation(), sizeof(KeyEntryInformation));
+		memcpy(data + 48, &keyentry->getKeyEntryInformation(), sizeof(KeyEntryAV1Information));
 		
 		std::vector<unsigned char> iv;
 		iv.resize(16, 0x00);
@@ -196,9 +196,9 @@ namespace logicalaccess
 		}
 	}
 
-	std::vector<unsigned char> SAMAV1ISO7816Commands::generateAuthEncKey(std::vector<unsigned char> keycipher, std::vector<unsigned char> rnd1, std::vector<unsigned char> rnd2)
+	void SAMAV1ISO7816Commands::generateAuthEncKey(std::vector<unsigned char> keycipher, std::vector<unsigned char> rnd1, std::vector<unsigned char> rnd2)
 	{
-		std::vector<unsigned char> SV1a(16), SV1b(16), emptyIV(16), sessionKey;
+		std::vector<unsigned char> SV1a(16), emptyIV(16);
 
 		std::copy(rnd1.begin() + 7, rnd1.begin() + 12, SV1a.begin());
 		std::copy(rnd2.begin() + 7, rnd2.begin() + 12, SV1a.begin() + 5);
@@ -216,9 +216,7 @@ namespace logicalaccess
 		boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
 		boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
 
-		cipher->cipher(SV1a, sessionKey, *symkey.get(), *iv.get(), false);
-
-		return sessionKey;
+		cipher->cipher(SV1a, d_authKey, *symkey.get(), *iv.get(), false);
 	}
 
 	void SAMAV1ISO7816Commands::lockUnlock(boost::shared_ptr<DESFireKey> masterKey, SAMLockUnlock state, unsigned char keyno, unsigned char unlockkeyno, unsigned char unlockkeyversion)
@@ -299,8 +297,8 @@ namespace logicalaccess
 				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P2 CMAC from SAM is Wrong.");
 		}
 
-		/* Create kxe */
-		std::vector<unsigned char> kxe = generateAuthEncKey(keycipher, rnd1, rnd2);
+		/* Create kxe - d_authkey */
+		generateAuthEncKey(keycipher, rnd1, rnd2);
 
 
 		//create rndA
@@ -312,7 +310,7 @@ namespace logicalaccess
 
 
 		//decipher rndB
-		boost::shared_ptr<openssl::SymmetricKey> symkey(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(kxe)));
+		boost::shared_ptr<openssl::SymmetricKey> symkey(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_authKey)));
 		boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
 
 		std::vector<unsigned char> encRndB(result.begin() + 8, result.end() - 2);

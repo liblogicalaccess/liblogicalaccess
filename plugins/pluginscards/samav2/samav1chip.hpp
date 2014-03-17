@@ -36,7 +36,7 @@ namespace logicalaccess
 			~SAMAV1Chip();
 
 
-			boost::shared_ptr<SAMCommands> getSAMAV1Commands() { return boost::dynamic_pointer_cast<SAMCommands>(getCommands()); };
+			boost::shared_ptr<SAMCommands<KeyEntryAV1Information, SETAV1> > getSAMAV1Commands() { return boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1> >(getCommands()); };
 		protected:
 	};
 }

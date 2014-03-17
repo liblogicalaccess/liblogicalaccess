@@ -36,9 +36,23 @@ namespace logicalaccess
 			/**
 			 * \brief Destructor.
 			 */
-			virtual ~SAMAV2ISO7816Commands();			
+			virtual ~SAMAV2ISO7816Commands();
+
+			virtual void authentificateHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
+
+			virtual boost::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> > getKeyEntry(unsigned char keyno);
+			virtual boost::shared_ptr<SAMKucEntry> getKUCEntry(unsigned char kucno);
+
+			virtual void changeKUCEntry(unsigned char kucno, boost::shared_ptr<SAMKucEntry> keyentry, boost::shared_ptr<DESFireKey> key);
+			virtual void changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> > keyentry, boost::shared_ptr<DESFireKey> key);
 
 		protected:
+
+			void SAMAV2ISO7816Commands::generateSessionKey(std::vector<unsigned char> rnd1, std::vector<unsigned char> rnd2);
+
+			std::vector<unsigned char> d_macSessionKey;
+
+			unsigned char d_cmdCtr;
 	};
 }
 

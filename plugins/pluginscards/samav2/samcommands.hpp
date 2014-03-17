@@ -52,13 +52,15 @@ namespace logicalaccess
 
 	class DESFireKey;
 
+
+	template <typename T, typename S>
 	class LIBLOGICALACCESS_API SAMCommands : public virtual Commands
 	{
 		public:		
 			virtual SAMVersion getVersion() = 0;
-			virtual boost::shared_ptr<SAMKeyEntry> getKeyEntry(unsigned char keyno) = 0;
+			virtual boost::shared_ptr<SAMKeyEntry<T, S> > getKeyEntry(unsigned char keyno) = 0;
 			virtual boost::shared_ptr<SAMKucEntry> getKUCEntry(unsigned char keyno) = 0;
-			virtual void changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry> keyentry, boost::shared_ptr<DESFireKey> key) = 0;
+			virtual void changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry<T, S> > keyentry, boost::shared_ptr<DESFireKey> key) = 0;
 			virtual void changeKUCEntry(unsigned char keyno, boost::shared_ptr<SAMKucEntry> keyentry, boost::shared_ptr<DESFireKey> key) = 0;
 			virtual void authentificateHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno) = 0;
 			virtual std::string	getSAMTypeFromSAM() = 0;
