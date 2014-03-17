@@ -401,7 +401,7 @@ namespace logicalaccess
 				switch (statusCode)
 				{
 				case 0x01:
-					msg = std::string("MIFARE® time out error.");
+					msg = std::string("MIFARE time out error.");
 					break;
 				case 0x02:
 					msg = std::string("More than one tag in the RFID field.");
@@ -410,16 +410,16 @@ namespace logicalaccess
 					msg = std::string("Incorrect tag type.");
 					break;
 				case 0x05:
-					msg = std::string("MIFARE® frame error.");
+					msg = std::string("MIFARE frame error.");
 					break;
 				case 0x06:
 					msg = std::string("Incorrect settings error.");
 					break;
 				case 0x13:
-					msg = std::string("MIFARE® data format error.");
+					msg = std::string("MIFARE data format error.");
 					break;
 				case 0x14:
-					msg = std::string("MIFARE® authentication error.");
+					msg = std::string("MIFARE authentication error.");
 					break;
 				case 0x27:
 					msg = std::string("Invalid command error.");
