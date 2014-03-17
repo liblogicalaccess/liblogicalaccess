@@ -8,6 +8,7 @@ add_library(
 	legicprimecards
 	SHARED
 	${SRCS}
+	${INCLUDE}
   )
 
 SET_TARGET_PROPERTIES(legicprimecards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})

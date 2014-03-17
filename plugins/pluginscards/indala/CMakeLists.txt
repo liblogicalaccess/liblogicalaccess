@@ -8,6 +8,7 @@ add_library(
 	indalacards
 	SHARED
 	${SRCS}
+	${INCLUDE}
   )
 
 SET_TARGET_PROPERTIES(indalacards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})

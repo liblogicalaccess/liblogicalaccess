@@ -8,6 +8,7 @@ add_library(
 	infineonmydcards
 	SHARED
 	${SRCS}
+	${INCLUDE}
   )
 
 SET_TARGET_PROPERTIES(infineonmydcards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})

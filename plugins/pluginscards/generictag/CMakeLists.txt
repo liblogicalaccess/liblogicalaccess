@@ -8,6 +8,7 @@ add_library(
 	generictagcards
 	SHARED
 	${SRCS}
+	${INCLUDE}
   )
 
 SET_TARGET_PROPERTIES(generictagcards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})

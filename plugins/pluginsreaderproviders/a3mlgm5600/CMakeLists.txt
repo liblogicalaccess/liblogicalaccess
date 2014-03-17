@@ -18,6 +18,7 @@ add_library(
 	a3mlgm5600readers
 	SHARED
 	${SOURCE_LIB}
+	${INCLUDE_LIB}
   )
 
 

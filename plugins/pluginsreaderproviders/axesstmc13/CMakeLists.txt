@@ -17,6 +17,7 @@ add_library(
 	axesstmc13readers
 	SHARED
 	${SOURCE_LIB}
+	${INCLUDE_LIB}
   )
 
 
