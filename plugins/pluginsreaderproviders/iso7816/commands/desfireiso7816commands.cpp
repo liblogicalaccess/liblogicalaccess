@@ -72,7 +72,7 @@ namespace logicalaccess
         if (getSAMChip())
         {
             INFO_("SelectApplication on SAM chip...");
-            boost::shared_ptr<SAMCommands> samcommands = boost::dynamic_pointer_cast<SAMCommands>(getSAMChip()->getCommands());
+			boost::shared_ptr<SAMCommands<KeyEntryAV1Information, SETAV1> > samcommands = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1> >(getSAMChip()->getCommands());
             std::vector<unsigned char> t_aid(3);
             int saveaid = aid;
             for (char x = 2; x >= 0; --x)
@@ -136,7 +136,7 @@ namespace logicalaccess
     std::vector<unsigned char> DESFireISO7816Commands::getChangeKeySAMCryptogram(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
     {
         boost::shared_ptr<SAMKeyStorage> samsks = boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
-        boost::shared_ptr<SAMCommands> samcommands = boost::dynamic_pointer_cast<SAMCommands>(getSAMChip()->getCommands());
+		boost::shared_ptr<SAMCommands<KeyEntryAV1Information, SETAV1> > samcommands = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1> >(getSAMChip()->getCommands());
 
         boost::shared_ptr<DESFireProfile> dprofile = boost::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile());
         boost::shared_ptr<DESFireKey> oldkey = boost::dynamic_pointer_cast<DESFireKey>(dprofile->getKey(d_crypto->d_currentAid, keyno));
@@ -731,7 +731,7 @@ namespace logicalaccess
 
             if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
             {
-                boost::shared_ptr<SAMCommands> samcommands = boost::dynamic_pointer_cast<SAMCommands>(getSAMChip()->getCommands());
+                boost::shared_ptr<SAMCommands<KeyEntryAV1Information, SETAV1> > samcommands = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1> >(getSAMChip()->getCommands());
                 boost::shared_ptr<ISO7816ReaderCardAdapter> readercardadapter = boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(samcommands->getReaderCardAdapter());
 
 
@@ -755,7 +755,7 @@ namespace logicalaccess
                     
                 if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
                 {
-                    boost::shared_ptr<SAMCommands> samcommands = boost::dynamic_pointer_cast<SAMCommands>(getSAMChip()->getCommands());
+                    boost::shared_ptr<SAMCommands<KeyEntryAV1Information, SETAV1> > samcommands = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1> >(getSAMChip()->getCommands());
                     boost::shared_ptr<ISO7816ReaderCardAdapter> readercardadapter = boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(samcommands->getReaderCardAdapter());
 
                     apduresult = readercardadapter->sendAPDUCommand(0x80, 0x0a, 0x00, 0x00, 0x08, result, 0x08);

@@ -169,20 +169,6 @@ namespace logicalaccess
 		d_cmdCtr = 0;
 	}
 
-	typedef struct  s_KeyEntryAV2Information
-	{
-		unsigned char desfireAid[3];
-		unsigned char desfirekeyno;
-		unsigned char cekno;
-		unsigned char cekv;
-		unsigned char kuc;
-		unsigned char set[2];
-		unsigned char vera;
-		unsigned char verb;
-		unsigned char verc;
-		unsigned char ExtSet;
-	}				KeyEntryAV2Information;
-
 	boost::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> > SAMAV2ISO7816Commands::getKeyEntry(unsigned char keyno)
 	{
 		std::vector<unsigned char> result;
@@ -192,8 +178,8 @@ namespace logicalaccess
 		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x64, keyno, 0x00, 0x00);
 		if ((result.size() == 15 || result.size() == 14) &&  result[result.size() - 2] == 0x90 && result[result.size() - 1] == 0x00)
 		{
-			keyentry.reset(new SAMKeyEntry<KeyEntryAV2Information, SETAV2>(SAMType::SAM_AV2));
-			keyentryinformation.ExtSet = result[result.size() - 3];
+			keyentry.reset(new SAMKeyEntry<KeyEntryAV2Information, SETAV2>());
+			keyentryinformation.ExtSET = result[result.size() - 3];
 			memcpy(keyentryinformation.set, &result[result.size() - 5], 2);
 			keyentry->setSET(keyentryinformation.set);
 
@@ -223,7 +209,7 @@ namespace logicalaccess
 		}
 		else
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "getKeyEntry failed.");
-		return 	boost::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> >();
+		return keyentry;
 	}
 
 	boost::shared_ptr<SAMKucEntry> SAMAV2ISO7816Commands::getKUCEntry(unsigned char kucno)

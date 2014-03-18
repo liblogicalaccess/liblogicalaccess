@@ -24,7 +24,7 @@ namespace logicalaccess
 	/**
 	 * \brief The DESFire base commands class.
 	 */
-	class LIBLOGICALACCESS_API SAMAV2ISO7816Commands : public SAMAV1ISO7816Commands
+	class LIBLOGICALACCESS_API SAMAV2ISO7816Commands : public SAMISO7816Commands<KeyEntryAV2Information, SETAV2>
 	{
 		public:
 
