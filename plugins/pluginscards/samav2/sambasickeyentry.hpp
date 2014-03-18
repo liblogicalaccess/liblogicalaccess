@@ -33,8 +33,8 @@ namespace logicalaccess
 	typedef enum 
 	{
 		SAM_KEY_DES = 0x00,
-		SAM_KEY_3K3DES = 0x0c,
-		SAM_KEY_AES = 0x10
+		SAM_KEY_3K3DES = 0x18,
+		SAM_KEY_AES = 0x20
 	}				SAMKeyType;
 
 	typedef struct  s_KeyEntryUpdateSettings

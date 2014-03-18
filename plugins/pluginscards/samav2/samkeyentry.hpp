@@ -171,7 +171,7 @@ namespace logicalaccess
 
 			void setKeyTypeFromSET()
 			{
-				char keytype = 0x38 & d_keyentryinformation.set[0];
+				unsigned char keytype = 0x38 & d_keyentryinformation.set[0];
 				size_t oldsize = getLength();
 
 				switch (keytype)

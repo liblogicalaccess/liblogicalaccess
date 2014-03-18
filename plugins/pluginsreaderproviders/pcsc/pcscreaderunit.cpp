@@ -701,7 +701,7 @@ namespace logicalaccess
 							}
 							else if (d_insertedChip->getCardType() == "SAM_AV2")
 							{
-								if (boost::dynamic_pointer_cast<SAMCommands>(d_insertedChip->getCommands())->getSAMTypeFromSAM() == "SAM_AV1")
+								if (boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2> >(d_insertedChip->getCommands())->getSAMTypeFromSAM() == "SAM_AV1")
 								{
 									INFO_SIMPLE_("SAM on the reader is AV2 but mode AV1 so we switch to AV1.");
 									d_insertedChip = createChip("SAM_AV1");
@@ -884,7 +884,7 @@ namespace logicalaccess
 				if (getPCSCConfiguration()->getSAMType() == "SAM_AV2" && ret->getSingleChip()->getCardType() != "SAM_AV1")
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM on the reader is not the same type as selected.");
 				//Check Backward AV1 => AV2 is active
-				if (getPCSCConfiguration()->getSAMType() != "SAM_AUTO" && ret->getSingleChip()->getCardType() == "SAM_AV2" && getPCSCConfiguration()->getSAMType() != boost::dynamic_pointer_cast<SAMCommands>(ret->getSingleChip()->getCommands())->getSAMTypeFromSAM())
+				if (getPCSCConfiguration()->getSAMType() != "SAM_AUTO" && ret->getSingleChip()->getCardType() == "SAM_AV2" && getPCSCConfiguration()->getSAMType() != boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2> >(ret->getSingleChip()->getCommands())->getSAMTypeFromSAM())
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM on the reader is not the same type as selected.");
 
 				INFO_SIMPLE_("SAM backward ended.");

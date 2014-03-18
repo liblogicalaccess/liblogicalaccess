@@ -46,6 +46,10 @@ namespace logicalaccess
 			virtual void changeKUCEntry(unsigned char kucno, boost::shared_ptr<SAMKucEntry> keyentry, boost::shared_ptr<DESFireKey> key);
 			virtual void changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> > keyentry, boost::shared_ptr<DESFireKey> key);
 
+			virtual std::vector<unsigned char> decipherData(std::vector<unsigned char> data, bool islastdata);
+			virtual std::vector<unsigned char> encipherData(std::vector<unsigned char> data, bool islastdata);
+			virtual std::vector<unsigned char> changeKeyPICC(const ChangeKeyInfo& info);
+
 		protected:
 
 			void generateSessionKey(std::vector<unsigned char> rnd1, std::vector<unsigned char> rnd2);

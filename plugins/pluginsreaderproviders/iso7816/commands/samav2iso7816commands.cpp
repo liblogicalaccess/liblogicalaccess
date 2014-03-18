@@ -224,4 +224,19 @@ namespace logicalaccess
 	void SAMAV2ISO7816Commands::changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> > keyentry, boost::shared_ptr<DESFireKey> key)
 	{
 	}
+
+	std::vector<unsigned char> SAMAV2ISO7816Commands::decipherData(std::vector<unsigned char> data, bool islastdata)
+	{
+		return std::vector<unsigned char>();
+	}
+
+	std::vector<unsigned char> SAMAV2ISO7816Commands::encipherData(std::vector<unsigned char> data, bool islastdata)
+	{
+		return std::vector<unsigned char>();
+	}
+
+	std::vector<unsigned char> SAMAV2ISO7816Commands::changeKeyPICC(const ChangeKeyInfo& info)
+	{
+		return std::vector<unsigned char>();
+	}
 }
