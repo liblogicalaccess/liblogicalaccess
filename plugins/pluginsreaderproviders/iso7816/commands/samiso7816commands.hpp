@@ -98,7 +98,7 @@ namespace logicalaccess
 				//we do not remove named_mutex - it can still be used by another process
 			}		
 
-			boost::shared_ptr<ISO7816ReaderCardAdapter> getISO7816ReaderCardAdapter() { return boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter()); };
+			boost::shared_ptr<ISO7816ReaderCardAdapter> getISO7816ReaderCardAdapter() { return boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(this->getReaderCardAdapter()); };
 
 			virtual SAMVersion getVersion()
 			{

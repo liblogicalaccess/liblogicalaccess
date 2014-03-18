@@ -77,7 +77,7 @@ namespace logicalaccess
 		unsigned char p1, p2;
 
 		setP1P2(offset, efid, p1, p2);
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0x0E, p1, p2, NULL, NULL);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0x0E, p1, p2);
 	}
 
 	bool ISO7816ISO7816Commands::getData(void* data, size_t& dataLength, unsigned short dataObject)

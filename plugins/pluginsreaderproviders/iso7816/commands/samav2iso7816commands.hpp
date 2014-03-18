@@ -48,7 +48,7 @@ namespace logicalaccess
 
 		protected:
 
-			void SAMAV2ISO7816Commands::generateSessionKey(std::vector<unsigned char> rnd1, std::vector<unsigned char> rnd2);
+			void generateSessionKey(std::vector<unsigned char> rnd1, std::vector<unsigned char> rnd2);
 
 			std::vector<unsigned char> d_macSessionKey;
 
