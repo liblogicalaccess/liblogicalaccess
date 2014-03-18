@@ -98,13 +98,15 @@ namespace logicalaccess
 				//we do not remove named_mutex - it can still be used by another process
 			}		
 
+			boost::shared_ptr<ISO7816ReaderCardAdapter> getISO7816ReaderCardAdapter() { return boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter()); };
+
 			virtual SAMVersion getVersion()
 			{
 				std::vector<unsigned char> result;
 				SAMVersion	info;
 				memset(&info, 0x00, sizeof(SAMVersion));
 
-				result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x60, 0x00, 0x00, 0x00);
+				result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x60, 0x00, 0x00, 0x00);
 
 
 				if (result.size() == 33 && result[31] == 0x90 && result[32] == 0x00)
@@ -131,7 +133,7 @@ namespace logicalaccess
 				boost::shared_ptr<SAMKucEntry> kucentry(new SAMKucEntry);
 				std::vector<unsigned char> result;
 
-				result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x6c, kucno, 0x00, 0x00);
+				result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x6c, kucno, 0x00, 0x00);
 
 				if (result.size() == 12 && (result[result.size() - 2] == 0x90 || result[result.size() - 1] == 0x00))
 				{
@@ -148,7 +150,7 @@ namespace logicalaccess
 			{
 				std::vector<unsigned char> result;
 
-				result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x5a, 0x00, 0x00, 0x03, aid);
+				result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x5a, 0x00, 0x00, 0x03, aid);
 
 				if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "selectApplication failed.");
@@ -158,7 +160,7 @@ namespace logicalaccess
 			{
 				std::vector<unsigned char> result;
 
-				result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xd8, keyno, 0x00);
+				result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xd8, keyno, 0x00);
 
 				if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "disableKeyEntry failed.");
@@ -168,7 +170,7 @@ namespace logicalaccess
 			{
 				std::vector<unsigned char> result;
 
-				result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xd5, 0x00, 0x00, 0x00);
+				result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xd5, 0x00, 0x00, 0x00);
 
 				if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "dumpSessionKey failed.");
@@ -176,12 +178,11 @@ namespace logicalaccess
 				return std::vector<unsigned char>(result.begin(), result.end() - 2);
 			}
 
-			boost::shared_ptr<ISO7816ReaderCardAdapter> getISO7816ReaderCardAdapter() { return boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter()); };
 			virtual std::string getSAMTypeFromSAM()
 			{
 				std::vector<unsigned char> result;
 
-				result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x60, 0x00, 0x00, 0x00);
+				result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x60, 0x00, 0x00, 0x00);
 
 				if (result.size() > 3)
 				{
@@ -220,7 +221,7 @@ namespace logicalaccess
 					data_p1.push_back(unlockkeyversion);
 				}
 
-				result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, p1_part1, 0x00, le, data_p1, 0x00);
+				result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, p1_part1, 0x00, le, data_p1, 0x00);
 				if (result.size() != 14 || result[12] != 0x90 || result[13] != 0xAF)
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P1 Failed.");
 
@@ -258,7 +259,7 @@ namespace logicalaccess
 				data_p2.insert(data_p2.end(), macHost.begin(), macHost.begin() + 8);
 				data_p2.insert(data_p2.end(), rnd1.begin(), rnd1.end());
 
-				result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, 0x00, 0x00, 0x14, data_p2, 0x00);
+				result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, 0x00, 0x00, 0x14, data_p2, 0x00);
 				if (result.size() != 26 || result[24] != 0x90 || result[25] != 0xAF)
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P2 Failed.");
 
@@ -308,7 +309,7 @@ namespace logicalaccess
 				iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
 				cipher->cipher(dataHost, encHost, *symkey.get(), *iv.get(), false);
 
-				result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, 0x00, 0x00, 0x20, encHost, 0x00);
+				result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, 0x00, 0x00, 0x20, encHost, 0x00);
 				if (result.size() != 18 || result[16] != 0x90 || result[17] != 0x00)
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P3 Failed.");
 
