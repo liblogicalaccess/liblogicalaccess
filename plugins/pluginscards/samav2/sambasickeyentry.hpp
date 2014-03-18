@@ -1,7 +1,7 @@
 /**
- * \file desfirekey.hpp
- * \author Maxime C. <maxime-dev@islog.com>
- * \brief DESFire key.
+ * \file sambasickeyentry.hpp
+ * \author Adrien J. <adrien.jund@islog.com>
+ * \brief SAMBasicKeyEntry header.
  */
 
 #ifndef LOGICALACCESS_SAMBASICKEYENTRY_HPP
@@ -61,7 +61,7 @@ namespace logicalaccess
 	}				ChangeKeyInfo;
 
 	/**
-	 * \brief A DESFire Key class.
+	 * \brief A SAMBasicKeyEntry Key class.
 	 */
 	class LIBLOGICALACCESS_API SAMBasicKeyEntry
 	{
@@ -138,20 +138,20 @@ namespace logicalaccess
 
 			/**
 			 * \brief Equality operator
-			 * \param ai DESFire key to compare.
+			 * \param ai SAM key to compare.
 			 * \return True if equals, false otherwise.
 			 */
 			virtual bool operator==(const SAMBasicKeyEntry& key) const;
 
 			/**
 			 * \brief Inequality operator
-			 * \param ai DESFire key to compare.
+			 * \param ai SAM key to compare.
 			 * \return True if inequals, false otherwise.
 			 */
 			inline bool operator!=(const SAMBasicKeyEntry& key) const { return !operator==(key); };
 
 			/**
-			 * \brief Get the DESFire Key Type in string format.
+			 * \brief Get the SAM Key Type in string format.
 			 * \return The key type in string.
 			 */
 			static std::string SAMKeyEntryTypeStr(SAMKeyType t);
@@ -166,9 +166,6 @@ namespace logicalaccess
 
 		protected:
 
-			/**
-			 * \brief Build an empty DESFire key.
-			 */
 			SAMBasicKeyEntry();
 
 			SAMBasicKeyEntry(const std::string& str, const std::string& str1, const std::string& str2);
@@ -186,7 +183,7 @@ namespace logicalaccess
 			bool d_diversify;
 
 			/**
-			 * \brief The DESFire key type.
+			 * \brief The SAM key type.
 			 */
 			SAMKeyType d_keyType; //TODO DELETE IT
 
@@ -194,5 +191,5 @@ namespace logicalaccess
 	};
 }
 
-#endif /* LOGICALACCESS_DESFIREKEY_HPP */
+#endif /* LOGICALACCESS_SAMBASICKEYENTRY_HPP */
 

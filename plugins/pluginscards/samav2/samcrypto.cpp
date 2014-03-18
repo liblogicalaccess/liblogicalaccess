@@ -1,7 +1,7 @@
 /**
- * \file desfirecrypto.cpp
- * \author Maxime C. <maxime-dev@islog.com>
- * \brief DESFire cryptographic functions.
+ * \file samcrypto.cpp
+ * \author Adrien J. <adrien.jund@islog.com>
+ * \brief SAMDESfireCrypto source.
  */
 
 #include "samcrypto.hpp"

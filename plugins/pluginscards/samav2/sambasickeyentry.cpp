@@ -1,7 +1,7 @@
 /**
- * \file desfirekey.cpp
- * \author Maxime C. <maxime-dev@islog.com>
- * \brief DESFire Key.
+ * \file sambasickeyentry.hpp
+ * \author Adrien J. <adrien.jund@islog.com>
+ * \brief SAMBasicKeyEntry source.
  */
 
 #include "sambasickeyentry.hpp"

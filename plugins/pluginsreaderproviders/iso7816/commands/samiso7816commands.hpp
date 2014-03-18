@@ -36,7 +36,7 @@
 namespace logicalaccess
 {		
 	/**
-	 * \brief The SAMAV1ISO7816 commands class.
+	 * \brief The SAMISO7816 commands class.
 	 */
 	template <typename T, typename S>
 	class LIBLOGICALACCESS_API SAMISO7816Commands : public SAMCommands<T, S>

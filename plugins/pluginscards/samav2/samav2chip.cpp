@@ -1,7 +1,7 @@
 /**
- * \file samav2chip.cpp
- * \author Maxime C. <maxime-dev@islog.com>
- * \brief SAM AV2 chip.
+ * \file samav2chip.hpp
+ * \author Adrien J. <adrien.jund@islog.com>
+ * \brief SAMAV1Chip source.
  */
 
 #include "samav2chip.hpp"

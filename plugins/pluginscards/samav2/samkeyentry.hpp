@@ -1,7 +1,7 @@
 /**
- * \file desfirekey.hpp
- * \author Maxime C. <maxime-dev@islog.com>
- * \brief DESFire key.
+ * \file samkeyentry.hpp
+ * \author Adrien J. <adrien.jund@islog.com>
+ * \brief samkeyentry header.
  */
 
 #ifndef LOGICALACCESS_SAMKEYENTRY_HPP
@@ -83,17 +83,24 @@ namespace logicalaccess
 	}				KeyEntryAV2Information;
 
 	/**
-	 * \brief A DESFire Key class.
+	 * \brief A SAMKeyEntry class.
 	 */
 	template <typename T, typename S>
 	class LIBLOGICALACCESS_API SAMKeyEntry: public SAMBasicKeyEntry
 	{
 		public:
 
-			/**
-			 * \brief Build an empty DESFire key.
-			 */
 			SAMKeyEntry() : SAMBasicKeyEntry()
+			{
+				memset(&d_keyentryinformation, 0x00, sizeof(d_keyentryinformation));
+			}
+
+			SAMKeyEntry(const std::string& str, const std::string& str1 = "", const std::string& str2 = "") : SAMBasicKeyEntry(str, str1, str2)
+			{
+				memset(&d_keyentryinformation, 0x00, sizeof(d_keyentryinformation));
+			}
+
+			SAMKeyEntry(const void** buf, size_t buflen, char numberkey) : SAMBasicKeyEntry(buf, buflen, numberkey)
 			{
 				memset(&d_keyentryinformation, 0x00, sizeof(d_keyentryinformation));
 			}
@@ -104,27 +111,8 @@ namespace logicalaccess
 			~SAMKeyEntry() { }
 
 			/**
-			 * \brief Build a DESFire key given a string representation of it.
-			 * \param str The string representation.
-			 */
-			SAMKeyEntry(const std::string& str, const std::string& str1 = "", const std::string& str2 = "") : SAMBasicKeyEntry(str, str1, str2)
-			{
-				memset(&d_keyentryinformation, 0x00, sizeof(d_keyentryinformation));
-			}
-
-			/**
-			 * \brief Build a DESFire key given a buffer.
-			 * \param buf The buffer.
-			 * \param buflen The buffer length.
-			 */
-			SAMKeyEntry(const void** buf, size_t buflen, char numberkey) : SAMBasicKeyEntry(buf, buflen, numberkey)
-			{
-				memset(&d_keyentryinformation, 0x00, sizeof(d_keyentryinformation));
-			}
-
-			/**
 			 * \brief Inequality operator
-			 * \param ai DESFire key to compare.
+			 * \param ai SAMKeyEntry key to compare.
 			 * \return True if inequals, false otherwise.
 			 */
 			inline bool operator!=(const SAMKeyEntry& key) const { return !operator==(key); };
@@ -240,5 +228,5 @@ namespace logicalaccess
 	};
 }
 
-#endif /* LOGICALACCESS_DESFIREKEY_HPP */
+#endif /* LOGICALACCESS_SAMKEYENTRY_HPP */
 

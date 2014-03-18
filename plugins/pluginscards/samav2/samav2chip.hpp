@@ -1,7 +1,7 @@
 /**
- * \file desfireev1chip.hpp
- * \author Maxime C. <maxime-dev@islog.com>
- * \brief DESFire EV1 chip.
+ * \file samav2chip.hpp
+ * \author Adrien J. <adrien.jund@islog.com>
+ * \brief SAMAV2Chip header.
  */
 
 #ifndef LOGICALACCESS_SAMAV2CHIP_HPP
@@ -41,5 +41,5 @@ namespace logicalaccess
 	};
 }
 
-#endif /* LOGICALACCESS_DESFIREEV1CHIP_HPP */
+#endif /* LOGICALACCESS_SAMAV2CHIP_HPP */
 

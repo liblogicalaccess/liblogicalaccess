@@ -75,5 +75,5 @@ namespace logicalaccess
 	};
 }
 
-#endif /* LOGICALACCESS_DESFIREEV1CARDPROVIDER_HPP */
+#endif /* LOGICALACCESS_SAMCOMMANDS_HPP */
 
