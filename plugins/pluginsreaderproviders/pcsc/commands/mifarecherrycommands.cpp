@@ -30,9 +30,6 @@ namespace logicalaccess
 	{
 		bool r = false;
 
-		unsigned char result[256];
-		size_t resultlen = 256;
-
 		// To check on Cherry documentation why key #0 failed.
 		if (keyno == 0)
 		{
@@ -60,9 +57,6 @@ namespace logicalaccess
 		command.push_back(blockno);
 		command.push_back(static_cast<unsigned char>(keytype));
 		command.push_back(keyno);
-
-		unsigned char result[256];
-		size_t resultlen = 256;
 
 		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x86, 0x00, 0x00, static_cast<unsigned char>(command.size()), command);
 	}
