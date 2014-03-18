@@ -212,11 +212,6 @@ namespace logicalaccess
 		return keyentry;
 	}
 
-	boost::shared_ptr<SAMKucEntry> SAMAV2ISO7816Commands::getKUCEntry(unsigned char kucno)
-	{
-				return 	boost::shared_ptr<SAMKucEntry>();
-	}
-
 	void SAMAV2ISO7816Commands::changeKUCEntry(unsigned char kucno, boost::shared_ptr<SAMKucEntry> keyentry, boost::shared_ptr<DESFireKey> key)
 	{
 	}

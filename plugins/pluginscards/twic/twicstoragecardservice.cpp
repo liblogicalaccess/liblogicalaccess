@@ -37,7 +37,6 @@ namespace logicalaccess
 		getTwicChip()->getTwicCommands()->selectTWICApplication();
 		if (icLocation->tag == 0x00)
 		{
-			size_t dataObjectLength = dataLength;			
 			std::vector<unsigned char> result = getTwicChip()->getTwicCommands()->getTWICData(icLocation->dataObject);
 			unsigned char *buf = (unsigned char*)data;
 			for (unsigned char x = 0; x < dataLength && x < result.size(); ++x)
