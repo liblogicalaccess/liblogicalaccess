@@ -30,26 +30,26 @@ namespace logicalaccess
 	{
 	}
 
-	void SAMAV2ISO7816Commands::generateSessionKey(std::vector<unsigned char> rnd1, std::vector<unsigned char> rnd2)
+	void SAMAV2ISO7816Commands::generateSessionKey(std::vector<unsigned char> rnda, std::vector<unsigned char> rndb)
 	{
 		std::vector<unsigned char> SV1a(16), SV2a(16), SV1b(16);
 
-		std::copy(rnd1.begin() + 11, rnd1.begin() + 16, SV1a.begin());
-		std::copy(rnd2.begin() + 11, rnd2.begin() + 16, SV1a.begin() + 5);
-		std::copy(rnd1.begin() + 4, rnd1.begin() + 9, SV1a.begin() + 10);
+		std::copy(rnda.begin() + 11, rnda.begin() + 16, SV1a.begin());
+		std::copy(rndb.begin() + 11, rndb.begin() + 16, SV1a.begin() + 5);
+		std::copy(rnda.begin() + 4, rnda.begin() + 9, SV1a.begin() + 10);
 
 		for (unsigned char x = 4; x <= 9; ++x)
 		{
-			SV1a[x + 6] ^= rnd2[x];
+			SV1a[x + 6] ^= rndb[x];
 		}
 
-		std::copy(rnd1.begin() + 7, rnd1.begin() + 12, SV2a.begin());
-		std::copy(rnd2.begin() + 7, rnd2.begin() + 12, SV2a.begin() + 5);
-		std::copy(rnd1.begin(), rnd1.begin() + 5, SV2a.begin() + 10);
+		std::copy(rnda.begin() + 7, rnda.begin() + 12, SV2a.begin());
+		std::copy(rndb.begin() + 7, rndb.begin() + 12, SV2a.begin() + 5);
+		std::copy(rnda.begin(), rnda.begin() + 5, SV2a.begin() + 10);
 
-		for (unsigned char x = 0; x <= 4; ++x)
+		for (unsigned char x = 0; x <= 5; ++x)
 		{
-			SV2a[x + 10] ^= rnd2[x];
+			SV2a[x + 10] ^= rndb[x];
 		}
 
 		SV1a[15] = 0x81; /* AES 128 */
@@ -61,17 +61,18 @@ namespace logicalaccess
 		boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
 
 		cipher->cipher(SV1a, d_sessionKey, *symkey.get(), *iv.get(), false);
-
+		iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastIV)));
 		cipher->cipher(SV2a, d_macSessionKey, *symkey.get(), *iv.get(), false);
 	}
 
 	void SAMAV2ISO7816Commands::authentificateHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno)
 	{
+		unsigned char hostmode = 1;
 		std::vector<unsigned char> result;
 		std::vector<unsigned char> data_p1(3, 0x00);
 		data_p1[0] = keyno;
 		data_p1[1] = key->getKeyVersion();
-		data_p1[2] = 2; //Host Mode: Full Protection
+		data_p1[2] = hostmode; //Host Mode: Full Protection
 
 
 		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xa4, 0x00, 0x00, 0x03, data_p1, 0x00);
@@ -84,7 +85,7 @@ namespace logicalaccess
 
 		/* Create rnd2 for p3 - CMAC: rnd2 | Host Mode | ZeroPad */
 		std::vector<unsigned char>  rnd2(result.begin(), result.begin() + 12);
-		rnd2.push_back(2); //Host Mode: Full Protection
+		rnd2.push_back(hostmode); //Host Mode: Full Protection
 		rnd2.resize(16); //ZeroPad
 
 
@@ -165,31 +166,38 @@ namespace logicalaccess
 		if (!std::equal(SAMrndA.begin(), SAMrndA.begin() + 16, rndA.begin()))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHost P3 RndA from SAM is invalide.");
 
-		generateSessionKey(rnd1, rnd2);
+		generateSessionKey(rndA, dencRndB);
 		d_cmdCtr = 0;
 	}
 
-	std::vector<unsigned char> SAMAV2ISO7816Commands::fullProtectionData(std::vector<unsigned char> cmd, std::vector<unsigned char> data)
+	std::vector<unsigned char> SAMAV2ISO7816Commands::fullProtectionCmd(std::vector<unsigned char> cmd, std::vector<unsigned char> data)
 	{
 		boost::shared_ptr<openssl::SymmetricKey> symkeySession(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_sessionKey)));
-		boost::shared_ptr<openssl::SymmetricKey> symkeyMAC(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_macSessionKey)));
 		boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastIV)));
 		boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
 
-		std::vector<unsigned char> encData, protectedCmd = cmd, encProtectedCmd;
+		std::vector<unsigned char> encData, protectedCmd = cmd, encProtectedCmd, cmdCtrVector, finalFullProtectedCmd = cmd;
 
 		if (data.size())
 		{
+			if (data.size() % 16 != 0)
+				data.resize((data.size() / 16 + 1) * 16);
 			cipher->cipher(data, encData, *symkeySession.get(), *iv.get(), false);
-			protectedCmd.insert(protectedCmd.begin() + 4, encData.begin(), encData.end());
+			protectedCmd.insert(protectedCmd.begin() + 5, encData.begin(), encData.end());
+			finalFullProtectedCmd.insert(finalFullProtectedCmd.begin() + 5, encData.begin(), encData.end());
 		}
 
-		protectedCmd[4] = protectedCmd[4] + encData.size();
-		protectedCmd.insert(protectedCmd.begin() + 2, d_cmdCtr);
+		protectedCmd[4] = encData.size() + 8;
+		finalFullProtectedCmd[4] = encData.size() + 8;
+
+		BufferHelper::setUInt32(cmdCtrVector, d_cmdCtr);
+		protectedCmd.insert(protectedCmd.begin() + 2, cmdCtrVector.begin(), cmdCtrVector.end());
 
 		encProtectedCmd = openssl::CMACCrypto::cmac(d_macSessionKey, cipher, 16, protectedCmd, d_lastIV, 16);
 		truncateMacBuffer(encProtectedCmd);
-		return encProtectedCmd;
+
+		finalFullProtectedCmd.insert(finalFullProtectedCmd.begin() + 5 + encData.size(), encProtectedCmd.begin(), encProtectedCmd.begin() + 8);
+		return finalFullProtectedCmd;
 	}
 
 
@@ -199,20 +207,19 @@ namespace logicalaccess
 		boost::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> > keyentry;
 		KeyEntryAV2Information keyentryinformation;
 
-		/*if (d_sessionKey.size())
+		if (d_sessionKey.size())
 		{
 			std::vector<unsigned char> cmd;
 			cmd.push_back(d_cla);
 			cmd.push_back(0x64);
 			cmd.push_back(keyno);
 			cmd.push_back(0x00);
-			cmd.push_back(0x08);
 			cmd.push_back(0x00);
-			std::vector<unsigned char> encProtectedCmd = fullProtectionData(cmd, std::vector<unsigned char>());
-			cmd.insert(cmd.begin() + 5, encProtectedCmd.begin(), encProtectedCmd.begin() + 8);
-			result = getISO7816ReaderCardAdapter()->sendCommand(cmd);
+			cmd.push_back(0x00);
+			std::vector<unsigned char> encProtectedCmd = fullProtectionCmd(cmd, std::vector<unsigned char>());
+			result = getISO7816ReaderCardAdapter()->sendCommand(encProtectedCmd);
 		}
-		else*/
+		else
 		{
 			result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x64, keyno, 0x00, 0x00);
 			if ((result.size() == 15 || result.size() == 14) &&  result[result.size() - 2] == 0x90 && result[result.size() - 1] == 0x00)
@@ -258,34 +265,32 @@ namespace logicalaccess
 
 	void SAMAV2ISO7816Commands::changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> > keyentry, boost::shared_ptr<DESFireKey> key)
 	{
-		/*std::vector<unsigned char> result;
+		std::vector<unsigned char> result;
 
 		unsigned char proMas = 0;
 		proMas = keyentry->getUpdateMask();
 
-		size_t buffer_size = keyentry->getLength() + sizeof(KeyEntryAV1Information);
+		size_t buffer_size = keyentry->getLength() + sizeof(KeyEntryAV2Information);
 		unsigned char *data = new unsigned char[buffer_size];
 		memset(data, 0, buffer_size);
 
 		memcpy(data, &*(keyentry->getData()), keyentry->getLength());
-		memcpy(data + 48, &keyentry->getKeyEntryInformation(), sizeof(KeyEntryAV1Information));
-		
-		std::vector<unsigned char> iv;
-		iv.resize(16, 0x00);
+		memcpy(data + 48, &keyentry->getKeyEntryInformation(), sizeof(KeyEntryAV2Information));
 
 		std::vector<unsigned char> vectordata(data, data + buffer_size);
 		
-		std::vector<unsigned char> encdatalittle;
-		
-		if (key->getKeyType() == DF_KEY_DES)
-			encdatalittle = d_crypto->sam_encrypt(d_crypto->d_sessionKey, vectordata);
-		else
-			encdatalittle = d_crypto->sam_crc_encrypt(d_crypto->d_sessionKey, vectordata, key);
-
-		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xc1, keyno, proMas, (unsigned char)(encdatalittle.size()), encdatalittle);
+		std::vector<unsigned char> cmd;
+		cmd.push_back(d_cla);
+		cmd.push_back(0xc1);
+		cmd.push_back(keyno);
+		cmd.push_back(proMas);
+		cmd.push_back(0x00);
+		cmd.push_back(0x00);
+		std::vector<unsigned char> encProtectedCmd = fullProtectionCmd(cmd, vectordata);
+		result = getISO7816ReaderCardAdapter()->sendCommand(encProtectedCmd);
 
 		if (result.size() >= 2 &&  (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKeyEntry failed.");*/
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKeyEntry failed.");
 	}
 
 	std::vector<unsigned char> SAMAV2ISO7816Commands::decipherData(std::vector<unsigned char> data, bool islastdata)

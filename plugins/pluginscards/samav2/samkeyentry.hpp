@@ -122,7 +122,7 @@ namespace logicalaccess
 			S getSETStruct()
 			{
 				S set;
-				char *x = (char*)set;
+				char *x = (char*)&set;
 		
 				unsigned char set_save[2];
 				unsigned char j = 0;

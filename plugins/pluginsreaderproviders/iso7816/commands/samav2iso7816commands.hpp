@@ -53,13 +53,13 @@ namespace logicalaccess
 
 			void generateSessionKey(std::vector<unsigned char> rnd1, std::vector<unsigned char> rnd2);
 
-			std::vector<unsigned char> fullProtectionData(std::vector<unsigned char> cmd, std::vector<unsigned char> data);
+			std::vector<unsigned char> fullProtectionCmd(std::vector<unsigned char> cmd, std::vector<unsigned char> data);
 
 			std::vector<unsigned char> d_macSessionKey;
 
 			std::vector<unsigned char> d_lastIV;
 
-			unsigned char d_cmdCtr;
+			unsigned int d_cmdCtr;
 	};
 }
 
