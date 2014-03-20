@@ -100,117 +100,11 @@
 						</goals>
 					</execution>
 					<execution>
-						<id>cmake-cards-Win32</id>
-						<phase>compile</phase>
-						<configuration>
-							<executable>cmake</executable>
-							<workingDirectory>./plugins/pluginscards/</workingDirectory>
-							<arguments>
-								<argument>-DCMAKE_BUILD_TYPE=Release</argument>
-								<argument>-DTARGET_ARCH=Win32</argument>
-								<argument>-GVisual Studio 11</argument>
-								<argument>-Tv110_xp</argument>
-								<argument>.</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>cmake-readers-Win32</id>
-						<phase>compile</phase>
-						<configuration>
-							<executable>cmake</executable>
-							<workingDirectory>./plugins/pluginsreaderproviders/</workingDirectory>
-							<arguments>
-								<argument>-DCMAKE_BUILD_TYPE=Release</argument>
-								<argument>-DTARGET_ARCH=Win32</argument>
-								<argument>-GVisual Studio 11</argument>
-								<argument>-Tv110_xp</argument>
-								<argument>.</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
 						<id>build-Win32</id>
 						<phase>compile</phase>
 						<configuration>
 							<arguments>
 								<argument>liblogicalaccess.sln</argument>
-								<argument>/p:Configuration=Release</argument>
-								<argument>/p:Platform=Win32</argument>
-								<argument>/t:Build</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>clean-cards-sln</id>
-						<phase>clean</phase>
-						<configuration>
-							<workingDirectory>./plugins/pluginscards/</workingDirectory>
-							<successCodes>
-								<successCode>1</successCode>
-								<successCode>0</successCode>
-							</successCodes>
-							<arguments>
-								<argument>pluginscards-liblogicalaccess.sln</argument>
-								<argument>/p:Configuration=Release</argument>
-								<argument>/t:Clean</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>clean-readers-sln</id>
-						<phase>clean</phase>
-						<configuration>
-							<workingDirectory>./plugins/pluginsreaderproviders/</workingDirectory>
-							<successCodes>
-								<successCode>1</successCode>
-								<successCode>0</successCode>
-							</successCodes>
-							<arguments>
-								<argument>pluginsreaders-liblogicalaccess.sln</argument>
-								<argument>/p:Configuration=Release</argument>
-								<argument>/t:Clean</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>					
-					<execution>
-						<id>build-cards-Win32</id>
-						<phase>compile</phase>
-						<configuration>
-							<workingDirectory>./plugins/pluginscards/</workingDirectory>
-							<arguments>
-								<argument>pluginscards-liblogicalaccess.sln</argument>
-								<argument>/p:Configuration=Release</argument>
-								<argument>/p:Platform=Win32</argument>
-								<argument>/t:Build</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>build-readers-Win32</id>
-						<phase>compile</phase>
-						<configuration>
-							<workingDirectory>./plugins/pluginsreaderproviders/</workingDirectory>
-							<arguments>
-								<argument>pluginsreaders-liblogicalaccess.sln</argument>
 								<argument>/p:Configuration=Release</argument>
 								<argument>/p:Platform=Win32</argument>
 								<argument>/t:Build</argument>
@@ -264,79 +158,11 @@
 						</goals>
 					</execution>
 					<execution>
-						<id>cmake-cards-x64</id>
-						<phase>compile</phase>
-						<configuration>
-							<executable>cmake</executable>
-							<workingDirectory>./plugins/pluginscards/</workingDirectory>
-							<arguments>
-								<argument>-DCMAKE_BUILD_TYPE=Release</argument>
-								<argument>-DTARGET_ARCH=x64</argument>
-								<argument>-GVisual Studio 11 Win64</argument>
-								<argument>-Tv110_xp</argument>
-								<argument>.</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>cmake-readers-x64</id>
-						<phase>compile</phase>
-						<configuration>
-							<executable>cmake</executable>
-							<workingDirectory>./plugins/pluginsreaderproviders/</workingDirectory>
-							<arguments>
-								<argument>-DCMAKE_BUILD_TYPE=Release</argument>
-								<argument>-DTARGET_ARCH=x64</argument>
-								<argument>-GVisual Studio 11 Win64</argument>
-								<argument>-Tv110_xp</argument>
-								<argument>.</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
 						<id>build-x64</id>
 						<phase>compile</phase>
 						<configuration>
 							<arguments>
 								<argument>liblogicalaccess.sln</argument>
-								<argument>/p:Configuration=Release</argument>
-								<argument>/p:Platform=x64</argument>
-								<argument>/t:Build</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>build-cards-x64</id>
-						<phase>compile</phase>
-						<configuration>
-							<workingDirectory>./plugins/pluginscards/</workingDirectory>
-							<arguments>
-								<argument>pluginscards-liblogicalaccess.sln</argument>
-								<argument>/p:Configuration=Release</argument>
-								<argument>/p:Platform=x64</argument>
-								<argument>/t:Build</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>build-readers-x64</id>
-						<phase>compile</phase>
-						<configuration>
-							<workingDirectory>./plugins/pluginsreaderproviders/</workingDirectory>
-							<arguments>
-								<argument>pluginsreaders-liblogicalaccess.sln</argument>
 								<argument>/p:Configuration=Release</argument>
 								<argument>/p:Platform=x64</argument>
 								<argument>/t:Build</argument>
