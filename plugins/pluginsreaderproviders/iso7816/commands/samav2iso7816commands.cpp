@@ -32,7 +32,7 @@ namespace logicalaccess
 
 	void SAMAV2ISO7816Commands::generateSessionKey(std::vector<unsigned char> rnda, std::vector<unsigned char> rndb)
 	{
-		std::vector<unsigned char> SV1a(16), SV2a(16), SV1b(16);
+		std::vector<unsigned char> SV1a(16), SV2a(16), SV1b(16), emptyIV(16);
 
 		std::copy(rnda.begin() + 11, rnda.begin() + 16, SV1a.begin());
 		std::copy(rndb.begin() + 11, rndb.begin() + 16, SV1a.begin() + 5);
@@ -57,11 +57,11 @@ namespace logicalaccess
 		/* TODO AES 192 */
 
 		boost::shared_ptr<openssl::SymmetricKey> symkey(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_authKey)));
-		boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastIV)));
+		boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
 		boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
 
 		cipher->cipher(SV1a, d_sessionKey, *symkey.get(), *iv.get(), false);
-		iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastIV)));
+		iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_sessionKey)));
 		cipher->cipher(SV2a, d_macSessionKey, *symkey.get(), *iv.get(), false);
 	}
 
