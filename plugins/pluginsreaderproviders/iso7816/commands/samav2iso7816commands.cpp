@@ -248,16 +248,46 @@ namespace logicalaccess
 
 	std::vector<unsigned char> SAMAV2ISO7816Commands::verifyAndDecryptResponse(std::vector<unsigned char> response)
 	{
+		boost::shared_ptr<openssl::SymmetricKey> symkeySession(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_sessionKey)));
+		boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastIV)));
+		boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
+
+		std::vector<unsigned char> myMac, cmdCtrVector, myEncMac;
+		if (response.size() < 2 + 8)
+			return response;
+
+		std::vector<unsigned char> mac(response.end() - 8 - 2, response.end() - 2);
+
+		myMac.push_back(response[response.size() - 2]);
+		myMac.push_back(response[response.size() - 1]);
+
+		BufferHelper::setUInt32(cmdCtrVector, d_cmdCtr);
+		std::reverse(cmdCtrVector.begin(), cmdCtrVector.end());
+		myMac.insert(myMac.end(), cmdCtrVector.begin(), cmdCtrVector.end());
+
+		if (16 - myMac.size() > 0)
+			myMac.insert(myMac.end(), response.begin(), response.begin() + 16 - myMac.size());
+
+	//	std::copy(response.begin() + 10, response.begin() + 16, myMac.begin());
+
+		myEncMac = openssl::CMACCrypto::cmac(d_macSessionKey, cipher, 16, myMac, d_lastIV, 16);
+		truncateMacBuffer(myEncMac);
+
+		if (!std::equal(myEncMac.begin(), myEncMac.begin() + 8 , mac.begin()))
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "verifyAndDecryptResponse wasnt able to verify the answer of the sam");
 		return std::vector<unsigned char>();
 	}
 
-	std::vector<unsigned char> SAMAV2ISO7816Commands::transmit(std::vector<unsigned char> cmd)
+	std::vector<unsigned char> SAMAV2ISO7816Commands::transmit(std::vector<unsigned char> cmd, bool first)
 	{
 		std::vector<unsigned char> result;
 
 		if (d_sessionKey.size())
 		{
 			result = getISO7816ReaderCardAdapter()->sendCommand(createfullProtectionCmd(cmd));
+			if (first)
+				++d_cmdCtr;
+			result = verifyAndDecryptResponse(result);
 		}
 		else
 			result = getISO7816ReaderCardAdapter()->sendCommand(cmd);
@@ -275,7 +305,7 @@ namespace logicalaccess
 			unsigned char cmd[] = { d_cla, 0x64, keyno, 0x00, 0x00 };
 			std::vector<unsigned char> cmd_vector(cmd, cmd + 5);
 
-			transmit(cmd_vector);
+			transmit(cmd_vector, true);
 		}
 		else
 		{
