@@ -56,18 +56,17 @@ namespace logicalaccess
 		SV2a[15] = 0x82; /* AES 128 */
 		/* TODO AES 192 */
 
-		boost::shared_ptr<openssl::SymmetricKey> symkey(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_authKey)));
+		boost::shared_ptr<openssl::SymmetricKey> symkey(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_macSessionKey)));
 		boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
 		boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
 
 		cipher->cipher(SV1a, d_sessionKey, *symkey.get(), *iv.get(), false);
-		iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_sessionKey)));
 		cipher->cipher(SV2a, d_macSessionKey, *symkey.get(), *iv.get(), false);
 	}
 
 	void SAMAV2ISO7816Commands::authentificateHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno)
 	{
-		unsigned char hostmode = 1;
+		unsigned char hostmode = 2;
 		std::vector<unsigned char> result;
 		std::vector<unsigned char> data_p1(3, 0x00);
 		data_p1[0] = keyno;
@@ -80,6 +79,7 @@ namespace logicalaccess
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHost P1 Failed.");
 
 		std::vector<unsigned char> keycipher(key->getData(), key->getData() + key->getLength());
+		d_macSessionKey = keycipher;
 		boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
 		std::vector<unsigned char> rnd1;
 
@@ -89,7 +89,7 @@ namespace logicalaccess
 		rnd2.resize(16); //ZeroPad
 
 
-		std::vector<unsigned char> macHost = openssl::CMACCrypto::cmac(keycipher, cipher, 16, rnd2, d_lastIV, 16);
+		std::vector<unsigned char> macHost = openssl::CMACCrypto::cmac(d_macSessionKey, cipher, 16, rnd2, d_lastIV, 16);
 		truncateMacBuffer(macHost);
 
 		RAND_seed(&result[0], 12);
@@ -111,7 +111,7 @@ namespace logicalaccess
 		/* Check CMAC - Create rnd1 for p3 - CMAC: rnd1 | P1 | other data */
 		rnd1.insert(rnd1.end(), rnd2.begin() + 12, rnd2.end()); //p2 data without rnd2
 
-		macHost = openssl::CMACCrypto::cmac(keycipher, cipher, 16, rnd1, d_lastIV, 16);
+		macHost = openssl::CMACCrypto::cmac(d_macSessionKey, cipher, 16, rnd1, d_lastIV, 16);
 		truncateMacBuffer(macHost);
 
 		for (unsigned char x = 0; x < 8; ++x)
