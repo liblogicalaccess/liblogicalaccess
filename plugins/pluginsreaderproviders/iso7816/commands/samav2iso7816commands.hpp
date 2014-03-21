@@ -21,6 +21,10 @@
 
 namespace logicalaccess
 {
+	#define AV2_HEADER_LENGTH 0x05
+	#define AV2_HEADER_LENGTH_WITH_LE 0x06
+	#define AV2_LC_POS 0x04
+
 	/**
 	 * \brief The DESFire base commands class.
 	 */
@@ -53,7 +57,13 @@ namespace logicalaccess
 
 			void generateSessionKey(std::vector<unsigned char> rnd1, std::vector<unsigned char> rnd2);
 
-			std::vector<unsigned char> fullProtectionCmd(std::vector<unsigned char> cmd, std::vector<unsigned char> data);
+			std::vector<unsigned char> createfullProtectionCmd(std::vector<unsigned char> cmd);
+
+			std::vector<unsigned char> verifyAndDecryptResponse(std::vector<unsigned char> response);
+
+			void getLcLe(std::vector<unsigned char> cmd, bool& lc, unsigned char& lcvalue, bool& le);
+
+			std::vector<unsigned char> transmit(std::vector<unsigned char> cmd);
 
 			std::vector<unsigned char> d_macSessionKey;
 

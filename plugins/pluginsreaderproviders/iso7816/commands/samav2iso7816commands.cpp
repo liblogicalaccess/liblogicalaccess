@@ -170,21 +170,32 @@ namespace logicalaccess
 		d_cmdCtr = 0;
 	}
 
-	std::vector<unsigned char> SAMAV2ISO7816Commands::fullProtectionCmd(std::vector<unsigned char> cmd, std::vector<unsigned char> data)
+	std::vector<unsigned char> SAMAV2ISO7816Commands::createfullProtectionCmd(std::vector<unsigned char> cmd)
 	{
+		bool lc, le;
+		unsigned char lcvalue;
 		boost::shared_ptr<openssl::SymmetricKey> symkeySession(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_sessionKey)));
 		boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastIV)));
 		boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
+		std::vector<unsigned char> protectedCmd = cmd, encProtectedCmd, cmdCtrVector, finalFullProtectedCmd = cmd, encData;
 
-		std::vector<unsigned char> encData, protectedCmd = cmd, encProtectedCmd, cmdCtrVector, finalFullProtectedCmd = cmd;
+		getLcLe(cmd, lc, lcvalue, le);
 
-		if (data.size())
+
+		if (!lc)
 		{
+			protectedCmd.insert(protectedCmd.begin() + AV2_LC_POS, 0x00);
+			finalFullProtectedCmd.insert(finalFullProtectedCmd.begin() + AV2_LC_POS, 0x00);
+		}
+		else
+		{
+			std::vector<unsigned char> data(cmd.begin() + AV2_HEADER_LENGTH, cmd.begin() +  AV2_HEADER_LENGTH + lcvalue);
+
 			if (data.size() % 16 != 0)
-				data.resize((data.size() / 16 + 1) * 16);
+				data.resize((unsigned char)(data.size() / 16 + 1) * 16);
 			cipher->cipher(data, encData, *symkeySession.get(), *iv.get(), false);
-			protectedCmd.insert(protectedCmd.begin() + 5, encData.begin(), encData.end());
-			finalFullProtectedCmd.insert(finalFullProtectedCmd.begin() + 5, encData.begin(), encData.end());
+			protectedCmd.insert(protectedCmd.begin() + AV2_HEADER_LENGTH, encData.begin(), encData.end());
+			finalFullProtectedCmd.insert(finalFullProtectedCmd.begin() + AV2_HEADER_LENGTH, encData.begin(), encData.end());
 		}
 
 		protectedCmd[4] = encData.size() + 8;
@@ -196,10 +207,62 @@ namespace logicalaccess
 		encProtectedCmd = openssl::CMACCrypto::cmac(d_macSessionKey, cipher, 16, protectedCmd, d_lastIV, 16);
 		truncateMacBuffer(encProtectedCmd);
 
-		finalFullProtectedCmd.insert(finalFullProtectedCmd.begin() + 5 + encData.size(), encProtectedCmd.begin(), encProtectedCmd.begin() + 8);
+		finalFullProtectedCmd.insert(finalFullProtectedCmd.begin() + AV2_HEADER_LENGTH + encData.size(), encProtectedCmd.begin(), encProtectedCmd.begin() + 8);
 		return finalFullProtectedCmd;
 	}
 
+	void SAMAV2ISO7816Commands::getLcLe(std::vector<unsigned char> cmd, bool& lc, unsigned char& lcvalue, bool& le)
+	{
+		if (cmd.size() < AV2_HEADER_LENGTH)
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "getLcLe cmd param is too little.");
+
+		//CLA INS P1 P2
+		if (cmd.size() == AV2_LC_POS)
+		{
+			lc = false;
+			le = false;
+			lcvalue = 0;
+		}
+		//CLA INS P1 P2 LE 
+		else if (cmd.size() == AV2_HEADER_LENGTH)
+		{
+			lc = false;
+			le = true;
+			lcvalue = 0;
+		}
+		//CLA INS P1 P2 LC DATA
+		else if (cmd[AV2_LC_POS] + AV2_HEADER_LENGTH == cmd.size())
+		{
+			lc = true;
+			le = false;
+			lcvalue = cmd[AV2_LC_POS];
+		}
+		// CLA INS P1 P2 LC DATA LE
+		else if (cmd[AV2_LC_POS] + AV2_HEADER_LENGTH_WITH_LE == cmd.size())
+		{
+			lc = true;
+			le = true;
+			lcvalue = cmd[AV2_LC_POS];
+		}
+	}
+
+	std::vector<unsigned char> SAMAV2ISO7816Commands::verifyAndDecryptResponse(std::vector<unsigned char> response)
+	{
+		return std::vector<unsigned char>();
+	}
+
+	std::vector<unsigned char> SAMAV2ISO7816Commands::transmit(std::vector<unsigned char> cmd)
+	{
+		std::vector<unsigned char> result;
+
+		if (d_sessionKey.size())
+		{
+			result = getISO7816ReaderCardAdapter()->sendCommand(createfullProtectionCmd(cmd));
+		}
+		else
+			result = getISO7816ReaderCardAdapter()->sendCommand(cmd);
+		return result;
+	}
 
 	boost::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> > SAMAV2ISO7816Commands::getKeyEntry(unsigned char keyno)
 	{
@@ -209,15 +272,10 @@ namespace logicalaccess
 
 		if (d_sessionKey.size())
 		{
-			std::vector<unsigned char> cmd;
-			cmd.push_back(d_cla);
-			cmd.push_back(0x64);
-			cmd.push_back(keyno);
-			cmd.push_back(0x00);
-			cmd.push_back(0x00);
-			cmd.push_back(0x00);
-			std::vector<unsigned char> encProtectedCmd = fullProtectionCmd(cmd, std::vector<unsigned char>());
-			result = getISO7816ReaderCardAdapter()->sendCommand(encProtectedCmd);
+			unsigned char cmd[] = { d_cla, 0x64, keyno, 0x00, 0x00 };
+			std::vector<unsigned char> cmd_vector(cmd, cmd + 5);
+
+			transmit(cmd_vector);
 		}
 		else
 		{
@@ -265,7 +323,7 @@ namespace logicalaccess
 
 	void SAMAV2ISO7816Commands::changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> > keyentry, boost::shared_ptr<DESFireKey> key)
 	{
-		std::vector<unsigned char> result;
+		/*std::vector<unsigned char> result;
 
 		unsigned char proMas = 0;
 		proMas = keyentry->getUpdateMask();
@@ -290,7 +348,7 @@ namespace logicalaccess
 		result = getISO7816ReaderCardAdapter()->sendCommand(encProtectedCmd);
 
 		if (result.size() >= 2 &&  (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKeyEntry failed.");
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKeyEntry failed.");*/
 	}
 
 	std::vector<unsigned char> SAMAV2ISO7816Commands::decipherData(std::vector<unsigned char> data, bool islastdata)
