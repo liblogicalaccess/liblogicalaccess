@@ -80,6 +80,8 @@ namespace logicalaccess
 					d_cla = DEFAULT_SAM_CLA + x;
 				else
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "No channel available.");
+
+				d_LastSessionIV.resize(16);
 			}
 
 			/**
@@ -335,6 +337,8 @@ namespace logicalaccess
 			std::vector<unsigned char> d_authKey;
 
 			std::vector<unsigned char> d_sessionKey;
+
+			std::vector<unsigned char> d_LastSessionIV;
 
 			void truncateMacBuffer(std::vector<unsigned char>& data)
 			{

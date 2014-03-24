@@ -23,7 +23,7 @@ namespace logicalaccess
 {
 	SAMAV2ISO7816Commands::SAMAV2ISO7816Commands() : d_cmdCtr(0)
 	{
-		d_lastIV.resize(16);
+		d_lastMacIV.resize(16);
 	}
 
 	SAMAV2ISO7816Commands::~SAMAV2ISO7816Commands()
@@ -89,7 +89,7 @@ namespace logicalaccess
 		rnd2.resize(16); //ZeroPad
 
 
-		std::vector<unsigned char> macHost = openssl::CMACCrypto::cmac(d_macSessionKey, cipher, 16, rnd2, d_lastIV, 16);
+		std::vector<unsigned char> macHost = openssl::CMACCrypto::cmac(d_macSessionKey, cipher, 16, rnd2, d_lastMacIV, 16);
 		truncateMacBuffer(macHost);
 
 		RAND_seed(&result[0], 12);
@@ -111,7 +111,7 @@ namespace logicalaccess
 		/* Check CMAC - Create rnd1 for p3 - CMAC: rnd1 | P1 | other data */
 		rnd1.insert(rnd1.end(), rnd2.begin() + 12, rnd2.end()); //p2 data without rnd2
 
-		macHost = openssl::CMACCrypto::cmac(d_macSessionKey, cipher, 16, rnd1, d_lastIV, 16);
+		macHost = openssl::CMACCrypto::cmac(d_macSessionKey, cipher, 16, rnd1, d_lastMacIV, 16);
 		truncateMacBuffer(macHost);
 
 		for (unsigned char x = 0; x < 8; ++x)
@@ -134,7 +134,7 @@ namespace logicalaccess
 
 		//decipher rndB
 		boost::shared_ptr<openssl::SymmetricKey> symkey(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_authKey)));
-		boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastIV)));
+		boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastMacIV)));
 
 		std::vector<unsigned char> encRndB(result.begin() + 8, result.end() - 2);
 		std::vector<unsigned char> dencRndB;
@@ -151,7 +151,7 @@ namespace logicalaccess
 		dataHost.insert(dataHost.end(), rndA.begin(), rndA.end()); //RndA
 		dataHost.insert(dataHost.end(), rndB1.begin(), rndB1.end()); //RndB'
 
-		iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastIV)));
+		iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastMacIV)));
 		cipher->cipher(dataHost, encHost, *symkey.get(), *iv.get(), false);
 
 		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xa4, 0x00, 0x00, 0x20, encHost, 0x00);
@@ -159,7 +159,7 @@ namespace logicalaccess
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHost P3 Failed.");
 
 		std::vector<unsigned char> encSAMrndA(result.begin(), result.end() - 2), SAMrndA;
-		iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastIV)));
+		iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastMacIV)));
 		cipher->decipher(encSAMrndA, SAMrndA, *symkey.get(), *iv.get(), false);
 		SAMrndA.insert(SAMrndA.begin(), SAMrndA.end() - 2, SAMrndA.end());
 
@@ -175,7 +175,7 @@ namespace logicalaccess
 		bool lc, le;
 		unsigned char lcvalue;
 		boost::shared_ptr<openssl::SymmetricKey> symkeySession(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_sessionKey)));
-		boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastIV)));
+		boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastMacIV)));
 		boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
 		std::vector<unsigned char> protectedCmd = cmd, encProtectedCmd, cmdCtrVector, finalFullProtectedCmd = cmd, encData;
 
@@ -193,6 +193,11 @@ namespace logicalaccess
 
 			if (data.size() % 16 != 0)
 				data.resize((unsigned char)(data.size() / 16 + 1) * 16);
+
+			/* generate IV because first decrypt */
+			d_LastSessionIV = generateEncIV(false);
+			iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_LastSessionIV)));
+
 			cipher->cipher(data, encData, *symkeySession.get(), *iv.get(), false);
 			protectedCmd.insert(protectedCmd.begin() + AV2_HEADER_LENGTH, encData.begin(), encData.end());
 			finalFullProtectedCmd.insert(finalFullProtectedCmd.begin() + AV2_HEADER_LENGTH, encData.begin(), encData.end());
@@ -204,7 +209,7 @@ namespace logicalaccess
 		BufferHelper::setUInt32(cmdCtrVector, d_cmdCtr);
 		protectedCmd.insert(protectedCmd.begin() + 2, cmdCtrVector.begin(), cmdCtrVector.end());
 
-		encProtectedCmd = openssl::CMACCrypto::cmac(d_macSessionKey, cipher, 16, protectedCmd, d_lastIV, 16);
+		encProtectedCmd = openssl::CMACCrypto::cmac(d_macSessionKey, cipher, 16, protectedCmd, d_lastMacIV, 16);
 		truncateMacBuffer(encProtectedCmd);
 
 		finalFullProtectedCmd.insert(finalFullProtectedCmd.begin() + AV2_HEADER_LENGTH + encData.size(), encProtectedCmd.begin(), encProtectedCmd.begin() + 8);
@@ -250,10 +255,12 @@ namespace logicalaccess
 	{
 		boost::shared_ptr<openssl::SymmetricKey> symkeySession(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_sessionKey)));
 		boost::shared_ptr<openssl::SymmetricKey> symkeyMac(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_macSessionKey)));
-		boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastIV)));
+		boost::shared_ptr<openssl::InitializationVector> ivMac(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastMacIV)));
+		boost::shared_ptr<openssl::InitializationVector> ivSession(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_LastSessionIV)));
 		boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
 
-		std::vector<unsigned char> myMac, cmdCtrVector, myEncMac;
+		/* begin check mac */
+		std::vector<unsigned char> myMac, cmdCtrVector, myEncMac, data;
 		if (response.size() < 2 + 8)
 			return response;
 
@@ -268,30 +275,95 @@ namespace logicalaccess
 
 		myMac.insert(myMac.end(), response.begin(), response.begin() + 10);
 
-		cipher->cipher(myMac, myEncMac, *symkeyMac.get(), *iv.get(), false);
-		d_lastIV = myEncMac;
+		cipher->cipher(myMac, myEncMac, *symkeyMac.get(), *ivMac.get(), false);
+		d_lastMacIV = myEncMac;
 
 		myEncMac.resize(0);
 		myEncMac.insert(myEncMac.begin(), response.begin() + 10, response.begin() + 16);
 
-		myEncMac = openssl::CMACCrypto::cmac(d_macSessionKey, cipher, 16, myEncMac, d_lastIV, 16);
+		myEncMac = openssl::CMACCrypto::cmac(d_macSessionKey, cipher, 16, myEncMac, d_lastMacIV, 16);
 		truncateMacBuffer(myEncMac);
 
 		if (!std::equal(myEncMac.begin(), myEncMac.begin() + 8 , mac.begin()))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "verifyAndDecryptResponse wasnt able to verify the answer of the sam");
-		return std::vector<unsigned char>();
+
+		if (response.size() > 2 + 8)
+		{
+			/* begin decrypt */
+
+			/* generate IV because first decrypt */
+			d_LastSessionIV = generateEncIV(false);
+			ivSession.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_LastSessionIV)));
+			std::vector<unsigned char> encData(response.begin(), response.end() - 2 - 8);
+
+			cipher->decipher(encData, data, *symkeySession.get(), *ivSession.get(), false);
+
+			unsigned int i = data.size() - 1;
+			for (; i >= 0 && data[i] != 0x80 && data[i] == 0x00; --i);
+			if (i >= 0)
+				data.resize(i);
+		}
+		data.push_back(response[response.size() - 2]);
+		data.push_back(response[response.size() - 1]);
+		return data;
 	}
 
-	std::vector<unsigned char> SAMAV2ISO7816Commands::transmit(std::vector<unsigned char> cmd, bool first)
+	std::vector<unsigned char> SAMAV2ISO7816Commands::generateEncIV(bool encrypt)
+	{
+		std::vector<unsigned char> myIV(4), cmdCtrVector, encIV;
+		BufferHelper::setUInt32(cmdCtrVector, d_cmdCtr);
+		std::reverse(cmdCtrVector.begin(), cmdCtrVector.end());
+
+		if (encrypt)
+		{
+			std::fill(myIV.begin(), myIV.end(), 0x01);
+			for (unsigned char i = 1; i < 4; ++i)
+				myIV.insert(myIV.end(), cmdCtrVector.begin(), cmdCtrVector.end());
+		}
+		else
+		{
+			std::fill(myIV.begin(), myIV.end(), 0x02);
+			for (unsigned char i = 1; i < 4; ++i)
+				myIV.insert(myIV.end(), cmdCtrVector.begin(), cmdCtrVector.end());
+		}
+		
+		boost::shared_ptr<openssl::SymmetricKey> symkeyMac(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_sessionKey)));
+		boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_LastSessionIV)));
+		boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
+
+		cipher->cipher(myIV, encIV, *symkeyMac.get(), *iv.get(), false);
+		return encIV;
+	}
+
+	std::vector<unsigned char> SAMAV2ISO7816Commands::transmit(std::vector<unsigned char> cmd, bool first, bool last)
 	{
 		std::vector<unsigned char> result;
 
 		if (d_sessionKey.size())
 		{
-			result = getISO7816ReaderCardAdapter()->sendCommand(createfullProtectionCmd(cmd));
+			try
+			{
+				result = getISO7816ReaderCardAdapter()->sendCommand(createfullProtectionCmd(cmd));
+			}
+			catch (std::exception)
+			{
+				std::fill(d_sessionKey.begin(), d_sessionKey.end(), 0);
+				std::fill(d_macSessionKey.begin(), d_macSessionKey.end(), 0);
+				std::fill(d_LastSessionIV.begin(), d_LastSessionIV.end(), 0);
+				std::fill(d_lastMacIV.begin(), d_lastMacIV.end(), 0);
+			}
+
 			if (first)
+			{
+				std::fill(d_LastSessionIV.begin(), d_LastSessionIV.end(), 0x00);
+				std::fill(d_lastMacIV.begin(), d_lastMacIV.end(), 0);
 				++d_cmdCtr;
+			}
 			result = verifyAndDecryptResponse(result);
+			if (last)
+			{
+				std::fill(d_lastMacIV.begin(), d_lastMacIV.end(), 0);
+			}
 		}
 		else
 			result = getISO7816ReaderCardAdapter()->sendCommand(cmd);
@@ -303,51 +375,44 @@ namespace logicalaccess
 		std::vector<unsigned char> result;
 		boost::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> > keyentry;
 		KeyEntryAV2Information keyentryinformation;
+		unsigned char cmd[] = { d_cla, 0x64, keyno, 0x00, 0x00 };
+		std::vector<unsigned char> cmd_vector(cmd, cmd + 5);
 
-		if (d_sessionKey.size())
-		{
-			unsigned char cmd[] = { d_cla, 0x64, keyno, 0x00, 0x00 };
-			std::vector<unsigned char> cmd_vector(cmd, cmd + 5);
+		result = transmit(cmd_vector, true, true);
 
-			transmit(cmd_vector, true);
-		}
-		else
+		if ((result.size() == 15 || result.size() == 14) &&  result[result.size() - 2] == 0x90 && result[result.size() - 1] == 0x00)
 		{
-			result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x64, keyno, 0x00, 0x00);
-			if ((result.size() == 15 || result.size() == 14) &&  result[result.size() - 2] == 0x90 && result[result.size() - 1] == 0x00)
+			keyentry.reset(new SAMKeyEntry<KeyEntryAV2Information, SETAV2>());
+			keyentryinformation.ExtSET = result[result.size() - 3];
+			memcpy(keyentryinformation.set, &result[result.size() - 5], 2);
+			keyentry->setSET(keyentryinformation.set);
+
+			keyentryinformation.kuc = result[result.size() - 6];
+			keyentryinformation.cekv = result[result.size() - 7];
+			keyentryinformation.cekno = result[result.size() - 8];
+			keyentryinformation.desfirekeyno =  result[result.size() - 9];
+
+			memcpy(keyentryinformation.desfireAid, &result[result.size() - 12], 3);
+
+
+			if (result.size() == 13)
 			{
-				keyentry.reset(new SAMKeyEntry<KeyEntryAV2Information, SETAV2>());
-				keyentryinformation.ExtSET = result[result.size() - 3];
-				memcpy(keyentryinformation.set, &result[result.size() - 5], 2);
-				keyentry->setSET(keyentryinformation.set);
-
-				keyentryinformation.kuc = result[result.size() - 6];
-				keyentryinformation.cekv = result[result.size() - 7];
-				keyentryinformation.cekno = result[result.size() - 8];
-				keyentryinformation.desfirekeyno =  result[result.size() - 9];
-
-				memcpy(keyentryinformation.desfireAid, &result[result.size() - 12], 3);
-
-
-				if (result.size() == 13)
-				{
-					keyentryinformation.verb = result[result.size() - 13];
-					keyentryinformation.vera = result[result.size() - 14];
-				}
-				else
-				{
-					keyentryinformation.verc = result[result.size() - 13];
-					keyentryinformation.verb = result[result.size() - 14];
-					keyentryinformation.vera = result[result.size() - 15];
-				}
-
-				keyentry->setKeyEntryInformation(keyentryinformation);
-				keyentry->setKeyTypeFromSET();
-				keyentry->setUpdateMask(0);
+				keyentryinformation.verb = result[result.size() - 13];
+				keyentryinformation.vera = result[result.size() - 14];
 			}
 			else
-				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "getKeyEntry failed.");
+			{
+				keyentryinformation.verc = result[result.size() - 13];
+				keyentryinformation.verb = result[result.size() - 14];
+				keyentryinformation.vera = result[result.size() - 15];
+			}
+
+			keyentry->setKeyEntryInformation(keyentryinformation);
+			keyentry->setKeyTypeFromSET();
+			keyentry->setUpdateMask(0);
 		}
+		else
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "getKeyEntry failed.");
 		return keyentry;
 	}
 

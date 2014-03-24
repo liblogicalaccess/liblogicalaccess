@@ -63,11 +63,13 @@ namespace logicalaccess
 
 			void getLcLe(std::vector<unsigned char> cmd, bool& lc, unsigned char& lcvalue, bool& le);
 
-			std::vector<unsigned char> transmit(std::vector<unsigned char> cmd, bool first);
+			std::vector<unsigned char> transmit(std::vector<unsigned char> cmd, bool first, bool last);
+
+			std::vector<unsigned char> generateEncIV(bool encrypt);
 
 			std::vector<unsigned char> d_macSessionKey;
 
-			std::vector<unsigned char> d_lastIV;
+			std::vector<unsigned char> d_lastMacIV;
 
 			unsigned int d_cmdCtr;
 	};
