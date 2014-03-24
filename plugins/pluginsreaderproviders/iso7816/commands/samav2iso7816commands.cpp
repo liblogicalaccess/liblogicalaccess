@@ -249,6 +249,7 @@ namespace logicalaccess
 	std::vector<unsigned char> SAMAV2ISO7816Commands::verifyAndDecryptResponse(std::vector<unsigned char> response)
 	{
 		boost::shared_ptr<openssl::SymmetricKey> symkeySession(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_sessionKey)));
+		boost::shared_ptr<openssl::SymmetricKey> symkeyMac(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_macSessionKey)));
 		boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastIV)));
 		boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
 
@@ -265,12 +266,15 @@ namespace logicalaccess
 		std::reverse(cmdCtrVector.begin(), cmdCtrVector.end());
 		myMac.insert(myMac.end(), cmdCtrVector.begin(), cmdCtrVector.end());
 
-		if (16 - myMac.size() > 0)
-			myMac.insert(myMac.end(), response.begin(), response.begin() + 16 - myMac.size());
+		myMac.insert(myMac.end(), response.begin(), response.begin() + 10);
 
-	//	std::copy(response.begin() + 10, response.begin() + 16, myMac.begin());
+		cipher->cipher(myMac, myEncMac, *symkeyMac.get(), *iv.get(), false);
+		d_lastIV = myEncMac;
 
-		myEncMac = openssl::CMACCrypto::cmac(d_macSessionKey, cipher, 16, myMac, d_lastIV, 16);
+		myEncMac.resize(0);
+		myEncMac.insert(myEncMac.begin(), response.begin() + 10, response.begin() + 16);
+
+		myEncMac = openssl::CMACCrypto::cmac(d_macSessionKey, cipher, 16, myEncMac, d_lastIV, 16);
 		truncateMacBuffer(myEncMac);
 
 		if (!std::equal(myEncMac.begin(), myEncMac.begin() + 8 , mac.begin()))
