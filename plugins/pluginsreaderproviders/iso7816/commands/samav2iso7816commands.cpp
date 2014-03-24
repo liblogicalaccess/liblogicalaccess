@@ -192,10 +192,14 @@ namespace logicalaccess
 			std::vector<unsigned char> data(cmd.begin() + AV2_HEADER_LENGTH, cmd.begin() +  AV2_HEADER_LENGTH + lcvalue);
 
 			if (data.size() % 16 != 0)
-				data.resize((unsigned char)(data.size() / 16 + 1) * 16);
+			{
+				data.push_back(0x80);
+				if (data.size() % 16 != 0)
+					data.resize((unsigned char)(data.size() / 16 + 1) * 16);
+			}
 
 			/* generate IV because first decrypt */
-			d_LastSessionIV = generateEncIV(false);
+			d_LastSessionIV = generateEncIV(true);
 			iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_LastSessionIV)));
 
 			cipher->cipher(data, encData, *symkeySession.get(), *iv.get(), false);
@@ -351,6 +355,7 @@ namespace logicalaccess
 				std::fill(d_macSessionKey.begin(), d_macSessionKey.end(), 0);
 				std::fill(d_LastSessionIV.begin(), d_LastSessionIV.end(), 0);
 				std::fill(d_lastMacIV.begin(), d_lastMacIV.end(), 0);
+				throw;
 			}
 
 			if (first)
@@ -422,7 +427,7 @@ namespace logicalaccess
 
 	void SAMAV2ISO7816Commands::changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> > keyentry, boost::shared_ptr<DESFireKey> key)
 	{
-		/*std::vector<unsigned char> result;
+		std::vector<unsigned char> result;
 
 		unsigned char proMas = 0;
 		proMas = keyentry->getUpdateMask();
@@ -441,13 +446,12 @@ namespace logicalaccess
 		cmd.push_back(0xc1);
 		cmd.push_back(keyno);
 		cmd.push_back(proMas);
-		cmd.push_back(0x00);
-		cmd.push_back(0x00);
-		std::vector<unsigned char> encProtectedCmd = fullProtectionCmd(cmd, vectordata);
-		result = getISO7816ReaderCardAdapter()->sendCommand(encProtectedCmd);
+		cmd.push_back(vectordata.size());
+		cmd.insert(cmd.end(), vectordata.begin(), vectordata.end());
+		result = transmit(cmd, true, true);
 
 		if (result.size() >= 2 &&  (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKeyEntry failed.");*/
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKeyEntry failed.");
 	}
 
 	std::vector<unsigned char> SAMAV2ISO7816Commands::decipherData(std::vector<unsigned char> data, bool islastdata)
