@@ -175,7 +175,7 @@ namespace logicalaccess
 		bool lc, le;
 		unsigned char lcvalue;
 		boost::shared_ptr<openssl::SymmetricKey> symkeySession(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_sessionKey)));
-		boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastMacIV)));
+		boost::shared_ptr<openssl::InitializationVector> ivSession(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_LastSessionIV)));
 		boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
 		std::vector<unsigned char> protectedCmd = cmd, encProtectedCmd, cmdCtrVector, finalFullProtectedCmd = cmd, encData;
 
@@ -190,6 +190,8 @@ namespace logicalaccess
 		else
 		{
 			std::vector<unsigned char> data(cmd.begin() + AV2_HEADER_LENGTH, cmd.begin() +  AV2_HEADER_LENGTH + lcvalue);
+			protectedCmd.erase(protectedCmd.begin() + AV2_HEADER_LENGTH, protectedCmd.begin() +  AV2_HEADER_LENGTH + lcvalue);
+			finalFullProtectedCmd.erase(finalFullProtectedCmd.begin() + AV2_HEADER_LENGTH, finalFullProtectedCmd.begin() +  AV2_HEADER_LENGTH + lcvalue);
 
 			if (data.size() % 16 != 0)
 			{
@@ -198,11 +200,11 @@ namespace logicalaccess
 					data.resize((unsigned char)(data.size() / 16 + 1) * 16);
 			}
 
-			/* generate IV because first decrypt */
+			/* generate IV because first encrypt */
 			d_LastSessionIV = generateEncIV(true);
-			iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_LastSessionIV)));
+			ivSession.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_LastSessionIV)));
 
-			cipher->cipher(data, encData, *symkeySession.get(), *iv.get(), false);
+			cipher->cipher(data, encData, *symkeySession.get(), *ivSession.get(), false);
 			protectedCmd.insert(protectedCmd.begin() + AV2_HEADER_LENGTH, encData.begin(), encData.end());
 			finalFullProtectedCmd.insert(finalFullProtectedCmd.begin() + AV2_HEADER_LENGTH, encData.begin(), encData.end());
 		}
@@ -212,6 +214,19 @@ namespace logicalaccess
 
 		BufferHelper::setUInt32(cmdCtrVector, d_cmdCtr);
 		protectedCmd.insert(protectedCmd.begin() + 2, cmdCtrVector.begin(), cmdCtrVector.end());
+
+		if (lc)
+		{
+			/* Creater our cipher buffer and keep last block */
+			boost::shared_ptr<openssl::SymmetricKey> symkeyMac(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_macSessionKey)));
+			boost::shared_ptr<openssl::InitializationVector> ivMac(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastMacIV)));
+			unsigned char blockReady = (unsigned char)(protectedCmd.size() / 16) * 16;
+			std::vector<unsigned char> encMac(protectedCmd.begin(), protectedCmd.begin() + blockReady), tmp;
+			protectedCmd.erase(protectedCmd.begin(), protectedCmd.begin() + blockReady);
+
+			cipher->cipher(encMac, tmp, *symkeyMac.get(), *ivMac.get(), false);
+			d_lastMacIV.assign(tmp.end() - 16, tmp.end());
+		}
 
 		encProtectedCmd = openssl::CMACCrypto::cmac(d_macSessionKey, cipher, 16, protectedCmd, d_lastMacIV, 16);
 		truncateMacBuffer(encProtectedCmd);
@@ -273,19 +288,25 @@ namespace logicalaccess
 		myMac.push_back(response[response.size() - 2]);
 		myMac.push_back(response[response.size() - 1]);
 
+		/* Set counter*/
 		BufferHelper::setUInt32(cmdCtrVector, d_cmdCtr);
 		std::reverse(cmdCtrVector.begin(), cmdCtrVector.end());
 		myMac.insert(myMac.end(), cmdCtrVector.begin(), cmdCtrVector.end());
 
-		myMac.insert(myMac.end(), response.begin(), response.begin() + 10);
+		if (response.size() != 2 + 8)
+		{
+			/* We have data Creater our cipher buffer and keep last block */
+			myMac.insert(myMac.end(), response.begin(), response.end() - 10);
+			unsigned char blockReady = (unsigned char)(myMac.size() / 16) * 16;
+			std::vector<unsigned char> lastBlock(myMac.begin() + blockReady, myMac.end());
+			myMac.erase(myMac.begin() + blockReady, myMac.end());
 
-		cipher->cipher(myMac, myEncMac, *symkeyMac.get(), *ivMac.get(), false);
-		d_lastMacIV = myEncMac;
+			cipher->cipher(myMac, myEncMac, *symkeyMac.get(), *ivMac.get(), false);
+			d_lastMacIV.assign(myEncMac.end() - 16, myEncMac.end());
+			myMac = lastBlock;
+		}
 
-		myEncMac.resize(0);
-		myEncMac.insert(myEncMac.begin(), response.begin() + 10, response.begin() + 16);
-
-		myEncMac = openssl::CMACCrypto::cmac(d_macSessionKey, cipher, 16, myEncMac, d_lastMacIV, 16);
+		myEncMac = openssl::CMACCrypto::cmac(d_macSessionKey, cipher, 16, myMac, d_lastMacIV, 16);
 		truncateMacBuffer(myEncMac);
 
 		if (!std::equal(myEncMac.begin(), myEncMac.begin() + 8 , mac.begin()))
