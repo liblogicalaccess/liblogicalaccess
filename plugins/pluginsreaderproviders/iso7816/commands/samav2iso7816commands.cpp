@@ -452,6 +452,25 @@ namespace logicalaccess
 		return keyentry;
 	}
 
+	boost::shared_ptr<SAMKucEntry> SAMAV2ISO7816Commands::getKUCEntry(unsigned char kucno)
+	{
+		boost::shared_ptr<SAMKucEntry> kucentry(new SAMKucEntry);
+		unsigned char cmd[] = { d_cla, 0x6c, kucno, 0x00, 0x00 };
+		std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
+
+		result = transmit(cmd_vector, true, true);
+
+		if (result.size() == 12 && (result[result.size() - 2] == 0x90 || result[result.size() - 1] == 0x00))
+		{
+			SAMKUCEntryStruct kucentrys;
+			memcpy(&kucentrys, &result[0], sizeof(SAMKUCEntryStruct));
+			kucentry->setKucEntryStruct(kucentrys);
+		}
+		else
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "getKUCEntry failed.");
+		return kucentry;
+	}
+
 	void SAMAV2ISO7816Commands::changeKUCEntry(unsigned char kucno, boost::shared_ptr<SAMKucEntry> keyentry, boost::shared_ptr<DESFireKey> key)
 	{
 	}
@@ -469,30 +488,16 @@ namespace logicalaccess
 
 		memcpy(data, &*(keyentry->getData()), keyentry->getLength());
 		memcpy(data + 48, &keyentry->getKeyEntryInformation(), sizeof(KeyEntryAV2Information));
-
 		std::vector<unsigned char> vectordata(data, data + buffer_size);
-		
-		std::vector<unsigned char> cmd;
-		cmd.push_back(d_cla);
-		cmd.push_back(0xc1);
-		cmd.push_back(keyno);
-		cmd.push_back(proMas);
-		cmd.push_back(vectordata.size());
-		cmd.insert(cmd.end(), vectordata.begin(), vectordata.end());
-		result = transmit(cmd, true, true);
+
+		unsigned char cmd[] = { d_cla, 0xc1, keyno, proMas, vectordata.size() };
+		std::vector<unsigned char> cmd_vector(cmd, cmd + 5);
+		cmd_vector.insert(cmd_vector.end(), vectordata.begin(), vectordata.end());
+
+		result = transmit(cmd_vector, true, true);
 
 		if (result.size() >= 2 &&  (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKeyEntry failed.");
-	}
-
-	std::vector<unsigned char> SAMAV2ISO7816Commands::decipherData(std::vector<unsigned char> data, bool islastdata)
-	{
-		return std::vector<unsigned char>();
-	}
-
-	std::vector<unsigned char> SAMAV2ISO7816Commands::encipherData(std::vector<unsigned char> data, bool islastdata)
-	{
-		return std::vector<unsigned char>();
 	}
 
 	std::vector<unsigned char> SAMAV2ISO7816Commands::changeKeyPICC(const ChangeKeyInfo& info)

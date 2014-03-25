@@ -44,6 +44,7 @@ namespace logicalaccess
 			virtual ~SAMAV1ISO7816Commands();			
 
 			virtual boost::shared_ptr<SAMKeyEntry<KeyEntryAV1Information, SETAV1> > getKeyEntry(unsigned char keyno);
+			virtual boost::shared_ptr<SAMKucEntry> getKUCEntry(unsigned char kucno);
 
 			virtual void changeKUCEntry(unsigned char kucno, boost::shared_ptr<SAMKucEntry> keyentry, boost::shared_ptr<DESFireKey> key);
 			virtual void changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry<KeyEntryAV1Information, SETAV1> > keyentry, boost::shared_ptr<DESFireKey> key);
@@ -51,9 +52,6 @@ namespace logicalaccess
 			virtual void authentificateHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
 			void authentificateHost_AES_3K3DES(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
 			void authentificateHostDES(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
-
-			virtual std::vector<unsigned char> decipherData(std::vector<unsigned char> data, bool islastdata);
-			virtual std::vector<unsigned char> encipherData(std::vector<unsigned char> data, bool islastdata);
 
 			virtual std::vector<unsigned char> changeKeyPICC(const ChangeKeyInfo& info);
 

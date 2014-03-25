@@ -130,22 +130,45 @@ namespace logicalaccess
 				return info;
 			}
 
-			virtual boost::shared_ptr<SAMKucEntry> getKUCEntry(unsigned char kucno)
+			virtual std::vector<unsigned char> decipherData(std::vector<unsigned char> data, bool islastdata)
 			{
-				boost::shared_ptr<SAMKucEntry> kucentry(new SAMKucEntry);
 				std::vector<unsigned char> result;
+				unsigned char p1 = 0x00;
+				std::vector<unsigned char> datawithlength(3);
 
-				result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x6c, kucno, 0x00, 0x00);
-
-				if (result.size() == 12 && (result[result.size() - 2] == 0x90 || result[result.size() - 1] == 0x00))
-				{
-					SAMKUCEntryStruct kucentrys;
-					memcpy(&kucentrys, &result[0], sizeof(SAMKUCEntryStruct));
-					kucentry->setKucEntryStruct(kucentrys);
-				}
+				if (!islastdata)
+					p1 = 0xaf;
 				else
-					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "getKUCEntry failed.");
-				return kucentry;
+				{
+					datawithlength[0] = (unsigned char)(data.size() & 0xff0000);
+					datawithlength[1] = (unsigned char)(data.size() & 0x00ff00);
+					datawithlength[2] = (unsigned char)(data.size() & 0x0000ff);
+				}
+				datawithlength.insert(datawithlength.end(), data.begin(), data.end());
+
+				result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xdd, p1, 0x00, (unsigned char)(datawithlength.size()), datawithlength, 0x00);
+
+				if (result.size() >= 2 &&  result[result.size() - 2] != 0x90 &&
+					((p1 == 0x00 && result[result.size() - 1] != 0x00) || (p1 == 0xaf && result[result.size() - 1] != 0xaf)))
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "decipherData failed.");
+
+				return std::vector<unsigned char>(result.begin(), result.end() - 2);
+			}
+
+			virtual std::vector<unsigned char> encipherData(std::vector<unsigned char> data, bool islastdata)
+			{
+				std::vector<unsigned char> result;
+				unsigned char p1 = 0x00;
+
+				if (!islastdata)
+					p1 = 0xaf;
+				result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xed, p1, 0x00, (unsigned char)(data.size()), data, 0x00);
+
+				if (result.size() >= 2 &&  result[result.size() - 2] != 0x90 &&
+					((p1 == 0x00 && result[result.size() - 1] != 0x00) || (p1 == 0xaf && result[result.size() - 1] != 0xaf)))
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "encipherData failed.");
+
+				return std::vector<unsigned char>(result.begin(), result.end() - 2);
 			}
 
 			virtual void selectApplication(std::vector<unsigned char> aid)

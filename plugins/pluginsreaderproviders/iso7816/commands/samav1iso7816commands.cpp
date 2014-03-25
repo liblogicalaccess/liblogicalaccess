@@ -75,6 +75,24 @@ namespace logicalaccess
 		return keyentry;
 	}
 
+	boost::shared_ptr<SAMKucEntry> SAMAV1ISO7816Commands::getKUCEntry(unsigned char kucno)
+	{
+		boost::shared_ptr<SAMKucEntry> kucentry(new SAMKucEntry);
+		std::vector<unsigned char> result;
+
+		result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x6c, kucno, 0x00, 0x00);
+
+		if (result.size() == 12 && (result[result.size() - 2] == 0x90 || result[result.size() - 1] == 0x00))
+		{
+			SAMKUCEntryStruct kucentrys;
+			memcpy(&kucentrys, &result[0], sizeof(SAMKUCEntryStruct));
+			kucentry->setKucEntryStruct(kucentrys);
+		}
+		else
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "getKUCEntry failed.");
+		return kucentry;
+	}
+
 	void SAMAV1ISO7816Commands::changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry<KeyEntryAV1Information, SETAV1> > keyentry, boost::shared_ptr<DESFireKey> key)
 	{
 		if (d_crypto->d_sessionKey.size() == 0)
@@ -238,49 +256,6 @@ namespace logicalaccess
 		if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKUCEntry failed.");
 	}
-
-
-	std::vector<unsigned char> SAMAV1ISO7816Commands::decipherData(std::vector<unsigned char> data, bool islastdata)
-	{
-		std::vector<unsigned char> result;
-		unsigned char p1 = 0x00;
-		std::vector<unsigned char> datawithlength(3);
-
-		if (!islastdata)
-			p1 = 0xaf;
-		else
-		{
-			datawithlength[0] = (unsigned char)(data.size() & 0xff0000);
-			datawithlength[1] = (unsigned char)(data.size() & 0x00ff00);
-			datawithlength[2] = (unsigned char)(data.size() & 0x0000ff);
-		}
-		datawithlength.insert(datawithlength.end(), data.begin(), data.end());
-
-		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xdd, p1, 0x00, (unsigned char)(datawithlength.size()), datawithlength, 0x00);
-
-		if (result.size() >= 2 &&  result[result.size() - 2] != 0x90 &&
-			((p1 == 0x00 && result[result.size() - 1] != 0x00) || (p1 == 0xaf && result[result.size() - 1] != 0xaf)))
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "decipherData failed.");
-
-		return std::vector<unsigned char>(result.begin(), result.end() - 2);
-	}
-
-	std::vector<unsigned char> SAMAV1ISO7816Commands::encipherData(std::vector<unsigned char> data, bool islastdata)
-	{
-		std::vector<unsigned char> result;
-		unsigned char p1 = 0x00;
-
-		if (!islastdata)
-			p1 = 0xaf;
-		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xed, p1, 0x00, (unsigned char)(data.size()), data, 0x00);
-
-		if (result.size() >= 2 &&  result[result.size() - 2] != 0x90 &&
-			((p1 == 0x00 && result[result.size() - 1] != 0x00) || (p1 == 0xaf && result[result.size() - 1] != 0xaf)))
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "encipherData failed.");
-
-		return std::vector<unsigned char>(result.begin(), result.end() - 2);
-	}
-
 
 	std::vector<unsigned char> SAMAV1ISO7816Commands::changeKeyPICC(const ChangeKeyInfo& info)
 	{
