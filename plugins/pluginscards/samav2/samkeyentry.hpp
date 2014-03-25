@@ -39,7 +39,7 @@ namespace logicalaccess
 		unsigned char rfu[2];
 		unsigned char authkey;
 		unsigned char disablekeyentry;
-		unsigned char lockey;
+		unsigned char lockkey;
 		unsigned char disablewritekeytopicc;
 		unsigned char disabledecryption;
 		unsigned char disableencryption;

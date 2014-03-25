@@ -67,8 +67,18 @@ namespace logicalaccess
 	void SAMAV2ISO7816Commands::authentificateHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno)
 	{
 		unsigned char hostmode = 2;
-		std::vector<unsigned char> result;
+		std::vector<unsigned char> result, emptyIV(16);
 		std::vector<unsigned char> data_p1(3, 0x00);
+
+		if (key->getKeyType() != DESFireKeyType::DF_KEY_AES)
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHost Only AES Key allowed.");
+
+		/* emptyIV and Clear Key */
+		d_lastMacIV = emptyIV;
+		d_LastSessionIV = emptyIV;
+		d_sessionKey.clear();
+		d_macSessionKey.clear();
+
 		data_p1[0] = keyno;
 		data_p1[1] = key->getKeyVersion();
 		data_p1[2] = hostmode; //Host Mode: Full Protection
