@@ -16,3 +16,9 @@ target_link_libraries(
         basic
         ${LIBLOGICALACCESS_LIBRARIES}
 )
+
+install ( TARGETS basic
+          RUNTIME DESTINATION bin
+          LIBRARY DESTINATION lib${LIB_SUFFIX}
+          ARCHIVE DESTINATION lib${LIB_SUFFIX}
+        )
