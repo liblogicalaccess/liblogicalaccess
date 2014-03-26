@@ -222,7 +222,9 @@ namespace logicalaccess
 		protectedCmd[4] = encData.size() + 8;
 		finalFullProtectedCmd[4] = encData.size() + 8;
 
+		/* Set counter*/
 		BufferHelper::setUInt32(cmdCtrVector, d_cmdCtr);
+		std::reverse(cmdCtrVector.begin(), cmdCtrVector.end());
 		protectedCmd.insert(protectedCmd.begin() + 2, cmdCtrVector.begin(), cmdCtrVector.end());
 
 		if (lc)
@@ -398,6 +400,7 @@ namespace logicalaccess
 			result = verifyAndDecryptResponse(result);
 			if (last)
 			{
+				std::fill(d_LastSessionIV.begin(), d_LastSessionIV.end(), 0x00);
 				std::fill(d_lastMacIV.begin(), d_lastMacIV.end(), 0);
 			}
 		}
