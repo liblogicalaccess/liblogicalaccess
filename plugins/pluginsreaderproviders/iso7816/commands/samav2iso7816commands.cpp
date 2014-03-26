@@ -474,14 +474,26 @@ namespace logicalaccess
 		return kucentry;
 	}
 
-	void SAMAV2ISO7816Commands::changeKUCEntry(unsigned char kucno, boost::shared_ptr<SAMKucEntry> keyentry, boost::shared_ptr<DESFireKey> key)
+	void SAMAV2ISO7816Commands::changeKUCEntry(unsigned char kucno, boost::shared_ptr<SAMKucEntry> kucentry, boost::shared_ptr<DESFireKey> key)
 	{
+		if (d_sessionKey.size() == 0)
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Failed: AuthentificationHost have to be done before use such command.");
+
+		unsigned char cmd[] = { d_cla, 0xcc, kucno, kucentry->getUpdateMask(), 0x06 };
+		std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
+		cmd_vector.insert(cmd_vector.end(), reinterpret_cast<char*>(&kucentry->getKucEntryStruct()), reinterpret_cast<char*>(&kucentry->getKucEntryStruct()) + 6);
+		result = transmit(cmd_vector, true, true);
+
+		if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKUCEntry failed.");
 	}
 
 	void SAMAV2ISO7816Commands::changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> > keyentry, boost::shared_ptr<DESFireKey> key)
 	{
-		std::vector<unsigned char> result;
+		if (d_sessionKey.size() == 0)
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Failed: AuthentificationHost have to be done before use such command.");
 
+		std::vector<unsigned char> result;
 		unsigned char proMas = 0;
 		proMas = keyentry->getUpdateMask();
 
