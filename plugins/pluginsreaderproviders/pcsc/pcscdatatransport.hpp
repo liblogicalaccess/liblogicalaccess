@@ -13,7 +13,7 @@
 
 namespace logicalaccess
 {
-	#define	TRANSPORT_PCSC			"PCSC"
+	#define	TRANSPORT_PCSC	"PCSC"
 
 	/**
 	 * \brief An PCSC data transport class.
@@ -90,13 +90,6 @@ namespace logicalaccess
 			 * \param errorFlag The error flag.
 			 */
 			static void CheckCardError(unsigned int errorFlag);
-
-			/**
-			 * \brief Check the command result and throw exception if needed.
-			 * \param data The result buffer.
-			 * \param datalen The result buffer length.
-			 */
-			virtual void CheckResult(const void* data, size_t datalen) const;
 
 			virtual void send(const std::vector<unsigned char>& data);
 
