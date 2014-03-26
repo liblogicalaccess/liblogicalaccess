@@ -1572,7 +1572,7 @@ namespace logicalaccess
 
 			if (commands)
 			{
-				boost::shared_ptr<DataTransport> dt = getDataTransport();
+				boost::shared_ptr<DataTransport> dt = rca->getDataTransport();
 				if (dt)
 				{
 					dt->setResultChecker(resultChecker);

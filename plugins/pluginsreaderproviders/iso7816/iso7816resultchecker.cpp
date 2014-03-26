@@ -4,7 +4,7 @@
  * \brief ISO7816 result checker.
  */
 
-#include "ISO7816ResultChecker.hpp"
+#include "iso7816resultchecker.hpp"
 
 namespace logicalaccess
 {

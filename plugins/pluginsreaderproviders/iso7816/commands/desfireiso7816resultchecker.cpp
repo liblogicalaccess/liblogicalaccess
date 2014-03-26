@@ -4,7 +4,7 @@
  * \brief DESFire ISO 7816 result checker.
  */
 
-#include "DESFireISO7816ResultChecker.hpp"
+#include "desfireiso7816resultchecker.hpp"
 
 namespace logicalaccess
 {
