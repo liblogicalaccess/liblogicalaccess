@@ -54,10 +54,10 @@ namespace logicalaccess
 		unsigned char desfireNumber;
 		unsigned char isMasterKey;
 		unsigned char oldKeyInvolvement;
-		unsigned char currentKeyNo;
-		unsigned char currentKeyV;
-		unsigned char newKeyNo;
-		unsigned char newKeyV;
+		unsigned char currentKeySlotNo;
+		unsigned char currentKeySlotV;
+		unsigned char newKeySlotNo;
+		unsigned char newKeySlotV;
 	}				ChangeKeyInfo;
 
 	/**

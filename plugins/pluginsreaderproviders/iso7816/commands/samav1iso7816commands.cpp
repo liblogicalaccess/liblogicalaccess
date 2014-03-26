@@ -272,10 +272,10 @@ namespace logicalaccess
 		if (info.isMasterKey)
 			cfg |= 0x10;
 		std::vector<unsigned char> data(4);
-		data[0] = info.currentKeyNo;
-		data[1] = info.currentKeyV;
-		data[2] = info.newKeyNo;
-		data[3] = info.newKeyV;
+		data[0] = info.currentKeySlotNo;
+		data[1] = info.currentKeySlotV;
+		data[2] = info.newKeySlotNo;
+		data[3] = info.newKeySlotV;
 		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xc4, keyCompMeth, cfg, (unsigned char)(data.size()), data, 0x00);
 
 		if (result.size() >= 2 &&  (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))

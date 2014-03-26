@@ -143,10 +143,10 @@ namespace logicalaccess
 
         ChangeKeyInfo samck;
         memset(&samck, 0x00, sizeof(samck));
-        samck.currentKeyNo = 0;
+        samck.currentKeySlotNo = 0;
         samck.isMasterKey = (d_crypto->d_currentAid == 0 && keyno == 0x00) ? 1 : 0;
-        samck.newKeyNo = samsks->getKeySlot();
-        samck.newKeyV = key->getKeyVersion();
+        samck.newKeySlotNo = samsks->getKeySlot();
+        samck.newKeySlotV = key->getKeyVersion();
         samck.desfireNumber = keyno;
         if ((d_crypto->d_currentKeyNo == 0 && keyno == 0) || (d_crypto->d_currentKeyNo == keyno /* && ChangeKey key == 0xE */))
         {
@@ -157,8 +157,8 @@ namespace logicalaccess
             if (oldkey && boost::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage()))
             {
                 boost::shared_ptr<SAMKeyStorage> oldsamks = boost::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage());
-                samck.currentKeyNo = oldsamks->getKeySlot();
-                samck.currentKeyV = oldkey->getKeyVersion();
+                samck.currentKeySlotNo = oldsamks->getKeySlot();
+                samck.currentKeySlotV = oldkey->getKeyVersion();
                 samck.oldKeyInvolvement = 1;
             }
             else
