@@ -73,27 +73,10 @@
 						</goals>
 					</execution>
 					<execution>
-						<id>before-cmake-Win32</id>
-						<phase>compile</phase>
-						<configuration>
-							<executable>scripts/cleancmake.bat</executable>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
 						<id>cmake-Win32</id>
 						<phase>compile</phase>
 						<configuration>
-							<executable>cmake</executable>
-							<arguments>
-								<argument>-DCMAKE_BUILD_TYPE=Release</argument>
-								<argument>-DTARGET_ARCH=Win32</argument>
-								<argument>-GVisual Studio 11</argument>
-								<argument>-Tv110_xp</argument>
-								<argument>.</argument>
-							</arguments>
+							<executable>scripts/GenerateWin32Solutions.bat</executable>
 						</configuration>
 						<goals>
 							<goal>exec</goal>
@@ -131,27 +114,10 @@
 						</goals>
 					</execution>
 					<execution>
-						<id>before-cmake-x64</id>
-						<phase>compile</phase>
-						<configuration>
-							<executable>scripts/cleancmake.bat</executable>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
 						<id>cmake-x64</id>
 						<phase>compile</phase>
 						<configuration>
-							<executable>cmake</executable>
-							<arguments>
-								<argument>-DCMAKE_BUILD_TYPE=Release</argument>
-								<argument>-DTARGET_ARCH=x64</argument>
-								<argument>-GVisual Studio 11 Win64</argument>
-								<argument>-Tv110_xp</argument>
-								<argument>.</argument>
-							</arguments>
+							<executable>scripts/GenerateX64Solutions.bat</executable>
 						</configuration>
 						<goals>
 							<goal>exec</goal>
