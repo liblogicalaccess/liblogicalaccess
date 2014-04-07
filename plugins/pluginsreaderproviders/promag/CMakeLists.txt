@@ -25,9 +25,9 @@ SET_TARGET_PROPERTIES(promagreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSIO
   
 target_link_libraries(
 	promagreaders
-	logicalaccess
+	${LIBLOGICALACCESS_LIBRARY}
 )
 
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/promag )
 install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/promag/readercardadapters )
-install ( TARGETS promagreaders RUNTIME DESTINATION bin ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS promagreaders RUNTIME DESTINATION bin/${TARGET_ARCH} ARCHIVE DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess )

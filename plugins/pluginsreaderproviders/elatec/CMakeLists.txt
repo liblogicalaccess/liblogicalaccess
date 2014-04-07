@@ -24,9 +24,9 @@ SET_TARGET_PROPERTIES(elatecreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSIO
   
 target_link_libraries(
 	elatecreaders
-	logicalaccess
+	${LIBLOGICALACCESS_LIBRARY}
 )
 
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/elatec )
 install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/elatec/readercardadapters )
-install ( TARGETS elatecreaders RUNTIME DESTINATION bin ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS elatecreaders RUNTIME DESTINATION bin/${TARGET_ARCH} ARCHIVE DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess )

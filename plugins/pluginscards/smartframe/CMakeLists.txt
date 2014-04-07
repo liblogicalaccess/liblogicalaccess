@@ -16,8 +16,8 @@ SET_TARGET_PROPERTIES(smartframecards PROPERTIES VERSION ${LIBLOGICALACCESS_VERS
 
 target_link_libraries(
 	smartframecards
-	logicalaccess
+	${LIBLOGICALACCESS_LIBRARY}
 )
 
 install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/smartframe )
-install ( TARGETS smartframecards RUNTIME DESTINATION bin ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS smartframecards RUNTIME DESTINATION bin/${TARGET_ARCH} ARCHIVE DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess )

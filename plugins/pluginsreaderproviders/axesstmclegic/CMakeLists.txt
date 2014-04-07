@@ -24,9 +24,9 @@ SET_TARGET_PROPERTIES(axesstmclegicreaders PROPERTIES VERSION ${LIBLOGICALACCESS
 
 target_link_libraries(
 	axesstmclegicreaders
-	logicalaccess
+	${LIBLOGICALACCESS_LIBRARY}
 )
 
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/axesstmclegic )
 install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/axesstmclegic/readercardadapters )
-install ( TARGETS axesstmclegicreaders RUNTIME DESTINATION bin ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS axesstmclegicreaders RUNTIME DESTINATION bin/${TARGET_ARCH} ARCHIVE DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess )

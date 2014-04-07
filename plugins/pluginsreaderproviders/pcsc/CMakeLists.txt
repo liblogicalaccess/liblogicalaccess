@@ -75,7 +75,7 @@ target_link_libraries(
 	iso7816cards
 	iso15693cards
 	proxcards
-	logicalaccess
+	${LIBLOGICALACCESS_LIBRARY}
 	${LINK_OPT}
 )
 
@@ -83,6 +83,6 @@ install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/pcs
 install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/pcsc/readercardadapters )
 install ( FILES ${include_commands} DESTINATION include/logicalaccess/plugins/readers/pcsc/commands )
 install ( FILES ${include_readers} DESTINATION include/logicalaccess/plugins/readers/pcsc/readers )
-install ( TARGETS pcscreaders RUNTIME DESTINATION bin ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS pcscreaders RUNTIME DESTINATION bin/${TARGET_ARCH} ARCHIVE DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess )
 
 

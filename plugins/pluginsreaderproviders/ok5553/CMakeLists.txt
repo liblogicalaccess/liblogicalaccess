@@ -50,12 +50,12 @@ target_link_libraries(
 	twiccards
 	iso7816readers
 	iso7816cards
-	logicalaccess
+	${LIBLOGICALACCESS_LIBRARY}
 )
 
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/ok5553 )
 install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/ok5553/readercardadapters )
 install ( FILES ${include_commands} DESTINATION include/logicalaccess/plugins/readers/ok5553/commands )
-install ( TARGETS ok5553readers RUNTIME DESTINATION bin ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS ok5553readers RUNTIME DESTINATION bin/${TARGET_ARCH} ARCHIVE DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess )
 
 

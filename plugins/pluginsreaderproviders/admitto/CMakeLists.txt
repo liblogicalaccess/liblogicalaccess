@@ -24,9 +24,9 @@ SET_TARGET_PROPERTIES(admittoreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSI
 
 target_link_libraries(
 	admittoreaders
-	logicalaccess
+	${LIBLOGICALACCESS_LIBRARY}
 )
 
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/admitto )
 install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/admitto/readercardadapters )
-install ( TARGETS admittoreaders RUNTIME DESTINATION bin ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS admittoreaders RUNTIME DESTINATION bin/${TARGET_ARCH} ARCHIVE DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess )

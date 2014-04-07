@@ -16,8 +16,8 @@ SET_TARGET_PROPERTIES(twiccards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_ST
 target_link_libraries(
 	twiccards
 	iso7816cards
-	logicalaccess
+	${LIBLOGICALACCESS_LIBRARY}
 )
 
 install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/twic )
-install ( TARGETS twiccards RUNTIME DESTINATION bin ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS twiccards RUNTIME DESTINATION bin/${TARGET_ARCH} ARCHIVE DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess )

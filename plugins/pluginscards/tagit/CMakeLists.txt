@@ -17,8 +17,8 @@ SET_TARGET_PROPERTIES(tagitcards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_S
 target_link_libraries(
 	tagitcards
 	iso15693cards
-	logicalaccess
+	${LIBLOGICALACCESS_LIBRARY}
 )
 
 install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/tagit )
-install ( TARGETS tagitcards RUNTIME DESTINATION bin ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS tagitcards RUNTIME DESTINATION bin/${TARGET_ARCH} ARCHIVE DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess )

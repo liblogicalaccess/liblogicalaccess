@@ -11,11 +11,11 @@ set(LIBLOGICALACCESS_VERSION_MAJOR 1)
 set(LIBLOGICALACCESS_VERSION_MINOR 74)
 set(LIBLOGICALACCESS_VERSION_STRING ${LIBLOGICALACCESS_VERSION_MAJOR}.${LIBLOGICALACCESS_VERSION_MINOR} )
 
-if (NOT TARGET_ARCH)
-	set(TARGET_ARCH "Win32")
-endif()
-
 if (MSVC)
+	if (NOT TARGET_ARCH)
+		set(TARGET_ARCH "Win32")
+	endif()
+
     SET(BOOST_LIBRARYDIR ${CMAKE_CURRENT_SOURCE_DIR}/packages/lib/${TARGET_ARCH})
     SET(BOOST_INCLUDEDIR ${CMAKE_CURRENT_SOURCE_DIR}/packages/include)
     SET(Boost_USE_STATIC_LIBS ON)
@@ -121,11 +121,15 @@ INCLUDE_DIRECTORIES(${NATIVE_INCLUDE} ${CMAKE_CURRENT_SOURCE_DIR}/plugins/crypto
 
 if(UNIX)
 
+set(LIBLOGICALACCESS_LIBRARY logicalaccess)
+
 file(GLOB source_dynlibrary ${NATIVE_SOURCE}/dynlibrary/posixdynlibrary.cpp ${NATIVE_SOURCE}/dynlibrary/librarymanager.cpp)
 INCLUDE_DIRECTORIES("/usr/local/include")
 file(GLOB include_dynlibrary ${NATIVE_INCLUDE}/logicalaccess/dynlibrary/posixdynlibrary.hpp ${NATIVE_INCLUDE}/logicalaccess/dynlibrary/idynlibrary.hpp ${NATIVE_INCLUDE}/logicalaccess/dynlibrary/librarymanager.hpp)
 
 else()
+
+set(LIBLOGICALACCESS_LIBRARY liblogicalaccess)
 
 file(GLOB source_vc ${CMAKE_CURRENT_SOURCE_DIR}/vc++/*.cpp)
 file(GLOB source_dynlibrary ${NATIVE_SOURCE}/dynlibrary/windowsdynlibrary.cpp ${NATIVE_SOURCE}/dynlibrary/winclass.cpp ${NATIVE_SOURCE}/dynlibrary/librarymanager.cpp)
@@ -177,24 +181,22 @@ set(include ${include_root} ${include_cards} ${include_readerproviders} ${includ
 
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_CURRENT_SOURCE_DIR}/plugins/cryptolib/${VC_FOLDER_NAME}")
 
-set(LIBLOGICALACCESS_LIBRARY logicalaccess)
-
 add_library(
-  logicalaccess
+  ${LIBLOGICALACCESS_LIBRARY}
   ${source}
   ${include}
 )
 
-install ( TARGETS logicalaccess
-          RUNTIME DESTINATION bin
-          LIBRARY DESTINATION lib${LIB_SUFFIX}
-          ARCHIVE DESTINATION lib${LIB_SUFFIX}
+install ( TARGETS ${LIBLOGICALACCESS_LIBRARY}
+          RUNTIME DESTINATION bin/${TARGET_ARCH}
+          LIBRARY DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}
+          ARCHIVE DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}
         )
 
 
-SET_TARGET_PROPERTIES(logicalaccess PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
-target_link_libraries(logicalaccess ${OPENSSL_LIBRARIES})
-target_link_libraries(logicalaccess ${ZLIB_LIBRARIES})
+SET_TARGET_PROPERTIES(${LIBLOGICALACCESS_LIBRARY} PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
+target_link_libraries(${LIBLOGICALACCESS_LIBRARY} ${OPENSSL_LIBRARIES})
+target_link_libraries(${LIBLOGICALACCESS_LIBRARY} ${ZLIB_LIBRARIES})
 
 
 if (WIN32)
@@ -204,10 +206,10 @@ if (WIN32)
 	set (SCLIB_ENDNAME "x64")
   endif()
 
-  target_link_libraries(logicalaccess winscard scardsyn${SCLIB_ENDNAME} Winmm ws2_32 delayimp logicalaccess-cryptolib)
+  target_link_libraries(${LIBLOGICALACCESS_LIBRARY} winscard scardsyn${SCLIB_ENDNAME} Winmm ws2_32 delayimp logicalaccess-cryptolib)
 
 elseif (UNIX)
-	target_link_libraries(logicalaccess logicalaccess-cryptolib ${Boost_LIBRARIES} ${CMAKE_DL_LIBS})
+	target_link_libraries(${LIBLOGICALACCESS_LIBRARY} logicalaccess-cryptolib ${Boost_LIBRARIES} ${CMAKE_DL_LIBS})
 endif()
 
 add_subdirectory(plugins/cryptolib)

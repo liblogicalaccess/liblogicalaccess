@@ -12,7 +12,7 @@ add_library(
   )
 
 if (WIN32)
-  set(LINK_OPT logicalaccess)
+  set(LINK_OPT ${LIBLOGICALACCESS_LIBRARY})
 endif()
   
 SET_TARGET_PROPERTIES(desfirecards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
@@ -27,4 +27,4 @@ if (MSVC)
 endif()
 
 install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/desfire )
-install ( TARGETS desfirecards RUNTIME DESTINATION bin ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS desfirecards RUNTIME DESTINATION bin/${TARGET_ARCH} ARCHIVE DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess )

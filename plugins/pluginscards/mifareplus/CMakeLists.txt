@@ -26,10 +26,10 @@ SET_TARGET_PROPERTIES(mifarepluscards PROPERTIES VERSION ${LIBLOGICALACCESS_VERS
 
 target_link_libraries(
 	mifarepluscards
-	logicalaccess
+	${LIBLOGICALACCESS_LIBRARY}
 	mifarecards
 	desfirecards
 )
 
 install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/mifareplus )
-install ( TARGETS mifarepluscards RUNTIME DESTINATION bin ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS mifarepluscards RUNTIME DESTINATION bin/${TARGET_ARCH} ARCHIVE DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess )

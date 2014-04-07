@@ -41,10 +41,10 @@ SET_TARGET_PROPERTIES(idondemandreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VE
 target_link_libraries(
 	idondemandreaders
 	generictagcards
-	logicalaccess
+	${LIBLOGICALACCESS_LIBRARY}
 )
 
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/idondemand )
 install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/idondemand/readercardadapters )
 install ( FILES ${include_commands} DESTINATION include/logicalaccess/plugins/readers/idondemand/commands )
-install ( TARGETS idondemandreaders RUNTIME DESTINATION bin ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS idondemandreaders RUNTIME DESTINATION bin/${TARGET_ARCH} ARCHIVE DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess )

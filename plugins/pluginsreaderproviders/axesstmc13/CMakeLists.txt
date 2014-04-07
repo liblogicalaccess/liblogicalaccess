@@ -25,9 +25,9 @@ SET_TARGET_PROPERTIES(axesstmc13readers PROPERTIES VERSION ${LIBLOGICALACCESS_VE
   
 target_link_libraries(
 	axesstmc13readers
-	logicalaccess
+	${LIBLOGICALACCESS_LIBRARY}
 )
 
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/axesstmc13 )
 install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/axesstmc13/readercardadapters )
-install ( TARGETS axesstmc13readers RUNTIME DESTINATION bin ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS axesstmc13readers RUNTIME DESTINATION bin/${TARGET_ARCH} ARCHIVE DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess )

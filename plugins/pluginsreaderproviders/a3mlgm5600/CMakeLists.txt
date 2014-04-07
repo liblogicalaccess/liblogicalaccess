@@ -26,10 +26,10 @@ SET_TARGET_PROPERTIES(a3mlgm5600readers PROPERTIES VERSION ${LIBLOGICALACCESS_VE
 
 target_link_libraries(
     a3mlgm5600readers
-    logicalaccess
+    ${LIBLOGICALACCESS_LIBRARY}
     ${LINK_OPT}
 )
 
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/a3mlgm5600 )
 install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/a3mlgm5600/readercardadapters )
-install ( TARGETS a3mlgm5600readers RUNTIME DESTINATION bin ARCHIVE DESTINATION lib${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS a3mlgm5600readers RUNTIME DESTINATION bin/${TARGET_ARCH} ARCHIVE DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess )
