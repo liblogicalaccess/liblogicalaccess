@@ -4,7 +4,7 @@
  * \brief SAM ISO7816 result checker.
  */
 
-#include "SAMISO7816ResultChecker.hpp"
+#include "samiso7816resultchecker.hpp"
 
 namespace logicalaccess
 {

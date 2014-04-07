@@ -4,7 +4,7 @@
  * \brief DESFire ISO 7816 result checker.
  */
 
-#include "MifareOmnikeyXX27ResultChecker.hpp"
+#include "mifareomnikeyxx27resultchecker.hpp"
 
 namespace logicalaccess
 {

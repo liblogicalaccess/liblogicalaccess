@@ -86,13 +86,13 @@ namespace logicalaccess
 			 * \brief Get the result checker.
 			 * \return The result checker.
 			 */
-			virtual boost::shared_ptr<ResultChecker> getResultChecker() const { return d_ResultChecker.lock(); };
+			virtual boost::shared_ptr<ResultChecker> getResultChecker() const { return d_ResultChecker; };
 
 			/**
 			 * \brief Set the result checker.
 			 * \param unit The result checker.
 			 */
-			virtual void setResultChecker(boost::weak_ptr<ResultChecker> checker){ d_ResultChecker = checker; };
+			virtual void setResultChecker(boost::shared_ptr<ResultChecker> checker){ d_ResultChecker = checker; };
 
 		protected:
 
@@ -118,7 +118,7 @@ namespace logicalaccess
 			/**
 			 * \brief The result checker.
 			 */
-			boost::weak_ptr<ResultChecker> d_ResultChecker;
+			boost::shared_ptr<ResultChecker> d_ResultChecker;
 	};
 
 }

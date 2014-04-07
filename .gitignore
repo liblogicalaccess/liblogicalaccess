@@ -35,3 +35,5 @@ cmake_install.cmake
 /Plugins/PluginsReaderProviders/Keyboard/islogkbdhooklib/islogkbdhooklib
 /Plugins/PluginsReaderProviders/Keyboard/islogkbdhook/islogkbdhook
 LibLogicalAccessConfig.cmake
+install
+install_manifest.txt
