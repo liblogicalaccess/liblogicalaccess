@@ -5,8 +5,6 @@ project(basic CXX)
 find_package(LibLogicalAccess NO_MODULE REQUIRED)
 include(${LIBLOGICALACCESS_USE_FILE})
 
-#add_definitions(${LIBLOGICALACCESS_USE_FILE})
-
 SET(SOURCE basic.cpp)
 
 add_executable(
