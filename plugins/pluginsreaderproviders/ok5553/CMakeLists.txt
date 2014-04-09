@@ -1,10 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 project(ok5553readers)
 
-if (NOT TARGET_ARCH)
-	set(TARGET_ARCH "Win32")
-endif()
-
 set(INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare
 		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso7816
 		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifareultralight
