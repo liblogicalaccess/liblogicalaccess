@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 project(basic CXX)
 
 find_package(LibLogicalAccess NO_MODULE REQUIRED)
-include(${LIBLOGICALACCESS_USE_FILE})
+include(${LIBLOGICALACCESS_USE_FILE}/..)
 
 SET(SOURCE basic.cpp)
 
