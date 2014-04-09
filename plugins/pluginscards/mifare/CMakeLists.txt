@@ -19,4 +19,4 @@ target_link_libraries(
 )
 
 install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/mifare )
-install ( TARGETS mifarecards RUNTIME DESTINATION bin/${TARGET_ARCH} ARCHIVE DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS mifarecards RUNTIME DESTINATION bin/${TARGET_ARCH}/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX} LIBRARY DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX} )

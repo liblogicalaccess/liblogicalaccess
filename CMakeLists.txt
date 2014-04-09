@@ -114,9 +114,6 @@ file(GLOB include_customformat ${NATIVE_INCLUDE}/logicalaccess/services/accessco
 file(GLOB include_nfctag ${NATIVE_INCLUDE}/logicalaccess/services/nfctag/*.hpp)
 file(GLOB include_storage ${NATIVE_INCLUDE}/logicalaccess/services/storage/*.hpp)
 
-#Includes Plugins Files
-file(GLOB_RECURSE include_plugins ${CMAKE_CURRENT_SOURCE_DIR}/plugins/*.hpp)
-
 INCLUDE_DIRECTORIES(${NATIVE_INCLUDE} ${CMAKE_CURRENT_SOURCE_DIR}/plugins/cryptolib/include)
 
 if(UNIX)
@@ -162,17 +159,17 @@ install ( FILES LICENSE.LibLogicalAccess.txt DESTINATION share/licenses/liblogic
 
 set(LIBLOGICALACCESS_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include/logicalaccess)
 
-install ( FILES ${include_root} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess )
-install ( FILES ${include_cards} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/cards )
-install ( FILES ${include_readerproviders} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/readerproviders )
-install ( FILES ${include_service} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services )
-install ( FILES ${include_accesscontrol} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/accesscontrol )
-install ( FILES ${include_encodings} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/accesscontrol/encodings )
-install ( FILES ${include_formats} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/accesscontrol/formats )
-install ( FILES ${include_customformat} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/accesscontrol/formats/customformat )
-install ( FILES ${include_nfctag} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/nfctag )
-install ( FILES ${include_dynlibrary} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/dynlibrary )
-install ( FILES ${include_storage} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/storage )
+install ( FILES ${include_root} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR} )
+install ( FILES ${include_cards} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/cards )
+install ( FILES ${include_readerproviders} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/readerproviders )
+install ( FILES ${include_service} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/services )
+install ( FILES ${include_accesscontrol} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/services/accesscontrol )
+install ( FILES ${include_encodings} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/services/accesscontrol/encodings )
+install ( FILES ${include_formats} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/services/accesscontrol/formats )
+install ( FILES ${include_customformat} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/services/accesscontrol/formats/customformat )
+install ( FILES ${include_nfctag} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/services/nfctag )
+install ( FILES ${include_dynlibrary} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/dynlibrary )
+install ( FILES ${include_storage} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/services/storage )
 
 
 set(source ${source_vc} ${source_root} ${source_cards} ${source_readerproviders}  ${source_service} ${source_accesscontrol} ${source_encodings} ${source_formats} ${source_customformat} ${source_nfctag} ${source_dynlibrary})
@@ -217,7 +214,7 @@ add_subdirectory(plugins/pluginscards)
 add_subdirectory(plugins/pluginsreaderproviders)
 
 if ( NOT DEFINED LIBLOGICALACCESS_CMAKE_CONFIG_DIR )
-  set ( LIBLOGICALACCESS_CMAKE_CONFIG_DIR lib${LIB_SUFFIX}/cmake/liblogicalaccess )
+  set ( LIBLOGICALACCESS_CMAKE_CONFIG_DIR lib/${LIB_SUFFIX}/cmake/liblogicalaccess )
 endif ()
 set(LIBLOGICALACCESS_DEFINITIONS "${CXX11_FLAGS}")
 set ( LIBLOGICALACCESS_INCLUDE_DIRS ${LIBLOGICALACCESS_INCLUDE_DIR} )

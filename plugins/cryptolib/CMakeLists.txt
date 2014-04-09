@@ -13,14 +13,15 @@ file(GLOB_RECURSE SRCS src/*.cpp)
 file(GLOB_RECURSE HDRS include/*.h)
 file(GLOB_RECURSE HDPPRS include/*.hpp)
 
+set(INCLUDE ${HDRS} ${HDPPRS} )
+
 add_library(
 	logicalaccess-cryptolib
 	STATIC
 	${SRCS}
-	${HDRS}
-	${HDPPRS}
+	${INCLUDE}
   )
   
  
-install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cryptolib )
+install ( FILES ${INCLUDE} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/cryptolib )
 

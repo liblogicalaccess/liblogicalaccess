@@ -29,4 +29,4 @@ target_link_libraries(
 
 install ( FILES ${include} ${includepp} DESTINATION include/logicalaccess/plugins/readers/sciel )
 install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/sciel/readercardadapters )
-install ( TARGETS scielreaders RUNTIME DESTINATION bin/${TARGET_ARCH} ARCHIVE DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS scielreaders RUNTIME DESTINATION bin/${TARGET_ARCH}/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX} LIBRARY DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX} )

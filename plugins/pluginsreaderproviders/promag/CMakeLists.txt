@@ -30,4 +30,4 @@ target_link_libraries(
 
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/promag )
 install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/promag/readercardadapters )
-install ( TARGETS promagreaders RUNTIME DESTINATION bin/${TARGET_ARCH} ARCHIVE DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess LIBRARY DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}/logicalaccess )
+install ( TARGETS promagreaders RUNTIME DESTINATION bin/${TARGET_ARCH}/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX} LIBRARY DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX} )
