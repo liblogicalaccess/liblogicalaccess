@@ -3,12 +3,9 @@ cmake_minimum_required(VERSION 2.8)
 project(basic CXX)
 
 find_package(LibLogicalAccess NO_MODULE REQUIRED)
-include(${LIBLOGICALACCESS_USE_FILE}/..)
-message(${LIBLOGICALACCESS_USE_FILE})
-if(UNIX)
-  set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wextra")
-  add_definitions(-DUNIX)
-endif()
+include(${LIBLOGICALACCESS_USE_FILE})
+
+add_definitions(${LIBLOGICALACCESS_USE_FILE})
 
 SET(SOURCE basic.cpp)
 
