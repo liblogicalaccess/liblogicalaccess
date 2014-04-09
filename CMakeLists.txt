@@ -185,7 +185,7 @@ add_library(
 )
 
 install ( TARGETS ${LIBLOGICALACCESS_LIBRARY}
-          RUNTIME DESTINATION bin/${TARGET_ARCH}
+          RUNTIME DESTINATION bin/${TARGET_ARCH}/${LIB_SUFFIX}
           LIBRARY DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}
           ARCHIVE DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX}
         )
@@ -214,7 +214,7 @@ add_subdirectory(plugins/pluginscards)
 add_subdirectory(plugins/pluginsreaderproviders)
 
 if ( NOT DEFINED LIBLOGICALACCESS_CMAKE_CONFIG_DIR )
-  set ( LIBLOGICALACCESS_CMAKE_CONFIG_DIR lib/${LIB_SUFFIX}/cmake/liblogicalaccess )
+  set ( LIBLOGICALACCESS_CMAKE_CONFIG_DIR lib/${TARGET_ARCH}/${LIB_SUFFIX}/cmake/liblogicalaccess )
 endif ()
 set(LIBLOGICALACCESS_DEFINITIONS "${CXX11_FLAGS}")
 set ( LIBLOGICALACCESS_INCLUDE_DIRS ${LIBLOGICALACCESS_INCLUDE_DIR} )

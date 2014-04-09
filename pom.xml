@@ -63,7 +63,7 @@
 								<successCode>0</successCode>
 							</successCodes>
 							<arguments>
-								<argument>liblogicalaccess.sln</argument>
+								<argument>INSTALL.vcxproj</argument>
 								<argument>/p:Configuration=Release</argument>
 								<argument>/t:Clean</argument>
 							</arguments>
@@ -87,7 +87,7 @@
 						<phase>compile</phase>
 						<configuration>
 							<arguments>
-								<argument>liblogicalaccess.sln</argument>
+								<argument>INSTALL.vcxproj</argument>
 								<argument>/p:Configuration=Release</argument>
 								<argument>/p:Platform=Win32</argument>
 								<argument>/t:Build</argument>
@@ -128,7 +128,7 @@
 						<phase>compile</phase>
 						<configuration>
 							<arguments>
-								<argument>liblogicalaccess.sln</argument>
+								<argument>INSTALL.vcxproj</argument>
 								<argument>/p:Configuration=Release</argument>
 								<argument>/p:Platform=x64</argument>
 								<argument>/t:Build</argument>
@@ -239,24 +239,10 @@
 						<configuration>
 							<tasks>
 								<copy todir="${project.basedir}/bin/plugins/Win32/Release" flatten="true">
-									<fileset dir="${project.basedir}/plugins/pluginscards">
-										<include name="**/bin/Win32/Release/*.lib"/>
-										<include name="**/bin/Win32/Release/*.dll"/>
-										<include name="**/bin/Win32/Release/*.exe"/>
-									</fileset>
-								</copy>
-								<copy todir="${project.basedir}/bin/plugins/Win32/Release" flatten="true">
 									<fileset dir="${project.basedir}/plugins/pluginsreaderproviders">
 										<include name="**/bin/Win32/Release/*.lib"/>
 										<include name="**/bin/Win32/Release/*.dll"/>
 										<include name="**/bin/Win32/Release/*.exe"/>
-									</fileset>
-								</copy>
-								<copy todir="${project.basedir}/bin/plugins/x64/Release" flatten="true">
-									<fileset dir="${project.basedir}/plugins/pluginscards">
-										<include name="**/bin/x64/Release/*.lib"/>
-										<include name="**/bin/x64/Release/*.dll"/>
-										<include name="**/bin/x64/Release/*.exe"/>
 									</fileset>
 								</copy>
 								<copy todir="${project.basedir}/bin/plugins/x64/Release" flatten="true">
@@ -268,6 +254,7 @@
 								</copy>
 								<exec executable="scripts/postbuild.bat">
 									<arg value="${islog.ISLOGSign}" />
+									<arg value="install/bin" />
 								</exec>
 							</tasks>
 						</configuration>
