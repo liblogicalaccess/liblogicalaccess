@@ -79,4 +79,4 @@ install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/pcs
 install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/pcsc/readercardadapters )
 install ( FILES ${include_commands} DESTINATION include/logicalaccess/plugins/readers/pcsc/commands )
 install ( FILES ${include_readers} DESTINATION include/logicalaccess/plugins/readers/pcsc/readers )
-install ( TARGETS pcscreaders RUNTIME DESTINATION bin/${TARGET_ARCH}/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX} LIBRARY DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX} )
+install ( TARGETS pcscreaders RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )

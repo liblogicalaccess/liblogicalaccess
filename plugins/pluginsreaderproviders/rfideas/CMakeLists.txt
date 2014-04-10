@@ -23,4 +23,4 @@ target_link_libraries(
 )
 
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/rfideas )
-install ( TARGETS rfideasreaders RUNTIME DESTINATION bin/${TARGET_ARCH}/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX} LIBRARY DESTINATION lib/${TARGET_ARCH}/${LIB_SUFFIX} )
+install ( TARGETS rfideasreaders RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )
