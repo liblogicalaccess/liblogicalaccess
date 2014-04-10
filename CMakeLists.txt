@@ -122,9 +122,10 @@ else()
 
 set(LIBLOGICALACCESS_LIBRARY liblogicalaccess)
 
-file(GLOB source_vc ${CMAKE_CURRENT_SOURCE_DIR}/vc++/*.cpp)
+file(GLOB source_vc ${CMAKE_CURRENT_SOURCE_DIR}/vc++/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/vc++/resource.rc)
 file(GLOB source_dynlibrary ${NATIVE_SOURCE}/dynlibrary/windowsdynlibrary.cpp ${NATIVE_SOURCE}/dynlibrary/winclass.cpp ${NATIVE_SOURCE}/dynlibrary/librarymanager.cpp)
 
+file(GLOB include_vc ${CMAKE_CURRENT_SOURCE_DIR}/vc++/*.h)
 file(GLOB include_dynlibrary ${NATIVE_INCLUDE}/logicalaccess/dynlibrary/winclass.hpp ${NATIVE_INCLUDE}/logicalaccess/dynlibrary/idynlibrary.hpp ${NATIVE_INCLUDE}/logicalaccess/dynlibrary/windowsdynlibrary.hpp ${NATIVE_INCLUDE}/logicalaccess/dynlibrary/librarymanager.hpp)
 
 SOURCE_GROUP("Source Files\\cards" FILES ${source_cards})
@@ -165,10 +166,13 @@ install ( FILES ${include_nfctag} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/lo
 install ( FILES ${include_dynlibrary} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/dynlibrary )
 install ( FILES ${include_storage} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/storage )
 
+if (WIN32)
+	install ( FILES ${include_vc} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess )
+endif()
 
 set(source ${source_vc} ${source_root} ${source_cards} ${source_readerproviders}  ${source_service} ${source_accesscontrol} ${source_encodings} ${source_formats} ${source_customformat} ${source_nfctag} ${source_dynlibrary})
 
-set(include ${include_root} ${include_cards} ${include_readerproviders} ${include_service} ${include_accesscontrol} ${include_encodings} ${include_formats} ${include_customformat} ${include_nfctag} ${include_dynlibrary} ${include_storage})
+set(include ${include_root} ${include_cards} ${include_readerproviders} ${include_service} ${include_accesscontrol} ${include_encodings} ${include_formats} ${include_customformat} ${include_nfctag} ${include_dynlibrary} ${include_storage} ${include_vc})
 
 LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_CURRENT_SOURCE_DIR}/plugins/cryptolib/${VC_FOLDER_NAME}")
 
