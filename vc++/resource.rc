@@ -1,4 +1,5 @@
 #pragma once
+#include "afxres.h"
 #ifndef _MAC
 
 /////////////////////////////////////////////////////////////////////////////
@@ -58,9 +59,8 @@ VALUE "Comments", VERSION_PROJECT_COMMENTS_VALUE
 VALUE "CompanyName", "ISLOG"
 VALUE "FileDescription", VERSION_PROJECT_FILE_DESCRIPTION_VALUE
 VALUE "FileVersion", VERSION_FILE_AND_PRODUCT_VALUE_STRING
-VALUE "InternalName", VERSION_PROJECT_INTERNAL_NAME_VALUE
-VALUE "LegalCopyright", 1
-VALUE "LegalTrademarks", 1
+VALUE "LegalCopyright", "Copyright (c) ISLOG 2014"
+VALUE "LegalTrademarks", "All Rights Reserved"
 VALUE "OLESelfRegister", VERSION_PROJECT_OLE_SELF_REGISTER_VALUE
 VALUE "OriginalFilename", VERSION_PROJECT_ORIGINAL_FILENAME_VALUE
 VALUE "PrivateBuild", VERSION_PROJECT_PRIVATE_BUILD_VALUE
