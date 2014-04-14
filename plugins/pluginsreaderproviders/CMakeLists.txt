@@ -1,5 +1,8 @@
-
 remove_definitions(-DLIBLOGICALACCESS_EXPORTS_DLL)
+
+if (WIN32)
+	remove_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif()
 
 option(BUILD_ISO7819 "iso7816" ON)
 if (BUILD_ISO7819)

@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
 project(pcscreaders)
 
+if (WIN32)
+	SET(VERSION_PRODUCTNAME_VALUE "pcscreaders")
+	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif()
+
 set(INCLUDE_FOLDER 	${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso7816
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare
@@ -57,6 +62,7 @@ add_library(
 	
 	${SOURCE_LIB}
 	${INCLUDE_LIB}
+	${resourcerc}
   )
 
 SET_TARGET_PROPERTIES(pcscreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})

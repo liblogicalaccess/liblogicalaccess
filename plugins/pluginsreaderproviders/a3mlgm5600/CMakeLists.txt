@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 2.6)
 project(a3mlgm5600readers)
 
+if (WIN32)
+	SET(VERSION_PRODUCTNAME_VALUE "a3mlgm5600readers")
+	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif()
 
 file(GLOB SRCS *.cpp)
 file(GLOB include *.hpp)
@@ -19,6 +23,7 @@ add_library(
 	SHARED
 	${SOURCE_LIB}
 	${INCLUDE_LIB}
+	${resourcerc}
   )
 
 

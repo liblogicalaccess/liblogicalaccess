@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
 project(ok5553readers)
 
+if (WIN32)
+	SET(VERSION_PRODUCTNAME_VALUE "ok5553readers")
+	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif()
+
 set(INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare
 		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso7816
 		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifareultralight
@@ -34,6 +39,7 @@ add_library(
 	SHARED
 	${SOURCE_LIB}
 	${INCLUDE_LIB}
+	${resourcerc}
   )
 
 SET_TARGET_PROPERTIES(ok5553readers PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})

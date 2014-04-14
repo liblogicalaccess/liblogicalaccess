@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
 project(keyboardreaders)
 
+if (WIN32)
+	SET(VERSION_PRODUCTNAME_VALUE "keyboardreaders")
+	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif()
+
 file(GLOB SRCS *.cpp)
 file(GLOB include *.h)
 file(GLOB includepp *.hpp)
@@ -21,6 +26,7 @@ add_library(
 	
 	${SOURCE_LIB}
 	${INCLUDE_LIB}
+	${resourcerc}
   )
 
 SET_TARGET_PROPERTIES(keyboardreaders PROPERTIES VERSION 1.70)

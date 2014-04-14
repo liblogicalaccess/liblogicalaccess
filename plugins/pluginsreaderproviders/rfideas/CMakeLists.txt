@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
 project(rfideasreaders)
 
+if (WIN32)
+	SET(VERSION_PRODUCTNAME_VALUE "rfideasreaders")
+	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif()
+
 file(GLOB SRCS *.cpp)
 file(GLOB include *.hpp)
 
@@ -13,6 +18,7 @@ add_library(
 	
 	${SOURCE_LIB}
 	${INCLUDE_LIB}
+	${resourcerc}
   )
 
 SET_TARGET_PROPERTIES(rfideasreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})  

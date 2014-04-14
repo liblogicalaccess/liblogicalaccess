@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
 project(rplethreaders)
 
+if (WIN32)
+	SET(VERSION_PRODUCTNAME_VALUE "rplethreaders")
+	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif()
+
 set(INCLUDE_FOLDER 	${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso7816
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816
@@ -25,6 +30,7 @@ add_library(
 	SHARED
 	${SOURCE_LIB}
 	${INCLUDE_LIB}
+	${resourcerc}
   )
 
 SET_TARGET_PROPERTIES(rplethreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})

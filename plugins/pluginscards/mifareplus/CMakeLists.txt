@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
 project(mifarepluscards)
 
+if (WIN32)
+	SET(VERSION_PRODUCTNAME_VALUE "mifarepluscards")
+	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif()
+
 if (NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE "Debug")
 endif()
@@ -11,15 +16,15 @@ INCLUDE_DIRECTORIES(${INCLUDE_FOLDER})
 
 
 file(GLOB_RECURSE SRCS *.cpp)
-file(GLOB_RECURSE include_mplus *.hpp)
+file(GLOB_RECURSE INCLUDE *.hpp)
 
 add_library(
 	mifarepluscards
 	SHARED
 
 	${SRCS}
-	${include_core}
-	${include_mplus}
+	${INCLUDE}
+	${resourcerc}
   )
 
 SET_TARGET_PROPERTIES(mifarepluscards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})

@@ -1,3 +1,11 @@
+cmake_minimum_required(VERSION 2.6)
+project(iso7816readers)
+
+if (WIN32)
+	SET(VERSION_PRODUCTNAME_VALUE "iso7816readers")
+	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif()
+
 set(INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2
@@ -27,6 +35,7 @@ add_library(
 	SHARED
 	${SOURCE_LIB}
 	${INCLUDE_LIB}
+	${resourcerc}
   )
   
 SET_TARGET_PROPERTIES(iso7816readers PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})

@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
 project(admittoreaders)
 
+if (WIN32)
+	SET(VERSION_PRODUCTNAME_VALUE "admittoreaders")
+	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif()
+
 file(GLOB SRCS *.cpp)
 file(GLOB include *.hpp)
 
@@ -18,6 +23,7 @@ add_library(
 	SHARED
 	${SOURCE_LIB}
 	${INCLUDE_LIB}
+	${resourcerc}
 	)
 
 SET_TARGET_PROPERTIES(admittoreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})

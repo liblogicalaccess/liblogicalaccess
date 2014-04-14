@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
 project(tagitcards)
 
+if (WIN32)
+	SET(VERSION_PRODUCTNAME_VALUE "tagitcards")
+	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif()
+
 file(GLOB_RECURSE SRCS *.cpp)
 file(GLOB_RECURSE INCLUDE *.hpp)
 
@@ -10,6 +15,7 @@ add_library(
 
 	${SRCS}
 	${INCLUDE}
+	${resourcerc}
   )
 
 SET_TARGET_PROPERTIES(tagitcards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})

@@ -1,5 +1,9 @@
 remove_definitions(-DLIBLOGICALACCESS_EXPORTS_DLL)
 
+if (WIN32)
+	remove_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif()
+
 add_subdirectory(twic)
 add_subdirectory(desfire)
 add_subdirectory(em4102)

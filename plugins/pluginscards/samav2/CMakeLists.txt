@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 2.6)
 project(samav2cards)
 
+if (WIN32)
+	SET(VERSION_PRODUCTNAME_VALUE "samav2cards")
+	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif()
 
 file(GLOB_RECURSE SRCS *.cpp)
 file(GLOB_RECURSE INCLUDE *.hpp)
@@ -26,6 +30,7 @@ add_library(
 	${source_commands}
 	${INCLUDE}
 	${include_commands}
+	${resourcerc}
   )
 
 SET_TARGET_PROPERTIES(samav2cards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})

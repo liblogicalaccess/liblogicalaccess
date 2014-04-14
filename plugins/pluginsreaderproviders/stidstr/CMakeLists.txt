@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
 project(stidstrreaders)
 
+if (WIN32)
+	SET(VERSION_PRODUCTNAME_VALUE "stidstrreaders")
+	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif()
+
 set(INCLUDE_FOLDER 	${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare)
 INCLUDE_DIRECTORIES(${INCLUDE_FOLDER})
@@ -30,6 +35,7 @@ add_library(
 	SHARED
 	${SOURCE_LIB}
 	${INCLUDE_LIB}
+	${resourcerc}
   )
 
 SET_TARGET_PROPERTIES(stidstrreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})  
