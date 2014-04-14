@@ -30,7 +30,7 @@ namespace logicalaccess
 		return ret;
 	}
 
-	void DESFireLocation::convertUIntToAid(unsigned int i, std::vector<unsigned char> aid)
+	void DESFireLocation::convertUIntToAid(unsigned int i, std::vector<unsigned char>& aid)
 	{
 		// LSB first
 		aid.push_back(i & 0xff);

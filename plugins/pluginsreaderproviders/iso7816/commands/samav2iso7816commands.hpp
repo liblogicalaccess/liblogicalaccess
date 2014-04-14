@@ -50,6 +50,8 @@ namespace logicalaccess
 			virtual void changeKUCEntry(unsigned char kucno, boost::shared_ptr<SAMKucEntry> kucentry, boost::shared_ptr<DESFireKey> key);
 			virtual void changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> > keyentry, boost::shared_ptr<DESFireKey> key);
 
+			virtual void selectApplication(std::vector<unsigned char> aid);
+
 			virtual std::vector<unsigned char> changeKeyPICC(const ChangeKeyInfo& info);
 
 		protected:

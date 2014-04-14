@@ -86,20 +86,20 @@ namespace logicalaccess
 			virtual std::string getDefaultXmlNodeName() const;
 
 			/**
-			 * \brief Set the SAM Key and Keyno for check if the SAM is the SAM we are waiting
+			 * \brief Set the SAM Key and Keyno for check if the SAM is the SAM we are waiting and for AV2 enable communication
 			 */
-			void setSAMSecurityCheck(boost::shared_ptr<DESFireKey> key, unsigned char keyno) { d_sam_key_securecheck = key; d_keyno_securecheck = keyno; };
+			void setSAMUnlockKey(boost::shared_ptr<DESFireKey> key, unsigned char keyno) { d_sam_key_unlock = key; d_keyno_unlock = keyno; };
 
 			/**
 			 * \brief Get SAM Security Check Key
 			 */
-			boost::shared_ptr<DESFireKey> getSAMSecurityKey() { return d_sam_key_securecheck; };
+			boost::shared_ptr<DESFireKey> getSAMUnLockKey() { return d_sam_key_unlock; };
 
 
 			/**
 			 * \brief Get SAM Security Check KeyNo
 			 */
-			unsigned char getSAMSecuritykeyNo() { return d_keyno_securecheck; };
+			unsigned char getSAMUnLockkeyNo() { return d_keyno_unlock; };
 
 		protected:
 
@@ -116,12 +116,12 @@ namespace logicalaccess
 			/**
 			 * \brief The SAM Key to see if it is the SAM we are waiting
 			 */
-			boost::shared_ptr<DESFireKey> d_sam_key_securecheck;
+			boost::shared_ptr<DESFireKey> d_sam_key_unlock;
 
 			/**
 			 * \brief The SAM Key to see if it is the SAM we are waiting
 			 */
-			unsigned char d_keyno_securecheck;
+			unsigned char d_keyno_unlock;
 	};
 }
 

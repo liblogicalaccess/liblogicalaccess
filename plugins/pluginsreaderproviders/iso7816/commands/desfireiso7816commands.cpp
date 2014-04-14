@@ -64,7 +64,7 @@ namespace logicalaccess
 
     void DESFireISO7816Commands::selectApplication(unsigned int aid)
     {
-        std::vector<unsigned char> command;
+        std::vector<unsigned char> command, samaid;
         DESFireLocation::convertUIntToAid(aid, command);
 
         transmit(DF_INS_SELECT_APPLICATION, command);
@@ -72,15 +72,12 @@ namespace logicalaccess
         if (getSAMChip())
         {
             INFO_("SelectApplication on SAM chip...");
-			boost::shared_ptr<SAMCommands<KeyEntryAV1Information, SETAV1> > samcommands = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1> >(getSAMChip()->getCommands());
-            std::vector<unsigned char> t_aid(3);
-            int saveaid = aid;
-            for (char x = 2; x >= 0; --x)
-            {
-                t_aid[(unsigned char)x] = saveaid & 0xff;
-                saveaid >>= 8;
-            }
-            samcommands->selectApplication(t_aid);
+			DESFireLocation::convertUIntToAid(aid, samaid);
+			std::reverse(samaid.begin(), samaid.end());
+			if (getSAMChip()->getCardType() == "SAM_AV1")
+				boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1> >(getSAMChip()->getCommands())->selectApplication(samaid);
+			else if (getSAMChip()->getCardType() == "SAM_AV2")
+				boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2> >(getSAMChip()->getCommands())->selectApplication(samaid);
         }
 
         d_crypto->selectApplication(aid);

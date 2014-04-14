@@ -545,4 +545,17 @@ namespace logicalaccess
 
 		return std::vector<unsigned char>(result.begin(), result.end() - 2);
 	}
+
+	void SAMAV2ISO7816Commands::selectApplication(std::vector<unsigned char> aid)
+	{
+		unsigned char cmd[] = { d_cla, 0x5a, 0x00, 0x00, 0x03 };
+		std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
+		cmd_vector.insert(cmd_vector.end(), aid.begin(), aid.end());
+
+		//result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x5a, 0x00, 0x00, 0x03, aid);
+		result = transmit(cmd_vector, true, true);
+
+		if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "selectApplication failed.");
+	}
 }

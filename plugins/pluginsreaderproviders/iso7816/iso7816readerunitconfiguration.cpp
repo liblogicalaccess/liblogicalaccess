@@ -30,7 +30,7 @@ namespace logicalaccess
 	{
 		d_sam_type = "SAM_NONE";
 		d_sam_reader_name = "";
-		d_keyno_securecheck = 0;
+		d_keyno_unlock = 0;
 	}
 
 	void ISO7816ReaderUnitConfiguration::serialize(boost::property_tree::ptree& node)
@@ -38,10 +38,10 @@ namespace logicalaccess
 		node.put("SAMType", d_sam_type);
 		node.put("SAMReaderName", d_sam_reader_name);
 		boost::property_tree::ptree knode;
-		knode.put("KeyNo", d_keyno_securecheck);
-		if (d_sam_key_securecheck)
+		knode.put("KeyNo", d_keyno_unlock);
+		if (d_sam_key_unlock)
 		{
-			d_sam_key_securecheck->serialize(knode);
+			d_sam_key_unlock->serialize(knode);
 		}
 		node.add_child("SAMKey", knode);
 	}
@@ -51,15 +51,15 @@ namespace logicalaccess
 		d_sam_type = static_cast<std::string>(node.get_child("SAMType").get_value<std::string>());
 		d_sam_reader_name = node.get_child("SAMReaderName").get_value<std::string>();
 		boost::property_tree::ptree knode = node.get_child("SAMKey");
-		d_keyno_securecheck = knode.get_child("KeyNo").get_value<unsigned char>();
+		d_keyno_unlock = knode.get_child("KeyNo").get_value<unsigned char>();
 		try
 		{
-			d_sam_key_securecheck.reset(new DESFireKey());
-			boost::dynamic_pointer_cast<XmlSerializable>(d_sam_key_securecheck)->unSerialize(knode, "");
+			d_sam_key_unlock.reset(new DESFireKey());
+			boost::dynamic_pointer_cast<XmlSerializable>(d_sam_key_unlock)->unSerialize(knode, "");
 		}
 		catch(std::exception& ex)
 		{
-			d_sam_key_securecheck.reset();
+			d_sam_key_unlock.reset();
 			ERROR_("Cannot unserialize SAM authentication key: %s", ex.what());
 		}
 	}

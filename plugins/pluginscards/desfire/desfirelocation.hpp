@@ -51,7 +51,7 @@ namespace logicalaccess
 			 * \param i The Application ID in 32 bits.
 			 * \param aid The Application ID buffer.
 			 */
-			static void convertUIntToAid(unsigned int i, std::vector<unsigned char> aid);
+			static void convertUIntToAid(unsigned int i, std::vector<unsigned char>& aid);
 
 			/**
 			 * \brief Serialize the current object to XML.
