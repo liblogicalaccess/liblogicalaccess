@@ -514,48 +514,4 @@ namespace logicalaccess
 		if (result.size() >= 2 &&  (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKeyEntry failed.");
 	}
-
-	std::vector<unsigned char> SAMAV2ISO7816Commands::changeKeyPICC(const ChangeKeyInfo& info)
-	{
-		unsigned char keyCompMeth = 0;
-
-		if (!info.oldKeyInvolvement)
-			keyCompMeth = 1;
-
-		unsigned char cfg = info.desfireNumber & 0xf;
-		if (info.isMasterKey)
-			cfg |= 0x10;
-		std::vector<unsigned char> vectordata(4);
-		vectordata[0] = info.currentKeySlotNo;
-		vectordata[1] = info.currentKeySlotV;
-		vectordata[2] = info.newKeySlotNo;
-		vectordata[3] = info.newKeySlotV;
-		unsigned char cmd[] = { d_cla, 0xc4, keyCompMeth, cfg, (unsigned char)(vectordata.size()), 0x00 };
-		std::vector<unsigned char> cmd_vector(cmd, cmd + 6), result;
-		cmd_vector.insert(cmd_vector.end() - 1, vectordata.begin(), vectordata.end());
-
-		result = transmit(cmd_vector, true, true);
-
-		if (result.size() >= 2 &&  (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
-		{
-			char tmp[64];
-			sprintf(tmp, "changeKeyPICC failed (%x %x).", result[result.size() - 2], result[result.size() - 1]);
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, tmp);
-		}
-
-		return std::vector<unsigned char>(result.begin(), result.end() - 2);
-	}
-
-	void SAMAV2ISO7816Commands::selectApplication(std::vector<unsigned char> aid)
-	{
-		unsigned char cmd[] = { d_cla, 0x5a, 0x00, 0x00, 0x03 };
-		std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
-		cmd_vector.insert(cmd_vector.end(), aid.begin(), aid.end());
-
-		//result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x5a, 0x00, 0x00, 0x03, aid);
-		result = transmit(cmd_vector, true, true);
-
-		if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "selectApplication failed.");
-	}
 }

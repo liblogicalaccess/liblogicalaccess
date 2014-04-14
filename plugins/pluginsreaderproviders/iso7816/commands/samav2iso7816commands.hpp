@@ -50,9 +50,7 @@ namespace logicalaccess
 			virtual void changeKUCEntry(unsigned char kucno, boost::shared_ptr<SAMKucEntry> kucentry, boost::shared_ptr<DESFireKey> key);
 			virtual void changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> > keyentry, boost::shared_ptr<DESFireKey> key);
 
-			virtual void selectApplication(std::vector<unsigned char> aid);
-
-			virtual std::vector<unsigned char> changeKeyPICC(const ChangeKeyInfo& info);
+			virtual std::vector<unsigned char> transmit(std::vector<unsigned char> cmd, bool first = true, bool last = true);
 
 		protected:
 
@@ -63,8 +61,6 @@ namespace logicalaccess
 			std::vector<unsigned char> verifyAndDecryptResponse(std::vector<unsigned char> response);
 
 			void getLcLe(std::vector<unsigned char> cmd, bool& lc, unsigned char& lcvalue, bool& le);
-
-			std::vector<unsigned char> transmit(std::vector<unsigned char> cmd, bool first, bool last);
 
 			std::vector<unsigned char> generateEncIV(bool encrypt);
 

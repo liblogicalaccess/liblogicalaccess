@@ -102,13 +102,19 @@ namespace logicalaccess
 
 			boost::shared_ptr<ISO7816ReaderCardAdapter> getISO7816ReaderCardAdapter() { return boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(this->getReaderCardAdapter()); };
 
+			virtual std::vector<unsigned char> transmit(std::vector<unsigned char> cmd, bool first = true, bool last = true)
+			{
+				return getISO7816ReaderCardAdapter()->sendCommand(cmd);
+			}
+
 			virtual SAMVersion getVersion()
 			{
-				std::vector<unsigned char> result;
+				unsigned char cmd[] = { d_cla, 0x60, 0x00, 0x00, 0x00 };
+				std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
 				SAMVersion	info;
 				memset(&info, 0x00, sizeof(SAMVersion));
 
-				result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x60, 0x00, 0x00, 0x00);
+				result = transmit(cmd_vector);
 
 
 				if (result.size() == 33 && result[31] == 0x90 && result[32] == 0x00)
@@ -132,7 +138,6 @@ namespace logicalaccess
 
 			virtual std::vector<unsigned char> decipherData(std::vector<unsigned char> data, bool islastdata)
 			{
-				std::vector<unsigned char> result;
 				unsigned char p1 = 0x00;
 				std::vector<unsigned char> datawithlength(3);
 
@@ -146,7 +151,11 @@ namespace logicalaccess
 				}
 				datawithlength.insert(datawithlength.end(), data.begin(), data.end());
 
-				result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xdd, p1, 0x00, (unsigned char)(datawithlength.size()), datawithlength, 0x00);
+				unsigned char cmd[] = { d_cla, 0xdd, p1, 0x00, (unsigned char)(datawithlength.size()), 0x00 };
+				std::vector<unsigned char> cmd_vector(cmd, cmd + 6), result;
+				cmd_vector.insert(cmd_vector.end() - 1, datawithlength.begin(), datawithlength.end());
+
+				result = transmit(cmd_vector);
 
 				if (result.size() >= 2 &&  result[result.size() - 2] != 0x90 &&
 					((p1 == 0x00 && result[result.size() - 1] != 0x00) || (p1 == 0xaf && result[result.size() - 1] != 0xaf)))
@@ -157,12 +166,14 @@ namespace logicalaccess
 
 			virtual std::vector<unsigned char> encipherData(std::vector<unsigned char> data, bool islastdata)
 			{
-				std::vector<unsigned char> result;
 				unsigned char p1 = 0x00;
 
 				if (!islastdata)
 					p1 = 0xaf;
-				result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xed, p1, 0x00, (unsigned char)(data.size()), data, 0x00);
+				unsigned char cmd[] = { d_cla, 0xed, p1, 0x00, (unsigned char)(data.size()), 0x00 };
+				std::vector<unsigned char> cmd_vector(cmd, cmd + 6), result;
+				cmd_vector.insert(cmd_vector.end() - 1, data.begin(), data.end());
+				result = transmit(cmd_vector);
 
 				if (result.size() >= 2 &&  result[result.size() - 2] != 0x90 &&
 					((p1 == 0x00 && result[result.size() - 1] != 0x00) || (p1 == 0xaf && result[result.size() - 1] != 0xaf)))
@@ -173,9 +184,10 @@ namespace logicalaccess
 
 			virtual void disableKeyEntry(unsigned char keyno) 
 			{
-				std::vector<unsigned char> result;
+				unsigned char cmd[] = { d_cla, 0xd8, keyno, 0x00 };
+				std::vector<unsigned char> cmd_vector(cmd, cmd + 4), result;
 
-				result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xd8, keyno, 0x00);
+				result = transmit(cmd_vector);
 
 				if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "disableKeyEntry failed.");
@@ -183,9 +195,10 @@ namespace logicalaccess
 
 			virtual std::vector<unsigned char> dumpSessionKey()
 			{
-				std::vector<unsigned char> result;
+				unsigned char cmd[] = { d_cla, 0xd5, 0x00, 0x00, 0x00 };
+				std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
 
-				result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xd5, 0x00, 0x00, 0x00);
+				result = transmit(cmd_vector);
 
 				if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "dumpSessionKey failed.");
@@ -195,9 +208,10 @@ namespace logicalaccess
 
 			virtual std::string getSAMTypeFromSAM()
 			{
-				std::vector<unsigned char> result;
+				unsigned char cmd[] = { d_cla, 0x60, 0x00, 0x00, 0x00 };
+				std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
 
-				result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x60, 0x00, 0x00, 0x00);
+				result = transmit(cmd_vector);
 
 				if (result.size() > 3)
 				{
@@ -214,7 +228,6 @@ namespace logicalaccess
 
 			virtual void lockUnlock(boost::shared_ptr<DESFireKey> masterKey, SAMLockUnlock state, unsigned char keyno, unsigned char unlockkeyno, unsigned char unlockkeyversion)
 			{
-				std::vector<unsigned char> result;
 				unsigned char p1_part1 = state;
 				unsigned int le = 2;
 
@@ -236,7 +249,11 @@ namespace logicalaccess
 					data_p1.push_back(unlockkeyversion);
 				}
 
-				result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, p1_part1, 0x00, le, data_p1, 0x00);
+				unsigned char cmdp1[] = { d_cla, 0x10, p1_part1, 0x00, le, 0x00 };
+				std::vector<unsigned char> cmd_vector(cmdp1, cmdp1 + 6), result;
+				cmd_vector.insert(cmd_vector.end() - 1, data_p1.begin(), data_p1.end());
+
+				result = transmit(cmd_vector);
 				if (result.size() != 14 || result[12] != 0x90 || result[13] != 0xAF)
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P1 Failed.");
 
@@ -274,7 +291,12 @@ namespace logicalaccess
 				data_p2.insert(data_p2.end(), macHost.begin(), macHost.begin() + 8);
 				data_p2.insert(data_p2.end(), rnd1.begin(), rnd1.end());
 
-				result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, 0x00, 0x00, 0x14, data_p2, 0x00);
+				unsigned char cmdp2[] = { d_cla, 0x10, 0x00, 0x00, 0x14, 0x00 };
+				cmd_vector.clear();
+				cmd_vector.insert(cmd_vector.end(), cmdp2, cmdp2 + 6);
+				cmd_vector.insert(cmd_vector.end() - 1, data_p2.begin(), data_p2.end());
+
+				result = transmit(cmd_vector);
 				if (result.size() != 26 || result[24] != 0x90 || result[25] != 0xAF)
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P2 Failed.");
 
@@ -324,7 +346,12 @@ namespace logicalaccess
 				iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
 				cipher->cipher(dataHost, encHost, *symkey.get(), *iv.get(), false);
 
-				result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, 0x00, 0x00, 0x20, encHost, 0x00);
+				unsigned char cmdp3[] = { d_cla, 0x10, 0x00, 0x00, 0x20, 0x00 };
+				cmd_vector.clear();
+				cmd_vector.insert(cmd_vector.end(), cmdp3, cmdp3 + 6);
+				cmd_vector.insert(cmd_vector.end() - 1, encHost.begin(), encHost.end());
+
+				result = transmit(cmd_vector);
 				if (result.size() != 18 || result[16] != 0x90 || result[17] != 0x00)
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P3 Failed.");
 
@@ -387,6 +414,50 @@ namespace logicalaccess
 				boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
 
 				cipher->cipher(SV1a, d_authKey, *symkey.get(), *iv.get(), false);
+			}
+
+			void selectApplication(std::vector<unsigned char> aid)
+			{
+				unsigned char cmd[] = { d_cla, 0x5a, 0x00, 0x00, 0x03 };
+				std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
+				cmd_vector.insert(cmd_vector.end(), aid.begin(), aid.end());
+
+				result = transmit(cmd_vector);
+
+				if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "selectApplication failed.");
+			}
+
+			std::vector<unsigned char> changeKeyPICC(const ChangeKeyInfo& info)
+			{
+				unsigned char keyCompMeth = 0;
+
+				if (!info.oldKeyInvolvement)
+					keyCompMeth = 1;
+
+				unsigned char cfg = info.desfireNumber & 0xf;
+				if (info.isMasterKey)
+					cfg |= 0x10;
+				std::vector<unsigned char> data(4);
+				data[0] = info.currentKeySlotNo;
+				data[1] = info.currentKeySlotV;
+				data[2] = info.newKeySlotNo;
+				data[3] = info.newKeySlotV;
+
+				unsigned char cmd[] = { d_cla, 0xc4, keyCompMeth, cfg, (unsigned char)(data.size()), 0x00 };
+				std::vector<unsigned char> cmd_vector(cmd, cmd + 6), result;
+				cmd_vector.insert(cmd_vector.end() - 1, data.begin(), data.end());
+
+				result = transmit(cmd_vector);
+
+				if (result.size() >= 2 &&  (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
+				{
+					char tmp[64];
+					sprintf(tmp, "changeKeyPICC failed (%x %x).", result[result.size() - 2], result[result.size() - 1]);
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, tmp);
+				}
+
+				return std::vector<unsigned char>(result.begin(), result.end() - 2);
 			}
 	};
 }
