@@ -228,6 +228,7 @@ namespace logicalaccess
 
 			virtual void lockUnlock(boost::shared_ptr<DESFireKey> masterKey, SAMLockUnlock state, unsigned char keyno, unsigned char unlockkeyno, unsigned char unlockkeyversion)
 			{
+				std::vector<unsigned char> result;
 				unsigned char p1_part1 = state;
 				unsigned int le = 2;
 
@@ -249,11 +250,7 @@ namespace logicalaccess
 					data_p1.push_back(unlockkeyversion);
 				}
 
-				unsigned char cmdp1[] = { d_cla, 0x10, p1_part1, 0x00, le, 0x00 };
-				std::vector<unsigned char> cmd_vector(cmdp1, cmdp1 + 6), result;
-				cmd_vector.insert(cmd_vector.end() - 1, data_p1.begin(), data_p1.end());
-
-				result = transmit(cmd_vector);
+				result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, p1_part1, 0x00, le, data_p1, 0x00);
 				if (result.size() != 14 || result[12] != 0x90 || result[13] != 0xAF)
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P1 Failed.");
 
@@ -291,12 +288,7 @@ namespace logicalaccess
 				data_p2.insert(data_p2.end(), macHost.begin(), macHost.begin() + 8);
 				data_p2.insert(data_p2.end(), rnd1.begin(), rnd1.end());
 
-				unsigned char cmdp2[] = { d_cla, 0x10, 0x00, 0x00, 0x14, 0x00 };
-				cmd_vector.clear();
-				cmd_vector.insert(cmd_vector.end(), cmdp2, cmdp2 + 6);
-				cmd_vector.insert(cmd_vector.end() - 1, data_p2.begin(), data_p2.end());
-
-				result = transmit(cmd_vector);
+				result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, 0x00, 0x00, 0x14, data_p2, 0x00);
 				if (result.size() != 26 || result[24] != 0x90 || result[25] != 0xAF)
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P2 Failed.");
 
@@ -346,12 +338,7 @@ namespace logicalaccess
 				iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
 				cipher->cipher(dataHost, encHost, *symkey.get(), *iv.get(), false);
 
-				unsigned char cmdp3[] = { d_cla, 0x10, 0x00, 0x00, 0x20, 0x00 };
-				cmd_vector.clear();
-				cmd_vector.insert(cmd_vector.end(), cmdp3, cmdp3 + 6);
-				cmd_vector.insert(cmd_vector.end() - 1, encHost.begin(), encHost.end());
-
-				result = transmit(cmd_vector);
+				result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0x10, 0x00, 0x00, 0x20, encHost, 0x00);
 				if (result.size() != 18 || result[16] != 0x90 || result[17] != 0x00)
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P3 Failed.");
 
