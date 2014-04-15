@@ -1,4 +1,5 @@
 <assembly>
+	<id>bin</id>
     <formats>
         <format>zip</format>
     </formats>
