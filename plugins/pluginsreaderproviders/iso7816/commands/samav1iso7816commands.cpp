@@ -160,8 +160,7 @@ namespace logicalaccess
 		std::vector<unsigned char> encRndAB = d_crypto->authenticateHostP1(key, encRndB, keyno);
 
 		unsigned char cmdp2[] = { d_cla, 0xa4, 0x00, 0x00, (unsigned char)(encRndAB.size()), 0x00 };
-		cmd_vector.clear();
-		cmd_vector.insert(cmd_vector.end(), cmdp2, cmdp2 + 6);
+		cmd_vector.assign(cmdp2, cmdp2 + 6);
 		cmd_vector.insert(cmd_vector.end() - 1, encRndAB.begin(), encRndAB.end());
 
 		result = transmit(cmd_vector);
@@ -225,8 +224,7 @@ namespace logicalaccess
 
 		//send enc rndAB
 		unsigned char cmdp2[] = { d_cla, 0xa4, 0x00, 0x00, (unsigned char)(encRndAB.size()), 0x00 };
-		cmd_vector.clear();
-		cmd_vector.insert(cmd_vector.end(), cmdp2, cmdp2 + 6);
+		cmd_vector.assign(cmdp2, cmdp2 + 6);
 		cmd_vector.insert(cmd_vector.end() - 1, encRndAB.begin(), encRndAB.end());
 
 		result = transmit(cmd_vector);

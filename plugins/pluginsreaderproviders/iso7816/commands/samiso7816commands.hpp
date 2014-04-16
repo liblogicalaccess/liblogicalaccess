@@ -48,6 +48,8 @@ namespace logicalaccess
 			 */
 			SAMISO7816Commands()
 			{
+				/*
+				# Only one active MIFARE authentication at a time is supported by SAM AV2, so interleaved processing of the commands over differents LCs in parallel is not possible.
 				d_named_mutex.reset(new boost::interprocess::named_mutex(boost::interprocess::open_or_create, "sam_mutex"));
 				bool locked = d_named_mutex->timed_lock(boost::get_system_time() + boost::posix_time::seconds(5));
 
@@ -79,8 +81,8 @@ namespace logicalaccess
 				if (x < d_region->get_size())
 					d_cla = DEFAULT_SAM_CLA + x;
 				else
-					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "No channel available.");
-
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "No channel available.");*/
+				d_cla = DEFAULT_SAM_CLA;
 				d_LastSessionIV.resize(16);
 			}
 
@@ -89,13 +91,13 @@ namespace logicalaccess
 			 */
 			virtual ~SAMISO7816Commands()
 			{
-				d_named_mutex->lock();
+				/*d_named_mutex->lock();
 				char *addr = (char*)d_region->get_address();
 				addr[d_cla - 0x80] = 0;
 				d_named_mutex->unlock();
 
 				if (!boost::interprocess::shared_memory_object::remove("sam_memory"))
-					INFO_SIMPLE_("SAM Shared Memory removed failed. It is probably still open by a process.");
+					INFO_SIMPLE_("SAM Shared Memory removed failed. It is probably still open by a process.");*/
 
 				//we do not remove named_mutex - it can still be used by another process
 			}		
@@ -355,9 +357,9 @@ namespace logicalaccess
 
 			boost::shared_ptr<SAMDESfireCrypto> d_crypto;
 
-			boost::shared_ptr<boost::interprocess::mapped_region> d_region;
+			//boost::shared_ptr<boost::interprocess::mapped_region> d_region;
 
-			boost::shared_ptr<boost::interprocess::named_mutex> d_named_mutex;
+			//boost::shared_ptr<boost::interprocess::named_mutex> d_named_mutex;
 
 			unsigned char d_cla;
 

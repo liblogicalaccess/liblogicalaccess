@@ -49,10 +49,10 @@ namespace logicalaccess
 
 	typedef struct s_EXTSET
 	{
-		unsigned char keyclass;
+		unsigned char keyclass[3];
 		unsigned char dumpsessionkey;
 		unsigned char diversifieduse;
-		unsigned char rfu[5];
+		unsigned char rfu[2];
 	}		 		ExtSET;
 
 	typedef struct  s_KeyEntryAV1Information

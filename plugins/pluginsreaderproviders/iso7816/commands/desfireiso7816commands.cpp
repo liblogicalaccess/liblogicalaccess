@@ -728,16 +728,18 @@ namespace logicalaccess
 
             if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
             {
-                boost::shared_ptr<SAMCommands<KeyEntryAV1Information, SETAV1> > samcommands = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1> >(getSAMChip()->getCommands());
-                boost::shared_ptr<ISO7816ReaderCardAdapter> readercardadapter = boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(samcommands->getReaderCardAdapter());
-
-
                 std::vector<unsigned char> data(2 + result.size());
                 data[0] = keyno;
                 data[1] = key->getKeyVersion();
                 memcpy(&data[0] + 2, &result[0], result.size());
 
-                apduresult = readercardadapter->sendAPDUCommand(0x80, 0x0a, 0x02, 0x00, static_cast<unsigned char>(data.size()), data, 0x00);
+				unsigned char cmd[] = { 0x80, 0x0a, 0x02, 0x00, static_cast<unsigned char>(data.size()), 0x00 };
+				std::vector<unsigned char> cmd_vector(cmd, cmd + 6);
+				cmd_vector.insert(cmd_vector.end() - 1, data.begin(), data.end());
+				if (getSAMChip()->getCardType() == "SAM_AV1")
+					apduresult = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1> >(getSAMChip()->getCommands())->transmit(cmd_vector);
+				else if (getSAMChip()->getCardType() == "SAM_AV2")
+					apduresult = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2> >(getSAMChip()->getCommands())->transmit(cmd_vector, true, false);
                 if (apduresult.size() <= 2)
                     THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam authenticate DES P1 failed.");
 
@@ -752,14 +754,19 @@ namespace logicalaccess
                     
                 if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
                 {
-                    boost::shared_ptr<SAMCommands<KeyEntryAV1Information, SETAV1> > samcommands = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1> >(getSAMChip()->getCommands());
-                    boost::shared_ptr<ISO7816ReaderCardAdapter> readercardadapter = boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(samcommands->getReaderCardAdapter());
-
-                    apduresult = readercardadapter->sendAPDUCommand(0x80, 0x0a, 0x00, 0x00, 0x08, result, 0x08);
-
+					unsigned char cmd[] = { 0x80, 0x0a, 0x00, 0x00, 0x08, 0x08 };
+					std::vector<unsigned char> cmd_vector(cmd, cmd + 6);
+					cmd_vector.insert(cmd_vector.end() - 1, result.begin(), result.end());
+					if (getSAMChip()->getCardType() == "SAM_AV1")
+						apduresult = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1> >(getSAMChip()->getCommands())->transmit(cmd_vector);
+					else if (getSAMChip()->getCardType() == "SAM_AV2")
+						apduresult = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2> >(getSAMChip()->getCommands())->transmit(cmd_vector, true, false);
 					if (apduresult.size() != 2 || apduresult[0] != 0x90 || apduresult[1] != 0x00)
                         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam authenticate DES P2 failed.");
-                    d_crypto->d_sessionKey = samcommands->dumpSessionKey();
+					if (getSAMChip()->getCardType() == "SAM_AV1")
+						d_crypto->d_sessionKey = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1> >(getSAMChip()->getCommands())->dumpSessionKey();
+					else if (getSAMChip()->getCardType() == "SAM_AV2")
+						d_crypto->d_sessionKey = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2> >(getSAMChip()->getCommands())->dumpSessionKey();
                     d_crypto->d_currentKeyNo = keyno;
                 }
                 else
