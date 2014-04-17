@@ -3,7 +3,7 @@
 	<groupId>eu.islog.lib.readers</groupId>
 	<artifactId>liblogicalaccess</artifactId>
 	<packaging>pom</packaging>
-	<version>1.75-SNAPSHOT</version>
+	<version>1.75.0-SNAPSHOT</version>
 	<name>LibLogicalaccess</name>
 	
 	<distributionManagement>
@@ -13,10 +13,7 @@
 		</repository>
 	</distributionManagement>
 	
-	<properties>
-		<maven.build.timestamp.format>MMdd</maven.build.timestamp.format>
-		<buildNumber>${maven.build.timestamp}</buildNumber>
-		
+	<properties>		
 		<projectId>liblogicalaccess</projectId>
 		<ciProjectId>liblogicalaccess-mvn</ciProjectId>
 		<publicProject>true</publicProject>
@@ -35,7 +32,78 @@
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+				  <doCheck>false</doCheck>
+				  <doUpdate>false</doUpdate>
+				</configuration>
+		    </plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<phase>initialize</phase>
+						<id>parse-version</id>
+						<goals>
+							<goal>parse-version</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.google.code.maven-replacer-plugin</groupId>
+				<artifactId>maven-replacer-plugin</artifactId>
+				<version>1.4.0</version>
+				<executions>                
+					<execution>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>replace</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<file>version.cmake.template</file>
+					<outputFile>version.cmake</outputFile>
+					<replacements>
+						<replacement>
+							<token>@buildtime@</token>
+							<value>${maven.build.timestamp}</value>
+						</replacement>
+						<replacement>
+							<token>@majorversion@</token>
+							<value>${parsedVersion.majorVersion}</value>
+						</replacement>
+						<replacement>
+							<token>@minorversion@</token>
+							<value>${parsedVersion.minorVersion}</value>
+						</replacement>
+						<replacement>
+							<token>@incrementalversion@</token>
+							<value>${parsedVersion.incrementalVersion}</value>
+						</replacement>
+						<replacement>
+							<token>@buildnumber@</token>
+							<value>${buildNumber}</value>
+						</replacement>
+					</replacements>                        
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
 				<configuration>
 					<executable>msbuild</executable>
 				</configuration>
@@ -63,7 +131,7 @@
 								<successCode>0</successCode>
 							</successCodes>
 							<arguments>
-								<argument>liblogicalaccess.sln</argument>
+								<argument>INSTALL.vcxproj</argument>
 								<argument>/p:Configuration=Release</argument>
 								<argument>/t:Clean</argument>
 							</arguments>
@@ -73,10 +141,18 @@
 						</goals>
 					</execution>
 					<execution>
-						<id>before-cmake-Win32</id>
-						<phase>compile</phase>
+						<id>clean-debug-sln</id>
+						<phase>clean</phase>
 						<configuration>
-							<executable>scripts/cleancmake.bat</executable>
+							<successCodes>
+								<successCode>1</successCode>
+								<successCode>0</successCode>
+							</successCodes>
+							<arguments>
+								<argument>INSTALL.vcxproj</argument>
+								<argument>/p:Configuration=Debug</argument>
+								<argument>/t:Clean</argument>
+							</arguments>
 						</configuration>
 						<goals>
 							<goal>exec</goal>
@@ -86,50 +162,7 @@
 						<id>cmake-Win32</id>
 						<phase>compile</phase>
 						<configuration>
-							<executable>cmake</executable>
-							<arguments>
-								<argument>-DCMAKE_BUILD_TYPE=Release</argument>
-								<argument>-DTARGET_ARCH=Win32</argument>
-								<argument>-GVisual Studio 11</argument>
-								<argument>-Tv110_xp</argument>
-								<argument>.</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>cmake-cards-Win32</id>
-						<phase>compile</phase>
-						<configuration>
-							<executable>cmake</executable>
-							<workingDirectory>./plugins/pluginscards/</workingDirectory>
-							<arguments>
-								<argument>-DCMAKE_BUILD_TYPE=Release</argument>
-								<argument>-DTARGET_ARCH=Win32</argument>
-								<argument>-GVisual Studio 11</argument>
-								<argument>-Tv110_xp</argument>
-								<argument>.</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>cmake-readers-Win32</id>
-						<phase>compile</phase>
-						<configuration>
-							<executable>cmake</executable>
-							<workingDirectory>./plugins/pluginsreaderproviders/</workingDirectory>
-							<arguments>
-								<argument>-DCMAKE_BUILD_TYPE=Release</argument>
-								<argument>-DTARGET_ARCH=Win32</argument>
-								<argument>-GVisual Studio 11</argument>
-								<argument>-Tv110_xp</argument>
-								<argument>.</argument>
-							</arguments>
+							<executable>scripts/GenerateWin32Solutions.bat</executable>
 						</configuration>
 						<goals>
 							<goal>exec</goal>
@@ -140,77 +173,7 @@
 						<phase>compile</phase>
 						<configuration>
 							<arguments>
-								<argument>liblogicalaccess.sln</argument>
-								<argument>/p:Configuration=Release</argument>
-								<argument>/p:Platform=Win32</argument>
-								<argument>/t:Build</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>clean-cards-sln</id>
-						<phase>clean</phase>
-						<configuration>
-							<workingDirectory>./plugins/pluginscards/</workingDirectory>
-							<successCodes>
-								<successCode>1</successCode>
-								<successCode>0</successCode>
-							</successCodes>
-							<arguments>
-								<argument>pluginscards-liblogicalaccess.sln</argument>
-								<argument>/p:Configuration=Release</argument>
-								<argument>/t:Clean</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>clean-readers-sln</id>
-						<phase>clean</phase>
-						<configuration>
-							<workingDirectory>./plugins/pluginsreaderproviders/</workingDirectory>
-							<successCodes>
-								<successCode>1</successCode>
-								<successCode>0</successCode>
-							</successCodes>
-							<arguments>
-								<argument>pluginsreaders-liblogicalaccess.sln</argument>
-								<argument>/p:Configuration=Release</argument>
-								<argument>/t:Clean</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>					
-					<execution>
-						<id>build-cards-Win32</id>
-						<phase>compile</phase>
-						<configuration>
-							<workingDirectory>./plugins/pluginscards/</workingDirectory>
-							<arguments>
-								<argument>pluginscards-liblogicalaccess.sln</argument>
-								<argument>/p:Configuration=Release</argument>
-								<argument>/p:Platform=Win32</argument>
-								<argument>/t:Build</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>build-readers-Win32</id>
-						<phase>compile</phase>
-						<configuration>
-							<workingDirectory>./plugins/pluginsreaderproviders/</workingDirectory>
-							<arguments>
-								<argument>pluginsreaders-liblogicalaccess.sln</argument>
+								<argument>INSTALL.vcxproj</argument>
 								<argument>/p:Configuration=Release</argument>
 								<argument>/p:Platform=Win32</argument>
 								<argument>/t:Build</argument>
@@ -237,63 +200,10 @@
 						</goals>
 					</execution>
 					<execution>
-						<id>before-cmake-x64</id>
-						<phase>compile</phase>
-						<configuration>
-							<executable>scripts/cleancmake.bat</executable>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
 						<id>cmake-x64</id>
 						<phase>compile</phase>
 						<configuration>
-							<executable>cmake</executable>
-							<arguments>
-								<argument>-DCMAKE_BUILD_TYPE=Release</argument>
-								<argument>-DTARGET_ARCH=x64</argument>
-								<argument>-GVisual Studio 11 Win64</argument>
-								<argument>-Tv110_xp</argument>
-								<argument>.</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>cmake-cards-x64</id>
-						<phase>compile</phase>
-						<configuration>
-							<executable>cmake</executable>
-							<workingDirectory>./plugins/pluginscards/</workingDirectory>
-							<arguments>
-								<argument>-DCMAKE_BUILD_TYPE=Release</argument>
-								<argument>-DTARGET_ARCH=x64</argument>
-								<argument>-GVisual Studio 11 Win64</argument>
-								<argument>-Tv110_xp</argument>
-								<argument>.</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>cmake-readers-x64</id>
-						<phase>compile</phase>
-						<configuration>
-							<executable>cmake</executable>
-							<workingDirectory>./plugins/pluginsreaderproviders/</workingDirectory>
-							<arguments>
-								<argument>-DCMAKE_BUILD_TYPE=Release</argument>
-								<argument>-DTARGET_ARCH=x64</argument>
-								<argument>-GVisual Studio 11 Win64</argument>
-								<argument>-Tv110_xp</argument>
-								<argument>.</argument>
-							</arguments>
+							<executable>scripts/GenerateX64Solutions.bat</executable>
 						</configuration>
 						<goals>
 							<goal>exec</goal>
@@ -304,39 +214,7 @@
 						<phase>compile</phase>
 						<configuration>
 							<arguments>
-								<argument>liblogicalaccess.sln</argument>
-								<argument>/p:Configuration=Release</argument>
-								<argument>/p:Platform=x64</argument>
-								<argument>/t:Build</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>build-cards-x64</id>
-						<phase>compile</phase>
-						<configuration>
-							<workingDirectory>./plugins/pluginscards/</workingDirectory>
-							<arguments>
-								<argument>pluginscards-liblogicalaccess.sln</argument>
-								<argument>/p:Configuration=Release</argument>
-								<argument>/p:Platform=x64</argument>
-								<argument>/t:Build</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>build-readers-x64</id>
-						<phase>compile</phase>
-						<configuration>
-							<workingDirectory>./plugins/pluginsreaderproviders/</workingDirectory>
-							<arguments>
-								<argument>pluginsreaders-liblogicalaccess.sln</argument>
+								<argument>INSTALL.vcxproj</argument>
 								<argument>/p:Configuration=Release</argument>
 								<argument>/p:Platform=x64</argument>
 								<argument>/t:Build</argument>
@@ -362,11 +240,95 @@
 							<goal>exec</goal>
 						</goals>
 					</execution>
+					<execution>
+						<id>cmake-Win32-debug</id>
+						<phase>compile</phase>
+						<configuration>
+							<executable>scripts/GenerateWin32Solutions-debug.bat</executable>
+						</configuration>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>build-Win32-debug</id>
+						<phase>compile</phase>
+						<configuration>
+							<arguments>
+								<argument>INSTALL.vcxproj</argument>
+								<argument>/p:Configuration=Debug</argument>
+								<argument>/p:Platform=Win32</argument>
+								<argument>/t:Build</argument>
+							</arguments>
+						</configuration>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>build-kbdhook-Win32-debug</id>
+						<phase>compile</phase>
+						<configuration>
+							<workingDirectory>./plugins/pluginsreaderproviders/keyboard</workingDirectory>
+							<arguments>
+								<argument>islogkbdhook.sln</argument>
+								<argument>/p:Configuration=Debug</argument>
+								<argument>/p:Platform=Win32</argument>
+								<argument>/t:Build</argument>
+							</arguments>
+						</configuration>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>cmake-x64-debug</id>
+						<phase>compile</phase>
+						<configuration>
+							<executable>scripts/GenerateX64Solutions-debug.bat</executable>
+						</configuration>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>build-x64-debug</id>
+						<phase>compile</phase>
+						<configuration>
+							<arguments>
+								<argument>INSTALL.vcxproj</argument>
+								<argument>/p:Configuration=Debug</argument>
+								<argument>/p:Platform=x64</argument>
+								<argument>/t:Build</argument>
+							</arguments>
+						</configuration>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>build-kbdhook-x64-debug</id>
+						<phase>compile</phase>
+						<configuration>
+							<workingDirectory>./plugins/pluginsreaderproviders/keyboard</workingDirectory>
+							<arguments>
+								<argument>islogkbdhook.sln</argument>
+								<argument>/p:Configuration=Debug</argument>
+								<argument>/p:Platform=x64</argument>
+								<argument>/t:Build</argument>
+							</arguments>
+						</configuration>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4</version>
 				<configuration>
+					<appendAssemblyId>false</appendAssemblyId>
 					<descriptors>
 						<descriptor>assembly.xml</descriptor>
 					</descriptors>
@@ -384,6 +346,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.8</version>
 				<executions>
 					<execution>
 						<id>unpack-dependencies</id>
@@ -402,6 +365,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.5</version>
 				<configuration>
 					<verbose>true</verbose>
 					<filesets>
@@ -438,6 +402,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
 				<executions>
 					<execution>
 						<phase>compile</phase>
@@ -446,36 +411,38 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<copy todir="${project.basedir}/bin/plugins/Win32/Release" flatten="true">
-									<fileset dir="${project.basedir}/plugins/pluginscards">
-										<include name="**/bin/Win32/Release/*.lib"/>
+								<copy todir="${project.basedir}/install/bin/Win32/Release" flatten="true">
+									<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
 										<include name="**/bin/Win32/Release/*.dll"/>
 										<include name="**/bin/Win32/Release/*.exe"/>
 									</fileset>
 								</copy>
-								<copy todir="${project.basedir}/bin/plugins/Win32/Release" flatten="true">
-									<fileset dir="${project.basedir}/plugins/pluginsreaderproviders">
-										<include name="**/bin/Win32/Release/*.lib"/>
-										<include name="**/bin/Win32/Release/*.dll"/>
-										<include name="**/bin/Win32/Release/*.exe"/>
-									</fileset>
-								</copy>
-								<copy todir="${project.basedir}/bin/plugins/x64/Release" flatten="true">
-									<fileset dir="${project.basedir}/plugins/pluginscards">
-										<include name="**/bin/x64/Release/*.lib"/>
+								<copy todir="${project.basedir}/install/bin/x64/Release" flatten="true">
+									<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
 										<include name="**/bin/x64/Release/*.dll"/>
 										<include name="**/bin/x64/Release/*.exe"/>
 									</fileset>
 								</copy>
-								<copy todir="${project.basedir}/bin/plugins/x64/Release" flatten="true">
-									<fileset dir="${project.basedir}/plugins/pluginsreaderproviders">
-										<include name="**/bin/x64/Release/*.lib"/>
-										<include name="**/bin/x64/Release/*.dll"/>
-										<include name="**/bin/x64/Release/*.exe"/>
+								<copy todir="${project.basedir}/install/bin/Win32/Debug" flatten="true">
+									<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
+										<include name="**/bin/Win32/Debug/*.dll"/>
+										<include name="**/bin/Win32/Debug/*.exe"/>
+									</fileset>
+								</copy>
+								<copy todir="${project.basedir}/install/bin/x64/Debug" flatten="true">
+									<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
+										<include name="**/bin/x64/Debug/*.dll"/>
+										<include name="**/bin/x64/Debug/*.exe"/>
+									</fileset>
+								</copy>
+								<copy todir="${project.basedir}/install/etc" flatten="true">
+									<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
+										<include name="islogkbdsettings.config"/>
 									</fileset>
 								</copy>
 								<exec executable="scripts/postbuild.bat">
 									<arg value="${islog.ISLOGSign}" />
+									<arg value="install/bin" />
 								</exec>
 							</tasks>
 						</configuration>
@@ -483,7 +450,7 @@
 				</executions>
 			</plugin>
 		</plugins>
-		<finalName>${artifactId}-${version}.${buildNumber}</finalName>
+		<finalName>${project.artifactId}-${project.version}</finalName>
 	</build>
 	
 	<dependencies>

@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
 project(samav2cards)
 
+if (WIN32)
+	SET(VERSION_PRODUCTNAME_VALUE "samav2cards")
+	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif()
+
 file(GLOB_RECURSE SRCS *.cpp)
 file(GLOB_RECURSE INCLUDE *.hpp)
 
@@ -21,25 +26,21 @@ endif()
 add_library(
 	samav2cards
 	SHARED
-
 	${SRCS}
 	${source_commands}
 	${INCLUDE}
 	${include_commands}
+	${resourcerc}
   )
 
-SET_TARGET_PROPERTIES(samav2cards PROPERTIES VERSION 1.70)
-
-set(OPT_LIBS)
-if (WIN32)
-  set(OPT_LIBS zlib libeay32 liblogicalaccess)
-else()
-  set(OPT_LIBS crypto z logicalaccess)
-endif()
+SET_TARGET_PROPERTIES(samav2cards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 
 target_link_libraries(
 	samav2cards
 	desfirecards
 	logicalaccess-cryptolib
-	${OPT_LIBS}
+	${LIBLOGICALACCESS_LIBRARY}
 )
+
+install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/samav2 )
+install ( TARGETS samav2cards RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )

@@ -5,7 +5,7 @@
  */
 
 #ifndef LOGICALACCESS_GENERICTAGACCESSCONTROLCARDSERVICE_HPP
-#define LOGICALACCESS_GENERICTAGACCESSCONTROLCARDSERVICE_HP
+#define LOGICALACCESS_GENERICTAGACCESSCONTROLCARDSERVICE_HPP
 
 #include "generictagchip.hpp"
 #include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"

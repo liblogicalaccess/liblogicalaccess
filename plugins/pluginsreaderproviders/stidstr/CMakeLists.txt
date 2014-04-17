@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 2.6)
 project(stidstrreaders)
 
-if (NOT TARGET_ARCH)
-	set(TARGET_ARCH "Win32")
+if (WIN32)
+	SET(VERSION_PRODUCTNAME_VALUE "stidstrreaders")
+	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
 endif()
 
 set(INCLUDE_FOLDER 	${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire
@@ -29,34 +30,25 @@ SOURCE_GROUP("Source Files\\commands" FILES ${source_commands})
 set(INCLUDE_LIB ${include} ${include_core} ${include_readercardadapters} ${include_commands})
 set(SOURCE_LIB ${SRCS} ${source_readercardadapters} ${source_commands})
 
-if (WIN32)
-LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
-										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire/bin/${TARGET_ARCH}/${VC_FOLDER_NAME})
-else()
-LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare/bin
-										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire/bin)
-endif()
-
 add_library(
 	stidstrreaders
 	SHARED
-	
 	${SOURCE_LIB}
 	${INCLUDE_LIB}
+	${resourcerc}
   )
 
-if (WIN32)
-  set(LINK_OPT liblogicalaccess libeay32)
-else()
-  set(LINK_OPT logicalaccess  crypto boost_filesystem boost_system)
-endif()
-
-SET_TARGET_PROPERTIES(stidstrreaders PROPERTIES VERSION 1.70)  
+SET_TARGET_PROPERTIES(stidstrreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})  
 
 target_link_libraries(
 	stidstrreaders
 	logicalaccess-cryptolib
 	mifarecards
 	desfirecards
-	${LINK_OPT}
+	${LIBLOGICALACCESS_LIBRARY}
 )
+
+install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/stidstr )
+install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/stidstr/readercardadapters )
+install ( FILES ${include_commands} DESTINATION include/logicalaccess/plugins/readers/stidstr/readercardadapters )
+install ( TARGETS stidstrreaders RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )

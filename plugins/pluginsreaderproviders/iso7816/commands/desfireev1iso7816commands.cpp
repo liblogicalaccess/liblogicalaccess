@@ -1091,7 +1091,7 @@ namespace logicalaccess
 			if (dd.size() > 0 && keyno != 0)
 			{
 				std::vector<unsigned char> CMAC = d_crypto->desfire_cmac(std::vector<unsigned char>(&err, &err + 1));
-				EXCEPTION_ASSERT_WITH_LOG(dd == CMAC, LibLogicalAccessException, "Wrong CMAC.")
+				EXCEPTION_ASSERT_WITH_LOG(dd == CMAC, LibLogicalAccessException, "Wrong CMAC.");
 			}
 		}
 	}

@@ -29,12 +29,17 @@
 #include "commands/twiciso7816commands.hpp"
 #include "commands/mifareultralightpcsccommands.hpp"
 #include "commands/mifareultralightcpcsccommands.hpp"
+#include "commands/mifareomnikeyxx27commands.hpp"
 #include "readercardadapters/pcscreadercardadapter.hpp"
 #include "mifareplussl1profile.hpp"
 #include "commands/mifareplusspringcardcommandssl1.hpp"
 #include "mifareplussl3profile.hpp"
 #include "commands/mifareplusspringcardcommandssl3.hpp"
 #include "samav1chip.hpp"
+
+#include "commands/samiso7816resultchecker.hpp"
+#include "commands/desfireiso7816resultchecker.hpp"
+#include "commands/mifareomnikeyxx27resultchecker.hpp"
 
 #include "readers/omnikeyxx21readerunit.hpp"
 #include "readers/omnikeylanxx21readerunit.hpp"
@@ -1441,6 +1446,7 @@ namespace logicalaccess
 
 			boost::shared_ptr<ReaderCardAdapter> rca = getReaderCardAdapter(type);
 			boost::shared_ptr<Commands> commands;
+			boost::shared_ptr<ResultChecker> resultChecker(new ISO7816ResultChecker()); // default one
 
 			if (type ==  "Mifare1K" || type == "Mifare4K" || type == "Mifare")
 			{
@@ -1455,6 +1461,11 @@ namespace logicalaccess
 				else if (getPCSCType() == PCSC_RUT_SPRINGCARD)
 				{
 					commands.reset(new MifareSpringCardCommands());
+				}
+				else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX27)
+				{
+					commands.reset(new MifareOmnikeyXX27Commands());
+					resultChecker.reset(new MifareOmnikeyXX27ResultChecker());
 				}
 				else
 				{
@@ -1478,11 +1489,13 @@ namespace logicalaccess
 			{
 				commands.reset(new DESFireEV1ISO7816Commands());
 				boost::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(getSAMChip());
+				resultChecker.reset(new DESFireISO7816ResultChecker());
 			}
 			else if (type == "DESFire")
 			{
 				commands.reset(new DESFireISO7816Commands());
 				boost::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(getSAMChip());
+				resultChecker.reset(new DESFireISO7816ResultChecker());
 			}
 			else if (type == "ISO15693")
 			{
@@ -1513,12 +1526,14 @@ namespace logicalaccess
 				commands.reset(new SAMAV1ISO7816Commands());
 				boost::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
 				boost::dynamic_pointer_cast<SAMAV1ISO7816Commands>(commands)->setCrypto(samcrypto);
+				resultChecker.reset(new SAMISO7816ResultChecker());
 			}
 			else if (type == "SAM_AV2")
 			{
 				commands.reset(new SAMAV2ISO7816Commands());
 				boost::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
 				boost::dynamic_pointer_cast<SAMAV2ISO7816Commands>(commands)->setCrypto(samcrypto);
+				resultChecker.reset(new SAMISO7816ResultChecker());
 			}
 			else if (type == "MifarePlus4K")
 			{
@@ -1575,6 +1590,11 @@ namespace logicalaccess
 
 			if (commands)
 			{
+				boost::shared_ptr<DataTransport> dt = rca->getDataTransport();
+				if (dt)
+				{
+					dt->setResultChecker(resultChecker);
+				}
 				commands->setReaderCardAdapter(rca);
 				commands->setChip(chip);
 				chip->setCommands(commands);

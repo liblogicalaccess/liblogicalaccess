@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 2.6)
 project(iso7816readers)
 
-if (NOT TARGET_ARCH)
-	set(TARGET_ARCH "Win32")
+if (WIN32)
+	SET(VERSION_PRODUCTNAME_VALUE "iso7816readers")
+	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
 endif()
 
 set(INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire
@@ -29,38 +30,15 @@ SOURCE_GROUP("Source Files\\commands" FILES ${source_commands})
 set(INCLUDE_LIB ${include} ${include_core} ${include_readercardadapters} ${include_commands})
 set(SOURCE_LIB ${SRCS} ${source_readercardadapters} ${source_readercardadapters} ${source_commands})
 
-if (WIN32)
-  LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../cryptolib/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
-										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
-										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
-										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816/bin/${TARGET_ARCH}/${VC_FOLDER_NAME}
-										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic/bin/${TARGET_ARCH}/${VC_FOLDER_NAME})
-else()
-  LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../../cryptolib
-										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2/bin
-										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire/bin
-										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816/bin
-										${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic/bin)
-endif()
-
 add_library(
 	iso7816readers
 	SHARED
-	
 	${SOURCE_LIB}
 	${INCLUDE_LIB}
+	${resourcerc}
   )
-
-SET_TARGET_PROPERTIES(iso7816readers PROPERTIES VERSION 1.70)
   
-set(LINK_LIB)
-if (WIN32)
-  set(LINK_LIB libeay32 twiccards liblogicalaccess)
-else()
-  set(LINK_LIB crypto logicalaccess)
-endif()
-
-SET_TARGET_PROPERTIES(iso7816readers PROPERTIES VERSION 1.70)
+SET_TARGET_PROPERTIES(iso7816readers PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
   
 target_link_libraries(
 	iso7816readers
@@ -68,6 +46,11 @@ target_link_libraries(
 	logicalaccess-cryptolib
 	iso7816cards
 	samav2cards
-	
-	${LINK_LIB}
+	${LIBLOGICALACCESS_LIBRARY}
+	twiccards
 )
+
+install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/iso7816 )
+install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/iso7816/readercardadapters )
+install ( FILES ${include_commands} DESTINATION include/logicalaccess/plugins/readers/iso7816/commands )
+install ( TARGETS iso7816readers RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )

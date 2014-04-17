@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include <vector>
 
-#include "../KeyboardSharedStruct.h"
+#include "../keyboardsharedstruct.hpp"
 
 namespace KBDHOOK
 {

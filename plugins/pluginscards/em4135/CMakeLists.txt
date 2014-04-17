@@ -1,26 +1,28 @@
 cmake_minimum_required(VERSION 2.6)
 project(em4135cards)
 
+if (WIN32)
+	SET(VERSION_PRODUCTNAME_VALUE "em4135cards")
+	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif()
+
 file(GLOB_RECURSE SRCS *.cpp)
 file(GLOB_RECURSE INCLUDE *.hpp)
 
 add_library(
 	em4135cards
 	SHARED
-
 	${SRCS}
 	${INCLUDE}
+	${resourcerc}
   )
 
-if (WIN32)
-  set(LINK_OPT liblogicalaccess)
-else()
-  set(LINK_OPT logicalaccess)
-endif()
-
-SET_TARGET_PROPERTIES(em4135cards PROPERTIES VERSION 1.70)
+SET_TARGET_PROPERTIES(em4135cards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 
 target_link_libraries(
 	em4135cards
-	${LINK_OPT}
+	${LIBLOGICALACCESS_LIBRARY}
 )
+
+install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/em4135 )
+install ( TARGETS em4135cards RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )

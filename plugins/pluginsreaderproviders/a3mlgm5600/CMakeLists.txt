@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 2.6)
 project(a3mlgm5600readers)
 
+if (WIN32)
+	SET(VERSION_PRODUCTNAME_VALUE "a3mlgm5600readers")
+	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif()
 
 file(GLOB SRCS *.cpp)
 file(GLOB include *.hpp)
@@ -17,20 +21,20 @@ set(SOURCE_LIB ${SRCS} ${source_readercardadapters})
 add_library(
 	a3mlgm5600readers
 	SHARED
-	
 	${SOURCE_LIB}
 	${INCLUDE_LIB}
+	${resourcerc}
   )
 
-if (WIN32)
-  set(LINK_OPT liblogicalaccess)
-else()
-  set(LINK_OPT logicalaccess pthread boost_system boost_filesystem)
-endif()
 
-SET_TARGET_PROPERTIES(a3mlgm5600readers PROPERTIES VERSION 1.70)
+SET_TARGET_PROPERTIES(a3mlgm5600readers PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 
 target_link_libraries(
     a3mlgm5600readers
+    ${LIBLOGICALACCESS_LIBRARY}
     ${LINK_OPT}
 )
+
+install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/a3mlgm5600 )
+install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/a3mlgm5600/readercardadapters )
+install ( TARGETS a3mlgm5600readers RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )

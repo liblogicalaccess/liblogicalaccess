@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
 project(keyboardreaders)
 
+if (WIN32)
+	SET(VERSION_PRODUCTNAME_VALUE "keyboardreaders")
+	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif()
+
 file(GLOB SRCS *.cpp)
 file(GLOB include *.h)
 file(GLOB includepp *.hpp)
@@ -21,18 +26,17 @@ add_library(
 	
 	${SOURCE_LIB}
 	${INCLUDE_LIB}
+	${resourcerc}
   )
-
-if (WIN32)
-  set(LINK_OPT liblogicalaccess)
-else()
-  set(LINK_OPT logicalaccess)
-endif()
 
 SET_TARGET_PROPERTIES(keyboardreaders PROPERTIES VERSION 1.70)
   
 target_link_libraries(
 	keyboardreaders
-	${LINK_OPT}
+	${LIBLOGICALACCESS_LIBRARY}
 	UserEnv
 )
+
+install ( FILES ${include} ${includepp} DESTINATION include/logicalaccess/plugins/readers/keyboard )
+install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/keyboard/readercardadapters )
+install ( TARGETS keyboardreaders RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )

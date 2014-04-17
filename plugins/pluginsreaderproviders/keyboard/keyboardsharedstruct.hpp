@@ -1,11 +1,11 @@
 /**
- * \file keyboardsharedstruct.h
+ * \file keyboardsharedstruct.hpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Keyboard shared struct. 
  */
 
-#ifndef LOGICALACCESS_KEYBOARDSHAREDSTRUCT_H
-#define LOGICALACCESS_KEYBOARDSHAREDSTRUCT_H
+#ifndef LOGICALACCESS_KEYBOARDSHAREDSTRUCT_HPP
+#define LOGICALACCESS_KEYBOARDSHAREDSTRUCT_HPP
 
 namespace logicalaccess
 {

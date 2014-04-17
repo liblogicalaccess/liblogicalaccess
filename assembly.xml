@@ -1,150 +1,80 @@
 <assembly>
+	<id>bin</id>
     <formats>
         <format>zip</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
         <fileSet>
-            <directory>/bin/Win32/Release/</directory>
-            <outputDirectory>/lib/Win32/</outputDirectory>
+            <directory>/install/lib/Win32/Release/</directory>
+            <outputDirectory>/lib/Win32/Release</outputDirectory>
             <includes>
 				<include>*.lib</include>
             </includes>
         </fileSet>
 		<fileSet>
-            <directory>/bin/plugins/Win32/Release/</directory>
-            <outputDirectory>/lib/Win32/</outputDirectory>
+            <directory>/install/lib/x64/Release/</directory>
+            <outputDirectory>/lib/x64/Release</outputDirectory>
             <includes>
 				<include>*.lib</include>
             </includes>
         </fileSet>
 		<fileSet>
-            <directory>/plugins/cryptolib/bin/Win32/Release</directory>
-            <outputDirectory>/lib/Win32/</outputDirectory>
+            <directory>/install/lib/Win32/Debug/</directory>
+            <outputDirectory>/lib/Win32/Debug</outputDirectory>
             <includes>
 				<include>*.lib</include>
             </includes>
         </fileSet>
 		<fileSet>
-            <directory>/bin/x64/Release/</directory>
-            <outputDirectory>/lib/x64/</outputDirectory>
+            <directory>/install/lib/x64/Debug/</directory>
+            <outputDirectory>/lib/x64/Debug</outputDirectory>
             <includes>
 				<include>*.lib</include>
             </includes>
         </fileSet>
 		<fileSet>
-            <directory>/bin/plugins/x64/Release/</directory>
-            <outputDirectory>/lib/x64/</outputDirectory>
-            <includes>
-				<include>*.lib</include>
-            </includes>
-        </fileSet>
-		<fileSet>
-            <directory>/plugins/cryptolib/bin/x64/Release</directory>
-            <outputDirectory>/lib/x64/</outputDirectory>
-            <includes>
-				<include>*.lib</include>
-            </includes>
-        </fileSet>
-		<fileSet>
-            <directory>/bin/Win32/Release/</directory>
-            <outputDirectory>/dll/Win32/</outputDirectory>
+            <directory>/install/bin/Win32/Release/</directory>
+            <outputDirectory>/dll/Win32/Release</outputDirectory>
             <includes>
                 <include>*.dll</include>
 				<include>*.exe</include>
             </includes>
         </fileSet>
 		<fileSet>
-            <directory>/bin/plugins/Win32/Release/</directory>
-            <outputDirectory>/dll/Win32/</outputDirectory>
+            <directory>/install/bin/x64/Release/</directory>
+            <outputDirectory>/dll/x64/Release</outputDirectory>
             <includes>
                 <include>*.dll</include>
 				<include>*.exe</include>
             </includes>
         </fileSet>
 		<fileSet>
-            <directory>/</directory>
-            <outputDirectory>/dll/Win32/</outputDirectory>
-            <includes>
-                <include>liblogicalaccess.config</include>
-				<include>/plugins/pluginsreaderproviders/keyboard/islogkbdsettings.config</include>
-            </includes>
-        </fileSet>
-		<fileSet>
-            <directory>/plugins/pluginsreaderproviders/keyboard/</directory>
-            <outputDirectory>/dll/Win32/</outputDirectory>
-            <includes>
-				<include>islogkbdsettings.config</include>
-            </includes>
-        </fileSet>
-		<fileSet>
-            <directory>/bin/x64/Release/</directory>
-            <outputDirectory>/dll/x64/</outputDirectory>
+            <directory>/install/bin/Win32/Debug/</directory>
+            <outputDirectory>/dll/Win32/Debug</outputDirectory>
             <includes>
                 <include>*.dll</include>
 				<include>*.exe</include>
             </includes>
         </fileSet>
 		<fileSet>
-            <directory>/bin/plugins/x64/Release/</directory>
-            <outputDirectory>/dll/x64/</outputDirectory>
+            <directory>/install/bin/x64/Debug/</directory>
+            <outputDirectory>/dll/x64/Debug</outputDirectory>
             <includes>
                 <include>*.dll</include>
 				<include>*.exe</include>
             </includes>
         </fileSet>
 		<fileSet>
-            <directory>/</directory>
-            <outputDirectory>/dll/x64/</outputDirectory>
+            <directory>/install/etc/</directory>
+            <outputDirectory>/etc</outputDirectory>
             <includes>
-                <include>liblogicalaccess.config</include>
+				<include>*.config</include>
             </includes>
         </fileSet>
 		<fileSet>
-            <directory>/plugins/pluginsreaderproviders/keyboard/</directory>
-            <outputDirectory>/dll/x64/</outputDirectory>
-            <includes>
-				<include>islogkbdsettings.config</include>
-            </includes>
-        </fileSet>
-		<fileSet>
-            <directory>/include</directory>
+            <directory>/install/include</directory>
             <outputDirectory>/include</outputDirectory>
-            <includes>
-                <include>**/*.h</include>
-				<include>**/*.hpp</include>
-            </includes>
-        </fileSet>
-		<fileSet>
-            <directory>/vc++</directory>
-            <outputDirectory>/include/logicalaccess</outputDirectory>
-            <includes>
-                <include>*.h</include>
-            </includes>
-        </fileSet>
-		<fileSet>
-            <directory>/plugins/cryptolib/include/logicalaccess</directory>
-            <outputDirectory>/include/logicalaccess</outputDirectory>
-            <includes>
-                <include>**/*.h</include>
-				<include>**/*.hpp</include>
-            </includes>
-        </fileSet>
-		<fileSet>
-            <directory>/plugins/pluginscards</directory>
-            <outputDirectory>/include/logicalaccess/plugins/cards</outputDirectory>
-            <includes>
-                <include>**/*.h</include>
-				<include>**/*.hpp</include>
-            </includes>
-        </fileSet>
-		<fileSet>
-            <directory>/plugins/pluginsreaderproviders</directory>
-            <outputDirectory>/include/logicalaccess/plugins/readers</outputDirectory>
-            <includes>
-                <include>**/*.h</include>
-				<include>**/*.hpp</include>
-            </includes>
         </fileSet>
 		<fileSet>
             <directory>/</directory>

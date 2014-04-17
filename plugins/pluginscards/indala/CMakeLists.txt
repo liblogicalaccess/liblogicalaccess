@@ -1,26 +1,28 @@
 cmake_minimum_required(VERSION 2.6)
 project(indalacards)
 
+if (WIN32)
+	SET(VERSION_PRODUCTNAME_VALUE "indalacards")
+	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif()
+
 file(GLOB_RECURSE SRCS *.cpp)
 file(GLOB_RECURSE INCLUDE *.hpp)
 
 add_library(
 	indalacards
 	SHARED
-
 	${SRCS}
 	${INCLUDE}
+	${resourcerc}
   )
 
-if (WIN32)
-  set(LINK_OPT liblogicalaccess)
-else()
-  set(LINK_OPT logicalaccess)
-endif()
-
-SET_TARGET_PROPERTIES(indalacards PROPERTIES VERSION 1.70)
+SET_TARGET_PROPERTIES(indalacards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 
 target_link_libraries(
 	indalacards
-	${LINK_OPT}
+	${LIBLOGICALACCESS_LIBRARY}
 )
+
+install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/indala )
+install ( TARGETS indalacards RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )

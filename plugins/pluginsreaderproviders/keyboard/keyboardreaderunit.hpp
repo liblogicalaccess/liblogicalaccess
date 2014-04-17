@@ -9,7 +9,7 @@
 
 #include "logicalaccess/readerproviders/readerunit.hpp"
 #include "keyboardreaderunitconfiguration.hpp"
-#include "keyboardsharedstruct.h"
+#include "keyboardsharedstruct.hpp"
 
 namespace logicalaccess
 {

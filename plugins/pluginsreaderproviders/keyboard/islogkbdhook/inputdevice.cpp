@@ -1,4 +1,4 @@
-#include "InputDevice.h"
+#include "inputdevice.hpp"
 #include "islogkbdlogs.hpp"
 
 namespace KBDHOOK

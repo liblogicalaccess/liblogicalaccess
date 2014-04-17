@@ -1,9 +1,2 @@
-cd ..
-call scripts/cleancmake.bat
-cmake -DCMAKE_BUILD_TYPE=Debug -DTARGET_ARCH=x64 -G"Visual Studio 11 Win64" -Tv110_xp .
-cd plugins/pluginscards/
-cmake -DCMAKE_BUILD_TYPE=Debug -DTARGET_ARCH=x64 -G"Visual Studio 11 Win64" -Tv110_xp .
-cd ../pluginsreaderproviders/
-cmake -DCMAKE_BUILD_TYPE=Debug -DTARGET_ARCH=x64 -G"Visual Studio 11 Win64" -Tv110_xp .
-cd ../../scripts
-pause;
+call scripts\cleancmake.bat
+cmake.exe -DCMAKE_BUILD_TYPE=Debug -DTARGET_ARCH=x64 -DLIB_SUFFIX=x64/Debug -G"Visual Studio 11 Win64" -Tv110_xp -DCMAKE_INSTALL_PREFIX=./install .
