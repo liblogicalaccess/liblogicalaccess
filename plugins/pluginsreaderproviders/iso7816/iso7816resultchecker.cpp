@@ -14,7 +14,7 @@ namespace logicalaccess
 
 		AddCheck(0x65, 0x81, "Memory failure");
 
-		AddCheck(0x67, 0x00, "Wrong length");
+		AddCheck(0x67, 0x00, "Wrong Length or LC byte");
 
 		AddCheck(0x68, 0x00, "Invalid CLA byte");
 
@@ -27,8 +27,19 @@ namespace logicalaccess
 
 		AddCheck(0x6A, 0x81, "Function not supported");
 		AddCheck(0x6A, 0x82, "File not found or addressed block/byte does not exist");
-
+		AddCheck(0x6A, 0x86, "Wrong P1 P2");
+		
 		AddCheck(0x6B, 0x00, "Wrong parameter P1 or P2");
+		
+		AddCheck(0x6C, 0x00, "Wrong LE");
+		
+		AddCheck(0x6D, 0x00, "Wrong Instruction");
+		
+		AddCheck(0x6E, 0x00, "Wrong Class");
+
+		AddCheck(0x69, 0x86, "Command not allowed");
+
+		AddCheck(0x6A, 0x80, "Wrong parameters for current instruction");
 	}
 
 	ISO7816ResultChecker::~ISO7816ResultChecker() {}

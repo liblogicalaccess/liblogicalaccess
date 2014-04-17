@@ -53,6 +53,7 @@
 
 #include "desfirechip.hpp"
 #include <boost/filesystem.hpp>
+#include <boost/shared_ptr.hpp>
 
 #ifdef UNIX
 #include <sys/time.h>
@@ -676,34 +677,45 @@ namespace logicalaccess
 							}
 						}
 						// Specific behavior for DESFire to check if it is not a DESFire EV1
-						else if (d_card_type == "UNKNOWN" && d_insertedChip && d_insertedChip->getCardType() == "DESFire")
+						else if (d_card_type == "UNKNOWN" && d_insertedChip)
 						{
-							try
+							if (d_insertedChip->getCardType() == "DESFire")
 							{
-#ifdef _WINDOWS
-				Sleep(100);
-#elif defined(__unix__)
-				usleep(100000);
-#endif
-								DESFireCommands::DESFireCardVersion cardversion;
-								boost::dynamic_pointer_cast<DESFireChip>(d_insertedChip)->getDESFireCommands()->getVersion(cardversion);
-								// Set from the version
-
-								// DESFire EV1 and not regular DESFire
-								if (cardversion.softwareMjVersion >= 1)
+								try
 								{
-									d_insertedChip = createChip("DESFireEV1");
+	#ifdef _WINDOWS
+					Sleep(100);
+	#elif defined(__unix__)
+					usleep(100000);
+	#endif
+									DESFireCommands::DESFireCardVersion cardversion;
+									boost::dynamic_pointer_cast<DESFireChip>(d_insertedChip)->getDESFireCommands()->getVersion(cardversion);
+									// Set from the version
 
-									if (d_proxyReaderUnit)
+									// DESFire EV1 and not regular DESFire
+									if (cardversion.softwareMjVersion >= 1)
 									{
-										d_proxyReaderUnit->setSingleChip(d_insertedChip);
+										d_insertedChip = createChip("DESFireEV1");
 									}
+									d_insertedChip->setChipIdentifier(std::vector<unsigned char>(cardversion.uid, cardversion.uid + sizeof(cardversion.uid)));
 								}
-								d_insertedChip->setChipIdentifier(std::vector<unsigned char>(cardversion.uid, cardversion.uid + sizeof(cardversion.uid)));
+								catch(std::exception&)
+								{
+									// Doesn't care about bad communication here, stay DESFire.
+								}
 							}
-							catch(std::exception&)
+							else if (d_insertedChip->getCardType() == "SAM_AV2")
 							{
-								// Doesn't care about bad communication here, stay DESFire.
+								if (boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2> >(d_insertedChip->getCommands())->getSAMTypeFromSAM() == "SAM_AV1")
+								{
+									INFO_SIMPLE_("SAM on the reader is AV2 but mode AV1 so we switch to AV1.");
+									d_insertedChip = createChip("SAM_AV1");
+								}
+							}
+
+							if (d_proxyReaderUnit)
+							{
+								d_proxyReaderUnit->setSingleChip(d_insertedChip);
 							}
 						}
 						else
@@ -873,11 +885,8 @@ namespace logicalaccess
 
 				INFO_SIMPLE_("Checking SAM backward...");
 
-				//No Backward AV2 => AV1
-				if (getPCSCConfiguration()->getSAMType() == "SAM_AV2" && ret->getSingleChip()->getCardType() != "SAM_AV1")
-					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM on the reader is not the same type as selected.");
 				//Check Backward AV1 => AV2 is active
-				if (getPCSCConfiguration()->getSAMType() != "SAM_AUTO" && ret->getSingleChip()->getCardType() == "SAM_AV2" && getPCSCConfiguration()->getSAMType() != boost::dynamic_pointer_cast<SAMCommands>(ret->getSingleChip()->getCommands())->getSAMTypeFromSAM())
+				if (getPCSCConfiguration()->getSAMType() != "SAM_AUTO" && ret->getSingleChip()->getCardType() == "SAM_AV2" && getPCSCConfiguration()->getSAMType() != boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2> >(ret->getSingleChip()->getCommands())->getSAMTypeFromSAM())
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM on the reader is not the same type as selected.");
 
 				INFO_SIMPLE_("SAM backward ended.");
@@ -889,8 +898,16 @@ namespace logicalaccess
 
 				try
 				{
-					if (getPCSCConfiguration()->getSAMSecurityKey())
-						boost::dynamic_pointer_cast<SAMAV1ISO7816Commands>(getSAMChip()->getCommands())->authentificateHost(getPCSCConfiguration()->getSAMSecurityKey(), getPCSCConfiguration()->getSAMSecuritykeyNo());
+					if (getPCSCConfiguration()->getSAMUnLockKey())
+					{
+						if (ret->getSingleChip()->getCardType() == "SAM_AV1")
+							boost::dynamic_pointer_cast<SAMAV1ISO7816Commands>(getSAMChip()->getCommands())->authentificateHost(getPCSCConfiguration()->getSAMUnLockKey(), getPCSCConfiguration()->getSAMUnLockkeyNo());
+						else if (ret->getSingleChip()->getCardType() == "SAM_AV2")
+							boost::dynamic_pointer_cast<SAMAV2ISO7816Commands>(getSAMChip()->getCommands())->lockUnlock(getPCSCConfiguration()->getSAMUnLockKey(), logicalaccess::SAMLockUnlock::Unlock, getPCSCConfiguration()->getSAMUnLockkeyNo(), 0, 0);
+					}
+					else
+						THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The Unlock SAM key is empty.");
+
 				}
 				catch (std::exception&)
 				{
@@ -964,13 +981,11 @@ namespace logicalaccess
 
 	std::vector<unsigned char> PCSCReaderUnit::getCardSerialNumber()
 	{
-		unsigned char ucReceivedData[255];
-		size_t ulNoOfDataReceived = sizeof(ucReceivedData);	// max csn len 64 (+ SW1 and SW2)
+		std::vector<unsigned char> ucReceivedData;
 
-		memset(ucReceivedData, 0x00, sizeof(ucReceivedData));
-		getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xCA, 0x00, 0x00, 0x00, ucReceivedData, &ulNoOfDataReceived);
+		ucReceivedData = getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xCA, 0x00, 0x00, 0x00);
 
-		return std::vector<unsigned char>(ucReceivedData, ucReceivedData + (ulNoOfDataReceived - 2));
+		return std::vector<unsigned char>(ucReceivedData.begin(), ucReceivedData.end() - 2);
 	}
 
 	size_t PCSCReaderUnit::getATR(void* atr, size_t atrLength)
@@ -1548,7 +1563,10 @@ namespace logicalaccess
 				if (dcmd->getSAMChip())
 				{
 					boost::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
-					boost::dynamic_pointer_cast<SAMAV1ISO7816Commands>(dcmd->getSAMChip()->getCommands())->setCrypto(samcrypto);
+					if (dcmd->getSAMChip()->getCardType() == "SAM_AV1")
+						boost::dynamic_pointer_cast<SAMAV1ISO7816Commands>(dcmd->getSAMChip()->getCommands())->setCrypto(samcrypto);
+					else if (dcmd->getSAMChip()->getCardType() == "SAM_AV2")
+						boost::dynamic_pointer_cast<SAMAV2ISO7816Commands>(dcmd->getSAMChip()->getCommands())->setCrypto(samcrypto);
 				}
 			}
 

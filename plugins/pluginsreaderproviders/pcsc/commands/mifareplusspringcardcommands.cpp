@@ -105,22 +105,19 @@ namespace logicalaccess
 
 	std::vector<unsigned char> MifarePlusSpringCardCommands::AESSendCommand(const std::vector<unsigned char>& command, bool t_cl, long int /*timeout*/)
 	{
-		unsigned char result[1024];
-		size_t resultlen = sizeof(result);
-		std::vector<unsigned char> r;
+		std::vector<unsigned char> result;
 
 		if (t_cl)
-			boost::dynamic_pointer_cast<PCSCReaderUnit>(getReaderCardAdapter()->getDataTransport()->getReaderUnit())->getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xFE, 0x00, 0x00, static_cast<unsigned char>(command.size()), reinterpret_cast<const unsigned char*>(&command[0]), command.size(), result, &resultlen);
+			result = boost::dynamic_pointer_cast<PCSCReaderUnit>(getReaderCardAdapter()->getDataTransport()->getReaderUnit())->getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xFE, 0x00, 0x00, static_cast<unsigned char>(command.size()), command);
 		else
-			boost::dynamic_pointer_cast<PCSCReaderUnit>(getReaderCardAdapter()->getDataTransport()->getReaderUnit())->getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xFE, 0x01, 0x07, static_cast<unsigned char>(command.size()), reinterpret_cast<const unsigned char*>(&command[0]), command.size(), result, &resultlen);
+			result = boost::dynamic_pointer_cast<PCSCReaderUnit>(getReaderCardAdapter()->getDataTransport()->getReaderUnit())->getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xFE, 0x01, 0x07, static_cast<unsigned char>(command.size()), command);
 		
-		r.insert(r.end(), result, result + resultlen);
 		// temp
-		std::cout << "card responded : " << BufferHelper::getHex(r) << "(" << r.size() << " bytes)\n";
+		std::cout << "card responded : " << BufferHelper::getHex(result) << "(" << result.size() << " bytes)\n";
 		//end
-		CheckCardReturn(result, resultlen);
+		CheckCardReturn(&result[0], result.size());
 
-		return r;
+		return result;
 	}
 
 	void MifarePlusSpringCardCommands::CheckCardReturn(const unsigned char result[], size_t resultlen)

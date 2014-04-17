@@ -29,7 +29,7 @@ namespace logicalaccess
 			 * \param efid The EF identifier to set as current.
 			 * \return True on success, false otherwise.
 			 */
-			virtual bool readBinay(void* data, size_t& dataLength, size_t offset, short efid = 0) = 0;
+			virtual bool readBinary(void* data, size_t& dataLength, size_t offset, short efid = 0) = 0;
 
 			/**
 			 * \brief Write binary data.
@@ -39,7 +39,7 @@ namespace logicalaccess
 			 * \param efid The EF identifier to set as current.
 			 * \return True on success, false otherwise.
 			 */
-			virtual void writeBinay(const void* data, size_t dataLength, size_t offset, short efid = 0) = 0;
+			virtual void writeBinary(const void* data, size_t dataLength, size_t offset, short efid = 0) = 0;
 
 			/**
 			 * \brief Update binary data.
@@ -49,7 +49,7 @@ namespace logicalaccess
 			 * \param efid The EF identifier to set as current.
 			 * \return True on success, false otherwise.
 			 */
-			virtual void updateBinay(const void* data, size_t dataLength, size_t offset, short efid = 0) = 0;
+			virtual void updateBinary(const void* data, size_t dataLength, size_t offset, short efid = 0) = 0;
 
 			/**
 			 * \brief Erase binary data.
@@ -57,7 +57,7 @@ namespace logicalaccess
 			 * \param efid The EF identifier to set as current.
 			 * \return True on success, false otherwise.
 			 */
-			virtual void eraseBinay(size_t offset, short efid = 0) = 0;
+			virtual void eraseBinary(size_t offset, short efid = 0) = 0;
 
 			// Don't implement record management yet.
 

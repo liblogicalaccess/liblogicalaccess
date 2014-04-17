@@ -330,7 +330,7 @@ namespace logicalaccess
 			 * \param data The data buffer
 			 * \param mode The communication mode
 			 */
-			virtual void handleWriteData(unsigned char cmd, void* parameters, unsigned int paramLength, const std::vector<unsigned char> data, EncryptionMode mode);
+			virtual void handleWriteData(unsigned char cmd, unsigned char* parameters, unsigned int paramLength, const std::vector<unsigned char> data, EncryptionMode mode);
 
 			/**
 			 * \brief Transmit a command.
@@ -344,20 +344,11 @@ namespace logicalaccess
 			 * \brief Transmit a command.
 			 * \param cmd The command code.
 			 * \param buf The command buffer.
-			 * \param forceLc Undocumented.
-			 * \return The response.
-			 */
-			virtual std::vector<unsigned char> transmit(unsigned char cmd, const std::vector<unsigned char>& buf, bool forceLc = false);
-
-			/**
-			 * \brief Transmit a command.
-			 * \param cmd The command code.
-			 * \param buf The command buffer.
 			 * \param buflen The command buffer length.
 			 * \param forceLc Undocumented.
 			 * \return The response.
 			 */
-			virtual std::vector<unsigned char> transmit(unsigned char cmd, const void* buf = NULL, size_t buflen = 0x00, bool forceLc = false);
+			virtual std::vector<unsigned char> transmit(unsigned char cmd, const std::vector<unsigned char> data = std::vector<unsigned char>(), unsigned char lc = 0, bool forceLc = false);
 
 			/**
 			 * \brief Crypto instance for security manipulation.

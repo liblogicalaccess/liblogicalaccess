@@ -1,72 +1,61 @@
 /**
- * \file desfirekey.hpp
- * \author Maxime C. <maxime-dev@islog.com>
- * \brief DESFire key.
+ * \file samkeyentry.hpp
+ * \author Adrien J. <adrien.jund@islog.com>
+ * \brief samkeyentry header.
  */
 
 #ifndef LOGICALACCESS_SAMKEYENTRY_HPP
 #define LOGICALACCESS_SAMKEYENTRY_HPP
 
 #include "logicalaccess/key.hpp"
-
-
-/**
- * \brief The SAM DES key size
- */
-#define SAM_DES_KEY_SIZE 16
-
-/**
- * \brief The SAM AES key size
- */
-#define SAM_AES_KEY_SIZE 16
-
-/**
- * \brief The SAM max key size
- */
-#define SAM_MAXKEY_SIZE 24
+#include "sambasickeyentry.hpp"
 
 namespace logicalaccess
 {
-	/**
-	 * \brief The SAM key type.
-	 */
-	typedef enum 
-	{
-		SAM_KEY_DES = 0x00,
-		SAM_KEY_3K3DES = 0x0c,
-		SAM_KEY_AES = 0x10
-	}				SAMKeyType;
 
-	typedef struct  s_KeyEntryUpdateSettings
+	typedef struct s_SETAV1
 	{
-		char keyVa;
-		char keyVb;
-		char keyVc;
-		char df_aid_keyno;
-		char key_no_v_cek;
-		char refkeykuc;
-		char updateset;
-		char keyversionsentseparatly;
-	}				KeyEntryUpdateSettings;
+		unsigned char dumpsessionkey;
+		unsigned char allowcrypto;
+		unsigned char keepIV;
+		unsigned char keytype[3];
+		unsigned char rfu[2];
+		unsigned char hightcommandsecurity;
+		unsigned char disablekeyentry;
+		unsigned char hostauthenticationafterreset;
+		unsigned char disablewritekeytopicc;
+		unsigned char disabledecryption;
+		unsigned char disableencryption;
+		unsigned char disableverifymac;
+		unsigned char disablegeneratemac;
+	}		 		SETAV1;
 
-	typedef struct s_SET
+	typedef struct s_SETAV2
 	{
-		char dumpsessionkey;
-		char allowcrypto;
-		char keepIV;
-		char keytype[3];
-		char rfu[2];
-		char hightcommandsecurity;
-		char disablekeyentry;
-		char hostauthenticationafterreset;
-		char disablewritekeytopicc;
-		char disabledecryption;
-		char disableencryption;
-		char disableverifymac;
-		char disablegeneratemac;
-	}		 		SET;
+		unsigned char dumpsessionkey;
+		unsigned char allowcrypto;
+		unsigned char keepIV;
+		unsigned char keytype[3];
+		unsigned char rfu[2];
+		unsigned char authkey;
+		unsigned char disablekeyentry;
+		unsigned char lockkey;
+		unsigned char disablewritekeytopicc;
+		unsigned char disabledecryption;
+		unsigned char disableencryption;
+		unsigned char disableverifymac;
+		unsigned char disablegeneratemac;
+	}		 		SETAV2;
 
-	typedef struct  s_KeyEntryInformation
+	typedef struct s_EXTSET
+	{
+		unsigned char keyclass[3];
+		unsigned char dumpsessionkey;
+		unsigned char diversifieduse;
+		unsigned char rfu[2];
+	}		 		ExtSET;
+
+	typedef struct  s_KeyEntryAV1Information
 	{
 		unsigned char desfireAid[3];
 		unsigned char desfirekeyno;
@@ -77,174 +66,167 @@ namespace logicalaccess
 		unsigned char vera;
 		unsigned char verb;
 		unsigned char verc;
-	}				KeyEntryInformation;
+	}				KeyEntryAV1Information;
 
-	typedef struct s_changeKeyInfo
+	typedef struct  s_KeyEntryAV2Information
 	{
-		unsigned char desfireNumber;
-		unsigned char isMasterKey;
-		unsigned char oldKeyInvolvement;
-		unsigned char currentKeyNo;
-		unsigned char currentKeyV;
-		unsigned char newKeyNo;
-		unsigned char newKeyV;
-	}				ChangeKeyInfo;
+		unsigned char desfireAid[3];
+		unsigned char desfirekeyno;
+		unsigned char cekno;
+		unsigned char cekv;
+		unsigned char kuc;
+		unsigned char set[2];
+		unsigned char vera;
+		unsigned char verb;
+		unsigned char verc;
+		unsigned char ExtSET;
+	}				KeyEntryAV2Information;
 
 	/**
-	 * \brief A DESFire Key class.
+	 * \brief A SAMKeyEntry class.
 	 */
-	class LIBLOGICALACCESS_API SAMKeyEntry
+	template <typename T, typename S>
+	class LIBLOGICALACCESS_API SAMKeyEntry: public SAMBasicKeyEntry
 	{
 		public:
 
-			/**
-			 * \brief Build an empty DESFire key.
-			 */
-			SAMKeyEntry();
+			SAMKeyEntry() : SAMBasicKeyEntry()
+			{
+				memset(&d_keyentryinformation, 0x00, sizeof(d_keyentryinformation));
+			}
+
+			SAMKeyEntry(const std::string& str, const std::string& str1 = "", const std::string& str2 = "") : SAMBasicKeyEntry(str, str1, str2)
+			{
+				memset(&d_keyentryinformation, 0x00, sizeof(d_keyentryinformation));
+			}
+
+			SAMKeyEntry(const void** buf, size_t buflen, char numberkey) : SAMBasicKeyEntry(buf, buflen, numberkey)
+			{
+				memset(&d_keyentryinformation, 0x00, sizeof(d_keyentryinformation));
+			}
 
 			/**
 			 * \brief Destructor.
 			 */
-			~SAMKeyEntry();
-
-			/**
-			 * \brief Build a DESFire key given a string representation of it.
-			 * \param str The string representation.
-			 */
-			SAMKeyEntry(const std::string& str, const std::string& str1 = "", const std::string& str2 = "");
-
-			/**
-			 * \brief Build a DESFire key given a buffer.
-			 * \param buf The buffer.
-			 * \param buflen The buffer length.
-			 */
-			SAMKeyEntry(const void** buf, size_t buflen, char numberkey);
-
-			/**
-			 * \brief Get the key length.
-			 * \return The key length.
-			 */
-			size_t getLength() const;
-
-			/**
-			 * \brief Get the keys data.
-			 * \return The keys data.
-			 */
-			std::vector< std::vector<unsigned char> > getKeysData();
-
-			/**
-			 * \brief Set the keys data.
-			 */
-			void setKeysData(std::vector<std::vector<unsigned char> > keys, SAMKeyType type);
-
-			/**
-			 * \brief Get the key data.
-			 * \return The key data.
-			 */
-			inline unsigned char *getData() { return d_key; };
-
-			/**
-			 * \brief Set if the key is diversified on the card.
-			 * \param diversify True if the key is diversified on the card, false otherwise.
-			 */
-			void setDiversify(bool diversify) { d_diversify = diversify; };
-
-			/**
-			 * \brief Get if the key is diversified on the card.
-			 * \return True if the key is diversified on the card, false otherwise.
-			 */
-			bool getDiversify() const { return d_diversify; };
-
-			/**
-			 * \brief Set the key type.
-			 * \param keyType The key type.
-			 */
-			void setKeyType(SAMKeyType keyType) { d_keyType = keyType; }; //TODO DELETE IT
-
-			/**
-			 * \brief Get the key type.
-			 * \return The key type.
-			 */
-			SAMKeyType getKeyType() const { return d_keyType; }; //TODO DELETE IT
-
-			/**
-			 * \brief Serialize the current object to XML.
-			 * \param parentNode The parent node.
-			 */
-			virtual void serialize(boost::property_tree::ptree& parentNode);
-
-			/**
-			 * \brief UnSerialize a XML node to the current object.
-			 * \param node The XML node.
-			 */
-			virtual void unSerialize(boost::property_tree::ptree& node);
-
-			/**
-			 * \brief Get the default Xml Node name for this object.
-			 * \return The Xml node name.
-			 */
-			virtual std::string getDefaultXmlNodeName() const;
-
-			/**
-			 * \brief Equality operator
-			 * \param ai DESFire key to compare.
-			 * \return True if equals, false otherwise.
-			 */
-			virtual bool operator==(const SAMKeyEntry& key) const;
+			~SAMKeyEntry() { }
 
 			/**
 			 * \brief Inequality operator
-			 * \param ai DESFire key to compare.
+			 * \param ai SAMKeyEntry key to compare.
 			 * \return True if inequals, false otherwise.
 			 */
 			inline bool operator!=(const SAMKeyEntry& key) const { return !operator==(key); };
 
-			/**
-			 * \brief Get the DESFire Key Type in string format.
-			 * \return The key type in string.
-			 */
-			static std::string SAMKeyEntryTypeStr(SAMKeyType t);
-
-			size_t getSingleLength() const;
-
-			void setSET(const SET& t);
 			void setSET(unsigned char *t) { memcpy(d_keyentryinformation.set, t, sizeof(*t)); };
-			SET getSETStruct();
 
-			unsigned char getUpdateMask() { return d_updatemask; };
-			void setUpdateMask(unsigned char c) { d_updatemask = c; };
+			S getSETStruct()
+			{
+				S set;
+				char *x = (char*)&set;
+		
+				unsigned char set_save[2];
+				unsigned char j = 0;
 
-			KeyEntryUpdateSettings getUpdateSettings();
-			void setUpdateSettings(const KeyEntryUpdateSettings& t);
+				memcpy(set_save, d_keyentryinformation.set, 2);
 
-			KeyEntryInformation &getKeyEntryInformation() { return d_keyentryinformation; } ;
-			void setKeyEntryInformation(const KeyEntryInformation& t) { d_keyentryinformation = t; };
+				for (char i = 7; i >= 0; --i)
+				{
+					if ((set_save[j] & 0x80) == 0x80)
+						x[i + j * 8] = 1;
+					else
+						x[i + j * 8] = 0;
+					set_save[j] = set_save[j] << 1;
+					if (i == 0 && j == 0)
+					{
+						i = 8;
+						j++;
+					}
+				}
 
-			void setKeyTypeFromSET();
-			void setSETKeyTypeFromKeyType();
+				return set;
+			}
+
+			void setSET(const S& t)
+			{
+				char *x = (char*)&t;
+				memset(d_keyentryinformation.set, 0, 2);
+				unsigned char j = 0;
+				for (char i = 7; i >= 0; --i)
+				{
+					d_keyentryinformation.set[j] += (char)x[i + j * 8];
+					if (i == 0 && j == 0)
+					{
+						i = 8;
+						j++;
+					}
+					else if (i != 0) 
+						d_keyentryinformation.set[j] = d_keyentryinformation.set[j] << 1;
+				}
+			}
+
+
+			T &getKeyEntryInformation() { return d_keyentryinformation; } ;
+			void setKeyEntryInformation(const T& t) { d_keyentryinformation = t; };
+
+
+			void setKeyTypeFromSET()
+			{
+				unsigned char keytype = 0x38 & d_keyentryinformation.set[0];
+				size_t oldsize = getLength();
+
+				switch (keytype)
+				{
+				case SAM_KEY_DES:
+					d_keyType = SAM_KEY_DES;
+					break;
+
+				case SAM_KEY_3K3DES:
+					d_keyType = SAM_KEY_3K3DES;
+					break;
+
+				case SAM_KEY_AES:
+					d_keyType = SAM_KEY_AES;
+					break;
+				}
+
+				unsigned char *tmp = new unsigned char[getLength()];
+				if (getLength() < oldsize)
+					oldsize = getLength();
+				memcpy(tmp, &*d_key, oldsize);
+				delete d_key;
+				d_key = tmp;
+			}
+
+
+			void setSETKeyTypeFromKeyType()
+			{
+				d_keyentryinformation.set[0] = d_keyentryinformation.set[0] - (0x38 & d_keyentryinformation.set[0]);
+				switch (d_keyType)
+				{
+				case SAM_KEY_DES:
+					break;
+
+				case SAM_KEY_3K3DES:
+					d_keyentryinformation.set[0] |= 0x18;
+					break;
+
+				case SAM_KEY_AES:
+					d_keyentryinformation.set[0] |= 0x20;
+					break;
+				}
+			}
+
+			void setKeysData(std::vector<std::vector<unsigned char> > keys, SAMKeyType type)
+			{
+				SAMBasicKeyEntry::setKeysData(keys, type);
+				setSETKeyTypeFromKeyType();
+			}
 
 		private:
 
-			/**
-			 * \brief The key bytes;
-			 */
-			unsigned char* d_key;
-
-			/**
-			 * \brief Diversify the key on the card.
-			 */
-			bool d_diversify;
-
-			/**
-			 * \brief The DESFire key type.
-			 */
-			SAMKeyType d_keyType; //TODO DELETE IT
-
-			unsigned char d_updatemask;
-
-			KeyEntryInformation d_keyentryinformation;
+			T d_keyentryinformation;
 	};
 }
 
-#endif /* LOGICALACCESS_DESFIREKEY_HPP */
+#endif /* LOGICALACCESS_SAMKEYENTRY_HPP */
 

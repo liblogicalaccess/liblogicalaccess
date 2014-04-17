@@ -33,11 +33,10 @@ namespace logicalaccess
 	{
 		bool r = false;
 
-		unsigned char result[256];
-		size_t resultlen = 256;
+		std::vector<unsigned char> result, vector_key((unsigned char*)key, (unsigned char*)key + keylen);
 
-		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x82, (vol ? 0x00 : 0x20), static_cast<char>(keyno), static_cast<unsigned char>(keylen), reinterpret_cast<const unsigned char*>(key), keylen, result, &resultlen);
-		if (!vol && (result[resultlen - 2] == 0x63) && (result[resultlen - 1] == 0x86))
+		result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x82, (vol ? 0x00 : 0x20), static_cast<char>(keyno), static_cast<unsigned char>(vector_key.size()), vector_key);
+		if (!vol && (result[result.size() - 2] == 0x63) && (result[result.size() - 1] == 0x86))
 		{
 			if (keyno == 0)
 			{
@@ -86,16 +85,12 @@ namespace logicalaccess
 
 	void MifarePCSCCommands::authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype)
 	{
-		unsigned char command[2];
-		size_t commandlen = sizeof(command);
+		std::vector<unsigned char> command;
 
-		command[0] = static_cast<unsigned char>(keytype);
-		command[1] = keyno;
+		command.push_back(static_cast<unsigned char>(keytype));
+		command.push_back(keyno);
 
-		unsigned char result[256];
-		size_t resultlen = 256;
-
-		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x88, 0x00, blockno, command, commandlen, result, &resultlen);
+		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x88, 0x00, blockno, command);
 	}
 
 	void MifarePCSCCommands::authenticate(unsigned char blockno, boost::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype)
@@ -124,17 +119,16 @@ namespace logicalaccess
 
 		size_t r = 0;
 
-		unsigned char result[256];
-		size_t resultlen = 256;
+		std::vector<unsigned char> result;
 
-		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xB0, 0x00, blockno, static_cast<unsigned char>(len), result, &resultlen);
+		result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xB0, 0x00, blockno, static_cast<unsigned char>(len));
 
-		r = resultlen - 2;
+		r = result.size() - 2;
 		if (r > buflen)
 		{
 			r = buflen;
 		}
-		memcpy(buf, result, r);
+		memcpy(buf, &result[0], r);
 
 		return r;
 	}
@@ -147,11 +141,8 @@ namespace logicalaccess
 		}
 
 		size_t r = 0;
-
-		unsigned char result[256];
-		size_t resultlen = sizeof(result);
-
-		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xD6, 0x00, blockno, static_cast<unsigned char>(buflen), reinterpret_cast<const unsigned char*>(buf), buflen, result, &resultlen);
+		std::vector<unsigned char> vector_buf((unsigned char*)buf, (unsigned char*)buf + buflen);
+		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xD6, 0x00, blockno, static_cast<unsigned char>(buflen), vector_buf);
 		r = buflen;
 
 		return r;

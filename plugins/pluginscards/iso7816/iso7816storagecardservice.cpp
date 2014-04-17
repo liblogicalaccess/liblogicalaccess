@@ -52,7 +52,7 @@ namespace logicalaccess
 		{		
 		case IFT_TRANSPARENT:
 			{
-				getISO7816Chip()->getISO7816Commands()->eraseBinay(0);
+				getISO7816Chip()->getISO7816Commands()->eraseBinary(0);
 			}
 			break;
 
@@ -109,7 +109,7 @@ namespace logicalaccess
 
 		case IFT_TRANSPARENT:
 			{
-				getISO7816Chip()->getISO7816Commands()->writeBinay(data, dataLength, 0);
+				getISO7816Chip()->getISO7816Commands()->writeBinary(data, dataLength, 0);
 			}
 			break;
 
@@ -164,7 +164,7 @@ namespace logicalaccess
 			break;
 
 		case IFT_TRANSPARENT:
-			getISO7816Chip()->getISO7816Commands()->readBinay(data, dataLength, 0);
+			getISO7816Chip()->getISO7816Commands()->readBinary(data, dataLength, 0);
 			break;
 
 		case IFT_LINEAR_FIXED:

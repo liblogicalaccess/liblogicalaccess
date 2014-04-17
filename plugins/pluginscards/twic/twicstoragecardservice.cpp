@@ -20,10 +20,9 @@ namespace logicalaccess
 		
 	}
 
-	void TwicStorageCardService::readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags)
+	void TwicStorageCardService::readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void *data, size_t dataLength, CardBehavior behaviorFlags)
 	{
 		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
-		EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
 
 		boost::shared_ptr<ISO7816Location> icISOLocation = boost::dynamic_pointer_cast<ISO7816Location>(location);
 		boost::shared_ptr<TwicLocation> icLocation = boost::dynamic_pointer_cast<TwicLocation>(location);
@@ -38,16 +37,18 @@ namespace logicalaccess
 		getTwicChip()->getTwicCommands()->selectTWICApplication();
 		if (icLocation->tag == 0x00)
 		{
-			size_t dataObjectLength = dataLength;			
-			getTwicChip()->getTwicCommands()->getTWICData(data, dataObjectLength, icLocation->dataObject);
+			std::vector<unsigned char> result = getTwicChip()->getTwicCommands()->getTWICData(icLocation->dataObject);
+			unsigned char *buf = (unsigned char*)data;
+			for (unsigned char x = 0; x < dataLength && x < result.size(); ++x)
+				buf[x] = result[x];
 		}
 		else
 		{
 			// A tag is specified, the user want to get only the tag's data.
 			size_t dataObjectLength = getTwicChip()->getTwicCommands()->getDataObjectLength(icLocation->dataObject, true);
-			unsigned char* fulldata = new unsigned char[dataObjectLength];
+			std::vector<unsigned char> fulldata = getTwicChip()->getTwicCommands()->getTWICData(icLocation->dataObject);
 
-			if (getTwicChip()->getTwicCommands()->getTWICData(fulldata, dataObjectLength, icLocation->dataObject))
+			if (fulldata.size())
 			{
 				size_t offset = getTwicChip()->getTwicCommands()->getMinimumBytesRepresentation(getTwicChip()->getTwicCommands()->getMaximumDataObjectLength(icLocation->dataObject)) + 1;
 				if (offset < dataObjectLength)
@@ -55,8 +56,6 @@ namespace logicalaccess
 					getTwicChip()->getTwicCommands()->getTagData(icLocation, &fulldata[offset], dataObjectLength - offset, data, dataLength);
 				}
 			}
-
-			delete[] fulldata;
 		}
 	}
 }

@@ -43,53 +43,41 @@ namespace logicalaccess
 
 			/**
 			 * \brief Get the Unsigned Cardholder Unique Identifier.
-			 * \param data The data buffer.
-			 * \param dataLength The buffer length.
-			 * \return True on success, false otherwise.
+			 * \return the data.
 			 */
-			virtual bool getUnsignedCardholderUniqueIdentifier(void* data, size_t& dataLength);
+			virtual std::vector<unsigned char>  getUnsignedCardholderUniqueIdentifier();
 
 			/**
 			 * \brief Get the TWIC Privacy Key.
-			 * \param data The data buffer.
-			 * \param dataLength The buffer length.
-			 * \return True on success, false otherwise.
+			 * \return the data.
 			 * \remarks Only accessible with the contact chip.
 			 */
-			virtual bool getTWICPrivacyKey(void* data, size_t& dataLength);
+			virtual std::vector<unsigned char>  getTWICPrivacyKey();
 
 			/**
 			 * \brief Get the Cardholder Unique Identifier.
-			 * \param data The data buffer.
-			 * \param dataLength The buffer length.
-			 * \return True on success, false otherwise.
+			 * \return the data.
 			 */
-			virtual bool getCardholderUniqueIdentifier(void* data, size_t& dataLength);
+			virtual std::vector<unsigned char>  getCardholderUniqueIdentifier();
 
 			/**
 			 * \brief Get the Cardholder Fingerprints.
-			 * \param data The data buffer.
-			 * \param dataLength The buffer length.
-			 * \return True on success, false otherwise.
+			 * \return the data.
 			 */
-			virtual bool getCardHolderFingerprints(void* data, size_t& dataLength);
+			virtual std::vector<unsigned char>  getCardHolderFingerprints();
 
 			/**
 			 * \brief Get the Security Object.
-			 * \param data The data buffer.
-			 * \param dataLength The buffer length.
-			 * \return True on success, false otherwise.
+			 * \return the data.
 			 */
-			virtual bool getSecurityObject(void* data, size_t& dataLength);
+			virtual std::vector<unsigned char>  getSecurityObject();
 
 			/**
 			 * \brief Get TWIC data object.
-			 * \param data The data buffer.
-			 * \param dataLength The buffer length.
 			 * \param dataObject The data object.
-			 * \return True on success, false otherwise.
+			 * \return the data.
 			 */
-			virtual bool getTWICData(void* data, size_t& dataLength, int64_t dataObject);
+			virtual std::vector<unsigned char> getTWICData(int64_t dataObject);
 
 		protected:
 	

@@ -50,7 +50,7 @@ namespace logicalaccess
 			 * \param dataLength The buffer length.
 			 * \return True on success, false otherwise.
 			 */
-			virtual bool getUnsignedCardholderUniqueIdentifier(void* data, size_t& dataLength) = 0;
+			virtual std::vector<unsigned char>  getUnsignedCardholderUniqueIdentifier() = 0;
 
 			/**
 			 * \brief Get the TWIC Privacy Key.
@@ -59,7 +59,7 @@ namespace logicalaccess
 			 * \return True on success, false otherwise.
 			 * \remarks Only accessible with the contact chip.
 			 */
-			virtual bool getTWICPrivacyKey(void* data, size_t& dataLength) = 0;
+			virtual std::vector<unsigned char>  getTWICPrivacyKey() = 0;
 
 			/**
 			 * \brief Get the Cardholder Unique Identifier.
@@ -67,7 +67,7 @@ namespace logicalaccess
 			 * \param dataLength The buffer length.
 			 * \return True on success, false otherwise.
 			 */
-			virtual bool getCardholderUniqueIdentifier(void* data, size_t& dataLength) = 0;
+			virtual std::vector<unsigned char>  getCardholderUniqueIdentifier() = 0;
 
 			/**
 			 * \brief Get the Cardholder Fingerprints.
@@ -75,7 +75,7 @@ namespace logicalaccess
 			 * \param dataLength The buffer length.
 			 * \return True on success, false otherwise.
 			 */
-			virtual bool getCardHolderFingerprints(void* data, size_t& dataLength) = 0;
+			virtual std::vector<unsigned char>  getCardHolderFingerprints() = 0;
 
 			/**
 			 * \brief Get the Security Object.
@@ -83,7 +83,7 @@ namespace logicalaccess
 			 * \param dataLength The buffer length.
 			 * \return True on success, false otherwise.
 			 */
-			virtual bool getSecurityObject(void* data, size_t& dataLength) = 0;
+			virtual std::vector<unsigned char>  getSecurityObject() = 0;
 
 			/**
 			 * \brief Get TWIC data object.
@@ -92,7 +92,7 @@ namespace logicalaccess
 			 * \param dataObject The data object.
 			 * \return True on success, false otherwise.
 			 */
-			virtual bool getTWICData(void* data, size_t& dataLength, int64_t dataObject) = 0;
+			virtual std::vector<unsigned char>  getTWICData(int64_t dataObject) = 0;
 
 
 	protected:

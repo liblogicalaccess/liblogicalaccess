@@ -44,14 +44,14 @@ namespace logicalaccess
 			 * \param aid The Application ID buffer.
 			 * \return The Application ID in 32 bits.
 			 */
-			static unsigned int convertAidToUInt(const void* aid);
+			static unsigned int convertAidToUInt(const std::vector<unsigned char> aid);
 
 			/**
 			 * \brief Convert an Application ID 32 bits into a buffer.
 			 * \param i The Application ID in 32 bits.
 			 * \param aid The Application ID buffer.
 			 */
-			static void convertUIntToAid(unsigned int i, void* aid);
+			static void convertUIntToAid(unsigned int i, std::vector<unsigned char>& aid);
 
 			/**
 			 * \brief Serialize the current object to XML.

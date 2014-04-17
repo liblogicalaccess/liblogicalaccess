@@ -1,31 +1,35 @@
 /**
- * \file desfireiso7816commands.hpp
- * \author Maxime C. <maxime-dev@islog.com>
- * \brief DESFire commands.
+ * \file SAMAV1ISO7816Commands.hpp
+ * \author Adrien J. <adrien.jund@islog.com>
+ * \brief SAMAV1ISO7816Commands commands.
  */
 
 #ifndef LOGICALACCESS_SAMAV1ISO7816CARDPROVIDER_HPP
 #define LOGICALACCESS_SAMAV1ISO7816CARDPROVIDER_HPP
 
-#include "samcommands.hpp"
 #include "../readercardadapters/iso7816readercardadapter.hpp"
 #include "../iso7816readerunitconfiguration.hpp"
+#include "samiso7816commands.hpp"
 #include "samcrypto.hpp"
 #include "samkeyentry.hpp"
 #include "samcrypto.hpp"
 #include "samcommands.hpp"
 
+#include <boost/interprocess/mapped_region.hpp>
+#include <boost/interprocess/sync/named_mutex.hpp>
+
 #include <string>
 #include <vector>
 #include <iostream>
 
+#define DEFAULT_SAM_CLA 0x80
 
 namespace logicalaccess
 {		
 	/**
-	 * \brief The DESFire base commands class.
+	 * \brief The SAMAV1ISO7816 commands class.
 	 */
-	class LIBLOGICALACCESS_API SAMAV1ISO7816Commands : public SAMCommands
+	class LIBLOGICALACCESS_API SAMAV1ISO7816Commands : public SAMISO7816Commands<KeyEntryAV1Information, SETAV1>
 	{
 		public:
 
@@ -39,37 +43,20 @@ namespace logicalaccess
 			 */
 			virtual ~SAMAV1ISO7816Commands();			
 
-			virtual SAMVersion getVersion();
-
-			virtual boost::shared_ptr<SAMKeyEntry> getKeyEntry(unsigned char keyno);
+			virtual boost::shared_ptr<SAMKeyEntry<KeyEntryAV1Information, SETAV1> > getKeyEntry(unsigned char keyno);
 			virtual boost::shared_ptr<SAMKucEntry> getKUCEntry(unsigned char kucno);
 
 			virtual void changeKUCEntry(unsigned char kucno, boost::shared_ptr<SAMKucEntry> keyentry, boost::shared_ptr<DESFireKey> key);
-			virtual void changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry> keyentry, boost::shared_ptr<DESFireKey> key);
+			virtual void changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry<KeyEntryAV1Information, SETAV1> > keyentry, boost::shared_ptr<DESFireKey> key);
 
-			virtual void activeAV2Mode();
-			virtual void selectApplication(unsigned char *aid);
 			virtual void authentificateHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
 			void authentificateHost_AES_3K3DES(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
 			void authentificateHostDES(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
-			virtual void disableKeyEntry(unsigned char keyno);
-			virtual std::vector<unsigned char> dumpSessionKey();
-
-			boost::shared_ptr<ISO7816ReaderCardAdapter> getISO7816ReaderCardAdapter() { return boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter()); };
-			virtual std::string getSAMTypeFromSAM();
-
-			boost::shared_ptr<SAMDESfireCrypto> getCrypto() { return d_crypto; };
-			void setCrypto(boost::shared_ptr<SAMDESfireCrypto> t) { d_crypto = t; };
-
-			virtual std::vector<unsigned char> decipherData(std::vector<unsigned char> data, bool islastdata);
-			virtual std::vector<unsigned char> encipherData(std::vector<unsigned char> data, bool islastdata);
-
-			virtual std::vector<unsigned char> changeKeyPICC(const ChangeKeyInfo& info);
 
 		protected:
-			boost::shared_ptr<SAMDESfireCrypto> d_crypto;
+
 	};
 }
 
-#endif /* LOGICALACCESS_DESFIREISO7816COMMANDS_HPP */
+#endif /* LOGICALACCESS_SAMAV1ISO7816COMMANDS_HPP */
 

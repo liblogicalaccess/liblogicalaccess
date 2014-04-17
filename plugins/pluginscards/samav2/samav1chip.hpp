@@ -1,7 +1,7 @@
 /**
- * \file desfireev1chip.hpp
- * \author Maxime C. <maxime-dev@islog.com>
- * \brief DESFire EV1 chip.
+ * \file samav1chip.hpp
+ * \author Adrien J. <adrien.jund@islog.com>
+ * \brief SAMAV1Chip header.
  */
 
 #ifndef LOGICALACCESS_SAMAV1CHIP_HPP
@@ -36,10 +36,10 @@ namespace logicalaccess
 			~SAMAV1Chip();
 
 
-			boost::shared_ptr<SAMCommands> getSAMAV1Commands() { return boost::dynamic_pointer_cast<SAMCommands>(getCommands()); };
+			boost::shared_ptr<SAMCommands<KeyEntryAV1Information, SETAV1> > getSAMAV1Commands() { return boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1> >(getCommands()); };
 		protected:
 	};
 }
 
-#endif /* LOGICALACCESS_DESFIREEV1CHIP_HPP */
+#endif /* LOGICALACCESS_SAMAV2CHIP_HPP */
 

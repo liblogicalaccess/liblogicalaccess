@@ -1,31 +1,29 @@
 /**
- * \file desfirekey.cpp
- * \author Maxime C. <maxime-dev@islog.com>
- * \brief DESFire Key.
+ * \file sambasickeyentry.hpp
+ * \author Adrien J. <adrien.jund@islog.com>
+ * \brief SAMBasicKeyEntry source.
  */
 
-#include "samkeyentry.hpp"
+#include "sambasickeyentry.hpp"
 
 namespace logicalaccess
 {
-	SAMKeyEntry::SAMKeyEntry() : d_updatemask(0)
+	SAMBasicKeyEntry::SAMBasicKeyEntry() : d_updatemask(0)
 	{
 		d_keyType = SAM_KEY_DES;
 		d_key = new unsigned char[getLength()];
 		memset(&*d_key, 0, getLength());
 		d_diversify = false;
 		d_updatemask = 0;
-		memset(&d_keyentryinformation, 0x00, sizeof(KeyEntryInformation));
 	}
 
-	SAMKeyEntry::SAMKeyEntry(const std::string& str, const std::string& str1, const std::string& str2) : d_updatemask(0)
+	SAMBasicKeyEntry::SAMBasicKeyEntry(const std::string& str, const std::string& str1, const std::string& str2) : d_updatemask(0)
 	{
 		d_keyType = SAM_KEY_DES;
 		d_key = new unsigned char[getLength()];
 		memset(&*d_key, 0, getLength());
 		d_diversify = false;
 		d_updatemask = 0;
-		memset(&d_keyentryinformation, 0x00, sizeof(KeyEntryInformation));
 		if (str != "")
 			memcpy(d_key, str.c_str(), getSingleLength());
 		if (str1 != "")
@@ -35,14 +33,13 @@ namespace logicalaccess
 
 	}
 
-	SAMKeyEntry::SAMKeyEntry(const void** buf, size_t buflen, char numberkey) : d_updatemask(0)
+	SAMBasicKeyEntry::SAMBasicKeyEntry(const void** buf, size_t buflen, char numberkey) : d_updatemask(0)
 	{
 		d_keyType = SAM_KEY_DES;
 		d_key = new unsigned char[getLength()];
 		memset(&*d_key, 0, getLength());
 		d_diversify = false;
 		d_updatemask = 0;
-		memset(&d_keyentryinformation, 0x00, sizeof(KeyEntryInformation));
 		if (buf != NULL)
 		{
 			if (buflen * numberkey  >= getLength())
@@ -63,12 +60,12 @@ namespace logicalaccess
 		}
 	}
 
-	SAMKeyEntry::~SAMKeyEntry()
+	SAMBasicKeyEntry::~SAMBasicKeyEntry()
 	{
 		delete[] d_key;
 	}
 
-	size_t SAMKeyEntry::getSingleLength() const
+	size_t SAMBasicKeyEntry::getSingleLength() const
 	{
 		size_t length = 0;
 
@@ -90,7 +87,7 @@ namespace logicalaccess
 		return length;
 	}
 
-	size_t SAMKeyEntry::getLength() const
+	size_t SAMBasicKeyEntry::getLength() const
 	{
 		size_t length = 0;
 
@@ -112,7 +109,7 @@ namespace logicalaccess
 		return length;
 	}
 
-	std::vector<std::vector<unsigned char> > SAMKeyEntry::getKeysData()
+	std::vector<std::vector<unsigned char> > SAMBasicKeyEntry::getKeysData()
 	{
 		std::vector<std::vector<unsigned char> > ret;
 		size_t keysize = getSingleLength();
@@ -126,7 +123,7 @@ namespace logicalaccess
 		return ret;
 	}
 
-	void SAMKeyEntry::setKeysData(std::vector<std::vector<unsigned char> > keys, SAMKeyType type)
+	void SAMBasicKeyEntry::setKeysData(std::vector<std::vector<unsigned char> > keys, SAMKeyType type)
 	{
 		if (keys.size() == 0)
 			return;
@@ -146,56 +143,10 @@ namespace logicalaccess
 				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "setKey failed because key don't have all the same size.");
 			memcpy(d_key + (x * keysize), &keys[x][0], keysize);
 		}
-		setSETKeyTypeFromKeyType();
 	}
 
-	void SAMKeyEntry::setSETKeyTypeFromKeyType()
-	{
-		d_keyentryinformation.set[0] = d_keyentryinformation.set[0] - (0x38 & d_keyentryinformation.set[0]);
-		switch (d_keyType)
-		{
-		case SAM_KEY_DES:
-			break;
 
-		case SAM_KEY_3K3DES:
-			d_keyentryinformation.set[0] |= 0x18;
-			break;
-
-		case SAM_KEY_AES:
-			d_keyentryinformation.set[0] |= 0x20;
-			break;
-		}
-	}
-
-	void SAMKeyEntry::setKeyTypeFromSET()
-	{
-		char keytype = 0x38 & d_keyentryinformation.set[0];
-		size_t oldsize = getLength();
-
-		switch (keytype)
-		{
-		case SAM_KEY_DES:
-			d_keyType = SAM_KEY_DES;
-			break;
-
-		case SAM_KEY_3K3DES:
-			d_keyType = SAM_KEY_3K3DES;
-			break;
-
-		case SAM_KEY_AES:
-			d_keyType = SAM_KEY_AES;
-			break;
-		}
-
-		unsigned char *tmp = new unsigned char[getLength()];
-		if (getLength() < oldsize)
-			oldsize = getLength();
-		memcpy(tmp, &*d_key, oldsize);
-		delete d_key;
-		d_key = tmp;
-	}
-
-	void SAMKeyEntry::serialize(boost::property_tree::ptree& parentNode)
+	void SAMBasicKeyEntry::serialize(boost::property_tree::ptree& parentNode)
 	{
 		boost::property_tree::ptree node;
 
@@ -205,18 +156,18 @@ namespace logicalaccess
 		parentNode.add_child(getDefaultXmlNodeName(), node);
 	}
 
-	void SAMKeyEntry::unSerialize(boost::property_tree::ptree& node)
+	void SAMBasicKeyEntry::unSerialize(boost::property_tree::ptree& node)
 	{
 		d_keyType = static_cast<SAMKeyType>(node.get_child("KeyType").get_value<unsigned int>());
 		d_diversify = node.get_child("Diversify").get_value<bool>();
 	}
 
-	std::string SAMKeyEntry::getDefaultXmlNodeName() const
+	std::string SAMBasicKeyEntry::getDefaultXmlNodeName() const
 	{
 		return "SAMKeyEntry";
 	}
 
-	bool SAMKeyEntry::operator==(const SAMKeyEntry& key) const
+	bool SAMBasicKeyEntry::operator==(const SAMBasicKeyEntry& key) const
 	{
 		if (d_keyType != key.d_keyType)
 		{
@@ -229,7 +180,7 @@ namespace logicalaccess
 		return true;
 	}
 
-	std::string SAMKeyEntry::SAMKeyEntryTypeStr(SAMKeyType t)
+	std::string SAMBasicKeyEntry::SAMKeyEntryTypeStr(SAMKeyType t)
 	{
 		switch (t) {
 			case SAM_KEY_DES: return "SAM_KEY_DES";
@@ -239,7 +190,7 @@ namespace logicalaccess
 		}
 	}
 
-	KeyEntryUpdateSettings SAMKeyEntry::getUpdateSettings()
+	KeyEntryUpdateSettings SAMBasicKeyEntry::getUpdateSettings()
 	{
 		KeyEntryUpdateSettings settings;
 
@@ -257,7 +208,7 @@ namespace logicalaccess
 		return settings;
 	}
 
-	void SAMKeyEntry::setUpdateSettings(const KeyEntryUpdateSettings& t)
+	void SAMBasicKeyEntry::setUpdateSettings(const KeyEntryUpdateSettings& t)
 	{
 		bool *x = (bool*)&t;
 		d_updatemask = 0;
@@ -266,51 +217,6 @@ namespace logicalaccess
 			d_updatemask += x[i];
 			if (i + (unsigned int)1 < sizeof(KeyEntryUpdateSettings))
 				d_updatemask = d_updatemask << 1;
-		}
-	}
-
-	SET SAMKeyEntry::getSETStruct()
-	{
-		SET set;
-		char *x = (char*)&set;
-		
-		unsigned char set_save[2];
-		unsigned char j = 0;
-
-		memcpy(set_save, d_keyentryinformation.set, 2);
-
-		for (char i = 7; i >= 0; --i)
-		{
-			if ((set_save[j] & 0x80) == 0x80)
-				x[i + j * 8] = 1;
-			else
-				x[i + j * 8] = 0;
-			set_save[j] = set_save[j] << 1;
-			if (i == 0 && j == 0)
-			{
-				i = 8;
-				j++;
-			}
-		}
-
-		return set;
-	}
-
-	void SAMKeyEntry::setSET(const SET& t)
-	{
-		char *x = (char*)&t;
-		memset(d_keyentryinformation.set, 0, 2);
-		unsigned char j = 0;
-		for (char i = 7; i >= 0; --i)
-		{
-			d_keyentryinformation.set[j] += (char)x[i + j * 8];
-			if (i == 0 && j == 0)
-			{
-				i = 8;
-				j++;
-			}
-			else if (i != 0) 
-				d_keyentryinformation.set[j] = d_keyentryinformation.set[j] << 1;
 		}
 	}
 }

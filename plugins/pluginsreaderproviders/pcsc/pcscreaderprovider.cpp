@@ -90,8 +90,13 @@ namespace logicalaccess
 
 	boost::shared_ptr<ReaderUnit> PCSCReaderProvider::createReaderUnit()
 	{
+		return createReaderUnit("");
+	}
+
+	boost::shared_ptr<ReaderUnit> PCSCReaderProvider::createReaderUnit(std::string readerunitname)
+	{
 		boost::shared_ptr<PCSCReaderUnit> ret;
-		ret.reset(new PCSCReaderUnit(""));
+		ret.reset(new PCSCReaderUnit(readerunitname));
 		ret->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
 
 		return ret;

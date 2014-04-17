@@ -73,11 +73,18 @@ namespace logicalaccess
 			 */
 			virtual const ReaderList& getReaderList() { return d_system_readers; };						
 
+
 			/**
 			 * \brief Create a new reader unit for the reader provider.
 			 * \return A reader unit.
 			 */
 			virtual boost::shared_ptr<ReaderUnit> createReaderUnit();
+
+			/**
+			 * \brief Create a new reader unit for the reader provider.
+			 * \return A reader unit.
+			 */
+			boost::shared_ptr<ReaderUnit> createReaderUnit(std::string readerunitname);
 
 			/**
 			 * \brief Get the reader group list.

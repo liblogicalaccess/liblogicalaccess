@@ -59,16 +59,13 @@ namespace logicalaccess
 		EXCEPTION_ASSERT_WITH_LOG(keystorage, std::invalid_argument, "Key storage must be defined.");
 		EXCEPTION_ASSERT_WITH_LOG(key.size() > 0, std::invalid_argument, "key cannot be empty.");
 
-		unsigned char result[256];
-		size_t resultlen = 256;
-
 		boost::shared_ptr<PCSCReaderCardAdapter> rca = getDefaultPCSCReaderCardAdapter();
 		//rca.reset(new OmnikeyHIDiClassReaderCardAdapter());
 		//rca->setReaderUnit(shared_from_this());
 
 		setIsSecureConnectionMode(true);
 		//rca->initSecureModeSession(0xFF);
-		rca->sendAPDUCommand(0x84, 0x82, (keystorage->getVolatile() ? 0x00 : 0x20), keystorage->getKeySlot(), static_cast<unsigned char>(key.size()), &key[0], key.size(), result, &resultlen);
+		rca->sendAPDUCommand(0x84, 0x82, (keystorage->getVolatile() ? 0x00 : 0x20), keystorage->getKeySlot(), static_cast<unsigned char>(key.size()), key);
 		//rca->closeSecureModeSession();
 		setIsSecureConnectionMode(false);
 	}

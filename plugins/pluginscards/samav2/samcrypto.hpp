@@ -1,11 +1,11 @@
 /**
- * \file desfirecrypto.hpp
- * \author Maxime C. <maxime-dev@islog.com>
- * \brief DESFireCrypto.
+ * \file samcrypto.hpp
+ * \author Adrien J. <adrien.jund@islog.com>
+ * \brief SAMDESfireCrypto header.
  */
 
-#ifndef SAMDESFIRECRYPTO_HPP
-#define SAMDESFIRECRYPTO_HPP
+#ifndef SAMCRYPTO_HPP
+#define SAMCRYPTO_HPP
 
 #include "logicalaccess/crypto/des_cipher.hpp"
 #include "logicalaccess/crypto/aes_cipher.hpp"

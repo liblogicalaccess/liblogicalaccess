@@ -30,8 +30,7 @@ namespace logicalaccess
 	{
 		bool r = false;
 
-		unsigned char result[256];
-		size_t resultlen = 256;
+		std::vector<unsigned char> result, vector_key((unsigned char*)key, (unsigned char*)key + keylen);
 
 		unsigned char keyindex = 0x00;
 		if (keytype == KT_KEY_B)
@@ -39,9 +38,9 @@ namespace logicalaccess
 			keyindex = 0x10 + keyno;
 		}
 
-		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x82, 0x00, keyindex, static_cast<unsigned char>(keylen), reinterpret_cast<const unsigned char*>(key), keylen, result, &resultlen);
+		result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x82, 0x00, keyindex, static_cast<unsigned char>(vector_key.size()), vector_key);
 
-		if (!vol && (result[resultlen - 2] == 0x63) && (result[resultlen - 1] == 0x86))
+		if (!vol && (result[result.size() - 2] == 0x63) && (result[result.size() - 1] == 0x86))
 		{
 			if (keyno == 0)
 			{
@@ -58,8 +57,7 @@ namespace logicalaccess
 
 	void MifareSpringCardCommands::authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype)
 	{
-		unsigned char command[5];
-		size_t commandlen = sizeof(command);
+		std::vector<unsigned char> command;
 
 		unsigned char keyindex = 0x00 + keyno;
 		if (keytype == KT_KEY_B)
@@ -67,16 +65,13 @@ namespace logicalaccess
 			keyindex = 0x10 + keyno;
 		}
 
-		command[0] = 0x01;
-		command[1] = 0x00;
-		command[2] = blockno;
-		command[3] = 0x00;
-		command[4] = keyindex;
+		command.push_back(0x01);
+		command.push_back(0x00);
+		command.push_back(blockno);
+		command.push_back(0x00);
+		command.push_back(keyindex);
 
-		unsigned char result[256];
-		size_t resultlen = 256;
-
-		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x86, 0x00, 0x00, static_cast<unsigned char>(commandlen), command, commandlen, result, &resultlen);
+		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x86, 0x00, 0x00, static_cast<unsigned char>(command.size()), command);
 	}
 }
 
