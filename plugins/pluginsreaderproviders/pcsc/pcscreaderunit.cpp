@@ -880,9 +880,6 @@ namespace logicalaccess
 
 				INFO_SIMPLE_("Checking SAM backward...");
 
-				//No Backward AV2 => AV1
-/*				if (getPCSCConfiguration()->getSAMType() == "SAM_AV2" && ret->getSingleChip()->getCardType() != "SAM_AV1")
-					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM on the reader is not the same type as selected."); */
 				//Check Backward AV1 => AV2 is active
 				if (getPCSCConfiguration()->getSAMType() != "SAM_AUTO" && ret->getSingleChip()->getCardType() == "SAM_AV2" && getPCSCConfiguration()->getSAMType() != boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2> >(ret->getSingleChip()->getCommands())->getSAMTypeFromSAM())
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM on the reader is not the same type as selected.");
@@ -900,7 +897,7 @@ namespace logicalaccess
 					{
 						if (ret->getSingleChip()->getCardType() == "SAM_AV1")
 							boost::dynamic_pointer_cast<SAMAV1ISO7816Commands>(getSAMChip()->getCommands())->authentificateHost(getPCSCConfiguration()->getSAMUnLockKey(), getPCSCConfiguration()->getSAMUnLockkeyNo());
-						else
+						else if (ret->getSingleChip()->getCardType() == "SAM_AV2")
 							boost::dynamic_pointer_cast<SAMAV2ISO7816Commands>(getSAMChip()->getCommands())->lockUnlock(getPCSCConfiguration()->getSAMUnLockKey(), logicalaccess::SAMLockUnlock::Unlock, getPCSCConfiguration()->getSAMUnLockkeyNo(), 0, 0);
 					}
 					else
