@@ -24,4 +24,5 @@ add_library(
   
  
 install ( FILES ${INCLUDE} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/crypto )
+install ( TARGETS logicalaccess-cryptolib ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )
 
