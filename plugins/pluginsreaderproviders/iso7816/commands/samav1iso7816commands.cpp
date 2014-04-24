@@ -100,8 +100,7 @@ namespace logicalaccess
 		if (d_crypto->d_sessionKey.size() == 0)
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Failed: AuthentificationHost have to be done before use such command.");
 
-		unsigned char proMas = 0;
-		proMas = keyentry->getUpdateMask();
+		unsigned char proMas = keyentry->getUpdateMask();
 
 		size_t buffer_size = keyentry->getLength() + sizeof(KeyEntryAV1Information);
 		unsigned char *data = new unsigned char[buffer_size];
@@ -267,8 +266,7 @@ namespace logicalaccess
 		else
 			encdatalittle = d_crypto->sam_crc_encrypt(d_crypto->d_sessionKey, vectordata, key);
 
-		int proMas = kucentry->getUpdateMask();
-
+		unsigned char proMas = kucentry->getUpdateMask();
 
 		unsigned char cmd[] = { d_cla, 0xcc, kucno, proMas, 0x08 };
 		std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;

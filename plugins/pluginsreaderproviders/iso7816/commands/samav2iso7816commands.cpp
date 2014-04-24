@@ -494,8 +494,7 @@ namespace logicalaccess
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Failed: AuthentificationHost have to be done before use such command.");
 
 		std::vector<unsigned char> result;
-		unsigned char proMas = 0;
-		proMas = keyentry->getUpdateMask();
+		unsigned char proMas = keyentry->getUpdateMask();
 
 		size_t buffer_size = keyentry->getLength() + sizeof(KeyEntryAV2Information);
 		unsigned char *data = new unsigned char[buffer_size];
@@ -505,7 +504,7 @@ namespace logicalaccess
 		memcpy(data + 48, &keyentry->getKeyEntryInformation(), sizeof(KeyEntryAV2Information));
 		std::vector<unsigned char> vectordata(data, data + buffer_size);
 
-		unsigned char cmd[] = { d_cla, 0xc1, keyno, proMas, vectordata.size() };
+		unsigned char cmd[] = { d_cla, 0xc1, keyno, proMas, (unsigned char)vectordata.size() };
 		std::vector<unsigned char> cmd_vector(cmd, cmd + 5);
 		cmd_vector.insert(cmd_vector.end(), vectordata.begin(), vectordata.end());
 
