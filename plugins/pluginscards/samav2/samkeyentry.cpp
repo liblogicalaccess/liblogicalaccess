@@ -8,7 +8,9 @@
 
 namespace logicalaccess
 {
-	//This declaration made SAMKeyEntry available for external link
+	//This declaration made SAMKeyEntry available for external link windows
+#ifndef UNIX
 	template SAMKeyEntry<logicalaccess::KeyEntryAV2Information, logicalaccess::SETAV2>;
 	template SAMKeyEntry<logicalaccess::KeyEntryAV1Information, logicalaccess::SETAV1>;
+#endif
 }
