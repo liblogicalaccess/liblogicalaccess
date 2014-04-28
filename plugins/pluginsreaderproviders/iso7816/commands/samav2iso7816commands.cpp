@@ -219,8 +219,8 @@ namespace logicalaccess
 			finalFullProtectedCmd.insert(finalFullProtectedCmd.begin() + AV2_HEADER_LENGTH, encData.begin(), encData.end());
 		}
 
-		protectedCmd[4] = encData.size() + 8;
-		finalFullProtectedCmd[4] = encData.size() + 8;
+		protectedCmd[4] = (unsigned char)encData.size() + 8;
+		finalFullProtectedCmd[4] = (unsigned char)encData.size() + 8;
 
 		/* Set counter*/
 		BufferHelper::setUInt32(cmdCtrVector, d_cmdCtr);
@@ -335,7 +335,7 @@ namespace logicalaccess
 
 			cipher->decipher(encData, data, *symkeySession.get(), *ivSession.get(), false);
 
-			unsigned int i = data.size() - 1;
+			unsigned int i = (unsigned int)data.size() - 1;
 			for (; i >= 0 && data[i] != 0x80 && data[i] == 0x00; --i);
 			if (i >= 0)
 				data.resize(i);

@@ -353,6 +353,50 @@ namespace logicalaccess
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P3 RndA from SAM is invalide.");
 			}
 
+			void selectApplication(std::vector<unsigned char> aid)
+			{
+				unsigned char cmd[] = { d_cla, 0x5a, 0x00, 0x00, 0x03 };
+				std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
+				cmd_vector.insert(cmd_vector.end(), aid.begin(), aid.end());
+
+				result = transmit(cmd_vector);
+
+				if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "selectApplication failed.");
+			}
+
+			std::vector<unsigned char> changeKeyPICC(const ChangeKeyInfo& info)
+			{
+				unsigned char keyCompMeth = 0;
+
+				if (!info.oldKeyInvolvement)
+					keyCompMeth = 1;
+
+				unsigned char cfg = info.desfireNumber & 0xf;
+				if (info.isMasterKey)
+					cfg |= 0x10;
+				std::vector<unsigned char> data(4);
+				data[0] = info.currentKeySlotNo;
+				data[1] = info.currentKeySlotV;
+				data[2] = info.newKeySlotNo;
+				data[3] = info.newKeySlotV;
+
+				unsigned char cmd[] = { d_cla, 0xc4, keyCompMeth, cfg, (unsigned char)(data.size()), 0x00 };
+				std::vector<unsigned char> cmd_vector(cmd, cmd + 6), result;
+				cmd_vector.insert(cmd_vector.end() - 1, data.begin(), data.end());
+
+				result = transmit(cmd_vector);
+
+				if (result.size() >= 2 &&  (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
+				{
+					char tmp[64];
+					sprintf(tmp, "changeKeyPICC failed (%x %x).", result[result.size() - 2], result[result.size() - 1]);
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, tmp);
+				}
+
+				return std::vector<unsigned char>(result.begin(), result.end() - 2);
+			}
+
 		protected:
 
 			boost::shared_ptr<SAMDESfireCrypto> d_crypto;
@@ -403,50 +447,6 @@ namespace logicalaccess
 				boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
 
 				cipher->cipher(SV1a, d_authKey, *symkey.get(), *iv.get(), false);
-			}
-
-			void selectApplication(std::vector<unsigned char> aid)
-			{
-				unsigned char cmd[] = { d_cla, 0x5a, 0x00, 0x00, 0x03 };
-				std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
-				cmd_vector.insert(cmd_vector.end(), aid.begin(), aid.end());
-
-				result = transmit(cmd_vector);
-
-				if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
-					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "selectApplication failed.");
-			}
-
-			std::vector<unsigned char> changeKeyPICC(const ChangeKeyInfo& info)
-			{
-				unsigned char keyCompMeth = 0;
-
-				if (!info.oldKeyInvolvement)
-					keyCompMeth = 1;
-
-				unsigned char cfg = info.desfireNumber & 0xf;
-				if (info.isMasterKey)
-					cfg |= 0x10;
-				std::vector<unsigned char> data(4);
-				data[0] = info.currentKeySlotNo;
-				data[1] = info.currentKeySlotV;
-				data[2] = info.newKeySlotNo;
-				data[3] = info.newKeySlotV;
-
-				unsigned char cmd[] = { d_cla, 0xc4, keyCompMeth, cfg, (unsigned char)(data.size()), 0x00 };
-				std::vector<unsigned char> cmd_vector(cmd, cmd + 6), result;
-				cmd_vector.insert(cmd_vector.end() - 1, data.begin(), data.end());
-
-				result = transmit(cmd_vector);
-
-				if (result.size() >= 2 &&  (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
-				{
-					char tmp[64];
-					sprintf(tmp, "changeKeyPICC failed (%x %x).", result[result.size() - 2], result[result.size() - 1]);
-					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, tmp);
-				}
-
-				return std::vector<unsigned char>(result.begin(), result.end() - 2);
 			}
 	};
 }
