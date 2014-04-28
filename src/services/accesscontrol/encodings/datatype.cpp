@@ -141,7 +141,7 @@ namespace logicalaccess
 
 		if ((newsize % blocklen) != 0 && (leftParity != PT_NONE || rightParity != PT_NONE))
 		{
-			char tmpmsg[64];
+			char tmpmsg[256];
 			sprintf(tmpmsg, "The buffer length (%d) without parity is not block length aligned. If you use parity on data type, it must be aligned.", static_cast<int>(buflen));
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, tmpmsg);
 		}
