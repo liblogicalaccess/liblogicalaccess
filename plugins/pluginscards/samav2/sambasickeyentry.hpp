@@ -60,6 +60,14 @@ namespace logicalaccess
 		unsigned char newKeySlotV;
 	}				ChangeKeyInfo;
 
+	typedef struct s_changeKeyDiversification
+	{
+		unsigned char enableAV2;
+		const char *divInput;
+		unsigned char diversifyCurrent;
+		unsigned char diversifyNew;
+	}				ChangeKeyDiversification;
+
 	/**
 	 * \brief A SAMBasicKeyEntry Key class.
 	 */

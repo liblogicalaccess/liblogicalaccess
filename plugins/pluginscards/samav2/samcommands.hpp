@@ -69,7 +69,7 @@ namespace logicalaccess
 			virtual std::vector<unsigned char> dumpSessionKey() = 0;
 			virtual std::vector<unsigned char> decipherData(std::vector<unsigned char> data, bool islastdata) = 0;
 			virtual std::vector<unsigned char> encipherData(std::vector<unsigned char> data, bool islastdata) = 0;
-			virtual std::vector<unsigned char> changeKeyPICC(const ChangeKeyInfo& info) = 0;
+			virtual std::vector<unsigned char> changeKeyPICC(const ChangeKeyInfo& info, const ChangeKeyDiversification& diversifycation) = 0;
 			virtual void lockUnlock(boost::shared_ptr<DESFireKey> masterKey, SAMLockUnlock state, unsigned char keyno, unsigned char unlockkeyno, unsigned char unlockkeyversion) = 0;	
 			virtual std::vector<unsigned char> transmit(std::vector<unsigned char> cmd, bool first = true, bool last = true) = 0;
 		protected:

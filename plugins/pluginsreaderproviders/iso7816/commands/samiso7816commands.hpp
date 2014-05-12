@@ -365,7 +365,7 @@ namespace logicalaccess
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "selectApplication failed.");
 			}
 
-			std::vector<unsigned char> changeKeyPICC(const ChangeKeyInfo& info)
+			std::vector<unsigned char> changeKeyPICC(const ChangeKeyInfo& info, const ChangeKeyDiversification& diversifycation)
 			{
 				unsigned char keyCompMeth = 0;
 
@@ -380,6 +380,16 @@ namespace logicalaccess
 				data[1] = info.currentKeySlotV;
 				data[2] = info.newKeySlotNo;
 				data[3] = info.newKeySlotV;
+
+				if (diversifycation.enableAV2)
+				{
+					keyCompMeth |= 0x20;
+					keyCompMeth |= diversifycation.diversifyCurrent == 0x01 ? 0x04 : 0x00;
+					keyCompMeth |= diversifycation.diversifyNew == 0x01 ? 0x02 : 0x00;
+
+					unsigned char size = strlen(diversifycation.divInput) > 31 ? 31 : (unsigned char)strlen(diversifycation.divInput);
+					data.insert(data.end(), diversifycation.divInput, diversifycation.divInput + size);
+				}
 
 				unsigned char cmd[] = { d_cla, 0xc4, keyCompMeth, cfg, (unsigned char)(data.size()), 0x00 };
 				std::vector<unsigned char> cmd_vector(cmd, cmd + 6), result;

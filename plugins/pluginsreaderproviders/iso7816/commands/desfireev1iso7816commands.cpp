@@ -17,6 +17,7 @@
 #include "desfireev1location.hpp"
 #include "logicalaccess/cards/samkeystorage.hpp"
 #include "samcommands.hpp"
+#include "nxpkeydiversification.hpp"
 
 
 namespace logicalaccess
@@ -365,16 +366,31 @@ namespace logicalaccess
 
 	void DESFireEV1ISO7816Commands::sam_iso_authenticate(boost::shared_ptr<DESFireKey> key, DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno)
 	{
+		unsigned char p2 = 0x00; //0x02 if selectApplication has been proceed
 		std::vector<unsigned char> apduresult;
 
 		std::vector<unsigned char> RPICC1 = iso_getChallenge(16);
 
 		std::vector<unsigned char> data(2 + RPICC1.size());
-		data[0] = keyno;
+
+		if (!boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "DESFireKey need a SAMKeyStorage to proceed a SAM ISO Authenticate.");
+
+		data[0] = boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage())->getKeySlot();
 		data[1] = key->getKeyVersion();
 		memcpy(&data[0] + 2, &RPICC1[0], RPICC1.size());
 
-		unsigned char cmdp1[] = { 0x80, 0x8e, 0x02, 0x00, (unsigned char)(data.size()), 0x00 };
+		if (boost::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification()))
+		{
+			p2 |= 0x11;
+			boost::shared_ptr<NXPKeyDiversification> diversifycation = boost::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification());
+
+			unsigned char size = diversifycation->d_systemidentifier.length() > 31 ? 31 : (unsigned char)diversifycation->d_systemidentifier.length();
+			data.insert(data.end(), diversifycation->d_systemidentifier.begin(), diversifycation->d_systemidentifier.begin() + size);
+		}
+
+
+		unsigned char cmdp1[] = { 0x80, 0x8e, p2, 0x00, (unsigned char)(data.size()), 0x00 };
 		std::vector<unsigned char> cmd_vector(cmdp1, cmdp1 + 6);
 		cmd_vector.insert(cmd_vector.end() - 1, data.begin(), data.end());
 
@@ -962,8 +978,8 @@ namespace logicalaccess
 		{			
 			size_t trunloffset = offset + i;
 			size_t trunklength = ((length - i) > 248) ? 248 : (length - i);		
-			command.insert(command.end(), trunloffset, trunloffset + 3);
-			command.insert(command.end(), trunklength, trunklength + 3);		
+			command.insert(command.end(), (unsigned char)trunloffset, (unsigned char)trunloffset + 3);
+			command.insert(command.end(), (unsigned char)trunklength, (unsigned char)trunklength + 3);		
 
 			std::vector<unsigned char> result = transmit_nomacv(DF_INS_READ_DATA, command);
 			unsigned char err = result.back();

@@ -8,6 +8,7 @@
 #include "desfirechip.hpp"
 #include "samav1iso7816commands.hpp"
 #include "logicalaccess/cards/samkeystorage.hpp"
+#include "nxpkeydiversification.hpp"
 
 #include <cstring>
 
@@ -69,7 +70,7 @@ namespace logicalaccess
 
         transmit(DF_INS_SELECT_APPLICATION, command);
 
-        if (getSAMChip())
+       /* if (getSAMChip())
         {
             INFO_("SelectApplication on SAM chip...");
 			DESFireLocation::convertUIntToAid(aid, samaid);
@@ -78,7 +79,7 @@ namespace logicalaccess
 				boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1> >(getSAMChip()->getCommands())->selectApplication(samaid);
 			else if (getSAMChip()->getCardType() == "SAM_AV2")
 				boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2> >(getSAMChip()->getCommands())->selectApplication(samaid);
-        }
+        }*/
 
         d_crypto->selectApplication(aid);
     }
@@ -133,7 +134,8 @@ namespace logicalaccess
     std::vector<unsigned char> DESFireISO7816Commands::getChangeKeySAMCryptogram(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
     {
         boost::shared_ptr<SAMKeyStorage> samsks = boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
-		boost::shared_ptr<SAMCommands<KeyEntryAV1Information, SETAV1> > samcommands = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1> >(getSAMChip()->getCommands());
+		boost::shared_ptr<SAMCommands<KeyEntryAV1Information, SETAV1> > samav1commands = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1> >(getSAMChip()->getCommands());
+		boost::shared_ptr<SAMCommands<KeyEntryAV2Information, SETAV2> > samav2commands = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2> >(getSAMChip()->getCommands());
 
         boost::shared_ptr<DESFireProfile> dprofile = boost::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile());
         boost::shared_ptr<DESFireKey> oldkey = boost::dynamic_pointer_cast<DESFireKey>(dprofile->getKey(d_crypto->d_currentAid, keyno));
@@ -164,7 +166,38 @@ namespace logicalaccess
             }
         }
 
-        std::vector<unsigned char> ret = samcommands->changeKeyPICC(samck);
+		ChangeKeyDiversification keyDiv;
+		memset(&keyDiv, 0x00, sizeof(keyDiv));
+		if (samav2commands
+			&& (boost::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification())
+			|| boost::dynamic_pointer_cast<NXPKeyDiversification>(oldkey->getKeyDiversification())))
+		{
+			boost::shared_ptr<NXPKeyDiversification> nxpdiv = boost::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification());
+			boost::shared_ptr<NXPKeyDiversification> oldnxpdiv = boost::dynamic_pointer_cast<NXPKeyDiversification>(oldkey->getKeyDiversification());
+
+			if (nxpdiv && oldnxpdiv && nxpdiv->d_systemidentifier != oldnxpdiv->d_systemidentifier)
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Current and New Key should have the same system identifier.");
+
+			if (nxpdiv)
+			{
+				keyDiv.diversifyNew = 0x01;
+				keyDiv.divInput = nxpdiv->d_systemidentifier.c_str();
+			}
+
+			if (oldnxpdiv)
+			{
+				keyDiv.diversifyCurrent = 0x01;
+				keyDiv.divInput = oldnxpdiv->d_systemidentifier.c_str();
+			}
+
+			keyDiv.enableAV2 = 0x01;
+		}
+
+        std::vector<unsigned char> ret;
+		if (samav1commands)
+			ret = samav1commands->changeKeyPICC(samck, keyDiv);
+		else
+			ret = samav2commands->changeKeyPICC(samck, keyDiv);
         d_crypto->d_lastIV.clear();
         d_crypto->d_lastIV.resize(d_crypto->d_block_size);
         std::copy(ret.end() - d_crypto->d_block_size, ret.end(), d_crypto->d_lastIV.begin());
