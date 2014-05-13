@@ -410,8 +410,9 @@ namespace logicalaccess
 			iso_externalAuthenticate(algorithm, isMasterCardKey, keyno, encRPCD1RPICC1);
 			encRPICC2RPCD2a = iso_internalAuthenticate(algorithm, isMasterCardKey, keyno, RPCD2, 2 * 16);
 		}
-		catch (std::exception& ex)
+		catch (...)
 		{
+			std::exception_ptr eptr = std::current_exception();
 			// Cancel SAM authentication with dummy command, but ignore return
 			try
 			{
@@ -424,7 +425,7 @@ namespace logicalaccess
 			}
 			catch(std::exception&){}
 
-			throw ex;
+			std::rethrow_exception(eptr);
 		}
 
 		if (encRPICC2RPCD2a.size() < 1)
