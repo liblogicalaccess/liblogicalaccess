@@ -178,7 +178,7 @@ namespace logicalaccess
 					unit.reset(new OmnikeyXX21ReaderUnit(readerName));
 				}
 			}
-			else if (readerName.find(string("x25")) != string::npos)
+			else if (readerName.find(string("x25")) != string::npos || readerName.find(string("5025-CL")) != string::npos)
 			{
 				unit.reset(new OmnikeyXX25ReaderUnit(readerName));
 			}
