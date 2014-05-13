@@ -57,8 +57,7 @@ namespace logicalaccess
 
 		const MifareUltralightAccessInfo* mAi = dynamic_cast<const MifareUltralightAccessInfo*>(&ai);
 
-		return (lockPage == mAi->lockPage
-			);
+		return (lockPage == mAi->lockPage);
 	}
 }
 

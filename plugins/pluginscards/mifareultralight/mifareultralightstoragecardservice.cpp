@@ -142,7 +142,7 @@ namespace logicalaccess
 
 		for (unsigned int i = 4; i < 16; ++i)
 		{
-			(getMifareUltralightChip()->getMifareUltralightCommands()->writePage(i, zeroblock, sizeof(zeroblock)) == 4);
+			getMifareUltralightChip()->getMifareUltralightCommands()->writePage(i, zeroblock, sizeof(zeroblock));
 		}
 	}
 }

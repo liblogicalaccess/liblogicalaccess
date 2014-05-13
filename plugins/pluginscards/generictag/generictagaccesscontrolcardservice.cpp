@@ -85,7 +85,7 @@ namespace logicalaccess
 			catch(std::exception& ex)
 			{
 				ERROR_("Error on read format: %s", ex.what());
-				throw ex;
+				std::rethrow_exception(std::current_exception());
 			}
 		}
 
