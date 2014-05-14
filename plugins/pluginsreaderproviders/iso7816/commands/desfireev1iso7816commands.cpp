@@ -979,8 +979,8 @@ namespace logicalaccess
         {			
             size_t trunloffset = offset + i;
             size_t trunklength = ((length - i) > 248) ? 248 : (length - i);		
-            command.insert(command.end(), (unsigned char)trunloffset, (unsigned char)trunloffset + 3);
-            command.insert(command.end(), (unsigned char)trunklength, (unsigned char)trunklength + 3);		
+			memcpy(&command[1], &trunloffset, 3);
+			memcpy(&command[4], &trunklength, 3);	
 
             std::vector<unsigned char> result = transmit_nomacv(DF_INS_READ_DATA, command);
             unsigned char err = result.back();
@@ -1171,7 +1171,7 @@ namespace logicalaccess
         {
             for (size_t i = 0; i < result.size() - 2; i += 3)
             {
-                std::vector<unsigned char> aid(result[i], result[i + 3]);
+                std::vector<unsigned char> aid(result.begin() + i, result.begin() + i + 3);
                 aids.push_back(DESFireLocation::convertAidToUInt(aid));
             }
 
@@ -1186,7 +1186,7 @@ namespace logicalaccess
 
         for (size_t i = 0; i < result.size(); i += 3)
         {
-            std::vector<unsigned char> aid(result[i], result[i + 3]);
+            std::vector<unsigned char> aid(result.begin() + i, result.begin() + i + 3);
             aids.push_back(DESFireLocation::convertAidToUInt(aid));
         }
 
