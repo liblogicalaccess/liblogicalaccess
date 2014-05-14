@@ -1171,7 +1171,7 @@ namespace logicalaccess
         {
             for (size_t i = 0; i < result.size() - 2; i += 3)
             {
-                std::vector<unsigned char> aid(result.begin() + i, result.begin() + i + 3]);
+                std::vector<unsigned char> aid(result.begin() + i, result.begin() + i + 3);
                 aids.push_back(DESFireLocation::convertAidToUInt(aid));
             }
 
