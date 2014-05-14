@@ -677,7 +677,7 @@ namespace logicalaccess
 							}
 						}
 						// Specific behavior for DESFire to check if it is not a DESFire EV1
-						else if (d_card_type == "UNKNOWN" && d_insertedChip)
+						else if (d_card_type == "UNKNOWN" && d_insertedChip && (d_insertedChip->getCardType() == "DESFire" || d_insertedChip->getCardType() == "SAM_AV2"))
 						{
 							if (d_insertedChip->getCardType() == "DESFire")
 							{
