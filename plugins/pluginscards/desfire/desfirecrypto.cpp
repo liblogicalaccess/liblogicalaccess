@@ -683,14 +683,17 @@ namespace logicalaccess
 		std::vector<unsigned char> oldkeydiv, newkeydiv;
 		oldkeydiv.resize(16, 0x00);
 		newkeydiv.resize(16, 0x00);
-		d_profile->getKey(d_currentAid, keyno, diversify, oldkeydiv);
+        // Get keyno only, in case of master card key
+        unsigned char keyno_only = static_cast<unsigned char>(keyno & 0x0f);
+        boost::shared_ptr<DESFireKey> oldkey = d_profile->getKey(d_currentAid, keyno_only);
+		d_profile->getKey(d_currentAid, keyno_only, diversify, oldkeydiv);
 		getKey(newkey, diversify, newkeydiv);	
 
 		std::vector<unsigned char> encCryptogram;
 
 		if (d_auth_method == CM_LEGACY) // Native DESFire
 		{
-			if (keyno != d_currentKeyNo)
+			if (keyno_only != d_currentKeyNo)
 			{
 				short crc;
 				for (unsigned int i = 0; i < newkeydiv.size(); ++i)
@@ -717,7 +720,7 @@ namespace logicalaccess
 		}
 		else
 		{
-			if (keyno != d_currentKeyNo)
+            if (keyno_only != d_currentKeyNo)
 			{
 				long crc;
 				for (unsigned int i = 0; i < newkeydiv.size(); ++i)
@@ -767,7 +770,7 @@ namespace logicalaccess
 			}
 			else
 			{
-				if (boost::dynamic_pointer_cast<openssl::AESCipher>(d_cipher))
+                if (newkey->getKeyType() == DF_KEY_AES)
 				{
 					// For AES, add key version.
 					newkeydiv.push_back(newkey->getKeyVersion());
