@@ -1501,7 +1501,7 @@ namespace logicalaccess
 			{
 				commands.reset(new ISO15693PCSCCommands());
 			}
-			else if (type == "ISO15693")
+			else if (type == "ISO7816")
 			{
 				commands.reset(new ISO7816ISO7816Commands());
 			}

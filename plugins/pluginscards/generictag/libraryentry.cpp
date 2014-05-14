@@ -29,6 +29,22 @@ extern "C"
 		}
 	}
 
+    LIBLOGICALACCESS_API void getGENERIC_T_CLChip(boost::shared_ptr<logicalaccess::Chip>* chip)
+    {
+        if (chip != NULL)
+		{
+			*chip = boost::shared_ptr<logicalaccess::GenericTagChip>(new logicalaccess::GenericTagChip("GENERIC_T_CL"));
+		}
+    }
+
+    LIBLOGICALACCESS_API void getGENERIC_T_CL_AChip(boost::shared_ptr<logicalaccess::Chip>* chip)
+    {
+        if (chip != NULL)
+		{
+			*chip = boost::shared_ptr<logicalaccess::GenericTagChip>(new logicalaccess::GenericTagChip("GENERIC_T_CL_A"));
+		}
+    }
+
 	LIBLOGICALACCESS_API void setTagIdBitsLengthOfGenericTagChip(boost::shared_ptr<logicalaccess::Chip>* chip, unsigned int bits)
 	{
 		if (chip != NULL)

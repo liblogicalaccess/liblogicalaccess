@@ -22,7 +22,13 @@ namespace logicalaccess
 	 */
 	class LIBLOGICALACCESS_API GenericTagChip : public Chip
 	{
-		public:			
+		public:	
+
+            /**
+			 * \brief Constructor.
+             * \param cardtype The card type.
+			 */
+            GenericTagChip(std::string cardtype);
 
 			/**
 			 * \brief Constructor.

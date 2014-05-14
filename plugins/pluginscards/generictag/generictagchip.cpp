@@ -13,6 +13,12 @@
 
 namespace logicalaccess
 {
+    GenericTagChip::GenericTagChip(std::string cardtype)
+		: Chip(cardtype)
+	{
+		d_tagIdBitsLength = 0;
+	}
+
 	GenericTagChip::GenericTagChip()
 		: Chip(CHIP_GENERICTAG)
 	{
