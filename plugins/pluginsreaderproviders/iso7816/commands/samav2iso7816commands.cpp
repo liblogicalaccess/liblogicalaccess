@@ -513,4 +513,24 @@ namespace logicalaccess
 		if (result.size() >= 2 &&  (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKeyEntry failed.");
 	}
+
+	std::vector<unsigned char> SAMAV2ISO7816Commands::dumpSecretKey(unsigned char keyno, unsigned char keyversion, std::vector<unsigned char> divInpu)
+	{
+		unsigned char p1 = 0x00;
+
+		if (divInpu.size())
+			p1 |= 0x02;
+
+		unsigned char cmd[] = { d_cla, 0xd6, p1, 0x00, 0x02 + (unsigned char)divInpu.size(), keyno, keyversion, 0x00 };
+		std::vector<unsigned char> cmd_vector(cmd, cmd + 8), result;
+		cmd_vector.insert(cmd_vector.end() - 1, divInpu.begin(), divInpu.end());
+
+
+		result = transmit(cmd_vector);
+
+		if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "dumpSecretKey failed.");
+
+		return std::vector<unsigned char>(result.begin(), result.end() - 2);
+	}
 }

@@ -52,6 +52,8 @@ namespace logicalaccess
 
 			virtual std::vector<unsigned char> transmit(std::vector<unsigned char> cmd, bool first = true, bool last = true);
 
+			std::vector<unsigned char> dumpSecretKey(unsigned char keyno, unsigned char keyversion, std::vector<unsigned char> divInpu);
+
 		protected:
 
 			void generateSessionKey(std::vector<unsigned char> rnd1, std::vector<unsigned char> rnd2);
