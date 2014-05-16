@@ -14,7 +14,7 @@ namespace logicalaccess
 		
 		AddCheck(0x65, 0x81, "Memory failure (unsuccessful updating)");
 
-		AddCheck(0x69, 0x82, "File access not allowed");
+		AddCheck(0x69, 0x82, "Security status not satisfied / File access not allowed");
 		AddCheck(0x69, 0x85, "File empty / Access conditions not satisfied");
 		
 		AddCheck(0x6A, 0x82, "File not found");

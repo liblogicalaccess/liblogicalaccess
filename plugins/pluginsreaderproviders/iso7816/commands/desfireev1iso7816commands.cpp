@@ -366,7 +366,7 @@ namespace logicalaccess
 
     void DESFireEV1ISO7816Commands::sam_iso_authenticate(boost::shared_ptr<DESFireKey> key, DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno)
     {
-        unsigned char p2 = 0x00; //0x02 if selectApplication has been proceed
+        unsigned char p1 = 0x00; //0x02 if selectApplication has been proceed
         std::vector<unsigned char> apduresult;
 
         std::vector<unsigned char> RPICC1 = iso_getChallenge(16);
@@ -382,7 +382,7 @@ namespace logicalaccess
 
         if (boost::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification()))
         {
-            p2 |= 0x11;
+            p1 |= 0x11;
             boost::shared_ptr<NXPKeyDiversification> diversifycation = boost::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification());
 
             unsigned char size = diversifycation->d_systemidentifier.length() > 31 ? 31 : (unsigned char)diversifycation->d_systemidentifier.length();
@@ -390,7 +390,7 @@ namespace logicalaccess
         }
 
 
-        unsigned char cmdp1[] = { 0x80, 0x8e, p2, 0x00, (unsigned char)(data.size()), 0x00 };
+        unsigned char cmdp1[] = { 0x80, 0x8e, p1, 0x00, (unsigned char)(data.size()), 0x00 };
         std::vector<unsigned char> cmd_vector(cmdp1, cmdp1 + 6);
         cmd_vector.insert(cmd_vector.end() - 1, data.begin(), data.end());
 
