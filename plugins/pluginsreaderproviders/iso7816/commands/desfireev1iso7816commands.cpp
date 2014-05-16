@@ -968,9 +968,9 @@ namespace logicalaccess
     {
         unsigned int ret = 0;
 
-        std::vector<unsigned char> command;
+        std::vector<unsigned char> command(7);
 
-        command.push_back(fileno);			
+        command[0] = static_cast<unsigned char>(fileno);			
 
         // Currently we have some problems to read more than 253 bytes with an Omnikey Reader.
         // So the read command is separated to some commands, 8 bytes aligned.
