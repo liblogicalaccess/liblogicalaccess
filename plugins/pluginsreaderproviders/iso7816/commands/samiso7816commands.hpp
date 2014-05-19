@@ -387,8 +387,7 @@ namespace logicalaccess
 					keyCompMeth |= diversifycation.diversifyCurrent == 0x01 ? 0x04 : 0x00;
 					keyCompMeth |= diversifycation.diversifyNew == 0x01 ? 0x02 : 0x00;
 
-					unsigned char size = strlen(diversifycation.divInput) > 31 ? 31 : (unsigned char)strlen(diversifycation.divInput);
-					data.insert(data.end(), diversifycation.divInput, diversifycation.divInput + size);
+					data.insert(data.end(), diversifycation.divInput, diversifycation.divInput + diversifycation.divInputSize);
 				}
 
 				unsigned char cmd[] = { d_cla, 0xc4, keyCompMeth, cfg, (unsigned char)(data.size()), 0x00 };

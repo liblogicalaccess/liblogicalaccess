@@ -166,28 +166,40 @@ namespace logicalaccess
             }
         }
 
+		std::vector<unsigned char> diversify;
+        if (key->getKeyDiversification())
+        {
+            key->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, key, keyno, diversify);
+        }
+
 		ChangeKeyDiversification keyDiv;
 		memset(&keyDiv, 0x00, sizeof(keyDiv));
 		if (samav2commands
 			&& (boost::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification())
 			|| boost::dynamic_pointer_cast<NXPKeyDiversification>(oldkey->getKeyDiversification())))
 		{
+			std::vector<unsigned char> diversifyNew, diversifyOld;
 			boost::shared_ptr<NXPKeyDiversification> nxpdiv = boost::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification());
 			boost::shared_ptr<NXPKeyDiversification> oldnxpdiv = boost::dynamic_pointer_cast<NXPKeyDiversification>(oldkey->getKeyDiversification());
 
-			if (nxpdiv && oldnxpdiv && nxpdiv->d_systemidentifier != oldnxpdiv->d_systemidentifier)
-				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Current and New Key should have the same system identifier.");
-
 			if (nxpdiv)
 			{
+				nxpdiv->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, key, keyno, diversifyNew);
 				keyDiv.diversifyNew = 0x01;
-				keyDiv.divInput = nxpdiv->d_systemidentifier.c_str();
+				keyDiv.divInput = &diversifyNew[0];
+				keyDiv.divInputSize = static_cast<unsigned char>(diversifyNew.size());
 			}
 
 			if (oldnxpdiv)
 			{
+				oldnxpdiv->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, key, keyno, diversifyOld);
+
+				if (nxpdiv && oldnxpdiv && !std::equal(diversifyNew.begin(), diversifyNew.end(), diversifyOld.begin()))
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Current and New Key should have the same system identifier.");
+
 				keyDiv.diversifyCurrent = 0x01;
-				keyDiv.divInput = oldnxpdiv->d_systemidentifier.c_str();
+				keyDiv.divInput = &diversifyOld[0];
+				keyDiv.divInputSize = static_cast<unsigned char>(diversifyOld.size());
 			}
 
 			keyDiv.enableAV2 = 0x01;
@@ -217,7 +229,7 @@ namespace logicalaccess
             std::vector<unsigned char> diversify;
             if (key->getKeyDiversification())
             {	
-                key->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, key, diversify);
+                key->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, key, keyno, diversify);
             }
             cryptogram = d_crypto->changeKey_PICC(keyno, key, diversify);
         }
@@ -749,7 +761,7 @@ namespace logicalaccess
         std::vector<unsigned char> diversify;
         if (key->getKeyDiversification())
         {
-            key->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, key, diversify);
+            key->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, key, keyno, diversify);
         }
         command.push_back(keyno);
 

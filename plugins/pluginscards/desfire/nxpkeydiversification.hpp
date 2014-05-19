@@ -12,20 +12,25 @@ namespace logicalaccess
 	class LIBLOGICALACCESS_API NXPKeyDiversification : public KeyDiversification
 	{
 	public:
-		virtual void initDiversification(std::vector<unsigned char> identifier, int AID, boost::shared_ptr<Key> key, std::vector<unsigned char>& diversify);
+		virtual void initDiversification(std::vector<unsigned char> identifier, int AID, boost::shared_ptr<Key> key, unsigned char keyno, std::vector<unsigned char>& diversify);
 		virtual std::vector<unsigned char> getDiversifiedKey(boost::shared_ptr<Key> key, std::vector<unsigned char> diversify);
 
-		NXPKeyDiversification() : d_systemidentifier("NXP Abu") {};
-		NXPKeyDiversification(std::string systemidentifier) : d_systemidentifier(systemidentifier) {};
+		NXPKeyDiversification() {};
+		NXPKeyDiversification(std::vector<unsigned char> systemidentifier) : d_divInput(systemidentifier) {};
 		~NXPKeyDiversification() {};
 
 		virtual std::string getType() { return "NXP"; };
 
-		std::string d_systemidentifier;
-
 		virtual void serialize(boost::property_tree::ptree& parentNode);
 		virtual void unSerialize(boost::property_tree::ptree& node);
 		virtual std::string getDefaultXmlNodeName() const { return "NXPKeyDiversification"; };
+
+		std::vector<unsigned char>& getDivInput() { return d_divInput; }
+
+		void setDivInput(std::vector<unsigned char> divInput) { d_divInput = divInput; }
+
+	private:
+		std::vector<unsigned char> d_divInput;
 	};
 }
 

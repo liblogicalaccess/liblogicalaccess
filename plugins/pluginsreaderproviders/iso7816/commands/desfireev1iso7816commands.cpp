@@ -367,6 +367,13 @@ namespace logicalaccess
     void DESFireEV1ISO7816Commands::sam_iso_authenticate(boost::shared_ptr<DESFireKey> key, DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno)
     {
         unsigned char p1 = 0x00; //0x02 if selectApplication has been proceed
+		std::vector<unsigned char> diversify;
+
+        if (key->getKeyDiversification())
+        {
+            key->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, key, keyno, diversify);
+        }
+
         std::vector<unsigned char> apduresult;
 
         std::vector<unsigned char> RPICC1 = iso_getChallenge(16);
@@ -383,10 +390,7 @@ namespace logicalaccess
         if (boost::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification()))
         {
             p1 |= 0x11;
-            boost::shared_ptr<NXPKeyDiversification> diversifycation = boost::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification());
-
-            unsigned char size = diversifycation->d_systemidentifier.length() > 31 ? 31 : (unsigned char)diversifycation->d_systemidentifier.length();
-            data.insert(data.end(), diversifycation->d_systemidentifier.begin(), diversifycation->d_systemidentifier.begin() + size);
+			data.insert(data.end(), diversify.begin(), diversify.end());
         }
 
 
@@ -474,7 +478,7 @@ namespace logicalaccess
 
         if (key->getKeyDiversification())
         {
-            key->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, key, diversify);
+            key->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, key, keyno, diversify);
         }
         std::vector<unsigned char> keydiv;
         d_crypto->getKey(key, diversify, keydiv);
@@ -631,7 +635,7 @@ namespace logicalaccess
         boost::shared_ptr<DESFireKey> currentkey = boost::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile())->getKey(d_crypto->d_currentAid, keyno);
         if (currentkey->getKeyDiversification())
         {
-            currentkey->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, currentkey, diversify);
+            currentkey->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, currentkey, keyno, diversify);
         }
 
         std::vector<unsigned char> encRndB = DESFireISO7816Commands::transmit(DFEV1_INS_AUTHENTICATE_ISO, data);
@@ -658,7 +662,7 @@ namespace logicalaccess
         boost::shared_ptr<DESFireKey> currentkey = boost::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile())->getKey(d_crypto->d_currentAid, keyno);
         if (currentkey->getKeyDiversification())
         {
-            currentkey->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, currentkey, diversify);
+            currentkey->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, currentkey, keyno, diversify);
         }
 
         std::vector<unsigned char> encRndB = DESFireISO7816Commands::transmit(DFEV1_INS_AUTHENTICATE_AES, data);
@@ -1073,7 +1077,7 @@ namespace logicalaccess
         std::vector<unsigned char> diversify;
         if (key->getKeyDiversification())
         {
-            key->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, key, diversify);
+            key->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, key, keyno, diversify);
         }
         std::vector<unsigned char> cryptogram;
 

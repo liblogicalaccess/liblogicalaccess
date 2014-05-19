@@ -12,35 +12,46 @@
 
 namespace logicalaccess
 {
-	void NXPKeyDiversification::initDiversification(std::vector<unsigned char> identifier, int AID, boost::shared_ptr<Key> key, std::vector<unsigned char>& diversify)
+	void NXPKeyDiversification::initDiversification(std::vector<unsigned char> identifier, int AID, boost::shared_ptr<Key> key, unsigned char keyno, std::vector<unsigned char>& diversify)
 	{
-		if (identifier.size() != 0)
+		if (d_divInput.size() == 0)
 		{
-			diversify.push_back(0x01);
+			if (identifier.size() == 0)
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "NXP Diversification without divInput need an UID.");
 
+			//UID
+			//std::reverse(identifier.begin(), identifier.end());
 			for (unsigned int x = 0; x < identifier.size(); ++x)
 				diversify.push_back(identifier[x]);
 			
+			//AID
 			unsigned char aidTab[3];
 			for (unsigned char x = 2; x != (unsigned char)0xff; --x)
 			{
 				aidTab[x] = AID & 0xff;
 				AID >>= 8;
 			}
+			//std::reverse(aidTab, aidTab + 3);
 			for (unsigned char x = 0; x < 3; ++x)
 				diversify.push_back(aidTab[x]);
 
-			std::vector<unsigned char> const_vector = std::vector<unsigned char>(d_systemidentifier.begin(), d_systemidentifier.end());
-			diversify.insert(diversify.end(), const_vector.begin(), const_vector.begin() + const_vector.size());
+			//keyID
+			diversify.push_back(keyno);
 		}
 		else
 		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Chip identifier is required for key diversification.");
+			if (d_divInput.size() > 31)
+				d_divInput.resize(31);
+			//divInput
+			diversify.insert(diversify.end(), d_divInput.begin(), d_divInput.end());
 		}
 	}
 
 	std::vector<unsigned char> NXPKeyDiversification::getDiversifiedKey(boost::shared_ptr<Key> key, std::vector<unsigned char> diversify)
 	{
+		//const AES 128
+		diversify.insert(diversify.begin(), 0x01);
+
 		INFO_("Using key diversification NXP with div : %s", BufferHelper::getHex(diversify).c_str());
 		int block_size = 0;
 		boost::shared_ptr<openssl::OpenSSLSymmetricCipher> d_cipher;
@@ -85,12 +96,13 @@ namespace logicalaccess
 	void NXPKeyDiversification::serialize(boost::property_tree::ptree& parentNode)
 	{
 		boost::property_tree::ptree node;
-		node.put("SystemIdentifier", d_systemidentifier);
+		node.put("divInput", std::string(d_divInput.begin(), d_divInput.end()));
 		parentNode.add_child(getDefaultXmlNodeName(), node);
 	}
 
 	void NXPKeyDiversification::unSerialize(boost::property_tree::ptree& node)
 	{
-		d_systemidentifier = node.get_child("SystemIdentifier").get_value<std::string>();
+		std::string divinput = node.get_child("divInput").get_value<std::string>();
+		d_divInput = std::vector<unsigned char>(divinput.begin(), divinput.end());
 	}
 }

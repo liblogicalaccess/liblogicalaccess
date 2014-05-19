@@ -8,7 +8,7 @@
 
 namespace logicalaccess
 {
-	void SagemKeyDiversification::initDiversification(std::vector<unsigned char> identifier, int /*AID*/, boost::shared_ptr<Key> /*key*/, std::vector<unsigned char>& diversify)
+	void SagemKeyDiversification::initDiversification(std::vector<unsigned char> identifier, int /*AID*/, boost::shared_ptr<Key> /*key*/, unsigned char /*keyno*/, std::vector<unsigned char>& diversify)
 	{
 		if (identifier.size() > 0)
 		{

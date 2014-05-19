@@ -63,7 +63,8 @@ namespace logicalaccess
 	typedef struct s_changeKeyDiversification
 	{
 		unsigned char enableAV2;
-		const char *divInput;
+		unsigned char *divInput;
+		unsigned char divInputSize;
 		unsigned char diversifyCurrent;
 		unsigned char diversifyNew;
 	}				ChangeKeyDiversification;
