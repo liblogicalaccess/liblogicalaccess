@@ -89,7 +89,7 @@ namespace logicalaccess
 		std::vector<unsigned char> res;
 
 		boost::posix_time::time_duration ptimeout = boost::posix_time::milliseconds(timeout + 100);
-		while (d_port->getSerialPort()->select(ptimeout))
+		if (d_port->getSerialPort()->select(ptimeout))
 		{
 			std::vector<unsigned char> tmpbuf;
 

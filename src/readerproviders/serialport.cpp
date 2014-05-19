@@ -153,15 +153,15 @@ namespace logicalaccess
 
 		return r;
 #else
-		COMMTIMEOUTS timeouts;
+		/*COMMTIMEOUTS timeouts;
 
-		timeouts.ReadIntervalTimeout = MAXDWORD;
+		timeouts.ReadIntervalTimeout = 300;
 		timeouts.ReadTotalTimeoutMultiplier = 0;
 		timeouts.ReadTotalTimeoutConstant = 0;
 		timeouts.WriteTotalTimeoutMultiplier = 0;
 		timeouts.WriteTotalTimeoutConstant = 0;
 
-		EXCEPTION_ASSERT(SetCommTimeouts(d_file, &timeouts), LibLogicalAccessException, "Cannot set serial port timeout");
+		EXCEPTION_ASSERT(SetCommTimeouts(d_file, &timeouts), LibLogicalAccessException, "Cannot set serial port timeout");*/
 
 		DWORD r = 0;
 		BOOL result = ReadFile(d_file, buf.data(), static_cast<int>(buf.size()), &r, NULL);
@@ -209,14 +209,6 @@ namespace logicalaccess
 
 		return r;
 #else
-		COMMTIMEOUTS timeouts;
-
-		timeouts.ReadIntervalTimeout = MAXDWORD;
-		timeouts.ReadTotalTimeoutMultiplier = 0;
-		timeouts.ReadTotalTimeoutConstant = 0;
-		timeouts.WriteTotalTimeoutMultiplier = 0;
-		timeouts.WriteTotalTimeoutConstant = 0;
-
 		DWORD r = 0;
 		BOOL result = WriteFile(d_file, &buf[0], static_cast<DWORD>(buf.size()), &r, NULL);
 
@@ -270,8 +262,8 @@ namespace logicalaccess
 			// specify timeout
 			if (GetCommTimeouts(d_file, &commTimeouts))
 			{
-				commTimeouts.ReadIntervalTimeout = MAXDWORD;
-				commTimeouts.ReadTotalTimeoutMultiplier = MAXDWORD;
+				commTimeouts.ReadIntervalTimeout = 0;
+                commTimeouts.ReadTotalTimeoutMultiplier = 0;
 				commTimeouts.ReadTotalTimeoutConstant = static_cast<DWORD>(timeout.total_microseconds() / 1000);
 				commTimeouts.WriteTotalTimeoutMultiplier = 0;
 				commTimeouts.WriteTotalTimeoutConstant = 0;
@@ -297,6 +289,13 @@ namespace logicalaccess
 						d_readBuf.resize(r);
 						ret = true;
 					}
+
+                    commTimeouts.ReadIntervalTimeout = 0;
+                    commTimeouts.ReadTotalTimeoutMultiplier = 0;
+				    commTimeouts.ReadTotalTimeoutConstant = 250;
+				    commTimeouts.WriteTotalTimeoutMultiplier = 0;
+				    commTimeouts.WriteTotalTimeoutConstant = 0;
+                    SetCommTimeouts(d_file, &commTimeouts);
 				}
 			}
 		}
