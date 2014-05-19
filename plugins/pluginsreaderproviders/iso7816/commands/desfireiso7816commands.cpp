@@ -168,9 +168,9 @@ namespace logicalaccess
 
 		std::vector<unsigned char> diversify;
         if (key->getKeyDiversification())
-        {
             key->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, key, keyno, diversify);
-        }
+		if (oldkey->getKeyDiversification())
+            oldkey->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, oldkey, keyno, diversify);
 
 		ChangeKeyDiversification keyDiv;
 		memset(&keyDiv, 0x00, sizeof(keyDiv));
