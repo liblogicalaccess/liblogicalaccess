@@ -4,7 +4,7 @@
 #include "desfireev1chip.hpp"
 #include "desfirechip.hpp"
 #include "sagemkeydiversification.hpp"
-#include "nxpkeydiversification.hpp"
+#include "nxpav2keydiversification.hpp"
 #include "logicalaccess/cards/keydiversification.hpp"
 
 #ifdef _MSC_VER
@@ -45,7 +45,7 @@ extern "C"
 	{
 		if (keydiversification != NULL)
 		{
-			*keydiversification = boost::shared_ptr<logicalaccess::NXPKeyDiversification>(new logicalaccess::NXPKeyDiversification());
+			*keydiversification = boost::shared_ptr<logicalaccess::NXPAV2KeyDiversification>(new logicalaccess::NXPAV2KeyDiversification());
 		}
 	}
 

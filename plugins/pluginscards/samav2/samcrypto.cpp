@@ -44,7 +44,7 @@ namespace logicalaccess
 
 		if (key->getKeyType() == DF_KEY_AES)
 			d_cipher.reset(new openssl::AESCipher());
-		else if (key->getKeyType() == DF_KEY_3K3DES)
+		else if (key->getKeyType() == DF_KEY_3K3DES || key->getKeyType() == DF_KEY_DES)
 			d_cipher.reset(new openssl::DESCipher());
 
 		openssl::AESSymmetricKey cipherkey = openssl::AESSymmetricKey::createFromData(keyvec);
@@ -99,6 +99,18 @@ namespace logicalaccess
 				d_sessionKey.insert(d_sessionKey.end(), d_rndB.begin() + 6, d_rndB.begin() + 10);
 				d_sessionKey.insert(d_sessionKey.end(), d_rndA.begin() + 12, d_rndA.begin() + 16);
 				d_sessionKey.insert(d_sessionKey.end(), d_rndB.begin() + 12, d_rndB.begin() + 16);
+
+				d_cipher.reset(new openssl::DESCipher());
+				d_authkey = keyvec;
+				d_block_size = 8;
+				d_mac_size = 8;
+			}
+			else if (key->getKeyType() == DF_KEY_DES)
+			{
+				d_sessionKey.insert(d_sessionKey.end(), d_rndA.begin(), d_rndA.begin() + 4);
+				d_sessionKey.insert(d_sessionKey.end(), d_rndB.begin(), d_rndB.begin() + 4);
+				d_sessionKey.insert(d_sessionKey.end(), d_rndA.begin() + 4, d_rndA.begin() + 8);
+				d_sessionKey.insert(d_sessionKey.end(), d_rndB.begin() + 4, d_rndB.begin() + 8);
 
 				d_cipher.reset(new openssl::DESCipher());
 				d_authkey = keyvec;

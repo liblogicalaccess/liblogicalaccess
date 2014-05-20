@@ -8,7 +8,7 @@
 #include "desfirechip.hpp"
 #include "samav1iso7816commands.hpp"
 #include "logicalaccess/cards/samkeystorage.hpp"
-#include "nxpkeydiversification.hpp"
+#include "nxpav2keydiversification.hpp"
 
 #include <cstring>
 
@@ -175,12 +175,12 @@ namespace logicalaccess
 		ChangeKeyDiversification keyDiv;
 		memset(&keyDiv, 0x00, sizeof(keyDiv));
 		if (samav2commands
-			&& (boost::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification())
-			|| boost::dynamic_pointer_cast<NXPKeyDiversification>(oldkey->getKeyDiversification())))
+			&& (boost::dynamic_pointer_cast<NXPAV2KeyDiversification>(key->getKeyDiversification())
+			|| boost::dynamic_pointer_cast<NXPAV2KeyDiversification>(oldkey->getKeyDiversification())))
 		{
 			std::vector<unsigned char> diversifyNew, diversifyOld;
-			boost::shared_ptr<NXPKeyDiversification> nxpdiv = boost::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification());
-			boost::shared_ptr<NXPKeyDiversification> oldnxpdiv = boost::dynamic_pointer_cast<NXPKeyDiversification>(oldkey->getKeyDiversification());
+			boost::shared_ptr<NXPAV2KeyDiversification> nxpdiv = boost::dynamic_pointer_cast<NXPAV2KeyDiversification>(key->getKeyDiversification());
+			boost::shared_ptr<NXPAV2KeyDiversification> oldnxpdiv = boost::dynamic_pointer_cast<NXPAV2KeyDiversification>(oldkey->getKeyDiversification());
 
 			if (nxpdiv)
 			{

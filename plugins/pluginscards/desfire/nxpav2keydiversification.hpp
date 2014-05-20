@@ -9,21 +9,21 @@
 
 namespace logicalaccess
 {
-	class LIBLOGICALACCESS_API NXPKeyDiversification : public KeyDiversification
+	class LIBLOGICALACCESS_API NXPAV2KeyDiversification : public KeyDiversification
 	{
 	public:
 		virtual void initDiversification(std::vector<unsigned char> identifier, int AID, boost::shared_ptr<Key> key, unsigned char keyno, std::vector<unsigned char>& diversify);
 		virtual std::vector<unsigned char> getDiversifiedKey(boost::shared_ptr<Key> key, std::vector<unsigned char> diversify);
 
-		NXPKeyDiversification() {};
-		NXPKeyDiversification(std::vector<unsigned char> systemidentifier) : d_divInput(systemidentifier) {};
-		~NXPKeyDiversification() {};
+		NXPAV2KeyDiversification() {};
+		NXPAV2KeyDiversification(std::vector<unsigned char> systemidentifier) : d_divInput(systemidentifier) {};
+		~NXPAV2KeyDiversification() {};
 
-		virtual std::string getType() { return "NXP"; };
+		virtual std::string getType() { return "NXPAV2"; };
 
 		virtual void serialize(boost::property_tree::ptree& parentNode);
 		virtual void unSerialize(boost::property_tree::ptree& node);
-		virtual std::string getDefaultXmlNodeName() const { return "NXPKeyDiversification"; };
+		virtual std::string getDefaultXmlNodeName() const { return "NXPAV2KeyDiversification"; };
 
 		std::vector<unsigned char>& getDivInput() { return d_divInput; }
 

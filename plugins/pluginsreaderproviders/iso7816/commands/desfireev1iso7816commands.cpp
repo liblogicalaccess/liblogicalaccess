@@ -17,7 +17,7 @@
 #include "desfireev1location.hpp"
 #include "logicalaccess/cards/samkeystorage.hpp"
 #include "samcommands.hpp"
-#include "nxpkeydiversification.hpp"
+#include "nxpav2keydiversification.hpp"
 
 
 namespace logicalaccess
@@ -387,7 +387,7 @@ namespace logicalaccess
         data[1] = key->getKeyVersion();
         memcpy(&data[0] + 2, &RPICC1[0], RPICC1.size());
 
-        if (boost::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification()))
+        if (boost::dynamic_pointer_cast<NXPAV2KeyDiversification>(key->getKeyDiversification()))
         {
             p1 |= 0x11;
 			data.insert(data.end(), diversify.begin(), diversify.end());
@@ -454,7 +454,7 @@ namespace logicalaccess
 
         INFO_("Session key length: %d", d_crypto->d_sessionKey.size());
 
-        if (key->getKeyType() == DF_KEY_3K3DES)
+		if (key->getKeyType() == DF_KEY_3K3DES || key->getKeyType() == DF_KEY_DES)
         {
             d_crypto->d_cipher.reset(new openssl::DESCipher());
             d_crypto->d_block_size = 8;
