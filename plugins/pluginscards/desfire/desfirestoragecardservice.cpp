@@ -50,7 +50,7 @@ namespace logicalaccess
 			getDESFireChip()->getDESFireCommands()->selectApplication(dfLocation->aid);
 
 			std::vector<unsigned char> files = getDESFireChip()->getDESFireCommands()->getFileIDs();
-			for (std::vector<unsigned char>::const_iterator file = files.cbegin(); (file != files.cend()); file++)
+			for (std::vector<unsigned char>::const_iterator file = files.cbegin(); (file != files.cend()); ++file)
 			{
 				getDESFireChip()->getDESFireCommands()->deleteFile(*file);
 			}
@@ -131,7 +131,7 @@ namespace logicalaccess
 
 			if (aiToWrite)
 			{
-				for (std::vector<unsigned int>::const_iterator aid = aids.cbegin(); (aid != aids.cend()) && createArbo; aid++)
+				for (std::vector<unsigned int>::const_iterator aid = aids.cbegin(); (aid != aids.cend()) && createArbo; ++aid)
 				{
 					createArbo = (*aid != dfLocation->aid);
 				}
@@ -222,7 +222,7 @@ namespace logicalaccess
 
 			if (aiToWrite)
 			{
-				for (std::vector<unsigned char>::const_iterator file = files.cbegin(); (file != files.cend()) && createArbo; file++)
+				for (std::vector<unsigned char>::const_iterator file = files.cbegin(); (file != files.cend()) && createArbo; ++file)
 				{
 					createArbo = (*file != dfLocation->file);
 				}

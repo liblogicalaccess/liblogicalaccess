@@ -179,7 +179,7 @@ namespace logicalaccess
 
 			std::list<std::vector<unsigned char> > allTags = getDefaultSCIELReaderCardAdapter()->receiveTagsListCommand(cmd);
 
-			for (std::list<std::vector<unsigned char> >::iterator i = allTags.begin(); i != allTags.end(); i++)
+			for (std::list<std::vector<unsigned char> >::iterator i = allTags.begin(); i != allTags.end(); ++i)
 			{
 				boost::shared_ptr<Chip> rChip = createChipFromBuffer((*i));
 				if (rChip)
@@ -206,17 +206,17 @@ namespace logicalaccess
 		std::list<boost::shared_ptr<Chip> > chipList = getReaderChipList();
 
 		DEBUG_("**** READER CHIP LIST RAW ****");
-		for (std::list<boost::shared_ptr<Chip> >::iterator i = chipList.begin(); i != chipList.end(); i++)
+		for (std::list<boost::shared_ptr<Chip> >::iterator i = chipList.begin(); i != chipList.end(); ++i)
 		{
 			DEBUG_("  -> Chip identifier %s Reception {%d}", BufferHelper::getHex((*i)->getChipIdentifier()).c_str(), static_cast<unsigned int>((*i)->getReceptionLevel()));
 		}
 		DEBUG_("**** END LIST ****");
 
 		// Timer management. We handle the global timeout when tags disappears (it was done before by the key, but it sucked !)
-		for (std::vector<boost::shared_ptr<Chip> >::iterator i = d_chipList.begin(); i != d_chipList.end(); i++)
+		for (std::vector<boost::shared_ptr<Chip> >::iterator i = d_chipList.begin(); i != d_chipList.end(); ++i)
 		{
 			bool findChip = false;
-			for (std::list<boost::shared_ptr<Chip> >::iterator j = chipList.begin(); j != chipList.end() && !findChip; j++)
+			for (std::list<boost::shared_ptr<Chip> >::iterator j = chipList.begin(); j != chipList.end() && !findChip; ++j)
 			{
 				findChip = ((*i)->getChipIdentifier() == (*j)->getChipIdentifier());
 			}
@@ -243,7 +243,7 @@ namespace logicalaccess
 		}
 
 		// Add new chip to the timer management
-		for (std::list<boost::shared_ptr<Chip> >::iterator i = chipList.begin(); i != chipList.end(); i++)
+		for (std::list<boost::shared_ptr<Chip> >::iterator i = chipList.begin(); i != chipList.end(); ++i)
 		{
 			std::string hexid = BufferHelper::getHex((*i)->getChipIdentifier());
 			if (d_tagGoneTimeout.find(hexid) == d_tagGoneTimeout.end())
@@ -253,7 +253,7 @@ namespace logicalaccess
 		}
 
 		DEBUG_("**** READER CHIP LIST AFTER GLOBAL TIMEOUT ****");
-		for (std::list<boost::shared_ptr<Chip> >::iterator i = chipList.begin(); i != chipList.end(); i++)
+		for (std::list<boost::shared_ptr<Chip> >::iterator i = chipList.begin(); i != chipList.end(); ++i)
 		{
 			DEBUG_("  -> Chip identifier %s Reception {%d}", BufferHelper::getHex((*i)->getChipIdentifier()).c_str(), static_cast<unsigned int>((*i)->getReceptionLevel()));
 		}
@@ -271,7 +271,7 @@ namespace logicalaccess
 		std::map<std::string, int> ignoreArea;
 		bool safetyAreaUsed = false;
 
-		for (std::list<boost::shared_ptr<Chip> >::iterator i = chipList.begin(); i != chipList.end(); i++)
+		for (std::list<boost::shared_ptr<Chip> >::iterator i = chipList.begin(); i != chipList.end(); ++i)
 		{
 			int timeInArea = 1;
 			bool forceTagArea = false;
@@ -573,35 +573,35 @@ namespace logicalaccess
 		d_ignoreArea = ignoreArea;
 
 		DEBUG_("**** FINAL CHIP LIST ****");
-		for (std::vector<boost::shared_ptr<Chip> >::iterator i = d_chipList.begin(); i != d_chipList.end(); i++)
+		for (std::vector<boost::shared_ptr<Chip> >::iterator i = d_chipList.begin(); i != d_chipList.end(); ++i)
 		{
 			DEBUG_("  -> Chip identifier %s Reception {%d}", BufferHelper::getHex((*i)->getChipIdentifier()).c_str(), static_cast<unsigned int>((*i)->getReceptionLevel()));
 		}
 		DEBUG_("**** END LIST ****");
 
 		DEBUG_("**** TAG-IN AREA CHIP LIST ****");
-		for (std::map<std::string, int>::iterator i = d_tagInArea.begin(); i != d_tagInArea.end(); i++)
+		for (std::map<std::string, int>::iterator i = d_tagInArea.begin(); i != d_tagInArea.end(); ++i)
 		{
 			DEBUG_("  -> Chip identifier {%s} Seconds in area {%d}", (*i).first.c_str(), (*i).second);
 		}
 		DEBUG_("**** END LIST ****");
 
 		DEBUG_("**** TAG-OUT AREA CHIP LIST ****");
-		for (std::map<std::string, int>::iterator i = d_tagOutArea.begin(); i != d_tagOutArea.end(); i++)
+		for (std::map<std::string, int>::iterator i = d_tagOutArea.begin(); i != d_tagOutArea.end(); ++i)
 		{
 			DEBUG_("  -> Chip identifier {%s} Seconds in area {%d}", (*i).first.c_str(), (*i).second);
 		}
 		DEBUG_("**** END LIST ****");
 
 		DEBUG_("**** TAG-SAFETY AREA CHIP LIST ****");
-		for (std::map<std::string, int>::iterator i = d_safetyArea.begin(); i != d_safetyArea.end(); i++)
+		for (std::map<std::string, int>::iterator i = d_safetyArea.begin(); i != d_safetyArea.end(); ++i)
 		{
 			DEBUG_("  -> Chip identifier {%s} Seconds in area {%d}", (*i).first.c_str(), (*i).second);
 		}
 		DEBUG_("**** END LIST ****");
 
 		DEBUG_("**** TAG-IGNORE AREA CHIP LIST ****");
-		for (std::map<std::string, int>::iterator i = d_ignoreArea.begin(); i != d_ignoreArea.end(); i++)
+		for (std::map<std::string, int>::iterator i = d_ignoreArea.begin(); i != d_ignoreArea.end(); ++i)
 		{
 			DEBUG_("  -> Chip identifier {%s} Seconds in area {%d}", (*i).first.c_str(), (*i).second);
 		}
