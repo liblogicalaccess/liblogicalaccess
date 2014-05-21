@@ -29,7 +29,7 @@ namespace logicalaccess
 
 	void STidSTRLEDBuzzerDisplay::setBuzzer(bool /*status*/)
 	{
-		WARNING_SIMPLE_("Buzzer not implement on STid STR");
+		WARNING_("Buzzer not implement on STid STR");
 		// No buzzer on STid STR, do nothing
 	}
 

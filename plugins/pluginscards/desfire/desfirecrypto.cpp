@@ -630,7 +630,7 @@ namespace logicalaccess
 		keydiv.clear();
 		if (key->getKeyDiversification() && diversify.size() != 0)
 		{
-			INFO_SIMPLE_("Use key diversification.");
+			INFO_("Use key diversification.");
 			keydiv = key->getKeyDiversification()->getDiversifiedKey(key, diversify);
 		}
 		else
@@ -678,7 +678,7 @@ namespace logicalaccess
 
 	std::vector<unsigned char> DESFireCrypto::changeKey_PICC(unsigned char keyno, boost::shared_ptr<DESFireKey> newkey, std::vector<unsigned char> diversify)
 	{
-		INFO_SIMPLE_("Init change key on PICC...");
+		INFO_("Init change key on PICC...");
 		std::vector<unsigned char> cryptogram;
 		std::vector<unsigned char> oldkeydiv, newkeydiv;
 		oldkeydiv.resize(16, 0x00);

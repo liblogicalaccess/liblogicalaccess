@@ -205,17 +205,17 @@ namespace logicalaccess
 					}
 					else
 					{
-						ERROR_SIMPLE_("Unable to retrieve the Reader Unit !");
+						ERROR_("Unable to retrieve the Reader Unit !");
 					}
 				}
 				else
 				{
-					ERROR_SIMPLE_("Unable to retrieve the Card Adapter !");
+					ERROR_("Unable to retrieve the Card Adapter !");
 				}
 			}
 			else
 			{
-				ERROR_SIMPLE_("Unable to retrieve the Chip !");
+				ERROR_("Unable to retrieve the Chip !");
 			}
 		}
 

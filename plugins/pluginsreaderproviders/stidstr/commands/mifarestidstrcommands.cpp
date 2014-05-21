@@ -28,14 +28,14 @@ namespace logicalaccess
 
 	std::vector<unsigned char> MifareSTidSTRCommands::scanMifare()
 	{
-		INFO_SIMPLE_("Scanning mifare card...");
+		INFO_("Scanning mifare card...");
 		std::vector<unsigned char> uid;
 		std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x00A0, std::vector<unsigned char>());
 
 		bool hasCard = (r[0] == 0x01);
 		if (hasCard)
 		{
-			INFO_SIMPLE_("Card detected !");
+			INFO_("Card detected !");
 			unsigned char uidLength = r[1];
 			uid = std::vector<unsigned char>(r.begin() + 2, r.begin() + 2 + uidLength);
 
@@ -43,7 +43,7 @@ namespace logicalaccess
 		}
 		else
 		{
-			INFO_SIMPLE_("No card detected !");
+			INFO_("No card detected !");
 		}
 
 		return uid;
@@ -51,7 +51,7 @@ namespace logicalaccess
 
 	void MifareSTidSTRCommands::releaseRFIDField()
 	{
-		INFO_SIMPLE_("Releasing RFID field...");
+		INFO_("Releasing RFID field...");
 		getSTidSTRReaderCardAdapter()->sendCommand(0x00A1, std::vector<unsigned char>());
 	}
 
@@ -87,12 +87,12 @@ namespace logicalaccess
 
 		if (boost::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key_storage))
 		{
-			INFO_SIMPLE_("Using computer memory key storage !");
+			INFO_("Using computer memory key storage !");
 			loadKey(static_cast<unsigned char>(mLocation->sector), keytype, key->getData(), key->getLength(), true);
 		}
 		else if (boost::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage))
 		{
-			INFO_SIMPLE_("Using reader memory key storage !");
+			INFO_("Using reader memory key storage !");
 			// Don't load the key when reader memory, except if specified
 			if (!key->isEmpty())
 			{
@@ -108,7 +108,7 @@ namespace logicalaccess
 	void MifareSTidSTRCommands::authenticate(unsigned char /*blockno*/, unsigned char /*keyno*/, MifareKeyType /*keytype*/)
 	{
 		// STid STR doesn't separate authentication and read/write operation.
-		WARNING_SIMPLE_("STid STR doesn't separate authentication and read/write operation.");
+		WARNING_("STid STR doesn't separate authentication and read/write operation.");
 	}
 
 	void MifareSTidSTRCommands::authenticate(unsigned char /*blockno*/, boost::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype)
@@ -116,7 +116,7 @@ namespace logicalaccess
 		INFO_("Setting the authenticate type... key storage {%s} key type {0x%x(%d)}", key_storage->serialize().c_str(), keytype, keytype);
 		if (boost::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key_storage))
 		{
-			INFO_SIMPLE_("Setting computer memory key storage !");
+			INFO_("Setting computer memory key storage !");
 			d_useSKB = false;
 			d_skbIndex = 0;
 		}
@@ -145,13 +145,13 @@ namespace logicalaccess
 
 		if (d_useSKB)
 		{
-			INFO_SIMPLE_("Need to use reader memory key storage (SKB) !");
+			INFO_("Need to use reader memory key storage (SKB) !");
 			return readBinaryIndex(d_skbIndex, blockno, len, buf, buflen);
 		}
 
-		INFO_SIMPLE_(" => Rescanning card to avoid bad authentication");
+		INFO_(" => Rescanning card to avoid bad authentication");
 		scanMifare();
-		INFO_SIMPLE_("Scan done ! Continue to read binary block.");
+		INFO_("Scan done ! Continue to read binary block.");
 
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(d_lastKeyType));
@@ -173,9 +173,9 @@ namespace logicalaccess
 		INFO_("Read binary index key index {0x%x(%u)} block {0x%x(%u)} [out] buffer len {%d}",
 				keyindex, keyindex, blockno, blockno, buflen);
 
-		INFO_SIMPLE_(" => Rescanning card to avoid bad authentication");
+		INFO_(" => Rescanning card to avoid bad authentication");
 		scanMifare();
-		INFO_SIMPLE_("Scan done ! Continue to read binary index.");
+		INFO_("Scan done ! Continue to read binary index.");
 
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(d_lastKeyType));
@@ -203,13 +203,13 @@ namespace logicalaccess
 
 		if (d_useSKB)
 		{
-			INFO_SIMPLE_("Need to use reader memory key storage (SKB) !");
+			INFO_("Need to use reader memory key storage (SKB) !");
 			return updateBinaryIndex(d_skbIndex, blockno, buf, buflen);
 		}
 
-		INFO_SIMPLE_(" => Rescanning card to avoid bad authentication");
+		INFO_(" => Rescanning card to avoid bad authentication");
 		scanMifare();
-		INFO_SIMPLE_("Scan done ! Continue to update binary block.");
+		INFO_("Scan done ! Continue to update binary block.");
 
 		if (blockno != 0)
 		{
@@ -229,9 +229,9 @@ namespace logicalaccess
 	{
 		INFO_("Update binary index key index {0x%x(%u)} block {0x%x(%u)} [in] buffer len {%d}", keyindex, keyindex, blockno, blockno, buflen);
 
-		INFO_SIMPLE_(" => Rescanning card to avoid bad authentication");
+		INFO_(" => Rescanning card to avoid bad authentication");
 		scanMifare();
-		INFO_SIMPLE_("Scan done ! Continue to update binary index.");
+		INFO_("Scan done ! Continue to update binary index.");
 
 		if (blockno != 0)
 		{

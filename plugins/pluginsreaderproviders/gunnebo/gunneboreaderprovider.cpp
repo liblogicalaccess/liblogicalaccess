@@ -36,7 +36,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<GunneboReaderProvider> GunneboReaderProvider::getSingletonInstance()
 	{
-		INFO_SIMPLE_("Getting singleton instance...");
+		INFO_("Getting singleton instance...");
 		static boost::shared_ptr<GunneboReaderProvider> instance;
 		if (!instance)
 		{
@@ -49,7 +49,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<ReaderUnit> GunneboReaderProvider::createReaderUnit()
 	{
-		INFO_SIMPLE_("Creating new reader unit with empty port... (Serial port auto-detect will be used when connecting to reader)");
+		INFO_("Creating new reader unit with empty port... (Serial port auto-detect will be used when connecting to reader)");
 
 		boost::shared_ptr<GunneboReaderUnit> ret(new GunneboReaderUnit());
 		ret->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));

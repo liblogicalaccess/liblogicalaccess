@@ -153,7 +153,7 @@ namespace logicalaccess
 				{
 					getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true, maxwait + 2000);
 					d_insertedChip.reset();
-					INFO_SIMPLE_("Card removed");
+					INFO_("Card removed");
 					removed = true;
 				}
 				catch(LibLogicalAccessException&)
@@ -239,7 +239,7 @@ namespace logicalaccess
 			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true);
 		}
 
-		INFO_SIMPLE_("Disconnected from the chip");
+		INFO_("Disconnected from the chip");
 	}
 
 	std::vector<unsigned char> RplethReaderUnit::getInsertedChipIdentifier()
@@ -254,13 +254,13 @@ namespace logicalaccess
 			csn = getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true);
 		}
 
-		INFO_SIMPLE_("Inserted chip identifier get");
+		INFO_("Inserted chip identifier get");
 		return csn;
 	}
 
 	boost::shared_ptr<Chip> RplethReaderUnit::getChipInAir(unsigned int maxwait)
 	{
-		INFO_SIMPLE_("Starting get chip in air...");
+		INFO_("Starting get chip in air...");
 
 		boost::shared_ptr<Chip> chip;
 		clock_t begin = std::clock();
@@ -338,7 +338,7 @@ namespace logicalaccess
 
 	bool RplethReaderUnit::connectToReader()
 	{
-		INFO_SIMPLE_("Starting connection to reader...");
+		INFO_("Starting connection to reader...");
 		boost::shared_ptr<DataTransport> dataTransport = getDataTransport();
 		if (!dataTransport->getReaderUnit())
 		{
@@ -349,7 +349,7 @@ namespace logicalaccess
 		bool connected = getDataTransport()->connect();
 		if (connected && getRplethConfiguration()->getMode() == RplethMode::PROXY)
 		{
-			INFO_SIMPLE_("Data transport connected, initializing PROXY mode...");
+			INFO_("Data transport connected, initializing PROXY mode...");
 			std::string type = getProxyReaderType();
 			boost::shared_ptr<ReaderProvider> rp = LibraryManager::getInstance()->getReaderProvider(type);
 			if (rp)
@@ -372,7 +372,7 @@ namespace logicalaccess
 
 	void RplethReaderUnit::disconnectFromReader()
 	{
-		INFO_SIMPLE_("Starting disconnection to reader...");
+		INFO_("Starting disconnection to reader...");
 		getDataTransport()->disconnect();
 	}
 
@@ -541,7 +541,7 @@ namespace logicalaccess
 
 	std::vector<unsigned char> RplethReaderUnit::receiveBadge (long int timeout)
 	{
-		COM_SIMPLE_("receiveBadge");
+		COM_("receiveBadge");
 		std::vector<unsigned char> res;
 		std::vector<unsigned char> cmd;
 		try

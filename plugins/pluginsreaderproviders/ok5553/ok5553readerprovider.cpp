@@ -55,7 +55,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<ReaderUnit> OK5553ReaderProvider::createReaderUnit()
 	{
-		INFO_SIMPLE_("Creating new reader unit");
+		INFO_("Creating new reader unit");
 
 		boost::shared_ptr<OK5553ReaderUnit> ret(new OK5553ReaderUnit());
 		ret->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));

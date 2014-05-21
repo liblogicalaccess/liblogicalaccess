@@ -36,7 +36,7 @@ namespace logicalaccess
 
 	void IdOnDemandReaderUnitConfiguration::unSerialize(boost::property_tree::ptree& node)
 	{
-		INFO_SIMPLE_("Unserializing reader unit configuration...");
+		INFO_("Unserializing reader unit configuration...");
 
 		d_authCode = node.get_child("AuthenticateCode").get_value<std::string>();
 

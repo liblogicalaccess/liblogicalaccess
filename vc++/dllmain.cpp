@@ -23,7 +23,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID /*lpRes
 		INFO_("Process attached ! HMODULE: %d", hModule);  
 		break;
 	case DLL_PROCESS_DETACH:
-		INFO_SIMPLE_("Process detached !");
+		INFO_("Process detached !");
 		logicalaccess::Settings::getInstance()->Uninitialize();  
 		
 		unregister_cipher(&des3_desc);

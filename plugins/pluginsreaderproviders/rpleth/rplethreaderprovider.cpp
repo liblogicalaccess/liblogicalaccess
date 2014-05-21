@@ -54,7 +54,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<ReaderUnit> RplethReaderProvider::createReaderUnit()
 	{
-		INFO_SIMPLE_("Creating new reader unit");
+		INFO_("Creating new reader unit");
 
 		boost::shared_ptr<RplethReaderUnit> ret(new RplethReaderUnit());
 		ret->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));

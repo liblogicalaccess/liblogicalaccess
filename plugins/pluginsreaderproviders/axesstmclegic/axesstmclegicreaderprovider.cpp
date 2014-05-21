@@ -47,7 +47,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<ReaderUnit> AxessTMCLegicReaderProvider::createReaderUnit()
 	{
-		INFO_SIMPLE_("Creating new reader unit with empty port... (Serial port auto-detect will be used when connecting to reader)");
+		INFO_("Creating new reader unit with empty port... (Serial port auto-detect will be used when connecting to reader)");
 
 		boost::shared_ptr<AxessTMCLegicReaderUnit> ret(new AxessTMCLegicReaderUnit());
 		ret->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));

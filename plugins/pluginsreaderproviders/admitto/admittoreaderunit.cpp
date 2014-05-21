@@ -96,7 +96,7 @@ namespace logicalaccess
 					{
 						if (buf[0] == 0x4e)
 						{
-							INFO_SIMPLE_("[Card removed] response received when we were on WaitInsertion! We ignore this response and wait for valid card number.");
+							INFO_("[Card removed] response received when we were on WaitInsertion! We ignore this response and wait for valid card number.");
 						}
 						else
 						{
@@ -107,7 +107,7 @@ namespace logicalaccess
 								(d_card_type == "UNKNOWN" ? "GenericTag" : d_card_type),
 								formatHexString(std::string(bufTmpId))
 							);
-							INFO_SIMPLE_("Chip detected !");
+							INFO_("Chip detected !");
 							inserted = true;
 						}
 					}
@@ -169,7 +169,7 @@ namespace logicalaccess
 						{
 							if (buf[0] == 0x4e)
 							{
-								INFO_SIMPLE_("Card removed !");
+								INFO_("Card removed !");
 								d_insertedChip.reset();
 								removed = true;
 							}
@@ -185,7 +185,7 @@ namespace logicalaccess
 
 								if (chip->getChipIdentifier() != d_insertedChip->getChipIdentifier())
 								{
-									INFO_SIMPLE_("Card found but not same chip ! The previous card has been removed !");
+									INFO_("Card found but not same chip ! The previous card has been removed !");
 									d_insertedChip.reset();
 									removed = true;
 								}
@@ -224,13 +224,13 @@ namespace logicalaccess
 
 	bool AdmittoReaderUnit::connect()
 	{
-		WARNING_SIMPLE_("Connect do nothing with Admitto reader");
+		WARNING_("Connect do nothing with Admitto reader");
 		return true;
 	}
 
 	void AdmittoReaderUnit::disconnect()
 	{
-		WARNING_SIMPLE_("Disconnect do nothing with Admitto reader");
+		WARNING_("Disconnect do nothing with Admitto reader");
 	}
 
 	boost::shared_ptr<Chip> AdmittoReaderUnit::createChip(std::string type)
@@ -240,12 +240,12 @@ namespace logicalaccess
 
 		if (chip)
 		{
-			INFO_SIMPLE_("Chip created successfully !");
+			INFO_("Chip created successfully !");
 			boost::shared_ptr<ReaderCardAdapter> rca;
 
 			if (type == "GenericTag")
 			{
-				INFO_SIMPLE_("Generic tag Chip created");
+				INFO_("Generic tag Chip created");
 				rca = getDefaultReaderCardAdapter();
 			}
 			else
@@ -281,7 +281,7 @@ namespace logicalaccess
 
 	std::string AdmittoReaderUnit::getReaderSerialNumber()
 	{
-		WARNING_SIMPLE_("Do nothing with Admitto reader");
+		WARNING_("Do nothing with Admitto reader");
 		std::string ret;
 		return ret;
 	}
@@ -289,9 +289,9 @@ namespace logicalaccess
 	bool AdmittoReaderUnit::isConnected()
 	{
 		if (d_insertedChip)
-			INFO_SIMPLE_("Is connected {1}");
+			INFO_("Is connected {1}");
 		else
-			INFO_SIMPLE_("Is connected {0}");
+			INFO_("Is connected {0}");
 		return bool(d_insertedChip);
 	}
 
@@ -303,7 +303,7 @@ namespace logicalaccess
 
 	void AdmittoReaderUnit::disconnectFromReader()
 	{
-		INFO_SIMPLE_("Disconnecting from reader...");
+		INFO_("Disconnecting from reader...");
 		getDataTransport()->disconnect();
 	}
 

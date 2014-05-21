@@ -32,14 +32,14 @@ namespace logicalaccess
 
 	std::vector<unsigned char> DESFireEV1STidSTRCommands::scanDESFire()
 	{
-		INFO_SIMPLE_("Scanning DESFire card...");
+		INFO_("Scanning DESFire card...");
 		std::vector<unsigned char> uid;
 		std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x0001, std::vector<unsigned char>());
 
 		bool hasCard = (r[0] == 0x01);
 		if (hasCard)
 		{
-			INFO_SIMPLE_("Card detected !");
+			INFO_("Card detected !");
 			unsigned char uidLength = r[1];
 			uid = std::vector<unsigned char>(r.begin() + 2, r.begin() + 2 + uidLength);
 
@@ -47,7 +47,7 @@ namespace logicalaccess
 		}
 		else
 		{
-			INFO_SIMPLE_("No card detected !");
+			INFO_("No card detected !");
 		}
 
 		return uid;
@@ -55,13 +55,13 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::releaseRFIDField()
 	{
-		INFO_SIMPLE_("Releasing RFID field...");
+		INFO_("Releasing RFID field...");
 		getSTidSTRReaderCardAdapter()->sendCommand(0x0002, std::vector<unsigned char>());
 	}
 
 	void DESFireEV1STidSTRCommands::changePPS(STidDESFireBaudrate readerToChipKbps, STidDESFireBaudrate chipToReaderKbps)
 	{
-		INFO_SIMPLE_("Changing PPS (communication speed between the chip and reader)...");
+		INFO_("Changing PPS (communication speed between the chip and reader)...");
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(readerToChipKbps));
 		command.push_back(static_cast<unsigned char>(chipToReaderKbps));
@@ -70,7 +70,7 @@ namespace logicalaccess
 
 	unsigned int DESFireEV1STidSTRCommands::getFreeMem()
 	{
-		INFO_SIMPLE_("Getting free memory of card (number of bytes free available)...");
+		INFO_("Getting free memory of card (number of bytes free available)...");
 		unsigned int freemem = 0;
 		std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x006E, std::vector<unsigned char>());
 
@@ -80,7 +80,7 @@ namespace logicalaccess
 		}
 		else
 		{
-			ERROR_SIMPLE_("The response buffer size should be 3 !");
+			ERROR_("The response buffer size should be 3 !");
 		}
 
 		INFO_("Free memory {%u}", freemem);
@@ -91,7 +91,7 @@ namespace logicalaccess
 	{
 		vector<DFName> dfnames;		
 		
-		ERROR_SIMPLE_("Function not available with this reader.");
+		ERROR_("Function not available with this reader.");
 		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
 
 		return dfnames;
@@ -101,7 +101,7 @@ namespace logicalaccess
 	{
 		vector<unsigned short> fileids;		
 
-		ERROR_SIMPLE_("Function not available with this reader.");
+		ERROR_("Function not available with this reader.");
 		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
 
 		return fileids;
@@ -171,7 +171,7 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys, DESFireKeyType& keyType)
 	{
-		INFO_SIMPLE_("Retrieving key settings...");
+		INFO_("Retrieving key settings...");
 		std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x0045, std::vector<unsigned char>());
 
 		EXCEPTION_ASSERT_WITH_LOG(r.size() >= 3, LibLogicalAccessException, "The response length should be at least 3-byte long");
@@ -197,7 +197,7 @@ namespace logicalaccess
 
 	std::vector<unsigned char> DESFireEV1STidSTRCommands::getCardUID()
 	{
-		INFO_SIMPLE_("Retrieving card uid...");
+		INFO_("Retrieving card uid...");
 		std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x0051, std::vector<unsigned char>());
 
 		return r;
@@ -232,14 +232,14 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::commitTransaction()
 	{
-		INFO_SIMPLE_("Committing transaction...");
+		INFO_("Committing transaction...");
 
 		getSTidSTRReaderCardAdapter()->sendCommand(0x00C7, std::vector<unsigned char>());
 	}
 
 	void DESFireEV1STidSTRCommands::abortTransaction()
 	{
-		INFO_SIMPLE_("Aborting transaction...");
+		INFO_("Aborting transaction...");
 
 		getSTidSTRReaderCardAdapter()->sendCommand(0x00A7, std::vector<unsigned char>());
 	}
@@ -391,13 +391,13 @@ namespace logicalaccess
 
 		if (boost::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key_storage))
 		{
-			INFO_SIMPLE_("Using computer memory key storage...");
+			INFO_("Using computer memory key storage...");
 			unsigned char* keydata = key->getData();
 			loadKey(std::vector<unsigned char>(keydata, keydata + key->getLength()), key->getKeyDiversification() != NULL, true);
 		}
 		else if (boost::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage))
 		{
-			INFO_SIMPLE_("Using reader memory key storage... -> Doing nothing !");
+			INFO_("Using reader memory key storage... -> Doing nothing !");
 		}
 		else
 		{
@@ -451,7 +451,7 @@ namespace logicalaccess
 
 		if (boost::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage))
 		{
-			INFO_SIMPLE_("Retreving key index from reader memory key storage...");
+			INFO_("Retreving key index from reader memory key storage...");
 			boost::shared_ptr<ReaderMemoryKeyStorage> rmKs = boost::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage);
 			keylocation = STID_DF_KEYLOC_INDEXED;
 			keyindex = rmKs->getKeySlot();
@@ -462,13 +462,13 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::authenticateISO(unsigned char /*keyno*/, DESFireISOAlgorithm /*algorithm*/)
 	{
-		ERROR_SIMPLE_("Function not available with this reader.");
+		ERROR_("Function not available with this reader.");
 		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
 	}
 
 	void DESFireEV1STidSTRCommands::authenticateAES(unsigned char /*keyno*/)
 	{
-		ERROR_SIMPLE_("Function not available with this reader.");
+		ERROR_("Function not available with this reader.");
 		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
 	}
 
@@ -659,12 +659,12 @@ namespace logicalaccess
 			// Old key and new key use reader memory. Use change keyindex instead.
 			if (key->getKeyStorage()->getType() == KST_READER_MEMORY && oldKey->getKeyStorage()->getType() == KST_READER_MEMORY)
 			{
-				INFO_SIMPLE_("Changing key by using reader EEPROM INDEXED memory key storage...");
+				INFO_("Changing key by using reader EEPROM INDEXED memory key storage...");
 				changeKeyIndex(keyno, key->getKeyType(), key->getKeyVersion(), boost::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key->getKeyStorage())->getKeySlot(), boost::dynamic_pointer_cast<ReaderMemoryKeyStorage>(oldKey->getKeyStorage())->getKeySlot());
 			}
 			else
 			{
-				INFO_SIMPLE_("Changing key directly...");
+				INFO_("Changing key directly...");
 				std::vector<unsigned char> command;
 				command.push_back(keyno);
 				command.push_back((key->getKeyType() == DF_KEY_AES) ? 0x02 : 0x00);
@@ -683,7 +683,7 @@ namespace logicalaccess
 		}
 		else
 		{
-			INFO_SIMPLE_("Key was already loaded. Doing nothing.");
+			INFO_("Key was already loaded. Doing nothing.");
 		}
 	}
 
@@ -708,7 +708,7 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::getVersion(DESFireCommands::DESFireCardVersion& dataVersion)
 	{
-		INFO_SIMPLE_("Retrieving version...");
+		INFO_("Retrieving version...");
 		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x0060, std::vector<unsigned char>());
 
 		EXCEPTION_ASSERT_WITH_LOG(result.size() >= 28, LibLogicalAccessException, "The response length should be at least 28-byte long");
@@ -718,7 +718,7 @@ namespace logicalaccess
 
 	std::vector<unsigned int> DESFireEV1STidSTRCommands::getApplicationIDs()
 	{
-		INFO_SIMPLE_("Retrieving all application ids...");
+		INFO_("Retrieving all application ids...");
 		std::vector<unsigned int> aids;
 
 		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x006A, std::vector<unsigned char>());
@@ -740,13 +740,13 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::erase()
 	{
-		INFO_SIMPLE_("Erasing card...");
+		INFO_("Erasing card...");
 		getSTidSTRReaderCardAdapter()->sendCommand(0x00FC, std::vector<unsigned char>());
 	}
 
 	std::vector<unsigned char> DESFireEV1STidSTRCommands::getFileIDs()
 	{
-		INFO_SIMPLE_("Retrieving all files ids...");
+		INFO_("Retrieving all files ids...");
 		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x006F, std::vector<unsigned char>());
 
 		unsigned char nbfiles = result[0];
@@ -796,7 +796,7 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::iso_selectApplication(std::vector<unsigned char> /*isoaid*/)
 	{
-		ERROR_SIMPLE_("Function not available with this reader.");
+		ERROR_("Function not available with this reader.");
 		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
 	}
 

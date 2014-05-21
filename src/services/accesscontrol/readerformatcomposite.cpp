@@ -46,7 +46,7 @@ namespace logicalaccess
 
 	void ReaderFormatComposite::unSerialize(boost::property_tree::ptree& node)
 	{
-		INFO_SIMPLE_("Unserializing reader format composite...");
+		INFO_("Unserializing reader format composite...");
 
 		d_readerConfiguration.reset(new ReaderConfiguration());
 		d_readerConfiguration->unSerialize(node.get_child(d_readerConfiguration->getDefaultXmlNodeName()));

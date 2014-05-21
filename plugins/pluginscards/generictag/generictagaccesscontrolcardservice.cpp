@@ -30,7 +30,7 @@ namespace logicalaccess
 	{
 		bool ret = false;
 
-		INFO_SIMPLE_("Try to read a format from Generic Tag...");
+		INFO_("Try to read a format from Generic Tag...");
 
 		boost::shared_ptr<Format> formatret;
 		if (format)
@@ -50,7 +50,7 @@ namespace logicalaccess
 
 					try
 					{
-						INFO_SIMPLE_("Reading data from Generic Tag...");
+						INFO_("Reading data from Generic Tag...");
 						std::vector<unsigned char> identifier = getChip()->getChipIdentifier();
 						if (length <= identifier.size())
 						{
@@ -62,7 +62,7 @@ namespace logicalaccess
 
 							if (realDataLengthBits >= formatret->getDataLength())
 							{
-								INFO_SIMPLE_("Converting data to format...");
+								INFO_("Converting data to format...");
 								unsigned int writePosBit = 0;
 								BitHelper::writeToBit(formatBuf, formatlength, &writePosBit, &identifier[0], length, dataLengthBits, dataLengthBits - realDataLengthBits, realDataLengthBits);
 								formatret->setLinearData(formatBuf, formatlength);

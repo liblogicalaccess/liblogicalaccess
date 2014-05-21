@@ -39,10 +39,10 @@ namespace logicalaccess
 
 	bool OmnikeyLANXX21ReaderUnit::connectToReader()
 	{
-		INFO_SIMPLE_("Connecting to LAN reader...");
+		INFO_("Connecting to LAN reader...");
 		// Connecting to LAN reader before using standard PC/SC commands
 		sendControlMode(CM_IOCTL_READER_CONNECT);
-		INFO_SIMPLE_("Connected successfully to the LAN reader. Now connecting to PC/SC reader with standard method...");
+		INFO_("Connected successfully to the LAN reader. Now connecting to PC/SC reader with standard method...");
 
 #ifdef _WINDOWS
 		Sleep(500);
@@ -55,12 +55,12 @@ namespace logicalaccess
 
 	void OmnikeyLANXX21ReaderUnit::disconnectFromReader()
 	{
-		INFO_SIMPLE_("Disconnecting from PC/SC reader with standard method...");
+		INFO_("Disconnecting from PC/SC reader with standard method...");
 		OmnikeyXX21ReaderUnit::disconnectFromReader();
 
-		INFO_SIMPLE_("Disconnecting from LAN reader...");
+		INFO_("Disconnecting from LAN reader...");
 		sendControlMode(CM_IOCTL_READER_DISCONNECT);
-		INFO_SIMPLE_("Disconnected successfully from the LAN reader.");
+		INFO_("Disconnected successfully from the LAN reader.");
 
 #ifdef _WINDOWS
 		Sleep(500);

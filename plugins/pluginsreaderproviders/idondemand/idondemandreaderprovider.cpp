@@ -35,7 +35,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<IdOnDemandReaderProvider> IdOnDemandReaderProvider::getSingletonInstance()
 	{
-		INFO_SIMPLE_("Getting singleton instance...");
+		INFO_("Getting singleton instance...");
 		static boost::shared_ptr<IdOnDemandReaderProvider> instance;
 		if (!instance)
 		{
@@ -48,7 +48,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<ReaderUnit> IdOnDemandReaderProvider::createReaderUnit()
 	{
-		INFO_SIMPLE_("Creating new reader unit with empty port... (Serial port auto-detect will be used when connecting to reader)");
+		INFO_("Creating new reader unit with empty port... (Serial port auto-detect will be used when connecting to reader)");
 
 		boost::shared_ptr<IdOnDemandReaderUnit> ret(new IdOnDemandReaderUnit());
 		ret->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));

@@ -48,7 +48,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<ReaderUnit> SCIELReaderProvider::createReaderUnit()
 	{
-		INFO_SIMPLE_("Creating new reader unit with empty port... (Serial port auto-detect will be used when connecting to reader)");
+		INFO_("Creating new reader unit with empty port... (Serial port auto-detect will be used when connecting to reader)");
 
 		boost::shared_ptr<SCIELReaderUnit> ret(new SCIELReaderUnit());
 		ret->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));

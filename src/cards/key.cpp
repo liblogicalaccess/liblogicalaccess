@@ -143,7 +143,7 @@ namespace logicalaccess
 
     void Key::unSerialize(boost::property_tree::ptree& node)
     {
-        INFO_SIMPLE_("Unserializing Key...");
+        INFO_("Unserializing Key...");
 
         if (node.get_child_optional("KeyDiversification"))
         {
@@ -158,7 +158,7 @@ namespace logicalaccess
 
         d_storeCipheredData = node.get_child("IsCiphered").get_value<bool>(false);
         uncipherKeyData(node);
-        INFO_SIMPLE_("Unserializing Key storage...");
+        INFO_("Unserializing Key storage...");
 		d_key_storage = KeyStorage::getKeyStorageFromType(static_cast<KeyStorageType>(node.get_child("<xmlattr>.keyStorageType").get_value<unsigned int>()));
 		if (d_key_storage)
 		{
@@ -226,7 +226,7 @@ namespace logicalaccess
         }
         else
         {
-            INFO_SIMPLE_("Data was ciphered ! Unciphering..");
+            INFO_("Data was ciphered ! Unciphering..");
             std::string secureKey = ((d_cipherKey == "") ? Key::secureAiKey : d_cipherKey);
             std::vector<unsigned char> hash = openssl::SHA256Hash(secureKey);
             openssl::AESSymmetricKey aes = openssl::AESSymmetricKey::createFromData(hash);

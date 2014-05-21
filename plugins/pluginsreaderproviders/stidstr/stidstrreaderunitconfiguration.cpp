@@ -44,7 +44,7 @@ namespace logicalaccess
 
 	void STidSTRReaderUnitConfiguration::unSerialize(boost::property_tree::ptree& node)
 	{
-		INFO_SIMPLE_("Unserializing reader unit configuration...");
+		INFO_("Unserializing reader unit configuration...");
 
 		d_rs485Address = node.get_child("RS485Address").get_value<unsigned char>();
 		d_communicationType = static_cast<STidCommunicationType>(node.get_child("CommunicationType").get_value<unsigned int>());

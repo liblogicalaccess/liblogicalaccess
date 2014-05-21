@@ -33,7 +33,7 @@ namespace logicalaccess
 
 	void DESFireAccessInfo::generateInfos()
 	{
-		INFO_SIMPLE_("Generate access information");
+		INFO_("Generate access information");
 		readKey->fromString(generateSimpleKey(0, readKey->getLength()));
 		readKeyno = 2;
 		writeKey->fromString(generateSimpleKey(1000, writeKey->getLength()));

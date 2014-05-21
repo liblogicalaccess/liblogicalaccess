@@ -79,7 +79,7 @@ namespace logicalaccess
 			{
 				d_insertedChip = chipList.front();
 				inserted = true;
-				INFO_SIMPLE_("Chip detected !");
+				INFO_("Chip detected !");
 			}
 
 			if (!inserted)
@@ -147,13 +147,13 @@ namespace logicalaccess
 
 	bool SCIELReaderUnit::connect()
 	{
-		WARNING_SIMPLE_("Connect do nothing with Sciel reader");
+		WARNING_("Connect do nothing with Sciel reader");
 		return true;
 	}
 
 	void SCIELReaderUnit::disconnect()
 	{
-		WARNING_SIMPLE_("Disconnect do nothing with Sciel reader");
+		WARNING_("Disconnect do nothing with Sciel reader");
 	}
 
 	bool ChipSortPredicate(const boost::shared_ptr<Chip>& lhs, const boost::shared_ptr<Chip>& rhs)
@@ -163,7 +163,7 @@ namespace logicalaccess
 
 	std::list<boost::shared_ptr<Chip> > SCIELReaderUnit::getReaderChipList()
 	{
-		INFO_SIMPLE_("Retrieving reader chip list...");
+		INFO_("Retrieving reader chip list...");
 		std::list<boost::shared_ptr<Chip> > chipList;
 		std::vector<unsigned char> cmd;
 		cmd.push_back(static_cast<unsigned char>(0x30));
@@ -175,7 +175,7 @@ namespace logicalaccess
 
 		try
 		{
-			INFO_SIMPLE_("Sending COM command...");
+			INFO_("Sending COM command...");
 
 			std::list<std::vector<unsigned char> > allTags = getDefaultSCIELReaderCardAdapter()->receiveTagsListCommand(cmd);
 
@@ -205,12 +205,12 @@ namespace logicalaccess
 	{
 		std::list<boost::shared_ptr<Chip> > chipList = getReaderChipList();
 
-		DEBUG_SIMPLE_("**** READER CHIP LIST RAW ****");
+		DEBUG_("**** READER CHIP LIST RAW ****");
 		for (std::list<boost::shared_ptr<Chip> >::iterator i = chipList.begin(); i != chipList.end(); i++)
 		{
 			DEBUG_("  -> Chip identifier %s Reception {%d}", BufferHelper::getHex((*i)->getChipIdentifier()).c_str(), static_cast<unsigned int>((*i)->getReceptionLevel()));
 		}
-		DEBUG_SIMPLE_("**** END LIST ****");
+		DEBUG_("**** END LIST ****");
 
 		// Timer management. We handle the global timeout when tags disappears (it was done before by the key, but it sucked !)
 		for (std::vector<boost::shared_ptr<Chip> >::iterator i = d_chipList.begin(); i != d_chipList.end(); i++)
@@ -252,12 +252,12 @@ namespace logicalaccess
 			}
 		}
 
-		DEBUG_SIMPLE_("**** READER CHIP LIST AFTER GLOBAL TIMEOUT ****");
+		DEBUG_("**** READER CHIP LIST AFTER GLOBAL TIMEOUT ****");
 		for (std::list<boost::shared_ptr<Chip> >::iterator i = chipList.begin(); i != chipList.end(); i++)
 		{
 			DEBUG_("  -> Chip identifier %s Reception {%d}", BufferHelper::getHex((*i)->getChipIdentifier()).c_str(), static_cast<unsigned int>((*i)->getReceptionLevel()));
 		}
-		DEBUG_SIMPLE_("**** END LIST ****");
+		DEBUG_("**** END LIST ****");
 
 		// Remember, the chip list in air is sorted by reception level
 		chipList.sort(ChipSortPredicate);
@@ -572,40 +572,40 @@ namespace logicalaccess
 		d_safetyArea = safetyArea;
 		d_ignoreArea = ignoreArea;
 
-		DEBUG_SIMPLE_("**** FINAL CHIP LIST ****");
+		DEBUG_("**** FINAL CHIP LIST ****");
 		for (std::vector<boost::shared_ptr<Chip> >::iterator i = d_chipList.begin(); i != d_chipList.end(); i++)
 		{
 			DEBUG_("  -> Chip identifier %s Reception {%d}", BufferHelper::getHex((*i)->getChipIdentifier()).c_str(), static_cast<unsigned int>((*i)->getReceptionLevel()));
 		}
-		DEBUG_SIMPLE_("**** END LIST ****");
+		DEBUG_("**** END LIST ****");
 
-		DEBUG_SIMPLE_("**** TAG-IN AREA CHIP LIST ****");
+		DEBUG_("**** TAG-IN AREA CHIP LIST ****");
 		for (std::map<std::string, int>::iterator i = d_tagInArea.begin(); i != d_tagInArea.end(); i++)
 		{
 			DEBUG_("  -> Chip identifier {%s} Seconds in area {%d}", (*i).first.c_str(), (*i).second);
 		}
-		DEBUG_SIMPLE_("**** END LIST ****");
+		DEBUG_("**** END LIST ****");
 
-		DEBUG_SIMPLE_("**** TAG-OUT AREA CHIP LIST ****");
+		DEBUG_("**** TAG-OUT AREA CHIP LIST ****");
 		for (std::map<std::string, int>::iterator i = d_tagOutArea.begin(); i != d_tagOutArea.end(); i++)
 		{
 			DEBUG_("  -> Chip identifier {%s} Seconds in area {%d}", (*i).first.c_str(), (*i).second);
 		}
-		DEBUG_SIMPLE_("**** END LIST ****");
+		DEBUG_("**** END LIST ****");
 
-		DEBUG_SIMPLE_("**** TAG-SAFETY AREA CHIP LIST ****");
+		DEBUG_("**** TAG-SAFETY AREA CHIP LIST ****");
 		for (std::map<std::string, int>::iterator i = d_safetyArea.begin(); i != d_safetyArea.end(); i++)
 		{
 			DEBUG_("  -> Chip identifier {%s} Seconds in area {%d}", (*i).first.c_str(), (*i).second);
 		}
-		DEBUG_SIMPLE_("**** END LIST ****");
+		DEBUG_("**** END LIST ****");
 
-		DEBUG_SIMPLE_("**** TAG-IGNORE AREA CHIP LIST ****");
+		DEBUG_("**** TAG-IGNORE AREA CHIP LIST ****");
 		for (std::map<std::string, int>::iterator i = d_ignoreArea.begin(); i != d_ignoreArea.end(); i++)
 		{
 			DEBUG_("  -> Chip identifier {%s} Seconds in area {%d}", (*i).first.c_str(), (*i).second);
 		}
-		DEBUG_SIMPLE_("**** END LIST ****");
+		DEBUG_("**** END LIST ****");
 
 		return chipList;
 	}
@@ -710,7 +710,7 @@ namespace logicalaccess
 
 	bool SCIELReaderUnit::retrieveReaderIdentifier()
 	{
-		INFO_SIMPLE_("Retrieving the SCIEL Reader Identifier...");
+		INFO_("Retrieving the SCIEL Reader Identifier...");
 		bool ret;
 		std::vector<unsigned char> cmd;
 		d_scielIdentifier.clear();
@@ -825,7 +825,7 @@ namespace logicalaccess
 
 	unsigned char SCIELReaderUnit::getADConvertorValue()
 	{
-		INFO_SIMPLE_("Retrieving the Ambiant Noise...");
+		INFO_("Retrieving the Ambiant Noise...");
 		unsigned char convertorValue = 0;
 
 		std::vector<unsigned char> cmd;

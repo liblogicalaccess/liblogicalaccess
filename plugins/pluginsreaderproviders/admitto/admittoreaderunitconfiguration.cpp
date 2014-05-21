@@ -31,7 +31,7 @@ namespace logicalaccess
 
 	void AdmittoReaderUnitConfiguration::unSerialize(boost::property_tree::ptree& /*node*/)
 	{
-		INFO_SIMPLE_("Unserializing reader unit configuration...");
+		INFO_("Unserializing reader unit configuration...");
 	}
 
 	std::string AdmittoReaderUnitConfiguration::getDefaultXmlNodeName() const

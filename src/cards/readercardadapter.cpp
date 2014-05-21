@@ -28,7 +28,7 @@ namespace logicalaccess
 		}
 		else
 		{
-			ERROR_SIMPLE_("Cannot transmit the command, data transport is not set!");
+			ERROR_("Cannot transmit the command, data transport is not set!");
 		}
 
 		return res;

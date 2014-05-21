@@ -73,7 +73,7 @@ namespace logicalaccess
 		if (createChipId.size() > 0)
 		{
 			d_insertedChip = ReaderUnit::createChip((d_card_type == "UNKNOWN" ? "GenericTag" : d_card_type), createChipId);
-			INFO_SIMPLE_("Chip detected !");
+			INFO_("Chip detected !");
 			inserted = true;
 		}
 		
@@ -94,14 +94,14 @@ namespace logicalaccess
 			std::vector<unsigned char> tmpId = getChipInAir(maxwait);
 			if (tmpId.size() > 0 && (tmpId != d_insertedChip->getChipIdentifier()))
 			{
-				INFO_SIMPLE_("Card found AND not same identifier as previous ! The previous card has been removed !");
+				INFO_("Card found AND not same identifier as previous ! The previous card has been removed !");
 				d_insertedChip.reset();
 				d_removalIdentifier = tmpId;
 				removed = true;
 			}
 			else if (tmpId.size() > 0 && tmpId == d_insertedChip->getChipIdentifier())
 			{
-				INFO_SIMPLE_("Card found but this is the same identifier as previous. Ignoring...");
+				INFO_("Card found but this is the same identifier as previous. Ignoring...");
 			}
 		}
 
@@ -233,7 +233,7 @@ namespace logicalaccess
 		DWORD res = WaitForSingleObject(getKeyboardReaderProvider()->hKbdEvent, (maxwait == 0) ? INFINITE : maxwait);
 		if (res == WAIT_OBJECT_0)
 		{
-			INFO_SIMPLE_("Keyboard event detected!");
+			INFO_("Keyboard event detected!");
 
 			ResetEvent(getKeyboardReaderProvider()->hKbdEvent);
 			c = getKeyboardReaderProvider()->sKeyboard->enteredKeyChar;
@@ -289,7 +289,7 @@ namespace logicalaccess
 
 	bool KeyboardReaderUnit::connectToReader()
 	{
-		INFO_SIMPLE_("Connecting to reader...");
+		INFO_("Connecting to reader...");
 		bool ret = false;
 
 #ifdef _WINDOWS
@@ -308,7 +308,7 @@ namespace logicalaccess
 
 	void KeyboardReaderUnit::disconnectFromReader()
 	{
-		INFO_SIMPLE_("Disconnecting from reader...");
+		INFO_("Disconnecting from reader...");
 #ifdef _WINDOWS
 		if (d_instanceConnected)
 		{
@@ -335,7 +335,7 @@ namespace logicalaccess
 
 	void KeyboardReaderUnit::unSerialize(boost::property_tree::ptree& node)
 	{
-		INFO_SIMPLE_("Unserialize Keyboard reader unit...");
+		INFO_("Unserialize Keyboard reader unit...");
 
 		d_devicename = node.get_child("DeviceName").get_value<std::string>();
 		d_readerUnitConfig->unSerialize(node.get_child(d_readerUnitConfig->getDefaultXmlNodeName()));

@@ -303,7 +303,7 @@ namespace logicalaccess
 
 	bool IdOnDemandReaderUnit::connectToReader()
 	{
-		INFO_SIMPLE_("Connecting to reader...");
+		INFO_("Connecting to reader...");
 		bool ret = getDataTransport()->connect();
 		if (ret)
 		{
@@ -315,7 +315,7 @@ namespace logicalaccess
 
 	void IdOnDemandReaderUnit::disconnectFromReader()
 	{
-		INFO_SIMPLE_("Disconnecting from reader...");
+		INFO_("Disconnecting from reader...");
 
 		// Close the session with the reader
 		//authenticateSDK(0000);	 // A wrong authenticate code logout the session

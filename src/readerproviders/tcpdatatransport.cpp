@@ -104,7 +104,7 @@ namespace logicalaccess
 			}
 			else
 			{
-				ERROR_SIMPLE_("TCP socket closed.");
+				ERROR_("TCP socket closed.");
 			}
 		}
 	}

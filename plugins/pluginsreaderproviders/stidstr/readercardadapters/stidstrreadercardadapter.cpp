@@ -21,13 +21,13 @@ namespace logicalaccess
 	STidSTRReaderCardAdapter::STidSTRReaderCardAdapter(STidCmdType adapterType)
 		: ReaderCardAdapter()
 	{
-		//INFO_SIMPLE_("Constructor");
+		//INFO_("Constructor");
 		d_adapterType = adapterType;
 	}
 
 	STidSTRReaderCardAdapter::~STidSTRReaderCardAdapter()
 	{
-		//INFO_SIMPLE_("Destructor");
+		//INFO_("Destructor");
 	}
 
 	boost::shared_ptr<STidSTRReaderUnit> STidSTRReaderCardAdapter::getSTidSTRReaderUnit() const
@@ -89,7 +89,7 @@ namespace logicalaccess
 		// Cipher the data
 		if ((readerConfig->getCommunicationMode() & STID_CM_CIPHERED) == STID_CM_CIPHERED)
 		{
-			COM_SIMPLE_("Need to cipher data ! Ciphering with AES...");
+			COM_("Need to cipher data ! Ciphering with AES...");
 			COM_("Message before ciphering {%s}", BufferHelper::getHex(processedMsg).c_str());
 			// 16-byte buffer aligned
 			if ((processedMsg.size() % 16) != 0)
@@ -121,13 +121,13 @@ namespace logicalaccess
 		}
 		else
 		{
-			COM_SIMPLE_("No need to cipher data !");
+			COM_("No need to cipher data !");
 		}
 
 		// Add the HMAC to the message
 		if ((readerConfig->getCommunicationMode() & STID_CM_SIGNED) == STID_CM_SIGNED)
 		{
-			COM_SIMPLE_("Need to sign data ! Adding the HMAC...");
+			COM_("Need to sign data ! Adding the HMAC...");
 			COM_("Message before signing {%s}", BufferHelper::getHex(processedMsg).c_str());
 			std::vector<unsigned char> hmacbuf = calculateHMAC(processedMsg);
 			processedMsg.insert(processedMsg.end(), hmacbuf.begin(), hmacbuf.end());
@@ -135,7 +135,7 @@ namespace logicalaccess
 		}
 		else
 		{
-			COM_SIMPLE_("No need to sign data !");
+			COM_("No need to sign data !");
 		}
 
 		COM_("Final message %s message size {%d}", BufferHelper::getHex(processedMsg).c_str(), processedMsg.size());
@@ -154,7 +154,7 @@ namespace logicalaccess
 			d_lastIV.resize(16);
 			if (RAND_bytes(&d_lastIV[0], static_cast<int>(d_lastIV.size())) != 1)
 			{
-				COM_SIMPLE_("Cannot retrieve cryptographically strong bytes");
+				COM_("Cannot retrieve cryptographically strong bytes");
 				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
 			}
 		}
@@ -242,7 +242,7 @@ namespace logicalaccess
 		// Check the message HMAC and remove it from the message
 		if ((readerConfig->getCommunicationMode() & STID_CM_SIGNED) == STID_CM_SIGNED)
 		{
-			COM_SIMPLE_("Need to check for signed data...");
+			COM_("Need to check for signed data...");
 			EXCEPTION_ASSERT_WITH_LOG(data.size() >= 10, LibLogicalAccessException, "The buffer is too short to contains the message HMAC.");
 			tmpData = std::vector<unsigned char>(data.begin(), data.end() - 10);
 			EXCEPTION_ASSERT_WITH_LOG(std::vector<unsigned char>(data.end() - 10, data.end()) == calculateHMAC(tmpData), LibLogicalAccessException, "Wrong HMAC.");
@@ -252,7 +252,7 @@ namespace logicalaccess
 		// Uncipher the data
 		if ((readerConfig->getCommunicationMode() & STID_CM_CIPHERED) == STID_CM_CIPHERED)
 		{
-			COM_SIMPLE_("Need to check for ciphered data...");
+			COM_("Need to check for ciphered data...");
 			EXCEPTION_ASSERT_WITH_LOG(tmpData.size() >= 16, LibLogicalAccessException, "The buffer is too short to contains the IV.");
 
 			std::vector<unsigned char> iv = std::vector<unsigned char>(tmpData.end() - 16, tmpData.end());

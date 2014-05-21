@@ -71,7 +71,7 @@ namespace logicalaccess
 		if (instance == NULL)
 		{
 			instance = new Settings();
-			INFO_SIMPLE_("New settings instance created.");
+			INFO_("New settings instance created.");
 		}
 		instance->Initialize();
 		return instance;

@@ -280,7 +280,7 @@ namespace logicalaccess
 
 	bool SmartIDReaderUnit::connectToReader()
 	{
-		INFO_SIMPLE_("Starting connection to reader...");
+		INFO_("Starting connection to reader...");
 		boost::shared_ptr<DataTransport> dataTransport = getDataTransport();
 		if (!dataTransport->getReaderUnit())
 		{

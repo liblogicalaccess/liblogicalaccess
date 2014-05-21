@@ -59,7 +59,7 @@ namespace logicalaccess
 		}
 		else if (!result.first.empty())
 		{
-			WARNING_SIMPLE_(result.first.c_str());
+			WARNING_(result.first.c_str());
 		}
 	}
 

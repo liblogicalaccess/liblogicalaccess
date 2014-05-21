@@ -83,7 +83,7 @@ namespace logicalaccess
 
 	void DESFireStorageCardService::writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior /*behaviorFlags*/)
 	{
-		INFO_SIMPLE_("Starting write data...");
+		INFO_("Starting write data...");
 
 		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 		EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
@@ -285,7 +285,7 @@ namespace logicalaccess
 		// Write access informations too
 		if (aiToWrite)
 		{
-			INFO_SIMPLE_("Starting to change keys...");
+			INFO_("Starting to change keys...");
 
 			bool changeKeys = ((appKeySettings & KS_CHANGE_KEY_WITH_TARGETED_KEYNO) == KS_CHANGE_KEY_WITH_TARGETED_KEYNO);
 
@@ -329,7 +329,7 @@ namespace logicalaccess
 							getDESFireChip()->getDESFireCommands()->authenticate(dfAiToWrite->readKeyno);
 						}
 
-						INFO_SIMPLE_("Changing readKey.");
+						INFO_("Changing readKey.");
 						getDESFireChip()->getDESFireCommands()->changeKey(dfAiToWrite->readKeyno, dfAiToWrite->readKey);
 					}
 					catch(std::exception& ex)
@@ -347,7 +347,7 @@ namespace logicalaccess
 							getDESFireChip()->getDESFireCommands()->authenticate(0);
 						}
 
-						INFO_SIMPLE_("Changing masterApplicationKey.");
+						INFO_("Changing masterApplicationKey.");
 						getDESFireChip()->getDESFireCommands()->changeKey(0, dfAiToWrite->masterApplicationKey);
 					}
 					catch(std::exception& ex)

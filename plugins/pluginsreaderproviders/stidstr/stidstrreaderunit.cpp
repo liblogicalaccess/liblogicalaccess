@@ -40,7 +40,7 @@ namespace logicalaccess
 	STidSTRReaderUnit::STidSTRReaderUnit()
 		: ReaderUnit()
 	{
-		//INFO_SIMPLE_("Constructor");
+		//INFO_("Constructor");
 		d_readerUnitConfig.reset(new STidSTRReaderUnitConfiguration());
 		setDefaultReaderCardAdapter (boost::shared_ptr<STidSTRReaderCardAdapter> (new STidSTRReaderCardAdapter(STID_CMD_READER)));
 		d_ledBuzzerDisplay.reset(new STidSTRLEDBuzzerDisplay());
@@ -64,7 +64,7 @@ namespace logicalaccess
 
 	STidSTRReaderUnit::~STidSTRReaderUnit()
 	{
-		//INFO_SIMPLE_("Destructor");
+		//INFO_("Destructor");
 		disconnectFromReader();
 	}
 
@@ -108,7 +108,7 @@ namespace logicalaccess
 
 				if (chip)
 				{
-					INFO_SIMPLE_("Chip detected !");
+					INFO_("Chip detected !");
 					d_insertedChip = chip;
 					inserted = true;
 				}
@@ -164,14 +164,14 @@ namespace logicalaccess
 					{
 						if (chip->getChipIdentifier() != d_insertedChip->getChipIdentifier())
 						{
-							INFO_SIMPLE_("Card found but not same chip ! The previous card has been removed !");
+							INFO_("Card found but not same chip ! The previous card has been removed !");
 							d_insertedChip.reset();
 							removed = true;
 						}
 					}
 					else
 					{
-						INFO_SIMPLE_("Card removed !");
+						INFO_("Card removed !");
 						d_insertedChip.reset();
 						removed = true;
 					}
@@ -203,13 +203,13 @@ namespace logicalaccess
 
 	bool STidSTRReaderUnit::connect()
 	{
-		WARNING_SIMPLE_("Connect do nothing with STid STR reader");
+		WARNING_("Connect do nothing with STid STR reader");
 		return true;
 	}
 
 	void STidSTRReaderUnit::disconnect()
 	{
-		WARNING_SIMPLE_("Disconnect do nothing with STid STR reader");
+		WARNING_("Disconnect do nothing with STid STR reader");
 	}
 
 	bool STidSTRReaderUnit::connectToReader()
@@ -220,12 +220,12 @@ namespace logicalaccess
 			// Negotiate sessions according to communication options
 			if ((getSTidSTRConfiguration()->getCommunicationMode() & STID_CM_SIGNED) == STID_CM_SIGNED)
 			{
-				INFO_SIMPLE_("Signed communication required, negotiating HMAC...");
+				INFO_("Signed communication required, negotiating HMAC...");
 				authenticateHMAC();
 			}
 			if ((getSTidSTRConfiguration()->getCommunicationMode() & STID_CM_CIPHERED) == STID_CM_CIPHERED)
 			{
-				INFO_SIMPLE_("Ciphered communication required, negotiating AES...");
+				INFO_("Ciphered communication required, negotiating AES...");
 				authenticateAES();
 			}
 		}
@@ -255,19 +255,19 @@ namespace logicalaccess
 
 		if (chip)
 		{
-			INFO_SIMPLE_("Chip created successfully !");
+			INFO_("Chip created successfully !");
 			boost::shared_ptr<ReaderCardAdapter> rca;
 			boost::shared_ptr<Commands> commands;
 
 			if (type == "Mifare1K" || type == "Mifare4K" || type == "Mifare")
 			{
-				INFO_SIMPLE_("Mifare classic Chip created");
+				INFO_("Mifare classic Chip created");
 				rca.reset(new STidSTRReaderCardAdapter(STID_CMD_MIFARE_CLASSIC));
 				commands.reset(new MifareSTidSTRCommands());
 			}
 			else if (type == "DESFire" || type == "DESFireEV1")
 			{
-				INFO_SIMPLE_("Mifare DESFire Chip created");
+				INFO_("Mifare DESFire Chip created");
 				rca.reset(new STidSTRReaderCardAdapter(STID_CMD_DESFIRE));
 				commands.reset(new DESFireEV1STidSTRCommands());
 				boost::dynamic_pointer_cast<DESFireEV1STidSTRCommands>(commands)->setProfile(boost::dynamic_pointer_cast<DESFireProfile>(chip->getProfile()));
@@ -285,14 +285,14 @@ namespace logicalaccess
 		}
 		else
 		{
-			ERROR_SIMPLE_("Unable to create the chip with this type !");
+			ERROR_("Unable to create the chip with this type !");
 		}
 		return chip;
 	}
 
 	boost::shared_ptr<Chip> STidSTRReaderUnit::getSingleChip()
 	{
-		//INFO_SIMPLE_("Getting the first detect chip...");
+		//INFO_("Getting the first detect chip...");
 		boost::shared_ptr<Chip> chip = d_insertedChip;
 
 		return chip;
@@ -300,7 +300,7 @@ namespace logicalaccess
 
 	std::vector<boost::shared_ptr<Chip> > STidSTRReaderUnit::getChipList()
 	{
-		//INFO_SIMPLE_("Getting all detected chips...");
+		//INFO_("Getting all detected chips...");
 		std::vector<boost::shared_ptr<Chip> > chipList;
 		boost::shared_ptr<Chip> singleChip = getSingleChip();
 		if (singleChip)
@@ -318,7 +318,7 @@ namespace logicalaccess
 
 	string STidSTRReaderUnit::getReaderSerialNumber()
 	{
-		WARNING_SIMPLE_("Do nothing with STid STR reader");
+		WARNING_("Do nothing with STid STR reader");
 		string ret;
 		return ret;
 	}
@@ -326,9 +326,9 @@ namespace logicalaccess
 	bool STidSTRReaderUnit::isConnected()
 	{
 		if (d_insertedChip)
-			INFO_SIMPLE_("Is connected {1}");
+			INFO_("Is connected {1}");
 		else
-			INFO_SIMPLE_("Is connected {0}");
+			INFO_("Is connected {0}");
 		return bool(d_insertedChip);
 	}
 	
@@ -351,7 +351,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<Chip> STidSTRReaderUnit::scan14443A()
 	{
-		INFO_SIMPLE_("Scanning 14443A chips...");
+		INFO_("Scanning 14443A chips...");
 		boost::shared_ptr<Chip> chip;
 		std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0002, std::vector<unsigned char>());
 		if (response.size() > 0)
@@ -378,17 +378,17 @@ namespace logicalaccess
 					switch (stidCardType)
 					{
 					case STID_CMD_MIFARE_CLASSIC:
-						INFO_SIMPLE_("Mifare classic type !");
+						INFO_("Mifare classic type !");
 						cardType = "Mifare";
 						break;
 
 					case STID_CMD_DESFIRE:
-						INFO_SIMPLE_("Mifare DESFire type !");
+						INFO_("Mifare DESFire type !");
 						cardType = "DESFireEV1";
 						break;
 
 					default:
-						INFO_SIMPLE_("Unknown type !");
+						INFO_("Unknown type !");
 						cardType = "UNKNOWN";
 						break;
 					}
@@ -396,7 +396,7 @@ namespace logicalaccess
 					chip = createChip(cardType);
 					chip->setChipIdentifier(uid);
 
-					INFO_SIMPLE_("Scanning for specific chip type, mandatory for STid reader...");
+					INFO_("Scanning for specific chip type, mandatory for STid reader...");
 					// Scan for specific chip type, mandatory for STid reader...
 					if (cardType == "DESFire" || cardType == "DESFireEV1")
 					{
@@ -411,21 +411,21 @@ namespace logicalaccess
 				}
 				else
 				{
-					ERROR_SIMPLE_("No UID retrieved !");
+					ERROR_("No UID retrieved !");
 				}
 			}
 			else if (!haveCard)
 			{
-				INFO_SIMPLE_("No card detected !");
+				INFO_("No card detected !");
 			}
 			else
 			{
-				ERROR_SIMPLE_("Command length should be > 4");
+				ERROR_("Command length should be > 4");
 			}
 		}
 		else
 		{
-			ERROR_SIMPLE_("No response !");
+			ERROR_("No response !");
 		}
 
 		return chip;
@@ -433,7 +433,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<Chip> STidSTRReaderUnit::scanARaw()
 	{
-		INFO_SIMPLE_("Scanning 14443A RAW chips...");
+		INFO_("Scanning 14443A RAW chips...");
 		boost::shared_ptr<Chip> chip;
 		std::vector<unsigned char> command;
 		command.push_back(0x00);
@@ -452,23 +452,23 @@ namespace logicalaccess
 				switch (atqa)
 				{
 				case 0x002:
-					INFO_SIMPLE_("Mifare classic 4K !");
+					INFO_("Mifare classic 4K !");
 					cardType = "Mifare4K";
 					break;
 				case 0x004:
-					INFO_SIMPLE_("Mifare classic 1K !"); // Ou Mifare Mini
+					INFO_("Mifare classic 1K !"); // Ou Mifare Mini
 					cardType = "Mifare1K";
 					break;
 				case 0x0042:
 				case 0x0044:
-					INFO_SIMPLE_("Mifare Ultralight");
+					INFO_("Mifare Ultralight");
 					cardType = "MifareUltralight";
 				case 0x0344:
-					INFO_SIMPLE_("Mifare DESFire type !");
+					INFO_("Mifare DESFire type !");
 					cardType = "DESFireEV1";
 					break;
 				default:
-					INFO_SIMPLE_("Unknown type !");
+					INFO_("Unknown type !");
 					cardType = "UNKNOWN";
 					break;
 				}
@@ -489,7 +489,7 @@ namespace logicalaccess
 					chip = createChip(cardType);
 					chip->setChipIdentifier(uid);
 
-					INFO_SIMPLE_("Scanning for specific chip type, mandatory for STid reader...");
+					INFO_("Scanning for specific chip type, mandatory for STid reader...");
 					// Scan for specific chip type, mandatory for STid reader...
 					if (cardType == "DESFire" || cardType == "DESFireEV1")
 					{
@@ -504,21 +504,21 @@ namespace logicalaccess
 				}
 				else
 				{
-					ERROR_SIMPLE_("No UID retrieved !");
+					ERROR_("No UID retrieved !");
 				}
 			}
 			else if (!haveCard)
 			{
-				INFO_SIMPLE_("No card detected !");
+				INFO_("No card detected !");
 			}
 			else
 			{
-				ERROR_SIMPLE_("Command length should be > 5");
+				ERROR_("Command length should be > 5");
 			}
 		}
 		else
 		{
-			ERROR_SIMPLE_("No response !");
+			ERROR_("No response !");
 		}
 
 		return chip;
@@ -526,7 +526,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<Chip> STidSTRReaderUnit::scan14443B()
 	{
-		INFO_SIMPLE_("Scanning 14443B chips...");
+		INFO_("Scanning 14443B chips...");
 		boost::shared_ptr<Chip> chip;
 		std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0009, std::vector<unsigned char>());
 		if (response.size() > 0)
@@ -545,21 +545,21 @@ namespace logicalaccess
 				}
 				else
 				{
-					ERROR_SIMPLE_("No UID retrieved !");
+					ERROR_("No UID retrieved !");
 				}
 			}
 			else if (!haveCard)
 			{
-				INFO_SIMPLE_("No card detected !");
+				INFO_("No card detected !");
 			}
 			else
 			{
-				ERROR_SIMPLE_("Command length should be > 4");
+				ERROR_("Command length should be > 4");
 			}
 		}
 		else
 		{
-			ERROR_SIMPLE_("No response !");
+			ERROR_("No response !");
 		}
 
 		return chip;
@@ -567,7 +567,7 @@ namespace logicalaccess
 
 	void STidSTRReaderUnit::authenticateHMAC()
 	{
-		INFO_SIMPLE_("Authenticating HMAC (signed communication)...");
+		INFO_("Authenticating HMAC (signed communication)...");
 
 		RAND_seed(getDataTransport().get(), sizeof(getDataTransport().get()));
 		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
@@ -576,7 +576,7 @@ namespace logicalaccess
 		boost::shared_ptr<HMAC1Key> key = getSTidSTRConfiguration()->getHMACKey();
 		if (key->isEmpty())
 		{
-			INFO_SIMPLE_("Empty key... using the default one !");
+			INFO_("Empty key... using the default one !");
 			key.reset(new HMAC1Key("A0 87 75 4B 75 47 48 10 94 BE"));
 		}
 
@@ -637,7 +637,7 @@ namespace logicalaccess
 
 	void STidSTRReaderUnit::authenticateAES()
 	{
-		INFO_SIMPLE_("Authenticating AES (ciphered communication)...");
+		INFO_("Authenticating AES (ciphered communication)...");
 
 		RAND_seed(getDataTransport().get(), sizeof(getDataTransport().get()));
 		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
@@ -652,7 +652,7 @@ namespace logicalaccess
 		boost::shared_ptr<AES128Key> key = getSTidSTRConfiguration()->getAESKey();
 		if (key->isEmpty())
 		{
-			INFO_SIMPLE_("Empty key... using the default one !");
+			INFO_("Empty key... using the default one !");
 			key.reset(new AES128Key("E7 4A 54 0F A0 7C 4D B1 B4 64 21 12 6D F7 AD 36"));
 		}
 
@@ -723,7 +723,7 @@ namespace logicalaccess
 
 	std::vector<unsigned char> STidSTRReaderUnit::authenticateReader2(const std::vector<unsigned char>& data)
 	{
-		INFO_SIMPLE_("Authenticating Reader 2...");
+		INFO_("Authenticating Reader 2...");
 		std::vector<unsigned char> ret;
 		STidCommunicationMode lastCM = getSTidSTRConfiguration()->getCommunicationMode();
 		getSTidSTRConfiguration()->setCommunicationMode(STID_CM_RESERVED);
@@ -744,13 +744,13 @@ namespace logicalaccess
 
 	void STidSTRReaderUnit::ResetAuthenticate()
 	{
-		INFO_SIMPLE_("Reseting authentication...");
+		INFO_("Reseting authentication...");
 		getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000D, std::vector<unsigned char>());
 	}
 
 	void STidSTRReaderUnit::ChangeReaderKeys(const std::vector<unsigned char>& key_hmac, const std::vector<unsigned char>& key_aes)
 	{
-		INFO_SIMPLE_("Changing reader keys...");
+		INFO_("Changing reader keys...");
 		std::vector<unsigned char> command;
 		unsigned char keyMode = 0x00;
 		if (key_hmac.size() > 0)
@@ -789,7 +789,7 @@ namespace logicalaccess
 
 	STidSTRReaderUnit::STidSTRInformation STidSTRReaderUnit::getReaderInformaton()
 	{
-		INFO_SIMPLE_("Getting reader information...");
+		INFO_("Getting reader information...");
 		std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0008, std::vector<unsigned char>());
 
 		EXCEPTION_ASSERT_WITH_LOG(response.size() >= 5, LibLogicalAccessException, "The GetInfos response should be 5-byte long.");
@@ -833,7 +833,7 @@ namespace logicalaccess
 
 	void STidSTRReaderUnit::getTamperSwitchInfos(bool& useTamperSwitch, STidTamperSwitchBehavior& behavior, bool& swChanged)
 	{
-		INFO_SIMPLE_("Getting tamper switch infos...");
+		INFO_("Getting tamper switch infos...");
 		std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000C, std::vector<unsigned char>());
 
 		EXCEPTION_ASSERT_WITH_LOG(response.size() >= 3, LibLogicalAccessException, "The GetTamperSwitchInfos response should be 3-byte long.");
@@ -847,7 +847,7 @@ namespace logicalaccess
 
 	void STidSTRReaderUnit::loadSKB()
 	{
-		INFO_SIMPLE_("Loading SKB...");
+		INFO_("Loading SKB...");
 		unsigned char statusCode = 0;
 		std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000E, std::vector<unsigned char>(), statusCode);
 

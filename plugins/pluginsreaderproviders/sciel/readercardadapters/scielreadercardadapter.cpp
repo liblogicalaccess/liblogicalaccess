@@ -93,7 +93,7 @@ namespace logicalaccess
 			// When whole list is sent, the reader send [5b nb_tags id_reader 5d]
 			if (tag.size() == 2)
 			{
-				COM_SIMPLE_("Whole list has been received successfully!");
+				COM_("Whole list has been received successfully!");
 				done = true;
 			}
 			else

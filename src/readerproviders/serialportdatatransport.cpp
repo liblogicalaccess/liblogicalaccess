@@ -206,11 +206,11 @@ namespace logicalaccess
 		{
 			if (!Settings::getInstance()->IsAutoDetectEnabled)
 			{
-				INFO_SIMPLE_("Auto detection is disabled through settings !");
+				INFO_("Auto detection is disabled through settings !");
 				return;
 			}
 
-			INFO_SIMPLE_("Serial port is empty ! Starting Auto COM Port Detection...");
+			INFO_("Serial port is empty ! Starting Auto COM Port Detection...");
 			std::vector<boost::shared_ptr<SerialPortXml> > ports;
 			if (SerialPortXml::EnumerateUsingCreateFile(ports) && !ports.empty() && getReaderUnit())
 			{
@@ -234,7 +234,7 @@ namespace logicalaccess
 							std::vector<unsigned char> r = sendCommand(wrappedcmd, Settings::getInstance()->AutoDetectionTimeout);
 							if (r.size() > 0)
 							{
-								INFO_SIMPLE_("Reader found ! Using this COM port !");
+								INFO_("Reader found ! Using this COM port !");
 								found = true;
 							}
 						}
@@ -251,7 +251,7 @@ namespace logicalaccess
 
 					if (!found)
 					{
-						INFO_SIMPLE_("No reader found on COM port...");
+						INFO_("No reader found on COM port...");
 					}
 					else
 					{
@@ -261,7 +261,7 @@ namespace logicalaccess
 			}
 			else
 			{
-				WARNING_SIMPLE_("No COM Port detected !");
+				WARNING_("No COM Port detected !");
 			}
 		}
 	}

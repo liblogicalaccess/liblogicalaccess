@@ -69,7 +69,7 @@ namespace logicalaccess
 		INFO_("Retrieving format for card type {%s}...", type.c_str());
 		if (formatsList.find(type) != formatsList.end())
 		{
-			INFO_SIMPLE_("Type found int the composite. Retrieving values...");
+			INFO_("Type found int the composite. Retrieving values...");
 			*format = formatsList[type].format;
 			*location = formatsList[type].location;
 			*aiToUse = formatsList[type].aiToUse;
@@ -79,12 +79,12 @@ namespace logicalaccess
 			}
 			else
 			{
-				ERROR_SIMPLE_("aiToWrite parameter is null. Cannot retrieve write value.");
+				ERROR_("aiToWrite parameter is null. Cannot retrieve write value.");
 			}
 		}
 		else
 		{
-			INFO_SIMPLE_("No format found for this type.");
+			INFO_("No format found for this type.");
 			(*format).reset();
 			(*location).reset();
 			(*aiToUse).reset();
@@ -149,7 +149,7 @@ namespace logicalaccess
 					// Make a manual format copy to preserve integrity.
 					try
 					{
-						INFO_SIMPLE_("Getting access control service from chip...");
+						INFO_("Getting access control service from chip...");
 						boost::shared_ptr<AccessControlCardService> acService = boost::dynamic_pointer_cast<AccessControlCardService>(chip->getService(CST_ACCESS_CONTROL));
 						if (acService)
 						{
@@ -173,17 +173,17 @@ namespace logicalaccess
 			}
 			else
 			{
-				INFO_SIMPLE_("Cannot found any configured format for this chip.");
+				INFO_("Cannot found any configured format for this chip.");
 			}
 		}
 
 		if (fcopy)
 		{
-			INFO_SIMPLE_("Format found, return.");
+			INFO_("Format found, return.");
 		}
 		else
 		{
-			INFO_SIMPLE_("No format found, return.");
+			INFO_("No format found, return.");
 		}
 
 		return fcopy;
@@ -191,7 +191,7 @@ namespace logicalaccess
 
 	void CardsFormatComposite::serialize(boost::property_tree::ptree& parentNode)
 	{
-		INFO_SIMPLE_("Serializing card format composite...");
+		INFO_("Serializing card format composite...");
 		boost::property_tree::ptree node;
 
 		if (formatsList.size() > 0)
@@ -218,7 +218,7 @@ namespace logicalaccess
 					boost::property_tree::ptree nodewinfo;
 					if (it->second.aiToWrite)
 					{
-						INFO_SIMPLE_("Write info detected. Serializing...");
+						INFO_("Write info detected. Serializing...");
 						it->second.aiToWrite->serialize(nodewinfo);
 					}
 					nodecard.add_child("WriteInfo", nodewinfo);
@@ -233,7 +233,7 @@ namespace logicalaccess
 
 	void CardsFormatComposite::unSerialize(boost::property_tree::ptree& node)
 	{
-		INFO_SIMPLE_("Unserializing cards format composite...");
+		INFO_("Unserializing cards format composite...");
 
 		EXCEPTION_ASSERT_WITH_LOG(getReaderUnit(), LibLogicalAccessException, "A reader unit must be associated to the object.");
 

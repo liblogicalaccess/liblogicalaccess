@@ -37,7 +37,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<AdmittoReaderProvider> AdmittoReaderProvider::getSingletonInstance()
 	{
-		INFO_SIMPLE_("Getting singleton instance...");
+		INFO_("Getting singleton instance...");
 		static boost::shared_ptr<AdmittoReaderProvider> instance;
 		if (!instance)
 		{
@@ -50,7 +50,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<ReaderUnit> AdmittoReaderProvider::createReaderUnit()
 	{
-		INFO_SIMPLE_("Creating new reader unit with empty port... (Serial port auto-detect will be used when connecting to reader)");
+		INFO_("Creating new reader unit with empty port... (Serial port auto-detect will be used when connecting to reader)");
 
 		boost::shared_ptr<AdmittoReaderUnit> ret(new AdmittoReaderUnit());
 		ret->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));

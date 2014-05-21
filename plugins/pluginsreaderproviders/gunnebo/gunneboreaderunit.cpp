@@ -110,7 +110,7 @@ namespace logicalaccess
 					if (createChipId.size() > 0)
 					{
 						d_insertedChip = ReaderUnit::createChip((d_card_type == "UNKNOWN" ? "GenericTag" : d_card_type), createChipId);
-						INFO_SIMPLE_("Chip detected !");
+						INFO_("Chip detected !");
 						inserted = true;
 					}
 				}
@@ -175,7 +175,7 @@ namespace logicalaccess
 							std::vector<unsigned char> tmpId = processCardId(buf);
 							if (tmpId.size() > 0 && (tmpId != d_insertedChip->getChipIdentifier()))
 							{
-								INFO_SIMPLE_("Card found but not same chip ! The previous card has been removed !");
+								INFO_("Card found but not same chip ! The previous card has been removed !");
 								d_insertedChip.reset();
 								removalIdentifier = tmpId;
 								removed = true;
@@ -235,13 +235,13 @@ namespace logicalaccess
 
 	bool GunneboReaderUnit::connect()
 	{
-		WARNING_SIMPLE_("Connect do nothing with Gunnebo reader");
+		WARNING_("Connect do nothing with Gunnebo reader");
 		return true;
 	}
 
 	void GunneboReaderUnit::disconnect()
 	{
-		WARNING_SIMPLE_("Disconnect do nothing with Gunnebo reader");
+		WARNING_("Disconnect do nothing with Gunnebo reader");
 	}
 	
 	boost::shared_ptr<Chip> GunneboReaderUnit::createChip(std::string type)
@@ -251,12 +251,12 @@ namespace logicalaccess
 
 		if (chip)
 		{
-			INFO_SIMPLE_("Chip created successfully !");
+			INFO_("Chip created successfully !");
 			boost::shared_ptr<ReaderCardAdapter> rca;
 
 			if (type == "GenericTag")
 			{
-				INFO_SIMPLE_("Generic tag Chip created");
+				INFO_("Generic tag Chip created");
 				rca = getDefaultReaderCardAdapter();
 			}
 			else
@@ -292,7 +292,7 @@ namespace logicalaccess
 
 	string GunneboReaderUnit::getReaderSerialNumber()
 	{
-		WARNING_SIMPLE_("Do nothing with Gunnebo reader");
+		WARNING_("Do nothing with Gunnebo reader");
 		string ret;
 		return ret;
 	}
@@ -300,9 +300,9 @@ namespace logicalaccess
 	bool GunneboReaderUnit::isConnected()
 	{
 		if (d_insertedChip)
-			INFO_SIMPLE_("Is connected {1}");
+			INFO_("Is connected {1}");
 		else
-			INFO_SIMPLE_("Is connected {0}");
+			INFO_("Is connected {0}");
 		return bool(d_insertedChip);
 	}
 

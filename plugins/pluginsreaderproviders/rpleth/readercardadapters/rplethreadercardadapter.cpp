@@ -50,7 +50,7 @@ namespace logicalaccess
 		}
 		else
 		{
-			ERROR_SIMPLE_("Not a Rpleth data transport.");
+			ERROR_("Not a Rpleth data transport.");
 		}
 
 		return res;

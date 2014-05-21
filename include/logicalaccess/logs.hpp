@@ -60,7 +60,7 @@ namespace logicalaccess
 
 	//#define PSTR(x)         PANTHEIOS_LITERAL_STRING(x)
 
-	#define DEBUG_(x, ...) logicalaccess::Logs::DEBUG_LOG(__FILE__, __LINE__, __FUNCTION__, x, ##__VA_ARGS__)
+	#define DEBUG_(x, ...) logicalaccess::Logs::DEBUG_LOG(__FILE__, __LINE__, __FUNCTION__, x, ## __VA_ARGS__)
 	#define ALERT_(x, ...) logicalaccess::Logs::ALERT_LOG(__FILE__, __LINE__, __FUNCTION__, x, ##__VA_ARGS__)
 	#define CRITICAL_(x, ...) logicalaccess::Logs::CRITICAL_LOG(__FILE__, __LINE__, __FUNCTION__, x, ##__VA_ARGS__)
 	#define EMERGENCY_(x, ...) logicalaccess::Logs::EMERGENCY_LOG(__FILE__, __LINE__, __FUNCTION__, x, ##__VA_ARGS__)
@@ -101,17 +101,6 @@ namespace logicalaccess
 	#define EXCEPTION_ASSERT_WITH_LOG(condition, type, msg) if (!(condition)) { THROW_EXCEPTION_WITH_LOG(type, msg); }
 
 	#endif
-
-	#define DEBUG_SIMPLE_(x) DEBUG_(x, NULL)
-	#define ALERT_SIMPLE_(x) ALERT_(x, NULL)
-	#define CRITICAL_SIMPLE_(x) CRITICAL_(x, NULL)
-	#define EMERGENCY_SIMPLE_(x) EMERGENCY_(x, NULL)
-	#define ERROR_SIMPLE_(x) ERROR_(x, NULL)
-	#define NOTICE_SIMPLE_(x) NOTICE_(x, NULL)
-	#define WARNING_SIMPLE_(x) WARNING_(x, NULL)
-	#define INFO_SIMPLE_(x) INFO_(x, NULL)
-	#define COM_SIMPLE_(x) COM_(x, NULL)
-	#define PLUGIN_SIMPLE_(x) PLUGIN_(x, NULL)
 }
 
 #endif

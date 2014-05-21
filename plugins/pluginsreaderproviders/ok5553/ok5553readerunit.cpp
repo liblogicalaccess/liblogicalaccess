@@ -131,7 +131,7 @@ namespace logicalaccess
 
 	bool OK5553ReaderUnit::connect()
 	{
-		INFO_SIMPLE_("Starting connect...");
+		INFO_("Starting connect...");
 		if (getSingleChip())
 		{
 			if (getSingleChip()->getCardType() == "DESFire")
@@ -161,7 +161,7 @@ namespace logicalaccess
 			getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("v");
 		}*/
 
-		INFO_SIMPLE_("Disconnected from the chip");
+		INFO_("Disconnected from the chip");
 	}
 
 	std::vector<unsigned char> OK5553ReaderUnit::asciiToHex (const std::vector<unsigned char>& source)
@@ -187,7 +187,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<Chip> OK5553ReaderUnit::getChipInAir(unsigned int maxwait)
 	{
-		INFO_SIMPLE_("Starting get chip in air...");
+		INFO_("Starting get chip in air...");
 
 		boost::shared_ptr<Chip> chip;
 		std::vector<unsigned char> buf;
@@ -321,7 +321,7 @@ namespace logicalaccess
 
 	bool OK5553ReaderUnit::connectToReader()
 	{
-		INFO_SIMPLE_("Starting connection to reader...");
+		INFO_("Starting connection to reader...");
 		boost::shared_ptr<DataTransport> dataTransport = getDataTransport();
 		if (!dataTransport->getReaderUnit())
 		{
@@ -334,7 +334,7 @@ namespace logicalaccess
 
 	void OK5553ReaderUnit::disconnectFromReader()
 	{
-		INFO_SIMPLE_("Starting disconnection to reader...");
+		INFO_("Starting disconnection to reader...");
 		getDataTransport()->disconnect();
 	}
 

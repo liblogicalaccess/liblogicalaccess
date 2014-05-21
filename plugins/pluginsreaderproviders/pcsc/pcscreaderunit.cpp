@@ -89,7 +89,7 @@ namespace logicalaccess
 
 	PCSCReaderUnit::~PCSCReaderUnit()
 	{
-		INFO_SIMPLE_("Reader unit destruction...");
+		INFO_("Reader unit destruction...");
 
 		if (isConnected())
 		{
@@ -234,13 +234,13 @@ namespace logicalaccess
 	{
 		if (isConnected())
 		{
-			ERROR_SIMPLE_(EXCEPTION_MSG_CONNECTED);
+			ERROR_(EXCEPTION_MSG_CONNECTED);
 			disconnect();
 		}
 
 		if (Settings::getInstance()->SeeWaitInsertionLog)
 		{
-			INFO_SIMPLE_("Waiting card insertion...");
+			INFO_("Waiting card insertion...");
 		}
 
 		LONG r = 0;
@@ -264,7 +264,7 @@ namespace logicalaccess
 		{
 			if (Settings::getInstance()->SeeWaitInsertionLog)
 			{
-				INFO_SIMPLE_("Listening on all readers");
+				INFO_("Listening on all readers");
 			}
 			readers_count = static_cast<int>(getReaderProvider()->getReaderList().size());
 
@@ -279,7 +279,7 @@ namespace logicalaccess
 				usePnp = false;
 				if (Settings::getInstance()->SeeWaitInsertionLog)
 				{
-					INFO_SIMPLE_("No PnP support.");
+					INFO_("No PnP support.");
 				}
 			}
 		}
@@ -479,7 +479,7 @@ namespace logicalaccess
 
 		if (Settings::getInstance()->SeeWaitRemovalLog)
 		{
-			INFO_SIMPLE_("Waiting card removal...");
+			INFO_("Waiting card removal...");
 		}
 
 		string reader = getConnectedName();
@@ -643,7 +643,7 @@ namespace logicalaccess
 		bool ret = false;
 		if (d_proxyReaderUnit)
 		{
-			INFO_SIMPLE_("Need to use a proxy reader !");
+			INFO_("Need to use a proxy reader !");
 			ret = d_proxyReaderUnit->connect(share_mode);
 			if (ret)
 			{
@@ -662,7 +662,7 @@ namespace logicalaccess
 			LONG lReturn = SCardConnect(getPCSCReaderProvider()->getContext(), reinterpret_cast<const char*>(getConnectedName().c_str()), share_mode, getPCSCConfiguration()->getTransmissionProtocol(), &d_sch, &d_ap);
 			if (SCARD_S_SUCCESS == lReturn)
 			{
-				INFO_SIMPLE_("SCardConnect Success !");
+				INFO_("SCardConnect Success !");
 
 				d_share_mode = share_mode;
 				if (d_insertedChip->getChipIdentifier().size() == 0)
@@ -708,7 +708,7 @@ namespace logicalaccess
 							{
 								if (boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2> >(d_insertedChip->getCommands())->getSAMTypeFromSAM() == "SAM_AV1")
 								{
-									INFO_SIMPLE_("SAM on the reader is AV2 but mode AV1 so we switch to AV1.");
+									INFO_("SAM on the reader is AV2 but mode AV1 so we switch to AV1.");
 									d_insertedChip = createChip("SAM_AV1");
 								}
 							}
@@ -745,7 +745,7 @@ namespace logicalaccess
 			// Unknown T=CL card, we have to send specific reader command to determine the type (A or B ?)
 			if (d_insertedChip->getCardType() == "GENERIC_T_CL")
 			{
-				INFO_SIMPLE_("Inserted chip is {CT_GENERIC_T_CL}. Looking for type A or B...");
+				INFO_("Inserted chip is {CT_GENERIC_T_CL}. Looking for type A or B...");
 				if (d_proxyReaderUnit)
 				{
 					setSingleChip(d_proxyReaderUnit->getSingleChip());
@@ -759,12 +759,12 @@ namespace logicalaccess
 					boost::shared_ptr<Chip> newChip;
 					if (isTypeA)
 					{
-						INFO_SIMPLE_("Type A detected !");
+						INFO_("Type A detected !");
 						newChip = createChip("GENERIC_T_CL_A");					
 					}
 					else if(isTypeB)
 					{
-						INFO_SIMPLE_("Type B detected !");
+						INFO_("Type B detected !");
 						newChip = createChip("GENERIC_T_CL_B");
 					}
 
@@ -775,7 +775,7 @@ namespace logicalaccess
 					}
 					else
 					{
-						INFO_SIMPLE_("Unable to find the type !");
+						INFO_("Unable to find the type !");
 					}
 				}
 			}
@@ -823,7 +823,7 @@ namespace logicalaccess
 
 	void PCSCReaderUnit::disconnect(unsigned int action)
 	{
-		INFO_SIMPLE_("Disconnecting from the chip.");
+		INFO_("Disconnecting from the chip.");
 
 		if (d_proxyReaderUnit)
 		{
@@ -843,7 +843,7 @@ namespace logicalaccess
 
 	bool PCSCReaderUnit::connectToReader()
 	{
-		INFO_SIMPLE_("Connecting to reader...");
+		INFO_("Connecting to reader...");
 
 		if (d_proxyReaderUnit)
 		{
@@ -883,18 +883,18 @@ namespace logicalaccess
 
 				ret->connect();
 
-				INFO_SIMPLE_("Checking SAM backward...");
+				INFO_("Checking SAM backward...");
 
 				//Check Backward AV1 => AV2 is active
 				if (getPCSCConfiguration()->getSAMType() != "SAM_AUTO" && ret->getSingleChip()->getCardType() == "SAM_AV2" && getPCSCConfiguration()->getSAMType() != boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2> >(ret->getSingleChip()->getCommands())->getSAMTypeFromSAM())
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM on the reader is not the same type as selected.");
 
-				INFO_SIMPLE_("SAM backward ended.");
+				INFO_("SAM backward ended.");
 			
 				setSAMChip(boost::dynamic_pointer_cast<SAMChip>(ret->getSingleChip()));
 				setSAMReaderUnit(ret);
 
-				INFO_SIMPLE_("Starting SAM Security check...");
+				INFO_("Starting SAM Security check...");
 
 				try
 				{
@@ -922,7 +922,7 @@ namespace logicalaccess
 
 	void PCSCReaderUnit::disconnectFromReader()
 	{
-		INFO_SIMPLE_("Disconnecting from reader...");
+		INFO_("Disconnecting from reader...");
 
 		if (d_proxyReaderUnit)
 		{
@@ -1482,7 +1482,7 @@ namespace logicalaccess
 				}
 				else
 				{
-					WARNING_SIMPLE_("Cannot found HIDiClass commands.");
+					WARNING_("Cannot found HIDiClass commands.");
 				}
 			}
 			else if (type == "DESFireEV1")
@@ -1577,7 +1577,7 @@ namespace logicalaccess
 				boost::shared_ptr<DataTransport> dt = getDataTransport();
 				if (dt)
 				{
-					INFO_SIMPLE_("Data transport forced to a specific one.");
+					INFO_("Data transport forced to a specific one.");
 					rca->setDataTransport(dt);
 				}
 
@@ -1600,7 +1600,7 @@ namespace logicalaccess
 				chip->setCommands(commands);
 			}
 
-			INFO_SIMPLE_("Object creation done.");
+			INFO_("Object creation done.");
 		}
 		return chip;
 	}

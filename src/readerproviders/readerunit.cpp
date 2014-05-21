@@ -82,7 +82,7 @@ namespace logicalaccess
 		{
 			if (waitInsertion(maxwait))
 			{
-				INFO_SIMPLE_("Chip(s) detected ! Looking in the list to find the chip...");
+				INFO_("Chip(s) detected ! Looking in the list to find the chip...");
 				bool found = false;
 				std::vector<boost::shared_ptr<Chip> > chipList = getChipList();
 				for (std::vector<boost::shared_ptr<Chip> >::iterator i = chipList.begin(); i != chipList.end() && !found; ++i)
@@ -92,7 +92,7 @@ namespace logicalaccess
 
 					if (tmp == identifier)
 					{
-						INFO_SIMPLE_("Chip found !");
+						INFO_("Chip found !");
 						// re-assign the chip
 						d_insertedChip = *i;
 						found = true;
@@ -139,7 +139,7 @@ namespace logicalaccess
 			// Try to use the configuration for all card (= generic tag), because the card type isn't configured
 			if (itct == ctList.end())
 			{
-				INFO_SIMPLE_("No configuration found for the chip type ! Looking for \"GenericTag\" configuration...");
+				INFO_("No configuration found for the chip type ! Looking for \"GenericTag\" configuration...");
 				useCardType = "GenericTag";
 				itct = std::find(ctList.begin(), ctList.end(), useCardType);
 			}
@@ -147,7 +147,7 @@ namespace logicalaccess
 			// Try to read the number only if a configuration exists (for this card type or default)
 			if (itct != ctList.end())
 			{
-				INFO_SIMPLE_("Configuration found in the composite ! Retrieving format for card...");
+				INFO_("Configuration found in the composite ! Retrieving format for card...");
 				boost::shared_ptr<AccessInfo> ai;
 				boost::shared_ptr<Location> loc;
 				boost::shared_ptr<Format> format;
@@ -155,33 +155,33 @@ namespace logicalaccess
 
 				if (format)
 				{
-					INFO_SIMPLE_("Format retrieved successfully ! Reading the format...");
+					INFO_("Format retrieved successfully ! Reading the format...");
 					format = composite->readFormat(chip);	// Read format on chip
 
 					if (format)
 					{
-						INFO_SIMPLE_("Format read successfully ! Getting identifier...");
+						INFO_("Format read successfully ! Getting identifier...");
 						ret = format->getIdentifier();
 					}
 					else
 					{
-						ERROR_SIMPLE_("Unable to read the format !");
+						ERROR_("Unable to read the format !");
 					}
 				}
 				else
 				{
-					WARNING_SIMPLE_("Cannot retrieve the format for card ! Trying using getNumber directly...");
+					WARNING_("Cannot retrieve the format for card ! Trying using getNumber directly...");
 					ret = getNumber(chip);
 				}
 			}
 			else
 			{
-				ERROR_SIMPLE_("No configuration found !");
+				ERROR_("No configuration found !");
 			}
 		}
 		else
 		{
-			INFO_SIMPLE_("Composite card format is NULL ! Reader chip identifier directly...");
+			INFO_("Composite card format is NULL ! Reader chip identifier directly...");
 			ret = chip->getChipIdentifier();
 		}
 
@@ -281,7 +281,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<ReaderUnitConfiguration> ReaderUnit::getConfiguration()
 	{
-		//INFO_SIMPLE_("Getting reader unit configuration...");
+		//INFO_("Getting reader unit configuration...");
 		if (d_readerUnitConfig)
 		{
 			//INFO_("Reader unit configuration {%s}", d_readerUnitConfig->serialize().c_str());
