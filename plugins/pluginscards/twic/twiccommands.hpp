@@ -21,13 +21,13 @@ namespace logicalaccess
 	{
 		public:
 
-			size_t getMinimumBytesRepresentation(size_t value);
+			static size_t getMinimumBytesRepresentation(size_t value);
 
-			size_t getMaximumDataObjectLength(int64_t dataObject);
+			static size_t getMaximumDataObjectLength(int64_t dataObject);
 
-			size_t getMaximumTagLength(int64_t dataObject, unsigned char tag);
+			static size_t getMaximumTagLength(int64_t dataObject, unsigned char tag);
 
-			size_t getValueFromBytes(unsigned char* data, size_t datalength);
+			static size_t getValueFromBytes(unsigned char* data, size_t datalength);
 
 			/**
 			 * \brief Get the current length for a data object.

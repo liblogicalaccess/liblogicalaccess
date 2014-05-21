@@ -97,7 +97,7 @@ namespace logicalaccess
 			 * \param madbuflen The MAD buffer length.
 			 * \return The CRC.
 			 */
-			unsigned char calculateMADCrc(const unsigned char* madbuf, size_t madbuflen);
+			static unsigned char calculateMADCrc(const unsigned char* madbuf, size_t madbuflen);
 
 			/**
 			 * \brief Find the referenced sector in the MAD.
@@ -105,7 +105,7 @@ namespace logicalaccess
 			 * \param madbuf The MAD buffer.
 			 * \param madbuflen The MAD buffer length.
 			 */
-			unsigned int findReferencedSector(long aid, unsigned char* madbuf, size_t madbuflen);
+			static unsigned int findReferencedSector(long aid, unsigned char* madbuf, size_t madbuflen);
 
 			/**
 			 * \brief Authenticate on a given location.
@@ -130,7 +130,7 @@ namespace logicalaccess
 			 * \param sector The sector.
 			 * \return The number of blocks.
 			 */
-			unsigned char getNbBlocks(int sector) const;
+			static unsigned char getNbBlocks(int sector);
 
 			/**
 			 * \brief Get the sector start block.

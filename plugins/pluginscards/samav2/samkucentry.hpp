@@ -46,7 +46,7 @@ namespace logicalaccess
 			 */
 			SAMKucEntry(const SAMKUCEntryStruct& k) : d_updatemask(0), d_kucentry(k) {};
 
-			unsigned char getUpdateMask() { return d_updatemask; };
+			unsigned char getUpdateMask() const { return d_updatemask; };
 			void setUpdateMask(unsigned char c) { d_updatemask = c; };
 
 			KucEntryUpdateSettings getUpdateSettings();

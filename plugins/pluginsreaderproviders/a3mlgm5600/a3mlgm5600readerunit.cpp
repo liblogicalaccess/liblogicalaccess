@@ -28,7 +28,8 @@ namespace logicalaccess
 {
 	A3MLGM5600ReaderUnit::A3MLGM5600ReaderUnit()
 		: ReaderUnit()
-{
+	{
+		d_deviceAddress = 0x00;
 		d_readerUnitConfig.reset(new A3MLGM5600ReaderUnitConfiguration());
 		setDefaultReaderCardAdapter (boost::shared_ptr<A3MLGM5600ReaderCardAdapter> (new A3MLGM5600ReaderCardAdapter()));
 		boost::shared_ptr<UdpDataTransport> dataTransport(new UdpDataTransport());

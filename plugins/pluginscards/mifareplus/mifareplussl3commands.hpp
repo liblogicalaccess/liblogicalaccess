@@ -76,9 +76,9 @@ namespace logicalaccess
 			 * \param sector The sector.
 			 * \return The number of blocks.
 			 */
-			unsigned char getNbBlocks(int sector) const;
+			static unsigned char getNbBlocks(int sector);
 
-			unsigned short getBlockNo(int sector, int block);
+			unsigned short getBlockNo(int sector, int block) const;
 
 			/**
 			 * \brief Authenticate a block, given a key number.

@@ -63,7 +63,7 @@ namespace logicalaccess
 		}
 	}
 
-	void ResultChecker::AddCheck(unsigned char SW1, unsigned char SW2, const std::string msg, bool throwException)
+	void ResultChecker::AddCheck(unsigned char SW1, unsigned char SW2, const std::string& msg, bool throwException)
 	{
 		ResultCheckerKeys keys(SW1, SW2);
 		ResultCheckerValues values(msg, throwException);
@@ -88,7 +88,7 @@ namespace logicalaccess
 		mapPrimary.clear();
 	}
 
-	void ResultChecker::AddSingleShotCheck(unsigned char SW1, unsigned char SW2, const std::string msg)
+	void ResultChecker::AddSingleShotCheck(unsigned char SW1, unsigned char SW2, const std::string& msg)
 	{
 		ResultCheckerKeys keys(SW1, SW2);
 		ResultCheckerValues values(msg, true);

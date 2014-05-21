@@ -62,14 +62,14 @@ namespace logicalaccess
 			 * \param data The data buffer to prepare.
 			 * \return The data buffer ready to send to device.
 			 */
-			std::vector<unsigned char> prepareDataForDevice(const std::vector<unsigned char>& data) const;
+			static std::vector<unsigned char> prepareDataForDevice(const std::vector<unsigned char>& data);
 
 			/**
 			 * \brief Prepare data buffer from device.
 			 * \param data The data buffer to prepare.
 			 * \return The data buffer ready to use.
 			 */
-			std::vector<unsigned char> prepareDataFromDevice(const std::vector<unsigned char>& data) const;
+			static std::vector<unsigned char> prepareDataFromDevice(const std::vector<unsigned char>& data);
 
 			/**
 			 * \brief Target device bus address destination.

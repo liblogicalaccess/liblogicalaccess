@@ -10,6 +10,7 @@ namespace logicalaccess
 {
 	TwicLocation::TwicLocation()
 	{
+		tag = 0x00;
 		dataObject = 0;
 	}
 

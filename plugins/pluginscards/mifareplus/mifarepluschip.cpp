@@ -47,7 +47,7 @@ namespace logicalaccess
 		boost::shared_ptr<LocationNode> sectorNode;
 		sectorNode.reset(new LocationNode());
 
-		sprintf(tmpName, "Sector %u", sector);
+		sprintf(tmpName, "Sector %d", sector);
 		sectorNode->setName(tmpName);
 		sectorNode->setLength((sector >= MIFARE_PLUS_2K_SECTOR_NB) ? 256 : 64);
 		sectorNode->setNeedAuthentication(true);

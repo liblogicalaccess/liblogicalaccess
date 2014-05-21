@@ -58,7 +58,7 @@ namespace logicalaccess
 			 * \param msg The string message related to the error codes.
 			 * \param throwException Define if an exception should be throwed for the error code.
 			 */
-			void AddCheck(unsigned char SW1, unsigned char SW2, const std::string msg, bool throwException = true);
+			void AddCheck(unsigned char SW1, unsigned char SW2, const std::string& msg, bool throwException = true);
 
 			/**
 			 * \brief Remove a check.
@@ -78,7 +78,7 @@ namespace logicalaccess
 			 * \param SW2 The SW2 error code.
 			 * \param msg The string message related to the error codes.
 			 */
-			void AddSingleShotCheck(unsigned char SW1, unsigned char SW2, const std::string msg);
+			void AddSingleShotCheck(unsigned char SW1, unsigned char SW2, const std::string& msg);
 
 		private:
 

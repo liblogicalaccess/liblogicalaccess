@@ -12,7 +12,8 @@ namespace logicalaccess
 	DESFireProfile::DESFireProfile() : 
 		Profile()
 	{
-		clearKeys();			
+		memset(d_aids, 0x00, sizeof(d_aids));
+		clearKeys();
 	}
 
 	DESFireProfile::~DESFireProfile()

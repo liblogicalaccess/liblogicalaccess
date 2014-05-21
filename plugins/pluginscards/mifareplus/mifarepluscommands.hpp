@@ -70,7 +70,7 @@ namespace logicalaccess
 		/**
 		* \brief Get the crypto class
 		*/
-		boost::shared_ptr<MifarePlusCrypto> GetCrypto();
+		boost::shared_ptr<MifarePlusCrypto> GetCrypto() const;
 
 		/**
 		* \MifarePlusCrypto class instance

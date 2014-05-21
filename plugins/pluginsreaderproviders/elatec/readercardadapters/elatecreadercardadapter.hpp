@@ -65,7 +65,7 @@ namespace logicalaccess
 			 * \param buf The buffer.
 			 * \return The checksum value.
 			 */
-			unsigned char calcChecksum(const std::vector<unsigned char>& buf) const;
+			static unsigned char calcChecksum(const std::vector<unsigned char>& buf);
 
 			/**
 			 * \brief The last command code used.

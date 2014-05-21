@@ -52,7 +52,7 @@ namespace logicalaccess
 		boost::shared_ptr<LocationNode> sectorNode;
 		sectorNode.reset(new LocationNode());
 
-		sprintf(tmpName, "Page %u", page);
+		sprintf(tmpName, "Page %d", page);
 		sectorNode->setName(tmpName);
 		sectorNode->setLength(4);
 		sectorNode->setNeedAuthentication(true);

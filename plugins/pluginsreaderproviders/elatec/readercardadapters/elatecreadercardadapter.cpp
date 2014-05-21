@@ -11,7 +11,7 @@ namespace logicalaccess
 	ElatecReaderCardAdapter::ElatecReaderCardAdapter()
 		: ReaderCardAdapter()
 	{
-		
+		d_last_cmdcode = 0x00;
 	}
 
 	ElatecReaderCardAdapter::~ElatecReaderCardAdapter()
@@ -19,7 +19,7 @@ namespace logicalaccess
 		
 	}
 
-	unsigned char ElatecReaderCardAdapter::calcChecksum(const std::vector<unsigned char>& buf) const
+	unsigned char ElatecReaderCardAdapter::calcChecksum(const std::vector<unsigned char>& buf)
 	{
 		unsigned char checksum = 0x00;
 

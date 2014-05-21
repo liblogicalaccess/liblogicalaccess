@@ -423,7 +423,7 @@ namespace logicalaccess
 		return minsize;
 	}
 
-	unsigned char MifareCommands::getNbBlocks(int sector) const
+	unsigned char MifareCommands::getNbBlocks(int sector)
 	{
 		return ((sector >= 32) ? 15 : 3);
 	}

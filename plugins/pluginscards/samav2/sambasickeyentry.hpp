@@ -75,6 +75,7 @@ namespace logicalaccess
 	class LIBLOGICALACCESS_API SAMBasicKeyEntry
 	{
 		public:
+
 			/**
 			 * \brief Destructor.
 			 */
@@ -167,7 +168,7 @@ namespace logicalaccess
 
 			size_t getSingleLength() const;
 
-			unsigned char getUpdateMask() { return d_updatemask; };
+			unsigned char getUpdateMask() const { return d_updatemask; };
 			void setUpdateMask(unsigned char c) { d_updatemask = c; };
 
 			KeyEntryUpdateSettings getUpdateSettings();

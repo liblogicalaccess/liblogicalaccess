@@ -144,12 +144,12 @@ namespace logicalaccess
 		return true;
 	}
 
-	unsigned char MifarePlusSL3Commands::getNbBlocks(int sector) const
+	unsigned char MifarePlusSL3Commands::getNbBlocks(int sector)
 	{
 		return ((sector >= 32) ? 15 : 3);
 	}
 
-	unsigned short MifarePlusSL3Commands::getBlockNo(int sector, int block)
+	unsigned short MifarePlusSL3Commands::getBlockNo(int sector, int block) const
 	{
 		unsigned short blockno = 0x0000;
 		int i;

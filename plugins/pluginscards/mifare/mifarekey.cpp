@@ -11,12 +11,14 @@ namespace logicalaccess
 	MifareKey::MifareKey()
 		: Key()
 	{
+		memset(d_key, 0x00, sizeof(d_key));
 		clear();
 	}	
 
 	MifareKey::MifareKey(const std::string& str)
 		: Key()
 	{
+		memset(d_key, 0x00, sizeof(d_key));
 		fromString(str);
 	}
 

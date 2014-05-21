@@ -56,7 +56,7 @@ namespace logicalaccess
 		return (rand);
 	}
 
-	boost::shared_ptr<MifarePlusCrypto> MifarePlusCommands::GetCrypto()
+	boost::shared_ptr<MifarePlusCrypto> MifarePlusCommands::GetCrypto() const
 	{
 		return (d_crypto);
 	}

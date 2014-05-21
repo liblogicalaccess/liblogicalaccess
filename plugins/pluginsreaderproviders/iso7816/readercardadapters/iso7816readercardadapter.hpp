@@ -28,8 +28,6 @@ namespace logicalaccess
 			*/
 			virtual void sendAPDUCommand(const std::vector<unsigned char>& command, unsigned char* result, size_t* resultlen);
 
-
-
 			/**
 			 * \brief Send an APDU command to the reader.
 			 */

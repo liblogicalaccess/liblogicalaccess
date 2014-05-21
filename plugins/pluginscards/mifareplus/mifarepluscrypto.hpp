@@ -84,7 +84,7 @@ namespace logicalaccess
 			/**
 			* \brief Get th initialisation vector counter part string
 			*/
-			std::vector<unsigned char> GetIvStringCountPart();
+			std::vector<unsigned char> GetIvStringCountPart() const;
 
 		public:
 

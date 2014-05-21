@@ -24,6 +24,7 @@ namespace logicalaccess
 {		
 	MifarePlusCrypto::MifarePlusCrypto()
 	{
+		d_Rctr = 0x00;
 		d_ti.resize(4, 0x00);
 	}
 
@@ -278,7 +279,7 @@ namespace logicalaccess
 		return (out);
 	}
 
-	std::vector<unsigned char> MifarePlusCrypto::GetIvStringCountPart()
+	std::vector<unsigned char> MifarePlusCrypto::GetIvStringCountPart() const
 	{
 		std::vector<unsigned char> ivStringC;
 		ivStringC.resize(12);

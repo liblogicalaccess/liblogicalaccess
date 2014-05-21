@@ -86,7 +86,7 @@ namespace logicalaccess
 		return data;
 	}
 
-	std::vector<unsigned char> DeisterReaderCardAdapter::prepareDataForDevice(const std::vector<unsigned char>& data) const
+	std::vector<unsigned char> DeisterReaderCardAdapter::prepareDataForDevice(const std::vector<unsigned char>& data)
 	{
 		std::vector<unsigned char> prepareData;
 		for (size_t i = 0; i < data.size(); i++)
@@ -121,7 +121,7 @@ namespace logicalaccess
 		return prepareData;
 	}
 
-	std::vector<unsigned char> DeisterReaderCardAdapter::prepareDataFromDevice(const std::vector<unsigned char>& data) const
+	std::vector<unsigned char> DeisterReaderCardAdapter::prepareDataFromDevice(const std::vector<unsigned char>& data)
 	{
 		std::vector<unsigned char> prepareData;
 		for (size_t i = 0; i < data.size(); i++)

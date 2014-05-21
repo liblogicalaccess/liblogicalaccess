@@ -25,7 +25,7 @@ namespace logicalaccess
 		virtual void unSerialize(boost::property_tree::ptree& node);
 		virtual std::string getDefaultXmlNodeName() const { return "NXPAV2KeyDiversification"; };
 
-		const std::vector<unsigned char>& getDivInput() { return d_divInput; }
+		const std::vector<unsigned char>& getDivInput() const { return d_divInput; }
 
 		void setDivInput(std::vector<unsigned char> divInput) { d_divInput = divInput; }
 

@@ -115,7 +115,7 @@ namespace logicalaccess
 			 * \param data The data to calculate checksum
 			 * \return The checksum.
 			 */
-			unsigned char calcBCC(const std::vector<unsigned char>& data);		
+			static unsigned char calcBCC(const std::vector<unsigned char>& data);		
 
 			/**
 			 * \brief The current sequence number.

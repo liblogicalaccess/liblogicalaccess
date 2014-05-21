@@ -93,13 +93,13 @@ namespace logicalaccess
 			/**
 			 * \brief Get SAM Security Check Key
 			 */
-			boost::shared_ptr<DESFireKey> getSAMUnLockKey() { return d_sam_key_unlock; };
+			boost::shared_ptr<DESFireKey> getSAMUnLockKey() const { return d_sam_key_unlock; };
 
 
 			/**
 			 * \brief Get SAM Security Check KeyNo
 			 */
-			unsigned char getSAMUnLockkeyNo() { return d_keyno_unlock; };
+			unsigned char getSAMUnLockkeyNo() const { return d_keyno_unlock; };
 
 		protected:
 

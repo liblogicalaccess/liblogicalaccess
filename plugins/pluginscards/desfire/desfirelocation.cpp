@@ -20,7 +20,7 @@ namespace logicalaccess
 	{
 	}
 
-	unsigned int DESFireLocation::convertAidToUInt(const std::vector<unsigned char> aid)
+	unsigned int DESFireLocation::convertAidToUInt(const std::vector<unsigned char>& aid)
 	{
 		// LSB first
 		int ret = ((aid[0] & 0xff) |
