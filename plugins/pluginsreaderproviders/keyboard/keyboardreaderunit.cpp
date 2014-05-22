@@ -85,7 +85,6 @@ namespace logicalaccess
 		INFO_("Waiting removal... max wait {%u}", maxwait);
 
 		bool removed = false;
-		unsigned int currentWait = 0;
 		d_removalIdentifier.clear();
 
 		// The inserted chip will stay inserted until a new identifier is read from the input device.
@@ -105,7 +104,7 @@ namespace logicalaccess
 			}
 		}
 
-		INFO_("Returns card removed ? {%d} - function timeout expired ? {%d}", removed, (maxwait != 0 && currentWait >= maxwait));
+		INFO_("Returns card removed ? {%d} - function timeout expired ? {%d}", removed, maxwait != 0);
 
 		return removed;
 	}

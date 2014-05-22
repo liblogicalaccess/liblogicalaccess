@@ -44,7 +44,7 @@ namespace logicalaccess
 		unsigned char p1, p2;
 
 		setP1P2(offset, efid, p1, p2);
-		getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xB0, p1, p2, static_cast<unsigned char>(dataLength));
+		result = getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xB0, p1, p2, static_cast<unsigned char>(dataLength));
 
 		if (dataLength >= result.size() - 2)
 		{			

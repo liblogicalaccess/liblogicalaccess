@@ -53,7 +53,7 @@ namespace logicalaccess
 		unsigned char dumpsessionkey;
 		unsigned char diversifieduse;
 		unsigned char rfu[2];
-	}		 		ExtSET;
+	}		 		ExtSETStruct;
 
 	typedef struct  s_KeyEntryAV1Information
 	{

@@ -22,7 +22,7 @@ namespace logicalaccess
 		
 	}
 
-	void ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen, unsigned char /*le*/, unsigned char* result, size_t* resultlen)
+	std::vector<unsigned char> ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen, unsigned char /*le*/)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(ins);
@@ -31,10 +31,10 @@ namespace logicalaccess
 			command.insert(command.end(), data, data + datalen);
 		}
 
-		ISO7816ReaderCardAdapter::sendAPDUCommand(command, result, resultlen);
+		return ISO7816ReaderCardAdapter::sendCommand(command);
 	}
 
-	void ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen, unsigned char* result, size_t* resultlen)
+	std::vector<unsigned char> ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(ins);
@@ -43,10 +43,10 @@ namespace logicalaccess
 			command.insert(command.end(), data, data + datalen);
 		}
 
-		ISO7816ReaderCardAdapter::sendAPDUCommand(command, result, resultlen);
+		return ISO7816ReaderCardAdapter::sendCommand(command);
 	}	
 
-	void ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, const unsigned char* data, size_t datalen, unsigned char* result, size_t* resultlen)
+	std::vector<unsigned char> ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, const unsigned char* data, size_t datalen)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(ins);
@@ -55,69 +55,37 @@ namespace logicalaccess
 			command.insert(command.end(), data, data + datalen);
 		}
 
-		ISO7816ReaderCardAdapter::sendAPDUCommand(command, result, resultlen);
-	}
-
-	void ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*le*/, unsigned char* result, size_t* resultlen)
-	{
-		std::vector<unsigned char> command;
-		command.push_back(ins);
-
-		ISO7816ReaderCardAdapter::sendAPDUCommand(command, result, resultlen);
-	}
-
-	void ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, unsigned char /*le*/, unsigned char* result, size_t* resultlen)
-	{
-		std::vector<unsigned char> command;
-		command.push_back(ins);
-
-		ISO7816ReaderCardAdapter::sendAPDUCommand(command, result, resultlen);
-	}
-
-
-	void ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen, unsigned char /*le*/)
-	{
-		std::vector<unsigned char> command;
-		command.push_back(ins);
-		if (data != NULL && datalen > 0)
-		{
-			command.insert(command.end(), data, data + datalen);
-		}
-		ISO7816ReaderCardAdapter::sendAPDUCommand(command, NULL, NULL);
-	}
-
-	void ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen)
-	{
-		std::vector<unsigned char> command;
-		command.push_back(ins);
-		if (data != NULL && datalen > 0)
-		{
-			command.insert(command.end(), data, data + datalen);
-		}
-		ISO7816ReaderCardAdapter::sendAPDUCommand(command, NULL, NULL);
+		return ISO7816ReaderCardAdapter::sendCommand(command);
 	}
 
 	std::vector<unsigned char> ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*le*/)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(ins);
-		ISO7816ReaderCardAdapter::sendAPDUCommand(command, NULL, NULL);
-		return std::vector<unsigned char>();
+
+		return ISO7816ReaderCardAdapter::sendCommand(command);
 	}
 
-
-	void ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char* result, size_t* resultlen)
+	std::vector<unsigned char> ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, unsigned char /*le*/)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(ins);
-		ISO7816ReaderCardAdapter::sendAPDUCommand(command, result, resultlen);
+
+		return ISO7816ReaderCardAdapter::sendCommand(command);
+	}
+
+	std::vector<unsigned char> ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/)
+	{
+		std::vector<unsigned char> command;
+		command.push_back(ins);
+		return ISO7816ReaderCardAdapter::sendCommand(command);
 	}
 
 
 
 	std::vector<unsigned char> ISO7816OK5553ReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
 	{
-		char tmp [3];
+		char tmp[3];
 		std::vector<unsigned char> data;
 		data.push_back(static_cast<unsigned char>('t'));
 		sprintf(tmp, "%.2X",(unsigned int)(command.size() + 1));

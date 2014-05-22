@@ -43,7 +43,7 @@ namespace logicalaccess
 		 * \brief Get the node name.
 		 * \return The node name.
 		 */
-		std::string getName();
+		std::string getName() const;
 
 		/**
 		 * \brief Get the childrens node.
@@ -73,7 +73,7 @@ namespace logicalaccess
 		 * \brief Get if authentication is needed.
 		 * \return True if authentication is needed, false otherwise.
 		 */
-		bool getNeedAuthentication();
+		bool getNeedAuthentication() const;
 
 		/**
 		 * \brief Set if the node has properties.
@@ -85,7 +85,7 @@ namespace logicalaccess
 		 * \brief Get if the node has properties.
 		 * \return True if the node has properties, false otherwise.
 		 */
-		bool getHasProperties();
+		bool getHasProperties() const;
 
 		/**
 		 * \brief Set the node length.
@@ -97,7 +97,7 @@ namespace logicalaccess
 		 * \brief Get the node length.
 		 * \return The node length.
 		 */
-		size_t getLength();
+		size_t getLength() const;
 
 		/**
 		 * \brief Set the associated location.
@@ -109,7 +109,7 @@ namespace logicalaccess
 		 * \brief Get the associated location.
 		 * \return The associated location.
 		 */
-		boost::shared_ptr<Location> getLocation();
+		boost::shared_ptr<Location> getLocation() const;
 
 		/**
 		 * \brief Set the byte unit.
@@ -121,7 +121,7 @@ namespace logicalaccess
 		 * \brief Get the byte unit.
 		 * \return The byte unit.
 		 */
-		size_t getUnit();
+		size_t getUnit() const;
 
 	protected:
 

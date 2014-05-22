@@ -74,7 +74,7 @@ namespace logicalaccess
 		d_sam_type = t;
 	}
 
-	std::string ISO7816ReaderUnitConfiguration::getSAMType()
+	std::string ISO7816ReaderUnitConfiguration::getSAMType() const
 	{
 		return d_sam_type;
 	}
@@ -85,7 +85,7 @@ namespace logicalaccess
 		d_sam_reader_name = t;
 	}
 
-	std::string ISO7816ReaderUnitConfiguration::getSAMReaderName()
+	std::string ISO7816ReaderUnitConfiguration::getSAMReaderName() const
 	{
 		return d_sam_reader_name;
 	}

@@ -92,10 +92,10 @@ namespace logicalaccess
 	bool OK5553ReaderUnit::waitRemoval(unsigned int maxwait)
 	{
 		bool removed = false;
-		unsigned int currentWait = 0;
 		removalIdentifier.clear();
 		if (d_insertedChip)
 		{
+			unsigned int currentWait = 0;
 			while (!removed && ((currentWait < maxwait) || maxwait == 0))
 			{
 				boost::shared_ptr<Chip> chip = getChipInAir(250);
@@ -167,9 +167,9 @@ namespace logicalaccess
 	std::vector<unsigned char> OK5553ReaderUnit::asciiToHex (const std::vector<unsigned char>& source)
 	{
 		std::vector<unsigned char> res;
-		char tmp [3];
 		if (source.size() > 1)
 		{
+			char tmp[3];
 			for (size_t i = 0; i <= source.size() - 2; i+=2)
 			{
 				tmp [0] = source[i];

@@ -147,7 +147,6 @@ namespace logicalaccess
 		INFO_("Waiting removal... max wait {%u}", maxwait);
 		bool removed = false;
 		unsigned int currentWait = 0;
-
 		try
 		{
 			if (d_insertedChip)
@@ -463,6 +462,7 @@ namespace logicalaccess
 				case 0x0044:
 					INFO_("Mifare Ultralight");
 					cardType = "MifareUltralight";
+					break;
 				case 0x0344:
 					INFO_("Mifare DESFire type !");
 					cardType = "DESFireEV1";

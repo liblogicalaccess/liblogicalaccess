@@ -807,7 +807,7 @@ namespace logicalaccess
 		command.push_back(0x01);
 		command.push_back(0x00 | ((formatCardEnabled) ? 0x00 : 0x01) | ((randomIdEnabled) ? 0x02 : 0x00));
 
-		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x005C, command);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x005C, command);
 	}
 
 	void DESFireEV1STidSTRCommands::setConfiguration(boost::shared_ptr<DESFireKey> defaultKey)
@@ -824,7 +824,7 @@ namespace logicalaccess
 		command.insert(command.end(), keydata, keydata + 24);
 		command.push_back(defaultKey->getKeyVersion());
 
-		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x005C, command);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x005C, command);
 	}
 
 	void DESFireEV1STidSTRCommands::setConfiguration(const std::vector<unsigned char>& ats)
@@ -834,7 +834,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(ats.size()));
 		command.insert(command.end(), ats.begin(), ats.end());
 
-		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x005C, command);
+		getSTidSTRReaderCardAdapter()->sendCommand(0x005C, command);
 	}
 
 	std::string DESFireEV1STidSTRCommands::STidKeyLocationTypeStr(STidKeyLocationType t)

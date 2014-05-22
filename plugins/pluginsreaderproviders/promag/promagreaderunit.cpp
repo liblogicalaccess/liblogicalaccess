@@ -93,7 +93,6 @@ namespace logicalaccess
 	bool PromagReaderUnit::waitRemoval(unsigned int maxwait)
 	{
 		bool removed = false;
-		unsigned int currentWait = 0;
 
 		if(d_promagIdentifier.size() == 0)
 		{
@@ -102,6 +101,7 @@ namespace logicalaccess
 
 		if (d_insertedChip)
 		{
+			unsigned int currentWait = 0;
 			do
 			{
 				boost::shared_ptr<Chip> chip = getChipInAir();

@@ -308,7 +308,7 @@ namespace logicalaccess
 			 * \param data The data buffer
 			 * \param mode The communication mode
 			 */
-			virtual void handleWriteData(unsigned char cmd, unsigned char* parameters, unsigned int paramLength, const std::vector<unsigned char> data, EncryptionMode mode);
+			virtual void handleWriteData(unsigned char cmd, unsigned char* parameters, unsigned int paramLength, const std::vector<unsigned char>& data, EncryptionMode mode);
 
 			/**
 			 * \brief Transmit a command.
@@ -318,7 +318,7 @@ namespace logicalaccess
 			 * \param forceLc Undocumented.
 			 * \return The response.
 			 */
-			virtual std::vector<unsigned char> transmit(unsigned char cmd, const std::vector<unsigned char> buf = std::vector<unsigned char>(), unsigned char lc = 0, bool forceLc = false);
+			virtual std::vector<unsigned char> transmit(unsigned char cmd, const std::vector<unsigned char>& buf = std::vector<unsigned char>(), unsigned char lc = 0, bool forceLc = false);
 
 			/**
 			 * \brief Transmit a command.
@@ -354,7 +354,7 @@ namespace logicalaccess
 			 * \param forceLc Undocumented.
 			 * \return The response.
 			 */
-			virtual std::vector<unsigned char> transmit_nomacv(unsigned char cmd, const std::vector<unsigned char> buf = std::vector<unsigned char>(), unsigned char lc = 0, bool forceLc = false);
+			virtual std::vector<unsigned char> transmit_nomacv(unsigned char cmd, const std::vector<unsigned char>& buf = std::vector<unsigned char>(), unsigned char lc = 0, bool forceLc = false);
 
 		protected:
 

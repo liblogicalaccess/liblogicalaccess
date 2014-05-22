@@ -194,7 +194,7 @@ namespace logicalaccess
 		INFO_("Serializing card format composite...");
 		boost::property_tree::ptree node;
 
-		if (formatsList.size() > 0)
+		if (!formatsList.empty())
 		{
 			FormatInfosList::iterator it;
 			for (it = formatsList.begin(); it != formatsList.end(); ++it)
@@ -262,7 +262,7 @@ namespace logicalaccess
 							{
 								location->unSerialize(childrenRootNode, "");
 							}
-							catch(std::exception ex)
+							catch (std::exception& ex)
 							{
 								ERROR_("Cannot unserialize location: {%s}", ex.what());
 								location.reset();
@@ -277,7 +277,7 @@ namespace logicalaccess
 							{
 								aiToUse->unSerialize(childrenRootNode, "");
 							}
-							catch(std::exception ex)
+							catch (std::exception& ex)
 							{
 								ERROR_("Cannot unserialize access info to use: {%s}", ex.what());
 								aiToUse.reset();
@@ -296,7 +296,7 @@ namespace logicalaccess
 								{
 									aiToWrite->unSerialize(writeNode, "");
 								}
-								catch(std::exception ex)
+								catch (std::exception& ex)
 								{
 									ERROR_("Cannot unserialize access info to write: {%s}", ex.what());
 									aiToWrite.reset();

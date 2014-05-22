@@ -27,7 +27,7 @@ namespace logicalaccess
 		d_name = name;
 	}
 
-	string LocationNode::getName()
+	string LocationNode::getName() const
 	{
 		return d_name;
 	}
@@ -42,7 +42,7 @@ namespace logicalaccess
 		d_needAuthentication = needed;
 	}
 
-	bool LocationNode::getNeedAuthentication()
+	bool LocationNode::getNeedAuthentication() const
 	{
 		return d_needAuthentication;
 	}
@@ -52,7 +52,7 @@ namespace logicalaccess
 		d_length = length;
 	}
 
-	size_t LocationNode::getLength()
+	size_t LocationNode::getLength() const
 	{
 		return d_length;
 	}
@@ -62,7 +62,7 @@ namespace logicalaccess
 		d_location = location;
 	}
 
-	boost::shared_ptr<Location> LocationNode::getLocation()
+	boost::shared_ptr<Location> LocationNode::getLocation() const
 	{
 		return d_location;
 	}
@@ -72,7 +72,7 @@ namespace logicalaccess
 		d_unit = unit;
 	}
 
-	size_t LocationNode::getUnit()
+	size_t LocationNode::getUnit() const
 	{
 		return d_unit;
 	}
@@ -82,7 +82,7 @@ namespace logicalaccess
 		d_hasProperties = hasProperties;
 	}
 
-	bool LocationNode::getHasProperties()
+	bool LocationNode::getHasProperties() const
 	{
 		return d_hasProperties;
 	}

@@ -28,7 +28,7 @@ namespace logicalaccess
 		boost::filesystem::directory_iterator end_iter;
 		std::string extension = EXTENSION_LIB;
 
-		if (libLoaded.size() == 0)
+		if (libLoaded.empty())
 		{
 			scanPlugins();
 		}
@@ -155,7 +155,6 @@ namespace logicalaccess
 		std::vector<std::string> plugins;
 		void* fct = NULL;
 		boost::filesystem::directory_iterator end_iter;
-		std::string extension = EXTENSION_LIB;
 		std::string fctname;
 		
 		if (libraryType == LibraryManager::CARDS_TYPE)

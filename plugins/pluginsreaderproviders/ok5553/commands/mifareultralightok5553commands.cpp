@@ -48,7 +48,6 @@ namespace logicalaccess
 	{
 		size_t res;
 		std::vector<unsigned char> command;
-		std::vector<unsigned char> answer;
 		char buffer [3];
 		command.push_back(static_cast<unsigned char>('w'));
 		command.push_back(static_cast<unsigned char>('b'));
@@ -61,7 +60,7 @@ namespace logicalaccess
 			command.push_back(static_cast<unsigned char>(buffer[0]));
 			command.push_back(static_cast<unsigned char>(buffer[1]));
 		}
-		answer = getOK5553ReaderCardAdapter()->sendCommand (command);
+		getOK5553ReaderCardAdapter()->sendCommand(command);
 		res = buflen;
 		return res;
 	}

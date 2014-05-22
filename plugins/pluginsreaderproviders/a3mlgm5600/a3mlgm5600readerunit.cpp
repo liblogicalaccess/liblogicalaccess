@@ -111,10 +111,10 @@ namespace logicalaccess
 	bool A3MLGM5600ReaderUnit::waitRemoval(unsigned int maxwait)
 	{
 		bool removed = false;
-		unsigned int currentWait = 0;
 
 		if (d_insertedChip)
 		{
+			unsigned int currentWait = 0;
 			do
 			{
 				std::vector<unsigned char> buf = hlRequest();

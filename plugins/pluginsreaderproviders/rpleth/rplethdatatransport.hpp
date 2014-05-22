@@ -72,7 +72,7 @@ namespace logicalaccess
 			 * \brief Get the buffer.
 			 * \return The buffer.
 			 */
-			const std::vector<unsigned char>& getBuffer() { return d_buffer; };
+			const std::vector<unsigned char>& getBuffer() const { return d_buffer; };
 
 
 			/**
@@ -96,7 +96,7 @@ namespace logicalaccess
 			 * \param data The data to calculate checksum
 			 * \return The checksum.
 			 */
-			unsigned char calcChecksum(const std::vector<unsigned char>& data);	
+			unsigned char calcChecksum(const std::vector<unsigned char>& data) const;	
 
 			/**
 			 * \brief d_buffer from last commands response.

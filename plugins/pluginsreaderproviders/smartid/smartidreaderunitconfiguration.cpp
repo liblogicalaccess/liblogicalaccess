@@ -17,6 +17,7 @@ namespace logicalaccess
 	SmartIDReaderUnitConfiguration::SmartIDReaderUnitConfiguration()
 		: ReaderUnitConfiguration(READER_SMARTID)
 	{
+		d_baudrate = BaudRateOutput::BRO_4800BAUD;
 		resetConfiguration();
 	}
 

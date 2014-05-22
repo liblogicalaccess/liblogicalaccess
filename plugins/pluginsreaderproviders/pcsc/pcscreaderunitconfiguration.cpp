@@ -26,7 +26,7 @@ namespace logicalaccess
 		d_share_mode = SM_SHARED;
 	}
 
-	unsigned int PCSCReaderUnitConfiguration::getTransmissionProtocol()
+	unsigned int PCSCReaderUnitConfiguration::getTransmissionProtocol() const
 	{
 		return d_protocol;
 	}
@@ -36,7 +36,7 @@ namespace logicalaccess
 		d_protocol = protocol;
 	}
 
-	PCSCShareMode PCSCReaderUnitConfiguration::getShareMode()
+	PCSCShareMode PCSCReaderUnitConfiguration::getShareMode() const
 	{
 		return d_share_mode;
 	}

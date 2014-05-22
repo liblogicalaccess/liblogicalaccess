@@ -36,28 +36,17 @@ namespace logicalaccess
 			/**
 			 * \brief Send an APDU command to the reader.
 			 */
-			virtual void sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const unsigned char* data, size_t datalen, unsigned char le, unsigned char* result, size_t* resultlen);
+			virtual std::vector<unsigned char> sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const unsigned char* data, size_t datalen, unsigned char le);
 
 			/**
 			 * \brief Send an APDU command to the reader.
 			 */
-			virtual void sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const unsigned char* data, size_t datalen, unsigned char* result, size_t* resultlen);
+			virtual std::vector<unsigned char> sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const unsigned char* data, size_t datalen);
 
 			/**
 			 * \brief Send an APDU command to the reader.
 			 */
-			virtual void sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, const unsigned char* data, size_t datalen, unsigned char* result, size_t* resultlen);
-
-			/**
-			 * \brief Send an APDU command to the reader without result.
-			 */
-			virtual void sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const unsigned char* data, size_t datalen, unsigned char le);
-
-			/**
-			 * \brief Send an APDU command to the reader without result.
-			 */
-			virtual void sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const unsigned char* data, size_t datalen);
-
+			virtual std::vector<unsigned char> sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, const unsigned char* data, size_t datalen);
 			/**
 			 * \brief Send an APDU command to the reader without data and result.
 			 */
@@ -66,17 +55,12 @@ namespace logicalaccess
 			/**
 			 * \brief Send an APDU command to the reader without data.
 			 */
-			virtual void sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, unsigned char le, unsigned char* result, size_t* resultlen);
+			virtual std::vector<unsigned char> sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, unsigned char le);
 
 			/**
 			 * \brief Send an APDU command to the reader without data.
 			 */
-			virtual void sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char le, unsigned char* result, size_t* resultlen);
-
-			/**
-			 * \brief Send an APDU command to the reader without data.
-			 */
-			virtual void sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char* result, size_t* resultlen);
+			virtual std::vector<unsigned char> sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2);
 
 			/**
 			 * \brief Adapt the command to send to the reader.

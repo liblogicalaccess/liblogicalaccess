@@ -335,7 +335,7 @@ namespace logicalaccess
 
 			cipher->decipher(encData, data, *symkeySession.get(), *ivSession.get(), false);
 
-			unsigned int i = (unsigned int)data.size() - 1;
+			int i = (int)data.size() - 1;
 			for (; i >= 0 && data[i] != 0x80 && data[i] == 0x00; --i);
 			if (i >= 0)
 				data.resize(i);

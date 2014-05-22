@@ -24,6 +24,7 @@ namespace logicalaccess
 {		
 	MifarePlusCrypto::MifarePlusCrypto()
 	{
+		d_Wctr = 0x00;
 		d_Rctr = 0x00;
 		d_ti.resize(4, 0x00);
 	}

@@ -62,10 +62,9 @@
 namespace logicalaccess
 {
 	PCSCReaderUnit::PCSCReaderUnit(const std::string& name)
-		: ISO7816ReaderUnit()
+		: ISO7816ReaderUnit(), d_name(name), d_connectedName(name)
 	{
-		d_name = name;
-		d_connectedName = d_name;
+		memset(d_atr, 0x00, sizeof(d_atr));
 		d_sch = 0;
 		d_share_mode = SM_SHARED;
 		d_ap = 0;
@@ -1019,30 +1018,15 @@ namespace logicalaccess
 					switch (atr[16])
 					{
 						case 0x11:
-							{
-								return "Mifare1K";
-								break;
-							}
+							return "Mifare1K";
 						case 0x21:
-							{
-								return "Mifare4K";
-								break;
-							}
+							return "Mifare4K";
 						case 0x93:
-							{
-								return "HIDiClass2KS";
-								break;
-							}
+							return "HIDiClass2KS";
 						case 0xA3:
-							{
-								return "HIDiClass16KS";
-								break;
-							}
+							return "HIDiClass16KS";
 						case 0xB3:
-							{
-								return "HIDiClass8x2KS";
-								break;
-							}
+							return "HIDiClass8x2KS";
 					}
 				} else if ((atr[0] == 0x3B) && (atr[1] == 0xF5))	// Specific Mifare classic stuff (coming from smartcard_list)
 				{
@@ -1337,9 +1321,9 @@ namespace logicalaccess
 						EXCEPTION_ASSERT_WITH_LOG(x < historicalBytesLength, LibLogicalAccessException, "Bad historical buffer. Too short to retrieve length from historical bytes.");
 						unsigned char length = atr[y + x++];
 
-						unsigned int w = 0;
 						if (aidIndicator == 0x4F)
-						{						
+						{	
+							unsigned int w = 0;
 							EXCEPTION_ASSERT_WITH_LOG(length >= 5, LibLogicalAccessException, "Bad internal historical buffer. Too short to retrieve the RID.");
 							unsigned char pcscRID[5] = {0xA0, 0x00, 0x00, 0x03, 0x06};
 							unsigned char rid[5];
@@ -1361,10 +1345,9 @@ namespace logicalaccess
 									break;
 								}
 
-								EXCEPTION_ASSERT_WITH_LOG(w+1 < length, LibLogicalAccessException, "Bad internal historical buffer. Too short to retrieve the Card Name.");
+								EXCEPTION_ASSERT_WITH_LOG(w + 1 < length, LibLogicalAccessException, "Bad internal historical buffer. Too short to retrieve the Card Name.");
 								unsigned char cardName[2];
 								memcpy(cardName, &atr[y + x + w], sizeof(cardName));
-								w += sizeof(cardName);
 
 								isStorageCard = true;
 							}
@@ -1432,8 +1415,6 @@ namespace logicalaccess
 
 	boost::shared_ptr<Chip> PCSCReaderUnit::createChip(std::string type)
 	{
-		std::string getterName;
-
 		if (d_proxyReaderUnit)
 		{
 			return d_proxyReaderUnit->createChip(type);

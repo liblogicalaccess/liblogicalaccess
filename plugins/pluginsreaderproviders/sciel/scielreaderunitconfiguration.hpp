@@ -56,7 +56,7 @@ namespace logicalaccess
 			 * \brief Get the tag-out threshold.
 			 * \return The tag-out threshold.
 			 */
-			unsigned char getTagOutThreshold() { return d_tagOutThreshold; };
+			unsigned char getTagOutThreshold() const { return d_tagOutThreshold; };
 
 			/**
 			 * \brief Set the tag-out threshold.
@@ -68,7 +68,7 @@ namespace logicalaccess
 			 * \brief Get the tag-in threshold.
 			 * \return The tag-in threshol.
 			 */
-			unsigned char getTagInThreshold() { return d_tagInThreshold; };
+			unsigned char getTagInThreshold() const { return d_tagInThreshold; };
 
 			/**
 			 * \brief Set the tag-in threshold.
@@ -80,7 +80,7 @@ namespace logicalaccess
 			 * \brief Get the safety threshold.
 			 * \return The safety threshol.
 			 */
-			unsigned char getSafetyThreshold() { return d_safetyThreshold; };
+			unsigned char getSafetyThreshold() const { return d_safetyThreshold; };
 
 			/**
 			 * \brief Set the safety threshold.
@@ -92,7 +92,7 @@ namespace logicalaccess
 			 * \brief Get the time before the tag is considered as "in", in milliseconds.
 			 * \return The time.
 			 */
-			unsigned short getTimeBeforeTagIn() { return d_timeBeforeTagIn; };
+			unsigned short getTimeBeforeTagIn() const { return d_timeBeforeTagIn; };
 
 			/**
 			 * \brief Set the time before the tag is considered as "in", in milliseconds.
@@ -104,7 +104,7 @@ namespace logicalaccess
 			 * \brief Get the time before the tag is considered as "out", in seconds.
 			 * \return The time.
 			 */
-			unsigned short getTimeBeforeTagOut() { return d_timeBeforeTagOut; };
+			unsigned short getTimeBeforeTagOut() const { return d_timeBeforeTagOut; };
 
 			/**
 			 * \brief Set the time before the tag is considered as "out", in seconds.
@@ -116,7 +116,7 @@ namespace logicalaccess
 			 * \brief Get the time before the tag is considered as in safety zone, in milliseconds.
 			 * \return The time.
 			 */
-			unsigned short getTimeBeforeSafety() { return d_timeBeforeSafety; };
+			unsigned short getTimeBeforeSafety() const { return d_timeBeforeSafety; };
 
 			/**
 			 * \brief Set the time before the tag is considered as in safety zone, in milliseconds.
@@ -128,7 +128,7 @@ namespace logicalaccess
 			 * \brief Get the time before the tag is removed from the stack, in seconds.
 			 * \return The time.
 			 */
-			unsigned char getTimeRemoval() { return d_timeRemoval; };
+			unsigned char getTimeRemoval() const { return d_timeRemoval; };
 
 			/**
 			 * \brief Set the time before the tag is removed from the stack, in seconds.

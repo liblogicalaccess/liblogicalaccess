@@ -34,7 +34,7 @@ namespace logicalaccess
 	{
 		boost::shared_ptr<LocationNode> rootNode;
 		rootNode.reset(new LocationNode());
-		char tmpName[128];
+		char tmpName[32];
 
 		rootNode->setName("Mifare DESFire");
 		rootNode->setHasProperties(true);

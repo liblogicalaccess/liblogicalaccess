@@ -92,7 +92,7 @@ namespace logicalaccess
 			 * \brief Get the transmission protocol.
 			 * \return The transmission protocol.
 			 */
-			unsigned int getTransmissionProtocol();
+			unsigned int getTransmissionProtocol() const;
 
 			/**
 			 * \brief Set the transmission protocol.
@@ -104,7 +104,7 @@ namespace logicalaccess
 			 * \brief Get the share mode.
 			 * \return The share mode.
 			 */
-			PCSCShareMode getShareMode();
+			PCSCShareMode getShareMode() const;
 
 			/**
 			 * \brief Set the share mode.

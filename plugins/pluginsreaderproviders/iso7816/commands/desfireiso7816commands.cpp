@@ -239,7 +239,7 @@ namespace logicalaccess
         if (cryptogram.size() > 0)
         {
 			command.insert(command.end(), cryptogram.begin(), cryptogram.end());
-            std::vector<unsigned char> result = transmit(DF_INS_CHANGE_KEY, command);
+            transmit(DF_INS_CHANGE_KEY, command);
         }
     }
 
@@ -361,7 +361,7 @@ namespace logicalaccess
         return ret;
     }
 
-    void DESFireISO7816Commands::handleWriteData(unsigned char cmd, unsigned char* parameters, unsigned int paramLength, const std::vector<unsigned char> data, EncryptionMode mode)
+    void DESFireISO7816Commands::handleWriteData(unsigned char cmd, unsigned char* parameters, unsigned int paramLength, const std::vector<unsigned char>& data, EncryptionMode mode)
     {
         std::vector<unsigned char> edata, command(64);
         size_t pos = 0;
@@ -829,7 +829,7 @@ namespace logicalaccess
         return transmit(cmd, std::vector<unsigned char>(), lc, true);
     }
 
-    std::vector<unsigned char> DESFireISO7816Commands::transmit(unsigned char cmd, const std::vector<unsigned char> data, unsigned char lc, bool forceLc)
+    std::vector<unsigned char> DESFireISO7816Commands::transmit(unsigned char cmd, const std::vector<unsigned char>& data, unsigned char lc, bool forceLc)
     {		
 		if (data.size())
         {

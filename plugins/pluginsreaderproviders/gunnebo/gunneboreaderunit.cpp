@@ -154,9 +154,9 @@ namespace logicalaccess
 
 		INFO_("Waiting removal... max wait {%u}", maxwait);
 		bool removed = false;
-		unsigned int currentWait = 0;
 		removalIdentifier.clear();
 
+		unsigned int currentWait = 0;
 		try
 		{
 			// The inserted chip will stay inserted until a new identifier is read on the serial port.

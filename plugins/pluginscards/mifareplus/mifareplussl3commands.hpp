@@ -78,7 +78,7 @@ namespace logicalaccess
 			 */
 			static unsigned char getNbBlocks(int sector);
 
-			unsigned short getBlockNo(int sector, int block) const;
+			static unsigned short getBlockNo(int sector, int block);
 
 			/**
 			 * \brief Authenticate a block, given a key number.

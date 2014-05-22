@@ -148,7 +148,6 @@ namespace logicalaccess
 				command.push_back (static_cast<unsigned char>(HidCommand::WAIT_REMOVAL));
 				command.push_back (static_cast<unsigned char>(0x04));
 				BufferHelper::setUInt32(command, maxwait);
-				std::vector<unsigned char> answer;
 				try
 				{
 					getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true, maxwait + 2000);
@@ -552,12 +551,12 @@ namespace logicalaccess
 			{
 				std::list<std::vector<unsigned char> > &badges = dt->getBadges();
 
-				if (badges.size() == 0)
+				if (badges.empty())
 				{
 					getDefaultRplethReaderCardAdapter()->sendRplethCommand(cmd, false, timeout);
 				}
 
-				if (badges.size())
+				if (!badges.empty())
 				{
 					res = badges.front();
 					badges.pop_front();
@@ -574,14 +573,14 @@ namespace logicalaccess
 		return res;
 	}
 
-	std::vector<unsigned char> RplethReaderUnit::getCsn (const std::vector<unsigned char>& trame)
+	std::vector<unsigned char> RplethReaderUnit::getCsn(const std::vector<unsigned char>& trame)
 	{
 		std::vector<unsigned char> result;
 		long long tmp = 0;
 		boost::shared_ptr<RplethReaderUnitConfiguration> conf = boost::dynamic_pointer_cast<RplethReaderUnitConfiguration>(d_readerUnitConfig);
 		if (conf->getLength() != 0)
 		{
-			if (trame.size()*8 >= static_cast<size_t>(conf->getLength() + conf->getOffset()))
+			if (trame.size() * 8 >= static_cast<size_t>(conf->getLength() + conf->getOffset()))
 			{
 				for (int i = 0; i < static_cast<int>(trame.size()); i++)
 				{
@@ -589,12 +588,12 @@ namespace logicalaccess
 					tmp |= trame[i];
 				}
 				tmp >>= conf->getOffset();
-				tmp &= static_cast<int>(pow(2, conf->getLength())-1);
+				tmp &= static_cast<int>(pow(2, conf->getLength()) - 1);
 				int size = 0;
-				if (conf->getLength()%8==0)
-					size = conf->getLength()/8;
+				if (conf->getLength() % 8 == 0)
+					size = conf->getLength() / 8;
 				else
-					size = conf->getLength()/8+1;
+					size = conf->getLength() / 8 + 1;
 				for (int i = 0, j = 0; i < size; i++, j += 8)
 				{
 					result.insert(result.begin(), (tmp >> j) & 0xff);

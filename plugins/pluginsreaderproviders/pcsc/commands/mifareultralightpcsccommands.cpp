@@ -64,9 +64,7 @@ namespace logicalaccess
 		std::vector<unsigned char> data;
 		data.insert(data.begin(), (unsigned char*)buf, (unsigned char*)buf + buflen);
 
-		std::vector<unsigned char> result;
-
-		result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xD6, 0x00, static_cast<unsigned char>(page), static_cast<unsigned char>(data.size()), data);
+		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xD6, 0x00, static_cast<unsigned char>(page), static_cast<unsigned char>(data.size()), data);
 		r = buflen;
 
 		return r;

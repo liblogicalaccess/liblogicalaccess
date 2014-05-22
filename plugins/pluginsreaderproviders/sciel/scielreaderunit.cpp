@@ -110,8 +110,7 @@ namespace logicalaccess
 		INFO_("Waiting removal... max wait {%u}", maxwait);
 
 		bool removed = false;
-		unsigned int currentWait = 0;	
-		
+		unsigned int currentWait = 0;
 		if (d_insertedChip)
 		{
 			do
@@ -275,7 +274,6 @@ namespace logicalaccess
 		{
 			int timeInArea = 1;
 			bool forceTagArea = false;
-			bool insertChip = false;
 
 			// Refresh inserted chip info
 			if (d_insertedChip)
@@ -315,6 +313,7 @@ namespace logicalaccess
 				// We don't care about chip in tag-*** area if chip exists in safety area
 				if (!safetyAreaUsed)
 				{
+					bool insertChip = false;
 					if ((*i)->getReceptionLevel() <= getSCIELConfiguration()->getTagInThreshold())
 					{
 						if (getSCIELConfiguration()->getTagInThreshold() < getSCIELConfiguration()->getTagOutThreshold())

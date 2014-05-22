@@ -29,7 +29,7 @@ namespace logicalaccess
 		d_encryptionMode = HID_AUTO;
 	}
 
-	bool OmnikeyXX21ReaderUnitConfiguration::getUseSecureMode()
+	bool OmnikeyXX21ReaderUnitConfiguration::getUseSecureMode() const
 	{
 		return d_useSecureMode;
 	}
@@ -39,7 +39,7 @@ namespace logicalaccess
 		d_useSecureMode = use_sm;
 	}
 
-	HIDEncryptionMode OmnikeyXX21ReaderUnitConfiguration::getEncryptionMode()
+	HIDEncryptionMode OmnikeyXX21ReaderUnitConfiguration::getEncryptionMode() const
 	{
 		return d_encryptionMode;
 	}
@@ -49,7 +49,7 @@ namespace logicalaccess
 		d_encryptionMode = encryption_mode;
 	}
 
-	boost::shared_ptr<TripleDESKey> OmnikeyXX21ReaderUnitConfiguration::getSecureReadKey()
+	boost::shared_ptr<TripleDESKey> OmnikeyXX21ReaderUnitConfiguration::getSecureReadKey() const
 	{
 		return d_secureReadKey;
 	}
@@ -59,7 +59,7 @@ namespace logicalaccess
 		d_secureReadKey = key;
 	}
 
-	boost::shared_ptr<TripleDESKey> OmnikeyXX21ReaderUnitConfiguration::getSecureWriteKey()
+	boost::shared_ptr<TripleDESKey> OmnikeyXX21ReaderUnitConfiguration::getSecureWriteKey() const
 	{
 		return d_secureWriteKey;
 	}

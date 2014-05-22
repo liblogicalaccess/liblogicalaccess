@@ -24,7 +24,7 @@ namespace logicalaccess
 		}
 	}
 
-	std::vector<unsigned char> ISO7816ReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const std::vector<unsigned char> data, unsigned char le)
+	std::vector<unsigned char> ISO7816ReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const std::vector<unsigned char>& data, unsigned char le)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(cla);
@@ -38,7 +38,7 @@ namespace logicalaccess
 		return sendCommand(command);
 	}
 
-	std::vector<unsigned char> ISO7816ReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const std::vector<unsigned char> data)
+	std::vector<unsigned char> ISO7816ReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const std::vector<unsigned char>& data)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(cla);
@@ -51,7 +51,7 @@ namespace logicalaccess
 		return sendCommand(command);
 	}	
 
-	std::vector<unsigned char> ISO7816ReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, const std::vector<unsigned char> data)
+	std::vector<unsigned char> ISO7816ReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, const std::vector<unsigned char>& data)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(cla);

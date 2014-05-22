@@ -48,7 +48,7 @@ namespace logicalaccess
 		d_buffer.clear();
 	}
 
-	unsigned char RplethDataTransport::calcChecksum(const std::vector<unsigned char>& data)
+	unsigned char RplethDataTransport::calcChecksum(const std::vector<unsigned char>& data) const
 	{
 		unsigned char bcc = 0x00;
 

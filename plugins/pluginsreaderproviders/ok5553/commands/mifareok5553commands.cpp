@@ -58,7 +58,6 @@ namespace logicalaccess
 	
 	size_t MifareOK5553Commands::updateBinary(unsigned char blockno, const void* buf, size_t buflen)
 	{
-		size_t result = 0;
 		char tmp [3];
 		std::vector<unsigned char> command;
 		std::vector<unsigned char> answer;
@@ -78,7 +77,7 @@ namespace logicalaccess
 			buflen = answer.size();
 		else
 			buflen = 0;
-		return result;
+		return buflen;
 	}
 	
 	bool MifareOK5553Commands::loadKey(unsigned char keyno, MifareKeyType /*keytype*/, const void* key, size_t keylen, bool vol)

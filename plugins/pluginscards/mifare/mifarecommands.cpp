@@ -428,7 +428,7 @@ namespace logicalaccess
 		return ((sector >= 32) ? 15 : 3);
 	}
 
-	unsigned char MifareCommands::getSectorStartBlock(int sector) const
+	unsigned char MifareCommands::getSectorStartBlock(int sector)
 	{
 		unsigned char start_block = 0;
 		for (int i = 0; i < sector; ++i)

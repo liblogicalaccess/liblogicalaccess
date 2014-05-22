@@ -11,12 +11,14 @@ namespace logicalaccess
 	AES128Key::AES128Key()
 		: Key()
 	{
+		memset(d_key, 0x00, sizeof(d_key));
 		clear();
 	}
 
 	AES128Key::AES128Key(const std::string& str)
 		: Key()
 	{
+		memset(d_key, 0x00, sizeof(d_key));
 		fromString(str);
 	}
 

@@ -23,6 +23,8 @@ namespace logicalaccess
 	RFIDeasReaderUnit::RFIDeasReaderUnit()
 		: ReaderUnit()
 	{
+		d_lastTagIdBitsLength = 0x00;
+		d_deviceId = 0x00;
 		d_readerUnitConfig.reset(new RFIDeasReaderUnitConfiguration());
 		d_card_type = "GenericTag";
 
@@ -188,10 +190,10 @@ namespace logicalaccess
 	bool RFIDeasReaderUnit::waitRemoval(unsigned int maxwait)
 	{
 		bool removed = false;
-		unsigned int currentWait = 0;
 
 		if (d_insertedChip)
 		{
+			unsigned int currentWait = 0;
 			do
 			{
 				std::vector<unsigned char> tagid = getTagId();

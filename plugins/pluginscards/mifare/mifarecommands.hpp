@@ -200,7 +200,7 @@ namespace logicalaccess
 			 * \param sector The sector.
 			 * \return The first block for this sector.
 			 */
-			unsigned char getSectorStartBlock(int sector) const;
+			static unsigned char getSectorStartBlock(int sector);
 
 		protected:
 

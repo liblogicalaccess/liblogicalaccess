@@ -54,7 +54,7 @@ namespace logicalaccess
 			/**
 			 * \brief get the SAM type.
 			 */
-			std::string getSAMType();
+			std::string getSAMType() const;
 
 			/**
 			 * \brief Set the SAM reader name.
@@ -65,7 +65,7 @@ namespace logicalaccess
 			/**
 			 * \brief get the SAM reader name.
 			 */
-			std::string getSAMReaderName();
+			std::string getSAMReaderName() const;
 
 			/**
 			 * \brief Serialize the current object to XML.

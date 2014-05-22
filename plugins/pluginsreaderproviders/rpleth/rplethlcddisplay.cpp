@@ -16,7 +16,6 @@ namespace logicalaccess
 	void RplethLCDDisplay::setMessage(std::string message)
 	{
 		std::vector<unsigned char> command;
-		std::vector<unsigned char> answer;
 		command.push_back (static_cast<unsigned char>(Device::LCD));
 		command.push_back (static_cast<unsigned char>(LcdCommand::DISPLAY));
 		command.push_back (static_cast<unsigned char>(message.size()));
@@ -27,7 +26,6 @@ namespace logicalaccess
 	void RplethLCDDisplay::setMessage(std::string message, int time)
 	{
 		std::vector<unsigned char> command;
-		std::vector<unsigned char> answer;
 		command.push_back (static_cast<unsigned char>(Device::LCD));
 		command.push_back (static_cast<unsigned char>(LcdCommand::DISPLAYT));
 		command.push_back (static_cast<unsigned char>(message.size()+1));
@@ -44,7 +42,6 @@ namespace logicalaccess
 	void RplethLCDDisplay::setDisplayTime(int time)
 	{
 		std::vector<unsigned char> command;
-		std::vector<unsigned char> answer;
 		command.push_back (static_cast<unsigned char>(Device::LCD));
 		command.push_back (static_cast<unsigned char>(LcdCommand::DISPLAYTIME));
 		command.push_back (static_cast<unsigned char>(0x01));
@@ -55,7 +52,6 @@ namespace logicalaccess
 	void RplethLCDDisplay::blink()
 	{
 		std::vector<unsigned char> command;
-		std::vector<unsigned char> answer;
 		command.push_back (static_cast<unsigned char>(Device::LCD));
 		command.push_back (static_cast<unsigned char>(LcdCommand::BLINK));
 		command.push_back (static_cast<unsigned char>(0x00));
@@ -65,7 +61,6 @@ namespace logicalaccess
 	void RplethLCDDisplay::autoScroll()
 	{
 		std::vector<unsigned char> command;
-		std::vector<unsigned char> answer;
 		command.push_back (static_cast<unsigned char>(Device::LCD));
 		command.push_back (static_cast<unsigned char>(LcdCommand::SCROLL));
 		command.push_back (static_cast<unsigned char>(0x00));

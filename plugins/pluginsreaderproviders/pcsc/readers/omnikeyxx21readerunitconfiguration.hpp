@@ -73,7 +73,7 @@ namespace logicalaccess
 			 * \brief Get if the secure mode is used.
 			 * \return The secure mode value, true if used, false otherwise.
 			 */
-			bool getUseSecureMode();
+			bool getUseSecureMode() const;
 
 			/**
 			 * \brief Set if the secure mode is used.
@@ -85,7 +85,7 @@ namespace logicalaccess
 			 * \brief Get the encryption mode.
 			 * \return The encryption mode.
 			 */
-			HIDEncryptionMode getEncryptionMode();
+			HIDEncryptionMode getEncryptionMode() const;
 
 			/**
 			 * \brief Set the encryption mode.
@@ -97,7 +97,7 @@ namespace logicalaccess
 			 * \brief Get the read key used in secure mode.
 			 * \return The read key.
 			 */
-			boost::shared_ptr<TripleDESKey> getSecureReadKey();
+			boost::shared_ptr<TripleDESKey> getSecureReadKey() const;
 
 			/**
 			 * \brief Set the read key used in secure mode.
@@ -109,7 +109,7 @@ namespace logicalaccess
 			 * \brief Get the write key used in secure mode.
 			 * \return The write key.
 			 */
-			boost::shared_ptr<TripleDESKey> getSecureWriteKey();
+			boost::shared_ptr<TripleDESKey> getSecureWriteKey() const;
 
 			/**
 			 * \brief Set the read key used in secure mode.

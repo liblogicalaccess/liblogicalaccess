@@ -29,7 +29,8 @@ namespace logicalaccess
 	private:
 		LibraryManager() {};
 		~LibraryManager() {};
-		bool hasEnding(std::string const &fullString, std::string ending);
+
+		static bool hasEnding(std::string const &fullString, std::string ending);
 
 	public:
 		static LibraryManager *getInstance()
@@ -45,21 +46,21 @@ namespace logicalaccess
 		boost::shared_ptr<ReaderProvider> getReaderProvider(const std::string& readertype);
 		boost::shared_ptr<Chip> getCard(const std::string& cardtype);
 		boost::shared_ptr<Commands> getCommands(const std::string& extendedtype);
-		boost::shared_ptr<DataTransport> getDataTransport(const std::string& transporttype);
+		static boost::shared_ptr<DataTransport> getDataTransport(const std::string& transporttype);
 		boost::shared_ptr<KeyDiversification> getKeyDiversification(const std::string& keydivtype);
 
 		std::vector<std::string> getAvailableCards();
 
 		std::vector<std::string> getAvailableReaders();
 
-		std::vector<std::string> getAvailableDataTransports();
+		static std::vector<std::string> getAvailableDataTransports();
 
 		void scanPlugins();
 
 	protected:
 
 		std::vector<std::string> getAvailablePlugins(LibraryType libraryType);
-		void getAvailablePlugins(std::vector<std::string>& plugins, getobjectinfoat objectinfoptr);
+		static void getAvailablePlugins(std::vector<std::string>& plugins, getobjectinfoat objectinfoptr);
 
 	private:
 		std::map<std::string, IDynLibrary*> libLoaded;
