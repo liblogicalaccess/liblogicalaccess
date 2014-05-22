@@ -209,7 +209,6 @@ namespace logicalaccess
 		}
 
 		DESFireKeySettings appKeySettings = KS_DEFAULT;
-		unsigned char appMaxNbKeys = 3;
 
 		bool needLoadKey = true;
 		createArbo = true;
@@ -217,6 +216,7 @@ namespace logicalaccess
 		{
 			getDESFireChip()->getDESFireCommands()->authenticate(0);
 
+			unsigned char appMaxNbKeys = 3;
 			getDESFireChip()->getDESFireCommands()->getKeySettings(appKeySettings, appMaxNbKeys);
 			std::vector<unsigned char> files = getDESFireChip()->getDESFireCommands()->getFileIDs();
 

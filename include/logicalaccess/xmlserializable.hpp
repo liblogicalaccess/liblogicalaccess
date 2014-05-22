@@ -153,7 +153,7 @@ namespace logicalaccess
 
 	protected:
 
-			unsigned long long atoull(const std::string& str);
+			static unsigned long long atoull(const std::string& str);
 	};	
 }
 

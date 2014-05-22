@@ -153,10 +153,6 @@ namespace logicalaccess
 		{
 			BitHelper::writeToBit(data, dataLengthBytes, &pos, calcChecksum(reinterpret_cast<const unsigned char*>(data), static_cast<unsigned int>((pos + 7) / 8)));
 		}
-		else
-		{
-			pos += 8;
-		}
 	}
 
 	void BariumFerritePCSCFormat::setLinearData(const void* data, size_t dataLengthBytes)
@@ -198,10 +194,6 @@ namespace logicalaccess
 				sprintf(exceptionmsg, "Barium Ferrit PCSC: checked doesn't match (%x != %x).", currentChecksum, checksum);
 				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, exceptionmsg);
 			}
-		}
-		else
-		{
-			pos += 8;
 		}
 	}
 }

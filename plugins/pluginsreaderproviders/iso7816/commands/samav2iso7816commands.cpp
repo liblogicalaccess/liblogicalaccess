@@ -497,8 +497,7 @@ namespace logicalaccess
 		unsigned char proMas = keyentry->getUpdateMask();
 
 		size_t buffer_size = keyentry->getLength() + sizeof(KeyEntryAV2Information);
-		unsigned char *data = new unsigned char[buffer_size];
-		memset(data, 0, buffer_size);
+		unsigned char *data = new unsigned char[buffer_size]();
 
 		memcpy(data, &*(keyentry->getData()), keyentry->getLength());
 		memcpy(data + 48, &keyentry->getKeyEntryInformation(), sizeof(KeyEntryAV2Information));

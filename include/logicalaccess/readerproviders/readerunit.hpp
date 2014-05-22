@@ -12,6 +12,8 @@
 #include "logicalaccess/readerproviders/ledbuzzerdisplay.hpp"
 #include "logicalaccess/myexception.hpp"
 #include <map>
+#include <chrono>
+#include <thread>
 
 #ifdef UNIX
 #include <PCSC/wintypes.h>

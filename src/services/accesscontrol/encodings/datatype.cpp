@@ -54,7 +54,7 @@ namespace logicalaccess
 		d_leftParityType = type;
 	}
 
-	ParityType DataType::getLeftParityType()
+	ParityType DataType::getLeftParityType() const
 	{
 		return d_leftParityType;
 	}
@@ -64,7 +64,7 @@ namespace logicalaccess
 		d_rightParityType = type;
 	}
 
-	ParityType DataType::getRightParityType()
+	ParityType DataType::getRightParityType() const
 	{
 		return d_rightParityType;
 	}
@@ -74,7 +74,7 @@ namespace logicalaccess
 		d_bitDataRepresentationType = bitDataRepresentationType;
 	}
 
-	EncodingType DataType::getBitDataRepresentationType()
+	EncodingType DataType::getBitDataRepresentationType() const
 	{
 		return d_bitDataRepresentationType;
 	}
@@ -107,7 +107,6 @@ namespace logicalaccess
 			size_t buflenBytes = (buflen + 7) / 8;
 			size_t procbuflenBytes = (procbuflen + 7) / 8;
 			unsigned int pos = 0;
-			unsigned int currentBlocklen;
 
 			while (pos < buflen)
 			{
@@ -117,7 +116,7 @@ namespace logicalaccess
 					BitHelper::writeToBit(procbuf, procbuflenBytes, &posproc, parity, 7, 1);
 				}
 
-				currentBlocklen = (pos + blocklen <= buflen) ? blocklen : buflen - pos;
+				unsigned int currentBlocklen = (pos + blocklen <= buflen) ? blocklen : buflen - pos;
 				BitHelper::writeToBit(procbuf, procbuflenBytes, &posproc, buf, buflenBytes, buflen, pos, currentBlocklen);
 
 				if (rightParity != PT_NONE)
@@ -154,7 +153,6 @@ namespace logicalaccess
 			{
 				unsigned int posproc = 0;
 				size_t procbuflenBytes = (procbuflen + 7) / 8;
-				unsigned int currentBlocklen;
 
 				unsigned int pos = 0;
 				while (pos < buflen)
@@ -172,7 +170,7 @@ namespace logicalaccess
 						}
 					}
 
-					currentBlocklen = ((pos + blocklen +((rightParity != PT_NONE) ? 1 : 0)) <= buflen) ? blocklen : buflen - pos - ((rightParity != PT_NONE) ? 1 : 0);
+					unsigned int currentBlocklen = ((pos + blocklen +((rightParity != PT_NONE) ? 1 : 0)) <= buflen) ? blocklen : buflen - pos - ((rightParity != PT_NONE) ? 1 : 0);
 					BitHelper::writeToBit(procbuf, procbuflenBytes, &posproc, buf, buflenBytes, buflen, pos, currentBlocklen);
 					pos += currentBlocklen;
 

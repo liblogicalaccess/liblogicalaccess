@@ -84,11 +84,7 @@ namespace logicalaccess
 
 			if (!inserted)
 			{
-#ifdef _WINDOWS
-				Sleep(100);
-#elif defined(__unix__)
-				usleep(100000);
-#endif
+				std::this_thread::sleep_for(std::chrono::milliseconds(100));
 				currentWait += 100;
 			}
 		} while (!inserted && (maxwait == 0 || currentWait < maxwait));
@@ -99,7 +95,6 @@ namespace logicalaccess
 	bool AxessTMC13ReaderUnit::waitRemoval(unsigned int maxwait)
 	{
 		bool removed = false;
-		unsigned int currentWait = 0;
 
 		if(d_tmcIdentifier.size() == 0)
 		{
@@ -108,6 +103,7 @@ namespace logicalaccess
 
 		if (d_insertedChip)
 		{
+			unsigned int currentWait = 0;
 			do
 			{
 				boost::shared_ptr<Chip> chip = getChipInAir();
@@ -127,11 +123,7 @@ namespace logicalaccess
 
 				if (!removed)
 				{
-	#ifdef _WINDOWS
-					Sleep(100);
-	#elif defined(__unix__)
-					usleep(100000);
-	#endif
+					std::this_thread::sleep_for(std::chrono::milliseconds(100));
 					currentWait += 100;
 				}
 			} while (!removed && (maxwait == 0 || currentWait < maxwait));

@@ -15,10 +15,8 @@
 
 namespace logicalaccess
 {
-	TcpDataTransport::TcpDataTransport()
+	TcpDataTransport::TcpDataTransport() : d_ipAddress("127.0.0.1"), d_port(9559)
 	{
-		d_ipAddress = "127.0.0.1";
-		d_port = 23;
 	}
 
 	TcpDataTransport::~TcpDataTransport()
@@ -45,7 +43,7 @@ namespace logicalaccess
 		d_port = port;
 	}
 
-	boost::shared_ptr<boost::asio::ip::tcp::socket> TcpDataTransport::getSocket()
+	boost::shared_ptr<boost::asio::ip::tcp::socket> TcpDataTransport::getSocket() const
 	{
 		return d_socket;
 	}
@@ -120,11 +118,7 @@ namespace logicalaccess
 		while (lenav == 0 && (timeout == 0 || currentWait < timeout))
 		{
 
-	#ifdef _WINDOWS
-			Sleep(250);
-	#elif defined(__unix__)
-			usleep(250000);
-	#endif
+			std::this_thread::sleep_for(std::chrono::milliseconds(250));
 			currentWait += 250;
 
 			lenav = socket->available();

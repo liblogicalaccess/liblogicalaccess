@@ -749,8 +749,6 @@ namespace logicalaccess
     void DESFireEV1ISO7816Commands::handleWriteData(unsigned char cmd, unsigned char* parameters, unsigned int paramLength, const std::vector<unsigned char>& data, EncryptionMode mode)
     {
         std::vector<unsigned char> edata, command;
-        size_t pos = 0;
-        size_t pkSize = 0;
 
         d_crypto->initBuf(data.size());
         size_t DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK = (DESFIRE_CLEAR_DATA_LENGTH_CHUNK - 8);
@@ -874,10 +872,10 @@ namespace logicalaccess
         unsigned char err = result[result.size() - 1];
         if (data.size() > DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK)
         {
-            pos += DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK;
+            size_t pos = DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK;
             while (err == DF_INS_ADDITIONAL_FRAME) // && pos < dataLength
             {
-                pkSize = ((data.size() - pos) >= (DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK)) ? (DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK) : (data.size() - pos);
+                size_t pkSize = ((data.size() - pos) >= (DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK)) ? (DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK) : (data.size() - pos);
 
                 switch (mode)
                 {

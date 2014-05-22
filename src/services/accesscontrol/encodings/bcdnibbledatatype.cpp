@@ -37,11 +37,11 @@ namespace logicalaccess
 		unsigned char* tmp = new unsigned char[64];
 		memset(tmp, 0x00, 64);
 
-		unsigned int shft, i, offset;
+		unsigned int shft, i;
 
 		for (shft = 0, i = 0; shft < dataLengthBits; shft += 4, ++i)
 		{
-			offset = ((i % 2) ==  0) ? 0 : 4;
+			unsigned int offset = ((i % 2) ==  0) ? 0 : 4;
 			unsigned char c = (unsigned char)(data % 10);
 			if (d_bitDataRepresentationType == ET_LITTLEENDIAN)
 			{

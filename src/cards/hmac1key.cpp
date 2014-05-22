@@ -11,6 +11,7 @@ namespace logicalaccess
 	HMAC1Key::HMAC1Key()
 		: Key()
 	{
+		memset(d_key, 0x00, sizeof(d_key));
 		clear();
 	}
 

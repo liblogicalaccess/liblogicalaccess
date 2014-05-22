@@ -29,9 +29,8 @@
 namespace logicalaccess
 {
 	ReaderUnit::ReaderUnit()
-		: XmlSerializable()
+		: XmlSerializable(), d_card_type("UNKNOWN")
 	{
-		d_card_type = "UNKNOWN";
 
 		try
 		{

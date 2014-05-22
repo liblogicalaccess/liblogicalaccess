@@ -31,13 +31,12 @@ namespace logicalaccess
 		unsigned int i;
 		unsigned int j;
 		unsigned char zeroblock[16];
-		bool erased;
 
 		memset(zeroblock, 0x00, 16);
 
 		for (i = 0; i < boost::dynamic_pointer_cast<MifarePlusChip>(getChip())->getNbSectors(); ++i)
 		{
-			erased = true;
+			bool erased = true;
 			if (boost::dynamic_pointer_cast<MifarePlusSL3Profile>(getChip()->getProfile())->getKeyUsage(i, KT_KEY_AES_B))
 			{
 				if (getMifarePlusChip()->getMifarePlusSL3Commands()->authenticate(i, profile->getKey(i, KT_KEY_AES_B), KT_KEY_AES_B))
@@ -90,12 +89,6 @@ namespace logicalaccess
 
 	void MifarePlusSL3StorageCardService::writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> /*aiToUse*/, boost::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags)
 	{
-		int i;
-		size_t bufIndex = 0;
-		size_t toWriteLen = 0;
-		size_t sectorLen;
-		int stopSector;
-
 		if (data == NULL || dataLength < MIFARE_PLUS_BLOCK_SIZE || dataLength % 16 != 0)
 		{
 			THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter. Data length must be multiple of 16.");
@@ -118,9 +111,10 @@ namespace logicalaccess
 			mAiToWrite = boost::dynamic_pointer_cast<MifarePlusAccessInfo>(getChip()->getProfile()->createAccessInfo());
 		}
 
+		size_t bufIndex = 0;
 		if (mLocation->block > 0)
 		{
-			sectorLen = (getMifarePlusChip()->getMifarePlusSL3Commands()->getNbBlocks(mLocation->sector) - mLocation->block) * MIFARE_PLUS_BLOCK_SIZE;
+			size_t sectorLen = (getMifarePlusChip()->getMifarePlusSL3Commands()->getNbBlocks(mLocation->sector) - mLocation->block) * MIFARE_PLUS_BLOCK_SIZE;
 			if (dataLength < sectorLen)
 				sectorLen = dataLength;
 			if (mAiToWrite->keyB && !mAiToWrite->keyB->isEmpty())
@@ -139,11 +133,13 @@ namespace logicalaccess
 
 		if (bufIndex < dataLength)
 		{
+			int stopSector;
 			if (!(behaviorFlags & CB_AUTOSWITCHAREA))
 				stopSector = mLocation->sector;
 			else
 			{
-				toWriteLen = 0;
+				size_t toWriteLen = 0;
+				int i;
 				for (i = 0; bufIndex + toWriteLen < dataLength; ++i)
 				{
 					toWriteLen += getMifarePlusChip()->getMifarePlusSL3Commands()->getNbBlocks(i) * MIFARE_PLUS_BLOCK_SIZE;
@@ -156,12 +152,6 @@ namespace logicalaccess
 
 	void MifarePlusSL3StorageCardService::readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags)
 	{
-		int i;
-		size_t bufIndex = 0;
-		size_t toReadLen = 0;
-		size_t sectorLen;
-		int stopSector;
-
 		if (data == NULL || dataLength < MIFARE_PLUS_BLOCK_SIZE || dataLength % 16 != 0)
 		{
 			THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter. Data length must be multiple of 16.");
@@ -184,9 +174,10 @@ namespace logicalaccess
 			mAiToUse = boost::dynamic_pointer_cast<MifarePlusAccessInfo>(getChip()->getProfile()->createAccessInfo());
 		}
 
+		size_t bufIndex = 0;
 		if (mLocation->block > 0)
 		{
-			sectorLen = (getMifarePlusChip()->getMifarePlusSL3Commands()->getNbBlocks(mLocation->sector) - mLocation->block) * MIFARE_PLUS_BLOCK_SIZE;
+			size_t sectorLen = (getMifarePlusChip()->getMifarePlusSL3Commands()->getNbBlocks(mLocation->sector) - mLocation->block) * MIFARE_PLUS_BLOCK_SIZE;
 			if (dataLength < sectorLen)
 				sectorLen = dataLength;
 			if (mAiToUse->keyA && !mAiToUse->keyA->isEmpty())
@@ -205,11 +196,13 @@ namespace logicalaccess
 
 		if (bufIndex < dataLength)
 		{
+			int stopSector;
 			if (!(behaviorFlags & CB_AUTOSWITCHAREA))
 				stopSector = mLocation->sector;
 			else
 			{
-				toReadLen = 0;
+				size_t toReadLen = 0;
+				int i;
 				for (i = 0; bufIndex + toReadLen < dataLength; ++i)
 				{
 					toReadLen += getMifarePlusChip()->getMifarePlusSL3Commands()->getNbBlocks(i) * MIFARE_PLUS_BLOCK_SIZE;

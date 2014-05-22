@@ -32,7 +32,7 @@ namespace logicalaccess
 			static Settings* getInstance();
 			
 			void Initialize();  
-			void Uninitialize();  
+			static void Uninitialize();  
 
 			/* Logs */
 			bool IsLogEnabled;
@@ -54,7 +54,7 @@ namespace logicalaccess
 			std::string DefaultReader;
 			std::vector<std::string> PluginFolders;
 
-			std::string getDllPath();
+			static std::string getDllPath();
 
 		protected:
 

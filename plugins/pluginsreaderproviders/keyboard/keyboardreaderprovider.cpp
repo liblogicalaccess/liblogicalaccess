@@ -24,6 +24,7 @@ namespace logicalaccess
 	{
 		INFO_("Creating new KeyboardReaderProvider instance...");
 
+		watchSessions = false;
 #ifdef _WINDOWS
 		//sharedGuid = "test";
 		createKbdFileMapping();
@@ -316,7 +317,7 @@ namespace logicalaccess
 
 				SetEvent(readerProvider->hStillAliveEvent);
 
-				Sleep(500);
+				std::this_thread::sleep_for(std::chrono::milliseconds(500));
 			} while (readerProvider->watchSessions);
 		}
 		else

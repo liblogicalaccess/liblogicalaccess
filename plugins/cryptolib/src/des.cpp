@@ -1367,14 +1367,13 @@ static void cookey(const ulong32 *raw1, ulong32 *keyout)
 #endif
 {
 	ulong32 *cook;
-	const ulong32 *raw0;
 	ulong32 dough[32];
 	int i;
 
 	cook = dough;
 	for(i=0; i < 16; i++, raw1++)
 	{
-		raw0 = raw1++;
+		const ulong32 *raw0 = raw1++;
 		*cook    = (*raw0 & 0x00fc0000L) << 6;
 		*cook   |= (*raw0 & 0x00000fc0L) << 10;
 		*cook   |= (*raw1 & 0x00fc0000L) >> 10;
@@ -1687,8 +1686,7 @@ int des_test(void)
 {
  #ifndef LTC_TEST
 	return CRYPT_NOP;
- #else    
-	int err;
+ #else
 	static const struct des_test_case {
 		int num, mode; /* mode 1 = encrypt */
 		unsigned char key[8], txt[8], out[8];
@@ -1802,6 +1800,7 @@ int des_test(void)
 
 	for(i=0; i < (int)(sizeof(cases)/sizeof(cases[0])); i++)
 	{
+		int err;
 		if ((err = des_setup(cases[i].key, 8, 0, &des)) != CRYPT_OK) {
 		   return err;
 		}
@@ -1929,13 +1928,10 @@ static unsigned short	crc_tabkermit[256];
 static void init_crckermit_tab( void )
 {
 	int i, j;
-	unsigned short crc, c;
 
 	for (i=0; i<256; i++)
 	{
-		crc = 0;
-		c   = (unsigned short) i;
-
+		unsigned short crc = 0, c = (unsigned short) i;;
 		for (j=0; j<8; j++)
 		{
 			if ( (crc ^ c) & 0x0001 ) crc = ( crc >> 1 ) ^ 0x8408;
@@ -1960,7 +1956,6 @@ unsigned short UpdateCrc(unsigned char ch, unsigned short *lpwCrc)
 
 void ComputeCrc(int CRCType, const unsigned char *Data, size_t Length, unsigned char *TransmitFirst, unsigned char *TransmitSecond)
 {
-	unsigned char chBlock;
 	unsigned short wCrc;
 	switch (CRCType)
 	{
@@ -1976,7 +1971,7 @@ void ComputeCrc(int CRCType, const unsigned char *Data, size_t Length, unsigned 
 
 	do
 	{
-		chBlock = *Data++;
+		unsigned char chBlock = *Data++;
 		UpdateCrc(chBlock, &wCrc);
 	} while (--Length);
 
@@ -1991,13 +1986,12 @@ void ComputeCrc(int CRCType, const unsigned char *Data, size_t Length, unsigned 
 
 void ComputeCrcCCITT(unsigned short crc_old, const unsigned char *Data, size_t Length, unsigned char *TransmitFirst, unsigned char *TransmitSecond)
 {
-	unsigned char cnt_bits, flag_xor, datac;
 	for (size_t i = 0; i < Length; ++i)
 	{
-		datac = Data[i];
-		for (cnt_bits = 8; cnt_bits; cnt_bits--)
+		unsigned char datac = Data[i];
+		for (unsigned char cnt_bits = 8; cnt_bits; cnt_bits--)
 		{
-			flag_xor = ((crc_old >> 8) & 0x80) ^ (datac & 0x80);
+			unsigned char flag_xor = ((crc_old >> 8) & 0x80) ^ (datac & 0x80);
 			datac <<= 1;
 			crc_old <<= 1;
 			if (flag_xor) crc_old ^= 0x1021;
@@ -2011,12 +2005,11 @@ void ComputeCrcCCITT(unsigned short crc_old, const unsigned char *Data, size_t L
 
 void ComputeCrcKermit(const unsigned char *Data, size_t Length, unsigned char *TransmitFirst, unsigned char *TransmitSecond)
 {
-	unsigned char chBlock;
 	unsigned short wCrc = 0;
 
 	do
 	{
-		chBlock = *Data++;
+		unsigned char chBlock = *Data++;
 		wCrc = UpdateCRCKermit(wCrc, chBlock);
 	} while (--Length);
 

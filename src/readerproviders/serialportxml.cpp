@@ -82,7 +82,7 @@ namespace logicalaccess
 		{
 			// Form the Raw device name
 			char portname[64];
-			sprintf(portname, "\\\\.\\COM%d", i);
+			sprintf(portname, "\\\\.\\COM%u", i);
 
 			//Try to open the port
 			bool bSuccess = false;
@@ -107,7 +107,7 @@ namespace logicalaccess
 			// Add the port number to the array which will be returned
 			if (bSuccess)
 			{
-				sprintf(portname, "COM%d", i);
+				sprintf(portname, "COM%u", i);
 				boost::shared_ptr<SerialPortXml> port;
 				port.reset(new SerialPortXml(portname));
 

@@ -117,7 +117,7 @@ namespace logicalaccess
 				unsigned char* dab = reinterpret_cast<unsigned char*>(data);
 				unsigned char* trb = reinterpret_cast<unsigned char*>(truncatedData);
 
-				for (size_t i = dataLengthBytes - 1, p = 0; p < copyLength && i >= 0; --i, ++p)
+				for (size_t i = dataLengthBytes - 1, p = 0; p < copyLength && i < SIZE_T_MAX; --i, ++p)
 				{
 					trb[p] = dab[i];
 				}
@@ -172,11 +172,10 @@ namespace logicalaccess
 	void BitHelper::writeToBit(void* writtenData, size_t writtenDataLengthBytes, unsigned int* writePosBits, const void* data, size_t /*dataLengthBytes*/, unsigned int /*dataLengthBits*/, unsigned int readPosBits, unsigned int readLengthBits)
 	//void BitHelper::writeToBit(void* data, size_t dataLength, size_t* pos, const void* d, size_t dPos, size_t length)
 	{
-		unsigned int ofs = 0;
 		unsigned int blen;
 		for (unsigned int i = readPosBits; i < (readPosBits + readLengthBits); i += blen)
 		{
-			ofs = i % 8;
+			unsigned int ofs = i % 8;
 			blen = (8 - ofs);
 			if ((i + blen) > (readLengthBits + readPosBits))
 			{

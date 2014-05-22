@@ -43,7 +43,7 @@ namespace logicalaccess
 		unsigned char p1 = (block & 0xffff) >> 8;
 		unsigned char p2 = static_cast<unsigned char>(block & 0xff);
 
-		getPCSCReaderCardAdapter()->sendAPDUCommand(0xff, 0xb0, p1, p2, static_cast<unsigned char>(le));
+		result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xff, 0xb0, p1, p2, static_cast<unsigned char>(le));
 
 		if (datalen >= result.size() - 2)
 		{

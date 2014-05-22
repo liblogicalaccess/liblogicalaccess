@@ -55,11 +55,7 @@ namespace logicalaccess
 			if ((all == false && ret.size() != 0) || (all == true && ret.size() == readers.size()))
 				notfound = false;
 			else
-#ifdef _WINDOWS
-				Sleep(1000);
-#elif defined(__unix__)
-				usleep(1000000);
-#endif
+				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 		}
 		return ret;
 	}

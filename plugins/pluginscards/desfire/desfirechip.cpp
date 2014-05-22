@@ -34,7 +34,6 @@ namespace logicalaccess
 	{
 		boost::shared_ptr<LocationNode> rootNode;
 		rootNode.reset(new LocationNode());
-		char tmpName[32];
 
 		rootNode->setName("Mifare DESFire");
 		rootNode->setHasProperties(true);
@@ -62,6 +61,7 @@ namespace logicalaccess
 
 			for (std::vector<unsigned int>::const_iterator aid = aids.cbegin(); aid != aids.cend(); ++aid)
 			{
+				char tmpName[32];
 				boost::shared_ptr<LocationNode> aidNode;
 				aidNode.reset(new LocationNode());
 				sprintf(tmpName, "Application ID %u", *aid);

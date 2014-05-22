@@ -27,6 +27,7 @@ namespace logicalaccess
 
 	Settings::Settings()
 	{
+		reset();
 	}
 	
 	void Settings::Initialize()
@@ -202,15 +203,15 @@ namespace logicalaccess
 		char szAppPath[MAX_PATH];
 		memset(szAppPath, 0x00, sizeof(szAppPath));
 		static std::string path = ".";
-		char tmp[128];
 
 		if (path == ".")
-		{		
+		{	
+			char tmp[128];
 			DWORD error = ERROR_SUCCESS;
 			if (!GetModuleFileNameA((HMODULE)&__ImageBase, szAppPath, sizeof(szAppPath)-1))
 			{
 				error = GetLastError();
-				sprintf(tmp, "Cannot get module file name. Last error code: %d. Trying with GetModuleHandle first...", error);
+				sprintf(tmp, "Cannot get module file name. Last error code: %ld. Trying with GetModuleHandle first...", error);
 				OutputDebugStringA(tmp);
 				HMODULE hm = NULL;
 				if (!GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
@@ -225,7 +226,7 @@ namespace logicalaccess
 				if (!GetModuleFileNameA(hm, szAppPath, sizeof(szAppPath)-1))
 				{
 					error = GetLastError();
-					sprintf(tmp, "Cannot get module file name. Last error code: %d. Trying with hmodule (%d) from dllmain...", error, __hLibLogicalAccessModule);
+					sprintf(tmp, "Cannot get module file name. Last error code: %ld. Trying with hmodule (%p) from dllmain...", error, __hLibLogicalAccessModule);
 					OutputDebugStringA(tmp);
 					if (__hLibLogicalAccessModule == NULL)
 					{
@@ -263,7 +264,7 @@ namespace logicalaccess
 			}
 			else
 			{
-				sprintf(tmp, "Still cannot get module file name. Last error code: %d.", error);
+				sprintf(tmp, "Still cannot get module file name. Last error code: %ld.", error);
 				OutputDebugStringA(tmp);
 			}
 

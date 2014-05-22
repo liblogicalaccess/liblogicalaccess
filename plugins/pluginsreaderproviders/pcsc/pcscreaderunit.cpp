@@ -682,11 +682,7 @@ namespace logicalaccess
 							{
 								try
 								{
-	#ifdef _WINDOWS
-					Sleep(100);
-	#elif defined(__unix__)
-					usleep(100000);
-	#endif
+									std::this_thread::sleep_for(std::chrono::milliseconds(100));
 									DESFireCommands::DESFireCardVersion cardversion;
 									boost::dynamic_pointer_cast<DESFireChip>(d_insertedChip)->getDESFireCommands()->getVersion(cardversion);
 									// Set from the version

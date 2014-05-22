@@ -44,11 +44,7 @@ namespace logicalaccess
 		sendControlMode(CM_IOCTL_READER_CONNECT);
 		INFO_("Connected successfully to the LAN reader. Now connecting to PC/SC reader with standard method...");
 
-#ifdef _WINDOWS
-		Sleep(500);
-#elif defined(__unix__)
-		usleep(500000);
-#endif
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
 		return OmnikeyXX21ReaderUnit::connectToReader();
 	}
@@ -62,11 +58,7 @@ namespace logicalaccess
 		sendControlMode(CM_IOCTL_READER_DISCONNECT);
 		INFO_("Disconnected successfully from the LAN reader.");
 
-#ifdef _WINDOWS
-		Sleep(500);
-#elif defined(__unix__)
-		usleep(500000);
-#endif
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
 
 	void OmnikeyLANXX21ReaderUnit::sendControlMode(DWORD dwControlCode)

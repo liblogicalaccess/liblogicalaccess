@@ -184,11 +184,7 @@ namespace logicalaccess
 						}
 						else
 						{
-			#ifdef _WINDOWS
-							Sleep(100);
-			#elif defined(__unix__)
-							usleep(100000);
-			#endif
+							std::this_thread::sleep_for(std::chrono::milliseconds(250));
 							currentWait += 250;
 						}
 
@@ -276,11 +272,7 @@ namespace logicalaccess
 			clock_t diff = maxwait - (std::clock() - begin);
 			if (diff > 0)
 			{
-				#ifdef _WINDOWS
-					Sleep(diff);
-				#elif defined(__unix__)
-					usleep(diff * (double)1000);
-				#endif
+				std::this_thread::sleep_for(std::chrono::milliseconds(diff));
 			}
 		}
 
@@ -576,12 +568,12 @@ namespace logicalaccess
 	std::vector<unsigned char> RplethReaderUnit::getCsn(const std::vector<unsigned char>& trame)
 	{
 		std::vector<unsigned char> result;
-		long long tmp = 0;
 		boost::shared_ptr<RplethReaderUnitConfiguration> conf = boost::dynamic_pointer_cast<RplethReaderUnitConfiguration>(d_readerUnitConfig);
 		if (conf->getLength() != 0)
 		{
 			if (trame.size() * 8 >= static_cast<size_t>(conf->getLength() + conf->getOffset()))
 			{
+				long long tmp = 0;
 				for (int i = 0; i < static_cast<int>(trame.size()); i++)
 				{
 					tmp <<= 8;

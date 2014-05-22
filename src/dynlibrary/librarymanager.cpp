@@ -166,7 +166,7 @@ namespace logicalaccess
 			fctname = "getReaderInfoAt";
 		}	
 
-		if (libLoaded.size() == 0)
+		if (libLoaded.empty())
 		{
 			scanPlugins();
 		}

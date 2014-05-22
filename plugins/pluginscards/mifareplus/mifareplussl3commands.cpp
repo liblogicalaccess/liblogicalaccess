@@ -24,12 +24,11 @@ namespace logicalaccess
 
 	void MifarePlusSL3Commands::writeSectors(int start_sector, int stop_sector, const void* buf, size_t buflen, boost::shared_ptr<AccessInfo> aiToUse)
 	{
-		int i;
-		size_t test_buflen = 0;
-		size_t toWriteLen = 0;
-
 		if (aiToUse)
 		{
+			int i;
+			size_t test_buflen = 0;
+			size_t toWriteLen = 0;
 			boost::shared_ptr<MifarePlusAccessInfo> mAiToUse = boost::dynamic_pointer_cast<MifarePlusAccessInfo>(aiToUse);
 			EXCEPTION_ASSERT(mAiToUse, std::invalid_argument, "aiToUse must be a MifarePlusAccessInfo.");
 
@@ -72,12 +71,11 @@ namespace logicalaccess
 
 	void MifarePlusSL3Commands::readSectors(int start_sector, int stop_sector, void* buf, size_t buflen, boost::shared_ptr<AccessInfo> aiToUse)
 	{
-		int i;
-		size_t test_buflen = 0;
-		size_t toReadLen = 0;
-
 		if (aiToUse)
 		{
+			int i;
+			size_t test_buflen = 0;
+			size_t toReadLen = 0;
 			boost::shared_ptr<MifarePlusAccessInfo> mAiToUse = boost::dynamic_pointer_cast<MifarePlusAccessInfo>(aiToUse);
 			EXCEPTION_ASSERT(mAiToUse, std::invalid_argument, "aiToUse must be a MifarePlusAccessInfo.");
 

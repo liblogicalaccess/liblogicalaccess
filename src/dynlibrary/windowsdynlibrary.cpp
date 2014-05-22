@@ -21,7 +21,6 @@ namespace logicalaccess
 	void* WindowsDynLibrary::getSymbol(const char* symName)
 	{
 		void* sym;
-		std::string	err;
 
 		sym = ::GetProcAddress(_handle, symName);
 		if (!sym)

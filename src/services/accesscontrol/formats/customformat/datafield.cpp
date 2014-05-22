@@ -14,6 +14,7 @@ namespace logicalaccess
 {
 	DataField::DataField()
 	{
+		d_length = 0x00;
 		d_position = 0;
 	}
 

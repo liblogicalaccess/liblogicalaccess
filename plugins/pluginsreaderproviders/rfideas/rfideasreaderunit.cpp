@@ -97,12 +97,10 @@ namespace logicalaccess
 	void RFIDeasReaderUnit::initReaderCnx()
 	{
 #ifdef _WINDOWS
-		BSHRT hr = fnSetConnectProduct(PRODUCT_PCPROX);
-		INFO_("SetConnectProduct returned %x", hr);
-		hr = fnSetDevTypeSrch(PRXDEVTYP_USB);
-		INFO_("SetDevTypeSrch returned %x", hr);
+		INFO_("SetConnectProduct returned %x", fnSetConnectProduct(PRODUCT_PCPROX));
+		INFO_("SetDevTypeSrch returned %x", fnSetDevTypeSrch(PRXDEVTYP_USB));
 
-		hr = fnUSBConnect(&d_deviceId);
+		BSHRT hr = fnUSBConnect(&d_deviceId);
 		INFO_("USBConnect returned %x", hr);
 		if (hr == 0)
 		{
@@ -176,11 +174,7 @@ namespace logicalaccess
 				inserted = true;
 			}
 
-#ifdef _WINDOWS
-			Sleep(250);
-#elif defined(__unix__)
-			usleep(250000);
-#endif
+			std::this_thread::sleep_for(std::chrono::milliseconds(250));
 			currentWait += 250;
 		} while (!inserted && (maxwait == 0 || currentWait < maxwait));
 
@@ -213,11 +207,7 @@ namespace logicalaccess
 
 				if (!removed)
 				{
-	#ifdef _WINDOWS
-					Sleep(250);
-	#elif defined(__unix__)
-					usleep(250000);
-	#endif
+					std::this_thread::sleep_for(std::chrono::milliseconds(250));
 					currentWait += 250;
 				}
 			} while (!removed && (maxwait == 0 || currentWait < maxwait));

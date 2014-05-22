@@ -119,11 +119,7 @@ namespace logicalaccess
 
 				if (!inserted)
 				{
-#ifdef _WINDOWS
-					Sleep(500);
-#elif defined(__unix__)
-					usleep(500000);
-#endif
+					std::this_thread::sleep_for(std::chrono::milliseconds(500));
 					currentWait += 500;
 				}
 			} while (!inserted && (maxwait == 0 || currentWait < maxwait));
@@ -199,11 +195,7 @@ namespace logicalaccess
 
 					if (!removed)
 					{
-#ifdef _WINDOWS
-						Sleep(500);
-#elif defined(__unix__)
-						usleep(500000);
-#endif
+						std::this_thread::sleep_for(std::chrono::milliseconds(500));
 						currentWait += 500;
 					}
 				} while (!removed && (maxwait == 0 || currentWait < maxwait));

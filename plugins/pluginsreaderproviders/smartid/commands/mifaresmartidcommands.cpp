@@ -26,8 +26,6 @@ namespace logicalaccess
 
 	bool MifareSmartIDCommands::loadKey(unsigned char keyno, MifareKeyType keytype, const void* key, size_t keylen, bool /*vol*/)
 	{
-		bool r = false;
-
 		std::vector<unsigned char> data;
 		data.resize(14, 0x00);
 
@@ -36,9 +34,8 @@ namespace logicalaccess
 		memcpy(&(data[8]), key, keylen);
 
 		getMifareSmartIDReaderCardAdapter()->sendCommand(0x4C, data);
-		r = true;
 
-		return r;
+		return true;
 	}
 
 	void MifareSmartIDCommands::loadKey(boost::shared_ptr<Location> location, boost::shared_ptr<Key> key, MifareKeyType keytype)

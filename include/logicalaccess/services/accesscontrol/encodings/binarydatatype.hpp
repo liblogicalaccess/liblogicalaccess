@@ -69,9 +69,9 @@ namespace logicalaccess
 
 		private :
 
-			void Alg(int s, int* i);
+			static void Alg(int s, int* i);
 
-			void Alg(int* i);
+			static void Alg(int* i);
 
 		protected:
 

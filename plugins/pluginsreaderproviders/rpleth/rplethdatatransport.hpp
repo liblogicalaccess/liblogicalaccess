@@ -96,7 +96,7 @@ namespace logicalaccess
 			 * \param data The data to calculate checksum
 			 * \return The checksum.
 			 */
-			unsigned char calcChecksum(const std::vector<unsigned char>& data) const;	
+			static unsigned char calcChecksum(const std::vector<unsigned char>& data);	
 
 			/**
 			 * \brief d_buffer from last commands response.

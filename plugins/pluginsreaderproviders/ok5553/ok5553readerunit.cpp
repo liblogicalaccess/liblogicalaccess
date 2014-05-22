@@ -110,11 +110,7 @@ namespace logicalaccess
 					}
 					else
 					{
-		#ifdef _WINDOWS
-						Sleep(100);
-		#elif defined(__unix__)
-						usleep(100000);
-		#endif
+						std::this_thread::sleep_for(std::chrono::milliseconds(100));
 						currentWait += 250;
 					}
 
@@ -228,11 +224,7 @@ namespace logicalaccess
 			}
 			if (!chip)
 			{
-	#ifdef _WINDOWS
-				Sleep(250);
-	#elif defined(__unix__)
-				usleep(250000);
-	#endif
+				std::this_thread::sleep_for(std::chrono::milliseconds(250));
 				currentWait += 250;
 			}
 		}

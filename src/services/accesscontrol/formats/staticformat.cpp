@@ -170,15 +170,13 @@ namespace logicalaccess
 	size_t StaticFormat::getSkeletonLinearData(void* data, size_t dataLengthBytes) const
 	{
 		size_t index = 0;
-		size_t length;
 
 		if (data != NULL)
 		{
 			index += getFormatLinearData(data, dataLengthBytes)  * 8;
-			length = ((index + 7) / 8);
+			size_t length = ((index + 7) / 8);
 
 			index += getEncodingLinearData(reinterpret_cast<char*>(data) + length, dataLengthBytes-length);
-			length = ((index + 7) / 8);
 		}
 		else
 		{

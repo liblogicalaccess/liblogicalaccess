@@ -65,7 +65,7 @@ namespace logicalaccess
 
     void DESFireISO7816Commands::selectApplication(unsigned int aid)
     {
-        std::vector<unsigned char> command, samaid;
+        std::vector<unsigned char> command;//, samaid;
         DESFireLocation::convertUIntToAid(aid, command);
 
         transmit(DF_INS_SELECT_APPLICATION, command);
@@ -364,10 +364,6 @@ namespace logicalaccess
     void DESFireISO7816Commands::handleWriteData(unsigned char cmd, unsigned char* parameters, unsigned int paramLength, const std::vector<unsigned char>& data, EncryptionMode mode)
     {
         std::vector<unsigned char> edata, command(64);
-        size_t pos = 0;
-		size_t p = 0;
-        size_t pkSize = 0;
-        bool ret = false;
 
         d_crypto->initBuf(data.size());
 
@@ -426,7 +422,7 @@ namespace logicalaccess
 			memcpy(&command[0], parameters, paramLength);
 			command.insert(command.end(), parameters, parameters + paramLength);
         }
-		p += paramLength;
+		size_t p = paramLength;
         memcpy(&command[p], &edata[0], edata.size());
         p += edata.size();
         command[p++] = 0x00;
@@ -435,11 +431,10 @@ namespace logicalaccess
         unsigned char err = result.back();
         if (data.size() > DESFIRE_CLEAR_DATA_LENGTH_CHUNK)
         {
-            ret = true;
-            pos += DESFIRE_CLEAR_DATA_LENGTH_CHUNK;
-            while (ret && err == DF_INS_ADDITIONAL_FRAME) // && pos < dataLength
+            size_t pos = DESFIRE_CLEAR_DATA_LENGTH_CHUNK;
+            while (err == DF_INS_ADDITIONAL_FRAME) // && pos < dataLength
             {
-                pkSize = ((data.size() - pos) >= DESFIRE_CLEAR_DATA_LENGTH_CHUNK) ? DESFIRE_CLEAR_DATA_LENGTH_CHUNK : (data.size() - pos);
+                size_t pkSize = ((data.size() - pos) >= DESFIRE_CLEAR_DATA_LENGTH_CHUNK) ? DESFIRE_CLEAR_DATA_LENGTH_CHUNK : (data.size() - pos);
 
                 switch (mode)
                 {

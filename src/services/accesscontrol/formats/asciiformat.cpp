@@ -97,7 +97,6 @@ namespace logicalaccess
 		{
 			size_t pos = 0;
 			memcpy(&reinterpret_cast<unsigned char*>(data)[pos], &d_formatLinear, sizeof(d_formatLinear));
-			pos += sizeof(d_formatLinear);
 		}
 
 		return retLength;

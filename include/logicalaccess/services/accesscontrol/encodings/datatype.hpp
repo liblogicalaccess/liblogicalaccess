@@ -59,7 +59,7 @@ namespace logicalaccess
 			 */
 			static DataType* getByEncodingType(EncodingType type);
 
-			long long pow(int base, unsigned int exp);			
+			static long long pow(int base, unsigned int exp);			
 
 			/**
 			 * \brief Set the left parity type of the wiegand format
@@ -71,7 +71,7 @@ namespace logicalaccess
 			 * \brief Get the left parity type.
 			 * \return The left parity type.
 			 */
-			ParityType getLeftParityType();
+			ParityType getLeftParityType() const;
 
 			/**
 			 * \brief Set the right parity type of the wiegand format
@@ -83,7 +83,7 @@ namespace logicalaccess
 			 * \brief Get the right parity type.
 			 * \return The right parity type.
 			 */
-			ParityType getRightParityType();
+			ParityType getRightParityType() const;
 
 			/**
 			 * \brief Add parity to a buffer.
@@ -121,7 +121,7 @@ namespace logicalaccess
 			 * \brief Get the bit data representation type.
 			 * \return The bit data representation type.
 			 */
-			EncodingType getBitDataRepresentationType();
+			EncodingType getBitDataRepresentationType() const;
 
 			/**
 			 * \brief Convert a character to the oser bit-sex (Least Significant Bit / Most Significant Bit).

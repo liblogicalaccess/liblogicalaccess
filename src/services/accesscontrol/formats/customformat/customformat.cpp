@@ -22,9 +22,8 @@
 namespace logicalaccess
 {
 	CustomFormat::CustomFormat()
-		: Format()
+		: Format(), d_name("Custom")
 	{
-		d_name = "Custom";
 	}
 
 	CustomFormat::~CustomFormat()

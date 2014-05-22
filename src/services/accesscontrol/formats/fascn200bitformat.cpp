@@ -22,6 +22,7 @@ namespace logicalaccess
 	FASCN200BitFormat::FASCN200BitFormat()
 		: StaticFormat()
 	{
+		memset(&d_formatLinear, 0x00, sizeof(d_formatLinear));
 		d_dataType.reset(new BCDNibbleDataType());
 		d_dataRepresentation.reset(new NoDataRepresentation());
 		
@@ -338,12 +339,11 @@ namespace logicalaccess
 
 		if (datalenBytes > 1)
 		{
-			unsigned char c;
 			unsigned int pos = 0;
 
 			while (pos < datalenBits)
 			{
-				c = (unsigned char)revertField(data, datalenBytes, &pos, 4);
+				unsigned char c = (unsigned char)revertField(data, datalenBytes, &pos, 4);
 				lrc ^= c;
 			}
 		}
@@ -359,7 +359,6 @@ namespace logicalaccess
 		{
 			size_t pos = 0;
 			memcpy(&reinterpret_cast<unsigned char*>(data)[pos], &d_formatLinear, sizeof(d_formatLinear));
-			pos += sizeof(d_formatLinear);
 		}
 
 		return retLength;
