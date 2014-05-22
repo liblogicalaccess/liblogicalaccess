@@ -64,7 +64,7 @@ namespace logicalaccess
 
 	void GunneboReaderUnit::setCardType(std::string cardType)
 	{
-		INFO_("Setting card type {0x%s(%s)}", cardType.c_str(), cardType.c_str());
+		LOG(LogLevel::INFOS) << ) << , "Setting card type {0x%s(%s)}", cardType.c_str(), cardType.c_str());
 		d_card_type = cardType;
 	}
 
@@ -76,7 +76,7 @@ namespace logicalaccess
 			Settings::getInstance()->IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
 		}
 
-		INFO_("Waiting insertion... max wait {%u}", maxwait);
+		LOG(LogLevel::INFOS) << ) << , "Waiting insertion... max wait {%u}", maxwait);
 
 		bool inserted = false;
 		unsigned int currentWait = 0;
@@ -110,7 +110,7 @@ namespace logicalaccess
 					if (createChipId.size() > 0)
 					{
 						d_insertedChip = ReaderUnit::createChip((d_card_type == "UNKNOWN" ? "GenericTag" : d_card_type), createChipId);
-						INFO_("Chip detected !");
+						LOG(LogLevel::INFOS) << ) << , "Chip detected !");
 						inserted = true;
 					}
 				}
@@ -134,7 +134,7 @@ namespace logicalaccess
 
 		removalIdentifier.clear();
 
-		INFO_("Returns card inserted ? {%d} function timeout expired ? {%d}", inserted, (maxwait != 0 && currentWait >= maxwait));
+		LOG(LogLevel::INFOS) << ) << , "Returns card inserted ? {%d} function timeout expired ? {%d}", inserted, (maxwait != 0 && currentWait >= maxwait));
 		Settings::getInstance()->IsLogEnabled = oldValue;
 
 		return inserted;
@@ -148,7 +148,7 @@ namespace logicalaccess
 			Settings::getInstance()->IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
 		}
 
-		INFO_("Waiting removal... max wait {%u}", maxwait);
+		LOG(LogLevel::INFOS) << ) << , "Waiting removal... max wait {%u}", maxwait);
 		bool removed = false;
 		removalIdentifier.clear();
 
@@ -171,7 +171,7 @@ namespace logicalaccess
 							std::vector<unsigned char> tmpId = processCardId(buf);
 							if (tmpId.size() > 0 && (tmpId != d_insertedChip->getChipIdentifier()))
 							{
-								INFO_("Card found but not same chip ! The previous card has been removed !");
+								LOG(LogLevel::INFOS) << ) << , "Card found but not same chip ! The previous card has been removed !");
 								d_insertedChip.reset();
 								removalIdentifier = tmpId;
 								removed = true;
@@ -197,7 +197,7 @@ namespace logicalaccess
 			throw;
 		}
 
-		INFO_("Returns card removed ? {%d} - function timeout expired ? {%d}", removed, (maxwait != 0 && currentWait >= maxwait));
+		LOG(LogLevel::INFOS) << ) << , "Returns card removed ? {%d} - function timeout expired ? {%d}", removed, (maxwait != 0 && currentWait >= maxwait));
 
 		Settings::getInstance()->IsLogEnabled = oldValue;
 
@@ -227,28 +227,28 @@ namespace logicalaccess
 
 	bool GunneboReaderUnit::connect()
 	{
-		WARNING_("Connect do nothing with Gunnebo reader");
+		LOG(LogLevel::WARNINGS) << , "Connect do nothing with Gunnebo reader");
 		return true;
 	}
 
 	void GunneboReaderUnit::disconnect()
 	{
-		WARNING_("Disconnect do nothing with Gunnebo reader");
+		LOG(LogLevel::WARNINGS) << , "Disconnect do nothing with Gunnebo reader");
 	}
 	
 	boost::shared_ptr<Chip> GunneboReaderUnit::createChip(std::string type)
 	{
-		INFO_("Creating chip... chip type {0x%s(%s)}", type.c_str());
+		LOG(LogLevel::INFOS) << ) << , "Creating chip... chip type {0x%s(%s)}", type.c_str());
 		boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 
 		if (chip)
 		{
-			INFO_("Chip created successfully !");
+			LOG(LogLevel::INFOS) << ) << , "Chip created successfully !");
 			boost::shared_ptr<ReaderCardAdapter> rca;
 
 			if (type == "GenericTag")
 			{
-				INFO_("Generic tag Chip created");
+				LOG(LogLevel::INFOS) << ) << , "Generic tag Chip created");
 				rca = getDefaultReaderCardAdapter();
 			}
 			else
@@ -284,7 +284,7 @@ namespace logicalaccess
 
 	string GunneboReaderUnit::getReaderSerialNumber()
 	{
-		WARNING_("Do nothing with Gunnebo reader");
+		LOG(LogLevel::WARNINGS) << , "Do nothing with Gunnebo reader");
 		string ret;
 		return ret;
 	}
@@ -292,9 +292,9 @@ namespace logicalaccess
 	bool GunneboReaderUnit::isConnected()
 	{
 		if (d_insertedChip)
-			INFO_("Is connected {1}");
+			LOG(LogLevel::INFOS) << ) << , "Is connected {1}");
 		else
-			INFO_("Is connected {0}");
+			LOG(LogLevel::INFOS) << ) << , "Is connected {0}");
 		return bool(d_insertedChip);
 	}
 

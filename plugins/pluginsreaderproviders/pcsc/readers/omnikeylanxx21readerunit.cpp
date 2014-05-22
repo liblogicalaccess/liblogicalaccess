@@ -39,10 +39,10 @@ namespace logicalaccess
 
 	bool OmnikeyLANXX21ReaderUnit::connectToReader()
 	{
-		INFO_("Connecting to LAN reader...");
+		LOG(LogLevel::INFOS) << ) << , "Connecting to LAN reader...");
 		// Connecting to LAN reader before using standard PC/SC commands
 		sendControlMode(CM_IOCTL_READER_CONNECT);
-		INFO_("Connected successfully to the LAN reader. Now connecting to PC/SC reader with standard method...");
+		LOG(LogLevel::INFOS) << ) << , "Connected successfully to the LAN reader. Now connecting to PC/SC reader with standard method...");
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
@@ -51,19 +51,19 @@ namespace logicalaccess
 
 	void OmnikeyLANXX21ReaderUnit::disconnectFromReader()
 	{
-		INFO_("Disconnecting from PC/SC reader with standard method...");
+		LOG(LogLevel::INFOS) << ) << , "Disconnecting from PC/SC reader with standard method...");
 		OmnikeyXX21ReaderUnit::disconnectFromReader();
 
-		INFO_("Disconnecting from LAN reader...");
+		LOG(LogLevel::INFOS) << ) << , "Disconnecting from LAN reader...");
 		sendControlMode(CM_IOCTL_READER_DISCONNECT);
-		INFO_("Disconnected successfully from the LAN reader.");
+		LOG(LogLevel::INFOS) << ) << , "Disconnected successfully from the LAN reader.");
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
 
 	void OmnikeyLANXX21ReaderUnit::sendControlMode(DWORD dwControlCode)
 	{
-		INFO_("Sending LAN control code {%d} on device {%s}...", dwControlCode, d_name.c_str());
+		LOG(LogLevel::INFOS) << ) << , "Sending LAN control code {%d} on device {%s}...", dwControlCode, d_name.c_str());
 
 		SCARDHANDLE hCardHandle;
 		unsigned char outBuffer[512];
@@ -86,7 +86,7 @@ namespace logicalaccess
 		dwStatus = SCardConnect(getPCSCReaderProvider()->getContext(), reinterpret_cast<const char*>(d_name.c_str()), SCARD_SHARE_DIRECT, 0, &hCardHandle, &dwAP);
 		if (SCARD_S_SUCCESS != dwStatus)
 		{
-			ERROR_("Error {%x}", dwStatus);
+			LOG(LogLevel::ERRORS) << , "Error {%x}", dwStatus);
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "LAN SCardConnect returned an error.");
 		}
 
@@ -96,7 +96,7 @@ namespace logicalaccess
 
 		if (SCARD_S_SUCCESS != dwStatus) 
 		{
-			ERROR_("Error {%x} - {%x}", dwStatus, *(ULONG *)outBuffer);
+			LOG(LogLevel::ERRORS) << , "Error {%x} - {%x}", dwStatus, *(ULONG *)outBuffer);
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "LAN SCardControl returned an error.");
 		}
 
@@ -104,7 +104,7 @@ namespace logicalaccess
 		dwStatus = SCardDisconnect(hCardHandle, SCARD_LEAVE_CARD); 
 		if (SCARD_S_SUCCESS != dwStatus) 
 		{
-			ERROR_("Error {%x}", dwStatus);
+			LOG(LogLevel::ERRORS) << , "Error {%x}", dwStatus);
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "LAN SCardDisconnect returned an error.");
 		}
 	}

@@ -19,7 +19,7 @@ namespace logicalaccess
 {
 	unsigned long long XmlSerializable::atoull(const std::string& str)
 	{
-		INFO_(" ** ATOULL started for decimal string {%s} len {%d}", str.c_str(), str.size());
+		LOG(LogLevel::INFOS) << " ** ATOULL started for decimal string " << str << " len " << str.size();
 		unsigned long long n = 0;
 		
 		if (!str.empty())
@@ -33,7 +33,7 @@ namespace logicalaccess
 			}
 		}
 
-		INFO_(" ** ATOULL returns {%llu}", n);
+		LOG(LogLevel::INFOS) << " ** ATOULL returns " << n;
 
 		return n;
 	}

@@ -26,7 +26,7 @@ namespace logicalaccess
 
 	std::vector<unsigned char> OK5553ReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
 	{
-		COM_("Processing response : %s", BufferHelper::getHex(answer).c_str());
+		LOG(LogLevel::COMS) << , "Processing response : %s", BufferHelper::getHex(answer).c_str());
 		if (answer.size() == 1)
 		{
 			EXCEPTION_ASSERT_WITH_LOG(answer[0] != 'N', LibLogicalAccessException, "No tag present in rfid field.");

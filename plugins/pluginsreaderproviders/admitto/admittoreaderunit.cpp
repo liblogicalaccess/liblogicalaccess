@@ -63,7 +63,7 @@ namespace logicalaccess
 
 	void AdmittoReaderUnit::setCardType(std::string cardType)
 	{
-		INFO_("Setting card type {0x%s(%s)}", cardType.c_str(), cardType.c_str());
+		LOG(LogLevel::INFOS) << ) << , "Setting card type {0x%s(%s)}", cardType.c_str(), cardType.c_str());
 		d_card_type = cardType;
 	}
 
@@ -75,7 +75,7 @@ namespace logicalaccess
 			Settings::getInstance()->IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
 		}
 
-		INFO_("Waiting insertion... max wait {%u}", maxwait);
+		LOG(LogLevel::INFOS) << ) << , "Waiting insertion... max wait {%u}", maxwait);
 
 		bool inserted = false;
 		unsigned int currentWait = 0;
@@ -96,7 +96,7 @@ namespace logicalaccess
 					{
 						if (buf[0] == 0x4e)
 						{
-							INFO_("[Card removed] response received when we were on WaitInsertion! We ignore this response and wait for valid card number.");
+							LOG(LogLevel::INFOS) << ) << , "[Card removed] response received when we were on WaitInsertion! We ignore this response and wait for valid card number.");
 						}
 						else
 						{
@@ -107,7 +107,7 @@ namespace logicalaccess
 								(d_card_type == "UNKNOWN" ? "GenericTag" : d_card_type),
 								formatHexString(std::string(bufTmpId))
 							);
-							INFO_("Chip detected !");
+							LOG(LogLevel::INFOS) << ) << , "Chip detected !");
 							inserted = true;
 						}
 					}
@@ -130,7 +130,7 @@ namespace logicalaccess
 			throw;
 		}
 
-		INFO_("Returns card inserted ? {%d} function timeout expired ? {%d}", inserted, (maxwait != 0 && currentWait >= maxwait));
+		LOG(LogLevel::INFOS) << ) << , "Returns card inserted ? {%d} function timeout expired ? {%d}", inserted, (maxwait != 0 && currentWait >= maxwait));
 		Settings::getInstance()->IsLogEnabled = oldValue;
 
 		return inserted;
@@ -144,7 +144,7 @@ namespace logicalaccess
 			Settings::getInstance()->IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
 		}
 
-		INFO_("Waiting removal... max wait {%u}", maxwait);
+		LOG(LogLevel::INFOS) << ) << , "Waiting removal... max wait {%u}", maxwait);
 		bool removed = false;
 		unsigned int currentWait = 0;
 
@@ -165,7 +165,7 @@ namespace logicalaccess
 						{
 							if (buf[0] == 0x4e)
 							{
-								INFO_("Card removed !");
+								LOG(LogLevel::INFOS) << ) << , "Card removed !");
 								d_insertedChip.reset();
 								removed = true;
 							}
@@ -181,7 +181,7 @@ namespace logicalaccess
 
 								if (chip->getChipIdentifier() != d_insertedChip->getChipIdentifier())
 								{
-									INFO_("Card found but not same chip ! The previous card has been removed !");
+									LOG(LogLevel::INFOS) << ) << , "Card found but not same chip ! The previous card has been removed !");
 									d_insertedChip.reset();
 									removed = true;
 								}
@@ -207,7 +207,7 @@ namespace logicalaccess
 			throw;
 		}
 
-		INFO_("Returns card removed ? {%d} - function timeout expired ? {%d}", removed, (maxwait != 0 && currentWait >= maxwait));
+		LOG(LogLevel::INFOS) << ) << , "Returns card removed ? {%d} - function timeout expired ? {%d}", removed, (maxwait != 0 && currentWait >= maxwait));
 
 		Settings::getInstance()->IsLogEnabled = oldValue;
 
@@ -216,28 +216,28 @@ namespace logicalaccess
 
 	bool AdmittoReaderUnit::connect()
 	{
-		WARNING_("Connect do nothing with Admitto reader");
+		LOG(LogLevel::WARNINGS) << , "Connect do nothing with Admitto reader");
 		return true;
 	}
 
 	void AdmittoReaderUnit::disconnect()
 	{
-		WARNING_("Disconnect do nothing with Admitto reader");
+		LOG(LogLevel::WARNINGS) << , "Disconnect do nothing with Admitto reader");
 	}
 
 	boost::shared_ptr<Chip> AdmittoReaderUnit::createChip(std::string type)
 	{
-		INFO_("Creating chip... chip type {0x%s(%s)}", type.c_str());
+		LOG(LogLevel::INFOS) << ) << , "Creating chip... chip type {0x%s(%s)}", type.c_str());
 		boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 
 		if (chip)
 		{
-			INFO_("Chip created successfully !");
+			LOG(LogLevel::INFOS) << ) << , "Chip created successfully !");
 			boost::shared_ptr<ReaderCardAdapter> rca;
 
 			if (type == "GenericTag")
 			{
-				INFO_("Generic tag Chip created");
+				LOG(LogLevel::INFOS) << ) << , "Generic tag Chip created");
 				rca = getDefaultReaderCardAdapter();
 			}
 			else
@@ -273,7 +273,7 @@ namespace logicalaccess
 
 	std::string AdmittoReaderUnit::getReaderSerialNumber()
 	{
-		WARNING_("Do nothing with Admitto reader");
+		LOG(LogLevel::WARNINGS) << , "Do nothing with Admitto reader");
 		std::string ret;
 		return ret;
 	}
@@ -281,9 +281,9 @@ namespace logicalaccess
 	bool AdmittoReaderUnit::isConnected()
 	{
 		if (d_insertedChip)
-			INFO_("Is connected {1}");
+			LOG(LogLevel::INFOS) << ) << , "Is connected {1}");
 		else
-			INFO_("Is connected {0}");
+			LOG(LogLevel::INFOS) << ) << , "Is connected {0}");
 		return bool(d_insertedChip);
 	}
 
@@ -295,7 +295,7 @@ namespace logicalaccess
 
 	void AdmittoReaderUnit::disconnectFromReader()
 	{
-		INFO_("Disconnecting from reader...");
+		LOG(LogLevel::INFOS) << ) << , "Disconnecting from reader...");
 		getDataTransport()->disconnect();
 	}
 

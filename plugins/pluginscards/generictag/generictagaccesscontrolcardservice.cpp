@@ -30,7 +30,7 @@ namespace logicalaccess
 	{
 		bool ret = false;
 
-		INFO_("Try to read a format from Generic Tag...");
+		LOG(LogLevel::INFOS) << ) << , "Try to read a format from Generic Tag...");
 
 		boost::shared_ptr<Format> formatret;
 		if (format)
@@ -50,7 +50,7 @@ namespace logicalaccess
 
 					try
 					{
-						INFO_("Reading data from Generic Tag...");
+						LOG(LogLevel::INFOS) << ) << , "Reading data from Generic Tag...");
 						std::vector<unsigned char> identifier = getChip()->getChipIdentifier();
 						if (length <= identifier.size())
 						{
@@ -62,7 +62,7 @@ namespace logicalaccess
 
 							if (realDataLengthBits >= formatret->getDataLength())
 							{
-								INFO_("Converting data to format...");
+								LOG(LogLevel::INFOS) << ) << , "Converting data to format...");
 								unsigned int writePosBit = 0;
 								BitHelper::writeToBit(formatBuf, formatlength, &writePosBit, &identifier[0], length, dataLengthBits, dataLengthBits - realDataLengthBits, realDataLengthBits);
 								formatret->setLinearData(formatBuf, formatlength);
@@ -70,7 +70,7 @@ namespace logicalaccess
 							}
 							else
 							{
-								ERROR_("Cannot read the format: format length (%d) bigger than the total available bits (%d).", formatret->getDataLength(), realDataLengthBits);
+								LOG(LogLevel::ERRORS) << , "Cannot read the format: format length (%d) bigger than the total available bits (%d).", formatret->getDataLength(), realDataLengthBits);
 							}
 						}
 					}
@@ -84,7 +84,7 @@ namespace logicalaccess
 			}
 			catch(std::exception& ex)
 			{
-				ERROR_("Error on read format: %s", ex.what());
+				LOG(LogLevel::ERRORS) << , "Error on read format: %s", ex.what());
 				std::rethrow_exception(std::current_exception());
 			}
 		}

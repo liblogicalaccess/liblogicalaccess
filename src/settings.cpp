@@ -42,10 +42,9 @@ namespace logicalaccess
 		{
 			LoadSettings();
 
-			INFO_("Log [enabled {%d} filename {%s} seewaitinsertion {%d} seewaitremoval {%d}]",
-				IsLogEnabled, LogFileName.c_str(), SeeWaitInsertionLog, SeeWaitRemovalLog);
-			INFO_("Auto-detection [enabled {%d} timeout {%d}]", IsAutoDetectEnabled, AutoDetectionTimeout);
-			INFO_("Retry serial port configuration [enabled {%d} timeout {%d}]", IsConfigurationRetryEnabled, ConfigurationRetryTimeout);
+			LOG(LogLevel::INFOS) << "Log [enabled " << IsLogEnabled << " filename " << LogFileName << " seewaitinsertion " << SeeWaitInsertionLog << " seewaitremoval " << SeeWaitRemovalLog << "]";
+			LOG(LogLevel::INFOS) << "Auto-detection [enabled " << IsAutoDetectEnabled << " timeout " << AutoDetectionTimeout << "]";
+			LOG(LogLevel::INFOS) << "Retry serial port configuration [enabled " << IsConfigurationRetryEnabled << " timeout " << ConfigurationRetryTimeout << "]";
 
 			if (IsLogEnabled && !Logs::logfile.is_open())
 			{
@@ -72,7 +71,7 @@ namespace logicalaccess
 		if (instance == NULL)
 		{
 			instance = new Settings();
-			INFO_("New settings instance created.");
+			LOG(LogLevel::INFOS) << "New settings instance created.";
 		}
 		instance->Initialize();
 		return instance;

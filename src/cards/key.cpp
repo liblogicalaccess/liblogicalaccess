@@ -143,7 +143,7 @@ namespace logicalaccess
 
     void Key::unSerialize(boost::property_tree::ptree& node)
     {
-        INFO_("Unserializing Key...");
+        LOG(LogLevel::INFOS) << ) << , "Unserializing Key...");
 
         if (node.get_child_optional("KeyDiversification"))
         {
@@ -158,7 +158,7 @@ namespace logicalaccess
 
         d_storeCipheredData = node.get_child("IsCiphered").get_value<bool>(false);
         uncipherKeyData(node);
-        INFO_("Unserializing Key storage...");
+        LOG(LogLevel::INFOS) << ) << , "Unserializing Key storage...");
 		d_key_storage = KeyStorage::getKeyStorageFromType(static_cast<KeyStorageType>(node.get_child("<xmlattr>.keyStorageType").get_value<unsigned int>()));
 		if (d_key_storage)
 		{
@@ -217,16 +217,16 @@ namespace logicalaccess
     void Key::uncipherKeyData(boost::property_tree::ptree& node)
     {
         std::string data = node.get_child("Data").get_value<std::string>();
-        //INFO_("Unciphering data... {%s}", data.c_str());
+        //LOG(LogLevel::INFOS) << ) << , "Unciphering data... {%s}", data.c_str());
 
         if (!d_storeCipheredData)
         {
-            //INFO_("Data was not ciphered ! Retrieving directly data...");
+            //LOG(LogLevel::INFOS) << ) << , "Data was not ciphered ! Retrieving directly data...");
             fromString(data);
         }
         else
         {
-            INFO_("Data was ciphered ! Unciphering..");
+            LOG(LogLevel::INFOS) << ) << , "Data was ciphered ! Unciphering..");
             std::string secureKey = ((d_cipherKey == "") ? Key::secureAiKey : d_cipherKey);
             std::vector<unsigned char> hash = openssl::SHA256Hash(secureKey);
             openssl::AESSymmetricKey aes = openssl::AESSymmetricKey::createFromData(hash);
@@ -243,7 +243,7 @@ namespace logicalaccess
             std::vector<unsigned char> keybuf(data.begin(), data.end()), uncipheredkey;			
             aescipher.decipher(BufferHelper::fromBase64(BufferHelper::getStdString(keybuf)), uncipheredkey, divaes, iv, true);		
 
-            //DEBUG_("Data unciphered: {%s}", uncipheredkey.toStdString().c_str());
+            //LOG(LogLevel::DEBUGS) << "Data unciphered: {%s}", uncipheredkey.toStdString().c_str());
 
             fromString(BufferHelper::getStdString(uncipheredkey));
         }

@@ -60,7 +60,7 @@ namespace logicalaccess
 		catch(std::exception& ex)
 		{
 			d_sam_key_unlock.reset();
-			ERROR_("Cannot unserialize SAM authentication key: %s", ex.what());
+			LOG(LogLevel::ERRORS) << , "Cannot unserialize SAM authentication key: %s", ex.what());
 		}
 	}
 

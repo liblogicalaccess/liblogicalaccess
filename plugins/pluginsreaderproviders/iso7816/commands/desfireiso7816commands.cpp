@@ -72,7 +72,7 @@ namespace logicalaccess
 
        /* if (getSAMChip())
         {
-            INFO_("SelectApplication on SAM chip...");
+            LOG(LogLevel::INFOS) << ) << , "SelectApplication on SAM chip...");
 			DESFireLocation::convertUIntToAid(aid, samaid);
 			std::reverse(samaid.begin(), samaid.end());
 			if (getSAMChip()->getCardType() == "SAM_AV1")

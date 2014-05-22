@@ -88,7 +88,7 @@ namespace logicalaccess
 
 	PCSCReaderUnit::~PCSCReaderUnit()
 	{
-		INFO_("Reader unit destruction...");
+		LOG(LogLevel::INFOS) << ) << , "Reader unit destruction...");
 
 		if (isConnected())
 		{
@@ -233,13 +233,13 @@ namespace logicalaccess
 	{
 		if (isConnected())
 		{
-			ERROR_(EXCEPTION_MSG_CONNECTED);
+			LOG(LogLevel::ERRORS) << , EXCEPTION_MSG_CONNECTED);
 			disconnect();
 		}
 
 		if (Settings::getInstance()->SeeWaitInsertionLog)
 		{
-			INFO_("Waiting card insertion...");
+			LOG(LogLevel::INFOS) << ) << , "Waiting card insertion...");
 		}
 
 		LONG r = 0;
@@ -254,7 +254,7 @@ namespace logicalaccess
 		{
 			if (Settings::getInstance()->SeeWaitInsertionLog)
 			{
-				INFO_("Use specific reader: %s.", reader.c_str());
+				LOG(LogLevel::INFOS) << ) << , "Use specific reader: %s.", reader.c_str());
 			}
 			readers_count = 1;
 			usePnp = false;
@@ -263,7 +263,7 @@ namespace logicalaccess
 		{
 			if (Settings::getInstance()->SeeWaitInsertionLog)
 			{
-				INFO_("Listening on all readers");
+				LOG(LogLevel::INFOS) << ) << , "Listening on all readers");
 			}
 			readers_count = static_cast<int>(getReaderProvider()->getReaderList().size());
 
@@ -278,7 +278,7 @@ namespace logicalaccess
 				usePnp = false;
 				if (Settings::getInstance()->SeeWaitInsertionLog)
 				{
-					INFO_("No PnP support.");
+					LOG(LogLevel::INFOS) << ) << , "No PnP support.");
 				}
 			}
 		}
@@ -389,7 +389,7 @@ namespace logicalaccess
 						{
 							if (Settings::getInstance()->SeeWaitInsertionLog)
 							{
-								ERROR_("Cannot get status change: %x.", r);
+								LOG(LogLevel::ERRORS) << , "Cannot get status change: %x.", r);
 							}
 							PCSCDataTransport::CheckCardError(r);
 						}
@@ -478,7 +478,7 @@ namespace logicalaccess
 
 		if (Settings::getInstance()->SeeWaitRemovalLog)
 		{
-			INFO_("Waiting card removal...");
+			LOG(LogLevel::INFOS) << ) << , "Waiting card removal...");
 		}
 
 		string reader = getConnectedName();
@@ -594,7 +594,7 @@ namespace logicalaccess
 						{
 							if (Settings::getInstance()->SeeWaitRemovalLog)
 							{
-								ERROR_("Cannot get status change: %x.", r);
+								LOG(LogLevel::ERRORS) << , "Cannot get status change: %x.", r);
 							}
 							PCSCDataTransport::CheckCardError(r);
 						}
@@ -638,11 +638,11 @@ namespace logicalaccess
 
 	bool PCSCReaderUnit::connect(PCSCShareMode share_mode)
 	{
-		INFO_("Connecting to the chip... Shared mode {%d}", share_mode);
+		LOG(LogLevel::INFOS) << ) << , "Connecting to the chip... Shared mode {%d}", share_mode);
 		bool ret = false;
 		if (d_proxyReaderUnit)
 		{
-			INFO_("Need to use a proxy reader !");
+			LOG(LogLevel::INFOS) << ) << , "Need to use a proxy reader !");
 			ret = d_proxyReaderUnit->connect(share_mode);
 			if (ret)
 			{
@@ -661,7 +661,7 @@ namespace logicalaccess
 			LONG lReturn = SCardConnect(getPCSCReaderProvider()->getContext(), reinterpret_cast<const char*>(getConnectedName().c_str()), share_mode, getPCSCConfiguration()->getTransmissionProtocol(), &d_sch, &d_ap);
 			if (SCARD_S_SUCCESS == lReturn)
 			{
-				INFO_("SCardConnect Success !");
+				LOG(LogLevel::INFOS) << ) << , "SCardConnect Success !");
 
 				d_share_mode = share_mode;
 				if (d_insertedChip->getChipIdentifier().size() == 0)
@@ -703,7 +703,7 @@ namespace logicalaccess
 							{
 								if (boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2> >(d_insertedChip->getCommands())->getSAMTypeFromSAM() == "SAM_AV1")
 								{
-									INFO_("SAM on the reader is AV2 but mode AV1 so we switch to AV1.");
+									LOG(LogLevel::INFOS) << ) << , "SAM on the reader is AV2 but mode AV1 so we switch to AV1.");
 									d_insertedChip = createChip("SAM_AV1");
 								}
 							}
@@ -720,7 +720,7 @@ namespace logicalaccess
 					}
 					catch (LibLogicalAccessException& e)
 					{
-						ERROR_("Exception while getting card serial number {%s}", e.what());
+						LOG(LogLevel::ERRORS) << , "Exception while getting card serial number {%s}", e.what());
 						d_insertedChip->setChipIdentifier(std::vector<unsigned char>());
 					}
 				}
@@ -731,7 +731,7 @@ namespace logicalaccess
 			}
 			else
 			{
-				INFO_("SCardConnect ERROR {%l} !", lReturn);
+				LOG(LogLevel::INFOS) << ) << , "SCardConnect ERROR {%l} !", lReturn);
 			}
 		}
 
@@ -740,7 +740,7 @@ namespace logicalaccess
 			// Unknown T=CL card, we have to send specific reader command to determine the type (A or B ?)
 			if (d_insertedChip->getCardType() == "GENERIC_T_CL")
 			{
-				INFO_("Inserted chip is {CT_GENERIC_T_CL}. Looking for type A or B...");
+				LOG(LogLevel::INFOS) << ) << , "Inserted chip is {CT_GENERIC_T_CL}. Looking for type A or B...");
 				if (d_proxyReaderUnit)
 				{
 					setSingleChip(d_proxyReaderUnit->getSingleChip());
@@ -754,12 +754,12 @@ namespace logicalaccess
 					boost::shared_ptr<Chip> newChip;
 					if (isTypeA)
 					{
-						INFO_("Type A detected !");
+						LOG(LogLevel::INFOS) << ) << , "Type A detected !");
 						newChip = createChip("GENERIC_T_CL_A");					
 					}
 					else if(isTypeB)
 					{
-						INFO_("Type B detected !");
+						LOG(LogLevel::INFOS) << ) << , "Type B detected !");
 						newChip = createChip("GENERIC_T_CL_B");
 					}
 
@@ -770,7 +770,7 @@ namespace logicalaccess
 					}
 					else
 					{
-						INFO_("Unable to find the type !");
+						LOG(LogLevel::INFOS) << ) << , "Unable to find the type !");
 					}
 				}
 			}
@@ -818,7 +818,7 @@ namespace logicalaccess
 
 	void PCSCReaderUnit::disconnect(unsigned int action)
 	{
-		INFO_("Disconnecting from the chip.");
+		LOG(LogLevel::INFOS) << ) << , "Disconnecting from the chip.");
 
 		if (d_proxyReaderUnit)
 		{
@@ -838,7 +838,7 @@ namespace logicalaccess
 
 	bool PCSCReaderUnit::connectToReader()
 	{
-		INFO_("Connecting to reader...");
+		LOG(LogLevel::INFOS) << ) << , "Connecting to reader...");
 
 		if (d_proxyReaderUnit)
 		{
@@ -878,18 +878,18 @@ namespace logicalaccess
 
 				ret->connect();
 
-				INFO_("Checking SAM backward...");
+				LOG(LogLevel::INFOS) << ) << , "Checking SAM backward...");
 
 				//Check Backward AV1 => AV2 is active
 				if (getPCSCConfiguration()->getSAMType() != "SAM_AUTO" && ret->getSingleChip()->getCardType() == "SAM_AV2" && getPCSCConfiguration()->getSAMType() != boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2> >(ret->getSingleChip()->getCommands())->getSAMTypeFromSAM())
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM on the reader is not the same type as selected.");
 
-				INFO_("SAM backward ended.");
+				LOG(LogLevel::INFOS) << ) << , "SAM backward ended.");
 			
 				setSAMChip(boost::dynamic_pointer_cast<SAMChip>(ret->getSingleChip()));
 				setSAMReaderUnit(ret);
 
-				INFO_("Starting SAM Security check...");
+				LOG(LogLevel::INFOS) << ) << , "Starting SAM Security check...");
 
 				try
 				{
@@ -917,7 +917,7 @@ namespace logicalaccess
 
 	void PCSCReaderUnit::disconnectFromReader()
 	{
-		INFO_("Disconnecting from reader...");
+		LOG(LogLevel::INFOS) << ) << , "Disconnecting from reader...");
 
 		if (d_proxyReaderUnit)
 		{
@@ -1184,7 +1184,7 @@ namespace logicalaccess
 		EXCEPTION_ASSERT_WITH_LOG(atrlen >= 2, LibLogicalAccessException, "The ATR length must be at least 2 bytes long (TS + T0).");
 
 		std::vector<unsigned char> sb(atr, atr + atrlen);
-		INFO_("Getting generic card type for ATR %s Len {%d}...", BufferHelper::getHex(sb).c_str(), atrlen);
+		LOG(LogLevel::INFOS) << ) << , "Getting generic card type for ATR %s Len {%d}...", BufferHelper::getHex(sb).c_str(), atrlen);
 
 		std::string cardType = "UNKNOWN";
 
@@ -1394,7 +1394,7 @@ namespace logicalaccess
 			break;
 		}		
 
-		INFO_("Generic card type found {%s}...", cardType.c_str());
+		LOG(LogLevel::INFOS) << ) << , "Generic card type found {%s}...", cardType.c_str());
 
 		return cardType;
 	}
@@ -1419,7 +1419,7 @@ namespace logicalaccess
 		boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 		if (chip)
 		{
-			INFO_("Chip (%s) created, creating other associated objects...", type.c_str());
+			LOG(LogLevel::INFOS) << ) << , "Chip (%s) created, creating other associated objects...", type.c_str());
 
 			boost::shared_ptr<ReaderCardAdapter> rca = getReaderCardAdapter(type);
 			boost::shared_ptr<Commands> commands;
@@ -1459,7 +1459,7 @@ namespace logicalaccess
 				}
 				else
 				{
-					WARNING_("Cannot found HIDiClass commands.");
+					LOG(LogLevel::WARNINGS) << , "Cannot found HIDiClass commands.");
 				}
 			}
 			else if (type == "DESFireEV1")
@@ -1547,14 +1547,14 @@ namespace logicalaccess
 				}
 			}
 
-			INFO_("Other objects created, making association (ReaderCardAdapter empty? %d - Commands empty? %d)...", !rca, !commands);
+			LOG(LogLevel::INFOS) << ) << , "Other objects created, making association (ReaderCardAdapter empty? %d - Commands empty? %d)...", !rca, !commands);
 
 			if (rca)
 			{
 				boost::shared_ptr<DataTransport> dt = getDataTransport();
 				if (dt)
 				{
-					INFO_("Data transport forced to a specific one.");
+					LOG(LogLevel::INFOS) << ) << , "Data transport forced to a specific one.");
 					rca->setDataTransport(dt);
 				}
 
@@ -1577,7 +1577,7 @@ namespace logicalaccess
 				chip->setCommands(commands);
 			}
 
-			INFO_("Object creation done.");
+			LOG(LogLevel::INFOS) << ) << , "Object creation done.");
 		}
 		return chip;
 	}

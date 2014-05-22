@@ -97,7 +97,7 @@ namespace logicalaccess
 				d_named_mutex->unlock();
 
 				if (!boost::interprocess::shared_memory_object::remove("sam_memory"))
-					INFO_("SAM Shared Memory removed failed. It is probably still open by a process.");*/
+					LOG(LogLevel::INFOS) << ) << , "SAM Shared Memory removed failed. It is probably still open by a process.");*/
 
 				//we do not remove named_mutex - it can still be used by another process
 			}		

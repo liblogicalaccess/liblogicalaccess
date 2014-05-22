@@ -28,7 +28,7 @@ namespace logicalaccess
 		}
 		else
 		{
-			ERROR_("Cannot transmit the command, data transport is not set!");
+			LOG(LogLevel::ERRORS) << "Cannot transmit the command, data transport is not set!";
 		}
 
 		return res;

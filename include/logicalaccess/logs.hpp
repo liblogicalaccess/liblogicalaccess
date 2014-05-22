@@ -25,7 +25,7 @@
 
 namespace logicalaccess
 {
-	enum LogLevel { INFOS = 0, WARNINGS, NOTICES, ERRORS, EMERGENSYS, CRITICALS, ALERTS, DEBUGS, COMS, PLUGINS };
+	enum LogLevel { INFOS = 0, WARNINGS, NOTICES, ERRORS, EMERGENSYS, CRITICALS, ALERTS, DEBUGS, COMS, PLUGINS, PLUGINS_ERROR };
 
 	class Logs
 	{
@@ -34,7 +34,7 @@ namespace logicalaccess
 		{
 			if (!Settings::getInstance()->IsLogEnabled
 			|| (level == LogLevel::COMS && !Settings::getInstance()->SeeCommunicationLog)
-			|| (level == LogLevel::PLUGINS && !Settings::getInstance()->SeePluginLog))
+			|| ((level == LogLevel::PLUGINS || level == LogLevel::PLUGINS_ERROR) && !Settings::getInstance()->SeePluginLog))
 				return;
 
 			if (logLevelMsg.empty())
@@ -101,17 +101,17 @@ namespace logicalaccess
 	#define LOG(x) ((void 0)
 
 	#define PSTR(x) ((void) 0)
-	#define DEBUG_(x, ...) ((void) 0)
-	#define ALERT_(x, ...) ((void) 0)
-	#define CRITICAL_(x, ...) ((void) 0)
-	#define EMERGENCY_(x, ...) ((void) 0)
-	#define ERROR_(x, ...) ((void) 0)
-	#define NOTICE_(x, ...) ((void) 0)
-	#define WARNING_(x, ...) ((void) 0)
-	#define INFO_(x, ...) ((void) 0)
-	#define COM_(x, ...) ((void) 0)
-	#define PLUGIN_(x, ...) ((void) 0)
-	#define PLUGIN_ERROR_(x, ...) ((void) 0)
+	#define LOG(LogLevel::DEBUGS) << x, ...) ((void) 0)
+	#define LOG(LogLevel::ALERTS) << , x, ...) ((void) 0)
+	#define LOG(LogLevel::CRITICALS) << , x, ...) ((void) 0)
+	#define LOG(LogLevel::EMERGENCYS) << , x, ...) ((void) 0)
+	#define LOG(LogLevel::ERRORS) << , x, ...) ((void) 0)
+	#define LOG(LogLevel::NOTICES) << , x, ...) ((void) 0)
+	#define LOG(LogLevel::WARNINGS) << , x, ...) ((void) 0)
+	#define LOG(LogLevel::INFOS) << ) << , x, ...) ((void) 0)
+	#define LOG(LogLevel::COMS) << , x, ...) ((void) 0)
+	#define LOG(LogLevel::PLUGINS) << , x, ...) ((void) 0)
+	#define LOG(LogLevel::PLUGINS_ERROR) << x, ...) ((void) 0)
 
 	#define THROW_EXCEPTION_WITH_LOG(type, msg) { throw EXCEPTION(type, msg); }
 	#define EXCEPTION_ASSERT_WITH_LOG(condition, type, msg) if (!(condition)) { THROW_EXCEPTION_WITH_LOG(type, msg); }

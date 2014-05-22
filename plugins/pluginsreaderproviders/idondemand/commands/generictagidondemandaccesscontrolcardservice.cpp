@@ -181,7 +181,7 @@ namespace logicalaccess
 
 		if (cmdstr != "")
 		{
-			INFO_("Writing format {%s}", cmdstr.c_str());
+			LOG(LogLevel::INFOS) << ) << , "Writing format {%s}", cmdstr.c_str());
 
 			boost::shared_ptr<GenericTagIdOnDemandCommands> commands = boost::dynamic_pointer_cast<GenericTagIdOnDemandCommands>(getGenericTagChip()->getCommands());
 			if (commands)
@@ -205,17 +205,17 @@ namespace logicalaccess
 					}
 					else
 					{
-						ERROR_("Unable to retrieve the Reader Unit !");
+						LOG(LogLevel::ERRORS) << , "Unable to retrieve the Reader Unit !");
 					}
 				}
 				else
 				{
-					ERROR_("Unable to retrieve the Card Adapter !");
+					LOG(LogLevel::ERRORS) << , "Unable to retrieve the Card Adapter !");
 				}
 			}
 			else
 			{
-				ERROR_("Unable to retrieve the Chip !");
+				LOG(LogLevel::ERRORS) << , "Unable to retrieve the Chip !");
 			}
 		}
 

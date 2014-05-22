@@ -117,13 +117,13 @@ namespace logicalaccess
 
 	std::vector<unsigned char> ISO7816OK5553ReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
 	{
-		COM_("Processing response : %s", BufferHelper::getHex(answer).c_str());
+		LOG(LogLevel::COMS) << , "Processing response : %s", BufferHelper::getHex(answer).c_str());
 		return answerReverse(handleAnswer(d_ok5553_reader_card_adapter->adaptAnswer(OK5553ReaderUnit::asciiToHex(answer))));
 	}
 
 	std::vector<unsigned char> ISO7816OK5553ReaderCardAdapter::answerReverse (const std::vector<unsigned char>& answer)
 	{
-		COM_("Reversing response : %s", BufferHelper::getHex(answer).c_str());
+		LOG(LogLevel::COMS) << , "Reversing response : %s", BufferHelper::getHex(answer).c_str());
 		std::vector<unsigned char> res;
 
 		if (answer.size() > 1)
@@ -142,7 +142,7 @@ namespace logicalaccess
 
 	std::vector<unsigned char> ISO7816OK5553ReaderCardAdapter::handleAnswer (const std::vector<unsigned char>& answer)
 	{
-		COM_("Handling response : %s", BufferHelper::getHex(answer).c_str());
+		LOG(LogLevel::COMS) << , "Handling response : %s", BufferHelper::getHex(answer).c_str());
 		std::vector<unsigned char> res;
 
 		if (answer.size() > 2)

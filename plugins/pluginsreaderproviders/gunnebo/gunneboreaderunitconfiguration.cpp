@@ -31,7 +31,7 @@ namespace logicalaccess
 
 	void GunneboReaderUnitConfiguration::unSerialize(boost::property_tree::ptree& /*node*/)
 	{
-		INFO_("Unserializing reader unit configuration...");
+		LOG(LogLevel::INFOS) << ) << , "Unserializing reader unit configuration...");
 	}
 
 	std::string GunneboReaderUnitConfiguration::getDefaultXmlNodeName() const

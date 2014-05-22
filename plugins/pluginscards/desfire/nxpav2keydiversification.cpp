@@ -49,7 +49,7 @@ namespace logicalaccess
 
 	std::vector<unsigned char> NXPAV2KeyDiversification::getDiversifiedKey(boost::shared_ptr<Key> key, std::vector<unsigned char> diversify)
 	{
-		INFO_("Using key diversification NXP with div : %s", BufferHelper::getHex(diversify).c_str());
+		LOG(LogLevel::INFOS) << ) << , "Using key diversification NXP with div : %s", BufferHelper::getHex(diversify).c_str());
 		int block_size = 0;
 		boost::shared_ptr<openssl::OpenSSLSymmetricCipher> d_cipher;
 		std::vector<unsigned char> keycipher(key->getData(), key->getData() + key->getLength());

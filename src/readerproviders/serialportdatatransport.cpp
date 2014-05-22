@@ -79,7 +79,7 @@ namespace logicalaccess
 	{
 		if (data.size() > 0)
 		{
-			COM_("Send command: %s", BufferHelper::getHex(data).c_str());
+			LOG(LogLevel::COMS) << , "Send command: %s", BufferHelper::getHex(data).c_str());
 			d_port->getSerialPort()->write(data);
 		}
 	}
@@ -99,7 +99,7 @@ namespace logicalaccess
 			}
 		}
 
-		COM_("Command response: %s", BufferHelper::getHex(res).c_str());
+		LOG(LogLevel::COMS) << , "Command response: %s", BufferHelper::getHex(res).c_str());
 
 		return res;
 	}
@@ -118,7 +118,7 @@ namespace logicalaccess
 		{
 			unsigned long baudrate = getPortBaudRate();
 
-			DEBUG_("Configuring serial port %s - Baudrate {%ul}...", port->getSerialPort()->deviceName().c_str(), baudrate);
+			LOG(LogLevel::DEBUGS) << "Configuring serial port %s - Baudrate {%ul}...", port->getSerialPort()->deviceName().c_str(), baudrate);
 
 #ifndef _WINDOWS
 			struct termios options = port->getSerialPort()->configuration();
@@ -187,7 +187,7 @@ namespace logicalaccess
 			{
 				// Strange stuff is going here... by waiting and reopening the COM port (maybe for system cleanup), it's working !
 				std::string portn = port->getSerialPort()->deviceName();
-				WARNING_("Exception received {%s} ! Sleeping {%d} milliseconds -> Reopen serial port {%s} -> Finally retry  to configure...",
+				LOG(LogLevel::WARNINGS) << , "Exception received {%s} ! Sleeping {%d} milliseconds -> Reopen serial port {%s} -> Finally retry  to configure...",
 							e.what(), Settings::getInstance()->ConfigurationRetryTimeout, portn.c_str());
 				std::this_thread::sleep_for(std::chrono::milliseconds(Settings::getInstance()->ConfigurationRetryTimeout));
 
@@ -203,11 +203,11 @@ namespace logicalaccess
 		{
 			if (!Settings::getInstance()->IsAutoDetectEnabled)
 			{
-				INFO_("Auto detection is disabled through settings !");
+				LOG(LogLevel::INFOS) << ) << , "Auto detection is disabled through settings !");
 				return;
 			}
 
-			INFO_("Serial port is empty ! Starting Auto COM Port Detection...");
+			LOG(LogLevel::INFOS) << ) << , "Serial port is empty ! Starting Auto COM Port Detection...");
 			std::vector<boost::shared_ptr<SerialPortXml> > ports;
 			if (SerialPortXml::EnumerateUsingCreateFile(ports) && !ports.empty() && getReaderUnit())
 			{
@@ -221,7 +221,7 @@ namespace logicalaccess
 					{
 						try
 						{
-							INFO_("Processing port {%s}...", (*i)->getSerialPort()->deviceName().c_str());
+							LOG(LogLevel::INFOS) << ) << , "Processing port {%s}...", (*i)->getSerialPort()->deviceName().c_str());
 							(*i)->getSerialPort()->open();
 							configure((*i), false);
 						
@@ -231,13 +231,13 @@ namespace logicalaccess
 							std::vector<unsigned char> r = sendCommand(wrappedcmd, Settings::getInstance()->AutoDetectionTimeout);
 							if (r.size() > 0)
 							{
-								INFO_("Reader found ! Using this COM port !");
+								LOG(LogLevel::INFOS) << ) << , "Reader found ! Using this COM port !");
 								found = true;
 							}
 						}
 						catch (std::exception& e)
 						{
-							ERROR_("Exception {%s}", e.what());
+							LOG(LogLevel::ERRORS) << , "Exception {%s}", e.what());
 						}
 
 						if ((*i)->getSerialPort()->isOpen())
@@ -248,7 +248,7 @@ namespace logicalaccess
 
 					if (!found)
 					{
-						INFO_("No reader found on COM port...");
+						LOG(LogLevel::INFOS) << ) << , "No reader found on COM port...");
 					}
 					else
 					{
@@ -258,7 +258,7 @@ namespace logicalaccess
 			}
 			else
 			{
-				WARNING_("No COM Port detected !");
+				LOG(LogLevel::WARNINGS) << , "No COM Port detected !");
 			}
 		}
 	}

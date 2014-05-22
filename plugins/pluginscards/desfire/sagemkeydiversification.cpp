@@ -30,7 +30,7 @@ namespace logicalaccess
 
 	std::vector<unsigned char> SagemKeyDiversification::getDiversifiedKey(boost::shared_ptr<Key> key, std::vector<unsigned char> diversify)
 	{
-		INFO_("Using key diversification Sagem with div : %s", BufferHelper::getHex(diversify).c_str());
+		LOG(LogLevel::INFOS) << ) << , "Using key diversification Sagem with div : %s", BufferHelper::getHex(diversify).c_str());
 		std::vector<unsigned char> keydiv;
 
 		boost::shared_ptr<DESFireKey> desfirekey = boost::dynamic_pointer_cast<DESFireKey>(key);

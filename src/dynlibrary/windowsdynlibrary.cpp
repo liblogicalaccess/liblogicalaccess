@@ -13,7 +13,7 @@ namespace logicalaccess
 	{
 		if ((_handle = ::LoadLibrary(dlName.c_str())) == NULL)
 		{
-			PLUGIN_ERROR_("Cannot load library %s.", dlName.c_str());
+			LOG(LogLevel::PLUGINS_ERROR) << "Cannot load library %s.", dlName.c_str());
 			throw EXCEPTION(LibLogicalAccessException, _getErrorMess(::GetLastError()));
 		}
 	}
@@ -25,7 +25,7 @@ namespace logicalaccess
 		sym = ::GetProcAddress(_handle, symName);
 		if (!sym)
 		{
-			PLUGIN_ERROR_("Cannot get symbol %s on library %s.", symName, _name.c_str());
+			LOG(LogLevel::PLUGINS_ERROR) << "Cannot get symbol %s on library %s.", symName, _name.c_str());
 			throw EXCEPTION(LibLogicalAccessException, _getErrorMess(::GetLastError()));
 		}
 		return sym;

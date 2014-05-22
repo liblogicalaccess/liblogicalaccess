@@ -97,17 +97,17 @@ namespace logicalaccess
 	void RFIDeasReaderUnit::initReaderCnx()
 	{
 #ifdef _WINDOWS
-		INFO_("SetConnectProduct returned %x", fnSetConnectProduct(PRODUCT_PCPROX));
-		INFO_("SetDevTypeSrch returned %x", fnSetDevTypeSrch(PRXDEVTYP_USB));
+		LOG(LogLevel::INFOS) << ) << , "SetConnectProduct returned %x", fnSetConnectProduct(PRODUCT_PCPROX));
+		LOG(LogLevel::INFOS) << ) << , "SetDevTypeSrch returned %x", fnSetDevTypeSrch(PRXDEVTYP_USB));
 
 		BSHRT hr = fnUSBConnect(&d_deviceId);
-		INFO_("USBConnect returned %x", hr);
+		LOG(LogLevel::INFOS) << ) << , "USBConnect returned %x", hr);
 		if (hr == 0)
 		{
 			hr = fnSetComSrchRange(1, 15);
-			INFO_("SetComSrchRange returned %x", hr);
+			LOG(LogLevel::INFOS) << ) << , "SetComSrchRange returned %x", hr);
 			hr = fnCOMConnect(&d_deviceId);
-			INFO_("COMConnect returned %x", hr);
+			LOG(LogLevel::INFOS) << ) << , "COMConnect returned %x", hr);
 			EXCEPTION_ASSERT_WITH_LOG(hr != 0, LibLogicalAccessException, "Can't connect to the RFIDeas device. Please be sure a reader is plugged");
 			isCOMConnection = true;
 		}
@@ -126,12 +126,12 @@ namespace logicalaccess
 			if (isCOMConnection)
 			{
 				BSHRT hr = fnCOMDisconnect();
-				INFO_("COMDisconnect returned %x", hr);
+				LOG(LogLevel::INFOS) << ) << , "COMDisconnect returned %x", hr);
 			}
 			else
 			{
 				BSHRT hr = fnUSBDisconnect();
-				INFO_("USBDisconnect returned %x", hr);
+				LOG(LogLevel::INFOS) << ) << , "USBDisconnect returned %x", hr);
 			}
 		}
 #endif
@@ -257,10 +257,10 @@ namespace logicalaccess
 			long err = fnGetLastLibErr();
 			if (err > 0)
 			{
-				WARNING_("An error occured when getting the active ID (%d)", err);
-				INFO_("Disconnecting from the reader...");
+				LOG(LogLevel::WARNINGS) << , "An error occured when getting the active ID (%d)", err);
+				LOG(LogLevel::INFOS) << ) << , "Disconnecting from the reader...");
 				disconnectFromReader();
-				INFO_("Reconnecting to the reader...");
+				LOG(LogLevel::INFOS) << ) << , "Reconnecting to the reader...");
 				connectToReader();
 			}
 		}

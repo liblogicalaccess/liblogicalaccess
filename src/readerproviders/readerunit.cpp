@@ -70,7 +70,7 @@ namespace logicalaccess
 
 	bool ReaderUnit::waitInsertion(const std::vector<unsigned char>& identifier, unsigned int maxwait)
 	{
-		INFO_("Started for identifier %s - maxwait {%u}", BufferHelper::getHex(identifier).c_str(), maxwait);
+		LOG(LogLevel::INFOS) << ) << , "Started for identifier %s - maxwait {%u}", BufferHelper::getHex(identifier).c_str(), maxwait);
 
 		bool inserted = false;
 
@@ -81,17 +81,17 @@ namespace logicalaccess
 		{
 			if (waitInsertion(maxwait))
 			{
-				INFO_("Chip(s) detected ! Looking in the list to find the chip...");
+				LOG(LogLevel::INFOS) << ) << , "Chip(s) detected ! Looking in the list to find the chip...");
 				bool found = false;
 				std::vector<boost::shared_ptr<Chip> > chipList = getChipList();
 				for (std::vector<boost::shared_ptr<Chip> >::iterator i = chipList.begin(); i != chipList.end() && !found; ++i)
 				{
 					std::vector<unsigned char> tmp = (*i)->getChipIdentifier();
-					INFO_("Processing chip %s...", BufferHelper::getHex(tmp).c_str());
+					LOG(LogLevel::INFOS) << ) << , "Processing chip %s...", BufferHelper::getHex(tmp).c_str());
 
 					if (tmp == identifier)
 					{
-						INFO_("Chip found !");
+						LOG(LogLevel::INFOS) << ) << , "Chip found !");
 						// re-assign the chip
 						d_insertedChip = *i;
 						found = true;
@@ -110,19 +110,19 @@ namespace logicalaccess
 			currentDate = boost::posix_time::second_clock::local_time();
 		}
 
-		INFO_("Returns inserted {%d} - expired {%d}", inserted, (currentDate >= maxDate));
+		LOG(LogLevel::INFOS) << ) << , "Returns inserted {%d} - expired {%d}", inserted, (currentDate >= maxDate));
 
 		return inserted;
 	}
 
 	std::vector<unsigned char> ReaderUnit::getNumber(boost::shared_ptr<Chip> chip, boost::shared_ptr<CardsFormatComposite> composite)
 	{
-		INFO_("Started for chip type {0x%s(%s)}", chip->getCardType().c_str(), chip->getGenericCardType().c_str());
+		LOG(LogLevel::INFOS) << ) << , "Started for chip type {0x%s(%s)}", chip->getCardType().c_str(), chip->getGenericCardType().c_str());
 		std::vector<unsigned char> ret;
 
 		if (composite)
 		{
-			INFO_("Composite used to find the chip identifier {%s}", boost::dynamic_pointer_cast<XmlSerializable>(composite)->serialize().c_str());
+			LOG(LogLevel::INFOS) << ) << , "Composite used to find the chip identifier {%s}", boost::dynamic_pointer_cast<XmlSerializable>(composite)->serialize().c_str());
 			composite->setReaderUnit(shared_from_this());
 
 			CardTypeList ctList = composite->getConfiguredCardTypes();
@@ -132,13 +132,13 @@ namespace logicalaccess
 			if (itct == ctList.end())
 			{
 				useCardType = chip->getGenericCardType();
-				INFO_("No configuration found for the chip type ! Looking for the generic type (%s) configuration...", useCardType.c_str());
+				LOG(LogLevel::INFOS) << ) << , "No configuration found for the chip type ! Looking for the generic type (%s) configuration...", useCardType.c_str());
 				itct = std::find(ctList.begin(), ctList.end(), useCardType);
 			}
 			// Try to use the configuration for all card (= generic tag), because the card type isn't configured
 			if (itct == ctList.end())
 			{
-				INFO_("No configuration found for the chip type ! Looking for \"GenericTag\" configuration...");
+				LOG(LogLevel::INFOS) << ) << , "No configuration found for the chip type ! Looking for \"GenericTag\" configuration...");
 				useCardType = "GenericTag";
 				itct = std::find(ctList.begin(), ctList.end(), useCardType);
 			}
@@ -146,7 +146,7 @@ namespace logicalaccess
 			// Try to read the number only if a configuration exists (for this card type or default)
 			if (itct != ctList.end())
 			{
-				INFO_("Configuration found in the composite ! Retrieving format for card...");
+				LOG(LogLevel::INFOS) << ) << , "Configuration found in the composite ! Retrieving format for card...");
 				boost::shared_ptr<AccessInfo> ai;
 				boost::shared_ptr<Location> loc;
 				boost::shared_ptr<Format> format;
@@ -154,37 +154,37 @@ namespace logicalaccess
 
 				if (format)
 				{
-					INFO_("Format retrieved successfully ! Reading the format...");
+					LOG(LogLevel::INFOS) << ) << , "Format retrieved successfully ! Reading the format...");
 					format = composite->readFormat(chip);	// Read format on chip
 
 					if (format)
 					{
-						INFO_("Format read successfully ! Getting identifier...");
+						LOG(LogLevel::INFOS) << ) << , "Format read successfully ! Getting identifier...");
 						ret = format->getIdentifier();
 					}
 					else
 					{
-						ERROR_("Unable to read the format !");
+						LOG(LogLevel::ERRORS) << , "Unable to read the format !");
 					}
 				}
 				else
 				{
-					WARNING_("Cannot retrieve the format for card ! Trying using getNumber directly...");
+					LOG(LogLevel::WARNINGS) << , "Cannot retrieve the format for card ! Trying using getNumber directly...");
 					ret = getNumber(chip);
 				}
 			}
 			else
 			{
-				ERROR_("No configuration found !");
+				LOG(LogLevel::ERRORS) << , "No configuration found !");
 			}
 		}
 		else
 		{
-			INFO_("Composite card format is NULL ! Reader chip identifier directly...");
+			LOG(LogLevel::INFOS) << ) << , "Composite card format is NULL ! Reader chip identifier directly...");
 			ret = chip->getChipIdentifier();
 		}
 
-		INFO_("Returns number %s", BufferHelper::getHex(ret).c_str());
+		LOG(LogLevel::INFOS) << ) << , "Returns number %s", BufferHelper::getHex(ret).c_str());
 
 		return ret;
 	}
@@ -197,7 +197,7 @@ namespace logicalaccess
 
 	uint64_t ReaderUnit::getFormatedNumber(const std::vector<unsigned char>& number, int padding)
 	{
-		INFO_("Getting formated number... number %s-{%s} padding {%d}", BufferHelper::getHex(number).c_str(), padding);
+		LOG(LogLevel::INFOS) << ) << , "Getting formated number... number %s-{%s} padding {%d}", BufferHelper::getHex(number).c_str(), padding);
 		uint64_t longnumber = 0x00;
 
 		for (size_t i = 0, j = number.size()-1; i < number.size(); ++i, --j)
@@ -207,13 +207,13 @@ namespace logicalaccess
 
 		longnumber += padding;
 
-		INFO_("Returns long number {0x%lx(%ld)}", longnumber, longnumber);
+		LOG(LogLevel::INFOS) << ) << , "Returns long number {0x%lx(%ld)}", longnumber, longnumber);
 		return longnumber;
 	}
 
 	string ReaderUnit::getFormatedNumber(const std::vector<unsigned char>& number)
 	{
-		INFO_("Getting formated number... number %s", BufferHelper::getHex(number).c_str());
+		LOG(LogLevel::INFOS) << ) << , "Getting formated number... number %s", BufferHelper::getHex(number).c_str());
 		std::ostringstream oss;
 		oss << std::setfill('0');
 
@@ -222,13 +222,13 @@ namespace logicalaccess
 			oss << std::hex << std::setw(2) << static_cast<unsigned int>(number[i]);
 		}
 
-		INFO_("Returns number {%s}", oss.str().c_str()); 
+		LOG(LogLevel::INFOS) << ) << , "Returns number {%s}", oss.str().c_str()); 
 		return oss.str();
 	}
 
 	boost::shared_ptr<Chip> ReaderUnit::createChip(std::string type, const std::vector<unsigned char>& identifier)
 	{
-		INFO_("Creating chip for card type {%s} and identifier %s...", type.c_str(), BufferHelper::getHex(identifier).c_str());
+		LOG(LogLevel::INFOS) << ) << , "Creating chip for card type {%s} and identifier %s...", type.c_str(), BufferHelper::getHex(identifier).c_str());
 		boost::shared_ptr<Chip> chip = createChip(type);
 		chip->setChipIdentifier(identifier);
 		return chip;
@@ -280,10 +280,10 @@ namespace logicalaccess
 
 	boost::shared_ptr<ReaderUnitConfiguration> ReaderUnit::getConfiguration()
 	{
-		//INFO_("Getting reader unit configuration...");
+		//LOG(LogLevel::INFOS) << ) << , "Getting reader unit configuration...");
 		if (d_readerUnitConfig)
 		{
-			//INFO_("Reader unit configuration {%s}", d_readerUnitConfig->serialize().c_str());
+			//LOG(LogLevel::INFOS) << ) << , "Reader unit configuration {%s}", d_readerUnitConfig->serialize().c_str());
 		}
 
 		return d_readerUnitConfig;

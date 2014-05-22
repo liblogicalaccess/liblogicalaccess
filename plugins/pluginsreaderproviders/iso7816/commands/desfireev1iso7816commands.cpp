@@ -448,7 +448,7 @@ namespace logicalaccess
             d_crypto->d_sessionKey = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2> >(getSAMChip()->getCommands())->dumpSessionKey();
         d_crypto->d_auth_method = CM_ISO;
 
-        INFO_("Session key length: %d", d_crypto->d_sessionKey.size());
+        LOG(LogLevel::INFOS) << ) << , "Session key length: %d", d_crypto->d_sessionKey.size());
 
 		if (key->getKeyType() == DF_KEY_3K3DES || key->getKeyType() == DF_KEY_DES)
         {

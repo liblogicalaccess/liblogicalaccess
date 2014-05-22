@@ -22,7 +22,7 @@ namespace logicalaccess
 	KeyboardReaderProvider::KeyboardReaderProvider() :
 		ReaderProvider()
 	{
-		INFO_("Creating new KeyboardReaderProvider instance...");
+		LOG(LogLevel::INFOS) << ) << , "Creating new KeyboardReaderProvider instance...");
 
 		watchSessions = false;
 #ifdef _WINDOWS
@@ -48,7 +48,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<KeyboardReaderProvider> KeyboardReaderProvider::getSingletonInstance()
 	{
-		INFO_("Getting singleton instance...");
+		LOG(LogLevel::INFOS) << ) << , "Getting singleton instance...");
 		static boost::shared_ptr<KeyboardReaderProvider> instance;
 		if (!instance)
 		{
@@ -78,7 +78,7 @@ namespace logicalaccess
 
 	long KeyboardReaderProvider::createKbdFileMapping()
 	{
-		INFO_("Creating the file mapping...");
+		LOG(LogLevel::INFOS) << ) << , "Creating the file mapping...");
 		long ret = 0;
 		SECURITY_ATTRIBUTES sa;
 
@@ -89,7 +89,7 @@ namespace logicalaccess
 			generateSharedGuid();
 		}
 		sprintf_s(sharedName, sizeof(sharedName), "%s%s", KEYBOARD_SHAREDDATA, sharedGuid.c_str());
-		INFO_("File mapping with shared name {%s}", sharedName);
+		LOG(LogLevel::INFOS) << ) << , "File mapping with shared name {%s}", sharedName);
 
 		fillSecurityDescriptor(&sa, NULL);
 
@@ -97,12 +97,12 @@ namespace logicalaccess
 		if (!shKeyboard)
 		{
 			ret = GetLastError();
-			ERROR_("CreateFileMapping error {%d}", ret);
+			LOG(LogLevel::ERRORS) << , "CreateFileMapping error {%d}", ret);
 			return ret;
 		}
 		sKeyboard = (KeyboardSharedStruct *)MapViewOfFile(shKeyboard, FILE_MAP_ALL_ACCESS, 0, 0, 0);
 
-		INFO_("Keyboard structure size {%d}", sizeof(sKeyboard));
+		LOG(LogLevel::INFOS) << ) << , "Keyboard structure size {%d}", sizeof(sKeyboard));
 
 		if (sa.lpSecurityDescriptor)
 		{
@@ -115,7 +115,7 @@ namespace logicalaccess
 
 	long KeyboardReaderProvider::createKbdEvent()
 	{
-		INFO_("Creating the event...");
+		LOG(LogLevel::INFOS) << ) << , "Creating the event...");
 		long ret = 0;
 
 		char eventName[512];
@@ -126,43 +126,43 @@ namespace logicalaccess
 			generateSharedGuid();
 		}
 		sprintf_s(eventName, sizeof(eventName), "%s%s", KEYBOARD_EVENT, sharedGuid.c_str());
-		INFO_("Event named {%s}", eventName);
+		LOG(LogLevel::INFOS) << ) << , "Event named {%s}", eventName);
 
 		hKbdEvent = CreateEvent(0, TRUE, FALSE, eventName);
 		if (!hKbdEvent)
 		{
 			ret = GetLastError();
-			ERROR_("CreateEvent error {%d} for hKbdEvent", ret);
+			LOG(LogLevel::ERRORS) << , "CreateEvent error {%d} for hKbdEvent", ret);
 		}
 
 		memset(eventName, 0x00, sizeof(eventName));
 		sprintf_s(eventName, sizeof(eventName), "%s%s", KEYBOARD_EVENTPROCESEED, sharedGuid.c_str());
-		INFO_("Event named {%s}", eventName);
+		LOG(LogLevel::INFOS) << ) << , "Event named {%s}", eventName);
 		hKbdEventProcessed = CreateEvent(0, TRUE, FALSE, eventName);
 		if (!hKbdEventProcessed)
 		{
 			ret = GetLastError();
-			ERROR_("CreateEvent error {%d} for hKbdEventProcessed", ret);
+			LOG(LogLevel::ERRORS) << , "CreateEvent error {%d} for hKbdEventProcessed", ret);
 		}
 
 		memset(eventName, 0x00, sizeof(eventName));
 		sprintf_s(eventName, sizeof(eventName), "%s%s", KEYBOARD_HOSTEVENT, sharedGuid.c_str());
-		INFO_("Event named {%s}", eventName);
+		LOG(LogLevel::INFOS) << ) << , "Event named {%s}", eventName);
 		hHostEvent = CreateEvent(0, TRUE, FALSE, eventName);
 		if (!hHostEvent)
 		{
 			ret = GetLastError();
-			ERROR_("CreateEvent error {%d} for hHostEvent", ret);
+			LOG(LogLevel::ERRORS) << , "CreateEvent error {%d} for hHostEvent", ret);
 		}
 
 		memset(eventName, 0x00, sizeof(eventName));
 		sprintf_s(eventName, sizeof(eventName), "%s%s", KEYBOARD_STILLALIVEEVENT, sharedGuid.c_str());
-		INFO_("Event named {%s}", eventName);
+		LOG(LogLevel::INFOS) << ) << , "Event named {%s}", eventName);
 		hStillAliveEvent = CreateEvent(0, TRUE, FALSE, eventName);
 		if (!hStillAliveEvent)
 		{
 			ret = GetLastError();
-			ERROR_("CreateEvent error {%d} for hStillAliveEvent", ret);
+			LOG(LogLevel::ERRORS) << , "CreateEvent error {%d} for hStillAliveEvent", ret);
 		}
 
 		return ret;
@@ -170,7 +170,7 @@ namespace logicalaccess
 
 	void KeyboardReaderProvider::freeKbdFileMapping()
 	{
-		INFO_("Releasing file mapping...");
+		LOG(LogLevel::INFOS) << ) << , "Releasing file mapping...");
 		if (shKeyboard)
 		{
 			CloseHandle(shKeyboard);
@@ -182,7 +182,7 @@ namespace logicalaccess
 
 	void KeyboardReaderProvider::freeKbdEvent()
 	{
-		INFO_("Releasing kbd events...");
+		LOG(LogLevel::INFOS) << ) << , "Releasing kbd events...");
 		if (hKbdEvent)
 		{
 			CloseHandle(hKbdEvent);
@@ -213,19 +213,19 @@ namespace logicalaccess
 		PSECURITY_DESCRIPTOR pSD = (PSECURITY_DESCRIPTOR) LocalAlloc(LPTR, SECURITY_DESCRIPTOR_MIN_LENGTH);
 		if (NULL == pSD) 
 		{ 
-			ERROR_("LocalAlloc Error {%u}", GetLastError());
+			LOG(LogLevel::ERRORS) << , "LocalAlloc Error {%u}", GetLastError());
 		}
 		else
 		{
 			if (!InitializeSecurityDescriptor(pSD, SECURITY_DESCRIPTOR_REVISION)) 
 			{
-				ERROR_( "InitializeSecurityDescriptor Error {%u}", GetLastError());
+				LOG(LogLevel::ERRORS) << ,  "InitializeSecurityDescriptor Error {%u}", GetLastError());
 			}
 			else
 			{
 				if (!SetSecurityDescriptorDacl(pSD, TRUE, pACL, FALSE))
 				{
-					ERROR_("SetSecurityDescriptorDacl Error {%u}", GetLastError());
+					LOG(LogLevel::ERRORS) << , "SetSecurityDescriptorDacl Error {%u}", GetLastError());
 				}
 				else
 				{
@@ -246,7 +246,7 @@ namespace logicalaccess
 	// Watch current session active console and start hook on it if it changed and not yet started for this session
 	DWORD WINAPI WatchThread(LPVOID lpThreadParameter)
 	{
-		INFO_("WatchThread begins...");
+		LOG(LogLevel::INFOS) << ) << , "WatchThread begins...");
 		boost::shared_ptr<KeyboardReaderProvider> readerProvider = KeyboardReaderProvider::getSingletonInstance();
 
 		if (readerProvider != NULL)
@@ -255,11 +255,11 @@ namespace logicalaccess
 			bool isUserSession = true;
 			DWORD hostSessionId = 0;
 			DWORD currentProcessSessionID = GetCurrentProcessId();
-			INFO_("Current process ID {%d}", hostSessionId);
+			LOG(LogLevel::INFOS) << ) << , "Current process ID {%d}", hostSessionId);
 
 			if (ProcessIdToSessionId(currentProcessSessionID, &hostSessionId))
 			{
-				INFO_("Current process Session ID {%d}", hostSessionId);
+				LOG(LogLevel::INFOS) << ) << , "Current process Session ID {%d}", hostSessionId);
 
 				// On windows XP Session 0 is ok, but on Vist and higher, this is not a valid user session.
 				OSVERSIONINFO osvi;
@@ -268,18 +268,18 @@ namespace logicalaccess
 				GetVersionEx(&osvi);
 				if (osvi.dwMajorVersion >= 6)
 				{
-					INFO_("We are on windows Vista or Higher. Need to check for invalid session 0.");
+					LOG(LogLevel::INFOS) << ) << , "We are on windows Vista or Higher. Need to check for invalid session 0.");
 					isUserSession = (hostSessionId != 0);
 				}
 				else
 				{
-					INFO_("We are on windows XP or less. Session 0 is valid.");
+					LOG(LogLevel::INFOS) << ) << , "We are on windows XP or less. Session 0 is valid.");
 					isUserSession = true;
 				}
 			}
 			else
 			{
-				ERROR_("ProcessIdToSessionId Error {%u}", GetLastError());
+				LOG(LogLevel::ERRORS) << , "ProcessIdToSessionId Error {%u}", GetLastError());
 			}
 
 			if (isUserSession)
@@ -287,11 +287,11 @@ namespace logicalaccess
 				DWORD processId = readerProvider->launchHook();
 				readerProvider->processHookedSessions.insert(readerProvider->processHookedSessions.end(), std::pair<DWORD, DWORD>(hostSessionId, processId));
 
-				INFO_("User session ID valid. Session ID added to watch list.");
+				LOG(LogLevel::INFOS) << ) << , "User session ID valid. Session ID added to watch list.");
 			}
 			else
 			{
-				ERROR_("Not user session ID.");
+				LOG(LogLevel::ERRORS) << , "Not user session ID.");
 			}
 
 			do
@@ -300,13 +300,13 @@ namespace logicalaccess
 				{
 					DWORD cSessionId = WTSGetActiveConsoleSessionId();
 
-					INFO_("WTSGetActiveConsoleSessionId = {%d} vs Last session ID {%d}", cSessionId, lastSessionId);
+					LOG(LogLevel::INFOS) << ) << , "WTSGetActiveConsoleSessionId = {%d} vs Last session ID {%d}", cSessionId, lastSessionId);
 
 					if (cSessionId != lastSessionId)
 					{
 						if (readerProvider->processHookedSessions.find(cSessionId) == readerProvider->processHookedSessions.end())
 						{
-							INFO_("New session ID detected {%d}. Adding session to watch list...", cSessionId);
+							LOG(LogLevel::INFOS) << ) << , "New session ID detected {%d}. Adding session to watch list...", cSessionId);
 							DWORD cProcessId = readerProvider->launchHookIntoDifferentSession(cSessionId);
 							readerProvider->processHookedSessions.insert(readerProvider->processHookedSessions.end(), std::pair<DWORD, DWORD>(cSessionId, cProcessId));
 						}
@@ -322,7 +322,7 @@ namespace logicalaccess
 		}
 		else
 		{
-			ERROR_("Reader provider is NULL.");
+			LOG(LogLevel::ERRORS) << , "Reader provider is NULL.");
 		}
 
 		return 0;
@@ -333,40 +333,40 @@ namespace logicalaccess
 		watchSessions = false;
 
 		unsigned int timeout = 2000;
-		INFO_("Waiting for listening thread to exit. Max timeout {%u}...", timeout);
+		LOG(LogLevel::INFOS) << ) << , "Waiting for listening thread to exit. Max timeout {%u}...", timeout);
 		
 		if (hWatchThrd != NULL)
 		{
 			DWORD res = WaitForSingleObject(hWatchThrd, timeout);
 			if (res == WAIT_OBJECT_0)
 			{
-				INFO_("Listening thread exited.");
+				LOG(LogLevel::INFOS) << ) << , "Listening thread exited.");
 			}
 			else
 			{
-				ERROR_("Listening thread timeout! Killing it!");
+				LOG(LogLevel::ERRORS) << , "Listening thread timeout! Killing it!");
 				TerminateThread(hWatchThrd, 0);
 				hWatchThrd = NULL;
 			}
 		}
 		else
 		{
-			ERROR_("Thread handle is NULL!");
+			LOG(LogLevel::ERRORS) << , "Thread handle is NULL!");
 		}
 
 		for (SessionHookMap::iterator it; it != processHookedSessions.end(); ++it)
 		{
-			INFO_("Terminating hook process {%d}...", (*it).second);
+			LOG(LogLevel::INFOS) << ) << , "Terminating hook process {%d}...", (*it).second);
 			bool ret = terminateProcess((*it).second, 0);
 			
 			if (!ret)
 			{
-				INFO_("Unable to terminate process!");
+				LOG(LogLevel::INFOS) << ) << , "Unable to terminate process!");
 			}
 		}
 
 		processHookedSessions.clear();
-		INFO_("Everything has been stopped successfully!");
+		LOG(LogLevel::INFOS) << ) << , "Everything has been stopped successfully!");
 	}
 
 	bool KeyboardReaderProvider::terminateProcess(DWORD dwProcessId, UINT uExitCode)
@@ -386,7 +386,7 @@ namespace logicalaccess
 
 	HANDLE KeyboardReaderProvider::retrieveWinlogonUserToken(const DWORD destSessionId, const SECURITY_IMPERSONATION_LEVEL ImpersonationLevel, const TOKEN_TYPE TokenType)
 	{
-		INFO_("RetrieveWinlogonUserToken begins");
+		LOG(LogLevel::INFOS) << ) << , "RetrieveWinlogonUserToken begins");
 
 		DWORD winlogonPid = 0;
 		HANDLE hUserTokenDup = NULL, hPToken = NULL, hProcess = NULL;
@@ -397,7 +397,7 @@ namespace logicalaccess
 		HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 		if (hSnap == INVALID_HANDLE_VALUE)
 		{
-			ERROR_("CreateToolhelp32Snapshot failed");
+			LOG(LogLevel::ERRORS) << , "CreateToolhelp32Snapshot failed");
 			return NULL;
 		}
 
@@ -405,13 +405,13 @@ namespace logicalaccess
 
 		if (!Process32First(hSnap, &procEntry))
 		{
-			ERROR_("Process32First failed");
+			LOG(LogLevel::ERRORS) << , "Process32First failed");
 			if (hSnap)
 				CloseHandle(hSnap);
 			return NULL;
 		}
 
-		INFO_("Finding the winlogon process in the right session ID !");
+		LOG(LogLevel::INFOS) << ) << , "Finding the winlogon process in the right session ID !");
 		do
 		{
 			if (_stricmp(procEntry.szExeFile, "winlogon.exe") == 0)
@@ -420,17 +420,17 @@ namespace logicalaccess
 				DWORD winlogonSessId = 0;
 				if (ProcessIdToSessionId(procEntry.th32ProcessID, &winlogonSessId))
 				{
-					INFO_("Current try - Winlogon in Session Id {%d}", winlogonSessId);
+					LOG(LogLevel::INFOS) << ) << , "Current try - Winlogon in Session Id {%d}", winlogonSessId);
 					if (winlogonSessId == destSessionId)
 					{
-						INFO_("Winlogon process found !");
+						LOG(LogLevel::INFOS) << ) << , "Winlogon process found !");
 						winlogonPid = procEntry.th32ProcessID;
 						break;
 					}
 				}
 				else
 				{
-					ERROR_("Unable to ProcessIdToSessionId Error {%d}", GetLastError());
+					LOG(LogLevel::ERRORS) << , "Unable to ProcessIdToSessionId Error {%d}", GetLastError());
 				}
 			}
 
@@ -439,38 +439,38 @@ namespace logicalaccess
 		if (hSnap)
 			CloseHandle(hSnap);
 
-		INFO_("Opening Process");
+		LOG(LogLevel::INFOS) << ) << , "Opening Process");
 		hProcess = OpenProcess(MAXIMUM_ALLOWED, FALSE, winlogonPid);
 
 		if (!OpenProcessToken(hProcess, TOKEN_ADJUST_PRIVILEGES|TOKEN_QUERY
 										|TOKEN_DUPLICATE|TOKEN_ASSIGN_PRIMARY|TOKEN_ADJUST_SESSIONID
 										|TOKEN_READ|TOKEN_WRITE, &hPToken))
 		{
-			ERROR_("Process token open Error: {%u}\n", GetLastError()); 
+			LOG(LogLevel::ERRORS) << , "Process token open Error: {%u}\n", GetLastError()); 
 		}
 
-		INFO_("Looking Privilege value");
+		LOG(LogLevel::INFOS) << ) << , "Looking Privilege value");
 		if (!LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &luid))
 		{
-			ERROR_("Lookup Privilege value Error: {%u}\n", GetLastError()); 
+			LOG(LogLevel::ERRORS) << , "Lookup Privilege value Error: {%u}\n", GetLastError()); 
 		}
 		tp.PrivilegeCount = 1;
 		tp.Privileges[0].Luid = luid;
 		tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
 
-		INFO_("Duplicating and setting privileges");
+		LOG(LogLevel::INFOS) << ) << , "Duplicating and setting privileges");
 
 		DuplicateTokenEx(hPToken, MAXIMUM_ALLOWED, NULL, ImpersonationLevel, TokenType, &hUserTokenDup);
 		SetTokenInformation(hUserTokenDup, TokenSessionId, (void*)destSessionId, sizeof(DWORD));
 
 		if (!AdjustTokenPrivileges(hUserTokenDup, FALSE, &tp, sizeof(TOKEN_PRIVILEGES), (PTOKEN_PRIVILEGES)NULL, NULL))
 		{
-			INFO_("Adjust Privilege value Error: %u\n", GetLastError()); 
+			LOG(LogLevel::INFOS) << ) << , "Adjust Privilege value Error: %u\n", GetLastError()); 
 		}
 
 		if (GetLastError() == ERROR_NOT_ALL_ASSIGNED)
 		{
-			ERROR_("Token does not have the privilege"); 
+			LOG(LogLevel::ERRORS) << , "Token does not have the privilege"); 
 		}
 
 		//Perform All the Close Handles task
@@ -484,12 +484,12 @@ namespace logicalaccess
 
 	DWORD KeyboardReaderProvider::launchHookIntoDifferentSession(DWORD destSessionId)
 	{
-		INFO_("Begins for sessionID {%d}", destSessionId);
+		LOG(LogLevel::INFOS) << ) << , "Begins for sessionID {%d}", destSessionId);
 
 		HANDLE hUserTokenDup = retrieveWinlogonUserToken(destSessionId, SecurityIdentification, TokenPrimary);
 		if (hUserTokenDup ==  NULL)
 		{
-			ERROR_("Unable to get the USER TOKEN !!");
+			LOG(LogLevel::ERRORS) << , "Unable to get the USER TOKEN !!");
 		}
 
 		return launchHook(hUserTokenDup);
@@ -497,7 +497,7 @@ namespace logicalaccess
 
 	DWORD KeyboardReaderProvider::launchHook(HANDLE hUserTokenDup)
 	{
-		INFO_("Begins ...");
+		LOG(LogLevel::INFOS) << ) << , "Begins ...");
 
 		PROCESS_INFORMATION pi;
 		ZeroMemory(&pi, sizeof(pi));
@@ -532,37 +532,37 @@ namespace logicalaccess
 		if (!appName.empty())
 		{
 			app = const_cast<char*>(appName.c_str());
-			INFO_("Application name {%s}", app);
+			LOG(LogLevel::INFOS) << ) << , "Application name {%s}", app);
 		}
 
 		if (!cmdLine.empty())
 		{
 			cmd = const_cast<char*>(cmdLine.c_str());
-			INFO_("Command line {%s}", cmd);
+			LOG(LogLevel::INFOS) << ) << , "Command line {%s}", cmd);
 		}
 
-		INFO_("Starting process...");
+		LOG(LogLevel::INFOS) << ) << , "Starting process...");
 
 		if (hUserTokenDup != NULL)
 		{
 			if (!CreateProcessAsUser(hUserTokenDup, app, cmd, NULL, NULL, FALSE, dwCreationFlags, pEnv, NULL, &si, &pi))
 			{
-				ERROR_("CreateProcessAsUser failed {%d}", GetLastError());
+				LOG(LogLevel::ERRORS) << , "CreateProcessAsUser failed {%d}", GetLastError());
 			}
 			else
 			{
-				INFO_("CreateProcessAsUser successfully ended !");
+				LOG(LogLevel::INFOS) << ) << , "CreateProcessAsUser successfully ended !");
 			}
 		}
 		else
 		{
 			if (!CreateProcess(app, cmd, NULL, NULL, FALSE, dwCreationFlags, pEnv, NULL, &si, &pi))
 			{
-				ERROR_("CreateProcess failed {%d}", GetLastError());
+				LOG(LogLevel::ERRORS) << , "CreateProcess failed {%d}", GetLastError());
 			}
 			else
 			{
-				INFO_("CreateProcess successfully ended !");
+				LOG(LogLevel::INFOS) << ) << , "CreateProcess successfully ended !");
 			}
 		}
 
@@ -630,7 +630,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<ReaderUnit> KeyboardReaderProvider::createReaderUnit()
 	{
-		INFO_("Creating new reader unit...");
+		LOG(LogLevel::INFOS) << ) << , "Creating new reader unit...");
 
 		boost::shared_ptr<KeyboardReaderUnit> ret;
 		ret.reset(new KeyboardReaderUnit());
@@ -641,23 +641,23 @@ namespace logicalaccess
 
 	bool KeyboardReaderProvider::refreshReaderList()
 	{
-		INFO_("Refresh reader list...");
+		LOG(LogLevel::INFOS) << ) << , "Refresh reader list...");
 		d_readers.clear();		
 
 #ifdef _WINDOWS
 		if (shKeyboard != NULL)
 		{
 			unsigned int timeout = 5000;
-			INFO_("Waiting {%u} milliseconds for host event set...", timeout);
+			LOG(LogLevel::INFOS) << ) << , "Waiting {%u} milliseconds for host event set...", timeout);
 			DWORD res = WaitForSingleObject(hHostEvent, timeout);
 			if (res == WAIT_OBJECT_0)
 			{
-				//INFO_("Host event is set! A keyboard hook is started.");
+				//LOG(LogLevel::INFOS) << ) << , "Host event is set! A keyboard hook is started.");
 				for (unsigned int i = 0; i < MAX_KEYBOARD_DEVICES; ++i)
 				{
 					if (sKeyboard->devices[i].handle != NULL)
 					{
-						//INFO_("Keyboard[%u].name = {%s}", i, sKeyboard->devices[i].name);
+						//LOG(LogLevel::INFOS) << ) << , "Keyboard[%u].name = {%s}", i, sKeyboard->devices[i].name);
 
 						if (strncmp(sKeyboard->devices[i].name, "", sizeof(sKeyboard->devices[i].name)))
 						{
@@ -666,25 +666,25 @@ namespace logicalaccess
 							ru->setKeyboard(sKeyboard->devices[i].name);
 							ru->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
 
-							INFO_("Reader {%s} added to the list.", sKeyboard->devices[i].name);
+							LOG(LogLevel::INFOS) << ) << , "Reader {%s} added to the list.", sKeyboard->devices[i].name);
 
 							d_readers.push_back(ru);
 						}
 						else
 						{
-							ERROR_("Keyboard name is empty! Ignoring...");
+							LOG(LogLevel::ERRORS) << , "Keyboard name is empty! Ignoring...");
 						}
 					}
 				}
 			}
 			else
 			{
-				INFO_("Timeout reached when waiting for host event... No keyboard hook found.");
+				LOG(LogLevel::INFOS) << ) << , "Timeout reached when waiting for host event... No keyboard hook found.");
 			}
 		}
 		else
 		{
-			ERROR_("File mapping handle invalid...");
+			LOG(LogLevel::ERRORS) << , "File mapping handle invalid...");
 		}
 #endif
 

@@ -21,13 +21,13 @@ namespace logicalaccess
 	STidSTRReaderCardAdapter::STidSTRReaderCardAdapter(STidCmdType adapterType)
 		: ReaderCardAdapter()
 	{
-		//INFO_("Constructor");
+		//LOG(LogLevel::INFOS) << ) << , "Constructor");
 		d_adapterType = adapterType;
 	}
 
 	STidSTRReaderCardAdapter::~STidSTRReaderCardAdapter()
 	{
-		//INFO_("Destructor");
+		//LOG(LogLevel::INFOS) << ) << , "Destructor");
 	}
 
 	boost::shared_ptr<STidSTRReaderUnit> STidSTRReaderCardAdapter::getSTidSTRReaderUnit() const
@@ -37,10 +37,10 @@ namespace logicalaccess
 
 	std::vector<unsigned char> STidSTRReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
 	{
-		COM_("Sending command command %s command size {%d}...", BufferHelper::getHex(command).c_str(), command.size());
+		LOG(LogLevel::COMS) << , "Sending command command %s command size {%d}...", BufferHelper::getHex(command).c_str(), command.size());
 		std::vector<unsigned char> cmd;
 		boost::shared_ptr<STidSTRReaderUnitConfiguration> readerConfig = getSTidSTRReaderUnit()->getSTidSTRConfiguration();
-		//INFO_("Reader configuration {%s}", dynamic_cast<XmlSerializable*>(&(*readerConfig))->serialize().c_str());
+		//LOG(LogLevel::INFOS) << ) << , "Reader configuration {%s}", dynamic_cast<XmlSerializable*>(&(*readerConfig))->serialize().c_str());
 
 		EXCEPTION_ASSERT_WITH_LOG(command.size() >= 2, LibLogicalAccessException, "The command size must be at least 2 byte long.");
 		unsigned short commandCode = command[0] << 8 | command[1];
@@ -68,7 +68,7 @@ namespace logicalaccess
 
 	std::vector<unsigned char> STidSTRReaderCardAdapter::sendMessage(unsigned short commandCode, const std::vector<unsigned char>& command)
 	{
-		COM_("Sending message with command code {0x%x(%u)} command %s command size {%d}...", commandCode, commandCode, BufferHelper::getHex(command).c_str(), command.size());
+		LOG(LogLevel::COMS) << , "Sending message with command code {0x%x(%u)} command %s command size {%d}...", commandCode, commandCode, BufferHelper::getHex(command).c_str(), command.size());
 		std::vector<unsigned char> processedMsg;
 
 		processedMsg.push_back(0x00); // RFU
@@ -89,8 +89,8 @@ namespace logicalaccess
 		// Cipher the data
 		if ((readerConfig->getCommunicationMode() & STID_CM_CIPHERED) == STID_CM_CIPHERED)
 		{
-			COM_("Need to cipher data ! Ciphering with AES...");
-			COM_("Message before ciphering {%s}", BufferHelper::getHex(processedMsg).c_str());
+			LOG(LogLevel::COMS) << , "Need to cipher data ! Ciphering with AES...");
+			LOG(LogLevel::COMS) << , "Message before ciphering {%s}", BufferHelper::getHex(processedMsg).c_str());
 			// 16-byte buffer aligned
 			if ((processedMsg.size() % 16) != 0)
 			{
@@ -117,28 +117,28 @@ namespace logicalaccess
 			processedMsg = encProcessedMsg;
 			processedMsg.insert(processedMsg.end(), iv.begin(), iv.end());
 
-			COM_("Message after ciphering {%s}", BufferHelper::getHex(processedMsg).c_str());
+			LOG(LogLevel::COMS) << , "Message after ciphering {%s}", BufferHelper::getHex(processedMsg).c_str());
 		}
 		else
 		{
-			COM_("No need to cipher data !");
+			LOG(LogLevel::COMS) << , "No need to cipher data !");
 		}
 
 		// Add the HMAC to the message
 		if ((readerConfig->getCommunicationMode() & STID_CM_SIGNED) == STID_CM_SIGNED)
 		{
-			COM_("Need to sign data ! Adding the HMAC...");
-			COM_("Message before signing {%s}", BufferHelper::getHex(processedMsg).c_str());
+			LOG(LogLevel::COMS) << , "Need to sign data ! Adding the HMAC...");
+			LOG(LogLevel::COMS) << , "Message before signing {%s}", BufferHelper::getHex(processedMsg).c_str());
 			std::vector<unsigned char> hmacbuf = calculateHMAC(processedMsg);
 			processedMsg.insert(processedMsg.end(), hmacbuf.begin(), hmacbuf.end());
-			COM_("Message after signing {%s}", BufferHelper::getHex(processedMsg).c_str());
+			LOG(LogLevel::COMS) << , "Message after signing {%s}", BufferHelper::getHex(processedMsg).c_str());
 		}
 		else
 		{
-			COM_("No need to sign data !");
+			LOG(LogLevel::COMS) << , "No need to sign data !");
 		}
 
-		COM_("Final message %s message size {%d}", BufferHelper::getHex(processedMsg).c_str(), processedMsg.size());
+		LOG(LogLevel::COMS) << , "Final message %s message size {%d}", BufferHelper::getHex(processedMsg).c_str(), processedMsg.size());
 
 		return processedMsg;
 	}
@@ -154,7 +154,7 @@ namespace logicalaccess
 			d_lastIV.resize(16);
 			if (RAND_bytes(&d_lastIV[0], static_cast<int>(d_lastIV.size())) != 1)
 			{
-				COM_("Cannot retrieve cryptographically strong bytes");
+				LOG(LogLevel::COMS) << , "Cannot retrieve cryptographically strong bytes");
 				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
 			}
 		}
@@ -163,7 +163,7 @@ namespace logicalaccess
 
 	std::vector<unsigned char> STidSTRReaderCardAdapter::sendCommand(unsigned short commandCode, const std::vector<unsigned char>& command, long int timeout)
 	{
-		COM_("Sending command with command code {0x%x(%u)} command %s command size {%d} timeout {%d}...", commandCode, commandCode, BufferHelper::getHex(command).c_str(), command.size(), timeout);
+		LOG(LogLevel::COMS) << , "Sending command with command code {0x%x(%u)} command %s command size {%d} timeout {%d}...", commandCode, commandCode, BufferHelper::getHex(command).c_str(), command.size(), timeout);
 
 		std::vector<unsigned char> buffer;
 		buffer.push_back(static_cast<unsigned char>((commandCode & 0xff00) >> 8));
@@ -176,39 +176,39 @@ namespace logicalaccess
 
 	std::vector<unsigned char> STidSTRReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
 	{
-		COM_("Processing the received buffer %s size {%d}...", BufferHelper::getHex(answer).c_str(), answer.size());
+		LOG(LogLevel::COMS) << , "Processing the received buffer %s size {%d}...", BufferHelper::getHex(answer).c_str(), answer.size());
 		unsigned char statusCode = 0x00;
 
-		COM_("Command size {%d}", answer.size());
+		LOG(LogLevel::COMS) << , "Command size {%d}", answer.size());
 		EXCEPTION_ASSERT_WITH_LOG(answer.size() >= 7, std::invalid_argument, "A valid buffer size must be at least 7 bytes long");
 
-		COM_("Command SOF {0x%x(%u)}", answer[0], answer[0]);
+		LOG(LogLevel::COMS) << , "Command SOF {0x%x(%u)}", answer[0], answer[0]);
 		EXCEPTION_ASSERT_WITH_LOG(answer[0] == SOF, std::invalid_argument, "The supplied buffer is not valid (bad SOF byte)");
 
 		unsigned short messageSize = (answer[1] << 8) | answer[2];
 
-		COM_("Inside message size {%u}", messageSize);
+		LOG(LogLevel::COMS) << , "Inside message size {%u}", messageSize);
 		EXCEPTION_ASSERT_WITH_LOG(static_cast<unsigned int>(messageSize + 7) <= answer.size(), std::invalid_argument, "The buffer is too small to contains the complete message.");
 
 		boost::shared_ptr<STidSTRReaderUnitConfiguration> readerConfig = getSTidSTRReaderUnit()->getSTidSTRConfiguration();
 
 		STidCommunicationType ctype = static_cast<STidCommunicationType>(answer[3] & 0x01);
-		COM_("Communication response type {0x%x(%d)}", ctype, ctype);
+		LOG(LogLevel::COMS) << , "Communication response type {0x%x(%d)}", ctype, ctype);
 		EXCEPTION_ASSERT_WITH_LOG(ctype == readerConfig->getCommunicationType(), std::invalid_argument, "The communication type doesn't match.");
 
 		if (ctype == STID_RS485)
 		{
 			unsigned char rs485Address = static_cast<unsigned char>((answer[3] & 0xfe) >> 1);
-			COM_("Communication response rs485 address {0x%x(%u)}", rs485Address, rs485Address);
+			LOG(LogLevel::COMS) << , "Communication response rs485 address {0x%x(%u)}", rs485Address, rs485Address);
 			EXCEPTION_ASSERT_WITH_LOG(rs485Address == readerConfig->getRS485Address(), std::invalid_argument, "The rs485 reader address doesn't match.");
 		}
 
 		STidCommunicationMode cmode = static_cast<STidCommunicationMode>(answer[4]);
-		COM_("Communication response mode {0x%x(%d)}", cmode, cmode);
+		LOG(LogLevel::COMS) << , "Communication response mode {0x%x(%d)}", cmode, cmode);
 		EXCEPTION_ASSERT_WITH_LOG(cmode == readerConfig->getCommunicationMode() || readerConfig->getCommunicationMode() == STID_CM_RESERVED, std::invalid_argument, "The communication type doesn't match.");
 		
 		std::vector<unsigned char> data = std::vector<unsigned char>(answer.begin() + 5, answer.begin() + 5 + messageSize);
-		COM_("Communication response data %s", BufferHelper::getHex(data).c_str());
+		LOG(LogLevel::COMS) << , "Communication response data %s", BufferHelper::getHex(data).c_str());
 
 		unsigned char first, second;
 		ComputeCrcCCITT(0xFFFF, &answer[1], 4 + messageSize, &first, &second);
@@ -233,7 +233,7 @@ namespace logicalaccess
 
 	std::vector<unsigned char> STidSTRReaderCardAdapter::receiveMessage(const std::vector<unsigned char>& data, unsigned char& statusCode)
 	{
-		COM_("Processing the response... data %s data size {%d}", BufferHelper::getHex(data).c_str(), data.size());
+		LOG(LogLevel::COMS) << , "Processing the response... data %s data size {%d}", BufferHelper::getHex(data).c_str(), data.size());
 
 		std::vector<unsigned char> tmpData = data;
 
@@ -242,17 +242,17 @@ namespace logicalaccess
 		// Check the message HMAC and remove it from the message
 		if ((readerConfig->getCommunicationMode() & STID_CM_SIGNED) == STID_CM_SIGNED)
 		{
-			COM_("Need to check for signed data...");
+			LOG(LogLevel::COMS) << , "Need to check for signed data...");
 			EXCEPTION_ASSERT_WITH_LOG(data.size() >= 10, LibLogicalAccessException, "The buffer is too short to contains the message HMAC.");
 			tmpData = std::vector<unsigned char>(data.begin(), data.end() - 10);
 			EXCEPTION_ASSERT_WITH_LOG(std::vector<unsigned char>(data.end() - 10, data.end()) == calculateHMAC(tmpData), LibLogicalAccessException, "Wrong HMAC.");
-			COM_("Data after removing signed data %s", BufferHelper::getHex(tmpData).c_str());
+			LOG(LogLevel::COMS) << , "Data after removing signed data %s", BufferHelper::getHex(tmpData).c_str());
 		}
 
 		// Uncipher the data
 		if ((readerConfig->getCommunicationMode() & STID_CM_CIPHERED) == STID_CM_CIPHERED)
 		{
-			COM_("Need to check for ciphered data...");
+			LOG(LogLevel::COMS) << , "Need to check for ciphered data...");
 			EXCEPTION_ASSERT_WITH_LOG(tmpData.size() >= 16, LibLogicalAccessException, "The buffer is too short to contains the IV.");
 
 			std::vector<unsigned char> iv = std::vector<unsigned char>(tmpData.end() - 16, tmpData.end());
@@ -270,7 +270,7 @@ namespace logicalaccess
 			}
 			tmpData = decTmpData;
 
-			COM_("Data after removing ciphered data %s", BufferHelper::getHex(tmpData).c_str());
+			LOG(LogLevel::COMS) << , "Data after removing ciphered data %s", BufferHelper::getHex(tmpData).c_str());
 		}
 		
 		EXCEPTION_ASSERT_WITH_LOG(tmpData.size() >= 6, LibLogicalAccessException, "The plain response message should be at least 6 bytes long.");
@@ -278,12 +278,12 @@ namespace logicalaccess
 		size_t offset = 0;
 		unsigned short ack = (tmpData[offset] << 8) | tmpData[offset+1];
 		offset += 2;
-		COM_("Acquiment value {0x%x(%u)}", ack, ack);
+		LOG(LogLevel::COMS) << , "Acquiment value {0x%x(%u)}", ack, ack);
 		EXCEPTION_ASSERT_WITH_LOG(ack == d_lastCommandCode, LibLogicalAccessException, "ACK doesn't match the last command code.");
 
 		unsigned short msglength = (tmpData[offset] << 8) | tmpData[offset+1];
 		offset += 2;
-		COM_("Plain data length {%u}", msglength);
+		LOG(LogLevel::COMS) << , "Plain data length {%u}", msglength);
 
 		EXCEPTION_ASSERT_WITH_LOG(static_cast<unsigned int>(msglength + 2) <= tmpData.size(), LibLogicalAccessException, "The buffer is too short to contains the complete plain message.");
 
@@ -291,12 +291,12 @@ namespace logicalaccess
 		offset += msglength;
 
 		STidCmdType statusType = static_cast<STidCmdType>(tmpData[offset++]);
-		COM_("Status type {%d != %d}", statusType, d_adapterType);
+		LOG(LogLevel::COMS) << , "Status type {%d != %d}", statusType, d_adapterType);
 
 		EXCEPTION_ASSERT_WITH_LOG(statusType == d_adapterType, LibLogicalAccessException, "Bad message type for this reader/card adapter.");
 
 		statusCode = tmpData[offset++];
-		COM_("Plain data status code {0x%x(%u)}", statusCode, statusCode);
+		LOG(LogLevel::COMS) << , "Plain data status code {0x%x(%u)}", statusCode, statusCode);
 		CheckError(statusCode);
 
 		return plainData;

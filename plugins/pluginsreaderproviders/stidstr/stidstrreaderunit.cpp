@@ -40,7 +40,7 @@ namespace logicalaccess
 	STidSTRReaderUnit::STidSTRReaderUnit()
 		: ReaderUnit()
 	{
-		//INFO_("Constructor");
+		//LOG(LogLevel::INFOS) << ) << , "Constructor");
 		d_readerUnitConfig.reset(new STidSTRReaderUnitConfiguration());
 		setDefaultReaderCardAdapter (boost::shared_ptr<STidSTRReaderCardAdapter> (new STidSTRReaderCardAdapter(STID_CMD_READER)));
 		d_ledBuzzerDisplay.reset(new STidSTRLEDBuzzerDisplay());
@@ -64,7 +64,7 @@ namespace logicalaccess
 
 	STidSTRReaderUnit::~STidSTRReaderUnit()
 	{
-		//INFO_("Destructor");
+		//LOG(LogLevel::INFOS) << ) << , "Destructor");
 		disconnectFromReader();
 	}
 
@@ -80,7 +80,7 @@ namespace logicalaccess
 
 	void STidSTRReaderUnit::setCardType(std::string cardType)
 	{
-		INFO_("Setting card type {0x%s(%s)}", cardType.c_str(), cardType.c_str());
+		LOG(LogLevel::INFOS) << ) << , "Setting card type {0x%s(%s)}", cardType.c_str(), cardType.c_str());
 		d_card_type = cardType;
 	}
 
@@ -92,7 +92,7 @@ namespace logicalaccess
 			Settings::getInstance()->IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
 		}
 
-		INFO_("Waiting insertion... max wait {%u}", maxwait);
+		LOG(LogLevel::INFOS) << ) << , "Waiting insertion... max wait {%u}", maxwait);
 		bool inserted = false;
 		unsigned int currentWait = 0;
 
@@ -108,7 +108,7 @@ namespace logicalaccess
 
 				if (chip)
 				{
-					INFO_("Chip detected !");
+					LOG(LogLevel::INFOS) << ) << , "Chip detected !");
 					d_insertedChip = chip;
 					inserted = true;
 				}
@@ -126,7 +126,7 @@ namespace logicalaccess
 			throw;
 		}
 
-		INFO_("Returns card inserted ? {%d} function timeout expired ? {%d}", inserted, (maxwait != 0 && currentWait >= maxwait));
+		LOG(LogLevel::INFOS) << ) << , "Returns card inserted ? {%d} function timeout expired ? {%d}", inserted, (maxwait != 0 && currentWait >= maxwait));
 		Settings::getInstance()->IsLogEnabled = oldValue;
 
 		return inserted;
@@ -140,7 +140,7 @@ namespace logicalaccess
 			Settings::getInstance()->IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
 		}
 
-		INFO_("Waiting removal... max wait {%u}", maxwait);
+		LOG(LogLevel::INFOS) << ) << , "Waiting removal... max wait {%u}", maxwait);
 		bool removed = false;
 		unsigned int currentWait = 0;
 		try
@@ -159,14 +159,14 @@ namespace logicalaccess
 					{
 						if (chip->getChipIdentifier() != d_insertedChip->getChipIdentifier())
 						{
-							INFO_("Card found but not same chip ! The previous card has been removed !");
+							LOG(LogLevel::INFOS) << ) << , "Card found but not same chip ! The previous card has been removed !");
 							d_insertedChip.reset();
 							removed = true;
 						}
 					}
 					else
 					{
-						INFO_("Card removed !");
+						LOG(LogLevel::INFOS) << ) << , "Card removed !");
 						d_insertedChip.reset();
 						removed = true;
 					}
@@ -185,7 +185,7 @@ namespace logicalaccess
 			throw;
 		}
 
-		INFO_("Returns card removed ? {%d} - function timeout expired ? {%d}", removed, (maxwait != 0 && currentWait >= maxwait));
+		LOG(LogLevel::INFOS) << ) << , "Returns card removed ? {%d} - function timeout expired ? {%d}", removed, (maxwait != 0 && currentWait >= maxwait));
 
 		Settings::getInstance()->IsLogEnabled = oldValue;
 
@@ -194,13 +194,13 @@ namespace logicalaccess
 
 	bool STidSTRReaderUnit::connect()
 	{
-		WARNING_("Connect do nothing with STid STR reader");
+		LOG(LogLevel::WARNINGS) << , "Connect do nothing with STid STR reader");
 		return true;
 	}
 
 	void STidSTRReaderUnit::disconnect()
 	{
-		WARNING_("Disconnect do nothing with STid STR reader");
+		LOG(LogLevel::WARNINGS) << , "Disconnect do nothing with STid STR reader");
 	}
 
 	bool STidSTRReaderUnit::connectToReader()
@@ -211,12 +211,12 @@ namespace logicalaccess
 			// Negotiate sessions according to communication options
 			if ((getSTidSTRConfiguration()->getCommunicationMode() & STID_CM_SIGNED) == STID_CM_SIGNED)
 			{
-				INFO_("Signed communication required, negotiating HMAC...");
+				LOG(LogLevel::INFOS) << ) << , "Signed communication required, negotiating HMAC...");
 				authenticateHMAC();
 			}
 			if ((getSTidSTRConfiguration()->getCommunicationMode() & STID_CM_CIPHERED) == STID_CM_CIPHERED)
 			{
-				INFO_("Ciphered communication required, negotiating AES...");
+				LOG(LogLevel::INFOS) << ) << , "Ciphered communication required, negotiating AES...");
 				authenticateAES();
 			}
 		}
@@ -241,24 +241,24 @@ namespace logicalaccess
 
 	boost::shared_ptr<Chip> STidSTRReaderUnit::createChip(std::string type)
 	{
-		INFO_("Creating chip... chip type {%s}", type.c_str());
+		LOG(LogLevel::INFOS) << ) << , "Creating chip... chip type {%s}", type.c_str());
 		boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 
 		if (chip)
 		{
-			INFO_("Chip created successfully !");
+			LOG(LogLevel::INFOS) << ) << , "Chip created successfully !");
 			boost::shared_ptr<ReaderCardAdapter> rca;
 			boost::shared_ptr<Commands> commands;
 
 			if (type == "Mifare1K" || type == "Mifare4K" || type == "Mifare")
 			{
-				INFO_("Mifare classic Chip created");
+				LOG(LogLevel::INFOS) << ) << , "Mifare classic Chip created");
 				rca.reset(new STidSTRReaderCardAdapter(STID_CMD_MIFARE_CLASSIC));
 				commands.reset(new MifareSTidSTRCommands());
 			}
 			else if (type == "DESFire" || type == "DESFireEV1")
 			{
-				INFO_("Mifare DESFire Chip created");
+				LOG(LogLevel::INFOS) << ) << , "Mifare DESFire Chip created");
 				rca.reset(new STidSTRReaderCardAdapter(STID_CMD_DESFIRE));
 				commands.reset(new DESFireEV1STidSTRCommands());
 				boost::dynamic_pointer_cast<DESFireEV1STidSTRCommands>(commands)->setProfile(boost::dynamic_pointer_cast<DESFireProfile>(chip->getProfile()));
@@ -276,14 +276,14 @@ namespace logicalaccess
 		}
 		else
 		{
-			ERROR_("Unable to create the chip with this type !");
+			LOG(LogLevel::ERRORS) << , "Unable to create the chip with this type !");
 		}
 		return chip;
 	}
 
 	boost::shared_ptr<Chip> STidSTRReaderUnit::getSingleChip()
 	{
-		//INFO_("Getting the first detect chip...");
+		//LOG(LogLevel::INFOS) << ) << , "Getting the first detect chip...");
 		boost::shared_ptr<Chip> chip = d_insertedChip;
 
 		return chip;
@@ -291,7 +291,7 @@ namespace logicalaccess
 
 	std::vector<boost::shared_ptr<Chip> > STidSTRReaderUnit::getChipList()
 	{
-		//INFO_("Getting all detected chips...");
+		//LOG(LogLevel::INFOS) << ) << , "Getting all detected chips...");
 		std::vector<boost::shared_ptr<Chip> > chipList;
 		boost::shared_ptr<Chip> singleChip = getSingleChip();
 		if (singleChip)
@@ -309,7 +309,7 @@ namespace logicalaccess
 
 	string STidSTRReaderUnit::getReaderSerialNumber()
 	{
-		WARNING_("Do nothing with STid STR reader");
+		LOG(LogLevel::WARNINGS) << , "Do nothing with STid STR reader");
 		string ret;
 		return ret;
 	}
@@ -317,9 +317,9 @@ namespace logicalaccess
 	bool STidSTRReaderUnit::isConnected()
 	{
 		if (d_insertedChip)
-			INFO_("Is connected {1}");
+			LOG(LogLevel::INFOS) << ) << , "Is connected {1}");
 		else
-			INFO_("Is connected {0}");
+			LOG(LogLevel::INFOS) << ) << , "Is connected {0}");
 		return bool(d_insertedChip);
 	}
 	
@@ -342,7 +342,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<Chip> STidSTRReaderUnit::scan14443A()
 	{
-		INFO_("Scanning 14443A chips...");
+		LOG(LogLevel::INFOS) << ) << , "Scanning 14443A chips...");
 		boost::shared_ptr<Chip> chip;
 		std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0002, std::vector<unsigned char>());
 		if (response.size() > 0)
@@ -352,34 +352,34 @@ namespace logicalaccess
 			{
 				STidCmdType stidCardType = static_cast<STidCmdType>(response[1]);
 
-				INFO_("Response detected stid card type {0x%x(%d)}", stidCardType, stidCardType);
+				LOG(LogLevel::INFOS) << ) << , "Response detected stid card type {0x%x(%d)}", stidCardType, stidCardType);
 
 				//unsigned char cardSize = response.constData<unsigned char>()[2];
 				//unsigned char chipInfo = response.constData<unsigned char>()[3];
 				unsigned char uidLen = response[4];
 
-				INFO_("UID length {%u}", uidLen);
+				LOG(LogLevel::INFOS) << ) << , "UID length {%u}", uidLen);
 
 				if (uidLen > 0)
 				{
 					std::vector<unsigned char> uid = std::vector<unsigned char>(response.begin() + 5, response.begin() + 5 + uidLen);
 
-					INFO_("UID %s-{%s}", BufferHelper::getHex(uid).c_str(), BufferHelper::getStdString(uid).c_str());
+					LOG(LogLevel::INFOS) << ) << , "UID %s-{%s}", BufferHelper::getHex(uid).c_str(), BufferHelper::getStdString(uid).c_str());
 					std::string cardType = "UNKNOWN";
 					switch (stidCardType)
 					{
 					case STID_CMD_MIFARE_CLASSIC:
-						INFO_("Mifare classic type !");
+						LOG(LogLevel::INFOS) << ) << , "Mifare classic type !");
 						cardType = "Mifare";
 						break;
 
 					case STID_CMD_DESFIRE:
-						INFO_("Mifare DESFire type !");
+						LOG(LogLevel::INFOS) << ) << , "Mifare DESFire type !");
 						cardType = "DESFireEV1";
 						break;
 
 					default:
-						INFO_("Unknown type !");
+						LOG(LogLevel::INFOS) << ) << , "Unknown type !");
 						cardType = "UNKNOWN";
 						break;
 					}
@@ -387,7 +387,7 @@ namespace logicalaccess
 					chip = createChip(cardType);
 					chip->setChipIdentifier(uid);
 
-					INFO_("Scanning for specific chip type, mandatory for STid reader...");
+					LOG(LogLevel::INFOS) << ) << , "Scanning for specific chip type, mandatory for STid reader...");
 					// Scan for specific chip type, mandatory for STid reader...
 					if (cardType == "DESFire" || cardType == "DESFireEV1")
 					{
@@ -402,21 +402,21 @@ namespace logicalaccess
 				}
 				else
 				{
-					ERROR_("No UID retrieved !");
+					LOG(LogLevel::ERRORS) << , "No UID retrieved !");
 				}
 			}
 			else if (!haveCard)
 			{
-				INFO_("No card detected !");
+				LOG(LogLevel::INFOS) << ) << , "No card detected !");
 			}
 			else
 			{
-				ERROR_("Command length should be > 4");
+				LOG(LogLevel::ERRORS) << , "Command length should be > 4");
 			}
 		}
 		else
 		{
-			ERROR_("No response !");
+			LOG(LogLevel::ERRORS) << , "No response !");
 		}
 
 		return chip;
@@ -424,7 +424,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<Chip> STidSTRReaderUnit::scanARaw()
 	{
-		INFO_("Scanning 14443A RAW chips...");
+		LOG(LogLevel::INFOS) << ) << , "Scanning 14443A RAW chips...");
 		boost::shared_ptr<Chip> chip;
 		std::vector<unsigned char> command;
 		command.push_back(0x00);
@@ -436,52 +436,52 @@ namespace logicalaccess
 			if (haveCard && response.size() > 5)
 			{
 				unsigned short atqa = (response[1] << 8) | response[2];
-				INFO_("ATQA (Answer To Request Type A) value {0x%x(%u)}", atqa, atqa);
+				LOG(LogLevel::INFOS) << ) << , "ATQA (Answer To Request Type A) value {0x%x(%u)}", atqa, atqa);
 
 				// Voir documentation AN10833 de NXP
 				std::string cardType = "UNKNOWN";
 				switch (atqa)
 				{
 				case 0x002:
-					INFO_("Mifare classic 4K !");
+					LOG(LogLevel::INFOS) << ) << , "Mifare classic 4K !");
 					cardType = "Mifare4K";
 					break;
 				case 0x004:
-					INFO_("Mifare classic 1K !"); // Ou Mifare Mini
+					LOG(LogLevel::INFOS) << ) << , "Mifare classic 1K !"); // Ou Mifare Mini
 					cardType = "Mifare1K";
 					break;
 				case 0x0042:
 				case 0x0044:
-					INFO_("Mifare Ultralight");
+					LOG(LogLevel::INFOS) << ) << , "Mifare Ultralight");
 					cardType = "MifareUltralight";
 					break;
 				case 0x0344:
-					INFO_("Mifare DESFire type !");
+					LOG(LogLevel::INFOS) << ) << , "Mifare DESFire type !");
 					cardType = "DESFireEV1";
 					break;
 				default:
-					INFO_("Unknown type !");
+					LOG(LogLevel::INFOS) << ) << , "Unknown type !");
 					cardType = "UNKNOWN";
 					break;
 				}
 
 				//unsigned char sak = response[3];
-				//INFO_("SAK (Select Acknowloedge Type A) value {0x%x(%u)}", sak);
+				//LOG(LogLevel::INFOS) << ) << , "SAK (Select Acknowloedge Type A) value {0x%x(%u)}", sak);
 
 
 				unsigned char uidLen = response[4];
-				INFO_("UID length {%u}", uidLen);
+				LOG(LogLevel::INFOS) << ) << , "UID length {%u}", uidLen);
 
 				if (uidLen > 0)
 				{
 					std::vector<unsigned char> uid = std::vector<unsigned char>(response.begin() + 5, response.begin() + 5 + uidLen);
 
-					INFO_("UID %s-{%s}", BufferHelper::getHex(uid).c_str(), BufferHelper::getStdString(uid).c_str());
+					LOG(LogLevel::INFOS) << ) << , "UID %s-{%s}", BufferHelper::getHex(uid).c_str(), BufferHelper::getStdString(uid).c_str());
 
 					chip = createChip(cardType);
 					chip->setChipIdentifier(uid);
 
-					INFO_("Scanning for specific chip type, mandatory for STid reader...");
+					LOG(LogLevel::INFOS) << ) << , "Scanning for specific chip type, mandatory for STid reader...");
 					// Scan for specific chip type, mandatory for STid reader...
 					if (cardType == "DESFire" || cardType == "DESFireEV1")
 					{
@@ -496,21 +496,21 @@ namespace logicalaccess
 				}
 				else
 				{
-					ERROR_("No UID retrieved !");
+					LOG(LogLevel::ERRORS) << , "No UID retrieved !");
 				}
 			}
 			else if (!haveCard)
 			{
-				INFO_("No card detected !");
+				LOG(LogLevel::INFOS) << ) << , "No card detected !");
 			}
 			else
 			{
-				ERROR_("Command length should be > 5");
+				LOG(LogLevel::ERRORS) << , "Command length should be > 5");
 			}
 		}
 		else
 		{
-			ERROR_("No response !");
+			LOG(LogLevel::ERRORS) << , "No response !");
 		}
 
 		return chip;
@@ -518,7 +518,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<Chip> STidSTRReaderUnit::scan14443B()
 	{
-		INFO_("Scanning 14443B chips...");
+		LOG(LogLevel::INFOS) << ) << , "Scanning 14443B chips...");
 		boost::shared_ptr<Chip> chip;
 		std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0009, std::vector<unsigned char>());
 		if (response.size() > 0)
@@ -531,27 +531,27 @@ namespace logicalaccess
 				{
 					std::vector<unsigned char> uid = std::vector<unsigned char>(response.begin() + 2, response.begin() + 5 + uidLen);
 
-					INFO_("UID length {%u}", uidLen);
+					LOG(LogLevel::INFOS) << ) << , "UID length {%u}", uidLen);
 					chip = createChip("UNKNOWN");
 					chip->setChipIdentifier(uid);
 				}
 				else
 				{
-					ERROR_("No UID retrieved !");
+					LOG(LogLevel::ERRORS) << , "No UID retrieved !");
 				}
 			}
 			else if (!haveCard)
 			{
-				INFO_("No card detected !");
+				LOG(LogLevel::INFOS) << ) << , "No card detected !");
 			}
 			else
 			{
-				ERROR_("Command length should be > 4");
+				LOG(LogLevel::ERRORS) << , "Command length should be > 4");
 			}
 		}
 		else
 		{
-			ERROR_("No response !");
+			LOG(LogLevel::ERRORS) << , "No response !");
 		}
 
 		return chip;
@@ -559,7 +559,7 @@ namespace logicalaccess
 
 	void STidSTRReaderUnit::authenticateHMAC()
 	{
-		INFO_("Authenticating HMAC (signed communication)...");
+		LOG(LogLevel::INFOS) << ) << , "Authenticating HMAC (signed communication)...");
 
 		RAND_seed(getDataTransport().get(), sizeof(getDataTransport().get()));
 		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
@@ -568,7 +568,7 @@ namespace logicalaccess
 		boost::shared_ptr<HMAC1Key> key = getSTidSTRConfiguration()->getHMACKey();
 		if (key->isEmpty())
 		{
-			INFO_("Empty key... using the default one !");
+			LOG(LogLevel::INFOS) << ) << , "Empty key... using the default one !");
 			key.reset(new HMAC1Key("A0 87 75 4B 75 47 48 10 94 BE"));
 		}
 
@@ -629,7 +629,7 @@ namespace logicalaccess
 
 	void STidSTRReaderUnit::authenticateAES()
 	{
-		INFO_("Authenticating AES (ciphered communication)...");
+		LOG(LogLevel::INFOS) << ) << , "Authenticating AES (ciphered communication)...");
 
 		RAND_seed(getDataTransport().get(), sizeof(getDataTransport().get()));
 		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
@@ -644,7 +644,7 @@ namespace logicalaccess
 		boost::shared_ptr<AES128Key> key = getSTidSTRConfiguration()->getAESKey();
 		if (key->isEmpty())
 		{
-			INFO_("Empty key... using the default one !");
+			LOG(LogLevel::INFOS) << ) << , "Empty key... using the default one !");
 			key.reset(new AES128Key("E7 4A 54 0F A0 7C 4D B1 B4 64 21 12 6D F7 AD 36"));
 		}
 
@@ -692,7 +692,7 @@ namespace logicalaccess
 
 	std::vector<unsigned char> STidSTRReaderUnit::authenticateReader1(bool isHMAC)
 	{
-		INFO_("Authenticating Reader 1... is HMAC {%d}", isHMAC);
+		LOG(LogLevel::INFOS) << ) << , "Authenticating Reader 1... is HMAC {%d}", isHMAC);
 		std::vector<unsigned char> command, ret;
 		command.push_back(isHMAC ? 0x01 : 0x02);
 
@@ -704,7 +704,7 @@ namespace logicalaccess
 		}
 		catch(std::exception& e)
 		{
-			ERROR_("Exception {%s}", e.what());
+			LOG(LogLevel::ERRORS) << , "Exception {%s}", e.what());
 			getSTidSTRConfiguration()->setCommunicationMode(lastCM);
 			throw;
 		}
@@ -715,7 +715,7 @@ namespace logicalaccess
 
 	std::vector<unsigned char> STidSTRReaderUnit::authenticateReader2(const std::vector<unsigned char>& data)
 	{
-		INFO_("Authenticating Reader 2...");
+		LOG(LogLevel::INFOS) << ) << , "Authenticating Reader 2...");
 		std::vector<unsigned char> ret;
 		STidCommunicationMode lastCM = getSTidSTRConfiguration()->getCommunicationMode();
 		getSTidSTRConfiguration()->setCommunicationMode(STID_CM_RESERVED);
@@ -725,7 +725,7 @@ namespace logicalaccess
 		}
 		catch(std::exception& e)
 		{
-			ERROR_("Exception {%s}", e.what());
+			LOG(LogLevel::ERRORS) << , "Exception {%s}", e.what());
 			getSTidSTRConfiguration()->setCommunicationMode(lastCM);
 			throw;
 		}
@@ -736,13 +736,13 @@ namespace logicalaccess
 
 	void STidSTRReaderUnit::ResetAuthenticate()
 	{
-		INFO_("Reseting authentication...");
+		LOG(LogLevel::INFOS) << ) << , "Reseting authentication...");
 		getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000D, std::vector<unsigned char>());
 	}
 
 	void STidSTRReaderUnit::ChangeReaderKeys(const std::vector<unsigned char>& key_hmac, const std::vector<unsigned char>& key_aes)
 	{
-		INFO_("Changing reader keys...");
+		LOG(LogLevel::INFOS) << ) << , "Changing reader keys...");
 		std::vector<unsigned char> command;
 		unsigned char keyMode = 0x00;
 		if (key_hmac.size() > 0)
@@ -764,7 +764,7 @@ namespace logicalaccess
 
 	void STidSTRReaderUnit::setBaudRate(STidBaudrate baudrate)
 	{
-		INFO_("Setting baudrate... baudrate {0x%x(%d)}", baudrate, baudrate);
+		LOG(LogLevel::INFOS) << ) << , "Setting baudrate... baudrate {0x%x(%d)}", baudrate, baudrate);
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(baudrate));
 		getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0005, command);
@@ -772,7 +772,7 @@ namespace logicalaccess
 
 	void STidSTRReaderUnit::set485Address(unsigned char address)
 	{
-		INFO_("Setting RS485 address... address {0x%x(%u)}", address, address);
+		LOG(LogLevel::INFOS) << ) << , "Setting RS485 address... address {0x%x(%u)}", address, address);
 		std::vector<unsigned char> command;
 		EXCEPTION_ASSERT_WITH_LOG(address <= 127, LibLogicalAccessException, "The RS485 address should be between 0 and 127.");
 		command.push_back(address);
@@ -781,7 +781,7 @@ namespace logicalaccess
 
 	STidSTRReaderUnit::STidSTRInformation STidSTRReaderUnit::getReaderInformaton()
 	{
-		INFO_("Getting reader information...");
+		LOG(LogLevel::INFOS) << ) << , "Getting reader information...");
 		std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0008, std::vector<unsigned char>());
 
 		EXCEPTION_ASSERT_WITH_LOG(response.size() >= 5, LibLogicalAccessException, "The GetInfos response should be 5-byte long.");
@@ -792,7 +792,7 @@ namespace logicalaccess
 		readerInfo.rs485Address = response[2];
 		readerInfo.voltage = (float)response[3] + ((float)response[4] / (float)10);
 
-		INFO_("Returns version {0x%x(%u)} baudrate {0x%x(%u)} rs485 address {0x%x(%u)} voltage {0x%x(%u)}",
+		LOG(LogLevel::INFOS) << ) << , "Returns version {0x%x(%u)} baudrate {0x%x(%u)} rs485 address {0x%x(%u)} voltage {0x%x(%u)}",
 			readerInfo.version, readerInfo.version, readerInfo.baudrate, readerInfo.baudrate, readerInfo.rs485Address, readerInfo.rs485Address,
 			readerInfo.voltage, readerInfo.voltage);
 
@@ -801,7 +801,7 @@ namespace logicalaccess
 
 	void STidSTRReaderUnit::setAllowedCommModes(bool plainComm, bool signedComm, bool cipheredComm)
 	{
-		INFO_("Setting allowed communication modes... plain comm {%d} signed comm {%d} ciphered comm {%d}", plainComm, signedComm, cipheredComm);
+		LOG(LogLevel::INFOS) << ) << , "Setting allowed communication modes... plain comm {%d} signed comm {%d} ciphered comm {%d}", plainComm, signedComm, cipheredComm);
 		std::vector<unsigned char> command;
 		unsigned char allowedModes = 0x08 |
 			((plainComm) ? 0x01 : 0x00) |
@@ -814,7 +814,7 @@ namespace logicalaccess
 
 	void STidSTRReaderUnit::setTamperSwitchSettings(bool useTamperSwitch, STidTamperSwitchBehavior behavior)
 	{
-		INFO_("Setting tamper switch settings... use tamper {%d} tamper behavior {0x%x(%u)}", useTamperSwitch, behavior, behavior);
+		LOG(LogLevel::INFOS) << ) << , "Setting tamper switch settings... use tamper {%d} tamper behavior {0x%x(%u)}", useTamperSwitch, behavior, behavior);
 		std::vector<unsigned char> command;
 
 		command.push_back((useTamperSwitch) ? 0x01 : 0x00);
@@ -825,7 +825,7 @@ namespace logicalaccess
 
 	void STidSTRReaderUnit::getTamperSwitchInfos(bool& useTamperSwitch, STidTamperSwitchBehavior& behavior, bool& swChanged)
 	{
-		INFO_("Getting tamper switch infos...");
+		LOG(LogLevel::INFOS) << ) << , "Getting tamper switch infos...");
 		std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000C, std::vector<unsigned char>());
 
 		EXCEPTION_ASSERT_WITH_LOG(response.size() >= 3, LibLogicalAccessException, "The GetTamperSwitchInfos response should be 3-byte long.");
@@ -834,12 +834,12 @@ namespace logicalaccess
 		behavior = static_cast<STidTamperSwitchBehavior>(response[1]);
 		swChanged = (response[2] == 0x01);
 
-		INFO_("Returns use tamper {%d} tamper behavior {0x%x(%u)}", useTamperSwitch, behavior, behavior);
+		LOG(LogLevel::INFOS) << ) << , "Returns use tamper {%d} tamper behavior {0x%x(%u)}", useTamperSwitch, behavior, behavior);
 	}
 
 	void STidSTRReaderUnit::loadSKB()
 	{
-		INFO_("Loading SKB...");
+		LOG(LogLevel::INFOS) << ) << , "Loading SKB...");
 		unsigned char statusCode = 0;
 		std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000E, std::vector<unsigned char>(), statusCode);
 

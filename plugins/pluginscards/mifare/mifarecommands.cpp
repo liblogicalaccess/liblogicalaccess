@@ -225,7 +225,7 @@ namespace logicalaccess
 		MifareKeyType wkt = KT_KEY_A;
 		MifareKeyType rkt = KT_KEY_A;
 
-		INFO_("mcba1");
+		LOG(LogLevel::INFOS) << ) << , "mcba1");
 
 		int virtualblock = 0;
 		if (sector >= 32)

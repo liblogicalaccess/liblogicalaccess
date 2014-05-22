@@ -59,7 +59,7 @@ namespace logicalaccess
 		}
 		else if (!result.first.empty())
 		{
-			WARNING_(result.first.c_str());
+			LOG(LogLevel::WARNINGS) << result.first;
 		}
 	}
 
