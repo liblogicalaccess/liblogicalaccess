@@ -20,62 +20,76 @@
 
 #include "settings.hpp"
 #include <fstream>
+#include <map>
+#include <boost/date_time.hpp>
 
 namespace logicalaccess
 {
-	class LIBLOGICALACCESS_API Logs
+	enum LogLevel { INFOS = 0, WARNINGS, NOTICES, ERRORS, EMERGENSYS, CRITICALS, ALERTS, DEBUGS, COMS, PLUGINS };
+
+	class Logs
 	{
-		public:
-			static void DEBUG_LOG(const char* file, int line, const char* function, const char* format, ...);
-			static void ALERT_LOG(const char* file, int line, const char* function, const char* format, ...);
-			static void CRITICAL_LOG(const char* file, int line, const char* function, const char* format, ...);
-			static void EMERGENCY_LOG(const char* file, int line, const char* function, const char* format, ...);
-			static void ERROR_LOG(const char* file, int line, const char* function, const char* format, ...);
-			static void ERROR_LOG(const char* file, int line, const char* function, const std::string& msg);
-			static void NOTICE_LOG(const char* file, int line, const char* function, const char* format, ...);
-			static void WARNING_LOG(const char* file, int line, const char* function, const char* format, ...);
-			static void INFO_LOG(const char* file, int line, const char* function, const char* format, ...);
-			static void COM_LOG(const char* file, int line, const char* function, const char* format, ...);
-			static void PLUGIN_LOG(const char* file, int line, const char* function, const char* format, ...);
-			static void PLUGIN_ERROR(const char* file, int line, const char* function, const char* format, ...);
+	public:
+		Logs(const char* file, const char* func, int line, enum LogLevel level)
+		{
+			if (!Settings::getInstance()->IsLogEnabled
+			|| (level == LogLevel::COMS && !Settings::getInstance()->SeeCommunicationLog)
+			|| (level == LogLevel::PLUGINS && !Settings::getInstance()->SeePluginLog))
+				return;
 
-			static std::ofstream logfile;
+			if (logLevelMsg.empty())
+			{
+				logLevelMsg[INFOS] = "INFO";
+				logLevelMsg[WARNINGS] = "WARNING";
+				logLevelMsg[NOTICES] = "NOTICE";
+				logLevelMsg[ERRORS] = "ERROR";
+				logLevelMsg[EMERGENSYS] = "EMERGENSY";
+				logLevelMsg[CRITICALS] = "CRITICAL";
+				logLevelMsg[ALERTS] = "ALERT";
+				logLevelMsg[DEBUGS] = "DEBUG";
+				logLevelMsg[COMS] = "COM";
+				logLevelMsg[PLUGINS] = "PLUGIN";
+			}
 
-		private:
-			static std::string processLog(const char* file, int line, const char* function, const char* msg);
+			if (logfile)
+			{
+				boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
+				_stream << boost::posix_time::to_simple_string(now) << " - " << file << ": " << logLevelMsg[level] << line << ": in function '" << func << "': ";
+			}
+		}
+   
+		~Logs()
+		{
+			if (logfile)
+			{
+				_stream << std::endl;
+				logfile << _stream.rdbuf();
+				logfile.flush();
+			}
+		}
+   
+		template <class T>
+		Logs& operator<<(const T& arg)
+		{
+			_stream << arg;
+			return (*this);
+		}
+   
+		static std::ofstream logfile;
 
-			static void log_DEBUG(std::string message) { log("DEBUG: " + message); };
-			static void log_ALERT(std::string message) { log("ALERT: " + message); };
-			static void log_CRITICAL(std::string message) { log("CRITICAL: " + message); };
-			static void log_EMERGENCY(std::string message) { log("EMERGENCY " + message); };
-			static void log_ERROR(std::string message) { log("ERROR: " + message); };
-			static void log_NOTICE(std::string message) { log("NOTICE: " + message); };
-			static void log_WARNING(std::string message) { log("WARNING: " + message); };
-			static void log_INFORMATIONAL(std::string message) { log("INFO: " + message); };
-
-			static void log(std::string message);
+	private:
+		std::stringstream   _stream;
+		static std::map<LogLevel, std::string> logLevelMsg;
 	};
 
 	#ifdef LOGICALACCESS_LOGS
 
-	//#define PSTR(x)         PANTHEIOS_LITERAL_STRING(x)
-
-	#define DEBUG_(x, ...) logicalaccess::Logs::DEBUG_LOG(__FILE__, __LINE__, __FUNCTION__, x, ## __VA_ARGS__)
-	#define ALERT_(x, ...) logicalaccess::Logs::ALERT_LOG(__FILE__, __LINE__, __FUNCTION__, x, ##__VA_ARGS__)
-	#define CRITICAL_(x, ...) logicalaccess::Logs::CRITICAL_LOG(__FILE__, __LINE__, __FUNCTION__, x, ##__VA_ARGS__)
-	#define EMERGENCY_(x, ...) logicalaccess::Logs::EMERGENCY_LOG(__FILE__, __LINE__, __FUNCTION__, x, ##__VA_ARGS__)
-	#define ERROR_(x, ...) logicalaccess::Logs::ERROR_LOG(__FILE__, __LINE__, __FUNCTION__, x, ##__VA_ARGS__)
-	#define NOTICE_(x, ...) logicalaccess::Logs::NOTICE_LOG(__FILE__, __LINE__, __FUNCTION__, x, ##__VA_ARGS__)
-	#define WARNING_(x, ...) logicalaccess::Logs::WARNING_LOG(__FILE__, __LINE__, __FUNCTION__, x, ##__VA_ARGS__)
-	#define INFO_(x, ...) logicalaccess::Logs::INFO_LOG(__FILE__, __LINE__, __FUNCTION__, x, ##__VA_ARGS__)
-	#define COM_(x, ...) logicalaccess::Logs::COM_LOG(__FILE__, __LINE__, __FUNCTION__, x, ##__VA_ARGS__)
-	#define PLUGIN_(x, ...) logicalaccess::Logs::PLUGIN_LOG(__FILE__, __LINE__, __FUNCTION__, x, ##__VA_ARGS__)
-	#define PLUGIN_ERROR_(x, ...) logicalaccess::Logs::PLUGIN_ERROR(__FILE__, __LINE__, __FUNCTION__, x, ##__VA_ARGS__)
+	#define LOG(x) Logs(__FILE__, __FUNCTION__, __LINE__, x)
 
 	/**
 	 * \brief Convenient alias to throw an exception with logs.
 	 */
-	#define THROW_EXCEPTION_WITH_LOG(type, msg) { ERROR_(msg); throw EXCEPTION(type, msg); }
+	#define THROW_EXCEPTION_WITH_LOG(type, msg) { LOG(LogLevel::ERRORS) << msg; throw EXCEPTION(type, msg); }
 
 	/**
 	 * \brief Assertion which raises an exception on failure with logs.
@@ -83,6 +97,8 @@ namespace logicalaccess
 	#define EXCEPTION_ASSERT_WITH_LOG(condition, type, msg) if (!(condition)) { THROW_EXCEPTION_WITH_LOG(type, msg); }
 
 	#else
+
+	#define LOG(x) ((void 0)
 
 	#define PSTR(x) ((void) 0)
 	#define DEBUG_(x, ...) ((void) 0)
