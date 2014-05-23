@@ -37,7 +37,7 @@ namespace logicalaccess
 		template <class T>
 		Logs& operator<<(const T& arg)
 		{
-			_stream << "\t" << arg;
+			_stream << arg;
 			return (*this);
 		}
    
@@ -65,7 +65,7 @@ namespace logicalaccess
 
 	#else
 
-	#define LOG(x) logicalaccess::Logs(__FILE__, __FUNCTION__, __LINE__, Logs::LogLevel::NONE)
+	#define LOG(x) logicalaccess::Logs(__FILE__, __FUNCTION__, __LINE__, logicalaccess::LogLevel::NONE)
 
 	#define THROW_EXCEPTION_WITH_LOG(type, msg) { throw EXCEPTION(type, msg); }
 	#define EXCEPTION_ASSERT_WITH_LOG(condition, type, msg) if (!(condition)) { THROW_EXCEPTION_WITH_LOG(type, msg); }

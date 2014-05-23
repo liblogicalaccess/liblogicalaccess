@@ -8,10 +8,6 @@
 #include "logicalaccess/crypto/tomcrypt.h"
 #include <ctime>
 
-#include <boost/foreach.hpp>
-#include <boost/optional.hpp>
-#include <boost/array.hpp>
-
 namespace logicalaccess
 {	
 	A3MLGM5600ReaderCardAdapter::A3MLGM5600ReaderCardAdapter()
