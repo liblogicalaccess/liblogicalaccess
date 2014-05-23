@@ -48,7 +48,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<ReaderUnit> PromagReaderProvider::createReaderUnit()
 	{
-		LOG(LogLevel::INFOS) << ) << , "Creating new reader unit with empty port... (Serial port auto-detect will be used when connecting to reader)");
+		LOG(LogLevel::INFOS) << "Creating new reader unit with empty port... (Serial port auto-detect will be used when connecting to reader)";
 
 		boost::shared_ptr<PromagReaderUnit> ret(new PromagReaderUnit());
 		ret->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));

@@ -57,7 +57,7 @@ namespace logicalaccess
 
 	void IdOnDemandReaderUnit::setCardType(std::string cardType)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Setting card type {0x%s(%s)}", cardType.c_str(), cardType.c_str());
+		LOG(LogLevel::INFOS) << "Setting card type {" << cardType << "}";
 		d_card_type = cardType;
 	}
 
@@ -94,7 +94,7 @@ namespace logicalaccess
 		}
 		catch(CardException& e)
 		{
-			LOG(LogLevel::ERRORS) << , "Exception Read {%s}", e.what());
+			LOG(LogLevel::ERRORS) << "Exception Read {" << e.what() << "}";
 			ret = false;
 		}
 
@@ -111,7 +111,7 @@ namespace logicalaccess
 		}
 		catch(CardException& e)
 		{
-			LOG(LogLevel::ERRORS) << , "Exception Verify {%s}", e.what());
+			LOG(LogLevel::ERRORS) << "Exception Verify {" << e.what() << "}";
 			ret = false;
 		}
 
@@ -128,7 +128,7 @@ namespace logicalaccess
 		}
 		catch(CardException& e)
 		{
-			LOG(LogLevel::ERRORS) << , "Exception Write {%s}", e.what());
+			LOG(LogLevel::ERRORS) << "Exception Write {" << e.what() << "}";
 			ret = false;
 		}
 
@@ -295,7 +295,7 @@ namespace logicalaccess
 
 	bool IdOnDemandReaderUnit::connectToReader()
 	{
-		LOG(LogLevel::INFOS) << ) << , "Connecting to reader...");
+		LOG(LogLevel::INFOS) << "Connecting to reader...";
 		bool ret = getDataTransport()->connect();
 		if (ret)
 		{
@@ -307,7 +307,7 @@ namespace logicalaccess
 
 	void IdOnDemandReaderUnit::disconnectFromReader()
 	{
-		LOG(LogLevel::INFOS) << ) << , "Disconnecting from reader...");
+		LOG(LogLevel::INFOS) << "Disconnecting from reader...";
 
 		// Close the session with the reader
 		//authenticateSDK(0000);	 // A wrong authenticate code logout the session

@@ -27,7 +27,7 @@ namespace logicalaccess
 
 	std::vector<unsigned char> GunneboReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
 	{
-		LOG(LogLevel::COMS) << , "Processing the received command buffer %s command size {%d}...", BufferHelper::getHex(answer).c_str(), answer.size());
+		LOG(LogLevel::COMS) << "Processing the received command buffer " << BufferHelper::getHex(answer) << " command size {" << answer.size()  << "}...";
 
 		EXCEPTION_ASSERT_WITH_LOG(answer.size() >= 3, std::invalid_argument, "A valid command buffer size must be at least 3 bytes long");
 		EXCEPTION_ASSERT_WITH_LOG(answer[0] == STX, std::invalid_argument, "The supplied command buffer is not valid (bad STX)");

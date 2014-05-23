@@ -33,7 +33,7 @@ namespace logicalaccess
 
 	void DESFireAccessInfo::generateInfos()
 	{
-		LOG(LogLevel::INFOS) << ) << , "Generate access information");
+		LOG(LogLevel::INFOS) << "Generate access information";
 		readKey->fromString(generateSimpleKey(0, readKey->getLength()));
 		readKeyno = 2;
 		writeKey->fromString(generateSimpleKey(1000, writeKey->getLength()));
@@ -44,7 +44,7 @@ namespace logicalaccess
 
 	void DESFireAccessInfo::generateInfos(const string& csn)
 	{
-	        LOG(LogLevel::INFOS) << ) << , "Generate access information with CSN '%s' as seed", csn.c_str());
+	        LOG(LogLevel::INFOS) << "Generate access information with CSN '" << csn << "' as seed";
 		long lcsn = atol(csn.c_str());
 
 		readKey->fromString(generateSimpleKey(lcsn, readKey->getLength()));
@@ -81,7 +81,7 @@ namespace logicalaccess
 
 	void DESFireAccessInfo::unSerialize(boost::property_tree::ptree& node)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Unserializing access information...");
+		LOG(LogLevel::INFOS) << "Unserializing access information...";
 
 		boost::dynamic_pointer_cast<XmlSerializable>(readKey)->unSerialize(node.get_child("ReadKey"), "");
 		readKeyno = node.get_child("ReadKeyno").get_value<unsigned char>();

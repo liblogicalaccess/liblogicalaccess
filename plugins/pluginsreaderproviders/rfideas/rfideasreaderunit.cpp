@@ -97,17 +97,16 @@ namespace logicalaccess
 	void RFIDeasReaderUnit::initReaderCnx()
 	{
 #ifdef _WINDOWS
-		LOG(LogLevel::INFOS) << ) << , "SetConnectProduct returned %x", fnSetConnectProduct(PRODUCT_PCPROX));
-		LOG(LogLevel::INFOS) << ) << , "SetDevTypeSrch returned %x", fnSetDevTypeSrch(PRXDEVTYP_USB));
+		LOG(LogLevel::INFOS) << "SetConnectProduct returned " << std::hex << fnSetConnectProduct(PRODUCT_PCPROX) << std::dec;
+		LOG(LogLevel::INFOS) << "SetDevTypeSrch returned " << std::hex << fnSetDevTypeSrch(PRXDEVTYP_USB) << std::dec;
 
 		BSHRT hr = fnUSBConnect(&d_deviceId);
-		LOG(LogLevel::INFOS) << ) << , "USBConnect returned %x", hr);
+		LOG(LogLevel::INFOS) << "USBConnect returned " << std::hex << hr << std::dec;
 		if (hr == 0)
 		{
-			hr = fnSetComSrchRange(1, 15);
-			LOG(LogLevel::INFOS) << ) << , "SetComSrchRange returned %x", hr);
+			LOG(LogLevel::INFOS) << "SetComSrchRange returned " << std::hex << fnSetComSrchRange(1, 15) << std::dec;
 			hr = fnCOMConnect(&d_deviceId);
-			LOG(LogLevel::INFOS) << ) << , "COMConnect returned %x", hr);
+			LOG(LogLevel::INFOS) << "COMConnect returned " << std::hex << hr << std::dec;
 			EXCEPTION_ASSERT_WITH_LOG(hr != 0, LibLogicalAccessException, "Can't connect to the RFIDeas device. Please be sure a reader is plugged");
 			isCOMConnection = true;
 		}
@@ -126,12 +125,12 @@ namespace logicalaccess
 			if (isCOMConnection)
 			{
 				BSHRT hr = fnCOMDisconnect();
-				LOG(LogLevel::INFOS) << ) << , "COMDisconnect returned %x", hr);
+				LOG(LogLevel::INFOS) << "COMDisconnect returned " << std::hex << hr << std::dec;
 			}
 			else
 			{
 				BSHRT hr = fnUSBDisconnect();
-				LOG(LogLevel::INFOS) << ) << , "USBDisconnect returned %x", hr);
+				LOG(LogLevel::INFOS) << "USBDisconnect returned " << std::hex << hr << std::dec;
 			}
 		}
 #endif
@@ -257,10 +256,10 @@ namespace logicalaccess
 			long err = fnGetLastLibErr();
 			if (err > 0)
 			{
-				LOG(LogLevel::WARNINGS) << , "An error occured when getting the active ID (%d)", err);
-				LOG(LogLevel::INFOS) << ) << , "Disconnecting from the reader...");
+				LOG(LogLevel::WARNINGS) << "An error occured when getting the active ID (" << err << ")";
+				LOG(LogLevel::INFOS) << "Disconnecting from the reader...";
 				disconnectFromReader();
-				LOG(LogLevel::INFOS) << ) << , "Reconnecting to the reader...");
+				LOG(LogLevel::INFOS) << "Reconnecting to the reader...";
 				connectToReader();
 			}
 		}

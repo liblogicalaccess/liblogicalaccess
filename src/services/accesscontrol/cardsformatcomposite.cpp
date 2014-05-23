@@ -54,7 +54,7 @@ namespace logicalaccess
 
 	void CardsFormatComposite::addFormatForCard(std::string type, boost::shared_ptr<Format> format, boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Add format for card type {%s}...", type.c_str());
+		LOG(LogLevel::INFOS) << "Add format for card type {" << type << "}...";
 		FormatInfos finfos;
 		finfos.format = format;
 		finfos.location = location;
@@ -66,10 +66,10 @@ namespace logicalaccess
 
 	void CardsFormatComposite::retrieveFormatForCard(std::string type, boost::shared_ptr<Format>* format, boost::shared_ptr<Location>* location, boost::shared_ptr<AccessInfo>* aiToUse, boost::shared_ptr<AccessInfo>* aiToWrite)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Retrieving format for card type {%s}...", type.c_str());
+		LOG(LogLevel::INFOS) << "Retrieving format for card type {" << type << "}...";
 		if (formatsList.find(type) != formatsList.end())
 		{
-			LOG(LogLevel::INFOS) << ) << , "Type found int the composite. Retrieving values...");
+			LOG(LogLevel::INFOS) << "Type found int the composite. Retrieving values...";
 			*format = formatsList[type].format;
 			*location = formatsList[type].location;
 			*aiToUse = formatsList[type].aiToUse;
@@ -79,12 +79,12 @@ namespace logicalaccess
 			}
 			else
 			{
-				LOG(LogLevel::ERRORS) << , "aiToWrite parameter is null. Cannot retrieve write value.");
+				LOG(LogLevel::ERRORS) << "aiToWrite parameter is null. Cannot retrieve write value.";
 			}
 		}
 		else
 		{
-			LOG(LogLevel::INFOS) << ) << , "No format found for this type.");
+			LOG(LogLevel::INFOS) << "No format found for this type.";
 			(*format).reset();
 			(*location).reset();
 			(*aiToUse).reset();
@@ -127,7 +127,7 @@ namespace logicalaccess
 
 		if (chip)
 		{			
-			LOG(LogLevel::INFOS) << ) << , "Read format using card format composite on a chip (%s)...", BufferHelper::getHex(chip->getChipIdentifier()).c_str());
+			LOG(LogLevel::INFOS) << "Read format using card format composite on a chip (" << BufferHelper::getHex(chip->getChipIdentifier()) << ")...";
 
 			FormatInfos finfos;
 			std::string ct = chip->getCardType();
@@ -149,7 +149,7 @@ namespace logicalaccess
 					// Make a manual format copy to preserve integrity.
 					try
 					{
-						LOG(LogLevel::INFOS) << ) << , "Getting access control service from chip...");
+						LOG(LogLevel::INFOS) << "Getting access control service from chip...";
 						boost::shared_ptr<AccessControlCardService> acService = boost::dynamic_pointer_cast<AccessControlCardService>(chip->getService(CST_ACCESS_CONTROL));
 						if (acService)
 						{
@@ -161,29 +161,29 @@ namespace logicalaccess
 						}
 						else
 						{
-							LOG(LogLevel::ERRORS) << , "Cannot found any access control service for this chip.");
+							LOG(LogLevel::ERRORS) << "Cannot found any access control service for this chip.";
 						}
 					}
 					catch(std::exception& ex)
 					{
-						LOG(LogLevel::WARNINGS) << , "Read format failed: {%s}", ex.what());
+						LOG(LogLevel::WARNINGS) << "Read format failed: {" << ex.what() << "}";
 						fcopy.reset();
 					}
 				}
 			}
 			else
 			{
-				LOG(LogLevel::INFOS) << ) << , "Cannot found any configured format for this chip.");
+				LOG(LogLevel::INFOS) << "Cannot found any configured format for this chip.";
 			}
 		}
 
 		if (fcopy)
 		{
-			LOG(LogLevel::INFOS) << ) << , "Format found, return.");
+			LOG(LogLevel::INFOS) << "Format found, return.";
 		}
 		else
 		{
-			LOG(LogLevel::INFOS) << ) << , "No format found, return.");
+			LOG(LogLevel::INFOS) << "No format found, return.";
 		}
 
 		return fcopy;
@@ -191,7 +191,7 @@ namespace logicalaccess
 
 	void CardsFormatComposite::serialize(boost::property_tree::ptree& parentNode)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Serializing card format composite...");
+		LOG(LogLevel::INFOS) << "Serializing card format composite...";
 		boost::property_tree::ptree node;
 
 		if (formatsList.empty())
@@ -199,7 +199,7 @@ namespace logicalaccess
 			FormatInfosList::iterator it;
 			for (it = formatsList.begin(); it != formatsList.end(); ++it)
 			{
-				LOG(LogLevel::INFOS) << ) << , "Serializing type {%s}...", it->first.c_str());
+				LOG(LogLevel::INFOS) << "Serializing type {" << it->first << "}...";
 				boost::property_tree::ptree nodecard;
 				nodecard.put("type", it->first);
 				nodecard.put("SelectedFormat", (it->second.format) ? it->second.format->getType() : FT_UNKNOWN);
@@ -218,7 +218,7 @@ namespace logicalaccess
 					boost::property_tree::ptree nodewinfo;
 					if (it->second.aiToWrite)
 					{
-						LOG(LogLevel::INFOS) << ) << , "Write info detected. Serializing...");
+						LOG(LogLevel::INFOS) << "Write info detected. Serializing...";
 						it->second.aiToWrite->serialize(nodewinfo);
 					}
 					nodecard.add_child("WriteInfo", nodewinfo);
@@ -233,7 +233,7 @@ namespace logicalaccess
 
 	void CardsFormatComposite::unSerialize(boost::property_tree::ptree& node)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Unserializing cards format composite...");
+		LOG(LogLevel::INFOS) << "Unserializing cards format composite...";
 
 		EXCEPTION_ASSERT_WITH_LOG(getReaderUnit(), LibLogicalAccessException, "A reader unit must be associated to the object.");
 
@@ -264,7 +264,7 @@ namespace logicalaccess
 							}
 							catch (std::exception& ex)
 							{
-								LOG(LogLevel::ERRORS) << , "Cannot unserialize location: {%s}", ex.what());
+								LOG(LogLevel::ERRORS) << "Cannot unserialize location: {" << ex.what() << "}";
 								location.reset();
 							}
 						}
@@ -279,7 +279,7 @@ namespace logicalaccess
 							}
 							catch (std::exception& ex)
 							{
-								LOG(LogLevel::ERRORS) << , "Cannot unserialize access info to use: {%s}", ex.what());
+								LOG(LogLevel::ERRORS) << "Cannot unserialize access info to use: {" << ex.what() << "}";
 								aiToUse.reset();
 							}
 						}
@@ -298,7 +298,7 @@ namespace logicalaccess
 								}
 								catch (std::exception& ex)
 								{
-									LOG(LogLevel::ERRORS) << , "Cannot unserialize access info to write: {%s}", ex.what());
+									LOG(LogLevel::ERRORS) << "Cannot unserialize access info to write: {" << ex.what() << "}";
 									aiToWrite.reset();
 								}
 							}

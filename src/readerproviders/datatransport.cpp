@@ -11,7 +11,7 @@ namespace logicalaccess
 {
 	std::vector<unsigned char> DataTransport::sendCommand(const std::vector<unsigned char>& command, long int timeout)
 	{
-		LOG(LogLevel::COMS) << , "Sending command %s command size {%d} timeout {%d}...", BufferHelper::getHex(command).c_str(), command.size(), timeout);
+		LOG(LogLevel::COMS) << "Sending command " << BufferHelper::getHex(command) << " command size {" << command.size() << "} timeout {" << timeout << "}...";
 
 		std::vector<unsigned char> res;
 		d_lastCommand = command;
@@ -32,7 +32,7 @@ namespace logicalaccess
 		}
 
 		d_lastResult = res;
-		LOG(LogLevel::COMS) << , "Response received successfully ! Reponse: %s size {%d}", BufferHelper::getHex(res).c_str(), res.size());
+		LOG(LogLevel::COMS) << "Response received successfully ! Reponse: " << BufferHelper::getHex(res) << " size {" << res.size() << "}";
 
 		return res;
 	}

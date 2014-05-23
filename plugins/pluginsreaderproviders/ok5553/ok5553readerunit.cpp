@@ -127,7 +127,7 @@ namespace logicalaccess
 
 	bool OK5553ReaderUnit::connect()
 	{
-		LOG(LogLevel::INFOS) << ) << , "Starting connect...");
+		LOG(LogLevel::INFOS) << "Starting connect...";
 		if (getSingleChip())
 		{
 			if (getSingleChip()->getCardType() == "DESFire")
@@ -157,7 +157,7 @@ namespace logicalaccess
 			getDefaultRplethReaderCardAdapter()->sendAsciiCommand ("v");
 		}*/
 
-		LOG(LogLevel::INFOS) << ) << , "Disconnected from the chip");
+		LOG(LogLevel::INFOS) << "Disconnected from the chip";
 	}
 
 	std::vector<unsigned char> OK5553ReaderUnit::asciiToHex (const std::vector<unsigned char>& source)
@@ -183,7 +183,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<Chip> OK5553ReaderUnit::getChipInAir(unsigned int maxwait)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Starting get chip in air...");
+		LOG(LogLevel::INFOS) << "Starting get chip in air...";
 
 		boost::shared_ptr<Chip> chip;
 		std::vector<unsigned char> buf;
@@ -234,7 +234,7 @@ namespace logicalaccess
 	
 	boost::shared_ptr<Chip> OK5553ReaderUnit::createChip(std::string type)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Create chip %s", type.c_str());
+		LOG(LogLevel::INFOS) << "Create chip " << type;
 		boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 
 		if (chip)
@@ -313,7 +313,7 @@ namespace logicalaccess
 
 	bool OK5553ReaderUnit::connectToReader()
 	{
-		LOG(LogLevel::INFOS) << ) << , "Starting connection to reader...");
+		LOG(LogLevel::INFOS) << "Starting connection to reader...";
 		boost::shared_ptr<DataTransport> dataTransport = getDataTransport();
 		if (!dataTransport->getReaderUnit())
 		{
@@ -326,7 +326,7 @@ namespace logicalaccess
 
 	void OK5553ReaderUnit::disconnectFromReader()
 	{
-		LOG(LogLevel::INFOS) << ) << , "Starting disconnection to reader...");
+		LOG(LogLevel::INFOS) << "Starting disconnection to reader...";
 		getDataTransport()->disconnect();
 	}
 
@@ -374,7 +374,7 @@ namespace logicalaccess
 		// Sending two RATS is not supported without a new Select. Doesn't send another one if the first successed.
 		if (d_successedRATS.size() == 0)
 		{
-			LOG(LogLevel::INFOS) << ) << , "Sending a RATS");
+			LOG(LogLevel::INFOS) << "Sending a RATS";
 			answer = getDefaultOK5553ReaderCardAdapter()->sendAsciiCommand ("t020FE020");
 			answer = asciiToHex (answer);
 			if (answer.size () > 1)

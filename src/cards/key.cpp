@@ -143,7 +143,7 @@ namespace logicalaccess
 
     void Key::unSerialize(boost::property_tree::ptree& node)
     {
-        LOG(LogLevel::INFOS) << ) << , "Unserializing Key...");
+        LOG(LogLevel::INFOS) << "Unserializing Key...";
 
         if (node.get_child_optional("KeyDiversification"))
         {
@@ -158,7 +158,7 @@ namespace logicalaccess
 
         d_storeCipheredData = node.get_child("IsCiphered").get_value<bool>(false);
         uncipherKeyData(node);
-        LOG(LogLevel::INFOS) << ) << , "Unserializing Key storage...");
+        LOG(LogLevel::INFOS) << "Unserializing Key storage...";
 		d_key_storage = KeyStorage::getKeyStorageFromType(static_cast<KeyStorageType>(node.get_child("<xmlattr>.keyStorageType").get_value<unsigned int>()));
 		if (d_key_storage)
 		{
@@ -217,16 +217,16 @@ namespace logicalaccess
     void Key::uncipherKeyData(boost::property_tree::ptree& node)
     {
         std::string data = node.get_child("Data").get_value<std::string>();
-        //LOG(LogLevel::INFOS) << ) << , "Unciphering data... {%s}", data.c_str());
+        //LOG(LogLevel::INFOS) << "Unciphering data... {%s}", data.c_str());
 
         if (!d_storeCipheredData)
         {
-            //LOG(LogLevel::INFOS) << ) << , "Data was not ciphered ! Retrieving directly data...");
+            //LOG(LogLevel::INFOS) << "Data was not ciphered ! Retrieving directly data...");
             fromString(data);
         }
         else
         {
-            LOG(LogLevel::INFOS) << ) << , "Data was ciphered ! Unciphering..");
+            LOG(LogLevel::INFOS) << "Data was ciphered ! Unciphering..";
             std::string secureKey = ((d_cipherKey == "") ? Key::secureAiKey : d_cipherKey);
             std::vector<unsigned char> hash = openssl::SHA256Hash(secureKey);
             openssl::AESSymmetricKey aes = openssl::AESSymmetricKey::createFromData(hash);

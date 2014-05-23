@@ -152,7 +152,7 @@ namespace logicalaccess
 				{
 					getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true, maxwait + 2000);
 					d_insertedChip.reset();
-					LOG(LogLevel::INFOS) << ) << , "Card removed");
+					LOG(LogLevel::INFOS) << "Card removed";
 					removed = true;
 				}
 				catch(LibLogicalAccessException&)
@@ -234,7 +234,7 @@ namespace logicalaccess
 			getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true);
 		}
 
-		LOG(LogLevel::INFOS) << ) << , "Disconnected from the chip");
+		LOG(LogLevel::INFOS) << "Disconnected from the chip";
 	}
 
 	std::vector<unsigned char> RplethReaderUnit::getInsertedChipIdentifier()
@@ -249,13 +249,13 @@ namespace logicalaccess
 			csn = getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true);
 		}
 
-		LOG(LogLevel::INFOS) << ) << , "Inserted chip identifier get");
+		LOG(LogLevel::INFOS) << "Inserted chip identifier get";
 		return csn;
 	}
 
 	boost::shared_ptr<Chip> RplethReaderUnit::getChipInAir(unsigned int maxwait)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Starting get chip in air...");
+		LOG(LogLevel::INFOS) << "Starting get chip in air...";
 
 		boost::shared_ptr<Chip> chip;
 		clock_t begin = std::clock();
@@ -281,7 +281,7 @@ namespace logicalaccess
 	
 	boost::shared_ptr<Chip> RplethReaderUnit::createChip(std::string type)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Create chip %s", type.c_str());
+		LOG(LogLevel::INFOS) << "Create chip " << type;
 		boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 
 		return chip;
@@ -329,7 +329,7 @@ namespace logicalaccess
 
 	bool RplethReaderUnit::connectToReader()
 	{
-		LOG(LogLevel::INFOS) << ) << , "Starting connection to reader...");
+		LOG(LogLevel::INFOS) << "Starting connection to reader...";
 		boost::shared_ptr<DataTransport> dataTransport = getDataTransport();
 		if (!dataTransport->getReaderUnit())
 		{
@@ -340,7 +340,7 @@ namespace logicalaccess
 		bool connected = getDataTransport()->connect();
 		if (connected && getRplethConfiguration()->getMode() == RplethMode::PROXY)
 		{
-			LOG(LogLevel::INFOS) << ) << , "Data transport connected, initializing PROXY mode...");
+			LOG(LogLevel::INFOS) << "Data transport connected, initializing PROXY mode...";
 			std::string type = getProxyReaderType();
 			boost::shared_ptr<ReaderProvider> rp = LibraryManager::getInstance()->getReaderProvider(type);
 			if (rp)
@@ -363,7 +363,7 @@ namespace logicalaccess
 
 	void RplethReaderUnit::disconnectFromReader()
 	{
-		LOG(LogLevel::INFOS) << ) << , "Starting disconnection to reader...");
+		LOG(LogLevel::INFOS) << "Starting disconnection to reader...";
 		getDataTransport()->disconnect();
 	}
 
@@ -532,7 +532,7 @@ namespace logicalaccess
 
 	std::vector<unsigned char> RplethReaderUnit::receiveBadge (long int timeout)
 	{
-		LOG(LogLevel::COMS) << , "receiveBadge");
+		LOG(LogLevel::COMS) << "receiveBadge";
 		std::vector<unsigned char> res;
 		std::vector<unsigned char> cmd;
 		try
@@ -593,7 +593,7 @@ namespace logicalaccess
 			}
 			else
 			{
-				LOG(LogLevel::WARNINGS) << , "Wrong trame length (%d < (%d + %d))", trame.size()*8, conf->getLength(), conf->getOffset());
+				LOG(LogLevel::WARNINGS) << "Wrong trame length (" << trame.size() * 8 << " < (" << conf->getLength() << " + " << conf->getOffset() << "))";
 			}
 		}
 		else
@@ -617,7 +617,7 @@ namespace logicalaccess
 			rptype = std::string(answer.begin(), answer.end());
 		}
 
-		LOG(LogLevel::COMS) << , "getProxyReaderType returns %s", rptype.c_str());
+		LOG(LogLevel::COMS) << "getProxyReaderType returns " << rptype;
 
 		return rptype;
 	}

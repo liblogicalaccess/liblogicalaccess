@@ -36,11 +36,11 @@ namespace logicalaccess
 
 	void IdOnDemandReaderUnitConfiguration::unSerialize(boost::property_tree::ptree& node)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Unserializing reader unit configuration...");
+		LOG(LogLevel::INFOS) << "Unserializing reader unit configuration...";
 
 		d_authCode = node.get_child("AuthenticateCode").get_value<std::string>();
 
-		LOG(LogLevel::INFOS) << ) << , "Authenticate Code unSerialized {%s}", d_authCode.c_str());
+		LOG(LogLevel::INFOS) << "Authenticate Code unSerialized {" << d_authCode.c_str() << "}";
 	}
 
 	std::string IdOnDemandReaderUnitConfiguration::getDefaultXmlNodeName() const
@@ -50,13 +50,13 @@ namespace logicalaccess
 
 	std::string IdOnDemandReaderUnitConfiguration::getAuthCode() const
 	{
-		LOG(LogLevel::INFOS) << ) << , "Get Authenticate Code {%s}", d_authCode.c_str());
+		LOG(LogLevel::INFOS) << "Get Authenticate Code {" << d_authCode << "}";
 		return d_authCode;
 	}
 
 	void IdOnDemandReaderUnitConfiguration::setAuthCode(std::string authCode)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Set Authenticate Code {%s}", authCode.c_str());
+		LOG(LogLevel::INFOS) << "Set Authenticate Code {" << authCode << "}";
 		d_authCode = authCode;
 	}
 }

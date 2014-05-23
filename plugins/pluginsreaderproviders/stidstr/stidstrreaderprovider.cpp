@@ -22,7 +22,7 @@ namespace logicalaccess
 	STidSTRReaderProvider::STidSTRReaderProvider() :
 		ReaderProvider()
 	{	
-		//LOG(LogLevel::INFOS) << ) << , "Constructor");
+		//LOG(LogLevel::INFOS) << "Constructor");
 	}
 
 	STidSTRReaderProvider::~STidSTRReaderProvider()
@@ -36,7 +36,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<STidSTRReaderProvider> STidSTRReaderProvider::getSingletonInstance()
 	{
-		LOG(LogLevel::INFOS) << ) << , "Getting singleton instance...");
+		LOG(LogLevel::INFOS) << "Getting singleton instance...";
 		static boost::shared_ptr<STidSTRReaderProvider> instance;
 		if (!instance)
 		{
@@ -49,7 +49,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<ReaderUnit> STidSTRReaderProvider::createReaderUnit()
 	{
-		LOG(LogLevel::INFOS) << ) << , "Creating new reader unit with empty port... (Serial port auto-detect will be used when connecting to reader)");
+		LOG(LogLevel::INFOS) << "Creating new reader unit with empty port... (Serial port auto-detect will be used when connecting to reader)";
 
 		boost::shared_ptr<STidSTRReaderUnit> ret(new STidSTRReaderUnit());
 		ret->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
@@ -59,7 +59,7 @@ namespace logicalaccess
 
 	bool STidSTRReaderProvider::refreshReaderList()
 	{
-		//LOG(LogLevel::INFOS) << ) << , "Refreshing reader list...");
+		//LOG(LogLevel::INFOS) << "Refreshing reader list...");
 		d_readers.clear();
 
 		std::vector<boost::shared_ptr<SerialPortXml> > ports;
@@ -72,7 +72,7 @@ namespace logicalaccess
 			dataTransport->setSerialPort(*i);
 			unit->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
 			d_readers.push_back(unit);
-			//LOG(LogLevel::INFOS) << ) << , "--> Detected reader unit {%s}...", dynamic_cast<XmlSerializable*>(&(*unit))->serialize().c_str());
+			//LOG(LogLevel::INFOS) << "--> Detected reader unit {%s}...", dynamic_cast<XmlSerializable*>(&(*unit))->serialize().c_str());
 		}
 
 		return true;

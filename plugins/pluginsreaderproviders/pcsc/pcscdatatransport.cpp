@@ -64,7 +64,7 @@ namespace logicalaccess
 				break;
 			}
 
-			LOG(LogLevel::COMS) << , "APDU command: %s", BufferHelper::getHex(data).c_str());
+			LOG(LogLevel::COMS) << "APDU command: " << BufferHelper::getHex(data);
 
 			unsigned int errorFlag = SCardTransmit(getPCSCReaderUnit()->getHandle(), ior, &data[0], static_cast<DWORD>(data.size()), NULL, returnedData, &ulNoOfDataReceived);
 
@@ -76,7 +76,7 @@ namespace logicalaccess
 	std::vector<unsigned char> PCSCDataTransport::receive(long int /*timeout*/)
 	{
 		std::vector<unsigned char> r = d_response;
-		LOG(LogLevel::COMS) << , "APDU response: %s", BufferHelper::getHex(r).c_str());
+		LOG(LogLevel::COMS) << "APDU response: " << BufferHelper::getHex(r);
 
 		d_response.clear();
 		return r;

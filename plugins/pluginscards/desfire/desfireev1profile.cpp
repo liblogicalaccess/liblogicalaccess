@@ -30,10 +30,10 @@ namespace logicalaccess
 		boost::shared_ptr<DESFireLocation> dfLocation = boost::dynamic_pointer_cast<DESFireLocation>(location);
 
 		if (!dfEV1Location)
-			LOG(LogLevel::WARNINGS) << , "location is not a DESFireEV1Location.");
+			LOG(LogLevel::WARNINGS) << "location is not a DESFireEV1Location.";
 
 		if (dfLocation)
-			LOG(LogLevel::WARNINGS) << , "DESFireEV1Profile use DESFireLocation so we force DES Crypto.");
+			LOG(LogLevel::WARNINGS) << "DESFireEV1Profile use DESFireLocation so we force DES Crypto.";
 		else if (!dfEV1Location)
 			EXCEPTION_ASSERT_WITH_LOG(dfEV1Location, std::invalid_argument, "location must be a DESFireEV1Location or DESFireLocation.");
 

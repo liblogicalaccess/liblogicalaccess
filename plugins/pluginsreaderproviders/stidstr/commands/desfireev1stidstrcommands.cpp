@@ -32,22 +32,22 @@ namespace logicalaccess
 
 	std::vector<unsigned char> DESFireEV1STidSTRCommands::scanDESFire()
 	{
-		LOG(LogLevel::INFOS) << ) << , "Scanning DESFire card...");
+		LOG(LogLevel::INFOS) << "Scanning DESFire card...";
 		std::vector<unsigned char> uid;
 		std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x0001, std::vector<unsigned char>());
 
 		bool hasCard = (r[0] == 0x01);
 		if (hasCard)
 		{
-			LOG(LogLevel::INFOS) << ) << , "Card detected !");
+			LOG(LogLevel::INFOS) << "Card detected !";
 			unsigned char uidLength = r[1];
 			uid = std::vector<unsigned char>(r.begin() + 2, r.begin() + 2 + uidLength);
 
-			LOG(LogLevel::INFOS) << ) << , "Card uid %s-{%s}", BufferHelper::getHex(uid).c_str(), BufferHelper::getStdString(uid).c_str());
+			LOG(LogLevel::INFOS) << "Card uid " << BufferHelper::getHex(uid) << "-{" << BufferHelper::getStdString(uid) << "}";
 		}
 		else
 		{
-			LOG(LogLevel::INFOS) << ) << , "No card detected !");
+			LOG(LogLevel::INFOS) << "No card detected !";
 		}
 
 		return uid;
@@ -55,13 +55,13 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::releaseRFIDField()
 	{
-		LOG(LogLevel::INFOS) << ) << , "Releasing RFID field...");
+		LOG(LogLevel::INFOS) << "Releasing RFID field...";
 		getSTidSTRReaderCardAdapter()->sendCommand(0x0002, std::vector<unsigned char>());
 	}
 
 	void DESFireEV1STidSTRCommands::changePPS(STidDESFireBaudrate readerToChipKbps, STidDESFireBaudrate chipToReaderKbps)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Changing PPS (communication speed between the chip and reader)...");
+		LOG(LogLevel::INFOS) << "Changing PPS (communication speed between the chip and reader)...";
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(readerToChipKbps));
 		command.push_back(static_cast<unsigned char>(chipToReaderKbps));
@@ -70,7 +70,7 @@ namespace logicalaccess
 
 	unsigned int DESFireEV1STidSTRCommands::getFreeMem()
 	{
-		LOG(LogLevel::INFOS) << ) << , "Getting free memory of card (number of bytes free available)...");
+		LOG(LogLevel::INFOS) << "Getting free memory of card (number of bytes free available)...";
 		unsigned int freemem = 0;
 		std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x006E, std::vector<unsigned char>());
 
@@ -80,10 +80,10 @@ namespace logicalaccess
 		}
 		else
 		{
-			LOG(LogLevel::ERRORS) << , "The response buffer size should be 3 !");
+			LOG(LogLevel::ERRORS) << "The response buffer size should be 3 !";
 		}
 
-		LOG(LogLevel::INFOS) << ) << , "Free memory {%u}", freemem);
+		LOG(LogLevel::INFOS) << "Free memory {" << freemem << "}";
 		return freemem;
 	}
 
@@ -91,7 +91,7 @@ namespace logicalaccess
 	{
 		vector<DFName> dfnames;		
 		
-		LOG(LogLevel::ERRORS) << , "Function not available with this reader.");
+		LOG(LogLevel::ERRORS) << "Function not available with this reader.";
 		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
 
 		return dfnames;
@@ -101,7 +101,7 @@ namespace logicalaccess
 	{
 		vector<unsigned short> fileids;		
 
-		LOG(LogLevel::ERRORS) << , "Function not available with this reader.");
+		LOG(LogLevel::ERRORS) << "Function not available with this reader.";
 		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
 
 		return fileids;
@@ -114,7 +114,7 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, DESFireKeyType cryptoMethod, FidSupport /*fidSupported*/, unsigned short isoFID, const char* isoDFName)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Creating application aid {0x%x(%d)} settings {0x%x(%d)} max nb Keys {%d} key type {0x%x(%d)}", aid, aid, settings, settings, maxNbKeys, cryptoMethod, cryptoMethod);
+		LOG(LogLevel::INFOS) << "Creating application aid {0x" << std::hex << aid << std::dec << "(" << aid << ")} settings {0x" << std::hex << settings << std::dec << "(" << settings << ")} max nb Keys {" << maxNbKeys << "} key type {0x" << std::hex << cryptoMethod << std::dec << "(" << cryptoMethod << ")}";
 
 		std::vector<unsigned char> tmpcmd;
 		std::vector<unsigned char> command;
@@ -144,7 +144,7 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::deleteApplication(unsigned int aid)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Deleting application aid {0x%x(%d)}...", aid, aid);
+		LOG(LogLevel::INFOS) << "Deleting application aid {0x" << std::hex << aid << std::dec << "(" << aid << ")}...";
 		std::vector<unsigned char> command;
 
 		DESFireLocation::convertUIntToAid(aid, command);
@@ -154,7 +154,7 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::selectApplication(unsigned int aid)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Selecting application aid {0x%x(%d)}", aid, aid);
+		LOG(LogLevel::INFOS) << "Selecting application aid {0x" << std::hex << aid << std::dec << "(" << aid << ")}";
 		std::vector<unsigned char> command;
 		DESFireLocation::convertUIntToAid(aid, command);
 
@@ -171,7 +171,7 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys, DESFireKeyType& keyType)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Retrieving key settings...");
+		LOG(LogLevel::INFOS) << "Retrieving key settings...";
 		std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x0045, std::vector<unsigned char>());
 
 		EXCEPTION_ASSERT_WITH_LOG(r.size() >= 3, LibLogicalAccessException, "The response length should be at least 3-byte long");
@@ -180,12 +180,12 @@ namespace logicalaccess
 		maxNbKeys = r[1] & 0x0F;
 		keyType = (r[2] == 0x02) ? DF_KEY_AES : DF_KEY_DES;
 
-		LOG(LogLevel::INFOS) << ) << , "Returns settings {0x%x(%d)} max nb Keys {%u} key type {0x%x(%d)}", settings, settings, maxNbKeys, keyType, keyType);
+		LOG(LogLevel::INFOS) << "Returns settings {0x" << std::hex << settings << std::dec << "(" << settings << ")} max nb Keys {" << maxNbKeys << "} key type {0x" << std::hex << keyType << std::dec << "(" << keyType << ")}";
 	}
 
 	unsigned char DESFireEV1STidSTRCommands::getKeyVersion(unsigned char keyno)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Retrieving key version for key number {%u}...", keyno);
+		LOG(LogLevel::INFOS) << "Retrieving key version for key number {" << keyno << "}...";
 		std::vector<unsigned char> command;
 		command.push_back(keyno);
 		std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x0064, command);
@@ -197,7 +197,7 @@ namespace logicalaccess
 
 	std::vector<unsigned char> DESFireEV1STidSTRCommands::getCardUID()
 	{
-		LOG(LogLevel::INFOS) << ) << , "Retrieving card uid...");
+		LOG(LogLevel::INFOS) << "Retrieving card uid...";
 		std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x0051, std::vector<unsigned char>());
 
 		return r;
@@ -210,8 +210,9 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::createStdDataFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned short isoFID)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Creating standard data file - file number {0x%x(%d)} encryption mode {0x%x(%d)} access right {0x%x(%d)} file size {%d}...",
-			fileno, fileno, comSettings, comSettings, accessRights, accessRights, fileSize);
+		LOG(LogLevel::INFOS) << "Creating standard data file - file number {0x" << std::hex << fileno << std::dec << "(" << fileno << ")} encryption mode {0x"
+			<< std::hex << comSettings << std::dec << "(" << comSettings << ")} access right {0x"
+			<< std::hex << AccessRightsInMemory(accessRights) << std::dec << "(" << AccessRightsInMemory(accessRights) << ")} file size {" << fileSize << "}...";
 
 		std::vector<unsigned char> command;
 		short ar = AccessRightsInMemory(accessRights);
@@ -232,14 +233,14 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::commitTransaction()
 	{
-		LOG(LogLevel::INFOS) << ) << , "Committing transaction...");
+		LOG(LogLevel::INFOS) << "Committing transaction...";
 
 		getSTidSTRReaderCardAdapter()->sendCommand(0x00C7, std::vector<unsigned char>());
 	}
 
 	void DESFireEV1STidSTRCommands::abortTransaction()
 	{
-		LOG(LogLevel::INFOS) << ) << , "Aborting transaction...");
+		LOG(LogLevel::INFOS) << "Aborting transaction...";
 
 		getSTidSTRReaderCardAdapter()->sendCommand(0x00A7, std::vector<unsigned char>());
 	}
@@ -251,8 +252,9 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::createBackupFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned short isoFID)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Creating backup file - file number {0x%x(%d)} encryption mode {0x%x(%d)} access right {0x%x(%d)} file size {%d}...",
-			fileno, fileno, comSettings, comSettings, accessRights, accessRights, fileSize);
+		LOG(LogLevel::INFOS) << "Creating backup file - file number {0x" << std::hex << fileno << std::dec << "(" << fileno << ")} encryption mode {0x"
+			<< std::hex << comSettings << std::dec << "(" << comSettings << ")} access right {0x"
+			<< std::hex << AccessRightsInMemory(accessRights) << std::dec << "(" << AccessRightsInMemory(accessRights) << ")} file size {" << fileSize << "}...";
 
 		std::vector<unsigned char> command;
 		short ar = AccessRightsInMemory(accessRights);
@@ -273,8 +275,10 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::createValueFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int lowerLimit, unsigned int upperLimit, unsigned int value, bool limitedCreditEnabled)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Creating value file - file number {0x%x(%d)} encryption mode {0x%x(%d)} access right {0x%x(%d)} lower limit {%d} upper limit {%d} value {0x%x(%d)}, limited credit enabled {%d}...",
-			fileno, fileno, comSettings, comSettings, accessRights, accessRights, lowerLimit, upperLimit, value, value, limitedCreditEnabled);
+		LOG(LogLevel::INFOS) << "Creating value file - file number {0x" << std::hex << fileno << std::dec << "(" << fileno << ")} encryption mode {0x"
+			<< std::hex << comSettings << std::dec << "(" << comSettings << ")} access right {0x"
+			<< std::hex << AccessRightsInMemory(accessRights) << std::dec << "(" << AccessRightsInMemory(accessRights) << ")} lower limit {" << lowerLimit << "} upper limit {" << upperLimit << "} value {0x"
+			<< std::hex << value << std::dec << "(" << value << ")}, limited credit enabled {" << limitedCreditEnabled << "}...";
 
 		std::vector<unsigned char> command;
 		short ar = AccessRightsInMemory(accessRights);
@@ -297,8 +301,9 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Creating linear record file - file number {0x%x(%d)} encryption mode {0x%x(%d)} access right {0x%x(%d)} file size {%d} max number records {%d}...",
-			fileno, fileno, comSettings, comSettings, accessRights, accessRights, fileSize, maxNumberOfRecords);
+		LOG(LogLevel::INFOS) << "Creating linear record file - file number {0x" << std::hex << fileno << std::dec << "(" << fileno << ")} encryption mode {0x"
+			<< std::hex << comSettings << std::dec << "(" << comSettings << ")} access right {0x"
+			<< std::hex << AccessRightsInMemory(accessRights) << std::dec << "(" << AccessRightsInMemory(accessRights) << ")} file size {" << fileSize << "} max number records {" << maxNumberOfRecords << "}...";
 
 		std::vector<unsigned char> command;
 		short ar = AccessRightsInMemory(accessRights);
@@ -327,8 +332,10 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Creating cyclic record file - file number {0x%x(%d)} encryption mode {0x%x(%d)} access right {0x%x(%d)} file size {%d} max number records {%d}...",
-			fileno, fileno, comSettings, comSettings, accessRights, accessRights, fileSize, maxNumberOfRecords);
+		LOG(LogLevel::INFOS) << "Creating cyclic record file - file number {0x" << std::hex << fileno << std::dec << "(" << fileno << ")} encryption mode {0x"
+			<< std::hex << comSettings << std::dec << "(" << comSettings << ")} access right {0x"
+			<< std::hex << AccessRightsInMemory(accessRights) << std::dec << "(" << AccessRightsInMemory(accessRights) << ")} file size {"
+			<< fileSize << "} max number records {" << maxNumberOfRecords << "}...";
 
 		std::vector<unsigned char> command;
 		short ar = AccessRightsInMemory(accessRights);
@@ -386,18 +393,18 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::loadKey(boost::shared_ptr<DESFireKey> key)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Loading key from storage {%s}...", boost::dynamic_pointer_cast<XmlSerializable>(key)->serialize().c_str());
+		LOG(LogLevel::INFOS) << "Loading key from storage {" << boost::dynamic_pointer_cast<XmlSerializable>(key)->serialize() << "}";
 		boost::shared_ptr<KeyStorage> key_storage = key->getKeyStorage();
 
 		if (boost::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key_storage))
 		{
-			LOG(LogLevel::INFOS) << ) << , "Using computer memory key storage...");
+			LOG(LogLevel::INFOS) << "Using computer memory key storage...";
 			unsigned char* keydata = key->getData();
 			loadKey(std::vector<unsigned char>(keydata, keydata + key->getLength()), key->getKeyDiversification() != NULL, true);
 		}
 		else if (boost::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage))
 		{
-			LOG(LogLevel::INFOS) << ) << , "Using reader memory key storage... -> Doing nothing !");
+			LOG(LogLevel::INFOS) << "Using reader memory key storage... -> Doing nothing !";
 		}
 		else
 		{
@@ -407,7 +414,7 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::loadKey(std::vector<unsigned char> key, bool /*diversify*/, bool /*isVolatile*/)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Loading key in reader memory... key size {%d}", key.size());
+		LOG(LogLevel::INFOS) << "Loading key in reader memory... key size {" << key.size() << "}";
 		EXCEPTION_ASSERT_WITH_LOG(key.size() == 16, LibLogicalAccessException, "The key length must be 16-byte long");
 
 		std::vector<unsigned char> command;
@@ -420,9 +427,9 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::authenticate(STidKeyLocationType keylocation, unsigned char keyno, DESFireKeyType cryptoMethod, unsigned char keyindex)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Authenticating from location... key location {%s} key number {0x%x(%u)}, key type {%s}, key index {0x%x(%u)}",
-			DESFireEV1STidSTRCommands::STidKeyLocationTypeStr(keylocation).c_str(), keyno, keyno,
-			DESFireKey::DESFireKeyTypeStr(cryptoMethod).c_str(), keyindex, keyindex);
+		LOG(LogLevel::INFOS) << "Authenticating from location... key location {" << DESFireEV1STidSTRCommands::STidKeyLocationTypeStr(keylocation) << "} key number {0x"
+			<< std::hex << keyno << std::dec << "(" << keyno << ")}, key type {" << DESFireKey::DESFireKeyTypeStr(cryptoMethod) << "}, key index {0x"
+			<< std::hex << keyindex << std::dec << "(" << keyindex << ")}";
 
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(keylocation));
@@ -441,7 +448,7 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Authenticating... key number {0x%x(%u)}",  keyno, keyno);
+		LOG(LogLevel::INFOS) << "Authenticating... key number {0x" << std::hex << keyno << std::dec << "(" << keyno << ")}";
 
 		boost::shared_ptr<KeyStorage> key_storage = key->getKeyStorage();
 		STidKeyLocationType keylocation = STID_DF_KEYLOC_RAM;
@@ -451,7 +458,7 @@ namespace logicalaccess
 
 		if (boost::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage))
 		{
-			LOG(LogLevel::INFOS) << ) << , "Retreving key index from reader memory key storage...");
+			LOG(LogLevel::INFOS) << "Retreving key index from reader memory key storage...";
 			boost::shared_ptr<ReaderMemoryKeyStorage> rmKs = boost::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage);
 			keylocation = STID_DF_KEYLOC_INDEXED;
 			keyindex = rmKs->getKeySlot();
@@ -462,19 +469,21 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::authenticateISO(unsigned char /*keyno*/, DESFireISOAlgorithm /*algorithm*/)
 	{
-		LOG(LogLevel::ERRORS) << , "Function not available with this reader.");
+		LOG(LogLevel::ERRORS) << "Function not available with this reader.";
 		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
 	}
 
 	void DESFireEV1STidSTRCommands::authenticateAES(unsigned char /*keyno*/)
 	{
-		LOG(LogLevel::ERRORS) << , "Function not available with this reader.");
+		LOG(LogLevel::ERRORS) << "Function not available with this reader.";
 		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
 	}
 
 	unsigned int DESFireEV1STidSTRCommands::readData(unsigned char fileno, unsigned int offset, unsigned int length, void* data, EncryptionMode mode)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Reading data... file number {0x%x(%d)} offset {%d} length {%d} encrypt mode {0x%x(%d)}",  fileno, fileno, offset, length, mode, mode);
+		LOG(LogLevel::INFOS) << "Reading data... file number {0x" << std::hex << fileno << std::dec << "(" << fileno << ")} offset {"
+			<< offset << "} length {" << length << "} encrypt mode {0x"
+			<< std::hex << mode << std::dec << "(" << mode << ")}";
 		unsigned int ret = 0;
 		std::vector<unsigned char> command;
 		
@@ -482,7 +491,7 @@ namespace logicalaccess
 		// STid STR reader doesn't support data larger than <stidMaxDataSize> bytes, we should split the command.
 		for (size_t i = 0; i < length; i += stidMaxDataSize)
 		{
-			LOG(LogLevel::INFOS) << ) << , "Reading data from index {%d} to {%d}...", i, i+stidMaxDataSize-1);
+			LOG(LogLevel::INFOS) << "Reading data from index {" << i << "} to " << (i + stidMaxDataSize - 1) << "...";
 			command.clear();
 			command.push_back(static_cast<unsigned char>(mode));
 			command.push_back(fileno);
@@ -496,21 +505,23 @@ namespace logicalaccess
 			memcpy(reinterpret_cast<unsigned char*>(data) + i, &result[0], result.size());
 			ret += static_cast<unsigned int>(result.size());
 		}
-		LOG(LogLevel::INFOS) << ) << , "Returns data size {%d}", ret);
+		LOG(LogLevel::INFOS) << "Returns data size {" << ret << "}";
 
 		return ret;
 	}
 
 	void DESFireEV1STidSTRCommands::writeData(unsigned char fileno, unsigned int offset, unsigned int length, const void* data, EncryptionMode mode)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Writing data... file number {0x%x(%d)} offset {%d} length {%d} encrypt mode {0x%x(%d)}", fileno, fileno, offset, length, mode, mode);
+		LOG(LogLevel::INFOS) << "Writing data... file number {0x"
+			<< std::hex << fileno << std::dec << "(" << fileno << ")} offset {" << offset << "} length {" << length << "} encrypt mode {0x"
+			<< std::hex << mode << std::dec << "(" << mode << ")}";
 		std::vector<unsigned char> command;
 		
 		size_t stidMaxDataSize = 1024; // New to version 1.2 of API (before was limited to 200)
 		// STid STR reader doesn't support data larger than <stidMaxDataSize> bytes, we should split the command.
 		for (size_t i = 0; i < length; i += stidMaxDataSize)
 		{
-			LOG(LogLevel::INFOS) << ) << , "Writing data from index {%d} to {%d}...", i, i+stidMaxDataSize-1);
+			LOG(LogLevel::INFOS) << "Writing data from index {" << i << "} to {" << i + stidMaxDataSize - 1 << "}...";
 			command.clear();
 			command.push_back(static_cast<unsigned char>(mode));
 			command.push_back(fileno);
@@ -526,7 +537,10 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::credit(unsigned char fileno, unsigned int value, EncryptionMode mode)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Increasing value file... file number {0x%x(%d)} value {0x%x(%d)} encrypt mode {0x%x(%d)}", fileno, fileno, value, value, mode, mode);
+		LOG(LogLevel::INFOS) << "Increasing value file... file number {0x"
+			<< std::hex << fileno << std::dec << "(" << fileno << ")} value {0x"
+			<< std::hex << value << std::dec << "(" << value << ")} encrypt mode {0x"
+			<< std::hex << mode << std::dec << "(" << mode << ")}";
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(mode));
 		command.push_back(fileno);
@@ -537,7 +551,10 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::debit(unsigned char fileno, unsigned int value, EncryptionMode mode)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Decreasing value file... file number {0x%x(%d)} value {0x%x(%d)} encrypt mode {0x%x(%d)}", fileno, fileno, value, value, mode, mode);
+		LOG(LogLevel::INFOS) << "Decreasing value file... file number {0x"
+			<< std::hex << fileno << std::dec << "(" << fileno << ")} value {0x"
+			<< std::hex << value << std::dec << "(" << value << ")} encrypt mode {0x"
+			<< std::hex << mode << std::dec << "(" << mode << ")}";
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(mode));
 		command.push_back(fileno);
@@ -548,7 +565,10 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::limitedCredit(unsigned char fileno, unsigned int value, EncryptionMode mode)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Increasing value file with limited amount... file number {0x%x(%d)} value {0x%x(%d)} encrypt mode {0x%x(%d)}", fileno, fileno, value, value, mode, mode);
+		LOG(LogLevel::INFOS) << "Increasing value file with limited amount... file number {0x"
+			<< std::hex << fileno << std::dec << "(" << fileno << ")} value {0x"
+			<< std::hex << value << std::dec << "(" << value << ")} encrypt mode {0x"
+			<< std::hex << mode << std::dec << "(" << mode << ")}";
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(mode));
 		command.push_back(fileno);
@@ -559,14 +579,16 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::writeRecord(unsigned char fileno, unsigned int offset, unsigned int length, const void* data, EncryptionMode mode)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Writing record... file number {0x%x(%d)} offset {%d} length {%d} encrypt mode {0x%x(%d)}", fileno, fileno, offset, length, mode, mode);
+		LOG(LogLevel::INFOS) << "Writing record... file number {0x"
+			<< std::hex << fileno << std::dec << "(" << fileno << ")} offset {" << offset << "} length {" << length << "} encrypt mode {0x"
+			<< std::hex << mode << std::dec << "(" << mode << ")}";
 		std::vector<unsigned char> command;
 
 		size_t stidMaxDataSize = 1024; // New to version 1.2 of API (before was limited to 200)
 		// STid STR reader doesn't support data larger than <stidMaxDataSize> bytes, we should split the command.
 		for (size_t i = 0; i < length; i += stidMaxDataSize)
 		{
-			LOG(LogLevel::INFOS) << ) << , "Writing data from index {%d} to {%d}...", i, i+stidMaxDataSize-1);
+			LOG(LogLevel::INFOS) << "Writing data from index {" << i << "} to {" << i + stidMaxDataSize - 1 << "}...";
 			command.clear();
 			command.push_back(static_cast<unsigned char>(mode));
 			command.push_back(fileno);
@@ -582,8 +604,9 @@ namespace logicalaccess
 
 	unsigned int DESFireEV1STidSTRCommands::readRecords(unsigned char fileno, unsigned int offset, unsigned int nbrecords, void* data, EncryptionMode mode)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Reading record... file number {0x%x(%d)} offset {%d} nb records {%d} encrypt mode {0x%x(%d)}", fileno, fileno, offset, nbrecords, mode, mode);
-
+		LOG(LogLevel::INFOS) << "Reading record... file number {0x"
+			<< std::hex << fileno << std::dec << "(" << fileno << ")} offset {" << offset << "} nb records {" << nbrecords << "} encrypt mode {0x"
+			<< std::hex << mode << std::dec << "(" << mode << ")}";
 		//size_t stidMaxDataSize = 1024; // New to version 1.2 of API (before was limited to 200)
 		// STid STR reader doesn't support data larger than <stidMaxDataSize> bytes, a record cannot exceed this size.
 
@@ -597,13 +620,13 @@ namespace logicalaccess
 
 		memcpy(reinterpret_cast<unsigned char*>(data), &result[0], result.size());
 
-		LOG(LogLevel::INFOS) << ) << , "Returns size {%d}", result.size());
+		LOG(LogLevel::INFOS) << "Returns size {" << result.size() << "}";
 		return static_cast<unsigned int>(result.size());
 	}
 
 	void DESFireEV1STidSTRCommands::clearRecordFile(unsigned char fileno)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Clearing record... file number {0x%x(%d)}", fileno, fileno);
+		LOG(LogLevel::INFOS) << "Clearing record... file number {0x" << std::hex << fileno << std::dec << "(" << fileno << ")}";
 
 		std::vector<unsigned char> command;
 		command.push_back(fileno);
@@ -613,9 +636,10 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::changeFileSettings(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, bool plain)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Changing file settings... file number {0x%x(%d)} com settings {0x%x(%d)} access rights {0x%x(%d)} plain {%d}",
-				fileno, fileno, comSettings, comSettings, accessRights, accessRights, plain, plain);
-
+		LOG(LogLevel::INFOS) << "Changing file settings... file number {0x"
+			<< std::hex << fileno << std::dec << "(" << fileno << ")} com settings file number {0x"
+			<< std::hex << comSettings << std::dec << "(" << comSettings << ")} access rights file number {0x"
+			<< std::hex << AccessRightsInMemory(accessRights) << std::dec << "(" << AccessRightsInMemory(accessRights) << ")} plain {" << plain << "}";
 		std::vector<unsigned char> command;
 		short ar = AccessRightsInMemory(accessRights);
 		
@@ -629,7 +653,7 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::deleteFile(unsigned char fileno)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Deleting file... file number {0x%x(%d)}", fileno, fileno);
+		LOG(LogLevel::INFOS) << "Deleting file... file number {0x" << std::hex << fileno << std::dec << "(" << fileno << ")}";
 
 		std::vector<unsigned char> command;
 		command.push_back(fileno);
@@ -639,7 +663,7 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::changeKeySettings(DESFireKeySettings settings)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Changing key settings... settings {0x%x(%d)}", settings, settings);
+		LOG(LogLevel::INFOS) << "Changing key settings... settings {0x" << std::hex << settings << std::dec << "(" << settings << ")}";
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(settings));
 
@@ -648,23 +672,23 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::changeKey(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Changing key... key number {0x%x(%u)} new key {%s}", keyno, keyno, boost::dynamic_pointer_cast<XmlSerializable>(key)->serialize().c_str());
+		LOG(LogLevel::INFOS) << "Changing key... key number {0x" << std::hex << keyno << std::dec << "(" << keyno << ")} new key {" << boost::dynamic_pointer_cast<XmlSerializable>(key)->serialize() << "}";
 		// Only change the key if new key and old key are not the same.
 		boost::shared_ptr<DESFireKey> oldKey = d_profile->getKey(d_currentAid, keyno);
 
-		LOG(LogLevel::INFOS) << ) << , "Old key {%s}", boost::dynamic_pointer_cast<XmlSerializable>(oldKey)->serialize().c_str());
+		LOG(LogLevel::INFOS) << "Old key {" << boost::dynamic_pointer_cast<XmlSerializable>(oldKey)->serialize() << "}";
 
 		if (key != oldKey)
 		{
 			// Old key and new key use reader memory. Use change keyindex instead.
 			if (key->getKeyStorage()->getType() == KST_READER_MEMORY && oldKey->getKeyStorage()->getType() == KST_READER_MEMORY)
 			{
-				LOG(LogLevel::INFOS) << ) << , "Changing key by using reader EEPROM INDEXED memory key storage...");
+				LOG(LogLevel::INFOS) << "Changing key by using reader EEPROM INDEXED memory key storage...";
 				changeKeyIndex(keyno, key->getKeyType(), key->getKeyVersion(), boost::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key->getKeyStorage())->getKeySlot(), boost::dynamic_pointer_cast<ReaderMemoryKeyStorage>(oldKey->getKeyStorage())->getKeySlot());
 			}
 			else
 			{
-				LOG(LogLevel::INFOS) << ) << , "Changing key directly...");
+				LOG(LogLevel::INFOS) << "Changing key directly...";
 				std::vector<unsigned char> command;
 				command.push_back(keyno);
 				command.push_back((key->getKeyType() == DF_KEY_AES) ? 0x02 : 0x00);
@@ -683,14 +707,15 @@ namespace logicalaccess
 		}
 		else
 		{
-			LOG(LogLevel::INFOS) << ) << , "Key was already loaded. Doing nothing.");
+			LOG(LogLevel::INFOS) << "Key was already loaded. Doing nothing.";
 		}
 	}
 
 	void DESFireEV1STidSTRCommands::changeKeyIndex(unsigned char keyno, DESFireKeyType cryptoMethod, unsigned char keyversion, unsigned char newkeyindex, unsigned char oldkeyindex)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Changing key index... key number {0x%x(%u)} crypto method {%s} key version {0x%x(%u)} new key index {0x%x(%u)} old key index {0x%x(%u)}",
-			keyno, keyno, DESFireKey::DESFireKeyTypeStr(cryptoMethod).c_str(), keyversion, keyversion, newkeyindex, newkeyindex, oldkeyindex, oldkeyindex);
+		LOG(LogLevel::INFOS) << "Changing key index... key number {0x" << std::hex << keyno << std::dec << "(" << keyno << ")} crypto method {0x"
+			<< std::hex << cryptoMethod << std::dec << "(" << cryptoMethod << ")} key version {0x" << std::hex << keyversion << std::dec << "(" << keyversion << ")} new key index {0x"
+			<< std::hex << newkeyindex << std::dec << "(" << newkeyindex << ")} old key index {0x" << std::hex << oldkeyindex << std::dec << "(" << oldkeyindex << ")}";
 
 		std::vector<unsigned char> command;
 		command.push_back(keyno);
@@ -708,7 +733,7 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::getVersion(DESFireCommands::DESFireCardVersion& dataVersion)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Retrieving version...");
+		LOG(LogLevel::INFOS) << "Retrieving version...";
 		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x0060, std::vector<unsigned char>());
 
 		EXCEPTION_ASSERT_WITH_LOG(result.size() >= 28, LibLogicalAccessException, "The response length should be at least 28-byte long");
@@ -718,7 +743,7 @@ namespace logicalaccess
 
 	std::vector<unsigned int> DESFireEV1STidSTRCommands::getApplicationIDs()
 	{
-		LOG(LogLevel::INFOS) << ) << , "Retrieving all application ids...");
+		LOG(LogLevel::INFOS) << "Retrieving all application ids...";
 		std::vector<unsigned int> aids;
 
 		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x006A, std::vector<unsigned char>());
@@ -732,7 +757,7 @@ namespace logicalaccess
 
 		for (std::vector<unsigned int>::iterator it = aids.begin(); it != aids.end(); ++it)
 		{
-			LOG(LogLevel::INFOS) << ) << , "Processing application id {0x%x(%d)}...", *it, *it);
+			LOG(LogLevel::INFOS) << "Processing application id {0x" << std::hex << *it << std::dec << "(" << *it << ")}...";
 		}
 
 		return aids;
@@ -740,13 +765,13 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::erase()
 	{
-		LOG(LogLevel::INFOS) << ) << , "Erasing card...");
+		LOG(LogLevel::INFOS) << "Erasing card...";
 		getSTidSTRReaderCardAdapter()->sendCommand(0x00FC, std::vector<unsigned char>());
 	}
 
 	std::vector<unsigned char> DESFireEV1STidSTRCommands::getFileIDs()
 	{
-		LOG(LogLevel::INFOS) << ) << , "Retrieving all files ids...");
+		LOG(LogLevel::INFOS) << "Retrieving all files ids...";
 		std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x006F, std::vector<unsigned char>());
 
 		unsigned char nbfiles = result[0];
@@ -759,7 +784,7 @@ namespace logicalaccess
 
 		for (std::vector<unsigned char>::iterator it = files.begin(); it != files.end(); ++it)
 		{
-			LOG(LogLevel::INFOS) << ) << , "Processing file id {0x%x(%d)}...", *it, *it);
+			LOG(LogLevel::INFOS) << "Processing file id {0x" << std::hex << *it << std::dec << "(" << *it << ")}...";
 		}
 
 		return files;
@@ -767,7 +792,7 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::getFileSettings(unsigned char fileno, FileSetting& fileSetting)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Retrieving file settings for file number {0x%x(%d)}", fileno, fileno);
+		LOG(LogLevel::INFOS) << "Retrieving file settings for file number {0x" << std::hex << fileno << std::dec << "(" << fileno << ")}";
 
 		std::vector<unsigned char> command;
 		command.push_back(fileno);
@@ -778,7 +803,7 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::getValue(unsigned char fileno, EncryptionMode mode, unsigned int& value)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Retrieving value for file number {0x%x(%d)} encrypt mode {0x%x(%d)}", fileno, fileno, mode, mode);
+		LOG(LogLevel::INFOS) << "Retrieving value for file number {0x" << std::hex << fileno << std::dec << "(" << fileno << ")} encrypt mode {0x" << std::hex << mode << std::dec << "(" << mode << ")}";
 
 		std::vector<unsigned char> command;
 		command.push_back(static_cast<unsigned char>(mode));
@@ -790,13 +815,13 @@ namespace logicalaccess
 		{
 			size_t offset = 0;
 			value = BufferHelper::getUInt32(result, offset);
-			LOG(LogLevel::INFOS) << ) << , "Result value {0x%x(%d)}", value, value);
+			LOG(LogLevel::INFOS) << "Result value {0x" << std::hex << value << std::dec << "(" << value << ")}";
 		}
 	}
 
 	void DESFireEV1STidSTRCommands::iso_selectApplication(std::vector<unsigned char> /*isoaid*/)
 	{
-		LOG(LogLevel::ERRORS) << , "Function not available with this reader.");
+		LOG(LogLevel::ERRORS) << "Function not available with this reader.";
 		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
 	}
 

@@ -272,7 +272,7 @@ namespace logicalaccess
 
 	bool SmartIDReaderUnit::connectToReader()
 	{
-		LOG(LogLevel::INFOS) << ) << , "Starting connection to reader...");
+		LOG(LogLevel::INFOS) << "Starting connection to reader...";
 		boost::shared_ptr<DataTransport> dataTransport = getDataTransport();
 		if (!dataTransport->getReaderUnit())
 		{

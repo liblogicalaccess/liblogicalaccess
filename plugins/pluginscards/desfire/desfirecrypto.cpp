@@ -625,12 +625,12 @@ namespace logicalaccess
 
 	void DESFireCrypto::getKey(boost::shared_ptr<DESFireKey> key, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Init key from crypto with diversify set to: %s.", BufferHelper::getHex(diversify).c_str());
+		LOG(LogLevel::INFOS) << "Init key from crypto with diversify set to: " << BufferHelper::getHex(diversify) << ".";
 
 		keydiv.clear();
 		if (key->getKeyDiversification() && diversify.size() != 0)
 		{
-			LOG(LogLevel::INFOS) << ) << , "Use key diversification.");
+			LOG(LogLevel::INFOS) << "Use key diversification.";
 			keydiv = key->getKeyDiversification()->getDiversifiedKey(key, diversify);
 		}
 		else
@@ -678,7 +678,7 @@ namespace logicalaccess
 
 	std::vector<unsigned char> DESFireCrypto::changeKey_PICC(unsigned char keyno, boost::shared_ptr<DESFireKey> newkey, std::vector<unsigned char> diversify)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Init change key on PICC...");
+		LOG(LogLevel::INFOS) << "Init change key on PICC...";
 		std::vector<unsigned char> cryptogram;
 		std::vector<unsigned char> oldkeydiv, newkeydiv;
 		oldkeydiv.resize(16, 0x00);

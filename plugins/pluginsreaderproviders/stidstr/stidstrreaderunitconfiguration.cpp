@@ -44,7 +44,7 @@ namespace logicalaccess
 
 	void STidSTRReaderUnitConfiguration::unSerialize(boost::property_tree::ptree& node)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Unserializing reader unit configuration...");
+		LOG(LogLevel::INFOS) << "Unserializing reader unit configuration...";
 
 		d_rs485Address = node.get_child("RS485Address").get_value<unsigned char>();
 		d_communicationType = static_cast<STidCommunicationType>(node.get_child("CommunicationType").get_value<unsigned int>());
@@ -60,13 +60,13 @@ namespace logicalaccess
 
 	unsigned char STidSTRReaderUnitConfiguration::getRS485Address() const
 	{
-		LOG(LogLevel::INFOS) << ) << , "RS485 Address {0x%x(%d)}", d_rs485Address, d_rs485Address);
+		LOG(LogLevel::INFOS) << "RS485 Address {0x" << std::hex <<d_rs485Address << std::dec << "(" << d_rs485Address << ")}";
 		return d_rs485Address;
 	}
 
 	void STidSTRReaderUnitConfiguration::setRS485Address(unsigned char address)
 	{
-		LOG(LogLevel::INFOS) << ) << , "RS485 Address {0x%x(%d)}", address, address);
+		LOG(LogLevel::INFOS) << "RS485 Address {0x" << std::hex << address << std::dec << "(" << address << ")}";
 		d_rs485Address = address;
 	}
 
@@ -74,8 +74,8 @@ namespace logicalaccess
 	{
 		switch (d_communicationType)
 		{
-			case STID_RS232: LOG(LogLevel::INFOS) << ) << , "Get Communication type {0x%x(%d)} {STID_RS232}", d_communicationType, d_communicationType); break;
-			case STID_RS485: LOG(LogLevel::INFOS) << ) << , "Get Communication type {0x%x(%d)} {STID_RS485}", d_communicationType, d_communicationType); break;
+			case STID_RS232: LOG(LogLevel::INFOS) << "Get Communication type {0x" << std::hex << d_communicationType << std::dec << "(" << d_communicationType << ")} {STID_RS232}"; break;
+			case STID_RS485: LOG(LogLevel::INFOS) << "Get Communication type {0x" << std::hex << d_communicationType << std::dec << "(" << d_communicationType << ")} {STID_RS485}"; break;
 		}
 		return d_communicationType;
 	}
@@ -85,8 +85,8 @@ namespace logicalaccess
 		d_communicationType = ctype;
 		switch (d_communicationType)
 		{
-			case STID_RS232: LOG(LogLevel::INFOS) << ) << , "Set Communication type {0x%x(%d)} {STID_RS232}", d_communicationType, d_communicationType); break;
-			case STID_RS485: LOG(LogLevel::INFOS) << ) << , "Set Communication type {0x%x(%d)} {STID_RS485}", d_communicationType, d_communicationType); break;
+			case STID_RS232: LOG(LogLevel::INFOS) << "Get Communication type {0x" << std::hex << d_communicationType << std::dec << "(" << d_communicationType << ")} {STID_RS232}"; break;
+			case STID_RS485: LOG(LogLevel::INFOS) << "Get Communication type {0x" << std::hex << d_communicationType << std::dec << "(" << d_communicationType << ")} {STID_RS485}"; break;
 		}
 	}
 
@@ -94,11 +94,11 @@ namespace logicalaccess
 	{
 		switch (d_communicationMode)
 		{
-			case STID_CM_PLAIN: LOG(LogLevel::INFOS) << ) << , "Get Communication mode {0x%x(%d)} {STID_CM_PLAIN}", d_communicationMode, d_communicationMode); break;
-			case STID_CM_SIGNED: LOG(LogLevel::INFOS) << ) << , "Get Communication mode {0x%x(%d)} {STID_CM_SIGNED}", d_communicationMode, d_communicationMode); break;
-			case STID_CM_CIPHERED: LOG(LogLevel::INFOS) << ) << , "Get Communication mode {0x%x(%d)} {STID_CM_CIPHERED}", d_communicationMode, d_communicationMode); break;
-			case STID_CM_CIPHERED_AND_SIGNED: LOG(LogLevel::INFOS) << ) << , "Get Communication mode {0x%x(%d)} {STID_CM_CIPHERED_AND_SIGNED}", d_communicationMode, d_communicationMode); break;
-			case STID_CM_RESERVED: LOG(LogLevel::INFOS) << ) << , "Get Communication mode {0x%x(%d)} {STID_CM_RESERVED}", d_communicationMode, d_communicationMode); break;
+			case STID_CM_PLAIN: LOG(LogLevel::INFOS) << "Get Communication mode {0x" << std::hex << d_communicationType << std::dec << "(" << d_communicationType << ")} {STID_CM_PLAIN}"; break;
+			case STID_CM_SIGNED: LOG(LogLevel::INFOS) << "Get Communication mode {0x" << std::hex << d_communicationType << std::dec << "(" << d_communicationType << ")} {STID_CM_SIGNED}"; break;
+			case STID_CM_CIPHERED: LOG(LogLevel::INFOS) << "Get Communication mode {0x" << std::hex << d_communicationType << std::dec << "(" << d_communicationType << ")} {STID_CM_CIPHERED}"; break;
+			case STID_CM_CIPHERED_AND_SIGNED: LOG(LogLevel::INFOS) << "Get Communication mode {0x" << std::hex << d_communicationType << std::dec << "(" << d_communicationType << ")} {STID_CM_CIPHERED_AND_SIGNED}"; break;
+			case STID_CM_RESERVED: LOG(LogLevel::INFOS) << "Get Communication mode {0x" << std::hex << d_communicationType << std::dec << "(" << d_communicationType << ")} {STID_CM_RESERVED}"; break;
 		}
 		return d_communicationMode;
 	}
@@ -108,17 +108,17 @@ namespace logicalaccess
 		d_communicationMode = cmode;
 		switch (d_communicationMode)
 		{
-			case STID_CM_PLAIN: LOG(LogLevel::INFOS) << ) << , "Set Communication mode {0x%x(%d)} {STID_CM_PLAIN}", d_communicationMode, d_communicationMode); break;
-			case STID_CM_SIGNED: LOG(LogLevel::INFOS) << ) << , "Set Communication mode {0x%x(%d)} {STID_CM_SIGNED}", d_communicationMode, d_communicationMode); break;
-			case STID_CM_CIPHERED: LOG(LogLevel::INFOS) << ) << , "Set Communication mode {0x%x(%d)} {STID_CM_CIPHERED}", d_communicationMode, d_communicationMode); break;
-			case STID_CM_CIPHERED_AND_SIGNED: LOG(LogLevel::INFOS) << ) << , "Set Communication mode {0x%x(%d)} {STID_CM_CIPHERED_AND_SIGNED}", d_communicationMode, d_communicationMode); break;
-			case STID_CM_RESERVED: LOG(LogLevel::INFOS) << ) << , "Set Communication mode {0x%x(%d)} {STID_CM_RESERVED}", d_communicationMode, d_communicationMode); break;
+			case STID_CM_PLAIN: LOG(LogLevel::INFOS) << "Get Communication mode {0x" << std::hex << d_communicationType << std::dec << "(" << d_communicationType << ")} {STID_CM_PLAIN}"; break;
+			case STID_CM_SIGNED: LOG(LogLevel::INFOS) << "Get Communication mode {0x" << std::hex << d_communicationType << std::dec << "(" << d_communicationType << ")} {STID_CM_SIGNED}"; break;
+			case STID_CM_CIPHERED: LOG(LogLevel::INFOS) << "Get Communication mode {0x" << std::hex << d_communicationType << std::dec << "(" << d_communicationType << ")} {STID_CM_CIPHERED}"; break;
+			case STID_CM_CIPHERED_AND_SIGNED: LOG(LogLevel::INFOS) << "Get Communication mode {0x" << std::hex << d_communicationType << std::dec << "(" << d_communicationType << ")} {STID_CM_CIPHERED_AND_SIGNED}"; break;
+			case STID_CM_RESERVED: LOG(LogLevel::INFOS) << "Get Communication mode {0x" << std::hex << d_communicationType << std::dec << "(" << d_communicationType << ")} {STID_CM_RESERVED}"; break;
 		}
 	}
 
 	boost::shared_ptr<HMAC1Key> STidSTRReaderUnitConfiguration::getHMACKey() const
 	{
-		LOG(LogLevel::DEBUGS) << "Get HMAC key data {%s}", d_key_hmac->toString().c_str());
+		LOG(LogLevel::DEBUGS) << "Get HMAC key data {" << d_key_hmac->toString() << "}";
 		return d_key_hmac;
 	}
 
@@ -126,14 +126,14 @@ namespace logicalaccess
 	{
 		if (key)
 		{
-			LOG(LogLevel::DEBUGS) << "Set HMAC key data {%s}", key->toString().c_str());
+			LOG(LogLevel::DEBUGS) << "Set HMAC key data {" << key->toString() << "}";
 			d_key_hmac = key;
 		}
 	}
 
 	boost::shared_ptr<AES128Key> STidSTRReaderUnitConfiguration::getAESKey() const
 	{
-		LOG(LogLevel::DEBUGS) << "Get AES 128 key data {%s}", d_key_aes->toString().c_str());
+		LOG(LogLevel::DEBUGS) << "Get AES 128 key data {" << d_key_aes->toString() << "}";
 		return d_key_aes;
 	}
 
@@ -141,7 +141,7 @@ namespace logicalaccess
 	{
 		if (key)
 		{
-			LOG(LogLevel::DEBUGS) << "Set AES 128 key data {%s}", key->toString().c_str());
+			LOG(LogLevel::DEBUGS) << "Set AES 128 key data {" << key->toString() << "}";
 			d_key_aes = key;
 		}
 	}

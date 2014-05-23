@@ -56,7 +56,7 @@ namespace logicalaccess
 
 	bool KeyboardReaderUnit::waitInsertion(unsigned int maxwait)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Waiting insertion... max wait {%u}", maxwait);
+		LOG(LogLevel::INFOS) << "Waiting insertion... max wait {" << maxwait << "}";
 
 		bool inserted = false;
 		std::vector<unsigned char> createChipId;
@@ -73,7 +73,7 @@ namespace logicalaccess
 		if (createChipId.size() > 0)
 		{
 			d_insertedChip = ReaderUnit::createChip((d_card_type == "UNKNOWN" ? "GenericTag" : d_card_type), createChipId);
-			LOG(LogLevel::INFOS) << ) << , "Chip detected !");
+			LOG(LogLevel::INFOS) << "Chip detected !";
 			inserted = true;
 		}
 		
@@ -82,7 +82,7 @@ namespace logicalaccess
 
 	bool KeyboardReaderUnit::waitRemoval(unsigned int maxwait)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Waiting removal... max wait {%u}", maxwait);
+		LOG(LogLevel::INFOS) << "Waiting removal... max wait {" << maxwait << "}";
 
 		bool removed = false;
 		d_removalIdentifier.clear();
@@ -93,18 +93,18 @@ namespace logicalaccess
 			std::vector<unsigned char> tmpId = getChipInAir(maxwait);
 			if (tmpId.size() > 0 && (tmpId != d_insertedChip->getChipIdentifier()))
 			{
-				LOG(LogLevel::INFOS) << ) << , "Card found AND not same identifier as previous ! The previous card has been removed !");
+				LOG(LogLevel::INFOS) << "Card found AND not same identifier as previous ! The previous card has been removed !";
 				d_insertedChip.reset();
 				d_removalIdentifier = tmpId;
 				removed = true;
 			}
 			else if (tmpId.size() > 0 && tmpId == d_insertedChip->getChipIdentifier())
 			{
-				LOG(LogLevel::INFOS) << ) << , "Card found but this is the same identifier as previous. Ignoring...");
+				LOG(LogLevel::INFOS) << "Card found but this is the same identifier as previous. Ignoring...";
 			}
 		}
 
-		LOG(LogLevel::INFOS) << ) << , "Returns card removed ? {%d} - function timeout expired ? {%d}", removed, maxwait != 0);
+		LOG(LogLevel::INFOS) << "Returns card removed ? {" << removed << "} - function timeout expired ? " << (maxwait != 0);
 
 		return removed;
 	}
@@ -123,7 +123,7 @@ namespace logicalaccess
 				c = 0x00;
 			} while (waitInputChar(c, 250));
 
-			LOG(LogLevel::INFOS) << ) << , "Keyboard chars received successfully {%s}-{%s}! Processing...", BufferHelper::getHex(ret).c_str(), BufferHelper::getStdString(ret).c_str());
+			LOG(LogLevel::INFOS) << "Keyboard chars received successfully {" << BufferHelper::getHex(ret) << "}-{" << BufferHelper::getStdString(ret) << "}! Processing...";
 
 			process = true;
 		}
@@ -232,7 +232,7 @@ namespace logicalaccess
 		DWORD res = WaitForSingleObject(getKeyboardReaderProvider()->hKbdEvent, (maxwait == 0) ? INFINITE : maxwait);
 		if (res == WAIT_OBJECT_0)
 		{
-			LOG(LogLevel::INFOS) << ) << , "Keyboard event detected!");
+			LOG(LogLevel::INFOS) << "Keyboard event detected!";
 
 			ResetEvent(getKeyboardReaderProvider()->hKbdEvent);
 			c = getKeyboardReaderProvider()->sKeyboard->enteredKeyChar;
@@ -288,7 +288,7 @@ namespace logicalaccess
 
 	bool KeyboardReaderUnit::connectToReader()
 	{
-		LOG(LogLevel::INFOS) << ) << , "Connecting to reader...");
+		LOG(LogLevel::INFOS) << "Connecting to reader...";
 		bool ret = false;
 
 #ifdef _WINDOWS
@@ -307,7 +307,7 @@ namespace logicalaccess
 
 	void KeyboardReaderUnit::disconnectFromReader()
 	{
-		LOG(LogLevel::INFOS) << ) << , "Disconnecting from reader...");
+		LOG(LogLevel::INFOS) << "Disconnecting from reader...";
 #ifdef _WINDOWS
 		if (d_instanceConnected)
 		{
@@ -334,7 +334,7 @@ namespace logicalaccess
 
 	void KeyboardReaderUnit::unSerialize(boost::property_tree::ptree& node)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Unserialize Keyboard reader unit...");
+		LOG(LogLevel::INFOS) << "Unserialize Keyboard reader unit...";
 
 		d_devicename = node.get_child("DeviceName").get_value<std::string>();
 		d_readerUnitConfig->unSerialize(node.get_child(d_readerUnitConfig->getDefaultXmlNodeName()));

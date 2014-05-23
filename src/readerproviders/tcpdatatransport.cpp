@@ -59,11 +59,11 @@ namespace logicalaccess
 		try
 		{
 			d_socket->connect(endpoint);
-			LOG(LogLevel::INFOS) << ) << , "Connected to %s on port %d.", getIpAddress().c_str(), getPort());
+			LOG(LogLevel::INFOS) << "Connected to " << getIpAddress() << " on port " << getPort() << ".";
 		}
 		catch(boost::system::system_error& ex)
 		{
-			LOG(LogLevel::ERRORS) << , "Cannot establish connection on %s:%d : %s", getIpAddress().c_str(), getPort(), ex.what());
+			LOG(LogLevel::ERRORS) << "Cannot establish connection on " << getIpAddress() << ":" << getPort() << " : " << ex.what();
 			d_socket.reset();
 		}
 
@@ -74,7 +74,7 @@ namespace logicalaccess
 	{
 		if (d_socket)
 		{
-			LOG(LogLevel::INFOS) << ) << , "Disconnected.");
+			LOG(LogLevel::INFOS) << "Disconnected.";
 			d_socket->close();
 			d_socket.reset();
 		}
@@ -97,12 +97,12 @@ namespace logicalaccess
 			boost::shared_ptr<boost::asio::ip::tcp::socket> socket = getSocket();
 			if (socket->is_open())
 			{
-				LOG(LogLevel::COMS) << , "Send command: %s", BufferHelper::getHex(data).c_str());
+				LOG(LogLevel::COMS) << "Send command: " << BufferHelper::getHex(data).c_str();
 				socket->send(boost::asio::buffer(data));
 			}
 			else
 			{
-				LOG(LogLevel::ERRORS) << , "TCP socket closed.");
+				LOG(LogLevel::ERRORS) << "TCP socket closed.";
 			}
 		}
 	}
@@ -137,7 +137,7 @@ namespace logicalaccess
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, buf);
 		}
 
-		LOG(LogLevel::COMS) << , "Command response: %s", BufferHelper::getHex(res).c_str());
+		LOG(LogLevel::COMS) << "Command response: " << BufferHelper::getHex(res);
 
 		return res;
 	}

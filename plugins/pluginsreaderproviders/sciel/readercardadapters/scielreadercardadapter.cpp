@@ -40,7 +40,7 @@ namespace logicalaccess
 		std::vector<unsigned char> buf;
 		if (d_trashedData.size() > 0)
 		{
-			LOG(LogLevel::COMS) << , "Adding existing trashed data: %s", BufferHelper::getHex(d_trashedData).c_str());
+			LOG(LogLevel::COMS) << "Adding existing trashed data: " << BufferHelper::getHex(d_trashedData);
 			buf = d_trashedData;
 		}
 		buf.insert(buf.end(), answer.begin(), answer.end());
@@ -75,14 +75,14 @@ namespace logicalaccess
 		buf = std::vector<unsigned char>(buf.begin() + 1, buf.end());
 		d_trashedData = buf;
 
-		LOG(LogLevel::COMS) << , "Returning processed data %s...", BufferHelper::getHex(data).c_str());
-		LOG(LogLevel::COMS) << , "	-> Actual trashed data %s...", BufferHelper::getHex(d_trashedData).c_str());
+		LOG(LogLevel::COMS) << "Returning processed data " << BufferHelper::getHex(data) << "...";
+		LOG(LogLevel::COMS) << "	-> Actual trashed data %s..." << BufferHelper::getHex(d_trashedData) << "...";
 		return data;
 	}
 
 	std::list<std::vector<unsigned char> > SCIELReaderCardAdapter::receiveTagsListCommand(const std::vector<unsigned char>& command, long int timeout)
 	{
-		LOG(LogLevel::COMS) << , "Beginning receiving tag(s) identifiers whole list... Timeout configured {%d}", timeout);
+		LOG(LogLevel::COMS) << "Beginning receiving tag(s) identifiers whole list... Timeout configured {" << timeout << "}";
 
 		std::list<std::vector<unsigned char>> tagsList;
 
@@ -93,7 +93,7 @@ namespace logicalaccess
 			// When whole list is sent, the reader send [5b nb_tags id_reader 5d]
 			if (tag.size() == 2)
 			{
-				LOG(LogLevel::COMS) << , "Whole list has been received successfully!");
+				LOG(LogLevel::COMS) << "Whole list has been received successfully!";
 				done = true;
 			}
 			else

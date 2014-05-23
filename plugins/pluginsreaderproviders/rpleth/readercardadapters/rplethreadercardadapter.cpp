@@ -32,7 +32,7 @@ namespace logicalaccess
 	
 	std::vector<unsigned char> RplethReaderCardAdapter::sendRplethCommand(const std::vector<unsigned char>& data, bool waitanswer, long timeout)
 	{
-		LOG(LogLevel::COMS) << , "Send Rpleth Command : %s", BufferHelper::getHex(data).c_str());
+		LOG(LogLevel::COMS) << "Send Rpleth Command : " << BufferHelper::getHex(data);
 		std::vector<unsigned char> res;
 
 		boost::shared_ptr<RplethDataTransport> dt = boost::dynamic_pointer_cast<RplethDataTransport>(getDataTransport());
@@ -50,7 +50,7 @@ namespace logicalaccess
 		}
 		else
 		{
-			LOG(LogLevel::ERRORS) << , "Not a Rpleth data transport.");
+			LOG(LogLevel::ERRORS) << "Not a Rpleth data transport.";
 		}
 
 		return res;

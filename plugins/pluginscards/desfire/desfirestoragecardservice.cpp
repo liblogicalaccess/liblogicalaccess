@@ -83,7 +83,7 @@ namespace logicalaccess
 
 	void DESFireStorageCardService::writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior /*behaviorFlags*/)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Starting write data...");
+		LOG(LogLevel::INFOS) << "Starting write data...";
 
 		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 		EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
@@ -285,7 +285,7 @@ namespace logicalaccess
 		// Write access informations too
 		if (aiToWrite)
 		{
-			LOG(LogLevel::INFOS) << ) << , "Starting to change keys...");
+			LOG(LogLevel::INFOS) << "Starting to change keys...";
 
 			bool changeKeys = ((appKeySettings & KS_CHANGE_KEY_WITH_TARGETED_KEYNO) == KS_CHANGE_KEY_WITH_TARGETED_KEYNO);
 
@@ -329,7 +329,7 @@ namespace logicalaccess
 							getDESFireChip()->getDESFireCommands()->authenticate(dfAiToWrite->readKeyno);
 						}
 
-						LOG(LogLevel::INFOS) << ) << , "Changing readKey.");
+						LOG(LogLevel::INFOS) << "Changing readKey.";
 						getDESFireChip()->getDESFireCommands()->changeKey(dfAiToWrite->readKeyno, dfAiToWrite->readKey);
 					}
 					catch(std::exception& ex)
@@ -347,7 +347,7 @@ namespace logicalaccess
 							getDESFireChip()->getDESFireCommands()->authenticate(0);
 						}
 
-						LOG(LogLevel::INFOS) << ) << , "Changing masterApplicationKey.");
+						LOG(LogLevel::INFOS) << "Changing masterApplicationKey.";
 						getDESFireChip()->getDESFireCommands()->changeKey(0, dfAiToWrite->masterApplicationKey);
 					}
 					catch(std::exception& ex)
@@ -363,7 +363,7 @@ namespace logicalaccess
 						getDESFireChip()->getDESFireCommands()->selectApplication(0x00);
 						getDESFireChip()->getDESFireCommands()->authenticate(0);
 						
-						LOG(LogLevel::INFOS) << ) << , "Changing masterCardKey. div? %d", dfAiToWrite->masterCardKey->getKeyDiversification() == NULL);
+						LOG(LogLevel::INFOS) << "Changing masterCardKey. div? " << (dfAiToWrite->masterCardKey->getKeyDiversification() == NULL);
 						getDESFireChip()->getDESFireCommands()->changeKey(0, dfAiToWrite->masterCardKey);
 					}
 					catch(std::exception& ex)

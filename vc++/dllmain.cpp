@@ -20,10 +20,10 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID /*lpRes
 		register_cipher(&des3_desc);
 
 		logicalaccess::Settings::getInstance()->Initialize();
-		LOG(LogLevel::INFOS) << ) << , "Process attached ! HMODULE: %d", hModule);  
+		LOG(logicalaccess::LogLevel::INFOS) << "Process attached ! HMODULE: " << hModule;  
 		break;
 	case DLL_PROCESS_DETACH:
-		LOG(LogLevel::INFOS) << ) << , "Process detached !");
+		LOG(logicalaccess::LogLevel::INFOS) << "Process detached !";
 		logicalaccess::Settings::getInstance()->Uninitialize();  
 		
 		unregister_cipher(&des3_desc);

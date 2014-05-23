@@ -48,7 +48,7 @@ namespace logicalaccess
 
 	boost::shared_ptr<ReaderUnit> ElatecReaderProvider::createReaderUnit()
 	{
-		LOG(LogLevel::INFOS) << ) << , "Creating new reader unit with empty port... (Serial port auto-detect will be used when connecting to reader)");
+		LOG(LogLevel::INFOS) << "Creating new reader unit with empty port... (Serial port auto-detect will be used when connecting to reader)";
 
 		boost::shared_ptr<ElatecReaderUnit> ret(new ElatecReaderUnit());
 		ret->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));

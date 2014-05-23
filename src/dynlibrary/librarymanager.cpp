@@ -216,10 +216,10 @@ namespace logicalaccess
 			boost::filesystem::path pluginDir(*it);
 			if (boost::filesystem::exists(pluginDir) && boost::filesystem::is_directory(pluginDir))
 			{
-				LOG(LogLevel::PLUGINS) << , "Scanning library folder %s ...", pluginDir.string().c_str());
+				LOG(LogLevel::PLUGINS) << "Scanning library folder " << pluginDir.string() << " ...";
 				for (boost::filesystem::directory_iterator dir_iter(pluginDir) ; dir_iter != end_iter ; ++dir_iter)
 				{
-					LOG(LogLevel::PLUGINS) << , "Checking library %s...", dir_iter->path().filename().string().c_str());
+					LOG(LogLevel::PLUGINS) << "Checking library " << dir_iter->path().filename().string() << "...";
 					if ((boost::filesystem::is_regular_file(dir_iter->status()) || boost::filesystem::is_symlink(dir_iter->status()))
 						&& dir_iter->path().extension() == extension
 						&& (hasEnding(dir_iter->path().filename().string(), enumType[LibraryManager::CARDS_TYPE] + extension)
@@ -234,31 +234,31 @@ namespace logicalaccess
 								fct = lib->getSymbol(fctname.c_str());
 								if (fct != NULL)
 								{
-									LOG(LogLevel::PLUGINS) << , "Library %s loaded.", dir_iter->path().filename().string().c_str());
+									LOG(LogLevel::PLUGINS) << "Library " << dir_iter->path().filename().string() << " loaded.";
 									libLoaded[dir_iter->path().filename().string()] = lib;
 								}
 								else
 								{
-									LOG(LogLevel::PLUGINS) << , "Cannot found library entry point in %s. Skipped.", dir_iter->path().filename().string().c_str());
+									LOG(LogLevel::PLUGINS) << "Cannot found library entry point in " << dir_iter->path().filename().string() << ". Skipped.";
 									delete lib;
 								}
 							}
 							else
 							{
-								LOG(LogLevel::PLUGINS) << , "Library %s already loaded. Skipped.", dir_iter->path().filename().string().c_str());
+								LOG(LogLevel::PLUGINS) << "Library " << dir_iter->path().filename().string() << " already loaded. Skipped.";
 							}
 						}
 						catch (...) {}
 					}
 					else
 					{
-						LOG(LogLevel::PLUGINS) << , "File %s does not match excepted filenames. Skipped.", dir_iter->path().filename().string().c_str());
+						LOG(LogLevel::PLUGINS) << "File " << dir_iter->path().filename().string() << " does not match excepted filenames. Skipped.";
 					}
 				}
 			}
 			else
 			{
-				LOG(LogLevel::WARNINGS) << , "Cannot found plug-in folder %s", (*it).c_str());
+				LOG(LogLevel::WARNINGS) << "Cannot found plug-in folder " << (*it);
 			}
 		}
 	}

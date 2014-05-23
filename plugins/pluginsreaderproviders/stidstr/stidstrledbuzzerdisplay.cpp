@@ -11,7 +11,7 @@ namespace logicalaccess
 	STidSTRLEDBuzzerDisplay::STidSTRLEDBuzzerDisplay()
 		: LEDBuzzerDisplay()
 	{
-		//LOG(LogLevel::INFOS) << ) << , "Constructor");
+		//LOG(LogLevel::INFOS) << "Constructor");
 		d_red_led = false;
 		d_green_led = false;
 		d_buzzer = false;
@@ -29,13 +29,13 @@ namespace logicalaccess
 
 	void STidSTRLEDBuzzerDisplay::setBuzzer(bool /*status*/)
 	{
-		LOG(LogLevel::WARNINGS) << , "Buzzer not implement on STid STR");
+		LOG(LogLevel::WARNINGS) << "Buzzer not implement on STid STR";
 		// No buzzer on STid STR, do nothing
 	}
 
 	void STidSTRLEDBuzzerDisplay::setPort()
 	{
-		LOG(LogLevel::INFOS) << ) << , "Sending LED/Buzzer command for: red{%d} green{%d} buzzer{%d}...", d_red_led, d_green_led, d_buzzer);
+		LOG(LogLevel::INFOS) << "Sending LED/Buzzer command for: red{" << d_red_led << "} green{" << d_green_led << "} buzzer{" << d_buzzer << "}...";
 		std::vector<unsigned char> data;
 		data.push_back(static_cast<unsigned char>((d_red_led ? 2 : 0) | (d_green_led ? 1 : 0)));
 		data.push_back(0xFF); // LED duration
@@ -55,7 +55,7 @@ namespace logicalaccess
 
 	void STidSTRLEDBuzzerDisplay::setRedLed(bool status, bool deferred)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Set Red LED {%d} deferred{%d}", status, deferred);
+		LOG(LogLevel::INFOS) << "Set Red LED {" << status << "} deferred{" << deferred << "}";
 		d_red_led = status;
 
 		if (!deferred)
@@ -66,7 +66,7 @@ namespace logicalaccess
 
 	void STidSTRLEDBuzzerDisplay::setGreenLed(bool status, bool deferred)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Set Green LED {%d} deferred{%d}", status, deferred);
+		LOG(LogLevel::INFOS) << "Set Green LED {" << status << "} deferred{" << deferred << "}";
 		d_green_led = status;
 
 		if (!deferred)
@@ -77,7 +77,7 @@ namespace logicalaccess
 
 	void STidSTRLEDBuzzerDisplay::setBuzzer(bool status, bool deferred)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Set Buzzer {%d} deferred{%d}", status, deferred);
+		LOG(LogLevel::INFOS) << "Set Buzzer {" << status << "} deferred{" << deferred << "}";
 		d_buzzer = status;
 
 		if (!deferred)

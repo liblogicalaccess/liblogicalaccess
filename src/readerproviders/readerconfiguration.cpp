@@ -45,10 +45,10 @@ namespace logicalaccess
 
 	void ReaderConfiguration::unSerialize(boost::property_tree::ptree& node)
 	{
-		LOG(LogLevel::INFOS) << ) << , "Unserializing reader configuration...");
+		LOG(LogLevel::INFOS) << "Unserializing reader configuration...";
 		std::string rpType = static_cast<std::string>(node.get_child("ReaderProvider").get_value<std::string>());
 
-		LOG(LogLevel::INFOS) << ) << , "Reader provider type {%s}", rpType.c_str());
+		LOG(LogLevel::INFOS) << "Reader provider type " << rpType;
 
 		d_readerProvider = ReaderProvider::getReaderProviderFromRPType(rpType);
 
