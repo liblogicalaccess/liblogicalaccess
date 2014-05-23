@@ -28,7 +28,6 @@ namespace logicalaccess
 		{
 			int i;
 			size_t test_buflen = 0;
-			size_t toWriteLen = 0;
 			boost::shared_ptr<MifarePlusAccessInfo> mAiToUse = boost::dynamic_pointer_cast<MifarePlusAccessInfo>(aiToUse);
 			EXCEPTION_ASSERT(mAiToUse, std::invalid_argument, "aiToUse must be a MifarePlusAccessInfo.");
 
@@ -42,7 +41,7 @@ namespace logicalaccess
 			test_buflen = 0;
 			for (i = start_sector; i <= stop_sector && test_buflen < buflen; ++i)
 			{
-				toWriteLen = getNbBlocks(i) * MIFARE_PLUS_BLOCK_SIZE;
+				size_t toWriteLen = getNbBlocks(i) * MIFARE_PLUS_BLOCK_SIZE;
 				if (toWriteLen + test_buflen > buflen)
 					toWriteLen = buflen - test_buflen;
 				if (mAiToUse->keyB && !mAiToUse->keyB->isEmpty())
@@ -75,7 +74,6 @@ namespace logicalaccess
 		{
 			int i;
 			size_t test_buflen = 0;
-			size_t toReadLen = 0;
 			boost::shared_ptr<MifarePlusAccessInfo> mAiToUse = boost::dynamic_pointer_cast<MifarePlusAccessInfo>(aiToUse);
 			EXCEPTION_ASSERT(mAiToUse, std::invalid_argument, "aiToUse must be a MifarePlusAccessInfo.");
 
@@ -89,7 +87,7 @@ namespace logicalaccess
 			test_buflen = 0;
 			for (i = start_sector; i <= stop_sector && test_buflen < buflen; ++i)
 			{
-				toReadLen = getNbBlocks(i) * MIFARE_PLUS_BLOCK_SIZE;
+				size_t toReadLen = getNbBlocks(i) * MIFARE_PLUS_BLOCK_SIZE;
 				if (toReadLen + test_buflen > buflen)
 					toReadLen = buflen - test_buflen;
 				if (mAiToUse->keyA && !mAiToUse->keyA->isEmpty())

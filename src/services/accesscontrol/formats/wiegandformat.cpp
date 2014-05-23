@@ -15,7 +15,7 @@
 namespace logicalaccess
 {
 	WiegandFormat::WiegandFormat()
-		: StaticFormat(), d_rightParityLength(0x00), d_leftParityLength(0x00)
+		: StaticFormat(), d_leftParityLength(0x00), d_leftParityType(PT_NONE), d_rightParityLength(0x00), d_rightParityType(PT_NONE)
 	{
 		d_dataType.reset(new BinaryDataType());
 		d_dataRepresentation.reset(new BigEndianDataRepresentation());
