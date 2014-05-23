@@ -40,8 +40,8 @@ HMODULE __hKbdHookModule;
 
 HHOOK hook;
 HHOOK hook_LL;
-static LRESULT CALLBACK msghook(UINT nCode, WPARAM wParam, LPARAM lParam);
-static LRESULT CALLBACK msghook_LL(UINT nCode, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK msghook(int nCode, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK msghook_LL(int nCode, WPARAM wParam, LPARAM lParam);
 
 #ifdef _MANAGED
 #pragma managed(push, off)
@@ -160,7 +160,7 @@ KEYBOARDHOOK_API BOOL ClearHook_LL(HWND hWnd)
 	return unhooked;
 }
 
-static LRESULT CALLBACK msghook(UINT nCode, WPARAM wParam, LPARAM lParam)
+static LRESULT CALLBACK msghook(int nCode, WPARAM wParam, LPARAM lParam)
 {
 	islogkbdlib::KbdLogs::getInstance()->LogEvent("#msghook# begins.");
 
@@ -215,7 +215,7 @@ static LRESULT CALLBACK msghook(UINT nCode, WPARAM wParam, LPARAM lParam)
 }
 
 /* Low level hook */
-static LRESULT CALLBACK msghook_LL(UINT nCode, WPARAM wParam, LPARAM lParam)
+static LRESULT CALLBACK msghook_LL(int nCode, WPARAM wParam, LPARAM lParam)
 {
 	islogkbdlib::KbdLogs::getInstance()->LogEvent("#msghook_LL# begins.");
 
@@ -226,7 +226,7 @@ static LRESULT CALLBACK msghook_LL(UINT nCode, WPARAM wParam, LPARAM lParam)
 		return 0;
 	}
 
-	WPARAM newWParam = wParam;
+	//WPARAM newWParam = wParam;
 
 	//KeyboardProcLParam l;
 	//memset(&l, 0, sizeof(l));

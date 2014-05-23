@@ -20,7 +20,7 @@ namespace islogkbdlib
 {
 	KbdSettings* KbdSettings::instance = NULL;
 
-	KbdSettings::KbdSettings()
+	KbdSettings::KbdSettings() : IsLogEnabled(false)
 	{
 	}
 	
@@ -106,15 +106,15 @@ namespace islogkbdlib
 		char szAppPath[MAX_PATH];
 		memset(szAppPath, 0x00, sizeof(szAppPath));
 		static std::string path = ".";
-		char tmp[128];
 
 		if (path == ".")
-		{		
+		{	
+            char tmp[128];
 			DWORD error = ERROR_SUCCESS;
 			if (!GetModuleFileNameA((HMODULE)&__ImageBase, szAppPath, sizeof(szAppPath)-1))
 			{
 				error = GetLastError();
-				sprintf(tmp, "Cannot get module file name. Last error code: %d. Trying with GetModuleHandle first...", error);
+				sprintf(tmp, "Cannot get module file name. Last error code: %lu. Trying with GetModuleHandle first...", error);
 				OutputDebugStringA(tmp);
 				HMODULE hm = NULL;
 				if (!GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
@@ -129,7 +129,7 @@ namespace islogkbdlib
 				if (!GetModuleFileNameA(hm, szAppPath, sizeof(szAppPath)-1))
 				{
 					error = GetLastError();
-					sprintf(tmp, "Cannot get module file name. Last error code: %d. Trying with hmodule (%d) from dllmain...", error, __hKbdHookModule);
+					sprintf(tmp, "Cannot get module file name. Last error code: %d. Trying with hmodule (%lu) from dllmain...", error, __hKbdHookModule);
 					OutputDebugStringA(tmp);
 					if (__hKbdHookModule == NULL)
 					{
@@ -167,7 +167,7 @@ namespace islogkbdlib
 			}
 			else
 			{
-				sprintf(tmp, "Still cannot get module file name. Last error code: %d.", error);
+				sprintf(tmp, "Still cannot get module file name. Last error code: %lu.", error);
 				OutputDebugStringA(tmp);
 			}
 

@@ -24,6 +24,7 @@ namespace logicalaccess
 	{
 		LOG(LogLevel::INFOS) << "Creating new KeyboardReaderProvider instance...";
 
+        hWatchThrd = NULL;
 		watchSessions = false;
 #ifdef _WINDOWS
 		//sharedGuid = "test";
@@ -100,7 +101,7 @@ namespace logicalaccess
 			LOG(LogLevel::ERRORS) << "CreateFileMapping error {" << ret << "}";
 			return ret;
 		}
-		sKeyboard = (KeyboardSharedStruct *)MapViewOfFile(shKeyboard, FILE_MAP_ALL_ACCESS, 0, 0, 0);
+		sKeyboard = static_cast<KeyboardSharedStruct*>(MapViewOfFile(shKeyboard, FILE_MAP_ALL_ACCESS, 0, 0, 0));
 
 		LOG(LogLevel::INFOS) << "Keyboard structure size {" << sizeof(sKeyboard) << "}";
 

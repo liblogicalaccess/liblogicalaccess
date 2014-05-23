@@ -18,17 +18,17 @@ namespace islogkbdlib
 
 			static KbdLogs* getInstance();
 
-			void Initialize();  
-			void Uninitialize(); 
+			static void Initialize();  
+			static void Uninitialize(); 
 
-			void LogEvent(const char *, ...);
+			static void LogEvent(const char *, ...);
 
 		protected:
 
 			KbdLogs();
 
-			void OpenLogFile(const char* pszLogFile);
-			void CloseLogFile();
+			static void OpenLogFile(const char* pszLogFile);
+			static void CloseLogFile();
 
 			static KbdLogs* instance;
 

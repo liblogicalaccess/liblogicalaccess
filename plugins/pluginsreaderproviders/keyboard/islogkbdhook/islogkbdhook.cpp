@@ -298,17 +298,15 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	int wmId, wmEvent;
 	PAINTSTRUCT ps;
-	HDC hdc;
 
 	switch (message)
 	{
 	case WM_COMMAND:
 		{
 			islogkbdlib::KbdLogs::getInstance()->LogEvent("#WndProc# WM_COMMAND received.");
-			wmId    = LOWORD(wParam);
-			wmEvent = HIWORD(wParam);
+			int wmId    = LOWORD(wParam);
+			//int wmEvent = HIWORD(wParam);
 			// Parse the menu selections:
 			switch (wmId)
 			{
@@ -354,7 +352,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT:
 		{
 			islogkbdlib::KbdLogs::getInstance()->LogEvent("#WndProc# WM_PAINT received.");
-			hdc = BeginPaint(hWnd, &ps);
+			HDC hdc = BeginPaint(hWnd, &ps);
 
 			LPSTR str = new CHAR[100];
 			memset(str, 0, 100 * sizeof(CHAR));
