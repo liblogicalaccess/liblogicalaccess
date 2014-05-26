@@ -14,7 +14,7 @@
 #include "samcrypto.hpp"
 #include "samkeyentry.hpp"
 #include "samcrypto.hpp"
-#include "samav2commands.h"
+#include "samav2commands.hpp"
 #include <string>
 #include <vector>
 #include <iostream>
