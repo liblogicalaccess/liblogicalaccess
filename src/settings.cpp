@@ -210,7 +210,7 @@ namespace logicalaccess
 			if (!GetModuleFileNameA((HMODULE)&__ImageBase, szAppPath, sizeof(szAppPath)-1))
 			{
 				error = GetLastError();
-				sprintf(tmp, "Cannot get module file name. Last error code: %ld. Trying with GetModuleHandle first...", error);
+				sprintf(tmp, "Cannot get module file name. Last error code: %lu. Trying with GetModuleHandle first...", error);
 				OutputDebugStringA(tmp);
 				HMODULE hm = NULL;
 				if (!GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
@@ -225,7 +225,7 @@ namespace logicalaccess
 				if (!GetModuleFileNameA(hm, szAppPath, sizeof(szAppPath)-1))
 				{
 					error = GetLastError();
-					sprintf(tmp, "Cannot get module file name. Last error code: %ld. Trying with hmodule (%p) from dllmain...", error, __hLibLogicalAccessModule);
+					sprintf(tmp, "Cannot get module file name. Last error code: %lu. Trying with hmodule (%p) from dllmain...", error, __hLibLogicalAccessModule);
 					OutputDebugStringA(tmp);
 					if (__hLibLogicalAccessModule == NULL)
 					{
@@ -263,7 +263,7 @@ namespace logicalaccess
 			}
 			else
 			{
-				sprintf(tmp, "Still cannot get module file name. Last error code: %ld.", error);
+				sprintf(tmp, "Still cannot get module file name. Last error code: %lu.", error);
 				OutputDebugStringA(tmp);
 			}
 

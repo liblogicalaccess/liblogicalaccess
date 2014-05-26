@@ -108,10 +108,7 @@ namespace logicalaccess
 
 	void CardsFormatComposite::removeFormatForCard(std::string type)
 	{
-		if (formatsList.find(type) != formatsList.end())
-		{
-			formatsList.erase(type);
-		}
+		formatsList.erase(type);
 	}
 
 	boost::shared_ptr<Format> CardsFormatComposite::readFormat()
