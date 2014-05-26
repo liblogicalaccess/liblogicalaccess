@@ -129,7 +129,7 @@ namespace islogkbdlib
 				if (!GetModuleFileNameA(hm, szAppPath, sizeof(szAppPath)-1))
 				{
 					error = GetLastError();
-					sprintf(tmp, "Cannot get module file name. Last error code: %d. Trying with hmodule (%p) from dllmain...", error, __hKbdHookModule);
+					sprintf(tmp, "Cannot get module file name. Last error code: %lu. Trying with hmodule (%p) from dllmain...", error, __hKbdHookModule);
 					OutputDebugStringA(tmp);
 					if (__hKbdHookModule == NULL)
 					{
