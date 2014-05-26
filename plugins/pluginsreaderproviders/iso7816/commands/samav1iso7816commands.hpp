@@ -53,6 +53,8 @@ namespace logicalaccess
 			void authentificateHost_AES_3K3DES(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
 			void authentificateHostDES(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
 
+			virtual std::vector<unsigned char> dumpSecretKey(unsigned char keyno, unsigned char keyversion, std::vector<unsigned char> divInpu);
+
 		protected:
 
 	};
