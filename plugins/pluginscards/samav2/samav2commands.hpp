@@ -7,14 +7,9 @@
 #ifndef LOGICALACCESS_SAMAV2COMMANDS_HPP
 #define LOGICALACCESS_SAMAV2COMMANDS_HPP
 
-#include "logicalaccess/xmlserializable.hpp"
-#include "logicalaccess/cards/commands.hpp"
-#include "samkeyentry.hpp"
-#include "samkucentry.hpp"
-
 namespace logicalaccess
 {
-	class LIBLOGICALACCESS_API SAMAV2Commands : public virtual Commands
+	class LIBLOGICALACCESS_API SAMAV2Commands
 	{
 		public:		
 			virtual std::vector<unsigned char> dumpSecretKey(unsigned char keyno, unsigned char keyversion, std::vector<unsigned char> divInpu) = 0;
