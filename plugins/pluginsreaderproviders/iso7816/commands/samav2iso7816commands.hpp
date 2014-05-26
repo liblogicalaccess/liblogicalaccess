@@ -14,6 +14,7 @@
 #include "samcrypto.hpp"
 #include "samkeyentry.hpp"
 #include "samcrypto.hpp"
+#include "samav2commands.h"
 #include <string>
 #include <vector>
 #include <iostream>
@@ -28,7 +29,7 @@ namespace logicalaccess
 	/**
 	 * \brief The DESFire base commands class.
 	 */
-	class LIBLOGICALACCESS_API SAMAV2ISO7816Commands : public SAMISO7816Commands<KeyEntryAV2Information, SETAV2>
+	class LIBLOGICALACCESS_API SAMAV2ISO7816Commands : public SAMISO7816Commands<KeyEntryAV2Information, SETAV2>, public SAMAV2Commands
 	{
 		public:
 
@@ -52,7 +53,7 @@ namespace logicalaccess
 
 			virtual std::vector<unsigned char> transmit(std::vector<unsigned char> cmd, bool first = true, bool last = true);
 
-			std::vector<unsigned char> dumpSecretKey(unsigned char keyno, unsigned char keyversion, std::vector<unsigned char> divInpu);
+			virtual std::vector<unsigned char> dumpSecretKey(unsigned char keyno, unsigned char keyversion, std::vector<unsigned char> divInpu);
 
 		protected:
 
