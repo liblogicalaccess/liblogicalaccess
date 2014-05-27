@@ -39,7 +39,7 @@ namespace logicalaccess
 	 * \brief The SAMISO7816 commands class.
 	 */
 	template <typename T, typename S>
-	class LIBLOGICALACCESS_API SAMISO7816Commands : public SAMCommands<T, S>
+	class LIBLOGICALACCESS_API SAMISO7816Commands : public virtual SAMCommands<T, S>
 	{
 		public:
 
