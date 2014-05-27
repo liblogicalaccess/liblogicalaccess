@@ -275,10 +275,4 @@ namespace logicalaccess
 		if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKUCEntry failed.");
 	}
-
-	std::vector<unsigned char> SAMAV1ISO7816Commands::dumpSecretKey(unsigned char keyno, unsigned char keyversion, std::vector<unsigned char> divInpu)
-	{
-		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Only SAMAV2 can dump Secret Key");
-		return std::vector<unsigned char>();
-	}
 }
