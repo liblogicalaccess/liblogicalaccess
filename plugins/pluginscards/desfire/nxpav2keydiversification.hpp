@@ -2,8 +2,8 @@
 #include "logicalaccess/key.hpp"
 #include <vector>
 
-#ifndef NXPKEYDIVERSIFICATION_HPP__
-#define NXPKEYDIVERSIFICATION_HPP__
+#ifndef NXPAV2KEYDIVERSIFICATION_HPP__
+#define NXPAV2KEYDIVERSIFICATION_HPP__
 
 #include <string>
 

@@ -646,24 +646,27 @@ namespace logicalaccess
 		}
 
 		if (key->getKeyType() != DF_KEY_AES)
+			getKeyVersioned(key, keydiv);
+	}
+
+	void DESFireCrypto::getKeyVersioned(boost::shared_ptr<DESFireKey> key, std::vector<unsigned char>& keyversioned)
+	{
+		unsigned char* keytmpversioned = new unsigned char[key->getLength()];
+		memset(keytmpversioned, 0x00, key->getLength());
+		unsigned char version = key->getKeyVersion();
+		// set the key version
+		for (unsigned char i = 0; i < 8; i++)
 		{
-			unsigned char* keyversioned = new unsigned char[key->getLength()];
-			memset(keyversioned, 0x00, key->getLength());
-			unsigned char version = key->getKeyVersion();
-			// set the key version
-			for (unsigned char i = 0; i < 8; i++)
+			keytmpversioned[7 - i] = (unsigned char)((unsigned char)(keyversioned[7 - i] & 0xFE) | (unsigned char)((version >> i) & 0x01));
+			keytmpversioned[15 - i] = (unsigned char)(keyversioned[15 - i]);
+			if (key->getLength() == 24)
 			{
-				keyversioned[7 - i] = (unsigned char)((unsigned char)(keydiv[7 - i] & 0xFE) | (unsigned char)((version >> i) & 0x01));
-				keyversioned[15 - i] = (unsigned char)((unsigned char)(keydiv[15 - i] & 0xFE) | (unsigned char)((version >> i) & 0x01));
-				if (key->getLength() == 24)
-				{
-					keyversioned[23 - i] = (unsigned char)((unsigned char)(keydiv[23 - i] & 0xFE) | (unsigned char)((version >> i) & 0x01));
-				}
+				keytmpversioned[23 - i] = (unsigned char)(keyversioned[23 - i]);
 			}
-			keydiv.clear();
-			keydiv.insert(keydiv.end(), keyversioned, keyversioned + key->getLength());
-			delete[] keyversioned;
 		}
+		keyversioned.clear();
+		keyversioned.insert(keyversioned.end(), keytmpversioned, keytmpversioned + key->getLength());
+		delete[] keytmpversioned;
 	}
 
 	void DESFireCrypto::selectApplication(size_t aid)

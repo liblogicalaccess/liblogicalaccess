@@ -310,6 +310,13 @@ namespace logicalaccess
 			static void getKey(boost::shared_ptr<DESFireKey> key, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv);
 
 			/**
+			 * \brief Get DES key versionned.
+			 * \param key The DESFire key information
+			 * \param keyversioned The key versioned.
+			 */
+			static void getKeyVersioned(boost::shared_ptr<DESFireKey> key, std::vector<unsigned char>& keyversioned);
+
+			/**
 			 * \brief Select an application.
 			 * \param aid The Application ID to select.
 			 */
