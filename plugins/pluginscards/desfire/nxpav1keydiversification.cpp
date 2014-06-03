@@ -23,6 +23,9 @@ namespace logicalaccess
 	{
 		diversify.push_back(keyno);
 		diversify.insert(diversify.end(), identifier.begin(), identifier.end());
+
+		if (diversify.size() != 8)
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "NXP Diversification AV1 need 8 bytes of DivInput (Keyno + 7-byte UID)");
 	}
 
 	std::vector<unsigned char> NXPAV1KeyDiversification::getDiversifiedKey(boost::shared_ptr<Key> key, std::vector<unsigned char> diversify)
