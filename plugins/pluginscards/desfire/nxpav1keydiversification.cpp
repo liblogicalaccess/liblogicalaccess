@@ -26,6 +26,8 @@ namespace logicalaccess
 
 		if (diversify.size() != 8)
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "NXP Diversification AV1 need 8 bytes of DivInput (Keyno + 7-byte UID)");
+		if (boost::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_AES)
+			diversify.insert(diversify.end(), diversify.begin(), diversify.end());
 	}
 
 	std::vector<unsigned char> NXPAV1KeyDiversification::getDiversifiedKey(boost::shared_ptr<Key> key, std::vector<unsigned char> diversify)
@@ -62,7 +64,6 @@ namespace logicalaccess
 		else if (boost::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_AES)
 		{
 			LOG(LogLevel::INFOS) << "Diversification NXP AV1 AES";
-			diversify.insert(diversify.end(), diversify.begin(), diversify.end());
 
 			for (int x = 0; x < 16; ++x)
 				diversify[x] = diversify[x] ^ keycipher[x];
@@ -75,14 +76,5 @@ namespace logicalaccess
 			cipher->cipher(diversify, divKey, *symkey.get(), *iv.get(), false);
 		}
 		return divKey;
-	}
-
-	
-	void NXPAV1KeyDiversification::serialize(boost::property_tree::ptree& parentNode)
-	{
-	}
-
-	void NXPAV1KeyDiversification::unSerialize(boost::property_tree::ptree& node)
-	{
 	}
 }

@@ -1,5 +1,6 @@
 #include "logicalaccess/cards/keydiversification.hpp"
 #include "logicalaccess/key.hpp"
+#include "nxpkeydiversification.hpp"
 #include <vector>
 
 #ifndef NXPAV2KEYDIVERSIFICATION_HPP__
@@ -9,7 +10,7 @@
 
 namespace logicalaccess
 {
-	class LIBLOGICALACCESS_API NXPAV2KeyDiversification : public KeyDiversification
+	class LIBLOGICALACCESS_API NXPAV2KeyDiversification : public NXPKeyDiversification
 	{
 	public:
 		virtual void initDiversification(std::vector<unsigned char> identifier, int AID, boost::shared_ptr<Key> key, unsigned char keyno, std::vector<unsigned char>& diversify);

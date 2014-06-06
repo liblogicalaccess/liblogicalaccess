@@ -8,6 +8,8 @@
 #include "desfirechip.hpp"
 #include "samav1iso7816commands.hpp"
 #include "logicalaccess/cards/samkeystorage.hpp"
+#include "nxpkeydiversification.hpp"
+#include "nxpav1keydiversification.hpp"
 #include "nxpav2keydiversification.hpp"
 
 #include <cstring>
@@ -174,13 +176,12 @@ namespace logicalaccess
 
 		ChangeKeyDiversification keyDiv;
 		memset(&keyDiv, 0x00, sizeof(keyDiv));
-		if (samav2commands
-			&& (boost::dynamic_pointer_cast<NXPAV2KeyDiversification>(key->getKeyDiversification())
-			|| boost::dynamic_pointer_cast<NXPAV2KeyDiversification>(oldkey->getKeyDiversification())))
+		if (boost::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification())
+			|| boost::dynamic_pointer_cast<NXPKeyDiversification>(oldkey->getKeyDiversification()))
 		{
 			std::vector<unsigned char> diversifyNew, diversifyOld;
-			boost::shared_ptr<NXPAV2KeyDiversification> nxpdiv = boost::dynamic_pointer_cast<NXPAV2KeyDiversification>(key->getKeyDiversification());
-			boost::shared_ptr<NXPAV2KeyDiversification> oldnxpdiv = boost::dynamic_pointer_cast<NXPAV2KeyDiversification>(oldkey->getKeyDiversification());
+			boost::shared_ptr<KeyDiversification> nxpdiv = key->getKeyDiversification();
+			boost::shared_ptr<KeyDiversification> oldnxpdiv = oldkey->getKeyDiversification();
 
 			if (nxpdiv)
 			{
@@ -194,15 +195,19 @@ namespace logicalaccess
 			{
 				oldnxpdiv->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, key, keyno, diversifyOld);
 
-				if (nxpdiv && oldnxpdiv && !std::equal(diversifyNew.begin(), diversifyNew.end(), diversifyOld.begin()))
-					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Current and New Key should have the same system identifier.");
+				if (nxpdiv && !std::equal(diversifyNew.begin(), diversifyNew.end(), diversifyOld.begin())
+					&& typeid(*nxpdiv) != typeid(*oldnxpdiv))
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Current and New Key should have the same system identifier and same NXP Div type.");
 
 				keyDiv.diversifyCurrent = 0x01;
 				keyDiv.divInput = &diversifyOld[0];
 				keyDiv.divInputSize = static_cast<unsigned char>(diversifyOld.size());
 			}
 
-			keyDiv.enableAV2 = 0x01;
+			if (boost::dynamic_pointer_cast<NXPAV2KeyDiversification>(nxpdiv))
+				keyDiv.divType = NXPKeyDiversificationType::SAMAV2;
+			else
+				keyDiv.divType = NXPKeyDiversificationType::SAMAV1;
 		}
 
         std::vector<unsigned char> ret;
@@ -772,12 +777,21 @@ namespace logicalaccess
 
             if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
             {
-                std::vector<unsigned char> data(2 + result.size());
-                data[0] = keyno;
+				unsigned char p1 = 0x00;
+                std::vector<unsigned char> data(2);
+                data[0] = boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage())->getKeySlot();
                 data[1] = key->getKeyVersion();
-                memcpy(&data[0] + 2, &result[0], result.size());
+				data.insert(data.end(), result.begin(), result.end());
 
-				unsigned char cmd[] = { 0x80, 0x0a, 0x02, 0x00, static_cast<unsigned char>(data.size()), 0x00 };
+				if (boost::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification()))
+				{
+					p1 |= 0x01;
+					if (boost::dynamic_pointer_cast<NXPAV2KeyDiversification>(key->getKeyDiversification()))
+						p1 |= 0x10;
+					data.insert(data.end(), diversify.begin(), diversify.end());
+				}
+
+				unsigned char cmd[] = { 0x80, 0x0a, p1, 0x00, static_cast<unsigned char>(data.size()), 0x00 };
 				std::vector<unsigned char> cmd_vector(cmd, cmd + 6);
 				cmd_vector.insert(cmd_vector.end() - 1, data.begin(), data.end());
 				if (getSAMChip()->getCardType() == "SAM_AV1")
@@ -798,15 +812,16 @@ namespace logicalaccess
                     
                 if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
                 {
-					unsigned char cmd[] = { 0x80, 0x0a, 0x00, 0x00, 0x08, 0x08 };
-					std::vector<unsigned char> cmd_vector(cmd, cmd + 6);
-					cmd_vector.insert(cmd_vector.end() - 1, result.begin(), result.end());
+					unsigned char cmd[] = { 0x80, 0x0a, 0x00, 0x00, 0x08 };
+					std::vector<unsigned char> cmd_vector(cmd, cmd + 5);
+					cmd_vector.insert(cmd_vector.end(), result.begin(), result.end());
 					if (getSAMChip()->getCardType() == "SAM_AV1")
 						apduresult = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1> >(getSAMChip()->getCommands())->transmit(cmd_vector);
 					else if (getSAMChip()->getCardType() == "SAM_AV2")
 						apduresult = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2> >(getSAMChip()->getCommands())->transmit(cmd_vector, true, false);
 					if (apduresult.size() != 2 || apduresult[0] != 0x90 || apduresult[1] != 0x00)
                         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam authenticate DES P2 failed.");
+
 					if (getSAMChip()->getCardType() == "SAM_AV1")
 						d_crypto->d_sessionKey = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1> >(getSAMChip()->getCommands())->dumpSessionKey();
 					else if (getSAMChip()->getCardType() == "SAM_AV2")

@@ -381,13 +381,15 @@ namespace logicalaccess
 				data[2] = info.newKeySlotNo;
 				data[3] = info.newKeySlotV;
 
-				if (diversifycation.enableAV2)
+				if (diversifycation.divType != NXPKeyDiversificationType::NO_DIV)
 				{
-					keyCompMeth |= 0x20;
+					if (diversifycation.divType == NXPKeyDiversificationType::SAMAV2)
+					{
+						keyCompMeth |= 0x20;
+						data.insert(data.end(), diversifycation.divInput, diversifycation.divInput + diversifycation.divInputSize);
+					}
 					keyCompMeth |= diversifycation.diversifyCurrent == 0x01 ? 0x04 : 0x00;
 					keyCompMeth |= diversifycation.diversifyNew == 0x01 ? 0x02 : 0x00;
-
-					data.insert(data.end(), diversifycation.divInput, diversifycation.divInput + diversifycation.divInputSize);
 				}
 
 				unsigned char cmd[] = { d_cla, 0xc4, keyCompMeth, cfg, (unsigned char)(data.size()), 0x00 };

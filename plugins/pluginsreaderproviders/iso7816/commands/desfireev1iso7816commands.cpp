@@ -383,12 +383,13 @@ namespace logicalaccess
         data[1] = key->getKeyVersion();
         memcpy(&data[0] + 2, &RPICC1[0], RPICC1.size());
 
-        if (boost::dynamic_pointer_cast<NXPAV2KeyDiversification>(key->getKeyDiversification()))
+        if (boost::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification()))
         {
-            p1 |= 0x11;
+			p1 |= 0x01;
+			if (boost::dynamic_pointer_cast<NXPAV2KeyDiversification>(key->getKeyDiversification()))
+				p1 |= 0x10;
 			data.insert(data.end(), diversify.begin(), diversify.end());
         }
-
 
         unsigned char cmdp1[] = { 0x80, 0x8e, p1, 0x00, (unsigned char)(data.size()), 0x00 };
         std::vector<unsigned char> cmd_vector(cmdp1, cmdp1 + 6);
