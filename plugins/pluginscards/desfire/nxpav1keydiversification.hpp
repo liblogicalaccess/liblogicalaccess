@@ -21,8 +21,8 @@ namespace logicalaccess
 
 		virtual std::string getType() { return "NXPAV1"; };
 
-		virtual void serialize(boost::property_tree::ptree& parentNode) {};
-		virtual void unSerialize(boost::property_tree::ptree& node) {};
+		virtual void serialize(boost::property_tree::ptree& parentNode);
+		virtual void unSerialize(boost::property_tree::ptree& node);
 		virtual std::string getDefaultXmlNodeName() const { return "NXPAV1KeyDiversification"; };
 
 	private:

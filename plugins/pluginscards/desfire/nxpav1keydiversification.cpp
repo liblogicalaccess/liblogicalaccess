@@ -77,4 +77,15 @@ namespace logicalaccess
 		}
 		return divKey;
 	}
+	
+	void NXPAV1KeyDiversification::serialize(boost::property_tree::ptree& parentNode)
+	{
+		boost::property_tree::ptree node;
+		parentNode.add_child(getDefaultXmlNodeName(), node);
+	}
+	
+	void NXPAV1KeyDiversification::unSerialize(boost::property_tree::ptree& /*node*/)
+	{
+	
+	}
 }
