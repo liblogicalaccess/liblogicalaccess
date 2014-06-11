@@ -5,6 +5,7 @@
 #include "desfirechip.hpp"
 #include "sagemkeydiversification.hpp"
 #include "nxpav2keydiversification.hpp"
+#include "nxpav1keydiversification.hpp"
 #include "logicalaccess/cards/keydiversification.hpp"
 
 #ifdef _MSC_VER
@@ -41,7 +42,15 @@ extern "C"
 		}
 	}
 
-	LIBLOGICALACCESS_API void getNXPDiversification(boost::shared_ptr<logicalaccess::KeyDiversification>* keydiversification)
+	LIBLOGICALACCESS_API void getNXPAV1Diversification(boost::shared_ptr<logicalaccess::KeyDiversification>* keydiversification)
+	{
+		if (keydiversification != NULL)
+		{
+			*keydiversification = boost::shared_ptr<logicalaccess::NXPAV1KeyDiversification>(new logicalaccess::NXPAV1KeyDiversification());
+		}
+	}
+
+	LIBLOGICALACCESS_API void getNXPAV2Diversification(boost::shared_ptr<logicalaccess::KeyDiversification>* keydiversification)
 	{
 		if (keydiversification != NULL)
 		{

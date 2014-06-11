@@ -135,8 +135,6 @@ namespace logicalaccess
 	void XmlSerializable::unSerialize(boost::property_tree::ptree& node, const std::string& rootNode)
 	{
 		boost::property_tree::ptree nodep = node.get_child(rootNode + getDefaultXmlNodeName());
-		if (nodep.empty())
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, std::string("unSerialize ") + rootNode + getDefaultXmlNodeName() + std::string(" failed (node empty)."));
 		unSerialize(nodep);
 	}
 }

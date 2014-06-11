@@ -60,11 +60,12 @@ namespace logicalaccess
 		unsigned char newKeySlotV;
 	}				ChangeKeyInfo;
 
-	enum NXPKeyDiversificationType {
+	typedef enum
+	{
 		NO_DIV = 0,
 		SAMAV1,
 		SAMAV2
-	};
+	}				NXPKeyDiversificationType;
 
 	typedef struct s_changeKeyDiversification
 	{
