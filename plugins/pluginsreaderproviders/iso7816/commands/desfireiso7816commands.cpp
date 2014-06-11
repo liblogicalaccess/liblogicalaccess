@@ -368,7 +368,7 @@ namespace logicalaccess
 
     void DESFireISO7816Commands::handleWriteData(unsigned char cmd, unsigned char* parameters, unsigned int paramLength, const std::vector<unsigned char>& data, EncryptionMode mode)
     {
-        std::vector<unsigned char> edata, command(64);
+        std::vector<unsigned char> edata, command;
 
         d_crypto->initBuf(data.size());
 
@@ -424,13 +424,10 @@ namespace logicalaccess
 
         if (paramLength > 0)
         {
-			memcpy(&command[0], parameters, paramLength);
-			command.insert(command.end(), parameters, parameters + paramLength);
+		command.insert(command.end(), parameters, parameters + paramLength);
         }
-		size_t p = paramLength;
-        memcpy(&command[p], &edata[0], edata.size());
-        p += edata.size();
-        command[p++] = 0x00;
+	command.insert(command.end(), edata.begin(), edata.end());
+        command.push_back(0x00);
 
         std::vector<unsigned char> result = transmit(cmd, command);
         unsigned char err = result.back();
