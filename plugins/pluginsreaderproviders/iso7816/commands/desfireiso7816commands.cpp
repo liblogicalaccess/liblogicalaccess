@@ -422,13 +422,11 @@ namespace logicalaccess
             }			
         }
 
-        if (paramLength > 0)
+        if (parameters != NULL && paramLength > 0)
         {
-		command.insert(command.end(), parameters, parameters + paramLength);
+            command.insert(command.end(), parameters, parameters + paramLength);
         }
-	command.insert(command.end(), edata.begin(), edata.end());
-        command.push_back(0x00);
-        command.resize(paramLength + edata.size());
+        command.insert(command.end(), edata.begin(), edata.end());
 
         std::vector<unsigned char> result = transmit(cmd, command);
         unsigned char err = result.back();

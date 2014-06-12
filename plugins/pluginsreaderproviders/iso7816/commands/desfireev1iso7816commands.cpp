@@ -867,7 +867,6 @@ namespace logicalaccess
             command.insert(command.end(), parameters, parameters + paramLength);
         }
         command.insert(command.end(), edata.begin(), edata.end());
-        command.push_back(0x00);
 
         std::vector<unsigned char> result = transmit_plain(cmd, command);
         unsigned char err = result[result.size() - 1];
