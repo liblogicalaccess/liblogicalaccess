@@ -3,7 +3,7 @@
 	<groupId>eu.islog.lib.readers</groupId>
 	<artifactId>liblogicalaccess-doc</artifactId>
 	<packaging>pom</packaging>
-	<version>1.75-SNAPSHOT</version>
+	<version>1.75.0</version>
 	<name>LibLogicalaccess Documentation</name>
 	
 	<distributionManagement>
@@ -12,14 +12,37 @@
 		  <url>http://artifacts.islog-services.eu/archiva/repository/rfid-releases</url>
 		</repository>
 	</distributionManagement>
-
-	<properties>
-		<maven.build.timestamp.format>MMdd</maven.build.timestamp.format>
-		<buildNumber>${maven.build.timestamp}</buildNumber>
+	
+	<properties>		
+		<scmUrl>scm:git:https://github.com/islog/liblogicalaccess.git</scmUrl>
+		<relativeScmPath />
 	</properties>
+	
+	<scm>
+		<connection>${scmUrl}${relativeScmPath}</connection>
+		<developerConnection>${scmUrl}${relativeScmPath}</developerConnection>
+		<url>${scmUrl}${relativeScmPath}</url>
+	</scm>
 	
     <build>
 		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+				  <doCheck>false</doCheck>
+				  <doUpdate>false</doUpdate>
+				</configuration>
+		    </plugin>
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
@@ -51,7 +74,7 @@
 							<executable>DoxygenHelper</executable>
 							<arguments>
 								<argument>build.doxyfile</argument>
-								<argument>${version}.${buildNumber}</argument>
+								<argument>${project.version}</argument>
 							</arguments>
 						</configuration>
 						<goals>
@@ -105,7 +128,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<finalName>${artifactId}-${version}.${buildNumber}</finalName>
+		<finalName>${artifactId}-${project.version}</finalName>
 	</build>
 	
 </project>
