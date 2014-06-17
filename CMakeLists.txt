@@ -152,6 +152,7 @@ SOURCE_GROUP("Header Files\\services\\accesscontrol\\encodings" FILES ${include_
 SOURCE_GROUP("Header Files\\services\\accesscontrol\\formats" FILES ${include_formats})
 SOURCE_GROUP("Header Files\\services\\accesscontrol\\formats\\customformat" FILES ${include_customformat})
 SOURCE_GROUP("Header Files\\services\\nfctag" FILES ${include_nfctag})
+SOURCE_GROUP("Header Files\\services\\storage" FILES ${include_storage})
 
 endif()
 
