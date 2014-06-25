@@ -520,7 +520,7 @@ namespace logicalaccess
 		if (divInpu.size())
 			p1 |= 0x02;
 
-		unsigned char cmd[] = { d_cla, 0xd6, p1, 0x00, 0x02 + (unsigned char)divInpu.size(), keyno, keyversion, 0x00 };
+		unsigned char cmd[] = { d_cla, 0xd6, p1, 0x00, 0x02 + static_cast<unsigned char>(divInpu.size()), keyno, keyversion, 0x00 };
 		std::vector<unsigned char> cmd_vector(cmd, cmd + 8), result;
 		cmd_vector.insert(cmd_vector.end() - 1, divInpu.begin(), divInpu.end());
 
