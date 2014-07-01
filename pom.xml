@@ -9,7 +9,7 @@
 	<distributionManagement>
 		<repository>
 		  <id>rfid-releases</id>
-		  <url>http://artifacts.islog-services.eu/archiva/repository/rfid-releases</url>
+		  <url>http://artifacts.islog.com/repository/rfid-releases</url>
 		</repository>
 	</distributionManagement>
 	
