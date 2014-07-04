@@ -21,7 +21,6 @@ namespace logicalaccess
 	STidSTRReaderCardAdapter::STidSTRReaderCardAdapter(STidCmdType adapterType)
 		: ReaderCardAdapter()
 	{
-		//LOG(LogLevel::INFOS) << "Constructor");
 		d_adapterType = adapterType;
 	}
 

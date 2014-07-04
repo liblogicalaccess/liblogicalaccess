@@ -40,7 +40,6 @@ namespace logicalaccess
 	STidSTRReaderUnit::STidSTRReaderUnit()
 		: ReaderUnit()
 	{
-		//LOG(LogLevel::INFOS) << "Constructor");
 		d_readerUnitConfig.reset(new STidSTRReaderUnitConfiguration());
 		setDefaultReaderCardAdapter (boost::shared_ptr<STidSTRReaderCardAdapter> (new STidSTRReaderCardAdapter(STID_CMD_READER)));
 		d_ledBuzzerDisplay.reset(new STidSTRLEDBuzzerDisplay());
