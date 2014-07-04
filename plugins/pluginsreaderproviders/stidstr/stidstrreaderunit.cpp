@@ -63,7 +63,6 @@ namespace logicalaccess
 
 	STidSTRReaderUnit::~STidSTRReaderUnit()
 	{
-		//LOG(LogLevel::INFOS) << "Destructor");
 		disconnectFromReader();
 	}
 

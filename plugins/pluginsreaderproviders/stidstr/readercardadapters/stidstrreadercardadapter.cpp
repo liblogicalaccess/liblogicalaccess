@@ -26,7 +26,6 @@ namespace logicalaccess
 
 	STidSTRReaderCardAdapter::~STidSTRReaderCardAdapter()
 	{
-		//LOG(LogLevel::INFOS) << "Destructor");
 	}
 
 	boost::shared_ptr<STidSTRReaderUnit> STidSTRReaderCardAdapter::getSTidSTRReaderUnit() const
