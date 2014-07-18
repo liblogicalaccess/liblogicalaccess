@@ -125,13 +125,13 @@ namespace logicalaccess
 			unsigned int getBaudrate();
 
 			void setFlowControl(const boost::asio::serial_port_base::flow_control::type& type);
-			boost::asio::serial_port_base::flow_control::type SerialPort::getFlowControl();
+			boost::asio::serial_port_base::flow_control::type getFlowControl();
 
 			void setParity(const boost::asio::serial_port_base::parity::type& parity);
-			boost::asio::serial_port_base::parity::type SerialPort::getParity();
+			boost::asio::serial_port_base::parity::type getParity();
 
 			void setStopBits(const boost::asio::serial_port_base::stop_bits::type& stop_bits);
-			boost::asio::serial_port_base::stop_bits::type SerialPort::getStopBits();
+			boost::asio::serial_port_base::stop_bits::type getStopBits();
 
 			void setCharacterSize(unsigned int character_size);
 			unsigned int getCharacterSize();
