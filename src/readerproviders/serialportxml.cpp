@@ -78,45 +78,32 @@ namespace logicalaccess
 		// Up to 255 COM ports are supported so we iterate through all of them seeing
 		// if we can open them or if we fail to open them, get an access denied or general error error.
 		// Both of these cases indicate that there is a COM port at that number. 
+		boost::asio::io_service io;
+		boost::asio::serial_port port(io);
 		for (unsigned int i = 1; i < 256; i++)
 		{
 			// Form the Raw device name
 			char portname[64];
-			sprintf(portname, "\\\\.\\COM%u", i);
+			sprintf(portname, "COM%u", i);
 
-			//Try to open the port
-			bool bSuccess = false;
-			HANDLE hPort = ::CreateFileA(portname, GENERIC_READ | GENERIC_WRITE, 0, 0, OPEN_EXISTING, 0, 0);
-			if (hPort == INVALID_HANDLE_VALUE)
+
+			try
 			{
-				DWORD dwError = GetLastError();
+				// create the serial device, note it takes the io service and the port name
+				port.open(portname);
+				port.close();
 
-				// Check to see if the error was because some other app had the port open or a general failure
-				if (dwError == ERROR_ACCESS_DENIED || dwError == ERROR_GEN_FAILURE || dwError == ERROR_SHARING_VIOLATION || dwError == ERROR_SEM_TIMEOUT)
-				bSuccess = true;
+				boost::shared_ptr<SerialPortXml> newPort;
+				newPort.reset(new SerialPortXml(portname));
+				ports.push_back(newPort); 
 			}
-			else
+			catch (std::exception& e)
 			{
-				// The port was opened successfully
-				bSuccess = true;
-
-				// Don't forget to close the port, since we are going to do nothing with it anyway
-				CloseHandle(hPort);
-			}
-
-			// Add the port number to the array which will be returned
-			if (bSuccess)
-			{
-				sprintf(portname, "COM%u", i);
-				boost::shared_ptr<SerialPortXml> port;
-				port.reset(new SerialPortXml(portname));
-
-				ports.push_back(port); 
+				LOG(LogLevel::WARNINGS) << portname << ": " << e.what();
 			}
 		}
 		
 #endif
-
 		return true;
 	}
 }

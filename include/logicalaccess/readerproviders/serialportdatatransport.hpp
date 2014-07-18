@@ -116,6 +116,9 @@ namespace logicalaccess
 
 			virtual std::vector<unsigned char> receive(long int timeout);
 
+			void setTimeout(int timeout) { m_timeout = timeout; }
+			int getTimeout() { return m_timeout; }
+
 		protected:
 
 			/**
@@ -132,6 +135,8 @@ namespace logicalaccess
 			 * \brief The baudrate to use when configuring the serial port.
 			 */
 			unsigned long d_portBaudRate;
+
+			int m_timeout;
 	};
 
 }

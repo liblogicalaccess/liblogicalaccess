@@ -73,7 +73,7 @@ namespace logicalaccess
 		unsigned char checksum = answer[buflength-1];
 		EXCEPTION_ASSERT_WITH_LOG(calcChecksum(std::vector<unsigned char>(answer.begin(), answer.begin() + buflength - 1)) == checksum, std::invalid_argument, "Wrong checksum");
 
-		ret = std::vector<unsigned char>(answer.begin() + 4, answer.begin() + 4 + buflength - 5);
+		ret = std::vector<unsigned char>(answer.begin() + 4, answer.end() - 1);
 		
 		return ret;
 	}
