@@ -139,6 +139,9 @@ namespace logicalaccess
 			void setTimeout(int timeout) { m_timeout = timeout; }
 			int getTimeout() { return m_timeout; }
 
+			void read_callback(std::size_t& data_available, boost::asio::deadline_timer& timeout, const boost::system::error_code& error, std::size_t bytes_transferred);
+			void wait_callback(boost::asio::serial_port& ser_port, const boost::system::error_code& error);
+
 		private:
 
 			/**
@@ -150,15 +153,11 @@ namespace logicalaccess
 
 			boost::asio::serial_port m_serial_port;
 
-
 			/**
 			 * \brief Read Timeout.
 			 */
 			int m_timeout;
 	};
 }
-
-void read_callback(std::size_t& data_available, boost::asio::deadline_timer& timeout, const boost::system::error_code& error, std::size_t bytes_transferred);
-void wait_callback(boost::asio::serial_port& ser_port, const boost::system::error_code& error);
 
 #endif /* SERIALPORT_HPP */

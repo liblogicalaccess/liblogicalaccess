@@ -46,6 +46,7 @@ namespace logicalaccess
 
 	void SerialPort::close()
 	{
+		m_io.stop();
 		if (m_serial_port.is_open())
 		{
 			m_serial_port.close();
@@ -126,11 +127,11 @@ namespace logicalaccess
 		std::size_t data_available = 0;
 
 		m_serial_port.async_read_some(boost::asio::buffer(my_buffer),
-						boost::bind(&read_callback, boost::ref(data_available), boost::ref(timeout),
+						boost::bind(&SerialPort::read_callback, this, boost::ref(data_available), boost::ref(timeout),
 						boost::asio::placeholders::error,
 						boost::asio::placeholders::bytes_transferred));
 		timeout.expires_from_now(boost::posix_time::milliseconds(m_timeout));
-		timeout.async_wait(boost::bind(&wait_callback, boost::ref(m_serial_port),
+		timeout.async_wait(boost::bind(&SerialPort::wait_callback, this, boost::ref(m_serial_port),
 						boost::asio::placeholders::error));
 
 		m_io.run();  // will block until async callbacks are finished
@@ -140,6 +141,20 @@ namespace logicalaccess
 			buf.clear();
 		m_io.reset();
 		return data_available;
+	}
+
+	void SerialPort::read_callback(std::size_t& data_available, boost::asio::deadline_timer& timeout, const boost::system::error_code& error, std::size_t bytes_transferred)
+	{
+		if (error || !bytes_transferred) // No data was read!
+			return;
+		data_available = bytes_transferred;
+		timeout.cancel();  // will cause wait_callback to fire with an error
+	}
+
+	void SerialPort::wait_callback(boost::asio::serial_port& m_serial_port, const boost::system::error_code& error)
+	{
+		if (!error)
+			m_serial_port.cancel(); // will cause read_callback to fire with an error
 	}
 
 	size_t SerialPort::write(const std::vector<unsigned char>& buf)
@@ -153,18 +168,4 @@ namespace logicalaccess
 	{
 		return m_serial_port.is_open();
 	}
-}
-
-void read_callback(std::size_t& data_available, boost::asio::deadline_timer& timeout, const boost::system::error_code& error, std::size_t bytes_transferred)
-{
-	if (error || !bytes_transferred) // No data was read!
-		return;
-	data_available = bytes_transferred;
-	timeout.cancel();  // will cause wait_callback to fire with an error
-}
-
-void wait_callback(boost::asio::serial_port& m_serial_port, const boost::system::error_code& error)
-{
-	if (!error)
-		m_serial_port.cancel(); // will cause read_callback to fire with an error
 }

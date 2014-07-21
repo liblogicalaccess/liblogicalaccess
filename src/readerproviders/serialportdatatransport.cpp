@@ -12,7 +12,7 @@
 
 namespace logicalaccess
 {
-	SerialPortDataTransport::SerialPortDataTransport(const std::string& portname) : d_isAutoDetected(false), m_timeout(50)
+	SerialPortDataTransport::SerialPortDataTransport(const std::string& portname) : d_isAutoDetected(false)
 	{
 		d_port.reset(new SerialPortXml(portname));
 
@@ -21,6 +21,7 @@ namespace logicalaccess
 #else
 		d_portBaudRate = B9600;
 #endif
+		m_timeout = 50;
 	}
 
 	SerialPortDataTransport::~SerialPortDataTransport()
