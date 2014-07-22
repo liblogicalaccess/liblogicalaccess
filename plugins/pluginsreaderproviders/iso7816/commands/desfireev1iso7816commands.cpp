@@ -66,7 +66,7 @@ namespace logicalaccess
             DFName dfname;
             memset(&dfname, 0x00, sizeof(dfname));
             dfname.AID = DESFireLocation::convertAidToUInt(r);
-            dfname.FID = static_cast<unsigned short>((r[3] << 8) | r[4]);
+            dfname.FID = static_cast<unsigned short>((r[4] << 8) | r[3]);
             memcpy(dfname.DF_Name, &r[5], r.size() - 5);
             dfnames.push_back(dfname);
 
@@ -102,7 +102,7 @@ namespace logicalaccess
         return fileids;
     }
 
-    void DESFireEV1ISO7816Commands::createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, DESFireKeyType cryptoMethod, FidSupport fidSupported, unsigned short isoFID, const char* isoDFName)
+    void DESFireEV1ISO7816Commands::createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, DESFireKeyType cryptoMethod, FidSupport fidSupported, unsigned short isoFID, std::vector<unsigned char> isoDFName)
     {
         std::vector<unsigned char> command;
 
@@ -112,11 +112,12 @@ namespace logicalaccess
 
         if (isoFID != 0x00)
         {
-            command.push_back(static_cast<unsigned char>(isoFID));
+            command.push_back(static_cast<unsigned char>(isoFID & 0xff));
+			command.push_back(static_cast<unsigned char>((isoFID & 0xff00) >> 8));
         }
-        if (isoDFName != NULL)
+        if (isoDFName.size() > 0)
         {
-            command.insert(command.end(), isoDFName, isoDFName + strlen(isoDFName));
+            command.insert(command.end(), isoDFName.begin(), isoDFName.end());
         }
 
         transmit(DF_INS_CREATE_APPLICATION, command);
@@ -162,8 +163,8 @@ namespace logicalaccess
         command.push_back(static_cast<unsigned char>(fileno));
         if (isoFID != 0)
         {
-            command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(isoFID & 0xff00) >> 8));
-            command.push_back(static_cast<unsigned char>(isoFID & 0xff));			
+			command.push_back(static_cast<unsigned char>(isoFID & 0xff));
+            command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(isoFID & 0xff00) >> 8));		
         }
         command.push_back(static_cast<unsigned char>(comSettings));
         BufferHelper::setUShort(command, ar);

@@ -59,7 +59,7 @@ namespace logicalaccess
 			 * \param settings Key settings
 			 * \param maxNbKeys Maximum number of keys
 			 */
-			virtual void createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, DESFireKeyType cryptoMethod, FidSupport fidSupported = FIDS_NO_ISO_FID, unsigned short isoFID = 0x00, const char* isoDFName = NULL);
+			virtual void createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, DESFireKeyType cryptoMethod, FidSupport fidSupported = FIDS_NO_ISO_FID, unsigned short isoFID = 0x00, std::vector<unsigned char> isoDFName = std::vector<unsigned char>());
 
 			/**
 			 * \brief Get key settings on the current application.
