@@ -12,7 +12,7 @@ namespace logicalaccess
 {
 	NdefMessage::NdefMessage(std::vector<unsigned char>& data)
 	{
-		unsigned int index = 0;
+		size_t index = 0;
 
 		while (index < data.size())
 		{
