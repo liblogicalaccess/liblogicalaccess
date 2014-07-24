@@ -6,6 +6,10 @@ if (WIN32)
 	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
 endif()
 
+set(INCLUDE_FOLDER 	${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816)
+
+INCLUDE_DIRECTORIES(${INCLUDE_FOLDER})
+
 file(GLOB_RECURSE SRCS *.cpp)
 file(GLOB_RECURSE INCLUDE *.hpp)
 
@@ -26,6 +30,7 @@ SET_TARGET_PROPERTIES(desfirecards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION
 target_link_libraries(
 	desfirecards
 	logicalaccess-cryptolib
+	iso7816cards
 	${LINK_OPT}
 )
 if (MSVC)

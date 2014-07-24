@@ -9,6 +9,7 @@
 
 #include "desfireiso7816commands.hpp"
 #include "desfireev1commands.hpp"
+#include "iso7816iso7816commands.hpp"
 
 #include <string>
 #include <vector>
@@ -21,7 +22,7 @@ namespace logicalaccess
 	/**
 	 * \brief The DESFire EV1 base commands class.
 	 */
-	class LIBLOGICALACCESS_API DESFireEV1ISO7816Commands : public DESFireISO7816Commands, public DESFireEV1Commands
+	class LIBLOGICALACCESS_API DESFireEV1ISO7816Commands : public DESFireISO7816Commands, public DESFireEV1Commands, public ISO7816ISO7816Commands
 	{
 		public:
 

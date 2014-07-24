@@ -45,6 +45,8 @@ namespace logicalaccess
 			 */
 			virtual boost::shared_ptr<DESFireLocation> getApplicationLocation();
 
+			virtual boost::shared_ptr<CardService> getService(CardServiceType serviceType);
+
 			/**
 			 * \brief Get the DESFire card provider for I/O access.
 			 * \return The DESFire card provider.
