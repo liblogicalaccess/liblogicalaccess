@@ -55,7 +55,7 @@ namespace logicalaccess
 
 	unsigned char NdefRecord::getTnfByte(bool firstRecord, bool lastRecord)
 	{
-		int value = m_tnf;
+		unsigned char value = static_cast<unsigned char>(m_tnf);
 
 		if (firstRecord)
 			value |= 0x80;
@@ -67,7 +67,7 @@ namespace logicalaccess
 			value |= 0x10;
 
 		if (m_id.size())
-			value |= 0x8;
+			value |= 0x08;
 
 		return value;
 	}

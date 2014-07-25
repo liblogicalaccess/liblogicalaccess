@@ -11,6 +11,17 @@
 
 namespace logicalaccess
 {
+	enum TNF {
+		TNF_EMPTY = 0x00,
+		TNF_WELL_KNOWN = 0x01,
+		TNF_MIME_MEDIA = 0x02,
+		TNF_ABSOLUTE_URI = 0x03,
+		TNF_EXTERNAL_TYPE = 0x04,
+		TNF_UNKNOWN = 0x05,
+		TNF_UNCHANGED = 0x06,
+		TNF_RESERVED = 0x07
+	};
+
 	class LIBLOGICALACCESS_API NdefRecord
 	{
 	public:
@@ -20,8 +31,8 @@ namespace logicalaccess
         unsigned int getEncodedSize();
         std::vector<unsigned char> encode(bool firstRecord, bool lastRecord);
 
-		void setTnf(unsigned char tnf) { m_tnf = tnf; };
-		unsigned char getTnf() { return m_tnf; };
+		void setTnf(TNF tnf) { m_tnf = tnf; };
+		TNF getTnf() { return m_tnf; };
 
         void setType(std::vector<unsigned char> type) { m_type = type; };
 		std::vector<unsigned char> getType() { return m_type; };
@@ -34,7 +45,7 @@ namespace logicalaccess
 
     private:
         unsigned char getTnfByte(bool firstRecord, bool lastRecord);
-        unsigned char m_tnf; // 3 bit
+        TNF m_tnf; // 3 bit
         std::vector<unsigned char> m_type;
         std::vector<unsigned char> m_payload;
         std::vector<unsigned char> m_id;
