@@ -31,7 +31,7 @@ namespace logicalaccess
 
 			void writeCapabilityContainer(unsigned short isoFID = 0xe103, unsigned short isoFIDNDEFFile = 0xe104, unsigned short NDEFFileSize = 0xff);
 
-			void writeNDEFFile(NdefMessage records, unsigned short isoFIDNDEFFile = 0xe104);
+			void writeNDEFFile(NdefMessage& records, unsigned short isoFIDNDEFFile = 0xe104);
 
 			NdefMessage readNDEFFile(unsigned short isoFIDApplication = 0xe105, unsigned short isoFIDNDEFFile = 0xe104);
 

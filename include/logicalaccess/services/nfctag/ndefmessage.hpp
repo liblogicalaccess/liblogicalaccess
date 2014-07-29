@@ -24,7 +24,7 @@ namespace logicalaccess
 		HTTPS = 0x04, // https://
 		TEL = 0x05, // tel:
 		MAIL_TO = 0x06, // mailto:
-		FILE = 0x1D // file://
+		URI_FILE = 0x1D // file://
 	};
 
 	class LIBLOGICALACCESS_API NdefMessage
