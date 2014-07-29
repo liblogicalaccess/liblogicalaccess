@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_DESFIREEV1NFCTAG4CARDSERVICE_HPP
 #define LOGICALACCESS_DESFIREEV1NFCTAG4CARDSERVICE_HPP
 
-#include "iso7816nfctag4cardservice.hpp"
+#include <iso7816/iso7816nfctag4cardservice.hpp>
 #include "desfireev1chip.hpp"
 
 

@@ -38,7 +38,7 @@ namespace logicalaccess
 		iso7816command->updateBinary(&CC[0], CC.size(), 0, isoFID);
 	}
 
-	void ISO7816NFCTag4CardService::writeNDEFFile(NdefMessage records, unsigned short isoFIDNDEFFile)
+	void ISO7816NFCTag4CardService::writeNDEFFile(NdefMessage& records, unsigned short isoFIDNDEFFile)
 	{
 		boost::shared_ptr<logicalaccess::ISO7816Commands> iso7816command(boost::dynamic_pointer_cast<logicalaccess::ISO7816Commands>(getChip()->getCommands()));
 
@@ -46,7 +46,7 @@ namespace logicalaccess
 		std::vector<unsigned char> data;
 
 		data.push_back(0x00); //NLEN
-		data.push_back(recordsData.size()); //NDEF Length
+		data.push_back(static_cast<unsigned char>(recordsData.size())); //NDEF Length
 		data.insert(data.end(), recordsData.begin(), recordsData.end());
 
 		iso7816command->selectFile(isoFIDNDEFFile);
