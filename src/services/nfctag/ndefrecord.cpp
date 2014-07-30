@@ -11,7 +11,7 @@ namespace logicalaccess
 {
 	unsigned int NdefRecord::getEncodedSize()
 	{
-		int size = 2; // tnf + typeLength
+		size_t size = 2; // tnf + typeLength
 
 		if (m_payload.size() > 0xFF)
 			size += 4;
