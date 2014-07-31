@@ -43,6 +43,7 @@ namespace logicalaccess
         void addEmptyRecord();
 
 		size_t getRecordCount() { return m_records.size(); };
+		std::vector<NdefRecord>& getRecords() { return m_records; };
 
     private:
         std::vector<NdefRecord> m_records;
