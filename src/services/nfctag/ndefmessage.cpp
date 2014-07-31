@@ -17,7 +17,7 @@ namespace logicalaccess
 		while (index < data.size())
 		{
 			EXCEPTION_ASSERT((index + 3) < data.size(), std::invalid_argument, "The buffer size is too small.");
-			NdefRecord record;
+			boost::shared_ptr<NdefRecord> record(new NdefRecord());
 
 			unsigned char tnf_tmp = data[index];
 			bool mb = (tnf_tmp & 0x80) != 0;
@@ -28,7 +28,7 @@ namespace logicalaccess
 			unsigned char tnf = (tnf_tmp & 0x7);
 			++index;
 
-			record.setTnf(static_cast<TNF>(tnf));
+			record->setTnf(static_cast<TNF>(tnf));
 
 			int typeLength = data[index];
 
@@ -50,18 +50,18 @@ namespace logicalaccess
 
 			++index;
 			EXCEPTION_ASSERT((index + typeLength) <= data.size(), std::invalid_argument, "The buffer size is too small.");
-			record.setType(std::vector<unsigned char>(data.begin() + index, data.begin() + index + typeLength));
+			record->setType(std::vector<unsigned char>(data.begin() + index, data.begin() + index + typeLength));
 			index += typeLength;
 
 			if (il)
 			{
 				EXCEPTION_ASSERT((index + idLength) <= data.size(), std::invalid_argument, "The buffer size is too small.");
-				record.setId(std::vector<unsigned char>(data.begin() + index, data.begin() + index + idLength));
+				record->setId(std::vector<unsigned char>(data.begin() + index, data.begin() + index + idLength));
 				index += idLength;
 			}
 
 			EXCEPTION_ASSERT((index + payloadLength) <= data.size(), std::invalid_argument, "The buffer size is too small.");
-			record.setPayload(std::vector<unsigned char>(data.begin() + index, data.begin() + index + payloadLength));
+			record->setPayload(std::vector<unsigned char>(data.begin() + index, data.begin() + index + payloadLength));
 			index += payloadLength;
 
 			m_records.push_back(record);
@@ -73,53 +73,53 @@ namespace logicalaccess
 
 	void NdefMessage::addMimeMediaRecord(std::string mimeType, std::string payload)
 	{
-		NdefRecord ndefr = NdefRecord();
-		ndefr.setTnf(TNF_MIME_MEDIA);
+		boost::shared_ptr<NdefRecord> ndefr(new NdefRecord());
+		ndefr->setTnf(TNF_MIME_MEDIA);
 
 		std::vector<unsigned char> mimeTypeVec(mimeType.begin(), mimeType.end()); 
 		std::vector<unsigned char> payloadVec(payload.begin(), payload.end());
 
-		ndefr.setType(mimeTypeVec);
-		ndefr.setPayload(payloadVec);
+		ndefr->setType(mimeTypeVec);
+		ndefr->setPayload(payloadVec);
 
 		m_records.push_back(ndefr);
 	}
 
 	void NdefMessage::addTextRecord(std::string text, std::string encoding)
 	{
-		NdefRecord ndefr;
-		ndefr.setTnf(TNF_WELL_KNOWN);
-		ndefr.setType(std::vector<unsigned char>(1, NdefType::Text));
+		boost::shared_ptr<NdefRecord> ndefr(new NdefRecord());
+		ndefr->setTnf(TNF_WELL_KNOWN);
+		ndefr->setType(std::vector<unsigned char>(1, NdefType::Text));
 
 		std::vector<unsigned char> payload;
 		payload.push_back(static_cast<unsigned char>(encoding.length()));
 		payload.insert(payload.end(), encoding.begin(), encoding.end());
 		payload.insert(payload.end(), text.begin(), text.end());
 
-		ndefr.setPayload(payload);
+		ndefr->setPayload(payload);
 
 		m_records.push_back(ndefr);
 	}
 
 	void NdefMessage::addUriRecord(std::string uri, UriType uritype)
 	{
-		NdefRecord ndefr;
-		ndefr.setTnf(TNF_WELL_KNOWN);
-		ndefr.setType(std::vector<unsigned char>(1, NdefType::Uri));
+		boost::shared_ptr<NdefRecord> ndefr(new NdefRecord());
+		ndefr->setTnf(TNF_WELL_KNOWN);
+		ndefr->setType(std::vector<unsigned char>(1, NdefType::Uri));
 
 		std::vector<unsigned char> payload;
 		payload.push_back(static_cast<unsigned char>(uritype));
 		payload.insert(payload.end(), uri.begin(), uri.end());
 
-		ndefr.setPayload(payload);
+		ndefr->setPayload(payload);
 
 		m_records.push_back(ndefr);
 	}
 
 	void NdefMessage::addEmptyRecord()
 	{
-		NdefRecord ndefr;
-		ndefr.setTnf(TNF_EMPTY);
+		boost::shared_ptr<NdefRecord> ndefr(new NdefRecord());
+		ndefr->setTnf(TNF_EMPTY);
 		m_records.push_back(ndefr);
 	}
 
@@ -127,9 +127,9 @@ namespace logicalaccess
 	{
 		std::vector<unsigned char> data;
 
-		for (std::vector<NdefRecord>::iterator it = m_records.begin(); it != m_records.end(); ++it)
+		for (std::vector<boost::shared_ptr<NdefRecord> >::iterator it = m_records.begin(); it != m_records.end(); ++it)
 		{
-			std::vector<unsigned char> record = (*it).encode((it == m_records.begin()), (next(it) == m_records.end()));
+			std::vector<unsigned char> record = (*it)->encode((it == m_records.begin()), (std::next(it) == m_records.end()));
 			data.insert(data.end(), record.begin(), record.end());
 		}
 		return data;

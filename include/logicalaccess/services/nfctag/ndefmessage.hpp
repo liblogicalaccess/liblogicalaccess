@@ -36,17 +36,17 @@ namespace logicalaccess
 
         std::vector<unsigned char> encode();
 
-		void addRecord(NdefRecord& record) { m_records.push_back(record); };
+		void addRecord(boost::shared_ptr<NdefRecord> record) { m_records.push_back(record); };
         void addMimeMediaRecord(std::string mimeType, std::string payload);
         void addTextRecord(std::string text, std::string encoding = "en");
         void addUriRecord(std::string uri, UriType uritype);
         void addEmptyRecord();
 
 		size_t getRecordCount() { return m_records.size(); };
-		std::vector<NdefRecord>& getRecords() { return m_records; };
+		std::vector<boost::shared_ptr<NdefRecord> >& getRecords() { return m_records; };
 
     private:
-        std::vector<NdefRecord> m_records;
+		std::vector<boost::shared_ptr<NdefRecord> > m_records;
 	};
 }
 

@@ -38,11 +38,11 @@ namespace logicalaccess
 		iso7816command->updateBinary(&CC[0], CC.size(), 0, isoFID);
 	}
 
-	void ISO7816NFCTag4CardService::writeNDEFFile(NdefMessage& records, unsigned short isoFIDNDEFFile)
+	void ISO7816NFCTag4CardService::writeNDEFFile(boost::shared_ptr<logicalaccess::NdefMessage> records, unsigned short isoFIDNDEFFile)
 	{
 		boost::shared_ptr<logicalaccess::ISO7816Commands> iso7816command(boost::dynamic_pointer_cast<logicalaccess::ISO7816Commands>(getChip()->getCommands()));
 
-		std::vector<unsigned char> recordsData = records.encode();
+		std::vector<unsigned char> recordsData = records->encode();
 		std::vector<unsigned char> data;
 
 		data.push_back(0x00); //NLEN
@@ -53,7 +53,7 @@ namespace logicalaccess
 		iso7816command->updateBinary(&data[0], data.size(), 0, isoFIDNDEFFile);
 	}
 
-	NdefMessage ISO7816NFCTag4CardService::readNDEFFile(unsigned short isoFIDApplication, unsigned short isoFIDNDEFFile)
+	boost::shared_ptr<logicalaccess::NdefMessage> ISO7816NFCTag4CardService::readNDEFFile(unsigned short isoFIDApplication, unsigned short isoFIDNDEFFile)
 	{
 		boost::shared_ptr<logicalaccess::ISO7816Commands> iso7816command(boost::dynamic_pointer_cast<logicalaccess::ISO7816Commands>(getChip()->getCommands()));
 
@@ -68,6 +68,6 @@ namespace logicalaccess
 		length = data[1];
 		data.resize(length);
 		iso7816command->readBinary(&data[0], length, 2, isoFIDNDEFFile);
-		return logicalaccess::NdefMessage(data);
+		return boost::shared_ptr<logicalaccess::NdefMessage>(new NdefMessage(data));
 	}
 }

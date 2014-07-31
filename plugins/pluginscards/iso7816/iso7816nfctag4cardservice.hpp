@@ -29,11 +29,11 @@ namespace logicalaccess
 
 			~ISO7816NFCTag4CardService() {};
 
-			void writeCapabilityContainer(unsigned short isoFID = 0xe103, unsigned short isoFIDNDEFFile = 0xe104, unsigned short NDEFFileSize = 0xff);
+			virtual void writeCapabilityContainer(unsigned short isoFID = 0xe103, unsigned short isoFIDNDEFFile = 0xe104, unsigned short NDEFFileSize = 0xff);
 
-			void writeNDEFFile(NdefMessage& records, unsigned short isoFIDNDEFFile = 0xe104);
+			virtual void writeNDEFFile(boost::shared_ptr<logicalaccess::NdefMessage> records, unsigned short isoFIDNDEFFile = 0xe104);
 
-			NdefMessage readNDEFFile(unsigned short isoFIDApplication = 0xe105, unsigned short isoFIDNDEFFile = 0xe104);
+			virtual boost::shared_ptr<logicalaccess::NdefMessage> readNDEFFile(unsigned short isoFIDApplication = 0xe105, unsigned short isoFIDNDEFFile = 0xe104);
 
 			virtual CardServiceType getServiceType() const { return CardServiceType::CST_NFC_TAG; };
 

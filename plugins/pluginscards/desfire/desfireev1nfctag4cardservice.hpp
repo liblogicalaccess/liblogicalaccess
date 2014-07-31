@@ -35,6 +35,8 @@ namespace logicalaccess
 
 			void deleteNFCApplication(unsigned char aid, boost::shared_ptr<logicalaccess::DESFireKey> masterPICCKey);
 
+			virtual boost::shared_ptr<logicalaccess::NdefMessage> readNDEFFile(unsigned short isoFIDApplication = 0xe105, unsigned short isoFIDNDEFFile = 0xe104);
+
 			virtual CardServiceType getServiceType() const { return CardServiceType::CST_NFC_TAG; };
 
 		protected:

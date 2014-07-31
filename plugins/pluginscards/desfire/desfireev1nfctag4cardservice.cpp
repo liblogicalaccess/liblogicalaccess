@@ -50,5 +50,13 @@ namespace logicalaccess
 		desfirecommand->authenticate(0x00, masterPICCKey);
 		desfirecommand->deleteApplication(aid);
 	}
+
+	boost::shared_ptr<logicalaccess::NdefMessage> DESFireEV1NFCTag4CardService::readNDEFFile(unsigned short isoFIDApplication, unsigned short isoFIDNDEFFile)
+	{
+		boost::shared_ptr<logicalaccess::DESFireCommands> desfirecommand(boost::dynamic_pointer_cast<logicalaccess::DESFireCommands>(getChip()->getCommands()));
+
+		desfirecommand->selectApplication(0x00);
+		return ISO7816NFCTag4CardService::readNDEFFile(isoFIDApplication, isoFIDNDEFFile);
+	}
 }
 

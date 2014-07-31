@@ -35,13 +35,13 @@ namespace logicalaccess
 		TNF getTnf() { return m_tnf; };
 
         void setType(std::vector<unsigned char> type) { m_type = type; };
-		std::vector<unsigned char> getType() { return m_type; };
+		std::vector<unsigned char>& getType() { return m_type; };
 
         void setPayload(std::vector<unsigned char> payload) { m_payload = payload; };
-		std::vector<unsigned char> getPayload() { return m_payload; };
+		std::vector<unsigned char>& getPayload() { return m_payload; };
 
         void setId(std::vector<unsigned char> id) { m_id = id; };
-		std::vector<unsigned char> getId() { return m_id; };
+		std::vector<unsigned char>& getId() { return m_id; };
 
     private:
         unsigned char getTnfByte(bool firstRecord, bool lastRecord);

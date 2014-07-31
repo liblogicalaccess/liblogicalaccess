@@ -11,18 +11,17 @@ namespace logicalaccess
 {
 	unsigned int NdefRecord::getEncodedSize()
 	{
-		size_t size = 2; // tnf + typeLength
+		size_t size = 0x02; // tnf + typeLength
 
 		if (m_payload.size() > 0xFF)
-			size += 4;
+			size += 0x04;
 		else
-			size += 1;
+			size += 0x01;
 
 		if (m_id.size())
-			size += 1;
+			size += 0x01;
 
-		size += (m_type.size() + m_payload.size() + m_id.size());
-		return size;
+		return size + m_type.size() + m_payload.size() + m_id.size();
 	}
 
 	std::vector<unsigned char> NdefRecord::encode(bool firstRecord, bool lastRecord)
@@ -30,10 +29,10 @@ namespace logicalaccess
 		std::vector<unsigned char> data;
 
 		data.push_back(getTnfByte(firstRecord, lastRecord));
-		data.push_back(m_type.size());
+		data.push_back(static_cast<unsigned char>(m_type.size()));
 
 		if (m_payload.size() <= 0xFF)// short record
-			data.push_back(m_payload.size());
+			data.push_back(static_cast<unsigned char>(m_payload.size()));
 		else // long record
 		{
 			data.push_back((m_payload.size() && 0xff000000) >> 24);
@@ -43,7 +42,7 @@ namespace logicalaccess
 		}
 
 		if (m_id.size())
-			data.push_back(m_id.size());
+			data.push_back(static_cast<unsigned char>(m_id.size()));
 
 		data.insert(data.end(), m_type.begin(), m_type.end());
 		data.insert(data.end(), m_payload.begin(), m_payload.end());
