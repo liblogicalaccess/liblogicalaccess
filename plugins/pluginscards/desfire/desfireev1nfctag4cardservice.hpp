@@ -31,9 +31,9 @@ namespace logicalaccess
 
 			~DESFireEV1NFCTag4CardService() {};
 
-			void createNFCApplication(unsigned char aid, boost::shared_ptr<logicalaccess::DESFireKey> masterPICCKey, unsigned short isoFIDApplication = 0xe105, unsigned short isoFIDCapabilityContainer = 0xe103, unsigned short isoFIDNDEFFile = 0xe104, unsigned short NDEFFileSize = 0xff);
+			void createNFCApplication(unsigned int aid, boost::shared_ptr<logicalaccess::DESFireKey> masterPICCKey, unsigned short isoFIDApplication = 0xe105, unsigned short isoFIDCapabilityContainer = 0xe103, unsigned short isoFIDNDEFFile = 0xe104, unsigned short NDEFFileSize = 0xff);
 
-			void deleteNFCApplication(unsigned char aid, boost::shared_ptr<logicalaccess::DESFireKey> masterPICCKey);
+			void deleteNFCApplication(unsigned int aid, boost::shared_ptr<logicalaccess::DESFireKey> masterPICCKey);
 
 			virtual boost::shared_ptr<logicalaccess::NdefMessage> readNDEFFile(unsigned short isoFIDApplication = 0xe105, unsigned short isoFIDNDEFFile = 0xe104);
 

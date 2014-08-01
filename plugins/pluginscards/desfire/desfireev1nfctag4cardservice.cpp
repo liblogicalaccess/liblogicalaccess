@@ -8,7 +8,7 @@
 
 namespace logicalaccess
 {
-	void DESFireEV1NFCTag4CardService::createNFCApplication(unsigned char aid, boost::shared_ptr<logicalaccess::DESFireKey> masterPICCKey, unsigned short isoFIDApplication, unsigned short isoFIDCapabilityContainer, unsigned short isoFIDNDEFFile, unsigned short NDEFFileSize)
+	void DESFireEV1NFCTag4CardService::createNFCApplication(unsigned int aid, boost::shared_ptr<logicalaccess::DESFireKey> masterPICCKey, unsigned short isoFIDApplication, unsigned short isoFIDCapabilityContainer, unsigned short isoFIDNDEFFile, unsigned short NDEFFileSize)
 	{
 		boost::shared_ptr<logicalaccess::DESFireCommands> desfirecommand(boost::dynamic_pointer_cast<logicalaccess::DESFireCommands>(getChip()->getCommands()));
 		boost::shared_ptr<logicalaccess::DESFireEV1Commands> desfireev1command(boost::dynamic_pointer_cast<logicalaccess::DESFireEV1Commands>(getChip()->getCommands()));
@@ -45,7 +45,7 @@ namespace logicalaccess
 		desfireev1command->createStdDataFile(0x02, logicalaccess::EncryptionMode::CM_PLAIN, dar, 0xff, isoFIDNDEFFile);
 	}
 
-	void DESFireEV1NFCTag4CardService::deleteNFCApplication(unsigned char aid, boost::shared_ptr<logicalaccess::DESFireKey> masterPICCKey)
+	void DESFireEV1NFCTag4CardService::deleteNFCApplication(unsigned int aid, boost::shared_ptr<logicalaccess::DESFireKey> masterPICCKey)
 	{
 		boost::shared_ptr<logicalaccess::DESFireCommands> desfirecommand(boost::dynamic_pointer_cast<logicalaccess::DESFireCommands>(getChip()->getCommands()));
 
