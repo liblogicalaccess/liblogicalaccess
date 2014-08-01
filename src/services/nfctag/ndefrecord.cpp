@@ -5,6 +5,7 @@
  */
 
 #include "logicalaccess/services/nfctag/ndefrecord.hpp"
+#include "logicalaccess/bufferhelper.hpp"
 
 
 namespace logicalaccess
@@ -69,6 +70,26 @@ namespace logicalaccess
 			value |= 0x08;
 
 		return value;
+	}
+
+	void NdefRecord::serialize(boost::property_tree::ptree& parentNode)
+	{
+		boost::property_tree::ptree node;
+
+		node.put("Tnf", (unsigned int)(getTnf()));
+		node.put("Type",  BufferHelper::getHex(getType()));
+		node.put("Id", BufferHelper::getHex(getId()));
+		node.put("Payload", BufferHelper::getHex(getPayload()));
+
+		parentNode.add_child(getDefaultXmlNodeName(), node);
+	}
+
+	void NdefRecord::unSerialize(boost::property_tree::ptree& node)
+	{
+		setTnf((TNF)(node.get_child("Tnf").get_value<unsigned int>()));
+		setType(BufferHelper::fromHexString(node.get_child("Type").get_value<std::string>()));
+		setId(BufferHelper::fromHexString(node.get_child("Id").get_value<std::string>()));
+		setPayload(BufferHelper::fromHexString(node.get_child("Payload").get_value<std::string>()));
 	}
 }
 

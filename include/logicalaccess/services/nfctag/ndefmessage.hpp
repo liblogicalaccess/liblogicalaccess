@@ -7,6 +7,7 @@
 #ifndef LOGICALACCESS_NDEFMESSAGE_HPP
 #define LOGICALACCESS_NDEFMESSAGE_HPP
 
+#include "logicalaccess/xmlserializable.hpp"
 #include "logicalaccess/services/nfctag/ndefrecord.hpp"
 
 namespace logicalaccess
@@ -27,7 +28,7 @@ namespace logicalaccess
 		URI_FILE = 0x1D // file://
 	};
 
-	class LIBLOGICALACCESS_API NdefMessage
+	class LIBLOGICALACCESS_API NdefMessage : public XmlSerializable
 	{
 	public:
 		NdefMessage() {};
@@ -44,6 +45,10 @@ namespace logicalaccess
 
 		size_t getRecordCount() const { return m_records.size(); };
 		std::vector<boost::shared_ptr<NdefRecord> >& getRecords() { return m_records; };
+
+		virtual void serialize(boost::property_tree::ptree& parentNode);
+		virtual void unSerialize(boost::property_tree::ptree& node);
+		virtual std::string getDefaultXmlNodeName() const;
 
     private:
 		std::vector<boost::shared_ptr<NdefRecord> > m_records;

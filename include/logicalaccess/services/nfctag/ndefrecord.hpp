@@ -22,7 +22,7 @@ namespace logicalaccess
 		TNF_RESERVED = 0x07
 	};
 
-	class LIBLOGICALACCESS_API NdefRecord
+	class LIBLOGICALACCESS_API NdefRecord : public XmlSerializable
 	{
 	public:
 		NdefRecord() : m_tnf(TNF::TNF_EMPTY) {};
@@ -42,6 +42,11 @@ namespace logicalaccess
 
         void setId(std::vector<unsigned char> id) { m_id = id; };
 		std::vector<unsigned char>& getId() { return m_id; };
+
+
+		virtual void serialize(boost::property_tree::ptree& parentNode);
+		virtual void unSerialize(boost::property_tree::ptree& node);
+		virtual std::string getDefaultXmlNodeName() const { return "NdefRecord"; };
 
     private:
         unsigned char getTnfByte(bool firstRecord, bool lastRecord) const;

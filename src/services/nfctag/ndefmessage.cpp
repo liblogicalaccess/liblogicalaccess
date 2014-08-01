@@ -6,7 +6,7 @@
 
 #include "logicalaccess/services/nfctag/ndefmessage.hpp"
 #include "logicalaccess/bufferhelper.hpp"
-
+#include <boost/foreach.hpp>
 
 namespace logicalaccess
 {
@@ -133,6 +133,40 @@ namespace logicalaccess
 			data.insert(data.end(), record.begin(), record.end());
 		}
 		return data;
+	}
+
+	void NdefMessage::serialize(boost::property_tree::ptree& parentNode)
+	{
+		boost::property_tree::ptree node;
+		
+		boost::property_tree::ptree fnode;
+		for (std::vector<boost::shared_ptr<NdefRecord> >::const_iterator i = m_records.cbegin(); i != m_records.cend(); ++i)
+		{
+			(*i)->serialize(fnode);
+		}
+		node.add_child("Fields", fnode);
+
+		parentNode.add_child(getDefaultXmlNodeName(), node);
+	}
+
+	void NdefMessage::unSerialize(boost::property_tree::ptree& node)
+	{
+		m_records.clear();
+		BOOST_FOREACH(boost::property_tree::ptree::value_type const& v, node.get_child("Fields"))
+		{
+			boost::shared_ptr<NdefRecord> record(new NdefRecord());
+			if (record)
+			{
+				boost::property_tree::ptree f = v.second;
+				record->unSerialize(f);
+				m_records.push_back(record);
+			}
+		}
+	}
+
+	std::string NdefMessage::getDefaultXmlNodeName() const
+	{
+		return "NdefMessage";
 	}
 }
 
