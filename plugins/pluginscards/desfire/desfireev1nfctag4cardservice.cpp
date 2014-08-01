@@ -14,7 +14,10 @@ namespace logicalaccess
 		boost::shared_ptr<logicalaccess::DESFireEV1Commands> desfireev1command(boost::dynamic_pointer_cast<logicalaccess::DESFireEV1Commands>(getChip()->getCommands()));
 
 		desfirecommand->selectApplication(0x00);
-		desfirecommand->authenticate(0x00, masterPICCKey);
+        if (masterPICCKey)
+        {
+		    desfirecommand->authenticate(0x00, masterPICCKey);
+        }
 
 		unsigned char dfName[] = {0xD2, 0x76, 0x00, 0x00, 0x85, 0x01, 0x01};
 		std::vector<unsigned char> dfNameVector(dfName, dfName + 7);
@@ -47,7 +50,10 @@ namespace logicalaccess
 		boost::shared_ptr<logicalaccess::DESFireCommands> desfirecommand(boost::dynamic_pointer_cast<logicalaccess::DESFireCommands>(getChip()->getCommands()));
 
 		desfirecommand->selectApplication(0x00);
-		desfirecommand->authenticate(0x00, masterPICCKey);
+        if (masterPICCKey)
+        {
+		    desfirecommand->authenticate(0x00, masterPICCKey);
+        }
 		desfirecommand->deleteApplication(aid);
 	}
 
