@@ -42,7 +42,7 @@ namespace logicalaccess
         void addUriRecord(std::string uri, UriType uritype);
         void addEmptyRecord();
 
-		size_t getRecordCount() { return m_records.size(); };
+		size_t getRecordCount() const { return m_records.size(); };
 		std::vector<boost::shared_ptr<NdefRecord> >& getRecords() { return m_records; };
 
     private:

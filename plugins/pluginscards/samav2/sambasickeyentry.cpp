@@ -17,6 +17,11 @@ namespace logicalaccess
 		d_updatemask = 0;
 	}
 
+	SAMBasicKeyEntry::SAMBasicKeyEntry(const SAMBasicKeyEntry& copy) : d_key(copy.d_key), d_diversify(copy.d_diversify), d_keyType(copy.d_keyType), d_updatemask(copy.d_updatemask)
+	{
+
+	}
+
 	SAMBasicKeyEntry::SAMBasicKeyEntry(const std::string& str, const std::string& str1, const std::string& str2) : d_updatemask(0)
 	{
 		d_keyType = SAM_KEY_DES;

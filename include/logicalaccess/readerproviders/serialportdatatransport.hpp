@@ -117,7 +117,7 @@ namespace logicalaccess
 			virtual std::vector<unsigned char> receive(long int timeout);
 
 			void setTimeout(int timeout) { m_timeout = timeout; }
-			int getTimeout() { return m_timeout; }
+			int getTimeout() const { return m_timeout; }
 
 		protected:
 

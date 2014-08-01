@@ -20,9 +20,9 @@ namespace logicalaccess
 			boost::shared_ptr<NdefRecord> record(new NdefRecord());
 
 			unsigned char tnf_tmp = data[index];
-			bool mb = (tnf_tmp & 0x80) != 0;
+			//bool mb = (tnf_tmp & 0x80) != 0;
 			bool me = (tnf_tmp & 0x40) != 0;
-			bool cf = (tnf_tmp & 0x20) != 0; //We dont manage chunked payload
+			//bool cf = (tnf_tmp & 0x20) != 0; //We dont manage chunked payload
 			bool sr = (tnf_tmp & 0x10) != 0;
 			bool il = (tnf_tmp & 0x8) != 0;
 			unsigned char tnf = (tnf_tmp & 0x7);

@@ -25,14 +25,14 @@ namespace logicalaccess
 	class LIBLOGICALACCESS_API NdefRecord
 	{
 	public:
-		NdefRecord() {};
+		NdefRecord() : m_tnf(TNF::TNF_EMPTY) {};
 		~NdefRecord() {};
 
-        unsigned int getEncodedSize();
+        size_t getEncodedSize() const;
         std::vector<unsigned char> encode(bool firstRecord, bool lastRecord);
 
 		void setTnf(TNF tnf) { m_tnf = tnf; };
-		TNF getTnf() { return m_tnf; };
+		TNF getTnf() const { return m_tnf; };
 
         void setType(std::vector<unsigned char> type) { m_type = type; };
 		std::vector<unsigned char>& getType() { return m_type; };
@@ -44,7 +44,8 @@ namespace logicalaccess
 		std::vector<unsigned char>& getId() { return m_id; };
 
     private:
-        unsigned char getTnfByte(bool firstRecord, bool lastRecord);
+        unsigned char getTnfByte(bool firstRecord, bool lastRecord) const;
+
         TNF m_tnf; // 3 bit
         std::vector<unsigned char> m_type;
         std::vector<unsigned char> m_payload;

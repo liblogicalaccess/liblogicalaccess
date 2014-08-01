@@ -9,7 +9,7 @@
 
 namespace logicalaccess
 {
-	unsigned int NdefRecord::getEncodedSize()
+	size_t NdefRecord::getEncodedSize() const
 	{
 		size_t size = 0x02; // tnf + typeLength
 
@@ -52,7 +52,7 @@ namespace logicalaccess
 		return data;
 	}
 
-	unsigned char NdefRecord::getTnfByte(bool firstRecord, bool lastRecord)
+	unsigned char NdefRecord::getTnfByte(bool firstRecord, bool lastRecord) const
 	{
 		unsigned char value = static_cast<unsigned char>(m_tnf);
 
