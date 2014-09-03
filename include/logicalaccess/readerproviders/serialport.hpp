@@ -14,6 +14,8 @@
 #include <boost/asio.hpp>
 #include <boost/utility.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/circular_buffer.hpp>
+#include <boost/thread/thread.hpp>
 
 #include "logicalaccess/readerproviders/readerunit.hpp"
 
@@ -136,11 +138,9 @@ namespace logicalaccess
 			void setCharacterSize(unsigned int character_size);
 			unsigned int getCharacterSize();
 
-			void setTimeout(int timeout) { m_timeout = timeout; }
-			int getTimeout() { return m_timeout; }
+			void read_start(const boost::system::error_code& e, std::size_t bytes_transferred);
 
-			void read_callback(std::size_t& data_available, boost::asio::deadline_timer& timeout, const boost::system::error_code& error, std::size_t bytes_transferred);
-			void wait_callback(boost::asio::serial_port& ser_port, const boost::system::error_code& error);
+			virtual std::vector<unsigned char> validePacket();
 
 		private:
 
@@ -153,10 +153,11 @@ namespace logicalaccess
 
 			boost::asio::serial_port m_serial_port;
 
-			/**
-			 * \brief Read Timeout.
-			 */
-			int m_timeout;
+			boost::circular_buffer<unsigned char> m_circular_buffer;
+
+			std::vector<unsigned char> m_buffer;
+
+			boost::shared_ptr<boost::thread> m_thread_reader;
 	};
 }
 

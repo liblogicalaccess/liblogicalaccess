@@ -19,11 +19,11 @@ namespace logicalaccess
 #else
 		m_dev("COM1"),
 #endif
-		m_serial_port(m_io), m_timeout(50)
+		m_serial_port(m_io), m_circular_buffer(256), m_buffer(128)
 	{
 	}
 
-	SerialPort::SerialPort(const std::string& dev) : m_dev(dev), m_serial_port(m_io), m_timeout(50)
+	SerialPort::SerialPort(const std::string& dev) : m_dev(dev), m_serial_port(m_io), m_circular_buffer(256), m_buffer(128)
 	{
 	}
 
@@ -36,6 +36,12 @@ namespace logicalaccess
 
 		if (!m_serial_port.is_open())
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't find the serial port.");
+
+		if (!m_thread_reader)
+		{
+			m_serial_port.async_read_some(boost::asio::buffer(m_buffer), boost::bind(&SerialPort::read_start, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+			m_thread_reader.reset(new boost::thread(boost::bind(&boost::asio::io_service::run, &m_io))); 
+		}
 	}
 
 	void SerialPort::reopen()
@@ -47,6 +53,8 @@ namespace logicalaccess
 	void SerialPort::close()
 	{
 		m_io.stop();
+		if (m_thread_reader)
+			m_thread_reader->join();
 		if (m_serial_port.is_open())
 		{
 			m_serial_port.close();
@@ -116,46 +124,41 @@ namespace logicalaccess
 	{
 		EXCEPTION_ASSERT(isOpen(), LibLogicalAccessException, "Cannot read on a closed device");
 		if (cnt == 0)
-		{
 			return 0;
+
+		buf = validePacket();
+		return buf.size();
+	}
+
+	std::vector<unsigned char> SerialPort::validePacket()
+	{
+		std::vector<unsigned char> result(m_circular_buffer.begin(), m_circular_buffer.end());
+		m_circular_buffer.clear();
+		return result;
+	}
+
+	void SerialPort::read_start(const boost::system::error_code& e, std::size_t bytes_transferred)
+    {
+		// ignore aborts
+		if (e == boost::asio::error::operation_aborted)
+			return;
+		if (e == boost::asio::error::eof)
+		{
+			close();
+			return;
 		}
 
-		buf.resize(cnt);
+		if (m_circular_buffer.reserve() < bytes_transferred)
+		{
+			LOG(LogLevel::WARNINGS) << "Buffer Overflow";
+			m_circular_buffer.clear();
+		}
 
-		boost::asio::deadline_timer timeout(m_io);
-		unsigned char my_buffer[256];
-		std::size_t data_available = 0;
+		m_circular_buffer.insert(m_circular_buffer.end(), m_buffer.begin(), m_buffer.begin() + bytes_transferred);
 
-		m_serial_port.async_read_some(boost::asio::buffer(my_buffer),
-						boost::bind(&SerialPort::read_callback, this, boost::ref(data_available), boost::ref(timeout),
-						boost::asio::placeholders::error,
-						boost::asio::placeholders::bytes_transferred));
-		timeout.expires_from_now(boost::posix_time::milliseconds(m_timeout));
-		timeout.async_wait(boost::bind(&SerialPort::wait_callback, this, boost::ref(m_serial_port),
-						boost::asio::placeholders::error));
-
-		m_io.run();  // will block until async callbacks are finished
-		if (data_available)
-			buf = std::vector<unsigned char>(my_buffer, my_buffer + data_available);
-		else
-			buf.clear();
-		m_io.reset();
-		return data_available;
-	}
-
-	void SerialPort::read_callback(std::size_t& data_available, boost::asio::deadline_timer& timeout, const boost::system::error_code& error, std::size_t bytes_transferred)
-	{
-		if (error || !bytes_transferred) // No data was read!
-			return;
-		data_available = bytes_transferred;
-		timeout.cancel();  // will cause wait_callback to fire with an error
-	}
-
-	void SerialPort::wait_callback(boost::asio::serial_port& m_serial_port, const boost::system::error_code& error)
-	{
-		if (!error)
-			m_serial_port.cancel(); // will cause read_callback to fire with an error
-	}
+		// start the next read
+		m_serial_port.async_read_some(boost::asio::buffer(m_buffer), boost::bind(&SerialPort::read_start, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+    }
 
 	size_t SerialPort::write(const std::vector<unsigned char>& buf)
 	{
