@@ -10,12 +10,12 @@
 
 #include <iostream>
 #include <string>
+#include <mutex>
 
 #include <boost/asio.hpp>
 #include <boost/utility.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/circular_buffer.hpp>
-#include <boost/thread/thread.hpp>
 
 #include "logicalaccess/readerproviders/readerunit.hpp"
 
@@ -139,6 +139,10 @@ namespace logicalaccess
 			unsigned int getCharacterSize();
 
 			void read_start(const boost::system::error_code& e, std::size_t bytes_transferred);
+			void do_close(const boost::system::error_code& error);
+			void do_write(const std::vector<unsigned char> buf);
+			void write_start();
+			void write_complete(const boost::system::error_code& error, const std::size_t bytes_transferred);
 
 			virtual std::vector<unsigned char> validePacket();
 
@@ -153,11 +157,15 @@ namespace logicalaccess
 
 			boost::asio::serial_port m_serial_port;
 
-			boost::circular_buffer<unsigned char> m_circular_buffer;
+			boost::circular_buffer<unsigned char> m_circular_read_buffer;
 
-			std::vector<unsigned char> m_buffer;
+			std::vector<unsigned char> m_read_buffer;
 
-			boost::shared_ptr<boost::thread> m_thread_reader;
+			std::vector<unsigned char> m_write_buffer;
+
+			boost::shared_ptr<std::thread> m_thread_reader;
+
+			std::mutex m_mutex_reader;
 	};
 }
 

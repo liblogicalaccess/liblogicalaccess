@@ -19,11 +19,12 @@ namespace logicalaccess
 #else
 		m_dev("COM1"),
 #endif
-		m_serial_port(m_io), m_circular_buffer(256), m_buffer(128)
+		m_serial_port(m_io), m_circular_read_buffer(256), m_read_buffer(128)
 	{
 	}
 
-	SerialPort::SerialPort(const std::string& dev) : m_dev(dev), m_serial_port(m_io), m_circular_buffer(256), m_buffer(128)
+	SerialPort::SerialPort(const std::string& dev)
+		: m_dev(dev), m_serial_port(m_io), m_circular_read_buffer(256), m_read_buffer(128)
 	{
 	}
 
@@ -39,8 +40,9 @@ namespace logicalaccess
 
 		if (!m_thread_reader)
 		{
-			m_serial_port.async_read_some(boost::asio::buffer(m_buffer), boost::bind(&SerialPort::read_start, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
-			m_thread_reader.reset(new boost::thread(boost::bind(&boost::asio::io_service::run, &m_io))); 
+			m_serial_port.async_read_some(boost::asio::buffer(m_read_buffer),
+				boost::bind(&SerialPort::read_start, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+			m_thread_reader.reset(new std::thread(boost::bind(&boost::asio::io_service::run, &m_io))); 
 		}
 	}
 
@@ -52,9 +54,20 @@ namespace logicalaccess
 
 	void SerialPort::close()
 	{
-		m_io.stop();
+		m_io.post(boost::bind(&SerialPort::do_close, this, boost::system::error_code())); 
 		if (m_thread_reader)
 			m_thread_reader->join();
+
+		m_io.reset();
+		m_thread_reader.reset();
+		m_circular_read_buffer.clear();
+		m_read_buffer.clear();
+		m_read_buffer.resize(128);
+		m_write_buffer.clear();
+	}
+
+	void SerialPort::do_close(const boost::system::error_code& error) 
+	{
 		if (m_serial_port.is_open())
 		{
 			m_serial_port.close();
@@ -126,46 +139,81 @@ namespace logicalaccess
 		if (cnt == 0)
 			return 0;
 
+		m_mutex_reader.lock();
 		buf = validePacket();
+		m_mutex_reader.unlock();
+
 		return buf.size();
 	}
 
 	std::vector<unsigned char> SerialPort::validePacket()
 	{
-		std::vector<unsigned char> result(m_circular_buffer.begin(), m_circular_buffer.end());
-		m_circular_buffer.clear();
+		std::vector<unsigned char> result(m_circular_read_buffer.begin(), m_circular_read_buffer.end());
+		m_circular_read_buffer.clear();
 		return result;
 	}
 
-	void SerialPort::read_start(const boost::system::error_code& e, std::size_t bytes_transferred)
+	void SerialPort::read_start(const boost::system::error_code& error, const std::size_t bytes_transferred)
     {
 		// ignore aborts
-		if (e == boost::asio::error::operation_aborted)
+		if (error == boost::asio::error::operation_aborted)
 			return;
-		if (e == boost::asio::error::eof)
+		if (error == boost::asio::error::eof)
 		{
-			close();
+			do_close(error);
 			return;
 		}
 
-		if (m_circular_buffer.reserve() < bytes_transferred)
+		m_mutex_reader.lock();
+		if (m_circular_read_buffer.reserve() < bytes_transferred)
 		{
 			LOG(LogLevel::WARNINGS) << "Buffer Overflow";
-			m_circular_buffer.clear();
+			m_circular_read_buffer.clear();
 		}
 
-		m_circular_buffer.insert(m_circular_buffer.end(), m_buffer.begin(), m_buffer.begin() + bytes_transferred);
+		m_circular_read_buffer.insert(m_circular_read_buffer.end(), m_read_buffer.begin(), m_read_buffer.begin() + bytes_transferred);
+		m_mutex_reader.unlock();
 
 		// start the next read
-		m_serial_port.async_read_some(boost::asio::buffer(m_buffer), boost::bind(&SerialPort::read_start, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+		m_serial_port.async_read_some(boost::asio::buffer(m_read_buffer), boost::bind(&SerialPort::read_start, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
     }
 
 	size_t SerialPort::write(const std::vector<unsigned char>& buf)
 	{
 		EXCEPTION_ASSERT(isOpen(), LibLogicalAccessException, "Cannot write on a closed device");
 
-		return m_serial_port.write_some(boost::asio::buffer(buf));
+		m_io.post(boost::bind(&SerialPort::do_write, this, buf)); 
+		return buf.size();
 	}
+
+	void SerialPort::do_write(const std::vector<unsigned char> buf) 
+	{
+		bool running = !m_write_buffer.empty();
+		m_write_buffer.insert(m_write_buffer.end(), buf.begin(), buf.end());
+		if (!running)
+			write_start();
+	}
+
+	void SerialPort::write_start()
+    {
+		boost::asio::async_write(m_serial_port,
+                        boost::asio::buffer(m_write_buffer),
+                        boost::bind(&SerialPort::write_complete,
+                        this, boost::asio::placeholders::error,
+						boost::asio::placeholders::bytes_transferred)); 
+    } 
+
+	void SerialPort::write_complete(const boost::system::error_code& error, const std::size_t bytes_transferred)
+    {
+        if (!error)
+        { // write completed, so send next write data
+			m_write_buffer.erase(m_write_buffer.begin(), m_write_buffer.begin() + bytes_transferred);
+            if (!m_write_buffer.empty())
+				write_start();
+        }
+        else
+            do_close(error);
+    }
 
 	bool SerialPort::isOpen()
 	{
