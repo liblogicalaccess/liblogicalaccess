@@ -41,7 +41,7 @@ namespace logicalaccess
 		if (!m_thread_reader)
 		{
 			m_serial_port.async_read_some(boost::asio::buffer(m_read_buffer),
-				boost::bind(&SerialPort::read_start, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+				boost::bind(&SerialPort::do_read, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
 			m_thread_reader.reset(new std::thread(boost::bind(&boost::asio::io_service::run, &m_io))); 
 		}
 	}
@@ -140,20 +140,21 @@ namespace logicalaccess
 			return 0;
 
 		m_mutex_reader.lock();
-		buf = validePacket();
+		if (m_circular_buffer_parser)
+		{
+			buf = m_circular_buffer_parser->getValidBuffer(m_circular_read_buffer);
+		}
+		else
+		{
+			buf.assign(m_circular_read_buffer.begin(), m_circular_read_buffer.end());
+			m_circular_read_buffer.clear();
+		}
 		m_mutex_reader.unlock();
 
 		return buf.size();
 	}
 
-	std::vector<unsigned char> SerialPort::validePacket()
-	{
-		std::vector<unsigned char> result(m_circular_read_buffer.begin(), m_circular_read_buffer.end());
-		m_circular_read_buffer.clear();
-		return result;
-	}
-
-	void SerialPort::read_start(const boost::system::error_code& error, const std::size_t bytes_transferred)
+	void SerialPort::do_read(const boost::system::error_code& error, const std::size_t bytes_transferred)
     {
 		// ignore aborts
 		if (error == boost::asio::error::operation_aborted)
@@ -175,7 +176,8 @@ namespace logicalaccess
 		m_mutex_reader.unlock();
 
 		// start the next read
-		m_serial_port.async_read_some(boost::asio::buffer(m_read_buffer), boost::bind(&SerialPort::read_start, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+		m_serial_port.async_read_some(boost::asio::buffer(m_read_buffer), boost::bind(&SerialPort::do_read,
+			this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
     }
 
 	size_t SerialPort::write(const std::vector<unsigned char>& buf)

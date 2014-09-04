@@ -60,7 +60,7 @@ namespace logicalaccess
 	bool ElatecReaderUnit::waitInsertion(unsigned int maxwait)
 	{
 		bool inserted = false;
-		unsigned int currentWait = 0;
+		std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(maxwait);
 
 		do
 		{
@@ -72,11 +72,8 @@ namespace logicalaccess
 			}
 
 			if (!inserted)
-			{
-				std::this_thread::sleep_for(std::chrono::milliseconds(100));
-				currentWait += 100;
-			}
-		} while (!inserted && (maxwait == 0 || currentWait < maxwait));
+				std::this_thread::sleep_for(std::chrono::milliseconds(250));
+		} while (!inserted && std::chrono::steady_clock::now() < clock_timeout);
 
 		return inserted;
 	}
@@ -87,7 +84,7 @@ namespace logicalaccess
 
 		if (d_insertedChip)
 		{
-			unsigned int currentWait = 0;
+			std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(maxwait);
 			do
 			{
 				boost::shared_ptr<Chip> chip = getChipInAir();
@@ -107,10 +104,9 @@ namespace logicalaccess
 
 				if (!removed)
 				{
-					std::this_thread::sleep_for(std::chrono::milliseconds(100));
-					currentWait += 100;
+					std::this_thread::sleep_for(std::chrono::milliseconds(250));
 				}
-			} while (!removed && (maxwait == 0 || currentWait < maxwait));
+			} while (!removed && std::chrono::steady_clock::now() < clock_timeout);
 		}
 
 		return removed;

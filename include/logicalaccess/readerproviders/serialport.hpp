@@ -18,6 +18,7 @@
 #include <boost/circular_buffer.hpp>
 
 #include "logicalaccess/readerproviders/readerunit.hpp"
+#include "logicalaccess/readerproviders/circularbufferparser.hpp"
 
 namespace logicalaccess
 {
@@ -138,13 +139,17 @@ namespace logicalaccess
 			void setCharacterSize(unsigned int character_size);
 			unsigned int getCharacterSize();
 
-			void read_start(const boost::system::error_code& e, std::size_t bytes_transferred);
+			void setCircularBufferParser(boost::shared_ptr<CircularBufferParser> circular_buffer_parser) { m_circular_buffer_parser = circular_buffer_parser; };
+			boost::shared_ptr<CircularBufferParser> getCircularBufferParser() { return m_circular_buffer_parser; };
+
+		private:
+			void do_read(const boost::system::error_code& e, std::size_t bytes_transferred);
+
 			void do_close(const boost::system::error_code& error);
+
 			void do_write(const std::vector<unsigned char> buf);
 			void write_start();
 			void write_complete(const boost::system::error_code& error, const std::size_t bytes_transferred);
-
-			virtual std::vector<unsigned char> validePacket();
 
 		private:
 
@@ -166,6 +171,8 @@ namespace logicalaccess
 			boost::shared_ptr<std::thread> m_thread_reader;
 
 			std::mutex m_mutex_reader;
+
+			boost::shared_ptr<CircularBufferParser> m_circular_buffer_parser;
 	};
 }
 
