@@ -139,7 +139,7 @@ namespace logicalaccess
 			void setCharacterSize(unsigned int character_size);
 			unsigned int getCharacterSize();
 
-			void setCircularBufferParser(boost::shared_ptr<CircularBufferParser> circular_buffer_parser) { m_circular_buffer_parser = circular_buffer_parser; };
+			void setCircularBufferParser(CircularBufferParser* circular_buffer_parser) { m_circular_buffer_parser.reset(circular_buffer_parser); };
 			boost::shared_ptr<CircularBufferParser> getCircularBufferParser() { return m_circular_buffer_parser; };
 
 		private:

@@ -15,7 +15,8 @@
 #include "logicalaccess/cards/chip.hpp"
 #include "readercardadapters/elatecreadercardadapter.hpp"
 #include <boost/filesystem.hpp>
-#include "logicalaccess/readerproviders/serialportdatatransport.hpp"
+#include "readercardadapters/elatecdatatransport.hpp"
+#include "readercardadapters/elatecbufferparser.hpp"
 
 namespace logicalaccess
 {
@@ -24,7 +25,7 @@ namespace logicalaccess
 	{
 		d_readerUnitConfig.reset(new ElatecReaderUnitConfiguration());
 		setDefaultReaderCardAdapter (boost::shared_ptr<ElatecReaderCardAdapter> (new ElatecReaderCardAdapter()));
-		boost::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
+		boost::shared_ptr<ElatecDataTransport> dataTransport(new ElatecDataTransport());
 		setDataTransport(dataTransport);
 		d_card_type = "UNKNOWN";
 

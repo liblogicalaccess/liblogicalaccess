@@ -10,9 +10,7 @@
 #include <vector>
 #include <boost/circular_buffer.hpp>
 
-#ifdef _MSC_VER
-#include "logicalaccess/msliblogicalaccess.h"
-#endif
+#include "logicalaccess/readerproviders/datatransport.hpp"
 
 namespace logicalaccess
 {
@@ -20,7 +18,8 @@ namespace logicalaccess
 	{
 	public:
 		CircularBufferParser() {};
-		~CircularBufferParser() {};
+
+		virtual ~CircularBufferParser() {};
 
 		virtual std::vector<unsigned char> getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer);
 	};
