@@ -21,7 +21,6 @@ namespace logicalaccess
 #else
 		d_portBaudRate = B9600;
 #endif
-		m_timeout = 50;
 	}
 
 	SerialPortDataTransport::~SerialPortDataTransport()
@@ -88,15 +87,18 @@ namespace logicalaccess
 	std::vector<unsigned char> SerialPortDataTransport::receive(long int timeout)
 	{
 		std::vector<unsigned char> res, tmpbuf;
-		long double start = std::clock();
-		bool end = false;
+		std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeout);
 
-		while ((d_port->getSerialPort()->read(tmpbuf, 256) > 0 || res.size() == 0x00)
-			&& !end)
+		do
 		{
-			res.insert(res.end(), tmpbuf.begin(), tmpbuf.end());
-			end = std::clock() > start + timeout + 100;
+			d_port->getSerialPort()->read(tmpbuf, 128);
+			if (!tmpbuf.size())
+				std::this_thread::sleep_for(std::chrono::milliseconds(250));
+			else
+				res.insert(res.end(), tmpbuf.begin(), tmpbuf.end());
 		}
+		while (std::chrono::steady_clock::now() < clock_timeout && res.size() == 0x00);
+
 		LOG(LogLevel::COMS) << "Command response: " << BufferHelper::getHex(res);
 
 		return res;
@@ -122,8 +124,6 @@ namespace logicalaccess
 			port->getSerialPort()->setCharacterSize(8);
 			port->getSerialPort()->setParity(boost::asio::serial_port_base::parity::none);
 			port->getSerialPort()->setStopBits(boost::asio::serial_port_base::stop_bits::one);
-
-			port->getSerialPort()->setTimeout(m_timeout);
 		}
 		catch(std::exception& e)
 		{
@@ -214,7 +214,6 @@ namespace logicalaccess
 
 		node.put("<xmlattr>.type", getTransportType());
 		node.put("PortBaudRate", d_portBaudRate);
-		node.put("TimeOut", m_timeout);
 		d_port->serialize(node);
 
 		parentNode.add_child(getDefaultXmlNodeName(), node);
@@ -223,7 +222,6 @@ namespace logicalaccess
 	void SerialPortDataTransport::unSerialize(boost::property_tree::ptree& node)
 	{
 		d_portBaudRate = node.get_child("PortBaudRate").get_value<unsigned long>();
-		m_timeout = node.get_child("TimeOut").get_value<int>();
 		d_port.reset(new SerialPortXml());
 		d_port->unSerialize(node.get_child(d_port->getDefaultXmlNodeName()));
 	}

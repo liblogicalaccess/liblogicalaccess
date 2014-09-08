@@ -10,12 +10,15 @@
 
 #include <iostream>
 #include <string>
+#include <mutex>
 
 #include <boost/asio.hpp>
 #include <boost/utility.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/circular_buffer.hpp>
 
 #include "logicalaccess/readerproviders/readerunit.hpp"
+#include "logicalaccess/readerproviders/circularbufferparser.hpp"
 
 namespace logicalaccess
 {
@@ -136,11 +139,17 @@ namespace logicalaccess
 			void setCharacterSize(unsigned int character_size);
 			unsigned int getCharacterSize();
 
-			void setTimeout(int timeout) { m_timeout = timeout; }
-			int getTimeout() { return m_timeout; }
+			void setCircularBufferParser(CircularBufferParser* circular_buffer_parser) { m_circular_buffer_parser.reset(circular_buffer_parser); };
+			boost::shared_ptr<CircularBufferParser> getCircularBufferParser() { return m_circular_buffer_parser; };
 
-			void read_callback(std::size_t& data_available, boost::asio::deadline_timer& timeout, const boost::system::error_code& error, std::size_t bytes_transferred);
-			void wait_callback(boost::asio::serial_port& ser_port, const boost::system::error_code& error);
+		private:
+			void do_read(const boost::system::error_code& e, std::size_t bytes_transferred);
+
+			void do_close(const boost::system::error_code& error);
+
+			void do_write(const std::vector<unsigned char> buf);
+			void write_start();
+			void write_complete(const boost::system::error_code& error, const std::size_t bytes_transferred);
 
 		private:
 
@@ -153,10 +162,17 @@ namespace logicalaccess
 
 			boost::asio::serial_port m_serial_port;
 
-			/**
-			 * \brief Read Timeout.
-			 */
-			int m_timeout;
+			boost::circular_buffer<unsigned char> m_circular_read_buffer;
+
+			std::vector<unsigned char> m_read_buffer;
+
+			std::vector<unsigned char> m_write_buffer;
+
+			boost::shared_ptr<std::thread> m_thread_reader;
+
+			std::mutex m_mutex_reader;
+
+			boost::shared_ptr<CircularBufferParser> m_circular_buffer_parser;
 	};
 }
 

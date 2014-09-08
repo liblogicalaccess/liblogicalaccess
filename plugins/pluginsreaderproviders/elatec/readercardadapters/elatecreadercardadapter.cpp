@@ -56,11 +56,9 @@ namespace logicalaccess
 	std::vector<unsigned char> ElatecReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
 	{
 		std::vector<unsigned char> ret;
-		EXCEPTION_ASSERT_WITH_LOG(answer.size() >= 5, std::invalid_argument, "A valid buffer size must be at least 5 bytes long");
-		
-		unsigned char buflength = answer[0];
-		EXCEPTION_ASSERT_WITH_LOG(answer.size() >= buflength, std::invalid_argument, "The buffer is too short according to the excepted buffer length");
+		EXCEPTION_ASSERT_WITH_LOG(answer.size() >= 5, std::invalid_argument, "No valid buffer recieved.");
 
+		unsigned char buflength = answer[0];
 		EXCEPTION_ASSERT_WITH_LOG(answer[2] == d_last_cmdcode, std::invalid_argument, "The request type doesn't match the command sent by the host");
 
 		unsigned char status = answer[3];

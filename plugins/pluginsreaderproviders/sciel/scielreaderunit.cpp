@@ -69,7 +69,7 @@ namespace logicalaccess
 		LOG(LogLevel::INFOS) << "Waiting insertion... max wait {" << maxwait << "}";
 
 		bool inserted = false;
-		unsigned int currentWait = 0;		
+		std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(maxwait);	
 
 		do
 		{
@@ -83,13 +83,10 @@ namespace logicalaccess
 			}
 
 			if (!inserted)
-			{
-				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-				currentWait += 1000;
-			}
-		} while (!inserted && (maxwait == 0 || currentWait < maxwait));
+				std::this_thread::sleep_for(std::chrono::milliseconds(250));
+		} while (!inserted && std::chrono::steady_clock::now() < clock_timeout);
 
-		LOG(LogLevel::INFOS) << "Returns card inserted ? {" << inserted << "} function timeout expired ? {" << (maxwait != 0 && currentWait >= maxwait) << "}";
+		LOG(LogLevel::INFOS) << "Returns card inserted ? {" << inserted << "} function timeout expired ? {" << (std::chrono::steady_clock::now() < clock_timeout) << "}";
 		Settings::getInstance()->IsLogEnabled = oldValue;
 
 		return inserted;
@@ -106,7 +103,7 @@ namespace logicalaccess
 		LOG(LogLevel::INFOS) << "Waiting removal... max wait {" << maxwait << "}";
 
 		bool removed = false;
-		unsigned int currentWait = 0;
+		std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(maxwait);	
 		if (d_insertedChip)
 		{
 			do
@@ -122,14 +119,11 @@ namespace logicalaccess
 				}
 
 				if (!removed)
-				{
-					std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-					currentWait += 1000;
-				}
-			} while (!removed && (maxwait == 0 || currentWait < maxwait));
+					std::this_thread::sleep_for(std::chrono::milliseconds(250));
+			} while (!removed && std::chrono::steady_clock::now() < clock_timeout);
 		}
 
-		LOG(LogLevel::INFOS) << "Returns card removed ? {" << removed << "} - function timeout expired ? {" << (maxwait != 0 && currentWait >= maxwait) << "}";
+		LOG(LogLevel::INFOS) << "Returns card removed ? {" << removed << "} - function timeout expired ? {" << (std::chrono::steady_clock::now() < clock_timeout) << "}";
 
 		Settings::getInstance()->IsLogEnabled = oldValue;
 

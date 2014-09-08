@@ -110,14 +110,11 @@ namespace logicalaccess
 
 			boost::shared_ptr<SerialPortXml> getSerialPort() const { return d_port; };
 
-			void setSerialPort(boost::shared_ptr<SerialPortXml> port) { d_port = port; };
+			virtual void setSerialPort(boost::shared_ptr<SerialPortXml> port) { d_port = port; };
 
 			virtual void send(const std::vector<unsigned char>& data);
 
 			virtual std::vector<unsigned char> receive(long int timeout);
-
-			void setTimeout(int timeout) { m_timeout = timeout; }
-			int getTimeout() const { return m_timeout; }
 
 		protected:
 
@@ -135,8 +132,6 @@ namespace logicalaccess
 			 * \brief The baudrate to use when configuring the serial port.
 			 */
 			unsigned long d_portBaudRate;
-
-			int m_timeout;
 	};
 
 }
