@@ -104,9 +104,7 @@ namespace logicalaccess
 				}
 
 				if (!removed)
-				{
 					std::this_thread::sleep_for(std::chrono::milliseconds(250));
-				}
 			} while (!removed && std::chrono::steady_clock::now() < clock_timeout);
 		}
 
