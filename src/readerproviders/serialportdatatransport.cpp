@@ -86,18 +86,18 @@ namespace logicalaccess
 
 	std::vector<unsigned char> SerialPortDataTransport::receive(long int timeout)
 	{
-		std::vector<unsigned char> res;
+		std::vector<unsigned char> res, tmpbuf;
+		std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeout);
 
-		boost::posix_time::time_duration ptimeout = boost::posix_time::milliseconds(timeout + 100);
-		if (d_port->getSerialPort()->select(ptimeout))
+		do
 		{
-			std::vector<unsigned char> tmpbuf;
-
-			while (d_port->getSerialPort()->read(tmpbuf, 256) > 0)
-			{
+			d_port->getSerialPort()->read(tmpbuf, 128);
+			if (!tmpbuf.size())
+				std::this_thread::sleep_for(std::chrono::milliseconds(250));
+			else
 				res.insert(res.end(), tmpbuf.begin(), tmpbuf.end());
-			}
 		}
+		while (std::chrono::steady_clock::now() < clock_timeout && res.size() == 0x00);
 
 		LOG(LogLevel::COMS) << "Command response: " << BufferHelper::getHex(res);
 
@@ -119,67 +119,11 @@ namespace logicalaccess
 			unsigned long baudrate = getPortBaudRate();
 
 			LOG(LogLevel::DEBUGS) << "Configuring serial port " << port->getSerialPort()->deviceName() << " - Baudrate " << baudrate << "...";
-
-#ifndef _WINDOWS
-			struct termios options = port->getSerialPort()->configuration();
-
-			/* Set speed */
-			cfsetispeed(&options, static_cast<speed_t>(baudrate));
-			cfsetospeed(&options, static_cast<speed_t>(baudrate));
-
-			/* Enable the receiver and set local mode */
-			options.c_cflag |= (CLOCAL | CREAD);
-
-			/* Set character size and parity check */
-			/* 8N1 */
-			options.c_cflag &= ~PARENB;
-			options.c_cflag &= ~CSTOPB;
-			options.c_cflag &= ~CSIZE;
-			options.c_cflag |= CS8;
-
-			/* Disable parity check and fancy stuff */
-			options.c_iflag &= ~ICRNL;
-			options.c_iflag &= ~INPCK;
-			options.c_iflag &= ~ISTRIP;
-
-			/* Disable software flow control */
-			options.c_iflag &= ~(IXON | IXOFF | IXANY);
-
-			/* RAW input */
-			options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
-
-			/* RAW output */
-			options.c_oflag &= ~OPOST;
-
-			/* Timeouts */
-			options.c_cc[VMIN] = 1;
-			options.c_cc[VTIME] = 5;
-
-			port->getSerialPort()->setConfiguration(options);
-#else
-			DCB options = port->getSerialPort()->configuration();
-			options.BaudRate = baudrate;
-			options.fBinary = TRUE;               // Binary mode; no EOF check
-			options.fParity = FALSE;               // Enable parity checking
-			options.fOutxCtsFlow = FALSE;         // No CTS output flow control
-			options.fOutxDsrFlow = FALSE;         // No DSR output flow control
-			options.fDtrControl = DTR_CONTROL_DISABLE;
-													// DTR flow control type
-			options.fDsrSensitivity = FALSE;      // DSR sensitivity
-			options.fTXContinueOnXoff = TRUE;     // XOFF continues Tx
-			options.fOutX = FALSE;                // No XON/XOFF out flow control
-			options.fInX = FALSE;                 // No XON/XOFF in flow control
-			options.fErrorChar = FALSE;           // Disable error replacement
-			options.fNull = FALSE;                // Disable null stripping
-			options.fRtsControl = RTS_CONTROL_DISABLE;
-													// RTS flow control
-			options.fAbortOnError = FALSE;        // Do not abort reads/writes on
-													// error
-			options.ByteSize = 8;                 // Number of bits/byte, 4-8
-			options.Parity = NOPARITY;            // 0-4=no,odd,even,mark,space
-			options.StopBits = ONESTOPBIT;        // 0,1,2 = 1, 1.5, 2
-			port->getSerialPort()->setConfiguration(options);
-#endif
+			port->getSerialPort()->setBaudrate(d_portBaudRate);
+			port->getSerialPort()->setFlowControl(boost::asio::serial_port_base::flow_control::none);
+			port->getSerialPort()->setCharacterSize(8);
+			port->getSerialPort()->setParity(boost::asio::serial_port_base::parity::none);
+			port->getSerialPort()->setStopBits(boost::asio::serial_port_base::stop_bits::one);
 		}
 		catch(std::exception& e)
 		{

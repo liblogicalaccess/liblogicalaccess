@@ -5,6 +5,9 @@
  */
 
 #include "desfireev1chip.hpp"
+#include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
+#include "desfirestoragecardservice.hpp"
+#include "desfireev1nfctag4cardservice.hpp"
 
 #include <cstring>
 
@@ -51,5 +54,36 @@ namespace logicalaccess
 		}
 
 		return location;
+	}
+
+	boost::shared_ptr<CardService> DESFireEV1Chip::getService(CardServiceType serviceType)
+	{
+		boost::shared_ptr<CardService> service;
+
+		switch (serviceType)
+		{
+		case CST_ACCESS_CONTROL:
+			{
+				service.reset(new AccessControlCardService(shared_from_this()));
+			}
+			break;
+		case CST_STORAGE:
+			{
+				service.reset(new DESFireStorageCardService(shared_from_this()));
+			}
+			break;
+		case CST_NFC_TAG:
+			{
+				service.reset(new DESFireEV1NFCTag4CardService(shared_from_this()));
+			}
+			break;
+		}
+
+		if (!service)
+		{
+			service = DESFireChip::getService(serviceType);
+		}
+
+		return service;
 	}
 }

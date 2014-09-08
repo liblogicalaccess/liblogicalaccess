@@ -8,300 +8,217 @@
 #include "logicalaccess/myexception.hpp"
 #include "logicalaccess/readerproviders/serialport.hpp"
 
-#ifdef UNIX
-#include <fcntl.h>
-#include <unistd.h>
-#include <errno.h>
-#endif
-
-/*
-#include "system.hpp"
-#include "invalid_call_exception.hpp"
-#include "system_error_exception.hpp"*/
-
-using std::string;
-
+#include <boost/asio.hpp>
+#include <boost/asio/basic_serial_port.hpp>
 
 namespace logicalaccess
 {
 	SerialPort::SerialPort() :
 #ifdef UNIX
-		d_file(-1),
-		d_dev("/dev/tty0")
+		m_dev("/dev/tty0"),
 #else
-		d_file(INVALID_HANDLE_VALUE),
-		d_dev("COM1")
+		m_dev("COM1"),
 #endif
+		m_serial_port(m_io), m_circular_read_buffer(256), m_read_buffer(128)
 	{
 	}
 
-	SerialPort::SerialPort(const string& dev) :
-#ifdef UNIX
-		d_file(-1),
-#else
-		d_file(INVALID_HANDLE_VALUE),
-#endif
-		d_dev(dev)
+	SerialPort::SerialPort(const std::string& dev)
+		: m_dev(dev), m_serial_port(m_io), m_circular_read_buffer(256), m_read_buffer(128)
 	{
 	}
 
 	void SerialPort::open()
 	{
-		if (isOpen()) return;
+		if (m_serial_port.is_open())
+			return;
 
-#ifdef UNIX
-		d_file = ::open(d_dev.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
-#else
-		d_file = CreateFileA(("\\\\.\\" + d_dev).c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
-		DWORD dwError = GetLastError();
-		if (dwError == ERROR_FILE_NOT_FOUND)
-		{
+		m_serial_port.open(m_dev);
+
+		if (!m_serial_port.is_open())
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't find the serial port.");
+
+		if (!m_thread_reader)
+		{
+			m_serial_port.async_read_some(boost::asio::buffer(m_read_buffer),
+				boost::bind(&SerialPort::do_read, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+			m_thread_reader.reset(new std::thread(boost::bind(&boost::asio::io_service::run, &m_io))); 
 		}
-#endif
 	}
 
 	void SerialPort::reopen()
 	{
-		close();
-		open();
+		m_serial_port.close();
+		m_serial_port.open(m_dev);
 	}
 
 	void SerialPort::close()
 	{
-		if (isOpen())
+		m_io.post(boost::bind(&SerialPort::do_close, this, boost::system::error_code())); 
+		if (m_thread_reader)
+			m_thread_reader->join();
+
+		m_io.reset();
+		m_thread_reader.reset();
+		m_circular_read_buffer.clear();
+		m_read_buffer.clear();
+		m_read_buffer.resize(128);
+		m_write_buffer.clear();
+	}
+
+	void SerialPort::do_close(const boost::system::error_code& error) 
+	{
+		if (m_serial_port.is_open())
 		{
-#ifdef UNIX
-			::close(d_file);
-			d_file = -1;
-#else
-			CloseHandle(d_file);
-			d_file = INVALID_HANDLE_VALUE;
-#endif
+			m_serial_port.close();
 		}
 	}
 
-#ifdef UNIX
-
-	struct termios SerialPort::configuration() const
+	void SerialPort::setBaudrate(unsigned int rate)
 	{
-		struct termios options;
-
-		/* Get options */
-		tcgetattr(d_file, &options);
-
-		return options;
+		m_serial_port.set_option(boost::asio::serial_port_base::baud_rate(rate));
 	}
 
-	void SerialPort::setConfiguration(const struct termios& options)
+	unsigned int SerialPort::getBaudrate()
 	{
-		/* Set the options */
-		tcsetattr(d_file, TCSANOW, &options);
-	}
-#else
-
-	DCB SerialPort::configuration() const
-	{
-		DCB options;
-		options.DCBlength = sizeof(options);
-
-		if (!GetCommState(d_file, &options))
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot get the communication state.");
-		}
-
-		return options;
+		boost::asio::serial_port_base::baud_rate baud_rate;
+		m_serial_port.get_option(baud_rate);
+		return baud_rate.value();
 	}
 
-	void SerialPort::setConfiguration(DCB& options)
+	void SerialPort::setFlowControl(const boost::asio::serial_port_base::flow_control::type& type)
 	{
-		if (!SetCommState(d_file, &options))
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot set the communication state.");
-		}
+		m_serial_port.set_option(boost::asio::serial_port_base::flow_control(type));
 	}
-#endif
 
-	size_t SerialPort::read(std::vector<unsigned char>& buf, size_t cnt) const
+	boost::asio::serial_port_base::flow_control::type SerialPort::getFlowControl()
+	{
+		boost::asio::serial_port_base::flow_control flow_control;
+		m_serial_port.get_option(flow_control);
+		return flow_control.value();
+	}
+
+	void SerialPort::setParity(const boost::asio::serial_port_base::parity::type& parity)
+	{
+		m_serial_port.set_option(boost::asio::serial_port_base::parity(parity));
+	}
+
+	boost::asio::serial_port_base::parity::type SerialPort::getParity()
+	{
+		boost::asio::serial_port_base::parity parity;
+		m_serial_port.get_option(parity);
+		return parity.value();
+	}
+
+	void SerialPort::setStopBits(const boost::asio::serial_port_base::stop_bits::type& stop_bits)
+	{
+		m_serial_port.set_option(boost::asio::serial_port_base::stop_bits(stop_bits));
+	}
+
+	boost::asio::serial_port_base::stop_bits::type SerialPort::getStopBits()
+	{
+		boost::asio::serial_port_base::stop_bits stop_bits;
+		m_serial_port.get_option(stop_bits);
+		return stop_bits.value();
+	}
+
+	void SerialPort::setCharacterSize(unsigned int character_size)
+	{
+		m_serial_port.set_option(boost::asio::serial_port_base::character_size(character_size));
+	}
+	unsigned int SerialPort::getCharacterSize()
+	{
+		boost::asio::serial_port_base::character_size character_size;
+		m_serial_port.get_option(character_size);
+		return character_size.value();
+	}
+
+	size_t SerialPort::read(std::vector<unsigned char>& buf, size_t cnt)
 	{
 		EXCEPTION_ASSERT(isOpen(), LibLogicalAccessException, "Cannot read on a closed device");
-
 		if (cnt == 0)
-		{
 			return 0;
-		}
 
-		buf.resize(cnt);
-
-#ifdef UNIX
-		ssize_t r = ::read(d_file, buf.data(), buf.size());
-
-		if (r < 0)
+		m_mutex_reader.lock();
+		if (m_circular_buffer_parser)
 		{
-			if (errno != EAGAIN)
-			{
-				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot read data.");
-			}
-			else
-			{
-				buf.resize(0);
-				return 0;
-			}
-		}
-
-		buf.resize(r);
-
-		return r;
-#else
-		/*COMMTIMEOUTS timeouts;
-
-		timeouts.ReadIntervalTimeout = 300;
-		timeouts.ReadTotalTimeoutMultiplier = 0;
-		timeouts.ReadTotalTimeoutConstant = 0;
-		timeouts.WriteTotalTimeoutMultiplier = 0;
-		timeouts.WriteTotalTimeoutConstant = 0;
-
-		EXCEPTION_ASSERT(SetCommTimeouts(d_file, &timeouts), LibLogicalAccessException, "Cannot set serial port timeout");*/
-
-		DWORD r = 0;
-		BOOL result = ReadFile(d_file, buf.data(), static_cast<int>(buf.size()), &r, NULL);
-
-		if (result == FALSE)
-		{
-			// DWORD er = GetLastError();
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot read data.");
-			//EXCEPTION_THROW_LAST_SYSTEM_ERROR();
-		}
-
-		if (r > 0)
-		{
-			buf.resize(r);
+			buf = m_circular_buffer_parser->getValidBuffer(m_circular_read_buffer);
 		}
 		else
 		{
-			buf.clear();
-			r = 0;
+			buf.assign(m_circular_read_buffer.begin(), m_circular_read_buffer.end());
+			m_circular_read_buffer.clear();
 		}
+		m_mutex_reader.unlock();
 
-		if (d_readBuf.size() > 0)
-		{
-			buf.insert(buf.begin(), d_readBuf.begin(), d_readBuf.end());
-			r += static_cast<int>(d_readBuf.size());
-			d_readBuf.clear();
-		}
-
-		return r;
-#endif
-
+		return buf.size();
 	}
 
-	size_t SerialPort::write(const std::vector<unsigned char>& buf) const
+	void SerialPort::do_read(const boost::system::error_code& error, const std::size_t bytes_transferred)
+    {
+		// ignore aborts
+		if (error == boost::asio::error::operation_aborted)
+			return;
+		if (error == boost::asio::error::eof)
+		{
+			do_close(error);
+			return;
+		}
+
+		m_mutex_reader.lock();
+		if (m_circular_read_buffer.reserve() < bytes_transferred)
+		{
+			LOG(LogLevel::WARNINGS) << "Buffer Overflow";
+			m_circular_read_buffer.clear();
+		}
+
+		m_circular_read_buffer.insert(m_circular_read_buffer.end(), m_read_buffer.begin(), m_read_buffer.begin() + bytes_transferred);
+		m_mutex_reader.unlock();
+
+		// start the next read
+		m_serial_port.async_read_some(boost::asio::buffer(m_read_buffer), boost::bind(&SerialPort::do_read,
+			this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+    }
+
+	size_t SerialPort::write(const std::vector<unsigned char>& buf)
 	{
 		EXCEPTION_ASSERT(isOpen(), LibLogicalAccessException, "Cannot write on a closed device");
 
-#ifdef UNIX
-		ssize_t r = ::write(d_file, &buf[0], buf.size());
-
-		if (r < 0)
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot write data.");
-		}
-
-		return r;
-#else
-		DWORD r = 0;
-		BOOL result = WriteFile(d_file, &buf[0], static_cast<DWORD>(buf.size()), &r, NULL);
-
-		if (result != TRUE)
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot write data.");
-		}
-
-		return r;
-#endif
+		m_io.post(boost::bind(&SerialPort::do_write, this, buf)); 
+		return buf.size();
 	}
 
-	bool SerialPort::select(boost::posix_time::time_duration timeout)
+	void SerialPort::do_write(const std::vector<unsigned char> buf) 
 	{
-		EXCEPTION_ASSERT(isOpen(), LibLogicalAccessException, "Cannot select on a closed device");
+		bool running = !m_write_buffer.empty();
+		m_write_buffer.insert(m_write_buffer.end(), buf.begin(), buf.end());
+		if (!running)
+			write_start();
+	}
 
-		bool ret = false;
+	void SerialPort::write_start()
+    {
+		boost::asio::async_write(m_serial_port,
+                        boost::asio::buffer(m_write_buffer),
+                        boost::bind(&SerialPort::write_complete,
+                        this, boost::asio::placeholders::error,
+						boost::asio::placeholders::bytes_transferred)); 
+    } 
 
-#ifdef UNIX
+	void SerialPort::write_complete(const boost::system::error_code& error, const std::size_t bytes_transferred)
+    {
+        if (!error)
+        { // write completed, so send next write data
+			m_write_buffer.erase(m_write_buffer.begin(), m_write_buffer.begin() + bytes_transferred);
+            if (!m_write_buffer.empty())
+				write_start();
+        }
+        else
+            do_close(error);
+    }
 
-		fd_set rfs;
-		FD_ZERO(&rfs);
-		FD_SET(socketDescriptor(), &rfs);
-
-		struct timeval tv;
-		struct timeval* ptv = NULL;
-
-		if (!timeout.is_special())
-		{
-			tv.tv_sec = static_cast<long>(timeout.total_seconds());
-			tv.tv_usec = static_cast<long>(timeout.total_microseconds() - timeout.total_seconds() * 1000000L);
-			ptv = &tv;
-		}
-
-		int retval;
-		retval = ::select(socketDescriptor() + 1, &rfs, NULL, NULL, ptv);
-
-		ret = (retval > 0);
-
-		if (retval < 0)
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot select the device.");
-		}
-#else
-
-		// tell to unblock when 1 byte is ready
-		if (SetCommMask(d_file, EV_RXCHAR))
-		{
-			COMMTIMEOUTS commTimeouts;
-
-			// specify timeout
-			if (GetCommTimeouts(d_file, &commTimeouts))
-			{
-				commTimeouts.ReadIntervalTimeout = 0;
-                commTimeouts.ReadTotalTimeoutMultiplier = 0;
-				commTimeouts.ReadTotalTimeoutConstant = static_cast<DWORD>(timeout.total_microseconds() / 1000);
-				commTimeouts.WriteTotalTimeoutMultiplier = 0;
-				commTimeouts.WriteTotalTimeoutConstant = 0;
-
-				// apply timeout
-				if (SetCommTimeouts(d_file, &commTimeouts) == TRUE)
-				{
-					// wait at least 1 byte
-					DWORD r = 0;
-					d_readBuf.resize(1);
-					BOOL result = ReadFile(d_file, &d_readBuf[0], static_cast<DWORD>(d_readBuf.size()), &r, NULL);
-					if (result == FALSE)
-					{
-						d_readBuf.clear();
-						THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot select the device.");
-					}
-					if (r < 1)
-					{
-						d_readBuf.clear();
-					}
-					else
-					{
-						d_readBuf.resize(r);
-						ret = true;
-					}
-
-                    commTimeouts.ReadIntervalTimeout = 0;
-                    commTimeouts.ReadTotalTimeoutMultiplier = 0;
-				    commTimeouts.ReadTotalTimeoutConstant = 250;
-				    commTimeouts.WriteTotalTimeoutMultiplier = 0;
-				    commTimeouts.WriteTotalTimeoutConstant = 0;
-                    SetCommTimeouts(d_file, &commTimeouts);
-				}
-			}
-		}
-
-#endif
-		return ret;
+	bool SerialPort::isOpen()
+	{
+		return m_serial_port.is_open();
 	}
 }
-

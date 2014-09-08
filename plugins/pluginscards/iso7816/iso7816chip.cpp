@@ -7,6 +7,7 @@
 #include "iso7816chip.hpp"
 #include "iso7816profile.hpp"
 #include "iso7816storagecardservice.hpp"
+#include "iso7816nfctag4cardservice.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -52,6 +53,7 @@ namespace logicalaccess
 		case CST_ACCESS_CONTROL:
 		  break;
 		case CST_NFC_TAG:
+			service.reset(new ISO7816NFCTag4CardService(shared_from_this()));
 		  break;
 		}
 

@@ -10,22 +10,15 @@
 
 #include <iostream>
 #include <string>
+#include <mutex>
 
-#ifdef UNIX
-# include <termios.h>
-# include <unistd.h>
-#else
-# ifndef WIN32_LEAN_AND_MEAN
-#  define WIN32_LEAN_AND_MEAN
-# endif
-# include <windows.h>
-# include <WinBase.h>
-#endif
-
+#include <boost/asio.hpp>
 #include <boost/utility.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/circular_buffer.hpp>
 
 #include "logicalaccess/readerproviders/readerunit.hpp"
+#include "logicalaccess/readerproviders/circularbufferparser.hpp"
 
 namespace logicalaccess
 {
@@ -98,78 +91,16 @@ namespace logicalaccess
 			 */
 			void close();
 
+			bool isOpen();
+
 			/**
 			 * \brief Get the device name.
 			 * \return The device name.
 			 */
 			inline const std::string& deviceName() const
 			{
-				return d_dev;
+				return m_dev;
 			}
-
-#ifdef UNIX
-
-			/**
-			 * \brief Check if the serial port is open.
-			 * \return true if the serial port is open, false otherwise.
-			 */
-			inline bool isOpen() const
-			{
-				return (d_file >= 0);
-			}
-
-			/**
-			 * \brief Get the internal socket descriptor.
-			 * \return The internal socket descriptor.
-			 */
-			inline int socketDescriptor() const
-			{
-				return d_file;
-			}
-
-			/**
-			 * \brief Get the serial port configuration.
-			 * \return The serial port configuration.
-			 */
-			struct termios configuration() const;
-
-			/**
-			 * \brief Set the serial port configuration.
-			 * \param options The new configuration.
-			 */
-			void setConfiguration(const struct termios& options);
-
-#else
-			/**
-			 * \brief Check if the serial port is open.
-			 * \return true if the serial port is open, false otherwise.
-			 */
-			inline bool isOpen() const
-			{
-				return (d_file != INVALID_HANDLE_VALUE);
-			}
-
-			/**
-			 * \brief Get the internal file handle.
-			 * \return The internal file handle.
-			 */
-			inline HANDLE fileHandle() const
-			{
-				return d_file;
-			}
-
-			/**
-			 * \brief Get the serial port configuration.
-			 * \return The serial port configuration.
-			 */
-			DCB configuration() const;
-
-			/**
-			 * \brief Set the serial port configuration.
-			 * \param options The new configuration.
-			 */
-			void setConfiguration(DCB& options);
-#endif
 
 			/**
 			 * \brief Read some data from the serial port.
@@ -181,7 +112,7 @@ namespace logicalaccess
 			 * The serial port must be open before the call or an LibLogicalAccessException will be thrown.
 			 * The call may also throw a std::exception in case of failure.
 			 */
-			size_t read(std::vector<unsigned char>& buf, size_t cnt) const;
+			size_t read(std::vector<unsigned char>& buf, size_t cnt);
 
 			/**
 			 * \brief Write some data to the serial port.
@@ -191,38 +122,57 @@ namespace logicalaccess
 			 * The serial port must be open before the call or an LibLogicalAccessException will be thrown.
 			 * The call may also throw a std::exception in case of failure.
 			 */
-			size_t write(const std::vector<unsigned char>& buf) const;
+			size_t write(const std::vector<unsigned char>& buf);
 
-			/**
-			 * \brief Wait for something to read or maximum timeout milliseconds.
-			 * \param timeout The I/O timeout, in milliseconds. If timeout is a special value, the call wait forever.
-			 * \return True if no error, false on timeout.
-			 */
-			bool select(boost::posix_time::time_duration timeout);
+			void setBaudrate(unsigned int rate);
+			unsigned int getBaudrate();
+
+			void setFlowControl(const boost::asio::serial_port_base::flow_control::type& type);
+			boost::asio::serial_port_base::flow_control::type getFlowControl();
+
+			void setParity(const boost::asio::serial_port_base::parity::type& parity);
+			boost::asio::serial_port_base::parity::type getParity();
+
+			void setStopBits(const boost::asio::serial_port_base::stop_bits::type& stop_bits);
+			boost::asio::serial_port_base::stop_bits::type getStopBits();
+
+			void setCharacterSize(unsigned int character_size);
+			unsigned int getCharacterSize();
+
+			void setCircularBufferParser(CircularBufferParser* circular_buffer_parser) { m_circular_buffer_parser.reset(circular_buffer_parser); };
+			boost::shared_ptr<CircularBufferParser> getCircularBufferParser() { return m_circular_buffer_parser; };
 
 		private:
+			void do_read(const boost::system::error_code& e, std::size_t bytes_transferred);
 
-#ifdef UNIX
-			/**
-			 * \brief The internal file descriptor.
-			 */
-			int d_file;
-#else
-			/**
-			 * \brief The internal file handle.
-			 */
-			HANDLE d_file;
+			void do_close(const boost::system::error_code& error);
 
-			/**
-			 * \brief Buffer use to read the first byte.
-			 */
-			mutable std::vector<unsigned char> d_readBuf;
-#endif
+			void do_write(const std::vector<unsigned char> buf);
+			void write_start();
+			void write_complete(const boost::system::error_code& error, const std::size_t bytes_transferred);
+
+		private:
 
 			/**
 			 * \brief The internal device name.
 			 */
-			std::string d_dev;
+			std::string m_dev;
+
+			boost::asio::io_service m_io;
+
+			boost::asio::serial_port m_serial_port;
+
+			boost::circular_buffer<unsigned char> m_circular_read_buffer;
+
+			std::vector<unsigned char> m_read_buffer;
+
+			std::vector<unsigned char> m_write_buffer;
+
+			boost::shared_ptr<std::thread> m_thread_reader;
+
+			std::mutex m_mutex_reader;
+
+			boost::shared_ptr<CircularBufferParser> m_circular_buffer_parser;
 	};
 }
 

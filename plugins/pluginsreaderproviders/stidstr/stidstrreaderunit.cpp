@@ -31,7 +31,7 @@
 #include <boost/filesystem.hpp>
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
-#include "logicalaccess/readerproviders/serialportdatatransport.hpp"
+#include "readercardadapters/stidstrreaderdatatransport.hpp"
 #include "desfireev1chip.hpp"
 #include "mifarechip.hpp"
 
@@ -40,11 +40,10 @@ namespace logicalaccess
 	STidSTRReaderUnit::STidSTRReaderUnit()
 		: ReaderUnit()
 	{
-		//LOG(LogLevel::INFOS) << "Constructor");
 		d_readerUnitConfig.reset(new STidSTRReaderUnitConfiguration());
 		setDefaultReaderCardAdapter (boost::shared_ptr<STidSTRReaderCardAdapter> (new STidSTRReaderCardAdapter(STID_CMD_READER)));
 		d_ledBuzzerDisplay.reset(new STidSTRLEDBuzzerDisplay());
-		boost::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
+		boost::shared_ptr<STidSTRDataTransport> dataTransport(new STidSTRDataTransport());
 #ifndef _WINDOWS
 		dataTransport->setPortBaudRate(B38400);
 #else
@@ -64,7 +63,6 @@ namespace logicalaccess
 
 	STidSTRReaderUnit::~STidSTRReaderUnit()
 	{
-		//LOG(LogLevel::INFOS) << "Destructor");
 		disconnectFromReader();
 	}
 
@@ -94,7 +92,7 @@ namespace logicalaccess
 
 		LOG(LogLevel::INFOS) << "Waiting insertion... max wait {" << maxwait << "}";
 		bool inserted = false;
-		unsigned int currentWait = 0;
+		std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(maxwait);
 
 		try
 		{
@@ -114,11 +112,8 @@ namespace logicalaccess
 				}
 
 				if (!inserted)
-				{
-					std::this_thread::sleep_for(std::chrono::milliseconds(100));
-					currentWait += 100;
-				}
-			} while (!inserted && (maxwait == 0 || currentWait < maxwait));
+					std::this_thread::sleep_for(std::chrono::milliseconds(250));
+			} while (!inserted && std::chrono::steady_clock::now() < clock_timeout);
 		}
 		catch (...)
 		{
@@ -126,7 +121,7 @@ namespace logicalaccess
 			throw;
 		}
 
-		LOG(LogLevel::INFOS) << "Returns card inserted ? {" << inserted << "} function timeout expired ? {" << (maxwait != 0 && currentWait >= maxwait) << "}";
+		LOG(LogLevel::INFOS) << "Returns card inserted ? {" << inserted << "} function timeout expired ? {" << (std::chrono::steady_clock::now() < clock_timeout) << "}";
 		Settings::getInstance()->IsLogEnabled = oldValue;
 
 		return inserted;
@@ -142,7 +137,7 @@ namespace logicalaccess
 
 		LOG(LogLevel::INFOS) << "Waiting removal... max wait {" << maxwait << "}";
 		bool removed = false;
-		unsigned int currentWait = 0;
+		std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(maxwait);
 		try
 		{
 			if (d_insertedChip)
@@ -172,11 +167,8 @@ namespace logicalaccess
 					}
 
 					if (!removed)
-					{
-						std::this_thread::sleep_for(std::chrono::milliseconds(100));
-						currentWait += 100;
-					}
-				} while (!removed && (maxwait == 0 || currentWait < maxwait));
+						std::this_thread::sleep_for(std::chrono::milliseconds(250));
+				} while (!removed && std::chrono::steady_clock::now() < clock_timeout);
 			}
 		}
 		catch (...)
@@ -185,7 +177,7 @@ namespace logicalaccess
 			throw;
 		}
 
-		LOG(LogLevel::INFOS) << "Returns card removed ? {" << removed << "} - function timeout expired ? {" << (maxwait != 0 && currentWait >= maxwait) << "}";
+		LOG(LogLevel::INFOS) << "Returns card removed ? {" << removed << "} - function timeout expired ? {" << (std::chrono::steady_clock::now() < clock_timeout) << "}";
 
 		Settings::getInstance()->IsLogEnabled = oldValue;
 

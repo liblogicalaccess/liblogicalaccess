@@ -9,6 +9,7 @@
 
 #include "desfireiso7816commands.hpp"
 #include "desfireev1commands.hpp"
+#include "iso7816iso7816commands.hpp"
 
 #include <string>
 #include <vector>
@@ -21,7 +22,7 @@ namespace logicalaccess
 	/**
 	 * \brief The DESFire EV1 base commands class.
 	 */
-	class LIBLOGICALACCESS_API DESFireEV1ISO7816Commands : public DESFireISO7816Commands, public DESFireEV1Commands
+	class LIBLOGICALACCESS_API DESFireEV1ISO7816Commands : public DESFireISO7816Commands, public DESFireEV1Commands, public ISO7816ISO7816Commands
 	{
 		public:
 
@@ -59,7 +60,7 @@ namespace logicalaccess
 			 * \param settings Key settings
 			 * \param maxNbKeys Maximum number of keys
 			 */
-			virtual void createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, DESFireKeyType cryptoMethod, FidSupport fidSupported = FIDS_NO_ISO_FID, unsigned short isoFID = 0x00, const char* isoDFName = NULL);
+			virtual void createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, DESFireKeyType cryptoMethod, FidSupport fidSupported = FIDS_NO_ISO_FID, unsigned short isoFID = 0x00, std::vector<unsigned char> isoDFName = std::vector<unsigned char>());
 
 			/**
 			 * \brief Get key settings on the current application.

@@ -11,7 +11,6 @@ namespace logicalaccess
 	STidSTRLEDBuzzerDisplay::STidSTRLEDBuzzerDisplay()
 		: LEDBuzzerDisplay()
 	{
-		//LOG(LogLevel::INFOS) << "Constructor");
 		d_red_led = false;
 		d_green_led = false;
 		d_buzzer = false;

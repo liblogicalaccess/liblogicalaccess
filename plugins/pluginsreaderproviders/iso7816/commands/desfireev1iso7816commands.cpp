@@ -66,7 +66,7 @@ namespace logicalaccess
             DFName dfname;
             memset(&dfname, 0x00, sizeof(dfname));
             dfname.AID = DESFireLocation::convertAidToUInt(r);
-            dfname.FID = static_cast<unsigned short>((r[3] << 8) | r[4]);
+            dfname.FID = static_cast<unsigned short>((r[4] << 8) | r[3]);
             memcpy(dfname.DF_Name, &r[5], r.size() - 5);
             dfnames.push_back(dfname);
 
@@ -102,7 +102,7 @@ namespace logicalaccess
         return fileids;
     }
 
-    void DESFireEV1ISO7816Commands::createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, DESFireKeyType cryptoMethod, FidSupport fidSupported, unsigned short isoFID, const char* isoDFName)
+    void DESFireEV1ISO7816Commands::createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, DESFireKeyType cryptoMethod, FidSupport fidSupported, unsigned short isoFID, std::vector<unsigned char> isoDFName)
     {
         std::vector<unsigned char> command;
 
@@ -112,11 +112,12 @@ namespace logicalaccess
 
         if (isoFID != 0x00)
         {
-            command.push_back(static_cast<unsigned char>(isoFID));
+            command.push_back(static_cast<unsigned char>(isoFID & 0xff));
+			command.push_back(static_cast<unsigned char>((isoFID & 0xff00) >> 8));
         }
-        if (isoDFName != NULL)
+        if (isoDFName.size() > 0)
         {
-            command.insert(command.end(), isoDFName, isoDFName + strlen(isoDFName));
+            command.insert(command.end(), isoDFName.begin(), isoDFName.end());
         }
 
         transmit(DF_INS_CREATE_APPLICATION, command);
@@ -162,8 +163,8 @@ namespace logicalaccess
         command.push_back(static_cast<unsigned char>(fileno));
         if (isoFID != 0)
         {
-            command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(isoFID & 0xff00) >> 8));
-            command.push_back(static_cast<unsigned char>(isoFID & 0xff));			
+			command.push_back(static_cast<unsigned char>(isoFID & 0xff));
+            command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(isoFID & 0xff00) >> 8));		
         }
         command.push_back(static_cast<unsigned char>(comSettings));
         BufferHelper::setUShort(command, ar);
@@ -246,7 +247,7 @@ namespace logicalaccess
         data.push_back(static_cast<unsigned char>(static_cast<unsigned short>(fid & 0xff00) >> 8));
         data.push_back(static_cast<unsigned char>(fid & 0xff));
 
-        getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_SELECT_FILE, 0x00, 0x0C, static_cast<unsigned char>(data.size()), data);
+        DESFireISO7816Commands::getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_SELECT_FILE, 0x00, 0x0C, static_cast<unsigned char>(data.size()), data);
     }
 
     std::vector<unsigned char> DESFireEV1ISO7816Commands::iso_readRecords(unsigned short fid, unsigned char start_record, DESFireRecords record_number)
@@ -260,7 +261,7 @@ namespace logicalaccess
             p2 += static_cast<unsigned char>((fid & 0xff) << 3);
         }
 
-        result = getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_READ_RECORDS, p1, p2, 0x00);
+        result = DESFireISO7816Commands::getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_READ_RECORDS, p1, p2, 0x00);
 
         return std::vector<unsigned char>(result.begin(), result.end() - 2);
     }
@@ -274,14 +275,14 @@ namespace logicalaccess
             p2 += static_cast<unsigned char>((fid & 0xff) << 3);
         }
 
-        getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_APPEND_RECORD, p1, p2, static_cast<unsigned char>(data.size()), data);
+        DESFireISO7816Commands::getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_APPEND_RECORD, p1, p2, static_cast<unsigned char>(data.size()), data);
     }
 
     std::vector<unsigned char> DESFireEV1ISO7816Commands::iso_getChallenge(unsigned int length)
     {
         std::vector<unsigned char> result;
 
-        result = getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_GET_CHALLENGE, 0x00, 0x00, static_cast<unsigned char>(length));
+        result = DESFireISO7816Commands::getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_GET_CHALLENGE, 0x00, 0x00, static_cast<unsigned char>(length));
 
         if (result[result.size() - 2] == 0x90 && result[result.size() - 1] == 0x00)
         {
@@ -299,7 +300,7 @@ namespace logicalaccess
             p2 = static_cast<unsigned char>(0x80 + (keyno & 0x0F));
         }
 
-        getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_EXTERNAL_AUTHENTICATE, p1, p2, static_cast<unsigned char>(data.size()), data);
+        DESFireISO7816Commands::getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_EXTERNAL_AUTHENTICATE, p1, p2, static_cast<unsigned char>(data.size()), data);
     }
 
     std::vector<unsigned char> DESFireEV1ISO7816Commands::iso_internalAuthenticate(DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno, const std::vector<unsigned char>& RPCD2, unsigned int length)
@@ -313,7 +314,7 @@ namespace logicalaccess
             p2 = static_cast<unsigned char>(0x80 + (keyno & 0x0F));
         }
 
-        result = getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_INTERNAL_AUTHENTICATE, p1, p2, static_cast<unsigned char>(RPCD2.size()), RPCD2, static_cast<unsigned char>(length));
+        result = DESFireISO7816Commands::getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_INTERNAL_AUTHENTICATE, p1, p2, static_cast<unsigned char>(RPCD2.size()), RPCD2, static_cast<unsigned char>(length));
 
         if (result[result.size() - 2] == 0x90 && result[result.size() - 1] == 0x00)
         {
@@ -1226,7 +1227,7 @@ namespace logicalaccess
 
     void DESFireEV1ISO7816Commands::iso_selectApplication(std::vector<unsigned char> isoaid)
     {
-        getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_SELECT_FILE, SELECT_FILE_BY_AID, 0x00, static_cast<unsigned char>(isoaid.size()), isoaid);
+        DESFireISO7816Commands::getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_SELECT_FILE, SELECT_FILE_BY_AID, 0x00, static_cast<unsigned char>(isoaid.size()), isoaid);
     }
 
     void DESFireEV1ISO7816Commands::setConfiguration(bool formatCardEnabled, bool randomIdEnabled)

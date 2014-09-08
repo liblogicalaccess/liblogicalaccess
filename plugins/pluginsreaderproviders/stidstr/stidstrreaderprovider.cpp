@@ -22,7 +22,6 @@ namespace logicalaccess
 	STidSTRReaderProvider::STidSTRReaderProvider() :
 		ReaderProvider()
 	{	
-		//LOG(LogLevel::INFOS) << "Constructor");
 	}
 
 	STidSTRReaderProvider::~STidSTRReaderProvider()

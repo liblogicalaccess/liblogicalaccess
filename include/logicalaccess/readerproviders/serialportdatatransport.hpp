@@ -110,7 +110,7 @@ namespace logicalaccess
 
 			boost::shared_ptr<SerialPortXml> getSerialPort() const { return d_port; };
 
-			void setSerialPort(boost::shared_ptr<SerialPortXml> port) { d_port = port; };
+			virtual void setSerialPort(boost::shared_ptr<SerialPortXml> port) { d_port = port; };
 
 			virtual void send(const std::vector<unsigned char>& data);
 

@@ -109,10 +109,10 @@ namespace logicalaccess
 
 	void DESFireEV1STidSTRCommands::createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys)
 	{
-		createApplication(aid, settings, maxNbKeys, DF_KEY_DES, FIDS_NO_ISO_FID, 0, NULL);
+		createApplication(aid, settings, maxNbKeys, DF_KEY_DES, FIDS_NO_ISO_FID, 0, std::vector<unsigned char>());
 	}
 
-	void DESFireEV1STidSTRCommands::createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, DESFireKeyType cryptoMethod, FidSupport /*fidSupported*/, unsigned short isoFID, const char* isoDFName)
+	void DESFireEV1STidSTRCommands::createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, DESFireKeyType cryptoMethod, FidSupport /*fidSupported*/, unsigned short isoFID, std::vector<unsigned char> isoDFName)
 	{
 		LOG(LogLevel::INFOS) << "Creating application aid {0x" << std::hex << aid << std::dec << "(" << aid << ")} settings {0x" << std::hex << settings << std::dec << "(" << settings << ")} max nb Keys {" << maxNbKeys << "} key type {0x" << std::hex << cryptoMethod << std::dec << "(" << cryptoMethod << ")}";
 
@@ -129,7 +129,7 @@ namespace logicalaccess
 		{
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "isoFID parameter not available with this reader.");
 		}
-		if (isoDFName != NULL)
+		if (isoDFName.size() > 0)
 		{
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "isoDFName parameter not available with this reader.");
 		}

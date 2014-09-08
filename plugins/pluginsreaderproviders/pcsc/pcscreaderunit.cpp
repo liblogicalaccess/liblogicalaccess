@@ -684,6 +684,7 @@ namespace logicalaccess
 								{
 									std::this_thread::sleep_for(std::chrono::milliseconds(100));
 									DESFireCommands::DESFireCardVersion cardversion;
+									boost::dynamic_pointer_cast<DESFireChip>(d_insertedChip)->getDESFireCommands()->selectApplication(0x00);
 									boost::dynamic_pointer_cast<DESFireChip>(d_insertedChip)->getDESFireCommands()->getVersion(cardversion);
 									// Set from the version
 
@@ -880,8 +881,8 @@ namespace logicalaccess
 
 				LOG(LogLevel::INFOS) << "Checking SAM backward...";
 
-				//Check Backward AV1 => AV2 is active
-				if (getPCSCConfiguration()->getSAMType() != "SAM_AUTO" && ret->getSingleChip()->getCardType() == "SAM_AV2" && getPCSCConfiguration()->getSAMType() != boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2> >(ret->getSingleChip()->getCommands())->getSAMTypeFromSAM())
+				std::string SAMType = getPCSCConfiguration()->getSAMType();
+				if (SAMType != "SAM_AUTO" && SAMType != ret->getSingleChip()->getCardType())
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM on the reader is not the same type as selected.");
 
 				LOG(LogLevel::INFOS) << "SAM backward ended.";

@@ -185,6 +185,8 @@ namespace logicalaccess
 
 			SAMBasicKeyEntry();
 
+			SAMBasicKeyEntry(const SAMBasicKeyEntry& copy);
+
 			SAMBasicKeyEntry(const std::string& str, const std::string& str1, const std::string& str2);
 
 			SAMBasicKeyEntry(const void** buf, size_t buflen, char numberkey);
