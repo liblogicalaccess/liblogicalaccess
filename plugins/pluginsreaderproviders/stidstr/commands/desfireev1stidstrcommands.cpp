@@ -751,7 +751,8 @@ namespace logicalaccess
 		unsigned nbaids = result[0];
 		for (size_t i = 0; i < nbaids; ++i)
 		{
-			std::vector<unsigned char> aid(result[1 + (i * 3)], result[1 + (i * 3) + 3]);
+			std::vector<unsigned char> aid(3);
+			std::copy(result.begin() + 1 + (i * 3), result.begin() + 1 + (i * 3) + 3, aid.begin());
 			aids.push_back(DESFireLocation::convertAidToUInt(aid));
 		}
 
