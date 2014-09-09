@@ -61,50 +61,87 @@ namespace logicalaccess
 		ports.clear();
 
 #ifdef UNIX
-		boost::shared_ptr<SerialPortXml> port0;
-		port0.reset(new SerialPortXml("/dev/ttyS0"));
-		boost::shared_ptr<SerialPortXml> port1;
-		port1.reset(new SerialPortXml("/dev/ttyS1"));
-		boost::shared_ptr<SerialPortXml> port2;
-		port2.reset(new SerialPortXml("/dev/ttyS2"));
-		boost::shared_ptr<SerialPortXml> port3;
-		port3.reset(new SerialPortXml("/dev/ttyS3"));
-		boost::shared_ptr<SerialPortXml> port4;
-		port4.reset(new SerialPortXml("/dev/ttyS4"));
-		boost::shared_ptr<SerialPortXml> port5;
-		port5.reset(new SerialPortXml("/dev/ttyS5"));
-#else
-
-		// Up to 255 COM ports are supported so we iterate through all of them seeing
-		// if we can open them or if we fail to open them, get an access denied or general error error.
-		// Both of these cases indicate that there is a COM port at that number. 
-		boost::asio::io_service io;
-		boost::asio::serial_port port(io);
-		for (unsigned int i = 1; i < 256; i++)
+		DIR* pdir = opendir("/dev");
+		struct dirent *pent;
+		if (pdir)
 		{
-			// Form the Raw device name
-			char portname[64];
-			sprintf(portname, "COM%u", i);
-
-
-			try
+			while (pent = readdir(pdir))
 			{
-				// create the serial device, note it takes the io service and the port name
-				port.open(portname);
-				port.close();
+				if ((strstr(pent->d_name, "ttyS") != 0) 
+					|| (strstr(pent->d_name, "ttyUSB") != 0)
+					|| (strstr(pent->d_name, "ttyACM") != 0))  
+				{
+				std::string p = ("/dev/");
+				p.append(pent->d_name);
 
-				boost::shared_ptr<SerialPortXml> newPort;
-				newPort.reset(new SerialPortXml(portname));
-				ports.push_back(newPort); 
-			}
-			catch (std::exception& e)
-			{
-				LOG(LogLevel::WARNINGS) << portname << ": " << e.what();
+				try
+				{
+					boost::asio::io_service service;
+					boost::asio::serial_port sp(service, portName);
+					if (sp.is_open())
+					{
+						sp.close();
+					 	boost::shared_ptr<SerialPortXml> newPort;
+						newPort.reset(new SerialPortXml(portName));
+						ports.push_back(newPort);
+					}
+				}
+				catch (std::exception&)
+				{
+					LOG(LogLevel::ERRORS) << "Open SerialPort failed: " << p;
+				}
 			}
 		}
-		
+		else
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Impossible to list SerialPort.");
+#else
+		bool success = false;
+		bool stop = false;
+		int bufferSize = 4096;
+		while (bufferSize && !stop)
+		{
+			char *buffer = new char[bufferSize];
+			int ret = QueryDosDevice(NULL, buffer, bufferSize);
+			if (ret == 0)
+			{
+				DWORD dwError = GetLastError();
+				if (dwError == ERROR_INSUFFICIENT_BUFFER)
+					bufferSize *= 2;
+				else
+				{
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Impossible to list SerialPort.");
+					stop = true;
+				}
+			}
+			else
+			{
+				stop = true;
+				success = true;
+				size_t i = 0;
+				while (buffer[i] != '\0')
+				{
+					char *currentDevice = buffer + i;
+					size_t len = strlen(currentDevice);
+					if (len > 3)
+					{
+						if (strncmp(currentDevice, "COM", 3) == 0)
+						{
+							if (std::all_of(currentDevice + 3, currentDevice + len, [](unsigned char c) { return ::isdigit(c); }))
+							{
+								boost::shared_ptr<SerialPortXml> newPort;
+								newPort.reset(new SerialPortXml(std::string(currentDevice, currentDevice + len)));
+								ports.push_back(newPort); 
+							}
+						}
+					}
+
+					i += len + 1;
+				}
+			}
+		   delete buffer;
+		}
 #endif
-		return true;
+		return success;
 	}
 }
 
