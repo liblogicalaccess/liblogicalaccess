@@ -9,6 +9,8 @@
 #ifdef UNIX
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <dirent.h>
 #endif
 
 #include "logicalaccess/logs.hpp"
@@ -77,12 +79,12 @@ namespace logicalaccess
 				try
 				{
 					boost::asio::io_service service;
-					boost::asio::serial_port sp(service, portName);
+					boost::asio::serial_port sp(service, p);
 					if (sp.is_open())
 					{
 						sp.close();
 					 	boost::shared_ptr<SerialPortXml> newPort;
-						newPort.reset(new SerialPortXml(portName));
+						newPort.reset(new SerialPortXml(p));
 						ports.push_back(newPort);
 					}
 				}
@@ -95,7 +97,6 @@ namespace logicalaccess
 		else
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Impossible to list SerialPort.");
 #else
-		bool success = false;
 		bool stop = false;
 		int bufferSize = 4096;
 		while (bufferSize && !stop)
@@ -108,15 +109,11 @@ namespace logicalaccess
 				if (dwError == ERROR_INSUFFICIENT_BUFFER)
 					bufferSize *= 2;
 				else
-				{
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Impossible to list SerialPort.");
-					stop = true;
-				}
 			}
 			else
 			{
 				stop = true;
-				success = true;
 				size_t i = 0;
 				while (buffer[i] != '\0')
 				{
@@ -141,7 +138,7 @@ namespace logicalaccess
 		   delete buffer;
 		}
 #endif
-		return success;
+		return true;
 	}
 }
 
