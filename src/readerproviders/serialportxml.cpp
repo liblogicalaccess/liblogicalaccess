@@ -73,24 +73,25 @@ namespace logicalaccess
 					|| (strstr(pent->d_name, "ttyUSB") != 0)
 					|| (strstr(pent->d_name, "ttyACM") != 0))  
 				{
-				std::string p = ("/dev/");
-				p.append(pent->d_name);
+					std::string p = ("/dev/");
+					p.append(pent->d_name);
 
-				try
-				{
-					boost::asio::io_service service;
-					boost::asio::serial_port sp(service, p);
-					if (sp.is_open())
+					try
 					{
-						sp.close();
-					 	boost::shared_ptr<SerialPortXml> newPort;
-						newPort.reset(new SerialPortXml(p));
-						ports.push_back(newPort);
+						boost::asio::io_service service;
+						boost::asio::serial_port sp(service, p);
+						if (sp.is_open())
+						{
+							sp.close();
+					 		boost::shared_ptr<SerialPortXml> newPort;
+							newPort.reset(new SerialPortXml(p));
+							ports.push_back(newPort);
+						}
 					}
-				}
-				catch (std::exception&)
-				{
-					LOG(LogLevel::ERRORS) << "Open SerialPort failed: " << p;
+					catch (std::exception&)
+					{
+						LOG(LogLevel::ERRORS) << "Open SerialPort failed: " << p;
+					}
 				}
 			}
 		}
