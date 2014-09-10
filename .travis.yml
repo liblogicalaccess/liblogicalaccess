@@ -1,9 +1,9 @@
 language: cpp
 compiler: gcc
 before_install:
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y && sudo add-apt-repository ppa:jkeiren/ppa -y
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y && sudo add-apt-repository ppa:jkeiren/ppa -y && sudo add-apt-repository ppa:boost-latest/ppa -y
   - sudo apt-get update -qq
-  - sudo apt-get install -qq libboost1.49-dev libboost-system1.49-dev libboost-filesystem1.49-dev libboost-date-time1.49-dev libpcsclite-dev libssl-dev
+  - sudo apt-get install -qq libboost1.55-dev libboost-system1.55-dev libboost-filesystem1.55-dev libboost-date-time1.55-dev libpcsclite-dev libssl-dev
   - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.7; fi
   - if [ "$CXX" = "g++" ]; then export CXX="g++-4.7" CC="gcc-4.7"; fi
 script: mkdir build && pushd build && cmake -DCMAKE_INSTALL_PREFIX=$PWD/install .. && make install && popd && cd samples/basic/ && mkdir build && pushd build && cmake -DLibLogicalAccess_DIR=$PWD/../../../build/install/lib/cmake/liblogicalaccess .. && make
