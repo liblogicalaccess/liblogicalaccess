@@ -143,6 +143,8 @@ namespace logicalaccess
 			void setCircularBufferParser(CircularBufferParser* circular_buffer_parser) { m_circular_buffer_parser.reset(circular_buffer_parser); };
 			boost::shared_ptr<CircularBufferParser> getCircularBufferParser() { return m_circular_buffer_parser; };
 
+			boost::shared_mutex& getAvailableDataMutex() { return m_available_data; };
+
 		private:
 			void do_read(const boost::system::error_code& e, std::size_t bytes_transferred);
 

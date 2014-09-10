@@ -40,6 +40,7 @@ namespace logicalaccess
 
 		if (!m_thread_reader)
 		{
+			m_available_data.lock();
 			m_serial_port.async_read_some(boost::asio::buffer(m_read_buffer),
 				boost::bind(&SerialPort::do_read, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
 			m_thread_reader.reset(new std::thread(boost::bind(&boost::asio::io_service::run, &m_io))); 
@@ -58,6 +59,7 @@ namespace logicalaccess
 		if (m_thread_reader)
 			m_thread_reader->join();
 
+		m_available_data.unlock();
 		m_io.reset();
 		m_thread_reader.reset();
 		m_circular_read_buffer.clear();
@@ -139,23 +141,19 @@ namespace logicalaccess
 		if (cnt == 0)
 			return 0;
 
-		auto now=std::chrono::steady_clock::now();
-		if (m_available_data.try_lock_until(boost::chrono::steady_clock::now() + boost::chrono::milliseconds(2000)))
+		m_mutex_reader.lock();
+		if (m_circular_buffer_parser)
 		{
-			m_mutex_reader.lock();
-			if (m_circular_buffer_parser)
-			{
-				buf = m_circular_buffer_parser->getValidBuffer(m_circular_read_buffer);
-			}
-			else
-			{
-				buf.assign(m_circular_read_buffer.begin(), m_circular_read_buffer.end());
-				m_circular_read_buffer.clear();
-			}
-			if (m_circular_read_buffer.size() != 0)
-				m_available_data.unlock();
-			m_mutex_reader.unlock();
+			buf = m_circular_buffer_parser->getValidBuffer(m_circular_read_buffer);
 		}
+		else
+		{
+			buf.assign(m_circular_read_buffer.begin(), m_circular_read_buffer.end());
+			m_circular_read_buffer.clear();
+		}
+		if (m_circular_read_buffer.size() != 0)
+			m_available_data.unlock();
+		m_mutex_reader.unlock();
 
 		return buf.size();
 	}
