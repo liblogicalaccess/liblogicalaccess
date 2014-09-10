@@ -8,6 +8,31 @@
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/readerproviders/readerconfiguration.hpp"
 #include "logicalaccess/services/storage/storagecardservice.hpp"
+#include "logicalaccess/services/nfctag/ndefmessage.hpp"
+
+//#include "osdpreaderunitconfiguration.hpp"
+//#include "osdpreaderunit.hpp"
+#include "logicalaccess/readerproviders/serialportdatatransport.hpp"
+#include "readercardadapters\elatecbufferparser.hpp"
+#include "commands/desfireev1iso7816commands.hpp"
+#include "desfireev1nfctag4cardservice.hpp"
+#include "pcscreaderunit.hpp"
+
+#include "elatecreaderprovider.hpp"
+#include "elatecreaderunitconfiguration.hpp"
+
+#include "scielreaderprovider.hpp"
+#include "scielreaderunitconfiguration.hpp"
+
+#include "axesstmc13readerprovider.hpp"
+#include "axesstmc13readerunitconfiguration.hpp"
+
+#include "deisterreaderprovider.hpp"
+#include "deisterreaderunitconfiguration.hpp"
+
+#include "stidstrreaderunitconfiguration.hpp"
+#include "stidstrreaderprovider.hpp"
+#include "readercardadapters/desfireev1stidstrcommands.hpp"
 
 #include <iostream>
 #include <string>
@@ -24,94 +49,99 @@ int main(int , char**)
 {
     try
     {
-        std::vector<std::string> readerList = logicalaccess::LibraryManager::getInstance()->getAvailableReaders();
-        std::cout << "Available reader plug-ins ("<< readerList.size() <<"):" << std::endl;
-        for (std::vector<std::string>::iterator it = readerList.begin(); it != readerList.end(); ++it)
-        {
-            std::cout << "\t" << (*it) << std::endl;
-        }
+		boost::shared_ptr<logicalaccess::ReaderConfiguration> readerConfig(new logicalaccess::ReaderConfiguration());
+ 
+		// Set PCSC ReaderProvider by calling the Library Manager which will load the function from the corresponding plug-in
+	/*	 readerConfig->setReaderProvider(logicalaccess::LibraryManager::getInstance()->getReaderProvider("PCSC"));
+		readerConfig->setReaderUnit(readerConfig->getReaderProvider()->createReaderUnit());
+		boost::shared_ptr<logicalaccess::PCSCReaderUnit> readerUnit = boost::dynamic_pointer_cast<logicalaccess::PCSCReaderUnit>(readerConfig->getReaderUnit());
+		readerUnit->setName("OMNIKEY CardMan 5x21-CL 0");*/
+ 
+		/*boost::shared_ptr<logicalaccess::ElatecReaderUnitConfiguration> readerUnitConfig(new logicalaccess::ElatecReaderUnitConfiguration());
+		boost::shared_ptr<logicalaccess::ElatecReaderUnit> readerUnit(new logicalaccess::ElatecReaderUnit());
+		readerUnit->setConfiguration(readerUnitConfig);
+		//readerUnit->setCardType("EM4102");
+		boost::dynamic_pointer_cast<logicalaccess::SerialPortDataTransport>(readerUnit->getDataTransport())
+			->setSerialPort(boost::shared_ptr<logicalaccess::SerialPortXml>(new logicalaccess::SerialPortXml("COM4")));*/
 
-        std::vector<std::string> cardList = logicalaccess::LibraryManager::getInstance()->getAvailableCards();
-        std::cout << "Available card plug-ins ("<< cardList.size() <<"):" << std::endl;
-        for (std::vector<std::string>::iterator it = cardList.begin(); it != cardList.end(); ++it)
-        {
-            std::cout << "\t" << (*it) << std::endl;
-        }
 
-        // Reader configuration object to store reader provider and reader unit selection.
-        boost::shared_ptr<logicalaccess::ReaderConfiguration> readerConfig(new logicalaccess::ReaderConfiguration());
+		/*boost::shared_ptr<logicalaccess::DeisterReaderUnitConfiguration> readerUnitConfig(new logicalaccess::DeisterReaderUnitConfiguration());
+		boost::shared_ptr<logicalaccess::DeisterReaderUnit> readerUnit(new logicalaccess::DeisterReaderUnit());
+		readerUnit->setConfiguration(readerUnitConfig);
+		//readerUnit->setCardType("EM4102");
+		boost::dynamic_pointer_cast<logicalaccess::SerialPortDataTransport>(readerUnit->getDataTransport())
+			->setSerialPort(boost::shared_ptr<logicalaccess::SerialPortXml>(new logicalaccess::SerialPortXml("COM62")));*/
+		//boost::dynamic_pointer_cast<logicalaccess::SerialPortDataTransport>(readerUnit->getDataTransport())->setPortBaudRate(9600);
 
-        // PC/SC
-        readerConfig->setReaderProvider(logicalaccess::LibraryManager::getInstance()->getReaderProvider("PCSC"));
 
-        if (readerConfig->getReaderProvider()->getRPType() == "PCSC" && readerConfig->getReaderProvider()->getReaderList().size() == 0)
-        {
-            std::cerr << "No readers on this system." << std::endl;
-            return EXIT_FAILURE;
-        }
-        std::cout << readerConfig->getReaderProvider()->getReaderList().size() << " readers on this system." << std::endl;
+	/*	boost::shared_ptr<logicalaccess::SCIELReaderUnitConfiguration> readerUnitConfig(new logicalaccess::SCIELReaderUnitConfiguration());
+		boost::shared_ptr<logicalaccess::SCIELReaderUnit> readerUnit(new logicalaccess::SCIELReaderUnit());
+		readerUnit->setConfiguration(readerUnitConfig);
+		readerUnit->setCardType("EM4102");
+		boost::dynamic_pointer_cast<logicalaccess::SerialPortDataTransport>(readerUnit->getDataTransport())
+			->setSerialPort(boost::shared_ptr<logicalaccess::SerialPortXml>(new logicalaccess::SerialPortXml("COM3")));
+		boost::dynamic_pointer_cast<logicalaccess::SerialPortDataTransport>(readerUnit->getDataTransport())->setPortBaudRate(9600);*/
 
-        // Create the default reader unit. On PC/SC, we will listen on all readers.
-        readerConfig->setReaderUnit(readerConfig->getReaderProvider()->createReaderUnit());
+		boost::shared_ptr<logicalaccess::STidSTRReaderUnitConfiguration> readerUnitConfig(new logicalaccess::STidSTRReaderUnitConfiguration());
+		boost::shared_ptr<logicalaccess::STidSTRReaderUnit> readerUnit(new logicalaccess::STidSTRReaderUnit());
+		readerUnit->setConfiguration(readerUnitConfig);
+		boost::dynamic_pointer_cast<logicalaccess::SerialPortDataTransport>(readerUnit->getDataTransport())
+			->setSerialPort(boost::shared_ptr<logicalaccess::SerialPortXml>(new logicalaccess::SerialPortXml("COM3")));
 
-        unsigned char data[2048];
-        memset(data, 0x00, sizeof(data));				
-
-        std::cout << "Waiting 15 seconds for a card insertion..." << std::endl;
-
+		std::size_t start = std::clock();
         while (1)
         {
-            readerConfig->getReaderUnit()->connectToReader();
+			//readerUnit->connectToReader();
+			//readerUnit->disconnectFromReader();
+            if (readerUnit->connectToReader())
+			{
+				std::cout << (double)((std::clock() - start) / (double) CLOCKS_PER_SEC) << "\tConnected to reader" << std::endl;
+				while (true)
+				{
+					std::cout << (double)((std::clock() - start) / (double) CLOCKS_PER_SEC) << "\tStartWaitInsertation" << std::endl;
+					if (readerUnit->waitInsertion(2000))
+					{
+						std::cout << (double)((std::clock() - start) / (double) CLOCKS_PER_SEC) << "\tEndWaitInsertation" << std::endl;
+						if (readerUnit->connect())
+						{
+							std::cout << (double)((std::clock() - start) / (double) CLOCKS_PER_SEC) << "\tconnect" << std::endl;
+							boost::shared_ptr<logicalaccess::Chip> chip = readerUnit->getSingleChip();
+							std::cout << (double)((std::clock() - start) / (double) CLOCKS_PER_SEC) << "\tGetSingleChip" << std::endl;
+							if (chip)
+							{
+								while (1)
+								{
+								chip->getRootLocationNode();
+								std::cout << logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()) << std::endl;
+								//boost::shared_ptr<logicalaccess::DESFireEV1STidSTRCommands> defirecommands(boost::dynamic_pointer_cast<logicalaccess::DESFireEV1STidSTRCommands>(chip->getCommands()));
+								std::cout << (double)((std::clock() - start) / (double) CLOCKS_PER_SEC) << "\tDone" << std::endl;
+								}
+						/*		defirecommands->getFileIDs();
+								defirecommands->selectApplication(1313);*/
+								//defirecommands->getFileIDs();
+								
+								/*		boost::shared_ptr<logicalaccess::ISO7816ISO7816Commands> iso7816command(boost::dynamic_pointer_cast<logicalaccess::ISO7816ISO7816Commands>(chip->getCommands()));
+								unsigned char data[128];
+								size_t datalength = 59;
+								iso7816command->selectFile(0xe105);
+								iso7816command->selectFile(0xe104);
+								iso7816command->readBinary(data, datalength, 60, 0xe104);
 
-            // Force card type here if you want to
-            //readerConfig->getReaderUnit()->setCardType(CT_DESFIRE_EV1);
+								boost::shared_ptr<logicalaccess::DESFireEV1NFCTag4CardService> cardService = boost::dynamic_pointer_cast<logicalaccess::DESFireEV1NFCTag4CardService>(chip->getService(logicalaccess::CardServiceType::CST_NFC_TAG));
+								boost::shared_ptr<logicalaccess::NdefMessage> myMessage = cardService->readNDEFFile();
+								*/
 
-            std::cout << "Time start : " << time(NULL) << std::endl;
-            if (readerConfig->getReaderUnit()->waitInsertion(15000))
-            {
-                
-                if (readerConfig->getReaderUnit()->connect())
-                {
-                    std::cout << "Card inserted on reader \"" << readerConfig->getReaderUnit()->getConnectedName() << "\"." << std::endl;
+							}
+							readerUnit->disconnect();
+						}
+						std::cout << (double)((std::clock() - start) / (double) CLOCKS_PER_SEC) << "\tStartWaitRemoval" << std::endl;
+						readerUnit->waitRemoval(2000);
+						std::cout << (double)((std::clock() - start) / (double) CLOCKS_PER_SEC) << "\tEndWaitRemoval" << std::endl;
 
-                    boost::shared_ptr<logicalaccess::Chip> chip = readerConfig->getReaderUnit()->getSingleChip();
-                    std::cout << "Card type: " << chip->getCardType() << std::endl;
-
-                    std::vector<unsigned char> csn = readerConfig->getReaderUnit()->getNumber(chip);
-                    std::cout << "Card Serial Number : " << logicalaccess::BufferHelper::getHex(csn) << std::endl;	
-
-                    std::cout << "Chip list:" << std::endl;
-                    std::vector<boost::shared_ptr<logicalaccess::Chip>> chipList = readerConfig->getReaderUnit()->getChipList();
-                    for(std::vector<boost::shared_ptr<logicalaccess::Chip>>::iterator i = chipList.begin(); i != chipList.end(); ++i)
-                    {
-                        std::cout << "\t" << logicalaccess::BufferHelper::getHex(readerConfig->getReaderUnit()->getNumber((*i))) << std::endl;
-                    }
-
-                    boost::shared_ptr<logicalaccess::Profile> profile = chip->getProfile();
-
-                    // DO SOMETHING HERE
-					// DO SOMETHING HERE
-					// DO SOMETHING HERE
-
-                    readerConfig->getReaderUnit()->disconnect();
-                }
-                else
-                {
-                    std::cout << "Error: cannot connect to the card." << std::endl;
-                }
-
-                std::cout << "Logical automatic card removal in 15 seconds..." << std::endl;
-
-                if (!readerConfig->getReaderUnit()->waitRemoval(15000))
-                {
-                    std::cerr << "Card removal forced." << std::endl;
-                }
-
-                std::cout << "Card removed." << std::endl;
-            } else
-            {
-                std::cout << "No card inserted." << std::endl;
-            }
+					}
+				}
+				readerUnit->disconnectFromReader();
+			}           
         }
     }
     catch (std::exception& ex)
