@@ -92,10 +92,7 @@ namespace logicalaccess
 		do
 		{
 			d_port->getSerialPort()->read(tmpbuf, 128);
-			if (!tmpbuf.size())
-				std::this_thread::sleep_for(std::chrono::milliseconds(250));
-			else
-				res.insert(res.end(), tmpbuf.begin(), tmpbuf.end());
+			res.insert(res.end(), tmpbuf.begin(), tmpbuf.end());
 		}
 		while (std::chrono::steady_clock::now() < clock_timeout && res.size() == 0x00);
 

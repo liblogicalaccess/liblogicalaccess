@@ -16,6 +16,7 @@
 #include <boost/utility.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/circular_buffer.hpp>
+#include <boost/thread/shared_mutex.hpp>
 
 #include "logicalaccess/readerproviders/readerunit.hpp"
 #include "logicalaccess/readerproviders/circularbufferparser.hpp"
@@ -161,7 +162,7 @@ namespace logicalaccess
 			boost::asio::io_service m_io;
 
 			boost::asio::serial_port m_serial_port;
-
+			
 			boost::circular_buffer<unsigned char> m_circular_read_buffer;
 
 			std::vector<unsigned char> m_read_buffer;
@@ -171,6 +172,8 @@ namespace logicalaccess
 			boost::shared_ptr<std::thread> m_thread_reader;
 
 			std::mutex m_mutex_reader;
+
+			boost::shared_mutex m_available_data;
 
 			boost::shared_ptr<CircularBufferParser> m_circular_buffer_parser;
 	};

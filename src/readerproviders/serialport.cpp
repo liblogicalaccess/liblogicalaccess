@@ -139,17 +139,23 @@ namespace logicalaccess
 		if (cnt == 0)
 			return 0;
 
-		m_mutex_reader.lock();
-		if (m_circular_buffer_parser)
+		auto now=std::chrono::steady_clock::now();
+		if (m_available_data.try_lock_until(boost::chrono::steady_clock::now() + boost::chrono::milliseconds(2000)))
 		{
-			buf = m_circular_buffer_parser->getValidBuffer(m_circular_read_buffer);
+			m_mutex_reader.lock();
+			if (m_circular_buffer_parser)
+			{
+				buf = m_circular_buffer_parser->getValidBuffer(m_circular_read_buffer);
+			}
+			else
+			{
+				buf.assign(m_circular_read_buffer.begin(), m_circular_read_buffer.end());
+				m_circular_read_buffer.clear();
+			}
+			if (m_circular_read_buffer.size() != 0)
+				m_available_data.unlock();
+			m_mutex_reader.unlock();
 		}
-		else
-		{
-			buf.assign(m_circular_read_buffer.begin(), m_circular_read_buffer.end());
-			m_circular_read_buffer.clear();
-		}
-		m_mutex_reader.unlock();
 
 		return buf.size();
 	}
@@ -173,6 +179,8 @@ namespace logicalaccess
 		}
 
 		m_circular_read_buffer.insert(m_circular_read_buffer.end(), m_read_buffer.begin(), m_read_buffer.begin() + bytes_transferred);
+
+		m_available_data.unlock();
 		m_mutex_reader.unlock();
 
 		// start the next read
