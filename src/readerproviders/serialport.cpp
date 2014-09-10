@@ -151,8 +151,6 @@ namespace logicalaccess
 			buf.assign(m_circular_read_buffer.begin(), m_circular_read_buffer.end());
 			m_circular_read_buffer.clear();
 		}
-		if (m_circular_read_buffer.size() != 0)
-			m_available_data.unlock();
 		m_mutex_reader.unlock();
 
 		return buf.size();
