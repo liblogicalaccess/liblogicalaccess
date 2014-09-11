@@ -34,14 +34,14 @@ namespace logicalaccess
 		 * \brief Serialize the current object to XML.
 		 * \param parentNode The parent node.
 		 */
-		void STidSTRDataTransport::serialize(boost::property_tree::ptree& parentNode)
+		void serialize(boost::property_tree::ptree& parentNode)
 		{ boost::property_tree::ptree node;	SerialPortDataTransport::serialize(node); parentNode.add_child(getDefaultXmlNodeName(), node); }
 
 		/**
 		 * \brief UnSerialize a XML node to the current object.
 		 * \param node The XML node.
 		 */
-		void STidSTRDataTransport::unSerialize(boost::property_tree::ptree& node)
+		void unSerialize(boost::property_tree::ptree& node)
 		{ SerialPortDataTransport::unSerialize(node.get_child(SerialPortDataTransport::getDefaultXmlNodeName()));
 		  d_port->getSerialPort()->setCircularBufferParser(new STidSTRBufferParser()); }
 
