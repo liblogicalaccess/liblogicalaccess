@@ -215,7 +215,7 @@ namespace logicalaccess
 		node.put("PortBaudRate", d_portBaudRate);
 		d_port->serialize(node);
 
-		parentNode.add_child(getDefaultXmlNodeName(), node);
+		parentNode.add_child(SerialPortDataTransport::getDefaultXmlNodeName(), node);
 	}
 
 	void SerialPortDataTransport::unSerialize(boost::property_tree::ptree& node)
