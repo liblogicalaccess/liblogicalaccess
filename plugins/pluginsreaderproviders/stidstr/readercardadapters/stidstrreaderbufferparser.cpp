@@ -20,10 +20,10 @@ namespace logicalaccess
 			{
 				result.assign(circular_buffer.begin(), circular_buffer.begin() + messageSize + 7);
 				circular_buffer.erase(circular_buffer.begin(), circular_buffer.begin() + messageSize + 7);
-				LOG(LogLevel::INFOS) << "Header found with the data: " << BufferHelper::getHex(result) << " Remaining on data on circular buffer: " << circular_buffer.size();
+				LOG(LogLevel::COMS) << "Header found with the data: " << BufferHelper::getHex(result) << " Remaining on data on circular buffer: " << circular_buffer.size();
 			}
 			else
-				LOG(LogLevel::INFOS) << "Header found without the data size expected: " << messageSize;
+				LOG(LogLevel::COMS) << "Header found without the data size expected: " << messageSize;
 		}
 		return result;
 	}

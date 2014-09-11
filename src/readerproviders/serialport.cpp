@@ -151,7 +151,7 @@ namespace logicalaccess
 		{
 			buf.assign(m_circular_read_buffer.begin(), m_circular_read_buffer.end());
 			m_circular_read_buffer.clear();
-			LOG(LogLevel::INFOS) << "Use data readed: " << BufferHelper::getHex(buf) << " Size: " << buf.size();
+			LOG(LogLevel::COMS) << "Use data readed: " << BufferHelper::getHex(buf) << " Size: " << buf.size();
 		}
 		m_mutex_reader.unlock();
 
@@ -177,7 +177,7 @@ namespace logicalaccess
 		}
 
 		m_circular_read_buffer.insert(m_circular_read_buffer.end(), m_read_buffer.begin(), m_read_buffer.begin() + bytes_transferred);
-		LOG(LogLevel::INFOS) << "Data readed: "
+		LOG(LogLevel::COMS) << "Data readed: "
 			<< BufferHelper::getHex(std::vector<unsigned char>(m_read_buffer.begin(), m_read_buffer.begin() + bytes_transferred))
 			<< " Size: " << bytes_transferred;
 
