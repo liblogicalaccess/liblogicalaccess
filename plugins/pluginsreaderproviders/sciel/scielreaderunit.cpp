@@ -15,7 +15,7 @@
 #include "logicalaccess/cards/chip.hpp"
 #include "readercardadapters/scielreadercardadapter.hpp"
 #include <boost/filesystem.hpp>
-#include "logicalaccess/readerproviders/serialportdatatransport.hpp"
+#include "readercardadapters/scieldatatransport.hpp"
 
 namespace logicalaccess
 {
@@ -24,7 +24,7 @@ namespace logicalaccess
 	{
 		d_readerUnitConfig.reset(new SCIELReaderUnitConfiguration());
 		setDefaultReaderCardAdapter (boost::shared_ptr<SCIELReaderCardAdapter> (new SCIELReaderCardAdapter()));
-		boost::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
+		boost::shared_ptr<ScielDataTransport> dataTransport(new ScielDataTransport());
 		setDataTransport(dataTransport);
 		d_card_type = "UNKNOWN";
 

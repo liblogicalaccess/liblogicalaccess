@@ -37,46 +37,13 @@ namespace logicalaccess
 
 	std::vector<unsigned char> SCIELReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
 	{
-		std::vector<unsigned char> buf;
-		if (d_trashedData.size() > 0)
-		{
-			LOG(LogLevel::COMS) << "Adding existing trashed data: " << BufferHelper::getHex(d_trashedData);
-			buf = d_trashedData;
-		}
-		buf.insert(buf.end(), answer.begin(), answer.end());
+		EXCEPTION_ASSERT_WITH_LOG(answer.size() >= 2, LibLogicalAccessException, "A valid buffer size must be at least 2 bytes long");
+		EXCEPTION_ASSERT_WITH_LOG(answer[0] == STX, LibLogicalAccessException, "The supplied buffer is not valid");
+		EXCEPTION_ASSERT_WITH_LOG(answer[answer.size() - 1] == ETX, LibLogicalAccessException, "Missing end of message");
 
-		// Remove CR/LF (some response have it ?!)
-		while (buf.size() >= 2 && buf[0] == 0x0d)
-		{
-			int cuti = 1;
-			if (buf[1] == 0x0a)
-			{
-				cuti++;
-			}
-
-			buf = std::vector<unsigned char>(buf.begin() + cuti, buf.end());
-		}
-
-		EXCEPTION_ASSERT_WITH_LOG(buf.size() >= 2, LibLogicalAccessException, "A valid buffer size must be at least 2 bytes long");
-		EXCEPTION_ASSERT_WITH_LOG(buf[0] == STX, LibLogicalAccessException, "The supplied buffer is not valid");
-		
-		std::vector<unsigned char> data;
-
-		int i = 1;
-		while(buf.size() > 0 && buf[i] != ETX)
-		{
-			unsigned char c = buf[i++];
-			data.push_back(c);
-		}
-		buf = std::vector<unsigned char>(buf.begin() + i, buf.end());
-
-		EXCEPTION_ASSERT_WITH_LOG(buf.size() > 0 && buf[0] == ETX, LibLogicalAccessException, "Missing end of message");
-
-		buf = std::vector<unsigned char>(buf.begin() + 1, buf.end());
-		d_trashedData = buf;
+		std::vector<unsigned char> data(answer.begin() + 1, answer.end() - 1);
 
 		LOG(LogLevel::COMS) << "Returning processed data " << BufferHelper::getHex(data) << "...";
-		LOG(LogLevel::COMS) << "	-> Actual trashed data %s..." << BufferHelper::getHex(d_trashedData) << "...";
 		return data;
 	}
 
