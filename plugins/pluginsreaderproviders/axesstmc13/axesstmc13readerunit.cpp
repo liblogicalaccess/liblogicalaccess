@@ -16,7 +16,7 @@
 #include "logicalaccess/readerproviders/serialport.hpp"
 #include "readercardadapters/axesstmc13readercardadapter.hpp"
 #include <boost/filesystem.hpp>
-#include "logicalaccess/readerproviders/serialportdatatransport.hpp"
+#include "readercardadapters/axesstmc13datatransport.hpp"
 
 namespace logicalaccess
 {
@@ -25,7 +25,7 @@ namespace logicalaccess
 	{
 		d_readerUnitConfig.reset(new AxessTMC13ReaderUnitConfiguration());
 		setDefaultReaderCardAdapter (boost::shared_ptr<AxessTMC13ReaderCardAdapter> (new AxessTMC13ReaderCardAdapter()));
-		boost::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
+		boost::shared_ptr<AxessTMC13DataTransport> dataTransport(new AxessTMC13DataTransport());
 #ifndef UNIX
 		dataTransport->setPortBaudRate(CBR_57600);
 #else
@@ -66,7 +66,7 @@ namespace logicalaccess
 	bool AxessTMC13ReaderUnit::waitInsertion(unsigned int maxwait)
 	{
 		bool inserted = false;
-		unsigned int currentWait = 0;
+		std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(maxwait);
 
 		if(d_tmcIdentifier.size() == 0)
 		{
@@ -83,11 +83,8 @@ namespace logicalaccess
 			}
 
 			if (!inserted)
-			{
-				std::this_thread::sleep_for(std::chrono::milliseconds(100));
-				currentWait += 100;
-			}
-		} while (!inserted && (maxwait == 0 || currentWait < maxwait));
+				std::this_thread::sleep_for(std::chrono::milliseconds(250));
+		} while (!inserted && std::chrono::steady_clock::now() < clock_timeout);
 
 		return inserted;
 	}
@@ -103,7 +100,7 @@ namespace logicalaccess
 
 		if (d_insertedChip)
 		{
-			unsigned int currentWait = 0;
+			std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(maxwait);
 			do
 			{
 				boost::shared_ptr<Chip> chip = getChipInAir();
@@ -122,11 +119,8 @@ namespace logicalaccess
 				}
 
 				if (!removed)
-				{
-					std::this_thread::sleep_for(std::chrono::milliseconds(100));
-					currentWait += 100;
-				}
-			} while (!removed && (maxwait == 0 || currentWait < maxwait));
+					std::this_thread::sleep_for(std::chrono::milliseconds(250));
+			} while (!removed && std::chrono::steady_clock::now() < clock_timeout);
 		}
 
 		return removed;

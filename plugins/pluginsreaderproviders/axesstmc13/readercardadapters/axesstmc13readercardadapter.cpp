@@ -30,16 +30,9 @@ namespace logicalaccess
 
 	std::vector<unsigned char> AxessTMC13ReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
 	{		
-		size_t i = 0;
-		for (; i < answer.size(); ++i)
-		{
-			if (answer[i] == CR)
-			{
-				break;
-			}
-		}
-		EXCEPTION_ASSERT_WITH_LOG(i < answer.size(), std::invalid_argument, "The supplied buffer is not valid (no stop byte)");		
+		EXCEPTION_ASSERT_WITH_LOG(answer.size() > 0, std::invalid_argument, "A valid command buffer size must be at least 1 bytes long");
+		EXCEPTION_ASSERT_WITH_LOG(answer[answer.size() - 1] == CR, std::invalid_argument, "The supplied command buffer is not valid");	
 		
-		return std::vector<unsigned char>(answer.begin(), answer.begin() + i);
+		return std::vector<unsigned char>(answer.begin(), answer.end() - 1);
 	}
 }

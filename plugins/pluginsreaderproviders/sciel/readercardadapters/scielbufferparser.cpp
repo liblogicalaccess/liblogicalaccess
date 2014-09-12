@@ -32,6 +32,7 @@ namespace logicalaccess
 				if (circular_buffer[0] != SCIELReaderCardAdapter::STX)
 				{
 					LOG(LogLevel::WARNINGS) << "Drop circular_buffer, STX not found";
+					circular_buffer.clear();
 					return result;
 				}
 

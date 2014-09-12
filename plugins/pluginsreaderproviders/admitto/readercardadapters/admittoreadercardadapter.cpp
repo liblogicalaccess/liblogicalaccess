@@ -28,19 +28,9 @@ namespace logicalaccess
 	std::vector<unsigned char> AdmittoReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
 	{
 		EXCEPTION_ASSERT_WITH_LOG(answer.size() >= 2, std::invalid_argument, "A valid command buffer size must be at least 2 bytes long");
-		EXCEPTION_ASSERT_WITH_LOG(answer[answer.size()-2] == CR, std::invalid_argument, "The supplied command buffer is not valid (bad first stop byte)");
-		EXCEPTION_ASSERT_WITH_LOG(answer[answer.size()-1] == LF, std::invalid_argument, "The supplied command buffer is not valid (bad second stop byte)");
+		EXCEPTION_ASSERT_WITH_LOG(answer[answer.size() - 2] == CR, std::invalid_argument, "The supplied command buffer is not valid (bad first stop byte)");
+		EXCEPTION_ASSERT_WITH_LOG(answer[answer.size() - 1] == LF, std::invalid_argument, "The supplied command buffer is not valid (bad second stop byte)");
 
-		size_t i = 0;
-		for (; i < answer.size()-1; ++i)
-		{
-			if (answer[i] == CR && answer[i+1] == LF)
-			{
-				break;
-			}
-		}
-		EXCEPTION_ASSERT_WITH_LOG(i < answer.size(), std::invalid_argument, "The supplied command buffer is not valid (no stop bytes)");
-
-		return std::vector<unsigned char>(answer.begin() + 2, answer.begin() + 2 + i);
+		return std::vector<unsigned char>(answer.begin() + 2, answer.end() - 2);
 	}
 }
