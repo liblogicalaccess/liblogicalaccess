@@ -172,7 +172,9 @@ namespace logicalaccess
 		m_mutex_reader.lock();
 		if (m_circular_read_buffer.reserve() < bytes_transferred)
 		{
-			LOG(LogLevel::WARNINGS) << "Buffer Overflow";
+			LOG(LogLevel::WARNINGS) << "Buffer Overflow, Size: " << m_circular_read_buffer.size()
+					<< " reserve: " << m_circular_read_buffer.reserve()
+					<< " bytes transferred: " << bytes_transferred;
 			m_circular_read_buffer.clear();
 		}
 

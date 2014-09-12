@@ -23,8 +23,10 @@ namespace logicalaccess
 				{
 					cuti++;
 				}
-
-				circular_buffer = boost::circular_buffer<unsigned char>(circular_buffer.begin() + cuti, circular_buffer.end());
+				result.assign(circular_buffer.begin() + cuti, circular_buffer.end());
+				circular_buffer.clear();
+				circular_buffer.insert(circular_buffer.end(), result.begin(), result.end());
+				result.clear();
 			}
 
 			if (circular_buffer.size() >= 2)
