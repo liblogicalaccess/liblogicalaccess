@@ -191,7 +191,7 @@ namespace logicalaccess
 		LOG(LogLevel::INFOS) << "Serializing card format composite...";
 		boost::property_tree::ptree node;
 
-		if (formatsList.empty())
+		if (!formatsList.empty())
 		{
 			FormatInfosList::iterator it;
 			for (it = formatsList.begin(); it != formatsList.end(); ++it)
