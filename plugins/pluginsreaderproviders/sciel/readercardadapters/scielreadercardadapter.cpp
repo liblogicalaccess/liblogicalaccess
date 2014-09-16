@@ -5,6 +5,7 @@
  */
 
 #include "scielreadercardadapter.hpp"
+#include "scieldatatransport.hpp"
 
 
 namespace logicalaccess
@@ -57,25 +58,33 @@ namespace logicalaccess
 		bool done = false;
 		while (!done && tag.size() > 0)
 		{	
-			// When whole list is sent, the reader send [5b nb_tags id_reader 5d]
-			if (tag.size() == 2)
-			{
-				LOG(LogLevel::COMS) << "Whole list has been received successfully!";
-				done = true;
-			}
-			else
-			{
-				tagsList.push_back(tag);
-			}
+            if (tag.size() == 2)
+            {
+                LOG(LogLevel::COMS) << "Whole list has been received successfully!";
+                done = true;
+            }
+            else
+            {
+			    tagsList.push_back(tag);
 
-			// Next time are optional
-			try
-			{
-				tag = sendCommand(std::vector<unsigned char>(), timeout);
-			}
-			catch(std::exception&)
-			{
-			}
+                boost::shared_ptr<ScielDataTransport> sdt = boost::dynamic_pointer_cast<ScielDataTransport>(getDataTransport());
+                if (sdt)
+                {
+                    std::vector<unsigned char> tagbuf = sdt->checkValideBufferAvailable();
+                    if (tagbuf.size() > 0)
+                    {
+                        tag = adaptAnswer(tagbuf);
+                    }
+                    else
+                    {
+                        tag = std::vector<unsigned char>();
+                    }
+                }
+                else
+                {
+                    tag = std::vector<unsigned char>();
+                }
+            }
 		}
 
 		return tagsList;

@@ -50,6 +50,8 @@ namespace logicalaccess
 		 * \return The Xml node name.
 		 */
 		virtual std::string getDefaultXmlNodeName() const { return "ScielDataTransport"; };
+
+        std::vector<unsigned char> checkValideBufferAvailable();
 	};
 
 }

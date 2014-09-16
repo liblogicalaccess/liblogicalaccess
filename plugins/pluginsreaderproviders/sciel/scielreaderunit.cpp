@@ -163,7 +163,11 @@ namespace logicalaccess
 			LOG(LogLevel::INFOS) << "Sending COM command...";
 
 			std::list<std::vector<unsigned char> > allTags = getDefaultSCIELReaderCardAdapter()->receiveTagsListCommand(cmd);
-
+            for (std::list<std::vector<unsigned char> >::iterator i = allTags.begin(); i != allTags.end(); ++i)
+		    {
+			    LOG(LogLevel::INFOS) << "  -> allTags identifier " << BufferHelper::getHex((*i));
+		    }
+            
 			for (std::list<std::vector<unsigned char> >::iterator i = allTags.begin(); i != allTags.end(); ++i)
 			{
 				boost::shared_ptr<Chip> rChip = createChipFromBuffer((*i));

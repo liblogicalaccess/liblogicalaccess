@@ -145,6 +145,10 @@ namespace logicalaccess
 
 			boost::shared_mutex& getAvailableDataMutex() { return m_available_data; };
 
+            std::mutex& getReadMutex() { return m_mutex_reader; };
+
+            boost::circular_buffer<unsigned char>& getCircularReadBuffer() { return m_circular_read_buffer; };
+
 		private:
 			void do_read(const boost::system::error_code& e, std::size_t bytes_transferred);
 
