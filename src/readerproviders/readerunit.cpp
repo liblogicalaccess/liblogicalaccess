@@ -126,57 +126,65 @@ namespace logicalaccess
 			composite->setReaderUnit(shared_from_this());
 
 			CardTypeList ctList = composite->getConfiguredCardTypes();
-			std::string useCardType = chip->getCardType();
-			CardTypeList::iterator itct = std::find(ctList.begin(), ctList.end(), useCardType);
-			// Try to use the generic card type
-			if (itct == ctList.end())
-			{
-				useCardType = chip->getGenericCardType();
-				LOG(LogLevel::INFOS) << "No configuration found for the chip type ! Looking for the generic type (" << useCardType << ") configuration...";
-				itct = std::find(ctList.begin(), ctList.end(), useCardType);
-			}
-			// Try to use the configuration for all card (= generic tag), because the card type isn't configured
-			if (itct == ctList.end())
-			{
-				LOG(LogLevel::INFOS) << "No configuration found for the chip type ! Looking for \"GenericTag\" configuration...";
-				useCardType = "GenericTag";
-				itct = std::find(ctList.begin(), ctList.end(), useCardType);
-			}
+            if (ctList.size() > 0)
+            {
+			    std::string useCardType = chip->getCardType();
+			    CardTypeList::iterator itct = std::find(ctList.begin(), ctList.end(), useCardType);
+			    // Try to use the generic card type
+			    if (itct == ctList.end())
+			    {
+				    useCardType = chip->getGenericCardType();
+				    LOG(LogLevel::INFOS) << "No configuration found for the chip type ! Looking for the generic type (" << useCardType << ") configuration...";
+				    itct = std::find(ctList.begin(), ctList.end(), useCardType);
+			    }
+			    // Try to use the configuration for all card (= generic tag), because the card type isn't configured
+			    if (itct == ctList.end())
+			    {
+				    LOG(LogLevel::INFOS) << "No configuration found for the chip type ! Looking for \"GenericTag\" configuration...";
+				    useCardType = "GenericTag";
+				    itct = std::find(ctList.begin(), ctList.end(), useCardType);
+			    }
 
-			// Try to read the number only if a configuration exists (for this card type or default)
-			if (itct != ctList.end())
-			{
-				LOG(LogLevel::INFOS) << "Configuration found in the composite ! Retrieving format for card...";
-				boost::shared_ptr<AccessInfo> ai;
-				boost::shared_ptr<Location> loc;
-				boost::shared_ptr<Format> format;
-				composite->retrieveFormatForCard(useCardType, &format, &loc, &ai);
+			    // Try to read the number only if a configuration exists (for this card type or default)
+			    if (itct != ctList.end())
+			    {
+				    LOG(LogLevel::INFOS) << "Configuration found in the composite ! Retrieving format for card...";
+				    boost::shared_ptr<AccessInfo> ai;
+				    boost::shared_ptr<Location> loc;
+				    boost::shared_ptr<Format> format;
+				    composite->retrieveFormatForCard(useCardType, &format, &loc, &ai);
 
-				if (format)
-				{
-					LOG(LogLevel::INFOS) << "Format retrieved successfully ! Reading the format...";
-					format = composite->readFormat(chip);	// Read format on chip
+				    if (format)
+				    {
+					    LOG(LogLevel::INFOS) << "Format retrieved successfully ! Reading the format...";
+					    format = composite->readFormat(chip);	// Read format on chip
 
-					if (format)
-					{
-						LOG(LogLevel::INFOS) << "Format read successfully ! Getting identifier...";
-						ret = format->getIdentifier();
-					}
-					else
-					{
-						LOG(LogLevel::ERRORS) << "Unable to read the format !";
-					}
-				}
-				else
-				{
-					LOG(LogLevel::WARNINGS) << "Cannot retrieve the format for card ! Trying using getNumber directly...";
-					ret = getNumber(chip);
-				}
-			}
-			else
-			{
-				LOG(LogLevel::ERRORS) << "No configuration found !";
-			}
+					    if (format)
+					    {
+						    LOG(LogLevel::INFOS) << "Format read successfully ! Getting identifier...";
+						    ret = format->getIdentifier();
+					    }
+					    else
+					    {
+						    LOG(LogLevel::ERRORS) << "Unable to read the format !";
+					    }
+				    }
+				    else
+				    {
+					    LOG(LogLevel::WARNINGS) << "Cannot retrieve the format for card ! Trying using getNumber directly...";
+					    ret = getNumber(chip);
+				    }
+			    }
+			    else
+			    {
+				    LOG(LogLevel::ERRORS) << "No configuration found !";
+			    }
+            }
+            else
+            {
+                LOG(LogLevel::INFOS) << "Composite card format is NOT NULL, but no card configuration ! Reader chip identifier directly...";
+			    ret = chip->getChipIdentifier();
+            }
 		}
 		else
 		{
