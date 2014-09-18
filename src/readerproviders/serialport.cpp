@@ -7,6 +7,7 @@
 
 #include "logicalaccess/myexception.hpp"
 #include "logicalaccess/readerproviders/serialport.hpp"
+#include "logicalaccess/bufferhelper.hpp"
 
 #include <boost/asio.hpp>
 #include <boost/asio/basic_serial_port.hpp>
@@ -40,6 +41,7 @@ namespace logicalaccess
 
 		if (!m_thread_reader)
 		{
+			m_available_data.lock();
 			m_serial_port.async_read_some(boost::asio::buffer(m_read_buffer),
 				boost::bind(&SerialPort::do_read, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
 			m_thread_reader.reset(new std::thread(boost::bind(&boost::asio::io_service::run, &m_io))); 
@@ -58,6 +60,7 @@ namespace logicalaccess
 		if (m_thread_reader)
 			m_thread_reader->join();
 
+		m_available_data.unlock();
 		m_io.reset();
 		m_thread_reader.reset();
 		m_circular_read_buffer.clear();
@@ -148,6 +151,7 @@ namespace logicalaccess
 		{
 			buf.assign(m_circular_read_buffer.begin(), m_circular_read_buffer.end());
 			m_circular_read_buffer.clear();
+			LOG(LogLevel::COMS) << "Use data readed: " << BufferHelper::getHex(buf) << " Size: " << buf.size();
 		}
 		m_mutex_reader.unlock();
 
@@ -168,11 +172,18 @@ namespace logicalaccess
 		m_mutex_reader.lock();
 		if (m_circular_read_buffer.reserve() < bytes_transferred)
 		{
-			LOG(LogLevel::WARNINGS) << "Buffer Overflow";
+			LOG(LogLevel::WARNINGS) << "Buffer Overflow, Size: " << m_circular_read_buffer.size()
+					<< " reserve: " << m_circular_read_buffer.reserve()
+					<< " bytes transferred: " << bytes_transferred;
 			m_circular_read_buffer.clear();
 		}
 
 		m_circular_read_buffer.insert(m_circular_read_buffer.end(), m_read_buffer.begin(), m_read_buffer.begin() + bytes_transferred);
+		LOG(LogLevel::COMS) << "Data readed: "
+			<< BufferHelper::getHex(std::vector<unsigned char>(m_read_buffer.begin(), m_read_buffer.begin() + bytes_transferred))
+			<< " Size: " << bytes_transferred;
+
+		m_available_data.unlock();
 		m_mutex_reader.unlock();
 
 		// start the next read

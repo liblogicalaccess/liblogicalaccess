@@ -17,7 +17,7 @@
 #include <boost/filesystem.hpp>
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
-#include "logicalaccess/readerproviders/serialportdatatransport.hpp"
+#include "readercardadapters/admittodatatransport.hpp"
 
 namespace logicalaccess
 {
@@ -33,7 +33,7 @@ namespace logicalaccess
 	{
 		d_readerUnitConfig.reset(new AdmittoReaderUnitConfiguration());
 		setDefaultReaderCardAdapter (boost::shared_ptr<AdmittoReaderCardAdapter> (new AdmittoReaderCardAdapter()));
-		boost::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
+		boost::shared_ptr<AdmittoDataTransport> dataTransport(new AdmittoDataTransport());
 		setDataTransport(dataTransport);
 		d_card_type = "UNKNOWN";
 
@@ -78,7 +78,7 @@ namespace logicalaccess
 		LOG(LogLevel::INFOS) << "Waiting insertion... max wait {" << maxwait << "}";
 
 		bool inserted = false;
-		unsigned int currentWait = 0;
+		std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(maxwait);
 		
 		try
 		{
@@ -118,11 +118,8 @@ namespace logicalaccess
 				}
 
 				if (!inserted)
-				{
-					std::this_thread::sleep_for(std::chrono::milliseconds(500));
-					currentWait += 500;
-				}
-			} while (!inserted && (maxwait == 0 || currentWait < maxwait));
+					std::this_thread::sleep_for(std::chrono::milliseconds(250));
+			} while (!inserted && std::chrono::steady_clock::now() < clock_timeout);
 		}
 		catch (...)
 		{
@@ -130,7 +127,7 @@ namespace logicalaccess
 			throw;
 		}
 
-		LOG(LogLevel::INFOS) << "Returns card inserted ? {" << inserted << "} function timeout expired ? {" << (maxwait != 0 && currentWait >= maxwait) << "}";
+		LOG(LogLevel::INFOS) << "Returns card inserted ? {" << inserted << "} function timeout expired ? {" << (std::chrono::steady_clock::now() < clock_timeout) << "}";
 		Settings::getInstance()->IsLogEnabled = oldValue;
 
 		return inserted;
@@ -146,7 +143,7 @@ namespace logicalaccess
 
 		LOG(LogLevel::INFOS) << "Waiting removal... max wait {" << maxwait << "}";
 		bool removed = false;
-		unsigned int currentWait = 0;
+		std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(maxwait);
 
 		try
 		{
@@ -194,11 +191,8 @@ namespace logicalaccess
 					}
 
 					if (!removed)
-					{
-						std::this_thread::sleep_for(std::chrono::milliseconds(500));
-						currentWait += 500;
-					}
-				} while (!removed && (maxwait == 0 || currentWait < maxwait));
+						std::this_thread::sleep_for(std::chrono::milliseconds(250));
+				} while (!removed && std::chrono::steady_clock::now() < clock_timeout);
 			}
 		}
 		catch (...)
@@ -207,7 +201,7 @@ namespace logicalaccess
 			throw;
 		}
 
-		LOG(LogLevel::INFOS) << "Returns card removed ? {" << removed << "} - function timeout expired ? {" << (maxwait != 0 && currentWait >= maxwait) << "}";
+		LOG(LogLevel::INFOS) << "Returns card removed ? {" << removed << "} - function timeout expired ? {" << (std::chrono::steady_clock::now() < clock_timeout) << "}";
 
 		Settings::getInstance()->IsLogEnabled = oldValue;
 

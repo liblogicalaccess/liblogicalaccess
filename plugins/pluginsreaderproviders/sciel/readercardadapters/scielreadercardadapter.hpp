@@ -58,13 +58,6 @@ namespace logicalaccess
 			 * \return The list of tags detected by the reader.
 			 */
 			std::list<std::vector<unsigned char>> receiveTagsListCommand(const std::vector<unsigned char>& command, long int timeout = 2000);
-
-		protected:
-
-			/**
-			 * \brief Trashed data from last command response.
-			 */
-			std::vector<unsigned char> d_trashedData;
 	};
 
 }

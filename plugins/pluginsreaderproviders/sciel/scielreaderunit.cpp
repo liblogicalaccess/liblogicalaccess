@@ -15,7 +15,7 @@
 #include "logicalaccess/cards/chip.hpp"
 #include "readercardadapters/scielreadercardadapter.hpp"
 #include <boost/filesystem.hpp>
-#include "logicalaccess/readerproviders/serialportdatatransport.hpp"
+#include "readercardadapters/scieldatatransport.hpp"
 
 namespace logicalaccess
 {
@@ -24,7 +24,7 @@ namespace logicalaccess
 	{
 		d_readerUnitConfig.reset(new SCIELReaderUnitConfiguration());
 		setDefaultReaderCardAdapter (boost::shared_ptr<SCIELReaderCardAdapter> (new SCIELReaderCardAdapter()));
-		boost::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
+		boost::shared_ptr<ScielDataTransport> dataTransport(new ScielDataTransport());
 		setDataTransport(dataTransport);
 		d_card_type = "UNKNOWN";
 
@@ -163,7 +163,11 @@ namespace logicalaccess
 			LOG(LogLevel::INFOS) << "Sending COM command...";
 
 			std::list<std::vector<unsigned char> > allTags = getDefaultSCIELReaderCardAdapter()->receiveTagsListCommand(cmd);
-
+            for (std::list<std::vector<unsigned char> >::iterator i = allTags.begin(); i != allTags.end(); ++i)
+		    {
+			    LOG(LogLevel::INFOS) << "  -> allTags identifier " << BufferHelper::getHex((*i));
+		    }
+            
 			for (std::list<std::vector<unsigned char> >::iterator i = allTags.begin(); i != allTags.end(); ++i)
 			{
 				boost::shared_ptr<Chip> rChip = createChipFromBuffer((*i));
@@ -826,7 +830,7 @@ namespace logicalaccess
 		EXCEPTION_ASSERT_WITH_LOG(r[0] == cmd[0] && r[1] == cmd[1], LibLogicalAccessException, "Bad response getting SCIEL AD convertor value. Bad command response identifier.");
 		EXCEPTION_ASSERT_WITH_LOG(r[4] == d_scielIdentifier[0] && r[5] == d_scielIdentifier[1], LibLogicalAccessException, "Bad response getting SCIEL AD convertor value. Bad reader response identifier.");
 
-		convertorValue = static_cast<unsigned char>(strtoul(BufferHelper::getStdString(std::vector<unsigned char>(r.end() - 2, r.end())).c_str(), NULL, 16));
+		convertorValue = static_cast<unsigned char>(strtoul(BufferHelper::getStdString(std::vector<unsigned char>(r.begin() + 2, r.end() - 2)).c_str(), NULL, 16));
 
 		return convertorValue;
 	}

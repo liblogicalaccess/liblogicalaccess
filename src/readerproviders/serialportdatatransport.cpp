@@ -86,16 +86,15 @@ namespace logicalaccess
 
 	std::vector<unsigned char> SerialPortDataTransport::receive(long int timeout)
 	{
-		std::vector<unsigned char> res, tmpbuf;
-		std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeout);
+		std::vector<unsigned char> res;
+		const std::chrono::steady_clock::time_point clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeout);
 
 		do
 		{
-			d_port->getSerialPort()->read(tmpbuf, 128);
-			if (!tmpbuf.size())
-				std::this_thread::sleep_for(std::chrono::milliseconds(250));
-			else
-				res.insert(res.end(), tmpbuf.begin(), tmpbuf.end());
+			if (d_port->getSerialPort()->getAvailableDataMutex().try_lock_until(boost::chrono::steady_clock::now() + boost::chrono::milliseconds(timeout)))
+			{
+				d_port->getSerialPort()->read(res, 128);
+			}
 		}
 		while (std::chrono::steady_clock::now() < clock_timeout && res.size() == 0x00);
 
@@ -216,7 +215,7 @@ namespace logicalaccess
 		node.put("PortBaudRate", d_portBaudRate);
 		d_port->serialize(node);
 
-		parentNode.add_child(getDefaultXmlNodeName(), node);
+		parentNode.add_child(SerialPortDataTransport::getDefaultXmlNodeName(), node);
 	}
 
 	void SerialPortDataTransport::unSerialize(boost::property_tree::ptree& node)

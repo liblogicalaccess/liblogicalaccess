@@ -1,14 +1,14 @@
 /**
- * \file stidstrreaderdatatransport.hpp
+ * \file axesstmc13datatransport.hpp
  * \author Adrien J. <adrien.jund@islog.com>
- * \brief STidSTR DataTransport. 
+ * \brief Axesstmc13 DataTransport. 
  */
 
-#ifndef STIDSTRREADERDATATRANSPORT_HPP
-#define STIDSTRREADERDATATRANSPORT_HPP
+#ifndef AXESSTMC13DATATRANSPORT_HPP
+#define AXESSTMC13DATATRANSPORT_HPP
 
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
-#include "stidstrreaderbufferparser.hpp"
+#include "axesstmc13bufferparser.hpp"
 
 #include <string>
 #include <vector>
@@ -16,19 +16,19 @@
 
 namespace logicalaccess
 {	
-	class LIBLOGICALACCESS_API STidSTRDataTransport : public SerialPortDataTransport
+	class LIBLOGICALACCESS_API AxessTMC13DataTransport : public SerialPortDataTransport
 	{
 	public:
-		STidSTRDataTransport(const std::string& portname = "") : SerialPortDataTransport(portname) {};
+		AxessTMC13DataTransport(const std::string& portname = "") : SerialPortDataTransport(portname) {};
 
 		virtual void setSerialPort(boost::shared_ptr<SerialPortXml> port)
-		{ d_port = port; d_port->getSerialPort()->setCircularBufferParser(new STidSTRBufferParser()); };
+		{ d_port = port; d_port->getSerialPort()->setCircularBufferParser(new AxessTMC13BufferParser()); };
 
 		/**
 		 * \brief Get the transport type of this instance.
 		 * \return The transport type.
 		 */
-		virtual std::string getTransportType() const { return "STidSTRSerialPort"; };
+		virtual std::string getTransportType() const { return "AxessTMC13SerialPort"; };
 
 		/**
 		 * \brief Serialize the current object to XML.
@@ -43,17 +43,17 @@ namespace logicalaccess
 		 */
 		void unSerialize(boost::property_tree::ptree& node)
 		{ SerialPortDataTransport::unSerialize(node.get_child(SerialPortDataTransport::getDefaultXmlNodeName()));
-		  d_port->getSerialPort()->setCircularBufferParser(new STidSTRBufferParser()); }
+	      d_port->getSerialPort()->setCircularBufferParser(new AxessTMC13BufferParser()); }
 
 		/**
 		 * \brief Get the default Xml Node name for this object.
 		 * \return The Xml node name.
 		 */
-		virtual std::string getDefaultXmlNodeName() const { return "STidSTRDataTransport"; };
+		virtual std::string getDefaultXmlNodeName() const { return "AxessTMC13DataTransport"; };
 	};
 
 }
 
-#endif /* STIDSTRREADERDATATRANSPORT_HPP */
+#endif /* AXESSTMC13DATATRANSPORT_HPP */
 
  
