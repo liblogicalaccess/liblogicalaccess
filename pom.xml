@@ -101,230 +101,6 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.2.1</version>
-				<configuration>
-					<executable>msbuild</executable>
-				</configuration>
-				<executions>
-					<!--<execution>
-						<id>changeversion</id>
-						<phase>compile</phase>
-						<configuration>
-							<executable>ExportMavenVersion</executable>
-							<arguments>
-								<argument>${version}.${buildNumber}.0</argument>
-								<argument>vc++</argument>
-							</arguments>							
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>-->
-					<execution>
-						<id>clean-sln</id>
-						<phase>clean</phase>
-						<configuration>
-							<successCodes>
-								<successCode>1</successCode>
-								<successCode>0</successCode>
-							</successCodes>
-							<arguments>
-								<argument>INSTALL.vcxproj</argument>
-								<argument>/p:Configuration=Release</argument>
-								<argument>/t:Clean</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>clean-debug-sln</id>
-						<phase>clean</phase>
-						<configuration>
-							<successCodes>
-								<successCode>1</successCode>
-								<successCode>0</successCode>
-							</successCodes>
-							<arguments>
-								<argument>INSTALL.vcxproj</argument>
-								<argument>/p:Configuration=Debug</argument>
-								<argument>/t:Clean</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>cmake-Win32</id>
-						<phase>compile</phase>
-						<configuration>
-							<executable>scripts/GenerateWin32Solutions.bat</executable>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>build-Win32</id>
-						<phase>compile</phase>
-						<configuration>
-							<arguments>
-								<argument>INSTALL.vcxproj</argument>
-								<argument>/p:Configuration=Release</argument>
-								<argument>/p:Platform=Win32</argument>
-								<argument>/t:Build</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>build-kbdhook-Win32</id>
-						<phase>compile</phase>
-						<configuration>
-							<workingDirectory>./plugins/pluginsreaderproviders/keyboard</workingDirectory>
-							<arguments>
-								<argument>islogkbdhook.sln</argument>
-								<argument>/p:Configuration=Release</argument>
-								<argument>/p:Platform=Win32</argument>
-								<argument>/t:Build</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>cmake-x64</id>
-						<phase>compile</phase>
-						<configuration>
-							<executable>scripts/GenerateX64Solutions.bat</executable>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>build-x64</id>
-						<phase>compile</phase>
-						<configuration>
-							<arguments>
-								<argument>INSTALL.vcxproj</argument>
-								<argument>/p:Configuration=Release</argument>
-								<argument>/p:Platform=x64</argument>
-								<argument>/t:Build</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>build-kbdhook-x64</id>
-						<phase>compile</phase>
-						<configuration>
-							<workingDirectory>./plugins/pluginsreaderproviders/keyboard</workingDirectory>
-							<arguments>
-								<argument>islogkbdhook.sln</argument>
-								<argument>/p:Configuration=Release</argument>
-								<argument>/p:Platform=x64</argument>
-								<argument>/t:Build</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>cmake-Win32-debug</id>
-						<phase>compile</phase>
-						<configuration>
-							<executable>scripts/GenerateWin32Solutions-debug.bat</executable>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>build-Win32-debug</id>
-						<phase>compile</phase>
-						<configuration>
-							<arguments>
-								<argument>INSTALL.vcxproj</argument>
-								<argument>/p:Configuration=Debug</argument>
-								<argument>/p:Platform=Win32</argument>
-								<argument>/t:Build</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>build-kbdhook-Win32-debug</id>
-						<phase>compile</phase>
-						<configuration>
-							<workingDirectory>./plugins/pluginsreaderproviders/keyboard</workingDirectory>
-							<arguments>
-								<argument>islogkbdhook.sln</argument>
-								<argument>/p:Configuration=Debug</argument>
-								<argument>/p:Platform=Win32</argument>
-								<argument>/t:Build</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>cmake-x64-debug</id>
-						<phase>compile</phase>
-						<configuration>
-							<executable>scripts/GenerateX64Solutions-debug.bat</executable>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>build-x64-debug</id>
-						<phase>compile</phase>
-						<configuration>
-							<arguments>
-								<argument>INSTALL.vcxproj</argument>
-								<argument>/p:Configuration=Debug</argument>
-								<argument>/p:Platform=x64</argument>
-								<argument>/t:Build</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>build-kbdhook-x64-debug</id>
-						<phase>compile</phase>
-						<configuration>
-							<workingDirectory>./plugins/pluginsreaderproviders/keyboard</workingDirectory>
-							<arguments>
-								<argument>islogkbdhook.sln</argument>
-								<argument>/p:Configuration=Debug</argument>
-								<argument>/p:Platform=x64</argument>
-								<argument>/t:Build</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.4</version>
 				<configuration>
@@ -400,59 +176,579 @@
 					</filesets>
 				</configuration>
 			</plugin>
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.7</version>
-				<executions>
-					<execution>
-						<phase>compile</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<tasks>
-								<copy todir="${project.basedir}/install/bin/Win32/Release" flatten="true">
-									<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
-										<include name="**/bin/Win32/Release/*.dll"/>
-										<include name="**/bin/Win32/Release/*.exe"/>
-									</fileset>
-								</copy>
-								<copy todir="${project.basedir}/install/bin/x64/Release" flatten="true">
-									<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
-										<include name="**/bin/x64/Release/*.dll"/>
-										<include name="**/bin/x64/Release/*.exe"/>
-									</fileset>
-								</copy>
-								<copy todir="${project.basedir}/install/bin/Win32/Debug" flatten="true">
-									<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
-										<include name="**/bin/Win32/Debug/*.dll"/>
-										<include name="**/bin/Win32/Debug/*.exe"/>
-									</fileset>
-								</copy>
-								<copy todir="${project.basedir}/install/bin/x64/Debug" flatten="true">
-									<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
-										<include name="**/bin/x64/Debug/*.dll"/>
-										<include name="**/bin/x64/Debug/*.exe"/>
-									</fileset>
-								</copy>
-								<copy todir="${project.basedir}/install/etc" flatten="true">
-									<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
-										<include name="islogkbdsettings.config"/>
-									</fileset>
-								</copy>
-								<exec executable="scripts/postbuild.bat">
-									<arg value="${islog.ISLOGSign}" />
-									<arg value="install/bin" />
-								</exec>
-							</tasks>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 		<finalName>${project.artifactId}-${project.version}</finalName>
 	</build>
 	
+	<profiles>
+		<profile>
+			<id>build-msbuild</id>
+			<activation>
+				<property><name>!islog.dgbuild</name></property>
+			</activation>
+	
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.2.1</version>
+						<configuration>
+							<executable>msbuild</executable>
+						</configuration>
+						<executions>
+							<execution>
+								<id>clean-sln</id>
+								<phase>clean</phase>
+								<configuration>
+									<successCodes>
+										<successCode>1</successCode>
+										<successCode>0</successCode>
+									</successCodes>
+									<arguments>
+										<argument>INSTALL.vcxproj</argument>
+										<argument>/p:Configuration=Release</argument>
+										<argument>/t:Clean</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>clean-debug-sln</id>
+								<phase>clean</phase>
+								<configuration>
+									<successCodes>
+										<successCode>1</successCode>
+										<successCode>0</successCode>
+									</successCodes>
+									<arguments>
+										<argument>INSTALL.vcxproj</argument>
+										<argument>/p:Configuration=Debug</argument>
+										<argument>/t:Clean</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>cmake-Win32</id>
+								<phase>compile</phase>
+								<configuration>
+									<executable>scripts/GenerateWin32Solutions.bat</executable>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>build-Win32</id>
+								<phase>compile</phase>
+								<configuration>
+									<arguments>
+										<argument>INSTALL.vcxproj</argument>
+										<argument>/p:Configuration=Release</argument>
+										<argument>/p:Platform=Win32</argument>
+										<argument>/t:Build</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>build-kbdhook-Win32</id>
+								<phase>compile</phase>
+								<configuration>
+									<workingDirectory>./plugins/pluginsreaderproviders/keyboard</workingDirectory>
+									<arguments>
+										<argument>islogkbdhook.sln</argument>
+										<argument>/p:Configuration=Release</argument>
+										<argument>/p:Platform=Win32</argument>
+										<argument>/t:Build</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>cmake-x64</id>
+								<phase>compile</phase>
+								<configuration>
+									<executable>scripts/GenerateX64Solutions.bat</executable>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>build-x64</id>
+								<phase>compile</phase>
+								<configuration>
+									<arguments>
+										<argument>INSTALL.vcxproj</argument>
+										<argument>/p:Configuration=Release</argument>
+										<argument>/p:Platform=x64</argument>
+										<argument>/t:Build</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>build-kbdhook-x64</id>
+								<phase>compile</phase>
+								<configuration>
+									<workingDirectory>./plugins/pluginsreaderproviders/keyboard</workingDirectory>
+									<arguments>
+										<argument>islogkbdhook.sln</argument>
+										<argument>/p:Configuration=Release</argument>
+										<argument>/p:Platform=x64</argument>
+										<argument>/t:Build</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>cmake-Win32-debug</id>
+								<phase>compile</phase>
+								<configuration>
+									<executable>scripts/GenerateWin32Solutions-debug.bat</executable>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>build-Win32-debug</id>
+								<phase>compile</phase>
+								<configuration>
+									<arguments>
+										<argument>INSTALL.vcxproj</argument>
+										<argument>/p:Configuration=Debug</argument>
+										<argument>/p:Platform=Win32</argument>
+										<argument>/t:Build</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>build-kbdhook-Win32-debug</id>
+								<phase>compile</phase>
+								<configuration>
+									<workingDirectory>./plugins/pluginsreaderproviders/keyboard</workingDirectory>
+									<arguments>
+										<argument>islogkbdhook.sln</argument>
+										<argument>/p:Configuration=Debug</argument>
+										<argument>/p:Platform=Win32</argument>
+										<argument>/t:Build</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>cmake-x64-debug</id>
+								<phase>compile</phase>
+								<configuration>
+									<executable>scripts/GenerateX64Solutions-debug.bat</executable>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>build-x64-debug</id>
+								<phase>compile</phase>
+								<configuration>
+									<arguments>
+										<argument>INSTALL.vcxproj</argument>
+										<argument>/p:Configuration=Debug</argument>
+										<argument>/p:Platform=x64</argument>
+										<argument>/t:Build</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>build-kbdhook-x64-debug</id>
+								<phase>compile</phase>
+								<configuration>
+									<workingDirectory>./plugins/pluginsreaderproviders/keyboard</workingDirectory>
+									<arguments>
+										<argument>islogkbdhook.sln</argument>
+										<argument>/p:Configuration=Debug</argument>
+										<argument>/p:Platform=x64</argument>
+										<argument>/t:Build</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.7</version>
+						<executions>
+							<execution>
+								<phase>compile</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<copy todir="${project.basedir}/install/bin/Win32/Release" flatten="true">
+											<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
+												<include name="**/bin/Win32/Release/*.dll"/>
+												<include name="**/bin/Win32/Release/*.exe"/>
+											</fileset>
+										</copy>
+										<copy todir="${project.basedir}/install/bin/x64/Release" flatten="true">
+											<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
+												<include name="**/bin/x64/Release/*.dll"/>
+												<include name="**/bin/x64/Release/*.exe"/>
+											</fileset>
+										</copy>
+										<copy todir="${project.basedir}/install/bin/Win32/Debug" flatten="true">
+											<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
+												<include name="**/bin/Win32/Debug/*.dll"/>
+												<include name="**/bin/Win32/Debug/*.exe"/>
+											</fileset>
+										</copy>
+										<copy todir="${project.basedir}/install/bin/x64/Debug" flatten="true">
+											<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
+												<include name="**/bin/x64/Debug/*.dll"/>
+												<include name="**/bin/x64/Debug/*.exe"/>
+											</fileset>
+										</copy>
+										<copy todir="${project.basedir}/install/etc" flatten="true">
+											<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
+												<include name="islogkbdsettings.config"/>
+											</fileset>
+										</copy>
+										<exec executable="scripts/postbuild.bat">
+											<arg value="${islog.ISLOGSign}" />
+											<arg value="install/bin" />
+										</exec>
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		<profile>
+			<!-- IncrediBuild -->
+			<id>build-incredibuild</id>
+			<activation>
+				<property><name>islog.dgbuild</name></property>
+			</activation>
+	
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.2.1</version>
+						<configuration>
+							<executable>BuildConsole</executable>
+						</configuration>
+						<executions>
+							<execution>
+								<id>cmake-Win32</id>
+								<phase>compile</phase>
+								<configuration>
+									<executable>scripts/GenerateWin32Solutions.bat</executable>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>build-Win32</id>
+								<phase>compile</phase>
+								<configuration>
+									<arguments>
+										<argument>liblogicalaccess.sln</argument>
+										<argument>/rebuild</argument>
+										<argument>/prj=INSTALL</argument>
+										<argument>/cfg="Release|Win32"</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>build-Win32-2</id>
+								<phase>compile</phase>
+								<configuration>
+									<executable>msbuild</executable>
+									<arguments>
+										<argument>INSTALL.vcxproj</argument>
+										<argument>/p:Configuration=Release</argument>
+										<argument>/p:Platform=Win32</argument>
+										<argument>/t:Build</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>build-kbdhook-Win32</id>
+								<phase>compile</phase>
+								<configuration>
+									<workingDirectory>./plugins/pluginsreaderproviders/keyboard</workingDirectory>
+									<arguments>
+										<argument>islogkbdhook.sln</argument>
+										<argument>/rebuild</argument>
+										<argument>/cfg="Release|Win32"</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>cmake-x64</id>
+								<phase>compile</phase>
+								<configuration>
+									<executable>scripts/GenerateX64Solutions.bat</executable>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>build-x64</id>
+								<phase>compile</phase>
+								<configuration>
+									<arguments>
+										<argument>liblogicalaccess.sln</argument>
+										<argument>/rebuild</argument>
+										<argument>/prj=INSTALL</argument>
+										<argument>/cfg="Release|x64"</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>build-x64-2</id>
+								<phase>compile</phase>
+								<configuration>
+									<executable>msbuild</executable>
+									<arguments>
+										<argument>INSTALL.vcxproj</argument>
+										<argument>/p:Configuration=Release</argument>
+										<argument>/p:Platform=x64</argument>
+										<argument>/t:Build</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>build-kbdhook-x64</id>
+								<phase>compile</phase>
+								<configuration>
+									<workingDirectory>./plugins/pluginsreaderproviders/keyboard</workingDirectory>
+									<arguments>
+										<argument>islogkbdhook.sln</argument>
+										<argument>/rebuild</argument>
+										<argument>/cfg="Release|x64"</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>cmake-Win32-debug</id>
+								<phase>compile</phase>
+								<configuration>
+									<executable>scripts/GenerateWin32Solutions-debug.bat</executable>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>build-Win32-debug</id>
+								<phase>compile</phase>
+								<configuration>
+									<arguments>
+										<argument>liblogicalaccess.sln</argument>
+										<argument>/rebuild</argument>
+										<argument>/prj=INSTALL</argument>
+										<argument>/cfg="Debug|Win32"</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>build-Win32-debug-2</id>
+								<phase>compile</phase>
+								<configuration>
+									<executable>msbuild</executable>
+									<arguments>
+										<argument>INSTALL.vcxproj</argument>
+										<argument>/p:Configuration=Debug</argument>
+										<argument>/p:Platform=Win32</argument>
+										<argument>/t:Build</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>build-kbdhook-Win32-debug</id>
+								<phase>compile</phase>
+								<configuration>
+									<workingDirectory>./plugins/pluginsreaderproviders/keyboard</workingDirectory>
+									<arguments>
+										<argument>islogkbdhook.sln</argument>
+										<argument>/rebuild</argument>
+										<argument>/cfg="Debug|Win32"</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>cmake-x64-debug</id>
+								<phase>compile</phase>
+								<configuration>
+									<executable>scripts/GenerateX64Solutions-debug.bat</executable>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>build-x64-debug</id>
+								<phase>compile</phase>
+								<configuration>
+									<arguments>
+										<argument>liblogicalaccess.sln</argument>
+										<argument>/rebuild</argument>
+										<argument>/prj=INSTALL</argument>
+										<argument>/cfg="Debug|x64"</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>build-x64-debug-2</id>
+								<phase>compile</phase>
+								<configuration>
+									<executable>msbuild</executable>
+									<arguments>
+										<argument>INSTALL.vcxproj</argument>
+										<argument>/p:Configuration=Debug</argument>
+										<argument>/p:Platform=x64</argument>
+										<argument>/t:Build</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>build-kbdhook-x64-debug</id>
+								<phase>compile</phase>
+								<configuration>
+									<workingDirectory>./plugins/pluginsreaderproviders/keyboard</workingDirectory>
+									<arguments>
+										<argument>islogkbdhook.sln</argument>
+										<argument>/rebuild</argument>
+										<argument>/cfg="Debug|x64"</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.7</version>
+						<executions>
+							<execution>
+								<phase>compile</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<copy todir="${project.basedir}/install/bin/Win32/Release" flatten="true">
+											<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
+												<include name="**/bin/Win32/Release/*.dll"/>
+												<include name="**/bin/Win32/Release/*.exe"/>
+											</fileset>
+										</copy>
+										<copy todir="${project.basedir}/install/bin/x64/Release" flatten="true">
+											<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
+												<include name="**/bin/x64/Release/*.dll"/>
+												<include name="**/bin/x64/Release/*.exe"/>
+											</fileset>
+										</copy>
+										<copy todir="${project.basedir}/install/bin/Win32/Debug" flatten="true">
+											<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
+												<include name="**/bin/Win32/Debug/*.dll"/>
+												<include name="**/bin/Win32/Debug/*.exe"/>
+											</fileset>
+										</copy>
+										<copy todir="${project.basedir}/install/bin/x64/Debug" flatten="true">
+											<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
+												<include name="**/bin/x64/Debug/*.dll"/>
+												<include name="**/bin/x64/Debug/*.exe"/>
+											</fileset>
+										</copy>
+										<copy todir="${project.basedir}/install/etc" flatten="true">
+											<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
+												<include name="islogkbdsettings.config"/>
+											</fileset>
+										</copy>
+										<exec executable="scripts/postbuild.bat">
+											<arg value="${islog.ISLOGSign}" />
+											<arg value="install/bin" />
+										</exec>
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+			
 	<dependencies>
 		<dependency>
 			<groupId>lib.portable</groupId>
