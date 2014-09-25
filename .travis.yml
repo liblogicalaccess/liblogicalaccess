@@ -13,8 +13,7 @@ before_install:
   - sudo apt-get install -qq libboost1.55-dev libboost-system1.55-dev libboost-filesystem1.55-dev libboost-date-time1.55-dev libboost-chrono1.55-dev libboost-thread1.55-dev libpcsclite-dev libssl-dev
   - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.7; fi
   - if [ "$CXX" = "g++" ]; then export CXX="g++-4.7" CC="gcc-4.7"; fi
-  - mkdir build
-script: pushd build && cmake -DCMAKE_INSTALL_PREFIX=$PWD/install .. && make install && popd && cd samples/basic/ && mkdir build && pushd build && cmake -DLibLogicalAccess_DIR=$PWD/../../../build/install/lib/cmake/liblogicalaccess .. && make
+script: if [ ${COVERITY_SCAN_BRANCH} != 1 ]; then mkdir build && pushd build && cmake -DCMAKE_INSTALL_PREFIX=$PWD/install .. && make install && popd && cd samples/basic/ && mkdir build && pushd build && cmake -DLibLogicalAccess_DIR=$PWD/../../../build/install/lib/cmake/liblogicalaccess .. && make ; fi
 notifications:
   recipients: reports@islog.com
   
@@ -24,6 +23,6 @@ addons:
       name: "islog/liblogicalaccess"
       description: "Build submitted via Travis CI"
     notification_email: reports@islog.com
-    build_command_prepend: "cd build && cmake -DCMAKE_INSTALL_PREFIX=$PWD/install .."
+    build_command_prepend: "mkdir build && pushd build && cmake -DCMAKE_INSTALL_PREFIX=$PWD/install .."
     build_command: "make"
     branch_pattern: master
