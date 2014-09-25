@@ -23,6 +23,6 @@ addons:
       name: "islog/liblogicalaccess"
       description: "Build submitted via Travis CI"
     notification_email: reports@islog.com
-    build_command_prepend: "cmake -DCMAKE_INSTALL_PREFIX=$PWD/install ."
+    build_command_prepend: "cov-configure --comptype g++ --compiler ${CXX}; cmake -DCMAKE_INSTALL_PREFIX=$PWD/install ."
     build_command: make
     branch_pattern: master
