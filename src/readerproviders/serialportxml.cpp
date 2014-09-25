@@ -136,7 +136,7 @@ namespace logicalaccess
 					i += len + 1;
 				}
 			}
-		   delete buffer;
+		   delete[] buffer;
 		}
 #endif
 		return true;

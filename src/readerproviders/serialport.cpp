@@ -199,7 +199,7 @@ namespace logicalaccess
 		return buf.size();
 	}
 
-	void SerialPort::do_write(const std::vector<unsigned char> buf) 
+	void SerialPort::do_write(const std::vector<unsigned char>& buf) 
 	{
 		bool running = !m_write_buffer.empty();
 		m_write_buffer.insert(m_write_buffer.end(), buf.begin(), buf.end());

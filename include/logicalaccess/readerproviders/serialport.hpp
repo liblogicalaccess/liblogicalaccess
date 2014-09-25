@@ -154,7 +154,7 @@ namespace logicalaccess
 
 			void do_close(const boost::system::error_code& error);
 
-			void do_write(const std::vector<unsigned char> buf);
+			void do_write(const std::vector<unsigned char>& buf);
 			void write_start();
 			void write_complete(const boost::system::error_code& error, const std::size_t bytes_transferred);
 
