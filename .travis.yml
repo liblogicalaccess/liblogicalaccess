@@ -1,11 +1,12 @@
+language: cpp
+compiler: gcc
+
 env:
   global:
    # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
    #   via the "travis encrypt" command using the project repo's public key
    - secure: "guH3n3xAMHfWgDMkGymeLOs6VIyBbDHrmeztT5cKmZf2AJp87jmWQOY58IPcUcudWwSK9cxpXZlzk2GtzoSX2Xpi+d2HTzh7rzEpwB1Q4akMKcOtWrlTWT4+vHdt/WOFPNgyh7R7nf5vgmpZFs6de3+9bV1yLsIdrGeqh679jX8="
 
-language: cpp
-compiler: gcc
 before_install:
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y && sudo add-apt-repository ppa:boost-latest/ppa -y
   - sudo apt-get update -qq
@@ -24,4 +25,4 @@ addons:
     notification_email: reports@islog.com
     build_command_prepend: "mkdir build && pushd build && cmake -DCMAKE_INSTALL_PREFIX=$PWD/install .."
     build_command: "make"
-    branch_pattern: develop
+    branch_pattern: master
