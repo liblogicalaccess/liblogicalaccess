@@ -50,7 +50,7 @@ namespace logicalaccess
 		size_t fieldDataLengthBytes = (d_length + 7) / 8;
 		unsigned char* paddedBuffer = new unsigned char[fieldDataLengthBytes];
 		memset(paddedBuffer, d_padding, fieldDataLengthBytes);
-#if !defined(__unix__)
+#ifndef __unix__
 		memcpy_s(paddedBuffer, fieldDataLengthBytes, d_value.c_str(), d_value.size());
 #else
 		if (fieldDataLengthBytes < d_value.size())

@@ -81,6 +81,7 @@ namespace logicalaccess
 			positions[i++] = (*b);
 		}
 		unsigned char parity = Format::calculateParity(data, dataLengthBytes, d_parityType, positions, d_bitsUsePositions.size());
+		delete[] positions;
 		BitHelper::writeToBit(data, dataLengthBytes, pos, parity, 7, 1);
 	}
 
@@ -99,6 +100,7 @@ namespace logicalaccess
 		}
 		unsigned char parity = Format::calculateParity(data, dataLengthBytes, d_parityType, positions, d_bitsUsePositions.size());
 		unsigned char currentParity = (unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[*pos / 8] << (*pos % 8)) >> 7);
+		delete[] positions;
 
 		if (parity != currentParity)
 		{

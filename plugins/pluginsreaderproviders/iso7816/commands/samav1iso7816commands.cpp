@@ -36,7 +36,7 @@ namespace logicalaccess
 		unsigned char cmd[] = { d_cla, 0x64, keyno, 0x00, 0x00 };
 		std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
 		boost::shared_ptr<SAMKeyEntry<KeyEntryAV1Information, SETAV1> > keyentry;
-		KeyEntryAV1Information keyentryinformation;
+		KeyEntryAV1Information keyentryinformation = {0};
 
 		result = transmit(cmd_vector);
 
@@ -112,6 +112,7 @@ namespace logicalaccess
 		iv.resize(16, 0x00);
 
 		std::vector<unsigned char> vectordata(data, data + buffer_size);
+		delete[] data;
 		
 		std::vector<unsigned char> encdatalittle;
 		

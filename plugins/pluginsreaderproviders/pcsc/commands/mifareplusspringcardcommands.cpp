@@ -40,8 +40,9 @@ namespace logicalaccess
 		{
 			command.resize(4);
 			command[0] = 0x70;
-			command[3] = static_cast<unsigned char>(GetCrypto()->d_PCDcap.size());
-			command.insert(command.end(), GetCrypto()->d_PCDcap.begin(), GetCrypto()->d_PCDcap.end());
+			std::vector<unsigned char> PCDcap = GetCrypto()->d_PCDcap;
+			command[3] = static_cast<unsigned char>(PCDcap.size());
+			command.insert(command.end(), PCDcap.begin(), PCDcap.end());
 		}
 
 		res = AESSendCommand(command, t_cl, 1000);

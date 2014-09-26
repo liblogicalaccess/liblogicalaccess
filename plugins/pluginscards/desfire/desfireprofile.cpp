@@ -56,7 +56,7 @@ namespace logicalaccess
 	bool DESFireProfile::getKeyUsage(size_t index) const
 	{	
 		size_t nbKeys = sizeof(d_key) / sizeof(boost::shared_ptr<DESFireKey>);
-		if (index > nbKeys)
+		if (index >= nbKeys)
 		{
 			return false;
 		}
@@ -67,7 +67,7 @@ namespace logicalaccess
 	void DESFireProfile::setKeyUsage(size_t index, bool used)
 	{
 		size_t nbKeys = sizeof(d_key) / sizeof(boost::shared_ptr<DESFireKey>);
-		if (index > nbKeys)
+		if (index >= nbKeys)
 		{
 			return;
 		}

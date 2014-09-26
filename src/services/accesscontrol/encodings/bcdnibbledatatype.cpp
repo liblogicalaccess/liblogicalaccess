@@ -73,7 +73,7 @@ namespace logicalaccess
 				
 				ret = BitHelper::align(tmpswb2, i, tmpswb, i, dataLengthBits);
 				DataType::addParityToBuffer(d_leftParityType, d_rightParityType, 4, tmpswb2, shft, swb, static_cast<unsigned int>(dataConvertedLengthBytes * 8));
-				delete[] tmpswb;
+				delete[] tmpswb, tmpswb2;
 			}
 			else
 			{

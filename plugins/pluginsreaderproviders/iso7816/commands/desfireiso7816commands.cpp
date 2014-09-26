@@ -187,7 +187,8 @@ namespace logicalaccess
 			{
 				nxpdiv->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, key, keyno, diversifyNew);
 				keyDiv.diversifyNew = 0x01;
-				keyDiv.divInput = &diversifyNew[0];
+				keyDiv.divInput = new unsigned char[diversifyNew.size()];
+				memcpy(keyDiv.divInput, &diversifyNew[0], diversifyNew.size());
 				keyDiv.divInputSize = static_cast<unsigned char>(diversifyNew.size());
 			}
 
@@ -200,7 +201,6 @@ namespace logicalaccess
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Current and New Key should have the same system identifier and same NXP Div type.");
 
 				keyDiv.diversifyCurrent = 0x01;
-				keyDiv.divInput = &diversifyOld[0];
 				keyDiv.divInputSize = static_cast<unsigned char>(diversifyOld.size());
 			}
 
@@ -215,6 +215,10 @@ namespace logicalaccess
 			ret = samav1commands->changeKeyPICC(samck, keyDiv);
 		else
 			ret = samav2commands->changeKeyPICC(samck, keyDiv);
+
+		if (keyDiv.divInput != NULL)
+			delete keyDiv.divInput;
+
         d_crypto->d_lastIV.clear();
         d_crypto->d_lastIV.resize(d_crypto->d_block_size);
         std::copy(ret.end() - d_crypto->d_block_size, ret.end(), d_crypto->d_lastIV.begin());
@@ -666,24 +670,30 @@ namespace logicalaccess
     {
         unsigned char parameters[1];
         parameters[0] = fileno;
-
-        handleWriteData(DF_INS_CREDIT, parameters, static_cast<unsigned int>(sizeof(parameters)), std::vector<unsigned char>(&value, &value + 4), mode);
+		uint32_t dataValue = static_cast<uint32_t>(value);
+		std::vector<unsigned char> data(sizeof(dataValue));
+		memcpy(&data[0], &dataValue, sizeof(dataValue));
+        handleWriteData(DF_INS_CREDIT, parameters, static_cast<unsigned int>(sizeof(parameters)), data, mode);
     }
 
     void DESFireISO7816Commands::debit(unsigned char fileno, unsigned int value, EncryptionMode mode)
     {
         unsigned char parameters[1];
         parameters[0] = fileno;
-
-        handleWriteData(DF_INS_DEBIT, parameters, static_cast<unsigned int>(sizeof(parameters)), std::vector<unsigned char>(&value, &value + 4), mode);
+		uint32_t dataValue = static_cast<uint32_t>(value);
+		std::vector<unsigned char> data(sizeof(dataValue));
+		memcpy(&data[0], &dataValue, sizeof(dataValue));
+        handleWriteData(DF_INS_DEBIT, parameters, static_cast<unsigned int>(sizeof(parameters)), data, mode);
     }
 
     void DESFireISO7816Commands::limitedCredit(unsigned char fileno, unsigned int value, EncryptionMode mode)
     {
         unsigned char parameters[1];
         parameters[0] = static_cast<unsigned char>(fileno);
-
-        handleWriteData(DF_INS_LIMITED_CREDIT, parameters, static_cast<unsigned int>(sizeof(parameters)), std::vector<unsigned char>(&value, &value + 4), mode);
+		uint32_t dataValue = static_cast<uint32_t>(value);
+		std::vector<unsigned char> data(sizeof(dataValue));
+		memcpy(&data[0], &dataValue, sizeof(dataValue));
+        handleWriteData(DF_INS_LIMITED_CREDIT, parameters, static_cast<unsigned int>(sizeof(parameters)), data, mode);
     }
 
     void DESFireISO7816Commands::writeRecord(unsigned char fileno, unsigned int offset, unsigned int length, const void* data, EncryptionMode mode)

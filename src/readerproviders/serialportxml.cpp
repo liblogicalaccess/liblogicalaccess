@@ -94,6 +94,7 @@ namespace logicalaccess
 					}
 				}
 			}
+			closedir(pdir);
 		}
 		else
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Impossible to list SerialPort.");

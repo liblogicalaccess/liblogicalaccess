@@ -502,6 +502,7 @@ namespace logicalaccess
 		memcpy(data, &*(keyentry->getData()), keyentry->getLength());
 		memcpy(data + 48, &keyentry->getKeyEntryInformation(), sizeof(KeyEntryAV2Information));
 		std::vector<unsigned char> vectordata(data, data + buffer_size);
+		delete[] data;
 
 		unsigned char cmd[] = { d_cla, 0xc1, keyno, proMas, (unsigned char)vectordata.size() };
 		std::vector<unsigned char> cmd_vector(cmd, cmd + 5);
