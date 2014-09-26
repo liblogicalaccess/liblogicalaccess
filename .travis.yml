@@ -13,4 +13,6 @@ before_install:
   - sudo apt-get install -qq libpcsclite-dev libssl-dev
 
 script: mkdir build && pushd build && cmake -DCMAKE_INSTALL_PREFIX=$PWD/install .. && make install && popd && cd samples/basic/ && mkdir build && pushd build && cmake -DLibLogicalAccess_DIR=$PWD/../../../build/install/lib/cmake/liblogicalaccess .. && make
+
+notifications:
   recipients: reports@islog.com
