@@ -13,6 +13,7 @@ C++ RFID Library for Windows and Linux. For PC/SC, ISO compliant and proprietary
   * Development branch: develop [![Build Status](https://travis-ci.org/islog/liblogicalaccess.png?branch=develop)](https://travis-ci.org/islog/liblogicalaccess)
   * Features branches: feature-*
 
+Coverity Scan: [![Coverity Scan Build Status](https://scan.coverity.com/projects/2286/badge.svg)](https://scan.coverity.com/projects/2286)
 
 How to install?
 ----------------
