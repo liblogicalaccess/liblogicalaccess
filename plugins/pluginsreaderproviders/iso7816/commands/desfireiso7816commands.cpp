@@ -217,7 +217,7 @@ namespace logicalaccess
 			ret = samav2commands->changeKeyPICC(samck, keyDiv);
 
 		if (keyDiv.divInput != NULL)
-			delete keyDiv.divInput;
+			delete[] keyDiv.divInput;
 
         d_crypto->d_lastIV.clear();
         d_crypto->d_lastIV.resize(d_crypto->d_block_size);
