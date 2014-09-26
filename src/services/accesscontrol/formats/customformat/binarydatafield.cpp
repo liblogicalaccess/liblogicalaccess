@@ -155,6 +155,7 @@ namespace logicalaccess
 		revertBinaryData(data, dataLengthBytes, pos, d_length, paddedBuffer, fieldDataLengthBytes);
 
 		d_value = BinaryFieldValue(paddedBuffer, fieldDataLengthBytes);
+		delete[] paddedBuffer;
 	}
 
 	bool BinaryDataField::checkSkeleton(boost::shared_ptr<DataField> field) const
