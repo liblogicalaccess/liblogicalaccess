@@ -201,7 +201,6 @@ namespace logicalaccess
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Current and New Key should have the same system identifier and same NXP Div type.");
 
 				keyDiv.diversifyCurrent = 0x01;
-				keyDiv.divInputSize = static_cast<unsigned char>(diversifyOld.size());
 			}
 
 			if (boost::dynamic_pointer_cast<NXPAV2KeyDiversification>(nxpdiv))
