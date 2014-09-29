@@ -6,7 +6,6 @@
 
 #include "stidstrreadercardadapter.hpp"
 #include "logicalaccess/crypto/tomcrypt.h"
-#include <array>
 #include <openssl/evp.h>
 #include <openssl/hmac.h>
 #include <openssl/sha.h>

@@ -390,11 +390,6 @@ namespace logicalaccess
 				
 				for (unsigned int j = firstBlock; j < getMifarePlusChip()->getMifarePlusSL1Commands()->getNbBlocks(i); ++j)
 				{
-					if ((i == 0) && (j == 0))
-					{
-						continue;
-					}
-
 					if (!getMifarePlusChip()->getMifarePlusSL1Commands()->updateBinary(static_cast<unsigned char>(getMifarePlusChip()->getMifarePlusSL1Commands()->getSectorStartBlock(i) + j), zeroblock, 16))
 					{
 						erased = false;
@@ -418,11 +413,6 @@ namespace logicalaccess
 			
 				for (unsigned int j = firstBlock; j < getMifarePlusChip()->getMifarePlusSL1Commands()->getNbBlocks(i); ++j)
 				{
-					if ((i == 0) && (j == 0))
-					{
-						continue;
-					}
-
 					if (!getMifarePlusChip()->getMifarePlusSL1Commands()->updateBinary(static_cast<unsigned char>(getMifarePlusChip()->getMifarePlusSL1Commands()->getSectorStartBlock(i) + j), zeroblock, 16))
 					{
 						erased = false;

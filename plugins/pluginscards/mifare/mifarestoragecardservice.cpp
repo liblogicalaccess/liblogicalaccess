@@ -394,11 +394,6 @@ namespace logicalaccess
 				
 				for (unsigned int j = firstBlock; j < getMifareChip()->getMifareCommands()->getNbBlocks(i); ++j)
 				{
-					if ((i == 0) && (j == 0))
-					{
-						continue;
-					}
-
 					if (!getMifareChip()->getMifareCommands()->updateBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(i) + j), zeroblock, 16))
 					{
 						erased = false;
@@ -422,11 +417,6 @@ namespace logicalaccess
 			
 				for (unsigned int j = firstBlock; j < getMifareChip()->getMifareCommands()->getNbBlocks(i); ++j)
 				{
-					if ((i == 0) && (j == 0))
-					{
-						continue;
-					}
-
 					if (!getMifareChip()->getMifareCommands()->updateBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(i) + j), zeroblock, 16))
 					{
 						erased = false;

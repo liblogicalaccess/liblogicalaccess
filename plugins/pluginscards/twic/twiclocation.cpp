@@ -43,10 +43,12 @@ namespace logicalaccess
 		if (!Location::operator==(location))
 			return false;
 
+		if (typeid(location) != typeid(TwicLocation))
+			return false;
+
 		const TwicLocation* pxLocation = dynamic_cast<const TwicLocation*>(&location);
 
-		return (dataObject == pxLocation->dataObject
-			);
+		return (dataObject == pxLocation->dataObject);
 	}
 }
 

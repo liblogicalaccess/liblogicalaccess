@@ -146,10 +146,12 @@ namespace logicalaccess
 			case KT_KEY_A:
 				{
 					d_key[index * 2] = key;
+					break;
 				}
 			case KT_KEY_B:
 				{
 					d_key[index * 2 + 1] = key;
+					break;
 				}
 		}
 	}

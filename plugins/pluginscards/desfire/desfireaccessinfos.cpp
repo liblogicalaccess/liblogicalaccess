@@ -88,6 +88,9 @@ namespace logicalaccess
 		if (!AccessInfo::operator==(ai))
 			return false;
 
+		if (typeid(ai) != typeid(DESFireAccessInfo))
+			return false;
+
 		const DESFireAccessInfo* dfAi = dynamic_cast<const DESFireAccessInfo*>(&ai);
 
 		return (readKey == dfAi->readKey

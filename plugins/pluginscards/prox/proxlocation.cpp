@@ -41,10 +41,12 @@ namespace logicalaccess
 		if (!Location::operator==(location))
 			return false;
 
+		if (typeid(location) != typeid(ProxLocation))
+			return false;
+
 		const ProxLocation* pxLocation = dynamic_cast<const ProxLocation*>(&location);
 
-		return (bit == pxLocation->bit
-			);
+		return (bit == pxLocation->bit);
 	}
 }
 

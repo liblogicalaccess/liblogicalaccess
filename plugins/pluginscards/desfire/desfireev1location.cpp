@@ -56,12 +56,14 @@ namespace logicalaccess
 		if (!Location::operator==(location))
 			return false;
 
+		if (typeid(location) != typeid(DESFireEV1Location))
+			return false;
+
 		const DESFireEV1Location* dfLocation = dynamic_cast<const DESFireEV1Location*>(&location);
 
 		return ((!useEV1 || (cryptoMethod == dfLocation->cryptoMethod
-				&& (!useISO7816 || (applicationFID == dfLocation->applicationFID && fileFID == dfLocation->fileFID)))
-			 )			
-			);
+				&& (!useISO7816 || (applicationFID == dfLocation->applicationFID
+				&& fileFID == dfLocation->fileFID)))));
 	}
 }
 

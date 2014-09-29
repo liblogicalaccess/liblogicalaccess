@@ -44,6 +44,9 @@ namespace logicalaccess
 		if (!Location::operator==(location))
 			return false;
 
+		if (typeid(location) != typeid(MifareUltralightLocation))
+			return false;
+
 		const MifareUltralightLocation* mLocation = dynamic_cast<const MifareUltralightLocation*>(&location);
 
 		return (page == mLocation->page

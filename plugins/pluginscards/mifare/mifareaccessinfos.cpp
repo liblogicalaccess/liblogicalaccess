@@ -209,6 +209,9 @@ namespace logicalaccess
 		if (!AccessInfo::operator==(ai))
 			return false;
 
+		if (typeid(ai) != typeid(MifareAccessInfo))
+			return false;
+
 		const MifareAccessInfo* mAi = dynamic_cast<const MifareAccessInfo*>(&ai);
 
 		return (keyA == mAi->keyA

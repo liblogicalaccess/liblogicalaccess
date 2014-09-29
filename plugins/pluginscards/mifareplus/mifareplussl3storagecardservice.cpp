@@ -36,20 +36,9 @@ namespace logicalaccess
 
 		for (i = 0; i < boost::dynamic_pointer_cast<MifarePlusChip>(getChip())->getNbSectors(); ++i)
 		{
-			bool erased = true;
 			if (boost::dynamic_pointer_cast<MifarePlusSL3Profile>(getChip()->getProfile())->getKeyUsage(i, KT_KEY_AES_B))
 			{
 				if (getMifarePlusChip()->getMifarePlusSL3Commands()->authenticate(i, profile->getKey(i, KT_KEY_AES_B), KT_KEY_AES_B))
-				{
-					for (j = ((i == 0) ? 1 : 0); j < getMifarePlusChip()->getMifarePlusSL3Commands()->getNbBlocks(i); ++j)
-					{
-						getMifarePlusChip()->getMifarePlusSL3Commands()->updateBinary(getMifarePlusChip()->getMifarePlusSL3Commands()->getBlockNo(i, j), false, true, zeroblock, MIFARE_PLUS_BLOCK_SIZE);
-					}
-				}
-			}
-			else if (boost::dynamic_pointer_cast<MifarePlusSL3Profile>(getChip()->getProfile())->getKeyUsage(i, KT_KEY_AES_A))
-			{
-				if (!erased && getMifarePlusChip()->getMifarePlusSL3Commands()->authenticate(i, profile->getKey(i, KT_KEY_AES_A), KT_KEY_AES_A))
 				{
 					for (j = ((i == 0) ? 1 : 0); j < getMifarePlusChip()->getMifarePlusSL3Commands()->getNbBlocks(i); ++j)
 					{

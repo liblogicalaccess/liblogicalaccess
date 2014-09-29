@@ -138,16 +138,10 @@ namespace logicalaccess
 		if(data != NULL)
 		{
 			BitHelper::writeToBit(data, dataLengthBytes, &pos, 0x2E, 0, 8);
-		}
-		else
-		{
-			pos += 4;
-		}
 
-		convertField(data, dataLengthBytes, &pos, getUid(), 16);
-		convertField(data, dataLengthBytes, &pos, getField(), 14);
-		if(data != NULL)
-		{
+			convertField(data, dataLengthBytes, &pos, getUid(), 16);
+			convertField(data, dataLengthBytes, &pos, getField(), 14);
+
 			pos = 39;
 			BitHelper::writeToBit(data, dataLengthBytes, &pos, 0x01, 7, 1);
 			pos = 38;

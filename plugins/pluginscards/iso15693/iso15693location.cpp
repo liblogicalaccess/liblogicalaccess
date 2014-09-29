@@ -41,10 +41,12 @@ namespace logicalaccess
 		if (!Location::operator==(location))
 			return false;
 
+		if (typeid(location) != typeid(ISO15693Location))
+			return false;
+
 		const ISO15693Location* pxLocation = dynamic_cast<const ISO15693Location*>(&location);
 
-		return (block == pxLocation->block
-			);
+		return (block == pxLocation->block);
 	}
 }
 

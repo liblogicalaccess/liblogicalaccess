@@ -18,7 +18,6 @@
 #include <cstring>
 
 #include <openssl/rand.h>
-#include <array>
 #include "logicalaccess/logs.hpp"
 #include "logicalaccess/crypto/symmetric_key.hpp"
 #include "logicalaccess/crypto/aes_symmetric_key.hpp"

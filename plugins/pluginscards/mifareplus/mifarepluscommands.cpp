@@ -7,7 +7,6 @@
 #include "mifarepluscommands.hpp"
 
 #include <stdlib.h>
-#include <array>
 
 namespace logicalaccess
 {

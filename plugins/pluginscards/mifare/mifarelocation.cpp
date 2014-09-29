@@ -63,6 +63,9 @@ namespace logicalaccess
 		if (!Location::operator==(location))
 			return false;
 
+		if (typeid(location) != typeid(MifareLocation))
+			return false;
+
 		const MifareLocation* mLocation = dynamic_cast<const MifareLocation*>(&location);
 
 		return (sector == mLocation->sector

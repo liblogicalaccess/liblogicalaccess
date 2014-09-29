@@ -17,7 +17,6 @@
 #include "logicalaccess/cards/samkeystorage.hpp"
 
 #include <openssl/rand.h>
-#include <array>
 #include "logicalaccess/crypto/des_cipher.hpp"
 #include "logicalaccess/crypto/des_symmetric_key.hpp"
 #include "logicalaccess/crypto/des_initialization_vector.hpp"

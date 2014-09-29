@@ -50,6 +50,9 @@ namespace logicalaccess
 		if (!AccessInfo::operator==(ai))
 			return false;
 
+		if (typeid(ai) != typeid(AccessInfo))
+			return false;
+
 		const MifareUltralightAccessInfo* mAi = dynamic_cast<const MifareUltralightAccessInfo*>(&ai);
 
 		return (lockPage == mAi->lockPage);

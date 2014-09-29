@@ -68,6 +68,9 @@ namespace logicalaccess
 		if (!Location::operator==(location))
 			return false;
 
+		if (typeid(location) != typeid(DESFireLocation))
+			return false;
+
 		const DESFireLocation* dfLocation = dynamic_cast<const DESFireLocation*>(&location);
 
 		return (aid == dfLocation->aid

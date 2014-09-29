@@ -6,7 +6,6 @@
 
 #include "logicalaccess/crypto/openssl.hpp"
 
-#include <array>
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 #include <openssl/rand.h>
