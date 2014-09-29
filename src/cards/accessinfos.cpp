@@ -14,8 +14,9 @@
 
 #include <openssl/rand.h>
 
-#include <sstream>
-#include <iomanip>
+#include <iostream>
+#include <string>
+#include <array>
 
 namespace logicalaccess
 {
@@ -23,10 +24,9 @@ namespace logicalaccess
 	{
 	}
 
-	string AccessInfo::generateSimpleKey(long seed, size_t keySize)
+	string AccessInfo::generateSimpleKey(size_t keySize)
 	{
 		std::ostringstream oss;
-		RAND_seed(&seed, sizeof(seed));
 
 #ifdef _WINDOWS
 		RAND_screen();
@@ -55,10 +55,9 @@ namespace logicalaccess
 		return oss.str();
 	}
 
-	string AccessInfo::generateSimpleDESKey(long seed, size_t keySize)
+	string AccessInfo::generateSimpleDESKey(size_t keySize)
 	{
 		std::ostringstream oss;
-		RAND_seed(&seed, sizeof(seed));
 
 #ifdef _WINDOWS
 		RAND_screen();

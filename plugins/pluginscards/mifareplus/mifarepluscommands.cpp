@@ -7,7 +7,7 @@
 #include "mifarepluscommands.hpp"
 
 #include <stdlib.h>
-
+#include <array>
 
 namespace logicalaccess
 {
@@ -37,14 +37,9 @@ namespace logicalaccess
 		return (string);
 	}
 
-	std::vector<unsigned char> MifarePlusCommands::GetRandKey(const void* init, size_t size)
+	std::vector<unsigned char> MifarePlusCommands::GetRandKey(size_t size)
 	{
 		std::vector<unsigned char> rand;
-
-		if (init != NULL)
-			RAND_seed(init, sizeof(init));
-		
-		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
 		
 		rand.clear();
 		rand.resize(size);

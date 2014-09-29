@@ -65,7 +65,7 @@ namespace logicalaccess
 		* \param init The init string for better random
 		* \param size The size of the generated random string
 		*/
-		static std::vector<unsigned char> GetRandKey(const void* init, size_t size);
+		static std::vector<unsigned char> GetRandKey(size_t size);
 
 		/**
 		* \brief Get the crypto class

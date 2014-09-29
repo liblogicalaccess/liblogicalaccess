@@ -18,6 +18,7 @@
 #include <cstring>
 
 #include <openssl/rand.h>
+#include <array>
 #include "logicalaccess/logs.hpp"
 #include "logicalaccess/crypto/symmetric_key.hpp"
 #include "logicalaccess/crypto/aes_symmetric_key.hpp"
@@ -55,10 +56,6 @@ namespace logicalaccess
 		std::vector<unsigned char> rndB1;
 		rndB1.insert(rndB1.end(), d_rndB.begin() + 1, d_rndB.begin() + 1 + 15);
 		rndB1.push_back(d_rndB[0]);
-
-		RAND_seed(&keyno, sizeof(keyno));
-
-		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
 
 		d_rndA.clear();
 		d_rndA.resize(16);

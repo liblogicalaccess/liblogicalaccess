@@ -6,33 +6,31 @@
 
 #include "logicalaccess/crypto/openssl.hpp"
 
+#include <array>
 #include <openssl/ssl.h>
 #include <openssl/err.h>
+#include <openssl/rand.h>
+#include "logicalaccess/logs.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {
 	namespace openssl
 	{
-		void initialize()
+		OpenSSLInitializer::OpenSSLInitializer()
 		{
-			/* libssl initialization */
-			SSL_library_init();
-
-			/*  OpenSSL_add_all_algorithms(); */
-			OpenSSL_add_all_digests();
-			SSL_load_error_strings();
-			ERR_load_crypto_strings();
+			ERR_load_crypto_strings(); 
+			OpenSSL_add_all_algorithms();
 			CRYPTO_malloc_init();
 		}
 
-		void cleanup()
+		OpenSSLInitializer::~OpenSSLInitializer()
 		{
-			/* cleanup SSL lib */
-
-			EVP_cleanup();
-			ERR_remove_state(0);
-			ERR_free_strings();
 			CRYPTO_cleanup_all_ex_data();
+			RAND_cleanup();
+			EVP_cleanup();
+			ERR_free_strings();
+			ERR_remove_state(0);
 		}
 	}
 }

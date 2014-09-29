@@ -27,7 +27,7 @@ namespace logicalaccess
 				 * \brief Constructor.
 				 * \param _mode The encryption mode. Default is CBC.
 				 */
-				AESCipher(EncMode _mode = OpenSSLSymmetricCipher::ENC_MODE_CBC) : OpenSSLSymmetricCipher(_mode) {}
+				AESCipher(EncMode _mode = OpenSSLSymmetricCipher::ENC_MODE_CBC) : OpenSSLSymmetricCipher(_mode) { }
 
 			protected:
 

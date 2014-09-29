@@ -157,10 +157,10 @@ namespace logicalaccess
 
 	void BariumFerritePCSCFormat::setLinearData(const void* data, size_t dataLengthBytes)
 	{
-		unsigned int pos = 0;
-		unsigned char fixedValue = 0x00;
 		if (data != NULL)
 		{
+			unsigned int pos = 0;
+			unsigned char fixedValue = 0x00;
 			if (dataLengthBytes*8 < getDataLength())
 			{
 				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Data length too small.");
@@ -175,15 +175,10 @@ namespace logicalaccess
 				sprintf(exceptionmsg, "Barium Ferrit PCSC: fixed value doesn't match (%x != %x).", fixedValue, 0x0F);
 				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, exceptionmsg);
 			}
-		}
-		else
-		{
-			pos += 4;
-		}
-		setFacilityCode((unsigned short)revertField(data, dataLengthBytes, &pos, 12));
-		setUid(revertField(data, dataLengthBytes, &pos, 16));
-		if (data != NULL)
-		{
+
+			setFacilityCode((unsigned short)revertField(data, dataLengthBytes, &pos, 12));
+			setUid(revertField(data, dataLengthBytes, &pos, 16));
+
 			unsigned int checkOffset = static_cast<unsigned int>((pos + 7) / 8);
 			unsigned char checksum = calcChecksum(reinterpret_cast<const unsigned char*>(data), checkOffset);
 			unsigned char currentChecksum = reinterpret_cast<const unsigned char*>(data)[checkOffset];

@@ -553,9 +553,6 @@ namespace logicalaccess
 	{
 		LOG(LogLevel::INFOS) << "Authenticating HMAC (signed communication)...";
 
-		RAND_seed(getDataTransport().get(), sizeof(getDataTransport().get()));
-		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
-
 		std::vector<unsigned char> buf1;
 		boost::shared_ptr<HMAC1Key> key = getSTidSTRConfiguration()->getHMACKey();
 		if (key->isEmpty())
@@ -622,9 +619,6 @@ namespace logicalaccess
 	void STidSTRReaderUnit::authenticateAES()
 	{
 		LOG(LogLevel::INFOS) << "Authenticating AES (ciphered communication)...";
-
-		RAND_seed(getDataTransport().get(), sizeof(getDataTransport().get()));
-		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
 
 		std::vector<unsigned char> rndB;
 		rndB.resize(16);

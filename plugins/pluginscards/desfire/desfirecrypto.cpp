@@ -570,8 +570,6 @@ namespace logicalaccess
 		rndB1.insert(rndB1.end(), d_rndB.begin() + 1, d_rndB.begin() + 8);
 		rndB1.push_back(d_rndB[0]);
 
-		RAND_seed(&keyno, sizeof(keyno));
-
 		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
 
 		d_rndA.clear();
@@ -803,8 +801,6 @@ namespace logicalaccess
 		rndB1.insert(rndB1.end(), d_rndB.begin() + 1, d_rndB.begin() + randomlen);
 		rndB1.push_back(d_rndB[0]);
 
-		RAND_seed(&keyno, sizeof(keyno));
-
 		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
 
 		d_rndA.clear();
@@ -895,8 +891,6 @@ namespace logicalaccess
 		std::vector<unsigned char> rndB1;
 		rndB1.insert(rndB1.end(), d_rndB.begin() + 1, d_rndB.begin() + 1 + 15);
 		rndB1.push_back(d_rndB[0]);
-
-		RAND_seed(&keyno, sizeof(keyno));
 
 		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
 

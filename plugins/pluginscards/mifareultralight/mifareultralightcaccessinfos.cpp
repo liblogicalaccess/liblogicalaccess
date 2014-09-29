@@ -28,15 +28,7 @@ namespace logicalaccess
 	{		
 		MifareUltralightAccessInfo::generateInfos();
 
-		key->fromString(generateSimpleKey(0, TRIPLEDES_KEY_SIZE));
-	}
-
-	void MifareUltralightCAccessInfo::generateInfos(const std::string& csn)
-	{
-		MifareUltralightAccessInfo::generateInfos(csn);
-
-		long lcsn = atol(csn.c_str());
-		key->fromString(generateSimpleKey(lcsn, TRIPLEDES_KEY_SIZE));
+		key->fromString(generateSimpleKey(TRIPLEDES_KEY_SIZE));
 	}
 
 	void MifareUltralightCAccessInfo::serialize(boost::property_tree::ptree& parentNode)
@@ -66,6 +58,9 @@ namespace logicalaccess
 	bool MifareUltralightCAccessInfo::operator==(const AccessInfo& ai) const
 	{
 		if (!MifareUltralightAccessInfo::operator==(ai))
+			return false;
+
+		if (typeid(ai) != typeid(MifareUltralightAccessInfo))
 			return false;
 
 		const MifareUltralightCAccessInfo* mAi = dynamic_cast<const MifareUltralightCAccessInfo*>(&ai);

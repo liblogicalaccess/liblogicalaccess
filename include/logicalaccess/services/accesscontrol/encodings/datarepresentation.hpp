@@ -18,6 +18,12 @@ namespace logicalaccess
 	class LIBLOGICALACCESS_API DataRepresentation : public Encoding
 	{
 		public:
+
+			/**
+			 * \brief Virtual Destructor.
+			 */
+			virtual ~DataRepresentation() {};
+
 			/**
 			 * \brief Convert data to the encoding type
 			 * \param data Data to convert

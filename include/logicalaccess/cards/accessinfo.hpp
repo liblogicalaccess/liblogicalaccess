@@ -32,12 +32,6 @@ namespace logicalaccess
 			virtual void generateInfos() = 0;
 
 			/**
-			 * \brief Generate pseudo-random access informations for a given card serial number.
-			 * \param csn The card serial number, as a salt (no diversification here).
-			 */
-			virtual void generateInfos(const std::string& csn) = 0;
-
-			/**
 			 * \brief Get the card type for this access infos.
 			 * \return The card type.
 			 */
@@ -49,7 +43,7 @@ namespace logicalaccess
 			 * \param keySize The key size.
 			 * \return A generated pseudo-random key.
 			 */
-			static std::string generateSimpleKey(long seed, size_t keySize);
+			static std::string generateSimpleKey(size_t keySize);
 
 			/**
 			 * \brief Generate a DES key data.
@@ -57,7 +51,7 @@ namespace logicalaccess
 			 * \param keySize The key size.
 			 * \return A generated pseudo-random key.
 			 */
-			static std::string generateSimpleDESKey(long seed, size_t keySize);
+			static std::string generateSimpleDESKey(size_t keySize);
 
 			/**
 			 * \brief Equality operator

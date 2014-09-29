@@ -8,6 +8,7 @@
 #ifndef OPENSSLASYMETRICCIPHER_HPP
 #define OPENSSLASYMETRICCIPHER_HPP
 
+#include "logicalaccess/crypto/openssl.hpp"
 #include "logicalaccess/crypto/asymmetric_cipher.hpp"
 
 namespace logicalaccess

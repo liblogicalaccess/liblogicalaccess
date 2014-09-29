@@ -6,6 +6,7 @@
 
 #include "stidstrreadercardadapter.hpp"
 #include "logicalaccess/crypto/tomcrypt.h"
+#include <array>
 #include <openssl/evp.h>
 #include <openssl/hmac.h>
 #include <openssl/sha.h>
@@ -19,10 +20,8 @@ namespace logicalaccess
 	const unsigned char STidSTRReaderCardAdapter::SOF = 0x02;
 
 	STidSTRReaderCardAdapter::STidSTRReaderCardAdapter(STidCmdType adapterType)
-		: ReaderCardAdapter()
-	{
-		d_adapterType = adapterType;
-	}
+		: ReaderCardAdapter(), d_adapterType(adapterType), d_lastCommandCode(0x00)
+	{ }
 
 	STidSTRReaderCardAdapter::~STidSTRReaderCardAdapter()
 	{
@@ -145,10 +144,6 @@ namespace logicalaccess
 	{
 		if (d_lastIV.size() == 0)
 		{
-			RAND_seed(&d_lastCommandCode, sizeof(d_lastCommandCode));
-
-			EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
-
 			d_lastIV.resize(16);
 			if (RAND_bytes(&d_lastIV[0], static_cast<int>(d_lastIV.size())) != 1)
 			{

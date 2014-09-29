@@ -5,6 +5,7 @@
  * \brief Open SSL symmetric cipher base class.
  */
 
+#include "logicalaccess/crypto/openssl.hpp"
 #include "logicalaccess/crypto/openssl_symmetric_cipher_context.hpp"
 #include "logicalaccess/crypto/symmetric_key.hpp"
 #include "logicalaccess/crypto/sha.hpp"
@@ -29,6 +30,7 @@ namespace logicalaccess
 		OpenSSLSymmetricCipherContext::OpenSSLSymmetricCipherContext(OpenSSLSymmetricCipher::Method _method) :
 			d_information(new Information(_method))
 		{
+			OpenSSLInitializer::GetInstance();
 		}
 
 		void OpenSSLSymmetricCipherContext::setPadding(bool padding)

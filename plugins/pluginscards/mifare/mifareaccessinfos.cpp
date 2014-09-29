@@ -124,18 +124,8 @@ namespace logicalaccess
 
 	void MifareAccessInfo::generateInfos()
 	{		
-		keyA->fromString(generateSimpleKey(0, MIFARE_KEY_SIZE));
-		keyB->fromString(generateSimpleKey(1000, MIFARE_KEY_SIZE));
-
-		sab.setAReadBWriteConfiguration();
-	}
-
-	void MifareAccessInfo::generateInfos(const string& csn)
-	{
-		long lcsn = atol(csn.c_str());
-
-		keyA->fromString(generateSimpleKey(lcsn, MIFARE_KEY_SIZE));
-		keyB->fromString(generateSimpleKey(lcsn + 1000, MIFARE_KEY_SIZE));
+		keyA->fromString(generateSimpleKey(MIFARE_KEY_SIZE));
+		keyB->fromString(generateSimpleKey(MIFARE_KEY_SIZE));
 
 		sab.setAReadBWriteConfiguration();
 	}

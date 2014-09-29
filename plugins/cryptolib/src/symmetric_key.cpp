@@ -5,19 +5,24 @@
  * \brief Symmetric key class.
  */
 
+#include "logicalaccess/logs.hpp"
+#include "logicalaccess/myexception.hpp"
+#include "logicalaccess/crypto/openssl.hpp"
 #include "logicalaccess/crypto/symmetric_key.hpp"
 
 #include <cstring>
 #include <chrono>
 #include <stdlib.h>
+#include <openssl/rand.h>
 
 namespace logicalaccess
 {
 	namespace openssl
 	{
 		SymmetricKey::SymmetricKey(size_t size) :
-			d_data(size), m_rand(std::chrono::system_clock::now().time_since_epoch().count())
+			d_data(size)
 		{
+			OpenSSLInitializer::GetInstance();
 			randomize();
 		}
 
@@ -28,9 +33,9 @@ namespace logicalaccess
 
 		void SymmetricKey::randomize()
 		{
-			for (size_t i = 0; i < d_data.size(); ++i)
+			if (RAND_bytes(&d_data[0], static_cast<int>(d_data.size())) != 1)
 			{
-				d_data[i] = static_cast<unsigned char>(m_rand());
+				THROW_EXCEPTION_WITH_LOG(logicalaccess::LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
 			}
 		}
 	}

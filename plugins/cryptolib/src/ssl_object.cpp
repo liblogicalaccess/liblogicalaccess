@@ -32,6 +32,7 @@ namespace logicalaccess
 		SSLObject::SSLObject(boost::shared_ptr<SSL> ssl) :
 			d_ssl(ssl)
 		{
+			OpenSSLInitializer::GetInstance();
 			assert(ssl);
 		}
 	}

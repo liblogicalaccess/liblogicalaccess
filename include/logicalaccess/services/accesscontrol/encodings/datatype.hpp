@@ -34,6 +34,11 @@ namespace logicalaccess
 			DataType();
 
 			/**
+			 * \brief Constructor.
+			 */
+			virtual ~DataType() {};
+
+			/**
 			 * \brief Convert "data" to the data type			 
 			 * \param data Data to convert
 			 * \param dataLengthBits Length of data to convert in bits

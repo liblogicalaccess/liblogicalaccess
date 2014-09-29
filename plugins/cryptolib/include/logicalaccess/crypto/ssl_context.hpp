@@ -23,6 +23,8 @@
 #endif
 #include <openssl/ssl.h>
 
+#include "logicalaccess/crypto/openssl.hpp"
+
 namespace logicalaccess
 {
 	namespace openssl
@@ -130,7 +132,7 @@ namespace logicalaccess
 				/**
 				 * \brief Create a null context.
 				 */
-				inline SSLContext() {}
+				inline SSLContext() { OpenSSLInitializer::GetInstance(); }
 
 				/**
 				 * \brief Constructor.

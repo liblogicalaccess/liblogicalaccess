@@ -34,25 +34,12 @@ namespace logicalaccess
 	void DESFireAccessInfo::generateInfos()
 	{
 		LOG(LogLevel::INFOS) << "Generate access information";
-		readKey->fromString(generateSimpleKey(0, readKey->getLength()));
+		readKey->fromString(generateSimpleKey(readKey->getLength()));
 		readKeyno = 2;
-		writeKey->fromString(generateSimpleKey(1000, writeKey->getLength()));
+		writeKey->fromString(generateSimpleKey(writeKey->getLength()));
 		writeKeyno = 1;
-		masterApplicationKey->fromString(generateSimpleKey(2000, masterApplicationKey->getLength()));
-		masterCardKey->fromString(generateSimpleKey(3000, masterCardKey->getLength()));
-	}
-
-	void DESFireAccessInfo::generateInfos(const string& csn)
-	{
-	        LOG(LogLevel::INFOS) << "Generate access information with CSN '" << csn << "' as seed";
-		long lcsn = atol(csn.c_str());
-
-		readKey->fromString(generateSimpleKey(lcsn, readKey->getLength()));
-		readKeyno = 2;
-		writeKey->fromString(generateSimpleKey(lcsn + 1000, writeKey->getLength()));
-		writeKeyno = 1;
-		masterApplicationKey->fromString(generateSimpleKey(lcsn + 2000, masterApplicationKey->getLength()));
-		masterCardKey->fromString(generateSimpleKey(lcsn + 3000, masterCardKey->getLength()));
+		masterApplicationKey->fromString(generateSimpleKey(masterApplicationKey->getLength()));
+		masterCardKey->fromString(generateSimpleKey(masterCardKey->getLength()));
 	}
 
 	void DESFireAccessInfo::serialize(boost::property_tree::ptree& parentNode)

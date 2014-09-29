@@ -35,12 +35,6 @@ namespace logicalaccess
 			virtual void generateInfos();
 
 			/**
-			 * \brief Generate pseudo-random Mifare Ultralight C access informations for a given card serial number.
-			 * \param csn The card serial number.
-			 */
-			virtual void generateInfos(const std::string& csn);
-
-			/**
 			 * \brief Get the card type for this access infos.
 			 * \return The card type.
 			 */

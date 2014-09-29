@@ -102,8 +102,6 @@ namespace logicalaccess
 		std::vector<unsigned char> macHost = openssl::CMACCrypto::cmac(d_macSessionKey, cipher, 16, rnd2, d_lastMacIV, 16);
 		truncateMacBuffer(macHost);
 
-		RAND_seed(&result[0], 12);
-		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
 		rnd1.resize(12);
 		if (RAND_bytes(&rnd1[0], static_cast<int>(rnd1.size())) != 1)
 		{

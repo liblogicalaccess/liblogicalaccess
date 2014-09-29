@@ -17,6 +17,7 @@
 #include "logicalaccess/cards/samkeystorage.hpp"
 
 #include <openssl/rand.h>
+#include <array>
 #include "logicalaccess/crypto/des_cipher.hpp"
 #include "logicalaccess/crypto/des_symmetric_key.hpp"
 #include "logicalaccess/crypto/des_initialization_vector.hpp"
@@ -51,9 +52,6 @@ namespace logicalaccess
 		std::vector<unsigned char> encRndB(result.begin(), result.end() - 2);
 		std::vector<unsigned char> rndB;
 		cipher.decipher(encRndB, rndB, deskey, desiv, false);
-		
-		RAND_seed(&result[0], 8);
-		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
 
 		std::vector<unsigned char> rndA;
 		rndA.resize(8);

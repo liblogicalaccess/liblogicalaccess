@@ -59,7 +59,7 @@ namespace logicalaccess
 		}
 
 		// authentication command containing RndA and RndB with AES encryption
-		RndA = GetRandKey(boost::posix_time::to_iso_extended_string(boost::posix_time::second_clock::local_time()).data(), MIFARE_PLUS_AES_KEY_SIZE);
+		RndA = GetRandKey(MIFARE_PLUS_AES_KEY_SIZE);
 		tmp.insert(tmp.end(), RndA.begin(), RndA.end());
 		std::vector<unsigned char> leftRot = LeftRotateSB(RndB);
 		tmp.insert(tmp.end(), leftRot.begin(), leftRot.end());

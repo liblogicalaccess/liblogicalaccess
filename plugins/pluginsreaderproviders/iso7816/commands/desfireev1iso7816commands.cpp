@@ -514,7 +514,7 @@ namespace logicalaccess
 
         std::vector<unsigned char> RPCD1;
         RPCD1.resize(le);
-        RAND_seed(&keyno, sizeof(keyno));
+
         EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
         if (RAND_bytes(&RPCD1[0], static_cast<int>(RPCD1.size())) != 1)
         {
@@ -537,7 +537,7 @@ namespace logicalaccess
         
         std::vector<unsigned char> RPCD2;
         RPCD2.resize(le);
-        RAND_seed(&keyno, sizeof(keyno));
+
         EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
         if (RAND_bytes(&RPCD2[0], static_cast<int>(RPCD2.size())) != 1)
         {

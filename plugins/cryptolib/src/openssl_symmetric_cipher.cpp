@@ -6,6 +6,7 @@
  */
 
 #include <stdexcept>
+#include "logicalaccess/crypto/openssl.hpp"
 #include "logicalaccess/crypto/openssl_symmetric_cipher.hpp"
 #include "logicalaccess/crypto/openssl_symmetric_cipher_context.hpp"
 #include "logicalaccess/crypto/symmetric_key.hpp"
@@ -23,6 +24,7 @@ namespace logicalaccess
 		OpenSSLSymmetricCipher::OpenSSLSymmetricCipher(OpenSSLSymmetricCipher::EncMode _mode) :
 			d_mode(_mode)
 		{
+			OpenSSLInitializer::GetInstance();
 		}
 
 		OpenSSLSymmetricCipherContext OpenSSLSymmetricCipher::start(OpenSSLSymmetricCipher::Method method, const SymmetricKey& key, const InitializationVector& iv, bool padding)

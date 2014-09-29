@@ -30,7 +30,7 @@ namespace logicalaccess
 		size_t value = 0;
 		for (size_t i = 0, n = datalength-1; i < datalength; i++, n--)
 		{
-			value |= (data[i] << (n * 8));
+			value |= static_cast<unsigned char>(data[i] << (n * 8));
 		}
 		return value;
 	}

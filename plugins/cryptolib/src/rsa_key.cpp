@@ -15,16 +15,21 @@
 #include <openssl/err.h>
 #include <openssl/bio.h>
 #include <openssl/ssl.h>
+#include <openssl/rand.h>
 
 namespace logicalaccess
 {
 	namespace openssl
 	{
-		std::mt19937 RSAKey::m_rand(static_cast<unsigned int>(std::chrono::system_clock::now().time_since_epoch().count()));
-
 		RSAKey RSAKey::createRandom()
 		{
-			RSAKey rsa(boost::shared_ptr<RSA>(RSA_generate_key(1024, m_rand() | 1, NULL, NULL), RSA_free), true);
+			unsigned char data;
+			if (RAND_bytes(&data, 1) != 1)
+			{
+				THROW_EXCEPTION_WITH_LOG(logicalaccess::LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
+			}
+
+			RSAKey rsa(boost::shared_ptr<RSA>(RSA_generate_key(1024, data | 1, NULL, NULL), RSA_free), true);
 
 			EXCEPTION_ASSERT_WITH_LOG(rsa.d_rsa, OpenSSLException, "Cannot generate RSA key pair");
 

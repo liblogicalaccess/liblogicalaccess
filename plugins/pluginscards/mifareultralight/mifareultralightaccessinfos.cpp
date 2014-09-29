@@ -28,11 +28,6 @@ namespace logicalaccess
 		
 	}
 
-	void MifareUltralightAccessInfo::generateInfos(const std::string& /*csn*/)
-	{
-		
-	}
-
 	void MifareUltralightAccessInfo::serialize(boost::property_tree::ptree& parentNode)
 	{
 		boost::property_tree::ptree node;

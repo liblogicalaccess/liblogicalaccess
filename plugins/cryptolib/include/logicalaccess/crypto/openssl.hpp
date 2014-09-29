@@ -13,37 +13,28 @@ namespace logicalaccess
 {
 	namespace openssl
 	{
-		/**
-		 * \brief Initialize OpenSSL library.
-		 * \warning MUST be called in the main thread, at the very beginning of the application.
-		 */
-		void initialize();
-
-		/**
-		 * \brief Clean up OpenSSL library.
-		 * \warning MUST be called in the main thread, at the very end of the application.
-		 */
-		void cleanup();
-
-		class Initializer : public boost::noncopyable
+		class OpenSSLInitializer : public boost::noncopyable
 		{
 			public:
+			  static OpenSSLInitializer& GetInstance()
+			  {
+				static OpenSSLInitializer instance;
+				return instance;
+			  }
+
+			private:
 
 				/**
-				 * \brief Create the initializer and call initialize.
+				 * \brief Initialize OpenSSL library.
+				 * \warning MUST be called in the main thread, at the very beginning of the application.
 				 */
-				Initializer()
-				{
-					initialize();
-				}
+				OpenSSLInitializer();
 
 				/**
-				 * \brief Destroy the initializer and call cleanup.
+				 * \brief Clean up OpenSSL library.
+				 * \warning MUST be called in the main thread, at the very end of the application.
 				 */
-				~Initializer()
-				{
-					cleanup();
-				}
+				~OpenSSLInitializer();
 		};
 	}
 }

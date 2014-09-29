@@ -8,6 +8,7 @@
 #include "logicalaccess/crypto/rsa_key.hpp"
 #include "logicalaccess/logs.hpp"
 #include "logicalaccess/myexception.hpp"
+#include "logicalaccess/crypto/openssl.hpp"
 
 #include <cassert>
 #include <cstring>
@@ -64,6 +65,7 @@ namespace logicalaccess
 			d_pkey(pkey),
 			d_has_private_compound(has_private_compound)
 		{
+			OpenSSLInitializer::GetInstance();
 			assert(d_pkey);
 		}
 	}

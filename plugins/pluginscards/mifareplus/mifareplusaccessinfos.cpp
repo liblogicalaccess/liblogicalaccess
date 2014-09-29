@@ -52,30 +52,14 @@ namespace logicalaccess
 
 	void MifarePlusAccessInfo::generateInfos()
 	{		
-		keyA->fromString(generateSimpleKey(0, keyA->getLength()));
-		keyB->fromString(generateSimpleKey(1000, keyB->getLength()));
-		keyOriginality->fromString(generateSimpleKey(2000, keyOriginality->getLength()));
-		keyMastercard->fromString(generateSimpleKey(3000, keyMastercard->getLength()));
-		keyConfiguration->fromString(generateSimpleKey(4000, keyConfiguration->getLength()));
-		keySwitchL2->fromString(generateSimpleKey(5000, keySwitchL2->getLength()));
-		keySwitchL3->fromString(generateSimpleKey(6000, keySwitchL3->getLength()));
-		keyAuthenticateSL1AES->fromString(generateSimpleKey(7000, keyAuthenticateSL1AES->getLength()));
-
-		sab.setAReadBWriteConfiguration();
-	}
-
-	void MifarePlusAccessInfo::generateInfos(const string& csn)
-	{
-		long lcsn = atol(csn.c_str());
-
-		keyA->fromString(generateSimpleKey(lcsn, keyA->getLength()));
-		keyB->fromString(generateSimpleKey(lcsn + 1000, keyB->getLength()));
-		keyOriginality->fromString(generateSimpleKey(lcsn + 2000, keyOriginality->getLength()));
-		keyMastercard->fromString(generateSimpleKey(lcsn + 3000, keyMastercard->getLength()));
-		keyConfiguration->fromString(generateSimpleKey(lcsn + 4000, keyConfiguration->getLength()));
-		keySwitchL2->fromString(generateSimpleKey(lcsn + 5000, keySwitchL2->getLength()));
-		keySwitchL3->fromString(generateSimpleKey(lcsn + 6000, keySwitchL3->getLength()));
-		keyAuthenticateSL1AES->fromString(generateSimpleKey(lcsn + 7000, keyAuthenticateSL1AES->getLength()));
+		keyA->fromString(generateSimpleKey(keyA->getLength()));
+		keyB->fromString(generateSimpleKey(keyB->getLength()));
+		keyOriginality->fromString(generateSimpleKey(keyOriginality->getLength()));
+		keyMastercard->fromString(generateSimpleKey(keyMastercard->getLength()));
+		keyConfiguration->fromString(generateSimpleKey(keyConfiguration->getLength()));
+		keySwitchL2->fromString(generateSimpleKey(keySwitchL2->getLength()));
+		keySwitchL3->fromString(generateSimpleKey(keySwitchL3->getLength()));
+		keyAuthenticateSL1AES->fromString(generateSimpleKey(keyAuthenticateSL1AES->getLength()));
 
 		sab.setAReadBWriteConfiguration();
 	}
@@ -181,6 +165,9 @@ namespace logicalaccess
 	bool MifarePlusAccessInfo::operator==(const AccessInfo& ai) const
 	{
 		if (!AccessInfo::operator==(ai))
+			return false;
+
+		if (typeid(ai) != typeid(MifarePlusAccessInfo))
 			return false;
 
 		const MifarePlusAccessInfo* mAi = dynamic_cast<const MifarePlusAccessInfo*>(&ai);

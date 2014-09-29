@@ -4,6 +4,8 @@
  * \brief The base class for asymmetric keys.
  */
 
+#include "logicalaccess/crypto/openssl.hpp"
+
 #ifndef ASYMETRICKEY_HPP
 #define ASYMETRICKEY_HPP
 
@@ -34,7 +36,7 @@ namespace logicalaccess
 				 *
 				 * A protected constructor, just to prevent instanciation.
 				 */
-				inline AsymmetricKey() {};
+				inline AsymmetricKey() { OpenSSLInitializer::GetInstance(); };
 		};
 	}
 }

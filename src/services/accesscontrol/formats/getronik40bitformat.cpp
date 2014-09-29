@@ -183,13 +183,10 @@ namespace logicalaccess
 				sprintf(exceptionmsg, "Getronik 40-Bit: fixed right value doesn't match (%x != %x).", fixedValue, 0x01);
 				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, exceptionmsg);
 			}
-		}
-		pos = 8;
-		d_uid = revertField(data, dataLengthBytes, &pos, 16);
-		d_formatLinear.d_field = (unsigned short)revertField(data, dataLengthBytes, &pos, 14);
-		pos = 38;
-		if (data != NULL)
-		{
+			pos = 8;
+			d_uid = revertField(data, dataLengthBytes, &pos, 16);
+			d_formatLinear.d_field = (unsigned short)revertField(data, dataLengthBytes, &pos, 14);
+			pos = 38;
 			unsigned char parity = getRightParity(data, dataLengthBytes);
 			if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != parity)
 			{

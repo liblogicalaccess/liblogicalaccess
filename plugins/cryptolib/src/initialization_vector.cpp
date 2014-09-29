@@ -5,10 +5,14 @@
  * \brief Initialization vector base class.
  */
 
+#include "logicalaccess/logs.hpp"
+#include "logicalaccess/myexception.hpp"
+#include "logicalaccess/crypto/openssl.hpp"
 #include "logicalaccess/crypto/initialization_vector.hpp"
 
 #include <cstring>
 #include <chrono>
+#include <openssl/rand.h>
 #include <openssl/evp.h>
 
 namespace logicalaccess
@@ -16,8 +20,10 @@ namespace logicalaccess
 	namespace openssl
 	{
 		InitializationVector::InitializationVector(size_t size, bool random) :
-			d_data(size), m_rand(std::chrono::system_clock::now().time_since_epoch().count())
+			d_data(size)
 		{
+			OpenSSLInitializer::GetInstance();
+
 			if (random)
 			{
 				randomize();
@@ -42,9 +48,9 @@ namespace logicalaccess
 
 		void InitializationVector::randomize()
 		{
-			for (size_t i = 0; i < d_data.size(); ++i)
+			if (RAND_bytes(&d_data[0], static_cast<int>(d_data.size())) != 1)
 			{
-				d_data[i] = static_cast<unsigned char>(m_rand());
+				THROW_EXCEPTION_WITH_LOG(logicalaccess::LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
 			}
 		}
 	}

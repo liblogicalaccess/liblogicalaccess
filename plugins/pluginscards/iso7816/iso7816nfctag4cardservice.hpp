@@ -27,7 +27,7 @@ namespace logicalaccess
 			 */
 			ISO7816NFCTag4CardService(boost::shared_ptr<Chip> chip) : CardService(chip) {};
 
-			~ISO7816NFCTag4CardService() {};
+			virtual ~ISO7816NFCTag4CardService() {};
 
 			virtual void writeCapabilityContainer(unsigned short isoFID = 0xe103, unsigned short isoFIDNDEFFile = 0xe104, unsigned short NDEFFileSize = 0xff);
 
