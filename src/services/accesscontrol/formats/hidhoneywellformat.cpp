@@ -173,15 +173,10 @@ namespace logicalaccess
 				sprintf(exceptionmsg, "HID Honeywell 40-Bit: fixed value doesn't match (%x != %x).", fixedValue, 0x0F);
 				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, exceptionmsg);
 			}
-		}
-		else
-		{
-			pos += 4;
-		}
-		setFacilityCode((unsigned short)revertField(data, dataLengthBytes, &pos, 12));
-		setUid(revertField(data, dataLengthBytes, &pos, 16));
-		if (data != NULL)
-		{
+
+			setFacilityCode((unsigned short)revertField(data, dataLengthBytes, &pos, 12));
+			setUid(revertField(data, dataLengthBytes, &pos, 16));
+
 			for(unsigned char i = 0; i < 8; ++i)
 			{
 				pos = 32 + i;

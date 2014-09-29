@@ -68,6 +68,9 @@ namespace logicalaccess
 
 		const MifareLocation* mLocation = dynamic_cast<const MifareLocation*>(&location);
 
+		if (!mLocation)
+			return false;
+
 		return (sector == mLocation->sector
 			&& block == mLocation->block
 			&& byte == mLocation->byte

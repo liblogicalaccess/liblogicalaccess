@@ -48,6 +48,9 @@ namespace logicalaccess
 
 		const TwicLocation* pxLocation = dynamic_cast<const TwicLocation*>(&location);
 
+		if (!pxLocation)
+			return false;
+
 		return (dataObject == pxLocation->dataObject);
 	}
 }

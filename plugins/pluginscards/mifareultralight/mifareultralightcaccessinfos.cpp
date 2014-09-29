@@ -65,6 +65,9 @@ namespace logicalaccess
 
 		const MifareUltralightCAccessInfo* mAi = dynamic_cast<const MifareUltralightCAccessInfo*>(&ai);
 
+		if (!mAi)
+			return false;
+
 		return (key == mAi->key);
 	}
 }

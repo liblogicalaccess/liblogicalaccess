@@ -73,6 +73,9 @@ namespace logicalaccess
 
 		const DESFireLocation* dfLocation = dynamic_cast<const DESFireLocation*>(&location);
 
+		if (!dfLocation)
+			return false;
+
 		return (aid == dfLocation->aid
 			&& file == dfLocation->file
 			&& byte == dfLocation->byte

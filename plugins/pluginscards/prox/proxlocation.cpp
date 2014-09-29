@@ -46,6 +46,9 @@ namespace logicalaccess
 
 		const ProxLocation* pxLocation = dynamic_cast<const ProxLocation*>(&location);
 
+		if (!pxLocation)
+			return false;
+
 		return (bit == pxLocation->bit);
 	}
 }

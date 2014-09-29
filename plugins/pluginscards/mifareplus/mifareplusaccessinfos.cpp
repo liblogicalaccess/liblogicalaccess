@@ -172,6 +172,9 @@ namespace logicalaccess
 
 		const MifarePlusAccessInfo* mAi = dynamic_cast<const MifarePlusAccessInfo*>(&ai);
 
+		if (!mAi)
+			return false;
+
 		return (keyA == mAi->keyA
 			&& keyB == mAi->keyB
 			&& keyOriginality == mAi->keyOriginality

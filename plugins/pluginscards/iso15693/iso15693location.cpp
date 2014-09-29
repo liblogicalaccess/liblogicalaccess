@@ -46,6 +46,9 @@ namespace logicalaccess
 
 		const ISO15693Location* pxLocation = dynamic_cast<const ISO15693Location*>(&location);
 
+		if (!pxLocation)
+			return false;
+
 		return (block == pxLocation->block);
 	}
 }

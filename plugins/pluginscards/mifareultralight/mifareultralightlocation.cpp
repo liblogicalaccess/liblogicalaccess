@@ -49,6 +49,9 @@ namespace logicalaccess
 
 		const MifareUltralightLocation* mLocation = dynamic_cast<const MifareUltralightLocation*>(&location);
 
+		if (!mLocation)
+			return false;
+
 		return (page == mLocation->page
 				&& byte == mLocation->byte);
 	}

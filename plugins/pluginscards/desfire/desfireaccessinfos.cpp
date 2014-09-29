@@ -93,6 +93,9 @@ namespace logicalaccess
 
 		const DESFireAccessInfo* dfAi = dynamic_cast<const DESFireAccessInfo*>(&ai);
 
+		if (!dfAi)
+			return false;
+
 		return (readKey == dfAi->readKey
 			&& readKeyno == dfAi->readKeyno
 			&& writeKey == dfAi->writeKey

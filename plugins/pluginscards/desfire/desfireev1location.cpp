@@ -61,6 +61,9 @@ namespace logicalaccess
 
 		const DESFireEV1Location* dfLocation = dynamic_cast<const DESFireEV1Location*>(&location);
 
+		if (!dfLocation)
+			return false;
+
 		return ((!useEV1 || (cryptoMethod == dfLocation->cryptoMethod
 				&& (!useISO7816 || (applicationFID == dfLocation->applicationFID
 				&& fileFID == dfLocation->fileFID)))));
