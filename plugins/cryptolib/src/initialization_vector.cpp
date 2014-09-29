@@ -8,6 +8,7 @@
 #include "logicalaccess/crypto/initialization_vector.hpp"
 
 #include <cstring>
+#include <chrono>
 #include <openssl/evp.h>
 
 namespace logicalaccess
@@ -15,7 +16,7 @@ namespace logicalaccess
 	namespace openssl
 	{
 		InitializationVector::InitializationVector(size_t size, bool random) :
-			d_data(size)
+			d_data(size), m_rand(std::chrono::system_clock::now().time_since_epoch().count())
 		{
 			if (random)
 			{
@@ -43,7 +44,7 @@ namespace logicalaccess
 		{
 			for (size_t i = 0; i < d_data.size(); ++i)
 			{
-				d_data[i] = static_cast<char>(rand() & 0xFF);
+				d_data[i] = static_cast<unsigned char>(m_rand());
 			}
 		}
 	}

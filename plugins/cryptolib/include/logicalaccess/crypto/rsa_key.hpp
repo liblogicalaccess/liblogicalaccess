@@ -11,6 +11,8 @@
 #include "logicalaccess/crypto/pem.hpp"
 
 #include <vector>
+#include <random>
+#include <chrono>
 
 #include <boost/shared_ptr.hpp>
 
@@ -218,6 +220,11 @@ namespace logicalaccess
 				friend class X509Certificate;
 				friend class X509CertificateRequest;
 				friend class EVPPKey;
+
+				/**
+				 * \brief mt19937 is a standard mersenne_twister_engine
+				 */
+				static std::mt19937 m_rand;
 		};
 
 		/**

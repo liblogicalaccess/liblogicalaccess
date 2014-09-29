@@ -9,6 +9,7 @@
 #include "logicalaccess/crypto/openssl_exception.hpp"
 #include "logicalaccess/myexception.hpp"
 
+#include <chrono>
 #include <openssl/evp.h>
 #include <openssl/buffer.h>
 #include <openssl/err.h>
@@ -19,9 +20,11 @@ namespace logicalaccess
 {
 	namespace openssl
 	{
+		std::mt19937 RSAKey::m_rand(static_cast<unsigned int>(std::chrono::system_clock::now().time_since_epoch().count()));
+
 		RSAKey RSAKey::createRandom()
 		{
-			RSAKey rsa(boost::shared_ptr<RSA>(RSA_generate_key(1024, rand() | 1, NULL, NULL), RSA_free), true);
+			RSAKey rsa(boost::shared_ptr<RSA>(RSA_generate_key(1024, m_rand() | 1, NULL, NULL), RSA_free), true);
 
 			EXCEPTION_ASSERT_WITH_LOG(rsa.d_rsa, OpenSSLException, "Cannot generate RSA key pair");
 

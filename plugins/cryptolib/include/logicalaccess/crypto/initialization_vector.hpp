@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <iostream>
+#include <random>
 
 namespace logicalaccess
 {
@@ -64,6 +65,11 @@ namespace logicalaccess
 				 * \brief The IV data.
 				 */
 				std::vector<unsigned char> d_data;
+
+				/**
+				 * \brief mt19937 is a standard mersenne_twister_engine
+				 */
+				std::mt19937 m_rand;
 		};
 	}
 }
