@@ -10,7 +10,6 @@ set(INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare
 		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso7816
 		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifareultralight
 		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire
-		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic
 		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816
 		${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2)
 
@@ -49,7 +48,6 @@ target_link_libraries(
 	mifarecards
 	mifareultralightcards
 	desfirecards
-	twiccards
 	iso7816readers
 	iso7816cards
 	${LIBLOGICALACCESS_LIBRARY}

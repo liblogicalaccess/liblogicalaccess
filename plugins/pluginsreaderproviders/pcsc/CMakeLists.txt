@@ -9,7 +9,6 @@ endif()
 set(INCLUDE_FOLDER 	${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso7816
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare
-					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/prox
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/tagit
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso15693
@@ -76,7 +75,6 @@ target_link_libraries(
 	iso7816readers
 	iso7816cards
 	iso15693cards
-	proxcards
 	${LIBLOGICALACCESS_LIBRARY}
 	${LINK_OPT}
 )
