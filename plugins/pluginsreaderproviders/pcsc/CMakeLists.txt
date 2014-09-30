@@ -53,6 +53,8 @@ set(SOURCE_LIB ${SRCS} ${source_readercardadapters} ${source_readers} ${source_c
 set (LINK_OPT)
 if (MSVC)
   set(LINK_OPT winscard )
+else (UNIX)
+	set(LINK_OPT pcsclite )
 endif()
 
 add_library(
