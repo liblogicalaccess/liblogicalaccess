@@ -158,11 +158,12 @@ namespace logicalaccess
 
 		if (bcc == DLE)
 		{
-			EXCEPTION_ASSERT_WITH_LOG(buf[offset++] == DLE, std::invalid_argument, "BCC is equal to DLE but is not doubled !");
+			EXCEPTION_ASSERT_WITH_LOG(buf[offset] == DLE, std::invalid_argument, "BCC is equal to DLE but is not doubled !");
+			++offset;
 		}
 
-		EXCEPTION_ASSERT_WITH_LOG((buf[offset++] == DLE) && (buf[offset++] == ETX), std::invalid_argument, "Missing end of command message");
-
+		EXCEPTION_ASSERT_WITH_LOG((buf[offset] == DLE) && (buf[offset + 1] == ETX), std::invalid_argument, "Missing end of command message");
+		offset += 2;
 		return data;
 	}
 

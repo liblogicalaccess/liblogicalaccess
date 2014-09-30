@@ -67,6 +67,9 @@ namespace logicalaccess
 
 		const ISO7816Location* pxLocation = dynamic_cast<const ISO7816Location*>(&location);
 
+		if (!pxLocation)
+			return false;
+
 		return (fileid == pxLocation->fileid
 			&& fileType == pxLocation->fileType
 			&& dataObject == pxLocation->dataObject
