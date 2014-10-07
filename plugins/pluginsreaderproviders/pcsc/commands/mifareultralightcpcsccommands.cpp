@@ -35,20 +35,52 @@ namespace logicalaccess
 		
 	}
 
+    std::vector<unsigned char> MifareUltralightCPCSCCommands::sendGenericCommand(const std::vector<unsigned char>& data)
+    {
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not implemented function call.");
+    }
+
+    std::vector<unsigned char> MifareUltralightCPCSCCommands::authenticate_PICC1()
+    {
+        std::vector<unsigned char> data;
+        data.push_back(0x1A);
+        data.push_back(0x00);
+
+        return sendGenericCommand(data);
+    }
+
+    std::vector<unsigned char> MifareUltralightCPCSCCommands::authenticate_PICC2(const std::vector<unsigned char>& encRndAB)
+    {
+        std::vector<unsigned char> data;
+        data.push_back(0xAF);
+        data.insert(data.end(), encRndAB.begin(), encRndAB.end());
+
+        return sendGenericCommand(data);
+    }
+
 	void MifareUltralightCPCSCCommands::authenticate(boost::shared_ptr<TripleDESKey> authkey)
 	{
 		std::vector<unsigned char> result;
 
+        if (!authkey)
+        {
+            boost::shared_ptr<MifareUltralightCProfile> profile = boost::dynamic_pointer_cast<MifareUltralightCProfile>(getChip()->getProfile());
+            if (profile)
+            {
+                authkey = profile->getKey();
+            }
+        }
+
 		// Get RndB from the PICC
-		result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x1A, 0x00, 0x00);
-		EXCEPTION_ASSERT_WITH_LOG((result.size() - 2) >= 8, CardException, "Authentication failed. The PICC return a bad buffer.");
+		result = authenticate_PICC1();
+		EXCEPTION_ASSERT_WITH_LOG(result.size() >= 11, CardException, "Authentication failed. The PICC return a bad buffer.");
 
 		openssl::DESCipher cipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_CBC);
 		unsigned char* keydata = authkey->getData();
 		openssl::DESSymmetricKey deskey(openssl::DESSymmetricKey::createFromData(std::vector<unsigned char>(keydata, keydata + authkey->getLength())));
 		openssl::DESInitializationVector desiv = openssl::DESInitializationVector::createNull();
 
-		std::vector<unsigned char> encRndB(result.begin(), result.end() - 2);
+		std::vector<unsigned char> encRndB(result.begin() + 1, result.end() - 2);
 		std::vector<unsigned char> rndB;
 		cipher.decipher(encRndB, rndB, deskey, desiv, false);
 
@@ -61,15 +93,18 @@ namespace logicalaccess
 
 		std::vector<unsigned char> rndAB;
 		rndAB.insert(rndAB.end(), rndA.begin(), rndA.end());
-		rndAB.insert(rndAB.end(), rndB.begin(), rndB.end());
+		rndAB.insert(rndAB.end(), rndB.begin() + 1, rndB.end());
+        rndAB.push_back(rndB.at(0));
 
 		std::vector<unsigned char> encRndAB;
+        desiv = openssl::DESInitializationVector::createFromData(encRndB);
 		cipher.cipher(rndAB, encRndAB, deskey, desiv, false);
 
 		// Send Ek(RndAB) to the PICC and get RndA'
-		result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xAF, 0x00, 0x00, static_cast<unsigned char>(encRndAB.size()), encRndAB);
+		result = authenticate_PICC2(encRndAB);
 		EXCEPTION_ASSERT_WITH_LOG((result.size() - 2) >= 8, CardException, "Authentication failed. The PICC return a bad buffer.");
 
+        desiv = openssl::DESInitializationVector::createFromData(std::vector<unsigned char>(encRndAB.end() - 8, encRndAB.end()));
 		std::vector<unsigned char> encRndA1(result.begin(), result.end() - 2);
 		std::vector<unsigned char> rndA1;
 		cipher.decipher(encRndA1, rndA1, deskey, desiv, false);

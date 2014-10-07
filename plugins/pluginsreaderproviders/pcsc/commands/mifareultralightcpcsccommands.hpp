@@ -38,6 +38,12 @@ namespace logicalaccess
 
 		
 		protected:
+
+            virtual std::vector<unsigned char> sendGenericCommand(const std::vector<unsigned char>& data);
+
+            virtual std::vector<unsigned char> authenticate_PICC1();
+
+            virtual std::vector<unsigned char> authenticate_PICC2(const std::vector<unsigned char>& encRndAB);
 					
 	};	
 }

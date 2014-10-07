@@ -24,7 +24,7 @@ namespace logicalaccess
 
 	void MifareUltralightCProfile::setDefaultKeys()
 	{
-		d_key.reset(new TripleDESKey());
+		d_key.reset(new TripleDESKey("49 45 4D 4B 41 45 52 42 21 4E 41 43 55 4F 59 46"));
 	}
 
 	void MifareUltralightCProfile::clearKeys()

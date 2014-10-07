@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <sstream>
 
+#include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 #include "mifareultralightstoragecardservice.hpp"
 
@@ -73,13 +74,14 @@ namespace logicalaccess
 
 		switch (serviceType)
 		{
+        case CST_ACCESS_CONTROL:
+			service.reset(new AccessControlCardService(shared_from_this()));
+			break;
 		case CST_STORAGE:
 			service.reset(new MifareUltralightStorageCardService(shared_from_this()));
 			break;
 		case CST_NFC_TAG:
-		  break;
-		case CST_ACCESS_CONTROL:
-		  break;
+		    break;
 		}
 
 		return service;

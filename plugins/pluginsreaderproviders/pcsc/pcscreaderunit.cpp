@@ -29,6 +29,9 @@
 #include "commands/twiciso7816commands.hpp"
 #include "commands/mifareultralightpcsccommands.hpp"
 #include "commands/mifareultralightcpcsccommands.hpp"
+#include "commands/mifareultralightcomnikeyxx21commands.hpp"
+#include "commands/mifareultralightcacsacrcommands.hpp"
+#include "commands/mifareultralightcspringcardcommands.hpp"
 #include "commands/mifareomnikeyxx27commands.hpp"
 #include "readercardadapters/pcscreadercardadapter.hpp"
 #include "mifareplussl1profile.hpp"
@@ -48,6 +51,7 @@
 #include "readers/cherryreaderunit.hpp"
 #include "readers/scmreaderunit.hpp"
 #include "readers/springcardreaderunit.hpp"
+#include "readers/acsacrreaderunit.hpp"
 
 #include "pcscdatatransport.hpp"
 
@@ -200,6 +204,10 @@ namespace logicalaccess
 		{
 			unit.reset(new SpringCardReaderUnit(readerName));
 		}
+        else if (readerName.find(string("ACS ACR")) != string::npos)
+		{
+            unit.reset(new ACSACRReaderUnit(readerName));
+        }
 
 		if (!unit)
 		{
@@ -1505,7 +1513,22 @@ namespace logicalaccess
 			}
 			else if (type == "MifareUltralightC")
 			{
-				commands.reset(new MifareUltralightCPCSCCommands());
+                if (getPCSCType() == PCSC_RUT_ACS_ACR)
+                {
+                    commands.reset(new MifareUltralightCACSACRCommands());
+                }
+                else if(getPCSCType() == PCSC_RUT_SPRINGCARD)
+                {
+                    commands.reset(new MifareUltralightCSpringCardCommands());
+                }
+                else if(getPCSCType() == PCSC_RUT_OMNIKEY_XX21)
+                {
+                    commands.reset(new MifareUltralightCOmnikeyXX21Commands());
+                }
+                else
+                {
+				    commands.reset(new MifareUltralightCPCSCCommands());
+                }
 			}
 			else if (type == "SAM_AV1")
 			{

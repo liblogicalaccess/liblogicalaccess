@@ -45,7 +45,8 @@ namespace logicalaccess
 		PCSC_RUT_CHERRY = 0x0004, /**< Cherry SmartTerminal PC/SC reader unit */
 		PCSC_RUT_SPRINGCARD = 0x0005, /**< SpringCard PC/SC reader unit */
 		PCSC_RUT_OMNIKEY_XX27 = 0x0006, /**< Omnikey PC/SC reader unit */
-		PCSC_RUT_OMNIKEY_LAN_XX21 = 0x0007 /**< Omnikey PC/SC LAN reader unit */
+		PCSC_RUT_OMNIKEY_LAN_XX21 = 0x0007, /**< Omnikey PC/SC LAN reader unit */
+        PCSC_RUT_ACS_ACR = 0x0008, /**< ACS ACR reader unit */
 	} PCSCReaderUnitType;
 
 	/**
