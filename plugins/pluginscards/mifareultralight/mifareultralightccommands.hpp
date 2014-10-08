@@ -26,6 +26,12 @@ namespace logicalaccess
 			 */
 			void authenticate(boost::shared_ptr<AccessInfo> aiToUse);
 
+            /**
+			 * \brief Change the chip authentication key.
+			 * \param aiToWrite The access information to write.
+			 */
+			void changeKey(boost::shared_ptr<AccessInfo> aiToWrite);
+
 			/**
 			 * \brief Change the chip authentication key.
 			 * \param key The new key.

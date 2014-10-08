@@ -88,4 +88,18 @@ namespace logicalaccess
 			}
 		}
 	}
+
+    void MifareUltralightCCommands::changeKey(boost::shared_ptr<AccessInfo> aiToWrite)
+	{
+		if (aiToWrite)
+		{
+			boost::shared_ptr<MifareUltralightCAccessInfo> mAi = boost::dynamic_pointer_cast<MifareUltralightCAccessInfo>(aiToWrite);
+			EXCEPTION_ASSERT_WITH_LOG(mAi, std::invalid_argument, "aiToWrite must be a MifareUltralightCAccessInfo.");
+
+			if (mAi->key)
+			{
+                changeKey(mAi->key);
+			}
+		}
+	}
 }

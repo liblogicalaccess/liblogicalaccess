@@ -35,14 +35,14 @@ namespace logicalaccess
 		writeData(location, aiToUse, boost::shared_ptr<AccessInfo>(), zeroblock, sizeof(zeroblock), CB_DEFAULT);
 	}	
 
-	void MifareUltralightStorageCardService::writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> /*aiToUse*/, boost::shared_ptr<AccessInfo> /*aiToWrite*/, const void* data, size_t dataLength, CardBehavior behaviorFlags)
+	void MifareUltralightStorageCardService::writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> /*aiToUse*/, boost::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags)
 	{
 		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 		EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
 
 		boost::shared_ptr<MifareUltralightLocation> mLocation = boost::dynamic_pointer_cast<MifareUltralightLocation>(location);
 		EXCEPTION_ASSERT_WITH_LOG(mLocation, std::invalid_argument, "location must be a MifareUltralightLocation.");
-		boost::shared_ptr<MifareUltralightAccessInfo> mAi = boost::dynamic_pointer_cast<MifareUltralightAccessInfo>(location);
+		boost::shared_ptr<MifareUltralightAccessInfo> mAi = boost::dynamic_pointer_cast<MifareUltralightAccessInfo>(aiToWrite);
 
 		size_t totaldatalen = dataLength + mLocation->byte;
 		int nbPages = 0;

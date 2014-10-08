@@ -62,7 +62,7 @@ namespace logicalaccess
 	{
 		std::vector<unsigned char> result;
 
-        if (!authkey)
+        if (!authkey || authkey->isEmpty())
         {
             boost::shared_ptr<MifareUltralightCProfile> profile = boost::dynamic_pointer_cast<MifareUltralightCProfile>(getChip()->getProfile());
             if (profile)
@@ -102,7 +102,7 @@ namespace logicalaccess
 
 		// Send Ek(RndAB) to the PICC and get RndA'
 		result = authenticate_PICC2(encRndAB);
-		EXCEPTION_ASSERT_WITH_LOG((result.size() - 2) >= 8, CardException, "Authentication failed. The PICC return a bad buffer.");
+		EXCEPTION_ASSERT_WITH_LOG(result.size() >= 10, CardException, "Authentication failed. The PICC return a bad buffer.");
 
         desiv = openssl::DESInitializationVector::createFromData(std::vector<unsigned char>(encRndAB.end() - 8, encRndAB.end()));
 		std::vector<unsigned char> encRndA1(result.begin(), result.end() - 2);

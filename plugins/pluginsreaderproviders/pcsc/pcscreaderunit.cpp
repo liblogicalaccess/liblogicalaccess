@@ -43,6 +43,7 @@
 #include "commands/samiso7816resultchecker.hpp"
 #include "commands/desfireiso7816resultchecker.hpp"
 #include "commands/mifareomnikeyxx27resultchecker.hpp"
+#include "commands/acsacrresultchecker.hpp"
 
 #include "readers/omnikeyxx21readerunit.hpp"
 #include "readers/omnikeylanxx21readerunit.hpp"
@@ -1516,6 +1517,7 @@ namespace logicalaccess
                 if (getPCSCType() == PCSC_RUT_ACS_ACR)
                 {
                     commands.reset(new MifareUltralightCACSACRCommands());
+                    resultChecker.reset(new ACSACRResultChecker());
                 }
                 else if(getPCSCType() == PCSC_RUT_SPRINGCARD)
                 {

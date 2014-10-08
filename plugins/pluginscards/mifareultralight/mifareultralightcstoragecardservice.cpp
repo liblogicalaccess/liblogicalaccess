@@ -39,6 +39,11 @@ namespace logicalaccess
 		getMifareUltralightCChip()->getMifareUltralightCCommands()->authenticate(aiToUse);
 
 		MifareUltralightStorageCardService::writeData(location, aiToUse, aiToWrite, data, dataLength, behaviorFlags);
+
+        if (aiToWrite)
+        {
+            getMifareUltralightCChip()->getMifareUltralightCCommands()->changeKey(aiToWrite);
+        }
 	}
 
 	void MifareUltralightCStorageCardService::readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags)
