@@ -22,7 +22,7 @@ namespace logicalaccess
     sym = ::dlsym(_handle, symName);
     err = ::dlerror();
     if (err)
-      THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, ::dlerror());
+      THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, err);
     return sym;
   }
 }
