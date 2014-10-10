@@ -10,52 +10,51 @@
 #include "twicchip.hpp"
 #include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
 
-
 namespace logicalaccess
 {
-	class TwicCardProvider;
+    class TwicCardProvider;
 
-	/**
-	 * \brief The Twic access control card service class.
-	 */
-	class LIBLOGICALACCESS_API TwicAccessControlCardService : public AccessControlCardService
-	{
-		public:
+    /**
+     * \brief The Twic access control card service class.
+     */
+    class LIBLOGICALACCESS_API TwicAccessControlCardService : public AccessControlCardService
+    {
+    public:
 
-			/**
-			 * \brief Constructor.
-			 * \param chip The associated chip.
-			 */
-			TwicAccessControlCardService(boost::shared_ptr<Chip> chip);
+        /**
+         * \brief Constructor.
+         * \param chip The associated chip.
+         */
+        TwicAccessControlCardService(boost::shared_ptr<Chip> chip);
 
-			/**
-			 * \brief Destructor.
-			 */
-			~TwicAccessControlCardService();
+        /**
+         * \brief Destructor.
+         */
+        ~TwicAccessControlCardService();
 
-			/**
-			 * \brief Read format from the card.
-			 * \param format The format to read.
-			 * \param location The format location.
-			 * \param aiToUse The key's informations to use.
-			 * \return The format read on success, null otherwise.
-			 */
-			virtual boost::shared_ptr<Format> readFormat(boost::shared_ptr<Format> format, boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse);
+        /**
+         * \brief Read format from the card.
+         * \param format The format to read.
+         * \param location The format location.
+         * \param aiToUse The key's informations to use.
+         * \return The format read on success, null otherwise.
+         */
+        virtual boost::shared_ptr<Format> readFormat(boost::shared_ptr<Format> format, boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse);
 
-			/**
-			 * \brief Write format to the card.
-			 * \param format The format to write.
-			 * \param location The format location.
-			 * \param aiToUse The key's informations to use.
-			 * \param aiToWrite The key's informations to write.
-			 * \return True on success, false otherwise.
-			 */
-			virtual bool writeFormat(boost::shared_ptr<Format> format, boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite);
+        /**
+         * \brief Write format to the card.
+         * \param format The format to write.
+         * \param location The format location.
+         * \param aiToUse The key's informations to use.
+         * \param aiToWrite The key's informations to write.
+         * \return True on success, false otherwise.
+         */
+        virtual bool writeFormat(boost::shared_ptr<Format> format, boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite);
 
-		protected:
+    protected:
 
-			boost::shared_ptr<TwicChip> getTwicChip() { return boost::dynamic_pointer_cast<TwicChip>(getChip()); };
-	};
+        boost::shared_ptr<TwicChip> getTwicChip() { return boost::dynamic_pointer_cast<TwicChip>(getChip()); };
+    };
 }
 
 #endif

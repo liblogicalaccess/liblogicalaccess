@@ -7,36 +7,35 @@
 #include "deisterreaderunitconfiguration.hpp"
 #include "deisterreaderprovider.hpp"
 
-
 namespace logicalaccess
 {
-	DeisterReaderUnitConfiguration::DeisterReaderUnitConfiguration()
-		: ReaderUnitConfiguration(READER_DEISTER)
-	{
-		resetConfiguration();
-	}
+    DeisterReaderUnitConfiguration::DeisterReaderUnitConfiguration()
+        : ReaderUnitConfiguration(READER_DEISTER)
+    {
+        resetConfiguration();
+    }
 
-	DeisterReaderUnitConfiguration::~DeisterReaderUnitConfiguration()
-	{
-	}
+    DeisterReaderUnitConfiguration::~DeisterReaderUnitConfiguration()
+    {
+    }
 
-	void DeisterReaderUnitConfiguration::resetConfiguration()
-	{
-	}
+    void DeisterReaderUnitConfiguration::resetConfiguration()
+    {
+    }
 
-	void DeisterReaderUnitConfiguration::serialize(boost::property_tree::ptree& parentNode)
-	{
-		boost::property_tree::ptree node;
-		parentNode.add_child(getDefaultXmlNodeName(), node);
-	}
+    void DeisterReaderUnitConfiguration::serialize(boost::property_tree::ptree& parentNode)
+    {
+        boost::property_tree::ptree node;
+        parentNode.add_child(getDefaultXmlNodeName(), node);
+    }
 
-	void DeisterReaderUnitConfiguration::unSerialize(boost::property_tree::ptree& /*node*/)
-	{
-		//TODO: Implement this.
-	}
+    void DeisterReaderUnitConfiguration::unSerialize(boost::property_tree::ptree& /*node*/)
+    {
+        //TODO: Implement this.
+    }
 
-	std::string DeisterReaderUnitConfiguration::getDefaultXmlNodeName() const
-	{
-		return "DeisterReaderUnitConfiguration";
-	}
+    std::string DeisterReaderUnitConfiguration::getDefaultXmlNodeName() const
+    {
+        return "DeisterReaderUnitConfiguration";
+    }
 }

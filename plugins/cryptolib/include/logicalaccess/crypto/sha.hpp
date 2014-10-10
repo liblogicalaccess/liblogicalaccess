@@ -13,23 +13,22 @@
 
 namespace logicalaccess
 {
-	namespace openssl
-	{
-		/**
-		 * \brief Get a SHA-256 hash.
-		 * \param buffer The buffer to get the hash from.
-		 * \return The hash.
-		 */
-		std::vector<unsigned char> SHA256Hash(const std::vector<unsigned char>& buffer);
+    namespace openssl
+    {
+        /**
+         * \brief Get a SHA-256 hash.
+         * \param buffer The buffer to get the hash from.
+         * \return The hash.
+         */
+        std::vector<unsigned char> SHA256Hash(const std::vector<unsigned char>& buffer);
 
-		/**
-		 * \brief Get a SHA-256 hash.
-		 * \param str The string to get the hash from.
-		 * \return The hash.
-		 */
-		std::vector<unsigned char> SHA256Hash(const std::string& str);
-	}
+        /**
+         * \brief Get a SHA-256 hash.
+         * \param str The string to get the hash from.
+         * \return The hash.
+         */
+        std::vector<unsigned char> SHA256Hash(const std::string& str);
+    }
 }
 
 #endif /* SHA_HPP */
-

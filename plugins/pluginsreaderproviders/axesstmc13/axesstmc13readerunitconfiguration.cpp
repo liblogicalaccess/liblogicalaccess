@@ -9,33 +9,33 @@
 
 namespace logicalaccess
 {
-	AxessTMC13ReaderUnitConfiguration::AxessTMC13ReaderUnitConfiguration()
-		: ReaderUnitConfiguration(READER_AXESSTMC13)
-	{
-		resetConfiguration();
-	}
+    AxessTMC13ReaderUnitConfiguration::AxessTMC13ReaderUnitConfiguration()
+        : ReaderUnitConfiguration(READER_AXESSTMC13)
+    {
+        resetConfiguration();
+    }
 
-	AxessTMC13ReaderUnitConfiguration::~AxessTMC13ReaderUnitConfiguration()
-	{
-	}
+    AxessTMC13ReaderUnitConfiguration::~AxessTMC13ReaderUnitConfiguration()
+    {
+    }
 
-	void AxessTMC13ReaderUnitConfiguration::resetConfiguration()
-	{
-	}
+    void AxessTMC13ReaderUnitConfiguration::resetConfiguration()
+    {
+    }
 
-	void AxessTMC13ReaderUnitConfiguration::serialize(boost::property_tree::ptree& parentNode)
-	{
-		boost::property_tree::ptree node;
-		parentNode.add_child(getDefaultXmlNodeName(), node);
-	}
+    void AxessTMC13ReaderUnitConfiguration::serialize(boost::property_tree::ptree& parentNode)
+    {
+        boost::property_tree::ptree node;
+        parentNode.add_child(getDefaultXmlNodeName(), node);
+    }
 
-	void AxessTMC13ReaderUnitConfiguration::unSerialize(boost::property_tree::ptree& /*node*/)
-	{
-		//TODO: Implement this.
-	}
+    void AxessTMC13ReaderUnitConfiguration::unSerialize(boost::property_tree::ptree& /*node*/)
+    {
+        //TODO: Implement this.
+    }
 
-	std::string AxessTMC13ReaderUnitConfiguration::getDefaultXmlNodeName() const
-	{
-		return "AxessTMC13ReaderUnitConfiguration";
-	}
+    std::string AxessTMC13ReaderUnitConfiguration::getDefaultXmlNodeName() const
+    {
+        return "AxessTMC13ReaderUnitConfiguration";
+    }
 }

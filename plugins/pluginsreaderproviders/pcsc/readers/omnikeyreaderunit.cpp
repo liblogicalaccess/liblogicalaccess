@@ -15,70 +15,67 @@
 
 namespace logicalaccess
 {
-	std::map<std::string, bool> OmnikeyReaderUnit::d_isSecureConnectionMode;
+    std::map<std::string, bool> OmnikeyReaderUnit::d_isSecureConnectionMode;
 
-	OmnikeyReaderUnit::OmnikeyReaderUnit(const std::string& name)
-		: PCSCReaderUnit(name)
-	{
-		
-	}
+    OmnikeyReaderUnit::OmnikeyReaderUnit(const std::string& name)
+        : PCSCReaderUnit(name)
+    {
+    }
 
-	OmnikeyReaderUnit::~OmnikeyReaderUnit()
-	{
-		
-	}
+    OmnikeyReaderUnit::~OmnikeyReaderUnit()
+    {
+    }
 
-	std::string OmnikeyReaderUnit::getReaderSerialNumber()
-	{
-		std::string ret;
-		
-		std::vector<unsigned char> ucReceivedData;
+    std::string OmnikeyReaderUnit::getReaderSerialNumber()
+    {
+        std::string ret;
 
-		//This Command is from ICAO Command Set (Test-Commands). If you use ICAO Test-Commands then the driver stop the tracking (the reader is « stuck » ).
-		ucReceivedData = getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x9A, 0x01, 0x05, 0x00);
-		//After using this command you must "Close" the Test-Mode with the following command:
-		size_t le = ucReceivedData.size() - 2;
+        std::vector<unsigned char> ucReceivedData;
 
-		if (le > 0)
-		{
-			ret = BufferHelper::getStdString(ucReceivedData);
-		}
+        //This Command is from ICAO Command Set (Test-Commands). If you use ICAO Test-Commands then the driver stop the tracking (the reader is « stuck » ).
+        ucReceivedData = getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x9A, 0x01, 0x05, 0x00);
+        //After using this command you must "Close" the Test-Mode with the following command:
+        size_t le = ucReceivedData.size() - 2;
 
-		try
-		{	
-			getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x9A, 0x04, 0x01);
-		}
-		catch(std::exception&)
-		{
-			
-		}
+        if (le > 0)
+        {
+            ret = BufferHelper::getStdString(ucReceivedData);
+        }
 
-		return ret;
-	}
+        try
+        {
+            getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x9A, 0x04, 0x01);
+        }
+        catch (std::exception&)
+        {
+        }
 
-	bool OmnikeyReaderUnit::getIsSecureConnectionMode()
-	{
-		if (d_isSecureConnectionMode.find(getConnectedName()) == d_isSecureConnectionMode.end())
-		{
-			return false;
-		}
+        return ret;
+    }
 
-		return d_isSecureConnectionMode[getConnectedName()];
-	}
+    bool OmnikeyReaderUnit::getIsSecureConnectionMode()
+    {
+        if (d_isSecureConnectionMode.find(getConnectedName()) == d_isSecureConnectionMode.end())
+        {
+            return false;
+        }
 
-	void OmnikeyReaderUnit::setIsSecureConnectionMode(bool isSecure)
-	{
-		d_isSecureConnectionMode[getConnectedName()] = isSecure;
-	}
+        return d_isSecureConnectionMode[getConnectedName()];
+    }
 
-	bool OmnikeyReaderUnit::waitRemoval(unsigned int maxwait)
-	{
-		/*if (getIsSecureConnectionMode())
-		{
-			SecureModeCloseSession(getHandle());
-			setIsSecureConnectionMode(false);
-		}*/
+    void OmnikeyReaderUnit::setIsSecureConnectionMode(bool isSecure)
+    {
+        d_isSecureConnectionMode[getConnectedName()] = isSecure;
+    }
 
-		return PCSCReaderUnit::waitRemoval(maxwait);		
-	}
+    bool OmnikeyReaderUnit::waitRemoval(unsigned int maxwait)
+    {
+        /*if (getIsSecureConnectionMode())
+        {
+        SecureModeCloseSession(getHandle());
+        setIsSecureConnectionMode(false);
+        }*/
+
+        return PCSCReaderUnit::waitRemoval(maxwait);
+    }
 }

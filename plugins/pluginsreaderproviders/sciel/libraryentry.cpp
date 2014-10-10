@@ -16,36 +16,36 @@
 
 extern "C"
 {
-	LIBLOGICALACCESS_API char *getLibraryName()
-	{
-		return (char *)"SCIEL";
-	}
+    LIBLOGICALACCESS_API char *getLibraryName()
+    {
+        return (char *)"SCIEL";
+    }
 
-	LIBLOGICALACCESS_API void getSCIELReader(boost::shared_ptr<logicalaccess::ReaderProvider>* rp)
-	{
-		if (rp != NULL)
-		{
-			*rp = logicalaccess::SCIELReaderProvider::getSingletonInstance();
-		}
-	}
+    LIBLOGICALACCESS_API void getSCIELReader(boost::shared_ptr<logicalaccess::ReaderProvider>* rp)
+    {
+        if (rp != NULL)
+        {
+            *rp = logicalaccess::SCIELReaderProvider::getSingletonInstance();
+        }
+    }
 
-	LIBLOGICALACCESS_API bool getReaderInfoAt(unsigned int index, char* readername, size_t readernamelen, void** getterfct)
-	{
-		bool ret = false;
-		if (readername != NULL && readernamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
-		{
-			switch (index)
-			{
-			case 0:
-				{
-					*getterfct = (void*)&getSCIELReader;
-					sprintf(readername, READER_SCIEL);
-					ret = true;
-				}
-				break;
-			}
-		}
+    LIBLOGICALACCESS_API bool getReaderInfoAt(unsigned int index, char* readername, size_t readernamelen, void** getterfct)
+    {
+        bool ret = false;
+        if (readername != NULL && readernamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
+        {
+            switch (index)
+            {
+            case 0:
+            {
+                *getterfct = (void*)&getSCIELReader;
+                sprintf(readername, READER_SCIEL);
+                ret = true;
+            }
+                break;
+            }
+        }
 
-		return ret;
-	}
+        return ret;
+    }
 }

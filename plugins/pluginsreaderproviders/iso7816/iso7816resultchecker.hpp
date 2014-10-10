@@ -11,16 +11,16 @@
 
 namespace logicalaccess
 {
-	/**
-	 * \brief The ISO 7816 result checker.
-	 */
-	class LIBLOGICALACCESS_API ISO7816ResultChecker : public ResultChecker
-	{
-		public:
-			ISO7816ResultChecker();
+    /**
+     * \brief The ISO 7816 result checker.
+     */
+    class LIBLOGICALACCESS_API ISO7816ResultChecker : public ResultChecker
+    {
+    public:
+        ISO7816ResultChecker();
 
-			virtual ~ISO7816ResultChecker();
-	};
+        virtual ~ISO7816ResultChecker();
+    };
 }
 
 #endif

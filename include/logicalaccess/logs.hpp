@@ -25,52 +25,52 @@
 
 namespace logicalaccess
 {
-	enum LogLevel { NONE = 0, INFOS, WARNINGS, NOTICES, ERRORS, EMERGENSYS, CRITICALS, ALERTS, DEBUGS, COMS, PLUGINS, PLUGINS_ERROR };
+    enum LogLevel { NONE = 0, INFOS, WARNINGS, NOTICES, ERRORS, EMERGENSYS, CRITICALS, ALERTS, DEBUGS, COMS, PLUGINS, PLUGINS_ERROR };
 
-	class LIBLOGICALACCESS_API Logs
-	{
-	public:
-		Logs(const char* file, const char* func, int line, enum LogLevel level);
-   
-		~Logs();
-   
-		template <class T>
-		Logs& operator<<(const T& arg)
-		{
-			_stream << arg;
-			return (*this);
-		}
-   
-		static std::ofstream logfile;
+    class LIBLOGICALACCESS_API Logs
+    {
+    public:
+        Logs(const char* file, const char* func, int line, enum LogLevel level);
 
-	private:
-		enum LogLevel		d_level;
-		std::stringstream   _stream;
-		static std::map<LogLevel, std::string> logLevelMsg;
-	};
+        ~Logs();
 
-	#ifdef LOGICALACCESS_LOGS
+        template <class T>
+        Logs& operator<<(const T& arg)
+        {
+            _stream << arg;
+            return (*this);
+        }
 
-	#define LOG(x) logicalaccess::Logs(__FILE__, __FUNCTION__, __LINE__, x)
+        static std::ofstream logfile;
 
-	/**
-	 * \brief Convenient alias to throw an exception with logs.
-	 */
-	#define THROW_EXCEPTION_WITH_LOG(type, msg) { LOG(logicalaccess::LogLevel::ERRORS) << msg; throw EXCEPTION(type, msg); }
+    private:
+        enum LogLevel		d_level;
+        std::stringstream   _stream;
+        static std::map<LogLevel, std::string> logLevelMsg;
+    };
 
-	/**
-	 * \brief Assertion which raises an exception on failure with logs.
-	 */
-	#define EXCEPTION_ASSERT_WITH_LOG(condition, type, msg) if (!(condition)) { THROW_EXCEPTION_WITH_LOG(type, msg); }
+#ifdef LOGICALACCESS_LOGS
 
-	#else
+#define LOG(x) logicalaccess::Logs(__FILE__, __FUNCTION__, __LINE__, x)
 
-	#define LOG(x) logicalaccess::Logs(__FILE__, __FUNCTION__, __LINE__, logicalaccess::LogLevel::NONE)
+    /**
+     * \brief Convenient alias to throw an exception with logs.
+     */
+#define THROW_EXCEPTION_WITH_LOG(type, msg) { LOG(logicalaccess::LogLevel::ERRORS) << msg; throw EXCEPTION(type, msg); }
 
-	#define THROW_EXCEPTION_WITH_LOG(type, msg) { throw EXCEPTION(type, msg); }
-	#define EXCEPTION_ASSERT_WITH_LOG(condition, type, msg) if (!(condition)) { THROW_EXCEPTION_WITH_LOG(type, msg); }
+    /**
+     * \brief Assertion which raises an exception on failure with logs.
+     */
+#define EXCEPTION_ASSERT_WITH_LOG(condition, type, msg) if (!(condition)) { THROW_EXCEPTION_WITH_LOG(type, msg); }
 
-	#endif
+#else
+
+#define LOG(x) logicalaccess::Logs(__FILE__, __FUNCTION__, __LINE__, logicalaccess::LogLevel::NONE)
+
+#define THROW_EXCEPTION_WITH_LOG(type, msg) { throw EXCEPTION(type, msg); }
+#define EXCEPTION_ASSERT_WITH_LOG(condition, type, msg) if (!(condition)) { THROW_EXCEPTION_WITH_LOG(type, msg); }
+
+#endif
 }
 
 #endif

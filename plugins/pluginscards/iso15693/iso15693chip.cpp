@@ -14,86 +14,84 @@
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 #include "iso15693storagecardservice.hpp"
 
-
 namespace logicalaccess
 {
-	ISO15693Chip::ISO15693Chip(std::string ct)
-		: Chip(ct)
-	{
-		d_profile.reset(new ISO15693Profile());
-	}
+    ISO15693Chip::ISO15693Chip(std::string ct)
+        : Chip(ct)
+    {
+        d_profile.reset(new ISO15693Profile());
+    }
 
-	ISO15693Chip::ISO15693Chip()
-		: Chip(CHIP_ISO15693)
-	{
-		d_profile.reset(new ISO15693Profile());
-	}
+    ISO15693Chip::ISO15693Chip()
+        : Chip(CHIP_ISO15693)
+    {
+        d_profile.reset(new ISO15693Profile());
+    }
 
-	ISO15693Chip::~ISO15693Chip()
-	{
+    ISO15693Chip::~ISO15693Chip()
+    {
+    }
 
-	}	
+    boost::shared_ptr<LocationNode> ISO15693Chip::getRootLocationNode()
+    {
+        boost::shared_ptr<LocationNode> rootNode;
+        rootNode.reset(new LocationNode());
 
-	boost::shared_ptr<LocationNode> ISO15693Chip::getRootLocationNode()
-	{
-		boost::shared_ptr<LocationNode> rootNode;
-		rootNode.reset(new LocationNode());
+        rootNode->setName("ISO 15693");
+        rootNode->setHasProperties(true);
 
-		rootNode->setName("ISO 15693");
-		rootNode->setHasProperties(true);
+        boost::shared_ptr<ISO15693Location> rootLocation;
+        rootLocation.reset(new ISO15693Location());
+        //FIXME: We need to add a specific property for this
+        rootLocation->block = static_cast<int>(-1);
+        rootNode->setLocation(rootLocation);
 
-		boost::shared_ptr<ISO15693Location> rootLocation;
-		rootLocation.reset(new ISO15693Location());
-		//FIXME: We need to add a specific property for this
-		rootLocation->block = static_cast<int>(-1);
-		rootNode->setLocation(rootLocation);	
+        if (getCommands())
+        {
+            ISO15693Commands::SystemInformation sysinfo = getISO15693Commands()->getSystemInformation();
+            if (sysinfo.hasVICCMemorySize)
+            {
+                char tmpName[255];
+                for (int i = 0; i < sysinfo.nbBlocks; i++)
+                {
+                    boost::shared_ptr<LocationNode> blockNode;
+                    blockNode.reset(new LocationNode());
 
-		if (getCommands())
-		{
-			ISO15693Commands::SystemInformation sysinfo = getISO15693Commands()->getSystemInformation();
-			if (sysinfo.hasVICCMemorySize)
-			{
-				char tmpName[255];
-				for (int i = 0; i < sysinfo.nbBlocks; i++)
-				{
-					boost::shared_ptr<LocationNode> blockNode;
-					blockNode.reset(new LocationNode());
+                    sprintf(tmpName, "Block %d", i);
+                    blockNode->setName(tmpName);
+                    blockNode->setNeedAuthentication(true);
+                    blockNode->setHasProperties(true);
+                    blockNode->setLength(sysinfo.blockSize);
 
-					sprintf(tmpName, "Block %d", i);
-					blockNode->setName(tmpName);
-					blockNode->setNeedAuthentication(true);
-					blockNode->setHasProperties(true);
-					blockNode->setLength(sysinfo.blockSize);
+                    boost::shared_ptr<ISO15693Location> blockLocation;
+                    blockLocation.reset(new ISO15693Location());
+                    blockLocation->block = i;
+                    blockNode->setLocation(blockLocation);
 
-					boost::shared_ptr<ISO15693Location> blockLocation;
-					blockLocation.reset(new ISO15693Location());
-					blockLocation->block = i;
-					blockNode->setLocation(blockLocation);				
+                    blockNode->setParent(rootNode);
+                    rootNode->getChildrens().push_back(blockNode);
+                }
+            }
+        }
 
-					blockNode->setParent(rootNode);
-					rootNode->getChildrens().push_back(blockNode);
-				}
-			}
-		}
+        return rootNode;
+    }
 
-		return rootNode;
-	}
+    boost::shared_ptr<CardService> ISO15693Chip::getService(CardServiceType serviceType)
+    {
+        boost::shared_ptr<CardService> service;
 
-	boost::shared_ptr<CardService> ISO15693Chip::getService(CardServiceType serviceType)
-	{
-		boost::shared_ptr<CardService> service;
+        switch (serviceType)
+        {
+        case CST_STORAGE:
+            service.reset(new ISO15693StorageCardService(shared_from_this()));
+            break;
+        case CST_ACCESS_CONTROL:
+            break;
+        case CST_NFC_TAG:
+            break;
+        }
 
-		switch (serviceType)
-		{
-		case CST_STORAGE:
-			service.reset(new ISO15693StorageCardService(shared_from_this()));
-			break;
-		case CST_ACCESS_CONTROL:
-		  break;
-		case CST_NFC_TAG:
-		  break;
-		}
-
-		return service;
-	}
+        return service;
+    }
 }

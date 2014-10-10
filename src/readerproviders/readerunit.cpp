@@ -25,334 +25,332 @@
 #include <boost/foreach.hpp>
 #include <map>
 
-
 namespace logicalaccess
 {
-	ReaderUnit::ReaderUnit()
-		: XmlSerializable(), d_card_type("UNKNOWN")
-	{
+    ReaderUnit::ReaderUnit()
+        : XmlSerializable(), d_card_type("UNKNOWN")
+    {
+        try
+        {
+            boost::property_tree::ptree pt;
+            read_xml((boost::filesystem::current_path().string() + "/ReaderUnit.config"), pt);
+            d_card_type = pt.get("config.cardType", "UNKNOWN");
+        }
+        catch (...) {}
+    }
 
-		try
-		{
-			boost::property_tree::ptree pt;
-			read_xml((boost::filesystem::current_path().string() + "/ReaderUnit.config"), pt);
-			d_card_type = pt.get("config.cardType", "UNKNOWN");
-		}
-		catch (...) { }
-	}
+    ReaderUnit::~ReaderUnit()
+    {
+    }
 
-	ReaderUnit::~ReaderUnit()
-	{
-	}
+    std::vector<unsigned char> ReaderUnit::getPingCommand() const
+    {
+        return std::vector<unsigned char>();
+    }
 
-	std::vector<unsigned char> ReaderUnit::getPingCommand() const
-	{
-		return std::vector<unsigned char>();
-	}
+    boost::shared_ptr<LCDDisplay> ReaderUnit::getLCDDisplay()
+    {
+        if (d_lcdDisplay)
+        {
+            d_lcdDisplay->setReaderCardAdapter(getDefaultReaderCardAdapter());
+        }
+        return d_lcdDisplay;
+    }
 
-	boost::shared_ptr<LCDDisplay> ReaderUnit::getLCDDisplay()
-	{
-		if (d_lcdDisplay)
-		{
-			d_lcdDisplay->setReaderCardAdapter(getDefaultReaderCardAdapter());
-		}
-		return d_lcdDisplay;
-	}
+    boost::shared_ptr<LEDBuzzerDisplay> ReaderUnit::getLEDBuzzerDisplay()
+    {
+        if (d_ledBuzzerDisplay)
+        {
+            d_ledBuzzerDisplay->setReaderCardAdapter(getDefaultReaderCardAdapter());
+        }
+        return d_ledBuzzerDisplay;
+    }
 
-	boost::shared_ptr<LEDBuzzerDisplay> ReaderUnit::getLEDBuzzerDisplay()
-	{
-		if (d_ledBuzzerDisplay)
-		{
-			d_ledBuzzerDisplay->setReaderCardAdapter(getDefaultReaderCardAdapter());
-		}
-		return d_ledBuzzerDisplay;
-	}
+    bool ReaderUnit::waitInsertion(const std::vector<unsigned char>& identifier, unsigned int maxwait)
+    {
+        LOG(LogLevel::INFOS) << "Started for identifier " << BufferHelper::getHex(identifier) << " - maxwait " << maxwait;
 
-	bool ReaderUnit::waitInsertion(const std::vector<unsigned char>& identifier, unsigned int maxwait)
-	{
-		LOG(LogLevel::INFOS) << "Started for identifier " << BufferHelper::getHex(identifier) << " - maxwait " << maxwait;
+        bool inserted = false;
 
-		bool inserted = false;
+        boost::posix_time::ptime currentDate = boost::posix_time::second_clock::local_time();
+        boost::posix_time::ptime maxDate = currentDate + boost::posix_time::milliseconds(maxwait);
 
-		boost::posix_time::ptime currentDate = boost::posix_time::second_clock::local_time();
-		boost::posix_time::ptime maxDate = currentDate + boost::posix_time::milliseconds(maxwait);
+        while (!inserted && currentDate < maxDate)
+        {
+            if (waitInsertion(maxwait))
+            {
+                LOG(LogLevel::INFOS) << "Chip(s) detected ! Looking in the list to find the chip...";
+                bool found = false;
+                std::vector<boost::shared_ptr<Chip> > chipList = getChipList();
+                for (std::vector<boost::shared_ptr<Chip> >::iterator i = chipList.begin(); i != chipList.end() && !found; ++i)
+                {
+                    std::vector<unsigned char> tmp = (*i)->getChipIdentifier();
+                    LOG(LogLevel::INFOS) << "Processing chip " << BufferHelper::getHex(tmp) << "...";
 
-		while (!inserted && currentDate < maxDate)
-		{
-			if (waitInsertion(maxwait))
-			{
-				LOG(LogLevel::INFOS) << "Chip(s) detected ! Looking in the list to find the chip...";
-				bool found = false;
-				std::vector<boost::shared_ptr<Chip> > chipList = getChipList();
-				for (std::vector<boost::shared_ptr<Chip> >::iterator i = chipList.begin(); i != chipList.end() && !found; ++i)
-				{
-					std::vector<unsigned char> tmp = (*i)->getChipIdentifier();
-					LOG(LogLevel::INFOS) << "Processing chip " << BufferHelper::getHex(tmp)  << "...";
+                    if (tmp == identifier)
+                    {
+                        LOG(LogLevel::INFOS) << "Chip found !";
+                        // re-assign the chip
+                        d_insertedChip = *i;
+                        found = true;
+                    }
+                }
 
-					if (tmp == identifier)
-					{
-						LOG(LogLevel::INFOS) << "Chip found !";
-						// re-assign the chip
-						d_insertedChip = *i;
-						found = true;
-					}
-				}
+                if (found)
+                {
+                    inserted = true;
+                }
+                else
+                {
+                    d_insertedChip.reset();
+                }
+            }
+            currentDate = boost::posix_time::second_clock::local_time();
+        }
 
-				if (found)
-				{
-					inserted = true;
-				}
-				else
-				{
-					d_insertedChip.reset();
-				}
-			}
-			currentDate = boost::posix_time::second_clock::local_time();
-		}
+        LOG(LogLevel::INFOS) << "Returns inserted " << inserted << " - expired " << (currentDate >= maxDate);
 
-		LOG(LogLevel::INFOS) << "Returns inserted " << inserted << " - expired " << (currentDate >= maxDate);
+        return inserted;
+    }
 
-		return inserted;
-	}
+    std::vector<unsigned char> ReaderUnit::getNumber(boost::shared_ptr<Chip> chip, boost::shared_ptr<CardsFormatComposite> composite)
+    {
+        LOG(LogLevel::INFOS) << "Started for chip type {0x" << chip->getCardType() << "(" << chip->getGenericCardType() << ")}";
+        std::vector<unsigned char> ret;
 
-	std::vector<unsigned char> ReaderUnit::getNumber(boost::shared_ptr<Chip> chip, boost::shared_ptr<CardsFormatComposite> composite)
-	{
-		LOG(LogLevel::INFOS) << "Started for chip type {0x" << chip->getCardType() << "(" << chip->getGenericCardType() << ")}";
-		std::vector<unsigned char> ret;
+        if (composite)
+        {
+            LOG(LogLevel::INFOS) << "Composite used to find the chip identifier {" << boost::dynamic_pointer_cast<XmlSerializable>(composite)->serialize() << "}";
+            composite->setReaderUnit(shared_from_this());
 
-		if (composite)
-		{
-			LOG(LogLevel::INFOS) << "Composite used to find the chip identifier {" << boost::dynamic_pointer_cast<XmlSerializable>(composite)->serialize() << "}";
-			composite->setReaderUnit(shared_from_this());
-
-			CardTypeList ctList = composite->getConfiguredCardTypes();
+            CardTypeList ctList = composite->getConfiguredCardTypes();
             if (ctList.size() > 0)
             {
-			    std::string useCardType = chip->getCardType();
-			    CardTypeList::iterator itct = std::find(ctList.begin(), ctList.end(), useCardType);
-			    // Try to use the generic card type
-			    if (itct == ctList.end())
-			    {
-				    useCardType = chip->getGenericCardType();
-				    LOG(LogLevel::INFOS) << "No configuration found for the chip type ! Looking for the generic type (" << useCardType << ") configuration...";
-				    itct = std::find(ctList.begin(), ctList.end(), useCardType);
-			    }
-			    // Try to use the configuration for all card (= generic tag), because the card type isn't configured
-			    if (itct == ctList.end())
-			    {
-				    LOG(LogLevel::INFOS) << "No configuration found for the chip type ! Looking for \"GenericTag\" configuration...";
-				    useCardType = "GenericTag";
-				    itct = std::find(ctList.begin(), ctList.end(), useCardType);
-			    }
+                std::string useCardType = chip->getCardType();
+                CardTypeList::iterator itct = std::find(ctList.begin(), ctList.end(), useCardType);
+                // Try to use the generic card type
+                if (itct == ctList.end())
+                {
+                    useCardType = chip->getGenericCardType();
+                    LOG(LogLevel::INFOS) << "No configuration found for the chip type ! Looking for the generic type (" << useCardType << ") configuration...";
+                    itct = std::find(ctList.begin(), ctList.end(), useCardType);
+                }
+                // Try to use the configuration for all card (= generic tag), because the card type isn't configured
+                if (itct == ctList.end())
+                {
+                    LOG(LogLevel::INFOS) << "No configuration found for the chip type ! Looking for \"GenericTag\" configuration...";
+                    useCardType = "GenericTag";
+                    itct = std::find(ctList.begin(), ctList.end(), useCardType);
+                }
 
-			    // Try to read the number only if a configuration exists (for this card type or default)
-			    if (itct != ctList.end())
-			    {
-				    LOG(LogLevel::INFOS) << "Configuration found in the composite ! Retrieving format for card...";
-				    boost::shared_ptr<AccessInfo> ai;
-				    boost::shared_ptr<Location> loc;
-				    boost::shared_ptr<Format> format;
-				    composite->retrieveFormatForCard(useCardType, &format, &loc, &ai);
+                // Try to read the number only if a configuration exists (for this card type or default)
+                if (itct != ctList.end())
+                {
+                    LOG(LogLevel::INFOS) << "Configuration found in the composite ! Retrieving format for card...";
+                    boost::shared_ptr<AccessInfo> ai;
+                    boost::shared_ptr<Location> loc;
+                    boost::shared_ptr<Format> format;
+                    composite->retrieveFormatForCard(useCardType, &format, &loc, &ai);
 
-				    if (format)
-				    {
-					    LOG(LogLevel::INFOS) << "Format retrieved successfully ! Reading the format...";
-					    format = composite->readFormat(chip);	// Read format on chip
+                    if (format)
+                    {
+                        LOG(LogLevel::INFOS) << "Format retrieved successfully ! Reading the format...";
+                        format = composite->readFormat(chip);	// Read format on chip
 
-					    if (format)
-					    {
-						    LOG(LogLevel::INFOS) << "Format read successfully ! Getting identifier...";
-						    ret = format->getIdentifier();
-					    }
-					    else
-					    {
-						    LOG(LogLevel::ERRORS) << "Unable to read the format !";
-					    }
-				    }
-				    else
-				    {
-					    LOG(LogLevel::WARNINGS) << "Cannot retrieve the format for card ! Trying using getNumber directly...";
-					    ret = getNumber(chip);
-				    }
-			    }
-			    else
-			    {
-				    LOG(LogLevel::ERRORS) << "No configuration found !";
-			    }
+                        if (format)
+                        {
+                            LOG(LogLevel::INFOS) << "Format read successfully ! Getting identifier...";
+                            ret = format->getIdentifier();
+                        }
+                        else
+                        {
+                            LOG(LogLevel::ERRORS) << "Unable to read the format !";
+                        }
+                    }
+                    else
+                    {
+                        LOG(LogLevel::WARNINGS) << "Cannot retrieve the format for card ! Trying using getNumber directly...";
+                        ret = getNumber(chip);
+                    }
+                }
+                else
+                {
+                    LOG(LogLevel::ERRORS) << "No configuration found !";
+                }
             }
             else
             {
                 LOG(LogLevel::INFOS) << "Composite card format is NOT NULL, but no card configuration ! Reader chip identifier directly...";
-			    ret = chip->getChipIdentifier();
+                ret = chip->getChipIdentifier();
             }
-		}
-		else
-		{
-			LOG(LogLevel::INFOS) << "Composite card format is NULL ! Reader chip identifier directly...";
-			ret = chip->getChipIdentifier();
-		}
+        }
+        else
+        {
+            LOG(LogLevel::INFOS) << "Composite card format is NULL ! Reader chip identifier directly...";
+            ret = chip->getChipIdentifier();
+        }
 
-		LOG(LogLevel::INFOS) << "Returns number " << BufferHelper::getHex(ret);
+        LOG(LogLevel::INFOS) << "Returns number " << BufferHelper::getHex(ret);
 
-		return ret;
-	}
+        return ret;
+    }
 
-	std::vector<unsigned char> ReaderUnit::getNumber(boost::shared_ptr<Chip> chip)
-	{
-		// Read encoded format if specified in the license.
-		return getNumber(chip, boost::shared_ptr<CardsFormatComposite>());
-	}
+    std::vector<unsigned char> ReaderUnit::getNumber(boost::shared_ptr<Chip> chip)
+    {
+        // Read encoded format if specified in the license.
+        return getNumber(chip, boost::shared_ptr<CardsFormatComposite>());
+    }
 
-	uint64_t ReaderUnit::getFormatedNumber(const std::vector<unsigned char>& number, int padding)
-	{
-		LOG(LogLevel::INFOS) << "Getting formated number... number " << BufferHelper::getHex(number) << " padding " << padding;
-		uint64_t longnumber = 0x00;
+    uint64_t ReaderUnit::getFormatedNumber(const std::vector<unsigned char>& number, int padding)
+    {
+        LOG(LogLevel::INFOS) << "Getting formated number... number " << BufferHelper::getHex(number) << " padding " << padding;
+        uint64_t longnumber = 0x00;
 
-		for (size_t i = 0, j = number.size()-1; i < number.size(); ++i, --j)
-		{
-			longnumber |= ((static_cast<uint64_t>(number[i])) << (j*8));
-		}
+        for (size_t i = 0, j = number.size() - 1; i < number.size(); ++i, --j)
+        {
+            longnumber |= ((static_cast<uint64_t>(number[i])) << (j * 8));
+        }
 
-		longnumber += padding;
+        longnumber += padding;
 
-		LOG(LogLevel::INFOS) << "Returns long number {0x" << std::hex << longnumber << std::dec << "(" << longnumber << ")}";
-		return longnumber;
-	}
+        LOG(LogLevel::INFOS) << "Returns long number {0x" << std::hex << longnumber << std::dec << "(" << longnumber << ")}";
+        return longnumber;
+    }
 
-	string ReaderUnit::getFormatedNumber(const std::vector<unsigned char>& number)
-	{
-		LOG(LogLevel::INFOS) << "Getting formated number... number " << BufferHelper::getHex(number);
-		std::ostringstream oss;
-		oss << std::setfill('0');
+    string ReaderUnit::getFormatedNumber(const std::vector<unsigned char>& number)
+    {
+        LOG(LogLevel::INFOS) << "Getting formated number... number " << BufferHelper::getHex(number);
+        std::ostringstream oss;
+        oss << std::setfill('0');
 
-		for (size_t i = 0; i < number.size(); ++i)
-		{
-			oss << std::hex << std::setw(2) << static_cast<unsigned int>(number[i]);
-		}
+        for (size_t i = 0; i < number.size(); ++i)
+        {
+            oss << std::hex << std::setw(2) << static_cast<unsigned int>(number[i]);
+        }
 
-		LOG(LogLevel::INFOS) << "Returns number " << oss.str(); 
-		return oss.str();
-	}
+        LOG(LogLevel::INFOS) << "Returns number " << oss.str();
+        return oss.str();
+    }
 
-	boost::shared_ptr<Chip> ReaderUnit::createChip(std::string type, const std::vector<unsigned char>& identifier)
-	{
-		LOG(LogLevel::INFOS) << "Creating chip for card type {" << type << "} and identifier " << BufferHelper::getHex(identifier) << "...";
-		boost::shared_ptr<Chip> chip = createChip(type);
-		chip->setChipIdentifier(identifier);
-		return chip;
-	}
+    boost::shared_ptr<Chip> ReaderUnit::createChip(std::string type, const std::vector<unsigned char>& identifier)
+    {
+        LOG(LogLevel::INFOS) << "Creating chip for card type {" << type << "} and identifier " << BufferHelper::getHex(identifier) << "...";
+        boost::shared_ptr<Chip> chip = createChip(type);
+        chip->setChipIdentifier(identifier);
+        return chip;
+    }
 
-	boost::shared_ptr<Chip> ReaderUnit::createChip(std::string type)
-	{
-		boost::shared_ptr<Chip> ret = LibraryManager::getInstance()->getCard(type);
+    boost::shared_ptr<Chip> ReaderUnit::createChip(std::string type)
+    {
+        boost::shared_ptr<Chip> ret = LibraryManager::getInstance()->getCard(type);
 
-		if (!ret)
-		{
-			ret.reset(new Chip(type));
-		}
+        if (!ret)
+        {
+            ret.reset(new Chip(type));
+        }
 
-		return ret;
-	}
+        return ret;
+    }
 
-	boost::shared_ptr<ReaderCardAdapter> ReaderUnit::getDefaultReaderCardAdapter()
-	{
-		if (d_defaultReaderCardAdapter)
-		{
-			if (getDataTransport())
-			{
-				d_defaultReaderCardAdapter->setDataTransport(getDataTransport());
-			}
+    boost::shared_ptr<ReaderCardAdapter> ReaderUnit::getDefaultReaderCardAdapter()
+    {
+        if (d_defaultReaderCardAdapter)
+        {
+            if (getDataTransport())
+            {
+                d_defaultReaderCardAdapter->setDataTransport(getDataTransport());
+            }
 
-			if (d_defaultReaderCardAdapter->getDataTransport())
-			{
-				d_defaultReaderCardAdapter->getDataTransport()->setReaderUnit(shared_from_this());
-			}
-		}
-		return d_defaultReaderCardAdapter;
-	}
+            if (d_defaultReaderCardAdapter->getDataTransport())
+            {
+                d_defaultReaderCardAdapter->getDataTransport()->setReaderUnit(shared_from_this());
+            }
+        }
+        return d_defaultReaderCardAdapter;
+    }
 
-	void ReaderUnit::setDefaultReaderCardAdapter(boost::shared_ptr<ReaderCardAdapter> defaultRca)
-	{
-		d_defaultReaderCardAdapter = defaultRca;
-	}
+    void ReaderUnit::setDefaultReaderCardAdapter(boost::shared_ptr<ReaderCardAdapter> defaultRca)
+    {
+        d_defaultReaderCardAdapter = defaultRca;
+    }
 
-	boost::shared_ptr<DataTransport> ReaderUnit::getDataTransport() const
-	{
-		return d_dataTransport;
-	}
+    boost::shared_ptr<DataTransport> ReaderUnit::getDataTransport() const
+    {
+        return d_dataTransport;
+    }
 
-	void ReaderUnit::setDataTransport(boost::shared_ptr<DataTransport> dataTransport)
-	{
-		d_dataTransport = dataTransport;
-	}
+    void ReaderUnit::setDataTransport(boost::shared_ptr<DataTransport> dataTransport)
+    {
+        d_dataTransport = dataTransport;
+    }
 
-	boost::shared_ptr<ReaderUnitConfiguration> ReaderUnit::getConfiguration()
-	{
-		//LOG(LogLevel::INFOS) << "Getting reader unit configuration...");
-		if (d_readerUnitConfig)
-		{
-			//LOG(LogLevel::INFOS) << "Reader unit configuration {%s}", d_readerUnitConfig->serialize().c_str());
-		}
+    boost::shared_ptr<ReaderUnitConfiguration> ReaderUnit::getConfiguration()
+    {
+        //LOG(LogLevel::INFOS) << "Getting reader unit configuration...");
+        if (d_readerUnitConfig)
+        {
+            //LOG(LogLevel::INFOS) << "Reader unit configuration {%s}", d_readerUnitConfig->serialize().c_str());
+        }
 
-		return d_readerUnitConfig;
-	}
+        return d_readerUnitConfig;
+    }
 
-	void ReaderUnit::setConfiguration(boost::shared_ptr<ReaderUnitConfiguration> config)
-	{
-		d_readerUnitConfig = config;
-	}
+    void ReaderUnit::setConfiguration(boost::shared_ptr<ReaderUnitConfiguration> config)
+    {
+        d_readerUnitConfig = config;
+    }
 
-	std::string ReaderUnit::getDefaultXmlNodeName() const
-	{
-		return "ReaderUnit";
-	}
+    std::string ReaderUnit::getDefaultXmlNodeName() const
+    {
+        return "ReaderUnit";
+    }
 
-	void ReaderUnit::serialize(boost::property_tree::ptree& node)
-	{
-		node.put("<xmlattr>.type", getReaderProvider()->getRPType());
-		d_readerUnitConfig->serialize(node);
-		if (getDataTransport())
-		{
-			node.put("TransportType", getDataTransport()->getTransportType());
-			getDataTransport()->serialize(node);
-		}
-		else
-		{
-			node.put("TransportType", "");
-		}
-	}
+    void ReaderUnit::serialize(boost::property_tree::ptree& node)
+    {
+        node.put("<xmlattr>.type", getReaderProvider()->getRPType());
+        d_readerUnitConfig->serialize(node);
+        if (getDataTransport())
+        {
+            node.put("TransportType", getDataTransport()->getTransportType());
+            getDataTransport()->serialize(node);
+        }
+        else
+        {
+            node.put("TransportType", "");
+        }
+    }
 
-	void ReaderUnit::unSerialize(boost::property_tree::ptree& node)
-	{
-		disconnectFromReader();
-		d_readerUnitConfig->unSerialize(node.get_child(d_readerUnitConfig->getDefaultXmlNodeName()));
-		std::string transportType = node.get_child("TransportType").get_value<std::string>();
-		boost::shared_ptr<DataTransport> dataTransport = LibraryManager::getInstance()->getDataTransport(transportType);
-		// Cannot create data transport instance from xml, use default one
-		if (!dataTransport)
-		{
-			dataTransport = getDataTransport();
-		}
-		if (dataTransport && transportType == dataTransport->getTransportType())
-		{
-			dataTransport->unSerialize(node.get_child(dataTransport->getDefaultXmlNodeName()));
-			setDataTransport(dataTransport);
-		}
-	}
+    void ReaderUnit::unSerialize(boost::property_tree::ptree& node)
+    {
+        disconnectFromReader();
+        d_readerUnitConfig->unSerialize(node.get_child(d_readerUnitConfig->getDefaultXmlNodeName()));
+        std::string transportType = node.get_child("TransportType").get_value<std::string>();
+        boost::shared_ptr<DataTransport> dataTransport = LibraryManager::getInstance()->getDataTransport(transportType);
+        // Cannot create data transport instance from xml, use default one
+        if (!dataTransport)
+        {
+            dataTransport = getDataTransport();
+        }
+        if (dataTransport && transportType == dataTransport->getTransportType())
+        {
+            dataTransport->unSerialize(node.get_child(dataTransport->getDefaultXmlNodeName()));
+            setDataTransport(dataTransport);
+        }
+    }
 
-	void ReaderUnit::unSerialize(boost::property_tree::ptree& node, const std::string& rootNode)
-	{
-		boost::property_tree::ptree parentNode = node.get_child(rootNode);
-		BOOST_FOREACH(boost::property_tree::ptree::value_type const& v, parentNode)
-		{
-			if (v.first == getDefaultXmlNodeName())
-			{
-				if (static_cast<std::string>(v.second.get_child("<xmlattr>.type").get_value<std::string>()) == getReaderProvider()->getRPType())
-				{
-					boost::property_tree::ptree r = v.second;
-					unSerialize(r);		
-				}
-			}
-		}
-	}
+    void ReaderUnit::unSerialize(boost::property_tree::ptree& node, const std::string& rootNode)
+    {
+        boost::property_tree::ptree parentNode = node.get_child(rootNode);
+        BOOST_FOREACH(boost::property_tree::ptree::value_type const& v, parentNode)
+        {
+            if (v.first == getDefaultXmlNodeName())
+            {
+                if (static_cast<std::string>(v.second.get_child("<xmlattr>.type").get_value<std::string>()) == getReaderProvider()->getRPType())
+                {
+                    boost::property_tree::ptree r = v.second;
+                    unSerialize(r);
+                }
+            }
+        }
+    }
 }

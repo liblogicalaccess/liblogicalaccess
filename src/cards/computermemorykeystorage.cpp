@@ -8,24 +8,23 @@
 
 namespace logicalaccess
 {
-	KeyStorageType ComputerMemoryKeyStorage::getType() const
-	{
-		return KST_COMPUTER_MEMORY;
-	}
+    KeyStorageType ComputerMemoryKeyStorage::getType() const
+    {
+        return KST_COMPUTER_MEMORY;
+    }
 
-	void ComputerMemoryKeyStorage::serialize(boost::property_tree::ptree& parentNode)
-	{
-		boost::property_tree::ptree node;
-		parentNode.add_child(getDefaultXmlNodeName(), node);
-	}
+    void ComputerMemoryKeyStorage::serialize(boost::property_tree::ptree& parentNode)
+    {
+        boost::property_tree::ptree node;
+        parentNode.add_child(getDefaultXmlNodeName(), node);
+    }
 
-	void ComputerMemoryKeyStorage::unSerialize(boost::property_tree::ptree& /*node*/)
-	{
-		
-	}
+    void ComputerMemoryKeyStorage::unSerialize(boost::property_tree::ptree& /*node*/)
+    {
+    }
 
-	std::string ComputerMemoryKeyStorage::getDefaultXmlNodeName() const
-	{
-		return "ComputerMemoryKeyStorage";
-	}
+    std::string ComputerMemoryKeyStorage::getDefaultXmlNodeName() const
+    {
+        return "ComputerMemoryKeyStorage";
+    }
 }

@@ -17,65 +17,63 @@
 
 #include "gunneboreaderunit.hpp"
 
-
 namespace logicalaccess
 {
-	GunneboReaderProvider::GunneboReaderProvider() :
-		ReaderProvider()
-	{
-	}
+    GunneboReaderProvider::GunneboReaderProvider() :
+        ReaderProvider()
+    {
+    }
 
-	GunneboReaderProvider::~GunneboReaderProvider()
-	{
-		release();
-	}
+    GunneboReaderProvider::~GunneboReaderProvider()
+    {
+        release();
+    }
 
-	void GunneboReaderProvider::release()
-	{
-	}
+    void GunneboReaderProvider::release()
+    {
+    }
 
-	boost::shared_ptr<GunneboReaderProvider> GunneboReaderProvider::getSingletonInstance()
-	{
-		LOG(LogLevel::INFOS) << "Getting singleton instance...";
-		static boost::shared_ptr<GunneboReaderProvider> instance;
-		if (!instance)
-		{
-			instance.reset(new GunneboReaderProvider());
-			instance->refreshReaderList();
-		}
+    boost::shared_ptr<GunneboReaderProvider> GunneboReaderProvider::getSingletonInstance()
+    {
+        LOG(LogLevel::INFOS) << "Getting singleton instance...";
+        static boost::shared_ptr<GunneboReaderProvider> instance;
+        if (!instance)
+        {
+            instance.reset(new GunneboReaderProvider());
+            instance->refreshReaderList();
+        }
 
-		return instance;
-	}
+        return instance;
+    }
 
-	boost::shared_ptr<ReaderUnit> GunneboReaderProvider::createReaderUnit()
-	{
-		LOG(LogLevel::INFOS) << "Creating new reader unit with empty port... (Serial port auto-detect will be used when connecting to reader)";
+    boost::shared_ptr<ReaderUnit> GunneboReaderProvider::createReaderUnit()
+    {
+        LOG(LogLevel::INFOS) << "Creating new reader unit with empty port... (Serial port auto-detect will be used when connecting to reader)";
 
-		boost::shared_ptr<GunneboReaderUnit> ret(new GunneboReaderUnit());
-		ret->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
+        boost::shared_ptr<GunneboReaderUnit> ret(new GunneboReaderUnit());
+        ret->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
 
-		//LOG(LogLevel::INFOS) << "Created reader unit {%s}", dynamic_cast<XmlSerializable*>(&(*ret))->serialize().c_str());
+        //LOG(LogLevel::INFOS) << "Created reader unit {%s}", dynamic_cast<XmlSerializable*>(&(*ret))->serialize().c_str());
 
-		return ret;
-	}	
+        return ret;
+    }
 
-	bool GunneboReaderProvider::refreshReaderList()
-	{
-		d_readers.clear();		
+    bool GunneboReaderProvider::refreshReaderList()
+    {
+        d_readers.clear();
 
-		std::vector<boost::shared_ptr<SerialPortXml> > ports;
-		EXCEPTION_ASSERT_WITH_LOG(SerialPortXml::EnumerateUsingCreateFile(ports), LibLogicalAccessException, "Can't enumerate the serial port list.");
+        std::vector<boost::shared_ptr<SerialPortXml> > ports;
+        EXCEPTION_ASSERT_WITH_LOG(SerialPortXml::EnumerateUsingCreateFile(ports), LibLogicalAccessException, "Can't enumerate the serial port list.");
 
-		for (std::vector<boost::shared_ptr<SerialPortXml> >::iterator i = ports.begin(); i != ports.end(); ++i)
-		{
-			boost::shared_ptr<GunneboReaderUnit> unit(new GunneboReaderUnit());
-			boost::shared_ptr<SerialPortDataTransport> dataTransport = boost::dynamic_pointer_cast<SerialPortDataTransport>(unit->getDataTransport());
-			dataTransport->setSerialPort(*i);
-			unit->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
-			d_readers.push_back(unit);
-		}
+        for (std::vector<boost::shared_ptr<SerialPortXml> >::iterator i = ports.begin(); i != ports.end(); ++i)
+        {
+            boost::shared_ptr<GunneboReaderUnit> unit(new GunneboReaderUnit());
+            boost::shared_ptr<SerialPortDataTransport> dataTransport = boost::dynamic_pointer_cast<SerialPortDataTransport>(unit->getDataTransport());
+            dataTransport->setSerialPort(*i);
+            unit->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
+            d_readers.push_back(unit);
+        }
 
-		return true;
-	}	
+        return true;
+    }
 }
-

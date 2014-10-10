@@ -8,8 +8,8 @@
 #include "logicalaccess/bufferhelper.hpp"
 
 namespace logicalaccess
-{		
-	std::vector<unsigned char> ScielDataTransport::checkValideBufferAvailable()
+{
+    std::vector<unsigned char> ScielDataTransport::checkValideBufferAvailable()
     {
         std::vector<unsigned char> ret;
 

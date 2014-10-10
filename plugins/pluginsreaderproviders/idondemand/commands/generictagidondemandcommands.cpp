@@ -8,5 +8,4 @@
 
 namespace logicalaccess
 {
-	
 }

@@ -16,35 +16,33 @@
 
 namespace logicalaccess
 {
-	/**
-	 * \brief The Mifare commands class for Omnikey xx27 reader.
-	 */
-	class LIBLOGICALACCESS_API MifareOmnikeyXX27Commands : public MifarePCSCCommands
-	{
-		public:			
+    /**
+     * \brief The Mifare commands class for Omnikey xx27 reader.
+     */
+    class LIBLOGICALACCESS_API MifareOmnikeyXX27Commands : public MifarePCSCCommands
+    {
+    public:
 
-			/**
-			 * \brief Constructor.
-			 */
-			MifareOmnikeyXX27Commands();
+        /**
+         * \brief Constructor.
+         */
+        MifareOmnikeyXX27Commands();
 
-			/**
-			 * \brief Destructor.
-			 */
-			virtual ~MifareOmnikeyXX27Commands();
+        /**
+         * \brief Destructor.
+         */
+        virtual ~MifareOmnikeyXX27Commands();
 
-		
-		protected:						
-			
-			/**
-			 * \brief Authenticate a block, given a key number.
-			 * \param blockno The block number.
-			 * \param keyno The key number, previously loaded with Mifare::loadKey().
-			 * \param keytype The key type.
-			 */
-			void authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype);
-	};	
+    protected:
+
+        /**
+         * \brief Authenticate a block, given a key number.
+         * \param blockno The block number.
+         * \param keyno The key number, previously loaded with Mifare::loadKey().
+         * \param keytype The key type.
+         */
+        void authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype);
+    };
 }
 
 #endif /* LOGICALACCESS_MIFAREOMNIKEYXX27COMMANDS_HPP */
-

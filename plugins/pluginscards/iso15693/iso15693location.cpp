@@ -8,48 +8,47 @@
 
 namespace logicalaccess
 {
-	ISO15693Location::ISO15693Location()
-	{
-		block = 0;
-	}
+    ISO15693Location::ISO15693Location()
+    {
+        block = 0;
+    }
 
-	ISO15693Location::~ISO15693Location()
-	{		
-	}
+    ISO15693Location::~ISO15693Location()
+    {
+    }
 
-	void ISO15693Location::serialize(boost::property_tree::ptree& parentNode)
-	{
-		boost::property_tree::ptree node;
-		
-		node.put("Block", block);
+    void ISO15693Location::serialize(boost::property_tree::ptree& parentNode)
+    {
+        boost::property_tree::ptree node;
 
-		parentNode.add_child(getDefaultXmlNodeName(), node);
-	}
+        node.put("Block", block);
 
-	void ISO15693Location::unSerialize(boost::property_tree::ptree& node)
-	{
-		block = node.get_child("Block").get_value<int>();
-	}
+        parentNode.add_child(getDefaultXmlNodeName(), node);
+    }
 
-	std::string ISO15693Location::getDefaultXmlNodeName() const
-	{
-		return "ISO15693Location";
-	}
+    void ISO15693Location::unSerialize(boost::property_tree::ptree& node)
+    {
+        block = node.get_child("Block").get_value<int>();
+    }
 
-	bool ISO15693Location::operator==(const Location& location) const
-	{
-		if (!Location::operator==(location))
-			return false;
+    std::string ISO15693Location::getDefaultXmlNodeName() const
+    {
+        return "ISO15693Location";
+    }
 
-		if (typeid(location) != typeid(ISO15693Location))
-			return false;
+    bool ISO15693Location::operator==(const Location& location) const
+    {
+        if (!Location::operator==(location))
+            return false;
 
-		const ISO15693Location* pxLocation = dynamic_cast<const ISO15693Location*>(&location);
+        if (typeid(location) != typeid(ISO15693Location))
+            return false;
 
-		if (!pxLocation)
-			return false;
+        const ISO15693Location* pxLocation = dynamic_cast<const ISO15693Location*>(&location);
 
-		return (block == pxLocation->block);
-	}
+        if (!pxLocation)
+            return false;
+
+        return (block == pxLocation->block);
+    }
 }
-

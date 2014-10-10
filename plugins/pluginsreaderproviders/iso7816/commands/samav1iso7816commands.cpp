@@ -27,253 +27,251 @@
 
 namespace logicalaccess
 {
-	SAMAV1ISO7816Commands::SAMAV1ISO7816Commands()	{ }
+    SAMAV1ISO7816Commands::SAMAV1ISO7816Commands()	{ }
 
-	SAMAV1ISO7816Commands::~SAMAV1ISO7816Commands()	{ }
+    SAMAV1ISO7816Commands::~SAMAV1ISO7816Commands()	{ }
 
-	boost::shared_ptr<SAMKeyEntry<KeyEntryAV1Information, SETAV1> >	SAMAV1ISO7816Commands::getKeyEntry(unsigned char keyno)
-	{
-		unsigned char cmd[] = { d_cla, 0x64, keyno, 0x00, 0x00 };
-		std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
-		boost::shared_ptr<SAMKeyEntry<KeyEntryAV1Information, SETAV1> > keyentry;
-		KeyEntryAV1Information keyentryinformation = {0};
+    boost::shared_ptr<SAMKeyEntry<KeyEntryAV1Information, SETAV1> >	SAMAV1ISO7816Commands::getKeyEntry(unsigned char keyno)
+    {
+        unsigned char cmd[] = { d_cla, 0x64, keyno, 0x00, 0x00 };
+        std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
+        boost::shared_ptr<SAMKeyEntry<KeyEntryAV1Information, SETAV1> > keyentry;
+        KeyEntryAV1Information keyentryinformation = { 0 };
 
-		result = transmit(cmd_vector);
+        result = transmit(cmd_vector);
 
-		if ((result.size() == 14 || result.size() == 13) &&  result[result.size() - 2] == 0x90 && result[result.size() - 1] == 0x00)
-		{
-			keyentry.reset(new SAMKeyEntry<KeyEntryAV1Information, SETAV1>());
+        if ((result.size() == 14 || result.size() == 13) && result[result.size() - 2] == 0x90 && result[result.size() - 1] == 0x00)
+        {
+            keyentry.reset(new SAMKeyEntry<KeyEntryAV1Information, SETAV1>());
 
-			memcpy(keyentryinformation.set, &result[result.size() - 4], 2);
-			keyentry->setSET(keyentryinformation.set);
+            memcpy(keyentryinformation.set, &result[result.size() - 4], 2);
+            keyentry->setSET(keyentryinformation.set);
 
-			keyentryinformation.kuc = result[result.size() - 5];
-			keyentryinformation.cekv = result[result.size() - 6];
-			keyentryinformation.cekno = result[result.size() - 7];
-			keyentryinformation.desfirekeyno =  result[result.size() - 8];
+            keyentryinformation.kuc = result[result.size() - 5];
+            keyentryinformation.cekv = result[result.size() - 6];
+            keyentryinformation.cekno = result[result.size() - 7];
+            keyentryinformation.desfirekeyno = result[result.size() - 8];
 
-			memcpy(keyentryinformation.desfireAid, &result[result.size() - 11], 3);
+            memcpy(keyentryinformation.desfireAid, &result[result.size() - 11], 3);
 
+            if (result.size() == 13)
+            {
+                keyentryinformation.verb = result[result.size() - 12];
+                keyentryinformation.vera = result[result.size() - 13];
+            }
+            else
+            {
+                keyentryinformation.verc = result[result.size() - 12];
+                keyentryinformation.verb = result[result.size() - 13];
+                keyentryinformation.vera = result[result.size() - 14];
+            }
 
-			if (result.size() == 13)
-			{
-				keyentryinformation.verb = result[result.size() - 12];
-				keyentryinformation.vera = result[result.size() - 13];
-			}
-			else
-			{
-				keyentryinformation.verc = result[result.size() - 12];
-				keyentryinformation.verb = result[result.size() - 13];
-				keyentryinformation.vera = result[result.size() - 14];
-			}
+            keyentry->setKeyEntryInformation(keyentryinformation);
+            keyentry->setKeyTypeFromSET();
+            keyentry->setUpdateMask(0);
+        }
+        else
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "getKeyEntry failed.");
+        return keyentry;
+    }
 
-			keyentry->setKeyEntryInformation(keyentryinformation);
-			keyentry->setKeyTypeFromSET();
-			keyentry->setUpdateMask(0);
-		}
-		else
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "getKeyEntry failed.");
-		return keyentry;
-	}
+    boost::shared_ptr<SAMKucEntry> SAMAV1ISO7816Commands::getKUCEntry(unsigned char kucno)
+    {
+        boost::shared_ptr<SAMKucEntry> kucentry(new SAMKucEntry);
+        unsigned char cmd[] = { d_cla, 0x6c, kucno, 0x00, 0x00 };
+        std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
 
-	boost::shared_ptr<SAMKucEntry> SAMAV1ISO7816Commands::getKUCEntry(unsigned char kucno)
-	{
-		boost::shared_ptr<SAMKucEntry> kucentry(new SAMKucEntry);
-		unsigned char cmd[] = { d_cla, 0x6c, kucno, 0x00, 0x00 };
-		std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
+        result = transmit(cmd_vector);
 
-		result = transmit(cmd_vector);
+        if (result.size() == 12 && (result[result.size() - 2] == 0x90 || result[result.size() - 1] == 0x00))
+        {
+            SAMKUCEntryStruct kucentrys;
+            memcpy(&kucentrys, &result[0], sizeof(SAMKUCEntryStruct));
+            kucentry->setKucEntryStruct(kucentrys);
+        }
+        else
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "getKUCEntry failed.");
+        return kucentry;
+    }
 
-		if (result.size() == 12 && (result[result.size() - 2] == 0x90 || result[result.size() - 1] == 0x00))
-		{
-			SAMKUCEntryStruct kucentrys;
-			memcpy(&kucentrys, &result[0], sizeof(SAMKUCEntryStruct));
-			kucentry->setKucEntryStruct(kucentrys);
-		}
-		else
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "getKUCEntry failed.");
-		return kucentry;
-	}
+    void SAMAV1ISO7816Commands::changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry<KeyEntryAV1Information, SETAV1> > keyentry, boost::shared_ptr<DESFireKey> key)
+    {
+        if (d_crypto->d_sessionKey.size() == 0)
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Failed: AuthentificationHost have to be done before use such command.");
 
-	void SAMAV1ISO7816Commands::changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry<KeyEntryAV1Information, SETAV1> > keyentry, boost::shared_ptr<DESFireKey> key)
-	{
-		if (d_crypto->d_sessionKey.size() == 0)
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Failed: AuthentificationHost have to be done before use such command.");
+        unsigned char proMas = keyentry->getUpdateMask();
 
-		unsigned char proMas = keyentry->getUpdateMask();
+        size_t buffer_size = keyentry->getLength() + sizeof(KeyEntryAV1Information);
+        unsigned char *data = new unsigned char[buffer_size]();
 
-		size_t buffer_size = keyentry->getLength() + sizeof(KeyEntryAV1Information);
-		unsigned char *data = new unsigned char[buffer_size]();
+        memcpy(data, &*(keyentry->getData()), keyentry->getLength());
+        memcpy(data + 48, &keyentry->getKeyEntryInformation(), sizeof(KeyEntryAV1Information));
 
-		memcpy(data, &*(keyentry->getData()), keyentry->getLength());
-		memcpy(data + 48, &keyentry->getKeyEntryInformation(), sizeof(KeyEntryAV1Information));
-		
-		std::vector<unsigned char> iv;
-		iv.resize(16, 0x00);
+        std::vector<unsigned char> iv;
+        iv.resize(16, 0x00);
 
-		std::vector<unsigned char> vectordata(data, data + buffer_size);
-		delete[] data;
-		
-		std::vector<unsigned char> encdatalittle;
-		
-		if (key->getKeyType() == DF_KEY_DES)
-			encdatalittle = d_crypto->sam_encrypt(d_crypto->d_sessionKey, vectordata);
-		else
-			encdatalittle = d_crypto->sam_crc_encrypt(d_crypto->d_sessionKey, vectordata, key);
+        std::vector<unsigned char> vectordata(data, data + buffer_size);
+        delete[] data;
 
-		unsigned char cmd[] = { d_cla, 0xc1, keyno, proMas, (unsigned char)(encdatalittle.size()) };
-		std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
-		cmd_vector.insert(cmd_vector.end(), encdatalittle.begin(), encdatalittle.end());
+        std::vector<unsigned char> encdatalittle;
 
-		result = transmit(cmd_vector);
+        if (key->getKeyType() == DF_KEY_DES)
+            encdatalittle = d_crypto->sam_encrypt(d_crypto->d_sessionKey, vectordata);
+        else
+            encdatalittle = d_crypto->sam_crc_encrypt(d_crypto->d_sessionKey, vectordata, key);
 
-		if (result.size() >= 2 &&  (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKeyEntry failed.");
-	}
+        unsigned char cmd[] = { d_cla, 0xc1, keyno, proMas, (unsigned char)(encdatalittle.size()) };
+        std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
+        cmd_vector.insert(cmd_vector.end(), encdatalittle.begin(), encdatalittle.end());
 
-	void SAMAV1ISO7816Commands::authentificateHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno)
-	{
-		if (key->getKeyType() == DF_KEY_DES)
-			authentificateHostDES(key, keyno);
-		else
-			authentificateHost_AES_3K3DES(key, keyno);
-	}
+        result = transmit(cmd_vector);
 
-	void SAMAV1ISO7816Commands::authentificateHost_AES_3K3DES(boost::shared_ptr<DESFireKey> key, unsigned char keyno)
-	{
-		std::vector<unsigned char> data;
-		unsigned char authMode = 0x00;
+        if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKeyEntry failed.");
+    }
 
-		data.push_back(keyno);
-		data.push_back(key->getKeyVersion());
+    void SAMAV1ISO7816Commands::authentificateHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno)
+    {
+        if (key->getKeyType() == DF_KEY_DES)
+            authentificateHostDES(key, keyno);
+        else
+            authentificateHost_AES_3K3DES(key, keyno);
+    }
 
-		unsigned char cmdp1[] = { d_cla, 0xa4, authMode, 0x00, 0x02, 0x00 };
-		std::vector<unsigned char> cmd_vector(cmdp1, cmdp1 + 6), result;
-		cmd_vector.insert(cmd_vector.end() - 1, data.begin(), data.end());
+    void SAMAV1ISO7816Commands::authentificateHost_AES_3K3DES(boost::shared_ptr<DESFireKey> key, unsigned char keyno)
+    {
+        std::vector<unsigned char> data;
+        unsigned char authMode = 0x00;
 
-		result = transmit(cmd_vector);
-		if (result.size() >= 2 &&  (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0xaf))
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHost_AES_3K3DES P1 failed.");
+        data.push_back(keyno);
+        data.push_back(key->getKeyVersion());
 
-		std::vector<unsigned char> encRndB(result.begin(), result.end() - 2);
-		std::vector<unsigned char> encRndAB = d_crypto->authenticateHostP1(key, encRndB, keyno);
+        unsigned char cmdp1[] = { d_cla, 0xa4, authMode, 0x00, 0x02, 0x00 };
+        std::vector<unsigned char> cmd_vector(cmdp1, cmdp1 + 6), result;
+        cmd_vector.insert(cmd_vector.end() - 1, data.begin(), data.end());
 
-		unsigned char cmdp2[] = { d_cla, 0xa4, 0x00, 0x00, (unsigned char)(encRndAB.size()), 0x00 };
-		cmd_vector.assign(cmdp2, cmdp2 + 6);
-		cmd_vector.insert(cmd_vector.end() - 1, encRndAB.begin(), encRndAB.end());
+        result = transmit(cmd_vector);
+        if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0xaf))
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHost_AES_3K3DES P1 failed.");
 
-		result = transmit(cmd_vector);
-		if (result.size() >= 2 &&  (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHost_AES_3K3DES P2 failed.");
+        std::vector<unsigned char> encRndB(result.begin(), result.end() - 2);
+        std::vector<unsigned char> encRndAB = d_crypto->authenticateHostP1(key, encRndB, keyno);
 
-		std::vector<unsigned char> encRndA1(result.begin(), result.end() - 2);
-		d_crypto->authenticateHostP2(keyno, encRndA1, key);
-	}
+        unsigned char cmdp2[] = { d_cla, 0xa4, 0x00, 0x00, (unsigned char)(encRndAB.size()), 0x00 };
+        cmd_vector.assign(cmdp2, cmdp2 + 6);
+        cmd_vector.insert(cmd_vector.end() - 1, encRndAB.begin(), encRndAB.end());
 
-	void SAMAV1ISO7816Commands::authentificateHostDES(boost::shared_ptr<DESFireKey> key, unsigned char keyno)
-	{
-		std::vector<unsigned char> data;
-		unsigned char authMode = 0x00;
-		size_t keylength = key->getLength();
+        result = transmit(cmd_vector);
+        if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHost_AES_3K3DES P2 failed.");
 
-		data.push_back(keyno);
-		data.push_back(key->getKeyVersion());
+        std::vector<unsigned char> encRndA1(result.begin(), result.end() - 2);
+        d_crypto->authenticateHostP2(keyno, encRndA1, key);
+    }
 
-		unsigned char cmdp1[] = { d_cla, 0xa4, authMode, 0x00, 0x02, 0x00 };
-		std::vector<unsigned char> cmd_vector(cmdp1, cmdp1 + 6), result;
-		cmd_vector.insert(cmd_vector.end() - 1, data.begin(), data.end());
+    void SAMAV1ISO7816Commands::authentificateHostDES(boost::shared_ptr<DESFireKey> key, unsigned char keyno)
+    {
+        std::vector<unsigned char> data;
+        unsigned char authMode = 0x00;
+        size_t keylength = key->getLength();
 
-		result = transmit(cmd_vector);
+        data.push_back(keyno);
+        data.push_back(key->getKeyVersion());
 
-		if (result.size() >= 2 &&  (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0xaf))
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHostDES P1 failed.");
+        unsigned char cmdp1[] = { d_cla, 0xa4, authMode, 0x00, 0x02, 0x00 };
+        std::vector<unsigned char> cmd_vector(cmdp1, cmdp1 + 6), result;
+        cmd_vector.insert(cmd_vector.end() - 1, data.begin(), data.end());
 
-		std::vector<unsigned char> keyvec(key->getData(), key->getData() + keylength);
-		
-		std::vector<unsigned char> iv(keylength);
-		memset(&iv[0], 0, keylength);
+        result = transmit(cmd_vector);
 
-		//get encRNB
-		std::vector<unsigned char> encRNB(result.begin(), result.end() - 2);
+        if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0xaf))
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHostDES P1 failed.");
 
-		//dec RNB
-		std::vector<unsigned char> RndB =  d_crypto->desfire_CBC_send(keyvec, iv, encRNB);
+        std::vector<unsigned char> keyvec(key->getData(), key->getData() + keylength);
 
-		//Create RNB'
-		std::vector<unsigned char> rndB1;
-		rndB1.insert(rndB1.end(), RndB.begin() + 1, RndB.begin() + RndB.size());
-		rndB1.push_back(RndB[0]);
+        std::vector<unsigned char> iv(keylength);
+        memset(&iv[0], 0, keylength);
 
-		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
-		//Create our RndA
-		std::vector<unsigned char>  rndA(8);
-		if (RAND_bytes(&rndA[0], static_cast<int>(rndA.size())) != 1)
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
-		}
+        //get encRNB
+        std::vector<unsigned char> encRNB(result.begin(), result.end() - 2);
 
-		//create rndAB
-		std::vector<unsigned char> rndAB;
-		rndAB.clear();
-		rndAB.insert(rndAB.end(), rndA.begin(), rndA.end());
-		rndAB.insert(rndAB.end(), rndB1.begin(), rndB1.end());
+        //dec RNB
+        std::vector<unsigned char> RndB = d_crypto->desfire_CBC_send(keyvec, iv, encRNB);
 
-		//enc rndAB
-		std::vector<unsigned char> encRndAB =  d_crypto->desfire_CBC_send(keyvec, iv, rndAB);
+        //Create RNB'
+        std::vector<unsigned char> rndB1;
+        rndB1.insert(rndB1.end(), RndB.begin() + 1, RndB.begin() + RndB.size());
+        rndB1.push_back(RndB[0]);
 
-		//send enc rndAB
-		unsigned char cmdp2[] = { d_cla, 0xa4, 0x00, 0x00, (unsigned char)(encRndAB.size()), 0x00 };
-		cmd_vector.assign(cmdp2, cmdp2 + 6);
-		cmd_vector.insert(cmd_vector.end() - 1, encRndAB.begin(), encRndAB.end());
+        EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
+        //Create our RndA
+        std::vector<unsigned char>  rndA(8);
+        if (RAND_bytes(&rndA[0], static_cast<int>(rndA.size())) != 1)
+        {
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
+        }
 
-		result = transmit(cmd_vector);
-		if (result.size() >= 2 &&  (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHostDES P2 failed.");
+        //create rndAB
+        std::vector<unsigned char> rndAB;
+        rndAB.clear();
+        rndAB.insert(rndAB.end(), rndA.begin(), rndA.end());
+        rndAB.insert(rndAB.end(), rndB1.begin(), rndB1.end());
 
+        //enc rndAB
+        std::vector<unsigned char> encRndAB = d_crypto->desfire_CBC_send(keyvec, iv, rndAB);
 
-		std::vector<unsigned char> encRndA1(result.begin(), result.end() - 2);
-		std::vector<unsigned char> dencRndA1 =  d_crypto->desfire_CBC_send(keyvec, iv, encRndA1);
+        //send enc rndAB
+        unsigned char cmdp2[] = { d_cla, 0xa4, 0x00, 0x00, (unsigned char)(encRndAB.size()), 0x00 };
+        cmd_vector.assign(cmdp2, cmdp2 + 6);
+        cmd_vector.insert(cmd_vector.end() - 1, encRndAB.begin(), encRndAB.end());
 
-		//create rndA'
-		std::vector<unsigned char> rndA1;
-		rndA1.insert(rndA1.end(), rndA.begin() + 1, rndA.begin() + rndA.size());
-		rndA1.push_back(rndA[0]);
-		
-		//Check if RNDA is our
-		if (!std::equal(dencRndA1.begin(), dencRndA1.end(), rndA1.begin()))
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHostDES Final Check failed.");
+        result = transmit(cmd_vector);
+        if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHostDES P2 failed.");
 
-		d_crypto->d_sessionKey.clear();
+        std::vector<unsigned char> encRndA1(result.begin(), result.end() - 2);
+        std::vector<unsigned char> dencRndA1 = d_crypto->desfire_CBC_send(keyvec, iv, encRndA1);
 
-		d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), rndA.begin(), rndA.begin() + 4);
-		d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RndB.begin(), RndB.begin() + 4);
-		d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), rndA.begin(), rndA.begin() + 4);
-		d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RndB.begin(), RndB.begin() + 4);
-	}
-	 
-	void SAMAV1ISO7816Commands::changeKUCEntry(unsigned char kucno, boost::shared_ptr<SAMKucEntry> kucentry, boost::shared_ptr<DESFireKey> key)
-	{
-		if (d_crypto->d_sessionKey.size() == 0)
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Failed: AuthentificationHost have to be done before use such command.");
+        //create rndA'
+        std::vector<unsigned char> rndA1;
+        rndA1.insert(rndA1.end(), rndA.begin() + 1, rndA.begin() + rndA.size());
+        rndA1.push_back(rndA[0]);
 
-		unsigned char data[6] = {};
-		memcpy(data, &kucentry->getKucEntryStruct(), 6);
-		std::vector<unsigned char> vectordata(data, data + 6);
-		std::vector<unsigned char> encdatalittle;
+        //Check if RNDA is our
+        if (!std::equal(dencRndA1.begin(), dencRndA1.end(), rndA1.begin()))
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHostDES Final Check failed.");
 
-		if (key->getKeyType() == DF_KEY_DES)
-			encdatalittle = d_crypto->sam_encrypt(d_crypto->d_sessionKey, vectordata);
-		else
-			encdatalittle = d_crypto->sam_crc_encrypt(d_crypto->d_sessionKey, vectordata, key);
+        d_crypto->d_sessionKey.clear();
 
-		unsigned char proMas = kucentry->getUpdateMask();
+        d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), rndA.begin(), rndA.begin() + 4);
+        d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RndB.begin(), RndB.begin() + 4);
+        d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), rndA.begin(), rndA.begin() + 4);
+        d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RndB.begin(), RndB.begin() + 4);
+    }
 
-		unsigned char cmd[] = { d_cla, 0xcc, kucno, proMas, 0x08 };
-		std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
-		cmd_vector.insert(cmd_vector.end(), encdatalittle.begin(), encdatalittle.end());
-		result = transmit(cmd_vector);
+    void SAMAV1ISO7816Commands::changeKUCEntry(unsigned char kucno, boost::shared_ptr<SAMKucEntry> kucentry, boost::shared_ptr<DESFireKey> key)
+    {
+        if (d_crypto->d_sessionKey.size() == 0)
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Failed: AuthentificationHost have to be done before use such command.");
 
-		if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKUCEntry failed.");
-	}
+        unsigned char data[6] = {};
+        memcpy(data, &kucentry->getKucEntryStruct(), 6);
+        std::vector<unsigned char> vectordata(data, data + 6);
+        std::vector<unsigned char> encdatalittle;
+
+        if (key->getKeyType() == DF_KEY_DES)
+            encdatalittle = d_crypto->sam_encrypt(d_crypto->d_sessionKey, vectordata);
+        else
+            encdatalittle = d_crypto->sam_crc_encrypt(d_crypto->d_sessionKey, vectordata, key);
+
+        unsigned char proMas = kucentry->getUpdateMask();
+
+        unsigned char cmd[] = { d_cla, 0xcc, kucno, proMas, 0x08 };
+        std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
+        cmd_vector.insert(cmd_vector.end(), encdatalittle.begin(), encdatalittle.end());
+        result = transmit(cmd_vector);
+
+        if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKUCEntry failed.");
+    }
 }

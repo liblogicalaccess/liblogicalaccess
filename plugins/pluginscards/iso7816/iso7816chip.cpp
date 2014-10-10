@@ -13,50 +13,49 @@
 #include <iomanip>
 #include <sstream>
 
-
 namespace logicalaccess
 {
-	ISO7816Chip::ISO7816Chip(std::string ct)
-		: Chip(ct)
-	{
-		d_profile.reset(new ISO7816Profile());
-	}
+    ISO7816Chip::ISO7816Chip(std::string ct)
+        : Chip(ct)
+    {
+        d_profile.reset(new ISO7816Profile());
+    }
 
-	ISO7816Chip::ISO7816Chip()
-		: Chip(CHIP_ISO7816)
-	{
-		d_profile.reset(new ISO7816Profile());
-	}
+    ISO7816Chip::ISO7816Chip()
+        : Chip(CHIP_ISO7816)
+    {
+        d_profile.reset(new ISO7816Profile());
+    }
 
-	ISO7816Chip::~ISO7816Chip()
-	{
-	}	
+    ISO7816Chip::~ISO7816Chip()
+    {
+    }
 
-	boost::shared_ptr<LocationNode> ISO7816Chip::getRootLocationNode()
-	{
-		boost::shared_ptr<LocationNode> rootNode;
-		rootNode.reset(new LocationNode());
-		rootNode->setName("ISO 7816");		
+    boost::shared_ptr<LocationNode> ISO7816Chip::getRootLocationNode()
+    {
+        boost::shared_ptr<LocationNode> rootNode;
+        rootNode.reset(new LocationNode());
+        rootNode->setName("ISO 7816");
 
-		return rootNode;
-	}
+        return rootNode;
+    }
 
-	boost::shared_ptr<CardService> ISO7816Chip::getService(CardServiceType serviceType)
-	{
-		boost::shared_ptr<CardService> service;
+    boost::shared_ptr<CardService> ISO7816Chip::getService(CardServiceType serviceType)
+    {
+        boost::shared_ptr<CardService> service;
 
-		switch (serviceType)
-		{
-		case CST_STORAGE:
-			service.reset(new ISO7816StorageCardService(shared_from_this()));
-			break;
-		case CST_ACCESS_CONTROL:
-		  break;
-		case CST_NFC_TAG:
-			service.reset(new ISO7816NFCTag4CardService(shared_from_this()));
-		  break;
-		}
+        switch (serviceType)
+        {
+        case CST_STORAGE:
+            service.reset(new ISO7816StorageCardService(shared_from_this()));
+            break;
+        case CST_ACCESS_CONTROL:
+            break;
+        case CST_NFC_TAG:
+            service.reset(new ISO7816NFCTag4CardService(shared_from_this()));
+            break;
+        }
 
-		return service;
-	}
+        return service;
+    }
 }

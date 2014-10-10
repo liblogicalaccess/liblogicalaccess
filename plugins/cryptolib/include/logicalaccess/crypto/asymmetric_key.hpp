@@ -11,35 +11,34 @@
 
 namespace logicalaccess
 {
-	namespace openssl
-	{
-		/**
-		 * \brief The asymmetric keys base class.
-		 *
-		 * This class just serves as a base class for all asymmetric key classes. It cannot be instanciated.
-		 */
-		class AsymmetricKey
-		{
-			public:
+    namespace openssl
+    {
+        /**
+         * \brief The asymmetric keys base class.
+         *
+         * This class just serves as a base class for all asymmetric key classes. It cannot be instanciated.
+         */
+        class AsymmetricKey
+        {
+        public:
 
-				/**
-				 * \brief Virtual destructor.
-				 *
-				 * Required for the class to be polymorphic.
-				 */
-				virtual ~AsymmetricKey() {};
+            /**
+             * \brief Virtual destructor.
+             *
+             * Required for the class to be polymorphic.
+             */
+            virtual ~AsymmetricKey() {};
 
-			protected:
+        protected:
 
-				/**
-				 * \brief Constructor.
-				 *
-				 * A protected constructor, just to prevent instanciation.
-				 */
-				inline AsymmetricKey() { OpenSSLInitializer::GetInstance(); };
-		};
-	}
+            /**
+             * \brief Constructor.
+             *
+             * A protected constructor, just to prevent instanciation.
+             */
+            inline AsymmetricKey() { OpenSSLInitializer::GetInstance(); };
+        };
+    }
 }
 
 #endif /* ASYMETRICKEY_HPP */
-

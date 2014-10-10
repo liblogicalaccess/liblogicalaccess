@@ -16,74 +16,73 @@
 
 namespace logicalaccess
 {
-	MifareUltralightChip::MifareUltralightChip(std::string ct) : 
-		Chip(ct)
-	{
-		
-	}
+    MifareUltralightChip::MifareUltralightChip(std::string ct) :
+        Chip(ct)
+    {
+    }
 
-	MifareUltralightChip::MifareUltralightChip()
-		: Chip(CHIP_MIFAREULTRALIGHT)
-	{
-		d_profile.reset(new MifareUltralightProfile());
-	}
+    MifareUltralightChip::MifareUltralightChip()
+        : Chip(CHIP_MIFAREULTRALIGHT)
+    {
+        d_profile.reset(new MifareUltralightProfile());
+    }
 
-	MifareUltralightChip::~MifareUltralightChip()
-	{
-	}
+    MifareUltralightChip::~MifareUltralightChip()
+    {
+    }
 
-	boost::shared_ptr<LocationNode> MifareUltralightChip::getRootLocationNode()
-	{
-		boost::shared_ptr<LocationNode> rootNode;
-		rootNode.reset(new LocationNode());
+    boost::shared_ptr<LocationNode> MifareUltralightChip::getRootLocationNode()
+    {
+        boost::shared_ptr<LocationNode> rootNode;
+        rootNode.reset(new LocationNode());
 
-		rootNode->setName("Mifare Ultralight");
+        rootNode->setName("Mifare Ultralight");
 
-		for (unsigned int i = 0; i < 16; ++i)
-		{
-			addPageNode(rootNode, i);
-		}
+        for (unsigned int i = 0; i < 16; ++i)
+        {
+            addPageNode(rootNode, i);
+        }
 
-		return rootNode;
-	}
+        return rootNode;
+    }
 
-	void MifareUltralightChip::addPageNode(boost::shared_ptr<LocationNode> rootNode, int page)
-	{
-		char tmpName[255];
-		boost::shared_ptr<LocationNode> sectorNode;
-		sectorNode.reset(new LocationNode());
+    void MifareUltralightChip::addPageNode(boost::shared_ptr<LocationNode> rootNode, int page)
+    {
+        char tmpName[255];
+        boost::shared_ptr<LocationNode> sectorNode;
+        sectorNode.reset(new LocationNode());
 
-		sprintf(tmpName, "Page %d", page);
-		sectorNode->setName(tmpName);
-		sectorNode->setLength(4);
-		sectorNode->setNeedAuthentication(true);
+        sprintf(tmpName, "Page %d", page);
+        sectorNode->setName(tmpName);
+        sectorNode->setLength(4);
+        sectorNode->setNeedAuthentication(true);
 
-		boost::shared_ptr<MifareUltralightLocation> location;
-		location.reset(new MifareUltralightLocation());
-		location->page = page;
-		location->byte = 0;
+        boost::shared_ptr<MifareUltralightLocation> location;
+        location.reset(new MifareUltralightLocation());
+        location->page = page;
+        location->byte = 0;
 
-		sectorNode->setLocation(location);
-		sectorNode->setParent(rootNode);
-		rootNode->getChildrens().push_back(sectorNode);
-	}
+        sectorNode->setLocation(location);
+        sectorNode->setParent(rootNode);
+        rootNode->getChildrens().push_back(sectorNode);
+    }
 
-	boost::shared_ptr<CardService> MifareUltralightChip::getService(CardServiceType serviceType)
-	{
-		boost::shared_ptr<CardService> service;
+    boost::shared_ptr<CardService> MifareUltralightChip::getService(CardServiceType serviceType)
+    {
+        boost::shared_ptr<CardService> service;
 
-		switch (serviceType)
-		{
+        switch (serviceType)
+        {
         case CST_ACCESS_CONTROL:
-			service.reset(new AccessControlCardService(shared_from_this()));
-			break;
-		case CST_STORAGE:
-			service.reset(new MifareUltralightStorageCardService(shared_from_this()));
-			break;
-		case CST_NFC_TAG:
-		    break;
-		}
+            service.reset(new AccessControlCardService(shared_from_this()));
+            break;
+        case CST_STORAGE:
+            service.reset(new MifareUltralightStorageCardService(shared_from_this()));
+            break;
+        case CST_NFC_TAG:
+            break;
+        }
 
-		return service;
-	}
+        return service;
+    }
 }

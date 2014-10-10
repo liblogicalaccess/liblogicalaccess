@@ -15,70 +15,69 @@
 
 namespace logicalaccess
 {
-	namespace openssl
-	{
-		class SSLContext;
+    namespace openssl
+    {
+        class SSLContext;
 
-		/**
-		 * \brief A SSL object.
-		 */
-		class SSLObject
-		{
-			public:
+        /**
+         * \brief A SSL object.
+         */
+        class SSLObject
+        {
+        public:
 
-				/**
-				 * \brief Get the associated data.
-				 * \return The associated data.
-				 */
-				void* getAppData();
+            /**
+             * \brief Get the associated data.
+             * \return The associated data.
+             */
+            void* getAppData();
 
-				/**
-				 * \brief Set the associated data.
-				 * \param data The data.
-				 */
-				void setAppData(void* data);
+            /**
+             * \brief Set the associated data.
+             * \param data The data.
+             */
+            void setAppData(void* data);
 
-				/**
-				 * \brief Get the associated data.
-				 * \return The associated data.
-				 */
-				template <typename T> T* getAppData()
-				{
-					return reinterpret_cast<T*>(getAppData());
-				}
+            /**
+             * \brief Get the associated data.
+             * \return The associated data.
+             */
+            template <typename T> T* getAppData()
+            {
+                return reinterpret_cast<T*>(getAppData());
+            }
 
-				/**
-				 * \brief Get the associated SSL context.
-				 * \return The associated SSL context.
-				 */
-				SSLContext sslContext();
+            /**
+             * \brief Get the associated SSL context.
+             * \return The associated SSL context.
+             */
+            SSLContext sslContext();
 
-				/**
-				 * \brief Get the raw pointer.
-				 * \return The raw pointer.
-				 */
-				inline boost::shared_ptr<SSL> getRaw()
-				{
-					return d_ssl;
-				}
+            /**
+             * \brief Get the raw pointer.
+             * \return The raw pointer.
+             */
+            inline boost::shared_ptr<SSL> getRaw()
+            {
+                return d_ssl;
+            }
 
-			private:
+        private:
 
-				/**
-				 * \brief Constructor.
-				 * \param ssl The SSL object to use. If ssl is NULL, the behavior is undefined.
-				 */
-				SSLObject(boost::shared_ptr<SSL> ssl);
+            /**
+             * \brief Constructor.
+             * \param ssl The SSL object to use. If ssl is NULL, the behavior is undefined.
+             */
+            SSLObject(boost::shared_ptr<SSL> ssl);
 
-				/**
-				 * \brief The internal pointer.
-				 */
-				boost::shared_ptr<SSL> d_ssl;
+            /**
+             * \brief The internal pointer.
+             */
+            boost::shared_ptr<SSL> d_ssl;
 
-				friend class X509CertificateStoreContext;
-		};
-	}
+            friend class X509CertificateStoreContext;
+        };
+    }
 }
 
 #endif /* SSL_OBJECT_HPP */
-

@@ -14,23 +14,22 @@
 
 namespace logicalaccess
 {
-	namespace openssl
-	{
-		OpenSSLInitializer::OpenSSLInitializer()
-		{
-			ERR_load_crypto_strings(); 
-			OpenSSL_add_all_algorithms();
-			CRYPTO_malloc_init();
-		}
+    namespace openssl
+    {
+        OpenSSLInitializer::OpenSSLInitializer()
+        {
+            ERR_load_crypto_strings();
+            OpenSSL_add_all_algorithms();
+            CRYPTO_malloc_init();
+        }
 
-		OpenSSLInitializer::~OpenSSLInitializer()
-		{
-			CRYPTO_cleanup_all_ex_data();
-			RAND_cleanup();
-			EVP_cleanup();
-			ERR_free_strings();
-			ERR_remove_state(0);
-		}
-	}
+        OpenSSLInitializer::~OpenSSLInitializer()
+        {
+            CRYPTO_cleanup_all_ex_data();
+            RAND_cleanup();
+            EVP_cleanup();
+            ERR_free_strings();
+            ERR_remove_state(0);
+        }
+    }
 }
-

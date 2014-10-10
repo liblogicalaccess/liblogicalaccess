@@ -12,22 +12,22 @@
 
 namespace logicalaccess
 {
-	ICode2Chip::ICode2Chip()
-		: ISO15693Chip(CHIP_ICODE2)
-	{
-	}
+    ICode2Chip::ICode2Chip()
+        : ISO15693Chip(CHIP_ICODE2)
+    {
+    }
 
-	ICode2Chip::~ICode2Chip()
-	{
-	}
+    ICode2Chip::~ICode2Chip()
+    {
+    }
 
-	boost::shared_ptr<LocationNode> ICode2Chip::getRootLocationNode()
-	{
-		boost::shared_ptr<LocationNode> rootNode;
-		rootNode.reset(new LocationNode());
+    boost::shared_ptr<LocationNode> ICode2Chip::getRootLocationNode()
+    {
+        boost::shared_ptr<LocationNode> rootNode;
+        rootNode.reset(new LocationNode());
 
-		rootNode->setName("iCode2");
+        rootNode->setName("iCode2");
 
-		return rootNode;
-	}
+        return rootNode;
+    }
 }

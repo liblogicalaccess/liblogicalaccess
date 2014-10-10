@@ -13,199 +13,199 @@
 
 namespace logicalaccess
 {
-	class Profile;
-	class SmartIDReaderCardAdapter;
-	class ReaderCommunication;
-	class MifareSmartIDCardProvider;
-	class SmartIDReaderProvider;
+    class Profile;
+    class SmartIDReaderCardAdapter;
+    class ReaderCommunication;
+    class MifareSmartIDCardProvider;
+    class SmartIDReaderProvider;
 
-	/**
-	 * \brief The SmartID reader unit class.
-	 */
-	class LIBLOGICALACCESS_API SmartIDReaderUnit : public ReaderUnit
-	{
-		public:			
+    /**
+     * \brief The SmartID reader unit class.
+     */
+    class LIBLOGICALACCESS_API SmartIDReaderUnit : public ReaderUnit
+    {
+    public:
 
-			/**
-			 * \brief Constructor.
-			 */
-			SmartIDReaderUnit();
+        /**
+         * \brief Constructor.
+         */
+        SmartIDReaderUnit();
 
-			/**
-			 * \brief Destructor.
-			 */
-			virtual ~SmartIDReaderUnit();
+        /**
+         * \brief Destructor.
+         */
+        virtual ~SmartIDReaderUnit();
 
-			/**
-			 * \brief Get the reader unit name.
-			 * \return The reader unit name.
-			 */
-			virtual std::string getName() const;
+        /**
+         * \brief Get the reader unit name.
+         * \return The reader unit name.
+         */
+        virtual std::string getName() const;
 
-			/**
-			 * \brief Get the connected reader unit name.
-			 * \return The connected reader unit name.
-			 */
-			virtual std::string getConnectedName();
+        /**
+         * \brief Get the connected reader unit name.
+         * \return The connected reader unit name.
+         */
+        virtual std::string getConnectedName();
 
-			/**
-			 * \brief Set the card type.
-			 * \param cardType The card type.
-			 */
-			virtual void setCardType(std::string cardType);
+        /**
+         * \brief Set the card type.
+         * \param cardType The card type.
+         */
+        virtual void setCardType(std::string cardType);
 
-			/**
-			 * \brief Get the reader communication for a card type.
-			 * \param cardType The card type.
-			 * \return The reader communication
-			 */
-			boost::shared_ptr<ReaderCommunication> getReaderCommunication(std::string cardType);
+        /**
+         * \brief Get the reader communication for a card type.
+         * \param cardType The card type.
+         * \return The reader communication
+         */
+        boost::shared_ptr<ReaderCommunication> getReaderCommunication(std::string cardType);
 
-			/**
-			 * \brief Wait for a card insertion.
-			 * \param maxwait The maximum time to wait for, in milliseconds. If maxwait is zero, then the call never times out.
-			 * \return True if a card was inserted, false otherwise. If a card was inserted, the name of the reader on which the insertion was detected is accessible with getReader().
-			 * \warning If the card is already connected, then the method always fail.
-			 */
-			virtual bool waitInsertion(unsigned int maxwait);
-	
-			/**
-			 * \brief Wait for a card removal.
-			 * \param maxwait The maximum time to wait for, in milliseconds. If maxwait is zero, then the call never times out.
-			 * \return True if a card was removed, false otherwise. If a card was removed, the name of the reader on which the removal was detected is accessible with getReader().
-			 */
-			virtual bool waitRemoval(unsigned int maxwait);
+        /**
+         * \brief Wait for a card insertion.
+         * \param maxwait The maximum time to wait for, in milliseconds. If maxwait is zero, then the call never times out.
+         * \return True if a card was inserted, false otherwise. If a card was inserted, the name of the reader on which the insertion was detected is accessible with getReader().
+         * \warning If the card is already connected, then the method always fail.
+         */
+        virtual bool waitInsertion(unsigned int maxwait);
 
-			/**
-			 * \brief Create the chip object from card type.
-			 * \param type The card type.
-			 * \return The chip.
-			 */
-			virtual boost::shared_ptr<Chip> createChip(std::string type);
+        /**
+         * \brief Wait for a card removal.
+         * \param maxwait The maximum time to wait for, in milliseconds. If maxwait is zero, then the call never times out.
+         * \return True if a card was removed, false otherwise. If a card was removed, the name of the reader on which the removal was detected is accessible with getReader().
+         */
+        virtual bool waitRemoval(unsigned int maxwait);
 
-			/**
-			 * \brief Get the first and/or most accurate chip found.
-			 * \return The single chip.
-			 */
-			virtual boost::shared_ptr<Chip> getSingleChip();
+        /**
+         * \brief Create the chip object from card type.
+         * \param type The card type.
+         * \return The chip.
+         */
+        virtual boost::shared_ptr<Chip> createChip(std::string type);
 
-			/**
-			 * \brief Get chip available in the RFID rang.
-			 * \return The chip list.
-			 */
-			virtual std::vector<boost::shared_ptr<Chip> > getChipList();
+        /**
+         * \brief Get the first and/or most accurate chip found.
+         * \return The single chip.
+         */
+        virtual boost::shared_ptr<Chip> getSingleChip();
 
-			/**
-			 * \brief Get the reader ping command.
-			 * \return The ping command.
-			 */
-			virtual std::vector<unsigned char> getPingCommand() const;
+        /**
+         * \brief Get chip available in the RFID rang.
+         * \return The chip list.
+         */
+        virtual std::vector<boost::shared_ptr<Chip> > getChipList();
 
-			/**
-			 * \brief Get the card serial number.
-			 * \return The card serial number.
-			 */
-			std::vector<unsigned char> getCardSerialNumber();
+        /**
+         * \brief Get the reader ping command.
+         * \return The ping command.
+         */
+        virtual std::vector<unsigned char> getPingCommand() const;
 
-			/**
-			 * \brief Get the default SmartID reader/card adapter.
-			 * \return The default SmartID reader/card adapter.
-			 */
-			virtual boost::shared_ptr<SmartIDReaderCardAdapter> getDefaultSmartIDReaderCardAdapter();			
+        /**
+         * \brief Get the card serial number.
+         * \return The card serial number.
+         */
+        std::vector<unsigned char> getCardSerialNumber();
 
-			/**
-			 * \brief Connect to the card.
-			 * \return True if the card was connected without error, false otherwise.
-			 *
-			 * If the card handle was already connected, connect() first call disconnect(). If you intend to do a reconnection, call reconnect() instead.
-			 */
-			bool connect();
+        /**
+         * \brief Get the default SmartID reader/card adapter.
+         * \return The default SmartID reader/card adapter.
+         */
+        virtual boost::shared_ptr<SmartIDReaderCardAdapter> getDefaultSmartIDReaderCardAdapter();
 
-			/**
-			 * \brief Disconnect from the SmartID.
-			 * \see connect
-			 *
-			 * Calling this method on a disconnected SmartID has no effect.
-			 */
-			void disconnect();
+        /**
+         * \brief Connect to the card.
+         * \return True if the card was connected without error, false otherwise.
+         *
+         * If the card handle was already connected, connect() first call disconnect(). If you intend to do a reconnection, call reconnect() instead.
+         */
+        bool connect();
 
-			/**
-			 * \brief Check if the card is connected.
-			 * \return True if the card is connected, false otherwise.
-			 */
-			virtual bool isConnected();
+        /**
+         * \brief Disconnect from the SmartID.
+         * \see connect
+         *
+         * Calling this method on a disconnected SmartID has no effect.
+         */
+        void disconnect();
 
-			/**
-			 * \brief Connect to the reader. Implicit connection on first command sent.
-			 * \return True if the connection successed.
-			 */
-			virtual bool connectToReader();
+        /**
+         * \brief Check if the card is connected.
+         * \return True if the card is connected, false otherwise.
+         */
+        virtual bool isConnected();
 
-			/**
-			 * \brief Disconnect from reader.
-			 */
-			virtual void disconnectFromReader();
+        /**
+         * \brief Connect to the reader. Implicit connection on first command sent.
+         * \return True if the connection successed.
+         */
+        virtual bool connectToReader();
 
-			/**
-			 * \brief Get a string hexadecimal representation of the reader serial number
-			 * \return The reader serial number or an empty string on error.
-			 */
-			virtual std::string getReaderSerialNumber();
+        /**
+         * \brief Disconnect from reader.
+         */
+        virtual void disconnectFromReader();
 
-			/**
-			 * \brief Get information about the SmartID.
-			 * \return A string describing the SmartID.
-			 */
-			std::string getInformation();
+        /**
+         * \brief Get a string hexadecimal representation of the reader serial number
+         * \return The reader serial number or an empty string on error.
+         */
+        virtual std::string getReaderSerialNumber();
 
-			/**
-			 * \brief Get information about the SmartID's firmware.
-			 * \return A string describing the SmartID's firmware.
-			 */
-			std::string getFirmwareVersion();			
+        /**
+         * \brief Get information about the SmartID.
+         * \return A string describing the SmartID.
+         */
+        std::string getInformation();
 
-			/**
-			 * \brief Reboot the SmartID.
-			 */
-			void reboot();
+        /**
+         * \brief Get information about the SmartID's firmware.
+         * \return A string describing the SmartID's firmware.
+         */
+        std::string getFirmwareVersion();
 
-			/**
-			 * \brief Reset the RF field.
-			 * \param offtime The offtime, in milliseconds. Default is 100.
-			 */
-			void resetRF(int offtime = 100);
+        /**
+         * \brief Reboot the SmartID.
+         */
+        void reboot();
 
-			/**
-			 * \brief Serialize the current object to XML.
-			 * \param parentNode The parent node.
-			 */
-			virtual void serialize(boost::property_tree::ptree& parentNode);
+        /**
+         * \brief Reset the RF field.
+         * \param offtime The offtime, in milliseconds. Default is 100.
+         */
+        void resetRF(int offtime = 100);
 
-			/**
-			 * \brief UnSerialize a XML node to the current object.
-			 * \param node The XML node.
-			 */
-			virtual void unSerialize(boost::property_tree::ptree& node);		
+        /**
+         * \brief Serialize the current object to XML.
+         * \param parentNode The parent node.
+         */
+        virtual void serialize(boost::property_tree::ptree& parentNode);
 
-			/**
-			 * \brief Get the SmartID reader unit configuration.
-			 * \return The SmartID reader unit configuration.
-			 */
-			boost::shared_ptr<SmartIDReaderUnitConfiguration> getSmartIDConfiguration() { return boost::dynamic_pointer_cast<SmartIDReaderUnitConfiguration>(getConfiguration()); };
+        /**
+         * \brief UnSerialize a XML node to the current object.
+         * \param node The XML node.
+         */
+        virtual void unSerialize(boost::property_tree::ptree& node);
 
-			/**
-			 * \brief Get the SmartID reader provider.
-			 * \return The SmartID reader provider.
-			 */
-			boost::shared_ptr<SmartIDReaderProvider> getSmartIDReaderProvider() const;
+        /**
+         * \brief Get the SmartID reader unit configuration.
+         * \return The SmartID reader unit configuration.
+         */
+        boost::shared_ptr<SmartIDReaderUnitConfiguration> getSmartIDConfiguration() { return boost::dynamic_pointer_cast<SmartIDReaderUnitConfiguration>(getConfiguration()); };
 
-		protected:
+        /**
+         * \brief Get the SmartID reader provider.
+         * \return The SmartID reader provider.
+         */
+        boost::shared_ptr<SmartIDReaderProvider> getSmartIDReaderProvider() const;
 
-			/**
-			 * \brief The reader communication.
-			 */
-			boost::shared_ptr<ReaderCommunication> d_readerCommunication;
-	};
+    protected:
+
+        /**
+         * \brief The reader communication.
+         */
+        boost::shared_ptr<ReaderCommunication> d_readerCommunication;
+    };
 }
 
 #endif

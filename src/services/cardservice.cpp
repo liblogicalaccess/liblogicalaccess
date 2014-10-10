@@ -7,12 +7,10 @@
 #include "logicalaccess/services/cardservice.hpp"
 #include "logicalaccess/cards/chip.hpp"
 
-
 namespace logicalaccess
 {
-	CardService::CardService(boost::shared_ptr<Chip> chip)
-	{
-		d_chip = chip;
-	}
+    CardService::CardService(boost::shared_ptr<Chip> chip)
+    {
+        d_chip = chip;
+    }
 }
-

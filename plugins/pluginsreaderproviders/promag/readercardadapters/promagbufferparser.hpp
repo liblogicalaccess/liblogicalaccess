@@ -1,7 +1,7 @@
 /**
  * \file promagbufferparser.hpp
  * \author Adrien J. <adrien.jund@islog.com>
- * \brief Promag Buffer Parser. 
+ * \brief Promag Buffer Parser.
  */
 
 #ifndef PROMAGBUFFERPARSER_HPP
@@ -12,21 +12,17 @@
 #include <string>
 #include <vector>
 
-
 namespace logicalaccess
-{	
-	class LIBLOGICALACCESS_API PromagBufferParser : public CircularBufferParser
-	{
-	public:
-		PromagBufferParser() {};
+{
+    class LIBLOGICALACCESS_API PromagBufferParser : public CircularBufferParser
+    {
+    public:
+        PromagBufferParser() {};
 
-		virtual ~PromagBufferParser() {};
+        virtual ~PromagBufferParser() {};
 
-		virtual std::vector<unsigned char> getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer);
-	};
-
+        virtual std::vector<unsigned char> getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer);
+    };
 }
 
 #endif /* PROMAGBUFFERPARSER_HPP */
-
- 

@@ -11,122 +11,122 @@
 
 namespace logicalaccess
 {
-	/**
-	 * \brief A HID Honeywell format class.
-	 */
-	class LIBLOGICALACCESS_API HIDHoneywellFormat : public StaticFormat
-	{
-		public:
-			/**
-			 * \brief Constructor.
-			 */
-			HIDHoneywellFormat();
+    /**
+     * \brief A HID Honeywell format class.
+     */
+    class LIBLOGICALACCESS_API HIDHoneywellFormat : public StaticFormat
+    {
+    public:
+        /**
+         * \brief Constructor.
+         */
+        HIDHoneywellFormat();
 
-			/**
-			 * \brief Destructor.
-			 */
-			virtual ~HIDHoneywellFormat();
+        /**
+         * \brief Destructor.
+         */
+        virtual ~HIDHoneywellFormat();
 
-			/**
-			 * \brief Get the format length in bits 
-			 */
-			virtual unsigned int getDataLength() const;
+        /**
+         * \brief Get the format length in bits
+         */
+        virtual unsigned int getDataLength() const;
 
-			/**
-			 * \brief Get the format name
-			 * \return The format name
-			 */
-			virtual string getName() const;		
+        /**
+         * \brief Get the format name
+         * \return The format name
+         */
+        virtual string getName() const;
 
-			/**
-			 * \brief Get facility code.
-			 */
-			unsigned short int getFacilityCode() const;
+        /**
+         * \brief Get facility code.
+         */
+        unsigned short int getFacilityCode() const;
 
-			/**
-			 * \brief Set facility code.
-			 * \param facilityCode The facility code.
-			 */
-			void setFacilityCode(unsigned short int facilityCode);
+        /**
+         * \brief Set facility code.
+         * \param facilityCode The facility code.
+         */
+        void setFacilityCode(unsigned short int facilityCode);
 
-			/**
-			 * \brief Get a right parity for a buffer.
-			 * \param data The buffer.
-			 * \param dataLengthBytes The buffer length in bytes.
-			 * \param rpNo The right parity number (0 to 7).
-			 * \return The parity.
-			 */
-			unsigned char getRightParity(const void* data, size_t dataLengthBytes, unsigned char rpNo) const;
+        /**
+         * \brief Get a right parity for a buffer.
+         * \param data The buffer.
+         * \param dataLengthBytes The buffer length in bytes.
+         * \param rpNo The right parity number (0 to 7).
+         * \return The parity.
+         */
+        unsigned char getRightParity(const void* data, size_t dataLengthBytes, unsigned char rpNo) const;
 
-			/**
-			 * \brief Get linear data.
-			 * \param data Where to put data
-			 * \param dataLengthBytes Length in byte of data
-			 */
-			virtual void getLinearData(void* data, size_t dataLengthBytes) const;
+        /**
+         * \brief Get linear data.
+         * \param data Where to put data
+         * \param dataLengthBytes Length in byte of data
+         */
+        virtual void getLinearData(void* data, size_t dataLengthBytes) const;
 
-			/**
-			 * \brief Set linear data
-			 * \param data Where to get data
-			 * \param dataLengthBytes Length of data in bytes
-			 */
-			virtual void setLinearData(const void* data, size_t dataLengthBytes);
-			
-			/**
-			 * \brief Get the format linear data in bytes.
-			 * \param data The data buffer
-			 * \param dataLengthBytes The data buffer length
-			 * \return The format linear data length.
-			 */
-			virtual size_t getFormatLinearData(void* data, size_t dataLengthBytes) const;
+        /**
+         * \brief Set linear data
+         * \param data Where to get data
+         * \param dataLengthBytes Length of data in bytes
+         */
+        virtual void setLinearData(const void* data, size_t dataLengthBytes);
 
-			/**
-			 * \brief Set the format linear data in bytes.
-			 * \param data The data buffer
-			 * \param indexByte The data offset
-			 */
-			virtual void setFormatLinearData(const void* data, size_t* indexByte);
+        /**
+         * \brief Get the format linear data in bytes.
+         * \param data The data buffer
+         * \param dataLengthBytes The data buffer length
+         * \return The format linear data length.
+         */
+        virtual size_t getFormatLinearData(void* data, size_t dataLengthBytes) const;
 
-			/**
-			 * \brief Get the format type.
-			 * \return The format type.
-			 */
-			virtual FormatType getType() const;
+        /**
+         * \brief Set the format linear data in bytes.
+         * \param data The data buffer
+         * \param indexByte The data offset
+         */
+        virtual void setFormatLinearData(const void* data, size_t* indexByte);
 
-			/**
-			 * \brief Serialize the current object to XML.
-			 * \param parentNode The parent node.
-			 */
-			virtual void serialize(boost::property_tree::ptree& parentNode);
+        /**
+         * \brief Get the format type.
+         * \return The format type.
+         */
+        virtual FormatType getType() const;
 
-			/**
-			 * \brief UnSerialize a XML node to the current object.
-			 * \param node The XML node.
-			 */
-			virtual void unSerialize(boost::property_tree::ptree& node);
+        /**
+         * \brief Serialize the current object to XML.
+         * \param parentNode The parent node.
+         */
+        virtual void serialize(boost::property_tree::ptree& parentNode);
 
-			/**
-			 * \brief Get the default Xml Node name for this object.
-			 * \return The Xml node name.
-			 */
-			virtual std::string getDefaultXmlNodeName() const;
+        /**
+         * \brief UnSerialize a XML node to the current object.
+         * \param node The XML node.
+         */
+        virtual void unSerialize(boost::property_tree::ptree& node);
 
-			/**
-			 * \brief Check the current format skeleton with another format.
-			 * \param format The format to check.
-			 * \return True on success, false otherwise.
-			 */
-			virtual bool checkSkeleton(boost::shared_ptr<Format> format) const;
+        /**
+         * \brief Get the default Xml Node name for this object.
+         * \return The Xml node name.
+         */
+        virtual std::string getDefaultXmlNodeName() const;
 
-		protected:
+        /**
+         * \brief Check the current format skeleton with another format.
+         * \param format The format to check.
+         * \return True on success, false otherwise.
+         */
+        virtual bool checkSkeleton(boost::shared_ptr<Format> format) const;
 
-			struct {
-				/**
-				 * \brief The facility code.
-				 */
-				unsigned short int d_facilityCode;
-			} d_formatLinear;
-	};	
+    protected:
+
+        struct {
+            /**
+             * \brief The facility code.
+             */
+            unsigned short int d_facilityCode;
+        } d_formatLinear;
+    };
 }
 
 #endif /* LOGICALACCESS_HIDHONEYWELLFORMAT_HPP */

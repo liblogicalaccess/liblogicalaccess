@@ -12,22 +12,22 @@
 
 namespace logicalaccess
 {
-	IndalaChip::IndalaChip()
-		: Chip(CHIP_INDALA)
-	{
-	}
+    IndalaChip::IndalaChip()
+        : Chip(CHIP_INDALA)
+    {
+    }
 
-	IndalaChip::~IndalaChip()
-	{
-	}
+    IndalaChip::~IndalaChip()
+    {
+    }
 
-	boost::shared_ptr<LocationNode> IndalaChip::getRootLocationNode()
-	{
-		boost::shared_ptr<LocationNode> rootNode;
-		rootNode.reset(new LocationNode());
+    boost::shared_ptr<LocationNode> IndalaChip::getRootLocationNode()
+    {
+        boost::shared_ptr<LocationNode> rootNode;
+        rootNode.reset(new LocationNode());
 
-		rootNode->setName("Indala");
+        rootNode->setName("Indala");
 
-		return rootNode;
-	}
+        return rootNode;
+    }
 }

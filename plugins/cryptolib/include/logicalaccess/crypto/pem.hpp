@@ -9,13 +9,13 @@
 
 namespace logicalaccess
 {
-	namespace openssl
-	{
-		/**
-		 * \brief Default PEM passphrase callback type.
-		 */
-		typedef int PEMPassphraseCallback(char*, int, int, void*);
-	}
+    namespace openssl
+    {
+        /**
+         * \brief Default PEM passphrase callback type.
+         */
+        typedef int PEMPassphraseCallback(char*, int, int, void*);
+    }
 }
 
 #endif /* PEM_HPP */

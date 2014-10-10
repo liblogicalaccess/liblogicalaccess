@@ -13,180 +13,176 @@
 
 namespace logicalaccess
 {
-	DESFireChip::DESFireChip(std::string ct) : 
-		Chip(ct)
-	{
-		
-	}
+    DESFireChip::DESFireChip(std::string ct) :
+        Chip(ct)
+    {
+    }
 
-	DESFireChip::DESFireChip() : 
-		Chip(CHIP_DESFIRE)
-	{
-		d_profile.reset(new DESFireProfile());
-	}
+    DESFireChip::DESFireChip() :
+        Chip(CHIP_DESFIRE)
+    {
+        d_profile.reset(new DESFireProfile());
+    }
 
-	DESFireChip::~DESFireChip()
-	{
+    DESFireChip::~DESFireChip()
+    {
+    }
 
-	}
+    boost::shared_ptr<LocationNode> DESFireChip::getRootLocationNode()
+    {
+        boost::shared_ptr<LocationNode> rootNode;
+        rootNode.reset(new LocationNode());
 
-	boost::shared_ptr<LocationNode> DESFireChip::getRootLocationNode()
-	{
-		boost::shared_ptr<LocationNode> rootNode;
-		rootNode.reset(new LocationNode());
+        rootNode->setName("Mifare DESFire");
+        rootNode->setHasProperties(true);
 
-		rootNode->setName("Mifare DESFire");
-		rootNode->setHasProperties(true);
+        boost::shared_ptr<DESFireLocation> rootLocation = boost::dynamic_pointer_cast<DESFireLocation>(getProfile()->createLocation());
+        rootLocation->aid = (unsigned int)-1;
+        rootLocation->file = (unsigned char)-1;
+        rootNode->setLocation(rootLocation);
 
-		boost::shared_ptr<DESFireLocation> rootLocation = boost::dynamic_pointer_cast<DESFireLocation>(getProfile()->createLocation());
-		rootLocation->aid = (unsigned int)-1;
-		rootLocation->file = (unsigned char)-1;
-		rootNode->setLocation(rootLocation);
+        if (getCommands())
+        {
+            getDESFireCommands()->selectApplication(0);
 
-		if (getCommands())
-		{
-			getDESFireCommands()->selectApplication(0);
+            // Try authentication.
+            try
+            {
+                getDESFireCommands()->authenticate(0);
+            }
+            catch (CardException&)
+            {
+            }
 
-			// Try authentication.
-			try
-			{
-				getDESFireCommands()->authenticate(0);
-			}
-			catch(CardException&)
-			{
+            std::vector<unsigned int> aids = getDESFireCommands()->getApplicationIDs();
 
-			}
+            for (std::vector<unsigned int>::const_iterator aid = aids.cbegin(); aid != aids.cend(); ++aid)
+            {
+                char tmpName[32];
+                boost::shared_ptr<LocationNode> aidNode;
+                aidNode.reset(new LocationNode());
+                sprintf(tmpName, "Application ID %u", *aid);
+                aidNode->setName(tmpName);
 
-			std::vector<unsigned int> aids = getDESFireCommands()->getApplicationIDs();
+                boost::shared_ptr<DESFireLocation> aidLocation = boost::dynamic_pointer_cast<DESFireLocation>(getProfile()->createLocation());
+                aidLocation->aid = *aid;
+                aidLocation->file = static_cast<unsigned char>(-1);
+                aidNode->setLocation(aidLocation);
 
-			for (std::vector<unsigned int>::const_iterator aid = aids.cbegin(); aid != aids.cend(); ++aid)
-			{
-				char tmpName[32];
-				boost::shared_ptr<LocationNode> aidNode;
-				aidNode.reset(new LocationNode());
-				sprintf(tmpName, "Application ID %u", *aid);
-				aidNode->setName(tmpName);
+                getDESFireCommands()->selectApplication(*aid);
+                // Try authentication.
+                try
+                {
+                    getDESFireCommands()->authenticate(0);
+                }
+                catch (CardException&)
+                {
+                }
 
-				boost::shared_ptr<DESFireLocation> aidLocation = boost::dynamic_pointer_cast<DESFireLocation>(getProfile()->createLocation());
-				aidLocation->aid = *aid;
-				aidLocation->file = static_cast<unsigned char>(-1);
-				aidNode->setLocation(aidLocation);
+                try
+                {
+                    std::vector<unsigned char> files = getDESFireCommands()->getFileIDs();
 
-				getDESFireCommands()->selectApplication(*aid);
-				// Try authentication.
-				try
-				{
-					getDESFireCommands()->authenticate(0);
-				}
-				catch(CardException&)
-				{
+                    for (std::vector<unsigned char>::const_iterator file = files.cbegin(); file != files.cend(); ++file)
+                    {
+                        boost::shared_ptr<LocationNode> fileNode;
+                        fileNode.reset(new LocationNode());
+                        sprintf(tmpName, "File %d", *file);
+                        fileNode->setName(tmpName);
 
-				}
+                        boost::shared_ptr<DESFireLocation> location = getApplicationLocation();
+                        location->aid = *aid;
+                        location->file = *file;
+                        location->byte = 0;
 
-				try
-				{
-					std::vector<unsigned char> files = getDESFireCommands()->getFileIDs();
-					
-					for (std::vector<unsigned char>::const_iterator file = files.cbegin(); file != files.cend(); ++file)
-					{
-						boost::shared_ptr<LocationNode> fileNode;
-						fileNode.reset(new LocationNode());
-						sprintf(tmpName, "File %d", *file);
-						fileNode->setName(tmpName);
+                        try
+                        {
+                            DESFireCommands::FileSetting settings;
+                            getDESFireCommands()->getFileSettings(*file, settings);
 
-						boost::shared_ptr<DESFireLocation> location = getApplicationLocation();
-						location->aid = *aid;
-						location->file = *file;
-						location->byte = 0;							
+                            location->securityLevel = (EncryptionMode)settings.comSett;
+                            switch (settings.fileType)
+                            {
+                            case 0:
+                            {
+                                size_t fileSize = 0;
+                                memcpy(&fileSize, settings.type.dataFile.fileSize, sizeof(settings.type.dataFile.fileSize));
+                                fileNode->setLength(fileSize);
+                            }
+                                break;
 
-						try
-						{
-							DESFireCommands::FileSetting settings;
-							getDESFireCommands()->getFileSettings(*file, settings);
+                            case 1:
+                            {
+                                //TODO: Write something here ?
+                            }
+                                break;
 
-							location->securityLevel = (EncryptionMode)settings.comSett;
-							switch (settings.fileType)
-							{
-							case 0:
-								{
-									size_t fileSize = 0;
-									memcpy(&fileSize, settings.type.dataFile.fileSize, sizeof(settings.type.dataFile.fileSize));
-									fileNode->setLength(fileSize);
-								}
-								break;
+                            case 2:
+                            {
+                                size_t recordSize = 0;
+                                memcpy(&recordSize, settings.type.recordFile.recordSize, sizeof(settings.type.recordFile.recordSize));
+                                fileNode->setLength(recordSize);
+                            }
+                                break;
+                            }
+                        }
+                        catch (std::exception&)
+                        {
+                            fileNode->setLength(0);
+                        }
 
-							case 1:
-								{
-									//TODO: Write something here ?
-								}
-								break;
+                        fileNode->setNeedAuthentication(true);
+                        fileNode->setHasProperties(true);
+                        fileNode->setLocation(location);
+                        fileNode->setParent(aidNode);
+                        aidNode->getChildrens().push_back(fileNode);
+                    }
+                }
+                catch (std::exception&)
+                {
+                }
 
-							case 2:
-								{
-									size_t recordSize = 0;
-									memcpy(&recordSize, settings.type.recordFile.recordSize, sizeof(settings.type.recordFile.recordSize));
-									fileNode->setLength(recordSize);
-								}
-								break;
-							}
-						}
-						catch(std::exception&)
-						{
-							fileNode->setLength(0);
-						}
-															
-						fileNode->setNeedAuthentication(true);
-						fileNode->setHasProperties(true);
-						fileNode->setLocation(location);
-						fileNode->setParent(aidNode);
-						aidNode->getChildrens().push_back(fileNode);
-					}
-				}
-				catch(std::exception&)
-				{
-				}
+                aidNode->setHasProperties(true);
+                aidNode->setParent(rootNode);
+                rootNode->getChildrens().push_back(aidNode);
+            }
+        }
 
-				aidNode->setHasProperties(true);
-				aidNode->setParent(rootNode);
-				rootNode->getChildrens().push_back(aidNode);
-			}
-		}
+        return rootNode;
+    }
 
-		return rootNode;
-	}
+    boost::shared_ptr<DESFireLocation> DESFireChip::getApplicationLocation()
+    {
+        boost::shared_ptr<DESFireLocation> location(new DESFireLocation());
 
-	boost::shared_ptr<DESFireLocation> DESFireChip::getApplicationLocation()
-	{
-		boost::shared_ptr<DESFireLocation> location(new DESFireLocation());		
+        return location;
+    }
 
-		return location;
-	}
+    boost::shared_ptr<CardService> DESFireChip::getService(CardServiceType serviceType)
+    {
+        boost::shared_ptr<CardService> service;
 
-	boost::shared_ptr<CardService> DESFireChip::getService(CardServiceType serviceType)
-	{
-		boost::shared_ptr<CardService> service;
+        switch (serviceType)
+        {
+        case CST_ACCESS_CONTROL:
+        {
+            service.reset(new AccessControlCardService(shared_from_this()));
+        }
+            break;
+        case CST_STORAGE:
+        {
+            service.reset(new DESFireStorageCardService(shared_from_this()));
+        }
+            break;
+        case CST_NFC_TAG:
+            break;
+        }
 
-		switch (serviceType)
-		{
-		case CST_ACCESS_CONTROL:
-			{
-				service.reset(new AccessControlCardService(shared_from_this()));
-			}
-			break;
-		case CST_STORAGE:
-			{
-				service.reset(new DESFireStorageCardService(shared_from_this()));
-			}
-			break;
-		case CST_NFC_TAG:
-		  break;
-		}
+        if (!service)
+        {
+            service = Chip::getService(serviceType);
+        }
 
-		if (!service)
-		{
-			service = Chip::getService(serviceType);
-		}
-
-		return service;
-	}
+        return service;
+    }
 }

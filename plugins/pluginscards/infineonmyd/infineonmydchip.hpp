@@ -15,34 +15,33 @@
 
 namespace logicalaccess
 {
-	#define CHIP_INFINEONMYD	"InfineonMYD"
+#define CHIP_INFINEONMYD	"InfineonMYD"
 
-	/**
-	 * \brief The Infineon My-D base chip class.
-	 */
-	class LIBLOGICALACCESS_API InfineonMYDChip : public ISO15693Chip
-	{
-		public:			
+    /**
+     * \brief The Infineon My-D base chip class.
+     */
+    class LIBLOGICALACCESS_API InfineonMYDChip : public ISO15693Chip
+    {
+    public:
 
-			/**
-			 * \brief Constructor.
-			 */
-			InfineonMYDChip();
+        /**
+         * \brief Constructor.
+         */
+        InfineonMYDChip();
 
-			/**
-			 * \brief Destructor.
-			 */
-			virtual ~InfineonMYDChip();			
+        /**
+         * \brief Destructor.
+         */
+        virtual ~InfineonMYDChip();
 
-			/**
-			 * \brief Get the root location node.
-			 * \return The root location node.
-			 */
-			virtual boost::shared_ptr<LocationNode> getRootLocationNode();
+        /**
+         * \brief Get the root location node.
+         * \return The root location node.
+         */
+        virtual boost::shared_ptr<LocationNode> getRootLocationNode();
 
-		protected:
-
-	};
+    protected:
+    };
 }
 
 #endif

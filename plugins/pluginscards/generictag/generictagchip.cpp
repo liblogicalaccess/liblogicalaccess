@@ -14,53 +14,53 @@
 namespace logicalaccess
 {
     GenericTagChip::GenericTagChip(std::string cardtype)
-		: Chip(cardtype)
-	{
-		d_tagIdBitsLength = 0;
-	}
+        : Chip(cardtype)
+    {
+        d_tagIdBitsLength = 0;
+    }
 
-	GenericTagChip::GenericTagChip()
-		: Chip(CHIP_GENERICTAG)
-	{
-		d_tagIdBitsLength = 0;
-	}
+    GenericTagChip::GenericTagChip()
+        : Chip(CHIP_GENERICTAG)
+    {
+        d_tagIdBitsLength = 0;
+    }
 
-	GenericTagChip::~GenericTagChip()
-	{
-	}
+    GenericTagChip::~GenericTagChip()
+    {
+    }
 
-	boost::shared_ptr<LocationNode> GenericTagChip::getRootLocationNode()
-	{
-		boost::shared_ptr<LocationNode> rootNode;
-		rootNode.reset(new LocationNode());
+    boost::shared_ptr<LocationNode> GenericTagChip::getRootLocationNode()
+    {
+        boost::shared_ptr<LocationNode> rootNode;
+        rootNode.reset(new LocationNode());
 
-		rootNode->setName("RFID Tag");
+        rootNode->setName("RFID Tag");
 
-		return rootNode;
-	}
+        return rootNode;
+    }
 
-	boost::shared_ptr<CardService> GenericTagChip::getService(CardServiceType serviceType)
-	{
-		boost::shared_ptr<CardService> service;
+    boost::shared_ptr<CardService> GenericTagChip::getService(CardServiceType serviceType)
+    {
+        boost::shared_ptr<CardService> service;
 
-		switch (serviceType)
-		{
-		case CST_ACCESS_CONTROL:
-			{
-				service.reset(new GenericTagAccessControlCardService(shared_from_this()));
-			}
-			break;
-		case CST_NFC_TAG:
-		  break;
-		case CST_STORAGE:
-		  break;
-		}
+        switch (serviceType)
+        {
+        case CST_ACCESS_CONTROL:
+        {
+            service.reset(new GenericTagAccessControlCardService(shared_from_this()));
+        }
+            break;
+        case CST_NFC_TAG:
+            break;
+        case CST_STORAGE:
+            break;
+        }
 
-		if (!service)
-		{
-			service = Chip::getService(serviceType);
-		}
+        if (!service)
+        {
+            service = Chip::getService(serviceType);
+        }
 
-		return service;
-	}
+        return service;
+    }
 }

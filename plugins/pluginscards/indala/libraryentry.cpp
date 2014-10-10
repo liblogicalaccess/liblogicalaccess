@@ -16,36 +16,36 @@
 
 extern "C"
 {
-	LIBLOGICALACCESS_API char *getLibraryName()
-	{
-		return (char *)"Indala";
-	}
-	
-	LIBLOGICALACCESS_API void getIndalaChip(boost::shared_ptr<logicalaccess::Chip>* chip)
-	{
-		if (chip != NULL)
-		{
-			*chip = boost::shared_ptr<logicalaccess::IndalaChip>(new logicalaccess::IndalaChip());
-		}
-	}
+    LIBLOGICALACCESS_API char *getLibraryName()
+    {
+        return (char *)"Indala";
+    }
 
-	LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char* chipname, size_t chipnamelen, void** getterfct)
-	{
-		bool ret = false;
-		if (chipname != NULL && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
-		{
-			switch (index)
-			{
-			case 0:
-				{
-					*getterfct = (void*)&getIndalaChip;
-					sprintf(chipname, CHIP_INDALA);
-					ret = true;
-				}
-				break;
-			}
-		}
+    LIBLOGICALACCESS_API void getIndalaChip(boost::shared_ptr<logicalaccess::Chip>* chip)
+    {
+        if (chip != NULL)
+        {
+            *chip = boost::shared_ptr<logicalaccess::IndalaChip>(new logicalaccess::IndalaChip());
+        }
+    }
 
-		return ret;
-	}
+    LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char* chipname, size_t chipnamelen, void** getterfct)
+    {
+        bool ret = false;
+        if (chipname != NULL && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
+        {
+            switch (index)
+            {
+            case 0:
+            {
+                *getterfct = (void*)&getIndalaChip;
+                sprintf(chipname, CHIP_INDALA);
+                ret = true;
+            }
+                break;
+            }
+        }
+
+        return ret;
+    }
 }

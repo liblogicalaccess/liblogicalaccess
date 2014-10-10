@@ -22,318 +22,318 @@
 
 namespace logicalaccess
 {
-	IdOnDemandReaderUnit::IdOnDemandReaderUnit()
-		: ReaderUnit()
-	{
-		d_readerUnitConfig.reset(new IdOnDemandReaderUnitConfiguration());
-		setDefaultReaderCardAdapter (boost::shared_ptr<IdOnDemandReaderCardAdapter> (new IdOnDemandReaderCardAdapter()));
-		boost::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
-		setDataTransport(dataTransport);
-		d_card_type = "UNKNOWN";
+    IdOnDemandReaderUnit::IdOnDemandReaderUnit()
+        : ReaderUnit()
+    {
+        d_readerUnitConfig.reset(new IdOnDemandReaderUnitConfiguration());
+        setDefaultReaderCardAdapter(boost::shared_ptr<IdOnDemandReaderCardAdapter>(new IdOnDemandReaderCardAdapter()));
+        boost::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
+        setDataTransport(dataTransport);
+        d_card_type = "UNKNOWN";
 
-		try
-		{
-			boost::property_tree::ptree pt;
-			read_xml((boost::filesystem::current_path().string() + "/IdOnDemandReaderUnit.config"), pt);
-			d_card_type = pt.get("config.cardType", "UNKNOWN");
-		}
-		catch (...) { }
-	}
+        try
+        {
+            boost::property_tree::ptree pt;
+            read_xml((boost::filesystem::current_path().string() + "/IdOnDemandReaderUnit.config"), pt);
+            d_card_type = pt.get("config.cardType", "UNKNOWN");
+        }
+        catch (...) {}
+    }
 
-	IdOnDemandReaderUnit::~IdOnDemandReaderUnit()
-	{
-		disconnectFromReader();
-	}
+    IdOnDemandReaderUnit::~IdOnDemandReaderUnit()
+    {
+        disconnectFromReader();
+    }
 
-	std::string IdOnDemandReaderUnit::getName() const
-	{
-		return getDataTransport()->getName();
-	}
+    std::string IdOnDemandReaderUnit::getName() const
+    {
+        return getDataTransport()->getName();
+    }
 
-	std::string IdOnDemandReaderUnit::getConnectedName()
-	{
-		return getName();
-	}
+    std::string IdOnDemandReaderUnit::getConnectedName()
+    {
+        return getName();
+    }
 
-	void IdOnDemandReaderUnit::setCardType(std::string cardType)
-	{
-		LOG(LogLevel::INFOS) << "Setting card type {" << cardType << "}";
-		d_card_type = cardType;
-	}
+    void IdOnDemandReaderUnit::setCardType(std::string cardType)
+    {
+        LOG(LogLevel::INFOS) << "Setting card type {" << cardType << "}";
+        d_card_type = cardType;
+    }
 
-	void IdOnDemandReaderUnit::authenticateSDK()
-	{
-		authenticateSDK(getIdOnDemandConfiguration()->getAuthCode());
-	}
+    void IdOnDemandReaderUnit::authenticateSDK()
+    {
+        authenticateSDK(getIdOnDemandConfiguration()->getAuthCode());
+    }
 
-	void IdOnDemandReaderUnit::authenticateSDK(std::string authCode)
-	{
-		char cmd[64];
+    void IdOnDemandReaderUnit::authenticateSDK(std::string authCode)
+    {
+        char cmd[64];
 #if !defined(__unix__)
-		sprintf_s(cmd, sizeof(cmd), "AUTH %s", authCode.c_str());
+        sprintf_s(cmd, sizeof(cmd), "AUTH %s", authCode.c_str());
 #else
-		sprintf(cmd, "AUTH %s", authCode.c_str());
+        sprintf(cmd, "AUTH %s", authCode.c_str());
 #endif
-		std::string strcmd = std::string(cmd);
-		getDefaultIdOnDemandReaderCardAdapter()->sendCommand(std::vector<unsigned char>(strcmd.begin(), strcmd.end()));
-	}
+        std::string strcmd = std::string(cmd);
+        getDefaultIdOnDemandReaderCardAdapter()->sendCommand(std::vector<unsigned char>(strcmd.begin(), strcmd.end()));
+    }
 
-	void IdOnDemandReaderUnit::beep()
-	{
-		std::string strcmd = std::string("BEEP");
-		getDefaultIdOnDemandReaderCardAdapter()->sendCommand(std::vector<unsigned char>(strcmd.begin(), strcmd.end()));
-	}
+    void IdOnDemandReaderUnit::beep()
+    {
+        std::string strcmd = std::string("BEEP");
+        getDefaultIdOnDemandReaderCardAdapter()->sendCommand(std::vector<unsigned char>(strcmd.begin(), strcmd.end()));
+    }
 
-	bool IdOnDemandReaderUnit::read()
-	{
-		bool ret = true;
-		try
-		{
-			std::string strcmd = std::string("READ");
-			getDefaultIdOnDemandReaderCardAdapter()->sendCommand(std::vector<unsigned char>(strcmd.begin(), strcmd.end()));
-		}
-		catch(CardException& e)
-		{
-			LOG(LogLevel::ERRORS) << "Exception Read {" << e.what() << "}";
-			ret = false;
-		}
+    bool IdOnDemandReaderUnit::read()
+    {
+        bool ret = true;
+        try
+        {
+            std::string strcmd = std::string("READ");
+            getDefaultIdOnDemandReaderCardAdapter()->sendCommand(std::vector<unsigned char>(strcmd.begin(), strcmd.end()));
+        }
+        catch (CardException& e)
+        {
+            LOG(LogLevel::ERRORS) << "Exception Read {" << e.what() << "}";
+            ret = false;
+        }
 
-		return ret;
-	}
+        return ret;
+    }
 
-	bool IdOnDemandReaderUnit::verify()
-	{
-		bool ret = true;
-		try
-		{
-			std::string strcmd = std::string("VERIFY");
-			getDefaultIdOnDemandReaderCardAdapter()->sendCommand(std::vector<unsigned char>(strcmd.begin(), strcmd.end()));
-		}
-		catch(CardException& e)
-		{
-			LOG(LogLevel::ERRORS) << "Exception Verify {" << e.what() << "}";
-			ret = false;
-		}
+    bool IdOnDemandReaderUnit::verify()
+    {
+        bool ret = true;
+        try
+        {
+            std::string strcmd = std::string("VERIFY");
+            getDefaultIdOnDemandReaderCardAdapter()->sendCommand(std::vector<unsigned char>(strcmd.begin(), strcmd.end()));
+        }
+        catch (CardException& e)
+        {
+            LOG(LogLevel::ERRORS) << "Exception Verify {" << e.what() << "}";
+            ret = false;
+        }
 
-		return ret;
-	}
+        return ret;
+    }
 
-	bool IdOnDemandReaderUnit::write()
-	{
-		bool ret = true;
-		try
-		{
-			std::string strcmd = std::string("WRITE");
-			getDefaultIdOnDemandReaderCardAdapter()->sendCommand(std::vector<unsigned char>(strcmd.begin(), strcmd.end()), 4000);
-		}
-		catch(CardException& e)
-		{
-			LOG(LogLevel::ERRORS) << "Exception Write {" << e.what() << "}";
-			ret = false;
-		}
+    bool IdOnDemandReaderUnit::write()
+    {
+        bool ret = true;
+        try
+        {
+            std::string strcmd = std::string("WRITE");
+            getDefaultIdOnDemandReaderCardAdapter()->sendCommand(std::vector<unsigned char>(strcmd.begin(), strcmd.end()), 4000);
+        }
+        catch (CardException& e)
+        {
+            LOG(LogLevel::ERRORS) << "Exception Write {" << e.what() << "}";
+            ret = false;
+        }
 
-		return ret;
-	}
+        return ret;
+    }
 
-	void IdOnDemandReaderUnit::activateEMCard(bool activate)
-	{
-		std::string strcmd = "EMCARD ";
-		if (activate)
-		{
-			strcmd += "ON";
-		}
-		else
-		{
-			strcmd += "FALSE";
-		}
-		getDefaultIdOnDemandReaderCardAdapter()->sendCommand(std::vector<unsigned char>(strcmd.begin(), strcmd.end()));
-	}
+    void IdOnDemandReaderUnit::activateEMCard(bool activate)
+    {
+        std::string strcmd = "EMCARD ";
+        if (activate)
+        {
+            strcmd += "ON";
+        }
+        else
+        {
+            strcmd += "FALSE";
+        }
+        getDefaultIdOnDemandReaderCardAdapter()->sendCommand(std::vector<unsigned char>(strcmd.begin(), strcmd.end()));
+    }
 
-	void IdOnDemandReaderUnit::activateAtmelCard(bool activate)
-	{
-		std::string strcmd = "ATCARD ";
-		if (activate)
-		{
-			strcmd += "ON";
-		}
-		else
-		{
-			strcmd += "FALSE";
-		}
-		getDefaultIdOnDemandReaderCardAdapter()->sendCommand(std::vector<unsigned char>(strcmd.begin(), strcmd.end()));
-	}
+    void IdOnDemandReaderUnit::activateAtmelCard(bool activate)
+    {
+        std::string strcmd = "ATCARD ";
+        if (activate)
+        {
+            strcmd += "ON";
+        }
+        else
+        {
+            strcmd += "FALSE";
+        }
+        getDefaultIdOnDemandReaderCardAdapter()->sendCommand(std::vector<unsigned char>(strcmd.begin(), strcmd.end()));
+    }
 
-	bool IdOnDemandReaderUnit::waitInsertion(unsigned int maxwait)
-	{
-		bool inserted = false;
-		unsigned int currentWait = 0;
+    bool IdOnDemandReaderUnit::waitInsertion(unsigned int maxwait)
+    {
+        bool inserted = false;
+        unsigned int currentWait = 0;
 
-		do
-		{
-			boost::shared_ptr<Chip> chip = getChipInAir();
-			if (chip)
-			{
-				d_insertedChip = chip;
-				inserted = true;
-			}
+        do
+        {
+            boost::shared_ptr<Chip> chip = getChipInAir();
+            if (chip)
+            {
+                d_insertedChip = chip;
+                inserted = true;
+            }
 
-			if (!inserted)
-			{
-				std::this_thread::sleep_for(std::chrono::milliseconds(100));
-				currentWait += 100;
-			}
-		} while (!inserted && (maxwait == 0 || currentWait < maxwait));
+            if (!inserted)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                currentWait += 100;
+            }
+        } while (!inserted && (maxwait == 0 || currentWait < maxwait));
 
-		return inserted;
-	}
+        return inserted;
+    }
 
-	bool IdOnDemandReaderUnit::waitRemoval(unsigned int maxwait)
-	{
-		bool removed = false;
+    bool IdOnDemandReaderUnit::waitRemoval(unsigned int maxwait)
+    {
+        bool removed = false;
 
-		if (d_insertedChip)
-		{
-			unsigned int currentWait = 0;
-			do
-			{
-				boost::shared_ptr<Chip> chip = getChipInAir();
-				if (!chip)
-				{
-					d_insertedChip.reset();
-					removed = true;
-				}
+        if (d_insertedChip)
+        {
+            unsigned int currentWait = 0;
+            do
+            {
+                boost::shared_ptr<Chip> chip = getChipInAir();
+                if (!chip)
+                {
+                    d_insertedChip.reset();
+                    removed = true;
+                }
 
-				if (!removed)
-				{
-					std::this_thread::sleep_for(std::chrono::milliseconds(100));
-					currentWait += 100;
-				}
-			} while (!removed && (maxwait == 0 || currentWait < maxwait));
-		}
+                if (!removed)
+                {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                    currentWait += 100;
+                }
+            } while (!removed && (maxwait == 0 || currentWait < maxwait));
+        }
 
-		return removed;
-	}
+        return removed;
+    }
 
-	bool IdOnDemandReaderUnit::connect()
-	{
-		return bool(d_insertedChip);
-	}
+    bool IdOnDemandReaderUnit::connect()
+    {
+        return bool(d_insertedChip);
+    }
 
-	void IdOnDemandReaderUnit::disconnect()
-	{
-	}
+    void IdOnDemandReaderUnit::disconnect()
+    {
+    }
 
-	boost::shared_ptr<Chip> IdOnDemandReaderUnit::getChipInAir()
-	{
-		boost::shared_ptr<Chip> chip;
+    boost::shared_ptr<Chip> IdOnDemandReaderUnit::getChipInAir()
+    {
+        boost::shared_ptr<Chip> chip;
 
-		// Change the reader state, but no other function to achieve the card detection...
-		if (read())
-		{
-			chip = createChip("GenericTag");
-		}
+        // Change the reader state, but no other function to achieve the card detection...
+        if (read())
+        {
+            chip = createChip("GenericTag");
+        }
 
-		return chip;
-	}
-	
-	boost::shared_ptr<Chip> IdOnDemandReaderUnit::createChip(std::string type)
-	{
-		boost::shared_ptr<Chip> chip;
-		boost::shared_ptr<ReaderCardAdapter> rca;
-		if (type == "GenericTag")
-		{
-			chip.reset(new GenericTagIdOnDemandChip());
-			boost::shared_ptr<Commands> commands(new GenericTagIdOnDemandCommands());
-			commands->setChip(chip);
-			chip->setCommands(commands);
-			rca = getDefaultReaderCardAdapter();
-			rca->setDataTransport(getDataTransport());
-			commands->setReaderCardAdapter(rca);
-		}
-		else
-		{
-			chip = ReaderUnit::createChip(type);
-		}
+        return chip;
+    }
 
-		return chip;
-	}
+    boost::shared_ptr<Chip> IdOnDemandReaderUnit::createChip(std::string type)
+    {
+        boost::shared_ptr<Chip> chip;
+        boost::shared_ptr<ReaderCardAdapter> rca;
+        if (type == "GenericTag")
+        {
+            chip.reset(new GenericTagIdOnDemandChip());
+            boost::shared_ptr<Commands> commands(new GenericTagIdOnDemandCommands());
+            commands->setChip(chip);
+            chip->setCommands(commands);
+            rca = getDefaultReaderCardAdapter();
+            rca->setDataTransport(getDataTransport());
+            commands->setReaderCardAdapter(rca);
+        }
+        else
+        {
+            chip = ReaderUnit::createChip(type);
+        }
 
-	boost::shared_ptr<Chip> IdOnDemandReaderUnit::getSingleChip()
-	{
-		boost::shared_ptr<Chip> chip = d_insertedChip;
-		return chip;
-	}
+        return chip;
+    }
 
-	std::vector<boost::shared_ptr<Chip> > IdOnDemandReaderUnit::getChipList()
-	{
-		std::vector<boost::shared_ptr<Chip> > chipList;
-		boost::shared_ptr<Chip> singleChip = getSingleChip();
-		if (singleChip)
-		{
-			chipList.push_back(singleChip);
-		}
-		return chipList;
-	}
+    boost::shared_ptr<Chip> IdOnDemandReaderUnit::getSingleChip()
+    {
+        boost::shared_ptr<Chip> chip = d_insertedChip;
+        return chip;
+    }
 
-	boost::shared_ptr<IdOnDemandReaderCardAdapter> IdOnDemandReaderUnit::getDefaultIdOnDemandReaderCardAdapter()
-	{
-		boost::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
-		return boost::dynamic_pointer_cast<IdOnDemandReaderCardAdapter>(adapter);
-	}
+    std::vector<boost::shared_ptr<Chip> > IdOnDemandReaderUnit::getChipList()
+    {
+        std::vector<boost::shared_ptr<Chip> > chipList;
+        boost::shared_ptr<Chip> singleChip = getSingleChip();
+        if (singleChip)
+        {
+            chipList.push_back(singleChip);
+        }
+        return chipList;
+    }
 
-	string IdOnDemandReaderUnit::getReaderSerialNumber()
-	{
-		string ret;
+    boost::shared_ptr<IdOnDemandReaderCardAdapter> IdOnDemandReaderUnit::getDefaultIdOnDemandReaderCardAdapter()
+    {
+        boost::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
+        return boost::dynamic_pointer_cast<IdOnDemandReaderCardAdapter>(adapter);
+    }
 
-		return ret;
-	}
+    string IdOnDemandReaderUnit::getReaderSerialNumber()
+    {
+        string ret;
 
-	bool IdOnDemandReaderUnit::isConnected()
-	{
-		return bool(d_insertedChip);
-	}
+        return ret;
+    }
 
-	bool IdOnDemandReaderUnit::connectToReader()
-	{
-		LOG(LogLevel::INFOS) << "Connecting to reader...";
-		bool ret = getDataTransport()->connect();
-		if (ret)
-		{
-			authenticateSDK();
-		}
+    bool IdOnDemandReaderUnit::isConnected()
+    {
+        return bool(d_insertedChip);
+    }
 
-		return ret;
-	}
+    bool IdOnDemandReaderUnit::connectToReader()
+    {
+        LOG(LogLevel::INFOS) << "Connecting to reader...";
+        bool ret = getDataTransport()->connect();
+        if (ret)
+        {
+            authenticateSDK();
+        }
 
-	void IdOnDemandReaderUnit::disconnectFromReader()
-	{
-		LOG(LogLevel::INFOS) << "Disconnecting from reader...";
+        return ret;
+    }
 
-		// Close the session with the reader
-		//authenticateSDK(0000);	 // A wrong authenticate code logout the session
-		getDataTransport()->disconnect();
-	}
+    void IdOnDemandReaderUnit::disconnectFromReader()
+    {
+        LOG(LogLevel::INFOS) << "Disconnecting from reader...";
 
-	std::vector<unsigned char> IdOnDemandReaderUnit::getPingCommand() const
-	{
-		std::string strcmd = "BEEP";
-		return std::vector<unsigned char>(strcmd.begin(), strcmd.end());
-	}
+        // Close the session with the reader
+        //authenticateSDK(0000);	 // A wrong authenticate code logout the session
+        getDataTransport()->disconnect();
+    }
 
-	void IdOnDemandReaderUnit::serialize(boost::property_tree::ptree& parentNode)
-	{
-		boost::property_tree::ptree node;
-		ReaderUnit::serialize(node);
-		parentNode.add_child(getDefaultXmlNodeName(), node);
-	}
+    std::vector<unsigned char> IdOnDemandReaderUnit::getPingCommand() const
+    {
+        std::string strcmd = "BEEP";
+        return std::vector<unsigned char>(strcmd.begin(), strcmd.end());
+    }
 
-	void IdOnDemandReaderUnit::unSerialize(boost::property_tree::ptree& node)
-	{
-		ReaderUnit::unSerialize(node);
-	}
+    void IdOnDemandReaderUnit::serialize(boost::property_tree::ptree& parentNode)
+    {
+        boost::property_tree::ptree node;
+        ReaderUnit::serialize(node);
+        parentNode.add_child(getDefaultXmlNodeName(), node);
+    }
 
-	boost::shared_ptr<IdOnDemandReaderProvider> IdOnDemandReaderUnit::getIdOnDemandReaderProvider() const
-	{
-		return boost::dynamic_pointer_cast<IdOnDemandReaderProvider>(getReaderProvider());
-	}
+    void IdOnDemandReaderUnit::unSerialize(boost::property_tree::ptree& node)
+    {
+        ReaderUnit::unSerialize(node);
+    }
+
+    boost::shared_ptr<IdOnDemandReaderProvider> IdOnDemandReaderUnit::getIdOnDemandReaderProvider() const
+    {
+        return boost::dynamic_pointer_cast<IdOnDemandReaderProvider>(getReaderProvider());
+    }
 }

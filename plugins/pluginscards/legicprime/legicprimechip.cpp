@@ -12,22 +12,22 @@
 
 namespace logicalaccess
 {
-	LegicPrimeChip::LegicPrimeChip()
-		: Chip(CHIP_LEGICPRIME)
-	{
-	}
+    LegicPrimeChip::LegicPrimeChip()
+        : Chip(CHIP_LEGICPRIME)
+    {
+    }
 
-	LegicPrimeChip::~LegicPrimeChip()
-	{
-	}
+    LegicPrimeChip::~LegicPrimeChip()
+    {
+    }
 
-	boost::shared_ptr<LocationNode> LegicPrimeChip::getRootLocationNode()
-	{
-		boost::shared_ptr<LocationNode> rootNode;
-		rootNode.reset(new LocationNode());
+    boost::shared_ptr<LocationNode> LegicPrimeChip::getRootLocationNode()
+    {
+        boost::shared_ptr<LocationNode> rootNode;
+        rootNode.reset(new LocationNode());
 
-		rootNode->setName("Legic Prime");
+        rootNode->setName("Legic Prime");
 
-		return rootNode;
-	}
+        return rootNode;
+    }
 }

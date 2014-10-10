@@ -20,63 +20,63 @@
 
 namespace logicalaccess
 {
-	/**
-	* \brief The Mifare Plus commands class.
-	*/
-	class LIBLOGICALACCESS_API MifarePlusCommands : public virtual Commands
-	{
-	public:
+    /**
+    * \brief The Mifare Plus commands class.
+    */
+    class LIBLOGICALACCESS_API MifarePlusCommands : public virtual Commands
+    {
+    public:
 
-		/**
-		* \brief constructor
-		*/
-		MifarePlusCommands();
+        /**
+        * \brief constructor
+        */
+        MifarePlusCommands();
 
-		/**
-		* \brief destructor
-		*/
-		~MifarePlusCommands();
+        /**
+        * \brief destructor
+        */
+        ~MifarePlusCommands();
 
-		/**
-		* \brief Generic send AES command with wrapper
-		* \param command The generic command
-		*/
-		virtual std::vector<unsigned char> AESSendCommand(const std::vector<unsigned char>& command, bool t_cl, long int /*timeout*/) = 0;
+        /**
+        * \brief Generic send AES command with wrapper
+        * \param command The generic command
+        */
+        virtual std::vector<unsigned char> AESSendCommand(const std::vector<unsigned char>& command, bool t_cl, long int /*timeout*/) = 0;
 
-	protected:
+    protected:
 
-		/**
-		* \brief Generic Authentication used in all AES authentication method
-		* \param keyBNr the Key Block Number
-		* \param key the key
-		* \param t_cl the T=CL indicator
-		* \param first The first authentication indicator
-		*/
-		virtual bool GenericAESAuthentication(unsigned short keyBNr, boost::shared_ptr<MifarePlusKey> key, bool t_cl, bool first) = 0;
-		
-		/**
-		* \brief Rotate the buffer by 1 from the left
-		* \param string The buffer to rotate
-		*/
-		static std::vector<unsigned char> LeftRotateSB(std::vector<unsigned char> string);
+        /**
+        * \brief Generic Authentication used in all AES authentication method
+        * \param keyBNr the Key Block Number
+        * \param key the key
+        * \param t_cl the T=CL indicator
+        * \param first The first authentication indicator
+        */
+        virtual bool GenericAESAuthentication(unsigned short keyBNr, boost::shared_ptr<MifarePlusKey> key, bool t_cl, bool first) = 0;
 
-		/**
-		* \brief Get a random string
-		* \param init The init string for better random
-		* \param size The size of the generated random string
-		*/
-		static std::vector<unsigned char> GetRandKey(size_t size);
+        /**
+        * \brief Rotate the buffer by 1 from the left
+        * \param string The buffer to rotate
+        */
+        static std::vector<unsigned char> LeftRotateSB(std::vector<unsigned char> string);
 
-		/**
-		* \brief Get the crypto class
-		*/
-		boost::shared_ptr<MifarePlusCrypto> GetCrypto() const;
+        /**
+        * \brief Get a random string
+        * \param init The init string for better random
+        * \param size The size of the generated random string
+        */
+        static std::vector<unsigned char> GetRandKey(size_t size);
 
-		/**
-		* \MifarePlusCrypto class instance
-		*/
-		boost::shared_ptr<MifarePlusCrypto> d_crypto;
-	};
+        /**
+        * \brief Get the crypto class
+        */
+        boost::shared_ptr<MifarePlusCrypto> GetCrypto() const;
+
+        /**
+        * \MifarePlusCrypto class instance
+        */
+        boost::shared_ptr<MifarePlusCrypto> d_crypto;
+    };
 }
 
 #endif /*LOGICALACCESS_MIFAREPLUSCOMMANDS_HPP */

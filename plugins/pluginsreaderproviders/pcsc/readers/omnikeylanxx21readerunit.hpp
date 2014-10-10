@@ -15,45 +15,44 @@
 
 namespace logicalaccess
 {
-	/**
-	 * \brief The Omnikey XX21 reader unit class.
-	 */
-	class LIBLOGICALACCESS_API OmnikeyLANXX21ReaderUnit : public OmnikeyXX21ReaderUnit
-	{
-		public:			
+    /**
+     * \brief The Omnikey XX21 reader unit class.
+     */
+    class LIBLOGICALACCESS_API OmnikeyLANXX21ReaderUnit : public OmnikeyXX21ReaderUnit
+    {
+    public:
 
-			/**
-			 * \brief Constructor.
-			 */
-			OmnikeyLANXX21ReaderUnit(const std::string& name);
+        /**
+         * \brief Constructor.
+         */
+        OmnikeyLANXX21ReaderUnit(const std::string& name);
 
-			/**
-			 * \brief Destructor.
-			 */
-			virtual ~OmnikeyLANXX21ReaderUnit();			
+        /**
+         * \brief Destructor.
+         */
+        virtual ~OmnikeyLANXX21ReaderUnit();
 
-			/**
-			 * \brief Get the PC/SC reader unit type.
-			 * \return The PC/SC reader unit type.
-			 */
-			virtual PCSCReaderUnitType getPCSCType() const;
+        /**
+         * \brief Get the PC/SC reader unit type.
+         * \return The PC/SC reader unit type.
+         */
+        virtual PCSCReaderUnitType getPCSCType() const;
 
-			/**
-			 * \brief Connect to the reader. Implicit connection on first command sent.
-			 * \return True if the connection successed.
-			 */
-			virtual bool connectToReader();
+        /**
+         * \brief Connect to the reader. Implicit connection on first command sent.
+         * \return True if the connection successed.
+         */
+        virtual bool connectToReader();
 
-			/**
-			 * \brief Disconnect from reader.
-			 */
-			virtual void disconnectFromReader();
+        /**
+         * \brief Disconnect from reader.
+         */
+        virtual void disconnectFromReader();
 
+    protected:
 
-		protected:
-			
-			void sendControlMode(DWORD dwControlCode);
-	};
+        void sendControlMode(DWORD dwControlCode);
+    };
 }
 
 #endif

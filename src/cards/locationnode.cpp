@@ -13,88 +13,87 @@ using std::ostream;
 
 namespace logicalaccess
 {
-	LocationNode::LocationNode()
-		: d_needAuthentication(false), d_hasProperties(false), d_length(0), d_unit(1)
-	{
-	}
+    LocationNode::LocationNode()
+        : d_needAuthentication(false), d_hasProperties(false), d_length(0), d_unit(1)
+    {
+    }
 
-	LocationNode::~LocationNode()
-	{
-	}
+    LocationNode::~LocationNode()
+    {
+    }
 
-	void LocationNode::setName(const string& name)
-	{
-		d_name = name;
-	}
+    void LocationNode::setName(const string& name)
+    {
+        d_name = name;
+    }
 
-	string LocationNode::getName() const
-	{
-		return d_name;
-	}
+    string LocationNode::getName() const
+    {
+        return d_name;
+    }
 
-	vector<boost::shared_ptr<LocationNode> >& LocationNode::getChildrens()
-	{
-		return d_childrens;
-	}
+    vector<boost::shared_ptr<LocationNode> >& LocationNode::getChildrens()
+    {
+        return d_childrens;
+    }
 
-	void LocationNode::setNeedAuthentication(bool needed)
-	{
-		d_needAuthentication = needed;
-	}
+    void LocationNode::setNeedAuthentication(bool needed)
+    {
+        d_needAuthentication = needed;
+    }
 
-	bool LocationNode::getNeedAuthentication() const
-	{
-		return d_needAuthentication;
-	}
+    bool LocationNode::getNeedAuthentication() const
+    {
+        return d_needAuthentication;
+    }
 
-	void LocationNode::setLength(size_t length)
-	{
-		d_length = length;
-	}
+    void LocationNode::setLength(size_t length)
+    {
+        d_length = length;
+    }
 
-	size_t LocationNode::getLength() const
-	{
-		return d_length;
-	}
+    size_t LocationNode::getLength() const
+    {
+        return d_length;
+    }
 
-	void LocationNode::setLocation(boost::shared_ptr<Location> location)
-	{
-		d_location = location;
-	}
+    void LocationNode::setLocation(boost::shared_ptr<Location> location)
+    {
+        d_location = location;
+    }
 
-	boost::shared_ptr<Location> LocationNode::getLocation() const
-	{
-		return d_location;
-	}
+    boost::shared_ptr<Location> LocationNode::getLocation() const
+    {
+        return d_location;
+    }
 
-	void LocationNode::setUnit(size_t unit)
-	{
-		d_unit = unit;
-	}
+    void LocationNode::setUnit(size_t unit)
+    {
+        d_unit = unit;
+    }
 
-	size_t LocationNode::getUnit() const
-	{
-		return d_unit;
-	}
+    size_t LocationNode::getUnit() const
+    {
+        return d_unit;
+    }
 
-	void LocationNode::setHasProperties(bool hasProperties)
-	{
-		d_hasProperties = hasProperties;
-	}
+    void LocationNode::setHasProperties(bool hasProperties)
+    {
+        d_hasProperties = hasProperties;
+    }
 
-	bool LocationNode::getHasProperties() const
-	{
-		return d_hasProperties;
-	}
+    bool LocationNode::getHasProperties() const
+    {
+        return d_hasProperties;
+    }
 
-	void LocationNode::setParent(boost::weak_ptr<LocationNode> parent)
-	{
-		d_parent = parent;
-	}
+    void LocationNode::setParent(boost::weak_ptr<LocationNode> parent)
+    {
+        d_parent = parent;
+    }
 
-	boost::shared_ptr<LocationNode> LocationNode::getParent()
-	{
-		return d_parent.lock();
-	}
+    boost::shared_ptr<LocationNode> LocationNode::getParent()
+    {
+        return d_parent.lock();
+    }
 }
-

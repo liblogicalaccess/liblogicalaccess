@@ -10,22 +10,19 @@
 #include <iomanip>
 #include <sstream>
 
-
 namespace logicalaccess
 {
-	SpringCardReaderUnit::SpringCardReaderUnit(const std::string& name)
-		: PCSCReaderUnit(name)
-	{
-		
-	}
+    SpringCardReaderUnit::SpringCardReaderUnit(const std::string& name)
+        : PCSCReaderUnit(name)
+    {
+    }
 
-	SpringCardReaderUnit::~SpringCardReaderUnit()
-	{
-		
-	}
+    SpringCardReaderUnit::~SpringCardReaderUnit()
+    {
+    }
 
-	PCSCReaderUnitType SpringCardReaderUnit::getPCSCType() const
-	{
-		return PCSC_RUT_SPRINGCARD;
-	}
+    PCSCReaderUnitType SpringCardReaderUnit::getPCSCType() const
+    {
+        return PCSC_RUT_SPRINGCARD;
+    }
 }

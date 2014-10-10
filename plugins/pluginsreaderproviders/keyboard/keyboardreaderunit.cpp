@@ -15,338 +15,336 @@
 #include <boost/filesystem.hpp>
 #include "logicalaccess/bufferhelper.hpp"
 
-
 namespace logicalaccess
 {
-	KeyboardReaderUnit::KeyboardReaderUnit()
-		: ReaderUnit()
-	{
-		d_readerUnitConfig.reset(new KeyboardReaderUnitConfiguration());
-		d_card_type = "UNKNOWN";
-		d_instanceConnected = false;
-		
-		try
-		{
-			boost::property_tree::ptree pt;
-			read_xml((boost::filesystem::current_path().string() + "/KeyboardReaderUnit.config"), pt);
-			d_card_type = pt.get("config.cardType", "UNKNOWN");
-		}
-		catch (...) { }
-	}
+    KeyboardReaderUnit::KeyboardReaderUnit()
+        : ReaderUnit()
+    {
+        d_readerUnitConfig.reset(new KeyboardReaderUnitConfiguration());
+        d_card_type = "UNKNOWN";
+        d_instanceConnected = false;
 
-	KeyboardReaderUnit::~KeyboardReaderUnit()
-	{
-		disconnectFromReader();
-	}
+        try
+        {
+            boost::property_tree::ptree pt;
+            read_xml((boost::filesystem::current_path().string() + "/KeyboardReaderUnit.config"), pt);
+            d_card_type = pt.get("config.cardType", "UNKNOWN");
+        }
+        catch (...) {}
+    }
 
-	std::string KeyboardReaderUnit::getName() const
-	{
-		return std::string(d_devicename);
-	}
+    KeyboardReaderUnit::~KeyboardReaderUnit()
+    {
+        disconnectFromReader();
+    }
 
-	std::string KeyboardReaderUnit::getConnectedName()
-	{
-		return getName();
-	}
+    std::string KeyboardReaderUnit::getName() const
+    {
+        return std::string(d_devicename);
+    }
 
-	void KeyboardReaderUnit::setCardType(std::string cardType)
-	{
-		d_card_type = cardType;
-	}
+    std::string KeyboardReaderUnit::getConnectedName()
+    {
+        return getName();
+    }
 
-	bool KeyboardReaderUnit::waitInsertion(unsigned int maxwait)
-	{
-		LOG(LogLevel::INFOS) << "Waiting insertion... max wait {" << maxwait << "}";
+    void KeyboardReaderUnit::setCardType(std::string cardType)
+    {
+        d_card_type = cardType;
+    }
 
-		bool inserted = false;
-		std::vector<unsigned char> createChipId;
+    bool KeyboardReaderUnit::waitInsertion(unsigned int maxwait)
+    {
+        LOG(LogLevel::INFOS) << "Waiting insertion... max wait {" << maxwait << "}";
 
-		if (d_removalIdentifier.size() > 0)
-		{
-			createChipId = d_removalIdentifier;
-		}
-		else
-		{
-			createChipId = getChipInAir(maxwait);
-		}
+        bool inserted = false;
+        std::vector<unsigned char> createChipId;
 
-		if (createChipId.size() > 0)
-		{
-			d_insertedChip = ReaderUnit::createChip((d_card_type == "UNKNOWN" ? "GenericTag" : d_card_type), createChipId);
-			LOG(LogLevel::INFOS) << "Chip detected !";
-			inserted = true;
-		}
-		
-		return inserted;
-	}
+        if (d_removalIdentifier.size() > 0)
+        {
+            createChipId = d_removalIdentifier;
+        }
+        else
+        {
+            createChipId = getChipInAir(maxwait);
+        }
 
-	bool KeyboardReaderUnit::waitRemoval(unsigned int maxwait)
-	{
-		LOG(LogLevel::INFOS) << "Waiting removal... max wait {" << maxwait << "}";
+        if (createChipId.size() > 0)
+        {
+            d_insertedChip = ReaderUnit::createChip((d_card_type == "UNKNOWN" ? "GenericTag" : d_card_type), createChipId);
+            LOG(LogLevel::INFOS) << "Chip detected !";
+            inserted = true;
+        }
 
-		bool removed = false;
-		d_removalIdentifier.clear();
+        return inserted;
+    }
 
-		// The inserted chip will stay inserted until a new identifier is read from the input device.
-		if (d_insertedChip)
-		{
-			std::vector<unsigned char> tmpId = getChipInAir(maxwait);
-			if (tmpId.size() > 0 && (tmpId != d_insertedChip->getChipIdentifier()))
-			{
-				LOG(LogLevel::INFOS) << "Card found AND not same identifier as previous ! The previous card has been removed !";
-				d_insertedChip.reset();
-				d_removalIdentifier = tmpId;
-				removed = true;
-			}
-			else if (tmpId.size() > 0 && tmpId == d_insertedChip->getChipIdentifier())
-			{
-				LOG(LogLevel::INFOS) << "Card found but this is the same identifier as previous. Ignoring...";
-			}
-		}
+    bool KeyboardReaderUnit::waitRemoval(unsigned int maxwait)
+    {
+        LOG(LogLevel::INFOS) << "Waiting removal... max wait {" << maxwait << "}";
 
-		LOG(LogLevel::INFOS) << "Returns card removed ? {" << removed << "} - function timeout expired ? " << (maxwait != 0);
+        bool removed = false;
+        d_removalIdentifier.clear();
 
-		return removed;
-	}
+        // The inserted chip will stay inserted until a new identifier is read from the input device.
+        if (d_insertedChip)
+        {
+            std::vector<unsigned char> tmpId = getChipInAir(maxwait);
+            if (tmpId.size() > 0 && (tmpId != d_insertedChip->getChipIdentifier()))
+            {
+                LOG(LogLevel::INFOS) << "Card found AND not same identifier as previous ! The previous card has been removed !";
+                d_insertedChip.reset();
+                d_removalIdentifier = tmpId;
+                removed = true;
+            }
+            else if (tmpId.size() > 0 && tmpId == d_insertedChip->getChipIdentifier())
+            {
+                LOG(LogLevel::INFOS) << "Card found but this is the same identifier as previous. Ignoring...";
+            }
+        }
 
-	std::vector<unsigned char> KeyboardReaderUnit::getChipInAir(unsigned int maxwait)
-	{
-		std::vector<unsigned char> ret;
+        LOG(LogLevel::INFOS) << "Returns card removed ? {" << removed << "} - function timeout expired ? " << (maxwait != 0);
 
-		bool process = false;
-		char c = 0x00;
-		if (waitInputChar(c, maxwait))
-		{
-			do
-			{
-				ret.push_back(static_cast<unsigned char>(c));
-				c = 0x00;
-			} while (waitInputChar(c, 250));
+        return removed;
+    }
 
-			LOG(LogLevel::INFOS) << "Keyboard chars received successfully {" << BufferHelper::getHex(ret) << "}-{" << BufferHelper::getStdString(ret) << "}! Processing...";
+    std::vector<unsigned char> KeyboardReaderUnit::getChipInAir(unsigned int maxwait)
+    {
+        std::vector<unsigned char> ret;
 
-			process = true;
-		}
+        bool process = false;
+        char c = 0x00;
+        if (waitInputChar(c, maxwait))
+        {
+            do
+            {
+                ret.push_back(static_cast<unsigned char>(c));
+                c = 0x00;
+            } while (waitInputChar(c, 250));
 
+            LOG(LogLevel::INFOS) << "Keyboard chars received successfully {" << BufferHelper::getHex(ret) << "}-{" << BufferHelper::getStdString(ret) << "}! Processing...";
 
-		// Check for prefix/suffix before any conversion
+            process = true;
+        }
 
-		if (process)
-		{
-			std::string prefix = getKeyboardConfiguration()->getPrefix();
-			if (!prefix.empty())
-			{
-				if (ret.size() <= prefix.size())
-				{
-					process = false;
-				}
-				else
-				{
-					for (unsigned int i = 0; i < prefix.size() && process; ++i)
-					{
-						process = (prefix.c_str()[i] == ret.at(i));
-					}
+        // Check for prefix/suffix before any conversion
 
-					if (process)
-					{
-						ret.erase(ret.begin(), ret.begin() + (prefix.size() - 1));
-					}
-				}
-			}
-		}
+        if (process)
+        {
+            std::string prefix = getKeyboardConfiguration()->getPrefix();
+            if (!prefix.empty())
+            {
+                if (ret.size() <= prefix.size())
+                {
+                    process = false;
+                }
+                else
+                {
+                    for (unsigned int i = 0; i < prefix.size() && process; ++i)
+                    {
+                        process = (prefix.c_str()[i] == ret.at(i));
+                    }
 
-		if (process)
-		{
-			std::string suffix = getKeyboardConfiguration()->getSuffix();
-			if (!suffix.empty())
-			{
-				if (ret.size() <= suffix.size())
-				{
-					process = false;
-				}
-				else
-				{
-					for (unsigned int i = 0; i < suffix.size() && process; ++i)
-					{
-						process = (suffix.c_str()[i] == ret.at(ret.size() - suffix.size() + i));
-					}
+                    if (process)
+                    {
+                        ret.erase(ret.begin(), ret.begin() + (prefix.size() - 1));
+                    }
+                }
+            }
+        }
 
-					if (process)
-					{
-						ret.resize(ret.size() - suffix.size());
-					}
-				}
-			}
-		}
+        if (process)
+        {
+            std::string suffix = getKeyboardConfiguration()->getSuffix();
+            if (!suffix.empty())
+            {
+                if (ret.size() <= suffix.size())
+                {
+                    process = false;
+                }
+                else
+                {
+                    for (unsigned int i = 0; i < suffix.size() && process; ++i)
+                    {
+                        process = (suffix.c_str()[i] == ret.at(ret.size() - suffix.size() + i));
+                    }
 
-		if (process)
-		{
-			// Now do data conversion
-			// WARNING: limited to 64-bit buffer long for now
+                    if (process)
+                    {
+                        ret.resize(ret.size() - suffix.size());
+                    }
+                }
+            }
+        }
 
-			unsigned long long convert = 0;
+        if (process)
+        {
+            // Now do data conversion
+            // WARNING: limited to 64-bit buffer long for now
 
-			if (getKeyboardConfiguration()->getIsDecimalNumber())
-			{
-				char tmp[2];
-				memset(tmp, 0x00, sizeof(tmp));
+            unsigned long long convert = 0;
 
-				size_t fact = ret.size() - 1;
-				for (std::vector<unsigned char>::iterator it = ret.begin(); it != ret.end(); ++it, --fact)
-				{
-					tmp[0] = *it;
-					unsigned long tmpi = strtoul(tmp, NULL, 10);
-					convert += static_cast<unsigned long long>(tmpi * pow(10, fact));
-				}
-			}
-			else
-			{
-				std::string tmp(ret.begin(), ret.end());
-				convert = strtoul(tmp.c_str(), NULL, 16);
-			}
+            if (getKeyboardConfiguration()->getIsDecimalNumber())
+            {
+                char tmp[2];
+                memset(tmp, 0x00, sizeof(tmp));
 
-			ret.clear();
-			ret.push_back(static_cast<unsigned char>((convert >> 56) & 0xff));
-			ret.push_back(static_cast<unsigned char>((convert >> 48) & 0xff));
-			ret.push_back(static_cast<unsigned char>((convert >> 40) & 0xff));
-			ret.push_back(static_cast<unsigned char>((convert >> 32) & 0xff));
-			ret.push_back(static_cast<unsigned char>((convert >> 24) & 0xff));
-			ret.push_back(static_cast<unsigned char>((convert >> 16) & 0xff));
-			ret.push_back(static_cast<unsigned char>((convert >> 8) & 0xff));
-			ret.push_back(static_cast<unsigned char>(convert & 0xff));
-		}
+                size_t fact = ret.size() - 1;
+                for (std::vector<unsigned char>::iterator it = ret.begin(); it != ret.end(); ++it, --fact)
+                {
+                    tmp[0] = *it;
+                    unsigned long tmpi = strtoul(tmp, NULL, 10);
+                    convert += static_cast<unsigned long long>(tmpi * pow(10, fact));
+                }
+            }
+            else
+            {
+                std::string tmp(ret.begin(), ret.end());
+                convert = strtoul(tmp.c_str(), NULL, 16);
+            }
 
-		if (!process)
-		{
-			ret.clear();
-		}
+            ret.clear();
+            ret.push_back(static_cast<unsigned char>((convert >> 56) & 0xff));
+            ret.push_back(static_cast<unsigned char>((convert >> 48) & 0xff));
+            ret.push_back(static_cast<unsigned char>((convert >> 40) & 0xff));
+            ret.push_back(static_cast<unsigned char>((convert >> 32) & 0xff));
+            ret.push_back(static_cast<unsigned char>((convert >> 24) & 0xff));
+            ret.push_back(static_cast<unsigned char>((convert >> 16) & 0xff));
+            ret.push_back(static_cast<unsigned char>((convert >> 8) & 0xff));
+            ret.push_back(static_cast<unsigned char>(convert & 0xff));
+        }
 
-		return ret;
-	}
+        if (!process)
+        {
+            ret.clear();
+        }
 
-	bool KeyboardReaderUnit::waitInputChar(char &c, unsigned int maxwait)
-	{
-		bool ret = false;
+        return ret;
+    }
 
-#ifdef _WINDOWS
-		DWORD res = WaitForSingleObject(getKeyboardReaderProvider()->hKbdEvent, (maxwait == 0) ? INFINITE : maxwait);
-		if (res == WAIT_OBJECT_0)
-		{
-			LOG(LogLevel::INFOS) << "Keyboard event detected!";
-
-			ResetEvent(getKeyboardReaderProvider()->hKbdEvent);
-			c = getKeyboardReaderProvider()->sKeyboard->enteredKeyChar;
-			SetEvent(getKeyboardReaderProvider()->hKbdEventProcessed);
-
-			ret = true;
-		}
-#endif
-
-		return ret;
-	}
-
-	bool KeyboardReaderUnit::connect()
-	{
-		return (d_insertedChip);
-	}
-
-	void KeyboardReaderUnit::disconnect()
-	{
-	}
-	
-	boost::shared_ptr<Chip> KeyboardReaderUnit::createChip(std::string type)
-	{
-		return ReaderUnit::createChip(type);
-	}
-
-	boost::shared_ptr<Chip> KeyboardReaderUnit::getSingleChip()
-	{
-		boost::shared_ptr<Chip> chip = d_insertedChip;
-		return chip;
-	}
-
-	std::vector<boost::shared_ptr<Chip> > KeyboardReaderUnit::getChipList()
-	{
-		std::vector<boost::shared_ptr<Chip> > chipList;
-		boost::shared_ptr<Chip> singleChip = getSingleChip();
-		if (singleChip)
-		{
-			chipList.push_back(singleChip);
-		}
-		return chipList;
-	}
-
-	std::string KeyboardReaderUnit::getReaderSerialNumber()
-	{
-		return std::string();
-	}
-
-	bool KeyboardReaderUnit::isConnected()
-	{
-		return (d_insertedChip);
-	}
-
-	bool KeyboardReaderUnit::connectToReader()
-	{
-		LOG(LogLevel::INFOS) << "Connecting to reader...";
-		bool ret = false;
+    bool KeyboardReaderUnit::waitInputChar(char &c, unsigned int maxwait)
+    {
+        bool ret = false;
 
 #ifdef _WINDOWS
-		// Just make a filter on input devices
-		if (getKeyboardReaderProvider()->sKeyboard != NULL)
-		{
-			std::strcpy(getKeyboardReaderProvider()->sKeyboard->selectedDeviceName, getName().c_str());
-			std::strcpy(getKeyboardReaderProvider()->sKeyboard->keyboardLayout, getKeyboardConfiguration()->getKeyboardLayout().c_str());
-			ret = true;
-		}
+        DWORD res = WaitForSingleObject(getKeyboardReaderProvider()->hKbdEvent, (maxwait == 0) ? INFINITE : maxwait);
+        if (res == WAIT_OBJECT_0)
+        {
+            LOG(LogLevel::INFOS) << "Keyboard event detected!";
+
+            ResetEvent(getKeyboardReaderProvider()->hKbdEvent);
+            c = getKeyboardReaderProvider()->sKeyboard->enteredKeyChar;
+            SetEvent(getKeyboardReaderProvider()->hKbdEventProcessed);
+
+            ret = true;
+        }
 #endif
 
-		d_instanceConnected = ret;
-		return ret;
-	}
+        return ret;
+    }
 
-	void KeyboardReaderUnit::disconnectFromReader()
-	{
-		LOG(LogLevel::INFOS) << "Disconnecting from reader...";
+    bool KeyboardReaderUnit::connect()
+    {
+        return (d_insertedChip);
+    }
+
+    void KeyboardReaderUnit::disconnect()
+    {
+    }
+
+    boost::shared_ptr<Chip> KeyboardReaderUnit::createChip(std::string type)
+    {
+        return ReaderUnit::createChip(type);
+    }
+
+    boost::shared_ptr<Chip> KeyboardReaderUnit::getSingleChip()
+    {
+        boost::shared_ptr<Chip> chip = d_insertedChip;
+        return chip;
+    }
+
+    std::vector<boost::shared_ptr<Chip> > KeyboardReaderUnit::getChipList()
+    {
+        std::vector<boost::shared_ptr<Chip> > chipList;
+        boost::shared_ptr<Chip> singleChip = getSingleChip();
+        if (singleChip)
+        {
+            chipList.push_back(singleChip);
+        }
+        return chipList;
+    }
+
+    std::string KeyboardReaderUnit::getReaderSerialNumber()
+    {
+        return std::string();
+    }
+
+    bool KeyboardReaderUnit::isConnected()
+    {
+        return (d_insertedChip);
+    }
+
+    bool KeyboardReaderUnit::connectToReader()
+    {
+        LOG(LogLevel::INFOS) << "Connecting to reader...";
+        bool ret = false;
+
 #ifdef _WINDOWS
-		if (d_instanceConnected)
-		{
-			// Don't really disconnect or close any listening, but remove the device filter if any.
-			if (getKeyboardReaderProvider()->sKeyboard != NULL)
-			{
-				memset(getKeyboardReaderProvider()->sKeyboard->selectedDeviceName, 0x00, DEVICE_NAME_MAXLENGTH);
-			}
-			d_instanceConnected = false;
-		}
+        // Just make a filter on input devices
+        if (getKeyboardReaderProvider()->sKeyboard != NULL)
+        {
+            std::strcpy(getKeyboardReaderProvider()->sKeyboard->selectedDeviceName, getName().c_str());
+            std::strcpy(getKeyboardReaderProvider()->sKeyboard->keyboardLayout, getKeyboardConfiguration()->getKeyboardLayout().c_str());
+            ret = true;
+        }
 #endif
-	}
 
-	void KeyboardReaderUnit::serialize(boost::property_tree::ptree& parentNode)
-	{
-		boost::property_tree::ptree node;
-		
-		node.put("<xmlattr>.type", getReaderProvider()->getRPType());
-		node.put("DeviceName", d_devicename);
-		d_readerUnitConfig->serialize(node);
+        d_instanceConnected = ret;
+        return ret;
+    }
 
-		parentNode.add_child(getDefaultXmlNodeName(), node);
-	}
+    void KeyboardReaderUnit::disconnectFromReader()
+    {
+        LOG(LogLevel::INFOS) << "Disconnecting from reader...";
+#ifdef _WINDOWS
+        if (d_instanceConnected)
+        {
+            // Don't really disconnect or close any listening, but remove the device filter if any.
+            if (getKeyboardReaderProvider()->sKeyboard != NULL)
+            {
+                memset(getKeyboardReaderProvider()->sKeyboard->selectedDeviceName, 0x00, DEVICE_NAME_MAXLENGTH);
+            }
+            d_instanceConnected = false;
+        }
+#endif
+    }
 
-	void KeyboardReaderUnit::unSerialize(boost::property_tree::ptree& node)
-	{
-		LOG(LogLevel::INFOS) << "Unserialize Keyboard reader unit...";
+    void KeyboardReaderUnit::serialize(boost::property_tree::ptree& parentNode)
+    {
+        boost::property_tree::ptree node;
 
-		d_devicename = node.get_child("DeviceName").get_value<std::string>();
-		d_readerUnitConfig->unSerialize(node.get_child(d_readerUnitConfig->getDefaultXmlNodeName()));
-	}
+        node.put("<xmlattr>.type", getReaderProvider()->getRPType());
+        node.put("DeviceName", d_devicename);
+        d_readerUnitConfig->serialize(node);
 
-	boost::shared_ptr<KeyboardReaderProvider> KeyboardReaderUnit::getKeyboardReaderProvider() const
-	{
-		return boost::dynamic_pointer_cast<KeyboardReaderProvider>(getReaderProvider());
-	}
+        parentNode.add_child(getDefaultXmlNodeName(), node);
+    }
 
-	void KeyboardReaderUnit::setKeyboard(const std::string& devicename)
-	{
-		d_devicename = devicename;
-	}
+    void KeyboardReaderUnit::unSerialize(boost::property_tree::ptree& node)
+    {
+        LOG(LogLevel::INFOS) << "Unserialize Keyboard reader unit...";
+
+        d_devicename = node.get_child("DeviceName").get_value<std::string>();
+        d_readerUnitConfig->unSerialize(node.get_child(d_readerUnitConfig->getDefaultXmlNodeName()));
+    }
+
+    boost::shared_ptr<KeyboardReaderProvider> KeyboardReaderUnit::getKeyboardReaderProvider() const
+    {
+        return boost::dynamic_pointer_cast<KeyboardReaderProvider>(getReaderProvider());
+    }
+
+    void KeyboardReaderUnit::setKeyboard(const std::string& devicename)
+    {
+        d_devicename = devicename;
+    }
 }

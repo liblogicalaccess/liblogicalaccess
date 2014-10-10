@@ -16,107 +16,106 @@
 
 namespace logicalaccess
 {
-	namespace openssl
-	{
-		/**
-		 * \brief An OpenSSL context class.
-		 *
-		 * The Context class is used by OpenSSLSymmetricCipher to perform block cipherement. It cannot be publicly instanciated.
-		 */
-		class OpenSSLSymmetricCipherContext
-		{
-			public:
+    namespace openssl
+    {
+        /**
+         * \brief An OpenSSL context class.
+         *
+         * The Context class is used by OpenSSLSymmetricCipher to perform block cipherement. It cannot be publicly instanciated.
+         */
+        class OpenSSLSymmetricCipherContext
+        {
+        public:
 
-			private:
+        private:
 
-				/**
-				 * \brief The context information structure.
-				 */
-				struct Information : public boost::noncopyable
-				{
-					/**
-					 * \brief Constructor.
-					 * \param method The method.
-					 */
-					Information(OpenSSLSymmetricCipher::Method method);
+            /**
+             * \brief The context information structure.
+             */
+            struct Information : public boost::noncopyable
+            {
+                /**
+                 * \brief Constructor.
+                 * \param method The method.
+                 */
+                Information(OpenSSLSymmetricCipher::Method method);
 
-					/**
-					 * \brief Destructor.
-					 */
-					~Information();
+                /**
+                 * \brief Destructor.
+                 */
+                ~Information();
 
-					/**
-					 * \brief The internal OpenSSL context.
-					 */
-					EVP_CIPHER_CTX ctx;
+                /**
+                 * \brief The internal OpenSSL context.
+                 */
+                EVP_CIPHER_CTX ctx;
 
-					/**
-					 * \brief The internal method.
-					 */
-					OpenSSLSymmetricCipher::Method method;
+                /**
+                 * \brief The internal method.
+                 */
+                OpenSSLSymmetricCipher::Method method;
 
-					/**
-					 * \brief An internal buffer.
-					 */
-					std::vector<unsigned char> data;
-				};
+                /**
+                 * \brief An internal buffer.
+                 */
+                std::vector<unsigned char> data;
+            };
 
-				/**
-				 * \brief Constructor.
-				 * \param method The method.
-				 */
-				OpenSSLSymmetricCipherContext(OpenSSLSymmetricCipher::Method method);
+            /**
+             * \brief Constructor.
+             * \param method The method.
+             */
+            OpenSSLSymmetricCipherContext(OpenSSLSymmetricCipher::Method method);
 
-				/**
-				 * \brief Set the padding.
-				 * \param padding true to enable padding, false to disable it.
-				 *
-				 * Padding is disabled by default.
-				 */
-				void setPadding(bool padding);
+            /**
+             * \brief Set the padding.
+             * \param padding true to enable padding, false to disable it.
+             *
+             * Padding is disabled by default.
+             */
+            void setPadding(bool padding);
 
-				/**
-				 * \brief Get the data.
-				 * \return The data.
-				 */
-				EVP_CIPHER_CTX* ctx();
+            /**
+             * \brief Get the data.
+             * \return The data.
+             */
+            EVP_CIPHER_CTX* ctx();
 
-				/**
-				 * \brief Get the block size.
-				 * \return The block size.
-				 */
-				size_t blockSize() const;
+            /**
+             * \brief Get the block size.
+             * \return The block size.
+             */
+            size_t blockSize() const;
 
-				/**
-				 * \brief Get the method.
-				 * \return The method.
-				 */
-				OpenSSLSymmetricCipher::Method method() const;
+            /**
+             * \brief Get the method.
+             * \return The method.
+             */
+            OpenSSLSymmetricCipher::Method method() const;
 
-				/**
-				 * \brief Get the data.
-				 * \return The data.
-				 */
-				std::vector<unsigned char>& data();
+            /**
+             * \brief Get the data.
+             * \return The data.
+             */
+            std::vector<unsigned char>& data();
 
-				/**
-				 * \brief Reset the context.
-				 */
-				void reset();
+            /**
+             * \brief Reset the context.
+             */
+            void reset();
 
-				/**
-				 * \brief The information.
-				 */
-				boost::shared_ptr<Information> d_information;
+            /**
+             * \brief The information.
+             */
+            boost::shared_ptr<Information> d_information;
 
-				friend class OpenSSLSymmetricCipher;
-		};
-		
-		inline EVP_CIPHER_CTX* OpenSSLSymmetricCipherContext::ctx() { return &d_information->ctx; }
-		inline OpenSSLSymmetricCipher::Method OpenSSLSymmetricCipherContext::method() const { return d_information->method; }
-		inline std::vector<unsigned char>& OpenSSLSymmetricCipherContext::data() { return d_information->data; }
-	}
+            friend class OpenSSLSymmetricCipher;
+        };
+
+        inline EVP_CIPHER_CTX* OpenSSLSymmetricCipherContext::ctx() { return &d_information->ctx; }
+        inline OpenSSLSymmetricCipher::Method OpenSSLSymmetricCipherContext::method() const { return d_information->method; }
+        inline std::vector<unsigned char>& OpenSSLSymmetricCipherContext::data() { return d_information->data; }
+    }
 }
 
 #endif /* OPENSSL_SYMETRIC_CIPHER_CONTEXT_HPP */
-

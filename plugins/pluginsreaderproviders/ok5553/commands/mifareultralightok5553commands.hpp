@@ -16,47 +16,46 @@
 
 namespace logicalaccess
 {
-	/**
-	 * \brief A Mifare Ultraligth OK5553 commands base class.
-	 */
-	class LIBLOGICALACCESS_API MifareUltralightOK5553Commands : public MifareUltralightCommands
-	{
-	public:
-			/**
-			 * \brief Constructor.
-			 */
-			MifareUltralightOK5553Commands();
+    /**
+     * \brief A Mifare Ultraligth OK5553 commands base class.
+     */
+    class LIBLOGICALACCESS_API MifareUltralightOK5553Commands : public MifareUltralightCommands
+    {
+    public:
+        /**
+         * \brief Constructor.
+         */
+        MifareUltralightOK5553Commands();
 
-			/**
-			 * \brief Destructor.
-			 */
-			virtual ~MifareUltralightOK5553Commands();
-			
-			/**
-			 * \brief Read a whole page.
-			 * \param sector The page number, from 0 to 15.
-			 * \param buf A buffer to fill with the data of the page.
-			 * \param buflen The length of buffer. Must be at least 4 bytes long or the call will fail.
-			 * \return The number of bytes red, or a negative value on error.
-			 */
-			virtual size_t readPage(int page, void* buf, size_t buflen);
+        /**
+         * \brief Destructor.
+         */
+        virtual ~MifareUltralightOK5553Commands();
 
-			/**
-			 * \brief Write a whole page.
-			 * \param sector The page number, from 0 to 15.
-			 * \param buf A buffer to from which to copy the data.
-			 * \param buflen The length of buffer. Must be at least 4 bytes long or the call will fail.
-			 * \return The number of bytes written, or a negative value on error.
-			 */
-			virtual size_t writePage(int page, const void* buf, size_t buflen);
-			
-			/**
-			 * \brief Get the OK5553 reader/card adapter.
-			 * \return The OK5553 reader/card adapter.
-			 */
-			virtual boost::shared_ptr<OK5553ReaderCardAdapter> getOK5553ReaderCardAdapter() { return boost::dynamic_pointer_cast<OK5553ReaderCardAdapter>(getReaderCardAdapter()); };
-	};	
+        /**
+         * \brief Read a whole page.
+         * \param sector The page number, from 0 to 15.
+         * \param buf A buffer to fill with the data of the page.
+         * \param buflen The length of buffer. Must be at least 4 bytes long or the call will fail.
+         * \return The number of bytes red, or a negative value on error.
+         */
+        virtual size_t readPage(int page, void* buf, size_t buflen);
+
+        /**
+         * \brief Write a whole page.
+         * \param sector The page number, from 0 to 15.
+         * \param buf A buffer to from which to copy the data.
+         * \param buflen The length of buffer. Must be at least 4 bytes long or the call will fail.
+         * \return The number of bytes written, or a negative value on error.
+         */
+        virtual size_t writePage(int page, const void* buf, size_t buflen);
+
+        /**
+         * \brief Get the OK5553 reader/card adapter.
+         * \return The OK5553 reader/card adapter.
+         */
+        virtual boost::shared_ptr<OK5553ReaderCardAdapter> getOK5553ReaderCardAdapter() { return boost::dynamic_pointer_cast<OK5553ReaderCardAdapter>(getReaderCardAdapter()); };
+    };
 }
 
 #endif /* LOGICALACCESS_MIFAREULTRALIGHTOK5553COMMANDS_HPP */
-

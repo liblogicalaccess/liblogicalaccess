@@ -9,17 +9,15 @@
 
 #include "logicalaccess/cards/commands.hpp"
 
-
 namespace logicalaccess
 {
-	/**
-	 * \brief The Generic Tag IdOnDemand commands class.
-	 */
-	class LIBLOGICALACCESS_API GenericTagIdOnDemandCommands : public Commands
-	{
-		public:			
-
-	};
+    /**
+     * \brief The Generic Tag IdOnDemand commands class.
+     */
+    class LIBLOGICALACCESS_API GenericTagIdOnDemandCommands : public Commands
+    {
+    public:
+    };
 }
 
 #endif

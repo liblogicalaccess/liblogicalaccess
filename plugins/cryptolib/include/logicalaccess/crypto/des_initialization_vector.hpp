@@ -11,61 +11,60 @@
 
 namespace logicalaccess
 {
-	namespace openssl
-	{
-		/**
-		 * \brief An DES initialization vector.
-		 *
-		 * DESInitializationVector represents an DES initialization vector (IV). Every DESInitializationVector is 8 bytes long.
-		 *
-		 * It is meant to be used with an instance of DESCipher.
-		 */
-		class DESInitializationVector : public InitializationVector
-		{
-			public:
+    namespace openssl
+    {
+        /**
+         * \brief An DES initialization vector.
+         *
+         * DESInitializationVector represents an DES initialization vector (IV). Every DESInitializationVector is 8 bytes long.
+         *
+         * It is meant to be used with an instance of DESCipher.
+         */
+        class DESInitializationVector : public InitializationVector
+        {
+        public:
 
-				/**
-				 * \brief Create a null IV.
-				 */
-				static DESInitializationVector createNull();
+            /**
+             * \brief Create a null IV.
+             */
+            static DESInitializationVector createNull();
 
-				/**
-				 * \brief Create a random IV.
-				 */
-				static DESInitializationVector createRandom();
+            /**
+             * \brief Create a random IV.
+             */
+            static DESInitializationVector createRandom();
 
-				/**
-				 * \brief Create an IV from data.
-				 * \param data The data. Must be 8 exactly bytes long.
-				 * \return IV from the data.
-				 * \warning If data is not exactly 8 bytes long, the behavior is undefined.
-				 */
-				static DESInitializationVector createFromData(const std::vector<unsigned char>& data);
+            /**
+             * \brief Create an IV from data.
+             * \param data The data. Must be 8 exactly bytes long.
+             * \return IV from the data.
+             * \warning If data is not exactly 8 bytes long, the behavior is undefined.
+             */
+            static DESInitializationVector createFromData(const std::vector<unsigned char>& data);
 
-			protected:
+        protected:
 
-				/**
-				 * \brief Create a new DESInitializationVector.
-				 * \param random true if the IV must be randomized, false otherwise.
-				 */
-				DESInitializationVector(bool random);
+            /**
+             * \brief Create a new DESInitializationVector.
+             * \param random true if the IV must be randomized, false otherwise.
+             */
+            DESInitializationVector(bool random);
 
-				/**
-				 * \brief Create an DESInitializationVector from existing data.
-				 * \param data The data.
-				 * \warning If data is not 8 bytes long, the behavior is undefined.
-				 */
-				DESInitializationVector(const std::vector<unsigned char>& data);
+            /**
+             * \brief Create an DESInitializationVector from existing data.
+             * \param data The data.
+             * \warning If data is not 8 bytes long, the behavior is undefined.
+             */
+            DESInitializationVector(const std::vector<unsigned char>& data);
 
-			private:
+        private:
 
-				/**
-				 * \brief The DES initialization vector size.
-				 */
-				static const size_t DEFAULT_SIZE = 8;
-		};
-	}
+            /**
+             * \brief The DES initialization vector size.
+             */
+            static const size_t DEFAULT_SIZE = 8;
+        };
+    }
 }
 
 #endif /* DES_INITIALIZATION_VECTOR_HPP */
-

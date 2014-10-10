@@ -17,38 +17,37 @@
 
 namespace logicalaccess
 {
-	/**
-	 * \brief The Twic base profile class.
-	 */
-	class LIBLOGICALACCESS_API TwicProfile : public ISO7816Profile
-	{
-		public:			
+    /**
+     * \brief The Twic base profile class.
+     */
+    class LIBLOGICALACCESS_API TwicProfile : public ISO7816Profile
+    {
+    public:
 
-			/**
-			 * \brief Constructor.
-			 */
-			TwicProfile();
+        /**
+         * \brief Constructor.
+         */
+        TwicProfile();
 
-			/**
-			 * \brief Destructor.
-			 */
-			virtual ~TwicProfile();
+        /**
+         * \brief Destructor.
+         */
+        virtual ~TwicProfile();
 
-			/**
-			 * \brief Create default Twic location.
-			 * \return Default Twic location.
-			 */
-			virtual boost::shared_ptr<Location> createLocation() const;	
-			
-			/**
-			 * \brief Get the supported format list.
-			 * \return The format list.
-			 */
-			virtual FormatList getSupportedFormatList();
+        /**
+         * \brief Create default Twic location.
+         * \return Default Twic location.
+         */
+        virtual boost::shared_ptr<Location> createLocation() const;
 
-		protected:
+        /**
+         * \brief Get the supported format list.
+         * \return The format list.
+         */
+        virtual FormatList getSupportedFormatList();
 
-	};
+    protected:
+    };
 }
 
 #endif

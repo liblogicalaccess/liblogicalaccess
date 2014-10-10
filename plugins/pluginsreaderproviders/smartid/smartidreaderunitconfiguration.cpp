@@ -14,35 +14,33 @@
 
 namespace logicalaccess
 {
-	SmartIDReaderUnitConfiguration::SmartIDReaderUnitConfiguration()
-		: ReaderUnitConfiguration(READER_SMARTID)
-	{
-		d_baudrate = BaudRateOutput::BRO_4800BAUD;
-		resetConfiguration();
-	}
+    SmartIDReaderUnitConfiguration::SmartIDReaderUnitConfiguration()
+        : ReaderUnitConfiguration(READER_SMARTID)
+    {
+        d_baudrate = BaudRateOutput::BRO_4800BAUD;
+        resetConfiguration();
+    }
 
-	SmartIDReaderUnitConfiguration::~SmartIDReaderUnitConfiguration()
-	{
-	}
+    SmartIDReaderUnitConfiguration::~SmartIDReaderUnitConfiguration()
+    {
+    }
 
-	void SmartIDReaderUnitConfiguration::resetConfiguration()
-	{
-		
-	}
+    void SmartIDReaderUnitConfiguration::resetConfiguration()
+    {
+    }
 
-	void SmartIDReaderUnitConfiguration::serialize(boost::property_tree::ptree& parentNode)
-	{
-		boost::property_tree::ptree node;
-		parentNode.add_child(getDefaultXmlNodeName(), node);
-	}
+    void SmartIDReaderUnitConfiguration::serialize(boost::property_tree::ptree& parentNode)
+    {
+        boost::property_tree::ptree node;
+        parentNode.add_child(getDefaultXmlNodeName(), node);
+    }
 
-	void SmartIDReaderUnitConfiguration::unSerialize(boost::property_tree::ptree& /*node*/)
-	{
-		
-	}
+    void SmartIDReaderUnitConfiguration::unSerialize(boost::property_tree::ptree& /*node*/)
+    {
+    }
 
-	std::string SmartIDReaderUnitConfiguration::getDefaultXmlNodeName() const
-	{
-		return "SmartIDReaderUnitConfiguration";
-	}
+    std::string SmartIDReaderUnitConfiguration::getDefaultXmlNodeName() const
+    {
+        return "SmartIDReaderUnitConfiguration";
+    }
 }

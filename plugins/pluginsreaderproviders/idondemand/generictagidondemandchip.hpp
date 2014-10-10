@@ -9,33 +9,32 @@
 
 #include "generictagchip.hpp"
 
-
 namespace logicalaccess
 {
-	/**
-	 * \brief The Generic Tag IdOnDemand commands class.
-	 */
-	class LIBLOGICALACCESS_API GenericTagIdOnDemandChip : public GenericTagChip
-	{
-		public:			
+    /**
+     * \brief The Generic Tag IdOnDemand commands class.
+     */
+    class LIBLOGICALACCESS_API GenericTagIdOnDemandChip : public GenericTagChip
+    {
+    public:
 
-			/**
-			 * \brief Constructor.
-			 */
-			GenericTagIdOnDemandChip();
+        /**
+         * \brief Constructor.
+         */
+        GenericTagIdOnDemandChip();
 
-			/**
-			 * \brief Destructor.
-			 */
-			~GenericTagIdOnDemandChip();
+        /**
+         * \brief Destructor.
+         */
+        ~GenericTagIdOnDemandChip();
 
-			/**
-			 * \brief Get a card service for this card provider.
-			 * \param serviceType The card service type.
-			 * \return The card service.
-			 */
-			virtual boost::shared_ptr<CardService> getService(CardServiceType serviceType);
-	};
+        /**
+         * \brief Get a card service for this card provider.
+         * \param serviceType The card service type.
+         * \return The card service.
+         */
+        virtual boost::shared_ptr<CardService> getService(CardServiceType serviceType);
+    };
 }
 
 #endif

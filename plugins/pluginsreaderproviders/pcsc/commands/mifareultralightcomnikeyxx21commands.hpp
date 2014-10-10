@@ -9,33 +9,29 @@
 
 #include "mifareultralightcpcsccommands.hpp"
 
-
 namespace logicalaccess
 {
-	/**
-	 * \brief The Mifare Ultralight C commands class for Omnikey xx21 reader.
-	 */
-	class LIBLOGICALACCESS_API MifareUltralightCOmnikeyXX21Commands : public MifareUltralightCPCSCCommands
-	{
-		public:			
+    /**
+     * \brief The Mifare Ultralight C commands class for Omnikey xx21 reader.
+     */
+    class LIBLOGICALACCESS_API MifareUltralightCOmnikeyXX21Commands : public MifareUltralightCPCSCCommands
+    {
+    public:
 
-			/**
-			 * \brief Constructor.
-			 */
-			MifareUltralightCOmnikeyXX21Commands();
+        /**
+         * \brief Constructor.
+         */
+        MifareUltralightCOmnikeyXX21Commands();
 
-			/**
-			 * \brief Destructor.
-			 */
-			virtual ~MifareUltralightCOmnikeyXX21Commands();
+        /**
+         * \brief Destructor.
+         */
+        virtual ~MifareUltralightCOmnikeyXX21Commands();
 
-		
-		protected:
+    protected:
 
-            virtual std::vector<unsigned char> sendGenericCommand(const std::vector<unsigned char>& data);
-					
-	};	
+        virtual std::vector<unsigned char> sendGenericCommand(const std::vector<unsigned char>& data);
+    };
 }
 
 #endif /* LOGICALACCESS_MIFAREULTRALIGHTCOMNIKEYXX21COMMANDS_HPP */
-

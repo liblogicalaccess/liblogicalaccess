@@ -1,7 +1,7 @@
 /**
  * \file rplethlcddisplay.hpp
  * \author Maxime C. <maxime-dev@islog.com>
- * \brief Rpleth LCD Display. 
+ * \brief Rpleth LCD Display.
  */
 
 #ifndef D3L_PCSC_RPLETHLCDDISPLAY_HPP
@@ -15,66 +15,62 @@
 
 #include "logicalaccess/logs.hpp"
 
-
 namespace logicalaccess
 {
+    /**
+     * \brief A Rpleth LCD Display class.
+     */
+    class LIBLOGICALACCESS_API RplethLCDDisplay : public LCDDisplay
+    {
+    public:
 
-	/**
-	 * \brief A Rpleth LCD Display class.
-	 */
-	class LIBLOGICALACCESS_API RplethLCDDisplay : public LCDDisplay
-	{
-		public:
+        /**
+         * \brief Constructor.
+         */
+        RplethLCDDisplay();
 
-			/**
-			 * \brief Constructor.
-			 */
-			RplethLCDDisplay();
+        /**
+         * \brief Write a message on screen.
+         * \param message The message to show.
+         */
+        virtual void setMessage(std::string message);
 
-			/**
-			 * \brief Write a message on screen.
-			 * \param message The message to show.
-			 */
-			virtual void setMessage(std::string message);
+        /**
+         * \brief Write a message on screen during a time.
+         * \param message The message to show.
+         * \param time The time to show the message
+         */
+        virtual void setMessage(std::string message, int time);
 
-			/**
-			 * \brief Write a message on screen during a time.
-			 * \param message The message to show.
-			 * \param time The time to show the message
-			 */
-			virtual void setMessage(std::string message, int time);
+        /**
+         * \brief Write a message on screen.
+         * \param rowid The row id for the message.
+         * \param message The message to show.
+         */
+        virtual void setMessage(unsigned char rowid, std::string message);
 
-			/**
-			 * \brief Write a message on screen.
-			 * \param rowid The row id for the message.
-			 * \param message The message to show.
-			 */
-			virtual void setMessage(unsigned char rowid, std::string message);
+        /**
+         * \brief Set the default time to display a message.
+         * \param time The time to show the message
+         */
+        void setDisplayTime(int time);
 
-			/**
-			 * \brief Set the default time to display a message.
-			 * \param time The time to show the message
-			 */
-			void setDisplayTime(int time);
+        /**
+         * \brief Enable or disable the blink.
+         */
+        void blink();
 
-			/**
-			 * \brief Enable or disable the blink.
-			 */
-			void blink();
+        /**
+         * \brief Enable or disable the autoScroll.
+         */
+        void autoScroll();
 
-			/**
-			 * \brief Enable or disable the autoScroll.
-			 */
-			void autoScroll();
-
-			/**
-			 * \brief Get the rpleth reader card adapter.
-			 * \return The rpleth reader card adapter.
-			 */
-			boost::shared_ptr<RplethReaderCardAdapter> getRplethReaderCardAdapter() { return boost::dynamic_pointer_cast<RplethReaderCardAdapter>(getReaderCardAdapter()); };
-	};
-
+        /**
+         * \brief Get the rpleth reader card adapter.
+         * \return The rpleth reader card adapter.
+         */
+        boost::shared_ptr<RplethReaderCardAdapter> getRplethReaderCardAdapter() { return boost::dynamic_pointer_cast<RplethReaderCardAdapter>(getReaderCardAdapter()); };
+    };
 }
 
 #endif /* D3L_PCSC_RPLETHLCDDISPLAY_HPP */
-

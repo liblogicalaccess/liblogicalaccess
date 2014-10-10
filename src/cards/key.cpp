@@ -34,7 +34,7 @@ namespace logicalaccess
     }
 
     void Key::clear()
-    {		
+    {
         if (getLength() > 0)
         {
             memset(getData(), 0x00, getLength());
@@ -44,7 +44,7 @@ namespace logicalaccess
     std::string Key::toString(bool withSpace) const
     {
         const unsigned char* data = getData();
-        std::ostringstream oss;		
+        std::ostringstream oss;
 
         oss << std::setfill('0');
 
@@ -65,7 +65,7 @@ namespace logicalaccess
     }
 
     bool Key::fromString(const std::string& str)
-    {		
+    {
         unsigned char* data = getData();
         std::istringstream iss(str);
 
@@ -132,7 +132,7 @@ namespace logicalaccess
         if (d_key_diversification)
         {
             boost::property_tree::ptree newnode;
-			newnode.put("<xmlattr>.keyDiversificationType", d_key_diversification->getType());
+            newnode.put("<xmlattr>.keyDiversificationType", d_key_diversification->getType());
             d_key_diversification->serialize(newnode);
             node.add_child("KeyDiversification", newnode);
         }
@@ -149,25 +149,25 @@ namespace logicalaccess
         {
             boost::property_tree::ptree keydivnode = node.get_child("KeyDiversification");
             d_key_diversification = KeyDiversification::getKeyDiversificationFromType(keydivnode.get_child("<xmlattr>.keyDiversificationType").get_value<std::string>());
-			boost::property_tree::ptree kdnode = keydivnode.get_child(d_key_diversification->getDefaultXmlNodeName());
-			if (!kdnode.empty())
-			{
-				d_key_diversification->unSerialize(kdnode);
-			}
+            boost::property_tree::ptree kdnode = keydivnode.get_child(d_key_diversification->getDefaultXmlNodeName());
+            if (!kdnode.empty())
+            {
+                d_key_diversification->unSerialize(kdnode);
+            }
         }
 
         d_storeCipheredData = node.get_child("IsCiphered").get_value<bool>(false);
         uncipherKeyData(node);
         LOG(LogLevel::INFOS) << "Unserializing Key storage...";
-		d_key_storage = KeyStorage::getKeyStorageFromType(static_cast<KeyStorageType>(node.get_child("<xmlattr>.keyStorageType").get_value<unsigned int>()));
-		if (d_key_storage)
-		{
-			boost::property_tree::ptree ksnode = node.get_child(d_key_storage->getDefaultXmlNodeName());
-			if (!ksnode.empty())
-			{
-				d_key_storage->unSerialize(ksnode);
-			}
-		}
+        d_key_storage = KeyStorage::getKeyStorageFromType(static_cast<KeyStorageType>(node.get_child("<xmlattr>.keyStorageType").get_value<unsigned int>()));
+        if (d_key_storage)
+        {
+            boost::property_tree::ptree ksnode = node.get_child(d_key_storage->getDefaultXmlNodeName());
+            if (!ksnode.empty())
+            {
+                d_key_storage->unSerialize(ksnode);
+            }
+        }
     }
 
     void Key::setStoreCipheredData(bool cipher)
@@ -240,8 +240,8 @@ namespace logicalaccess
             aescipher.cipher(keynamebuf, divaesbuf, aes, iv, false);
             openssl::AESSymmetricKey divaes = openssl::AESSymmetricKey::createFromData(divaesbuf);
 
-            std::vector<unsigned char> keybuf(data.begin(), data.end()), uncipheredkey;			
-            aescipher.decipher(BufferHelper::fromBase64(BufferHelper::getStdString(keybuf)), uncipheredkey, divaes, iv, true);		
+            std::vector<unsigned char> keybuf(data.begin(), data.end()), uncipheredkey;
+            aescipher.decipher(BufferHelper::fromBase64(BufferHelper::getStdString(keybuf)), uncipheredkey, divaes, iv, true);
 
             //LOG(LogLevel::DEBUGS) << "Data unciphered: {%s}", uncipheredkey.toStdString().c_str());
 
@@ -284,4 +284,3 @@ namespace logicalaccess
         return os << key.toString();
     }
 }
-

@@ -6,7 +6,6 @@
 
 #include "iso7816readerunit.hpp"
 
-
 #include <iostream>
 #include <iomanip>
 #include <sstream>
@@ -25,23 +24,22 @@
 
 namespace logicalaccess
 {
-	ISO7816ReaderUnit::ISO7816ReaderUnit()
-		: ReaderUnit()
-	{
-	
-	}
+    ISO7816ReaderUnit::ISO7816ReaderUnit()
+        : ReaderUnit()
+    {
+    }
 
-	ISO7816ReaderUnit::~ISO7816ReaderUnit() {}
+    ISO7816ReaderUnit::~ISO7816ReaderUnit() {}
 
-	boost::shared_ptr<Chip> ISO7816ReaderUnit::getSingleChip()
-	{
-		boost::shared_ptr<Chip> ret;
-		return ret;
-	}
+    boost::shared_ptr<Chip> ISO7816ReaderUnit::getSingleChip()
+    {
+        boost::shared_ptr<Chip> ret;
+        return ret;
+    }
 
-	std::vector<boost::shared_ptr<Chip> > ISO7816ReaderUnit::getChipList()
-	{
-		std::vector<boost::shared_ptr<Chip> > ret;
-		return ret;
-	}
+    std::vector<boost::shared_ptr<Chip> > ISO7816ReaderUnit::getChipList()
+    {
+        std::vector<boost::shared_ptr<Chip> > ret;
+        return ret;
+    }
 }

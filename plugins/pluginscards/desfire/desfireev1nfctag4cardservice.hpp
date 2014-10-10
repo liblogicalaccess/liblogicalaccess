@@ -10,40 +10,37 @@
 #include <iso7816/iso7816nfctag4cardservice.hpp>
 #include "desfireev1chip.hpp"
 
-
 namespace logicalaccess
 {
-	class DESFireChip;
+    class DESFireChip;
 
+    /**
+     * \brief The DESFire storage card service bas class.
+     */
+    class LIBLOGICALACCESS_API DESFireEV1NFCTag4CardService : public ISO7816NFCTag4CardService
+    {
+    public:
 
-	/**
-	 * \brief The DESFire storage card service bas class.
-	 */
-	class LIBLOGICALACCESS_API DESFireEV1NFCTag4CardService : public ISO7816NFCTag4CardService
-	{
-		public:
+        /**
+         * \brief Constructor.
+         * \param chip The chip.
+         */
+        DESFireEV1NFCTag4CardService(boost::shared_ptr<Chip> chip) : ISO7816NFCTag4CardService(chip) {};
 
-			/**
-			 * \brief Constructor.
-			 * \param chip The chip.
-			 */
-			DESFireEV1NFCTag4CardService(boost::shared_ptr<Chip> chip) : ISO7816NFCTag4CardService(chip) {};
+        ~DESFireEV1NFCTag4CardService() {};
 
-			~DESFireEV1NFCTag4CardService() {};
+        void createNFCApplication(unsigned int aid, boost::shared_ptr<logicalaccess::DESFireKey> masterPICCKey, unsigned short isoFIDApplication = 0xe105, unsigned short isoFIDCapabilityContainer = 0xe103, unsigned short isoFIDNDEFFile = 0xe104, unsigned short NDEFFileSize = 0xff);
 
-			void createNFCApplication(unsigned int aid, boost::shared_ptr<logicalaccess::DESFireKey> masterPICCKey, unsigned short isoFIDApplication = 0xe105, unsigned short isoFIDCapabilityContainer = 0xe103, unsigned short isoFIDNDEFFile = 0xe104, unsigned short NDEFFileSize = 0xff);
+        void deleteNFCApplication(unsigned int aid, boost::shared_ptr<logicalaccess::DESFireKey> masterPICCKey);
 
-			void deleteNFCApplication(unsigned int aid, boost::shared_ptr<logicalaccess::DESFireKey> masterPICCKey);
+        virtual boost::shared_ptr<logicalaccess::NdefMessage> readNDEFFile(unsigned short isoFIDApplication = 0xe105, unsigned short isoFIDNDEFFile = 0xe104);
 
-			virtual boost::shared_ptr<logicalaccess::NdefMessage> readNDEFFile(unsigned short isoFIDApplication = 0xe105, unsigned short isoFIDNDEFFile = 0xe104);
+        virtual CardServiceType getServiceType() const { return CardServiceType::CST_NFC_TAG; };
 
-			virtual CardServiceType getServiceType() const { return CardServiceType::CST_NFC_TAG; };
+    protected:
 
-		protected:
-
-			boost::shared_ptr<DESFireEV1Chip> getDESFireChip() { return boost::dynamic_pointer_cast<DESFireEV1Chip>(getChip()); };
-	};
+        boost::shared_ptr<DESFireEV1Chip> getDESFireChip() { return boost::dynamic_pointer_cast<DESFireEV1Chip>(getChip()); };
+    };
 }
 
 #endif /* LOGICALACCESS_DESFIRENFCTAG4CARDSERVICE_HPP */
-

@@ -9,118 +9,117 @@
 
 #include "logicalaccess/readerproviders/readerunitconfiguration.hpp"
 
-
 namespace logicalaccess
-{	
-	/**
-	 * \brief Represent the rpleth firmware version.
-	 */
-	typedef enum
-	{
-		WIEGAND = 0x01,
-		PROXY = 0x02
-	} RplethMode;
+{
+    /**
+     * \brief Represent the rpleth firmware version.
+     */
+    typedef enum
+    {
+        WIEGAND = 0x01,
+        PROXY = 0x02
+    } RplethMode;
 
-	/**
-	 * \brief The Rpleth reader unit configuration base class.
-	 */
-	class LIBLOGICALACCESS_API RplethReaderUnitConfiguration : public ReaderUnitConfiguration
-	{
-		public:
+    /**
+     * \brief The Rpleth reader unit configuration base class.
+     */
+    class LIBLOGICALACCESS_API RplethReaderUnitConfiguration : public ReaderUnitConfiguration
+    {
+    public:
 
-			/**
-			 * \brief Constructor.
-			 */
-			RplethReaderUnitConfiguration();
+        /**
+         * \brief Constructor.
+         */
+        RplethReaderUnitConfiguration();
 
-			/**
-			 * \brief Destructor.
-			 */
-			virtual ~RplethReaderUnitConfiguration();
+        /**
+         * \brief Destructor.
+         */
+        virtual ~RplethReaderUnitConfiguration();
 
-			/**
-			 * \brief Reset the configuration to default values
-			 */
-			virtual void resetConfiguration();
+        /**
+         * \brief Reset the configuration to default values
+         */
+        virtual void resetConfiguration();
 
-			/**
-			 * \brief Set the wiegand configuration to param values
-			 * \param offset The offset in wiegand communication
-			 * \param lenght The lenght of csn in wiegand communication
-			 */
-			void setWiegandConfiguration (unsigned char offset, unsigned char lenght);
+        /**
+         * \brief Set the wiegand configuration to param values
+         * \param offset The offset in wiegand communication
+         * \param lenght The lenght of csn in wiegand communication
+         */
+        void setWiegandConfiguration(unsigned char offset, unsigned char lenght);
 
-			/**
-			 * \brief Serialize the current object to XML.
-			 * \param parentNode The parent node.
-			 */
-			virtual void serialize(boost::property_tree::ptree& parentNode);
+        /**
+         * \brief Serialize the current object to XML.
+         * \param parentNode The parent node.
+         */
+        virtual void serialize(boost::property_tree::ptree& parentNode);
 
-			/**
-			 * \brief UnSerialize a XML node to the current object.
-			 * \param node The XML node.
-			 */
-			virtual void unSerialize(boost::property_tree::ptree& node);
+        /**
+         * \brief UnSerialize a XML node to the current object.
+         * \param node The XML node.
+         */
+        virtual void unSerialize(boost::property_tree::ptree& node);
 
-			/**
-			 * \brief Get the default Xml Node name for this object.
-			 * \return The Xml node name.
-			 */
-			virtual std::string getDefaultXmlNodeName() const;
-			
-			/**
-			 * \brief Get the offset in wiegand communication.
-			 * \return The offset in wiegand communication.
-			 */
-			unsigned char getOffset() const;
+        /**
+         * \brief Get the default Xml Node name for this object.
+         * \return The Xml node name.
+         */
+        virtual std::string getDefaultXmlNodeName() const;
 
-			/**
-			 * \brief Set the offset in wiegand communication.
-			 * \param offset The new offset in wiegand communication.
-			 */
-			void setOffset(unsigned char offset);
-			
-			/**
-			 * \brief Get the length of csn in wiegand communication.
-			 * \return The length of csn in wiegand communication.
-			 */
-			unsigned char getLength() const;
+        /**
+         * \brief Get the offset in wiegand communication.
+         * \return The offset in wiegand communication.
+         */
+        unsigned char getOffset() const;
 
-			/**
-			 * \brief Set the lenght of csn in wiegand communication.
-			 * \param length The new length of csn in wiegand communication.
-			 */
-			void setLength(unsigned char length);
+        /**
+         * \brief Set the offset in wiegand communication.
+         * \param offset The new offset in wiegand communication.
+         */
+        void setOffset(unsigned char offset);
 
-			/**
-			 * \brief Get the mode of the reader.
-			 * \return The mode of the reader.
-			 */
-			RplethMode getMode() const;
+        /**
+         * \brief Get the length of csn in wiegand communication.
+         * \return The length of csn in wiegand communication.
+         */
+        unsigned char getLength() const;
 
-			/**
-			 * \brief Set the type of the reader.
-			 * \param mode The new type of the reader.
-			 */
-			void setMode(RplethMode mode);
+        /**
+         * \brief Set the lenght of csn in wiegand communication.
+         * \param length The new length of csn in wiegand communication.
+         */
+        void setLength(unsigned char length);
 
-		protected:
+        /**
+         * \brief Get the mode of the reader.
+         * \return The mode of the reader.
+         */
+        RplethMode getMode() const;
 
-			/**
-			 * \brief Represent offset use to compute the CSN.
-			 */
-			unsigned char d_offset;
+        /**
+         * \brief Set the type of the reader.
+         * \param mode The new type of the reader.
+         */
+        void setMode(RplethMode mode);
 
-			/**
-			 * \brief Represent length of CSN.
-			 */
-			unsigned char d_length;
+    protected:
 
-			/**
-			 * \brief Represent the Rpleth firmware version currently use.
-			 */
-			RplethMode d_mode;
-	};
+        /**
+         * \brief Represent offset use to compute the CSN.
+         */
+        unsigned char d_offset;
+
+        /**
+         * \brief Represent length of CSN.
+         */
+        unsigned char d_length;
+
+        /**
+         * \brief Represent the Rpleth firmware version currently use.
+         */
+        RplethMode d_mode;
+    };
 }
 
 #endif

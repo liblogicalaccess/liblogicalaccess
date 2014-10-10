@@ -15,331 +15,331 @@
 
 namespace logicalaccess
 {
-	class Profile;
-	class RplethReaderCardAdapter;
-	class RplethReaderProvider;
+    class Profile;
+    class RplethReaderCardAdapter;
+    class RplethReaderProvider;
 
-	/**
-	 * \brief Device code in Rpleth protocol.
-	 */
-	typedef enum
-	{
-		RPLETH = 0x00,
-		HID = 0X01,
-		LCD = 0x02
-	} Device;
+    /**
+     * \brief Device code in Rpleth protocol.
+     */
+    typedef enum
+    {
+        RPLETH = 0x00,
+        HID = 0X01,
+        LCD = 0x02
+    } Device;
 
-	/**
-	 * \brief RplethCommand code in Rpleth protocol.
-	 */
-	typedef enum
-	{
-		STATEDHCP = 0x01,
-		DHCP = 0x02,
-		MAC = 0x03,
-		IP = 0x04,
-		SUBNET = 0x05,
-		GATEWAY = 0x06,
-		PORT = 0x07,
-		MESSAGE = 0x08,
-		RESET = 0x09,
-		PING = 0x0a
-	} RplethCommand;
+    /**
+     * \brief RplethCommand code in Rpleth protocol.
+     */
+    typedef enum
+    {
+        STATEDHCP = 0x01,
+        DHCP = 0x02,
+        MAC = 0x03,
+        IP = 0x04,
+        SUBNET = 0x05,
+        GATEWAY = 0x06,
+        PORT = 0x07,
+        MESSAGE = 0x08,
+        RESET = 0x09,
+        PING = 0x0a
+    } RplethCommand;
 
-	/**
-	 * \brief HidCommand code in Rpleth protocol.
-	 */
-	typedef enum
-	{
-		BEEP = 0x00,
-		GREENLED = 0x01,
-		REDLED = 0x02,
-		NOP = 0x03,
-		BADGE = 0x04,
-		COM = 0x05,
-		WAIT_INSERTION = 0x06,
-		WAIT_REMOVAL = 0x07,
-		CONNECT = 0x08,
-		DISCONNECT = 0x09,
-		GET_READERTYPE = 0x0A,
-		GET_CSN = 0x0B,
-		SET_CARDTYPE = 0x0C
-	} HidCommand;
+    /**
+     * \brief HidCommand code in Rpleth protocol.
+     */
+    typedef enum
+    {
+        BEEP = 0x00,
+        GREENLED = 0x01,
+        REDLED = 0x02,
+        NOP = 0x03,
+        BADGE = 0x04,
+        COM = 0x05,
+        WAIT_INSERTION = 0x06,
+        WAIT_REMOVAL = 0x07,
+        CONNECT = 0x08,
+        DISCONNECT = 0x09,
+        GET_READERTYPE = 0x0A,
+        GET_CSN = 0x0B,
+        SET_CARDTYPE = 0x0C
+    } HidCommand;
 
-	/**
-	 * \brief LcdCommand code in Rpleth protocol.
-	 */
-	typedef enum
-	{
-		DISPLAY = 0x00,
-		DISPLAYT = 0X01,
-		BLINK = 0X02,
-		SCROLL = 0X03,
-		DISPLAYTIME = 0x04
-	} LcdCommand;
+    /**
+     * \brief LcdCommand code in Rpleth protocol.
+     */
+    typedef enum
+    {
+        DISPLAY = 0x00,
+        DISPLAYT = 0X01,
+        BLINK = 0X02,
+        SCROLL = 0X03,
+        DISPLAYTIME = 0x04
+    } LcdCommand;
 
-	/**
-	 * \brief The Rpleth reader unit class.
-	 */
-	class LIBLOGICALACCESS_API RplethReaderUnit : public ReaderUnit
-	{
-		public:			
+    /**
+     * \brief The Rpleth reader unit class.
+     */
+    class LIBLOGICALACCESS_API RplethReaderUnit : public ReaderUnit
+    {
+    public:
 
-			/**
-			 * \brief Constructor.
-			 * \param ip The reader address
-			 * \param port The port .
-			 */
-			RplethReaderUnit();
+        /**
+         * \brief Constructor.
+         * \param ip The reader address
+         * \param port The port .
+         */
+        RplethReaderUnit();
 
-			/**
-			 * \brief Destructor.
-			 */
-			virtual ~RplethReaderUnit();
+        /**
+         * \brief Destructor.
+         */
+        virtual ~RplethReaderUnit();
 
-			/**
-			 * \brief Get the reader unit name.
-			 * \return The reader unit name.
-			 */
-			virtual std::string getName() const;
+        /**
+         * \brief Get the reader unit name.
+         * \return The reader unit name.
+         */
+        virtual std::string getName() const;
 
-			/**
-			 * \brief Get the connected reader unit name.
-			 * \return The connected reader unit name.
-			 */
-			virtual std::string getConnectedName();
+        /**
+         * \brief Get the connected reader unit name.
+         * \return The connected reader unit name.
+         */
+        virtual std::string getConnectedName();
 
-			/**
-			 * \brief Set the card type.
-			 * \param cardType The card type.
-			 */
-			virtual void setCardType(std::string cardType);			
+        /**
+         * \brief Set the card type.
+         * \param cardType The card type.
+         */
+        virtual void setCardType(std::string cardType);
 
-			/**
-			 * \brief Wait for a card insertion.
-			 * \param maxwait The maximum time to wait for, in milliseconds. If maxwait is zero, then the call never times out.
-			 * \return True if a card was inserted, false otherwise. If a card was inserted, the name of the reader on which the insertion was detected is accessible with getReader().
-			 * \warning If the card is already connected, then the method always fail.
-			 */
-			virtual bool waitInsertion(unsigned int maxwait);
-	
-			/**
-			 * \brief Wait for a card removal.
-			 * \param maxwait The maximum time to wait for, in milliseconds. If maxwait is zero, then the call never times out.
-			 * \return True if a card was removed, false otherwise. If a card was removed, the name of the reader on which the removal was detected is accessible with getReader().
-			 */
-			virtual bool waitRemoval(unsigned int maxwait);
+        /**
+         * \brief Wait for a card insertion.
+         * \param maxwait The maximum time to wait for, in milliseconds. If maxwait is zero, then the call never times out.
+         * \return True if a card was inserted, false otherwise. If a card was inserted, the name of the reader on which the insertion was detected is accessible with getReader().
+         * \warning If the card is already connected, then the method always fail.
+         */
+        virtual bool waitInsertion(unsigned int maxwait);
 
-			/**
-			 * \brief Create the chip object from card type.
-			 * \param type The card type.
-			 * \return The chip.
-			 */
-			virtual boost::shared_ptr<Chip> createChip(std::string type);
+        /**
+         * \brief Wait for a card removal.
+         * \param maxwait The maximum time to wait for, in milliseconds. If maxwait is zero, then the call never times out.
+         * \return True if a card was removed, false otherwise. If a card was removed, the name of the reader on which the removal was detected is accessible with getReader().
+         */
+        virtual bool waitRemoval(unsigned int maxwait);
 
-			/**
-			 * \brief Get the first and/or most accurate chip found.
-			 * \return The single chip.
-			 */
-			virtual boost::shared_ptr<Chip> getSingleChip();
+        /**
+         * \brief Create the chip object from card type.
+         * \param type The card type.
+         * \return The chip.
+         */
+        virtual boost::shared_ptr<Chip> createChip(std::string type);
 
-			/**
-			 * \brief Get chip available in the RFID rang.
-			 * \return The chip list.
-			 */
-			virtual std::vector<boost::shared_ptr<Chip> > getChipList();
+        /**
+         * \brief Get the first and/or most accurate chip found.
+         * \return The single chip.
+         */
+        virtual boost::shared_ptr<Chip> getSingleChip();
 
-			/**
-			 * \brief Get the current chip in air.
-			 * \return The chip in air.
-			 */
-			boost::shared_ptr<Chip> getChipInAir(unsigned int maxwait = 2000);
+        /**
+         * \brief Get chip available in the RFID rang.
+         * \return The chip list.
+         */
+        virtual std::vector<boost::shared_ptr<Chip> > getChipList();
 
-			/**
-			 * \brief Get the default Elatec reader/card adapter.
-			 * \return The default Elatec reader/card adapter.
-			 */
-			virtual boost::shared_ptr<RplethReaderCardAdapter> getDefaultRplethReaderCardAdapter();			
+        /**
+         * \brief Get the current chip in air.
+         * \return The chip in air.
+         */
+        boost::shared_ptr<Chip> getChipInAir(unsigned int maxwait = 2000);
 
-			/**
-			 * \brief Connect to the card.
-			 * \return True if the card was connected without error, false otherwise.
-			 *
-			 * If the card handle was already connected, connect() first call disconnect(). If you intend to do a reconnection, call reconnect() instead.
-			 */
-			bool connect();
+        /**
+         * \brief Get the default Elatec reader/card adapter.
+         * \return The default Elatec reader/card adapter.
+         */
+        virtual boost::shared_ptr<RplethReaderCardAdapter> getDefaultRplethReaderCardAdapter();
 
-			/**
-			 * \brief Disconnect from the reader.
-			 * \see connect
-			 *
-			 * Calling this method on a disconnected reader has no effect.
-			 */
-			void disconnect();
+        /**
+         * \brief Connect to the card.
+         * \return True if the card was connected without error, false otherwise.
+         *
+         * If the card handle was already connected, connect() first call disconnect(). If you intend to do a reconnection, call reconnect() instead.
+         */
+        bool connect();
 
-			/**
-			 * \brief Check if the card is connected.
-			 * \return True if the card is connected, false otherwise.
-			 */
-			virtual bool isConnected();
+        /**
+         * \brief Disconnect from the reader.
+         * \see connect
+         *
+         * Calling this method on a disconnected reader has no effect.
+         */
+        void disconnect();
 
-			/**
-			 * \brief Connect to the reader. Implicit connection on first command sent.
-			 * \return True if the connection successed.
-			 */
-			virtual bool connectToReader();
+        /**
+         * \brief Check if the card is connected.
+         * \return True if the card is connected, false otherwise.
+         */
+        virtual bool isConnected();
 
-			/**
-			 * \brief Disconnect from reader.
-			 */
-			virtual void disconnectFromReader();
+        /**
+         * \brief Connect to the reader. Implicit connection on first command sent.
+         * \return True if the connection successed.
+         */
+        virtual bool connectToReader();
 
-			/**
-			 * \brief Get a string hexadecimal representation of the reader serial number
-			 * \return The reader serial number or an empty string on error.
-			 */
-			virtual std::string getReaderSerialNumber();
+        /**
+         * \brief Disconnect from reader.
+         */
+        virtual void disconnectFromReader();
 
-			/**
-			 * \brief Serialize the current object to XML.
-			 * \param parentNode The parent node.
-			 */
-			virtual void serialize(boost::property_tree::ptree& parentNode);
+        /**
+         * \brief Get a string hexadecimal representation of the reader serial number
+         * \return The reader serial number or an empty string on error.
+         */
+        virtual std::string getReaderSerialNumber();
 
-			/**
-			 * \brief UnSerialize a XML node to the current object.
-			 * \param node The XML node.
-			 */
-			virtual void unSerialize(boost::property_tree::ptree& node);
+        /**
+         * \brief Serialize the current object to XML.
+         * \param parentNode The parent node.
+         */
+        virtual void serialize(boost::property_tree::ptree& parentNode);
 
-			/**
-			 * \brief Get the Rpleth reader unit configuration.
-			 * \return The Rpleth reader unit configuration.
-			 */
-			boost::shared_ptr<RplethReaderUnitConfiguration> getRplethConfiguration() { return boost::dynamic_pointer_cast<RplethReaderUnitConfiguration>(getConfiguration()); };
+        /**
+         * \brief UnSerialize a XML node to the current object.
+         * \param node The XML node.
+         */
+        virtual void unSerialize(boost::property_tree::ptree& node);
 
-			/**
-			 * \brief Get the Rpleth reader provider.
-			 * \return The Rpleth reader provider.
-			 */
-			boost::shared_ptr<RplethReaderProvider> getRplethReaderProvider() const;
+        /**
+         * \brief Get the Rpleth reader unit configuration.
+         * \return The Rpleth reader unit configuration.
+         */
+        boost::shared_ptr<RplethReaderUnitConfiguration> getRplethConfiguration() { return boost::dynamic_pointer_cast<RplethReaderUnitConfiguration>(getConfiguration()); };
 
-			/**
-			 * \brief Get reader dhcp state.
-			 */
-			bool getDhcpState();
+        /**
+         * \brief Get the Rpleth reader provider.
+         * \return The Rpleth reader provider.
+         */
+        boost::shared_ptr<RplethReaderProvider> getRplethReaderProvider() const;
 
-			/**
-			 * \brief Set the reader dhcp state.
-			 */
-			void setDhcpState(bool status);
+        /**
+         * \brief Get reader dhcp state.
+         */
+        bool getDhcpState();
 
-			/**
-			 * \brief Set the Rpleth IP Address.
-			 * \param readerAddress The new Rpleth IP Address.
-			 */
-			void setReaderIp(const std::vector<unsigned char>& address);
-			
-			/**
-			 * \brief Set the Rpleth MAC Address.
-			 * \param readerAddress The new Rpleth MAC Address.
-			 */
-			void setReaderMac(const std::vector<unsigned char>& address);
+        /**
+         * \brief Set the reader dhcp state.
+         */
+        void setDhcpState(bool status);
 
-			/**
-			 * \brief Set the Rpleth Subnet mask.
-			 * \param readerAddress The new Rpleth Subnet Subnet.
-			 */
-			void setReaderSubnet(const std::vector<unsigned char>& address);
-			
-			/**
-			 * \brief Set the Rpleth Gateway Address.
-			 * \param readerAddress The new Rpleth Gateway Address.
-			 */
-			void setReaderGateway(const std::vector<unsigned char>& address);
+        /**
+         * \brief Set the Rpleth IP Address.
+         * \param readerAddress The new Rpleth IP Address.
+         */
+        void setReaderIp(const std::vector<unsigned char>& address);
 
-			/**
-			 * \brief Set the Rpleth port.
-			 * \param readerAddress The new Rpleth port.
-			 */
-			void setReaderPort(int port);
+        /**
+         * \brief Set the Rpleth MAC Address.
+         * \param readerAddress The new Rpleth MAC Address.
+         */
+        void setReaderMac(const std::vector<unsigned char>& address);
 
-			/**
-			 * \brief Set the Rpleth port.
-			 * \param offset The offset in wiegand trame.
-			 * \param length The length of code in wiegand.
-			 * \param tramSize The size of wiegand trame.
-			 */
-			void setConfWiegand(unsigned char offset, unsigned char length, unsigned char tramSize);
-			
-			/**
-			 * \brief Reset the Rpleth reader.
-			 */
-			void resetReader();
+        /**
+         * \brief Set the Rpleth Subnet mask.
+         * \param readerAddress The new Rpleth Subnet Subnet.
+         */
+        void setReaderSubnet(const std::vector<unsigned char>& address);
 
-			/**
-			 * \brief Set the Rpleth default message.
-			 * \param message The new default message.
-			 */
-			void setReaderMessage(const std::string& message);
+        /**
+         * \brief Set the Rpleth Gateway Address.
+         * \param readerAddress The new Rpleth Gateway Address.
+         */
+        void setReaderGateway(const std::vector<unsigned char>& address);
 
-			/**
-			 * \brief Send a nop.
-			 */
-			void nop();
-			
-			/**
-			 * \brief Request the last badge.
-			 * \param timeout The time to wait.
-			 * \return The last badge.
-			 */
-			std::vector<unsigned char> badge(long int timeout = 2000);
+        /**
+         * \brief Set the Rpleth port.
+         * \param readerAddress The new Rpleth port.
+         */
+        void setReaderPort(int port);
 
-			/**
-			 * \brief Send a reqA.
-			 * \return The answer of the card.
-			 */
-			std::vector<unsigned char> reqA();
+        /**
+         * \brief Set the Rpleth port.
+         * \param offset The offset in wiegand trame.
+         * \param length The length of code in wiegand.
+         * \param tramSize The size of wiegand trame.
+         */
+        void setConfWiegand(unsigned char offset, unsigned char length, unsigned char tramSize);
 
-			/**
-			 * \brief Send a rats.
-			 * \return The answer of the card.
-			 */
-			std::vector<unsigned char> rats();
+        /**
+         * \brief Reset the Rpleth reader.
+         */
+        void resetReader();
 
-			std::string getProxyReaderType();
+        /**
+         * \brief Set the Rpleth default message.
+         * \param message The new default message.
+         */
+        void setReaderMessage(const std::string& message);
 
-			std::vector<unsigned char> getInsertedChipIdentifier();
+        /**
+         * \brief Send a nop.
+         */
+        void nop();
 
-		protected:
+        /**
+         * \brief Request the last badge.
+         * \param timeout The time to wait.
+         * \return The last badge.
+         */
+        std::vector<unsigned char> badge(long int timeout = 2000);
 
-			/**
-			 * \brief Send a command to the reader.
-			 * \param command The command buffer.			 
-			 * \param timeout The command timeout.
-			 * \return The result of the command.
-			 */
-			std::vector<unsigned char> receiveBadge (long int timeout = 2000);
+        /**
+         * \brief Send a reqA.
+         * \return The answer of the card.
+         */
+        std::vector<unsigned char> reqA();
 
-			/**
-			 * \brief Take the csn from wiegand full trame.
-			 * \param trame The wiegnad full trame.			 
-			 * \return The csn contains into the wiegand trame.
-			 */
-			std::vector<unsigned char> getCsn (const std::vector<unsigned char>& trame);
+        /**
+         * \brief Send a rats.
+         * \return The answer of the card.
+         */
+        std::vector<unsigned char> rats();
 
-			/**
-			 * \brief Last successed RATS result.
-			 */
-			std::vector<unsigned char> d_successedRATS;
+        std::string getProxyReaderType();
 
-			/**
-			 * \brief The new identifier that will be used for the next waitInsertion after the waitRemoval.
-			 */
-			std::vector<unsigned char> removalIdentifier;
+        std::vector<unsigned char> getInsertedChipIdentifier();
 
-			boost::shared_ptr<ReaderUnit> d_proxyReader;
-	};
+    protected:
+
+        /**
+         * \brief Send a command to the reader.
+         * \param command The command buffer.
+         * \param timeout The command timeout.
+         * \return The result of the command.
+         */
+        std::vector<unsigned char> receiveBadge(long int timeout = 2000);
+
+        /**
+         * \brief Take the csn from wiegand full trame.
+         * \param trame The wiegnad full trame.
+         * \return The csn contains into the wiegand trame.
+         */
+        std::vector<unsigned char> getCsn(const std::vector<unsigned char>& trame);
+
+        /**
+         * \brief Last successed RATS result.
+         */
+        std::vector<unsigned char> d_successedRATS;
+
+        /**
+         * \brief The new identifier that will be used for the next waitInsertion after the waitRemoval.
+         */
+        std::vector<unsigned char> removalIdentifier;
+
+        boost::shared_ptr<ReaderUnit> d_proxyReader;
+    };
 }
 
 #endif

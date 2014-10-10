@@ -17,72 +17,71 @@
 
 namespace logicalaccess
 {
-	/**
-	 * \brief The ISO7816 base profile class.
-	 */
-	class LIBLOGICALACCESS_API ISO7816Profile : public Profile
-	{
-		public:			
+    /**
+     * \brief The ISO7816 base profile class.
+     */
+    class LIBLOGICALACCESS_API ISO7816Profile : public Profile
+    {
+    public:
 
-			/**
-			 * \brief Constructor.
-			 */
-			ISO7816Profile();
+        /**
+         * \brief Constructor.
+         */
+        ISO7816Profile();
 
-			/**
-			 * \brief Destructor.
-			 */
-			virtual ~ISO7816Profile();
+        /**
+         * \brief Destructor.
+         */
+        virtual ~ISO7816Profile();
 
-			/**
-			 * \brief Set default keys for the card in memory.
-			 */
-			virtual void setDefaultKeys();
+        /**
+         * \brief Set default keys for the card in memory.
+         */
+        virtual void setDefaultKeys();
 
-			/**
-			 * \brief Set default keys for the type card in memory at a specific location.
-			 */
-			virtual void setDefaultKeysAt(boost::shared_ptr<Location> location);
+        /**
+         * \brief Set default keys for the type card in memory at a specific location.
+         */
+        virtual void setDefaultKeysAt(boost::shared_ptr<Location> location);
 
-			/**
-			 * \brief Clear all keys in memory.
-			 */
-			virtual void clearKeys();
+        /**
+         * \brief Clear all keys in memory.
+         */
+        virtual void clearKeys();
 
-			/**
-			 * \brief Set ISO7816 key at a specific location.
-			 * \param location The key's location.
-			 * \param AccessInfo The key's informations.
-			 */
-			virtual void setKeyAt(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> AccessInfo);
+        /**
+         * \brief Set ISO7816 key at a specific location.
+         * \param location The key's location.
+         * \param AccessInfo The key's informations.
+         */
+        virtual void setKeyAt(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> AccessInfo);
 
-			/**
-			 * \brief Set default keys for a sector.
-			 * \param index The sector index.
-			 */
-			void setDefaultKeysAt(size_t index);
-			
-			/**
-			 * \brief Create default ISO7816 access informations.
-			 * \return Default ISO7816 access informations. Always null.
-			 */
-			virtual boost::shared_ptr<AccessInfo> createAccessInfo() const;
+        /**
+         * \brief Set default keys for a sector.
+         * \param index The sector index.
+         */
+        void setDefaultKeysAt(size_t index);
 
-			/**
-			 * \brief Create default ISO7816 location.
-			 * \return Default ISO7816 location.
-			 */
-			virtual boost::shared_ptr<Location> createLocation() const;
-			
-			/**
-			 * \brief Get the supported format list.
-			 * \return The format list.
-			 */
-			virtual FormatList getSupportedFormatList();
+        /**
+         * \brief Create default ISO7816 access informations.
+         * \return Default ISO7816 access informations. Always null.
+         */
+        virtual boost::shared_ptr<AccessInfo> createAccessInfo() const;
 
-		protected:
+        /**
+         * \brief Create default ISO7816 location.
+         * \return Default ISO7816 location.
+         */
+        virtual boost::shared_ptr<Location> createLocation() const;
 
-	};
+        /**
+         * \brief Get the supported format list.
+         * \return The format list.
+         */
+        virtual FormatList getSupportedFormatList();
+
+    protected:
+    };
 }
 
 #endif

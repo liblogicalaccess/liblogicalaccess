@@ -9,33 +9,29 @@
 
 #include "mifareultralightcpcsccommands.hpp"
 
-
 namespace logicalaccess
 {
-	/**
-	 * \brief The Mifare Ultralight C commands class for SpringCard reader.
-	 */
-	class LIBLOGICALACCESS_API MifareUltralightCSpringCardCommands : public MifareUltralightCPCSCCommands
-	{
-		public:			
+    /**
+     * \brief The Mifare Ultralight C commands class for SpringCard reader.
+     */
+    class LIBLOGICALACCESS_API MifareUltralightCSpringCardCommands : public MifareUltralightCPCSCCommands
+    {
+    public:
 
-			/**
-			 * \brief Constructor.
-			 */
-			MifareUltralightCSpringCardCommands();
+        /**
+         * \brief Constructor.
+         */
+        MifareUltralightCSpringCardCommands();
 
-			/**
-			 * \brief Destructor.
-			 */
-			virtual ~MifareUltralightCSpringCardCommands();
+        /**
+         * \brief Destructor.
+         */
+        virtual ~MifareUltralightCSpringCardCommands();
 
-		
-		protected:
+    protected:
 
-            virtual std::vector<unsigned char> sendGenericCommand(const std::vector<unsigned char>& data);
-					
-	};	
+        virtual std::vector<unsigned char> sendGenericCommand(const std::vector<unsigned char>& data);
+    };
 }
 
 #endif /* LOGICALACCESS_MIFAREULTRALIGHTCSPRINGCARDCOMMANDS_HPP */
-

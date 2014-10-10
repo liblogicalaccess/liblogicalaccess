@@ -11,26 +11,25 @@
 
 namespace logicalaccess
 {
-	/**
-	 * \brief The 2k MifarePlus base chip class.
-	 */
-	class LIBLOGICALACCESS_API MifarePlus2KChip : public MifarePlusChip
-	{
-		public:
+    /**
+     * \brief The 2k MifarePlus base chip class.
+     */
+    class LIBLOGICALACCESS_API MifarePlus2KChip : public MifarePlusChip
+    {
+    public:
 
-			/**
-			 * \brief Constructor.
-			 */
-			MifarePlus2KChip();
+        /**
+         * \brief Constructor.
+         */
+        MifarePlus2KChip();
 
-			/**
-			 * \brief Destructor.
-			 */
-			virtual ~MifarePlus2KChip();
+        /**
+         * \brief Destructor.
+         */
+        virtual ~MifarePlus2KChip();
 
-		protected:
-
-	};
+    protected:
+    };
 }
 
 #endif /* LOGICALACCESS_MIFAREPLUS2KCHIP_HPP */

@@ -1,39 +1,39 @@
 /* ---- SYMMETRIC KEY STUFF -----
  *
- * We put each of the ciphers scheduled keys in their own structs then we put all of 
+ * We put each of the ciphers scheduled keys in their own structs then we put all of
  * the key formats in one union.  This makes the function prototypes easier to use.
  */
 #ifdef LTC_BLOWFISH
 struct blowfish_key {
-   ulong32 S[4][256];
-   ulong32 K[18];
+    ulong32 S[4][256];
+    ulong32 K[18];
 };
 #endif
 
 #ifdef LTC_RC5
 struct rc5_key {
-   int rounds;
-   ulong32 K[50];
+    int rounds;
+    ulong32 K[50];
 };
 #endif
 
 #ifdef LTC_RC6
 struct rc6_key {
-   ulong32 K[44];
+    ulong32 K[44];
 };
 #endif
 
 #ifdef LTC_SAFERP
 struct saferp_key {
-   unsigned char K[33][16];
-   long rounds;
+    unsigned char K[33][16];
+    long rounds;
 };
 #endif
 
 #ifdef LTC_RIJNDAEL
 struct rijndael_key {
-   ulong32 eK[60], dK[60];
-   int Nr;
+    ulong32 eK[60], dK[60];
+    int Nr;
 };
 #endif
 
@@ -46,27 +46,27 @@ struct kseed_key {
 #ifdef LTC_KASUMI
 struct kasumi_key {
     ulong32 KLi1[8], KLi2[8],
-            KOi1[8], KOi2[8], KOi3[8],
-            KIi1[8], KIi2[8], KIi3[8];
+        KOi1[8], KOi2[8], KOi3[8],
+        KIi1[8], KIi2[8], KIi3[8];
 };
 #endif
 
 #ifdef LTC_XTEA
 struct xtea_key {
-   unsigned long A[32], B[32];
+    unsigned long A[32], B[32];
 };
 #endif
 
 #ifdef LTC_TWOFISH
 #ifndef LTC_TWOFISH_SMALL
-   struct twofish_key {
-      ulong32 S[4][256], K[40];
-   };
+struct twofish_key {
+    ulong32 S[4][256], K[40];
+};
 #else
-   struct twofish_key {
-      ulong32 K[40];
-      unsigned char S[32], start;
-   };
+struct twofish_key {
+    ulong32 K[40];
+    unsigned char S[32], start;
+};
 #endif
 #endif
 
@@ -109,7 +109,7 @@ struct noekeon_key {
 };
 #endif
 
-#ifdef LTC_SKIPJACK 
+#ifdef LTC_SKIPJACK
 struct skipjack_key {
     unsigned char key[10];
 };
@@ -117,18 +117,18 @@ struct skipjack_key {
 
 #ifdef LTC_KHAZAD
 struct khazad_key {
-   ulong64 roundKeyEnc[8 + 1]; 
-   ulong64 roundKeyDec[8 + 1]; 
+    ulong64 roundKeyEnc[8 + 1];
+    ulong64 roundKeyDec[8 + 1];
 };
 #endif
 
 #ifdef LTC_ANUBIS
-struct anubis_key { 
-   int keyBits; 
-   int R; 
-   ulong32 roundKeyEnc[18 + 1][4]; 
-   ulong32 roundKeyDec[18 + 1][4]; 
-}; 
+struct anubis_key {
+    int keyBits;
+    int R;
+    ulong32 roundKeyEnc[18 + 1][4];
+    ulong32 roundKeyDec[18 + 1][4];
+};
 #endif
 
 #ifdef LTC_MULTI2
@@ -147,150 +147,148 @@ struct camellia_key {
 
 typedef union Symmetric_key {
 #ifdef LTC_DES
-   struct des_key des;
-   struct des3_key des3;
+    struct des_key des;
+    struct des3_key des3;
 #endif
 #ifdef LTC_RC2
-   struct rc2_key rc2;
+    struct rc2_key rc2;
 #endif
 #ifdef LTC_SAFER
-   struct safer_key safer;
+    struct safer_key safer;
 #endif
 #ifdef LTC_TWOFISH
-   struct twofish_key  twofish;
+    struct twofish_key  twofish;
 #endif
 #ifdef LTC_BLOWFISH
-   struct blowfish_key blowfish;
+    struct blowfish_key blowfish;
 #endif
 #ifdef LTC_RC5
-   struct rc5_key      rc5;
+    struct rc5_key      rc5;
 #endif
 #ifdef LTC_RC6
-   struct rc6_key      rc6;
+    struct rc6_key      rc6;
 #endif
 #ifdef LTC_SAFERP
-   struct saferp_key   saferp;
+    struct saferp_key   saferp;
 #endif
 #ifdef LTC_RIJNDAEL
-   struct rijndael_key rijndael;
+    struct rijndael_key rijndael;
 #endif
 #ifdef LTC_XTEA
-   struct xtea_key     xtea;
+    struct xtea_key     xtea;
 #endif
 #ifdef LTC_CAST5
-   struct cast5_key    cast5;
+    struct cast5_key    cast5;
 #endif
 #ifdef LTC_NOEKEON
-   struct noekeon_key  noekeon;
-#endif   
+    struct noekeon_key  noekeon;
+#endif
 #ifdef LTC_SKIPJACK
-   struct skipjack_key skipjack;
+    struct skipjack_key skipjack;
 #endif
 #ifdef LTC_KHAZAD
-   struct khazad_key   khazad;
+    struct khazad_key   khazad;
 #endif
 #ifdef LTC_ANUBIS
-   struct anubis_key   anubis;
+    struct anubis_key   anubis;
 #endif
 #ifdef LTC_KSEED
-   struct kseed_key    kseed;
+    struct kseed_key    kseed;
 #endif
 #ifdef LTC_KASUMI
-   struct kasumi_key   kasumi;
-#endif  
+    struct kasumi_key   kasumi;
+#endif
 #ifdef LTC_MULTI2
-   struct multi2_key   multi2;
+    struct multi2_key   multi2;
 #endif
 #ifdef LTC_CAMELLIA
-   struct camellia_key camellia;
+    struct camellia_key camellia;
 #endif
-   void   *data;
+    void   *data;
 } symmetric_key;
 
 #ifdef LTC_ECB_MODE
 /** A block cipher ECB structure */
 typedef struct {
-   /** The index of the cipher chosen */
-   int                 cipher, 
-   /** The block size of the given cipher */
-                       blocklen;
-   /** The scheduled key */                       
-   symmetric_key       key;
+    /** The index of the cipher chosen */
+    int                 cipher,
+        /** The block size of the given cipher */
+        blocklen;
+    /** The scheduled key */
+    symmetric_key       key;
 } symmetric_ECB;
 #endif
 
 #ifdef LTC_CFB_MODE
 /** A block cipher CFB structure */
 typedef struct {
-   /** The index of the cipher chosen */
-   int                 cipher, 
-   /** The block size of the given cipher */                        
-                       blocklen, 
-   /** The padding offset */
-                       padlen;
-   /** The current IV */
-   unsigned char       IV[MAXBLOCKSIZE], 
-   /** The pad used to encrypt/decrypt */ 
-                       pad[MAXBLOCKSIZE];
-   /** The scheduled key */
-   symmetric_key       key;
+    /** The index of the cipher chosen */
+    int                 cipher,
+        /** The block size of the given cipher */
+        blocklen,
+        /** The padding offset */
+        padlen;
+    /** The current IV */
+    unsigned char       IV[MAXBLOCKSIZE],
+        /** The pad used to encrypt/decrypt */
+        pad[MAXBLOCKSIZE];
+    /** The scheduled key */
+    symmetric_key       key;
 } symmetric_CFB;
 #endif
 
 #ifdef LTC_OFB_MODE
 /** A block cipher OFB structure */
 typedef struct {
-   /** The index of the cipher chosen */
-   int                 cipher, 
-   /** The block size of the given cipher */                        
-                       blocklen, 
-   /** The padding offset */
-                       padlen;
-   /** The current IV */
-   unsigned char       IV[MAXBLOCKSIZE];
-   /** The scheduled key */
-   symmetric_key       key;
+    /** The index of the cipher chosen */
+    int                 cipher,
+        /** The block size of the given cipher */
+        blocklen,
+        /** The padding offset */
+        padlen;
+    /** The current IV */
+    unsigned char       IV[MAXBLOCKSIZE];
+    /** The scheduled key */
+    symmetric_key       key;
 } symmetric_OFB;
 #endif
 
 #ifdef LTC_CBC_MODE
 /** A block cipher CBC structure */
 typedef struct {
-   /** The index of the cipher chosen */
-   int                 cipher, 
-   /** The block size of the given cipher */                        
-                       blocklen;
-   /** The current IV */
-   unsigned char       IV[MAXBLOCKSIZE];
-   /** The scheduled key */
-   symmetric_key       key;
+    /** The index of the cipher chosen */
+    int                 cipher,
+        /** The block size of the given cipher */
+        blocklen;
+    /** The current IV */
+    unsigned char       IV[MAXBLOCKSIZE];
+    /** The scheduled key */
+    symmetric_key       key;
 } symmetric_CBC;
 #endif
-
 
 #ifdef LTC_CTR_MODE
 /** A block cipher CTR structure */
 typedef struct {
-   /** The index of the cipher chosen */
-   int                 cipher,
-   /** The block size of the given cipher */                        
-                       blocklen, 
-   /** The padding offset */
-                       padlen, 
-   /** The mode (endianess) of the CTR, 0==little, 1==big */
-                       mode,
-   /** counter width */
-                       ctrlen;
+    /** The index of the cipher chosen */
+    int                 cipher,
+        /** The block size of the given cipher */
+        blocklen,
+        /** The padding offset */
+        padlen,
+        /** The mode (endianess) of the CTR, 0==little, 1==big */
+        mode,
+        /** counter width */
+        ctrlen;
 
-   /** The counter */                       
-   unsigned char       ctr[MAXBLOCKSIZE], 
-   /** The pad used to encrypt/decrypt */                       
-                       pad[MAXBLOCKSIZE];
-   /** The scheduled key */
-   symmetric_key       key;
+    /** The counter */
+    unsigned char       ctr[MAXBLOCKSIZE],
+        /** The pad used to encrypt/decrypt */
+        pad[MAXBLOCKSIZE];
+    /** The scheduled key */
+    symmetric_key       key;
 } symmetric_CTR;
 #endif
-
 
 #ifdef LTC_LRW_MODE
 /** A LRW structure */
@@ -300,12 +298,12 @@ typedef struct {
 
     /** The current IV */
     unsigned char     IV[16],
- 
-    /** the tweak key */
-                      tweak[16],
 
-    /** The current pad, it's the product of the first 15 bytes against the tweak key */
-                      pad[16];
+        /** the tweak key */
+        tweak[16],
+
+        /** The current pad, it's the product of the first 15 bytes against the tweak key */
+        pad[16];
 
     /** The scheduled symmetric key */
     symmetric_key     key;
@@ -320,239 +318,238 @@ typedef struct {
 #ifdef LTC_F8_MODE
 /** A block cipher F8 structure */
 typedef struct {
-   /** The index of the cipher chosen */
-   int                 cipher, 
-   /** The block size of the given cipher */                        
-                       blocklen, 
-   /** The padding offset */
-                       padlen;
-   /** The current IV */
-   unsigned char       IV[MAXBLOCKSIZE],
-                       MIV[MAXBLOCKSIZE];
-   /** Current block count */
-   ulong32             blockcnt;
-   /** The scheduled key */
-   symmetric_key       key;
+    /** The index of the cipher chosen */
+    int                 cipher,
+        /** The block size of the given cipher */
+        blocklen,
+        /** The padding offset */
+        padlen;
+    /** The current IV */
+    unsigned char       IV[MAXBLOCKSIZE],
+        MIV[MAXBLOCKSIZE];
+    /** Current block count */
+    ulong32             blockcnt;
+    /** The scheduled key */
+    symmetric_key       key;
 } symmetric_F8;
 #endif
 
-
 /** cipher descriptor table, last entry has "name == NULL" to mark the end of table */
 extern struct ltc_cipher_descriptor {
-   /** name of cipher */
-   char *name;
-   /** internal ID */
-   unsigned char ID;
-   /** min keysize (octets) */
-   int  min_key_length, 
-   /** max keysize (octets) */
-        max_key_length, 
-   /** block size (octets) */
-        block_length, 
-   /** default number of rounds */
+    /** name of cipher */
+    char *name;
+    /** internal ID */
+    unsigned char ID;
+    /** min keysize (octets) */
+    int  min_key_length,
+        /** max keysize (octets) */
+        max_key_length,
+        /** block size (octets) */
+        block_length,
+        /** default number of rounds */
         default_rounds;
-   /** Setup the cipher 
-      @param key         The input symmetric key
-      @param keylen      The length of the input key (octets)
-      @param num_rounds  The requested number of rounds (0==default)
-      @param skey        [out] The destination of the scheduled key
-      @return CRYPT_OK if successful
-   */
-   int  (*setup)(const unsigned char *key, int keylen, int num_rounds, symmetric_key *skey);
-   /** Encrypt a block
-      @param pt      The plaintext
-      @param ct      [out] The ciphertext
-      @param skey    The scheduled key
-      @return CRYPT_OK if successful
-   */
-   int (*ecb_encrypt)(const unsigned char *pt, unsigned char *ct, symmetric_key *skey);
-   /** Decrypt a block
-      @param ct      The ciphertext
-      @param pt      [out] The plaintext
-      @param skey    The scheduled key
-      @return CRYPT_OK if successful
-   */
-   int (*ecb_decrypt)(const unsigned char *ct, unsigned char *pt, symmetric_key *skey);
-   /** Test the block cipher
-       @return CRYPT_OK if successful, CRYPT_NOP if self-testing has been disabled
-   */
-   int (*test)(void);
-
-   /** Terminate the context 
-      @param skey    The scheduled key
-   */
-   void (*done)(symmetric_key *skey);      
-
-   /** Determine a key size
-       @param keysize    [in/out] The size of the key desired and the suggested size
+    /** Setup the cipher
+       @param key         The input symmetric key
+       @param keylen      The length of the input key (octets)
+       @param num_rounds  The requested number of rounds (0==default)
+       @param skey        [out] The destination of the scheduled key
        @return CRYPT_OK if successful
-   */
-   int  (*keysize)(int *keysize);
-
-/** Accelerators **/
-   /** Accelerated ECB encryption 
-       @param pt      Plaintext
-       @param ct      Ciphertext
-       @param blocks  The number of complete blocks to process
-       @param skey    The scheduled key context
+       */
+    int(*setup)(const unsigned char *key, int keylen, int num_rounds, symmetric_key *skey);
+    /** Encrypt a block
+       @param pt      The plaintext
+       @param ct      [out] The ciphertext
+       @param skey    The scheduled key
        @return CRYPT_OK if successful
-   */
-   int (*accel_ecb_encrypt)(const unsigned char *pt, unsigned char *ct, unsigned long blocks, symmetric_key *skey);
-
-   /** Accelerated ECB decryption 
-       @param pt      Plaintext
-       @param ct      Ciphertext
-       @param blocks  The number of complete blocks to process
-       @param skey    The scheduled key context
+       */
+    int(*ecb_encrypt)(const unsigned char *pt, unsigned char *ct, symmetric_key *skey);
+    /** Decrypt a block
+       @param ct      The ciphertext
+       @param pt      [out] The plaintext
+       @param skey    The scheduled key
        @return CRYPT_OK if successful
-   */
-   int (*accel_ecb_decrypt)(const unsigned char *ct, unsigned char *pt, unsigned long blocks, symmetric_key *skey);
+       */
+    int(*ecb_decrypt)(const unsigned char *ct, unsigned char *pt, symmetric_key *skey);
+    /** Test the block cipher
+        @return CRYPT_OK if successful, CRYPT_NOP if self-testing has been disabled
+        */
+    int(*test)(void);
 
-   /** Accelerated CBC encryption 
-       @param pt      Plaintext
-       @param ct      Ciphertext
-       @param blocks  The number of complete blocks to process
-       @param IV      The initial value (input/output)
-       @param skey    The scheduled key context
-       @return CRYPT_OK if successful
-   */
-   int (*accel_cbc_encrypt)(const unsigned char *pt, unsigned char *ct, unsigned long blocks, unsigned char *IV, symmetric_key *skey);
+    /** Terminate the context
+       @param skey    The scheduled key
+       */
+    void(*done)(symmetric_key *skey);
 
-   /** Accelerated CBC decryption 
-       @param pt      Plaintext
-       @param ct      Ciphertext
-       @param blocks  The number of complete blocks to process
-       @param IV      The initial value (input/output)
-       @param skey    The scheduled key context
-       @return CRYPT_OK if successful
-   */
-   int (*accel_cbc_decrypt)(const unsigned char *ct, unsigned char *pt, unsigned long blocks, unsigned char *IV, symmetric_key *skey);
+    /** Determine a key size
+        @param keysize    [in/out] The size of the key desired and the suggested size
+        @return CRYPT_OK if successful
+        */
+    int(*keysize)(int *keysize);
 
-   /** Accelerated CTR encryption 
-       @param pt      Plaintext
-       @param ct      Ciphertext
-       @param blocks  The number of complete blocks to process
-       @param IV      The initial value (input/output)
-       @param mode    little or big endian counter (mode=0 or mode=1)
-       @param skey    The scheduled key context
-       @return CRYPT_OK if successful
-   */
-   int (*accel_ctr_encrypt)(const unsigned char *pt, unsigned char *ct, unsigned long blocks, unsigned char *IV, int mode, symmetric_key *skey);
+    /** Accelerators **/
+    /** Accelerated ECB encryption
+        @param pt      Plaintext
+        @param ct      Ciphertext
+        @param blocks  The number of complete blocks to process
+        @param skey    The scheduled key context
+        @return CRYPT_OK if successful
+        */
+    int(*accel_ecb_encrypt)(const unsigned char *pt, unsigned char *ct, unsigned long blocks, symmetric_key *skey);
 
-   /** Accelerated LRW 
-       @param pt      Plaintext
-       @param ct      Ciphertext
-       @param blocks  The number of complete blocks to process
-       @param IV      The initial value (input/output)
-       @param tweak   The LRW tweak
-       @param skey    The scheduled key context
-       @return CRYPT_OK if successful
-   */
-   int (*accel_lrw_encrypt)(const unsigned char *pt, unsigned char *ct, unsigned long blocks, unsigned char *IV, const unsigned char *tweak, symmetric_key *skey);
+    /** Accelerated ECB decryption
+        @param pt      Plaintext
+        @param ct      Ciphertext
+        @param blocks  The number of complete blocks to process
+        @param skey    The scheduled key context
+        @return CRYPT_OK if successful
+        */
+    int(*accel_ecb_decrypt)(const unsigned char *ct, unsigned char *pt, unsigned long blocks, symmetric_key *skey);
 
-   /** Accelerated LRW 
-       @param ct      Ciphertext
-       @param pt      Plaintext
-       @param blocks  The number of complete blocks to process
-       @param IV      The initial value (input/output)
-       @param tweak   The LRW tweak
-       @param skey    The scheduled key context
-       @return CRYPT_OK if successful
-   */
-   int (*accel_lrw_decrypt)(const unsigned char *ct, unsigned char *pt, unsigned long blocks, unsigned char *IV, const unsigned char *tweak, symmetric_key *skey);
+    /** Accelerated CBC encryption
+        @param pt      Plaintext
+        @param ct      Ciphertext
+        @param blocks  The number of complete blocks to process
+        @param IV      The initial value (input/output)
+        @param skey    The scheduled key context
+        @return CRYPT_OK if successful
+        */
+    int(*accel_cbc_encrypt)(const unsigned char *pt, unsigned char *ct, unsigned long blocks, unsigned char *IV, symmetric_key *skey);
 
-   /** Accelerated CCM packet (one-shot)
-       @param key        The secret key to use
-       @param keylen     The length of the secret key (octets)
-       @param uskey      A previously scheduled key [optional can be NULL]
-       @param nonce      The session nonce [use once]
-       @param noncelen   The length of the nonce
-       @param header     The header for the session
-       @param headerlen  The length of the header (octets)
-       @param pt         [out] The plaintext
-       @param ptlen      The length of the plaintext (octets)
-       @param ct         [out] The ciphertext
-       @param tag        [out] The destination tag
-       @param taglen     [in/out] The max size and resulting size of the authentication tag
-       @param direction  Encrypt or Decrypt direction (0 or 1)
-       @return CRYPT_OK if successful
-   */
-   int (*accel_ccm_memory)(
-       const unsigned char *key,    unsigned long keylen,
-       symmetric_key       *uskey,
-       const unsigned char *nonce,  unsigned long noncelen,
-       const unsigned char *header, unsigned long headerlen,
-             unsigned char *pt,     unsigned long ptlen,
-             unsigned char *ct,
-             unsigned char *tag,    unsigned long *taglen,
-                       int  direction);
+    /** Accelerated CBC decryption
+        @param pt      Plaintext
+        @param ct      Ciphertext
+        @param blocks  The number of complete blocks to process
+        @param IV      The initial value (input/output)
+        @param skey    The scheduled key context
+        @return CRYPT_OK if successful
+        */
+    int(*accel_cbc_decrypt)(const unsigned char *ct, unsigned char *pt, unsigned long blocks, unsigned char *IV, symmetric_key *skey);
 
-   /** Accelerated GCM packet (one shot)
-       @param key        The secret key
-       @param keylen     The length of the secret key
-       @param IV         The initial vector 
-       @param IVlen      The length of the initial vector
-       @param adata      The additional authentication data (header)
-       @param adatalen   The length of the adata
-       @param pt         The plaintext
-       @param ptlen      The length of the plaintext (ciphertext length is the same)
-       @param ct         The ciphertext
-       @param tag        [out] The MAC tag
-       @param taglen     [in/out] The MAC tag length
-       @param direction  Encrypt or Decrypt mode (GCM_ENCRYPT or GCM_DECRYPT)
-       @return CRYPT_OK on success
-   */
-   int (*accel_gcm_memory)(
-       const unsigned char *key,    unsigned long keylen,
-       const unsigned char *IV,     unsigned long IVlen,
-       const unsigned char *adata,  unsigned long adatalen,
-             unsigned char *pt,     unsigned long ptlen,
-             unsigned char *ct, 
-             unsigned char *tag,    unsigned long *taglen,
-                       int direction);
+    /** Accelerated CTR encryption
+        @param pt      Plaintext
+        @param ct      Ciphertext
+        @param blocks  The number of complete blocks to process
+        @param IV      The initial value (input/output)
+        @param mode    little or big endian counter (mode=0 or mode=1)
+        @param skey    The scheduled key context
+        @return CRYPT_OK if successful
+        */
+    int(*accel_ctr_encrypt)(const unsigned char *pt, unsigned char *ct, unsigned long blocks, unsigned char *IV, int mode, symmetric_key *skey);
 
-   /** Accelerated one shot LTC_OMAC 
-       @param key            The secret key
-       @param keylen         The key length (octets) 
-       @param in             The message 
-       @param inlen          Length of message (octets)
-       @param out            [out] Destination for tag
-       @param outlen         [in/out] Initial and final size of out
-       @return CRYPT_OK on success
-   */
-   int (*omac_memory)(
-       const unsigned char *key, unsigned long keylen,
-       const unsigned char *in,  unsigned long inlen,
-             unsigned char *out, unsigned long *outlen);
+    /** Accelerated LRW
+        @param pt      Plaintext
+        @param ct      Ciphertext
+        @param blocks  The number of complete blocks to process
+        @param IV      The initial value (input/output)
+        @param tweak   The LRW tweak
+        @param skey    The scheduled key context
+        @return CRYPT_OK if successful
+        */
+    int(*accel_lrw_encrypt)(const unsigned char *pt, unsigned char *ct, unsigned long blocks, unsigned char *IV, const unsigned char *tweak, symmetric_key *skey);
 
-   /** Accelerated one shot XCBC 
-       @param key            The secret key
-       @param keylen         The key length (octets) 
-       @param in             The message 
-       @param inlen          Length of message (octets)
-       @param out            [out] Destination for tag
-       @param outlen         [in/out] Initial and final size of out
-       @return CRYPT_OK on success
-   */
-   int (*xcbc_memory)(
-       const unsigned char *key, unsigned long keylen,
-       const unsigned char *in,  unsigned long inlen,
-             unsigned char *out, unsigned long *outlen);
+    /** Accelerated LRW
+        @param ct      Ciphertext
+        @param pt      Plaintext
+        @param blocks  The number of complete blocks to process
+        @param IV      The initial value (input/output)
+        @param tweak   The LRW tweak
+        @param skey    The scheduled key context
+        @return CRYPT_OK if successful
+        */
+    int(*accel_lrw_decrypt)(const unsigned char *ct, unsigned char *pt, unsigned long blocks, unsigned char *IV, const unsigned char *tweak, symmetric_key *skey);
 
-   /** Accelerated one shot F9 
-       @param key            The secret key
-       @param keylen         The key length (octets) 
-       @param in             The message 
-       @param inlen          Length of message (octets)
-       @param out            [out] Destination for tag
-       @param outlen         [in/out] Initial and final size of out
-       @return CRYPT_OK on success
-       @remark Requires manual padding
-   */
-   int (*f9_memory)(
-       const unsigned char *key, unsigned long keylen,
-       const unsigned char *in,  unsigned long inlen,
-             unsigned char *out, unsigned long *outlen);
+    /** Accelerated CCM packet (one-shot)
+        @param key        The secret key to use
+        @param keylen     The length of the secret key (octets)
+        @param uskey      A previously scheduled key [optional can be NULL]
+        @param nonce      The session nonce [use once]
+        @param noncelen   The length of the nonce
+        @param header     The header for the session
+        @param headerlen  The length of the header (octets)
+        @param pt         [out] The plaintext
+        @param ptlen      The length of the plaintext (octets)
+        @param ct         [out] The ciphertext
+        @param tag        [out] The destination tag
+        @param taglen     [in/out] The max size and resulting size of the authentication tag
+        @param direction  Encrypt or Decrypt direction (0 or 1)
+        @return CRYPT_OK if successful
+        */
+    int(*accel_ccm_memory)(
+        const unsigned char *key, unsigned long keylen,
+        symmetric_key       *uskey,
+        const unsigned char *nonce, unsigned long noncelen,
+        const unsigned char *header, unsigned long headerlen,
+        unsigned char *pt, unsigned long ptlen,
+        unsigned char *ct,
+        unsigned char *tag, unsigned long *taglen,
+        int  direction);
+
+    /** Accelerated GCM packet (one shot)
+        @param key        The secret key
+        @param keylen     The length of the secret key
+        @param IV         The initial vector
+        @param IVlen      The length of the initial vector
+        @param adata      The additional authentication data (header)
+        @param adatalen   The length of the adata
+        @param pt         The plaintext
+        @param ptlen      The length of the plaintext (ciphertext length is the same)
+        @param ct         The ciphertext
+        @param tag        [out] The MAC tag
+        @param taglen     [in/out] The MAC tag length
+        @param direction  Encrypt or Decrypt mode (GCM_ENCRYPT or GCM_DECRYPT)
+        @return CRYPT_OK on success
+        */
+    int(*accel_gcm_memory)(
+        const unsigned char *key, unsigned long keylen,
+        const unsigned char *IV, unsigned long IVlen,
+        const unsigned char *adata, unsigned long adatalen,
+        unsigned char *pt, unsigned long ptlen,
+        unsigned char *ct,
+        unsigned char *tag, unsigned long *taglen,
+        int direction);
+
+    /** Accelerated one shot LTC_OMAC
+        @param key            The secret key
+        @param keylen         The key length (octets)
+        @param in             The message
+        @param inlen          Length of message (octets)
+        @param out            [out] Destination for tag
+        @param outlen         [in/out] Initial and final size of out
+        @return CRYPT_OK on success
+        */
+    int(*omac_memory)(
+        const unsigned char *key, unsigned long keylen,
+        const unsigned char *in, unsigned long inlen,
+        unsigned char *out, unsigned long *outlen);
+
+    /** Accelerated one shot XCBC
+        @param key            The secret key
+        @param keylen         The key length (octets)
+        @param in             The message
+        @param inlen          Length of message (octets)
+        @param out            [out] Destination for tag
+        @param outlen         [in/out] Initial and final size of out
+        @return CRYPT_OK on success
+        */
+    int(*xcbc_memory)(
+        const unsigned char *key, unsigned long keylen,
+        const unsigned char *in, unsigned long inlen,
+        unsigned char *out, unsigned long *outlen);
+
+    /** Accelerated one shot F9
+        @param key            The secret key
+        @param keylen         The key length (octets)
+        @param in             The message
+        @param inlen          Length of message (octets)
+        @param out            [out] Destination for tag
+        @param outlen         [in/out] Initial and final size of out
+        @return CRYPT_OK on success
+        @remark Requires manual padding
+        */
+    int(*f9_memory)(
+        const unsigned char *key, unsigned long keylen,
+        const unsigned char *in, unsigned long inlen,
+        unsigned char *out, unsigned long *outlen);
 } cipher_descriptor[];
 
 #ifdef LTC_BLOWFISH
@@ -755,7 +752,6 @@ int kasumi_keysize(int *keysize);
 extern const struct ltc_cipher_descriptor kasumi_desc;
 #endif
 
-
 #ifdef LTC_MULTI2
 int multi2_setup(const unsigned char *key, int keylen, int num_rounds, symmetric_key *skey);
 int multi2_ecb_encrypt(const unsigned char *pt, unsigned char *ct, symmetric_key *skey);
@@ -777,16 +773,16 @@ extern const struct ltc_cipher_descriptor camellia_desc;
 #endif
 
 #ifdef LTC_ECB_MODE
-int ecb_start(int cipher, const unsigned char *key, 
-              int keylen, int num_rounds, symmetric_ECB *ecb);
+int ecb_start(int cipher, const unsigned char *key,
+    int keylen, int num_rounds, symmetric_ECB *ecb);
 int ecb_encrypt(const unsigned char *pt, unsigned char *ct, unsigned long len, symmetric_ECB *ecb);
 int ecb_decrypt(const unsigned char *ct, unsigned char *pt, unsigned long len, symmetric_ECB *ecb);
 int ecb_done(symmetric_ECB *ecb);
 #endif
 
 #ifdef LTC_CFB_MODE
-int cfb_start(int cipher, const unsigned char *IV, const unsigned char *key, 
-              int keylen, int num_rounds, symmetric_CFB *cfb);
+int cfb_start(int cipher, const unsigned char *IV, const unsigned char *key,
+    int keylen, int num_rounds, symmetric_CFB *cfb);
 int cfb_encrypt(const unsigned char *pt, unsigned char *ct, unsigned long len, symmetric_CFB *cfb);
 int cfb_decrypt(const unsigned char *ct, unsigned char *pt, unsigned long len, symmetric_CFB *cfb);
 int cfb_getiv(unsigned char *IV, unsigned long *len, symmetric_CFB *cfb);
@@ -795,8 +791,8 @@ int cfb_done(symmetric_CFB *cfb);
 #endif
 
 #ifdef LTC_OFB_MODE
-int ofb_start(int cipher, const unsigned char *IV, const unsigned char *key, 
-              int keylen, int num_rounds, symmetric_OFB *ofb);
+int ofb_start(int cipher, const unsigned char *IV, const unsigned char *key,
+    int keylen, int num_rounds, symmetric_OFB *ofb);
 int ofb_encrypt(const unsigned char *pt, unsigned char *ct, unsigned long len, symmetric_OFB *ofb);
 int ofb_decrypt(const unsigned char *ct, unsigned char *pt, unsigned long len, symmetric_OFB *ofb);
 int ofb_getiv(unsigned char *IV, unsigned long *len, symmetric_OFB *ofb);
@@ -806,7 +802,7 @@ int ofb_done(symmetric_OFB *ofb);
 
 #ifdef LTC_CBC_MODE
 int cbc_start(int cipher, const unsigned char *IV, const unsigned char *key,
-               int keylen, int num_rounds, symmetric_CBC *cbc);
+    int keylen, int num_rounds, symmetric_CBC *cbc);
 int cbc_encrypt(const unsigned char *pt, unsigned char *ct, unsigned long len, symmetric_CBC *cbc);
 int cbc_decrypt(const unsigned char *ct, unsigned char *pt, unsigned long len, symmetric_CBC *cbc);
 int cbc_getiv(unsigned char *IV, unsigned long *len, symmetric_CBC *cbc);
@@ -820,11 +816,11 @@ int cbc_done(symmetric_CBC *cbc);
 #define CTR_COUNTER_BIG_ENDIAN       0x1000
 #define LTC_CTR_RFC3686              0x2000
 
-int ctr_start(               int   cipher,
-              const unsigned char *IV,
-              const unsigned char *key,       int keylen,
-                             int  num_rounds, int ctr_mode,
-                   symmetric_CTR *ctr);
+int ctr_start(int   cipher,
+    const unsigned char *IV,
+    const unsigned char *key, int keylen,
+    int  num_rounds, int ctr_mode,
+    symmetric_CTR *ctr);
 int ctr_encrypt(const unsigned char *pt, unsigned char *ct, unsigned long len, symmetric_CTR *ctr);
 int ctr_decrypt(const unsigned char *ct, unsigned char *pt, unsigned long len, symmetric_CTR *ctr);
 int ctr_getiv(unsigned char *IV, unsigned long *len, symmetric_CTR *ctr);
@@ -838,12 +834,12 @@ int ctr_test(void);
 #define LRW_ENCRYPT 0
 #define LRW_DECRYPT 1
 
-int lrw_start(               int   cipher,
-              const unsigned char *IV,
-              const unsigned char *key,       int keylen,
-              const unsigned char *tweak,
-                             int  num_rounds, 
-                   symmetric_LRW *lrw);
+int lrw_start(int   cipher,
+    const unsigned char *IV,
+    const unsigned char *key, int keylen,
+    const unsigned char *tweak,
+    int  num_rounds,
+    symmetric_LRW *lrw);
 int lrw_encrypt(const unsigned char *pt, unsigned char *ct, unsigned long len, symmetric_LRW *lrw);
 int lrw_decrypt(const unsigned char *ct, unsigned char *pt, unsigned long len, symmetric_LRW *lrw);
 int lrw_getiv(unsigned char *IV, unsigned long *len, symmetric_LRW *lrw);
@@ -853,13 +849,13 @@ int lrw_test(void);
 
 /* don't call */
 int lrw_process(const unsigned char *pt, unsigned char *ct, unsigned long len, int mode, symmetric_LRW *lrw);
-#endif    
+#endif
 
 #ifdef LTC_F8_MODE
-int f8_start(                int  cipher, const unsigned char *IV, 
-             const unsigned char *key,                    int  keylen, 
-             const unsigned char *salt_key,               int  skeylen,
-                             int  num_rounds,   symmetric_F8  *f8);
+int f8_start(int  cipher, const unsigned char *IV,
+    const unsigned char *key, int  keylen,
+    const unsigned char *salt_key, int  skeylen,
+    int  num_rounds, symmetric_F8  *f8);
 int f8_encrypt(const unsigned char *pt, unsigned char *ct, unsigned long len, symmetric_F8 *f8);
 int f8_decrypt(const unsigned char *ct, unsigned char *pt, unsigned long len, symmetric_F8 *f8);
 int f8_getiv(unsigned char *IV, unsigned long *len, symmetric_F8 *f8);
@@ -870,27 +866,27 @@ int f8_test_mode(void);
 
 #ifdef LTC_XTS_MODE
 typedef struct {
-   symmetric_key  key1, key2;
-   int            cipher;
+    symmetric_key  key1, key2;
+    int            cipher;
 } symmetric_xts;
 
-int xts_start(                int  cipher,
-              const unsigned char *key1, 
-              const unsigned char *key2, 
-                    unsigned long  keylen,
-                              int  num_rounds, 
-                    symmetric_xts *xts);
+int xts_start(int  cipher,
+    const unsigned char *key1,
+    const unsigned char *key2,
+    unsigned long  keylen,
+    int  num_rounds,
+    symmetric_xts *xts);
 
 int xts_encrypt(
-   const unsigned char *pt, unsigned long ptlen,
-         unsigned char *ct,
-   const unsigned char *tweak,
-         symmetric_xts *xts);
+    const unsigned char *pt, unsigned long ptlen,
+    unsigned char *ct,
+    const unsigned char *tweak,
+    symmetric_xts *xts);
 int xts_decrypt(
-   const unsigned char *ct, unsigned long ptlen,
-         unsigned char *pt,
-   const unsigned char *tweak,
-         symmetric_xts *xts);
+    const unsigned char *ct, unsigned long ptlen,
+    unsigned char *pt,
+    const unsigned char *tweak,
+    symmetric_xts *xts);
 
 void xts_done(symmetric_xts *xts);
 int  xts_test(void);

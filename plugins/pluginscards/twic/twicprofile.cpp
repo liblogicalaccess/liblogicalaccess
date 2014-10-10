@@ -16,30 +16,28 @@
 
 namespace logicalaccess
 {
-	TwicProfile::TwicProfile()
-		: ISO7816Profile()
-	{
+    TwicProfile::TwicProfile()
+        : ISO7816Profile()
+    {
+    }
 
-	}
+    TwicProfile::~TwicProfile()
+    {
+    }
 
-	TwicProfile::~TwicProfile()
-	{
+    boost::shared_ptr<Location> TwicProfile::createLocation() const
+    {
+        boost::shared_ptr<TwicLocation> ret;
+        ret.reset(new TwicLocation());
+        return ret;
+    }
 
-	}
+    FormatList TwicProfile::getSupportedFormatList()
+    {
+        FormatList formats;
 
-	boost::shared_ptr<Location> TwicProfile::createLocation() const
-	{
-		boost::shared_ptr<TwicLocation> ret;
-		ret.reset(new TwicLocation());
-		return ret;
-	}
+        formats.push_back(boost::shared_ptr<FASCN200BitFormat>(new FASCN200BitFormat()));
 
-	FormatList TwicProfile::getSupportedFormatList()
-	{
-		FormatList formats;
-
-		formats.push_back(boost::shared_ptr<FASCN200BitFormat>(new FASCN200BitFormat()));
-
-		return formats;
-	}
+        return formats;
+    }
 }

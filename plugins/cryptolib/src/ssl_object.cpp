@@ -10,31 +10,30 @@
 
 namespace logicalaccess
 {
-	namespace openssl
-	{
-		void* SSLObject::getAppData()
-		{
-			return SSL_get_app_data(d_ssl.get());
-		}
+    namespace openssl
+    {
+        void* SSLObject::getAppData()
+        {
+            return SSL_get_app_data(d_ssl.get());
+        }
 
-		void SSLObject::setAppData(void* data)
-		{
-			SSL_set_app_data(d_ssl.get(), data);
-		}
+        void SSLObject::setAppData(void* data)
+        {
+            SSL_set_app_data(d_ssl.get(), data);
+        }
 
-		SSLContext SSLObject::sslContext()
-		{
-			SSL_CTX* ctx = SSL_get_SSL_CTX(d_ssl.get());
+        SSLContext SSLObject::sslContext()
+        {
+            SSL_CTX* ctx = SSL_get_SSL_CTX(d_ssl.get());
 
-			return SSLContext(boost::shared_ptr<SSL_CTX>(ctx, null_deleter()));
-		}
+            return SSLContext(boost::shared_ptr<SSL_CTX>(ctx, null_deleter()));
+        }
 
-		SSLObject::SSLObject(boost::shared_ptr<SSL> ssl) :
-			d_ssl(ssl)
-		{
-			OpenSSLInitializer::GetInstance();
-			assert(ssl);
-		}
-	}
+        SSLObject::SSLObject(boost::shared_ptr<SSL> ssl) :
+            d_ssl(ssl)
+        {
+            OpenSSLInitializer::GetInstance();
+            assert(ssl);
+        }
+    }
 }
-

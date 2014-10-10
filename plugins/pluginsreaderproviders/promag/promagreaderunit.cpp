@@ -19,248 +19,248 @@
 
 namespace logicalaccess
 {
-	PromagReaderUnit::PromagReaderUnit()
-		: ReaderUnit()
-	{
-		d_readerUnitConfig.reset(new PromagReaderUnitConfiguration());
-		setDefaultReaderCardAdapter (boost::shared_ptr<PromagReaderCardAdapter> (new PromagReaderCardAdapter()));
-		boost::shared_ptr<PromagDataTransport> dataTransport(new PromagDataTransport());
-		setDataTransport(dataTransport);
-		d_card_type = "UNKNOWN";
+    PromagReaderUnit::PromagReaderUnit()
+        : ReaderUnit()
+    {
+        d_readerUnitConfig.reset(new PromagReaderUnitConfiguration());
+        setDefaultReaderCardAdapter(boost::shared_ptr<PromagReaderCardAdapter>(new PromagReaderCardAdapter()));
+        boost::shared_ptr<PromagDataTransport> dataTransport(new PromagDataTransport());
+        setDataTransport(dataTransport);
+        d_card_type = "UNKNOWN";
 
-		try
-		{
-			boost::property_tree::ptree pt;
-			read_xml((boost::filesystem::current_path().string() + "/PromagReaderUnit.config"), pt);
-			d_card_type = pt.get("config.cardType", "UNKNOWN");
-		}
-		catch (...) { }
-	}
+        try
+        {
+            boost::property_tree::ptree pt;
+            read_xml((boost::filesystem::current_path().string() + "/PromagReaderUnit.config"), pt);
+            d_card_type = pt.get("config.cardType", "UNKNOWN");
+        }
+        catch (...) {}
+    }
 
-	PromagReaderUnit::~PromagReaderUnit()
-	{
-		disconnectFromReader();
-	}
+    PromagReaderUnit::~PromagReaderUnit()
+    {
+        disconnectFromReader();
+    }
 
-	std::string PromagReaderUnit::getName() const
-	{
-		return getDataTransport()->getName();
-	}
+    std::string PromagReaderUnit::getName() const
+    {
+        return getDataTransport()->getName();
+    }
 
-	std::string PromagReaderUnit::getConnectedName()
-	{
-		return getName();
-	}
+    std::string PromagReaderUnit::getConnectedName()
+    {
+        return getName();
+    }
 
-	void PromagReaderUnit::setCardType(std::string cardType)
-	{
-		d_card_type = cardType;
-	}
+    void PromagReaderUnit::setCardType(std::string cardType)
+    {
+        d_card_type = cardType;
+    }
 
-	bool PromagReaderUnit::waitInsertion(unsigned int maxwait)
-	{
-		bool inserted = false;
-		std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(maxwait);
+    bool PromagReaderUnit::waitInsertion(unsigned int maxwait)
+    {
+        bool inserted = false;
+        std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(maxwait);
 
-		if(d_promagIdentifier.size() == 0)
-		{
-			retrieveReaderIdentifier();
-		}
+        if (d_promagIdentifier.size() == 0)
+        {
+            retrieveReaderIdentifier();
+        }
 
-		do
-		{
-			boost::shared_ptr<Chip> chip = getChipInAir();
-			if (chip)
-			{
-				d_insertedChip = chip;
-				inserted = true;
-			}
+        do
+        {
+            boost::shared_ptr<Chip> chip = getChipInAir();
+            if (chip)
+            {
+                d_insertedChip = chip;
+                inserted = true;
+            }
 
-			if (!inserted)
-				std::this_thread::sleep_for(std::chrono::milliseconds(250));
-		} while (!inserted && std::chrono::steady_clock::now() < clock_timeout);
+            if (!inserted)
+                std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        } while (!inserted && std::chrono::steady_clock::now() < clock_timeout);
 
-		return inserted;
-	}
+        return inserted;
+    }
 
-	bool PromagReaderUnit::waitRemoval(unsigned int maxwait)
-	{
-		bool removed = false;
+    bool PromagReaderUnit::waitRemoval(unsigned int maxwait)
+    {
+        bool removed = false;
 
-		if(d_promagIdentifier.size() == 0)
-		{
-			retrieveReaderIdentifier();
-		}
+        if (d_promagIdentifier.size() == 0)
+        {
+            retrieveReaderIdentifier();
+        }
 
-		if (d_insertedChip)
-		{
-			std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(maxwait);
-			do
-			{
-				boost::shared_ptr<Chip> chip = getChipInAir();
-				if (chip)
-				{
-					if (chip->getChipIdentifier() != d_insertedChip->getChipIdentifier())
-					{
-						d_insertedChip.reset();
-						removed = true;
-					}
-				}
-				else
-				{
-					d_insertedChip.reset();
-					removed = true;
-				}
+        if (d_insertedChip)
+        {
+            std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(maxwait);
+            do
+            {
+                boost::shared_ptr<Chip> chip = getChipInAir();
+                if (chip)
+                {
+                    if (chip->getChipIdentifier() != d_insertedChip->getChipIdentifier())
+                    {
+                        d_insertedChip.reset();
+                        removed = true;
+                    }
+                }
+                else
+                {
+                    d_insertedChip.reset();
+                    removed = true;
+                }
 
-				if (!removed)
-					std::this_thread::sleep_for(std::chrono::milliseconds(250));
-			} while (!removed && std::chrono::steady_clock::now() < clock_timeout);
-		}
+                if (!removed)
+                    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+            } while (!removed && std::chrono::steady_clock::now() < clock_timeout);
+        }
 
-		return removed;
-	}
+        return removed;
+    }
 
-	bool PromagReaderUnit::connect()
-	{
-		return true;
-	}
+    bool PromagReaderUnit::connect()
+    {
+        return true;
+    }
 
-	void PromagReaderUnit::disconnect()
-	{
-	}
+    void PromagReaderUnit::disconnect()
+    {
+    }
 
-	std::vector<unsigned char> PromagReaderUnit::getPingCommand() const
-	{
-		std::vector<unsigned char> cmd;
+    std::vector<unsigned char> PromagReaderUnit::getPingCommand() const
+    {
+        std::vector<unsigned char> cmd;
 
-		cmd.push_back(static_cast<unsigned char>('N'));
+        cmd.push_back(static_cast<unsigned char>('N'));
 
-		return cmd;
-	}
+        return cmd;
+    }
 
-	boost::shared_ptr<Chip> PromagReaderUnit::getChipInAir()
-	{
-		boost::shared_ptr<Chip> chip;
-		std::vector<unsigned char> cmd;
-		cmd.push_back(static_cast<unsigned char>('R'));
+    boost::shared_ptr<Chip> PromagReaderUnit::getChipInAir()
+    {
+        boost::shared_ptr<Chip> chip;
+        std::vector<unsigned char> cmd;
+        cmd.push_back(static_cast<unsigned char>('R'));
 
-		std::vector<unsigned char> rawidbuf = getDefaultPromagReaderCardAdapter()->sendCommand(cmd);
-		if (rawidbuf.size() > 0)
-		{
-			string rawidstr = BufferHelper::getStdString(rawidbuf);
-			std::vector<unsigned char> insertedId = XmlSerializable::formatHexString(rawidstr);	
-			chip = ReaderUnit::createChip(
-				(d_card_type == "UNKNOWN" ? "GenericTag" : d_card_type),
-				insertedId
-			);
-		}
+        std::vector<unsigned char> rawidbuf = getDefaultPromagReaderCardAdapter()->sendCommand(cmd);
+        if (rawidbuf.size() > 0)
+        {
+            string rawidstr = BufferHelper::getStdString(rawidbuf);
+            std::vector<unsigned char> insertedId = XmlSerializable::formatHexString(rawidstr);
+            chip = ReaderUnit::createChip(
+                (d_card_type == "UNKNOWN" ? "GenericTag" : d_card_type),
+                insertedId
+                );
+        }
 
-		return chip;
-	}
-	
-	boost::shared_ptr<Chip> PromagReaderUnit::createChip(std::string type)
-	{
-		boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
+        return chip;
+    }
 
-		if (chip)
-		{
-			boost::shared_ptr<ReaderCardAdapter> rca;
+    boost::shared_ptr<Chip> PromagReaderUnit::createChip(std::string type)
+    {
+        boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 
-			if (type == "GenericTag")
-				rca = getDefaultReaderCardAdapter();
-			else
-				return chip;
+        if (chip)
+        {
+            boost::shared_ptr<ReaderCardAdapter> rca;
 
-			rca->setDataTransport(getDataTransport());
-		}
-		return chip;
-	}
+            if (type == "GenericTag")
+                rca = getDefaultReaderCardAdapter();
+            else
+                return chip;
 
-	boost::shared_ptr<Chip> PromagReaderUnit::getSingleChip()
-	{
-		boost::shared_ptr<Chip> chip = d_insertedChip;
-		return chip;
-	}
+            rca->setDataTransport(getDataTransport());
+        }
+        return chip;
+    }
 
-	std::vector<boost::shared_ptr<Chip> > PromagReaderUnit::getChipList()
-	{
-		std::vector<boost::shared_ptr<Chip> > chipList;
-		boost::shared_ptr<Chip> singleChip = getSingleChip();
-		if (singleChip)
-		{
-			chipList.push_back(singleChip);
-		}
-		return chipList;
-	}
+    boost::shared_ptr<Chip> PromagReaderUnit::getSingleChip()
+    {
+        boost::shared_ptr<Chip> chip = d_insertedChip;
+        return chip;
+    }
 
-	boost::shared_ptr<PromagReaderCardAdapter> PromagReaderUnit::getDefaultPromagReaderCardAdapter()
-	{
-		boost::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
-		return boost::dynamic_pointer_cast<PromagReaderCardAdapter>(adapter);
-	}
+    std::vector<boost::shared_ptr<Chip> > PromagReaderUnit::getChipList()
+    {
+        std::vector<boost::shared_ptr<Chip> > chipList;
+        boost::shared_ptr<Chip> singleChip = getSingleChip();
+        if (singleChip)
+        {
+            chipList.push_back(singleChip);
+        }
+        return chipList;
+    }
 
-	string PromagReaderUnit::getReaderSerialNumber()
-	{
-		string ret;
+    boost::shared_ptr<PromagReaderCardAdapter> PromagReaderUnit::getDefaultPromagReaderCardAdapter()
+    {
+        boost::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
+        return boost::dynamic_pointer_cast<PromagReaderCardAdapter>(adapter);
+    }
 
-		return ret;
-	}
+    string PromagReaderUnit::getReaderSerialNumber()
+    {
+        string ret;
 
-	bool PromagReaderUnit::isConnected()
-	{
-		return bool(d_insertedChip);
-	}
+        return ret;
+    }
 
-	bool PromagReaderUnit::connectToReader()
-	{
-		return getDataTransport()->connect();
-	}
+    bool PromagReaderUnit::isConnected()
+    {
+        return bool(d_insertedChip);
+    }
 
-	void PromagReaderUnit::disconnectFromReader()
-	{
-		getDataTransport()->disconnect();
-	}
+    bool PromagReaderUnit::connectToReader()
+    {
+        return getDataTransport()->connect();
+    }
 
-	void PromagReaderUnit::serialize(boost::property_tree::ptree& parentNode)
-	{
-		boost::property_tree::ptree node;
-		ReaderUnit::serialize(node);
-		parentNode.add_child(getDefaultXmlNodeName(), node);
-	}
+    void PromagReaderUnit::disconnectFromReader()
+    {
+        getDataTransport()->disconnect();
+    }
 
-	void PromagReaderUnit::unSerialize(boost::property_tree::ptree& node)
-	{
-		ReaderUnit::unSerialize(node);
-	}
+    void PromagReaderUnit::serialize(boost::property_tree::ptree& parentNode)
+    {
+        boost::property_tree::ptree node;
+        ReaderUnit::serialize(node);
+        parentNode.add_child(getDefaultXmlNodeName(), node);
+    }
 
-	boost::shared_ptr<PromagReaderProvider> PromagReaderUnit::getPromagReaderProvider() const
-	{
-		return boost::dynamic_pointer_cast<PromagReaderProvider>(getReaderProvider());
-	}
+    void PromagReaderUnit::unSerialize(boost::property_tree::ptree& node)
+    {
+        ReaderUnit::unSerialize(node);
+    }
 
-	bool PromagReaderUnit::retrieveReaderIdentifier()
-	{
-		bool ret;
-		std::vector<unsigned char> cmd;
-		try
-		{
-			cmd.push_back(static_cast<unsigned char>('N'));
+    boost::shared_ptr<PromagReaderProvider> PromagReaderUnit::getPromagReaderProvider() const
+    {
+        return boost::dynamic_pointer_cast<PromagReaderProvider>(getReaderProvider());
+    }
 
-			std::vector<unsigned char> r = getDefaultPromagReaderCardAdapter()->sendCommand(cmd);			
+    bool PromagReaderUnit::retrieveReaderIdentifier()
+    {
+        bool ret;
+        std::vector<unsigned char> cmd;
+        try
+        {
+            cmd.push_back(static_cast<unsigned char>('N'));
 
-			d_promagIdentifier = r;
-			ret = true;
-		}
-		catch(std::exception&)
-		{
-			ret = false;
-		}
+            std::vector<unsigned char> r = getDefaultPromagReaderCardAdapter()->sendCommand(cmd);
 
-		return ret;
-	}
+            d_promagIdentifier = r;
+            ret = true;
+        }
+        catch (std::exception&)
+        {
+            ret = false;
+        }
 
-	std::vector<unsigned char> PromagReaderUnit::getPromagIdentifier()
-	{
-		return d_promagIdentifier;
-	}
+        return ret;
+    }
+
+    std::vector<unsigned char> PromagReaderUnit::getPromagIdentifier()
+    {
+        return d_promagIdentifier;
+    }
 }

@@ -16,36 +16,36 @@
 
 extern "C"
 {
-	LIBLOGICALACCESS_API char *getLibraryName()
-	{
-		return (char *)"PCSC";
-	}
+    LIBLOGICALACCESS_API char *getLibraryName()
+    {
+        return (char *)"PCSC";
+    }
 
-	LIBLOGICALACCESS_API void getPCSCReader(boost::shared_ptr<logicalaccess::ReaderProvider>* rp)
-	{
-		if (rp != NULL)
-		{
-			*rp = logicalaccess::PCSCReaderProvider::createInstance();
-		}
-	}
+    LIBLOGICALACCESS_API void getPCSCReader(boost::shared_ptr<logicalaccess::ReaderProvider>* rp)
+    {
+        if (rp != NULL)
+        {
+            *rp = logicalaccess::PCSCReaderProvider::createInstance();
+        }
+    }
 
-	LIBLOGICALACCESS_API bool getReaderInfoAt(unsigned int index, char* readername, size_t readernamelen, void** getterfct)
-	{
-		bool ret = false;
-		if (readername != NULL && readernamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
-		{
-			switch (index)
-			{
-			case 0:
-				{
-					*getterfct = (void*)&getPCSCReader;
-					sprintf(readername, READER_PCSC);
-					ret = true;
-				}
-				break;
-			}
-		}
+    LIBLOGICALACCESS_API bool getReaderInfoAt(unsigned int index, char* readername, size_t readernamelen, void** getterfct)
+    {
+        bool ret = false;
+        if (readername != NULL && readernamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
+        {
+            switch (index)
+            {
+            case 0:
+            {
+                *getterfct = (void*)&getPCSCReader;
+                sprintf(readername, READER_PCSC);
+                ret = true;
+            }
+                break;
+            }
+        }
 
-		return ret;
-	}
+        return ret;
+    }
 }

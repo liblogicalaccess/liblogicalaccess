@@ -17,57 +17,54 @@
 #include "logicalaccess/cards/samkeystorage.hpp"
 
 namespace logicalaccess
-{	
-	MifareUltralightPCSCCommands::MifareUltralightPCSCCommands()
-		: MifareUltralightCommands()
-	{
-		
-	}
+{
+    MifareUltralightPCSCCommands::MifareUltralightPCSCCommands()
+        : MifareUltralightCommands()
+    {
+    }
 
-	MifareUltralightPCSCCommands::~MifareUltralightPCSCCommands()
-	{
-		
-	}
+    MifareUltralightPCSCCommands::~MifareUltralightPCSCCommands()
+    {
+    }
 
-	size_t MifareUltralightPCSCCommands::readPage(int page, void* buf, size_t buflen)
-	{
-		if ((buflen >= 16) || (!buf))
-		{
-			THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter.");
-		}
+    size_t MifareUltralightPCSCCommands::readPage(int page, void* buf, size_t buflen)
+    {
+        if ((buflen >= 16) || (!buf))
+        {
+            THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter.");
+        }
 
-		size_t r = 0;
+        size_t r = 0;
 
-		std::vector<unsigned char> result;
+        std::vector<unsigned char> result;
 
-		result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xB0, 0x00, static_cast<unsigned char>(page), 16);
+        result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xB0, 0x00, static_cast<unsigned char>(page), 16);
 
-		r = result.size() - 2;
-		if (r > buflen)
-		{
-			r = buflen;
-		}
-		memcpy(buf, &result[0], r);
+        r = result.size() - 2;
+        if (r > buflen)
+        {
+            r = buflen;
+        }
+        memcpy(buf, &result[0], r);
 
-		return r;
-	}
+        return r;
+    }
 
-	size_t MifareUltralightPCSCCommands::writePage(int page, const void* buf, size_t buflen)
-	{
-		if ((buflen > 16) || (!buf))
-		{
-			THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter.");
-		}
+    size_t MifareUltralightPCSCCommands::writePage(int page, const void* buf, size_t buflen)
+    {
+        if ((buflen > 16) || (!buf))
+        {
+            THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter.");
+        }
 
-		size_t r = 0;
+        size_t r = 0;
 
-		std::vector<unsigned char> data;
-		data.insert(data.begin(), (unsigned char*)buf, (unsigned char*)buf + buflen);
+        std::vector<unsigned char> data;
+        data.insert(data.begin(), (unsigned char*)buf, (unsigned char*)buf + buflen);
 
-		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xD6, 0x00, static_cast<unsigned char>(page), static_cast<unsigned char>(data.size()), data);
-		r = buflen;
+        getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xD6, 0x00, static_cast<unsigned char>(page), static_cast<unsigned char>(data.size()), data);
+        r = buflen;
 
-		return r;
-	}	
+        return r;
+    }
 }
-

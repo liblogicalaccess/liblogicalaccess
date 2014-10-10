@@ -22,7 +22,7 @@ void crypt_argchk(const char *v, const char *s, int d);
 
 #elif ARGTYPE == 3
 
-#define LTC_ARGCHK(x) 
+#define LTC_ARGCHK(x)
 #define LTC_ARGCHKVD(x) LTC_ARGCHK(x)
 
 #elif ARGTYPE == 4
@@ -31,7 +31,6 @@ void crypt_argchk(const char *v, const char *s, int d);
 #define LTC_ARGCHKVD(x) if (!(x)) return;
 
 #endif
-
 
 /* $Source$ */
 /* $Revision$ */

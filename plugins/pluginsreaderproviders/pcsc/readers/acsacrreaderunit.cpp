@@ -10,22 +10,19 @@
 #include <iomanip>
 #include <sstream>
 
-
 namespace logicalaccess
 {
-	ACSACRReaderUnit::ACSACRReaderUnit(const std::string& name)
-		: PCSCReaderUnit(name)
-	{
-		
-	}
+    ACSACRReaderUnit::ACSACRReaderUnit(const std::string& name)
+        : PCSCReaderUnit(name)
+    {
+    }
 
-	ACSACRReaderUnit::~ACSACRReaderUnit()
-	{
-		
-	}
+    ACSACRReaderUnit::~ACSACRReaderUnit()
+    {
+    }
 
-	PCSCReaderUnitType ACSACRReaderUnit::getPCSCType() const
-	{
-		return PCSC_RUT_ACS_ACR;
-	}
+    PCSCReaderUnitType ACSACRReaderUnit::getPCSCType() const
+    {
+        return PCSC_RUT_ACS_ACR;
+    }
 }

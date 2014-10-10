@@ -12,22 +12,22 @@
 
 namespace logicalaccess
 {
-	SmartFrameChip::SmartFrameChip()
-		: Chip(CHIP_SMARTFRAME)
-	{
-	}
+    SmartFrameChip::SmartFrameChip()
+        : Chip(CHIP_SMARTFRAME)
+    {
+    }
 
-	SmartFrameChip::~SmartFrameChip()
-	{
-	}
+    SmartFrameChip::~SmartFrameChip()
+    {
+    }
 
-	boost::shared_ptr<LocationNode> SmartFrameChip::getRootLocationNode()
-	{
-		boost::shared_ptr<LocationNode> rootNode;
-		rootNode.reset(new LocationNode());
+    boost::shared_ptr<LocationNode> SmartFrameChip::getRootLocationNode()
+    {
+        boost::shared_ptr<LocationNode> rootNode;
+        rootNode.reset(new LocationNode());
 
-		rootNode->setName("SmartFrame");
+        rootNode->setName("SmartFrame");
 
-		return rootNode;
-	}
+        return rootNode;
+    }
 }

@@ -21,72 +21,72 @@
 #include <iostream>
 
 namespace logicalaccess
-{	
-	/**
-	 * \brief The MifarePlus base profile class.
-	 */
-	class LIBLOGICALACCESS_API MifarePlusSL3StorageCardService : public StorageCardService
-	{
-		public:
-			
-			/**
-			 * \brief Constructor.
-			 * \param chip The chip.
-			 */
-			MifarePlusSL3StorageCardService(boost::shared_ptr<Chip> chip);
+{
+    /**
+     * \brief The MifarePlus base profile class.
+     */
+    class LIBLOGICALACCESS_API MifarePlusSL3StorageCardService : public StorageCardService
+    {
+    public:
 
-			/**
-			 * \brief Destructor.
-			 */
-			virtual ~MifarePlusSL3StorageCardService();
+        /**
+         * \brief Constructor.
+         * \param chip The chip.
+         */
+        MifarePlusSL3StorageCardService(boost::shared_ptr<Chip> chip);
 
-			/**
-			 * \brief Erase the card.
-			 */
-			virtual void erase();			
+        /**
+         * \brief Destructor.
+         */
+        virtual ~MifarePlusSL3StorageCardService();
 
-			/**
-			 * \brief Erase a specific location on the card.
-			 * \param location The data location.
-			 * \param aiToUse The key's informations to use to delete.
-			 */
-			virtual void erase(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse);			
+        /**
+         * \brief Erase the card.
+         */
+        virtual void erase();
 
-			/**
-			 * \brief Write data on a specific location, using given keys.
-			 * \param location The data location.
-			 * \param aiToUse The key's informations to use for write access.
-			 * \param aiToWrite The key's informations to change.
-			 * \param data Data to write.
-			 * \param dataLength Data's length to write.
-			 * \param behaviorFlags Flags which determines the behavior.
-			 */
-			virtual	void writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags);
+        /**
+         * \brief Erase a specific location on the card.
+         * \param location The data location.
+         * \param aiToUse The key's informations to use to delete.
+         */
+        virtual void erase(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse);
 
-			/**
-			 * \brief Read data on a specific location, using given keys.
-			 * \param location The data location.
-			 * \param aiToUse The key's informations to use for read access.
-			 * \param data Will contain data after reading.
-			 * \param dataLength Data's length to read.
-			 * \param behaviorFlags Flags which determines the behavior.
-			 */
-			virtual void readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags);
+        /**
+         * \brief Write data on a specific location, using given keys.
+         * \param location The data location.
+         * \param aiToUse The key's informations to use for write access.
+         * \param aiToWrite The key's informations to change.
+         * \param data Data to write.
+         * \param dataLength Data's length to write.
+         * \param behaviorFlags Flags which determines the behavior.
+         */
+        virtual	void writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags);
 
-			/**
-			 * \brief Read data header on a specific location, using given keys.
-			 * \param location The data location.
-			 * \param aiToUse The key's informations to use.
-			 * \param data Will contain data after reading.
-			 * \param dataLength Data's length to read.
-			 * \return Data header length.
-			 */
-			virtual unsigned int readDataHeader(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength);
+        /**
+         * \brief Read data on a specific location, using given keys.
+         * \param location The data location.
+         * \param aiToUse The key's informations to use for read access.
+         * \param data Will contain data after reading.
+         * \param dataLength Data's length to read.
+         * \param behaviorFlags Flags which determines the behavior.
+         */
+        virtual void readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags);
 
-		protected:
+        /**
+         * \brief Read data header on a specific location, using given keys.
+         * \param location The data location.
+         * \param aiToUse The key's informations to use.
+         * \param data Will contain data after reading.
+         * \param dataLength Data's length to read.
+         * \return Data header length.
+         */
+        virtual unsigned int readDataHeader(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength);
 
-			boost::shared_ptr<MifarePlusChip> getMifarePlusChip() { return boost::dynamic_pointer_cast<MifarePlusChip>(getChip()); };
-	};
+    protected:
+
+        boost::shared_ptr<MifarePlusChip> getMifarePlusChip() { return boost::dynamic_pointer_cast<MifarePlusChip>(getChip()); };
+    };
 }
 
 #endif /* LOGICALACCESS_MIFAREPLUSSL3STORAGECARDSERVICE_HPP */

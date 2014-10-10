@@ -21,183 +21,183 @@
 
 namespace logicalaccess
 {
-	CustomFormat::CustomFormat()
-		: Format(), d_name("Custom")
-	{
-	}
+    CustomFormat::CustomFormat()
+        : Format(), d_name("Custom")
+    {
+    }
 
-	CustomFormat::~CustomFormat()
-	{
-	}	
+    CustomFormat::~CustomFormat()
+    {
+    }
 
-	unsigned int CustomFormat::getDataLength() const
-	{
-		unsigned int dataLength = 0;
-		for(std::list<boost::shared_ptr<DataField> >::const_iterator i = d_fieldList.cbegin(); i != d_fieldList.cend(); ++i)
-		{
-			unsigned int maxLength = (*i)->getPosition() + (*i)->getDataLength();
-			if (maxLength > dataLength)
-			{
-				dataLength = maxLength;
-			}
-		}
+    unsigned int CustomFormat::getDataLength() const
+    {
+        unsigned int dataLength = 0;
+        for (std::list<boost::shared_ptr<DataField> >::const_iterator i = d_fieldList.cbegin(); i != d_fieldList.cend(); ++i)
+        {
+            unsigned int maxLength = (*i)->getPosition() + (*i)->getDataLength();
+            if (maxLength > dataLength)
+            {
+                dataLength = maxLength;
+            }
+        }
 
-		return dataLength;
-	}
+        return dataLength;
+    }
 
-	void CustomFormat::setName(const string& name)
-	{
-		d_name = name;
-	}
+    void CustomFormat::setName(const string& name)
+    {
+        d_name = name;
+    }
 
-	string CustomFormat::getName() const
-	{
-		return d_name;
-	}	
+    string CustomFormat::getName() const
+    {
+        return d_name;
+    }
 
-	void CustomFormat::getLinearData(void* data, size_t dataLengthBytes) const
-	{
-		unsigned int pos = 0;
-		std::list<boost::shared_ptr<DataField> > sortedFieldList = d_fieldList;
-		sortedFieldList.sort(FieldSortPredicate);
-		memset(data, 0x00, dataLengthBytes);
-		for(std::list<boost::shared_ptr<DataField> >::const_iterator i = sortedFieldList.begin(); i != sortedFieldList.end(); ++i)
-		{
-			pos = (*i)->getPosition();
-			(*i)->getLinearData(data, dataLengthBytes, &pos);
-		}
-	}
+    void CustomFormat::getLinearData(void* data, size_t dataLengthBytes) const
+    {
+        unsigned int pos = 0;
+        std::list<boost::shared_ptr<DataField> > sortedFieldList = d_fieldList;
+        sortedFieldList.sort(FieldSortPredicate);
+        memset(data, 0x00, dataLengthBytes);
+        for (std::list<boost::shared_ptr<DataField> >::const_iterator i = sortedFieldList.begin(); i != sortedFieldList.end(); ++i)
+        {
+            pos = (*i)->getPosition();
+            (*i)->getLinearData(data, dataLengthBytes, &pos);
+        }
+    }
 
-	void CustomFormat::setLinearData(const void* data, size_t dataLengthBytes)
-	{
-		unsigned int pos = 0;
-		std::list<boost::shared_ptr<DataField> > sortedFieldList = d_fieldList;
-		sortedFieldList.sort(FieldSortPredicate);
-		for(std::list<boost::shared_ptr<DataField> >::iterator i = sortedFieldList.begin(); i != sortedFieldList.end(); ++i)
-		{
-			pos = (*i)->getPosition();
-			(*i)->setLinearData(data, dataLengthBytes, &pos);
-		}
-	}
+    void CustomFormat::setLinearData(const void* data, size_t dataLengthBytes)
+    {
+        unsigned int pos = 0;
+        std::list<boost::shared_ptr<DataField> > sortedFieldList = d_fieldList;
+        sortedFieldList.sort(FieldSortPredicate);
+        for (std::list<boost::shared_ptr<DataField> >::iterator i = sortedFieldList.begin(); i != sortedFieldList.end(); ++i)
+        {
+            pos = (*i)->getPosition();
+            (*i)->setLinearData(data, dataLengthBytes, &pos);
+        }
+    }
 
-	void CustomFormat::serialize(boost::property_tree::ptree& parentNode)
-	{
-		boost::property_tree::ptree node;
+    void CustomFormat::serialize(boost::property_tree::ptree& parentNode)
+    {
+        boost::property_tree::ptree node;
 
-		node.put("<xmlattr>.type", getType());
-		node.put("Name", d_name);
-		
-		boost::property_tree::ptree fnode;
-		for (std::list<boost::shared_ptr<DataField> >::const_iterator i = d_fieldList.cbegin(); i != d_fieldList.cend(); ++i)
-		{
-			(*i)->serialize(fnode);
-		}
-		node.add_child("Fields", fnode);
+        node.put("<xmlattr>.type", getType());
+        node.put("Name", d_name);
 
-		parentNode.add_child(getDefaultXmlNodeName(), node);
-	}
+        boost::property_tree::ptree fnode;
+        for (std::list<boost::shared_ptr<DataField> >::const_iterator i = d_fieldList.cbegin(); i != d_fieldList.cend(); ++i)
+        {
+            (*i)->serialize(fnode);
+        }
+        node.add_child("Fields", fnode);
 
-	void CustomFormat::unSerialize(boost::property_tree::ptree& node)
-	{
-		d_fieldList.clear();
-		d_name = node.get_child("Name").get_value<std::string>();
-		BOOST_FOREACH(boost::property_tree::ptree::value_type const& v, node.get_child("Fields"))
-		{
-			// TODO: improve the unserialization process to be generic
-			boost::shared_ptr<DataField> dataField;
-			if (v.first == "ASCIIDataField")
-			{
-				dataField.reset(new ASCIIDataField());
-			}
-			else if (v.first == "BinaryDataField")
-			{
-				dataField.reset(new BinaryDataField());
-			}
-			else if (v.first == "NumberDataField")
-			{
-				dataField.reset(new NumberDataField());
-			}
-			else if (v.first == "ParityDataField")
-			{
-				dataField.reset(new ParityDataField());
-			}
+        parentNode.add_child(getDefaultXmlNodeName(), node);
+    }
 
-			if (dataField)
-			{
-				boost::property_tree::ptree f = v.second;
-				dataField->unSerialize(f);
-				d_fieldList.push_back(dataField);
-			}
-		}
-	}
+    void CustomFormat::unSerialize(boost::property_tree::ptree& node)
+    {
+        d_fieldList.clear();
+        d_name = node.get_child("Name").get_value<std::string>();
+        BOOST_FOREACH(boost::property_tree::ptree::value_type const& v, node.get_child("Fields"))
+        {
+            // TODO: improve the unserialization process to be generic
+            boost::shared_ptr<DataField> dataField;
+            if (v.first == "ASCIIDataField")
+            {
+                dataField.reset(new ASCIIDataField());
+            }
+            else if (v.first == "BinaryDataField")
+            {
+                dataField.reset(new BinaryDataField());
+            }
+            else if (v.first == "NumberDataField")
+            {
+                dataField.reset(new NumberDataField());
+            }
+            else if (v.first == "ParityDataField")
+            {
+                dataField.reset(new ParityDataField());
+            }
 
-	std::string CustomFormat::getDefaultXmlNodeName() const
-	{
-		return "CustomFormat";
-	}
+            if (dataField)
+            {
+                boost::property_tree::ptree f = v.second;
+                dataField->unSerialize(f);
+                d_fieldList.push_back(dataField);
+            }
+        }
+    }
 
-	bool CustomFormat::checkSkeleton(boost::shared_ptr<Format> format) const
-	{
-		bool ret = false;
-		if (format)
-		{
-			boost::shared_ptr<CustomFormat> pFormat = boost::dynamic_pointer_cast<CustomFormat>(format);
-			if (pFormat && pFormat->getDataLength() == getDataLength())
-			{
-				std::list<boost::shared_ptr<DataField> > fields = pFormat->getFieldList();
-				if (fields.size() == d_fieldList.size())
-				{
-					ret = true;
-					for(std::list<boost::shared_ptr<DataField> >::const_iterator i = d_fieldList.cbegin(), fi = fields.cbegin(); ret && i != d_fieldList.cend() && fi != fields.cend(); ++i, ++fi)
-					{
-						ret = (*i)->checkSkeleton(*fi);
-					}
-				}
-			}
-		}
-		return ret;
-	}
+    std::string CustomFormat::getDefaultXmlNodeName() const
+    {
+        return "CustomFormat";
+    }
 
-	FormatType CustomFormat::getType() const
-	{
-		return FT_CUSTOM;
-	}
+    bool CustomFormat::checkSkeleton(boost::shared_ptr<Format> format) const
+    {
+        bool ret = false;
+        if (format)
+        {
+            boost::shared_ptr<CustomFormat> pFormat = boost::dynamic_pointer_cast<CustomFormat>(format);
+            if (pFormat && pFormat->getDataLength() == getDataLength())
+            {
+                std::list<boost::shared_ptr<DataField> > fields = pFormat->getFieldList();
+                if (fields.size() == d_fieldList.size())
+                {
+                    ret = true;
+                    for (std::list<boost::shared_ptr<DataField> >::const_iterator i = d_fieldList.cbegin(), fi = fields.cbegin(); ret && i != d_fieldList.cend() && fi != fields.cend(); ++i, ++fi)
+                    {
+                        ret = (*i)->checkSkeleton(*fi);
+                    }
+                }
+            }
+        }
+        return ret;
+    }
 
-	size_t CustomFormat::getSkeletonLinearData(void* data, size_t dataLengthBytes) const
-	{
-		std::string xmlstr = const_cast<XmlSerializable*>(dynamic_cast<const XmlSerializable*>(this))->serialize();
-		std::vector<unsigned char> xmlbuf(xmlstr.begin(), xmlstr.end());
+    FormatType CustomFormat::getType() const
+    {
+        return FT_CUSTOM;
+    }
 
-		if (data != NULL)
-		{
-			if (dataLengthBytes < xmlbuf.size())
-			{
-				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The buffer size is too short.");
-			}
-			memcpy(data, &xmlbuf[0], xmlbuf.size());
-		}
+    size_t CustomFormat::getSkeletonLinearData(void* data, size_t dataLengthBytes) const
+    {
+        std::string xmlstr = const_cast<XmlSerializable*>(dynamic_cast<const XmlSerializable*>(this))->serialize();
+        std::vector<unsigned char> xmlbuf(xmlstr.begin(), xmlstr.end());
 
-		return (xmlbuf.size() * 8);
-	}
+        if (data != NULL)
+        {
+            if (dataLengthBytes < xmlbuf.size())
+            {
+                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The buffer size is too short.");
+            }
+            memcpy(data, &xmlbuf[0], xmlbuf.size());
+        }
 
-	void CustomFormat::setSkeletonLinearData(const void* data, size_t dataLengthBytes)
-	{
-		std::vector<unsigned char> xmlbuf((unsigned char*)data, (unsigned char*)data + dataLengthBytes);
-		std::string xmlstr = BufferHelper::getStdString(xmlbuf);
-		dynamic_cast<XmlSerializable*>(this)->unSerialize(xmlstr, "");
-	}
+        return (xmlbuf.size() * 8);
+    }
 
-	boost::shared_ptr<DataField> CustomFormat::getFieldForPosition(unsigned int position)
-	{
-		boost::shared_ptr<DataField> field;
-		for (std::list<boost::shared_ptr<DataField> >::const_iterator i = d_fieldList.cbegin(); !field && i != d_fieldList.cend(); ++i)
-		{
-			if (position >= (*i)->getPosition()  && position < ((*i)->getPosition() + (*i)->getDataLength()))
-			{
-				field = (*i);
-			}
-		}
+    void CustomFormat::setSkeletonLinearData(const void* data, size_t dataLengthBytes)
+    {
+        std::vector<unsigned char> xmlbuf((unsigned char*)data, (unsigned char*)data + dataLengthBytes);
+        std::string xmlstr = BufferHelper::getStdString(xmlbuf);
+        dynamic_cast<XmlSerializable*>(this)->unSerialize(xmlstr, "");
+    }
 
-		return field;
-	}
+    boost::shared_ptr<DataField> CustomFormat::getFieldForPosition(unsigned int position)
+    {
+        boost::shared_ptr<DataField> field;
+        for (std::list<boost::shared_ptr<DataField> >::const_iterator i = d_fieldList.cbegin(); !field && i != d_fieldList.cend(); ++i)
+        {
+            if (position >= (*i)->getPosition() && position < ((*i)->getPosition() + (*i)->getDataLength()))
+            {
+                field = (*i);
+            }
+        }
+
+        return field;
+    }
 }

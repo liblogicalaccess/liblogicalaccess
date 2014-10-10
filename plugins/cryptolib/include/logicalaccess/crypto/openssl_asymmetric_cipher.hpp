@@ -13,18 +13,17 @@
 
 namespace logicalaccess
 {
-	namespace openssl
-	{
-		/**
-		 * \brief The base class for all OpenSSL based asymmetric ciphers.
-		 * \see RSACipher
-		 * \see AsymmetricCipher
-		 */
-		class OpenSSLAsymmetricCipher : public AsymmetricCipher
-		{
-		};
-	}
+    namespace openssl
+    {
+        /**
+         * \brief The base class for all OpenSSL based asymmetric ciphers.
+         * \see RSACipher
+         * \see AsymmetricCipher
+         */
+        class OpenSSLAsymmetricCipher : public AsymmetricCipher
+        {
+        };
+    }
 }
 
 #endif /* OPENSSLASYMETRICCIPHER_HPP */
-

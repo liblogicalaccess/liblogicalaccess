@@ -15,19 +15,16 @@
 #include "logicalaccess/cards/readermemorykeystorage.hpp"
 #include "logicalaccess/cards/samkeystorage.hpp"
 
-
 namespace logicalaccess
-{	
-	MifareUltralightCOmnikeyXX21Commands::MifareUltralightCOmnikeyXX21Commands()
-		: MifareUltralightCPCSCCommands()
-	{
-		
-	}
+{
+    MifareUltralightCOmnikeyXX21Commands::MifareUltralightCOmnikeyXX21Commands()
+        : MifareUltralightCPCSCCommands()
+    {
+    }
 
-	MifareUltralightCOmnikeyXX21Commands::~MifareUltralightCOmnikeyXX21Commands()
-	{
-		
-	}
+    MifareUltralightCOmnikeyXX21Commands::~MifareUltralightCOmnikeyXX21Commands()
+    {
+    }
 
     std::vector<unsigned char> MifareUltralightCOmnikeyXX21Commands::sendGenericCommand(const std::vector<unsigned char>& data)
     {
@@ -43,4 +40,3 @@ namespace logicalaccess
         return getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xA0, 0x00, 0x05, static_cast<unsigned char>(wdata.size()), wdata);
     }
 }
-

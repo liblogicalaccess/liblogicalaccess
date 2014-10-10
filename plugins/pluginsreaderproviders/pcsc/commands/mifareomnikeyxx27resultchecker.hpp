@@ -11,16 +11,16 @@
 
 namespace logicalaccess
 {
-	/**
-	 * \brief The Omnikey xx27 mifare implementation result checker.
-	 */
-	class LIBLOGICALACCESS_API MifareOmnikeyXX27ResultChecker : public ISO7816ResultChecker
-	{
-		public:
-			MifareOmnikeyXX27ResultChecker();
+    /**
+     * \brief The Omnikey xx27 mifare implementation result checker.
+     */
+    class LIBLOGICALACCESS_API MifareOmnikeyXX27ResultChecker : public ISO7816ResultChecker
+    {
+    public:
+        MifareOmnikeyXX27ResultChecker();
 
-			virtual ~MifareOmnikeyXX27ResultChecker();
-	};
+        virtual ~MifareOmnikeyXX27ResultChecker();
+    };
 }
 
 #endif

@@ -17,26 +17,26 @@
 
 namespace logicalaccess
 {
-	namespace openssl
-	{
-		SymmetricKey::SymmetricKey(size_t size) :
-			d_data(size)
-		{
-			OpenSSLInitializer::GetInstance();
-			randomize();
-		}
+    namespace openssl
+    {
+        SymmetricKey::SymmetricKey(size_t size) :
+            d_data(size)
+        {
+            OpenSSLInitializer::GetInstance();
+            randomize();
+        }
 
-		SymmetricKey::SymmetricKey(const std::vector<unsigned char>& _data) :
-			d_data(_data)
-		{
-		}
+        SymmetricKey::SymmetricKey(const std::vector<unsigned char>& _data) :
+            d_data(_data)
+        {
+        }
 
-		void SymmetricKey::randomize()
-		{
-			if (RAND_bytes(&d_data[0], static_cast<int>(d_data.size())) != 1)
-			{
-				THROW_EXCEPTION_WITH_LOG(logicalaccess::LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
-			}
-		}
-	}
+        void SymmetricKey::randomize()
+        {
+            if (RAND_bytes(&d_data[0], static_cast<int>(d_data.size())) != 1)
+            {
+                THROW_EXCEPTION_WITH_LOG(logicalaccess::LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
+            }
+        }
+    }
 }

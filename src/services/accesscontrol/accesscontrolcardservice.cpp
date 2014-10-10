@@ -8,99 +8,96 @@
 #include "logicalaccess/services/storage/storagecardservice.hpp"
 #include "logicalaccess/cards/chip.hpp"
 
-
 namespace logicalaccess
 {
-	AccessControlCardService::AccessControlCardService(boost::shared_ptr<Chip> chip)
-		: CardService(chip)
-	{
-		
-	}
+    AccessControlCardService::AccessControlCardService(boost::shared_ptr<Chip> chip)
+        : CardService(chip)
+    {
+    }
 
-	AccessControlCardService::~AccessControlCardService()
-	{
-	}
+    AccessControlCardService::~AccessControlCardService()
+    {
+    }
 
-	CardServiceType AccessControlCardService::getServiceType() const
-	{
-		return CST_ACCESS_CONTROL;
-	}
+    CardServiceType AccessControlCardService::getServiceType() const
+    {
+        return CST_ACCESS_CONTROL;
+    }
 
-	boost::shared_ptr<Format> AccessControlCardService::readFormat(boost::shared_ptr<Format> format, boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse)
-	{
-		bool ret = false;
-		
-		EXCEPTION_ASSERT_WITH_LOG(format, std::invalid_argument, "format to read can't be null.");
-		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location parameter can't be null.");
+    boost::shared_ptr<Format> AccessControlCardService::readFormat(boost::shared_ptr<Format> format, boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse)
+    {
+        bool ret = false;
 
-		// By default duplicate the format. Other kind of implementation should override this current method.
-		boost::shared_ptr<Format> formatret = Format::getByFormatType(format->getType());
-		formatret->unSerialize(format->serialize(), "");
+        EXCEPTION_ASSERT_WITH_LOG(format, std::invalid_argument, "format to read can't be null.");
+        EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location parameter can't be null.");
 
-		boost::shared_ptr<StorageCardService> storage = boost::dynamic_pointer_cast<StorageCardService>(d_chip->getService(CST_STORAGE));
-		if (storage)
-		{
-			size_t length = (formatret->getDataLength() + 7) / 8;
-			if (length > 0)
-			{
-				unsigned char *formatBuf = new unsigned char[length];
-				if (formatBuf != NULL)
-				{
-					memset(formatBuf, 0x00, length);
-					try
-					{
-						storage->readData(location, aiToUse, formatBuf, length, CB_AUTOSWITCHAREA);
-				
-						formatret->setLinearData(formatBuf, length);
-						ret = true;
-					}
-					catch(std::exception&)
-					{
-						delete[] formatBuf;
-						throw;
-					}
-					delete[] formatBuf;
-				}
-			}
-		}
+        // By default duplicate the format. Other kind of implementation should override this current method.
+        boost::shared_ptr<Format> formatret = Format::getByFormatType(format->getType());
+        formatret->unSerialize(format->serialize(), "");
 
-		if (!ret)
-		{
-			formatret.reset();
-		}
+        boost::shared_ptr<StorageCardService> storage = boost::dynamic_pointer_cast<StorageCardService>(d_chip->getService(CST_STORAGE));
+        if (storage)
+        {
+            size_t length = (formatret->getDataLength() + 7) / 8;
+            if (length > 0)
+            {
+                unsigned char *formatBuf = new unsigned char[length];
+                if (formatBuf != NULL)
+                {
+                    memset(formatBuf, 0x00, length);
+                    try
+                    {
+                        storage->readData(location, aiToUse, formatBuf, length, CB_AUTOSWITCHAREA);
 
-		return formatret;
-	}
+                        formatret->setLinearData(formatBuf, length);
+                        ret = true;
+                    }
+                    catch (std::exception&)
+                    {
+                        delete[] formatBuf;
+                        throw;
+                    }
+                    delete[] formatBuf;
+                }
+            }
+        }
 
-	bool AccessControlCardService::writeFormat(boost::shared_ptr<Format> format, boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite)
-	{
-		bool ret = false;
+        if (!ret)
+        {
+            formatret.reset();
+        }
 
-		EXCEPTION_ASSERT_WITH_LOG(format, std::invalid_argument, "format to write can't be null.");
-		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location parameter can't be null.");
+        return formatret;
+    }
 
-		boost::shared_ptr<StorageCardService> storage = boost::dynamic_pointer_cast<StorageCardService>(d_chip->getService(CST_STORAGE));
-		if (storage)
-		{
-			size_t length = (format->getDataLength() + 7) / 8;
-			unsigned char *formatBuf = new unsigned char[length];
-			memset(formatBuf, 0x00, length);
-			format->getLinearData(formatBuf, length);
-			try
-			{
-				storage->writeData(location, aiToUse, aiToWrite, formatBuf, length, CB_AUTOSWITCHAREA);
-			}
-			catch(std::exception&)
-			{
-				delete[] formatBuf;
-				throw;
-			}
+    bool AccessControlCardService::writeFormat(boost::shared_ptr<Format> format, boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite)
+    {
+        bool ret = false;
 
-			ret = true;
-			delete[] formatBuf;
-		}
-		
-		return ret;
-	}
+        EXCEPTION_ASSERT_WITH_LOG(format, std::invalid_argument, "format to write can't be null.");
+        EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location parameter can't be null.");
+
+        boost::shared_ptr<StorageCardService> storage = boost::dynamic_pointer_cast<StorageCardService>(d_chip->getService(CST_STORAGE));
+        if (storage)
+        {
+            size_t length = (format->getDataLength() + 7) / 8;
+            unsigned char *formatBuf = new unsigned char[length];
+            memset(formatBuf, 0x00, length);
+            format->getLinearData(formatBuf, length);
+            try
+            {
+                storage->writeData(location, aiToUse, aiToWrite, formatBuf, length, CB_AUTOSWITCHAREA);
+            }
+            catch (std::exception&)
+            {
+                delete[] formatBuf;
+                throw;
+            }
+
+            ret = true;
+            delete[] formatBuf;
+        }
+
+        return ret;
+    }
 }
-

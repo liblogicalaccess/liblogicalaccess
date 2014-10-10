@@ -8,12 +8,12 @@
 
 namespace logicalaccess
 {
-	MifarePlusLocation::MifarePlusLocation()
-		: MifareLocation()
-	{
-	}
+    MifarePlusLocation::MifarePlusLocation()
+        : MifareLocation()
+    {
+    }
 
-	MifarePlusLocation::~MifarePlusLocation()
-	{		
-	}
+    MifarePlusLocation::~MifarePlusLocation()
+    {
+    }
 }

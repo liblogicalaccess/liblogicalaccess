@@ -11,35 +11,33 @@
 
 namespace logicalaccess
 {
-	#define CHIP_MIFARE4K	"Mifare4K"
+#define CHIP_MIFARE4K	"Mifare4K"
 
-	/**
-	 * \brief The 4k Mifare base chip class.
-	 */
-	class LIBLOGICALACCESS_API Mifare4KChip : public MifareChip
-	{
-		public:
+    /**
+     * \brief The 4k Mifare base chip class.
+     */
+    class LIBLOGICALACCESS_API Mifare4KChip : public MifareChip
+    {
+    public:
 
-			/**
-			 * \brief Constructor
-			 */
-			Mifare4KChip();
+        /**
+         * \brief Constructor
+         */
+        Mifare4KChip();
 
-			/**
-			 * \brief Destructor.
-			 */
-			virtual ~Mifare4KChip();
+        /**
+         * \brief Destructor.
+         */
+        virtual ~Mifare4KChip();
 
-			/**
-			 * \brief Get the root location node.
-			 * \return The root location node.
-			 */
-			virtual boost::shared_ptr<LocationNode> getRootLocationNode();
+        /**
+         * \brief Get the root location node.
+         * \return The root location node.
+         */
+        virtual boost::shared_ptr<LocationNode> getRootLocationNode();
 
-		protected:
-
-	};
+    protected:
+    };
 }
 
 #endif /* LOGICALACCESS_MIFARE4KCHIP_HPP */
-

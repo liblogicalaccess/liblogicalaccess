@@ -11,16 +11,16 @@
 
 namespace logicalaccess
 {
-	/**
-	 * \brief The DESFire ISO 7816 result checker.
-	 */
-	class LIBLOGICALACCESS_API DESFireISO7816ResultChecker : public ISO7816ResultChecker
-	{
-		public:
-			DESFireISO7816ResultChecker();
+    /**
+     * \brief The DESFire ISO 7816 result checker.
+     */
+    class LIBLOGICALACCESS_API DESFireISO7816ResultChecker : public ISO7816ResultChecker
+    {
+    public:
+        DESFireISO7816ResultChecker();
 
-			virtual ~DESFireISO7816ResultChecker();
-	};
+        virtual ~DESFireISO7816ResultChecker();
+    };
 }
 
 #endif

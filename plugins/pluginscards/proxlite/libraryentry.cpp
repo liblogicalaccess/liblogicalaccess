@@ -16,36 +16,36 @@
 
 extern "C"
 {
-	LIBLOGICALACCESS_API char *getLibraryName()
-	{
-		return (char *)"ProxLite";
-	}
-	
-	LIBLOGICALACCESS_API void getProxLiteChip(boost::shared_ptr<logicalaccess::Chip>* chip)
-	{
-		if (chip != NULL)
-		{
-			*chip = boost::shared_ptr<logicalaccess::ProxLiteChip>(new logicalaccess::ProxLiteChip());
-		}
-	}
+    LIBLOGICALACCESS_API char *getLibraryName()
+    {
+        return (char *)"ProxLite";
+    }
 
-	LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char* chipname, size_t chipnamelen, void** getterfct)
-	{
-		bool ret = false;
-		if (chipname != NULL && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
-		{
-			switch (index)
-			{
-			case 0:
-				{
-					*getterfct = (void*)&getProxLiteChip;
-					sprintf(chipname, CHIP_PROXLITE);
-					ret = true;
-				}
-				break;
-			}
-		}
+    LIBLOGICALACCESS_API void getProxLiteChip(boost::shared_ptr<logicalaccess::Chip>* chip)
+    {
+        if (chip != NULL)
+        {
+            *chip = boost::shared_ptr<logicalaccess::ProxLiteChip>(new logicalaccess::ProxLiteChip());
+        }
+    }
 
-		return ret;
-	}
+    LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char* chipname, size_t chipnamelen, void** getterfct)
+    {
+        bool ret = false;
+        if (chipname != NULL && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
+        {
+            switch (index)
+            {
+            case 0:
+            {
+                *getterfct = (void*)&getProxLiteChip;
+                sprintf(chipname, CHIP_PROXLITE);
+                ret = true;
+            }
+                break;
+            }
+        }
+
+        return ret;
+    }
 }

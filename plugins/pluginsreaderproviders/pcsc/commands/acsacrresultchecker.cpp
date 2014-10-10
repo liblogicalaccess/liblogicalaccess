@@ -8,10 +8,10 @@
 
 namespace logicalaccess
 {
-	ACSACRResultChecker::ACSACRResultChecker()
-	{
-		AddCheck(0x63, 0x0, "The operation failed.");
-	}
+    ACSACRResultChecker::ACSACRResultChecker()
+    {
+        AddCheck(0x63, 0x0, "The operation failed.");
+    }
 
-	ACSACRResultChecker::~ACSACRResultChecker() {}
+    ACSACRResultChecker::~ACSACRResultChecker() {}
 }

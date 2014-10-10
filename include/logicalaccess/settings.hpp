@@ -25,50 +25,50 @@ extern HMODULE __hLibLogicalAccessModule;
 
 namespace logicalaccess
 {
-	class LIBLOGICALACCESS_API Settings
-	{
-		public:
+    class LIBLOGICALACCESS_API Settings
+    {
+    public:
 
-			static Settings* getInstance();
-			
-			void Initialize();  
-			static void Uninitialize();  
+        static Settings* getInstance();
 
-			/* Logs */
-			bool IsLogEnabled;
-			std::string LogFileName;
-			bool SeeWaitInsertionLog;
-			bool SeeWaitRemovalLog;
-			bool SeeCommunicationLog;
-			bool SeePluginLog;
+        void Initialize();
+        static void Uninitialize();
 
-			/* Auto-Detection */
-			bool IsAutoDetectEnabled;
-			long int AutoDetectionTimeout;
+        /* Logs */
+        bool IsLogEnabled;
+        std::string LogFileName;
+        bool SeeWaitInsertionLog;
+        bool SeeWaitRemovalLog;
+        bool SeeCommunicationLog;
+        bool SeePluginLog;
 
-			/* Serial port configuration */
-			bool IsConfigurationRetryEnabled;
-			long int ConfigurationRetryTimeout;
+        /* Auto-Detection */
+        bool IsAutoDetectEnabled;
+        long int AutoDetectionTimeout;
 
-			/* Default Reader */
-			std::string DefaultReader;
-			std::vector<std::string> PluginFolders;
+        /* Serial port configuration */
+        bool IsConfigurationRetryEnabled;
+        long int ConfigurationRetryTimeout;
 
-			static std::string getDllPath();
+        /* Default Reader */
+        std::string DefaultReader;
+        std::vector<std::string> PluginFolders;
 
-		protected:
+        static std::string getDllPath();
 
-			Settings();
-			
-			void LoadSettings();
-			void SaveSettings();
+    protected:
 
-			static Settings* instance;
-			
-		private:
-		
-			void reset();
-	};
+        Settings();
+
+        void LoadSettings();
+        void SaveSettings();
+
+        static Settings* instance;
+
+    private:
+
+        void reset();
+    };
 }
 
 #endif

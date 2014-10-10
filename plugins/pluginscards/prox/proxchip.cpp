@@ -12,51 +12,50 @@
 
 #include "proxaccesscontrolcardservice.hpp"
 
-
 namespace logicalaccess
 {
-	ProxChip::ProxChip()
-		: Chip("Prox")
-	{
-		d_profile.reset(new ProxProfile());
-	}
+    ProxChip::ProxChip()
+        : Chip("Prox")
+    {
+        d_profile.reset(new ProxProfile());
+    }
 
-	ProxChip::~ProxChip()
-	{
-	}	
+    ProxChip::~ProxChip()
+    {
+    }
 
-	boost::shared_ptr<LocationNode> ProxChip::getRootLocationNode()
-	{
-		boost::shared_ptr<LocationNode> rootNode;
-		rootNode.reset(new LocationNode());
+    boost::shared_ptr<LocationNode> ProxChip::getRootLocationNode()
+    {
+        boost::shared_ptr<LocationNode> rootNode;
+        rootNode.reset(new LocationNode());
 
-		rootNode->setName("HID Prox");
+        rootNode->setName("HID Prox");
 
-		return rootNode;
-	}
+        return rootNode;
+    }
 
-	boost::shared_ptr<CardService> ProxChip::getService(CardServiceType serviceType)
-	{
-		boost::shared_ptr<CardService> service;
+    boost::shared_ptr<CardService> ProxChip::getService(CardServiceType serviceType)
+    {
+        boost::shared_ptr<CardService> service;
 
-		switch (serviceType)
-		{
-		case CST_ACCESS_CONTROL:
-			{
-				service.reset(new ProxAccessControlCardService(shared_from_this()));
-			}
-			break;
-		case CST_NFC_TAG:
-		  break;
-		case CST_STORAGE:
-		  break;
-		}
+        switch (serviceType)
+        {
+        case CST_ACCESS_CONTROL:
+        {
+            service.reset(new ProxAccessControlCardService(shared_from_this()));
+        }
+            break;
+        case CST_NFC_TAG:
+            break;
+        case CST_STORAGE:
+            break;
+        }
 
-		if (!service)
-		{
-			service = Chip::getService(serviceType);
-		}
+        if (!service)
+        {
+            service = Chip::getService(serviceType);
+        }
 
-		return service;
-	}
+        return service;
+    }
 }

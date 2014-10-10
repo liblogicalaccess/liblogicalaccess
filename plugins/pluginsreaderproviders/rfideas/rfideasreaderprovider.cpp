@@ -16,56 +16,54 @@
 
 #include "rfideasreaderunit.hpp"
 
-
 namespace logicalaccess
 {
-	RFIDeasReaderProvider::RFIDeasReaderProvider() :
-		ReaderProvider()
-	{
-	}
+    RFIDeasReaderProvider::RFIDeasReaderProvider() :
+        ReaderProvider()
+    {
+    }
 
-	boost::shared_ptr<RFIDeasReaderProvider> RFIDeasReaderProvider::getSingletonInstance()
-	{
-		static boost::shared_ptr<RFIDeasReaderProvider> instance;
-		if (!instance)
-		{
-			instance.reset(new RFIDeasReaderProvider());
-			try
-			{
-				instance->refreshReaderList();
-			}
-			catch(std::exception&)
-			{
-			}
-		}
+    boost::shared_ptr<RFIDeasReaderProvider> RFIDeasReaderProvider::getSingletonInstance()
+    {
+        static boost::shared_ptr<RFIDeasReaderProvider> instance;
+        if (!instance)
+        {
+            instance.reset(new RFIDeasReaderProvider());
+            try
+            {
+                instance->refreshReaderList();
+            }
+            catch (std::exception&)
+            {
+            }
+        }
 
-		return instance;
-	}
+        return instance;
+    }
 
-	RFIDeasReaderProvider::~RFIDeasReaderProvider()
-	{
-		release();
-	}
+    RFIDeasReaderProvider::~RFIDeasReaderProvider()
+    {
+        release();
+    }
 
-	void RFIDeasReaderProvider::release()
-	{
-	}
+    void RFIDeasReaderProvider::release()
+    {
+    }
 
-	boost::shared_ptr<ReaderUnit> RFIDeasReaderProvider::createReaderUnit()
-	{
-		boost::shared_ptr<RFIDeasReaderUnit> ret = RFIDeasReaderUnit::getSingletonInstance();
-		ret->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
+    boost::shared_ptr<ReaderUnit> RFIDeasReaderProvider::createReaderUnit()
+    {
+        boost::shared_ptr<RFIDeasReaderUnit> ret = RFIDeasReaderUnit::getSingletonInstance();
+        ret->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
 
-		return ret;
-	}	
+        return ret;
+    }
 
-	bool RFIDeasReaderProvider::refreshReaderList()
-	{
-		d_readers.clear();
-		
-		d_readers.push_back(createReaderUnit());
+    bool RFIDeasReaderProvider::refreshReaderList()
+    {
+        d_readers.clear();
 
-		return true;
-	}	
+        d_readers.push_back(createReaderUnit());
+
+        return true;
+    }
 }
-

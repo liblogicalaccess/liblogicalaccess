@@ -15,22 +15,22 @@
 
 namespace logicalaccess
 {
-	/**
-	 * \brief A  MifarePlus location informations.
-	 */
-	class LIBLOGICALACCESS_API MifarePlusLocation : public MifareLocation
-	{
-		public:
-			/**
-			 * \brief Constructor.
-			 */
-			MifarePlusLocation();
+    /**
+     * \brief A  MifarePlus location informations.
+     */
+    class LIBLOGICALACCESS_API MifarePlusLocation : public MifareLocation
+    {
+    public:
+        /**
+         * \brief Constructor.
+         */
+        MifarePlusLocation();
 
-			/**
-			 * \brief Destructor.
-			 */
-			virtual ~MifarePlusLocation();
-	};	
+        /**
+         * \brief Destructor.
+         */
+        virtual ~MifarePlusLocation();
+    };
 }
 
 #endif /* LOGICALACCESS_MIFAREPLUSLOCATION_HPP */

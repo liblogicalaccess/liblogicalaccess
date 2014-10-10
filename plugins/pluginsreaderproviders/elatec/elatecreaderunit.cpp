@@ -20,209 +20,209 @@
 
 namespace logicalaccess
 {
-	ElatecReaderUnit::ElatecReaderUnit()
-		: ReaderUnit()
-	{
-		d_readerUnitConfig.reset(new ElatecReaderUnitConfiguration());
-		setDefaultReaderCardAdapter (boost::shared_ptr<ElatecReaderCardAdapter> (new ElatecReaderCardAdapter()));
-		boost::shared_ptr<ElatecDataTransport> dataTransport(new ElatecDataTransport());
-		setDataTransport(dataTransport);
-		d_card_type = "UNKNOWN";
+    ElatecReaderUnit::ElatecReaderUnit()
+        : ReaderUnit()
+    {
+        d_readerUnitConfig.reset(new ElatecReaderUnitConfiguration());
+        setDefaultReaderCardAdapter(boost::shared_ptr<ElatecReaderCardAdapter>(new ElatecReaderCardAdapter()));
+        boost::shared_ptr<ElatecDataTransport> dataTransport(new ElatecDataTransport());
+        setDataTransport(dataTransport);
+        d_card_type = "UNKNOWN";
 
-		try
-		{
-			boost::property_tree::ptree pt;
-			read_xml((boost::filesystem::current_path().string() + "/ElatecReaderUnit.config"), pt);
-			d_card_type = pt.get("config.cardType", "UNKNOWN");
-		}
-		catch (...) { }
-	}
+        try
+        {
+            boost::property_tree::ptree pt;
+            read_xml((boost::filesystem::current_path().string() + "/ElatecReaderUnit.config"), pt);
+            d_card_type = pt.get("config.cardType", "UNKNOWN");
+        }
+        catch (...) {}
+    }
 
-	ElatecReaderUnit::~ElatecReaderUnit()
-	{
-		disconnectFromReader();
-	}
+    ElatecReaderUnit::~ElatecReaderUnit()
+    {
+        disconnectFromReader();
+    }
 
-	std::string ElatecReaderUnit::getName() const
-	{
-		return getDataTransport()->getName();
-	}
+    std::string ElatecReaderUnit::getName() const
+    {
+        return getDataTransport()->getName();
+    }
 
-	std::string ElatecReaderUnit::getConnectedName()
-	{
-		return getName();
-	}
+    std::string ElatecReaderUnit::getConnectedName()
+    {
+        return getName();
+    }
 
-	void ElatecReaderUnit::setCardType(std::string cardType)
-	{
-		d_card_type = cardType;
-	}
+    void ElatecReaderUnit::setCardType(std::string cardType)
+    {
+        d_card_type = cardType;
+    }
 
-	bool ElatecReaderUnit::waitInsertion(unsigned int maxwait)
-	{
-		bool inserted = false;
-		std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(maxwait);
+    bool ElatecReaderUnit::waitInsertion(unsigned int maxwait)
+    {
+        bool inserted = false;
+        std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(maxwait);
 
-		do
-		{
-			boost::shared_ptr<Chip> chip = getChipInAir();
-			if (chip)
-			{
-				d_insertedChip = chip;
-				inserted = true;
-			}
+        do
+        {
+            boost::shared_ptr<Chip> chip = getChipInAir();
+            if (chip)
+            {
+                d_insertedChip = chip;
+                inserted = true;
+            }
 
-			if (!inserted)
-				std::this_thread::sleep_for(std::chrono::milliseconds(250));
-		} while (!inserted && std::chrono::steady_clock::now() < clock_timeout);
+            if (!inserted)
+                std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        } while (!inserted && std::chrono::steady_clock::now() < clock_timeout);
 
-		return inserted;
-	}
+        return inserted;
+    }
 
-	bool ElatecReaderUnit::waitRemoval(unsigned int maxwait)
-	{
-		bool removed = false;
+    bool ElatecReaderUnit::waitRemoval(unsigned int maxwait)
+    {
+        bool removed = false;
 
-		if (d_insertedChip)
-		{
-			std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(maxwait);
-			do
-			{
-				boost::shared_ptr<Chip> chip = getChipInAir();
-				if (chip)
-				{
-					if (chip->getChipIdentifier() != d_insertedChip->getChipIdentifier())
-					{
-						d_insertedChip.reset();
-						removed = true;
-					}
-				}
-				else
-				{
-					d_insertedChip.reset();
-					removed = true;
-				}
+        if (d_insertedChip)
+        {
+            std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(maxwait);
+            do
+            {
+                boost::shared_ptr<Chip> chip = getChipInAir();
+                if (chip)
+                {
+                    if (chip->getChipIdentifier() != d_insertedChip->getChipIdentifier())
+                    {
+                        d_insertedChip.reset();
+                        removed = true;
+                    }
+                }
+                else
+                {
+                    d_insertedChip.reset();
+                    removed = true;
+                }
 
-				if (!removed)
-					std::this_thread::sleep_for(std::chrono::milliseconds(250));
-			} while (!removed && std::chrono::steady_clock::now() < clock_timeout);
-		}
+                if (!removed)
+                    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+            } while (!removed && std::chrono::steady_clock::now() < clock_timeout);
+        }
 
-		return removed;
-	}
+        return removed;
+    }
 
-	bool ElatecReaderUnit::connect()
-	{
-		return bool(d_insertedChip);
-	}
+    bool ElatecReaderUnit::connect()
+    {
+        return bool(d_insertedChip);
+    }
 
-	void ElatecReaderUnit::disconnect()
-	{
-	}
+    void ElatecReaderUnit::disconnect()
+    {
+    }
 
-	boost::shared_ptr<Chip> ElatecReaderUnit::getChipInAir()
-	{
-		boost::shared_ptr<Chip> chip;
+    boost::shared_ptr<Chip> ElatecReaderUnit::getChipInAir()
+    {
+        boost::shared_ptr<Chip> chip;
 
-		std::vector<unsigned char> result = getDefaultElatecReaderCardAdapter()->sendCommand(0x11, std::vector<unsigned char>());
-		if (result.size() > 0)
-		{
-			chip = ReaderUnit::createChip(
-				(d_card_type == "UNKNOWN" ? "GenericTag" : d_card_type),
-				std::vector<unsigned char>(result.begin() + 1, result.end())
-			);
-		}
+        std::vector<unsigned char> result = getDefaultElatecReaderCardAdapter()->sendCommand(0x11, std::vector<unsigned char>());
+        if (result.size() > 0)
+        {
+            chip = ReaderUnit::createChip(
+                (d_card_type == "UNKNOWN" ? "GenericTag" : d_card_type),
+                std::vector<unsigned char>(result.begin() + 1, result.end())
+                );
+        }
 
-		return chip;
-	}
-	
-	boost::shared_ptr<Chip> ElatecReaderUnit::createChip(std::string type)
-	{
-		boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
+        return chip;
+    }
 
-		if (chip)
-		{
-			boost::shared_ptr<ReaderCardAdapter> rca;
+    boost::shared_ptr<Chip> ElatecReaderUnit::createChip(std::string type)
+    {
+        boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 
-			if (type == "GenericTag")
-				rca = getDefaultReaderCardAdapter();
-			else
-				return chip;
+        if (chip)
+        {
+            boost::shared_ptr<ReaderCardAdapter> rca;
 
-			rca->setDataTransport(getDataTransport());
-		}
-		return chip;
-	}
+            if (type == "GenericTag")
+                rca = getDefaultReaderCardAdapter();
+            else
+                return chip;
 
-	boost::shared_ptr<Chip> ElatecReaderUnit::getSingleChip()
-	{
-		boost::shared_ptr<Chip> chip = d_insertedChip;
-		return chip;
-	}
+            rca->setDataTransport(getDataTransport());
+        }
+        return chip;
+    }
 
-	std::vector<boost::shared_ptr<Chip> > ElatecReaderUnit::getChipList()
-	{
-		std::vector<boost::shared_ptr<Chip> > chipList;
-		boost::shared_ptr<Chip> singleChip = getSingleChip();
-		if (singleChip)
-		{
-			chipList.push_back(singleChip);
-		}
-		return chipList;
-	}
+    boost::shared_ptr<Chip> ElatecReaderUnit::getSingleChip()
+    {
+        boost::shared_ptr<Chip> chip = d_insertedChip;
+        return chip;
+    }
 
-	boost::shared_ptr<ElatecReaderCardAdapter> ElatecReaderUnit::getDefaultElatecReaderCardAdapter()
-	{
-		boost::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
-		return boost::dynamic_pointer_cast<ElatecReaderCardAdapter>(adapter);
-	}
+    std::vector<boost::shared_ptr<Chip> > ElatecReaderUnit::getChipList()
+    {
+        std::vector<boost::shared_ptr<Chip> > chipList;
+        boost::shared_ptr<Chip> singleChip = getSingleChip();
+        if (singleChip)
+        {
+            chipList.push_back(singleChip);
+        }
+        return chipList;
+    }
 
-	string ElatecReaderUnit::getReaderSerialNumber()
-	{
-		string ret;
+    boost::shared_ptr<ElatecReaderCardAdapter> ElatecReaderUnit::getDefaultElatecReaderCardAdapter()
+    {
+        boost::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
+        return boost::dynamic_pointer_cast<ElatecReaderCardAdapter>(adapter);
+    }
 
-		return ret;
-	}
+    string ElatecReaderUnit::getReaderSerialNumber()
+    {
+        string ret;
 
-	bool ElatecReaderUnit::isConnected()
-	{
-		return bool(d_insertedChip);
-	}
+        return ret;
+    }
 
-	bool ElatecReaderUnit::connectToReader()
-	{
-		getDataTransport()->setReaderUnit(shared_from_this());
-		return getDataTransport()->connect();
-	}
+    bool ElatecReaderUnit::isConnected()
+    {
+        return bool(d_insertedChip);
+    }
 
-	void ElatecReaderUnit::disconnectFromReader()
-	{
-		getDataTransport()->disconnect();
-	}
+    bool ElatecReaderUnit::connectToReader()
+    {
+        getDataTransport()->setReaderUnit(shared_from_this());
+        return getDataTransport()->connect();
+    }
 
-	std::vector<unsigned char> ElatecReaderUnit::getPingCommand() const
-	{
-		std::vector<unsigned char> cmd;
+    void ElatecReaderUnit::disconnectFromReader()
+    {
+        getDataTransport()->disconnect();
+    }
 
-		cmd.push_back(0x11);
+    std::vector<unsigned char> ElatecReaderUnit::getPingCommand() const
+    {
+        std::vector<unsigned char> cmd;
 
-		return cmd;
-	}
+        cmd.push_back(0x11);
 
-	void ElatecReaderUnit::serialize(boost::property_tree::ptree& parentNode)
-	{
-		boost::property_tree::ptree node;
-		ReaderUnit::serialize(node);
-		parentNode.add_child(getDefaultXmlNodeName(), node);
-	}
+        return cmd;
+    }
 
-	void ElatecReaderUnit::unSerialize(boost::property_tree::ptree& node)
-	{
-		ReaderUnit::unSerialize(node);
-	}
+    void ElatecReaderUnit::serialize(boost::property_tree::ptree& parentNode)
+    {
+        boost::property_tree::ptree node;
+        ReaderUnit::serialize(node);
+        parentNode.add_child(getDefaultXmlNodeName(), node);
+    }
 
-	boost::shared_ptr<ElatecReaderProvider> ElatecReaderUnit::getElatecReaderProvider() const
-	{
-		return boost::dynamic_pointer_cast<ElatecReaderProvider>(getReaderProvider());
-	}
+    void ElatecReaderUnit::unSerialize(boost::property_tree::ptree& node)
+    {
+        ReaderUnit::unSerialize(node);
+    }
+
+    boost::shared_ptr<ElatecReaderProvider> ElatecReaderUnit::getElatecReaderProvider() const
+    {
+        return boost::dynamic_pointer_cast<ElatecReaderProvider>(getReaderProvider());
+    }
 }

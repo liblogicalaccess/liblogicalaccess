@@ -1,7 +1,7 @@
 /**
  * \file datatransport.hpp
  * \author Maxime C. <maxime-dev@islog.com>
- * \brief Data transport for reader/card commands. 
+ * \brief Data transport for reader/card commands.
  */
 
 #ifndef LOGICALACCESS_DATATRANSPORT_HPP
@@ -14,114 +14,112 @@
 
 namespace logicalaccess
 {
-	/**
-	 * \brief A data transport base class. It provide an abstraction layer between the host and readers.
-	 */
-	class LIBLOGICALACCESS_API DataTransport : public XmlSerializable
-	{
-		public:
+    /**
+     * \brief A data transport base class. It provide an abstraction layer between the host and readers.
+     */
+    class LIBLOGICALACCESS_API DataTransport : public XmlSerializable
+    {
+    public:
 
-			/**
-			 * \brief Get the reader unit.
-			 * \return The reader unit.
-			 */
-			virtual boost::shared_ptr<ReaderUnit> getReaderUnit() const { return d_ReaderUnit.lock(); };
+        /**
+         * \brief Get the reader unit.
+         * \return The reader unit.
+         */
+        virtual boost::shared_ptr<ReaderUnit> getReaderUnit() const { return d_ReaderUnit.lock(); };
 
-			/**
-			 * \brief Set the reader unit.
-			 * \param unit The reader unit.
-			 */
-			virtual void setReaderUnit(boost::weak_ptr<ReaderUnit> unit){ d_ReaderUnit = unit; };
+        /**
+         * \brief Set the reader unit.
+         * \param unit The reader unit.
+         */
+        virtual void setReaderUnit(boost::weak_ptr<ReaderUnit> unit){ d_ReaderUnit = unit; };
 
-			/**
-			 * \brief Get the transport type of this instance.
-			 * \return The transport type.
-			 */
-			virtual std::string getTransportType() const = 0;
+        /**
+         * \brief Get the transport type of this instance.
+         * \return The transport type.
+         */
+        virtual std::string getTransportType() const = 0;
 
-			/**
-			 * \brief Connect to the transport layer.
-			 * \return True on success, false otherwise.
-			 */
-			virtual bool connect() = 0;
+        /**
+         * \brief Connect to the transport layer.
+         * \return True on success, false otherwise.
+         */
+        virtual bool connect() = 0;
 
-			/**
-			 * \brief Disconnect from the transport layer.
-			 */
-			virtual void disconnect() = 0;
+        /**
+         * \brief Disconnect from the transport layer.
+         */
+        virtual void disconnect() = 0;
 
-			/**
-			 * \briaf Get if connected to the transport layer.
-			 * \return True if connected, false otherwise.
-			 */
-			virtual bool isConnected() = 0;
+        /**
+         * \briaf Get if connected to the transport layer.
+         * \return True if connected, false otherwise.
+         */
+        virtual bool isConnected() = 0;
 
-			/**
-			 * \brief Get the data transport endpoint name.
-			 * \return The data transport endpoint name.
-			 */
-			virtual std::string getName() const = 0;
+        /**
+         * \brief Get the data transport endpoint name.
+         * \return The data transport endpoint name.
+         */
+        virtual std::string getName() const = 0;
 
-			/**
-			 * \brief Send a command to the reader.
-			 * \param command The command buffer.			 
-			 * \param timeout The command timeout.
-			 * \return the result of the command.
-			 */
-			virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long int timeout = 2000);
+        /**
+         * \brief Send a command to the reader.
+         * \param command The command buffer.
+         * \param timeout The command timeout.
+         * \return the result of the command.
+         */
+        virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long int timeout = 2000);
 
-			/**
-			 * \brief Get the last command.
-			 * \return The last command.
-			 */
-			virtual std::vector<unsigned char> getLastCommand() { return d_lastCommand; };
+        /**
+         * \brief Get the last command.
+         * \return The last command.
+         */
+        virtual std::vector<unsigned char> getLastCommand() { return d_lastCommand; };
 
-			/**
-			 * \brief Get the last command result.
-			 * \return The last command result.
-			 */
-			virtual std::vector<unsigned char> getLastResult() { return d_lastResult; };
+        /**
+         * \brief Get the last command result.
+         * \return The last command result.
+         */
+        virtual std::vector<unsigned char> getLastResult() { return d_lastResult; };
 
-			/**
-			 * \brief Get the result checker.
-			 * \return The result checker.
-			 */
-			virtual boost::shared_ptr<ResultChecker> getResultChecker() const { return d_ResultChecker; };
+        /**
+         * \brief Get the result checker.
+         * \return The result checker.
+         */
+        virtual boost::shared_ptr<ResultChecker> getResultChecker() const { return d_ResultChecker; };
 
-			/**
-			 * \brief Set the result checker.
-			 * \param unit The result checker.
-			 */
-			virtual void setResultChecker(boost::shared_ptr<ResultChecker> checker){ d_ResultChecker = checker; };
+        /**
+         * \brief Set the result checker.
+         * \param unit The result checker.
+         */
+        virtual void setResultChecker(boost::shared_ptr<ResultChecker> checker){ d_ResultChecker = checker; };
 
-		protected:
+    protected:
 
-			virtual void send(const std::vector<unsigned char>& data) = 0;
+        virtual void send(const std::vector<unsigned char>& data) = 0;
 
-			virtual std::vector<unsigned char> receive(long int timeout) = 0;
-			
-			/**
-			 * \brief The reader unit.
-			 */
-			boost::weak_ptr<ReaderUnit> d_ReaderUnit;
+        virtual std::vector<unsigned char> receive(long int timeout) = 0;
 
-			/**
-			 * \brief The last result.
-			 */
-			std::vector<unsigned char> d_lastResult;
+        /**
+         * \brief The reader unit.
+         */
+        boost::weak_ptr<ReaderUnit> d_ReaderUnit;
 
-			/**
-			 * \brief The last command.
-			 */
-			std::vector<unsigned char> d_lastCommand;
+        /**
+         * \brief The last result.
+         */
+        std::vector<unsigned char> d_lastResult;
 
-			/**
-			 * \brief The result checker.
-			 */
-			boost::shared_ptr<ResultChecker> d_ResultChecker;
-	};
+        /**
+         * \brief The last command.
+         */
+        std::vector<unsigned char> d_lastCommand;
 
+        /**
+         * \brief The result checker.
+         */
+        boost::shared_ptr<ResultChecker> d_ResultChecker;
+    };
 }
 
 #endif /* LOGICALACCESS_DATATRANSPORT_HPP */
-

@@ -19,73 +19,72 @@
 
 namespace logicalaccess
 {
-	void NXPAV1KeyDiversification::initDiversification(std::vector<unsigned char> identifier, int AID, boost::shared_ptr<Key> key, unsigned char keyno, std::vector<unsigned char>& diversify)
-	{
-		diversify.push_back(keyno);
-		diversify.insert(diversify.end(), identifier.begin(), identifier.end());
+    void NXPAV1KeyDiversification::initDiversification(std::vector<unsigned char> identifier, int AID, boost::shared_ptr<Key> key, unsigned char keyno, std::vector<unsigned char>& diversify)
+    {
+        diversify.push_back(keyno);
+        diversify.insert(diversify.end(), identifier.begin(), identifier.end());
 
-		if (diversify.size() != 8)
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "NXP Diversification AV1 need 8 bytes of DivInput (Keyno + 7-byte UID)");
-		if (boost::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_AES)
-			diversify.insert(diversify.end(), diversify.begin(), diversify.end());
-	}
+        if (diversify.size() != 8)
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "NXP Diversification AV1 need 8 bytes of DivInput (Keyno + 7-byte UID)");
+        if (boost::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_AES)
+            diversify.insert(diversify.end(), diversify.begin(), diversify.end());
+    }
 
-	std::vector<unsigned char> NXPAV1KeyDiversification::getDiversifiedKey(boost::shared_ptr<Key> key, std::vector<unsigned char> diversify)
-	{
-		LOG(LogLevel::INFOS) << "Using key diversification NXP AV1 with div : " << BufferHelper::getHex(diversify);
-		boost::shared_ptr<openssl::SymmetricKey> symkey;
-		boost::shared_ptr<openssl::InitializationVector> iv;
-		boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher;
-		std::vector<unsigned char> keycipher(key->getData(), key->getData() + key->getLength());
-		std::vector<unsigned char> divKey, divInputEncP1, divInputEncP2;
+    std::vector<unsigned char> NXPAV1KeyDiversification::getDiversifiedKey(boost::shared_ptr<Key> key, std::vector<unsigned char> diversify)
+    {
+        LOG(LogLevel::INFOS) << "Using key diversification NXP AV1 with div : " << BufferHelper::getHex(diversify);
+        boost::shared_ptr<openssl::SymmetricKey> symkey;
+        boost::shared_ptr<openssl::InitializationVector> iv;
+        boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher;
+        std::vector<unsigned char> keycipher(key->getData(), key->getData() + key->getLength());
+        std::vector<unsigned char> divKey, divInputEncP1, divInputEncP2;
 
-		if (boost::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() != DESFireKeyType::DF_KEY_AES)
-		{
-			LOG(LogLevel::INFOS) << "Diversification NXP AV1 3DES";
-			for (int x = 0; x < 8; ++x)
-				diversify[x] = diversify[x] ^ keycipher[x];
+        if (boost::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() != DESFireKeyType::DF_KEY_AES)
+        {
+            LOG(LogLevel::INFOS) << "Diversification NXP AV1 3DES";
+            for (int x = 0; x < 8; ++x)
+                diversify[x] = diversify[x] ^ keycipher[x];
 
-			std::vector<unsigned char> emptyIV(8);
-			symkey.reset(new openssl::DESSymmetricKey(openssl::DESSymmetricKey::createFromData(keycipher)));
-			iv.reset(new openssl::DESInitializationVector(openssl::DESInitializationVector::createFromData(emptyIV)));
-			cipher.reset(new openssl::DESCipher());
+            std::vector<unsigned char> emptyIV(8);
+            symkey.reset(new openssl::DESSymmetricKey(openssl::DESSymmetricKey::createFromData(keycipher)));
+            iv.reset(new openssl::DESInitializationVector(openssl::DESInitializationVector::createFromData(emptyIV)));
+            cipher.reset(new openssl::DESCipher());
 
-			cipher->cipher(diversify, divInputEncP1, *symkey.get(), *iv.get(), false);
+            cipher->cipher(diversify, divInputEncP1, *symkey.get(), *iv.get(), false);
 
-			divKey.insert(divKey.end(), divInputEncP1.begin(), divInputEncP1.end());
+            divKey.insert(divKey.end(), divInputEncP1.begin(), divInputEncP1.end());
 
-			diversify = divInputEncP1;
-			for (int x = 0; x < 8; ++x)
-				diversify[x] = diversify[x] ^ keycipher[x + 8];
+            diversify = divInputEncP1;
+            for (int x = 0; x < 8; ++x)
+                diversify[x] = diversify[x] ^ keycipher[x + 8];
 
-			cipher->cipher(diversify, divInputEncP2, *symkey.get(), *iv.get(), false);
-			divKey.insert(divKey.end(), divInputEncP2.begin(), divInputEncP2.end());
-		}
-		else if (boost::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_AES)
-		{
-			LOG(LogLevel::INFOS) << "Diversification NXP AV1 AES";
+            cipher->cipher(diversify, divInputEncP2, *symkey.get(), *iv.get(), false);
+            divKey.insert(divKey.end(), divInputEncP2.begin(), divInputEncP2.end());
+        }
+        else if (boost::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_AES)
+        {
+            LOG(LogLevel::INFOS) << "Diversification NXP AV1 AES";
 
-			for (int x = 0; x < 16; ++x)
-				diversify[x] = diversify[x] ^ keycipher[x];
+            for (int x = 0; x < 16; ++x)
+                diversify[x] = diversify[x] ^ keycipher[x];
 
-			std::vector<unsigned char> emptyIV(16);
-			symkey.reset(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(keycipher)));
-			iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
-			cipher.reset(new openssl::AESCipher());
+            std::vector<unsigned char> emptyIV(16);
+            symkey.reset(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(keycipher)));
+            iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
+            cipher.reset(new openssl::AESCipher());
 
-			cipher->cipher(diversify, divKey, *symkey.get(), *iv.get(), false);
-		}
-		return divKey;
-	}
-	
-	void NXPAV1KeyDiversification::serialize(boost::property_tree::ptree& parentNode)
-	{
-		boost::property_tree::ptree node;
-		parentNode.add_child(getDefaultXmlNodeName(), node);
-	}
-	
-	void NXPAV1KeyDiversification::unSerialize(boost::property_tree::ptree& /*node*/)
-	{
-	
-	}
+            cipher->cipher(diversify, divKey, *symkey.get(), *iv.get(), false);
+        }
+        return divKey;
+    }
+
+    void NXPAV1KeyDiversification::serialize(boost::property_tree::ptree& parentNode)
+    {
+        boost::property_tree::ptree node;
+        parentNode.add_child(getDefaultXmlNodeName(), node);
+    }
+
+    void NXPAV1KeyDiversification::unSerialize(boost::property_tree::ptree& /*node*/)
+    {
+    }
 }

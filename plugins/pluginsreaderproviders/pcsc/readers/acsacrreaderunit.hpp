@@ -15,33 +15,31 @@
 
 namespace logicalaccess
 {
-	/**
-	 * \brief The ACS ACR reader unit class.
-	 */
-	class LIBLOGICALACCESS_API ACSACRReaderUnit : public PCSCReaderUnit
-	{
-		public:			
+    /**
+     * \brief The ACS ACR reader unit class.
+     */
+    class LIBLOGICALACCESS_API ACSACRReaderUnit : public PCSCReaderUnit
+    {
+    public:
 
-			/**
-			 * \brief Constructor.
-			 */
-			ACSACRReaderUnit(const std::string& name);
+        /**
+         * \brief Constructor.
+         */
+        ACSACRReaderUnit(const std::string& name);
 
-			/**
-			 * \brief Destructor.
-			 */
-			virtual ~ACSACRReaderUnit();			
+        /**
+         * \brief Destructor.
+         */
+        virtual ~ACSACRReaderUnit();
 
-			/**
-			 * \brief Get the PC/SC reader unit type.
-			 * \return The PC/SC reader unit type.
-			 */
-			virtual PCSCReaderUnitType getPCSCType() const;
+        /**
+         * \brief Get the PC/SC reader unit type.
+         * \return The PC/SC reader unit type.
+         */
+        virtual PCSCReaderUnitType getPCSCType() const;
 
-
-		protected:
-			
-	};
+    protected:
+    };
 }
 
 #endif

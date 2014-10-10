@@ -10,70 +10,70 @@
 
 namespace logicalaccess
 {
-	NoDataRepresentation::NoDataRepresentation()
-	{
-	}
+    NoDataRepresentation::NoDataRepresentation()
+    {
+    }
 
-	NoDataRepresentation::~NoDataRepresentation()
-	{
-	}
+    NoDataRepresentation::~NoDataRepresentation()
+    {
+    }
 
-	string NoDataRepresentation::getName() const
-	{
-		return string("No Representation");
-	}
+    string NoDataRepresentation::getName() const
+    {
+        return string("No Representation");
+    }
 
-	EncodingType NoDataRepresentation::getType() const
-	{
-		return ET_NOENCODING;
-	}
+    EncodingType NoDataRepresentation::getType() const
+    {
+        return ET_NOENCODING;
+    }
 
-	unsigned int NoDataRepresentation::convertNumeric(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
-	{
-		if (convertedLengthBytes >= dataLengthBytes)
-		{
-			memset(convertedData, 0x00, convertedLengthBytes);
-			memcpy(convertedData, data, dataLengthBytes);				
-		}
+    unsigned int NoDataRepresentation::convertNumeric(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
+    {
+        if (convertedLengthBytes >= dataLengthBytes)
+        {
+            memset(convertedData, 0x00, convertedLengthBytes);
+            memcpy(convertedData, data, dataLengthBytes);
+        }
 
-		return dataLengthBits;
-	}
+        return dataLengthBits;
+    }
 
-	unsigned int NoDataRepresentation::convertBinary(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
-	{
-		if (convertedLengthBytes >= dataLengthBytes)
-		{
-			memset(convertedData, 0x00, convertedLengthBytes);
-			memcpy(convertedData, data, dataLengthBytes);				
-		}
+    unsigned int NoDataRepresentation::convertBinary(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
+    {
+        if (convertedLengthBytes >= dataLengthBytes)
+        {
+            memset(convertedData, 0x00, convertedLengthBytes);
+            memcpy(convertedData, data, dataLengthBytes);
+        }
 
-		return dataLengthBits;
-	}
+        return dataLengthBits;
+    }
 
-	unsigned int NoDataRepresentation::convertLength(unsigned int lengthBits)
-	{
-		return lengthBits;
-	}
+    unsigned int NoDataRepresentation::convertLength(unsigned int lengthBits)
+    {
+        return lengthBits;
+    }
 
-	unsigned int NoDataRepresentation::revertNumeric(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
-	{
-		if (convertedLengthBytes >= dataLengthBytes)
-		{
-			memset(convertedData, 0x00, convertedLengthBytes);
-			memcpy(convertedData, data, dataLengthBytes);				
-		}
+    unsigned int NoDataRepresentation::revertNumeric(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
+    {
+        if (convertedLengthBytes >= dataLengthBytes)
+        {
+            memset(convertedData, 0x00, convertedLengthBytes);
+            memcpy(convertedData, data, dataLengthBytes);
+        }
 
-		return dataLengthBits;
-	}
+        return dataLengthBits;
+    }
 
-	unsigned int NoDataRepresentation::revertBinary(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
-	{
-		if (convertedLengthBytes >= dataLengthBytes)
-		{
-			memset(convertedData, 0x00, convertedLengthBytes);
-			memcpy(convertedData, data, dataLengthBytes);				
-		}
+    unsigned int NoDataRepresentation::revertBinary(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
+    {
+        if (convertedLengthBytes >= dataLengthBytes)
+        {
+            memset(convertedData, 0x00, convertedLengthBytes);
+            memcpy(convertedData, data, dataLengthBytes);
+        }
 
-		return dataLengthBits;
-	}
+        return dataLengthBits;
+    }
 }

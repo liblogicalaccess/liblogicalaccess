@@ -8,29 +8,29 @@
 
 namespace logicalaccess
 {
-	std::vector<unsigned char> ReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
-	{
-		return command;
-	}
+    std::vector<unsigned char> ReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
+    {
+        return command;
+    }
 
-	std::vector<unsigned char> ReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
-	{
-		return answer;
-	}
+    std::vector<unsigned char> ReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
+    {
+        return answer;
+    }
 
-	std::vector<unsigned char> ReaderCardAdapter::sendCommand(const std::vector<unsigned char>& command, long timeout)
-	{
-		std::vector<unsigned char> res;
+    std::vector<unsigned char> ReaderCardAdapter::sendCommand(const std::vector<unsigned char>& command, long timeout)
+    {
+        std::vector<unsigned char> res;
 
-		if (d_dataTransport)
-		{
-			res = adaptAnswer(d_dataTransport->sendCommand(adaptCommand(command), timeout));
-		}
-		else
-		{
-			LOG(LogLevel::ERRORS) << "Cannot transmit the command, data transport is not set!";
-		}
+        if (d_dataTransport)
+        {
+            res = adaptAnswer(d_dataTransport->sendCommand(adaptCommand(command), timeout));
+        }
+        else
+        {
+            LOG(LogLevel::ERRORS) << "Cannot transmit the command, data transport is not set!";
+        }
 
-		return res;
-	}
+        return res;
+    }
 }
