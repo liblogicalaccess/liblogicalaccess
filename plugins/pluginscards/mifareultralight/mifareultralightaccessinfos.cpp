@@ -32,7 +32,7 @@ namespace logicalaccess
 	{
 		boost::property_tree::ptree node;
 		node.put("LockPage", lockPage);
-		parentNode.add_child(getDefaultXmlNodeName(), node);
+		parentNode.add_child(MifareUltralightAccessInfo::getDefaultXmlNodeName(), node);
 	}
 
 	void MifareUltralightAccessInfo::unSerialize(boost::property_tree::ptree& node)
