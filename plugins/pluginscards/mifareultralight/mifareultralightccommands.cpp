@@ -10,12 +10,17 @@ namespace logicalaccess
 {
     void MifareUltralightCCommands::changeKey(boost::shared_ptr<TripleDESKey> key)
     {
-        if (key)
+        if (key && key->getLength() == 16)
         {
-            for (unsigned int i = 0; i < key->getLength(); i += 4)
-            {
-                writePage(0x2C + (i / 4), key->getData() + i, 4);
-            }
+			std::vector<unsigned char> buf;
+			for (char i = 15; i >= 0; --i)
+			{
+				buf.push_back(key->getData()[i]);
+			}
+            writePage(0x2C, buf.data() + 8, 4);
+			writePage(0x2D, buf.data() + 12, 4);
+			writePage(0x2E, buf.data(), 4);
+			writePage(0x2F, buf.data() + 4, 4);
         }
     }
 

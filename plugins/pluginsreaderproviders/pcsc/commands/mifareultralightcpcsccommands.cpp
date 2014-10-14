@@ -12,6 +12,7 @@
 
 #include "../pcscreaderprovider.hpp"
 #include "mifareultralightcchip.hpp"
+#include "desfirecrypto.hpp"
 #include "logicalaccess/cards/computermemorykeystorage.hpp"
 #include "logicalaccess/cards/readermemorykeystorage.hpp"
 #include "logicalaccess/cards/samkeystorage.hpp"
@@ -31,6 +32,14 @@ namespace logicalaccess
     MifareUltralightCPCSCCommands::~MifareUltralightCPCSCCommands()
     {
     }
+
+	void MifareUltralightCPCSCCommands::startGenericSession()
+	{
+	}
+
+	void MifareUltralightCPCSCCommands::stopGenericSession()
+	{
+	}
 
     std::vector<unsigned char> MifareUltralightCPCSCCommands::sendGenericCommand(const std::vector<unsigned char>& data)
     {
@@ -68,44 +77,55 @@ namespace logicalaccess
             }
         }
 
-        // Get RndB from the PICC
-        result = authenticate_PICC1();
-        EXCEPTION_ASSERT_WITH_LOG(result.size() >= 11, CardException, "Authentication failed. The PICC return a bad buffer.");
+		startGenericSession();
 
-        openssl::DESCipher cipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_CBC);
-        unsigned char* keydata = authkey->getData();
-        openssl::DESSymmetricKey deskey(openssl::DESSymmetricKey::createFromData(std::vector<unsigned char>(keydata, keydata + authkey->getLength())));
-        openssl::DESInitializationVector desiv = openssl::DESInitializationVector::createNull();
+		try
+		{
+			// Get RndB from the PICC
+			result = authenticate_PICC1();
+			EXCEPTION_ASSERT_WITH_LOG(result.size() >= 11, CardException, "Authentication failed. The PICC return a bad buffer.");
+			EXCEPTION_ASSERT_WITH_LOG(result.at(0) == 0xAF, CardException, "Authentication failed. Return code unexcepted.");
 
-        std::vector<unsigned char> encRndB(result.begin() + 1, result.end() - 2);
-        std::vector<unsigned char> rndB;
-        cipher.decipher(encRndB, rndB, deskey, desiv, false);
+			std::vector<unsigned char> iv;
+			iv.resize(8, 0x00);
 
-        std::vector<unsigned char> rndA;
-        rndA.resize(8);
-        if (RAND_bytes(&rndA[0], static_cast<int>(rndA.size())) != 1)
-        {
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
-        }
+			std::vector<unsigned char> key = std::vector<unsigned char>(authkey->getData(), authkey->getData() + authkey->getLength());
+			std::vector<unsigned char> encRndB(result.begin() + 1, result.end() - 2);
+			std::vector<unsigned char> rndB = DESFireCrypto::desfire_CBC_receive(key, iv, encRndB);
 
-        std::vector<unsigned char> rndAB;
-        rndAB.insert(rndAB.end(), rndA.begin(), rndA.end());
-        rndAB.insert(rndAB.end(), rndB.begin() + 1, rndB.end());
-        rndAB.push_back(rndB.at(0));
+			std::vector<unsigned char> rndA;
+			rndA.resize(8);
+			if (RAND_bytes(&rndA[0], static_cast<int>(rndA.size())) != 1)
+			{
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
+			}
 
-        std::vector<unsigned char> encRndAB;
-        desiv = openssl::DESInitializationVector::createFromData(encRndB);
-        cipher.cipher(rndAB, encRndAB, deskey, desiv, false);
+			std::vector<unsigned char> rndAB;
+			rndAB.insert(rndAB.end(), rndA.begin(), rndA.end());
+			rndAB.insert(rndAB.end(), rndB.begin() + 1, rndB.end());
+			rndAB.push_back(rndB.at(0));
 
-        // Send Ek(RndAB) to the PICC and get RndA'
-        result = authenticate_PICC2(encRndAB);
-        EXCEPTION_ASSERT_WITH_LOG(result.size() >= 10, CardException, "Authentication failed. The PICC return a bad buffer.");
+			std::vector<unsigned char> encRndAB = DESFireCrypto::sam_CBC_send(key, encRndB, rndAB);
 
-        desiv = openssl::DESInitializationVector::createFromData(std::vector<unsigned char>(encRndAB.end() - 8, encRndAB.end()));
-        std::vector<unsigned char> encRndA1(result.begin(), result.end() - 2);
-        std::vector<unsigned char> rndA1;
-        cipher.decipher(encRndA1, rndA1, deskey, desiv, false);
+			// Send Ek(RndAB) to the PICC and get RndA'
+			result = authenticate_PICC2(encRndAB);
+			EXCEPTION_ASSERT_WITH_LOG(result.size() >= 11, CardException, "Authentication failed. The PICC return a bad buffer.");
+			EXCEPTION_ASSERT_WITH_LOG(result.at(0) == 0x00, CardException, "Authentication failed. Return code unexcepted.");
 
-        EXCEPTION_ASSERT_WITH_LOG(rndA == rndA1, CardException, "Authentication failed. RndA' != RndA.");
+			iv = std::vector<unsigned char>(encRndAB.end() - 8, encRndAB.end());
+			std::vector<unsigned char> encRndA1(result.begin() + 1, result.end() - 2);
+			std::vector<unsigned char> rndA1 = DESFireCrypto::desfire_CBC_receive(key, iv, encRndA1);
+			rndA1.insert(rndA1.begin(), rndA1.at(rndA1.size() - 1));
+			rndA1.erase(rndA1.end() - 1);
+
+			EXCEPTION_ASSERT_WITH_LOG(rndA == rndA1, CardException, "Authentication failed. RndA' != RndA.");
+		}
+		catch (std::exception&)
+		{
+			stopGenericSession();
+			throw;
+		}
+
+		stopGenericSession();
     }
 }

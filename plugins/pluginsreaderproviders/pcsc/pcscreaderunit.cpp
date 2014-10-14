@@ -43,6 +43,7 @@
 #include "commands/desfireiso7816resultchecker.hpp"
 #include "commands/mifareomnikeyxx27resultchecker.hpp"
 #include "commands/acsacrresultchecker.hpp"
+#include "commands/springcardresultchecker.hpp"
 
 #include "readers/omnikeyxx21readerunit.hpp"
 #include "readers/omnikeylanxx21readerunit.hpp"
@@ -1521,6 +1522,7 @@ namespace logicalaccess
                 else if (getPCSCType() == PCSC_RUT_SPRINGCARD)
                 {
                     commands.reset(new MifareUltralightCSpringCardCommands());
+					resultChecker.reset(new SpringCardResultChecker());
                 }
                 else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX21)
                 {
