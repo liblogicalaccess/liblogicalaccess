@@ -30,6 +30,10 @@ namespace logicalaccess
 
     protected:
 
+		virtual void startGenericSession();
+
+		virtual void stopGenericSession();
+
         virtual std::vector<unsigned char> sendGenericCommand(const std::vector<unsigned char>& data);
     };
 }
