@@ -73,21 +73,24 @@ namespace logicalaccess
     std::vector<unsigned char> RplethDataTransport::receive(long int timeout)
     {
         std::vector<unsigned char> ret, buf;
-        clock_t begin, diff;
-        begin = std::clock();
+		std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeout);
 
-        diff = (begin + timeout) - std::clock();
-        while (ret.size() == 0 && diff > 0)
+		do
         {
             buf.clear();
             if (d_buffer.size() < 5 || (d_buffer.size() >= 4 && d_buffer.size() < (unsigned int)(4 + d_buffer[3] + 1)))
                 buf = TcpDataTransport::receive(timeout);
 
-            if (d_buffer.size() < 1024)
+            if (d_buffer.size() < 8192)
             {
                 d_buffer.insert(d_buffer.end(), buf.begin(), buf.end());
                 buf.clear();
             }
+			else
+			{
+				d_buffer.clear();
+				buf.clear();
+			}
 
             if (d_buffer.size() >= 4)
             {
@@ -121,9 +124,7 @@ namespace logicalaccess
                     break; //We have a correct answer
                 }
             }
-
-            diff = (begin + timeout) - std::clock();
-        }
+		} while (ret.size() == 0 && std::chrono::steady_clock::now() < clock_timeout);
         return ret;
     }
 

@@ -63,7 +63,9 @@ namespace logicalaccess
         DISCONNECT = 0x09,
         GET_READERTYPE = 0x0A,
         GET_CSN = 0x0B,
-        SET_CARDTYPE = 0x0C
+        SET_CARDTYPE = 0x0C,
+		SEND_CARDS = 0x0D,
+		RECEIVE_UNPRESENTED_CARDS = 0x0E
     } HidCommand;
 
     /**
@@ -310,6 +312,10 @@ namespace logicalaccess
         std::string getProxyReaderType();
 
         std::vector<unsigned char> getInsertedChipIdentifier();
+
+		void sendCardsWaited(std::list<std::vector<unsigned char> > cards);
+
+		std::list<std::vector<unsigned char> > RplethReaderUnit::receiveCardsWaited(bool present = false);
 
     protected:
 

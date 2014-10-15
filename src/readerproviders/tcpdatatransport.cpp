@@ -10,12 +10,13 @@
 #include "logicalaccess/bufferhelper.hpp"
 
 #include <boost/foreach.hpp>
+#include <boost/lambda/lambda.hpp>
 #include <boost/optional.hpp>
 #include <boost/array.hpp>
 
 namespace logicalaccess
 {
-    TcpDataTransport::TcpDataTransport() : d_ipAddress("127.0.0.1"), d_port(9559)
+	TcpDataTransport::TcpDataTransport() : d_ipAddress("127.0.0.1"), d_port(9559), d_socket(d_ios), d_timer(d_ios), d_read_error(true)
     {
     }
 
@@ -43,46 +44,36 @@ namespace logicalaccess
         d_port = port;
     }
 
-    boost::shared_ptr<boost::asio::ip::tcp::socket> TcpDataTransport::getSocket() const
-    {
-        return d_socket;
-    }
-
     bool TcpDataTransport::connect()
     {
-        if (d_socket)
-            d_socket->close();
-
-        boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(getIpAddress()), getPort());
-        d_socket.reset(new boost::asio::ip::tcp::socket(ios));
+		if (d_socket.is_open())
+            d_socket.close();
 
         try
         {
-            d_socket->connect(endpoint);
+			boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(getIpAddress()), getPort());
+			d_socket.connect(endpoint);
+
             LOG(LogLevel::INFOS) << "Connected to " << getIpAddress() << " on port " << getPort() << ".";
         }
         catch (boost::system::system_error& ex)
         {
             LOG(LogLevel::ERRORS) << "Cannot establish connection on " << getIpAddress() << ":" << getPort() << " : " << ex.what();
-            d_socket.reset();
+			disconnect();
         }
 
-        return bool(d_socket);
+		return bool(d_socket.is_open());
     }
 
     void TcpDataTransport::disconnect()
     {
-        if (d_socket)
-        {
-            LOG(LogLevel::INFOS) << "Disconnected.";
-            d_socket->close();
-            d_socket.reset();
-        }
+        LOG(LogLevel::INFOS) << "Disconnected.";
+        d_socket.close();
     }
 
     bool TcpDataTransport::isConnected()
     {
-        return bool(d_socket);
+		return bool(d_socket.is_open());
     }
 
     std::string TcpDataTransport::getName() const
@@ -94,51 +85,52 @@ namespace logicalaccess
     {
         if (data.size() > 0)
         {
-            boost::shared_ptr<boost::asio::ip::tcp::socket> socket = getSocket();
-            if (socket->is_open())
-            {
-                LOG(LogLevel::COMS) << "Send command: " << BufferHelper::getHex(data).c_str();
-                socket->send(boost::asio::buffer(data));
-            }
-            else
-            {
-                LOG(LogLevel::ERRORS) << "TCP socket closed.";
-            }
+			d_socket.send(boost::asio::buffer(data));
         }
+    }
+
+    void TcpDataTransport::read_complete(const boost::system::error_code& error, size_t bytes_transferred)
+	{
+        d_read_error = (error || bytes_transferred == 0);
+		d_bytes_transferred = bytes_transferred;
+        d_timer.cancel();
+    }
+ 
+    void TcpDataTransport::time_out(const boost::system::error_code& error)
+	{
+        if (error) 
+            return;
+        d_socket.cancel();
     }
 
     std::vector<unsigned char> TcpDataTransport::receive(long int timeout)
     {
-        std::vector<unsigned char> res;
+		std::vector<unsigned char> recv(256);
+		d_ios.reset();
+		d_bytes_transferred = 0;
+ 
+		d_socket.async_receive(boost::asio::buffer(recv),
+                boost::bind(&TcpDataTransport::read_complete,
+                        this,
+                        boost::asio::placeholders::error,
+                        boost::asio::placeholders::bytes_transferred));
+ 
+        d_timer.expires_from_now(boost::posix_time::milliseconds(timeout));
+        d_timer.async_wait(boost::bind(&TcpDataTransport::time_out,
+                                this, boost::asio::placeholders::error));
+ 
+		d_ios.run();
 
-        boost::shared_ptr<boost::asio::ip::tcp::socket> socket = getSocket();
-
-        long int currentWait = 0;
-        size_t lenav = socket->available();
-        while (lenav == 0 && (timeout == 0 || currentWait < timeout))
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(250));
-            currentWait += 250;
-
-            lenav = socket->available();
-        }
-
-        if (lenav > 0)
-        {
-            std::vector<unsigned char> bufrcv(lenav);
-            size_t len = socket->receive(boost::asio::buffer(bufrcv));
-            res = std::vector<unsigned char>(bufrcv.begin(), bufrcv.begin() + len);
-        }
-        else
-        {
+		recv.resize(d_bytes_transferred);
+		if (d_read_error || recv.size() == 0)
+		{
             char buf[64];
-            sprintf(buf, "Socket receive timeout (%ld > %ld).", currentWait, timeout);
+            sprintf(buf, "Socket receive timeout (> %ld milliseconds).", timeout);
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, buf);
         }
 
-        LOG(LogLevel::COMS) << "Command response: " << BufferHelper::getHex(res);
-
-        return res;
+        LOG(LogLevel::COMS) << "Command response: " << BufferHelper::getHex(recv);
+		return recv;
     }
 
     void TcpDataTransport::serialize(boost::property_tree::ptree& parentNode)

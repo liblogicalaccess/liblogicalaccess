@@ -9,6 +9,7 @@
 
 #include "logicalaccess/readerproviders/datatransport.hpp"
 #include <boost/asio.hpp>
+#include <boost/asio/deadline_timer.hpp>
 
 namespace logicalaccess
 {
@@ -79,11 +80,6 @@ namespace logicalaccess
         virtual std::string getDefaultXmlNodeName() const;
 
         /**
-         * \brief Get the client socket.
-         */
-        boost::shared_ptr<boost::asio::ip::tcp::socket> getSocket() const;
-
-        /**
          * \brief Get the ip address.
          * \return The ip address.
          */
@@ -120,17 +116,48 @@ namespace logicalaccess
          */
         virtual std::vector<unsigned char> receive(long int timeout);
 
-        /**
-         * \brief Client socket use to communicate with the reader.
+
+		/**
+         * \brief Read complete
+		 * \param error Read error
+		 * \param bytes_transferred Byte transfered
          */
-        boost::shared_ptr<boost::asio::ip::tcp::socket> d_socket;
+		void read_complete(const boost::system::error_code& error, size_t bytes_transferred);
+
+		/**
+         * \brief Read timeout
+		 * \param error Read timeout or canceled
+         */
+	    void time_out(const boost::system::error_code& error);
 
     protected:
 
         /**
          * \brief Provides core I/O functionality
          */
-        boost::asio::io_service ios;
+        boost::asio::io_service d_ios;
+
+        /**
+         * \brief TCP Socket
+         */
+		boost::asio::ip::tcp::socket d_socket;
+
+
+		/**
+         * \brief Read Deadline timer
+         */
+		boost::asio::deadline_timer d_timer;
+
+
+		/**
+         * \brief Read error
+         */
+		bool d_read_error;
+
+		/**
+         * \brief Byte Readed
+         */
+		size_t d_bytes_transferred;
 
         /**
          * \brief The ip address
