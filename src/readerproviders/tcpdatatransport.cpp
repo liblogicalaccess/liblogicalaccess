@@ -10,7 +10,6 @@
 #include "logicalaccess/bufferhelper.hpp"
 
 #include <boost/foreach.hpp>
-#include <boost/lambda/lambda.hpp>
 #include <boost/optional.hpp>
 #include <boost/array.hpp>
 
@@ -44,15 +43,30 @@ namespace logicalaccess
         d_port = port;
     }
 
-    bool TcpDataTransport::connect()
+	bool TcpDataTransport::connect()
+	{
+		return connect(2000);
+	}
+
+    bool TcpDataTransport::connect(long int timeout)
     {
 		if (d_socket.is_open())
             d_socket.close();
 
         try
         {
+			d_timer.expires_from_now(boost::posix_time::milliseconds(timeout));
+			d_timer.async_wait(boost::bind(&TcpDataTransport::time_out,
+                                this, boost::asio::placeholders::error));
+
 			boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(getIpAddress()), getPort());
-			d_socket.connect(endpoint);
+			d_socket.async_connect(endpoint, boost::bind(&TcpDataTransport::connect_complete,
+                                this, boost::asio::placeholders::error));
+
+			d_ios.run();
+
+			if (d_read_error)
+				d_socket.close();
 
             LOG(LogLevel::INFOS) << "Connected to " << getIpAddress() << " on port " << getPort() << ".";
         }
@@ -87,6 +101,12 @@ namespace logicalaccess
         {
 			d_socket.send(boost::asio::buffer(data));
         }
+    }
+
+	void TcpDataTransport::connect_complete(const boost::system::error_code& error)
+	{
+		d_read_error = (error != 0);
+        d_timer.cancel();
     }
 
     void TcpDataTransport::read_complete(const boost::system::error_code& error, size_t bytes_transferred)

@@ -38,11 +38,17 @@ namespace logicalaccess
          */
         virtual std::string getTransportType() const { return TRANSPORT_TCP; };
 
-        /**
+		/**
          * \param Connect to the transport layer.
          * \return True on success, false otherwise.
          */
         virtual bool connect();
+
+        /**
+         * \param Connect to the transport layer.
+         * \return True on success, false otherwise.
+         */
+        virtual bool connect(long int timeout = 2000);
 
         /**
          * \param Disconnect from the transport layer.
@@ -116,6 +122,11 @@ namespace logicalaccess
          */
         virtual std::vector<unsigned char> receive(long int timeout);
 
+		/**
+         * \brief Connect complete
+		 * \param error Read error
+         */
+		void connect_complete(const boost::system::error_code& error);
 
 		/**
          * \brief Read complete
