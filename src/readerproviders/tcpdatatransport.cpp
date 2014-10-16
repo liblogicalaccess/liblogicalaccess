@@ -55,6 +55,7 @@ namespace logicalaccess
 
         try
         {
+			d_ios.reset();
 			d_timer.expires_from_now(boost::posix_time::milliseconds(timeout));
 			d_timer.async_wait(boost::bind(&TcpDataTransport::time_out,
                                 this, boost::asio::placeholders::error));
@@ -129,6 +130,7 @@ namespace logicalaccess
 		d_ios.reset();
 		d_bytes_transferred = 0;
  
+		d_ios.reset();
 		d_socket.async_receive(boost::asio::buffer(recv),
                 boost::bind(&TcpDataTransport::read_complete,
                         this,

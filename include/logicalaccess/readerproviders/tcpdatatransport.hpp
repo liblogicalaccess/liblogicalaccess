@@ -39,13 +39,14 @@ namespace logicalaccess
         virtual std::string getTransportType() const { return TRANSPORT_TCP; };
 
 		/**
-         * \param Connect to the transport layer.
+         * \brief Connect to the transport layer.
          * \return True on success, false otherwise.
          */
         virtual bool connect();
 
         /**
-         * \param Connect to the transport layer.
+         * \brief Connect to the transport layer.
+		 * \param timeout Time after the connect task will be canceled.
          * \return True on success, false otherwise.
          */
         virtual bool connect(long int timeout = 2000);
@@ -56,7 +57,7 @@ namespace logicalaccess
         virtual void disconnect();
 
         /**
-         * \briaf Get if connected to the transport layer.
+         * \brief Get if connected to the transport layer.
          * \return True if connected, false otherwise.
          */
         virtual bool isConnected();
@@ -153,12 +154,10 @@ namespace logicalaccess
          */
 		boost::asio::ip::tcp::socket d_socket;
 
-
 		/**
          * \brief Read Deadline timer
          */
 		boost::asio::deadline_timer d_timer;
-
 
 		/**
          * \brief Read error
