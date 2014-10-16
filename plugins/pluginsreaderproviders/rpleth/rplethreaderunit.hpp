@@ -313,9 +313,9 @@ namespace logicalaccess
 
         std::vector<unsigned char> getInsertedChipIdentifier();
 
-	void sendCardsWaited(std::list<std::vector<unsigned char> > cards);
+        void sendCardWaited(std::vector<unsigned char> card);
 
-	std::list<std::vector<unsigned char> > receiveCardsWaited(bool present = false);
+        std::vector<unsigned char> receiveCardWaited(bool present = false);
 
     protected:
 

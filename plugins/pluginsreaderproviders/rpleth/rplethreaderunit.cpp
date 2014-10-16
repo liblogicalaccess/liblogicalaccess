@@ -136,29 +136,23 @@ namespace logicalaccess
         return inserted;
     }
 
-	void RplethReaderUnit::sendCardsWaited(std::list<std::vector<unsigned char> > cards)
+	void RplethReaderUnit::sendCardWaited(std::vector<unsigned char> card)
     {
         std::vector<unsigned char> command, tmp;
         command.push_back(static_cast<unsigned char>(Device::HID));
         command.push_back(static_cast<unsigned char>(HidCommand::SEND_CARDS));
 
-		for (std::list<std::vector<unsigned char> >::iterator it = cards.begin(); it != cards.end(); ++it)
-		{
-			std::string card_string = BufferHelper::getHex(*it);
-			tmp.insert(tmp.end(), card_string.begin(), card_string.end());
-
-			if (std::next(it) != cards.end())
-				tmp.push_back('|');
-		}
+		std::string card_string = BufferHelper::getHex(card);
+		tmp.insert(tmp.end(), card_string.begin(), card_string.end());
 
 		command.push_back(static_cast<unsigned char>(tmp.size()));
 		command.insert(command.end(), tmp.begin(), tmp.end());
         getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true);
     }
 
-	std::list<std::vector<unsigned char> > RplethReaderUnit::receiveCardsWaited(bool present)
+	std::vector<unsigned char> RplethReaderUnit::receiveCardWaited(bool present)
 	{
-		std::list<std::vector<unsigned char> > cards;
+		std::vector<unsigned char> card;
 		std::vector<unsigned char> command, answer;
 
         command.push_back(static_cast<unsigned char>(Device::HID));
@@ -167,14 +161,7 @@ namespace logicalaccess
         command.push_back(static_cast<unsigned char>(present));
         answer = getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true);
 
-		std::vector<unsigned char>::iterator start = answer.begin(), stop;
-		while ((stop = std::find(start, answer.end(), '|')) != answer.end())
-		{
-			std::vector<unsigned char> card_vector  = BufferHelper::fromHexString(std::string(start, stop));
-			cards.insert(cards.end(), card_vector);
-			start = stop + 1;
-		}
-		return cards;
+		return BufferHelper::fromHexString(std::string(answer.begin(), answer.end()));
 	}
 
     bool RplethReaderUnit::waitRemoval(unsigned int maxwait)
