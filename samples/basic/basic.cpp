@@ -39,7 +39,7 @@ int main(int , char**)
         }
 
         // Reader configuration object to store reader provider and reader unit selection.
-        boost::shared_ptr<logicalaccess::ReaderConfiguration> readerConfig(new logicalaccess::ReaderConfiguration());
+        std::shared_ptr<logicalaccess::ReaderConfiguration> readerConfig(new logicalaccess::ReaderConfiguration());
 
         // PC/SC
         readerConfig->setReaderProvider(logicalaccess::LibraryManager::getInstance()->getReaderProvider("PCSC"));
@@ -74,20 +74,20 @@ int main(int , char**)
                 {
                     std::cout << "Card inserted on reader \"" << readerConfig->getReaderUnit()->getConnectedName() << "\"." << std::endl;
 
-                    boost::shared_ptr<logicalaccess::Chip> chip = readerConfig->getReaderUnit()->getSingleChip();
+                    std::shared_ptr<logicalaccess::Chip> chip = readerConfig->getReaderUnit()->getSingleChip();
                     std::cout << "Card type: " << chip->getCardType() << std::endl;
 
                     std::vector<unsigned char> csn = readerConfig->getReaderUnit()->getNumber(chip);
                     std::cout << "Card Serial Number : " << logicalaccess::BufferHelper::getHex(csn) << std::endl;	
 
                     std::cout << "Chip list:" << std::endl;
-                    std::vector<boost::shared_ptr<logicalaccess::Chip>> chipList = readerConfig->getReaderUnit()->getChipList();
-                    for(std::vector<boost::shared_ptr<logicalaccess::Chip>>::iterator i = chipList.begin(); i != chipList.end(); ++i)
+                    std::vector<std::shared_ptr<logicalaccess::Chip>> chipList = readerConfig->getReaderUnit()->getChipList();
+                    for(std::vector<std::shared_ptr<logicalaccess::Chip>>::iterator i = chipList.begin(); i != chipList.end(); ++i)
                     {
                         std::cout << "\t" << logicalaccess::BufferHelper::getHex(readerConfig->getReaderUnit()->getNumber((*i))) << std::endl;
                     }
 
-                    boost::shared_ptr<logicalaccess::Profile> profile = chip->getProfile();
+                    std::shared_ptr<logicalaccess::Profile> profile = chip->getProfile();
 
                     // DO SOMETHING HERE
 					// DO SOMETHING HERE
