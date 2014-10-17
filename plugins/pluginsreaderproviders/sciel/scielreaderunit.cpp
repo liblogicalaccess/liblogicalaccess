@@ -23,8 +23,8 @@ namespace logicalaccess
         : ReaderUnit()
     {
         d_readerUnitConfig.reset(new SCIELReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(boost::shared_ptr<SCIELReaderCardAdapter>(new SCIELReaderCardAdapter()));
-        boost::shared_ptr<ScielDataTransport> dataTransport(new ScielDataTransport());
+        setDefaultReaderCardAdapter(std::shared_ptr<SCIELReaderCardAdapter>(new SCIELReaderCardAdapter()));
+        std::shared_ptr<ScielDataTransport> dataTransport(new ScielDataTransport());
         setDataTransport(dataTransport);
         d_card_type = "UNKNOWN";
 
@@ -74,7 +74,7 @@ namespace logicalaccess
         do
         {
             refreshChipList();
-            std::vector<boost::shared_ptr<Chip> > chipList = getChipList();
+            std::vector<std::shared_ptr<Chip> > chipList = getChipList();
             if (!chipList.empty())
             {
                 d_insertedChip = chipList.front();
@@ -109,9 +109,9 @@ namespace logicalaccess
             do
             {
                 refreshChipList();
-                std::vector<boost::shared_ptr<Chip> > chipList = getChipList();
+                std::vector<std::shared_ptr<Chip> > chipList = getChipList();
 
-                std::vector<boost::shared_ptr<Chip> >::iterator i = std::find_if(chipList.begin(), chipList.end(), SCIELReaderUnit::Finder(d_insertedChip));
+                std::vector<std::shared_ptr<Chip> >::iterator i = std::find_if(chipList.begin(), chipList.end(), SCIELReaderUnit::Finder(d_insertedChip));
                 if (i == chipList.end())
                 {
                     d_insertedChip.reset();
@@ -141,15 +141,15 @@ namespace logicalaccess
         LOG(LogLevel::WARNINGS) << "Disconnect do nothing with Sciel reader";
     }
 
-    bool ChipSortPredicate(const boost::shared_ptr<Chip>& lhs, const boost::shared_ptr<Chip>& rhs)
+    bool ChipSortPredicate(const std::shared_ptr<Chip>& lhs, const std::shared_ptr<Chip>& rhs)
     {
         return lhs->getReceptionLevel() < rhs->getReceptionLevel();
     }
 
-    std::list<boost::shared_ptr<Chip> > SCIELReaderUnit::getReaderChipList()
+    std::list<std::shared_ptr<Chip> > SCIELReaderUnit::getReaderChipList()
     {
         LOG(LogLevel::INFOS) << "Retrieving reader chip list...";
-        std::list<boost::shared_ptr<Chip> > chipList;
+        std::list<std::shared_ptr<Chip> > chipList;
         std::vector<unsigned char> cmd;
         cmd.push_back(static_cast<unsigned char>(0x30));
         cmd.push_back(static_cast<unsigned char>(0x41));
@@ -170,7 +170,7 @@ namespace logicalaccess
 
             for (std::list<std::vector<unsigned char> >::iterator i = allTags.begin(); i != allTags.end(); ++i)
             {
-                boost::shared_ptr<Chip> rChip = createChipFromBuffer((*i));
+                std::shared_ptr<Chip> rChip = createChipFromBuffer((*i));
                 if (rChip)
                 {
                     chipList.push_back(rChip);
@@ -190,22 +190,22 @@ namespace logicalaccess
      * The timer "Time before tag out" is not used anymore: If tag was in tag-in and go in tag-out, we keep the tag in the list (waitRemoval will still wait the tag go OUT of the tag-out threshold)
      * We wait one or x tags in Tag-in, and we remove the tag from the list only if the tag is not anymore in the tag-out threshold.
      */
-    std::list<boost::shared_ptr<Chip> > SCIELReaderUnit::refreshChipList()
+    std::list<std::shared_ptr<Chip> > SCIELReaderUnit::refreshChipList()
     {
-        std::list<boost::shared_ptr<Chip> > chipList = getReaderChipList();
+        std::list<std::shared_ptr<Chip> > chipList = getReaderChipList();
 
         LOG(LogLevel::DEBUGS) << "**** READER CHIP LIST RAW ****";
-        for (std::list<boost::shared_ptr<Chip> >::iterator i = chipList.begin(); i != chipList.end(); ++i)
+        for (std::list<std::shared_ptr<Chip> >::iterator i = chipList.begin(); i != chipList.end(); ++i)
         {
             LOG(LogLevel::DEBUGS) << "  -> Chip identifier " << BufferHelper::getHex((*i)->getChipIdentifier()) << " Reception {" << static_cast<unsigned int>((*i)->getReceptionLevel()) << "}";
         }
         LOG(LogLevel::DEBUGS) << "**** END LIST ****";
 
         // Timer management. We handle the global timeout when tags disappears (it was done before by the key, but it sucked !)
-        for (std::vector<boost::shared_ptr<Chip> >::iterator i = d_chipList.begin(); i != d_chipList.end(); ++i)
+        for (std::vector<std::shared_ptr<Chip> >::iterator i = d_chipList.begin(); i != d_chipList.end(); ++i)
         {
             bool findChip = false;
-            for (std::list<boost::shared_ptr<Chip> >::iterator j = chipList.begin(); j != chipList.end() && !findChip; ++j)
+            for (std::list<std::shared_ptr<Chip> >::iterator j = chipList.begin(); j != chipList.end() && !findChip; ++j)
             {
                 findChip = ((*i)->getChipIdentifier() == (*j)->getChipIdentifier());
             }
@@ -232,7 +232,7 @@ namespace logicalaccess
         }
 
         // Add new chip to the timer management
-        for (std::list<boost::shared_ptr<Chip> >::iterator i = chipList.begin(); i != chipList.end(); ++i)
+        for (std::list<std::shared_ptr<Chip> >::iterator i = chipList.begin(); i != chipList.end(); ++i)
         {
             std::string hexid = BufferHelper::getHex((*i)->getChipIdentifier());
             if (d_tagGoneTimeout.find(hexid) == d_tagGoneTimeout.end())
@@ -242,7 +242,7 @@ namespace logicalaccess
         }
 
         LOG(LogLevel::DEBUGS) << "**** READER CHIP LIST AFTER GLOBAL TIMEOUT ****";
-        for (std::list<boost::shared_ptr<Chip> >::iterator i = chipList.begin(); i != chipList.end(); ++i)
+        for (std::list<std::shared_ptr<Chip> >::iterator i = chipList.begin(); i != chipList.end(); ++i)
         {
             LOG(LogLevel::DEBUGS) << "  -> Chip identifier " << BufferHelper::getHex((*i)->getChipIdentifier()) << " Reception {" << static_cast<unsigned int>((*i)->getReceptionLevel()) << "}";
         }
@@ -260,7 +260,7 @@ namespace logicalaccess
         std::map<std::string, int> ignoreArea;
         bool safetyAreaUsed = false;
 
-        for (std::list<boost::shared_ptr<Chip> >::iterator i = chipList.begin(); i != chipList.end(); ++i)
+        for (std::list<std::shared_ptr<Chip> >::iterator i = chipList.begin(); i != chipList.end(); ++i)
         {
             int timeInArea = 1;
             bool forceTagArea = false;
@@ -562,7 +562,7 @@ namespace logicalaccess
         d_ignoreArea = ignoreArea;
 
         LOG(LogLevel::DEBUGS) << "**** FINAL CHIP LIST ****";
-        for (std::vector<boost::shared_ptr<Chip> >::iterator i = d_chipList.begin(); i != d_chipList.end(); ++i)
+        for (std::vector<std::shared_ptr<Chip> >::iterator i = d_chipList.begin(); i != d_chipList.end(); ++i)
         {
             LOG(LogLevel::DEBUGS) << "  -> Chip identifier " << BufferHelper::getHex((*i)->getChipIdentifier()) << " Reception {" << static_cast<unsigned int>((*i)->getReceptionLevel()) << "}";
         }
@@ -599,13 +599,13 @@ namespace logicalaccess
         return chipList;
     }
 
-    boost::shared_ptr<Chip> SCIELReaderUnit::createChip(std::string type)
+    std::shared_ptr<Chip> SCIELReaderUnit::createChip(std::string type)
     {
-        boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
+        std::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 
         if (chip)
         {
-            boost::shared_ptr<ReaderCardAdapter> rca;
+            std::shared_ptr<ReaderCardAdapter> rca;
 
             if (type == "GenericTag")
                 rca = getDefaultReaderCardAdapter();
@@ -617,21 +617,21 @@ namespace logicalaccess
         return chip;
     }
 
-    boost::shared_ptr<Chip> SCIELReaderUnit::getSingleChip()
+    std::shared_ptr<Chip> SCIELReaderUnit::getSingleChip()
     {
-        boost::shared_ptr<Chip> chip = d_insertedChip;
+        std::shared_ptr<Chip> chip = d_insertedChip;
         return chip;
     }
 
-    std::vector<boost::shared_ptr<Chip> > SCIELReaderUnit::getChipList()
+    std::vector<std::shared_ptr<Chip> > SCIELReaderUnit::getChipList()
     {
         return d_chipList;
     }
 
-    boost::shared_ptr<SCIELReaderCardAdapter> SCIELReaderUnit::getDefaultSCIELReaderCardAdapter()
+    std::shared_ptr<SCIELReaderCardAdapter> SCIELReaderUnit::getDefaultSCIELReaderCardAdapter()
     {
-        boost::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
-        return boost::dynamic_pointer_cast<SCIELReaderCardAdapter>(adapter);
+        std::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
+        return std::dynamic_pointer_cast<SCIELReaderCardAdapter>(adapter);
     }
 
     string SCIELReaderUnit::getReaderSerialNumber()
@@ -692,9 +692,9 @@ namespace logicalaccess
         ReaderUnit::unSerialize(node);
     }
 
-    boost::shared_ptr<SCIELReaderProvider> SCIELReaderUnit::getSCIELReaderProvider() const
+    std::shared_ptr<SCIELReaderProvider> SCIELReaderUnit::getSCIELReaderProvider() const
     {
-        return boost::dynamic_pointer_cast<SCIELReaderProvider>(getReaderProvider());
+        return std::dynamic_pointer_cast<SCIELReaderProvider>(getReaderProvider());
     }
 
     bool SCIELReaderUnit::retrieveReaderIdentifier()
@@ -862,9 +862,9 @@ namespace logicalaccess
         return status;
     }
 
-    boost::shared_ptr<Chip> SCIELReaderUnit::createChipFromBuffer(std::vector<unsigned char> buffer)
+    std::shared_ptr<Chip> SCIELReaderUnit::createChipFromBuffer(std::vector<unsigned char> buffer)
     {
-        boost::shared_ptr<Chip> chip;
+        std::shared_ptr<Chip> chip;
         if (buffer.size() > 2)
         {
             chip = createChip((d_card_type == "UNKNOWN") ? "GenericTag" : d_card_type);

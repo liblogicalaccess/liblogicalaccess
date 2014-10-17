@@ -11,7 +11,7 @@
 
 namespace logicalaccess
 {
-    MifarePlusSL1StorageCardService::MifarePlusSL1StorageCardService(boost::shared_ptr<Chip> chip)
+    MifarePlusSL1StorageCardService::MifarePlusSL1StorageCardService(std::shared_ptr<Chip> chip)
         : StorageCardService(chip)
     {
     }
@@ -20,9 +20,9 @@ namespace logicalaccess
     {
     }
 
-    void MifarePlusSL1StorageCardService::erase(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse)
+    void MifarePlusSL1StorageCardService::erase(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse)
     {
-        boost::shared_ptr<MifarePlusLocation> mLocation = boost::dynamic_pointer_cast<MifarePlusLocation>(location);
+        std::shared_ptr<MifarePlusLocation> mLocation = std::dynamic_pointer_cast<MifarePlusLocation>(location);
         if (!mLocation)
         {
             return;
@@ -32,7 +32,7 @@ namespace logicalaccess
         unsigned char *zeroblock = new unsigned char[zeroblock_size];
         memset(zeroblock, 0x00, zeroblock_size);
 
-        boost::shared_ptr<MifarePlusAccessInfo> _aiToWrite;
+        std::shared_ptr<MifarePlusAccessInfo> _aiToWrite;
         _aiToWrite.reset(new MifarePlusAccessInfo(MIFARE_PLUS_CRYPTO1_KEY_SIZE));
 
         if (mLocation->sector == 0)
@@ -44,14 +44,14 @@ namespace logicalaccess
         }
         else if (mLocation->useMAD)
         {
-            boost::shared_ptr<MifarePlusLocation> madLocation(new MifarePlusLocation());
+            std::shared_ptr<MifarePlusLocation> madLocation(new MifarePlusLocation());
             madLocation->sector = 0;
             madLocation->block = 1;
 
-            boost::shared_ptr<MifarePlusAccessInfo> madAi(new MifarePlusAccessInfo(MIFARE_PLUS_CRYPTO1_KEY_SIZE));
+            std::shared_ptr<MifarePlusAccessInfo> madAi(new MifarePlusAccessInfo(MIFARE_PLUS_CRYPTO1_KEY_SIZE));
             if (aiToUse)
             {
-                boost::shared_ptr<MifarePlusAccessInfo> mAiToUse = boost::dynamic_pointer_cast<MifarePlusAccessInfo>(aiToUse);
+                std::shared_ptr<MifarePlusAccessInfo> mAiToUse = std::dynamic_pointer_cast<MifarePlusAccessInfo>(aiToUse);
                 if (mAiToUse->useMAD)
                 {
                     madAi->keyA = mAiToUse->madKeyA;
@@ -74,13 +74,13 @@ namespace logicalaccess
         delete[] zeroblock;
     }
 
-    void MifarePlusSL1StorageCardService::writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags)
+    void MifarePlusSL1StorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
         EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
 
-        boost::shared_ptr<MifarePlusLocation> mLocation = boost::dynamic_pointer_cast<MifarePlusLocation>(location);
-        boost::shared_ptr<MifarePlusAccessInfo> mAiToUse = boost::dynamic_pointer_cast<MifarePlusAccessInfo>(aiToUse);
+        std::shared_ptr<MifarePlusLocation> mLocation = std::dynamic_pointer_cast<MifarePlusLocation>(location);
+        std::shared_ptr<MifarePlusAccessInfo> mAiToUse = std::dynamic_pointer_cast<MifarePlusAccessInfo>(aiToUse);
 
         EXCEPTION_ASSERT_WITH_LOG(mLocation, std::invalid_argument, "location must be a MifareLocation.");
 
@@ -90,7 +90,7 @@ namespace logicalaccess
         }
         else
         {
-            mAiToUse = boost::dynamic_pointer_cast<MifarePlusAccessInfo>(getChip()->getProfile()->createAccessInfo());
+            mAiToUse = std::dynamic_pointer_cast<MifarePlusAccessInfo>(getChip()->getProfile()->createAccessInfo());
         }
 
         bool writeAidToMad = false;
@@ -141,20 +141,20 @@ namespace logicalaccess
             {
                 if (!mAiToUse->keyA->isEmpty())
                 {
-                    boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(mLocation->sector + i, KT_KEY_CRYPTO1_A, mAiToUse->keyA);
+                    std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(mLocation->sector + i, KT_KEY_CRYPTO1_A, mAiToUse->keyA);
                 }
                 if (!mAiToUse->keyB->isEmpty())
                 {
-                    boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(mLocation->sector + i, KT_KEY_CRYPTO1_B, mAiToUse->keyB);
+                    std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(mLocation->sector + i, KT_KEY_CRYPTO1_B, mAiToUse->keyB);
                 }
             }
 
-            boost::shared_ptr<MifarePlusAccessInfo> mAiToWrite;
+            std::shared_ptr<MifarePlusAccessInfo> mAiToWrite;
             // Write access informations too
             if (aiToWrite)
             {
                 // Sector keys will be changed after writing
-                mAiToWrite = boost::dynamic_pointer_cast<MifarePlusAccessInfo>(aiToWrite);
+                mAiToWrite = std::dynamic_pointer_cast<MifarePlusAccessInfo>(aiToWrite);
 
                 EXCEPTION_ASSERT_WITH_LOG(mAiToWrite, std::invalid_argument, "mAiToWrite must be a MifarePlusAccessInfo.");
 
@@ -163,7 +163,7 @@ namespace logicalaccess
                 {
                     unsigned int madsector = (mLocation->sector <= 16) ? 0 : 16;
                     MifarePlusAccessInfo::SectorAccessBits sab;
-                    boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(madsector, KT_KEY_CRYPTO1_A, mAiToUse->madKeyA);
+                    std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(madsector, KT_KEY_CRYPTO1_A, mAiToUse->madKeyA);
                     if (mAiToUse->madKeyB->isEmpty())
                     {
                         sab.setTransportConfiguration();
@@ -171,7 +171,7 @@ namespace logicalaccess
                     else
                     {
                         sab.setAReadBWriteConfiguration();
-                        boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(madsector, KT_KEY_CRYPTO1_B, mAiToUse->madKeyB);
+                        std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(madsector, KT_KEY_CRYPTO1_B, mAiToUse->madKeyB);
                     }
 
                     MifarePlusAccessInfo::SectorAccessBits newsab;
@@ -186,12 +186,12 @@ namespace logicalaccess
 
                     if (!mAiToWrite->madKeyA->isEmpty())
                     {
-                        boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(getMifarePlusChip()->getNbSectors(), KT_KEY_CRYPTO1_A, mAiToWrite->madKeyA);
+                        std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(getMifarePlusChip()->getNbSectors(), KT_KEY_CRYPTO1_A, mAiToWrite->madKeyA);
                     }
 
                     if (!mAiToWrite->madKeyB->isEmpty())
                     {
-                        boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(getMifarePlusChip()->getNbSectors(), KT_KEY_CRYPTO1_B, mAiToWrite->madKeyB);
+                        std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(getMifarePlusChip()->getNbSectors(), KT_KEY_CRYPTO1_B, mAiToWrite->madKeyB);
                     }
 
                     unsigned char userbyte = 0xC3; // DA: 1, MA: 1, RFU, ADV: 01
@@ -200,12 +200,12 @@ namespace logicalaccess
 
                 if (!mAiToWrite->keyA->isEmpty())
                 {
-                    boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(getMifarePlusChip()->getNbSectors(), KT_KEY_CRYPTO1_A, mAiToWrite->keyA);
+                    std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(getMifarePlusChip()->getNbSectors(), KT_KEY_CRYPTO1_A, mAiToWrite->keyA);
                 }
 
                 if (!mAiToWrite->keyB->isEmpty())
                 {
-                    boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(getMifarePlusChip()->getNbSectors(), KT_KEY_CRYPTO1_B, mAiToWrite->keyB);
+                    std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(getMifarePlusChip()->getNbSectors(), KT_KEY_CRYPTO1_B, mAiToWrite->keyB);
                 }
             }
 
@@ -231,18 +231,18 @@ namespace logicalaccess
                     (mAiToWrite) ? &(mAiToWrite->sab) : NULL);
             }
 
-            boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKeyUsage(getMifarePlusChip()->getNbSectors(), KT_KEY_CRYPTO1_A, false);
-            boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKeyUsage(getMifarePlusChip()->getNbSectors(), KT_KEY_CRYPTO1_B, false);
+            std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKeyUsage(getMifarePlusChip()->getNbSectors(), KT_KEY_CRYPTO1_A, false);
+            std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKeyUsage(getMifarePlusChip()->getNbSectors(), KT_KEY_CRYPTO1_B, false);
         }
     }
 
-    void MifarePlusSL1StorageCardService::readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags)
+    void MifarePlusSL1StorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
         EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
 
-        boost::shared_ptr<MifarePlusLocation> mLocation = boost::dynamic_pointer_cast<MifarePlusLocation>(location);
-        boost::shared_ptr<MifarePlusAccessInfo> mAiToUse = boost::dynamic_pointer_cast<MifarePlusAccessInfo>(aiToUse);
+        std::shared_ptr<MifarePlusLocation> mLocation = std::dynamic_pointer_cast<MifarePlusLocation>(location);
+        std::shared_ptr<MifarePlusAccessInfo> mAiToUse = std::dynamic_pointer_cast<MifarePlusAccessInfo>(aiToUse);
 
         EXCEPTION_ASSERT_WITH_LOG(mLocation, std::invalid_argument, "location must be a MifarePlusLocation.");
         if (aiToUse)
@@ -251,7 +251,7 @@ namespace logicalaccess
         }
         else
         {
-            mAiToUse = boost::dynamic_pointer_cast<MifarePlusAccessInfo>(getChip()->getProfile()->createAccessInfo());
+            mAiToUse = std::dynamic_pointer_cast<MifarePlusAccessInfo>(getChip()->getProfile()->createAccessInfo());
         }
 
         getChip()->getProfile()->clearKeys();
@@ -274,11 +274,11 @@ namespace logicalaccess
         {
             if (!mAiToUse->keyA->isEmpty())
             {
-                boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(mLocation->sector + i, KT_KEY_CRYPTO1_A, mAiToUse->keyA);
+                std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(mLocation->sector + i, KT_KEY_CRYPTO1_A, mAiToUse->keyA);
             }
             if (!mAiToUse->keyB->isEmpty())
             {
-                boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(mLocation->sector + i, KT_KEY_CRYPTO1_B, mAiToUse->keyB);
+                std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(mLocation->sector + i, KT_KEY_CRYPTO1_B, mAiToUse->keyB);
             }
         }
 
@@ -305,7 +305,7 @@ namespace logicalaccess
         }
     }
 
-    unsigned int MifarePlusSL1StorageCardService::readDataHeader(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength)
+    unsigned int MifarePlusSL1StorageCardService::readDataHeader(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength)
     {
         if (data == NULL || dataLength == 0)
         {
@@ -314,32 +314,32 @@ namespace logicalaccess
 
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 
-        boost::shared_ptr<MifarePlusLocation> mLocation = boost::dynamic_pointer_cast<MifarePlusLocation>(location);
+        std::shared_ptr<MifarePlusLocation> mLocation = std::dynamic_pointer_cast<MifarePlusLocation>(location);
         EXCEPTION_ASSERT_WITH_LOG(mLocation, std::invalid_argument, "location must be a MifarePlusLocation.");
 
         MifarePlusAccessInfo::SectorAccessBits sab;
 
         if (aiToUse)
         {
-            boost::shared_ptr<MifarePlusAccessInfo> mAiToUse = boost::dynamic_pointer_cast<MifarePlusAccessInfo>(aiToUse);
+            std::shared_ptr<MifarePlusAccessInfo> mAiToUse = std::dynamic_pointer_cast<MifarePlusAccessInfo>(aiToUse);
 
             EXCEPTION_ASSERT_WITH_LOG(mAiToUse, std::invalid_argument, "aiToUse must be a MifarePlusAccessInfo");
 
             if (!mAiToUse->keyA->isEmpty())
             {
-                boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(mLocation->sector, KT_KEY_CRYPTO1_A, mAiToUse->keyA);
+                std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(mLocation->sector, KT_KEY_CRYPTO1_A, mAiToUse->keyA);
             }
 
             if (!mAiToUse->keyB->isEmpty())
             {
-                boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(mLocation->sector, KT_KEY_CRYPTO1_B, mAiToUse->keyB);
+                std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(mLocation->sector, KT_KEY_CRYPTO1_B, mAiToUse->keyB);
             }
 
             sab = mAiToUse->sab;
         }
         else
         {
-            boost::dynamic_pointer_cast<MifarePlusProfile>(getChip()->getProfile())->setDefaultKeysAt(mLocation->sector);
+            std::dynamic_pointer_cast<MifarePlusProfile>(getChip()->getProfile())->setDefaultKeysAt(mLocation->sector);
             sab.setTransportConfiguration();
         }
 
@@ -374,13 +374,13 @@ namespace logicalaccess
             bool used = false;
             unsigned int firstBlock = (i == 0) ? 1 : 0; // Don't write the first block in sector 0
 
-            boost::shared_ptr<MifarePlusLocation> location(new MifarePlusLocation());
+            std::shared_ptr<MifarePlusLocation> location(new MifarePlusLocation());
             location->sector = i;
-            if (boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->getKeyUsage(i, KT_KEY_CRYPTO1_B))
+            if (std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->getKeyUsage(i, KT_KEY_CRYPTO1_B))
             {
                 used = true;
 
-                boost::shared_ptr<MifarePlusKey> key = boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->getKey(i, KT_KEY_CRYPTO1_B);
+                std::shared_ptr<MifarePlusKey> key = std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->getKey(i, KT_KEY_CRYPTO1_B);
 
                 getMifarePlusChip()->getMifarePlusSL1Commands()->loadKey(location, key, KT_KEY_CRYPTO1_B);
                 getMifarePlusChip()->getMifarePlusSL1Commands()->authenticate(static_cast<unsigned char>(getMifarePlusChip()->getMifarePlusSL1Commands()->getSectorStartBlock(i)), key->getKeyStorage(), KT_KEY_CRYPTO1_B);
@@ -399,11 +399,11 @@ namespace logicalaccess
                 }
             }
 
-            if ((!erased || !used) && boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->getKeyUsage(i, KT_KEY_CRYPTO1_A))
+            if ((!erased || !used) && std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->getKeyUsage(i, KT_KEY_CRYPTO1_A))
             {
                 used = true;
 
-                boost::shared_ptr<MifarePlusKey> key = boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->getKey(i, KT_KEY_CRYPTO1_A);
+                std::shared_ptr<MifarePlusKey> key = std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->getKey(i, KT_KEY_CRYPTO1_A);
 
                 getMifarePlusChip()->getMifarePlusSL1Commands()->loadKey(location, key, KT_KEY_CRYPTO1_A);
                 getMifarePlusChip()->getMifarePlusSL1Commands()->authenticate(static_cast<unsigned char>(getMifarePlusChip()->getMifarePlusSL1Commands()->getSectorStartBlock(i)), key->getKeyStorage(), KT_KEY_CRYPTO1_A);

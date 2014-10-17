@@ -25,13 +25,13 @@ namespace logicalaccess
          * \brief Get the reader unit.
          * \return The reader unit.
          */
-        virtual boost::shared_ptr<ReaderUnit> getReaderUnit() const { return d_ReaderUnit.lock(); };
+        virtual std::shared_ptr<ReaderUnit> getReaderUnit() const { return d_ReaderUnit.lock(); };
 
         /**
          * \brief Set the reader unit.
          * \param unit The reader unit.
          */
-        virtual void setReaderUnit(boost::weak_ptr<ReaderUnit> unit){ d_ReaderUnit = unit; };
+        virtual void setReaderUnit(std::weak_ptr<ReaderUnit> unit){ d_ReaderUnit = unit; };
 
         /**
          * \brief Get the transport type of this instance.
@@ -86,13 +86,13 @@ namespace logicalaccess
          * \brief Get the result checker.
          * \return The result checker.
          */
-        virtual boost::shared_ptr<ResultChecker> getResultChecker() const { return d_ResultChecker; };
+        virtual std::shared_ptr<ResultChecker> getResultChecker() const { return d_ResultChecker; };
 
         /**
          * \brief Set the result checker.
          * \param unit The result checker.
          */
-        virtual void setResultChecker(boost::shared_ptr<ResultChecker> checker){ d_ResultChecker = checker; };
+        virtual void setResultChecker(std::shared_ptr<ResultChecker> checker){ d_ResultChecker = checker; };
 
     protected:
 
@@ -103,7 +103,7 @@ namespace logicalaccess
         /**
          * \brief The reader unit.
          */
-        boost::weak_ptr<ReaderUnit> d_ReaderUnit;
+        std::weak_ptr<ReaderUnit> d_ReaderUnit;
 
         /**
          * \brief The last result.
@@ -118,7 +118,7 @@ namespace logicalaccess
         /**
          * \brief The result checker.
          */
-        boost::shared_ptr<ResultChecker> d_ResultChecker;
+        std::shared_ptr<ResultChecker> d_ResultChecker;
     };
 }
 

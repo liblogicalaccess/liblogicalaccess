@@ -102,7 +102,7 @@ namespace logicalaccess
             //we do not remove named_mutex - it can still be used by another process
         }
 
-        boost::shared_ptr<ISO7816ReaderCardAdapter> getISO7816ReaderCardAdapter() { return boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(this->getReaderCardAdapter()); };
+        std::shared_ptr<ISO7816ReaderCardAdapter> getISO7816ReaderCardAdapter() { return std::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(this->getReaderCardAdapter()); };
 
         virtual std::vector<unsigned char> transmit(std::vector<unsigned char> cmd, bool first = true, bool last = true)
         {
@@ -224,10 +224,10 @@ namespace logicalaccess
             return "SAM_NONE";
         }
 
-        virtual boost::shared_ptr<SAMDESfireCrypto> getCrypto() { return d_crypto; };
-        virtual void setCrypto(boost::shared_ptr<SAMDESfireCrypto> t) { d_crypto = t; };
+        virtual std::shared_ptr<SAMDESfireCrypto> getCrypto() { return d_crypto; };
+        virtual void setCrypto(std::shared_ptr<SAMDESfireCrypto> t) { d_crypto = t; };
 
-        virtual void lockUnlock(boost::shared_ptr<DESFireKey> masterKey, SAMLockUnlock state, unsigned char keyno, unsigned char unlockkeyno, unsigned char unlockkeyversion)
+        virtual void lockUnlock(std::shared_ptr<DESFireKey> masterKey, SAMLockUnlock state, unsigned char keyno, unsigned char unlockkeyno, unsigned char unlockkeyversion)
         {
             std::vector<unsigned char> result;
             unsigned char p1_part1 = state;
@@ -256,7 +256,7 @@ namespace logicalaccess
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P1 Failed.");
 
             std::vector<unsigned char> keycipher(masterKey->getData(), masterKey->getData() + masterKey->getLength());
-            boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
+            std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
             std::vector<unsigned char> emptyIV(16), rnd1;
 
             /* Create rnd2 for p3 - CMAC: rnd2 | P2 | other data */
@@ -314,8 +314,8 @@ namespace logicalaccess
             }
 
             //decipher rndB
-            boost::shared_ptr<openssl::SymmetricKey> symkey(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_authKey)));
-            boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
+            std::shared_ptr<openssl::SymmetricKey> symkey(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_authKey)));
+            std::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
 
             std::vector<unsigned char> encRndB(result.begin() + 8, result.end() - 2);
             std::vector<unsigned char> dencRndB;
@@ -405,11 +405,11 @@ namespace logicalaccess
 
     protected:
 
-        boost::shared_ptr<SAMDESfireCrypto> d_crypto;
+        std::shared_ptr<SAMDESfireCrypto> d_crypto;
 
-        //boost::shared_ptr<boost::interprocess::mapped_region> d_region;
+        //std::shared_ptr<boost::interprocess::mapped_region> d_region;
 
-        //boost::shared_ptr<boost::interprocess::named_mutex> d_named_mutex;
+        //std::shared_ptr<boost::interprocess::named_mutex> d_named_mutex;
 
         unsigned char d_cla;
 
@@ -448,9 +448,9 @@ namespace logicalaccess
             SV1a[15] = 0x91; /* AES 128 */
             /* TODO AES 192 */
 
-            boost::shared_ptr<openssl::SymmetricKey> symkey(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(keycipher)));
-            boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
-            boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
+            std::shared_ptr<openssl::SymmetricKey> symkey(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(keycipher)));
+            std::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
+            std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
 
             cipher->cipher(SV1a, d_authKey, *symkey.get(), *iv.get(), false);
         }

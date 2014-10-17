@@ -48,9 +48,9 @@ namespace logicalaccess
         }
     }
 
-    boost::shared_ptr<PCSCReaderProvider> PCSCReaderProvider::createInstance()
+    std::shared_ptr<PCSCReaderProvider> PCSCReaderProvider::createInstance()
     {
-        boost::shared_ptr<PCSCReaderProvider> ret(new PCSCReaderProvider());
+        std::shared_ptr<PCSCReaderProvider> ret(new PCSCReaderProvider());
         ret->refreshReaderList();
         return ret;
     }
@@ -72,8 +72,8 @@ namespace logicalaccess
                 {
                     size_t f = strlen(rdname);
                     std::string t(rdname, f);
-                    boost::shared_ptr<PCSCReaderUnit> unit = PCSCReaderUnit::createPCSCReaderUnit(t);
-                    unit->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
+                    std::shared_ptr<PCSCReaderUnit> unit = PCSCReaderUnit::createPCSCReaderUnit(t);
+                    unit->setReaderProvider(std::weak_ptr<ReaderProvider>(shared_from_this()));
                     d_system_readers.push_back(unit);
 
                     rdname += strlen(rdname) + 1;
@@ -87,16 +87,16 @@ namespace logicalaccess
         return r;
     }
 
-    boost::shared_ptr<ReaderUnit> PCSCReaderProvider::createReaderUnit()
+    std::shared_ptr<ReaderUnit> PCSCReaderProvider::createReaderUnit()
     {
         return createReaderUnit("");
     }
 
-    boost::shared_ptr<ReaderUnit> PCSCReaderProvider::createReaderUnit(std::string readerunitname)
+    std::shared_ptr<ReaderUnit> PCSCReaderProvider::createReaderUnit(std::string readerunitname)
     {
-        boost::shared_ptr<PCSCReaderUnit> ret;
+        std::shared_ptr<PCSCReaderUnit> ret;
         ret.reset(new PCSCReaderUnit(readerunitname));
-        ret->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
+        ret->setReaderProvider(std::weak_ptr<ReaderProvider>(shared_from_this()));
 
         return ret;
     }

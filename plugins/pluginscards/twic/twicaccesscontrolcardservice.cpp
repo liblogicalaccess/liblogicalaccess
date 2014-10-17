@@ -18,7 +18,7 @@
 
 namespace logicalaccess
 {
-    TwicAccessControlCardService::TwicAccessControlCardService(boost::shared_ptr<Chip> chip)
+    TwicAccessControlCardService::TwicAccessControlCardService(std::shared_ptr<Chip> chip)
         : AccessControlCardService(chip)
     {
     }
@@ -27,11 +27,11 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<Format> TwicAccessControlCardService::readFormat(boost::shared_ptr<Format> format, boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> /*aiToUse*/)
+    std::shared_ptr<Format> TwicAccessControlCardService::readFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> /*aiToUse*/)
     {
         bool ret = false;
 
-        boost::shared_ptr<Format> formatret;
+        std::shared_ptr<Format> formatret;
         if (format)
         {
             formatret = Format::getByFormatType(format->getType());
@@ -42,14 +42,14 @@ namespace logicalaccess
             formatret.reset(new FASCN200BitFormat());
         }
 
-        boost::shared_ptr<TwicLocation> pLocation;
+        std::shared_ptr<TwicLocation> pLocation;
         if (location)
         {
-            pLocation = boost::dynamic_pointer_cast<TwicLocation>(location);
+            pLocation = std::dynamic_pointer_cast<TwicLocation>(location);
         }
         else
         {
-            if (boost::dynamic_pointer_cast<FASCN200BitFormat>(formatret))
+            if (std::dynamic_pointer_cast<FASCN200BitFormat>(formatret))
             {
                 pLocation.reset(new TwicLocation());
                 pLocation->dataObject = 0x5FC104;
@@ -64,10 +64,10 @@ namespace logicalaccess
             memset(formatBuf, 0x00, length);
             try
             {
-                boost::shared_ptr<StorageCardService> storage = boost::dynamic_pointer_cast<StorageCardService>(getTwicChip()->getService(CST_STORAGE));
+                std::shared_ptr<StorageCardService> storage = std::dynamic_pointer_cast<StorageCardService>(getTwicChip()->getService(CST_STORAGE));
                 if (storage)
                 {
-                    storage->readData(pLocation, boost::shared_ptr<AccessInfo>(), formatBuf, length, CB_DEFAULT);
+                    storage->readData(pLocation, std::shared_ptr<AccessInfo>(), formatBuf, length, CB_DEFAULT);
                     formatret->setLinearData(formatBuf, length);
 
                     ret = true;
@@ -89,7 +89,7 @@ namespace logicalaccess
         return formatret;
     }
 
-    bool TwicAccessControlCardService::writeFormat(boost::shared_ptr<Format> /*format*/, boost::shared_ptr<Location> /*location*/, boost::shared_ptr<AccessInfo> /*aiToUse*/, boost::shared_ptr<AccessInfo> /*aiToWrite*/)
+    bool TwicAccessControlCardService::writeFormat(std::shared_ptr<Format> /*format*/, std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/, std::shared_ptr<AccessInfo> /*aiToWrite*/)
     {
         return false;
     }

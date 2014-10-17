@@ -59,7 +59,7 @@ namespace logicalaccess
          * \param cardType The card type.
          * \return The reader communication
          */
-        boost::shared_ptr<ReaderCommunication> getReaderCommunication(std::string cardType);
+        std::shared_ptr<ReaderCommunication> getReaderCommunication(std::string cardType);
 
         /**
          * \brief Wait for a card insertion.
@@ -81,19 +81,19 @@ namespace logicalaccess
          * \param type The card type.
          * \return The chip.
          */
-        virtual boost::shared_ptr<Chip> createChip(std::string type);
+        virtual std::shared_ptr<Chip> createChip(std::string type);
 
         /**
          * \brief Get the first and/or most accurate chip found.
          * \return The single chip.
          */
-        virtual boost::shared_ptr<Chip> getSingleChip();
+        virtual std::shared_ptr<Chip> getSingleChip();
 
         /**
          * \brief Get chip available in the RFID rang.
          * \return The chip list.
          */
-        virtual std::vector<boost::shared_ptr<Chip> > getChipList();
+        virtual std::vector<std::shared_ptr<Chip> > getChipList();
 
         /**
          * \brief Get the reader ping command.
@@ -111,7 +111,7 @@ namespace logicalaccess
          * \brief Get the default SmartID reader/card adapter.
          * \return The default SmartID reader/card adapter.
          */
-        virtual boost::shared_ptr<SmartIDReaderCardAdapter> getDefaultSmartIDReaderCardAdapter();
+        virtual std::shared_ptr<SmartIDReaderCardAdapter> getDefaultSmartIDReaderCardAdapter();
 
         /**
          * \brief Connect to the card.
@@ -191,20 +191,20 @@ namespace logicalaccess
          * \brief Get the SmartID reader unit configuration.
          * \return The SmartID reader unit configuration.
          */
-        boost::shared_ptr<SmartIDReaderUnitConfiguration> getSmartIDConfiguration() { return boost::dynamic_pointer_cast<SmartIDReaderUnitConfiguration>(getConfiguration()); };
+        std::shared_ptr<SmartIDReaderUnitConfiguration> getSmartIDConfiguration() { return std::dynamic_pointer_cast<SmartIDReaderUnitConfiguration>(getConfiguration()); };
 
         /**
          * \brief Get the SmartID reader provider.
          * \return The SmartID reader provider.
          */
-        boost::shared_ptr<SmartIDReaderProvider> getSmartIDReaderProvider() const;
+        std::shared_ptr<SmartIDReaderProvider> getSmartIDReaderProvider() const;
 
     protected:
 
         /**
          * \brief The reader communication.
          */
-        boost::shared_ptr<ReaderCommunication> d_readerCommunication;
+        std::shared_ptr<ReaderCommunication> d_readerCommunication;
     };
 }
 

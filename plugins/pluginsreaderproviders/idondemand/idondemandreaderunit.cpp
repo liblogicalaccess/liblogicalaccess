@@ -26,8 +26,8 @@ namespace logicalaccess
         : ReaderUnit()
     {
         d_readerUnitConfig.reset(new IdOnDemandReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(boost::shared_ptr<IdOnDemandReaderCardAdapter>(new IdOnDemandReaderCardAdapter()));
-        boost::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
+        setDefaultReaderCardAdapter(std::shared_ptr<IdOnDemandReaderCardAdapter>(new IdOnDemandReaderCardAdapter()));
+        std::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
         setDataTransport(dataTransport);
         d_card_type = "UNKNOWN";
 
@@ -170,7 +170,7 @@ namespace logicalaccess
 
         do
         {
-            boost::shared_ptr<Chip> chip = getChipInAir();
+            std::shared_ptr<Chip> chip = getChipInAir();
             if (chip)
             {
                 d_insertedChip = chip;
@@ -196,7 +196,7 @@ namespace logicalaccess
             unsigned int currentWait = 0;
             do
             {
-                boost::shared_ptr<Chip> chip = getChipInAir();
+                std::shared_ptr<Chip> chip = getChipInAir();
                 if (!chip)
                 {
                     d_insertedChip.reset();
@@ -223,9 +223,9 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<Chip> IdOnDemandReaderUnit::getChipInAir()
+    std::shared_ptr<Chip> IdOnDemandReaderUnit::getChipInAir()
     {
-        boost::shared_ptr<Chip> chip;
+        std::shared_ptr<Chip> chip;
 
         // Change the reader state, but no other function to achieve the card detection...
         if (read())
@@ -236,14 +236,14 @@ namespace logicalaccess
         return chip;
     }
 
-    boost::shared_ptr<Chip> IdOnDemandReaderUnit::createChip(std::string type)
+    std::shared_ptr<Chip> IdOnDemandReaderUnit::createChip(std::string type)
     {
-        boost::shared_ptr<Chip> chip;
-        boost::shared_ptr<ReaderCardAdapter> rca;
+        std::shared_ptr<Chip> chip;
+        std::shared_ptr<ReaderCardAdapter> rca;
         if (type == "GenericTag")
         {
             chip.reset(new GenericTagIdOnDemandChip());
-            boost::shared_ptr<Commands> commands(new GenericTagIdOnDemandCommands());
+            std::shared_ptr<Commands> commands(new GenericTagIdOnDemandCommands());
             commands->setChip(chip);
             chip->setCommands(commands);
             rca = getDefaultReaderCardAdapter();
@@ -258,16 +258,16 @@ namespace logicalaccess
         return chip;
     }
 
-    boost::shared_ptr<Chip> IdOnDemandReaderUnit::getSingleChip()
+    std::shared_ptr<Chip> IdOnDemandReaderUnit::getSingleChip()
     {
-        boost::shared_ptr<Chip> chip = d_insertedChip;
+        std::shared_ptr<Chip> chip = d_insertedChip;
         return chip;
     }
 
-    std::vector<boost::shared_ptr<Chip> > IdOnDemandReaderUnit::getChipList()
+    std::vector<std::shared_ptr<Chip> > IdOnDemandReaderUnit::getChipList()
     {
-        std::vector<boost::shared_ptr<Chip> > chipList;
-        boost::shared_ptr<Chip> singleChip = getSingleChip();
+        std::vector<std::shared_ptr<Chip> > chipList;
+        std::shared_ptr<Chip> singleChip = getSingleChip();
         if (singleChip)
         {
             chipList.push_back(singleChip);
@@ -275,10 +275,10 @@ namespace logicalaccess
         return chipList;
     }
 
-    boost::shared_ptr<IdOnDemandReaderCardAdapter> IdOnDemandReaderUnit::getDefaultIdOnDemandReaderCardAdapter()
+    std::shared_ptr<IdOnDemandReaderCardAdapter> IdOnDemandReaderUnit::getDefaultIdOnDemandReaderCardAdapter()
     {
-        boost::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
-        return boost::dynamic_pointer_cast<IdOnDemandReaderCardAdapter>(adapter);
+        std::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
+        return std::dynamic_pointer_cast<IdOnDemandReaderCardAdapter>(adapter);
     }
 
     string IdOnDemandReaderUnit::getReaderSerialNumber()
@@ -332,8 +332,8 @@ namespace logicalaccess
         ReaderUnit::unSerialize(node);
     }
 
-    boost::shared_ptr<IdOnDemandReaderProvider> IdOnDemandReaderUnit::getIdOnDemandReaderProvider() const
+    std::shared_ptr<IdOnDemandReaderProvider> IdOnDemandReaderUnit::getIdOnDemandReaderProvider() const
     {
-        return boost::dynamic_pointer_cast<IdOnDemandReaderProvider>(getReaderProvider());
+        return std::dynamic_pointer_cast<IdOnDemandReaderProvider>(getReaderProvider());
     }
 }

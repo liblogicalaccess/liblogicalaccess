@@ -22,14 +22,14 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<ReaderProvider> ReaderProvider::getReaderProviderFromRPType(std::string rpt)
+    std::shared_ptr<ReaderProvider> ReaderProvider::getReaderProviderFromRPType(std::string rpt)
     {
         return LibraryManager::getInstance()->getReaderProvider(rpt);
     }
 
-    const std::vector<boost::shared_ptr<ReaderUnit> > ReaderProvider::waitForReaders(std::vector<std::string> readers, double maxwait, bool all)
+    const std::vector<std::shared_ptr<ReaderUnit> > ReaderProvider::waitForReaders(std::vector<std::string> readers, double maxwait, bool all)
     {
-        std::vector<boost::shared_ptr<ReaderUnit> > ret;
+        std::vector<std::shared_ptr<ReaderUnit> > ret;
         bool notfound = true;
         time_t timer, current_timer;
 

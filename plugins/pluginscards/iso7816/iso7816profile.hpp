@@ -42,7 +42,7 @@ namespace logicalaccess
         /**
          * \brief Set default keys for the type card in memory at a specific location.
          */
-        virtual void setDefaultKeysAt(boost::shared_ptr<Location> location);
+        virtual void setDefaultKeysAt(std::shared_ptr<Location> location);
 
         /**
          * \brief Clear all keys in memory.
@@ -54,7 +54,7 @@ namespace logicalaccess
          * \param location The key's location.
          * \param AccessInfo The key's informations.
          */
-        virtual void setKeyAt(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> AccessInfo);
+        virtual void setKeyAt(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> AccessInfo);
 
         /**
          * \brief Set default keys for a sector.
@@ -66,13 +66,13 @@ namespace logicalaccess
          * \brief Create default ISO7816 access informations.
          * \return Default ISO7816 access informations. Always null.
          */
-        virtual boost::shared_ptr<AccessInfo> createAccessInfo() const;
+        virtual std::shared_ptr<AccessInfo> createAccessInfo() const;
 
         /**
          * \brief Create default ISO7816 location.
          * \return Default ISO7816 location.
          */
-        virtual boost::shared_ptr<Location> createLocation() const;
+        virtual std::shared_ptr<Location> createLocation() const;
 
         /**
          * \brief Get the supported format list.

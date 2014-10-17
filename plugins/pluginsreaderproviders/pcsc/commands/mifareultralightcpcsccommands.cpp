@@ -64,13 +64,13 @@ namespace logicalaccess
         return sendGenericCommand(data);
     }
 
-    void MifareUltralightCPCSCCommands::authenticate(boost::shared_ptr<TripleDESKey> authkey)
+    void MifareUltralightCPCSCCommands::authenticate(std::shared_ptr<TripleDESKey> authkey)
     {
         std::vector<unsigned char> result;
 
         if (!authkey || authkey->isEmpty())
         {
-            boost::shared_ptr<MifareUltralightCProfile> profile = boost::dynamic_pointer_cast<MifareUltralightCProfile>(getChip()->getProfile());
+            std::shared_ptr<MifareUltralightCProfile> profile = std::dynamic_pointer_cast<MifareUltralightCProfile>(getChip()->getProfile());
             if (profile)
             {
                 authkey = profile->getKey();

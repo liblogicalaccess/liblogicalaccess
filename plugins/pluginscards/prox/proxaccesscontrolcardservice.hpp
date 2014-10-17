@@ -22,7 +22,7 @@ namespace logicalaccess
          * \brief Constructor.
          * \param cardProvider The associated card provider.
          */
-        ProxAccessControlCardService(boost::shared_ptr<Chip> chip);
+        ProxAccessControlCardService(std::shared_ptr<Chip> chip);
 
         /**
          * \brief Destructor.
@@ -36,7 +36,7 @@ namespace logicalaccess
          * \param aiToUse The key's informations to use.
          * \return The format read on success, null otherwise.
          */
-        virtual boost::shared_ptr<Format> readFormat(boost::shared_ptr<Format> format, boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse);
+        virtual std::shared_ptr<Format> readFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse);
 
         /**
          * \brief Write format to the card.
@@ -46,7 +46,7 @@ namespace logicalaccess
          * \param aiToWrite The key's informations to write.
          * \return True on success, false otherwise.
          */
-        virtual bool writeFormat(boost::shared_ptr<Format> format, boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite);
+        virtual bool writeFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite);
 
         /**
          * \brief Get the PACS bits of the card.

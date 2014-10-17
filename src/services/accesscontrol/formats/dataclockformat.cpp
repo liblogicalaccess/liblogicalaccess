@@ -19,7 +19,7 @@ namespace logicalaccess
         d_dataType.reset(new BCDNibbleDataType());
         d_dataRepresentation.reset(new LittleEndianDataRepresentation());
 
-        boost::shared_ptr<NumberDataField> uidField(new NumberDataField());
+        std::shared_ptr<NumberDataField> uidField(new NumberDataField());
         uidField->setName("Uid");
         uidField->setIsIdentifier(true);
         uidField->setDataLength(32);
@@ -77,12 +77,12 @@ namespace logicalaccess
         return "DataClockFormat";
     }
 
-    bool DataClockFormat::checkSkeleton(boost::shared_ptr<Format> format) const
+    bool DataClockFormat::checkSkeleton(std::shared_ptr<Format> format) const
     {
         bool ret = false;
         if (format)
         {
-            boost::shared_ptr<DataClockFormat> pFormat = boost::dynamic_pointer_cast<DataClockFormat>(format);
+            std::shared_ptr<DataClockFormat> pFormat = std::dynamic_pointer_cast<DataClockFormat>(format);
             if (pFormat)
             {
                 ret = true;

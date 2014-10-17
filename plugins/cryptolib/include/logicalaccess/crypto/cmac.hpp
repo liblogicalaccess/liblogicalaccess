@@ -25,7 +25,7 @@ namespace logicalaccess
              * \param lastIV The last initialisation vector
              * \return The MAC result for the message.
              */
-            static std::vector<unsigned char> cmac(const std::vector<unsigned char>& key, boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const std::vector<unsigned char>& data, std::vector<unsigned char> lastIV, unsigned int padding_size);
+            static std::vector<unsigned char> cmac(const std::vector<unsigned char>& key, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const std::vector<unsigned char>& data, std::vector<unsigned char> lastIV, unsigned int padding_size);
 
             /**
              * \brief Shift a string.

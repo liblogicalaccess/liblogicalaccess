@@ -86,12 +86,12 @@ namespace logicalaccess
         /**
          * \brief Set the SAM Key and Keyno for check if the SAM is the SAM we are waiting and for AV2 enable communication
          */
-        void setSAMUnlockKey(boost::shared_ptr<DESFireKey> key, unsigned char keyno) { d_sam_key_unlock = key; d_keyno_unlock = keyno; };
+        void setSAMUnlockKey(std::shared_ptr<DESFireKey> key, unsigned char keyno) { d_sam_key_unlock = key; d_keyno_unlock = keyno; };
 
         /**
          * \brief Get SAM Security Check Key
          */
-        boost::shared_ptr<DESFireKey> getSAMUnLockKey() const { return d_sam_key_unlock; };
+        std::shared_ptr<DESFireKey> getSAMUnLockKey() const { return d_sam_key_unlock; };
 
         /**
          * \brief Get SAM Security Check KeyNo
@@ -113,7 +113,7 @@ namespace logicalaccess
         /**
          * \brief The SAM Key to see if it is the SAM we are waiting
          */
-        boost::shared_ptr<DESFireKey> d_sam_key_unlock;
+        std::shared_ptr<DESFireKey> d_sam_key_unlock;
 
         /**
          * \brief The SAM Key to see if it is the SAM we are waiting

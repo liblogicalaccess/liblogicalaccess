@@ -33,9 +33,9 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<SCIELReaderProvider> SCIELReaderProvider::getSingletonInstance()
+    std::shared_ptr<SCIELReaderProvider> SCIELReaderProvider::getSingletonInstance()
     {
-        static boost::shared_ptr<SCIELReaderProvider> instance;
+        static std::shared_ptr<SCIELReaderProvider> instance;
         if (!instance)
         {
             instance.reset(new SCIELReaderProvider());
@@ -45,12 +45,12 @@ namespace logicalaccess
         return instance;
     }
 
-    boost::shared_ptr<ReaderUnit> SCIELReaderProvider::createReaderUnit()
+    std::shared_ptr<ReaderUnit> SCIELReaderProvider::createReaderUnit()
     {
         LOG(LogLevel::INFOS) << "Creating new reader unit with empty port... (Serial port auto-detect will be used when connecting to reader)";
 
-        boost::shared_ptr<SCIELReaderUnit> ret(new SCIELReaderUnit());
-        ret->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
+        std::shared_ptr<SCIELReaderUnit> ret(new SCIELReaderUnit());
+        ret->setReaderProvider(std::weak_ptr<ReaderProvider>(shared_from_this()));
 
         return ret;
     }
@@ -59,15 +59,15 @@ namespace logicalaccess
     {
         d_readers.clear();
 
-        std::vector<boost::shared_ptr<SerialPortXml> > ports;
+        std::vector<std::shared_ptr<SerialPortXml> > ports;
         EXCEPTION_ASSERT_WITH_LOG(SerialPortXml::EnumerateUsingCreateFile(ports), LibLogicalAccessException, "Can't enumerate the serial port list.");
 
-        for (std::vector<boost::shared_ptr<SerialPortXml> >::iterator i = ports.begin(); i != ports.end(); ++i)
+        for (std::vector<std::shared_ptr<SerialPortXml> >::iterator i = ports.begin(); i != ports.end(); ++i)
         {
-            boost::shared_ptr<SCIELReaderUnit> unit(new SCIELReaderUnit());
-            boost::shared_ptr<SerialPortDataTransport> dataTransport = boost::dynamic_pointer_cast<SerialPortDataTransport>(unit->getDataTransport());
+            std::shared_ptr<SCIELReaderUnit> unit(new SCIELReaderUnit());
+            std::shared_ptr<SerialPortDataTransport> dataTransport = std::dynamic_pointer_cast<SerialPortDataTransport>(unit->getDataTransport());
             dataTransport->setSerialPort(*i);
-            unit->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
+            unit->setReaderProvider(std::weak_ptr<ReaderProvider>(shared_from_this()));
             d_readers.push_back(unit);
         }
 

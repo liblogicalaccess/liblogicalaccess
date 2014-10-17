@@ -10,7 +10,7 @@
 
 namespace logicalaccess
 {
-    MifareUltralightStorageCardService::MifareUltralightStorageCardService(boost::shared_ptr<Chip> chip)
+    MifareUltralightStorageCardService::MifareUltralightStorageCardService(std::shared_ptr<Chip> chip)
         : StorageCardService(chip)
     {
     }
@@ -19,9 +19,9 @@ namespace logicalaccess
     {
     }
 
-    void MifareUltralightStorageCardService::erase(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse)
+    void MifareUltralightStorageCardService::erase(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse)
     {
-        boost::shared_ptr<MifareUltralightLocation> mLocation = boost::dynamic_pointer_cast<MifareUltralightLocation>(location);
+        std::shared_ptr<MifareUltralightLocation> mLocation = std::dynamic_pointer_cast<MifareUltralightLocation>(location);
         if (!mLocation)
         {
             return;
@@ -30,17 +30,17 @@ namespace logicalaccess
         unsigned char zeroblock[4];
         memset(zeroblock, 0x00, sizeof(zeroblock));
 
-        writeData(location, aiToUse, boost::shared_ptr<AccessInfo>(), zeroblock, sizeof(zeroblock), CB_DEFAULT);
+        writeData(location, aiToUse, std::shared_ptr<AccessInfo>(), zeroblock, sizeof(zeroblock), CB_DEFAULT);
     }
 
-    void MifareUltralightStorageCardService::writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> /*aiToUse*/, boost::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags)
+    void MifareUltralightStorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> /*aiToUse*/, std::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
         EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
 
-        boost::shared_ptr<MifareUltralightLocation> mLocation = boost::dynamic_pointer_cast<MifareUltralightLocation>(location);
+        std::shared_ptr<MifareUltralightLocation> mLocation = std::dynamic_pointer_cast<MifareUltralightLocation>(location);
         EXCEPTION_ASSERT_WITH_LOG(mLocation, std::invalid_argument, "location must be a MifareUltralightLocation.");
-        boost::shared_ptr<MifareUltralightAccessInfo> mAi = boost::dynamic_pointer_cast<MifareUltralightAccessInfo>(aiToWrite);
+        std::shared_ptr<MifareUltralightAccessInfo> mAi = std::dynamic_pointer_cast<MifareUltralightAccessInfo>(aiToWrite);
 
         size_t totaldatalen = dataLength + mLocation->byte;
         int nbPages = 0;
@@ -88,12 +88,12 @@ namespace logicalaccess
         }
     }
 
-    void MifareUltralightStorageCardService::readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> /*aiToUse*/, void* data, size_t dataLength, CardBehavior behaviorFlags)
+    void MifareUltralightStorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> /*aiToUse*/, void* data, size_t dataLength, CardBehavior behaviorFlags)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
         EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
 
-        boost::shared_ptr<MifareUltralightLocation> mLocation = boost::dynamic_pointer_cast<MifareUltralightLocation>(location);
+        std::shared_ptr<MifareUltralightLocation> mLocation = std::dynamic_pointer_cast<MifareUltralightLocation>(location);
         EXCEPTION_ASSERT_WITH_LOG(mLocation, std::invalid_argument, "location must be a MifareLocation.");
 
         size_t totaldatalen = dataLength + mLocation->byte;
@@ -127,7 +127,7 @@ namespace logicalaccess
         }
     }
 
-    unsigned int MifareUltralightStorageCardService::readDataHeader(boost::shared_ptr<Location> /*location*/, boost::shared_ptr<AccessInfo> /*aiToUse*/, void* /*data*/, size_t /*dataLength*/)
+    unsigned int MifareUltralightStorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/, void* /*data*/, size_t /*dataLength*/)
     {
         return 0;
     }

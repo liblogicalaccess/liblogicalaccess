@@ -71,19 +71,19 @@ namespace logicalaccess
          * \param type The card type.
          * \return The chip.
          */
-        virtual boost::shared_ptr<Chip> createChip(std::string type);
+        virtual std::shared_ptr<Chip> createChip(std::string type);
 
         /**
          * \brief Get the first and/or most accurate chip found.
          * \return The single chip.
          */
-        virtual boost::shared_ptr<Chip> getSingleChip();
+        virtual std::shared_ptr<Chip> getSingleChip();
 
         /**
          * \brief Get chip available in the RFID rang.
          * \return The chip list.
          */
-        virtual std::vector<boost::shared_ptr<Chip> > getChipList();
+        virtual std::vector<std::shared_ptr<Chip> > getChipList();
 
         /**
          * \brief Connect to the card.
@@ -140,13 +140,13 @@ namespace logicalaccess
          * \brief Get the Elatec reader unit configuration.
          * \return The Elatec reader unit configuration.
          */
-        boost::shared_ptr<KeyboardReaderUnitConfiguration> getKeyboardConfiguration() { return boost::dynamic_pointer_cast<KeyboardReaderUnitConfiguration>(getConfiguration()); };
+        std::shared_ptr<KeyboardReaderUnitConfiguration> getKeyboardConfiguration() { return std::dynamic_pointer_cast<KeyboardReaderUnitConfiguration>(getConfiguration()); };
 
         /**
          * \brief Get the Elatec reader provider.
          * \return The Elatec reader provider.
          */
-        boost::shared_ptr<KeyboardReaderProvider> getKeyboardReaderProvider() const;
+        std::shared_ptr<KeyboardReaderProvider> getKeyboardReaderProvider() const;
 
         /**
          * \brief Get a chip identifier from the input device.

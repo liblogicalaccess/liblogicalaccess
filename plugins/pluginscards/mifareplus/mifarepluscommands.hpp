@@ -52,7 +52,7 @@ namespace logicalaccess
         * \param t_cl the T=CL indicator
         * \param first The first authentication indicator
         */
-        virtual bool GenericAESAuthentication(unsigned short keyBNr, boost::shared_ptr<MifarePlusKey> key, bool t_cl, bool first) = 0;
+        virtual bool GenericAESAuthentication(unsigned short keyBNr, std::shared_ptr<MifarePlusKey> key, bool t_cl, bool first) = 0;
 
         /**
         * \brief Rotate the buffer by 1 from the left
@@ -70,12 +70,12 @@ namespace logicalaccess
         /**
         * \brief Get the crypto class
         */
-        boost::shared_ptr<MifarePlusCrypto> GetCrypto() const;
+        std::shared_ptr<MifarePlusCrypto> GetCrypto() const;
 
         /**
         * \MifarePlusCrypto class instance
         */
-        boost::shared_ptr<MifarePlusCrypto> d_crypto;
+        std::shared_ptr<MifarePlusCrypto> d_crypto;
     };
 }
 

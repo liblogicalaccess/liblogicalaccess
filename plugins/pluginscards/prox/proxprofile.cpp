@@ -35,23 +35,23 @@ namespace logicalaccess
     {
     }
 
-    void ProxProfile::setDefaultKeysAt(boost::shared_ptr<Location> /*location*/)
+    void ProxProfile::setDefaultKeysAt(std::shared_ptr<Location> /*location*/)
     {
     }
 
-    void ProxProfile::setKeyAt(boost::shared_ptr<Location> /*location*/, boost::shared_ptr<AccessInfo> /*AccessInfo*/)
+    void ProxProfile::setKeyAt(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*AccessInfo*/)
     {
     }
 
-    boost::shared_ptr<AccessInfo> ProxProfile::createAccessInfo() const
+    std::shared_ptr<AccessInfo> ProxProfile::createAccessInfo() const
     {
-        boost::shared_ptr<AccessInfo> ret;
+        std::shared_ptr<AccessInfo> ret;
         return ret;
     }
 
-    boost::shared_ptr<Location> ProxProfile::createLocation() const
+    std::shared_ptr<Location> ProxProfile::createLocation() const
     {
-        boost::shared_ptr<ProxLocation> ret;
+        std::shared_ptr<ProxLocation> ret;
         ret.reset(new ProxLocation());
         return ret;
     }
@@ -59,7 +59,7 @@ namespace logicalaccess
     FormatList ProxProfile::getSupportedFormatList()
     {
         FormatList list = Profile::getHIDWiegandFormatList();
-        list.push_back(boost::shared_ptr<RawFormat>(new RawFormat()));
+        list.push_back(std::shared_ptr<RawFormat>(new RawFormat()));
         return list;
     }
 }

@@ -1,5 +1,5 @@
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "smartidreaderprovider.hpp"
 
@@ -21,7 +21,7 @@ extern "C"
         return (char *)"SmartID";
     }
 
-    LIBLOGICALACCESS_API void getSmartIDReader(boost::shared_ptr<logicalaccess::ReaderProvider>* rp)
+    LIBLOGICALACCESS_API void getSmartIDReader(std::shared_ptr<logicalaccess::ReaderProvider>* rp)
     {
         if (rp != NULL)
         {

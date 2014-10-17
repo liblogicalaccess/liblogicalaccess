@@ -12,7 +12,7 @@
 
 namespace logicalaccess
 {
-    void NXPAV2KeyDiversification::initDiversification(std::vector<unsigned char> identifier, int AID, boost::shared_ptr<Key> key, unsigned char keyno, std::vector<unsigned char>& diversify)
+    void NXPAV2KeyDiversification::initDiversification(std::vector<unsigned char> identifier, int AID, std::shared_ptr<Key> key, unsigned char keyno, std::vector<unsigned char>& diversify)
     {
         if (d_divInput.size() == 0)
         {
@@ -47,21 +47,21 @@ namespace logicalaccess
         }
     }
 
-    std::vector<unsigned char> NXPAV2KeyDiversification::getDiversifiedKey(boost::shared_ptr<Key> key, std::vector<unsigned char> diversify)
+    std::vector<unsigned char> NXPAV2KeyDiversification::getDiversifiedKey(std::shared_ptr<Key> key, std::vector<unsigned char> diversify)
     {
         LOG(LogLevel::INFOS) << "Using key diversification NXP AV2 with div : " << BufferHelper::getHex(diversify);
         int block_size = 0;
-        boost::shared_ptr<openssl::OpenSSLSymmetricCipher> d_cipher;
+        std::shared_ptr<openssl::OpenSSLSymmetricCipher> d_cipher;
         std::vector<unsigned char> keycipher(key->getData(), key->getData() + key->getLength());
         std::vector<unsigned char> emptyIV, keydiv;
 
-        if (boost::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_DES
-            || boost::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_3K3DES)
+        if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_DES
+            || std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_3K3DES)
         {
             d_cipher.reset(new openssl::DESCipher());
             block_size = 8;
         }
-        else if (boost::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_AES)
+        else if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_AES)
         {
             d_cipher.reset(new openssl::AESCipher());
             block_size = 16;
@@ -70,7 +70,7 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "NXP Diversification don't support this security");
 
         emptyIV.resize(block_size);
-        if (boost::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_AES)
+        if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_AES)
         {
             //const AES 128
             diversify.insert(diversify.begin(), 0x01);
@@ -79,7 +79,7 @@ namespace logicalaccess
             keydiv.resize(16);
             std::copy(keydiv_tmp.end() - 16, keydiv_tmp.end(), keydiv.begin());
         }
-        else if (boost::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_DES)
+        else if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_DES)
         {
             std::vector<unsigned char> keydiv_tmp_1, keydiv_tmp_2;
             diversify.insert(diversify.begin(), 0x21);
@@ -89,7 +89,7 @@ namespace logicalaccess
             keydiv.insert(keydiv.end(), keydiv_tmp_1.begin() + 8, keydiv_tmp_1.end());
             keydiv.insert(keydiv.end(), keydiv_tmp_2.begin() + 8, keydiv_tmp_2.end());
         }
-        else if (boost::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_3K3DES)
+        else if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_3K3DES)
         {
             std::vector<unsigned char> keydiv_tmp_1, keydiv_tmp_2, keydiv_tmp_3;
             diversify.insert(diversify.begin(), 0x31);

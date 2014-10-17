@@ -31,9 +31,9 @@ namespace logicalaccess
         : ReaderUnit()
     {
         d_readerUnitConfig.reset(new OK5553ReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(boost::shared_ptr<OK5553ReaderCardAdapter>(new OK5553ReaderCardAdapter()));
+        setDefaultReaderCardAdapter(std::shared_ptr<OK5553ReaderCardAdapter>(new OK5553ReaderCardAdapter()));
 
-        boost::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
+        std::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
         setDataTransport(dataTransport);
         d_card_type = "UNKNOWN";
 
@@ -78,7 +78,7 @@ namespace logicalaccess
         }
         else
         {
-            boost::shared_ptr<Chip> chip = getChipInAir(maxwait);
+            std::shared_ptr<Chip> chip = getChipInAir(maxwait);
             if (chip)
             {
                 d_insertedChip = chip;
@@ -98,7 +98,7 @@ namespace logicalaccess
             unsigned int currentWait = 0;
             while (!removed && ((currentWait < maxwait) || maxwait == 0))
             {
-                boost::shared_ptr<Chip> chip = getChipInAir(250);
+                std::shared_ptr<Chip> chip = getChipInAir(250);
                 if (chip)
                 {
                     std::vector<unsigned char> tmpId = chip->getChipIdentifier();
@@ -180,11 +180,11 @@ namespace logicalaccess
         return res;
     }
 
-    boost::shared_ptr<Chip> OK5553ReaderUnit::getChipInAir(unsigned int maxwait)
+    std::shared_ptr<Chip> OK5553ReaderUnit::getChipInAir(unsigned int maxwait)
     {
         LOG(LogLevel::INFOS) << "Starting get chip in air...";
 
-        boost::shared_ptr<Chip> chip;
+        std::shared_ptr<Chip> chip;
         std::vector<unsigned char> buf;
         unsigned int currentWait = 0;
         while (!chip && (maxwait == 0 || currentWait < maxwait))
@@ -212,7 +212,7 @@ namespace logicalaccess
                     chip = createChip("DESFire");
                     buf.erase(buf.begin());
                     chip->setChipIdentifier(buf);
-                    boost::dynamic_pointer_cast<DESFireISO7816Commands>(chip->getCommands())->getCrypto()->setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(chip->getProfile()), chip->getChipIdentifier());
+                    std::dynamic_pointer_cast<DESFireISO7816Commands>(chip->getCommands())->getCrypto()->setCryptoContext(std::dynamic_pointer_cast<DESFireProfile>(chip->getProfile()), chip->getChipIdentifier());
                 }
                 else if (buf[0] == ChipType::MIFAREULTRALIGHT)
                 {
@@ -231,15 +231,15 @@ namespace logicalaccess
         return chip;
     }
 
-    boost::shared_ptr<Chip> OK5553ReaderUnit::createChip(std::string type)
+    std::shared_ptr<Chip> OK5553ReaderUnit::createChip(std::string type)
     {
         LOG(LogLevel::INFOS) << "Create chip " << type;
-        boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
+        std::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 
         if (chip)
         {
-            boost::shared_ptr<ReaderCardAdapter> rca;
-            boost::shared_ptr<Commands> commands;
+            std::shared_ptr<ReaderCardAdapter> rca;
+            std::shared_ptr<Commands> commands;
 
             if (type == "Mifare1K" || type == "Mifare4K" || type == "Mifare")
             {
@@ -275,16 +275,16 @@ namespace logicalaccess
         return chip;
     }
 
-    boost::shared_ptr<Chip> OK5553ReaderUnit::getSingleChip()
+    std::shared_ptr<Chip> OK5553ReaderUnit::getSingleChip()
     {
-        boost::shared_ptr<Chip> chip = d_insertedChip;
+        std::shared_ptr<Chip> chip = d_insertedChip;
         return chip;
     }
 
-    std::vector<boost::shared_ptr<Chip> > OK5553ReaderUnit::getChipList()
+    std::vector<std::shared_ptr<Chip> > OK5553ReaderUnit::getChipList()
     {
-        std::vector<boost::shared_ptr<Chip> > chipList;
-        boost::shared_ptr<Chip> singleChip = getSingleChip();
+        std::vector<std::shared_ptr<Chip> > chipList;
+        std::shared_ptr<Chip> singleChip = getSingleChip();
         if (singleChip)
         {
             chipList.push_back(singleChip);
@@ -292,12 +292,12 @@ namespace logicalaccess
         return chipList;
     }
 
-    boost::shared_ptr<OK5553ReaderCardAdapter> OK5553ReaderUnit::getDefaultOK5553ReaderCardAdapter()
+    std::shared_ptr<OK5553ReaderCardAdapter> OK5553ReaderUnit::getDefaultOK5553ReaderCardAdapter()
     {
-        boost::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
+        std::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
         if (!adapter->getDataTransport())
             adapter->setDataTransport(getDataTransport());
-        return boost::dynamic_pointer_cast<OK5553ReaderCardAdapter>(adapter);
+        return std::dynamic_pointer_cast<OK5553ReaderCardAdapter>(adapter);
     }
 
     string OK5553ReaderUnit::getReaderSerialNumber()
@@ -313,7 +313,7 @@ namespace logicalaccess
     bool OK5553ReaderUnit::connectToReader()
     {
         LOG(LogLevel::INFOS) << "Starting connection to reader...";
-        boost::shared_ptr<DataTransport> dataTransport = getDataTransport();
+        std::shared_ptr<DataTransport> dataTransport = getDataTransport();
         if (!dataTransport->getReaderUnit())
         {
             dataTransport->setReaderUnit(shared_from_this());
@@ -341,9 +341,9 @@ namespace logicalaccess
         ReaderUnit::unSerialize(node);
     }
 
-    boost::shared_ptr<OK5553ReaderProvider> OK5553ReaderUnit::getOK5553ReaderProvider() const
+    std::shared_ptr<OK5553ReaderProvider> OK5553ReaderUnit::getOK5553ReaderProvider() const
     {
-        return boost::dynamic_pointer_cast<OK5553ReaderProvider>(getReaderProvider());
+        return std::dynamic_pointer_cast<OK5553ReaderProvider>(getReaderProvider());
     }
 
     std::vector<unsigned char> OK5553ReaderUnit::reqA()

@@ -23,9 +23,9 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<RFIDeasReaderProvider> RFIDeasReaderProvider::getSingletonInstance()
+    std::shared_ptr<RFIDeasReaderProvider> RFIDeasReaderProvider::getSingletonInstance()
     {
-        static boost::shared_ptr<RFIDeasReaderProvider> instance;
+        static std::shared_ptr<RFIDeasReaderProvider> instance;
         if (!instance)
         {
             instance.reset(new RFIDeasReaderProvider());
@@ -50,10 +50,10 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<ReaderUnit> RFIDeasReaderProvider::createReaderUnit()
+    std::shared_ptr<ReaderUnit> RFIDeasReaderProvider::createReaderUnit()
     {
-        boost::shared_ptr<RFIDeasReaderUnit> ret = RFIDeasReaderUnit::getSingletonInstance();
-        ret->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
+        std::shared_ptr<RFIDeasReaderUnit> ret = RFIDeasReaderUnit::getSingletonInstance();
+        ret->setReaderProvider(std::weak_ptr<ReaderProvider>(shared_from_this()));
 
         return ret;
     }

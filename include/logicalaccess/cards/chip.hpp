@@ -30,7 +30,7 @@ namespace logicalaccess
     /**
      * \brief The base chip class for all chip. Each chip have is own object and providers according to himself and the reader used to access the chip.
      */
-    class LIBLOGICALACCESS_API Chip : public boost::enable_shared_from_this < Chip >
+    class LIBLOGICALACCESS_API Chip : public std::enable_shared_from_this < Chip >
     {
     public:
 
@@ -66,31 +66,31 @@ namespace logicalaccess
          * \brief Get the root location node.
          * \return The root location node.
          */
-        virtual boost::shared_ptr<LocationNode> getRootLocationNode();
+        virtual std::shared_ptr<LocationNode> getRootLocationNode();
 
         /**
          * \brief Get the commands.
          * \return The commands.
          */
-        boost::shared_ptr<Commands> getCommands() const { return d_commands; };
+        std::shared_ptr<Commands> getCommands() const { return d_commands; };
 
         /**
          * \brief Set commands.
          * \param commands The commands.
          */
-        void setCommands(boost::shared_ptr<Commands> commands) { d_commands = commands; };
+        void setCommands(std::shared_ptr<Commands> commands) { d_commands = commands; };
 
         /**
          * \brief Get the profile.
          * \return The profile.
          */
-        boost::shared_ptr<Profile> getProfile() const { return d_profile; };
+        std::shared_ptr<Profile> getProfile() const { return d_profile; };
 
         /**
          * \brief Set the profile.
          * \param rofile The profile.
          */
-        void setProfile(boost::shared_ptr<Profile> profile) { d_profile = profile; };
+        void setProfile(std::shared_ptr<Profile> profile) { d_profile = profile; };
 
         /**
          * \brief Get the chip identifier.
@@ -133,7 +133,7 @@ namespace logicalaccess
          * \param serviceType The card service type.
          * \return The card service.
          */
-        virtual boost::shared_ptr<CardService> getService(CardServiceType serviceType);
+        virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
 
         bool operator < (const Chip& chip)
         {
@@ -160,12 +160,12 @@ namespace logicalaccess
         /**
          * \brief Commands object.
          */
-        boost::shared_ptr<Commands> d_commands;
+        std::shared_ptr<Commands> d_commands;
 
         /**
          * \brief The profile.
          */
-        boost::shared_ptr<Profile> d_profile;
+        std::shared_ptr<Profile> d_profile;
 
         /**
          * \brief The chip reception level.

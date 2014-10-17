@@ -1,5 +1,5 @@
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "promagreaderprovider.hpp"
 
@@ -21,7 +21,7 @@ extern "C"
         return (char *)"Promag";
     }
 
-    LIBLOGICALACCESS_API void getPromagReader(boost::shared_ptr<logicalaccess::ReaderProvider>* rp)
+    LIBLOGICALACCESS_API void getPromagReader(std::shared_ptr<logicalaccess::ReaderProvider>* rp)
     {
         if (rp != NULL)
         {

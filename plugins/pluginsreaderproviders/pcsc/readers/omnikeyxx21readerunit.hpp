@@ -51,20 +51,20 @@ namespace logicalaccess
          * \param type The card type.
          * \return The PC/SC reader/card adapter.
          */
-        virtual boost::shared_ptr<ReaderCardAdapter> getReaderCardAdapter(std::string type);
+        virtual std::shared_ptr<ReaderCardAdapter> getReaderCardAdapter(std::string type);
 
         /**
          * \brief Get the Omnikey XX21 reader unit configuration.
          * \return The Omnikey XX21 reader unit configuration.
          */
-        boost::shared_ptr<OmnikeyXX21ReaderUnitConfiguration> getOmnikeyXX21Configuration() { return boost::dynamic_pointer_cast<OmnikeyXX21ReaderUnitConfiguration>(getPCSCConfiguration()); };
+        std::shared_ptr<OmnikeyXX21ReaderUnitConfiguration> getOmnikeyXX21Configuration() { return std::dynamic_pointer_cast<OmnikeyXX21ReaderUnitConfiguration>(getPCSCConfiguration()); };
 
         /**
          * \brief Change a key in reader memory.
          * \param keystorage The key storage information.
          * \param key The key value.
          */
-        virtual void changeReaderKey(boost::shared_ptr<ReaderMemoryKeyStorage> keystorage, const std::vector<unsigned char>& key);
+        virtual void changeReaderKey(std::shared_ptr<ReaderMemoryKeyStorage> keystorage, const std::vector<unsigned char>& key);
 
         /**
          * \brief Get if the inserted card is from ISO 14443-4 A or B.

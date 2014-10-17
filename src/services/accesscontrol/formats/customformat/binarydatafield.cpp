@@ -157,12 +157,12 @@ namespace logicalaccess
         delete[] paddedBuffer;
     }
 
-    bool BinaryDataField::checkSkeleton(boost::shared_ptr<DataField> field) const
+    bool BinaryDataField::checkSkeleton(std::shared_ptr<DataField> field) const
     {
         bool ret = false;
         if (field)
         {
-            boost::shared_ptr<BinaryDataField> pField = boost::dynamic_pointer_cast<BinaryDataField>(field);
+            std::shared_ptr<BinaryDataField> pField = std::dynamic_pointer_cast<BinaryDataField>(field);
             if (pField)
             {
                 ret = (pField->getDataLength() == getDataLength() &&

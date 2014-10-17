@@ -106,7 +106,7 @@ namespace logicalaccess
         configure(d_port, Settings::getInstance()->IsConfigurationRetryEnabled);
     }
 
-    void SerialPortDataTransport::configure(boost::shared_ptr<SerialPortXml> port, bool retryConfiguring)
+    void SerialPortDataTransport::configure(std::shared_ptr<SerialPortXml> port, bool retryConfiguring)
     {
         EXCEPTION_ASSERT_WITH_LOG(port, LibLogicalAccessException, "No serial port configured !");
         EXCEPTION_ASSERT_WITH_LOG(port->getSerialPort()->deviceName() != "", LibLogicalAccessException, "Serial port name is empty ! Auto-detect failed !");
@@ -150,16 +150,16 @@ namespace logicalaccess
             }
 
             LOG(LogLevel::INFOS) << "Serial port is empty ! Starting Auto COM Port Detection...";
-            std::vector<boost::shared_ptr<SerialPortXml> > ports;
+            std::vector<std::shared_ptr<SerialPortXml> > ports;
             if (SerialPortXml::EnumerateUsingCreateFile(ports) && !ports.empty() && getReaderUnit())
             {
                 std::vector<unsigned char> cmd = getReaderUnit()->getPingCommand();
                 if (cmd.size() > 0)
                 {
-                    boost::shared_ptr<ReaderCardAdapter> rca = getReaderUnit()->getDefaultReaderCardAdapter();
+                    std::shared_ptr<ReaderCardAdapter> rca = getReaderUnit()->getDefaultReaderCardAdapter();
                     std::vector<unsigned char> wrappedcmd = rca->adaptCommand(cmd);
                     bool found = false;
-                    for (std::vector<boost::shared_ptr<SerialPortXml> >::iterator i = ports.begin(); i != ports.end() && !found; ++i)
+                    for (std::vector<std::shared_ptr<SerialPortXml> >::iterator i = ports.begin(); i != ports.end() && !found; ++i)
                     {
                         try
                         {

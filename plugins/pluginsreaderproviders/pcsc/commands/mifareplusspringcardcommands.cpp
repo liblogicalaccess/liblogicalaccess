@@ -23,7 +23,7 @@ namespace logicalaccess
     {
     }
 
-    bool MifarePlusSpringCardCommands::GenericAESAuthentication(unsigned short keyBNr, boost::shared_ptr<MifarePlusKey> key, bool t_cl, bool first)
+    bool MifarePlusSpringCardCommands::GenericAESAuthentication(unsigned short keyBNr, std::shared_ptr<MifarePlusKey> key, bool t_cl, bool first)
     {
         std::vector<unsigned char> command;
         std::vector<unsigned char> res;
@@ -109,9 +109,9 @@ namespace logicalaccess
         std::vector<unsigned char> result;
 
         if (t_cl)
-            result = boost::dynamic_pointer_cast<PCSCReaderUnit>(getReaderCardAdapter()->getDataTransport()->getReaderUnit())->getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xFE, 0x00, 0x00, static_cast<unsigned char>(command.size()), command);
+            result = std::dynamic_pointer_cast<PCSCReaderUnit>(getReaderCardAdapter()->getDataTransport()->getReaderUnit())->getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xFE, 0x00, 0x00, static_cast<unsigned char>(command.size()), command);
         else
-            result = boost::dynamic_pointer_cast<PCSCReaderUnit>(getReaderCardAdapter()->getDataTransport()->getReaderUnit())->getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xFE, 0x01, 0x07, static_cast<unsigned char>(command.size()), command);
+            result = std::dynamic_pointer_cast<PCSCReaderUnit>(getReaderCardAdapter()->getDataTransport()->getReaderUnit())->getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xFE, 0x01, 0x07, static_cast<unsigned char>(command.size()), command);
 
         // temp
         std::cout << "card responded : " << BufferHelper::getHex(result) << "(" << result.size() << " bytes)\n";

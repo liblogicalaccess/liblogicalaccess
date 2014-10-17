@@ -13,26 +13,26 @@ namespace logicalaccess
     {
         d_sectorKeySize = sectorKeySize;
 
-        keyA = boost::shared_ptr<MifarePlusKey>(new MifarePlusKey(d_sectorKeySize));
+        keyA = std::shared_ptr<MifarePlusKey>(new MifarePlusKey(d_sectorKeySize));
         keyA->fromString(MIFARE_PLUS_DEFAULT_AESKEY);
-        keyB = boost::shared_ptr<MifarePlusKey>(new MifarePlusKey(d_sectorKeySize));
+        keyB = std::shared_ptr<MifarePlusKey>(new MifarePlusKey(d_sectorKeySize));
         keyB->fromString(MIFARE_PLUS_DEFAULT_AESKEY);
-        keyOriginality = boost::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_AES_KEY_SIZE));
+        keyOriginality = std::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_AES_KEY_SIZE));
         keyOriginality->fromString(MIFARE_PLUS_DEFAULT_AESKEY);
-        keyMastercard = boost::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_AES_KEY_SIZE));
+        keyMastercard = std::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_AES_KEY_SIZE));
         keyMastercard->fromString(MIFARE_PLUS_DEFAULT_AESKEY);
-        keyConfiguration = boost::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_AES_KEY_SIZE));
+        keyConfiguration = std::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_AES_KEY_SIZE));
         keyConfiguration->fromString(MIFARE_PLUS_DEFAULT_AESKEY);
-        keySwitchL2 = boost::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_AES_KEY_SIZE));
+        keySwitchL2 = std::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_AES_KEY_SIZE));
         keySwitchL2->fromString(MIFARE_PLUS_DEFAULT_AESKEY);
-        keySwitchL3 = boost::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_AES_KEY_SIZE));
+        keySwitchL3 = std::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_AES_KEY_SIZE));
         keySwitchL3->fromString(MIFARE_PLUS_DEFAULT_AESKEY);
-        keyAuthenticateSL1AES = boost::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_AES_KEY_SIZE));
+        keyAuthenticateSL1AES = std::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_AES_KEY_SIZE));
         keyAuthenticateSL1AES->fromString(MIFARE_PLUS_DEFAULT_AESKEY);
 
-        madKeyA = boost::shared_ptr<MifarePlusKey>(new MifarePlusKey(d_sectorKeySize));
+        madKeyA = std::shared_ptr<MifarePlusKey>(new MifarePlusKey(d_sectorKeySize));
         madKeyA->fromString(MIFARE_PLUS_DEFAULT_AESKEY);
-        madKeyB = boost::shared_ptr<MifarePlusKey>(new MifarePlusKey(d_sectorKeySize));
+        madKeyB = std::shared_ptr<MifarePlusKey>(new MifarePlusKey(d_sectorKeySize));
         madKeyB->fromString(MIFARE_PLUS_DEFAULT_AESKEY);
         useMAD = false;
         sab.setTransportConfiguration();
@@ -122,14 +122,14 @@ namespace logicalaccess
 
     void MifarePlusAccessInfo::unSerialize(boost::property_tree::ptree& node)
     {
-        boost::dynamic_pointer_cast<XmlSerializable>(keyA)->unSerialize(node.get_child("KeyA"), "");
-        boost::dynamic_pointer_cast<XmlSerializable>(keyB)->unSerialize(node.get_child("KeyB"), "");
-        boost::dynamic_pointer_cast<XmlSerializable>(keyOriginality)->unSerialize(node.get_child("KeyOriginality"), "");
-        boost::dynamic_pointer_cast<XmlSerializable>(keyMastercard)->unSerialize(node.get_child("KeyMastercard"), "");
-        boost::dynamic_pointer_cast<XmlSerializable>(keyConfiguration)->unSerialize(node.get_child("KeyConfiguration"), "");
-        boost::dynamic_pointer_cast<XmlSerializable>(keySwitchL2)->unSerialize(node.get_child("KeySwitchL2"), "");
-        boost::dynamic_pointer_cast<XmlSerializable>(keySwitchL3)->unSerialize(node.get_child("KeySwitchL3"), "");
-        boost::dynamic_pointer_cast<XmlSerializable>(keyAuthenticateSL1AES)->unSerialize(node.get_child("KeyAuthenticateSL1AES"), "");
+        std::dynamic_pointer_cast<XmlSerializable>(keyA)->unSerialize(node.get_child("KeyA"), "");
+        std::dynamic_pointer_cast<XmlSerializable>(keyB)->unSerialize(node.get_child("KeyB"), "");
+        std::dynamic_pointer_cast<XmlSerializable>(keyOriginality)->unSerialize(node.get_child("KeyOriginality"), "");
+        std::dynamic_pointer_cast<XmlSerializable>(keyMastercard)->unSerialize(node.get_child("KeyMastercard"), "");
+        std::dynamic_pointer_cast<XmlSerializable>(keyConfiguration)->unSerialize(node.get_child("KeyConfiguration"), "");
+        std::dynamic_pointer_cast<XmlSerializable>(keySwitchL2)->unSerialize(node.get_child("KeySwitchL2"), "");
+        std::dynamic_pointer_cast<XmlSerializable>(keySwitchL3)->unSerialize(node.get_child("KeySwitchL3"), "");
+        std::dynamic_pointer_cast<XmlSerializable>(keyAuthenticateSL1AES)->unSerialize(node.get_child("KeyAuthenticateSL1AES"), "");
 
         string sabstr = node.get_child("SectorAccessBits").get_value<std::string>();
         unsigned char buf[3];
@@ -152,8 +152,8 @@ namespace logicalaccess
         if (!modnode.empty())
         {
             useMAD = modnode.get_child("Use").get_value<bool>();
-            boost::dynamic_pointer_cast<XmlSerializable>(madKeyA)->unSerialize(modnode.get_child("MADKeyA"), "");
-            boost::dynamic_pointer_cast<XmlSerializable>(madKeyB)->unSerialize(modnode.get_child("MADKeyB"), "");
+            std::dynamic_pointer_cast<XmlSerializable>(madKeyA)->unSerialize(modnode.get_child("MADKeyA"), "");
+            std::dynamic_pointer_cast<XmlSerializable>(madKeyB)->unSerialize(modnode.get_child("MADKeyB"), "");
         }
     }
 

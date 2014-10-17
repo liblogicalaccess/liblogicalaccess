@@ -22,14 +22,14 @@ namespace logicalaccess
 
         d_formatLinear.d_field = 0;
 
-        boost::shared_ptr<NumberDataField> field(new NumberDataField());
+        std::shared_ptr<NumberDataField> field(new NumberDataField());
         field->setName("Uid");
         field->setIsIdentifier(true);
         field->setDataLength(16);
         field->setDataRepresentation(d_dataRepresentation);
         field->setDataType(d_dataType);
         d_fieldList.push_back(field);
-        field = boost::shared_ptr<NumberDataField>(new NumberDataField());
+        field = std::shared_ptr<NumberDataField>(new NumberDataField());
         field->setName("Field");
         field->setDataLength(14);
         field->setDataRepresentation(d_dataRepresentation);
@@ -53,13 +53,13 @@ namespace logicalaccess
 
     unsigned short int Getronik40BitFormat::getField() const
     {
-        boost::shared_ptr<NumberDataField> field = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("Field"));
+        std::shared_ptr<NumberDataField> field = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("Field"));
         return static_cast<unsigned short int>(field->getValue());
     }
 
     void Getronik40BitFormat::setField(unsigned short int field)
     {
-        boost::shared_ptr<NumberDataField> nfield = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("Field"));
+        std::shared_ptr<NumberDataField> nfield = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("Field"));
         nfield->setValue(field);
         d_formatLinear.d_field = field;
     }
@@ -101,12 +101,12 @@ namespace logicalaccess
         return "Getronik40BitFormat";
     }
 
-    bool Getronik40BitFormat::checkSkeleton(boost::shared_ptr<Format> format) const
+    bool Getronik40BitFormat::checkSkeleton(std::shared_ptr<Format> format) const
     {
         bool ret = false;
         if (format)
         {
-            boost::shared_ptr<Getronik40BitFormat> pFormat = boost::dynamic_pointer_cast<Getronik40BitFormat>(format);
+            std::shared_ptr<Getronik40BitFormat> pFormat = std::dynamic_pointer_cast<Getronik40BitFormat>(format);
             if (pFormat)
             {
                 ret = (

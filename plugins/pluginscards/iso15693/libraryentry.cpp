@@ -1,5 +1,5 @@
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "iso15693chip.hpp"
 
@@ -21,11 +21,11 @@ extern "C"
         return (char *)"ISO15693";
     }
 
-    LIBLOGICALACCESS_API void getISO15693Chip(boost::shared_ptr<logicalaccess::Chip>* chip)
+    LIBLOGICALACCESS_API void getISO15693Chip(std::shared_ptr<logicalaccess::Chip>* chip)
     {
         if (chip != NULL)
         {
-            *chip = boost::shared_ptr<logicalaccess::ISO15693Chip>(new logicalaccess::ISO15693Chip());
+            *chip = std::shared_ptr<logicalaccess::ISO15693Chip>(new logicalaccess::ISO15693Chip());
         }
     }
 

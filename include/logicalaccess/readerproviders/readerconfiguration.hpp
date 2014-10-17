@@ -60,37 +60,37 @@ namespace logicalaccess
          * \brief Get the reader provider.
          * \return The reader provider.
          */
-        boost::shared_ptr<ReaderProvider> getReaderProvider() const;
+        std::shared_ptr<ReaderProvider> getReaderProvider() const;
 
         /**
          * \brief Get the reader unit.
          * \return The reader unit.
          */
-        boost::shared_ptr<ReaderUnit> getReaderUnit() const;
+        std::shared_ptr<ReaderUnit> getReaderUnit() const;
 
         /*
          * \brief Set the reader provider.
          * \param provider The reader provider.
          */
-        void setReaderProvider(boost::shared_ptr<ReaderProvider> provider);
+        void setReaderProvider(std::shared_ptr<ReaderProvider> provider);
 
         /*
          * \brief Set the reader unit.
          * \param provider The reader unit.
          */
-        void setReaderUnit(boost::shared_ptr<ReaderUnit> unit);
+        void setReaderUnit(std::shared_ptr<ReaderUnit> unit);
 
     protected:
 
         /**
          * \brief The reader provider.
          */
-        boost::shared_ptr<ReaderProvider> d_readerProvider;
+        std::shared_ptr<ReaderProvider> d_readerProvider;
 
         /**
          * \brief The reader unit.
          */
-        boost::shared_ptr<ReaderUnit> d_ReaderUnit;
+        std::shared_ptr<ReaderUnit> d_ReaderUnit;
     };
 }
 

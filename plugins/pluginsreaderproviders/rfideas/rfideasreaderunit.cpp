@@ -268,14 +268,14 @@ namespace logicalaccess
         return tagid;
     }
 
-    boost::shared_ptr<Chip> RFIDeasReaderUnit::createChip(std::string type)
+    std::shared_ptr<Chip> RFIDeasReaderUnit::createChip(std::string type)
     {
-        boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
+        std::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
         setTagIdBitsLengthFct setagfct;
 
         if (chip)
         {
-            boost::shared_ptr<ReaderCardAdapter> rca;
+            std::shared_ptr<ReaderCardAdapter> rca;
 
             if (type == "GenericTag")
             {
@@ -295,16 +295,16 @@ namespace logicalaccess
         return chip;
     }
 
-    boost::shared_ptr<Chip> RFIDeasReaderUnit::getSingleChip()
+    std::shared_ptr<Chip> RFIDeasReaderUnit::getSingleChip()
     {
-        boost::shared_ptr<Chip> chip = d_insertedChip;
+        std::shared_ptr<Chip> chip = d_insertedChip;
         return chip;
     }
 
-    std::vector<boost::shared_ptr<Chip> > RFIDeasReaderUnit::getChipList()
+    std::vector<std::shared_ptr<Chip> > RFIDeasReaderUnit::getChipList()
     {
-        std::vector<boost::shared_ptr<Chip> > chipList;
-        boost::shared_ptr<Chip> singleChip = getSingleChip();
+        std::vector<std::shared_ptr<Chip> > chipList;
+        std::shared_ptr<Chip> singleChip = getSingleChip();
         if (singleChip)
         {
             chipList.push_back(singleChip);
@@ -339,14 +339,14 @@ namespace logicalaccess
         d_readerUnitConfig->unSerialize(node.get_child(d_readerUnitConfig->getDefaultXmlNodeName()));
     }
 
-    boost::shared_ptr<RFIDeasReaderProvider> RFIDeasReaderUnit::getRFIDeasReaderProvider() const
+    std::shared_ptr<RFIDeasReaderProvider> RFIDeasReaderUnit::getRFIDeasReaderProvider() const
     {
-        return boost::dynamic_pointer_cast<RFIDeasReaderProvider>(getReaderProvider());
+        return std::dynamic_pointer_cast<RFIDeasReaderProvider>(getReaderProvider());
     }
 
-    boost::shared_ptr<RFIDeasReaderUnit> RFIDeasReaderUnit::getSingletonInstance()
+    std::shared_ptr<RFIDeasReaderUnit> RFIDeasReaderUnit::getSingletonInstance()
     {
-        static boost::shared_ptr<RFIDeasReaderUnit> instance;
+        static std::shared_ptr<RFIDeasReaderUnit> instance;
         if (!instance)
         {
             instance.reset(new RFIDeasReaderUnit());

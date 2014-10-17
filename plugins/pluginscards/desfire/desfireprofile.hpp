@@ -50,7 +50,7 @@ namespace logicalaccess
          * \param keyno The key number.
          * \return The specified DESFire key or a null key if params are invalid.
          */
-        boost::shared_ptr<DESFireKey> getKey(size_t aid, unsigned char keyno) const;
+        std::shared_ptr<DESFireKey> getKey(size_t aid, unsigned char keyno) const;
 
         /**
          * \brief Set one of the DESFire keys of this profile.
@@ -58,7 +58,7 @@ namespace logicalaccess
          * \param keyno The key number to set
          * \param key The value of the key.
          */
-        virtual void setKey(size_t aid, unsigned char keyno, boost::shared_ptr<DESFireKey> key);
+        virtual void setKey(size_t aid, unsigned char keyno, std::shared_ptr<DESFireKey> key);
 
         /**
          * \brief Set default keys for the card in memory.
@@ -68,7 +68,7 @@ namespace logicalaccess
         /**
          * \brief Set default keys for the type card in memory at a specific location.
          */
-        virtual void setDefaultKeysAt(boost::shared_ptr<Location> location);
+        virtual void setDefaultKeysAt(std::shared_ptr<Location> location);
 
         /**
          * \brief Clear all keys in memory.
@@ -80,19 +80,19 @@ namespace logicalaccess
          * \param location The key's location.
          * \param AccessInfo The key's informations.
          */
-        virtual void setKeyAt(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> AccessInfo);
+        virtual void setKeyAt(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> AccessInfo);
 
         /**
          * \brief Create default DESFire access informations.
          * \return Default DESFire access informations.
          */
-        virtual boost::shared_ptr<AccessInfo> createAccessInfo() const;
+        virtual std::shared_ptr<AccessInfo> createAccessInfo() const;
 
         /**
          * \brief Create default DESFire location.
          * \return Default DESFire location.
          */
-        virtual boost::shared_ptr<Location> createLocation() const;
+        virtual std::shared_ptr<Location> createLocation() const;
 
         /**
          * \brief Get the supported format list.
@@ -105,7 +105,7 @@ namespace logicalaccess
          * \param keyType The key algorithm type.
          * \return The default key.
          */
-        static boost::shared_ptr<DESFireKey> getDefaultKey(DESFireKeyType keyType);
+        static std::shared_ptr<DESFireKey> getDefaultKey(DESFireKeyType keyType);
 
     protected:
 
@@ -164,7 +164,7 @@ namespace logicalaccess
          *		17 - 30	:	3(DES) Application 2 keys
          *		.............
          */
-        boost::shared_ptr<DESFireKey> d_key[393];
+        std::shared_ptr<DESFireKey> d_key[393];
 
         /**
          * \brief The Application ID used.

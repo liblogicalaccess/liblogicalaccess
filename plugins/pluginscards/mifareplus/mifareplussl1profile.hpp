@@ -38,7 +38,7 @@ namespace logicalaccess
          * \param keytype The key type.
          * \return The specified mifare key or a null key if either index or keytype is invalid.
          */
-        virtual boost::shared_ptr<MifarePlusKey> getKey(int index, MifarePlusKeyType keytype) const;
+        virtual std::shared_ptr<MifarePlusKey> getKey(int index, MifarePlusKeyType keytype) const;
 
         /**
          * \brief Set one of the Mifare keys of this profile.
@@ -47,7 +47,7 @@ namespace logicalaccess
          * \param key The value of the key.
          * \warning setKey() automatically calls setMifareKeyUsage(index, keytype, true).
          */
-        virtual void setKey(int index, MifarePlusKeyType keytype, boost::shared_ptr<MifarePlusKey> key);
+        virtual void setKey(int index, MifarePlusKeyType keytype, std::shared_ptr<MifarePlusKey> key);
 
         /**
          * \brief Clear all keys in memory.
@@ -81,7 +81,7 @@ namespace logicalaccess
          * \param location The key's location.
          * \param AccessInfo The key's informations.
          */
-        virtual void setKeyAt(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> AccessInfo);
+        virtual void setKeyAt(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> AccessInfo);
 
         /**
          * \brief Set default keys for the mifare card in memory.
@@ -92,17 +92,17 @@ namespace logicalaccess
          * \brief Create default Mifare access informations.
          * \return Default Mifare access informations.
          */
-        virtual boost::shared_ptr<AccessInfo> createAccessInfo() const;
+        virtual std::shared_ptr<AccessInfo> createAccessInfo() const;
 
     protected:
 
         /**
          * \brief The real keys, + 2 for new keys.
          */
-        boost::shared_ptr<MifarePlusKey>* d_sectorKeys;
-        boost::shared_ptr<MifarePlusKey> d_switchL2Key;
-        boost::shared_ptr<MifarePlusKey> d_switchL3Key;
-        boost::shared_ptr<MifarePlusKey> d_SL1AesKey;
+        std::shared_ptr<MifarePlusKey>* d_sectorKeys;
+        std::shared_ptr<MifarePlusKey> d_switchL2Key;
+        std::shared_ptr<MifarePlusKey> d_switchL3Key;
+        std::shared_ptr<MifarePlusKey> d_SL1AesKey;
     };
 }
 

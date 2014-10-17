@@ -24,37 +24,37 @@ namespace logicalaccess
          * \brief Get the chip.
          * \return The chip.
          */
-        boost::shared_ptr<Chip> getChip() const { return d_chip.lock(); };
+        std::shared_ptr<Chip> getChip() const { return d_chip.lock(); };
 
         /**
          * \brief Set the chip.
          * \param chip The chip.
          */
-        virtual void setChip(boost::shared_ptr<Chip> chip) { d_chip = chip; };
+        virtual void setChip(std::shared_ptr<Chip> chip) { d_chip = chip; };
 
         /**
          * \brief Get the reader/card adapter.
          * \return The reader/card adapter.
          */
-        virtual boost::shared_ptr<ReaderCardAdapter> getReaderCardAdapter() const { return d_readerCardAdapter; };
+        virtual std::shared_ptr<ReaderCardAdapter> getReaderCardAdapter() const { return d_readerCardAdapter; };
 
         /**
          * \brief Set the reader/card adapter.
          * \param adapter The reader/card adapter.
          */
-        virtual void setReaderCardAdapter(boost::shared_ptr<ReaderCardAdapter> adapter) { d_readerCardAdapter = adapter; };
+        virtual void setReaderCardAdapter(std::shared_ptr<ReaderCardAdapter> adapter) { d_readerCardAdapter = adapter; };
 
     protected:
 
         /**
          * \brief The reader/card adapter.
          */
-        boost::shared_ptr<ReaderCardAdapter> d_readerCardAdapter;
+        std::shared_ptr<ReaderCardAdapter> d_readerCardAdapter;
 
         /**
          * \brief The chip.
          */
-        boost::weak_ptr<Chip> d_chip;
+        std::weak_ptr<Chip> d_chip;
     };
 }
 

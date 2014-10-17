@@ -9,27 +9,27 @@
 
 namespace logicalaccess
 {
-    boost::shared_ptr<DESFireChip> DESFireCommands::getDESFireChip() const
+    std::shared_ptr<DESFireChip> DESFireCommands::getDESFireChip() const
     {
-        return boost::dynamic_pointer_cast<DESFireChip>(getChip());
+        return std::dynamic_pointer_cast<DESFireChip>(getChip());
     }
 
-    void DESFireCommands::selectApplication(boost::shared_ptr<DESFireLocation> location)
+    void DESFireCommands::selectApplication(std::shared_ptr<DESFireLocation> location)
     {
         selectApplication(location->aid);
     }
 
-    void DESFireCommands::createApplication(boost::shared_ptr<DESFireLocation> location, DESFireKeySettings settings, unsigned char maxNbKeys)
+    void DESFireCommands::createApplication(std::shared_ptr<DESFireLocation> location, DESFireKeySettings settings, unsigned char maxNbKeys)
     {
         createApplication(location->aid, settings, maxNbKeys);
     }
 
-    void DESFireCommands::createStdDataFile(boost::shared_ptr<DESFireLocation> location, DESFireAccessRights accessRights, unsigned int fileSize)
+    void DESFireCommands::createStdDataFile(std::shared_ptr<DESFireLocation> location, DESFireAccessRights accessRights, unsigned int fileSize)
     {
         createStdDataFile(location->file, location->securityLevel, accessRights, fileSize);
     }
 
-    EncryptionMode DESFireCommands::getEncryptionMode(boost::shared_ptr<AccessInfo> aiToUse, unsigned char fileno, bool isReadMode, bool* needLoadKey = NULL)
+    EncryptionMode DESFireCommands::getEncryptionMode(std::shared_ptr<AccessInfo> aiToUse, unsigned char fileno, bool isReadMode, bool* needLoadKey = NULL)
     {
         EncryptionMode encMode = CM_ENCRYPT;
         DESFireCommands::FileSetting fileSetting;

@@ -22,7 +22,7 @@ namespace logicalaccess
     {
     }
 
-    bool MifarePlusSpringCardCommandsSL3::genericAuthenticate(int sector, boost::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype, bool first)
+    bool MifarePlusSpringCardCommandsSL3::genericAuthenticate(int sector, std::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype, bool first)
     {
         unsigned short KeyBlockNumber = 0x0000;
         switch (keytype)
@@ -56,12 +56,12 @@ namespace logicalaccess
         return (MifarePlusSpringCardCommands::GenericAESAuthentication(KeyBlockNumber, key, true, first));
     }
 
-    bool MifarePlusSpringCardCommandsSL3::authenticate(int sector, boost::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype)
+    bool MifarePlusSpringCardCommandsSL3::authenticate(int sector, std::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype)
     {
         return (genericAuthenticate(sector, key, keytype, true));
     }
 
-    bool MifarePlusSpringCardCommandsSL3::followingAuthenticate(int sector, boost::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype)
+    bool MifarePlusSpringCardCommandsSL3::followingAuthenticate(int sector, std::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype)
     {
         return (genericAuthenticate(sector, key, keytype, false));
     }

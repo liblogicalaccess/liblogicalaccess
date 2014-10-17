@@ -36,7 +36,7 @@ namespace logicalaccess
          */
         size_t getDataObjectLength(int64_t dataObject, bool withObjectLength = false);
 
-        static bool getTagData(boost::shared_ptr<TwicLocation> location, void* data, size_t datalen, void* datatag, size_t& datataglen);
+        static bool getTagData(std::shared_ptr<TwicLocation> location, void* data, size_t datalen, void* datatag, size_t& datataglen);
 
         /**
          * \brief Select the TWIC application.

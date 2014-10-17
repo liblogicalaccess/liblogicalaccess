@@ -54,7 +54,7 @@ namespace logicalaccess
          * \brief Get the OK5553 reader/card adapter.
          * \return The OK5553 reader/card adapter.
          */
-        virtual boost::shared_ptr<OK5553ReaderCardAdapter> getOK5553ReaderCardAdapter() { return boost::dynamic_pointer_cast<OK5553ReaderCardAdapter>(getReaderCardAdapter()); };
+        virtual std::shared_ptr<OK5553ReaderCardAdapter> getOK5553ReaderCardAdapter() { return std::dynamic_pointer_cast<OK5553ReaderCardAdapter>(getReaderCardAdapter()); };
     };
 }
 

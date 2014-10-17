@@ -80,7 +80,7 @@ namespace logicalaccess
         /**
          * \brief Reader card adapter used to send command..
          */
-        boost::shared_ptr<OK5553ReaderCardAdapter> d_ok5553_reader_card_adapter;
+        std::shared_ptr<OK5553ReaderCardAdapter> d_ok5553_reader_card_adapter;
 
         /**
          * \brief Handle the asnwer received from the reader.

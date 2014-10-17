@@ -47,17 +47,17 @@ namespace logicalaccess
         return removed;
     }
 
-    boost::shared_ptr<ReaderCardAdapter> OmnikeyXX21ReaderUnit::getReaderCardAdapter(std::string /*type*/)
+    std::shared_ptr<ReaderCardAdapter> OmnikeyXX21ReaderUnit::getReaderCardAdapter(std::string /*type*/)
     {
         return getDefaultReaderCardAdapter();
     }
 
-    void OmnikeyXX21ReaderUnit::changeReaderKey(boost::shared_ptr<ReaderMemoryKeyStorage> keystorage, const std::vector<unsigned char>& key)
+    void OmnikeyXX21ReaderUnit::changeReaderKey(std::shared_ptr<ReaderMemoryKeyStorage> keystorage, const std::vector<unsigned char>& key)
     {
         EXCEPTION_ASSERT_WITH_LOG(keystorage, std::invalid_argument, "Key storage must be defined.");
         EXCEPTION_ASSERT_WITH_LOG(key.size() > 0, std::invalid_argument, "key cannot be empty.");
 
-        boost::shared_ptr<PCSCReaderCardAdapter> rca = getDefaultPCSCReaderCardAdapter();
+        std::shared_ptr<PCSCReaderCardAdapter> rca = getDefaultPCSCReaderCardAdapter();
         //rca.reset(new OmnikeyHIDiClassReaderCardAdapter());
         //rca->setReaderUnit(shared_from_this());
 

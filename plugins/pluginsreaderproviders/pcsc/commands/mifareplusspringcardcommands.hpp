@@ -48,7 +48,7 @@ namespace logicalaccess
         * \param t_cl the T=CL indicator
         * \param first The first authentication indicator
         */
-        virtual bool GenericAESAuthentication(unsigned short keyBNr, boost::shared_ptr<MifarePlusKey> key, bool t_cl, bool first);
+        virtual bool GenericAESAuthentication(unsigned short keyBNr, std::shared_ptr<MifarePlusKey> key, bool t_cl, bool first);
 
         /**
         * \brief Turn on the TCL mode

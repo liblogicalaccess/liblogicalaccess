@@ -34,7 +34,7 @@ namespace logicalaccess
         LOG(LogLevel::COMS) << "Send Rpleth Command : " << BufferHelper::getHex(data);
         std::vector<unsigned char> res;
 
-        boost::shared_ptr<RplethDataTransport> dt = boost::dynamic_pointer_cast<RplethDataTransport>(getDataTransport());
+        std::shared_ptr<RplethDataTransport> dt = std::dynamic_pointer_cast<RplethDataTransport>(getDataTransport());
         if (dt)
         {
             if (!waitanswer)

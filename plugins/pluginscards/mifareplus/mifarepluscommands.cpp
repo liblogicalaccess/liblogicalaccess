@@ -12,7 +12,7 @@ namespace logicalaccess
 {
     MifarePlusCommands::MifarePlusCommands()
     {
-        d_crypto = boost::shared_ptr<MifarePlusCrypto>(new MifarePlusCrypto());
+        d_crypto = std::shared_ptr<MifarePlusCrypto>(new MifarePlusCrypto());
     }
 
     MifarePlusCommands::~MifarePlusCommands()
@@ -50,7 +50,7 @@ namespace logicalaccess
         return (rand);
     }
 
-    boost::shared_ptr<MifarePlusCrypto> MifarePlusCommands::GetCrypto() const
+    std::shared_ptr<MifarePlusCrypto> MifarePlusCommands::GetCrypto() const
     {
         return (d_crypto);
     }

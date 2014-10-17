@@ -23,8 +23,8 @@ namespace logicalaccess
         : ReaderUnit()
     {
         d_readerUnitConfig.reset(new DeisterReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(boost::shared_ptr<DeisterReaderCardAdapter>(new DeisterReaderCardAdapter()));
-        boost::shared_ptr<DeisterDataTransport> dataTransport(new DeisterDataTransport());
+        setDefaultReaderCardAdapter(std::shared_ptr<DeisterReaderCardAdapter>(new DeisterReaderCardAdapter()));
+        std::shared_ptr<DeisterDataTransport> dataTransport(new DeisterDataTransport());
         setDataTransport(dataTransport);
         d_card_type = "UNKNOWN";
 
@@ -64,7 +64,7 @@ namespace logicalaccess
 
         do
         {
-            boost::shared_ptr<Chip> chip = getChipInAir();
+            std::shared_ptr<Chip> chip = getChipInAir();
             if (chip)
             {
                 d_insertedChip = chip;
@@ -87,7 +87,7 @@ namespace logicalaccess
             std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(maxwait);
             do
             {
-                boost::shared_ptr<Chip> chip = getChipInAir();
+                std::shared_ptr<Chip> chip = getChipInAir();
                 if (chip)
                 {
                     if (chip->getChipIdentifier() != d_insertedChip->getChipIdentifier())
@@ -139,9 +139,9 @@ namespace logicalaccess
         return cmd;
     }
 
-    boost::shared_ptr<Chip> DeisterReaderUnit::getChipInAir()
+    std::shared_ptr<Chip> DeisterReaderUnit::getChipInAir()
     {
-        boost::shared_ptr<Chip> chip;
+        std::shared_ptr<Chip> chip;
         std::vector<unsigned char> cmd;
         cmd.push_back(static_cast<unsigned char>(0x0B));
 
@@ -215,13 +215,13 @@ namespace logicalaccess
         }
     }
 
-    boost::shared_ptr<Chip> DeisterReaderUnit::createChip(std::string type)
+    std::shared_ptr<Chip> DeisterReaderUnit::createChip(std::string type)
     {
-        boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
+        std::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 
         if (chip)
         {
-            boost::shared_ptr<ReaderCardAdapter> rca;
+            std::shared_ptr<ReaderCardAdapter> rca;
 
             if (type == "Mifare1K" || type == "Mifare4K" || type == "Mifare")
                 rca = getDefaultReaderCardAdapter();
@@ -233,16 +233,16 @@ namespace logicalaccess
         return chip;
     }
 
-    boost::shared_ptr<Chip> DeisterReaderUnit::getSingleChip()
+    std::shared_ptr<Chip> DeisterReaderUnit::getSingleChip()
     {
-        boost::shared_ptr<Chip> chip = d_insertedChip;
+        std::shared_ptr<Chip> chip = d_insertedChip;
         return chip;
     }
 
-    std::vector<boost::shared_ptr<Chip> > DeisterReaderUnit::getChipList()
+    std::vector<std::shared_ptr<Chip> > DeisterReaderUnit::getChipList()
     {
-        std::vector<boost::shared_ptr<Chip> > chipList;
-        boost::shared_ptr<Chip> singleChip = getSingleChip();
+        std::vector<std::shared_ptr<Chip> > chipList;
+        std::shared_ptr<Chip> singleChip = getSingleChip();
         if (singleChip)
         {
             chipList.push_back(singleChip);
@@ -250,10 +250,10 @@ namespace logicalaccess
         return chipList;
     }
 
-    boost::shared_ptr<DeisterReaderCardAdapter> DeisterReaderUnit::getDefaultDeisterReaderCardAdapter()
+    std::shared_ptr<DeisterReaderCardAdapter> DeisterReaderUnit::getDefaultDeisterReaderCardAdapter()
     {
-        boost::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
-        return boost::dynamic_pointer_cast<DeisterReaderCardAdapter>(adapter);
+        std::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
+        return std::dynamic_pointer_cast<DeisterReaderCardAdapter>(adapter);
     }
 
     string DeisterReaderUnit::getReaderSerialNumber()
@@ -280,8 +280,8 @@ namespace logicalaccess
         ReaderUnit::unSerialize(node);
     }
 
-    boost::shared_ptr<DeisterReaderProvider> DeisterReaderUnit::getDeisterReaderProvider() const
+    std::shared_ptr<DeisterReaderProvider> DeisterReaderUnit::getDeisterReaderProvider() const
     {
-        return boost::dynamic_pointer_cast<DeisterReaderProvider>(getReaderProvider());
+        return std::dynamic_pointer_cast<DeisterReaderProvider>(getReaderProvider());
     }
 }

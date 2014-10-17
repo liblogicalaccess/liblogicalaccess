@@ -15,7 +15,7 @@ namespace logicalaccess
     /**
      * \brief A Key base class. The key object is used to describe key chip information used for authentication on secured memory area or for restricted operation.
      */
-    class LIBLOGICALACCESS_API Key : public XmlSerializable, public boost::enable_shared_from_this < Key >
+    class LIBLOGICALACCESS_API Key : public XmlSerializable, public std::enable_shared_from_this < Key >
     {
     public:
 
@@ -83,13 +83,13 @@ namespace logicalaccess
          * \brief Set the key storage used for this key.
          * \param key_storage The key storage.
          */
-        void setKeyStorage(boost::shared_ptr<KeyStorage> key_storage);
+        void setKeyStorage(std::shared_ptr<KeyStorage> key_storage);
 
         /**
          * \brief Get the key storage used for this key.
          * \return The key storage.
          */
-        boost::shared_ptr<KeyStorage> getKeyStorage() const;
+        std::shared_ptr<KeyStorage> getKeyStorage() const;
 
         /**
          * \brief Serialize the current object to XML.
@@ -139,12 +139,12 @@ namespace logicalaccess
         /**
          * \brief Set KeyDiversification
          */
-        void setKeyDiversification(boost::shared_ptr<KeyDiversification> div) { d_key_diversification = div; };
+        void setKeyDiversification(std::shared_ptr<KeyDiversification> div) { d_key_diversification = div; };
 
         /**
          * \brief Get Diversification
          */
-        boost::shared_ptr<KeyDiversification> getKeyDiversification() { return d_key_diversification; };
+        std::shared_ptr<KeyDiversification> getKeyDiversification() { return d_key_diversification; };
 
     private:
         /**
@@ -174,12 +174,12 @@ namespace logicalaccess
         /**
          * \brief The key storage used for this key.
          */
-        boost::shared_ptr<KeyStorage> d_key_storage;
+        std::shared_ptr<KeyStorage> d_key_storage;
 
         /**
          * \brief The key storage used for this key.
          */
-        boost::shared_ptr<KeyDiversification> d_key_diversification;
+        std::shared_ptr<KeyDiversification> d_key_diversification;
 
         /**
          * \brief The cipher key.

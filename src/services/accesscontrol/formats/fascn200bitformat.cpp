@@ -28,7 +28,7 @@ namespace logicalaccess
         d_dataType->setBitDataRepresentationType(ET_LITTLEENDIAN);
         d_dataType->setRightParityType(PT_ODD);
 
-        boost::shared_ptr<NumberDataField> field(new NumberDataField());
+        std::shared_ptr<NumberDataField> field(new NumberDataField());
         field->setName("Uid");
         field->setIsIdentifier(true);
         field->setDataLength(24);
@@ -36,42 +36,42 @@ namespace logicalaccess
         field->setDataType(d_dataType);
         d_fieldList.push_back(field);
 
-        field = boost::shared_ptr<NumberDataField>(new NumberDataField());
+        field = std::shared_ptr<NumberDataField>(new NumberDataField());
         field->setName("AgencyCode");
         field->setDataLength(16);
         field->setDataRepresentation(d_dataRepresentation);
         field->setDataType(d_dataType);
         d_fieldList.push_back(field);
 
-        field = boost::shared_ptr<NumberDataField>(new NumberDataField());
+        field = std::shared_ptr<NumberDataField>(new NumberDataField());
         field->setName("SystemCode");
         field->setDataLength(16);
         field->setDataRepresentation(d_dataRepresentation);
         field->setDataType(d_dataType);
         d_fieldList.push_back(field);
 
-        field = boost::shared_ptr<NumberDataField>(new NumberDataField());
+        field = std::shared_ptr<NumberDataField>(new NumberDataField());
         field->setName("PersonIdentifier");
         field->setDataLength(40);
         field->setDataRepresentation(d_dataRepresentation);
         field->setDataType(d_dataType);
         d_fieldList.push_back(field);
 
-        field = boost::shared_ptr<NumberDataField>(new NumberDataField());
+        field = std::shared_ptr<NumberDataField>(new NumberDataField());
         field->setName("OrganizationalCategory");
         field->setDataLength(4);
         field->setDataRepresentation(d_dataRepresentation);
         field->setDataType(d_dataType);
         d_fieldList.push_back(field);
 
-        field = boost::shared_ptr<NumberDataField>(new NumberDataField());
+        field = std::shared_ptr<NumberDataField>(new NumberDataField());
         field->setName("OrganizationalIdentifier");
         field->setDataLength(16);
         field->setDataRepresentation(d_dataRepresentation);
         field->setDataType(d_dataType);
         d_fieldList.push_back(field);
 
-        field = boost::shared_ptr<NumberDataField>(new NumberDataField());
+        field = std::shared_ptr<NumberDataField>(new NumberDataField());
         field->setName("POACategory");
         field->setDataLength(4);
         field->setDataRepresentation(d_dataRepresentation);
@@ -85,26 +85,26 @@ namespace logicalaccess
 
     unsigned short FASCN200BitFormat::getAgencyCode() const
     {
-        boost::shared_ptr<NumberDataField> field = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("AgencyCode"));
+        std::shared_ptr<NumberDataField> field = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("AgencyCode"));
         return static_cast<unsigned short>(field->getValue());
     }
 
     void FASCN200BitFormat::setAgencyCode(unsigned short agencyCode)
     {
-        boost::shared_ptr<NumberDataField> field = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("AgencyCode"));
+        std::shared_ptr<NumberDataField> field = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("AgencyCode"));
         field->setValue(agencyCode);
         d_formatLinear.d_agencyCode = agencyCode;
     }
 
     unsigned short FASCN200BitFormat::getSystemCode() const
     {
-        boost::shared_ptr<NumberDataField> field = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("SystemCode"));
+        std::shared_ptr<NumberDataField> field = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("SystemCode"));
         return static_cast<unsigned short>(field->getValue());
     }
 
     void FASCN200BitFormat::setSystemCode(unsigned short systemCode)
     {
-        boost::shared_ptr<NumberDataField> field = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("SystemCode"));
+        std::shared_ptr<NumberDataField> field = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("SystemCode"));
         field->setValue(systemCode);
         d_formatLinear.d_systemCode = systemCode;
     }
@@ -131,52 +131,52 @@ namespace logicalaccess
 
     unsigned long long FASCN200BitFormat::getPersonIdentifier() const
     {
-        boost::shared_ptr<NumberDataField> field = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("PersonIdentifier"));
+        std::shared_ptr<NumberDataField> field = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("PersonIdentifier"));
         return static_cast<unsigned long long>(field->getValue());
     }
 
     void FASCN200BitFormat::setPersonIdentifier(unsigned long long personIdentifier)
     {
-        boost::shared_ptr<NumberDataField> field = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("PersonIdentifier"));
+        std::shared_ptr<NumberDataField> field = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("PersonIdentifier"));
         field->setValue(personIdentifier);
         d_formatLinear.d_personIdentifier = personIdentifier;
     }
 
     FASCNOrganizationalCategory FASCN200BitFormat::getOrganizationalCategory() const
     {
-        boost::shared_ptr<NumberDataField> field = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("OrganizationalCategory"));
+        std::shared_ptr<NumberDataField> field = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("OrganizationalCategory"));
         return static_cast<FASCNOrganizationalCategory>(field->getValue());
     }
 
     void FASCN200BitFormat::setOrganizationalCategory(FASCNOrganizationalCategory orgCategory)
     {
-        boost::shared_ptr<NumberDataField> field = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("OrganizationalCategory"));
+        std::shared_ptr<NumberDataField> field = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("OrganizationalCategory"));
         field->setValue(orgCategory);
         d_formatLinear.d_orgCategory = orgCategory;
     }
 
     unsigned short FASCN200BitFormat::getOrganizationalIdentifier() const
     {
-        boost::shared_ptr<NumberDataField> field = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("OrganizationalIdentifier"));
+        std::shared_ptr<NumberDataField> field = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("OrganizationalIdentifier"));
         return static_cast<unsigned short>(field->getValue());
     }
 
     void FASCN200BitFormat::setOrganizationalIdentifier(unsigned short orgIdentifier)
     {
-        boost::shared_ptr<NumberDataField> field = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("OrganizationalIdentifier"));
+        std::shared_ptr<NumberDataField> field = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("OrganizationalIdentifier"));
         field->setValue(orgIdentifier);
         d_formatLinear.d_orgIdentifier = orgIdentifier;
     }
 
     FASCNPOAssociationCategory FASCN200BitFormat::getPOACategory() const
     {
-        boost::shared_ptr<NumberDataField> field = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("POACategory"));
+        std::shared_ptr<NumberDataField> field = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("POACategory"));
         return static_cast<FASCNPOAssociationCategory>(field->getValue());
     }
 
     void FASCN200BitFormat::setPOACategory(FASCNPOAssociationCategory poaCategory)
     {
-        boost::shared_ptr<NumberDataField> field = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("POACategory"));
+        std::shared_ptr<NumberDataField> field = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("POACategory"));
         field->setValue(poaCategory);
         d_formatLinear.d_poaCategory = poaCategory;
     }
@@ -376,12 +376,12 @@ namespace logicalaccess
         setSystemCode(d_formatLinear.d_systemCode);
     }
 
-    bool FASCN200BitFormat::checkSkeleton(boost::shared_ptr<Format> format) const
+    bool FASCN200BitFormat::checkSkeleton(std::shared_ptr<Format> format) const
     {
         bool ret = false;
         if (format)
         {
-            boost::shared_ptr<FASCN200BitFormat> pFormat = boost::dynamic_pointer_cast<FASCN200BitFormat>(format);
+            std::shared_ptr<FASCN200BitFormat> pFormat = std::dynamic_pointer_cast<FASCN200BitFormat>(format);
             if (pFormat)
             {
                 ret = (

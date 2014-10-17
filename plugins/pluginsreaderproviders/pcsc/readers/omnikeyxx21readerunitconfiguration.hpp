@@ -97,25 +97,25 @@ namespace logicalaccess
          * \brief Get the read key used in secure mode.
          * \return The read key.
          */
-        boost::shared_ptr<TripleDESKey> getSecureReadKey() const;
+        std::shared_ptr<TripleDESKey> getSecureReadKey() const;
 
         /**
          * \brief Set the read key used in secure mode.
          * \param key The read key.
          */
-        void setSecureReadKey(boost::shared_ptr<TripleDESKey> key);
+        void setSecureReadKey(std::shared_ptr<TripleDESKey> key);
 
         /**
          * \brief Get the write key used in secure mode.
          * \return The write key.
          */
-        boost::shared_ptr<TripleDESKey> getSecureWriteKey() const;
+        std::shared_ptr<TripleDESKey> getSecureWriteKey() const;
 
         /**
          * \brief Set the read key used in secure mode.
          * \param key The read key.
          */
-        void setSecureWriteKey(boost::shared_ptr<TripleDESKey> key);
+        void setSecureWriteKey(std::shared_ptr<TripleDESKey> key);
 
     protected:
 
@@ -127,12 +127,12 @@ namespace logicalaccess
         /**
          * \brief The custom read key secure mode HID iClass (optional).
          */
-        boost::shared_ptr<TripleDESKey> d_secureReadKey;
+        std::shared_ptr<TripleDESKey> d_secureReadKey;
 
         /**
          * \brief The custom write key secure mode HID iClass (optional).
          */
-        boost::shared_ptr<TripleDESKey> d_secureWriteKey;
+        std::shared_ptr<TripleDESKey> d_secureWriteKey;
 
         /**
          * \brief The encryption mode.

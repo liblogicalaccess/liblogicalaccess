@@ -39,25 +39,25 @@ namespace logicalaccess
          * \brief Get the Data Representation for the field.
          * \return The Data Representation.
          */
-        boost::shared_ptr<DataRepresentation> getDataRepresentation() const;
+        std::shared_ptr<DataRepresentation> getDataRepresentation() const;
 
         /**
          * \brief Set the Data Representation for the field.
          * \param encoding The Data Representation.
          */
-        void setDataRepresentation(boost::shared_ptr<DataRepresentation>& encoding);
+        void setDataRepresentation(std::shared_ptr<DataRepresentation>& encoding);
 
         /**
          * \brief Get the Data Type for the field.
          * \return The Data Type.
          */
-        boost::shared_ptr<DataType> getDataType() const;
+        std::shared_ptr<DataType> getDataType() const;
 
         /**
          * \brief Set the Data Type for the field.
          * \param encoding The Data Type.
          */
-        void setDataType(boost::shared_ptr<DataType>& encoding);
+        void setDataType(std::shared_ptr<DataType>& encoding);
 
         /**
          * \brief Set if the field is a fixed field.
@@ -142,12 +142,12 @@ namespace logicalaccess
         /**
          * \brief The Data Representation.
          */
-        boost::shared_ptr<DataRepresentation> d_dataRepresentation;
+        std::shared_ptr<DataRepresentation> d_dataRepresentation;
 
         /**
          * \brief The Data Type.
          */
-        boost::shared_ptr<DataType> d_dataType;
+        std::shared_ptr<DataType> d_dataType;
 
         /**
          * \brief The field is a value field.

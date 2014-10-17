@@ -36,28 +36,28 @@ namespace logicalaccess
         return true;
     }
 
-    void MifareSmartIDCommands::loadKey(boost::shared_ptr<Location> location, boost::shared_ptr<Key> key, MifareKeyType keytype)
+    void MifareSmartIDCommands::loadKey(std::shared_ptr<Location> location, std::shared_ptr<Key> key, MifareKeyType keytype)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
         EXCEPTION_ASSERT_WITH_LOG(key, std::invalid_argument, "key cannot be null.");
 
-        boost::shared_ptr<MifareLocation> mLocation = boost::dynamic_pointer_cast<MifareLocation>(location);
-        boost::shared_ptr<MifareKey> mKey = boost::dynamic_pointer_cast<MifareKey>(key);
+        std::shared_ptr<MifareLocation> mLocation = std::dynamic_pointer_cast<MifareLocation>(location);
+        std::shared_ptr<MifareKey> mKey = std::dynamic_pointer_cast<MifareKey>(key);
 
         EXCEPTION_ASSERT_WITH_LOG(mLocation, std::invalid_argument, "location must be a MifareLocation.");
         EXCEPTION_ASSERT_WITH_LOG(mKey, std::invalid_argument, "key must be a MifareKey.");
 
-        boost::shared_ptr<KeyStorage> key_storage = key->getKeyStorage();
+        std::shared_ptr<KeyStorage> key_storage = key->getKeyStorage();
 
-        if (boost::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key_storage))
+        if (std::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key_storage))
         {
             loadKey(0, keytype, key->getData(), key->getLength());
         }
-        else if (boost::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage))
+        else if (std::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage))
         {
             // Don't load the key when reader memory
 
-            //boost::shared_ptr<ReaderMemoryKeyStorage> rmKs = boost::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage);
+            //std::shared_ptr<ReaderMemoryKeyStorage> rmKs = std::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage);
             //loadKey(rmKs->getKeySlot(), keytype, key->getData(), key->getLength(), rmKs->getVolatile());
         }
         else
@@ -78,15 +78,15 @@ namespace logicalaccess
         getMifareSmartIDReaderCardAdapter()->sendCommand(0x56, data);
     }
 
-    void MifareSmartIDCommands::authenticate(unsigned char blockno, boost::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype)
+    void MifareSmartIDCommands::authenticate(unsigned char blockno, std::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype)
     {
-        if (boost::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key_storage))
+        if (std::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key_storage))
         {
             authenticate(blockno, 0, keytype);
         }
-        else if (boost::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage))
+        else if (std::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage))
         {
-            boost::shared_ptr<ReaderMemoryKeyStorage> rmKs = boost::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage);
+            std::shared_ptr<ReaderMemoryKeyStorage> rmKs = std::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage);
             authenticate(blockno, rmKs->getKeySlot(), keytype);
         }
         else

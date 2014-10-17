@@ -1,5 +1,5 @@
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "mifareplus4kchip.hpp"
 
@@ -21,11 +21,11 @@ extern "C"
         return (char *)"MifarePlus";
     }
 
-    LIBLOGICALACCESS_API void getMifarePlus4KChip(boost::shared_ptr<logicalaccess::Chip>* chip)
+    LIBLOGICALACCESS_API void getMifarePlus4KChip(std::shared_ptr<logicalaccess::Chip>* chip)
     {
         if (chip != NULL)
         {
-            *chip = boost::shared_ptr<logicalaccess::MifarePlus4KChip>(new logicalaccess::MifarePlus4KChip());
+            *chip = std::shared_ptr<logicalaccess::MifarePlus4KChip>(new logicalaccess::MifarePlus4KChip());
         }
     }
 

@@ -9,27 +9,27 @@
 
 namespace logicalaccess
 {
-    DESFireStorageCardService::DESFireStorageCardService(boost::shared_ptr<Chip> chip)
+    DESFireStorageCardService::DESFireStorageCardService(std::shared_ptr<Chip> chip)
         : StorageCardService(chip)
     {
     }
 
     void DESFireStorageCardService::erase()
     {
-        boost::shared_ptr<DESFireCommands> cmd = getDESFireChip()->getDESFireCommands();
+        std::shared_ptr<DESFireCommands> cmd = getDESFireChip()->getDESFireCommands();
         cmd->selectApplication(0);
         cmd->authenticate(0);
         cmd->erase();
 
-        cmd->changeKey(0, boost::shared_ptr<DESFireKey>(new DESFireKey(string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
+        cmd->changeKey(0, std::shared_ptr<DESFireKey>(new DESFireKey(string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
     }
 
-    void DESFireStorageCardService::erase(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse)
+    void DESFireStorageCardService::erase(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 
-        boost::shared_ptr<DESFireLocation> dfLocation = boost::dynamic_pointer_cast<DESFireLocation>(location);
-        boost::shared_ptr<DESFireAccessInfo> dfAiToUse = boost::dynamic_pointer_cast<DESFireAccessInfo>(aiToUse);
+        std::shared_ptr<DESFireLocation> dfLocation = std::dynamic_pointer_cast<DESFireLocation>(location);
+        std::shared_ptr<DESFireAccessInfo> dfAiToUse = std::dynamic_pointer_cast<DESFireAccessInfo>(aiToUse);
 
         EXCEPTION_ASSERT_WITH_LOG(dfLocation, std::invalid_argument, "location must be a DESFireLocation.");
 
@@ -54,7 +54,7 @@ namespace logicalaccess
                 getDESFireChip()->getDESFireCommands()->deleteFile(*file);
             }
 
-            getDESFireChip()->getDESFireCommands()->changeKey(0, boost::shared_ptr<DESFireKey>(new DESFireKey(string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
+            getDESFireChip()->getDESFireCommands()->changeKey(0, std::shared_ptr<DESFireKey>(new DESFireKey(string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
         }
         // Otherwise format the file.
         else
@@ -65,7 +65,7 @@ namespace logicalaccess
             unsigned char* buf = new unsigned char[fileLength];
             memset(buf, 0x00, fileLength);
 
-            boost::shared_ptr<AccessInfo> ai;
+            std::shared_ptr<AccessInfo> ai;
             try
             {
                 writeData(location, aiToUse, ai, buf, fileLength, CB_DEFAULT);
@@ -80,16 +80,16 @@ namespace logicalaccess
         }
     }
 
-    void DESFireStorageCardService::writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior /*behaviorFlags*/)
+    void DESFireStorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior /*behaviorFlags*/)
     {
         LOG(LogLevel::INFOS) << "Starting write data...";
 
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
         EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
 
-        boost::shared_ptr<DESFireLocation> dfLocation = boost::dynamic_pointer_cast<DESFireLocation>(location);
-        boost::shared_ptr<DESFireAccessInfo> dfAiToUse = boost::dynamic_pointer_cast<DESFireAccessInfo>(aiToUse);
-        boost::shared_ptr<DESFireAccessInfo> dfAiToWrite = boost::dynamic_pointer_cast<DESFireAccessInfo>(aiToWrite);
+        std::shared_ptr<DESFireLocation> dfLocation = std::dynamic_pointer_cast<DESFireLocation>(location);
+        std::shared_ptr<DESFireAccessInfo> dfAiToUse = std::dynamic_pointer_cast<DESFireAccessInfo>(aiToUse);
+        std::shared_ptr<DESFireAccessInfo> dfAiToWrite = std::dynamic_pointer_cast<DESFireAccessInfo>(aiToWrite);
 
         EXCEPTION_ASSERT_WITH_LOG(dfLocation, std::invalid_argument, "location must be a DESFireLocation.");
 
@@ -99,7 +99,7 @@ namespace logicalaccess
         }
         else
         {
-            dfAiToUse = boost::dynamic_pointer_cast<DESFireAccessInfo>(getChip()->getProfile()->createAccessInfo());
+            dfAiToUse = std::dynamic_pointer_cast<DESFireAccessInfo>(getChip()->getProfile()->createAccessInfo());
         }
 
         if (aiToWrite)
@@ -115,7 +115,7 @@ namespace logicalaccess
         }
         else
         {
-            getDESFireChip()->getDESFireProfile()->setKey(0, 0, boost::shared_ptr<DESFireKey>(new DESFireKey(string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
+            getDESFireChip()->getDESFireProfile()->setKey(0, 0, std::shared_ptr<DESFireKey>(new DESFireKey(string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
         }
 
         getDESFireChip()->getDESFireCommands()->selectApplication(0);
@@ -176,9 +176,9 @@ namespace logicalaccess
 
         getDESFireChip()->getDESFireCommands()->selectApplication(dfLocation);
         DESFireKeyType cryptoMethod = DF_KEY_DES;
-        if (boost::dynamic_pointer_cast<DESFireEV1Location>(dfLocation))
+        if (std::dynamic_pointer_cast<DESFireEV1Location>(dfLocation))
         {
-            cryptoMethod = boost::dynamic_pointer_cast<DESFireEV1Location>(dfLocation)->cryptoMethod;
+            cryptoMethod = std::dynamic_pointer_cast<DESFireEV1Location>(dfLocation)->cryptoMethod;
         }
 
         if (!dfAiToUse->masterApplicationKey->isEmpty())
@@ -373,13 +373,13 @@ namespace logicalaccess
         }
     }
 
-    void DESFireStorageCardService::readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior /*behaviorFlags*/)
+    void DESFireStorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior /*behaviorFlags*/)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
         EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "location cannot be null.");
 
-        boost::shared_ptr<DESFireLocation> dfLocation = boost::dynamic_pointer_cast<DESFireLocation>(location);
-        boost::shared_ptr<DESFireAccessInfo> dfAiToUse = boost::dynamic_pointer_cast<DESFireAccessInfo>(aiToUse);
+        std::shared_ptr<DESFireLocation> dfLocation = std::dynamic_pointer_cast<DESFireLocation>(location);
+        std::shared_ptr<DESFireAccessInfo> dfAiToUse = std::dynamic_pointer_cast<DESFireAccessInfo>(aiToUse);
 
         EXCEPTION_ASSERT_WITH_LOG(dfLocation, std::invalid_argument, "location must be a DESFireLocation.");
         if (aiToUse)
@@ -388,7 +388,7 @@ namespace logicalaccess
         }
         else
         {
-            dfAiToUse = boost::dynamic_pointer_cast<DESFireAccessInfo>(getChip()->getProfile()->createAccessInfo());
+            dfAiToUse = std::dynamic_pointer_cast<DESFireAccessInfo>(getChip()->getProfile()->createAccessInfo());
         }
 
         getChip()->getProfile()->setDefaultKeysAt(dfLocation);
@@ -419,7 +419,7 @@ namespace logicalaccess
             encMode);
     }
 
-    unsigned int DESFireStorageCardService::readDataHeader(boost::shared_ptr<Location> /*location*/, boost::shared_ptr<AccessInfo> /*aiToUse*/, void* /*data*/, size_t /*dataLength*/)
+    unsigned int DESFireStorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/, void* /*data*/, size_t /*dataLength*/)
     {
         return 0;
     }

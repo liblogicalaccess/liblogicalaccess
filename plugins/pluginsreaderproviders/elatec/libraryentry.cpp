@@ -1,5 +1,5 @@
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "elatecreaderprovider.hpp"
 
@@ -21,7 +21,7 @@ extern "C"
         return (char *)"Elatec";
     }
 
-    LIBLOGICALACCESS_API void getElatecReader(boost::shared_ptr<logicalaccess::ReaderProvider>* rp)
+    LIBLOGICALACCESS_API void getElatecReader(std::shared_ptr<logicalaccess::ReaderProvider>* rp)
     {
         if (rp != NULL)
         {

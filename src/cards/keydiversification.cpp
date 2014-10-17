@@ -10,9 +10,9 @@
 
 namespace logicalaccess
 {
-    boost::shared_ptr<KeyDiversification> KeyDiversification::getKeyDiversificationFromType(std::string kdiv)
+    std::shared_ptr<KeyDiversification> KeyDiversification::getKeyDiversificationFromType(std::string kdiv)
     {
-        boost::shared_ptr<KeyDiversification> ret = LibraryManager::getInstance()->getKeyDiversification(kdiv);
+        std::shared_ptr<KeyDiversification> ret = LibraryManager::getInstance()->getKeyDiversification(kdiv);
 
         if (!ret)
         {

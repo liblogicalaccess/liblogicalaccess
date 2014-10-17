@@ -8,7 +8,7 @@
 #define OPENSSL_SYMETRIC_CIPHER_CONTEXT_HPP
 
 #include "logicalaccess/crypto/openssl_symmetric_cipher.hpp"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <openssl/evp.h>
 
@@ -107,7 +107,7 @@ namespace logicalaccess
             /**
              * \brief The information.
              */
-            boost::shared_ptr<Information> d_information;
+            std::shared_ptr<Information> d_information;
 
             friend class OpenSSLSymmetricCipher;
         };

@@ -32,22 +32,22 @@ namespace logicalaccess
         d_length = length;
     }
 
-    boost::shared_ptr<DataRepresentation> ValueDataField::getDataRepresentation() const
+    std::shared_ptr<DataRepresentation> ValueDataField::getDataRepresentation() const
     {
         return d_dataRepresentation;
     }
 
-    void ValueDataField::setDataRepresentation(boost::shared_ptr<DataRepresentation>& encoding)
+    void ValueDataField::setDataRepresentation(std::shared_ptr<DataRepresentation>& encoding)
     {
         d_dataRepresentation = encoding;
     }
 
-    boost::shared_ptr<DataType> ValueDataField::getDataType() const
+    std::shared_ptr<DataType> ValueDataField::getDataType() const
     {
         return d_dataType;
     }
 
-    void ValueDataField::setDataType(boost::shared_ptr<DataType>& encoding)
+    void ValueDataField::setDataType(std::shared_ptr<DataType>& encoding)
     {
         d_dataType = encoding;
     }

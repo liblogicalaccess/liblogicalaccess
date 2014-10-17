@@ -1,5 +1,5 @@
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "stidstrreaderprovider.hpp"
 
@@ -21,7 +21,7 @@ extern "C"
         return (char *)"STidSTR";
     }
 
-    LIBLOGICALACCESS_API void getSTidSTRReader(boost::shared_ptr<logicalaccess::STidSTRReaderProvider>* rp)
+    LIBLOGICALACCESS_API void getSTidSTRReader(std::shared_ptr<logicalaccess::STidSTRReaderProvider>* rp)
     {
         if (rp != NULL)
         {

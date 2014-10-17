@@ -617,7 +617,7 @@ namespace logicalaccess
         d_mac_size = 4;
     }
 
-    void DESFireCrypto::getKey(boost::shared_ptr<DESFireKey> key, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv)
+    void DESFireCrypto::getKey(std::shared_ptr<DESFireKey> key, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv)
     {
         LOG(LogLevel::INFOS) << "Init key from crypto with diversify set to: " << BufferHelper::getHex(diversify) << ".";
 
@@ -643,7 +643,7 @@ namespace logicalaccess
             getKeyVersioned(key, keydiv);
     }
 
-    void DESFireCrypto::getKeyVersioned(boost::shared_ptr<DESFireKey> key, std::vector<unsigned char>& keyversioned)
+    void DESFireCrypto::getKeyVersioned(std::shared_ptr<DESFireKey> key, std::vector<unsigned char>& keyversioned)
     {
         unsigned char* keytmpversioned = new unsigned char[key->getLength()];
         memset(keytmpversioned, 0x00, key->getLength());
@@ -673,7 +673,7 @@ namespace logicalaccess
         d_sessionKey.clear();
     }
 
-    std::vector<unsigned char> DESFireCrypto::changeKey_PICC(unsigned char keyno, boost::shared_ptr<DESFireKey> newkey, std::vector<unsigned char> diversify)
+    std::vector<unsigned char> DESFireCrypto::changeKey_PICC(unsigned char keyno, std::shared_ptr<DESFireKey> newkey, std::vector<unsigned char> diversify)
     {
         LOG(LogLevel::INFOS) << "Init change key on PICC...";
         std::vector<unsigned char> cryptogram;
@@ -682,7 +682,7 @@ namespace logicalaccess
         newkeydiv.resize(16, 0x00);
         // Get keyno only, in case of master card key
         unsigned char keyno_only = static_cast<unsigned char>(keyno & 0x0f);
-        boost::shared_ptr<DESFireKey> oldkey = d_profile->getKey(d_currentAid, keyno_only);
+        std::shared_ptr<DESFireKey> oldkey = d_profile->getKey(d_currentAid, keyno_only);
         d_profile->getKey(d_currentAid, keyno_only, diversify, oldkeydiv);
         getKey(newkey, diversify, newkeydiv);
 
@@ -725,10 +725,10 @@ namespace logicalaccess
                     encCryptogram.push_back(static_cast<unsigned char>(oldkeydiv[i] ^ newkeydiv[i]));
                 }
 
-                boost::shared_ptr<openssl::SymmetricKey> sessionkey;
-                boost::shared_ptr<openssl::InitializationVector> iv;
+                std::shared_ptr<openssl::SymmetricKey> sessionkey;
+                std::shared_ptr<openssl::InitializationVector> iv;
 
-                if (boost::dynamic_pointer_cast<openssl::AESCipher>(d_cipher))
+                if (std::dynamic_pointer_cast<openssl::AESCipher>(d_cipher))
                 {
                     // For AES, add key version.
                     encCryptogram.push_back(newkey->getKeyVersion());
@@ -945,7 +945,7 @@ namespace logicalaccess
         return desfire_cmac(d_sessionKey, d_cipher, d_block_size, data);
     }
 
-    std::vector<unsigned char> DESFireCrypto::desfire_cmac(const std::vector<unsigned char>& key, boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const std::vector<unsigned char>& data)
+    std::vector<unsigned char> DESFireCrypto::desfire_cmac(const std::vector<unsigned char>& key, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const std::vector<unsigned char>& data)
     {
         std::vector<unsigned char> ret = openssl::CMACCrypto::cmac(key, cipherMAC, block_size, data, d_lastIV, block_size);
 
@@ -972,13 +972,13 @@ namespace logicalaccess
         return desfire_iso_decrypt(d_sessionKey, data, d_cipher, d_block_size, length);
     }
 
-    std::vector<unsigned char> DESFireCrypto::desfire_iso_decrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size, size_t datalen)
+    std::vector<unsigned char> DESFireCrypto::desfire_iso_decrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size, size_t datalen)
     {
         std::vector<unsigned char> decdata;
-        boost::shared_ptr<openssl::SymmetricKey> isokey;
-        boost::shared_ptr<openssl::InitializationVector> iv;
+        std::shared_ptr<openssl::SymmetricKey> isokey;
+        std::shared_ptr<openssl::InitializationVector> iv;
 
-        if (boost::dynamic_pointer_cast<openssl::AESCipher>(cipher))
+        if (std::dynamic_pointer_cast<openssl::AESCipher>(cipher))
         {
             isokey.reset(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(key)));
             iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastIV)));
@@ -1073,9 +1073,9 @@ namespace logicalaccess
 
         if (decdata.size() > 0)
         {
-            boost::shared_ptr<openssl::SymmetricKey> isokey;
-            boost::shared_ptr<openssl::InitializationVector> iv;
-            if (boost::dynamic_pointer_cast<openssl::AESCipher>(d_cipher))
+            std::shared_ptr<openssl::SymmetricKey> isokey;
+            std::shared_ptr<openssl::InitializationVector> iv;
+            if (std::dynamic_pointer_cast<openssl::AESCipher>(d_cipher))
             {
                 isokey.reset(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_sessionKey)));
                 iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastIV)));
@@ -1092,7 +1092,7 @@ namespace logicalaccess
         return encdata;
     }
 
-    std::vector<unsigned char> DESFireCrypto::desfire_iso_encrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size, const std::vector<unsigned char>& param)
+    std::vector<unsigned char> DESFireCrypto::desfire_iso_encrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size, const std::vector<unsigned char>& param)
     {
         std::vector<unsigned char> encdata;
         std::vector<unsigned char> decdata = data;
@@ -1109,9 +1109,9 @@ namespace logicalaccess
             decdata.push_back(0x00);
         }
 
-        boost::shared_ptr<openssl::SymmetricKey> isokey;
-        boost::shared_ptr<openssl::InitializationVector> iv;
-        if (boost::dynamic_pointer_cast<openssl::AESCipher>(cipher))
+        std::shared_ptr<openssl::SymmetricKey> isokey;
+        std::shared_ptr<openssl::InitializationVector> iv;
+        if (std::dynamic_pointer_cast<openssl::AESCipher>(cipher))
         {
             isokey.reset(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(key)));
             iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastIV)));
@@ -1130,13 +1130,13 @@ namespace logicalaccess
         return encdata;
     }
 
-    void DESFireCrypto::setCryptoContext(boost::shared_ptr<DESFireProfile> profile, std::vector<unsigned char> identifier)
+    void DESFireCrypto::setCryptoContext(std::shared_ptr<DESFireProfile> profile, std::vector<unsigned char> identifier)
     {
         d_profile = profile;
         d_identifier = identifier;
     }
 
-    boost::shared_ptr<DESFireKey> DESFireCrypto::getKey(unsigned char keyno)
+    std::shared_ptr<DESFireKey> DESFireCrypto::getKey(unsigned char keyno)
     {
         return d_profile->getKey(d_currentAid, keyno);
     }

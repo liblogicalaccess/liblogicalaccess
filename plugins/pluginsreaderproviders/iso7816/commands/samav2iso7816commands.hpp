@@ -42,13 +42,13 @@ namespace logicalaccess
          */
         virtual ~SAMAV2ISO7816Commands();
 
-        virtual void authentificateHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno);
+        virtual void authentificateHost(std::shared_ptr<DESFireKey> key, unsigned char keyno);
 
-        virtual boost::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> > getKeyEntry(unsigned char keyno);
-        virtual boost::shared_ptr<SAMKucEntry> getKUCEntry(unsigned char kucno);
+        virtual std::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> > getKeyEntry(unsigned char keyno);
+        virtual std::shared_ptr<SAMKucEntry> getKUCEntry(unsigned char kucno);
 
-        virtual void changeKUCEntry(unsigned char kucno, boost::shared_ptr<SAMKucEntry> kucentry, boost::shared_ptr<DESFireKey> key);
-        virtual void changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> > keyentry, boost::shared_ptr<DESFireKey> key);
+        virtual void changeKUCEntry(unsigned char kucno, std::shared_ptr<SAMKucEntry> kucentry, std::shared_ptr<DESFireKey> key);
+        virtual void changeKeyEntry(unsigned char keyno, std::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> > keyentry, std::shared_ptr<DESFireKey> key);
 
         virtual std::vector<unsigned char> transmit(std::vector<unsigned char> cmd, bool first = true, bool last = true);
 

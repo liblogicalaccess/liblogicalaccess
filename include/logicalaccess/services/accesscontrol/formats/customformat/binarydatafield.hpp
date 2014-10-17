@@ -138,7 +138,7 @@ namespace logicalaccess
          * \param field The field to check.
          * \return True on success, false otherwise.
          */
-        virtual bool checkSkeleton(boost::shared_ptr<DataField> field) const;
+        virtual bool checkSkeleton(std::shared_ptr<DataField> field) const;
 
         /**
          * \brief Serialize the current object to XML.

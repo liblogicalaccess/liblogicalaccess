@@ -15,14 +15,14 @@ namespace logicalaccess
         d_formatLinear.d_facilityCode = 0;
 
         d_fieldList.clear();
-        boost::shared_ptr<NumberDataField> field(new NumberDataField());
+        std::shared_ptr<NumberDataField> field(new NumberDataField());
         field->setName("Uid");
         field->setIsIdentifier(true);
         field->setDataLength(19);
         field->setDataRepresentation(d_dataRepresentation);
         field->setDataType(d_dataType);
         d_fieldList.push_back(field);
-        field = boost::shared_ptr<NumberDataField>(new NumberDataField());
+        field = std::shared_ptr<NumberDataField>(new NumberDataField());
         field->setName("FacilityCode");
         field->setDataLength(16);
         field->setDataRepresentation(d_dataRepresentation);
@@ -41,13 +41,13 @@ namespace logicalaccess
 
     unsigned short int Wiegand37WithFacilityFormat::getFacilityCode() const
     {
-        boost::shared_ptr<NumberDataField> field = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("FacilityCode"));
+        std::shared_ptr<NumberDataField> field = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("FacilityCode"));
         return static_cast<unsigned short int>(field->getValue());
     }
 
     void Wiegand37WithFacilityFormat::setFacilityCode(unsigned short int facilityCode)
     {
-        boost::shared_ptr<NumberDataField> field = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("FacilityCode"));
+        std::shared_ptr<NumberDataField> field = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("FacilityCode"));
         field->setValue(facilityCode);
         d_formatLinear.d_facilityCode = facilityCode;
     }
@@ -115,12 +115,12 @@ namespace logicalaccess
         return "Wiegand37WithFacilityFormat";
     }
 
-    bool Wiegand37WithFacilityFormat::checkSkeleton(boost::shared_ptr<Format> format) const
+    bool Wiegand37WithFacilityFormat::checkSkeleton(std::shared_ptr<Format> format) const
     {
         bool ret = false;
         if (format)
         {
-            boost::shared_ptr<Wiegand37WithFacilityFormat> pFormat = boost::dynamic_pointer_cast<Wiegand37WithFacilityFormat>(format);
+            std::shared_ptr<Wiegand37WithFacilityFormat> pFormat = std::dynamic_pointer_cast<Wiegand37WithFacilityFormat>(format);
             if (pFormat)
             {
                 ret = (

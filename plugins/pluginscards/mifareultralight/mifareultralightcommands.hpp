@@ -68,7 +68,7 @@ namespace logicalaccess
 
     protected:
 
-        boost::shared_ptr<MifareUltralightChip> getMifareUltralightChip();
+        std::shared_ptr<MifareUltralightChip> getMifareUltralightChip();
     };
 }
 

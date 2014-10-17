@@ -38,7 +38,7 @@ namespace logicalaccess
     /**
      * \brief The reader unit base class. This is an object for a specific reader instance to detect card and interact with the reader.
      */
-    class LIBLOGICALACCESS_API ReaderUnit : public XmlSerializable, public boost::enable_shared_from_this < ReaderUnit >
+    class LIBLOGICALACCESS_API ReaderUnit : public XmlSerializable, public std::enable_shared_from_this < ReaderUnit >
     {
     public:
 
@@ -105,7 +105,7 @@ namespace logicalaccess
          * \param type The card type.
          * \return The chip.
          */
-        virtual boost::shared_ptr<Chip> createChip(std::string type);
+        virtual std::shared_ptr<Chip> createChip(std::string type);
 
         /**
          * \brief Create the chip object from card type with identifier.
@@ -113,26 +113,26 @@ namespace logicalaccess
          * \param identifier The chip identifier.
          * \return The chip.
          */
-        virtual boost::shared_ptr<Chip> createChip(std::string type, const std::vector<unsigned char>& identifier);
+        virtual std::shared_ptr<Chip> createChip(std::string type, const std::vector<unsigned char>& identifier);
 
         /**
          * \brief Get the number from the embedded licensing configuration.
          * \param chip The chip object.
          * \return The identifier number.
          */
-        virtual std::vector<unsigned char> getNumber(boost::shared_ptr<Chip> chip);
+        virtual std::vector<unsigned char> getNumber(std::shared_ptr<Chip> chip);
 
         /**
          * \brief Get the first and/or most accurate chip found.
          * \return The single chip.
          */
-        virtual boost::shared_ptr<Chip> getSingleChip() = 0;
+        virtual std::shared_ptr<Chip> getSingleChip() = 0;
 
         /**
          * \brief Get chip available in the RFID rang.
          * \return The chip list.
          */
-        virtual std::vector<boost::shared_ptr<Chip> > getChipList() = 0;
+        virtual std::vector<std::shared_ptr<Chip> > getChipList() = 0;
 
         /**
          * \brief Get the number from the reader format composite.
@@ -140,7 +140,7 @@ namespace logicalaccess
          * \param composite The card format composite.
          * \return The identifier number.
          */
-        virtual std::vector<unsigned char> getNumber(boost::shared_ptr<Chip> chip, boost::shared_ptr<CardsFormatComposite> composite);
+        virtual std::vector<unsigned char> getNumber(std::shared_ptr<Chip> chip, std::shared_ptr<CardsFormatComposite> composite);
 
         /**
          * \brief Get the number as decimal a number.
@@ -197,37 +197,37 @@ namespace logicalaccess
          * \brief Get the reader unit configuration.
          * \return The reader unit configuration.
          */
-        virtual boost::shared_ptr<ReaderUnitConfiguration> getConfiguration();
+        virtual std::shared_ptr<ReaderUnitConfiguration> getConfiguration();
 
         /**
          * \brief Set the reader unit configuration.
          * \param config The reader unit configuration.
          */
-        virtual void setConfiguration(boost::shared_ptr<ReaderUnitConfiguration> config);
+        virtual void setConfiguration(std::shared_ptr<ReaderUnitConfiguration> config);
 
         /**
          * \brief Get the default reader/card adapter.
          * \return The default reader/card adapter.
          */
-        virtual boost::shared_ptr<ReaderCardAdapter> getDefaultReaderCardAdapter();
+        virtual std::shared_ptr<ReaderCardAdapter> getDefaultReaderCardAdapter();
 
         /**
          * \brief Set the default reader/card adapter.
          * \param defaultRca The default reader/card adapter.
          */
-        virtual void setDefaultReaderCardAdapter(boost::shared_ptr<ReaderCardAdapter> defaultRca);
+        virtual void setDefaultReaderCardAdapter(std::shared_ptr<ReaderCardAdapter> defaultRca);
 
         /**
          * \brief Get the data transport layer.
          * \return The data transport layer.
          */
-        virtual boost::shared_ptr<DataTransport> getDataTransport() const;
+        virtual std::shared_ptr<DataTransport> getDataTransport() const;
 
         /**
          * \brief Set the data transport layer.
          * \param dataTransport The data transport layer.
          */
-        virtual void setDataTransport(boost::shared_ptr<DataTransport> dataTransport);
+        virtual void setDataTransport(std::shared_ptr<DataTransport> dataTransport);
 
         /**
          * \brief Get a string hexadecimal representation of the reader serial number
@@ -265,25 +265,25 @@ namespace logicalaccess
          * \brief Get the associated reader provider.
          * \return The associated reader provider.
          */
-        boost::shared_ptr<ReaderProvider> getReaderProvider() const { return d_readerProvider.lock(); };
+        std::shared_ptr<ReaderProvider> getReaderProvider() const { return d_readerProvider.lock(); };
 
         /**
          * \brief Set the associated reader provider.
          * \param provider The associated reader provider.
          */
-        void setReaderProvider(boost::weak_ptr<ReaderProvider> provider) { d_readerProvider = provider; };
+        void setReaderProvider(std::weak_ptr<ReaderProvider> provider) { d_readerProvider = provider; };
 
         /**
          * \brief Get the LCD Display for this reader unit.
          * \return The LCD Display.
          */
-        virtual boost::shared_ptr<LCDDisplay> getLCDDisplay();
+        virtual std::shared_ptr<LCDDisplay> getLCDDisplay();
 
         /**
          * \brief Get the LED/Buzzer Display for this reader unit.
          * \return The LED/Buzzer Display.
          */
-        virtual boost::shared_ptr<LEDBuzzerDisplay> getLEDBuzzerDisplay();
+        virtual std::shared_ptr<LEDBuzzerDisplay> getLEDBuzzerDisplay();
 
     protected:
 
@@ -295,39 +295,39 @@ namespace logicalaccess
         /**
          * \brief The associated reader provider for the reader unit.
          */
-        boost::weak_ptr<ReaderProvider> d_readerProvider;
+        std::weak_ptr<ReaderProvider> d_readerProvider;
 
         /**
          * \brief The reader unit configuration.
          */
-        boost::shared_ptr<ReaderUnitConfiguration> d_readerUnitConfig;
+        std::shared_ptr<ReaderUnitConfiguration> d_readerUnitConfig;
 
         /**
          * \brief The inserted chip.
          */
-        boost::shared_ptr<Chip> d_insertedChip;
+        std::shared_ptr<Chip> d_insertedChip;
 
         /**
          * \brief The inserted chip.
          */
-        boost::shared_ptr<LCDDisplay> d_lcdDisplay;
+        std::shared_ptr<LCDDisplay> d_lcdDisplay;
 
         /**
          * \brief The inserted chip.
          */
-        boost::shared_ptr<LEDBuzzerDisplay> d_ledBuzzerDisplay;
+        std::shared_ptr<LEDBuzzerDisplay> d_ledBuzzerDisplay;
 
     private:
 
         /**
          * \brief The default reader/card adapter.
          */
-        boost::shared_ptr<ReaderCardAdapter> d_defaultReaderCardAdapter;
+        std::shared_ptr<ReaderCardAdapter> d_defaultReaderCardAdapter;
 
         /**
          * \brief The data transport layer.
          */
-        boost::shared_ptr<DataTransport> d_dataTransport;
+        std::shared_ptr<DataTransport> d_dataTransport;
     };
 }
 

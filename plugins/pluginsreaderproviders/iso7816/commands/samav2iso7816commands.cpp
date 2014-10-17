@@ -56,15 +56,15 @@ namespace logicalaccess
         SV2a[15] = 0x82; /* AES 128 */
         /* TODO AES 192 */
 
-        boost::shared_ptr<openssl::SymmetricKey> symkey(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_macSessionKey)));
-        boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
-        boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
+        std::shared_ptr<openssl::SymmetricKey> symkey(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_macSessionKey)));
+        std::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
+        std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
 
         cipher->cipher(SV1a, d_sessionKey, *symkey.get(), *iv.get(), false);
         cipher->cipher(SV2a, d_macSessionKey, *symkey.get(), *iv.get(), false);
     }
 
-    void SAMAV2ISO7816Commands::authentificateHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno)
+    void SAMAV2ISO7816Commands::authentificateHost(std::shared_ptr<DESFireKey> key, unsigned char keyno)
     {
         unsigned char hostmode = 2;
         std::vector<unsigned char> result, emptyIV(16);
@@ -89,7 +89,7 @@ namespace logicalaccess
 
         std::vector<unsigned char> keycipher(key->getData(), key->getData() + key->getLength());
         d_macSessionKey = keycipher;
-        boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
+        std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
         std::vector<unsigned char> rnd1;
 
         /* Create rnd2 for p3 - CMAC: rnd2 | Host Mode | ZeroPad */
@@ -137,8 +137,8 @@ namespace logicalaccess
         }
 
         //decipher rndB
-        boost::shared_ptr<openssl::SymmetricKey> symkey(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_authKey)));
-        boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastMacIV)));
+        std::shared_ptr<openssl::SymmetricKey> symkey(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_authKey)));
+        std::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastMacIV)));
 
         std::vector<unsigned char> encRndB(result.begin() + 8, result.end() - 2);
         std::vector<unsigned char> dencRndB;
@@ -178,9 +178,9 @@ namespace logicalaccess
     {
         bool lc, le;
         unsigned char lcvalue;
-        boost::shared_ptr<openssl::SymmetricKey> symkeySession(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_sessionKey)));
-        boost::shared_ptr<openssl::InitializationVector> ivSession(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_LastSessionIV)));
-        boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
+        std::shared_ptr<openssl::SymmetricKey> symkeySession(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_sessionKey)));
+        std::shared_ptr<openssl::InitializationVector> ivSession(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_LastSessionIV)));
+        std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
         std::vector<unsigned char> protectedCmd = cmd, encProtectedCmd, cmdCtrVector, finalFullProtectedCmd = cmd, encData;
 
         getLcLe(cmd, lc, lcvalue, le);
@@ -223,8 +223,8 @@ namespace logicalaccess
         if (lc)
         {
             /* Creater our cipher buffer and keep last block */
-            boost::shared_ptr<openssl::SymmetricKey> symkeyMac(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_macSessionKey)));
-            boost::shared_ptr<openssl::InitializationVector> ivMac(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastMacIV)));
+            std::shared_ptr<openssl::SymmetricKey> symkeyMac(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_macSessionKey)));
+            std::shared_ptr<openssl::InitializationVector> ivMac(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastMacIV)));
             unsigned char blockReady = (unsigned char)(protectedCmd.size() / 16) * 16;
             std::vector<unsigned char> encMac(protectedCmd.begin(), protectedCmd.begin() + blockReady), tmp;
             protectedCmd.erase(protectedCmd.begin(), protectedCmd.begin() + blockReady);
@@ -277,11 +277,11 @@ namespace logicalaccess
 
     std::vector<unsigned char> SAMAV2ISO7816Commands::verifyAndDecryptResponse(std::vector<unsigned char> response)
     {
-        boost::shared_ptr<openssl::SymmetricKey> symkeySession(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_sessionKey)));
-        boost::shared_ptr<openssl::SymmetricKey> symkeyMac(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_macSessionKey)));
-        boost::shared_ptr<openssl::InitializationVector> ivMac(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastMacIV)));
-        boost::shared_ptr<openssl::InitializationVector> ivSession(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_LastSessionIV)));
-        boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
+        std::shared_ptr<openssl::SymmetricKey> symkeySession(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_sessionKey)));
+        std::shared_ptr<openssl::SymmetricKey> symkeyMac(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_macSessionKey)));
+        std::shared_ptr<openssl::InitializationVector> ivMac(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastMacIV)));
+        std::shared_ptr<openssl::InitializationVector> ivSession(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_LastSessionIV)));
+        std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
 
         /* begin check mac */
         std::vector<unsigned char> myMac, cmdCtrVector, myEncMac, data;
@@ -357,9 +357,9 @@ namespace logicalaccess
                 myIV.insert(myIV.end(), cmdCtrVector.begin(), cmdCtrVector.end());
         }
 
-        boost::shared_ptr<openssl::SymmetricKey> symkeyMac(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_sessionKey)));
-        boost::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_LastSessionIV)));
-        boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
+        std::shared_ptr<openssl::SymmetricKey> symkeyMac(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(d_sessionKey)));
+        std::shared_ptr<openssl::InitializationVector> iv(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_LastSessionIV)));
+        std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
 
         cipher->cipher(myIV, encIV, *symkeyMac.get(), *iv.get(), false);
         return encIV;
@@ -402,10 +402,10 @@ namespace logicalaccess
         return result;
     }
 
-    boost::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> > SAMAV2ISO7816Commands::getKeyEntry(unsigned char keyno)
+    std::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> > SAMAV2ISO7816Commands::getKeyEntry(unsigned char keyno)
     {
         std::vector<unsigned char> result;
-        boost::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> > keyentry;
+        std::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> > keyentry;
         KeyEntryAV2Information keyentryinformation;
         unsigned char cmd[] = { d_cla, 0x64, keyno, 0x00, 0x00 };
         std::vector<unsigned char> cmd_vector(cmd, cmd + 5);
@@ -447,9 +447,9 @@ namespace logicalaccess
         return keyentry;
     }
 
-    boost::shared_ptr<SAMKucEntry> SAMAV2ISO7816Commands::getKUCEntry(unsigned char kucno)
+    std::shared_ptr<SAMKucEntry> SAMAV2ISO7816Commands::getKUCEntry(unsigned char kucno)
     {
-        boost::shared_ptr<SAMKucEntry> kucentry(new SAMKucEntry);
+        std::shared_ptr<SAMKucEntry> kucentry(new SAMKucEntry);
         unsigned char cmd[] = { d_cla, 0x6c, kucno, 0x00, 0x00 };
         std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
 
@@ -466,7 +466,7 @@ namespace logicalaccess
         return kucentry;
     }
 
-    void SAMAV2ISO7816Commands::changeKUCEntry(unsigned char kucno, boost::shared_ptr<SAMKucEntry> kucentry, boost::shared_ptr<DESFireKey> key)
+    void SAMAV2ISO7816Commands::changeKUCEntry(unsigned char kucno, std::shared_ptr<SAMKucEntry> kucentry, std::shared_ptr<DESFireKey> key)
     {
         if (d_sessionKey.size() == 0)
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Failed: AuthentificationHost have to be done before use such command.");
@@ -480,7 +480,7 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKUCEntry failed.");
     }
 
-    void SAMAV2ISO7816Commands::changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> > keyentry, boost::shared_ptr<DESFireKey> key)
+    void SAMAV2ISO7816Commands::changeKeyEntry(unsigned char keyno, std::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> > keyentry, std::shared_ptr<DESFireKey> key)
     {
         if (d_sessionKey.size() == 0)
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Failed: AuthentificationHost have to be done before use such command.");

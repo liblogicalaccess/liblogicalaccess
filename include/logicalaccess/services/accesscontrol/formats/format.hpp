@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_FORMAT_HPP
 #define LOGICALACCESS_FORMAT_HPP
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/utility.hpp>
 
 #include "logicalaccess/xmlserializable.hpp"
@@ -43,7 +43,7 @@ namespace logicalaccess
         FT_RAW = 0xFF
     } FormatType;
 
-    bool FieldSortPredicate(const boost::shared_ptr<DataField>& lhs, const boost::shared_ptr<DataField>& rhs);
+    bool FieldSortPredicate(const std::shared_ptr<DataField>& lhs, const std::shared_ptr<DataField>& rhs);
 
     /**
      * \brief A format.
@@ -109,7 +109,7 @@ namespace logicalaccess
          * \param type The format type.
          * \return The new format instance.
          */
-        static boost::shared_ptr<Format> getByFormatType(FormatType type);
+        static std::shared_ptr<Format> getByFormatType(FormatType type);
 
         /**
          * \brief Get values field list.
@@ -129,7 +129,7 @@ namespace logicalaccess
          * \param format The format to check.
          * \return True on success, false otherwise.
          */
-        virtual bool checkSkeleton(boost::shared_ptr<Format> format) const = 0;
+        virtual bool checkSkeleton(std::shared_ptr<Format> format) const = 0;
 
         /**
          * \brief Calculate parity for a block of data.
@@ -152,25 +152,25 @@ namespace logicalaccess
          * \brief Get the format field list.
          * \return The field list.
          */
-        virtual std::list<boost::shared_ptr<DataField> > getFieldList();
+        virtual std::list<std::shared_ptr<DataField> > getFieldList();
 
         /**
          * \brief Get the format field list.
          * \param fields The field list.
          */
-        virtual void setFieldList(std::list<boost::shared_ptr<DataField> > fields);
+        virtual void setFieldList(std::list<std::shared_ptr<DataField> > fields);
 
         /**
          * \brief Get the field object from name.
          */
-        boost::shared_ptr<DataField> getFieldFromName(std::string field) const;
+        std::shared_ptr<DataField> getFieldFromName(std::string field) const;
 
     protected:
 
         /**
          * \brief The field list.
          */
-        std::list<boost::shared_ptr<DataField> > d_fieldList;
+        std::list<std::shared_ptr<DataField> > d_fieldList;
     };
 }
 

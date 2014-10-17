@@ -115,13 +115,13 @@ namespace logicalaccess
         }
     }
 
-    boost::shared_ptr<HMAC1Key> STidSTRReaderUnitConfiguration::getHMACKey() const
+    std::shared_ptr<HMAC1Key> STidSTRReaderUnitConfiguration::getHMACKey() const
     {
         LOG(LogLevel::DEBUGS) << "Get HMAC key data {" << d_key_hmac->toString() << "}";
         return d_key_hmac;
     }
 
-    void STidSTRReaderUnitConfiguration::setHMACKey(boost::shared_ptr<HMAC1Key> key)
+    void STidSTRReaderUnitConfiguration::setHMACKey(std::shared_ptr<HMAC1Key> key)
     {
         if (key)
         {
@@ -130,13 +130,13 @@ namespace logicalaccess
         }
     }
 
-    boost::shared_ptr<AES128Key> STidSTRReaderUnitConfiguration::getAESKey() const
+    std::shared_ptr<AES128Key> STidSTRReaderUnitConfiguration::getAESKey() const
     {
         LOG(LogLevel::DEBUGS) << "Get AES 128 key data {" << d_key_aes->toString() << "}";
         return d_key_aes;
     }
 
-    void STidSTRReaderUnitConfiguration::setAESKey(boost::shared_ptr<AES128Key> key)
+    void STidSTRReaderUnitConfiguration::setAESKey(std::shared_ptr<AES128Key> key)
     {
         if (key)
         {

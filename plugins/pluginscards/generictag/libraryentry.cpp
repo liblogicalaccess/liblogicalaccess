@@ -1,5 +1,5 @@
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "generictagchip.hpp"
 
@@ -21,35 +21,35 @@ extern "C"
         return (char*)"GenericTag";
     }
 
-    LIBLOGICALACCESS_API void getGenericTagChip(boost::shared_ptr<logicalaccess::Chip>* chip)
+    LIBLOGICALACCESS_API void getGenericTagChip(std::shared_ptr<logicalaccess::Chip>* chip)
     {
         if (chip != NULL)
         {
-            *chip = boost::shared_ptr<logicalaccess::GenericTagChip>(new logicalaccess::GenericTagChip());
+            *chip = std::shared_ptr<logicalaccess::GenericTagChip>(new logicalaccess::GenericTagChip());
         }
     }
 
-    LIBLOGICALACCESS_API void getGENERIC_T_CLChip(boost::shared_ptr<logicalaccess::Chip>* chip)
+    LIBLOGICALACCESS_API void getGENERIC_T_CLChip(std::shared_ptr<logicalaccess::Chip>* chip)
     {
         if (chip != NULL)
         {
-            *chip = boost::shared_ptr<logicalaccess::GenericTagChip>(new logicalaccess::GenericTagChip("GENERIC_T_CL"));
+            *chip = std::shared_ptr<logicalaccess::GenericTagChip>(new logicalaccess::GenericTagChip("GENERIC_T_CL"));
         }
     }
 
-    LIBLOGICALACCESS_API void getGENERIC_T_CL_AChip(boost::shared_ptr<logicalaccess::Chip>* chip)
+    LIBLOGICALACCESS_API void getGENERIC_T_CL_AChip(std::shared_ptr<logicalaccess::Chip>* chip)
     {
         if (chip != NULL)
         {
-            *chip = boost::shared_ptr<logicalaccess::GenericTagChip>(new logicalaccess::GenericTagChip("GENERIC_T_CL_A"));
+            *chip = std::shared_ptr<logicalaccess::GenericTagChip>(new logicalaccess::GenericTagChip("GENERIC_T_CL_A"));
         }
     }
 
-    LIBLOGICALACCESS_API void setTagIdBitsLengthOfGenericTagChip(boost::shared_ptr<logicalaccess::Chip>* chip, unsigned int bits)
+    LIBLOGICALACCESS_API void setTagIdBitsLengthOfGenericTagChip(std::shared_ptr<logicalaccess::Chip>* chip, unsigned int bits)
     {
         if (chip != NULL)
         {
-            boost::dynamic_pointer_cast<logicalaccess::GenericTagChip>(*chip)->setTagIdBitsLength(bits);
+            std::dynamic_pointer_cast<logicalaccess::GenericTagChip>(*chip)->setTagIdBitsLength(bits);
         }
     }
 

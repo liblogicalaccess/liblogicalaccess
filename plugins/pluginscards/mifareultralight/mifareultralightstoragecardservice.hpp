@@ -27,7 +27,7 @@ namespace logicalaccess
          * \brief Constructor.
          * \param chip The chip.
          */
-        MifareUltralightStorageCardService(boost::shared_ptr<Chip> chip);
+        MifareUltralightStorageCardService(std::shared_ptr<Chip> chip);
 
         /**
          * \brief Destructor.
@@ -44,7 +44,7 @@ namespace logicalaccess
          * \param location The data location.
          * \param aiToUse The key's informations to use to delete.
          */
-        virtual void erase(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse);
+        virtual void erase(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse);
 
         /**
          * \brief Write data on a specific Mifare location, using given Mifare keys.
@@ -55,7 +55,7 @@ namespace logicalaccess
          * \param dataLength Data's length to write.
          * \param behaviorFlags Flags which determines the behavior.
          */
-        virtual void writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags);
+        virtual void writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags);
 
         /**
          * \brief Read data on a specific Mifare location, using given Mifare keys.
@@ -65,7 +65,7 @@ namespace logicalaccess
          * \param dataLength Data's length to read.
          * \param behaviorFlags Flags which determines the behavior.
          */
-        virtual void readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags);
+        virtual void readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags);
 
         /**
          * \brief Read data header on a specific location, using given keys.
@@ -75,7 +75,7 @@ namespace logicalaccess
          * \param dataLength Data's length to read.
          * \return Data header length.
          */
-        virtual unsigned int readDataHeader(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength);
+        virtual unsigned int readDataHeader(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength);
 
     protected:
 
@@ -83,7 +83,7 @@ namespace logicalaccess
          * \brief Get the associated Mifare Ultralight chip.
          * \return The Mifare Ultralight chip.
          */
-        boost::shared_ptr<MifareUltralightChip> getMifareUltralightChip() { return boost::dynamic_pointer_cast<MifareUltralightChip>(getChip()); };
+        std::shared_ptr<MifareUltralightChip> getMifareUltralightChip() { return std::dynamic_pointer_cast<MifareUltralightChip>(getChip()); };
     };
 }
 

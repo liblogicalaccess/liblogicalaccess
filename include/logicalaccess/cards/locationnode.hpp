@@ -13,7 +13,7 @@
 #include <vector>
 #include <iostream>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace logicalaccess
 {
@@ -49,19 +49,19 @@ namespace logicalaccess
          * \brief Get the childrens node.
          * \return The childrens node.
          */
-        std::vector<boost::shared_ptr<LocationNode> >& getChildrens();
+        std::vector<std::shared_ptr<LocationNode> >& getChildrens();
 
         /**
          * \brief Set the parent node.
          * \param parent The parent node.
          */
-        void setParent(boost::weak_ptr<LocationNode> parent);
+        void setParent(std::weak_ptr<LocationNode> parent);
 
         /**
          * \brief Get the parent node.
          * \return The parent node.
          */
-        boost::shared_ptr<LocationNode> getParent();
+        std::shared_ptr<LocationNode> getParent();
 
         /**
          * \brief Set if authentication is needed.
@@ -103,13 +103,13 @@ namespace logicalaccess
          * \brief Set the associated location.
          * \param location The associated location.
          */
-        void setLocation(boost::shared_ptr<Location> location);
+        void setLocation(std::shared_ptr<Location> location);
 
         /**
          * \brief Get the associated location.
          * \return The associated location.
          */
-        boost::shared_ptr<Location> getLocation() const;
+        std::shared_ptr<Location> getLocation() const;
 
         /**
          * \brief Set the byte unit.
@@ -128,12 +128,12 @@ namespace logicalaccess
         /**
          * \brief The childrens node.
          */
-        std::vector<boost::shared_ptr<LocationNode> > d_childrens;
+        std::vector<std::shared_ptr<LocationNode> > d_childrens;
 
         /**
          * \brief The parent node.
          */
-        boost::weak_ptr<LocationNode> d_parent;
+        std::weak_ptr<LocationNode> d_parent;
 
         /**
          * \brief Need authentication to access the node data.
@@ -158,7 +158,7 @@ namespace logicalaccess
         /**
          * \brief The associated location.
          */
-        boost::shared_ptr<Location> d_location;
+        std::shared_ptr<Location> d_location;
 
         /**
          * \brief The byte unit.

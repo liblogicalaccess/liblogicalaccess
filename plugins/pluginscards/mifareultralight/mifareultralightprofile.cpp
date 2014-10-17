@@ -25,7 +25,7 @@ namespace logicalaccess
     {
     }
 
-    void MifareUltralightProfile::setDefaultKeysAt(boost::shared_ptr<Location> /*location*/)
+    void MifareUltralightProfile::setDefaultKeysAt(std::shared_ptr<Location> /*location*/)
     {
     }
 
@@ -33,20 +33,20 @@ namespace logicalaccess
     {
     }
 
-    void MifareUltralightProfile::setKeyAt(boost::shared_ptr<Location> /*location*/, boost::shared_ptr<AccessInfo> /*AccessInfo*/)
+    void MifareUltralightProfile::setKeyAt(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*AccessInfo*/)
     {
     }
 
-    boost::shared_ptr<AccessInfo> MifareUltralightProfile::createAccessInfo() const
+    std::shared_ptr<AccessInfo> MifareUltralightProfile::createAccessInfo() const
     {
-        boost::shared_ptr<MifareUltralightAccessInfo> ret;
+        std::shared_ptr<MifareUltralightAccessInfo> ret;
         ret.reset(new MifareUltralightAccessInfo());
         return ret;
     }
 
-    boost::shared_ptr<Location> MifareUltralightProfile::createLocation() const
+    std::shared_ptr<Location> MifareUltralightProfile::createLocation() const
     {
-        boost::shared_ptr<MifareUltralightLocation> ret;
+        std::shared_ptr<MifareUltralightLocation> ret;
         ret.reset(new MifareUltralightLocation());
         return ret;
     }

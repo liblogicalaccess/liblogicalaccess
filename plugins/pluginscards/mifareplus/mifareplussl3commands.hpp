@@ -28,7 +28,7 @@ namespace logicalaccess
         * \param key The key to use to authenticate to the sector
         * \param keytype The key type
         */
-        virtual void writeSector(int sector, int start_block, const void* buf, size_t buflen, boost::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype);
+        virtual void writeSector(int sector, int start_block, const void* buf, size_t buflen, std::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype);
 
         /**
          * \brief write several sectors.
@@ -38,7 +38,7 @@ namespace logicalaccess
          * \param buflen The buffer length
          * \param aiToUse The access informations for authentification on the sectors to write
          */
-        virtual void writeSectors(int start_sector, int stop_sector, const void* buf, size_t buflen, boost::shared_ptr<AccessInfo> aiToUse);
+        virtual void writeSectors(int start_sector, int stop_sector, const void* buf, size_t buflen, std::shared_ptr<AccessInfo> aiToUse);
 
         /**
          * \brief Read a whole sector.
@@ -49,7 +49,7 @@ namespace logicalaccess
          * \param key The key to use to authenticate to the sector
          * \param keytype The key type
          */
-        virtual void readSector(int sector, int start_block, void* buf, size_t buflen, boost::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype);
+        virtual void readSector(int sector, int start_block, void* buf, size_t buflen, std::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype);
 
         /**
          * \brief Read several sectors.
@@ -59,7 +59,7 @@ namespace logicalaccess
          * \param buflen The buffer length
          * \param aiToUse The access informations for authentification on the sectors to read
          */
-        virtual void readSectors(int start_sector, int stop_sector, void* buf, size_t buflen, boost::shared_ptr<AccessInfo> aiToUse);
+        virtual void readSectors(int start_sector, int stop_sector, void* buf, size_t buflen, std::shared_ptr<AccessInfo> aiToUse);
 
         /**
          * \brief Authenticate on a given sector
@@ -67,7 +67,7 @@ namespace logicalaccess
          * \param AccessInfo The access infos containing keys for authentication.
          * \param ret Return value, true on success, false otherwise.
          */
-        virtual bool authenticate(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> ai);
+        virtual bool authenticate(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> ai);
 
         /**
          * \brief Get number of data blocks for a sector.
@@ -85,7 +85,7 @@ namespace logicalaccess
          * \param keytype The mifare plus key type.
          * \return true if authenticated, false otherwise.
          */
-        virtual bool followingAuthenticate(int sector, boost::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype) = 0;
+        virtual bool followingAuthenticate(int sector, std::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype) = 0;
 
         /**
          * \brief Authenticate a block, given a key number.
@@ -94,7 +94,7 @@ namespace logicalaccess
          * \param keytype The mifare plus key type.
          * \return true if authenticated, false otherwise.
          */
-        virtual bool authenticate(int sector, boost::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype) = 0;
+        virtual bool authenticate(int sector, std::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype) = 0;
 
         /**
         * \brief Reset the authentication

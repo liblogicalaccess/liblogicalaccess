@@ -295,7 +295,7 @@ namespace logicalaccess
          * \brief Load a key in the reader memory.
          * \param key The key object to load.
          */
-        virtual void loadKey(boost::shared_ptr<DESFireKey> key);
+        virtual void loadKey(std::shared_ptr<DESFireKey> key);
 
         /**
          * \brief Load a key in the reader memory.
@@ -325,7 +325,7 @@ namespace logicalaccess
          * \param keyno The key number.
          * \param key The key.
          */
-        virtual void authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key);
+        virtual void authenticate(unsigned char keyno, std::shared_ptr<DESFireKey> key);
 
         /**
          * \brief AuthenticateISO command.
@@ -440,7 +440,7 @@ namespace logicalaccess
          * \param keyno The key number to change
          * \param key The new key
          */
-        virtual void changeKey(unsigned char keyno, boost::shared_ptr<DESFireKey> key);
+        virtual void changeKey(unsigned char keyno, std::shared_ptr<DESFireKey> key);
 
         /**
          * \brief Change the key indexed keyno by a new index or crypto method.
@@ -509,7 +509,7 @@ namespace logicalaccess
          * \brief Set the card configuration default key.
          * param defaultKey The new default key.
          */
-        virtual void setConfiguration(boost::shared_ptr<DESFireKey> defaultKey);
+        virtual void setConfiguration(std::shared_ptr<DESFireKey> defaultKey);
 
         /**
          * \brief Set a custom card ATS.
@@ -521,9 +521,9 @@ namespace logicalaccess
          * \brief Get the STidSTR reader/card adapter.
          * \return The STidSTR reader/card adapter.
          */
-        boost::shared_ptr<STidSTRReaderCardAdapter> getSTidSTRReaderCardAdapter() { return boost::dynamic_pointer_cast<STidSTRReaderCardAdapter>(getReaderCardAdapter()); };
+        std::shared_ptr<STidSTRReaderCardAdapter> getSTidSTRReaderCardAdapter() { return std::dynamic_pointer_cast<STidSTRReaderCardAdapter>(getReaderCardAdapter()); };
 
-        void setProfile(boost::shared_ptr<DESFireProfile> profile) { d_profile = profile; };
+        void setProfile(std::shared_ptr<DESFireProfile> profile) { d_profile = profile; };
 
         /**
          * \brief Get the STid Key Location Type in string format.
@@ -535,7 +535,7 @@ namespace logicalaccess
 
         unsigned int d_currentAid;
 
-        boost::shared_ptr<DESFireProfile> d_profile;
+        std::shared_ptr<DESFireProfile> d_profile;
     };
 }
 

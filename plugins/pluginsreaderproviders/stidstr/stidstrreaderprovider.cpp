@@ -33,10 +33,10 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<STidSTRReaderProvider> STidSTRReaderProvider::getSingletonInstance()
+    std::shared_ptr<STidSTRReaderProvider> STidSTRReaderProvider::getSingletonInstance()
     {
         LOG(LogLevel::INFOS) << "Getting singleton instance...";
-        static boost::shared_ptr<STidSTRReaderProvider> instance;
+        static std::shared_ptr<STidSTRReaderProvider> instance;
         if (!instance)
         {
             instance.reset(new STidSTRReaderProvider());
@@ -46,12 +46,12 @@ namespace logicalaccess
         return instance;
     }
 
-    boost::shared_ptr<ReaderUnit> STidSTRReaderProvider::createReaderUnit()
+    std::shared_ptr<ReaderUnit> STidSTRReaderProvider::createReaderUnit()
     {
         LOG(LogLevel::INFOS) << "Creating new reader unit with empty port... (Serial port auto-detect will be used when connecting to reader)";
 
-        boost::shared_ptr<STidSTRReaderUnit> ret(new STidSTRReaderUnit());
-        ret->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
+        std::shared_ptr<STidSTRReaderUnit> ret(new STidSTRReaderUnit());
+        ret->setReaderProvider(std::weak_ptr<ReaderProvider>(shared_from_this()));
 
         return ret;
     }
@@ -61,15 +61,15 @@ namespace logicalaccess
         //LOG(LogLevel::INFOS) << "Refreshing reader list...");
         d_readers.clear();
 
-        std::vector<boost::shared_ptr<SerialPortXml> > ports;
+        std::vector<std::shared_ptr<SerialPortXml> > ports;
         EXCEPTION_ASSERT_WITH_LOG(SerialPortXml::EnumerateUsingCreateFile(ports), LibLogicalAccessException, "Can't enumerate the serial port list.");
 
-        for (std::vector<boost::shared_ptr<SerialPortXml> >::iterator i = ports.begin(); i != ports.end(); ++i)
+        for (std::vector<std::shared_ptr<SerialPortXml> >::iterator i = ports.begin(); i != ports.end(); ++i)
         {
-            boost::shared_ptr<STidSTRReaderUnit> unit(new STidSTRReaderUnit());
-            boost::shared_ptr<SerialPortDataTransport> dataTransport = boost::dynamic_pointer_cast<SerialPortDataTransport>(unit->getDataTransport());
+            std::shared_ptr<STidSTRReaderUnit> unit(new STidSTRReaderUnit());
+            std::shared_ptr<SerialPortDataTransport> dataTransport = std::dynamic_pointer_cast<SerialPortDataTransport>(unit->getDataTransport());
             dataTransport->setSerialPort(*i);
-            unit->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
+            unit->setReaderProvider(std::weak_ptr<ReaderProvider>(shared_from_this()));
             d_readers.push_back(unit);
             //LOG(LogLevel::INFOS) << "--> Detected reader unit {%s}...", dynamic_cast<XmlSerializable*>(&(*unit))->serialize().c_str());
         }

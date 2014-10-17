@@ -32,15 +32,15 @@ namespace logicalaccess
          */
         virtual std::vector<unsigned char> adaptAnswer(const std::vector<unsigned char>& answer);
 
-        boost::shared_ptr<DataTransport> getDataTransport() const { return d_dataTransport; };
+        std::shared_ptr<DataTransport> getDataTransport() const { return d_dataTransport; };
 
-        void setDataTransport(boost::shared_ptr<DataTransport> dataTransport) { d_dataTransport = dataTransport; };
+        void setDataTransport(std::shared_ptr<DataTransport> dataTransport) { d_dataTransport = dataTransport; };
 
         virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long timeout = 3000);
 
     protected:
 
-        boost::shared_ptr<DataTransport> d_dataTransport;
+        std::shared_ptr<DataTransport> d_dataTransport;
     };
 }
 

@@ -12,13 +12,13 @@
 
 namespace logicalaccess
 {
-    bool MifarePlusSL1Commands::authenticate(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> ai)
+    bool MifarePlusSL1Commands::authenticate(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> ai)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
         EXCEPTION_ASSERT_WITH_LOG(ai, std::invalid_argument, "ai cannot be null.");
 
-        boost::shared_ptr<MifarePlusLocation> mLocation = boost::dynamic_pointer_cast<MifarePlusLocation>(location);
-        boost::shared_ptr<MifarePlusAccessInfo> mAi = boost::dynamic_pointer_cast<MifarePlusAccessInfo>(ai);
+        std::shared_ptr<MifarePlusLocation> mLocation = std::dynamic_pointer_cast<MifarePlusLocation>(location);
+        std::shared_ptr<MifarePlusAccessInfo> mAi = std::dynamic_pointer_cast<MifarePlusAccessInfo>(ai);
 
         EXCEPTION_ASSERT_WITH_LOG(mLocation, std::invalid_argument, "location must be a MifarePlusLocation.");
         EXCEPTION_ASSERT_WITH_LOG(mAi, std::invalid_argument, "ai must be a MifarePlusAccessInfo.");
@@ -31,27 +31,27 @@ namespace logicalaccess
 
         if (!mAi->keyA->isEmpty())
         {
-            boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(mLocation->sector, KT_KEY_CRYPTO1_A, mAi->keyA);
+            std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(mLocation->sector, KT_KEY_CRYPTO1_A, mAi->keyA);
         }
 
         if (!mAi->keyB->isEmpty())
         {
-            boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(mLocation->sector, KT_KEY_CRYPTO1_B, mAi->keyB);
+            std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->setKey(mLocation->sector, KT_KEY_CRYPTO1_B, mAi->keyB);
             keytype = KT_KEY_CRYPTO1_B;
         }
 
-        if (!boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->getKeyUsage(mLocation->sector, keytype))
+        if (!std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->getKeyUsage(mLocation->sector, keytype))
         {
             THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_NOKEY);
         }
 
-        boost::shared_ptr<MifarePlusKey> key = boost::dynamic_pointer_cast<MifarePlusKey>(boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->getKey(mLocation->sector, keytype));
+        std::shared_ptr<MifarePlusKey> key = std::dynamic_pointer_cast<MifarePlusKey>(std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->getKey(mLocation->sector, keytype));
         loadKey(location, key, keytype);
         getMifarePlusChip()->getMifarePlusSL1Commands()->authenticate(static_cast<unsigned char>(getSectorStartBlock(mLocation->sector)), key->getKeyStorage(), keytype);
 
         return true;
     }
-    unsigned int MifarePlusSL1Commands::getSectorFromMAD(long aid, boost::shared_ptr<MifarePlusKey> madKeyA)
+    unsigned int MifarePlusSL1Commands::getSectorFromMAD(long aid, std::shared_ptr<MifarePlusKey> madKeyA)
     {
         unsigned int sector = static_cast<unsigned int>(-1);
         MifarePlusAccessInfo::SectorAccessBits sab;
@@ -104,7 +104,7 @@ namespace logicalaccess
         return sector;
     }
 
-    void MifarePlusSL1Commands::setSectorToMAD(long aid, unsigned int sector, boost::shared_ptr<MifarePlusKey> madKeyA, boost::shared_ptr<MifarePlusKey> madKeyB)
+    void MifarePlusSL1Commands::setSectorToMAD(long aid, unsigned int sector, std::shared_ptr<MifarePlusKey> madKeyA, std::shared_ptr<MifarePlusKey> madKeyB)
     {
         MifarePlusAccessInfo::SectorAccessBits sab;
 
@@ -221,9 +221,9 @@ namespace logicalaccess
         return sector;
     }
 
-    boost::shared_ptr<MifarePlusChip> MifarePlusSL1Commands::getMifarePlusChip()
+    std::shared_ptr<MifarePlusChip> MifarePlusSL1Commands::getMifarePlusChip()
     {
-        return boost::dynamic_pointer_cast<MifarePlusChip>(getChip());
+        return std::dynamic_pointer_cast<MifarePlusChip>(getChip());
     }
 
     void MifarePlusSL1Commands::changeBlock(const MifarePlusAccessInfo::SectorAccessBits& sab, int sector, int block, bool write)
@@ -286,14 +286,14 @@ namespace logicalaccess
         }
 
         MifarePlusKeyType keytype = (write) ? wkt : rkt;
-        boost::shared_ptr<MifarePlusKey> key = boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->getKey(sector, keytype);
+        std::shared_ptr<MifarePlusKey> key = std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->getKey(sector, keytype);
 
-        if (!boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->getKeyUsage(sector, keytype))
+        if (!std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->getKeyUsage(sector, keytype))
         {
             THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_NOKEY);
         }
 
-        boost::shared_ptr<MifarePlusLocation> location(new MifarePlusLocation());
+        std::shared_ptr<MifarePlusLocation> location(new MifarePlusLocation());
         location->sector = sector;
         location->block = block;
 
@@ -337,13 +337,13 @@ namespace logicalaccess
         if (newsab != NULL)
         {
             int writeSector = getMifarePlusChip()->getNbSectors();
-            changeKey(boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->getKey(writeSector, KT_KEY_CRYPTO1_A), boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->getKey(writeSector, KT_KEY_CRYPTO1_B), sector, sab, newsab, userbyte);
+            changeKey(std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->getKey(writeSector, KT_KEY_CRYPTO1_A), std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->getKey(writeSector, KT_KEY_CRYPTO1_B), sector, sab, newsab, userbyte);
         }
 
         return retlen;
     }
 
-    void MifarePlusSL1Commands::changeKey(boost::shared_ptr<MifarePlusKey> keyA, boost::shared_ptr<MifarePlusKey> keyB, unsigned int sector, const MifarePlusAccessInfo::SectorAccessBits& sab, MifarePlusAccessInfo::SectorAccessBits* newsab, unsigned char userbyte)
+    void MifarePlusSL1Commands::changeKey(std::shared_ptr<MifarePlusKey> keyA, std::shared_ptr<MifarePlusKey> keyB, unsigned int sector, const MifarePlusAccessInfo::SectorAccessBits& sab, MifarePlusAccessInfo::SectorAccessBits* newsab, unsigned char userbyte)
     {
         char trailerblock[16];
         memset(trailerblock, 0x00, sizeof(trailerblock));

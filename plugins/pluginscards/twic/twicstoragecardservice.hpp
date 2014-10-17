@@ -30,7 +30,7 @@ namespace logicalaccess
          * \brief Constructor.
          * \param chip The chip.
          */
-        TwicStorageCardService(boost::shared_ptr<Chip> chip);
+        TwicStorageCardService(std::shared_ptr<Chip> chip);
 
         /**
          * \brief Destructor.
@@ -46,11 +46,11 @@ namespace logicalaccess
          * \param behaviorFlags Flags which determines the behavior.
          * \return True on success, false otherwise.
          */
-        virtual void readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void *data, size_t dataLength, CardBehavior behaviorFlags);
+        virtual void readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, void *data, size_t dataLength, CardBehavior behaviorFlags);
 
     protected:
 
-        boost::shared_ptr<TwicChip> getTwicChip() { return boost::dynamic_pointer_cast<TwicChip>(getISO7816Chip()); };
+        std::shared_ptr<TwicChip> getTwicChip() { return std::dynamic_pointer_cast<TwicChip>(getISO7816Chip()); };
     };
 }
 

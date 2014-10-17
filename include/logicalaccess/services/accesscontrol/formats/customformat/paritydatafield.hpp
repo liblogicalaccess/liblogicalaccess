@@ -63,7 +63,7 @@ namespace logicalaccess
          * \param field The field to check with.
          * \return True if the field is dependent, false otherwise.
          */
-        bool checkFieldDependecy(boost::shared_ptr<DataField> field);
+        bool checkFieldDependecy(std::shared_ptr<DataField> field);
 
         /**
          * \brief Get linear data.
@@ -86,7 +86,7 @@ namespace logicalaccess
          * \param field The field to check.
          * \return True on success, false otherwise.
          */
-        virtual bool checkSkeleton(boost::shared_ptr<DataField> field) const;
+        virtual bool checkSkeleton(std::shared_ptr<DataField> field) const;
 
         /**
          * \brief Serialize the current object to XML.

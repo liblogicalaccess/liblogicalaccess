@@ -20,12 +20,12 @@ namespace logicalaccess
     /**
      * \brief A format list.
      */
-    typedef std::vector<boost::shared_ptr<Format> > FormatList;
+    typedef std::vector<std::shared_ptr<Format> > FormatList;
 
     /**
      * \brief The base profile class for all profiles. Most of the time, a profile only contains key mapping for a chip.
      */
-    class LIBLOGICALACCESS_API Profile : public boost::enable_shared_from_this < Profile >
+    class LIBLOGICALACCESS_API Profile : public std::enable_shared_from_this < Profile >
     {
     public:
 
@@ -47,14 +47,14 @@ namespace logicalaccess
         /**
          * \brief Set default keys for the type card in memory at a specific location.
          */
-        virtual void setDefaultKeysAt(boost::shared_ptr<Location> location) = 0;
+        virtual void setDefaultKeysAt(std::shared_ptr<Location> location) = 0;
 
         /**
          * \brief Set key at a specific location.
          * \param location The key's location.
          * \param AccessInfo The key's informations.
          */
-        virtual void setKeyAt(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> AccessInfo) = 0;
+        virtual void setKeyAt(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> AccessInfo) = 0;
 
         /**
          * \brief Clear all keys in memory
@@ -65,13 +65,13 @@ namespace logicalaccess
          * \brief Create default access informations.
          * \return Default access informations.
          */
-        virtual boost::shared_ptr<AccessInfo> createAccessInfo() const = 0;
+        virtual std::shared_ptr<AccessInfo> createAccessInfo() const = 0;
 
         /**
          * \brief Create default location.
          * \return Default location.
          */
-        virtual boost::shared_ptr<Location> createLocation() const = 0;
+        virtual std::shared_ptr<Location> createLocation() const = 0;
 
         /**
          * \brief Get the supported format list.

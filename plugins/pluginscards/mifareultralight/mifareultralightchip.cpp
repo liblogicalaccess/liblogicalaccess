@@ -31,9 +31,9 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<LocationNode> MifareUltralightChip::getRootLocationNode()
+    std::shared_ptr<LocationNode> MifareUltralightChip::getRootLocationNode()
     {
-        boost::shared_ptr<LocationNode> rootNode;
+        std::shared_ptr<LocationNode> rootNode;
         rootNode.reset(new LocationNode());
 
         rootNode->setName("Mifare Ultralight");
@@ -46,10 +46,10 @@ namespace logicalaccess
         return rootNode;
     }
 
-    void MifareUltralightChip::addPageNode(boost::shared_ptr<LocationNode> rootNode, int page)
+    void MifareUltralightChip::addPageNode(std::shared_ptr<LocationNode> rootNode, int page)
     {
         char tmpName[255];
-        boost::shared_ptr<LocationNode> sectorNode;
+        std::shared_ptr<LocationNode> sectorNode;
         sectorNode.reset(new LocationNode());
 
         sprintf(tmpName, "Page %d", page);
@@ -57,7 +57,7 @@ namespace logicalaccess
         sectorNode->setLength(4);
         sectorNode->setNeedAuthentication(true);
 
-        boost::shared_ptr<MifareUltralightLocation> location;
+        std::shared_ptr<MifareUltralightLocation> location;
         location.reset(new MifareUltralightLocation());
         location->page = page;
         location->byte = 0;
@@ -67,9 +67,9 @@ namespace logicalaccess
         rootNode->getChildrens().push_back(sectorNode);
     }
 
-    boost::shared_ptr<CardService> MifareUltralightChip::getService(CardServiceType serviceType)
+    std::shared_ptr<CardService> MifareUltralightChip::getService(CardServiceType serviceType)
     {
-        boost::shared_ptr<CardService> service;
+        std::shared_ptr<CardService> service;
 
         switch (serviceType)
         {

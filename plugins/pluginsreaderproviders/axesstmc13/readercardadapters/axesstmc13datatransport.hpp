@@ -20,7 +20,7 @@ namespace logicalaccess
     public:
         AxessTMC13DataTransport(const std::string& portname = "") : SerialPortDataTransport(portname) {};
 
-        virtual void setSerialPort(boost::shared_ptr<SerialPortXml> port)
+        virtual void setSerialPort(std::shared_ptr<SerialPortXml> port)
         {
             d_port = port; d_port->getSerialPort()->setCircularBufferParser(new AxessTMC13BufferParser());
         };

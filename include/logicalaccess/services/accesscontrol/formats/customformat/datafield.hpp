@@ -9,7 +9,7 @@
 
 #include "logicalaccess/xmlserializable.hpp"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/utility.hpp>
 
 #include "logicalaccess/logs.hpp"
@@ -23,7 +23,7 @@ namespace logicalaccess
     /**
      * \brief A data field base class.
      */
-    class LIBLOGICALACCESS_API DataField : public XmlSerializable, public boost::enable_shared_from_this < DataField >
+    class LIBLOGICALACCESS_API DataField : public XmlSerializable, public std::enable_shared_from_this < DataField >
     {
     public:
         /**
@@ -87,7 +87,7 @@ namespace logicalaccess
          * \param field The field to check.
          * \return True on success, false otherwise.
          */
-        virtual bool checkSkeleton(boost::shared_ptr<DataField> field) const = 0;
+        virtual bool checkSkeleton(std::shared_ptr<DataField> field) const = 0;
 
         /**
          * \brief Serialize the current object to XML.

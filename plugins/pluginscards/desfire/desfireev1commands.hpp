@@ -102,7 +102,7 @@ namespace logicalaccess
          * \brief Select an application.
          * \param location The DESFire location
          */
-        virtual void selectApplication(boost::shared_ptr<DESFireLocation> location);
+        virtual void selectApplication(std::shared_ptr<DESFireLocation> location);
 
         /**
          * \brief Create a new application.
@@ -110,7 +110,7 @@ namespace logicalaccess
          * \param settings Key settings
          * \param maxNbKeys Maximum number of keys
          */
-        virtual void createApplication(boost::shared_ptr<DESFireLocation> location, DESFireKeySettings settings, unsigned char maxNbKeys);
+        virtual void createApplication(std::shared_ptr<DESFireLocation> location, DESFireKeySettings settings, unsigned char maxNbKeys);
 
         /**
          * \brief Create a new data file in the current application.
@@ -118,7 +118,7 @@ namespace logicalaccess
          * \param accessRights The file access rights
          * \param fileSize The file size.
          */
-        virtual void createStdDataFile(boost::shared_ptr<DESFireLocation> location, DESFireAccessRights accessRights, unsigned int fileSize);
+        virtual void createStdDataFile(std::shared_ptr<DESFireLocation> location, DESFireAccessRights accessRights, unsigned int fileSize);
 
         /**
          * \brief Get the value of available bytes.
@@ -305,7 +305,7 @@ namespace logicalaccess
          * \param key The new key
          * \return True on success, false otherwise.
          */
-        //virtual bool changeKey(unsigned char keyno, boost::shared_ptr<DESFireKey> key) = 0;
+        //virtual bool changeKey(unsigned char keyno, std::shared_ptr<DESFireKey> key) = 0;
 
         /**
          * \brief Get the card version information.
@@ -352,7 +352,7 @@ namespace logicalaccess
          * \brief Set the card configuration default key.
          * param defaultKey The new default key.
          */
-        virtual void setConfiguration(boost::shared_ptr<DESFireKey> defaultKey) = 0;
+        virtual void setConfiguration(std::shared_ptr<DESFireKey> defaultKey) = 0;
 
         /**
          * \brief Set a custom card ATS.
@@ -362,7 +362,7 @@ namespace logicalaccess
 
     protected:
 
-        boost::shared_ptr<DESFireEV1Chip> getDESFireEV1Chip() const;
+        std::shared_ptr<DESFireEV1Chip> getDESFireEV1Chip() const;
     };
 }
 

@@ -20,7 +20,7 @@ namespace logicalaccess
     class RFIDeasReaderCardAdapter;
     class RFIDeasReaderProvider;
 
-    typedef void(*setTagIdBitsLengthFct)(boost::shared_ptr<Chip>*, unsigned int);
+    typedef void(*setTagIdBitsLengthFct)(std::shared_ptr<Chip>*, unsigned int);
 
     /**
      * \brief The RFIDeas reader unit class.
@@ -72,19 +72,19 @@ namespace logicalaccess
          * \param type The card type.
          * \return The chip.
          */
-        virtual boost::shared_ptr<Chip> createChip(std::string type);
+        virtual std::shared_ptr<Chip> createChip(std::string type);
 
         /**
          * \brief Get the first and/or most accurate chip found.
          * \return The single chip.
          */
-        virtual boost::shared_ptr<Chip> getSingleChip();
+        virtual std::shared_ptr<Chip> getSingleChip();
 
         /**
          * \brief Get chip available in the RFID rang.
          * \return The chip list.
          */
-        virtual std::vector<boost::shared_ptr<Chip> > getChipList();
+        virtual std::vector<std::shared_ptr<Chip> > getChipList();
 
         /**
          * \brief Get the tag id.
@@ -147,19 +147,19 @@ namespace logicalaccess
          * \brief Get the Deister reader unit configuration.
          * \return The Deister reader unit configuration.
          */
-        boost::shared_ptr<RFIDeasReaderUnitConfiguration> getRFIDeasConfiguration() { return boost::dynamic_pointer_cast<RFIDeasReaderUnitConfiguration>(getConfiguration()); };
+        std::shared_ptr<RFIDeasReaderUnitConfiguration> getRFIDeasConfiguration() { return std::dynamic_pointer_cast<RFIDeasReaderUnitConfiguration>(getConfiguration()); };
 
         /**
          * \brief Get the Deister reader provider.
          * \return The Deister reader provider.
          */
-        boost::shared_ptr<RFIDeasReaderProvider> getRFIDeasReaderProvider() const;
+        std::shared_ptr<RFIDeasReaderProvider> getRFIDeasReaderProvider() const;
 
         /**
          * \brief Get the reader unit singleton instance.
          * \return The reader unit instance.
          */
-        static boost::shared_ptr<RFIDeasReaderUnit> getSingletonInstance();
+        static std::shared_ptr<RFIDeasReaderUnit> getSingletonInstance();
 
     protected:
 

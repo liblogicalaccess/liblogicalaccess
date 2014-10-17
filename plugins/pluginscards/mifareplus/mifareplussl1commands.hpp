@@ -79,7 +79,7 @@ namespace logicalaccess
          * \param madKeyA The MAD key A for read access.
          * \return The sector.
          */
-        unsigned int getSectorFromMAD(long aid, boost::shared_ptr<MifarePlusKey> madKeyA);
+        unsigned int getSectorFromMAD(long aid, std::shared_ptr<MifarePlusKey> madKeyA);
 
         /**
          * \brief Set the sector referenced by the AID to the MAD.
@@ -88,7 +88,7 @@ namespace logicalaccess
          * \param madKeyA The MAD key A for read access.
          * \param madKeyB The MAD key B for write access.
          */
-        void setSectorToMAD(long aid, unsigned int sector, boost::shared_ptr<MifarePlusKey> madKeyA, boost::shared_ptr<MifarePlusKey> madKeyB);
+        void setSectorToMAD(long aid, unsigned int sector, std::shared_ptr<MifarePlusKey> madKeyA, std::shared_ptr<MifarePlusKey> madKeyB);
 
         /**
          * \brief Calculate the MAD crc.
@@ -111,9 +111,9 @@ namespace logicalaccess
          * \param location The location.
          * \param ai The access infos.
          */
-        bool authenticate(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> ai);
+        bool authenticate(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> ai);
 
-        void changeKey(boost::shared_ptr<MifarePlusKey> keyA, boost::shared_ptr<MifarePlusKey> keyB, unsigned int sector, const MifarePlusAccessInfo::SectorAccessBits& sab, MifarePlusAccessInfo::SectorAccessBits* newsab, unsigned char userbyte = 0x00);
+        void changeKey(std::shared_ptr<MifarePlusKey> keyA, std::shared_ptr<MifarePlusKey> keyB, unsigned int sector, const MifarePlusAccessInfo::SectorAccessBits& sab, MifarePlusAccessInfo::SectorAccessBits* newsab, unsigned char userbyte = 0x00);
 
         /**
          * \brief Change authenticated block.
@@ -144,7 +144,7 @@ namespace logicalaccess
          * \param key The key.
          * \param keytype The mifare plus key type.
          */
-        virtual void loadKey(boost::shared_ptr<Location> location, boost::shared_ptr<Key> key, MifarePlusKeyType keytype) = 0;
+        virtual void loadKey(std::shared_ptr<Location> location, std::shared_ptr<Key> key, MifarePlusKeyType keytype) = 0;
 
         /**
          * \brief Authenticate a block, given a key number.
@@ -153,19 +153,19 @@ namespace logicalaccess
          * \param keytype The mifare plus key type.
          * \return true if authenticated, false otherwise.
          */
-        virtual void authenticate(unsigned char blockno, boost::shared_ptr<KeyStorage> key_storage, MifarePlusKeyType keytype) = 0;
+        virtual void authenticate(unsigned char blockno, std::shared_ptr<KeyStorage> key_storage, MifarePlusKeyType keytype) = 0;
 
         /**
         * \brief Switch to SL2
         * \param key The switch SL2 AES key
         */
-        virtual bool SwitchLevel2(boost::shared_ptr<MifarePlusKey> key) = 0;
+        virtual bool SwitchLevel2(std::shared_ptr<MifarePlusKey> key) = 0;
 
-        virtual bool AESAuthenticate(boost::shared_ptr<MifarePlusKey> key) = 0;
+        virtual bool AESAuthenticate(std::shared_ptr<MifarePlusKey> key) = 0;
 
     protected:
 
-        boost::shared_ptr<MifarePlusChip> getMifarePlusChip();
+        std::shared_ptr<MifarePlusChip> getMifarePlusChip();
     };
 }
 

@@ -24,9 +24,9 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<LocationNode> ProxChip::getRootLocationNode()
+    std::shared_ptr<LocationNode> ProxChip::getRootLocationNode()
     {
-        boost::shared_ptr<LocationNode> rootNode;
+        std::shared_ptr<LocationNode> rootNode;
         rootNode.reset(new LocationNode());
 
         rootNode->setName("HID Prox");
@@ -34,9 +34,9 @@ namespace logicalaccess
         return rootNode;
     }
 
-    boost::shared_ptr<CardService> ProxChip::getService(CardServiceType serviceType)
+    std::shared_ptr<CardService> ProxChip::getService(CardServiceType serviceType)
     {
-        boost::shared_ptr<CardService> service;
+        std::shared_ptr<CardService> service;
 
         switch (serviceType)
         {

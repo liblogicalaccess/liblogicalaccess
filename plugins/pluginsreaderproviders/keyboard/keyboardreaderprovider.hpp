@@ -55,7 +55,7 @@ namespace logicalaccess
          * \brief Get the keyboard reader provider instance.
          * \return The Keyboard reader provider instance.
          */
-        static boost::shared_ptr<KeyboardReaderProvider> getSingletonInstance();
+        static std::shared_ptr<KeyboardReaderProvider> getSingletonInstance();
 
         /**
          * \brief Get the reader provider type.
@@ -85,7 +85,7 @@ namespace logicalaccess
          * \brief Create a new reader unit for the reader provider.
          * \return A reader unit.
          */
-        virtual boost::shared_ptr<ReaderUnit> createReaderUnit();
+        virtual std::shared_ptr<ReaderUnit> createReaderUnit();
 
 #ifdef _WINDOWS
         DWORD launchHook(HANDLE hUserTokenDup = NULL);

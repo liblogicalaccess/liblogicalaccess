@@ -40,9 +40,9 @@ namespace logicalaccess
         : ReaderUnit()
     {
         d_readerUnitConfig.reset(new STidSTRReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(boost::shared_ptr<STidSTRReaderCardAdapter>(new STidSTRReaderCardAdapter(STID_CMD_READER)));
+        setDefaultReaderCardAdapter(std::shared_ptr<STidSTRReaderCardAdapter>(new STidSTRReaderCardAdapter(STID_CMD_READER)));
         d_ledBuzzerDisplay.reset(new STidSTRLEDBuzzerDisplay());
-        boost::shared_ptr<STidSTRDataTransport> dataTransport(new STidSTRDataTransport());
+        std::shared_ptr<STidSTRDataTransport> dataTransport(new STidSTRDataTransport());
 #ifndef _WINDOWS
         dataTransport->setPortBaudRate(B38400);
 #else
@@ -97,7 +97,7 @@ namespace logicalaccess
         {
             do
             {
-                boost::shared_ptr<Chip> chip = scanARaw(); // scan14443A() => Obsolete. It's just used for testing purpose !
+                std::shared_ptr<Chip> chip = scanARaw(); // scan14443A() => Obsolete. It's just used for testing purpose !
                 if (!chip)
                 {
                     chip = scan14443B();
@@ -143,7 +143,7 @@ namespace logicalaccess
             {
                 do
                 {
-                    boost::shared_ptr<Chip> chip = scanARaw(); // scan14443A() => Obsolete. It's just used for testing purpose !
+                    std::shared_ptr<Chip> chip = scanARaw(); // scan14443A() => Obsolete. It's just used for testing purpose !
                     if (!chip)
                     {
                         chip = scan14443B();
@@ -230,16 +230,16 @@ namespace logicalaccess
         return buffer;
     }
 
-    boost::shared_ptr<Chip> STidSTRReaderUnit::createChip(std::string type)
+    std::shared_ptr<Chip> STidSTRReaderUnit::createChip(std::string type)
     {
         LOG(LogLevel::INFOS) << "Creating chip... chip type {" << type << "}";
-        boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
+        std::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 
         if (chip)
         {
             LOG(LogLevel::INFOS) << "Chip created successfully !";
-            boost::shared_ptr<ReaderCardAdapter> rca;
-            boost::shared_ptr<Commands> commands;
+            std::shared_ptr<ReaderCardAdapter> rca;
+            std::shared_ptr<Commands> commands;
 
             if (type == "Mifare1K" || type == "Mifare4K" || type == "Mifare")
             {
@@ -252,7 +252,7 @@ namespace logicalaccess
                 LOG(LogLevel::INFOS) << "Mifare DESFire Chip created";
                 rca.reset(new STidSTRReaderCardAdapter(STID_CMD_DESFIRE));
                 commands.reset(new DESFireEV1STidSTRCommands());
-                boost::dynamic_pointer_cast<DESFireEV1STidSTRCommands>(commands)->setProfile(boost::dynamic_pointer_cast<DESFireProfile>(chip->getProfile()));
+                std::dynamic_pointer_cast<DESFireEV1STidSTRCommands>(commands)->setProfile(std::dynamic_pointer_cast<DESFireProfile>(chip->getProfile()));
             }
             else
                 return chip;
@@ -272,19 +272,19 @@ namespace logicalaccess
         return chip;
     }
 
-    boost::shared_ptr<Chip> STidSTRReaderUnit::getSingleChip()
+    std::shared_ptr<Chip> STidSTRReaderUnit::getSingleChip()
     {
         //LOG(LogLevel::INFOS) << "Getting the first detect chip...");
-        boost::shared_ptr<Chip> chip = d_insertedChip;
+        std::shared_ptr<Chip> chip = d_insertedChip;
 
         return chip;
     }
 
-    std::vector<boost::shared_ptr<Chip> > STidSTRReaderUnit::getChipList()
+    std::vector<std::shared_ptr<Chip> > STidSTRReaderUnit::getChipList()
     {
         //LOG(LogLevel::INFOS) << "Getting all detected chips...");
-        std::vector<boost::shared_ptr<Chip> > chipList;
-        boost::shared_ptr<Chip> singleChip = getSingleChip();
+        std::vector<std::shared_ptr<Chip> > chipList;
+        std::shared_ptr<Chip> singleChip = getSingleChip();
         if (singleChip)
         {
             chipList.push_back(singleChip);
@@ -292,10 +292,10 @@ namespace logicalaccess
         return chipList;
     }
 
-    boost::shared_ptr<STidSTRReaderCardAdapter> STidSTRReaderUnit::getDefaultSTidSTRReaderCardAdapter()
+    std::shared_ptr<STidSTRReaderCardAdapter> STidSTRReaderUnit::getDefaultSTidSTRReaderCardAdapter()
     {
-        boost::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
-        return boost::dynamic_pointer_cast<STidSTRReaderCardAdapter>(adapter);
+        std::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
+        return std::dynamic_pointer_cast<STidSTRReaderCardAdapter>(adapter);
     }
 
     string STidSTRReaderUnit::getReaderSerialNumber()
@@ -326,15 +326,15 @@ namespace logicalaccess
         ReaderUnit::unSerialize(node);
     }
 
-    boost::shared_ptr<STidSTRReaderProvider> STidSTRReaderUnit::getSTidSTRReaderProvider() const
+    std::shared_ptr<STidSTRReaderProvider> STidSTRReaderUnit::getSTidSTRReaderProvider() const
     {
-        return boost::dynamic_pointer_cast<STidSTRReaderProvider>(getReaderProvider());
+        return std::dynamic_pointer_cast<STidSTRReaderProvider>(getReaderProvider());
     }
 
-    boost::shared_ptr<Chip> STidSTRReaderUnit::scan14443A()
+    std::shared_ptr<Chip> STidSTRReaderUnit::scan14443A()
     {
         LOG(LogLevel::INFOS) << "Scanning 14443A chips...";
-        boost::shared_ptr<Chip> chip;
+        std::shared_ptr<Chip> chip;
         std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0002, std::vector<unsigned char>());
         if (response.size() > 0)
         {
@@ -382,13 +382,13 @@ namespace logicalaccess
                     // Scan for specific chip type, mandatory for STid reader...
                     if (cardType == "DESFire" || cardType == "DESFireEV1")
                     {
-                        boost::shared_ptr<DESFireEV1Chip> dchip = boost::dynamic_pointer_cast<DESFireEV1Chip>(chip);
-                        boost::dynamic_pointer_cast<DESFireEV1STidSTRCommands>(dchip->getDESFireEV1Commands())->scanDESFire();
+                        std::shared_ptr<DESFireEV1Chip> dchip = std::dynamic_pointer_cast<DESFireEV1Chip>(chip);
+                        std::dynamic_pointer_cast<DESFireEV1STidSTRCommands>(dchip->getDESFireEV1Commands())->scanDESFire();
                     }
                     else if (cardType == "Mifare" || cardType == "Mifare1K" || cardType == "Mifare4K")
                     {
-                        boost::shared_ptr<MifareChip> mchip = boost::dynamic_pointer_cast<MifareChip>(chip);
-                        boost::dynamic_pointer_cast<MifareSTidSTRCommands>(mchip->getMifareCommands())->scanMifare();
+                        std::shared_ptr<MifareChip> mchip = std::dynamic_pointer_cast<MifareChip>(chip);
+                        std::dynamic_pointer_cast<MifareSTidSTRCommands>(mchip->getMifareCommands())->scanMifare();
                     }
                 }
                 else
@@ -413,10 +413,10 @@ namespace logicalaccess
         return chip;
     }
 
-    boost::shared_ptr<Chip> STidSTRReaderUnit::scanARaw()
+    std::shared_ptr<Chip> STidSTRReaderUnit::scanARaw()
     {
         LOG(LogLevel::INFOS) << "Scanning 14443A RAW chips...";
-        boost::shared_ptr<Chip> chip;
+        std::shared_ptr<Chip> chip;
         std::vector<unsigned char> command;
         command.push_back(0x00);
 
@@ -475,13 +475,13 @@ namespace logicalaccess
                     // Scan for specific chip type, mandatory for STid reader...
                     if (cardType == "DESFire" || cardType == "DESFireEV1")
                     {
-                        boost::shared_ptr<DESFireEV1Commands> chipcmd = boost::dynamic_pointer_cast<DESFireEV1Commands>(chip->getCommands());
-                        boost::dynamic_pointer_cast<DESFireEV1STidSTRCommands>(chipcmd)->scanDESFire();
+                        std::shared_ptr<DESFireEV1Commands> chipcmd = std::dynamic_pointer_cast<DESFireEV1Commands>(chip->getCommands());
+                        std::dynamic_pointer_cast<DESFireEV1STidSTRCommands>(chipcmd)->scanDESFire();
                     }
                     else if (cardType == "Mifare" || cardType == "Mifare1K" || cardType == "Mifare4K")
                     {
-                        boost::shared_ptr<MifareCommands> chipcmd = boost::dynamic_pointer_cast<MifareCommands>(chip->getCommands());
-                        boost::dynamic_pointer_cast<MifareSTidSTRCommands>(chipcmd)->scanMifare();
+                        std::shared_ptr<MifareCommands> chipcmd = std::dynamic_pointer_cast<MifareCommands>(chip->getCommands());
+                        std::dynamic_pointer_cast<MifareSTidSTRCommands>(chipcmd)->scanMifare();
                     }
                 }
                 else
@@ -506,10 +506,10 @@ namespace logicalaccess
         return chip;
     }
 
-    boost::shared_ptr<Chip> STidSTRReaderUnit::scan14443B()
+    std::shared_ptr<Chip> STidSTRReaderUnit::scan14443B()
     {
         LOG(LogLevel::INFOS) << "Scanning 14443B chips...";
-        boost::shared_ptr<Chip> chip;
+        std::shared_ptr<Chip> chip;
         std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0009, std::vector<unsigned char>());
         if (response.size() > 0)
         {
@@ -552,7 +552,7 @@ namespace logicalaccess
         LOG(LogLevel::INFOS) << "Authenticating HMAC (signed communication)...";
 
         std::vector<unsigned char> buf1;
-        boost::shared_ptr<HMAC1Key> key = getSTidSTRConfiguration()->getHMACKey();
+        std::shared_ptr<HMAC1Key> key = getSTidSTRConfiguration()->getHMACKey();
         if (key->isEmpty())
         {
             LOG(LogLevel::INFOS) << "Empty key... using the default one !";
@@ -625,7 +625,7 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
         }
 
-        boost::shared_ptr<AES128Key> key = getSTidSTRConfiguration()->getAESKey();
+        std::shared_ptr<AES128Key> key = getSTidSTRConfiguration()->getAESKey();
         if (key->isEmpty())
         {
             LOG(LogLevel::INFOS) << "Empty key... using the default one !";

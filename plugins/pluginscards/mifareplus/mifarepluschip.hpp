@@ -48,7 +48,7 @@ namespace logicalaccess
          * \brief Get the root location node.
          * \return The root location node.
          */
-        virtual boost::shared_ptr<LocationNode> getRootLocationNode();
+        virtual std::shared_ptr<LocationNode> getRootLocationNode();
 
         /**
          * \brief Get number of sectors
@@ -60,23 +60,23 @@ namespace logicalaccess
          * \param rootNode The root node.
          * \param sector The sector.
          */
-        void addSectorNode(boost::shared_ptr<LocationNode> rootNode, int sector);
+        void addSectorNode(std::shared_ptr<LocationNode> rootNode, int sector);
 
-        boost::shared_ptr<CardService> getService(CardServiceType serviceType);
+        std::shared_ptr<CardService> getService(CardServiceType serviceType);
 
         /**
          * \brief Get the Mifare card provider for I/O access.
          * \return The Mifare card provider.
          */
-        boost::shared_ptr<MifarePlusSL1Commands> getMifarePlusSL1Commands() { return boost::dynamic_pointer_cast<MifarePlusSL1Commands>(getCommands()); };
-        boost::shared_ptr<MifarePlusSL3Commands> getMifarePlusSL3Commands() { return boost::dynamic_pointer_cast<MifarePlusSL3Commands>(getCommands()); };
+        std::shared_ptr<MifarePlusSL1Commands> getMifarePlusSL1Commands() { return std::dynamic_pointer_cast<MifarePlusSL1Commands>(getCommands()); };
+        std::shared_ptr<MifarePlusSL3Commands> getMifarePlusSL3Commands() { return std::dynamic_pointer_cast<MifarePlusSL3Commands>(getCommands()); };
 
         /**
          * \brief Get the Mifare profile.
          * \return The Mifare profile.
          */
-        inline boost::shared_ptr<MifarePlusSL1Profile> getMifarePlusSL1Profile() { return boost::dynamic_pointer_cast<MifarePlusSL1Profile>(getProfile()); };
-        inline boost::shared_ptr<MifarePlusSL3Profile> getMifarePlusSL3Profile() { return boost::dynamic_pointer_cast<MifarePlusSL3Profile>(getProfile()); };
+        inline std::shared_ptr<MifarePlusSL1Profile> getMifarePlusSL1Profile() { return std::dynamic_pointer_cast<MifarePlusSL1Profile>(getProfile()); };
+        inline std::shared_ptr<MifarePlusSL3Profile> getMifarePlusSL3Profile() { return std::dynamic_pointer_cast<MifarePlusSL3Profile>(getProfile()); };
 
     protected:
 

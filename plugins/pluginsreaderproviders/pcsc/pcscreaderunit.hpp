@@ -158,19 +158,19 @@ namespace logicalaccess
          * \param type The card type.
          * \return The chip.
          */
-        virtual boost::shared_ptr<Chip> createChip(std::string type);
+        virtual std::shared_ptr<Chip> createChip(std::string type);
 
         /**
          * \brief Get the first and/or most accurate chip found.
          * \return The single chip.
          */
-        virtual boost::shared_ptr<Chip> getSingleChip();
+        virtual std::shared_ptr<Chip> getSingleChip();
 
         /**
          * \brief Get chip available in the RFID rang.
          * \return The chip list.
          */
-        virtual std::vector<boost::shared_ptr<Chip> > getChipList();
+        virtual std::vector<std::shared_ptr<Chip> > getChipList();
 
         /**
          * \brief Get the card serial number.
@@ -198,14 +198,14 @@ namespace logicalaccess
          * \brief Get the default PC/SC reader/card adapter.
          * \return The default PC/SC reader/card adapter.
          */
-        virtual boost::shared_ptr<PCSCReaderCardAdapter> getDefaultPCSCReaderCardAdapter();
+        virtual std::shared_ptr<PCSCReaderCardAdapter> getDefaultPCSCReaderCardAdapter();
 
         /**
          * \brief Get the PC/SC reader/card adapter for a card type.
          * \param type The card type.
          * \return The PC/SC reader/card adapter.
          */
-        virtual boost::shared_ptr<ReaderCardAdapter> getReaderCardAdapter(std::string type);
+        virtual std::shared_ptr<ReaderCardAdapter> getReaderCardAdapter(std::string type);
 
         /**
          * \brief Serialize the current object to XML.
@@ -223,37 +223,37 @@ namespace logicalaccess
          * \brief Get the reader unit configuration.
          * \return The reader unit configuration.
          */
-        virtual boost::shared_ptr<ReaderUnitConfiguration> getConfiguration();
+        virtual std::shared_ptr<ReaderUnitConfiguration> getConfiguration();
 
         /**
          * \brief Set the reader unit configuration.
          * \param config The reader unit configuration.
          */
-        virtual void setConfiguration(boost::shared_ptr<ReaderUnitConfiguration> config);
+        virtual void setConfiguration(std::shared_ptr<ReaderUnitConfiguration> config);
 
         /**
          * \brief Change a key in reader memory.
          * \param keystorage The key storage information.
          * \param key The key value.
          */
-        virtual void changeReaderKey(boost::shared_ptr<ReaderMemoryKeyStorage> keystorage, const std::vector<unsigned char>& key);
+        virtual void changeReaderKey(std::shared_ptr<ReaderMemoryKeyStorage> keystorage, const std::vector<unsigned char>& key);
 
         /**
          * \brief Get the PC/SC reader unit configuration.
          * \return The PC/SC reader unit configuration.
          */
-        boost::shared_ptr<PCSCReaderUnitConfiguration> getPCSCConfiguration() { return boost::dynamic_pointer_cast<PCSCReaderUnitConfiguration>(getConfiguration()); };
+        std::shared_ptr<PCSCReaderUnitConfiguration> getPCSCConfiguration() { return std::dynamic_pointer_cast<PCSCReaderUnitConfiguration>(getConfiguration()); };
 
-        boost::shared_ptr<PCSCReaderProvider> getPCSCReaderProvider() const;
+        std::shared_ptr<PCSCReaderProvider> getPCSCReaderProvider() const;
 
-        static boost::shared_ptr<PCSCReaderUnit> createPCSCReaderUnit(std::string& readerName);
+        static std::shared_ptr<PCSCReaderUnit> createPCSCReaderUnit(std::string& readerName);
 
         /**
          * \brief Make the reader unit as a proxy to another. Use when listening on all PC/SC reader unit.
          * \param readerUnit The referenced reader unit.
          * \param readerUnitConfig The referenced reader unit configuration.
          */
-        void makeProxy(boost::shared_ptr<PCSCReaderUnit> readerUnit, boost::shared_ptr<PCSCReaderUnitConfiguration> readerUnitConfig);
+        void makeProxy(std::shared_ptr<PCSCReaderUnit> readerUnit, std::shared_ptr<PCSCReaderUnitConfiguration> readerUnitConfig);
 
         /**
          * \brief Get if the inserted card is from ISO 14443-4 A or B.
@@ -265,29 +265,29 @@ namespace logicalaccess
         /**
          * \brief Get The SAM Chip
          */
-        boost::shared_ptr<SAMChip> getSAMChip();
+        std::shared_ptr<SAMChip> getSAMChip();
 
         /**
          * \brief Set the SAM Chip
          */
-        void setSAMChip(boost::shared_ptr<SAMChip> t);
+        void setSAMChip(std::shared_ptr<SAMChip> t);
 
         /**
          * \brief Get The SAM ReaderUnit
          */
-        boost::shared_ptr<PCSCReaderUnit> getSAMReaderUnit();
+        std::shared_ptr<PCSCReaderUnit> getSAMReaderUnit();
 
         /**
          * \brief Set the SAM ReaderUnit
          */
-        void setSAMReaderUnit(boost::shared_ptr<PCSCReaderUnit> t);
+        void setSAMReaderUnit(std::shared_ptr<PCSCReaderUnit> t);
 
     protected:
 
         /**
          * \brief The SAM reader unit.
          */
-        boost::shared_ptr<SAMChip> d_sam_chip;
+        std::shared_ptr<SAMChip> d_sam_chip;
 
         /**
          * \brief The reader unit name.
@@ -319,7 +319,7 @@ namespace logicalaccess
          * \brief Set the first and/or most accurate chip found.
          * \param chip The single chip.
          */
-        void setSingleChip(boost::shared_ptr<Chip> chip);
+        void setSingleChip(std::shared_ptr<Chip> chip);
 
         /**
          * \brief Get the card type from atr code
@@ -356,12 +356,12 @@ namespace logicalaccess
         /**
          * \brief The proxy reader unit.
          */
-        boost::shared_ptr<PCSCReaderUnit> d_proxyReaderUnit;
+        std::shared_ptr<PCSCReaderUnit> d_proxyReaderUnit;
 
         /**
          * \brief The SAM ReaderUnit used SAM Authentication
          */
-        boost::shared_ptr<PCSCReaderUnit> d_sam_readerunit;
+        std::shared_ptr<PCSCReaderUnit> d_sam_readerunit;
     };
 }
 

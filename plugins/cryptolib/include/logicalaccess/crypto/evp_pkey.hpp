@@ -12,7 +12,7 @@
 #include <string>
 #include <iostream>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <openssl/evp.h>
 
 namespace logicalaccess
@@ -73,14 +73,14 @@ namespace logicalaccess
              * \param pkey The EVP_PKEY structure pointer. If pkey is NULL, the behavior is undefined.
              * \param has_private_compound true if the EVP_PKEY has a private compound, false otherwise.
              */
-            EVPPKey(boost::shared_ptr<EVP_PKEY> pkey, bool has_private_compound);
+            EVPPKey(std::shared_ptr<EVP_PKEY> pkey, bool has_private_compound);
 
         private:
 
             /**
              * \brief The internal EVP_PKEY structure pointer.
              */
-            boost::shared_ptr<EVP_PKEY> d_pkey;
+            std::shared_ptr<EVP_PKEY> d_pkey;
 
             /**
              * \brief The private compound flag.

@@ -24,9 +24,9 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<LocationNode> MifareUltralightCChip::getRootLocationNode()
+    std::shared_ptr<LocationNode> MifareUltralightCChip::getRootLocationNode()
     {
-        boost::shared_ptr<LocationNode> rootNode;
+        std::shared_ptr<LocationNode> rootNode;
         rootNode.reset(new LocationNode());
 
         rootNode->setName("Mifare Ultralight C");
@@ -39,9 +39,9 @@ namespace logicalaccess
         return rootNode;
     }
 
-    boost::shared_ptr<CardService> MifareUltralightCChip::getService(CardServiceType serviceType)
+    std::shared_ptr<CardService> MifareUltralightCChip::getService(CardServiceType serviceType)
     {
-        boost::shared_ptr<CardService> service;
+        std::shared_ptr<CardService> service;
 
         switch (serviceType)
         {

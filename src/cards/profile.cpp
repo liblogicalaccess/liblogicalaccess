@@ -29,13 +29,13 @@ namespace logicalaccess
     {
         FormatList formats;
 
-        formats.push_back(boost::shared_ptr<Wiegand26Format>(new Wiegand26Format()));
-        formats.push_back(boost::shared_ptr<Wiegand34Format>(new Wiegand34Format()));
-        formats.push_back(boost::shared_ptr<Wiegand34WithFacilityFormat>(new Wiegand34WithFacilityFormat()));
-        formats.push_back(boost::shared_ptr<Wiegand37Format>(new Wiegand37Format()));
-        formats.push_back(boost::shared_ptr<Wiegand37WithFacilityFormat>(new Wiegand37WithFacilityFormat()));
-        formats.push_back(boost::shared_ptr<DataClockFormat>(new DataClockFormat()));
-        formats.push_back(boost::shared_ptr<Corporate1000Format>(new Corporate1000Format()));
+        formats.push_back(std::shared_ptr<Wiegand26Format>(new Wiegand26Format()));
+        formats.push_back(std::shared_ptr<Wiegand34Format>(new Wiegand34Format()));
+        formats.push_back(std::shared_ptr<Wiegand34WithFacilityFormat>(new Wiegand34WithFacilityFormat()));
+        formats.push_back(std::shared_ptr<Wiegand37Format>(new Wiegand37Format()));
+        formats.push_back(std::shared_ptr<Wiegand37WithFacilityFormat>(new Wiegand37WithFacilityFormat()));
+        formats.push_back(std::shared_ptr<DataClockFormat>(new DataClockFormat()));
+        formats.push_back(std::shared_ptr<Corporate1000Format>(new Corporate1000Format()));
 
         return formats;
     }

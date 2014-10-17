@@ -22,14 +22,14 @@ namespace logicalaccess
 
         d_formatLinear.d_facilityCode = 0;
 
-        boost::shared_ptr<NumberDataField> uidField(new NumberDataField());
+        std::shared_ptr<NumberDataField> uidField(new NumberDataField());
         uidField->setName("Uid");
         uidField->setIsIdentifier(true);
         uidField->setDataLength(16);
         uidField->setDataRepresentation(d_dataRepresentation);
         uidField->setDataType(d_dataType);
         d_fieldList.push_back(uidField);
-        boost::shared_ptr<NumberDataField> fcField(new NumberDataField());
+        std::shared_ptr<NumberDataField> fcField(new NumberDataField());
         fcField->setName("FacilityCode");
         fcField->setDataLength(12);
         fcField->setDataRepresentation(d_dataRepresentation);
@@ -53,13 +53,13 @@ namespace logicalaccess
 
     unsigned short int BariumFerritePCSCFormat::getFacilityCode() const
     {
-        boost::shared_ptr<NumberDataField> field = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("FacilityCode"));
+        std::shared_ptr<NumberDataField> field = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("FacilityCode"));
         return static_cast<unsigned short int>(field->getValue());
     }
 
     void BariumFerritePCSCFormat::setFacilityCode(unsigned short int facilityCode)
     {
-        boost::shared_ptr<NumberDataField> field = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("FacilityCode"));
+        std::shared_ptr<NumberDataField> field = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("FacilityCode"));
         field->setValue(facilityCode);
         d_formatLinear.d_facilityCode = facilityCode;
     }
@@ -101,12 +101,12 @@ namespace logicalaccess
         return "BariumFerritePCSCFormat";
     }
 
-    bool BariumFerritePCSCFormat::checkSkeleton(boost::shared_ptr<Format> format) const
+    bool BariumFerritePCSCFormat::checkSkeleton(std::shared_ptr<Format> format) const
     {
         bool ret = false;
         if (format)
         {
-            boost::shared_ptr<BariumFerritePCSCFormat> pFormat = boost::dynamic_pointer_cast<BariumFerritePCSCFormat>(format);
+            std::shared_ptr<BariumFerritePCSCFormat> pFormat = std::dynamic_pointer_cast<BariumFerritePCSCFormat>(format);
             if (pFormat)
             {
                 ret = (

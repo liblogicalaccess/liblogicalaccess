@@ -27,7 +27,7 @@ namespace logicalaccess
         d_serialport.reset(new SerialPort(dev));
     }
 
-    boost::shared_ptr<SerialPort> SerialPortXml::getSerialPort() const
+    std::shared_ptr<SerialPort> SerialPortXml::getSerialPort() const
     {
         return d_serialport;
     }
@@ -58,7 +58,7 @@ namespace logicalaccess
         return "SerialPort";
     }
 
-    bool SerialPortXml::EnumerateUsingCreateFile(std::vector<boost::shared_ptr<SerialPortXml> >& ports)
+    bool SerialPortXml::EnumerateUsingCreateFile(std::vector<std::shared_ptr<SerialPortXml> >& ports)
     {
         ports.clear();
 
@@ -83,7 +83,7 @@ namespace logicalaccess
                         if (sp.is_open())
                         {
                             sp.close();
-                            boost::shared_ptr<SerialPortXml> newPort;
+                            std::shared_ptr<SerialPortXml> newPort;
                             newPort.reset(new SerialPortXml(p));
                             ports.push_back(newPort);
                         }
@@ -127,7 +127,7 @@ namespace logicalaccess
                         {
                             if (std::all_of(currentDevice + 3, currentDevice + len, [](unsigned char c) { return ::isdigit(c); }))
                             {
-                                boost::shared_ptr<SerialPortXml> newPort;
+                                std::shared_ptr<SerialPortXml> newPort;
                                 newPort.reset(new SerialPortXml(std::string(currentDevice, currentDevice + len)));
                                 ports.push_back(newPort);
                             }

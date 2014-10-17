@@ -37,21 +37,21 @@ namespace logicalaccess
 
         std::vector<unsigned char> encode();
 
-        void addRecord(boost::shared_ptr<NdefRecord> record) { m_records.push_back(record); };
+        void addRecord(std::shared_ptr<NdefRecord> record) { m_records.push_back(record); };
         void addMimeMediaRecord(std::string mimeType, std::string payload);
         void addTextRecord(std::string text, std::string encoding = "en");
         void addUriRecord(std::string uri, UriType uritype);
         void addEmptyRecord();
 
         size_t getRecordCount() const { return m_records.size(); };
-        std::vector<boost::shared_ptr<NdefRecord> >& getRecords() { return m_records; };
+        std::vector<std::shared_ptr<NdefRecord> >& getRecords() { return m_records; };
 
         virtual void serialize(boost::property_tree::ptree& parentNode);
         virtual void unSerialize(boost::property_tree::ptree& node);
         virtual std::string getDefaultXmlNodeName() const;
 
     private:
-        std::vector<boost::shared_ptr<NdefRecord> > m_records;
+        std::vector<std::shared_ptr<NdefRecord> > m_records;
     };
 }
 

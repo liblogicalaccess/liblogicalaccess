@@ -11,7 +11,7 @@ namespace logicalaccess
     MifareProfile::MifareProfile()
         : Profile()
     {
-        d_key = new boost::shared_ptr<MifareKey>[(getNbSectors() + 1) * 2];
+        d_key = new std::shared_ptr<MifareKey>[(getNbSectors() + 1) * 2];
 
         clearKeys();
     }
@@ -34,11 +34,11 @@ namespace logicalaccess
         }
     }
 
-    void MifareProfile::setDefaultKeysAt(boost::shared_ptr<Location> location)
+    void MifareProfile::setDefaultKeysAt(std::shared_ptr<Location> location)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 
-        boost::shared_ptr<MifareLocation> mLocation = boost::dynamic_pointer_cast<MifareLocation>(location);
+        std::shared_ptr<MifareLocation> mLocation = std::dynamic_pointer_cast<MifareLocation>(location);
         EXCEPTION_ASSERT_WITH_LOG(mLocation, std::invalid_argument, "location must be a MifareLocation.");
 
         if (mLocation->sector != -1)
@@ -56,11 +56,11 @@ namespace logicalaccess
         }
     }
 
-    boost::shared_ptr<MifareKey> MifareProfile::getKey(int index, MifareKeyType keytype) const
+    std::shared_ptr<MifareKey> MifareProfile::getKey(int index, MifareKeyType keytype) const
     {
         if (index > static_cast<int>(getNbSectors()))
         {
-            return boost::shared_ptr<MifareKey>(new MifareKey());
+            return std::shared_ptr<MifareKey>(new MifareKey());
         }
 
         switch (keytype)
@@ -75,12 +75,12 @@ namespace logicalaccess
         }
         default:
         {
-            return boost::shared_ptr<MifareKey>(new MifareKey());
+            return std::shared_ptr<MifareKey>(new MifareKey());
         }
         }
     }
 
-    void MifareProfile::setKey(int index, MifareKeyType keytype, boost::shared_ptr<MifareKey> key)
+    void MifareProfile::setKey(int index, MifareKeyType keytype, std::shared_ptr<MifareKey> key)
     {
         if (index > static_cast<int>(getNbSectors()))
         {
@@ -135,7 +135,7 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Index is greater than max sector number.");
         }
 
-        boost::shared_ptr<MifareKey> key;
+        std::shared_ptr<MifareKey> key;
         if (used)
         {
             key.reset(new MifareKey());
@@ -163,13 +163,13 @@ namespace logicalaccess
         d_key[index * 2 + 1].reset(new MifareKey());
     }
 
-    void MifareProfile::setKeyAt(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> AccessInfo)
+    void MifareProfile::setKeyAt(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> AccessInfo)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
         EXCEPTION_ASSERT_WITH_LOG(AccessInfo, std::invalid_argument, "AccessInfo cannot be null.");
 
-        boost::shared_ptr<MifareLocation> mLocation = boost::dynamic_pointer_cast<MifareLocation>(location);
-        boost::shared_ptr<MifareAccessInfo> mAi = boost::dynamic_pointer_cast<MifareAccessInfo>(AccessInfo);
+        std::shared_ptr<MifareLocation> mLocation = std::dynamic_pointer_cast<MifareLocation>(location);
+        std::shared_ptr<MifareAccessInfo> mAi = std::dynamic_pointer_cast<MifareAccessInfo>(AccessInfo);
 
         EXCEPTION_ASSERT_WITH_LOG(mLocation, std::invalid_argument, "location must be a MifareLocation.");
         EXCEPTION_ASSERT_WITH_LOG(mAi, std::invalid_argument, "AccessInfo must be a MifareAccessInfo.");
@@ -185,16 +185,16 @@ namespace logicalaccess
         }
     }
 
-    boost::shared_ptr<AccessInfo> MifareProfile::createAccessInfo() const
+    std::shared_ptr<AccessInfo> MifareProfile::createAccessInfo() const
     {
-        boost::shared_ptr<MifareAccessInfo> ret;
+        std::shared_ptr<MifareAccessInfo> ret;
         ret.reset(new MifareAccessInfo());
         return ret;
     }
 
-    boost::shared_ptr<Location> MifareProfile::createLocation() const
+    std::shared_ptr<Location> MifareProfile::createLocation() const
     {
-        boost::shared_ptr<MifareLocation> ret;
+        std::shared_ptr<MifareLocation> ret;
         ret.reset(new MifareLocation());
         return ret;
     }

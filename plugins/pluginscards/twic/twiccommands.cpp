@@ -194,7 +194,7 @@ namespace logicalaccess
         return length;
     }
 
-    bool TwicCommands::getTagData(boost::shared_ptr<TwicLocation> location, void* data, size_t datalen, void* datatag, size_t& datataglen)
+    bool TwicCommands::getTagData(std::shared_ptr<TwicLocation> location, void* data, size_t datalen, void* datatag, size_t& datataglen)
     {
         bool ret = false;
         bool processed = false;

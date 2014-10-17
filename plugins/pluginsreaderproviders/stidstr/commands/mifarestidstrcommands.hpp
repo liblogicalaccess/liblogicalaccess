@@ -37,7 +37,7 @@ namespace logicalaccess
          * \brief Get the STidSTR reader/card adapter.
          * \return The STidSTR reader/card adapter.
          */
-        boost::shared_ptr<STidSTRReaderCardAdapter> getSTidSTRReaderCardAdapter() const { return boost::dynamic_pointer_cast<STidSTRReaderCardAdapter>(getReaderCardAdapter()); };
+        std::shared_ptr<STidSTRReaderCardAdapter> getSTidSTRReaderCardAdapter() const { return std::dynamic_pointer_cast<STidSTRReaderCardAdapter>(getReaderCardAdapter()); };
 
         /**
          * \brief Scan the RFID field for Mifare tag.
@@ -56,7 +56,7 @@ namespace logicalaccess
          * \param key The key.
          * \param keytype The mifare key type.
          */
-        virtual void loadKey(boost::shared_ptr<Location> location, boost::shared_ptr<Key> key, MifareKeyType keytype);
+        virtual void loadKey(std::shared_ptr<Location> location, std::shared_ptr<Key> key, MifareKeyType keytype);
 
         /**
          * \brief Load a key to the reader.
@@ -83,7 +83,7 @@ namespace logicalaccess
          * \param key_storage The key storage used for authentication.
          * \param keytype The key type.
          */
-        virtual void authenticate(unsigned char blockno, boost::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype);
+        virtual void authenticate(unsigned char blockno, std::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype);
 
         /**
          * \brief Read bytes from the card.

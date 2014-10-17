@@ -19,12 +19,12 @@ namespace logicalaccess
     {
     }
 
-    void DESFireEV1Profile::setDefaultKeysAt(boost::shared_ptr<Location> location)
+    void DESFireEV1Profile::setDefaultKeysAt(std::shared_ptr<Location> location)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 
-        boost::shared_ptr<DESFireEV1Location> dfEV1Location = boost::dynamic_pointer_cast<DESFireEV1Location>(location);
-        boost::shared_ptr<DESFireLocation> dfLocation = boost::dynamic_pointer_cast<DESFireLocation>(location);
+        std::shared_ptr<DESFireEV1Location> dfEV1Location = std::dynamic_pointer_cast<DESFireEV1Location>(location);
+        std::shared_ptr<DESFireLocation> dfLocation = std::dynamic_pointer_cast<DESFireLocation>(location);
 
         if (!dfEV1Location)
             LOG(LogLevel::WARNINGS) << "location is not a DESFireEV1Location.";
@@ -52,9 +52,9 @@ namespace logicalaccess
         }
     }
 
-    boost::shared_ptr<Location> DESFireEV1Profile::createLocation() const
+    std::shared_ptr<Location> DESFireEV1Profile::createLocation() const
     {
-        boost::shared_ptr<DESFireEV1Location> ret;
+        std::shared_ptr<DESFireEV1Location> ret;
         ret.reset(new DESFireEV1Location());
         return ret;
     }

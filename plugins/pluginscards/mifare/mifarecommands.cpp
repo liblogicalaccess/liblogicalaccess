@@ -12,13 +12,13 @@
 
 namespace logicalaccess
 {
-    void MifareCommands::authenticate(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> ai)
+    void MifareCommands::authenticate(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> ai)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
         EXCEPTION_ASSERT_WITH_LOG(ai, std::invalid_argument, "ai cannot be null.");
 
-        boost::shared_ptr<MifareLocation> mLocation = boost::dynamic_pointer_cast<MifareLocation>(location);
-        boost::shared_ptr<MifareAccessInfo> mAi = boost::dynamic_pointer_cast<MifareAccessInfo>(ai);
+        std::shared_ptr<MifareLocation> mLocation = std::dynamic_pointer_cast<MifareLocation>(location);
+        std::shared_ptr<MifareAccessInfo> mAi = std::dynamic_pointer_cast<MifareAccessInfo>(ai);
 
         EXCEPTION_ASSERT_WITH_LOG(mLocation, std::invalid_argument, "location must be a MifareLocation.");
         EXCEPTION_ASSERT_WITH_LOG(mAi, std::invalid_argument, "ai must be a MifareAccessInfo.");
@@ -45,12 +45,12 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_NOKEY);
         }
 
-        boost::shared_ptr<MifareKey> key = getMifareChip()->getMifareProfile()->getKey(mLocation->sector, keytype);
+        std::shared_ptr<MifareKey> key = getMifareChip()->getMifareProfile()->getKey(mLocation->sector, keytype);
         loadKey(location, key, keytype);
         authenticate(static_cast<unsigned char>(getSectorStartBlock(mLocation->sector)), key->getKeyStorage(), keytype);
     }
 
-    unsigned int MifareCommands::getSectorFromMAD(long aid, boost::shared_ptr<MifareKey> madKeyA)
+    unsigned int MifareCommands::getSectorFromMAD(long aid, std::shared_ptr<MifareKey> madKeyA)
     {
         unsigned int sector = static_cast<unsigned int>(-1);
         MifareAccessInfo::SectorAccessBits sab;
@@ -103,7 +103,7 @@ namespace logicalaccess
         return sector;
     }
 
-    void MifareCommands::setSectorToMAD(long aid, unsigned int sector, boost::shared_ptr<MifareKey> madKeyA, boost::shared_ptr<MifareKey> madKeyB)
+    void MifareCommands::setSectorToMAD(long aid, unsigned int sector, std::shared_ptr<MifareKey> madKeyA, std::shared_ptr<MifareKey> madKeyB)
     {
         MifareAccessInfo::SectorAccessBits sab;
 
@@ -282,14 +282,14 @@ namespace logicalaccess
         }
 
         MifareKeyType keytype = (write) ? wkt : rkt;
-        boost::shared_ptr<MifareKey> key = getMifareChip()->getMifareProfile()->getKey(sector, keytype);
+        std::shared_ptr<MifareKey> key = getMifareChip()->getMifareProfile()->getKey(sector, keytype);
 
         if (!getMifareChip()->getMifareProfile()->getKeyUsage(sector, keytype))
         {
             THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_NOKEY);
         }
 
-        boost::shared_ptr<MifareLocation> location(new MifareLocation());
+        std::shared_ptr<MifareLocation> location(new MifareLocation());
         location->sector = sector;
         location->block = block;
 
@@ -345,7 +345,7 @@ namespace logicalaccess
         return retlen;
     }
 
-    void MifareCommands::changeKey(boost::shared_ptr<MifareKey> keyA, boost::shared_ptr<MifareKey> keyB, unsigned int sector, const MifareAccessInfo::SectorAccessBits& sab, MifareAccessInfo::SectorAccessBits* newsab, unsigned char userbyte)
+    void MifareCommands::changeKey(std::shared_ptr<MifareKey> keyA, std::shared_ptr<MifareKey> keyB, unsigned int sector, const MifareAccessInfo::SectorAccessBits& sab, MifareAccessInfo::SectorAccessBits* newsab, unsigned char userbyte)
     {
         char trailerblock[16];
         memset(trailerblock, 0x00, sizeof(trailerblock));
@@ -438,8 +438,8 @@ namespace logicalaccess
         return start_block;
     }
 
-    boost::shared_ptr<MifareChip> MifareCommands::getMifareChip() const
+    std::shared_ptr<MifareChip> MifareCommands::getMifareChip() const
     {
-        return boost::dynamic_pointer_cast<MifareChip>(getChip());
+        return std::dynamic_pointer_cast<MifareChip>(getChip());
     }
 }

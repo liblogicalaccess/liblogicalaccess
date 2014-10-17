@@ -13,8 +13,8 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API NXPAV2KeyDiversification : public NXPKeyDiversification
     {
     public:
-        virtual void initDiversification(std::vector<unsigned char> identifier, int AID, boost::shared_ptr<Key> key, unsigned char keyno, std::vector<unsigned char>& diversify);
-        virtual std::vector<unsigned char> getDiversifiedKey(boost::shared_ptr<Key> key, std::vector<unsigned char> diversify);
+        virtual void initDiversification(std::vector<unsigned char> identifier, int AID, std::shared_ptr<Key> key, unsigned char keyno, std::vector<unsigned char>& diversify);
+        virtual std::vector<unsigned char> getDiversifiedKey(std::shared_ptr<Key> key, std::vector<unsigned char> diversify);
 
         NXPAV2KeyDiversification() {};
         NXPAV2KeyDiversification(const std::vector<unsigned char>& systemidentifier) : d_divInput(systemidentifier) {};

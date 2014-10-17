@@ -45,20 +45,20 @@ namespace logicalaccess
          * \brief Get the root location node.
          * \return The root location node.
          */
-        virtual boost::shared_ptr<LocationNode> getRootLocationNode();
+        virtual std::shared_ptr<LocationNode> getRootLocationNode();
 
         /**
          * \brief Get a card service for this card provider.
          * \param serviceType The card service type.
          * \return The card service.
          */
-        virtual boost::shared_ptr<CardService> getService(CardServiceType serviceType);
+        virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
 
         /**
          * \brief Get the Prox profile.
          * \return The Prox profile.
          */
-        boost::shared_ptr<ProxProfile> getProxProfile() { return boost::dynamic_pointer_cast<ProxProfile>(getProfile()); };
+        std::shared_ptr<ProxProfile> getProxProfile() { return std::dynamic_pointer_cast<ProxProfile>(getProfile()); };
 
     protected:
     };

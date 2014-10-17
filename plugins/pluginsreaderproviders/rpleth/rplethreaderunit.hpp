@@ -137,31 +137,31 @@ namespace logicalaccess
          * \param type The card type.
          * \return The chip.
          */
-        virtual boost::shared_ptr<Chip> createChip(std::string type);
+        virtual std::shared_ptr<Chip> createChip(std::string type);
 
         /**
          * \brief Get the first and/or most accurate chip found.
          * \return The single chip.
          */
-        virtual boost::shared_ptr<Chip> getSingleChip();
+        virtual std::shared_ptr<Chip> getSingleChip();
 
         /**
          * \brief Get chip available in the RFID rang.
          * \return The chip list.
          */
-        virtual std::vector<boost::shared_ptr<Chip> > getChipList();
+        virtual std::vector<std::shared_ptr<Chip> > getChipList();
 
         /**
          * \brief Get the current chip in air.
          * \return The chip in air.
          */
-        boost::shared_ptr<Chip> getChipInAir(unsigned int maxwait = 2000);
+        std::shared_ptr<Chip> getChipInAir(unsigned int maxwait = 2000);
 
         /**
          * \brief Get the default Elatec reader/card adapter.
          * \return The default Elatec reader/card adapter.
          */
-        virtual boost::shared_ptr<RplethReaderCardAdapter> getDefaultRplethReaderCardAdapter();
+        virtual std::shared_ptr<RplethReaderCardAdapter> getDefaultRplethReaderCardAdapter();
 
         /**
          * \brief Connect to the card.
@@ -218,13 +218,13 @@ namespace logicalaccess
          * \brief Get the Rpleth reader unit configuration.
          * \return The Rpleth reader unit configuration.
          */
-        boost::shared_ptr<RplethReaderUnitConfiguration> getRplethConfiguration() { return boost::dynamic_pointer_cast<RplethReaderUnitConfiguration>(getConfiguration()); };
+        std::shared_ptr<RplethReaderUnitConfiguration> getRplethConfiguration() { return std::dynamic_pointer_cast<RplethReaderUnitConfiguration>(getConfiguration()); };
 
         /**
          * \brief Get the Rpleth reader provider.
          * \return The Rpleth reader provider.
          */
-        boost::shared_ptr<RplethReaderProvider> getRplethReaderProvider() const;
+        std::shared_ptr<RplethReaderProvider> getRplethReaderProvider() const;
 
         /**
          * \brief Get reader dhcp state.
@@ -344,7 +344,7 @@ namespace logicalaccess
          */
         std::vector<unsigned char> removalIdentifier;
 
-        boost::shared_ptr<ReaderUnit> d_proxyReader;
+        std::shared_ptr<ReaderUnit> d_proxyReader;
     };
 }
 

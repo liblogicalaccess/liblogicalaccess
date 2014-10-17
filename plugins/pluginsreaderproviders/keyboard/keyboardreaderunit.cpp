@@ -252,21 +252,21 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<Chip> KeyboardReaderUnit::createChip(std::string type)
+    std::shared_ptr<Chip> KeyboardReaderUnit::createChip(std::string type)
     {
         return ReaderUnit::createChip(type);
     }
 
-    boost::shared_ptr<Chip> KeyboardReaderUnit::getSingleChip()
+    std::shared_ptr<Chip> KeyboardReaderUnit::getSingleChip()
     {
-        boost::shared_ptr<Chip> chip = d_insertedChip;
+        std::shared_ptr<Chip> chip = d_insertedChip;
         return chip;
     }
 
-    std::vector<boost::shared_ptr<Chip> > KeyboardReaderUnit::getChipList()
+    std::vector<std::shared_ptr<Chip> > KeyboardReaderUnit::getChipList()
     {
-        std::vector<boost::shared_ptr<Chip> > chipList;
-        boost::shared_ptr<Chip> singleChip = getSingleChip();
+        std::vector<std::shared_ptr<Chip> > chipList;
+        std::shared_ptr<Chip> singleChip = getSingleChip();
         if (singleChip)
         {
             chipList.push_back(singleChip);
@@ -338,9 +338,9 @@ namespace logicalaccess
         d_readerUnitConfig->unSerialize(node.get_child(d_readerUnitConfig->getDefaultXmlNodeName()));
     }
 
-    boost::shared_ptr<KeyboardReaderProvider> KeyboardReaderUnit::getKeyboardReaderProvider() const
+    std::shared_ptr<KeyboardReaderProvider> KeyboardReaderUnit::getKeyboardReaderProvider() const
     {
-        return boost::dynamic_pointer_cast<KeyboardReaderProvider>(getReaderProvider());
+        return std::dynamic_pointer_cast<KeyboardReaderProvider>(getReaderProvider());
     }
 
     void KeyboardReaderUnit::setKeyboard(const std::string& devicename)

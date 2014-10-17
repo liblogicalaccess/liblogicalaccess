@@ -48,7 +48,7 @@ namespace logicalaccess
          * \param port The COM port to configure.
          * \param retryConfiguring On error, the function wait some milliseconds and retry another time to configure the serial port.
          */
-        void configure(boost::shared_ptr<SerialPortXml> port, bool retryConfiguring);
+        void configure(std::shared_ptr<SerialPortXml> port, bool retryConfiguring);
 
         /**
          * \param Connect to the transport layer.
@@ -108,9 +108,9 @@ namespace logicalaccess
          */
         void setPortBaudRate(unsigned long baudRate) { d_portBaudRate = baudRate; };
 
-        boost::shared_ptr<SerialPortXml> getSerialPort() const { return d_port; };
+        std::shared_ptr<SerialPortXml> getSerialPort() const { return d_port; };
 
-        virtual void setSerialPort(boost::shared_ptr<SerialPortXml> port) { d_port = port; };
+        virtual void setSerialPort(std::shared_ptr<SerialPortXml> port) { d_port = port; };
 
         virtual void send(const std::vector<unsigned char>& data);
 
@@ -126,7 +126,7 @@ namespace logicalaccess
         /**
          * \brief The serial port.
          */
-        boost::shared_ptr<SerialPortXml> d_port;
+        std::shared_ptr<SerialPortXml> d_port;
 
         /**
          * \brief The baudrate to use when configuring the serial port.

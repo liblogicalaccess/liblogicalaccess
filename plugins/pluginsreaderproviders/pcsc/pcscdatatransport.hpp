@@ -59,7 +59,7 @@ namespace logicalaccess
          * \brief Get the PC/SC reader unit.
          * \return The PC/SC reader unit.
          */
-        boost::shared_ptr<PCSCReaderUnit> getPCSCReaderUnit() const { return boost::dynamic_pointer_cast<PCSCReaderUnit>(getReaderUnit()); };
+        std::shared_ptr<PCSCReaderUnit> getPCSCReaderUnit() const { return std::dynamic_pointer_cast<PCSCReaderUnit>(getReaderUnit()); };
 
         /**
          * \brief Get the data transport endpoint name.

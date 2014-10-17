@@ -23,7 +23,7 @@ namespace logicalaccess
     /**
      * \brief A Key storage base class. The key storage specify where the key is stored in memory. It can have cryptographic functionalities.
      */
-    class LIBLOGICALACCESS_API KeyStorage : public XmlSerializable, public boost::enable_shared_from_this < KeyStorage >
+    class LIBLOGICALACCESS_API KeyStorage : public XmlSerializable, public std::enable_shared_from_this < KeyStorage >
     {
     public:
 
@@ -37,7 +37,7 @@ namespace logicalaccess
          * \brief Get the key storage instance from a key storage type.
          * \return The key storage instance.
          */
-        static boost::shared_ptr<KeyStorage> getKeyStorageFromType(KeyStorageType kst);
+        static std::shared_ptr<KeyStorage> getKeyStorageFromType(KeyStorageType kst);
 
     protected:
     };

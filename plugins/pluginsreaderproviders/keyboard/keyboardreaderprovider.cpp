@@ -46,10 +46,10 @@ namespace logicalaccess
 #endif
     }
 
-    boost::shared_ptr<KeyboardReaderProvider> KeyboardReaderProvider::getSingletonInstance()
+    std::shared_ptr<KeyboardReaderProvider> KeyboardReaderProvider::getSingletonInstance()
     {
         LOG(LogLevel::INFOS) << "Getting singleton instance...";
-        static boost::shared_ptr<KeyboardReaderProvider> instance;
+        static std::shared_ptr<KeyboardReaderProvider> instance;
         if (!instance)
         {
             instance.reset(new KeyboardReaderProvider());
@@ -247,7 +247,7 @@ namespace logicalaccess
     DWORD WINAPI WatchThread(LPVOID lpThreadParameter)
     {
         LOG(LogLevel::INFOS) << "WatchThread begins...";
-        boost::shared_ptr<KeyboardReaderProvider> readerProvider = KeyboardReaderProvider::getSingletonInstance();
+        std::shared_ptr<KeyboardReaderProvider> readerProvider = KeyboardReaderProvider::getSingletonInstance();
 
         if (readerProvider != NULL)
         {
@@ -626,13 +626,13 @@ namespace logicalaccess
     }
 #endif
 
-    boost::shared_ptr<ReaderUnit> KeyboardReaderProvider::createReaderUnit()
+    std::shared_ptr<ReaderUnit> KeyboardReaderProvider::createReaderUnit()
     {
         LOG(LogLevel::INFOS) << "Creating new reader unit...";
 
-        boost::shared_ptr<KeyboardReaderUnit> ret;
+        std::shared_ptr<KeyboardReaderUnit> ret;
         ret.reset(new KeyboardReaderUnit());
-        ret->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
+        ret->setReaderProvider(std::weak_ptr<ReaderProvider>(shared_from_this()));
 
         return ret;
     }
@@ -659,10 +659,10 @@ namespace logicalaccess
 
                         if (strncmp(sKeyboard->devices[i].name, "", sizeof(sKeyboard->devices[i].name)))
                         {
-                            boost::shared_ptr<KeyboardReaderUnit> ru;
+                            std::shared_ptr<KeyboardReaderUnit> ru;
                             ru.reset(new KeyboardReaderUnit());
                             ru->setKeyboard(sKeyboard->devices[i].name);
-                            ru->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
+                            ru->setReaderProvider(std::weak_ptr<ReaderProvider>(shared_from_this()));
 
                             LOG(LogLevel::INFOS) << "Reader {" << sKeyboard->devices[i].name << "} added to the list.";
 

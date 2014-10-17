@@ -74,7 +74,7 @@ namespace logicalaccess
          * \param keyno The key number to change
          * \param key The new key
          */
-        virtual void changeKey(unsigned char keyno, boost::shared_ptr<DESFireKey> key);
+        virtual void changeKey(unsigned char keyno, std::shared_ptr<DESFireKey> key);
 
         /**
          * \brief Get key settings on the current application.
@@ -270,7 +270,7 @@ namespace logicalaccess
          * \param keyno The key number.
          * \param key The key.
          */
-        virtual void authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key);
+        virtual void authenticate(unsigned char keyno, std::shared_ptr<DESFireKey> key);
 
         /**
          * \brief Get the card version information.
@@ -282,34 +282,34 @@ namespace logicalaccess
          * \brief Get the ISO7816 reader/card adapter.
          * \return The ISO7816 reader/card adapter.
          */
-        boost::shared_ptr<ISO7816ReaderCardAdapter> getISO7816ReaderCardAdapter() { return boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter()); };
+        std::shared_ptr<ISO7816ReaderCardAdapter> getISO7816ReaderCardAdapter() { return std::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter()); };
 
         /**
          * \brief Get the internal DESFire crypto.
          * \return The internal DESFire crypto.
          */
-        boost::shared_ptr<DESFireCrypto> getCrypto() { return d_crypto; };
+        std::shared_ptr<DESFireCrypto> getCrypto() { return d_crypto; };
 
         /**
          * \brief Get the internal DESFire crypto.
          * \return The internal DESFire crypto.
          */
-        void setCrypto(boost::shared_ptr<DESFireCrypto> t) { d_crypto = t; };
+        void setCrypto(std::shared_ptr<DESFireCrypto> t) { d_crypto = t; };
 
         /**
          * \brief Set the SAM Chip.
          * \param t The SAM Chip.
          */
-        void setSAMChip(boost::shared_ptr<SAMChip> t) { d_SAM_chip = t; }
+        void setSAMChip(std::shared_ptr<SAMChip> t) { d_SAM_chip = t; }
 
         /**
          * \brief get the SAM Chip.
          */
-        boost::shared_ptr<SAMChip> getSAMChip() { return d_SAM_chip; }
+        std::shared_ptr<SAMChip> getSAMChip() { return d_SAM_chip; }
 
     protected:
 
-        std::vector<unsigned char> getChangeKeySAMCryptogram(unsigned char keyno, boost::shared_ptr<DESFireKey> key);
+        std::vector<unsigned char> getChangeKeySAMCryptogram(unsigned char keyno, std::shared_ptr<DESFireKey> key);
 
         /**
          * \brief Generic method to read data from a file.
@@ -352,12 +352,12 @@ namespace logicalaccess
         /**
          * \brief Crypto instance for security manipulation.
          */
-        boost::shared_ptr<DESFireCrypto> d_crypto;
+        std::shared_ptr<DESFireCrypto> d_crypto;
 
         /**
          * \brief The SAMChip used for the SAM Commands.
          */
-        boost::shared_ptr<SAMChip> d_SAM_chip;
+        std::shared_ptr<SAMChip> d_SAM_chip;
     };
 }
 

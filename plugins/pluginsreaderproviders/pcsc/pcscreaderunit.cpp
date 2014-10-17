@@ -58,7 +58,7 @@
 
 #include "desfirechip.hpp"
 #include <boost/filesystem.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #ifdef UNIX
 #include <sys/time.h>
@@ -87,7 +87,7 @@ namespace logicalaccess
 
         d_proxyReaderUnit.reset();
         d_readerUnitConfig.reset(new PCSCReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(boost::shared_ptr<PCSCReaderCardAdapter>(new PCSCReaderCardAdapter()));
+        setDefaultReaderCardAdapter(std::shared_ptr<PCSCReaderCardAdapter>(new PCSCReaderCardAdapter()));
     }
 
     PCSCReaderUnit::~PCSCReaderUnit()
@@ -143,7 +143,7 @@ namespace logicalaccess
     void PCSCReaderUnit::unSerialize(boost::property_tree::ptree& node)
     {
         d_name = node.get_child("Name").get_value<std::string>();
-        boost::shared_ptr<PCSCReaderUnitConfiguration> pcscRUC = getPCSCConfiguration();
+        std::shared_ptr<PCSCReaderUnitConfiguration> pcscRUC = getPCSCConfiguration();
         PCSCReaderUnitType pcscType = getPCSCType();
         d_proxyReaderUnit = PCSCReaderUnit::createPCSCReaderUnit(d_name);
         if (d_proxyReaderUnit->getPCSCType() == pcscType)
@@ -152,7 +152,7 @@ namespace logicalaccess
         }
         else
         {
-            d_proxyReaderUnit->makeProxy(boost::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
+            d_proxyReaderUnit->makeProxy(std::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
         }
 
         if (d_proxyReaderUnit)
@@ -165,9 +165,9 @@ namespace logicalaccess
         }
     }
 
-    boost::shared_ptr<PCSCReaderUnit> PCSCReaderUnit::createPCSCReaderUnit(std::string& readerName)
+    std::shared_ptr<PCSCReaderUnit> PCSCReaderUnit::createPCSCReaderUnit(std::string& readerName)
     {
-        boost::shared_ptr<PCSCReaderUnit> unit;
+        std::shared_ptr<PCSCReaderUnit> unit;
         if (readerName.find(string("OMNIKEY")) != string::npos)
         {
             if (readerName.find(string("x21")) != string::npos || readerName.find(string("5321")) != string::npos || readerName.find(string("6321")) != string::npos)
@@ -427,7 +427,7 @@ namespace logicalaccess
 
         if (connectedReader != "")
         {
-            boost::shared_ptr<PCSCReaderUnitConfiguration> pcscRUC = getPCSCConfiguration();
+            std::shared_ptr<PCSCReaderUnitConfiguration> pcscRUC = getPCSCConfiguration();
             if (this->getPCSCType() == PCSC_RUT_DEFAULT)
             {
                 d_proxyReaderUnit = PCSCReaderUnit::createPCSCReaderUnit(connectedReader);
@@ -438,7 +438,7 @@ namespace logicalaccess
                 }
                 else
                 {
-                    d_proxyReaderUnit->makeProxy(boost::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
+                    d_proxyReaderUnit->makeProxy(std::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
                     d_proxyReaderUnit->d_sam_chip = d_sam_chip;
                     d_proxyReaderUnit->d_sam_readerunit = d_sam_readerunit;
                 }
@@ -448,7 +448,7 @@ namespace logicalaccess
                 // Already a proxy from serialization maybe, just copy instance information to it.
                 if (d_proxyReaderUnit)
                 {
-                    d_proxyReaderUnit->makeProxy(boost::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
+                    d_proxyReaderUnit->makeProxy(std::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
                 }
             }
 
@@ -692,8 +692,8 @@ namespace logicalaccess
                                 {
                                     std::this_thread::sleep_for(std::chrono::milliseconds(100));
                                     DESFireCommands::DESFireCardVersion cardversion;
-                                    boost::dynamic_pointer_cast<DESFireChip>(d_insertedChip)->getDESFireCommands()->selectApplication(0x00);
-                                    boost::dynamic_pointer_cast<DESFireChip>(d_insertedChip)->getDESFireCommands()->getVersion(cardversion);
+                                    std::dynamic_pointer_cast<DESFireChip>(d_insertedChip)->getDESFireCommands()->selectApplication(0x00);
+                                    std::dynamic_pointer_cast<DESFireChip>(d_insertedChip)->getDESFireCommands()->getVersion(cardversion);
                                     // Set from the version
 
                                     // DESFire EV1 and not regular DESFire
@@ -710,7 +710,7 @@ namespace logicalaccess
                             }
                             else if (d_insertedChip->getCardType() == "SAM_AV2")
                             {
-                                if (boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(d_insertedChip->getCommands())->getSAMTypeFromSAM() == "SAM_AV1")
+                                if (std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(d_insertedChip->getCommands())->getSAMTypeFromSAM() == "SAM_AV1")
                                 {
                                     LOG(LogLevel::INFOS) << "SAM on the reader is AV2 but mode AV1 so we switch to AV1.";
                                     d_insertedChip = createChip("SAM_AV1");
@@ -735,7 +735,7 @@ namespace logicalaccess
                 }
 
                 if (d_insertedChip->getGenericCardType() == "DESFire")
-                    boost::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->getCrypto()->setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(d_insertedChip->getProfile()), d_insertedChip->getChipIdentifier());
+                    std::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->getCrypto()->setCryptoContext(std::dynamic_pointer_cast<DESFireProfile>(d_insertedChip->getProfile()), d_insertedChip->getChipIdentifier());
                 ret = true;
             }
             else
@@ -760,7 +760,7 @@ namespace logicalaccess
                     bool isTypeB = false;
                     getT_CL_ISOType(isTypeA, isTypeB);
 
-                    boost::shared_ptr<Chip> newChip;
+                    std::shared_ptr<Chip> newChip;
                     if (isTypeA)
                     {
                         LOG(LogLevel::INFOS) << "Type A detected !";
@@ -871,7 +871,7 @@ namespace logicalaccess
             if (i == (int)(getReaderProvider()->getReaderList().size()))
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The SAM Reader specified has not been find.");
 
-            boost::shared_ptr<PCSCReaderUnit> ret;
+            std::shared_ptr<PCSCReaderUnit> ret;
 
             if (d_sam_readerunit && d_sam_readerunit->getName() == getPCSCConfiguration()->getSAMReaderName())
                 ret = d_sam_readerunit;
@@ -895,7 +895,7 @@ namespace logicalaccess
 
             LOG(LogLevel::INFOS) << "SAM backward ended.";
 
-            setSAMChip(boost::dynamic_pointer_cast<SAMChip>(ret->getSingleChip()));
+            setSAMChip(std::dynamic_pointer_cast<SAMChip>(ret->getSingleChip()));
             setSAMReaderUnit(ret);
 
             LOG(LogLevel::INFOS) << "Starting SAM Security check...";
@@ -905,17 +905,17 @@ namespace logicalaccess
                 if (getPCSCConfiguration()->getSAMUnLockKey())
                 {
                     if (ret->getSingleChip()->getCardType() == "SAM_AV1")
-                        boost::dynamic_pointer_cast<SAMAV1ISO7816Commands>(getSAMChip()->getCommands())->authentificateHost(getPCSCConfiguration()->getSAMUnLockKey(), getPCSCConfiguration()->getSAMUnLockkeyNo());
+                        std::dynamic_pointer_cast<SAMAV1ISO7816Commands>(getSAMChip()->getCommands())->authentificateHost(getPCSCConfiguration()->getSAMUnLockKey(), getPCSCConfiguration()->getSAMUnLockkeyNo());
                     else if (ret->getSingleChip()->getCardType() == "SAM_AV2")
-                        boost::dynamic_pointer_cast<SAMAV2ISO7816Commands>(getSAMChip()->getCommands())->lockUnlock(getPCSCConfiguration()->getSAMUnLockKey(), logicalaccess::SAMLockUnlock::Unlock, getPCSCConfiguration()->getSAMUnLockkeyNo(), 0, 0);
+                        std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(getSAMChip()->getCommands())->lockUnlock(getPCSCConfiguration()->getSAMUnLockKey(), logicalaccess::SAMLockUnlock::Unlock, getPCSCConfiguration()->getSAMUnLockkeyNo(), 0, 0);
                 }
                 else
                     THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The Unlock SAM key is empty.");
             }
             catch (std::exception&)
             {
-                setSAMChip(boost::shared_ptr<SAMChip>());
-                setSAMReaderUnit(boost::shared_ptr<PCSCReaderUnit>());
+                setSAMChip(std::shared_ptr<SAMChip>());
+                setSAMReaderUnit(std::shared_ptr<PCSCReaderUnit>());
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The SAM Detected is not the SAM waited.");
             }
         }
@@ -936,12 +936,12 @@ namespace logicalaccess
             {
                 d_sam_readerunit->disconnect();
                 d_sam_readerunit->disconnectFromReader();
-                setSAMChip(boost::shared_ptr<SAMChip>());
+                setSAMChip(std::shared_ptr<SAMChip>());
             }
         }
     }
 
-    boost::shared_ptr<SAMChip> PCSCReaderUnit::getSAMChip()
+    std::shared_ptr<SAMChip> PCSCReaderUnit::getSAMChip()
     {
         if (d_proxyReaderUnit)
         {
@@ -951,7 +951,7 @@ namespace logicalaccess
         return d_sam_chip;
     }
 
-    void PCSCReaderUnit::setSAMChip(boost::shared_ptr<SAMChip> t)
+    void PCSCReaderUnit::setSAMChip(std::shared_ptr<SAMChip> t)
     {
         if (d_proxyReaderUnit)
         {
@@ -961,7 +961,7 @@ namespace logicalaccess
         d_sam_chip = t;
     }
 
-    boost::shared_ptr<PCSCReaderUnit> PCSCReaderUnit::getSAMReaderUnit()
+    std::shared_ptr<PCSCReaderUnit> PCSCReaderUnit::getSAMReaderUnit()
     {
         if (d_proxyReaderUnit)
         {
@@ -971,7 +971,7 @@ namespace logicalaccess
         return d_sam_readerunit;
     }
 
-    void PCSCReaderUnit::setSAMReaderUnit(boost::shared_ptr<PCSCReaderUnit> t)
+    void PCSCReaderUnit::setSAMReaderUnit(std::shared_ptr<PCSCReaderUnit> t)
     {
         if (d_proxyReaderUnit)
         {
@@ -1417,7 +1417,7 @@ namespace logicalaccess
         return cardType;
     }
 
-    boost::shared_ptr<ReaderCardAdapter> PCSCReaderUnit::getReaderCardAdapter(std::string type)
+    std::shared_ptr<ReaderCardAdapter> PCSCReaderUnit::getReaderCardAdapter(std::string type)
     {
         if (d_proxyReaderUnit)
         {
@@ -1427,21 +1427,21 @@ namespace logicalaccess
         return getDefaultReaderCardAdapter();
     }
 
-    boost::shared_ptr<Chip> PCSCReaderUnit::createChip(std::string type)
+    std::shared_ptr<Chip> PCSCReaderUnit::createChip(std::string type)
     {
         if (d_proxyReaderUnit)
         {
             return d_proxyReaderUnit->createChip(type);
         }
 
-        boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
+        std::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
         if (chip)
         {
             LOG(LogLevel::INFOS) << "Chip (" << type << ") created, creating other associated objects...";
 
-            boost::shared_ptr<ReaderCardAdapter> rca = getReaderCardAdapter(type);
-            boost::shared_ptr<Commands> commands;
-            boost::shared_ptr<ResultChecker> resultChecker(new ISO7816ResultChecker()); // default one
+            std::shared_ptr<ReaderCardAdapter> rca = getReaderCardAdapter(type);
+            std::shared_ptr<Commands> commands;
+            std::shared_ptr<ResultChecker> resultChecker(new ISO7816ResultChecker()); // default one
 
             if (type == "Mifare1K" || type == "Mifare4K" || type == "Mifare")
             {
@@ -1483,13 +1483,13 @@ namespace logicalaccess
             else if (type == "DESFireEV1")
             {
                 commands.reset(new DESFireEV1ISO7816Commands());
-                boost::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(getSAMChip());
+                std::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(getSAMChip());
                 resultChecker.reset(new DESFireISO7816ResultChecker());
             }
             else if (type == "DESFire")
             {
                 commands.reset(new DESFireISO7816Commands());
-                boost::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(getSAMChip());
+                std::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(getSAMChip());
                 resultChecker.reset(new DESFireISO7816ResultChecker());
             }
             else if (type == "ISO15693")
@@ -1536,15 +1536,15 @@ namespace logicalaccess
             else if (type == "SAM_AV1")
             {
                 commands.reset(new SAMAV1ISO7816Commands());
-                boost::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
-                boost::dynamic_pointer_cast<SAMAV1ISO7816Commands>(commands)->setCrypto(samcrypto);
+                std::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
+                std::dynamic_pointer_cast<SAMAV1ISO7816Commands>(commands)->setCrypto(samcrypto);
                 resultChecker.reset(new SAMISO7816ResultChecker());
             }
             else if (type == "SAM_AV2")
             {
                 commands.reset(new SAMAV2ISO7816Commands());
-                boost::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
-                boost::dynamic_pointer_cast<SAMAV2ISO7816Commands>(commands)->setCrypto(samcrypto);
+                std::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
+                std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(commands)->setCrypto(samcrypto);
                 resultChecker.reset(new SAMISO7816ResultChecker());
             }
             else if (type == "MifarePlus4K")
@@ -1553,7 +1553,7 @@ namespace logicalaccess
                 std::string ct = getCardTypeFromATR(d_atr, d_atrLength);
                 if (ct != "Mifare")
                 {
-                    chip->setProfile(boost::shared_ptr<MifarePlusSL1Profile>(new MifarePlusSL1Profile()));
+                    chip->setProfile(std::shared_ptr<MifarePlusSL1Profile>(new MifarePlusSL1Profile()));
                     if (getPCSCType() == PCSC_RUT_SPRINGCARD)
                     {
                         commands.reset(new MifarePlusSpringCardCommandsSL1());
@@ -1561,7 +1561,7 @@ namespace logicalaccess
                 }
                 else /* A MODIFIER */
                 {
-                    chip->setProfile(boost::shared_ptr<MifarePlusSL3Profile>(new MifarePlusSL3Profile()));
+                    chip->setProfile(std::shared_ptr<MifarePlusSL3Profile>(new MifarePlusSL3Profile()));
                     if (getPCSCType() == PCSC_RUT_SPRINGCARD)
                     {
                         commands.reset(new MifarePlusSpringCardCommandsSL3());
@@ -1571,14 +1571,14 @@ namespace logicalaccess
 
             if (type == "DESFire" || type == "DESFireEV1")
             {
-                boost::shared_ptr<DESFireISO7816Commands> dcmd = boost::dynamic_pointer_cast<DESFireISO7816Commands>(commands);
+                std::shared_ptr<DESFireISO7816Commands> dcmd = std::dynamic_pointer_cast<DESFireISO7816Commands>(commands);
                 if (dcmd->getSAMChip())
                 {
-                    boost::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
+                    std::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
                     if (dcmd->getSAMChip()->getCardType() == "SAM_AV1")
-                        boost::dynamic_pointer_cast<SAMAV1ISO7816Commands>(dcmd->getSAMChip()->getCommands())->setCrypto(samcrypto);
+                        std::dynamic_pointer_cast<SAMAV1ISO7816Commands>(dcmd->getSAMChip()->getCommands())->setCrypto(samcrypto);
                     else if (dcmd->getSAMChip()->getCardType() == "SAM_AV2")
-                        boost::dynamic_pointer_cast<SAMAV2ISO7816Commands>(dcmd->getSAMChip()->getCommands())->setCrypto(samcrypto);
+                        std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(dcmd->getSAMChip()->getCommands())->setCrypto(samcrypto);
                 }
             }
 
@@ -1586,7 +1586,7 @@ namespace logicalaccess
 
             if (rca)
             {
-                boost::shared_ptr<DataTransport> dt = getDataTransport();
+                std::shared_ptr<DataTransport> dt = getDataTransport();
                 if (dt)
                 {
                     LOG(LogLevel::INFOS) << "Data transport forced to a specific one.";
@@ -1602,7 +1602,7 @@ namespace logicalaccess
 
             if (commands)
             {
-                boost::shared_ptr<DataTransport> dt = rca->getDataTransport();
+                std::shared_ptr<DataTransport> dt = rca->getDataTransport();
                 if (dt)
                 {
                     dt->setResultChecker(resultChecker);
@@ -1617,9 +1617,9 @@ namespace logicalaccess
         return chip;
     }
 
-    boost::shared_ptr<Chip> PCSCReaderUnit::getSingleChip()
+    std::shared_ptr<Chip> PCSCReaderUnit::getSingleChip()
     {
-        boost::shared_ptr<Chip> chip;
+        std::shared_ptr<Chip> chip;
         if (d_proxyReaderUnit)
             chip = d_proxyReaderUnit->getSingleChip();
         else
@@ -1627,10 +1627,10 @@ namespace logicalaccess
         return chip;
     }
 
-    std::vector<boost::shared_ptr<Chip> > PCSCReaderUnit::getChipList()
+    std::vector<std::shared_ptr<Chip> > PCSCReaderUnit::getChipList()
     {
-        std::vector<boost::shared_ptr<Chip> > chipList;
-        boost::shared_ptr<Chip> singleChip = getSingleChip();
+        std::vector<std::shared_ptr<Chip> > chipList;
+        std::shared_ptr<Chip> singleChip = getSingleChip();
         if (singleChip)
         {
             chipList.push_back(singleChip);
@@ -1638,9 +1638,9 @@ namespace logicalaccess
         return chipList;
     }
 
-    boost::shared_ptr<PCSCReaderCardAdapter> PCSCReaderUnit::getDefaultPCSCReaderCardAdapter()
+    std::shared_ptr<PCSCReaderCardAdapter> PCSCReaderUnit::getDefaultPCSCReaderCardAdapter()
     {
-        return boost::dynamic_pointer_cast<PCSCReaderCardAdapter>(getDefaultReaderCardAdapter());
+        return std::dynamic_pointer_cast<PCSCReaderCardAdapter>(getDefaultReaderCardAdapter());
     }
 
     string PCSCReaderUnit::getReaderSerialNumber()
@@ -1652,12 +1652,12 @@ namespace logicalaccess
         return "";
     }
 
-    boost::shared_ptr<PCSCReaderProvider> PCSCReaderUnit::getPCSCReaderProvider() const
+    std::shared_ptr<PCSCReaderProvider> PCSCReaderUnit::getPCSCReaderProvider() const
     {
-        return boost::dynamic_pointer_cast<PCSCReaderProvider>(getReaderProvider());
+        return std::dynamic_pointer_cast<PCSCReaderProvider>(getReaderProvider());
     }
 
-    void PCSCReaderUnit::makeProxy(boost::shared_ptr<PCSCReaderUnit> readerUnit, boost::shared_ptr<PCSCReaderUnitConfiguration> readerUnitConfig)
+    void PCSCReaderUnit::makeProxy(std::shared_ptr<PCSCReaderUnit> readerUnit, std::shared_ptr<PCSCReaderUnitConfiguration> readerUnitConfig)
     {
         d_card_type = readerUnit->getCardType();
         d_readerProvider = readerUnit->getReaderProvider();
@@ -1673,12 +1673,12 @@ namespace logicalaccess
         d_insertedChip = readerUnit->getSingleChip();
     }
 
-    void PCSCReaderUnit::setSingleChip(boost::shared_ptr<Chip> chip)
+    void PCSCReaderUnit::setSingleChip(std::shared_ptr<Chip> chip)
     {
         d_insertedChip = chip;
     }
 
-    boost::shared_ptr<ReaderUnitConfiguration> PCSCReaderUnit::getConfiguration()
+    std::shared_ptr<ReaderUnitConfiguration> PCSCReaderUnit::getConfiguration()
     {
         if (d_proxyReaderUnit)
         {
@@ -1688,7 +1688,7 @@ namespace logicalaccess
         return d_readerUnitConfig;
     }
 
-    void PCSCReaderUnit::setConfiguration(boost::shared_ptr<ReaderUnitConfiguration> config)
+    void PCSCReaderUnit::setConfiguration(std::shared_ptr<ReaderUnitConfiguration> config)
     {
         if (d_proxyReaderUnit)
         {
@@ -1700,7 +1700,7 @@ namespace logicalaccess
         }
     }
 
-    void PCSCReaderUnit::changeReaderKey(boost::shared_ptr<ReaderMemoryKeyStorage> keystorage, const std::vector<unsigned char>& key)
+    void PCSCReaderUnit::changeReaderKey(std::shared_ptr<ReaderMemoryKeyStorage> keystorage, const std::vector<unsigned char>& key)
     {
         if (d_proxyReaderUnit)
         {

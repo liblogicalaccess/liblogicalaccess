@@ -25,23 +25,23 @@ namespace logicalaccess
     {
     }
 
-    void ISO7816Profile::setDefaultKeysAt(boost::shared_ptr<Location> /*location*/)
+    void ISO7816Profile::setDefaultKeysAt(std::shared_ptr<Location> /*location*/)
     {
     }
 
-    void ISO7816Profile::setKeyAt(boost::shared_ptr<Location> /*location*/, boost::shared_ptr<AccessInfo> /*AccessInfo*/)
+    void ISO7816Profile::setKeyAt(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*AccessInfo*/)
     {
     }
 
-    boost::shared_ptr<AccessInfo> ISO7816Profile::createAccessInfo() const
+    std::shared_ptr<AccessInfo> ISO7816Profile::createAccessInfo() const
     {
-        boost::shared_ptr<AccessInfo> ret;
+        std::shared_ptr<AccessInfo> ret;
         return ret;
     }
 
-    boost::shared_ptr<Location> ISO7816Profile::createLocation() const
+    std::shared_ptr<Location> ISO7816Profile::createLocation() const
     {
-        boost::shared_ptr<ISO7816Location> ret;
+        std::shared_ptr<ISO7816Location> ret;
         ret.reset(new ISO7816Location());
         return ret;
     }

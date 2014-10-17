@@ -31,11 +31,11 @@ namespace logicalaccess
 
     SAMAV1ISO7816Commands::~SAMAV1ISO7816Commands()	{ }
 
-    boost::shared_ptr<SAMKeyEntry<KeyEntryAV1Information, SETAV1> >	SAMAV1ISO7816Commands::getKeyEntry(unsigned char keyno)
+    std::shared_ptr<SAMKeyEntry<KeyEntryAV1Information, SETAV1> >	SAMAV1ISO7816Commands::getKeyEntry(unsigned char keyno)
     {
         unsigned char cmd[] = { d_cla, 0x64, keyno, 0x00, 0x00 };
         std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
-        boost::shared_ptr<SAMKeyEntry<KeyEntryAV1Information, SETAV1> > keyentry;
+        std::shared_ptr<SAMKeyEntry<KeyEntryAV1Information, SETAV1> > keyentry;
         KeyEntryAV1Information keyentryinformation = { 0 };
 
         result = transmit(cmd_vector);
@@ -75,9 +75,9 @@ namespace logicalaccess
         return keyentry;
     }
 
-    boost::shared_ptr<SAMKucEntry> SAMAV1ISO7816Commands::getKUCEntry(unsigned char kucno)
+    std::shared_ptr<SAMKucEntry> SAMAV1ISO7816Commands::getKUCEntry(unsigned char kucno)
     {
-        boost::shared_ptr<SAMKucEntry> kucentry(new SAMKucEntry);
+        std::shared_ptr<SAMKucEntry> kucentry(new SAMKucEntry);
         unsigned char cmd[] = { d_cla, 0x6c, kucno, 0x00, 0x00 };
         std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
 
@@ -94,7 +94,7 @@ namespace logicalaccess
         return kucentry;
     }
 
-    void SAMAV1ISO7816Commands::changeKeyEntry(unsigned char keyno, boost::shared_ptr<SAMKeyEntry<KeyEntryAV1Information, SETAV1> > keyentry, boost::shared_ptr<DESFireKey> key)
+    void SAMAV1ISO7816Commands::changeKeyEntry(unsigned char keyno, std::shared_ptr<SAMKeyEntry<KeyEntryAV1Information, SETAV1> > keyentry, std::shared_ptr<DESFireKey> key)
     {
         if (d_crypto->d_sessionKey.size() == 0)
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Failed: AuthentificationHost have to be done before use such command.");
@@ -130,7 +130,7 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKeyEntry failed.");
     }
 
-    void SAMAV1ISO7816Commands::authentificateHost(boost::shared_ptr<DESFireKey> key, unsigned char keyno)
+    void SAMAV1ISO7816Commands::authentificateHost(std::shared_ptr<DESFireKey> key, unsigned char keyno)
     {
         if (key->getKeyType() == DF_KEY_DES)
             authentificateHostDES(key, keyno);
@@ -138,7 +138,7 @@ namespace logicalaccess
             authentificateHost_AES_3K3DES(key, keyno);
     }
 
-    void SAMAV1ISO7816Commands::authentificateHost_AES_3K3DES(boost::shared_ptr<DESFireKey> key, unsigned char keyno)
+    void SAMAV1ISO7816Commands::authentificateHost_AES_3K3DES(std::shared_ptr<DESFireKey> key, unsigned char keyno)
     {
         std::vector<unsigned char> data;
         unsigned char authMode = 0x00;
@@ -169,7 +169,7 @@ namespace logicalaccess
         d_crypto->authenticateHostP2(keyno, encRndA1, key);
     }
 
-    void SAMAV1ISO7816Commands::authentificateHostDES(boost::shared_ptr<DESFireKey> key, unsigned char keyno)
+    void SAMAV1ISO7816Commands::authentificateHostDES(std::shared_ptr<DESFireKey> key, unsigned char keyno)
     {
         std::vector<unsigned char> data;
         unsigned char authMode = 0x00;
@@ -249,7 +249,7 @@ namespace logicalaccess
         d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RndB.begin(), RndB.begin() + 4);
     }
 
-    void SAMAV1ISO7816Commands::changeKUCEntry(unsigned char kucno, boost::shared_ptr<SAMKucEntry> kucentry, boost::shared_ptr<DESFireKey> key)
+    void SAMAV1ISO7816Commands::changeKUCEntry(unsigned char kucno, std::shared_ptr<SAMKucEntry> kucentry, std::shared_ptr<DESFireKey> key)
     {
         if (d_crypto->d_sessionKey.size() == 0)
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Failed: AuthentificationHost have to be done before use such command.");

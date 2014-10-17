@@ -70,22 +70,22 @@ namespace logicalaccess
         return "ReaderConfiguration";
     }
 
-    boost::shared_ptr<ReaderProvider> ReaderConfiguration::getReaderProvider() const
+    std::shared_ptr<ReaderProvider> ReaderConfiguration::getReaderProvider() const
     {
         return d_readerProvider;
     }
 
-    void ReaderConfiguration::setReaderProvider(boost::shared_ptr<ReaderProvider> provider)
+    void ReaderConfiguration::setReaderProvider(std::shared_ptr<ReaderProvider> provider)
     {
         d_readerProvider = provider;
     }
 
-    boost::shared_ptr<ReaderUnit> ReaderConfiguration::getReaderUnit() const
+    std::shared_ptr<ReaderUnit> ReaderConfiguration::getReaderUnit() const
     {
         return d_ReaderUnit;
     }
 
-    void ReaderConfiguration::setReaderUnit(boost::shared_ptr<ReaderUnit> unit)
+    void ReaderConfiguration::setReaderUnit(std::shared_ptr<ReaderUnit> unit)
     {
         d_ReaderUnit = unit;
     }

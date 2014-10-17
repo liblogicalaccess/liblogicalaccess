@@ -29,12 +29,12 @@ namespace logicalaccess
         /**
          * \brief Get the RplethReaderProvider instance. Singleton because we can only have one TCP communication, and Rpleth can't have shared access, so we share the same reader unit.
          */
-        static boost::shared_ptr<RplethReaderProvider> getSingletonInstance();
+        static std::shared_ptr<RplethReaderProvider> getSingletonInstance();
 
         /**
          * \brief Get a new RplethReaderProvider instance.
          */
-        boost::shared_ptr<RplethReaderProvider> createInstance();
+        std::shared_ptr<RplethReaderProvider> createInstance();
 
         /**
          * \brief Destructor.
@@ -76,7 +76,7 @@ namespace logicalaccess
          * param port The reader port
          * \return A reader unit.
          */
-        virtual boost::shared_ptr<ReaderUnit> createReaderUnit();
+        virtual std::shared_ptr<ReaderUnit> createReaderUnit();
 
     protected:
 

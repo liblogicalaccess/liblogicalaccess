@@ -9,7 +9,7 @@
 
 namespace logicalaccess
 {
-    MifareUltralightCStorageCardService::MifareUltralightCStorageCardService(boost::shared_ptr<Chip> chip)
+    MifareUltralightCStorageCardService::MifareUltralightCStorageCardService(std::shared_ptr<Chip> chip)
         : MifareUltralightStorageCardService(chip)
     {
     }
@@ -25,14 +25,14 @@ namespace logicalaccess
         MifareUltralightStorageCardService::erase();
     }
 
-    void MifareUltralightCStorageCardService::erase(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse)
+    void MifareUltralightCStorageCardService::erase(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse)
     {
         getMifareUltralightCChip()->getMifareUltralightCCommands()->authenticate(aiToUse);
 
         MifareUltralightStorageCardService::erase(location, aiToUse);
     }
 
-    void MifareUltralightCStorageCardService::writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags)
+    void MifareUltralightCStorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags)
     {
         getMifareUltralightCChip()->getMifareUltralightCCommands()->authenticate(aiToUse);
 
@@ -44,7 +44,7 @@ namespace logicalaccess
         }
     }
 
-    void MifareUltralightCStorageCardService::readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags)
+    void MifareUltralightCStorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags)
     {
         getMifareUltralightCChip()->getMifareUltralightCCommands()->authenticate(aiToUse);
 

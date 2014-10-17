@@ -14,7 +14,7 @@ namespace logicalaccess
         /**
          * \brief A null deleter structure.
          *
-         * Sometimes, you want to use a boost::shared_ptr to reference a staticaly allocated object that must *NOT* be deallocated when the shared_ptr is destroyed. null_deleter serves this purpose.
+         * Sometimes, you want to use a std::shared_ptr to reference a staticaly allocated object that must *NOT* be deallocated when the shared_ptr is destroyed. null_deleter serves this purpose.
          */
         struct null_deleter
         {

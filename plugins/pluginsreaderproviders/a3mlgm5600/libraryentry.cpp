@@ -1,5 +1,5 @@
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "a3mlgm5600readerprovider.hpp"
 
@@ -21,7 +21,7 @@ extern "C"
         return (char *)"A3MLGM5600";
     }
 
-    LIBLOGICALACCESS_API void getA3MLGM5600Reader(boost::shared_ptr<logicalaccess::ReaderProvider>* rp)
+    LIBLOGICALACCESS_API void getA3MLGM5600Reader(std::shared_ptr<logicalaccess::ReaderProvider>* rp)
     {
         if (rp != NULL)
         {

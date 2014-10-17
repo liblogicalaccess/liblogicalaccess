@@ -15,14 +15,14 @@ namespace logicalaccess
     /**
      * \brief A reader unit list.
      */
-    typedef std::vector<boost::shared_ptr<ReaderUnit> > ReaderList;
+    typedef std::vector<std::shared_ptr<ReaderUnit> > ReaderList;
 
     bool hasEnding(std::string const &fullString, std::string ending);
 
     /**
      * \brief A Reader Provider base class. It provide a available list of specific reader kind.
      */
-    class LIBLOGICALACCESS_API ReaderProvider : public boost::enable_shared_from_this < ReaderProvider >
+    class LIBLOGICALACCESS_API ReaderProvider : public std::enable_shared_from_this < ReaderProvider >
     {
     public:
 
@@ -57,7 +57,7 @@ namespace logicalaccess
          * \brief Lock until one or all ready are detected.
          * \return The reader list with one or all the ReaderUnit.
          */
-        virtual const std::vector<boost::shared_ptr<ReaderUnit> > waitForReaders(std::vector<std::string> readers, double maxwait, bool all);
+        virtual const std::vector<std::shared_ptr<ReaderUnit> > waitForReaders(std::vector<std::string> readers, double maxwait, bool all);
 
         /**
          * \brief Get the reader provider type.
@@ -75,14 +75,14 @@ namespace logicalaccess
          * \brief Create a new reader unit for the reader provider.
          * \return A reader unit.
          */
-        virtual boost::shared_ptr<ReaderUnit> createReaderUnit() = 0;
+        virtual std::shared_ptr<ReaderUnit> createReaderUnit() = 0;
 
         /**
          * \brief Get the reader provider object from the reader provider type.
          * \param rpt The reader provider type.
          * \return The reader provider object.
          */
-        static boost::shared_ptr<ReaderProvider> getReaderProviderFromRPType(std::string rpt);
+        static std::shared_ptr<ReaderProvider> getReaderProviderFromRPType(std::string rpt);
 
     protected:
     };

@@ -191,7 +191,7 @@ namespace logicalaccess
          * \param param The optional parameters
          * \return The data encrypted buffer
          */
-        std::vector<unsigned char> desfire_iso_encrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size, const std::vector<unsigned char>& param = std::vector<unsigned char>());
+        std::vector<unsigned char> desfire_iso_encrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size, const std::vector<unsigned char>& param = std::vector<unsigned char>());
 
         /**
          * \brief Return data part for the encrypted communication mode for WriteData / WriteRecord.
@@ -218,7 +218,7 @@ namespace logicalaccess
          * \param length The decrypted excepted length
          * \return The data decrypted buffer
          */
-        std::vector<unsigned char> desfire_iso_decrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size, size_t datalen);
+        std::vector<unsigned char> desfire_iso_decrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size, size_t datalen);
 
         /**
          * \brief Decrypt and verify data part of the decrypted communication mode for ReadData / ReadRecords.
@@ -236,7 +236,7 @@ namespace logicalaccess
          * \param data The data source buffer to calculate MAC
          * \return The MAC result for the message.
          */
-        std::vector<unsigned char> desfire_cmac(const std::vector<unsigned char>& key, boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const std::vector<unsigned char>& data);
+        std::vector<unsigned char> desfire_cmac(const std::vector<unsigned char>& key, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const std::vector<unsigned char>& data);
 
         /**
          * \brief  Return data part for the encrypted communication mode.
@@ -307,14 +307,14 @@ namespace logicalaccess
          * \param diversify The diversify buffer, NULL if no diversification is needed
          * \param keydiv The key data, diversified if a diversify buffer is specified.
          */
-        static void getKey(boost::shared_ptr<DESFireKey> key, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv);
+        static void getKey(std::shared_ptr<DESFireKey> key, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv);
 
         /**
          * \brief Get DES key versionned.
          * \param key The DESFire key information
          * \param keyversioned The key versioned.
          */
-        static void getKeyVersioned(boost::shared_ptr<DESFireKey> key, std::vector<unsigned char>& keyversioned);
+        static void getKeyVersioned(std::shared_ptr<DESFireKey> key, std::vector<unsigned char>& keyversioned);
 
         /**
          * \brief Select an application.
@@ -329,9 +329,9 @@ namespace logicalaccess
          * \param diversify The diversify buffer, NULL if no diversification is needed
          * \return The change key cryptogram.
          */
-        std::vector<unsigned char> changeKey_PICC(unsigned char keyno, boost::shared_ptr<DESFireKey> newKey, std::vector<unsigned char> diversify);
+        std::vector<unsigned char> changeKey_PICC(unsigned char keyno, std::shared_ptr<DESFireKey> newKey, std::vector<unsigned char> diversify);
 
-        void setCryptoContext(boost::shared_ptr<DESFireProfile> profile, std::vector<unsigned char> identifier);
+        void setCryptoContext(std::shared_ptr<DESFireProfile> profile, std::vector<unsigned char> identifier);
 
         /**
          * \brief Get the diversify buffer.
@@ -345,7 +345,7 @@ namespace logicalaccess
          * \param keyno The key number.
          * \return The key.
          */
-        boost::shared_ptr<DESFireKey> getKey(unsigned char keyno);
+        std::shared_ptr<DESFireKey> getKey(unsigned char keyno);
 
         void createApplication(int aid, size_t maxNbKeys, DESFireKeyType cryptoMethod);
 
@@ -361,7 +361,7 @@ namespace logicalaccess
         /**
          * \brief The current cipher.
          */
-        boost::shared_ptr<openssl::OpenSSLSymmetricCipher> d_cipher;
+        std::shared_ptr<openssl::OpenSSLSymmetricCipher> d_cipher;
 
         /**
          * \brief The MAC size.
@@ -425,7 +425,7 @@ namespace logicalaccess
         /**
          * \brief The DESFire profile which own keys.
          */
-        boost::shared_ptr<DESFireProfile> d_profile;
+        std::shared_ptr<DESFireProfile> d_profile;
 
         /**
          * \brief The card identifier use for key diversification.

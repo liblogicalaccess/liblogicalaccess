@@ -29,7 +29,7 @@ namespace logicalaccess
         /**
          * \brief Get the SmartIDReaderProvider instance. Singleton because we can only have one COM communication, and the SmartID can't have shared access, so we share the same reader unit.
          */
-        static boost::shared_ptr<SmartIDReaderProvider> getSingletonInstance();
+        static std::shared_ptr<SmartIDReaderProvider> getSingletonInstance();
 
         /**
          * \brief Destructor.
@@ -69,7 +69,7 @@ namespace logicalaccess
          * \brief Create a new reader unit for the reader provider.
          * \return A reader unit.
          */
-        virtual boost::shared_ptr<ReaderUnit> createReaderUnit();
+        virtual std::shared_ptr<ReaderUnit> createReaderUnit();
 
     protected:
 

@@ -78,37 +78,37 @@ namespace logicalaccess
          * \param type The card type.
          * \return The chip.
          */
-        virtual boost::shared_ptr<Chip> createChip(std::string type);
+        virtual std::shared_ptr<Chip> createChip(std::string type);
 
         /**
          * \brief Get the first and/or most accurate chip found.
          * \return The single chip.
          */
-        virtual boost::shared_ptr<Chip> getSingleChip();
+        virtual std::shared_ptr<Chip> getSingleChip();
 
         /**
          * \brief Get the raw read chip list without any threshold modification.
          * \return The reader chip list.
          */
-        virtual std::list<boost::shared_ptr<Chip> > getReaderChipList();
+        virtual std::list<std::shared_ptr<Chip> > getReaderChipList();
 
         /**
          * \brief Get chip available in the RFID rang.
          * \return The chip list.
          */
-        virtual std::vector<boost::shared_ptr<Chip> > getChipList();
+        virtual std::vector<std::shared_ptr<Chip> > getChipList();
 
         /**
          * \brief Refresh the chip list from stack.
          * \return The chip list from the stack, without area filtering.
          */
-        std::list<boost::shared_ptr<Chip> > refreshChipList();
+        std::list<std::shared_ptr<Chip> > refreshChipList();
 
         /**
          * \brief Get the default SCIEL reader/card adapter.
          * \return The default SCIEL reader/card adapter.
          */
-        virtual boost::shared_ptr<SCIELReaderCardAdapter> getDefaultSCIELReaderCardAdapter();
+        virtual std::shared_ptr<SCIELReaderCardAdapter> getDefaultSCIELReaderCardAdapter();
 
         /**
          * \brief Connect to the card.
@@ -165,13 +165,13 @@ namespace logicalaccess
          * \brief Get the SCIEL reader unit configuration.
          * \return The SCIEL reader unit configuration.
          */
-        boost::shared_ptr<SCIELReaderUnitConfiguration> getSCIELConfiguration() { return boost::dynamic_pointer_cast<SCIELReaderUnitConfiguration>(getConfiguration()); };
+        std::shared_ptr<SCIELReaderUnitConfiguration> getSCIELConfiguration() { return std::dynamic_pointer_cast<SCIELReaderUnitConfiguration>(getConfiguration()); };
 
         /**
          * \brief Get the SCIEL reader provider.
          * \return The SCIEL reader provider.
          */
-        boost::shared_ptr<SCIELReaderProvider> getSCIELReaderProvider() const;
+        std::shared_ptr<SCIELReaderProvider> getSCIELReaderProvider() const;
 
         /**
          * \brief Get the reader ping command.
@@ -235,7 +235,7 @@ namespace logicalaccess
          * \param buffer The buffer.
          * \return The chip object.
          */
-        boost::shared_ptr<Chip> createChipFromBuffer(std::vector<unsigned char> buffer);
+        std::shared_ptr<Chip> createChipFromBuffer(std::vector<unsigned char> buffer);
 
         /**
          * \brief The SCIEL reader identifier.
@@ -245,7 +245,7 @@ namespace logicalaccess
         /**
          * \brief The chip list from stack.
          */
-        std::vector<boost::shared_ptr<Chip> > d_chipList;
+        std::vector<std::shared_ptr<Chip> > d_chipList;
 
         /**
          * \brief The chip list in tag-in area.
@@ -278,19 +278,19 @@ namespace logicalaccess
         class Finder
         {
         public:
-            Finder(boost::shared_ptr<Chip> chip) :
+            Finder(std::shared_ptr<Chip> chip) :
                 m_chip(chip)
             {
             }
 
-            bool operator()(boost::shared_ptr<Chip> chip)
+            bool operator()(std::shared_ptr<Chip> chip)
             {
                 return (chip && m_chip && chip->getChipIdentifier() == m_chip->getChipIdentifier());
             }
 
         protected:
 
-            boost::shared_ptr<Chip> m_chip;
+            std::shared_ptr<Chip> m_chip;
         };
     };
 }

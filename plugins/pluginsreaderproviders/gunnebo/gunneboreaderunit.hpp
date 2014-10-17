@@ -71,25 +71,25 @@ namespace logicalaccess
          * \param type The card type.
          * \return The chip.
          */
-        virtual boost::shared_ptr<Chip> createChip(std::string type);
+        virtual std::shared_ptr<Chip> createChip(std::string type);
 
         /**
          * \brief Get the first and/or most accurate chip found.
          * \return The single chip.
          */
-        virtual boost::shared_ptr<Chip> getSingleChip();
+        virtual std::shared_ptr<Chip> getSingleChip();
 
         /**
          * \brief Get chip available in the RFID rang.
          * \return The chip list.
          */
-        virtual std::vector<boost::shared_ptr<Chip> > getChipList();
+        virtual std::vector<std::shared_ptr<Chip> > getChipList();
 
         /**
          * \brief Get the default Gunnebo reader/card adapter.
          * \return The default Gunnebo reader/card adapter.
          */
-        virtual boost::shared_ptr<GunneboReaderCardAdapter> getDefaultGunneboReaderCardAdapter();
+        virtual std::shared_ptr<GunneboReaderCardAdapter> getDefaultGunneboReaderCardAdapter();
 
         /**
          * \brief Connect to the card.
@@ -152,13 +152,13 @@ namespace logicalaccess
          * \brief Get the Gunnebo reader unit configuration.
          * \return The Gunnebo reader unit configuration.
          */
-        boost::shared_ptr<GunneboReaderUnitConfiguration> getGunneboConfiguration() { return boost::dynamic_pointer_cast<GunneboReaderUnitConfiguration>(getConfiguration()); };
+        std::shared_ptr<GunneboReaderUnitConfiguration> getGunneboConfiguration() { return std::dynamic_pointer_cast<GunneboReaderUnitConfiguration>(getConfiguration()); };
 
         /**
          * \brief Get the Gunnebo reader provider.
          * \return The Gunnebo reader provider.
          */
-        boost::shared_ptr<GunneboReaderProvider> getGunneboReaderProvider() const;
+        std::shared_ptr<GunneboReaderProvider> getGunneboReaderProvider() const;
 
     private:
 

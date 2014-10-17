@@ -24,9 +24,9 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<SmartIDReaderProvider> SmartIDReaderProvider::getSingletonInstance()
+    std::shared_ptr<SmartIDReaderProvider> SmartIDReaderProvider::getSingletonInstance()
     {
-        static boost::shared_ptr<SmartIDReaderProvider> instance;
+        static std::shared_ptr<SmartIDReaderProvider> instance;
         if (!instance)
         {
             instance.reset(new SmartIDReaderProvider());
@@ -45,12 +45,12 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<ReaderUnit> SmartIDReaderProvider::createReaderUnit()
+    std::shared_ptr<ReaderUnit> SmartIDReaderProvider::createReaderUnit()
     {
         LOG(LogLevel::INFOS) << "Creating new reader unit with empty port... (Serial port auto-detect will be used when connecting to reader)";
 
-        boost::shared_ptr<SmartIDReaderUnit> ret(new SmartIDReaderUnit());
-        ret->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
+        std::shared_ptr<SmartIDReaderUnit> ret(new SmartIDReaderUnit());
+        ret->setReaderProvider(std::weak_ptr<ReaderProvider>(shared_from_this()));
 
         return ret;
     }
@@ -59,15 +59,15 @@ namespace logicalaccess
     {
         d_readers.clear();
 
-        std::vector<boost::shared_ptr<SerialPortXml> > ports;
+        std::vector<std::shared_ptr<SerialPortXml> > ports;
         EXCEPTION_ASSERT_WITH_LOG(SerialPortXml::EnumerateUsingCreateFile(ports), LibLogicalAccessException, "Can't enumerate the serial port list.");
 
-        for (std::vector<boost::shared_ptr<SerialPortXml> >::iterator i = ports.begin(); i != ports.end(); ++i)
+        for (std::vector<std::shared_ptr<SerialPortXml> >::iterator i = ports.begin(); i != ports.end(); ++i)
         {
-            boost::shared_ptr<SmartIDReaderUnit> unit(new SmartIDReaderUnit());
-            boost::shared_ptr<SerialPortDataTransport> dataTransport = boost::dynamic_pointer_cast<SerialPortDataTransport>(unit->getDataTransport());
+            std::shared_ptr<SmartIDReaderUnit> unit(new SmartIDReaderUnit());
+            std::shared_ptr<SerialPortDataTransport> dataTransport = std::dynamic_pointer_cast<SerialPortDataTransport>(unit->getDataTransport());
             dataTransport->setSerialPort(*i);
-            unit->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
+            unit->setReaderProvider(std::weak_ptr<ReaderProvider>(shared_from_this()));
             d_readers.push_back(unit);
         }
 

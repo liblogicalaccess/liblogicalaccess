@@ -24,23 +24,23 @@ namespace logicalaccess
          * \brief Constructor.
          * \param chip The chip.
          */
-        ISO7816NFCTag4CardService(boost::shared_ptr<Chip> chip) : CardService(chip) {};
+        ISO7816NFCTag4CardService(std::shared_ptr<Chip> chip) : CardService(chip) {};
 
         virtual ~ISO7816NFCTag4CardService() {};
 
         virtual void writeCapabilityContainer(unsigned short isoFID = 0xe103, unsigned short isoFIDNDEFFile = 0xe104, unsigned short NDEFFileSize = 0xff);
 
-        virtual void writeNDEFFile(boost::shared_ptr<logicalaccess::NdefMessage> records, unsigned short isoFIDNDEFFile = 0xe104);
+        virtual void writeNDEFFile(std::shared_ptr<logicalaccess::NdefMessage> records, unsigned short isoFIDNDEFFile = 0xe104);
 
         virtual void writeNDEFFile(std::vector<unsigned char> recordsData, unsigned short isoFIDNDEFFile = 0xe104);
 
-        virtual boost::shared_ptr<logicalaccess::NdefMessage> readNDEFFile(unsigned short isoFIDApplication = 0xe105, unsigned short isoFIDNDEFFile = 0xe104);
+        virtual std::shared_ptr<logicalaccess::NdefMessage> readNDEFFile(unsigned short isoFIDApplication = 0xe105, unsigned short isoFIDNDEFFile = 0xe104);
 
         virtual CardServiceType getServiceType() const { return CardServiceType::CST_NFC_TAG; };
 
     protected:
 
-        boost::shared_ptr<ISO7816Chip> getISO7816Chip() { return boost::dynamic_pointer_cast<ISO7816Chip>(getChip()); };
+        std::shared_ptr<ISO7816Chip> getISO7816Chip() { return std::dynamic_pointer_cast<ISO7816Chip>(getChip()); };
     };
 }
 

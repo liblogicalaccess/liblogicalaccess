@@ -1,5 +1,5 @@
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "proxlitechip.hpp"
 
@@ -21,11 +21,11 @@ extern "C"
         return (char *)"ProxLite";
     }
 
-    LIBLOGICALACCESS_API void getProxLiteChip(boost::shared_ptr<logicalaccess::Chip>* chip)
+    LIBLOGICALACCESS_API void getProxLiteChip(std::shared_ptr<logicalaccess::Chip>* chip)
     {
         if (chip != NULL)
         {
-            *chip = boost::shared_ptr<logicalaccess::ProxLiteChip>(new logicalaccess::ProxLiteChip());
+            *chip = std::shared_ptr<logicalaccess::ProxLiteChip>(new logicalaccess::ProxLiteChip());
         }
     }
 

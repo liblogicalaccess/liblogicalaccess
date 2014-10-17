@@ -1,5 +1,5 @@
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "mifareultralightcchip.hpp"
 #include "mifareultralightchip.hpp"
@@ -22,19 +22,19 @@ extern "C"
         return (char *)"MifareUltralight";
     }
 
-    LIBLOGICALACCESS_API void getMifareUltralightCChip(boost::shared_ptr<logicalaccess::Chip>* chip)
+    LIBLOGICALACCESS_API void getMifareUltralightCChip(std::shared_ptr<logicalaccess::Chip>* chip)
     {
         if (chip != NULL)
         {
-            *chip = boost::shared_ptr<logicalaccess::MifareUltralightCChip>(new logicalaccess::MifareUltralightCChip());
+            *chip = std::shared_ptr<logicalaccess::MifareUltralightCChip>(new logicalaccess::MifareUltralightCChip());
         }
     }
 
-    LIBLOGICALACCESS_API void getMifareUltralightChip(boost::shared_ptr<logicalaccess::Chip>* chip)
+    LIBLOGICALACCESS_API void getMifareUltralightChip(std::shared_ptr<logicalaccess::Chip>* chip)
     {
         if (chip != NULL)
         {
-            *chip = boost::shared_ptr<logicalaccess::MifareUltralightChip>(new logicalaccess::MifareUltralightChip());
+            *chip = std::shared_ptr<logicalaccess::MifareUltralightChip>(new logicalaccess::MifareUltralightChip());
         }
     }
 

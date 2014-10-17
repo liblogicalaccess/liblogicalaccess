@@ -51,26 +51,26 @@ namespace logicalaccess
          * \brief Get the root location node.
          * \return The root location node.
          */
-        virtual boost::shared_ptr<LocationNode> getRootLocationNode();
+        virtual std::shared_ptr<LocationNode> getRootLocationNode();
 
         /**
          * \brief Get a card service for this chip.
          * \param serviceType The card service type.
          * \return The card service.
          */
-        virtual boost::shared_ptr<CardService> getService(CardServiceType serviceType);
+        virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
 
         /**
          * \brief Get the ISO15693 card provider for I/O access.
          * \return The ISO15693 card provider.
          */
-        boost::shared_ptr<ISO15693Commands> getISO15693Commands() { return boost::dynamic_pointer_cast<ISO15693Commands>(getCommands()); };
+        std::shared_ptr<ISO15693Commands> getISO15693Commands() { return std::dynamic_pointer_cast<ISO15693Commands>(getCommands()); };
 
         /**
          * \brief Get the ISO15693 profile.
          * \return The ISO15693 profile.
          */
-        boost::shared_ptr<ISO15693Profile> getISO15693Profile() { return boost::dynamic_pointer_cast<ISO15693Profile>(getProfile()); };
+        std::shared_ptr<ISO15693Profile> getISO15693Profile() { return std::dynamic_pointer_cast<ISO15693Profile>(getProfile()); };
 
     protected:
     };

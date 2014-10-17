@@ -189,42 +189,42 @@ namespace logicalaccess
         /**
          * \brief The key A.
          */
-        boost::shared_ptr<MifarePlusKey> keyA;
+        std::shared_ptr<MifarePlusKey> keyA;
 
         /**
          * \brief The key B.
          */
-        boost::shared_ptr<MifarePlusKey> keyB;
+        std::shared_ptr<MifarePlusKey> keyB;
 
         /**
          * \brief The key Originality.
          */
-        boost::shared_ptr<MifarePlusKey> keyOriginality;
+        std::shared_ptr<MifarePlusKey> keyOriginality;
 
         /**
          * \brief The key Mastercard.
          */
-        boost::shared_ptr<MifarePlusKey> keyMastercard;
+        std::shared_ptr<MifarePlusKey> keyMastercard;
 
         /**
          * \brief The key Configuration.
          */
-        boost::shared_ptr<MifarePlusKey> keyConfiguration;
+        std::shared_ptr<MifarePlusKey> keyConfiguration;
 
         /**
          * \brief The key Switch level 2.
          */
-        boost::shared_ptr<MifarePlusKey> keySwitchL2;
+        std::shared_ptr<MifarePlusKey> keySwitchL2;
 
         /**
          * \brief The key Switch level 3.
          */
-        boost::shared_ptr<MifarePlusKey> keySwitchL3;
+        std::shared_ptr<MifarePlusKey> keySwitchL3;
 
         /**
          * \brief The key SL1 AES authentification.
          */
-        boost::shared_ptr<MifarePlusKey> keyAuthenticateSL1AES;
+        std::shared_ptr<MifarePlusKey> keyAuthenticateSL1AES;
 
         /**
          * \brief MAD is used ?
@@ -234,12 +234,12 @@ namespace logicalaccess
         /**
          * \brief The MAD A Key.
          */
-        boost::shared_ptr<MifarePlusKey> madKeyA;
+        std::shared_ptr<MifarePlusKey> madKeyA;
 
         /**
          * \brief The MAD B Key.
          */
-        boost::shared_ptr<MifarePlusKey> madKeyB;
+        std::shared_ptr<MifarePlusKey> madKeyB;
 
         /**
          * \brief The sector access bits.

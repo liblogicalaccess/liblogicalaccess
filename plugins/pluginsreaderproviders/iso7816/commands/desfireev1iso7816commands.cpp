@@ -317,18 +317,18 @@ namespace logicalaccess
         return result;
     }
 
-    void DESFireEV1ISO7816Commands::authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
+    void DESFireEV1ISO7816Commands::authenticate(unsigned char keyno, std::shared_ptr<DESFireKey> key)
     {
         if (!key) {
-            key = boost::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile())->getDefaultKey(DF_KEY_DES);
+            key = std::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile())->getDefaultKey(DF_KEY_DES);
         }
 
         // Get the appropriate authentification method and algorithm according to the key type (for 3DES we use legacy method instead of ISO).
 
-        if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()) && !getSAMChip())
+        if (std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()) && !getSAMChip())
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAMKeyStorage set on the key but not SAM reader has been set.");
 
-        if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()) && key->getKeyType() != DF_KEY_DES)
+        if (std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()) && key->getKeyType() != DF_KEY_DES)
         {
             if (key->getKeyType() == DF_KEY_3K3DES)
                 sam_iso_authenticate(key, DF_ALG_3K3DES, (d_crypto->d_currentAid == 0 && keyno == 0), keyno);
@@ -354,7 +354,7 @@ namespace logicalaccess
         }
     }
 
-    void DESFireEV1ISO7816Commands::sam_iso_authenticate(boost::shared_ptr<DESFireKey> key, DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno)
+    void DESFireEV1ISO7816Commands::sam_iso_authenticate(std::shared_ptr<DESFireKey> key, DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno)
     {
         unsigned char p1 = 0x00; //0x02 if selectApplication has been proceed
         std::vector<unsigned char> diversify;
@@ -370,17 +370,17 @@ namespace logicalaccess
 
         std::vector<unsigned char> data(2 + RPICC1.size());
 
-        if (!boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
+        if (!std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "DESFireKey need a SAMKeyStorage to proceed a SAM ISO Authenticate.");
 
-        data[0] = boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage())->getKeySlot();
+        data[0] = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage())->getKeySlot();
         data[1] = key->getKeyVersion();
         memcpy(&data[0] + 2, &RPICC1[0], RPICC1.size());
 
-        if (boost::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification()))
+        if (std::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification()))
         {
             p1 |= 0x01;
-            if (boost::dynamic_pointer_cast<NXPAV2KeyDiversification>(key->getKeyDiversification()))
+            if (std::dynamic_pointer_cast<NXPAV2KeyDiversification>(key->getKeyDiversification()))
                 p1 |= 0x10;
             data.insert(data.end(), diversify.begin(), diversify.end());
         }
@@ -390,9 +390,9 @@ namespace logicalaccess
         cmd_vector.insert(cmd_vector.end() - 1, data.begin(), data.end());
 
         if (getSAMChip()->getCardType() == "SAM_AV1")
-            apduresult = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->transmit(cmd_vector);
+            apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->transmit(cmd_vector);
         else if (getSAMChip()->getCardType() == "SAM_AV2")
-            apduresult = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(cmd_vector, true, false);
+            apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(cmd_vector, true, false);
         if (apduresult.size() <= 2 && apduresult[apduresult.size() - 2] != 0x90 && apduresult[apduresult.size() - 2] != 0xaf)
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam_iso_authenticate P1 failed.");
 
@@ -414,9 +414,9 @@ namespace logicalaccess
                 unsigned char resetcmd[] = { 0x80, 0xaf, 0x00, 0x00, 0x00 };
                 cmd_vector.assign(resetcmd, resetcmd + 5);
                 if (getSAMChip()->getCardType() == "SAM_AV1")
-                    apduresult = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->transmit(cmd_vector);
+                    apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->transmit(cmd_vector);
                 else if (getSAMChip()->getCardType() == "SAM_AV2")
-                    apduresult = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(cmd_vector);
+                    apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(cmd_vector);
             }
             catch (std::exception&){}
 
@@ -430,17 +430,17 @@ namespace logicalaccess
         cmd_vector.assign(cmdp2, cmdp2 + 5);
         cmd_vector.insert(cmd_vector.end(), encRPICC2RPCD2a.begin(), encRPICC2RPCD2a.end());
         if (getSAMChip()->getCardType() == "SAM_AV1")
-            apduresult = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->transmit(cmd_vector);
+            apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->transmit(cmd_vector);
         else if (getSAMChip()->getCardType() == "SAM_AV2")
-            apduresult = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(cmd_vector);
+            apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(cmd_vector);
         if (apduresult.size() <= 2 && apduresult[apduresult.size() - 2] != 0x90 && apduresult[apduresult.size() - 2] != 0x00)
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam_iso_authenticate P2 failed.");
 
         d_crypto->d_currentKeyNo = keyno;
         if (getSAMChip()->getCardType() == "SAM_AV1")
-            d_crypto->d_sessionKey = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->dumpSessionKey();
+            d_crypto->d_sessionKey = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->dumpSessionKey();
         else if (getSAMChip()->getCardType() == "SAM_AV2")
-            d_crypto->d_sessionKey = boost::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->dumpSessionKey();
+            d_crypto->d_sessionKey = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->dumpSessionKey();
         d_crypto->d_auth_method = CM_ISO;
 
         LOG(LogLevel::INFOS) << "Session key length: " << d_crypto->d_sessionKey.size();
@@ -461,10 +461,10 @@ namespace logicalaccess
         d_crypto->d_lastIV.resize(d_crypto->d_block_size, 0x00);
     }
 
-    void DESFireEV1ISO7816Commands::iso_authenticate(boost::shared_ptr<DESFireKey> key, DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno)
+    void DESFireEV1ISO7816Commands::iso_authenticate(std::shared_ptr<DESFireKey> key, DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno)
     {
         unsigned char le;
-        boost::shared_ptr<openssl::SymmetricCipher> cipher;
+        std::shared_ptr<openssl::SymmetricCipher> cipher;
         std::vector<unsigned char> diversify;
 
         if (key->getKeyDiversification())
@@ -490,9 +490,9 @@ namespace logicalaccess
             cipher.reset(new openssl::AESCipher());
         }
 
-        boost::shared_ptr<openssl::SymmetricKey> isokey;
-        boost::shared_ptr<openssl::InitializationVector> iv;
-        if (boost::dynamic_pointer_cast<openssl::AESCipher>(cipher))
+        std::shared_ptr<openssl::SymmetricKey> isokey;
+        std::shared_ptr<openssl::InitializationVector> iv;
+        if (std::dynamic_pointer_cast<openssl::AESCipher>(cipher))
         {
             isokey.reset(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(keydiv)));
             iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createNull()));
@@ -518,7 +518,7 @@ namespace logicalaccess
         makecrypt1.insert(makecrypt1.end(), RPICC1.begin(), RPICC1.end());
         std::vector<unsigned char> cryptogram;
         cipher->cipher(makecrypt1, cryptogram, *isokey.get(), *iv.get(), false);
-        if (boost::dynamic_pointer_cast<openssl::AESCipher>(cipher))
+        if (std::dynamic_pointer_cast<openssl::AESCipher>(cipher))
         {
             iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(std::vector<unsigned char>(cryptogram.end() - iv->data().size(), cryptogram.end()))));
         }
@@ -623,7 +623,7 @@ namespace logicalaccess
         data.push_back(keyno);
 
         std::vector<unsigned char> diversify;
-        boost::shared_ptr<DESFireKey> currentkey = boost::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile())->getKey(d_crypto->d_currentAid, keyno);
+        std::shared_ptr<DESFireKey> currentkey = std::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile())->getKey(d_crypto->d_currentAid, keyno);
         if (currentkey->getKeyDiversification())
         {
             currentkey->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, currentkey, keyno, diversify);
@@ -649,7 +649,7 @@ namespace logicalaccess
         data.push_back(keyno);
 
         std::vector<unsigned char> diversify;
-        boost::shared_ptr<DESFireKey> currentkey = boost::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile())->getKey(d_crypto->d_currentAid, keyno);
+        std::shared_ptr<DESFireKey> currentkey = std::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile())->getKey(d_crypto->d_currentAid, keyno);
         if (currentkey->getKeyDiversification())
         {
             currentkey->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, currentkey, keyno, diversify);
@@ -1057,7 +1057,7 @@ namespace logicalaccess
         }
     }
 
-    void DESFireEV1ISO7816Commands::changeKey(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
+    void DESFireEV1ISO7816Commands::changeKey(unsigned char keyno, std::shared_ptr<DESFireKey> key)
     {
         std::vector<unsigned char> diversify;
         if (key->getKeyDiversification())
@@ -1072,7 +1072,7 @@ namespace logicalaccess
             keynobyte |= key->getKeyType();
         }
 
-        if (boost::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
+        if (std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
         {
             cryptogram = getChangeKeySAMCryptogram(keyno, key);
         }
@@ -1236,7 +1236,7 @@ namespace logicalaccess
         DESFireISO7816Commands::transmit(DFEV1_INS_SET_CONFIGURATION, buf);
     }
 
-    void DESFireEV1ISO7816Commands::setConfiguration(boost::shared_ptr<DESFireKey> defaultKey)
+    void DESFireEV1ISO7816Commands::setConfiguration(std::shared_ptr<DESFireKey> defaultKey)
     {
         if (defaultKey->getLength() < 24)
         {

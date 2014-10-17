@@ -1,5 +1,5 @@
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "legicprimechip.hpp"
 
@@ -21,11 +21,11 @@ extern "C"
         return (char *)"LegicPrime";
     }
 
-    LIBLOGICALACCESS_API void getLegicPrimeChip(boost::shared_ptr<logicalaccess::Chip>* chip)
+    LIBLOGICALACCESS_API void getLegicPrimeChip(std::shared_ptr<logicalaccess::Chip>* chip)
     {
         if (chip != NULL)
         {
-            *chip = boost::shared_ptr<logicalaccess::LegicPrimeChip>(new logicalaccess::LegicPrimeChip());
+            *chip = std::shared_ptr<logicalaccess::LegicPrimeChip>(new logicalaccess::LegicPrimeChip());
         }
     }
 

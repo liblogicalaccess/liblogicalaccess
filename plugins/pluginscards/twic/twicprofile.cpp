@@ -25,9 +25,9 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<Location> TwicProfile::createLocation() const
+    std::shared_ptr<Location> TwicProfile::createLocation() const
     {
-        boost::shared_ptr<TwicLocation> ret;
+        std::shared_ptr<TwicLocation> ret;
         ret.reset(new TwicLocation());
         return ret;
     }
@@ -36,7 +36,7 @@ namespace logicalaccess
     {
         FormatList formats;
 
-        formats.push_back(boost::shared_ptr<FASCN200BitFormat>(new FASCN200BitFormat()));
+        formats.push_back(std::shared_ptr<FASCN200BitFormat>(new FASCN200BitFormat()));
 
         return formats;
     }

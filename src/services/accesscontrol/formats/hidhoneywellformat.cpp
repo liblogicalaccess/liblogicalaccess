@@ -22,14 +22,14 @@ namespace logicalaccess
 
         d_formatLinear.d_facilityCode = 0;
 
-        boost::shared_ptr<NumberDataField> field(new NumberDataField());
+        std::shared_ptr<NumberDataField> field(new NumberDataField());
         field->setName("Uid");
         field->setIsIdentifier(true);
         field->setDataLength(16);
         field->setDataRepresentation(d_dataRepresentation);
         field->setDataType(d_dataType);
         d_fieldList.push_back(field);
-        field = boost::shared_ptr<NumberDataField>(new NumberDataField());
+        field = std::shared_ptr<NumberDataField>(new NumberDataField());
         field->setName("FacilityCode");
         field->setDataLength(12);
         field->setDataRepresentation(d_dataRepresentation);
@@ -53,13 +53,13 @@ namespace logicalaccess
 
     unsigned short int HIDHoneywellFormat::getFacilityCode() const
     {
-        boost::shared_ptr<NumberDataField> field = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("FacilityCode"));
+        std::shared_ptr<NumberDataField> field = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("FacilityCode"));
         return static_cast<unsigned short int>(field->getValue());
     }
 
     void HIDHoneywellFormat::setFacilityCode(unsigned short int facilityCode)
     {
-        boost::shared_ptr<NumberDataField> field = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("FacilityCode"));
+        std::shared_ptr<NumberDataField> field = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("FacilityCode"));
         field->setValue(facilityCode);
         d_formatLinear.d_facilityCode = facilityCode;
     }
@@ -101,12 +101,12 @@ namespace logicalaccess
         return "HIDHoneywellFormat";
     }
 
-    bool HIDHoneywellFormat::checkSkeleton(boost::shared_ptr<Format> format) const
+    bool HIDHoneywellFormat::checkSkeleton(std::shared_ptr<Format> format) const
     {
         bool ret = false;
         if (format)
         {
-            boost::shared_ptr<HIDHoneywellFormat> pFormat = boost::dynamic_pointer_cast<HIDHoneywellFormat>(format);
+            std::shared_ptr<HIDHoneywellFormat> pFormat = std::dynamic_pointer_cast<HIDHoneywellFormat>(format);
             if (pFormat)
             {
                 ret = (

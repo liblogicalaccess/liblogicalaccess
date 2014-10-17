@@ -21,9 +21,9 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<LocationNode> StmLri512Chip::getRootLocationNode()
+    std::shared_ptr<LocationNode> StmLri512Chip::getRootLocationNode()
     {
-        boost::shared_ptr<LocationNode> rootNode;
+        std::shared_ptr<LocationNode> rootNode;
         rootNode.reset(new LocationNode());
 
         rootNode->setName("STM LRI512");

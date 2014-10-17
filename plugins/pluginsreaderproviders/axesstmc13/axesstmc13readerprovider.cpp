@@ -24,9 +24,9 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<AxessTMC13ReaderProvider> AxessTMC13ReaderProvider::getSingletonInstance()
+    std::shared_ptr<AxessTMC13ReaderProvider> AxessTMC13ReaderProvider::getSingletonInstance()
     {
-        static boost::shared_ptr<AxessTMC13ReaderProvider> instance;
+        static std::shared_ptr<AxessTMC13ReaderProvider> instance;
         if (!instance)
         {
             instance.reset(new AxessTMC13ReaderProvider());
@@ -45,12 +45,12 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<ReaderUnit> AxessTMC13ReaderProvider::createReaderUnit()
+    std::shared_ptr<ReaderUnit> AxessTMC13ReaderProvider::createReaderUnit()
     {
         LOG(LogLevel::INFOS) << "Creating new reader unit with empty port... (Serial port auto-detect will be used when connecting to reader)";
 
-        boost::shared_ptr<AxessTMC13ReaderUnit> ret(new AxessTMC13ReaderUnit());
-        ret->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
+        std::shared_ptr<AxessTMC13ReaderUnit> ret(new AxessTMC13ReaderUnit());
+        ret->setReaderProvider(std::weak_ptr<ReaderProvider>(shared_from_this()));
 
         return ret;
     }
@@ -59,15 +59,15 @@ namespace logicalaccess
     {
         d_readers.clear();
 
-        std::vector<boost::shared_ptr<SerialPortXml> > ports;
+        std::vector<std::shared_ptr<SerialPortXml> > ports;
         EXCEPTION_ASSERT_WITH_LOG(SerialPortXml::EnumerateUsingCreateFile(ports), LibLogicalAccessException, "Can't enumerate the serial port list.");
 
-        for (std::vector<boost::shared_ptr<SerialPortXml> >::iterator i = ports.begin(); i != ports.end(); ++i)
+        for (std::vector<std::shared_ptr<SerialPortXml> >::iterator i = ports.begin(); i != ports.end(); ++i)
         {
-            boost::shared_ptr<AxessTMC13ReaderUnit> unit(new AxessTMC13ReaderUnit());
-            boost::shared_ptr<SerialPortDataTransport> dataTransport = boost::dynamic_pointer_cast<SerialPortDataTransport>(unit->getDataTransport());
+            std::shared_ptr<AxessTMC13ReaderUnit> unit(new AxessTMC13ReaderUnit());
+            std::shared_ptr<SerialPortDataTransport> dataTransport = std::dynamic_pointer_cast<SerialPortDataTransport>(unit->getDataTransport());
             dataTransport->setSerialPort(*i);
-            unit->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
+            unit->setReaderProvider(std::weak_ptr<ReaderProvider>(shared_from_this()));
             d_readers.push_back(unit);
         }
 

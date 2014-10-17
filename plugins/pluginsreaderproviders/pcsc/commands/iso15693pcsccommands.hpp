@@ -47,7 +47,7 @@ namespace logicalaccess
          * \brief Get the PC/SC reader/card adapter.
          * \return The PC/SC reader/card adapter.
          */
-        virtual boost::shared_ptr<PCSCReaderCardAdapter> getPCSCReaderCardAdapter() { return boost::dynamic_pointer_cast<PCSCReaderCardAdapter>(getReaderCardAdapter()); };
+        virtual std::shared_ptr<PCSCReaderCardAdapter> getPCSCReaderCardAdapter() { return std::dynamic_pointer_cast<PCSCReaderCardAdapter>(getReaderCardAdapter()); };
     };
 }
 

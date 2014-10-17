@@ -83,7 +83,7 @@ namespace logicalaccess
         //fonction conforme aux specifications NIST 800-38B
         std::vector<unsigned char> iv;
         iv.resize(MIFARE_PLUS_BLOCK_SIZE, 0x00);
-        data = openssl::CMACCrypto::cmac(d_Kmac, boost::shared_ptr<openssl::OpenSSLSymmetricCipher>(new openssl::AESCipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_CBC)), MIFARE_PLUS_BLOCK_SIZE, data, iv, MIFARE_PLUS_BLOCK_SIZE);
+        data = openssl::CMACCrypto::cmac(d_Kmac, std::shared_ptr<openssl::OpenSSLSymmetricCipher>(new openssl::AESCipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_CBC)), MIFARE_PLUS_BLOCK_SIZE, data, iv, MIFARE_PLUS_BLOCK_SIZE);
         while (data.size() > MIFARE_PLUS_BLOCK_SIZE)
         {
             data = std::vector<unsigned char>(data.begin() + MIFARE_PLUS_BLOCK_SIZE, data.end());
@@ -147,7 +147,7 @@ namespace logicalaccess
         //fonction conforme aux specifications NIST 800-38B
         std::vector<unsigned char> iv;
         iv.resize(MIFARE_PLUS_BLOCK_SIZE, 0x00);
-        data = openssl::CMACCrypto::cmac(d_Kmac, boost::shared_ptr<openssl::OpenSSLSymmetricCipher>(new openssl::AESCipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_CBC)), MIFARE_PLUS_BLOCK_SIZE, data, iv, MIFARE_PLUS_BLOCK_SIZE);
+        data = openssl::CMACCrypto::cmac(d_Kmac, std::shared_ptr<openssl::OpenSSLSymmetricCipher>(new openssl::AESCipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_CBC)), MIFARE_PLUS_BLOCK_SIZE, data, iv, MIFARE_PLUS_BLOCK_SIZE);
         while (data.size() > MIFARE_PLUS_BLOCK_SIZE)
         {
             data = std::vector<unsigned char>(data.begin() + MIFARE_PLUS_BLOCK_SIZE, data.end());

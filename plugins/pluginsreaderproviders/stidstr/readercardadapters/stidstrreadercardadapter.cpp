@@ -26,16 +26,16 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<STidSTRReaderUnit> STidSTRReaderCardAdapter::getSTidSTRReaderUnit() const
+    std::shared_ptr<STidSTRReaderUnit> STidSTRReaderCardAdapter::getSTidSTRReaderUnit() const
     {
-        return boost::dynamic_pointer_cast<STidSTRReaderUnit>(getDataTransport()->getReaderUnit());
+        return std::dynamic_pointer_cast<STidSTRReaderUnit>(getDataTransport()->getReaderUnit());
     }
 
     std::vector<unsigned char> STidSTRReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
     {
         LOG(LogLevel::COMS) << "Sending command command " << BufferHelper::getHex(command) << " command size {" << command.size() << "}...";
         std::vector<unsigned char> cmd;
-        boost::shared_ptr<STidSTRReaderUnitConfiguration> readerConfig = getSTidSTRReaderUnit()->getSTidSTRConfiguration();
+        std::shared_ptr<STidSTRReaderUnitConfiguration> readerConfig = getSTidSTRReaderUnit()->getSTidSTRConfiguration();
         //LOG(LogLevel::INFOS) << "Reader configuration {%s}", dynamic_cast<XmlSerializable*>(&(*readerConfig))->serialize().c_str());
 
         EXCEPTION_ASSERT_WITH_LOG(command.size() >= 2, LibLogicalAccessException, "The command size must be at least 2 byte long.");
@@ -80,7 +80,7 @@ namespace logicalaccess
 
         processedMsg.insert(processedMsg.end(), command.begin(), command.end());
 
-        boost::shared_ptr<STidSTRReaderUnitConfiguration> readerConfig = getSTidSTRReaderUnit()->getSTidSTRConfiguration();
+        std::shared_ptr<STidSTRReaderUnitConfiguration> readerConfig = getSTidSTRReaderUnit()->getSTidSTRConfiguration();
 
         // Cipher the data
         if ((readerConfig->getCommunicationMode() & STID_CM_CIPHERED) == STID_CM_CIPHERED)
@@ -182,7 +182,7 @@ namespace logicalaccess
         LOG(LogLevel::COMS) << "Inside message size {" << messageSize << "}";
         EXCEPTION_ASSERT_WITH_LOG(static_cast<unsigned int>(messageSize + 7) <= answer.size(), std::invalid_argument, "The buffer is too small to contains the complete message.");
 
-        boost::shared_ptr<STidSTRReaderUnitConfiguration> readerConfig = getSTidSTRReaderUnit()->getSTidSTRConfiguration();
+        std::shared_ptr<STidSTRReaderUnitConfiguration> readerConfig = getSTidSTRReaderUnit()->getSTidSTRConfiguration();
 
         STidCommunicationType ctype = static_cast<STidCommunicationType>(answer[3] & 0x01);
         LOG(LogLevel::COMS) << "Communication response type {0x" << std::hex << ctype << std::dec << "(" << ctype << ")}";
@@ -229,7 +229,7 @@ namespace logicalaccess
 
         std::vector<unsigned char> tmpData = data;
 
-        boost::shared_ptr<STidSTRReaderUnitConfiguration> readerConfig = getSTidSTRReaderUnit()->getSTidSTRConfiguration();
+        std::shared_ptr<STidSTRReaderUnitConfiguration> readerConfig = getSTidSTRReaderUnit()->getSTidSTRConfiguration();
 
         // Check the message HMAC and remove it from the message
         if ((readerConfig->getCommunicationMode() & STID_CM_SIGNED) == STID_CM_SIGNED)

@@ -8,7 +8,7 @@
 
 namespace logicalaccess
 {
-    void SagemKeyDiversification::initDiversification(std::vector<unsigned char> identifier, int /*AID*/, boost::shared_ptr<Key> /*key*/, unsigned char /*keyno*/, std::vector<unsigned char>& diversify)
+    void SagemKeyDiversification::initDiversification(std::vector<unsigned char> identifier, int /*AID*/, std::shared_ptr<Key> /*key*/, unsigned char /*keyno*/, std::vector<unsigned char>& diversify)
     {
         if (identifier.size() > 0)
         {
@@ -28,12 +28,12 @@ namespace logicalaccess
         }
     }
 
-    std::vector<unsigned char> SagemKeyDiversification::getDiversifiedKey(boost::shared_ptr<Key> key, std::vector<unsigned char> diversify)
+    std::vector<unsigned char> SagemKeyDiversification::getDiversifiedKey(std::shared_ptr<Key> key, std::vector<unsigned char> diversify)
     {
         LOG(LogLevel::INFOS) << "Using key diversification Sagem with div : " << BufferHelper::getHex(diversify);
         std::vector<unsigned char> keydiv;
 
-        boost::shared_ptr<DESFireKey> desfirekey = boost::dynamic_pointer_cast<DESFireKey>(key);
+        std::shared_ptr<DESFireKey> desfirekey = std::dynamic_pointer_cast<DESFireKey>(key);
 
         // Sagem diversification algo. Should be an option with SAM diversification soon...
         std::vector<unsigned char> iv;

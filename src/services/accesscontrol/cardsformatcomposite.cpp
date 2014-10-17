@@ -21,9 +21,9 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<Format> CardsFormatComposite::createFormatFromXml(const std::string& xmlstring, const std::string& rootNode)
+    std::shared_ptr<Format> CardsFormatComposite::createFormatFromXml(const std::string& xmlstring, const std::string& rootNode)
     {
-        boost::shared_ptr<Format> ret;
+        std::shared_ptr<Format> ret;
 
         std::istringstream iss(xmlstring);
         boost::property_tree::ptree pt;
@@ -50,7 +50,7 @@ namespace logicalaccess
         return ret;
     }
 
-    void CardsFormatComposite::addFormatForCard(std::string type, boost::shared_ptr<Format> format, boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite)
+    void CardsFormatComposite::addFormatForCard(std::string type, std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite)
     {
         LOG(LogLevel::INFOS) << "Add format for card type {" << type << "}...";
         FormatInfos finfos;
@@ -62,7 +62,7 @@ namespace logicalaccess
         formatsList[type] = finfos;
     }
 
-    void CardsFormatComposite::retrieveFormatForCard(std::string type, boost::shared_ptr<Format>* format, boost::shared_ptr<Location>* location, boost::shared_ptr<AccessInfo>* aiToUse, boost::shared_ptr<AccessInfo>* aiToWrite)
+    void CardsFormatComposite::retrieveFormatForCard(std::string type, std::shared_ptr<Format>* format, std::shared_ptr<Location>* location, std::shared_ptr<AccessInfo>* aiToUse, std::shared_ptr<AccessInfo>* aiToWrite)
     {
         LOG(LogLevel::INFOS) << "Retrieving format for card type {" << type << "}...";
         if (formatsList.find(type) != formatsList.end())
@@ -109,16 +109,16 @@ namespace logicalaccess
         formatsList.erase(type);
     }
 
-    boost::shared_ptr<Format> CardsFormatComposite::readFormat()
+    std::shared_ptr<Format> CardsFormatComposite::readFormat()
     {
         return readFormat(getReaderUnit()->getSingleChip());
     }
 
-    boost::shared_ptr<Format> CardsFormatComposite::readFormat(boost::shared_ptr<Chip> chip)
+    std::shared_ptr<Format> CardsFormatComposite::readFormat(std::shared_ptr<Chip> chip)
     {
         EXCEPTION_ASSERT_WITH_LOG(getReaderUnit(), LibLogicalAccessException, "A reader unit must be associated to the object.");
 
-        boost::shared_ptr<Format> fcopy;
+        std::shared_ptr<Format> fcopy;
 
         if (chip)
         {
@@ -145,7 +145,7 @@ namespace logicalaccess
                     try
                     {
                         LOG(LogLevel::INFOS) << "Getting access control service from chip...";
-                        boost::shared_ptr<AccessControlCardService> acService = boost::dynamic_pointer_cast<AccessControlCardService>(chip->getService(CST_ACCESS_CONTROL));
+                        std::shared_ptr<AccessControlCardService> acService = std::dynamic_pointer_cast<AccessControlCardService>(chip->getService(CST_ACCESS_CONTROL));
                         if (acService)
                         {
                             fcopy = acService->readFormat(finfos.format, finfos.location, finfos.aiToUse);
@@ -238,19 +238,19 @@ namespace logicalaccess
             {
                 string type = v.second.get_child("type").get_value<std::string>();
 
-                boost::shared_ptr<Chip> chip = getReaderUnit()->createChip(type);
+                std::shared_ptr<Chip> chip = getReaderUnit()->createChip(type);
                 EXCEPTION_ASSERT_WITH_LOG(chip, LibLogicalAccessException, "Unknow card type.");
 
                 FormatInfos finfos;
-                if (boost::shared_ptr<Format> format = Format::getByFormatType(static_cast<FormatType>(v.second.get_child("SelectedFormat").get_value<unsigned int>())))
+                if (std::shared_ptr<Format> format = Format::getByFormatType(static_cast<FormatType>(v.second.get_child("SelectedFormat").get_value<unsigned int>())))
                 {
-                    boost::shared_ptr<Profile> profile = chip->getProfile();
+                    std::shared_ptr<Profile> profile = chip->getProfile();
                     boost::property_tree::ptree childrenRootNode = v.second.get_child("FormatConfiguration");
                     format->unSerialize(childrenRootNode, "");
 
                     if (profile)
                     {
-                        boost::shared_ptr<Location> location = profile->createLocation();
+                        std::shared_ptr<Location> location = profile->createLocation();
                         if (location)
                         {
                             try
@@ -265,7 +265,7 @@ namespace logicalaccess
                         }
                         finfos.location = location;
 
-                        boost::shared_ptr<AccessInfo> aiToUse = profile->createAccessInfo();
+                        std::shared_ptr<AccessInfo> aiToUse = profile->createAccessInfo();
                         if (aiToUse)
                         {
                             try
@@ -280,7 +280,7 @@ namespace logicalaccess
                         }
                         finfos.aiToUse = aiToUse;
 
-                        boost::shared_ptr<AccessInfo> aiToWrite;
+                        std::shared_ptr<AccessInfo> aiToWrite;
                         boost::property_tree::ptree writeNode = v.second.get_child("WriteInfo");
                         if (!writeNode.empty())
                         {
@@ -318,12 +318,12 @@ namespace logicalaccess
         return "CardsFormat";
     }
 
-    boost::shared_ptr<ReaderUnit> CardsFormatComposite::getReaderUnit() const
+    std::shared_ptr<ReaderUnit> CardsFormatComposite::getReaderUnit() const
     {
         return d_ReaderUnit.lock();
     }
 
-    void CardsFormatComposite::setReaderUnit(boost::weak_ptr<ReaderUnit> unit)
+    void CardsFormatComposite::setReaderUnit(std::weak_ptr<ReaderUnit> unit)
     {
         d_ReaderUnit = unit;
     }

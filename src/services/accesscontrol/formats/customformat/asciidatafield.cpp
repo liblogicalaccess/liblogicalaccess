@@ -95,12 +95,12 @@ namespace logicalaccess
         d_value = BufferHelper::getStdString(ret);
     }
 
-    bool ASCIIDataField::checkSkeleton(boost::shared_ptr<DataField> field) const
+    bool ASCIIDataField::checkSkeleton(std::shared_ptr<DataField> field) const
     {
         bool ret = false;
         if (field)
         {
-            boost::shared_ptr<ASCIIDataField> pField = boost::dynamic_pointer_cast<ASCIIDataField>(field);
+            std::shared_ptr<ASCIIDataField> pField = std::dynamic_pointer_cast<ASCIIDataField>(field);
             if (pField)
             {
                 ret = (pField->getDataLength() == getDataLength() &&

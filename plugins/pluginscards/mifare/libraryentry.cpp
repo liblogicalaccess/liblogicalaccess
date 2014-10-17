@@ -1,5 +1,5 @@
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "mifare1kchip.hpp"
 #include "mifare4kchip.hpp"
@@ -23,27 +23,27 @@ extern "C"
         return (char *)"Mifare";
     }
 
-    LIBLOGICALACCESS_API void getMifare1KChip(boost::shared_ptr<logicalaccess::Chip>* chip)
+    LIBLOGICALACCESS_API void getMifare1KChip(std::shared_ptr<logicalaccess::Chip>* chip)
     {
         if (chip != NULL)
         {
-            *chip = boost::shared_ptr<logicalaccess::Mifare1KChip>(new logicalaccess::Mifare1KChip());
+            *chip = std::shared_ptr<logicalaccess::Mifare1KChip>(new logicalaccess::Mifare1KChip());
         }
     }
 
-    LIBLOGICALACCESS_API void getMifare4KChip(boost::shared_ptr<logicalaccess::Chip>* chip)
+    LIBLOGICALACCESS_API void getMifare4KChip(std::shared_ptr<logicalaccess::Chip>* chip)
     {
         if (chip != NULL)
         {
-            *chip = boost::shared_ptr<logicalaccess::Mifare4KChip>(new logicalaccess::Mifare4KChip());
+            *chip = std::shared_ptr<logicalaccess::Mifare4KChip>(new logicalaccess::Mifare4KChip());
         }
     }
 
-    LIBLOGICALACCESS_API void getMifareChip(boost::shared_ptr<logicalaccess::Chip>* chip)
+    LIBLOGICALACCESS_API void getMifareChip(std::shared_ptr<logicalaccess::Chip>* chip)
     {
         if (chip != NULL)
         {
-            *chip = boost::shared_ptr<logicalaccess::MifareChip>(new logicalaccess::MifareChip());
+            *chip = std::shared_ptr<logicalaccess::MifareChip>(new logicalaccess::MifareChip());
         }
     }
 

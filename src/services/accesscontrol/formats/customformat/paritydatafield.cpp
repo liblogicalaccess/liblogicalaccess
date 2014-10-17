@@ -107,12 +107,12 @@ namespace logicalaccess
         }
     }
 
-    bool ParityDataField::checkSkeleton(boost::shared_ptr<DataField> field) const
+    bool ParityDataField::checkSkeleton(std::shared_ptr<DataField> field) const
     {
         bool ret = false;
         if (field)
         {
-            boost::shared_ptr<ParityDataField> pField = boost::dynamic_pointer_cast<ParityDataField>(field);
+            std::shared_ptr<ParityDataField> pField = std::dynamic_pointer_cast<ParityDataField>(field);
             if (pField)
             {
                 std::vector<unsigned int> bitsPositions = pField->getBitsUsePositions();
@@ -136,7 +136,7 @@ namespace logicalaccess
         return ret;
     }
 
-    bool ParityDataField::checkFieldDependecy(boost::shared_ptr<DataField> field)
+    bool ParityDataField::checkFieldDependecy(std::shared_ptr<DataField> field)
     {
         bool depend = false;
 

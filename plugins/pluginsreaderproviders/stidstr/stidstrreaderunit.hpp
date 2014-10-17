@@ -92,25 +92,25 @@ namespace logicalaccess
          * \param type The card type.
          * \return The chip.
          */
-        virtual boost::shared_ptr<Chip> createChip(std::string type);
+        virtual std::shared_ptr<Chip> createChip(std::string type);
 
         /**
          * \brief Get the first and/or most accurate chip found.
          * \return The single chip.
          */
-        virtual boost::shared_ptr<Chip> getSingleChip();
+        virtual std::shared_ptr<Chip> getSingleChip();
 
         /**
          * \brief Get chip available in the RFID rang.
          * \return The chip list.
          */
-        virtual std::vector<boost::shared_ptr<Chip> > getChipList();
+        virtual std::vector<std::shared_ptr<Chip> > getChipList();
 
         /**
          * \brief Get the default STidSTR reader/card adapter.
          * \return The default STidSTR reader/card adapter.
          */
-        virtual boost::shared_ptr<STidSTRReaderCardAdapter> getDefaultSTidSTRReaderCardAdapter();
+        virtual std::shared_ptr<STidSTRReaderCardAdapter> getDefaultSTidSTRReaderCardAdapter();
 
         /**
          * \brief Connect to the card.
@@ -173,31 +173,31 @@ namespace logicalaccess
          * \brief Get the STidSTR reader unit configuration.
          * \return The STidSTR reader unit configuration.
          */
-        boost::shared_ptr<STidSTRReaderUnitConfiguration> getSTidSTRConfiguration() { return boost::dynamic_pointer_cast<STidSTRReaderUnitConfiguration>(getConfiguration()); };
+        std::shared_ptr<STidSTRReaderUnitConfiguration> getSTidSTRConfiguration() { return std::dynamic_pointer_cast<STidSTRReaderUnitConfiguration>(getConfiguration()); };
 
         /**
          * \brief Get the STidSTR reader provider.
          * \return The STidSTR reader provider.
          */
-        boost::shared_ptr<STidSTRReaderProvider> getSTidSTRReaderProvider() const;
+        std::shared_ptr<STidSTRReaderProvider> getSTidSTRReaderProvider() const;
 
         /**
          * \brief Scan the RFID field for ISO 14443-A tag detection.
          * \return The chip object if a tag is inserted.
          */
-        boost::shared_ptr<Chip> scan14443A();
+        std::shared_ptr<Chip> scan14443A();
 
         /**
          * \brief Scan the RFID field for ISO 14443-A tag detection.
          * \return The chip object if a tag is inserted.
          */
-        boost::shared_ptr<Chip> scanARaw();
+        std::shared_ptr<Chip> scanARaw();
 
         /**
          * \brief Scan the RFID field for ISO 14443-B tag detection.
          * \return The chip object if a tag is inserted.
          */
-        boost::shared_ptr<Chip> scan14443B();
+        std::shared_ptr<Chip> scan14443B();
 
         /**
          * \brief Authenticate the host with the reader and genereate session keys for HMAC and enciphering, 1/2.

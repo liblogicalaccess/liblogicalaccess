@@ -72,19 +72,19 @@ namespace logicalaccess
          * \param type The card type.
          * \return The chip.
          */
-        virtual boost::shared_ptr<Chip> createChip(std::string type);
+        virtual std::shared_ptr<Chip> createChip(std::string type);
 
         /**
          * \brief Get the first and/or most accurate chip found.
          * \return The single chip.
          */
-        virtual boost::shared_ptr<Chip> getSingleChip();
+        virtual std::shared_ptr<Chip> getSingleChip();
 
         /**
          * \brief Get chip available in the RFID rang.
          * \return The chip list.
          */
-        virtual std::vector<boost::shared_ptr<Chip> > getChipList();
+        virtual std::vector<std::shared_ptr<Chip> > getChipList();
 
         /**
          * \brief Get the reader ping command.
@@ -96,13 +96,13 @@ namespace logicalaccess
          * \brief Get the current chip in air.
          * \return The chip in air.
          */
-        boost::shared_ptr<Chip> getChipInAir();
+        std::shared_ptr<Chip> getChipInAir();
 
         /**
          * \brief Get the default AxessTMC13 reader/card adapter.
          * \return The default AxessTMC13 reader/card adapter.
          */
-        virtual boost::shared_ptr<AxessTMC13ReaderCardAdapter> getDefaultAxessTMC13ReaderCardAdapter();
+        virtual std::shared_ptr<AxessTMC13ReaderCardAdapter> getDefaultAxessTMC13ReaderCardAdapter();
 
         /**
          * \brief Connect to the card.
@@ -171,13 +171,13 @@ namespace logicalaccess
          * \brief Get the AxessTMC13 reader unit configuration.
          * \return The AxessTMC13 reader unit configuration.
          */
-        boost::shared_ptr<AxessTMC13ReaderUnitConfiguration> getAxessTMC13Configuration() { return boost::dynamic_pointer_cast<AxessTMC13ReaderUnitConfiguration>(getConfiguration()); };
+        std::shared_ptr<AxessTMC13ReaderUnitConfiguration> getAxessTMC13Configuration() { return std::dynamic_pointer_cast<AxessTMC13ReaderUnitConfiguration>(getConfiguration()); };
 
         /**
          * \brief Get the AxessTMC13 reader provider.
          * \return The AxessTMC13 reader provider.
          */
-        boost::shared_ptr<AxessTMC13ReaderProvider> getAxessTMC13ReaderProvider() const;
+        std::shared_ptr<AxessTMC13ReaderProvider> getAxessTMC13ReaderProvider() const;
 
     protected:
 

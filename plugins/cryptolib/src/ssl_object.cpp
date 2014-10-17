@@ -7,6 +7,7 @@
 #include "logicalaccess/crypto/ssl_object.hpp"
 #include "logicalaccess/crypto/ssl_context.hpp"
 #include "logicalaccess/crypto/null_deleter.hpp"
+#include <assert.h>
 
 namespace logicalaccess
 {
@@ -26,10 +27,10 @@ namespace logicalaccess
         {
             SSL_CTX* ctx = SSL_get_SSL_CTX(d_ssl.get());
 
-            return SSLContext(boost::shared_ptr<SSL_CTX>(ctx, null_deleter()));
+            return SSLContext(std::shared_ptr<SSL_CTX>(ctx, null_deleter()));
         }
 
-        SSLObject::SSLObject(boost::shared_ptr<SSL> ssl) :
+        SSLObject::SSLObject(std::shared_ptr<SSL> ssl) :
             d_ssl(ssl)
         {
             OpenSSLInitializer::GetInstance();

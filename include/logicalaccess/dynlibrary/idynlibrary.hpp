@@ -17,11 +17,11 @@
 namespace logicalaccess
 {
     typedef char* (*getlibname)();
-    typedef void (CDECL_WIN32_ *getprovider)(boost::shared_ptr<ReaderProvider>*);
-    typedef void (CDECL_WIN32_ *getcard)(boost::shared_ptr<Chip>*);
-    typedef void (CDECL_WIN32_ *getdiversification)(boost::shared_ptr<KeyDiversification>*);
-    typedef void (CDECL_WIN32_ *getcommands)(boost::shared_ptr<Commands>*);
-    typedef void (CDECL_WIN32_ *setcryptocontext)(boost::shared_ptr<Commands>*, boost::shared_ptr<Chip>*);
+    typedef void (CDECL_WIN32_ *getprovider)(std::shared_ptr<ReaderProvider>*);
+    typedef void (CDECL_WIN32_ *getcard)(std::shared_ptr<Chip>*);
+    typedef void (CDECL_WIN32_ *getdiversification)(std::shared_ptr<KeyDiversification>*);
+    typedef void (CDECL_WIN32_ *getcommands)(std::shared_ptr<Commands>*);
+    typedef void (CDECL_WIN32_ *setcryptocontext)(std::shared_ptr<Commands>*, std::shared_ptr<Chip>*);
     typedef bool (CDECL_WIN32_ *getobjectinfoat)(unsigned int, char*, size_t, void**);
 
     class	IDynLibrary

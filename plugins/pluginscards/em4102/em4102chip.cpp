@@ -31,9 +31,9 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<LocationNode> EM4102Chip::getRootLocationNode()
+    std::shared_ptr<LocationNode> EM4102Chip::getRootLocationNode()
     {
-        boost::shared_ptr<LocationNode> rootNode;
+        std::shared_ptr<LocationNode> rootNode;
         rootNode.reset(new LocationNode());
 
         rootNode->setName("EM4102");

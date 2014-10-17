@@ -13,7 +13,7 @@
 #include <vector>
 #include <chrono>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <openssl/rsa.h>
 #include <openssl/err.h>
@@ -103,7 +103,7 @@ namespace logicalaccess
              * \brief Get the raw pointer.
              * \return The raw pointer.
              */
-            inline boost::shared_ptr<RSA> getRaw() const
+            inline std::shared_ptr<RSA> getRaw() const
             {
                 return d_rsa;
             }
@@ -178,7 +178,7 @@ namespace logicalaccess
              * \param rsa The RSA pointer. If rsa is NULL, the behavior is undefined.
              * \param has_private_key Wether the specified RSA pointer contains a private compound or not.
              */
-            RSAKey(boost::shared_ptr<RSA> rsa, bool has_private_key);
+            RSAKey(std::shared_ptr<RSA> rsa, bool has_private_key);
 
             /**
              * \brief The boolean test.
@@ -197,7 +197,7 @@ namespace logicalaccess
             /**
              * \brief The RSA keys pair.
              */
-            boost::shared_ptr<RSA> d_rsa;
+            std::shared_ptr<RSA> d_rsa;
 
             /**
              * \brief The private key flag.

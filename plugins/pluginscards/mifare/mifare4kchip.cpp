@@ -17,9 +17,9 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<LocationNode> Mifare4KChip::getRootLocationNode()
+    std::shared_ptr<LocationNode> Mifare4KChip::getRootLocationNode()
     {
-        boost::shared_ptr<LocationNode> rootNode = MifareChip::getRootLocationNode();
+        std::shared_ptr<LocationNode> rootNode = MifareChip::getRootLocationNode();
 
         for (int i = 16; i < 40; i++)
         {

@@ -33,7 +33,7 @@ namespace logicalaccess
          * \brief Read format from a card.
          * \return The format.
          */
-        boost::shared_ptr<Format> readFormat();
+        std::shared_ptr<Format> readFormat();
 
         /**
          * \brief Serialize the current object to XML.
@@ -57,37 +57,37 @@ namespace logicalaccess
          * \brief Get the reader configuration.
          * \return The reader configuration.
          */
-        boost::shared_ptr<ReaderConfiguration> getReaderConfiguration() const;
+        std::shared_ptr<ReaderConfiguration> getReaderConfiguration() const;
 
         /*
          * \brief Set the reader configuration.
          * \param provider The reader configuration.
          */
-        void setReaderConfiguration(boost::shared_ptr<ReaderConfiguration> readerConfig);
+        void setReaderConfiguration(std::shared_ptr<ReaderConfiguration> readerConfig);
 
         /**
          * \brief Get the cards format composite.
          * \return The cards foramt composite.
          */
-        boost::shared_ptr<CardsFormatComposite> getCardsFormatComposite() const;
+        std::shared_ptr<CardsFormatComposite> getCardsFormatComposite() const;
 
         /*
          * \brief Set the cards format composite.
          * \param provider The cards format composite.
          */
-        void setCardsFormatComposite(boost::shared_ptr<CardsFormatComposite> composite);
+        void setCardsFormatComposite(std::shared_ptr<CardsFormatComposite> composite);
 
     protected:
 
         /**
          * \brief The cards foramt composite.
          */
-        boost::shared_ptr<CardsFormatComposite> d_cardsFormatComposite;
+        std::shared_ptr<CardsFormatComposite> d_cardsFormatComposite;
 
         /**
          * \brief The reader configuration.
          */
-        boost::shared_ptr<ReaderConfiguration> d_readerConfiguration;
+        std::shared_ptr<ReaderConfiguration> d_readerConfiguration;
     };
 }
 

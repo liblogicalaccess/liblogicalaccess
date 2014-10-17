@@ -17,7 +17,7 @@ namespace logicalaccess
         while (index < data.size())
         {
             EXCEPTION_ASSERT((index + 3) < data.size(), std::invalid_argument, "The buffer size is too small.");
-            boost::shared_ptr<NdefRecord> record(new NdefRecord());
+            std::shared_ptr<NdefRecord> record(new NdefRecord());
 
             unsigned char tnf_tmp = data[index];
             //bool mb = (tnf_tmp & 0x80) != 0;
@@ -73,7 +73,7 @@ namespace logicalaccess
 
     void NdefMessage::addMimeMediaRecord(std::string mimeType, std::string payload)
     {
-        boost::shared_ptr<NdefRecord> ndefr(new NdefRecord());
+        std::shared_ptr<NdefRecord> ndefr(new NdefRecord());
         ndefr->setTnf(TNF_MIME_MEDIA);
 
         std::vector<unsigned char> mimeTypeVec(mimeType.begin(), mimeType.end());
@@ -87,7 +87,7 @@ namespace logicalaccess
 
     void NdefMessage::addTextRecord(std::string text, std::string encoding)
     {
-        boost::shared_ptr<NdefRecord> ndefr(new NdefRecord());
+        std::shared_ptr<NdefRecord> ndefr(new NdefRecord());
         ndefr->setTnf(TNF_WELL_KNOWN);
         ndefr->setType(std::vector<unsigned char>(1, NdefType::Text));
 
@@ -103,7 +103,7 @@ namespace logicalaccess
 
     void NdefMessage::addUriRecord(std::string uri, UriType uritype)
     {
-        boost::shared_ptr<NdefRecord> ndefr(new NdefRecord());
+        std::shared_ptr<NdefRecord> ndefr(new NdefRecord());
         ndefr->setTnf(TNF_WELL_KNOWN);
         ndefr->setType(std::vector<unsigned char>(1, NdefType::Uri));
 
@@ -118,7 +118,7 @@ namespace logicalaccess
 
     void NdefMessage::addEmptyRecord()
     {
-        boost::shared_ptr<NdefRecord> ndefr(new NdefRecord());
+        std::shared_ptr<NdefRecord> ndefr(new NdefRecord());
         ndefr->setTnf(TNF_EMPTY);
         m_records.push_back(ndefr);
     }
@@ -127,7 +127,7 @@ namespace logicalaccess
     {
         std::vector<unsigned char> data;
 
-        for (std::vector<boost::shared_ptr<NdefRecord> >::iterator it = m_records.begin(); it != m_records.end(); ++it)
+        for (std::vector<std::shared_ptr<NdefRecord> >::iterator it = m_records.begin(); it != m_records.end(); ++it)
         {
             std::vector<unsigned char> record = (*it)->encode((it == m_records.begin()), (std::next(it) == m_records.end()));
             data.insert(data.end(), record.begin(), record.end());
@@ -140,7 +140,7 @@ namespace logicalaccess
         boost::property_tree::ptree node;
 
         boost::property_tree::ptree fnode;
-        for (std::vector<boost::shared_ptr<NdefRecord> >::const_iterator i = m_records.cbegin(); i != m_records.cend(); ++i)
+        for (std::vector<std::shared_ptr<NdefRecord> >::const_iterator i = m_records.cbegin(); i != m_records.cend(); ++i)
         {
             (*i)->serialize(fnode);
         }
@@ -154,7 +154,7 @@ namespace logicalaccess
         m_records.clear();
         BOOST_FOREACH(boost::property_tree::ptree::value_type const& v, node.get_child("Fields"))
         {
-            boost::shared_ptr<NdefRecord> record(new NdefRecord());
+            std::shared_ptr<NdefRecord> record(new NdefRecord());
             if (record)
             {
                 boost::property_tree::ptree f = v.second;

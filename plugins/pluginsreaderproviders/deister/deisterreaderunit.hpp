@@ -95,31 +95,31 @@ namespace logicalaccess
          * \param type The card type.
          * \return The chip.
          */
-        virtual boost::shared_ptr<Chip> createChip(std::string type);
+        virtual std::shared_ptr<Chip> createChip(std::string type);
 
         /**
          * \brief Get the first and/or most accurate chip found.
          * \return The single chip.
          */
-        virtual boost::shared_ptr<Chip> getSingleChip();
+        virtual std::shared_ptr<Chip> getSingleChip();
 
         /**
          * \brief Get chip available in the RFID rang.
          * \return The chip list.
          */
-        virtual std::vector<boost::shared_ptr<Chip> > getChipList();
+        virtual std::vector<std::shared_ptr<Chip> > getChipList();
 
         /**
          * \brief Get the current chip in air.
          * \return The chip in air.
          */
-        boost::shared_ptr<Chip> getChipInAir();
+        std::shared_ptr<Chip> getChipInAir();
 
         /**
          * \brief Get the default Deister reader/card adapter.
          * \return The default Deister reader/card adapter.
          */
-        virtual boost::shared_ptr<DeisterReaderCardAdapter> getDefaultDeisterReaderCardAdapter();
+        virtual std::shared_ptr<DeisterReaderCardAdapter> getDefaultDeisterReaderCardAdapter();
 
         /**
          * \brief Connect to the card.
@@ -182,13 +182,13 @@ namespace logicalaccess
          * \brief Get the Deister reader unit configuration.
          * \return The Deister reader unit configuration.
          */
-        boost::shared_ptr<DeisterReaderUnitConfiguration> getDeisterConfiguration() { return boost::dynamic_pointer_cast<DeisterReaderUnitConfiguration>(getConfiguration()); };
+        std::shared_ptr<DeisterReaderUnitConfiguration> getDeisterConfiguration() { return std::dynamic_pointer_cast<DeisterReaderUnitConfiguration>(getConfiguration()); };
 
         /**
          * \brief Get the Deister reader provider.
          * \return The Deister reader provider.
          */
-        boost::shared_ptr<DeisterReaderProvider> getDeisterReaderProvider() const;
+        std::shared_ptr<DeisterReaderProvider> getDeisterReaderProvider() const;
 
     protected:
 

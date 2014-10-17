@@ -24,9 +24,9 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<CardService> GenericTagIdOnDemandChip::getService(CardServiceType serviceType)
+    std::shared_ptr<CardService> GenericTagIdOnDemandChip::getService(CardServiceType serviceType)
     {
-        boost::shared_ptr<CardService> service;
+        std::shared_ptr<CardService> service;
 
         switch (serviceType)
         {

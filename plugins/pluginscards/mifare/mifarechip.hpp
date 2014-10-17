@@ -46,7 +46,7 @@ namespace logicalaccess
          * \brief Get the root location node.
          * \return The root location node.
          */
-        virtual boost::shared_ptr<LocationNode> getRootLocationNode();
+        virtual std::shared_ptr<LocationNode> getRootLocationNode();
 
         /**
          * \brief Get number of sectors
@@ -58,26 +58,26 @@ namespace logicalaccess
          * \param rootNode The root node.
          * \param sector The sector.
          */
-        void addSectorNode(boost::shared_ptr<LocationNode> rootNode, int sector);
+        void addSectorNode(std::shared_ptr<LocationNode> rootNode, int sector);
 
         /**
          * \brief Get a card service for this card provider.
          * \param serviceType The card service type.
          * \return The card service.
          */
-        virtual boost::shared_ptr<CardService> getService(CardServiceType serviceType);
+        virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
 
         /**
          * \brief Get the Mifare commands.
          * \return The Mifare commands.
          */
-        boost::shared_ptr<MifareCommands> getMifareCommands() { return boost::dynamic_pointer_cast<MifareCommands>(getCommands()); };
+        std::shared_ptr<MifareCommands> getMifareCommands() { return std::dynamic_pointer_cast<MifareCommands>(getCommands()); };
 
         /**
          * \brief Get the Mifare profile.
          * \return The Mifare profile.
          */
-        boost::shared_ptr<MifareProfile> getMifareProfile() { return boost::dynamic_pointer_cast<MifareProfile>(getProfile()); };
+        std::shared_ptr<MifareProfile> getMifareProfile() { return std::dynamic_pointer_cast<MifareProfile>(getProfile()); };
 
     protected:
 

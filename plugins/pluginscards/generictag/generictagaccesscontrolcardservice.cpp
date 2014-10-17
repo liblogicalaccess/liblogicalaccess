@@ -15,7 +15,7 @@
 
 namespace logicalaccess
 {
-    GenericTagAccessControlCardService::GenericTagAccessControlCardService(boost::shared_ptr<Chip> chip)
+    GenericTagAccessControlCardService::GenericTagAccessControlCardService(std::shared_ptr<Chip> chip)
         : AccessControlCardService(chip)
     {
     }
@@ -24,13 +24,13 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<Format> GenericTagAccessControlCardService::readFormat(boost::shared_ptr<Format> format, boost::shared_ptr<Location> /*location*/, boost::shared_ptr<AccessInfo> /*aiToUse*/)
+    std::shared_ptr<Format> GenericTagAccessControlCardService::readFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/)
     {
         bool ret = false;
 
         LOG(LogLevel::INFOS) << "Try to read a format from Generic Tag...";
 
-        boost::shared_ptr<Format> formatret;
+        std::shared_ptr<Format> formatret;
         if (format)
         {
             try
@@ -95,7 +95,7 @@ namespace logicalaccess
         return formatret;
     }
 
-    bool GenericTagAccessControlCardService::writeFormat(boost::shared_ptr<Format> /*format*/, boost::shared_ptr<Location> /*location*/, boost::shared_ptr<AccessInfo> /*aiToUse*/, boost::shared_ptr<AccessInfo> /*aiToWrite*/)
+    bool GenericTagAccessControlCardService::writeFormat(std::shared_ptr<Format> /*format*/, std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/, std::shared_ptr<AccessInfo> /*aiToWrite*/)
     {
         return false;
     }

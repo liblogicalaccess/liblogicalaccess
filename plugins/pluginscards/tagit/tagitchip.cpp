@@ -21,9 +21,9 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<LocationNode> TagItChip::getRootLocationNode()
+    std::shared_ptr<LocationNode> TagItChip::getRootLocationNode()
     {
-        boost::shared_ptr<LocationNode> rootNode = ISO15693Chip::getRootLocationNode();
+        std::shared_ptr<LocationNode> rootNode = ISO15693Chip::getRootLocationNode();
         rootNode->setName("Tag-It");
 
         return rootNode;

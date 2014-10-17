@@ -22,7 +22,7 @@
 
 namespace logicalaccess
 {
-    GenericTagIdOnDemandAccessControlCardService::GenericTagIdOnDemandAccessControlCardService(boost::shared_ptr<Chip> chip)
+    GenericTagIdOnDemandAccessControlCardService::GenericTagIdOnDemandAccessControlCardService(std::shared_ptr<Chip> chip)
         : GenericTagAccessControlCardService(chip)
     {
     }
@@ -31,13 +31,13 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<Format> GenericTagIdOnDemandAccessControlCardService::readFormat(boost::shared_ptr<Format> /*format*/, boost::shared_ptr<Location> /*location*/, boost::shared_ptr<AccessInfo> /*aiToUse*/)
+    std::shared_ptr<Format> GenericTagIdOnDemandAccessControlCardService::readFormat(std::shared_ptr<Format> /*format*/, std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/)
     {
         // Not implemented.
-        return boost::shared_ptr<Format>();
+        return std::shared_ptr<Format>();
     }
 
-    bool GenericTagIdOnDemandAccessControlCardService::writeFormat(boost::shared_ptr<Format> format, boost::shared_ptr<Location> /*location*/, boost::shared_ptr<AccessInfo> /*aiToUse*/, boost::shared_ptr<AccessInfo> /*aiToWrite*/)
+    bool GenericTagIdOnDemandAccessControlCardService::writeFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/, std::shared_ptr<AccessInfo> /*aiToWrite*/)
     {
         EXCEPTION_ASSERT_WITH_LOG(format, std::invalid_argument, "format to write can't be null.");
 
@@ -50,7 +50,7 @@ namespace logicalaccess
         {
         case FT_WIEGAND26:
         {
-            boost::shared_ptr<Wiegand26Format> wf = boost::dynamic_pointer_cast<Wiegand26Format>(format);
+            std::shared_ptr<Wiegand26Format> wf = std::dynamic_pointer_cast<Wiegand26Format>(format);
 #if defined(__unix__)
             sprintf(tmp, "Hid26 %d %llud", wf->getFacilityCode(), wf->getUid());
 #else
@@ -61,7 +61,7 @@ namespace logicalaccess
         }
         case FT_WIEGAND34FACILITY:
         {
-            boost::shared_ptr<Wiegand34WithFacilityFormat> wf = boost::dynamic_pointer_cast<Wiegand34WithFacilityFormat>(format);
+            std::shared_ptr<Wiegand34WithFacilityFormat> wf = std::dynamic_pointer_cast<Wiegand34WithFacilityFormat>(format);
 #if defined(__unix__)
             sprintf(tmp, "Hid34 %d %llud", wf->getFacilityCode(), wf->getUid());
 #else
@@ -72,7 +72,7 @@ namespace logicalaccess
         }
         case FT_CORPORATE1000:
         {
-            boost::shared_ptr<Corporate1000Format> wf = boost::dynamic_pointer_cast<Corporate1000Format>(format);
+            std::shared_ptr<Corporate1000Format> wf = std::dynamic_pointer_cast<Corporate1000Format>(format);
 #if defined(__unix__)
             sprintf(tmp, "Hid35 %d %llud 3", wf->getCompanyCode(), wf->getUid());
 #else
@@ -83,7 +83,7 @@ namespace logicalaccess
         }
         case FT_WIEGAND37FACILITY:
         {
-            boost::shared_ptr<Wiegand37WithFacilityFormat> wf = boost::dynamic_pointer_cast<Wiegand37WithFacilityFormat>(format);
+            std::shared_ptr<Wiegand37WithFacilityFormat> wf = std::dynamic_pointer_cast<Wiegand37WithFacilityFormat>(format);
 #if defined(__unix__)
             sprintf(tmp, "Hid37 %d %lld 2", wf->getFacilityCode(), wf->getUid());
 #else
@@ -94,7 +94,7 @@ namespace logicalaccess
         }
         case FT_WIEGAND37:
         {
-            boost::shared_ptr<Wiegand37Format> wf = boost::dynamic_pointer_cast<Wiegand37Format>(format);
+            std::shared_ptr<Wiegand37Format> wf = std::dynamic_pointer_cast<Wiegand37Format>(format);
 #if defined(__unix__)
             sprintf(tmp, "Hid37 0 %llud 1", wf->getUid());
 #else
@@ -105,9 +105,9 @@ namespace logicalaccess
         }
         case FT_CUSTOM:
         {
-            boost::shared_ptr<CustomFormat> wf = boost::dynamic_pointer_cast<CustomFormat>(format);
-            boost::shared_ptr<NumberDataField> fieldUid = boost::dynamic_pointer_cast<NumberDataField>(wf->getFieldFromName("Uid"));
-            boost::shared_ptr<NumberDataField> fieldFacility = boost::dynamic_pointer_cast<NumberDataField>(wf->getFieldFromName("Facility Code"));
+            std::shared_ptr<CustomFormat> wf = std::dynamic_pointer_cast<CustomFormat>(format);
+            std::shared_ptr<NumberDataField> fieldUid = std::dynamic_pointer_cast<NumberDataField>(wf->getFieldFromName("Uid"));
+            std::shared_ptr<NumberDataField> fieldFacility = std::dynamic_pointer_cast<NumberDataField>(wf->getFieldFromName("Facility Code"));
 
             if (format->getName() == "Wiegand 32")
             {
@@ -183,13 +183,13 @@ namespace logicalaccess
         {
             LOG(LogLevel::INFOS) << "Writing format {" << cmdstr << "}";
 
-            boost::shared_ptr<GenericTagIdOnDemandCommands> commands = boost::dynamic_pointer_cast<GenericTagIdOnDemandCommands>(getGenericTagChip()->getCommands());
+            std::shared_ptr<GenericTagIdOnDemandCommands> commands = std::dynamic_pointer_cast<GenericTagIdOnDemandCommands>(getGenericTagChip()->getCommands());
             if (commands)
             {
-                boost::shared_ptr<IdOnDemandReaderCardAdapter> adapter = boost::dynamic_pointer_cast<IdOnDemandReaderCardAdapter>(commands->getReaderCardAdapter());
+                std::shared_ptr<IdOnDemandReaderCardAdapter> adapter = std::dynamic_pointer_cast<IdOnDemandReaderCardAdapter>(commands->getReaderCardAdapter());
                 if (adapter)
                 {
-                    boost::shared_ptr<IdOnDemandReaderUnit> idReaderUnit = boost::dynamic_pointer_cast<IdOnDemandReaderUnit>(adapter->getDataTransport()->getReaderUnit());
+                    std::shared_ptr<IdOnDemandReaderUnit> idReaderUnit = std::dynamic_pointer_cast<IdOnDemandReaderUnit>(adapter->getDataTransport()->getReaderUnit());
 
                     if (idReaderUnit)
                     {

@@ -9,6 +9,7 @@
 #include "logicalaccess/crypto/openssl_symmetric_cipher_context.hpp"
 #include "logicalaccess/crypto/symmetric_key.hpp"
 #include "logicalaccess/crypto/sha.hpp"
+#include <assert.h>
 
 #include <cstring>
 

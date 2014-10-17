@@ -24,7 +24,7 @@ namespace logicalaccess
          * \param block The block number.
          * \return True if the block is locked, false otherwise.
          */
-        static bool isLocked(boost::shared_ptr<ISO15693Commands> cmd, unsigned char block);
+        static bool isLocked(std::shared_ptr<ISO15693Commands> cmd, unsigned char block);
     };
 }
 

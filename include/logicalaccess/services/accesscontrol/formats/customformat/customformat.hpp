@@ -68,7 +68,7 @@ namespace logicalaccess
          * \param format The format to check.
          * \return True on success, false otherwise.
          */
-        virtual bool checkSkeleton(boost::shared_ptr<Format> format) const;
+        virtual bool checkSkeleton(std::shared_ptr<Format> format) const;
 
         /**
          * \brief Get the format type.
@@ -113,7 +113,7 @@ namespace logicalaccess
          * \param position The position.
          * \return The associated field at this position.
          */
-        boost::shared_ptr<DataField> getFieldForPosition(unsigned int position);
+        std::shared_ptr<DataField> getFieldForPosition(unsigned int position);
 
     protected:
 

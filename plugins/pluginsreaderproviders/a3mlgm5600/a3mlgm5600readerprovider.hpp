@@ -32,7 +32,7 @@ namespace logicalaccess
         /**
          * \brief Get the A3MLGM5600ReaderProvider instance. Singleton because we can only have one UDP communication, and A3MLGM5600 can't have shared access, so we share the same reader unit.
          */
-        static boost::shared_ptr<A3MLGM5600ReaderProvider> getSingletonInstance();
+        static std::shared_ptr<A3MLGM5600ReaderProvider> getSingletonInstance();
 
         /**
          * \brief Destructor.
@@ -72,7 +72,7 @@ namespace logicalaccess
          * \brief Create a new reader unit for the reader provider.
          * \return A reader unit.
          */
-        virtual boost::shared_ptr<ReaderUnit> createReaderUnit();
+        virtual std::shared_ptr<ReaderUnit> createReaderUnit();
 
     protected:
 

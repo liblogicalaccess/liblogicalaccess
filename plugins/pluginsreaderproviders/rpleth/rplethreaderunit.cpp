@@ -31,9 +31,9 @@ namespace logicalaccess
         : ReaderUnit()
     {
         d_readerUnitConfig.reset(new RplethReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(boost::shared_ptr<RplethReaderCardAdapter>(new RplethReaderCardAdapter()));
+        setDefaultReaderCardAdapter(std::shared_ptr<RplethReaderCardAdapter>(new RplethReaderCardAdapter()));
 
-        boost::shared_ptr<RplethDataTransport> dataTransport(new RplethDataTransport());
+        std::shared_ptr<RplethDataTransport> dataTransport(new RplethDataTransport());
         dataTransport->setIpAddress("192.168.1.100");
         dataTransport->setPort(23);
         setDataTransport(dataTransport);
@@ -124,7 +124,7 @@ namespace logicalaccess
             }
             else
             {
-                boost::shared_ptr<Chip> chip = getChipInAir(maxwait);
+                std::shared_ptr<Chip> chip = getChipInAir(maxwait);
                 if (chip)
                 {
                     d_insertedChip = chip;
@@ -194,7 +194,7 @@ namespace logicalaccess
 
                 while (!removed && ((currentWait < maxwait) || maxwait == 0))
                 {
-                    boost::shared_ptr<Chip> chip;
+                    std::shared_ptr<Chip> chip;
                     try
                     {
                         chip = getChipInAir(250);
@@ -245,7 +245,7 @@ namespace logicalaccess
             }
 
             if (d_insertedChip->getGenericCardType() == "DESFire")
-                boost::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->getCrypto()->setCryptoContext(boost::dynamic_pointer_cast<DESFireProfile>(d_insertedChip->getProfile()), d_insertedChip->getChipIdentifier());
+                std::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->getCrypto()->setCryptoContext(std::dynamic_pointer_cast<DESFireProfile>(d_insertedChip->getProfile()), d_insertedChip->getChipIdentifier());
         }
 
         return true;
@@ -281,11 +281,11 @@ namespace logicalaccess
         return csn;
     }
 
-    boost::shared_ptr<Chip> RplethReaderUnit::getChipInAir(unsigned int maxwait)
+    std::shared_ptr<Chip> RplethReaderUnit::getChipInAir(unsigned int maxwait)
     {
         LOG(LogLevel::INFOS) << "Starting get chip in air...";
 
-        boost::shared_ptr<Chip> chip;
+        std::shared_ptr<Chip> chip;
         clock_t begin = std::clock();
         std::vector<unsigned char> buf = receiveBadge(maxwait);
 
@@ -307,24 +307,24 @@ namespace logicalaccess
         return chip;
     }
 
-    boost::shared_ptr<Chip> RplethReaderUnit::createChip(std::string type)
+    std::shared_ptr<Chip> RplethReaderUnit::createChip(std::string type)
     {
         LOG(LogLevel::INFOS) << "Create chip " << type;
-        boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
+        std::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 
         return chip;
     }
 
-    boost::shared_ptr<Chip> RplethReaderUnit::getSingleChip()
+    std::shared_ptr<Chip> RplethReaderUnit::getSingleChip()
     {
-        boost::shared_ptr<Chip> chip = d_insertedChip;
+        std::shared_ptr<Chip> chip = d_insertedChip;
         return chip;
     }
 
-    std::vector<boost::shared_ptr<Chip> > RplethReaderUnit::getChipList()
+    std::vector<std::shared_ptr<Chip> > RplethReaderUnit::getChipList()
     {
-        std::vector<boost::shared_ptr<Chip> > chipList;
-        boost::shared_ptr<Chip> singleChip = getSingleChip();
+        std::vector<std::shared_ptr<Chip> > chipList;
+        std::shared_ptr<Chip> singleChip = getSingleChip();
         if (singleChip)
         {
             chipList.push_back(singleChip);
@@ -332,9 +332,9 @@ namespace logicalaccess
         return chipList;
     }
 
-    boost::shared_ptr<RplethReaderCardAdapter> RplethReaderUnit::getDefaultRplethReaderCardAdapter()
+    std::shared_ptr<RplethReaderCardAdapter> RplethReaderUnit::getDefaultRplethReaderCardAdapter()
     {
-        boost::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
+        std::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
         if (adapter)
         {
             if (!adapter->getDataTransport())
@@ -342,7 +342,7 @@ namespace logicalaccess
                 adapter->setDataTransport(getDataTransport());
             }
         }
-        return boost::dynamic_pointer_cast<RplethReaderCardAdapter>(adapter);
+        return std::dynamic_pointer_cast<RplethReaderCardAdapter>(adapter);
     }
 
     string RplethReaderUnit::getReaderSerialNumber()
@@ -358,7 +358,7 @@ namespace logicalaccess
     bool RplethReaderUnit::connectToReader()
     {
         LOG(LogLevel::INFOS) << "Starting connection to reader...";
-        boost::shared_ptr<DataTransport> dataTransport = getDataTransport();
+        std::shared_ptr<DataTransport> dataTransport = getDataTransport();
         if (!dataTransport->getReaderUnit())
         {
             dataTransport->setReaderUnit(shared_from_this());
@@ -370,11 +370,11 @@ namespace logicalaccess
         {
             LOG(LogLevel::INFOS) << "Data transport connected, initializing PROXY mode...";
             std::string type = getProxyReaderType();
-            boost::shared_ptr<ReaderProvider> rp = LibraryManager::getInstance()->getReaderProvider(type);
+            std::shared_ptr<ReaderProvider> rp = LibraryManager::getInstance()->getReaderProvider(type);
             if (rp)
             {
                 d_proxyReader = rp->createReaderUnit();
-                boost::shared_ptr<RplethDataTransport> rpdt = boost::dynamic_pointer_cast<RplethDataTransport>(getDataTransport());
+                std::shared_ptr<RplethDataTransport> rpdt = std::dynamic_pointer_cast<RplethDataTransport>(getDataTransport());
 
                 EXCEPTION_ASSERT_WITH_LOG(rpdt, LibLogicalAccessException, "Rpleth data transport required for proxy mode.");
                 d_proxyReader->setDataTransport(rpdt);
@@ -402,9 +402,9 @@ namespace logicalaccess
         ReaderUnit::unSerialize(node);
     }
 
-    boost::shared_ptr<RplethReaderProvider> RplethReaderUnit::getRplethReaderProvider() const
+    std::shared_ptr<RplethReaderProvider> RplethReaderUnit::getRplethReaderProvider() const
     {
-        return boost::dynamic_pointer_cast<RplethReaderProvider>(getReaderProvider());
+        return std::dynamic_pointer_cast<RplethReaderProvider>(getReaderProvider());
     }
 
     bool RplethReaderUnit::getDhcpState()
@@ -560,7 +560,7 @@ namespace logicalaccess
         std::vector<unsigned char> cmd;
         try
         {
-            boost::shared_ptr<RplethDataTransport> dt = boost::dynamic_pointer_cast<RplethDataTransport>(getDefaultRplethReaderCardAdapter()->getDataTransport());
+            std::shared_ptr<RplethDataTransport> dt = std::dynamic_pointer_cast<RplethDataTransport>(getDefaultRplethReaderCardAdapter()->getDataTransport());
 
             if (dt)
             {
@@ -590,7 +590,7 @@ namespace logicalaccess
     std::vector<unsigned char> RplethReaderUnit::getCsn(const std::vector<unsigned char>& trame)
     {
         std::vector<unsigned char> result;
-        boost::shared_ptr<RplethReaderUnitConfiguration> conf = boost::dynamic_pointer_cast<RplethReaderUnitConfiguration>(d_readerUnitConfig);
+        std::shared_ptr<RplethReaderUnitConfiguration> conf = std::dynamic_pointer_cast<RplethReaderUnitConfiguration>(d_readerUnitConfig);
         if (conf->getLength() != 0)
         {
             if (trame.size() * 8 >= static_cast<size_t>(conf->getLength() + conf->getOffset()))

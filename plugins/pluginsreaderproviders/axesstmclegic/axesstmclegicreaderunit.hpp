@@ -72,19 +72,19 @@ namespace logicalaccess
          * \param type The card type.
          * \return The chip.
          */
-        virtual boost::shared_ptr<Chip> createChip(std::string type);
+        virtual std::shared_ptr<Chip> createChip(std::string type);
 
         /**
          * \brief Get the first and/or most accurate chip found.
          * \return The single chip.
          */
-        virtual boost::shared_ptr<Chip> getSingleChip();
+        virtual std::shared_ptr<Chip> getSingleChip();
 
         /**
          * \brief Get chip available in the RFID rang.
          * \return The chip list.
          */
-        virtual std::vector<boost::shared_ptr<Chip> > getChipList();
+        virtual std::vector<std::shared_ptr<Chip> > getChipList();
 
         /**
          * \brief Get the reader ping command.
@@ -96,13 +96,13 @@ namespace logicalaccess
          * \brief Get the current chip in air.
          * \return The chip in air.
          */
-        boost::shared_ptr<Chip> getChipInAir();
+        std::shared_ptr<Chip> getChipInAir();
 
         /**
          * \brief Get the default AxessTMCLegic reader/card adapter.
          * \return The default AxessTMCLegic reader/card adapter.
          */
-        virtual boost::shared_ptr<AxessTMCLegicReaderCardAdapter> getDefaultAxessTMCLegicReaderCardAdapter();
+        virtual std::shared_ptr<AxessTMCLegicReaderCardAdapter> getDefaultAxessTMCLegicReaderCardAdapter();
 
         /**
          * \brief Connect to the card.
@@ -159,13 +159,13 @@ namespace logicalaccess
          * \brief Get the AxessTMCLegic reader unit configuration.
          * \return The AxessTMCLegic reader unit configuration.
          */
-        boost::shared_ptr<AxessTMCLegicReaderUnitConfiguration> getAxessTMCLegicConfiguration() { return boost::dynamic_pointer_cast<AxessTMCLegicReaderUnitConfiguration>(getConfiguration()); };
+        std::shared_ptr<AxessTMCLegicReaderUnitConfiguration> getAxessTMCLegicConfiguration() { return std::dynamic_pointer_cast<AxessTMCLegicReaderUnitConfiguration>(getConfiguration()); };
 
         /**
          * \brief Get the AxessTMCLegic reader provider.
          * \return The AxessTMCLegic reader provider.
          */
-        boost::shared_ptr<AxessTMCLegicReaderProvider> getAxessTMCLegicReaderProvider() const;
+        std::shared_ptr<AxessTMCLegicReaderProvider> getAxessTMCLegicReaderProvider() const;
 
     protected:
 

@@ -213,7 +213,7 @@ namespace logicalaccess
          * \brief Select an application.
          * \param location The DESFire location
          */
-        virtual void selectApplication(boost::shared_ptr<DESFireLocation> location);
+        virtual void selectApplication(std::shared_ptr<DESFireLocation> location);
 
         /**
          * \brief Create a new application.
@@ -221,7 +221,7 @@ namespace logicalaccess
          * \param settings Key settings
          * \param maxNbKeys Maximum number of keys
          */
-        virtual void createApplication(boost::shared_ptr<DESFireLocation> location, DESFireKeySettings settings, unsigned char maxNbKeys);
+        virtual void createApplication(std::shared_ptr<DESFireLocation> location, DESFireKeySettings settings, unsigned char maxNbKeys);
 
         /**
          * \brief Create a new data file in the current application.
@@ -229,7 +229,7 @@ namespace logicalaccess
          * \param accessRights The file access rights
          * \param fileSize The file size.
          */
-        virtual void createStdDataFile(boost::shared_ptr<DESFireLocation> location, DESFireAccessRights accessRights, unsigned int fileSize);
+        virtual void createStdDataFile(std::shared_ptr<DESFireLocation> location, DESFireAccessRights accessRights, unsigned int fileSize);
 
         /**
          * \brief Get the communication mode for a file.
@@ -239,7 +239,7 @@ namespace logicalaccess
          * \param needLoadKey Set if it's necessary to be authenticate for the access.
          * \return The communication mode.
          */
-        virtual EncryptionMode getEncryptionMode(boost::shared_ptr<AccessInfo> aiToUse, unsigned char fileno, bool isReadMode, bool* needLoadKey);
+        virtual EncryptionMode getEncryptionMode(std::shared_ptr<AccessInfo> aiToUse, unsigned char fileno, bool isReadMode, bool* needLoadKey);
 
         /**
          * \brief Get the length of a file.
@@ -280,7 +280,7 @@ namespace logicalaccess
          * \param keyno The key number to change
          * \param key The new key
          */
-        virtual void changeKey(unsigned char keyno, boost::shared_ptr<DESFireKey> key) = 0;
+        virtual void changeKey(unsigned char keyno, std::shared_ptr<DESFireKey> key) = 0;
 
         /**
          * \brief Get key settings on the current application.
@@ -477,7 +477,7 @@ namespace logicalaccess
          * \param keyno The key number.
          * \param key The key.
          */
-        virtual void authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key) = 0;
+        virtual void authenticate(unsigned char keyno, std::shared_ptr<DESFireKey> key) = 0;
 
         /**
          * \brief Get the card version information.
@@ -487,7 +487,7 @@ namespace logicalaccess
 
     protected:
 
-        boost::shared_ptr<DESFireChip> getDESFireChip() const;
+        std::shared_ptr<DESFireChip> getDESFireChip() const;
     };
 }
 

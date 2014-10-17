@@ -8,7 +8,7 @@
 
 namespace logicalaccess
 {
-    void MifareUltralightCCommands::changeKey(boost::shared_ptr<TripleDESKey> key)
+    void MifareUltralightCCommands::changeKey(std::shared_ptr<TripleDESKey> key)
     {
         if (key && key->getLength() == 16)
         {
@@ -80,11 +80,11 @@ namespace logicalaccess
         }
     }
 
-    void MifareUltralightCCommands::authenticate(boost::shared_ptr<AccessInfo> aiToUse)
+    void MifareUltralightCCommands::authenticate(std::shared_ptr<AccessInfo> aiToUse)
     {
         if (aiToUse)
         {
-            boost::shared_ptr<MifareUltralightCAccessInfo> mAi = boost::dynamic_pointer_cast<MifareUltralightCAccessInfo>(aiToUse);
+            std::shared_ptr<MifareUltralightCAccessInfo> mAi = std::dynamic_pointer_cast<MifareUltralightCAccessInfo>(aiToUse);
             EXCEPTION_ASSERT_WITH_LOG(mAi, std::invalid_argument, "aiToUse must be a MifareUltralightCAccessInfo.");
 
             if (mAi->key)
@@ -94,11 +94,11 @@ namespace logicalaccess
         }
     }
 
-    void MifareUltralightCCommands::changeKey(boost::shared_ptr<AccessInfo> aiToWrite)
+    void MifareUltralightCCommands::changeKey(std::shared_ptr<AccessInfo> aiToWrite)
     {
         if (aiToWrite)
         {
-            boost::shared_ptr<MifareUltralightCAccessInfo> mAi = boost::dynamic_pointer_cast<MifareUltralightCAccessInfo>(aiToWrite);
+            std::shared_ptr<MifareUltralightCAccessInfo> mAi = std::dynamic_pointer_cast<MifareUltralightCAccessInfo>(aiToWrite);
             EXCEPTION_ASSERT_WITH_LOG(mAi, std::invalid_argument, "aiToWrite must be a MifareUltralightCAccessInfo.");
 
             if (mAi->key)

@@ -41,7 +41,7 @@ namespace logicalaccess
         d_port = port;
     }
 
-    boost::shared_ptr<boost::asio::ip::udp::socket> UdpDataTransport::getSocket() const
+    std::shared_ptr<boost::asio::ip::udp::socket> UdpDataTransport::getSocket() const
     {
         return d_socket;
     }
@@ -89,7 +89,7 @@ namespace logicalaccess
     {
         if (data.size() > 0)
         {
-            boost::shared_ptr<boost::asio::ip::udp::socket> socket = getSocket();
+            std::shared_ptr<boost::asio::ip::udp::socket> socket = getSocket();
             socket->send(boost::asio::buffer(data));
         }
     }
@@ -97,7 +97,7 @@ namespace logicalaccess
     std::vector<unsigned char> UdpDataTransport::receive(long int timeout)
     {
         std::vector<unsigned char> res;
-        boost::shared_ptr<boost::asio::ip::udp::socket> socket = getSocket();
+        std::shared_ptr<boost::asio::ip::udp::socket> socket = getSocket();
 
         long int currentWait = 0;
         size_t lenav = socket->available();

@@ -48,7 +48,7 @@ namespace logicalaccess
         return std::vector<unsigned char>();
     }
 
-    boost::shared_ptr<LCDDisplay> ReaderUnit::getLCDDisplay()
+    std::shared_ptr<LCDDisplay> ReaderUnit::getLCDDisplay()
     {
         if (d_lcdDisplay)
         {
@@ -57,7 +57,7 @@ namespace logicalaccess
         return d_lcdDisplay;
     }
 
-    boost::shared_ptr<LEDBuzzerDisplay> ReaderUnit::getLEDBuzzerDisplay()
+    std::shared_ptr<LEDBuzzerDisplay> ReaderUnit::getLEDBuzzerDisplay()
     {
         if (d_ledBuzzerDisplay)
         {
@@ -81,8 +81,8 @@ namespace logicalaccess
             {
                 LOG(LogLevel::INFOS) << "Chip(s) detected ! Looking in the list to find the chip...";
                 bool found = false;
-                std::vector<boost::shared_ptr<Chip> > chipList = getChipList();
-                for (std::vector<boost::shared_ptr<Chip> >::iterator i = chipList.begin(); i != chipList.end() && !found; ++i)
+                std::vector<std::shared_ptr<Chip> > chipList = getChipList();
+                for (std::vector<std::shared_ptr<Chip> >::iterator i = chipList.begin(); i != chipList.end() && !found; ++i)
                 {
                     std::vector<unsigned char> tmp = (*i)->getChipIdentifier();
                     LOG(LogLevel::INFOS) << "Processing chip " << BufferHelper::getHex(tmp) << "...";
@@ -113,14 +113,14 @@ namespace logicalaccess
         return inserted;
     }
 
-    std::vector<unsigned char> ReaderUnit::getNumber(boost::shared_ptr<Chip> chip, boost::shared_ptr<CardsFormatComposite> composite)
+    std::vector<unsigned char> ReaderUnit::getNumber(std::shared_ptr<Chip> chip, std::shared_ptr<CardsFormatComposite> composite)
     {
         LOG(LogLevel::INFOS) << "Started for chip type {0x" << chip->getCardType() << "(" << chip->getGenericCardType() << ")}";
         std::vector<unsigned char> ret;
 
         if (composite)
         {
-            LOG(LogLevel::INFOS) << "Composite used to find the chip identifier {" << boost::dynamic_pointer_cast<XmlSerializable>(composite)->serialize() << "}";
+            LOG(LogLevel::INFOS) << "Composite used to find the chip identifier {" << std::dynamic_pointer_cast<XmlSerializable>(composite)->serialize() << "}";
             composite->setReaderUnit(shared_from_this());
 
             CardTypeList ctList = composite->getConfiguredCardTypes();
@@ -147,9 +147,9 @@ namespace logicalaccess
                 if (itct != ctList.end())
                 {
                     LOG(LogLevel::INFOS) << "Configuration found in the composite ! Retrieving format for card...";
-                    boost::shared_ptr<AccessInfo> ai;
-                    boost::shared_ptr<Location> loc;
-                    boost::shared_ptr<Format> format;
+                    std::shared_ptr<AccessInfo> ai;
+                    std::shared_ptr<Location> loc;
+                    std::shared_ptr<Format> format;
                     composite->retrieveFormatForCard(useCardType, &format, &loc, &ai);
 
                     if (format)
@@ -195,10 +195,10 @@ namespace logicalaccess
         return ret;
     }
 
-    std::vector<unsigned char> ReaderUnit::getNumber(boost::shared_ptr<Chip> chip)
+    std::vector<unsigned char> ReaderUnit::getNumber(std::shared_ptr<Chip> chip)
     {
         // Read encoded format if specified in the license.
-        return getNumber(chip, boost::shared_ptr<CardsFormatComposite>());
+        return getNumber(chip, std::shared_ptr<CardsFormatComposite>());
     }
 
     uint64_t ReaderUnit::getFormatedNumber(const std::vector<unsigned char>& number, int padding)
@@ -232,17 +232,17 @@ namespace logicalaccess
         return oss.str();
     }
 
-    boost::shared_ptr<Chip> ReaderUnit::createChip(std::string type, const std::vector<unsigned char>& identifier)
+    std::shared_ptr<Chip> ReaderUnit::createChip(std::string type, const std::vector<unsigned char>& identifier)
     {
         LOG(LogLevel::INFOS) << "Creating chip for card type {" << type << "} and identifier " << BufferHelper::getHex(identifier) << "...";
-        boost::shared_ptr<Chip> chip = createChip(type);
+        std::shared_ptr<Chip> chip = createChip(type);
         chip->setChipIdentifier(identifier);
         return chip;
     }
 
-    boost::shared_ptr<Chip> ReaderUnit::createChip(std::string type)
+    std::shared_ptr<Chip> ReaderUnit::createChip(std::string type)
     {
-        boost::shared_ptr<Chip> ret = LibraryManager::getInstance()->getCard(type);
+        std::shared_ptr<Chip> ret = LibraryManager::getInstance()->getCard(type);
 
         if (!ret)
         {
@@ -252,7 +252,7 @@ namespace logicalaccess
         return ret;
     }
 
-    boost::shared_ptr<ReaderCardAdapter> ReaderUnit::getDefaultReaderCardAdapter()
+    std::shared_ptr<ReaderCardAdapter> ReaderUnit::getDefaultReaderCardAdapter()
     {
         if (d_defaultReaderCardAdapter)
         {
@@ -269,22 +269,22 @@ namespace logicalaccess
         return d_defaultReaderCardAdapter;
     }
 
-    void ReaderUnit::setDefaultReaderCardAdapter(boost::shared_ptr<ReaderCardAdapter> defaultRca)
+    void ReaderUnit::setDefaultReaderCardAdapter(std::shared_ptr<ReaderCardAdapter> defaultRca)
     {
         d_defaultReaderCardAdapter = defaultRca;
     }
 
-    boost::shared_ptr<DataTransport> ReaderUnit::getDataTransport() const
+    std::shared_ptr<DataTransport> ReaderUnit::getDataTransport() const
     {
         return d_dataTransport;
     }
 
-    void ReaderUnit::setDataTransport(boost::shared_ptr<DataTransport> dataTransport)
+    void ReaderUnit::setDataTransport(std::shared_ptr<DataTransport> dataTransport)
     {
         d_dataTransport = dataTransport;
     }
 
-    boost::shared_ptr<ReaderUnitConfiguration> ReaderUnit::getConfiguration()
+    std::shared_ptr<ReaderUnitConfiguration> ReaderUnit::getConfiguration()
     {
         //LOG(LogLevel::INFOS) << "Getting reader unit configuration...");
         if (d_readerUnitConfig)
@@ -295,7 +295,7 @@ namespace logicalaccess
         return d_readerUnitConfig;
     }
 
-    void ReaderUnit::setConfiguration(boost::shared_ptr<ReaderUnitConfiguration> config)
+    void ReaderUnit::setConfiguration(std::shared_ptr<ReaderUnitConfiguration> config)
     {
         d_readerUnitConfig = config;
     }
@@ -325,7 +325,7 @@ namespace logicalaccess
         disconnectFromReader();
         d_readerUnitConfig->unSerialize(node.get_child(d_readerUnitConfig->getDefaultXmlNodeName()));
         std::string transportType = node.get_child("TransportType").get_value<std::string>();
-        boost::shared_ptr<DataTransport> dataTransport = LibraryManager::getInstance()->getDataTransport(transportType);
+        std::shared_ptr<DataTransport> dataTransport = LibraryManager::getInstance()->getDataTransport(transportType);
         // Cannot create data transport instance from xml, use default one
         if (!dataTransport)
         {

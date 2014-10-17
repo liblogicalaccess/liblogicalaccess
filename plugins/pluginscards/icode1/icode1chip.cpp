@@ -21,9 +21,9 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<LocationNode> ICode1Chip::getRootLocationNode()
+    std::shared_ptr<LocationNode> ICode1Chip::getRootLocationNode()
     {
-        boost::shared_ptr<LocationNode> rootNode;
+        std::shared_ptr<LocationNode> rootNode;
         rootNode.reset(new LocationNode());
 
         rootNode->setName("iCode1");

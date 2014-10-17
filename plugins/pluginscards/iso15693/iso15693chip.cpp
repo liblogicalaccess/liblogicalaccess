@@ -32,15 +32,15 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<LocationNode> ISO15693Chip::getRootLocationNode()
+    std::shared_ptr<LocationNode> ISO15693Chip::getRootLocationNode()
     {
-        boost::shared_ptr<LocationNode> rootNode;
+        std::shared_ptr<LocationNode> rootNode;
         rootNode.reset(new LocationNode());
 
         rootNode->setName("ISO 15693");
         rootNode->setHasProperties(true);
 
-        boost::shared_ptr<ISO15693Location> rootLocation;
+        std::shared_ptr<ISO15693Location> rootLocation;
         rootLocation.reset(new ISO15693Location());
         //FIXME: We need to add a specific property for this
         rootLocation->block = static_cast<int>(-1);
@@ -54,7 +54,7 @@ namespace logicalaccess
                 char tmpName[255];
                 for (int i = 0; i < sysinfo.nbBlocks; i++)
                 {
-                    boost::shared_ptr<LocationNode> blockNode;
+                    std::shared_ptr<LocationNode> blockNode;
                     blockNode.reset(new LocationNode());
 
                     sprintf(tmpName, "Block %d", i);
@@ -63,7 +63,7 @@ namespace logicalaccess
                     blockNode->setHasProperties(true);
                     blockNode->setLength(sysinfo.blockSize);
 
-                    boost::shared_ptr<ISO15693Location> blockLocation;
+                    std::shared_ptr<ISO15693Location> blockLocation;
                     blockLocation.reset(new ISO15693Location());
                     blockLocation->block = i;
                     blockNode->setLocation(blockLocation);
@@ -77,9 +77,9 @@ namespace logicalaccess
         return rootNode;
     }
 
-    boost::shared_ptr<CardService> ISO15693Chip::getService(CardServiceType serviceType)
+    std::shared_ptr<CardService> ISO15693Chip::getService(CardServiceType serviceType)
     {
-        boost::shared_ptr<CardService> service;
+        std::shared_ptr<CardService> service;
 
         switch (serviceType)
         {

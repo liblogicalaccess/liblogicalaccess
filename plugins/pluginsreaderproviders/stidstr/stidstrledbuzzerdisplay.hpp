@@ -85,7 +85,7 @@ namespace logicalaccess
          */
         void setPort(bool red, bool green, bool buzzer);
 
-        boost::shared_ptr<STidSTRReaderCardAdapter> getSTidSTRReaderCardAdapter() { return boost::dynamic_pointer_cast<STidSTRReaderCardAdapter>(getReaderCardAdapter()); };
+        std::shared_ptr<STidSTRReaderCardAdapter> getSTidSTRReaderCardAdapter() { return std::dynamic_pointer_cast<STidSTRReaderCardAdapter>(getReaderCardAdapter()); };
 
     protected:
 

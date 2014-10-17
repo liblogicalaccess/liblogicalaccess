@@ -116,12 +116,12 @@ namespace logicalaccess
         }
     }
 
-    void Key::setKeyStorage(boost::shared_ptr<KeyStorage> key_storage)
+    void Key::setKeyStorage(std::shared_ptr<KeyStorage> key_storage)
     {
         d_key_storage = key_storage;
     }
 
-    boost::shared_ptr<KeyStorage> Key::getKeyStorage() const
+    std::shared_ptr<KeyStorage> Key::getKeyStorage() const
     {
         return d_key_storage;
     }

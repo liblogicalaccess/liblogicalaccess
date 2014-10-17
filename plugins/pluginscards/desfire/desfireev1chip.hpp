@@ -36,27 +36,27 @@ namespace logicalaccess
          * \brief Get the root location node.
          * \return The root location node.
          */
-        virtual boost::shared_ptr<LocationNode> getRootLocationNode();
+        virtual std::shared_ptr<LocationNode> getRootLocationNode();
 
         /**
          * \brief Get the application location information.
          * \return The location.
          */
-        virtual boost::shared_ptr<DESFireLocation> getApplicationLocation();
+        virtual std::shared_ptr<DESFireLocation> getApplicationLocation();
 
-        virtual boost::shared_ptr<CardService> getService(CardServiceType serviceType);
+        virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
 
         /**
          * \brief Get the DESFire card provider for I/O access.
          * \return The DESFire card provider.
          */
-        boost::shared_ptr<DESFireEV1Commands> getDESFireEV1Commands() { return boost::dynamic_pointer_cast<DESFireEV1Commands>(getCommands()); };
+        std::shared_ptr<DESFireEV1Commands> getDESFireEV1Commands() { return std::dynamic_pointer_cast<DESFireEV1Commands>(getCommands()); };
 
         /**
          * \brief Get the DESFire EV1 profile.
          * \return The DESFire EV1 profile.
          */
-        boost::shared_ptr<DESFireEV1Profile> getDESFireEV1Profile() { return boost::dynamic_pointer_cast<DESFireEV1Profile>(getProfile()); };
+        std::shared_ptr<DESFireEV1Profile> getDESFireEV1Profile() { return std::dynamic_pointer_cast<DESFireEV1Profile>(getProfile()); };
 
     protected:
     };

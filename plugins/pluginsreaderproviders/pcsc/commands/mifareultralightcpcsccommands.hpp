@@ -33,7 +33,7 @@ namespace logicalaccess
          * \brief Authenticate to the chip.
          * \param authkey The authentication key.
          */
-        virtual void authenticate(boost::shared_ptr<TripleDESKey> authkey);
+        virtual void authenticate(std::shared_ptr<TripleDESKey> authkey);
 
     protected:
 

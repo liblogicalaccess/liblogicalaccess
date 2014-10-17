@@ -53,30 +53,30 @@ namespace logicalaccess
          * \brief Get the root location node.
          * \return The root location node.
          */
-        virtual boost::shared_ptr<LocationNode> getRootLocationNode();
+        virtual std::shared_ptr<LocationNode> getRootLocationNode();
 
         /**
          * \brief Get a card service for this chip.
          * \param serviceType The card service type.
          * \return The card service.
          */
-        virtual boost::shared_ptr<CardService> getService(CardServiceType serviceType);
+        virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
 
         /**
          * \brief Get the Mifare Ultralight commands.
          * \return The Mifare Ultralight commands.
          */
-        boost::shared_ptr<MifareUltralightCommands> getMifareUltralightCommands() { return boost::dynamic_pointer_cast<MifareUltralightCommands>(getCommands()); };
+        std::shared_ptr<MifareUltralightCommands> getMifareUltralightCommands() { return std::dynamic_pointer_cast<MifareUltralightCommands>(getCommands()); };
 
         /**
          * \brief Get the Mifare Ultralight profile.
          * \return The Mifare Ultralight profile.
          */
-        boost::shared_ptr<MifareUltralightProfile> getMifareUltralightProfile() { return boost::dynamic_pointer_cast<MifareUltralightProfile>(getProfile()); };
+        std::shared_ptr<MifareUltralightProfile> getMifareUltralightProfile() { return std::dynamic_pointer_cast<MifareUltralightProfile>(getProfile()); };
 
     protected:
 
-        void addPageNode(boost::shared_ptr<LocationNode> rootNode, int page);
+        void addPageNode(std::shared_ptr<LocationNode> rootNode, int page);
     };
 }
 

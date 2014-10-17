@@ -38,7 +38,7 @@ namespace logicalaccess
          * \brief Create default Twic location.
          * \return Default Twic location.
          */
-        virtual boost::shared_ptr<Location> createLocation() const;
+        virtual std::shared_ptr<Location> createLocation() const;
 
         /**
          * \brief Get the supported format list.

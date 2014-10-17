@@ -1,5 +1,5 @@
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "deisterreaderprovider.hpp"
 
@@ -21,7 +21,7 @@ extern "C"
         return (char *)"Deister";
     }
 
-    LIBLOGICALACCESS_API void getDeisterReader(boost::shared_ptr<logicalaccess::ReaderProvider>* rp)
+    LIBLOGICALACCESS_API void getDeisterReader(std::shared_ptr<logicalaccess::ReaderProvider>* rp)
     {
         if (rp != NULL)
         {

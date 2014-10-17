@@ -81,7 +81,7 @@ namespace logicalaccess
         /**
          * \brief Get the client socket.
          */
-        boost::shared_ptr<boost::asio::ip::udp::socket> getSocket() const;
+        std::shared_ptr<boost::asio::ip::udp::socket> getSocket() const;
 
         /**
          * \brief Get the ip address.
@@ -116,7 +116,7 @@ namespace logicalaccess
         /**
          * \brief Client socket use to communicate with the reader.
          */
-        boost::shared_ptr<boost::asio::ip::udp::socket> d_socket;
+        std::shared_ptr<boost::asio::ip::udp::socket> d_socket;
 
         /**
          * \brief Provides core I/O functionality

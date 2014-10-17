@@ -72,25 +72,25 @@ namespace logicalaccess
          * \param type The card type.
          * \return The chip.
          */
-        virtual boost::shared_ptr<Chip> createChip(std::string type);
+        virtual std::shared_ptr<Chip> createChip(std::string type);
 
         /**
          * \brief Get the first and/or most accurate chip found.
          * \return The single chip.
          */
-        virtual boost::shared_ptr<Chip> getSingleChip();
+        virtual std::shared_ptr<Chip> getSingleChip();
 
         /**
          * \brief Get chip available in the RFID rang.
          * \return The chip list.
          */
-        virtual std::vector<boost::shared_ptr<Chip> > getChipList();
+        virtual std::vector<std::shared_ptr<Chip> > getChipList();
 
         /**
          * \brief Get the default Admitto reader/card adapter.
          * \return The default Admitto reader/card adapter.
          */
-        virtual boost::shared_ptr<AdmittoReaderCardAdapter> getDefaultAdmittoReaderCardAdapter();
+        virtual std::shared_ptr<AdmittoReaderCardAdapter> getDefaultAdmittoReaderCardAdapter();
 
         /**
          * \brief Connect to the card.
@@ -153,13 +153,13 @@ namespace logicalaccess
          * \brief Get the Admitto reader unit configuration.
          * \return The Admitto reader unit configuration.
          */
-        boost::shared_ptr<AdmittoReaderUnitConfiguration> getAdmittoConfiguration() { return boost::dynamic_pointer_cast<AdmittoReaderUnitConfiguration>(getConfiguration()); };
+        std::shared_ptr<AdmittoReaderUnitConfiguration> getAdmittoConfiguration() { return std::dynamic_pointer_cast<AdmittoReaderUnitConfiguration>(getConfiguration()); };
 
         /**
          * \brief Get the Admitto reader provider.
          * \return The Admitto reader provider.
          */
-        boost::shared_ptr<AdmittoReaderProvider> getAdmittoReaderProvider() const;
+        std::shared_ptr<AdmittoReaderProvider> getAdmittoReaderProvider() const;
 
     protected:
     };

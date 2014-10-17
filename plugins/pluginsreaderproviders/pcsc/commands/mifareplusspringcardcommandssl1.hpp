@@ -43,7 +43,7 @@ namespace logicalaccess
          * \param key The key.
          * \param keytype The mifare plus key type.
          */
-        virtual void loadKey(boost::shared_ptr<Location> location, boost::shared_ptr<Key> key, MifarePlusKeyType keytype);
+        virtual void loadKey(std::shared_ptr<Location> location, std::shared_ptr<Key> key, MifarePlusKeyType keytype);
 
         /**
          * \brief Authenticate a block, given a key number.
@@ -52,30 +52,30 @@ namespace logicalaccess
          * \param keytype The mifare plus key type.
          * \return true if authenticated, false otherwise.
          */
-        virtual void authenticate(unsigned char blockno, boost::shared_ptr<KeyStorage> key_storage, MifarePlusKeyType keytype);
+        virtual void authenticate(unsigned char blockno, std::shared_ptr<KeyStorage> key_storage, MifarePlusKeyType keytype);
 
         /**
         * \brief Convert MifarePlus key to Mifare key
         */
-        boost::shared_ptr<MifareKey> ConvertKey(boost::shared_ptr<Key> key);
+        std::shared_ptr<MifareKey> ConvertKey(std::shared_ptr<Key> key);
 
         /**
         * \brief Switch to SL2
         * \param key The switch SL2 AES key
         */
-        virtual bool SwitchLevel2(boost::shared_ptr<MifarePlusKey> key);
+        virtual bool SwitchLevel2(std::shared_ptr<MifarePlusKey> key);
 
         /**
         * \brief Switch to SL3
         * \param key The switch SL3 AES key
         */
-        virtual bool SwitchLevel3(boost::shared_ptr<MifarePlusKey> key);
+        virtual bool SwitchLevel3(std::shared_ptr<MifarePlusKey> key);
 
         /**
         * \brief authenticate to SL1 with AES security
         * \param key The SL1 specific AES key
         */
-        virtual bool AESAuthenticate(boost::shared_ptr<MifarePlusKey> key);
+        virtual bool AESAuthenticate(std::shared_ptr<MifarePlusKey> key);
     };
 }
 

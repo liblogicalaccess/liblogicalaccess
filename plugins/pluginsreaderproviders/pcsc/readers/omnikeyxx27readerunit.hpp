@@ -43,7 +43,7 @@ namespace logicalaccess
          * \param type The card type.
          * \return The PC/SC reader/card adapter.
          */
-        virtual boost::shared_ptr<ReaderCardAdapter> getReaderCardAdapter(std::string type);
+        virtual std::shared_ptr<ReaderCardAdapter> getReaderCardAdapter(std::string type);
 
     protected:
     };

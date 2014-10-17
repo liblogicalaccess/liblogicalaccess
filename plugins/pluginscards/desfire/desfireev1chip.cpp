@@ -23,17 +23,17 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<LocationNode> DESFireEV1Chip::getRootLocationNode()
+    std::shared_ptr<LocationNode> DESFireEV1Chip::getRootLocationNode()
     {
-        boost::shared_ptr<LocationNode> rootNode = DESFireChip::getRootLocationNode();
+        std::shared_ptr<LocationNode> rootNode = DESFireChip::getRootLocationNode();
         rootNode->setName("Mifare DESFire EV1");
 
         return rootNode;
     }
 
-    boost::shared_ptr<DESFireLocation> DESFireEV1Chip::getApplicationLocation()
+    std::shared_ptr<DESFireLocation> DESFireEV1Chip::getApplicationLocation()
     {
-        boost::shared_ptr<DESFireEV1Location> location(new DESFireEV1Location());
+        std::shared_ptr<DESFireEV1Location> location(new DESFireEV1Location());
 
         try
         {
@@ -55,9 +55,9 @@ namespace logicalaccess
         return location;
     }
 
-    boost::shared_ptr<CardService> DESFireEV1Chip::getService(CardServiceType serviceType)
+    std::shared_ptr<CardService> DESFireEV1Chip::getService(CardServiceType serviceType)
     {
-        boost::shared_ptr<CardService> service;
+        std::shared_ptr<CardService> service;
 
         switch (serviceType)
         {

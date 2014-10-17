@@ -44,20 +44,20 @@ namespace logicalaccess
          * \brief Get the reader card adapter.
          * \return The reader card adapter.
          */
-        boost::shared_ptr<ReaderCardAdapter> getReaderCardAdapter() const { return d_readerCardAdapter; };
+        std::shared_ptr<ReaderCardAdapter> getReaderCardAdapter() const { return d_readerCardAdapter; };
 
         /**
          * \brief Set the reader card adapter.
          * \param adapter The reader card adapter.
          */
-        void setReaderCardAdapter(boost::shared_ptr<ReaderCardAdapter> adapter) { d_readerCardAdapter = adapter; };
+        void setReaderCardAdapter(std::shared_ptr<ReaderCardAdapter> adapter) { d_readerCardAdapter = adapter; };
 
     protected:
 
         /**
          * \brief The reader card adapter.
          */
-        boost::shared_ptr<ReaderCardAdapter> d_readerCardAdapter;
+        std::shared_ptr<ReaderCardAdapter> d_readerCardAdapter;
     };
 }
 

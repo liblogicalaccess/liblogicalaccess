@@ -112,25 +112,25 @@ namespace logicalaccess
          * \brief Get the key used for HMAC signature.
          * \return The key.
          */
-        boost::shared_ptr<HMAC1Key> getHMACKey() const;
+        std::shared_ptr<HMAC1Key> getHMACKey() const;
 
         /**
          * \brief Set the key used for HMAC signature.
          * \param key The key.
          */
-        void setHMACKey(boost::shared_ptr<HMAC1Key> key);
+        void setHMACKey(std::shared_ptr<HMAC1Key> key);
 
         /**
          * \brief Get the key used for AES enciphering.
          * \return The key.
          */
-        boost::shared_ptr<AES128Key> getAESKey() const;
+        std::shared_ptr<AES128Key> getAESKey() const;
 
         /**
          * \brief Set the key used for AES enciphering.
          * \param key The key.
          */
-        void setAESKey(boost::shared_ptr<AES128Key> key);
+        void setAESKey(std::shared_ptr<AES128Key> key);
 
     protected:
 
@@ -152,12 +152,12 @@ namespace logicalaccess
         /**
          * \brief The key used for HMAC signature.
          */
-        boost::shared_ptr<HMAC1Key> d_key_hmac;
+        std::shared_ptr<HMAC1Key> d_key_hmac;
 
         /**
          * \brief The key used for AES enciphering.
          */
-        boost::shared_ptr<AES128Key> d_key_aes;
+        std::shared_ptr<AES128Key> d_key_aes;
     };
 }
 

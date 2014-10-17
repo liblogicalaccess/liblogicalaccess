@@ -47,7 +47,7 @@ namespace logicalaccess
     {
         MifareUltralightAccessInfo::unSerialize(node.get_child(MifareUltralightAccessInfo::getDefaultXmlNodeName()));
 
-        boost::dynamic_pointer_cast<XmlSerializable>(key)->unSerialize(node.get_child("Key"), "");
+        std::dynamic_pointer_cast<XmlSerializable>(key)->unSerialize(node.get_child("Key"), "");
     }
 
     std::string MifareUltralightCAccessInfo::getDefaultXmlNodeName() const

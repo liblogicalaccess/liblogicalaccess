@@ -11,15 +11,15 @@ namespace logicalaccess
     MifarePlusSL1Profile::MifarePlusSL1Profile()
         : MifarePlusProfile()
     {
-        d_sectorKeys = new boost::shared_ptr<MifarePlusKey>[(getNbSectors() + 1) * 2];
+        d_sectorKeys = new std::shared_ptr<MifarePlusKey>[(getNbSectors() + 1) * 2];
         for (unsigned int i = 0; i <= getNbSectors(); i++)
         {
-            d_sectorKeys[i * 2] = boost::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_CRYPTO1_KEY_SIZE));
-            d_sectorKeys[i * 2 + 1] = boost::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_CRYPTO1_KEY_SIZE));
+            d_sectorKeys[i * 2] = std::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_CRYPTO1_KEY_SIZE));
+            d_sectorKeys[i * 2 + 1] = std::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_CRYPTO1_KEY_SIZE));
         }
-        d_switchL2Key = boost::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_AES_KEY_SIZE));
-        d_switchL3Key = boost::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_AES_KEY_SIZE));
-        d_SL1AesKey = boost::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_AES_KEY_SIZE));
+        d_switchL2Key = std::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_AES_KEY_SIZE));
+        d_switchL3Key = std::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_AES_KEY_SIZE));
+        d_SL1AesKey = std::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_AES_KEY_SIZE));
 
         clearKeys();
     }
@@ -41,11 +41,11 @@ namespace logicalaccess
         d_SL1AesKey.reset();
     }
 
-    boost::shared_ptr<MifarePlusKey> MifarePlusSL1Profile::getKey(int index, MifarePlusKeyType keytype) const
+    std::shared_ptr<MifarePlusKey> MifarePlusSL1Profile::getKey(int index, MifarePlusKeyType keytype) const
     {
         if (index > static_cast<int>(getNbSectors()) && (keytype == KT_KEY_CRYPTO1_A || keytype == KT_KEY_CRYPTO1_B))
         {
-            return boost::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_CRYPTO1_KEY_SIZE));
+            return std::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_CRYPTO1_KEY_SIZE));
         }
 
         switch (keytype)
@@ -72,12 +72,12 @@ namespace logicalaccess
         }
         default:
         {
-            return boost::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_AES_KEY_SIZE));
+            return std::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_AES_KEY_SIZE));
         }
         }
     }
 
-    void MifarePlusSL1Profile::setKey(int index, MifarePlusKeyType keytype, boost::shared_ptr<MifarePlusKey> /*key*/)
+    void MifarePlusSL1Profile::setKey(int index, MifarePlusKeyType keytype, std::shared_ptr<MifarePlusKey> /*key*/)
     {
         if (index > static_cast<int>(getNbSectors()) && (keytype == KT_KEY_CRYPTO1_A || keytype == KT_KEY_CRYPTO1_B))
         {
@@ -162,14 +162,14 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Index is greater than max sector number.");
         }
 
-        boost::shared_ptr<MifarePlusKey> key;
+        std::shared_ptr<MifarePlusKey> key;
         if (used && (keytype == KT_KEY_CRYPTO1_A || keytype == KT_KEY_CRYPTO1_B))
         {
-            key = boost::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_CRYPTO1_KEY_SIZE));
+            key = std::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_CRYPTO1_KEY_SIZE));
         }
         else if (used)
         {
-            key = boost::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_AES_KEY_SIZE));
+            key = std::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_AES_KEY_SIZE));
         }
 
         /*		switch (keytype)
@@ -215,13 +215,13 @@ namespace logicalaccess
         d_SL1AesKey.reset(new MifarePlusKey(MIFARE_PLUS_DEFAULT_AESKEY, MIFARE_PLUS_AES_KEY_SIZE, MIFARE_PLUS_AES_KEY_SIZE));
     }
 
-    void MifarePlusSL1Profile::setKeyAt(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> AccessInfo)
+    void MifarePlusSL1Profile::setKeyAt(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> AccessInfo)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
         EXCEPTION_ASSERT_WITH_LOG(AccessInfo, std::invalid_argument, "AccessInfo cannot be null.");
 
-        boost::shared_ptr<MifarePlusLocation> dfLocation = boost::dynamic_pointer_cast<MifarePlusLocation>(location);
-        boost::shared_ptr<MifarePlusAccessInfo> dfAi = boost::dynamic_pointer_cast<MifarePlusAccessInfo>(AccessInfo);
+        std::shared_ptr<MifarePlusLocation> dfLocation = std::dynamic_pointer_cast<MifarePlusLocation>(location);
+        std::shared_ptr<MifarePlusAccessInfo> dfAi = std::dynamic_pointer_cast<MifarePlusAccessInfo>(AccessInfo);
 
         EXCEPTION_ASSERT_WITH_LOG(dfLocation, std::invalid_argument, "location must be a MifareLocation.");
         EXCEPTION_ASSERT_WITH_LOG(dfAi, std::invalid_argument, "AccessInfo must be a MifareAccessInfo.");
@@ -248,9 +248,9 @@ namespace logicalaccess
         }
     }
 
-    boost::shared_ptr<AccessInfo> MifarePlusSL1Profile::createAccessInfo() const
+    std::shared_ptr<AccessInfo> MifarePlusSL1Profile::createAccessInfo() const
     {
-        boost::shared_ptr<MifarePlusAccessInfo> ret;
+        std::shared_ptr<MifarePlusAccessInfo> ret;
         ret.reset(new MifarePlusAccessInfo(MIFARE_PLUS_CRYPTO1_KEY_SIZE));
         return ret;
     }

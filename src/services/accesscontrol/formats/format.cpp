@@ -33,20 +33,20 @@ namespace logicalaccess
     {
     }
 
-    bool FieldSortPredicate(const boost::shared_ptr<DataField>& lhs, const boost::shared_ptr<DataField>& rhs)
+    bool FieldSortPredicate(const std::shared_ptr<DataField>& lhs, const std::shared_ptr<DataField>& rhs)
     {
         bool before;
-        if (boost::dynamic_pointer_cast<ParityDataField>(lhs))
+        if (std::dynamic_pointer_cast<ParityDataField>(lhs))
         {
-            if (boost::dynamic_pointer_cast<ParityDataField>(rhs))
+            if (std::dynamic_pointer_cast<ParityDataField>(rhs))
             {
-                if (boost::dynamic_pointer_cast<ParityDataField>(rhs)->checkFieldDependecy(lhs))
+                if (std::dynamic_pointer_cast<ParityDataField>(rhs)->checkFieldDependecy(lhs))
                 {
                     before = true;
                 }
                 else
                 {
-                    if (boost::dynamic_pointer_cast<ParityDataField>(lhs)->checkFieldDependecy(rhs))
+                    if (std::dynamic_pointer_cast<ParityDataField>(lhs)->checkFieldDependecy(rhs))
                     {
                         before = false;
                     }
@@ -63,7 +63,7 @@ namespace logicalaccess
         }
         else
         {
-            if (boost::dynamic_pointer_cast<ParityDataField>(rhs))
+            if (std::dynamic_pointer_cast<ParityDataField>(rhs))
             {
                 before = true;
             }
@@ -100,9 +100,9 @@ namespace logicalaccess
         return parity;
     }
 
-    boost::shared_ptr<Format> Format::getByFormatType(FormatType type)
+    std::shared_ptr<Format> Format::getByFormatType(FormatType type)
     {
-        boost::shared_ptr<Format> ret;
+        std::shared_ptr<Format> ret;
         switch (type)
         {
         case FT_WIEGAND26:
@@ -168,26 +168,26 @@ namespace logicalaccess
     {
         std::vector<unsigned char> ret;
 
-        std::list<boost::shared_ptr<DataField> > fields = getFieldList();
-        for (std::list<boost::shared_ptr<DataField> >::iterator i = fields.begin(); i != fields.end(); ++i)
+        std::list<std::shared_ptr<DataField> > fields = getFieldList();
+        for (std::list<std::shared_ptr<DataField> >::iterator i = fields.begin(); i != fields.end(); ++i)
         {
-            boost::shared_ptr<ValueDataField> vfield = boost::dynamic_pointer_cast<ValueDataField>(*i);
+            std::shared_ptr<ValueDataField> vfield = std::dynamic_pointer_cast<ValueDataField>(*i);
             if (vfield)
             {
                 if (vfield->getIsIdentifier())
                 {
-                    if (boost::dynamic_pointer_cast<ASCIIDataField>(vfield))
+                    if (std::dynamic_pointer_cast<ASCIIDataField>(vfield))
                     {
-                        BufferHelper::setString(ret, boost::dynamic_pointer_cast<ASCIIDataField>(vfield)->getValue());
+                        BufferHelper::setString(ret, std::dynamic_pointer_cast<ASCIIDataField>(vfield)->getValue());
                     }
-                    else if (boost::dynamic_pointer_cast<BinaryDataField>(vfield))
+                    else if (std::dynamic_pointer_cast<BinaryDataField>(vfield))
                     {
-                        std::vector<unsigned char> bindata = boost::dynamic_pointer_cast<BinaryDataField>(vfield)->getValue();
+                        std::vector<unsigned char> bindata = std::dynamic_pointer_cast<BinaryDataField>(vfield)->getValue();
                         ret.insert(ret.end(), bindata.begin(), bindata.end());
                     }
-                    else if (boost::dynamic_pointer_cast<NumberDataField>(vfield))
+                    else if (std::dynamic_pointer_cast<NumberDataField>(vfield))
                     {
-                        BufferHelper::setUInt64(ret, boost::dynamic_pointer_cast<NumberDataField>(vfield)->getValue());
+                        BufferHelper::setUInt64(ret, std::dynamic_pointer_cast<NumberDataField>(vfield)->getValue());
                     }
                 }
             }
@@ -207,9 +207,9 @@ namespace logicalaccess
     std::vector<std::string> Format::getValuesFieldList() const
     {
         std::vector<std::string> fields;
-        for (std::list<boost::shared_ptr<DataField> >::const_iterator i = d_fieldList.begin(); i != d_fieldList.end(); ++i)
+        for (std::list<std::shared_ptr<DataField> >::const_iterator i = d_fieldList.begin(); i != d_fieldList.end(); ++i)
         {
-            boost::shared_ptr<ValueDataField> vfield = boost::dynamic_pointer_cast<ValueDataField>(*i);
+            std::shared_ptr<ValueDataField> vfield = std::dynamic_pointer_cast<ValueDataField>(*i);
             if (vfield)
             {
                 if (!vfield->getIsFixedField())
@@ -225,7 +225,7 @@ namespace logicalaccess
     {
         unsigned int length = 0;
 
-        for (std::list<boost::shared_ptr<DataField> >::const_iterator i = d_fieldList.begin(); length == 0 && i != d_fieldList.end(); ++i)
+        for (std::list<std::shared_ptr<DataField> >::const_iterator i = d_fieldList.begin(); length == 0 && i != d_fieldList.end(); ++i)
         {
             if ((*i)->getName() == field)
             {
@@ -236,11 +236,11 @@ namespace logicalaccess
         return length;
     }
 
-    boost::shared_ptr<DataField> Format::getFieldFromName(std::string field) const
+    std::shared_ptr<DataField> Format::getFieldFromName(std::string field) const
     {
-        boost::shared_ptr<DataField> ret;
+        std::shared_ptr<DataField> ret;
 
-        for (std::list<boost::shared_ptr<DataField> >::const_iterator i = d_fieldList.begin(); !ret && i != d_fieldList.end(); ++i)
+        for (std::list<std::shared_ptr<DataField> >::const_iterator i = d_fieldList.begin(); !ret && i != d_fieldList.end(); ++i)
         {
             if ((*i)->getName() == field)
             {
@@ -251,13 +251,13 @@ namespace logicalaccess
         return ret;
     }
 
-    std::list<boost::shared_ptr<DataField> > Format::getFieldList()
+    std::list<std::shared_ptr<DataField> > Format::getFieldList()
     {
         d_fieldList.sort(FieldSortPredicate);
         return d_fieldList;
     }
 
-    void Format::setFieldList(std::list<boost::shared_ptr<DataField> > fields)
+    void Format::setFieldList(std::list<std::shared_ptr<DataField> > fields)
     {
         d_fieldList = fields;
     }

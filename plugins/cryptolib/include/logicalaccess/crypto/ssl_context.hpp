@@ -9,7 +9,7 @@
 
 #include <string>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #ifdef _WINDOWS
 #ifndef WIN32_LEAN_AND_MEAN
@@ -121,7 +121,7 @@ namespace logicalaccess
              * \brief Get the raw pointer.
              * \return The raw pointer.
              */
-            inline boost::shared_ptr<SSL_CTX> getRaw()
+            inline std::shared_ptr<SSL_CTX> getRaw()
             {
                 return d_ctx;
             }
@@ -137,7 +137,7 @@ namespace logicalaccess
              * \brief Constructor.
              * \param ctx The SSL context to use. If ctx is NULL, the behavior is undefined.
              */
-            SSLContext(boost::shared_ptr<SSL_CTX> ctx);
+            SSLContext(std::shared_ptr<SSL_CTX> ctx);
 
             /**
              * \brief The boolean test.
@@ -159,7 +159,7 @@ namespace logicalaccess
             /**
              * \brief The internal pointer.
              */
-            boost::shared_ptr<SSL_CTX> d_ctx;
+            std::shared_ptr<SSL_CTX> d_ctx;
 
             friend class SecureSocket;
             friend class SSLObject;

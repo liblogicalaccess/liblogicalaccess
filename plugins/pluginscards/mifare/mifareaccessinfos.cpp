@@ -170,8 +170,8 @@ namespace logicalaccess
 
     void MifareAccessInfo::unSerialize(boost::property_tree::ptree& node)
     {
-        boost::dynamic_pointer_cast<XmlSerializable>(keyA)->unSerialize(node.get_child("KeyA"), "");
-        boost::dynamic_pointer_cast<XmlSerializable>(keyB)->unSerialize(node.get_child("KeyB"), "");
+        std::dynamic_pointer_cast<XmlSerializable>(keyA)->unSerialize(node.get_child("KeyA"), "");
+        std::dynamic_pointer_cast<XmlSerializable>(keyB)->unSerialize(node.get_child("KeyB"), "");
 
         string sabstr = node.get_child("SectorAccessBits").get_value<std::string>();
         unsigned char buf[3];
@@ -194,8 +194,8 @@ namespace logicalaccess
         if (!modnode.empty())
         {
             useMAD = modnode.get_child("Use").get_value<bool>();
-            boost::dynamic_pointer_cast<XmlSerializable>(madKeyA)->unSerialize(modnode.get_child("MADKeyA"), "");
-            boost::dynamic_pointer_cast<XmlSerializable>(madKeyB)->unSerialize(modnode.get_child("MADKeyB"), "");
+            std::dynamic_pointer_cast<XmlSerializable>(madKeyA)->unSerialize(modnode.get_child("MADKeyA"), "");
+            std::dynamic_pointer_cast<XmlSerializable>(madKeyB)->unSerialize(modnode.get_child("MADKeyB"), "");
         }
     }
 

@@ -29,9 +29,9 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<LocationNode> GenericTagChip::getRootLocationNode()
+    std::shared_ptr<LocationNode> GenericTagChip::getRootLocationNode()
     {
-        boost::shared_ptr<LocationNode> rootNode;
+        std::shared_ptr<LocationNode> rootNode;
         rootNode.reset(new LocationNode());
 
         rootNode->setName("RFID Tag");
@@ -39,9 +39,9 @@ namespace logicalaccess
         return rootNode;
     }
 
-    boost::shared_ptr<CardService> GenericTagChip::getService(CardServiceType serviceType)
+    std::shared_ptr<CardService> GenericTagChip::getService(CardServiceType serviceType)
     {
-        boost::shared_ptr<CardService> service;
+        std::shared_ptr<CardService> service;
 
         switch (serviceType)
         {

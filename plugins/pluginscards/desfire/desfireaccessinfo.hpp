@@ -68,22 +68,22 @@ namespace logicalaccess
         /**
          * \brief The master card key.
          */
-        boost::shared_ptr<DESFireKey> masterCardKey;
+        std::shared_ptr<DESFireKey> masterCardKey;
 
         /**
          * \brief The master application key.
          */
-        boost::shared_ptr<DESFireKey> masterApplicationKey;
+        std::shared_ptr<DESFireKey> masterApplicationKey;
 
         /**
          * \brief The read key.
          */
-        boost::shared_ptr<DESFireKey> readKey;
+        std::shared_ptr<DESFireKey> readKey;
 
         /**
          * \brief The write key.
          */
-        boost::shared_ptr<DESFireKey> writeKey;
+        std::shared_ptr<DESFireKey> writeKey;
 
         /**
          * \brief The read key number.

@@ -9,9 +9,9 @@
 
 namespace logicalaccess
 {
-    boost::shared_ptr<MifareUltralightChip> MifareUltralightCommands::getMifareUltralightChip()
+    std::shared_ptr<MifareUltralightChip> MifareUltralightCommands::getMifareUltralightChip()
     {
-        return boost::dynamic_pointer_cast<MifareUltralightChip>(getChip());
+        return std::dynamic_pointer_cast<MifareUltralightChip>(getChip());
     }
 
     size_t MifareUltralightCommands::readPages(int start_page, int stop_page, void* buf, size_t buflen)

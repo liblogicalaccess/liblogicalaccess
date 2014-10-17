@@ -22,14 +22,14 @@ namespace logicalaccess
 
     void DESFireProfile::setDefaultKeys()
     {
-        setKey(0, 0, boost::shared_ptr<DESFireKey>(new DESFireKey(string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
+        setKey(0, 0, std::shared_ptr<DESFireKey>(new DESFireKey(string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
     }
 
-    void DESFireProfile::setDefaultKeysAt(boost::shared_ptr<Location> location)
+    void DESFireProfile::setDefaultKeysAt(std::shared_ptr<Location> location)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 
-        boost::shared_ptr<DESFireLocation> dfLocation = boost::dynamic_pointer_cast<DESFireLocation>(location);
+        std::shared_ptr<DESFireLocation> dfLocation = std::dynamic_pointer_cast<DESFireLocation>(location);
         EXCEPTION_ASSERT_WITH_LOG(dfLocation, std::invalid_argument, "location must be a DESFireLocation.");
 
         // Application (File keys are Application keys)
@@ -54,7 +54,7 @@ namespace logicalaccess
 
     bool DESFireProfile::getKeyUsage(size_t index) const
     {
-        size_t nbKeys = sizeof(d_key) / sizeof(boost::shared_ptr<DESFireKey>);
+        size_t nbKeys = sizeof(d_key) / sizeof(std::shared_ptr<DESFireKey>);
         if (index >= nbKeys)
         {
             return false;
@@ -65,13 +65,13 @@ namespace logicalaccess
 
     void DESFireProfile::setKeyUsage(size_t index, bool used)
     {
-        size_t nbKeys = sizeof(d_key) / sizeof(boost::shared_ptr<DESFireKey>);
+        size_t nbKeys = sizeof(d_key) / sizeof(std::shared_ptr<DESFireKey>);
         if (index >= nbKeys)
         {
             return;
         }
 
-        boost::shared_ptr<DESFireKey> key;
+        std::shared_ptr<DESFireKey> key;
         if (used)
         {
             key.reset(new DESFireKey());
@@ -130,9 +130,9 @@ namespace logicalaccess
         return true;
     }
 
-    boost::shared_ptr<DESFireKey> DESFireProfile::getDefaultKey(DESFireKeyType keyType)
+    std::shared_ptr<DESFireKey> DESFireProfile::getDefaultKey(DESFireKeyType keyType)
     {
-        boost::shared_ptr<DESFireKey> key(new DESFireKey());
+        std::shared_ptr<DESFireKey> key(new DESFireKey());
 
         key->setKeyType(keyType);
         std::vector<unsigned char> buf;
@@ -142,9 +142,9 @@ namespace logicalaccess
         return key;
     }
 
-    boost::shared_ptr<DESFireKey> DESFireProfile::getKey(size_t aid, unsigned char keyno) const
+    std::shared_ptr<DESFireKey> DESFireProfile::getKey(size_t aid, unsigned char keyno) const
     {
-        boost::shared_ptr<DESFireKey> key;
+        std::shared_ptr<DESFireKey> key;
 
         if (checkKeyPos(aid, keyno, false))
         {
@@ -193,7 +193,7 @@ namespace logicalaccess
         return true;
     }
 
-    void DESFireProfile::setKey(size_t aid, unsigned char keyno, boost::shared_ptr<DESFireKey> key)
+    void DESFireProfile::setKey(size_t aid, unsigned char keyno, std::shared_ptr<DESFireKey> key)
     {
         if (!checkKeyPos(aid, keyno, true))
         {
@@ -211,13 +211,13 @@ namespace logicalaccess
         d_key[keyPos] = key;
     }
 
-    void DESFireProfile::setKeyAt(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> AccessInfo)
+    void DESFireProfile::setKeyAt(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> AccessInfo)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
         EXCEPTION_ASSERT_WITH_LOG(AccessInfo, std::invalid_argument, "AccessInfo cannot be null.");
 
-        boost::shared_ptr<DESFireLocation> dfLocation = boost::dynamic_pointer_cast<DESFireLocation>(location);
-        boost::shared_ptr<DESFireAccessInfo> dfAi = boost::dynamic_pointer_cast<DESFireAccessInfo>(AccessInfo);
+        std::shared_ptr<DESFireLocation> dfLocation = std::dynamic_pointer_cast<DESFireLocation>(location);
+        std::shared_ptr<DESFireAccessInfo> dfAi = std::dynamic_pointer_cast<DESFireAccessInfo>(AccessInfo);
 
         EXCEPTION_ASSERT_WITH_LOG(dfLocation, std::invalid_argument, "location must be a DESFireLocation.");
         EXCEPTION_ASSERT_WITH_LOG(dfAi, std::invalid_argument, "AccessInfo must be a DESFireAccessInfo.");
@@ -243,16 +243,16 @@ namespace logicalaccess
         }
     }
 
-    boost::shared_ptr<AccessInfo> DESFireProfile::createAccessInfo() const
+    std::shared_ptr<AccessInfo> DESFireProfile::createAccessInfo() const
     {
-        boost::shared_ptr<DESFireAccessInfo> ret;
+        std::shared_ptr<DESFireAccessInfo> ret;
         ret.reset(new DESFireAccessInfo());
         return ret;
     }
 
-    boost::shared_ptr<Location> DESFireProfile::createLocation() const
+    std::shared_ptr<Location> DESFireProfile::createLocation() const
     {
-        boost::shared_ptr<DESFireLocation> ret;
+        std::shared_ptr<DESFireLocation> ret;
         ret.reset(new DESFireLocation());
         return ret;
     }

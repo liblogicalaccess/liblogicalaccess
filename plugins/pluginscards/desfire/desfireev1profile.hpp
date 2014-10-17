@@ -32,13 +32,13 @@ namespace logicalaccess
         /**
          * \brief Set default keys for the type card in memory at a specific location.
          */
-        virtual void setDefaultKeysAt(boost::shared_ptr<Location> location);
+        virtual void setDefaultKeysAt(std::shared_ptr<Location> location);
 
         /**
          * \brief Create default DESFire location.
          * \return Default DESFire location.
          */
-        virtual boost::shared_ptr<Location> createLocation() const;
+        virtual std::shared_ptr<Location> createLocation() const;
     };
 }
 

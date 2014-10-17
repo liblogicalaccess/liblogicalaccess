@@ -10,7 +10,7 @@
 
 namespace logicalaccess
 {
-    AccessControlCardService::AccessControlCardService(boost::shared_ptr<Chip> chip)
+    AccessControlCardService::AccessControlCardService(std::shared_ptr<Chip> chip)
         : CardService(chip)
     {
     }
@@ -24,7 +24,7 @@ namespace logicalaccess
         return CST_ACCESS_CONTROL;
     }
 
-    boost::shared_ptr<Format> AccessControlCardService::readFormat(boost::shared_ptr<Format> format, boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse)
+    std::shared_ptr<Format> AccessControlCardService::readFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse)
     {
         bool ret = false;
 
@@ -32,10 +32,10 @@ namespace logicalaccess
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location parameter can't be null.");
 
         // By default duplicate the format. Other kind of implementation should override this current method.
-        boost::shared_ptr<Format> formatret = Format::getByFormatType(format->getType());
+        std::shared_ptr<Format> formatret = Format::getByFormatType(format->getType());
         formatret->unSerialize(format->serialize(), "");
 
-        boost::shared_ptr<StorageCardService> storage = boost::dynamic_pointer_cast<StorageCardService>(d_chip->getService(CST_STORAGE));
+        std::shared_ptr<StorageCardService> storage = std::dynamic_pointer_cast<StorageCardService>(d_chip->getService(CST_STORAGE));
         if (storage)
         {
             size_t length = (formatret->getDataLength() + 7) / 8;
@@ -70,14 +70,14 @@ namespace logicalaccess
         return formatret;
     }
 
-    bool AccessControlCardService::writeFormat(boost::shared_ptr<Format> format, boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite)
+    bool AccessControlCardService::writeFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite)
     {
         bool ret = false;
 
         EXCEPTION_ASSERT_WITH_LOG(format, std::invalid_argument, "format to write can't be null.");
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location parameter can't be null.");
 
-        boost::shared_ptr<StorageCardService> storage = boost::dynamic_pointer_cast<StorageCardService>(d_chip->getService(CST_STORAGE));
+        std::shared_ptr<StorageCardService> storage = std::dynamic_pointer_cast<StorageCardService>(d_chip->getService(CST_STORAGE));
         if (storage)
         {
             size_t length = (format->getDataLength() + 7) / 8;

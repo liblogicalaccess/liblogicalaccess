@@ -1,5 +1,5 @@
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "indalachip.hpp"
 
@@ -21,11 +21,11 @@ extern "C"
         return (char *)"Indala";
     }
 
-    LIBLOGICALACCESS_API void getIndalaChip(boost::shared_ptr<logicalaccess::Chip>* chip)
+    LIBLOGICALACCESS_API void getIndalaChip(std::shared_ptr<logicalaccess::Chip>* chip)
     {
         if (chip != NULL)
         {
-            *chip = boost::shared_ptr<logicalaccess::IndalaChip>(new logicalaccess::IndalaChip());
+            *chip = std::shared_ptr<logicalaccess::IndalaChip>(new logicalaccess::IndalaChip());
         }
     }
 

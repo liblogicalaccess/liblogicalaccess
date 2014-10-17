@@ -53,18 +53,18 @@ namespace logicalaccess
          * \brief Get the serial port object.
          * \return The serial port.
          */
-        boost::shared_ptr<SerialPort> getSerialPort() const;
+        std::shared_ptr<SerialPort> getSerialPort() const;
 
         /**
          * \brief Enumate available COM port using CreateFile function.
          * \param ports The list which will contains the available COM port.
          * \return True on success, false otherwise.
          */
-        static bool EnumerateUsingCreateFile(std::vector<boost::shared_ptr<SerialPortXml> >& ports);
+        static bool EnumerateUsingCreateFile(std::vector<std::shared_ptr<SerialPortXml> >& ports);
 
     protected:
 
-        boost::shared_ptr<SerialPort> d_serialport;
+        std::shared_ptr<SerialPort> d_serialport;
     };
 }
 

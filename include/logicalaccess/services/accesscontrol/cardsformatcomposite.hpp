@@ -18,10 +18,10 @@ namespace logicalaccess
      */
     struct FormatInfos
     {
-        boost::shared_ptr<Format> format; /**< \brief Format information. */
-        boost::shared_ptr<Location> location; /**< \brief Location information. */
-        boost::shared_ptr<AccessInfo> aiToUse; /**< \brief Access information to use. */
-        boost::shared_ptr<AccessInfo> aiToWrite; /**< \brief Access information to write. */
+        std::shared_ptr<Format> format; /**< \brief Format information. */
+        std::shared_ptr<Location> location; /**< \brief Location information. */
+        std::shared_ptr<AccessInfo> aiToUse; /**< \brief Access information to use. */
+        std::shared_ptr<AccessInfo> aiToWrite; /**< \brief Access information to write. */
 
         FormatInfos()
         {
@@ -66,7 +66,7 @@ namespace logicalaccess
          * \param rootNode The root node.
          * \return The format instance.
          */
-        boost::shared_ptr<Format> createFormatFromXml(const string& xmlstring, const string& rootNode);
+        std::shared_ptr<Format> createFormatFromXml(const string& xmlstring, const string& rootNode);
 
         /**
          * \brief Add a format for a card type.
@@ -76,7 +76,7 @@ namespace logicalaccess
          * \param aiToUse The format access information.
          * \param aiToWrite The format access information to write in write mode.
          */
-        void addFormatForCard(std::string type, boost::shared_ptr<Format> format, boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite = boost::shared_ptr<AccessInfo>());
+        void addFormatForCard(std::string type, std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite = std::shared_ptr<AccessInfo>());
 
         /**
          * \brief Retrieve format information for a card type.
@@ -86,7 +86,7 @@ namespace logicalaccess
          * \param aiToUse The format access information.
          * \param aiToWrite The format access information to write in write mode.
          */
-        void retrieveFormatForCard(std::string type, boost::shared_ptr<Format>* format, boost::shared_ptr<Location>* location, boost::shared_ptr<AccessInfo>* aiToUse, boost::shared_ptr<AccessInfo>* aiToWrite = NULL);
+        void retrieveFormatForCard(std::string type, std::shared_ptr<Format>* format, std::shared_ptr<Location>* location, std::shared_ptr<AccessInfo>* aiToUse, std::shared_ptr<AccessInfo>* aiToWrite = NULL);
 
         /**
          * \brief Remove a format for a card type.
@@ -104,14 +104,14 @@ namespace logicalaccess
          * \brief Read format from a card.
          * \return The format.
          */
-        boost::shared_ptr<Format> readFormat();
+        std::shared_ptr<Format> readFormat();
 
         /**
          * \brief Read format from a card.
          * \param chip The chip object.
          * \return The format.
          */
-        boost::shared_ptr<Format> readFormat(boost::shared_ptr<Chip> chip);
+        std::shared_ptr<Format> readFormat(std::shared_ptr<Chip> chip);
 
         /**
          * \brief Serialize the current object to XML.
@@ -135,13 +135,13 @@ namespace logicalaccess
          * \brief Get the reader unit.
          * \return The reader unit.
          */
-        boost::shared_ptr<ReaderUnit> getReaderUnit() const;
+        std::shared_ptr<ReaderUnit> getReaderUnit() const;
 
         /*
          * \brief Set the reader unit.
          * \param unit The reader unit.
          */
-        void setReaderUnit(boost::weak_ptr<ReaderUnit> unit);
+        void setReaderUnit(std::weak_ptr<ReaderUnit> unit);
 
     protected:
 
@@ -150,7 +150,7 @@ namespace logicalaccess
         /**
          * \brief The reader unit.
          */
-        boost::weak_ptr<ReaderUnit> d_ReaderUnit;
+        std::weak_ptr<ReaderUnit> d_ReaderUnit;
     };
 }
 

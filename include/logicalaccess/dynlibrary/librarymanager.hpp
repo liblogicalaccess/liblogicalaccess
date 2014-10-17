@@ -43,11 +43,11 @@ namespace logicalaccess
         void* getFctFromName(std::string fctname, LibraryType libraryType);
         static  LibraryManager *_singleton;
 
-        boost::shared_ptr<ReaderProvider> getReaderProvider(const std::string& readertype);
-        boost::shared_ptr<Chip> getCard(const std::string& cardtype);
-        boost::shared_ptr<Commands> getCommands(const std::string& extendedtype);
-        static boost::shared_ptr<DataTransport> getDataTransport(const std::string& transporttype);
-        boost::shared_ptr<KeyDiversification> getKeyDiversification(const std::string& keydivtype);
+        std::shared_ptr<ReaderProvider> getReaderProvider(const std::string& readertype);
+        std::shared_ptr<Chip> getCard(const std::string& cardtype);
+        std::shared_ptr<Commands> getCommands(const std::string& extendedtype);
+        static std::shared_ptr<DataTransport> getDataTransport(const std::string& transporttype);
+        std::shared_ptr<KeyDiversification> getKeyDiversification(const std::string& keydivtype);
 
         std::vector<std::string> getAvailableCards();
 

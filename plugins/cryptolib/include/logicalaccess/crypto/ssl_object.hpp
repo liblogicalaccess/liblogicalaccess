@@ -9,7 +9,7 @@
 
 #include <string>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <openssl/ssl.h>
 
@@ -57,7 +57,7 @@ namespace logicalaccess
              * \brief Get the raw pointer.
              * \return The raw pointer.
              */
-            inline boost::shared_ptr<SSL> getRaw()
+            inline std::shared_ptr<SSL> getRaw()
             {
                 return d_ssl;
             }
@@ -68,12 +68,12 @@ namespace logicalaccess
              * \brief Constructor.
              * \param ssl The SSL object to use. If ssl is NULL, the behavior is undefined.
              */
-            SSLObject(boost::shared_ptr<SSL> ssl);
+            SSLObject(std::shared_ptr<SSL> ssl);
 
             /**
              * \brief The internal pointer.
              */
-            boost::shared_ptr<SSL> d_ssl;
+            std::shared_ptr<SSL> d_ssl;
 
             friend class X509CertificateStoreContext;
         };

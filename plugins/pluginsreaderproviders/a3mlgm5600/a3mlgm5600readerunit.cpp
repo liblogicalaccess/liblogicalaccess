@@ -12,7 +12,7 @@
 
 #include "readercardadapters/a3mlgm5600readercardadapter.hpp"
 #include "logicalaccess/readerproviders/readerunitconfiguration.hpp"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/filesystem.hpp>
 #include "logicalaccess/readerproviders/readerunit.hpp"
 #include "a3mlgm5600readerprovider.hpp"
@@ -30,8 +30,8 @@ namespace logicalaccess
     {
         d_deviceAddress = 0x00;
         d_readerUnitConfig.reset(new A3MLGM5600ReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(boost::shared_ptr<A3MLGM5600ReaderCardAdapter>(new A3MLGM5600ReaderCardAdapter()));
-        boost::shared_ptr<UdpDataTransport> dataTransport(new UdpDataTransport());
+        setDefaultReaderCardAdapter(std::shared_ptr<A3MLGM5600ReaderCardAdapter>(new A3MLGM5600ReaderCardAdapter()));
+        std::shared_ptr<UdpDataTransport> dataTransport(new UdpDataTransport());
         dataTransport->setIpAddress("192.168.1.100");
         dataTransport->setPort(2000);
         setDataTransport(dataTransport);
@@ -132,7 +132,7 @@ namespace logicalaccess
 
     string A3MLGM5600ReaderUnit::getPADKey()
     {
-        boost::shared_ptr<A3MLGM5600ReaderCardAdapter> adapter = getDefaultA3MLGM5600ReaderCardAdapter();
+        std::shared_ptr<A3MLGM5600ReaderCardAdapter> adapter = getDefaultA3MLGM5600ReaderCardAdapter();
         std::vector<unsigned char> res = adapter->sendCommand(0x17, std::vector<unsigned char>());
 
         return BufferHelper::getStdString(res);
@@ -166,13 +166,13 @@ namespace logicalaccess
         getDataTransport()->disconnect();
     }
 
-    boost::shared_ptr<Chip> A3MLGM5600ReaderUnit::createChip(std::string type)
+    std::shared_ptr<Chip> A3MLGM5600ReaderUnit::createChip(std::string type)
     {
-        boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
+        std::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 
         if (chip)
         {
-            boost::shared_ptr<ReaderCardAdapter> rca;
+            std::shared_ptr<ReaderCardAdapter> rca;
 
             if (type == "GenericTag")
                 rca = getDefaultReaderCardAdapter();
@@ -184,16 +184,16 @@ namespace logicalaccess
         return chip;
     }
 
-    boost::shared_ptr<Chip> A3MLGM5600ReaderUnit::getSingleChip()
+    std::shared_ptr<Chip> A3MLGM5600ReaderUnit::getSingleChip()
     {
-        boost::shared_ptr<Chip> chip = d_insertedChip;
+        std::shared_ptr<Chip> chip = d_insertedChip;
         return chip;
     }
 
-    std::vector<boost::shared_ptr<Chip> > A3MLGM5600ReaderUnit::getChipList()
+    std::vector<std::shared_ptr<Chip> > A3MLGM5600ReaderUnit::getChipList()
     {
-        std::vector<boost::shared_ptr<Chip> > chipList;
-        boost::shared_ptr<Chip> singleChip = getSingleChip();
+        std::vector<std::shared_ptr<Chip> > chipList;
+        std::shared_ptr<Chip> singleChip = getSingleChip();
         if (singleChip)
         {
             chipList.push_back(singleChip);
@@ -201,15 +201,15 @@ namespace logicalaccess
         return chipList;
     }
 
-    boost::shared_ptr<A3MLGM5600ReaderCardAdapter> A3MLGM5600ReaderUnit::getDefaultA3MLGM5600ReaderCardAdapter()
+    std::shared_ptr<A3MLGM5600ReaderCardAdapter> A3MLGM5600ReaderUnit::getDefaultA3MLGM5600ReaderCardAdapter()
     {
-        boost::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
-        return boost::dynamic_pointer_cast<A3MLGM5600ReaderCardAdapter>(adapter);
+        std::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
+        return std::dynamic_pointer_cast<A3MLGM5600ReaderCardAdapter>(adapter);
     }
 
     string A3MLGM5600ReaderUnit::getReaderSerialNumber()
     {
-        boost::shared_ptr<A3MLGM5600ReaderCardAdapter> adapter = getDefaultA3MLGM5600ReaderCardAdapter();
+        std::shared_ptr<A3MLGM5600ReaderCardAdapter> adapter = getDefaultA3MLGM5600ReaderCardAdapter();
         std::vector<unsigned char> res = adapter->sendCommand(0x09, std::vector<unsigned char>());
 
         return BufferHelper::getHex(res);
@@ -232,14 +232,14 @@ namespace logicalaccess
         ReaderUnit::unSerialize(node);
     }
 
-    boost::shared_ptr<A3MLGM5600ReaderProvider> A3MLGM5600ReaderUnit::getA3MLGM5600ReaderProvider() const
+    std::shared_ptr<A3MLGM5600ReaderProvider> A3MLGM5600ReaderUnit::getA3MLGM5600ReaderProvider() const
     {
-        return boost::dynamic_pointer_cast<A3MLGM5600ReaderProvider>(getReaderProvider());
+        return std::dynamic_pointer_cast<A3MLGM5600ReaderProvider>(getReaderProvider());
     }
 
-    boost::shared_ptr<A3MLGM5600ReaderUnit> A3MLGM5600ReaderUnit::getSingletonInstance()
+    std::shared_ptr<A3MLGM5600ReaderUnit> A3MLGM5600ReaderUnit::getSingletonInstance()
     {
-        static boost::shared_ptr<A3MLGM5600ReaderUnit> instance;
+        static std::shared_ptr<A3MLGM5600ReaderUnit> instance;
         if (!instance)
         {
             instance.reset(new A3MLGM5600ReaderUnit());

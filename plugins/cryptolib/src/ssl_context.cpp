@@ -71,7 +71,7 @@ namespace logicalaccess
             EXCEPTION_ASSERT_WITH_LOG(SSL_CTX_load_verify_locations(d_ctx.get(), NULL, verification_certificate_path.c_str()) == 1, OpenSSLException, "Unable to load the verification certificate path");
         }
 
-        SSLContext::SSLContext(boost::shared_ptr<SSL_CTX> ctx) :
+        SSLContext::SSLContext(std::shared_ptr<SSL_CTX> ctx) :
             d_ctx(ctx)
         {
             SSLContext();

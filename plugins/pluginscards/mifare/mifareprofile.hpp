@@ -40,7 +40,7 @@ namespace logicalaccess
          * \param keytype The key type.
          * \return The specified mifare key or a null key if either index or keytype is invalid.
          */
-        boost::shared_ptr<MifareKey> getKey(int index, MifareKeyType keytype) const;
+        std::shared_ptr<MifareKey> getKey(int index, MifareKeyType keytype) const;
 
         /**
          * \brief Set one of the Mifare keys of this profile.
@@ -49,7 +49,7 @@ namespace logicalaccess
          * \param key The value of the key.
          * \warning setKey() automatically calls setMifareKeyUsage(index, keytype, true).
          */
-        void setKey(int index, MifareKeyType keytype, boost::shared_ptr<MifareKey> key);
+        void setKey(int index, MifareKeyType keytype, std::shared_ptr<MifareKey> key);
 
         /**
          * \brief Set default keys for the mifare card in memory.
@@ -59,7 +59,7 @@ namespace logicalaccess
         /**
          * \brief Set default keys for the type card in memory at a specific location.
          */
-        virtual void setDefaultKeysAt(boost::shared_ptr<Location> location);
+        virtual void setDefaultKeysAt(std::shared_ptr<Location> location);
 
         /**
          * \brief Clear all keys in memory.
@@ -71,7 +71,7 @@ namespace logicalaccess
          * \param location The key's location.
          * \param AccessInfo The key's informations.
          */
-        virtual void setKeyAt(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> AccessInfo);
+        virtual void setKeyAt(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> AccessInfo);
 
         /**
          * \brief Set default keys for a sector.
@@ -83,13 +83,13 @@ namespace logicalaccess
          * \brief Create default Mifare access informations.
          * \return Default Mifare access informations.
          */
-        virtual boost::shared_ptr<AccessInfo> createAccessInfo() const;
+        virtual std::shared_ptr<AccessInfo> createAccessInfo() const;
 
         /**
          * \brief Create default Mifare location.
          * \return Default Mifare location.
          */
-        virtual boost::shared_ptr<Location> createLocation() const;
+        virtual std::shared_ptr<Location> createLocation() const;
 
         /**
          * \brief Get one of the Mifare keys usage.
@@ -124,7 +124,7 @@ namespace logicalaccess
         /**
          * \brief The real keys, + 2 for new keys.
          */
-        boost::shared_ptr<MifareKey>* d_key;
+        std::shared_ptr<MifareKey>* d_key;
     };
 }
 

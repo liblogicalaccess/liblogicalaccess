@@ -31,18 +31,18 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<LocationNode> ISO7816Chip::getRootLocationNode()
+    std::shared_ptr<LocationNode> ISO7816Chip::getRootLocationNode()
     {
-        boost::shared_ptr<LocationNode> rootNode;
+        std::shared_ptr<LocationNode> rootNode;
         rootNode.reset(new LocationNode());
         rootNode->setName("ISO 7816");
 
         return rootNode;
     }
 
-    boost::shared_ptr<CardService> ISO7816Chip::getService(CardServiceType serviceType)
+    std::shared_ptr<CardService> ISO7816Chip::getService(CardServiceType serviceType)
     {
-        boost::shared_ptr<CardService> service;
+        std::shared_ptr<CardService> service;
 
         switch (serviceType)
         {

@@ -28,15 +28,15 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<LocationNode> DESFireChip::getRootLocationNode()
+    std::shared_ptr<LocationNode> DESFireChip::getRootLocationNode()
     {
-        boost::shared_ptr<LocationNode> rootNode;
+        std::shared_ptr<LocationNode> rootNode;
         rootNode.reset(new LocationNode());
 
         rootNode->setName("Mifare DESFire");
         rootNode->setHasProperties(true);
 
-        boost::shared_ptr<DESFireLocation> rootLocation = boost::dynamic_pointer_cast<DESFireLocation>(getProfile()->createLocation());
+        std::shared_ptr<DESFireLocation> rootLocation = std::dynamic_pointer_cast<DESFireLocation>(getProfile()->createLocation());
         rootLocation->aid = (unsigned int)-1;
         rootLocation->file = (unsigned char)-1;
         rootNode->setLocation(rootLocation);
@@ -59,12 +59,12 @@ namespace logicalaccess
             for (std::vector<unsigned int>::const_iterator aid = aids.cbegin(); aid != aids.cend(); ++aid)
             {
                 char tmpName[32];
-                boost::shared_ptr<LocationNode> aidNode;
+                std::shared_ptr<LocationNode> aidNode;
                 aidNode.reset(new LocationNode());
                 sprintf(tmpName, "Application ID %u", *aid);
                 aidNode->setName(tmpName);
 
-                boost::shared_ptr<DESFireLocation> aidLocation = boost::dynamic_pointer_cast<DESFireLocation>(getProfile()->createLocation());
+                std::shared_ptr<DESFireLocation> aidLocation = std::dynamic_pointer_cast<DESFireLocation>(getProfile()->createLocation());
                 aidLocation->aid = *aid;
                 aidLocation->file = static_cast<unsigned char>(-1);
                 aidNode->setLocation(aidLocation);
@@ -85,12 +85,12 @@ namespace logicalaccess
 
                     for (std::vector<unsigned char>::const_iterator file = files.cbegin(); file != files.cend(); ++file)
                     {
-                        boost::shared_ptr<LocationNode> fileNode;
+                        std::shared_ptr<LocationNode> fileNode;
                         fileNode.reset(new LocationNode());
                         sprintf(tmpName, "File %d", *file);
                         fileNode->setName(tmpName);
 
-                        boost::shared_ptr<DESFireLocation> location = getApplicationLocation();
+                        std::shared_ptr<DESFireLocation> location = getApplicationLocation();
                         location->aid = *aid;
                         location->file = *file;
                         location->byte = 0;
@@ -151,16 +151,16 @@ namespace logicalaccess
         return rootNode;
     }
 
-    boost::shared_ptr<DESFireLocation> DESFireChip::getApplicationLocation()
+    std::shared_ptr<DESFireLocation> DESFireChip::getApplicationLocation()
     {
-        boost::shared_ptr<DESFireLocation> location(new DESFireLocation());
+        std::shared_ptr<DESFireLocation> location(new DESFireLocation());
 
         return location;
     }
 
-    boost::shared_ptr<CardService> DESFireChip::getService(CardServiceType serviceType)
+    std::shared_ptr<CardService> DESFireChip::getService(CardServiceType serviceType)
     {
-        boost::shared_ptr<CardService> service;
+        std::shared_ptr<CardService> service;
 
         switch (serviceType)
         {

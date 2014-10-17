@@ -48,22 +48,22 @@ namespace logicalaccess
         d_encryptionMode = encryption_mode;
     }
 
-    boost::shared_ptr<TripleDESKey> OmnikeyXX21ReaderUnitConfiguration::getSecureReadKey() const
+    std::shared_ptr<TripleDESKey> OmnikeyXX21ReaderUnitConfiguration::getSecureReadKey() const
     {
         return d_secureReadKey;
     }
 
-    void OmnikeyXX21ReaderUnitConfiguration::setSecureReadKey(boost::shared_ptr<TripleDESKey> key)
+    void OmnikeyXX21ReaderUnitConfiguration::setSecureReadKey(std::shared_ptr<TripleDESKey> key)
     {
         d_secureReadKey = key;
     }
 
-    boost::shared_ptr<TripleDESKey> OmnikeyXX21ReaderUnitConfiguration::getSecureWriteKey() const
+    std::shared_ptr<TripleDESKey> OmnikeyXX21ReaderUnitConfiguration::getSecureWriteKey() const
     {
         return d_secureWriteKey;
     }
 
-    void OmnikeyXX21ReaderUnitConfiguration::setSecureWriteKey(boost::shared_ptr<TripleDESKey> key)
+    void OmnikeyXX21ReaderUnitConfiguration::setSecureWriteKey(std::shared_ptr<TripleDESKey> key)
     {
         d_secureWriteKey = key;
     }
@@ -89,8 +89,8 @@ namespace logicalaccess
     {
         PCSCReaderUnitConfiguration::unSerialize(node.get_child(PCSCReaderUnitConfiguration::getDefaultXmlNodeName()));
         d_useSecureMode = node.get_child("UseSecureMode").get_value<bool>();
-        boost::dynamic_pointer_cast<XmlSerializable>(d_secureReadKey)->unSerialize(node.get_child("SecureReadKey"), "");
-        boost::dynamic_pointer_cast<XmlSerializable>(d_secureWriteKey)->unSerialize(node.get_child("SecureWriteKey"), "");
+        std::dynamic_pointer_cast<XmlSerializable>(d_secureReadKey)->unSerialize(node.get_child("SecureReadKey"), "");
+        std::dynamic_pointer_cast<XmlSerializable>(d_secureWriteKey)->unSerialize(node.get_child("SecureWriteKey"), "");
         d_encryptionMode = static_cast<HIDEncryptionMode>(node.get_child("EncryptionMode").get_value<unsigned int>());
     }
 

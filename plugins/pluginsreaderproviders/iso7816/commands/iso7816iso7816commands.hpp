@@ -119,7 +119,7 @@ namespace logicalaccess
          * \brief Get the ISO7816 reader/card adapter.
          * \return The ISO7816 reader/card adapter.
          */
-        boost::shared_ptr<ISO7816ReaderCardAdapter> getISO7816ReaderCardAdapter() { return boost::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter()); };
+        std::shared_ptr<ISO7816ReaderCardAdapter> getISO7816ReaderCardAdapter() { return std::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter()); };
 
     protected:
 

@@ -17,7 +17,7 @@ namespace logicalaccess
         d_rightParityType = PT_ODD;
         d_rightParityLength = 16;
 
-        boost::shared_ptr<NumberDataField> field(new NumberDataField());
+        std::shared_ptr<NumberDataField> field(new NumberDataField());
         field->setName("Uid");
         field->setIsIdentifier(true);
         field->setDataLength(32);
@@ -89,12 +89,12 @@ namespace logicalaccess
         return "Wiegand34Format";
     }
 
-    bool Wiegand34Format::checkSkeleton(boost::shared_ptr<Format> format) const
+    bool Wiegand34Format::checkSkeleton(std::shared_ptr<Format> format) const
     {
         bool ret = false;
         if (format)
         {
-            boost::shared_ptr<Wiegand34Format> pFormat = boost::dynamic_pointer_cast<Wiegand34Format>(format);
+            std::shared_ptr<Wiegand34Format> pFormat = std::dynamic_pointer_cast<Wiegand34Format>(format);
             if (pFormat)
             {
                 ret = true;

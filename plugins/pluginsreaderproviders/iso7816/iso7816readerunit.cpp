@@ -31,15 +31,15 @@ namespace logicalaccess
 
     ISO7816ReaderUnit::~ISO7816ReaderUnit() {}
 
-    boost::shared_ptr<Chip> ISO7816ReaderUnit::getSingleChip()
+    std::shared_ptr<Chip> ISO7816ReaderUnit::getSingleChip()
     {
-        boost::shared_ptr<Chip> ret;
+        std::shared_ptr<Chip> ret;
         return ret;
     }
 
-    std::vector<boost::shared_ptr<Chip> > ISO7816ReaderUnit::getChipList()
+    std::vector<std::shared_ptr<Chip> > ISO7816ReaderUnit::getChipList()
     {
-        std::vector<boost::shared_ptr<Chip> > ret;
+        std::vector<std::shared_ptr<Chip> > ret;
         return ret;
     }
 }

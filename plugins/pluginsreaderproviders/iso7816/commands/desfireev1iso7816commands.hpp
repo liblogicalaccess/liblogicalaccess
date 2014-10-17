@@ -168,14 +168,14 @@ namespace logicalaccess
          * \param isMasterCardKey True if the key to authenticate is the master card key, false otherwise.
          * \param keyno The key number.
          */
-        virtual void iso_authenticate(boost::shared_ptr<DESFireKey> key, DESFireISOAlgorithm algorithm = DF_ALG_2K3DES, bool isMasterCardKey = true, unsigned char keyno = 0x00);
+        virtual void iso_authenticate(std::shared_ptr<DESFireKey> key, DESFireISOAlgorithm algorithm = DF_ALG_2K3DES, bool isMasterCardKey = true, unsigned char keyno = 0x00);
 
         /**
          * \brief Authenticate, given a key number.
          * \param keyno The key number.
          * \param key The key.
          */
-        virtual void authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key);
+        virtual void authenticate(unsigned char keyno, std::shared_ptr<DESFireKey> key);
 
         /**
          * \brief AuthenticateISO command.
@@ -232,7 +232,7 @@ namespace logicalaccess
          * \param keyno The key number to change
          * \param key The new key
          */
-        virtual void changeKey(unsigned char keyno, boost::shared_ptr<DESFireKey> key);
+        virtual void changeKey(unsigned char keyno, std::shared_ptr<DESFireKey> key);
 
         /**
          * \brief Get the card version information.
@@ -277,7 +277,7 @@ namespace logicalaccess
          * \brief Set the card configuration default key.
          * param defaultKey The new default key.
          */
-        virtual void setConfiguration(boost::shared_ptr<DESFireKey> defaultKey);
+        virtual void setConfiguration(std::shared_ptr<DESFireKey> defaultKey);
 
         /**
          * \brief Set a custom card ATS.
@@ -285,7 +285,7 @@ namespace logicalaccess
          */
         virtual void setConfiguration(const std::vector<unsigned char>& ats);
 
-        virtual void sam_iso_authenticate(boost::shared_ptr<DESFireKey> key, DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno);
+        virtual void sam_iso_authenticate(std::shared_ptr<DESFireKey> key, DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno);
 
     protected:
 

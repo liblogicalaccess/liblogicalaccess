@@ -390,18 +390,18 @@ namespace logicalaccess
         return std::vector<unsigned char>();
     }
 
-    void DESFireEV1STidSTRCommands::loadKey(boost::shared_ptr<DESFireKey> key)
+    void DESFireEV1STidSTRCommands::loadKey(std::shared_ptr<DESFireKey> key)
     {
-        LOG(LogLevel::INFOS) << "Loading key from storage {" << boost::dynamic_pointer_cast<XmlSerializable>(key)->serialize() << "}";
-        boost::shared_ptr<KeyStorage> key_storage = key->getKeyStorage();
+        LOG(LogLevel::INFOS) << "Loading key from storage {" << std::dynamic_pointer_cast<XmlSerializable>(key)->serialize() << "}";
+        std::shared_ptr<KeyStorage> key_storage = key->getKeyStorage();
 
-        if (boost::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key_storage))
+        if (std::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key_storage))
         {
             LOG(LogLevel::INFOS) << "Using computer memory key storage...";
             unsigned char* keydata = key->getData();
             loadKey(std::vector<unsigned char>(keydata, keydata + key->getLength()), key->getKeyDiversification() != NULL, true);
         }
-        else if (boost::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage))
+        else if (std::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage))
         {
             LOG(LogLevel::INFOS) << "Using reader memory key storage... -> Doing nothing !";
         }
@@ -441,24 +441,24 @@ namespace logicalaccess
 
     void DESFireEV1STidSTRCommands::authenticate(unsigned char keyno)
     {
-        boost::shared_ptr<DESFireKey> key = d_profile->getKey(d_currentAid, keyno);
+        std::shared_ptr<DESFireKey> key = d_profile->getKey(d_currentAid, keyno);
         authenticate(keyno, key);
     }
 
-    void DESFireEV1STidSTRCommands::authenticate(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
+    void DESFireEV1STidSTRCommands::authenticate(unsigned char keyno, std::shared_ptr<DESFireKey> key)
     {
         LOG(LogLevel::INFOS) << "Authenticating... key number {0x" << std::hex << keyno << std::dec << "(" << keyno << ")}";
 
-        boost::shared_ptr<KeyStorage> key_storage = key->getKeyStorage();
+        std::shared_ptr<KeyStorage> key_storage = key->getKeyStorage();
         STidKeyLocationType keylocation = STID_DF_KEYLOC_RAM;
         unsigned char keyindex = 0x00;
 
         loadKey(key);	// Load key in the reader memory if needed (only when using Computer Memory Storage)
 
-        if (boost::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage))
+        if (std::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage))
         {
             LOG(LogLevel::INFOS) << "Retreving key index from reader memory key storage...";
-            boost::shared_ptr<ReaderMemoryKeyStorage> rmKs = boost::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage);
+            std::shared_ptr<ReaderMemoryKeyStorage> rmKs = std::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage);
             keylocation = STID_DF_KEYLOC_INDEXED;
             keyindex = rmKs->getKeySlot();
         }
@@ -669,13 +669,13 @@ namespace logicalaccess
         getSTidSTRReaderCardAdapter()->sendCommand(0x0054, command);
     }
 
-    void DESFireEV1STidSTRCommands::changeKey(unsigned char keyno, boost::shared_ptr<DESFireKey> key)
+    void DESFireEV1STidSTRCommands::changeKey(unsigned char keyno, std::shared_ptr<DESFireKey> key)
     {
-        LOG(LogLevel::INFOS) << "Changing key... key number {0x" << std::hex << keyno << std::dec << "(" << keyno << ")} new key {" << boost::dynamic_pointer_cast<XmlSerializable>(key)->serialize() << "}";
+        LOG(LogLevel::INFOS) << "Changing key... key number {0x" << std::hex << keyno << std::dec << "(" << keyno << ")} new key {" << std::dynamic_pointer_cast<XmlSerializable>(key)->serialize() << "}";
         // Only change the key if new key and old key are not the same.
-        boost::shared_ptr<DESFireKey> oldKey = d_profile->getKey(d_currentAid, keyno);
+        std::shared_ptr<DESFireKey> oldKey = d_profile->getKey(d_currentAid, keyno);
 
-        LOG(LogLevel::INFOS) << "Old key {" << boost::dynamic_pointer_cast<XmlSerializable>(oldKey)->serialize() << "}";
+        LOG(LogLevel::INFOS) << "Old key {" << std::dynamic_pointer_cast<XmlSerializable>(oldKey)->serialize() << "}";
 
         if (key != oldKey)
         {
@@ -683,7 +683,7 @@ namespace logicalaccess
             if (key->getKeyStorage()->getType() == KST_READER_MEMORY && oldKey->getKeyStorage()->getType() == KST_READER_MEMORY)
             {
                 LOG(LogLevel::INFOS) << "Changing key by using reader EEPROM INDEXED memory key storage...";
-                changeKeyIndex(keyno, key->getKeyType(), key->getKeyVersion(), boost::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key->getKeyStorage())->getKeySlot(), boost::dynamic_pointer_cast<ReaderMemoryKeyStorage>(oldKey->getKeyStorage())->getKeySlot());
+                changeKeyIndex(keyno, key->getKeyType(), key->getKeyVersion(), std::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key->getKeyStorage())->getKeySlot(), std::dynamic_pointer_cast<ReaderMemoryKeyStorage>(oldKey->getKeyStorage())->getKeySlot());
             }
             else
             {
@@ -835,7 +835,7 @@ namespace logicalaccess
         getSTidSTRReaderCardAdapter()->sendCommand(0x005C, command);
     }
 
-    void DESFireEV1STidSTRCommands::setConfiguration(boost::shared_ptr<DESFireKey> defaultKey)
+    void DESFireEV1STidSTRCommands::setConfiguration(std::shared_ptr<DESFireKey> defaultKey)
     {
         if (defaultKey->getLength() < 24)
         {

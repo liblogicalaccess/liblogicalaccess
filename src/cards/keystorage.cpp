@@ -10,9 +10,9 @@
 
 namespace logicalaccess
 {
-    boost::shared_ptr<KeyStorage> KeyStorage::getKeyStorageFromType(KeyStorageType kst)
+    std::shared_ptr<KeyStorage> KeyStorage::getKeyStorageFromType(KeyStorageType kst)
     {
-        boost::shared_ptr<KeyStorage> ret;
+        std::shared_ptr<KeyStorage> ret;
 
         switch (kst)
         {

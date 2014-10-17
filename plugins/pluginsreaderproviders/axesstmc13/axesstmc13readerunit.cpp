@@ -24,8 +24,8 @@ namespace logicalaccess
         : ReaderUnit()
     {
         d_readerUnitConfig.reset(new AxessTMC13ReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(boost::shared_ptr<AxessTMC13ReaderCardAdapter>(new AxessTMC13ReaderCardAdapter()));
-        boost::shared_ptr<AxessTMC13DataTransport> dataTransport(new AxessTMC13DataTransport());
+        setDefaultReaderCardAdapter(std::shared_ptr<AxessTMC13ReaderCardAdapter>(new AxessTMC13ReaderCardAdapter()));
+        std::shared_ptr<AxessTMC13DataTransport> dataTransport(new AxessTMC13DataTransport());
 #ifndef UNIX
         dataTransport->setPortBaudRate(CBR_57600);
 #else
@@ -75,7 +75,7 @@ namespace logicalaccess
 
         do
         {
-            boost::shared_ptr<Chip> chip = getChipInAir();
+            std::shared_ptr<Chip> chip = getChipInAir();
             if (chip)
             {
                 d_insertedChip = chip;
@@ -103,7 +103,7 @@ namespace logicalaccess
             std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(maxwait);
             do
             {
-                boost::shared_ptr<Chip> chip = getChipInAir();
+                std::shared_ptr<Chip> chip = getChipInAir();
                 if (chip)
                 {
                     if (chip->getChipIdentifier() != d_insertedChip->getChipIdentifier())
@@ -155,9 +155,9 @@ namespace logicalaccess
         return cmd;
     }
 
-    boost::shared_ptr<Chip> AxessTMC13ReaderUnit::getChipInAir()
+    std::shared_ptr<Chip> AxessTMC13ReaderUnit::getChipInAir()
     {
-        boost::shared_ptr<Chip> chip;
+        std::shared_ptr<Chip> chip;
         std::vector<unsigned char> cmd;
         cmd.push_back(static_cast<unsigned char>('s'));
 
@@ -176,13 +176,13 @@ namespace logicalaccess
         return chip;
     }
 
-    boost::shared_ptr<Chip> AxessTMC13ReaderUnit::createChip(std::string type)
+    std::shared_ptr<Chip> AxessTMC13ReaderUnit::createChip(std::string type)
     {
-        boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
+        std::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 
         if (chip)
         {
-            boost::shared_ptr<ReaderCardAdapter> rca;
+            std::shared_ptr<ReaderCardAdapter> rca;
 
             if (type == "GenericTag")
                 rca = getDefaultReaderCardAdapter();
@@ -194,16 +194,16 @@ namespace logicalaccess
         return chip;
     }
 
-    boost::shared_ptr<Chip> AxessTMC13ReaderUnit::getSingleChip()
+    std::shared_ptr<Chip> AxessTMC13ReaderUnit::getSingleChip()
     {
-        boost::shared_ptr<Chip> chip = d_insertedChip;
+        std::shared_ptr<Chip> chip = d_insertedChip;
         return chip;
     }
 
-    std::vector<boost::shared_ptr<Chip> > AxessTMC13ReaderUnit::getChipList()
+    std::vector<std::shared_ptr<Chip> > AxessTMC13ReaderUnit::getChipList()
     {
-        std::vector<boost::shared_ptr<Chip> > chipList;
-        boost::shared_ptr<Chip> singleChip = getSingleChip();
+        std::vector<std::shared_ptr<Chip> > chipList;
+        std::shared_ptr<Chip> singleChip = getSingleChip();
         if (singleChip)
         {
             chipList.push_back(singleChip);
@@ -211,10 +211,10 @@ namespace logicalaccess
         return chipList;
     }
 
-    boost::shared_ptr<AxessTMC13ReaderCardAdapter> AxessTMC13ReaderUnit::getDefaultAxessTMC13ReaderCardAdapter()
+    std::shared_ptr<AxessTMC13ReaderCardAdapter> AxessTMC13ReaderUnit::getDefaultAxessTMC13ReaderCardAdapter()
     {
-        boost::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
-        return boost::dynamic_pointer_cast<AxessTMC13ReaderCardAdapter>(adapter);
+        std::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
+        return std::dynamic_pointer_cast<AxessTMC13ReaderCardAdapter>(adapter);
     }
 
     string AxessTMC13ReaderUnit::getReaderSerialNumber()
@@ -241,9 +241,9 @@ namespace logicalaccess
         ReaderUnit::unSerialize(node);
     }
 
-    boost::shared_ptr<AxessTMC13ReaderProvider> AxessTMC13ReaderUnit::getAxessTMC13ReaderProvider() const
+    std::shared_ptr<AxessTMC13ReaderProvider> AxessTMC13ReaderUnit::getAxessTMC13ReaderProvider() const
     {
-        return boost::dynamic_pointer_cast<AxessTMC13ReaderProvider>(getReaderProvider());
+        return std::dynamic_pointer_cast<AxessTMC13ReaderProvider>(getReaderProvider());
     }
 
     bool AxessTMC13ReaderUnit::retrieveReaderIdentifier()

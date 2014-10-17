@@ -26,22 +26,22 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<LocationNode> TwicChip::getRootLocationNode()
+    std::shared_ptr<LocationNode> TwicChip::getRootLocationNode()
     {
-        boost::shared_ptr<LocationNode> rootNode;
+        std::shared_ptr<LocationNode> rootNode;
         rootNode.reset(new LocationNode());
         rootNode->setName("Twic");
 
-        boost::shared_ptr<LocationNode> applNode;
+        std::shared_ptr<LocationNode> applNode;
         applNode.reset(new LocationNode());
         applNode->setName("Twic Application");
         applNode->setParent(rootNode);
         rootNode->getChildrens().push_back(applNode);
 
-        boost::shared_ptr<LocationNode> ucuiNode;
+        std::shared_ptr<LocationNode> ucuiNode;
         ucuiNode.reset(new LocationNode());
         ucuiNode->setName("Unsigned Cardholder Unique Identifier");
-        boost::shared_ptr<TwicLocation> ucuiLocation;
+        std::shared_ptr<TwicLocation> ucuiLocation;
         ucuiLocation.reset(new TwicLocation());
         ucuiLocation->dataObject = 0x5FC104;
         ucuiNode->setLocation(ucuiLocation);
@@ -50,10 +50,10 @@ namespace logicalaccess
         ucuiNode->setParent(applNode);
         applNode->getChildrens().push_back(ucuiNode);
 
-        boost::shared_ptr<LocationNode> tpkNode;
+        std::shared_ptr<LocationNode> tpkNode;
         tpkNode.reset(new LocationNode());
         tpkNode->setName("TWIC Privacy Key");
-        boost::shared_ptr<TwicLocation> tpkLocation;
+        std::shared_ptr<TwicLocation> tpkLocation;
         tpkLocation.reset(new TwicLocation());
         tpkLocation->dataObject = 0xDFC101;
         tpkNode->setLocation(tpkLocation);
@@ -62,10 +62,10 @@ namespace logicalaccess
         tpkNode->setParent(applNode);
         applNode->getChildrens().push_back(tpkNode);
 
-        boost::shared_ptr<LocationNode> cuiNode;
+        std::shared_ptr<LocationNode> cuiNode;
         cuiNode.reset(new LocationNode());
         cuiNode->setName("Cardholder Unique Identifier");
-        boost::shared_ptr<TwicLocation> cuiLocation;
+        std::shared_ptr<TwicLocation> cuiLocation;
         cuiLocation.reset(new TwicLocation());
         cuiLocation->dataObject = 0x5FC102;
         cuiNode->setLocation(cuiLocation);
@@ -74,10 +74,10 @@ namespace logicalaccess
         cuiNode->setParent(applNode);
         applNode->getChildrens().push_back(cuiNode);
 
-        boost::shared_ptr<LocationNode> cfNode;
+        std::shared_ptr<LocationNode> cfNode;
         cfNode.reset(new LocationNode());
         cfNode->setName("Cardholder Fingerprints");
-        boost::shared_ptr<TwicLocation> cfLocation;
+        std::shared_ptr<TwicLocation> cfLocation;
         cfLocation.reset(new TwicLocation());
         cfLocation->dataObject = 0xDFC103;
         cfNode->setLocation(cfLocation);
@@ -86,10 +86,10 @@ namespace logicalaccess
         cfNode->setParent(applNode);
         applNode->getChildrens().push_back(cfNode);
 
-        boost::shared_ptr<LocationNode> soNode;
+        std::shared_ptr<LocationNode> soNode;
         soNode.reset(new LocationNode());
         soNode->setName("Security Object");
-        boost::shared_ptr<TwicLocation> soLocation;
+        std::shared_ptr<TwicLocation> soLocation;
         soLocation.reset(new TwicLocation());
         soLocation->dataObject = 0xDFC10F;
         soNode->setLocation(soLocation);
@@ -101,9 +101,9 @@ namespace logicalaccess
         return rootNode;
     }
 
-    boost::shared_ptr<CardService> TwicChip::getService(CardServiceType serviceType)
+    std::shared_ptr<CardService> TwicChip::getService(CardServiceType serviceType)
     {
-        boost::shared_ptr<CardService> service;
+        std::shared_ptr<CardService> service;
 
         switch (serviceType)
         {

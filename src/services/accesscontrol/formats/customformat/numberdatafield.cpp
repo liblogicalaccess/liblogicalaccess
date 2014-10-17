@@ -50,12 +50,12 @@ namespace logicalaccess
         d_value = revertNumericData(data, dataLengthBytes, pos, d_length);
     }
 
-    bool NumberDataField::checkSkeleton(boost::shared_ptr<DataField> field) const
+    bool NumberDataField::checkSkeleton(std::shared_ptr<DataField> field) const
     {
         bool ret = false;
         if (field)
         {
-            boost::shared_ptr<NumberDataField> pField = boost::dynamic_pointer_cast<NumberDataField>(field);
+            std::shared_ptr<NumberDataField> pField = std::dynamic_pointer_cast<NumberDataField>(field);
             if (pField)
             {
                 ret = (pField->getDataLength() == getDataLength() &&

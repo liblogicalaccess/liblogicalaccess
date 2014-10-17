@@ -15,7 +15,7 @@
 
 namespace logicalaccess
 {
-    ProxAccessControlCardService::ProxAccessControlCardService(boost::shared_ptr<Chip> chip)
+    ProxAccessControlCardService::ProxAccessControlCardService(std::shared_ptr<Chip> chip)
         : AccessControlCardService(chip)
     {
     }
@@ -24,14 +24,14 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<Format> ProxAccessControlCardService::readFormat(boost::shared_ptr<Format> format, boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> /*aiToUse*/)
+    std::shared_ptr<Format> ProxAccessControlCardService::readFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> /*aiToUse*/)
     {
         bool ret = false;
 
-        boost::shared_ptr<Format> formatret;
+        std::shared_ptr<Format> formatret;
         if (format)
         {
-            boost::shared_ptr<ProxLocation> pLocation;
+            std::shared_ptr<ProxLocation> pLocation;
             formatret = Format::getByFormatType(format->getType());
             formatret->unSerialize(format->serialize(), "");
             unsigned int dataLengthBits = formatret->getDataLength();
@@ -43,7 +43,7 @@ namespace logicalaccess
 
             if (location)
             {
-                pLocation = boost::dynamic_pointer_cast<ProxLocation>(location);
+                pLocation = std::dynamic_pointer_cast<ProxLocation>(location);
             }
             else
             {
@@ -84,7 +84,7 @@ namespace logicalaccess
         return formatret;
     }
 
-    bool ProxAccessControlCardService::writeFormat(boost::shared_ptr<Format> /*format*/, boost::shared_ptr<Location> /*location*/, boost::shared_ptr<AccessInfo> /*aiToUse*/, boost::shared_ptr<AccessInfo> /*aiToWrite*/)
+    bool ProxAccessControlCardService::writeFormat(std::shared_ptr<Format> /*format*/, std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/, std::shared_ptr<AccessInfo> /*aiToWrite*/)
     {
         return false;
     }

@@ -33,7 +33,7 @@ namespace logicalaccess
     unsigned int CustomFormat::getDataLength() const
     {
         unsigned int dataLength = 0;
-        for (std::list<boost::shared_ptr<DataField> >::const_iterator i = d_fieldList.cbegin(); i != d_fieldList.cend(); ++i)
+        for (std::list<std::shared_ptr<DataField> >::const_iterator i = d_fieldList.cbegin(); i != d_fieldList.cend(); ++i)
         {
             unsigned int maxLength = (*i)->getPosition() + (*i)->getDataLength();
             if (maxLength > dataLength)
@@ -58,10 +58,10 @@ namespace logicalaccess
     void CustomFormat::getLinearData(void* data, size_t dataLengthBytes) const
     {
         unsigned int pos = 0;
-        std::list<boost::shared_ptr<DataField> > sortedFieldList = d_fieldList;
+        std::list<std::shared_ptr<DataField> > sortedFieldList = d_fieldList;
         sortedFieldList.sort(FieldSortPredicate);
         memset(data, 0x00, dataLengthBytes);
-        for (std::list<boost::shared_ptr<DataField> >::const_iterator i = sortedFieldList.begin(); i != sortedFieldList.end(); ++i)
+        for (std::list<std::shared_ptr<DataField> >::const_iterator i = sortedFieldList.begin(); i != sortedFieldList.end(); ++i)
         {
             pos = (*i)->getPosition();
             (*i)->getLinearData(data, dataLengthBytes, &pos);
@@ -71,9 +71,9 @@ namespace logicalaccess
     void CustomFormat::setLinearData(const void* data, size_t dataLengthBytes)
     {
         unsigned int pos = 0;
-        std::list<boost::shared_ptr<DataField> > sortedFieldList = d_fieldList;
+        std::list<std::shared_ptr<DataField> > sortedFieldList = d_fieldList;
         sortedFieldList.sort(FieldSortPredicate);
-        for (std::list<boost::shared_ptr<DataField> >::iterator i = sortedFieldList.begin(); i != sortedFieldList.end(); ++i)
+        for (std::list<std::shared_ptr<DataField> >::iterator i = sortedFieldList.begin(); i != sortedFieldList.end(); ++i)
         {
             pos = (*i)->getPosition();
             (*i)->setLinearData(data, dataLengthBytes, &pos);
@@ -88,7 +88,7 @@ namespace logicalaccess
         node.put("Name", d_name);
 
         boost::property_tree::ptree fnode;
-        for (std::list<boost::shared_ptr<DataField> >::const_iterator i = d_fieldList.cbegin(); i != d_fieldList.cend(); ++i)
+        for (std::list<std::shared_ptr<DataField> >::const_iterator i = d_fieldList.cbegin(); i != d_fieldList.cend(); ++i)
         {
             (*i)->serialize(fnode);
         }
@@ -104,7 +104,7 @@ namespace logicalaccess
         BOOST_FOREACH(boost::property_tree::ptree::value_type const& v, node.get_child("Fields"))
         {
             // TODO: improve the unserialization process to be generic
-            boost::shared_ptr<DataField> dataField;
+            std::shared_ptr<DataField> dataField;
             if (v.first == "ASCIIDataField")
             {
                 dataField.reset(new ASCIIDataField());
@@ -136,19 +136,19 @@ namespace logicalaccess
         return "CustomFormat";
     }
 
-    bool CustomFormat::checkSkeleton(boost::shared_ptr<Format> format) const
+    bool CustomFormat::checkSkeleton(std::shared_ptr<Format> format) const
     {
         bool ret = false;
         if (format)
         {
-            boost::shared_ptr<CustomFormat> pFormat = boost::dynamic_pointer_cast<CustomFormat>(format);
+            std::shared_ptr<CustomFormat> pFormat = std::dynamic_pointer_cast<CustomFormat>(format);
             if (pFormat && pFormat->getDataLength() == getDataLength())
             {
-                std::list<boost::shared_ptr<DataField> > fields = pFormat->getFieldList();
+                std::list<std::shared_ptr<DataField> > fields = pFormat->getFieldList();
                 if (fields.size() == d_fieldList.size())
                 {
                     ret = true;
-                    for (std::list<boost::shared_ptr<DataField> >::const_iterator i = d_fieldList.cbegin(), fi = fields.cbegin(); ret && i != d_fieldList.cend() && fi != fields.cend(); ++i, ++fi)
+                    for (std::list<std::shared_ptr<DataField> >::const_iterator i = d_fieldList.cbegin(), fi = fields.cbegin(); ret && i != d_fieldList.cend() && fi != fields.cend(); ++i, ++fi)
                     {
                         ret = (*i)->checkSkeleton(*fi);
                     }
@@ -187,10 +187,10 @@ namespace logicalaccess
         dynamic_cast<XmlSerializable*>(this)->unSerialize(xmlstr, "");
     }
 
-    boost::shared_ptr<DataField> CustomFormat::getFieldForPosition(unsigned int position)
+    std::shared_ptr<DataField> CustomFormat::getFieldForPosition(unsigned int position)
     {
-        boost::shared_ptr<DataField> field;
-        for (std::list<boost::shared_ptr<DataField> >::const_iterator i = d_fieldList.cbegin(); !field && i != d_fieldList.cend(); ++i)
+        std::shared_ptr<DataField> field;
+        for (std::list<std::shared_ptr<DataField> >::const_iterator i = d_fieldList.cbegin(); !field && i != d_fieldList.cend(); ++i)
         {
             if (position >= (*i)->getPosition() && position < ((*i)->getPosition() + (*i)->getDataLength()))
             {

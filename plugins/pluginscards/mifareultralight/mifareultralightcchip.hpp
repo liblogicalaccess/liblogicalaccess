@@ -41,26 +41,26 @@ namespace logicalaccess
          * \brief Get the root location node.
          * \return The root location node.
          */
-        virtual boost::shared_ptr<LocationNode> getRootLocationNode();
+        virtual std::shared_ptr<LocationNode> getRootLocationNode();
 
         /**
          * \brief Get a card service for this chip.
          * \param serviceType The card service type.
          * \return The card service.
          */
-        virtual boost::shared_ptr<CardService> getService(CardServiceType serviceType);
+        virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
 
         /**
          * \brief Get the Mifare Ultralight C card provider for I/O access.
          * \return The Mifare Ultralight C card provider.
          */
-        boost::shared_ptr<MifareUltralightCCommands> getMifareUltralightCCommands() { return boost::dynamic_pointer_cast<MifareUltralightCCommands>(getMifareUltralightCommands()); };
+        std::shared_ptr<MifareUltralightCCommands> getMifareUltralightCCommands() { return std::dynamic_pointer_cast<MifareUltralightCCommands>(getMifareUltralightCommands()); };
 
         /**
          * \brief Get the Mifare Ultralight C profile.
          * \return The Mifare Ultralight C profile.
          */
-        boost::shared_ptr<MifareUltralightCProfile> getMifareUltralightCProfile() { return boost::dynamic_pointer_cast<MifareUltralightCProfile>(getMifareUltralightProfile()); };
+        std::shared_ptr<MifareUltralightCProfile> getMifareUltralightCProfile() { return std::dynamic_pointer_cast<MifareUltralightCProfile>(getMifareUltralightProfile()); };
 
     protected:
     };

@@ -21,14 +21,14 @@ namespace logicalaccess
 
         d_formatLinear.d_companyCode = 0;
 
-        boost::shared_ptr<NumberDataField> uidField(new NumberDataField());
+        std::shared_ptr<NumberDataField> uidField(new NumberDataField());
         uidField->setName("Uid");
         uidField->setIsIdentifier(true);
         uidField->setDataLength(20);
         uidField->setDataRepresentation(d_dataRepresentation);
         uidField->setDataType(d_dataType);
         d_fieldList.push_back(uidField);
-        boost::shared_ptr<NumberDataField> ccField(new NumberDataField());
+        std::shared_ptr<NumberDataField> ccField(new NumberDataField());
         ccField->setName("CompanyCode");
         ccField->setDataLength(12);
         ccField->setDataRepresentation(d_dataRepresentation);
@@ -52,13 +52,13 @@ namespace logicalaccess
 
     unsigned short int Corporate1000Format::getCompanyCode() const
     {
-        boost::shared_ptr<NumberDataField> field = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("CompanyCode"));
+        std::shared_ptr<NumberDataField> field = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("CompanyCode"));
         return static_cast<unsigned short int>(field->getValue());
     }
 
     void Corporate1000Format::setCompanyCode(unsigned short int companyCode)
     {
-        boost::shared_ptr<NumberDataField> field = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("CompanyCode"));
+        std::shared_ptr<NumberDataField> field = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("CompanyCode"));
         field->setValue(companyCode);
         d_formatLinear.d_companyCode = companyCode;
     }
@@ -247,12 +247,12 @@ namespace logicalaccess
         return "Corporate1000Format";
     }
 
-    bool Corporate1000Format::checkSkeleton(boost::shared_ptr<Format> format) const
+    bool Corporate1000Format::checkSkeleton(std::shared_ptr<Format> format) const
     {
         bool ret = false;
         if (format)
         {
-            boost::shared_ptr<Corporate1000Format> pFormat = boost::dynamic_pointer_cast<Corporate1000Format>(format);
+            std::shared_ptr<Corporate1000Format> pFormat = std::dynamic_pointer_cast<Corporate1000Format>(format);
             if (pFormat)
             {
                 ret = (

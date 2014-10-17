@@ -164,12 +164,12 @@ namespace logicalaccess
         /**
          * \brief The key A.
          */
-        boost::shared_ptr<MifareKey> keyA;
+        std::shared_ptr<MifareKey> keyA;
 
         /**
          * \brief The key B.
          */
-        boost::shared_ptr<MifareKey> keyB;
+        std::shared_ptr<MifareKey> keyB;
 
         /**
          * \brief MAD is used ?
@@ -179,12 +179,12 @@ namespace logicalaccess
         /**
          * \brief The MAD A Key.
          */
-        boost::shared_ptr<MifareKey> madKeyA;
+        std::shared_ptr<MifareKey> madKeyA;
 
         /**
          * \brief The MAD B Key.
          */
-        boost::shared_ptr<MifareKey> madKeyB;
+        std::shared_ptr<MifareKey> madKeyB;
 
         /**
          * \brief The sector access bits.

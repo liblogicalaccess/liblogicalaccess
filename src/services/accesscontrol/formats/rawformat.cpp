@@ -21,7 +21,7 @@ namespace logicalaccess
         d_dataType.reset(new BinaryDataType());
         d_dataRepresentation.reset(new BigEndianDataRepresentation());
 
-        boost::shared_ptr<BinaryDataField> field(new BinaryDataField());
+        std::shared_ptr<BinaryDataField> field(new BinaryDataField());
         field->setName("RawData");
         field->setIsIdentifier(true);
         field->setDataLength(getFieldLength(field->getName()));
@@ -99,24 +99,24 @@ namespace logicalaccess
 
     std::vector<unsigned char> RawFormat::getRawData() const
     {
-        boost::shared_ptr<BinaryDataField> field = boost::dynamic_pointer_cast<BinaryDataField>(getFieldFromName("RawData"));
+        std::shared_ptr<BinaryDataField> field = std::dynamic_pointer_cast<BinaryDataField>(getFieldFromName("RawData"));
         return field->getValue();
     }
 
     void RawFormat::setRawData(std::vector<unsigned char>& data)
     {
-        boost::shared_ptr<BinaryDataField> field = boost::dynamic_pointer_cast<BinaryDataField>(getFieldFromName("RawData"));
+        std::shared_ptr<BinaryDataField> field = std::dynamic_pointer_cast<BinaryDataField>(getFieldFromName("RawData"));
         field->setDataLength(static_cast<unsigned int>(data.size() * 8));
         field->setValue(data);
         d_rawData = data;
     }
 
-    bool RawFormat::checkSkeleton(boost::shared_ptr<Format> format) const
+    bool RawFormat::checkSkeleton(std::shared_ptr<Format> format) const
     {
         bool ret = false;
         if (format)
         {
-            boost::shared_ptr<RawFormat> pFormat = boost::dynamic_pointer_cast<RawFormat>(format);
+            std::shared_ptr<RawFormat> pFormat = std::dynamic_pointer_cast<RawFormat>(format);
             if (pFormat)
             {
                 ret = true;

@@ -47,7 +47,7 @@ namespace logicalaccess
          * \brief Create a new PC/SC reader provider instance.
          * \return The PC/SC reader provider instance.
          */
-        static boost::shared_ptr<PCSCReaderProvider> createInstance();
+        static std::shared_ptr<PCSCReaderProvider> createInstance();
 
         /**
          * \brief Get the reader provider type.
@@ -77,13 +77,13 @@ namespace logicalaccess
          * \brief Create a new reader unit for the reader provider.
          * \return A reader unit.
          */
-        virtual boost::shared_ptr<ReaderUnit> createReaderUnit();
+        virtual std::shared_ptr<ReaderUnit> createReaderUnit();
 
         /**
          * \brief Create a new reader unit for the reader provider.
          * \return A reader unit.
          */
-        boost::shared_ptr<ReaderUnit> createReaderUnit(std::string readerunitname);
+        std::shared_ptr<ReaderUnit> createReaderUnit(std::string readerunitname);
 
         /**
          * \brief Get the reader group list.

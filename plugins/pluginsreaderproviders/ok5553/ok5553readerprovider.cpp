@@ -24,20 +24,20 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<OK5553ReaderProvider> OK5553ReaderProvider::getSingletonInstance()
+    std::shared_ptr<OK5553ReaderProvider> OK5553ReaderProvider::getSingletonInstance()
     {
-        static boost::shared_ptr<OK5553ReaderProvider> instance;
+        static std::shared_ptr<OK5553ReaderProvider> instance;
         if (!instance)
         {
-            instance = boost::shared_ptr<OK5553ReaderProvider>(new OK5553ReaderProvider());
+            instance = std::shared_ptr<OK5553ReaderProvider>(new OK5553ReaderProvider());
             instance->refreshReaderList();
         }
         return instance;
     }
 
-    boost::shared_ptr<OK5553ReaderProvider> OK5553ReaderProvider::createInstance()
+    std::shared_ptr<OK5553ReaderProvider> OK5553ReaderProvider::createInstance()
     {
-        boost::shared_ptr<OK5553ReaderProvider> instance = boost::shared_ptr<OK5553ReaderProvider>(new OK5553ReaderProvider());
+        std::shared_ptr<OK5553ReaderProvider> instance = std::shared_ptr<OK5553ReaderProvider>(new OK5553ReaderProvider());
         instance->refreshReaderList();
 
         return instance;
@@ -52,12 +52,12 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<ReaderUnit> OK5553ReaderProvider::createReaderUnit()
+    std::shared_ptr<ReaderUnit> OK5553ReaderProvider::createReaderUnit()
     {
         LOG(LogLevel::INFOS) << "Creating new reader unit";
 
-        boost::shared_ptr<OK5553ReaderUnit> ret(new OK5553ReaderUnit());
-        ret->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
+        std::shared_ptr<OK5553ReaderUnit> ret(new OK5553ReaderUnit());
+        ret->setReaderProvider(std::weak_ptr<ReaderProvider>(shared_from_this()));
         d_readers.push_back(ret);
 
         return ret;
@@ -67,15 +67,15 @@ namespace logicalaccess
     {
         d_readers.clear();
 
-        std::vector<boost::shared_ptr<SerialPortXml> > ports;
+        std::vector<std::shared_ptr<SerialPortXml> > ports;
         EXCEPTION_ASSERT_WITH_LOG(SerialPortXml::EnumerateUsingCreateFile(ports), LibLogicalAccessException, "Can't enumerate the serial port list.");
 
-        for (std::vector<boost::shared_ptr<SerialPortXml> >::iterator i = ports.begin(); i != ports.end(); ++i)
+        for (std::vector<std::shared_ptr<SerialPortXml> >::iterator i = ports.begin(); i != ports.end(); ++i)
         {
-            boost::shared_ptr<OK5553ReaderUnit> unit(new OK5553ReaderUnit());
-            boost::shared_ptr<SerialPortDataTransport> dataTransport = boost::dynamic_pointer_cast<SerialPortDataTransport>(unit->getDataTransport());
+            std::shared_ptr<OK5553ReaderUnit> unit(new OK5553ReaderUnit());
+            std::shared_ptr<SerialPortDataTransport> dataTransport = std::dynamic_pointer_cast<SerialPortDataTransport>(unit->getDataTransport());
             dataTransport->setSerialPort(*i);
-            unit->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
+            unit->setReaderProvider(std::weak_ptr<ReaderProvider>(shared_from_this()));
             d_readers.push_back(unit);
         }
 

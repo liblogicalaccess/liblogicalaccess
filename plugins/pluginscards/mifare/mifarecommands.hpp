@@ -80,7 +80,7 @@ namespace logicalaccess
          * \param madKeyA The MAD key A for read access.
          * \return The sector.
          */
-        unsigned int getSectorFromMAD(long aid, boost::shared_ptr<MifareKey> madKeyA);
+        unsigned int getSectorFromMAD(long aid, std::shared_ptr<MifareKey> madKeyA);
 
         /**
          * \brief Set the sector referenced by the AID to the MAD.
@@ -89,7 +89,7 @@ namespace logicalaccess
          * \param madKeyA The MAD key A for read access.
          * \param madKeyB The MAD key B for write access.
          */
-        void setSectorToMAD(long aid, unsigned int sector, boost::shared_ptr<MifareKey> madKeyA, boost::shared_ptr<MifareKey> madKeyB);
+        void setSectorToMAD(long aid, unsigned int sector, std::shared_ptr<MifareKey> madKeyA, std::shared_ptr<MifareKey> madKeyB);
 
         /**
          * \brief Calculate the MAD crc.
@@ -112,7 +112,7 @@ namespace logicalaccess
          * \param location The location.
          * \param ai The access infos.
          */
-        void authenticate(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> ai);
+        void authenticate(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> ai);
 
         /**
          * \brief Load a key on a given location.
@@ -120,9 +120,9 @@ namespace logicalaccess
          * \param key The key.
          * \param keytype The mifare key type.
          */
-        //virtual void loadKey(boost::shared_ptr<Location> location, boost::shared_ptr<Key> key, MifareKeyType keytype);
+        //virtual void loadKey(std::shared_ptr<Location> location, std::shared_ptr<Key> key, MifareKeyType keytype);
 
-        void changeKey(boost::shared_ptr<MifareKey> keyA, boost::shared_ptr<MifareKey> keyB, unsigned int sector, const MifareAccessInfo::SectorAccessBits& sab, MifareAccessInfo::SectorAccessBits* newsab, unsigned char userbyte = 0x00);
+        void changeKey(std::shared_ptr<MifareKey> keyA, std::shared_ptr<MifareKey> keyB, unsigned int sector, const MifareAccessInfo::SectorAccessBits& sab, MifareAccessInfo::SectorAccessBits* newsab, unsigned char userbyte = 0x00);
 
         /**
          * \brief Change authenticated block.
@@ -169,7 +169,7 @@ namespace logicalaccess
          * \param key The key.
          * \param keytype The mifare key type.
          */
-        virtual void loadKey(boost::shared_ptr<Location> location, boost::shared_ptr<Key> key, MifareKeyType keytype) = 0;
+        virtual void loadKey(std::shared_ptr<Location> location, std::shared_ptr<Key> key, MifareKeyType keytype) = 0;
 
         /**
          * \brief Authenticate a block, given a key number.
@@ -185,7 +185,7 @@ namespace logicalaccess
          * \param key_storage The key storage used for authentication.
          * \param keytype The key type.
          */
-        virtual void authenticate(unsigned char blockno, boost::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype) = 0;
+        virtual void authenticate(unsigned char blockno, std::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype) = 0;
 
         /**
          * \brief Get number of data blocks for a sector.
@@ -203,7 +203,7 @@ namespace logicalaccess
 
     protected:
 
-        boost::shared_ptr<MifareChip> getMifareChip() const;
+        std::shared_ptr<MifareChip> getMifareChip() const;
     };
 }
 

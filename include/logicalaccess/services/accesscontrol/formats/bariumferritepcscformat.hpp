@@ -107,7 +107,7 @@ namespace logicalaccess
          * \param format The format to check.
          * \return True on success, false otherwise.
          */
-        virtual bool checkSkeleton(boost::shared_ptr<Format> format) const;
+        virtual bool checkSkeleton(std::shared_ptr<Format> format) const;
 
         /**
          * \brief Calculate data checksum.

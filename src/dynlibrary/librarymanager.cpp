@@ -47,9 +47,9 @@ namespace logicalaccess
         return NULL;
     }
 
-    boost::shared_ptr<ReaderProvider> LibraryManager::getReaderProvider(const std::string& readertype)
+    std::shared_ptr<ReaderProvider> LibraryManager::getReaderProvider(const std::string& readertype)
     {
-        boost::shared_ptr<ReaderProvider> ret;
+        std::shared_ptr<ReaderProvider> ret;
         std::string fctname = "get" + readertype + "Reader";
 
         getprovider getpcscsfct;
@@ -63,9 +63,9 @@ namespace logicalaccess
         return ret;
     }
 
-    boost::shared_ptr<Chip> LibraryManager::getCard(const std::string& cardtype)
+    std::shared_ptr<Chip> LibraryManager::getCard(const std::string& cardtype)
     {
-        boost::shared_ptr<Chip> ret;
+        std::shared_ptr<Chip> ret;
         std::string fctname = "get" + cardtype + "Chip";
 
         getcard getcardfct;
@@ -79,9 +79,9 @@ namespace logicalaccess
         return ret;
     }
 
-    boost::shared_ptr<KeyDiversification> LibraryManager::getKeyDiversification(const std::string& keydivtype)
+    std::shared_ptr<KeyDiversification> LibraryManager::getKeyDiversification(const std::string& keydivtype)
     {
-        boost::shared_ptr<KeyDiversification> ret;
+        std::shared_ptr<KeyDiversification> ret;
         std::string fctname = "get" + keydivtype + "Diversification";
 
         getdiversification getdiversificationfct;
@@ -95,9 +95,9 @@ namespace logicalaccess
         return ret;
     }
 
-    boost::shared_ptr<Commands> LibraryManager::getCommands(const std::string& extendedtype)
+    std::shared_ptr<Commands> LibraryManager::getCommands(const std::string& extendedtype)
     {
-        boost::shared_ptr<Commands> ret;
+        std::shared_ptr<Commands> ret;
         std::string fctname = "get" + extendedtype + "Commands";
 
         getcommands getcommandsfct;
@@ -110,9 +110,9 @@ namespace logicalaccess
         return ret;
     }
 
-    boost::shared_ptr<DataTransport> LibraryManager::getDataTransport(const std::string& transporttype)
+    std::shared_ptr<DataTransport> LibraryManager::getDataTransport(const std::string& transporttype)
     {
-        boost::shared_ptr<DataTransport> ret;
+        std::shared_ptr<DataTransport> ret;
 
         if (transporttype == TRANSPORT_SERIALPORT)
         {

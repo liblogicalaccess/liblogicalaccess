@@ -9,7 +9,7 @@
 
 namespace logicalaccess
 {
-    void MifarePlusSL3Commands::writeSector(int sector, int start_block, const void* buf, size_t buflen, boost::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype)
+    void MifarePlusSL3Commands::writeSector(int sector, int start_block, const void* buf, size_t buflen, std::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype)
     {
         if (buf == NULL || buflen < MIFARE_PLUS_BLOCK_SIZE || buflen % MIFARE_PLUS_BLOCK_SIZE != 0 || buflen / MIFARE_PLUS_BLOCK_SIZE + start_block > getNbBlocks(sector))
         {
@@ -22,13 +22,13 @@ namespace logicalaccess
         }
     }
 
-    void MifarePlusSL3Commands::writeSectors(int start_sector, int stop_sector, const void* buf, size_t buflen, boost::shared_ptr<AccessInfo> aiToUse)
+    void MifarePlusSL3Commands::writeSectors(int start_sector, int stop_sector, const void* buf, size_t buflen, std::shared_ptr<AccessInfo> aiToUse)
     {
         if (aiToUse)
         {
             int i;
             size_t test_buflen = 0;
-            boost::shared_ptr<MifarePlusAccessInfo> mAiToUse = boost::dynamic_pointer_cast<MifarePlusAccessInfo>(aiToUse);
+            std::shared_ptr<MifarePlusAccessInfo> mAiToUse = std::dynamic_pointer_cast<MifarePlusAccessInfo>(aiToUse);
             EXCEPTION_ASSERT(mAiToUse, std::invalid_argument, "aiToUse must be a MifarePlusAccessInfo.");
 
             for (i = start_sector; i < stop_sector; ++i)
@@ -55,7 +55,7 @@ namespace logicalaccess
         }
     }
 
-    void MifarePlusSL3Commands::readSector(int sector, int start_block, void* buf, size_t buflen, boost::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype)
+    void MifarePlusSL3Commands::readSector(int sector, int start_block, void* buf, size_t buflen, std::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype)
     {
         if (buf == NULL || buflen < MIFARE_PLUS_BLOCK_SIZE || buflen % MIFARE_PLUS_BLOCK_SIZE != 0 || buflen / MIFARE_PLUS_BLOCK_SIZE + start_block > getNbBlocks(sector))
         {
@@ -68,13 +68,13 @@ namespace logicalaccess
         }
     }
 
-    void MifarePlusSL3Commands::readSectors(int start_sector, int stop_sector, void* buf, size_t buflen, boost::shared_ptr<AccessInfo> aiToUse)
+    void MifarePlusSL3Commands::readSectors(int start_sector, int stop_sector, void* buf, size_t buflen, std::shared_ptr<AccessInfo> aiToUse)
     {
         if (aiToUse)
         {
             int i;
             size_t test_buflen = 0;
-            boost::shared_ptr<MifarePlusAccessInfo> mAiToUse = boost::dynamic_pointer_cast<MifarePlusAccessInfo>(aiToUse);
+            std::shared_ptr<MifarePlusAccessInfo> mAiToUse = std::dynamic_pointer_cast<MifarePlusAccessInfo>(aiToUse);
             EXCEPTION_ASSERT(mAiToUse, std::invalid_argument, "aiToUse must be a MifarePlusAccessInfo.");
 
             for (i = start_sector; i < stop_sector; ++i)
@@ -101,9 +101,9 @@ namespace logicalaccess
         }
     }
 
-    bool MifarePlusSL3Commands::authenticate(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> ai)
+    bool MifarePlusSL3Commands::authenticate(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> ai)
     {
-        boost::shared_ptr<MifarePlusAccessInfo> mAiToUse = boost::dynamic_pointer_cast<MifarePlusAccessInfo>(ai);
+        std::shared_ptr<MifarePlusAccessInfo> mAiToUse = std::dynamic_pointer_cast<MifarePlusAccessInfo>(ai);
 
         if (ai)
         {
@@ -111,7 +111,7 @@ namespace logicalaccess
         }
         else
         {
-            mAiToUse = boost::dynamic_pointer_cast<MifarePlusAccessInfo>(getChip()->getProfile()->createAccessInfo());
+            mAiToUse = std::dynamic_pointer_cast<MifarePlusAccessInfo>(getChip()->getProfile()->createAccessInfo());
         }
 
         if (mAiToUse->keyConfiguration && !mAiToUse->keyConfiguration->isEmpty())
@@ -123,7 +123,7 @@ namespace logicalaccess
         if (mAiToUse->keyA && !mAiToUse->keyA->isEmpty())
         {
             EXCEPTION_ASSERT(location, std::invalid_argument, "location cannot be null.");
-            boost::shared_ptr<MifarePlusLocation> mLocation = boost::dynamic_pointer_cast<MifarePlusLocation>(location);
+            std::shared_ptr<MifarePlusLocation> mLocation = std::dynamic_pointer_cast<MifarePlusLocation>(location);
             EXCEPTION_ASSERT(mLocation, std::invalid_argument, "location must be a MifarePlusLocation.");
 
             authenticate(mLocation->sector, mAiToUse->keyA, KT_KEY_AES_A);
@@ -131,7 +131,7 @@ namespace logicalaccess
         if (mAiToUse->keyB && !mAiToUse->keyB->isEmpty())
         {
             EXCEPTION_ASSERT(location, std::invalid_argument, "location cannot be null.");
-            boost::shared_ptr<MifarePlusLocation> mLocation = boost::dynamic_pointer_cast<MifarePlusLocation>(location);
+            std::shared_ptr<MifarePlusLocation> mLocation = std::dynamic_pointer_cast<MifarePlusLocation>(location);
             EXCEPTION_ASSERT(mLocation, std::invalid_argument, "location must be a MifarePlusLocation.");
 
             authenticate(mLocation->sector, mAiToUse->keyB, KT_KEY_AES_B);

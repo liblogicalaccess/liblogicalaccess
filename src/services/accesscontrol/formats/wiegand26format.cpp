@@ -19,14 +19,14 @@ namespace logicalaccess
 
         d_formatLinear.d_facilityCode = 0;
 
-        boost::shared_ptr<NumberDataField> field(new NumberDataField());
+        std::shared_ptr<NumberDataField> field(new NumberDataField());
         field->setName("Uid");
         field->setIsIdentifier(true);
         field->setDataLength(16);
         field->setDataRepresentation(d_dataRepresentation);
         field->setDataType(d_dataType);
         d_fieldList.push_back(field);
-        field = boost::shared_ptr<NumberDataField>(new NumberDataField());
+        field = std::shared_ptr<NumberDataField>(new NumberDataField());
         field->setName("FacilityCode");
         field->setDataLength(8);
         field->setDataRepresentation(d_dataRepresentation);
@@ -40,13 +40,13 @@ namespace logicalaccess
 
     unsigned char Wiegand26Format::getFacilityCode() const
     {
-        boost::shared_ptr<NumberDataField> field = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("FacilityCode"));
+        std::shared_ptr<NumberDataField> field = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("FacilityCode"));
         return static_cast<unsigned char>(field->getValue());
     }
 
     void Wiegand26Format::setFacilityCode(unsigned char facilityCode)
     {
-        boost::shared_ptr<NumberDataField> field = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("FacilityCode"));
+        std::shared_ptr<NumberDataField> field = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("FacilityCode"));
         field->setValue(facilityCode);
         d_formatLinear.d_facilityCode = facilityCode;
     }
@@ -125,12 +125,12 @@ namespace logicalaccess
         return "Wiegand26Format";
     }
 
-    bool Wiegand26Format::checkSkeleton(boost::shared_ptr<Format> format) const
+    bool Wiegand26Format::checkSkeleton(std::shared_ptr<Format> format) const
     {
         bool ret = false;
         if (format)
         {
-            boost::shared_ptr<Wiegand26Format> pFormat = boost::dynamic_pointer_cast<Wiegand26Format>(format);
+            std::shared_ptr<Wiegand26Format> pFormat = std::dynamic_pointer_cast<Wiegand26Format>(format);
             if (pFormat)
             {
                 ret = (

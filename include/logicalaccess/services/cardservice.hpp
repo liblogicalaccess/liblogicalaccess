@@ -34,7 +34,7 @@ namespace logicalaccess
     /**
      * \brief The base card service class for all services.
      */
-    class LIBLOGICALACCESS_API CardService : public boost::enable_shared_from_this < CardService >
+    class LIBLOGICALACCESS_API CardService : public std::enable_shared_from_this < CardService >
     {
     public:
 
@@ -42,13 +42,13 @@ namespace logicalaccess
          * \brief Constructor.
          * \param chip The associated chip.
          */
-        CardService(boost::shared_ptr<Chip> chip);
+        CardService(std::shared_ptr<Chip> chip);
 
         /*
          * \brief Get the associated chip object.
          * \return The chip.
          */
-        boost::shared_ptr<Chip> getChip() { return d_chip; };
+        std::shared_ptr<Chip> getChip() { return d_chip; };
 
         /**
          * \brief Get the card service type.
@@ -61,7 +61,7 @@ namespace logicalaccess
         /**
          * \brief Chip object.
          */
-        boost::shared_ptr<Chip> d_chip;
+        std::shared_ptr<Chip> d_chip;
     };
 }
 

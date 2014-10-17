@@ -22,7 +22,7 @@ namespace logicalaccess
         d_formatLinear.d_asciiLength = 16;
         d_formatLinear.d_padding = ' ';
 
-        boost::shared_ptr<ASCIIDataField> asciiField(new ASCIIDataField());
+        std::shared_ptr<ASCIIDataField> asciiField(new ASCIIDataField());
         asciiField->setName("Value");
         asciiField->setIsIdentifier(true);
         asciiField->setDataLength(d_formatLinear.d_asciiLength * 8);
@@ -140,49 +140,49 @@ namespace logicalaccess
 
     string ASCIIFormat::getASCIIValue()
     {
-        boost::shared_ptr<ASCIIDataField> field = boost::dynamic_pointer_cast<ASCIIDataField>(getFieldFromName("Value"));
+        std::shared_ptr<ASCIIDataField> field = std::dynamic_pointer_cast<ASCIIDataField>(getFieldFromName("Value"));
         return field->getValue();
     }
 
     void ASCIIFormat::setASCIIValue(string value)
     {
-        boost::shared_ptr<ASCIIDataField> field = boost::dynamic_pointer_cast<ASCIIDataField>(getFieldFromName("Value"));
+        std::shared_ptr<ASCIIDataField> field = std::dynamic_pointer_cast<ASCIIDataField>(getFieldFromName("Value"));
         field->setValue(value);
         d_asciiValue = value;
     }
 
     unsigned int ASCIIFormat::getASCIILength() const
     {
-        boost::shared_ptr<ASCIIDataField> field = boost::dynamic_pointer_cast<ASCIIDataField>(getFieldFromName("Value"));
+        std::shared_ptr<ASCIIDataField> field = std::dynamic_pointer_cast<ASCIIDataField>(getFieldFromName("Value"));
         return (field->getDataLength() + 7) / 8;
     }
 
     void ASCIIFormat::setASCIILength(unsigned int length)
     {
-        boost::shared_ptr<ASCIIDataField> field = boost::dynamic_pointer_cast<ASCIIDataField>(getFieldFromName("Value"));
+        std::shared_ptr<ASCIIDataField> field = std::dynamic_pointer_cast<ASCIIDataField>(getFieldFromName("Value"));
         field->setDataLength(length * 8);
         d_formatLinear.d_asciiLength = length;
     }
 
     unsigned char ASCIIFormat::getPadding()
     {
-        boost::shared_ptr<ASCIIDataField> field = boost::dynamic_pointer_cast<ASCIIDataField>(getFieldFromName("Value"));
+        std::shared_ptr<ASCIIDataField> field = std::dynamic_pointer_cast<ASCIIDataField>(getFieldFromName("Value"));
         return field->getPaddingChar();
     }
 
     void ASCIIFormat::setPadding(unsigned char padding)
     {
-        boost::shared_ptr<ASCIIDataField> field = boost::dynamic_pointer_cast<ASCIIDataField>(getFieldFromName("Value"));
+        std::shared_ptr<ASCIIDataField> field = std::dynamic_pointer_cast<ASCIIDataField>(getFieldFromName("Value"));
         field->setPaddingChar(padding);
         d_formatLinear.d_padding = padding;
     }
 
-    bool ASCIIFormat::checkSkeleton(boost::shared_ptr<Format> format) const
+    bool ASCIIFormat::checkSkeleton(std::shared_ptr<Format> format) const
     {
         bool ret = false;
         if (format)
         {
-            boost::shared_ptr<ASCIIFormat> pFormat = boost::dynamic_pointer_cast<ASCIIFormat>(format);
+            std::shared_ptr<ASCIIFormat> pFormat = std::dynamic_pointer_cast<ASCIIFormat>(format);
             if (pFormat)
             {
                 ret = (

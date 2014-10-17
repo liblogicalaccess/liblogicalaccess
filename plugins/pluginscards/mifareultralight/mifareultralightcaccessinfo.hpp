@@ -69,7 +69,7 @@ namespace logicalaccess
         /**
          * \brief The authentication key.
          */
-        boost::shared_ptr<TripleDESKey> key;
+        std::shared_ptr<TripleDESKey> key;
     };
 }
 

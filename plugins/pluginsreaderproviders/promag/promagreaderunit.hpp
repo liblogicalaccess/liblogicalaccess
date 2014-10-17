@@ -71,31 +71,31 @@ namespace logicalaccess
          * \param type The card type.
          * \return The chip.
          */
-        virtual boost::shared_ptr<Chip> createChip(std::string type);
+        virtual std::shared_ptr<Chip> createChip(std::string type);
 
         /**
          * \brief Get the first and/or most accurate chip found.
          * \return The single chip.
          */
-        virtual boost::shared_ptr<Chip> getSingleChip();
+        virtual std::shared_ptr<Chip> getSingleChip();
 
         /**
          * \brief Get chip available in the RFID rang.
          * \return The chip list.
          */
-        virtual std::vector<boost::shared_ptr<Chip> > getChipList();
+        virtual std::vector<std::shared_ptr<Chip> > getChipList();
 
         /**
          * \brief Get the current chip in air.
          * \return The chip in air.
          */
-        boost::shared_ptr<Chip> getChipInAir();
+        std::shared_ptr<Chip> getChipInAir();
 
         /**
          * \brief Get the default Promag reader/card adapter.
          * \return The default Promag reader/card adapter.
          */
-        virtual boost::shared_ptr<PromagReaderCardAdapter> getDefaultPromagReaderCardAdapter();
+        virtual std::shared_ptr<PromagReaderCardAdapter> getDefaultPromagReaderCardAdapter();
 
         /**
          * \brief Connect to the card.
@@ -170,13 +170,13 @@ namespace logicalaccess
          * \brief Get the Promag reader unit configuration.
          * \return The Promag reader unit configuration.
          */
-        boost::shared_ptr<PromagReaderUnitConfiguration> getPromagConfiguration() { return boost::dynamic_pointer_cast<PromagReaderUnitConfiguration>(getConfiguration()); };
+        std::shared_ptr<PromagReaderUnitConfiguration> getPromagConfiguration() { return std::dynamic_pointer_cast<PromagReaderUnitConfiguration>(getConfiguration()); };
 
         /**
          * \brief Get the Promag reader provider.
          * \return The Promag reader provider.
          */
-        boost::shared_ptr<PromagReaderProvider> getPromagReaderProvider() const;
+        std::shared_ptr<PromagReaderProvider> getPromagReaderProvider() const;
 
     protected:
 

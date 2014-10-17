@@ -83,7 +83,7 @@ namespace logicalaccess
 
     protected:
 
-        boost::shared_ptr<STidSTRReaderUnit> getSTidSTRReaderUnit() const;
+        std::shared_ptr<STidSTRReaderUnit> getSTidSTRReaderUnit() const;
 
         /**
          * \brief Process message data to send.

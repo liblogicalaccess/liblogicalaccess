@@ -16,35 +16,35 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<DataRepresentation> StaticFormat::getDataRepresentation() const
+    std::shared_ptr<DataRepresentation> StaticFormat::getDataRepresentation() const
     {
         return d_dataRepresentation;
     }
 
-    void StaticFormat::setDataRepresentation(boost::shared_ptr<DataRepresentation>& encoding)
+    void StaticFormat::setDataRepresentation(std::shared_ptr<DataRepresentation>& encoding)
     {
         d_dataRepresentation = encoding;
     }
 
-    boost::shared_ptr<DataType> StaticFormat::getDataType() const
+    std::shared_ptr<DataType> StaticFormat::getDataType() const
     {
         return d_dataType;
     }
 
-    void StaticFormat::setDataType(boost::shared_ptr<DataType>& encoding)
+    void StaticFormat::setDataType(std::shared_ptr<DataType>& encoding)
     {
         d_dataType = encoding;
     }
 
     unsigned long long StaticFormat::getUid() const
     {
-        boost::shared_ptr<NumberDataField> field = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("Uid"));
+        std::shared_ptr<NumberDataField> field = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("Uid"));
         return static_cast<unsigned long long>(field->getValue());
     }
 
     void StaticFormat::setUid(unsigned long long uid)
     {
-        boost::shared_ptr<NumberDataField> field = boost::dynamic_pointer_cast<NumberDataField>(getFieldFromName("Uid"));
+        std::shared_ptr<NumberDataField> field = std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("Uid"));
         field->setValue(uid);
         d_uid = uid;
     }

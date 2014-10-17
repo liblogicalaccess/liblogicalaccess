@@ -72,31 +72,31 @@ namespace logicalaccess
          * \param type The card type.
          * \return The chip.
          */
-        virtual boost::shared_ptr<Chip> createChip(std::string type);
+        virtual std::shared_ptr<Chip> createChip(std::string type);
 
         /**
          * \brief Get the first and/or most accurate chip found.
          * \return The single chip.
          */
-        virtual boost::shared_ptr<Chip> getSingleChip();
+        virtual std::shared_ptr<Chip> getSingleChip();
 
         /**
          * \brief Get chip available in the RFID rang.
          * \return The chip list.
          */
-        virtual std::vector<boost::shared_ptr<Chip> > getChipList();
+        virtual std::vector<std::shared_ptr<Chip> > getChipList();
 
         /**
          * \brief Get the current chip in air.
          * \return The chip in air.
          */
-        boost::shared_ptr<Chip> getChipInAir();
+        std::shared_ptr<Chip> getChipInAir();
 
         /**
          * \brief Get the default A3MLGM5600 reader/card adapter.
          * \return The default A3MLGM5600 reader/card adapter.
          */
-        virtual boost::shared_ptr<A3MLGM5600ReaderCardAdapter> getDefaultA3MLGM5600ReaderCardAdapter();
+        virtual std::shared_ptr<A3MLGM5600ReaderCardAdapter> getDefaultA3MLGM5600ReaderCardAdapter();
 
         /**
          * \brief Connect to the card.
@@ -171,19 +171,19 @@ namespace logicalaccess
          * \brief Get the A3MLGM5600 reader unit configuration.
          * \return The A3MLGM5600 reader unit configuration.
          */
-        boost::shared_ptr<A3MLGM5600ReaderUnitConfiguration> getA3MLGM5600Configuration() { return boost::dynamic_pointer_cast<A3MLGM5600ReaderUnitConfiguration>(getConfiguration()); };
+        std::shared_ptr<A3MLGM5600ReaderUnitConfiguration> getA3MLGM5600Configuration() { return std::dynamic_pointer_cast<A3MLGM5600ReaderUnitConfiguration>(getConfiguration()); };
 
         /**
          * \brief Get the A3MLGM5600 reader provider.
          * \return The A3MLGM5600 reader provider.
          */
-        boost::shared_ptr<A3MLGM5600ReaderProvider> getA3MLGM5600ReaderProvider() const;
+        std::shared_ptr<A3MLGM5600ReaderProvider> getA3MLGM5600ReaderProvider() const;
 
         /**
          * \brief Get the reader unit singleton instance.
          * \return The reader unit instance.
          */
-        static boost::shared_ptr<A3MLGM5600ReaderUnit> getSingletonInstance();
+        static std::shared_ptr<A3MLGM5600ReaderUnit> getSingletonInstance();
 
     protected:
 

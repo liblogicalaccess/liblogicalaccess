@@ -28,9 +28,9 @@ namespace logicalaccess
         : ReaderUnit()
     {
         d_readerUnitConfig.reset(new SmartIDReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(boost::shared_ptr<SmartIDReaderCardAdapter>(new SmartIDReaderCardAdapter()));
+        setDefaultReaderCardAdapter(std::shared_ptr<SmartIDReaderCardAdapter>(new SmartIDReaderCardAdapter()));
         d_ledBuzzerDisplay.reset(new SmartIDLEDBuzzerDisplay());
-        boost::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
+        std::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
 #ifndef _WINDOWS
         dataTransport->setPortBaudRate(B115200);
 #else
@@ -67,12 +67,12 @@ namespace logicalaccess
     {
         d_card_type = cardType;
         d_readerCommunication = getReaderCommunication(cardType);
-        boost::dynamic_pointer_cast<ReaderCardAdapter>(d_readerCommunication)->setDataTransport(getDataTransport());
+        std::dynamic_pointer_cast<ReaderCardAdapter>(d_readerCommunication)->setDataTransport(getDataTransport());
     }
 
-    boost::shared_ptr<ReaderCommunication> SmartIDReaderUnit::getReaderCommunication(std::string cardType)
+    std::shared_ptr<ReaderCommunication> SmartIDReaderUnit::getReaderCommunication(std::string cardType)
     {
-        boost::shared_ptr<ReaderCommunication> ret;
+        std::shared_ptr<ReaderCommunication> ret;
 
         if (cardType == "Mifare1K" || cardType == "Mifare4K" || cardType == "Mifare")
             ret.reset(new MifareSmartIDReaderCardAdapter());
@@ -187,15 +187,15 @@ namespace logicalaccess
         return csn;
     }
 
-    boost::shared_ptr<Chip> SmartIDReaderUnit::createChip(std::string type)
+    std::shared_ptr<Chip> SmartIDReaderUnit::createChip(std::string type)
     {
-        boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
+        std::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
         setcryptocontext setcryptocontextfct;
 
         if (chip)
         {
-            boost::shared_ptr<ReaderCardAdapter> rca;
-            boost::shared_ptr<Commands> commands;
+            std::shared_ptr<ReaderCardAdapter> rca;
+            std::shared_ptr<Commands> commands;
 
             if (type == "Mifare1K" || type == "Mifare4K" || type == "Mifare")
             {
@@ -235,16 +235,16 @@ namespace logicalaccess
         return chip;
     }
 
-    boost::shared_ptr<Chip> SmartIDReaderUnit::getSingleChip()
+    std::shared_ptr<Chip> SmartIDReaderUnit::getSingleChip()
     {
-        boost::shared_ptr<Chip> chip = d_insertedChip;
+        std::shared_ptr<Chip> chip = d_insertedChip;
         return chip;
     }
 
-    std::vector<boost::shared_ptr<Chip> > SmartIDReaderUnit::getChipList()
+    std::vector<std::shared_ptr<Chip> > SmartIDReaderUnit::getChipList()
     {
-        std::vector<boost::shared_ptr<Chip> > chipList;
-        boost::shared_ptr<Chip> singleChip = getSingleChip();
+        std::vector<std::shared_ptr<Chip> > chipList;
+        std::shared_ptr<Chip> singleChip = getSingleChip();
         if (singleChip)
         {
             chipList.push_back(singleChip);
@@ -252,10 +252,10 @@ namespace logicalaccess
         return chipList;
     }
 
-    boost::shared_ptr<SmartIDReaderCardAdapter> SmartIDReaderUnit::getDefaultSmartIDReaderCardAdapter()
+    std::shared_ptr<SmartIDReaderCardAdapter> SmartIDReaderUnit::getDefaultSmartIDReaderCardAdapter()
     {
-        boost::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
-        return boost::dynamic_pointer_cast<SmartIDReaderCardAdapter>(adapter);
+        std::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
+        return std::dynamic_pointer_cast<SmartIDReaderCardAdapter>(adapter);
     }
 
     std::string SmartIDReaderUnit::getReaderSerialNumber()
@@ -273,7 +273,7 @@ namespace logicalaccess
     bool SmartIDReaderUnit::connectToReader()
     {
         LOG(LogLevel::INFOS) << "Starting connection to reader...";
-        boost::shared_ptr<DataTransport> dataTransport = getDataTransport();
+        std::shared_ptr<DataTransport> dataTransport = getDataTransport();
         if (!dataTransport->getReaderUnit())
         {
             dataTransport->setReaderUnit(shared_from_this());
@@ -335,8 +335,8 @@ namespace logicalaccess
         ReaderUnit::unSerialize(node);
     }
 
-    boost::shared_ptr<SmartIDReaderProvider> SmartIDReaderUnit::getSmartIDReaderProvider() const
+    std::shared_ptr<SmartIDReaderProvider> SmartIDReaderUnit::getSmartIDReaderProvider() const
     {
-        return boost::dynamic_pointer_cast<SmartIDReaderProvider>(getReaderProvider());
+        return std::dynamic_pointer_cast<SmartIDReaderProvider>(getReaderProvider());
     }
 }

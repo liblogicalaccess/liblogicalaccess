@@ -1,5 +1,5 @@
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "infineonmydchip.hpp"
 
@@ -21,11 +21,11 @@ extern "C"
         return (char *)"InfineonMYD";
     }
 
-    LIBLOGICALACCESS_API void getInfineonMYDChip(boost::shared_ptr<logicalaccess::Chip>* chip)
+    LIBLOGICALACCESS_API void getInfineonMYDChip(std::shared_ptr<logicalaccess::Chip>* chip)
     {
         if (chip != NULL)
         {
-            *chip = boost::shared_ptr<logicalaccess::InfineonMYDChip>(new logicalaccess::InfineonMYDChip());
+            *chip = std::shared_ptr<logicalaccess::InfineonMYDChip>(new logicalaccess::InfineonMYDChip());
         }
     }
 

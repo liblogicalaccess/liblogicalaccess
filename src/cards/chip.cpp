@@ -35,9 +35,9 @@ namespace logicalaccess
         return d_cardtype;
     }
 
-    boost::shared_ptr<LocationNode> Chip::getRootLocationNode()
+    std::shared_ptr<LocationNode> Chip::getRootLocationNode()
     {
-        boost::shared_ptr<LocationNode> rootNode;
+        std::shared_ptr<LocationNode> rootNode;
         rootNode.reset(new LocationNode());
 
         rootNode->setName("Unknown");
@@ -45,8 +45,8 @@ namespace logicalaccess
         return rootNode;
     }
 
-    boost::shared_ptr<CardService> Chip::getService(CardServiceType /*serviceType*/)
+    std::shared_ptr<CardService> Chip::getService(CardServiceType /*serviceType*/)
     {
-        return boost::shared_ptr<CardService>();
+        return std::shared_ptr<CardService>();
     }
 }

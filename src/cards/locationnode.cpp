@@ -32,7 +32,7 @@ namespace logicalaccess
         return d_name;
     }
 
-    vector<boost::shared_ptr<LocationNode> >& LocationNode::getChildrens()
+    vector<std::shared_ptr<LocationNode> >& LocationNode::getChildrens()
     {
         return d_childrens;
     }
@@ -57,12 +57,12 @@ namespace logicalaccess
         return d_length;
     }
 
-    void LocationNode::setLocation(boost::shared_ptr<Location> location)
+    void LocationNode::setLocation(std::shared_ptr<Location> location)
     {
         d_location = location;
     }
 
-    boost::shared_ptr<Location> LocationNode::getLocation() const
+    std::shared_ptr<Location> LocationNode::getLocation() const
     {
         return d_location;
     }
@@ -87,12 +87,12 @@ namespace logicalaccess
         return d_hasProperties;
     }
 
-    void LocationNode::setParent(boost::weak_ptr<LocationNode> parent)
+    void LocationNode::setParent(std::weak_ptr<LocationNode> parent)
     {
         d_parent = parent;
     }
 
-    boost::shared_ptr<LocationNode> LocationNode::getParent()
+    std::shared_ptr<LocationNode> LocationNode::getParent()
     {
         return d_parent.lock();
     }

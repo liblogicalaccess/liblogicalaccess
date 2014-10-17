@@ -1,5 +1,5 @@
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "gunneboreaderprovider.hpp"
 
@@ -21,7 +21,7 @@ extern "C"
         return (char *)"Gunnebo";
     }
 
-    LIBLOGICALACCESS_API void getGunneboReader(boost::shared_ptr<logicalaccess::ReaderProvider>* rp)
+    LIBLOGICALACCESS_API void getGunneboReader(std::shared_ptr<logicalaccess::ReaderProvider>* rp)
     {
         if (rp != NULL)
         {

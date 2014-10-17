@@ -1,5 +1,5 @@
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "em4135chip.hpp"
 
@@ -21,11 +21,11 @@ extern "C"
         return (char *)"EM4135";
     }
 
-    LIBLOGICALACCESS_API void getEM4135Chip(boost::shared_ptr<logicalaccess::Chip>* chip)
+    LIBLOGICALACCESS_API void getEM4135Chip(std::shared_ptr<logicalaccess::Chip>* chip)
     {
         if (chip != NULL)
         {
-            *chip = boost::shared_ptr<logicalaccess::EM4135Chip>(new logicalaccess::EM4135Chip());
+            *chip = std::shared_ptr<logicalaccess::EM4135Chip>(new logicalaccess::EM4135Chip());
         }
     }
 

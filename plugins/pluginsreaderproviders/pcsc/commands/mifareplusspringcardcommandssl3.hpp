@@ -41,7 +41,7 @@ namespace logicalaccess
          * \param keytype The mifare plus key type.
          * \return true if authenticated, false otherwise.
          */
-        virtual bool followingAuthenticate(int sector, boost::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype);
+        virtual bool followingAuthenticate(int sector, std::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype);
 
         /**
          * \brief Authenticate a block, given a key number.
@@ -50,7 +50,7 @@ namespace logicalaccess
          * \param keytype The mifare plus key type.
          * \return true if authenticated, false otherwise.
          */
-        virtual bool authenticate(int sector, boost::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype);
+        virtual bool authenticate(int sector, std::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype);
 
         /**
         * \brief Reset the authentication
@@ -152,7 +152,7 @@ namespace logicalaccess
          * \param first The first authentication indicator
          * \return true if authenticated, false otherwise.
          */
-        virtual bool genericAuthenticate(int sector, boost::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype, bool first);
+        virtual bool genericAuthenticate(int sector, std::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype, bool first);
 
         /**
          * \brief Get the appropriate read command code

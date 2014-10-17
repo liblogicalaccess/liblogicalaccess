@@ -1,5 +1,5 @@
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "desfireev1chip.hpp"
 #include "desfirechip.hpp"
@@ -26,43 +26,43 @@ extern "C"
         return (char *)"DESFire";
     }
 
-    LIBLOGICALACCESS_API void getDESFireEV1Chip(boost::shared_ptr<logicalaccess::Chip>* chip)
+    LIBLOGICALACCESS_API void getDESFireEV1Chip(std::shared_ptr<logicalaccess::Chip>* chip)
     {
         if (chip != NULL)
         {
-            *chip = boost::shared_ptr<logicalaccess::DESFireEV1Chip>(new logicalaccess::DESFireEV1Chip());
+            *chip = std::shared_ptr<logicalaccess::DESFireEV1Chip>(new logicalaccess::DESFireEV1Chip());
         }
     }
 
-    LIBLOGICALACCESS_API void getDESFireChip(boost::shared_ptr<logicalaccess::Chip>* chip)
+    LIBLOGICALACCESS_API void getDESFireChip(std::shared_ptr<logicalaccess::Chip>* chip)
     {
         if (chip != NULL)
         {
-            *chip = boost::shared_ptr<logicalaccess::DESFireChip>(new logicalaccess::DESFireChip());
+            *chip = std::shared_ptr<logicalaccess::DESFireChip>(new logicalaccess::DESFireChip());
         }
     }
 
-    LIBLOGICALACCESS_API void getNXPAV1Diversification(boost::shared_ptr<logicalaccess::KeyDiversification>* keydiversification)
+    LIBLOGICALACCESS_API void getNXPAV1Diversification(std::shared_ptr<logicalaccess::KeyDiversification>* keydiversification)
     {
         if (keydiversification != NULL)
         {
-            *keydiversification = boost::shared_ptr<logicalaccess::NXPAV1KeyDiversification>(new logicalaccess::NXPAV1KeyDiversification());
+            *keydiversification = std::shared_ptr<logicalaccess::NXPAV1KeyDiversification>(new logicalaccess::NXPAV1KeyDiversification());
         }
     }
 
-    LIBLOGICALACCESS_API void getNXPAV2Diversification(boost::shared_ptr<logicalaccess::KeyDiversification>* keydiversification)
+    LIBLOGICALACCESS_API void getNXPAV2Diversification(std::shared_ptr<logicalaccess::KeyDiversification>* keydiversification)
     {
         if (keydiversification != NULL)
         {
-            *keydiversification = boost::shared_ptr<logicalaccess::NXPAV2KeyDiversification>(new logicalaccess::NXPAV2KeyDiversification());
+            *keydiversification = std::shared_ptr<logicalaccess::NXPAV2KeyDiversification>(new logicalaccess::NXPAV2KeyDiversification());
         }
     }
 
-    LIBLOGICALACCESS_API void getSagemDiversification(boost::shared_ptr<logicalaccess::KeyDiversification>* keydiversification)
+    LIBLOGICALACCESS_API void getSagemDiversification(std::shared_ptr<logicalaccess::KeyDiversification>* keydiversification)
     {
         if (keydiversification != NULL)
         {
-            *keydiversification = boost::shared_ptr<logicalaccess::SagemKeyDiversification>(new logicalaccess::SagemKeyDiversification());
+            *keydiversification = std::shared_ptr<logicalaccess::SagemKeyDiversification>(new logicalaccess::SagemKeyDiversification());
         }
     }
 

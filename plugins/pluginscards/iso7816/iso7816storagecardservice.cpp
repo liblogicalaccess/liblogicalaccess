@@ -11,7 +11,7 @@
 
 namespace logicalaccess
 {
-    ISO7816StorageCardService::ISO7816StorageCardService(boost::shared_ptr<Chip> chip)
+    ISO7816StorageCardService::ISO7816StorageCardService(std::shared_ptr<Chip> chip)
         : StorageCardService(chip)
     {
     }
@@ -25,10 +25,10 @@ namespace logicalaccess
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not implemented.");
     }
 
-    void ISO7816StorageCardService::erase(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> /*aiToUse*/)
+    void ISO7816StorageCardService::erase(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> /*aiToUse*/)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
-        boost::shared_ptr<ISO7816Location> icLocation = boost::dynamic_pointer_cast<ISO7816Location>(location);
+        std::shared_ptr<ISO7816Location> icLocation = std::dynamic_pointer_cast<ISO7816Location>(location);
 
         EXCEPTION_ASSERT_WITH_LOG(icLocation, std::invalid_argument, "location must be a ISO7816Location.");
 
@@ -66,12 +66,12 @@ namespace logicalaccess
         }
     }
 
-    void ISO7816StorageCardService::writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> /*aiToUse*/, boost::shared_ptr<AccessInfo> /*aiToWrite*/, const void* data, size_t dataLength, CardBehavior /*behaviorFlags*/)
+    void ISO7816StorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> /*aiToUse*/, std::shared_ptr<AccessInfo> /*aiToWrite*/, const void* data, size_t dataLength, CardBehavior /*behaviorFlags*/)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
         EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
 
-        boost::shared_ptr<ISO7816Location> icLocation = boost::dynamic_pointer_cast<ISO7816Location>(location);
+        std::shared_ptr<ISO7816Location> icLocation = std::dynamic_pointer_cast<ISO7816Location>(location);
 
         EXCEPTION_ASSERT_WITH_LOG(icLocation, std::invalid_argument, "location must be a ISO7816Location.");
 
@@ -123,12 +123,12 @@ namespace logicalaccess
         }
     }
 
-    void ISO7816StorageCardService::readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> /*aiToUse*/, void* data, size_t dataLength, CardBehavior /*behaviorFlags*/)
+    void ISO7816StorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> /*aiToUse*/, void* data, size_t dataLength, CardBehavior /*behaviorFlags*/)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
         EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
 
-        boost::shared_ptr<ISO7816Location> icLocation = boost::dynamic_pointer_cast<ISO7816Location>(location);
+        std::shared_ptr<ISO7816Location> icLocation = std::dynamic_pointer_cast<ISO7816Location>(location);
 
         EXCEPTION_ASSERT_WITH_LOG(icLocation, std::invalid_argument, "location must be a ISO7816Location.");
 
@@ -176,7 +176,7 @@ namespace logicalaccess
         }
     }
 
-    unsigned int ISO7816StorageCardService::readDataHeader(boost::shared_ptr<Location> /*location*/, boost::shared_ptr<AccessInfo> /*aiToUse*/, void* /*data*/, size_t /*dataLength*/)
+    unsigned int ISO7816StorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/, void* /*data*/, size_t /*dataLength*/)
     {
         return 0;
     }

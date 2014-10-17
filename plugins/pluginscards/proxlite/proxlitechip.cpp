@@ -21,9 +21,9 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<LocationNode> ProxLiteChip::getRootLocationNode()
+    std::shared_ptr<LocationNode> ProxLiteChip::getRootLocationNode()
     {
-        boost::shared_ptr<LocationNode> rootNode;
+        std::shared_ptr<LocationNode> rootNode;
         rootNode.reset(new LocationNode());
 
         rootNode->setName("ProxLite");

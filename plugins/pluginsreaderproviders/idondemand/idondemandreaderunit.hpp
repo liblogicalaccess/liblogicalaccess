@@ -71,25 +71,25 @@ namespace logicalaccess
          * \param type The card type.
          * \return The chip.
          */
-        virtual boost::shared_ptr<Chip> createChip(std::string type);
+        virtual std::shared_ptr<Chip> createChip(std::string type);
 
         /**
          * \brief Get the first and/or most accurate chip found.
          * \return The single chip.
          */
-        virtual boost::shared_ptr<Chip> getSingleChip();
+        virtual std::shared_ptr<Chip> getSingleChip();
 
         /**
          * \brief Get chip available in the RFID rang.
          * \return The chip list.
          */
-        virtual std::vector<boost::shared_ptr<Chip> > getChipList();
+        virtual std::vector<std::shared_ptr<Chip> > getChipList();
 
         /**
          * \brief Get the default IdOnDemand reader/card adapter.
          * \return The default IdOnDemand reader/card adapter.
          */
-        virtual boost::shared_ptr<IdOnDemandReaderCardAdapter> getDefaultIdOnDemandReaderCardAdapter();
+        virtual std::shared_ptr<IdOnDemandReaderCardAdapter> getDefaultIdOnDemandReaderCardAdapter();
 
         /**
          * \brief Connect to the card.
@@ -152,13 +152,13 @@ namespace logicalaccess
          * \brief Get the IdOnDemand reader unit configuration.
          * \return The IdOnDemand reader unit configuration.
          */
-        boost::shared_ptr<IdOnDemandReaderUnitConfiguration> getIdOnDemandConfiguration() { return boost::dynamic_pointer_cast<IdOnDemandReaderUnitConfiguration>(getConfiguration()); };
+        std::shared_ptr<IdOnDemandReaderUnitConfiguration> getIdOnDemandConfiguration() { return std::dynamic_pointer_cast<IdOnDemandReaderUnitConfiguration>(getConfiguration()); };
 
         /**
          * \brief Get the IdOnDemand reader provider.
          * \return The IdOnDemand reader provider.
          */
-        boost::shared_ptr<IdOnDemandReaderProvider> getIdOnDemandReaderProvider() const;
+        std::shared_ptr<IdOnDemandReaderProvider> getIdOnDemandReaderProvider() const;
 
         /**
          * \brief Authenticate the reader with the configured authentication code for SDK use.
@@ -212,7 +212,7 @@ namespace logicalaccess
          * \return The chip.
          * \remarks This function change the reader state! Do not use in multi-threading process.
          */
-        boost::shared_ptr<Chip> getChipInAir();
+        std::shared_ptr<Chip> getChipInAir();
     };
 }
 

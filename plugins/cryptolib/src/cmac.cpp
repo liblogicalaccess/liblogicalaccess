@@ -13,14 +13,14 @@ namespace logicalaccess
 {
     namespace openssl
     {
-        std::vector<unsigned char> CMACCrypto::cmac(const std::vector<unsigned char>& key, boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const std::vector<unsigned char>& data, std::vector<unsigned char> lastIV, unsigned int padding_size)
+        std::vector<unsigned char> CMACCrypto::cmac(const std::vector<unsigned char>& key, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const std::vector<unsigned char>& data, std::vector<unsigned char> lastIV, unsigned int padding_size)
         {
-            boost::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherK1K2;
+            std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherK1K2;
 
-            boost::shared_ptr<openssl::SymmetricKey> symkey;
-            boost::shared_ptr<openssl::InitializationVector> iv;
+            std::shared_ptr<openssl::SymmetricKey> symkey;
+            std::shared_ptr<openssl::InitializationVector> iv;
             // 3DES
-            if (boost::dynamic_pointer_cast<openssl::DESCipher>(cipherMAC))
+            if (std::dynamic_pointer_cast<openssl::DESCipher>(cipherMAC))
             {
                 cipherK1K2.reset(new openssl::DESCipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_ECB));
 
@@ -110,7 +110,7 @@ namespace logicalaccess
 
             std::vector<unsigned char> ret;
             // 3DES
-            if (boost::dynamic_pointer_cast<openssl::DESCipher>(cipherMAC))
+            if (std::dynamic_pointer_cast<openssl::DESCipher>(cipherMAC))
             {
                 iv.reset(new openssl::DESInitializationVector(openssl::DESInitializationVector::createFromData(lastIV)));
             }

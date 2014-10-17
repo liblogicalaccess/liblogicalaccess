@@ -31,8 +31,8 @@ namespace logicalaccess
         : ReaderUnit()
     {
         d_readerUnitConfig.reset(new GunneboReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(boost::shared_ptr<GunneboReaderCardAdapter>(new GunneboReaderCardAdapter()));
-        boost::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
+        setDefaultReaderCardAdapter(std::shared_ptr<GunneboReaderCardAdapter>(new GunneboReaderCardAdapter()));
+        std::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
         setDataTransport(dataTransport);
         d_card_type = "UNKNOWN";
 
@@ -236,15 +236,15 @@ namespace logicalaccess
         LOG(LogLevel::WARNINGS) << "Disconnect do nothing with Gunnebo reader";
     }
 
-    boost::shared_ptr<Chip> GunneboReaderUnit::createChip(std::string type)
+    std::shared_ptr<Chip> GunneboReaderUnit::createChip(std::string type)
     {
         LOG(LogLevel::INFOS) << "Creating chip... chip type {" << type << "}";
-        boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
+        std::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 
         if (chip)
         {
             LOG(LogLevel::INFOS) << "Chip created successfully !";
-            boost::shared_ptr<ReaderCardAdapter> rca;
+            std::shared_ptr<ReaderCardAdapter> rca;
 
             if (type == "GenericTag")
             {
@@ -259,16 +259,16 @@ namespace logicalaccess
         return chip;
     }
 
-    boost::shared_ptr<Chip> GunneboReaderUnit::getSingleChip()
+    std::shared_ptr<Chip> GunneboReaderUnit::getSingleChip()
     {
-        boost::shared_ptr<Chip> chip = d_insertedChip;
+        std::shared_ptr<Chip> chip = d_insertedChip;
         return chip;
     }
 
-    std::vector<boost::shared_ptr<Chip> > GunneboReaderUnit::getChipList()
+    std::vector<std::shared_ptr<Chip> > GunneboReaderUnit::getChipList()
     {
-        std::vector<boost::shared_ptr<Chip> > chipList;
-        boost::shared_ptr<Chip> singleChip = getSingleChip();
+        std::vector<std::shared_ptr<Chip> > chipList;
+        std::shared_ptr<Chip> singleChip = getSingleChip();
         if (singleChip)
         {
             chipList.push_back(singleChip);
@@ -276,10 +276,10 @@ namespace logicalaccess
         return chipList;
     }
 
-    boost::shared_ptr<GunneboReaderCardAdapter> GunneboReaderUnit::getDefaultGunneboReaderCardAdapter()
+    std::shared_ptr<GunneboReaderCardAdapter> GunneboReaderUnit::getDefaultGunneboReaderCardAdapter()
     {
-        boost::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
-        return boost::dynamic_pointer_cast<GunneboReaderCardAdapter>(adapter);
+        std::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
+        return std::dynamic_pointer_cast<GunneboReaderCardAdapter>(adapter);
     }
 
     string GunneboReaderUnit::getReaderSerialNumber()
@@ -330,8 +330,8 @@ namespace logicalaccess
         ReaderUnit::unSerialize(node);
     }
 
-    boost::shared_ptr<GunneboReaderProvider> GunneboReaderUnit::getGunneboReaderProvider() const
+    std::shared_ptr<GunneboReaderProvider> GunneboReaderUnit::getGunneboReaderProvider() const
     {
-        return boost::dynamic_pointer_cast<GunneboReaderProvider>(getReaderProvider());
+        return std::dynamic_pointer_cast<GunneboReaderProvider>(getReaderProvider());
     }
 }

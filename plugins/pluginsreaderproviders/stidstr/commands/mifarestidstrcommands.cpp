@@ -69,27 +69,27 @@ namespace logicalaccess
         return true;
     }
 
-    void MifareSTidSTRCommands::loadKey(boost::shared_ptr<Location> location, boost::shared_ptr<Key> key, MifareKeyType keytype)
+    void MifareSTidSTRCommands::loadKey(std::shared_ptr<Location> location, std::shared_ptr<Key> key, MifareKeyType keytype)
     {
         LOG(LogLevel::INFOS) << "Loading key... location {" << location->serialize() << "} key type {0x" << std::hex << keytype << std::dec << "(" << keytype << ")}";
 
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
         EXCEPTION_ASSERT_WITH_LOG(key, std::invalid_argument, "key cannot be null.");
 
-        boost::shared_ptr<MifareLocation> mLocation = boost::dynamic_pointer_cast<MifareLocation>(location);
-        boost::shared_ptr<MifareKey> mKey = boost::dynamic_pointer_cast<MifareKey>(key);
+        std::shared_ptr<MifareLocation> mLocation = std::dynamic_pointer_cast<MifareLocation>(location);
+        std::shared_ptr<MifareKey> mKey = std::dynamic_pointer_cast<MifareKey>(key);
 
         EXCEPTION_ASSERT_WITH_LOG(mLocation, std::invalid_argument, "location must be a MifareLocation.");
         EXCEPTION_ASSERT_WITH_LOG(mKey, std::invalid_argument, "key must be a MifareKey.");
 
-        boost::shared_ptr<KeyStorage> key_storage = key->getKeyStorage();
+        std::shared_ptr<KeyStorage> key_storage = key->getKeyStorage();
 
-        if (boost::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key_storage))
+        if (std::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key_storage))
         {
             LOG(LogLevel::INFOS) << "Using computer memory key storage !";
             loadKey(static_cast<unsigned char>(mLocation->sector), keytype, key->getData(), key->getLength(), true);
         }
-        else if (boost::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage))
+        else if (std::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage))
         {
             LOG(LogLevel::INFOS) << "Using reader memory key storage !";
             // Don't load the key when reader memory, except if specified
@@ -110,19 +110,19 @@ namespace logicalaccess
         LOG(LogLevel::WARNINGS) << "STid STR doesn't separate authentication and read/write operation.";
     }
 
-    void MifareSTidSTRCommands::authenticate(unsigned char /*blockno*/, boost::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype)
+    void MifareSTidSTRCommands::authenticate(unsigned char /*blockno*/, std::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype)
     {
         LOG(LogLevel::INFOS) << "Setting the authenticate type... key storage {" << key_storage->serialize() << "} key type {0x" << std::hex << keytype << std::dec << "(" << keytype << ")}";
-        if (boost::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key_storage))
+        if (std::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key_storage))
         {
             LOG(LogLevel::INFOS) << "Setting computer memory key storage !";
             d_useSKB = false;
             d_skbIndex = 0;
         }
-        else if (boost::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage))
+        else if (std::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage))
         {
             d_useSKB = true;
-            boost::shared_ptr<ReaderMemoryKeyStorage> rmks = boost::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage);
+            std::shared_ptr<ReaderMemoryKeyStorage> rmks = std::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage);
             d_skbIndex = rmks->getKeySlot();
             LOG(LogLevel::INFOS) << "Setting reader memory key storage ! SKB index {" << d_skbIndex << "}";
         }

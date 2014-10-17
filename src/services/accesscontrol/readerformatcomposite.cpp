@@ -18,9 +18,9 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<Format> ReaderFormatComposite::readFormat()
+    std::shared_ptr<Format> ReaderFormatComposite::readFormat()
     {
-        boost::shared_ptr<Format> fcopy;
+        std::shared_ptr<Format> fcopy;
         if (d_readerConfiguration && d_cardsFormatComposite)
         {
             d_cardsFormatComposite->setReaderUnit(d_readerConfiguration->getReaderUnit());
@@ -64,22 +64,22 @@ namespace logicalaccess
         return "ReaderFormatComposite";
     }
 
-    boost::shared_ptr<ReaderConfiguration> ReaderFormatComposite::getReaderConfiguration() const
+    std::shared_ptr<ReaderConfiguration> ReaderFormatComposite::getReaderConfiguration() const
     {
         return d_readerConfiguration;
     }
 
-    void ReaderFormatComposite::setReaderConfiguration(boost::shared_ptr<ReaderConfiguration> readerConfig)
+    void ReaderFormatComposite::setReaderConfiguration(std::shared_ptr<ReaderConfiguration> readerConfig)
     {
         d_readerConfiguration = readerConfig;
     }
 
-    boost::shared_ptr<CardsFormatComposite> ReaderFormatComposite::getCardsFormatComposite() const
+    std::shared_ptr<CardsFormatComposite> ReaderFormatComposite::getCardsFormatComposite() const
     {
         return d_cardsFormatComposite;
     }
 
-    void ReaderFormatComposite::setCardsFormatComposite(boost::shared_ptr<CardsFormatComposite> composite)
+    void ReaderFormatComposite::setCardsFormatComposite(std::shared_ptr<CardsFormatComposite> composite)
     {
         d_cardsFormatComposite = composite;
     }

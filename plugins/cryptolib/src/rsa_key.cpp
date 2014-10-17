@@ -29,7 +29,7 @@ namespace logicalaccess
                 THROW_EXCEPTION_WITH_LOG(logicalaccess::LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
             }
 
-            RSAKey rsa(boost::shared_ptr<RSA>(RSA_generate_key(1024, data | 1, NULL, NULL), RSA_free), true);
+            RSAKey rsa(std::shared_ptr<RSA>(RSA_generate_key(1024, data | 1, NULL, NULL), RSA_free), true);
 
             EXCEPTION_ASSERT_WITH_LOG(rsa.d_rsa, OpenSSLException, "Cannot generate RSA key pair");
 
@@ -50,7 +50,7 @@ namespace logicalaccess
             }
             else
             {
-                boost::shared_ptr<RSA> sprsa(prsa, RSA_free);
+                std::shared_ptr<RSA> sprsa(prsa, RSA_free);
 
                 return RSAKey(sprsa, false);
             }
@@ -68,7 +68,7 @@ namespace logicalaccess
             }
             else
             {
-                boost::shared_ptr<RSA> sprsa(prsa, RSA_free);
+                std::shared_ptr<RSA> sprsa(prsa, RSA_free);
 
                 return RSAKey(sprsa, true);
             }
@@ -78,13 +78,13 @@ namespace logicalaccess
         {
             std::vector<unsigned char> datacopy = data;
 
-            boost::shared_ptr<BIO> pbio(BIO_new_mem_buf(datacopy.data(), (int)datacopy.size()), BIO_free);
+            std::shared_ptr<BIO> pbio(BIO_new_mem_buf(datacopy.data(), (int)datacopy.size()), BIO_free);
 
             RSA* prsa = PEM_read_bio_RSA_PUBKEY(pbio.get(), NULL, callback, userdata);
 
             EXCEPTION_ASSERT_WITH_LOG(prsa, OpenSSLException, "Unable to parse the RSA public key PEM data");
 
-            boost::shared_ptr<RSA> sprsa(prsa, RSA_free);
+            std::shared_ptr<RSA> sprsa(prsa, RSA_free);
 
             return RSAKey(sprsa, false);
         }
@@ -93,13 +93,13 @@ namespace logicalaccess
         {
             std::vector<unsigned char> datacopy = data;
 
-            boost::shared_ptr<BIO> pbio(BIO_new_mem_buf(datacopy.data(), (int)datacopy.size()), BIO_free);
+            std::shared_ptr<BIO> pbio(BIO_new_mem_buf(datacopy.data(), (int)datacopy.size()), BIO_free);
 
             RSA* prsa = PEM_read_bio_RSAPrivateKey(pbio.get(), NULL, callback, userdata);
 
             EXCEPTION_ASSERT_WITH_LOG(prsa, OpenSSLException, "Unable to parse the RSA public key PEM data");
 
-            boost::shared_ptr<RSA> sprsa(prsa, RSA_free);
+            std::shared_ptr<RSA> sprsa(prsa, RSA_free);
 
             return RSAKey(sprsa, true);
         }
@@ -119,7 +119,7 @@ namespace logicalaccess
 
             EXCEPTION_ASSERT_WITH_LOG(prsa, OpenSSLException, "Unable to parse the RSA public key PEM file");
 
-            boost::shared_ptr<RSA> sprsa(prsa, RSA_free);
+            std::shared_ptr<RSA> sprsa(prsa, RSA_free);
 
             return RSAKey(sprsa, false);
         }
@@ -139,7 +139,7 @@ namespace logicalaccess
 
             EXCEPTION_ASSERT_WITH_LOG(prsa, OpenSSLException, "Unable to parse the RSA private key PEM file");
 
-            boost::shared_ptr<RSA> sprsa(prsa, RSA_free);
+            std::shared_ptr<RSA> sprsa(prsa, RSA_free);
 
             return RSAKey(sprsa, true);
         }
@@ -151,7 +151,7 @@ namespace logicalaccess
 
         std::vector<unsigned char> RSAKey::getPEM(bool discard_private_compound, PEMPassphraseCallback callback, void* userdata) const
         {
-            boost::shared_ptr<BIO> pbio(BIO_new(BIO_s_mem()), BIO_free);
+            std::shared_ptr<BIO> pbio(BIO_new(BIO_s_mem()), BIO_free);
 
             if (hasPrivateCompound() && (!discard_private_compound))
             {
@@ -221,7 +221,7 @@ namespace logicalaccess
 
         RSAKey RSAKey::createFromRaw(RSA* raw, bool has_private_key)
         {
-            boost::shared_ptr<RSA> sprsa;
+            std::shared_ptr<RSA> sprsa;
 
             if (has_private_key)
             {
@@ -235,7 +235,7 @@ namespace logicalaccess
             return RSAKey(sprsa, has_private_key);
         }
 
-        RSAKey::RSAKey(boost::shared_ptr<RSA> rsa, bool has_private_key) :
+        RSAKey::RSAKey(std::shared_ptr<RSA> rsa, bool has_private_key) :
             d_rsa(rsa),
             d_has_private_key(has_private_key)
         {

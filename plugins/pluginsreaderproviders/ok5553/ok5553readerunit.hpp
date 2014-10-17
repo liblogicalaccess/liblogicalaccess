@@ -83,31 +83,31 @@ namespace logicalaccess
          * \param type The card type.
          * \return The chip.
          */
-        virtual boost::shared_ptr<Chip> createChip(std::string type);
+        virtual std::shared_ptr<Chip> createChip(std::string type);
 
         /**
          * \brief Get the first and/or most accurate chip found.
          * \return The single chip.
          */
-        virtual boost::shared_ptr<Chip> getSingleChip();
+        virtual std::shared_ptr<Chip> getSingleChip();
 
         /**
          * \brief Get chip available in the RFID rang.
          * \return The chip list.
          */
-        virtual std::vector<boost::shared_ptr<Chip> > getChipList();
+        virtual std::vector<std::shared_ptr<Chip> > getChipList();
 
         /**
          * \brief Get the current chip in air.
          * \return The chip in air.
          */
-        boost::shared_ptr<Chip> getChipInAir(unsigned int maxwait = 2000);
+        std::shared_ptr<Chip> getChipInAir(unsigned int maxwait = 2000);
 
         /**
          * \brief Get the default OK5553 reader/card adapter.
          * \return The default OK5553 reader/card adapter.
          */
-        virtual boost::shared_ptr<OK5553ReaderCardAdapter> getDefaultOK5553ReaderCardAdapter();
+        virtual std::shared_ptr<OK5553ReaderCardAdapter> getDefaultOK5553ReaderCardAdapter();
 
         /**
          * \brief Connect to the card.
@@ -164,13 +164,13 @@ namespace logicalaccess
          * \brief Get the OK5553 reader unit configuration.
          * \return The OK5553 reader unit configuration.
          */
-        boost::shared_ptr<OK5553ReaderUnitConfiguration> getOK5553Configuration() { return boost::dynamic_pointer_cast<OK5553ReaderUnitConfiguration>(getConfiguration()); };
+        std::shared_ptr<OK5553ReaderUnitConfiguration> getOK5553Configuration() { return std::dynamic_pointer_cast<OK5553ReaderUnitConfiguration>(getConfiguration()); };
 
         /**
          * \brief Get the OK5553 reader provider.
          * \return The OK5553 reader provider.
          */
-        boost::shared_ptr<OK5553ReaderProvider> getOK5553ReaderProvider() const;
+        std::shared_ptr<OK5553ReaderProvider> getOK5553ReaderProvider() const;
 
         /**
          * \brief Convert a Ascii vector in a Hex vector.

@@ -37,10 +37,10 @@ namespace logicalaccess
         return d_nbSectors;
     }
 
-    void MifareChip::addSectorNode(boost::shared_ptr<LocationNode> rootNode, int sector)
+    void MifareChip::addSectorNode(std::shared_ptr<LocationNode> rootNode, int sector)
     {
         char tmpName[255];
-        boost::shared_ptr<LocationNode> sectorNode;
+        std::shared_ptr<LocationNode> sectorNode;
         sectorNode.reset(new LocationNode());
 
         sprintf(tmpName, "Sector %d", sector);
@@ -48,7 +48,7 @@ namespace logicalaccess
         sectorNode->setLength((sector >= 32) ? 240 : 48);
         sectorNode->setNeedAuthentication(true);
 
-        boost::shared_ptr<MifareLocation> location;
+        std::shared_ptr<MifareLocation> location;
         location.reset(new MifareLocation());
         location->sector = sector;
         location->byte = 0;
@@ -58,13 +58,13 @@ namespace logicalaccess
         rootNode->getChildrens().push_back(sectorNode);
     }
 
-    boost::shared_ptr<LocationNode> MifareChip::getRootLocationNode()
+    std::shared_ptr<LocationNode> MifareChip::getRootLocationNode()
     {
-        boost::shared_ptr<LocationNode> rootNode;
+        std::shared_ptr<LocationNode> rootNode;
         rootNode.reset(new LocationNode());
 
         rootNode->setName("Mifare Classic");
-        boost::shared_ptr<MifareLocation> rootLocation;
+        std::shared_ptr<MifareLocation> rootLocation;
         rootLocation.reset(new MifareLocation());
         rootLocation->sector = (unsigned int)-1;
         rootNode->setLocation(rootLocation);
@@ -80,9 +80,9 @@ namespace logicalaccess
         return rootNode;
     }
 
-    boost::shared_ptr<CardService> MifareChip::getService(CardServiceType serviceType)
+    std::shared_ptr<CardService> MifareChip::getService(CardServiceType serviceType)
     {
-        boost::shared_ptr<CardService> service;
+        std::shared_ptr<CardService> service;
 
         switch (serviceType)
         {

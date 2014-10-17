@@ -24,8 +24,8 @@ namespace logicalaccess
         : ReaderUnit()
     {
         d_readerUnitConfig.reset(new ElatecReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(boost::shared_ptr<ElatecReaderCardAdapter>(new ElatecReaderCardAdapter()));
-        boost::shared_ptr<ElatecDataTransport> dataTransport(new ElatecDataTransport());
+        setDefaultReaderCardAdapter(std::shared_ptr<ElatecReaderCardAdapter>(new ElatecReaderCardAdapter()));
+        std::shared_ptr<ElatecDataTransport> dataTransport(new ElatecDataTransport());
         setDataTransport(dataTransport);
         d_card_type = "UNKNOWN";
 
@@ -65,7 +65,7 @@ namespace logicalaccess
 
         do
         {
-            boost::shared_ptr<Chip> chip = getChipInAir();
+            std::shared_ptr<Chip> chip = getChipInAir();
             if (chip)
             {
                 d_insertedChip = chip;
@@ -88,7 +88,7 @@ namespace logicalaccess
             std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(maxwait);
             do
             {
-                boost::shared_ptr<Chip> chip = getChipInAir();
+                std::shared_ptr<Chip> chip = getChipInAir();
                 if (chip)
                 {
                     if (chip->getChipIdentifier() != d_insertedChip->getChipIdentifier())
@@ -120,9 +120,9 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<Chip> ElatecReaderUnit::getChipInAir()
+    std::shared_ptr<Chip> ElatecReaderUnit::getChipInAir()
     {
-        boost::shared_ptr<Chip> chip;
+        std::shared_ptr<Chip> chip;
 
         std::vector<unsigned char> result = getDefaultElatecReaderCardAdapter()->sendCommand(0x11, std::vector<unsigned char>());
         if (result.size() > 0)
@@ -136,13 +136,13 @@ namespace logicalaccess
         return chip;
     }
 
-    boost::shared_ptr<Chip> ElatecReaderUnit::createChip(std::string type)
+    std::shared_ptr<Chip> ElatecReaderUnit::createChip(std::string type)
     {
-        boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
+        std::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 
         if (chip)
         {
-            boost::shared_ptr<ReaderCardAdapter> rca;
+            std::shared_ptr<ReaderCardAdapter> rca;
 
             if (type == "GenericTag")
                 rca = getDefaultReaderCardAdapter();
@@ -154,16 +154,16 @@ namespace logicalaccess
         return chip;
     }
 
-    boost::shared_ptr<Chip> ElatecReaderUnit::getSingleChip()
+    std::shared_ptr<Chip> ElatecReaderUnit::getSingleChip()
     {
-        boost::shared_ptr<Chip> chip = d_insertedChip;
+        std::shared_ptr<Chip> chip = d_insertedChip;
         return chip;
     }
 
-    std::vector<boost::shared_ptr<Chip> > ElatecReaderUnit::getChipList()
+    std::vector<std::shared_ptr<Chip> > ElatecReaderUnit::getChipList()
     {
-        std::vector<boost::shared_ptr<Chip> > chipList;
-        boost::shared_ptr<Chip> singleChip = getSingleChip();
+        std::vector<std::shared_ptr<Chip> > chipList;
+        std::shared_ptr<Chip> singleChip = getSingleChip();
         if (singleChip)
         {
             chipList.push_back(singleChip);
@@ -171,10 +171,10 @@ namespace logicalaccess
         return chipList;
     }
 
-    boost::shared_ptr<ElatecReaderCardAdapter> ElatecReaderUnit::getDefaultElatecReaderCardAdapter()
+    std::shared_ptr<ElatecReaderCardAdapter> ElatecReaderUnit::getDefaultElatecReaderCardAdapter()
     {
-        boost::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
-        return boost::dynamic_pointer_cast<ElatecReaderCardAdapter>(adapter);
+        std::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
+        return std::dynamic_pointer_cast<ElatecReaderCardAdapter>(adapter);
     }
 
     string ElatecReaderUnit::getReaderSerialNumber()
@@ -221,8 +221,8 @@ namespace logicalaccess
         ReaderUnit::unSerialize(node);
     }
 
-    boost::shared_ptr<ElatecReaderProvider> ElatecReaderUnit::getElatecReaderProvider() const
+    std::shared_ptr<ElatecReaderProvider> ElatecReaderUnit::getElatecReaderProvider() const
     {
-        return boost::dynamic_pointer_cast<ElatecReaderProvider>(getReaderProvider());
+        return std::dynamic_pointer_cast<ElatecReaderProvider>(getReaderProvider());
     }
 }

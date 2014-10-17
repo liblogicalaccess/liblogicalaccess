@@ -32,8 +32,8 @@ namespace logicalaccess
 		: ReaderUnit()
 	{
 		d_readerUnitConfig.reset(new AdmittoReaderUnitConfiguration());
-		setDefaultReaderCardAdapter (boost::shared_ptr<AdmittoReaderCardAdapter> (new AdmittoReaderCardAdapter()));
-		boost::shared_ptr<AdmittoDataTransport> dataTransport(new AdmittoDataTransport());
+		setDefaultReaderCardAdapter (std::shared_ptr<AdmittoReaderCardAdapter> (new AdmittoReaderCardAdapter()));
+		std::shared_ptr<AdmittoDataTransport> dataTransport(new AdmittoDataTransport());
 		setDataTransport(dataTransport);
 		d_card_type = "UNKNOWN";
 
@@ -171,7 +171,7 @@ namespace logicalaccess
 								unsigned int l = static_cast<unsigned int>(atoull(BufferHelper::getStdString(buf)));
 								char bufTmpId[64];
 								sprintf(bufTmpId, "%08x", l);
-								boost::shared_ptr<Chip> chip = ReaderUnit::createChip(
+								std::shared_ptr<Chip> chip = ReaderUnit::createChip(
 									(d_card_type == "UNKNOWN" ? "GenericTag" : d_card_type),
 									formatHexString(std::string(bufTmpId))
 								);
@@ -219,15 +219,15 @@ namespace logicalaccess
 		LOG(LogLevel::WARNINGS) << "Disconnect do nothing with Admitto reader";
 	}
 
-	boost::shared_ptr<Chip> AdmittoReaderUnit::createChip(std::string type)
+	std::shared_ptr<Chip> AdmittoReaderUnit::createChip(std::string type)
 	{
 		LOG(LogLevel::INFOS) << "Creating chip... chip type {" << type << "}";
-		boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
+		std::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 
 		if (chip)
 		{
 			LOG(LogLevel::INFOS) << "Chip created successfully !";
-			boost::shared_ptr<ReaderCardAdapter> rca;
+			std::shared_ptr<ReaderCardAdapter> rca;
 
 			if (type == "GenericTag")
 			{
@@ -242,16 +242,16 @@ namespace logicalaccess
 		return chip;
 	}
 
-	boost::shared_ptr<Chip> AdmittoReaderUnit::getSingleChip()
+	std::shared_ptr<Chip> AdmittoReaderUnit::getSingleChip()
 	{
-		boost::shared_ptr<Chip> chip = d_insertedChip;
+		std::shared_ptr<Chip> chip = d_insertedChip;
 		return chip;
 	}
 
-	std::vector<boost::shared_ptr<Chip> > AdmittoReaderUnit::getChipList()
+	std::vector<std::shared_ptr<Chip> > AdmittoReaderUnit::getChipList()
 	{
-		std::vector<boost::shared_ptr<Chip> > chipList;
-		boost::shared_ptr<Chip> singleChip = getSingleChip();
+		std::vector<std::shared_ptr<Chip> > chipList;
+		std::shared_ptr<Chip> singleChip = getSingleChip();
 		if (singleChip)
 		{
 			chipList.push_back(singleChip);
@@ -259,10 +259,10 @@ namespace logicalaccess
 		return chipList;
 	}
 
-	boost::shared_ptr<AdmittoReaderCardAdapter> AdmittoReaderUnit::getDefaultAdmittoReaderCardAdapter()
+	std::shared_ptr<AdmittoReaderCardAdapter> AdmittoReaderUnit::getDefaultAdmittoReaderCardAdapter()
 	{
-		boost::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
-		return boost::dynamic_pointer_cast<AdmittoReaderCardAdapter>(adapter);
+		std::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
+		return std::dynamic_pointer_cast<AdmittoReaderCardAdapter>(adapter);
 	}
 
 	std::string AdmittoReaderUnit::getReaderSerialNumber()
@@ -314,8 +314,8 @@ namespace logicalaccess
 		ReaderUnit::unSerialize(node);
 	}
 
-	boost::shared_ptr<AdmittoReaderProvider> AdmittoReaderUnit::getAdmittoReaderProvider() const
+	std::shared_ptr<AdmittoReaderProvider> AdmittoReaderUnit::getAdmittoReaderProvider() const
 	{
-		return boost::dynamic_pointer_cast<AdmittoReaderProvider>(getReaderProvider());
+		return std::dynamic_pointer_cast<AdmittoReaderProvider>(getReaderProvider());
 	}
 }

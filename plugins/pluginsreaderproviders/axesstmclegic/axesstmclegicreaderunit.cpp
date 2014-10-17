@@ -23,8 +23,8 @@ namespace logicalaccess
         : ReaderUnit()
     {
         d_readerUnitConfig.reset(new AxessTMCLegicReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(boost::shared_ptr<AxessTMCLegicReaderCardAdapter>(new AxessTMCLegicReaderCardAdapter()));
-        boost::shared_ptr<AxessTMCLegicDataTransport> dataTransport(new AxessTMCLegicDataTransport());
+        setDefaultReaderCardAdapter(std::shared_ptr<AxessTMCLegicReaderCardAdapter>(new AxessTMCLegicReaderCardAdapter()));
+        std::shared_ptr<AxessTMCLegicDataTransport> dataTransport(new AxessTMCLegicDataTransport());
 #ifndef UNIX
         dataTransport->setPortBaudRate(CBR_57600);
 #else
@@ -69,7 +69,7 @@ namespace logicalaccess
 
         do
         {
-            boost::shared_ptr<Chip> chip = getChipInAir();
+            std::shared_ptr<Chip> chip = getChipInAir();
             if (chip)
             {
                 d_insertedChip = chip;
@@ -92,7 +92,7 @@ namespace logicalaccess
             std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(maxwait);
             do
             {
-                boost::shared_ptr<Chip> chip = getChipInAir();
+                std::shared_ptr<Chip> chip = getChipInAir();
                 if (chip)
                 {
                     if (chip->getChipIdentifier() != d_insertedChip->getChipIdentifier())
@@ -155,9 +155,9 @@ namespace logicalaccess
         getDefaultAxessTMCLegicReaderCardAdapter()->sendCommand(cmd);
     }
 
-    boost::shared_ptr<Chip> AxessTMCLegicReaderUnit::getChipInAir()
+    std::shared_ptr<Chip> AxessTMCLegicReaderUnit::getChipInAir()
     {
-        boost::shared_ptr<Chip> chip;
+        std::shared_ptr<Chip> chip;
 
 #ifdef _WINDOWS
         std::vector<unsigned char> cmd;
@@ -180,13 +180,13 @@ namespace logicalaccess
         return chip;
     }
 
-    boost::shared_ptr<Chip> AxessTMCLegicReaderUnit::createChip(std::string type)
+    std::shared_ptr<Chip> AxessTMCLegicReaderUnit::createChip(std::string type)
     {
-        boost::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
+        std::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 
         if (chip)
         {
-            boost::shared_ptr<ReaderCardAdapter> rca;
+            std::shared_ptr<ReaderCardAdapter> rca;
 
             if (type == "LegicPrime")
                 rca = getDefaultReaderCardAdapter();
@@ -198,16 +198,16 @@ namespace logicalaccess
         return chip;
     }
 
-    boost::shared_ptr<Chip> AxessTMCLegicReaderUnit::getSingleChip()
+    std::shared_ptr<Chip> AxessTMCLegicReaderUnit::getSingleChip()
     {
-        boost::shared_ptr<Chip> chip = d_insertedChip;
+        std::shared_ptr<Chip> chip = d_insertedChip;
         return chip;
     }
 
-    std::vector<boost::shared_ptr<Chip> > AxessTMCLegicReaderUnit::getChipList()
+    std::vector<std::shared_ptr<Chip> > AxessTMCLegicReaderUnit::getChipList()
     {
-        std::vector<boost::shared_ptr<Chip> > chipList;
-        boost::shared_ptr<Chip> singleChip = getSingleChip();
+        std::vector<std::shared_ptr<Chip> > chipList;
+        std::shared_ptr<Chip> singleChip = getSingleChip();
         if (singleChip)
         {
             chipList.push_back(singleChip);
@@ -215,10 +215,10 @@ namespace logicalaccess
         return chipList;
     }
 
-    boost::shared_ptr<AxessTMCLegicReaderCardAdapter> AxessTMCLegicReaderUnit::getDefaultAxessTMCLegicReaderCardAdapter()
+    std::shared_ptr<AxessTMCLegicReaderCardAdapter> AxessTMCLegicReaderUnit::getDefaultAxessTMCLegicReaderCardAdapter()
     {
-        boost::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
-        return boost::dynamic_pointer_cast<AxessTMCLegicReaderCardAdapter>(adapter);
+        std::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
+        return std::dynamic_pointer_cast<AxessTMCLegicReaderCardAdapter>(adapter);
     }
 
     string AxessTMCLegicReaderUnit::getReaderSerialNumber()
@@ -245,8 +245,8 @@ namespace logicalaccess
         ReaderUnit::unSerialize(node);
     }
 
-    boost::shared_ptr<AxessTMCLegicReaderProvider> AxessTMCLegicReaderUnit::getAxessTMCLegicReaderProvider() const
+    std::shared_ptr<AxessTMCLegicReaderProvider> AxessTMCLegicReaderUnit::getAxessTMCLegicReaderProvider() const
     {
-        return boost::dynamic_pointer_cast<AxessTMCLegicReaderProvider>(getReaderProvider());
+        return std::dynamic_pointer_cast<AxessTMCLegicReaderProvider>(getReaderProvider());
     }
 }

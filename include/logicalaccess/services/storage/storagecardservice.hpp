@@ -32,7 +32,7 @@ namespace logicalaccess
          * \brief Constructor.
          * \param chip The associated chip.
          */
-        StorageCardService(boost::shared_ptr<Chip> chip) : CardService(chip) {};
+        StorageCardService(std::shared_ptr<Chip> chip) : CardService(chip) {};
 
         /**
          * \brief Get the card service type.
@@ -50,7 +50,7 @@ namespace logicalaccess
          * \param location The data location.
          * \param aiToUse The key's informations to use to delete.
          */
-        virtual void erase(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse) = 0;
+        virtual void erase(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse) = 0;
 
         /**
          * \brief Write data on a specific location, using given keys.
@@ -61,7 +61,7 @@ namespace logicalaccess
          * \param dataLength Data's length to write.
          * \param behaviorFlags Flags which determines the behavior.
          */
-        virtual	void writeData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, boost::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags) = 0;
+        virtual	void writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags) = 0;
 
         /**
          * \brief Read data on a specific location, using given keys.
@@ -71,7 +71,7 @@ namespace logicalaccess
          * \param dataLength Data's length to read.
          * \param behaviorFlags Flags which determines the behavior.
          */
-        virtual void readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags) = 0;
+        virtual void readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags) = 0;
 
         /**
          * \brief Read data header on a specific location, using given keys.
@@ -81,7 +81,7 @@ namespace logicalaccess
          * \param dataLength Data's length to read.
          * \return Data header length.
          */
-        virtual unsigned int readDataHeader(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength) = 0;
+        virtual unsigned int readDataHeader(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength) = 0;
     };
 }
 

@@ -13,7 +13,7 @@
 
 #include <openssl/x509.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 namespace logicalaccess
@@ -92,7 +92,7 @@ namespace logicalaccess
              * \brief Get the raw pointer.
              * \return The raw pointer.
              */
-            inline boost::shared_ptr<X509> getRaw() const
+            inline std::shared_ptr<X509> getRaw() const
             {
                 return d_cert;
             }
@@ -170,7 +170,7 @@ namespace logicalaccess
              * \brief Set the serial number for a given certificate.
              * \param cert The X509 certificate. If cert is NULL, the behavior is undefined.
              */
-            static void setSerialNumber(boost::shared_ptr<X509> cert);
+            static void setSerialNumber(std::shared_ptr<X509> cert);
 
             /**
              * \brief Add a X509v3 extension to a given certificate.
@@ -179,7 +179,7 @@ namespace logicalaccess
              * \param key The key.
              * \param value The value.
              */
-            static void addExtension(boost::shared_ptr<X509> cert, boost::shared_ptr<X509V3_CTX> ctx, const std::string& key, const std::string& value);
+            static void addExtension(std::shared_ptr<X509> cert, std::shared_ptr<X509V3_CTX> ctx, const std::string& key, const std::string& value);
 
             /**
              * \brief Sign a certificate with a given key.
@@ -187,7 +187,7 @@ namespace logicalaccess
              * \param pkey The private key. If key is NULL or has no private compound, the behavior is undefined.
              * \param digest_nid The digest nid. Default is NID_sha1WithRSAEncryption.
              */
-            static void signCertificateWithKey(boost::shared_ptr<X509> cert, const EVPPKey& pkey, int digest_nid = NID_sha1WithRSAEncryption);
+            static void signCertificateWithKey(std::shared_ptr<X509> cert, const EVPPKey& pkey, int digest_nid = NID_sha1WithRSAEncryption);
 
             /**
              * \brief Check if a specified NID must can be copied from CA certificate to a client certificate.
@@ -200,7 +200,7 @@ namespace logicalaccess
              * \brief Create a certificate from a X509 structure pointer.
              * \param cert The X509 structure pointer. If cert is NULL, the behavior is undefined.
              */
-            X509Certificate(boost::shared_ptr<X509> cert);
+            X509Certificate(std::shared_ptr<X509> cert);
 
             /**
              * \brief The boolean test.
@@ -214,7 +214,7 @@ namespace logicalaccess
             /**
              * \brief The internal X509 structure pointer.
              */
-            boost::shared_ptr<X509> d_cert;
+            std::shared_ptr<X509> d_cert;
 
             friend bool operator==(const X509Certificate& lhs, const X509Certificate& rhs);
             friend bool operator!=(const X509Certificate& lhs, const X509Certificate& rhs);

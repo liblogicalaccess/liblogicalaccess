@@ -44,29 +44,29 @@ namespace logicalaccess
          * \param location The key's location.
          * \param AccessInfo The key's informations.
          */
-        virtual void setKeyAt(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> AccessInfo);
+        virtual void setKeyAt(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> AccessInfo);
 
         /**
          * \brief Set the Mifare Ultralight C authentication key.
          * \param key The authentication key.
          */
-        void setKey(boost::shared_ptr<TripleDESKey> key);
+        void setKey(std::shared_ptr<TripleDESKey> key);
 
         /**
          * \brief Get the Mifare Ultralight C authentication key.
          * \return The authentication key.
          */
-        boost::shared_ptr<TripleDESKey> getKey() const;
+        std::shared_ptr<TripleDESKey> getKey() const;
 
         /**
          * \brief Create default access informations.
          * \return Default access informations. Always null.
          */
-        virtual boost::shared_ptr<AccessInfo> createAccessInfo() const;
+        virtual std::shared_ptr<AccessInfo> createAccessInfo() const;
 
     protected:
 
-        boost::shared_ptr<TripleDESKey> d_key;
+        std::shared_ptr<TripleDESKey> d_key;
     };
 }
 

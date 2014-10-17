@@ -29,12 +29,12 @@ namespace logicalaccess
         /**
          * \brief Get the OK5553ReaderProvider instance.
          */
-        static boost::shared_ptr<OK5553ReaderProvider> getSingletonInstance();
+        static std::shared_ptr<OK5553ReaderProvider> getSingletonInstance();
 
         /**
          * \brief Get a new OK5553ReaderProvider instance.
          */
-        boost::shared_ptr<OK5553ReaderProvider> createInstance();
+        std::shared_ptr<OK5553ReaderProvider> createInstance();
 
         /**
          * \brief Destructor.
@@ -76,7 +76,7 @@ namespace logicalaccess
          * param port The reader port
          * \return A reader unit.
          */
-        virtual boost::shared_ptr<ReaderUnit> createReaderUnit();
+        virtual std::shared_ptr<ReaderUnit> createReaderUnit();
 
     protected:
 

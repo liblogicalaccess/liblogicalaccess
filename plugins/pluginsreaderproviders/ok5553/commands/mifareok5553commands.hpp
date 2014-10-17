@@ -68,7 +68,7 @@ namespace logicalaccess
          * \param key The key.
          * \param keytype The mifare key type.
          */
-        void loadKey(boost::shared_ptr<Location> location, boost::shared_ptr<Key> key, MifareKeyType keytype);
+        void loadKey(std::shared_ptr<Location> location, std::shared_ptr<Key> key, MifareKeyType keytype);
 
         /**
          * \brief Authenticate a block, given a key number.
@@ -85,13 +85,13 @@ namespace logicalaccess
          * \param keytype The key type.
          * \return true if authenticated, false otherwise.
          */
-        void authenticate(unsigned char blockno, boost::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype);
+        void authenticate(unsigned char blockno, std::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype);
 
         /**
          * \brief Get the OK5553 reader/card adapter.
          * \return The OK5553 reader/card adapter.
          */
-        virtual boost::shared_ptr<OK5553ReaderCardAdapter> getOK5553ReaderCardAdapter() { return boost::dynamic_pointer_cast<OK5553ReaderCardAdapter>(getReaderCardAdapter()); };
+        virtual std::shared_ptr<OK5553ReaderCardAdapter> getOK5553ReaderCardAdapter() { return std::dynamic_pointer_cast<OK5553ReaderCardAdapter>(getReaderCardAdapter()); };
     };
 }
 

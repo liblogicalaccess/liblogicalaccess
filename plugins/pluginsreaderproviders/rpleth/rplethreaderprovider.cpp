@@ -23,20 +23,20 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<RplethReaderProvider> RplethReaderProvider::getSingletonInstance()
+    std::shared_ptr<RplethReaderProvider> RplethReaderProvider::getSingletonInstance()
     {
-        static boost::shared_ptr<RplethReaderProvider> instance;
+        static std::shared_ptr<RplethReaderProvider> instance;
         if (!instance)
         {
-            instance = boost::shared_ptr<RplethReaderProvider>(new RplethReaderProvider());
+            instance = std::shared_ptr<RplethReaderProvider>(new RplethReaderProvider());
             instance->refreshReaderList();
         }
         return instance;
     }
 
-    boost::shared_ptr<RplethReaderProvider> RplethReaderProvider::createInstance()
+    std::shared_ptr<RplethReaderProvider> RplethReaderProvider::createInstance()
     {
-        boost::shared_ptr<RplethReaderProvider> instance = boost::shared_ptr<RplethReaderProvider>(new RplethReaderProvider());
+        std::shared_ptr<RplethReaderProvider> instance = std::shared_ptr<RplethReaderProvider>(new RplethReaderProvider());
         instance->refreshReaderList();
 
         return instance;
@@ -51,12 +51,12 @@ namespace logicalaccess
     {
     }
 
-    boost::shared_ptr<ReaderUnit> RplethReaderProvider::createReaderUnit()
+    std::shared_ptr<ReaderUnit> RplethReaderProvider::createReaderUnit()
     {
         LOG(LogLevel::INFOS) << "Creating new reader unit";
 
-        boost::shared_ptr<RplethReaderUnit> ret(new RplethReaderUnit());
-        ret->setReaderProvider(boost::weak_ptr<ReaderProvider>(shared_from_this()));
+        std::shared_ptr<RplethReaderUnit> ret(new RplethReaderUnit());
+        ret->setReaderProvider(std::weak_ptr<ReaderProvider>(shared_from_this()));
         d_readers.push_back(ret);
 
         return ret;

@@ -8,7 +8,7 @@
 
 namespace logicalaccess
 {
-    TwicStorageCardService::TwicStorageCardService(boost::shared_ptr<Chip> chip)
+    TwicStorageCardService::TwicStorageCardService(std::shared_ptr<Chip> chip)
         : ISO7816StorageCardService(chip)
     {
     }
@@ -17,12 +17,12 @@ namespace logicalaccess
     {
     }
 
-    void TwicStorageCardService::readData(boost::shared_ptr<Location> location, boost::shared_ptr<AccessInfo> aiToUse, void *data, size_t dataLength, CardBehavior behaviorFlags)
+    void TwicStorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, void *data, size_t dataLength, CardBehavior behaviorFlags)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 
-        boost::shared_ptr<ISO7816Location> icISOLocation = boost::dynamic_pointer_cast<ISO7816Location>(location);
-        boost::shared_ptr<TwicLocation> icLocation = boost::dynamic_pointer_cast<TwicLocation>(location);
+        std::shared_ptr<ISO7816Location> icISOLocation = std::dynamic_pointer_cast<ISO7816Location>(location);
+        std::shared_ptr<TwicLocation> icLocation = std::dynamic_pointer_cast<TwicLocation>(location);
 
         if (icISOLocation)
         {

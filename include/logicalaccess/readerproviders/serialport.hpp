@@ -141,7 +141,7 @@ namespace logicalaccess
         unsigned int getCharacterSize();
 
         void setCircularBufferParser(CircularBufferParser* circular_buffer_parser) { m_circular_buffer_parser.reset(circular_buffer_parser); };
-        boost::shared_ptr<CircularBufferParser> getCircularBufferParser() { return m_circular_buffer_parser; };
+        std::shared_ptr<CircularBufferParser> getCircularBufferParser() { return m_circular_buffer_parser; };
 
         boost::shared_mutex& getAvailableDataMutex() { return m_available_data; };
 
@@ -175,13 +175,13 @@ namespace logicalaccess
 
         std::vector<unsigned char> m_write_buffer;
 
-        boost::shared_ptr<std::thread> m_thread_reader;
+        std::shared_ptr<std::thread> m_thread_reader;
 
         std::mutex m_mutex_reader;
 
         boost::shared_mutex m_available_data;
 
-        boost::shared_ptr<CircularBufferParser> m_circular_buffer_parser;
+        std::shared_ptr<CircularBufferParser> m_circular_buffer_parser;
     };
 }
 

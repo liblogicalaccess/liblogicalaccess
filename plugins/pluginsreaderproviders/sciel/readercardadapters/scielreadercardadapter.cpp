@@ -66,7 +66,7 @@ namespace logicalaccess
             {
                 tagsList.push_back(tag);
 
-                boost::shared_ptr<ScielDataTransport> sdt = boost::dynamic_pointer_cast<ScielDataTransport>(getDataTransport());
+                std::shared_ptr<ScielDataTransport> sdt = std::dynamic_pointer_cast<ScielDataTransport>(getDataTransport());
                 if (sdt)
                 {
                     std::vector<unsigned char> tagbuf = sdt->checkValideBufferAvailable();
