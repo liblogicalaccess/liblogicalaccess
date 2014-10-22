@@ -286,22 +286,12 @@ namespace logicalaccess
         LOG(LogLevel::INFOS) << "Starting get chip in air...";
 
         std::shared_ptr<Chip> chip;
-        clock_t begin = std::clock();
         std::vector<unsigned char> buf = receiveBadge(maxwait);
 
         if (buf.size() > 0)
         {
             chip = createChip((d_card_type == "UNKNOWN") ? "GenericTag" : d_card_type);
             chip->setChipIdentifier(buf);
-        }
-        else
-        {
-            //We got the Ping but no badge detected so we wait
-            clock_t diff = maxwait - (std::clock() - begin);
-            if (diff > 0)
-            {
-                std::this_thread::sleep_for(std::chrono::milliseconds(diff));
-            }
         }
 
         return chip;
@@ -558,6 +548,8 @@ namespace logicalaccess
         LOG(LogLevel::COMS) << "receiveBadge";
         std::vector<unsigned char> res;
         std::vector<unsigned char> cmd;
+		std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeout);
+
         try
         {
             std::shared_ptr<RplethDataTransport> dt = std::dynamic_pointer_cast<RplethDataTransport>(getDefaultRplethReaderCardAdapter()->getDataTransport());
@@ -569,7 +561,16 @@ namespace logicalaccess
                 if (badges.empty())
                 {
                     getDefaultRplethReaderCardAdapter()->sendRplethCommand(cmd, false, timeout);
+					//We have the ping - client is here
                 }
+
+				try
+				{
+					getDefaultRplethReaderCardAdapter()->sendRplethCommand(cmd, true, timeout);
+				}
+				catch (std::exception)
+				{ //We dont care about timeout
+				}
 
                 if (!badges.empty())
                 {
