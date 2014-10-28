@@ -6,6 +6,7 @@
 #include "sagemkeydiversification.hpp"
 #include "nxpav2keydiversification.hpp"
 #include "nxpav1keydiversification.hpp"
+#include "omnitechkeydiversification.hpp"
 #include "logicalaccess/cards/keydiversification.hpp"
 
 #ifdef _MSC_VER
@@ -63,6 +64,14 @@ extern "C"
         if (keydiversification != NULL)
         {
             *keydiversification = std::shared_ptr<logicalaccess::SagemKeyDiversification>(new logicalaccess::SagemKeyDiversification());
+        }
+    }
+
+	LIBLOGICALACCESS_API void getOmnitechDiversification(std::shared_ptr<logicalaccess::KeyDiversification>* keydiversification)
+    {
+        if (keydiversification != NULL)
+        {
+            *keydiversification = std::shared_ptr<logicalaccess::OmnitechKeyDiversification>(new logicalaccess::OmnitechKeyDiversification());
         }
     }
 
