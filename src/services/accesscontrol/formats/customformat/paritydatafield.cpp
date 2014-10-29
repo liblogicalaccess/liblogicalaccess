@@ -159,7 +159,7 @@ namespace logicalaccess
         {
             bnode.put("Bit", *i);
         }
-        parentNode.add_child("BitsPositions", bnode);
+        node.add_child("BitsPositions", bnode);
         parentNode.add_child(getDefaultXmlNodeName(), node);
     }
 
