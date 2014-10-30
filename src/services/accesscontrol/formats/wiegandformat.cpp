@@ -98,8 +98,7 @@ namespace logicalaccess
 			par = getRightParity();
 			if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != par)
 			{
-				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Left parity format error.");
-				return;
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Right parity format error.");
 			}
 		}
 	}
