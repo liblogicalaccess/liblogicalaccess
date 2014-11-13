@@ -524,6 +524,16 @@ namespace logicalaccess
         getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, false);
     }
 
+	void RplethReaderUnit::setContext(const std::string& context)
+    {
+        std::vector<unsigned char> command;
+        command.push_back(static_cast<unsigned char>(Device::RPLETH));
+		command.push_back(static_cast<unsigned char>(RplethCommand::SET_CONTEXT));
+		command.push_back(static_cast<unsigned char>(context.size()));
+		command.insert(command.end(), context.begin(), context.end());
+        getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, false);
+    }
+
     std::vector<unsigned char> RplethReaderUnit::badge(long int timeout)
     {
         std::vector<unsigned char> command;

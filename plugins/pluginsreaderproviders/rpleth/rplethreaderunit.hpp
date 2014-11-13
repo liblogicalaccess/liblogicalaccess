@@ -43,7 +43,8 @@ namespace logicalaccess
         PORT = 0x07,
         MESSAGE = 0x08,
         RESET = 0x09,
-        PING = 0x0a
+        PING = 0x0a,
+		SET_CONTEXT = 0x0b
     } RplethCommand;
 
     /**
@@ -289,6 +290,12 @@ namespace logicalaccess
          * \brief Send a nop.
          */
         void nop();
+
+		/**
+		 * \brief Set the client context.
+		 * \param context The context.
+		 */
+		void setContext(const std::string& context);
 
         /**
          * \brief Request the last badge.
