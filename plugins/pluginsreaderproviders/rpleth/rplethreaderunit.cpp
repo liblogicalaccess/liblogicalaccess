@@ -355,21 +355,25 @@ namespace logicalaccess
             setDataTransport(dataTransport);
         }
 
-        bool connected = getDataTransport()->connect();
-        if (connected && getRplethConfiguration()->getMode() == RplethMode::PROXY)
-        {
-            LOG(LogLevel::INFOS) << "Data transport connected, initializing PROXY mode...";
-            std::string type = getProxyReaderType();
-            std::shared_ptr<ReaderProvider> rp = LibraryManager::getInstance()->getReaderProvider(type);
-            if (rp)
-            {
-                d_proxyReader = rp->createReaderUnit();
-                std::shared_ptr<RplethDataTransport> rpdt = std::dynamic_pointer_cast<RplethDataTransport>(getDataTransport());
+		bool connected = true;
+		if (!getDataTransport()->isConnected())
+		{
+			connected = getDataTransport()->connect();
+			if (connected && getRplethConfiguration()->getMode() == RplethMode::PROXY)
+			{
+				LOG(LogLevel::INFOS) << "Data transport connected, initializing PROXY mode...";
+				std::string type = getProxyReaderType();
+				std::shared_ptr<ReaderProvider> rp = LibraryManager::getInstance()->getReaderProvider(type);
+				if (rp)
+				{
+					d_proxyReader = rp->createReaderUnit();
+					std::shared_ptr<RplethDataTransport> rpdt = std::dynamic_pointer_cast<RplethDataTransport>(getDataTransport());
 
-                EXCEPTION_ASSERT_WITH_LOG(rpdt, LibLogicalAccessException, "Rpleth data transport required for proxy mode.");
-                d_proxyReader->setDataTransport(rpdt);
-            }
-        }
+					EXCEPTION_ASSERT_WITH_LOG(rpdt, LibLogicalAccessException, "Rpleth data transport required for proxy mode.");
+					d_proxyReader->setDataTransport(rpdt);
+				}
+			}
+		}
 
         return connected;
     }
@@ -521,6 +525,16 @@ namespace logicalaccess
         command.push_back(static_cast<unsigned char>(Device::HID));
         command.push_back(static_cast<unsigned char>(HidCommand::NOP));
         command.push_back(static_cast<unsigned char>(0x00));
+        getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, false);
+    }
+
+	void RplethReaderUnit::setContext(const std::string& context)
+    {
+        std::vector<unsigned char> command;
+        command.push_back(static_cast<unsigned char>(Device::RPLETH));
+		command.push_back(static_cast<unsigned char>(RplethCommand::SET_CONTEXT));
+		command.push_back(static_cast<unsigned char>(context.size()));
+		command.insert(command.end(), context.begin(), context.end());
         getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, false);
     }
 
