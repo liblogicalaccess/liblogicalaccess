@@ -245,7 +245,7 @@ namespace logicalaccess
 
     bool KeyboardReaderUnit::connect()
     {
-        return (d_insertedChip);
+        return (bool)d_insertedChip;
     }
 
     void KeyboardReaderUnit::disconnect()
@@ -281,7 +281,7 @@ namespace logicalaccess
 
     bool KeyboardReaderUnit::isConnected()
     {
-        return (d_insertedChip);
+        return (bool)d_insertedChip;
     }
 
     bool KeyboardReaderUnit::connectToReader()
