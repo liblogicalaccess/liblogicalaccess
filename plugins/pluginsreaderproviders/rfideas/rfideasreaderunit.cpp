@@ -322,7 +322,7 @@ namespace logicalaccess
 
 	bool RFIDeasReaderUnit::isConnected()
 	{
-		return (d_insertedChip);
+		return (bool)d_insertedChip;
 	}
 
 	void RFIDeasReaderUnit::serialize(boost::property_tree::ptree& parentNode)
