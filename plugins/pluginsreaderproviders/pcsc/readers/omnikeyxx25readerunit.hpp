@@ -46,7 +46,15 @@ namespace logicalaccess
          */
         virtual std::vector<unsigned char> getCardSerialNumber();
 
+
     protected:
+		/**
+         * \brief Get the card type from a specified ATR.
+         * \param atr The atr string (without terminal NULL character).
+         * \param atrlen The length of the atr string.
+         * \return Return Prox because OmnikeyXX25 Readers can only read it.
+         */
+		virtual std::string getCardTypeFromATR(const unsigned char* atr, size_t atrlen);
     };
 }
 

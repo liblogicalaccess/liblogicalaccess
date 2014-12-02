@@ -49,7 +49,15 @@ namespace logicalaccess
             {
                 pLocation.reset(new ProxLocation());
                 // TODO: fix it (signed/unsigned)
-                pLocation->bit = static_cast<int>(atrLengthBits - dataLengthBits);
+                pLocation->bit = static_cast<int>(atrLengthBits - dataLengthBits); //raw wiegand
+
+				int historBytesSize = getChip()->getChipIdentifier()[1] & 0x0f;
+				if ((getChip()->getChipIdentifier().size() - historBytesSize - 1) > 0
+					&& getChip()->getChipIdentifier()[getChip()->getChipIdentifier().size() - historBytesSize - 1] == 0x00) //Check Prox Format
+				{
+					pLocation->bit -= 8; //skip TCK
+					pLocation->bit = ((pLocation->bit % 8) + 1) * 8;
+				}
             }
 
             if (pLocation)

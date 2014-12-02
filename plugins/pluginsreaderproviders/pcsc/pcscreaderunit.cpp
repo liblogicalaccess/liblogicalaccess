@@ -1140,19 +1140,6 @@ namespace logicalaccess
                             return "DESFire";
                         }
                     }
-                    else
-                    {
-                        if (atrlen > 2)
-                        {
-                            if (atr[0] == 0x3B)
-                            {
-                                if (atr[1] == 0x05 || atr[1] == 0x06 || atr[1] == 0x07)
-                                {
-                                    return "Prox";
-                                }
-                            }
-                        }
-                    }
                     return "UNKNOWN";
                 }
             }
