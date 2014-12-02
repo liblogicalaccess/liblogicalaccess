@@ -56,7 +56,7 @@ namespace logicalaccess
 					&& getChip()->getChipIdentifier()[getChip()->getChipIdentifier().size() - historBytesSize - 1] == 0x00) //Check Prox Format
 				{
 					pLocation->bit -= 8; //skip TCK
-					pLocation->bit = ((pLocation->bit % 8) + 1) * 8;
+					pLocation->bit = static_cast<unsigned char>(pLocation->bit / 8) * 8;
 				}
             }
 
