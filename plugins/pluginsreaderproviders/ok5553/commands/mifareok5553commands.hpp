@@ -40,7 +40,7 @@ namespace logicalaccess
          * \param buflen The length of buffer.
          * \return The count of bytes red.
          */
-        size_t readBinary(unsigned char blockno, size_t len, void* buf, size_t buflen);
+        std::vector<unsigned char> readBinary(unsigned char blockno, size_t len);
 
         /**
          * \brief Write bytes to the card.
@@ -49,7 +49,7 @@ namespace logicalaccess
          * \param buflen The length of buffer.
          * \return The count of bytes written.
          */
-        size_t updateBinary(unsigned char blockno, const void* buf, size_t buflen);
+        void updateBinary(unsigned char blockno, const std::vector<unsigned char>& buf);
 
         /**
          * \brief Load a key to the reader.

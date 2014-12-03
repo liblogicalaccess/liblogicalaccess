@@ -68,7 +68,7 @@ namespace logicalaccess
          * \param buflen The length of buffer.
          * \return The count of bytes red.
          */
-        virtual size_t readBinary(short blockno, char len, bool encrypted, bool macOnCommand, bool macOnResponse, void* buf, size_t buflen);
+        virtual std::vector<unsigned char> readBinary(short blockno, char len, bool encrypted, bool macOnCommand, bool macOnResponse);
 
         /**
          * \brief Read bytes from the card.
@@ -79,7 +79,7 @@ namespace logicalaccess
          * \param buflen The length of buffer.
          * \return The count of bytes red.
          */
-        virtual size_t updateBinary(short blockno, bool encrypted, bool macOnResponse, const void* buf, size_t buflen);
+        virtual void updateBinary(short blockno, bool encrypted, bool macOnResponse, const std::vector<unsigned char>& buf);
 
         /**
          * \brief Increment a block

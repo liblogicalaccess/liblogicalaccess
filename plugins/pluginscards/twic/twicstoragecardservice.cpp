@@ -17,8 +17,9 @@ namespace logicalaccess
     {
     }
 
-    void TwicStorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, void *data, size_t dataLength, CardBehavior behaviorFlags)
+    std::vector<unsigned char> TwicStorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, size_t length, CardBehavior behaviorFlags)
     {
+		std::vector<unsigned char> result;
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 
         std::shared_ptr<ISO7816Location> icISOLocation = std::dynamic_pointer_cast<ISO7816Location>(location);
@@ -26,18 +27,14 @@ namespace logicalaccess
 
         if (icISOLocation)
         {
-            ISO7816StorageCardService::readData(location, aiToUse, data, dataLength, behaviorFlags);
-            return;
+            return ISO7816StorageCardService::readData(location, aiToUse, length, behaviorFlags);
         }
         EXCEPTION_ASSERT_WITH_LOG(icLocation, std::invalid_argument, "location must be a TwicLocation or ISO7816Location.");
 
         getTwicChip()->getTwicCommands()->selectTWICApplication();
         if (icLocation->tag == 0x00)
         {
-            std::vector<unsigned char> result = getTwicChip()->getTwicCommands()->getTWICData(icLocation->dataObject);
-            unsigned char *buf = (unsigned char*)data;
-            for (unsigned char x = 0; x < dataLength && x < result.size(); ++x)
-                buf[x] = result[x];
+            result = getTwicChip()->getTwicCommands()->getTWICData(icLocation->dataObject);
         }
         else
         {
@@ -50,9 +47,13 @@ namespace logicalaccess
                 size_t offset = getTwicChip()->getTwicCommands()->getMinimumBytesRepresentation(getTwicChip()->getTwicCommands()->getMaximumDataObjectLength(icLocation->dataObject)) + 1;
                 if (offset < dataObjectLength)
                 {
-                    getTwicChip()->getTwicCommands()->getTagData(icLocation, &fulldata[offset], dataObjectLength - offset, data, dataLength);
+					result = std::vector<unsigned char>(256);
+					size_t size = 256;
+                    getTwicChip()->getTwicCommands()->getTagData(icLocation, &fulldata[offset], dataObjectLength - offset, &result[0], size);
+					result.resize(size);
                 }
             }
         }
+		return result;
     }
 }

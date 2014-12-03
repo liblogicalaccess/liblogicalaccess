@@ -37,36 +37,33 @@ namespace logicalaccess
 
         if (sysinfo.hasVICCMemorySize)
         {
-            unsigned char* tmp = new unsigned char[sysinfo.blockSize];
-            memset(tmp, 0x00, sysinfo.blockSize);
+			std::vector<unsigned char> tmp(sysinfo.blockSize, 0x00);
 
             std::shared_ptr<AccessInfo> ai;
-            writeData(location, aiToUse, ai, tmp, sysinfo.blockSize, CB_DEFAULT);
+            writeData(location, aiToUse, ai, tmp, CB_DEFAULT);
         }
     }
 
-    void ISO15693StorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo>, std::shared_ptr<AccessInfo>, const void* data, size_t dataLength, CardBehavior)
+    void ISO15693StorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo>, std::shared_ptr<AccessInfo>, const std::vector<unsigned char>& data, CardBehavior)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
-        EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
 
         std::shared_ptr<ISO15693Location> icLocation = std::dynamic_pointer_cast<ISO15693Location>(location);
 
         EXCEPTION_ASSERT_WITH_LOG(icLocation, std::invalid_argument, "location must be a ISO15693Location.");
 
-        getISO15693Chip()->getISO15693Commands()->writeBlock(icLocation->block, data, dataLength);
+        getISO15693Chip()->getISO15693Commands()->writeBlock(icLocation->block, data);
     }
 
-    void ISO15693StorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo>, void* data, size_t dataLength, CardBehavior)
+    std::vector<unsigned char> ISO15693StorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo>, size_t length, CardBehavior)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
-        EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
 
         std::shared_ptr<ISO15693Location> icLocation = std::dynamic_pointer_cast<ISO15693Location>(location);
 
         EXCEPTION_ASSERT_WITH_LOG(icLocation, std::invalid_argument, "location must be a ISO15693Location.");
 
-        getISO15693Chip()->getISO15693Commands()->readBlock(icLocation->block, data, dataLength, dataLength);
+        return getISO15693Chip()->getISO15693Commands()->readBlock(icLocation->block);
     }
 
     unsigned int ISO15693StorageCardService::readDataHeader(std::shared_ptr<Location>, std::shared_ptr<AccessInfo>, void*, size_t)

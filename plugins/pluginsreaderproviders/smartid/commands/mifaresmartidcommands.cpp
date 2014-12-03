@@ -95,11 +95,11 @@ namespace logicalaccess
         }
     }
 
-    size_t MifareSmartIDCommands::readBinary(unsigned char blockno, size_t len, void* buf, size_t buflen)
+    std::vector<unsigned char> MifareSmartIDCommands::readBinary(unsigned char blockno, size_t len)
     {
-        if ((len >= 256) || (len > buflen) || (!buf))
+        if (len >= 256)
         {
-            THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter.");
+            THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad len parameter.");
         }
 
         std::vector<unsigned char> data;
@@ -110,16 +110,14 @@ namespace logicalaccess
 
         EXCEPTION_ASSERT_WITH_LOG(sbuf.size() == 16, LibLogicalAccessException, "The read value should always be 16 bytes long");
 
-        memcpy(buf, &sbuf[0], sbuf.size());
-
-        return sbuf.size();
+        return sbuf;
     }
 
-    size_t MifareSmartIDCommands::updateBinary(unsigned char blockno, const void* buf, size_t buflen)
+    void MifareSmartIDCommands::updateBinary(unsigned char blockno, const std::vector<unsigned char>& buf)
     {
-        if ((buflen >= 256) || (!buf))
+        if (buf.size() >= 256)
         {
-            THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter.");
+            THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad len parameter.");
         }
 
         if (blockno != 0)
@@ -127,11 +125,9 @@ namespace logicalaccess
             std::vector<unsigned char> ldata;
 
             ldata.push_back(blockno);
-            ldata.insert(ldata.end(), static_cast<const unsigned char*>(buf), static_cast<const unsigned char*>(buf)+buflen);
+            ldata.insert(ldata.end(), buf.begin(), buf.end());
 
             getMifareSmartIDReaderCardAdapter()->sendCommand(0x47, ldata);
         }
-
-        return buflen;
     }
 }

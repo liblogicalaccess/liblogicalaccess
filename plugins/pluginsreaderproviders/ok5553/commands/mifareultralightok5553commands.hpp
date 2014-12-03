@@ -39,7 +39,7 @@ namespace logicalaccess
          * \param buflen The length of buffer. Must be at least 4 bytes long or the call will fail.
          * \return The number of bytes red, or a negative value on error.
          */
-        virtual size_t readPage(int page, void* buf, size_t buflen);
+        virtual std::vector<unsigned char> readPage(int page);
 
         /**
          * \brief Write a whole page.
@@ -48,7 +48,7 @@ namespace logicalaccess
          * \param buflen The length of buffer. Must be at least 4 bytes long or the call will fail.
          * \return The number of bytes written, or a negative value on error.
          */
-        virtual size_t writePage(int page, const void* buf, size_t buflen);
+        virtual void writePage(int page, const std::vector<unsigned char>& buf);
 
         /**
          * \brief Get the OK5553 reader/card adapter.

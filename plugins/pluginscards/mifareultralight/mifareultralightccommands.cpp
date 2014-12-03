@@ -17,10 +17,10 @@ namespace logicalaccess
 			{
 				buf.push_back(key->getData()[i]);
 			}
-            writePage(0x2C, buf.data() + 8, 4);
-			writePage(0x2D, buf.data() + 12, 4);
-			writePage(0x2E, buf.data(), 4);
-			writePage(0x2F, buf.data() + 4, 4);
+            writePage(0x2C, std::vector<unsigned char>(buf.begin() + 8, buf.begin() + 12));
+			writePage(0x2D, std::vector<unsigned char>(buf.begin() + 12, buf.begin() + 16));
+			writePage(0x2E, std::vector<unsigned char>(buf.begin(), buf.begin() + 4));
+			writePage(0x2F, std::vector<unsigned char>(buf.begin() + 4, buf.begin() + 8));
         }
     }
 
@@ -32,8 +32,7 @@ namespace logicalaccess
         }
         else
         {
-            unsigned char lockbits[4];
-            memset(lockbits, 0x00, sizeof(lockbits));
+            std::vector<unsigned char> lockbits(4, 0x00);
 
             if (page >= 44 && page <= 47)
             {
@@ -76,7 +75,7 @@ namespace logicalaccess
                 lockbits[0] |= (1 << 1);
             }
 
-            writePage(0x28, lockbits, sizeof(lockbits));
+            writePage(0x28, lockbits);
         }
     }
 

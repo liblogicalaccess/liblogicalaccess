@@ -953,38 +953,45 @@ namespace logicalaccess
         }
     }
 
-    unsigned int DESFireEV1ISO7816Commands::readData(unsigned char fileno, unsigned int offset, unsigned int length, void* data, EncryptionMode mode)
+    std::vector<unsigned char> DESFireEV1ISO7816Commands::readData(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode)
     {
-        unsigned int ret = 0;
-
-        std::vector<unsigned char> command(7);
+        std::vector<unsigned char> command(7), ret;
 
         command[0] = static_cast<unsigned char>(fileno);
 
-        // Currently we have some problems to read more than 253 bytes with an Omnikey Reader.
-        // So the read command is separated to some commands, 8 bytes aligned.
+		if (length == 0)
+		{
+			std::vector<unsigned char> result = transmit_nomacv(DF_INS_READ_DATA, command);
+			unsigned char err = result.back();
+			result.resize(result.size() - 2);
+			result = handleReadData(err, result, static_cast<unsigned int>(result.size()), mode);
+			ret.insert(ret.end(), result.begin(), result.end());
+		}
+		else
+		{
+			// Currently we have some problems to read more than 253 bytes with an Omnikey Reader.
+			// So the read command is separated to some commands, 8 bytes aligned.
 
-        for (size_t i = 0; i < length; i += 248)
-        {
-            size_t trunloffset = offset + i;
-            size_t trunklength = ((length - i) > 248) ? 248 : (length - i);
-            memcpy(&command[1], &trunloffset, 3);
-            memcpy(&command[4], &trunklength, 3);
+			for (size_t i = 0; i < length; i += 248)
+			{
+				size_t trunloffset = offset + i;
+				size_t trunklength = ((length - i) > 248) ? 248 : (length - i);
+				memcpy(&command[1], &trunloffset, 3);
+				memcpy(&command[4], &trunklength, 3);
 
-            std::vector<unsigned char> result = transmit_nomacv(DF_INS_READ_DATA, command);
-            unsigned char err = result.back();
-            result.resize(result.size() - 2);
-            result = handleReadData(err, result, static_cast<unsigned int>(trunklength), mode);
-            memcpy(reinterpret_cast<unsigned char*>(data)+i, &result[0], result.size());
-            ret += static_cast<unsigned int>(result.size());
-        }
-
+				std::vector<unsigned char> result = transmit_nomacv(DF_INS_READ_DATA, command);
+				unsigned char err = result.back();
+				result.resize(result.size() - 2);
+				result = handleReadData(err, result, static_cast<unsigned int>(trunklength), mode);
+				ret.insert(ret.end(), result.begin(), result.end());
+			}
+		}
         return ret;
     }
 
-    unsigned int DESFireEV1ISO7816Commands::readRecords(unsigned char fileno, unsigned int offset, unsigned int length, void* data, EncryptionMode mode)
+    std::vector<unsigned char> DESFireEV1ISO7816Commands::readRecords(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode)
     {
-        std::vector<unsigned char> command;
+        std::vector<unsigned char> command, ret;
 
         command.push_back(fileno);
         command.insert(command.end(), offset, offset + 3);
@@ -994,9 +1001,9 @@ namespace logicalaccess
         unsigned char err = result.back();
         result.resize(result.size() - 2);
         result = handleReadData(err, result, length, mode);
-        memcpy(data, &result[0], result.size());
+        ret.insert(ret.end(), result.begin(), result.end());
 
-        return static_cast<unsigned int>(result.size());
+        return ret;
     }
 
     void DESFireEV1ISO7816Commands::changeFileSettings(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, bool plain)

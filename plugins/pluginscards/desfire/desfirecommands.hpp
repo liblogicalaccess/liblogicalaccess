@@ -383,7 +383,7 @@ namespace logicalaccess
          * \param mode The communication mode
          * \return The number of bytes read.
          */
-        virtual unsigned int readData(unsigned char fileno, unsigned int offset, unsigned int length, void* data, EncryptionMode mode) = 0;
+        virtual std::vector<unsigned char> readData(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode) = 0;
 
         /**
          * \brief Write data into a specific file.
@@ -393,7 +393,7 @@ namespace logicalaccess
          * \param data The data buffer
          * \param mode The communication mode
          */
-        virtual void writeData(unsigned char fileno, unsigned int offset, unsigned int length, const void* data, EncryptionMode mode) = 0;
+        virtual void writeData(unsigned char fileno, unsigned int offset, const std::vector<unsigned char>& data, EncryptionMode mode) = 0;
 
         /**
          * \brief Get value from a specific value file.
@@ -437,7 +437,7 @@ namespace logicalaccess
          * \param data The data buffer
          * \param mode The communication mode
          */
-        virtual void writeRecord(unsigned char fileno, unsigned int offset, unsigned int length, const void* data, EncryptionMode mode) = 0;
+        virtual void writeRecord(unsigned char fileno, unsigned int offset, const std::vector<unsigned char>& data, EncryptionMode mode) = 0;
 
         /**
          * \brief Read record from a specific record file.
@@ -448,7 +448,7 @@ namespace logicalaccess
          * \param mode The communication mode
          * \return The number of bytes read.
          */
-        virtual unsigned int readRecords(unsigned char fileno, unsigned int offset, unsigned int length, void* data, EncryptionMode mode) = 0;
+        virtual std::vector<unsigned char> readRecords(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode) = 0;
 
         /**
          * \brief Clear a specific record file.

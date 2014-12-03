@@ -66,10 +66,9 @@ namespace logicalaccess
         }
     }
 
-    void ISO7816StorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> /*aiToUse*/, std::shared_ptr<AccessInfo> /*aiToWrite*/, const void* data, size_t dataLength, CardBehavior /*behaviorFlags*/)
+    void ISO7816StorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> /*aiToUse*/, std::shared_ptr<AccessInfo> /*aiToWrite*/, const std::vector<unsigned char>& data, CardBehavior /*behaviorFlags*/)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
-        EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
 
         std::shared_ptr<ISO7816Location> icLocation = std::dynamic_pointer_cast<ISO7816Location>(location);
 
@@ -96,7 +95,7 @@ namespace logicalaccess
         {
             if (icLocation->dataObject > 0)
             {
-                getISO7816Chip()->getISO7816Commands()->putData(data, dataLength, icLocation->dataObject);
+                getISO7816Chip()->getISO7816Commands()->putData(data, icLocation->dataObject);
             }
             else
             {
@@ -107,7 +106,7 @@ namespace logicalaccess
 
         case IFT_TRANSPARENT:
         {
-            getISO7816Chip()->getISO7816Commands()->writeBinary(data, dataLength, 0);
+            getISO7816Chip()->getISO7816Commands()->writeBinary(data, 0);
         }
             break;
 
@@ -123,10 +122,10 @@ namespace logicalaccess
         }
     }
 
-    void ISO7816StorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> /*aiToUse*/, void* data, size_t dataLength, CardBehavior /*behaviorFlags*/)
+    std::vector<unsigned char> ISO7816StorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> /*aiToUse*/, size_t length, CardBehavior /*behaviorFlags*/)
     {
+		std::vector<unsigned char> data;
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
-        EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
 
         std::shared_ptr<ISO7816Location> icLocation = std::dynamic_pointer_cast<ISO7816Location>(location);
 
@@ -152,7 +151,7 @@ namespace logicalaccess
         case IFT_DIRECTORY:
             if (icLocation->dataObject > 0)
             {
-                getISO7816Chip()->getISO7816Commands()->getData(data, dataLength, icLocation->dataObject);
+                data = getISO7816Chip()->getISO7816Commands()->getData(length, icLocation->dataObject);
             }
             else
             {
@@ -161,7 +160,7 @@ namespace logicalaccess
             break;
 
         case IFT_TRANSPARENT:
-            getISO7816Chip()->getISO7816Commands()->readBinary(data, dataLength, 0);
+            data = getISO7816Chip()->getISO7816Commands()->readBinary(length, 0);
             break;
 
         case IFT_LINEAR_FIXED:
@@ -174,6 +173,7 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Doesn't know how to read on this file.");
             break;
         }
+		return data;
     }
 
     unsigned int ISO7816StorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/, void* /*data*/, size_t /*dataLength*/)

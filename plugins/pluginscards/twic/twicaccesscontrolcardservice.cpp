@@ -60,25 +60,16 @@ namespace logicalaccess
         if (pLocation)
         {
             size_t length = (formatret->getDataLength() + 7) / 8;
-            unsigned char *formatBuf = new unsigned char[length];
-            memset(formatBuf, 0x00, length);
-            try
-            {
-                std::shared_ptr<StorageCardService> storage = std::dynamic_pointer_cast<StorageCardService>(getTwicChip()->getService(CST_STORAGE));
-                if (storage)
-                {
-                    storage->readData(pLocation, std::shared_ptr<AccessInfo>(), formatBuf, length, CB_DEFAULT);
-                    formatret->setLinearData(formatBuf, length);
+			std::vector<unsigned char> formatBuf;
 
-                    ret = true;
-                }
-            }
-            catch (std::exception&)
+            std::shared_ptr<StorageCardService> storage = std::dynamic_pointer_cast<StorageCardService>(getTwicChip()->getService(CST_STORAGE));
+            if (storage)
             {
-                delete[] formatBuf;
-                throw;
+                formatBuf = storage->readData(pLocation, std::shared_ptr<AccessInfo>(), length, CB_DEFAULT);
+                formatret->setLinearData(&formatBuf[0], formatBuf.size());
+
+                ret = true;
             }
-            delete[] formatBuf;
         }
 
         if (!ret)

@@ -32,11 +32,11 @@ namespace logicalaccess
         MifareUltralightStorageCardService::erase(location, aiToUse);
     }
 
-    void MifareUltralightCStorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags)
+    void MifareUltralightCStorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite, const std::vector<unsigned char>& data, CardBehavior behaviorFlags)
     {
         getMifareUltralightCChip()->getMifareUltralightCCommands()->authenticate(aiToUse);
 
-        MifareUltralightStorageCardService::writeData(location, aiToUse, aiToWrite, data, dataLength, behaviorFlags);
+        MifareUltralightStorageCardService::writeData(location, aiToUse, aiToWrite, data, behaviorFlags);
 
         if (aiToWrite)
         {
@@ -44,10 +44,10 @@ namespace logicalaccess
         }
     }
 
-    void MifareUltralightCStorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags)
+    std::vector<unsigned char> MifareUltralightCStorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, size_t length, CardBehavior behaviorFlags)
     {
         getMifareUltralightCChip()->getMifareUltralightCCommands()->authenticate(aiToUse);
 
-        MifareUltralightStorageCardService::readData(location, aiToUse, data, dataLength, behaviorFlags);
+        return MifareUltralightStorageCardService::readData(location, aiToUse, length, behaviorFlags);
     }
 }

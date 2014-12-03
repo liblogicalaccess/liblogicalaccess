@@ -26,9 +26,9 @@ namespace logicalaccess
     {
     }
 
-    size_t MifareOK5553Commands::readBinary(unsigned char blockno, size_t len, void* buf, size_t buflen)
+    std::vector<unsigned char> MifareOK5553Commands::readBinary(unsigned char blockno, size_t len)
     {
-        size_t res = 0;
+        std::vector<unsigned char> res;
         char tmp[3];
         std::vector<unsigned char> command;
         std::vector<unsigned char> answer;
@@ -39,21 +39,10 @@ namespace logicalaccess
         command.push_back(static_cast<unsigned char>(tmp[1]));
         answer = getOK5553ReaderCardAdapter()->sendCommand(command);
         // convert ascii in hexa
-        answer = OK5553ReaderUnit::asciiToHex(answer);
-        res = (len < answer.size()) ? len : answer.size();
-        if (res <= buflen)
-        {
-            memcpy(buf, &answer[0], res);
-        }
-        else
-        {
-            res = 0;
-        }
-
-        return res;
+        return OK5553ReaderUnit::asciiToHex(answer);
     }
 
-    size_t MifareOK5553Commands::updateBinary(unsigned char blockno, const void* buf, size_t buflen)
+    void MifareOK5553Commands::updateBinary(unsigned char blockno, const std::vector<unsigned char>& buf)
     {
         char tmp[3];
         std::vector<unsigned char> command;
@@ -63,18 +52,13 @@ namespace logicalaccess
         sprintf(tmp, "%.2X", blockno);
         command.push_back(static_cast<unsigned char>(tmp[0]));
         command.push_back(static_cast<unsigned char>(tmp[1]));
-        for (size_t i = 0; i < buflen; i++)
+        for (size_t i = 0; i < buf.size(); i++)
         {
-            sprintf(tmp, "%.2X", ((char *)buf)[i]);
+            sprintf(tmp, "%.2X", &buf[i]);
             command.push_back(static_cast<unsigned char>(tmp[0]));
             command.push_back(static_cast<unsigned char>(tmp[1]));
         }
-        answer = getOK5553ReaderCardAdapter()->sendCommand(command);
-        if (answer.size() > 1)
-            buflen = answer.size();
-        else
-            buflen = 0;
-        return buflen;
+        getOK5553ReaderCardAdapter()->sendCommand(command);
     }
 
     bool MifareOK5553Commands::loadKey(unsigned char keyno, MifareKeyType /*keytype*/, const void* key, size_t keylen, bool vol)

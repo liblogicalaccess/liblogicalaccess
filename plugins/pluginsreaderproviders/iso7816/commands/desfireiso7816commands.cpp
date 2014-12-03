@@ -599,11 +599,9 @@ namespace logicalaccess
         transmit(DF_INS_DELETE_FILE, command);
     }
 
-    unsigned int DESFireISO7816Commands::readData(unsigned char fileno, unsigned int offset, unsigned int length, void* data, EncryptionMode mode)
+    std::vector<unsigned char> DESFireISO7816Commands::readData(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode)
     {
-        unsigned int ret = 0;
-
-        std::vector<unsigned char> command;
+        std::vector<unsigned char> command, ret;
 
         command.push_back(fileno);
 
@@ -625,25 +623,24 @@ namespace logicalaccess
             unsigned char err = result.back();
             result.resize(result.size() - 2);
             result = handleReadData(err, result, static_cast<unsigned int>(trunklength), mode);
-            memcpy(reinterpret_cast<unsigned char*>(data)+i, &result[0], result.size());
-            ret += static_cast<unsigned int>(result.size());
+            ret.insert(ret.end(), result.begin(), result.end());
         }
 
         return ret;
     }
 
-    void DESFireISO7816Commands::writeData(unsigned char fileno, unsigned int offset, unsigned int length, const void* data, EncryptionMode mode)
+    void DESFireISO7816Commands::writeData(unsigned char fileno, unsigned int offset, const std::vector<unsigned char>& data, EncryptionMode mode)
     {
         unsigned char parameters[7];
         parameters[0] = static_cast<unsigned char>(fileno);
         parameters[1] = static_cast<unsigned char>(offset & 0xff);
         parameters[2] = static_cast<unsigned char>(static_cast<unsigned short>(offset & 0xff00) >> 8);
         parameters[3] = static_cast<unsigned char>(static_cast<unsigned int>(offset & 0xff0000) >> 16);
-        parameters[4] = static_cast<unsigned char>(length & 0xff);
-        parameters[5] = static_cast<unsigned char>(static_cast<unsigned short>(length & 0xff00) >> 8);
-        parameters[6] = static_cast<unsigned char>(static_cast<unsigned int>(length & 0xff0000) >> 16);
+        parameters[4] = static_cast<unsigned char>(data.size() & 0xff);
+        parameters[5] = static_cast<unsigned char>(static_cast<unsigned short>(data.size() & 0xff00) >> 8);
+        parameters[6] = static_cast<unsigned char>(static_cast<unsigned int>(data.size() & 0xff0000) >> 16);
 
-        handleWriteData(DF_INS_WRITE_DATA, parameters, static_cast<unsigned int>(sizeof(parameters)), std::vector<unsigned char>((unsigned char*)data, (unsigned char*)data + length), mode);
+        handleWriteData(DF_INS_WRITE_DATA, parameters, static_cast<unsigned int>(sizeof(parameters)), data, mode);
     }
 
     void DESFireISO7816Commands::getValue(unsigned char fileno, EncryptionMode mode, unsigned int& value)
@@ -693,23 +690,23 @@ namespace logicalaccess
         handleWriteData(DF_INS_LIMITED_CREDIT, parameters, static_cast<unsigned int>(sizeof(parameters)), data, mode);
     }
 
-    void DESFireISO7816Commands::writeRecord(unsigned char fileno, unsigned int offset, unsigned int length, const void* data, EncryptionMode mode)
+    void DESFireISO7816Commands::writeRecord(unsigned char fileno, unsigned int offset, const std::vector<unsigned char>& data, EncryptionMode mode)
     {
         unsigned char parameters[7];
         parameters[0] = fileno;
         parameters[1] = static_cast<unsigned char>(offset & 0xff);
         parameters[2] = static_cast<unsigned char>(static_cast<unsigned short>(offset & 0xff00) >> 8);
         parameters[3] = static_cast<unsigned char>(static_cast<unsigned int>(offset & 0xff0000) >> 16);
-        parameters[4] = static_cast<unsigned char>(length & 0xff);
-        parameters[5] = static_cast<unsigned char>(static_cast<unsigned short>(length & 0xff00) >> 8);
-        parameters[6] = static_cast<unsigned char>(static_cast<unsigned int>(length & 0xff0000) >> 16);
+        parameters[4] = static_cast<unsigned char>(data.size() & 0xff);
+        parameters[5] = static_cast<unsigned char>(static_cast<unsigned short>(data.size() & 0xff00) >> 8);
+        parameters[6] = static_cast<unsigned char>(static_cast<unsigned int>(data.size() & 0xff0000) >> 16);
 
-        handleWriteData(DF_INS_WRITE_RECORD, parameters, static_cast<unsigned int>(sizeof(parameters)), std::vector<unsigned char>((unsigned char*)data, (unsigned char*)data + length), mode);
+        handleWriteData(DF_INS_WRITE_RECORD, parameters, static_cast<unsigned int>(sizeof(parameters)), data, mode);
     }
 
-    unsigned int DESFireISO7816Commands::readRecords(unsigned char fileno, unsigned int offset, unsigned int length, void* data, EncryptionMode mode)
+    std::vector<unsigned char> DESFireISO7816Commands::readRecords(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode)
     {
-        std::vector<unsigned char> command;
+        std::vector<unsigned char> command, ret;
 
         command.push_back(fileno);
         command.push_back(static_cast<unsigned char>(offset & 0xff));
@@ -723,9 +720,9 @@ namespace logicalaccess
         unsigned char err = result.back();
         result.resize(result.size() - 2);
         result = handleReadData(err, result, length, mode);
-        memcpy(data, &result[0], result.size());
+		ret.insert(ret.end(), result.begin(), result.end());
 
-        return static_cast<unsigned int>(result.size());
+        return ret;
     }
 
     void DESFireISO7816Commands::clearRecordFile(unsigned char fileno)

@@ -108,41 +108,26 @@ namespace logicalaccess
         }
     }
 
-    size_t MifarePCSCCommands::readBinary(unsigned char blockno, size_t len, void* buf, size_t buflen)
+    std::vector<unsigned char> MifarePCSCCommands::readBinary(unsigned char blockno, size_t len)
     {
-        if ((len >= 256) || (len > buflen) || (!buf))
+        if (len >= 256)
         {
-            THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter.");
+            THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad len parameter.");
         }
-
-        size_t r = 0;
 
         std::vector<unsigned char> result;
 
         result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xB0, 0x00, blockno, static_cast<unsigned char>(len));
-
-        r = result.size() - 2;
-        if (r > buflen)
-        {
-            r = buflen;
-        }
-        memcpy(buf, &result[0], r);
-
-        return r;
+        return std::vector<unsigned char>(result.begin(), result.end() - 2);
     }
 
-    size_t MifarePCSCCommands::updateBinary(unsigned char blockno, const void* buf, size_t buflen)
+    void MifarePCSCCommands::updateBinary(unsigned char blockno, const std::vector<unsigned char>& buf)
     {
-        if ((buflen >= 256) || (!buf))
+        if (buf.size() >= 256)
         {
-            THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter.");
+            THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buf size parameter.");
         }
 
-        size_t r = 0;
-        std::vector<unsigned char> vector_buf((unsigned char*)buf, (unsigned char*)buf + buflen);
-        getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xD6, 0x00, blockno, static_cast<unsigned char>(buflen), vector_buf);
-        r = buflen;
-
-        return r;
+        getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xD6, 0x00, blockno, static_cast<unsigned char>(buf.size()), buf);
     }
 }

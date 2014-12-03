@@ -9,20 +9,20 @@
 
 namespace logicalaccess
 {
-    void MifarePlusSL3Commands::writeSector(int sector, int start_block, const void* buf, size_t buflen, std::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype)
+    void MifarePlusSL3Commands::writeSector(int sector, int start_block, const std::vector<unsigned char>& buf, std::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype)
     {
-        if (buf == NULL || buflen < MIFARE_PLUS_BLOCK_SIZE || buflen % MIFARE_PLUS_BLOCK_SIZE != 0 || buflen / MIFARE_PLUS_BLOCK_SIZE + start_block > getNbBlocks(sector))
+        if (buf.size() < MIFARE_PLUS_BLOCK_SIZE || buf.size() % MIFARE_PLUS_BLOCK_SIZE != 0 || buf.size() / MIFARE_PLUS_BLOCK_SIZE + start_block > getNbBlocks(sector))
         {
             THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter. The minimum buffer's length is 16 bytes.");
         }
 
         if (authenticate(sector, key, keytype))
         {
-            updateBinary(getBlockNo(sector, start_block), false, true, buf, buflen);
+            updateBinary(getBlockNo(sector, start_block), false, true, buf);
         }
     }
 
-    void MifarePlusSL3Commands::writeSectors(int start_sector, int stop_sector, const void* buf, size_t buflen, std::shared_ptr<AccessInfo> aiToUse)
+    void MifarePlusSL3Commands::writeSectors(int start_sector, int stop_sector, const std::vector<unsigned char>& buf, std::shared_ptr<AccessInfo> aiToUse)
     {
         if (aiToUse)
         {
@@ -35,19 +35,20 @@ namespace logicalaccess
             {
                 test_buflen += getNbBlocks(i) * MIFARE_PLUS_BLOCK_SIZE;
             }
-            if (test_buflen + MIFARE_PLUS_BLOCK_SIZE != buflen)
+            if (test_buflen + MIFARE_PLUS_BLOCK_SIZE != buf.size())
                 THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter. The buffer must fit the sectors size.");
 
             test_buflen = 0;
-            for (i = start_sector; i <= stop_sector && test_buflen < buflen; ++i)
+            for (i = start_sector; i <= stop_sector && test_buflen < buf.size(); ++i)
             {
                 size_t toWriteLen = getNbBlocks(i) * MIFARE_PLUS_BLOCK_SIZE;
-                if (toWriteLen + test_buflen > buflen)
-                    toWriteLen = buflen - test_buflen;
+                if (toWriteLen + test_buflen > buf.size())
+                    toWriteLen = buf.size() - test_buflen;
+				std::vector<unsigned char> tmp(buf.begin() + test_buflen, buf.begin() + test_buflen + toWriteLen);
                 if (mAiToUse->keyB && !mAiToUse->keyB->isEmpty())
-                    writeSector(i, 0, reinterpret_cast<const char*>(buf)+test_buflen, toWriteLen, mAiToUse->keyB, KT_KEY_AES_B);
+                    writeSector(i, 0, tmp, mAiToUse->keyB, KT_KEY_AES_B);
                 else if (mAiToUse->keyA && !mAiToUse->keyA->isEmpty())
-                    writeSector(i, 0, reinterpret_cast<const char*>(buf)+test_buflen, toWriteLen, mAiToUse->keyA, KT_KEY_AES_A);
+                    writeSector(i, 0, tmp, mAiToUse->keyA, KT_KEY_AES_A);
                 else
                     THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "You must set the writing key using the MifarePlusAccessInfo ");
                 test_buflen += getNbBlocks(i) * MIFARE_PLUS_BLOCK_SIZE;
@@ -55,50 +56,37 @@ namespace logicalaccess
         }
     }
 
-    void MifarePlusSL3Commands::readSector(int sector, int start_block, void* buf, size_t buflen, std::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype)
+    std::vector<unsigned char> MifarePlusSL3Commands::readSector(int sector, int start_block, std::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype)
     {
-        if (buf == NULL || buflen < MIFARE_PLUS_BLOCK_SIZE || buflen % MIFARE_PLUS_BLOCK_SIZE != 0 || buflen / MIFARE_PLUS_BLOCK_SIZE + start_block > getNbBlocks(sector))
-        {
-            THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter. The minimum buffer's length is 16 bytes.");
-        }
-
         if (authenticate(sector, key, keytype))
         {
-            readBinary(getBlockNo(sector, start_block), static_cast<unsigned char>(buflen / MIFARE_PLUS_BLOCK_SIZE), false, true, true, buf, buflen);
+            return readBinary(getBlockNo(sector, start_block), MIFARE_PLUS_BLOCK_SIZE, false, true, true);
         }
+		return std::vector<unsigned char>();
     }
 
-    void MifarePlusSL3Commands::readSectors(int start_sector, int stop_sector, void* buf, size_t buflen, std::shared_ptr<AccessInfo> aiToUse)
+    std::vector<unsigned char> MifarePlusSL3Commands::readSectors(int start_sector, int stop_sector, std::shared_ptr<AccessInfo> aiToUse)
     {
+		std::vector<unsigned char> ret, data;
+
         if (aiToUse)
         {
-            int i;
-            size_t test_buflen = 0;
             std::shared_ptr<MifarePlusAccessInfo> mAiToUse = std::dynamic_pointer_cast<MifarePlusAccessInfo>(aiToUse);
             EXCEPTION_ASSERT(mAiToUse, std::invalid_argument, "aiToUse must be a MifarePlusAccessInfo.");
 
-            for (i = start_sector; i < stop_sector; ++i)
+            for (int i = start_sector; i <= stop_sector; ++i)
             {
-                test_buflen += getNbBlocks(i) * MIFARE_PLUS_BLOCK_SIZE;
-            }
-            if (test_buflen + MIFARE_PLUS_BLOCK_SIZE > buflen)
-                THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter. The buffer must fit the sectors size.");
-
-            test_buflen = 0;
-            for (i = start_sector; i <= stop_sector && test_buflen < buflen; ++i)
-            {
-                size_t toReadLen = getNbBlocks(i) * MIFARE_PLUS_BLOCK_SIZE;
-                if (toReadLen + test_buflen > buflen)
-                    toReadLen = buflen - test_buflen;
                 if (mAiToUse->keyA && !mAiToUse->keyA->isEmpty())
-                    readSector(i, 0, reinterpret_cast<char*>(buf)+test_buflen, toReadLen, mAiToUse->keyA, KT_KEY_AES_A);
+					data = readSector(i, 0, mAiToUse->keyA, KT_KEY_AES_A);
                 else if (mAiToUse->keyB && !mAiToUse->keyB->isEmpty())
-                    readSector(i, 0, reinterpret_cast<char*>(buf)+test_buflen, toReadLen, mAiToUse->keyB, KT_KEY_AES_B);
+                    data = readSector(i, 0, mAiToUse->keyB, KT_KEY_AES_B);
                 else
                     THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "You must set the writing key using the MifarePlusAccessInfo ");
-                test_buflen += getNbBlocks(i) * MIFARE_PLUS_BLOCK_SIZE;
+
+				ret.insert(ret.end(), data.begin(), data.end());
             }
         }
+		return ret;
     }
 
     bool MifarePlusSL3Commands::authenticate(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> ai)

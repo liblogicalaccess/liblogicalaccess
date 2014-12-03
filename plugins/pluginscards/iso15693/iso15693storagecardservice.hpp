@@ -52,7 +52,7 @@ namespace logicalaccess
          * \param dataLength Data's length to write.
          * \param behaviorFlags Flags which determines the behavior.
          */
-        virtual void writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags);
+        virtual void writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite, const std::vector<unsigned char>& data, CardBehavior behaviorFlags);
 
         /**
          * \brief Read data on a specific Tag-It location, using given Tag-It keys.
@@ -62,7 +62,7 @@ namespace logicalaccess
          * \param dataLength Data's length to read.
          * \param behaviorFlags Flags which determines the behavior.
          */
-        virtual void readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags);
+        virtual std::vector<unsigned char> readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, size_t dataLength, CardBehavior behaviorFlags);
 
         /**
          * \brief Read data header on a specific location, using given keys.

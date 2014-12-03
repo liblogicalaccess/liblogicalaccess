@@ -46,7 +46,7 @@ namespace logicalaccess
          * \param behaviorFlags Flags which determines the behavior.
          * \return True on success, false otherwise.
          */
-        virtual void readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, void *data, size_t dataLength, CardBehavior behaviorFlags);
+        virtual std::vector<unsigned char> readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, size_t length, CardBehavior behaviorFlags);
 
     protected:
 
