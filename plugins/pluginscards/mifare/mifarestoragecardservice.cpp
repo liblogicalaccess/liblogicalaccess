@@ -27,8 +27,6 @@ namespace logicalaccess
         }
 
         unsigned int zeroblock_size = getMifareChip()->getMifareCommands()->getNbBlocks(mLocation->sector) * 16;
-        unsigned char *zeroblock = new unsigned char[zeroblock_size];
-        memset(zeroblock, 0x00, zeroblock_size);
 
         std::shared_ptr<MifareAccessInfo> _aiToWrite;
         _aiToWrite.reset(new MifareAccessInfo());
@@ -61,21 +59,20 @@ namespace logicalaccess
             {
                 madAi->sab.setAReadBWriteConfiguration();
             }
-
-            writeData(madLocation, madAi, _aiToWrite, zeroblock, 32, CB_DEFAULT);
+			std::vector<unsigned char> zeroblock(32, 0x00);
+            writeData(madLocation, madAi, _aiToWrite, zeroblock,  CB_DEFAULT);
         }
 
         bool tmpuseMAD = mLocation->useMAD;
         mLocation->useMAD = false;
-        writeData(location, aiToUse, _aiToWrite, zeroblock, zeroblock_size - (mLocation->block * 16), CB_DEFAULT);
+		std::vector<unsigned char> zeroblock(zeroblock_size - (mLocation->block * 16), 0x00);
+        writeData(location, aiToUse, _aiToWrite, zeroblock, CB_DEFAULT);
         mLocation->useMAD = tmpuseMAD;
-        delete[] zeroblock;
     }
 
-    void MifareStorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags)
+    void MifareStorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite, const std::vector<unsigned char>& data, CardBehavior behaviorFlags)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
-        EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
 
         std::shared_ptr<MifareLocation> mLocation = std::dynamic_pointer_cast<MifareLocation>(location);
         std::shared_ptr<MifareAccessInfo> mAiToUse = std::dynamic_pointer_cast<MifareAccessInfo>(aiToUse);
@@ -106,7 +103,7 @@ namespace logicalaccess
             }
         }
 
-        size_t totaldatalen = dataLength + (mLocation->block * 16) + mLocation->byte;
+        size_t totaldatalen = data.size() + (mLocation->block * 16) + mLocation->byte;
         int nbSectors = 0;
         size_t totalbuflen = 0;
         while (totalbuflen < totaldatalen)
@@ -125,7 +122,7 @@ namespace logicalaccess
             size_t buflen = totalbuflen - (mLocation->block * 16);
             std::vector<unsigned char> dataSectors;
             dataSectors.resize(buflen, 0x00);
-            memcpy(&dataSectors[0] + mLocation->byte, data, dataLength);
+			std::copy(data.begin(), data.end(), dataSectors.begin() + mLocation->byte);
 
             if (writeAidToMad)
             {
@@ -217,8 +214,7 @@ namespace logicalaccess
                 getMifareChip()->getMifareCommands()->writeSectors(mLocation->sector,
                     mLocation->sector + nbSectors - 1,
                     mLocation->block,
-                    &dataSectors[0],
-                    dataSectors.size(),
+                    dataSectors,
                     mAiToUse->sab,
                     mAiToUse->gpb,
                     (mAiToWrite) ? &(mAiToWrite->sab) : NULL);
@@ -227,8 +223,7 @@ namespace logicalaccess
             {
                 getMifareChip()->getMifareCommands()->writeSector(mLocation->sector,
                     mLocation->block,
-                    &dataSectors[0],
-                    dataSectors.size(),
+                    dataSectors,
                     mAiToUse->sab,
                     mAiToUse->gpb,
                     (mAiToWrite) ? &(mAiToWrite->sab) : NULL);
@@ -239,10 +234,10 @@ namespace logicalaccess
         }
     }
 
-    void MifareStorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags)
+    std::vector<unsigned char> MifareStorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, size_t length, CardBehavior behaviorFlags)
     {
+		std::vector<unsigned char> ret;
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
-        EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
 
         std::shared_ptr<MifareLocation> mLocation = std::dynamic_pointer_cast<MifareLocation>(location);
         std::shared_ptr<MifareAccessInfo> mAiToUse = std::dynamic_pointer_cast<MifareAccessInfo>(aiToUse);
@@ -264,7 +259,7 @@ namespace logicalaccess
             mLocation->sector = getMifareChip()->getMifareCommands()->getSectorFromMAD(mLocation->aid, mAiToUse->madKeyA);
         }
 
-        size_t totaldatalen = dataLength + (mLocation->block * 16) + mLocation->byte;
+        size_t totaldatalen = length + (mLocation->block * 16) + mLocation->byte;
         int nbSectors = 0;
         size_t totalbuflen = 0;
         while (totalbuflen < totaldatalen)
@@ -289,23 +284,22 @@ namespace logicalaccess
         {
             size_t buflen = totalbuflen - (mLocation->block * 16);
             std::vector<unsigned char> dataSectors;
-            dataSectors.resize(buflen, 0x00);
-            size_t reallen;
 
             if (behaviorFlags & CB_AUTOSWITCHAREA)
             {
-                reallen = getMifareChip()->getMifareCommands()->readSectors(mLocation->sector, mLocation->sector + nbSectors - 1, mLocation->block, dataSectors.data(), dataSectors.size(), mAiToUse->sab);
+                dataSectors = getMifareChip()->getMifareCommands()->readSectors(mLocation->sector, mLocation->sector + nbSectors - 1, mLocation->block, mAiToUse->sab);
             }
             else
             {
-                reallen = getMifareChip()->getMifareCommands()->readSector(mLocation->sector, mLocation->block, dataSectors.data(), dataSectors.size(), mAiToUse->sab);
+                dataSectors = getMifareChip()->getMifareCommands()->readSector(mLocation->sector, mLocation->block, mAiToUse->sab);
             }
 
-            if (dataLength <= (reallen - mLocation->byte))
+            if (length <= (dataSectors.size() - mLocation->byte))
             {
-                memcpy(static_cast<char*>(data), &dataSectors[0] + mLocation->byte, dataLength);
+				ret.insert(ret.end(), dataSectors.begin() + mLocation->byte, dataSectors.begin() + mLocation->byte + length);
             }
         }
+		return ret;
     }
 
     unsigned int MifareStorageCardService::readDataHeader(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength)
@@ -349,7 +343,7 @@ namespace logicalaccess
         if (dataLength >= 16)
         {
             getMifareChip()->getMifareCommands()->changeBlock(sab, mLocation->sector, getMifareChip()->getMifareCommands()->getNbBlocks(mLocation->sector), false);
-            return static_cast<unsigned int>(getMifareChip()->getMifareCommands()->readBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(mLocation->sector) + getMifareChip()->getMifareCommands()->getNbBlocks(mLocation->sector)), 16, data, 16));
+            return static_cast<unsigned int>(getMifareChip()->getMifareCommands()->readBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(mLocation->sector) + getMifareChip()->getMifareCommands()->getNbBlocks(mLocation->sector)), 16).size());
         }
 
         return 0;
@@ -357,11 +351,8 @@ namespace logicalaccess
 
     void MifareStorageCardService::erase()
     {
-        unsigned char zeroblock[16];
-        unsigned char trailerblock[16];
-
-        memset(zeroblock, 0x00, 16);
-        memset(trailerblock, 0xFF, 16);
+        std::vector<unsigned char> zeroblock(16, 0x00);
+		std::vector<unsigned char> trailerblock(16, 0xFF);
 
         MifareAccessInfo::SectorAccessBits sab;
         sab.setTransportConfiguration();
@@ -391,16 +382,10 @@ namespace logicalaccess
 
                 for (unsigned int j = firstBlock; j < getMifareChip()->getMifareCommands()->getNbBlocks(i); ++j)
                 {
-                    if (!getMifareChip()->getMifareCommands()->updateBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(i) + j), zeroblock, 16))
-                    {
-                        erased = false;
-                    }
+                    getMifareChip()->getMifareCommands()->updateBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(i) + j), zeroblock);
                 }
 
-                if (!getMifareChip()->getMifareCommands()->updateBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(i) + getMifareChip()->getMifareCommands()->getNbBlocks(i)), trailerblock, 16))
-                {
-                    erased = false;
-                }
+                getMifareChip()->getMifareCommands()->updateBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(i) + getMifareChip()->getMifareCommands()->getNbBlocks(i)), trailerblock);
             }
 
             if ((!erased || !used) && getMifareChip()->getMifareProfile()->getKeyUsage(i, KT_KEY_A))
@@ -414,16 +399,10 @@ namespace logicalaccess
 
                 for (unsigned int j = firstBlock; j < getMifareChip()->getMifareCommands()->getNbBlocks(i); ++j)
                 {
-                    if (!getMifareChip()->getMifareCommands()->updateBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(i) + j), zeroblock, 16))
-                    {
-                        erased = false;
-                    }
+                    getMifareChip()->getMifareCommands()->updateBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(i) + j), zeroblock);
                 }
 
-                if (!getMifareChip()->getMifareCommands()->updateBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(i) + getMifareChip()->getMifareCommands()->getNbBlocks(i)), trailerblock, 16))
-                {
-                    erased = false;
-                }
+                getMifareChip()->getMifareCommands()->updateBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(i) + getMifareChip()->getMifareCommands()->getNbBlocks(i)), trailerblock);
             }
         }
     }

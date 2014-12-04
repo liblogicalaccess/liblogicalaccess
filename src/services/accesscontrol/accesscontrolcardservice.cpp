@@ -41,39 +41,23 @@ namespace logicalaccess
             size_t length = (formatret->getDataLength() + 7) / 8;
             if (length > 0)
             {
-                unsigned char *formatBuf = new unsigned char[length];
-                if (formatBuf != NULL)
-                {
-                    memset(formatBuf, 0x00, length);
-                    try
-                    {
-                        storage->readData(location, aiToUse, formatBuf, length, CB_AUTOSWITCHAREA);
+				std::vector<unsigned char> formatBuf;
 
-                        formatret->setLinearData(formatBuf, length);
-                        ret = true;
-                    }
-                    catch (std::exception&)
-                    {
-                        delete[] formatBuf;
-                        throw;
-                    }
-                    delete[] formatBuf;
-                }
+				formatBuf = storage->readData(location, aiToUse, length, CB_AUTOSWITCHAREA);
+
+				formatret->setLinearData(&formatBuf[0], formatBuf.size());
+				ret = true;
             }
         }
 
         if (!ret)
-        {
             formatret.reset();
-        }
 
         return formatret;
     }
 
     bool AccessControlCardService::writeFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite)
     {
-        bool ret = false;
-
         EXCEPTION_ASSERT_WITH_LOG(format, std::invalid_argument, "format to write can't be null.");
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location parameter can't be null.");
 
@@ -81,23 +65,13 @@ namespace logicalaccess
         if (storage)
         {
             size_t length = (format->getDataLength() + 7) / 8;
-            unsigned char *formatBuf = new unsigned char[length];
-            memset(formatBuf, 0x00, length);
-            format->getLinearData(formatBuf, length);
-            try
-            {
-                storage->writeData(location, aiToUse, aiToWrite, formatBuf, length, CB_AUTOSWITCHAREA);
-            }
-            catch (std::exception&)
-            {
-                delete[] formatBuf;
-                throw;
-            }
+			std::vector<unsigned char> formatBuf(length, 0x00);
 
-            ret = true;
-            delete[] formatBuf;
+            format->getLinearData(&formatBuf[0], formatBuf.size());
+            storage->writeData(location, aiToUse, aiToWrite, formatBuf, CB_AUTOSWITCHAREA);
         }
-
-        return ret;
+		else
+			EXCEPTION_ASSERT_WITH_LOG(location, std::runtime_error, "No storage has been found.");
+		return true;
     }
 }

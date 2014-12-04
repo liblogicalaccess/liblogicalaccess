@@ -33,40 +33,25 @@ namespace logicalaccess
         getPCSCReaderCardAdapter()->sendAPDUCommand(0xff, 0x30, 0x00, 0x01, 3, command);
     }
 
-    bool ISO15693PCSCCommands::readBlock(size_t block, void* data, size_t datalen, size_t le)
+    std::vector<unsigned char> ISO15693PCSCCommands::readBlock(size_t block, size_t le)
     {
-        bool ret = false;
         std::vector<unsigned char> result;
         unsigned char p1 = (block & 0xffff) >> 8;
         unsigned char p2 = static_cast<unsigned char>(block & 0xff);
 
         result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xff, 0xb0, p1, p2, static_cast<unsigned char>(le));
 
-        if (datalen >= result.size() - 2)
-        {
-            memcpy(data, &result[0], result.size() - 2);
-            ret = true;
-        }
-
-        return ret;
+        return std::vector<unsigned char>(result.begin(), result.end() - 2);
     }
 
-    bool ISO15693PCSCCommands::writeBlock(size_t block, const void* data, size_t datalen)
+    void ISO15693PCSCCommands::writeBlock(size_t block, const std::vector<unsigned char>& data)
     {
         bool ret = false;
         std::vector<unsigned char> result;
         unsigned char p1 = (block & 0xffff) >> 8;
         unsigned char p2 = static_cast<unsigned char>(block & 0xff);
 
-        std::vector<unsigned char> vector_data((unsigned char*)data, (unsigned char*)data + datalen);
-        result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xff, 0xd6, p1, p2, static_cast<unsigned char>(datalen), vector_data);
-
-        if (datalen >= result.size() - 2)
-        {
-            ret = true;
-        }
-
-        return ret;
+        result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xff, 0xd6, p1, p2, static_cast<unsigned char>(data.size()), data);
     }
 
     void ISO15693PCSCCommands::lockBlock(size_t block)

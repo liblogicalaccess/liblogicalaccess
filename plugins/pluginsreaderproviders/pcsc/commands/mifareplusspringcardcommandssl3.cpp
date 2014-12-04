@@ -79,7 +79,7 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Authentication reset failed\n");
     }
 
-    size_t MifarePlusSpringCardCommandsSL3::readBinary(short blockno, char len, bool encrypted, bool macOnCommand, bool macOnResponse, void* buf, size_t buflen)
+    std::vector<unsigned char> MifarePlusSpringCardCommandsSL3::readBinary(short blockno, char len, bool encrypted, bool macOnCommand, bool macOnResponse)
     {
         std::vector<unsigned char> command;
         std::vector<unsigned char> res;
@@ -109,20 +109,16 @@ namespace logicalaccess
         else if (encrypted)
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Session encryption key is null, you must set it first. Maybe the authentication failed\n");
 
-        if (res.size() < buflen)
-            buflen = res.size();
-        memcpy(buf, &res[0], buflen);
-
-        return (res.size());
+        return res;
     }
 
-    size_t MifarePlusSpringCardCommandsSL3::updateBinary(short blockno, bool encrypted, bool macOnResponse, const void* buf, size_t buflen)
+    void MifarePlusSpringCardCommandsSL3::updateBinary(short blockno, bool encrypted, bool macOnResponse, const std::vector<unsigned char>& buf)
     {
         std::vector<unsigned char> command;
         std::vector<unsigned char> res;
         std::vector<unsigned char> data;
 
-        if ((buflen >= 256) || (!buf))
+        if (buf.size() >= 256)
             THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter.");
 
         command.resize(3);
@@ -130,7 +126,7 @@ namespace logicalaccess
         command[1] = static_cast<unsigned char>(blockno);
         command[2] = static_cast<unsigned char>(blockno >> 8);
 
-        data.insert(data.end(), static_cast<const unsigned char*>(buf), static_cast<const unsigned char*>(buf)+buflen);
+        data.insert(data.end(), buf.begin(), buf.end());
         if (encrypted && GetCrypto()->d_Kenc.size() > 0)
             data = GetCrypto()->AESCipher(data, GetCrypto()->d_Kenc, true);
         else if (encrypted)
@@ -146,11 +142,6 @@ namespace logicalaccess
 
         if (macOnResponse)
             res = checkMAC(res, command);
-
-        if (res[0] == 0x90)
-            return (buflen);
-
-        return 0;
     }
 
     unsigned char MifarePlusSpringCardCommandsSL3::findReadCommandCode(bool encrypted, bool macOnCommand, bool macOnResponse)

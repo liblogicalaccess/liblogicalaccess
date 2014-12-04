@@ -38,9 +38,9 @@ namespace logicalaccess
 
         virtual void stayQuiet() = 0;
 
-        virtual bool readBlock(size_t block, void* data, size_t datalen, size_t le = 0) = 0;
+        virtual std::vector<unsigned char> readBlock(size_t block, size_t le = 0) = 0;
 
-        virtual bool writeBlock(size_t block, const void* data, size_t datalen) = 0;
+        virtual void writeBlock(size_t block, const std::vector<unsigned char>& data) = 0;
 
         virtual void lockBlock(size_t block) = 0;
 

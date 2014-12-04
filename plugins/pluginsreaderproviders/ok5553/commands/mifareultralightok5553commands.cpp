@@ -23,9 +23,8 @@ namespace logicalaccess
     {
     }
 
-    size_t MifareUltralightOK5553Commands::readPage(int page, void* buf, size_t buflen)
+    std::vector<unsigned char> MifareUltralightOK5553Commands::readPage(int page)
     {
-        size_t res;
         std::vector<unsigned char> command;
         std::vector<unsigned char> answer;
         char buffer[3];
@@ -35,15 +34,11 @@ namespace logicalaccess
         command.push_back(static_cast<unsigned char>(buffer[0]));
         command.push_back(static_cast<unsigned char>(buffer[1]));
         answer = getOK5553ReaderCardAdapter()->sendCommand(command);
-        answer = OK5553ReaderUnit::asciiToHex(answer);
-        res = (buflen <= answer.size()) ? buflen : answer.size();
-        memcpy(buf, &answer[0], res);
-        return res;
+        return OK5553ReaderUnit::asciiToHex(answer);
     }
 
-    size_t MifareUltralightOK5553Commands::writePage(int page, const void* buf, size_t buflen)
+    void MifareUltralightOK5553Commands::writePage(int page, const std::vector<unsigned char>& buf)
     {
-        size_t res;
         std::vector<unsigned char> command;
         char buffer[3];
         command.push_back(static_cast<unsigned char>('w'));
@@ -51,14 +46,12 @@ namespace logicalaccess
         sprintf(buffer, "%.2X", page);
         command.push_back(static_cast<unsigned char>(buffer[0]));
         command.push_back(static_cast<unsigned char>(buffer[1]));
-        for (size_t i = 0; i < buflen; i++)
+        for (size_t i = 0; i < buf.size(); i++)
         {
-            sprintf(buffer, "%.2X", ((char*)buf)[i]);
+            sprintf(buffer, "%.2X", buf[i]);
             command.push_back(static_cast<unsigned char>(buffer[0]));
             command.push_back(static_cast<unsigned char>(buffer[1]));
         }
         getOK5553ReaderCardAdapter()->sendCommand(command);
-        res = buflen;
-        return res;
     }
 }

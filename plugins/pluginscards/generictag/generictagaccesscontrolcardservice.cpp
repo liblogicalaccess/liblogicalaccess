@@ -97,6 +97,6 @@ namespace logicalaccess
 
     bool GenericTagAccessControlCardService::writeFormat(std::shared_ptr<Format> /*format*/, std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/, std::shared_ptr<AccessInfo> /*aiToWrite*/)
     {
-        return false;
+		return false;
     }
 }

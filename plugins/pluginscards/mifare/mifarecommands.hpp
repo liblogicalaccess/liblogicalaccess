@@ -32,7 +32,7 @@ namespace logicalaccess
          * \param readtrailer Read the trailer block.
          * \return The number of bytes red, or a negative value on error.
          */
-        virtual size_t readSector(int sector, int start_block, void* buf, size_t buflen, const MifareAccessInfo::SectorAccessBits& sab, bool readtrailer = false);
+        virtual std::vector<unsigned char> readSector(int sector, int start_block, const MifareAccessInfo::SectorAccessBits& sab, bool readtrailer = false);
 
         /**
          * \brief Write a whole sector.
@@ -46,7 +46,7 @@ namespace logicalaccess
          * \return The number of bytes written, or a negative value on error.
          * \warning If sector is 0, the first 16 bytes will be skipped and be considered "copied" since the first block in sector 0 is read-only.
          */
-        virtual size_t writeSector(int sector, int start_block, const void* buf, size_t buflen, const MifareAccessInfo::SectorAccessBits& sab, unsigned char userbyte = 0x00, MifareAccessInfo::SectorAccessBits* newsab = NULL);
+        virtual void writeSector(int sector, int start_block, const std::vector<unsigned char>& buf, const MifareAccessInfo::SectorAccessBits& sab, unsigned char userbyte = 0x00, MifareAccessInfo::SectorAccessBits* newsab = NULL);
 
         /**
          * \brief Read several sectors.
@@ -58,7 +58,7 @@ namespace logicalaccess
          * \param sab The sector access bits.
          * \return The number of bytes red, or a negative value on error.
          */
-        virtual size_t readSectors(int start_sector, int stop_sector, int start_block, void* buf, size_t buflen, const MifareAccessInfo::SectorAccessBits& sab);
+        virtual std::vector<unsigned char> readSectors(int start_sector, int stop_sector, int start_block, const MifareAccessInfo::SectorAccessBits& sab);
 
         /**
          * \brief Write several sectors.
@@ -72,7 +72,7 @@ namespace logicalaccess
          * \param newsab If not NULL the keys will be changed as well.
          * \return The number of bytes red, or a negative value on error.
          */
-        virtual size_t writeSectors(int start_sector, int stop_sector, int start_block, const void* buf, size_t buflen, const MifareAccessInfo::SectorAccessBits& sab, unsigned char userbyte = 0x00, MifareAccessInfo::SectorAccessBits* newsab = NULL);
+        virtual void writeSectors(int start_sector, int stop_sector, int start_block, const std::vector<unsigned char>& buf, const MifareAccessInfo::SectorAccessBits& sab, unsigned char userbyte = 0x00, MifareAccessInfo::SectorAccessBits* newsab = NULL);
 
         /**
          * \brief Get the sector referenced by the AID from the MAD.
@@ -137,11 +137,9 @@ namespace logicalaccess
          * \brief Read bytes from the card.
          * \param blockno The block number.
          * \param len The count of bytes to read. (0 <= len < 16)
-         * \param buf The buffer in which to place the data.
-         * \param buflen The length of buffer.
          * \return The count of bytes red.
          */
-        virtual size_t readBinary(unsigned char blockno, size_t len, void* buf, size_t buflen) = 0;
+        virtual std::vector<unsigned char> readBinary(unsigned char blockno, size_t len) = 0;
 
         /**
          * \brief Write bytes to the card.
@@ -150,7 +148,7 @@ namespace logicalaccess
          * \param buflen The length of buffer.
          * \return The count of bytes written.
          */
-        virtual size_t updateBinary(unsigned char blockno, const void* buf, size_t buflen) = 0;
+        virtual void updateBinary(unsigned char blockno, const std::vector<unsigned char>& buf) = 0;
 
         /**
          * \brief Load a key to the reader.

@@ -61,39 +61,35 @@ namespace logicalaccess
             getMifarePlusChip()->getMifarePlusSL1Profile()->setKey(0, KT_KEY_CRYPTO1_A, madKeyA);
         }
 
-        unsigned char madbuf[32];
-        memset(madbuf, 0x00, sizeof(madbuf));
-
-        if (!readSector(0, 1, madbuf, sizeof(madbuf), sab))
+		std::vector<unsigned char> madbuf = readSector(0, 1, sab);
+        if (!madbuf.size())
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't read the MAD.");
         }
 
-        unsigned char madcrc = calculateMADCrc(madbuf, sizeof(madbuf));
+        unsigned char madcrc = calculateMADCrc(&madbuf[0], madbuf.size());
         if (madcrc != madbuf[0])
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Bad MAD CRC.");
         }
 
-        sector = findReferencedSector(aid, madbuf, sizeof(madbuf));
+        sector = findReferencedSector(aid, &madbuf[0], madbuf.size());
 
         if ((sector == static_cast<unsigned int>(-1)) && (getChip()->getCardType() == "MifarePlus4K" || getChip()->getCardType() == "MifarePlus2K"))
         {
-            unsigned char madbuf2[48];
-            memset(madbuf2, 0x00, sizeof(madbuf2));
-
-            if (readSector(16, 0, madbuf2, sizeof(madbuf2), sab) != sizeof(madbuf2))
+            std::vector<unsigned char> madbuf = readSector(16, 0, sab);
+			if (!madbuf.size())
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't read the MAD2.");
             }
 
-            unsigned char mad2crc = calculateMADCrc(madbuf2, sizeof(madbuf2));
-            if (mad2crc != madbuf2[0])
+            unsigned char mad2crc = calculateMADCrc(&madbuf[0], madbuf.size());
+            if (mad2crc != madbuf[0])
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Bad MAD2 CRC.");
             }
 
-            sector = findReferencedSector(aid, madbuf2, sizeof(madbuf2));
+            sector = findReferencedSector(aid, &madbuf[0], madbuf.size());
 
             if (sector != static_cast<unsigned int>(-1))
             {
@@ -132,10 +128,8 @@ namespace logicalaccess
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't make reference to the MAD itself.");
             }
 
-            unsigned char madbuf[32];
-            memset(madbuf, 0x00, sizeof(madbuf));
-
-            if (readSector(0, 1, madbuf, sizeof(madbuf), sab) != sizeof(madbuf))
+            std::vector<unsigned char> madbuf = readSector(0, 1, sab);
+			if (!madbuf.size())
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't read the MAD.");
             }
@@ -146,12 +140,9 @@ namespace logicalaccess
             {
                 madbuf[1] = static_cast<unsigned char>(0x01 << (sector - 1));
             }
-            madbuf[0] = calculateMADCrc(madbuf, sizeof(madbuf));
+            madbuf[0] = calculateMADCrc(&madbuf[0], madbuf.size());
 
-            if (!writeSector(0, 1, madbuf, sizeof(madbuf), sab))
-            {
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't write the MAD.");
-            }
+            writeSector(0, 1, madbuf, sab);
         }
         else
         {
@@ -160,23 +151,18 @@ namespace logicalaccess
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't make reference to the MAD2 itself.");
             }
 
-            unsigned char madbuf2[48];
-            memset(madbuf2, 0x00, sizeof(madbuf2));
-
-            if (readSector(16, 0, madbuf2, sizeof(madbuf2), sab) != sizeof(madbuf2))
+            std::vector<unsigned char> madbuf = readSector(16, 0, sab);
+			if (!madbuf.size())
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't read the MAD2.");
             }
 
             sector -= 16;
-            madbuf2[sector * 2] = (aid & 0xff00) >> 8;
-            madbuf2[(sector * 2) + 1] = aid & 0xff;
-            madbuf2[0] = calculateMADCrc(madbuf2, sizeof(madbuf2));
+            madbuf[sector * 2] = (aid & 0xff00) >> 8;
+            madbuf[(sector * 2) + 1] = aid & 0xff;
+            madbuf[0] = calculateMADCrc(&madbuf[0], madbuf.size());
 
-            if (!writeSector(16, 0, madbuf2, sizeof(madbuf2), sab))
-            {
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't write the MAD2.");
-            }
+            writeSector(16, 0, madbuf, sab);
         }
     }
 
@@ -301,29 +287,25 @@ namespace logicalaccess
         authenticate(static_cast<unsigned char>(getSectorStartBlock(sector)), key->getKeyStorage(), keytype);
     }
 
-    size_t MifarePlusSL1Commands::readSector(int sector, int start_block, void* buf, size_t buflen, const MifarePlusAccessInfo::SectorAccessBits& sab)
+    std::vector<unsigned char> MifarePlusSL1Commands::readSector(int sector, int start_block, const MifarePlusAccessInfo::SectorAccessBits& sab)
     {
-        size_t retlen = 0;
-
-        if (buf == NULL || buflen < (getNbBlocks(sector) - static_cast<unsigned int>(start_block)) * 16)
-        {
-            THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter. The minimum buffer's length is 48 bytes.");
-        }
+        std::vector<unsigned char> ret;
 
         for (int i = start_block; i < getNbBlocks(sector); i++)
         {
             changeBlock(sab, sector, i, false);
-            retlen += readBinary(static_cast<unsigned char>(getSectorStartBlock(sector) + i), 16, reinterpret_cast<char*>(buf)+retlen, 16);
+            std::vector<unsigned char> data = readBinary(static_cast<unsigned char>(getSectorStartBlock(sector) + i), 16);
+			ret.insert(ret.end(), data.begin(), data.end());
         }
 
-        return retlen;
+        return ret;
     }
 
-    size_t MifarePlusSL1Commands::writeSector(int sector, int start_block, const void* buf, size_t buflen, const MifarePlusAccessInfo::SectorAccessBits& sab, unsigned char userbyte, MifarePlusAccessInfo::SectorAccessBits* newsab)
+    void MifarePlusSL1Commands::writeSector(int sector, int start_block, const std::vector<unsigned char>& buf, const MifarePlusAccessInfo::SectorAccessBits& sab, unsigned char userbyte, MifarePlusAccessInfo::SectorAccessBits* newsab)
     {
         size_t retlen = 0;
 
-        if (buf == NULL || buflen < (getNbBlocks(sector) - static_cast<unsigned int>(start_block)) * 16)
+        if (buf.size() < (getNbBlocks(sector) - static_cast<unsigned int>(start_block)) * 16)
         {
             THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter. The minimum buffer's length is 48 bytes.");
         }
@@ -331,7 +313,9 @@ namespace logicalaccess
         for (int i = start_block; i < getNbBlocks(sector); i++)
         {
             changeBlock(sab, sector, i, true);
-            retlen += updateBinary(static_cast<unsigned char>(getSectorStartBlock(sector) + i), reinterpret_cast<const char*>(buf)+retlen, 16);
+			std::vector<unsigned char> tmp(buf.begin() + retlen, buf.end() + retlen + 16);
+            updateBinary(static_cast<unsigned char>(getSectorStartBlock(sector) + i), tmp);
+			retlen += 16;
         }
 
         if (newsab != NULL)
@@ -339,14 +323,11 @@ namespace logicalaccess
             int writeSector = getMifarePlusChip()->getNbSectors();
             changeKey(std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->getKey(writeSector, KT_KEY_CRYPTO1_A), std::dynamic_pointer_cast<MifarePlusSL1Profile>(getChip()->getProfile())->getKey(writeSector, KT_KEY_CRYPTO1_B), sector, sab, newsab, userbyte);
         }
-
-        return retlen;
     }
 
     void MifarePlusSL1Commands::changeKey(std::shared_ptr<MifarePlusKey> keyA, std::shared_ptr<MifarePlusKey> keyB, unsigned int sector, const MifarePlusAccessInfo::SectorAccessBits& sab, MifarePlusAccessInfo::SectorAccessBits* newsab, unsigned char userbyte)
     {
-        char trailerblock[16];
-        memset(trailerblock, 0x00, sizeof(trailerblock));
+        std::vector<unsigned char> trailerblock(16, 0x00);
 
         if (!keyB || keyB->isEmpty())
         {
@@ -366,13 +347,33 @@ namespace logicalaccess
         trailerblock[MIFARE_PLUS_CRYPTO1_KEY_SIZE + 3] = userbyte;
 
         changeBlock(sab, sector, getNbBlocks(sector), true);
-        if (updateBinary(static_cast<unsigned char>(getSectorStartBlock(sector) + getNbBlocks(sector)), trailerblock, 16) != 16)
-        {
-            THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_CHANGEKEY);
-        }
+        updateBinary(static_cast<unsigned char>(getSectorStartBlock(sector) + getNbBlocks(sector)), trailerblock);
     }
 
-    size_t MifarePlusSL1Commands::readSectors(int start_sector, int stop_sector, int start_block, void* buf, size_t buflen, const MifarePlusAccessInfo::SectorAccessBits& sab)
+    std::vector<unsigned char> MifarePlusSL1Commands::readSectors(int start_sector, int stop_sector, int start_block, const MifarePlusAccessInfo::SectorAccessBits& sab)
+    {
+		std::vector<unsigned char> ret;
+        if (start_sector > stop_sector)
+        {
+            THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Start sector can't be greater than stop sector.");
+        }
+
+        size_t minsize = 0;
+        size_t offset = 0;
+
+        for (int i = start_sector; i <= stop_sector; ++i)
+        {
+            minsize += getNbBlocks(i) * 16;
+            int startBlockSector = (i == start_sector) ? start_block : 0;
+            std::vector<unsigned char> tmp = readSector(i, startBlockSector, sab);
+			ret.insert(ret.end(), tmp.begin(), tmp.end());
+			offset += (getNbBlocks(i) - startBlockSector) * 16;
+        }
+
+        return ret;
+    }
+
+    void MifarePlusSL1Commands::writeSectors(int start_sector, int stop_sector, int start_block, const std::vector<unsigned char>& buf, const MifarePlusAccessInfo::SectorAccessBits& sab, unsigned char userbyte, MifarePlusAccessInfo::SectorAccessBits* newsab)
     {
         if (start_sector > stop_sector)
         {
@@ -385,39 +386,13 @@ namespace logicalaccess
         for (int i = start_sector; i <= stop_sector; ++i)
         {
             minsize += getNbBlocks(i) * 16;
-            if (buflen < (minsize - (start_block * 16)))
-            {
-                THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "The buffer is too short.");
-            }
+
             int startBlockSector = (i == start_sector) ? start_block : 0;
-            offset += readSector(i, startBlockSector, reinterpret_cast<char*>(buf)+offset, (getNbBlocks(i) - startBlockSector) * 16, sab);
+            std::vector<unsigned char> tmp(buf.begin() + offset, buf.begin() + offset + (getNbBlocks(i) - startBlockSector) * 16);
+			writeSector(i, startBlockSector, tmp, sab, userbyte, newsab);
+
+			offset += (getNbBlocks(i) - startBlockSector) * 16;
         }
-
-        return minsize;
-    }
-
-    size_t MifarePlusSL1Commands::writeSectors(int start_sector, int stop_sector, int start_block, const void* buf, size_t buflen, const MifarePlusAccessInfo::SectorAccessBits& sab, unsigned char userbyte, MifarePlusAccessInfo::SectorAccessBits* newsab)
-    {
-        if (start_sector > stop_sector)
-        {
-            THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Start sector can't be greater than stop sector.");
-        }
-
-        size_t minsize = 0;
-        size_t offset = 0;
-
-        for (int i = start_sector; i <= stop_sector; ++i)
-        {
-            minsize += getNbBlocks(i) * 16;
-            if (buflen < (minsize - (start_block * 16)))
-            {
-                THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "The buffer is too short.");
-            }
-            int startBlockSector = (i == start_sector) ? start_block : 0;
-            offset += writeSector(i, startBlockSector, reinterpret_cast<const char*>(buf)+offset, (getNbBlocks(i) - startBlockSector) * 16, sab, userbyte, newsab);
-        }
-
-        return minsize;
     }
 
     unsigned char MifarePlusSL1Commands::getNbBlocks(int sector)

@@ -14,58 +14,43 @@ namespace logicalaccess
         return std::dynamic_pointer_cast<MifareUltralightChip>(getChip());
     }
 
-    size_t MifareUltralightCommands::readPages(int start_page, int stop_page, void* buf, size_t buflen)
+    std::vector<unsigned char> MifareUltralightCommands::readPages(int start_page, int stop_page)
     {
+		std::vector<unsigned char> ret;
+
         if (start_page > stop_page)
         {
             THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Start page can't be greater than stop page.");
         }
 
-        size_t minsize = 0;
-        size_t offset = 0;
-
         for (int i = start_page; i <= stop_page; ++i)
         {
-            minsize += 4;
-            if (buflen < minsize)
-            {
-                THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "The buffer is too short.");
-            }
-
-            offset += readPage(i, reinterpret_cast<char*>(buf)+offset, 4);
+            std::vector<unsigned char> data = readPage(i);
+			ret.insert(ret.end(), data.begin(), data.end());
         }
 
-        return minsize;
+        return ret;
     }
 
-    size_t MifareUltralightCommands::writePages(int start_page, int stop_page, const void* buf, size_t buflen)
+    void MifareUltralightCommands::writePages(int start_page, int stop_page, const std::vector<unsigned char>& buf)
     {
         if (start_page > stop_page)
         {
             THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Start page can't be greater than stop page.");
         }
 
-        size_t minsize = 0;
         size_t offset = 0;
-
         for (int i = start_page; i <= stop_page; ++i)
         {
-            minsize += 4;
-            if (buflen < minsize)
-            {
-                THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "The buffer is too short.");
-            }
-
-            offset += writePage(i, reinterpret_cast<const char*>(buf)+offset, 4);
+			std::vector<unsigned char> tmp(buf.begin() + offset, buf.begin() + offset + 4);
+			writePage(i, tmp);
+            offset += 4;
         }
-
-        return minsize;
     }
 
     void MifareUltralightCommands::lockPage(int page)
     {
-        unsigned char lockbits[4];
-        memset(lockbits, 0x00, sizeof(lockbits));
+        std::vector<unsigned char> lockbits(4, 0x00);
 
         if (page >= 3 && page <= 7)
         {
@@ -76,6 +61,6 @@ namespace logicalaccess
             lockbits[3] |= static_cast<unsigned char>(1 << (page - 8));
         }
 
-        writePage(2, lockbits, sizeof(lockbits));
+        writePage(2, lockbits);
     }
 }

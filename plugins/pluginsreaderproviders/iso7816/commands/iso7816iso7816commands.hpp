@@ -43,7 +43,7 @@ namespace logicalaccess
          * \param efid The EF identifier to set as current.
          * \return True on success, false otherwise.
          */
-        virtual bool readBinary(void* data, size_t& dataLength, size_t offset, short efid = 0);
+        virtual std::vector<unsigned char> readBinary(size_t length, size_t offset, short efid = 0);
 
         /**
          * \brief Write binary data.
@@ -53,7 +53,7 @@ namespace logicalaccess
          * \param efid The EF identifier to set as current.
          * \return True on success, false otherwise.
          */
-        virtual void writeBinary(const void* data, size_t dataLength, size_t offset, short efid = 0);
+        virtual void writeBinary(const std::vector<unsigned char>& data, size_t offset, short efid = 0);
 
         /**
          * \brief Update binary data.
@@ -63,7 +63,7 @@ namespace logicalaccess
          * \param efid The EF identifier to set as current.
          * \return True on success, false otherwise.
          */
-        virtual void updateBinary(const void* data, size_t dataLength, size_t offset, short efid = 0);
+        virtual void updateBinary(const std::vector<unsigned char>& data, size_t offset, short efid = 0);
 
         /**
          * \brief Erase binary data.
@@ -80,7 +80,7 @@ namespace logicalaccess
          * \param dataObject The data object to get.
          * \return True on success, false otherwise.
          */
-        virtual bool getData(void* data, size_t& dataLength, unsigned short dataObject);
+        virtual std::vector<unsigned char> getData(size_t length, unsigned short dataObject);
 
         /**
          * \brief Put data.
@@ -89,7 +89,7 @@ namespace logicalaccess
          * \param dataObject The data object to get.
          * \return True on success, false otherwise.
          */
-        virtual void putData(const void* data, size_t dataLength, unsigned short dataObject);
+        virtual void putData(const std::vector<unsigned char>& data, unsigned short dataObject);
 
         /**
          * \brief Select a file by the file identifier.

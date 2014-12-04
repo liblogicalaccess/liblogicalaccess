@@ -37,16 +37,15 @@ namespace logicalaccess
          */
         virtual ~TwicStorageCardService();
 
-        /**
+		/**
          * \brief Read data on a specific DESFire location, using given DESFire keys.
          * \param location The data location.
          * \param aiToUse The key's informations to use for write access.
-         * \param data Will contain data after reading.
-         * \param dataLength Data's length to read.
+		 * \param length to read.
          * \param behaviorFlags Flags which determines the behavior.
-         * \return True on success, false otherwise.
+		 * \return Data readed
          */
-        virtual void readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, void *data, size_t dataLength, CardBehavior behaviorFlags);
+        virtual std::vector<unsigned char> readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, size_t length, CardBehavior behaviorFlags);
 
     protected:
 

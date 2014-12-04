@@ -28,7 +28,7 @@ namespace logicalaccess
         * \param key The key to use to authenticate to the sector
         * \param keytype The key type
         */
-        virtual void writeSector(int sector, int start_block, const void* buf, size_t buflen, std::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype);
+        virtual void writeSector(int sector, int start_block, const std::vector<unsigned char>& buf, std::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype);
 
         /**
          * \brief write several sectors.
@@ -38,7 +38,7 @@ namespace logicalaccess
          * \param buflen The buffer length
          * \param aiToUse The access informations for authentification on the sectors to write
          */
-        virtual void writeSectors(int start_sector, int stop_sector, const void* buf, size_t buflen, std::shared_ptr<AccessInfo> aiToUse);
+        virtual void writeSectors(int start_sector, int stop_sector, const std::vector<unsigned char>& buf, std::shared_ptr<AccessInfo> aiToUse);
 
         /**
          * \brief Read a whole sector.
@@ -49,7 +49,7 @@ namespace logicalaccess
          * \param key The key to use to authenticate to the sector
          * \param keytype The key type
          */
-        virtual void readSector(int sector, int start_block, void* buf, size_t buflen, std::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype);
+        virtual std::vector<unsigned char> readSector(int sector, int start_block, std::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype);
 
         /**
          * \brief Read several sectors.
@@ -59,7 +59,7 @@ namespace logicalaccess
          * \param buflen The buffer length
          * \param aiToUse The access informations for authentification on the sectors to read
          */
-        virtual void readSectors(int start_sector, int stop_sector, void* buf, size_t buflen, std::shared_ptr<AccessInfo> aiToUse);
+        virtual std::vector<unsigned char> readSectors(int start_sector, int stop_sector, std::shared_ptr<AccessInfo> aiToUse);
 
         /**
          * \brief Authenticate on a given sector
@@ -112,7 +112,7 @@ namespace logicalaccess
          * \param buflen The length of buffer.
          * \return The count of bytes red.
          */
-        virtual size_t readBinary(short blockno, char len, bool encrypted, bool macOnCommand, bool macOnResponse, void* buf, size_t buflen) = 0;
+        virtual std::vector<unsigned char> readBinary(short blockno, char len, bool encrypted, bool macOnCommand, bool macOnResponse) = 0;
 
         /**
          * \brief Read bytes from the card.
@@ -123,7 +123,7 @@ namespace logicalaccess
          * \param buflen The length of buffer.
          * \return The count of bytes red.
          */
-        virtual size_t updateBinary(short blockno, bool encrypted, bool macOnResponse, const void* buf, size_t buflen) = 0;
+        virtual void updateBinary(short blockno, bool encrypted, bool macOnResponse, const std::vector<unsigned char>& buf) = 0;
 
         /**
          * \brief Increment a block

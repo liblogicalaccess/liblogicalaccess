@@ -62,30 +62,18 @@ namespace logicalaccess
             getDESFireChip()->getDESFireCommands()->selectApplication(dfLocation->aid);
 
             size_t fileLength = getDESFireChip()->getDESFireCommands()->getFileLength(static_cast<unsigned char>(dfLocation->file));
-            unsigned char* buf = new unsigned char[fileLength];
-            memset(buf, 0x00, fileLength);
+			std::vector<unsigned char> buf(fileLength, 0x00);
 
             std::shared_ptr<AccessInfo> ai;
-            try
-            {
-                writeData(location, aiToUse, ai, buf, fileLength, CB_DEFAULT);
-            }
-            catch (std::exception&)
-            {
-                delete[] buf;
-                throw;
-            }
-
-            delete[] buf;
+            writeData(location, aiToUse, ai, buf, CB_DEFAULT);
         }
     }
 
-    void DESFireStorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior /*behaviorFlags*/)
+    void DESFireStorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite, const std::vector<unsigned char>& data, CardBehavior /*behaviorFlags*/)
     {
         LOG(LogLevel::INFOS) << "Starting write data...";
 
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
-        EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "data cannot be null.");
 
         std::shared_ptr<DESFireLocation> dfLocation = std::dynamic_pointer_cast<DESFireLocation>(location);
         std::shared_ptr<DESFireAccessInfo> dfAiToUse = std::dynamic_pointer_cast<DESFireAccessInfo>(aiToUse);
@@ -247,7 +235,7 @@ namespace logicalaccess
                     dfLocation->securityLevel = CM_ENCRYPT;
                 }
 
-                getDESFireChip()->getDESFireCommands()->createStdDataFile(dfLocation, rights, static_cast<int>(dataLength)+dfLocation->byte);
+                getDESFireChip()->getDESFireCommands()->createStdDataFile(dfLocation, rights, data.size() + dfLocation->byte);
                 needLoadKey = false;
             }
         }
@@ -273,12 +261,7 @@ namespace logicalaccess
             getDESFireChip()->getDESFireCommands()->authenticate(dfAiToUse->writeKeyno);
         }
 
-        getDESFireChip()->getDESFireCommands()->writeData(dfLocation->file,
-            dfLocation->byte,
-            static_cast<unsigned int>(dataLength),
-            data,
-            encMode
-            );
+        getDESFireChip()->getDESFireCommands()->writeData(dfLocation->file, dfLocation->byte, data, encMode);
 
         // Write access informations too
         if (aiToWrite)
@@ -373,10 +356,9 @@ namespace logicalaccess
         }
     }
 
-    void DESFireStorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior /*behaviorFlags*/)
+    std::vector<unsigned char> DESFireStorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, size_t dataLength, CardBehavior /*behaviorFlags*/)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
-        EXCEPTION_ASSERT_WITH_LOG(data, std::invalid_argument, "location cannot be null.");
 
         std::shared_ptr<DESFireLocation> dfLocation = std::dynamic_pointer_cast<DESFireLocation>(location);
         std::shared_ptr<DESFireAccessInfo> dfAiToUse = std::dynamic_pointer_cast<DESFireAccessInfo>(aiToUse);
@@ -412,11 +394,7 @@ namespace logicalaccess
             getDESFireChip()->getDESFireCommands()->authenticate(dfAiToUse->readKeyno);
         }
 
-        getDESFireChip()->getDESFireCommands()->readData(dfLocation->file,
-            dfLocation->byte,
-            static_cast<unsigned int>(dataLength),
-            data,
-            encMode);
+        return getDESFireChip()->getDESFireCommands()->readData(dfLocation->file, dfLocation->byte, dataLength, encMode);
     }
 
     unsigned int DESFireStorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/, void* /*data*/, size_t /*dataLength*/)

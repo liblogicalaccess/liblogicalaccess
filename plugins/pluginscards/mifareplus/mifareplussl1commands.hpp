@@ -31,7 +31,7 @@ namespace logicalaccess
          * \param sab The sector access bits.
          * \return The number of bytes red, or a negative value on error.
          */
-        virtual size_t readSector(int sector, int start_block, void* buf, size_t buflen, const MifarePlusAccessInfo::SectorAccessBits& sab);
+        virtual std::vector<unsigned char> readSector(int sector, int start_block, const MifarePlusAccessInfo::SectorAccessBits& sab);
 
         /**
          * \brief Write a whole sector.
@@ -45,7 +45,7 @@ namespace logicalaccess
          * \return The number of bytes written, or a negative value on error.
          * \warning If sector is 0, the first 16 bytes will be skipped and be considered "copied" since the first block in sector 0 is read-only.
          */
-        virtual size_t writeSector(int sector, int start_block, const void* buf, size_t buflen, const MifarePlusAccessInfo::SectorAccessBits& sab, unsigned char userbyte = 0x00, MifarePlusAccessInfo::SectorAccessBits* newsab = NULL);
+        virtual void writeSector(int sector, int start_block, const std::vector<unsigned char>& buf, const MifarePlusAccessInfo::SectorAccessBits& sab, unsigned char userbyte = 0x00, MifarePlusAccessInfo::SectorAccessBits* newsab = NULL);
 
         /**
          * \brief Read several sectors.
@@ -57,7 +57,7 @@ namespace logicalaccess
          * \param sab The sector access bits.
          * \return The number of bytes red, or a negative value on error.
          */
-        virtual size_t readSectors(int start_sector, int stop_sector, int start_block, void* buf, size_t buflen, const MifarePlusAccessInfo::SectorAccessBits& sab);
+        virtual std::vector<unsigned char> readSectors(int start_sector, int stop_sector, int start_block, const MifarePlusAccessInfo::SectorAccessBits& sab);
 
         /**
          * \brief Write several sectors.
@@ -71,7 +71,7 @@ namespace logicalaccess
          * \param newsab If not NULL the keys will be changed as well.
          * \return The number of bytes red, or a negative value on error.
          */
-        virtual size_t writeSectors(int start_sector, int stop_sector, int start_block, const void* buf, size_t buflen, const MifarePlusAccessInfo::SectorAccessBits& sab, unsigned char userbyte = 0x00, MifarePlusAccessInfo::SectorAccessBits* newsab = NULL);
+        virtual void writeSectors(int start_sector, int stop_sector, int start_block, const std::vector<unsigned char>& buf, const MifarePlusAccessInfo::SectorAccessBits& sab, unsigned char userbyte = 0x00, MifarePlusAccessInfo::SectorAccessBits* newsab = NULL);
 
         /**
          * \brief Get the sector referenced by the AID from the MAD.

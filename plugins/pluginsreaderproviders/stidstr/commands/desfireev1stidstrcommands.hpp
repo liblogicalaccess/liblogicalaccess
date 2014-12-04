@@ -345,21 +345,19 @@ namespace logicalaccess
          * \param fileno The file number
          * \param offset The byte offset
          * \param length The data length to read
-         * \param data The data buffer
          * \param mode The communication mode
-         * \return The number of bytes read.
+         * \return The bytes readed.
          */
-        virtual unsigned int readData(unsigned char fileno, unsigned int offset, unsigned int length, void* data, EncryptionMode mode);
+        virtual std::vector<unsigned char> readData(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode);
 
         /**
          * \brief Write data into a specific file.
          * \param fileno The file number
          * \param offset The byte offset
-         * \param length The data length to read
          * \param data The data buffer
          * \param mode The communication mode
          */
-        virtual void writeData(unsigned char fileno, unsigned int offset, unsigned int length, const void* data, EncryptionMode mode);
+        virtual void writeData(unsigned char fileno, unsigned int offset, const std::vector<unsigned char>& data, EncryptionMode mode);
 
         /**
          * \brief Credit a specific value file.
@@ -395,7 +393,7 @@ namespace logicalaccess
          * \param data The data buffer
          * \param mode The communication mode
          */
-        virtual void writeRecord(unsigned char fileno, unsigned int offset, unsigned int length, const void* data, EncryptionMode mode);
+        virtual void writeRecord(unsigned char fileno, unsigned int offset, const std::vector<unsigned char>& data, EncryptionMode mode);
 
         /**
          * \brief Read record from a specific record file.
@@ -406,7 +404,7 @@ namespace logicalaccess
          * \param mode The communication mode
          * \return The number of bytes read.
          */
-        virtual unsigned int readRecords(unsigned char fileno, unsigned int offset, unsigned int length, void* data, EncryptionMode mode);
+        virtual std::vector<unsigned char> readRecords(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode);
 
         /**
          * \brief Clear a specific record file.

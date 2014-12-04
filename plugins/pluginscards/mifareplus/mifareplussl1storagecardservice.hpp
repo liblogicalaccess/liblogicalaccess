@@ -57,20 +57,19 @@ namespace logicalaccess
          * \param aiToUse The key's informations to use for write access.
          * \param aiToWrite The key's informations to change.
          * \param data Data to write.
-         * \param dataLength Data's length to write.
          * \param behaviorFlags Flags which determines the behavior.
          */
-        virtual void writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite, const void* data, size_t dataLength, CardBehavior behaviorFlags);
+        virtual void writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite, const std::vector<unsigned char>& data, CardBehavior behaviorFlags);
 
         /**
          * \brief Read data on a specific Mifare location, using given Mifare keys.
          * \param location The data location.
          * \param aiToUse The key's informations to use for write access.
-         * \param data Will contain data after reading.
-         * \param dataLength Data's length to read.
+         * \param length to read.
          * \param behaviorFlags Flags which determines the behavior.
+		 * \return Data readed
          */
-        virtual void readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength, CardBehavior behaviorFlags);
+        virtual std::vector<unsigned char> readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, size_t length, CardBehavior behaviorFlags);
 
         /**
          * \brief Read data header on a specific location, using given keys.

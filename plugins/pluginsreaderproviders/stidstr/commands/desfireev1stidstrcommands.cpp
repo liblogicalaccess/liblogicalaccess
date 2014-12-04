@@ -478,13 +478,13 @@ namespace logicalaccess
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
     }
 
-    unsigned int DESFireEV1STidSTRCommands::readData(unsigned char fileno, unsigned int offset, unsigned int length, void* data, EncryptionMode mode)
+    std::vector<unsigned char> DESFireEV1STidSTRCommands::readData(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode)
     {
         LOG(LogLevel::INFOS) << "Reading data... file number {0x" << std::hex << fileno << std::dec << "(" << fileno << ")} offset {"
             << offset << "} length {" << length << "} encrypt mode {0x"
             << std::hex << mode << std::dec << "(" << mode << ")}";
         unsigned int ret = 0;
-        std::vector<unsigned char> command;
+        std::vector<unsigned char> command, result;
 
         size_t stidMaxDataSize = 1024; // New to version 1.2 of API (before was limited to 200)
         // STid STR reader doesn't support data larger than <stidMaxDataSize> bytes, we should split the command.
@@ -499,36 +499,35 @@ namespace logicalaccess
             command.insert(command.end(), (unsigned char*)&trunloffset, (unsigned char*)&trunloffset + 3);
             command.insert(command.end(), (unsigned char*)&trunklength, (unsigned char*)&trunklength + 3);
 
-            std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x00BD, command);
+            std::vector<unsigned char> data = getSTidSTRReaderCardAdapter()->sendCommand(0x00BD, command);
 
-            memcpy(reinterpret_cast<unsigned char*>(data)+i, &result[0], result.size());
-            ret += static_cast<unsigned int>(result.size());
+			result.insert(result.end(), data.begin(), data.end());
         }
-        LOG(LogLevel::INFOS) << "Returns data size {" << ret << "}";
+        LOG(LogLevel::INFOS) << "Returns data size {" << result.size() << "}";
 
-        return ret;
+        return result;
     }
 
-    void DESFireEV1STidSTRCommands::writeData(unsigned char fileno, unsigned int offset, unsigned int length, const void* data, EncryptionMode mode)
+    void DESFireEV1STidSTRCommands::writeData(unsigned char fileno, unsigned int offset, const std::vector<unsigned char>& data, EncryptionMode mode)
     {
         LOG(LogLevel::INFOS) << "Writing data... file number {0x"
-            << std::hex << fileno << std::dec << "(" << fileno << ")} offset {" << offset << "} length {" << length << "} encrypt mode {0x"
+            << std::hex << fileno << std::dec << "(" << fileno << ")} offset {" << offset << "} length {" << data.size() << "} encrypt mode {0x"
             << std::hex << mode << std::dec << "(" << mode << ")}";
         std::vector<unsigned char> command;
 
         size_t stidMaxDataSize = 1024; // New to version 1.2 of API (before was limited to 200)
         // STid STR reader doesn't support data larger than <stidMaxDataSize> bytes, we should split the command.
-        for (size_t i = 0; i < length; i += stidMaxDataSize)
+        for (size_t i = 0; i < data.size(); i += stidMaxDataSize)
         {
             LOG(LogLevel::INFOS) << "Writing data from index {" << i << "} to {" << i + stidMaxDataSize - 1 << "}...";
             command.clear();
             command.push_back(static_cast<unsigned char>(mode));
             command.push_back(fileno);
             size_t trunloffset = offset + i;
-            size_t trunklength = ((length - i) > stidMaxDataSize) ? stidMaxDataSize : (length - i);
+            size_t trunklength = ((data.size() - i) > stidMaxDataSize) ? stidMaxDataSize : (data.size() - i);
             command.insert(command.end(), (unsigned char*)&trunloffset, (unsigned char*)&trunloffset + 3);
             command.insert(command.end(), (unsigned char*)&trunklength, (unsigned char*)&trunklength + 3);
-            command.insert(command.end(), reinterpret_cast<const unsigned char*>(data)+i, reinterpret_cast<const unsigned char*>(data)+i + trunklength);
+            command.insert(command.end(), data.begin() + i, data.begin() + i + trunklength);
 
             getSTidSTRReaderCardAdapter()->sendCommand(0x003D, command);
         }
@@ -576,32 +575,32 @@ namespace logicalaccess
         getSTidSTRReaderCardAdapter()->sendCommand(0x001C, command);
     }
 
-    void DESFireEV1STidSTRCommands::writeRecord(unsigned char fileno, unsigned int offset, unsigned int length, const void* data, EncryptionMode mode)
+    void DESFireEV1STidSTRCommands::writeRecord(unsigned char fileno, unsigned int offset, const std::vector<unsigned char>& data, EncryptionMode mode)
     {
         LOG(LogLevel::INFOS) << "Writing record... file number {0x"
-            << std::hex << fileno << std::dec << "(" << fileno << ")} offset {" << offset << "} length {" << length << "} encrypt mode {0x"
+            << std::hex << fileno << std::dec << "(" << fileno << ")} offset {" << offset << "} length {" << data.size() << "} encrypt mode {0x"
             << std::hex << mode << std::dec << "(" << mode << ")}";
         std::vector<unsigned char> command;
 
         size_t stidMaxDataSize = 1024; // New to version 1.2 of API (before was limited to 200)
         // STid STR reader doesn't support data larger than <stidMaxDataSize> bytes, we should split the command.
-        for (size_t i = 0; i < length; i += stidMaxDataSize)
+        for (size_t i = 0; i < data.size(); i += stidMaxDataSize)
         {
             LOG(LogLevel::INFOS) << "Writing data from index {" << i << "} to {" << i + stidMaxDataSize - 1 << "}...";
             command.clear();
             command.push_back(static_cast<unsigned char>(mode));
             command.push_back(fileno);
             size_t trunloffset = offset + i;
-            size_t trunklength = ((length - i) > stidMaxDataSize) ? stidMaxDataSize : (length - i);
+            size_t trunklength = ((data.size() - i) > stidMaxDataSize) ? stidMaxDataSize : (data.size() - i);
             command.insert(command.end(), (unsigned char*)&trunloffset, (unsigned char*)&trunloffset + 3);
             command.insert(command.end(), (unsigned char*)&trunklength, (unsigned char*)&trunklength + 3);
-            command.insert(command.end(), reinterpret_cast<const unsigned char*>(data)+i, reinterpret_cast<const unsigned char*>(data)+i + trunklength);
+            command.insert(command.end(), data.begin() + i, data.begin() + i + trunklength);
 
             getSTidSTRReaderCardAdapter()->sendCommand(0x003B, command);
         }
     }
 
-    unsigned int DESFireEV1STidSTRCommands::readRecords(unsigned char fileno, unsigned int offset, unsigned int nbrecords, void* data, EncryptionMode mode)
+    std::vector<unsigned char> DESFireEV1STidSTRCommands::readRecords(unsigned char fileno, unsigned int offset, unsigned int nbrecords, EncryptionMode mode)
     {
         LOG(LogLevel::INFOS) << "Reading record... file number {0x"
             << std::hex << fileno << std::dec << "(" << fileno << ")} offset {" << offset << "} nb records {" << nbrecords << "} encrypt mode {0x"
@@ -617,10 +616,8 @@ namespace logicalaccess
 
         std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x00BB, command);
 
-        memcpy(reinterpret_cast<unsigned char*>(data), &result[0], result.size());
-
         LOG(LogLevel::INFOS) << "Returns size {" << result.size() << "}";
-        return static_cast<unsigned int>(result.size());
+        return result;
     }
 
     void DESFireEV1STidSTRCommands::clearRecordFile(unsigned char fileno)

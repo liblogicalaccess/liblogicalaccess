@@ -33,8 +33,8 @@ namespace logicalaccess
         virtual ~ISO15693PCSCCommands();
 
         virtual void stayQuiet();
-        virtual bool readBlock(size_t block, void* data, size_t datalen, size_t le = 0);
-        virtual bool writeBlock(size_t block, const void* data, size_t datalen);
+        virtual std::vector<unsigned char> readBlock(size_t block, size_t le = 0);
+        virtual void writeBlock(size_t block, const std::vector<unsigned char>& data);
         virtual void lockBlock(size_t block);
         virtual void writeAFI(size_t afi);
         virtual void lockAFI();
