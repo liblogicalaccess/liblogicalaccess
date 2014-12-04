@@ -172,9 +172,8 @@ namespace logicalaccess
          * \param fileno The file number
          * \param offset The byte offset
          * \param length The data length to read
-         * \param data The data buffer
          * \param mode The communication mode
-         * \return The number of bytes read.
+         * \return The bytes readed.
          */
         virtual std::vector<unsigned char> readData(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode);
 
@@ -182,7 +181,6 @@ namespace logicalaccess
          * \brief Write data into a specific file.
          * \param fileno The file number
          * \param offset The byte offset
-         * \param length The data length to read
          * \param data The data buffer
          * \param mode The communication mode
          */

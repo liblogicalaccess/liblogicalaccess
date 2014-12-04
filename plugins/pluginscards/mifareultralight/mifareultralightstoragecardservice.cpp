@@ -55,8 +55,6 @@ namespace logicalaccess
             dataPages.resize(buflen, 0x00);
 			std::copy(data.begin(), data.end(), dataPages.begin() + mLocation->byte);
 
-            size_t reallen;
-
             if (behaviorFlags & CB_AUTOSWITCHAREA)
             {
                 getMifareUltralightChip()->getMifareUltralightCommands()->writePages(mLocation->page,
@@ -97,7 +95,6 @@ namespace logicalaccess
         {
             std::vector<unsigned char> dataPages;
 
-            size_t reallen;
             if (behaviorFlags & CB_AUTOSWITCHAREA)
             {
                 dataPages = getMifareUltralightChip()->getMifareUltralightCommands()->readPages(mLocation->page, mLocation->page + nbPages - 1);
