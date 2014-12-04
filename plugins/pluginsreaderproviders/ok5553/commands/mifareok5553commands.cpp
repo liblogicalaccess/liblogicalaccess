@@ -54,7 +54,7 @@ namespace logicalaccess
         command.push_back(static_cast<unsigned char>(tmp[1]));
         for (size_t i = 0; i < buf.size(); i++)
         {
-            sprintf(tmp, "%.2X", &buf[i]);
+            sprintf(tmp, "%.2X", buf[i]);
             command.push_back(static_cast<unsigned char>(tmp[0]));
             command.push_back(static_cast<unsigned char>(tmp[1]));
         }

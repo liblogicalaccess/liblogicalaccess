@@ -128,7 +128,7 @@ namespace logicalaccess
             }
 
 			std::vector<unsigned char> madbuf = readSector(0, 1, sab);
-			if (madbuf.size() != 32)
+			if (!madbuf.size())
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't read the MAD.");
             }
@@ -139,7 +139,7 @@ namespace logicalaccess
             {
                 madbuf[1] = static_cast<unsigned char>(sector);
             }
-            madbuf[0] = calculateMADCrc(&madbuf[0], sizeof(madbuf));
+            madbuf[0] = calculateMADCrc(&madbuf[0], madbuf.size());
 
             writeSector(0, 1, madbuf, sab);
         }
