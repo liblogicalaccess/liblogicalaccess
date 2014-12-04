@@ -955,17 +955,22 @@ namespace logicalaccess
 
     std::vector<unsigned char> DESFireEV1ISO7816Commands::readData(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode)
     {
-        std::vector<unsigned char> command(7), ret;
+        std::vector<unsigned char> command(7), ret, result;
 
         command[0] = static_cast<unsigned char>(fileno);
 
 		if (length == 0)
 		{
-			std::vector<unsigned char> result = transmit_nomacv(DF_INS_READ_DATA, command);
-			unsigned char err = result.back();
-			result.resize(result.size() - 2);
-			result = handleReadData(err, result, static_cast<unsigned int>(result.size()), mode);
-			ret.insert(ret.end(), result.begin(), result.end());
+			while (ret.size() == 0
+				|| (result.size() >= 2 && result[result.size() - 2] == 0x90 && result[result.size() - 1] == 0xAF))
+			{
+				result = transmit_nomacv(DF_INS_READ_DATA, command);
+				std::vector<unsigned char> data = result;
+				unsigned char err = data.back();
+				data.resize(data.size() - 2);
+				data = handleReadData(err, data, data.size(), mode);
+				ret.insert(ret.end(), data.begin(), data.end());
+			}
 		}
 		else
 		{
@@ -979,7 +984,7 @@ namespace logicalaccess
 				memcpy(&command[1], &trunloffset, 3);
 				memcpy(&command[4], &trunklength, 3);
 
-				std::vector<unsigned char> result = transmit_nomacv(DF_INS_READ_DATA, command);
+				result = transmit_nomacv(DF_INS_READ_DATA, command);
 				unsigned char err = result.back();
 				result.resize(result.size() - 2);
 				result = handleReadData(err, result, static_cast<unsigned int>(trunklength), mode);
@@ -989,9 +994,9 @@ namespace logicalaccess
         return ret;
     }
 
-    std::vector<unsigned char> DESFireEV1ISO7816Commands::readRecords(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode)
+	std::vector<unsigned char> DESFireEV1ISO7816Commands::readRecords(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode)
     {
-        std::vector<unsigned char> command, ret;
+        std::vector<unsigned char> command;
 
         command.push_back(fileno);
         command.insert(command.end(), offset, offset + 3);
@@ -1001,9 +1006,8 @@ namespace logicalaccess
         unsigned char err = result.back();
         result.resize(result.size() - 2);
         result = handleReadData(err, result, length, mode);
-        ret.insert(ret.end(), result.begin(), result.end());
 
-        return ret;
+        return result;
     }
 
     void DESFireEV1ISO7816Commands::changeFileSettings(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, bool plain)
