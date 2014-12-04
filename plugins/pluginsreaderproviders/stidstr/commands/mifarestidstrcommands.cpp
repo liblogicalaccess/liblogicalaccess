@@ -133,19 +133,18 @@ namespace logicalaccess
         d_lastKeyType = keytype;
     }
 
-    size_t MifareSTidSTRCommands::readBinary(unsigned char blockno, size_t len, void* buf, size_t buflen)
+    std::vector<unsigned char> MifareSTidSTRCommands::readBinary(unsigned char blockno, size_t len)
     {
-        LOG(LogLevel::INFOS) << "Read binary block {0x" << std::hex << blockno << std::dec << "(" << blockno << ")} len {" << len << "} [out] buffer len {" << buflen << "}";
-
-        if ((len >= 256) || (len > buflen) || (!buf))
+        LOG(LogLevel::INFOS) << "Read binary block {0x" << std::hex << blockno << std::dec << "(" << blockno << ")} len {" << len << "}";
+        if (len >= 256)
         {
-            THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter.");
+            THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad length parameter.");
         }
 
         if (d_useSKB)
         {
             LOG(LogLevel::INFOS) << "Need to use reader memory key storage (SKB) !";
-            return readBinaryIndex(d_skbIndex, blockno, len, buf, buflen);
+            return readBinaryIndex(d_skbIndex, blockno, len);
         }
 
         LOG(LogLevel::INFOS) << " => Rescanning card to avoid bad authentication";
@@ -160,16 +159,13 @@ namespace logicalaccess
 
         LOG(LogLevel::INFOS) << "Read binary buffer returned " << BufferHelper::getHex(sbuf) << " len {" << sbuf.size() << "}";
         EXCEPTION_ASSERT_WITH_LOG(sbuf.size() == 16, LibLogicalAccessException, "The read value should always be 16 bytes long");
-        EXCEPTION_ASSERT_WITH_LOG(sbuf.size() <= buflen, LibLogicalAccessException, "Buffer is too small to get all response value");
 
-        memcpy(buf, &sbuf[0], sbuf.size());
-
-        return sbuf.size();
+        return sbuf;
     }
 
-    size_t MifareSTidSTRCommands::readBinaryIndex(unsigned char keyindex, unsigned char blockno, size_t /*len*/, void* buf, size_t buflen)
+    std::vector<unsigned char> MifareSTidSTRCommands::readBinaryIndex(unsigned char keyindex, unsigned char blockno, size_t /*len*/)
     {
-        LOG(LogLevel::INFOS) << "Read binary index key index {0x" << std::hex << keyindex << std::dec << "(" << keyindex << ")} block {0x" << std::hex << blockno << std::dec << "(" << blockno << ")} [out] buffer len {" << buflen << "}";
+        LOG(LogLevel::INFOS) << "Read binary index key index {0x" << std::hex << keyindex << std::dec << "(" << keyindex << ")} block {0x" << std::hex << blockno << std::dec << "(" << blockno << ")}";
         LOG(LogLevel::INFOS) << " => Rescanning card to avoid bad authentication";
         scanMifare();
         LOG(LogLevel::INFOS) << "Scan done ! Continue to read binary index.";
@@ -182,26 +178,18 @@ namespace logicalaccess
         std::vector<unsigned char> sbuf = getSTidSTRReaderCardAdapter()->sendCommand(0x00B1, command);
 
         EXCEPTION_ASSERT_WITH_LOG(sbuf.size() == 16, LibLogicalAccessException, "The read value should always be 16 bytes long");
-        EXCEPTION_ASSERT_WITH_LOG(buflen >= sbuf.size(), LibLogicalAccessException, "The buffer is too short to store the result.");
 
-        memcpy(buf, &sbuf[0], sbuf.size());
-
-        return sbuf.size();
+        return sbuf;
     }
 
-    size_t MifareSTidSTRCommands::updateBinary(unsigned char blockno, const void* buf, size_t buflen)
+    void MifareSTidSTRCommands::updateBinary(unsigned char blockno, const std::vector<unsigned char>& buf)
     {
-        LOG(LogLevel::INFOS) << "Update binary block {0x" << std::hex << blockno << std::dec << "(" << blockno << ")} [in] buffer len {" << buflen << "}";
-
-        if ((buflen >= 256) || (!buf))
-        {
-            THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter.");
-        }
+        LOG(LogLevel::INFOS) << "Update binary block {0x" << std::hex << blockno << std::dec << "(" << blockno << ")}";
 
         if (d_useSKB)
         {
             LOG(LogLevel::INFOS) << "Need to use reader memory key storage (SKB) !";
-            return updateBinaryIndex(d_skbIndex, blockno, buf, buflen);
+            return updateBinaryIndex(d_skbIndex, blockno, buf);
         }
 
         LOG(LogLevel::INFOS) << " => Rescanning card to avoid bad authentication";
@@ -213,18 +201,15 @@ namespace logicalaccess
             std::vector<unsigned char> command;
             command.push_back(static_cast<unsigned char>(d_lastKeyType));
             command.push_back(blockno);
-            command.insert(command.end(), (unsigned char*)buf, (unsigned char*)buf + buflen);
+            command.insert(command.end(), buf.begin(), buf.end());
 
             getSTidSTRReaderCardAdapter()->sendCommand(0x00D2, command);
         }
-
-        LOG(LogLevel::INFOS) << "Returns final [out] buffer len {" << buflen << "}";
-        return buflen;
     }
 
-    size_t MifareSTidSTRCommands::updateBinaryIndex(unsigned char keyindex, unsigned char blockno, const void* buf, size_t buflen)
+    void MifareSTidSTRCommands::updateBinaryIndex(unsigned char keyindex, unsigned char blockno, const std::vector<unsigned char>& buf)
     {
-        LOG(LogLevel::INFOS) << "Update binary index key index {0x" << std::hex << keyindex << std::dec << "(" << keyindex << ")} block {0x" << std::hex << blockno << std::dec << "(" << blockno << ")} [in] buffer len {" << buflen << "}";
+        LOG(LogLevel::INFOS) << "Update binary index key index {0x" << std::hex << keyindex << std::dec << "(" << keyindex << ")} block {0x" << std::hex << blockno << std::dec << "(" << blockno << ")}";
 
         LOG(LogLevel::INFOS) << " => Rescanning card to avoid bad authentication";
         scanMifare();
@@ -236,12 +221,9 @@ namespace logicalaccess
             command.push_back(static_cast<unsigned char>(d_lastKeyType));
             command.push_back(keyindex);
             command.push_back(blockno);
-            command.insert(command.end(), (unsigned char*)buf, (unsigned char*)buf + buflen);
+            command.insert(command.end(), buf.begin(), buf.end());
 
             getSTidSTRReaderCardAdapter()->sendCommand(0x00D3, command);
         }
-
-        LOG(LogLevel::INFOS) << "Returns final [out] buffer len {" << buflen << "}";
-        return buflen;
     }
 }

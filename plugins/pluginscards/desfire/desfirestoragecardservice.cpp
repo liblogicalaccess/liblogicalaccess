@@ -397,8 +397,8 @@ namespace logicalaccess
         return getDESFireChip()->getDESFireCommands()->readData(dfLocation->file, dfLocation->byte, dataLength, encMode);
     }
 
-    bool DESFireStorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/, size_t /*dataLength*/)
+    unsigned int DESFireStorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/, void* /*data*/, size_t /*dataLength*/)
     {
-        return false;
+        return 0;
     }
 }

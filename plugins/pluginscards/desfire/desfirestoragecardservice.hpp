@@ -69,7 +69,7 @@ namespace logicalaccess
          * \param dataLength Data's length to read.
          * \return Data header length.
          */
-        virtual bool readDataHeader(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, size_t dataLength);
+        virtual unsigned int readDataHeader(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength);
 
     protected:
 
