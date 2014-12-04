@@ -71,7 +71,7 @@ namespace logicalaccess
             storage->writeData(location, aiToUse, aiToWrite, formatBuf, CB_AUTOSWITCHAREA);
         }
 		else
-			EXCEPTION_ASSERT_WITH_LOG(location, std::exception, "No storage has been found.");
+			EXCEPTION_ASSERT_WITH_LOG(location, std::runtime_error, "No storage has been found.");
 		return true;
     }
 }
