@@ -29,7 +29,7 @@ add_library(
 	${resourcerc}
   )
 
-SET_TARGET_PROPERTIES(keyboardreaders PROPERTIES VERSION 1.70)
+SET_TARGET_PROPERTIES(keyboardreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
   
 target_link_libraries(
 	keyboardreaders
