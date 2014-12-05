@@ -753,7 +753,7 @@
 		<dependency>
 			<groupId>lib.portable</groupId>
 			<artifactId>boost</artifactId>
-			<version>1.52</version>
+			<version>1.57</version>
 			<scope>compile</scope>
 			<type>zip</type>
 		</dependency>
