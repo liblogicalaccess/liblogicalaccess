@@ -305,7 +305,7 @@ namespace logicalaccess
          * \param atrlen The length of the atr string.
          * \return The card type.
          */
-        virtual std::string getCardTypeFromATR(const unsigned char* atr, size_t atrlen);
+        std::string getCardTypeFromATR(const unsigned char* atr, size_t atrlen);
 
         /**
          * \brief Get the generic card type from ATR.

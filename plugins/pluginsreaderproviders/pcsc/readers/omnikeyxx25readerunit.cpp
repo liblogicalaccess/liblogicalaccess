@@ -5,6 +5,7 @@
  */
 
 #include "../readers/omnikeyxx25readerunit.hpp"
+#include "proxchip.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -31,14 +32,8 @@ namespace logicalaccess
         return std::vector<unsigned char>(d_atr, d_atr + d_atrLength);
     }
 
-	std::string OmnikeyXX25ReaderUnit::getCardTypeFromATR(const unsigned char* atr, size_t atrlen)
+	std::shared_ptr<Chip> OmnikeyXX25ReaderUnit::createChip(std::string type)
 	{
-		if (atr && (atrlen > 0))
-        {
-            memcpy(d_atr, reinterpret_cast<const void*>(atr), atrlen);
-            d_atrLength = atrlen;
-			return "Prox";
-		}
-		return "UNKNOWN";
+		return std::shared_ptr<Chip>(new ProxChip());
 	}
 }

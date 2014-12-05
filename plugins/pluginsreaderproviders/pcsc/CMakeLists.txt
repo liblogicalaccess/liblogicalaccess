@@ -16,6 +16,7 @@ set(INCLUDE_FOLDER 	${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifareplus
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2
+					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/prox
 					/usr/include/PCSC)
 if (UNIX)
   set(INCLUDE_FOLDER ${INCLUDE_FOLDER} "/usr/local/include/PCSC/")
@@ -77,6 +78,7 @@ target_link_libraries(
 	iso7816readers
 	iso7816cards
 	iso15693cards
+	proxcards
 	${LIBLOGICALACCESS_LIBRARY}
 	${LINK_OPT}
 )
