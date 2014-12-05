@@ -483,7 +483,6 @@ namespace logicalaccess
         LOG(LogLevel::INFOS) << "Reading data... file number {0x" << std::hex << fileno << std::dec << "(" << fileno << ")} offset {"
             << offset << "} length {" << length << "} encrypt mode {0x"
             << std::hex << mode << std::dec << "(" << mode << ")}";
-        unsigned int ret = 0;
         std::vector<unsigned char> command, result;
 
         size_t stidMaxDataSize = 1024; // New to version 1.2 of API (before was limited to 200)

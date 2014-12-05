@@ -46,12 +46,10 @@ namespace logicalaccess
 
     void ISO15693PCSCCommands::writeBlock(size_t block, const std::vector<unsigned char>& data)
     {
-        bool ret = false;
-        std::vector<unsigned char> result;
         unsigned char p1 = (block & 0xffff) >> 8;
         unsigned char p2 = static_cast<unsigned char>(block & 0xff);
 
-        result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xff, 0xd6, p1, p2, static_cast<unsigned char>(data.size()), data);
+        getPCSCReaderCardAdapter()->sendAPDUCommand(0xff, 0xd6, p1, p2, static_cast<unsigned char>(data.size()), data);
     }
 
     void ISO15693PCSCCommands::lockBlock(size_t block)

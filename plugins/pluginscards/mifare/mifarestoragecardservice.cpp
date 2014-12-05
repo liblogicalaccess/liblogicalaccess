@@ -282,7 +282,6 @@ namespace logicalaccess
 
         if (nbSectors >= 1)
         {
-            size_t buflen = totalbuflen - (mLocation->block * 16);
             std::vector<unsigned char> dataSectors;
 
             if (behaviorFlags & CB_AUTOSWITCHAREA)

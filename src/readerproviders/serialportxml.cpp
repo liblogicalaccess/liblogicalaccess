@@ -64,9 +64,9 @@ namespace logicalaccess
 
 #ifdef UNIX
         DIR* pdir = opendir("/dev");
-        struct dirent *pent;
         if (pdir)
         {
+			struct dirent *pent;
             while (pent = readdir(pdir))
             {
                 if ((strstr(pent->d_name, "ttyS") != 0)

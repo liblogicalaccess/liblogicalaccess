@@ -15,7 +15,7 @@
 
 namespace logicalaccess
 {
-	TcpDataTransport::TcpDataTransport() : d_ipAddress("127.0.0.1"), d_port(9559), d_socket(d_ios), d_timer(d_ios), d_read_error(true), d_bytes_transferred(0)
+	TcpDataTransport::TcpDataTransport() : d_socket(d_ios), d_timer(d_ios), d_read_error(true), d_bytes_transferred(0), d_ipAddress("127.0.0.1"), d_port(9559)
     {
     }
 

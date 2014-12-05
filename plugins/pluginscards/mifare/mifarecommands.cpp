@@ -353,18 +353,13 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Start sector can't be greater than stop sector.");
         }
 
-        size_t minsize = 0;
-        size_t offset = 0;
 		std::vector<unsigned char> ret;
 
         for (int i = start_sector; i <= stop_sector; ++i)
         {
-            minsize += getNbBlocks(i) * 16;
-
             int startBlockSector = (i == start_sector) ? start_block : 0;
             std::vector<unsigned char> data = readSector(i, startBlockSector, sab);
 
-			offset += data.size();
 			ret.insert(ret.end(), data.begin(), data.end());
         }
 
@@ -378,12 +373,10 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Start sector can't be greater than stop sector.");
         }
 
-        size_t minsize = 0;
         size_t offset = 0;
 
         for (int i = start_sector; i <= stop_sector; ++i)
         {
-            minsize += getNbBlocks(i) * 16;
 
             int startBlockSector = (i == start_sector) ? start_block : 0;
 			std::vector<unsigned char> tmp(buf.begin() + offset, buf.begin() + offset + (getNbBlocks(i) - startBlockSector) * 16);

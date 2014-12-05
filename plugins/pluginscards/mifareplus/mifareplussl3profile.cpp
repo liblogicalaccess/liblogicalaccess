@@ -164,10 +164,10 @@ namespace logicalaccess
 
         std::shared_ptr<MifarePlusKey> key;
 
-        if (used)
+       /* if (used)
             key = std::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_AES_KEY_SIZE));
 
-        /*		switch (keytype)
+        switch (keytype)
         {
         case KT_KEY_AES_A:
         {

@@ -28,7 +28,6 @@ namespace logicalaccess
 
     std::vector<unsigned char> MifareOK5553Commands::readBinary(unsigned char blockno, size_t len)
     {
-        std::vector<unsigned char> res;
         char tmp[3];
         std::vector<unsigned char> command;
         std::vector<unsigned char> answer;
@@ -46,7 +45,6 @@ namespace logicalaccess
     {
         char tmp[3];
         std::vector<unsigned char> command;
-        std::vector<unsigned char> answer;
         command.push_back(static_cast<unsigned char>('w'));
         command.push_back(static_cast<unsigned char>('b'));
         sprintf(tmp, "%.2X", blockno);

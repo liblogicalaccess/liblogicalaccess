@@ -152,7 +152,6 @@ namespace logicalaccess
 
 	std::vector<unsigned char> RplethReaderUnit::receiveCardWaited(bool present)
 	{
-		std::vector<unsigned char> card;
 		std::vector<unsigned char> command, answer;
 
         command.push_back(static_cast<unsigned char>(Device::HID));
@@ -562,7 +561,6 @@ namespace logicalaccess
         LOG(LogLevel::COMS) << "receiveBadge";
         std::vector<unsigned char> res;
         std::vector<unsigned char> cmd;
-		std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeout);
 
         try
         {

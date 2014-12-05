@@ -682,7 +682,6 @@ namespace logicalaccess
         newkeydiv.resize(16, 0x00);
         // Get keyno only, in case of master card key
         unsigned char keyno_only = static_cast<unsigned char>(keyno & 0x0f);
-        std::shared_ptr<DESFireKey> oldkey = d_profile->getKey(d_currentAid, keyno_only);
         d_profile->getKey(d_currentAid, keyno_only, diversify, oldkeydiv);
         getKey(newkey, diversify, newkeydiv);
 

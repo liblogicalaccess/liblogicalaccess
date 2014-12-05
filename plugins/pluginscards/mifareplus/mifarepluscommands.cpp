@@ -10,9 +10,8 @@
 
 namespace logicalaccess
 {
-    MifarePlusCommands::MifarePlusCommands()
+    MifarePlusCommands::MifarePlusCommands() : d_crypto(std::shared_ptr<MifarePlusCrypto>(new MifarePlusCrypto()))
     {
-        d_crypto = std::shared_ptr<MifarePlusCrypto>(new MifarePlusCrypto());
     }
 
     MifarePlusCommands::~MifarePlusCommands()

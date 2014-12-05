@@ -157,10 +157,6 @@ namespace logicalaccess
         size_t bufIndex = 0;
         if (mLocation->block > 0)
         {
-            size_t sectorLen = (getMifarePlusChip()->getMifarePlusSL3Commands()->getNbBlocks(mLocation->sector) - mLocation->block) * MIFARE_PLUS_BLOCK_SIZE;
-            if (length < sectorLen)
-                sectorLen = length;
-
             if (mAiToUse->keyA && !mAiToUse->keyA->isEmpty())
                 data = getMifarePlusChip()->getMifarePlusSL3Commands()->readSector(mLocation->sector, mLocation->block, mAiToUse->keyA, KT_KEY_AES_A);
             else if (mAiToUse->keyB && !mAiToUse->keyB->isEmpty())

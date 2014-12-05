@@ -162,7 +162,7 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Index is greater than max sector number.");
         }
 
-        std::shared_ptr<MifarePlusKey> key;
+       /* std::shared_ptr<MifarePlusKey> key;
         if (used && (keytype == KT_KEY_CRYPTO1_A || keytype == KT_KEY_CRYPTO1_B))
         {
             key = std::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_CRYPTO1_KEY_SIZE));
@@ -172,7 +172,7 @@ namespace logicalaccess
             key = std::shared_ptr<MifarePlusKey>(new MifarePlusKey(MIFARE_PLUS_AES_KEY_SIZE));
         }
 
-        /*		switch (keytype)
+        switch (keytype)
         {
         case KT_KEY_CRYPTO1_A:
         {

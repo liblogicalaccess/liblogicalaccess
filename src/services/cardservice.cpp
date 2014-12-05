@@ -9,8 +9,7 @@
 
 namespace logicalaccess
 {
-    CardService::CardService(std::shared_ptr<Chip> chip)
+    CardService::CardService(std::shared_ptr<Chip> chip): d_chip(chip)
     {
-        d_chip = chip;
     }
 }
