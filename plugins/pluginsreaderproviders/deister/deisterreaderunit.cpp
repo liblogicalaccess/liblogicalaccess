@@ -87,6 +87,7 @@ namespace logicalaccess
             std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(maxwait);
             do
             {
+				std::this_thread::sleep_for(std::chrono::milliseconds(1000)); //Deister 'forget' the card...
                 std::shared_ptr<Chip> chip = getChipInAir();
                 if (chip)
                 {
