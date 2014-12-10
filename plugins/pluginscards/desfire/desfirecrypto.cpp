@@ -7,7 +7,7 @@
 #include "desfirecommands.hpp"
 #include "desfirecrypto.hpp"
 #include "logicalaccess/crypto/tomcrypt.h"
-#include <zlib.h>
+#include <boost/crc.hpp>
 #include <ctime>
 #include <cstdlib>
 
@@ -217,15 +217,15 @@ namespace logicalaccess
 
     long DESFireCrypto::desfire_crc32(const void* data, size_t dataLength)
     {
-        long crc = crc32(0L, Z_NULL, 0);
-        crc = crc32(crc, reinterpret_cast<const Bytef*>(data), static_cast<uInt>(dataLength));
-        crc ^= 0xffffffff;
-        if (crc < 0)
-        {
-            crc = (-1 * (crc ^ 0xffffffff)) - 1;
-        }
-
-        return crc;
+		boost::crc_32_type result;
+		result.process_bytes(data, dataLength);
+		long crc = result.checksum();
+		crc ^= 0xffffffff;
+		if (crc < 0)
+		{
+			crc = (-1 * (crc ^ 0xffffffff)) - 1;
+		}
+		return crc;
     }
 
     std::vector<unsigned char> DESFireCrypto::desfire_CBC_send(const std::vector<unsigned char>& key, const std::vector<unsigned char>& iv, const std::vector<unsigned char>& data)

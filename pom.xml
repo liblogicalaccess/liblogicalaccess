@@ -758,13 +758,6 @@
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>lib.compress</groupId>
-			<artifactId>zlib</artifactId>
-			<version>1.2.7</version>
-			<scope>compile</scope>
-			<type>zip</type>
-		</dependency>
-		<dependency>
 			<groupId>lib.crypto</groupId>
 			<artifactId>openssl</artifactId>
 			<version>1.0.0b.2</version>

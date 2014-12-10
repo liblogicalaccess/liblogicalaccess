@@ -6,7 +6,6 @@
 
 #include "mifarepluscrypto.hpp"
 #include "logicalaccess/crypto/tomcrypt.h"
-#include <zlib.h>
 #include <ctime>
 #include <cstdlib>
 
