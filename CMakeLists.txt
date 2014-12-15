@@ -30,7 +30,7 @@ option ( BUILD_SHARED_LIBS "build shared libraries" ON )
 find_package(CXX11 REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAGS}")
 
-find_package(Boost 1.51 REQUIRED COMPONENTS filesystem system date_time chrono thread regex)
+find_package(Boost 1.51 REQUIRED COMPONENTS filesystem system date_time chrono thread)
 include_directories(${Boost_INCLUDE_DIRS})
 
 find_package(OpenSSL REQUIRED)
@@ -58,6 +58,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 	add_definitions(-DDEBUG -D_DEBUG)
 endif()
 
+add_definitions(-DBOOST_ASIO_NO_IOSTREAM)
 if(UNIX)
   add_definitions(-DUNIX -DLOGICALACCESS_LOGS)
 else()
