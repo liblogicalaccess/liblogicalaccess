@@ -54,9 +54,6 @@ int main(int , char**)
         // Create the default reader unit. On PC/SC, we will listen on all readers.
         readerConfig->setReaderUnit(readerConfig->getReaderProvider()->createReaderUnit());
 
-        unsigned char data[2048];
-        memset(data, 0x00, sizeof(data));				
-
         std::cout << "Waiting 15 seconds for a card insertion..." << std::endl;
 
         while (1)
