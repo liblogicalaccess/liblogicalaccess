@@ -2,9 +2,9 @@ version: 1.77.3
 
 # branches to build
 branches:
-# whitelist
-only:
-- master
+  # whitelist
+  only:
+  - master
 
 # Operating system (build VM template)
 os: Windows Server 2012 R2
