@@ -41,8 +41,7 @@ build:
 # scripts to run before build
 before_build:
   - cd c:\projects\liblogicalaccess
-  - scripts\GenerateX64Solutions.bat
-build_script:
   - mvn clean package --batch-mode
+  - scripts\GenerateX64Solutions.bat
 cache:
   - C:\maven\
