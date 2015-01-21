@@ -1,6 +1,8 @@
 liblogicalaccess
 =============
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/islog/liblogicalaccess?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [Homepage](http://liblogicalaccess.islog.com) | 
 [GitHub-Repository](https://github.com/islog/liblogicalaccess) | 
 [Download binaries](http://liblogicalaccess.islog.com/wiki/doku.php/download) |
