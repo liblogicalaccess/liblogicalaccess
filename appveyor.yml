@@ -34,14 +34,15 @@ install:
           'http://download.islog.com/mavenSettingsAppVeyor.xml',
           'C:\maven\apache-maven-3.2.5\conf\settings.xml'
         )
+        
+build:
+  project: INSTALL.vcxproj
 
 # scripts to run before build
 before_build:
   - cd c:\projects\liblogicalaccess
+  - scripts\GenerateX64Solutions.bat
 build_script:
-  - mvn clean package --batch-mode -DskipTest
-test_script:
-  - mvn clean install --batch-mode
+  - mvn clean package --batch-mode
 cache:
   - C:\maven\
-  - C:\Users\appveyor\.m2
