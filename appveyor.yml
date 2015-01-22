@@ -55,9 +55,9 @@ before_build:
       { scripts\GenerateX64Solutions.bat }
       elseif (($env:PLATFORM -eq "x64") -and ($env:CONFIGURATION -eq "Debug"))
       { scripts\GenerateX64Solutions-debug.bat }
-      elseif (($env:PLATFORM -eq "Win32") -and ($env:CONFIGURATION -eq "Release"))
+      elseif (($env:PLATFORM -eq "x86") -and ($env:CONFIGURATION -eq "Release"))
       { scripts\GenerateWin32Solutions.bat }
-      elseif (($env:PLATFORM -eq "Win32") -and ($env:CONFIGURATION -eq "Debug"))
+      elseif (($env:PLATFORM -eq "x86") -and ($env:CONFIGURATION -eq "Debug"))
       { scripts\GenerateWin32Solutions-debug.bat }
 cache:
   - C:\maven\
