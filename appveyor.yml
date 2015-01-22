@@ -1,13 +1,14 @@
 version: 1.77.3-{build}
 environment:
-  JAVA_HOME: C:\Program Files\Java\jdk1.7.0
-  matrix:
-    platform:
-      - x86
-      - x64
-    configuration:
-      - Debug
-      - Release
+  global:
+    JAVA_HOME: C:\Program Files\Java\jdk1.7.0
+    
+platform:
+  - x86
+  - x64
+configuration:
+  - Debug
+  - Release
 
 # branches to build
 branches:
