@@ -58,6 +58,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 	add_definitions(-DDEBUG -D_DEBUG)
 endif()
 
+add_definitions(-DBOOST_ASIO_NO_IOSTREAM)
 if(UNIX)
   add_definitions(-DUNIX -DLOGICALACCESS_LOGS)
 else()
