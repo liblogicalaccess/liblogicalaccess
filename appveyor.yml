@@ -52,7 +52,13 @@ before_build:
   - 7z x target/* -opackages
   - ps: |
       if (($env:PLATFORM -eq "x64") -and ($env:CONFIGURATION -eq "Release"))
-        scripts\GenerateX64Solutions.bat
+      { scripts\GenerateX64Solutions.bat }
+      elseif (($env:PLATFORM -eq "x64") -and ($env:CONFIGURATION -eq "Debug"))
+      { scripts\GenerateX64Solutions-debug.bat }
+      elseif (($env:PLATFORM -eq "Win32") -and ($env:CONFIGURATION -eq "Release"))
+      { scripts\GenerateWin32Solutions.bat }
+      elseif (($env:PLATFORM -eq "Win32") -and ($env:CONFIGURATION -eq "Debug"))
+      { scripts\GenerateWin32Solutions-debug.bat }
 cache:
   - C:\maven\
   - C:\Users\appveyor\.m2
