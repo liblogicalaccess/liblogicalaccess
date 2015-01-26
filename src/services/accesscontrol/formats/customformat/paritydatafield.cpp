@@ -157,7 +157,7 @@ namespace logicalaccess
         boost::property_tree::ptree bnode;
         for (std::vector<unsigned int>::iterator i = d_bitsUsePositions.begin(); i != d_bitsUsePositions.end(); ++i)
         {
-            bnode.put("Bit", *i);
+            bnode.add("Bit", *i);
         }
         node.add_child("BitsPositions", bnode);
         parentNode.add_child(getDefaultXmlNodeName(), node);
