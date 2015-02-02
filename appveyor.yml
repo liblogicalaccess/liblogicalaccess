@@ -48,7 +48,7 @@ build:
 # scripts to run before build
 before_build:
   - cd c:\projects\liblogicalaccess
-  - mvn dependency:copy-dependencies
+  - mvn -q dependency:copy-dependencies
   - 7z x target/* -opackages
   - ps: |
       if (($env:PLATFORM -eq "x64") -and ($env:CONFIGURATION -eq "Release"))
@@ -58,7 +58,7 @@ before_build:
       elseif (($env:PLATFORM -eq "x86") -and ($env:CONFIGURATION -eq "Release"))
       { scripts\GenerateWin32Solutions.bat }
       elseif (($env:PLATFORM -eq "x86") -and ($env:CONFIGURATION -eq "Debug"))
-      { scripts\GenerateWin32Solutions-debug.bat }
+      { cmake.exe -DCMAKE_BUILD_TYPE=Debug -DTARGET_ARCH=Win32 -DLIB_SUFFIX=Win32/Debug -G"Visual Studio 12" -Tv120_xp . -DCMAKE_INSTALL_PREFIX=./install . }
 cache:
   - C:\maven\
   - C:\Users\appveyor\.m2
