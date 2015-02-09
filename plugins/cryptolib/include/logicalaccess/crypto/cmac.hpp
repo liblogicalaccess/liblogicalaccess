@@ -15,6 +15,16 @@ namespace logicalaccess
         public:
             CMACCrypto() { OpenSSLInitializer::GetInstance(); };
             ~CMACCrypto() {};
+			
+			/* 
+			 * \brief Calculate CMAC for a crypto algorithm and key.
+			 * \param key The key to use.
+			 * \param crypto The crypto algorithm (3DES, AES, ...).
+			 * \param data The data buffer to calculate CMAC.
+			 * \param padding_size The padding size.
+			 * \return The CMAC result for the message.
+			 */
+			static std::vector<unsigned char> cmac(const std::vector<unsigned char>& key, std::string crypto, const std::vector<unsigned char>& data, unsigned int padding_size = 0);
 
             /**
              * \brief  Return data part for the encrypted communication mode.

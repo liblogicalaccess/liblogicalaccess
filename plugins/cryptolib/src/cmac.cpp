@@ -13,6 +13,40 @@ namespace logicalaccess
 {
     namespace openssl
     {
+		std::vector<unsigned char> CMACCrypto::cmac(const std::vector<unsigned char>& key, std::string crypto, const std::vector<unsigned char>& data, unsigned int padding_size)
+		{
+			std::vector<unsigned char> cmac, iv;
+			
+			std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC;
+			unsigned int block_size = 0;
+			if (crypto == "des" || crypto == "3des")
+			{
+				cipherMAC.reset(new openssl::DESCipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_CBC));
+				block_size = 8;
+			}
+			else if (crypto == "aes")
+			{
+				cipherMAC.reset(new openssl::AESCipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_CBC));
+				block_size = 16;
+			}
+
+			if (cipherMAC)
+			{
+				if (padding_size == 0)
+				{
+					padding_size = block_size;
+				}
+				iv.resize(block_size, 0x00);
+				cmac = CMACCrypto::cmac(key, cipherMAC, block_size, data, iv, padding_size);
+				if (cmac.size() > block_size)
+				{
+					cmac = std::vector<unsigned char>(cmac.end() - block_size, cmac.end());
+				}
+			}
+
+			return cmac;
+		}
+
         std::vector<unsigned char> CMACCrypto::cmac(const std::vector<unsigned char>& key, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const std::vector<unsigned char>& data, std::vector<unsigned char> lastIV, unsigned int padding_size)
         {
             std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherK1K2;
