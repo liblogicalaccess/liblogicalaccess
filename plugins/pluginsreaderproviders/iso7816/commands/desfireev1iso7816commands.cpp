@@ -372,7 +372,31 @@ namespace logicalaccess
 
         if (!std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "DESFireKey need a SAMKeyStorage to proceed a SAM ISO Authenticate.");
+	
+		if (getSAMChip()->getCardType() == "SAM_AV2")
+		{
+			LOG(LogLevel::INFOS) << "Start AuthenticationPICC in purpose to fix SAM state (NXP SAM Documentation 3.5)";
 
+			try
+			{
+				std::vector<unsigned char> randomAuthenticatePICC = { 0x80, 0x0a, 0x00, 0x00, 0x12,
+					0x00,
+					0x00,
+					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+					0x00 };
+				std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(randomAuthenticatePICC);
+			}
+			catch (std::exception&){}
+
+			try
+			{
+				// Cancel SAM authentication with dummy command, but ignore return
+				std::vector<unsigned char> cmd_vector = { 0x80, 0xaf, 0x00, 0x00, 0x00 };
+				std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(cmd_vector);
+			}
+			catch (std::exception&){}
+		}
+		
         data[0] = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage())->getKeySlot();
         data[1] = key->getKeyVersion();
         memcpy(&data[0] + 2, &RPICC1[0], RPICC1.size());

@@ -82,7 +82,7 @@ namespace logicalaccess
 
     void TcpDataTransport::disconnect()
     {
-        LOG(LogLevel::INFOS) << "Disconnected.";
+		LOG(LogLevel::INFOS) << getIpAddress() << ":" << getPort() << "Disconnected.";
         d_socket.close();
     }
 
@@ -100,7 +100,17 @@ namespace logicalaccess
     {
         if (data.size() > 0)
         {
-			d_socket.send(boost::asio::buffer(data));
+			try
+			{
+				d_socket.send(boost::asio::buffer(data));
+			}
+			catch (boost::system::system_error& ex)
+			{
+				std::exception_ptr eptr = std::current_exception();
+				LOG(LogLevel::ERRORS) << "Cannot send on " << getIpAddress() << ":" << getPort() << " : " << ex.what();
+				disconnect();
+				std::rethrow_exception(eptr);
+			}
         }
     }
 
