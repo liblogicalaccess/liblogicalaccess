@@ -18,7 +18,7 @@ namespace logicalaccess
     class ElatecReaderProvider;
 
     /**
-     * \brief The Elatec reader unit class.
+     * \brief The Elatec reader unit class. The reader must be setup in Transparent mode (USB: Transparent Virtual COM Port / V24: Transparent Operation).
      */
     class LIBLOGICALACCESS_API ElatecReaderUnit : public ReaderUnit
     {
