@@ -25,16 +25,9 @@ namespace logicalaccess
         }
 
         res = receive(timeout);
-
 		d_lastResult = res;
 
-        if (res.size() > 0 && getResultChecker())
-        {
-            getResultChecker()->CheckResult(&res[0], res.size());
-        }
-
         LOG(LogLevel::COMS) << "Response received successfully ! Reponse: " << BufferHelper::getHex(res) << " size {" << res.size() << "}";
-
         return res;
     }
 }

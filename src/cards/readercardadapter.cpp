@@ -25,6 +25,12 @@ namespace logicalaccess
         if (d_dataTransport)
         {
             res = adaptAnswer(d_dataTransport->sendCommand(adaptCommand(command), timeout));
+
+			if (res.size() > 0 && getResultChecker())
+			{
+				LOG(LogLevel::INFOS) << "Call ResultChecker...";
+				getResultChecker()->CheckResult(&res[0], res.size());
+			}
         }
         else
         {

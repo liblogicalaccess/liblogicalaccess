@@ -8,7 +8,6 @@
 #define LOGICALACCESS_DATATRANSPORT_HPP
 
 #include "logicalaccess/readerproviders/readerprovider.hpp"
-#include "logicalaccess/resultchecker.hpp"
 
 #include <vector>
 
@@ -82,18 +81,6 @@ namespace logicalaccess
          */
         virtual std::vector<unsigned char> getLastResult() { return d_lastResult; };
 
-        /**
-         * \brief Get the result checker.
-         * \return The result checker.
-         */
-        virtual std::shared_ptr<ResultChecker> getResultChecker() const { return d_ResultChecker; };
-
-        /**
-         * \brief Set the result checker.
-         * \param unit The result checker.
-         */
-        virtual void setResultChecker(std::shared_ptr<ResultChecker> checker){ d_ResultChecker = checker; };
-
     protected:
 
         virtual void send(const std::vector<unsigned char>& data) = 0;
@@ -114,11 +101,6 @@ namespace logicalaccess
          * \brief The last command.
          */
         std::vector<unsigned char> d_lastCommand;
-
-        /**
-         * \brief The result checker.
-         */
-        std::shared_ptr<ResultChecker> d_ResultChecker;
     };
 }
 

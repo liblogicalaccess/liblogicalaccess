@@ -1573,6 +1573,7 @@ namespace logicalaccess
 
             if (rca)
             {
+				rca->setResultChecker(resultChecker);
                 std::shared_ptr<DataTransport> dt = getDataTransport();
                 if (dt)
                 {
@@ -1589,11 +1590,6 @@ namespace logicalaccess
 
             if (commands)
             {
-                std::shared_ptr<DataTransport> dt = rca->getDataTransport();
-                if (dt)
-                {
-                    dt->setResultChecker(resultChecker);
-                }
                 commands->setReaderCardAdapter(rca);
                 commands->setChip(chip);
                 chip->setCommands(commands);
