@@ -102,6 +102,7 @@ namespace logicalaccess
         {
 			try
 			{
+				LOG(LogLevel::COMS) << "TCP Send Data: " << BufferHelper::getHex(data);
 				d_socket.send(boost::asio::buffer(data));
 			}
 			catch (boost::system::system_error& ex)
@@ -161,7 +162,7 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, buf);
         }
 
-        LOG(LogLevel::COMS) << "Command response: " << BufferHelper::getHex(recv);
+        LOG(LogLevel::COMS) << "TCP Data read: " << BufferHelper::getHex(recv);
 		return recv;
     }
 

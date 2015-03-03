@@ -5,6 +5,7 @@
  */
 
 #include "logicalaccess/cards/readercardadapter.hpp"
+#include "logicalaccess/bufferhelper.hpp"
 
 namespace logicalaccess
 {
@@ -28,8 +29,12 @@ namespace logicalaccess
 
 			if (res.size() > 0 && getResultChecker())
 			{
-				LOG(LogLevel::INFOS) << "Call ResultChecker...";
+				LOG(LogLevel::DEBUGS) << "Call ResultChecker..." << BufferHelper::getHex(res);
 				getResultChecker()->CheckResult(&res[0], res.size());
+			}
+			else if (getResultChecker())
+			{
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "ResultChecker is set but no data has been received !!!")
 			}
         }
         else
