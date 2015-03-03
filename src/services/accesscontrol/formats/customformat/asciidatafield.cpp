@@ -48,17 +48,13 @@ namespace logicalaccess
         }
 
         size_t fieldDataLengthBytes = (d_length + 7) / 8;
+		size_t copyValueLength = (d_value.size() > fieldDataLengthBytes) ? fieldDataLengthBytes : d_value.size();
         unsigned char* paddedBuffer = new unsigned char[fieldDataLengthBytes];
         memset(paddedBuffer, d_padding, fieldDataLengthBytes);
 #ifndef __unix__
-        memcpy_s(paddedBuffer, fieldDataLengthBytes, d_value.c_str(), d_value.size());
+		memcpy_s(paddedBuffer, fieldDataLengthBytes, d_value.c_str(), copyValueLength);
 #else
-        if (fieldDataLengthBytes < d_value.size())
-        {
-            delete[] paddedBuffer;
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The size of the dest buffer is too small for memcpy");
-        }
-        memcpy(paddedBuffer, d_value.c_str(), d_value.size());
+		memcpy(paddedBuffer, d_value.c_str(), copyValueLength);
 #endif
 
         convertBinaryData(paddedBuffer, fieldDataLengthBytes, pos, d_length, data, dataLengthBytes);
