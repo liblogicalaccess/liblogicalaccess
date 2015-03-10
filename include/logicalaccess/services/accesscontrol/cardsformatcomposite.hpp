@@ -49,6 +49,8 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API CardsFormatComposite : public XmlSerializable
     {
     public:
+        using XmlSerializable::serialize;
+        using XmlSerializable::unSerialize;
 
         /**
          * \brief Constructor.
@@ -117,19 +119,19 @@ namespace logicalaccess
          * \brief Serialize the current object to XML.
          * \param parentNode The parent node.
          */
-        virtual void serialize(boost::property_tree::ptree& parentNode);
+        virtual void serialize(boost::property_tree::ptree& parentNode) override;
 
         /**
          * \brief UnSerialize a XML node to the current object.
          * \param node The XML node.
          */
-        virtual void unSerialize(boost::property_tree::ptree& node);
+        virtual void unSerialize(boost::property_tree::ptree& node) override;
 
         /**
          * \brief Get the default Xml Node name for this object.
          * \return The Xml node name.
          */
-        virtual std::string getDefaultXmlNodeName() const;
+        virtual std::string getDefaultXmlNodeName() const override;
 
         /**
          * \brief Get the reader unit.
@@ -145,7 +147,7 @@ namespace logicalaccess
 
     protected:
 
-        FormatInfosList formatsList;	/**< \brief The format list configurated */
+        FormatInfosList formatsList;	/**< \brief The configured formats' list */
 
         /**
          * \brief The reader unit.

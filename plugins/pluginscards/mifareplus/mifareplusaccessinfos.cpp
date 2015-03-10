@@ -122,14 +122,14 @@ namespace logicalaccess
 
     void MifarePlusAccessInfo::unSerialize(boost::property_tree::ptree& node)
     {
-        std::dynamic_pointer_cast<XmlSerializable>(keyA)->unSerialize(node.get_child("KeyA"), "");
-        std::dynamic_pointer_cast<XmlSerializable>(keyB)->unSerialize(node.get_child("KeyB"), "");
-        std::dynamic_pointer_cast<XmlSerializable>(keyOriginality)->unSerialize(node.get_child("KeyOriginality"), "");
-        std::dynamic_pointer_cast<XmlSerializable>(keyMastercard)->unSerialize(node.get_child("KeyMastercard"), "");
-        std::dynamic_pointer_cast<XmlSerializable>(keyConfiguration)->unSerialize(node.get_child("KeyConfiguration"), "");
-        std::dynamic_pointer_cast<XmlSerializable>(keySwitchL2)->unSerialize(node.get_child("KeySwitchL2"), "");
-        std::dynamic_pointer_cast<XmlSerializable>(keySwitchL3)->unSerialize(node.get_child("KeySwitchL3"), "");
-        std::dynamic_pointer_cast<XmlSerializable>(keyAuthenticateSL1AES)->unSerialize(node.get_child("KeyAuthenticateSL1AES"), "");
+        keyA->unSerialize(node.get_child("KeyA"), "");
+        keyB->unSerialize(node.get_child("KeyB"), "");
+        keyOriginality->unSerialize(node.get_child("KeyOriginality"), "");
+        keyMastercard->unSerialize(node.get_child("KeyMastercard"), "");
+        keyConfiguration->unSerialize(node.get_child("KeyConfiguration"), "");
+        keySwitchL2->unSerialize(node.get_child("KeySwitchL2"), "");
+        keySwitchL3->unSerialize(node.get_child("KeySwitchL3"), "");
+        keyAuthenticateSL1AES->unSerialize(node.get_child("KeyAuthenticateSL1AES"), "");
 
         string sabstr = node.get_child("SectorAccessBits").get_value<std::string>();
         unsigned char buf[3];
@@ -152,8 +152,8 @@ namespace logicalaccess
         if (!modnode.empty())
         {
             useMAD = modnode.get_child("Use").get_value<bool>();
-            std::dynamic_pointer_cast<XmlSerializable>(madKeyA)->unSerialize(modnode.get_child("MADKeyA"), "");
-            std::dynamic_pointer_cast<XmlSerializable>(madKeyB)->unSerialize(modnode.get_child("MADKeyB"), "");
+            madKeyA->unSerialize(modnode.get_child("MADKeyA"), "");
+            madKeyB->unSerialize(modnode.get_child("MADKeyB"), "");
         }
     }
 

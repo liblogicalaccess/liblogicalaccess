@@ -392,7 +392,7 @@ namespace logicalaccess
 
     void DESFireEV1STidSTRCommands::loadKey(std::shared_ptr<DESFireKey> key)
     {
-        LOG(LogLevel::INFOS) << "Loading key from storage {" << std::dynamic_pointer_cast<XmlSerializable>(key)->serialize() << "}";
+        LOG(LogLevel::INFOS) << "Loading key from storage {" << key->serialize() << "}";
         std::shared_ptr<KeyStorage> key_storage = key->getKeyStorage();
 
         if (std::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key_storage))
@@ -667,11 +667,11 @@ namespace logicalaccess
 
     void DESFireEV1STidSTRCommands::changeKey(unsigned char keyno, std::shared_ptr<DESFireKey> key)
     {
-        LOG(LogLevel::INFOS) << "Changing key... key number {0x" << std::hex << keyno << std::dec << "(" << keyno << ")} new key {" << std::dynamic_pointer_cast<XmlSerializable>(key)->serialize() << "}";
+        LOG(LogLevel::INFOS) << "Changing key... key number {0x" << std::hex << keyno << std::dec << "(" << keyno << ")} new key {" << key->serialize() << "}";
         // Only change the key if new key and old key are not the same.
         std::shared_ptr<DESFireKey> oldKey = d_profile->getKey(d_currentAid, keyno);
 
-        LOG(LogLevel::INFOS) << "Old key {" << std::dynamic_pointer_cast<XmlSerializable>(oldKey)->serialize() << "}";
+        LOG(LogLevel::INFOS) << "Old key {" << oldKey->serialize() << "}";
 
         if (key != oldKey)
         {

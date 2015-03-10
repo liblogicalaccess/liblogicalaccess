@@ -120,7 +120,7 @@ namespace logicalaccess
 
         if (composite)
         {
-            LOG(LogLevel::INFOS) << "Composite used to find the chip identifier {" << std::dynamic_pointer_cast<XmlSerializable>(composite)->serialize() << "}";
+            LOG(LogLevel::INFOS) << "Composite used to find the chip identifier {" << composite->serialize() << "}";
             composite->setReaderUnit(shared_from_this());
 
             CardTypeList ctList = composite->getConfiguredCardTypes();

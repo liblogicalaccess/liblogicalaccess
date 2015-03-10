@@ -89,8 +89,8 @@ namespace logicalaccess
     {
         PCSCReaderUnitConfiguration::unSerialize(node.get_child(PCSCReaderUnitConfiguration::getDefaultXmlNodeName()));
         d_useSecureMode = node.get_child("UseSecureMode").get_value<bool>();
-        std::dynamic_pointer_cast<XmlSerializable>(d_secureReadKey)->unSerialize(node.get_child("SecureReadKey"), "");
-        std::dynamic_pointer_cast<XmlSerializable>(d_secureWriteKey)->unSerialize(node.get_child("SecureWriteKey"), "");
+        d_secureReadKey->unSerialize(node.get_child("SecureReadKey"), "");
+        d_secureWriteKey->unSerialize(node.get_child("SecureWriteKey"), "");
         d_encryptionMode = static_cast<HIDEncryptionMode>(node.get_child("EncryptionMode").get_value<unsigned int>());
     }
 

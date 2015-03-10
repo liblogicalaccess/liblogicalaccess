@@ -22,6 +22,8 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API TripleDESKey : public Key
     {
     public:
+        using XmlSerializable::serialize;
+        using XmlSerializable::unSerialize;
 
         /**
          * \brief Build an empty 16-bytes triple DES key.
@@ -64,19 +66,19 @@ namespace logicalaccess
          * \param parentNode The parent node.
          * \return The XML string.
          */
-        virtual void serialize(boost::property_tree::ptree& parentNode);
+        virtual void serialize(boost::property_tree::ptree& parentNode) override;
 
         /**
          * \brief UnSerialize a XML node to the current object.
          * \param node The XML node.
          */
-        virtual void unSerialize(boost::property_tree::ptree& node);
+        virtual void unSerialize(boost::property_tree::ptree& node) override;
 
         /**
          * \brief Get the default Xml Node name for this object.
          * \return The Xml node name.
          */
-        virtual std::string getDefaultXmlNodeName() const;
+        virtual std::string getDefaultXmlNodeName() const override;
 
     private:
 
