@@ -49,7 +49,8 @@ namespace logicalaccess
             if (IsLogEnabled && !Logs::logfile.is_open())
             {
 #ifdef __linux__
-                Logs::logfile.open(("/var/log/" + LogFileName), std::ios::out | std::ios::app);
+                Logs::logToStderr = LogToStderr;
+                Logs::logfile.open(LogFileName, std::ios::out | std::ios::app);
 #else
                 Logs::logfile.open((getDllPath() + "/" + LogFileName), std::ios::out | std::ios::app);
 #endif
@@ -112,6 +113,7 @@ namespace logicalaccess
 
             IsLogEnabled = pt.get("config.log.enabled", false);
             LogFileName = pt.get<std::string>("config.log.filename", "liblogicalaccess.log");
+            LogToStderr = pt.get<bool>("config.log.to_stderr", false);
             SeeWaitInsertionLog = pt.get("config.log.seewaitinsertion", false);
             SeeWaitRemovalLog = pt.get("config.log.seewaitremoval", false);
             SeeCommunicationLog = pt.get("config.log.seecommunication", false);

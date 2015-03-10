@@ -37,6 +37,7 @@ namespace logicalaccess
         /* Logs */
         bool IsLogEnabled;
         std::string LogFileName;
+        bool LogToStderr;
         bool SeeWaitInsertionLog;
         bool SeeWaitRemovalLog;
         bool SeeCommunicationLog;

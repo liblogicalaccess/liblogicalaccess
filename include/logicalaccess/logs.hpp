@@ -43,6 +43,12 @@ namespace logicalaccess
 
         static std::ofstream logfile;
 
+        /**
+        * Do we duplicate the log to stderr?
+        * Defaults to false.
+        */
+        static bool logToStderr;
+
     private:
         enum LogLevel		d_level;
         std::stringstream   _stream;
