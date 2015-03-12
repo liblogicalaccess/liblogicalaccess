@@ -242,11 +242,14 @@ namespace logicalaccess
 
     std::shared_ptr<Chip> ReaderUnit::createChip(std::string type)
     {
-        std::shared_ptr<Chip> ret = LibraryManager::getInstance()->getCard(type);
+        LOG(LogLevel::INFOS) << "Attempting to create a card of type (" << type << ")";
 
+        std::shared_ptr<Chip> ret = LibraryManager::getInstance()->getCard(type);
         if (!ret)
         {
-            ret.reset(new Chip(type));
+            LOG(LogLevel::NOTICES) << "Falling back to creating a default Chip object because " <<
+                    "we could'nt create a more derived object type";
+            ret.reset(new Chip("__UNSUPPORTED__" + type));
         }
 
         return ret;

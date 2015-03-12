@@ -688,12 +688,15 @@ namespace logicalaccess
                         {
                             if (d_insertedChip->getCardType() == "DESFire")
                             {
+                                auto insertedChip = std::dynamic_pointer_cast<DESFireChip>(d_insertedChip);
+                                EXCEPTION_ASSERT_WITH_LOG(insertedChip, LibLogicalAccessException, "Wrong card type: expected DESFire.");
+
                                 try
                                 {
                                     std::this_thread::sleep_for(std::chrono::milliseconds(100));
                                     DESFireCommands::DESFireCardVersion cardversion;
-                                    std::dynamic_pointer_cast<DESFireChip>(d_insertedChip)->getDESFireCommands()->selectApplication(0x00);
-                                    std::dynamic_pointer_cast<DESFireChip>(d_insertedChip)->getDESFireCommands()->getVersion(cardversion);
+                                    insertedChip->getDESFireCommands()->selectApplication(0x00);
+                                    insertedChip->getDESFireCommands()->getVersion(cardversion);
                                     // Set from the version
 
                                     // DESFire EV1 and not regular DESFire
@@ -1424,7 +1427,8 @@ namespace logicalaccess
         std::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
         if (chip)
         {
-            LOG(LogLevel::INFOS) << "Chip (" << type << ") created, creating other associated objects...";
+            LOG(LogLevel::INFOS) << "Chip (" << chip->getCardType() << ") created, creating other associated objects...";
+            type = chip->getCardType(); // type may not be what we expected, it may be unsupported.
 
             std::shared_ptr<ReaderCardAdapter> rca = getReaderCardAdapter(type);
             std::shared_ptr<Commands> commands;
