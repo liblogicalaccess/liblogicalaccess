@@ -70,12 +70,12 @@ namespace logicalaccess
     {
         LOG(LogLevel::INFOS) << "Unserializing access information...";
 
-        std::dynamic_pointer_cast<XmlSerializable>(readKey)->unSerialize(node.get_child("ReadKey"), "");
+        readKey->unSerialize(node.get_child("ReadKey"), "");
         readKeyno = node.get_child("ReadKeyno").get_value<unsigned char>();
-        std::dynamic_pointer_cast<XmlSerializable>(writeKey)->unSerialize(node.get_child("WriteKey"), "");
+        writeKey->unSerialize(node.get_child("WriteKey"), "");
         writeKeyno = node.get_child("WriteKeyno").get_value<unsigned char>();
-        std::dynamic_pointer_cast<XmlSerializable>(masterApplicationKey)->unSerialize(node.get_child("MasterApplicationKey"), "");
-        std::dynamic_pointer_cast<XmlSerializable>(masterCardKey)->unSerialize(node.get_child("MasterCardKey"), "");
+        masterApplicationKey->unSerialize(node.get_child("MasterApplicationKey"), "");
+        masterCardKey->unSerialize(node.get_child("MasterCardKey"), "");
     }
 
     std::string DESFireAccessInfo::getDefaultXmlNodeName() const

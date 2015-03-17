@@ -55,7 +55,7 @@ namespace logicalaccess
         try
         {
             d_sam_key_unlock.reset(new DESFireKey());
-            std::dynamic_pointer_cast<XmlSerializable>(d_sam_key_unlock)->unSerialize(knode, "");
+            d_sam_key_unlock->unSerialize(knode, "");
         }
         catch (std::exception& ex)
         {
