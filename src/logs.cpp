@@ -8,6 +8,7 @@
 
 namespace logicalaccess
 {
+    bool Logs::logToStderr = false;
     std::ofstream Logs::logfile;
     std::map<LogLevel, std::string> Logs::logLevelMsg;
 
@@ -46,6 +47,9 @@ namespace logicalaccess
             _stream << std::endl;
             logfile << _stream.rdbuf();
             logfile.flush();
+
+            if (logToStderr)
+                std::cerr << _stream.str();
         }
     }
 }
