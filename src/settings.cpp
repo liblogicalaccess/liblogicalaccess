@@ -182,6 +182,7 @@ namespace logicalaccess
     {
         IsLogEnabled = false;
         LogFileName = "liblogicalaccess.log";
+        LogToStderr = false;
         SeeWaitInsertionLog = false;
         SeeWaitRemovalLog = false;
         SeeCommunicationLog = false;
