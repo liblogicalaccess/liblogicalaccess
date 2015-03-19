@@ -818,10 +818,7 @@ namespace logicalaccess
                 }
                 edata = data;
 
-                if (d_crypto->d_auth_method == CM_LEGACY) // Only in native mode mac needs to be added
-                {
-                    edata.insert(edata.end(), mac.begin(), mac.end());
-                }
+				edata.insert(edata.end(), mac.begin(), mac.end());
             }
                 break;
 
@@ -921,10 +918,7 @@ namespace logicalaccess
                             mac = d_crypto->generateMAC(gdata);
                         }
 
-                        if (d_crypto->d_auth_method == CM_LEGACY) // Only in native mode mac needs to be added
-                        {
-                            edata.insert(edata.begin(), mac.begin(), mac.end());
-                        }
+						edata.insert(edata.begin(), mac.begin(), mac.end());
                     }
                     else
                     {
