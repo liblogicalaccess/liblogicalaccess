@@ -862,7 +862,21 @@ namespace logicalaccess
 
             case CM_MAC:
                 edata = std::vector<unsigned char>(data.begin(), data.begin() + DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK);
-                d_crypto->bufferingForGenerateMAC(edata);
+				if (d_crypto->d_auth_method == CM_LEGACY)
+				{
+					d_crypto->bufferingForGenerateMAC(edata);
+				}
+				else
+				{
+					std::vector<unsigned char> gdata;
+					gdata.push_back(cmd);
+					if (parameters != NULL)
+					{
+						gdata.insert(gdata.end(), (unsigned char*)parameters, (unsigned char*)parameters + paramLength);
+					}
+					gdata.insert(gdata.end(), edata.begin(), edata.end());
+					d_crypto->bufferingForGenerateMAC(gdata);
+				}
                 break;
 
             case CM_ENCRYPT:
@@ -901,24 +915,8 @@ namespace logicalaccess
                     edata = std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize);
                     if (pos + pkSize == data.size())
                     {
-                        std::vector<unsigned char> mac;
-                        if (d_crypto->d_auth_method == CM_LEGACY)
-                        {
-                            mac = d_crypto->generateMAC(edata);
-                        }
-                        else
-                        {
-                            std::vector<unsigned char> gdata;
-                            gdata.push_back(cmd);
-                            if (parameters != NULL)
-                            {
-                                gdata.insert(gdata.end(), (unsigned char*)parameters, (unsigned char*)parameters + paramLength);
-                            }
-                            gdata.insert(gdata.end(), edata.begin(), edata.end());
-                            mac = d_crypto->generateMAC(gdata);
-                        }
-
-						edata.insert(edata.begin(), mac.begin(), mac.end());
+                        std::vector<unsigned char> mac = d_crypto->generateMAC(edata);
+						edata.insert(edata.end(), mac.begin(), mac.end());
                     }
                     else
                     {
