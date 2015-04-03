@@ -49,6 +49,8 @@ namespace logicalaccess
                     }
                 }
             }
+			else
+				THROW_EXCEPTION_WITH_LOG(CardException, "SW1 or SW2 is missing.");
         }
 
         mapSingleShot.clear();
