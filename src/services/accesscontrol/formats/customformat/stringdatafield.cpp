@@ -1,46 +1,57 @@
 /**
- * \file asciidatafield.cpp
+ * \file stringdatafield.cpp
  * \author Maxime C. <maxime-dev@islog.com>
- * \brief ASCII Data field.
+ * \brief String Data field.
  */
 
-#include "logicalaccess/services/accesscontrol/formats/customformat/asciidatafield.hpp"
+#include "logicalaccess/services/accesscontrol/formats/customformat/stringdatafield.hpp"
 #include "logicalaccess/bufferhelper.hpp"
 
 namespace logicalaccess
 {
-    ASCIIDataField::ASCIIDataField()
+	StringDataField::StringDataField()
         : ValueDataField()
     {
         d_length = 0;
         d_padding = ' ';
+		d_charset = "ascii";
     }
 
-    ASCIIDataField::~ASCIIDataField()
+	StringDataField::~StringDataField()
     {
     }
 
-    void ASCIIDataField::setValue(const std::string& value)
+	void StringDataField::setValue(const std::string& value)
     {
         d_value = value;
     }
 
-    std::string ASCIIDataField::getValue() const
+	std::string StringDataField::getValue() const
     {
         return d_value;
     }
 
-    void ASCIIDataField::setPaddingChar(unsigned char padding)
+	void StringDataField::setCharset(const std::string& charset)
+	{
+		d_charset = charset;
+	}
+
+	std::string StringDataField::getCharset() const
+	{
+		return d_charset;
+	}
+
+	void StringDataField::setPaddingChar(unsigned char padding)
     {
         d_padding = padding;
     }
 
-    unsigned char ASCIIDataField::getPaddingChar() const
+	unsigned char StringDataField::getPaddingChar() const
     {
         return d_padding;
     }
 
-    void ASCIIDataField::getLinearData(void* data, size_t dataLengthBytes, unsigned int* pos) const
+	void StringDataField::getLinearData(void* data, size_t dataLengthBytes, unsigned int* pos) const
     {
         if ((dataLengthBytes * 8) < (d_length + *pos))
         {
@@ -73,7 +84,7 @@ namespace logicalaccess
         }*/
     }
 
-    void ASCIIDataField::setLinearData(const void* data, size_t dataLengthBytes, unsigned int* pos)
+	void StringDataField::setLinearData(const void* data, size_t dataLengthBytes, unsigned int* pos)
     {
         if ((dataLengthBytes * 8) < (d_length + *pos))
         {
@@ -91,12 +102,12 @@ namespace logicalaccess
         d_value = BufferHelper::getStdString(ret);
     }
 
-    bool ASCIIDataField::checkSkeleton(std::shared_ptr<DataField> field) const
+	bool StringDataField::checkSkeleton(std::shared_ptr<DataField> field) const
     {
         bool ret = false;
         if (field)
         {
-            std::shared_ptr<ASCIIDataField> pField = std::dynamic_pointer_cast<ASCIIDataField>(field);
+			std::shared_ptr<StringDataField> pField = std::dynamic_pointer_cast<StringDataField>(field);
             if (pField)
             {
                 ret = (pField->getDataLength() == getDataLength() &&
@@ -110,26 +121,28 @@ namespace logicalaccess
         return ret;
     }
 
-    void ASCIIDataField::serialize(boost::property_tree::ptree& parentNode)
+	void StringDataField::serialize(boost::property_tree::ptree& parentNode)
     {
         boost::property_tree::ptree node;
 
         ValueDataField::serialize(node);
         node.put("Value", d_value);
         node.put("Padding", d_padding);
+		node.put("Charset", d_charset);
 
         parentNode.add_child(getDefaultXmlNodeName(), node);
     }
 
-    void ASCIIDataField::unSerialize(boost::property_tree::ptree& node)
+	void StringDataField::unSerialize(boost::property_tree::ptree& node)
     {
         ValueDataField::unSerialize(node);
         d_value = node.get_child("Value").get_value<std::string>();
         d_padding = node.get_child("Padding").get_value<unsigned char>();
+		d_charset = node.get_child("Charset").get_value<unsigned char>();
     }
 
-    std::string ASCIIDataField::getDefaultXmlNodeName() const
+    std::string StringDataField::getDefaultXmlNodeName() const
     {
-        return "ASCIIDataField";
+        return "StringDataField";
     }
 }

@@ -7,7 +7,7 @@
 #include "logicalaccess/myexception.hpp"
 #include "logicalaccess/services/accesscontrol/formats/customformat/customformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
-#include "logicalaccess/services/accesscontrol/formats/customformat/asciidatafield.hpp"
+#include "logicalaccess/services/accesscontrol/formats/customformat/stringdatafield.hpp"
 #include "logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp"
 #include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
 #include "logicalaccess/services/accesscontrol/formats/customformat/paritydatafield.hpp"
@@ -105,9 +105,9 @@ namespace logicalaccess
         {
             // TODO: improve the unserialization process to be generic
             std::shared_ptr<DataField> dataField;
-            if (v.first == "ASCIIDataField")
+            if (v.first == "StringDataField")
             {
-                dataField.reset(new ASCIIDataField());
+                dataField.reset(new StringDataField());
             }
             else if (v.first == "BinaryDataField")
             {

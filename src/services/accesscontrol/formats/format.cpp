@@ -20,7 +20,7 @@
 #include "logicalaccess/services/accesscontrol/formats/customformat/customformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 
-#include "logicalaccess/services/accesscontrol/formats/customformat/asciidatafield.hpp"
+#include "logicalaccess/services/accesscontrol/formats/customformat/stringdatafield.hpp"
 #include "logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp"
 #include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
 #include "logicalaccess/services/accesscontrol/formats/customformat/paritydatafield.hpp"
@@ -176,9 +176,9 @@ namespace logicalaccess
             {
                 if (vfield->getIsIdentifier())
                 {
-                    if (std::dynamic_pointer_cast<ASCIIDataField>(vfield))
+					if (std::dynamic_pointer_cast<StringDataField>(vfield))
                     {
-                        BufferHelper::setString(ret, std::dynamic_pointer_cast<ASCIIDataField>(vfield)->getValue());
+						BufferHelper::setString(ret, std::dynamic_pointer_cast<StringDataField>(vfield)->getValue());
                     }
                     else if (std::dynamic_pointer_cast<BinaryDataField>(vfield))
                     {

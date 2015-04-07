@@ -9,7 +9,7 @@
 #include "logicalaccess/services/accesscontrol/encodings/binarydatatype.hpp"
 #include "logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp"
 
-#include "logicalaccess/services/accesscontrol/formats/customformat/asciidatafield.hpp"
+#include "logicalaccess/services/accesscontrol/formats/customformat/stringdatafield.hpp"
 
 namespace logicalaccess
 {
@@ -22,7 +22,7 @@ namespace logicalaccess
         d_formatLinear.d_asciiLength = 16;
         d_formatLinear.d_padding = ' ';
 
-        std::shared_ptr<ASCIIDataField> asciiField(new ASCIIDataField());
+        std::shared_ptr<StringDataField> asciiField(new StringDataField());
         asciiField->setName("Value");
         asciiField->setIsIdentifier(true);
         asciiField->setDataLength(d_formatLinear.d_asciiLength * 8);
@@ -140,39 +140,39 @@ namespace logicalaccess
 
     string ASCIIFormat::getASCIIValue()
     {
-        std::shared_ptr<ASCIIDataField> field = std::dynamic_pointer_cast<ASCIIDataField>(getFieldFromName("Value"));
+		std::shared_ptr<StringDataField> field = std::dynamic_pointer_cast<StringDataField>(getFieldFromName("Value"));
         return field->getValue();
     }
 
     void ASCIIFormat::setASCIIValue(string value)
     {
-        std::shared_ptr<ASCIIDataField> field = std::dynamic_pointer_cast<ASCIIDataField>(getFieldFromName("Value"));
+		std::shared_ptr<StringDataField> field = std::dynamic_pointer_cast<StringDataField>(getFieldFromName("Value"));
         field->setValue(value);
         d_asciiValue = value;
     }
 
     unsigned int ASCIIFormat::getASCIILength() const
     {
-        std::shared_ptr<ASCIIDataField> field = std::dynamic_pointer_cast<ASCIIDataField>(getFieldFromName("Value"));
+		std::shared_ptr<StringDataField> field = std::dynamic_pointer_cast<StringDataField>(getFieldFromName("Value"));
         return (field->getDataLength() + 7) / 8;
     }
 
     void ASCIIFormat::setASCIILength(unsigned int length)
     {
-        std::shared_ptr<ASCIIDataField> field = std::dynamic_pointer_cast<ASCIIDataField>(getFieldFromName("Value"));
+		std::shared_ptr<StringDataField> field = std::dynamic_pointer_cast<StringDataField>(getFieldFromName("Value"));
         field->setDataLength(length * 8);
         d_formatLinear.d_asciiLength = length;
     }
 
     unsigned char ASCIIFormat::getPadding()
     {
-        std::shared_ptr<ASCIIDataField> field = std::dynamic_pointer_cast<ASCIIDataField>(getFieldFromName("Value"));
+		std::shared_ptr<StringDataField> field = std::dynamic_pointer_cast<StringDataField>(getFieldFromName("Value"));
         return field->getPaddingChar();
     }
 
     void ASCIIFormat::setPadding(unsigned char padding)
     {
-        std::shared_ptr<ASCIIDataField> field = std::dynamic_pointer_cast<ASCIIDataField>(getFieldFromName("Value"));
+		std::shared_ptr<StringDataField> field = std::dynamic_pointer_cast<StringDataField>(getFieldFromName("Value"));
         field->setPaddingChar(padding);
         d_formatLinear.d_padding = padding;
     }

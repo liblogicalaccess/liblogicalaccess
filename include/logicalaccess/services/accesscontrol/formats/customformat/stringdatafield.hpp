@@ -1,31 +1,31 @@
 /**
- * \file asciidatafield.hpp
+ * \file stringdatafield.hpp
  * \author Maxime C. <maxime-dev@islog.com>
- * \brief Ascii data field.
+ * \brief String data field.
  */
 
-#ifndef LOGICALACCESS_ASCIIDATAFIELD_HPP
-#define LOGICALACCESS_ASCIIDATAFIELD_HPP
+#ifndef LOGICALACCESS_STRINGDATAFIELD_HPP
+#define LOGICALACCESS_STRINGDATAFIELD_HPP
 
 #include "logicalaccess/services/accesscontrol/formats/customformat/valuedatafield.hpp"
 
 namespace logicalaccess
 {
     /**
-     * \brief A ascii data field.
+     * \brief A string data field.
      */
-    class LIBLOGICALACCESS_API ASCIIDataField : public ValueDataField
+    class LIBLOGICALACCESS_API StringDataField : public ValueDataField
     {
     public:
         /**
          * \brief Constructor.
          */
-        ASCIIDataField();
+		StringDataField();
 
         /**
          * \brief Destructor.
          */
-        virtual ~ASCIIDataField();
+		virtual ~StringDataField();
 
         /**
          * \brief Set the field value.
@@ -38,6 +38,18 @@ namespace logicalaccess
          * \return The field value.
          */
         string getValue() const;
+
+		/**
+		* \brief Set the field charset.
+		* \param charset The field charset.
+		*/
+		void setCharset(const string& charset);
+
+		/**
+		* \brief Get the field charset.
+		* \return The field charset.
+		*/
+		string getCharset() const;
 
         /**
          * \brief Set the padding char.
@@ -96,8 +108,10 @@ namespace logicalaccess
 
         std::string d_value;
 
+		std::string d_charset;
+
         unsigned char d_padding;
     };
 }
 
-#endif /* LOGICALACCESS_ASCIIDATAFIELD_HPP */
+#endif /* LOGICALACCESS_STRINGDATAFIELD_HPP */
