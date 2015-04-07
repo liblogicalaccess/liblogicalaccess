@@ -23,13 +23,23 @@ namespace logicalaccess
 
 	void StringDataField::setValue(const std::string& value)
     {
-        d_value = value;
+        d_value = std::vector<unsigned char>(value.begin(), value.end());
     }
 
 	std::string StringDataField::getValue() const
     {
-        return d_value;
+        return std::string(d_value.begin(), d_value.end());
     }
+
+	void StringDataField::setRawValue(const std::vector<unsigned char>& value)
+	{
+		d_value = value;
+	}
+
+	std::vector<unsigned char> StringDataField::getRawValue() const
+	{
+		return d_value;
+	}
 
 	void StringDataField::setCharset(const std::string& charset)
 	{
@@ -63,7 +73,7 @@ namespace logicalaccess
         unsigned char* paddedBuffer = new unsigned char[fieldDataLengthBytes];
         memset(paddedBuffer, d_padding, fieldDataLengthBytes);
 #ifndef __unix__
-		memcpy_s(paddedBuffer, fieldDataLengthBytes, d_value.c_str(), copyValueLength);
+		memcpy_s(paddedBuffer, fieldDataLengthBytes, &d_value[0], copyValueLength);
 #else
 		memcpy(paddedBuffer, d_value.c_str(), copyValueLength);
 #endif
@@ -99,7 +109,7 @@ namespace logicalaccess
 
         std::vector<unsigned char> ret(paddedBuffer, paddedBuffer + fieldDataLengthBytes);
         delete[] paddedBuffer;
-        d_value = BufferHelper::getStdString(ret);
+		d_value = ret;
     }
 
 	bool StringDataField::checkSkeleton(std::shared_ptr<DataField> field) const
@@ -126,7 +136,7 @@ namespace logicalaccess
         boost::property_tree::ptree node;
 
         ValueDataField::serialize(node);
-        node.put("Value", d_value);
+        node.put("Value", getValue());
         node.put("Padding", d_padding);
 		node.put("Charset", d_charset);
 
@@ -136,9 +146,9 @@ namespace logicalaccess
 	void StringDataField::unSerialize(boost::property_tree::ptree& node)
     {
         ValueDataField::unSerialize(node);
-        d_value = node.get_child("Value").get_value<std::string>();
+        setValue(node.get_child("Value").get_value<std::string>());
         d_padding = node.get_child("Padding").get_value<unsigned char>();
-		d_charset = node.get_child("Charset").get_value<unsigned char>();
+		d_charset = node.get_child("Charset").get_value<std::string>();
     }
 
     std::string StringDataField::getDefaultXmlNodeName() const

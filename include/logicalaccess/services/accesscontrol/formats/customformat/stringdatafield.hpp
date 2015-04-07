@@ -40,6 +40,18 @@ namespace logicalaccess
         string getValue() const;
 
 		/**
+		* \brief Set the field value.
+		* \param value The field value.
+		*/
+		void setRawValue(const std::vector<unsigned char>& value);
+
+		/**
+		* \brief Get the field value.
+		* \return The field value.
+		*/
+		std::vector<unsigned char> getRawValue() const;
+
+		/**
 		* \brief Set the field charset.
 		* \param charset The field charset.
 		*/
@@ -106,7 +118,7 @@ namespace logicalaccess
 
     protected:
 
-        std::string d_value;
+        std::vector<unsigned char> d_value;
 
 		std::string d_charset;
 
