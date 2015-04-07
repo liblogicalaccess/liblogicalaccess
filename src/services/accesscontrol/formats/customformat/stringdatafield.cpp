@@ -75,7 +75,7 @@ namespace logicalaccess
 #ifndef __unix__
 		memcpy_s(paddedBuffer, fieldDataLengthBytes, &d_value[0], copyValueLength);
 #else
-		memcpy(paddedBuffer, d_value.c_str(), copyValueLength);
+		memcpy(paddedBuffer, &d_value[0], copyValueLength);
 #endif
 
         convertBinaryData(paddedBuffer, fieldDataLengthBytes, pos, d_length, data, dataLengthBytes);
