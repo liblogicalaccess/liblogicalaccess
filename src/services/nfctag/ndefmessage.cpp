@@ -85,7 +85,12 @@ namespace logicalaccess
         m_records.push_back(ndefr);
     }
 
-    void NdefMessage::addTextRecord(std::string text, std::string encoding)
+	void NdefMessage::addTextRecord(std::string text)
+	{
+		addTextRecord(std::vector<unsigned char>(text.begin(), text.end()));
+	}
+
+    void NdefMessage::addTextRecord(std::vector<unsigned char> text, std::string encoding)
     {
         std::shared_ptr<NdefRecord> ndefr(new NdefRecord());
         ndefr->setTnf(TNF_WELL_KNOWN);
