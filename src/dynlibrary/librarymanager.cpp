@@ -215,7 +215,13 @@ namespace logicalaccess
             const std::string &libname = itr.first;
             IDynLibrary *lib = itr.second;
 
-            auto fptr = (int(*)(const std::string &, std::shared_ptr<ReaderUnit> &)) lib->getSymbol("getReaderUnit");
+	    int (*fptr)(const std::string &, std::shared_ptr<ReaderUnit> &) = nullptr;
+	    try
+	      {
+		fptr = reinterpret_cast<decltype(fptr)>(lib->getSymbol("getReaderUnit"));
+	      }
+	    // throw on symbol not found... we ignore this.
+	    catch (...) {}
             if (fptr)
             {
                 fptr(readerName, readerUnit);
