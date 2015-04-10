@@ -50,7 +50,7 @@ extern "C"
             {
                 u = make_shared<OmnikeyXX25ReaderUnit>(readerName);
             }
-            else if (readerName.find("x27") != string::npos || readerName.find("5127") != string::npos || readerName.find("5427") != string::npos)
+            else if (readerName.find("x27") != string::npos || readerName.find("5127") != string::npos)
             {
                 u = make_shared<OmnikeyXX27ReaderUnit>(readerName);
             }
