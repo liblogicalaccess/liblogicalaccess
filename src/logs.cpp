@@ -52,4 +52,19 @@ namespace logicalaccess
                 std::cerr << _stream.str();
         }
     }
+
+  // This is a debugging facility that probably should'nt be here...
+  std::stringstream &operator<<(std::stringstream &ss, const std::vector<unsigned char> &bytebuff)
+  {
+    ss << "[data size: " << bytebuff.size() << "] : {";
+    ss << std::hex;
+    for (auto itr = bytebuff.begin(); itr != bytebuff.end(); )
+      {
+	ss << (int)*itr;
+	if (++itr != bytebuff.end())
+	  ss << ", ";
+      }
+    ss << "}";
+  }
+  
 }
