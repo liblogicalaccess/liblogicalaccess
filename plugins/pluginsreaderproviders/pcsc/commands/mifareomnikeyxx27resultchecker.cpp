@@ -29,8 +29,6 @@ namespace logicalaccess
         AddCheck(0x6A, 0x82, "Illegal block number (File not found)");
 
         AddCheck(0x6B, 0x00, "Wrong parameter (P1 or P2)");
-
-        AddCheck(0x6F, 0x00, "Operation failed");
     }
 
     MifareOmnikeyXX27ResultChecker::~MifareOmnikeyXX27ResultChecker() {}

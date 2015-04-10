@@ -37,6 +37,8 @@ namespace logicalaccess
 
         AddCheck(0x6E, 0x00, "Wrong Class");
 
+        AddCheck(0x6F, 0x00, "Operation failed, no precise diagnosis");
+
         AddCheck(0x69, 0x86, "Command not allowed");
 
         AddCheck(0x6A, 0x80, "Wrong parameters for current instruction");
