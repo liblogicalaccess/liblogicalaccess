@@ -40,10 +40,18 @@ namespace logicalaccess
             return _singleton;
         }
 
-        void* getFctFromName(std::string fctname, LibraryType libraryType);
+        void* getFctFromName(const std::string &fctname, LibraryType libraryType);
         static  LibraryManager *_singleton;
 
         std::shared_ptr<ReaderProvider> getReaderProvider(const std::string& readertype);
+
+        /**
+        * Attempt to find a suitable library that can build a ReaderUnit for
+        * a reader named `readerName`.
+        *
+        * Returns the allocated ReaderUnit object or NULL on failure.
+        */
+        std::shared_ptr<ReaderUnit> getReader(const std::string &readerName);
         std::shared_ptr<Chip> getCard(const std::string& cardtype);
         std::shared_ptr<Commands> getCommands(const std::string& extendedtype);
         static std::shared_ptr<DataTransport> getDataTransport(const std::string& transporttype);

@@ -89,6 +89,7 @@ namespace logicalaccess
 
     std::shared_ptr<ReaderUnit> PCSCReaderProvider::createReaderUnit()
     {
+        //return createReaderUnit("Generic PCSC ReaderUnit");
         return createReaderUnit("");
     }
 

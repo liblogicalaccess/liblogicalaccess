@@ -246,7 +246,7 @@ namespace logicalaccess
 
         std::shared_ptr<PCSCReaderProvider> getPCSCReaderProvider() const;
 
-        static std::shared_ptr<PCSCReaderUnit> createPCSCReaderUnit(std::string& readerName);
+        static std::shared_ptr<PCSCReaderUnit> createPCSCReaderUnit(const std::string& readerName);
 
         /**
          * \brief Make the reader unit as a proxy to another. Use when listening on all PC/SC reader unit.

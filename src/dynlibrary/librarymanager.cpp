@@ -23,7 +23,7 @@ namespace logicalaccess
 
     LIBLOGICALACCESS_API LibraryManager *LibraryManager::_singleton = NULL;
 
-    void* LibraryManager::getFctFromName(std::string fctname, LibraryType libraryType)
+    void* LibraryManager::getFctFromName(const std::string &fctname, LibraryType libraryType)
     {
         void *fct;
         boost::filesystem::directory_iterator end_iter;
@@ -202,6 +202,28 @@ namespace logicalaccess
             memset(objectname, 0x00, sizeof(objectname));
             ++i;
         }
+    }
+
+    std::shared_ptr<ReaderUnit> LibraryManager::getReader(const std::string &readerName)
+    {
+        // The idea here is simply to loop over all shared library
+        // and opportunistically call the `getReaderUnit()` function if it exists, hoping
+        // that some module will be able to fulfil our request.
+        std::shared_ptr<ReaderUnit> readerUnit;
+        for (auto &&itr : libLoaded)
+        {
+            const std::string &libname = itr.first;
+            IDynLibrary *lib = itr.second;
+
+            auto fptr = (int(*)(const std::string &, std::shared_ptr<ReaderUnit> &)) lib->getSymbol("getReaderUnit");
+            if (fptr)
+            {
+                fptr(readerName, readerUnit);
+            }
+            if (readerUnit)
+                break;
+        }
+        return readerUnit;
     }
 
     void LibraryManager::scanPlugins()

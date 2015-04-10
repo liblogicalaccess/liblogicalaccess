@@ -165,56 +165,14 @@ namespace logicalaccess
         }
     }
 
-    std::shared_ptr<PCSCReaderUnit> PCSCReaderUnit::createPCSCReaderUnit(std::string& readerName)
+    std::shared_ptr<PCSCReaderUnit> PCSCReaderUnit::createPCSCReaderUnit(const std::string& readerName)
     {
-        std::shared_ptr<PCSCReaderUnit> unit;
-        if (readerName.find(string("OMNIKEY")) != string::npos)
-        {
-            if (readerName.find(string("x21")) != string::npos || readerName.find(string("5321")) != string::npos || readerName.find(string("6321")) != string::npos)
-            {
-                if (readerName.find(string("LAN")) != string::npos)
-                {
-                    unit.reset(new OmnikeyLANXX21ReaderUnit(readerName));
-                }
-                else
-                {
-                    unit.reset(new OmnikeyXX21ReaderUnit(readerName));
-                }
-            }
-            else if (readerName.find(string("x25")) != string::npos || readerName.find(string("5025-CL")) != string::npos)
-            {
-                unit.reset(new OmnikeyXX25ReaderUnit(readerName));
-            }
-            else if (readerName.find(string("x27")) != string::npos || readerName.find(string("5127")) != string::npos || readerName.find(string("5427")) != string::npos)
-            {
-                unit.reset(new OmnikeyXX27ReaderUnit(readerName));
-            }
-        }
-        else if (readerName.find(string("SDI010 Contactless Reader")) != string::npos
-            || readerName.find(string("SCR331-DI USB ContactlessReader")) != string::npos
-            || readerName.find(string("SCL010 Contactless")) != string::npos)
-        {
-            unit.reset(new SCMReaderUnit(readerName));
-        }
-        else if (readerName.find(string("Cherry ")) != string::npos)
-        {
-            unit.reset(new CherryReaderUnit(readerName));
-        }
-        else if (readerName.find(string("SpringCard")) != string::npos)
-        {
-            unit.reset(new SpringCardReaderUnit(readerName));
-        }
-        else if (readerName.find(string("ACS ACR")) != string::npos)
-        {
-            unit.reset(new ACSACRReaderUnit(readerName));
-        }
-
-        if (!unit)
-        {
-            unit.reset(new PCSCReaderUnit(readerName));
-        }
-
-        return unit;
+        std::shared_ptr<ReaderUnit> reader = LibraryManager::getInstance()->getReader(readerName);
+        if (reader)
+            assert(std::dynamic_pointer_cast<PCSCReaderUnit>(reader));
+        else
+            reader = std::make_shared<PCSCReaderUnit>(readerName);
+        return std::dynamic_pointer_cast<PCSCReaderUnit>(reader);
     }
 
     PCSCReaderUnitType PCSCReaderUnit::getPCSCType() const
