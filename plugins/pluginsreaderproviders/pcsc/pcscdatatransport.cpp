@@ -43,6 +43,8 @@ namespace logicalaccess
     {
         d_response.clear();
 
+        EXCEPTION_ASSERT_WITH_LOG(getPCSCReaderUnit(), LibLogicalAccessException, "The PCSC reader unit object"
+                "is null. We cannot send.");
         if (data.size() > 0)
         {
             unsigned char returnedData[255];

@@ -92,11 +92,23 @@ namespace logicalaccess
 
     PCSCReaderUnit::~PCSCReaderUnit()
     {
+        // We want to destroy the Chip object before destroying the reader unit.
+        // We have to access the card's type before nulling the card object.
+        std::string genericCardType;
+        if (d_proxyReaderUnit && d_proxyReaderUnit->d_insertedChip)
+            genericCardType = d_proxyReaderUnit->d_insertedChip->getGenericCardType();
+        else if (d_insertedChip)
+            genericCardType = d_insertedChip->getGenericCardType();
+
+        d_insertedChip = nullptr;
+        if (d_proxyReaderUnit)
+            d_proxyReaderUnit->d_insertedChip = nullptr;
+
         LOG(LogLevel::INFOS) << "Reader unit destruction...";
 
         if (isConnected())
         {
-            disconnect();
+            disconnect(genericCardType == CHIP_SAM ? SCARD_UNPOWER_CARD : SCARD_LEAVE_CARD);
         }
     }
 
@@ -428,6 +440,7 @@ namespace logicalaccess
             {
                 if (d_name == "")
                 {
+                    d_insertedChip = nullptr;
                     d_proxyReaderUnit.reset();
                 }
                 return true;
