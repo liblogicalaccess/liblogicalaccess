@@ -65,7 +65,7 @@ add_library(
 	${SOURCE_LIB}
 	${INCLUDE_LIB}
 	${resourcerc}
-  )
+  readers/omnikey5427readerunitconfiguration.cpp readers/omnikey5427readerunitconfiguration.hpp)
 
 SET_TARGET_PROPERTIES(pcscreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
   

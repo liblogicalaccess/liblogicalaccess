@@ -22,6 +22,8 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API AES128Key : public Key
     {
     public:
+        using XmlSerializable::serialize;
+        using XmlSerializable::unSerialize;
 
         /**
          * \brief Build an empty 16-bytes AES128 key.
