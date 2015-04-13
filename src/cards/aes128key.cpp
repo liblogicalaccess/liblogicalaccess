@@ -37,6 +37,13 @@ namespace logicalaccess
         }
     }
 
+    AES128Key::AES128Key(const std::vector<uint8_t> &data) :
+            Key()
+    {
+        clear();
+        fromBytes(data);
+    }
+
     void AES128Key::serialize(boost::property_tree::ptree& parentNode)
     {
         boost::property_tree::ptree node;
@@ -52,5 +59,12 @@ namespace logicalaccess
     std::string AES128Key::getDefaultXmlNodeName() const
     {
         return "AES128Key";
+    }
+
+    void AES128Key::fromBytes(const std::vector<uint8_t> &v)
+    {
+        assert(v.size() == AES128_KEY_SIZE);
+        memcpy(d_key, &v[0], AES128_KEY_SIZE);
+        d_isEmpty = false;
     }
 }

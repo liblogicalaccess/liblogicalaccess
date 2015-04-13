@@ -44,6 +44,11 @@ namespace logicalaccess
         AES128Key(const void* buf, size_t buflen);
 
         /**
+         * Create a key from a 16bytes vector.
+         */
+        AES128Key(const std::vector<uint8_t> &data);
+
+        /**
          * \brief Get the key length.
          * \return The key length.
          */
@@ -79,6 +84,12 @@ namespace logicalaccess
          * \return The Xml node name.
          */
         virtual std::string getDefaultXmlNodeName() const;
+
+        /**
+         * Construct a key from a raw byte vector.
+         * The vector MUST be 16 bytes.
+         */
+        void fromBytes(const std::vector<uint8_t> &v);
 
     private:
 
