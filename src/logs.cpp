@@ -12,11 +12,14 @@ namespace logicalaccess
     std::ofstream Logs::logfile;
     std::map<LogLevel, std::string> Logs::logLevelMsg;
 
-    Logs::Logs(const char* file, const char* func, int line, enum LogLevel level) : d_level(level)
+    Logs::Logs(const char *file, const char *func, int line, enum LogLevel level)
+            : d_level(level)
     {
         if (!Settings::getInstance()->IsLogEnabled
-            || (d_level == LogLevel::COMS && !Settings::getInstance()->SeeCommunicationLog)
-            || ((d_level == LogLevel::PLUGINS || d_level == LogLevel::PLUGINS_ERROR) && !Settings::getInstance()->SeePluginLog))
+            ||
+            (d_level == LogLevel::COMS && !Settings::getInstance()->SeeCommunicationLog)
+            || ((d_level == LogLevel::PLUGINS || d_level == LogLevel::PLUGINS_ERROR) &&
+                !Settings::getInstance()->SeePluginLog))
             d_level = NONE;
 
         if (logLevelMsg.empty())
@@ -36,7 +39,9 @@ namespace logicalaccess
         if (logfile && d_level != NONE)
         {
             boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
-            _stream << boost::posix_time::to_simple_string(now) << " - " << logLevelMsg[d_level] << ": \t{" << line << "}\t{" << func << "}\t{" << file << "}:" << std::endl;
+            _stream << boost::posix_time::to_simple_string(now) << " - " <<
+            logLevelMsg[d_level] << ": \t{" << line << "}\t{" << func << "}\t{" << file <<
+            "}:" << std::endl;
         }
     }
 
@@ -53,18 +58,22 @@ namespace logicalaccess
         }
     }
 
-  // This is a debugging facility that probably should'nt be here...
-  std::stringstream &operator<<(std::stringstream &ss, const std::vector<unsigned char> &bytebuff)
-  {
-    ss << "[data size: " << bytebuff.size() << "] : {";
-    ss << std::hex;
-    for (auto itr = bytebuff.begin(); itr != bytebuff.end(); )
-      {
-	ss << (int)*itr;
-	if (++itr != bytebuff.end())
-	  ss << ", ";
-      }
-    ss << "}";
-  }
-  
+    // This is a debugging facility that probably should'nt be here...
+    std::stringstream &operator<<(std::stringstream &ss,
+                                  const std::vector<unsigned char> &bytebuff)
+    {
+        std::stringstream tmp;
+        tmp << "[data size: " << bytebuff.size() << "] : {";
+        tmp << std::hex;
+        for (auto itr = bytebuff.begin(); itr != bytebuff.end();)
+        {
+            tmp << (int) *itr;
+            if (++itr != bytebuff.end())
+                tmp << ", ";
+        }
+        tmp << "}";
+        ss << tmp.str();
+        return ss;
+    }
+
 }
