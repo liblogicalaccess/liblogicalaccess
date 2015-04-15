@@ -426,6 +426,7 @@ namespace logicalaccess
             if (d_proxyReaderUnit)
             {
                 d_proxyReaderUnit->setSingleChip(d_insertedChip);
+              //  d_proxyReaderUnit->cardInserted();
             }
         }
 
@@ -763,7 +764,10 @@ namespace logicalaccess
             d_sch = 0;
             d_ap = 0;
         }
-
+        if (ret && d_proxyReaderUnit)
+            d_proxyReaderUnit->cardInserted();
+        else if (ret)
+            cardInserted();
         return ret;
     }
 

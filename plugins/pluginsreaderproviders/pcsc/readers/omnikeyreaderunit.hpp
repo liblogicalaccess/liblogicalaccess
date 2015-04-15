@@ -58,7 +58,9 @@ namespace logicalaccess
          */
         virtual bool waitRemoval(unsigned int maxwait);
 
-        /**
+        virtual bool waitInsertion(unsigned int maxwait) override;
+
+         /**
          * \brief Is secure connection mode ?
          * \remarks We must store it in static memory because the connection mode is global for all connection to the reader
          */

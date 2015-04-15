@@ -32,7 +32,7 @@ namespace logicalaccess
 
         std::vector<unsigned char> ucReceivedData;
 
-        //This Command is from ICAO Command Set (Test-Commands). If you use ICAO Test-Commands then the driver stop the tracking (the reader is « stuck » ).
+        //This Command is from ICAO Command Set (Test-Commands). If you use ICAO Test-Commands then the driver stop the tracking (the reader is ï¿½ stuck ï¿½ ).
         ucReceivedData = getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x9A, 0x01, 0x05, 0x00);
         //After using this command you must "Close" the Test-Mode with the following command:
         size_t le = ucReceivedData.size() - 2;
@@ -77,5 +77,10 @@ namespace logicalaccess
         }*/
 
         return PCSCReaderUnit::waitRemoval(maxwait);
+    }
+
+    bool OmnikeyReaderUnit::waitInsertion(unsigned int maxwait)
+    {
+        return PCSCReaderUnit::waitInsertion(maxwait);
     }
 }

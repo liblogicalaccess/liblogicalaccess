@@ -29,7 +29,7 @@ namespace logicalaccess
          * \return True if a card was inserted, false otherwise. If a card was inserted, the name of the reader on which the insertion was detected is accessible with getReader().
          * \warning If the card is already connected, then the method always fail.
          */
-        virtual bool waitInsertion(unsigned int /*maxwait*/) { return true; }
+        virtual bool waitInsertion(unsigned int /*maxwait*/) override { return true; }
 
         /**
          * \brief Wait for a card removal.

@@ -72,7 +72,7 @@ namespace logicalaccess
          * \return True if a card was inserted, false otherwise. If a card was inserted, the name of the reader on which the insertion was detected is accessible with getReader().
          * \warning If the card is already connected, then the method always fail.
          */
-        virtual bool waitInsertion(unsigned int maxwait);
+        virtual bool waitInsertion(unsigned int maxwait) override;
 
         /**
          * \brief Wait for a card removal.
@@ -281,6 +281,13 @@ namespace logicalaccess
          * \brief Set the SAM ReaderUnit
          */
         void setSAMReaderUnit(std::shared_ptr<PCSCReaderUnit> t);
+
+        /**
+         * This method is used to notify implementation
+         * that a card was inserted, when the implementation
+         * is used as a proxy.
+         */
+        virtual void cardInserted() {}
 
     protected:
 
