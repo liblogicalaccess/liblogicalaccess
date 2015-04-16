@@ -55,7 +55,7 @@ namespace logicalaccess
         static std::map<LogLevel, std::string> logLevelMsg;
     };
 
-  std::stringstream &operator<<(std::stringstream &ss, const std::vector<unsigned char> &bytebuff);
+	LIBLOGICALACCESS_API std::stringstream &operator<<(std::stringstream &ss, const std::vector<unsigned char> &bytebuff);
   
   
 #ifdef LOGICALACCESS_LOGS
