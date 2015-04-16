@@ -283,11 +283,10 @@ namespace logicalaccess
         void setSAMReaderUnit(std::shared_ptr<PCSCReaderUnit> t);
 
         /**
-         * This method is used to notify implementation
-         * that a card was inserted, when the implementation
-         * is used as a proxy.
+         * This method is used to notify the (proxyfied) implementation
+         * that a card was connected
          */
-        virtual void cardInserted() {}
+        virtual void cardConnected() {}
 
     protected:
 
