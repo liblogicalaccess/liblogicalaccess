@@ -21,6 +21,9 @@ namespace logicalaccess
     const std::string& getName(void) const
     { return _name; }
     void* getSymbol(const char* symName);
+
+
+    virtual bool hasSymbol(const char *name);
   };
 }
 

@@ -215,19 +215,15 @@ namespace logicalaccess
             const std::string &libname = itr.first;
             IDynLibrary *lib = itr.second;
 
-	    int (*fptr)(const std::string &, std::shared_ptr<ReaderUnit> &) = nullptr;
-	    try
-	      {
-		fptr = reinterpret_cast<decltype(fptr)>(lib->getSymbol("getReaderUnit"));
-	      }
-	    // throw on symbol not found... we ignore this.
-	    catch (...) {}
-            if (fptr)
+            int (*fptr)(const std::string &, std::shared_ptr<ReaderUnit> &) = nullptr;
+            if (lib->hasSymbol("getReaderUnit"))
             {
+                fptr = reinterpret_cast<decltype(fptr)>(lib->getSymbol("getReaderUnit"));
+                assert(fptr);
                 fptr(readerName, readerUnit);
+                if (readerUnit)
+                    break;
             }
-            if (readerUnit)
-                break;
         }
         return readerUnit;
     }

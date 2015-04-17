@@ -28,6 +28,8 @@ namespace logicalaccess
             return _name;
         }
         void* getSymbol(const char* symName);
+
+        virtual bool hasSymbol(const char *name);
     };
 }
 

@@ -25,4 +25,19 @@ namespace logicalaccess
       THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, err);
     return sym;
   }
+
+    bool PosixDynLibrary::hasSymbol(const char *name)
+    {
+      void* sym;
+      char* err;
+
+      ::dlerror();
+      sym = ::dlsym(_handle, name);
+      err = ::dlerror();
+      if (err || !sym)
+      {
+          return false;
+      }
+      return true;
+    }
 }

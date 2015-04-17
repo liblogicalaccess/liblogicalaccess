@@ -32,4 +32,16 @@ namespace logicalaccess
         }
         return sym;
     }
+
+    bool WindowsDynLibrary::hasSymbol(const char *name)
+    {
+        void* sym;
+
+        sym = ::GetProcAddress(_handle, name);
+        if (!sym)
+        {
+            return false;
+        }
+        return true;
+    }
 }
