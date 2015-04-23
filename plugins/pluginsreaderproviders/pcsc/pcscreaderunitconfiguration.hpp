@@ -116,7 +116,7 @@ namespace logicalaccess
          * \brief Get the PC/SC reader unit configuration type.
          * \return The PC/SC reader unit configuration type.
          */
-        virtual PCSCReaderUnitType getPCSCType() const { return PCSC_RUT_DEFAULT; };
+		virtual PCSCReaderUnitType getPCSCType() const;
 
     protected:
 

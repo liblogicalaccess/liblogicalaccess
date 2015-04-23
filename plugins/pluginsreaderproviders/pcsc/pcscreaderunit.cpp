@@ -1659,7 +1659,7 @@ namespace logicalaccess
         {
             d_readerUnitConfig = config;
         }
-    }
+	}
 
     void PCSCReaderUnit::changeReaderKey(std::shared_ptr<ReaderMemoryKeyStorage> keystorage, const std::vector<unsigned char>& key)
     {

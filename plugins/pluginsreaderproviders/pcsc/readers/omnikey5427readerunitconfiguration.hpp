@@ -51,6 +51,8 @@ namespace logicalaccess
 
         virtual void unSerialize(boost::property_tree::ptree &node) override;
 
+		virtual PCSCReaderUnitType getPCSCType() const override;
+
     private:
         bool useSecureMode_;
 

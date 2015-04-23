@@ -8,8 +8,9 @@
 using namespace logicalaccess;
 
 Omnikey5427ReaderUnitConfiguration::Omnikey5427ReaderUnitConfiguration() :
-        useSecureMode_(false),
-        masterKey_(new AES128Key())
+        useSecureMode_(true),                  // default to use secure
+        masterKey_(new AES128Key())            // but without leaking the key to client code.
+		                                       // the reader unit code will use the default is none is set.
 {
 
 }
@@ -63,4 +64,9 @@ void Omnikey5427ReaderUnitConfiguration::unSerialize(boost::property_tree::ptree
             node.get_child(PCSCReaderUnitConfiguration::getDefaultXmlNodeName()));
     useSecureMode_ = node.get_child("UseSecureMode").get_value<bool>();
     masterKey_->unSerialize(node.get_child("MasterKey"), "");
+}
+
+PCSCReaderUnitType Omnikey5427ReaderUnitConfiguration::getPCSCType() const
+{
+	return PCSC_RUT_OMNIKEY_XX27;
 }

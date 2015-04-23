@@ -69,4 +69,9 @@ namespace logicalaccess
     {
         return "PCSCReaderUnitConfiguration";
     }
+
+	PCSCReaderUnitType PCSCReaderUnitConfiguration::getPCSCType() const
+	{
+		return PCSC_RUT_DEFAULT;
+	}
 }
