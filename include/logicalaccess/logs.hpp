@@ -56,7 +56,7 @@ namespace logicalaccess
     };
 
 	LIBLOGICALACCESS_API std::stringstream &operator<<(std::stringstream &ss, const std::vector<unsigned char> &bytebuff);
-  
+    LIBLOGICALACCESS_API std::stringstream &operator<<(std::stringstream &ss, const std::vector<bool> &bytebuff);
   
 #ifdef LOGICALACCESS_LOGS
 

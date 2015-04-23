@@ -76,4 +76,21 @@ namespace logicalaccess
         return ss;
     }
 
+    std::stringstream &operator<<(std::stringstream &ss,
+                                  const std::vector<bool> &bytebuff)
+    {
+        std::stringstream tmp;
+        tmp << "[data size: " << bytebuff.size() << "] : {";
+        tmp << std::hex;
+        for (auto itr = bytebuff.begin(); itr != bytebuff.end();)
+        {
+            tmp << (int) *itr;
+            if (++itr != bytebuff.end())
+                tmp << ", ";
+        }
+        tmp << "}";
+        ss << tmp.str();
+        return ss;
+    }
+
 }

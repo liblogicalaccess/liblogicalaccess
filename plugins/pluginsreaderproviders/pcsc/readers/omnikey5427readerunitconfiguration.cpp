@@ -10,7 +10,7 @@ using namespace logicalaccess;
 Omnikey5427ReaderUnitConfiguration::Omnikey5427ReaderUnitConfiguration() :
         useSecureMode_(true),                  // default to use secure
         masterKey_(new AES128Key())            // but without leaking the key to client code.
-		                                       // the reader unit code will use the default is none is set.
+                                               // the reader unit code will use the default is none is set.
 {
 
 }
