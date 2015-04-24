@@ -288,6 +288,11 @@ namespace logicalaccess
          */
         virtual void cardConnected() {}
 
+        /**
+         * Returns the proxy implementation reader unit, or null.
+         */
+        std::shared_ptr<PCSCReaderUnit> getProxyReaderUnit();
+
     protected:
 
         /**

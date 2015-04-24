@@ -39,7 +39,7 @@ void Omnikey5427ReaderUnitConfiguration::setSecureMasterKey(
 void Omnikey5427ReaderUnitConfiguration::resetConfiguration()
 {
     PCSCReaderUnitConfiguration::resetConfiguration();
-    useSecureMode_ = false;
+    useSecureMode_ = true;
     masterKey_.reset(new AES128Key());
 }
 

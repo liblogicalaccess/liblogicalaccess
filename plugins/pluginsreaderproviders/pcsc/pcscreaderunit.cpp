@@ -1681,4 +1681,9 @@ namespace logicalaccess
             isTypeB = false;
         }
     }
+
+    std::shared_ptr<PCSCReaderUnit> PCSCReaderUnit::getProxyReaderUnit()
+    {
+        return d_proxyReaderUnit;
+    }
 }
