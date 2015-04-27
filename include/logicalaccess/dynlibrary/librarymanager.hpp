@@ -18,6 +18,8 @@
 
 namespace logicalaccess
 {
+    class AccessControlCardService;
+
     class LIBLOGICALACCESS_API_DLL LibraryManager
     {
     public:
@@ -56,6 +58,9 @@ namespace logicalaccess
         std::shared_ptr<Commands> getCommands(const std::string& extendedtype);
         static std::shared_ptr<DataTransport> getDataTransport(const std::string& transporttype);
         std::shared_ptr<KeyDiversification> getKeyDiversification(const std::string& keydivtype);
+
+        std::shared_ptr<AccessControlCardService> getAccessControlCardService(
+                std::shared_ptr<Chip> chip);
 
         std::vector<std::string> getAvailableCards();
 

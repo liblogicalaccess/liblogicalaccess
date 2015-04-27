@@ -10,6 +10,7 @@
 #include "desfirestoragecardservice.hpp"
 
 #include <cstring>
+#include <logicalaccess/dynlibrary/librarymanager.hpp>
 
 namespace logicalaccess
 {
@@ -166,7 +167,10 @@ namespace logicalaccess
         {
         case CST_ACCESS_CONTROL:
         {
-            service.reset(new AccessControlCardService(shared_from_this()));
+            service = LibraryManager::getInstance()
+                    ->getAccessControlCardService(shared_from_this());
+            if (!service)
+                service.reset(new AccessControlCardService(shared_from_this()));
         }
             break;
         case CST_STORAGE:
