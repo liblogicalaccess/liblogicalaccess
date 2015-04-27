@@ -56,20 +56,6 @@ namespace logicalaccess
          * \return True on success, false otherwise.
          */
         virtual bool writeFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite);
-
-        /**
-         * \brief Get the PACS bits of the card.
-         * \param location Location where is located the PACS bits.
-         * \param aiToUse Access information to use for authentication on the PACS bits.
-         * \param maxPACSLength The maximum PACS length in bytes.
-         * \return The PACS bits.
-         */
-        virtual std::vector<unsigned char> getPACSBits(
-                std::shared_ptr<Location> location = std::shared_ptr<Location>(),
-                std::shared_ptr<AccessInfo> aiToUse = std::shared_ptr<AccessInfo>(),
-                size_t maxPACSLength = 0) { return std::vector<unsigned char>() ; } ;
-
-    protected:
     };
 }
 
