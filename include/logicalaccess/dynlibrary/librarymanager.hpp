@@ -59,6 +59,12 @@ namespace logicalaccess
         static std::shared_ptr<DataTransport> getDataTransport(const std::string& transporttype);
         std::shared_ptr<KeyDiversification> getKeyDiversification(const std::string& keydivtype);
 
+        /**
+         * Attempt to find a library that can instantiate an AccessControl service
+         * object for the chip.
+         *
+         * Returns a new service, or nullptr on failure.
+         */
         std::shared_ptr<AccessControlCardService> getAccessControlCardService(
                 std::shared_ptr<Chip> chip);
 

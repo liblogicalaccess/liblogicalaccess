@@ -291,7 +291,6 @@ namespace logicalaccess
     std::shared_ptr<AccessControlCardService> LibraryManager::getAccessControlCardService(
             std::shared_ptr<Chip> chip)
     {
-
         std::shared_ptr<AccessControlCardService> srv;
         for (auto &&itr : libLoaded)
         {

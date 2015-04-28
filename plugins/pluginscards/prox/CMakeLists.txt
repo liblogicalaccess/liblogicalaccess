@@ -16,7 +16,7 @@ add_library(
 	${SRCS}
 	${INCLUDE}
 	${resourcerc}
-  )
+	)
 
 SET_TARGET_PROPERTIES(proxcards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 

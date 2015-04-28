@@ -9,6 +9,7 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <logicalaccess/dynlibrary/librarymanager.hpp>
 
 #include "proxaccesscontrolcardservice.hpp"
 
@@ -42,7 +43,10 @@ namespace logicalaccess
         {
         case CST_ACCESS_CONTROL:
         {
-            service.reset(new ProxAccessControlCardService(shared_from_this()));
+            service = LibraryManager::getInstance()
+                    ->getAccessControlCardService(shared_from_this());
+            if (!service)
+                service.reset(new ProxAccessControlCardService(shared_from_this()));
         }
             break;
         case CST_NFC_TAG:

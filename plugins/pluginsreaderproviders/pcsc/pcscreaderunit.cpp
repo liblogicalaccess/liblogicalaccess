@@ -62,6 +62,8 @@
 
 #ifdef UNIX
 #include <sys/time.h>
+#include <proxcommand.h>
+
 #endif
 
 namespace logicalaccess
@@ -1169,6 +1171,12 @@ namespace logicalaccess
         LOG(LogLevel::INFOS) << "Getting generic card type for ATR " << BufferHelper::getHex(sb) << " Len {" << atrlen << "}...";
 
         std::string cardType = "UNKNOWN";
+        std::string atrstr = BufferHelper::getHex(sb);
+        if (atrstr == "3B8F8001804F0CA0000003064000000000000028")
+        {
+            // On OK5427 the ATR for some Prox card is this.
+            return "Prox";
+        }
 
         //bool isTEqual0Supported = false;
         //bool isTEqual1Supported = false;
@@ -1532,6 +1540,11 @@ namespace logicalaccess
                         commands.reset(new MifarePlusSpringCardCommandsSL3());
                     }
                 }
+            }
+            else if (type == "Prox")
+            {   // A dummy command, whose only goal is to allow retrieval of the
+                // reader unit later on.
+                commands.reset(new ProxCommand());
             }
 
             if (type == "DESFire" || type == "DESFireEV1")
