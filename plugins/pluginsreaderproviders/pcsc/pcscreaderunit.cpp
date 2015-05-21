@@ -48,7 +48,6 @@
 #include "readers/omnikeyxx21readerunit.hpp"
 #include "readers/omnikeylanxx21readerunit.hpp"
 #include "readers/omnikeyxx25readerunit.hpp"
-#include "readers/omnikeyxx27readerunit.hpp"
 #include "readers/cherryreaderunit.hpp"
 #include "readers/scmreaderunit.hpp"
 #include "readers/springcardreaderunit.hpp"

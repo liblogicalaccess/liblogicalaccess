@@ -4,7 +4,6 @@
 #include "pcscreaderprovider.hpp"
 #include "readers/omnikeylanxx21readerunit.hpp"
 #include "readers/omnikeyxx25readerunit.hpp"
-#include "readers/omnikeyxx27readerunit.hpp"
 #include "readers/scmreaderunit.hpp"
 #include "readers/springcardreaderunit.hpp"
 #include "readers/cherryreaderunit.hpp"
@@ -49,10 +48,6 @@ extern "C"
             else if (readerName.find("x25") != string::npos || readerName.find("5025-CL") != string::npos)
             {
                 u = make_shared<OmnikeyXX25ReaderUnit>(readerName);
-            }
-            else if (readerName.find("x27") != string::npos || readerName.find("5127") != string::npos)
-            {
-                u = make_shared<OmnikeyXX27ReaderUnit>(readerName);
             }
         }
         else if (readerName.find("SDI010 Contactless Reader") != string::npos
