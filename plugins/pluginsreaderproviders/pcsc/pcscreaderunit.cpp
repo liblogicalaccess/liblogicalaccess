@@ -32,6 +32,7 @@
 #include "commands/mifareultralightcacsacrcommands.hpp"
 #include "commands/mifareultralightcspringcardcommands.hpp"
 #include "commands/mifareomnikeyxx27commands.hpp"
+#include "commands/proxcommand.hpp"
 #include "readercardadapters/pcscreadercardadapter.hpp"
 #include "mifareplussl1profile.hpp"
 #include "commands/mifareplusspringcardcommandssl1.hpp"
