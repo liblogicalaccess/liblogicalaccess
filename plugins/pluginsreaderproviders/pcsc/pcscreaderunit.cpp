@@ -62,8 +62,6 @@
 
 #ifdef UNIX
 #include <sys/time.h>
-#include <proxcommand.h>
-
 #endif
 
 namespace logicalaccess
