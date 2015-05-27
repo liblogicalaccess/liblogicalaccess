@@ -102,6 +102,11 @@ extern "C" {
 }
 #endif
 
+/**
+ * Convert a TomCrypt error code to const char *
+ */
+const char *error_to_string(int errcode);
+
 #endif /* TOMCRYPT_H_ */
 
 /* $Source$ */
