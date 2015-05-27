@@ -34,8 +34,10 @@ namespace logicalaccess
          */
         virtual ~A3MLGM5600ReaderCardAdapter();
 
-        static const unsigned char STX = 0x02; /**< \brief The start value. */
-        static const unsigned char ETX = 0x03; /**< \brief The stop value. */
+        enum CmdFlag {
+            STX = 0x02, /**< \brief The start value. */
+            ETX = 0x03 /**< \brief The stop value. */
+        };
 
         /**
          * \brief Adapt the command to send to the reader.

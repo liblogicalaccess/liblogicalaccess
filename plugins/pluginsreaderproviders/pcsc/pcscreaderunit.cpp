@@ -71,7 +71,7 @@ namespace logicalaccess
     {
         memset(d_atr, 0x00, sizeof(d_atr));
         d_sch = 0;
-        d_share_mode = SM_SHARED;
+        d_share_mode = SC_SHARED;
         d_ap = 0;
         d_atrLength = 0;
 

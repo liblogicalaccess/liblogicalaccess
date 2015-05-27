@@ -69,10 +69,10 @@ namespace logicalaccess
     void IdOnDemandReaderUnit::authenticateSDK(std::string authCode)
     {
         char cmd[64];
-#if !defined(__unix__)
-        sprintf_s(cmd, sizeof(cmd), "AUTH %s", authCode.c_str());
-#else
+#if defined(UNIX)
         sprintf(cmd, "AUTH %s", authCode.c_str());
+#else
+        sprintf_s(cmd, sizeof(cmd), "AUTH %s", authCode.c_str());
 #endif
         std::string strcmd = std::string(cmd);
         getDefaultIdOnDemandReaderCardAdapter()->sendCommand(std::vector<unsigned char>(strcmd.begin(), strcmd.end()));

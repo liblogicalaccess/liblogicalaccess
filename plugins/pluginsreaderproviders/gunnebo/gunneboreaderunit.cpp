@@ -213,10 +213,10 @@ namespace logicalaccess
             unsigned long long l = atoull(BufferHelper::getStdString(rawSerialData));
             char bufTmpId[128];
             memset(bufTmpId, 0x00, sizeof(bufTmpId));
-#if !defined(__unix__)
-            sprintf_s(bufTmpId, sizeof(bufTmpId), "%012llx", l);
-#else
+#if defined(UNIX)
             sprintf(bufTmpId, "%012llx", l);
+#else
+            sprintf_s(bufTmpId, sizeof(bufTmpId), "%012llx", l);
 #endif
 
             ret = formatHexString(std::string(bufTmpId));

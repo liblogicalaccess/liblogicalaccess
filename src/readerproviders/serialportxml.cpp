@@ -67,7 +67,7 @@ namespace logicalaccess
         if (pdir)
         {
 			struct dirent *pent;
-            while (pent = readdir(pdir))
+            while ((pent = readdir(pdir)) != NULL)
             {
                 if ((strstr(pent->d_name, "ttyS") != 0)
                     || (strstr(pent->d_name, "ttyUSB") != 0)
