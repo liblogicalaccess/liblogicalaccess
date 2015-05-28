@@ -115,7 +115,7 @@ namespace logicalaccess
 
     std::vector<unsigned char> ReaderUnit::getNumber(std::shared_ptr<Chip> chip, std::shared_ptr<CardsFormatComposite> composite)
     {
-        LOG(LogLevel::INFOS) << "Started for chip type {0x" << chip->getCardType() << "(" << chip->getGenericCardType() << ")}";
+        LOG(LogLevel::INFOS) << "Started for chip type {" << chip->getCardType() << "} Generic {" << chip->getGenericCardType() << "}";
         std::vector<unsigned char> ret;
 
         if (composite)

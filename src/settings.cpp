@@ -48,11 +48,11 @@ namespace logicalaccess
 
             if (IsLogEnabled && !Logs::logfile.is_open())
             {
-#ifdef __linux__
+#ifdef _MSC_VER
+                Logs::logfile.open((getDllPath() + "/" + LogFileName), std::ios::out | std::ios::app);
+#else
                 Logs::logToStderr = LogToStderr;
                 Logs::logfile.open(LogFileName, std::ios::out | std::ios::app);
-#else
-                Logs::logfile.open((getDllPath() + "/" + LogFileName), std::ios::out | std::ios::app);
 #endif
             }
         }

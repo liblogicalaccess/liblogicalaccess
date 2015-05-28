@@ -38,7 +38,8 @@ namespace logicalaccess
         {
             try
             {
-                if ((*it).second != NULL && hasEnding((*it).first, enumType[libraryType] + extension) && (fct = (*it).second->getSymbol(fctname.c_str())) != NULL)
+                if ((*it).second != NULL && hasEnding((*it).first, enumType[libraryType] + extension)
+		    && (fct = (*it).second->getSymbol(fctname.c_str())) != NULL)
                     return fct;
             }
             catch (...) {}
