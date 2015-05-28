@@ -24,7 +24,7 @@ if (MSVC)
 endif()
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    add_definitions(-Wno-deprecated-declarations)
+    add_definitions(-Wno-deprecated-declarations) #Openssl is deprecated for OS X 10.7
     if (NOT DEFINED CMAKE_MACOSX_RPATH)
      set(CMAKE_MACOSX_RPATH 0)
     endif()
