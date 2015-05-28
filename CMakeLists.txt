@@ -113,7 +113,11 @@ if(UNIX)
 
 set(LIBLOGICALACCESS_LIBRARY logicalaccess)
 
-file(GLOB source_dynlibrary ${NATIVE_SOURCE}/dynlibrary/posixdynlibrary.cpp ${NATIVE_SOURCE}/dynlibrary/librarymanager.cpp)
+file(GLOB source_dynlibrary
+${NATIVE_SOURCE}/dynlibrary/posixdynlibrary.cpp
+${NATIVE_SOURCE}/dynlibrary/librarymanager.cpp
+${NATIVE_SOURCE}/dynlibrary/dllinit.cpp
+)
 INCLUDE_DIRECTORIES("/usr/local/include")
 file(GLOB include_dynlibrary ${NATIVE_INCLUDE}/logicalaccess/dynlibrary/posixdynlibrary.hpp ${NATIVE_INCLUDE}/logicalaccess/dynlibrary/idynlibrary.hpp ${NATIVE_INCLUDE}/logicalaccess/dynlibrary/librarymanager.hpp)
 
