@@ -1,4 +1,6 @@
 #include <vector>
+#include <logicalaccess/myexception.hpp>
+#include <logicalaccess/logs.hpp>
 #include "boost/shared_ptr.hpp"
 #include "logicalaccess/crypto/des_cipher.hpp"
 #include "logicalaccess/crypto/aes_cipher.hpp"
@@ -29,6 +31,10 @@ namespace logicalaccess
 				cipherMAC.reset(new openssl::AESCipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_CBC));
 				block_size = 16;
 			}
+            else
+            {
+                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Wrong crypto mechanism: " + crypto);
+            }
 
 			if (cipherMAC)
 			{
