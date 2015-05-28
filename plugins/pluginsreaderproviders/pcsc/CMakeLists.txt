@@ -68,7 +68,7 @@ target_link_libraries(
 	iso15693cards
 	proxcards
 	${LIBLOGICALACCESS_LIBRARY}
-        ${PCSCLITE_LIBRARY}
+        ${PCSCLITE_LIBRARIES}
 )
 
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/pcsc )
