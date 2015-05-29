@@ -55,8 +55,15 @@ namespace logicalaccess
         static std::map<LogLevel, std::string> logLevelMsg;
     };
 
-	LIBLOGICALACCESS_API std::stringstream &operator<<(std::stringstream &ss, const std::vector<unsigned char> &bytebuff);
-    LIBLOGICALACCESS_API std::stringstream &operator<<(std::stringstream &ss, const std::vector<bool> &bytebuff);
+    /**
+     * An overload to pretty-print a byte vector to an ostream.
+     */
+    LIBLOGICALACCESS_API std::ostream &operator<<(std::ostream &ss, const std::vector<unsigned char> &bytebuff);
+
+    /**
+     * An overload to pretty-print a boolean vector to an ostream.
+     */
+    LIBLOGICALACCESS_API std::ostream &operator<<(std::ostream &ss, const std::vector<bool> &bytebuff);
   
 #ifdef LOGICALACCESS_LOGS
 

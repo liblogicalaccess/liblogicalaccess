@@ -58,9 +58,8 @@ namespace logicalaccess
         }
     }
 
-    // This is a debugging facility that probably should'nt be here...
-    std::stringstream &operator<<(std::stringstream &ss,
-                                  const std::vector<unsigned char> &bytebuff)
+    std::ostream &operator<<(std::ostream &ss,
+                             const std::vector<unsigned char> &bytebuff)
     {
         std::stringstream tmp;
         tmp << "[data size: " << bytebuff.size() << "] : {";
@@ -76,8 +75,8 @@ namespace logicalaccess
         return ss;
     }
 
-    std::stringstream &operator<<(std::stringstream &ss,
-                                  const std::vector<bool> &bytebuff)
+    std::ostream &operator<<(std::ostream &ss,
+                             const std::vector<bool> &bytebuff)
     {
         std::stringstream tmp;
         tmp << "[data size: " << bytebuff.size() << "] : {";
