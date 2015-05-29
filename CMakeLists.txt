@@ -44,6 +44,10 @@ include_directories(${Boost_INCLUDE_DIRS})
 find_package(OpenSSL REQUIRED)
 include_directories(${OPENSSL_INCLUDE_DIR})
 
+if (APPLE)
+    SET(CMAKE_DL_LIBS ${CMAKE_DL_LIBS} "-framework CoreFoundation")
+endif()
+
 if (UNIX)
   find_package(PCSCLite REQUIRED)
   include_directories(${PCSCLITE_INCLUDE_DIRS})

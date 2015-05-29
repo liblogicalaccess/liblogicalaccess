@@ -17,6 +17,10 @@
 
 #include <string>
 
+#ifdef __APPLE__
+#include "CoreFoundation/CoreFoundation.h"
+#endif
+
 #ifdef _MSC_VER
 extern "C" IMAGE_DOS_HEADER __ImageBase;
 #endif
@@ -133,8 +137,14 @@ namespace logicalaccess
                 if (v.first == "Folder")
                 {
                     std::string folder = v.second.get<std::string>("");
-                    if (folder == "$current")
-                        folder = getDllPath();
+                    const std::string currentName = "$current";
+                    size_t start_pos = folder.find(currentName);
+                    if(start_pos != std::string::npos)
+                    {
+                        folder.replace(start_pos, currentName.length(), getDllPath());
+                    }
+
+                    LOG(LogLevel::PLUGINS) << "Library folder: " << folder;
                     PluginFolders.push_back(folder);
                 }
             }
@@ -273,6 +283,17 @@ namespace logicalaccess
         }
 
         return path;
+#elif defined(__APPLE__)
+        CFBundleRef mainBundle = CFBundleGetMainBundle();
+        CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
+        char path[PATH_MAX];
+        if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)path, PATH_MAX))
+        {
+            return boost::filesystem::current_path().string();
+        }
+        CFRelease(resourcesURL);
+
+        return std::string(path, strlen(path));
 #else
         return boost::filesystem::current_path().string();
 #endif
