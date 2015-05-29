@@ -215,11 +215,11 @@ namespace logicalaccess
         return ((second << 8) | first);
     }
 
-    long DESFireCrypto::desfire_crc32(const void* data, size_t dataLength)
+    uint32_t DESFireCrypto::desfire_crc32(const void* data, size_t dataLength)
     {
 		boost::crc_32_type result;
 		result.process_bytes(data, dataLength);
-		long crc = result.checksum();
+		uint32_t crc = result.checksum();
 		crc ^= 0xffffffff;
 		if (crc < 0)
 		{
@@ -718,7 +718,7 @@ namespace logicalaccess
         {
             if (keyno_only != d_currentKeyNo)
             {
-                long crc;
+                uint32_t crc;
                 for (unsigned int i = 0; i < newkeydiv.size(); ++i)
                 {
                     encCryptogram.push_back(static_cast<unsigned char>(oldkeydiv[i] ^ newkeydiv[i]));
@@ -1016,8 +1016,8 @@ namespace logicalaccess
 
         std::vector<unsigned char> crcbuf = std::vector<unsigned char>(decdata.begin(), decdata.begin() + ll);
         crcbuf.push_back(0x00);	// SW_OPERATION_OK
-        long crc1 = desfire_crc32(&crcbuf[0], crcbuf.size());
-        long crc2 = static_cast<long>(decdata[ll] | (decdata[ll + 1] << 8) | (decdata[ll + 2] << 16) | (decdata[ll + 3] << 24));
+        uint32_t crc1 = desfire_crc32(&crcbuf[0], crcbuf.size());
+        uint32_t crc2 = decdata[ll] | (decdata[ll + 1] << 8) | (decdata[ll + 2] << 16) | (decdata[ll + 3] << 24);
         size_t pad = decdata.size() - ll - 4;
         std::vector<unsigned char> padding = std::vector<unsigned char>(decdata.begin() + ll + 4, decdata.begin() + ll + 4 + pad);
         std::vector<unsigned char> padding1;
@@ -1025,10 +1025,10 @@ namespace logicalaccess
         {
             padding1.push_back(0x00);
         }
-        char computationError[128];
-        memset(computationError, 0x00, 128);
-        sprintf(computationError, "Error in crc computation: (crc1: %04x, crc2: %04x) or padding", static_cast<unsigned int>(crc1), static_cast<unsigned int>(crc2));
-        EXCEPTION_ASSERT_WITH_LOG(crc1 == crc2 && padding == padding1, LibLogicalAccessException, computationError);
+        std::stringstream ss;
+        ss << "Error in crc computation: (crc1: " << std::hex << crc1;
+        ss << ", crc2: " << crc2 << ") or padding. Padding: " << padding << ". padding1: " << padding1;
+        EXCEPTION_ASSERT_WITH_LOG(crc1 == crc2 && padding == padding1, LibLogicalAccessException, ss.str());
 
         decdata.resize(ll);
         return decdata;
@@ -1045,7 +1045,7 @@ namespace logicalaccess
         if (end) {
             std::vector<unsigned char> calconbuf = param;
             calconbuf.insert(calconbuf.end(), d_buf.begin(), d_buf.end());
-            long crc = desfire_crc32(&calconbuf[0], calconbuf.size());
+            uint32_t crc = desfire_crc32(&calconbuf[0], calconbuf.size());
             decdata.push_back(static_cast<unsigned char>(crc & 0xff));
             decdata.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
             decdata.push_back(static_cast<unsigned char>((crc & 0xff0000) >> 16));
@@ -1097,7 +1097,7 @@ namespace logicalaccess
         std::vector<unsigned char> decdata = data;
         std::vector<unsigned char> calconbuf = param;
         calconbuf.insert(calconbuf.end(), data.begin(), data.end());
-        long crc = desfire_crc32(&calconbuf[0], calconbuf.size());
+        uint32_t crc = desfire_crc32(&calconbuf[0], calconbuf.size());
         decdata.push_back(static_cast<unsigned char>(crc & 0xff));
         decdata.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
         decdata.push_back(static_cast<unsigned char>((crc & 0xff0000) >> 16));

@@ -126,7 +126,7 @@ namespace logicalaccess
          * \param dataLength The data buffer length
          * \return The CRC.
          */
-        static long desfire_crc32(const void* data, size_t dataLength);
+        static uint32_t desfire_crc32(const void* data, size_t dataLength);
 
         /**
          * \brief Perform DESFire CBC decryption operation, which is used for authentication and data encryption.
