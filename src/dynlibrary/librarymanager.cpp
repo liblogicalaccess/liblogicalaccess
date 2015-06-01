@@ -274,7 +274,11 @@ namespace logicalaccess
                                 LOG(LogLevel::PLUGINS) << "Library " << dir_iter->path().filename().string() << " already loaded. Skipped.";
                             }
                         }
-                        catch (...) {}
+                        catch (const std::exception &e)
+                        {
+                            LOG(LogLevel::ERRORS) << "Something bad happened when handling " << dir_iter->path().filename().string() <<
+                            ": " << e.what();
+                        }
                     }
                     else
                     {

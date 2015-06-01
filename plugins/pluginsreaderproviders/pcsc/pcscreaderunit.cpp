@@ -1407,7 +1407,8 @@ namespace logicalaccess
         std::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
         if (chip)
         {
-            LOG(LogLevel::INFOS) << "Chip (" << chip->getCardType() << ") created, creating other associated objects...";
+            LOG(LogLevel::INFOS) << "Chip (" << chip->getCardType() <<
+            ") created, creating other associated objects... Reader PCSC Type is " << getPCSCType();
             type = chip->getCardType(); // type may not be what we expected, it may be unsupported.
 
             std::shared_ptr<ReaderCardAdapter> rca = getReaderCardAdapter(type);
