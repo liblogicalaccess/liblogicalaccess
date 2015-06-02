@@ -105,7 +105,7 @@ namespace logicalaccess
         unsigned char* paddedBuffer = new unsigned char[fieldDataLengthBytes];
         memset(paddedBuffer, d_padding, fieldDataLengthBytes);
 
-#if defined(__unix__)
+#if defined(UNIX)
 		memcpy(paddedBuffer, d_value.getData(), copyValueLength);
 #else
 		memcpy_s(paddedBuffer, fieldDataLengthBytes, d_value.getData(), copyValueLength);

@@ -71,7 +71,7 @@ namespace logicalaccess
     {
         memset(d_atr, 0x00, sizeof(d_atr));
         d_sch = 0;
-        d_share_mode = SM_SHARED;
+        d_share_mode = SC_SHARED;
         d_ap = 0;
         d_atrLength = 0;
 
@@ -659,7 +659,7 @@ namespace logicalaccess
                         {
                             if (d_insertedChip->getCardType() == "DESFire")
                             {
-                                auto insertedChip = std::dynamic_pointer_cast<DESFireChip>(d_insertedChip);
+			        std::shared_ptr<DESFireChip> insertedChip = std::dynamic_pointer_cast<DESFireChip>(d_insertedChip);
                                 EXCEPTION_ASSERT_WITH_LOG(insertedChip, LibLogicalAccessException, "Wrong card type: expected DESFire.");
 
                                 try

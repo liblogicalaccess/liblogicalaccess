@@ -6,7 +6,10 @@
 #include "logicalaccess/cards/keydiversification.hpp"
 #include <string>
 
-#ifdef UNIX
+#if defined __APPLE__
+#define CDECL_WIN32_
+#define EXTENSION_LIB ".dylib"
+#elif defined UNIX
 #define CDECL_WIN32_
 #define EXTENSION_LIB ".so"
 #else

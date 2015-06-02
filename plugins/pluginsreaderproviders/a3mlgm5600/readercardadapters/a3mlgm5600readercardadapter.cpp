@@ -45,7 +45,7 @@ namespace logicalaccess
         command.push_back(0); //TIME
         command.insert(command.end(), data.begin() + 1, data.end());	//DATA
         command.push_back(calcBCC(command));
-        command.insert(command.begin(), &STX, &STX + 1);	//STX
+        command.insert(command.begin(), STX);	//STX
         command.push_back(ETX);	//ETX
 
         d_seq++;

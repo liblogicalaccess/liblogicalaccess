@@ -23,6 +23,14 @@ if (MSVC)
     SET(OPENSSL_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/packages/include)
 endif()
 
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    add_definitions(-Wno-deprecated-declarations) #Openssl is deprecated for OS X 10.7
+    if (NOT DEFINED CMAKE_MACOSX_RPATH)
+     set(CMAKE_MACOSX_RPATH 0)
+    endif()
+endif()
+
+
 list ( APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
 
 option ( BUILD_SHARED_LIBS "build shared libraries" ON )
@@ -36,26 +44,25 @@ include_directories(${Boost_INCLUDE_DIRS})
 find_package(OpenSSL REQUIRED)
 include_directories(${OPENSSL_INCLUDE_DIR})
 
+if (APPLE)
+    SET(CMAKE_DL_LIBS ${CMAKE_DL_LIBS} "-framework CoreFoundation")
+endif()
+
 if (UNIX)
   find_package(PCSCLite REQUIRED)
   include_directories(${PCSCLITE_INCLUDE_DIRS})
 endif()
 
 include_directories(packages/include)
-if(UNIX)
-  LINK_DIRECTORIES(${LINK_DIRECTORIES} "${CMAKE_CURRENT_SOURCE_DIR}/packages/lib")
-else()
-  LINK_DIRECTORIES(${LINK_DIRECTORIES} "${CMAKE_CURRENT_SOURCE_DIR}/packages/lib/${TARGET_ARCH}")
-endif()
 
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+if(MSVC)
+    LINK_DIRECTORIES(${LINK_DIRECTORIES} "${CMAKE_CURRENT_SOURCE_DIR}/packages/lib/${TARGET_ARCH}")
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 	set(VC_FOLDER_NAME "Debug")
-else()
-	set(VC_FOLDER_NAME "Release")
-endif()
-
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-	add_definitions(-DDEBUG -D_DEBUG)
+        add_definitions(-DDEBUG -D_DEBUG)
+    else()
+            set(VC_FOLDER_NAME "Release")
+    endif()
 endif()
 
 add_definitions(-DBOOST_ASIO_NO_IOSTREAM)
@@ -172,14 +179,14 @@ install ( FILES ${include_dynlibrary} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR
 install ( FILES ${include_storage} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/storage )
 
 if (WIN32)
-	install ( FILES ${include_vc} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess )
+    install ( FILES ${include_vc} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess )
+    LINK_DIRECTORIES(${LINK_DIRECTORIES} "${CMAKE_CURRENT_SOURCE_DIR}/plugins/cryptolib/${VC_FOLDER_NAME}")
 endif()
 
 set(source ${source_root} ${source_cards} ${source_readerproviders}  ${source_service} ${source_accesscontrol} ${source_encodings} ${source_formats} ${source_customformat} ${source_nfctag} ${source_dynlibrary} ${source_vc} ${resourcerc})
 
 set(include ${include_root} ${include_cards} ${include_readerproviders} ${include_service} ${include_accesscontrol} ${include_encodings} ${include_formats} ${include_customformat} ${include_nfctag} ${include_dynlibrary} ${include_storage} ${include_vc})
 
-LINK_DIRECTORIES( ${LINK_DIRECTORIES} "${CMAKE_CURRENT_SOURCE_DIR}/plugins/cryptolib/${VC_FOLDER_NAME}")
 
 add_library(
   ${LIBLOGICALACCESS_LIBRARY}

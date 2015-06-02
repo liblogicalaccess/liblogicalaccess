@@ -52,9 +52,9 @@ namespace logicalaccess
         {
             std::shared_ptr<Wiegand26Format> wf = std::dynamic_pointer_cast<Wiegand26Format>(format);
 #if defined(__unix__)
-            sprintf(tmp, "Hid26 %d %llud", wf->getFacilityCode(), wf->getUid());
+            sprintf(tmp, "Wiegand 26 %d %llud", wf->getFacilityCode(), wf->getUid());
 #else
-            sprintf(tmp, "Hid26 %d %d", wf->getFacilityCode(), wf->getUid());
+            sprintf(tmp, "Wiegand 26 %d %llud", wf->getFacilityCode(), wf->getUid());
 #endif
             cmdstr = std::string(tmp);
             break;
@@ -63,9 +63,9 @@ namespace logicalaccess
         {
             std::shared_ptr<Wiegand34WithFacilityFormat> wf = std::dynamic_pointer_cast<Wiegand34WithFacilityFormat>(format);
 #if defined(__unix__)
-            sprintf(tmp, "Hid34 %d %llud", wf->getFacilityCode(), wf->getUid());
+            sprintf(tmp, "Wiegand 34 %d %llud", wf->getFacilityCode(), wf->getUid());
 #else
-            sprintf(tmp, "Hid34 %d %d 0", wf->getFacilityCode(), wf->getUid());
+            sprintf(tmp, "Wiegand 34 %d %llud 0", wf->getFacilityCode(), wf->getUid());
 #endif
             cmdstr = std::string(tmp);
             break;
@@ -74,9 +74,9 @@ namespace logicalaccess
         {
             std::shared_ptr<Corporate1000Format> wf = std::dynamic_pointer_cast<Corporate1000Format>(format);
 #if defined(__unix__)
-            sprintf(tmp, "Hid35 %d %llud 3", wf->getCompanyCode(), wf->getUid());
+            sprintf(tmp, "Wiegand 35 %d %llud 3", wf->getCompanyCode(), wf->getUid());
 #else
-            sprintf(tmp, "Hid35 %d %d 3", wf->getCompanyCode(), wf->getUid());
+            sprintf(tmp, "Wiegand 35 %d %llud 3", wf->getCompanyCode(), wf->getUid());
 #endif
             cmdstr = std::string(tmp);
             break;
@@ -85,9 +85,9 @@ namespace logicalaccess
         {
             std::shared_ptr<Wiegand37WithFacilityFormat> wf = std::dynamic_pointer_cast<Wiegand37WithFacilityFormat>(format);
 #if defined(__unix__)
-            sprintf(tmp, "Hid37 %d %lld 2", wf->getFacilityCode(), wf->getUid());
+            sprintf(tmp, "Wiegand 37 %d %llud 2", wf->getFacilityCode(), wf->getUid());
 #else
-            sprintf(tmp, "Hid37 %d %d 2", wf->getFacilityCode(), wf->getUid());
+            sprintf(tmp, "Wiegand 37 %d %llud 2", wf->getFacilityCode(), wf->getUid());
 #endif
             cmdstr = std::string(tmp);
             break;
@@ -96,9 +96,9 @@ namespace logicalaccess
         {
             std::shared_ptr<Wiegand37Format> wf = std::dynamic_pointer_cast<Wiegand37Format>(format);
 #if defined(__unix__)
-            sprintf(tmp, "Hid37 0 %llud 1", wf->getUid());
+            sprintf(tmp, "Wiegand 37 0 %lld 1", wf->getUid());
 #else
-            sprintf(tmp, "Hid37 0 %d 1", wf->getUid());
+            sprintf(tmp, "Wiegand 37 0 %lld 1", wf->getUid());
 #endif
             cmdstr = std::string(tmp);
             break;
@@ -112,36 +112,36 @@ namespace logicalaccess
             if (format->getName() == "Wiegand 32")
             {
 #if defined(__unix__)
-                sprintf(tmp, "Hid32 %llud %llud", fieldFacility->getValue(), fieldUid->getValue());
+                sprintf(tmp, "Wiegand 32 %lld %llud", fieldFacility->getValue(), fieldUid->getValue());
 #else
-                sprintf(tmp, "Hid32 %d %d", fieldFacility->getValue(), fieldUid->getValue());
+                sprintf(tmp, "Wiegand 32 %lld %llud", fieldFacility->getValue(), fieldUid->getValue());
 #endif
                 cmdstr = std::string(tmp);
             }
             else if (format->getName() == "Wiegand 37 With 13-bit Facility")
             {
 #if defined(__unix__)
-                sprintf(tmp, "Hid37 %llud %llud 3", fieldFacility->getValue(), fieldUid->getValue());
+                sprintf(tmp, "Wiegand 37 %lld %llud 3", fieldFacility->getValue(), fieldUid->getValue());
 #else
-                sprintf(tmp, "Hid37 %d %d 3", fieldFacility->getValue(), fieldUid->getValue());
+                sprintf(tmp, "Wiegand 37 %lld %llud 3", fieldFacility->getValue(), fieldUid->getValue());
 #endif
                 cmdstr = std::string(tmp);
             }
             else if (format->getName() == "Wiegand 40")
             {
 #if defined(__unix__)
-                sprintf(tmp, "Hid40 %llud %llud", fieldFacility->getValue(), fieldUid->getValue());
+                sprintf(tmp, "Wiegand 40 %lld %llud", fieldFacility->getValue(), fieldUid->getValue());
 #else
-                sprintf(tmp, "Hid40 %d %d", fieldFacility->getValue(), fieldUid->getValue());
+                sprintf(tmp, "Wiegand 40 %lld %llud", fieldFacility->getValue(), fieldUid->getValue());
 #endif
                 cmdstr = std::string(tmp);
             }
             else if (format->getName() == "Wiegand 42 (HID10313C compatible)")
             {
 #if defined(__unix__)
-                sprintf(tmp, "Hid42 %llud %llud", fieldFacility->getValue(), fieldUid->getValue());
+                sprintf(tmp, "Wiegand 42 %llud %llud", fieldFacility->getValue(), fieldUid->getValue());
 #else
-                sprintf(tmp, "Hid42 %d %d", fieldFacility->getValue(), fieldUid->getValue());
+                sprintf(tmp, "Wiegand 42 %lld %llud", fieldFacility->getValue(), fieldUid->getValue());
 #endif
                 cmdstr = std::string(tmp);
             }
@@ -150,7 +150,7 @@ namespace logicalaccess
 #if defined(__unix__)
                 sprintf(tmp, "Honeywell %llud", fieldUid->getValue());
 #else
-                sprintf(tmp, "Honeywell %d", fieldUid->getValue());
+                sprintf(tmp, "Honeywell %llud", fieldUid->getValue());
 #endif
                 cmdstr = std::string(tmp);
             }

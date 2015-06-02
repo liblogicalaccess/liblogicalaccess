@@ -166,12 +166,13 @@ namespace logicalaccess
         {
             if ((tmp = d_dataRepresentation->revertBinary(extractData, extractedSizeBytes, tmp, revertedTemporaryData, revertedTemporarySizeBytes)) > 0)
             {
-#if !defined(__unix__)
-                memcpy_s(revertedData, revertedDataLengthBytes, revertedTemporaryData, revertedTemporarySizeBytes);
+
+#if defined(UNIX)
+              if (revertedDataLengthBytes < revertedTemporarySizeBytes)
+                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The size of the dest buffer is too small for memcpy");
+              memcpy(revertedData, revertedTemporaryData, revertedTemporarySizeBytes);
 #else
-                if (revertedDataLengthBytes < revertedTemporarySizeBytes)
-                    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The size of the dest buffer is too small for memcpy");
-                memcpy(revertedData, revertedTemporaryData, revertedTemporarySizeBytes);
+              memcpy_s(revertedData, revertedDataLengthBytes, revertedTemporaryData, revertedTemporarySizeBytes);
 #endif
             }
         }

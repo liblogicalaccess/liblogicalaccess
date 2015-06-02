@@ -23,7 +23,7 @@ namespace logicalaccess
     void PCSCReaderUnitConfiguration::resetConfiguration()
     {
         d_protocol = SCARD_PROTOCOL_T0 | SCARD_PROTOCOL_T1;
-        d_share_mode = SM_SHARED;
+        d_share_mode = SC_SHARED;
     }
 
     unsigned int PCSCReaderUnitConfiguration::getTransmissionProtocol() const

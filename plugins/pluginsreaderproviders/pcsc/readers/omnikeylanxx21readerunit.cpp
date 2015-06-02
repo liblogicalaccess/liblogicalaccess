@@ -13,6 +13,14 @@
 
 #if defined(__unix__)
 #include <PCSC/reader.h>
+#elif defined(__APPLE__)
+
+#ifndef SCARD_CTL_CODE
+#define SCARD_CTL_CODE(code) (0x42000000 + (code))
+#endif
+
+#include <PCSC/winscard.h>
+#include <PCSC/wintypes.h>
 #endif
 
 #define CM_IOCTL_READER_CONNECT				SCARD_CTL_CODE (3410)

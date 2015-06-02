@@ -72,10 +72,10 @@ namespace logicalaccess
 		size_t copyValueLength = (d_value.size() > fieldDataLengthBytes) ? fieldDataLengthBytes : d_value.size();
         unsigned char* paddedBuffer = new unsigned char[fieldDataLengthBytes];
         memset(paddedBuffer, d_padding, fieldDataLengthBytes);
-#ifndef __unix__
-		memcpy_s(paddedBuffer, fieldDataLengthBytes, &d_value[0], copyValueLength);
+#if defined(UNIX)
+        memcpy(paddedBuffer, &d_value[0], copyValueLength);
 #else
-		memcpy(paddedBuffer, &d_value[0], copyValueLength);
+        memcpy_s(paddedBuffer, fieldDataLengthBytes, &d_value[0], copyValueLength);
 #endif
 
         convertBinaryData(paddedBuffer, fieldDataLengthBytes, pos, d_length, data, dataLengthBytes);

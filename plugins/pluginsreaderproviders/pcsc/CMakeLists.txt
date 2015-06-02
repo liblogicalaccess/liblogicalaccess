@@ -16,11 +16,7 @@ set(INCLUDE_FOLDER 	${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifareplus
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2
-					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/prox
-					/usr/include/PCSC)
-if (UNIX)
-  set(INCLUDE_FOLDER ${INCLUDE_FOLDER} "/usr/local/include/PCSC/")
-endif()
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/prox)
 
 INCLUDE_DIRECTORIES(${INCLUDE_FOLDER})
 
@@ -50,14 +46,6 @@ SOURCE_GROUP("Source Files\\readers" FILES ${source_readers})
 set(INCLUDE_LIB ${include} ${include_core} ${include_readercardadapters} ${include_readers} ${include_commands})
 set(SOURCE_LIB ${SRCS} ${source_readercardadapters} ${source_readers} ${source_commands})
 
-					
-set (LINK_OPT)
-if (MSVC)
-  set(LINK_OPT winscard )
-else (UNIX)
-	set(LINK_OPT pcsclite )
-endif()
-
 add_library(
 	pcscreaders
 	SHARED
@@ -80,7 +68,7 @@ target_link_libraries(
 	iso15693cards
 	proxcards
 	${LIBLOGICALACCESS_LIBRARY}
-	${LINK_OPT}
+        ${PCSCLITE_LIBRARIES}
 )
 
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/pcsc )
