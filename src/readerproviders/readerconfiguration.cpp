@@ -20,7 +20,15 @@ namespace logicalaccess
     {
         Settings* config = Settings::getInstance();
 
-        d_readerProvider = LibraryManager::getInstance()->getReaderProvider(config->DefaultReader);
+		try
+		{
+			d_readerProvider = LibraryManager::getInstance()->getReaderProvider(config->DefaultReader);
+		}
+		catch (std::exception& ex)
+		{
+			LOG(LogLevel::ERRORS) << "Cannot create reader provider instance `" << config->DefaultReader << "`: " << ex.what();
+			d_readerProvider.reset();
+		}
     }
 
     ReaderConfiguration::~ReaderConfiguration()
