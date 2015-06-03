@@ -221,10 +221,7 @@ namespace logicalaccess
 		result.process_bytes(data, dataLength);
 		uint32_t crc = result.checksum();
 		crc ^= 0xffffffff;
-		if (crc < 0)
-		{
-			crc = (-1 * (crc ^ 0xffffffff)) - 1;
-		}
+		crc = (-1 * (crc ^ 0xffffffff)) - 1;
 		return crc;
     }
 
