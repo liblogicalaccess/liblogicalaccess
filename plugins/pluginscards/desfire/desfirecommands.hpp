@@ -233,13 +233,14 @@ namespace logicalaccess
 
         /**
          * \brief Get the communication mode for a file.
-         * \param aiToUse DESFire access information to use
          * \param fileno The file number
          * \param isReadMode Is read or write mode
          * \param needLoadKey Set if it's necessary to be authenticate for the access.
          * \return The communication mode.
          */
-        virtual EncryptionMode getEncryptionMode(std::shared_ptr<AccessInfo> aiToUse, unsigned char fileno, bool isReadMode, bool* needLoadKey);
+        virtual EncryptionMode getEncryptionMode(unsigned char fileno, bool isReadMode, bool* needLoadKey = NULL);
+
+		virtual EncryptionMode getEncryptionMode(const DESFireCommands::FileSetting& fileSetting, bool isReadMode, bool* needLoadKey = NULL);
 
         /**
          * \brief Get the length of a file.

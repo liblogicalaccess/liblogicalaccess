@@ -101,7 +101,8 @@ namespace logicalaccess
                             DESFireCommands::FileSetting settings;
                             getDESFireCommands()->getFileSettings(*file, settings);
 
-                            location->securityLevel = (EncryptionMode)settings.comSett;
+							// We assume the action when using location node enumeration will be for read access
+							location->securityLevel = getDESFireCommands()->getEncryptionMode(settings, true);
                             switch (settings.fileType)
                             {
                             case 0:

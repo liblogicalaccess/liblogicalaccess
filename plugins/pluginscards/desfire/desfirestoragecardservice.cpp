@@ -253,7 +253,7 @@ namespace logicalaccess
 
         if (encMode == CM_UNKNOWN)
         {
-            encMode = getDESFireChip()->getDESFireCommands()->getEncryptionMode(aiToUse, static_cast<unsigned char>(dfLocation->file), false, &needLoadKey);
+            encMode = getDESFireChip()->getDESFireCommands()->getEncryptionMode(static_cast<unsigned char>(dfLocation->file), false, &needLoadKey);
         }
 
         if (needLoadKey)
@@ -379,9 +379,9 @@ namespace logicalaccess
 
         bool needLoadKey = true;
         EncryptionMode encMode = dfLocation->securityLevel;
-        if (encMode == CM_UNKNOWN)
+		if (encMode == CM_UNKNOWN || encMode == CM_PLAIN)
         {
-            encMode = getDESFireChip()->getDESFireCommands()->getEncryptionMode(aiToUse, static_cast<unsigned char>(dfLocation->file), true, &needLoadKey);
+            encMode = getDESFireChip()->getDESFireCommands()->getEncryptionMode(static_cast<unsigned char>(dfLocation->file), true, &needLoadKey);
         }
 
         if (needLoadKey)

@@ -29,59 +29,52 @@ namespace logicalaccess
         createStdDataFile(location->file, location->securityLevel, accessRights, fileSize);
     }
 
-    EncryptionMode DESFireCommands::getEncryptionMode(std::shared_ptr<AccessInfo> aiToUse, unsigned char fileno, bool isReadMode, bool* needLoadKey = NULL)
+    EncryptionMode DESFireCommands::getEncryptionMode(unsigned char fileno, bool isReadMode, bool* needLoadKey)
     {
-        EncryptionMode encMode = CM_ENCRYPT;
         DESFireCommands::FileSetting fileSetting;
         memset(&fileSetting, 0x00, sizeof(fileSetting));
 
         getFileSettings(fileno, fileSetting);
 
-        unsigned char accessRight = (isReadMode) ? (fileSetting.accessRights[0] >> 4) : (fileSetting.accessRights[0] & 0xF);
-        if (accessRight == 0xE)
-        {
-            accessRight = (fileSetting.accessRights[1] >> 4);
-            if (accessRight == 0xE)
-            {
-                encMode = CM_PLAIN;
-                if (needLoadKey != NULL)
-                {
-                    *needLoadKey = false;
-                }
-            }
-            else
-            {
-                if (aiToUse != NULL)
-                {
-                    encMode = CM_MAC;
-                }
-                else
-                {
-                    encMode = CM_PLAIN;
-                }
-            }
-        }
-        else
-        {
-            switch ((fileSetting.comSett & 0x3))
-            {
-            case 0:
-            case 2:
-                encMode = CM_PLAIN;
-                break;
-
-            case 1:
-                encMode = CM_MAC;
-                break;
-
-            case 3:
-                encMode = CM_ENCRYPT;
-                break;
-            }
-        }
-
-        return encMode;
+		return getEncryptionMode(fileSetting, isReadMode, needLoadKey);
     }
+
+	EncryptionMode DESFireCommands::getEncryptionMode(const DESFireCommands::FileSetting& fileSetting, bool isReadMode, bool* needLoadKey)
+	{
+		EncryptionMode encMode = CM_ENCRYPT;
+		unsigned char accessRight = (isReadMode) ? (fileSetting.accessRights[1] >> 4) : (fileSetting.accessRights[1] & 0xF);
+		unsigned char rwAccessRight = (fileSetting.accessRights[0] >> 4);
+		if (accessRight == 0xE || rwAccessRight == 0xE)
+		{
+			// If accessRight or rwAccessRight is not set to Free then the communication could be MACed instead of PLAIN
+			// Ignored here.
+			encMode = CM_PLAIN;
+			if (needLoadKey != NULL)
+			{
+				*needLoadKey = false;
+			}
+		}
+		else
+		{
+			switch ((fileSetting.comSett & 0x3))
+			{
+			case 0:
+			case 2:
+				encMode = CM_PLAIN;
+				break;
+
+			case 1:
+				encMode = CM_MAC;
+				break;
+
+			case 3:
+				encMode = CM_ENCRYPT;
+				break;
+			}
+		}
+
+		return encMode;
+	}
 
     unsigned int DESFireCommands::getFileLength(unsigned char fileno)
     {
