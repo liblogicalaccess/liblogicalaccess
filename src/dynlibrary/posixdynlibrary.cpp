@@ -9,8 +9,19 @@ namespace logicalaccess
 
   PosixDynLibrary::PosixDynLibrary(const std::string& dlName) : _name(dlName)
   {
+      ::dlerror(); // clear potential old error
     if ((_handle = ::dlopen(dlName.c_str(), RTLD_NOW)) == NULL)
-      THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, ::dlerror());
+    {
+        char *error = ::dlerror();
+        if (error)
+        {
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Failed to dlopen() " + dlName +
+                                                                + ": " + std::string(error));
+        }
+        else
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Failed to dlopen() " + dlName +
+                                                                " for unkown reason");
+    }
   }
 
   void* PosixDynLibrary::getSymbol(const char* symName)
