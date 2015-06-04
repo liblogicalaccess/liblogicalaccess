@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 2.8.12)
 
 set(TARGET_NAME test_mifare_ultralightc)
 set(SOURCE_FILES main.cpp)

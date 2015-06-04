@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 2.8.12)
 project(test_desfire_ev1)
 
 set(TARGET_NAME test_desfire_ev1)

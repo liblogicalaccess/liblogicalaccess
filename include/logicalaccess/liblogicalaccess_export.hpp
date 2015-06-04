@@ -1,0 +1,17 @@
+//
+// Created by xaqq on 6/4/15.
+//
+
+#ifndef LIBLOGICALACCESS_LIBLOGICALACCESS_EXPORT_HPP
+#define LIBLOGICALACCESS_LIBLOGICALACCESS_EXPORT_HPP
+
+
+#ifndef LIBLOGICALACCESS_API
+#ifdef _MSC_VER
+#include "msliblogicalaccess.h"
+#else
+#define LIBLOGICALACCESS_API
+#endif
+#endif
+
+#endif //LIBLOGICALACCESS_LIBLOGICALACCESS_EXPORT_HPP

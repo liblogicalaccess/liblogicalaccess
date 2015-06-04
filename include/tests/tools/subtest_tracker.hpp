@@ -7,7 +7,7 @@
 
 #include <list>
 #include <string>
-#include "logicalaccess/msliblogicalaccess.h"
+#include "logicalaccess/liblogicalaccess_export.hpp"
 
 /**
  * Track the passed subtests to print an overview when the test program

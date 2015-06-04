@@ -2,7 +2,7 @@
 
 #include <cstdint>
 #include <ctime>
-#include "logicalaccess/msliblogicalaccess.h"
+#include "logicalaccess/liblogicalaccess_export.hpp"
 
 class LIBLOGICALACCESS_API MyClock
 {
