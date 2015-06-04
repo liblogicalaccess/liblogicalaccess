@@ -21,7 +21,14 @@ namespace logicalaccess
         }
     }
 
-    LIBLOGICALACCESS_API LibraryManager *LibraryManager::_singleton = NULL;
+    LibraryManager *LibraryManager::_singleton = NULL;
+
+	LibraryManager *LibraryManager::getInstance()
+	{
+		if (NULL == _singleton)
+			_singleton = new LibraryManager();
+		return _singleton;
+	}
 
     void* LibraryManager::getFctFromName(const std::string &fctname, LibraryType libraryType)
     {
@@ -274,7 +281,11 @@ namespace logicalaccess
                                 LOG(LogLevel::PLUGINS) << "Library " << dir_iter->path().filename().string() << " already loaded. Skipped.";
                             }
                         }
-                        catch (...) {}
+                        catch (const std::exception &e)
+                        {
+                            LOG(LogLevel::ERRORS) << "Something bad happened when handling " << dir_iter->path().filename().string() <<
+                            ": " << e.what();
+                        }
                     }
                     else
                     {
