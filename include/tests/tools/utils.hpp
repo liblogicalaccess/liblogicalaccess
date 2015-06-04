@@ -4,8 +4,9 @@
 #include <vector>
 #include <cstdint>
 #include <memory>
+#include "logicalaccess/msliblogicalaccess.h"
 
-std::ostream &operator<<(std::ostream &o, std::vector<uint8_t> &v);
+LIBLOGICALACCESS_API std::ostream &operator<<(std::ostream &o, std::vector<uint8_t> &v);
 
 
 namespace logicalaccess
@@ -27,12 +28,12 @@ using PCSCReaderUnitPtr = std::shared_ptr<logicalaccess::PCSCReaderUnit>;
  * This function handles the calls necessary to create a reader unit
  * and get a chip from it. This code is re-usable for PCSC tests.
  */
-std::tuple<ReaderProviderPtr, ReaderUnitPtr, ChipPtr> pcsc_test_init();
+LIBLOGICALACCESS_API std::tuple<ReaderProviderPtr, ReaderUnitPtr, ChipPtr> pcsc_test_init();
 
 /**
  * Take care of disconnecting the reader and the card.
  */
-void pcsc_test_shutdown(ReaderUnitPtr);
+LIBLOGICALACCESS_API void pcsc_test_shutdown(ReaderUnitPtr);
 
 /**
  * Honor the environment variable LLA_TEST_WAIT and wait for a given duration before
@@ -41,14 +42,14 @@ void pcsc_test_shutdown(ReaderUnitPtr);
  * This helps when running the tests with CTest, as it gives the user some time to remove
  * the card from the previous test.
  */
-void prologue();
+LIBLOGICALACCESS_API void prologue();
 
 /**
  * Use compile time ifdef to return the operating system name.
  */
-std::string get_os_name();
+LIBLOGICALACCESS_API std::string get_os_name();
 
 /**
  * Returns a "short name" (OK5321, OK5327) for PCSC reader.
  */
-std::string pcsc_reader_unit_name(ReaderUnitPtr ru);
+LIBLOGICALACCESS_API std::string pcsc_reader_unit_name(ReaderUnitPtr ru);

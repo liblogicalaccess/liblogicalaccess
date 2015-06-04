@@ -2,8 +2,9 @@
 
 #include <cstdint>
 #include <ctime>
+#include "logicalaccess/msliblogicalaccess.h"
 
-class MyClock
+class LIBLOGICALACCESS_API MyClock
 {
 private:
     std::size_t clock_start_;
@@ -20,4 +21,4 @@ public:
     }
 };
 
-extern MyClock __global_clock;
+LIBLOGICALACCESS_API MyClock &get_global_clock();

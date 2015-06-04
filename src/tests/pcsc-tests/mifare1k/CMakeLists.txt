@@ -8,7 +8,7 @@ target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/plugins)
 
 target_link_libraries(${TARGET_NAME}
  lla-tests
- logicalaccess
+ ${LIBLOGICALACCESS_LIBRARY}
  pcscreaders
  mifarecards
  logicalaccess-cryptolib

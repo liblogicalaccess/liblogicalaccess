@@ -6,15 +6,15 @@
 #include "subtest_tracker.hpp"
 
 #define PRINT_TIME(msg)                                                                                  \
-            std::cout << ((std::clock() - __global_clock()) / static_cast<double>(CLOCKS_PER_SEC)) <<    \
+            std::cout << ((std::clock() - get_global_clock()()) / static_cast<double>(CLOCKS_PER_SEC)) <<    \
             '\t' << msg << std::endl
 
-#define ERROR(expr, msg) std::cerr << "Assertion failed: " << (expr) << ". " << (msg) << std::endl
+#define PRINT_ERROR_IMPL(expr, msg) std::cerr << "Assertion failed: " << (expr) << ". " << (msg) << std::endl
 
 #define LLA_ASSERT(cond, msg)                   \
   do {                                          \
   if (!(cond)) {                                \
-  ERROR((#cond), (msg));                        \
+  PRINT_ERROR_IMPL((#cond), (msg));             \
   raise(SIGABRT);                               \
   }                                             \
   }                                             \

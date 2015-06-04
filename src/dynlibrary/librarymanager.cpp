@@ -21,7 +21,14 @@ namespace logicalaccess
         }
     }
 
-    LIBLOGICALACCESS_API LibraryManager *LibraryManager::_singleton = NULL;
+    LibraryManager *LibraryManager::_singleton = NULL;
+
+	LibraryManager *LibraryManager::getInstance()
+	{
+		if (NULL == _singleton)
+			_singleton = new LibraryManager();
+		return _singleton;
+	}
 
     void* LibraryManager::getFctFromName(const std::string &fctname, LibraryType libraryType)
     {

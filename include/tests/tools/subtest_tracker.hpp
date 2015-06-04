@@ -7,6 +7,7 @@
 
 #include <list>
 #include <string>
+#include "logicalaccess/msliblogicalaccess.h"
 
 /**
  * Track the passed subtests to print an overview when the test program
@@ -14,7 +15,7 @@
  *
  * This is implemented as a singleton.
  */
-class SubTestTracker
+class LIBLOGICALACCESS_API SubTestTracker
 {
     std::list<std::string> tests_;
 

@@ -35,12 +35,7 @@ namespace logicalaccess
         static bool hasEnding(std::string const &fullString, std::string ending);
 
     public:
-        static LibraryManager *getInstance()
-        {
-            if (NULL == _singleton)
-                _singleton = new LibraryManager();
-            return _singleton;
-        }
+		static LibraryManager *getInstance();
 
         void* getFctFromName(const std::string &fctname, LibraryType libraryType);
         static  LibraryManager *_singleton;

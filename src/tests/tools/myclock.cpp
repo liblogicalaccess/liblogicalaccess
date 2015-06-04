@@ -4,4 +4,9 @@
 
 #include "tests/tools/myclock.hpp"
 
-MyClock __global_clock;
+
+MyClock &get_global_clock()
+{
+	static MyClock c;
+	return c;
+}

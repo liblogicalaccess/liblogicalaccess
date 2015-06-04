@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
+project(test_desfire_ev1)
 
 set(TARGET_NAME test_desfire_ev1)
 set(SOURCE_FILES main.cpp)
@@ -14,7 +15,7 @@ ${CMAKE_SOURCE_DIR}/plugins
 
 target_link_libraries(${TARGET_NAME}
  lla-tests
- logicalaccess
+ ${LIBLOGICALACCESS_LIBRARY}
  pcscreaders
  desfirecards
  iso7816readers
