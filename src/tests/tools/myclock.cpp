@@ -2,7 +2,7 @@
 // Created by xaqq on 5/29/15.
 //
 
-#include "tests/tools/myclock.hpp"
+#include "logicalaccess/tests/tools/myclock.hpp"
 
 
 MyClock &get_global_clock()

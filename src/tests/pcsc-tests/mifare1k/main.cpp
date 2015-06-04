@@ -11,8 +11,8 @@
 #include "pluginscards/mifare/mifarecommands.hpp"
 #include "pluginscards/mifare/mifareprofile.hpp"
 
-#include "tests/tools/macros.hpp"
-#include "tests/tools/utils.hpp"
+#include "logicalaccess/tests/tools/macros.hpp"
+#include "logicalaccess/tests/tools/utils.hpp"
 
 
 void introduction()

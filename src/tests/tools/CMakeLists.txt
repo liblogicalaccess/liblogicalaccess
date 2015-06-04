@@ -9,3 +9,5 @@ target_include_directories(${TARGET_NAME} PRIVATE
 ${CMAKE_SOURCE_DIR}/plugins
 ${CMAKE_SOURCE_DIR}/include/
 )
+
+install ( TARGETS lla-tests RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )

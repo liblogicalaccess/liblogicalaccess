@@ -4,9 +4,9 @@
 
 #include <iostream>
 #include <algorithm>
-#include "tests/tools/subtest_tracker.hpp"
-#include "tests/tools/macros.hpp"
-#include "tests/tools/utils.hpp"
+#include "logicalaccess/tests/tools/subtest_tracker.hpp"
+#include "logicalaccess/tests/tools/macros.hpp"
+#include "logicalaccess/tests/tools/utils.hpp"
 
 void SubTestTracker::add_passed(const std::string &subtest_name)
 {

@@ -2,7 +2,7 @@
 // Created by xaqq on 5/29/15.
 //
 
-#include "tests/tools/utils.hpp"
+#include "logicalaccess/tests/tools/utils.hpp"
 #include <iostream>
 #include <sstream>
 
@@ -11,7 +11,7 @@
 #include "logicalaccess/readerproviders/readerconfiguration.hpp"
 
 #include "pluginsreaderproviders/pcsc/pcscreaderunit.hpp"
-#include "tests/tools/macros.hpp"
+#include "logicalaccess/tests/tools/macros.hpp"
 
 std::ostream &operator<<(std::ostream &o, std::vector<uint8_t> &v)
 {
