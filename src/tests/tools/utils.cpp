@@ -13,20 +13,6 @@
 #include "pluginsreaderproviders/pcsc/pcscreaderunit.hpp"
 #include "logicalaccess/tests/tools/macros.hpp"
 
-std::ostream &operator<<(std::ostream &o, std::vector<uint8_t> &v)
-{
-    std::stringstream tmp;
-    tmp << std::hex;
-    for (auto itr = v.begin(); itr != v.end();)
-    {
-        tmp << (int) *itr;
-        if (++itr != v.end())
-            tmp << ", ";
-    }
-    o << tmp.str();
-    return o;
-}
-
 std::tuple<ReaderProviderPtr, ReaderUnitPtr, ChipPtr> pcsc_test_init()
 {
     // Reader configuration object to store reader provider and reader unit selection.

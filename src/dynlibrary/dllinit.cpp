@@ -1,5 +1,5 @@
+#include <logicalaccess/myexception.hpp>
 #include "logicalaccess/crypto/tomcrypt.h"
-
 #include "logicalaccess/settings.hpp"
 #include "logicalaccess/logs.hpp"
 
@@ -13,8 +13,14 @@ struct dll_init_s
 {
     dll_init_s()
     {
-        register_cipher(&des_desc);
-        register_cipher(&des3_desc);
+        int ret;
+        ret = register_cipher(&des_desc);
+        EXCEPTION_ASSERT_WITH_LOG(ret >= 0, logicalaccess::LibLogicalAccessException,
+                                  "Failed to register DES cipher with TomCrypt");
+
+        ret = register_cipher(&des3_desc);
+        EXCEPTION_ASSERT_WITH_LOG(ret >= 0, logicalaccess::LibLogicalAccessException,
+                                  "Failed to register 3DES cipher with TomCrypt");
 
         logicalaccess::Settings::getInstance()->Initialize();
         LOG(logicalaccess::LogLevel::INFOS) << "Process attached !";

@@ -6,9 +6,6 @@
 #include <memory>
 #include "logicalaccess/liblogicalaccess_export.hpp"
 
-LIBLOGICALACCESS_API std::ostream &operator<<(std::ostream &o, std::vector<uint8_t> &v);
-
-
 namespace logicalaccess
 {
     class ReaderUnit;
