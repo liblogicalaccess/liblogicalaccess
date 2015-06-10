@@ -53,7 +53,7 @@ namespace logicalaccess
                 return value_;
             }
 
-            friend std::ostream &operator<<(std::ostream &os, const SecureModeStatus &s);
+			LIBLOGICALACCESS_API friend std::ostream &operator<<(std::ostream &os, const SecureModeStatus &s);
         private:
             int value_;
 

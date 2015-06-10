@@ -138,7 +138,7 @@ namespace logicalaccess
         setSecureConnectionStatus(SecureModeStatus(v));
     }
 
-    std::ostream &operator<<(std::ostream &os, const OmnikeyXX21ReaderUnit::SecureModeStatus &s)
+	LIBLOGICALACCESS_API std::ostream &operator<<(std::ostream &os, const OmnikeyXX21ReaderUnit::SecureModeStatus &s)
     {
         using sms = OmnikeyXX21ReaderUnit::SecureModeStatus;
         switch (s.value_)
