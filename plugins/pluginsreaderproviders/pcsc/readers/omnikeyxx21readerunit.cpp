@@ -29,6 +29,8 @@
 
 namespace logicalaccess
 {
+    std::map<std::string, OmnikeyXX21ReaderUnit::SecureModeStatus> OmnikeyXX21ReaderUnit::secure_connection_status_;
+
     OmnikeyXX21ReaderUnit::OmnikeyXX21ReaderUnit(const std::string& name)
         : OmnikeyReaderUnit(name)
     {
@@ -49,7 +51,7 @@ namespace logicalaccess
         bool removed = OmnikeyReaderUnit::waitRemoval(maxwait);
         if (removed)
         {
-            setIsSecureConnectionMode(false);
+            setSecureConnectionStatus(SecureModeStatus::DISABLED);
         }
 
         return removed;
@@ -69,11 +71,11 @@ namespace logicalaccess
         //rca.reset(new OmnikeyHIDiClassReaderCardAdapter());
         //rca->setReaderUnit(shared_from_this());
 
-        setIsSecureConnectionMode(true);
+        //setIsSecureConnectionMode(true);
         //rca->initSecureModeSession(0xFF);
         rca->sendAPDUCommand(0x84, 0x82, (keystorage->getVolatile() ? 0x00 : 0x20), keystorage->getKeySlot(), static_cast<unsigned char>(key.size()), key);
         //rca->closeSecureModeSession();
-        setIsSecureConnectionMode(false);
+        //setIsSecureConnectionMode(false);
     }
 
     void OmnikeyXX21ReaderUnit::getT_CL_ISOType(bool& isTypeA, bool& isTypeB)
@@ -111,5 +113,46 @@ namespace logicalaccess
                 break;
             }
         }
+    }
+
+    void OmnikeyXX21ReaderUnit::setSecureConnectionStatus(
+            OmnikeyXX21ReaderUnit::SecureModeStatus st)
+    {
+        auto itr = secure_connection_status_.find(getConnectedName());
+        if (itr != secure_connection_status_.end())
+            itr->second = st;
+        else
+            secure_connection_status_.insert(std::make_pair(getConnectedName(), st));
+    }
+
+    OmnikeyXX21ReaderUnit::SecureModeStatus OmnikeyXX21ReaderUnit::getSecureConnectionStatus()
+    {
+        const auto itr = secure_connection_status_.find(getConnectedName());
+        if (itr == secure_connection_status_.end())
+            return SecureModeStatus(SecureModeStatus::DISABLED);
+        return itr->second;
+    }
+
+    void OmnikeyXX21ReaderUnit::setSecureConnectionStatus(int v)
+    {
+        setSecureConnectionStatus(SecureModeStatus(v));
+    }
+
+    std::ostream &operator<<(std::ostream &os, const OmnikeyXX21ReaderUnit::SecureModeStatus &s)
+    {
+        using sms = OmnikeyXX21ReaderUnit::SecureModeStatus;
+        switch (s.value_)
+        {
+            case sms::READ:
+                os << "READ ONLY";
+                break;
+            case sms::WRITE:
+                os << "WRITE";
+                break;
+            case sms::DISABLED:
+                os << "DISABLED";
+                break;
+        }
+        return os;
     }
 }

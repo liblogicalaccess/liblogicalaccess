@@ -15,7 +15,6 @@
 
 namespace logicalaccess
 {
-    std::map<std::string, bool> OmnikeyReaderUnit::d_isSecureConnectionMode;
 
     OmnikeyReaderUnit::OmnikeyReaderUnit(const std::string& name)
         : PCSCReaderUnit(name)
@@ -51,21 +50,6 @@ namespace logicalaccess
         }
 
         return ret;
-    }
-
-    bool OmnikeyReaderUnit::getIsSecureConnectionMode()
-    {
-        if (d_isSecureConnectionMode.find(getConnectedName()) == d_isSecureConnectionMode.end())
-        {
-            return false;
-        }
-
-        return d_isSecureConnectionMode[getConnectedName()];
-    }
-
-    void OmnikeyReaderUnit::setIsSecureConnectionMode(bool isSecure)
-    {
-        d_isSecureConnectionMode[getConnectedName()] = isSecure;
     }
 
     bool OmnikeyReaderUnit::waitRemoval(unsigned int maxwait)

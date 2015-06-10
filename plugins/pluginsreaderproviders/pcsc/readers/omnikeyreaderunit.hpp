@@ -40,18 +40,6 @@ namespace logicalaccess
         virtual std::string getReaderSerialNumber();
 
         /**
-         * \brief Get if the current connection is in secure mode.
-         * \return True if secure mode is currently use, false otherwise.
-         */
-        bool getIsSecureConnectionMode();
-
-        /**
-         * \brief Set if the current connection is in secure mode.
-         * \param isSecure The secure mode value.
-         */
-        void setIsSecureConnectionMode(bool isSecure);
-
-        /**
          * \brief Wait for a card removal.
          * \param maxwait The maximum time to wait for, in milliseconds. If maxwait is zero, then the call never times out.
          * \return True if a card was removed, false otherwise. If a card was removed, the name of the reader on which the removal was detected is accessible with getReader().
@@ -59,12 +47,6 @@ namespace logicalaccess
         virtual bool waitRemoval(unsigned int maxwait);
 
         virtual bool waitInsertion(unsigned int maxwait) override;
-
-         /**
-         * \brief Is secure connection mode ?
-         * \remarks We must store it in static memory because the connection mode is global for all connection to the reader
-         */
-        static std::map<std::string, bool> d_isSecureConnectionMode;
 
     protected:
     };

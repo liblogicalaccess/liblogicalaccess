@@ -24,6 +24,41 @@ namespace logicalaccess
     public:
 
         /**
+         * This represents the status of the secure mode.
+         * This struct is implicitly castable to bool: it will be true when secure
+         * mode is not in DISABLED state.
+         */
+        struct SecureModeStatus
+        {
+            SecureModeStatus(int st)
+            {
+                assert(st == READ || st == WRITE || st == DISABLED);
+                value_ = st;
+            }
+
+            enum
+            {
+                READ,
+                WRITE,
+                DISABLED
+            };
+
+            operator bool() const
+            {
+                return value_ != DISABLED;
+            }
+
+            operator int() const
+            {
+                return value_;
+            }
+
+            friend std::ostream &operator<<(std::ostream &os, const SecureModeStatus &s);
+        private:
+            int value_;
+
+        };
+        /**
          * \brief Constructor.
          */
         OmnikeyXX21ReaderUnit(const std::string& name);
@@ -32,6 +67,23 @@ namespace logicalaccess
          * \brief Destructor.
          */
         virtual ~OmnikeyXX21ReaderUnit();
+
+        /**
+         * Retrieve the current status of the secure mode.
+         */
+        SecureModeStatus getSecureConnectionStatus();
+
+        /**
+         * Set the current status of the secure mode.
+         */
+        void setSecureConnectionStatus(SecureModeStatus st);
+
+        /**
+         * Set the current status of the secure mode.
+         * Integer overload for less typing. Assert on invalid value.
+         */
+        void setSecureConnectionStatus(int v);
+
 
         /**
          * \brief Get the PC/SC reader unit type.
@@ -74,6 +126,11 @@ namespace logicalaccess
         virtual void getT_CL_ISOType(bool& isTypeA, bool& isTypeB);
 
     protected:
+         /**
+         * \brief Is secure connection mode ?
+         * \remarks We must store it in static memory because the connection mode is global for all connection to the reader
+         */
+        static std::map<std::string, SecureModeStatus> secure_connection_status_;
     };
 }
 
