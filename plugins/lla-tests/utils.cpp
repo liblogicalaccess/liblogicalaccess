@@ -2,7 +2,7 @@
 // Created by xaqq on 5/29/15.
 //
 
-#include "logicalaccess/tests/tools/utils.hpp"
+#include "utils.hpp"
 #include <iostream>
 #include <sstream>
 
@@ -11,7 +11,7 @@
 #include "logicalaccess/readerproviders/readerconfiguration.hpp"
 
 #include "pluginsreaderproviders/pcsc/pcscreaderunit.hpp"
-#include "logicalaccess/tests/tools/macros.hpp"
+#include "macros.hpp"
 
 std::tuple<ReaderProviderPtr, ReaderUnitPtr, ChipPtr> pcsc_test_init()
 {

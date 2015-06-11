@@ -11,8 +11,8 @@
 #include "pluginsreaderproviders/iso7816/commands/desfireev1iso7816commands.hpp"
 #include "pluginscards/desfire/desfirecommands.hpp"
 
-#include "logicalaccess/tests/tools/macros.hpp"
-#include "logicalaccess/tests/tools/utils.hpp"
+#include "lla-tests/macros.hpp"
+#include "lla-tests/utils.hpp"
 
 void introduction()
 {

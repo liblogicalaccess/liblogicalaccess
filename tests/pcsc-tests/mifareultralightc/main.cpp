@@ -6,8 +6,8 @@
 #include "pluginscards/mifareultralight/mifareultralightccommands.hpp"
 #include "pluginscards/mifareultralight/mifareultralightcprofile.hpp"
 
-#include "logicalaccess/tests/tools/macros.hpp"
-#include "logicalaccess/tests/tools/utils.hpp"
+#include "lla-tests/macros.hpp"
+#include "lla-tests/utils.hpp"
 
 void introduction()
 {

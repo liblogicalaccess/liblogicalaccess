@@ -5,8 +5,8 @@
 #include "pluginscards/iso15693/iso15693commands.hpp"
 
 
-#include "logicalaccess/tests/tools/macros.hpp"
-#include "logicalaccess/tests/tools/utils.hpp"
+#include "lla-tests/macros.hpp"
+#include "lla-tests/utils.hpp"
 #include <vector>
 
 void introduction()
