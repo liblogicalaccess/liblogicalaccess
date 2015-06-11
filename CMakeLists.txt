@@ -113,7 +113,6 @@ file(GLOB include_formats ${NATIVE_INCLUDE}/logicalaccess/services/accesscontrol
 file(GLOB include_customformat ${NATIVE_INCLUDE}/logicalaccess/services/accesscontrol/formats/customformat/*.hpp)
 file(GLOB include_nfctag ${NATIVE_INCLUDE}/logicalaccess/services/nfctag/*.hpp)
 file(GLOB include_storage ${NATIVE_INCLUDE}/logicalaccess/services/storage/*.hpp)
-file(GLOB include_tests ${NATIVE_INCLUDE}/logicalaccess/tests/tools/*.hpp)
 
 INCLUDE_DIRECTORIES(${NATIVE_INCLUDE} ${CMAKE_CURRENT_SOURCE_DIR}/plugins/cryptolib/include)
 
@@ -160,7 +159,6 @@ SOURCE_GROUP("Header Files\\services\\accesscontrol\\formats" FILES ${include_fo
 SOURCE_GROUP("Header Files\\services\\accesscontrol\\formats\\customformat" FILES ${include_customformat})
 SOURCE_GROUP("Header Files\\services\\nfctag" FILES ${include_nfctag})
 SOURCE_GROUP("Header Files\\services\\storage" FILES ${include_storage})
-SOURCE_GROUP("Header Files\\tests" FILES ${include_tests})
 
 endif()
 
@@ -179,7 +177,6 @@ install ( FILES ${include_customformat} DESTINATION ${LIBLOGICALACCESS_INCLUDE_D
 install ( FILES ${include_nfctag} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/nfctag )
 install ( FILES ${include_dynlibrary} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/dynlibrary )
 install ( FILES ${include_storage} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/storage )
-install ( FILES ${include_tests} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/tests/tools/ )
 
 if (WIN32)
     install ( FILES ${include_vc} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess )
@@ -227,7 +224,8 @@ endif()
 add_subdirectory(plugins/cryptolib)
 add_subdirectory(plugins/pluginscards)
 add_subdirectory(plugins/pluginsreaderproviders)
-add_subdirectory(src/tests)
+add_subdirectory(plugins/lla-tests)
+add_subdirectory(tests)
 
 if ( NOT DEFINED LIBLOGICALACCESS_CMAKE_CONFIG_DIR )
   set ( LIBLOGICALACCESS_CMAKE_CONFIG_DIR lib/${LIB_SUFFIX}/cmake/liblogicalaccess )
