@@ -67,9 +67,9 @@ void prologue()
 std::string get_os_name()
 {
 #ifdef  _WIN64
-  return "Win64";
+  return "Win";
 #elif _WIN32
-    return "Win32";
+    return "Win";
 #elif __APPLE__ || __MACH__
     return "Mac OSX";
 #elif __linux__

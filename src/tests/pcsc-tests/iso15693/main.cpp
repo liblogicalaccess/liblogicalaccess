@@ -68,7 +68,7 @@ int main(int, char **)
     auto sysinfo = cmd->getSystemInformation();
     // Our unittest card is supposed to have the blocksize/nbblock available.
     // However, this doesn't work with OK5427 and doesn't work with OK5321 on Linux.
-    if (pcsc_reader_unit_name(readerUnit) == "OKXX21" && get_os_name() == "Win64")
+    if (pcsc_reader_unit_name(readerUnit) == "OKXX21" && get_os_name() == "Win")
     {
         LLA_ASSERT(sysinfo.hasVICCMemorySize, "Doesn't have VICCMemorySize information");
         LLA_ASSERT(sysinfo.blockSize == 4, "Unexpected block size");
@@ -76,7 +76,7 @@ int main(int, char **)
         LLA_SUBTEST_PASSED("SystemInformation");
     }
 
-    if ((get_os_name() == "Win64" && pcsc_reader_unit_name(readerUnit) == "OKXX21") ||
+    if ((get_os_name() == "Win" && pcsc_reader_unit_name(readerUnit) == "OKXX21") ||
         pcsc_reader_unit_name(readerUnit) == "OKXX27")
     {
         write_read_test(readerUnit, cmd);
