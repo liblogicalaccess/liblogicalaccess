@@ -2,7 +2,7 @@
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/readerproviders/readerconfiguration.hpp"
 #include "logicalaccess/services/storage/storagecardservice.hpp"
-#include "logicalaccess/plugins/cards/mifare/mifarechip.hpp"
+#include "pluginscards/mifare/mifarechip.hpp"
 
 #include "lla-tests/macros.hpp"
 #include "lla-tests/utils.hpp"
@@ -17,6 +17,7 @@ void introduction()
 
     LLA_SUBTEST_REGISTER("WriteService");
     LLA_SUBTEST_REGISTER("ReadService");
+    LLA_SUBTEST_REGISTER("CorrectWriteRead");
 }
 
 int main(int, char **)
@@ -72,15 +73,19 @@ int main(int, char **)
     storage->writeData(location, aiToUse, aiToWrite, writedata, logicalaccess::CB_DEFAULT);
     using namespace logicalaccess; // required for overload of std::ostrean(vector &)
     PRINT_TIME("Wrote: " << writedata);
+    LLA_SUBTEST_PASSED("WriteService")
+
 
     const int mifare_block_size = 16;
     // We read the data on the same location. Remember, the key is now changed.
     readdata = storage
             ->readData(location, aiToWrite, mifare_block_size, logicalaccess::CB_DEFAULT);
     PRINT_TIME("Read: " << readdata);
+    LLA_SUBTEST_PASSED("ReadService")
 
     LLA_ASSERT(std::equal(writedata.begin(), writedata.end(), readdata.begin()),
                "Data read is not what we wrote.");
+    LLA_SUBTEST_PASSED("CorrectWriteRead");
 
     pcsc_test_shutdown(readerUnit);
     return 0;
