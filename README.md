@@ -1,11 +1,9 @@
 liblogicalaccess
 =============
 
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/islog/liblogicalaccess?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 [Homepage](http://liblogicalaccess.islog.com) | 
 [GitHub-Repository](https://github.com/islog/liblogicalaccess) | 
-[Download binaries](http://liblogicalaccess.islog.com/wiki/doku.php/download) |
+[Download binaries](https://github.com/islog/liblogicalaccess/releases) |
 [Issue-Tracker](https://github.com/islog/liblogicalaccess/issues)
 
 C++ RFID Library for Windows and Linux. For PC/SC, ISO compliant and proprietary hardware.
@@ -19,9 +17,9 @@ Coverity Scan: [![Coverity Scan Build Status](https://scan.coverity.com/projects
 
 How to install?
 ----------------
-See http://liblogicalaccess.islog.com/wiki/doku.php/install
+See https://github.com/islog/liblogicalaccess/wiki/Install-LibLogicalAccess
 
 
 How to build?
 ----------------
-See http://liblogicalaccess.islog.com/wiki/doku.php/build
+See https://github.com/islog/liblogicalaccess/wiki/Build-Liblogicalaccess
