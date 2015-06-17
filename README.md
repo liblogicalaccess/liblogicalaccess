@@ -1,4 +1,4 @@
-liblogicalaccess
+![liblogicalaccess_logo](http://islog.github.io/liblogicalaccess/images/lla_logo.png)
 =============
 
 [Homepage](http://liblogicalaccess.islog.com) | 
