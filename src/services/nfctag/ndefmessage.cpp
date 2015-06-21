@@ -71,16 +71,15 @@ namespace logicalaccess
         }
     }
 
-    void NdefMessage::addMimeMediaRecord(std::string mimeType, std::string payload)
+    void NdefMessage::addMimeMediaRecord(std::string mimeType, std::vector<unsigned char> payload)
     {
         std::shared_ptr<NdefRecord> ndefr(new NdefRecord());
         ndefr->setTnf(TNF_MIME_MEDIA);
 
         std::vector<unsigned char> mimeTypeVec(mimeType.begin(), mimeType.end());
-        std::vector<unsigned char> payloadVec(payload.begin(), payload.end());
 
         ndefr->setType(mimeTypeVec);
-        ndefr->setPayload(payloadVec);
+		ndefr->setPayload(payload);
 
         m_records.push_back(ndefr);
     }
