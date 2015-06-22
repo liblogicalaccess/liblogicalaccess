@@ -92,19 +92,37 @@ namespace logicalaccess
          */
         virtual void updateBinary(unsigned char blockno, const std::vector<unsigned char>& buf);
 
-		/**
-		* \brief Increment a block value.
-		* \param blockno The block number.
-		* \param value The increment value.
-		*/
+        /**
+        * \brief Increment a block value.
+        * \param blockno The block number.
+        * \param value The increment value.
+        *
+        * @note This internally call transfer ! Use increment_raw() if you wish to perform
+        * transfer() yourself.
+        */
 		virtual void increment(unsigned char blockno, uint32_t value) override;
 
-		/**
-		* \brief Decrement a block value.
-		* \param blockno The block number.
-		* \param value The decrement value.
-		*/
-		virtual void decrement(unsigned char blockno, uint32_t value) override;
+        /**
+        * \brief Decrement a block value.
+        * \param blockno The block number.
+        * \param value The decrement value.
+        *
+        * @note This internally call transfer ! Use decrement_raw() if you wish to perform
+        * transfer() yourself.
+        */
+        virtual void decrement(unsigned char blockno, uint32_t value) override;
+
+        /**
+         * Send the Increment Mifare command but doesn't not automatically perform
+         * a transfer.
+         */
+        void increment_raw(uint8_t blockno, uint32_t value);
+
+        /**
+         * Send the Decrement Mifare command but doesn't not automatically perform
+         * a transfer.
+         */
+        void decrement_raw(uint8_t blockno, uint32_t value);
 
 		/**
 		* \brief Transfer volatile memory to block value.

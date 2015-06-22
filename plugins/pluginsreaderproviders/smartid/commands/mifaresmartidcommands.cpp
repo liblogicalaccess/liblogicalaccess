@@ -133,27 +133,14 @@ namespace logicalaccess
 
 	void MifareSmartIDCommands::increment(unsigned char blockno, uint32_t value)
 	{
-		std::vector<unsigned char> command;
-		command.push_back(blockno);
-		command.push_back(static_cast<unsigned char>(value & 0xff));
-		command.push_back(static_cast<unsigned char>((value >> 8) & 0xff));
-		command.push_back(static_cast<unsigned char>((value >> 16) & 0xff));
-		command.push_back(static_cast<unsigned char>((value >> 24) & 0xff));
-
-		getMifareSmartIDReaderCardAdapter()->sendCommand(0x48, command);
+        increment_raw(blockno, value);
+        transfer(blockno);
 	}
 
 	void MifareSmartIDCommands::decrement(unsigned char blockno, uint32_t value)
 	{
-		std::vector<unsigned char> command;
-		command.push_back(blockno);
-		command.push_back(static_cast<unsigned char>(value & 0xff));
-		command.push_back(static_cast<unsigned char>((value >> 8) & 0xff));
-		command.push_back(static_cast<unsigned char>((value >> 16) & 0xff));
-		command.push_back(static_cast<unsigned char>((value >> 24) & 0xff));
-
-		getMifareSmartIDReaderCardAdapter()->sendCommand(0x49, command);
-        //// name _raw if no automatic transfer
+        decrement_raw(blockno, value);
+        transfer(blockno);
 	}
 
 	void MifareSmartIDCommands::transfer(unsigned char blockno)
@@ -171,4 +158,28 @@ namespace logicalaccess
 
 		getMifareSmartIDReaderCardAdapter()->sendCommand(0x4A, command);
 	}
+
+    void MifareSmartIDCommands::increment_raw(uint8_t blockno, uint32_t value)
+    {
+        std::vector<unsigned char> command;
+        command.push_back(blockno);
+        command.push_back(static_cast<unsigned char>(value & 0xff));
+        command.push_back(static_cast<unsigned char>((value >> 8) & 0xff));
+        command.push_back(static_cast<unsigned char>((value >> 16) & 0xff));
+        command.push_back(static_cast<unsigned char>((value >> 24) & 0xff));
+
+        getMifareSmartIDReaderCardAdapter()->sendCommand(0x48, command);
+    }
+
+    void MifareSmartIDCommands::decrement_raw(uint8_t blockno, uint32_t value)
+    {
+        std::vector<unsigned char> command;
+        command.push_back(blockno);
+        command.push_back(static_cast<unsigned char>(value & 0xff));
+        command.push_back(static_cast<unsigned char>((value >> 8) & 0xff));
+        command.push_back(static_cast<unsigned char>((value >> 16) & 0xff));
+        command.push_back(static_cast<unsigned char>((value >> 24) & 0xff));
+
+        getMifareSmartIDReaderCardAdapter()->sendCommand(0x49, command);
+    }
 }
