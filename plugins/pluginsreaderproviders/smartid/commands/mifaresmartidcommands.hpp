@@ -91,6 +91,32 @@ namespace logicalaccess
          * \return The count of bytes written.
          */
         virtual void updateBinary(unsigned char blockno, const std::vector<unsigned char>& buf);
+
+		/**
+		* \brief Increment a block value.
+		* \param blockno The block number.
+		* \param value The increment value.
+		*/
+		virtual void increment(unsigned char blockno, unsigned int value);
+
+		/**
+		* \brief Decrement a block value.
+		* \param blockno The block number.
+		* \param value The decrement value.
+		*/
+		virtual void decrement(unsigned char blockno, unsigned int value);
+
+		/**
+		* \brief Transfer volatile memory to block value.
+		* \param blockno The block number.
+		*/
+		virtual void transfer(unsigned char blockno);
+
+		/**
+		* \brief Store block value to volatile memory.
+		* \param blockno The block number.
+		*/
+		virtual void restore(unsigned char blockno);
     };
 }
 

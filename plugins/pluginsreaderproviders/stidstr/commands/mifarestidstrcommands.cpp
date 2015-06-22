@@ -226,4 +226,14 @@ namespace logicalaccess
             getSTidSTRReaderCardAdapter()->sendCommand(0x00D3, command);
         }
     }
+
+	void MifareSTidSTRCommands::increment(unsigned char /*blockno*/, unsigned int /*value*/)
+	{
+		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not implemented.");
+	}
+
+	void MifareSTidSTRCommands::decrement(unsigned char /*blockno*/, unsigned int /*value*/)
+	{
+		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not implemented.");
+	}
 }

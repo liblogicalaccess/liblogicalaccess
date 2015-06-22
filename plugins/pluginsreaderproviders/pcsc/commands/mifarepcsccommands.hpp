@@ -58,6 +58,20 @@ namespace logicalaccess
          */
         virtual void updateBinary(unsigned char blockno, const std::vector<unsigned char>& buf);
 
+		/**
+		* \brief Increment a block value.
+		* \param blockno The block number.
+		* \param value The increment value.
+		*/
+		virtual void increment(unsigned char blockno, unsigned int value);
+
+		/**
+		* \brief Decrement a block value.
+		* \param blockno The block number.
+		* \param value The decrement value.
+		*/
+		virtual void decrement(unsigned char blockno, unsigned int value);
+
     protected:
 
         /**

@@ -130,4 +130,26 @@ namespace logicalaccess
 
         getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xD6, 0x00, blockno, static_cast<unsigned char>(buf.size()), buf);
     }
+
+	void MifarePCSCCommands::increment(unsigned char blockno, unsigned int value)
+	{
+		std::vector<unsigned char> buf;
+		buf.push_back(static_cast<unsigned char>(value & 0xff));
+		buf.push_back(static_cast<unsigned char>((value >> 8) & 0xff));
+		buf.push_back(static_cast<unsigned char>((value >> 16) & 0xff));
+		buf.push_back(static_cast<unsigned char>((value >> 24) & 0xff));
+
+		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xD4, 0x00, blockno, static_cast<unsigned char>(buf.size()), buf);
+	}
+
+	void MifarePCSCCommands::decrement(unsigned char blockno, unsigned int value)
+	{
+		std::vector<unsigned char> buf;
+		buf.push_back(static_cast<unsigned char>(value & 0xff));
+		buf.push_back(static_cast<unsigned char>((value >> 8) & 0xff));
+		buf.push_back(static_cast<unsigned char>((value >> 16) & 0xff));
+		buf.push_back(static_cast<unsigned char>((value >> 24) & 0xff));
+
+		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xD8, 0x00, blockno, static_cast<unsigned char>(buf.size()), buf);
+	}
 }

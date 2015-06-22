@@ -150,6 +150,20 @@ namespace logicalaccess
          */
         virtual void updateBinary(unsigned char blockno, const std::vector<unsigned char>& buf) = 0;
 
+		/**
+		 * \brief Increment a block value.
+		 * \param blockno The block number.
+		 * \param value The increment value.
+		 */
+		virtual void increment(unsigned char blockno, unsigned int value) = 0;
+
+		/**
+		* \brief Decrement a block value.
+		* \param blockno The block number.
+		* \param value The decrement value.
+		*/
+		virtual void decrement(unsigned char blockno, unsigned int value) = 0;
+
         /**
          * \brief Load a key to the reader.
          * \param keyno The reader key slot number. Can be anything from 0x00 to 0x1F.
