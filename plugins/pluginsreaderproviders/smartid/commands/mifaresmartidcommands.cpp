@@ -131,7 +131,7 @@ namespace logicalaccess
         }
     }
 
-	void MifareSmartIDCommands::increment(unsigned char blockno, unsigned int value)
+	void MifareSmartIDCommands::increment(unsigned char blockno, uint32_t value)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(blockno);
@@ -143,7 +143,7 @@ namespace logicalaccess
 		getMifareSmartIDReaderCardAdapter()->sendCommand(0x48, command);
 	}
 
-	void MifareSmartIDCommands::decrement(unsigned char blockno, unsigned int value)
+	void MifareSmartIDCommands::decrement(unsigned char blockno, uint32_t value)
 	{
 		std::vector<unsigned char> command;
 		command.push_back(blockno);

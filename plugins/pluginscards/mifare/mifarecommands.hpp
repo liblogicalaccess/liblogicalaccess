@@ -150,20 +150,6 @@ namespace logicalaccess
          */
         virtual void updateBinary(unsigned char blockno, const std::vector<unsigned char>& buf) = 0;
 
-		/**
-		 * \brief Increment a block value.
-		 * \param blockno The block number.
-		 * \param value The increment value.
-		 */
-		virtual void increment(unsigned char blockno, unsigned int value) = 0;
-
-		/**
-		* \brief Decrement a block value.
-		* \param blockno The block number.
-		* \param value The decrement value.
-		*/
-		virtual void decrement(unsigned char blockno, unsigned int value) = 0;
-
         /**
          * \brief Load a key to the reader.
          * \param keyno The reader key slot number. Can be anything from 0x00 to 0x1F.
@@ -198,6 +184,40 @@ namespace logicalaccess
          * \param keytype The key type.
          */
         virtual void authenticate(unsigned char blockno, std::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype) = 0;
+
+        /**
+         * Increment (inplace) the value block at address `blockno`.
+         *
+         * This means that this is the equivalent of also calling transfer.
+         *
+         * @warning While the parameter is unsigned (because negative value causes errors),
+         * value superior to 2^31-1 are also rejected.
+         */
+        virtual void increment(uint8_t blockno, uint32_t value) = 0;
+
+        /**
+         * Decrement (inplace) the value block at address `blockno` by `value` unit.
+         *
+         * This means that this is the equivalent of also calling transfer.
+         *
+         * @warning While the parameter is unsigned (because negative value causes errors),
+         * value superior to 2^31-1 are also rejected.
+         */
+        virtual void decrement(uint8_t blockno, uint32_t value) = 0;
+
+        /**
+         * Write a value block, using `value` as the numerical value to be written
+         * and backup_blockno as the address of the backup block.
+         *
+         */
+        bool writeValueBlock(uint8_t blockno, uint32_t value, uint8_t backup_blockno);
+
+        /**
+         * Read the value and the address of the backup block from a value-block.
+         *
+         * If the block is not a valid value block, return false.
+         */
+        bool readValueBlock(uint8_t blockno, uint32_t &value, uint8_t &backup_block);
 
         /**
          * \brief Get number of data blocks for a sector.

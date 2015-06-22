@@ -60,7 +60,7 @@ namespace logicalaccess
         getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x86, 0x00, 0x00, static_cast<unsigned char>(command.size()), command);
     }
 
-	void MifareSCMCommands::increment(unsigned char blockno, unsigned int value)
+	void MifareSCMCommands::increment(unsigned char blockno, uint32_t value)
 	{
 		std::vector<unsigned char> buf;
 		buf.push_back(0xC0);
@@ -73,7 +73,7 @@ namespace logicalaccess
 		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xF0, 0x00, blockno, static_cast<unsigned char>(buf.size()), buf);
 	}
 
-	void MifareSCMCommands::decrement(unsigned char blockno, unsigned int value)
+	void MifareSCMCommands::decrement(unsigned char blockno, uint32_t value)
 	{
 		std::vector<unsigned char> buf;
 		buf.push_back(0xC1);

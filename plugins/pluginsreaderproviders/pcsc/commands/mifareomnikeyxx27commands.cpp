@@ -36,4 +36,5 @@ namespace logicalaccess
 
         getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x86, 0x00, 0x00, static_cast<unsigned char>(command.size()), command);
     }
+
 }

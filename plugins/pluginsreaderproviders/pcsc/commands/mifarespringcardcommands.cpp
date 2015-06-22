@@ -83,7 +83,7 @@ namespace logicalaccess
 		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xF5, 0xC2, blockno, static_cast<unsigned char>(buf.size()), buf);
 	}
 
-	void MifareSpringCardCommands::increment(unsigned char blockno, unsigned int value)
+	void MifareSpringCardCommands::increment(unsigned char blockno, uint32_t value)
 	{
 		std::vector<unsigned char> buf;
 		buf.push_back(static_cast<unsigned char>((value >> 24) & 0xff));
@@ -94,7 +94,7 @@ namespace logicalaccess
 		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xF5, 0xC1, blockno, static_cast<unsigned char>(buf.size()), buf);
 	}
 
-	void MifareSpringCardCommands::decrement(unsigned char blockno, unsigned int value)
+	void MifareSpringCardCommands::decrement(unsigned char blockno, uint32_t value)
 	{
 		std::vector<unsigned char> buf;
 		buf.push_back(static_cast<unsigned char>((value >> 24) & 0xff));

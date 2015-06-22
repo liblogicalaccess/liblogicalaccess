@@ -57,6 +57,7 @@
 #include "pcscdatatransport.hpp"
 
 #include "desfirechip.hpp"
+#include "commands/mifareomnikeyxx21commands.hpp"
 #include <boost/filesystem.hpp>
 #include <memory>
 
@@ -1433,6 +1434,10 @@ namespace logicalaccess
                 {
                     commands.reset(new MifareOmnikeyXX27Commands());
                     resultChecker.reset(new MifareOmnikeyXX27ResultChecker());
+                }
+                else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_LAN_XX21)
+                {
+                    commands.reset(new MifareOmnikeyXX21Commands());
                 }
                 else
                 {

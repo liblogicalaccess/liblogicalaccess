@@ -227,12 +227,12 @@ namespace logicalaccess
         }
     }
 
-	void MifareSTidSTRCommands::increment(unsigned char /*blockno*/, unsigned int /*value*/)
+	void MifareSTidSTRCommands::increment(unsigned char /*blockno*/, uint32_t /*value*/)
 	{
 		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not implemented.");
 	}
 
-	void MifareSTidSTRCommands::decrement(unsigned char /*blockno*/, unsigned int /*value*/)
+	void MifareSTidSTRCommands::decrement(unsigned char /*blockno*/,  uint32_t /*value*/)
 	{
 		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not implemented.");
 	}

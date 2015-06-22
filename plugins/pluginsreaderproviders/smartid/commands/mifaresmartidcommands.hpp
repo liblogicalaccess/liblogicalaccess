@@ -97,14 +97,14 @@ namespace logicalaccess
 		* \param blockno The block number.
 		* \param value The increment value.
 		*/
-		virtual void increment(unsigned char blockno, unsigned int value);
+		virtual void increment(unsigned char blockno, uint32_t value) override;
 
 		/**
 		* \brief Decrement a block value.
 		* \param blockno The block number.
 		* \param value The decrement value.
 		*/
-		virtual void decrement(unsigned char blockno, unsigned int value);
+		virtual void decrement(unsigned char blockno, uint32_t value) override;
 
 		/**
 		* \brief Transfer volatile memory to block value.

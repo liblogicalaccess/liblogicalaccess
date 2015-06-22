@@ -92,14 +92,14 @@ namespace logicalaccess
 		* \param blockno The block number.
 		* \param value The increment value.
 		*/
-		virtual void increment(unsigned char blockno, unsigned int value);
+		virtual void increment(unsigned char blockno, unsigned int value) override;
 
 		/**
 		* \brief Decrement a block value.
 		* \param blockno The block number.
 		* \param value The decrement value.
 		*/
-		virtual void decrement(unsigned char blockno, unsigned int value);
+		virtual void decrement(unsigned char blockno, unsigned int value) override;
 
         /**
          * \brief Get the OK5553 reader/card adapter.

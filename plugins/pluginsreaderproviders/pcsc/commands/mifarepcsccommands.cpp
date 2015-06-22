@@ -131,25 +131,38 @@ namespace logicalaccess
         getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xD6, 0x00, blockno, static_cast<unsigned char>(buf.size()), buf);
     }
 
-	void MifarePCSCCommands::increment(unsigned char blockno, unsigned int value)
-	{
-		std::vector<unsigned char> buf;
-		buf.push_back(static_cast<unsigned char>(value & 0xff));
-		buf.push_back(static_cast<unsigned char>((value >> 8) & 0xff));
-		buf.push_back(static_cast<unsigned char>((value >> 16) & 0xff));
-		buf.push_back(static_cast<unsigned char>((value >> 24) & 0xff));
+    void MifarePCSCCommands::increment(uint8_t blockno, uint32_t value)
+    {
+        std::vector<uint8_t> buf;
+        std::vector<uint8_t> dest           = {0x80, 0x01, blockno};
+        std::vector<uint8_t> value_change   = {0x81, 0x04, 0x00, 0x00, 0x00, 0x00};
 
-		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xD4, 0x00, blockno, static_cast<unsigned char>(buf.size()), buf);
-	}
+        memcpy(&value_change[2], &value, 4);
 
-	void MifarePCSCCommands::decrement(unsigned char blockno, unsigned int value)
-	{
-		std::vector<unsigned char> buf;
-		buf.push_back(static_cast<unsigned char>(value & 0xff));
-		buf.push_back(static_cast<unsigned char>((value >> 8) & 0xff));
-		buf.push_back(static_cast<unsigned char>((value >> 16) & 0xff));
-		buf.push_back(static_cast<unsigned char>((value >> 24) & 0xff));
+        buf = {0xA0, static_cast<uint8_t>(dest.size() + value_change.size())};
+        buf.insert(buf.end(), dest.begin(), dest.end());
+        buf.insert(buf.end(), value_change.begin(), value_change.end());
 
-		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xD8, 0x00, blockno, static_cast<unsigned char>(buf.size()), buf);
-	}
+        getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xC2, 0x00,
+                                                    0x03, static_cast<unsigned char>(buf.size()),
+                                                    buf);
+    }
+
+    void MifarePCSCCommands::decrement(uint8_t blockno, uint32_t value)
+    {
+        std::vector<uint8_t> buf;
+        std::vector<uint8_t> dest           = {0x80, 0x01, blockno};
+        std::vector<uint8_t> value_change   = {0x81, 0x04, 0x00, 0x00, 0x00, 0x00};
+
+        memcpy(&value_change[2], &value, 4);
+
+        buf = {0xA1, static_cast<uint8_t>(dest.size() + value_change.size())};
+        buf.insert(buf.end(), dest.begin(), dest.end());
+        buf.insert(buf.end(), value_change.begin(), value_change.end());
+
+        getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xC2, 0x00,
+                                                    0x03, static_cast<unsigned char>(buf.size()),
+                                                    buf);
+    }
+
 }
