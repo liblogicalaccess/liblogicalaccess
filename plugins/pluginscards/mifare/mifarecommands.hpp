@@ -210,14 +210,14 @@ namespace logicalaccess
          * and backup_blockno as the address of the backup block.
          *
          */
-        bool writeValueBlock(uint8_t blockno, uint32_t value, uint8_t backup_blockno);
+        bool writeValueBlock(uint8_t blockno, int32_t value, uint8_t backup_blockno);
 
         /**
          * Read the value and the address of the backup block from a value-block.
          *
          * If the block is not a valid value block, return false.
          */
-        bool readValueBlock(uint8_t blockno, uint32_t &value, uint8_t &backup_block);
+        bool readValueBlock(uint8_t blockno, int32_t &value, uint8_t &backup_block);
 
         /**
          * \brief Get number of data blocks for a sector.

@@ -26,18 +26,19 @@ void read_value_block(std::shared_ptr<logicalaccess::MifareCommands> cmd)
 {
     auto key = std::make_shared<logicalaccess::MifareKey>("ff ff ff ff ff ff");
     cmd->loadKey(0, logicalaccess::MifareKeyType::KT_KEY_A, key->getData(), key->getLength());
-    cmd->authenticate(32, 0, logicalaccess::MifareKeyType::KT_KEY_A);
-
-    std::vector<uint8_t> tmp;
-    using namespace logicalaccess;
-    tmp = cmd->readBinary(32, 16);
-    PRINT_TIME("Raw read data: " << tmp);
-
-    unsigned int value;
+    int32_t value;
     uint8_t backup;
+
+    cmd->authenticate(32, 0, logicalaccess::MifareKeyType::KT_KEY_A);
     cmd->readValueBlock(32, value, backup);
     LLA_ASSERT(value == 42424242, "Invalid value");
     LLA_ASSERT(backup == 33, "Invalid backup block number");
+
+    cmd->authenticate(16, 0, logicalaccess::MifareKeyType::KT_KEY_A);
+    cmd->readValueBlock(16, value, backup);
+    LLA_ASSERT(value == -42, "Invalid value");
+    LLA_ASSERT(backup == 17, "Invalid backup block number");
+
     LLA_SUBTEST_PASSED("ReadValueBlock");
 }
 
@@ -45,9 +46,13 @@ void write_value_block(std::shared_ptr<logicalaccess::MifareCommands> cmd)
 {
     auto key = std::make_shared<logicalaccess::MifareKey>("ff ff ff ff ff ff");
     cmd->loadKey(0, logicalaccess::MifareKeyType::KT_KEY_A, key->getData(), key->getLength());
-    cmd->authenticate(32, 0, logicalaccess::MifareKeyType::KT_KEY_A);
 
+    cmd->authenticate(32, 0, logicalaccess::MifareKeyType::KT_KEY_A);
     cmd->writeValueBlock(32, 42424242, 33);
+
+    cmd->authenticate(16, 0, logicalaccess::MifareKeyType::KT_KEY_A);
+    cmd->writeValueBlock(16, -42, 17);
+
     LLA_SUBTEST_PASSED("WriteValueBlock");
 }
 
@@ -55,13 +60,20 @@ void increment(std::shared_ptr<logicalaccess::MifareCommands> cmd)
 {
     auto key = std::make_shared<logicalaccess::MifareKey>("ff ff ff ff ff ff");
     cmd->loadKey(0, logicalaccess::MifareKeyType::KT_KEY_A, key->getData(), key->getLength());
-    cmd->authenticate(32, 0, logicalaccess::MifareKeyType::KT_KEY_A);
 
-    cmd->increment(32, 10);
-    unsigned int value;
+    int32_t value;
     uint8_t backup;
+
+    cmd->authenticate(32, 0, logicalaccess::MifareKeyType::KT_KEY_A);
+    cmd->increment(32, 10);
     cmd->readValueBlock(32, value, backup);
     LLA_ASSERT(value == 42424252, "Invalid value");
+
+    cmd->authenticate(16, 0, logicalaccess::MifareKeyType::KT_KEY_A);
+    cmd->increment(16, 84);
+    cmd->readValueBlock(16, value, backup);
+    LLA_ASSERT(value == 42, "Invalid value");
+
     LLA_SUBTEST_PASSED("Increment");
 }
 
@@ -69,13 +81,20 @@ void decrement(std::shared_ptr<logicalaccess::MifareCommands> cmd)
 {
     auto key = std::make_shared<logicalaccess::MifareKey>("ff ff ff ff ff ff");
     cmd->loadKey(0, logicalaccess::MifareKeyType::KT_KEY_A, key->getData(), key->getLength());
-    cmd->authenticate(32, 0, logicalaccess::MifareKeyType::KT_KEY_A);
 
-    cmd->decrement(32, 20);
-    unsigned int value;
+    int32_t value;
     uint8_t backup;
+
+    cmd->authenticate(32, 0, logicalaccess::MifareKeyType::KT_KEY_A);
+    cmd->decrement(32, 20);
     cmd->readValueBlock(32, value, backup);
     LLA_ASSERT(value == 42424232, "Invalid value");
+
+    cmd->authenticate(16, 0, logicalaccess::MifareKeyType::KT_KEY_A);
+    cmd->decrement(16, 84 + 42);
+    cmd->readValueBlock(16, value, backup);
+    LLA_ASSERT(value == -84, "Invalid value");
+
     LLA_SUBTEST_PASSED("Decrement");
 }
 
@@ -96,7 +115,6 @@ int main(int, char **)
 
 
     auto cmd = std::dynamic_pointer_cast<logicalaccess::MifareCommands>(chip->getCommands());
-    auto profile = std::dynamic_pointer_cast<logicalaccess::MifareProfile>(chip->getProfile());
 
     // Get the root node
     std::shared_ptr<logicalaccess::LocationNode> rootNode = chip->getRootLocationNode();

@@ -406,7 +406,7 @@ namespace logicalaccess
         return std::dynamic_pointer_cast<MifareChip>(getChip());
     }
 
-    bool MifareCommands::writeValueBlock(uint8_t blockno, uint32_t input_value, uint8_t backup_blockno)
+    bool MifareCommands::writeValueBlock(uint8_t blockno, int32_t input_value, uint8_t backup_blockno)
     {
         int32_t value                   = input_value;
         int32_t reverse                 = value ^ 0xFFFFFFFF;
@@ -425,7 +425,7 @@ namespace logicalaccess
         return true;
     }
 
-    bool MifareCommands::readValueBlock(uint8_t blockno, uint32_t &value, uint8_t &backup_block)
+    bool MifareCommands::readValueBlock(uint8_t blockno, int32_t &value, uint8_t &backup_block)
     {
         auto buffer = readBinary(blockno, 16);
 

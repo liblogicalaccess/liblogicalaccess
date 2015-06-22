@@ -153,6 +153,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>((value >> 24) & 0xff));
 
 		getMifareSmartIDReaderCardAdapter()->sendCommand(0x49, command);
+        //// name _raw if no automatic transfer
 	}
 
 	void MifareSmartIDCommands::transfer(unsigned char blockno)
