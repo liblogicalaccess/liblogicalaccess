@@ -4,6 +4,7 @@
  * \brief Location informations for Mifare Ultralight card.
  */
 
+#include <boost/property_tree/ptree.hpp>
 #include "mifareultralightlocation.hpp"
 
 namespace logicalaccess

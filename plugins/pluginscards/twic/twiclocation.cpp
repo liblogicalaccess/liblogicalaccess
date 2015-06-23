@@ -4,6 +4,7 @@
  * \brief Location informations for Twic card.
  */
 
+#include <boost/property_tree/ptree.hpp>
 #include "twiclocation.hpp"
 
 namespace logicalaccess

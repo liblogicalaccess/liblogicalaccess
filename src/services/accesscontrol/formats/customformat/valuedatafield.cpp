@@ -8,9 +8,11 @@
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 #include "logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp"
 #include "logicalaccess/services/accesscontrol/encodings/binarydatatype.hpp"
+#include "logicalaccess/myexception.hpp"
 
 #include <cstring>
 #include <stdlib.h>
+#include <boost/property_tree/ptree.hpp>
 
 namespace logicalaccess
 {

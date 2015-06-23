@@ -6,6 +6,7 @@
 
 #include "rfideasreaderunitconfiguration.hpp"
 #include "rfideasreaderprovider.hpp"
+#include <boost/property_tree/ptree.hpp>
 
 namespace logicalaccess
 {

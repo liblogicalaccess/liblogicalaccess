@@ -6,6 +6,7 @@
 
 #include "axesstmc13readerprovider.hpp"
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
+#include "logicalaccess/myexception.hpp"
 
 #ifdef __unix__
 #include <stdlib.h>
@@ -16,6 +17,7 @@
 #include <iomanip>
 
 #include "axesstmc13readerunit.hpp"
+#include "logicalaccess/logs.hpp"
 
 namespace logicalaccess
 {

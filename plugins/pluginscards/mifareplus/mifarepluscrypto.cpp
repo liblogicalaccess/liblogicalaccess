@@ -18,6 +18,7 @@
 #include "logicalaccess/crypto/aes_initialization_vector.hpp"
 #include "logicalaccess/crypto/des_symmetric_key.hpp"
 #include "logicalaccess/crypto/des_initialization_vector.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {

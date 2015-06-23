@@ -7,12 +7,10 @@
 #ifndef LOGICALACCESS_STIDSTRLEDBUZZERDISPLAY_HPP
 #define LOGICALACCESS_STIDSTRLEDBUZZERDISPLAY_HPP
 
-#include "readercardadapters/stidstrreadercardadapter.hpp"
-
 #include <string>
 #include <vector>
-
-#include "logicalaccess/logs.hpp"
+#include "logicalaccess/readerproviders/ledbuzzerdisplay.hpp"
+#include "stidstr_fwd.hpp"
 
 namespace logicalaccess
 {

@@ -5,6 +5,7 @@
  */
 
 #include "rplethledbuzzerdisplay.hpp"
+#include "readercardadapters/rplethreadercardadapter.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -53,4 +54,7 @@ namespace logicalaccess
         command.push_back(static_cast<unsigned char>(status));
         getRplethReaderCardAdapter()->sendRplethCommand(command, false);
     }
+
+    std::shared_ptr<RplethReaderCardAdapter> RplethLEDBuzzerDisplay::getRplethReaderCardAdapter()
+    { return std::dynamic_pointer_cast<RplethReaderCardAdapter>(getReaderCardAdapter()); }
 }

@@ -4,6 +4,7 @@
  * \brief  Admitto reader unit configuration.
  */
 
+#include <boost/property_tree/ptree.hpp>
 #include "admittoreaderunitconfiguration.hpp"
 #include "admittoreaderprovider.hpp"
 

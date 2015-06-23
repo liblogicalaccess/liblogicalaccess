@@ -9,6 +9,8 @@
 #include "logicalaccess/crypto/cmac.hpp"
 #include "desfirecrypto.hpp"
 #include <vector>
+#include <boost/property_tree/ptree.hpp>
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {

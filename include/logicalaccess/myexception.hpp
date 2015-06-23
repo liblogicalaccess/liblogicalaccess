@@ -7,13 +7,11 @@
 
 #ifdef UNIX
 #define NOEXCEPT noexcept
-#ifndef LIBLOGICALACCESS_API
-#define LIBLOGICALACCESS_API
-#endif
 #else
-#include "logicalaccess/msliblogicalaccess.h"
 #define NOEXCEPT
 #endif
+
+#include "logicalaccess_api.hpp"
 
 namespace logicalaccess
 {

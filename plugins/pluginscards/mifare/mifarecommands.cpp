@@ -4,8 +4,10 @@
  * \brief Mifare commands.
  */
 
+#include <cstring>
 #include "mifarecommands.hpp"
 #include "mifarechip.hpp"
+#include "logicalaccess/myexception.hpp"
 
 #define PREFIX_PATTERN 0xE3
 #define POLYNOM_PATTERN 0x1D

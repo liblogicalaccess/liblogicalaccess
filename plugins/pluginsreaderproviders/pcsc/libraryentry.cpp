@@ -8,17 +8,7 @@
 #include "readers/springcardreaderunit.hpp"
 #include "readers/cherryreaderunit.hpp"
 #include "readers/acsacrreaderunit.hpp"
-
-#ifdef _MSC_VER
-#include "logicalaccess/msliblogicalaccess.h"
-#else
-#ifndef LIBLOGICALACCESS_API
-#define LIBLOGICALACCESS_API
-#endif
-#ifndef DISABLE_PRAGMA_WARNING
-#define DISABLE_PRAGMA_WARNING /**< \brief winsmcrd.h was modified to support this macro, to avoid MSVC specific warnings pragma */
-#endif
-#endif
+#include "logicalaccess/logicalaccess_api.hpp"
 
 extern "C"
 {

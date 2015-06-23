@@ -18,6 +18,7 @@
 #include "logicalaccess/cards/samkeystorage.hpp"
 #include "samcommands.hpp"
 #include "nxpav2keydiversification.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {
@@ -47,9 +48,9 @@ namespace logicalaccess
         return freemem;
     }
 
-    vector<DFName> DESFireEV1ISO7816Commands::getDFNames()
+    std::vector<DFName> DESFireEV1ISO7816Commands::getDFNames()
     {
-        vector<DFName> dfnames;
+        std::vector<DFName> dfnames;
         unsigned char err;
         unsigned char cmd = DFEV1_INS_GET_DF_NAMES;
 
@@ -71,9 +72,9 @@ namespace logicalaccess
         return dfnames;
     }
 
-    vector<unsigned short> DESFireEV1ISO7816Commands::getISOFileIDs()
+    std::vector<unsigned short> DESFireEV1ISO7816Commands::getISOFileIDs()
     {
-        vector<unsigned short> fileids;
+        std::vector<unsigned short> fileids;
         unsigned char err;
         unsigned char cmd = DFEV1_INS_GET_ISO_FILE_IDS;
         std::vector<unsigned char> fullr;

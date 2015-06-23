@@ -4,6 +4,7 @@
  * \brief  AxessTMC 13Mhz reader unit configuration.
  */
 
+#include <boost/property_tree/ptree.hpp>
 #include "axesstmc13readerunitconfiguration.hpp"
 #include "axesstmc13readerprovider.hpp"
 

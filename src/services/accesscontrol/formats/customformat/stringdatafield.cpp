@@ -4,8 +4,11 @@
  * \brief String Data field.
  */
 
+#include <cstring>
+#include <boost/property_tree/ptree.hpp>
 #include "logicalaccess/services/accesscontrol/formats/customformat/stringdatafield.hpp"
 #include "logicalaccess/bufferhelper.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {

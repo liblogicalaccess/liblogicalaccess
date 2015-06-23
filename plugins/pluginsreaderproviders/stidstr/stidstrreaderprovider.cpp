@@ -14,8 +14,10 @@
 
 #include <sstream>
 #include <iomanip>
+#include <logicalaccess/logs.hpp>
 
 #include "stidstrreaderunit.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {

@@ -16,6 +16,8 @@
 #include "readercardadapters/axesstmclegicreadercardadapter.hpp"
 #include <boost/filesystem.hpp>
 #include "readercardadapters/axesstmclegicdatatransport.hpp"
+#include <boost/property_tree/xml_parser.hpp>
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {

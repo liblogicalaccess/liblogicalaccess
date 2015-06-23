@@ -6,6 +6,8 @@
 
 #include "scielreadercardadapter.hpp"
 #include "scieldatatransport.hpp"
+#include "logicalaccess/bufferhelper.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {

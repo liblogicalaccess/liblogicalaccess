@@ -10,6 +10,9 @@
 #include <iomanip>
 #include <codecvt>
 
+#include <chrono>
+#include <thread>
+
 #ifdef _WINDOWS
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 #include <Userenv.h>

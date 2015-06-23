@@ -4,6 +4,7 @@
  * \brief DESFire Key.
  */
 
+#include <boost/property_tree/ptree.hpp>
 #include "desfirekey.hpp"
 
 namespace logicalaccess

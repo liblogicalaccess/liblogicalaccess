@@ -6,6 +6,7 @@
 
 #include "keyboardreaderunitconfiguration.hpp"
 #include "keyboardreaderprovider.hpp"
+#include <boost/property_tree/ptree.hpp>
 
 namespace logicalaccess
 {

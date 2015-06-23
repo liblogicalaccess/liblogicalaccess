@@ -5,6 +5,7 @@
  */
 
 #include "logicalaccess/cards/computermemorykeystorage.hpp"
+#include <boost/property_tree/ptree.hpp>
 
 namespace logicalaccess
 {

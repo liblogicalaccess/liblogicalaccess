@@ -11,6 +11,7 @@
 #include <iostream>
 #include <string>
 #include <mutex>
+#include <thread>
 
 #include <boost/asio.hpp>
 #include <boost/utility.hpp>

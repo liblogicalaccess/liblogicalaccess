@@ -17,6 +17,7 @@
 #include <boost/filesystem.hpp>
 #include "readercardadapters/elatecdatatransport.hpp"
 #include "readercardadapters/elatecbufferparser.hpp"
+#include <boost/property_tree/xml_parser.hpp>
 
 namespace logicalaccess
 {

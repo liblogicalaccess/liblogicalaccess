@@ -6,6 +6,7 @@
 
 #include "promagreaderprovider.hpp"
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
+#include "logicalaccess/myexception.hpp"
 
 #ifdef __unix__
 #include <stdlib.h>

@@ -17,6 +17,8 @@
 #include "readercardadapters/axesstmc13readercardadapter.hpp"
 #include <boost/filesystem.hpp>
 #include "readercardadapters/axesstmc13datatransport.hpp"
+#include "logicalaccess/bufferhelper.hpp"
+#include <boost/property_tree/xml_parser.hpp>
 
 namespace logicalaccess
 {

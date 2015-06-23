@@ -5,6 +5,7 @@
  */
 
 #include "mifareultralightccommands.hpp"
+#include "logicalaccess/logs.hpp"
 
 namespace logicalaccess
 {

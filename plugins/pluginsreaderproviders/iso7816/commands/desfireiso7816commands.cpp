@@ -11,6 +11,7 @@
 #include "nxpkeydiversification.hpp"
 #include "nxpav1keydiversification.hpp"
 #include "nxpav2keydiversification.hpp"
+#include "logicalaccess/myexception.hpp"
 
 #include <cstring>
 

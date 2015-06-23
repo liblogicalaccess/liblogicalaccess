@@ -7,6 +7,7 @@
 #include "mifareplusspringcardcommandssl1.hpp"
 #include "../pcscreaderprovider.hpp"
 #include "mifarepluschip.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {

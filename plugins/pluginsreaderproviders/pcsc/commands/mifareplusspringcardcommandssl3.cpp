@@ -10,6 +10,7 @@
 
 #include "../pcscreaderprovider.hpp"
 #include "mifarepluschip.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {

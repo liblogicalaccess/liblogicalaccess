@@ -4,6 +4,7 @@
  * \brief Sciel buffer parser.
  */
 
+#include <logicalaccess/logs.hpp>
 #include "scieldatatransport.hpp"
 #include "logicalaccess/bufferhelper.hpp"
 

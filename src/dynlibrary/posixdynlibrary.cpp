@@ -1,6 +1,7 @@
 #include <dlfcn.h>
 
 #include "logicalaccess/dynlibrary/posixdynlibrary.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {

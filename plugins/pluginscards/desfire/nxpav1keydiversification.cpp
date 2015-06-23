@@ -9,6 +9,7 @@
 #include "logicalaccess/crypto/cmac.hpp"
 #include "desfirecrypto.hpp"
 #include <vector>
+#include <boost/property_tree/ptree.hpp>
 
 #include "logicalaccess/crypto/tomcrypt.h"
 #include "logicalaccess/crypto/symmetric_key.hpp"
@@ -16,6 +17,7 @@
 #include "logicalaccess/crypto/aes_initialization_vector.hpp"
 #include "logicalaccess/crypto/des_symmetric_key.hpp"
 #include "logicalaccess/crypto/des_initialization_vector.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {

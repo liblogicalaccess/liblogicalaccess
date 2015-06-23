@@ -4,12 +4,14 @@
  * \brief Mifare SmartID commands.
  */
 
+#include <string.h>
 #include "mifaresmartidcommands.hpp"
 #include "../smartidreaderprovider.hpp"
 #include "mifarechip.hpp"
 #include "logicalaccess/cards/computermemorykeystorage.hpp"
 #include "logicalaccess/cards/readermemorykeystorage.hpp"
 #include "logicalaccess/cards/samkeystorage.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {

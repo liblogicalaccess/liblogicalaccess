@@ -6,6 +6,7 @@
 
 #include "desfirestoragecardservice.hpp"
 #include "desfireev1location.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {

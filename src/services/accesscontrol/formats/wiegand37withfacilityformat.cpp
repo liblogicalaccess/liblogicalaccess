@@ -4,6 +4,8 @@
  * \brief Wiegand 37 With Facility Format.
  */
 
+#include <cstring>
+#include <boost/property_tree/ptree.hpp>
 #include "logicalaccess/services/accesscontrol/formats/wiegand37withfacilityformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
 

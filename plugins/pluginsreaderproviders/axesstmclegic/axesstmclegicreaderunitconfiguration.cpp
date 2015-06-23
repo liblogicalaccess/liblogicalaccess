@@ -4,6 +4,7 @@
  * \brief  AxessTMCLegic reader unit configuration.
  */
 
+#include <boost/property_tree/ptree.hpp>
 #include "axesstmclegicreaderunitconfiguration.hpp"
 #include "axesstmclegicreaderprovider.hpp"
 

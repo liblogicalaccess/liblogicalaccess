@@ -5,6 +5,7 @@
  */
 
 #include "twiccommands.hpp"
+#include <cstring>
 
 namespace logicalaccess
 {

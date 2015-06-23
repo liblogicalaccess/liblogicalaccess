@@ -4,6 +4,8 @@
  * \brief  IdOnDemand reader unit configuration.
  */
 
+#include <boost/property_tree/ptree.hpp>
+#include <logicalaccess/logs.hpp>
 #include "idondemandreaderunitconfiguration.hpp"
 #include "idondemandreaderprovider.hpp"
 

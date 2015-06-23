@@ -7,6 +7,9 @@
 #include "../readers/omnikeylanxx21readerunit.hpp"
 #include "../pcscreaderprovider.hpp"
 
+#include "logicalaccess/myexception.hpp"
+#include <thread>
+
 #include <iostream>
 #include <iomanip>
 #include <sstream>
