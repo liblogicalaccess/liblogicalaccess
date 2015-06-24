@@ -53,11 +53,11 @@ before_build:
   - 7z x target/* -opackages
   - ps: |
       if (($env:PLATFORM -eq "x64") -and ($env:CONFIGURATION -eq "Release"))
-      { scripts\GenerateX64Solutions.bat }
+      { cmake.exe -DCMAKE_BUILD_TYPE=Release -DTARGET_ARCH=x64 -DLIB_SUFFIX=x64/Release -G"Visual Studio 12" -Tv120_xp . -DCMAKE_INSTALL_PREFIX=./install . }
       elseif (($env:PLATFORM -eq "x64") -and ($env:CONFIGURATION -eq "Debug"))
-      { scripts\GenerateX64Solutions-debug.bat }
+      { cmake.exe -DCMAKE_BUILD_TYPE=Debug -DTARGET_ARCH=x64 -DLIB_SUFFIX=x64/Debug -G"Visual Studio 12" -Tv120_xp . -DCMAKE_INSTALL_PREFIX=./install . }
       elseif (($env:PLATFORM -eq "x86") -and ($env:CONFIGURATION -eq "Release"))
-      { scripts\GenerateWin32Solutions.bat }
+      { cmake.exe -DCMAKE_BUILD_TYPE=Release -DTARGET_ARCH=Win32 -DLIB_SUFFIX=Win32/Release -G"Visual Studio 12" -Tv120_xp . -DCMAKE_INSTALL_PREFIX=./install . }
       elseif (($env:PLATFORM -eq "x86") -and ($env:CONFIGURATION -eq "Debug"))
       { cmake.exe -DCMAKE_BUILD_TYPE=Debug -DTARGET_ARCH=Win32 -DLIB_SUFFIX=Win32/Debug -G"Visual Studio 12" -Tv120_xp . -DCMAKE_INSTALL_PREFIX=./install . }
 cache:
