@@ -1,4 +1,4 @@
-version: 1.77.3-{build}
+version: 1.78.0-{build}
 environment:
   global:
     JAVA_HOME: C:\Program Files\Java\jdk1.7.0
@@ -15,9 +15,10 @@ branches:
   # whitelist
   only:
   - master
+  - develop
 
 # Operating system (build VM template)
-os: Windows Server 2012 R2
+#os: Windows Server 2012 R2
 
 # clone directory
 clone_folder: c:\projects\liblogicalaccess
@@ -52,11 +53,11 @@ before_build:
   - 7z x target/* -opackages
   - ps: |
       if (($env:PLATFORM -eq "x64") -and ($env:CONFIGURATION -eq "Release"))
-      { scripts\GenerateX64Solutions.bat }
+      { cmake.exe -DCMAKE_BUILD_TYPE=Release -DTARGET_ARCH=x64 -DLIB_SUFFIX=x64/Release -G"Visual Studio 12 Win64" -Tv120_xp . -DCMAKE_INSTALL_PREFIX=./install . }
       elseif (($env:PLATFORM -eq "x64") -and ($env:CONFIGURATION -eq "Debug"))
-      { scripts\GenerateX64Solutions-debug.bat }
+      { cmake.exe -DCMAKE_BUILD_TYPE=Debug -DTARGET_ARCH=x64 -DLIB_SUFFIX=x64/Debug -G"Visual Studio 12 Win64" -Tv120_xp . -DCMAKE_INSTALL_PREFIX=./install . }
       elseif (($env:PLATFORM -eq "x86") -and ($env:CONFIGURATION -eq "Release"))
-      { scripts\GenerateWin32Solutions.bat }
+      { cmake.exe -DCMAKE_BUILD_TYPE=Release -DTARGET_ARCH=Win32 -DLIB_SUFFIX=Win32/Release -G"Visual Studio 12" -Tv120_xp . -DCMAKE_INSTALL_PREFIX=./install . }
       elseif (($env:PLATFORM -eq "x86") -and ($env:CONFIGURATION -eq "Debug"))
       { cmake.exe -DCMAKE_BUILD_TYPE=Debug -DTARGET_ARCH=Win32 -DLIB_SUFFIX=Win32/Debug -G"Visual Studio 12" -Tv120_xp . -DCMAKE_INSTALL_PREFIX=./install . }
 cache:
