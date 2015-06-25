@@ -4,6 +4,7 @@
  * \brief Deister reader unit configuration.
  */
 
+#include <boost/property_tree/ptree.hpp>
 #include "deisterreaderunitconfiguration.hpp"
 #include "deisterreaderprovider.hpp"
 

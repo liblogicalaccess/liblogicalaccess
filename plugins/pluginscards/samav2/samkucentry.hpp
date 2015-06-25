@@ -7,6 +7,7 @@
 #ifndef LOGICALACCESS_SAMKUCENTRY_HPP
 #define LOGICALACCESS_SAMKUCENTRY_HPP
 
+#include <cstring>
 #include "logicalaccess/key.hpp"
 
 namespace logicalaccess

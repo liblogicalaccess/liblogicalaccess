@@ -4,6 +4,7 @@
  * \brief Location informations for Prox card.
  */
 
+#include <boost/property_tree/ptree.hpp>
 #include "proxlocation.hpp"
 
 namespace logicalaccess

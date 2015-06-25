@@ -4,6 +4,7 @@
  * \brief PC/SC reader unit configuration.
  */
 
+#include <boost/property_tree/ptree.hpp>
 #include "pcscreaderunitconfiguration.hpp"
 #include "pcscreaderprovider.hpp"
 #include "pcscreaderunit.hpp"

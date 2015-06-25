@@ -18,10 +18,11 @@
  */
 #define EXCEPTION_ASSERT(condition,type,msg) if (!(condition)) { throw EXCEPTION(type, msg); }
 
-#include "settings.hpp"
+#include "logicalaccess_api.hpp"
 #include <fstream>
 #include <map>
-#include <boost/date_time.hpp>
+#include <sstream>
+#include <vector>
 
 namespace logicalaccess
 {

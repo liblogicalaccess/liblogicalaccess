@@ -5,6 +5,7 @@
  */
 
 #include "a3mlgm5600ledbuzzerdisplay.hpp"
+#include "readercardadapters/a3mlgm5600readercardadapter.hpp"
 
 #include <iostream>
 #include <iomanip>

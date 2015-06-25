@@ -4,6 +4,7 @@
  * \brief Access informations for DESFire card.
  */
 
+#include <boost/property_tree/ptree.hpp>
 #include "desfireaccessinfo.hpp"
 #include "desfireprofile.hpp"
 #include "desfirechip.hpp"

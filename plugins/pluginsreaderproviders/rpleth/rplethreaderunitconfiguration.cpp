@@ -4,6 +4,7 @@
  * \brief  Rpleth reader unit configuration.
  */
 
+#include <boost/property_tree/ptree.hpp>
 #include "rplethreaderunitconfiguration.hpp"
 #include "rplethreaderprovider.hpp"
 

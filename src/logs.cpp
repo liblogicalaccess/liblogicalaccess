@@ -5,6 +5,8 @@
  */
 
 #include "logicalaccess/logs.hpp"
+#include "logicalaccess/settings.hpp"
+#include <boost/date_time.hpp>
 
 namespace logicalaccess
 {

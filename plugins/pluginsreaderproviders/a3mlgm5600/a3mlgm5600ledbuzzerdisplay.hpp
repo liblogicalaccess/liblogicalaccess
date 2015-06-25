@@ -7,12 +7,11 @@
 #ifndef LOGICALACCESS_A3MLGM5600LEDBUZZERDISPLAY_HPP
 #define LOGICALACCESS_A3MLGM5600LEDBUZZERDISPLAY_HPP
 
-#include "readercardadapters/a3mlgm5600readercardadapter.hpp"
-
+#include "logicalaccess/logicalaccess_api.hpp"
+#include "logicalaccess/readerproviders/ledbuzzerdisplay.hpp"
+#include "a3mlgm5600_fwd.hpp"
 #include <string>
 #include <vector>
-
-#include "logicalaccess/logs.hpp"
 
 namespace logicalaccess
 {

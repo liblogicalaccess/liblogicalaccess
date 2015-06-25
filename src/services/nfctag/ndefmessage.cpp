@@ -7,6 +7,7 @@
 #include "logicalaccess/services/nfctag/ndefmessage.hpp"
 #include "logicalaccess/bufferhelper.hpp"
 #include <boost/foreach.hpp>
+#include <boost/property_tree/ptree.hpp>
 
 namespace logicalaccess
 {

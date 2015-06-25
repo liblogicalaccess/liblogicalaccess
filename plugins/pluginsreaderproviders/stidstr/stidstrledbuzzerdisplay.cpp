@@ -5,6 +5,7 @@
  */
 
 #include "stidstrledbuzzerdisplay.hpp"
+#include "readercardadapters/stidstrreadercardadapter.hpp"
 
 namespace logicalaccess
 {

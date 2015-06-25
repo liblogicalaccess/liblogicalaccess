@@ -4,6 +4,7 @@
  * \brief A3MLGM5600 reader unit configuration.
  */
 
+#include <boost/property_tree/ptree.hpp>
 #include "a3mlgm5600readerunitconfiguration.hpp"
 #include "a3mlgm5600readerprovider.hpp"
 

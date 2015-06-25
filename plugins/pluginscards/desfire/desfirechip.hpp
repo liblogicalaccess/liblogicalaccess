@@ -15,10 +15,6 @@
 #include <vector>
 #include <iostream>
 
-using std::string;
-using std::vector;
-using std::ostream;
-
 namespace logicalaccess
 {
 #define	CHIP_DESFIRE		"DESFire"

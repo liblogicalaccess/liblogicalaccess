@@ -4,6 +4,7 @@
  * \brief  Gunnebo reader unit configuration.
  */
 
+#include <boost/property_tree/ptree.hpp>
 #include "gunneboreaderunitconfiguration.hpp"
 #include "gunneboreaderprovider.hpp"
 

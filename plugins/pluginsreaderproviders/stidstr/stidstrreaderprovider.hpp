@@ -8,7 +8,6 @@
 #define LOGICALACCESS_READERSTIDSTR_PROVIDER_HPP
 
 #include "logicalaccess/readerproviders/readerprovider.hpp"
-#include "stidstrreaderunit.hpp"
 
 namespace logicalaccess
 {

@@ -4,6 +4,7 @@
  * \brief STidSTR buffer parser.
  */
 
+#include <logicalaccess/logs.hpp>
 #include "stidstrreaderbufferparser.hpp"
 #include "logicalaccess/bufferhelper.hpp"
 

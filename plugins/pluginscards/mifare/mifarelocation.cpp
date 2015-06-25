@@ -4,6 +4,7 @@
  * \brief Location informations for Mifare card.
  */
 
+#include <boost/property_tree/ptree.hpp>
 #include "mifarelocation.hpp"
 
 namespace logicalaccess

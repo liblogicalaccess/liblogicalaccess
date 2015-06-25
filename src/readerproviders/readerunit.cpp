@@ -24,6 +24,13 @@
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
 #include <map>
+#include "logicalaccess/bufferhelper.hpp"
+
+#include "logicalaccess/readerproviders/lcddisplay.hpp"
+#include "logicalaccess/readerproviders/ledbuzzerdisplay.hpp"
+#include "logicalaccess/readerproviders/readerunitconfiguration.hpp"
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 
 namespace logicalaccess
 {

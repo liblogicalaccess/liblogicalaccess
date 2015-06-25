@@ -12,6 +12,8 @@
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/logs.hpp"
 
+#include <thread>
+
 namespace logicalaccess
 {
     ReaderProvider::ReaderProvider()

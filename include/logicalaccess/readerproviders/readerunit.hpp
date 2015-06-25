@@ -7,13 +7,13 @@
 #ifndef LOGICALACCESS_READERUNIT_HPP
 #define LOGICALACCESS_READERUNIT_HPP
 
-#include "logicalaccess/readerproviders/readerunitconfiguration.hpp"
-#include "logicalaccess/readerproviders/lcddisplay.hpp"
-#include "logicalaccess/readerproviders/ledbuzzerdisplay.hpp"
-#include "logicalaccess/myexception.hpp"
-#include <map>
-#include <chrono>
-#include <thread>
+#include <stdint.h>
+#include <boost/property_tree/ptree_fwd.hpp>
+#include <memory>
+#include <string>
+#include <vector>
+#include "logicalaccess/xmlserializable.hpp"
+#include "logicalaccess/lla_fwd.hpp"
 
 #ifdef UNIX
 #include <PCSC/wintypes.h>

@@ -4,6 +4,7 @@
  * \brief DESFire card profiles.
  */
 
+#include <cstring>
 #include "desfireprofile.hpp"
 #include "desfirecrypto.hpp"
 

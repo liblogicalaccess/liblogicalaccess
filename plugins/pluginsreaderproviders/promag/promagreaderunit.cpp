@@ -16,6 +16,8 @@
 #include "readercardadapters/promagreadercardadapter.hpp"
 #include <boost/filesystem.hpp>
 #include "readercardadapters/promagdatatransport.hpp"
+#include "logicalaccess/bufferhelper.hpp"
+#include <boost/property_tree/xml_parser.hpp>
 
 namespace logicalaccess
 {

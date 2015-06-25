@@ -44,13 +44,13 @@ namespace logicalaccess
          * \brief Get the ISO DF-Names of all active application.
          * \return The DF-Names list.
          */
-        virtual vector<DFName> getDFNames();
+        virtual std::vector<DFName> getDFNames();
 
         /**
          * \brief Get the ISO FID of all active files within the currently selected application.
          * \return The ISO FID list.
          */
-        virtual vector<unsigned short> getISOFileIDs();
+        virtual std::vector<unsigned short> getISOFileIDs();
 
         /**
          * \brief Create a new application.

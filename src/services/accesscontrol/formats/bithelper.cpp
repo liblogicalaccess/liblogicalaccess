@@ -5,7 +5,7 @@
  */
 
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
-
+#include "logicalaccess/logs.hpp"
 #include <cstring>
 
 namespace logicalaccess

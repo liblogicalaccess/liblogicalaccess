@@ -4,6 +4,8 @@
  * \brief Wiegand 26 Format.
  */
 
+#include <cstring>
+#include <boost/property_tree/ptree.hpp>
 #include "logicalaccess/services/accesscontrol/formats/wiegand26format.hpp"
 #include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
 

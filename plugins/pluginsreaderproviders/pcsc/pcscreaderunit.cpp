@@ -9,6 +9,7 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <thread>
 
 #include "pcscreaderprovider.hpp"
 #include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
@@ -61,9 +62,14 @@
 #include <boost/filesystem.hpp>
 #include <memory>
 
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+
 #ifdef UNIX
 #include <sys/time.h>
 #endif
+
+#include "logicalaccess/settings.hpp"
 
 namespace logicalaccess
 {

@@ -5,6 +5,7 @@
  */
 
 #include "rplethlcddisplay.hpp"
+#include "readercardadapters/rplethreadercardadapter.hpp"
 
 namespace logicalaccess
 {

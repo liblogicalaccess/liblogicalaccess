@@ -23,6 +23,8 @@
 #include "commands/mifareok5553commands.hpp"
 #include "commands/mifareultralightok5553commands.hpp"
 #include <boost/filesystem.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
 
 namespace logicalaccess

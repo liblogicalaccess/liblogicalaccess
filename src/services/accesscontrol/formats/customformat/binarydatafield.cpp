@@ -8,10 +8,8 @@
 #include "logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp"
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 #include "logicalaccess/services/accesscontrol/formats/customformat/binarydatafield.hpp"
-
-#ifdef __unix__
 #include <cstring>
-#endif
+#include <boost/property_tree/ptree.hpp>
 
 namespace logicalaccess
 {

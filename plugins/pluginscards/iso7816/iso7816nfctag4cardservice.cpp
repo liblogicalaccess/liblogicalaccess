@@ -6,6 +6,7 @@
 
 #include "iso7816nfctag4cardservice.hpp"
 #include "logicalaccess/services/nfctag/ndefmessage.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {

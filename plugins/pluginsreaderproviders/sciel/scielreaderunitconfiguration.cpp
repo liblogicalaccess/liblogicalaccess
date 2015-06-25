@@ -7,6 +7,8 @@
 #include "scielreaderunitconfiguration.hpp"
 #include "scielreaderprovider.hpp"
 
+#include <boost/property_tree/ptree.hpp>
+
 #ifdef UNIX
 # include <termios.h>
 # include <unistd.h>

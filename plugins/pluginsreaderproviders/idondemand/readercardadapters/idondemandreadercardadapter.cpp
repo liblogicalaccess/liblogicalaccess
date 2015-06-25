@@ -5,6 +5,7 @@
  */
 
 #include "idondemandreadercardadapter.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {

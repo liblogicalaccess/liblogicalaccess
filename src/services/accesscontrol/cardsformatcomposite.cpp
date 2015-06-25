@@ -10,6 +10,8 @@
 #include "logicalaccess/cards/chip.hpp"
 #include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
 #include <boost/foreach.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 
 namespace logicalaccess
 {

@@ -17,8 +17,11 @@
 #include "generictagidondemandchip.hpp"
 #include "commands/generictagidondemandaccesscontrolcardservice.hpp"
 #include <boost/filesystem.hpp>
+#include <boost/property_tree/ptree.hpp>
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
 #include "commands/generictagidondemandcommands.hpp"
+#include "logicalaccess/myexception.hpp"
+#include <boost/property_tree/xml_parser.hpp>
 
 namespace logicalaccess
 {

@@ -4,6 +4,8 @@
  * \brief Access informations for mifarePlus card.
  */
 
+#include <boost/property_tree/ptree.hpp>
+#include <iomanip>
 #include "mifareplusaccessinfo.hpp"
 #include "mifarepluschip.hpp"
 

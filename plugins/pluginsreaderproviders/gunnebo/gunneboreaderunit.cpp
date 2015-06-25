@@ -15,9 +15,12 @@
 #include "logicalaccess/cards/chip.hpp"
 #include "readercardadapters/gunneboreadercardadapter.hpp"
 #include <boost/filesystem.hpp>
+#include <boost/property_tree/ptree.hpp>
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
+#include "logicalaccess/settings.hpp"
+#include <boost/property_tree/xml_parser.hpp>
 
 namespace logicalaccess
 {

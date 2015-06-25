@@ -7,12 +7,10 @@
 #ifndef D3L_PCSC_RPLETHLEDBUZZERDISPLAY_HPP
 #define D3L_PCSC_RPLETHLEDBUZZERDISPLAY_HPP
 
-#include "readercardadapters/rplethreadercardadapter.hpp"
-
 #include <string>
 #include <vector>
-
-#include "logicalaccess/logs.hpp"
+#include <logicalaccess/readerproviders/ledbuzzerdisplay.hpp>
+#include "rpleth_fwd.hpp"
 
 namespace logicalaccess
 {
@@ -52,11 +50,7 @@ namespace logicalaccess
          */
         void setLED(HidCommand led, bool status);
 
-        /**
-         * \brief Get the rpleth reader card adapter.
-         * \return The rpleth reader card adapter.
-         */
-        std::shared_ptr<RplethReaderCardAdapter> getRplethReaderCardAdapter() { return std::dynamic_pointer_cast<RplethReaderCardAdapter>(getReaderCardAdapter()); };
+        std::shared_ptr<RplethReaderCardAdapter> getRplethReaderCardAdapter();;
 
     protected:
 

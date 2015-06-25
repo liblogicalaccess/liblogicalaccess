@@ -28,11 +28,16 @@
 #include "commands/mifarestidstrcommands.hpp"
 #include "desfireprofile.hpp"
 #include <boost/filesystem.hpp>
+#include <logicalaccess/myexception.hpp>
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
 #include "readercardadapters/stidstrreaderdatatransport.hpp"
 #include "desfireev1chip.hpp"
 #include "mifarechip.hpp"
+
+#include "stidstrreaderunitconfiguration.hpp"
+#include "logicalaccess/settings.hpp"
+#include <boost/property_tree/xml_parser.hpp>
 
 namespace logicalaccess
 {
@@ -829,5 +834,10 @@ namespace logicalaccess
         std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000E, std::vector<unsigned char>(), statusCode);
 
         EXCEPTION_ASSERT_WITH_LOG(response.size() == 0, LibLogicalAccessException, "Unable to load the SKB values. An unknown error occured.");
+    }
+
+    std::shared_ptr<STidSTRReaderUnitConfiguration> STidSTRReaderUnit::getSTidSTRConfiguration()
+    {
+        return std::dynamic_pointer_cast<STidSTRReaderUnitConfiguration>(getConfiguration());
     }
 }

@@ -7,6 +7,7 @@
 #ifndef LOGICALACCESS_SAMKEYENTRY_HPP
 #define LOGICALACCESS_SAMKEYENTRY_HPP
 
+#include <cstring>
 #include "logicalaccess/key.hpp"
 #include "sambasickeyentry.hpp"
 

@@ -6,6 +6,7 @@
 
 #include "ok5553readercardadapter.hpp"
 #include "logicalaccess/bufferhelper.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {

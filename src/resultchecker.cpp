@@ -5,6 +5,8 @@
  */
 
 #include "logicalaccess/resultchecker.hpp"
+#include "logicalaccess/myexception.hpp"
+#include "logicalaccess/logs.hpp"
 
 namespace logicalaccess
 {

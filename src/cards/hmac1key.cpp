@@ -5,6 +5,8 @@
  */
 
 #include "logicalaccess/cards/hmac1key.hpp"
+#include <cstring>
+#include <boost/property_tree/ptree.hpp>
 
 namespace logicalaccess
 {

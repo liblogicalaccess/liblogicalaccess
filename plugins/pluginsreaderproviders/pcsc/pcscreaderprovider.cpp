@@ -16,6 +16,7 @@
 #include <iomanip>
 
 #include "pcscreaderunit.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {

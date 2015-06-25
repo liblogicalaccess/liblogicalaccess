@@ -13,6 +13,7 @@
 
 #include <sstream>
 #include <iomanip>
+#include <logicalaccess/logs.hpp>
 
 #include "rplethreaderunit.hpp"
 

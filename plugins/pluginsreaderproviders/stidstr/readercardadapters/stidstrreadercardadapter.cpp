@@ -13,6 +13,8 @@
 #include "logicalaccess/crypto/aes_cipher.hpp"
 #include "logicalaccess/crypto/aes_initialization_vector.hpp"
 #include "logicalaccess/crypto/aes_symmetric_key.hpp"
+#include "../stidstrreaderunitconfiguration.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {

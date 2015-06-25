@@ -31,6 +31,8 @@
 #include <vector>
 #include <iostream>
 
+#include "logicalaccess/myexception.hpp"
+
 #define DEFAULT_SAM_CLA 0x80
 
 namespace logicalaccess

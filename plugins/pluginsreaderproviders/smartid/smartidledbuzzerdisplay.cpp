@@ -5,6 +5,7 @@
  */
 
 #include "smartidledbuzzerdisplay.hpp"
+#include "readercardadapters/smartidreadercardadapter.hpp"
 
 namespace logicalaccess
 {
@@ -77,4 +78,7 @@ namespace logicalaccess
             setPort();
         }
     }
+
+    std::shared_ptr<SmartIDReaderCardAdapter> SmartIDLEDBuzzerDisplay::getSmartIDReaderCardAdapter()
+    { return std::dynamic_pointer_cast<SmartIDReaderCardAdapter>(getReaderCardAdapter()); }
 }

@@ -6,6 +6,7 @@
 
 #include "logicalaccess/readerproviders/datatransport.hpp"
 #include "logicalaccess/bufferhelper.hpp"
+#include "logicalaccess/logs.hpp"
 
 namespace logicalaccess
 {

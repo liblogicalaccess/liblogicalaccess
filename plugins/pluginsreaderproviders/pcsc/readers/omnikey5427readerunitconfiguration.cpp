@@ -3,6 +3,7 @@
 //
 
 #include <logicalaccess/cards/tripledeskey.hpp>
+#include <boost/property_tree/ptree.hpp>
 #include "omnikey5427readerunitconfiguration.hpp"
 
 using namespace logicalaccess;

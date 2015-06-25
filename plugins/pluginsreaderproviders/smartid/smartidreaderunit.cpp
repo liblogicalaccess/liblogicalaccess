@@ -18,9 +18,11 @@
 #include "readercardadapters/smartidreadercardadapter.hpp"
 #include "smartidledbuzzerdisplay.hpp"
 #include <boost/filesystem.hpp>
+#include <boost/property_tree/ptree.hpp>
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
+#include <boost/property_tree/xml_parser.hpp>
 
 namespace logicalaccess
 {

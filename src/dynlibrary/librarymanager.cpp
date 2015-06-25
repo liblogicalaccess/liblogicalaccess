@@ -6,6 +6,7 @@
 #include "logicalaccess/readerproviders/tcpdatatransport.hpp"
 #include "logicalaccess/readerproviders/udpdatatransport.hpp"
 #include "logicalaccess/cards/keydiversification.hpp"
+#include "logicalaccess/settings.hpp"
 
 namespace logicalaccess
 {

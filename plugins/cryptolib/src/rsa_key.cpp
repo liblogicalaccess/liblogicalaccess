@@ -17,6 +17,8 @@
 #include <openssl/ssl.h>
 #include <openssl/rand.h>
 
+#include <cassert>
+
 namespace logicalaccess
 {
     namespace openssl

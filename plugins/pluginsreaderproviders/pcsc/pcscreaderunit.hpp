@@ -7,16 +7,13 @@
 #ifndef LOGICALACCESS_PCSCREADERUNIT_HPP
 #define LOGICALACCESS_PCSCREADERUNIT_HPP
 
-#include "logicalaccess/readerproviders/readerunit.hpp"
 #include "pcscreaderunitconfiguration.hpp"
 #include "../iso7816/iso7816readerunit.hpp"
-#include "logicalaccess/cards/readermemorykeystorage.hpp"
+#include "pcsc_fwd.hpp"
 
 namespace logicalaccess
 {
     class Chip;
-    class PCSCReaderCardAdapter;
-    class PCSCReaderProvider;
     class SAMChip;
 
     /**

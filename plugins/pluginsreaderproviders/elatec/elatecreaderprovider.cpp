@@ -6,6 +6,7 @@
 
 #include "elatecreaderprovider.hpp"
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
+#include "logicalaccess/myexception.hpp"
 
 #ifdef __unix__
 #include <stdlib.h>
@@ -14,6 +15,7 @@
 
 #include <sstream>
 #include <iomanip>
+#include <logicalaccess/logs.hpp>
 
 #include "elatecreaderunit.hpp"
 

@@ -4,6 +4,7 @@
  * \brief Omnikey XX21 reader unit configuration.
  */
 
+#include <boost/property_tree/ptree.hpp>
 #include "../readers/omnikeyxx21readerunitconfiguration.hpp"
 
 namespace logicalaccess

@@ -16,6 +16,7 @@
 
 #include "ok5553readerunit.hpp"
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {
