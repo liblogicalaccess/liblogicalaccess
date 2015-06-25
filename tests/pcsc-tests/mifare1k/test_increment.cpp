@@ -3,6 +3,7 @@
 #include "logicalaccess/readerproviders/readerconfiguration.hpp"
 #include "logicalaccess/services/storage/storagecardservice.hpp"
 #include "pluginscards/mifare/mifarechip.hpp"
+#include "logicalaccess/cards/locationnode.hpp"
 
 #include "lla-tests/macros.hpp"
 #include "lla-tests/utils.hpp"

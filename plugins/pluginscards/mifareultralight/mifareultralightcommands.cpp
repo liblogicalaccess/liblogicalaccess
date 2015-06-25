@@ -4,6 +4,7 @@
  * \brief Mifare Ultralight commands.
  */
 
+#include <logicalaccess/logs.hpp>
 #include "mifareultralightcommands.hpp"
 #include "mifareultralightchip.hpp"
 

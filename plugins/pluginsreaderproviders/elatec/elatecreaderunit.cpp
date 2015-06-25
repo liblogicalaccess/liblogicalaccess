@@ -178,11 +178,9 @@ namespace logicalaccess
         return std::dynamic_pointer_cast<ElatecReaderCardAdapter>(adapter);
     }
 
-    string ElatecReaderUnit::getReaderSerialNumber()
+    std::string ElatecReaderUnit::getReaderSerialNumber()
     {
-        string ret;
-
-        return ret;
+        return std::string();
     }
 
     bool ElatecReaderUnit::isConnected()

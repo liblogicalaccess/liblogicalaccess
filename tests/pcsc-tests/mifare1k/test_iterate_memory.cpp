@@ -6,6 +6,7 @@
 
 #include "lla-tests/macros.hpp"
 #include "lla-tests/utils.hpp"
+#include "logicalaccess/cards/locationnode.hpp"
 
 void introduction()
 {

@@ -223,9 +223,9 @@ namespace logicalaccess
         return std::dynamic_pointer_cast<AxessTMCLegicReaderCardAdapter>(adapter);
     }
 
-    string AxessTMCLegicReaderUnit::getReaderSerialNumber()
+    std::string AxessTMCLegicReaderUnit::getReaderSerialNumber()
     {
-        string ret;
+        std::string ret;
 
         return ret;
     }

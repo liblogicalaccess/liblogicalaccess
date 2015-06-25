@@ -231,8 +231,8 @@ namespace logicalaccess
         bool usePnp = true;
         int readers_count = 0;
 
-        string reader = getName();
-        string connectedReader = "";
+        std::string reader = getName();
+        std::string connectedReader = "";
         std::string cardType = "UNKNOWN";
 
         if (reader != "")
@@ -466,7 +466,7 @@ namespace logicalaccess
             LOG(LogLevel::INFOS) << "Waiting card removal...";
         }
 
-        string reader = getConnectedName();
+        std::string reader = getConnectedName();
 
         int readers_count = static_cast<int>(getReaderProvider()->getReaderList().size());
 
@@ -519,7 +519,7 @@ namespace logicalaccess
             {
                 if ((SCARD_STATE_PRESENT & readers[i].dwEventState) == 0)
                 {
-                    reader = string(reinterpret_cast<const char*>(readers[i].szReader), strlen(reinterpret_cast<const char*>(readers[i].szReader)));
+                    reader = std::string(reinterpret_cast<const char*>(readers[i].szReader), strlen(reinterpret_cast<const char*>(readers[i].szReader)));
                     break;
                 }
             }
@@ -569,7 +569,7 @@ namespace logicalaccess
                             {
                                 loop = false;
 
-                                reader = string(reinterpret_cast<const char*>(readers[i].szReader), strlen(reinterpret_cast<const char*>(readers[i].szReader)));
+                                reader = std::string(reinterpret_cast<const char*>(readers[i].szReader), strlen(reinterpret_cast<const char*>(readers[i].szReader)));
                                 break;
                             }
                         }
@@ -1627,7 +1627,7 @@ namespace logicalaccess
         return std::dynamic_pointer_cast<PCSCReaderCardAdapter>(getDefaultReaderCardAdapter());
     }
 
-    string PCSCReaderUnit::getReaderSerialNumber()
+    std::string PCSCReaderUnit::getReaderSerialNumber()
     {
         if (d_proxyReaderUnit)
         {

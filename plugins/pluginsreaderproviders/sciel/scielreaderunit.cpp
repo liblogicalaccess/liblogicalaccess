@@ -638,11 +638,9 @@ namespace logicalaccess
         return std::dynamic_pointer_cast<SCIELReaderCardAdapter>(adapter);
     }
 
-    string SCIELReaderUnit::getReaderSerialNumber()
+    std::string SCIELReaderUnit::getReaderSerialNumber()
     {
-        string ret;
-
-        return ret;
+        return std::string();
     }
 
     bool SCIELReaderUnit::isConnected()

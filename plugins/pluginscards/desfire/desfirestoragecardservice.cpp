@@ -4,6 +4,7 @@
  * \brief DESFire storage card service.
  */
 
+#include <logicalaccess/logs.hpp>
 #include "desfirestoragecardservice.hpp"
 #include "desfireev1location.hpp"
 #include "logicalaccess/myexception.hpp"
@@ -22,7 +23,7 @@ namespace logicalaccess
         cmd->authenticate(0);
         cmd->erase();
 
-        cmd->changeKey(0, std::shared_ptr<DESFireKey>(new DESFireKey(string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
+        cmd->changeKey(0, std::shared_ptr<DESFireKey>(new DESFireKey(std::string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
     }
 
     void DESFireStorageCardService::erase(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse)
@@ -55,7 +56,7 @@ namespace logicalaccess
                 getDESFireChip()->getDESFireCommands()->deleteFile(*file);
             }
 
-            getDESFireChip()->getDESFireCommands()->changeKey(0, std::shared_ptr<DESFireKey>(new DESFireKey(string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
+            getDESFireChip()->getDESFireCommands()->changeKey(0,std::shared_ptr<DESFireKey>(new DESFireKey(std::string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
         }
         // Otherwise format the file.
         else
@@ -104,7 +105,7 @@ namespace logicalaccess
         }
         else
         {
-            getDESFireChip()->getDESFireProfile()->setKey(0, 0, std::shared_ptr<DESFireKey>(new DESFireKey(string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
+            getDESFireChip()->getDESFireProfile()->setKey(0, 0, std::shared_ptr<DESFireKey>(new DESFireKey(std::string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
         }
 
         getDESFireChip()->getDESFireCommands()->selectApplication(0);

@@ -149,7 +149,7 @@ namespace logicalaccess
         std::vector<unsigned char> rawidbuf = getDefaultPromagReaderCardAdapter()->sendCommand(cmd);
         if (rawidbuf.size() > 0)
         {
-            string rawidstr = BufferHelper::getStdString(rawidbuf);
+            std::string rawidstr = BufferHelper::getStdString(rawidbuf);
             std::vector<unsigned char> insertedId = XmlSerializable::formatHexString(rawidstr);
             chip = ReaderUnit::createChip(
                 (d_card_type == "UNKNOWN" ? "GenericTag" : d_card_type),
@@ -201,11 +201,9 @@ namespace logicalaccess
         return std::dynamic_pointer_cast<PromagReaderCardAdapter>(adapter);
     }
 
-    string PromagReaderUnit::getReaderSerialNumber()
+    std::string PromagReaderUnit::getReaderSerialNumber()
     {
-        string ret;
-
-        return ret;
+        return std::string();
     }
 
     bool PromagReaderUnit::isConnected()

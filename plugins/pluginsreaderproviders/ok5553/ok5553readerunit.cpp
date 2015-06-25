@@ -302,9 +302,9 @@ namespace logicalaccess
         return std::dynamic_pointer_cast<OK5553ReaderCardAdapter>(adapter);
     }
 
-    string OK5553ReaderUnit::getReaderSerialNumber()
+    std::string OK5553ReaderUnit::getReaderSerialNumber()
     {
-        return "";
+        return std::string();
     }
 
     bool OK5553ReaderUnit::isConnected()

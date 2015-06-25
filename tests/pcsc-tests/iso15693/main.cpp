@@ -6,6 +6,7 @@
 #include "logicalaccess/bufferhelper.hpp"
 #include "lla-tests/macros.hpp"
 #include "lla-tests/utils.hpp"
+#include "logicalaccess/logs.hpp"
 #include <vector>
 
 void introduction()

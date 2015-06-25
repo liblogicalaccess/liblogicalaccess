@@ -4,6 +4,7 @@
  * \brief Mifare Ultralight C card profiles.
  */
 
+#include <logicalaccess/logs.hpp>
 #include "mifareultralightcprofile.hpp"
 
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"

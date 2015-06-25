@@ -7,17 +7,13 @@
 #ifndef LOGICALACCESS_READERCONFIGURATION_HPP
 #define LOGICALACCESS_READERCONFIGURATION_HPP
 
-#include "logicalaccess/readerproviders/readerprovider.hpp"
-
 #include <string>
 #include <vector>
 #include <iostream>
 #include <map>
 
-using std::string;
-using std::ostream;
-using std::map;
-using std::pair;
+#include "logicalaccess/lla_fwd.hpp"
+#include "logicalaccess/xmlserializable.hpp"
 
 namespace logicalaccess
 {

@@ -303,11 +303,10 @@ namespace logicalaccess
         return std::dynamic_pointer_cast<STidSTRReaderCardAdapter>(adapter);
     }
 
-    string STidSTRReaderUnit::getReaderSerialNumber()
+    std::string STidSTRReaderUnit::getReaderSerialNumber()
     {
         LOG(LogLevel::WARNINGS) << "Do nothing with STid STR reader";
-        string ret;
-        return ret;
+        return std::string();
     }
 
     bool STidSTRReaderUnit::isConnected()

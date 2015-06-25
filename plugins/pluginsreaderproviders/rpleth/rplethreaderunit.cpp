@@ -63,8 +63,7 @@ namespace logicalaccess
 
     std::string RplethReaderUnit::getName() const
     {
-        string ret = "";
-        return ret;
+        return std::string();
     }
 
     std::string RplethReaderUnit::getConnectedName()
@@ -340,7 +339,7 @@ namespace logicalaccess
         return std::dynamic_pointer_cast<RplethReaderCardAdapter>(adapter);
     }
 
-    string RplethReaderUnit::getReaderSerialNumber()
+    std::string RplethReaderUnit::getReaderSerialNumber()
     {
         return "";
     }

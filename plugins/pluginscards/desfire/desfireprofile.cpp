@@ -5,6 +5,7 @@
  */
 
 #include <cstring>
+#include <logicalaccess/logs.hpp>
 #include "desfireprofile.hpp"
 #include "desfirecrypto.hpp"
 
@@ -23,7 +24,7 @@ namespace logicalaccess
 
     void DESFireProfile::setDefaultKeys()
     {
-        setKey(0, 0, std::shared_ptr<DESFireKey>(new DESFireKey(string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
+        setKey(0, 0, std::shared_ptr<DESFireKey>(new DESFireKey(std::string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
     }
 
     void DESFireProfile::setDefaultKeysAt(std::shared_ptr<Location> location)

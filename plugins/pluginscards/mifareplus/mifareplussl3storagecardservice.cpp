@@ -12,6 +12,7 @@
 #include <iomanip>
 #include <sstream>
 #include <cstring>
+#include <logicalaccess/logs.hpp>
 
 namespace logicalaccess
 {

@@ -9,8 +9,6 @@
 
 #include "logicalaccess/xmlserializable.hpp"
 
-#include "logicalaccess/logs.hpp"
-
 namespace logicalaccess
 {
     class ReaderCardAdapter;

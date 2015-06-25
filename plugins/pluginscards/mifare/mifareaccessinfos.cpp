@@ -7,6 +7,7 @@
 #include <cstring>
 #include <boost/property_tree/ptree.hpp>
 #include <iomanip>
+#include <logicalaccess/logs.hpp>
 #include "mifareaccessinfo.hpp"
 #include "mifarechip.hpp"
 
@@ -176,7 +177,7 @@ namespace logicalaccess
         keyA->unSerialize(node.get_child("KeyA"), "");
         keyB->unSerialize(node.get_child("KeyB"), "");
 
-        string sabstr = node.get_child("SectorAccessBits").get_value<std::string>();
+        std::string sabstr = node.get_child("SectorAccessBits").get_value<std::string>();
         unsigned char buf[3];
         memset(buf, 0x00, sizeof(buf));
         std::istringstream iss(sabstr);

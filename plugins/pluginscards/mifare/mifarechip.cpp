@@ -14,6 +14,7 @@
 #include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
 #include "mifarestoragecardservice.hpp"
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include "logicalaccess/cards/locationnode.hpp"
 
 namespace logicalaccess
 {

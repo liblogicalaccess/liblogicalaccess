@@ -12,6 +12,7 @@
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
 
 #include "proxaccesscontrolcardservice.hpp"
+#include "logicalaccess/cards/locationnode.hpp"
 
 namespace logicalaccess
 {

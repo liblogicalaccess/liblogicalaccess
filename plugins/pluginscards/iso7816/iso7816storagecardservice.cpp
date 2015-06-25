@@ -5,6 +5,7 @@
  */
 
 #include <cstring>
+#include <logicalaccess/logs.hpp>
 #include "iso7816storagecardservice.hpp"
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 #include "iso7816location.hpp"

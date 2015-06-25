@@ -4,6 +4,7 @@
 #include "logicalaccess/services/storage/storagecardservice.hpp"
 #include "pluginscards/mifare/mifarechip.hpp"
 
+#include "logicalaccess/logs.hpp"
 #include "lla-tests/macros.hpp"
 #include "lla-tests/utils.hpp"
 

@@ -6,6 +6,7 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <iomanip>
+#include <logicalaccess/logs.hpp>
 #include "mifareplusaccessinfo.hpp"
 #include "mifarepluschip.hpp"
 
@@ -133,7 +134,7 @@ namespace logicalaccess
         keySwitchL3->unSerialize(node.get_child("KeySwitchL3"), "");
         keyAuthenticateSL1AES->unSerialize(node.get_child("KeyAuthenticateSL1AES"), "");
 
-        string sabstr = node.get_child("SectorAccessBits").get_value<std::string>();
+        std::string sabstr = node.get_child("SectorAccessBits").get_value<std::string>();
         unsigned char buf[3];
         memset(buf, 0x00, sizeof(buf));
         std::istringstream iss(sabstr);

@@ -5,6 +5,7 @@
  */
 
 #include <cstring>
+#include <logicalaccess/logs.hpp>
 #include "mifareplussl3commands.hpp"
 #include "mifarepluschip.hpp"
 #include "logicalaccess/myexception.hpp"

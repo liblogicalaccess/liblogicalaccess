@@ -5,6 +5,7 @@
  */
 
 #include <boost/property_tree/ptree.hpp>
+#include <logicalaccess/logs.hpp>
 #include "desfireaccessinfo.hpp"
 #include "desfireprofile.hpp"
 #include "desfirechip.hpp"

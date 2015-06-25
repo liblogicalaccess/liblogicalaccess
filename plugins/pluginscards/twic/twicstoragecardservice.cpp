@@ -4,6 +4,7 @@
  * \brief Twic storage card service.
  */
 
+#include <logicalaccess/logs.hpp>
 #include "twicstoragecardservice.hpp"
 
 namespace logicalaccess

@@ -1,5 +1,6 @@
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include <boost/filesystem.hpp>
+#include <logicalaccess/logs.hpp>
 
 // TODO: Data transport should also be through plug-in
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"

@@ -5,6 +5,7 @@
  */
 
 #include "em4102chip.hpp"
+#include "logicalaccess/cards/locationnode.hpp"
 
 namespace logicalaccess
 {

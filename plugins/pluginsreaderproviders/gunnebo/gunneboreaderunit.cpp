@@ -285,11 +285,10 @@ namespace logicalaccess
         return std::dynamic_pointer_cast<GunneboReaderCardAdapter>(adapter);
     }
 
-    string GunneboReaderUnit::getReaderSerialNumber()
+    std::string GunneboReaderUnit::getReaderSerialNumber()
     {
         LOG(LogLevel::WARNINGS) << "Do nothing with Gunnebo reader";
-        string ret;
-        return ret;
+        return std::string();
     }
 
     bool GunneboReaderUnit::isConnected()
