@@ -145,9 +145,8 @@ namespace logicalaccess
 
     std::string RFIDeasReaderUnit::getName() const
     {
-        string ret = "";
-        return ret;
-    }
+		return std::string();
+	}
 
     std::string RFIDeasReaderUnit::getConnectedName()
     {
@@ -318,11 +317,9 @@ namespace logicalaccess
         return chipList;
     }
 
-    string RFIDeasReaderUnit::getReaderSerialNumber()
+    std::string RFIDeasReaderUnit::getReaderSerialNumber()
     {
-        string ret;
-
-        return ret;
+		return "";
     }
 
     bool RFIDeasReaderUnit::isConnected()
