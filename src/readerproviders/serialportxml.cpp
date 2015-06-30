@@ -90,9 +90,9 @@ namespace logicalaccess
                             ports.push_back(newPort);
                         }
                     }
-                    catch (std::exception&)
+                    catch (const std::exception &e)
                     {
-                        LOG(LogLevel::ERRORS) << "Open SerialPort failed: " << p;
+                        LOG(LogLevel::ERRORS) << "Open SerialPort failed: " << p << ". Exception: " << e.what();
                     }
                 }
             }
