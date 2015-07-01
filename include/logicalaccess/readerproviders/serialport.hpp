@@ -18,6 +18,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/circular_buffer.hpp>
 #include <boost/thread/shared_mutex.hpp>
+#include <condition_variable>
 
 #include "logicalaccess/readerproviders/readerunit.hpp"
 #include "logicalaccess/readerproviders/circularbufferparser.hpp"
@@ -114,7 +115,7 @@ namespace logicalaccess
          * The serial port must be open before the call or an LibLogicalAccessException will be thrown.
          * The call may also throw a std::exception in case of failure.
          */
-        size_t read(std::vector<unsigned char>& buf, size_t cnt);
+        size_t read(std::vector<unsigned char>& buf);
 
         /**
          * \brief Write some data to the serial port.
@@ -144,11 +145,42 @@ namespace logicalaccess
         void setCircularBufferParser(CircularBufferParser* circular_buffer_parser) { m_circular_buffer_parser.reset(circular_buffer_parser); };
         std::shared_ptr<CircularBufferParser> getCircularBufferParser() { return m_circular_buffer_parser; };
 
-        boost::shared_mutex& getAvailableDataMutex() { return m_available_data; };
-
-        std::mutex& getReadMutex() { return m_mutex_reader; };
-
         boost::circular_buffer<unsigned char>& getCircularReadBuffer() { return m_circular_read_buffer; };
+
+        /**
+         * Wait until more data are available, or until `until` is reach.
+         *
+         * If more data are available, execute the callback while holding
+         * the internal mutex.
+         */
+        template<typename T>
+        void waitMoreData(const std::chrono::steady_clock::time_point &until, T&& callback)
+        {
+            std::unique_lock<std::mutex> ul(cond_var_mutex_);
+            cond_var_.wait_until(ul,
+                                 until,
+                                 [&] () { return data_flag_ ; });
+            if (data_flag_)
+            {
+                callback();
+            }
+        }
+
+        /**
+         * Execute `callback` while holding the internal mutex.
+         */
+        template<typename T>
+        void lockedExecute(T &&callback)
+        {
+            std::unique_lock<std::mutex> ul(cond_var_mutex_);
+            callback();
+        }
+
+        /**
+         * Calling this function means that available data have been consumed,
+         * or that more data is needed to continue.
+         */
+        void dataConsumed();
 
     private:
         void do_read(const boost::system::error_code& e, std::size_t bytes_transferred);
@@ -160,7 +192,6 @@ namespace logicalaccess
         void write_complete(const boost::system::error_code& error, const std::size_t bytes_transferred);
 
     private:
-
         /**
          * \brief The internal device name.
          */
@@ -178,11 +209,15 @@ namespace logicalaccess
 
         std::shared_ptr<std::thread> m_thread_reader;
 
-        std::mutex m_mutex_reader;
-
-        boost::shared_mutex m_available_data;
-
         std::shared_ptr<CircularBufferParser> m_circular_buffer_parser;
+
+        /**
+         * Synchronization stuff
+         */
+
+        std::condition_variable cond_var_;
+        bool data_flag_;
+        std::mutex cond_var_mutex_;
     };
 }
 

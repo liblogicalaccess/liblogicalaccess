@@ -48,11 +48,7 @@ namespace logicalaccess
         setDefaultReaderCardAdapter(std::shared_ptr<STidSTRReaderCardAdapter>(new STidSTRReaderCardAdapter(STID_CMD_READER)));
         d_ledBuzzerDisplay.reset(new STidSTRLEDBuzzerDisplay());
         std::shared_ptr<STidSTRDataTransport> dataTransport(new STidSTRDataTransport());
-#ifndef _WINDOWS
-        dataTransport->setPortBaudRate(B38400);
-#else
-        dataTransport->setPortBaudRate(CBR_38400);
-#endif
+        dataTransport->setPortBaudRate(38400);
         setDataTransport(dataTransport);
         d_card_type = "UNKNOWN";
 

@@ -33,11 +33,7 @@ namespace logicalaccess
         setDefaultReaderCardAdapter(std::shared_ptr<SmartIDReaderCardAdapter>(new SmartIDReaderCardAdapter()));
         d_ledBuzzerDisplay.reset(new SmartIDLEDBuzzerDisplay());
         std::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
-#ifndef _WINDOWS
-        dataTransport->setPortBaudRate(B115200);
-#else
-        dataTransport->setPortBaudRate(CBR_115200);
-#endif
+        dataTransport->setPortBaudRate(115200);
         setDataTransport(dataTransport);
         d_card_type = "UNKNOWN";
 

@@ -22,17 +22,21 @@ namespace logicalaccess
 #else
         m_dev("COM1"),
 #endif
-        m_serial_port(m_io), m_circular_read_buffer(256), m_read_buffer(128)
+        m_serial_port(m_io), m_circular_read_buffer(256), m_read_buffer(128),
+        data_flag_(false)
     {
     }
 
     SerialPort::SerialPort(const std::string& dev)
-        : m_dev(dev), m_serial_port(m_io), m_circular_read_buffer(256), m_read_buffer(128)
+        : m_dev(dev), m_serial_port(m_io), m_circular_read_buffer(256), m_read_buffer(128),
+          data_flag_(false)
     {
     }
 
     void SerialPort::open()
     {
+        LOG(DEBUGS) << "Opening serial port...";
+
         if (m_serial_port.is_open())
             return;
 
@@ -43,7 +47,8 @@ namespace logicalaccess
 
         if (!m_thread_reader)
         {
-            m_available_data.lock();
+            data_flag_ = false;
+
             m_serial_port.async_read_some(boost::asio::buffer(m_read_buffer),
                 boost::bind(&SerialPort::do_read, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
             m_thread_reader.reset(new std::thread(boost::bind(&boost::asio::io_service::run, &m_io)));
@@ -62,7 +67,6 @@ namespace logicalaccess
         if (m_thread_reader)
             m_thread_reader->join();
 
-        m_available_data.unlock();
         m_io.reset();
         m_thread_reader.reset();
         m_circular_read_buffer.clear();
@@ -138,13 +142,10 @@ namespace logicalaccess
         return character_size.value();
     }
 
-    size_t SerialPort::read(std::vector<unsigned char>& buf, size_t cnt)
+    size_t SerialPort::read(std::vector<unsigned char>& buf)
     {
         EXCEPTION_ASSERT(isOpen(), LibLogicalAccessException, "Cannot read on a closed device");
-        if (cnt == 0)
-            return 0;
 
-        m_mutex_reader.lock();
         if (m_circular_buffer_parser)
         {
             buf = m_circular_buffer_parser->getValidBuffer(m_circular_read_buffer);
@@ -153,25 +154,27 @@ namespace logicalaccess
         {
             buf.assign(m_circular_read_buffer.begin(), m_circular_read_buffer.end());
             m_circular_read_buffer.clear();
-            LOG(LogLevel::COMS) << "Use data readed: " << BufferHelper::getHex(buf) << " Size: " << buf.size();
+            LOG(LogLevel::COMS) << "Use data read: " << BufferHelper::getHex(buf) << " Size: " << buf.size();
         }
-        m_mutex_reader.unlock();
 
         return buf.size();
     }
 
     void SerialPort::do_read(const boost::system::error_code& error, const std::size_t bytes_transferred)
     {
-        // ignore aborts
         if (error == boost::asio::error::operation_aborted)
+        {
+            LOG(DEBUGS) << "Read aborted: " << error.message();
             return;
+        }
         if (error == boost::asio::error::eof)
         {
+            LOG(DEBUGS) << "Read errored (EOF)";
             do_close(error);
             return;
         }
 
-        m_mutex_reader.lock();
+        cond_var_mutex_.lock();
         if (m_circular_read_buffer.reserve() < bytes_transferred)
         {
             LOG(LogLevel::WARNINGS) << "Buffer Overflow, Size: " << m_circular_read_buffer.size()
@@ -179,14 +182,15 @@ namespace logicalaccess
                 << " bytes transferred: " << bytes_transferred;
             m_circular_read_buffer.clear();
         }
-
         m_circular_read_buffer.insert(m_circular_read_buffer.end(), m_read_buffer.begin(), m_read_buffer.begin() + bytes_transferred);
-        LOG(LogLevel::COMS) << "Data readed: "
+
+        LOG(LogLevel::INFOS) << "Data read: "
             << BufferHelper::getHex(std::vector<unsigned char>(m_read_buffer.begin(), m_read_buffer.begin() + bytes_transferred))
             << " Size: " << bytes_transferred;
 
-        m_available_data.unlock();
-        m_mutex_reader.unlock();
+        data_flag_ = true;
+        cond_var_mutex_.unlock();
+        cond_var_.notify_all();
 
         // start the next read
         m_serial_port.async_read_some(boost::asio::buffer(m_read_buffer), boost::bind(&SerialPort::do_read,
@@ -233,5 +237,10 @@ namespace logicalaccess
     bool SerialPort::isOpen()
     {
         return m_serial_port.is_open();
+    }
+
+    void SerialPort::dataConsumed()
+    {
+        data_flag_ = false;
     }
 }
