@@ -40,6 +40,7 @@
 #include "mifareplussl3profile.hpp"
 #include "commands/mifareplusspringcardcommandssl3.hpp"
 #include "samav1chip.hpp"
+#include "commands/felicascmcommands.hpp"
 
 #include "commands/samiso7816resultchecker.hpp"
 #include "commands/desfireiso7816resultchecker.hpp"
@@ -51,7 +52,6 @@
 #include "readers/omnikeylanxx21readerunit.hpp"
 #include "readers/omnikeyxx25readerunit.hpp"
 #include "readers/cherryreaderunit.hpp"
-#include "readers/scmreaderunit.hpp"
 #include "readers/springcardreaderunit.hpp"
 #include "readers/acsacrreaderunit.hpp"
 
@@ -1044,6 +1044,15 @@ namespace logicalaccess
                         return "Mifare1K";
                     }
                 }
+				else
+				{
+					unsigned char atrFeliCa[] = { 0x3B, 0x8C, 0x80, 0x01, 0x04, 0x43, 0xFD };
+
+					if (!memcmp(atr, atrFeliCa, sizeof(atrFeliCa)))
+					{
+						return "FeliCa";
+					}
+				}
                 return "UNKNOWN";
             }
             else if (atrlen == 11 && (atr[0] == 0x3B) && (atr[1] == 0x09))	// specific Mifare classic stuff again (coming from smartcard_list)
@@ -1424,7 +1433,7 @@ namespace logicalaccess
 
             if (type == "Mifare1K" || type == "Mifare4K" || type == "Mifare")
             {
-                if (getPCSCType() == PCSC_RUT_SCM_SDI010)
+				if (getPCSCType() == PCSC_RUT_SCM)
                 {
                     commands.reset(new MifareSCMCommands());
                 }
@@ -1556,6 +1565,13 @@ namespace logicalaccess
                 // reader unit later on.
                 commands.reset(new ProxCommand());
             }
+			else if (type == "FeliCa")
+			{
+				if (getPCSCType() == PCSC_RUT_SCM)
+				{
+					commands.reset(new FeliCaSCMCommands());
+				}
+			}
 
             if (type == "DESFire" || type == "DESFireEV1")
             {

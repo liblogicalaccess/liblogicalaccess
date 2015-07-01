@@ -21,8 +21,8 @@ namespace logicalaccess
     {
     }
 
-    PCSCReaderUnitType SCMReaderUnit::getPCSCType() const
-    {
-        return PCSC_RUT_SCM_SDI010;
-    }
+	PCSCReaderUnitType SCMReaderUnit::getPCSCType() const
+	{
+		return PCSC_RUT_SCM;
+	}
 }

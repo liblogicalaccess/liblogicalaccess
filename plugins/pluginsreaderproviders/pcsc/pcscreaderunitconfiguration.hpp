@@ -38,14 +38,14 @@ namespace logicalaccess
      */
     typedef enum {
         PCSC_RUT_DEFAULT = 0x0000, /**< Default PC/SC reader unit */
-        PCSC_RUT_OMNIKEY_XX21 = 0x0001, /**< Omnikey PC/SC reader unit */
-        PCSC_RUT_OMNIKEY_XX25 = 0x0002, /**< Omnikey PC/SC reader unit */
-        PCSC_RUT_SCM_SDI010 = 0x0003, /**< SDI010 PC/SC reader unit */
+        PCSC_RUT_OMNIKEY_XX21 = 0x0001, /**< Omnikey xx21 PC/SC reader unit */
+        PCSC_RUT_OMNIKEY_XX25 = 0x0002, /**< Omnikey xx25 PC/SC reader unit */
+        PCSC_RUT_SCM = 0x0003, /**< SCM PC/SC reader unit */
         PCSC_RUT_CHERRY = 0x0004, /**< Cherry SmartTerminal PC/SC reader unit */
         PCSC_RUT_SPRINGCARD = 0x0005, /**< SpringCard PC/SC reader unit */
-        PCSC_RUT_OMNIKEY_XX27 = 0x0006, /**< Omnikey PC/SC reader unit */
+        PCSC_RUT_OMNIKEY_XX27 = 0x0006, /**< Omnikey xx27 PC/SC reader unit */
         PCSC_RUT_OMNIKEY_LAN_XX21 = 0x0007, /**< Omnikey PC/SC LAN reader unit */
-        PCSC_RUT_ACS_ACR = 0x0008, /**< ACS ACR reader unit */
+        PCSC_RUT_ACS_ACR = 0x0008 /**< ACS ACR reader unit */
     } PCSCReaderUnitType;
 
     /**

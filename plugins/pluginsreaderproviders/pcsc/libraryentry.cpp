@@ -42,7 +42,11 @@ extern "C"
         }
         else if (readerName.find("SDI010 Contactless Reader") != string::npos
                 || readerName.find("SCR331-DI USB ContactlessReader") != string::npos
-                || readerName.find("SCL010 Contactless") != string::npos)
+                || readerName.find("SCL010 Contactless") != string::npos
+				|| readerName.find("SCL01x Contactless") != string::npos
+				|| readerName.find("SCL3711 reader") != string::npos
+				|| readerName.find("Identive CLOUD 4700 F Contactless") != string::npos
+				|| readerName.find("Identive CLOUD 4710 F Contactless") != string::npos)
         {
             u = make_shared<SCMReaderUnit>(readerName);
         }
