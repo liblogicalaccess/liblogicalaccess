@@ -146,7 +146,6 @@ namespace logicalaccess
     {
         EXCEPTION_ASSERT(isOpen(), LibLogicalAccessException, "Cannot read on a closed device");
 
-        m_mutex_reader.lock();
         if (m_circular_buffer_parser)
         {
             buf = m_circular_buffer_parser->getValidBuffer(m_circular_read_buffer);
@@ -157,7 +156,6 @@ namespace logicalaccess
             m_circular_read_buffer.clear();
             LOG(LogLevel::COMS) << "Use data read: " << BufferHelper::getHex(buf) << " Size: " << buf.size();
         }
-        m_mutex_reader.unlock();
 
         return buf.size();
     }
@@ -176,7 +174,6 @@ namespace logicalaccess
             return;
         }
 
-        m_mutex_reader.lock();
         cond_var_mutex_.lock();
         if (m_circular_read_buffer.reserve() < bytes_transferred)
         {
@@ -194,7 +191,6 @@ namespace logicalaccess
         data_flag_ = true;
         cond_var_mutex_.unlock();
         cond_var_.notify_all();
-        m_mutex_reader.unlock();
 
         // start the next read
         m_serial_port.async_read_some(boost::asio::buffer(m_read_buffer), boost::bind(&SerialPort::do_read,

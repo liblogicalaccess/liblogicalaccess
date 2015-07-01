@@ -145,8 +145,6 @@ namespace logicalaccess
         void setCircularBufferParser(CircularBufferParser* circular_buffer_parser) { m_circular_buffer_parser.reset(circular_buffer_parser); };
         std::shared_ptr<CircularBufferParser> getCircularBufferParser() { return m_circular_buffer_parser; };
 
-        std::mutex& getReadMutex() { return m_mutex_reader; };
-
         boost::circular_buffer<unsigned char>& getCircularReadBuffer() { return m_circular_read_buffer; };
 
         /**
@@ -166,6 +164,16 @@ namespace logicalaccess
             {
                 callback();
             }
+        }
+
+        /**
+         * Execute `callback` while holding the internal mutex.
+         */
+        template<typename T>
+        void lockedExecute(T &&callback)
+        {
+            std::unique_lock<std::mutex> ul(cond_var_mutex_);
+            callback();
         }
 
         /**
@@ -200,8 +208,6 @@ namespace logicalaccess
         std::vector<unsigned char> m_write_buffer;
 
         std::shared_ptr<std::thread> m_thread_reader;
-
-        std::mutex m_mutex_reader;
 
         std::shared_ptr<CircularBufferParser> m_circular_buffer_parser;
 
