@@ -50,7 +50,7 @@ namespace logicalaccess
         virtual void clearKeys();
 
         /**
-         * \brief Set ISO15693 key at a specific location.
+         * \brief Set FeliCa key at a specific location.
          * \param location The key's location.
          * \param AccessInfo The key's informations.
          */
@@ -63,14 +63,14 @@ namespace logicalaccess
         void setDefaultKeysAt(size_t index);
 
         /**
-         * \brief Create default ISO15693 access informations.
-         * \return Default ISO15693 access informations. Always null.
+         * \brief Create default FeliCa access informations.
+         * \return Default FeliCa access informations. Always null.
          */
         virtual std::shared_ptr<AccessInfo> createAccessInfo() const;
 
         /**
-         * \brief Create default ISO15693 location.
-         * \return Default ISO15693 location.
+         * \brief Create default FeliCa location.
+         * \return Default FeliCa location.
          */
         virtual std::shared_ptr<Location> createLocation() const;
 

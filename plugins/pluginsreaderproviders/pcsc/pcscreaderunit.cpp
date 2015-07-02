@@ -1105,6 +1105,12 @@ namespace logicalaccess
                         {
                             return"TagIt";
                         }
+
+                        unsigned char atrCPS3[] = { 0x3b, 0x8f, 0x80, 0x01, 0x00, 0x31, 0xb8, 0x64, 0x04, 0xb0, 0xec, 0xc1, 0x73, 0x94, 0x01, 0x80, 0x82, 0x90, 0x00, 0x0e };
+                        if (!memcmp(atr, atrCPS3, sizeof(atrCPS3)))
+                        {
+                            return"CPS3";
+                        }
                     }
                 }
                 else

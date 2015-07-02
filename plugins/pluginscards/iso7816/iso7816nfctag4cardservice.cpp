@@ -74,4 +74,9 @@ namespace logicalaccess
         data = iso7816command->readBinary(length, 2, isoFIDNDEFFile);
         return std::shared_ptr<logicalaccess::NdefMessage>(new NdefMessage(data));
     }
+
+    std::shared_ptr<logicalaccess::NdefMessage> ISO7816NFCTag4CardService::readNDEF()
+    {
+        return readNDEFFile();
+    }
 }
