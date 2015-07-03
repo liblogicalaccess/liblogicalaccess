@@ -1085,31 +1085,33 @@ namespace logicalaccess
             {
                 if (atrlen == 20)
                 {
-                    memcpy(eatr + 12, atr + 12, 3);
-                    eatr[19] = atr[19];
-
-                    if (memcmp(eatr, atr, atrlen) != 0)
+                    unsigned char atrCPS3[] = { 0x3b, 0x8f, 0x80, 0x01, 0x00, 0x31, 0xb8, 0x64, 0x04, 0xb0, 0xec, 0xc1, 0x73, 0x94, 0x01, 0x80, 0x82, 0x90, 0x00, 0x0e };
+                    if (!memcmp(atr, atrCPS3, sizeof(atrCPS3)))
                     {
-                        return "UNKNOWN";
+                        return"CPS3";
                     }
                     else
                     {
-                        std::string ret = atrXToCardType((atr[13] << 8) | atr[14]);
-                        if (ret != "UNKNOWN")
-                        {
-                            return ret;
-                        }
+                        memcpy(eatr + 12, atr + 12, 3);
+                        eatr[19] = atr[19];
 
-                        unsigned char atrTagIT[] = { 0x3b, 0x8f, 0x80, 0x01, 0x80, 0x4f, 0x0c, 0xa0, 0x00, 0x00, 0x03, 0x06, 0x0b, 0x00, 0x12, 0x00, 0x00, 0x00, 0x00, 0x71 };
-                        if (!memcmp(atr, atrTagIT, sizeof(atrTagIT)))
+                        if (memcmp(eatr, atr, atrlen) != 0)
                         {
-                            return"TagIt";
+                            return "UNKNOWN";
                         }
-
-                        unsigned char atrCPS3[] = { 0x3b, 0x8f, 0x80, 0x01, 0x00, 0x31, 0xb8, 0x64, 0x04, 0xb0, 0xec, 0xc1, 0x73, 0x94, 0x01, 0x80, 0x82, 0x90, 0x00, 0x0e };
-                        if (!memcmp(atr, atrCPS3, sizeof(atrCPS3)))
+                        else
                         {
-                            return"CPS3";
+                            std::string ret = atrXToCardType((atr[13] << 8) | atr[14]);
+                            if (ret != "UNKNOWN")
+                            {
+                                return ret;
+                            }
+
+                            unsigned char atrTagIT[] = { 0x3b, 0x8f, 0x80, 0x01, 0x80, 0x4f, 0x0c, 0xa0, 0x00, 0x00, 0x03, 0x06, 0x0b, 0x00, 0x12, 0x00, 0x00, 0x00, 0x00, 0x71 };
+                            if (!memcmp(atr, atrTagIT, sizeof(atrTagIT)))
+                            {
+                                return"TagIt";
+                            }
                         }
                     }
                 }
