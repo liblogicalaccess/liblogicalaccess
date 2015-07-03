@@ -1,22 +1,22 @@
 /**
- * \file desfirenfctag4cardservice.hpp
+ * \file iso7816nfctag4cardservice.hpp
  * \author Adrien J. <adrien-dev@islog.com>
- * \brief DESFire NFC Tag 4 card service.
+ * \brief NFC Tag 4 card service.
  */
 
 #ifndef LOGICALACCESS_ISO7816NFCTAG4CARDSERVICE_HPP
 #define LOGICALACCESS_ISO7816NFCTAG4CARDSERVICE_HPP
 
-#include "logicalaccess/services/cardservice.hpp"
+#include "logicalaccess/services/nfctag/nfctagcardservice.hpp"
 #include "logicalaccess/services/nfctag/ndefmessage.hpp"
 #include "iso7816chip.hpp"
 
 namespace logicalaccess
 {
     /**
-     * \brief The DESFire storage card service bas class.
+     * \brief The ISO7816 NFC Tag 4 storage card service bas class.
      */
-    class LIBLOGICALACCESS_API ISO7816NFCTag4CardService : public CardService
+    class LIBLOGICALACCESS_API ISO7816NFCTag4CardService : public NFCTagCardService
     {
     public:
 
@@ -24,7 +24,7 @@ namespace logicalaccess
          * \brief Constructor.
          * \param chip The chip.
          */
-        ISO7816NFCTag4CardService(std::shared_ptr<Chip> chip) : CardService(chip) {};
+        ISO7816NFCTag4CardService(std::shared_ptr<Chip> chip) : NFCTagCardService(chip) {};
 
         virtual ~ISO7816NFCTag4CardService() {};
 
@@ -36,7 +36,7 @@ namespace logicalaccess
 
         virtual std::shared_ptr<logicalaccess::NdefMessage> readNDEFFile(unsigned short isoFIDApplication = 0xe105, unsigned short isoFIDNDEFFile = 0xe104);
 
-        virtual CardServiceType getServiceType() const { return CardServiceType::CST_NFC_TAG; };
+        virtual std::shared_ptr<logicalaccess::NdefMessage> readNDEF();
 
     protected:
 

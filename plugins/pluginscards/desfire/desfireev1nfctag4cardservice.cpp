@@ -64,4 +64,16 @@ namespace logicalaccess
         desfirecommand->selectApplication(0x00);
         return ISO7816NFCTag4CardService::readNDEFFile(isoFIDApplication, isoFIDNDEFFile);
     }
+
+    void DESFireEV1NFCTag4CardService::writeNDEF(std::shared_ptr<logicalaccess::NdefMessage> records)
+    {
+        createNFCApplication(0x000001, std::shared_ptr<logicalaccess::DESFireKey>());
+        writeNDEFFile(records);
+    }
+
+    void DESFireEV1NFCTag4CardService::eraseNDEF()
+    {
+        std::shared_ptr<logicalaccess::DESFireCommands> desfirecommand(std::dynamic_pointer_cast<logicalaccess::DESFireCommands>(getChip()->getCommands()));
+        desfirecommand->erase();
+    }
 }
