@@ -75,6 +75,8 @@ namespace logicalaccess
 
     bool GunneboReaderUnit::waitInsertion(unsigned int maxwait)
     {
+        std::chrono::system_clock::time_point wait_until(std::chrono::system_clock::now()
+                                                         + std::chrono::milliseconds(maxwait));
         bool oldValue = Settings::getInstance()->IsLogEnabled;
         if (oldValue && !Settings::getInstance()->SeeWaitInsertionLog)
         {
@@ -126,10 +128,9 @@ namespace logicalaccess
 
                 if (!inserted)
                 {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-                    currentWait += 500;
+                    std::this_thread::sleep_for(std::chrono::milliseconds(250));
                 }
-            } while (!inserted && (maxwait == 0 || currentWait < maxwait));
+            } while (!inserted && (std::chrono::system_clock::now() < wait_until || maxwait == 0));
         }
         catch (...)
         {
@@ -139,7 +140,8 @@ namespace logicalaccess
 
         removalIdentifier.clear();
 
-        LOG(LogLevel::INFOS) << "Returns card inserted ? {" << inserted << "} function timeout expired ? {" << (maxwait != 0 && currentWait >= maxwait) << "}";
+        LOG(LogLevel::INFOS) << "Returns card inserted ? {" << inserted << "} function timeout expired ? {"
+        << (std::chrono::system_clock::now() > wait_until && maxwait != 0) << "}";
         Settings::getInstance()->IsLogEnabled = oldValue;
 
         return inserted;
@@ -147,6 +149,9 @@ namespace logicalaccess
 
     bool GunneboReaderUnit::waitRemoval(unsigned int maxwait)
     {
+        std::chrono::steady_clock::time_point wait_until(std::chrono::steady_clock::now()
+                                                         + std::chrono::milliseconds(maxwait));
+
         bool oldValue = Settings::getInstance()->IsLogEnabled;
         if (oldValue && !Settings::getInstance()->SeeWaitRemovalLog)
         {
@@ -157,7 +162,6 @@ namespace logicalaccess
         bool removed = false;
         removalIdentifier.clear();
 
-        unsigned int currentWait = 0;
         try
         {
             // The inserted chip will stay inserted until a new identifier is read on the serial port.
@@ -190,10 +194,9 @@ namespace logicalaccess
 
                     if (!removed)
                     {
-                        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-                        currentWait += 500;
+                        std::this_thread::sleep_for(std::chrono::milliseconds(250));
                     }
-                } while (!removed && (maxwait == 0 || currentWait < maxwait));
+                } while (!removed && (std::chrono::steady_clock::now() < wait_until || maxwait == 0));
             }
         }
         catch (...)
@@ -202,7 +205,8 @@ namespace logicalaccess
             throw;
         }
 
-        LOG(LogLevel::INFOS) << "Returns card removed ? {" << removed << "} - function timeout expired ? {" << (maxwait != 0 && currentWait >= maxwait) << "}";
+        LOG(LogLevel::INFOS) << "Returns card removed ? {" << removed << "} - function timeout expired ? {"
+        << (std::chrono::steady_clock::now() > wait_until && maxwait != 0) << "}";
 
         Settings::getInstance()->IsLogEnabled = oldValue;
 
