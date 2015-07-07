@@ -22,6 +22,8 @@
 #include "logicalaccess/settings.hpp"
 #include <boost/property_tree/xml_parser.hpp>
 
+#include "readercardadapters/gunnebodatatransport.hpp"
+
 namespace logicalaccess
 {
     /*
@@ -35,7 +37,7 @@ namespace logicalaccess
     {
         d_readerUnitConfig.reset(new GunneboReaderUnitConfiguration());
         setDefaultReaderCardAdapter(std::shared_ptr<GunneboReaderCardAdapter>(new GunneboReaderCardAdapter()));
-        std::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
+        std::shared_ptr<GunneboDataTransport> dataTransport(new GunneboDataTransport());
         setDataTransport(dataTransport);
         d_card_type = "UNKNOWN";
 
