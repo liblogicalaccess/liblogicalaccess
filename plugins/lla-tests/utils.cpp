@@ -16,7 +16,7 @@
 
 
 bool detail::prologue_has_run = false;
-enum detail::ReaderType detail::reader_type = ReaderType::PCSC;
+enum detail::ReaderType detail::reader_type = detail::ReaderType::PCSC;
 
 std::tuple<ReaderProviderPtr, ReaderUnitPtr, ChipPtr> pcsc_test_init()
 {

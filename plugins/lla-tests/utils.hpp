@@ -16,13 +16,13 @@ namespace logicalaccess
 
 namespace detail
 {
-    extern bool prologue_has_run;
+	extern LIBLOGICALACCESS_API bool prologue_has_run;
     enum ReaderType
     {
         PCSC,
         NFC
     };
-    extern enum ReaderType reader_type;
+	extern LIBLOGICALACCESS_API enum ReaderType reader_type;
 }
 
 using ReaderUnitPtr     = std::shared_ptr<logicalaccess::ReaderUnit>;

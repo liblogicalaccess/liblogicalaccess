@@ -20,7 +20,7 @@ function(lla_create_test TEST_SUITE_NAME SOURCE_FILENAME)
 ## module we link against
 set(TARGET_NAME ${TEST_SUITE_NAME}_${SOURCE_FILENAME})
 add_executable(${TARGET_NAME} ${SOURCE_FILENAME}.cpp)
-set_target_properties(${TARGET_NAME} PROPERTIES COMPILE_FLAGS "-W -Wall -g -std=c++11")
+#set_target_properties(${TARGET_NAME} PROPERTIES COMPILE_FLAGS "-W -Wall -g -std=c++11")
 target_link_libraries(${TARGET_NAME}
  lla-tests
  ${LIBLOGICALACCESS_LIBRARY}
