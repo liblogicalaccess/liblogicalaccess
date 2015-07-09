@@ -57,6 +57,21 @@ namespace logicalaccess
     };
 
     /**
+     * A RAII object that disable logging in its constructor, and restore
+     * the old value in its destructor.
+     *
+     * This is used where we need to temporarily disable logging. This is
+     * exception safe.
+     */
+    struct LIBLOGICALACCESS_API LogDisabler
+    {
+        LogDisabler();
+        ~LogDisabler();
+    private:
+        bool old_;
+    };
+
+    /**
      * An overload to pretty-print a byte vector to an ostream.
      */
     LIBLOGICALACCESS_API std::ostream &operator<<(std::ostream &ss, const std::vector<unsigned char> &bytebuff);

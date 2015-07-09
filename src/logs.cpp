@@ -94,4 +94,14 @@ namespace logicalaccess
         return ss;
     }
 
+    LogDisabler::LogDisabler()
+    {
+        old_ = Settings::getInstance()->IsLogEnabled;
+        Settings::getInstance()->IsLogEnabled = false;
+    }
+
+    LogDisabler::~LogDisabler()
+    {
+        Settings::getInstance()->IsLogEnabled = old_;
+    }
 }
