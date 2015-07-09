@@ -18,7 +18,6 @@
 
 void introduction()
 {
-    prologue();
     PRINT_TIME("This test target DESFireEV1 cards. It test the storage service for writing and"
                        "reading data in a file.");
 
@@ -55,13 +54,14 @@ void create_app_and_file(std::shared_ptr<logicalaccess::DESFireISO7816Commands> 
     cmdev1->createStdDataFile(0x00, logicalaccess::EncryptionMode::CM_ENCRYPT, ar, file_size, 0);
 }
 
-int main(int, char **)
+int main(int ac, char **av)
 {
+    prologue(ac, av);
     introduction();
     ReaderProviderPtr provider;
     ReaderUnitPtr readerUnit;
     ChipPtr chip;
-    std::tie(provider, readerUnit, chip) = pcsc_test_init();
+    std::tie(provider, readerUnit, chip) = lla_test_init();
 
     PRINT_TIME("CHip identifier: " <<
                logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));

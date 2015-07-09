@@ -14,6 +14,10 @@
 #include "pluginsreaderproviders/pcsc/pcscreaderunit.hpp"
 #include "macros.hpp"
 
+
+bool detail::prologue_has_run = false;
+enum detail::ReaderType detail::reader_type = ReaderType::PCSC;
+
 std::tuple<ReaderProviderPtr, ReaderUnitPtr, ChipPtr> pcsc_test_init()
 {
     // Reader configuration object to store reader provider and reader unit selection.
@@ -55,7 +59,7 @@ void pcsc_test_shutdown(ReaderUnitPtr readerUnit)
     readerUnit->disconnectFromReader();
 }
 
-void prologue()
+void prologue(int ac, char **av)
 {
     char *wait_mstime = getenv("LLA_TEST_WAIT");
     if (wait_mstime)
@@ -63,6 +67,13 @@ void prologue()
         int duration = std::atoi(wait_mstime);
         std::this_thread::sleep_for(std::chrono::milliseconds(duration));
     }
+
+    if (ac == 2 && strcmp(av[1], "nfc") == 0)
+    {
+        detail::reader_type = detail::ReaderType::NFC;
+    }
+
+    detail::prologue_has_run = true;
 }
 
 std::string get_os_name()
@@ -98,4 +109,45 @@ std::string pcsc_reader_unit_name(ReaderUnitPtr ru)
             LLA_ASSERT(0, "PCSC Type not handled");
     }
     return "I AM DEAD";
+}
+
+std::tuple<ReaderProviderPtr, ReaderUnitPtr, ChipPtr> nfc_test_init()
+{
+    // Reader configuration object to store reader provider and reader unit selection.
+    std::shared_ptr<logicalaccess::ReaderConfiguration> readerConfig(
+            new logicalaccess::ReaderConfiguration());
+
+    // Set PCSC ReaderProvider by calling the Library Manager which will load the function from the corresponding plug-in
+    auto provider = logicalaccess::LibraryManager::getInstance()->getReaderProvider("NFC");
+    LLA_ASSERT(provider, "Cannot get PCSC provider");
+    readerConfig->setReaderProvider(provider);
+
+    auto readerUnit = readerConfig->getReaderProvider()->createReaderUnit();
+
+    LLA_ASSERT(readerUnit, "Cannot create reader unit");
+
+    LLA_ASSERT(readerUnit->connectToReader(), "Cannot connect to reader");
+    PRINT_TIME("Connected to reader");
+    PRINT_TIME("StartWaitInsertation");
+
+    LLA_ASSERT(readerUnit->waitInsertion(15000), "waitInsertion failed");
+    PRINT_TIME("EndWaitInsertation");
+
+    LLA_ASSERT(readerUnit->connect(), "Failed to connect");
+    PRINT_TIME("Connected");
+
+    auto chip = readerUnit->getSingleChip();
+    LLA_ASSERT(chip, "getSingleChip() returned NULL");
+    PRINT_TIME("GetSingleChip");
+
+    return std::make_tuple(provider, readerUnit, chip);
+}
+
+std::tuple<ReaderProviderPtr, ReaderUnitPtr, ChipPtr> lla_test_init()
+{
+    LLA_ASSERT(detail::prologue_has_run, "Call prologue() before initalizing the test suite");
+    if (detail::reader_type == detail::PCSC)
+        return pcsc_test_init();
+    else if (detail::reader_type == detail::NFC)
+        return nfc_test_init();
 }

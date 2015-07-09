@@ -11,7 +11,6 @@
 
 void introduction()
 {
-    prologue();
     PRINT_TIME("This test target ISO15693 cards.");
     PRINT_TIME("It works properly on windows with OK5321 but is broken on Linux for this reader");
     PRINT_TIME("OK5427 partially works on both Linux and Windows");
@@ -47,13 +46,14 @@ static void write_read_test(ReaderUnitPtr readerUnit, std::shared_ptr<ISO15693Co
     LLA_SUBTEST_PASSED("ReadBlock");
 }
 
-int main(int, char **)
+int main(int ac, char **av)
 {
+    prologue(ac, av);
     introduction();
     ReaderProviderPtr provider;
     ReaderUnitPtr readerUnit;
     ChipPtr chip;
-    std::tie(provider, readerUnit, chip) = pcsc_test_init();
+    std::tie(provider, readerUnit, chip) = lla_test_init();
 
     PRINT_TIME("CHip identifier: " <<
                logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));

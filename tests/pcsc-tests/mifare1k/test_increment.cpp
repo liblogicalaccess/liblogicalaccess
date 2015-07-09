@@ -10,7 +10,6 @@
 
 void introduction()
 {
-    prologue();
     PRINT_TIME("This test target Mifare1K cards. It tests the implementation of "
                "the increment and decrement commands");
 
@@ -99,13 +98,14 @@ void decrement(std::shared_ptr<logicalaccess::MifareCommands> cmd)
     LLA_SUBTEST_PASSED("Decrement");
 }
 
-int main(int, char **)
+int main(int ac, char **av)
 {
+    prologue(ac, av);
     introduction();
     ReaderProviderPtr provider;
     ReaderUnitPtr readerUnit;
     ChipPtr chip;
-    std::tie(provider, readerUnit, chip) = pcsc_test_init();
+    std::tie(provider, readerUnit, chip) = lla_test_init();
 
     PRINT_TIME("Chip identifier: " <<
                logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));

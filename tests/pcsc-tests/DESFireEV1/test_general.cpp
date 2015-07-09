@@ -16,7 +16,6 @@
 
 void introduction()
 {
-    prologue();
     PRINT_TIME("This test target DESFireEV1 cards.");
 
     PRINT_TIME("You will have 20 seconds to insert a card. Test log below");
@@ -28,13 +27,13 @@ void introduction()
     LLA_SUBTEST_REGISTER("ReadFormat");
 }
 
-int main(int, char **)
+int main(int ac, char **av)
 {
     introduction();
     ReaderProviderPtr provider;
     ReaderUnitPtr readerUnit;
     ChipPtr chip;
-    std::tie(provider, readerUnit, chip) = pcsc_test_init();
+    std::tie(provider, readerUnit, chip) = lla_test_init();
 
     PRINT_TIME("CHip identifier: " <<
                logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));

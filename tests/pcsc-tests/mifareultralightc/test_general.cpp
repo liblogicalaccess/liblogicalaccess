@@ -11,7 +11,6 @@
 
 void introduction()
 {
-    prologue();
     PRINT_TIME("This test target MifareUltraLightC cards.");
 
     PRINT_TIME("You will have 20 seconds to insert a card. Test log below");
@@ -57,8 +56,9 @@ std::tuple<ReaderProviderPtr, ReaderUnitPtr, ChipPtr> init()
     return std::make_tuple(provider, readerUnit, chip);
 }
 
-int main(int, char **)
+int main(int ac, char **av)
 {
+    prologue(ac, av);
     introduction();
     ReaderProviderPtr provider;
     ReaderUnitPtr readerUnit;
