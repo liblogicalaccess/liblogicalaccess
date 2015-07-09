@@ -107,7 +107,7 @@ int main(int, char **)
     ChipPtr chip;
     std::tie(provider, readerUnit, chip) = pcsc_test_init();
 
-    PRINT_TIME("CHip identifier: " <<
+    PRINT_TIME("Chip identifier: " <<
                logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
 
     LLA_ASSERT(chip->getCardType() == "Mifare1K",
