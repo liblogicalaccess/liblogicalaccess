@@ -853,4 +853,10 @@ namespace logicalaccess
 
         return getISO7816ReaderCardAdapter()->sendAPDUCommand(DF_CLA_ISO_WRAP, cmd, 0x00, 0x00, 0x00);
     }
+
+    void DESFireISO7816Commands::setChip(std::shared_ptr<Chip> chip)
+    {
+        DESFireCommands::setChip(chip);
+        d_crypto->setCryptoContext(getDESFireChip()->getDESFireProfile(), chip->getChipIdentifier());
+    }
 }

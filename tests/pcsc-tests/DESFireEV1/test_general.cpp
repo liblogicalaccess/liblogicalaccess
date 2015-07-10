@@ -29,6 +29,7 @@ void introduction()
 
 int main(int ac, char **av)
 {
+    prologue(ac, av);
     introduction();
     ReaderProviderPtr provider;
     ReaderUnitPtr readerUnit;

@@ -63,7 +63,7 @@ int main(int ac, char **av)
     ChipPtr chip;
     std::tie(provider, readerUnit, chip) = lla_test_init();
 
-    PRINT_TIME("CHip identifier: " <<
+    PRINT_TIME("Chip identifier: " <<
                logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
 
     LLA_ASSERT(chip->getCardType() == "DESFireEV1",

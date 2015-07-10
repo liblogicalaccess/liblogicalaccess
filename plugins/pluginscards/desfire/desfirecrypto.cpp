@@ -1135,6 +1135,7 @@ namespace logicalaccess
 
     std::shared_ptr<DESFireKey> DESFireCrypto::getKey(unsigned char keyno)
     {
+        assert(d_profile);
         return d_profile->getKey(d_currentAid, keyno);
     }
 

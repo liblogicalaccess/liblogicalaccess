@@ -39,6 +39,12 @@ namespace logicalaccess
         virtual ~DESFireISO7816Commands();
 
         /**
+         * Override setChip() so we can steal the DESFireProfile and forward
+         * it to the crypto context.
+         */
+        virtual void setChip(std::shared_ptr<Chip> chip) override;
+
+        /**
          * \brief Erase the card.
          */
         virtual void erase();
