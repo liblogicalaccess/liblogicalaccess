@@ -45,7 +45,8 @@ namespace logicalaccess
         PCSC_RUT_SPRINGCARD = 0x0005, /**< SpringCard PC/SC reader unit */
         PCSC_RUT_OMNIKEY_XX27 = 0x0006, /**< Omnikey xx27 PC/SC reader unit */
         PCSC_RUT_OMNIKEY_LAN_XX21 = 0x0007, /**< Omnikey PC/SC LAN reader unit */
-        PCSC_RUT_ACS_ACR = 0x0008 /**< ACS ACR reader unit */
+        PCSC_RUT_ACS_ACR = 0x0008, /**< ACS ACR reader unit */
+        PCSC_RUT_ACS_ACR_1222L = 0x0009 /**< ACS ACR 1222L reader unit */
     } PCSCReaderUnitType;
 
     /**

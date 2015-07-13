@@ -8,6 +8,7 @@
 #include "readers/springcardreaderunit.hpp"
 #include "readers/cherryreaderunit.hpp"
 #include "readers/acsacrreaderunit.hpp"
+#include "readers/acsacr1222lreaderunit.hpp"
 #include "logicalaccess/logicalaccess_api.hpp"
 
 extern "C"
@@ -57,6 +58,10 @@ extern "C"
         else if (readerName.find("SpringCard") != string::npos)
         {
             u = make_shared<SpringCardReaderUnit>(readerName);
+        }
+        else if (readerName.find("ACS ACR1222 3S PICC Reader PICC") != string::npos)
+        {
+            u = make_shared<ACSACR1222LReaderUnit>(readerName);
         }
         else if (readerName.find("ACS ACR") != string::npos)
         {

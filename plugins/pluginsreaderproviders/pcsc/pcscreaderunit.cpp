@@ -1511,7 +1511,7 @@ namespace logicalaccess
             }
             else if (type == "MifareUltralightC")
             {
-                if (getPCSCType() == PCSC_RUT_ACS_ACR)
+                if (getPCSCType() == PCSC_RUT_ACS_ACR || getPCSCType() == PCSC_RUT_ACS_ACR_1222L)
                 {
                     commands.reset(new MifareUltralightCACSACRCommands());
                     resultChecker.reset(new ACSACRResultChecker());
