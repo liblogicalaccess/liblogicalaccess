@@ -17,9 +17,9 @@ Coverity Scan: [![Coverity Scan Build Status](https://scan.coverity.com/projects
 
 How to install?
 ----------------
-See https://github.com/islog/liblogicalaccess/wiki/Install-LibLogicalAccess
+See [installation page](https://github.com/islog/liblogicalaccess/wiki/Install-LibLogicalAccess).
 
 
 How to build?
 ----------------
-See https://github.com/islog/liblogicalaccess/wiki/Build-Liblogicalaccess
+See [build page](https://github.com/islog/liblogicalaccess/wiki/Build-Liblogicalaccess).
