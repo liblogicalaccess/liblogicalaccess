@@ -345,6 +345,8 @@ namespace logicalaccess
 
         void createApplication(int aid, size_t maxNbKeys, DESFireKeyType cryptoMethod);
 
+		void setIdentifier(std::vector<unsigned char> identifier) { d_identifier = identifier; };
+
         const std::vector<unsigned char> getIdentifier() const { return d_identifier; };
 
     public:

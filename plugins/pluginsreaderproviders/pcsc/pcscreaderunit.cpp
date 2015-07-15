@@ -683,6 +683,8 @@ namespace logicalaccess
                                         d_insertedChip = createChip("DESFireEV1");
                                     }
                                     d_insertedChip->setChipIdentifier(std::vector<unsigned char>(cardversion.uid, cardversion.uid + sizeof(cardversion.uid)));
+									std::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->getCrypto()
+										->setIdentifier(d_insertedChip->getChipIdentifier());
                                 }
                                 catch (std::exception&)
                                 {
