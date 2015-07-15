@@ -444,8 +444,8 @@ namespace logicalaccess
         memcpy(&backup1, &buffer[idx], 1);          idx++;
         memcpy(&backup1_reverse, &buffer[idx], 1);  idx++;
 
-        if (value0 == value1 && value0 ^ 0xFFFFFFFF == value_reverse &&
-            backup0 == backup1 && backup0 ^ 0xFF == backup0_reverse &&
+        if (value0 == value1 && (value0 ^ 0xFFFFFFFF) == value_reverse &&
+            backup0 == backup1 && (backup0 ^ 0xFF) == backup0_reverse &&
             backup0_reverse == backup1_reverse)
         {
             value = value0;

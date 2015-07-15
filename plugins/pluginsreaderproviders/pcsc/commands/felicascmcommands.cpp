@@ -32,7 +32,7 @@ namespace logicalaccess
 		// First 8 bytes = IDm
 		EXCEPTION_ASSERT_WITH_LOG(result.size() > 8, LibLogicalAccessException, "Wrong system codes result.");
 		unsigned char nbCodes = result[8];
-		EXCEPTION_ASSERT_WITH_LOG(result.size() >= (9 + (nbCodes * 2)), LibLogicalAccessException, "Wrong system codes result. Invalid length for excepted system codes number.");
+		EXCEPTION_ASSERT_WITH_LOG(result.size() >= static_cast<unsigned int>(9 + (nbCodes * 2)), LibLogicalAccessException, "Wrong system codes result. Invalid length for excepted system codes number.");
 		
 		for (unsigned char i = 0; i < nbCodes; ++i)
 		{
@@ -57,7 +57,7 @@ namespace logicalaccess
 		// First 8 bytes = IDm
 		EXCEPTION_ASSERT_WITH_LOG(result.size() > 8, LibLogicalAccessException, "Wrong request service result.");
 		unsigned char nbVersions = result[8];
-		EXCEPTION_ASSERT_WITH_LOG(result.size() >= (9 + (nbVersions * 2)), LibLogicalAccessException, "Wrong request service result. Invalid length for excepted services/areas number.");
+		EXCEPTION_ASSERT_WITH_LOG(result.size() >= static_cast<unsigned int>(9 + (nbVersions * 2)), LibLogicalAccessException, "Wrong request service result. Invalid length for excepted services/areas number.");
 
 		for (unsigned char i = 0; i < nbVersions; ++i)
 		{
@@ -95,7 +95,7 @@ namespace logicalaccess
 		// First 8 bytes = IDm, then Status Flag 1 + Status Flag 2
 		EXCEPTION_ASSERT_WITH_LOG(result.size() > 10, LibLogicalAccessException, "Wrong read result.");
 		unsigned char nbBlocks = result[10];
-		EXCEPTION_ASSERT_WITH_LOG(result.size() >= (11 + (nbBlocks * 16)), LibLogicalAccessException, "Wrong read result. Invalid length for blocks number.");
+		EXCEPTION_ASSERT_WITH_LOG(result.size() >= static_cast<unsigned int>(11 + (nbBlocks * 16)), LibLogicalAccessException, "Wrong read result. Invalid length for blocks number.");
 
 		return std::vector<unsigned char>(&result[11], &result[11] + (nbBlocks * 16));
 	}
