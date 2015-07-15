@@ -140,7 +140,12 @@ namespace logicalaccess
             madbuf[sector * 2 + 1] = (aid & 0xff00) >> 8;
             if (madbuf[1] == 0x00)
             {
-                madbuf[1] = static_cast<unsigned char>(sector);
+                // BCD Nibble representation
+                madbuf[1] = static_cast<unsigned char>(sector % 10);
+                if (sector >= 10)
+                {
+                    madbuf[1] |= 0x10;
+                }
             }
             madbuf[0] = calculateMADCrc(&madbuf[0], madbuf.size());
 
