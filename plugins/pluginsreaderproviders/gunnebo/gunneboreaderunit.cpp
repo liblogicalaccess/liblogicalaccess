@@ -86,7 +86,6 @@ namespace logicalaccess
         LOG(LogLevel::INFOS) << "Waiting insertion... max wait {" << maxwait << "}";
 
         bool inserted = false;
-        unsigned int currentWait = 0;
         std::vector<unsigned char> createChipId;
 
         try

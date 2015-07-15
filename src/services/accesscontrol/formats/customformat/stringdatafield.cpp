@@ -13,11 +13,9 @@
 namespace logicalaccess
 {
 	StringDataField::StringDataField()
-        : ValueDataField()
+		: ValueDataField(), d_padding(0), d_charset("ascii")
     {
         d_length = 0;
-        d_padding = ' ';
-		d_charset = "ascii";
     }
 
 	StringDataField::~StringDataField()

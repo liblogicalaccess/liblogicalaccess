@@ -214,7 +214,7 @@ namespace logicalaccess
         }
     }
 
-    std::shared_ptr<ReaderUnit> LibraryManager::getReader(const std::string &readerName)
+    std::shared_ptr<ReaderUnit> LibraryManager::getReader(const std::string &readerName) const
     {
         // The idea here is simply to loop over all shared library
         // and opportunistically call the `getReaderUnit()` function if it exists, hoping
@@ -222,12 +222,11 @@ namespace logicalaccess
         std::shared_ptr<ReaderUnit> readerUnit;
         for (auto &&itr : libLoaded)
         {
-            const std::string &libname = itr.first;
             IDynLibrary *lib = itr.second;
 
-            int (*fptr)(const std::string &, std::shared_ptr<ReaderUnit> &) = nullptr;
             if (lib->hasSymbol("getReaderUnit"))
             {
+				int(*fptr)(const std::string &, std::shared_ptr<ReaderUnit> &) = nullptr;
                 fptr = reinterpret_cast<decltype(fptr)>(lib->getSymbol("getReaderUnit"));
                 assert(fptr);
                 fptr(readerName, readerUnit);
@@ -303,17 +302,16 @@ namespace logicalaccess
     }
 
     std::shared_ptr<AccessControlCardService> LibraryManager::getAccessControlCardService(
-            std::shared_ptr<Chip> chip)
+            std::shared_ptr<Chip> chip) const
     {
         std::shared_ptr<AccessControlCardService> srv;
         for (auto &&itr : libLoaded)
         {
-            const std::string &libname = itr.first;
             IDynLibrary *lib = itr.second;
 
-            int (*fptr)(std::shared_ptr<Chip>, std::shared_ptr<AccessControlCardService> &) = nullptr;
             if (lib->hasSymbol("getAccessControlCardService"))
             {
+				int(*fptr)(std::shared_ptr<Chip>, std::shared_ptr<AccessControlCardService> &) = nullptr;
                 fptr = reinterpret_cast<decltype(fptr)>(lib->getSymbol("getAccessControlCardService"));
                 assert(fptr);
                 fptr(chip, srv);

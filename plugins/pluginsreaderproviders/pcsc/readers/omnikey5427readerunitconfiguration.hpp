@@ -35,7 +35,7 @@ namespace logicalaccess
          * Return the 128 bits AES key used to establish
          * a secure session with the reader.
          */
-        std::shared_ptr<AES128Key> getSecureMasterKey();
+        std::shared_ptr<AES128Key> getSecureMasterKey() const;
 
         /**
          * Set a 128 bits AES key that will be used as

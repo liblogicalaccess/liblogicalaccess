@@ -26,7 +26,7 @@ void Omnikey5427ReaderUnitConfiguration::setUseSecureMode(bool use_sm)
     useSecureMode_ = use_sm;
 }
 
-std::shared_ptr<AES128Key> Omnikey5427ReaderUnitConfiguration::getSecureMasterKey()
+std::shared_ptr<AES128Key> Omnikey5427ReaderUnitConfiguration::getSecureMasterKey() const
 {
     return masterKey_;
 }
