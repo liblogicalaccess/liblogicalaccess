@@ -290,6 +290,11 @@ namespace logicalaccess
          */
         std::shared_ptr<PCSCReaderUnit> getProxyReaderUnit();
 
+
+        virtual void setCardTechnologies(const TechnoBitset &bitset) override;
+
+        virtual TechnoBitset getCardTechnologies() override;
+
     protected:
 
         /**

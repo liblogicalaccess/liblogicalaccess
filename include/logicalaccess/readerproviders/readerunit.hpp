@@ -14,6 +14,7 @@
 #include <vector>
 #include "logicalaccess/xmlserializable.hpp"
 #include "logicalaccess/lla_fwd.hpp"
+#include "logicalaccess/techno.hpp"
 
 #ifdef UNIX
 #include <PCSC/wintypes.h>
@@ -286,6 +287,20 @@ namespace logicalaccess
          * \return The LED/Buzzer Display.
          */
         virtual std::shared_ptr<LEDBuzzerDisplay> getLEDBuzzerDisplay();
+
+		/**
+		 * Request that the reader enable or disable the various card technologies
+		 * as described in the bitset.
+		 * The default implementation just does nothing.
+		 */
+		virtual void setCardTechnologies(const TechnoBitset& bitset);
+
+		/**
+		 * Return a bitset describing which cards technology are enabled.
+		 *
+		 * The default implementation return a bitset with all flags set to false.
+		 */
+		virtual TechnoBitset getCardTechnologies();
 
     protected:
 

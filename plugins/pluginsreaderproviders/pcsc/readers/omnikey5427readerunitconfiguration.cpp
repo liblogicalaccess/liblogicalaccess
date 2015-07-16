@@ -13,7 +13,6 @@ Omnikey5427ReaderUnitConfiguration::Omnikey5427ReaderUnitConfiguration() :
         masterKey_(new AES128Key())            // but without leaking the key to client code.
                                                // the reader unit code will use the default is none is set.
 {
-
 }
 
 bool Omnikey5427ReaderUnitConfiguration::getUseSecureMode() const

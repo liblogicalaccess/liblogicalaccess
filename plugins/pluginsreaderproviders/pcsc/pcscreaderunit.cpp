@@ -1732,4 +1732,21 @@ namespace logicalaccess
     {
         return d_proxyReaderUnit;
     }
+
+    TechnoBitset PCSCReaderUnit::getCardTechnologies()
+    {
+        if (d_proxyReaderUnit)
+            return d_proxyReaderUnit->getCardTechnologies();
+        assert(0);
+    }
+
+    void PCSCReaderUnit::setCardTechnologies(const TechnoBitset &bitset)
+    {
+        if (d_proxyReaderUnit)
+        {
+            d_proxyReaderUnit->setCardTechnologies(bitset);
+            return;
+        }
+        assert(0);
+    }
 }

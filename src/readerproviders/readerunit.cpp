@@ -363,4 +363,15 @@ namespace logicalaccess
             }
         }
     }
+
+	void ReaderUnit::setCardTechnologies(const TechnoBitset& bitset)
+	{
+
+	}
+
+    TechnoBitset ReaderUnit::getCardTechnologies()
+    {
+        TechnoBitset tb = 0;
+        return tb;
+    }
 }

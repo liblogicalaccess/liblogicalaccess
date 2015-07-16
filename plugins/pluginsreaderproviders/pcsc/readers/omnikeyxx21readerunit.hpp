@@ -125,6 +125,20 @@ namespace logicalaccess
          */
         virtual void getT_CL_ISOType(bool& isTypeA, bool& isTypeB);
 
+		/**
+		* Request that the reader enable or disable the various card technologies
+		* as described in the bitset.
+		* The default implementation just does nothing.
+		*/
+		virtual void setCardTechnologies(const TechnoBitset& bitset);
+
+		/**
+		* Return a bitset describing which cards technology are enabled.
+		*
+		* The default implementation return a bitset with all flags set to false.
+		*/
+		virtual TechnoBitset getCardTechnologies();
+
     protected:
          /**
          * \brief Is secure connection mode ?
