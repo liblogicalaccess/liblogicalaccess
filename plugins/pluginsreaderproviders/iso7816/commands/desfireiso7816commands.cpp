@@ -150,24 +150,20 @@ namespace logicalaccess
         samck.newKeySlotNo = samsks->getKeySlot();
         samck.newKeySlotV = key->getKeyVersion();
         samck.desfireNumber = keyno;
-        if ((d_crypto->d_currentKeyNo == 0 && keyno == 0) || (d_crypto->d_currentKeyNo == keyno /* && ChangeKey key == 0xE */))
-        {
-            samck.oldKeyInvolvement = 0;
-        }
+
+		if (oldkey && std::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage()))
+		{
+			std::shared_ptr<SAMKeyStorage> oldsamks = std::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage());
+			samck.currentKeySlotNo = oldsamks->getKeySlot();
+			samck.currentKeySlotV = oldkey->getKeyVersion();
+		}
+		else
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Current key required on SAM to change the key.");
+
+        if ((d_crypto->d_currentKeyNo == 0 && keyno == 0) || (keyno == 0xE))
+            samck.oldKeyInvolvement = 1;
         else
-        {
-            if (oldkey && std::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage()))
-            {
-                std::shared_ptr<SAMKeyStorage> oldsamks = std::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage());
-                samck.currentKeySlotNo = oldsamks->getKeySlot();
-                samck.currentKeySlotV = oldkey->getKeyVersion();
-                samck.oldKeyInvolvement = 1;
-            }
-            else
-            {
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Current key required on SAM to change the key.");
-            }
-        }
+			samck.oldKeyInvolvement = 0;
 
         std::vector<unsigned char> diversify;
         if (key->getKeyDiversification())
