@@ -16,6 +16,7 @@
 #include "../readercardadapters/pcscreadercardadapter.hpp"
 #include "logicalaccess/myexception.hpp"
 
+#include <boost/regex.hpp>
 #if defined(__unix__)
 #include <PCSC/reader.h>
 #elif defined(__APPLE__)
@@ -194,14 +195,35 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                      "Cannot set card technologies.");
         }
+#else
+        std::ifstream file("/etc/omnikey.ini");
+        std::vector<std::string> lines;
+        std::string str;
+        while (std::getline(file, str))
+        {
+            lines.push_back(std::move(str));
+        }
+        if (!file.good() && !file.eof())
+        {
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot read /etc/omnikey.ini");
+        }
+        file.close();
+        std::map<std::string, bool> technos;
+        technos["ICLASS15693"] = bitset & Techno::ICLASS_15693;
+        technos["ISO15693"] = bitset & Techno::ISO_15693;
+        technos["ICODE1"] = bitset & Techno::ICODE1;
+        technos["ISO14443A"] = bitset & Techno::ISO_14443_A;
+        technos["ISO14443B"] = bitset & Techno::ISO_14443_B;
+        technos["STM14443B"] = bitset & Techno::STM14443B;
+        replaceCardTechnoLinux(lines, technos);
 #endif
     }
 
 
     TechnoBitset OmnikeyXX21ReaderUnit::getCardTechnologies()
     {
-#ifdef _WIN32
         TechnoBitset bs = 0;
+#ifdef _WIN32
         std::vector<uint8_t> data;
         if (WindowsRegistry::readBinary(
                 "SYSTEM\\CurrentControlSet\\Control\\CardMan\\RFID",
@@ -223,8 +245,34 @@ namespace logicalaccess
         else
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                      "Cannot retrieve card technologies.");
-        return bs;
+#else
+        // On Linux, edit /etc/omnikey.ini if available.
+        std::ifstream file("/etc/omnikey.ini");
+        std::vector<std::string> lines;
+        std::string str;
+        while (std::getline(file, str))
+        {
+            lines.push_back(std::move(str));
+        }
+        if (!file.good() && !file.eof())
+        {
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot read /etc/omnikey.ini");
+        }
+
+        if (fetchCardTechoLinux(lines, "ISO14443A"))
+            bs |= Techno::ISO_14443_A;
+        if (fetchCardTechoLinux(lines, "ISO14443B"))
+            bs |= Techno::ISO_14443_B;
+        if (fetchCardTechoLinux(lines, "ICLASS15693"))
+            bs |= Techno::ICLASS_15693;
+        if (fetchCardTechoLinux(lines, "ISO15693"))
+            bs |= Techno::ISO_15693;
+        if (fetchCardTechoLinux(lines, "STM14443B"))
+            bs |= Techno::STM14443B;
+        if (fetchCardTechoLinux(lines, "ICODE1"))
+            bs |= Techno::ICODE1;
 #endif
+        return bs;
     }
 
     LIBLOGICALACCESS_API std::ostream &
@@ -245,5 +293,66 @@ namespace logicalaccess
                 break;
         }
         return os;
+    }
+
+    bool OmnikeyXX21ReaderUnit::fetchCardTechoLinux(const std::vector<std::string> &lines,
+                                                    const std::string &techno)
+    {
+        auto find_line = [&] (const std::string &s) -> bool {
+
+            boost::regex r("^" + techno + "(\\s)?=(\\s)?\\d$");
+            if (boost::regex_match(s, r))
+            {
+                return true;
+            }
+            return false;
+        };
+
+        auto itr = std::find_if(lines.begin(), lines.end(), find_line);
+        if (itr != lines.end())
+        {
+            boost::smatch match;
+            boost::regex r(".*(\\d)$");
+            auto ret = boost::regex_search(*itr, match, r);
+            if (ret)
+            {
+                if (match.size() == 2 && match[1] == '1')
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    bool OmnikeyXX21ReaderUnit::replaceCardTechnoLinux(std::vector<std::string> &lines,
+                                                       const std::map<std::string, bool> technos)
+    {
+        for (auto map_itr : technos)
+        {
+            auto find_line = [&] (const std::string &s) -> bool {
+
+                boost::regex r("^" + map_itr.first + "(\\s)?=(\\s)?\\d$");
+                if (boost::regex_match(s, r))
+                {
+                    return true;
+                }
+                return false;
+            };
+            auto line_itr = std::find_if(lines.begin(), lines.end(), find_line);
+            if (line_itr != lines.end())
+            {
+                *line_itr = map_itr.first + " = " + (map_itr.second ? "1" : "0");
+            }
+        }
+
+        std::ofstream of("/etc/omnikey.ini", std::ios_base::trunc);
+        for (auto &line : lines)
+            of << line << '\n';
+        if (!of.good())
+        {
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot set card technologies"
+                    " because we fail to write to reader's config file.");
+        }
     }
 }
