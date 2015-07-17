@@ -374,7 +374,8 @@ namespace logicalaccess
         if (!std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "DESFireKey need a SAMKeyStorage to proceed a SAM ISO Authenticate.");
 	
-		if (getSAMChip()->getCardType() == "SAM_AV2")
+		if (getSAMChip()->getCardType() == "SAM_AV2"
+			&& !std::dynamic_pointer_cast<NXPAV2KeyDiversification>(key->getKeyDiversification()))
 		{
 			LOG(LogLevel::INFOS) << "Start AuthenticationPICC in purpose to fix SAM state (NXP SAM Documentation 3.5)";
 
