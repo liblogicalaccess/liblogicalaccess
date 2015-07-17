@@ -814,7 +814,7 @@ namespace logicalaccess
 
         if (d_proxyReaderUnit)
         {
-            d_proxyReaderUnit->disconnect();
+			d_proxyReaderUnit->disconnect(action);
         }
         else
         {
