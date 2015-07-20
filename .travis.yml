@@ -10,7 +10,7 @@ before_install:
   - sudo add-apt-repository ppa:kubuntu-ppa/backports -y
   - sudo apt-get update -qq
   - sudo apt-get install -qq g++ gcc clang cmake
-  - sudo apt-get install -qq libboost1.55-dev libboost-system1.55-dev libboost-filesystem1.55-dev libboost-date-time1.55-dev libboost-chrono1.55-dev libboost-thread1.55-dev
+  - sudo apt-get install -qq libboost1.55-dev libboost-system1.55-dev libboost-filesystem1.55-dev libboost-date-time1.55-dev libboost-chrono1.55-dev libboost-thread1.55-dev libboost-regex1.55-dev
   - sudo apt-get install -qq libpcsclite-dev libssl-dev
 
 script: mkdir build && pushd build && cmake -DCMAKE_INSTALL_PREFIX=$PWD/install .. && make install && popd && cd samples/basic/ && mkdir build && pushd build && cmake -DLibLogicalAccess_DIR=$PWD/../../../build/install/lib/cmake/liblogicalaccess .. && make
