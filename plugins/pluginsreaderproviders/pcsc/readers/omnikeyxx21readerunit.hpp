@@ -139,6 +139,8 @@ namespace logicalaccess
 		*/
 		virtual TechnoBitset getCardTechnologies();
 
+		virtual TechnoBitset getPossibleCardTechnologies();
+
     protected:
          /**
          * \brief Is secure connection mode ?

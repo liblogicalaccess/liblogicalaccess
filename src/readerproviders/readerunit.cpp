@@ -374,4 +374,11 @@ namespace logicalaccess
         TechnoBitset tb = 0;
         return tb;
     }
+
+
+	TechnoBitset ReaderUnit::getPossibleCardTechnologies()
+	{
+		TechnoBitset tb = 0;
+		return tb;
+	}
 }

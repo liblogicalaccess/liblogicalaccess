@@ -298,9 +298,20 @@ namespace logicalaccess
 		/**
 		 * Return a bitset describing which cards technology are enabled.
 		 *
-		 * The default implementation return a bitset with all flags set to false.
+		 * The default implementation returns a bitset with all flags set to false.
 		 */
 		virtual TechnoBitset getCardTechnologies();
+
+		/**
+		 * This returns a bitset of all technologies that can potentially be enabled
+		 * on the reader.
+		 *
+		 * This is useful because the TechnoBitset enumerate all possible technologies
+		 * accros all the readers.
+		 *
+		 * The default implementation returns an empty bitset.
+		 */
+		virtual TechnoBitset getPossibleCardTechnologies();
 
     protected:
 

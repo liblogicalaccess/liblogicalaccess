@@ -274,6 +274,14 @@ namespace logicalaccess
 #endif
         return bs;
     }
+	
+	TechnoBitset OmnikeyXX21ReaderUnit::getPossibleCardTechnologies()
+	{
+		using namespace Techno;
+		TechnoBitset tb = (ICLASS_15693 | ISO_15693 | ICODE1 |
+			STM14443B | ISO_14443_B | ISO_14443_A);
+		return tb;
+	}
 
     LIBLOGICALACCESS_API std::ostream &
     operator<<(std::ostream &os,
