@@ -62,8 +62,10 @@ namespace logicalaccess
 
 	void MifareSCMCommands::increment(unsigned char blockno, uint32_t value)
 	{
+        // Somehow the documentation is invalid, and increment and decrement
+        // operation code are reversed (SCL011).
 		std::vector<unsigned char> buf;
-		buf.push_back(0xC0);
+		buf.push_back(0xC1);
 		buf.push_back(blockno);
 		buf.push_back(static_cast<unsigned char>(value & 0xff));
 		buf.push_back(static_cast<unsigned char>((value >> 8) & 0xff));
@@ -75,8 +77,10 @@ namespace logicalaccess
 
 	void MifareSCMCommands::decrement(unsigned char blockno, uint32_t value)
 	{
+        // Somehow the documentation is invalid, and increment and decrement
+        // operation code are reversed (SCL011).
 		std::vector<unsigned char> buf;
-		buf.push_back(0xC1);
+		buf.push_back(0xC0);
 		buf.push_back(blockno);
 		buf.push_back(static_cast<unsigned char>(value & 0xff));
 		buf.push_back(static_cast<unsigned char>((value >> 8) & 0xff));
