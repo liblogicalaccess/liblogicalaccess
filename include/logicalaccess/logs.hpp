@@ -11,7 +11,7 @@
  * \brief Convenient alias to create an exception.
  */
 #undef EXCEPTION
-#define EXCEPTION(type, msg) type(/*__FUNCTION__ "," __FILE__ "," __LINE__ " : "*/ msg)
+#define EXCEPTION(type, ...) type(/*__FUNCTION__ "," __FILE__ "," __LINE__ " : "*/ __VA_ARGS__)
 
 /**
  * \brief Assertion which raises an exception on failure.
@@ -85,15 +85,23 @@ namespace logicalaccess
 
 #define LOG(x) logicalaccess::Logs(__FILE__, __FUNCTION__, __LINE__, x)
 
-    /**
-     * \brief Convenient alias to throw an exception with logs.
-     */
-#define THROW_EXCEPTION_WITH_LOG(type, msg) { LOG(logicalaccess::LogLevel::ERRORS) << msg; throw EXCEPTION(type, msg); }
+/**
+* Convenient alias to throw an exception with logs.
+*/
+#define THROW_EXCEPTION_WITH_LOG(type, msg, ...)                               \
+    {                                                                          \
+        LOG(logicalaccess::LogLevel::ERRORS) << msg;                           \
+        throw EXCEPTION(type, msg, ##__VA_ARGS__);                             \
+    }
 
-    /**
-     * \brief Assertion which raises an exception on failure with logs.
-     */
-#define EXCEPTION_ASSERT_WITH_LOG(condition, type, msg) if (!(condition)) { THROW_EXCEPTION_WITH_LOG(type, msg); }
+/**
+* Assertion which raises an exception on failure with logs.
+*/
+#define EXCEPTION_ASSERT_WITH_LOG(condition, type, msg, ...)                   \
+    if (!(condition))                                                          \
+    {                                                                          \
+        THROW_EXCEPTION_WITH_LOG(type, msg, ##__VA_ARGS__);                    \
+    }
 
 #else
 
