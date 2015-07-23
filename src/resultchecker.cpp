@@ -22,7 +22,7 @@ namespace logicalaccess
 
     void ResultChecker::CheckResult(const void* data, size_t datalen)
     {
-        ResultCheckerValues result("", false);
+        ResultCheckerValues result("", CardException::DEFAULT, false);
 
         if (!mapPrimary.empty() || !mapSingleShot.empty())
         {
@@ -42,7 +42,7 @@ namespace logicalaccess
                     }
                 }
 
-                if (!result.second && !mapPrimary.empty())
+                if (!std::get<2>(result) && !mapPrimary.empty())
                 {
                     auto res = mapPrimary.find(keys);
                     if (res != mapPrimary.end())
@@ -57,20 +57,23 @@ namespace logicalaccess
 
         mapSingleShot.clear();
 
-        if (result.second && !result.first.empty())
+        if (std::get<2>(result) && !std::get<0>(result).empty())
         {
-            THROW_EXCEPTION_WITH_LOG(CardException, result.first);
+            THROW_EXCEPTION_WITH_LOG(CardException, std::get<0>(result), std::get<1>(result));
         }
-        else if (!result.first.empty())
+		else if (!std::get<0>(result).empty())
         {
-            LOG(LogLevel::WARNINGS) << result.first;
+            LOG(LogLevel::WARNINGS) << std::get<0>(result);
         }
     }
 
-    void ResultChecker::AddCheck(unsigned char SW1, unsigned char SW2, const std::string& msg, bool throwException)
+    void ResultChecker::AddCheck(unsigned char SW1, unsigned char SW2,
+		const std::string& msg,
+		CardException::ErrorType error /* = DEFAULT */,
+		bool throwException)
     {
         ResultCheckerKeys keys(SW1, SW2);
-        ResultCheckerValues values(msg, throwException);
+        ResultCheckerValues values(msg, error, throwException);
 
         mapPrimary[keys] = values;
     }
@@ -95,7 +98,7 @@ namespace logicalaccess
     void ResultChecker::AddSingleShotCheck(unsigned char SW1, unsigned char SW2, const std::string& msg)
     {
         ResultCheckerKeys keys(SW1, SW2);
-        ResultCheckerValues values(msg, true);
+        ResultCheckerValues values(msg, CardException::DEFAULT, true);
 
         mapSingleShot[keys] = values;
     }

@@ -25,7 +25,8 @@ namespace logicalaccess
 
         AddCheck(0x6F, 0x00, "No precise diagnostics");
 
-        AddCheck(0x91, 0x0C, "No changes done to backup files. CommitTransaction / AbortTransaction not necessary", false);
+		AddCheck(0x91, 0x0C, "No changes done to backup files. CommitTransaction / AbortTransaction not necessary",
+			CardException::DEFAULT, false);
         AddCheck(0x91, 0x0E, "Insufficient NV-Memory to complete command");
         AddCheck(0x91, 0x1C, "Command code not supported");
         AddCheck(0x91, 0x1E, "CRC or MAC does not match data / Padding bytes not valid");
@@ -36,10 +37,11 @@ namespace logicalaccess
         AddCheck(0x91, 0xA0, "Requested AID not present on PICC");
         AddCheck(0x91, 0xA1, "Unrecoverable error within aplication, application will be disabled");
         AddCheck(0x91, 0xAE, "Current authentication status does not allow the requested command");
-        AddCheck(0x91, 0xAF, "Additional data frame is expected to be sent", false);
+        AddCheck(0x91, 0xAF, "Additional data frame is expected to be sent", CardException::DEFAULT, false);
         AddCheck(0x91, 0xBE, "Attempt to read/write data from/to beyond the file's/record's limits / Attempt to exceed the limits of a value file");
         AddCheck(0x91, 0xC1, "Unrecoverable error within PICC, PICC will be disabled");
-        AddCheck(0x91, 0xCA, "Previous Command was not fully completed / Not all Frames were requested or provided by the PCD", false);
+		AddCheck(0x91, 0xCA, "Previous Command was not fully completed / Not all Frames were requested or provided by the PCD",
+			CardException::DEFAULT, false);
         AddCheck(0x91, 0xCD, "PICC was disabled by an unrecoverable error");
         AddCheck(0x91, 0xCE, "Number of Applications limit reached, no additional CreateApplication possible");
         AddCheck(0x91, 0xDE, "Creation of file/application failed because file/application with same number already exists");

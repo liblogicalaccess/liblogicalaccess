@@ -8,8 +8,10 @@
 #define LOGICALACCESS_RESULTCHECKER_HPP
 
 #include "logicalaccess_api.hpp"
+#include "myexception.hpp"
 #include <iostream>
 #include <map>
+#include <tuple>
 
 namespace logicalaccess
 {
@@ -44,9 +46,13 @@ namespace logicalaccess
          * \param SW1 The SW1 error code.
          * \param SW2 The SW2 error code.
          * \param msg The string message related to the error codes.
+		 * \param error The (liblogicalacccess-level) error code corresponding to the error.
          * \param throwException Define if an exception should be throwed for the error code.
          */
-        void AddCheck(unsigned char SW1, unsigned char SW2, const std::string& msg, bool throwException = true);
+        void AddCheck(unsigned char SW1, unsigned char SW2,
+			const std::string& msg,
+			CardException::ErrorType error = CardException::DEFAULT,
+			bool throwException = true);
 
         /**
          * \brief Remove a check.
@@ -78,7 +84,8 @@ namespace logicalaccess
         /**
          * \brief Result checker map values.
          */
-        typedef std::pair<std::string, bool> ResultCheckerValues;
+        typedef std::tuple<std::string, CardException::ErrorType, bool> ResultCheckerValues;
+		//typedef std::pair<std::string, bool> ResultCheckerValues;
 
         /**
          * \brief Primary map checks.
