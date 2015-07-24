@@ -362,5 +362,6 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot set card technologies"
                     " because we fail to write to reader's config file.");
         }
+        return true;
     }
 }
