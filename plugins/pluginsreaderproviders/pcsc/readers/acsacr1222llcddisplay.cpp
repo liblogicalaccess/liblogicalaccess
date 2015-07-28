@@ -16,25 +16,35 @@ namespace logicalaccess
     {
         clear();
 
-        for (unsigned char i = 0; i < 2 && (i * 16) < static_cast<unsigned char>(message.size()); i++)
+        for (unsigned char i = 0; i < 2 && (i * 15) < static_cast<unsigned char>(message.size()); i++)
         {
-            setMessage(i, message.substr(i * 16, (i + 1) * 16));
+            setMessage(i, message.substr(i * 15, (i + 1) * 15));
         }
     }
 
     void ACSACR1222LLCDDisplay::setMessage(unsigned char rowid, std::string message)
     {
         std::vector<unsigned char> data;
+        // The first character will not be displayed on the LCD screen :(
+        data.push_back(' ');
+
         data.insert(data.end(), message.begin(), message.end());
         // Make sure we don't overflow the LCD line
         if (data.size() > 16)
         {
             data = std::vector<unsigned char>(data.begin(), data.begin() + 16);
         }
+        else // or underflow it (resulting in potential garbage on screen)
+        {
+            while (data.size() < 16)
+            {
+                data.push_back(' ');
+            }
+        }
 
         // Always use fonts Set A, not bold.
         unsigned char option = 0x00;
-        unsigned char position = rowid * 40;
+        unsigned char position = (rowid ? 0x40 : 0x00);
 
         getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, option, 0x68, position, data);
     }
