@@ -33,7 +33,10 @@ namespace logicalaccess
          * \brief Write a message on screen.
          * \param message The message to show.
          */
-        virtual void setMessage(std::string message);
+        virtual void setMessage(std::string message) override;
+
+
+        virtual void clear() override;
 
         /**
          * \brief Write a message on screen.

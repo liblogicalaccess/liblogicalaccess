@@ -34,6 +34,13 @@ namespace logicalaccess
         virtual void setMessage(unsigned char rowid, std::string message) = 0;
 
         /**
+         * Clear the LCD screen.
+         *
+         * @note The command is not implemented for Rpleth LCD display.
+         */
+        virtual void clear() = 0;
+
+        /**
          * \brief Get the reader card adapter.
          * \return The reader card adapter.
          */

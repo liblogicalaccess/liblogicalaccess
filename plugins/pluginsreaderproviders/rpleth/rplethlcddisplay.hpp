@@ -30,6 +30,11 @@ namespace logicalaccess
         RplethLCDDisplay();
 
         /**
+         * Does nothing.
+         */
+        virtual void clear() override;
+
+         /**
          * \brief Write a message on screen.
          * \param message The message to show.
          */

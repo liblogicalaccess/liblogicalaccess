@@ -66,4 +66,9 @@ namespace logicalaccess
         command.push_back(static_cast<unsigned char>(0x00));
         getRplethReaderCardAdapter()->sendRplethCommand(command, false);
     }
+
+    void RplethLCDDisplay::clear()
+    {
+
+    }
 }

@@ -72,11 +72,14 @@ namespace logicalaccess
         * \param rowid The row id for the message.
         * \param message The message to show.
         */
-        virtual void setMessage(unsigned char rowid, std::string message);
+        virtual void setMessage(unsigned char rowid, std::string message) override;
 
         std::shared_ptr<PCSCReaderCardAdapter> getPCSCReaderCardAdapter() { return std::dynamic_pointer_cast<PCSCReaderCardAdapter>(getReaderCardAdapter()); };
 
-        void clear();
+        /**
+         * The implementation simply write to line of SPACE character.
+         */
+        virtual void clear() override;
 
         void scroll(unsigned char x = 0, unsigned char y = 0, unsigned char xRange = 128, unsigned char yRange = 32, unsigned char speedPixel = 2, LCDScrollPeriod speedPeriod = ScrollPeriodUnit23, LCDScrollDirection direction = ScrollFromLeftToRight);
 
