@@ -119,7 +119,7 @@ std::tuple<ReaderProviderPtr, ReaderUnitPtr, ChipPtr> nfc_test_init()
 
     // Set PCSC ReaderProvider by calling the Library Manager which will load the function from the corresponding plug-in
     auto provider = logicalaccess::LibraryManager::getInstance()->getReaderProvider("NFC");
-    LLA_ASSERT(provider, "Cannot get PCSC provider");
+    LLA_ASSERT(provider, "Cannot get NFC provider");
     readerConfig->setReaderProvider(provider);
 
     auto readerUnit = readerConfig->getReaderProvider()->createReaderUnit();

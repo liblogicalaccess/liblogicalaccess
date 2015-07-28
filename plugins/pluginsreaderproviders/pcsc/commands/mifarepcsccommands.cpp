@@ -34,23 +34,24 @@ namespace logicalaccess
         std::vector<unsigned char> result,
             vector_key((unsigned char *)key, (unsigned char *)key + keylen);
 
-		try
-		{
-			result = getPCSCReaderCardAdapter()->sendAPDUCommand(
-				0xFF, 0x82, (vol ? 0x00 : 0x20), static_cast<char>(keyno),
-				static_cast<unsigned char>(vector_key.size()), vector_key);
-		}
-		catch (CardException e)
-		{
-			if (!vol && e.error_code() == CardException::WRONG_P1_P2)
-			{
-				// With the Sony RC-S380, non-volatile memory doesn't work,
-				// so we try again.
-				return loadKey(keyno, keytype, key, keylen, true);
-			}
-			else
-				throw;
-		}
+        try
+        {
+            result = getPCSCReaderCardAdapter()->sendAPDUCommand(
+                0xFF, 0x82, (vol ? 0x00 : 0x20), static_cast<char>(keyno),
+                static_cast<unsigned char>(vector_key.size()), vector_key);
+        }
+        catch (CardException e)
+        {
+            if (!vol && (e.error_code() == CardException::WRONG_P1_P2 ||
+                         e.error_code() == CardException::UNKOWN_ERROR))
+            {
+                // With the Sony RC-S380, non-volatile memory doesn't work,
+                // so we try again. Same with ACR1222L.
+                return loadKey(keyno, keytype, key, keylen, true);
+            }
+            else
+                throw;
+        }
         if (!vol && (result[result.size() - 2] == 0x63) &&
             (result[result.size() - 1] == 0x86))
         {

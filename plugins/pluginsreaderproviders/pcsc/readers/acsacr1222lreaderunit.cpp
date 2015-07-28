@@ -4,6 +4,7 @@
 * \brief ACS ACR 1222L reader unit.
 */
 
+#include "iso7816resultchecker.hpp"
 #include "../readers/acsacr1222lreaderunit.hpp"
 #include "../readercardadapters/pcscreadercardadapter.hpp"
 #include "logicalaccess/bufferhelper.hpp"
@@ -16,7 +17,7 @@ namespace logicalaccess
         : PCSCReaderUnit(name)
     {
         d_readerControlReaderCardAdapter.reset(new PCSCReaderCardAdapter());
-        d_readerControlReaderCardAdapter->setResultChecker(std::shared_ptr<ResultChecker>());
+        d_readerControlReaderCardAdapter->setResultChecker(std::make_shared<ISO7816ResultChecker>());
 
         d_ledBuzzerDisplay.reset(new ACSACR1222LLEDBuzzerDisplay());
         d_lcdDisplay.reset(new ACSACR1222LLCDDisplay());
@@ -51,9 +52,18 @@ namespace logicalaccess
     bool ACSACR1222LReaderUnit::connect()
     {
         bool ret = PCSCReaderUnit::connect();
+
+        // Finish setting up the ledbuzzer object.
+        // We cannot do that in constructor because passing the reader unit to the
+        // datatransport requires calling shared_from_this(), which cannot be done
+        // from constructor.
+        d_ledBuzzerDisplay->setReaderCardAdapter(getReaderControlReaderCardAdapter());
+
         if (ret)
         {
-            setDefaultLEDBuzzerBehavior(true, false, false, true);
+            // The firmware doesn't seem to implement this, despite what the doc
+            // is saying.
+            //setDefaultLEDBuzzerBehavior(true, false, false, true);
             d_ledBuzzerDisplay->setGreenLed(true);
             d_ledBuzzerDisplay->setRedLed(false);
         }
@@ -100,5 +110,11 @@ namespace logicalaccess
             beepOnChipReset = ((value & 0x20) == 0x20);
             blinkOnCardOperation = ((value & 0x80) == 0x80);
         }
+    }
+
+    std::string ACSACR1222LReaderUnit::getFirmwareVersion()
+    {
+        auto ret = getReaderControlReaderCardAdapter()->sendAPDUCommand(0xFF, 0x00, 0x48, 0x00, 0x00);
+        return std::string(ret.begin(), ret.end());
     }
 }

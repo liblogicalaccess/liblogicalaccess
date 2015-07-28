@@ -77,4 +77,7 @@ namespace logicalaccess
 
         getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x00, 0x44, p1, 0x00);
     }
+
+    std::shared_ptr<PCSCReaderCardAdapter> ACSACR1222LLEDBuzzerDisplay::getPCSCReaderCardAdapter()
+    { return std::dynamic_pointer_cast<PCSCReaderCardAdapter>(getReaderCardAdapter()); }
 }

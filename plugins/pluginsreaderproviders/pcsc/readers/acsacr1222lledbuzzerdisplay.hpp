@@ -9,7 +9,7 @@
 
 #include "logicalaccess/logicalaccess_api.hpp"
 #include "logicalaccess/readerproviders/ledbuzzerdisplay.hpp"
-#include "../readercardadapters/pcscreadercardadapter.hpp"
+#include "../pcsc_fwd.hpp"
 #include <string>
 #include <vector>
 
@@ -63,7 +63,7 @@ namespace logicalaccess
         */
         void setLED();
 
-        std::shared_ptr<PCSCReaderCardAdapter> getPCSCReaderCardAdapter() { return std::dynamic_pointer_cast<PCSCReaderCardAdapter>(getReaderCardAdapter()); };
+        std::shared_ptr<PCSCReaderCardAdapter> getPCSCReaderCardAdapter();
 
     protected:
 

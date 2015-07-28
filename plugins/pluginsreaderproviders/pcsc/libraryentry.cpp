@@ -61,7 +61,8 @@ extern "C"
         {
             u = make_shared<SpringCardReaderUnit>(readerName);
         }
-        else if (readerName.find("ACS ACR1222 3S PICC Reader PICC") != string::npos)
+        else if (readerName.find("ACS ACR1222 3S PICC Reader PICC") != string::npos
+                || readerName.find("ACS ACR1222 3S PICC Reader 00 00") != string::npos) // Name under Linux
         {
             u = make_shared<ACSACR1222LReaderUnit>(readerName);
         }

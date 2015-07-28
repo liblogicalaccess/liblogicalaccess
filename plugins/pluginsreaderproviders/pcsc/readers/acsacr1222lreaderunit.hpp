@@ -66,6 +66,11 @@ namespace logicalaccess
         */
         void getDefaultLEDBuzzerBehavior(bool& showPICCPollingStatus, bool& beepOnCardEvent, bool& beepOnChipReset, bool& blinkOnCardOperation);
 
+        /**
+         * Query the reader to retrieve the firmware version.
+         */
+        std::string getFirmwareVersion();
+
     protected:
 
         std::shared_ptr<PCSCReaderCardAdapter> getReaderControlReaderCardAdapter();

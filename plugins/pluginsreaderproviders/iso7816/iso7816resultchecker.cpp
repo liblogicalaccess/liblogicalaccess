@@ -10,6 +10,8 @@ namespace logicalaccess
 {
     ISO7816ResultChecker::ISO7816ResultChecker()
     {
+        AddCheck(0x63, 0x00, "Operation failed, no precise diagnosis",
+                 CardException::UNKOWN_ERROR);
         AddCheck(0x64, 0x00, "Execution error", CardException::EXECUTION_ERROR);
 
         AddCheck(0x65, 0x81, "Memory failure", CardException::MEMORY_FAILURE);
