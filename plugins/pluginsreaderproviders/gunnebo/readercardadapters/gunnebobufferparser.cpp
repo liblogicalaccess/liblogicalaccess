@@ -9,21 +9,31 @@
 
 namespace logicalaccess
 {
+    GunneboBufferParser::GunneboBufferParser()
+    {
+        d_checksum = true;
+    }
+
+    void GunneboBufferParser::setChecksum(bool checksum)
+    {
+        d_checksum = checksum;
+    }
+
     std::vector<unsigned char> GunneboBufferParser::getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer)
     {
         std::vector<unsigned char> result;
 
-        if (circular_buffer.size() >= 3 && circular_buffer[0] == GunneboReaderCardAdapter::STX)
+        size_t foolen = d_checksum ? 2 : 1;
+        if (circular_buffer.size() >= (1 + foolen) && circular_buffer[0] == GunneboReaderCardAdapter::STX)
         {
             for (size_t i = 1; i < circular_buffer.size(); ++i)
             {
                 if (circular_buffer[i] == GunneboReaderCardAdapter::ETX)
                 {
-                    if (circular_buffer.size() >= i + 2)
+                    if (circular_buffer.size() >= i + foolen)
                     {
-                        result.assign(circular_buffer.begin(), circular_buffer.begin() + i + 2);
-                        circular_buffer.erase(circular_buffer.begin(),
-                                              circular_buffer.begin() + i + 2);
+                        result.assign(circular_buffer.begin(), circular_buffer.begin() + i + foolen);
+                        circular_buffer.erase(circular_buffer.begin(), circular_buffer.begin() + i + foolen);
                         break;
                     }
                     else

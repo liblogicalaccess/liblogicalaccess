@@ -83,7 +83,7 @@ namespace logicalaccess
          */
         void setPort(bool red, bool green, bool buzzer);
 
-        std::shared_ptr<SmartIDReaderCardAdapter> getSmartIDReaderCardAdapter();;
+        std::shared_ptr<SmartIDReaderCardAdapter> getSmartIDReaderCardAdapter();
 
     protected:
 

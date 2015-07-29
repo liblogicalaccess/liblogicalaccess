@@ -335,10 +335,35 @@ namespace logicalaccess
     void GunneboReaderUnit::unSerialize(boost::property_tree::ptree& node)
     {
         ReaderUnit::unSerialize(node);
+
+        std::shared_ptr<GunneboReaderUnitConfiguration> c = getGunneboConfiguration();
+        if (c)
+        {
+            std::shared_ptr<GunneboDataTransport> dt = std::dynamic_pointer_cast<GunneboDataTransport>(getDataTransport());
+            if (dt)
+            {
+                dt->setChecksum(c->getChecksum());
+            }
+        }
     }
 
     std::shared_ptr<GunneboReaderProvider> GunneboReaderUnit::getGunneboReaderProvider() const
     {
         return std::dynamic_pointer_cast<GunneboReaderProvider>(getReaderProvider());
+    }
+
+    void GunneboReaderUnit::setConfiguration(std::shared_ptr<ReaderUnitConfiguration> config)
+    {
+        ReaderUnit::setConfiguration(config);
+
+        std::shared_ptr<GunneboReaderUnitConfiguration> c = std::dynamic_pointer_cast<GunneboReaderUnitConfiguration>(config);
+        if (c)
+        {
+            std::shared_ptr<GunneboDataTransport> dt = std::dynamic_pointer_cast<GunneboDataTransport>(getDataTransport());
+            if (dt)
+            {
+                dt->setChecksum(c->getChecksum());
+            }
+        }
     }
 }

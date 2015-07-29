@@ -18,13 +18,26 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API GunneboDataTransport : public SerialPortDataTransport
     {
     public:
-        GunneboDataTransport(const std::string& portname = "") : SerialPortDataTransport(portname) {};
+        GunneboDataTransport(const std::string& portname = "") : SerialPortDataTransport(portname) { d_checksum = true; };
 
         virtual void setSerialPort(std::shared_ptr<SerialPortXml> port)
         {
             d_port = port;
-            d_port->getSerialPort()->setCircularBufferParser(new GunneboBufferParser());
+            GunneboBufferParser* parser = new GunneboBufferParser();
+            parser->setChecksum(d_checksum);
+            d_port->getSerialPort()->setCircularBufferParser(parser);
         };
+
+        void setChecksum(bool checksum)
+        {
+            d_checksum = checksum;
+
+            std::shared_ptr<GunneboBufferParser> parser = std::dynamic_pointer_cast<GunneboBufferParser>(d_port->getSerialPort()->getCircularBufferParser());
+            if (parser)
+            {
+                parser->setChecksum(checksum);
+            }
+        }
 
         /**
          * \brief Get the transport type of this instance.
@@ -38,7 +51,10 @@ namespace logicalaccess
          */
         void serialize(boost::property_tree::ptree& parentNode)
         {
-            boost::property_tree::ptree node;	SerialPortDataTransport::serialize(node); parentNode.add_child(getDefaultXmlNodeName(), node);
+            boost::property_tree::ptree node;
+            SerialPortDataTransport::serialize(node);
+            node.put("Checksum", d_checksum);
+            parentNode.add_child(getDefaultXmlNodeName(), node);
         }
 
         /**
@@ -48,7 +64,10 @@ namespace logicalaccess
         void unSerialize(boost::property_tree::ptree& node)
         {
             SerialPortDataTransport::unSerialize(node.get_child(SerialPortDataTransport::getDefaultXmlNodeName()));
-            d_port->getSerialPort()->setCircularBufferParser(new GunneboBufferParser());
+            d_checksum = node.get_child("Checksum").get_value<bool>();
+            GunneboBufferParser* parser = new GunneboBufferParser();
+            parser->setChecksum(d_checksum);
+            d_port->getSerialPort()->setCircularBufferParser(parser);
         }
 
         /**
@@ -56,5 +75,9 @@ namespace logicalaccess
          * \return The Xml node name.
          */
         virtual std::string getDefaultXmlNodeName() const { return "GunneboDataTransport"; };
+
+    protected:
+
+        bool d_checksum;
     };
 }

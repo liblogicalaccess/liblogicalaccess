@@ -29,9 +29,16 @@ namespace logicalaccess
     {
         LOG(LogLevel::COMS) << "Processing the received command buffer " << BufferHelper::getHex(answer) << " command size {" << answer.size() << "}...";
 
-        EXCEPTION_ASSERT_WITH_LOG(answer.size() >= 3, std::invalid_argument, "A valid command buffer size must be at least 3 bytes long");
+        std::shared_ptr<GunneboReaderUnit> ru = std::dynamic_pointer_cast<GunneboReaderUnit>(getDataTransport()->getReaderUnit());
+        size_t foolen = 2;
+        if (ru && !ru->getGunneboConfiguration()->getChecksum())
+        {
+            foolen = 1;
+        }
+
+        EXCEPTION_ASSERT_WITH_LOG(answer.size() >= (1 + foolen), std::invalid_argument, "A valid command buffer size must be at least 3 bytes long");
         EXCEPTION_ASSERT_WITH_LOG(answer[0] == STX, std::invalid_argument, "The supplied command buffer is not valid (bad STX)");
-        EXCEPTION_ASSERT_WITH_LOG(answer[answer.size() - 2] == ETX, std::invalid_argument, "The supplied command buffer is not valid (bad ETX)");
+        EXCEPTION_ASSERT_WITH_LOG(answer[answer.size() - foolen] == ETX, std::invalid_argument, "The supplied command buffer is not valid (bad ETX)");
 
         // Gunnebo ID is like that: [STX - 1 byte][id - x bytes][ETX - 1 byte][checksum - 1 byte]
         // We don't calculate the checksum ! Who cares ?!? :)
