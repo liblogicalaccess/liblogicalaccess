@@ -22,6 +22,7 @@
 #include "commands/desfireev1iso7816commands.hpp"
 #include "commands/mifarepcsccommands.hpp"
 #include "commands/mifarescmcommands.hpp"
+#include "commands/mifare_acr1222L_commands.hpp"
 #include "commands/mifarecherrycommands.hpp"
 #include "commands/mifarespringcardcommands.hpp"
 #include "commands/iso15693pcsccommands.hpp"
@@ -1460,6 +1461,10 @@ namespace logicalaccess
                 else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_LAN_XX21)
                 {
                     commands.reset(new MifareOmnikeyXX21Commands());
+                }
+                else if (getPCSCType() == PCSC_RUT_ACS_ACR_1222L)
+                {
+                    commands.reset(new MifareACR1222LCommands());
                 }
                 else
                 {
