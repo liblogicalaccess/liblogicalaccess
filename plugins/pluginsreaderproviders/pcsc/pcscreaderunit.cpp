@@ -1749,4 +1749,22 @@ namespace logicalaccess
         }
         assert(0);
     }
+
+    std::shared_ptr<LCDDisplay> PCSCReaderUnit::getLCDDisplay()
+    {
+        if (d_proxyReaderUnit)
+        {
+            return d_proxyReaderUnit->getLCDDisplay();
+        }
+        return ReaderUnit::getLCDDisplay();
+    }
+
+    std::shared_ptr<LEDBuzzerDisplay> PCSCReaderUnit::getLEDBuzzerDisplay()
+    {
+        if (d_proxyReaderUnit)
+        {
+            return d_proxyReaderUnit->getLEDBuzzerDisplay();
+        }
+        return ReaderUnit::getLEDBuzzerDisplay();
+    }
 }

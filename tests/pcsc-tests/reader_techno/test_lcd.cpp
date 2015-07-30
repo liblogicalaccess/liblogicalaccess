@@ -16,9 +16,7 @@ using namespace logicalaccess;
 
 void introduction()
 {
-    PRINT_TIME("This test chekcs that we properly disable "
-                       "or enable type of cards");
-
+    PRINT_TIME("This test checks that the LCD screen for ACR1222L works properly.");
     PRINT_TIME("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
     LLA_SUBTEST_REGISTER("DisplaySomeNumbers");

@@ -295,6 +295,10 @@ namespace logicalaccess
 
         virtual TechnoBitset getCardTechnologies() override;
 
+        virtual std::shared_ptr<LCDDisplay> getLCDDisplay() override;
+
+        virtual std::shared_ptr<LEDBuzzerDisplay> getLEDBuzzerDisplay() override;
+
     protected:
 
         /**

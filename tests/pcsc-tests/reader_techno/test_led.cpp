@@ -16,9 +16,7 @@ using namespace logicalaccess;
 
 void introduction()
 {
-    PRINT_TIME("This test chekcs that we properly disable "
-               "or enable type of cards");
-
+    PRINT_TIME("Test the leds of the ACR1222L reader.");
     PRINT_TIME("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
     LLA_SUBTEST_REGISTER("TurnLedOn");
