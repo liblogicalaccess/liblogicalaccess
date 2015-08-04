@@ -31,7 +31,11 @@ namespace logicalaccess
     /**
      * \brief Share mode enumeration.
      */
-    typedef enum { SC_SHARED = SCARD_SHARE_SHARED, SC_SHARED_EXCLUSIVE = SCARD_SHARE_EXCLUSIVE } PCSCShareMode;
+    typedef enum {
+        SC_SHARED = SCARD_SHARE_SHARED,
+        SC_SHARED_EXCLUSIVE = SCARD_SHARE_EXCLUSIVE,
+        SC_DIRECT = SCARD_SHARE_DIRECT
+    } PCSCShareMode;
 
     /**
      *\brief The reader unit types.

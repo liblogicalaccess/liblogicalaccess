@@ -10,6 +10,8 @@
 #include "pcscreaderunitconfiguration.hpp"
 #include "../iso7816/iso7816readerunit.hpp"
 #include "pcsc_fwd.hpp"
+#include "logicalaccess/lla_fwd.hpp"
+#include "pcsc_connection.hpp"
 
 namespace logicalaccess
 {
@@ -137,10 +139,10 @@ namespace logicalaccess
         const SCARDHANDLE& getHandle() const;
 
         /**
-         * \brief Get the active protocol for the connected card.
-         * \return The active protocol.
-         */
-        inline unsigned long getActiveProtocol() const { return d_ap; };
+        * \brief Get the active protocol for the connected card.
+        * \return The active protocol.
+        */
+        unsigned long getActiveProtocol() const;
 
         /**
          * \brief Get the currently active share mode.
@@ -148,7 +150,7 @@ namespace logicalaccess
          *
          * If the card is not connected, requesting the share mode value is meaningless.
          */
-        inline PCSCShareMode getShareMode() const { return d_share_mode; };
+        PCSCShareMode getShareMode() const;
 
         /**
          * \brief Create the chip object from card type.
@@ -344,21 +346,23 @@ namespace logicalaccess
          * \return The card type
          */
         std::string atrXToCardType(int code) const;
-
-        /**
+/*
+        *//**
          * \brief The handle.
-         */
+         *//*
         SCARDHANDLE d_sch;
 
-        /**
+        *//**
          * \brief The share mode.
-         */
+         *//*
         PCSCShareMode d_share_mode;
 
-        /**
+        *//**
          * \brief The activated protocol.
-         */
-        DWORD d_ap;
+         *//*
+        DWORD d_ap;*/
+
+        std::unique_ptr<PCSCConnection> connection_;
 
         /**
          * \brief The current card ATR.
@@ -380,6 +384,7 @@ namespace logicalaccess
          */
         std::shared_ptr<PCSCReaderUnit> d_sam_readerunit;
     };
+
 }
 
 #endif

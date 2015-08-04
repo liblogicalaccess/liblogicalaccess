@@ -71,6 +71,7 @@
 #endif
 
 #include "logicalaccess/settings.hpp"
+#include "pcsc_ctl_datatransport.hpp"
 
 namespace logicalaccess
 {
@@ -78,9 +79,6 @@ namespace logicalaccess
         : ISO7816ReaderUnit(), d_name(name), d_connectedName(name)
     {
         memset(d_atr, 0x00, sizeof(d_atr));
-        d_sch = 0;
-        d_share_mode = SC_SHARED;
-        d_ap = 0;
         d_atrLength = 0;
 
         d_card_type = "UNKNOWN";
@@ -142,7 +140,10 @@ namespace logicalaccess
 
     const SCARDHANDLE& PCSCReaderUnit::getHandle() const
     {
-        return d_sch;
+        static SCARDHANDLE nullhandle = 0;
+        if (connection_)
+            return connection_->handle_;
+        return nullhandle;
     }
 
     void PCSCReaderUnit::serialize(boost::property_tree::ptree& parentNode)
@@ -211,8 +212,7 @@ namespace logicalaccess
         {
             return d_proxyReaderUnit->isConnected();
         }
-
-        return (d_sch != 0);
+        return connection_ && connection_->handle_;
     }
 
     bool PCSCReaderUnit::waitInsertion(unsigned int maxwait)
@@ -228,6 +228,7 @@ namespace logicalaccess
             LOG(LogLevel::INFOS) << "Waiting card insertion...";
         }
 
+		connection_ = nullptr;
         LONG r = 0;
         bool usePnp = true;
         int readers_count = 0;
@@ -457,6 +458,8 @@ namespace logicalaccess
             return false;
         }
 
+		disconnect();
+		assert(connection_ == nullptr);
         if (isConnected())
         {
             THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_CONNECTED);
@@ -615,6 +618,19 @@ namespace logicalaccess
             d_connectedName = d_name;
         }
 
+		
+		assert(connection_ == nullptr);
+		if (getConnectedName().size()) // otherwise we are in the proxy parent
+			// and cannot yet connect.
+		{
+			connection_ = std::unique_ptr<PCSCConnection>(new PCSCConnection(SC_DIRECT,
+				0, // No protocol
+				getPCSCReaderProvider()->getContext(),
+				getConnectedName()));
+			auto ctl_data_transport = std::make_shared<PCSCControlDataTransport>();
+			ctl_data_transport->setReaderUnit(shared_from_this());
+			getDefaultReaderCardAdapter()->setDataTransport(ctl_data_transport);
+		}
         return (!reader.empty());
     }
 
@@ -633,9 +649,9 @@ namespace logicalaccess
             ret = d_proxyReaderUnit->connect(share_mode);
             if (ret)
             {
-                d_sch = d_proxyReaderUnit->getHandle();
-                d_ap = d_proxyReaderUnit->getActiveProtocol();
-                d_share_mode = share_mode;
+             //  d_sch = d_proxyReaderUnit->getHandle();
+              //  d_ap = d_proxyReaderUnit->getActiveProtocol();
+              //  d_share_mode = share_mode;
             }
         }
         else
@@ -644,13 +660,20 @@ namespace logicalaccess
             {
                 disconnect();
             }
+			assert(connection_ == nullptr);
+			connection_ = std::unique_ptr<PCSCConnection>(new PCSCConnection(
+                    share_mode,
+                    getPCSCConfiguration()->getTransmissionProtocol(),
+                    getPCSCReaderProvider()->getContext(),
+                    getConnectedName()));
 
-            LONG lReturn = SCardConnect(getPCSCReaderProvider()->getContext(), reinterpret_cast<const char*>(getConnectedName().c_str()), share_mode, getPCSCConfiguration()->getTransmissionProtocol(), &d_sch, &d_ap);
-            if (SCARD_S_SUCCESS == lReturn)
-            {
+			auto ctl_data_transport = std::make_shared<PCSCDataTransport>();
+			ctl_data_transport->setReaderUnit(shared_from_this());
+			getDefaultReaderCardAdapter()->setDataTransport(ctl_data_transport);
+
+
                 LOG(LogLevel::INFOS) << "SCardConnect Success !";
 
-                d_share_mode = share_mode;
                 if (d_insertedChip->getChipIdentifier().size() == 0)
                 {
                     try
@@ -718,11 +741,6 @@ namespace logicalaccess
                     }
                 }
                 ret = true;
-            }
-            else
-            {
-                LOG(LogLevel::INFOS) << "SCardConnect ERROR {" << lReturn << "} !";
-            }
         }
 
         if (ret)
@@ -765,11 +783,6 @@ namespace logicalaccess
                 }
             }
         }
-        else
-        {
-            d_sch = 0;
-            d_ap = 0;
-        }
         if (ret && d_proxyReaderUnit)
             d_proxyReaderUnit->cardConnected();
         else if (ret)
@@ -789,10 +802,12 @@ namespace logicalaccess
             return false;
         }
 
+        // TODO RECONNECT
+         /*
         if (SCARD_S_SUCCESS == SCardReconnect(d_sch, d_share_mode, getPCSCConfiguration()->getTransmissionProtocol(), SCARD_LEAVE_CARD, &d_ap))
         {
             return true;
-        }
+        }*/
 
         return false;
     }
@@ -821,12 +836,9 @@ namespace logicalaccess
         {
             if (isConnected())
             {
-                SCardDisconnect(d_sch, action);
+				connection_ = nullptr;
             }
         }
-
-        d_sch = 0;
-        d_ap = 0;
     }
 
     bool PCSCReaderUnit::connectToReader()
@@ -903,6 +915,18 @@ namespace logicalaccess
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The SAM Detected is not the SAM waited.");
             }
         }
+
+        if (getConnectedName().size()) // otherwise we are in the proxy parent
+        // and cannot yet connect.
+        {
+            connection_ = std::unique_ptr<PCSCConnection>(new PCSCConnection(SC_DIRECT,
+                                                                             0, // No protocol
+                                                                             getPCSCReaderProvider()->getContext(),
+                                                                             getConnectedName()));
+            auto ctl_data_transport = std::make_shared<PCSCControlDataTransport>();
+            ctl_data_transport->setReaderUnit(shared_from_this());
+            getDefaultReaderCardAdapter()->setDataTransport(ctl_data_transport);
+        }
         return true;
     }
 
@@ -922,6 +946,7 @@ namespace logicalaccess
                 d_sam_readerunit->disconnectFromReader();
                 setSAMChip(std::shared_ptr<SAMChip>());
             }
+            connection_ = nullptr;
         }
     }
 
@@ -1678,10 +1703,10 @@ namespace logicalaccess
             d_readerUnitConfig = readerUnitConfig;
         }
 
-        d_ap = readerUnit->getActiveProtocol();
-        d_share_mode = readerUnit->getShareMode();
+//        d_ap = readerUnit->getActiveProtocol();
+//        d_share_mode = readerUnit->getShareMode();
         d_atrLength = readerUnit->getATR(d_atr, sizeof(d_atr));
-        d_sch = readerUnit->getHandle();
+//        d_sch = readerUnit->getHandle();
         d_insertedChip = readerUnit->getSingleChip();
     }
 
@@ -1771,5 +1796,17 @@ namespace logicalaccess
             return d_proxyReaderUnit->getLEDBuzzerDisplay();
         }
         return ReaderUnit::getLEDBuzzerDisplay();
+    }
+
+    unsigned long PCSCReaderUnit::getActiveProtocol() const
+    {
+        return connection_ ? connection_->protocol_ : 0;
+    }
+
+    PCSCShareMode PCSCReaderUnit::getShareMode() const
+    {
+        if (connection_)
+            return connection_->share_mode_;
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "No active connection.");
     }
 }
