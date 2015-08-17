@@ -9,7 +9,16 @@
 #include "logicalaccess/colorize.hpp"
 #include <boost/date_time.hpp>
 
-thread_local std::vector<std::string> logicalaccess::Logs::context_;
+#ifdef WIN32
+// For now the additional context for the logger wont be thread safe,
+// because the compiler doesn't support it.
+static std::vector<std::string> context_;
+#else
+/**
+ * A queue of "context string" to help make sense of the log message.
+ */
+static thread_local std::vector<std::string> context_;
+#endif
 
 namespace logicalaccess
 {
@@ -154,11 +163,11 @@ namespace logicalaccess
 
     LogContext::LogContext(const std::string &msg)
     {
-        Logs::context_.push_back(msg);
+        context_.push_back(msg);
     }
 
     LogContext::~LogContext()
     {
-        Logs::context_.pop_back();
+        context_.pop_back();
     }
 }

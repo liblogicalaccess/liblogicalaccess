@@ -92,13 +92,6 @@ namespace logicalaccess
         enum LogLevel d_level;
         std::stringstream _stream;
         static std::map<LogLevel, std::string> logLevelMsg;
-
-        /**
-         * A queue of "context string" to help make sense of the log message.
-         */
-        static thread_local std::vector<std::string> context_;
-
-        friend class LogContext;
     };
 
     /**
