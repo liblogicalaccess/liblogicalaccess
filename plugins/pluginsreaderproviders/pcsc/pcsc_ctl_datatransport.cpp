@@ -13,6 +13,7 @@
 #ifdef WIN32
 #define IOCTL_CCID_ESCAPE SCARD_CTL_CODE(3500)
 #else
+#include <reader.h>
 #define IOCTL_CCID_ESCAPE SCARD_CTL_CODE(3500)
 #endif
 
