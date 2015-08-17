@@ -47,6 +47,20 @@ namespace logicalaccess
         PLUGINS_ERROR
     };
 
+    /**
+     * A class that push a string into the current logger's context at
+     * construction, and pop it at deletion.
+     *
+     * The direct use of this class is discouraged and the macro
+     * LLA_LOG_CTX(...) should be used to push some context to the logger.
+     */
+    class LIBLOGICALACCESS_API LogContext
+    {
+      public:
+        LogContext(const std::string &);
+        ~LogContext();
+    };
+
     class LIBLOGICALACCESS_API Logs
     {
       public:
@@ -70,9 +84,21 @@ namespace logicalaccess
         static bool logToStderr;
 
       private:
+        /**
+         * Build a string containing some contextual information.
+         */
+        std::string pretty_context_infos();
+
         enum LogLevel d_level;
         std::stringstream _stream;
         static std::map<LogLevel, std::string> logLevelMsg;
+
+        /**
+         * A queue of "context string" to help make sense of the log message.
+         */
+        static thread_local std::vector<std::string> context_;
+
+        friend class LogContext;
     };
 
     /**
@@ -106,6 +132,14 @@ namespace logicalaccess
 #ifdef LOGICALACCESS_LOGS
 
 #define LOG(x) logicalaccess::Logs(__FILE__, __FUNCTION__, __LINE__, x)
+
+#define LLA_LOG_CTX(param)                                                     \
+    LogContext lla_log_ctx([&](void)                                           \
+                           {                                                   \
+                               std::stringstream logger_macro_ss__;            \
+                               logger_macro_ss__ << param;                     \
+                               return logger_macro_ss__.str();                 \
+                           }())
 
 /**
 * Convenient alias to throw an exception with logs.

@@ -19,6 +19,8 @@
 
 void logicalaccess::PCSCControlDataTransport::send(const std::vector<unsigned char> &data)
 {
+    LLA_LOG_CTX("PCSC Control DataTransport");
+
     d_response.clear();
 
     EXCEPTION_ASSERT_WITH_LOG(getPCSCReaderUnit(), LibLogicalAccessException,

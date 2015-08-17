@@ -75,7 +75,9 @@ namespace logicalaccess
         return before;
     }
 
-    unsigned char Format::calculateParity(const void* data, size_t dataLengthBytes, ParityType parityType, unsigned int* positions, size_t nbPositions)
+    unsigned char Format::calculateParity(const void* data, size_t dataLengthBytes,
+                                          ParityType parityType, unsigned int* positions,
+                                          size_t nbPositions)
     {
         unsigned char parity = 0x00;
         for (size_t i = 0; i < nbPositions && i < (dataLengthBytes * 8); i++)

@@ -122,6 +122,8 @@ namespace logicalaccess
             SeeWaitRemovalLog = pt.get("config.log.seewaitremoval", false);
             SeeCommunicationLog = pt.get("config.log.seecommunication", false);
             SeePluginLog = pt.get("config.log.seeplugin", false);
+            ColorizeLog = pt.get("config.log.colorize", false);
+            ContextLog = pt.get("config.log.context", false);
 
             IsAutoDetectEnabled = pt.get("config.autodetect.enabled", false);
             AutoDetectionTimeout = pt.get<long int>("config.autodetect.timeout", 400);
@@ -169,10 +171,13 @@ namespace logicalaccess
             // Put log filename in property tree
             pt.put("config.log.enabled", IsLogEnabled);
             pt.put("config.log.filename", LogFileName);
+            pt.put("config.log.to_stderr", LogToStderr);
             pt.put("config.log.seewaitinsertion", SeeWaitInsertionLog);
             pt.put("config.log.seewaitremoval", SeeWaitRemovalLog);
             pt.put("config.log.seecommunication", SeeCommunicationLog);
             pt.put("config.log.seeplugin", SeePluginLog);
+            pt.put("config.log.colorize", ColorizeLog);
+            pt.put("config.log.context", ContextLog);
 
             pt.put("config.autodetect.enabled", IsAutoDetectEnabled);
             pt.put("config.autodetect.timeout", AutoDetectionTimeout);
@@ -197,6 +202,8 @@ namespace logicalaccess
         SeeWaitRemovalLog = false;
         SeeCommunicationLog = false;
         SeePluginLog = false;
+        ColorizeLog = false;
+        ContextLog = false;
 
         IsAutoDetectEnabled = false;
         AutoDetectionTimeout = 400;

@@ -42,6 +42,8 @@ namespace logicalaccess
         bool SeeWaitRemovalLog;
         bool SeeCommunicationLog;
         bool SeePluginLog;
+        bool ColorizeLog;
+        bool ContextLog;
 
         /* Auto-Detection */
         bool IsAutoDetectEnabled;

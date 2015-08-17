@@ -6,7 +6,10 @@
 
 #include "logicalaccess/logs.hpp"
 #include "logicalaccess/settings.hpp"
+#include "logicalaccess/colorize.hpp"
 #include <boost/date_time.hpp>
+
+thread_local std::vector<std::string> logicalaccess::Logs::context_;
 
 namespace logicalaccess
 {
@@ -44,10 +47,51 @@ namespace logicalaccess
         {
             boost::posix_time::ptime now =
                 boost::posix_time::microsec_clock::local_time();
-            _stream << boost::posix_time::to_simple_string(now) << " - "
-                    << logLevelMsg[d_level] << ": \t{" << line << "}\t{" << func
-                    << "}\t{" << file << "}:" << std::endl;
+            if (Settings::getInstance()->ColorizeLog)
+            {
+                _stream << Colorize::underline(
+                               boost::posix_time::to_simple_string(now))
+                        << " - " << Colorize::red(logLevelMsg[d_level])
+                        << ": \t{" << line << "}\t{" << Colorize::green(func)
+                        << "}\t{" << file << "}:" << std::endl;
+            }
+            else
+            {
+                _stream << boost::posix_time::to_simple_string(now) << " - "
+                        << logLevelMsg[d_level] << ": \t{" << line << "}\t{"
+                        << func << "}\t{" << file << "}:" << std::endl;
+            }
+            if (Settings::getInstance()->ContextLog)
+                _stream << pretty_context_infos();
         }
+    }
+
+    std::string Logs::pretty_context_infos()
+    {
+        using namespace Colorize;
+        if (context_.size() == 0)
+            return "";
+
+        std::string ret;
+        if (Settings::getInstance()->ColorizeLog)
+            ret = green(underline("Context:")) + ' ';
+        else
+            ret = "Context: ";
+        int count = 0;
+
+        for (const auto &itr : context_)
+        {
+            if (count != 0)
+                ret += std::string(9, ' ');
+            std::stringstream ss;
+            ss << count << ") ";
+            if (Settings::getInstance()->ColorizeLog)
+                ret += yellow(ss.str()) + itr + '\n';
+            else
+                ret += ss.str() + itr + '\n';
+            count++;
+        }
+        return ret;
     }
 
     Logs::~Logs()
@@ -106,5 +150,15 @@ namespace logicalaccess
     LogDisabler::~LogDisabler()
     {
         Settings::getInstance()->IsLogEnabled = old_;
+    }
+
+    LogContext::LogContext(const std::string &msg)
+    {
+        Logs::context_.push_back(msg);
+    }
+
+    LogContext::~LogContext()
+    {
+        Logs::context_.pop_back();
     }
 }
