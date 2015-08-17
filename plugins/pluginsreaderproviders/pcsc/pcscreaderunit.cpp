@@ -1697,10 +1697,7 @@ namespace logicalaccess
             d_readerUnitConfig = readerUnitConfig;
         }
 
-//        d_ap = readerUnit->getActiveProtocol();
-//        d_share_mode = readerUnit->getShareMode();
         d_atrLength = readerUnit->getATR(d_atr, sizeof(d_atr));
-//        d_sch = readerUnit->getHandle();
         d_insertedChip = readerUnit->getSingleChip();
     }
 
