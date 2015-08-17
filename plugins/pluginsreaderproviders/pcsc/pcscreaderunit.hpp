@@ -346,23 +346,11 @@ namespace logicalaccess
          * \return The card type
          */
         std::string atrXToCardType(int code) const;
-/*
-        *//**
-         * \brief The handle.
-         *//*
-        SCARDHANDLE d_sch;
 
-        *//**
-         * \brief The share mode.
-         *//*
-        PCSCShareMode d_share_mode;
-
-        *//**
-         * \brief The activated protocol.
-         *//*
-        DWORD d_ap;*/
-
-        std::unique_ptr<PCSCConnection> connection_;
+		/**
+		 * A PCSC connection object.
+		 */
+		std::unique_ptr<PCSCConnection> connection_;
 
         /**
          * \brief The current card ATR.

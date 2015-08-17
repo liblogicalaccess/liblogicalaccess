@@ -9,21 +9,18 @@
 logicalaccess::PCSCConnection::PCSCConnection(PCSCShareMode mode,
                                               unsigned long protocol,
                                               SCARDCONTEXT context,
-                                              const std::string &device) :
-        handle_(0),
-        share_mode_(mode),
-        protocol_(protocol)
+                                              const std::string &device)
+    : handle_(0)
+    , share_mode_(mode)
+    , protocol_(protocol)
 {
-	LOG(ERRORS) << "DEVICE STR {" << device.c_str() << "} .Proto = " << protocol << ", mode = " << (int)mode;
-    LONG lReturn = SCardConnect(context,
-                                device.c_str(),
-                                mode,
-								protocol,
-                                &handle_, &protocol_);
+    LONG lReturn = SCardConnect(context, device.c_str(), mode, protocol,
+                                &handle_, &active_protocol_);
     if (lReturn != SCARD_S_SUCCESS)
     {
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "Failed to establish PCSC connection: " + PCSCConnection::strerror(lReturn));
+                                 "Failed to establish PCSC connection: " +
+                                     PCSCConnection::strerror(lReturn));
     }
 }
 
@@ -32,6 +29,18 @@ logicalaccess::PCSCConnection::~PCSCConnection()
     if (handle_)
     {
         SCardDisconnect(handle_, SCARD_LEAVE_CARD);
+    }
+}
+
+void logicalaccess::PCSCConnection::reconnect()
+{
+    LONG lReturn = SCardReconnect(handle_, share_mode_, protocol_,
+                                  SCARD_LEAVE_CARD, &active_protocol_);
+    if (lReturn != SCARD_S_SUCCESS)
+    {
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "Failed to reconnect PCSC connection: " +
+                                     PCSCConnection::strerror(lReturn));
     }
 }
 

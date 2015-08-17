@@ -29,6 +29,8 @@ namespace logicalaccess
          */
         ~PCSCConnection();
 
+		void reconnect();
+
 		/**
 		 * Check for a PCSC error in error_flag.
 		 *
@@ -36,6 +38,8 @@ namespace logicalaccess
 		 * string if no error.
 		 */
 		static std::string strerror(unsigned int error_flag);
+
+	private:
 
         /**
          * The handle.
@@ -48,9 +52,16 @@ namespace logicalaccess
         PCSCShareMode share_mode_;
 
         /**
-         * The activated protocol.
+         * The protocol.
          */
         DWORD protocol_;
+
+		/**
+		 * The activated protocol
+		 */
+		DWORD active_protocol_;
+
+		friend class PCSCReaderUnit;
     };
 }
 

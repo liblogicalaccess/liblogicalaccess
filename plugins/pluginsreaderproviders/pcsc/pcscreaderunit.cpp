@@ -797,18 +797,12 @@ namespace logicalaccess
             return d_proxyReaderUnit->reconnect();
         }
 
+		connection_->reconnect();
+
         if (!isConnected())
         {
             return false;
         }
-
-        // TODO RECONNECT
-         /*
-        if (SCARD_S_SUCCESS == SCardReconnect(d_sch, d_share_mode, getPCSCConfiguration()->getTransmissionProtocol(), SCARD_LEAVE_CARD, &d_ap))
-        {
-            return true;
-        }*/
-
         return false;
     }
 
@@ -1800,13 +1794,17 @@ namespace logicalaccess
 
     unsigned long PCSCReaderUnit::getActiveProtocol() const
     {
-        return connection_ ? connection_->protocol_ : 0;
+        if (connection_)
+            return connection_->active_protocol_;
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "No active connection.");
     }
 
     PCSCShareMode PCSCReaderUnit::getShareMode() const
     {
         if (connection_)
             return connection_->share_mode_;
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "No active connection.");
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "No active connection.");
     }
 }
