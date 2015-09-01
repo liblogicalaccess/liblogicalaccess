@@ -71,6 +71,16 @@ namespace logicalaccess
          */
         std::string getFirmwareVersion();
 
+        /**
+         * Reimplemented so we can enable a "no-card" connection.
+         */
+        virtual bool waitRemoval(unsigned int maxwait) override;
+
+        /**
+         * Reimplemented so we can enable a "no-card" connection.
+         */
+        virtual bool connectToReader() override;
+
     protected:
 
         std::shared_ptr<PCSCReaderCardAdapter> getReaderControlReaderCardAdapter();

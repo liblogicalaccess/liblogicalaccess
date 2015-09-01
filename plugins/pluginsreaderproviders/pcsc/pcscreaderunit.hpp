@@ -341,6 +341,14 @@ namespace logicalaccess
         void setSingleChip(std::shared_ptr<Chip> chip);
 
         /**
+         * Direct means we established without requiring
+         * that a card be near the card reader.
+         */
+        void setup_pcsc_connection(PCSCShareMode share_mode);
+
+        void teardown_pcsc_connection();
+
+        /**
          * \brief Get the card type from atr code
          * \param code The atr code
          * \return The card type

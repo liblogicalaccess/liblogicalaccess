@@ -117,4 +117,18 @@ namespace logicalaccess
         auto ret = getReaderControlReaderCardAdapter()->sendAPDUCommand(0xFF, 0x00, 0x48, 0x00, 0x00);
         return std::string(ret.begin(), ret.end());
     }
+
+    bool ACSACR1222LReaderUnit::waitRemoval(unsigned int maxwait)
+    {
+        bool ret = PCSCReaderUnit::waitRemoval(maxwait);
+        setup_pcsc_connection(SC_DIRECT);
+        return ret;
+    }
+
+    bool ACSACR1222LReaderUnit::connectToReader()
+    {
+        bool ret = PCSCReaderUnit::connectToReader();
+        setup_pcsc_connection(SC_DIRECT);
+        return ret;
+    }
 }

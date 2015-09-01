@@ -228,7 +228,7 @@ namespace logicalaccess
             LOG(LogLevel::INFOS) << "Waiting card insertion...";
         }
 
-		connection_ = nullptr;
+		teardown_pcsc_connection();
         LONG r = 0;
         bool usePnp = true;
         int readers_count = 0;
@@ -617,20 +617,8 @@ namespace logicalaccess
             d_insertedChip.reset();
             d_connectedName = d_name;
         }
-
 		
 		assert(connection_ == nullptr);
-		if (getConnectedName().size()) // otherwise we are in the proxy parent
-			// and cannot yet connect.
-		{
-			connection_ = std::unique_ptr<PCSCConnection>(new PCSCConnection(SC_DIRECT,
-				0, // No protocol
-				getPCSCReaderProvider()->getContext(),
-				getConnectedName()));
-			auto ctl_data_transport = std::make_shared<PCSCControlDataTransport>();
-			ctl_data_transport->setReaderUnit(shared_from_this());
-			getDefaultReaderCardAdapter()->setDataTransport(ctl_data_transport);
-		}
         return (!reader.empty());
     }
 
@@ -660,17 +648,7 @@ namespace logicalaccess
             {
                 disconnect();
             }
-			assert(connection_ == nullptr);
-			connection_ = std::unique_ptr<PCSCConnection>(new PCSCConnection(
-                    share_mode,
-                    getPCSCConfiguration()->getTransmissionProtocol(),
-                    getPCSCReaderProvider()->getContext(),
-                    getConnectedName()));
-
-			auto ctl_data_transport = std::make_shared<PCSCDataTransport>();
-			ctl_data_transport->setReaderUnit(shared_from_this());
-			getDefaultReaderCardAdapter()->setDataTransport(ctl_data_transport);
-
+			setup_pcsc_connection(share_mode);
 
                 LOG(LogLevel::INFOS) << "SCardConnect Success !";
 
@@ -830,7 +808,7 @@ namespace logicalaccess
         {
             if (isConnected())
             {
-				connection_ = nullptr;
+				teardown_pcsc_connection();
             }
         }
     }
@@ -909,18 +887,6 @@ namespace logicalaccess
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The SAM Detected is not the SAM waited.");
             }
         }
-
-        if (getConnectedName().size()) // otherwise we are in the proxy parent
-        // and cannot yet connect.
-        {
-            connection_ = std::unique_ptr<PCSCConnection>(new PCSCConnection(SC_DIRECT,
-                                                                             0, // No protocol
-                                                                             getPCSCReaderProvider()->getContext(),
-                                                                             getConnectedName()));
-            auto ctl_data_transport = std::make_shared<PCSCControlDataTransport>();
-            ctl_data_transport->setReaderUnit(shared_from_this());
-            getDefaultReaderCardAdapter()->setDataTransport(ctl_data_transport);
-        }
         return true;
     }
 
@@ -940,7 +906,7 @@ namespace logicalaccess
                 d_sam_readerunit->disconnectFromReader();
                 setSAMChip(std::shared_ptr<SAMChip>());
             }
-            connection_ = nullptr;
+           teardown_pcsc_connection();
         }
     }
 
@@ -1803,5 +1769,33 @@ namespace logicalaccess
             return connection_->share_mode_;
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "No active connection.");
+    }
+
+    void PCSCReaderUnit::setup_pcsc_connection(PCSCShareMode share_mode)
+    {
+        assert(connection_ == nullptr);
+        if (share_mode == SC_DIRECT)
+        {
+            connection_ = std::unique_ptr<PCSCConnection>(new PCSCConnection(SC_DIRECT,
+                                                                             0, // No protocol
+                                                                             getPCSCReaderProvider()->getContext(),
+                                                                             getConnectedName()));
+        }
+        else
+        {
+            connection_ = std::unique_ptr<PCSCConnection>(new PCSCConnection(
+                    share_mode,
+                    getPCSCConfiguration()->getTransmissionProtocol(),
+                    getPCSCReaderProvider()->getContext(),
+                    getConnectedName()));
+        }
+        auto ctl_data_transport = std::make_shared<PCSCControlDataTransport>();
+        ctl_data_transport->setReaderUnit(shared_from_this());
+        getDefaultReaderCardAdapter()->setDataTransport(ctl_data_transport);
+    }
+
+    void PCSCReaderUnit::teardown_pcsc_connection()
+    {
+        connection_ = nullptr;
     }
 }
