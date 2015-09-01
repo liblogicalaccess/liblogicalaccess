@@ -119,10 +119,8 @@ namespace logicalaccess
     protected:
 
         std::vector<unsigned char> d_value;
-
-		std::string d_charset;
-
         unsigned char d_padding;
+		std::string d_charset;
     };
 }
 

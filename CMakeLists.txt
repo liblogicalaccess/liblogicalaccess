@@ -36,7 +36,12 @@ list ( APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
 option ( BUILD_SHARED_LIBS "build shared libraries" ON )
 
 find_package(CXX11 REQUIRED)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAGS}")
+
+if (UNIX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAGS} -W -Wall -Wno-unused-parameter")
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAGS}")
+endif()
 
 find_package(Boost 1.51 REQUIRED COMPONENTS filesystem system date_time chrono thread regex)
 include_directories(${Boost_INCLUDE_DIRS})
