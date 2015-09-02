@@ -22,6 +22,8 @@ namespace logicalaccess
 
         d_ledBuzzerDisplay.reset(new ACSACR1222LLEDBuzzerDisplay());
         d_lcdDisplay.reset(new ACSACR1222LLCDDisplay());
+
+        d_readerUnitConfig.reset(new ACSACR1222LReaderUnitConfiguration());
     }
 
     ACSACR1222LReaderUnit::~ACSACR1222LReaderUnit()
@@ -124,7 +126,14 @@ namespace logicalaccess
     {
         if (sam_used_as_perma_connection_)
             return sam_used_as_perma_connection_->getLCDDisplay();
-        return d_lcdDisplay;
+        return ReaderUnit::getLCDDisplay();
+    }
+
+    std::shared_ptr<LEDBuzzerDisplay> ACSACR1222LReaderUnit::getLEDBuzzerDisplay()
+    {
+        if (sam_used_as_perma_connection_)
+            return sam_used_as_perma_connection_->getLEDBuzzerDisplay();
+        return ReaderUnit::getLEDBuzzerDisplay();
     }
 
     bool ACSACR1222LReaderUnit::waitRemoval(unsigned int maxwait)
@@ -157,14 +166,23 @@ namespace logicalaccess
     {
         kill_background_connection();
 
-        LLA_LOG_CTX("Setting up fake SAM connection.");
+        LLA_LOG_CTX("Setting up feedback PCSC connection for ACSACR1222L.");
         auto provider =
             std::dynamic_pointer_cast<PCSCReaderProvider>(getReaderProvider());
         assert(provider);
 
+        assert(getACSACR1222LConfiguration());
+        auto name = getACSACR1222LConfiguration()->getUserFeedbackReader();
+        LOG(DEBUGS) << "NAME IS {" << name << "}";
+        if (name.empty())
+        {
+            LOG(WARNINGS) << "Cannot fetch name for the reader unit that would be used as " <<
+                    "a background connection for ACSACR1222L";
+            return;
+        }
+
         sam_used_as_perma_connection_ =
-            std::dynamic_pointer_cast<PCSCReaderUnit>(
-                provider->createReaderUnit("ACS ACR1222 3S PICC Reader SAM 2"));
+            std::dynamic_pointer_cast<PCSCReaderUnit>(provider->createReaderUnit(name));
         assert(sam_used_as_perma_connection_);
 
         sam_used_as_perma_connection_->setup_pcsc_connection(SC_DIRECT);
@@ -190,4 +208,15 @@ namespace logicalaccess
             sam_used_as_perma_connection_ = nullptr;
         }
     }
+
+    std::shared_ptr<ACSACR1222LReaderUnitConfiguration> ACSACR1222LReaderUnit::getACSACR1222LConfiguration()
+    {
+        auto cfg = std::dynamic_pointer_cast<ACSACR1222LReaderUnitConfiguration>(getConfiguration());
+        if (!cfg)
+        {
+            LOG(WARNINGS) << "Requested ACSACR1222L ReaderUnit Configuration but type mismatch";
+        }
+        return cfg;
+    }
+
 }

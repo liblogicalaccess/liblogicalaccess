@@ -8,6 +8,7 @@
 #define LOGICALACCESS_ACSACR1222LREADERUNIT_HPP
 
 #include "acsacrreaderunit.hpp"
+#include "acsacr1222lreaderunitconfiguration.hpp"
 
 namespace logicalaccess
 {
@@ -87,12 +88,20 @@ namespace logicalaccess
         virtual void disconnectFromReader() override;
 
         /**
-        * We establish a perma connection with one of 3 SAM avaiable
+        * We establish a perma connection with one of 3 SAM available
         * on the card reader.
         * We have to overload this method to return the handle
         * managed by the readerunit corresponding to our "perma connection SAM".
         */
         virtual std::shared_ptr<LCDDisplay> getLCDDisplay() override;
+
+        /**
+         * Same situation than getLCDDisplay
+         */
+        virtual std::shared_ptr<LEDBuzzerDisplay> getLEDBuzzerDisplay() override;
+
+
+        std::shared_ptr<ACSACR1222LReaderUnitConfiguration> getACSACR1222LConfiguration();
 
     protected:
 

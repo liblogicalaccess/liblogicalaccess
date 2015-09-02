@@ -51,9 +51,8 @@ int main(int ac, char **av)
     PRINT_TIME("Reader name: " << readerUnit->getName());
     PRINT_TIME("Connected Reader Name: " << readerUnit->getConnectedName());
 
-    //LLA_ASSERT(readerUnit->waitInsertion(15000), "waitInsertion failed");
-  //  LLA_ASSERT(readerUnit->connect(), "Failed to connect to the card.");
-
+    auto lcd = readerUnit->getLCDDisplay();
+    LLA_ASSERT(lcd, "No LCD display.");
 
     std::string msg;
     for (int x = 0; x < 3; x++)

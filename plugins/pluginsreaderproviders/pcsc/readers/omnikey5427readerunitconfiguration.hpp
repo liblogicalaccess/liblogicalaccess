@@ -44,10 +44,6 @@ namespace logicalaccess
          */
         void setSecureMasterKey( std::shared_ptr<AES128Key>);
 
-		void setDetectProx(bool detect_prox);
-
-		void setDetect14443(bool detect);
-
         virtual void resetConfiguration() override;
 
         virtual void serialize(boost::property_tree::ptree &parentNode) override;
