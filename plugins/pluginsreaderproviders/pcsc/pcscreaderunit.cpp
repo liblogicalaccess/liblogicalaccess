@@ -1776,22 +1776,26 @@ namespace logicalaccess
         assert(connection_ == nullptr);
         if (share_mode == SC_DIRECT)
         {
-            connection_ = std::unique_ptr<PCSCConnection>(new PCSCConnection(SC_DIRECT,
-                                                                             0, // No protocol
-                                                                             getPCSCReaderProvider()->getContext(),
-                                                                             getConnectedName()));
+            connection_ = std::unique_ptr<PCSCConnection>(new PCSCConnection(
+                SC_DIRECT,
+                0, // No protocol
+                getPCSCReaderProvider()->getContext(), getConnectedName()));
+
+            auto ctl_data_transport =
+                std::make_shared<PCSCControlDataTransport>();
+            ctl_data_transport->setReaderUnit(shared_from_this());
+            getDefaultReaderCardAdapter()->setDataTransport(ctl_data_transport);
         }
         else
         {
             connection_ = std::unique_ptr<PCSCConnection>(new PCSCConnection(
-                    share_mode,
-                    getPCSCConfiguration()->getTransmissionProtocol(),
-                    getPCSCReaderProvider()->getContext(),
-                    getConnectedName()));
+                share_mode, getPCSCConfiguration()->getTransmissionProtocol(),
+				getPCSCReaderProvider()->getContext(), getConnectedName()));
+
+			auto data_transport = std::make_shared<PCSCDataTransport>();
+			data_transport->setReaderUnit(shared_from_this());
+			getDefaultReaderCardAdapter()->setDataTransport(data_transport);
         }
-        auto ctl_data_transport = std::make_shared<PCSCControlDataTransport>();
-        ctl_data_transport->setReaderUnit(shared_from_this());
-        getDefaultReaderCardAdapter()->setDataTransport(ctl_data_transport);
     }
 
     void PCSCReaderUnit::teardown_pcsc_connection()
