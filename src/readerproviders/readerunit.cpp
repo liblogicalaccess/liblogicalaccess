@@ -64,6 +64,11 @@ namespace logicalaccess
         return d_lcdDisplay;
     }
 
+    void ReaderUnit::setLCDDisplay(std::shared_ptr<LCDDisplay> d)
+    {
+        d_lcdDisplay = d;
+    }
+
     std::shared_ptr<LEDBuzzerDisplay> ReaderUnit::getLEDBuzzerDisplay()
     {
         if (d_ledBuzzerDisplay)
@@ -71,6 +76,11 @@ namespace logicalaccess
             d_ledBuzzerDisplay->setReaderCardAdapter(getDefaultReaderCardAdapter());
         }
         return d_ledBuzzerDisplay;
+    }
+
+    void ReaderUnit::setLEDBuzzerDisplay(std::shared_ptr<LEDBuzzerDisplay> lbd)
+    {
+        d_ledBuzzerDisplay = lbd;
     }
 
     bool ReaderUnit::waitInsertion(const std::vector<unsigned char>& identifier, unsigned int maxwait)

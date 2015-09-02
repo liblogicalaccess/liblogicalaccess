@@ -1724,7 +1724,7 @@ namespace logicalaccess
     {
         if (d_proxyReaderUnit)
             return d_proxyReaderUnit->getCardTechnologies();
-        assert(0);
+        return ReaderUnit::getCardTechnologies();
     }
 
     void PCSCReaderUnit::setCardTechnologies(const TechnoBitset &bitset)
@@ -1734,7 +1734,7 @@ namespace logicalaccess
             d_proxyReaderUnit->setCardTechnologies(bitset);
             return;
         }
-        assert(0);
+        ReaderUnit::setCardTechnologies(bitset);
     }
 
     std::shared_ptr<LCDDisplay> PCSCReaderUnit::getLCDDisplay()
@@ -1746,6 +1746,15 @@ namespace logicalaccess
         return ReaderUnit::getLCDDisplay();
     }
 
+    void PCSCReaderUnit::setLCDDisplay(std::shared_ptr<LCDDisplay> d)
+    {
+        if (d_proxyReaderUnit)
+        {
+            return d_proxyReaderUnit->setLCDDisplay(d);
+        }
+        ReaderUnit::setLCDDisplay(d);
+    }
+
     std::shared_ptr<LEDBuzzerDisplay> PCSCReaderUnit::getLEDBuzzerDisplay()
     {
         if (d_proxyReaderUnit)
@@ -1753,6 +1762,16 @@ namespace logicalaccess
             return d_proxyReaderUnit->getLEDBuzzerDisplay();
         }
         return ReaderUnit::getLEDBuzzerDisplay();
+    }
+
+    void
+    PCSCReaderUnit::setLEDBuzzerDisplay(std::shared_ptr<LEDBuzzerDisplay> lbd)
+    {
+        if (d_proxyReaderUnit)
+        {
+            return d_proxyReaderUnit->setLEDBuzzerDisplay(lbd);
+        }
+        ReaderUnit::setLEDBuzzerDisplay(lbd);
     }
 
     unsigned long PCSCReaderUnit::getActiveProtocol() const

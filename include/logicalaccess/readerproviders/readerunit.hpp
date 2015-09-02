@@ -282,11 +282,23 @@ namespace logicalaccess
          */
         virtual std::shared_ptr<LCDDisplay> getLCDDisplay();
 
+		/**
+		* \brief Get the LCD Display for this reader unit.
+		* \return The LCD Display.
+		*/
+		virtual void setLCDDisplay(std::shared_ptr<LCDDisplay> d);
+
         /**
          * \brief Get the LED/Buzzer Display for this reader unit.
          * \return The LED/Buzzer Display.
          */
         virtual std::shared_ptr<LEDBuzzerDisplay> getLEDBuzzerDisplay();
+
+		/**
+		* \brief Get the LCD Display for this reader unit.
+		* \return The LCD Display.
+		*/
+		virtual void setLEDBuzzerDisplay(std::shared_ptr<LEDBuzzerDisplay> lbd);
 
 		/**
 		 * Request that the reader enable or disable the various card technologies

@@ -299,7 +299,13 @@ namespace logicalaccess
 
         virtual std::shared_ptr<LCDDisplay> getLCDDisplay() override;
 
-        virtual std::shared_ptr<LEDBuzzerDisplay> getLEDBuzzerDisplay() override;
+        virtual void setLCDDisplay(std::shared_ptr<LCDDisplay> d) override;
+
+        virtual std::shared_ptr<LEDBuzzerDisplay>
+        getLEDBuzzerDisplay() override;
+
+        virtual void
+        setLEDBuzzerDisplay(std::shared_ptr<LEDBuzzerDisplay> lbd) override;
 
     protected:
 
