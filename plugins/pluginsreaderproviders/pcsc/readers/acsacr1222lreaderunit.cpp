@@ -10,6 +10,7 @@
 #include "logicalaccess/bufferhelper.hpp"
 #include "acsacr1222lledbuzzerdisplay.hpp"
 #include "acsacr1222llcddisplay.hpp"
+#include <cassert>
 
 namespace logicalaccess
 {
@@ -114,21 +115,79 @@ namespace logicalaccess
 
     std::string ACSACR1222LReaderUnit::getFirmwareVersion()
     {
-        auto ret = getReaderControlReaderCardAdapter()->sendAPDUCommand(0xFF, 0x00, 0x48, 0x00, 0x00);
+        auto ret = getReaderControlReaderCardAdapter()->sendAPDUCommand(
+            0xFF, 0x00, 0x48, 0x00, 0x00);
         return std::string(ret.begin(), ret.end());
+    }
+
+    std::shared_ptr<LCDDisplay> ACSACR1222LReaderUnit::getLCDDisplay()
+    {
+        if (sam_used_as_perma_connection_)
+            return sam_used_as_perma_connection_->getLCDDisplay();
+        return d_lcdDisplay;
     }
 
     bool ACSACR1222LReaderUnit::waitRemoval(unsigned int maxwait)
     {
         bool ret = PCSCReaderUnit::waitRemoval(maxwait);
-        setup_pcsc_connection(SC_DIRECT);
+        if (ret)
+        {
+            establish_background_connection();
+        }
         return ret;
     }
 
     bool ACSACR1222LReaderUnit::connectToReader()
     {
         bool ret = PCSCReaderUnit::connectToReader();
-        setup_pcsc_connection(SC_DIRECT);
+        if (ret)
+        {
+            establish_background_connection();
+        }
         return ret;
+    }
+
+    void ACSACR1222LReaderUnit::disconnectFromReader()
+    {
+        kill_background_connection();
+        PCSCReaderUnit::disconnectFromReader();
+    }
+
+    void ACSACR1222LReaderUnit::establish_background_connection()
+    {
+        kill_background_connection();
+
+        LLA_LOG_CTX("Setting up fake SAM connection.");
+        auto provider =
+            std::dynamic_pointer_cast<PCSCReaderProvider>(getReaderProvider());
+        assert(provider);
+
+        sam_used_as_perma_connection_ =
+            std::dynamic_pointer_cast<PCSCReaderUnit>(
+                provider->createReaderUnit("ACS ACR1222 3S PICC Reader SAM 2"));
+        assert(sam_used_as_perma_connection_);
+
+        sam_used_as_perma_connection_->setup_pcsc_connection(SC_DIRECT);
+
+        auto lcd = std::make_shared<ACSACR1222LLCDDisplay>();
+        lcd->setReaderCardAdapter(
+            sam_used_as_perma_connection_->getDefaultReaderCardAdapter());
+        sam_used_as_perma_connection_->setLCDDisplay(lcd);
+
+        auto ledbuzzer = std::make_shared<ACSACR1222LLEDBuzzerDisplay>();
+        ledbuzzer->setReaderCardAdapter(
+            sam_used_as_perma_connection_->getDefaultReaderCardAdapter());
+        sam_used_as_perma_connection_->setLEDBuzzerDisplay(ledbuzzer);
+    }
+
+    void ACSACR1222LReaderUnit::kill_background_connection()
+    {
+        if (sam_used_as_perma_connection_)
+        {
+            sam_used_as_perma_connection_->disconnect();
+            sam_used_as_perma_connection_->disconnectFromReader();
+            sam_used_as_perma_connection_->teardown_pcsc_connection();
+            sam_used_as_perma_connection_ = nullptr;
+        }
     }
 }

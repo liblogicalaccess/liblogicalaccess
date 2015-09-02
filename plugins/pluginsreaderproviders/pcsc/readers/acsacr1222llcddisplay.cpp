@@ -15,6 +15,7 @@ namespace logicalaccess
     void ACSACR1222LLCDDisplay::setMessage(std::string message)
     {
         LLA_LOG_CTX("ACS_ACR_1222L SetMessage");
+		LOG(DEBUGS) << "HOHO";
         clear();
 
         for (unsigned char i = 0; i < 2 && (i * 15) < static_cast<unsigned char>(message.size()); i++)

@@ -66,6 +66,10 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
+#include "readers/acsacr1222llcddisplay.hpp"
+#include "logicalaccess/readerproviders/lcddisplay.hpp"
+
+
 #ifdef UNIX
 #include <sys/time.h>
 #endif
