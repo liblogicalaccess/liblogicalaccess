@@ -1,7 +1,7 @@
 #include "desfirekey.hpp"
 #include "logicalaccess/logs.hpp"
 #include "sagemkeydiversification.hpp"
-#include "boost/shared_ptr.hpp"
+#include <memory>
 #include "logicalaccess/bufferhelper.hpp"
 #include "desfirecrypto.hpp"
 #include <vector>

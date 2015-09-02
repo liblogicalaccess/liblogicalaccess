@@ -1,6 +1,6 @@
 #include "logicalaccess/key.hpp"
-#include "boost/shared_ptr.hpp"
 #include <vector>
+#include <memory>
 
 #ifndef KEYDIVERSIFICATION_HPP__
 #define KEYDIVERSIFICATION_HPP__

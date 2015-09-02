@@ -1,5 +1,5 @@
 #include <vector>
-#include "boost/shared_ptr.hpp"
+#include <memory>
 #include "logicalaccess/crypto/openssl.hpp"
 #include "logicalaccess/crypto/openssl_symmetric_cipher.hpp"
 

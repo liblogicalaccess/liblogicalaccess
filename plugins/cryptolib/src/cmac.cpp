@@ -1,7 +1,7 @@
 #include <vector>
+#include <memory>
 #include <logicalaccess/myexception.hpp>
 #include <logicalaccess/logs.hpp>
-#include "boost/shared_ptr.hpp"
 #include "logicalaccess/crypto/des_cipher.hpp"
 #include "logicalaccess/crypto/aes_cipher.hpp"
 #include "logicalaccess/crypto/cmac.hpp"

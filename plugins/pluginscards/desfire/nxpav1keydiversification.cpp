@@ -1,7 +1,7 @@
 #include "desfirekey.hpp"
 #include "logicalaccess/logs.hpp"
 #include "nxpav1keydiversification.hpp"
-#include "boost/shared_ptr.hpp"
+#include <memory>
 #include "logicalaccess/bufferhelper.hpp"
 #include "logicalaccess/crypto/aes_cipher.hpp"
 #include "logicalaccess/crypto/aes_symmetric_key.hpp"

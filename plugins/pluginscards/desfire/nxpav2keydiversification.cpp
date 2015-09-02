@@ -1,7 +1,7 @@
 #include "desfirekey.hpp"
 #include "logicalaccess/logs.hpp"
 #include "nxpav2keydiversification.hpp"
-#include "boost/shared_ptr.hpp"
+#include <memory>
 #include "logicalaccess/bufferhelper.hpp"
 #include "logicalaccess/crypto/aes_cipher.hpp"
 #include "logicalaccess/crypto/aes_symmetric_key.hpp"
@@ -37,8 +37,17 @@ namespace logicalaccess
             for (unsigned char x = 0; x < 3; ++x)
                 diversify.push_back(aidTab[x]);
 
-            //keyID
-            diversify.push_back(keyno);
+            // If a system identifier is set we use it, otherwise we use key number
+            if (d_systemIdentifier.size() > 0)
+            {
+                // System Identifier
+                diversify.insert(diversify.end(), d_systemIdentifier.begin(), d_systemIdentifier.end());
+            }
+            else
+            {
+                //keyID
+                diversify.push_back(keyno);
+            }
         }
         else
         {
@@ -111,6 +120,7 @@ namespace logicalaccess
     {
         boost::property_tree::ptree node;
         node.put("divInput", std::string(d_divInput.begin(), d_divInput.end()));
+        node.put("systemIdentifier", std::string(d_systemIdentifier.begin(), d_systemIdentifier.end()));
         parentNode.add_child(getDefaultXmlNodeName(), node);
     }
 
@@ -118,5 +128,11 @@ namespace logicalaccess
     {
         std::string divinput = node.get_child("divInput").get_value<std::string>();
         d_divInput = std::vector<unsigned char>(divinput.begin(), divinput.end());
+        boost::optional<const boost::property_tree::ptree&> siChild = node.get_child("systemIdentifier");
+        if (siChild)
+        {
+            std::string systemIdentifier = siChild.get().get_value<std::string>();
+            d_systemIdentifier = std::vector<unsigned char>(systemIdentifier.begin(), systemIdentifier.end());
+        }
     }
 }
