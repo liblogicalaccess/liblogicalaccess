@@ -18,7 +18,7 @@ void ACSACR1222LReaderUnitConfiguration::resetConfiguration()
 #ifdef UNIX
     user_feedback_reader_ = "ACS ACR1222 3S PICC Reader 00 03";
 #else
-    user_feedback_reader = "ACS ACR1222 3S PICC Reader SAM 2";
+    user_feedback_reader_ = "ACS ACR1222 3S PICC Reader SAM 2";
 #endif
 }
 
