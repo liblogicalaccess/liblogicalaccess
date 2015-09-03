@@ -173,19 +173,29 @@ namespace logicalaccess
 
         assert(getACSACR1222LConfiguration());
         auto name = getACSACR1222LConfiguration()->getUserFeedbackReader();
-        LOG(DEBUGS) << "NAME IS {" << name << "}";
         if (name.empty())
         {
             LOG(WARNINGS) << "Cannot fetch name for the reader unit that would be used as " <<
                     "a background connection for ACSACR1222L";
             return;
         }
+        try
+        {
+            sam_used_as_perma_connection_ =
+                std::dynamic_pointer_cast<PCSCReaderUnit>(
+                    provider->createReaderUnit(name));
+            assert(sam_used_as_perma_connection_);
 
-        sam_used_as_perma_connection_ =
-            std::dynamic_pointer_cast<PCSCReaderUnit>(provider->createReaderUnit(name));
-        assert(sam_used_as_perma_connection_);
-
-        sam_used_as_perma_connection_->setup_pcsc_connection(SC_DIRECT);
+            sam_used_as_perma_connection_->setup_pcsc_connection(SC_DIRECT);
+        }
+        catch (const std::exception &e)
+        {
+            LOG(ERRORS)
+                << "Failed to establish PCSC connection when establishing "
+                << "background connection for ACSACR1222L: " << e.what();
+            sam_used_as_perma_connection_ = nullptr;
+            return;
+        }
 
         auto lcd = std::make_shared<ACSACR1222LLCDDisplay>();
         lcd->setReaderCardAdapter(
