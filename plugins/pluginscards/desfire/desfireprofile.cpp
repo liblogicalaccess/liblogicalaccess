@@ -153,7 +153,7 @@ namespace logicalaccess
             size_t posAid;
             getPosAid(aid, &posAid);
 
-            size_t keyPos = 1 + posAid * 14 + keyno;
+            size_t keyPos = posAid * 14 + keyno;
 
             if (getKeyUsage(keyPos))
             {
@@ -181,7 +181,7 @@ namespace logicalaccess
         size_t posAid;
         getPosAid(aid, &posAid);
 
-        size_t keyPos = 1 + posAid * 14 + keyno;
+        size_t keyPos = posAid * 14 + keyno;
 
         if (!getKeyUsage(keyPos))
         {
@@ -208,7 +208,7 @@ namespace logicalaccess
             posAid = addPosAid(aid);
         }
 
-        size_t keyPos = 1 + posAid * 14 + keyno;
+        size_t keyPos = posAid * 14 + keyno;
 
         d_key[keyPos] = key;
     }
