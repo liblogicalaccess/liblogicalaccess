@@ -16,6 +16,9 @@
 #include "readercardadapters/axesstmclegicreadercardadapter.hpp"
 #include <boost/filesystem.hpp>
 #include "readercardadapters/axesstmclegicdatatransport.hpp"
+#include <boost/property_tree/xml_parser.hpp>
+#include "logicalaccess/myexception.hpp"
+#include "logicalaccess/logs.hpp"
 
 namespace logicalaccess
 {
@@ -25,11 +28,7 @@ namespace logicalaccess
         d_readerUnitConfig.reset(new AxessTMCLegicReaderUnitConfiguration());
         setDefaultReaderCardAdapter(std::shared_ptr<AxessTMCLegicReaderCardAdapter>(new AxessTMCLegicReaderCardAdapter()));
         std::shared_ptr<AxessTMCLegicDataTransport> dataTransport(new AxessTMCLegicDataTransport());
-#ifndef UNIX
-        dataTransport->setPortBaudRate(CBR_57600);
-#else
-        dataTransport->setPortBaudRate(B57600);
-#endif
+        dataTransport->setPortBaudRate(57600);
         setDataTransport(dataTransport);
         d_card_type = "UNKNOWN";
 
@@ -221,9 +220,9 @@ namespace logicalaccess
         return std::dynamic_pointer_cast<AxessTMCLegicReaderCardAdapter>(adapter);
     }
 
-    string AxessTMCLegicReaderUnit::getReaderSerialNumber()
+    std::string AxessTMCLegicReaderUnit::getReaderSerialNumber()
     {
-        string ret;
+        std::string ret;
 
         return ret;
     }

@@ -38,6 +38,12 @@ namespace logicalaccess
          */
         virtual PCSCReaderUnitType getPCSCType() const;
 
+        /**
+        * \brief Get the reader firmware version.
+        * \return The firmware version.
+        */
+        std::string getFirmwareVersion();
+
     protected:
     };
 }

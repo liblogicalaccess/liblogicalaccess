@@ -5,6 +5,7 @@
  */
 
 #include "logicalaccess/readerproviders/serialportxml.hpp"
+#include "logicalaccess/myexception.hpp"
 
 #ifdef UNIX
 #include <fcntl.h>
@@ -14,6 +15,7 @@
 #endif
 
 #include "logicalaccess/logs.hpp"
+#include <boost/property_tree/ptree.hpp>
 
 namespace logicalaccess
 {
@@ -88,9 +90,9 @@ namespace logicalaccess
                             ports.push_back(newPort);
                         }
                     }
-                    catch (std::exception&)
+                    catch (const std::exception &e)
                     {
-                        LOG(LogLevel::ERRORS) << "Open SerialPort failed: " << p;
+                        LOG(LogLevel::ERRORS) << "Open SerialPort failed: " << p << ". Exception: " << e.what();
                     }
                 }
             }

@@ -13,6 +13,7 @@
 
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 #include "iso15693storagecardservice.hpp"
+#include "logicalaccess/cards/locationnode.hpp"
 
 namespace logicalaccess
 {

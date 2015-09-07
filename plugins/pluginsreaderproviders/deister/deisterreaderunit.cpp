@@ -16,6 +16,9 @@
 #include "readercardadapters/deisterreadercardadapter.hpp"
 #include <boost/filesystem.hpp>
 #include "readercardadapters/deisterdatatransport.hpp"
+#include "logicalaccess/myexception.hpp"
+#include <boost/property_tree/xml_parser.hpp>
+#include <logicalaccess/logs.hpp>
 
 namespace logicalaccess
 {
@@ -257,11 +260,9 @@ namespace logicalaccess
         return std::dynamic_pointer_cast<DeisterReaderCardAdapter>(adapter);
     }
 
-    string DeisterReaderUnit::getReaderSerialNumber()
+    std::string DeisterReaderUnit::getReaderSerialNumber()
     {
-        string ret;
-
-        return ret;
+        return std::string();
     }
 
     bool DeisterReaderUnit::isConnected()

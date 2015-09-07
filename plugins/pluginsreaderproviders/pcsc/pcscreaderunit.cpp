@@ -9,6 +9,7 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <thread>
 
 #include "pcscreaderprovider.hpp"
 #include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
@@ -21,6 +22,7 @@
 #include "commands/desfireev1iso7816commands.hpp"
 #include "commands/mifarepcsccommands.hpp"
 #include "commands/mifarescmcommands.hpp"
+#include "commands/mifare_acr1222L_commands.hpp"
 #include "commands/mifarecherrycommands.hpp"
 #include "commands/mifarespringcardcommands.hpp"
 #include "commands/iso15693pcsccommands.hpp"
@@ -39,6 +41,7 @@
 #include "mifareplussl3profile.hpp"
 #include "commands/mifareplusspringcardcommandssl3.hpp"
 #include "samav1chip.hpp"
+#include "commands/felicascmcommands.hpp"
 
 #include "commands/samiso7816resultchecker.hpp"
 #include "commands/desfireiso7816resultchecker.hpp"
@@ -50,19 +53,29 @@
 #include "readers/omnikeylanxx21readerunit.hpp"
 #include "readers/omnikeyxx25readerunit.hpp"
 #include "readers/cherryreaderunit.hpp"
-#include "readers/scmreaderunit.hpp"
 #include "readers/springcardreaderunit.hpp"
 #include "readers/acsacrreaderunit.hpp"
 
 #include "pcscdatatransport.hpp"
 
 #include "desfirechip.hpp"
+#include "commands/mifareomnikeyxx21commands.hpp"
 #include <boost/filesystem.hpp>
 #include <memory>
+
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+
+#include "readers/acsacr1222llcddisplay.hpp"
+#include "logicalaccess/readerproviders/lcddisplay.hpp"
+
 
 #ifdef UNIX
 #include <sys/time.h>
 #endif
+
+#include "logicalaccess/settings.hpp"
+#include "pcsc_ctl_datatransport.hpp"
 
 namespace logicalaccess
 {
@@ -70,9 +83,6 @@ namespace logicalaccess
         : ISO7816ReaderUnit(), d_name(name), d_connectedName(name)
     {
         memset(d_atr, 0x00, sizeof(d_atr));
-        d_sch = 0;
-        d_share_mode = SC_SHARED;
-        d_ap = 0;
         d_atrLength = 0;
 
         d_card_type = "UNKNOWN";
@@ -134,7 +144,10 @@ namespace logicalaccess
 
     const SCARDHANDLE& PCSCReaderUnit::getHandle() const
     {
-        return d_sch;
+        static SCARDHANDLE nullhandle = 0;
+        if (connection_)
+            return connection_->handle_;
+        return nullhandle;
     }
 
     void PCSCReaderUnit::serialize(boost::property_tree::ptree& parentNode)
@@ -203,8 +216,7 @@ namespace logicalaccess
         {
             return d_proxyReaderUnit->isConnected();
         }
-
-        return (d_sch != 0);
+        return connection_ && connection_->handle_;
     }
 
     bool PCSCReaderUnit::waitInsertion(unsigned int maxwait)
@@ -220,12 +232,13 @@ namespace logicalaccess
             LOG(LogLevel::INFOS) << "Waiting card insertion...";
         }
 
+		teardown_pcsc_connection();
         LONG r = 0;
         bool usePnp = true;
         int readers_count = 0;
 
-        string reader = getName();
-        string connectedReader = "";
+        std::string reader = getName();
+        std::string connectedReader = "";
         std::string cardType = "UNKNOWN";
 
         if (reader != "")
@@ -449,6 +462,8 @@ namespace logicalaccess
             return false;
         }
 
+		disconnect();
+		assert(connection_ == nullptr);
         if (isConnected())
         {
             THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_CONNECTED);
@@ -459,7 +474,7 @@ namespace logicalaccess
             LOG(LogLevel::INFOS) << "Waiting card removal...";
         }
 
-        string reader = getConnectedName();
+        std::string reader = getConnectedName();
 
         int readers_count = static_cast<int>(getReaderProvider()->getReaderList().size());
 
@@ -512,7 +527,7 @@ namespace logicalaccess
             {
                 if ((SCARD_STATE_PRESENT & readers[i].dwEventState) == 0)
                 {
-                    reader = string(reinterpret_cast<const char*>(readers[i].szReader), strlen(reinterpret_cast<const char*>(readers[i].szReader)));
+                    reader = std::string(reinterpret_cast<const char*>(readers[i].szReader), strlen(reinterpret_cast<const char*>(readers[i].szReader)));
                     break;
                 }
             }
@@ -562,7 +577,7 @@ namespace logicalaccess
                             {
                                 loop = false;
 
-                                reader = string(reinterpret_cast<const char*>(readers[i].szReader), strlen(reinterpret_cast<const char*>(readers[i].szReader)));
+                                reader = std::string(reinterpret_cast<const char*>(readers[i].szReader), strlen(reinterpret_cast<const char*>(readers[i].szReader)));
                                 break;
                             }
                         }
@@ -606,7 +621,8 @@ namespace logicalaccess
             d_insertedChip.reset();
             d_connectedName = d_name;
         }
-
+		
+		assert(connection_ == nullptr);
         return (!reader.empty());
     }
 
@@ -625,9 +641,9 @@ namespace logicalaccess
             ret = d_proxyReaderUnit->connect(share_mode);
             if (ret)
             {
-                d_sch = d_proxyReaderUnit->getHandle();
-                d_ap = d_proxyReaderUnit->getActiveProtocol();
-                d_share_mode = share_mode;
+             //  d_sch = d_proxyReaderUnit->getHandle();
+              //  d_ap = d_proxyReaderUnit->getActiveProtocol();
+              //  d_share_mode = share_mode;
             }
         }
         else
@@ -636,13 +652,10 @@ namespace logicalaccess
             {
                 disconnect();
             }
+			setup_pcsc_connection(share_mode);
 
-            LONG lReturn = SCardConnect(getPCSCReaderProvider()->getContext(), reinterpret_cast<const char*>(getConnectedName().c_str()), share_mode, getPCSCConfiguration()->getTransmissionProtocol(), &d_sch, &d_ap);
-            if (SCARD_S_SUCCESS == lReturn)
-            {
                 LOG(LogLevel::INFOS) << "SCardConnect Success !";
 
-                d_share_mode = share_mode;
                 if (d_insertedChip->getChipIdentifier().size() == 0)
                 {
                     try
@@ -676,6 +689,8 @@ namespace logicalaccess
                                         d_insertedChip = createChip("DESFireEV1");
                                     }
                                     d_insertedChip->setChipIdentifier(std::vector<unsigned char>(cardversion.uid, cardversion.uid + sizeof(cardversion.uid)));
+									std::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->getCrypto()
+										->setIdentifier(d_insertedChip->getChipIdentifier());
                                 }
                                 catch (std::exception&)
                                 {
@@ -707,15 +722,7 @@ namespace logicalaccess
                         d_insertedChip->setChipIdentifier(std::vector<unsigned char>());
                     }
                 }
-
-                if (d_insertedChip->getGenericCardType() == "DESFire")
-                    std::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->getCrypto()->setCryptoContext(std::dynamic_pointer_cast<DESFireProfile>(d_insertedChip->getProfile()), d_insertedChip->getChipIdentifier());
                 ret = true;
-            }
-            else
-            {
-                LOG(LogLevel::INFOS) << "SCardConnect ERROR {" << lReturn << "} !";
-            }
         }
 
         if (ret)
@@ -758,11 +765,6 @@ namespace logicalaccess
                 }
             }
         }
-        else
-        {
-            d_sch = 0;
-            d_ap = 0;
-        }
         if (ret && d_proxyReaderUnit)
             d_proxyReaderUnit->cardConnected();
         else if (ret)
@@ -777,16 +779,12 @@ namespace logicalaccess
             return d_proxyReaderUnit->reconnect();
         }
 
+		connection_->reconnect();
+
         if (!isConnected())
         {
             return false;
         }
-
-        if (SCARD_S_SUCCESS == SCardReconnect(d_sch, d_share_mode, getPCSCConfiguration()->getTransmissionProtocol(), SCARD_LEAVE_CARD, &d_ap))
-        {
-            return true;
-        }
-
         return false;
     }
 
@@ -808,18 +806,15 @@ namespace logicalaccess
 
         if (d_proxyReaderUnit)
         {
-            d_proxyReaderUnit->disconnect();
+			d_proxyReaderUnit->disconnect(action);
         }
         else
         {
             if (isConnected())
             {
-                SCardDisconnect(d_sch, action);
+				teardown_pcsc_connection();
             }
         }
-
-        d_sch = 0;
-        d_ap = 0;
     }
 
     bool PCSCReaderUnit::connectToReader()
@@ -915,6 +910,7 @@ namespace logicalaccess
                 d_sam_readerunit->disconnectFromReader();
                 setSAMChip(std::shared_ptr<SAMChip>());
             }
+           teardown_pcsc_connection();
         }
     }
 
@@ -1037,6 +1033,15 @@ namespace logicalaccess
                         return "Mifare1K";
                     }
                 }
+				else
+				{
+					unsigned char atrFeliCa[] = { 0x3B, 0x8C, 0x80, 0x01, 0x04, 0x43, 0xFD };
+
+					if (!memcmp(atr, atrFeliCa, sizeof(atrFeliCa)))
+					{
+						return "FeliCa";
+					}
+				}
                 return "UNKNOWN";
             }
             else if (atrlen == 11 && (atr[0] == 0x3B) && (atr[1] == 0x09))	// specific Mifare classic stuff again (coming from smartcard_list)
@@ -1069,25 +1074,33 @@ namespace logicalaccess
             {
                 if (atrlen == 20)
                 {
-                    memcpy(eatr + 12, atr + 12, 3);
-                    eatr[19] = atr[19];
-
-                    if (memcmp(eatr, atr, atrlen) != 0)
+                    unsigned char atrCPS3[] = { 0x3b, 0x8f, 0x80, 0x01, 0x00, 0x31, 0xb8, 0x64, 0x04, 0xb0, 0xec, 0xc1, 0x73, 0x94, 0x01, 0x80, 0x82, 0x90, 0x00, 0x0e };
+                    if (!memcmp(atr, atrCPS3, sizeof(atrCPS3)))
                     {
-                        return "UNKNOWN";
+                        return"CPS3";
                     }
                     else
                     {
-                        std::string ret = atrXToCardType((atr[13] << 8) | atr[14]);
-                        if (ret != "UNKNOWN")
-                        {
-                            return ret;
-                        }
+                        memcpy(eatr + 12, atr + 12, 3);
+                        eatr[19] = atr[19];
 
-                        unsigned char atrTagIT[] = { 0x3b, 0x8f, 0x80, 0x01, 0x80, 0x4f, 0x0c, 0xa0, 0x00, 0x00, 0x03, 0x06, 0x0b, 0x00, 0x12, 0x00, 0x00, 0x00, 0x00, 0x71 };
-                        if (!memcmp(atr, atrTagIT, sizeof(atrTagIT)))
+                        if (memcmp(eatr, atr, atrlen) != 0)
                         {
-                            return"TagIt";
+                            return "UNKNOWN";
+                        }
+                        else
+                        {
+                            std::string ret = atrXToCardType((atr[13] << 8) | atr[14]);
+                            if (ret != "UNKNOWN")
+                            {
+                                return ret;
+                            }
+
+                            unsigned char atrTagIT[] = { 0x3b, 0x8f, 0x80, 0x01, 0x80, 0x4f, 0x0c, 0xa0, 0x00, 0x00, 0x03, 0x06, 0x0b, 0x00, 0x12, 0x00, 0x00, 0x00, 0x00, 0x71 };
+                            if (!memcmp(atr, atrTagIT, sizeof(atrTagIT)))
+                            {
+                                return"TagIt";
+                            }
                         }
                     }
                 }
@@ -1417,7 +1430,7 @@ namespace logicalaccess
 
             if (type == "Mifare1K" || type == "Mifare4K" || type == "Mifare")
             {
-                if (getPCSCType() == PCSC_RUT_SCM_SDI010)
+				if (getPCSCType() == PCSC_RUT_SCM)
                 {
                     commands.reset(new MifareSCMCommands());
                 }
@@ -1433,6 +1446,14 @@ namespace logicalaccess
                 {
                     commands.reset(new MifareOmnikeyXX27Commands());
                     resultChecker.reset(new MifareOmnikeyXX27ResultChecker());
+                }
+                else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_LAN_XX21)
+                {
+                    commands.reset(new MifareOmnikeyXX21Commands());
+                }
+                else if (getPCSCType() == PCSC_RUT_ACS_ACR_1222L)
+                {
+                    commands.reset(new MifareACR1222LCommands());
                 }
                 else
                 {
@@ -1486,7 +1507,7 @@ namespace logicalaccess
             }
             else if (type == "MifareUltralightC")
             {
-                if (getPCSCType() == PCSC_RUT_ACS_ACR)
+                if (getPCSCType() == PCSC_RUT_ACS_ACR || getPCSCType() == PCSC_RUT_ACS_ACR_1222L)
                 {
                     commands.reset(new MifareUltralightCACSACRCommands());
                     resultChecker.reset(new ACSACRResultChecker());
@@ -1545,6 +1566,13 @@ namespace logicalaccess
                 // reader unit later on.
                 commands.reset(new ProxCommand());
             }
+			else if (type == "FeliCa")
+			{
+				if (getPCSCType() == PCSC_RUT_SCM)
+				{
+					commands.reset(new FeliCaSCMCommands());
+				}
+			}
 
             if (type == "DESFire" || type == "DESFireEV1")
             {
@@ -1616,7 +1644,7 @@ namespace logicalaccess
         return std::dynamic_pointer_cast<PCSCReaderCardAdapter>(getDefaultReaderCardAdapter());
     }
 
-    string PCSCReaderUnit::getReaderSerialNumber()
+    std::string PCSCReaderUnit::getReaderSerialNumber()
     {
         if (d_proxyReaderUnit)
         {
@@ -1639,10 +1667,7 @@ namespace logicalaccess
             d_readerUnitConfig = readerUnitConfig;
         }
 
-        d_ap = readerUnit->getActiveProtocol();
-        d_share_mode = readerUnit->getShareMode();
         d_atrLength = readerUnit->getATR(d_atr, sizeof(d_atr));
-        d_sch = readerUnit->getHandle();
         d_insertedChip = readerUnit->getSingleChip();
     }
 
@@ -1697,5 +1722,107 @@ namespace logicalaccess
     std::shared_ptr<PCSCReaderUnit> PCSCReaderUnit::getProxyReaderUnit()
     {
         return d_proxyReaderUnit;
+    }
+
+    TechnoBitset PCSCReaderUnit::getCardTechnologies()
+    {
+        if (d_proxyReaderUnit)
+            return d_proxyReaderUnit->getCardTechnologies();
+        return ReaderUnit::getCardTechnologies();
+    }
+
+    void PCSCReaderUnit::setCardTechnologies(const TechnoBitset &bitset)
+    {
+        if (d_proxyReaderUnit)
+        {
+            d_proxyReaderUnit->setCardTechnologies(bitset);
+            return;
+        }
+        ReaderUnit::setCardTechnologies(bitset);
+    }
+
+    std::shared_ptr<LCDDisplay> PCSCReaderUnit::getLCDDisplay()
+    {
+        if (d_proxyReaderUnit)
+        {
+            return d_proxyReaderUnit->getLCDDisplay();
+        }
+        return ReaderUnit::getLCDDisplay();
+    }
+
+    void PCSCReaderUnit::setLCDDisplay(std::shared_ptr<LCDDisplay> d)
+    {
+        if (d_proxyReaderUnit)
+        {
+            return d_proxyReaderUnit->setLCDDisplay(d);
+        }
+        ReaderUnit::setLCDDisplay(d);
+    }
+
+    std::shared_ptr<LEDBuzzerDisplay> PCSCReaderUnit::getLEDBuzzerDisplay()
+    {
+        if (d_proxyReaderUnit)
+        {
+            return d_proxyReaderUnit->getLEDBuzzerDisplay();
+        }
+        return ReaderUnit::getLEDBuzzerDisplay();
+    }
+
+    void
+    PCSCReaderUnit::setLEDBuzzerDisplay(std::shared_ptr<LEDBuzzerDisplay> lbd)
+    {
+        if (d_proxyReaderUnit)
+        {
+            return d_proxyReaderUnit->setLEDBuzzerDisplay(lbd);
+        }
+        ReaderUnit::setLEDBuzzerDisplay(lbd);
+    }
+
+    unsigned long PCSCReaderUnit::getActiveProtocol() const
+    {
+        if (connection_)
+            return connection_->active_protocol_;
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "No active connection.");
+    }
+
+    PCSCShareMode PCSCReaderUnit::getShareMode() const
+    {
+        if (connection_)
+            return connection_->share_mode_;
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "No active connection.");
+    }
+
+    void PCSCReaderUnit::setup_pcsc_connection(PCSCShareMode share_mode)
+    {
+        assert(connection_ == nullptr);
+        if (share_mode == SC_DIRECT)
+        {
+            connection_ = std::unique_ptr<PCSCConnection>(new PCSCConnection(
+                SC_DIRECT,
+                0, // No protocol
+                getPCSCReaderProvider()->getContext(), getConnectedName()));
+
+            auto ctl_data_transport =
+                std::make_shared<PCSCControlDataTransport>();
+            ctl_data_transport->setReaderUnit(shared_from_this());
+            getDefaultReaderCardAdapter()->setDataTransport(ctl_data_transport);
+        }
+        else
+        {
+            connection_ = std::unique_ptr<PCSCConnection>(new PCSCConnection(
+                share_mode, getPCSCConfiguration()->getTransmissionProtocol(),
+				getPCSCReaderProvider()->getContext(), getConnectedName()));
+
+			auto data_transport = std::make_shared<PCSCDataTransport>();
+			data_transport->setReaderUnit(shared_from_this());
+			getDefaultReaderCardAdapter()->setDataTransport(data_transport);
+        }
+    }
+
+    void PCSCReaderUnit::teardown_pcsc_connection()
+    {
+        connection_ = nullptr;
     }
 }

@@ -7,13 +7,14 @@
 #ifndef LOGICALACCESS_READERUNIT_HPP
 #define LOGICALACCESS_READERUNIT_HPP
 
-#include "logicalaccess/readerproviders/readerunitconfiguration.hpp"
-#include "logicalaccess/readerproviders/lcddisplay.hpp"
-#include "logicalaccess/readerproviders/ledbuzzerdisplay.hpp"
-#include "logicalaccess/myexception.hpp"
-#include <map>
-#include <chrono>
-#include <thread>
+#include <stdint.h>
+#include <boost/property_tree/ptree_fwd.hpp>
+#include <memory>
+#include <string>
+#include <vector>
+#include "logicalaccess/xmlserializable.hpp"
+#include "logicalaccess/lla_fwd.hpp"
+#include "logicalaccess/techno.hpp"
 
 #ifdef UNIX
 #include <PCSC/wintypes.h>
@@ -281,11 +282,48 @@ namespace logicalaccess
          */
         virtual std::shared_ptr<LCDDisplay> getLCDDisplay();
 
+		/**
+		* \brief Get the LCD Display for this reader unit.
+		* \return The LCD Display.
+		*/
+		virtual void setLCDDisplay(std::shared_ptr<LCDDisplay> d);
+
         /**
          * \brief Get the LED/Buzzer Display for this reader unit.
          * \return The LED/Buzzer Display.
          */
         virtual std::shared_ptr<LEDBuzzerDisplay> getLEDBuzzerDisplay();
+
+		/**
+		* \brief Get the LCD Display for this reader unit.
+		* \return The LCD Display.
+		*/
+		virtual void setLEDBuzzerDisplay(std::shared_ptr<LEDBuzzerDisplay> lbd);
+
+		/**
+		 * Request that the reader enable or disable the various card technologies
+		 * as described in the bitset.
+		 * The default implementation just does nothing.
+		 */
+		virtual void setCardTechnologies(const TechnoBitset& bitset);
+
+		/**
+		 * Return a bitset describing which cards technology are enabled.
+		 *
+		 * The default implementation returns a bitset with all flags set to false.
+		 */
+		virtual TechnoBitset getCardTechnologies();
+
+		/**
+		 * This returns a bitset of all technologies that can potentially be enabled
+		 * on the reader.
+		 *
+		 * This is useful because the TechnoBitset enumerate all possible technologies
+		 * accros all the readers.
+		 *
+		 * The default implementation returns an empty bitset.
+		 */
+		virtual TechnoBitset getPossibleCardTechnologies();
 
     protected:
 

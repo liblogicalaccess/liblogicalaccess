@@ -14,6 +14,7 @@
 #include "logicalaccess/cards/computermemorykeystorage.hpp"
 #include "logicalaccess/cards/readermemorykeystorage.hpp"
 #include "logicalaccess/cards/samkeystorage.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {
@@ -161,4 +162,54 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The key storage type is not supported for this card/reader.");
         }
     }
+
+	void MifareOK5553Commands::increment(unsigned char blockno, unsigned int value)
+	{
+		std::vector<unsigned char> command;
+		command.push_back(static_cast<unsigned char>('+'));
+		command.push_back(blockno);
+		command.push_back(static_cast<unsigned char>(value & 0xff));
+		command.push_back(static_cast<unsigned char>((value >> 8) & 0xff));
+		command.push_back(static_cast<unsigned char>((value >> 16) & 0xff));
+		command.push_back(static_cast<unsigned char>((value >> 24) & 0xff));
+
+		std::vector<unsigned char> answer = getOK5553ReaderCardAdapter()->sendCommand(command);
+
+		if (answer.size() > 0)
+		{
+			if (answer[0] == 'l')
+			{
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Value block failure.");
+			}
+			else if (answer[0] == 'F')
+			{
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Increment failure.");
+			}
+		}
+	}
+
+	void MifareOK5553Commands::decrement(unsigned char blockno, unsigned int value)
+	{
+		std::vector<unsigned char> command;
+		command.push_back(static_cast<unsigned char>('-'));
+		command.push_back(blockno);
+		command.push_back(static_cast<unsigned char>(value & 0xff));
+		command.push_back(static_cast<unsigned char>((value >> 8) & 0xff));
+		command.push_back(static_cast<unsigned char>((value >> 16) & 0xff));
+		command.push_back(static_cast<unsigned char>((value >> 24) & 0xff));
+
+		std::vector<unsigned char> answer = getOK5553ReaderCardAdapter()->sendCommand(command);
+
+		if (answer.size() > 0)
+		{
+			if (answer[0] == 'l')
+			{
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Value block failure.");
+			}
+			else if (answer[0] == 'F')
+			{
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Decrement failure.");
+			}
+		}
+	}
 }

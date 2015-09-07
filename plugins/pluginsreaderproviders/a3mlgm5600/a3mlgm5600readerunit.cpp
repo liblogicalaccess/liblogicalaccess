@@ -14,6 +14,7 @@
 #include "logicalaccess/readerproviders/readerunitconfiguration.hpp"
 #include <memory>
 #include <boost/filesystem.hpp>
+#include <boost/property_tree/ptree.hpp>
 #include "logicalaccess/readerproviders/readerunit.hpp"
 #include "a3mlgm5600readerprovider.hpp"
 #include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
@@ -22,6 +23,9 @@
 #include "a3mlgm5600lcddisplay.hpp"
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/readerproviders/udpdatatransport.hpp"
+#include "logicalaccess/bufferhelper.hpp"
+#include "logicalaccess/myexception.hpp"
+#include <boost/property_tree/xml_parser.hpp>
 
 namespace logicalaccess
 {

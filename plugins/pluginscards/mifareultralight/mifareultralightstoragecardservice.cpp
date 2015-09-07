@@ -4,6 +4,7 @@
  * \brief Mifare Ultralight storage card service.
  */
 
+#include <logicalaccess/logs.hpp>
 #include "mifareultralightstoragecardservice.hpp"
 #include "mifareultralightchip.hpp"
 #include "mifareultralightaccessinfo.hpp"

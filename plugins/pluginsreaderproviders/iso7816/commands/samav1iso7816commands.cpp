@@ -14,9 +14,11 @@
 #include "samcommands.hpp"
 #include <openssl/rand.h>
 #include "logicalaccess/crypto/symmetric_key.hpp"
-#include "logicalaccess/crypto/aes_symmetric_key.hpp"
 #include "logicalaccess/crypto/aes_initialization_vector.hpp"
 #include "logicalaccess/crypto/aes_cipher.hpp"
+#include "logicalaccess/crypto/des_symmetric_key.hpp"
+#include "logicalaccess/crypto/des_initialization_vector.hpp"
+#include "logicalaccess/crypto/des_cipher.hpp"
 #include "logicalaccess/crypto/cmac.hpp"
 
 #include <boost/interprocess/shared_memory_object.hpp>
@@ -178,8 +180,7 @@ namespace logicalaccess
         data.push_back(keyno);
         data.push_back(key->getKeyVersion());
 
-        unsigned char cmdp1[] = { d_cla, 0xa4, authMode, 0x00, 0x02, 0x00 };
-        std::vector<unsigned char> cmd_vector(cmdp1, cmdp1 + 6), result;
+		std::vector<unsigned char> cmd_vector = { d_cla, 0xa4, authMode, 0x00, 0x02, 0x00 }, result;
         cmd_vector.insert(cmd_vector.end() - 1, data.begin(), data.end());
 
         result = transmit(cmd_vector);
@@ -189,14 +190,16 @@ namespace logicalaccess
 
         std::vector<unsigned char> keyvec(key->getData(), key->getData() + keylength);
 
-        std::vector<unsigned char> iv(keylength);
-        memset(&iv[0], 0, keylength);
-
         //get encRNB
         std::vector<unsigned char> encRNB(result.begin(), result.end() - 2);
 
         //dec RNB
-        std::vector<unsigned char> RndB = d_crypto->desfire_CBC_send(keyvec, iv, encRNB);
+		std::vector<unsigned char> RndB;
+		openssl::DESSymmetricKey cipherkey = openssl::DESSymmetricKey::createFromData(keyvec);
+		openssl::DESInitializationVector iv = openssl::DESInitializationVector::createNull();
+		std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::DESCipher());
+
+		cipher->decipher(encRNB, RndB, cipherkey, iv, false);
 
         //Create RNB'
         std::vector<unsigned char> rndB1;
@@ -218,11 +221,11 @@ namespace logicalaccess
         rndAB.insert(rndAB.end(), rndB1.begin(), rndB1.end());
 
         //enc rndAB
-        std::vector<unsigned char> encRndAB = d_crypto->desfire_CBC_send(keyvec, iv, rndAB);
+		std::vector<unsigned char> encRndAB;
+		cipher->cipher(rndAB, encRndAB, cipherkey, iv, false);
 
         //send enc rndAB
-        unsigned char cmdp2[] = { d_cla, 0xa4, 0x00, 0x00, (unsigned char)(encRndAB.size()), 0x00 };
-        cmd_vector.assign(cmdp2, cmdp2 + 6);
+		cmd_vector = { d_cla, 0xa4, 0x00, 0x00, (unsigned char)(encRndAB.size()), 0x00 };
         cmd_vector.insert(cmd_vector.end() - 1, encRndAB.begin(), encRndAB.end());
 
         result = transmit(cmd_vector);
@@ -230,7 +233,8 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHostDES P2 failed.");
 
         std::vector<unsigned char> encRndA1(result.begin(), result.end() - 2);
-        std::vector<unsigned char> dencRndA1 = d_crypto->desfire_CBC_send(keyvec, iv, encRndA1);
+		std::vector<unsigned char> dencRndA1;
+		cipher->decipher(encRndA1, dencRndA1, cipherkey, iv, false);
 
         //create rndA'
         std::vector<unsigned char> rndA1;

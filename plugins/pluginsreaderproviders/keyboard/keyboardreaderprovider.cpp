@@ -10,6 +10,9 @@
 #include <iomanip>
 #include <codecvt>
 
+#include <chrono>
+#include <thread>
+
 #ifdef _WINDOWS
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 #include <Userenv.h>
@@ -441,9 +444,7 @@ namespace logicalaccess
         LOG(LogLevel::INFOS) << "Opening Process";
         hProcess = OpenProcess(MAXIMUM_ALLOWED, FALSE, winlogonPid);
 
-        if (!OpenProcessToken(hProcess, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY
-            | TOKEN_DUPLICATE | TOKEN_ASSIGN_PRIMARY | TOKEN_ADJUST_SESSIONID
-            | TOKEN_READ | TOKEN_WRITE, &hPToken))
+        if (!OpenProcessToken(hProcess, TOKEN_QUERY | TOKEN_DUPLICATE | TOKEN_READ, &hPToken))
         {
             LOG(LogLevel::ERRORS) << "Process token open Error: {" << std::hex << GetLastError() << std::dec << "}";
         }

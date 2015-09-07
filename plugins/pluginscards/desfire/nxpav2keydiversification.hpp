@@ -17,7 +17,7 @@ namespace logicalaccess
         virtual std::vector<unsigned char> getDiversifiedKey(std::shared_ptr<Key> key, std::vector<unsigned char> diversify);
 
         NXPAV2KeyDiversification() {};
-        NXPAV2KeyDiversification(const std::vector<unsigned char>& systemidentifier) : d_divInput(systemidentifier) {};
+        NXPAV2KeyDiversification(const std::vector<unsigned char>& divInput) : d_divInput(divInput) {};
         ~NXPAV2KeyDiversification() {};
 
         virtual std::string getType() { return "NXPAV2"; };
@@ -30,8 +30,14 @@ namespace logicalaccess
 
         void setDivInput(std::vector<unsigned char> divInput) { d_divInput = divInput; }
 
+        const std::vector<unsigned char>& getSystemIdentifier() const { return d_systemIdentifier; }
+
+        void setSystemIdentifier(std::vector<unsigned char> systemIdentifier) { d_systemIdentifier = systemIdentifier; }
+
     private:
         std::vector<unsigned char> d_divInput;
+
+        std::vector<unsigned char> d_systemIdentifier;
     };
 }
 

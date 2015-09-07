@@ -6,6 +6,7 @@
 
 #include "generictagchip.hpp"
 #include "generictagaccesscontrolcardservice.hpp"
+#include "logicalaccess/cards/locationnode.hpp"
 
 #include <iostream>
 #include <iomanip>

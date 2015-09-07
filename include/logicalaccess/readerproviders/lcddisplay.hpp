@@ -9,8 +9,6 @@
 
 #include "logicalaccess/xmlserializable.hpp"
 
-#include "logicalaccess/logs.hpp"
-
 namespace logicalaccess
 {
     class ReaderCardAdapter;
@@ -34,6 +32,13 @@ namespace logicalaccess
          * \param message The message to show.
          */
         virtual void setMessage(unsigned char rowid, std::string message) = 0;
+
+        /**
+         * Clear the LCD screen.
+         *
+         * @note The command is not implemented for Rpleth LCD display.
+         */
+        virtual void clear() = 0;
 
         /**
          * \brief Get the reader card adapter.

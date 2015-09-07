@@ -5,8 +5,9 @@
  */
 
 #include "mifarepluscommands.hpp"
-
+#include "logicalaccess/myexception.hpp"
 #include <stdlib.h>
+#include <logicalaccess/logs.hpp>
 
 namespace logicalaccess
 {

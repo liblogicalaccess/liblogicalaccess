@@ -3,7 +3,7 @@
 	<groupId>eu.islog.lib.readers</groupId>
 	<artifactId>liblogicalaccess</artifactId>
 	<packaging>pom</packaging>
-	<version>1.78.0</version>
+	<version>1.79.0-SNAPSHOT</version>
 	<name>LibLogicalaccess</name>
 	
 	<distributionManagement>
@@ -753,7 +753,7 @@
 		<dependency>
 			<groupId>lib.portable</groupId>
 			<artifactId>boost</artifactId>
-			<version>1.57-light</version>
+			<version>1.57-light2</version>
 			<scope>compile</scope>
 			<type>zip</type>
 		</dependency>

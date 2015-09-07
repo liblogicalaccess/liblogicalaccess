@@ -13,6 +13,7 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include "logicalaccess/cards/locationnode.hpp"
 
 namespace logicalaccess
 {

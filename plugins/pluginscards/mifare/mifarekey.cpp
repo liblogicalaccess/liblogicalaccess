@@ -4,6 +4,8 @@
  * \brief Mifare Key.
  */
 
+#include <cstring>
+#include <boost/property_tree/ptree.hpp>
 #include "mifarekey.hpp"
 
 namespace logicalaccess

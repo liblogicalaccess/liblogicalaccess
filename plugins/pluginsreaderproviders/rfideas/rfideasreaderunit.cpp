@@ -10,13 +10,19 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <thread>
+#include <chrono>
 
 #include "rfideasreaderprovider.hpp"
 #include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
 #include "logicalaccess/cards/chip.hpp"
 #include <boost/filesystem.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
+#include "logicalaccess/logs.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {
@@ -139,9 +145,8 @@ namespace logicalaccess
 
     std::string RFIDeasReaderUnit::getName() const
     {
-        string ret = "";
-        return ret;
-    }
+		return std::string();
+	}
 
     std::string RFIDeasReaderUnit::getConnectedName()
     {
@@ -312,11 +317,9 @@ namespace logicalaccess
         return chipList;
     }
 
-    string RFIDeasReaderUnit::getReaderSerialNumber()
+    std::string RFIDeasReaderUnit::getReaderSerialNumber()
     {
-        string ret;
-
-        return ret;
+		return "";
     }
 
     bool RFIDeasReaderUnit::isConnected()

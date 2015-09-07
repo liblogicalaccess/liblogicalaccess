@@ -4,6 +4,7 @@
  * \brief MifarePlus card profiles.
  */
 
+#include <logicalaccess/logs.hpp>
 #include "mifareplussl1profile.hpp"
 
 namespace logicalaccess

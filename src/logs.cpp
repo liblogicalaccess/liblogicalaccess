@@ -5,6 +5,20 @@
  */
 
 #include "logicalaccess/logs.hpp"
+#include "logicalaccess/settings.hpp"
+#include "logicalaccess/colorize.hpp"
+#include <boost/date_time.hpp>
+
+#ifdef WIN32
+// For now the additional context for the logger wont be thread safe,
+// because the compiler doesn't support it.
+static std::vector<std::string> context_;
+#else
+/**
+ * A queue of "context string" to help make sense of the log message.
+ */
+static thread_local std::vector<std::string> context_;
+#endif
 
 namespace logicalaccess
 {
@@ -12,37 +26,81 @@ namespace logicalaccess
     std::ofstream Logs::logfile;
     std::map<LogLevel, std::string> Logs::logLevelMsg;
 
-    Logs::Logs(const char *file, const char *func, int line, enum LogLevel level)
-            : d_level(level)
+    Logs::Logs(const char *file, const char *func, int line,
+               enum LogLevel level)
+        : d_level(level)
     {
-        if (!Settings::getInstance()->IsLogEnabled
-            ||
-            (d_level == LogLevel::COMS && !Settings::getInstance()->SeeCommunicationLog)
-            || ((d_level == LogLevel::PLUGINS || d_level == LogLevel::PLUGINS_ERROR) &&
-                !Settings::getInstance()->SeePluginLog))
+        if (!Settings::getInstance()->IsLogEnabled ||
+            (d_level == LogLevel::COMS &&
+             !Settings::getInstance()->SeeCommunicationLog) ||
+            ((d_level == LogLevel::PLUGINS ||
+              d_level == LogLevel::PLUGINS_ERROR) &&
+             !Settings::getInstance()->SeePluginLog))
             d_level = NONE;
 
         if (logLevelMsg.empty())
         {
-            logLevelMsg[INFOS] = "INFO";
-            logLevelMsg[WARNINGS] = "WARNING";
-            logLevelMsg[NOTICES] = "NOTICE";
-            logLevelMsg[ERRORS] = "ERROR";
+            logLevelMsg[INFOS]      = "INFO";
+            logLevelMsg[WARNINGS]   = "WARNING";
+            logLevelMsg[NOTICES]    = "NOTICE";
+            logLevelMsg[ERRORS]     = "ERROR";
             logLevelMsg[EMERGENSYS] = "EMERGENSY";
-            logLevelMsg[CRITICALS] = "CRITICAL";
-            logLevelMsg[ALERTS] = "ALERT";
-            logLevelMsg[DEBUGS] = "DEBUG";
-            logLevelMsg[COMS] = "COM";
-            logLevelMsg[PLUGINS] = "PLUGIN";
+            logLevelMsg[CRITICALS]  = "CRITICAL";
+            logLevelMsg[ALERTS]     = "ALERT";
+            logLevelMsg[DEBUGS]     = "DEBUG";
+            logLevelMsg[COMS]       = "COM";
+            logLevelMsg[PLUGINS]    = "PLUGIN";
         }
 
         if (logfile && d_level != NONE)
         {
-            boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
-            _stream << boost::posix_time::to_simple_string(now) << " - " <<
-            logLevelMsg[d_level] << ": \t{" << line << "}\t{" << func << "}\t{" << file <<
-            "}:" << std::endl;
+            boost::posix_time::ptime now =
+                boost::posix_time::microsec_clock::local_time();
+            if (Settings::getInstance()->ColorizeLog)
+            {
+                _stream << Colorize::underline(
+                               boost::posix_time::to_simple_string(now))
+                        << " - " << Colorize::red(logLevelMsg[d_level])
+                        << ": \t{" << line << "}\t{" << Colorize::green(func)
+                        << "}\t{" << file << "}:" << std::endl;
+            }
+            else
+            {
+                _stream << boost::posix_time::to_simple_string(now) << " - "
+                        << logLevelMsg[d_level] << ": \t{" << line << "}\t{"
+                        << func << "}\t{" << file << "}:" << std::endl;
+            }
+            if (Settings::getInstance()->ContextLog)
+                _stream << pretty_context_infos();
         }
+    }
+
+    std::string Logs::pretty_context_infos()
+    {
+        using namespace Colorize;
+        if (context_.size() == 0)
+            return "";
+
+        std::string ret;
+        if (Settings::getInstance()->ColorizeLog)
+            ret = green(underline("Context:")) + ' ';
+        else
+            ret = "Context: ";
+        int count = 0;
+
+        for (const auto &itr : context_)
+        {
+            if (count != 0)
+                ret += std::string(9, ' ');
+            std::stringstream ss;
+            ss << count << ") ";
+            if (Settings::getInstance()->ColorizeLog)
+                ret += yellow(ss.str()) + itr + '\n';
+            else
+                ret += ss.str() + itr + '\n';
+            count++;
+        }
+        return ret;
     }
 
     Logs::~Logs()
@@ -66,7 +124,7 @@ namespace logicalaccess
         tmp << std::hex;
         for (auto itr = bytebuff.begin(); itr != bytebuff.end();)
         {
-            tmp << (int) *itr;
+            tmp << (int)*itr;
             if (++itr != bytebuff.end())
                 tmp << ", ";
         }
@@ -83,7 +141,7 @@ namespace logicalaccess
         tmp << std::hex;
         for (auto itr = bytebuff.begin(); itr != bytebuff.end();)
         {
-            tmp << (int) *itr;
+            tmp << (int)*itr;
             if (++itr != bytebuff.end())
                 tmp << ", ";
         }
@@ -92,4 +150,24 @@ namespace logicalaccess
         return ss;
     }
 
+    LogDisabler::LogDisabler()
+    {
+        old_ = Settings::getInstance()->IsLogEnabled;
+        Settings::getInstance()->IsLogEnabled = false;
+    }
+
+    LogDisabler::~LogDisabler()
+    {
+        Settings::getInstance()->IsLogEnabled = old_;
+    }
+
+    LogContext::LogContext(const std::string &msg)
+    {
+        context_.push_back(msg);
+    }
+
+    LogContext::~LogContext()
+    {
+        context_.pop_back();
+    }
 }

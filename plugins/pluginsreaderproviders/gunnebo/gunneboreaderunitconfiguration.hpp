@@ -51,7 +51,21 @@ namespace logicalaccess
          */
         virtual std::string getDefaultXmlNodeName() const;
 
+        /**
+        * \brief Get if checksum is used.
+        * \return The checksum use value, true if used, false otherwise.
+        */
+        bool getChecksum() const;
+
+        /**
+        * \brief Set if checksum is used.
+        * \param checksum The checksum use value, true if used, false otherwise.
+        */
+        void setChecksum(bool checksum);
+
     protected:
+
+        bool d_checksum;
     };
 }
 

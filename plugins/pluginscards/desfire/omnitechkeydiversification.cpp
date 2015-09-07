@@ -1,10 +1,13 @@
 #include "desfirekey.hpp"
 #include "logicalaccess/logs.hpp"
 #include "omnitechkeydiversification.hpp"
-#include "boost/shared_ptr.hpp"
+#include <memory>
 #include "logicalaccess/bufferhelper.hpp"
 #include "desfirecrypto.hpp"
 #include <vector>
+#include "logicalaccess/myexception.hpp"
+#include <cstring>
+#include <boost/property_tree/ptree.hpp>
 
 namespace logicalaccess
 {

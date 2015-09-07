@@ -7,8 +7,8 @@
 #ifndef LOGICALACCESS_LOCATION_HPP
 #define LOGICALACCESS_LOCATION_HPP
 
-#include "logicalaccess/readerproviders/readerprovider.hpp"
-#include "logicalaccess/linearizable.hpp"
+#include <string>
+#include "logicalaccess/xmlserializable.hpp"
 
 namespace logicalaccess
 {

@@ -4,8 +4,11 @@
  * \brief MifarePlus SL1 commands.
  */
 
+#include <cstring>
+#include <logicalaccess/logs.hpp>
 #include "mifareplussl3commands.hpp"
 #include "mifarepluschip.hpp"
+#include "logicalaccess/myexception.hpp"
 
 #define PREFIX_PATTERN 0xE3
 #define POLYNOM_PATTERN 0x1D

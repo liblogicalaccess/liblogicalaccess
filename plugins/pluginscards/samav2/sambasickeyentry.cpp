@@ -4,7 +4,11 @@
  * \brief SAMBasicKeyEntry source.
  */
 
+#include <cstring>
+#include <boost/property_tree/ptree.hpp>
 #include "sambasickeyentry.hpp"
+#include "logicalaccess/myexception.hpp"
+#include "logicalaccess/logs.hpp"
 
 namespace logicalaccess
 {

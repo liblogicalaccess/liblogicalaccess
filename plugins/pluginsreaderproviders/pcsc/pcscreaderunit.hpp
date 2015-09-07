@@ -7,16 +7,15 @@
 #ifndef LOGICALACCESS_PCSCREADERUNIT_HPP
 #define LOGICALACCESS_PCSCREADERUNIT_HPP
 
-#include "logicalaccess/readerproviders/readerunit.hpp"
 #include "pcscreaderunitconfiguration.hpp"
 #include "../iso7816/iso7816readerunit.hpp"
-#include "logicalaccess/cards/readermemorykeystorage.hpp"
+#include "pcsc_fwd.hpp"
+#include "logicalaccess/lla_fwd.hpp"
+#include "pcsc_connection.hpp"
 
 namespace logicalaccess
 {
     class Chip;
-    class PCSCReaderCardAdapter;
-    class PCSCReaderProvider;
     class SAMChip;
 
     /**
@@ -140,10 +139,10 @@ namespace logicalaccess
         const SCARDHANDLE& getHandle() const;
 
         /**
-         * \brief Get the active protocol for the connected card.
-         * \return The active protocol.
-         */
-        inline unsigned long getActiveProtocol() const { return d_ap; };
+        * \brief Get the active protocol for the connected card.
+        * \return The active protocol.
+        */
+        unsigned long getActiveProtocol() const;
 
         /**
          * \brief Get the currently active share mode.
@@ -151,7 +150,7 @@ namespace logicalaccess
          *
          * If the card is not connected, requesting the share mode value is meaningless.
          */
-        inline PCSCShareMode getShareMode() const { return d_share_mode; };
+        PCSCShareMode getShareMode() const;
 
         /**
          * \brief Create the chip object from card type.
@@ -293,6 +292,21 @@ namespace logicalaccess
          */
         std::shared_ptr<PCSCReaderUnit> getProxyReaderUnit();
 
+
+        virtual void setCardTechnologies(const TechnoBitset &bitset) override;
+
+        virtual TechnoBitset getCardTechnologies() override;
+
+        virtual std::shared_ptr<LCDDisplay> getLCDDisplay() override;
+
+        virtual void setLCDDisplay(std::shared_ptr<LCDDisplay> d) override;
+
+        virtual std::shared_ptr<LEDBuzzerDisplay>
+        getLEDBuzzerDisplay() override;
+
+        virtual void
+        setLEDBuzzerDisplay(std::shared_ptr<LEDBuzzerDisplay> lbd) override;
+
     protected:
 
         /**
@@ -332,6 +346,20 @@ namespace logicalaccess
          */
         void setSingleChip(std::shared_ptr<Chip> chip);
 
+      public:
+        /**
+         * Direct means we established without requiring
+         * that a card be near the card reader.
+         */
+        void setup_pcsc_connection(PCSCShareMode share_mode);
+
+        /**
+         * Terminate the PCSC connection.
+         * This is a noop if the connection is already terminated.
+         */
+        void teardown_pcsc_connection();
+
+      protected:
         /**
          * \brief Get the card type from atr code
          * \param code The atr code
@@ -339,20 +367,10 @@ namespace logicalaccess
          */
         std::string atrXToCardType(int code) const;
 
-        /**
-         * \brief The handle.
-         */
-        SCARDHANDLE d_sch;
-
-        /**
-         * \brief The share mode.
-         */
-        PCSCShareMode d_share_mode;
-
-        /**
-         * \brief The activated protocol.
-         */
-        DWORD d_ap;
+		/**
+		 * A PCSC connection object.
+		 */
+		std::unique_ptr<PCSCConnection> connection_;
 
         /**
          * \brief The current card ATR.
@@ -374,6 +392,7 @@ namespace logicalaccess
          */
         std::shared_ptr<PCSCReaderUnit> d_sam_readerunit;
     };
+
 }
 
 #endif

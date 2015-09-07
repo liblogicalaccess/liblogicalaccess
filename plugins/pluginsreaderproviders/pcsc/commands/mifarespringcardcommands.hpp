@@ -45,6 +45,7 @@ namespace logicalaccess
          * \return true on success, false otherwise.
          */
         bool loadKey(unsigned char keyno, MifareKeyType keytype, const void* key, size_t keylen, bool vol = false);
+
         /**
          * \brief Authenticate a block, given a key number.
          * \param blockno The block number.
@@ -52,6 +53,26 @@ namespace logicalaccess
          * \param keytype The key type.
          */
         void authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype);
+
+		/**
+		* \brief Store block value to volatile memory.
+		* \param blockno The block number.
+		*/
+		virtual void restore(unsigned char blockno);
+
+		/**
+		* \brief Increment a block value.
+		* \param blockno The block number.
+		* \param value The increment value.
+		*/
+		virtual void increment(unsigned char blockno, uint32_t value) override;
+
+		/**
+		* \brief Decrement a block value.
+		* \param blockno The block number.
+		* \param value The decrement value.
+		*/
+		virtual void decrement(unsigned char blockno, uint32_t value) override;
     };
 }
 

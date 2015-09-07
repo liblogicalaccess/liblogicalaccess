@@ -13,6 +13,7 @@
 #include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 #include "mifareultralightstoragecardservice.hpp"
+#include "logicalaccess/cards/locationnode.hpp"
 
 namespace logicalaccess
 {

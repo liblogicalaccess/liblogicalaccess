@@ -8,6 +8,7 @@
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 
 #include <stdlib.h>
+#include <boost/property_tree/ptree.hpp>
 
 namespace logicalaccess
 {

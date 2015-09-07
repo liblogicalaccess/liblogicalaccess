@@ -16,10 +16,6 @@
 #include <vector>
 #include <iostream>
 
-using std::string;
-using std::vector;
-using std::ostream;
-
 namespace logicalaccess
 {
     /**
@@ -348,6 +344,8 @@ namespace logicalaccess
         std::shared_ptr<DESFireKey> getKey(unsigned char keyno);
 
         void createApplication(int aid, size_t maxNbKeys, DESFireKeyType cryptoMethod);
+
+		void setIdentifier(std::vector<unsigned char> identifier) { d_identifier = identifier; };
 
         const std::vector<unsigned char> getIdentifier() const { return d_identifier; };
 

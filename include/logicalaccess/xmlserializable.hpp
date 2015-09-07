@@ -41,23 +41,8 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
-
-#ifdef _MSC_VER
-#include "msliblogicalaccess.h"
-#else
-#ifndef LIBLOGICALACCESS_API
-#define LIBLOGICALACCESS_API
-#endif
-#ifndef DISABLE_PRAGMA_WARNING
-#define DISABLE_PRAGMA_WARNING /**< \brief winsmcrd.h was modified to support this macro, to avoid MSVC specific warnings pragma */
-#endif
-#endif
-
-#include "logicalaccess/logs.hpp"
-
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-#include <boost/property_tree/ptree.hpp>
+#include "logicalaccess/logicalaccess_api.hpp"
+#include <boost/property_tree/ptree_fwd.hpp>
 
 namespace logicalaccess
 {

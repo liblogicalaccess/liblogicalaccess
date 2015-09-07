@@ -4,6 +4,7 @@
  * \brief MifarePlus SL1 storage card service.
  */
 
+#include <cstring>
 #include "mifareplussl1storagecardservice.hpp"
 #include "mifarepluschip.hpp"
 #include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"

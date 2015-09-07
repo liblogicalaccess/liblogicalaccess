@@ -8,14 +8,10 @@
 #define LOGICALACCESS_STIDSTRREADERUNIT_HPP
 
 #include "logicalaccess/readerproviders/readerunit.hpp"
-#include "stidstrreaderunitconfiguration.hpp"
+#include "stidstr_fwd.hpp"
 
 namespace logicalaccess
 {
-    class Profile;
-    class STidSTRReaderCardAdapter;
-    class STidSTRReaderProvider;
-
     /**
      * \brief The STid baudrates.
      */
@@ -169,11 +165,7 @@ namespace logicalaccess
          */
         virtual void unSerialize(boost::property_tree::ptree& node);
 
-        /**
-         * \brief Get the STidSTR reader unit configuration.
-         * \return The STidSTR reader unit configuration.
-         */
-        std::shared_ptr<STidSTRReaderUnitConfiguration> getSTidSTRConfiguration() { return std::dynamic_pointer_cast<STidSTRReaderUnitConfiguration>(getConfiguration()); };
+        std::shared_ptr<STidSTRReaderUnitConfiguration> getSTidSTRConfiguration();;
 
         /**
          * \brief Get the STidSTR reader provider.

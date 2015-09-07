@@ -4,16 +4,14 @@
  * \brief Xml Serializable.
  */
 
+#include <string>
+#include <vector>
+#include <boost/property_tree/ptree.hpp>
+#include <fstream>
+#include "logicalaccess/logs.hpp"
 #include "logicalaccess/myexception.hpp"
 #include "logicalaccess/xmlserializable.hpp"
-#include "logicalaccess/logs.hpp"
-#include <stdlib.h>
-#include <fstream>
-#include <iostream>
-#include <iomanip>
-#include <sstream>
-#include <cstring>
-#include <boost/algorithm/string.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 
 namespace logicalaccess
 {

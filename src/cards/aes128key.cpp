@@ -5,6 +5,8 @@
  */
 
 #include "logicalaccess/cards/aes128key.hpp"
+#include <cstring>
+#include <boost/property_tree/ptree.hpp>
 
 namespace logicalaccess
 {

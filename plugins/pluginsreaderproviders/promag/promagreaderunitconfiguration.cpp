@@ -4,6 +4,7 @@
  * \brief  Promag reader unit configuration.
  */
 
+#include <boost/property_tree/ptree.hpp>
 #include "promagreaderunitconfiguration.hpp"
 #include "promagreaderprovider.hpp"
 

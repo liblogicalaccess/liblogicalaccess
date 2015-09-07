@@ -31,6 +31,8 @@
 #include <vector>
 #include <iostream>
 
+#include "logicalaccess/myexception.hpp"
+
 #define DEFAULT_SAM_CLA 0x80
 
 namespace logicalaccess
@@ -364,8 +366,7 @@ namespace logicalaccess
         {
             unsigned char keyCompMeth = 0;
 
-            if (!info.oldKeyInvolvement)
-                keyCompMeth = 1;
+			keyCompMeth = info.oldKeyInvolvement;
 
             unsigned char cfg = info.desfireNumber & 0xf;
             if (info.isMasterKey)
@@ -379,12 +380,12 @@ namespace logicalaccess
             if (diversifycation.divType != NXPKeyDiversificationType::NO_DIV)
             {
                 if (diversifycation.divType == NXPKeyDiversificationType::SAMAV2)
-                {
                     keyCompMeth |= 0x20;
-                    data.insert(data.end(), diversifycation.divInput, diversifycation.divInput + diversifycation.divInputSize);
-                }
+
                 keyCompMeth |= diversifycation.diversifyCurrent == 0x01 ? 0x04 : 0x00;
                 keyCompMeth |= diversifycation.diversifyNew == 0x01 ? 0x02 : 0x00;
+
+				data.insert(data.end(), diversifycation.divInput, diversifycation.divInput + diversifycation.divInputSize);
             }
 
             unsigned char cmd[] = { d_cla, 0xc4, keyCompMeth, cfg, (unsigned char)(data.size()), 0x00 };

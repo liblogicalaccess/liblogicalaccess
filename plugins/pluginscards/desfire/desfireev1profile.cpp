@@ -7,6 +7,7 @@
 #include "desfireev1profile.hpp"
 
 #include <cstring>
+#include <logicalaccess/logs.hpp>
 
 namespace logicalaccess
 {

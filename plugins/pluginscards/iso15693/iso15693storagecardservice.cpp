@@ -4,8 +4,10 @@
  * \brief ISO15693 storage card service.
  */
 
+#include <logicalaccess/logs.hpp>
 #include "iso15693storagecardservice.hpp"
 #include "iso15693location.hpp"
+#include "logicalaccess/cards/locationnode.hpp"
 
 namespace logicalaccess
 {

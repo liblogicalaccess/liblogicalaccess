@@ -16,7 +16,8 @@ set(INCLUDE_FOLDER 	${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifareplus
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2
-                                        ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/prox)
+                    ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/prox
+					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/felica)
 
 INCLUDE_DIRECTORIES(${INCLUDE_FOLDER})
 
@@ -67,6 +68,7 @@ target_link_libraries(
 	iso7816cards
 	iso15693cards
 	proxcards
+	felicacards
 	${LIBLOGICALACCESS_LIBRARY}
         ${PCSCLITE_LIBRARIES}
 )

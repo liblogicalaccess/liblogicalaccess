@@ -8,17 +8,8 @@
 #include "readers/springcardreaderunit.hpp"
 #include "readers/cherryreaderunit.hpp"
 #include "readers/acsacrreaderunit.hpp"
-
-#ifdef _MSC_VER
-#include "logicalaccess/msliblogicalaccess.h"
-#else
-#ifndef LIBLOGICALACCESS_API
-#define LIBLOGICALACCESS_API
-#endif
-#ifndef DISABLE_PRAGMA_WARNING
-#define DISABLE_PRAGMA_WARNING /**< \brief winsmcrd.h was modified to support this macro, to avoid MSVC specific warnings pragma */
-#endif
-#endif
+#include "readers/acsacr1222lreaderunit.hpp"
+#include "logicalaccess/logicalaccess_api.hpp"
 
 extern "C"
 {
@@ -52,7 +43,13 @@ extern "C"
         }
         else if (readerName.find("SDI010 Contactless Reader") != string::npos
                 || readerName.find("SCR331-DI USB ContactlessReader") != string::npos
-                || readerName.find("SCL010 Contactless") != string::npos)
+                || readerName.find("SCL010 Contactless") != string::npos
+				|| readerName.find("SCL01x Contactless") != string::npos
+				|| readerName.find("SCL3711 reader") != string::npos
+				|| readerName.find("Identive CLOUD 4700 F Contactless") != string::npos
+				|| readerName.find("Identive CLOUD 4710 F Contactless") != string::npos
+				|| readerName.find("SCM Microsystems Inc. SCL011G Contactless Reader") != string::npos
+				)
         {
             u = make_shared<SCMReaderUnit>(readerName);
         }
@@ -63,6 +60,11 @@ extern "C"
         else if (readerName.find("SpringCard") != string::npos)
         {
             u = make_shared<SpringCardReaderUnit>(readerName);
+        }
+        else if (readerName.find("ACS ACR1222 3S PICC Reader PICC") != string::npos
+                || readerName.find("ACS ACR1222 3S PICC Reader 00 00") != string::npos) // Name under Linux
+        {
+            u = make_shared<ACSACR1222LReaderUnit>(readerName);
         }
         else if (readerName.find("ACS ACR") != string::npos)
         {

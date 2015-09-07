@@ -7,12 +7,10 @@
 #ifndef LOGICALACCESS_SMARTIDLEDBUZZERDISPLAY_HPP
 #define LOGICALACCESS_SMARTIDLEDBUZZERDISPLAY_HPP
 
-#include "readercardadapters/smartidreadercardadapter.hpp"
-
 #include <string>
 #include <vector>
-
-#include "logicalaccess/logs.hpp"
+#include <logicalaccess/readerproviders/ledbuzzerdisplay.hpp>
+#include "smartid_fwd.hpp"
 
 namespace logicalaccess
 {
@@ -85,7 +83,7 @@ namespace logicalaccess
          */
         void setPort(bool red, bool green, bool buzzer);
 
-        std::shared_ptr<SmartIDReaderCardAdapter> getSmartIDReaderCardAdapter() { return std::dynamic_pointer_cast<SmartIDReaderCardAdapter>(getReaderCardAdapter()); };
+        std::shared_ptr<SmartIDReaderCardAdapter> getSmartIDReaderCardAdapter();
 
     protected:
 

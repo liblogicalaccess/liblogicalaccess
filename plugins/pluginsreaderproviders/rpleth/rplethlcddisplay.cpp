@@ -5,6 +5,7 @@
  */
 
 #include "rplethlcddisplay.hpp"
+#include "readercardadapters/rplethreadercardadapter.hpp"
 
 namespace logicalaccess
 {
@@ -64,5 +65,10 @@ namespace logicalaccess
         command.push_back(static_cast<unsigned char>(LcdCommand::SCROLL));
         command.push_back(static_cast<unsigned char>(0x00));
         getRplethReaderCardAdapter()->sendRplethCommand(command, false);
+    }
+
+    void RplethLCDDisplay::clear()
+    {
+
     }
 }

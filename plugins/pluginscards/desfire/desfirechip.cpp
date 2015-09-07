@@ -11,6 +11,8 @@
 
 #include <cstring>
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
+#include "logicalaccess/myexception.hpp"
+#include "logicalaccess/cards/locationnode.hpp"
 
 namespace logicalaccess
 {

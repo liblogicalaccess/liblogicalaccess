@@ -7,11 +7,9 @@
 #ifndef LOGICALACCESS_PROFILES_HPP
 #define LOGICALACCESS_PROFILES_HPP
 
-#include "logicalaccess/readerproviders/readerunit.hpp"
-#include "logicalaccess/services/accesscontrol/formats/format.hpp"
-#include "logicalaccess/cards/location.hpp"
-
-#include "logicalaccess/logs.hpp"
+#include "logicalaccess/lla_fwd.hpp"
+#include <vector>
+#include <memory>
 
 namespace logicalaccess
 {

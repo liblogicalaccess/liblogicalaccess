@@ -4,8 +4,10 @@
  * \brief ISO7816 NFC Tag Type 4 card service.
  */
 
+#include <logicalaccess/logs.hpp>
 #include "iso7816nfctag4cardservice.hpp"
 #include "logicalaccess/services/nfctag/ndefmessage.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {
@@ -71,5 +73,10 @@ namespace logicalaccess
         length = data[1];
         data = iso7816command->readBinary(length, 2, isoFIDNDEFFile);
         return std::shared_ptr<logicalaccess::NdefMessage>(new NdefMessage(data));
+    }
+
+    std::shared_ptr<logicalaccess::NdefMessage> ISO7816NFCTag4CardService::readNDEF()
+    {
+        return readNDEFFile();
     }
 }

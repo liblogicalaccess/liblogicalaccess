@@ -48,7 +48,7 @@ namespace logicalaccess
         *
         * Returns the allocated ReaderUnit object or NULL on failure.
         */
-        std::shared_ptr<ReaderUnit> getReader(const std::string &readerName);
+        std::shared_ptr<ReaderUnit> getReader(const std::string &readerName) const;
         std::shared_ptr<Chip> getCard(const std::string& cardtype);
         std::shared_ptr<Commands> getCommands(const std::string& extendedtype);
         static std::shared_ptr<DataTransport> getDataTransport(const std::string& transporttype);
@@ -61,7 +61,7 @@ namespace logicalaccess
          * Returns a new service, or nullptr on failure.
          */
         std::shared_ptr<AccessControlCardService> getAccessControlCardService(
-                std::shared_ptr<Chip> chip);
+                std::shared_ptr<Chip> chip) const;
 
         std::vector<std::string> getAvailableCards();
 

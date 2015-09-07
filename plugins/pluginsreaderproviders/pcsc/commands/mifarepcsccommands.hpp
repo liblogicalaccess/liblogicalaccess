@@ -58,6 +58,10 @@ namespace logicalaccess
          */
         virtual void updateBinary(unsigned char blockno, const std::vector<unsigned char>& buf);
 
+        virtual void increment(uint8_t blockno, uint32_t value) override;
+
+        virtual void decrement(uint8_t blockno, uint32_t value) override;
+
     protected:
 
         /**

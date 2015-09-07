@@ -16,6 +16,10 @@
 #include "readercardadapters/scielreadercardadapter.hpp"
 #include <boost/filesystem.hpp>
 #include "readercardadapters/scieldatatransport.hpp"
+#include "logicalaccess/settings.hpp"
+#include "logicalaccess/bufferhelper.hpp"
+#include "logicalaccess/myexception.hpp"
+#include <boost/property_tree/xml_parser.hpp>
 
 namespace logicalaccess
 {
@@ -634,11 +638,9 @@ namespace logicalaccess
         return std::dynamic_pointer_cast<SCIELReaderCardAdapter>(adapter);
     }
 
-    string SCIELReaderUnit::getReaderSerialNumber()
+    std::string SCIELReaderUnit::getReaderSerialNumber()
     {
-        string ret;
-
-        return ret;
+        return std::string();
     }
 
     bool SCIELReaderUnit::isConnected()

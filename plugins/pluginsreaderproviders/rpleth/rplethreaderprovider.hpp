@@ -8,12 +8,8 @@
 #define LOGICALACCESS_READERRPLETH_PROVIDER_HPP
 
 #include "logicalaccess/readerproviders/readerprovider.hpp"
-#include "rplethreaderunit.hpp"
-
 #include <string>
 #include <vector>
-
-#include "logicalaccess/logs.hpp"
 
 namespace logicalaccess
 {

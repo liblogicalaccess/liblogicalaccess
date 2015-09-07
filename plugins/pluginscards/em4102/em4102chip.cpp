@@ -5,20 +5,7 @@
  */
 
 #include "em4102chip.hpp"
-
-#include <iostream>
-#include <iomanip>
-#include <sstream>
-
-using std::endl;
-using std::dec;
-using std::hex;
-using std::setfill;
-using std::setw;
-using std::ostringstream;
-using std::istringstream;
-
-#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include "logicalaccess/cards/locationnode.hpp"
 
 namespace logicalaccess
 {

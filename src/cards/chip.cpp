@@ -5,7 +5,7 @@
  */
 
 #include "logicalaccess/cards/chip.hpp"
-
+#include "logicalaccess/cards/locationnode.hpp"
 #include <fstream>
 
 using std::ofstream;

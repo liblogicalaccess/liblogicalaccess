@@ -16,6 +16,7 @@
 #include <iomanip>
 
 #include "smartidreaderunit.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {

@@ -18,12 +18,18 @@
 #include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
 #include "logicalaccess/cards/chip.hpp"
 #include <boost/filesystem.hpp>
+#include <boost/property_tree/ptree.hpp>
 #include "logicalaccess/readerproviders/tcpdatatransport.hpp"
 #include "rplethledbuzzerdisplay.hpp"
 #include "rplethlcddisplay.hpp"
 #include "rplethdatatransport.hpp"
 #include "desfirechip.hpp"
 #include "commands/desfireiso7816commands.hpp"
+
+#include "logicalaccess/readerproviders/serialportxml.hpp"
+#include "rplethreaderunitconfiguration.hpp"
+#include "logicalaccess/myexception.hpp"
+#include <boost/property_tree/xml_parser.hpp>
 
 namespace logicalaccess
 {
@@ -57,8 +63,7 @@ namespace logicalaccess
 
     std::string RplethReaderUnit::getName() const
     {
-        string ret = "";
-        return ret;
+        return std::string();
     }
 
     std::string RplethReaderUnit::getConnectedName()
@@ -334,7 +339,7 @@ namespace logicalaccess
         return std::dynamic_pointer_cast<RplethReaderCardAdapter>(adapter);
     }
 
-    string RplethReaderUnit::getReaderSerialNumber()
+    std::string RplethReaderUnit::getReaderSerialNumber()
     {
         return "";
     }
@@ -656,4 +661,7 @@ namespace logicalaccess
 
         return rptype;
     }
+
+    std::shared_ptr<RplethReaderUnitConfiguration> RplethReaderUnit::getRplethConfiguration()
+    { return std::dynamic_pointer_cast<RplethReaderUnitConfiguration>(getConfiguration()); }
 }

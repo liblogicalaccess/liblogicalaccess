@@ -21,6 +21,7 @@
 #include "logicalaccess/crypto/des_symmetric_key.hpp"
 #include "logicalaccess/crypto/des_initialization_vector.hpp"
 #include "logicalaccess/crypto/cmac.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {
@@ -1134,6 +1135,7 @@ namespace logicalaccess
 
     std::shared_ptr<DESFireKey> DESFireCrypto::getKey(unsigned char keyno)
     {
+        assert(d_profile);
         return d_profile->getKey(d_currentAid, keyno);
     }
 

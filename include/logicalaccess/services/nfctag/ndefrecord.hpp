@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_NDEFRECORD_HPP
 #define LOGICALACCESS_NDEFRECORD_HPP
 
-#include "logicalaccess/services/cardservice.hpp"
+#include <logicalaccess/xmlserializable.hpp>
 
 namespace logicalaccess
 {

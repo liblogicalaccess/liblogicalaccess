@@ -14,6 +14,8 @@
 #include "logicalaccess/cards/chip.hpp"
 #include <boost/filesystem.hpp>
 #include "logicalaccess/bufferhelper.hpp"
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 
 namespace logicalaccess
 {

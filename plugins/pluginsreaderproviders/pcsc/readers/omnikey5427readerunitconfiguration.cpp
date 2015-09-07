@@ -3,6 +3,7 @@
 //
 
 #include <logicalaccess/cards/tripledeskey.hpp>
+#include <boost/property_tree/ptree.hpp>
 #include "omnikey5427readerunitconfiguration.hpp"
 
 using namespace logicalaccess;
@@ -12,7 +13,6 @@ Omnikey5427ReaderUnitConfiguration::Omnikey5427ReaderUnitConfiguration() :
         masterKey_(new AES128Key())            // but without leaking the key to client code.
                                                // the reader unit code will use the default is none is set.
 {
-
 }
 
 bool Omnikey5427ReaderUnitConfiguration::getUseSecureMode() const
@@ -25,7 +25,7 @@ void Omnikey5427ReaderUnitConfiguration::setUseSecureMode(bool use_sm)
     useSecureMode_ = use_sm;
 }
 
-std::shared_ptr<AES128Key> Omnikey5427ReaderUnitConfiguration::getSecureMasterKey()
+std::shared_ptr<AES128Key> Omnikey5427ReaderUnitConfiguration::getSecureMasterKey() const
 {
     return masterKey_;
 }

@@ -7,11 +7,9 @@
 #include "logicalaccess/bufferhelper.hpp"
 #include <iostream>
 #include <algorithm>
-#include <sstream>
 #include <iomanip>
-#include <iterator>
 #include <stdexcept>
-#include <string.h>
+#include <cstring>
 #include "logicalaccess/logs.hpp"
 #include "logicalaccess/myexception.hpp"
 

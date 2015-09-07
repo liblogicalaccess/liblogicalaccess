@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <cassert>
 
 namespace logicalaccess
 {
@@ -125,12 +126,45 @@ namespace logicalaccess
          */
         virtual void getT_CL_ISOType(bool& isTypeA, bool& isTypeB);
 
+		/**
+		* Request that the reader enable or disable the various card technologies
+		* as described in the bitset.
+		* The default implementation just does nothing.
+		*/
+		virtual void setCardTechnologies(const TechnoBitset& bitset);
+
+		/**
+		* Return a bitset describing which cards technology are enabled.
+		*
+		* The default implementation return a bitset with all flags set to false.
+		*/
+		virtual TechnoBitset getCardTechnologies();
+
+		virtual TechnoBitset getPossibleCardTechnologies();
+
     protected:
          /**
          * \brief Is secure connection mode ?
          * \remarks We must store it in static memory because the connection mode is global for all connection to the reader
          */
         static std::map<std::string, SecureModeStatus> secure_connection_status_;
+
+    private:
+        /**
+         * Search a line matching the configuration for a given technology.
+         *
+         * @param lines is a vector of all lines in /etc/omnikey.ini
+         * @param techno the technology string we are looking for.
+         *
+         * @return true if the techno is found and enabled, false otherwise.
+         */
+        bool fetchCardTechoLinux(const std::vector<std::string> &lines, const std::string &techno);
+
+        /**
+         * Write the updated configuration for enabled technology on disk.
+         */
+        bool replaceCardTechnoLinux(std::vector<std::string> &lines,
+                                    const std::map<std::string, bool> technos);
     };
 }
 

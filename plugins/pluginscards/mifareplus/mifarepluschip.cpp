@@ -14,6 +14,7 @@
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 #include "mifareplussl1storagecardservice.hpp"
 #include "mifareplussl3storagecardservice.hpp"
+#include "logicalaccess/cards/locationnode.hpp"
 
 #define MIFARE_PLUS_2K_SECTOR_NB 32
 

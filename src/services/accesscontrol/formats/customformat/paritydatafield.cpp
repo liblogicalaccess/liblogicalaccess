@@ -10,6 +10,7 @@
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 
 #include <boost/foreach.hpp>
+#include <boost/property_tree/ptree.hpp>
 
 namespace logicalaccess
 {

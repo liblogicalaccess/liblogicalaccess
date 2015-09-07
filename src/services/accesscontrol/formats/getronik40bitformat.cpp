@@ -4,6 +4,7 @@
  * \brief Getronik 40-Bit Format.
  */
 
+#include <boost/property_tree/ptree.hpp>
 #include "logicalaccess/myexception.hpp"
 #include "logicalaccess/services/accesscontrol/formats/getronik40bitformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"

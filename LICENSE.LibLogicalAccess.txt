@@ -1,6 +1,6 @@
 /*
  *  liblogicalaccess - C++ RFID Library for Windows and Linux.
- *  Copyright (C) 2005-2014 ISLOG <support@islog.com>
+ *  Copyright (C) 2005-2015 ISLOG <support@islog.com>
  *
  *  This library is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by

@@ -4,6 +4,7 @@
  * \brief Access informations for Mifare Ultralight C card.
  */
 
+#include <boost/property_tree/ptree.hpp>
 #include "mifareultralightcaccessinfo.hpp"
 #include "mifareultralightcchip.hpp"
 

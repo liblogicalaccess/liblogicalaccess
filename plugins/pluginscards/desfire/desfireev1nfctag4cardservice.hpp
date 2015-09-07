@@ -35,7 +35,9 @@ namespace logicalaccess
 
         virtual std::shared_ptr<logicalaccess::NdefMessage> readNDEFFile(unsigned short isoFIDApplication = 0xe105, unsigned short isoFIDNDEFFile = 0xe104);
 
-        virtual CardServiceType getServiceType() const { return CardServiceType::CST_NFC_TAG; };
+        virtual void writeNDEF(std::shared_ptr<logicalaccess::NdefMessage> records);
+
+        virtual void eraseNDEF();
 
     protected:
 

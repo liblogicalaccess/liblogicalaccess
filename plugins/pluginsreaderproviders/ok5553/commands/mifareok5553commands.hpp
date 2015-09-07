@@ -87,6 +87,20 @@ namespace logicalaccess
          */
         void authenticate(unsigned char blockno, std::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype);
 
+		/**
+		* \brief Increment a block value.
+		* \param blockno The block number.
+		* \param value The increment value.
+		*/
+		virtual void increment(unsigned char blockno, unsigned int value) override;
+
+		/**
+		* \brief Decrement a block value.
+		* \param blockno The block number.
+		* \param value The decrement value.
+		*/
+		virtual void decrement(unsigned char blockno, unsigned int value) override;
+
         /**
          * \brief Get the OK5553 reader/card adapter.
          * \return The OK5553 reader/card adapter.

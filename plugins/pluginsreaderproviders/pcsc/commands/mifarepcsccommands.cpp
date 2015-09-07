@@ -15,6 +15,7 @@
 #include "logicalaccess/cards/computermemorykeystorage.hpp"
 #include "logicalaccess/cards/readermemorykeystorage.hpp"
 #include "logicalaccess/cards/samkeystorage.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {
@@ -30,11 +31,29 @@ namespace logicalaccess
     bool MifarePCSCCommands::loadKey(unsigned char keyno, MifareKeyType keytype, const void* key, size_t keylen, bool vol)
     {
         bool r = false;
+        std::vector<unsigned char> result,
+            vector_key((unsigned char *)key, (unsigned char *)key + keylen);
 
-        std::vector<unsigned char> result, vector_key((unsigned char*)key, (unsigned char*)key + keylen);
-
-        result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x82, (vol ? 0x00 : 0x20), static_cast<char>(keyno), static_cast<unsigned char>(vector_key.size()), vector_key);
-        if (!vol && (result[result.size() - 2] == 0x63) && (result[result.size() - 1] == 0x86))
+        try
+        {
+            result = getPCSCReaderCardAdapter()->sendAPDUCommand(
+                0xFF, 0x82, (vol ? 0x00 : 0x20), static_cast<char>(keyno),
+                static_cast<unsigned char>(vector_key.size()), vector_key);
+        }
+        catch (CardException e)
+        {
+            if (!vol && (e.error_code() == CardException::WRONG_P1_P2 ||
+                         e.error_code() == CardException::UNKOWN_ERROR))
+            {
+                // With the Sony RC-S380, non-volatile memory doesn't work,
+                // so we try again. Same with ACR1222L.
+                return loadKey(keyno, keytype, key, keylen, true);
+            }
+            else
+                throw;
+        }
+        if (!vol && (result[result.size() - 2] == 0x63) &&
+            (result[result.size() - 1] == 0x86))
         {
             if (keyno == 0)
             {
@@ -130,4 +149,39 @@ namespace logicalaccess
 
         getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xD6, 0x00, blockno, static_cast<unsigned char>(buf.size()), buf);
     }
+
+    void MifarePCSCCommands::increment(uint8_t blockno, uint32_t value)
+    {
+        std::vector<uint8_t> buf;
+        std::vector<uint8_t> dest           = {0x80, 0x01, blockno};
+        std::vector<uint8_t> value_change   = {0x81, 0x04, 0x00, 0x00, 0x00, 0x00};
+
+        memcpy(&value_change[2], &value, 4);
+
+        buf = {0xA0, static_cast<uint8_t>(dest.size() + value_change.size())};
+        buf.insert(buf.end(), dest.begin(), dest.end());
+        buf.insert(buf.end(), value_change.begin(), value_change.end());
+
+        getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xC2, 0x00,
+                                                    0x03, static_cast<unsigned char>(buf.size()),
+                                                    buf);
+    }
+
+    void MifarePCSCCommands::decrement(uint8_t blockno, uint32_t value)
+    {
+        std::vector<uint8_t> buf;
+        std::vector<uint8_t> dest           = {0x80, 0x01, blockno};
+        std::vector<uint8_t> value_change   = {0x81, 0x04, 0x00, 0x00, 0x00, 0x00};
+
+        memcpy(&value_change[2], &value, 4);
+
+        buf = {0xA1, static_cast<uint8_t>(dest.size() + value_change.size())};
+        buf.insert(buf.end(), dest.begin(), dest.end());
+        buf.insert(buf.end(), value_change.begin(), value_change.end());
+
+        getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xC2, 0x00,
+                                                    0x03, static_cast<unsigned char>(buf.size()),
+                                                    buf);
+    }
+
 }

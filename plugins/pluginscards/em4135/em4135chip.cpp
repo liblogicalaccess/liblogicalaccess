@@ -11,6 +11,7 @@
 #include <sstream>
 
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include "logicalaccess/cards/locationnode.hpp"
 
 namespace logicalaccess
 {

@@ -6,6 +6,8 @@
 
 #include "logicalaccess/cards/readercardadapter.hpp"
 #include "logicalaccess/bufferhelper.hpp"
+#include "logicalaccess/myexception.hpp"
+#include "logicalaccess/logs.hpp"
 
 namespace logicalaccess
 {

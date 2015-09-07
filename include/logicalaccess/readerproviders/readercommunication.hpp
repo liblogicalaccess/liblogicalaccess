@@ -7,14 +7,8 @@
 #ifndef LOGICALACCESS_READERCOMMUNICATION_HPP
 #define LOGICALACCESS_READERCOMMUNICATION_HPP
 
-#include "logicalaccess/readerproviders/readerunit.hpp"
-
-#include <string>
+#include "logicalaccess/logicalaccess_api.hpp"
 #include <vector>
-using std::string;
-using std::vector;
-
-#include "logicalaccess/logs.hpp"
 
 namespace logicalaccess
 {

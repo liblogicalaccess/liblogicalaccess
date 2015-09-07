@@ -147,7 +147,7 @@ namespace logicalaccess
          * \brief Get a string hexadecimal representation of the reader serial number
          * \return The reader serial number or an empty string on error.
          */
-        virtual string getReaderSerialNumber();
+        virtual std::string getReaderSerialNumber();
 
         /**
          * \brief Serialize the current object to XML.

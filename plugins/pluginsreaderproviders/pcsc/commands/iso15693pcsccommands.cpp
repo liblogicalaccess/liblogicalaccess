@@ -11,6 +11,7 @@
 #include <sstream>
 
 #include "iso15693chip.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {

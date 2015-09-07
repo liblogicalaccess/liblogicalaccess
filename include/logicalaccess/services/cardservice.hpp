@@ -7,9 +7,8 @@
 #ifndef LOGICALACCESS_CARDSERVICE_HPP
 #define LOGICALACCESS_CARDSERVICE_HPP
 
-#include "logicalaccess/readerproviders/readerprovider.hpp"
-
-#include "logicalaccess/logs.hpp"
+#include <memory>
+#include "logicalaccess/logicalaccess_api.hpp"
 
 namespace logicalaccess
 {

@@ -160,6 +160,12 @@ namespace logicalaccess
          */
         std::shared_ptr<GunneboReaderProvider> getGunneboReaderProvider() const;
 
+        /**
+        * \brief Set the reader unit configuration.
+        * \param config The reader unit configuration.
+        */
+        virtual void setConfiguration(std::shared_ptr<ReaderUnitConfiguration> config);
+
     private:
 
         /**

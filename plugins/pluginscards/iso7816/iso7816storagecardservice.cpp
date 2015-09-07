@@ -4,10 +4,13 @@
  * \brief ISO7816 storage card service.
  */
 
+#include <cstring>
+#include <logicalaccess/logs.hpp>
 #include "iso7816storagecardservice.hpp"
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 #include "iso7816location.hpp"
 #include "iso7816chip.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {

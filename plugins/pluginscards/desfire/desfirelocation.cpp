@@ -4,6 +4,7 @@
  * \brief Location informations for DESFire card.
  */
 
+#include <boost/property_tree/ptree.hpp>
 #include "desfirelocation.hpp"
 
 namespace logicalaccess

@@ -28,11 +28,16 @@
 #include "commands/mifarestidstrcommands.hpp"
 #include "desfireprofile.hpp"
 #include <boost/filesystem.hpp>
+#include <logicalaccess/myexception.hpp>
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
 #include "readercardadapters/stidstrreaderdatatransport.hpp"
 #include "desfireev1chip.hpp"
 #include "mifarechip.hpp"
+
+#include "stidstrreaderunitconfiguration.hpp"
+#include "logicalaccess/settings.hpp"
+#include <boost/property_tree/xml_parser.hpp>
 
 namespace logicalaccess
 {
@@ -43,11 +48,7 @@ namespace logicalaccess
         setDefaultReaderCardAdapter(std::shared_ptr<STidSTRReaderCardAdapter>(new STidSTRReaderCardAdapter(STID_CMD_READER)));
         d_ledBuzzerDisplay.reset(new STidSTRLEDBuzzerDisplay());
         std::shared_ptr<STidSTRDataTransport> dataTransport(new STidSTRDataTransport());
-#ifndef _WINDOWS
-        dataTransport->setPortBaudRate(B38400);
-#else
-        dataTransport->setPortBaudRate(CBR_38400);
-#endif
+        dataTransport->setPortBaudRate(38400);
         setDataTransport(dataTransport);
         d_card_type = "UNKNOWN";
 
@@ -298,11 +299,10 @@ namespace logicalaccess
         return std::dynamic_pointer_cast<STidSTRReaderCardAdapter>(adapter);
     }
 
-    string STidSTRReaderUnit::getReaderSerialNumber()
+    std::string STidSTRReaderUnit::getReaderSerialNumber()
     {
         LOG(LogLevel::WARNINGS) << "Do nothing with STid STR reader";
-        string ret;
-        return ret;
+        return std::string();
     }
 
     bool STidSTRReaderUnit::isConnected()
@@ -829,5 +829,10 @@ namespace logicalaccess
         std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000E, std::vector<unsigned char>(), statusCode);
 
         EXCEPTION_ASSERT_WITH_LOG(response.size() == 0, LibLogicalAccessException, "Unable to load the SKB values. An unknown error occured.");
+    }
+
+    std::shared_ptr<STidSTRReaderUnitConfiguration> STidSTRReaderUnit::getSTidSTRConfiguration()
+    {
+        return std::dynamic_pointer_cast<STidSTRReaderUnitConfiguration>(getConfiguration());
     }
 }

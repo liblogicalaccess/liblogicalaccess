@@ -20,6 +20,7 @@
 #include "logicalaccess/bufferhelper.hpp"
 
 #include <openssl/rand.h>
+#include <boost/property_tree/ptree.hpp>
 
 namespace logicalaccess
 {

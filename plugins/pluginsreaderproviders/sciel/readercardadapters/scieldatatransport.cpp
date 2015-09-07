@@ -4,6 +4,7 @@
  * \brief Sciel buffer parser.
  */
 
+#include <logicalaccess/logs.hpp>
 #include "scieldatatransport.hpp"
 #include "logicalaccess/bufferhelper.hpp"
 
@@ -13,10 +14,10 @@ namespace logicalaccess
     {
         std::vector<unsigned char> ret;
 
-        d_port->getSerialPort()->getReadMutex().lock();
-        if (d_port->getSerialPort()->getCircularBufferParser())
-            ret = d_port->getSerialPort()->getCircularBufferParser()->getValidBuffer(d_port->getSerialPort()->getCircularReadBuffer());
-        d_port->getSerialPort()->getReadMutex().unlock();
+        d_port->getSerialPort()->lockedExecute([&](){
+            if (d_port->getSerialPort()->getCircularBufferParser())
+                ret = d_port->getSerialPort()->getCircularBufferParser()->getValidBuffer(d_port->getSerialPort()->getCircularReadBuffer());
+        });
         LOG(LogLevel::COMS) << "checkValideBufferAvailable: " << BufferHelper::getHex(ret);
         return ret;
     }

@@ -4,6 +4,7 @@
  * \brief Location informations for ISO15693 card.
  */
 
+#include <boost/property_tree/ptree.hpp>
 #include "iso15693location.hpp"
 
 namespace logicalaccess

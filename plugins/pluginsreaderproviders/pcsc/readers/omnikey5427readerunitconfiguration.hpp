@@ -35,7 +35,7 @@ namespace logicalaccess
          * Return the 128 bits AES key used to establish
          * a secure session with the reader.
          */
-        std::shared_ptr<AES128Key> getSecureMasterKey();
+        std::shared_ptr<AES128Key> getSecureMasterKey() const;
 
         /**
          * Set a 128 bits AES key that will be used as
@@ -43,7 +43,6 @@ namespace logicalaccess
          * with the reader.
          */
         void setSecureMasterKey( std::shared_ptr<AES128Key>);
-
 
         virtual void resetConfiguration() override;
 
@@ -55,7 +54,6 @@ namespace logicalaccess
 
     private:
         bool useSecureMode_;
-
         std::shared_ptr<AES128Key> masterKey_;
     };
 

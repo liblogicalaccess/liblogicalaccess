@@ -4,12 +4,14 @@
  * \brief Mifare SmartID commands.
  */
 
+#include <string.h>
 #include "mifaresmartidcommands.hpp"
 #include "../smartidreaderprovider.hpp"
 #include "mifarechip.hpp"
 #include "logicalaccess/cards/computermemorykeystorage.hpp"
 #include "logicalaccess/cards/readermemorykeystorage.hpp"
 #include "logicalaccess/cards/samkeystorage.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {
@@ -129,5 +131,57 @@ namespace logicalaccess
 
             getMifareSmartIDReaderCardAdapter()->sendCommand(0x47, ldata);
         }
+    }
+
+	void MifareSmartIDCommands::increment(unsigned char blockno, uint32_t value)
+	{
+        increment_raw(blockno, value);
+        transfer(blockno);
+	}
+
+	void MifareSmartIDCommands::decrement(unsigned char blockno, uint32_t value)
+	{
+        decrement_raw(blockno, value);
+        transfer(blockno);
+	}
+
+	void MifareSmartIDCommands::transfer(unsigned char blockno)
+	{
+		std::vector<unsigned char> command;
+		command.push_back(blockno);
+
+		getMifareSmartIDReaderCardAdapter()->sendCommand(0x4B, command);
+	}
+
+	void MifareSmartIDCommands::restore(unsigned char blockno)
+	{
+		std::vector<unsigned char> command;
+		command.push_back(blockno);
+
+		getMifareSmartIDReaderCardAdapter()->sendCommand(0x4A, command);
+	}
+
+    void MifareSmartIDCommands::increment_raw(uint8_t blockno, uint32_t value)
+    {
+        std::vector<unsigned char> command;
+        command.push_back(blockno);
+        command.push_back(static_cast<unsigned char>(value & 0xff));
+        command.push_back(static_cast<unsigned char>((value >> 8) & 0xff));
+        command.push_back(static_cast<unsigned char>((value >> 16) & 0xff));
+        command.push_back(static_cast<unsigned char>((value >> 24) & 0xff));
+
+        getMifareSmartIDReaderCardAdapter()->sendCommand(0x48, command);
+    }
+
+    void MifareSmartIDCommands::decrement_raw(uint8_t blockno, uint32_t value)
+    {
+        std::vector<unsigned char> command;
+        command.push_back(blockno);
+        command.push_back(static_cast<unsigned char>(value & 0xff));
+        command.push_back(static_cast<unsigned char>((value >> 8) & 0xff));
+        command.push_back(static_cast<unsigned char>((value >> 16) & 0xff));
+        command.push_back(static_cast<unsigned char>((value >> 24) & 0xff));
+
+        getMifareSmartIDReaderCardAdapter()->sendCommand(0x49, command);
     }
 }

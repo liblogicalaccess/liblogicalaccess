@@ -8,8 +8,8 @@
 #define LOGICALACCESS_CARDSFORMATCOMPOSITE_HPP
 
 #include "logicalaccess/cards/profile.hpp"
-
 #include <map>
+#include <logicalaccess/xmlserializable.hpp>
 
 namespace logicalaccess
 {
@@ -68,7 +68,7 @@ namespace logicalaccess
          * \param rootNode The root node.
          * \return The format instance.
          */
-        std::shared_ptr<Format> createFormatFromXml(const string& xmlstring, const string& rootNode);
+        std::shared_ptr<Format> createFormatFromXml(const std::string& xmlstring, const std::string& rootNode);
 
         /**
          * \brief Add a format for a card type.
@@ -78,7 +78,9 @@ namespace logicalaccess
          * \param aiToUse The format access information.
          * \param aiToWrite The format access information to write in write mode.
          */
-        void addFormatForCard(std::string type, std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite = std::shared_ptr<AccessInfo>());
+        void addFormatForCard(std::string type, std::shared_ptr<Format> format,
+                              std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse,
+                              std::shared_ptr<AccessInfo> aiToWrite = std::shared_ptr<AccessInfo>());
 
         /**
          * \brief Retrieve format information for a card type.
@@ -88,7 +90,9 @@ namespace logicalaccess
          * \param aiToUse The format access information.
          * \param aiToWrite The format access information to write in write mode.
          */
-        void retrieveFormatForCard(std::string type, std::shared_ptr<Format>* format, std::shared_ptr<Location>* location, std::shared_ptr<AccessInfo>* aiToUse, std::shared_ptr<AccessInfo>* aiToWrite = NULL);
+        void retrieveFormatForCard(std::string type, std::shared_ptr<Format>* format,
+                                   std::shared_ptr<Location>* location, std::shared_ptr<AccessInfo>* aiToUse,
+                                   std::shared_ptr<AccessInfo>* aiToWrite = NULL);
 
         /**
          * \brief Remove a format for a card type.

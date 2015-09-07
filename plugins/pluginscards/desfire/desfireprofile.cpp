@@ -4,6 +4,8 @@
  * \brief DESFire card profiles.
  */
 
+#include <cstring>
+#include <logicalaccess/logs.hpp>
 #include "desfireprofile.hpp"
 #include "desfirecrypto.hpp"
 
@@ -22,7 +24,7 @@ namespace logicalaccess
 
     void DESFireProfile::setDefaultKeys()
     {
-        setKey(0, 0, std::shared_ptr<DESFireKey>(new DESFireKey(string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
+        setKey(0, 0, std::shared_ptr<DESFireKey>(new DESFireKey(std::string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
     }
 
     void DESFireProfile::setDefaultKeysAt(std::shared_ptr<Location> location)
@@ -151,7 +153,7 @@ namespace logicalaccess
             size_t posAid;
             getPosAid(aid, &posAid);
 
-            size_t keyPos = 1 + posAid * 14 + keyno;
+            size_t keyPos = posAid * 14 + keyno;
 
             if (getKeyUsage(keyPos))
             {
@@ -179,7 +181,7 @@ namespace logicalaccess
         size_t posAid;
         getPosAid(aid, &posAid);
 
-        size_t keyPos = 1 + posAid * 14 + keyno;
+        size_t keyPos = posAid * 14 + keyno;
 
         if (!getKeyUsage(keyPos))
         {
@@ -206,7 +208,7 @@ namespace logicalaccess
             posAid = addPosAid(aid);
         }
 
-        size_t keyPos = 1 + posAid * 14 + keyno;
+        size_t keyPos = posAid * 14 + keyno;
 
         d_key[keyPos] = key;
     }

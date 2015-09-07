@@ -23,6 +23,8 @@
 #include "commands/mifareok5553commands.hpp"
 #include "commands/mifareultralightok5553commands.hpp"
 #include <boost/filesystem.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
 
 namespace logicalaccess
@@ -300,9 +302,9 @@ namespace logicalaccess
         return std::dynamic_pointer_cast<OK5553ReaderCardAdapter>(adapter);
     }
 
-    string OK5553ReaderUnit::getReaderSerialNumber()
+    std::string OK5553ReaderUnit::getReaderSerialNumber()
     {
-        return "";
+        return std::string();
     }
 
     bool OK5553ReaderUnit::isConnected()

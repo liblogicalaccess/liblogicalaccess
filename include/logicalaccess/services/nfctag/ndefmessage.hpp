@@ -38,7 +38,7 @@ namespace logicalaccess
         std::vector<unsigned char> encode();
 
         void addRecord(std::shared_ptr<NdefRecord> record) { m_records.push_back(record); };
-        void addMimeMediaRecord(std::string mimeType, std::string payload);
+        void addMimeMediaRecord(std::string mimeType, std::vector<unsigned char> payload);
 		void addTextRecord(std::string text);
         void addTextRecord(std::vector<unsigned char> text, std::string encoding = "us-ascii");
         void addUriRecord(std::string uri, UriType uritype);

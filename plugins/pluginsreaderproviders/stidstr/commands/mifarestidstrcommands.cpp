@@ -10,6 +10,7 @@
 #include "logicalaccess/cards/computermemorykeystorage.hpp"
 #include "logicalaccess/cards/readermemorykeystorage.hpp"
 #include "logicalaccess/cards/samkeystorage.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {
@@ -226,4 +227,14 @@ namespace logicalaccess
             getSTidSTRReaderCardAdapter()->sendCommand(0x00D3, command);
         }
     }
+
+	void MifareSTidSTRCommands::increment(unsigned char /*blockno*/, uint32_t /*value*/)
+	{
+		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not implemented.");
+	}
+
+	void MifareSTidSTRCommands::decrement(unsigned char /*blockno*/,  uint32_t /*value*/)
+	{
+		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not implemented.");
+	}
 }

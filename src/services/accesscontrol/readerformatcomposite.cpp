@@ -6,6 +6,8 @@
 
 #include "logicalaccess/services/accesscontrol/readerformatcomposite.hpp"
 #include "logicalaccess/cards/accessinfo.hpp"
+#include <boost/property_tree/ptree.hpp>
+#include <logicalaccess/logs.hpp>
 
 namespace logicalaccess
 {

@@ -41,4 +41,13 @@ namespace logicalaccess
 
         getA3MLGM5600ReaderCardAdapter()->sendCommand(0x14, data);
     }
+
+    void A3MLGM5600LCDDisplay::clear()
+    {
+        std::string empty;
+        for (int i = 0; i < 17; i++)
+            empty.push_back(' ');
+        setMessage(0, empty);
+        setMessage(1, empty);
+    }
 }

@@ -164,12 +164,12 @@ namespace logicalaccess
          *		17 - 30	:	3(DES) Application 2 keys
          *		.............
          */
-        std::shared_ptr<DESFireKey> d_key[393];
+        std::shared_ptr<DESFireKey> d_key[406];
 
         /**
          * \brief The Application ID used.
          */
-        size_t d_aids[28];
+        size_t d_aids[29];
 
         /**
          * \brief Number of Application ID used.

@@ -1,12 +1,10 @@
 ![liblogicalaccess_logo](http://islog.github.io/liblogicalaccess/images/lla_logo.png)
 =============
 
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/islog/liblogicalaccess?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-[Homepage](https://islog.github.io/liblogicalaccess/) | 
+[Homepage](http://liblogicalaccess.islog.com) | 
 [Wiki](https://github.com/islog/liblogicalaccess/wiki) |
+[GitHub-Repository](https://github.com/islog/liblogicalaccess) | 
 [Download binaries](https://github.com/islog/liblogicalaccess/releases) |
-[Supported hardware](https://github.com/islog/liblogicalaccess/wiki/Supported-hardware) |
 [Issue-Tracker](https://github.com/islog/liblogicalaccess/issues)
 
 Welcome to the LibLogicalAccess project web page, an open source RFID library developed in C++ for Linux / Windows, also available on C#, Delphi, WinDev… for who are using the Microsoft operating system (using a COM wrapper).
@@ -20,9 +18,9 @@ Coverity Scan: [![Coverity Scan Build Status](https://scan.coverity.com/projects
 
 How to install?
 ----------------
-See https://github.com/islog/liblogicalaccess/wiki/Install-LibLogicalAccess
+See [installation page](https://github.com/islog/liblogicalaccess/wiki/Install-LibLogicalAccess).
 
 
 How to build?
 ----------------
-See https://github.com/islog/liblogicalaccess/wiki/Build-Liblogicalaccess
+See [build page](https://github.com/islog/liblogicalaccess/wiki/Build-Liblogicalaccess).

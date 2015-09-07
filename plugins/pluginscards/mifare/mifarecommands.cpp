@@ -4,8 +4,11 @@
  * \brief Mifare commands.
  */
 
+#include <cstring>
+#include <logicalaccess/logs.hpp>
 #include "mifarecommands.hpp"
 #include "mifarechip.hpp"
+#include "logicalaccess/myexception.hpp"
 
 #define PREFIX_PATTERN 0xE3
 #define POLYNOM_PATTERN 0x1D
@@ -137,7 +140,12 @@ namespace logicalaccess
             madbuf[sector * 2 + 1] = (aid & 0xff00) >> 8;
             if (madbuf[1] == 0x00)
             {
-                madbuf[1] = static_cast<unsigned char>(sector);
+                // BCD Nibble representation
+                madbuf[1] = static_cast<unsigned char>(sector % 10);
+                if (sector >= 10)
+                {
+                    madbuf[1] |= 0x10;
+                }
             }
             madbuf[0] = calculateMADCrc(&madbuf[0], madbuf.size());
 
@@ -404,5 +412,51 @@ namespace logicalaccess
     std::shared_ptr<MifareChip> MifareCommands::getMifareChip() const
     {
         return std::dynamic_pointer_cast<MifareChip>(getChip());
+    }
+
+    bool MifareCommands::writeValueBlock(uint8_t blockno, int32_t input_value, uint8_t backup_blockno)
+    {
+        int32_t value                   = input_value;
+        int32_t reverse                 = value ^ 0xFFFFFFFF;
+        uint8_t backup_blockno_reverse  = backup_blockno ^ 0xFF;
+
+        std::vector<uint8_t> buf(16);
+        memcpy(&buf[0], &value, 4);
+        memcpy(&buf[4], &reverse, 4);
+        memcpy(&buf[8], &value, 4);
+        memcpy(&buf[12], &backup_blockno, 1);
+        memcpy(&buf[13], &backup_blockno_reverse, 1);
+        memcpy(&buf[14], &backup_blockno, 1);
+        memcpy(&buf[15], &backup_blockno_reverse, 1);
+        updateBinary(blockno, buf);
+
+        return true;
+    }
+
+    bool MifareCommands::readValueBlock(uint8_t blockno, int32_t &value, uint8_t &backup_block)
+    {
+        auto buffer = readBinary(blockno, 16);
+
+        int32_t value0, value1, value_reverse;
+        uint8_t backup0, backup1, backup0_reverse, backup1_reverse;
+
+        int idx = 0;
+        memcpy(&value0, &buffer[idx], 4);           idx += 4;
+        memcpy(&value_reverse, &buffer[idx], 4);    idx += 4;
+        memcpy(&value1, &buffer[idx], 4);           idx +=4;
+        memcpy(&backup0, &buffer[idx], 1);          idx++;
+        memcpy(&backup0_reverse, &buffer[idx], 1);  idx++;
+        memcpy(&backup1, &buffer[idx], 1);          idx++;
+        memcpy(&backup1_reverse, &buffer[idx], 1);  idx++;
+
+        if (value0 == value1 && (value0 ^ 0xFFFFFFFF) == value_reverse &&
+            backup0 == backup1 && (backup0 ^ 0xFF) == backup0_reverse &&
+            backup0_reverse == backup1_reverse)
+        {
+            value = value0;
+            backup_block = backup0;
+            return true;
+        }
+        return false;
     }
 }

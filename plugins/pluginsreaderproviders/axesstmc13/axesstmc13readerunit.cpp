@@ -17,6 +17,8 @@
 #include "readercardadapters/axesstmc13readercardadapter.hpp"
 #include <boost/filesystem.hpp>
 #include "readercardadapters/axesstmc13datatransport.hpp"
+#include "logicalaccess/bufferhelper.hpp"
+#include <boost/property_tree/xml_parser.hpp>
 
 namespace logicalaccess
 {
@@ -26,11 +28,7 @@ namespace logicalaccess
         d_readerUnitConfig.reset(new AxessTMC13ReaderUnitConfiguration());
         setDefaultReaderCardAdapter(std::shared_ptr<AxessTMC13ReaderCardAdapter>(new AxessTMC13ReaderCardAdapter()));
         std::shared_ptr<AxessTMC13DataTransport> dataTransport(new AxessTMC13DataTransport());
-#ifndef UNIX
-        dataTransport->setPortBaudRate(CBR_57600);
-#else
-        dataTransport->setPortBaudRate(B57600);
-#endif
+        dataTransport->setPortBaudRate(57600);
         setDataTransport(dataTransport);
         d_card_type = "UNKNOWN";
 
@@ -217,9 +215,9 @@ namespace logicalaccess
         return std::dynamic_pointer_cast<AxessTMC13ReaderCardAdapter>(adapter);
     }
 
-    string AxessTMC13ReaderUnit::getReaderSerialNumber()
+    std::string AxessTMC13ReaderUnit::getReaderSerialNumber()
     {
-        string ret;
+        std::string ret;
 
         return ret;
     }

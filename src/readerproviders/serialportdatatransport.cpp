@@ -8,18 +8,16 @@
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
 #include "logicalaccess/cards/readercardadapter.hpp"
 #include "logicalaccess/bufferhelper.hpp"
+#include "logicalaccess/settings.hpp"
+#include "logicalaccess/logs.hpp"
+#include <boost/property_tree/ptree.hpp>
 
 namespace logicalaccess
 {
     SerialPortDataTransport::SerialPortDataTransport(const std::string& portname) : d_isAutoDetected(false)
     {
         d_port.reset(new SerialPortXml(portname));
-
-#ifndef UNIX
-        d_portBaudRate = CBR_9600;
-#else
-        d_portBaudRate = B9600;
-#endif
+        d_portBaudRate = 9600;
     }
 
     SerialPortDataTransport::~SerialPortDataTransport()
@@ -85,15 +83,23 @@ namespace logicalaccess
 
     std::vector<unsigned char> SerialPortDataTransport::receive(long int timeout)
     {
+        LOG(DEBUGS) << "TIMEOUT: " << timeout;
         std::vector<unsigned char> res;
         const std::chrono::steady_clock::time_point clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeout);
 
         do
         {
-            if (d_port->getSerialPort()->getAvailableDataMutex().try_lock_until(boost::chrono::steady_clock::now() + boost::chrono::milliseconds(timeout)))
-            {
-                d_port->getSerialPort()->read(res, 128);
-            }
+            LOG(DEBUGS) << "SerialPortDT receiving";
+
+            // our lambda will get executed only if some data
+            // are available.
+            d_port->getSerialPort()->waitMoreData(clock_timeout,
+            [&](){
+                auto ret = d_port->getSerialPort()->read(res);
+                if (ret == 0)
+                    d_port->getSerialPort()->dataConsumed();
+            });
+
         } while (std::chrono::steady_clock::now() < clock_timeout && res.size() == 0x00);
 
         LOG(LogLevel::COMS) << "Command response: " << BufferHelper::getHex(res);

@@ -11,6 +11,7 @@
 #include <iomanip>
 #include <sstream>
 #include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
+#include "logicalaccess/cards/locationnode.hpp"
 
 namespace logicalaccess
 {

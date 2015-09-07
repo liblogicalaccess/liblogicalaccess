@@ -59,4 +59,34 @@ namespace logicalaccess
 
         getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x86, 0x00, 0x00, static_cast<unsigned char>(command.size()), command);
     }
+
+	void MifareSCMCommands::increment(unsigned char blockno, uint32_t value)
+	{
+        // Somehow the documentation is invalid, and increment and decrement
+        // operation code are reversed (SCL011).
+		std::vector<unsigned char> buf;
+		buf.push_back(0xC1);
+		buf.push_back(blockno);
+		buf.push_back(static_cast<unsigned char>(value & 0xff));
+		buf.push_back(static_cast<unsigned char>((value >> 8) & 0xff));
+		buf.push_back(static_cast<unsigned char>((value >> 16) & 0xff));
+		buf.push_back(static_cast<unsigned char>((value >> 24) & 0xff));
+
+		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xF0, 0x00, blockno, static_cast<unsigned char>(buf.size()), buf);
+	}
+
+	void MifareSCMCommands::decrement(unsigned char blockno, uint32_t value)
+	{
+        // Somehow the documentation is invalid, and increment and decrement
+        // operation code are reversed (SCL011).
+		std::vector<unsigned char> buf;
+		buf.push_back(0xC0);
+		buf.push_back(blockno);
+		buf.push_back(static_cast<unsigned char>(value & 0xff));
+		buf.push_back(static_cast<unsigned char>((value >> 8) & 0xff));
+		buf.push_back(static_cast<unsigned char>((value >> 16) & 0xff));
+		buf.push_back(static_cast<unsigned char>((value >> 24) & 0xff));
+
+		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xF0, 0x00, blockno, static_cast<unsigned char>(buf.size()), buf);
+	}
 }

@@ -4,6 +4,7 @@
  * \brief  OK5553 reader unit configuration.
  */
 
+#include <boost/property_tree/ptree.hpp>
 #include "ok5553readerunitconfiguration.hpp"
 #include "ok5553readerprovider.hpp"
 

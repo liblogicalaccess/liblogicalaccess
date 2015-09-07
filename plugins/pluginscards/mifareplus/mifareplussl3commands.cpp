@@ -4,6 +4,7 @@
  * \brief MifarePlus SL3 commands.
  */
 
+#include <logicalaccess/logs.hpp>
 #include "mifareplussl3commands.hpp"
 #include "mifarepluschip.hpp"
 

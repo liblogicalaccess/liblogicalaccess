@@ -7,6 +7,7 @@
 #include "desfireev1stidstrcommands.hpp"
 #include "desfirechip.hpp"
 #include <openssl/rand.h>
+#include <string.h>
 #include "logicalaccess/logs.hpp"
 #include "logicalaccess/crypto/aes_cipher.hpp"
 #include "logicalaccess/crypto/aes_symmetric_key.hpp"
@@ -17,6 +18,7 @@
 #include "desfireprofile.hpp"
 #include "logicalaccess/cards/computermemorykeystorage.hpp"
 #include "logicalaccess/cards/readermemorykeystorage.hpp"
+#include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {
@@ -86,9 +88,9 @@ namespace logicalaccess
         return freemem;
     }
 
-    vector<DFName> DESFireEV1STidSTRCommands::getDFNames()
+    std::vector<DFName> DESFireEV1STidSTRCommands::getDFNames()
     {
-        vector<DFName> dfnames;
+        std::vector<DFName> dfnames;
 
         LOG(LogLevel::ERRORS) << "Function not available with this reader.";
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
@@ -96,9 +98,9 @@ namespace logicalaccess
         return dfnames;
     }
 
-    vector<unsigned short> DESFireEV1STidSTRCommands::getISOFileIDs()
+    std::vector<unsigned short> DESFireEV1STidSTRCommands::getISOFileIDs()
     {
-        vector<unsigned short> fileids;
+        std::vector<unsigned short> fileids;
 
         LOG(LogLevel::ERRORS) << "Function not available with this reader.";
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");

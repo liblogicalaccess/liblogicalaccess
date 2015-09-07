@@ -24,6 +24,13 @@
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
 #include <map>
+#include "logicalaccess/bufferhelper.hpp"
+
+#include "logicalaccess/readerproviders/lcddisplay.hpp"
+#include "logicalaccess/readerproviders/ledbuzzerdisplay.hpp"
+#include "logicalaccess/readerproviders/readerunitconfiguration.hpp"
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 
 namespace logicalaccess
 {
@@ -57,6 +64,11 @@ namespace logicalaccess
         return d_lcdDisplay;
     }
 
+    void ReaderUnit::setLCDDisplay(std::shared_ptr<LCDDisplay> d)
+    {
+        d_lcdDisplay = d;
+    }
+
     std::shared_ptr<LEDBuzzerDisplay> ReaderUnit::getLEDBuzzerDisplay()
     {
         if (d_ledBuzzerDisplay)
@@ -64,6 +76,11 @@ namespace logicalaccess
             d_ledBuzzerDisplay->setReaderCardAdapter(getDefaultReaderCardAdapter());
         }
         return d_ledBuzzerDisplay;
+    }
+
+    void ReaderUnit::setLEDBuzzerDisplay(std::shared_ptr<LEDBuzzerDisplay> lbd)
+    {
+        d_ledBuzzerDisplay = lbd;
     }
 
     bool ReaderUnit::waitInsertion(const std::vector<unsigned char>& identifier, unsigned int maxwait)
@@ -356,4 +373,22 @@ namespace logicalaccess
             }
         }
     }
+
+	void ReaderUnit::setCardTechnologies(const TechnoBitset& bitset)
+	{
+
+	}
+
+    TechnoBitset ReaderUnit::getCardTechnologies()
+    {
+        TechnoBitset tb = 0;
+        return tb;
+    }
+
+
+	TechnoBitset ReaderUnit::getPossibleCardTechnologies()
+	{
+		TechnoBitset tb = 0;
+		return tb;
+	}
 }

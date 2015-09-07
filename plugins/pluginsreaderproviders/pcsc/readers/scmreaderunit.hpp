@@ -32,11 +32,11 @@ namespace logicalaccess
          */
         virtual ~SCMReaderUnit();
 
-        /**
-         * \brief Get the PC/SC reader unit type.
-         * \return The PC/SC reader unit type.
-         */
-        virtual PCSCReaderUnitType getPCSCType() const;
+		/**
+		* \brief Get the PC/SC reader unit type.
+		* \return The PC/SC reader unit type.
+		*/
+		virtual PCSCReaderUnitType getPCSCType() const;
 
     protected:
     };

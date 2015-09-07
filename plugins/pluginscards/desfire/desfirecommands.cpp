@@ -6,6 +6,7 @@
 
 #include "desfirecommands.hpp"
 #include "desfirechip.hpp"
+#include <cstring>
 
 namespace logicalaccess
 {

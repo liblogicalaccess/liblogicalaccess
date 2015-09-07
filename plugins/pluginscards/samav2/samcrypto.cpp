@@ -9,6 +9,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <climits>
+#include "logicalaccess/myexception.hpp"
 
 #ifndef UNIX
 #include "logicalaccess/msliblogicalaccess.h"

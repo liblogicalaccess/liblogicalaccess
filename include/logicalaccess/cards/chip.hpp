@@ -7,13 +7,11 @@
 #ifndef LOGICALACCESS_CHIP_HPP
 #define LOGICALACCESS_CHIP_HPP
 
-#include "logicalaccess/readerproviders/readerunit.hpp"
-#include "logicalaccess/cards/profile.hpp"
-#include "logicalaccess/cards/locationnode.hpp"
-#include "logicalaccess/services/cardservice.hpp"
-#include "logicalaccess/cards/commands.hpp"
-
-#include "logicalaccess/logs.hpp"
+#include <memory>
+#include <vector>
+#include "logicalaccess/lla_fwd.hpp"
+#include "logicalaccess/logicalaccess_api.hpp"
+#include <logicalaccess/services/cardservice.hpp>
 
 namespace logicalaccess
 {

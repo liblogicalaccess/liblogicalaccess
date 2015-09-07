@@ -4,6 +4,7 @@
  * \brief  Elatec reader unit configuration.
  */
 
+#include <boost/property_tree/ptree.hpp>
 #include "elatecreaderunitconfiguration.hpp"
 #include "elatecreaderprovider.hpp"
 
