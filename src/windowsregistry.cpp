@@ -82,7 +82,7 @@ bool WindowsRegistry::readBinary(const std::string &keypath,
     std::vector<uint8_t> tmpbuf(100);
     DWORD size  = tmpbuf.size();
     DWORD flags = RRF_RT_ANY;
-    ret = RegGetValue(hKey, nullptr, value, flags, nullptr, &tmpbuf[0], &size);
+    ret = RegQueryValueEx(hKey, value, 0, nullptr, &tmpbuf[0], &size);
     tmpbuf.resize(size);
     if (ret == ERROR_SUCCESS)
     {
