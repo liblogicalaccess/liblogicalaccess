@@ -119,20 +119,20 @@ namespace logicalaccess
     void NXPAV2KeyDiversification::serialize(boost::property_tree::ptree& parentNode)
     {
         boost::property_tree::ptree node;
-        node.put("divInput", std::string(d_divInput.begin(), d_divInput.end()));
-        node.put("systemIdentifier", std::string(d_systemIdentifier.begin(), d_systemIdentifier.end()));
+        node.put("divInput", BufferHelper::getHex(d_divInput));
+        node.put("systemIdentifier", BufferHelper::getHex(d_systemIdentifier));
         parentNode.add_child(getDefaultXmlNodeName(), node);
     }
 
     void NXPAV2KeyDiversification::unSerialize(boost::property_tree::ptree& node)
     {
         std::string divinput = node.get_child("divInput").get_value<std::string>();
-        d_divInput = std::vector<unsigned char>(divinput.begin(), divinput.end());
-        boost::optional<const boost::property_tree::ptree&> siChild = node.get_child("systemIdentifier");
+        d_divInput = BufferHelper::fromHexString(divinput);
+        boost::optional<boost::property_tree::ptree&> siChild = node.get_child_optional("systemIdentifier");
         if (siChild)
         {
             std::string systemIdentifier = siChild.get().get_value<std::string>();
-            d_systemIdentifier = std::vector<unsigned char>(systemIdentifier.begin(), systemIdentifier.end());
+            d_systemIdentifier = BufferHelper::fromHexString(systemIdentifier);
         }
     }
 }
