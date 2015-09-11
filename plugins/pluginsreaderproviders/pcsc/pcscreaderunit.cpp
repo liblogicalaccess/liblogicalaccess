@@ -722,6 +722,9 @@ namespace logicalaccess
                         d_insertedChip->setChipIdentifier(std::vector<unsigned char>());
                     }
                 }
+
+                if (d_insertedChip->getGenericCardType() == "DESFire")
+                    std::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->getCrypto()->setCryptoContext(std::dynamic_pointer_cast<DESFireProfile>(d_insertedChip->getProfile()), d_insertedChip->getChipIdentifier());
                 ret = true;
         }
 
