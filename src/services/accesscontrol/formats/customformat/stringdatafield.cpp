@@ -137,9 +137,14 @@ namespace logicalaccess
         boost::property_tree::ptree node;
 
         ValueDataField::serialize(node);
-        node.put("Value", getValue());
         node.put("Padding", d_padding);
 		node.put("Charset", d_charset);
+        std::string strv = getValue();
+        if (d_charset != "ascii" && d_charset != "us-ascii" && d_charset != "utf-8")
+        {
+            strv = BufferHelper::getHex(std::vector<unsigned char>(strv.begin(), strv.end()));
+        }
+        node.put("Value", strv);
 
         parentNode.add_child(getDefaultXmlNodeName(), node);
     }
@@ -147,9 +152,17 @@ namespace logicalaccess
 	void StringDataField::unSerialize(boost::property_tree::ptree& node)
     {
         ValueDataField::unSerialize(node);
-        setValue(node.get_child("Value").get_value<std::string>());
         d_padding = node.get_child("Padding").get_value<unsigned char>();
 		d_charset = node.get_child("Charset").get_value<std::string>();
+        std::string strv = node.get_child("Value").get_value<std::string>();
+        if (d_charset != "ascii" && d_charset != "us-ascii" && d_charset != "utf-8")
+        {
+            d_value = BufferHelper::fromHexString(strv);
+        }
+        else
+        {
+            setValue(strv);
+        }
     }
 
     std::string StringDataField::getDefaultXmlNodeName() const
