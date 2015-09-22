@@ -38,7 +38,7 @@ bool WindowsRegistry::writeBinary(const std::string &keypath,
 
     LPCTSTR value = TEXT(keyname.c_str());
     ret = RegSetValueEx(hKey, value, 0, REG_BINARY, (CONST BYTE *)&data[0],
-                        data.size());
+                        static_cast<DWORD>(data.size()));
     if (ret == ERROR_SUCCESS)
     {
         LOG(INFOS) << "Success writing the registry key.";
@@ -80,7 +80,7 @@ bool WindowsRegistry::readBinary(const std::string &keypath,
     LPCTSTR value = TEXT(keyname.c_str());
 
     std::vector<uint8_t> tmpbuf(100);
-    DWORD size  = tmpbuf.size();
+    DWORD size = static_cast<DWORD>(tmpbuf.size());
     DWORD flags = RRF_RT_ANY;
     ret = RegQueryValueEx(hKey, value, 0, nullptr, &tmpbuf[0], &size);
     tmpbuf.resize(size);

@@ -343,7 +343,9 @@ namespace logicalaccess
         if (dataLength >= 16)
         {
             getMifareChip()->getMifareCommands()->changeBlock(sab, mLocation->sector, getMifareChip()->getMifareCommands()->getNbBlocks(mLocation->sector), false);
-            return static_cast<unsigned int>(getMifareChip()->getMifareCommands()->readBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(mLocation->sector) + getMifareChip()->getMifareCommands()->getNbBlocks(mLocation->sector)), 16).size());
+            std::vector<unsigned char> vdata = getMifareChip()->getMifareCommands()->readBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(mLocation->sector) + getMifareChip()->getMifareCommands()->getNbBlocks(mLocation->sector)), 16);
+            memcpy(data, &vdata[0], vdata.size());
+            return static_cast<unsigned int>(vdata.size());
         }
 
         return 0;
