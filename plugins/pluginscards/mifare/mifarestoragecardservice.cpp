@@ -4,6 +4,7 @@
  * \brief Mifare storage card service.
  */
 
+#include <cstring>
 #include <logicalaccess/logs.hpp>
 #include "mifarestoragecardservice.hpp"
 #include "mifarechip.hpp"
