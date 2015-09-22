@@ -158,6 +158,7 @@ namespace logicalaccess
         keyB->serialize(kb);
         node.add_child("KeyB", kb);
         node.put("SectorAccessBits", oss.str());
+        node.put("GPB", gpb);
 
         boost::property_tree::ptree madnode;
         madnode.put("Use", useMAD);
@@ -167,6 +168,7 @@ namespace logicalaccess
         boost::property_tree::ptree madkb;
         madKeyB->serialize(madkb);
         madnode.add_child("MADKeyB", madkb);
+        madnode.put("MADGPB", madGPB);
         node.add_child("MAD", madnode);
 
         parentNode.add_child(getDefaultXmlNodeName(), node);
@@ -193,13 +195,15 @@ namespace logicalaccess
             buf[i] = static_cast<unsigned char>(tmp);
         }
         sab.fromArray(buf, sizeof(buf));
+        gpb = node.get_child("GPB").get_value<unsigned char>();
 
-        boost::property_tree::ptree modnode = node.get_child("MAD");
-        if (!modnode.empty())
+        boost::property_tree::ptree madnode = node.get_child("MAD");
+        if (!madnode.empty())
         {
-            useMAD = modnode.get_child("Use").get_value<bool>();
-            madKeyA->unSerialize(modnode.get_child("MADKeyA"), "");
-            madKeyB->unSerialize(modnode.get_child("MADKeyB"), "");
+            useMAD = madnode.get_child("Use").get_value<bool>();
+            madKeyA->unSerialize(madnode.get_child("MADKeyA"), "");
+            madKeyB->unSerialize(madnode.get_child("MADKeyB"), "");
+            madGPB = madnode.get_child("MADGPB").get_value<unsigned char>();
         }
     }
 
