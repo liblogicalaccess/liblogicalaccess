@@ -4,7 +4,7 @@
 
 #include <logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp>
 #include "MifarePlusSL1Chip.hpp"
-#include "mifareplsstoragecardservice_sl1.hpp"
+#include "mifareplusstoragecardservice_sl1.hpp"
 
 using namespace logicalaccess;
 

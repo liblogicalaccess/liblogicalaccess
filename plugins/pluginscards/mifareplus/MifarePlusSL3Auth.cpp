@@ -141,7 +141,7 @@ ByteVector MifarePlusSL3Auth::deriveKEnc()
     //set the session key base for Kenc
     tmp.insert(tmp.end(), f, f + 5);
     tmp.insert(tmp.end(), g, g + 5);
-    tmp.resize(MIFARE_PLUS_AES_KEY_SIZE);
+    tmp.resize(16);
     c = 0;
     while (c < 5)
     {
@@ -177,7 +177,7 @@ ByteVector MifarePlusSL3Auth::deriveKMac()
     //set the session key base for Kmac
     tmp.insert(tmp.end(), f, f + 5);
     tmp.insert(tmp.end(), g, g + 5);
-    tmp.resize(MIFARE_PLUS_AES_KEY_SIZE);
+    tmp.resize(16);
     c = 0;
     while (c < 5)
     {

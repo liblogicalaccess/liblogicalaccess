@@ -9,7 +9,6 @@
 
 #include <logicalaccess/cards/aes128key.hpp>
 #include "../mifare/mifarecommands.hpp"
-#include "mifareplusaccessinfo.hpp"
 
 namespace logicalaccess
 {

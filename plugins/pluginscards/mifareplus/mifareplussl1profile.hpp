@@ -7,7 +7,6 @@
 #ifndef LOGICALACCESS_MIFAREPLUSSL1_HPP
 #define LOGICALACCESS_MIFAREPLUSSL1_HPP
 
-#include "mifareplusprofile.hpp"
 #include "../mifare/mifareprofile.hpp"
 
 #include <string>

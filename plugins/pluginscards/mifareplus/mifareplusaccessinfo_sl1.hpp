@@ -14,36 +14,13 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API MifarePlusSL1AccessInfo : public MifareAccessInfo
     {
       public:
-        MifarePlusSL1AccessInfo()
-            : aesAuthKey(new AES128Key())
-        {
-        }
+        MifarePlusSL1AccessInfo();
 
-        virtual void serialize(boost::property_tree::ptree &parentNode) override
-        {
-            boost::property_tree::ptree node;
-            MifareAccessInfo::serialize(node);
+        virtual void serialize(boost::property_tree::ptree &parentNode) override;
 
-            boost::property_tree::ptree aes_key;
-            aesAuthKey->serialize(aes_key);
-            node.add_child("AESAuthKey", aes_key);
+        virtual void unSerialize(boost::property_tree::ptree &parentNode) override;
 
-            parentNode.add_child(
-                MifarePlusSL1AccessInfo::getDefaultXmlNodeName(), node);
-        }
-
-        virtual void
-        unSerialize(boost::property_tree::ptree &parentNode) override
-        {
-            MifareAccessInfo::unSerialize(parentNode.get_child(
-                MifareAccessInfo::getDefaultXmlNodeName()));
-            aesAuthKey->unSerialize(parentNode.get_child("AESAuthKey"), "");
-        }
-
-        virtual std::string getDefaultXmlNodeName() const override
-        {
-            return "MifarePlusSL1AccessInfo";
-        }
+        virtual std::string getDefaultXmlNodeName() const;
 
         /**
          * Key for card authentication in SL1.
