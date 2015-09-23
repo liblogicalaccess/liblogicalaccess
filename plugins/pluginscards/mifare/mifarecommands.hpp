@@ -32,7 +32,9 @@ namespace logicalaccess
          * \param readtrailer Read the trailer block.
          * \return The number of bytes red, or a negative value on error.
          */
-        virtual std::vector<unsigned char> readSector(int sector, int start_block, const MifareAccessInfo::SectorAccessBits& sab, bool readtrailer = false);
+        virtual std::vector<unsigned char> readSector(int sector, int start_block,
+                                                      const MifareAccessInfo::SectorAccessBits& sab,
+                                                      bool readtrailer = false) final;
 
         /**
          * \brief Write a whole sector.
@@ -46,7 +48,11 @@ namespace logicalaccess
          * \return The number of bytes written, or a negative value on error.
          * \warning If sector is 0, the first 16 bytes will be skipped and be considered "copied" since the first block in sector 0 is read-only.
          */
-        virtual void writeSector(int sector, int start_block, const std::vector<unsigned char>& buf, const MifareAccessInfo::SectorAccessBits& sab, unsigned char userbyte = 0x00, MifareAccessInfo::SectorAccessBits* newsab = NULL);
+        virtual void writeSector(int sector, int start_block,
+                                 const std::vector<unsigned char>& buf,
+                                 const MifareAccessInfo::SectorAccessBits& sab,
+                                 unsigned char userbyte = 0x00,
+                                 MifareAccessInfo::SectorAccessBits* newsab = NULL) final;
 
         /**
          * \brief Read several sectors.
@@ -58,7 +64,9 @@ namespace logicalaccess
          * \param sab The sector access bits.
          * \return The number of bytes red, or a negative value on error.
          */
-        virtual std::vector<unsigned char> readSectors(int start_sector, int stop_sector, int start_block, const MifareAccessInfo::SectorAccessBits& sab);
+        virtual std::vector<unsigned char> readSectors(int start_sector, int stop_sector,
+                                                       int start_block,
+                                                       const MifareAccessInfo::SectorAccessBits& sab) final;
 
         /**
          * \brief Write several sectors.
@@ -72,7 +80,11 @@ namespace logicalaccess
          * \param newsab If not NULL the keys will be changed as well.
          * \return The number of bytes red, or a negative value on error.
          */
-        virtual void writeSectors(int start_sector, int stop_sector, int start_block, const std::vector<unsigned char>& buf, const MifareAccessInfo::SectorAccessBits& sab, unsigned char userbyte = 0x00, MifareAccessInfo::SectorAccessBits* newsab = NULL);
+        virtual void writeSectors(int start_sector, int stop_sector,
+                                  int start_block, const std::vector<unsigned char>& buf,
+                                  const MifareAccessInfo::SectorAccessBits& sab,
+                                  unsigned char userbyte = 0x00,
+                                  MifareAccessInfo::SectorAccessBits* newsab = NULL) final;
 
         /**
          * \brief Get the sector referenced by the AID from the MAD.

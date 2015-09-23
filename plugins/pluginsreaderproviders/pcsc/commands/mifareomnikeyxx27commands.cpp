@@ -26,6 +26,7 @@ namespace logicalaccess
 
     void MifareOmnikeyXX27Commands::authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype)
     {
+        TRACE(blockno, keyno, keytype)
         std::vector<unsigned char> command;
 
         command.push_back(0x01);

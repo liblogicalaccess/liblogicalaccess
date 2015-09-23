@@ -37,7 +37,7 @@ namespace logicalaccess
          * \param data The buffer.
          * \param size_t The buffer length.
          */
-        void CheckResult(const void* data, size_t datalen);
+		virtual void CheckResult(const void* data, size_t datalen);
 
     protected:
 

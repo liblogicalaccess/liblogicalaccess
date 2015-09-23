@@ -13,6 +13,19 @@
 
 namespace logicalaccess
 {
+    LIBLOGICALACCESS_API std::ostream &operator<<(std::ostream &s, const MifareKeyType &k)
+    {
+        if (k == KT_KEY_A)
+        {
+            s << "KEY_A";
+        }
+        else if (k == KT_KEY_B)
+        {
+            s << "KEY_B";
+        }
+        return s;
+    }
+
     size_t MifareAccessInfo::SectorAccessBits::toArray(void* buf, size_t buflen) const
     {
         if (buflen < 3)
@@ -171,7 +184,7 @@ namespace logicalaccess
         madnode.put("MADGPB", madGPB);
         node.add_child("MAD", madnode);
 
-        parentNode.add_child(getDefaultXmlNodeName(), node);
+		parentNode.add_child(MifareAccessInfo::getDefaultXmlNodeName(), node);
     }
 
     void MifareAccessInfo::unSerialize(boost::property_tree::ptree& node)

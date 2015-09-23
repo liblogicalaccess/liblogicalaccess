@@ -32,9 +32,9 @@ int main(int ac, char **av)
     PRINT_TIME("Chip identifier: " <<
                logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
 
-    LLA_ASSERT(chip->getCardType() == "Mifare1K",
-               "Chip is not a Mifare1K, but is " + chip->getCardType() +
-               " instead.");
+   // LLA_ASSERT(chip->getCardType() == "Mifare1K",
+//               "Chip is not a Mifare1K, but is " + chip->getCardType() +
+//               " instead.");
 
     auto storage = std::dynamic_pointer_cast<logicalaccess::StorageCardService>(
             chip->getService(logicalaccess::CST_STORAGE));
@@ -46,26 +46,28 @@ int main(int ac, char **av)
     // We want to write data on sector 1.
     std::shared_ptr<logicalaccess::MifareLocation> mlocation(
             new logicalaccess::MifareLocation());
-    mlocation->sector = 2;
+    mlocation->sector = 4;
     mlocation->block = 0;
     location = mlocation;
 
     // Key to use for sector authentication
     std::shared_ptr<logicalaccess::MifareAccessInfo> maiToUse(
             new logicalaccess::MifareAccessInfo());
-    maiToUse->keyA->fromString("ff ff ff ff ff ff");      // Default key
+    maiToUse->keyA->fromString("00 00 00 00 00 00");      // Default key
+    maiToUse->keyB->fromString("00 00 00 00 00 00");
+    maiToUse->sab.setAReadBWriteConfiguration();
     aiToUse = maiToUse;
 
     // Change the sector key with the following key
     std::shared_ptr<logicalaccess::MifareAccessInfo> maiToWrite(
             new logicalaccess::MifareAccessInfo());
-    maiToWrite->keyA->fromString("ff ff ff ff ff ff");
-    maiToWrite->keyB->fromString("ff ff ff ff ff ff");
+    maiToWrite->keyA->fromString("00 00 00 00 00 00");
+    maiToWrite->keyB->fromString("00 00 00 00 00 00");
     maiToWrite->sab.setAReadBWriteConfiguration(); // Configure the sector access bits
     aiToWrite = maiToWrite;
 
     // Data to write
-    std::vector<uint8_t> writedata(16, 'd');
+    std::vector<uint8_t> writedata(16, 'e');
 
     // Data read
     std::vector<uint8_t> readdata;

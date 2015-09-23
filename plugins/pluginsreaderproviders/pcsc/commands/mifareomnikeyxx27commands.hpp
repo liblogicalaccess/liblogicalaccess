@@ -19,7 +19,7 @@ namespace logicalaccess
     /**
      * \brief The Mifare commands class for Omnikey xx27 reader.
      */
-    class LIBLOGICALACCESS_API MifareOmnikeyXX27Commands : public MifarePCSCCommands
+    class LIBLOGICALACCESS_API MifareOmnikeyXX27Commands : public virtual MifarePCSCCommands
     {
     public:
 
@@ -33,7 +33,9 @@ namespace logicalaccess
          */
         virtual ~MifareOmnikeyXX27Commands();
 
-    protected:
+    public:
+        using MifarePCSCCommands::authenticate;
+//        using MifarePCSCCommands::loadKey;
 
         /**
          * \brief Authenticate a block, given a key number.

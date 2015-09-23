@@ -17,6 +17,8 @@ namespace logicalaccess
      */
     typedef enum { KT_KEY_A = 0x60, KT_KEY_B = 0x61 } MifareKeyType;
 
+    LIBLOGICALACCESS_API std::ostream &operator<<(std::ostream &s, const MifareKeyType &k);
+
     /**
      * \brief A Mifare access informations.
      */

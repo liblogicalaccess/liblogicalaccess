@@ -85,7 +85,7 @@ namespace logicalaccess
         if (Settings::getInstance()->ColorizeLog)
             ret = green(underline("Context:")) + ' ';
         else
-            ret = "Context: ";
+            ret   = "Context: ";
         int count = 0;
 
         for (const auto &itr : context_)
@@ -160,6 +160,35 @@ namespace logicalaccess
     {
         Settings::getInstance()->IsLogEnabled = old_;
     }
+    
+    std::string get_nth_param_name(const char *param_names, int idx)
+    {
+        // We probably can go full constexpr here.
+        std::string ret;
+        char *dup = strdup(param_names);
+        char *ptr = strtok(dup, ", ");
+        int i = 1;
+
+        if (idx == 0)
+            ret = std::string(ptr);
+
+        while ((ptr = strtok(nullptr, ", ")))
+        {
+            if (i == idx)
+            {
+                ret = std::string(ptr);
+                break;
+            }
+            i++;
+        }
+        free(dup);
+        return ret;
+    }
+
+    void trace_print_helper(std::stringstream &ss, const char *param_names, int idx)
+    {
+        ss << std::endl;
+    }
 
     LogContext::LogContext(const std::string &msg)
     {
@@ -170,4 +199,5 @@ namespace logicalaccess
     {
         context_.pop_back();
     }
+
 }

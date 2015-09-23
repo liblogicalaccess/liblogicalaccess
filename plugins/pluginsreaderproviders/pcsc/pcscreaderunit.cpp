@@ -6,16 +6,13 @@
 
 #include "pcscreaderunit.hpp"
 
-#include <iostream>
 #include <iomanip>
-#include <sstream>
 #include <thread>
 
 #include "pcscreaderprovider.hpp"
 #include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
 #include "logicalaccess/cards/chip.hpp"
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
-#include "logicalaccess/dynlibrary/idynlibrary.hpp"
 
 #include "commands/samav1iso7816commands.hpp"
 #include "commands/samav2iso7816commands.hpp"
@@ -26,7 +23,6 @@
 #include "commands/mifarecherrycommands.hpp"
 #include "commands/mifarespringcardcommands.hpp"
 #include "commands/iso15693pcsccommands.hpp"
-#include "commands/iso7816iso7816commands.hpp"
 #include "commands/twiciso7816commands.hpp"
 #include "commands/mifareultralightpcsccommands.hpp"
 #include "commands/mifareultralightcpcsccommands.hpp"
@@ -34,17 +30,18 @@
 #include "commands/mifareultralightcacsacrcommands.hpp"
 #include "commands/mifareultralightcspringcardcommands.hpp"
 #include "commands/mifareomnikeyxx27commands.hpp"
+#include "commands/mifareomnikeyxx21commands.hpp"
+#include "commands/mifareplus_omnikeyxx21_sl1.hpp"
+#include "commands/mifareplus_sprincard_sl1.hpp"
+
 #include "commands/proxcommand.hpp"
-#include "readercardadapters/pcscreadercardadapter.hpp"
 #include "mifareplussl1profile.hpp"
-#include "commands/mifareplusspringcardcommandssl1.hpp"
-#include "mifareplussl3profile.hpp"
-#include "commands/mifareplusspringcardcommandssl3.hpp"
 #include "samav1chip.hpp"
 #include "commands/felicascmcommands.hpp"
 
 #include "commands/samiso7816resultchecker.hpp"
 #include "commands/desfireiso7816resultchecker.hpp"
+#include "commands/mifareplusiso7816resultchecker.hpp"
 #include "commands/mifareomnikeyxx27resultchecker.hpp"
 #include "commands/acsacrresultchecker.hpp"
 #include "commands/springcardresultchecker.hpp"
@@ -56,26 +53,29 @@
 #include "readers/springcardreaderunit.hpp"
 #include "readers/acsacrreaderunit.hpp"
 
+#include "../../pluginscards/mifareplus/mifarepluschip.hpp"
+#include "../../pluginscards/mifareplus/MifarePlusSL1Chip.hpp"
+
+
 #include "pcscdatatransport.hpp"
 
 #include "desfirechip.hpp"
-#include "commands/mifareomnikeyxx21commands.hpp"
-#include <boost/filesystem.hpp>
-#include <memory>
+#include "../../pluginscards/mifareplus/MifarePlusSL0Commands.hpp"
 
+#include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
 #include "readers/acsacr1222llcddisplay.hpp"
-#include "logicalaccess/readerproviders/lcddisplay.hpp"
 
 
 #ifdef UNIX
-#include <sys/time.h>
 #endif
 
 #include "logicalaccess/settings.hpp"
 #include "pcsc_ctl_datatransport.hpp"
+#include "commands/mifareplus_acsacr1222l_sl1.hpp"
+#include "commands/mifareplus_pcsc_sl3.hpp"
 
 namespace logicalaccess
 {
@@ -361,10 +361,16 @@ namespace logicalaccess
                                 if ((SCARD_STATE_PRESENT & readers[i].dwEventState) != 0)
                                 {
                                     loop = false;
-                                    cardType = getCardTypeFromATR(readers[i].rgbAtr, readers[i].cbAtr);
+                                    cardType = getCardTypeFromHardcodedATR(readers[i].rgbAtr, readers[i].cbAtr);
                                     if (cardType == "UNKNOWN")
                                     {
-                                        cardType = getGenericCardTypeFromATR(readers[i].rgbAtr, readers[i].cbAtr);
+                                        cardType = getCardTypeFromATR(readers[i].rgbAtr,
+                                                                      readers[i].cbAtr);
+                                        if (cardType == "UNKNOWN")
+                                        {
+                                            cardType = getGenericCardTypeFromATR(
+                                                    readers[i].rgbAtr, readers[i].cbAtr);
+                                        }
                                     }
                                     connectedReader = std::string(reinterpret_cast<const char*>(readers[i].szReader));
 
@@ -656,6 +662,7 @@ namespace logicalaccess
 
                 LOG(LogLevel::INFOS) << "SCardConnect Success !";
 
+                detect_mifareplus_security_level(d_insertedChip);
                 if (d_insertedChip->getChipIdentifier().size() == 0)
                 {
                     try
@@ -980,6 +987,9 @@ namespace logicalaccess
     {
         if (atr && (atrlen > 0))
         {
+            std::vector<unsigned char> sb(atr, atr + atrlen);
+            LOG(LogLevel::INFOS) << "Getting card type for ATR " << BufferHelper::getHex(sb) << " Len {" << atrlen << "}...";
+
             unsigned char eatr[20] = {
                 0x3B, 0x8F, 0x80, 0x01, 0x80,
                 0x4F, 0x0C, 0xA0, 0x00, 0x00,
@@ -1190,6 +1200,27 @@ namespace logicalaccess
         {
             // On OK5427 the ATR for some Prox card is this.
             return "Prox";
+        }
+        if (atrstr == "3B878001C1052F2F0035C730") // level 0 or level 3
+        {
+            return "MifarePlusS";
+        }
+        //3B878001C1052F2F01BCD6A9 // mifare plus X 4K / 7 bytes uid
+        if (atrstr == "3B878001C1052F2F01BCD6A9")
+        {
+            return "MifarePlusX";
+        }
+        if (atrstr == "3B8F8001804F0CA000000306030036000000005D") // MifarePlus S -- SecurityLevel 1
+        {
+            return "MifarePlus_SL1_2K";
+        }
+        if (atrstr == "3B8F8001804F0CA000000306030036000000005D") // MifarePlus S -- SecurityLevel 1
+        {
+            return "MifarePlus_SL1_2K";
+        }
+        if (atrstr == "3B8F8001804F0CA000000306030037000000005C") // Mifare Plus S 4k -- SL1
+        {
+            return "MifarePlus_SL1_4K";
         }
 
         //bool isTEqual0Supported = false;
@@ -1543,7 +1574,7 @@ namespace logicalaccess
                 std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(commands)->setCrypto(samcrypto);
                 resultChecker.reset(new SAMISO7816ResultChecker());
             }
-            else if (type == "MifarePlus4K")
+           /* else if (type == "MifarePlus4K")
             {
                 //TODO : find the SL without ATR
                 std::string ct = getCardTypeFromATR(d_atr, d_atrLength);
@@ -1555,7 +1586,7 @@ namespace logicalaccess
                         commands.reset(new MifarePlusSpringCardCommandsSL1());
                     }
                 }
-                else /* A MODIFIER */
+                else *//* A MODIFIER *//*
                 {
                     chip->setProfile(std::shared_ptr<MifarePlusSL3Profile>(new MifarePlusSL3Profile()));
                     if (getPCSCType() == PCSC_RUT_SPRINGCARD)
@@ -1563,6 +1594,10 @@ namespace logicalaccess
                         commands.reset(new MifarePlusSpringCardCommandsSL3());
                     }
                 }
+            }*/
+            else if (type.find("MifarePlus") == 0)
+            {
+                configure_mifareplus_chip(chip, commands, resultChecker);
             }
             else if (type == "Prox")
             {   // A dummy command, whose only goal is to allow retrieval of the
@@ -1828,4 +1863,153 @@ namespace logicalaccess
     {
         connection_ = nullptr;
     }
+
+    void PCSCReaderUnit::configure_mifareplus_chip(std::shared_ptr<Chip> chip,
+                                                   std::shared_ptr<Commands> &commands,
+                                                   std::shared_ptr<ResultChecker> &resultChecker)
+    {
+        // It's possible we are in security level 1. In this case,
+        // The chip type is MifarePlusSL1Chip (MifarePlusSL1_2kChip or 4k).
+        // We just need to plug the command object for SL1 Mifare.
+        auto mfp_sl1 = std::dynamic_pointer_cast<MifarePlusSL1Chip>(chip);
+        if (mfp_sl1)
+        {
+            LOG(INFOS) << "The mifare plus is in security level 1.";
+
+            if (getPCSCType() == PCSC_RUT_OMNIKEY_XX27)
+            {
+                auto cmd = new MifarePlusSL1Policy<MifarePlusSL1PCSCCommands,
+                        MifareOmnikeyXX27Commands>();
+                commands.reset(cmd);
+                resultChecker.reset(new MifareOmnikeyXX27ResultChecker());
+            }
+            else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_XX21)
+            {
+                commands.reset(new MifarePlusSL1Policy<
+                        MifarePlusOmnikeyXX21SL1Commands,
+                        MifareOmnikeyXX21Commands>);
+            }
+            else if (getPCSCType() == PCSC_RUT_ACS_ACR_1222L)
+            {
+                commands.reset(new MifarePlusACSACR1222L_SL1Commands());
+            }
+            else if (getPCSCType() == PCSC_RUT_SPRINGCARD)
+            {
+                auto cmd = new MifarePlusSL1Policy<
+                        MifarePlusSpringcardAES_SL1_Auth,
+                        MifareSpringCardCommands>();
+                commands.reset(cmd);
+            }
+            else
+            {
+                commands.reset(new MifarePlusSL1PCSCCommands());
+            }
+
+            return;
+        }
+
+        LOG(INFOS) << "Detected some kind of MifarePlus..." << chip->getCardType();
+        auto mfp = std::dynamic_pointer_cast<MifarePlusChip>(chip);
+        assert(mfp);
+        if (mfp->getSecurityLevel() == 0)
+        {
+            LOG(INFOS) << "The mifare plus is in security level 0.";
+            commands.reset(new MifarePlusSL0Commands());
+        }
+        else if (mfp->getSecurityLevel() == 3)
+        {
+            LOG(INFOS) << "The mifare plus is in security level 3.";
+            commands.reset(new MifarePlusSL3PCSCCommands());
+        }
+        else if (mfp->getSecurityLevel() == -1) // unknown
+        {
+            commands.reset(new MifarePlusSL0Commands()); // will be used to detect the security level.
+        }
+        resultChecker = std::make_shared<MifarePlusISO7816ResultChecker>();
+    }
+
+    void PCSCReaderUnit::detect_mifareplus_security_level(std::shared_ptr<Chip> c)
+    {
+        if (c->getCardType() == "MifarePlusS" || c->getCardType() == "MifarePlusX")
+        {
+            auto mfp = std::dynamic_pointer_cast<MifarePlusChip>(c);
+            assert(mfp);
+
+            if (mfp->getSecurityLevel() != -1)
+                return; // we already know the current SL.
+
+            std::shared_ptr<MifarePlusSL0Commands> mfp_utils = std::dynamic_pointer_cast<MifarePlusSL0Commands>(c->getCommands());
+            assert(mfp_utils);
+
+            if (mfp_utils->probeLevel3())
+            {
+                d_insertedChip = createChip("MifarePlus_SL3_2K");
+            }
+            else if (mfp_utils->isLevel0()) // a bit dangerous as it overwrite data on card
+            {
+                if (mfp_utils->is4K())
+                    d_insertedChip = createChip("MifarePlus_SL0_4K");
+                else
+                    d_insertedChip = createChip("MifarePlus_SL0_2K");
+            }
+        }
+    }
+
+    std::string PCSCReaderUnit::getCardTypeFromHardcodedATR(const unsigned char *atr,
+                                                            size_t atrlen)
+    {
+        EXCEPTION_ASSERT_WITH_LOG(atrlen >= 2, LibLogicalAccessException, "The ATR length must be at least 2 bytes long (TS + T0).");
+
+        std::vector<unsigned char> sb(atr, atr + atrlen);
+        LOG(LogLevel::INFOS) << "Getting card type for hardcoded ATR "
+        << BufferHelper::getHex(sb) << " Len {" << atrlen << "}...";
+
+        std::string cardType = "UNKNOWN";
+        std::string atrstr = BufferHelper::getHex(sb);
+
+        if (atrstr == "3B8F8001804F0CA0000003064000000000000028")
+        {
+            // On OK5427 the ATR for some Prox card is this.
+            return "Prox";
+        }
+        if (atrstr == "3B878001C1052F2F0035C730") // level 0 or level 3
+        {
+            return "MifarePlusS";
+        }
+        // mifare plus X 4K / 7 bytes uid
+        if (atrstr == "3B878001C1052F2F01BCD6A9")
+        {
+            return "MifarePlusX";
+        }
+        if (atrstr == "3B8F8001804F0CA000000306030036000000005D") // MifarePlus S -- SecurityLevel 1
+        {
+            return "MifarePlus_SL1_2K";
+        }
+        if (atrstr == "3B8F8001804F0CA000000306030037000000005C") // Mifare Plus S 4k -- SL1
+        {
+            return "MifarePlus_SL1_4K";
+        }
+        if (atrstr == "3B8F8001804F0CA0000003060300020000000069")// Mifare Plus S 4K SL1
+        {
+            return "MifarePlus_SL1_4K"; // this is the ATR detected by Omnikey 5321 (on Linux).
+        }
+		if (atrstr == "3B8F8001804F0CA000000306030001000000006A" && getPCSCType() == PCSC_RUT_ACS_ACR_1222L)
+		{
+			return "MifarePlus_SL1_2K"; // on ACR ACS 1222L
+		}
+        if (atrstr == "3B8F8001804F0CA00000030603FFA00000000034")
+        {
+			// 2K and 4K have same ATR.
+            return "MifarePlus_SL1_4K"; // Sprincard Yoyo
+        }
+		if (atrstr == "3B878001C1052F2F0035C730")
+		{
+			// It seems that when in SL3, the MFP shares a common ATR.
+			// Atr was tested on springcards-yoyo, 5427 and 5321.
+            // Also we cannot determine if the card is 2 or 4k.
+			return "MifarePlus_SL3_2K";
+		}
+        return cardType;
+    }
+
 }

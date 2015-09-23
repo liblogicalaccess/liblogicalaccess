@@ -22,7 +22,7 @@ namespace logicalaccess
     /**
      * \brief The Mifare base chip class.
      */
-    class LIBLOGICALACCESS_API MifareChip : public Chip
+    class LIBLOGICALACCESS_API MifareChip : public virtual Chip
     {
     public:
 

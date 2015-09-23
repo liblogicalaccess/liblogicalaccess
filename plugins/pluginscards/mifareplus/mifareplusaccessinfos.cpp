@@ -12,7 +12,7 @@
 
 namespace logicalaccess
 {
-    MifarePlusAccessInfo::MifarePlusAccessInfo(size_t sectorKeySize)
+    MifarePlusAccessInfo_OLD::MifarePlusAccessInfo_OLD(size_t sectorKeySize)
     {
         d_sectorKeySize = sectorKeySize;
 
@@ -44,16 +44,16 @@ namespace logicalaccess
         madGPB = 0xC3; // DA: 1, MA: 1, RFU, ADV: 01
     }
 
-    MifarePlusAccessInfo::~MifarePlusAccessInfo()
+    MifarePlusAccessInfo_OLD::~MifarePlusAccessInfo_OLD()
     {
     }
 
-    std::string MifarePlusAccessInfo::getCardType() const
+    std::string MifarePlusAccessInfo_OLD::getCardType() const
     {
         return CHIP_MIFAREPLUS4K;
     }
 
-    void MifarePlusAccessInfo::generateInfos()
+    void MifarePlusAccessInfo_OLD::generateInfos()
     {
         keyA->fromString(generateSimpleKey(keyA->getLength()));
         keyB->fromString(generateSimpleKey(keyB->getLength()));
@@ -67,7 +67,7 @@ namespace logicalaccess
         sab.setAReadBWriteConfiguration();
     }
 
-    void MifarePlusAccessInfo::serialize(boost::property_tree::ptree& parentNode)
+    void MifarePlusAccessInfo_OLD::serialize(boost::property_tree::ptree& parentNode)
     {
         unsigned char buf[3];
         boost::property_tree::ptree node;
@@ -123,7 +123,7 @@ namespace logicalaccess
         parentNode.add_child(getDefaultXmlNodeName(), node);
     }
 
-    void MifarePlusAccessInfo::unSerialize(boost::property_tree::ptree& node)
+    void MifarePlusAccessInfo_OLD::unSerialize(boost::property_tree::ptree& node)
     {
         keyA->unSerialize(node.get_child("KeyA"), "");
         keyB->unSerialize(node.get_child("KeyB"), "");
@@ -160,20 +160,20 @@ namespace logicalaccess
         }
     }
 
-    std::string MifarePlusAccessInfo::getDefaultXmlNodeName() const
+    std::string MifarePlusAccessInfo_OLD::getDefaultXmlNodeName() const
     {
         return "MifarePlusAccessInfo";
     }
 
-    bool MifarePlusAccessInfo::operator==(const AccessInfo& ai) const
+    bool MifarePlusAccessInfo_OLD::operator==(const AccessInfo& ai) const
     {
         if (!AccessInfo::operator==(ai))
             return false;
 
-        if (typeid(ai) != typeid(MifarePlusAccessInfo))
+        if (typeid(ai) != typeid(MifarePlusAccessInfo_OLD))
             return false;
 
-        const MifarePlusAccessInfo* mAi = dynamic_cast<const MifarePlusAccessInfo*>(&ai);
+        const MifarePlusAccessInfo_OLD * mAi = dynamic_cast<const MifarePlusAccessInfo_OLD *>(&ai);
 
         if (!mAi)
             return false;
@@ -192,7 +192,7 @@ namespace logicalaccess
             );
     }
 
-    size_t MifarePlusAccessInfo::SectorAccessBits::toArray(void* buf, size_t buflen) const
+    size_t MifarePlusAccessInfo_OLD::SectorAccessBits::toArray(void* buf, size_t buflen) const
     {
         if (buflen < 3)
         {
@@ -213,7 +213,7 @@ namespace logicalaccess
         return 3;
     }
 
-    bool MifarePlusAccessInfo::SectorAccessBits::fromArray(const void* buf, size_t buflen)
+    bool MifarePlusAccessInfo_OLD::SectorAccessBits::fromArray(const void* buf, size_t buflen)
     {
         if (buflen < 3)
         {
@@ -252,7 +252,7 @@ namespace logicalaccess
         return false;
     }
 
-    void MifarePlusAccessInfo::SectorAccessBits::setTransportConfiguration()
+    void MifarePlusAccessInfo_OLD::SectorAccessBits::setTransportConfiguration()
     {
         d_sector_trailer_access_bits.c1 = false;
         d_sector_trailer_access_bits.c2 = false;
@@ -266,7 +266,7 @@ namespace logicalaccess
         }
     }
 
-    void MifarePlusAccessInfo::SectorAccessBits::setAReadBWriteConfiguration()
+    void MifarePlusAccessInfo_OLD::SectorAccessBits::setAReadBWriteConfiguration()
     {
         d_sector_trailer_access_bits.c1 = false;
         d_sector_trailer_access_bits.c2 = true;

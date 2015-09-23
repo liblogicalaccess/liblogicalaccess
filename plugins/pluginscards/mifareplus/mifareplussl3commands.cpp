@@ -5,146 +5,65 @@
  */
 
 #include <logicalaccess/logs.hpp>
+#include <assert.h>
+#include <logicalaccess/crypto/cmac.hpp>
 #include "mifareplussl3commands.hpp"
 #include "mifarepluschip.hpp"
+#include "MifarePlusSL0Commands.hpp"
+#include "MifarePlusAESAuth.hpp"
+#include "MifarePlusSL3Auth.hpp"
 
 namespace logicalaccess
 {
-    void MifarePlusSL3Commands::writeSector(int sector, int start_block, const std::vector<unsigned char>& buf, std::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype)
-    {
-        if (buf.size() < MIFARE_PLUS_BLOCK_SIZE || buf.size() % MIFARE_PLUS_BLOCK_SIZE != 0 || buf.size() / MIFARE_PLUS_BLOCK_SIZE + start_block > getNbBlocks(sector))
-        {
-            THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter. The minimum buffer's length is 16 bytes.");
-        }
 
-        if (authenticate(sector, key, keytype))
-        {
-            updateBinary(getBlockNo(sector, start_block), false, true, buf);
-        }
+    bool MifarePlusSL3Commands_NEW::authenticate(int sector, std::shared_ptr<AES128Key> key,
+                                                 MifareKeyType type)
+    {
+        auth_.reset(new MifarePlusSL3Auth(getReaderCardAdapter()));
+        return auth_->firstAuthenticate(sector, key, type);
     }
 
-    void MifarePlusSL3Commands::writeSectors(int start_sector, int stop_sector, const std::vector<unsigned char>& buf, std::shared_ptr<AccessInfo> aiToUse)
+    ByteVector MifarePlusSL3Commands_NEW::readBinaryPlain(
+            unsigned char blockno,
+            size_t len)
     {
-        if (aiToUse)
-        {
-            int i;
-            size_t test_buflen = 0;
-            std::shared_ptr<MifarePlusAccessInfo> mAiToUse = std::dynamic_pointer_cast<MifarePlusAccessInfo>(aiToUse);
-            EXCEPTION_ASSERT(mAiToUse, std::invalid_argument, "aiToUse must be a MifarePlusAccessInfo.");
+        assert(len / 16 < 255);
+        uint8_t nb_block_to_read = len / 16;
+/*
+        ByteVector mac = {1, 2, 3, 4, 5, 6, 7 , 8};
+        ByteVector cmd{0x34, blockno, 0x00, nb_block_to_read};
+        cmd.insert(cmd.end(), mac.begin(), mac.end());*/
+        assert(auth_);
 
-            for (i = start_sector; i < stop_sector; ++i)
-            {
-                test_buflen += getNbBlocks(i) * MIFARE_PLUS_BLOCK_SIZE;
-            }
-            if (test_buflen + MIFARE_PLUS_BLOCK_SIZE != buf.size())
-                THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter. The buffer must fit the sectors size.");
+        ByteVector data(16, 'a');
+        data = {0x32, 0x14, 0xA5, 0xF4, 0xDE, 0x18, 0xAE, 0xC8, 0xDA, 0x6F,
+                0x50, 0x33, 0x32, 0xB7, 0x10, 0xD7};
+       // data = {0x02, 0xBB, 0x2A, 0x18, 0xBA, 0x7C, 0x4B, 0x54, 0xFC, 0x9F,
+//                0x8C, 0xAE, 0x37, 0x7F, 0x5C, 0x1A};
+        //data = auth_->cipherWriteData(data);
 
-            test_buflen = 0;
-            for (i = start_sector; i <= stop_sector && test_buflen < buf.size(); ++i)
-            {
-                size_t toWriteLen = getNbBlocks(i) * MIFARE_PLUS_BLOCK_SIZE;
-                if (toWriteLen + test_buflen > buf.size())
-                    toWriteLen = buf.size() - test_buflen;
-				std::vector<unsigned char> tmp(buf.begin() + test_buflen, buf.begin() + test_buflen + toWriteLen);
-                if (mAiToUse->keyB && !mAiToUse->keyB->isEmpty())
-                    writeSector(i, 0, tmp, mAiToUse->keyB, KT_KEY_AES_B);
-                else if (mAiToUse->keyA && !mAiToUse->keyA->isEmpty())
-                    writeSector(i, 0, tmp, mAiToUse->keyA, KT_KEY_AES_A);
-                else
-                    THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "You must set the writing key using the MifarePlusAccessInfo ");
-                test_buflen += getNbBlocks(i) * MIFARE_PLUS_BLOCK_SIZE;
-            }
-        }
+        LOG(DEBUGS) << "Data encryp: " << data;
+        ByteVector cmd = {0xA3, blockno, 0x00};
+        cmd.insert(cmd.end(), data.begin(), data.end());
+
+        auto mac = auth_->computeWriteMac(0xA3, blockno, data);
+        //auto mac = GetMacOnCommand(cmd, auth_->trans_id_, auth_->deriveKMac());
+        LOG(DEBUGS) << "Mac = " << mac;
+        cmd.insert(cmd.end(), mac.begin(), mac.end());
+
+        auto ret = getReaderCardAdapter()->sendCommand(cmd);
+        LOG(DEBUGS) << "Ret from plain read" << ret;
+        return ret;
     }
 
-    std::vector<unsigned char> MifarePlusSL3Commands::readSector(int sector, int start_block, std::shared_ptr<MifarePlusKey> key, MifarePlusKeyType keytype)
+    void MifarePlusSL3Commands_NEW::resetAuth()
     {
-        if (authenticate(sector, key, keytype))
-        {
-            return readBinary(getBlockNo(sector, start_block), MIFARE_PLUS_BLOCK_SIZE, false, true, true);
-        }
-		return std::vector<unsigned char>();
-    }
+        LOG(ERRORS) << "HOHO RESETTING AUTH";
+        using ByteVector = std::vector<unsigned char>;
+        ByteVector command {0x78};
+        ByteVector ret;
 
-    std::vector<unsigned char> MifarePlusSL3Commands::readSectors(int start_sector, int stop_sector, std::shared_ptr<AccessInfo> aiToUse)
-    {
-		std::vector<unsigned char> ret, data;
-
-        if (aiToUse)
-        {
-            std::shared_ptr<MifarePlusAccessInfo> mAiToUse = std::dynamic_pointer_cast<MifarePlusAccessInfo>(aiToUse);
-            EXCEPTION_ASSERT(mAiToUse, std::invalid_argument, "aiToUse must be a MifarePlusAccessInfo.");
-
-            for (int i = start_sector; i <= stop_sector; ++i)
-            {
-                if (mAiToUse->keyA && !mAiToUse->keyA->isEmpty())
-					data = readSector(i, 0, mAiToUse->keyA, KT_KEY_AES_A);
-                else if (mAiToUse->keyB && !mAiToUse->keyB->isEmpty())
-                    data = readSector(i, 0, mAiToUse->keyB, KT_KEY_AES_B);
-                else
-                    THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "You must set the writing key using the MifarePlusAccessInfo ");
-
-				ret.insert(ret.end(), data.begin(), data.end());
-            }
-        }
-		return ret;
-    }
-
-    bool MifarePlusSL3Commands::authenticate(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> ai)
-    {
-        std::shared_ptr<MifarePlusAccessInfo> mAiToUse = std::dynamic_pointer_cast<MifarePlusAccessInfo>(ai);
-
-        if (ai)
-        {
-            EXCEPTION_ASSERT(mAiToUse, std::invalid_argument, "ai must be a MifarePlusAccessInfo.");
-        }
-        else
-        {
-            mAiToUse = std::dynamic_pointer_cast<MifarePlusAccessInfo>(getChip()->getProfile()->createAccessInfo());
-        }
-
-        if (mAiToUse->keyConfiguration && !mAiToUse->keyConfiguration->isEmpty())
-            authenticate(0, mAiToUse->keyConfiguration, KT_KEY_CONFIGURATION);
-        else if (mAiToUse->keyMastercard && !mAiToUse->keyMastercard->isEmpty())
-            authenticate(0, mAiToUse->keyMastercard, KT_KEY_MASTERCARD);
-        if (mAiToUse->keyOriginality && !mAiToUse->keyOriginality->isEmpty())
-            authenticate(0, mAiToUse->keyOriginality, KT_KEY_ORIGINALITY);
-        if (mAiToUse->keyA && !mAiToUse->keyA->isEmpty())
-        {
-            EXCEPTION_ASSERT(location, std::invalid_argument, "location cannot be null.");
-            std::shared_ptr<MifarePlusLocation> mLocation = std::dynamic_pointer_cast<MifarePlusLocation>(location);
-            EXCEPTION_ASSERT(mLocation, std::invalid_argument, "location must be a MifarePlusLocation.");
-
-            authenticate(mLocation->sector, mAiToUse->keyA, KT_KEY_AES_A);
-        }
-        if (mAiToUse->keyB && !mAiToUse->keyB->isEmpty())
-        {
-            EXCEPTION_ASSERT(location, std::invalid_argument, "location cannot be null.");
-            std::shared_ptr<MifarePlusLocation> mLocation = std::dynamic_pointer_cast<MifarePlusLocation>(location);
-            EXCEPTION_ASSERT(mLocation, std::invalid_argument, "location must be a MifarePlusLocation.");
-
-            authenticate(mLocation->sector, mAiToUse->keyB, KT_KEY_AES_B);
-        }
-
-        return true;
-    }
-
-    unsigned char MifarePlusSL3Commands::getNbBlocks(int sector)
-    {
-        return ((sector >= 32) ? 15 : 3);
-    }
-
-    unsigned short MifarePlusSL3Commands::getBlockNo(int sector, int block)
-    {
-        unsigned short blockno = 0x0000;
-        int i;
-
-        for (i = 0; i < sector; ++i)
-        {
-            blockno += getNbBlocks(i) + 1;
-        }
-        blockno += static_cast<unsigned short>(block);
-
-        return blockno;
+        ret = getReaderCardAdapter()->sendCommand(command);
+        LOG(DEBUGS) << "Ret from ResetAuth: " << ret;
     }
 }

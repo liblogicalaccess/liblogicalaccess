@@ -6,6 +6,7 @@
 
 #include <cstring>
 #include <logicalaccess/logs.hpp>
+#include <assert.h>
 #include "mifarestoragecardservice.hpp"
 #include "mifarechip.hpp"
 
@@ -138,6 +139,9 @@ namespace logicalaccess
             {
                 if (!mAiToUse->keyA->isEmpty())
                 {
+                    assert(getMifareChip());
+                    assert(getMifareChip()->getProfile());
+                    assert(getMifareChip()->getMifareProfile());
                     getMifareChip()->getMifareProfile()->setKey(mLocation->sector + i, KT_KEY_A, mAiToUse->keyA);
                 }
                 if (!mAiToUse->keyB->isEmpty())
@@ -305,6 +309,7 @@ namespace logicalaccess
 
     unsigned int MifareStorageCardService::readDataHeader(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength)
     {
+		TRACE(location, aiToUse);
         if (data == NULL || dataLength == 0)
         {
             return 16;
@@ -317,8 +322,13 @@ namespace logicalaccess
 
         MifareAccessInfo::SectorAccessBits sab;
 
+		LOG(DEBUGS) << "LAMA 0";
+
         if (aiToUse)
         {
+
+			LOG(DEBUGS) << "LAMA IF";
+
             std::shared_ptr<MifareAccessInfo> mAiToUse = std::dynamic_pointer_cast<MifareAccessInfo>(aiToUse);
 
             EXCEPTION_ASSERT_WITH_LOG(mAiToUse, std::invalid_argument, "aiToUse must be a MifareAccessInfo");
@@ -327,6 +337,8 @@ namespace logicalaccess
             {
                 getMifareChip()->getMifareProfile()->setKey(mLocation->sector, KT_KEY_A, mAiToUse->keyA);
             }
+
+			LOG(DEBUGS) << "LAMA 2";
 
             if (!mAiToUse->keyB->isEmpty())
             {
@@ -337,17 +349,33 @@ namespace logicalaccess
         }
         else
         {
+
+			LOG(DEBUGS) << "LAMA ELSE";
+
+			assert(getMifareChip());
+			assert(getMifareChip()->getMifareProfile());
+			assert(mLocation && mLocation->sector);
             getMifareChip()->getMifareProfile()->setDefaultKeysAt(mLocation->sector);
+
+			LOG(DEBUGS) << "LAMA ELSE 1";
+
             sab.setTransportConfiguration();
-        }
+		}
+		LOG(DEBUGS) << "LAMA 3";
+
 
         if (dataLength >= 16)
         {
+
+			LOG(DEBUGS) << "LAMA 3.5";
+
             getMifareChip()->getMifareCommands()->changeBlock(sab, mLocation->sector, getMifareChip()->getMifareCommands()->getNbBlocks(mLocation->sector), false);
             std::vector<unsigned char> vdata = getMifareChip()->getMifareCommands()->readBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(mLocation->sector) + getMifareChip()->getMifareCommands()->getNbBlocks(mLocation->sector)), 16);
             memcpy(data, &vdata[0], vdata.size());
             return static_cast<unsigned int>(vdata.size());
         }
+
+		LOG(DEBUGS) << "LAMA 4";
 
         return 0;
     }

@@ -34,6 +34,7 @@ namespace logicalaccess
     enum LogLevel
     {
         NONE = 0,
+        TRACE,
         INFOS,
         WARNINGS,
         NOTICES,
@@ -46,6 +47,16 @@ namespace logicalaccess
         PLUGINS,
         PLUGINS_ERROR
     };
+
+    /**
+     * An overload to pretty-print a byte vector to an ostream.
+     */
+    LIBLOGICALACCESS_API std::ostream &operator<<(std::ostream &ss, const std::vector<unsigned char> &bytebuff);
+
+    /**
+     * An overload to pretty-print a boolean vector to an ostream.
+     */
+    LIBLOGICALACCESS_API std::ostream &operator<<(std::ostream &ss, const std::vector<bool> &bytebuff);
 
     /**
      * A class that push a string into the current logger's context at
@@ -119,12 +130,69 @@ namespace logicalaccess
     /**
      * An overload to pretty-print a boolean vector to an ostream.
      */
+    LIBLOGICALACCESS_API std::ostream &operator<<(std::ostream &ss, const std::vector<bool> &bytebuff);
+
     LIBLOGICALACCESS_API std::ostream &
     operator<<(std::ostream &ss, const std::vector<bool> &bytebuff);
 
 #ifdef LOGICALACCESS_LOGS
 
 #define LOG(x) logicalaccess::Logs(__FILE__, __FUNCTION__, __LINE__, x)
+
+	LIBLOGICALACCESS_API void trace_print_helper(std::stringstream &ss, const char *param_names, int idx);
+
+	LIBLOGICALACCESS_API std::string get_nth_param_name(const char *param_names, int idx);
+
+    /**
+     * Declaration of the print_helper for non uint8_t types.
+     */
+    template<typename Current, typename ...T>
+    typename std::enable_if<!std::is_same<unsigned char, typename std::remove_reference<Current>::type>::value>::type
+    trace_print_helper(std::stringstream &ss, const char *param_names, int idx, Current &&c, T &&...args);
+
+    /**
+     * Declaration of the print_helper for uint8_t type.
+     */
+    template<typename Current, typename ...T>
+    typename std::enable_if<std::is_same<unsigned char, typename std::remove_reference<Current>::type>::value>::type
+    trace_print_helper(std::stringstream &ss, const char *param_names, int idx, Current &&c, T &&...args);
+
+
+    template<typename Current, typename ...T>
+    typename std::enable_if<std::is_same<unsigned char, typename std::remove_reference<Current>::type>::value>::type
+    trace_print_helper(std::stringstream &ss, const char *param_names, int idx, Current &&c, T &&...args)
+    {
+      ss << " [" << get_nth_param_name(param_names, idx) << " --> " << +c << "]";
+      trace_print_helper(ss, param_names, idx + 1, args...);
+    }
+
+    template<typename Current, typename ...T>
+    typename std::enable_if<!std::is_same<unsigned char, typename std::remove_reference<Current>::type>::value>::type
+    trace_print_helper(std::stringstream &ss, const char *param_names, int idx, Current &&c, T &&...args)
+    {
+      using namespace logicalaccess; // to access some custom ostream overload for vector.
+      ss << " [" << get_nth_param_name(param_names, idx) << " --> " << c << "]";
+      trace_print_helper(ss, param_names, idx + 1, args...);
+    }
+
+    template<typename ...T>
+    void trace_print(std::stringstream &ss, const char *param_names, T &&...params)
+    {
+        trace_print_helper(ss, param_names, 0, params...);
+    }
+
+    /**
+     * Log something at the TRACE level. This is a variadic macro that accepts all
+     * parameters types and will output something like [param_name -> param_value]
+     */
+#define TRACE(...)                                                 \
+  std::stringstream trace_stringstream;                            \
+  trace_print(trace_stringstream, #__VA_ARGS__, ##__VA_ARGS__);    \
+  LOG(TRACE) << trace_stringstream.str();
+
+	LIBLOGICALACCESS_API void trace_print_helper(std::stringstream &ss, const char *param_names, int idx);
+
+	LIBLOGICALACCESS_API std::string get_nth_param_name(const char *param_names, int idx);
 
 #define LLA_LOG_CTX(param)                                                     \
     LogContext lla_log_ctx([&](void)                                           \

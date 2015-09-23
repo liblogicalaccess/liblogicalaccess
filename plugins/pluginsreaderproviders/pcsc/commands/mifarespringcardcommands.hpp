@@ -33,7 +33,9 @@ namespace logicalaccess
          */
         virtual ~MifareSpringCardCommands();
 
-    protected:
+    public:
+        using MifarePCSCCommands::authenticate;
+        using MifarePCSCCommands::loadKey;
 
         /**
          * \brief Load a key to the reader.

@@ -216,6 +216,7 @@ namespace logicalaccess
 
     void MifareCommands::changeBlock(const MifareAccessInfo::SectorAccessBits& sab, int sector, int block, bool write)
     {
+		TRACE(sector, block, write);
         MifareKeyType wkt = KT_KEY_A;
         MifareKeyType rkt = KT_KEY_A;
 

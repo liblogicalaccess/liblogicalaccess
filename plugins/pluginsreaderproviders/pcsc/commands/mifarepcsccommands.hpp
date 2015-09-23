@@ -16,6 +16,9 @@
 
 namespace logicalaccess
 {
+    template<typename T, typename T2>
+    class MifarePlusSL1Policy;
+
     /**
      * \brief The Mifare card provider class for PCSC reader.
      */
@@ -98,6 +101,9 @@ namespace logicalaccess
          * \param keytype The key type.
          */
         void authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype);
+
+        template<typename T, typename T2>
+        friend class MifarePlusSL1Policy;
     };
 }
 

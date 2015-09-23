@@ -20,19 +20,19 @@ namespace logicalaccess
     /**
      * \brief The MifarePlus base profile class.
      */
-    class LIBLOGICALACCESS_API MifarePlusProfile : public Profile
+    class LIBLOGICALACCESS_API MifarePlusProfile_OLD : public Profile
     {
     public:
 
         /**
          * \brief Constructor.
          */
-        MifarePlusProfile();
+        MifarePlusProfile_OLD();
 
         /**
          * \brief Destructor.
          */
-        virtual ~MifarePlusProfile();
+        virtual ~MifarePlusProfile_OLD();
 
         /**
          * \brief Get one of the Mifare keys of this profile.

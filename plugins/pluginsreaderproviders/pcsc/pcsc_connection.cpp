@@ -14,6 +14,9 @@ logicalaccess::PCSCConnection::PCSCConnection(PCSCShareMode mode,
     , share_mode_(mode)
     , protocol_(protocol)
 {
+    LOG(DEBUGS) << "Attempting to establish PCSCConnection: Protocol: "
+                << pcsc_protocol_to_string(protocol)
+                << ", Shared mode: " << pcsc_share_mode_to_string(mode);
     LONG lReturn = SCardConnect(context, device.c_str(), mode, protocol,
                                 &handle_, &active_protocol_);
     if (lReturn != SCARD_S_SUCCESS)
@@ -22,6 +25,8 @@ logicalaccess::PCSCConnection::PCSCConnection(PCSCShareMode mode,
                                  "Failed to establish PCSC connection: " +
                                      PCSCConnection::strerror(lReturn));
     }
+    LOG(DEBUGS) << "Established PCSC connection. Active protocol: "
+                << pcsc_protocol_to_string(active_protocol_);
 }
 
 logicalaccess::PCSCConnection::~PCSCConnection()

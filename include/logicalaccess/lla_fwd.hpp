@@ -5,6 +5,8 @@
 #ifndef LIBLOGICALACCESS_LLA_FWD_HPP
 #define LIBLOGICALACCESS_LLA_FWD_HPP
 
+#include <cstdint>
+#include <vector>
 #include "logicalaccess_api.hpp"
 
 namespace logicalaccess
@@ -38,6 +40,10 @@ namespace logicalaccess
     class CardService;
 
     class Format;
+
+    class ResultChecker;
 }
+
+using ByteVector = std::vector<uint8_t>;
 
 #endif //LIBLOGICALACCESS_LLA_FWD_HPP

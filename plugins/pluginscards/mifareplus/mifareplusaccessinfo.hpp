@@ -38,18 +38,18 @@ namespace logicalaccess
     /**
      * \brief A MifarePlus access informations.
      */
-    class LIBLOGICALACCESS_API MifarePlusAccessInfo : public AccessInfo
+    class LIBLOGICALACCESS_API MifarePlusAccessInfo_OLD : public AccessInfo
     {
     public:
         /**
          * \brief Constructor.
          */
-        MifarePlusAccessInfo(size_t sectorKeySize);
+        MifarePlusAccessInfo_OLD(size_t sectorKeySize);
 
         /**
          * \brief Destructor.
          */
-        virtual ~MifarePlusAccessInfo();
+        virtual ~MifarePlusAccessInfo_OLD();
 
         /**
          * \brief Generate pseudo-random Mifare access informations.

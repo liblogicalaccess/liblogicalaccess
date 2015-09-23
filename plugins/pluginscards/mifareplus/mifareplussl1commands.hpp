@@ -7,8 +7,8 @@
 #ifndef LOGICALACCESS_MIFAREPLUSSL1COMMANDS_HPP
 #define LOGICALACCESS_MIFAREPLUSSL1COMMANDS_HPP
 
+#include <logicalaccess/cards/aes128key.hpp>
 #include "../mifare/mifarecommands.hpp"
-#include "mifarepluscommands.hpp"
 #include "mifareplusaccessinfo.hpp"
 
 namespace logicalaccess
@@ -16,156 +16,158 @@ namespace logicalaccess
     class MifarePlusChip;
 
     /**
-     * \brief The MifarePlus SL1 commands class.
+     * The API offered to talk to a Mifare Plus SL1 card.
+     * It extends the interface of Mifare card and provide
+     * a few call that implement features from the SL1.
+     *
+     * This class implements all method in order to compile, but call
+     * for Mifare classic shall not be dispatched to this class;
      */
-    class LIBLOGICALACCESS_API MifarePlusSL1Commands : public virtual MifareCommands, public virtual MifarePlusCommands
+    class LIBLOGICALACCESS_API MifarePlusSL1Commands : public MifareCommands
+    {
+    public:
+        /**
+         * Perform AES Key authentication against the card.
+         *
+         * @note The keyslot allows us to reuse this code for SL1 AES authentication
+         * and security-level switching (to level2).
+         *
+         * @param key The key to use
+         * @param keyslot where the key is located on the card.
+         */
+        virtual bool AESAuthenticate(std::shared_ptr<AES128Key> key, uint16_t keyslot);
+
+        virtual bool AESAuthenticateSL1(std::shared_ptr<AES128Key> key);
+
+        /**
+         * Switch the card to Security Level 2 using the key specificied
+         * as a parameter
+         */
+        virtual bool switchLevel2(std::shared_ptr<AES128Key> key);
+
+		/**
+		 * Move the card to level 3
+		 */
+		virtual bool switchLevel3(std::shared_ptr<AES128Key> key);
+
+
+        virtual std::vector<unsigned char> readBinary(unsigned char blockno, size_t len);
+
+        virtual void updateBinary(unsigned char blockno,
+                                  const std::vector<unsigned char> &buf);
+
+        virtual bool loadKey(unsigned char keyno, MifareKeyType keytype, const void *key,
+                             size_t keylen, bool vol);
+
+        virtual void loadKey(std::shared_ptr<Location> location, std::shared_ptr<Key> key,
+                             MifareKeyType keytype);
+
+        virtual void authenticate(unsigned char blockno, unsigned char keyno,
+                                  MifareKeyType keytype);
+
+        virtual void authenticate(unsigned char blockno,
+                                  std::shared_ptr<KeyStorage> key_storage,
+                                  MifareKeyType keytype);
+
+        virtual void increment(uint8_t blockno, uint32_t value);
+
+        virtual void decrement(uint8_t blockno, uint32_t value);
+
+    private:
+        bool aes_auth_step2(std::vector<uint8_t> rnd_b,
+                                    std::shared_ptr<AES128Key> key);
+        bool aes_auth_final(const ByteVector &rnd_a,
+                            const ByteVector &rnd_a_reader,
+                            std::shared_ptr<AES128Key> key);
+    };
+
+    /**
+    * `MifareSL1Impl` is a class that implements
+    * the additional SL1 commands.
+    * `MifareClassicImpl` is a class that provide support
+    * for the MifareClassic command set.
+    *
+    * The MifarePlusSL1Policy is templated with the concrete
+    * implementation class for commands.
+    */
+    template<typename MifareSL1Impl,
+            typename MifareClassicImpl>
+    class MifarePlusSL1Policy: public MifarePlusSL1Commands
     {
     public:
 
-        /**
-         * \brief Read a whole sector.
-         * \param sector The sector number, from 0 to 15.
-         * \param start_block The first block on the sector.
-         * \param buf A buffer to fill with the data of the sector.
-         * \param buflen The length of buffer. Must be at least 48 bytes long or the call will fail.
-         * \param sab The sector access bits.
-         * \return The number of bytes red, or a negative value on error.
-         */
-        virtual std::vector<unsigned char> readSector(int sector, int start_block, const MifarePlusAccessInfo::SectorAccessBits& sab);
+        void fixup()
+        {
+            classic_impl.setChip(getChip());
+            classic_impl.setReaderCardAdapter(getReaderCardAdapter());
 
-        /**
-         * \brief Write a whole sector.
-         * \param sector The sector number, from 0 to 15.
-         * \param start_block The first block on the sector.
-         * \param buf A buffer to from which to copy the data.
-         * \param buflen The length of buffer. Must be at least 48 bytes long or the call will fail.
-         * \param sab The sector access bits.
-         * \param userbyte The user byte on trailer block.
-         * \param newsab If not NULL the key will be changed as well.
-         * \return The number of bytes written, or a negative value on error.
-         * \warning If sector is 0, the first 16 bytes will be skipped and be considered "copied" since the first block in sector 0 is read-only.
-         */
-        virtual void writeSector(int sector, int start_block, const std::vector<unsigned char>& buf, const MifarePlusAccessInfo::SectorAccessBits& sab, unsigned char userbyte = 0x00, MifarePlusAccessInfo::SectorAccessBits* newsab = NULL);
+            sl1_impl_.setChip(getChip());
+            sl1_impl_.setReaderCardAdapter(getReaderCardAdapter());
+        }
 
-        /**
-         * \brief Read several sectors.
-         * \param start_sector The start sector number, from 0 to stop_sector.
-         * \param stop_sector The stop sector number, from start_sector to 15.
-         * \param start_block The first block on the sector.
-         * \param buf The buffer to fill with the data.
-         * \param buflen The length of buf. Must be at least (stop_sector - start_sector + 1) * 48 bytes long.
-         * \param sab The sector access bits.
-         * \return The number of bytes red, or a negative value on error.
-         */
-        virtual std::vector<unsigned char> readSectors(int start_sector, int stop_sector, int start_block, const MifarePlusAccessInfo::SectorAccessBits& sab);
+        virtual bool AESAuthenticateSL1(std::shared_ptr<AES128Key> key) override
+        {
+            fixup();
+            return sl1_impl_.AESAuthenticateSL1(key);
+        }
 
-        /**
-         * \brief Write several sectors.
-         * \param start_sector The start sector number, from 0 to stop_sector.
-         * \param stop_sector The stop sector number, from start_sector to 15.
-         * \param start_block The first block on the sector.
-         * \param buf The buffer to fill with the data.
-         * \param buflen The length of buf. Must be at least (stop_sector - start_sector + 1) * 48 bytes long.
-         * \param sab The sector access bits.
-         * \param userbyte The user byte on trailer blocks.
-         * \param newsab If not NULL the keys will be changed as well.
-         * \return The number of bytes red, or a negative value on error.
-         */
-        virtual void writeSectors(int start_sector, int stop_sector, int start_block, const std::vector<unsigned char>& buf, const MifarePlusAccessInfo::SectorAccessBits& sab, unsigned char userbyte = 0x00, MifarePlusAccessInfo::SectorAccessBits* newsab = NULL);
+        virtual void authenticate(unsigned char blockno,
+                                  unsigned char keyno,
+                                  MifareKeyType keytype) override
+        {
+            fixup();
+            classic_impl.authenticate(blockno, keyno, keytype);
+        }
 
-        /**
-         * \brief Get the sector referenced by the AID from the MAD.
-         * \param aid The application ID.
-         * \param madKeyA The MAD key A for read access.
-         * \return The sector.
-         */
-        unsigned int getSectorFromMAD(long aid, std::shared_ptr<MifarePlusKey> madKeyA);
+        virtual std::vector<unsigned char> readBinary(unsigned char blockno, size_t len)override
+        {
+            fixup();
+            return classic_impl.readBinary(blockno, len);
+        }
 
-        /**
-         * \brief Set the sector referenced by the AID to the MAD.
-         * \param aid The application ID.
-         * \param sector The sector.
-         * \param madKeyA The MAD key A for read access.
-         * \param madKeyB The MAD key B for write access.
-         */
-        void setSectorToMAD(long aid, unsigned int sector, std::shared_ptr<MifarePlusKey> madKeyA, std::shared_ptr<MifarePlusKey> madKeyB);
+        virtual void updateBinary(unsigned char blockno,
+                                  const std::vector<unsigned char> &buf)override
+        {
+            fixup();
+            classic_impl.updateBinary(blockno, buf);
+        }
 
-        /**
-         * \brief Calculate the MAD crc.
-         * \param madbuf The MAD buffer.
-         * \param madbuflen The MAD buffer length.
-         * \return The CRC.
-         */
-        static unsigned char calculateMADCrc(const unsigned char* madbuf, size_t madbuflen);
+        virtual bool loadKey(unsigned char keyno, MifareKeyType keytype, const void *key,
+                             size_t keylen, bool vol)override
+        {
+            fixup();
+            return classic_impl.loadKey(keyno, keytype, key, keylen, vol);
+        }
 
-        /**
-         * \brief Find the referenced sector in the MAD.
-         * \param aid The application ID.
-         * \param madbuf The MAD buffer.
-         * \param madbuflen The MAD buffer length.
-         */
-        static unsigned int findReferencedSector(long aid, unsigned char* madbuf, size_t madbuflen);
+        virtual void loadKey(std::shared_ptr<Location> location, std::shared_ptr<Key> key,
+                             MifareKeyType keytype)override
+        {
+            fixup();
+            classic_impl.loadKey(location, key, keytype);
+        }
 
-        /**
-         * \brief Authenticate on a given location.
-         * \param location The location.
-         * \param ai The access infos.
-         */
-        bool authenticate(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> ai);
+        virtual void authenticate(unsigned char blockno,
+                                  std::shared_ptr<KeyStorage> key_storage,
+                                  MifareKeyType keytype) override
+        {
+            fixup();
+            classic_impl.authenticate(blockno, key_storage, keytype);
+        }
 
-        void changeKey(std::shared_ptr<MifarePlusKey> keyA, std::shared_ptr<MifarePlusKey> keyB, unsigned int sector, const MifarePlusAccessInfo::SectorAccessBits& sab, MifarePlusAccessInfo::SectorAccessBits* newsab, unsigned char userbyte = 0x00);
+        virtual void increment(uint8_t blockno, uint32_t value)override
+        {
+            fixup();
+            classic_impl.increment(blockno, value);
+        }
 
-        /**
-         * \brief Change authenticated block.
-         * \param sab The security access bits.
-         * \param sector The sector.
-         * \param block The block.
-         * \param write Write access.
-         */
-        void changeBlock(const MifarePlusAccessInfo::SectorAccessBits& sab, int sector, int block, bool write);
+        virtual void decrement(uint8_t blockno, uint32_t value) override
+        {
+            fixup();
+            classic_impl.decrement(blockno, value);
+        }
 
-        /**
-         * \brief Get number of data blocks for a sector.
-         * \param sector The sector.
-         * \return The number of blocks.
-         */
-        static unsigned char getNbBlocks(int sector);
-
-        /**
-         * \brief Get the sector start block.
-         * \param sector The sector.
-         * \return The first block for this sector.
-         */
-        static unsigned char getSectorStartBlock(int sector);
-
-        /**
-         * \brief Load a key on a given location.
-         * \param location The location.
-         * \param key The key.
-         * \param keytype The mifare plus key type.
-         */
-        virtual void loadKey(std::shared_ptr<Location> location, std::shared_ptr<Key> key, MifarePlusKeyType keytype) = 0;
-
-        /**
-         * \brief Authenticate a block, given a key number.
-         * \param blockno The block number.
-         * \param key_storage The key storage used for authentication.
-         * \param keytype The mifare plus key type.
-         * \return true if authenticated, false otherwise.
-         */
-        virtual void authenticate(unsigned char blockno, std::shared_ptr<KeyStorage> key_storage, MifarePlusKeyType keytype) = 0;
-
-        /**
-        * \brief Switch to SL2
-        * \param key The switch SL2 AES key
-        */
-        virtual bool SwitchLevel2(std::shared_ptr<MifarePlusKey> key) = 0;
-
-        virtual bool AESAuthenticate(std::shared_ptr<MifarePlusKey> key) = 0;
-
-    protected:
-
-        std::shared_ptr<MifarePlusChip> getMifarePlusChip();
+        MifareSL1Impl sl1_impl_;
+        MifareClassicImpl classic_impl;
     };
 }
 

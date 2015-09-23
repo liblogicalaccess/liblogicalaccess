@@ -75,4 +75,33 @@ namespace logicalaccess
 	{
 		return PCSC_RUT_DEFAULT;
 	}
+
+	std::string pcsc_share_mode_to_string(PCSCShareMode sm)
+	{
+		switch (sm)
+		{
+		case SC_SHARED:
+			return "SHARED";
+		case SC_SHARED_EXCLUSIVE:
+			return "EXCLUSIVE";
+		case SC_DIRECT:
+			return "DIRECT";
+		}
+		return "UNKOWN";
+	}
+
+	std::string pcsc_protocol_to_string(unsigned long proto)
+	{
+		if (proto == SCARD_PROTOCOL_T0)
+			return "T=0";
+		if (proto == SCARD_PROTOCOL_T1)
+			return "T=1";
+		if (proto == SCARD_PROTOCOL_RAW)
+			return "RAW";
+		if (proto == SCARD_PROTOCOL_UNDEFINED)
+			return "UNDEFINED";
+		if (proto == 0)
+			return "NO_PROTOCOL";
+		return "UNKOWN";
+	}
 }

@@ -309,6 +309,19 @@ namespace logicalaccess
 
     protected:
 
+        void configure_mifareplus_chip(std::shared_ptr<Chip> c,
+                                       std::shared_ptr<Commands> &commands,
+                                       std::shared_ptr<ResultChecker> &resultChecker);
+
+        /**
+         * Attempt to detect the security level by sending command to the card
+         * once its' been connected.
+         *
+         * If we find something, we'll override the commands objects and reconfigure
+         * the chip.
+         */
+        void detect_mifareplus_security_level(std::shared_ptr<Chip> c);
+
         /**
          * \brief The SAM reader unit.
          */
@@ -339,6 +352,12 @@ namespace logicalaccess
          * \return The generic card type.
          */
         std::string getGenericCardTypeFromATR(const unsigned char* atr, size_t atrlen);
+
+        /**
+         * Attempt to retrieve the card type from fully hardcoded ATR.
+         * This is the first thing we check.
+         */
+        std::string getCardTypeFromHardcodedATR(const unsigned char* atr, size_t atrlen);
 
         /**
          * \brief Set the first and/or most accurate chip found.

@@ -30,6 +30,8 @@ namespace logicalaccess
 
     bool MifarePCSCCommands::loadKey(unsigned char keyno, MifareKeyType keytype, const void* key, size_t keylen, bool vol)
     {
+        std::vector<uint8_t> key_(static_cast<const char *>(key), static_cast<const char *>(key) + keylen);
+        TRACE(keyno, keytype, key_);
         bool r = false;
         std::vector<unsigned char> result,
             vector_key((unsigned char *)key, (unsigned char *)key + keylen);
@@ -102,6 +104,7 @@ namespace logicalaccess
 
     void MifarePCSCCommands::authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype)
     {
+        TRACE(blockno, keyno, keytype);
         std::vector<unsigned char> command;
 
         command.push_back(static_cast<unsigned char>(keytype));
@@ -112,6 +115,7 @@ namespace logicalaccess
 
     void MifarePCSCCommands::authenticate(unsigned char blockno, std::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype)
     {
+        TRACE(blockno, key_storage, keytype);
         if (std::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key_storage))
         {
             authenticate(blockno, 0, keytype);
@@ -129,6 +133,7 @@ namespace logicalaccess
 
     std::vector<unsigned char> MifarePCSCCommands::readBinary(unsigned char blockno, size_t len)
     {
+        TRACE(blockno, len);
         if (len >= 256)
         {
             THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad len parameter.");
@@ -142,6 +147,7 @@ namespace logicalaccess
 
     void MifarePCSCCommands::updateBinary(unsigned char blockno, const std::vector<unsigned char>& buf)
     {
+        TRACE(blockno, buf);
         if (buf.size() >= 256)
         {
             THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buf size parameter.");

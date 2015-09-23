@@ -29,10 +29,10 @@ int main(int ac, char **av)
 
     PRINT_TIME("Chip identifier: " <<
                logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
-
+/*
     LLA_ASSERT(chip->getCardType() == "Mifare1K",
                "Chip is not a Mifare1K, but is " + chip->getCardType() +
-               " instead.");
+               " instead.");*/
 
 
     // Get the root node
