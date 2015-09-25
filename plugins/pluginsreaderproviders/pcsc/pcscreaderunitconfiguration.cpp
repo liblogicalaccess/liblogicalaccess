@@ -100,8 +100,6 @@ namespace logicalaccess
 			return "RAW";
 		if (proto == SCARD_PROTOCOL_UNDEFINED)
 			return "UNDEFINED";
-		if (proto == 0)
-			return "NO_PROTOCOL";
 		return "UNKOWN";
 	}
 }
