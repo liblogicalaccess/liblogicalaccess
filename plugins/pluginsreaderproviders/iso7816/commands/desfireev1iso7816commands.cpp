@@ -7,6 +7,10 @@
 #include "../commands/desfireev1iso7816commands.hpp"
 #include "desfirechip.hpp"
 #include <openssl/rand.h>
+#include <logicalaccess/iks/IslogKeyServer.hpp>
+#include <logicalaccess/settings.hpp>
+#include <logicalaccess/iks/packet/DesfireAuth.hpp>
+#include <logicalaccess/cards/IKSStorage.hpp>
 #include "logicalaccess/logs.hpp"
 #include "logicalaccess/crypto/aes_cipher.hpp"
 #include "logicalaccess/crypto/aes_symmetric_key.hpp"
@@ -341,6 +345,18 @@ namespace logicalaccess
             else
                 sam_iso_authenticate(key, DF_ALG_AES, (d_crypto->d_currentAid == 0 && keyno == 0), keyno);
         }
+            else if (key->getKeyStorage()->getType() == KST_SERVER)
+        {
+            if (key->getKeyType() == DF_KEY_DES)
+                DESFireISO7816Commands::iks_des_authenticate(keyno, key);
+            else if (key->getKeyType() == DF_KEY_AES)
+                iks_iso_authenticate(key, (d_crypto->d_currentAid == 0 && keyno == 0), keyno);
+            else
+            {
+                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                         "Combination of KeyStorage + KeyType is not supported.");
+            }
+        }
         else
         {
             switch (key->getKeyType())
@@ -504,6 +520,8 @@ namespace logicalaccess
         }
         std::vector<unsigned char> keydiv;
         d_crypto->getKey(key, diversify, keydiv);
+
+            std::cout << "MY KEY AFTER DIVERSIFICATION IS: " << keydiv << std::endl;
 
         if (algorithm == DF_ALG_2K3DES)
         {
@@ -1110,10 +1128,15 @@ namespace logicalaccess
         {
             cryptogram = getChangeKeySAMCryptogram(keyno, key);
         }
+        else if (key->getKeyStorage()->getType() == KST_SERVER)
+        {
+            cryptogram = getChangeKeyIKSCryptogram(keyno, key);
+        }
         else
         {
             cryptogram = d_crypto->changeKey_PICC(keynobyte, key, diversify);
         }
+        std::cout << "CRYPTOGRAM IS : " << cryptogram << std::endl;
 
         std::vector<unsigned char> data;
         data.push_back(keynobyte);
@@ -1350,5 +1373,58 @@ namespace logicalaccess
         }
 
         return DESFireISO7816Commands::transmit(cmd, buf, lc, forceLc);
+    }
+
+    void DESFireEV1ISO7816Commands::iks_iso_authenticate(std::shared_ptr<DESFireKey> key,
+                                                         bool isMasterCardKey,
+                                                         uint8_t keyno)
+    {
+        assert(key->getKeyType() == DF_KEY_AES && key->getKeyStorage()->getType() == KST_SERVER);
+        iks::IslogKeyServer &iks = iks::IslogKeyServer::fromGlobalSettings();
+
+        std::vector<unsigned char> RPICC1 = iso_getChallenge(16); //16 because aes
+        iks::DesfireAuthCommand cmd;
+        cmd.algo_ = iks::DESFIRE_AUTH_ALGO_AES;
+        cmd.step_ = 1;
+        cmd.key_idt_ = std::dynamic_pointer_cast<IKSStorage>(key->getKeyStorage())->getKeyIdentity();
+        std::copy(RPICC1.begin(), RPICC1.end(), cmd.data_.begin());
+        cmd.div_info_ = iks::KeyDivInfo::build(key, getChip()->getChipIdentifier(),
+                                               keyno, d_crypto->d_currentAid);
+
+        iks.send_command(cmd);
+        auto resp = std::dynamic_pointer_cast<iks::DesfireAuthResponse>(iks.recv());
+        EXCEPTION_ASSERT_WITH_LOG(resp, IKSException, "Cannot retrieve proper response from server.");
+        auto cryptogram = std::vector<uint8_t>(resp->data_.begin(), resp->data_.end());
+
+        iso_externalAuthenticate(DF_ALG_AES, isMasterCardKey, keyno, cryptogram);
+
+        auto RPCD2 = std::vector<uint8_t>(resp->random2_.begin(), resp->random2_.end());
+        cryptogram = iso_internalAuthenticate(DF_ALG_AES, isMasterCardKey, keyno, RPCD2, 2 * 16);
+
+        cmd.step_ = 2;
+        cmd.div_info_ = iks::KeyDivInfo::build(key, getChip()->getChipIdentifier(),
+                                               keyno, d_crypto->d_currentAid);
+
+        std::copy(cryptogram.begin(), cryptogram.end(), cmd.data_.begin());
+        iks.send_command(cmd);
+        resp = std::dynamic_pointer_cast<iks::DesfireAuthResponse>(iks.recv());
+        EXCEPTION_ASSERT_WITH_LOG(resp, IKSException, "Cannot retrieve proper response from server.");
+        EXCEPTION_ASSERT_WITH_LOG(resp->success_, IKSException, "Mutual authentication failure.");
+
+        d_crypto->d_currentKeyNo = keyno;
+        d_crypto->d_sessionKey.clear();
+        d_crypto->d_auth_method = CM_ISO;
+
+        // Session key from IKS.
+        d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(),
+                                      resp->data_.begin(), resp->data_.begin() + 16);
+
+        d_crypto->d_cipher.reset(new openssl::AESCipher());
+        d_crypto->d_block_size = 16;
+        d_crypto->d_mac_size = 8;
+
+        // common
+        d_crypto->d_lastIV.clear();
+        d_crypto->d_lastIV.resize(d_crypto->d_block_size, 0x00);
     }
 }

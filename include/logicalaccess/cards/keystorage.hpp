@@ -17,7 +17,8 @@ namespace logicalaccess
     typedef enum {
         KST_COMPUTER_MEMORY = 0x00, /* Key stored in computer memory */
         KST_READER_MEMORY = 0x01, /* Key stored in reader memory */
-        KST_SAM = 0x02 /* Key stored in SAM */
+        KST_SAM = 0x02, /* Key stored in SAM */
+        KST_SERVER = 0x03
     } KeyStorageType;
 
     /**

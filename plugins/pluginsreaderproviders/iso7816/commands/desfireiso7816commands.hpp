@@ -276,6 +276,8 @@ namespace logicalaccess
          */
         virtual void authenticate(unsigned char keyno, std::shared_ptr<DESFireKey> key);
 
+        void iks_des_authenticate(unsigned char keyno, std::shared_ptr<DESFireKey> key);
+
         /**
          * \brief Get the card version information.
          * \param dataVersion The card version information structure that will be filled
@@ -314,6 +316,8 @@ namespace logicalaccess
     protected:
 
         std::vector<unsigned char> getChangeKeySAMCryptogram(unsigned char keyno, std::shared_ptr<DESFireKey> key);
+
+        std::vector<unsigned char> getChangeKeyIKSCryptogram(unsigned char keyno, std::shared_ptr<DESFireKey> key);
 
         /**
          * \brief Generic method to read data from a file.

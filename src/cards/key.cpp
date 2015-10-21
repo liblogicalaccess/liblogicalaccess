@@ -21,6 +21,7 @@
 
 #include <openssl/rand.h>
 #include <boost/property_tree/ptree.hpp>
+#include "logicalaccess/cards/keydiversification.hpp"
 
 namespace logicalaccess
 {
@@ -284,4 +285,10 @@ namespace logicalaccess
     {
         return os << key.toString();
     }
+
+std::shared_ptr<KeyDiversification> Key::getKeyDiversification()
+{ return d_key_diversification; }
+
+void Key::setKeyDiversification(std::shared_ptr<KeyDiversification> div)
+{ d_key_diversification = div; }
 }

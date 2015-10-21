@@ -17,12 +17,13 @@ namespace logicalaccess
         virtual std::vector<unsigned char> getDiversifiedKey(std::shared_ptr<Key> key, std::vector<unsigned char> diversify);
 
         NXPAV1KeyDiversification() {};
-        ~NXPAV1KeyDiversification() {};
+        virtual ~NXPAV1KeyDiversification() {};
 
         virtual std::string getType() { return "NXPAV1"; };
 
-        virtual void serialize(boost::property_tree::ptree& parentNode);
-        virtual void unSerialize(boost::property_tree::ptree& node);
+        virtual void serialize(boost::property_tree::ptree &parentNode) override;
+
+        virtual void unSerialize(boost::property_tree::ptree& node) override;
         virtual std::string getDefaultXmlNodeName() const { return "NXPAV1KeyDiversification"; };
 
     private:

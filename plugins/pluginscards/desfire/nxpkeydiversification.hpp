@@ -16,7 +16,7 @@ namespace logicalaccess
         virtual std::vector<unsigned char> getDiversifiedKey(std::shared_ptr<Key> key, std::vector<unsigned char> diversify) = 0;
 
         NXPKeyDiversification() {};
-        ~NXPKeyDiversification() {};
+            virtual ~NXPKeyDiversification() = default;
 
         virtual std::string getType() { return "NXP"; };
 

@@ -5,7 +5,12 @@ project(basic CXX)
 find_package(LibLogicalAccess NO_MODULE REQUIRED)
 include(${LIBLOGICALACCESS_USE_FILE})
 
+include_directories(/usr/local/include)
+
 SET(SOURCE basic.cpp)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -W -Wall -Wno-unused-parameter")
+
 
 add_executable(
     basic
@@ -15,6 +20,7 @@ add_executable(
 target_link_libraries(
         basic
         ${LIBLOGICALACCESS_LIBRARIES}
+        desfirecards
 )
 
 install ( TARGETS basic

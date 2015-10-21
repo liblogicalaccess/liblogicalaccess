@@ -116,6 +116,17 @@ namespace logicalaccess
 
     };
 
+    /**
+     * An exception related to operation against the Islog Key Server.
+     */
+    class IKSException : public Exception::exception
+    {
+    public:
+        IKSException(const std::string& message)
+                : exception(message)
+        {};
+    };
+
 #define EXCEPTION_MSG_CONNECTED			"Already connected to a card. Please disconnect before." /**< \brief Not connected exception message */
 #define EXCEPTION_MSG_NOREADER			"No reader found." /**< \brief No reader found exception format */
 #define EXCEPTION_MSG_LICENSENOACCESS	"The current license doesn't allow this functionality." /**< \brief License no access exception message  */
