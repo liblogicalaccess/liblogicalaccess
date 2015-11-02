@@ -37,3 +37,4 @@ cmake_install.cmake
 LibLogicalAccessConfig.cmake
 install
 install_manifest.txt
+*.dll
