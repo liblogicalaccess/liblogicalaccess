@@ -19,6 +19,7 @@
 #include "samcommands.hpp"
 #include "nxpav2keydiversification.hpp"
 #include "logicalaccess/myexception.hpp"
+#include <cassert>
 
 namespace logicalaccess
 {
@@ -323,6 +324,10 @@ namespace logicalaccess
         if (!key) {
             key = std::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile())->getDefaultKey(DF_KEY_DES);
         }
+
+        std::shared_ptr<DESFireProfile> dprofile = std::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile());
+        assert(dprofile);
+        dprofile->setKey(d_crypto->d_currentAid, keyno, key);
 
         // Get the appropriate authentification method and algorithm according to the key type (for 3DES we use legacy method instead of ISO).
 
