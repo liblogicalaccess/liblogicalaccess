@@ -40,9 +40,7 @@ namespace logicalaccess
 
         if (r.size() == 3)
         {
-            freemem = (r[0] << 16) |
-                (r[1] << 8) |
-                r[2];
+            freemem = (r[2] << 16) | (r[1] << 8) | r[0];
         }
 
         return freemem;
