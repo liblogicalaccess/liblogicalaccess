@@ -45,7 +45,7 @@ int main()
 }
 ")
 
-if(MSVC AND (MSVC10 OR MSVC11 OR MSVC12))
+if(MSVC AND (MSVC10 OR MSVC11 OR MSVC12 OR MSVC14))
 	#Microsoft Visual Studio, and everything that automatically accepts C++11
 	message(STATUS "Microsoft Visual Studio 0x11 detected")
 	set(CXX11_FLAGS_INTERNAL " ")

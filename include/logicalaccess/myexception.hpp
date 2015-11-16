@@ -5,7 +5,7 @@
 #include <exception>
 #include <functional>
 
-#ifdef UNIX
+#if defined(UNIX) || _MSC_VER >= 1900
 #define NOEXCEPT noexcept
 #else
 #define NOEXCEPT

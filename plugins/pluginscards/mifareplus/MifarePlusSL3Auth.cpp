@@ -111,7 +111,7 @@ bool MifarePlusSL3Auth::aes_first_auth_final(const ByteVector &encrypted_data)
     }
     catch (std::exception &e)
     {
-        LOG(ERRORS) << "Error decrypting AES content. AES Auth failed.";
+        LOG(ERRORS) << "Error decrypting AES content. AES Auth failed: " << e.what();
     }
     return false;
 }
@@ -206,7 +206,7 @@ ByteVector &data)
     ByteVector ret(8);
     for (int i = 0; i < 8; i++)
     {
-        assert(to_hash.size() > i * 2 + 1);
+        assert(to_hash.size() > (size_t)(i * 2 + 1));
         ret[i] = to_hash[i * 2 + 1];
     }
     return ret;

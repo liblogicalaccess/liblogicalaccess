@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <iterator>
 #include "subtest_tracker.hpp"
 #include "macros.hpp"
 #include "utils.hpp"
