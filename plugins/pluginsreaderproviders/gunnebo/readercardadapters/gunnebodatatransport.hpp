@@ -24,19 +24,12 @@ namespace logicalaccess
         {
             d_port = port;
             GunneboBufferParser* parser = new GunneboBufferParser();
-            parser->setChecksum(d_checksum);
             d_port->getSerialPort()->setCircularBufferParser(parser);
         };
 
         void setChecksum(bool checksum)
         {
             d_checksum = checksum;
-
-            std::shared_ptr<GunneboBufferParser> parser = std::dynamic_pointer_cast<GunneboBufferParser>(d_port->getSerialPort()->getCircularBufferParser());
-            if (parser)
-            {
-                parser->setChecksum(checksum);
-            }
         }
 
         /**
@@ -66,7 +59,6 @@ namespace logicalaccess
             SerialPortDataTransport::unSerialize(node.get_child(SerialPortDataTransport::getDefaultXmlNodeName()));
             d_checksum = node.get_child("Checksum").get_value<bool>();
             GunneboBufferParser* parser = new GunneboBufferParser();
-            parser->setChecksum(d_checksum);
             d_port->getSerialPort()->setCircularBufferParser(parser);
         }
 
