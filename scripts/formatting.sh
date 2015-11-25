@@ -14,3 +14,6 @@ find ${DIR}/../src/iks -name "*.cpp"  | xargs clang-format-3.8 -style=file -i {}
 
 find ${DIR}/../tests/other/ -name "*.cpp"  | xargs clang-format-3.8 -style=file -i {} \;
 clang-format-3.8 -style=file -i ${DIR}/../tests/pcsc-tests/DESFireEV1/test_changekey_iks.cpp
+
+clang-format-3.8 -style=file -i ${DIR}/../src/cards/keystorage.cpp
+
