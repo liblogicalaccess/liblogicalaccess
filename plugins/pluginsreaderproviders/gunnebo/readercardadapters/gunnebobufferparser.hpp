@@ -21,12 +21,6 @@ namespace logicalaccess
         virtual ~GunneboBufferParser() = default;
 
         virtual std::vector<unsigned char> getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer);
-
-        void setChecksum(bool checksum);
-
-    protected:
-
-        bool d_checksum;
     };
 }
 

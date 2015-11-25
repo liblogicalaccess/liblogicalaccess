@@ -216,10 +216,39 @@ namespace logicalaccess
     {
         std::vector<unsigned char> ret;
 
-        if (rawSerialData.size() > 0)
+        if (rawSerialData.size() >= 2)
         {
-            unsigned long long l = atoull(BufferHelper::getStdString(rawSerialData));
+            unsigned long long l = 0;
             char bufTmpId[128];
+            std::string strSerialData = BufferHelper::getStdString(rawSerialData);
+
+            // If checksum, decode as a Gunnebo reader output
+            if (rawSerialData[0] != 0x31 || rawSerialData[1] != 0x46)
+            {
+                l = atoull(strSerialData);
+            }
+            // Otherwise decode as a STid Gunnebo reader output
+            else
+            {
+                std::vector<unsigned char> hexSerialData = BufferHelper::fromHexString(strSerialData);
+                LOG(LogLevel::COMS) << "Gunnebo STid Hex data: {" << BufferHelper::getHex(hexSerialData) << "}";
+
+                if (hexSerialData.size() >= 5)
+                {
+                    int cc = (hexSerialData[1] << 4) | (hexSerialData[2] >> 4);
+                    int ci1 = ((hexSerialData[2] & 0x0f) >> 1) + 1;
+                    int ci2 = ((hexSerialData[2] & 0x01) << 16) | (hexSerialData[3] << 8) | hexSerialData[4];
+                    
+                    memset(bufTmpId, 0x00, sizeof(bufTmpId));
+#if defined(UNIX)
+                    sprintf(bufTmpId, "%04ld%03ld%06ld", cc, ci1, ci2);
+#else
+                    sprintf_s(bufTmpId, sizeof(bufTmpId), "%04ld%03ld%06ld", cc, ci1, ci2);
+#endif
+                    l = atoull(std::string(bufTmpId));
+                }   
+            }
+
             memset(bufTmpId, 0x00, sizeof(bufTmpId));
 #if defined(UNIX)
             sprintf(bufTmpId, "%012llx", l);
@@ -228,6 +257,7 @@ namespace logicalaccess
 #endif
 
             ret = formatHexString(std::string(bufTmpId));
+            LOG(LogLevel::INFOS) << "Gunnebo decoded id: {dec: " << l << "- hex: " << ret << "}";
         }
 
         return ret;
@@ -335,16 +365,6 @@ namespace logicalaccess
     void GunneboReaderUnit::unSerialize(boost::property_tree::ptree& node)
     {
         ReaderUnit::unSerialize(node);
-
-        std::shared_ptr<GunneboReaderUnitConfiguration> c = getGunneboConfiguration();
-        if (c)
-        {
-            std::shared_ptr<GunneboDataTransport> dt = std::dynamic_pointer_cast<GunneboDataTransport>(getDataTransport());
-            if (dt)
-            {
-                dt->setChecksum(c->getChecksum());
-            }
-        }
     }
 
     std::shared_ptr<GunneboReaderProvider> GunneboReaderUnit::getGunneboReaderProvider() const
@@ -355,15 +375,5 @@ namespace logicalaccess
     void GunneboReaderUnit::setConfiguration(std::shared_ptr<ReaderUnitConfiguration> config)
     {
         ReaderUnit::setConfiguration(config);
-
-        std::shared_ptr<GunneboReaderUnitConfiguration> c = std::dynamic_pointer_cast<GunneboReaderUnitConfiguration>(config);
-        if (c)
-        {
-            std::shared_ptr<GunneboDataTransport> dt = std::dynamic_pointer_cast<GunneboDataTransport>(getDataTransport());
-            if (dt)
-            {
-                dt->setChecksum(c->getChecksum());
-            }
-        }
     }
 }
