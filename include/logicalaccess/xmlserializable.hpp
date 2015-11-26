@@ -33,8 +33,8 @@
 //typedef unsigned __int64 uint64_t;
 //typedef int ssize_t;
 #define strdup _strdup
-//#else
-//#include <stdint.h>
+#else
+#include <stdint.h>
 #endif
 
 #include <string>

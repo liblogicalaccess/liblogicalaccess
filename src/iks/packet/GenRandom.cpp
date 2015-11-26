@@ -1,7 +1,5 @@
 #include "logicalaccess/iks/packet/GenRandom.hpp"
 #include <cstring>
-#include <arpa/inet.h>
-
 
 using namespace logicalaccess;
 using namespace logicalaccess::iks;
@@ -14,7 +12,7 @@ GenRandomCommand::GenRandomCommand()
 std::vector<uint8_t> GenRandomCommand::serialize() const
 {
     auto header      = BaseCommand::serialize();
-    auto req_bytes   = htons(nb_bytes_);
+    auto req_bytes   = lla_htons(nb_bytes_);
     auto buffer_size = header.size();
 
     header.resize(buffer_size + sizeof(req_bytes));

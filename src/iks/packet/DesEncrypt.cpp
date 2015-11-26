@@ -1,5 +1,4 @@
 #include <cstring>
-#include <arpa/inet.h>
 #include "logicalaccess/iks/packet/DesEncrypt.hpp"
 #include "logicalaccess/logs.hpp"
 
@@ -17,7 +16,7 @@ DesEncryptCommand::DesEncryptCommand()
 std::vector<uint8_t> DesEncryptCommand::serialize() const
 {
     auto header       = BaseCommand::serialize();
-    auto payload_size = htons(static_cast<uint16_t>(payload_.size()));
+    auto payload_size = lla_htons(static_cast<uint16_t>(payload_.size()));
     auto needle       = header.size();
 
     header.resize(binary_size());

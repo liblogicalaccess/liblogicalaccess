@@ -1,3 +1,4 @@
+#include <boost/asio.hpp>
 #include <logicalaccess/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <logicalaccess/iks/packet/GenRandom.hpp>

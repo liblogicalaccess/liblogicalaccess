@@ -8,9 +8,9 @@ namespace logicalaccess
 {
 namespace iks
 {
-class DesfireChangeKeyCommand : public BaseCommand
-{
-  public:
+    class LIBLOGICALACCESS_API DesfireChangeKeyCommand : public BaseCommand
+    {
+      public:
     DesfireChangeKeyCommand();
     virtual ~DesfireChangeKeyCommand() = default;
 
@@ -42,7 +42,7 @@ class DesfireChangeKeyCommand : public BaseCommand
     KeyDivInfo newkey_divinfo_;
 };
 
-class DesfireChangeKeyResponse : public BaseResponse
+class LIBLOGICALACCESS_API DesfireChangeKeyResponse : public BaseResponse
 {
   public:
     DesfireChangeKeyResponse(uint16_t status, const std::vector<uint8_t> &data);

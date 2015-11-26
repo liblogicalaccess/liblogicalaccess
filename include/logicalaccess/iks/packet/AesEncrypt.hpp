@@ -8,7 +8,7 @@ namespace logicalaccess
 {
 namespace iks
 {
-class AesEncryptCommand : public BaseCommand
+	class LIBLOGICALACCESS_API AesEncryptCommand : public BaseCommand
 {
   public:
     AesEncryptCommand();
@@ -27,7 +27,7 @@ class AesEncryptCommand : public BaseCommand
     std::array<uint8_t, 16> iv_;
 };
 
-class AesEncryptResponse : public BaseResponse
+	class LIBLOGICALACCESS_API AesEncryptResponse : public BaseResponse
 {
   public:
     AesEncryptResponse(uint16_t status, const std::vector<uint8_t> &data);

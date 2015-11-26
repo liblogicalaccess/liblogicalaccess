@@ -20,7 +20,6 @@ add_executable(
 target_link_libraries(
         basic
         ${LIBLOGICALACCESS_LIBRARIES}
-        desfirecards
 )
 
 install ( TARGETS basic

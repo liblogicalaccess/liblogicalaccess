@@ -5,7 +5,8 @@
 #include <cstdint>
 #include <cstddef>
 #include <memory>
-
+#include "logicalaccess/logicalaccess_api.hpp"
+#include "logicalaccess/utils.hpp"
 
 namespace logicalaccess
 {
@@ -65,7 +66,7 @@ enum protocol_opcode
     SMSG_OP_DESFIRE_CHANGEKEY,
 };
 
-class BaseCommand
+class LIBLOGICALACCESS_API BaseCommand
 {
   public:
     virtual std::vector<uint8_t> serialize() const;
@@ -87,7 +88,7 @@ class BaseCommand
 /**
  * Some information about how to do key diversification.
  */
-class KeyDivInfo
+class LIBLOGICALACCESS_API KeyDivInfo
 {
   public:
     KeyDivInfo();
@@ -119,7 +120,7 @@ class KeyDivInfo
                             unsigned char keyno);
 };
 
-class BaseResponse
+class LIBLOGICALACCESS_API BaseResponse
 {
   public:
     virtual ~BaseResponse() = default;

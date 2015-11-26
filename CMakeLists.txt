@@ -7,12 +7,6 @@ endif()
 
 project(liblogicalaccess)
 
-## Clion hack.
-FILE (GLOB_RECURSE clion_all_headers ${CMAKE_SOURCE_DIR}/*.hpp)
-ADD_CUSTOM_TARGET(all_clion
-    SOURCES ${clion_all_headers}
-)
-
 include(version.cmake)
 set(LIBLOGICALACCESS_VERSION_STRING ${LIBLOGICALACCESS_VERSION_MAJOR}.${LIBLOGICALACCESS_VERSION_MINOR}.${LIBLOGICALACCESS_VERSION_PATCH} )
 

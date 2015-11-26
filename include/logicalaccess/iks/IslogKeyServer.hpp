@@ -13,12 +13,12 @@ namespace iks
  *
  * This object is movable but not copyable.
  */
-class IslogKeyServer
+class LIBLOGICALACCESS_API IslogKeyServer
 {
   public:
     IslogKeyServer() = delete;
     IslogKeyServer(const IslogKeyServer &) = delete;
-    IslogKeyServer(IslogKeyServer &&) = default;
+//    IslogKeyServer(IslogKeyServer &&) = default;
 
     struct IKSConfig
     {

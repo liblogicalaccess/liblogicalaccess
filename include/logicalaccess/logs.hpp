@@ -64,7 +64,7 @@ namespace logicalaccess
      * And overload to pretty-print a byte std::array to an ostream
      */
     template<long unsigned int Size>
-    LIBLOGICALACCESS_API std::ostream &operator<<(std::ostream &ss, const std::array<uint8_t, Size> &bytearray)
+    std::ostream &operator<<(std::ostream &ss, const std::array<uint8_t, Size> &bytearray)
     {
         ss << std::vector<uint8_t>(bytearray.begin(), bytearray.end());
         return ss;

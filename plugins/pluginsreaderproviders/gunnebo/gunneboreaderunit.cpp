@@ -241,7 +241,8 @@ namespace logicalaccess
                     
                     memset(bufTmpId, 0x00, sizeof(bufTmpId));
 #if defined(UNIX)
-                    sprintf(bufTmpId, "%04ld%03ld%06ld", cc, ci1, ci2);
+                    snprintf(bufTmpId, sizeof(bufTmpId), "%04ld%03ld%06ld", static_cast<long>(cc),
+                            static_cast<long>(ci1), static_cast<long>(ci2));
 #else
                     sprintf_s(bufTmpId, sizeof(bufTmpId), "%04ld%03ld%06ld", cc, ci1, ci2);
 #endif
@@ -251,7 +252,7 @@ namespace logicalaccess
 
             memset(bufTmpId, 0x00, sizeof(bufTmpId));
 #if defined(UNIX)
-            sprintf(bufTmpId, "%012llx", l);
+            snprintf(bufTmpId, sizeof(bufTmpId), "%012llx", l);
 #else
             sprintf_s(bufTmpId, sizeof(bufTmpId), "%012llx", l);
 #endif

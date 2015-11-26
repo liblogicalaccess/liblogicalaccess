@@ -1,13 +1,12 @@
 #include "logicalaccess/iks/packet/Base.hpp"
 
 #include <cstring>
-#include <arpa/inet.h>
+#include <logicalaccess/utils.hpp>
 #include <assert.h>
 #include <logicalaccess/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 #include "logicalaccess/key.hpp"
-#include "../../../plugins/pluginscards/desfire/nxpav1keydiversification.hpp"
-#include "../../../plugins/pluginscards/desfire/nxpav2keydiversification.hpp"
+#include <logicalaccess/cards/keydiversification.hpp>
 
 using namespace logicalaccess;
 using namespace logicalaccess::iks;
@@ -18,8 +17,8 @@ std::vector<uint8_t> BaseCommand::serialize() const
     uint16_t op;
 
     std::vector<uint8_t> ret(6);
-    full_size = htonl(static_cast<uint32_t>(binary_size()));
-    op        = htons(opcode_);
+    full_size = logicalaccess::lla_htonl(static_cast<uint32_t>(binary_size()));
+    op        = logicalaccess::lla_htons(opcode_);
 
     memcpy(&ret[0], &full_size, sizeof(full_size));
     memcpy(&ret[sizeof(full_size)], &op, sizeof(op));
@@ -102,18 +101,14 @@ KeyDivInfo KeyDivInfo::build(std::shared_ptr<Key> key,
     auto kd       = KeyDivInfo();
     kd.div_input_ = divinput;
 
-    if (std::dynamic_pointer_cast<NXPAV1KeyDiversification>(
-            key->getKeyDiversification()))
-    {
+	if (key->getKeyDiversification()->getType() == "NXPAV1")
+	{
         kd.flag_ = KEYDIV_ALGO_NXP_AV1;
     }
-    else if (std::dynamic_pointer_cast<NXPAV2KeyDiversification>(
-                 key->getKeyDiversification()))
+	if (key->getKeyDiversification()->getType() == "NXPAV2")
     {
         kd.flag_ = KEYDIV_ALGO_NXP_AV2;
     }
-
-
     return kd;
 }
 

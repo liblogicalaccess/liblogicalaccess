@@ -31,10 +31,10 @@ void introduction()
     LLA_SUBTEST_REGISTER("CorrectWriteRead");
 }
 
-std::vector<uint8_t> operator"" _v(const char *str, size_t size)
+std::vector<uint8_t> vector_from_string(const std::string &s)
 {
-    std::vector<uint8_t> ret(str, str + size);
-    return ret;
+	std::vector<uint8_t> ret(s.begin(), s.end());
+	return ret;
 }
 
 void read_write(std::shared_ptr<logicalaccess::DESFireEV1ISO7816Commands> cmdev1)
@@ -46,7 +46,7 @@ void read_write(std::shared_ptr<logicalaccess::DESFireEV1ISO7816Commands> cmdev1
     key->setKeyStorage(
         std::make_shared<logicalaccess::IKSStorage>("imported-one-aes"));
     auto div = std::make_shared<NXPAV2KeyDiversification>();
-    div->setSystemIdentifier("BOAP"_v);
+    div->setSystemIdentifier(vector_from_string("BOAP"));
     key->setKeyDiversification(div);
 
     static_cast<DESFireISO7816Commands *>(cmdev1.get())->selectApplication(0x535);

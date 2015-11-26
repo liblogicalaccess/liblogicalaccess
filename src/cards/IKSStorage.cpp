@@ -21,6 +21,7 @@ void IKSStorage::unSerialize(boost::property_tree::ptree &node)
 std::string IKSStorage::getDefaultXmlNodeName() const
 {
         assert(0 && "Not implemented");
+		return "";
 }
 
 const std::string &IKSStorage::getKeyIdentity() const

@@ -49,7 +49,7 @@ int main(int ac, char **av)
                                std::make_shared<ProxLocation>(), nullptr);
     ret->getLinearData(&buffer[0], buffer.size());
 
-    std::cout << "Format: " << buffer << std::endl;
+    std::cout << "Format: " << std::vector<uint8_t>(buffer.begin(), buffer.end()) << std::endl;
 
     pcsc_test_shutdown(readerUnit);
     return 0;

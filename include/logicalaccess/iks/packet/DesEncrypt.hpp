@@ -8,7 +8,7 @@ namespace logicalaccess
 {
 namespace iks
 {
-class DesEncryptCommand : public BaseCommand
+	class LIBLOGICALACCESS_API DesEncryptCommand : public BaseCommand
 {
   public:
     DesEncryptCommand();
@@ -31,7 +31,7 @@ class DesEncryptCommand : public BaseCommand
 #define COMMAND_DES_ENCRYPT_FLAG_CBC 2
 };
 
-class DesEncryptResponse : public BaseResponse
+	class LIBLOGICALACCESS_API DesEncryptResponse : public BaseResponse
 {
   public:
     DesEncryptResponse(uint16_t status, const std::vector<uint8_t> &data);

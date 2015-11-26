@@ -15,7 +15,7 @@ enum desfire_auth_algo_e
     DESFIRE_AUTH_ALGO_DES
 };
 
-class DesfireAuthCommand : public BaseCommand
+class LIBLOGICALACCESS_API DesfireAuthCommand : public BaseCommand
 {
   public:
     DesfireAuthCommand();
@@ -45,7 +45,7 @@ class DesfireAuthCommand : public BaseCommand
     KeyDivInfo div_info_;
 };
 
-class DesfireAuthResponse : public BaseResponse
+class LIBLOGICALACCESS_API DesfireAuthResponse : public BaseResponse
 {
   public:
     DesfireAuthResponse(uint16_t status, const std::vector<uint8_t> &data);
