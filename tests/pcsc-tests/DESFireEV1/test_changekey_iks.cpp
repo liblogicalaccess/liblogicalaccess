@@ -33,8 +33,8 @@ void introduction()
 
 std::vector<uint8_t> vector_from_string(const std::string &s)
 {
-	std::vector<uint8_t> ret(s.begin(), s.end());
-	return ret;
+    std::vector<uint8_t> ret(s.begin(), s.end());
+    return ret;
 }
 
 void read_write(std::shared_ptr<logicalaccess::DESFireEV1ISO7816Commands> cmdev1)

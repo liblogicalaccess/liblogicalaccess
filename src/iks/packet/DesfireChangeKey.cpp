@@ -5,6 +5,8 @@ using namespace logicalaccess;
 using namespace logicalaccess::iks;
 
 DesfireChangeKeyCommand::DesfireChangeKeyCommand()
+    : flag_(0)
+    , keyno_(0)
 {
     opcode_ = CMSG_OP_DESFIRE_CHANGEKEY;
 }

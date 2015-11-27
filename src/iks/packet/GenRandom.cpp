@@ -5,6 +5,7 @@ using namespace logicalaccess;
 using namespace logicalaccess::iks;
 
 GenRandomCommand::GenRandomCommand()
+    : nb_bytes_(0)
 {
     opcode_ = CMSG_OP_GENRANDOM;
 }

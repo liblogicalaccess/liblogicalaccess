@@ -17,6 +17,7 @@ SSLTransport::SSLTransport(boost::asio::ssl::context &ctx)
     , d_timer(d_ios)
     , d_read_error(true)
     , d_bytes_transferred(0)
+    , d_port(0)
 {
 }
 

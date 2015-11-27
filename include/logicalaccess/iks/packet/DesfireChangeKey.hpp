@@ -8,9 +8,9 @@ namespace logicalaccess
 {
 namespace iks
 {
-    class LIBLOGICALACCESS_API DesfireChangeKeyCommand : public BaseCommand
-    {
-      public:
+class LIBLOGICALACCESS_API DesfireChangeKeyCommand : public BaseCommand
+{
+  public:
     DesfireChangeKeyCommand();
     virtual ~DesfireChangeKeyCommand() = default;
 

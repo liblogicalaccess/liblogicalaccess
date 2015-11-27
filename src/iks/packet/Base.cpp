@@ -101,11 +101,11 @@ KeyDivInfo KeyDivInfo::build(std::shared_ptr<Key> key,
     auto kd       = KeyDivInfo();
     kd.div_input_ = divinput;
 
-	if (key->getKeyDiversification()->getType() == "NXPAV1")
-	{
+    if (key->getKeyDiversification()->getType() == "NXPAV1")
+    {
         kd.flag_ = KEYDIV_ALGO_NXP_AV1;
     }
-	if (key->getKeyDiversification()->getType() == "NXPAV2")
+    if (key->getKeyDiversification()->getType() == "NXPAV2")
     {
         kd.flag_ = KEYDIV_ALGO_NXP_AV2;
     }

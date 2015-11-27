@@ -227,12 +227,13 @@ std::shared_ptr<BaseResponse> IslogKeyServer::recv()
             has_status = true;
         }
 
-        LOG(INFOS) << "Size: " << packet_size << ". Op: " << opcode
-                   << ". St: " << status << ". Bufsize: " << buffer.size()
-                   << ". Needle: " << needle;
         if (has_size && has_opcode && has_status &&
             buffer.size() - needle >= packet_size - 8) // total size of header
         {
+            LOG(INFOS) << "Size: " << packet_size << ". Op: " << opcode
+                       << ". St: " << status << ". Bufsize: " << buffer.size()
+                       << ". Needle: " << needle;
+
             return build_response(
                 packet_size, opcode, status,
                 std::vector<uint8_t>(buffer.begin() + needle, buffer.end()));
