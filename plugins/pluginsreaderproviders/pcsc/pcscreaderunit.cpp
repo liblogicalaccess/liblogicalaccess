@@ -1460,7 +1460,7 @@ namespace logicalaccess
 
             std::shared_ptr<ReaderCardAdapter> rca = getReaderCardAdapter(type);
             std::shared_ptr<Commands> commands;
-            std::shared_ptr<ResultChecker> resultChecker(new ISO7816ResultChecker()); // default one
+            std::shared_ptr<ResultChecker> resultChecker= createDefaultResultChecker();
 
             if (type == "Mifare1K" || type == "Mifare4K" || type == "Mifare")
             {
@@ -1544,12 +1544,10 @@ namespace logicalaccess
                 if (getPCSCType() == PCSC_RUT_ACS_ACR || getPCSCType() == PCSC_RUT_ACS_ACR_1222L)
                 {
                     commands.reset(new MifareUltralightCACSACRCommands());
-                    resultChecker.reset(new ACSACRResultChecker());
                 }
                 else if (getPCSCType() == PCSC_RUT_SPRINGCARD)
                 {
                     commands.reset(new MifareUltralightCSpringCardCommands());
-					resultChecker.reset(new SpringCardResultChecker());
                 }
                 else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX21)
                 {
@@ -1574,27 +1572,6 @@ namespace logicalaccess
                 std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(commands)->setCrypto(samcrypto);
                 resultChecker.reset(new SAMISO7816ResultChecker());
             }
-           /* else if (type == "MifarePlus4K")
-            {
-                //TODO : find the SL without ATR
-                std::string ct = getCardTypeFromATR(d_atr, d_atrLength);
-                if (ct != "Mifare")
-                {
-                    chip->setProfile(std::shared_ptr<MifarePlusSL1Profile>(new MifarePlusSL1Profile()));
-                    if (getPCSCType() == PCSC_RUT_SPRINGCARD)
-                    {
-                        commands.reset(new MifarePlusSpringCardCommandsSL1());
-                    }
-                }
-                else *//* A MODIFIER *//*
-                {
-                    chip->setProfile(std::shared_ptr<MifarePlusSL3Profile>(new MifarePlusSL3Profile()));
-                    if (getPCSCType() == PCSC_RUT_SPRINGCARD)
-                    {
-                        commands.reset(new MifarePlusSpringCardCommandsSL3());
-                    }
-                }
-            }*/
             else if (type.find("MifarePlus") == 0)
             {
                 configure_mifareplus_chip(chip, commands, resultChecker);

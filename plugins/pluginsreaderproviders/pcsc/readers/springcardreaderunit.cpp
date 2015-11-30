@@ -5,10 +5,9 @@
  */
 
 #include "../readers/springcardreaderunit.hpp"
+#include "../commands/springcardresultchecker.hpp"
 
-#include <iostream>
 #include <iomanip>
-#include <sstream>
 
 namespace logicalaccess
 {
@@ -25,4 +24,9 @@ namespace logicalaccess
     {
         return PCSC_RUT_SPRINGCARD;
     }
+
+std::shared_ptr<ResultChecker> SpringCardReaderUnit::createDefaultResultChecker() const
+{
+    return std::make_shared<SpringCardResultChecker>();
+}
 }

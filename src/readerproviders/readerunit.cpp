@@ -391,4 +391,9 @@ namespace logicalaccess
 		TechnoBitset tb = 0;
 		return tb;
 	}
+
+    std::shared_ptr<ResultChecker> ReaderUnit::createDefaultResultChecker() const
+    {
+        return nullptr;
+    }
 }

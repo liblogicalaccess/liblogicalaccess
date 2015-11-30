@@ -4,23 +4,16 @@
  * \brief PC/SC reader unit.
  */
 
-#include "iso7816readerunit.hpp"
-
-#include <iostream>
 #include <iomanip>
-#include <sstream>
-
-#include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
-#include "logicalaccess/cards/chip.hpp"
-#include "logicalaccess/dynlibrary/librarymanager.hpp"
-#include "logicalaccess/dynlibrary/idynlibrary.hpp"
-
-#include "desfirechip.hpp"
 #include <boost/filesystem.hpp>
 
-#ifdef UNIX
-#include <sys/time.h>
-#endif
+#include "iso7816readerunit.hpp"
+#include "logicalaccess/cards/chip.hpp"
+#include "logicalaccess/dynlibrary/librarymanager.hpp"
+#include "desfirechip.hpp"
+#include "iso7816resultchecker.hpp"
+#include "commands/desfireiso7816resultchecker.hpp"
+#include "commands/samiso7816resultchecker.hpp"
 
 namespace logicalaccess
 {
@@ -42,4 +35,9 @@ namespace logicalaccess
         std::vector<std::shared_ptr<Chip> > ret;
         return ret;
     }
+
+std::shared_ptr<ResultChecker> ISO7816ReaderUnit::createDefaultResultChecker() const
+{
+    return std::make_shared<ISO7816ResultChecker>();
+}
 }

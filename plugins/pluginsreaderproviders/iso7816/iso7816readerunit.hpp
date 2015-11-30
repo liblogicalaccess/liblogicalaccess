@@ -98,8 +98,8 @@ namespace logicalaccess
          */
         virtual std::string getReaderSerialNumber() { return ""; }
 
-    protected:
-    private:
+      protected:
+        virtual std::shared_ptr<ResultChecker> createDefaultResultChecker() const override;
     };
 }
 

@@ -357,6 +357,16 @@ namespace logicalaccess
          */
         std::shared_ptr<LEDBuzzerDisplay> d_ledBuzzerDisplay;
 
+        /**
+         * Create a new ResultChecker object that make sense for the current reader.
+         *
+         * It's possible that this ResultChecker won't be used, as more fine-grained
+         * check regarding reader/card-type combination happen.
+         *
+         * The default implementation returns nullptr.
+         */
+        virtual std::shared_ptr<ResultChecker> createDefaultResultChecker() const;
+
     private:
 
         /**
