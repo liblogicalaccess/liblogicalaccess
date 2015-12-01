@@ -36,3 +36,8 @@ find ${DIR}/../src/services/identity -name "*.cpp"  | xargs clang-format-3.8 -st
 find ${DIR}/../plugins/pluginscards/epass -name "*.hpp" -or -name "*.cpp"  | xargs clang-format-3.8 -style=file -i {} \;
 find ${DIR}/../plugins/pluginsreaderproviders/stidprg -name "*.cpp"  | xargs clang-format-3.8 -style=file -i {} \;
 find ${DIR}/../plugins/pluginsreaderproviders/stidprg -name "*.hpp"  | xargs clang-format-3.8 -style=file -i {} \;
+clang-format-3.8 -style=file -i ${DIR}/../src/cardprobe.cpp  ${DIR}/../include/cardprobe.cpp
+
+clang-format-3.8 -style=file -i ${DIR}/../plugins/pluginsreaderproviders/pcsc/readers/id3readerunit.hpp ${DIR}/../plugins/pluginsreaderproviders/pcsc/readers/id3readerunit.cpp
+
+clang-format-3.8 -style=file -i ${DIR}/../plugins/pluginsreaderproviders/pcsc/readers/cardprobes/*.hpp ${DIR}/../plugins/pluginsreaderproviders/pcsc/readers/cardprobes/*.cpp
