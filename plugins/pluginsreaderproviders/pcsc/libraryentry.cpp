@@ -9,6 +9,7 @@
 #include "readers/cherryreaderunit.hpp"
 #include "readers/acsacrreaderunit.hpp"
 #include "readers/acsacr1222lreaderunit.hpp"
+#include "readers/id3readerunit.hpp"
 #include "logicalaccess/logicalaccess_api.hpp"
 
 extern "C"
@@ -69,6 +70,10 @@ extern "C"
         else if (readerName.find("ACS ACR") != string::npos)
         {
             u = make_shared<ACSACRReaderUnit>(readerName);
+        }
+        else if (readerName.find("id3 Semiconductors") != string::npos)
+        {
+            u = make_shared<ID3ReaderUnit>(readerName);
         }
     }
 
