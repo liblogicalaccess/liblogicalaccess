@@ -2,6 +2,7 @@
 #include "../readercardadapters/pcscreadercardadapter.hpp"
 #include "../pcscdatatransport.hpp"
 #include "logicalaccess/bufferhelper.hpp"
+#include "cardprobes/cl1356cardprobe.hpp"
 #include <cassert>
 #include <array>
 #include <iostream>
@@ -116,6 +117,17 @@ std::shared_ptr<Chip> ID3ReaderUnit::selectCard(uint8_t idx)
         PCSCDataTransport::CheckCardError(r);
     }
     return nullptr;
+}
+
+PCSCReaderUnitType ID3ReaderUnit::getPCSCType() const
+{
+	return PCSC_RUT_ID3_CL1356;
+}
+
+
+std::shared_ptr<CardProbe> ID3ReaderUnit::createCardProbe()
+{
+	return std::make_shared<CL1356CardProbe>(this);
 }
 
 

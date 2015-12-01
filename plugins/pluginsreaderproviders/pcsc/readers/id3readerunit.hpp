@@ -40,6 +40,8 @@ class LIBLOGICALACCESS_API ID3ReaderUnit : public PCSCReaderUnit
 
     void toggleCardOperation(bool e);
 
+	PCSCReaderUnitType getPCSCType() const override;
+
   private:
     /**
      * Extract the information about 1 card from the data
@@ -50,6 +52,8 @@ class LIBLOGICALACCESS_API ID3ReaderUnit : public PCSCReaderUnit
                                       const ByteVector::iterator &end);
 
   protected:
+    std::shared_ptr<CardProbe> createCardProbe() override;
+
     /**
      * A RAII object that setup an adapter
      * that wrap proprietary commands.

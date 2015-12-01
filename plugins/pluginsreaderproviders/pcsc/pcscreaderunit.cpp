@@ -75,6 +75,7 @@
 #include "pcsc_ctl_datatransport.hpp"
 #include "commands/mifareplus_acsacr1222l_sl1.hpp"
 #include "commands/mifareplus_pcsc_sl3.hpp"
+#include "commands/mifare_cl1356_commands.hpp"
 #include "readers/cardprobes/pcsccardprobe.hpp"
 #include "atrparser.hpp"
 #include "../../pluginscards/epass/epass_command.hpp"
@@ -1053,6 +1054,10 @@ std::shared_ptr<ReaderCardAdapter> PCSCReaderUnit::getReaderCardAdapter(std::str
                 else if (getPCSCType() == PCSC_RUT_ACS_ACR_1222L)
                 {
                     commands.reset(new MifareACR1222LCommands());
+                }
+                else if (getPCSCType() == PCSC_RUT_ID3_CL1356)
+                {
+                     commands.reset(new MifareCL1356Commands());
                 }
                 else
                 {
