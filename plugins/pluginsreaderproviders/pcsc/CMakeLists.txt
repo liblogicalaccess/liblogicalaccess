@@ -43,9 +43,16 @@ SOURCE_GROUP("Header Files\\readers" FILES ${include_readers})
 file(GLOB source_readers ${CMAKE_CURRENT_SOURCE_DIR}/readers/*.cpp)
 SOURCE_GROUP("Source Files\\readers" FILES ${source_readers})
 
+file(GLOB source_probes ${CMAKE_CURRENT_SOURCE_DIR}/readers/cardprobes/*.cpp)
+SOURCE_GROUP("Source Files\\readers\\cardprobes" FILES ${source_probes})
 
-set(INCLUDE_LIB ${include} ${include_core} ${include_readercardadapters} ${include_readers} ${include_commands})
-set(SOURCE_LIB ${SRCS} ${source_readercardadapters} ${source_readers} ${source_commands})
+file(GLOB include_probes ${CMAKE_CURRENT_SOURCE_DIR}/readers/cardprobes/*.hpp)
+SOURCE_GROUP("Header Files\\readers\\cardprobes" FILES ${include_probes})
+
+set(INCLUDE_LIB ${include} ${include_core} ${include_readercardadapters}
+        ${include_readers} ${include_commands} ${include_probes})
+set(SOURCE_LIB ${SRCS} ${source_readercardadapters} ${source_readers}
+        ${source_commands} ${source_probes})
 
 add_library(
 	pcscreaders

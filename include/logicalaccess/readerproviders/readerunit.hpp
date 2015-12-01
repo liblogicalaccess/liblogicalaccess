@@ -15,6 +15,7 @@
 #include "logicalaccess/xmlserializable.hpp"
 #include "logicalaccess/lla_fwd.hpp"
 #include "logicalaccess/techno.hpp"
+#include "logicalaccess/cardprobe.hpp"
 
 #ifdef UNIX
 #include <PCSC/wintypes.h>
@@ -382,6 +383,17 @@ namespace logicalaccess
          * The default implementation returns nullptr.
          */
         virtual std::shared_ptr<ResultChecker> createDefaultResultChecker() const;
+
+        /**
+         * Create a new CardProbe object that works with the current
+         * reader.
+         *
+         * This is required because the behaviour of reader varies a lot when
+         * probing for cards.
+         *
+         * The default implementation returns nullptr;
+         */
+        virtual std::shared_ptr<CardProbe> createCardProbe();
 
     private:
 

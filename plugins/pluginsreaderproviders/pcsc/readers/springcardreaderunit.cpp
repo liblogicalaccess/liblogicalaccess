@@ -6,6 +6,7 @@
 
 #include "../readers/springcardreaderunit.hpp"
 #include "../commands/springcardresultchecker.hpp"
+#include "cardprobes/springcardprobe.hpp"
 
 #include <iomanip>
 
@@ -25,8 +26,13 @@ namespace logicalaccess
         return PCSC_RUT_SPRINGCARD;
     }
 
-std::shared_ptr<ResultChecker> SpringCardReaderUnit::createDefaultResultChecker() const
-{
-    return std::make_shared<SpringCardResultChecker>();
-}
+    std::shared_ptr<ResultChecker> SpringCardReaderUnit::createDefaultResultChecker() const
+    {
+        return std::make_shared<SpringCardResultChecker>();
+    }
+
+    std::shared_ptr<CardProbe> SpringCardReaderUnit::createCardProbe()
+    {
+        return std::make_shared<SpringCardProbe>(this);
+    }
 }

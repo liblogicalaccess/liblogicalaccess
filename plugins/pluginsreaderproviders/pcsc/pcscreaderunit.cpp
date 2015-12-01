@@ -65,6 +65,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+#include "logicalaccess/cardprobe.hpp"
 #include <logicalaccess/utils.hpp>
 
 #include "readers/acsacr1222llcddisplay.hpp"
@@ -74,6 +75,7 @@
 #include "pcsc_ctl_datatransport.hpp"
 #include "commands/mifareplus_acsacr1222l_sl1.hpp"
 #include "commands/mifareplus_pcsc_sl3.hpp"
+#include "readers/cardprobes/pcsccardprobe.hpp"
 #include "atrparser.hpp"
 #include "../../pluginscards/epass/epass_command.hpp"
 #include "../../pluginscards/epass/epass_readercardadapter.hpp"
@@ -598,18 +600,12 @@ namespace logicalaccess
 
     bool PCSCReaderUnit::connect(PCSCShareMode share_mode)
     {
-        LOG(LogLevel::INFOS) << "Connecting to the chip... Shared mode {" << share_mode << "}";
+        LOG(LogLevel::INFOS) << "Connecting to the chip... Share mode {" << share_mode << "}";
         bool ret = false;
         if (d_proxyReaderUnit)
         {
             LOG(LogLevel::INFOS) << "Need to use a proxy reader !";
             ret = d_proxyReaderUnit->connect(share_mode);
-            if (ret)
-            {
-             //  d_sch = d_proxyReaderUnit->getHandle();
-              //  d_ap = d_proxyReaderUnit->getActiveProtocol();
-              //  d_share_mode = share_mode;
-            }
         }
         else
         {
@@ -625,7 +621,6 @@ namespace logicalaccess
 				connection_->setDisposition(SCARD_LEAVE_CARD);
 
                 LOG(LogLevel::INFOS) << "SCardConnect Success !";
-
                 detect_mifareplus_security_level(d_insertedChip);
                 if (d_insertedChip->getChipIdentifier().size() == 0)
                 {
@@ -677,6 +672,14 @@ namespace logicalaccess
                                 {
                                     // Doesn't care about bad communication here, stay DESFire.
                                 }
+                                std::vector<uint8_t> uid;
+                                if (createCardProbe()->is_desfire_ev1(&uid))
+                                {
+                                    d_insertedChip = createChip("DESFireEV1");
+                                }
+                                d_insertedChip->setChipIdentifier(uid);
+                                std::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->getCrypto()
+                                    ->setIdentifier(d_insertedChip->getChipIdentifier());
                             }
                             else if (d_insertedChip->getCardType() == "SAM_AV2")
                             {
@@ -1539,5 +1542,10 @@ std::shared_ptr<ReaderCardAdapter> PCSCReaderUnit::getReaderCardAdapter(std::str
             return d_proxyReaderUnit->createDefaultResultChecker();
         }
         return ISO7816ReaderUnit::createDefaultResultChecker();
+    }
+
+    std::shared_ptr<CardProbe> PCSCReaderUnit::createCardProbe()
+    {
+        return std::make_shared<PCSCCardProbe>(this);
     }
 }
