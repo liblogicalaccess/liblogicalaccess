@@ -105,7 +105,7 @@ void PCSCCardProbe::reset()
         auto pcsc_ru = dynamic_cast<PCSCReaderUnit *>(reader_unit_);
         assert(pcsc_ru);
 
-        pcsc_ru->reconnect();
+        pcsc_ru->reconnect(SCARD_UNPOWER_CARD);
     }
     catch (const std::exception &e)
     {

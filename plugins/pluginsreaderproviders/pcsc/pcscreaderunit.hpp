@@ -100,6 +100,7 @@ namespace logicalaccess
 
         /**
          * \brief Reconnect to the card with the currently active share mode on the same reader.
+         * \param control the behavior of the reconnect.
          * \return True if the card was reconnected without error, false otherwise.
          */
         virtual bool reconnect(int action = 0);

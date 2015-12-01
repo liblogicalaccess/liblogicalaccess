@@ -29,6 +29,12 @@ namespace logicalaccess
          */
         ~PCSCConnection();
 
+        /**
+         * Reconnect the PCSC connection.
+         *
+         * @param action_on_reconnect is one the define from the SCard library
+         * that control the behaviour of the reconnect.
+         */
 		void reconnect();
 
 		/**
