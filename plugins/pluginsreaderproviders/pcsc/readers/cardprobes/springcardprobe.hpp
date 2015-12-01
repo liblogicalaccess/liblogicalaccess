@@ -4,13 +4,13 @@
 
 namespace logicalaccess
 {
-class SpringCardProbe : public PCSCCardProbe
+class LIBLOGICALACCESS_API SpringCardProbe : public PCSCCardProbe
 {
-  public:
+    public:
     SpringCardProbe(ReaderUnit *ru);
 
 
-  public:
+    public:
     virtual bool maybe_mifare_classic() override;
 };
 }

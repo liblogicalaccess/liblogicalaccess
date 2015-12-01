@@ -27,7 +27,9 @@ bool PCSCCardProbe::maybe_mifare_classic()
         logicalaccess::MifareAccessInfo::SectorAccessBits sab;
         std::dynamic_pointer_cast<logicalaccess::MifareProfile>(chip->getProfile())
             ->setDefaultKeysAt(0x00);
-        auto ret = command->readSector(0, 1, sab);
+		std::dynamic_pointer_cast<logicalaccess::MifareProfile>(chip->getProfile())
+			->setDefaultKeysAt(1);
+        auto ret = command->readSector(1, 0, sab);
         return true;
     }
     catch (const CardException &e)
@@ -41,7 +43,7 @@ bool PCSCCardProbe::maybe_mifare_classic()
     }
     catch (const std::exception &)
     {
-        // If an error occurred, the card probably isn't desfire.
+        // If an error occurred, the card probably isn't mifare classic.
         return false;
     }
     return false;

@@ -4,15 +4,15 @@
 
 namespace logicalaccess
 {
-class PCSCCardProbe : public CardProbe
+class LIBLOGICALACCESS_API PCSCCardProbe : public CardProbe
 {
   public:
     PCSCCardProbe(ReaderUnit *ru);
 
   public:
-    virtual bool is_desfire(std::vector<uint8_t> *uid) override;
+    virtual bool is_desfire(std::vector<uint8_t> *uid = nullptr) override;
 
-    virtual bool is_desfire_ev1(std::vector<uint8_t> *uid) override;
+    virtual bool is_desfire_ev1(std::vector<uint8_t> *uid = nullptr) override;
 
     virtual bool maybe_mifare_classic() override;
 

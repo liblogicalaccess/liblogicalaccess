@@ -3,11 +3,7 @@
 #include <thread>
 #include "logicalaccess/logs.hpp"
 #include "logicalaccess/cardprobe.hpp"
-#include "../plugins/pluginscards/desfire/desfirecommands.hpp"
 #include "logicalaccess/cards/chip.hpp"
-#include "../plugins/pluginscards/mifare/mifarecommands.hpp"
-#include "../plugins/pluginscards/mifare/mifareprofile.hpp"
-#include "../plugins/pluginsreaderproviders/pcsc/pcscreaderunit.hpp"
 
 using namespace logicalaccess;
 

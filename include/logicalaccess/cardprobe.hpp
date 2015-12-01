@@ -17,7 +17,7 @@ namespace logicalaccess
  * if not properly defined. This class may be reimplemented for some
  * reader unit that behave differently.
  */
-class CardProbe
+class LIBLOGICALACCESS_API CardProbe
 {
       public:
         CardProbe(ReaderUnit *ru);
