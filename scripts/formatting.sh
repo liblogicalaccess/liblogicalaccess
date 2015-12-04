@@ -21,3 +21,7 @@ clang-format-3.8 -style=file -i ${DIR}/../plugins/pluginsreaderproviders/pcsc/at
 
 find ${DIR}/../tests/unittest -name "*.cpp"  | xargs clang-format-3.8 -style=file -i {} \;
 clang-format-3.8 -style=file -i ${DIR}/../src/utils.cpp ${DIR}/../include/logicalaccess/utils.hpp
+
+clang-format-3.8 -style=file -i ${DIR}/../src/services/uidchanger/uidchangerservice.cpp ${DIR}/../include/logicalaccess/services/uidchanger/uidchangerservice.hpp
+
+clang-format-3.8 -style=file -i ${DIR}/../plugins/pluginscards/mifareultralight/mifareultralightuidchangerservice.{cpp,hpp}

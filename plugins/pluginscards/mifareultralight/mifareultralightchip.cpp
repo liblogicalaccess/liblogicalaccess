@@ -5,15 +5,10 @@
  */
 
 #include "mifareultralightchip.hpp"
-
-#include <iostream>
-#include <iomanip>
-#include <sstream>
-
 #include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
-#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 #include "mifareultralightstoragecardservice.hpp"
 #include "logicalaccess/cards/locationnode.hpp"
+#include "mifareultralightuidchangerservice.hpp"
 
 namespace logicalaccess
 {
@@ -81,6 +76,10 @@ namespace logicalaccess
             service.reset(new MifareUltralightStorageCardService(shared_from_this()));
             break;
         case CST_NFC_TAG:
+            break;
+        case CST_UID_CHANGER:
+            auto storage = std::make_shared<MifareUltralightStorageCardService>(shared_from_this());
+            service.reset(new MifareUltralightUIDChangerService(storage));
             break;
         }
 

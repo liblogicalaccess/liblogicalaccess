@@ -27,7 +27,8 @@ namespace logicalaccess
     typedef enum {
         CST_ACCESS_CONTROL = 0x0000, /**< The access control card service type */
         CST_NFC_TAG = 0x0001, /**< The NFC Tag card service type */
-        CST_STORAGE = 0x0002 /**< The storage card service type */
+        CST_STORAGE = 0x0002, /**< The storage card service type */
+        CST_UID_CHANGER = 0x0003, /**< Service to change the UID of a card */
     } CardServiceType;
 
     /**

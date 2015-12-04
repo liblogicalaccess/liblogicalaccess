@@ -107,6 +107,7 @@ file(GLOB source_encodings ${NATIVE_SOURCE}/services/accesscontrol/encodings/*.c
 file(GLOB source_formats ${NATIVE_SOURCE}/services/accesscontrol/formats/*.cpp)
 file(GLOB source_customformat ${NATIVE_SOURCE}/services/accesscontrol/formats/customformat/*.cpp)
 file(GLOB source_nfctag ${NATIVE_SOURCE}/services/nfctag/*.cpp)
+file(GLOB source_uidchanger ${NATIVE_SOURCE}/services/uidchanger/*.cpp)
 file(GLOB source_iks ${NATIVE_SOURCE}/iks/*.cpp ${NATIVE_SOURCE}/iks/packet/*.cpp)
 
 			
@@ -121,6 +122,7 @@ file(GLOB include_formats ${NATIVE_INCLUDE}/logicalaccess/services/accesscontrol
 file(GLOB include_customformat ${NATIVE_INCLUDE}/logicalaccess/services/accesscontrol/formats/customformat/*.hpp)
 file(GLOB include_nfctag ${NATIVE_INCLUDE}/logicalaccess/services/nfctag/*.hpp)
 file(GLOB include_storage ${NATIVE_INCLUDE}/logicalaccess/services/storage/*.hpp)
+file(GLOB include_uidchanger ${NATIVE_INCLUDE}/logicalaccess/services/uidchanger/*.hpp)
 file(GLOB include_iks ${NATIVE_INCLUDE}/iks/*.hpp ${NATIVE_INCLUDE}/iks/packet/*.hpp)
 
 INCLUDE_DIRECTORIES(${NATIVE_INCLUDE} ${CMAKE_CURRENT_SOURCE_DIR}/plugins/cryptolib/include)
@@ -157,6 +159,7 @@ SOURCE_GROUP("Source Files\\services\\accesscontrol\\encodings" FILES ${source_e
 SOURCE_GROUP("Source Files\\services\\accesscontrol\\formats" FILES ${source_formats})
 SOURCE_GROUP("Source Files\\services\\accesscontrol\\formats\\customformat" FILES ${source_customformat})
 SOURCE_GROUP("Source Files\\services\\nfctag" FILES ${source_nfctag})
+SOURCE_GROUP("Source Files\\services\\uidchanger" FILES ${source_uidchanger})
 SOURCE_GROUP("Source Files\\iks" FILES ${source_iks})
 
 SOURCE_GROUP("Header Files\\cards" FILES ${include_cards})
@@ -169,6 +172,7 @@ SOURCE_GROUP("Header Files\\services\\accesscontrol\\formats" FILES ${include_fo
 SOURCE_GROUP("Header Files\\services\\accesscontrol\\formats\\customformat" FILES ${include_customformat})
 SOURCE_GROUP("Header Files\\services\\nfctag" FILES ${include_nfctag})
 SOURCE_GROUP("Header Files\\services\\storage" FILES ${include_storage})
+SOURCE_GROUP("Header Files\\services\\uidchanger" FILES ${include_uidchanger})
 SOURCE_GROUP("Header Files\\services\\iks" FILES ${include_iks})
 
 endif()
@@ -197,14 +201,14 @@ endif()
 
 set(source ${source_root} ${source_cards} ${source_readerproviders}
         ${source_service} ${source_accesscontrol} ${source_encodings}
-        ${source_formats} ${source_customformat} ${source_nfctag}
+        ${source_formats} ${source_customformat} ${source_nfctag} ${source_uidchanger}
         ${source_dynlibrary} ${source_vc} ${resourcerc}
         ${source_iks}
         )
 
 set(include ${include_root} ${include_cards} ${include_readerproviders}
         ${include_service} ${include_accesscontrol} ${include_encodings}
-        ${include_formats} ${include_customformat} ${include_nfctag}
+        ${include_formats} ${include_customformat} ${include_nfctag} ${include_uidchanger}
         ${include_dynlibrary} ${include_storage} ${include_vc}
         ${include_iks}
         )
