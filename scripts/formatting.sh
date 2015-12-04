@@ -6,10 +6,10 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-clang-format-3.8 -style=file -i ${DIR}/../include/logicalaccess/cards/IKSStorage.hpp;
+clang-format-3.8 -style=file -i ${DIR}/../include/logicalaccess/cards/IKSStorage.hpp
 find ${DIR}/../include/logicalaccess/iks -name "*.hpp"  | xargs clang-format-3.8 -style=file -i {} \;
-find ${DIR}/../src/iks -name "*.cpp"  | xargs clang-format-3.8 -style=file -i {} \;
 
+find ${DIR}/../src/iks -name "*.cpp"  | xargs clang-format-3.8 -style=file -i {} \;
 
 
 find ${DIR}/../tests/other/ -name "*.cpp"  | xargs clang-format-3.8 -style=file -i {} \;
@@ -19,4 +19,5 @@ clang-format-3.8 -style=file -i ${DIR}/../src/cards/keystorage.cpp
 
 clang-format-3.8 -style=file -i ${DIR}/../plugins/pluginsreaderproviders/pcsc/atrparser.cpp ${DIR}/../plugins/pluginsreaderproviders/pcsc/atrparser.hpp
 
-clang-format-3.8 -style=file -i ${DIR}/../tests/unittest/test_atrparser.cpp
+find ${DIR}/../tests/unittest -name "*.cpp"  | xargs clang-format-3.8 -style=file -i {} \;
+clang-format-3.8 -style=file -i ${DIR}/../src/utils.cpp ${DIR}/../include/logicalaccess/utils.hpp

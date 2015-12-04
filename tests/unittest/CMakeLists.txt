@@ -20,3 +20,4 @@ function(add_gtest_test file)
 endfunction()
 
 add_gtest_test(test_atrparser.cpp)
+add_gtest_test(test_elapsed_time_counter.cpp)
