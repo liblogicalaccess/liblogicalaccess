@@ -65,12 +65,10 @@
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+#include <logicalaccess/utils.hpp>
 
 #include "readers/acsacr1222llcddisplay.hpp"
 
-
-#ifdef UNIX
-#endif
 
 #include "logicalaccess/settings.hpp"
 #include "pcsc_ctl_datatransport.hpp"
@@ -318,16 +316,7 @@ namespace logicalaccess
                 }
 
                 bool loop;
-
-#ifndef _WINDOWS
-                struct timeval tv1, tv2;
-                struct timezone tz;
-
-                gettimeofday(&tv1, &tz);
-#else
-                DWORD tc = GetTickCount();
-#endif
-
+                ElapsedTimeCounter time_counter;
                 do
                 {
                     loop = false;
@@ -335,21 +324,10 @@ namespace logicalaccess
 
                     if (SCARD_S_SUCCESS == r)
                     {
-#ifndef _WINDOWS
-                        gettimeofday(&tv2, &tz);
-
-                        if ((maxwait == 0) || static_cast<unsigned int>((tv2.tv_sec - tv1.tv_sec) * 1000L + (tv2.tv_usec - tv1.tv_usec) / 1000L) < maxwait)
+                        if ((maxwait == 0) || time_counter.elapsed() < maxwait)
                         {
                             loop = true;
                         }
-#else
-                        DWORD ltc = GetTickCount();
-
-                        if ((maxwait == 0) || (ltc - tc) < maxwait)
-                        {
-                            loop = true;
-                        }
-#endif
 
                         for (int i = 0; i < readers_count; ++i)
                         {
@@ -536,38 +514,19 @@ namespace logicalaccess
                     readers[i].dwCurrentState = readers[i].dwEventState;
                 }
 
-                bool loop = true;
-#ifndef _WINDOWS
-                struct timeval tv1, tv2;
-                struct timezone tz;
-
-                gettimeofday(&tv1, &tz);
-#else
-                DWORD tc = GetTickCount();
-#endif
-                while (loop)
+                bool loop;
+                ElapsedTimeCounter time_counter;
+                do
                 {
                     loop = false;
-
                     r = SCardGetStatusChange(getPCSCReaderProvider()->getContext(), ((maxwait == 0) ? INFINITE : maxwait), readers, readers_count);
 
                     if (SCARD_S_SUCCESS == r)
                     {
-#ifndef _WINDOWS
-                        gettimeofday(&tv2, &tz);
-
-                        if ((maxwait == 0) || static_cast<unsigned int>((tv2.tv_sec - tv1.tv_sec) * 1000L + (tv2.tv_usec - tv1.tv_usec) / 1000L) < maxwait)
+                        if ((maxwait == 0) || time_counter.elapsed() < maxwait)
                         {
                             loop = true;
                         }
-#else
-                        DWORD ltc = GetTickCount();
-
-                        if ((maxwait == 0) || (ltc - tc) < maxwait)
-                        {
-                            loop = true;
-                        }
-#endif
                         for (int i = 0; i < readers_count; ++i)
                         {
                             if ((SCARD_STATE_PRESENT & readers[i].dwEventState) == 0)
@@ -590,7 +549,7 @@ namespace logicalaccess
                             PCSCDataTransport::CheckCardError(r);
                         }
                     }
-                }
+                } while (loop);
             }
         }
 
