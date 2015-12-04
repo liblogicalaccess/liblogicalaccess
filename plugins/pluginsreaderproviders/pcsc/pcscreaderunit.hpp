@@ -338,28 +338,6 @@ namespace logicalaccess
         std::string d_connectedName;
 
         /**
-         * \brief Get the card type from a specified ATR.
-         * \param atr The atr string (without terminal NULL character).
-         * \param atrlen The length of the atr string.
-         * \return The card type.
-         */
-        std::string getCardTypeFromATR(const unsigned char* atr, size_t atrlen);
-
-        /**
-         * \brief Get the generic card type from ATR.
-         * \param atr The atr string (without terminal NULL character).
-         * \param atrlen The length of the atr string.
-         * \return The generic card type.
-         */
-        std::string getGenericCardTypeFromATR(const unsigned char* atr, size_t atrlen);
-
-        /**
-         * Attempt to retrieve the card type from fully hardcoded ATR.
-         * This is the first thing we check.
-         */
-        std::string getCardTypeFromHardcodedATR(const unsigned char* atr, size_t atrlen);
-
-        /**
          * \brief Set the first and/or most accurate chip found.
          * \param chip The single chip.
          */

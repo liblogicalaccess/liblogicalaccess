@@ -17,3 +17,6 @@ clang-format-3.8 -style=file -i ${DIR}/../tests/pcsc-tests/DESFireEV1/test_chang
 
 clang-format-3.8 -style=file -i ${DIR}/../src/cards/keystorage.cpp
 
+clang-format-3.8 -style=file -i ${DIR}/../plugins/pluginsreaderproviders/pcsc/atrparser.cpp ${DIR}/../plugins/pluginsreaderproviders/pcsc/atrparser.hpp
+
+clang-format-3.8 -style=file -i ${DIR}/../tests/unittest/test_atrparser.cpp

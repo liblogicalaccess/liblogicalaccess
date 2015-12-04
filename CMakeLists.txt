@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 
+## To build google-test based unittest build with LLA_BUILD_UNITTESTS=1
+
 if (NOT DEFINED CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" )
 endif()

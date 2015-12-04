@@ -37,4 +37,7 @@ endfunction()
 
 add_subdirectory(pcsc-tests)
 add_subdirectory(other)
-add_subdirectory(unittest)
+
+if (LLA_BUILD_UNITTESTS)
+    add_subdirectory(unittest)
+endif()

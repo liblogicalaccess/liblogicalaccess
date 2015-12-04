@@ -4,7 +4,8 @@
 #include "pluginsreaderproviders/pcsc/atrparser.hpp"
 
 using namespace logicalaccess;
-TEST(test_atr_parser, bla)
+
+TEST(test_atr_parser, test_1)
 {
     ASSERT_EQ("DESFire", ATRParser::guessCardType(
                              ByteVector{0x3b, 0x81, 0x80, 0x1, 0x80, 0x80}));
@@ -26,4 +27,17 @@ TEST(test_atr_parser, bla)
               ATRParser::guessCardType("3B8F8001804F0CA0000003060B00140000000077"));
     ASSERT_EQ("HIDiClass8x2KS",
               ATRParser::guessCardType("3B8F8001804F0CA0000003060A001C000000007E"));
+}
+
+TEST(test_atr_parser, test_hardcoded)
+{
+    ASSERT_EQ("UNKNOWN",
+              ATRParser::guessCardType("3B8F8001804F0CA0000003064000000000000028"));
+    ASSERT_EQ("Prox",
+              ATRParser::guessCardType("3B8F8001804F0CA0000003064000000000000028",
+                                       PCSC_RUT_OMNIKEY_XX27));
+
+    ASSERT_EQ("MifarePlus_SL1_2K",
+              ATRParser::guessCardType("3B8F8001804F0CA000000306030001000000006A",
+                                       PCSC_RUT_ACS_ACR_1222L));
 }
