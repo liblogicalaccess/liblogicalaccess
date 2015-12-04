@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <cstddef>
 #include <chrono>
+#include "logicalaccess_api.hpp"
 
 /**
  * Platform independent utils.
@@ -19,7 +20,7 @@ uint16_t lla_htons(uint16_t in);
  *
  * The precision of the counter is milliseconds.
  */
-class ElapsedTimeCounter
+class LIBLOGICALACCESS_API ElapsedTimeCounter
 {
   public:
     ElapsedTimeCounter();
