@@ -37,3 +37,4 @@ endfunction()
 
 add_subdirectory(pcsc-tests)
 add_subdirectory(other)
+add_subdirectory(unittest)
