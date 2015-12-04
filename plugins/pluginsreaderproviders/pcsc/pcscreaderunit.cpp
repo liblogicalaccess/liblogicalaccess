@@ -83,9 +83,6 @@ namespace logicalaccess
     PCSCReaderUnit::PCSCReaderUnit(const std::string& name)
         : ISO7816ReaderUnit(), d_name(name), d_connectedName(name)
     {
-        memset(d_atr, 0x00, sizeof(d_atr));
-        d_atrLength = 0;
-
         d_card_type = "UNKNOWN";
 
         try
@@ -361,9 +358,9 @@ namespace logicalaccess
                                 readers[i].dwCurrentState = readers[i].dwEventState;
                                 if ((SCARD_STATE_PRESENT & readers[i].dwEventState) != 0)
                                 {
-                                    memcpy(d_atr, readers[i].rgbAtr, readers[i].cbAtr);
-                                    d_atrLength = readers[i].cbAtr;
-                                    cardType = ATRParser::guessCardType(d_atr, d_atrLength);
+                                    atr_ = std::vector<uint8_t>(readers[i].rgbAtr,
+                                                                readers[i].rgbAtr + readers[i].cbAtr);
+                                    cardType = ATRParser::guessCardType(atr_, getPCSCType());
                                     loop = false;
                                     LOG(INFOS) << "Guessed card type from atr: " << cardType;
                                     connectedReader = std::string(reinterpret_cast<const char*>(readers[i].szReader));
@@ -663,9 +660,9 @@ namespace logicalaccess
                     {
                         if (d_insertedChip->getCardType() == "Prox")
                         {
-                            if (d_atrLength > 2)
+                            if (atr_.size() > 2)
                             {
-                                d_insertedChip->setChipIdentifier(std::vector<unsigned char>(d_atr, d_atr + d_atrLength));
+                                d_insertedChip->setChipIdentifier(atr_);
                             }
                         }
                         // Specific behavior for DESFire to check if it is not a DESFire EV1
@@ -969,12 +966,11 @@ namespace logicalaccess
 
     size_t PCSCReaderUnit::getATR(void* atr, size_t atrLength)
     {
-        if (atr != NULL && atrLength >= d_atrLength)
+        if (atr != nullptr && atrLength >= atr_.size())
         {
-            memcpy(atr, d_atr, d_atrLength);
+            memcpy(atr, &atr_[0], atr_.size());
         }
-
-        return d_atrLength;
+        return atr_.size();
     }
 
 std::string PCSCReaderUnit::atrXToCardType(int code) const
@@ -1261,7 +1257,9 @@ std::shared_ptr<ReaderCardAdapter> PCSCReaderUnit::getReaderCardAdapter(std::str
             d_readerUnitConfig = readerUnitConfig;
         }
 
-        d_atrLength = readerUnit->getATR(d_atr, sizeof(d_atr));
+        auto atr_len = readerUnit->getATR(nullptr, 0);
+        atr_.resize(atr_len);
+        readerUnit->getATR(&atr_[0], atr_.size());
         d_insertedChip = readerUnit->getSingleChip();
     }
 

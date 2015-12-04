@@ -370,14 +370,9 @@ namespace logicalaccess
 		std::unique_ptr<PCSCConnection> connection_;
 
         /**
-         * \brief The current card ATR.
+         * The current ATR
          */
-        unsigned char d_atr[64];
-
-        /**
-         * \brief The ATR length.
-         */
-        size_t d_atrLength;
+        std::vector<uint8_t> atr_;
 
         /**
          * \brief The proxy reader unit.
