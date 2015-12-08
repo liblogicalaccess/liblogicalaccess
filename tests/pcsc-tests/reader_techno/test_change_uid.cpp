@@ -12,11 +12,13 @@ using namespace logicalaccess;
 
 void introduction()
 {
-    PRINT_TIME("Test that we can change the UID of some card. This test targets Mifare Ultralight");
+    PRINT_TIME("Test that we can change the UID of some card."
+               " This test targets Mifare Ultralight and Mifare Classic");
 
     PRINT_TIME("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
-    LLA_SUBTEST_REGISTER("ChangeCardTechno");
+    LLA_SUBTEST_REGISTER("ChangeUID");
+    LLA_SUBTEST_REGISTER("ValidateUIDChange");
 }
 
 ByteVector gen_random_uid()
@@ -24,7 +26,7 @@ ByteVector gen_random_uid()
     return RandomHelper::bytes(7);
 }
 
-void change_uid(const ByteVector &new_uid)
+void change_uid(ByteVector new_uid)
 {
     ReaderProviderPtr provider;
     ReaderUnitPtr readerUnit;
@@ -40,20 +42,33 @@ void change_uid(const ByteVector &new_uid)
 
     LLA_ASSERT(uid_changer, "No UID Changer service available for this card.");
 
+    if (chip->getCardType() == "Mifare1K")
+    {
+        // For MifareClassic the UID is 4bytes.
+        new_uid = ByteVector(new_uid.begin(), new_uid.begin() + 4);
+    }
+
     PRINT_TIME("Changing UID to " << BufferHelper::getHex(new_uid));
     uid_changer->changeUID(new_uid);
+    LLA_SUBTEST_PASSED("ChangeUID");
     pcsc_test_shutdown(readerUnit);
 }
 
-void check_uid(const ByteVector &new_uid)
+void check_uid(ByteVector new_uid)
 {
     ReaderProviderPtr provider;
     ReaderUnitPtr readerUnit;
     ChipPtr chip;
     std::tie(provider, readerUnit, chip) = lla_test_init();
 
-    LLA_ASSERT(chip->getChipIdentifier() == new_uid, "UID was not changed.");
+    if (chip->getCardType() == "Mifare1K")
+    {
+        // For MifareClassic the UID is 4bytes.
+        new_uid = ByteVector(new_uid.begin(), new_uid.begin() + 4);
+    }
 
+    LLA_ASSERT(chip->getChipIdentifier() == new_uid, "UID was not changed.");
+    LLA_SUBTEST_PASSED("ValidateUIDChange");
     pcsc_test_shutdown(readerUnit);
 }
 

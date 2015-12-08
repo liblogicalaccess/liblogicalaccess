@@ -192,6 +192,7 @@ install ( FILES ${include_customformat} DESTINATION ${LIBLOGICALACCESS_INCLUDE_D
 install ( FILES ${include_nfctag} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/nfctag )
 install ( FILES ${include_dynlibrary} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/dynlibrary )
 install ( FILES ${include_storage} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/storage )
+install ( FILES ${include_uidchanger} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/uidchanger )
 install ( FILES ${include_iks} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/iks )
 
 if (WIN32)
