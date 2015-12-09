@@ -239,7 +239,14 @@ namespace logicalaccess
 
         std::shared_ptr<PCSCReaderProvider> getPCSCReaderProvider() const;
 
-        static std::shared_ptr<PCSCReaderUnit> createPCSCReaderUnit(const std::string& readerName);
+        /**
+         * Instanciate a PCSC Reader unit object.
+         *
+         * The `readerIdentifier` (which can be equal to `readerName`) is
+         * used to determine which reader to instanciate.
+         */
+        static std::shared_ptr<PCSCReaderUnit> createPCSCReaderUnit(const std::string &readerIdentifier,
+                                                                    const std::string& readerName);
 
         /**
          * \brief Make the reader unit as a proxy to another. Use when listening on all PC/SC reader unit.
@@ -279,7 +286,7 @@ namespace logicalaccess
          * This method is used to notify the (proxyfied) implementation
          * that a card was connected
          */
-        virtual void cardConnected() {}
+        virtual void cardConnected() {};
 
         /**
          * Returns the proxy implementation reader unit, or null.
@@ -379,6 +386,22 @@ namespace logicalaccess
          * \brief The SAM ReaderUnit used SAM Authentication
          */
         std::shared_ptr<PCSCReaderUnit> d_sam_readerunit;
+
+      private:
+        /**
+         * Attempt to create an USB Identifier for a reader identified (at the
+         * PCSC library level) by `pcscReaderName`.
+         *
+         * If successful, the returned string will be "usb_identity::1234_4567"
+         * with 1234 being the VENDOR_ID and 4567 the PRODUCT_ID.
+         *
+         * On failure, this function returns an empty string.
+         *
+         * @param context the PCSC Context we'll use to establish a connection.
+         * @param pcscReaderName Name of the reader we'll connect to.
+         */
+        static std::string getUSBIdentifier(SCARDCONTEXT context,
+                                            const std::string &pcscReaderName);
     };
 
 }

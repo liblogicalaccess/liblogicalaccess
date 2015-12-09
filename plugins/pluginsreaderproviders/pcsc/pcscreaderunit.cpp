@@ -66,6 +66,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <logicalaccess/utils.hpp>
+#include <reader.h>
 
 #include "readers/acsacr1222llcddisplay.hpp"
 
@@ -75,6 +76,7 @@
 #include "commands/mifareplus_acsacr1222l_sl1.hpp"
 #include "commands/mifareplus_pcsc_sl3.hpp"
 #include "atrparser.hpp"
+#include "pcscfeatures.hpp"
 
 namespace logicalaccess
 {
@@ -173,7 +175,7 @@ namespace logicalaccess
         d_name = node.get_child("Name").get_value<std::string>();
         std::shared_ptr<PCSCReaderUnitConfiguration> pcscRUC = getPCSCConfiguration();
         PCSCReaderUnitType pcscType = getPCSCType();
-        d_proxyReaderUnit = PCSCReaderUnit::createPCSCReaderUnit(d_name);
+        d_proxyReaderUnit = PCSCReaderUnit::createPCSCReaderUnit(d_name, d_name);
         if (d_proxyReaderUnit->getPCSCType() == pcscType)
         {
             d_proxyReaderUnit.reset();
@@ -193,9 +195,11 @@ namespace logicalaccess
         }
     }
 
-    std::shared_ptr<PCSCReaderUnit> PCSCReaderUnit::createPCSCReaderUnit(const std::string& readerName)
+    std::shared_ptr<PCSCReaderUnit> PCSCReaderUnit::createPCSCReaderUnit(const std::string &readerIdentifier,
+                                                                         const std::string& readerName)
     {
-        std::shared_ptr<ReaderUnit> reader = LibraryManager::getInstance()->getReader(readerName);
+        std::shared_ptr<ReaderUnit> reader = LibraryManager::getInstance()->getReader(readerIdentifier,
+                                                                                      readerName);
         if (reader)
             assert(std::dynamic_pointer_cast<PCSCReaderUnit>(reader));
         else
@@ -395,7 +399,11 @@ namespace logicalaccess
             std::shared_ptr<PCSCReaderUnitConfiguration> pcscRUC = getPCSCConfiguration();
             if (this->getPCSCType() == PCSC_RUT_DEFAULT)
             {
-                d_proxyReaderUnit = PCSCReaderUnit::createPCSCReaderUnit(connectedReader);
+                std::string usb_identifier = getUSBIdentifier(getPCSCReaderProvider()->getContext(),
+                                                              connectedReader);
+                if (usb_identifier.empty()) // fallback to identifier = name
+                    usb_identifier = connectedReader;
+                d_proxyReaderUnit = PCSCReaderUnit::createPCSCReaderUnit(usb_identifier, connectedReader);
                 if (d_proxyReaderUnit->getPCSCType() == PCSC_RUT_DEFAULT)
                 {
                     d_proxyReaderUnit.reset();
@@ -1527,5 +1535,27 @@ std::shared_ptr<ReaderCardAdapter> PCSCReaderUnit::getReaderCardAdapter(std::str
             }
         }
     }
+
+std::string PCSCReaderUnit::getUSBIdentifier(SCARDCONTEXT context,
+                                             const std::string &pcscReaderName)
+{
+    try
+    {
+        // We need a temporary PCSC connection to query the reader.
+        // Hopefully a connection is not established already... Anyway, we cannot check this.
+        PCSCConnection connection(SC_DIRECT, 0, context, pcscReaderName);
+        auto usb_info = PCSCFeatures::getUSBInfo(connection);
+
+        std::stringstream ss;
+        ss << "usb_identity::" << std::hex << usb_info.first << "_" << usb_info.second;
+        return ss.str();
+    }
+    catch (const std::exception &e)
+    {
+        LOG(WARNINGS) << "Failed to build the USB identifier for the reader whose name is " <<
+            pcscReaderName << ". Reason: " << e.what();
+    }
+    return "";
+}
 
 }

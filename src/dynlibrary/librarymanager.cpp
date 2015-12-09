@@ -214,7 +214,8 @@ namespace logicalaccess
         }
     }
 
-    std::shared_ptr<ReaderUnit> LibraryManager::getReader(const std::string &readerName) const
+    std::shared_ptr<ReaderUnit> LibraryManager::getReader(const std::string &readerIdentifier,
+                                                          const std::string &readerName) const
     {
         // The idea here is simply to loop over all shared library
         // and opportunistically call the `getReaderUnit()` function if it exists, hoping
@@ -226,10 +227,10 @@ namespace logicalaccess
 
             if (lib->hasSymbol("getReaderUnit"))
             {
-				int(*fptr)(const std::string &, std::shared_ptr<ReaderUnit> &) = nullptr;
+				int(*fptr)(const std::string &, const std::string &, std::shared_ptr<ReaderUnit> &) = nullptr;
                 fptr = reinterpret_cast<decltype(fptr)>(lib->getSymbol("getReaderUnit"));
                 assert(fptr);
-                fptr(readerName, readerUnit);
+                fptr(readerIdentifier, readerName, readerUnit);
                 if (readerUnit)
                     break;
             }

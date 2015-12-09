@@ -73,7 +73,7 @@ namespace logicalaccess
                 {
                     size_t f = strlen(rdname);
                     std::string t(rdname, f);
-                    std::shared_ptr<PCSCReaderUnit> unit = PCSCReaderUnit::createPCSCReaderUnit(t);
+                    std::shared_ptr<PCSCReaderUnit> unit = PCSCReaderUnit::createPCSCReaderUnit(t, t);
                     unit->setReaderProvider(std::weak_ptr<ReaderProvider>(shared_from_this()));
                     d_system_readers.push_back(unit);
 
@@ -90,7 +90,6 @@ namespace logicalaccess
 
     std::shared_ptr<ReaderUnit> PCSCReaderProvider::createReaderUnit()
     {
-        //return createReaderUnit("Generic PCSC ReaderUnit");
         return createReaderUnit("");
     }
 

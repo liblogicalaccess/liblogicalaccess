@@ -6,21 +6,11 @@
 
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
 
-#if UNIX
-#define LIBLOGICALACCESS_API_DLL
-#else
-#ifdef LIBLOGICALACCESS_EXPORTS_DLL
-#define LIBLOGICALACCESS_API_DLL __declspec(dllexport)
-#else
-#define LIBLOGICALACCESS_API_DLL __declspec(dllimport)
-#endif
-#endif
-
 namespace logicalaccess
 {
     class AccessControlCardService;
 
-    class LIBLOGICALACCESS_API_DLL LibraryManager
+    class LIBLOGICALACCESS_API LibraryManager
     {
     public:
         enum LibraryType {
@@ -43,12 +33,26 @@ namespace logicalaccess
         std::shared_ptr<ReaderProvider> getReaderProvider(const std::string& readertype);
 
         /**
-        * Attempt to find a suitable library that can build a ReaderUnit for
-        * a reader named `readerName`.
-        *
-        * Returns the allocated ReaderUnit object or NULL on failure.
-        */
-        std::shared_ptr<ReaderUnit> getReader(const std::string &readerName) const;
+         * Attempt to instantiate a reader unit corresponding to the `readerIdentifer`
+         * parameter.
+         *
+         * This is done by looping through the plugins and calling the C function
+         * `getReaderUnit()` exported by plugins.
+         *
+         * The `readerIdentifier` parameter either represents the readerName or its
+         * USB information. If USB informations were extracted, the `readerIdentifier`
+         * would be something like "usb_identity::1c34_8141" instead of a traditional
+         * reader name.
+         *
+         * The `readerName` is the name of the reader as exposed by the underlying
+         * PCSC library.
+         *
+         * This function either returns a readerUnit corresponding to the identifier,
+         * or nullptr on failure.
+         */
+        std::shared_ptr<ReaderUnit> getReader(const std::string &readerIdentifier,
+                                              const std::string &readerName) const;
+
         std::shared_ptr<Chip> getCard(const std::string& cardtype);
         std::shared_ptr<Commands> getCommands(const std::string& extendedtype);
         static std::shared_ptr<DataTransport> getDataTransport(const std::string& transporttype);
