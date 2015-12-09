@@ -198,8 +198,21 @@ namespace logicalaccess
     std::shared_ptr<PCSCReaderUnit> PCSCReaderUnit::createPCSCReaderUnit(const std::string &readerIdentifier,
                                                                          const std::string& readerName)
     {
+        LOG(INFOS) << "Attempting to create PCSCReaderUnit with identifier {" << readerIdentifier <<
+            "} and name {" << readerName << "}";
+
         std::shared_ptr<ReaderUnit> reader = LibraryManager::getInstance()->getReader(readerIdentifier,
                                                                                       readerName);
+        if (!reader)
+        {
+            // It is possible that we managed to extract USB information for the reader
+            // but that those informations were not registered in the "libraryentry" file
+            // corresponding to the plugin. This means we have information we can't use
+            // and building ReaderUnit fails. In this case, we try again using the
+            // readerName as identifier.
+            reader = LibraryManager::getInstance()->getReader(readerName, readerName);
+        }
+
         if (reader)
             assert(std::dynamic_pointer_cast<PCSCReaderUnit>(reader));
         else
@@ -1545,6 +1558,9 @@ std::string PCSCReaderUnit::getUSBIdentifier(SCARDCONTEXT context,
         // Hopefully a connection is not established already... Anyway, we cannot check this.
         PCSCConnection connection(SC_DIRECT, 0, context, pcscReaderName);
         auto usb_info = PCSCFeatures::getUSBInfo(connection);
+
+        if (!usb_info.first || !usb_info.second)
+            return "";
 
         std::stringstream ss;
         ss << "usb_identity::" << std::hex << usb_info.first << "_" << usb_info.second;

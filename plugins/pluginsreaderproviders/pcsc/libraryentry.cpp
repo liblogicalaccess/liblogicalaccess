@@ -1,5 +1,6 @@
 #include <string>
 #include <memory>
+#include <logicalaccess/utils.hpp>
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "pcscreaderprovider.hpp"
 #include "readers/omnikeylanxx21readerunit.hpp"
@@ -14,62 +15,52 @@
 extern "C"
 {
 
+#define REGISTER_READER_USB(factory_helper, type, vendor_id, product_id) (factory_helper).registerReader((vendor_id), (product_id), \
+std::bind(&std::make_shared<type, const std::string &>, std::placeholders::_1));
+
+#define REGISTER_READER(factory_helper, type, regexp) (factory_helper).registerReader((regexp), \
+std::bind(&std::make_shared<type, const std::string &>, std::placeholders::_1));
+
+
     /**
     * Attempt to create a ReaderUnit object for a reader with name readName.
     * This function returns NULL if there is no match, is does NOT create a default PCSCReaderUnit.
     */
-    LIBLOGICALACCESS_API void getReaderUnit(const std::string &readerName, std::shared_ptr<logicalaccess::ReaderUnit> &u)
+    LIBLOGICALACCESS_API void getReaderUnit(const std::string &readerIdentifier,
+                                            const std::string &readerName,
+                                            std::shared_ptr<logicalaccess::ReaderUnit> &u)
     {
         using namespace std;
         using namespace logicalaccess;
 
-        if (readerName.find("OMNIKEY") != string::npos)
-        {
-            if (readerName.find("x21") != string::npos || readerName.find("5321") != string::npos || readerName.find("6321") != string::npos)
-            {
-                if (readerName.find("LAN") != string::npos)
-                {
-                    u = make_shared<OmnikeyLANXX21ReaderUnit>(readerName);
-                }
-                else
-                {
-                    u = make_shared<OmnikeyXX21ReaderUnit>(readerName);
-                }
-            }
-            else if (readerName.find("x25") != string::npos || readerName.find("5025-CL") != string::npos)
-            {
-                u = make_shared<OmnikeyXX25ReaderUnit>(readerName);
-            }
-        }
-        else if (readerName.find("SDI010 Contactless Reader") != string::npos
-                || readerName.find("SCR331-DI USB ContactlessReader") != string::npos
-                || readerName.find("SCL010 Contactless") != string::npos
-				|| readerName.find("SCL01x Contactless") != string::npos
-				|| readerName.find("SCL3711 reader") != string::npos
-				|| readerName.find("Identive CLOUD 4700 F Contactless") != string::npos
-				|| readerName.find("Identive CLOUD 4710 F Contactless") != string::npos
-				|| readerName.find("SCM Microsystems Inc. SCL011G Contactless Reader") != string::npos
-				)
-        {
-            u = make_shared<SCMReaderUnit>(readerName);
-        }
-        else if (readerName.find("Cherry ") != string::npos)
-        {
-            u = make_shared<CherryReaderUnit>(readerName);
-        }
-        else if (readerName.find("SpringCard") != string::npos)
-        {
-            u = make_shared<SpringCardReaderUnit>(readerName);
-        }
-        else if (readerName.find("ACS ACR1222 3S PICC Reader PICC") != string::npos
-                || readerName.find("ACS ACR1222 3S PICC Reader 00 00") != string::npos) // Name under Linux
-        {
-            u = make_shared<ACSACR1222LReaderUnit>(readerName);
-        }
-        else if (readerName.find("ACS ACR") != string::npos)
-        {
-            u = make_shared<ACSACRReaderUnit>(readerName);
-        }
+        ReaderFactoryHelper rfh;
+
+        REGISTER_READER_USB(rfh, SpringCardReaderUnit, 0x1C34, 0x8141);
+        REGISTER_READER(rfh, SpringCardReaderUnit, ".*SpringCard.*");
+
+        REGISTER_READER(rfh, OmnikeyLANXX21ReaderUnit, ".*OMNIKEY.*(x21|5321|5321).*(LAN).*");
+        REGISTER_READER(rfh, OmnikeyXX21ReaderUnit, ".*OMNIKEY.*(LAN).*(x21|5321|5321).*");
+        REGISTER_READER(rfh, OmnikeyXX21ReaderUnit, ".*OMNIKEY.*(x21|5321|5321).*");
+
+        REGISTER_READER(rfh, OmnikeyXX25ReaderUnit, ".*OMNIKEY.*(x25|5025-CL).*");
+
+        REGISTER_READER(rfh, SCMReaderUnit, ".*SDI010 Contactless Reader.*");
+        REGISTER_READER(rfh, SCMReaderUnit, ".*SCR331-DI USB ContactlessReader.*");
+        REGISTER_READER(rfh, SCMReaderUnit, ".*SCL010 Contactless.*");
+        REGISTER_READER(rfh, SCMReaderUnit, ".*SCL01x Contactless.*");
+        REGISTER_READER(rfh, SCMReaderUnit, ".*SCL3711 reader.*");
+        REGISTER_READER(rfh, SCMReaderUnit, ".*Identive CLOUD 4700 F Contactless.*");
+        REGISTER_READER(rfh, SCMReaderUnit, ".*Identive CLOUD 4710 F Contactless.*");
+        REGISTER_READER(rfh, SCMReaderUnit, ".*SCM Microsystems Inc. SCL011G Contactless Reader.*");
+
+        REGISTER_READER(rfh, CherryReaderUnit, ".*Cherry .*");
+
+        REGISTER_READER(rfh, ACSACR1222LReaderUnit, ".*ACS ACR1222 3S PICC Reader PICC.*");
+        REGISTER_READER(rfh, ACSACR1222LReaderUnit, ".*ACS ACR1222 3S PICC Reader 00 00.*");
+
+        REGISTER_READER(rfh, ACSACRReaderUnit, ".*ACS ACR.*");
+
+        u = rfh.instanciate(readerIdentifier, readerName);
     }
 
     LIBLOGICALACCESS_API char *getLibraryName()
