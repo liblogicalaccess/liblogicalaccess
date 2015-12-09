@@ -12,7 +12,10 @@ namespace logicalaccess
  * This part of PC/SC let us query the reader for available features.
  * As a special case, this class also support extracting TLV Properties
  * from the reader.
- */
+ *
+ * @warning Most old reader will not support the commands sent by this class.
+ *          The caller is expected to wrap method invocation with try/catch block.
+  */
 class PCSCFeatures
 {
   public:
@@ -78,6 +81,25 @@ class PCSCFeatures
      * is not supported on all reader.
      */
     std::vector<Property> getTLVProperties();
+
+    /**
+     * Returns a pair of USB <vendor_id:product_id> information.
+     *
+     * This is simply an helper function that doesn't perform any interaction
+     * with the reader. Instead, it search the properties_vector parameter.
+     */
+    static std::pair<uint16_t, uint16_t>
+    getUSBInfo(const std::vector<Property> &properties_vector);
+
+    /**
+     * Fetch the USB <vendor_id:product_id> information.
+     *
+     * This is done by querying the reader, through the `connection`
+     * object.
+     *
+     * Returns a pair of <0:0> on failure.
+     */
+    static std::pair<uint16_t, uint16_t> getUSBInfo(PCSCConnection &connection);
 
   private:
     /**

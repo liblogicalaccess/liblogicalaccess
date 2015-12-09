@@ -25,7 +25,6 @@ PCSCFeatures::Property::Property(uint8_t tag, uint32_t data, const std::string &
 {
 }
 
-
 std::vector<PCSCFeatures::Feature> PCSCFeatures::getFeatures()
 {
     auto bytes = fetch_features_bytes();
@@ -218,4 +217,34 @@ PCSCFeatures::extract_property_from_bytes(ByteVector::iterator &it,
 
     THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                              "Tag " + std::to_string(+tag) + " is not recognized");
+}
+
+std::pair<uint16_t, uint16_t> PCSCFeatures::getUSBInfo(
+    const std::vector<PCSCFeatures::Property> &properties_vector)
+{
+    uint16_t vendor_id  = 0;
+    uint16_t product_id = 0;
+
+    for (const auto &p : properties_vector)
+    {
+        if (p.tag_ == PCSCv2_PART10_PROPERTY_wIdVendor)
+            vendor_id = static_cast<uint16_t>(p.value_);
+        else if (p.tag_ == PCSCv2_PART10_PROPERTY_wIdProduct)
+            product_id = static_cast<uint16_t>(p.value_);
+    }
+    return std::make_pair(vendor_id, product_id);
+}
+
+std::pair<uint16_t, uint16_t> PCSCFeatures::getUSBInfo(PCSCConnection &connection)
+{
+    try
+    {
+        PCSCFeatures pcscf(&connection);
+        return getUSBInfo(pcscf.getTLVProperties());
+    }
+    catch (const std::exception &e)
+    {
+        LOG(WARNINGS) << "Cannot retrieve USB information.";
+        return std::make_pair(0, 0);
+    }
 }
