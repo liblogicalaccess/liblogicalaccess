@@ -13,7 +13,7 @@ logicalaccess::PCSCConnection::PCSCConnection(PCSCShareMode mode,
     : handle_(0)
     , share_mode_(mode)
     , protocol_(protocol)
-	, disposition(SCARD_LEAVE_CARD)
+	, disposition_(SCARD_LEAVE_CARD)
 {
     LOG(DEBUGS) << "Attempting to establish PCSCConnection: Protocol: "
                 << pcsc_protocol_to_string(protocol)
@@ -34,14 +34,14 @@ logicalaccess::PCSCConnection::~PCSCConnection()
 {
     if (handle_)
     {
-        SCardDisconnect(handle_, disposition);
+        SCardDisconnect(handle_, disposition_);
     }
 }
 
 void logicalaccess::PCSCConnection::reconnect()
 {
     LONG lReturn = SCardReconnect(handle_, share_mode_, protocol_,
-								disposition, &active_protocol_);
+                                  disposition_, &active_protocol_);
     if (lReturn != SCARD_S_SUCCESS)
     {
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
@@ -303,4 +303,9 @@ std::string logicalaccess::PCSCConnection::strerror(unsigned int error_flag)
         }
     }
     return msg;
+}
+
+SCARDHANDLE logicalaccess::PCSCConnection::getHandle() const
+{
+    return handle_;
 }

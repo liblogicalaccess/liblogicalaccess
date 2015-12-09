@@ -15,6 +15,16 @@ uint16_t lla_htons(uint16_t in)
     return htons(in);
 }
 
+uint32_t lla_ntohl(uint32_t in)
+{
+    return ntohl(in);
+}
+
+uint16_t lla_ntohs(uint16_t in)
+{
+    return ntohs(in);
+}
+
 ElapsedTimeCounter::ElapsedTimeCounter()
 {
     creation_ = steady_clock::now();

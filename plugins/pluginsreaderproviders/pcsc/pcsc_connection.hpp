@@ -42,7 +42,12 @@ namespace logicalaccess
 		/**
 		* Set the action to take on the card in the connected reader on close.
 		*/
-		void setDisposition(DWORD dispo) { disposition = dispo; }
+		void setDisposition(DWORD dispo) { disposition_ = dispo; }
+
+        /**
+         * Returns the handler associated with the connection.
+         */
+        SCARDHANDLE getHandle() const;
 
 	private:
 
@@ -67,9 +72,9 @@ namespace logicalaccess
 		DWORD active_protocol_;
 
 		/**
-		* Action to take on the card in the connected reader on close. 
+		* Action to take on the card in the connected reader on close.
 		*/
-		DWORD disposition;
+		DWORD disposition_;
 
 		friend class PCSCReaderUnit;
     };
