@@ -17,7 +17,7 @@ clang-format-3.8 -style=file -i ${DIR}/../tests/pcsc-tests/DESFireEV1/test_chang
 
 clang-format-3.8 -style=file -i ${DIR}/../src/cards/keystorage.cpp
 
-clang-format-3.8 -style=file -i ${DIR}/../plugins/pluginsreaderproviders/pcsc/atrparser.cpp ${DIR}/../plugins/pluginsreaderproviders/pcsc/atrparser.hpp
+clang-format-3.8 -style=file -i ${DIR}/../plugins/pluginsreaderproviders/pcsc/atrparser.cpp ${DIR}/../plugins/pluginsreaderproviders/pcsc/atrparser.hpp ${DIR}/../plugins/pluginsreaderproviders/pcsc/pcscfeatures.{cpp,hpp}
 
 find ${DIR}/../tests/unittest -name "*.cpp"  | xargs clang-format-3.8 -style=file -i {} \;
 clang-format-3.8 -style=file -i ${DIR}/../src/utils.cpp ${DIR}/../include/logicalaccess/utils.hpp
