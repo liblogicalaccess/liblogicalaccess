@@ -14,19 +14,6 @@
 
 extern "C" {
 
-#define REGISTER_READER_USB(factory_helper, type, vendor_id, product_id)            \
-    (factory_helper)                                                                \
-        .registerReader((vendor_id), (product_id),                                  \
-                        std::bind(&std::make_shared<type, const std::string &>,     \
-                                  std::placeholders::_1));
-
-#define REGISTER_READER(factory_helper, type, regexp)                               \
-    (factory_helper)                                                                \
-        .registerReader((regexp),                                                   \
-                        std::bind(&std::make_shared<type, const std::string &>,     \
-                                  std::placeholders::_1));
-
-
 /**
 * Attempt to create a ReaderUnit object for a reader with name readName.
 * This function returns NULL if there is no match, is does NOT create a default
@@ -48,6 +35,7 @@ getReaderUnit(const std::string &readerIdentifier, const std::string &readerName
                     ".*OMNIKEY.*(x21|5321|5321).*(LAN).*");
     REGISTER_READER(rfh, OmnikeyXX21ReaderUnit,
                     ".*OMNIKEY.*(LAN).*(x21|5321|5321).*");
+
     REGISTER_READER(rfh, OmnikeyXX21ReaderUnit, ".*OMNIKEY.*(x21|5321|5321).*");
 
     REGISTER_READER(rfh, OmnikeyXX25ReaderUnit, ".*OMNIKEY.*(x25|5025-CL).*");

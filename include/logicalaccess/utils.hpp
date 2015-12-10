@@ -80,4 +80,16 @@ class LIBLOGICALACCESS_API ReaderFactoryHelper
     using FactoryInfo = std::pair<std::string, FactoryFunction>;
     std::vector<FactoryInfo> factory_infos_;
 };
+
+#define REGISTER_READER_USB(factory_helper, type, vendor_id, product_id)            \
+    (factory_helper)                                                                \
+        .registerReader((vendor_id), (product_id),                                  \
+                        std::bind(&std::make_shared<type, const std::string &>,     \
+                                  std::placeholders::_1));
+
+#define REGISTER_READER(factory_helper, type, regexp)                               \
+    (factory_helper)                                                                \
+        .registerReader((regexp),                                                   \
+                        std::bind(&std::make_shared<type, const std::string &>,     \
+                                  std::placeholders::_1));
 }
