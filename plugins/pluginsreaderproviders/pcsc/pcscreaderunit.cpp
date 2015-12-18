@@ -118,7 +118,7 @@ namespace logicalaccess
 
         if (isConnected())
         {
-            disconnect(genericCardType == CHIP_SAM ? SCARD_UNPOWER_CARD : SCARD_LEAVE_CARD);
+            disconnect();
         }
     }
 
@@ -660,6 +660,11 @@ namespace logicalaccess
             }
 			setup_pcsc_connection(share_mode);
 
+			if (d_insertedChip->getGenericCardType() == CHIP_SAM)
+				connection_->setDisposition(SCARD_UNPOWER_CARD);
+			else
+				connection_->setDisposition(SCARD_LEAVE_CARD);
+
                 LOG(LogLevel::INFOS) << "SCardConnect Success !";
 
                 detect_mifareplus_security_level(d_insertedChip);
@@ -679,7 +684,7 @@ namespace logicalaccess
                         {
                             if (d_insertedChip->getCardType() == "DESFire")
                             {
-			        std::shared_ptr<DESFireChip> insertedChip = std::dynamic_pointer_cast<DESFireChip>(d_insertedChip);
+								std::shared_ptr<DESFireChip> insertedChip = std::dynamic_pointer_cast<DESFireChip>(d_insertedChip);
                                 EXCEPTION_ASSERT_WITH_LOG(insertedChip, LibLogicalAccessException, "Wrong card type: expected DESFire.");
 
                                 try
@@ -782,7 +787,7 @@ namespace logicalaccess
         return ret;
     }
 
-    bool PCSCReaderUnit::reconnect()
+    bool PCSCReaderUnit::reconnect(int action)
     {
         if (d_proxyReaderUnit)
         {
@@ -790,6 +795,9 @@ namespace logicalaccess
         }
 
 		connection_->reconnect();
+
+		if (!ISO7816ReaderUnit::reconnect(action))
+			return false;
 
         if (!isConnected())
         {
@@ -800,31 +808,19 @@ namespace logicalaccess
 
     void PCSCReaderUnit::disconnect()
     {
-        if (d_insertedChip && d_insertedChip->getGenericCardType() == CHIP_SAM)
-        {
-            disconnect(SCARD_UNPOWER_CARD);
-        }
-        else
-        {
-            disconnect(SCARD_LEAVE_CARD);
-        }
-    }
+		LOG(LogLevel::INFOS) << "Disconnecting from the chip.";
 
-    void PCSCReaderUnit::disconnect(unsigned int action)
-    {
-        LOG(LogLevel::INFOS) << "Disconnecting from the chip.";
-
-        if (d_proxyReaderUnit)
-        {
-			d_proxyReaderUnit->disconnect(action);
-        }
-        else
-        {
-            if (isConnected())
-            {
+		if (d_proxyReaderUnit)
+		{
+			d_proxyReaderUnit->disconnect();
+		}
+		else
+		{
+			if (isConnected())
+			{
 				teardown_pcsc_connection();
-            }
-        }
+			}
+		}
     }
 
     bool PCSCReaderUnit::connectToReader()
@@ -884,15 +880,29 @@ namespace logicalaccess
 
             try
             {
-                if (getPCSCConfiguration()->getSAMUnLockKey())
-                {
-                    if (ret->getSingleChip()->getCardType() == "SAM_AV1")
-                        std::dynamic_pointer_cast<SAMAV1ISO7816Commands>(getSAMChip()->getCommands())->authentificateHost(getPCSCConfiguration()->getSAMUnLockKey(), getPCSCConfiguration()->getSAMUnLockkeyNo());
-                    else if (ret->getSingleChip()->getCardType() == "SAM_AV2")
-                        std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(getSAMChip()->getCommands())->lockUnlock(getPCSCConfiguration()->getSAMUnLockKey(), logicalaccess::SAMLockUnlock::Unlock, getPCSCConfiguration()->getSAMUnLockkeyNo(), 0, 0);
-                }
-                else
-                    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The Unlock SAM key is empty.");
+				if (!getPCSCConfiguration()->getSAMUnLockKey())
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The Unlock SAM key is empty.");
+
+				if (ret->getSingleChip()->getCardType() == "SAM_AV1")
+					std::dynamic_pointer_cast<SAMAV1ISO7816Commands>(getSAMChip()->getCommands())->authentificateHost(getPCSCConfiguration()->getSAMUnLockKey(), getPCSCConfiguration()->getSAMUnLockkeyNo());
+				else if (ret->getSingleChip()->getCardType() == "SAM_AV2")
+				{
+					try
+					{
+						std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(getSAMChip()->getCommands())->lockUnlock(getPCSCConfiguration()->getSAMUnLockKey(), logicalaccess::SAMLockUnlock::Unlock, getPCSCConfiguration()->getSAMUnLockkeyNo(), 0, 0);
+					}
+					catch (CardException& ex)
+					{
+						if (ex.error_code() != CardException::WRONG_P1_P2)
+							std::rethrow_exception(std::current_exception());
+
+						//try to lock the SAM in case it was already unlocked
+						std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(getSAMChip()->getCommands())->lockUnlock(getPCSCConfiguration()->getSAMUnLockKey(),
+							logicalaccess::SAMLockUnlock::LockWithoutSpecifyingKey, getPCSCConfiguration()->getSAMUnLockkeyNo(), 0, 0);
+
+						std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(getSAMChip()->getCommands())->lockUnlock(getPCSCConfiguration()->getSAMUnLockKey(), logicalaccess::SAMLockUnlock::Unlock, getPCSCConfiguration()->getSAMUnLockkeyNo(), 0, 0);
+					}
+				}
             }
             catch (std::exception&)
             {
@@ -900,6 +910,9 @@ namespace logicalaccess
                 setSAMReaderUnit(std::shared_ptr<PCSCReaderUnit>());
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The SAM Detected is not the SAM waited.");
             }
+
+			//Set SAM unlock key to the SAM Reader in case of reconnect
+			ret->getISO7816Configuration()->setSAMUnlockKey(getPCSCConfiguration()->getSAMUnLockKey(), getPCSCConfiguration()->getSAMUnLockkeyNo());
         }
         return true;
     }

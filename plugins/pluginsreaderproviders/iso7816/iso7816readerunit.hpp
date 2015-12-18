@@ -98,7 +98,16 @@ namespace logicalaccess
          */
         virtual std::string getReaderSerialNumber() { return ""; }
 
+		/**
+		* \brief Get the ISO7816 reader unit configuration.
+		* \return The ISO7816 reader unit configuration.
+		*/
+		std::shared_ptr<ISO7816ReaderUnitConfiguration> getISO7816Configuration() { return std::dynamic_pointer_cast<ISO7816ReaderUnitConfiguration>(getConfiguration()); };
+
     protected:
+
+		virtual bool reconnect(int action);
+
     private:
     };
 }

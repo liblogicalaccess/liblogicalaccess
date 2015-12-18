@@ -102,18 +102,12 @@ namespace logicalaccess
          * \brief Reconnect to the card with the currently active share mode on the same reader.
          * \return True if the card was reconnected without error, false otherwise.
          */
-        bool reconnect();
+        virtual bool reconnect(int action = 0);
 
         /**
          * \brief Disconnect from the card.
          */
         virtual void disconnect();
-
-        /**
-         * \brief Disconnect from the card.
-         * \param action Card action on disconnect.
-         */
-        virtual void disconnect(unsigned int action);
 
         /**
          * \brief Check if the handle is associated to a card (aka. "connected").

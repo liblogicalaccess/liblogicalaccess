@@ -791,12 +791,32 @@ namespace logicalaccess
                 unsigned char cmd[] = { 0x80, 0x0a, p1, 0x00, static_cast<unsigned char>(data.size()), 0x00 };
                 std::vector<unsigned char> cmd_vector(cmd, cmd + 6);
                 cmd_vector.insert(cmd_vector.end() - 1, data.begin(), data.end());
-                if (getSAMChip()->getCardType() == "SAM_AV1")
-                    apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->transmit(cmd_vector);
-                else if (getSAMChip()->getCardType() == "SAM_AV2")
-                    apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(cmd_vector, true, false);
-                if (apduresult.size() <= 2)
-                    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam authenticate DES P1 failed.");
+
+				int trytoreconnecy = 0;
+				do
+				{
+					try
+					{
+						if (getSAMChip()->getCardType() == "SAM_AV1")
+							apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->transmit(cmd_vector);
+						else if (getSAMChip()->getCardType() == "SAM_AV2")
+							apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(cmd_vector, true, false);
+					}
+					catch (CardException& ex)
+					{
+						if (trytoreconnecy > 5 || ex.error_code() != CardException::WRONG_P1_P2
+							|| !std::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification()))
+							std::rethrow_exception(std::current_exception());
+
+						//SAM av2 often fail even if parameters are correct for during diversification av2 
+						LOG(LogLevel::WARNINGS) << "try to auth with SAM P1: " << trytoreconnecy;
+						getSAMChip()->getCommands()->getReaderCardAdapter()->getDataTransport()->getReaderUnit()->reconnect();
+					}
+					++trytoreconnecy;
+				} while (true);
+
+				if (apduresult.size() <= 2)
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam authenticate DES P1 failed.");
 
                 rndAB.insert(rndAB.begin(), apduresult.begin(), apduresult.begin() + 16);
             }

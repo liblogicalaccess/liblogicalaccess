@@ -22,7 +22,7 @@ namespace logicalaccess
         AddCheck(0x6A, 0x82, "Invalid key version");
 
         AddCheck(0x68, 0x83, "Invalid chaining sequence");
-        AddCheck(0x69, 0x85, "conditions of use not satisfied, invalid key type, invalid CID, key limit reached");
+        AddCheck(0x69, 0x85, "conditions of use not satisfied, invalid key type, invalid CID, key limit reached", CardException::WRONG_P1_P2);
         AddCheck(0x69, 0x82, "Integrity error");
 
         AddCheck(0x90, 0x1E, "MAC verification failed, CRC/Padding failed, auth error, integrity error");
