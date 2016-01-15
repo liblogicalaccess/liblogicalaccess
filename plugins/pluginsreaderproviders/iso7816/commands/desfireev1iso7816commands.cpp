@@ -437,7 +437,7 @@ namespace logicalaccess
         std::vector<unsigned char> cmd_vector(cmdp1, cmdp1 + 6);
         cmd_vector.insert(cmd_vector.end() - 1, data.begin(), data.end());
 
-		int trytoreconnecy = 0;
+		int trytoreconnect = 0;
 		do
 		{
 			try
@@ -450,15 +450,15 @@ namespace logicalaccess
 			}
 			catch (CardException& ex)
 			{
-				if (trytoreconnecy > 5 || ex.error_code() != CardException::WRONG_P1_P2
+				if (trytoreconnect > 5 || ex.error_code() != CardException::WRONG_P1_P2
 					|| !std::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification()))
 					std::rethrow_exception(std::current_exception());
 
 				//SAM av2 often fail even if parameters are correct for during diversification av2
-				LOG(LogLevel::WARNINGS) << "try to auth with SAM P1: " << trytoreconnecy;
+				LOG(LogLevel::WARNINGS) << "try to auth with SAM P1: " << trytoreconnect;
 				getSAMChip()->getCommands()->getReaderCardAdapter()->getDataTransport()->getReaderUnit()->reconnect();
 			}
-			++trytoreconnecy;
+			++trytoreconnect;
 		} while (true);
 
         if (apduresult.size() <= 2 && apduresult[apduresult.size() - 2] != 0x90 && apduresult[apduresult.size() - 2] != 0xaf)
