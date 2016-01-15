@@ -39,6 +39,11 @@ namespace logicalaccess
 		 */
 		static std::string strerror(unsigned int error_flag);
 
+		/**
+		* Set the action to take on the card in the connected reader on close.
+		*/
+		void setDisposition(DWORD dispo) { disposition = dispo; }
+
 	private:
 
         /**
@@ -60,6 +65,11 @@ namespace logicalaccess
 		 * The activated protocol
 		 */
 		DWORD active_protocol_;
+
+		/**
+		* Action to take on the card in the connected reader on close. 
+		*/
+		DWORD disposition;
 
 		friend class PCSCReaderUnit;
     };

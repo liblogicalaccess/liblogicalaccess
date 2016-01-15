@@ -100,6 +100,15 @@ namespace logicalaccess
 
       protected:
         virtual std::shared_ptr<ResultChecker> createDefaultResultChecker() const override;
+		/**
+		* \brief Get the ISO7816 reader unit configuration.
+		* \return The ISO7816 reader unit configuration.
+		*/
+		std::shared_ptr<ISO7816ReaderUnitConfiguration> getISO7816Configuration() { return std::dynamic_pointer_cast<ISO7816ReaderUnitConfiguration>(getConfiguration()); };
+
+		virtual bool reconnect(int action);
+
+    private:
     };
 }
 

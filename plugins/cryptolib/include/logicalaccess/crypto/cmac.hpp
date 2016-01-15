@@ -24,7 +24,7 @@ namespace logicalaccess
 			 * \param padding_size The padding size.
 			 * \return The CMAC result for the message.
 			 */
-			static std::vector<unsigned char> cmac(const std::vector<unsigned char>& key, std::string crypto, const std::vector<unsigned char>& data, unsigned int padding_size = 0);
+            static std::vector<unsigned char> cmac(const std::vector<unsigned char>& key, std::string crypto, const std::vector<unsigned char>& data, unsigned int padding_size = 0, const std::vector<unsigned char>& iv = std::vector<unsigned char>());
 
             /**
              * \brief  Return data part for the encrypted communication mode.

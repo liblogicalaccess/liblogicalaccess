@@ -15,9 +15,9 @@ namespace logicalaccess
 {
     namespace openssl
     {
-		std::vector<unsigned char> CMACCrypto::cmac(const std::vector<unsigned char>& key, std::string crypto, const std::vector<unsigned char>& data, unsigned int padding_size)
+        std::vector<unsigned char> CMACCrypto::cmac(const std::vector<unsigned char>& key, std::string crypto, const std::vector<unsigned char>& data, unsigned int padding_size, const std::vector<unsigned char>& iv)
 		{
-			std::vector<unsigned char> cmac, iv;
+            std::vector<unsigned char> cmac, lastiv;
 			
 			std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC;
 			unsigned int block_size = 0;
@@ -38,12 +38,20 @@ namespace logicalaccess
 
 			if (cipherMAC)
 			{
+                lastiv.resize(block_size, 0x00);
 				if (padding_size == 0)
 				{
 					padding_size = block_size;
 				}
-				iv.resize(block_size, 0x00);
-				cmac = CMACCrypto::cmac(key, cipherMAC, block_size, data, iv, padding_size);
+                if (iv.size() > 0)
+                {
+                    for (unsigned char i = 0; i < iv.size(); ++i)
+                    {
+                        lastiv[i] = iv[i];
+                    }
+                }
+				
+                cmac = CMACCrypto::cmac(key, cipherMAC, block_size, data, lastiv, padding_size);
 				if (cmac.size() > block_size)
 				{
 					cmac = std::vector<unsigned char>(cmac.end() - block_size, cmac.end());
