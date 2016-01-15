@@ -103,11 +103,18 @@ class LIBLOGICALACCESS_API IslogKeyServer
                                          const std::string &key_name,
                                          const std::array<uint8_t, 8> &iv);
 
+    /**
+     * Send a command and retrieve a response.
+     * On network error, attempt to reconnect and try again.
+     */
+    std::shared_ptr<BaseResponse> transact(const BaseCommand &cmd);
+
     void send_command(const BaseCommand &cmd);
 
     std::shared_ptr<BaseResponse> recv();
 
   private:
+    void setup_transport();
     std::shared_ptr<BaseResponse> build_response(uint32_t size, uint16_t opcode,
                                                  uint16_t status,
                                                  const std::vector<uint8_t> &data);
@@ -124,6 +131,9 @@ class LIBLOGICALACCESS_API IslogKeyServer
      * The registered pre-configuration is stored here.
      */
     static IKSConfig pre_configuration_;
+
+    std::string ip_;
+    uint16_t port_;
 };
 }
 }

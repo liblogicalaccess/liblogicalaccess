@@ -25,7 +25,9 @@ IslogKeyServer::IslogKeyServer(const std::string &ip, uint16_t port,
                                const std::string &client_cert,
                                const std::string &client_key,
                                const std::string &root_ca)
-    : ssl_ctx_(boost::asio::ssl::context::tlsv12_client)
+    : ssl_ctx_(boost::asio::ssl::context::tlsv12_client),
+      ip_(ip),
+      port_(port)
 {
     ssl_ctx_.use_certificate_file(client_cert,
                                   boost::asio::ssl::context_base::file_format::pem);
@@ -35,14 +37,7 @@ IslogKeyServer::IslogKeyServer(const std::string &ip, uint16_t port,
     ssl_ctx_.load_verify_file(root_ca);
     ssl_ctx_.set_verify_mode(boost::asio::ssl::verify_peer);
 
-    transport_ = std::unique_ptr<SSLTransport>(new SSLTransport(ssl_ctx_));
-
-    transport_->setIpAddress(ip);
-    transport_->setPort(port);
-
-    if (!transport_->connect(2500))
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "Failed to connect to Islog Key Server.");
+    setup_transport();
 }
 
 std::vector<uint8_t> IslogKeyServer::get_random(size_t sz)
@@ -51,8 +46,7 @@ std::vector<uint8_t> IslogKeyServer::get_random(size_t sz)
     GenRandomCommand cmd;
     cmd.nb_bytes_ = static_cast<uint16_t>(sz);
 
-    transport_->send(cmd.serialize());
-    auto ret = std::dynamic_pointer_cast<GenRandomResponse>(recv());
+    auto ret = std::dynamic_pointer_cast<GenRandomResponse>(transact(cmd));
     assert(ret && ret->opcode_ == SMSG_OP_GENRANDOM);
     LOG(INFOS) << ret->bytes_;
     return ret->bytes_;
@@ -67,8 +61,7 @@ std::vector<uint8_t> IslogKeyServer::aes_encrypt(const std::vector<uint8_t> &in,
     cmd.iv_       = iv;
     cmd.payload_  = in;
 
-    transport_->send(cmd.serialize());
-    auto ret = std::dynamic_pointer_cast<AesEncryptResponse>(recv());
+    auto ret = std::dynamic_pointer_cast<AesEncryptResponse>(transact(cmd));
     assert(ret && ret->opcode_ == SMSG_OP_AES_ENCRYPT);
     if (ret->status_ != SMSG_STATUS_SUCCESS)
     {
@@ -102,8 +95,7 @@ std::vector<uint8_t> IslogKeyServer::aes_decrypt(const std::vector<uint8_t> &in,
     cmd.iv_       = iv;
     cmd.payload_  = in;
 
-    transport_->send(cmd.serialize());
-    auto ret = std::dynamic_pointer_cast<AesEncryptResponse>(recv());
+    auto ret = std::dynamic_pointer_cast<AesEncryptResponse>(transact(cmd));
     assert(ret && ret->opcode_ == SMSG_OP_AES_ENCRYPT);
     if (ret->status_ != SMSG_STATUS_SUCCESS)
     {
@@ -159,8 +151,7 @@ std::vector<uint8_t> IslogKeyServer::des_crypto(const std::vector<uint8_t> &in,
         use_ecb ? COMMAND_DES_ENCRYPT_FLAG_ECB : COMMAND_DES_ENCRYPT_FLAG_CBC;
     cmd.decrypt_ = decrypt;
 
-    transport_->send(cmd.serialize());
-    auto ret = std::dynamic_pointer_cast<DesEncryptResponse>(recv());
+    auto ret = std::dynamic_pointer_cast<DesEncryptResponse>(transact(cmd));
     assert(ret && ret->opcode_ == SMSG_OP_DES_ENCRYPT);
     if (ret->status_ != SMSG_STATUS_SUCCESS)
     {
@@ -168,6 +159,41 @@ std::vector<uint8_t> IslogKeyServer::des_crypto(const std::vector<uint8_t> &in,
                                  "DESCrypto failed: " + strstatus(ret->status_));
     }
     return ret->bytes_;
+}
+
+void IslogKeyServer::setup_transport()
+{
+    transport_ = nullptr;
+
+    transport_ = std::unique_ptr<SSLTransport>(new SSLTransport(ssl_ctx_));
+
+    transport_->setIpAddress(ip_);
+    transport_->setPort(port_);
+
+    if (!transport_->connect(2500))
+    {
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "Failed to connect to Islog Key Server.");
+    }
+}
+
+std::shared_ptr<BaseResponse> IslogKeyServer::transact(const BaseCommand &cmd)
+{
+    int max_try = 3;
+
+    do
+    {
+        try
+        {
+            transport_->send(cmd.serialize());
+            return recv();
+        }
+        catch (const std::exception &e)
+        {
+            LOG(ERRORS) << "Network error in IKS. Attempting to reconnect.";
+            setup_transport();
+        }
+    } while (--max_try);
 }
 
 void IslogKeyServer::send_command(const BaseCommand &cmd)
