@@ -173,7 +173,7 @@ SOURCE_GROUP("Header Files\\services\\accesscontrol\\formats\\customformat" FILE
 SOURCE_GROUP("Header Files\\services\\nfctag" FILES ${include_nfctag})
 SOURCE_GROUP("Header Files\\services\\storage" FILES ${include_storage})
 SOURCE_GROUP("Header Files\\services\\uidchanger" FILES ${include_uidchanger})
-SOURCE_GROUP("Header Files\\services\\iks" FILES ${include_iks})
+SOURCE_GROUP("Header Files\\iks" FILES ${include_iks})
 
 endif()
 
