@@ -19,6 +19,11 @@ namespace logicalaccess
     public:
 
         /**
+        * \brief Constructor.
+        */
+        ComputerMemoryKeyStorage();
+
+        /**
          * \brief Get the key storage type.
          * \return The key storage type.
          */
@@ -43,7 +48,41 @@ namespace logicalaccess
          */
         virtual std::string getDefaultXmlNodeName() const;
 
+        /**
+        * \brief Set if the key is locked.
+        * \param locked True if the key is locked, false otherwise.
+        */
+        void setLocked(bool locked);
+
+        /**
+        * \brief Get if the key is locked.
+        * \return True if the key is locked, false otherwise.
+        */
+        bool getLocked() const;
+
+        /**
+        * \brief Set if the key is random.
+        * \param random True if the key is random, false otherwise.
+        */
+        void setRandom(bool random);
+
+        /**
+        * \brief Get if the key is random.
+        * \return True if the key is random, false otherwise.
+        */
+        bool getRandom() const;
+
     protected:
+
+        /**
+        * \brief True if the key is locked. If locked, the key shouldn't be changed or displayed without a complete erase.
+        */
+        bool d_locked;
+
+        /**
+        * \brief True if the key is random. If random the key is generated at each use.
+        */
+        bool d_random;
     };
 }
 
