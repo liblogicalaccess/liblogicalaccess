@@ -36,3 +36,8 @@ ${LLA_TESTS_ADDITIONAL_INCLUDES}
 endfunction()
 
 add_subdirectory(pcsc-tests)
+add_subdirectory(other)
+
+if (LLA_BUILD_UNITTESTS)
+    add_subdirectory(unittest)
+endif()

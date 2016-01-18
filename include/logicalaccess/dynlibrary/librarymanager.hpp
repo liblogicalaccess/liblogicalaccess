@@ -63,6 +63,18 @@ namespace logicalaccess
         std::shared_ptr<AccessControlCardService> getAccessControlCardService(
                 std::shared_ptr<Chip> chip) const;
 
+        /**
+         * Retrieve a Service object for a given CardServiceType.
+         *
+         * This gives a chance to library to offer a customized service based
+         * on the chip/reader combination.
+         *
+         * Use case: Fetch an UIDChanger service from the LLA-NFC plugin for a
+         * Mifare Classic card.
+         */
+        std::shared_ptr<CardService> getCardService(std::shared_ptr<Chip> chip,
+                                                    CardServiceType type);
+
         std::vector<std::string> getAvailableCards();
 
         std::vector<std::string> getAvailableReaders();

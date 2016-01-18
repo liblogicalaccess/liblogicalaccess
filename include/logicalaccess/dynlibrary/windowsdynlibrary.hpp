@@ -18,15 +18,13 @@ namespace logicalaccess
 
     public:
         WindowsDynLibrary(const std::string& dlName);
-        ~WindowsDynLibrary()
-        {
-            ::FreeLibrary(_handle);
-        }
+		~WindowsDynLibrary();
 
         const std::string& getName(void) const
         {
             return _name;
         }
+
         void* getSymbol(const char* symName);
 
         virtual bool hasSymbol(const char *name);

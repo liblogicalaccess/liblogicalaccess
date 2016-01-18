@@ -1,5 +1,6 @@
-#include "logicalaccess/myexception.hpp"
+#include <boost/asio.hpp>
 #include "logicalaccess/dynlibrary/windowsdynlibrary.hpp"
+#include "logicalaccess/myexception.hpp"
 #include "logicalaccess/logs.hpp"
 #include "logicalaccess/readerproviders/readerunit.hpp"
 
@@ -19,6 +20,11 @@ namespace logicalaccess
             throw EXCEPTION(LibLogicalAccessException, _getErrorMess(::GetLastError()));
         }
     }
+
+	WindowsDynLibrary::~WindowsDynLibrary()
+	{
+		::FreeLibrary(_handle);
+	}
 
     void* WindowsDynLibrary::getSymbol(const char* symName)
     {

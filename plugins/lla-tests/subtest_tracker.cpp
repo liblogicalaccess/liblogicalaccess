@@ -24,14 +24,20 @@ std::ostream &operator<<(std::ostream &os, const SubTestTracker &stt)
         os << "\n\t" << test;
     }
 
-    os << "\nSubtest that didn't run: ";
-
     std::list<std::string> not_run;
     std::set_difference(stt.all_tests_.begin(), stt.all_tests_.end(),
                         stt.tests_.begin(), stt.tests_.end(), std::inserter(not_run, not_run.begin()));
-    for (const auto& test : not_run)
+    if (not_run.empty())
     {
-        os << "\n\t" << test;
+        os << "\nAll subtests ran.";
+    }
+    else
+    {
+        os << "\nSubtest that didn't run: ";
+        for (const auto &test : not_run)
+        {
+            os << "\n\t" << test;
+        }
     }
 
     return os;

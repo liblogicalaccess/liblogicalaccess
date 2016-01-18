@@ -10,6 +10,7 @@
 #include "logicalaccess/bufferhelper.hpp"
 #include "acsacr1222lledbuzzerdisplay.hpp"
 #include "acsacr1222llcddisplay.hpp"
+#include "../commands/acsacrresultchecker.hpp"
 #include <cassert>
 
 namespace logicalaccess
@@ -229,4 +230,8 @@ namespace logicalaccess
         return cfg;
     }
 
+    std::shared_ptr<ResultChecker> ACSACR1222LReaderUnit::createDefaultResultChecker() const
+    {
+        return std::make_shared<ACSACRResultChecker>();
+    }
 }

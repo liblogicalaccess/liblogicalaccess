@@ -45,6 +45,7 @@ namespace logicalaccess
         std::string getFirmwareVersion();
 
     protected:
+        virtual std::shared_ptr<ResultChecker> createDefaultResultChecker() const override;
     };
 }
 

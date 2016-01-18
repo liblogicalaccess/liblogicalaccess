@@ -12,6 +12,7 @@
 
 namespace logicalaccess
 {
+class KeyDiversification;
     /**
      * \brief A Key base class. The key object is used to describe key chip information used for authentication on secured memory area or for restricted operation.
      */
@@ -136,15 +137,9 @@ namespace logicalaccess
          */
         bool getStoreCipheredData();
 
-        /**
-         * \brief Set KeyDiversification
-         */
-        void setKeyDiversification(std::shared_ptr<KeyDiversification> div) { d_key_diversification = div; };
+        void setKeyDiversification(std::shared_ptr<KeyDiversification> div);
 
-        /**
-         * \brief Get Diversification
-         */
-        std::shared_ptr<KeyDiversification> getKeyDiversification() { return d_key_diversification; };
+        std::shared_ptr<KeyDiversification> getKeyDiversification();
 
     private:
         /**

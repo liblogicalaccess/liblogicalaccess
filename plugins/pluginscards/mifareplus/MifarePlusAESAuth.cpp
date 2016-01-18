@@ -92,7 +92,7 @@ bool logicalaccess::MifarePlusAESAuth::aes_auth_final(const ByteVector &rnd_a,
     }
     catch (std::exception &e)
     {
-        LOG(ERRORS) << "Error decrypting AES content. AES Auth failed.";
+        LOG(ERRORS) << "Error decrypting AES content. AES Auth failed: " << e.what();
     }
     return false;
 }

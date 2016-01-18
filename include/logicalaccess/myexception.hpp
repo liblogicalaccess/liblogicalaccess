@@ -5,7 +5,7 @@
 #include <exception>
 #include <functional>
 
-#ifdef UNIX
+#if defined(UNIX) || _MSC_VER >= 1900
 #define NOEXCEPT noexcept
 #else
 #define NOEXCEPT
@@ -114,6 +114,17 @@ namespace logicalaccess
 	protected:
 		enum ErrorType error_type_;
 
+    };
+
+    /**
+     * An exception related to operation against the Islog Key Server.
+     */
+    class IKSException : public Exception::exception
+    {
+    public:
+        IKSException(const std::string& message)
+                : exception(message)
+        {};
     };
 
 #define EXCEPTION_MSG_CONNECTED			"Already connected to a card. Please disconnect before." /**< \brief Not connected exception message */

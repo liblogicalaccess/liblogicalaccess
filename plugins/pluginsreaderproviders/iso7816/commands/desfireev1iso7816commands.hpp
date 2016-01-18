@@ -286,6 +286,13 @@ namespace logicalaccess
 
         virtual void sam_iso_authenticate(std::shared_ptr<DESFireKey> key, DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno);
 
+        /**
+         * Perform the authentication relying on Islog Key Server to perform
+         * cryptographic operation.
+         * This routine is suitable only for AES key: this is enforced by assertion.
+         */
+        virtual void iks_iso_authenticate(std::shared_ptr<DESFireKey> key, bool isMasterCardKey, uint8_t keyno);
+
     protected:
 
         /**

@@ -18,7 +18,7 @@ namespace logicalaccess
 
         NXPAV2KeyDiversification() {};
         NXPAV2KeyDiversification(const std::vector<unsigned char>& divInput) : d_divInput(divInput) {};
-        ~NXPAV2KeyDiversification() {};
+        virtual ~NXPAV2KeyDiversification() {};
 
         virtual std::string getType() { return "NXPAV2"; };
 

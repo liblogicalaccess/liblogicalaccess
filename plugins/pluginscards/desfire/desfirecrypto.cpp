@@ -226,6 +226,23 @@ namespace logicalaccess
 		return crc;
     }
 
+    /**
+     * Check wheter or not a key is triple DES.
+     * We do this by comparing the 8 first byte to 8 second byte, ignoring
+     * parity bits.
+     */
+    static bool is_triple_des(const std::vector<uint8_t> &key)
+    {
+        assert(key.size() >= 16);
+
+        for (int i = 0; i < 8; ++i)
+        {
+            if ((key[i] & 0xFE) != (key[i + 8] & 0xFE))
+                return true; // Bytes differ, so its triple DES.
+        }
+        return false;
+    }
+
     std::vector<unsigned char> DESFireCrypto::desfire_CBC_send(const std::vector<unsigned char>& key, const std::vector<unsigned char>& iv, const std::vector<unsigned char>& data)
     {
         symmetric_key skey;
@@ -237,8 +254,11 @@ namespace logicalaccess
         std::vector<unsigned char> ret;
 
         bool is3des = false;
-        if (memcmp(&key[0], &key[8], 8))
+        if (is_triple_des(key))
         {
+            std::cout << "in desfire_CBC_send, key = " << key << std::endl;
+            assert(0);
+            std::cout << "PLEASE NO PLEASE NO" << std::endl;
             is3des = true;
         }
 
@@ -489,7 +509,7 @@ namespace logicalaccess
     std::vector<unsigned char> DESFireCrypto::desfire_encrypt(const std::vector<unsigned char>& key, std::vector<unsigned char> data)
     {
         int pad = (8 - ((data.size() + 2) % 8)) % 8;
-
+        std::cout << "DES ENCRYPT: " << key << std::endl << ". DATA " << data << std::endl;;
         short crc = desfire_crc16(&data[0], data.size());
         data.push_back(static_cast<unsigned char>(crc & 0xff));
         data.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
@@ -497,6 +517,7 @@ namespace logicalaccess
         {
             data.push_back(0x00);
         }
+        std::cout << "DATA WITH PAD AND CRC: " << data << std::endl;
 
         return desfire_CBC_send(key, std::vector<unsigned char>(), data);
     }
@@ -619,6 +640,8 @@ namespace logicalaccess
     {
         LOG(LogLevel::INFOS) << "Init key from crypto with diversify set to: " << BufferHelper::getHex(diversify) << ".";
 
+        std::cout << "Entering getKey" << std::endl;
+
         keydiv.clear();
         if (key->getKeyDiversification() && diversify.size() != 0)
         {
@@ -629,6 +652,7 @@ namespace logicalaccess
         {
             if (key->isEmpty())
             {
+                std::cout << "KEY IS EMPTY: " << keydiv << std::endl;
                 keydiv.resize(key->getLength(), 0x00);
             }
             else
@@ -636,9 +660,11 @@ namespace logicalaccess
                 keydiv.insert(keydiv.end(), key->getData(), key->getData() + key->getLength());
             }
         }
+        std::cout << "KEYDIV: " << keydiv << std::endl;
 
         if (key->getKeyType() != DF_KEY_AES)
             getKeyVersioned(key, keydiv);
+        std::cout << "KEYDIV2: " << keydiv << std::endl;
     }
 
     void DESFireCrypto::getKeyVersioned(std::shared_ptr<DESFireKey> key, std::vector<unsigned char>& keyversioned)
@@ -687,6 +713,7 @@ namespace logicalaccess
 
         if (d_auth_method == CM_LEGACY) // Native DESFire
         {
+            std::cout << "HERE" << std::endl;
             if (keyno_only != d_currentKeyNo)
             {
                 short crc;
@@ -705,10 +732,13 @@ namespace logicalaccess
                 {
                     encCryptogram.push_back(0x00);
                 }
+                std::cout << "ENC CRYPTOGRAM IS : " << encCryptogram << std::endl;
                 cryptogram = desfire_CBC_send(d_sessionKey, std::vector<unsigned char>(), encCryptogram);
             }
             else
             {
+                std::cout << "NEW KEY DIV IS : " << newkeydiv << std::endl;
+                std::cout << "SESSION KEY IS : " << d_sessionKey << std::endl;
                 cryptogram = desfire_encrypt(d_sessionKey, newkeydiv);
             }
         }
@@ -727,6 +757,7 @@ namespace logicalaccess
 
                 if (std::dynamic_pointer_cast<openssl::AESCipher>(d_cipher))
                 {
+                        std::cout << "ADDING KEY VERSION (" << +newkey->getKeyVersion() << ")"<< std::endl;
                     // For AES, add key version.
                     encCryptogram.push_back(newkey->getKeyVersion());
 
@@ -764,6 +795,7 @@ namespace logicalaccess
             }
             else
             {
+                std::cout << "Keyno = " << +keyno << ". Keyno only: " << +keyno_only << ". Current keyno: "<< +d_currentKeyNo << std::endl;
                 if (newkey->getKeyType() == DF_KEY_AES)
                 {
                     // For AES, add key version.
@@ -1089,7 +1121,11 @@ namespace logicalaccess
         return encdata;
     }
 
-    std::vector<unsigned char> DESFireCrypto::desfire_iso_encrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size, const std::vector<unsigned char>& param)
+    std::vector<unsigned char> DESFireCrypto::desfire_iso_encrypt(const std::vector<unsigned char>& key,
+                                                                  const std::vector<unsigned char>& data,
+                                                                  std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher,
+                                                                  unsigned int block_size,
+                                                                  const std::vector<unsigned char>& param)
     {
         std::vector<unsigned char> encdata;
         std::vector<unsigned char> decdata = data;

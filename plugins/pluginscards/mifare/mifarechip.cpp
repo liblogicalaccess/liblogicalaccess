@@ -5,15 +5,11 @@
  */
 
 #include "mifarechip.hpp"
-#include "mifareprofile.hpp"
 
-#include <iostream>
 #include <iomanip>
-#include <sstream>
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
 #include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
 #include "mifarestoragecardservice.hpp"
-#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 #include "logicalaccess/cards/locationnode.hpp"
 
 namespace logicalaccess
@@ -103,6 +99,18 @@ namespace logicalaccess
             break;
         case CST_NFC_TAG:
             break;
+
+        case CST_UID_CHANGER:
+        {
+            // Changing the UID of Mifare Classic works with (some) NFC only.
+            // Therefore, we relies on the LibraryManager to (maybe) retrieve
+            // a UIDChanger service.
+            service = LibraryManager::getInstance()->getCardService(shared_from_this(),
+                                                                    CST_UID_CHANGER);
+            // If the LLA-NFC plugin doesn't give us a service, for any reason
+            // (not a NFC reader for example) then we do nothing.
+            break;
+        }
         }
 
         if (!service)

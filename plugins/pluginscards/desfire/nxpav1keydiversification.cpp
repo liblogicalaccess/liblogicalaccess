@@ -21,7 +21,9 @@
 
 namespace logicalaccess
 {
-    void NXPAV1KeyDiversification::initDiversification(std::vector<unsigned char> identifier, int AID, std::shared_ptr<Key> key, unsigned char keyno, std::vector<unsigned char>& diversify)
+    void NXPAV1KeyDiversification::initDiversification(std::vector<unsigned char> identifier, int AID,
+                                                       std::shared_ptr<Key> key, unsigned char keyno,
+                                                       std::vector<unsigned char>& diversify)
     {
         diversify.push_back(keyno);
         diversify.insert(diversify.end(), identifier.begin(), identifier.end());
@@ -32,7 +34,8 @@ namespace logicalaccess
             diversify.insert(diversify.end(), diversify.begin(), diversify.end());
     }
 
-    std::vector<unsigned char> NXPAV1KeyDiversification::getDiversifiedKey(std::shared_ptr<Key> key, std::vector<unsigned char> diversify)
+    std::vector<unsigned char> NXPAV1KeyDiversification::getDiversifiedKey(std::shared_ptr<Key> key,
+                                                                           std::vector<unsigned char> diversify)
     {
         LOG(LogLevel::INFOS) << "Using key diversification NXP AV1 with div : " << BufferHelper::getHex(diversify);
         std::shared_ptr<openssl::SymmetricKey> symkey;

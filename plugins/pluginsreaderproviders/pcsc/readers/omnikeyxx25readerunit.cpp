@@ -29,7 +29,7 @@ namespace logicalaccess
 
     std::vector<unsigned char> OmnikeyXX25ReaderUnit::getCardSerialNumber()
     {
-        return std::vector<unsigned char>(d_atr, d_atr + d_atrLength);
+        return atr_;
     }
 
 	std::shared_ptr<Chip> OmnikeyXX25ReaderUnit::createChip(std::string type)

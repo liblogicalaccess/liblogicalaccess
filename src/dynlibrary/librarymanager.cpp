@@ -321,4 +321,25 @@ namespace logicalaccess
         }
         return srv;
     }
+
+std::shared_ptr<CardService> LibraryManager::getCardService(std::shared_ptr<Chip> chip,
+                                                            CardServiceType type)
+{
+    std::shared_ptr<CardService> srv;
+    for (auto &&itr : libLoaded)
+    {
+        IDynLibrary *lib = itr.second;
+
+        if (lib->hasSymbol("getCardService"))
+        {
+            int (*fptr)(std::shared_ptr<Chip>, std::shared_ptr<CardService> &, CardServiceType) = nullptr;
+            fptr = reinterpret_cast<decltype(fptr)>(lib->getSymbol("getCardService"));
+            assert(fptr);
+            fptr(chip, srv, type);
+            if (srv)
+                break;
+        }
+    }
+    return srv;
+}
 }

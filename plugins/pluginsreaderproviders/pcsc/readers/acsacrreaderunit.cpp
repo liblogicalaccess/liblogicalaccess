@@ -7,6 +7,7 @@
 #include "../readers/acsacrreaderunit.hpp"
 #include "../readercardadapters/pcscreadercardadapter.hpp"
 #include "logicalaccess/bufferhelper.hpp"
+#include "../commands/acsacrresultchecker.hpp"
 
 namespace logicalaccess
 {
@@ -32,4 +33,9 @@ namespace logicalaccess
         getDefaultPCSCReaderCardAdapter()->setResultChecker(checker);
         return BufferHelper::getStdString(res);
     }
+
+std::shared_ptr<ResultChecker> ACSACRReaderUnit::createDefaultResultChecker() const
+{
+    return std::make_shared<ACSACRResultChecker>();
+}
 }

@@ -15,7 +15,7 @@ namespace logicalaccess
 {
     namespace openssl
     {
-        std::vector<unsigned char> CMACCrypto::cmac(const std::vector<unsigned char>& key, std::string crypto, const std::vector<unsigned char>& data, unsigned int padding_size, const std::vector<unsigned char>& iv)
+        std::vector<unsigned char> CMACCrypto::cmac(const std::vector<unsigned char>& key, std::string crypto, const std::vector<unsigned char>& data, const std::vector<unsigned char>& iv, int padding_size)
 		{
             std::vector<unsigned char> cmac, lastiv;
 			

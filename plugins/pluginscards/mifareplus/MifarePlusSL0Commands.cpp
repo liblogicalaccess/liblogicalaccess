@@ -136,4 +136,5 @@ bool MifarePlusSL0Commands::is4K()
         assert(0);
     }
     assert(0);
+	return false;
 }

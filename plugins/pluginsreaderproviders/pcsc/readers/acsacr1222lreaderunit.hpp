@@ -100,18 +100,15 @@ namespace logicalaccess
          */
         virtual std::shared_ptr<LEDBuzzerDisplay> getLEDBuzzerDisplay() override;
 
-
         std::shared_ptr<ACSACR1222LReaderUnitConfiguration> getACSACR1222LConfiguration();
 
     protected:
-
         std::shared_ptr<PCSCReaderCardAdapter> getReaderControlReaderCardAdapter();
-
-    protected:
-
         std::shared_ptr<PCSCReaderCardAdapter> d_readerControlReaderCardAdapter;
 
-	private:
+        virtual std::shared_ptr<ResultChecker> createDefaultResultChecker() const override;
+
+    private:
 		void establish_background_connection();
 		void kill_background_connection();
 		std::shared_ptr<PCSCReaderUnit> sam_used_as_perma_connection_;

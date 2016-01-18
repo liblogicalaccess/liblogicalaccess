@@ -28,6 +28,8 @@
 #include <map>
 #include <sstream>
 #include <vector>
+#include <array>
+#include <cstdint>
 
 namespace logicalaccess
 {
@@ -57,6 +59,16 @@ namespace logicalaccess
      * An overload to pretty-print a boolean vector to an ostream.
      */
     LIBLOGICALACCESS_API std::ostream &operator<<(std::ostream &ss, const std::vector<bool> &bytebuff);
+
+    /**
+     * And overload to pretty-print a byte std::array to an ostream
+     */
+    template<long unsigned int Size>
+    std::ostream &operator<<(std::ostream &ss, const std::array<uint8_t, Size> &bytearray)
+    {
+        ss << std::vector<uint8_t>(bytearray.begin(), bytearray.end());
+        return ss;
+    }
 
     /**
      * A class that push a string into the current logger's context at
