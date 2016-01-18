@@ -1,5 +1,6 @@
 #include <assert.h>
 #include "logicalaccess/cards/IKSStorage.hpp"
+#include <boost/property_tree/ptree.hpp>
 
 using namespace logicalaccess;
 
@@ -10,18 +11,20 @@ KeyStorageType IKSStorage::getType() const
 
 void IKSStorage::serialize(boost::property_tree::ptree &parentNode)
 {
-        assert(0 && "Not implemented");
+    boost::property_tree::ptree node;
+    node.put("KeyIdentity", key_identity_);
+
+    parentNode.add_child(getDefaultXmlNodeName(), node);
 }
 
 void IKSStorage::unSerialize(boost::property_tree::ptree &node)
 {
-        assert(0 && "Not implemented");
+    key_identity_ = node.get_child("KeyIdentity").get_value<std::string>();
 }
 
 std::string IKSStorage::getDefaultXmlNodeName() const
 {
-        assert(0 && "Not implemented");
-		return "";
+	return "IKSStorage";
 }
 
 const std::string &IKSStorage::getKeyIdentity() const
