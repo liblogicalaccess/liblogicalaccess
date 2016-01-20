@@ -23,6 +23,9 @@ class LIBLOGICALACCESS_API IslogKeyServer
     struct IKSConfig
     {
         IKSConfig() = default;
+        IKSConfig(const std::string &ip, uint16_t port,
+                  const std::string &client_cert, const std::string &client_key,
+                  const std::string &root_ca);
         std::string ip;
         uint16_t port;
         std::string client_cert;
@@ -132,8 +135,7 @@ class LIBLOGICALACCESS_API IslogKeyServer
      */
     static IKSConfig pre_configuration_;
 
-    std::string ip_;
-    uint16_t port_;
+    IKSConfig config_;
 };
 }
 }
