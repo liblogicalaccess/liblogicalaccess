@@ -126,6 +126,11 @@ namespace logicalaccess
     void PCSCReaderUnit::setName(const std::string& name)
     {
         d_name = name;
+
+        if (this->getPCSCType() == PCSC_RUT_DEFAULT)
+        {
+            d_proxyReaderUnit = PCSCReaderUnit::createPCSCReaderUnit(d_name);
+        }
     }
 
     std::string PCSCReaderUnit::getConnectedName()

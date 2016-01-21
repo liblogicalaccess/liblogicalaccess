@@ -79,17 +79,11 @@ namespace logicalaccess
 
         std::shared_ptr<PCSCReaderCardAdapter> rca =
             getDefaultPCSCReaderCardAdapter();
-        // rca.reset(new OmnikeyHIDiClassReaderCardAdapter());
-        // rca->setReaderUnit(shared_from_this());
 
-        // setIsSecureConnectionMode(true);
-        // rca->initSecureModeSession(0xFF);
         rca->sendAPDUCommand(0x84, 0x82,
                              (keystorage->getVolatile() ? 0x00 : 0x20),
                              keystorage->getKeySlot(),
                              static_cast<unsigned char>(key.size()), key);
-        // rca->closeSecureModeSession();
-        // setIsSecureConnectionMode(false);
     }
 
     void OmnikeyXX21ReaderUnit::getT_CL_ISOType(bool &isTypeA, bool &isTypeB)
