@@ -63,7 +63,7 @@ void IKSStorage::setKeyIdentity(const std::string &idt)
     key_identity_ = idt;
 }
 
-void IKSStorage::serializeIKSConfig(bool v)
+void IKSStorage::setSerializeIKSConfig(bool v)
 {
     saveIKSConfig_ = v;
 }
@@ -75,7 +75,22 @@ void IKSStorage::setIKSConfig(const std::string &ip, uint16_t port,
     config_ = iks::IslogKeyServer::IKSConfig(ip, port, client_cert, client_key, root_ca);
 }
 
-iks::IslogKeyServer::IKSConfig IKSStorage::getIKSConfig()
+const iks::IslogKeyServer::IKSConfig &IKSStorage::getIKSConfig()
 {
     return config_;
+}
+
+bool IKSStorage::getSerializeIKSConfig() const
+{
+    return saveIKSConfig_;
+}
+
+void IKSStorage::getIKSConfig(std::string &ip, uint16_t &port, std::string &client_cert,
+                              std::string &client_key, std::string &root_ca)
+{
+    ip = config_.ip;
+    port = config_.port;
+    client_cert = config_.client_cert;
+    client_key = config_.client_key;
+    root_ca = config_.root_ca;
 }
