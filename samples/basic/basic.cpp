@@ -42,7 +42,11 @@ int main(int , char**)
         std::shared_ptr<logicalaccess::ReaderConfiguration> readerConfig(new logicalaccess::ReaderConfiguration());
 
         // PC/SC
-        readerConfig->setReaderProvider(logicalaccess::LibraryManager::getInstance()->getReaderProvider("PCSC"));
+        std::string rpstr = "PCSC";
+        std::cout << "Please type the reader plug-in to use:" << std::endl;
+        std::cin >> rpstr;
+
+        readerConfig->setReaderProvider(logicalaccess::LibraryManager::getInstance()->getReaderProvider(rpstr));
 
         if (readerConfig->getReaderProvider()->getRPType() == "PCSC" && readerConfig->getReaderProvider()->getReaderList().size() == 0)
         {
@@ -51,9 +55,23 @@ int main(int , char**)
         }
         std::cout << readerConfig->getReaderProvider()->getReaderList().size() << " readers on this system." << std::endl;
 
-        // Create the default reader unit. On PC/SC, we will listen on all readers.
-        readerConfig->setReaderUnit(readerConfig->getReaderProvider()->createReaderUnit());
+        // List available reader units
+        int ruindex = 0;
+        const logicalaccess::ReaderList readers = readerConfig->getReaderProvider()->getReaderList();
+        std::cout << "Please select index of the reader unit to use:" << std::endl;
+        for (int i = 0; i < readers.size(); ++i)
+        {
+            std::cout << "\t" << i << ". " << readers.at(i)->getName() << std::endl;
+        }
+        std::cin >> ruindex;
 
+        if (ruindex < 0 || ruindex >= readers.size())
+        {
+            std::cerr << "Selected reader unit outside range." << std::endl;
+            return EXIT_FAILURE;
+        }
+
+        readerConfig->setReaderUnit(readers.at(ruindex));
         std::cout << "Waiting 15 seconds for a card insertion..." << std::endl;
 
         while (1)
