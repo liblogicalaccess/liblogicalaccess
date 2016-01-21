@@ -18,7 +18,7 @@ ATRParser::ATRParser(const std::vector<uint8_t> &atr)
                            "MifarePlus_SL1_2K");
     register_hardcoded_atr("3B8F8001804F0CA000000306030037000000005C",
                            "MifarePlus_SL1_4K");
-    //register_hardcoded_atr("3B8F8001804F0CA0000003060300020000000069",
+    // register_hardcoded_atr("3B8F8001804F0CA0000003060300020000000069",
     //"MifarePlus_SL1_4K");
     register_hardcoded_atr("3B8F8001804F0CA000000306030001000000006A",
                            "MifarePlus_SL1_2K", PCSC_RUT_ACS_ACR_1222L);
@@ -74,7 +74,8 @@ std::string ATRParser::guessCardType(const std::vector<uint8_t> &atr,
 std::string ATRParser::parse(bool ignore_reader_type,
                              const PCSCReaderUnitType &reader_type) const
 {
-    LOG(INFOS) << "Trying to match ATR " << atr_ << " (" << BufferHelper::getHex(atr_) << ") to a card type.";
+    LOG(INFOS) << "Trying to match ATR " << atr_ << " ("
+               << BufferHelper::getHex(atr_) << ") to a card type.";
     auto atr = check_hardcoded(ignore_reader_type, reader_type);
     if (atr != "UNKNOWN")
         return atr;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "logicalaccess/cards/keystorage.hpp"
+#include "logicalaccess/iks/IslogKeyServer.hpp"
 
 namespace logicalaccess
 {
@@ -41,7 +42,42 @@ class LIBLOGICALACCESS_API IKSStorage : public KeyStorage
      */
     const std::string &getKeyIdentity() const;
 
+    void setKeyIdentity(const std::string &idt);
+
+    /**
+     * Control the value of the saveIKSConfig_ flag.
+     */
+    void setSerializeIKSConfig(bool v);
+
+    bool getSerializeIKSConfig() const;
+
+    void setIKSConfig(const std::string &ip, uint16_t port,
+                      const std::string &client_cert, const std::string &client_key,
+                      const std::string &root_ca);
+
+    const iks::IslogKeyServer::IKSConfig &getIKSConfig();
+
+    /**
+     * Retrieve the config stored internally.
+     * This method is here to be exported by the COM wrapper.
+     */
+    void getIKSConfig(std::string &ip, uint16_t &port, std::string &client_cert,
+                      std::string &client_key, std::string &root_ca);
+
   protected:
     std::string key_identity_;
+
+    /**
+     * Do we save IKS when serializing the object,
+     * or do we clear it instead?
+     */
+    bool saveIKSConfig_;
+
+    /**
+     * We store the IKS configuration
+     * in most IKSStorage object in order to ease
+     * the loading of configuration from a serialized object.
+     */
+    iks::IslogKeyServer::IKSConfig config_;
 };
 }

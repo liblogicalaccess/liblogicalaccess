@@ -25,9 +25,8 @@ IslogKeyServer::IslogKeyServer(const std::string &ip, uint16_t port,
                                const std::string &client_cert,
                                const std::string &client_key,
                                const std::string &root_ca)
-    : ssl_ctx_(boost::asio::ssl::context::tlsv12_client),
-      ip_(ip),
-      port_(port)
+    : ssl_ctx_(boost::asio::ssl::context::tlsv12_client)
+    , config_(ip, port, client_cert, client_key, root_ca)
 {
     ssl_ctx_.use_certificate_file(client_cert,
                                   boost::asio::ssl::context_base::file_format::pem);
@@ -167,8 +166,8 @@ void IslogKeyServer::setup_transport()
 
     transport_ = std::unique_ptr<SSLTransport>(new SSLTransport(ssl_ctx_));
 
-    transport_->setIpAddress(ip_);
-    transport_->setPort(port_);
+    transport_->setIpAddress(config_.ip);
+    transport_->setPort(config_.port);
 
     if (!transport_->connect(2500))
     {
@@ -194,6 +193,7 @@ std::shared_ptr<BaseResponse> IslogKeyServer::transact(const BaseCommand &cmd)
             setup_transport();
         }
     } while (--max_try);
+    return nullptr;
 }
 
 void IslogKeyServer::send_command(const BaseCommand &cmd)
@@ -308,11 +308,18 @@ void IslogKeyServer::configureGlobalInstance(const std::string &ip, uint16_t por
                                              const std::string &client_key,
                                              const std::string &root_ca)
 {
-    IKSConfig cfg;
-    cfg.ip                             = ip;
-    cfg.port                           = port;
-    cfg.client_cert                    = client_cert;
-    cfg.client_key                     = client_key;
-    cfg.root_ca                        = root_ca;
-    IslogKeyServer::pre_configuration_ = cfg;
+    IslogKeyServer::pre_configuration_ =
+        IKSConfig(ip, port, client_cert, client_key, root_ca);
+}
+
+IslogKeyServer::IKSConfig::IKSConfig(const std::string &ip, uint16_t port,
+                                     const std::string &client_cert,
+                                     const std::string &client_key,
+                                     const std::string &root_ca)
+{
+    this->ip          = ip;
+    this->port        = port;
+    this->client_cert = client_cert;
+    this->client_key  = client_key;
+    this->root_ca     = root_ca;
 }
