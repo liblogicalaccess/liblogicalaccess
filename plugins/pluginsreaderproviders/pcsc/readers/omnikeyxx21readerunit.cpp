@@ -81,7 +81,7 @@ namespace logicalaccess
             getDefaultPCSCReaderCardAdapter();
 
         rca->sendAPDUCommand(0x84, 0x82,
-                             (keystorage->getVolatile() ? 0x00 : 0x20),
+                             (keystorage->getVolatile() ? 0x00 : 0x20) | 1 << 7,
                              keystorage->getKeySlot(),
                              static_cast<unsigned char>(key.size()), key);
     }
