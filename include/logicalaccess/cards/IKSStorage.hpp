@@ -47,13 +47,22 @@ class LIBLOGICALACCESS_API IKSStorage : public KeyStorage
     /**
      * Control the value of the saveIKSConfig_ flag.
      */
-    void serializeIKSConfig(bool v);
+    void setSerializeIKSConfig(bool v);
+
+    bool getSerializeIKSConfig() const;
 
     void setIKSConfig(const std::string &ip, uint16_t port,
                       const std::string &client_cert, const std::string &client_key,
                       const std::string &root_ca);
 
-    iks::IslogKeyServer::IKSConfig getIKSConfig();
+    const iks::IslogKeyServer::IKSConfig &getIKSConfig();
+
+    /**
+     * Retrieve the config stored internally.
+     * This method is here to be exported by the COM wrapper.
+     */
+    void getIKSConfig(std::string &ip, uint16_t &port, std::string &client_cert,
+                      std::string &client_key, std::string &root_ca);
 
   protected:
     std::string key_identity_;
