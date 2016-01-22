@@ -69,6 +69,8 @@ namespace logicalaccess
          */
         virtual ~OmnikeyXX21ReaderUnit();
 
+         virtual ReaderServicePtr getService(const ReaderServiceType &type) override;
+
         /**
          * Retrieve the current status of the secure mode.
          */

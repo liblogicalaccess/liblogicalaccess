@@ -19,6 +19,8 @@
 #include <boost/regex.hpp>
 #if defined(__unix__)
 #include <PCSC/reader.h>
+#include <logicalaccess/dynlibrary/librarymanager.hpp>
+
 #elif defined(__APPLE__)
 
 #ifndef SCARD_CTL_CODE
@@ -80,8 +82,18 @@ namespace logicalaccess
         std::shared_ptr<PCSCReaderCardAdapter> rca =
             getDefaultPCSCReaderCardAdapter();
 
+        uint8_t key_loc = (keystorage->getVolatile() ? 0x00 : 0x20);
+        if (keystorage->getKeySlot() == 0x80 || keystorage->getKeySlot() == 0x81 ||
+            keystorage->getKeySlot() == 0x82)
+        {
+            // We want to change either the session read key, session write key, or the
+            // HID encryption key. Those keys are considered "reader key" and therefor need
+            // this flags.
+            key_loc |= 1 << 7;
+        }
+
         rca->sendAPDUCommand(0x84, 0x82,
-                             (keystorage->getVolatile() ? 0x00 : 0x20) | 1 << 7,
+                             key_loc,
                              keystorage->getKeySlot(),
                              static_cast<unsigned char>(key.size()), key);
     }
@@ -358,4 +370,15 @@ namespace logicalaccess
         }
         return true;
     }
+
+ReaderServicePtr OmnikeyXX21ReaderUnit::getService(const ReaderServiceType &type)
+{
+    if (type == RST_LICENSE_CHECKER)
+    {
+        // The implementation for this service actually lives in LLA-private.
+        // We rely on the LibraryManager to grab a instance of the service.
+        return LibraryManager::getInstance()->getReaderService(shared_from_this(), type);
+    }
+    return nullptr;
+}
 }

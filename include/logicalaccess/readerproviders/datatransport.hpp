@@ -7,6 +7,7 @@
 #ifndef LOGICALACCESS_DATATRANSPORT_HPP
 #define LOGICALACCESS_DATATRANSPORT_HPP
 
+#include "logicalaccess/lla_fwd.hpp"
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 
 #include <vector>
