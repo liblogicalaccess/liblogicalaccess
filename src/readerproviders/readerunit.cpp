@@ -396,4 +396,9 @@ namespace logicalaccess
     {
         return nullptr;
     }
+
+    ReaderServicePtr ReaderUnit::getService(const ReaderServiceType &type)
+    {
+        return nullptr;
+    }
 }

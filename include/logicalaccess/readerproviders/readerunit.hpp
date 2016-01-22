@@ -20,6 +20,7 @@
 #include <PCSC/wintypes.h>
 #endif
 
+#include <logicalaccess/services/reader_service.hpp>
 #define	PLUGINOBJECT_MAXLEN		64
 
 namespace logicalaccess
@@ -330,6 +331,15 @@ namespace logicalaccess
 		 * The default implementation returns an empty bitset.
 		 */
 		virtual TechnoBitset getPossibleCardTechnologies();
+
+        /**
+         * Request a service object of type `type`.
+         *
+         * The service object will be associated with the current reader.
+         *
+         * The default implementation returns nullptr;
+         */
+        virtual ReaderServicePtr getService(const ReaderServiceType &type);
 
     protected:
 

@@ -69,6 +69,8 @@ namespace logicalaccess
          */
         virtual ~OmnikeyXX21ReaderUnit();
 
+         virtual ReaderServicePtr getService(const ReaderServiceType &type) override;
+
         /**
          * Retrieve the current status of the secure mode.
          */
@@ -117,7 +119,8 @@ namespace logicalaccess
          * \param keystorage The key storage information.
          * \param key The key value.
          */
-        virtual void changeReaderKey(std::shared_ptr<ReaderMemoryKeyStorage> keystorage, const std::vector<unsigned char>& key);
+        virtual void changeReaderKey(std::shared_ptr<ReaderMemoryKeyStorage> keystorage,
+                                     const std::vector<unsigned char>& key) override;
 
         /**
          * \brief Get if the inserted card is from ISO 14443-4 A or B.

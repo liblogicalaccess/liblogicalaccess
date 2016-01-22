@@ -123,6 +123,7 @@ file(GLOB include_customformat ${NATIVE_INCLUDE}/logicalaccess/services/accessco
 file(GLOB include_nfctag ${NATIVE_INCLUDE}/logicalaccess/services/nfctag/*.hpp)
 file(GLOB include_storage ${NATIVE_INCLUDE}/logicalaccess/services/storage/*.hpp)
 file(GLOB include_uidchanger ${NATIVE_INCLUDE}/logicalaccess/services/uidchanger/*.hpp)
+file(GLOB include_license_checker ${NATIVE_INCLUDE}/logicalaccess/services/licensechecker/*.hpp)
 file(GLOB include_iks ${NATIVE_INCLUDE}/logicalaccess/iks/*.hpp)
 file(GLOB include_iks_packet ${NATIVE_INCLUDE}/logicalaccess/iks/packet/*.hpp)
 
@@ -174,6 +175,7 @@ SOURCE_GROUP("Header Files\\services\\accesscontrol\\formats\\customformat" FILE
 SOURCE_GROUP("Header Files\\services\\nfctag" FILES ${include_nfctag})
 SOURCE_GROUP("Header Files\\services\\storage" FILES ${include_storage})
 SOURCE_GROUP("Header Files\\services\\uidchanger" FILES ${include_uidchanger})
+SOURCE_GROUP("Header Files\\services\\license_checker" FILES ${include_license_checker})
 SOURCE_GROUP("Header Files\\iks" FILES ${include_iks})
 SOURCE_GROUP("Header Files\\iks\\packet" FILES ${include_iks_packet})
 
@@ -195,6 +197,7 @@ install ( FILES ${include_nfctag} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/lo
 install ( FILES ${include_dynlibrary} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/dynlibrary )
 install ( FILES ${include_storage} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/storage )
 install ( FILES ${include_uidchanger} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/uidchanger )
+install ( FILES ${include_license_checker} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/licensechecker )
 install ( FILES ${include_iks} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/iks )
 install ( FILES ${include_iks_packet} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/iks/packet )
 
@@ -213,6 +216,7 @@ set(source ${source_root} ${source_cards} ${source_readerproviders}
 set(include ${include_root} ${include_cards} ${include_readerproviders}
         ${include_service} ${include_accesscontrol} ${include_encodings}
         ${include_formats} ${include_customformat} ${include_nfctag} ${include_uidchanger}
+        ${include_license_checker}
         ${include_dynlibrary} ${include_storage} ${include_vc}
         ${include_iks} ${include_iks_packet}
         )

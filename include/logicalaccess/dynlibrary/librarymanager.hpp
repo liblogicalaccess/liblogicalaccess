@@ -59,6 +59,8 @@ namespace logicalaccess
          * object for the chip.
          *
          * Returns a new service, or nullptr on failure.
+         *
+         * Note: Should be removed in favor of getCardService with type = AccessControl.
          */
         std::shared_ptr<AccessControlCardService> getAccessControlCardService(
                 std::shared_ptr<Chip> chip) const;
@@ -74,6 +76,16 @@ namespace logicalaccess
          */
         std::shared_ptr<CardService> getCardService(std::shared_ptr<Chip> chip,
                                                     CardServiceType type);
+
+        /**
+         * Retrieve a Service object for a given ReaderServiceType.
+         *
+         * Similarly to getCardService(), this call gives LLA plugins a
+         * chance to provide an implementation for a reader/service-type
+         * combination.
+         */
+        ReaderServicePtr getReaderService(ReaderUnitPtr reader,
+                                          ReaderServiceType type);
 
         std::vector<std::string> getAvailableCards();
 

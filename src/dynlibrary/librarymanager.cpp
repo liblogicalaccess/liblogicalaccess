@@ -342,4 +342,24 @@ std::shared_ptr<CardService> LibraryManager::getCardService(std::shared_ptr<Chip
     }
     return srv;
 }
+
+ReaderServicePtr LibraryManager::getReaderService(ReaderUnitPtr reader, ReaderServiceType type)
+{
+    ReaderServicePtr srv;
+    for (auto &&itr : libLoaded)
+    {
+        IDynLibrary *lib = itr.second;
+
+        if (lib->hasSymbol("getReaderService"))
+        {
+            int (*fptr)(ReaderUnitPtr, ReaderServicePtr &, ReaderServiceType) = nullptr;
+            fptr = reinterpret_cast<decltype(fptr)>(lib->getSymbol("getReaderService"));
+            assert(fptr);
+            fptr(reader, srv, type);
+            if (srv)
+                break;
+        }
+    }
+    return srv;
+}
 }

@@ -7,6 +7,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <memory>
 #include "logicalaccess_api.hpp"
 
 namespace logicalaccess
@@ -16,6 +17,7 @@ namespace logicalaccess
     class Chip;
 
     class DataTransport;
+    using DataTransportPtr = std::shared_ptr<DataTransport>;
 
     class LCDDisplay;
 
@@ -26,6 +28,7 @@ namespace logicalaccess
     class ReaderProvider;
 
     class ReaderUnit;
+    using ReaderUnitPtr = std::shared_ptr<ReaderUnit>;
 
     class ReaderUnitConfiguration;
 
@@ -42,6 +45,21 @@ namespace logicalaccess
     class Format;
 
     class ResultChecker;
+
+    class Key;
+    using KeyPtr = std::shared_ptr<Key>;
+
+    class TripleDESKey;
+    using TripleDESKeyPtr = std::shared_ptr<TripleDESKey>;
+
+    class KeyStorage;
+    using KeyStoragePtr = std::shared_ptr<KeyStorage>;
+
+    class ReaderMemoryKeyStorage;
+    using ReaderMemoryKeyStoragePtr = std::shared_ptr<ReaderMemoryKeyStorage>;
+
+    class ReaderService;
+    using ReaderServicePtr = std::shared_ptr<ReaderService>;
 }
 
 using ByteVector = std::vector<uint8_t>;

@@ -25,3 +25,7 @@ clang-format-3.8 -style=file -i ${DIR}/../src/utils.cpp ${DIR}/../include/logica
 clang-format-3.8 -style=file -i ${DIR}/../src/services/uidchanger/uidchangerservice.cpp ${DIR}/../include/logicalaccess/services/uidchanger/uidchangerservice.hpp
 
 clang-format-3.8 -style=file -i ${DIR}/../plugins/pluginscards/mifareultralight/mifareultralightuidchangerservice.{cpp,hpp}
+
+
+clang-format-3.8 -style=file -i ${DIR}/../include/logicalaccess/services/reader_service.hpp
+clang-format-3.8 -style=file -i ${DIR}/../include/logicalaccess/services/licensechecker/license_checker_service.hpp
