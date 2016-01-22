@@ -18,7 +18,7 @@
 bool detail::prologue_has_run = false;
 enum detail::ReaderType detail::reader_type = detail::ReaderType::PCSC;
 
-std::tuple<ReaderProviderPtr, ReaderUnitPtr, ChipPtr> pcsc_test_init()
+std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr, logicalaccess::ChipPtr> pcsc_test_init()
 {
     // Reader configuration object to store reader provider and reader unit selection.
     std::shared_ptr<logicalaccess::ReaderConfiguration> readerConfig(
@@ -50,7 +50,7 @@ std::tuple<ReaderProviderPtr, ReaderUnitPtr, ChipPtr> pcsc_test_init()
     return std::make_tuple(provider, readerUnit, chip);
 }
 
-void pcsc_test_shutdown(ReaderUnitPtr readerUnit)
+void pcsc_test_shutdown(logicalaccess::ReaderUnitPtr readerUnit)
 {
     readerUnit->disconnect();
     PRINT_TIME("StartWaitRemoval");
@@ -91,10 +91,10 @@ std::string get_os_name()
 #endif
 }
 
-std::string pcsc_reader_unit_name(ReaderUnitPtr ru)
+std::string pcsc_reader_unit_name(logicalaccess::ReaderUnitPtr ru)
 {
     using namespace logicalaccess;
-    PCSCReaderUnitPtr pcsc_reader = std::dynamic_pointer_cast<PCSCReaderUnit>(ru);
+    std::shared_ptr<PCSCReaderUnit> pcsc_reader = std::dynamic_pointer_cast<PCSCReaderUnit>(ru);
     LLA_ASSERT(pcsc_reader, "Reader is not PCSC");
 
     switch (pcsc_reader->getPCSCType())
@@ -111,7 +111,7 @@ std::string pcsc_reader_unit_name(ReaderUnitPtr ru)
     return "I AM DEAD";
 }
 
-std::tuple<ReaderProviderPtr, ReaderUnitPtr, ChipPtr> nfc_test_init()
+std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr, logicalaccess::ChipPtr> nfc_test_init()
 {
     // Reader configuration object to store reader provider and reader unit selection.
     std::shared_ptr<logicalaccess::ReaderConfiguration> readerConfig(
@@ -143,7 +143,7 @@ std::tuple<ReaderProviderPtr, ReaderUnitPtr, ChipPtr> nfc_test_init()
     return std::make_tuple(provider, readerUnit, chip);
 }
 
-std::tuple<ReaderProviderPtr, ReaderUnitPtr, ChipPtr> lla_test_init()
+std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr, logicalaccess::ChipPtr> lla_test_init()
 {
     LLA_ASSERT(detail::prologue_has_run, "Call prologue() before initalizing the test suite");
     if (detail::reader_type == detail::PCSC)
@@ -152,5 +152,5 @@ std::tuple<ReaderProviderPtr, ReaderUnitPtr, ChipPtr> lla_test_init()
 		return nfc_test_init();
 
 	LLA_ASSERT(0, "lla_test_init failed");
-	return std::tuple<ReaderProviderPtr, ReaderUnitPtr, ChipPtr>(); //VS warning
+    return std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr, logicalaccess::ChipPtr>(); //VS warning
 }

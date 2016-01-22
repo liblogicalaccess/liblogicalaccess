@@ -56,6 +56,8 @@ void create_app_and_file(std::shared_ptr<logicalaccess::DESFireISO7816Commands> 
 
 int main(int ac, char **av)
 {
+    using namespace logicalaccess;
+
     prologue(ac, av);
     introduction();
     ReaderProviderPtr provider;
@@ -64,23 +66,23 @@ int main(int ac, char **av)
     std::tie(provider, readerUnit, chip) = lla_test_init();
 
     PRINT_TIME("Chip identifier: " <<
-               logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
+               BufferHelper::getHex(chip->getChipIdentifier()));
 
     LLA_ASSERT(chip->getCardType() == "DESFireEV1",
                "Chip is not an DESFireEV1, but is " + chip->getCardType() +
                " instead.");
 
-    auto storage = std::dynamic_pointer_cast<logicalaccess::StorageCardService>(
+    auto storage = std::dynamic_pointer_cast<StorageCardService>(
             chip->getService(logicalaccess::CST_STORAGE));
 
-    auto cmd = std::dynamic_pointer_cast<logicalaccess::DESFireISO7816Commands>(chip->getCommands());
-    auto cmdev1 = std::dynamic_pointer_cast<logicalaccess::DESFireEV1ISO7816Commands>(chip->getCommands());
+    auto cmd = std::dynamic_pointer_cast<DESFireISO7816Commands>(chip->getCommands());
+    auto cmdev1 = std::dynamic_pointer_cast<DESFireEV1ISO7816Commands>(chip->getCommands());
 
-    std::shared_ptr<logicalaccess::Location> location;
-    std::shared_ptr<logicalaccess::AccessInfo> aiToUse;
+    std::shared_ptr<Location> location;
+    std::shared_ptr<AccessInfo> aiToUse;
 
     // The excepted memory tree
-    std::shared_ptr<logicalaccess::DESFireEV1Location> dlocation(new logicalaccess::DESFireEV1Location());
+    std::shared_ptr<DESFireEV1Location> dlocation(new DESFireEV1Location());
 
     // The Application ID to use
     dlocation->aid = 0x000534;
@@ -92,7 +94,7 @@ int main(int ac, char **av)
     dlocation->cryptoMethod = logicalaccess::DF_KEY_AES;
     location = dlocation;
 
-    std::shared_ptr<logicalaccess::DESFireAccessInfo> daiToUse(new logicalaccess::DESFireAccessInfo());
+    std::shared_ptr<DESFireAccessInfo> daiToUse(new DESFireAccessInfo());
     daiToUse->masterCardKey->fromString("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00");
 
     daiToUse->writeKeyno = 1;
@@ -111,7 +113,6 @@ int main(int ac, char **av)
     // Write data on the specified location with the specified key
     storage->writeData(location, aiToUse, aiToUse, writedata, logicalaccess::CB_DEFAULT);
 
-    using namespace logicalaccess; // required for overload of std::ostrean(vector &)
     PRINT_TIME("Wrote: " << writedata);
     LLA_SUBTEST_PASSED("WriteService")
 

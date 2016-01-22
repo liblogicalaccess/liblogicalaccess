@@ -22,7 +22,7 @@ void introduction()
     LLA_SUBTEST_REGISTER("WriteRead");
 }
 
-std::tuple<ReaderProviderPtr, ReaderUnitPtr, ChipPtr> init()
+std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr, logicalaccess::ChipPtr> init()
 {
     // Reader configuration object to store reader provider and reader unit selection.
     std::shared_ptr<logicalaccess::ReaderConfiguration> readerConfig(
@@ -58,6 +58,7 @@ std::tuple<ReaderProviderPtr, ReaderUnitPtr, ChipPtr> init()
 
 int main(int ac, char **av)
 {
+    using namespace logicalaccess;
     prologue(ac, av);
     introduction();
     ReaderProviderPtr provider;

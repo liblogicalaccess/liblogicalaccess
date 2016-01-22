@@ -15,12 +15,11 @@
 #include "../readers/omnikeyxx21readerunitconfiguration.hpp"
 #include "../readercardadapters/pcscreadercardadapter.hpp"
 #include "logicalaccess/myexception.hpp"
+#include <logicalaccess/dynlibrary/librarymanager.hpp>
 
 #include <boost/regex.hpp>
 #if defined(__unix__)
 #include <PCSC/reader.h>
-#include <logicalaccess/dynlibrary/librarymanager.hpp>
-
 #elif defined(__APPLE__)
 
 #ifndef SCARD_CTL_CODE

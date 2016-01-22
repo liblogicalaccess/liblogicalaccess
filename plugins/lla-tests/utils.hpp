@@ -5,14 +5,7 @@
 #include <cstdint>
 #include <memory>
 #include "logicalaccess/liblogicalaccess_export.hpp"
-
-namespace logicalaccess
-{
-    class ReaderUnit;
-    class PCSCReaderUnit;
-    class Chip;
-    class ReaderProvider;
-}
+#include "logicalaccess/lla_fwd.hpp"
 
 namespace detail
 {
@@ -25,23 +18,18 @@ namespace detail
 	extern LIBLOGICALACCESS_API enum ReaderType reader_type;
 }
 
-using ReaderUnitPtr     = std::shared_ptr<logicalaccess::ReaderUnit>;
-using ChipPtr           = std::shared_ptr<logicalaccess::Chip>;
-using ReaderProviderPtr = std::shared_ptr<logicalaccess::ReaderProvider>;
-using PCSCReaderUnitPtr = std::shared_ptr<logicalaccess::PCSCReaderUnit>;
-
 /**
  * PCSC tests initialization routine.
  *
  * This function handles the calls necessary to create a reader unit
  * and get a chip from it. This code is re-usable for PCSC tests.
  */
-LIBLOGICALACCESS_API std::tuple<ReaderProviderPtr, ReaderUnitPtr, ChipPtr> pcsc_test_init();
+LIBLOGICALACCESS_API std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr, logicalaccess::ChipPtr> pcsc_test_init();
 
 /**
  * NFC tests initialization routine.
  */
-LIBLOGICALACCESS_API std::tuple<ReaderProviderPtr, ReaderUnitPtr, ChipPtr> nfc_test_init();
+LIBLOGICALACCESS_API std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr, logicalaccess::ChipPtr> nfc_test_init();
 
 /**
  * Generic test initialization routine.
@@ -51,12 +39,12 @@ LIBLOGICALACCESS_API std::tuple<ReaderProviderPtr, ReaderUnitPtr, ChipPtr> nfc_t
  *
  * It defaults to PCSC.
  */
-LIBLOGICALACCESS_API std::tuple<ReaderProviderPtr, ReaderUnitPtr, ChipPtr> lla_test_init();
+LIBLOGICALACCESS_API std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr, logicalaccess::ChipPtr> lla_test_init();
 
 /**
  * Take care of disconnecting the reader and the card.
  */
-LIBLOGICALACCESS_API void pcsc_test_shutdown(ReaderUnitPtr);
+LIBLOGICALACCESS_API void pcsc_test_shutdown(logicalaccess::ReaderUnitPtr);
 
 /**
  * Honor the environment variable LLA_TEST_WAIT and wait for a given duration before
@@ -75,4 +63,4 @@ LIBLOGICALACCESS_API std::string get_os_name();
 /**
  * Returns a "short name" (OK5321, OK5327) for PCSC reader.
  */
-LIBLOGICALACCESS_API std::string pcsc_reader_unit_name(ReaderUnitPtr ru);
+LIBLOGICALACCESS_API std::string pcsc_reader_unit_name(logicalaccess::ReaderUnitPtr ru);
