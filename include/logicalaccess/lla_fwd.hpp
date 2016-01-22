@@ -15,6 +15,7 @@ namespace logicalaccess
     class CardsFormatComposite;
 
     class Chip;
+    using ChipPtr = std::shared_ptr<Chip>;
 
     class DataTransport;
     using DataTransportPtr = std::shared_ptr<DataTransport>;
@@ -25,10 +26,14 @@ namespace logicalaccess
 
     class ReaderCardAdapter;
 
-    class ReaderProvider;
-
+    class ReaderProvider;   
+    using ReaderProviderPtr = std::shared_ptr<ReaderProvider>;
+    
     class ReaderUnit;
     using ReaderUnitPtr = std::shared_ptr<ReaderUnit>;
+
+    //class PCSCReaderUnit;
+    //using PCSCReaderUnit = std::shared_ptr<PCSCReaderUnit>;
 
     class ReaderUnitConfiguration;
 

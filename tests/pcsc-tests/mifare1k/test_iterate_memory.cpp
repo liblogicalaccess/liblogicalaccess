@@ -20,6 +20,8 @@ void introduction()
 
 int main(int ac, char **av)
 {
+    using namespace logicalaccess;
+
     prologue(ac, av);
     introduction();
     ReaderProviderPtr provider;
@@ -28,7 +30,7 @@ int main(int ac, char **av)
     std::tie(provider, readerUnit, chip) = lla_test_init();
 
     PRINT_TIME("Chip identifier: " <<
-               logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
+               BufferHelper::getHex(chip->getChipIdentifier()));
 /*
     LLA_ASSERT(chip->getCardType() == "Mifare1K",
                "Chip is not a Mifare1K, but is " + chip->getCardType() +
@@ -36,11 +38,11 @@ int main(int ac, char **av)
 
 
     // Get the root node
-    std::shared_ptr<logicalaccess::LocationNode> rootNode = chip->getRootLocationNode();
+    std::shared_ptr<LocationNode> rootNode = chip->getRootLocationNode();
     // Get childrens of this node
-    std::vector<std::shared_ptr<logicalaccess::LocationNode> > childs = rootNode->getChildrens();
+    std::vector<std::shared_ptr<LocationNode> > childs = rootNode->getChildrens();
     int size = 0 ;
-    for (std::vector<std::shared_ptr<logicalaccess::LocationNode> >::iterator i = childs.begin(); i != childs.end(); ++i)
+    for (std::vector<std::shared_ptr<LocationNode> >::iterator i = childs.begin(); i != childs.end(); ++i)
     {
         // Display node information
         int tmp_size = (*i)->getLength() * (*i)->getUnit();

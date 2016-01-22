@@ -149,6 +149,7 @@ void create_app_and_file(
 
 int main(int ac, char **av)
 {
+    using namespace logicalaccess;
     prologue(ac, av);
     introduction();
     ReaderProviderPtr provider;
