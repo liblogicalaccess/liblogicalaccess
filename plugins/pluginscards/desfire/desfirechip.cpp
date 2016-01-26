@@ -17,12 +17,14 @@
 namespace logicalaccess
 {
     DESFireChip::DESFireChip(std::string ct) :
-        Chip(ct)
+        Chip(ct),
+        random_uid_(false)
     {
     }
 
     DESFireChip::DESFireChip() :
-        Chip(CHIP_DESFIRE)
+        Chip(CHIP_DESFIRE),
+        random_uid_(false)
     {
         d_profile.reset(new DESFireProfile());
     }

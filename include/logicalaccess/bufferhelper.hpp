@@ -48,6 +48,24 @@ namespace logicalaccess
         static uint64_t getUInt64(const std::vector<unsigned char>& buffer, size_t& offset);
 
         static void setString(std::vector<unsigned char>& buffer, const std::string& value);
+
+        /**
+         * Check if the buffer contains either no byte, or only zeroed bytes
+         */
+        template<typename Buffer>
+        static bool allZeroes(const Buffer &buf)
+        {
+            bool all_zero = true;
+            for (const auto & byte : buf)
+            {
+                if (byte)
+                {
+                    all_zero = false;
+                    break;
+                }
+            }
+            return all_zero;
+        }
     };
 }
 

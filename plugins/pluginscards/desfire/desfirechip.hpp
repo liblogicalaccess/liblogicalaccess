@@ -79,7 +79,17 @@ namespace logicalaccess
          */
         std::shared_ptr<DESFireProfile> getDESFireProfile() { return std::dynamic_pointer_cast<DESFireProfile>(getProfile()); };
 
+        void setRandomUIDEnabled(bool enabled)
+        {
+            random_uid_ = enabled;
+        }
+
     protected:
+        /**
+         * Is random UUID enabled or not ?
+         * This is detected when creating the chip object in PCSC Reader.
+         */
+        bool random_uid_;
     };
 }
 

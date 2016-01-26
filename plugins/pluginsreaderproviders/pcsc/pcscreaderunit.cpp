@@ -655,7 +655,17 @@ namespace logicalaccess
                                     {
                                         d_insertedChip = createChip("DESFireEV1");
                                     }
-                                    d_insertedChip->setChipIdentifier(std::vector<unsigned char>(cardversion.uid, cardversion.uid + sizeof(cardversion.uid)));
+                                    // If random UID is enabled, GetVersion will return a full-zero UID.
+                                    // We need to call the classic PCSC GetUID function
+                                    if (BufferHelper::allZeroes(cardversion.uid))
+                                    {
+                                        d_insertedChip->setChipIdentifier(getCardSerialNumber());
+                                        insertedChip->setRandomUIDEnabled(true);
+                                    }
+                                    else
+                                    {
+                                        d_insertedChip->setChipIdentifier(std::vector<unsigned char>(cardversion.uid, cardversion.uid + sizeof(cardversion.uid)));
+                                    }
 									std::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->getCrypto()
 										->setIdentifier(d_insertedChip->getChipIdentifier());
                                 }
