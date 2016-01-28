@@ -301,6 +301,8 @@ namespace logicalaccess
         virtual void
         setLEDBuzzerDisplay(std::shared_ptr<LEDBuzzerDisplay> lbd) override;
 
+        virtual ReaderServicePtr getService(const ReaderServiceType &type);
+
     protected:
 
         void configure_mifareplus_chip(std::shared_ptr<Chip> c,

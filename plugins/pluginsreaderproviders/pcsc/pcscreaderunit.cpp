@@ -1347,6 +1347,15 @@ std::shared_ptr<ReaderCardAdapter> PCSCReaderUnit::getReaderCardAdapter(std::str
         ReaderUnit::setLEDBuzzerDisplay(lbd);
     }
 
+    ReaderServicePtr PCSCReaderUnit::getService(const ReaderServiceType &type)
+    {
+        if (d_proxyReaderUnit)
+        {
+            return d_proxyReaderUnit->getService(type);
+        }
+        return ReaderUnit::getService(type);
+    }
+
     unsigned long PCSCReaderUnit::getActiveProtocol() const
     {
         if (connection_)
