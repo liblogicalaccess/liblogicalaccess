@@ -79,9 +79,25 @@ namespace logicalaccess
          */
         std::shared_ptr<DESFireProfile> getDESFireProfile() { return std::dynamic_pointer_cast<DESFireProfile>(getProfile()); };
 
-        void setRandomUIDEnabled(bool enabled)
+
+        /**
+         * Set the flag that tells us wether or now the
+         * current chip identifier is real and not random.
+         */
+        void setHasRealUID(bool enabled)
         {
-            random_uid_ = enabled;
+            has_real_uid_ = enabled;
+        }
+
+        /**
+         * Does the current chip identifier represents the "real uid" or
+         * is it a "random UID" ?
+         *
+         * This flag is updated when we fetch the real UID for the first time.
+         */
+        bool hasRealUID() const
+        {
+            return has_real_uid_;
         }
 
     protected:
@@ -89,7 +105,7 @@ namespace logicalaccess
          * Is random UUID enabled or not ?
          * This is detected when creating the chip object in PCSC Reader.
          */
-        bool random_uid_;
+        bool has_real_uid_;
     };
 }
 

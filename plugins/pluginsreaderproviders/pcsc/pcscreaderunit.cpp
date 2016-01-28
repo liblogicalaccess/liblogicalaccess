@@ -660,7 +660,7 @@ namespace logicalaccess
                                     if (BufferHelper::allZeroes(cardversion.uid))
                                     {
                                         d_insertedChip->setChipIdentifier(getCardSerialNumber());
-                                        insertedChip->setRandomUIDEnabled(true);
+                                        std::dynamic_pointer_cast<DESFireChip>(d_insertedChip)->setHasRealUID(false);
                                     }
                                     else
                                     {

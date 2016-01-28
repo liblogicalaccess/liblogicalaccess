@@ -256,9 +256,6 @@ namespace logicalaccess
         bool is3des = false;
         if (is_triple_des(key))
         {
-            std::cout << "in desfire_CBC_send, key = " << key << std::endl;
-            assert(0);
-            std::cout << "PLEASE NO PLEASE NO" << std::endl;
             is3des = true;
         }
 
@@ -1018,6 +1015,7 @@ namespace logicalaccess
             iv.reset(new openssl::DESInitializationVector(openssl::DESInitializationVector::createFromData(d_lastIV)));
         }
 
+        assert(cipher);
         cipher->decipher(data, decdata, *isokey, *iv, false);
         if (cipher == d_cipher)
         {

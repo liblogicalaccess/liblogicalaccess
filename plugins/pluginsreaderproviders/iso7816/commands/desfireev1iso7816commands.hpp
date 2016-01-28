@@ -361,6 +361,11 @@ namespace logicalaccess
          */
         virtual std::vector<unsigned char> transmit_nomacv(unsigned char cmd, const std::vector<unsigned char>& buf = std::vector<unsigned char>(), unsigned char lc = 0, bool forceLc = false);
 
+        /**
+         * Called after authentication was performed
+         */
+        void onAuthenticated();
+
     protected:
     };
 }

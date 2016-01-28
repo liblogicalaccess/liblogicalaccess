@@ -375,6 +375,8 @@ namespace logicalaccess
                 break;
             }
         }
+        // Cause segfault because d_crypt->d_cipher is not set.
+        //onAuthenticated();
     }
 
     void DESFireEV1ISO7816Commands::sam_iso_authenticate(std::shared_ptr<DESFireKey> key, DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno)
@@ -626,16 +628,16 @@ namespace logicalaccess
             if (std::vector<unsigned char>(keydiv.begin(), keydiv.begin() + 8) == std::vector<unsigned char>(keydiv.begin() + 8, keydiv.begin() + 8 + 8))
             {
                 d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPCD1.begin(), RPCD1.begin() + 4);
-                d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPICC2.begin(), RPCD1.begin() + 4);
+                d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPICC2.begin(), RPICC2.begin() + 4);
                 d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPCD1.begin(), RPCD1.begin() + 4);
-                d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPICC2.begin(), RPCD1.begin() + 4);
+                d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPICC2.begin(), RPICC2.begin() + 4);
             }
             else
             {
                 d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPCD1.begin(), RPCD1.begin() + 4);
-                d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPICC2.begin(), RPCD1.begin() + 4);
+                d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPICC2.begin(), RPICC2.begin() + 4);
                 d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPCD1.begin() + 4, RPCD1.begin() + 8);
-                d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPICC2.begin() + 4, RPCD1.begin() + 8);
+                d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPICC2.begin() + 4, RPICC2.begin() + 8);
             }
 
             d_crypto->d_cipher.reset(new openssl::DESCipher());
@@ -671,6 +673,8 @@ namespace logicalaccess
         }
         d_crypto->d_lastIV.clear();
         d_crypto->d_lastIV.resize(d_crypto->d_block_size, 0x00);
+
+        onAuthenticated();
     }
 
     void DESFireEV1ISO7816Commands::authenticateISO(unsigned char keyno, DESFireISOAlgorithm algorithm)
@@ -1445,5 +1449,17 @@ namespace logicalaccess
         // common
         d_crypto->d_lastIV.clear();
         d_crypto->d_lastIV.resize(d_crypto->d_block_size, 0x00);
+
+        onAuthenticated();
+    }
+
+    void DESFireEV1ISO7816Commands::onAuthenticated()
+    {
+        // If we don't have the read UID, we retrieve it
+        if (!getDESFireChip()->hasRealUID())
+        {
+            getChip()->setChipIdentifier(getCardUID());
+            getDESFireChip()->setHasRealUID(true);
+        }
     }
 }

@@ -18,13 +18,13 @@ namespace logicalaccess
 {
     DESFireChip::DESFireChip(std::string ct) :
         Chip(ct),
-        random_uid_(false)
+        has_real_uid_(true)
     {
     }
 
     DESFireChip::DESFireChip() :
         Chip(CHIP_DESFIRE),
-        random_uid_(false)
+        has_real_uid_(true)
     {
         d_profile.reset(new DESFireProfile());
     }
