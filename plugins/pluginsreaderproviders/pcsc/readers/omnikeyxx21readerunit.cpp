@@ -90,7 +90,6 @@ namespace logicalaccess
             // this flags.
             key_loc |= 1 << 7;
         }
-
         rca->sendAPDUCommand(0x84, 0x82,
                              key_loc,
                              keystorage->getKeySlot(),

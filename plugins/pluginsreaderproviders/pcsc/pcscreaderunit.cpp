@@ -130,6 +130,8 @@ namespace logicalaccess
         if (this->getPCSCType() == PCSC_RUT_DEFAULT)
         {
             d_proxyReaderUnit = PCSCReaderUnit::createPCSCReaderUnit(d_name);
+            d_proxyReaderUnit->makeProxy(std::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()),
+                                         getPCSCConfiguration());
         }
     }
 
@@ -1232,6 +1234,10 @@ std::shared_ptr<ReaderCardAdapter> PCSCReaderUnit::getReaderCardAdapter(std::str
 
     std::shared_ptr<PCSCReaderProvider> PCSCReaderUnit::getPCSCReaderProvider() const
     {
+        if (d_proxyReaderUnit)
+        {
+            return d_proxyReaderUnit->getPCSCReaderProvider();
+        }
         return std::dynamic_pointer_cast<PCSCReaderProvider>(getReaderProvider());
     }
 
@@ -1357,8 +1363,21 @@ std::shared_ptr<ReaderCardAdapter> PCSCReaderUnit::getReaderCardAdapter(std::str
         ReaderUnit::setLEDBuzzerDisplay(lbd);
     }
 
+    ReaderServicePtr PCSCReaderUnit::getService(const ReaderServiceType &type)
+    {
+        if (d_proxyReaderUnit)
+        {
+            return d_proxyReaderUnit->getService(type);
+        }
+        return ReaderUnit::getService(type);
+    }
+
     unsigned long PCSCReaderUnit::getActiveProtocol() const
     {
+        if (d_proxyReaderUnit)
+        {
+            return d_proxyReaderUnit->getActiveProtocol();
+        }
         if (connection_)
             return connection_->active_protocol_;
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
@@ -1367,6 +1386,10 @@ std::shared_ptr<ReaderCardAdapter> PCSCReaderUnit::getReaderCardAdapter(std::str
 
     PCSCShareMode PCSCReaderUnit::getShareMode() const
     {
+        if (d_proxyReaderUnit)
+        {
+            return d_proxyReaderUnit->getShareMode();
+        }
         if (connection_)
             return connection_->share_mode_;
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
@@ -1375,9 +1398,14 @@ std::shared_ptr<ReaderCardAdapter> PCSCReaderUnit::getReaderCardAdapter(std::str
 
     void PCSCReaderUnit::setup_pcsc_connection(PCSCShareMode share_mode)
     {
+        if (d_proxyReaderUnit)
+        {
+            return d_proxyReaderUnit->setup_pcsc_connection(share_mode);
+        }
         assert(connection_ == nullptr);
         if (share_mode == SC_DIRECT)
         {
+            assert(getPCSCReaderProvider());
             connection_ = std::unique_ptr<PCSCConnection>(new PCSCConnection(
                 SC_DIRECT,
                 0, // No protocol
@@ -1402,6 +1430,10 @@ std::shared_ptr<ReaderCardAdapter> PCSCReaderUnit::getReaderCardAdapter(std::str
 
     void PCSCReaderUnit::teardown_pcsc_connection()
     {
+        if (d_proxyReaderUnit)
+        {
+            d_proxyReaderUnit->teardown_pcsc_connection();
+        }
         connection_ = nullptr;
     }
 
