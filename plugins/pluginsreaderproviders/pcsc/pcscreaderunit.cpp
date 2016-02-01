@@ -131,7 +131,7 @@ namespace logicalaccess
 
         if (this->getPCSCType() == PCSC_RUT_DEFAULT)
         {
-            d_proxyReaderUnit = PCSCReaderUnit::createPCSCReaderUnit(d_name);
+            d_proxyReaderUnit = PCSCReaderUnit::createPCSCReaderUnit(d_name, d_name);
             d_proxyReaderUnit->makeProxy(std::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()),
                                          getPCSCConfiguration());
         }

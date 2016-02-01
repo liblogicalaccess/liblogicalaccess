@@ -240,10 +240,10 @@ namespace logicalaccess
         std::shared_ptr<PCSCReaderProvider> getPCSCReaderProvider() const;
 
         /**
-         * Instanciate a PCSC Reader unit object.
+         * Instantiate a PCSC Reader unit object.
          *
          * The `readerIdentifier` (which can be equal to `readerName`) is
-         * used to determine which reader to instanciate.
+         * used to determine which reader to instantiate.
          */
         static std::shared_ptr<PCSCReaderUnit> createPCSCReaderUnit(const std::string &readerIdentifier,
                                                                     const std::string& readerName);
