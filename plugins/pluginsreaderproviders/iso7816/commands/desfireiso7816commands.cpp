@@ -964,8 +964,6 @@ namespace logicalaccess
         assert(old_key_storage);
         cmd.oldkey_idt_ = old_key_storage->getKeyIdentity();
         cmd.session_key_ = d_crypto->d_sessionKey;
-        std::cout << "OLDKEY: " << cmd.oldkey_idt_ << ". NEWKEY = " << cmd.newkey_idt_
-                << ". SESSION KEY: " << d_crypto->d_sessionKey << std::endl;
 
         cmd.iv_ = d_crypto->d_lastIV;
         cmd.keyno_ = keyno;

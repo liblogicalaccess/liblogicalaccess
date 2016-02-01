@@ -1159,7 +1159,6 @@ namespace logicalaccess
         {
             cryptogram = d_crypto->changeKey_PICC(keynobyte, key, diversify);
         }
-        std::cout << "CRYPTOGRAM IS : " << cryptogram << std::endl;
 
         std::vector<unsigned char> data;
         data.push_back(keynobyte);
