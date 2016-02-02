@@ -305,6 +305,8 @@ namespace logicalaccess
 
     protected:
 
+        virtual std::shared_ptr<ResultChecker> createDefaultResultChecker() const override;
+
         void configure_mifareplus_chip(std::shared_ptr<Chip> c,
                                        std::shared_ptr<Commands> &commands,
                                        std::shared_ptr<ResultChecker> &resultChecker);

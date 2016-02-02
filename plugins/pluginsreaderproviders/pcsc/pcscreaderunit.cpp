@@ -1414,6 +1414,7 @@ std::shared_ptr<ReaderCardAdapter> PCSCReaderUnit::getReaderCardAdapter(std::str
             auto ctl_data_transport =
                 std::make_shared<PCSCControlDataTransport>();
             ctl_data_transport->setReaderUnit(shared_from_this());
+            getDefaultReaderCardAdapter()->setResultChecker(createDefaultResultChecker());
             getDefaultReaderCardAdapter()->setDataTransport(ctl_data_transport);
         }
         else
@@ -1528,4 +1529,12 @@ std::shared_ptr<ReaderCardAdapter> PCSCReaderUnit::getReaderCardAdapter(std::str
         }
     }
 
+    std::shared_ptr<ResultChecker> PCSCReaderUnit::createDefaultResultChecker() const
+    {
+        if (d_proxyReaderUnit)
+        {
+            return d_proxyReaderUnit->createDefaultResultChecker();
+        }
+        return ISO7816ReaderUnit::createDefaultResultChecker();
+    }
 }

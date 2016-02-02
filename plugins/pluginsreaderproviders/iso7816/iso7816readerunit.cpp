@@ -47,7 +47,6 @@ namespace logicalaccess
 std::shared_ptr<ResultChecker> ISO7816ReaderUnit::createDefaultResultChecker() const
 {
     return std::make_shared<ISO7816ResultChecker>();
-
 }
 
 bool ISO7816ReaderUnit::reconnect(int action)
