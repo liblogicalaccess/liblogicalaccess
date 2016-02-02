@@ -6,6 +6,110 @@
 
 using namespace logicalaccess;
 
+/**
+ * Various defines from PCSC Lite, not available on Windows.
+ */
+#ifndef FEATURE_VERIFY_PIN_START
+#define FEATURE_VERIFY_PIN_START 0x01
+#endif
+#ifndef FEATURE_VERIFY_PIN_FINISH
+#define FEATURE_VERIFY_PIN_FINISH 0x02
+#endif
+#ifndef FEATURE_MODIFY_PIN_START
+#define FEATURE_MODIFY_PIN_START 0x03
+#endif
+#ifndef FEATURE_MODIFY_PIN_FINISH
+#define FEATURE_MODIFY_PIN_FINISH 0x04
+#endif
+#ifndef FEATURE_GET_KEY_PRESSED
+#define FEATURE_GET_KEY_PRESSED 0x05
+#endif
+#ifndef FEATURE_VERIFY_PIN_DIRECT
+#define FEATURE_VERIFY_PIN_DIRECT 0x06
+#endif
+#ifndef FEATURE_MODIFY_PIN_DIRECT
+#define FEATURE_MODIFY_PIN_DIRECT 0x07
+#endif
+#ifndef FEATURE_MCT_READER_DIRECT
+#define FEATURE_MCT_READER_DIRECT 0x08
+#endif
+#ifndef FEATURE_MCT_UNIVERSAL
+#define FEATURE_MCT_UNIVERSAL 0x09
+#endif
+#ifndef FEATURE_IFD_PIN_PROPERTIES
+#define FEATURE_IFD_PIN_PROPERTIES 0x0A
+#endif
+#ifndef FEATURE_ABORT
+#define FEATURE_ABORT 0x0B
+#endif
+#ifndef FEATURE_SET_SPE_MESSAGE
+#define FEATURE_SET_SPE_MESSAGE 0x0C
+#endif
+#ifndef FEATURE_VERIFY_PIN_DIRECT_APP_ID
+#define FEATURE_VERIFY_PIN_DIRECT_APP_ID 0x0D
+#endif
+#ifndef FEATURE_MODIFY_PIN_DIRECT_APP_ID
+#define FEATURE_MODIFY_PIN_DIRECT_APP_ID 0x0E
+#endif
+#ifndef FEATURE_WRITE_DISPLAY
+#define FEATURE_WRITE_DISPLAY 0x0F
+#endif
+#ifndef FEATURE_GET_KEY
+#define FEATURE_GET_KEY 0x10
+#endif
+#ifndef FEATURE_IFD_DISPLAY_PROPERTIES
+#define FEATURE_IFD_DISPLAY_PROPERTIES 0x11
+#endif
+#ifndef FEATURE_GET_TLV_PROPERTIES
+#define FEATURE_GET_TLV_PROPERTIES 0x12
+#endif
+#ifndef FEATURE_CCID_ESC_COMMAND
+#define FEATURE_CCID_ESC_COMMAND 0x13
+#endif
+#ifndef FEATURE_EXECUTE_PACE
+#define FEATURE_EXECUTE_PACE 0x14
+#endif
+
+/**
+ * Defines of TLV properties opcode, as provided by PCSC Lite
+ */
+#ifndef PCSCv2_PART10_PROPERTY_wLcdLayout
+#define PCSCv2_PART10_PROPERTY_wLcdLayout 1
+#endif
+#ifndef PCSCv2_PART10_PROPERTY_bEntryValidationCondition
+#define PCSCv2_PART10_PROPERTY_bEntryValidationCondition 2
+#endif
+#ifndef PCSCv2_PART10_PROPERTY_bTimeOut2
+#define PCSCv2_PART10_PROPERTY_bTimeOut2 3
+#endif
+#ifndef PCSCv2_PART10_PROPERTY_wLcdMaxCharacters
+#define PCSCv2_PART10_PROPERTY_wLcdMaxCharacters 4
+#endif
+#ifndef PCSCv2_PART10_PROPERTY_wLcdMaxLines
+#define PCSCv2_PART10_PROPERTY_wLcdMaxLines 5
+#endif
+#ifndef PCSCv2_PART10_PROPERTY_bMinPINSize
+#define PCSCv2_PART10_PROPERTY_bMinPINSize 6
+#endif
+#ifndef PCSCv2_PART10_PROPERTY_bMaxPINSize
+#define PCSCv2_PART10_PROPERTY_bMaxPINSize 7
+#endif
+#ifndef PCSCv2_PART10_PROPERTY_sFirmwareID
+#define PCSCv2_PART10_PROPERTY_sFirmwareID 8
+#endif
+#ifndef PCSCv2_PART10_PROPERTY_bPPDUSupport
+#define PCSCv2_PART10_PROPERTY_bPPDUSupport 9
+#endif
+#ifndef PCSCv2_PART10_PROPERTY_dwMaxAPDUDataSize
+#define PCSCv2_PART10_PROPERTY_dwMaxAPDUDataSize 10
+#endif
+#ifndef PCSCv2_PART10_PROPERTY_wIdVendor
+#define PCSCv2_PART10_PROPERTY_wIdVendor 11
+#endif
+#ifndef PCSCv2_PART10_PROPERTY_wIdProduct
+#define PCSCv2_PART10_PROPERTY_wIdProduct 12
+#endif
+
 PCSCFeatures::PCSCFeatures(PCSCConnection *connection)
     : connection_(connection)
 {
