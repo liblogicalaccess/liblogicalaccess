@@ -153,7 +153,10 @@ namespace logicalaccess
         std::vector<unsigned char> result = transmit_nomacv(DFEV1_INS_GET_CARD_UID);
         result.resize(result.size() - 2);
 
-        return d_crypto->desfire_iso_decrypt(result, 7);
+        if (d_crypto->d_auth_method == CryptoMethod::CM_ISO)
+            return d_crypto->desfire_iso_decrypt(result, 7);
+        else
+            return d_crypto->desfire_decrypt(d_crypto->d_sessionKey, result, 7);
     }
 
     void DESFireEV1ISO7816Commands::createStdDataFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned short isoFID)
@@ -375,8 +378,7 @@ namespace logicalaccess
                 break;
             }
         }
-        // Cause segfault because d_crypt->d_cipher is not set.
-        //onAuthenticated();
+        onAuthenticated();
     }
 
     void DESFireEV1ISO7816Commands::sam_iso_authenticate(std::shared_ptr<DESFireKey> key, DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno)
