@@ -44,7 +44,7 @@ option ( BUILD_SHARED_LIBS "build shared libraries" ON )
 find_package(CXX11 REQUIRED)
 
 if (UNIX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAGS} -W -Wall -Wno-unused-parameter")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAGS} -g -W -Wall -Wno-unused-parameter")
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAGS}")
 endif()

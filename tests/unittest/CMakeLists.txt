@@ -12,7 +12,7 @@ function(create_test file)
 
    target_link_libraries(${test_name}
            ${GTEST_BOTH_LIBRARIES} ${Boost_LIBRARIES}
-           pthread logicalaccess pcscreaders
+           pthread logicalaccess pcscreaders stidprgreaders
            epasscards)
 endfunction()
 
@@ -26,3 +26,5 @@ add_gtest_test(test_atrparser.cpp)
 add_gtest_test(test_elapsed_time_counter.cpp)
 add_gtest_test(test_epass_utils.cpp)
 add_gtest_test(test_asn1.cpp)
+add_gtest_test(test_manchester.cpp)
+add_gtest_test(test_stid_prg_utils.cpp)

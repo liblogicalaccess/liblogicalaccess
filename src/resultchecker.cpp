@@ -103,4 +103,9 @@ namespace logicalaccess
 
         mapSingleShot[keys] = values;
     }
+
+    bool ResultChecker::AllowEmptyResult() const
+    {
+        return false;
+    }
 }

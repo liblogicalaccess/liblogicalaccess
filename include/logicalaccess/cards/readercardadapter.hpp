@@ -20,6 +20,7 @@ namespace logicalaccess
     public:
 
 		virtual ~ReaderCardAdapter() {};
+        ReaderCardAdapter();
 
         /**
          * \brief Adapt the command to send to the reader.

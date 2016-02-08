@@ -14,14 +14,14 @@ namespace logicalaccess
 class LIBLOGICALACCESS_API SSLTransport
 {
   public:
-    /**
-     * \brief Constructor.
-     */
-  #ifdef ENABLE_SSLTRANSPORT
+/**
+ * \brief Constructor.
+ */
+#ifdef ENABLE_SSLTRANSPORT
     SSLTransport(boost::asio::ssl::context &ctx);
-  #else
+#else
     SSLTransport(/*boost::asio::ssl::context &ctx*/);
-  #endif
+#endif
     /**
      * \brief Destructor.
      */

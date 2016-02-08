@@ -34,7 +34,7 @@ namespace logicalaccess
 				LOG(LogLevel::DEBUGS) << "Call ResultChecker..." << BufferHelper::getHex(res);
 				getResultChecker()->CheckResult(&res[0], res.size());
 			}
-			else if (getResultChecker())
+			else if (getResultChecker() && !getResultChecker()->AllowEmptyResult())
 			{
 				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "ResultChecker is set but no data has been received !!!")
 			}
@@ -46,4 +46,10 @@ namespace logicalaccess
 
         return res;
     }
+
+ReaderCardAdapter::ReaderCardAdapter()
+{
+
+}
+
 }

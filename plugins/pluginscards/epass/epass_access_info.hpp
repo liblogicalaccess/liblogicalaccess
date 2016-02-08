@@ -10,7 +10,7 @@ namespace logicalaccess
 class LIBLOGICALACCESS_API EPassAccessInfo : public AccessInfo
 {
   public:
-    EPassAccessInfo() = default;
+    EPassAccessInfo()          = default;
     virtual ~EPassAccessInfo() = default;
 
     virtual void generateInfos() override;

@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <sstream>
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
+#include <cassert>
 
 #include "proxaccesscontrolcardservice.hpp"
 #include "logicalaccess/cards/locationnode.hpp"
@@ -45,7 +46,7 @@ namespace logicalaccess
         case CST_ACCESS_CONTROL:
         {
             service = LibraryManager::getInstance()
-                    ->getAccessControlCardService(shared_from_this());
+                    ->getCardService(shared_from_this(), CardServiceType::CST_ACCESS_CONTROL);
             if (!service)
                 service.reset(new ProxAccessControlCardService(shared_from_this()));
         }

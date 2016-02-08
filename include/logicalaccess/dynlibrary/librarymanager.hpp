@@ -55,17 +55,6 @@ namespace logicalaccess
         std::shared_ptr<KeyDiversification> getKeyDiversification(const std::string& keydivtype);
 
         /**
-         * Attempt to find a library that can instantiate an AccessControl service
-         * object for the chip.
-         *
-         * Returns a new service, or nullptr on failure.
-         *
-         * Note: Should be removed in favor of getCardService with type = AccessControl.
-         */
-        std::shared_ptr<AccessControlCardService> getAccessControlCardService(
-                std::shared_ptr<Chip> chip) const;
-
-        /**
          * Retrieve a Service object for a given CardServiceType.
          *
          * This gives a chance to library to offer a customized service based

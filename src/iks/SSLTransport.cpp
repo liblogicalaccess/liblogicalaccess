@@ -13,17 +13,17 @@ namespace logicalaccess
 {
 SSLTransport::SSLTransport(
 #ifdef ENABLE_SSLTRANSPORT
-	boost::asio::ssl::context &ctx
+    boost::asio::ssl::context &ctx
 #endif /* ENABLE_SSLTRANSPORT */
-	)
-    : 
+    )
+    :
 #ifdef ENABLE_SSLTRANSPORT
-	ssl_ctx_(ctx)
+    ssl_ctx_(ctx)
     , d_socket(d_ios, ssl_ctx_)
     , d_timer(d_ios)
     ,
 #endif /* ENABLE_SSLTRANSPORT */
-	d_read_error(true)
+    d_read_error(true)
     , d_bytes_transferred(0)
     , d_port(0)
 {
@@ -56,12 +56,13 @@ void SSLTransport::setPort(int port)
 bool SSLTransport::connect(long int timeout)
 {
 #ifndef ENABLE_SSLTRANSPORT
-	THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SSLTransport feature is disabled.");
+    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                             "SSLTransport feature is disabled.");
 #else
     if (d_socket.lowest_layer().is_open())
         d_socket.lowest_layer().close();
 
-	try
+    try
     {
         d_ios.reset();
         d_timer.expires_from_now(boost::posix_time::milliseconds(timeout));
@@ -97,16 +98,16 @@ void SSLTransport::disconnect()
 {
     LOG(LogLevel::INFOS) << getIpAddress() << ":" << getPort() << "Disconnected.";
 #ifdef ENABLE_SSLTRANSPORT
-	d_socket.lowest_layer().close();
+    d_socket.lowest_layer().close();
 #endif /* ENABLE_SSLTRANSPORT */
 }
 
 bool SSLTransport::isConnected()
 {
 #ifndef ENABLE_SSLTRANSPORT
-	return false;
+    return false;
 #else
-	return bool(d_socket.lowest_layer().is_open());
+    return bool(d_socket.lowest_layer().is_open());
 #endif /* ENABLE_SSLTRANSPORT */
 }
 
@@ -118,7 +119,8 @@ std::string SSLTransport::getName() const
 void SSLTransport::send(const std::vector<unsigned char> &data)
 {
 #ifndef ENABLE_SSLTRANSPORT
-	THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SSLTransport feature is disabled.");
+    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                             "SSLTransport feature is disabled.");
 #else
     if (data.size() > 0)
     {
@@ -224,7 +226,8 @@ std::string SSLTransport::getDefaultXmlNodeName() const
 bool SSLTransport::handshake(long timeout)
 {
 #ifndef ENABLE_SSLTRANSPORT
-	THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SSLTransport feature is disabled.");
+    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                             "SSLTransport feature is disabled.");
 #else
     try
     {
@@ -259,7 +262,7 @@ bool SSLTransport::handshake(long timeout)
                               << ":" << getPort() << " : " << ex.what();
         disconnect();
     }
-	return d_socket.lowest_layer().is_open();
+    return d_socket.lowest_layer().is_open();
 #endif /* ENABLE_SSLTRANSPORT */
 }
 }

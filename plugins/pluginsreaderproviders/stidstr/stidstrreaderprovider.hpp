@@ -51,7 +51,7 @@ namespace logicalaccess
          * \brief List all readers of the system.
          * \return True if the list was updated, false otherwise.
          */
-        virtual bool refreshReaderList();
+        virtual bool refreshReaderList() override;
 
         /**
          * \brief Get reader list for this reader provider.

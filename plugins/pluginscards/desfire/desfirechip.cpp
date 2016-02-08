@@ -173,7 +173,7 @@ namespace logicalaccess
         case CST_ACCESS_CONTROL:
         {
             service = LibraryManager::getInstance()
-                    ->getAccessControlCardService(shared_from_this());
+                ->getCardService(shared_from_this(), CardServiceType::CST_ACCESS_CONTROL);
             if (!service)
                 service.reset(new AccessControlCardService(shared_from_this()));
         }

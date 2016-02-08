@@ -34,3 +34,5 @@ find ${DIR}/../include/logicalaccess/services/identity -name "*.hpp"  | xargs cl
 find ${DIR}/../src/services/identity -name "*.cpp"  | xargs clang-format-3.8 -style=file -i {} \;
 
 find ${DIR}/../plugins/pluginscards/epass -name "*.hpp" -or -name "*.cpp"  | xargs clang-format-3.8 -style=file -i {} \;
+find ${DIR}/../plugins/pluginsreaderproviders/stidprg -name "*.cpp"  | xargs clang-format-3.8 -style=file -i {} \;
+find ${DIR}/../plugins/pluginsreaderproviders/stidprg -name "*.hpp"  | xargs clang-format-3.8 -style=file -i {} \;

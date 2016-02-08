@@ -63,7 +63,7 @@ namespace logicalaccess
     bool SerialPortXml::EnumerateUsingCreateFile(std::vector<std::shared_ptr<SerialPortXml> >& ports)
     {
         ports.clear();
-
+        ports.push_back(std::make_shared<SerialPortXml>("/dev/pts/7"));
 #ifdef UNIX
         DIR* pdir = opendir("/dev");
         if (pdir)

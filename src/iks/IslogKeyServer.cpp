@@ -25,11 +25,12 @@ IslogKeyServer::IslogKeyServer(const std::string &ip, uint16_t port,
                                const std::string &client_cert,
                                const std::string &client_key,
                                const std::string &root_ca)
-    : 
+    :
 #ifdef ENABLE_SSLTRANSPORT
-	ssl_ctx_(boost::asio::ssl::context::tlsv12_client),
+    ssl_ctx_(boost::asio::ssl::context::tlsv12_client)
+    ,
 #endif /* ENABLE_SSLTRANSPORT */
-      config_(ip, port, client_cert, client_key, root_ca)
+    config_(ip, port, client_cert, client_key, root_ca)
 {
 #ifdef ENABLE_SSLTRANSPORT
     ssl_ctx_.use_certificate_file(client_cert,
@@ -169,7 +170,7 @@ void IslogKeyServer::setup_transport()
 {
     transport_ = nullptr;
 
-   // transport_ = std::unique_ptr<SSLTransport>(new SSLTransport(ssl_ctx_));
+    // transport_ = std::unique_ptr<SSLTransport>(new SSLTransport(ssl_ctx_));
 
     transport_->setIpAddress(config_.ip);
     transport_->setPort(config_.port);

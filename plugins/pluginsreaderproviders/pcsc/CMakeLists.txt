@@ -69,9 +69,9 @@ target_link_libraries(
 	iso15693cards
 	proxcards
 	felicacards
-    epasscards
+	epasscards
 	${LIBLOGICALACCESS_LIBRARY}
-        ${PCSCLITE_LIBRARIES}
+	${PCSCLITE_LIBRARIES}
 )
 
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/pcsc )

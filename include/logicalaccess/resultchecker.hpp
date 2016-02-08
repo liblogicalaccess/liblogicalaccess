@@ -39,6 +39,13 @@ namespace logicalaccess
          */
 		virtual void CheckResult(const void* data, size_t datalen);
 
+        /**
+         * Whether or not an empty result is a valid response
+         * or not.
+         * Default to false.
+         */
+        virtual bool AllowEmptyResult() const;
+
     protected:
 
         /**
