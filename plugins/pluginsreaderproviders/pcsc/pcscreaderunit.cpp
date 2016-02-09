@@ -953,13 +953,9 @@ namespace logicalaccess
         return std::vector<unsigned char>(ucReceivedData.begin(), ucReceivedData.end() - 2);
     }
 
-    size_t PCSCReaderUnit::getATR(void* atr, size_t atrLength)
+	const std::vector<uint8_t>& PCSCReaderUnit::getATR() const
     {
-        if (atr != nullptr && atrLength >= atr_.size())
-        {
-            memcpy(atr, &atr_[0], atr_.size());
-        }
-        return atr_.size();
+        return atr_;
     }
 
 std::string PCSCReaderUnit::atrXToCardType(int code) const
@@ -1250,9 +1246,7 @@ std::shared_ptr<ReaderCardAdapter> PCSCReaderUnit::getReaderCardAdapter(std::str
             d_readerUnitConfig = readerUnitConfig;
         }
 
-        auto atr_len = readerUnit->getATR(nullptr, 0);
-        atr_.resize(atr_len);
-        readerUnit->getATR(&atr_[0], atr_.size());
+		atr_ = readerUnit->getATR();
         d_insertedChip = readerUnit->getSingleChip();
     }
 

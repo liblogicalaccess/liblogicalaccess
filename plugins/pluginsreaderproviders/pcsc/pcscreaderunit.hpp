@@ -185,7 +185,7 @@ namespace logicalaccess
          * \param atrLength The ATR array length.
          * \return The ATR length.
          */
-        size_t getATR(void* atr, size_t atrLength);
+		const std::vector<uint8_t>& PCSCReaderUnit::getATR() const;
 
         /**
          * \brief Get the default PC/SC reader/card adapter.
