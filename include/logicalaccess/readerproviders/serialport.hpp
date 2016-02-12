@@ -34,7 +34,7 @@ namespace logicalaccess
      *
      * Then you can either read() or write() data, or simply wait for it using select().
      */
-    class LIBLOGICALACCESS_API SerialPort : public boost::noncopyable
+    class LIBLOGICALACCESS_API SerialPort
     {
     public:
 
@@ -50,6 +50,12 @@ namespace logicalaccess
          * \param dev The device name. (Example: "/dev/tty0")
          */
         SerialPort(const std::string& dev);
+
+		/**
+		* \brief Remove copy.
+		*/
+		SerialPort(const SerialPort& other) = delete; // non construction-copyable
+		SerialPort& operator=(const SerialPort&) = delete; // non copyable
 
         /**
          * \brief Destructor.

@@ -48,7 +48,7 @@ namespace logicalaccess
     /**
      * \brief A format.
      */
-    class LIBLOGICALACCESS_API Format : boost::noncopyable, public XmlSerializable
+    class LIBLOGICALACCESS_API Format : public XmlSerializable
     {
     public:
         /**
@@ -57,6 +57,12 @@ namespace logicalaccess
          * Create a Format.
          */
         Format();
+
+		/**
+		* \brief Remove copy.
+		*/
+		Format(const Format& other) = delete; // non construction-copyable
+		Format& operator=(const Format&) = delete; // non copyable
 
         /**
          * \brief Get data length in bits.

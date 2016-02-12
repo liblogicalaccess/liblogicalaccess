@@ -12,8 +12,6 @@
 
 #include <openssl/evp.h>
 
-#include <boost/noncopyable.hpp>
-
 namespace logicalaccess
 {
     namespace openssl
@@ -32,7 +30,7 @@ namespace logicalaccess
             /**
              * \brief The context information structure.
              */
-            struct Information : public boost::noncopyable
+            struct Information
             {
                 /**
                  * \brief Constructor.
@@ -44,6 +42,12 @@ namespace logicalaccess
                  * \brief Destructor.
                  */
                 ~Information();
+
+				/**
+				* \brief Remove copy.
+				*/
+				Information(const Information& other) = delete; // non construction-copyable
+				Information& operator=(const Information&) = delete; // non copyable
 
                 /**
                  * \brief The internal OpenSSL context.

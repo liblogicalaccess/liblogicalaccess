@@ -7,13 +7,11 @@
 #ifndef OPENSSL_HPP
 #define OPENSSL_HPP
 
-#include <boost/noncopyable.hpp>
-
 namespace logicalaccess
 {
     namespace openssl
     {
-        class OpenSSLInitializer : public boost::noncopyable
+        class OpenSSLInitializer
         {
         public:
             static OpenSSLInitializer& GetInstance()
@@ -29,6 +27,12 @@ namespace logicalaccess
              * \warning MUST be called in the main thread, at the very beginning of the application.
              */
             OpenSSLInitializer();
+
+			/**
+			* \brief Remove copy.
+			*/
+			OpenSSLInitializer(const OpenSSLInitializer& other) = delete; // non construction-copyable
+			OpenSSLInitializer& operator=(const OpenSSLInitializer&) = delete; // non copyable
 
             /**
              * \brief Clean up OpenSSL library.
