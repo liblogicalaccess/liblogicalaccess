@@ -56,6 +56,7 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API SAMCommands : public virtual Commands
     {
     public:
+		SAMCommands() {}
         virtual SAMVersion getVersion() = 0;
         virtual std::shared_ptr<SAMKeyEntry<T, S> > getKeyEntry(unsigned char keyno) = 0;
         virtual std::shared_ptr<SAMKucEntry> getKUCEntry(unsigned char keyno) = 0;

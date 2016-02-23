@@ -25,6 +25,8 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API MifarePlusSL1Commands : public MifareCommands
     {
     public:
+		MifarePlusSL1Commands() {}
+
         /**
          * Perform AES Key authentication against the card.
          *
@@ -94,6 +96,7 @@ namespace logicalaccess
     class MifarePlusSL1Policy: public MifarePlusSL1Commands
     {
     public:
+		MifarePlusSL1Policy() {}
 
         void fixup()
         {

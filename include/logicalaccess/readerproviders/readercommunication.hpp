@@ -19,6 +19,8 @@ namespace logicalaccess
     {
     public:
 
+		ReaderCommunication() {}
+
         /**
          * \brief Send a request command from the PCD to the PICC.
          * \return The PICC answer to the request command.

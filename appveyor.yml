@@ -1,4 +1,4 @@
-version: 1.81.0-{build}
+version: 1.81.1-{build}
 environment:
   global:
     JAVA_HOME: C:\Program Files\Java\jdk1.7.0
@@ -50,7 +50,7 @@ build:
 before_build:
   - cd c:\projects\liblogicalaccess
   - mvn -q dependency:copy-dependencies
-  - 7z x target/* -opackages
+  - 7z x target/* -opackages > nul
   - ps: |
       if (($env:PLATFORM -eq "x64") -and ($env:CONFIGURATION -eq "Release"))
       { cmake.exe -DCMAKE_BUILD_TYPE=Release -DTARGET_ARCH=x64 -DLIB_SUFFIX=x64/Release -G"Visual Studio 12 Win64" -Tv120_xp . -DCMAKE_INSTALL_PREFIX=./install . }

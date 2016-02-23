@@ -27,7 +27,7 @@ namespace logicalaccess
     typedef void (CDECL_WIN32_ *setcryptocontext)(std::shared_ptr<Commands>*, std::shared_ptr<Chip>*);
     typedef bool (CDECL_WIN32_ *getobjectinfoat)(unsigned int, char*, size_t, void**);
 
-    class	IDynLibrary
+    class IDynLibrary
     {
     public:
         virtual ~IDynLibrary() {}

@@ -20,6 +20,8 @@ namespace logicalaccess
     {
     public:
 
+		FeliCaCommands() {}
+
 		/**
 		 * \brief Get system codes.
 		 * \return System codes list.

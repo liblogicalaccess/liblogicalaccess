@@ -132,6 +132,8 @@ namespace logicalaccess
     {
     public:
 
+		DESFireCommands() {}
+
         /**
          * \brief Erase the card.
          */

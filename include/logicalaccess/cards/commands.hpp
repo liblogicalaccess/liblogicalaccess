@@ -20,6 +20,8 @@ namespace logicalaccess
     {
     public:
 
+		Commands() {}
+
         /**
          * \brief Get the chip.
          * \return The chip.
