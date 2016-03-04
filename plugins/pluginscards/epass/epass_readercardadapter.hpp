@@ -5,7 +5,7 @@
 namespace logicalaccess
 {
 class EPassCrypto;
-class EPassReaderCardAdapter : public ISO7816ReaderCardAdapter
+class LIBLOGICALACCESS_API EPassReaderCardAdapter : public ISO7816ReaderCardAdapter
 {
 
   public:

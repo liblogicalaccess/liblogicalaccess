@@ -8,7 +8,7 @@
 #define SHA_HPP
 
 #include <vector>
-
+#include <cstdint>
 #include <iostream>
 
 namespace logicalaccess

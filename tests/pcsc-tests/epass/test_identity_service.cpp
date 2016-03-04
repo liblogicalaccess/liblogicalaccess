@@ -79,8 +79,7 @@ int main(int ac, char **av)
     LLA_ASSERT(srv->get(IdentityCardService::MetaData::BIRTHDATE, tp), "Failed to "
         "fetch birthdate");
     std::time_t tp_t = std::chrono::system_clock::to_time_t(tp);
-    std::tm tm; bzero(&tm, sizeof(tm));
-    tm = *std::localtime(&tp_t);
+    std::tm tm = *std::localtime(&tp_t);
     PRINT_TIME("Birthdate: " << std::put_time(&tm, "%c"));
 
     pcsc_test_shutdown(readerUnit);

@@ -7,7 +7,7 @@
 namespace logicalaccess
 {
 
-class EPassCommand : public Commands
+class LIBLOGICALACCESS_API EPassCommand : public Commands
 {
   public:
     EPassCommand();

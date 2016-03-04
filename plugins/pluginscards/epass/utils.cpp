@@ -7,6 +7,7 @@
 #include <logicalaccess/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <vector>
+#include <ctime>
 
 using namespace logicalaccess;
 
@@ -71,7 +72,7 @@ std::vector<uint8_t> EPassUtils::seed_from_mrz(const std::string &mrz)
 
 std::vector<uint8_t> EPassUtils::compute_enc_key(const std::vector<uint8_t> &seed)
 {
-    std::vector<uint> c    = {0, 0, 0, 1};
+    std::vector<uint8_t> c = { 0, 0, 0, 1 };
     std::vector<uint8_t> D = seed;
     D.insert(D.end(), c.begin(), c.end());
 
@@ -81,7 +82,7 @@ std::vector<uint8_t> EPassUtils::compute_enc_key(const std::vector<uint8_t> &see
 
 std::vector<uint8_t> EPassUtils::compute_mac_key(const std::vector<uint8_t> &seed)
 {
-    std::vector<uint> c    = {0, 0, 0, 2};
+    std::vector<uint8_t> c = { 0, 0, 0, 2 };
     std::vector<uint8_t> D = seed;
     D.insert(D.end(), c.begin(), c.end());
 
@@ -165,7 +166,7 @@ ByteVector EPassUtils::encrypt_apdu(const ByteVector &apdu, const ByteVector &ks
     ByteVector do_87;
     if (apdu_has_data(apdu)) // LC -- do we have any data?
     {
-        do_87 = {0x87, encrypted_data.size() + 1, 0x01};
+        do_87 = {0x87, static_cast<uint8_t>(encrypted_data.size() + 1), 0x01};
         do_87.insert(do_87.end(), encrypted_data.begin(), encrypted_data.end());
     }
 
@@ -590,7 +591,7 @@ EPassUtils::parse_dg1_date(const ByteVector &in, int millenium_limit)
     auto month = std::stoi(std::string(itr + 2, itr + 4));
     auto day   = std::stoi(std::string(itr + 4, itr + 6));
 
-    std::tm date = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    std::tm date = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     date.tm_mon  = month - 1; // tm_mon starts at 0
     date.tm_mday = day;
 
