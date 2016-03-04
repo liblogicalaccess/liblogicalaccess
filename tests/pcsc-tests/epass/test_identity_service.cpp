@@ -8,6 +8,7 @@
 #include <logicalaccess/services/identity/identity_service.hpp>
 #include <logicalaccess/crypto/sha.hpp>
 #include <pluginscards/epass/epass_access_info.hpp>
+#include <ctime>
 
 void introduction()
 {
@@ -80,7 +81,10 @@ int main(int ac, char **av)
         "fetch birthdate");
     std::time_t tp_t = std::chrono::system_clock::to_time_t(tp);
     std::tm tm = *std::localtime(&tp_t);
-    PRINT_TIME("Birthdate: " << std::put_time(&tm, "%c"));
+
+    char buff[512];
+    std::strftime(buff, sizeof(buff), "%c", &tm);
+    PRINT_TIME("Birthdate: " << buff);
 
     pcsc_test_shutdown(readerUnit);
 
