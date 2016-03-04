@@ -1,8 +1,8 @@
 #pragma once
 
-#include <string>
-#include <array>
 #include "logicalaccess/iks/packet/Base.hpp"
+#include <array>
+#include <string>
 
 namespace logicalaccess
 {

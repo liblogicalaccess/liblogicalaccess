@@ -1,8 +1,8 @@
-#include <algorithm>
-#include <logicalaccess/myexception.hpp>
+#include "atrparser.hpp"
 #include "logicalaccess/bufferhelper.hpp"
 #include "logicalaccess/logs.hpp"
-#include "atrparser.hpp"
+#include <algorithm>
+#include <logicalaccess/myexception.hpp>
 
 namespace logicalaccess
 {
@@ -378,7 +378,7 @@ std::string ATRParser::check_generic_from_atr() const
 
     unsigned char T0                    = atr[y++];
     unsigned char historicalBytesLength = T0 & 0x0f;
-    bool hasTA1 = ((T0 & 0x10) == 0x10);
+    bool hasTA1                         = ((T0 & 0x10) == 0x10);
     if (hasTA1)
     {
         EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLogicalAccessException,

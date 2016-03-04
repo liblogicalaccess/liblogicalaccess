@@ -1,6 +1,6 @@
-#include <cstring>
 #include "logicalaccess/iks/packet/DesEncrypt.hpp"
 #include "logicalaccess/logs.hpp"
+#include <cstring>
 
 
 using namespace logicalaccess;

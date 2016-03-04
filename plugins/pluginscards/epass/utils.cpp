@@ -45,7 +45,6 @@ uint8_t EPassUtils::compute_mrz_checksum(const std::string &in)
         }
         count++;
     }
-    std::cout << "SUM = " << sum << std::endl;
     return static_cast<uint8_t>(sum % 10);
 }
 
@@ -402,7 +401,6 @@ EPassDG2 EPassUtils::parse_dg2(const ByteVector &raw)
     uint8_t nb_bio_entry = *(itr + 2);
     itr += 3;
 
-    std::cout << "There is " << +nb_bio_entry << " bio entries" << std::endl;
     for (int i = 0; i < nb_bio_entry; ++i)
         dg2.infos_.push_back(parse_dg2_entry(itr, raw.end()));
     assert(itr == raw.end());
@@ -483,7 +481,6 @@ void EPassUtils::parse_dg2_entry_header(EPassDG2::BioInfo &info,
     // We read all available TLV in the Header.
 
     ByteVector header(itr, end);
-    std::cout << "Header: " << header << std::endl;
 
     if (*itr == 0x80)
     {

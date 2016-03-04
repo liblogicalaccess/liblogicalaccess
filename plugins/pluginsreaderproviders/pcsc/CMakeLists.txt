@@ -69,6 +69,7 @@ target_link_libraries(
 	iso15693cards
 	proxcards
 	felicacards
+    epasscards
 	${LIBLOGICALACCESS_LIBRARY}
         ${PCSCLITE_LIBRARIES}
 )

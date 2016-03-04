@@ -10,7 +10,10 @@ function(create_test file)
            ${CMAKE_SOURCE_DIR}/plugins
    )
 
-   target_link_libraries(${test_name} ${GTEST_BOTH_LIBRARIES} ${Boost_LIBRARIES} pthread logicalaccess pcscreaders)
+   target_link_libraries(${test_name}
+           ${GTEST_BOTH_LIBRARIES} ${Boost_LIBRARIES}
+           pthread logicalaccess pcscreaders
+           epasscards)
 endfunction()
 
 function(add_gtest_test file)
@@ -21,3 +24,5 @@ endfunction()
 
 add_gtest_test(test_atrparser.cpp)
 add_gtest_test(test_elapsed_time_counter.cpp)
+add_gtest_test(test_epass_utils.cpp)
+add_gtest_test(test_asn1.cpp)

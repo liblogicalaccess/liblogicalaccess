@@ -35,19 +35,13 @@ bool EPassCommand::authenticate(const std::string &mrz)
         std::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter());
     assert(rcu);
     auto challenge = get_challenge(rcu);
-    std::cout << "Challenge: " << challenge << std::endl;
     auto tmp = crypto_->step1(challenge);
 
     tmp = rcu->sendAPDUCommand(0x00, 0x82, 0x00, 0x00, 0x28, tmp, 0x28);
     // drop status bytes.
     EXCEPTION_ASSERT_WITH_LOG(tmp.size() == 40, LibLogicalAccessException,
                               "Unexpected response length");
-    std::cout << "bla = " << tmp << std::endl;
-
-    bool ret = crypto_->step2(tmp);
-    std::cout << "Ret = " << ret << std::endl;
-
-    return ret;
+    return crypto_->step2(tmp);
 }
 
 EPassEFCOM EPassCommand::readEFCOM()
@@ -78,7 +72,6 @@ bool EPassCommand::selectEF(const ByteVector &file_id)
         std::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter());
     assert(rca);
     auto ret = rca->sendAPDUCommand(0x00, 0xA4, 0x02, 0x0C, file_id.size(), file_id);
-    std::cout << "CLEAR: " << ret << std::endl;
     return true;
 }
 
@@ -122,14 +115,12 @@ EPassDG1 EPassCommand::readDG1()
 {
     selectEF({0x01, 0x01});
     auto raw = readEF(1, 1);
-    std::cout << "DG1: " << raw << std::endl;
     return EPassUtils::parse_dg1(raw);
 }
 
 EPassDG2 EPassCommand::readDG2()
 {
     selectEF({0x01, 0x02});
-    std::cout << "AFTER SELECT FILE" << std::endl;
 
     // File tag is 2 bytes and size is 2 bytes too.
     auto dg2_raw = readEF(2, 2);
@@ -178,17 +169,8 @@ void EPassCommand::readSOD()
     auto hash_1 = compute_hash({1, 1});
     auto hash_2 = compute_hash({1, 2});
 
-    std::cout << "DG1 Hash: " << BufferHelper::getHex(hash_1) << std::endl;
-    std::cout << "DG2 Hash: " << BufferHelper::getHex(hash_2) << std::endl;
-
-    std::cout << "selecting SOD" << std::endl;
     selectEF({0x01, 0x1D});
-    std::cout << "reading SOD" << std::endl;
     auto tmp = readEF(2, 2);
-
-    std::cout << "read: " << tmp << std::endl;
-    std::ofstream of("/tmp/lama", std::ios::binary | std::ios::trunc);
-    of.write((const char *)tmp.data() + 4, tmp.size() - 4);
 }
 
 ByteVector EPassCommand::compute_hash(const ByteVector &file_id)

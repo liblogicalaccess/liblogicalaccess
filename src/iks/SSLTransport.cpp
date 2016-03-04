@@ -1,13 +1,13 @@
-#include "logicalaccess/myexception.hpp"
 #include "logicalaccess/iks/SSLTransport.hpp"
-#include "logicalaccess/cards/readercardadapter.hpp"
 #include "logicalaccess/bufferhelper.hpp"
+#include "logicalaccess/cards/readercardadapter.hpp"
+#include "logicalaccess/myexception.hpp"
 
+#include <boost/array.hpp>
 #include <boost/foreach.hpp>
 #include <boost/optional.hpp>
-#include <boost/array.hpp>
-#include <logicalaccess/logs.hpp>
 #include <boost/property_tree/ptree.hpp>
+#include <logicalaccess/logs.hpp>
 
 namespace logicalaccess
 {
@@ -203,8 +203,7 @@ bool SSLTransport::handshake(long timeout)
                                        boost::asio::placeholders::error));
 
         d_socket.async_handshake(boost::asio::ssl::stream_base::client,
-                                 [&](const boost::system::error_code &error)
-                                 {
+                                 [&](const boost::system::error_code &error) {
                                      LOG(LogLevel::INFOS)
                                          << "Handshake return code: " << error
                                          << " ::: " << error.message();

@@ -1,13 +1,13 @@
+#include "logicalaccess/iks/IslogKeyServer.hpp"
 #include <boost/asio.hpp>
-#include <logicalaccess/logs.hpp>
-#include <logicalaccess/myexception.hpp>
-#include <logicalaccess/iks/packet/GenRandom.hpp>
 #include <logicalaccess/iks/packet/AesEncrypt.hpp>
 #include <logicalaccess/iks/packet/DesEncrypt.hpp>
 #include <logicalaccess/iks/packet/DesfireAuth.hpp>
-#include <logicalaccess/settings.hpp>
 #include <logicalaccess/iks/packet/DesfireChangeKey.hpp>
-#include "logicalaccess/iks/IslogKeyServer.hpp"
+#include <logicalaccess/iks/packet/GenRandom.hpp>
+#include <logicalaccess/logs.hpp>
+#include <logicalaccess/myexception.hpp>
+#include <logicalaccess/settings.hpp>
 
 using namespace logicalaccess;
 using namespace logicalaccess::iks;
@@ -145,7 +145,7 @@ std::vector<uint8_t> IslogKeyServer::des_crypto(const std::vector<uint8_t> &in,
     DesEncryptCommand cmd;
     cmd.key_name_ = key_name;
     cmd.iv_       = iv;
-    cmd.payload_ = in;
+    cmd.payload_  = in;
     cmd.flags_ =
         use_ecb ? COMMAND_DES_ENCRYPT_FLAG_ECB : COMMAND_DES_ENCRYPT_FLAG_CBC;
     cmd.decrypt_ = decrypt;

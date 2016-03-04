@@ -1,14 +1,13 @@
 #pragma once
 
-#include <memory>
 #include "logicalaccess/lla_fwd.hpp"
 #include "logicalaccess/logicalaccess_api.hpp"
+#include <memory>
 
 namespace logicalaccess
 {
 
-typedef enum
-{
+typedef enum {
     /**
      * @see LicenseCheckerService
      */

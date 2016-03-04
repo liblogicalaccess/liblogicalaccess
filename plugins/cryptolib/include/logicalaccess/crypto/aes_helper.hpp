@@ -43,7 +43,6 @@ namespace logicalaccess
         static std::vector<uint8_t>  AESRun(const std::vector<uint8_t> &data, const std::vector<uint8_t> &key,
                                             const std::vector<uint8_t> &iv_data,
                                             bool crypt);
-
     };
 }
 

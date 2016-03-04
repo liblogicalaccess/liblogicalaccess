@@ -1,6 +1,6 @@
+#include "logicalaccess/utils.hpp"
 #include <gtest/gtest.h>
 #include <thread>
-#include "logicalaccess/utils.hpp"
 
 using namespace logicalaccess;
 

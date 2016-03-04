@@ -1,8 +1,8 @@
 #pragma once
 
-#include <string>
 #include "SSLTransport.hpp"
 #include "logicalaccess/iks/packet/Base.hpp"
+#include <string>
 
 namespace logicalaccess
 {
@@ -16,7 +16,7 @@ namespace iks
 class LIBLOGICALACCESS_API IslogKeyServer
 {
   public:
-    IslogKeyServer() = delete;
+    IslogKeyServer()                       = delete;
     IslogKeyServer(const IslogKeyServer &) = delete;
     //    IslogKeyServer(IslogKeyServer &&) = default;
 

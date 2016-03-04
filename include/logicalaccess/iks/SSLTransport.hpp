@@ -1,10 +1,10 @@
 #pragma once
 
 #include "logicalaccess/logicalaccess_api.hpp"
-#include <boost/property_tree/ptree_fwd.hpp>
 #include <boost/asio.hpp>
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/asio/ssl.hpp>
+#include <boost/property_tree/ptree_fwd.hpp>
 
 namespace logicalaccess
 {

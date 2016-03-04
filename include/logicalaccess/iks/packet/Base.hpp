@@ -1,12 +1,12 @@
 #pragma once
 
-#include <string>
-#include <vector>
-#include <cstdint>
-#include <cstddef>
-#include <memory>
 #include "logicalaccess/logicalaccess_api.hpp"
 #include "logicalaccess/utils.hpp"
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <vector>
 
 namespace logicalaccess
 {

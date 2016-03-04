@@ -1,9 +1,9 @@
 #pragma once
 
-#include <cstdint>
-#include <cstddef>
-#include <chrono>
 #include "logicalaccess_api.hpp"
+#include <chrono>
+#include <cstddef>
+#include <cstdint>
 
 /**
  * Platform independent utils.

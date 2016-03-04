@@ -3,11 +3,11 @@
 
 #include "logicalaccess/logicalaccess_api.hpp"
 #include "pcscreaderunitconfiguration.hpp"
-#include <vector>
-#include <cstdint>
 #include <cstddef>
-#include <string>
+#include <cstdint>
 #include <map>
+#include <string>
+#include <vector>
 
 namespace logicalaccess
 {
