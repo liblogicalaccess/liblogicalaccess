@@ -24,7 +24,9 @@ namespace detail
  * This function handles the calls necessary to create a reader unit
  * and get a chip from it. This code is re-usable for PCSC tests.
  */
-LIBLOGICALACCESS_API std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr, logicalaccess::ChipPtr> pcsc_test_init();
+LIBLOGICALACCESS_API
+std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr, logicalaccess::ChipPtr>
+    pcsc_test_init(const std::string &card_type = "");
 
 /**
  * NFC tests initialization routine.
@@ -39,7 +41,8 @@ LIBLOGICALACCESS_API std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess:
  *
  * It defaults to PCSC.
  */
-LIBLOGICALACCESS_API std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr, logicalaccess::ChipPtr> lla_test_init();
+LIBLOGICALACCESS_API std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr, logicalaccess::ChipPtr>
+    lla_test_init(const std::string &card_type = "");
 
 /**
  * Take care of disconnecting the reader and the card.

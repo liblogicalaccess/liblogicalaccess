@@ -109,6 +109,7 @@ file(GLOB source_customformat ${NATIVE_SOURCE}/services/accesscontrol/formats/cu
 file(GLOB source_nfctag ${NATIVE_SOURCE}/services/nfctag/*.cpp)
 file(GLOB source_uidchanger ${NATIVE_SOURCE}/services/uidchanger/*.cpp)
 file(GLOB source_iks ${NATIVE_SOURCE}/iks/*.cpp ${NATIVE_SOURCE}/iks/packet/*.cpp)
+file(GLOB source_service_identity ${NATIVE_SOURCE}/services/identity/*.cpp)
 
 			
 #Include Files
@@ -126,6 +127,7 @@ file(GLOB include_uidchanger ${NATIVE_INCLUDE}/logicalaccess/services/uidchanger
 file(GLOB include_license_checker ${NATIVE_INCLUDE}/logicalaccess/services/licensechecker/*.hpp)
 file(GLOB include_iks ${NATIVE_INCLUDE}/logicalaccess/iks/*.hpp)
 file(GLOB include_iks_packet ${NATIVE_INCLUDE}/logicalaccess/iks/packet/*.hpp)
+file(GLOB include_service_identity ${NATIVE_SOURCE}/services/identity/*.hpp)
 
 INCLUDE_DIRECTORIES(${NATIVE_INCLUDE} ${CMAKE_CURRENT_SOURCE_DIR}/plugins/cryptolib/include)
 
@@ -163,6 +165,7 @@ SOURCE_GROUP("Source Files\\services\\accesscontrol\\formats\\customformat" FILE
 SOURCE_GROUP("Source Files\\services\\nfctag" FILES ${source_nfctag})
 SOURCE_GROUP("Source Files\\services\\uidchanger" FILES ${source_uidchanger})
 SOURCE_GROUP("Source Files\\iks" FILES ${source_iks})
+SOURCE_GROUP("Source Files\\services\\identity" FILES ${source_service_identity})
 
 SOURCE_GROUP("Header Files\\cards" FILES ${include_cards})
 SOURCE_GROUP("Header Files\\dynlibrary" FILES ${include_dynlibrary})
@@ -178,6 +181,7 @@ SOURCE_GROUP("Header Files\\services\\uidchanger" FILES ${include_uidchanger})
 SOURCE_GROUP("Header Files\\services\\license_checker" FILES ${include_license_checker})
 SOURCE_GROUP("Header Files\\iks" FILES ${include_iks})
 SOURCE_GROUP("Header Files\\iks\\packet" FILES ${include_iks_packet})
+SOURCE_GROUP("Header Files\\services\\identity" FILES ${include_service_identity})
 
 endif()
 
@@ -200,6 +204,8 @@ install ( FILES ${include_uidchanger} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR
 install ( FILES ${include_license_checker} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/licensechecker )
 install ( FILES ${include_iks} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/iks )
 install ( FILES ${include_iks_packet} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/iks/packet )
+install ( FILES ${include_service_identity} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/identity )
+
 
 if (WIN32)
     install ( FILES ${include_vc} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess )
@@ -210,7 +216,7 @@ set(source ${source_root} ${source_cards} ${source_readerproviders}
         ${source_service} ${source_accesscontrol} ${source_encodings}
         ${source_formats} ${source_customformat} ${source_nfctag} ${source_uidchanger}
         ${source_dynlibrary} ${source_vc} ${resourcerc}
-        ${source_iks}
+        ${source_iks} ${source_service_identity}
         )
 
 set(include ${include_root} ${include_cards} ${include_readerproviders}
@@ -218,7 +224,7 @@ set(include ${include_root} ${include_cards} ${include_readerproviders}
         ${include_formats} ${include_customformat} ${include_nfctag} ${include_uidchanger}
         ${include_license_checker}
         ${include_dynlibrary} ${include_storage} ${include_vc}
-        ${include_iks} ${include_iks_packet}
+        ${include_iks} ${include_iks_packet} ${include_service_identity}
         )
 
 

@@ -28,6 +28,11 @@ namespace logicalaccess
          * \return The hash.
          */
         std::vector<unsigned char> SHA256Hash(const std::string& str);
+
+    /**
+     * Compute the sha1 hash of `in`.
+     */
+    std::vector<uint8_t> SHA1Hash(const std::vector<uint8_t> &in);
     }
 }
 

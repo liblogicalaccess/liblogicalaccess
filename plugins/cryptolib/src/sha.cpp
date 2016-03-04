@@ -49,5 +49,24 @@ namespace logicalaccess
 
             return r;
         }
+
+    std::vector<uint8_t> SHA1Hash(const std::vector<uint8_t> &in)
+    {
+        unsigned int len = 20;
+        std::vector<unsigned char> r(len);
+
+        EVP_MD_CTX mdctx;
+
+        EVP_MD_CTX_init(&mdctx);
+
+        EVP_DigestInit_ex(&mdctx, EVP_sha1(), NULL);
+        EVP_DigestUpdate(&mdctx, &in[0], in.size());
+        EVP_DigestFinal_ex(&mdctx, reinterpret_cast<unsigned char*>(&r[0]), &len);
+        r.resize(len);
+
+        EVP_MD_CTX_cleanup(&mdctx);
+
+        return r;
+    }
     }
 }

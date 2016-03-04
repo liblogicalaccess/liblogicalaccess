@@ -18,7 +18,8 @@
 bool detail::prologue_has_run = false;
 enum detail::ReaderType detail::reader_type = detail::ReaderType::PCSC;
 
-std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr, logicalaccess::ChipPtr> pcsc_test_init()
+std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr, logicalaccess::ChipPtr>
+pcsc_test_init(const std::string &card_type /* = "" */)
 {
     // Reader configuration object to store reader provider and reader unit selection.
     std::shared_ptr<logicalaccess::ReaderConfiguration> readerConfig(
@@ -32,6 +33,9 @@ std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr, logic
     auto readerUnit = readerConfig->getReaderProvider()->createReaderUnit();
 
     LLA_ASSERT(readerUnit, "Cannot create reader unit");
+
+    if (card_type.size())
+        readerUnit->setCardType(card_type);
 
     LLA_ASSERT(readerUnit->connectToReader(), "Cannot connect to reader");
     PRINT_TIME("Connected to reader");
@@ -143,11 +147,12 @@ std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr, logic
     return std::make_tuple(provider, readerUnit, chip);
 }
 
-std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr, logicalaccess::ChipPtr> lla_test_init()
+std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr, logicalaccess::ChipPtr>
+lla_test_init(const std::string &card_type /* = "" */)
 {
     LLA_ASSERT(detail::prologue_has_run, "Call prologue() before initalizing the test suite");
     if (detail::reader_type == detail::PCSC)
-        return pcsc_test_init();
+        return pcsc_test_init(card_type);
 	else if (detail::reader_type == detail::NFC)
 		return nfc_test_init();
 

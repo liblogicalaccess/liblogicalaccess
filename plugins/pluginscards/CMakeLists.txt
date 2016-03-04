@@ -27,3 +27,5 @@ add_subdirectory(tagit)
 add_subdirectory(samav2)
 add_subdirectory(felica)
 add_subdirectory(cps3)
+add_subdirectory(epass)
+

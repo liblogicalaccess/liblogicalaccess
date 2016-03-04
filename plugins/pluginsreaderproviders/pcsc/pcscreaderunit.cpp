@@ -75,6 +75,8 @@
 #include "commands/mifareplus_acsacr1222l_sl1.hpp"
 #include "commands/mifareplus_pcsc_sl3.hpp"
 #include "atrparser.hpp"
+#include "../../pluginscards/epass/epass_command.hpp"
+#include "../../pluginscards/epass/epass_readercardadapter.hpp"
 
 namespace logicalaccess
 {
@@ -1148,6 +1150,13 @@ std::shared_ptr<ReaderCardAdapter> PCSCReaderUnit::getReaderCardAdapter(std::str
 					commands.reset(new FeliCaSCMCommands());
 				}
 			}
+            else if (type == "EPass")
+            {
+                commands = std::make_shared<EPassCommand>();
+                rca = std::make_shared<EPassReaderCardAdapter>();
+                rca->setDataTransport(std::make_shared<PCSCDataTransport>());
+                //commands->setReaderCardAdapter(rca);
+            }
 
             if (type == "DESFire" || type == "DESFireEV1")
             {
