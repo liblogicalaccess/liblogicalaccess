@@ -14,7 +14,7 @@ namespace logicalaccess
         if (key && key->getLength() == 16)
         {
 			std::vector<unsigned char> buf;
-			for (char i = 15; i >= 0; --i)
+			for (int i = 15; i >= 0; --i)
 			{
 				buf.push_back(key->getData()[i]);
 			}

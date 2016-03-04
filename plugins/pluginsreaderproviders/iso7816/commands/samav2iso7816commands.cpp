@@ -260,14 +260,14 @@ namespace logicalaccess
             lcvalue = 0;
         }
         //CLA INS P1 P2 LC DATA
-        else if (cmd[AV2_LC_POS] + AV2_HEADER_LENGTH == cmd.size())
+        else if (cmd[AV2_LC_POS] + AV2_HEADER_LENGTH == static_cast<int>(cmd.size()))
         {
             lc = true;
             le = false;
             lcvalue = cmd[AV2_LC_POS];
         }
         // CLA INS P1 P2 LC DATA LE
-        else if (cmd[AV2_LC_POS] + AV2_HEADER_LENGTH_WITH_LE == cmd.size())
+        else if (cmd[AV2_LC_POS] + AV2_HEADER_LENGTH_WITH_LE == static_cast<int>(cmd.size()))
         {
             lc = true;
             le = true;

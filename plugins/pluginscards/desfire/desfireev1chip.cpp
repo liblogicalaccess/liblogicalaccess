@@ -81,6 +81,8 @@ namespace logicalaccess
             service.reset(new DESFireEV1NFCTag4CardService(shared_from_this()));
         }
             break;
+        default:
+            break;
         }
 
         if (!service)

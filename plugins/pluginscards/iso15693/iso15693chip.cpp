@@ -87,9 +87,7 @@ namespace logicalaccess
         case CST_STORAGE:
             service.reset(new ISO15693StorageCardService(shared_from_this()));
             break;
-        case CST_ACCESS_CONTROL:
-            break;
-        case CST_NFC_TAG:
+        default:
             break;
         }
 

@@ -52,7 +52,7 @@ namespace logicalaccess
         case CST_STORAGE:
             service.reset(new MifareUltralightCStorageCardService(shared_from_this()));
             break;
-        case CST_NFC_TAG:
+        default:
             break;
         }
 

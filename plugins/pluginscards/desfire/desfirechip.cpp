@@ -183,7 +183,7 @@ namespace logicalaccess
             service.reset(new DESFireStorageCardService(shared_from_this()));
         }
             break;
-        case CST_NFC_TAG:
+        default:
             break;
         }
 

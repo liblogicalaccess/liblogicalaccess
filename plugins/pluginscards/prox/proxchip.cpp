@@ -50,9 +50,7 @@ namespace logicalaccess
                 service.reset(new ProxAccessControlCardService(shared_from_this()));
         }
             break;
-        case CST_NFC_TAG:
-            break;
-        case CST_STORAGE:
+        default:
             break;
         }
 

@@ -118,7 +118,7 @@ namespace logicalaccess
             service.reset(new TwicStorageCardService(shared_from_this()));
         }
             break;
-        case CST_NFC_TAG:
+        default:
             break;
         }
 

@@ -97,9 +97,6 @@ namespace logicalaccess
             service.reset(new MifareStorageCardService(shared_from_this()));
         }
             break;
-        case CST_NFC_TAG:
-            break;
-
         case CST_UID_CHANGER:
         {
             // Changing the UID of Mifare Classic works with (some) NFC only.
@@ -111,6 +108,8 @@ namespace logicalaccess
             // (not a NFC reader for example) then we do nothing.
             break;
         }
+        default:
+            break;
         }
 
         if (!service)

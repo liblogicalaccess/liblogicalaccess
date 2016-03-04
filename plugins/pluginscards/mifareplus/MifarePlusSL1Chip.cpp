@@ -53,7 +53,7 @@ std::shared_ptr<CardService> MifarePlusSL1Chip::getService(CardServiceType servi
             case CST_STORAGE:
                 service.reset(new MifarePlusStorageCardServiceSL1(shared_from_this()));
                 break;
-            case CST_NFC_TAG:
+            default:
                 break;
         }
     return service;

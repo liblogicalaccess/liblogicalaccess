@@ -28,7 +28,7 @@ namespace logicalaccess
             size_t len)
     {
         assert(len / 16 < 255);
-        uint8_t nb_block_to_read = static_cast<uint8_t>(len / 16);
+//        uint8_t nb_block_to_read = static_cast<uint8_t>(len / 16);
 /*
         ByteVector mac = {1, 2, 3, 4, 5, 6, 7 , 8};
         ByteVector cmd{0x34, blockno, 0x00, nb_block_to_read};

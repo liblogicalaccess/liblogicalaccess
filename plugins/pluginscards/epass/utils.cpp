@@ -250,7 +250,7 @@ ByteVector EPassUtils::compute_mac(const ByteVector &in, const ByteVector &k_mac
         y = ByteVector(8, 0);
 
     auto itr = in.begin();
-    for (int i = 0; i < in.size() / 8; ++i)
+    for (uint32_t i = 0; i < in.size() / 8; ++i)
     {
         ByteVector block(itr, itr + 8);
         itr += 8;
@@ -591,7 +591,7 @@ EPassUtils::parse_dg1_date(const ByteVector &in, int millenium_limit)
     auto month = std::stoi(std::string(itr + 2, itr + 4));
     auto day   = std::stoi(std::string(itr + 4, itr + 6));
 
-    std::tm date = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+    std::tm date = {};
     date.tm_mon  = month - 1; // tm_mon starts at 0
     date.tm_mday = day;
 

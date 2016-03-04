@@ -50,10 +50,10 @@ namespace logicalaccess
         case CST_STORAGE:
             service.reset(new ISO7816StorageCardService(shared_from_this()));
             break;
-        case CST_ACCESS_CONTROL:
-            break;
         case CST_NFC_TAG:
             service.reset(new ISO7816NFCTag4CardService(shared_from_this()));
+            break;
+        default:
             break;
         }
 

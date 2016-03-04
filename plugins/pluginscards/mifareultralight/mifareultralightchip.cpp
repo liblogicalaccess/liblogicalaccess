@@ -75,11 +75,14 @@ namespace logicalaccess
         case CST_STORAGE:
             service.reset(new MifareUltralightStorageCardService(shared_from_this()));
             break;
-        case CST_NFC_TAG:
-            break;
         case CST_UID_CHANGER:
-            auto storage = std::make_shared<MifareUltralightStorageCardService>(shared_from_this());
+        {
+            auto storage = std::make_shared<MifareUltralightStorageCardService>(
+                shared_from_this());
             service.reset(new MifareUltralightUIDChangerService(storage));
+            break;
+        }
+        default:
             break;
         }
 
