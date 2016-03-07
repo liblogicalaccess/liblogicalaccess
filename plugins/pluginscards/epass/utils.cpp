@@ -1,13 +1,13 @@
 #include "utils.hpp"
 #include <cassert>
 #include <cstring>
+#include <ctime>
 #include <iostream>
 #include <logicalaccess/crypto/des_helper.hpp>
 #include <logicalaccess/crypto/sha.hpp>
 #include <logicalaccess/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <vector>
-#include <ctime>
 
 using namespace logicalaccess;
 
@@ -72,7 +72,7 @@ std::vector<uint8_t> EPassUtils::seed_from_mrz(const std::string &mrz)
 
 std::vector<uint8_t> EPassUtils::compute_enc_key(const std::vector<uint8_t> &seed)
 {
-    std::vector<uint8_t> c = { 0, 0, 0, 1 };
+    std::vector<uint8_t> c = {0, 0, 0, 1};
     std::vector<uint8_t> D = seed;
     D.insert(D.end(), c.begin(), c.end());
 
@@ -82,7 +82,7 @@ std::vector<uint8_t> EPassUtils::compute_enc_key(const std::vector<uint8_t> &see
 
 std::vector<uint8_t> EPassUtils::compute_mac_key(const std::vector<uint8_t> &seed)
 {
-    std::vector<uint8_t> c = { 0, 0, 0, 2 };
+    std::vector<uint8_t> c = {0, 0, 0, 2};
     std::vector<uint8_t> D = seed;
     D.insert(D.end(), c.begin(), c.end());
 

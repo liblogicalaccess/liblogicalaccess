@@ -35,7 +35,7 @@ bool EPassCommand::authenticate(const std::string &mrz)
         std::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter());
     assert(rcu);
     auto challenge = get_challenge(rcu);
-    auto tmp = crypto_->step1(challenge);
+    auto tmp       = crypto_->step1(challenge);
 
     tmp = rcu->sendAPDUCommand(0x00, 0x82, 0x00, 0x00, 0x28, tmp, 0x28);
     // drop status bytes.
