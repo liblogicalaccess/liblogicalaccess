@@ -5,10 +5,11 @@
 
 namespace logicalaccess
 {
-class EPassChip : public ISO7816Chip
+class LIBLOGICALACCESS_API EPassChip : public ISO7816Chip
 {
   public:
     EPassChip();
+    virtual ~EPassChip() = default;
 
     std::shared_ptr<EPassCommand> getEPassCommand();
 

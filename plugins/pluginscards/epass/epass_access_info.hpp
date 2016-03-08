@@ -10,6 +10,9 @@ namespace logicalaccess
 class LIBLOGICALACCESS_API EPassAccessInfo : public AccessInfo
 {
   public:
+    EPassAccessInfo() = default;
+    virtual ~EPassAccessInfo() = default;
+
     virtual void generateInfos() override;
 
     virtual std::string getCardType() const override;
