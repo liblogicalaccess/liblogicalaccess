@@ -127,7 +127,7 @@ file(GLOB include_uidchanger ${NATIVE_INCLUDE}/logicalaccess/services/uidchanger
 file(GLOB include_license_checker ${NATIVE_INCLUDE}/logicalaccess/services/licensechecker/*.hpp)
 file(GLOB include_iks ${NATIVE_INCLUDE}/logicalaccess/iks/*.hpp)
 file(GLOB include_iks_packet ${NATIVE_INCLUDE}/logicalaccess/iks/packet/*.hpp)
-file(GLOB include_service_identity ${NATIVE_SOURCE}/services/identity/*.hpp)
+file(GLOB include_service_identity ${NATIVE_INCLUDE}/logicalaccess/services/identity/*.hpp)
 
 INCLUDE_DIRECTORIES(${NATIVE_INCLUDE} ${CMAKE_CURRENT_SOURCE_DIR}/plugins/cryptolib/include)
 
