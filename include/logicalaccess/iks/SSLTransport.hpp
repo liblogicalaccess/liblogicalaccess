@@ -17,8 +17,11 @@ class LIBLOGICALACCESS_API SSLTransport
     /**
      * \brief Constructor.
      */
+  #ifdef ENABLE_SSLTRANSPORT
+    SSLTransport(boost::asio::ssl::context &ctx);
+  #else
     SSLTransport(/*boost::asio::ssl::context &ctx*/);
-
+  #endif
     /**
      * \brief Destructor.
      */

@@ -57,7 +57,7 @@ bool SSLTransport::connect(long int timeout)
 {
 #ifndef ENABLE_SSLTRANSPORT
 	THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SSLTransport feature is disabled.");
-#elif
+#else
     if (d_socket.lowest_layer().is_open())
         d_socket.lowest_layer().close();
 
@@ -105,7 +105,7 @@ bool SSLTransport::isConnected()
 {
 #ifndef ENABLE_SSLTRANSPORT
 	return false;
-#elif
+#else
 	return bool(d_socket.lowest_layer().is_open());
 #endif /* ENABLE_SSLTRANSPORT */
 }
@@ -119,7 +119,7 @@ void SSLTransport::send(const std::vector<unsigned char> &data)
 {
 #ifndef ENABLE_SSLTRANSPORT
 	THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SSLTransport feature is disabled.");
-#elif
+#else
     if (data.size() > 0)
     {
         try
@@ -225,7 +225,7 @@ bool SSLTransport::handshake(long timeout)
 {
 #ifndef ENABLE_SSLTRANSPORT
 	THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SSLTransport feature is disabled.");
-#elif
+#else
     try
     {
         timeout *= 3;

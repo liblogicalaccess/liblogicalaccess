@@ -33,6 +33,10 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 endif()
 
 
+if (ENABLE_SSLTRANSPORT)
+  add_definitions(-DENABLE_SSLTRANSPORT)
+endif()
+
 list ( APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
 
 option ( BUILD_SHARED_LIBS "build shared libraries" ON )
