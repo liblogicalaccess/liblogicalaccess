@@ -17,7 +17,7 @@ class LIBLOGICALACCESS_API SSLTransport
     /**
      * \brief Constructor.
      */
-    SSLTransport(boost::asio::ssl::context &ctx);
+    SSLTransport(/*boost::asio::ssl::context &ctx*/);
 
     /**
      * \brief Destructor.
@@ -134,6 +134,7 @@ class LIBLOGICALACCESS_API SSLTransport
      */
     bool handshake(long timeout);
 
+#ifdef ENABLE_SSLTRANSPORT
     /**
      * \brief Provides core I/O functionality
      */
@@ -150,6 +151,7 @@ class LIBLOGICALACCESS_API SSLTransport
 * \brief Read Deadline timer
 */
     boost::asio::deadline_timer d_timer;
+#endif /* ENABLE_SSLTRANSPORT */
 
     /**
 * \brief Read error

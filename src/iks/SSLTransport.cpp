@@ -11,11 +11,19 @@
 
 namespace logicalaccess
 {
-SSLTransport::SSLTransport(boost::asio::ssl::context &ctx)
-    : ssl_ctx_(ctx)
+SSLTransport::SSLTransport(
+#ifdef ENABLE_SSLTRANSPORT
+	boost::asio::ssl::context &ctx
+#endif /* ENABLE_SSLTRANSPORT */
+	)
+    : 
+#ifdef ENABLE_SSLTRANSPORT
+	ssl_ctx_(ctx)
     , d_socket(d_ios, ssl_ctx_)
     , d_timer(d_ios)
-    , d_read_error(true)
+    ,
+#endif /* ENABLE_SSLTRANSPORT */
+	d_read_error(true)
     , d_bytes_transferred(0)
     , d_port(0)
 {
@@ -47,10 +55,13 @@ void SSLTransport::setPort(int port)
 
 bool SSLTransport::connect(long int timeout)
 {
+#ifndef ENABLE_SSLTRANSPORT
+	THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SSLTransport feature is disabled.");
+#elif
     if (d_socket.lowest_layer().is_open())
         d_socket.lowest_layer().close();
 
-    try
+	try
     {
         d_ios.reset();
         d_timer.expires_from_now(boost::posix_time::milliseconds(timeout));
@@ -79,17 +90,24 @@ bool SSLTransport::connect(long int timeout)
     }
 
     return handshake(timeout);
+#endif /* ENABLE_SSLTRANSPORT */
 }
 
 void SSLTransport::disconnect()
 {
     LOG(LogLevel::INFOS) << getIpAddress() << ":" << getPort() << "Disconnected.";
-    d_socket.lowest_layer().close();
+#ifdef ENABLE_SSLTRANSPORT
+	d_socket.lowest_layer().close();
+#endif /* ENABLE_SSLTRANSPORT */
 }
 
 bool SSLTransport::isConnected()
 {
-    return bool(d_socket.lowest_layer().is_open());
+#ifndef ENABLE_SSLTRANSPORT
+	return false;
+#elif
+	return bool(d_socket.lowest_layer().is_open());
+#endif /* ENABLE_SSLTRANSPORT */
 }
 
 std::string SSLTransport::getName() const
@@ -99,6 +117,9 @@ std::string SSLTransport::getName() const
 
 void SSLTransport::send(const std::vector<unsigned char> &data)
 {
+#ifndef ENABLE_SSLTRANSPORT
+	THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SSLTransport feature is disabled.");
+#elif
     if (data.size() > 0)
     {
         try
@@ -115,32 +136,40 @@ void SSLTransport::send(const std::vector<unsigned char> &data)
             std::rethrow_exception(eptr);
         }
     }
+#endif /* ENABLE_SSLTRANSPORT */
 }
 
 void SSLTransport::connect_complete(const boost::system::error_code &error)
 {
+#ifdef ENABLE_SSLTRANSPORT
     d_read_error = (error != 0);
     d_timer.cancel();
+#endif /* ENABLE_SSLTRANSPORT */
 }
 
 void SSLTransport::read_complete(const boost::system::error_code &error,
                                  size_t bytes_transferred)
 {
+#ifdef ENABLE_SSLTRANSPORT
     d_read_error        = (error || bytes_transferred == 0);
     d_bytes_transferred = bytes_transferred;
     d_timer.cancel();
+#endif /* ENABLE_SSLTRANSPORT */
 }
 
 void SSLTransport::time_out(const boost::system::error_code &error)
 {
+#ifdef ENABLE_SSLTRANSPORT
     if (error)
         return;
     d_socket.lowest_layer().cancel();
+#endif /* ENABLE_SSLTRANSPORT */
 }
 
 std::vector<uint8_t> SSLTransport::receive(long int timeout)
 {
     std::vector<unsigned char> recv(256);
+#ifdef ENABLE_SSLTRANSPORT
     d_ios.reset();
     d_bytes_transferred = 0;
 
@@ -166,6 +195,7 @@ std::vector<uint8_t> SSLTransport::receive(long int timeout)
     }
 
     LOG(LogLevel::COMS) << "TCP Data read: " << BufferHelper::getHex(recv);
+#endif /* ENABLE_SSLTRANSPORT */
     return recv;
 }
 
@@ -193,6 +223,9 @@ std::string SSLTransport::getDefaultXmlNodeName() const
 
 bool SSLTransport::handshake(long timeout)
 {
+#ifndef ENABLE_SSLTRANSPORT
+	THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SSLTransport feature is disabled.");
+#elif
     try
     {
         timeout *= 3;
@@ -227,6 +260,7 @@ bool SSLTransport::handshake(long timeout)
                               << ":" << getPort() << " : " << ex.what();
         disconnect();
     }
-    return d_socket.lowest_layer().is_open();
+	return d_socket.lowest_layer().is_open();
+#endif /* ENABLE_SSLTRANSPORT */
 }
 }

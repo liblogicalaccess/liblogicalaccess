@@ -127,7 +127,9 @@ class LIBLOGICALACCESS_API IslogKeyServer
                                     const std::array<uint8_t, 8> &iv, bool use_ecb,
                                     bool decrypt);
 
+#ifdef ENABLE_SSLTRANSPORT
     boost::asio::ssl::context ssl_ctx_;
+#endif /* ENABLE_SSLTRANSPORT */
     std::unique_ptr<SSLTransport> transport_;
 
     /**
