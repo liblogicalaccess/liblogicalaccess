@@ -10,7 +10,7 @@
 namespace logicalaccess
 {
 	OSDPReaderCardAdapter::OSDPReaderCardAdapter(std::shared_ptr<OSDPCommands> command, unsigned char address, std::shared_ptr<DESFireISO7816ResultChecker> resultChecker)
-		: ISO7816ReaderCardAdapter(), m_commands(command), m_address(address), d_resultChecker(resultChecker)
+		: ISO7816ReaderCardAdapter(), m_commands(command), d_resultChecker(resultChecker), m_address(address)
 	{
 		//Set Profile 0x01 command
 		std::shared_ptr<OSDPChannel> result = m_commands->setProfile(0x01);

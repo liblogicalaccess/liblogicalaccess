@@ -42,7 +42,7 @@ target_link_libraries(
 	desfirecards
 	samav2cards
 	iso7816cards
-	liblogicalaccess
+	${LIBLOGICALACCESS_LIBRARY}
 	${OPENSSL_LIBRARIES}
 )
 
