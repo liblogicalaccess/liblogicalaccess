@@ -4,7 +4,9 @@
 #include <boost/property_tree/ptree_fwd.hpp>
 #include <boost/asio.hpp>
 #include <boost/asio/deadline_timer.hpp>
+#ifdef ENABLE_SSLTRANSPORT
 #include <boost/asio/ssl.hpp>
+#endif
 
 namespace logicalaccess
 {
