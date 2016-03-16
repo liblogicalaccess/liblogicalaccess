@@ -23,8 +23,10 @@ namespace logicalaccess
 		EXCEPTION_ASSERT_WITH_LOG(result.size() >= 6, std::invalid_argument, "A valid buffer size must be at least 5 bytes long");
 		result.erase(result.begin()); //0xff
 		unsigned char index = 0;
-		EXCEPTION_ASSERT_WITH_LOG(result[index++] == 0x53, std::invalid_argument, "Invalid SOM Received.");
-		EXCEPTION_ASSERT_WITH_LOG(result[index++] == (getAddress() | 0x80), std::invalid_argument, "Invalid Address Received.");
+		EXCEPTION_ASSERT_WITH_LOG(result[index] == 0x53, std::invalid_argument, "Invalid SOM Received.");
+		++index;
+		EXCEPTION_ASSERT_WITH_LOG(result[index] == (getAddress() | 0x80), std::invalid_argument, "Invalid Address Received.");
+		++index;
 
 		short packetLength = ((result[index + 1] << 8) + result[index]);
 		EXCEPTION_ASSERT_WITH_LOG(result.size() >= static_cast<unsigned int>(packetLength), std::invalid_argument, "PacketLength and recieved are not the same.");

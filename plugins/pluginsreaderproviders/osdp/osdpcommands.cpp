@@ -38,7 +38,7 @@ namespace logicalaccess
 		m_channel->setCommandsType(OSDPCommandsType::CHLNG);
 		m_channel->isSCB = true;
 
-		RAND_seed(m_channel.get(), sizeof(m_channel.get()));
+		RAND_seed(m_channel.get(), sizeof(*(m_channel.get())));
 		EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient entropy source");
 		std::vector<unsigned char> rnda(8);
 		if (RAND_bytes(&rnda[0], static_cast<int>(rnda.size())) != 1)
@@ -121,7 +121,7 @@ namespace logicalaccess
 		}
 
 		m_channel->setCommandsType(OSDPCommandsType::BUZ);
-		memcpy(&buzConfig[0], &led, sizeof(s_led_cmd));
+		memcpy(&buzConfig[0], &led, sizeof(s_buz_cmd));
 		m_channel->setData(buzConfig);
 		return transmit();
 	}

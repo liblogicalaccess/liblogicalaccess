@@ -19,6 +19,8 @@ namespace logicalaccess
     {
     public:
 
+		virtual ~ReaderCardAdapter() {};
+
         /**
          * \brief Adapt the command to send to the reader.
          * \param command The command to send.

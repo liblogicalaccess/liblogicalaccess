@@ -24,7 +24,7 @@ class LIBLOGICALACCESS_API IKSStorage : public KeyStorage
      *
      * This storage will fail when used.
      */
-    IKSStorage() = default;
+	IKSStorage() : saveIKSConfig_(false) {}
 
     virtual KeyStorageType getType() const;
 
