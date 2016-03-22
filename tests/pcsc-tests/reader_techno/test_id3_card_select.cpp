@@ -9,11 +9,11 @@
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
 #include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
 
-#include "pluginsreaderproviders/iso7816/commands/desfireev1iso7816commands.hpp"
+//#include "pluginsreaderproviders/iso7816/commands/desfireev1iso7816commands.hpp"
 #include "pluginscards/desfire/desfireev1commands.hpp"
 #include "pluginscards/desfire/desfireev1chip.hpp"
 #include "pluginsreaderproviders/pcsc/readers/id3readerunit.hpp"
-#include "pluginsreaderproviders/pcsc/readercardadapters/pcscreadercardadapter.hpp"
+//#include "pluginsreaderproviders/pcsc/readercardadapters/pcscreadercardadapter.hpp"
 
 #include "lla-tests/macros.hpp"
 #include "lla-tests/utils.hpp"
@@ -68,7 +68,7 @@ int main(int ac, char **av)
 	id3->selectCard(0);
 
 		return 0;
-
+/*
 	auto sc = [&](const std::vector<uint8_t> &d) { return id3->getDefaultPCSCReaderCardAdapter()->sendCommand(d); };
 	auto ret = sc({ 0xFF, 0x9F, 0x00, 0x00, 0x01, 0x09});
 	std::cout << "Ret: " << ret << std::endl;
@@ -84,5 +84,5 @@ int main(int ac, char **av)
 
 	ret = sc({ 0xFF, 0xCA, 0x00, 0x00, 0x00 });
 	std::cout << "Ret: " << ret << std::endl;
-	return 0;
+	return 0;*/
 }
