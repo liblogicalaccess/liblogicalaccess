@@ -43,8 +43,6 @@ bool STidPRGReaderProvider::refreshReaderList()
                               LibLogicalAccessException,
                               "Can't enumerate the serial port list.");
 
-    std::cout << "REFRESH" << std::endl;
-
     for (std::vector<std::shared_ptr<SerialPortXml>>::iterator i = ports.begin();
          i != ports.end(); ++i)
     {
