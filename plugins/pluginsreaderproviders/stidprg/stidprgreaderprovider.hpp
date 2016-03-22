@@ -4,6 +4,8 @@
 
 namespace logicalaccess
 {
+#define READER_STIDPRG		"STidPRG"
+
 class LIBLOGICALACCESS_API STidPRGReaderProvider : public ReaderProvider
 {
   public:
