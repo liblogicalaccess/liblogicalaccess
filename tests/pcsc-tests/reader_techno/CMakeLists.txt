@@ -5,6 +5,7 @@ ${CMAKE_SOURCE_DIR}/plugins/pluginscards/desfire/
 ${CMAKE_SOURCE_DIR}/plugins/pluginscards/samav2/
 ${CMAKE_SOURCE_DIR}/plugins/pluginscards/iso7816/
 ${CMAKE_SOURCE_DIR}/plugins/readers/iso7816/commands/
+${CMAKE_SOURCE_DIR}/plugins/pluginsreaderproviders/iso7816/
 ${CMAKE_SOURCE_DIR}/plugins/
 )
 

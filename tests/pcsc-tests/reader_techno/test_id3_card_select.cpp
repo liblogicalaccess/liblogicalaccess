@@ -9,11 +9,11 @@
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
 #include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
 
-//#include "pluginsreaderproviders/iso7816/commands/desfireev1iso7816commands.hpp"
+#include "pluginsreaderproviders/iso7816/commands/desfireev1iso7816commands.hpp"
 #include "pluginscards/desfire/desfireev1commands.hpp"
 #include "pluginscards/desfire/desfireev1chip.hpp"
 #include "pluginsreaderproviders/pcsc/readers/id3readerunit.hpp"
-//#include "pluginsreaderproviders/pcsc/readercardadapters/pcscreadercardadapter.hpp"
+#include "pluginsreaderproviders/pcsc/readercardadapters/pcscreadercardadapter.hpp"
 
 #include "lla-tests/macros.hpp"
 #include "lla-tests/utils.hpp"
@@ -33,7 +33,6 @@ int main(int ac, char **av)
 	introduction();
 	ReaderProviderPtr provider;
 	std::shared_ptr<PCSCReaderUnit> readerUnit;
-	ChipPtr chip;
 
 	std::shared_ptr<logicalaccess::ReaderConfiguration> readerConfig(
 		new logicalaccess::ReaderConfiguration());
@@ -58,17 +57,33 @@ int main(int ac, char **av)
 
 	LLA_ASSERT(id3->waitInsertion(10000), "No card inserted");
 	id3->connect();
-	
+    auto chip = id3->getSingleChip();
+    assert(chip);
+
+    PRINT_TIME("Chip type: " << chip->getCardType() << ". UID: " << chip->getChipIdentifier());
+    //id3->unfreeze();
+
+    //id3->waitRemoval(10000);
+    //return 0;
+
 	for (auto &chip_info : id3->listCards())
 	{
-		PRINT_TIME("Card Info: " << chip_info.identifier_);
+        PRINT_TIME("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        PRINT_TIME("Card UID: " << chip_info.uid_);
+        PRINT_TIME("Card ATR: " << chip_info.atr_);
+        PRINT_TIME("Card (guessed) Type: " << chip_info.guessed_type_);
 	}
 
 	id3->selectCard(1);
+    std::cout << "CSN1: " << id3->getCardSerialNumber() << std::endl;
 	id3->selectCard(0);
+    std::cout << "CSN0: " << id3->getCardSerialNumber() << std::endl;
+	id3->selectCard(2);
+    std::cout << "CSN2: " << id3->getCardSerialNumber() << std::endl;
 
-		return 0;
-/*
+    id3->unfreeze();
+    return 0;
+
 	auto sc = [&](const std::vector<uint8_t> &d) { return id3->getDefaultPCSCReaderCardAdapter()->sendCommand(d); };
 	auto ret = sc({ 0xFF, 0x9F, 0x00, 0x00, 0x01, 0x09});
 	std::cout << "Ret: " << ret << std::endl;
@@ -84,5 +99,5 @@ int main(int ac, char **av)
 
 	ret = sc({ 0xFF, 0xCA, 0x00, 0x00, 0x00 });
 	std::cout << "Ret: " << ret << std::endl;
-	return 0;*/
+	return 0;
 }

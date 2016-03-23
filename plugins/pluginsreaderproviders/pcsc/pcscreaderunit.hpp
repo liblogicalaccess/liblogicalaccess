@@ -358,13 +358,6 @@ namespace logicalaccess
         void teardown_pcsc_connection();
 
       protected:
-        /**
-         * \brief Get the card type from atr code
-         * \param code The atr code
-         * \return The card type
-         */
-        std::string atrXToCardType(int code) const;
-
 		/**
 		 * A PCSC connection object.
 		 */

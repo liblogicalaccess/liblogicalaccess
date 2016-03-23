@@ -1,8 +1,8 @@
+#include "cl1356cardprobe.hpp"
+#include "logicalaccess/cards/chip.hpp"
 #include "logicalaccess/logs.hpp"
 #include "mifarecommands.hpp"
 #include "mifareprofile.hpp"
-#include "cl1356cardprobe.hpp"
-#include "logicalaccess/cards/chip.hpp"
 
 using namespace logicalaccess;
 
@@ -31,8 +31,8 @@ bool CL1356CardProbe::maybe_mifare_classic()
     {
         if (e.error_code() == CardException::ErrorType::UNKOWN_ERROR)
         {
-			// The reader returns the generic 0x6F00 signal a generic error
-			// when the authentication failed.
+            // The reader returns the generic 0x6F00 signal a generic error
+            // when the authentication failed.
             return true;
         }
     }

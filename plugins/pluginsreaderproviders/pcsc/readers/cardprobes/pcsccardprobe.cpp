@@ -1,11 +1,11 @@
-#include <desfirecommands.hpp>
-#include <assert.h>
+#include "pcsccardprobe.hpp"
+#include "../../pcscreaderunit.hpp"
+#include "logicalaccess/cards/chip.hpp"
 #include "logicalaccess/logs.hpp"
 #include "mifarecommands.hpp"
 #include "mifareprofile.hpp"
-#include "pcsccardprobe.hpp"
-#include "logicalaccess/cards/chip.hpp"
-#include "../../pcscreaderunit.hpp"
+#include <assert.h>
+#include <desfirecommands.hpp>
 
 using namespace logicalaccess;
 
@@ -27,8 +27,8 @@ bool PCSCCardProbe::maybe_mifare_classic()
         logicalaccess::MifareAccessInfo::SectorAccessBits sab;
         std::dynamic_pointer_cast<logicalaccess::MifareProfile>(chip->getProfile())
             ->setDefaultKeysAt(0x00);
-		std::dynamic_pointer_cast<logicalaccess::MifareProfile>(chip->getProfile())
-			->setDefaultKeysAt(1);
+        std::dynamic_pointer_cast<logicalaccess::MifareProfile>(chip->getProfile())
+            ->setDefaultKeysAt(1);
         auto ret = command->readSector(1, 0, sab);
         return true;
     }

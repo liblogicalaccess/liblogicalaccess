@@ -1,9 +1,9 @@
+#include "logicalaccess/cardprobe.hpp"
+#include "logicalaccess/cards/chip.hpp"
+#include "logicalaccess/logs.hpp"
 #include <assert.h>
 #include <chrono>
 #include <thread>
-#include "logicalaccess/logs.hpp"
-#include "logicalaccess/cardprobe.hpp"
-#include "logicalaccess/cards/chip.hpp"
 
 using namespace logicalaccess;
 

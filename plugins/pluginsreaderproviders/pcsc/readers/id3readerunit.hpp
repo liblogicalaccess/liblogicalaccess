@@ -1,9 +1,10 @@
 #pragma once
 
-#include <string>
 #include "../pcscreaderunit.hpp"
 #include "logicalaccess/cards/readercardadapter.hpp"
 #include "logicalaccess/logicalaccess_api.hpp"
+#include "CL1356PlusUtils.hpp"
+#include <string>
 
 namespace logicalaccess
 {
@@ -28,7 +29,7 @@ class LIBLOGICALACCESS_API ID3ReaderUnit : public PCSCReaderUnit
     /**
      * Returns the list of cards that are available in the field.
      */
-    std::vector<ChipInformation> listCards();
+    std::vector<CL1356PlusUtils::Info> listCards();
 
     /**
      * Select a card by its index in the vector returned
@@ -40,7 +41,9 @@ class LIBLOGICALACCESS_API ID3ReaderUnit : public PCSCReaderUnit
 
     void toggleCardOperation(bool e);
 
-	PCSCReaderUnitType getPCSCType() const override;
+    PCSCReaderUnitType getPCSCType() const override;
+
+        void unfreeze();
 
   private:
     /**

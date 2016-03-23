@@ -422,6 +422,7 @@ namespace logicalaccess
                 }
             }
 
+            std::cout << "ALALALALALAMAMAMA: " << cardType << std::endl;
             d_insertedChip = createChip((d_card_type == "UNKNOWN") ? cardType : d_card_type);
             if (d_proxyReaderUnit)
             {
@@ -673,14 +674,14 @@ namespace logicalaccess
                                 {
                                     // Doesn't care about bad communication here, stay DESFire.
                                 }
-                                std::vector<uint8_t> uid;
+         /*                       std::vector<uint8_t> uid;
                                 if (createCardProbe()->is_desfire_ev1(&uid))
                                 {
                                     d_insertedChip = createChip("DESFireEV1");
                                 }
                                 d_insertedChip->setChipIdentifier(uid);
                                 std::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->getCrypto()
-                                    ->setIdentifier(d_insertedChip->getChipIdentifier());
+                                    ->setIdentifier(d_insertedChip->getChipIdentifier());*/
                             }
                             else if (d_insertedChip->getCardType() == "SAM_AV2")
                             {
@@ -964,43 +965,7 @@ namespace logicalaccess
         return atr_;
     }
 
-std::string PCSCReaderUnit::atrXToCardType(int code) const
-    {
-        switch (code)
-        {
-        case 0x01:
-            return "Mifare1K";
-        case 0x02:
-            return "Mifare4K";
-        case 0x03:
-            return "MifareUltralight";
-        case 0x11:
-            return "DESFire";
-        case 0x1A:
-            return "HIDiClass16KS";
-        case 0x1C:
-            return "HIDiClass8x2KS";
-        case 0x18:
-            return "HIDiClass2KS";
-        case 0x1D:
-            return "HIDiClass32KS_16_16";
-        case 0x1E:
-            return "HIDiClass32KS_16_8x2";
-        case 0x1F:
-            return "HIDiClass32KS_8x2_16";
-        case 0x20:
-            return "HIDiClass32KS_8x2_8x2";
-        case 0x26:
-            return "MIFARE_MINI";
-        case 0x3A:
-            return "MifareUltralightC";
-
-        default:
-            return "UNKNOWN";
-        }
-    }
-
-std::shared_ptr<ReaderCardAdapter> PCSCReaderUnit::getReaderCardAdapter(std::string type)
+     std::shared_ptr<ReaderCardAdapter> PCSCReaderUnit::getReaderCardAdapter(std::string type)
     {
         if (d_proxyReaderUnit)
         {
