@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../pcscreaderunit.hpp"
+#include "CL1356PlusUtils.hpp"
 #include "logicalaccess/cards/readercardadapter.hpp"
 #include "logicalaccess/logicalaccess_api.hpp"
-#include "CL1356PlusUtils.hpp"
 #include <string>
 
 namespace logicalaccess
@@ -43,7 +43,7 @@ class LIBLOGICALACCESS_API ID3ReaderUnit : public PCSCReaderUnit
 
     PCSCReaderUnitType getPCSCType() const override;
 
-        void unfreeze();
+    void unfreeze();
 
   private:
     /**

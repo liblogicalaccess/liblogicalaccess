@@ -25,8 +25,8 @@ ATRParser::ATRParser(const std::vector<uint8_t> &atr)
     register_hardcoded_atr("3B8F8001804F0CA00000030603FFA00000000034",
                            "MifarePlus_SL1_4K", PCSC_RUT_SPRINGCARD);
     register_hardcoded_atr("3B878001C1052F2F0035C730", "MifarePlus_SL3_2K");
-    register_hardcoded_atr("3B8F8001804F0CA000000306030000000000006B",
-                           "Mifare1K", PCSC_RUT_ID3_CL1356);
+    register_hardcoded_atr("3B8F8001804F0CA000000306030000000000006B", "Mifare1K",
+                           PCSC_RUT_ID3_CL1356);
 }
 
 ///

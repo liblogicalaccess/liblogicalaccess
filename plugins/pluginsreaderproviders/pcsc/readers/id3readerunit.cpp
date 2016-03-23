@@ -1,9 +1,9 @@
 #include "id3readerunit.hpp"
+#include "../atrparser.hpp"
 #include "../pcscdatatransport.hpp"
 #include "../readercardadapters/pcscreadercardadapter.hpp"
 #include "cardprobes/cl1356cardprobe.hpp"
 #include "logicalaccess/bufferhelper.hpp"
-#include "../atrparser.hpp"
 #include <array>
 #include <cassert>
 #include <iostream>
@@ -20,18 +20,22 @@ std::vector<CL1356PlusUtils::Info> ID3ReaderUnit::listCards()
 {
     APDUWrapperGuard guard(this);
 
-    auto counts = CL1356PlusUtils::parse_list_card(getDefaultReaderCardAdapter()->sendCommand({0x0E, 0, 0}));
+    auto counts = CL1356PlusUtils::parse_list_card(
+        getDefaultReaderCardAdapter()->sendCommand({0x0E, 0, 0}));
 
     std::vector<CL1356PlusUtils::Info> infos;
-    for (int i = 0 ; i < counts.present_; ++i)
+    for (int i = 0; i < counts.present_; ++i)
     {
         auto info = CL1356PlusUtils::parse_get_card_info(
-            getDefaultReaderCardAdapter()->sendCommand({0x11, static_cast<uint8_t>(i), 0}));
+            getDefaultReaderCardAdapter()->sendCommand(
+                {0x11, static_cast<uint8_t>(i), 0}));
 
 
         // We might as well extract ATR.
-        info.atr_ = getDefaultReaderCardAdapter()->sendCommand({0x12, static_cast<uint8_t>(i), 0});
-        info.guessed_type_ = ATRParser::guessCardType(info.atr_, PCSC_RUT_ID3_CL1356);
+        info.atr_ = getDefaultReaderCardAdapter()->sendCommand(
+            {0x12, static_cast<uint8_t>(i), 0});
+        info.guessed_type_ =
+            ATRParser::guessCardType(info.atr_, PCSC_RUT_ID3_CL1356);
         infos.push_back(info);
     }
     return infos;
@@ -75,8 +79,9 @@ std::shared_ptr<Chip> ID3ReaderUnit::selectCard(uint8_t idx)
     {
         APDUWrapperGuard guard(this);
         ret = getDefaultReaderCardAdapter()->sendCommand({0x10, idx});
-        EXCEPTION_ASSERT_WITH_LOG(ret.size() == 0, LibLogicalAccessException,
-                                  "Excepted a 0 length response, got something else");
+        EXCEPTION_ASSERT_WITH_LOG(
+            ret.size() == 0, LibLogicalAccessException,
+            "Excepted a 0 length response, got something else");
     }
     return nullptr;
 }
@@ -121,9 +126,10 @@ std::vector<unsigned char> ID3ReaderUnit::APDUWrapperGuard::Adapter::adaptComman
     const std::vector<unsigned char> &command)
 {
     assert(command.size() <= 255);
-//    auto tmp =
-//        ByteVector{0xFF, 0x9F, 0x00, 0x00, static_cast<uint8_t>(command.size())};
-    //tmp.insert(tmp.end(), command.begin(), command.end());
+    //    auto tmp =
+    //        ByteVector{0xFF, 0x9F, 0x00, 0x00,
+    //        static_cast<uint8_t>(command.size())};
+    // tmp.insert(tmp.end(), command.begin(), command.end());
 
     auto tmp = ByteVector{0xFF, 0x9F};
     tmp.insert(tmp.end(), command.begin(), command.end());
