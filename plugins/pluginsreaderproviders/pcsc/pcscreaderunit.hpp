@@ -282,6 +282,8 @@ namespace logicalaccess
          */
         virtual void cardConnected() {}
 
+        virtual void cardInserted() {};
+
         /**
          * Returns the proxy implementation reader unit, or null.
          */
@@ -343,6 +345,23 @@ namespace logicalaccess
          * \param chip The single chip.
          */
         void setSingleChip(std::shared_ptr<Chip> chip);
+
+      private:
+        // Internal helper for waitInsertion
+        using SPtrStringVector = std::vector<std::shared_ptr<std::string>>;
+        using ReaderStateVector = std::vector<SCARD_READERSTATE>;
+
+        /**
+         * Prepare the parameters for the call to SCardGetStatusChange
+         * invoked by waitInsertion()
+         */
+        std::tuple<SPtrStringVector, ReaderStateVector> prepare_poll_parameters();
+
+        /**
+         * Create the proxy reader based on which reader detected a card
+         * during waitInsertion.
+         */
+        void waitInsertion_create_proxy(const std::string &reader_name);
 
       public:
         /**

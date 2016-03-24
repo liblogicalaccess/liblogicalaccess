@@ -67,6 +67,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include "logicalaccess/cardprobe.hpp"
 #include <logicalaccess/utils.hpp>
+#include <pcsclite.h>
 
 #include "readers/acsacr1222llcddisplay.hpp"
 
@@ -80,6 +81,7 @@
 #include "atrparser.hpp"
 #include "../../pluginscards/epass/epass_command.hpp"
 #include "../../pluginscards/epass/epass_readercardadapter.hpp"
+#include "commands/id3resultchecker.hpp"
 
 namespace logicalaccess
 {
@@ -239,190 +241,59 @@ namespace logicalaccess
         {
             LOG(LogLevel::INFOS) << "Waiting card insertion...";
         }
+        teardown_pcsc_connection();
 
-		teardown_pcsc_connection();
-        LONG r = 0;
-        bool usePnp = true;
-        int readers_count = 0;
 
-        std::string reader = getName();
-        std::string connectedReader = "";
-        std::string cardType = "UNKNOWN";
+        SPtrStringVector readers_names;
+        ReaderStateVector readers;
+        std::tie(readers_names, readers) = prepare_poll_parameters();
 
-        if (reader != "")
+        std::string connectedReader;
+        std::string cardType;
+        LONG r;
+        ElapsedTimeCounter time_counter;
+        do
         {
-            if (Settings::getInstance()->SeeWaitInsertionLog)
+            r = SCardGetStatusChange(getPCSCReaderProvider()->getContext(),
+                                     ((maxwait == 0) ? INFINITE : maxwait - time_counter.elapsed()),
+                                     &readers[0], readers.size());
+            if (SCARD_S_SUCCESS == r)
             {
-                LOG(LogLevel::INFOS) << "Use specific reader: " << reader.c_str() << ".";
+                for (size_t i = 0; i < readers.size(); ++i)
+                {
+                    if ((SCARD_STATE_CHANGED & readers[i].dwEventState) != 0)
+                    {
+                        readers[i].dwCurrentState = readers[i].dwEventState;
+                        if ((SCARD_STATE_PRESENT & readers[i].dwEventState) != 0)
+                        {
+                            // The current reader detected a card. Great, let's use it.
+                            atr_ = std::vector<uint8_t>(readers[i].rgbAtr,
+                                                        readers[i].rgbAtr + readers[i].cbAtr);
+                            // Create the proxy now, so the ATR parser operate on the correct
+                            // reader type. -- This help with some reader-specific ATR.
+                            connectedReader = std::string(readers[i].szReader);
+                            waitInsertion_create_proxy(connectedReader);
+                            cardType = ATRParser::guessCardType(atr_, getPCSCType());
+                            LOG(INFOS) << "Guessed card type from atr: " << cardType;
+                            goto end_loop;
+                        }
+                    }
+                }
             }
-            readers_count = 1;
-            usePnp = false;
-        }
-        else
-        {
-            if (Settings::getInstance()->SeeWaitInsertionLog)
+            else if (r != SCARD_E_TIMEOUT)
             {
-                LOG(LogLevel::INFOS) << "Listening on all readers";
-            }
-            readers_count = static_cast<int>(getReaderProvider()->getReaderList().size());
-
-            SCARD_READERSTATE rgReaderStates[1];
-            rgReaderStates[0].szReader = "\\\\?PnP?\\Notification";
-            rgReaderStates[0].dwCurrentState = SCARD_STATE_UNAWARE;
-
-            r = SCardGetStatusChange(getPCSCReaderProvider()->getContext(), 0, rgReaderStates, 1);
-
-            if (rgReaderStates[0].dwEventState & SCARD_STATE_UNKNOWN)
-            {
-                usePnp = false;
                 if (Settings::getInstance()->SeeWaitInsertionLog)
                 {
-                    LOG(LogLevel::INFOS) << "No PnP support.";
+                    LOG(LogLevel::ERRORS) << "Cannot get status change: " << r << ".";
                 }
+                PCSCDataTransport::CheckCardError(static_cast<unsigned int>(r));
+                break;
             }
-        }
-
-        if (readers_count == 0)
-        {
-            THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_NOREADER);
-        }
-
-        char** readers_names = new char*[readers_count];
-
-        for (int i = 0; i < readers_count; ++i)
-        {
-            readers_names[i] = NULL;
-        }
-
-        if (readers_names)
-        {
-            SCARD_READERSTATE* readers = new SCARD_READERSTATE[readers_count + (usePnp ? 1 : 0)];
-
-            if (readers)
-            {
-                memset(readers, 0x00, sizeof(SCARD_READERSTATE) * (readers_count + (usePnp ? 1 : 0)));
-
-                if (reader != "")
-                {
-                    readers_names[0] = strdup(reader.c_str());
-                    readers[0].dwCurrentState = SCARD_STATE_UNAWARE;
-                    readers[0].dwEventState = SCARD_STATE_UNAWARE;
-                    readers[0].szReader = reinterpret_cast<const char*>(readers_names[0]);
-                }
-                else
-                {
-                    for (int i = 0; i < readers_count; ++i)
-                    {
-                        readers_names[i] = strdup(getReaderProvider()->getReaderList().at(i)->getName().c_str());
-                        readers[i].dwCurrentState = SCARD_STATE_UNAWARE;
-                        readers[i].dwEventState = SCARD_STATE_UNAWARE;
-                        readers[i].szReader = reinterpret_cast<const char*>(readers_names[i]);
-                    }
-                }
-                if (usePnp)
-                {
-                    readers[readers_count].dwCurrentState = SCARD_STATE_UNAWARE;
-                    readers[readers_count].dwEventState = SCARD_STATE_UNAWARE;
-                    readers[readers_count].szReader = "\\\\?PnP?\\Notification";
-                    readers_count++;
-                }
-
-                bool loop;
-                ElapsedTimeCounter time_counter;
-                do
-                {
-                    loop = false;
-                    r = SCardGetStatusChange(getPCSCReaderProvider()->getContext(), ((maxwait == 0) ? INFINITE : maxwait), readers, readers_count);
-
-                    if (SCARD_S_SUCCESS == r)
-                    {
-                        if ((maxwait == 0) || time_counter.elapsed() < maxwait)
-                        {
-                            loop = true;
-                        }
-
-                        for (int i = 0; i < readers_count; ++i)
-                        {
-                            if ((SCARD_STATE_CHANGED & readers[i].dwEventState) != 0)
-                            {
-                                readers[i].dwCurrentState = readers[i].dwEventState;
-                                if ((SCARD_STATE_PRESENT & readers[i].dwEventState) != 0)
-                                {
-                                    atr_ = std::vector<uint8_t>(readers[i].rgbAtr,
-                                                                readers[i].rgbAtr + readers[i].cbAtr);
-                                    cardType = ATRParser::guessCardType(atr_, getPCSCType());
-                                    loop = false;
-                                    LOG(INFOS) << "Guessed card type from atr: " << cardType;
-                                    connectedReader = std::string(reinterpret_cast<const char*>(readers[i].szReader));
-
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (r != SCARD_E_TIMEOUT)
-                        {
-                            if (Settings::getInstance()->SeeWaitInsertionLog)
-                            {
-                                LOG(LogLevel::ERRORS) << "Cannot get status change: " << r << ".";
-                            }
-                            PCSCDataTransport::CheckCardError(r);
-                        }
-                    }
-                } while (loop);
-
-                if (usePnp)
-                {
-                    readers_count--;
-                }
-
-                for (int i = 0; i < readers_count; ++i)
-                {
-                    if (readers_names[i])
-                    {
-                        free(readers_names[i]);
-                        readers_names[i] = NULL;
-                    }
-                }
-
-                delete[] readers;
-                readers = NULL;
-            }
-
-            delete[] readers_names;
-            readers_names = NULL;
-        }
+        } while (maxwait == 0 || time_counter.elapsed() < maxwait);
+        end_loop:
 
         if (connectedReader != "")
         {
-            std::shared_ptr<PCSCReaderUnitConfiguration> pcscRUC = getPCSCConfiguration();
-            if (this->getPCSCType() == PCSC_RUT_DEFAULT)
-            {
-                d_proxyReaderUnit = PCSCReaderUnit::createPCSCReaderUnit(connectedReader);
-                if (d_proxyReaderUnit->getPCSCType() == PCSC_RUT_DEFAULT)
-                {
-                    d_proxyReaderUnit.reset();
-                    d_connectedName = connectedReader;
-                }
-                else
-                {
-                    d_proxyReaderUnit->makeProxy(std::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
-                    d_proxyReaderUnit->d_sam_chip = d_sam_chip;
-                    d_proxyReaderUnit->d_sam_readerunit = d_sam_readerunit;
-                }
-            }
-            else
-            {
-                // Already a proxy from serialization maybe, just copy instance information to it.
-                if (d_proxyReaderUnit)
-                {
-                    d_proxyReaderUnit->makeProxy(std::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
-                }
-            }
-
-            std::cout << "ALALALALALAMAMAMA: " << cardType << std::endl;
             d_insertedChip = createChip((d_card_type == "UNKNOWN") ? cardType : d_card_type);
             if (d_proxyReaderUnit)
             {
@@ -430,7 +301,17 @@ namespace logicalaccess
             }
         }
 
-        return (connectedReader != "");
+        if (!connectedReader.empty())
+        {
+            if (d_proxyReaderUnit)
+            {
+                d_proxyReaderUnit->cardInserted();
+            }
+            else
+                cardInserted();
+            return true;
+        }
+        return false;
     }
 
     bool PCSCReaderUnit::waitRemoval(unsigned int maxwait)
@@ -754,9 +635,9 @@ namespace logicalaccess
                 }
             }
         }
-        if (ret && d_proxyReaderUnit)
-            d_proxyReaderUnit->cardConnected();
-        else if (ret)
+        //if (ret && d_proxyReaderUnit)
+        //    d_proxyReaderUnit->cardConnected();
+        if (ret)
             cardConnected();
         return ret;
     }
@@ -1022,7 +903,8 @@ namespace logicalaccess
                 }
                 else if (getPCSCType() == PCSC_RUT_ID3_CL1356)
                 {
-                     commands.reset(new MifareCL1356Commands());
+                    commands.reset(new MifareCL1356Commands());
+                    resultChecker = std::make_shared<ID3ResultChecker>();
                 }
                 else
                 {
@@ -1518,4 +1400,83 @@ namespace logicalaccess
     {
         return std::make_shared<PCSCCardProbe>(this);
     }
+
+    std::tuple<PCSCReaderUnit::SPtrStringVector, PCSCReaderUnit::ReaderStateVector>
+    PCSCReaderUnit::prepare_poll_parameters()
+    {
+        size_t readers_count = 0;
+        if (!getName().empty())
+        {
+            // use dedicated reader
+            if (Settings::getInstance()->SeeWaitInsertionLog)
+            {
+                LOG(LogLevel::INFOS) << "Use specific reader: " << getName() << ".";
+            }
+            readers_count = 1;
+        }
+        else
+        {
+            readers_count = getReaderProvider()->getReaderList().size();
+        }
+
+        EXCEPTION_ASSERT_WITH_LOG(readers_count > 0, CardException,
+                                  EXCEPTION_MSG_NOREADER);
+
+        SPtrStringVector readers_names(readers_count);
+        ReaderStateVector readers(readers_count);
+        bzero(&readers[0], readers.size() * sizeof(SCARD_READERSTATE));
+
+        if (!getName().empty())
+        {
+            readers_names[0] = std::make_shared<std::string>(getName());
+            readers[0].dwCurrentState = SCARD_STATE_UNAWARE;
+            readers[0].dwEventState = SCARD_STATE_UNAWARE;
+            readers[0].szReader = readers_names[0]->c_str();
+        }
+        else
+        {
+            for (size_t i = 0; i < readers_count; ++i)
+            {
+                readers_names[i] = std::make_shared<std::string>(getReaderProvider()
+                                                                     ->getReaderList().at(i)->getName());
+                readers[i].dwCurrentState = SCARD_STATE_UNAWARE;
+                readers[i].dwEventState = SCARD_STATE_UNAWARE;
+                readers[i].szReader = readers_names[i]->c_str();
+            }
+        }
+        return std::make_tuple(readers_names, readers);
+    }
+
+    void PCSCReaderUnit::waitInsertion_create_proxy(
+        const std::string &reader_name)
+    {
+        assert(!reader_name.empty());
+
+        std::shared_ptr<PCSCReaderUnitConfiguration> pcscRUC = getPCSCConfiguration();
+        if (this->getPCSCType() == PCSC_RUT_DEFAULT)
+        {
+            d_proxyReaderUnit = PCSCReaderUnit::createPCSCReaderUnit(reader_name);
+            if (d_proxyReaderUnit->getPCSCType() == PCSC_RUT_DEFAULT)
+            {
+                d_proxyReaderUnit.reset();
+                d_connectedName = reader_name;
+            }
+            else
+            {
+                d_proxyReaderUnit->makeProxy(std::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
+                d_proxyReaderUnit->d_sam_chip = d_sam_chip;
+                d_proxyReaderUnit->d_sam_readerunit = d_sam_readerunit;
+            }
+        }
+        else
+        {
+            // Already a proxy from serialization maybe, just copy instance information to it.
+            if (d_proxyReaderUnit)
+            {
+                d_proxyReaderUnit->makeProxy(std::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
+            }
+        }
+    }
+
+
 }
