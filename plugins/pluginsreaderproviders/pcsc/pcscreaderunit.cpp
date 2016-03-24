@@ -247,14 +247,10 @@ namespace logicalaccess
         SPtrStringVector readers_names;
         ReaderStateVector readers;
         std::tie(readers_names, readers) = prepare_poll_parameters();
-
-        std::string connectedReader;
-        std::string cardType;
-        LONG r;
         ElapsedTimeCounter time_counter;
         do
         {
-            r = SCardGetStatusChange(getPCSCReaderProvider()->getContext(),
+            LONG r = SCardGetStatusChange(getPCSCReaderProvider()->getContext(),
                                      ((maxwait == 0) ? INFINITE : maxwait - time_counter.elapsed()),
                                      &readers[0], readers.size());
             if (SCARD_S_SUCCESS == r)
@@ -267,15 +263,19 @@ namespace logicalaccess
                         if ((SCARD_STATE_PRESENT & readers[i].dwEventState) != 0)
                         {
                             // The current reader detected a card. Great, let's use it.
+
+                            std::string connectedReader;
+                            std::string cardType;
                             atr_ = std::vector<uint8_t>(readers[i].rgbAtr,
                                                         readers[i].rgbAtr + readers[i].cbAtr);
+
                             // Create the proxy now, so the ATR parser operate on the correct
                             // reader type. -- This help with some reader-specific ATR.
                             connectedReader = std::string(readers[i].szReader);
                             waitInsertion_create_proxy(connectedReader);
                             cardType = ATRParser::guessCardType(atr_, getPCSCType());
                             LOG(INFOS) << "Guessed card type from atr: " << cardType;
-                            goto end_loop;
+                            return process_insertion(cardType, maxwait, time_counter);
                         }
                     }
                 }
@@ -290,27 +290,6 @@ namespace logicalaccess
                 break;
             }
         } while (maxwait == 0 || time_counter.elapsed() < maxwait);
-        end_loop:
-
-        if (connectedReader != "")
-        {
-            d_insertedChip = createChip((d_card_type == "UNKNOWN") ? cardType : d_card_type);
-            if (d_proxyReaderUnit)
-            {
-                d_proxyReaderUnit->setSingleChip(d_insertedChip);
-            }
-        }
-
-        if (!connectedReader.empty())
-        {
-            if (d_proxyReaderUnit)
-            {
-                d_proxyReaderUnit->cardInserted();
-            }
-            else
-                cardInserted();
-            return true;
-        }
         return false;
     }
 
@@ -598,7 +577,7 @@ namespace logicalaccess
         if (ret)
         {
             // Unknown T=CL card, we have to send specific reader command to determine the type (A or B ?)
-            if (d_insertedChip->getCardType() == "GENERIC_T_CL")
+            if (d_insertedChip && d_insertedChip->getCardType() == "GENERIC_T_CL")
             {
                 LOG(LogLevel::INFOS) << "Inserted chip is {CT_GENERIC_T_CL}. Looking for type A or B...";
                 if (d_proxyReaderUnit)
@@ -1478,5 +1457,19 @@ namespace logicalaccess
         }
     }
 
+bool PCSCReaderUnit::process_insertion(const std::string &cardType,
+                                       int maxwait,
+                                       const ElapsedTimeCounter &elapsed)
+{
+    if (d_proxyReaderUnit)
+        return d_proxyReaderUnit->process_insertion(cardType, maxwait, elapsed);
+
+    d_insertedChip = createChip((d_card_type == "UNKNOWN") ? cardType : d_card_type);
+    if (d_proxyReaderUnit)
+    {
+        d_proxyReaderUnit->setSingleChip(d_insertedChip);
+    }
+    return true;
+}
 
 }

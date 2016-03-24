@@ -55,11 +55,16 @@ int main(int ac, char **av)
 	auto id3 = std::dynamic_pointer_cast<ID3ReaderUnit>(readerUnit);
 	LLA_ASSERT(id3, "Reader unit is not ID3.");
 
+    id3->setCardType("DESFire");
 	LLA_ASSERT(id3->waitInsertion(10000), "No card inserted");
-	id3->connect();
+    PRINT_TIME("CSN : " << id3->getCardSerialNumber());
+
+    id3->connect();
+/*    PRINT_TIME("CSN : " << id3->getCardSerialNumber());
     auto chip = id3->getSingleChip();
     assert(chip);
 
+    PRINT_TIME("ATR = " << id3->getATR());
     PRINT_TIME("Chip type: " << chip->getCardType() << ". UID: " << chip->getChipIdentifier());
     //id3->unfreeze();
 
@@ -78,11 +83,13 @@ int main(int ac, char **av)
     std::cout << "CSN1: " << id3->getCardSerialNumber() << std::endl;
 	id3->selectCard(0);
     std::cout << "CSN0: " << id3->getCardSerialNumber() << std::endl;
-	id3->selectCard(2);
-    std::cout << "CSN2: " << id3->getCardSerialNumber() << std::endl;
+	//id3->selectCard(2);
+    //std::cout << "CSN2: " << id3->getCardSerialNumber() << std::endl;
 
-    id3->unfreeze();
-    return 0;
+    //id3->unfreeze();
+    id3->waitRemoval(10000);
+    std::cout << "REMOVED OK" << std::endl;
+    return 0;*/
 
 	auto sc = [&](const std::vector<uint8_t> &d) { return id3->getDefaultPCSCReaderCardAdapter()->sendCommand(d); };
 	auto ret = sc({ 0xFF, 0x9F, 0x00, 0x00, 0x01, 0x09});

@@ -32,6 +32,11 @@ class LIBLOGICALACCESS_API ID3ReaderUnit : public PCSCReaderUnit
     std::vector<CL1356PlusUtils::Info> listCards();
 
     /**
+     * Get the ATR for the idx'th card
+     */
+    ByteVector getAtr(int idx);
+
+    /**
      * Select a card by its index in the vector returned
      * by a previous call to listCards().
      *
@@ -43,16 +48,34 @@ class LIBLOGICALACCESS_API ID3ReaderUnit : public PCSCReaderUnit
 
     PCSCReaderUnitType getPCSCType() const override;
 
+    /**
+     * Unfreeze the card tracking.
+     *
+     * This is required because command such as listCard while
+     * pause automatic card tracking.
+     */
     void unfreeze();
 
-  private:
+    virtual bool process_insertion(const std::string &cardType,
+                                   int maxwait,
+                                   const ElapsedTimeCounter &elapsed) override;
+
+    using PCSCReaderUnit::connect;
+    virtual bool connect(PCSCShareMode share_mode) override;
+
+    virtual void disconnect() override;
+
+    void power_card(bool power_on);
+
+
+private:
     /**
-     * Extract the information about 1 card from the data
-     * returned by the list card proprietary APDU.
-     * See CL1356ACommandsReference.pdf
+     * Select the correct card (if needed) based on the forced card type, if any.
+     * If forced card type is not set, this function is a noop.
+     *
+     * Return false on failure. True otherwise.
      */
-    ChipInformation extract_card_info(ByteVector::iterator &itr,
-                                      const ByteVector::iterator &end);
+    bool select_correct_card();
 
   protected:
     std::shared_ptr<CardProbe> createCardProbe() override;

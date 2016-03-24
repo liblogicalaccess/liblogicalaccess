@@ -55,16 +55,12 @@ namespace logicalaccess
         template<typename Buffer>
         static bool allZeroes(const Buffer &buf)
         {
-            bool all_zero = true;
             for (const auto & byte : buf)
             {
                 if (byte)
-                {
-                    all_zero = false;
-                    break;
-                }
+                    return false;
             }
-            return all_zero;
+            return true;
         }
     };
 }

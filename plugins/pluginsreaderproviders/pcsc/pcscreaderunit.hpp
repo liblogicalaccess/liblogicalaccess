@@ -7,6 +7,7 @@
 #ifndef LOGICALACCESS_PCSCREADERUNIT_HPP
 #define LOGICALACCESS_PCSCREADERUNIT_HPP
 
+#include <logicalaccess/utils.hpp>
 #include "pcscreaderunitconfiguration.hpp"
 #include "../iso7816/iso7816readerunit.hpp"
 #include "pcsc_fwd.hpp"
@@ -71,7 +72,7 @@ namespace logicalaccess
          * \return True if a card was inserted, false otherwise. If a card was inserted, the name of the reader on which the insertion was detected is accessible with getReader().
          * \warning If the card is already connected, then the method always fail.
          */
-        virtual bool waitInsertion(unsigned int maxwait) override;
+        virtual bool waitInsertion(unsigned int maxwait) override final;
 
         /**
          * \brief Wait for a card removal.
@@ -86,9 +87,9 @@ namespace logicalaccess
          *
          * If the card handle was already connected, connect() first call disconnect(). If you intend to do a reconnection, call reconnect() instead.
          */
-        virtual bool connect();
+        virtual bool connect() override;
 
-        /**
+         /**
          * \brief Connect to the card.
          * \param reader The reader name. If an empty or invalid reader name is specified, connect will fail.
          * \param share_mode The share mode.
@@ -96,7 +97,7 @@ namespace logicalaccess
          *
          * If the card handle was already connected, connect() first call disconnect(). If you intend to do a reconnection, call reconnect() instead.
          */
-        bool connect(PCSCShareMode share_mode);
+        virtual bool connect(PCSCShareMode share_mode);
 
         /**
          * \brief Reconnect to the card with the currently active share mode on the same reader.
@@ -282,8 +283,6 @@ namespace logicalaccess
          */
         virtual void cardConnected() {}
 
-        virtual void cardInserted() {};
-
         /**
          * Returns the proxy implementation reader unit, or null.
          */
@@ -346,7 +345,7 @@ namespace logicalaccess
          */
         void setSingleChip(std::shared_ptr<Chip> chip);
 
-      private:
+      protected:
         // Internal helper for waitInsertion
         using SPtrStringVector = std::vector<std::shared_ptr<std::string>>;
         using ReaderStateVector = std::vector<SCARD_READERSTATE>;
@@ -362,6 +361,17 @@ namespace logicalaccess
          * during waitInsertion.
          */
         void waitInsertion_create_proxy(const std::string &reader_name);
+
+        /**
+         * Give a chance to concrete reader implementation to do something just
+         * after a insertion has been detected.
+         *
+         * This default implemented MUST be called explicitly if you override this
+         * method.
+         */
+        virtual bool process_insertion(const std::string &cardType,
+                                       int maxwait,
+                                       const ElapsedTimeCounter &elapsed);
 
       public:
         /**

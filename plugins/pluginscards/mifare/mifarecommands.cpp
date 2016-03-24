@@ -6,6 +6,7 @@
 
 #include <cstring>
 #include <logicalaccess/logs.hpp>
+#include <cassert>
 #include "mifarecommands.hpp"
 #include "mifarechip.hpp"
 #include "logicalaccess/myexception.hpp"
@@ -437,6 +438,9 @@ namespace logicalaccess
     bool MifareCommands::readValueBlock(uint8_t blockno, int32_t &value, uint8_t &backup_block)
     {
         auto buffer = readBinary(blockno, 16);
+        EXCEPTION_ASSERT_WITH_LOG(buffer.size() == 16, LibLogicalAccessException,
+                                  "Didn't manage to read 16 bytes of data. Has " +
+                                      std::to_string(buffer.size()) + " instead.");
 
         int32_t value0, value1, value_reverse;
         uint8_t backup0, backup1, backup0_reverse, backup1_reverse;

@@ -107,7 +107,7 @@ int main(int ac, char **av)
     ReaderProviderPtr provider;
     ReaderUnitPtr readerUnit;
     ChipPtr chip;
-    std::tie(provider, readerUnit, chip) = lla_test_init();
+    std::tie(provider, readerUnit, chip) = lla_test_init("Mifare1K");
 
     PRINT_TIME("Chip identifier: " <<
                logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));

@@ -62,9 +62,4 @@ namespace logicalaccess
 
         return PCSCReaderUnit::waitRemoval(maxwait);
     }
-
-    bool OmnikeyReaderUnit::waitInsertion(unsigned int maxwait)
-    {
-        return PCSCReaderUnit::waitInsertion(maxwait);
-    }
 }
