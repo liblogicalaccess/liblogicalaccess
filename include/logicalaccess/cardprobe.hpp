@@ -49,6 +49,14 @@ class LIBLOGICALACCESS_API CardProbe
          */
         virtual bool maybe_mifare_classic() = 0;
 
+        /**
+         * Is random UID enable for a DESFire card.
+         *
+         * @param uid The UID in case random UID is DISABLED. Otherwise
+         * `*uid` wont be set.
+         */
+        virtual bool has_desfire_random_uid(ByteVector *uid) = 0;
+
       protected:
         ReaderUnit *reader_unit_;
 };

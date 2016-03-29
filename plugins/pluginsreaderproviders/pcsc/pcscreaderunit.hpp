@@ -307,6 +307,17 @@ namespace logicalaccess
 
     protected:
 
+        /**
+         * Perform adjustment regarding a Chip.
+         *
+         * For example, if the Chip type is desfire, we check that it
+         * is not in fact a desfire ev1.
+         * Similarly, we check to see if a desfire has random UID enabled or not.
+         *
+         * This function may return a new Chip object, that should be used.
+         */
+        std::shared_ptr<Chip> adjustChip(std::shared_ptr<Chip> c);
+
         virtual std::shared_ptr<ResultChecker> createDefaultResultChecker() const override;
 
         virtual std::shared_ptr<CardProbe> createCardProbe() override;

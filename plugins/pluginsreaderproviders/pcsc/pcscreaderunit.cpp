@@ -484,94 +484,13 @@ namespace logicalaccess
 
                 LOG(LogLevel::INFOS) << "SCardConnect Success !";
                 detect_mifareplus_security_level(d_insertedChip);
-                if (d_insertedChip->getChipIdentifier().size() == 0)
-                {
-                    try
-                    {
-                        if (d_insertedChip->getCardType() == "Prox")
-                        {
-                            if (atr_.size() > 2)
-                            {
-                                d_insertedChip->setChipIdentifier(atr_);
-                            }
-                        }
-                        // Specific behavior for DESFire to check if it is not a DESFire EV1
-                        else if (d_card_type == "UNKNOWN" && d_insertedChip && (d_insertedChip->getCardType() == "DESFire" || d_insertedChip->getCardType() == "SAM_AV2"))
-                        {
-                            if (d_insertedChip->getCardType() == "DESFire")
-                            {
-								std::shared_ptr<DESFireChip> insertedChip = std::dynamic_pointer_cast<DESFireChip>(d_insertedChip);
-                                EXCEPTION_ASSERT_WITH_LOG(insertedChip, LibLogicalAccessException, "Wrong card type: expected DESFire.");
 
-                                try
-                                {
-                                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-                                    DESFireCommands::DESFireCardVersion cardversion;
-                                    insertedChip->getDESFireCommands()->selectApplication(0x00);
-                                    insertedChip->getDESFireCommands()->getVersion(cardversion);
-                                    // Set from the version
-
-                                    // DESFire EV1 and not regular DESFire
-                                    if (cardversion.softwareMjVersion >= 1)
-                                    {
-                                        d_insertedChip = createChip("DESFireEV1");
-                                    }
-                                    // If random UID is enabled, GetVersion will return a full-zero UID.
-                                    // We need to call the classic PCSC GetUID function
-                                    if (BufferHelper::allZeroes(cardversion.uid))
-                                    {
-                                        d_insertedChip->setChipIdentifier(getCardSerialNumber());
-                                        std::dynamic_pointer_cast<DESFireChip>(d_insertedChip)->setHasRealUID(false);
-                                    }
-                                    else
-                                    {
-                                        d_insertedChip->setChipIdentifier(std::vector<unsigned char>(cardversion.uid, cardversion.uid + sizeof(cardversion.uid)));
-                                    }
-									std::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->getCrypto()
-										->setIdentifier(d_insertedChip->getChipIdentifier());
-                                }
-                                catch (std::exception&)
-                                {
-                                    // Doesn't care about bad communication here, stay DESFire.
-                                }
-         /*                       std::vector<uint8_t> uid;
-                                if (createCardProbe()->is_desfire_ev1(&uid))
-                                {
-                                    d_insertedChip = createChip("DESFireEV1");
-                                }
-                                d_insertedChip->setChipIdentifier(uid);
-                                std::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->getCrypto()
-                                    ->setIdentifier(d_insertedChip->getChipIdentifier());*/
-                            }
-                            else if (d_insertedChip->getCardType() == "SAM_AV2")
-                            {
-                                if (std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(d_insertedChip->getCommands())->getSAMTypeFromSAM() == "SAM_AV1")
-                                {
-                                    LOG(LogLevel::INFOS) << "SAM on the reader is AV2 but mode AV1 so we switch to AV1.";
-                                    d_insertedChip = createChip("SAM_AV1");
-                                }
-                            }
-
-                            if (d_proxyReaderUnit)
-                            {
-                                d_proxyReaderUnit->setSingleChip(d_insertedChip);
-                            }
-                        }
-                        else
-                        {
-                            d_insertedChip->setChipIdentifier(getCardSerialNumber());
-                        }
-                    }
-                    catch (LibLogicalAccessException& e)
-                    {
-                        LOG(LogLevel::ERRORS) << "Exception while getting card serial number {" << e.what() << "}";
-                        d_insertedChip->setChipIdentifier(std::vector<unsigned char>());
-                    }
-                }
-
-                if (d_insertedChip->getGenericCardType() == "DESFire")
-                    std::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->getCrypto()->setCryptoContext(std::dynamic_pointer_cast<DESFireProfile>(d_insertedChip->getProfile()), d_insertedChip->getChipIdentifier());
-                ret = true;
+            d_insertedChip = adjustChip(d_insertedChip);
+            if (d_proxyReaderUnit)
+            {
+                d_proxyReaderUnit->setSingleChip(d_insertedChip);
+            }
+            ret = true;
         }
 
         if (ret)
@@ -1472,4 +1391,67 @@ bool PCSCReaderUnit::process_insertion(const std::string &cardType,
     return true;
 }
 
+std::shared_ptr<Chip> PCSCReaderUnit::adjustChip(std::shared_ptr<Chip> c)
+{
+    // DESFire adjustment. Check maybe it's DESFireEV1. Check random uid.
+    // Adjust cryptographic context.
+    if (c->getCardType() == "DESFire" && d_card_type == "UNKNOWN")
+    {
+        if (createCardProbe()->is_desfire_ev1())
+            c = createChip("DESFireEV1");
+    }
+    if (c->getCardType() == "DESFire" || c->getCardType() == "DESFireEV1")
+    {
+        ByteVector uid;
+        if (createCardProbe()->has_desfire_random_uid(&uid))
+        {
+            c->setChipIdentifier(getCardSerialNumber()); // Has random, cannot rely on get_version
+            std::dynamic_pointer_cast<DESFireChip>(c)->setHasRealUID(false);
+        }
+        else
+            c->setChipIdentifier(uid);
+
+        std::dynamic_pointer_cast<DESFireISO7816Commands>(c->getCommands())->getCrypto()
+            ->setIdentifier(c->getChipIdentifier());
+        std::dynamic_pointer_cast<DESFireISO7816Commands>(c->getCommands())->getCrypto()
+            ->setCryptoContext(std::dynamic_pointer_cast<DESFireProfile>(c->getProfile()),
+                               c->getChipIdentifier());
+    }
+
+    if (c->getChipIdentifier().size() == 0)
+    {
+        try
+        {
+            if (c->getCardType() == "Prox")
+            {
+                if (atr_.size() > 2)
+                {
+                    c->setChipIdentifier(atr_);
+                }
+            }
+            // Specific behavior for DESFire to check if it is not a DESFire EV1
+            else if (d_card_type == "UNKNOWN" && c && c->getCardType() == "SAM_AV2")
+            {
+                if (c->getCardType() == "SAM_AV2")
+                {
+                    if (std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(c->getCommands())->getSAMTypeFromSAM() == "SAM_AV1")
+                    {
+                        LOG(LogLevel::INFOS) << "SAM on the reader is AV2 but mode AV1 so we switch to AV1.";
+                        c = createChip("SAM_AV1");
+                    }
+                }
+            }
+            else
+            {
+                c->setChipIdentifier(getCardSerialNumber());
+            }
+        }
+        catch (LibLogicalAccessException& e)
+        {
+            LOG(LogLevel::ERRORS) << "Exception while getting card serial number {" << e.what() << "}";
+            c->setChipIdentifier(ByteVector());
+        }
+    }
+   return c;
+}
 }

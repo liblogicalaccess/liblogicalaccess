@@ -16,6 +16,8 @@ class LIBLOGICALACCESS_API PCSCCardProbe : public CardProbe
 
     virtual bool maybe_mifare_classic() override;
 
+    virtual bool has_desfire_random_uid(ByteVector *uid) override;
+
   protected:
     void reset();
 };

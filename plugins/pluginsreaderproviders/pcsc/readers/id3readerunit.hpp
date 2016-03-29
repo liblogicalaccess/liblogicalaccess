@@ -36,6 +36,8 @@ class LIBLOGICALACCESS_API ID3ReaderUnit : public PCSCReaderUnit
      */
     ByteVector getAtr(int idx);
 
+    virtual std::vector<std::shared_ptr<Chip>> getChipList() override;
+
     /**
      * Select a card by its index in the vector returned
      * by a previous call to listCards().
@@ -56,8 +58,7 @@ class LIBLOGICALACCESS_API ID3ReaderUnit : public PCSCReaderUnit
      */
     void unfreeze();
 
-    virtual bool process_insertion(const std::string &cardType,
-                                   int maxwait,
+    virtual bool process_insertion(const std::string &cardType, int maxwait,
                                    const ElapsedTimeCounter &elapsed) override;
 
     using PCSCReaderUnit::connect;
@@ -68,7 +69,7 @@ class LIBLOGICALACCESS_API ID3ReaderUnit : public PCSCReaderUnit
     void power_card(bool power_on);
 
 
-private:
+  private:
     /**
      * Select the correct card (if needed) based on the forced card type, if any.
      * If forced card type is not set, this function is a noop.

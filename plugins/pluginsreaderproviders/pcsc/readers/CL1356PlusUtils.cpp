@@ -1,6 +1,7 @@
 #include <logicalaccess/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <cassert>
+#include <iostream>
 #include "CL1356PlusUtils.hpp"
 
 using namespace logicalaccess;
@@ -32,6 +33,7 @@ CL1356PlusUtils::Info CL1356PlusUtils::parse_get_card_info(const ByteVector &in)
     Info info;
     if (*itr != 0x01)
     {
+        std::cout << "itr = " << (*itr) << std::endl;
         assert(0);
     }
     ++itr; // skip card type

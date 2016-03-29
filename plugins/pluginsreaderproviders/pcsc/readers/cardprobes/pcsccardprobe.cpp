@@ -84,6 +84,7 @@ bool PCSCCardProbe::is_desfire_ev1(std::vector<uint8_t> *uid)
         DESFireCommands::DESFireCardVersion cardversion;
         auto desfire_command =
             std::dynamic_pointer_cast<DESFireCommands>(chip->getCommands());
+        assert(desfire_command);
         desfire_command->selectApplication(0x00);
         desfire_command->getVersion(cardversion);
 
@@ -115,5 +116,32 @@ void PCSCCardProbe::reset()
         THROW_EXCEPTION_WITH_LOG(
             LibLogicalAccessException,
             "Card probing failed because reseting the PCSC connection failed.");
+    }
+}
+
+bool PCSCCardProbe::has_desfire_random_uid(ByteVector *uid)
+{
+    try
+    {
+        DESFireCommands::DESFireCardVersion cardversion;
+        auto chip = reader_unit_->createChip("DESFireEV1");
+        auto desfire_command =
+            std::dynamic_pointer_cast<DESFireCommands>(chip->getCommands());
+        assert(desfire_command);
+
+        desfire_command->selectApplication(0x00);
+        desfire_command->getVersion(cardversion);
+
+        if (BufferHelper::allZeroes(cardversion.uid))
+        {
+            return true;
+        }
+        if (uid)
+            *uid = ByteVector(std::begin(cardversion.uid), std::end(cardversion.uid));
+        return false;
+    }
+    catch (const std::exception &)
+    {
+        return false;
     }
 }
