@@ -135,7 +135,7 @@ void ID3ReaderUnit::disconnect()
 void ID3ReaderUnit::power_card(bool power_on)
 {
     APDUWrapperGuard guard(this);
-    getDefaultReaderCardAdapter()->sendCommand({0x13, power_on, 0x00});
+    getDefaultReaderCardAdapter()->sendCommand({0x13, static_cast<uint8_t>(power_on), 0x00});
 }
 
 bool ID3ReaderUnit::connect(PCSCShareMode share_mode)

@@ -67,7 +67,6 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include "logicalaccess/cardprobe.hpp"
 #include <logicalaccess/utils.hpp>
-#include <pcsclite.h>
 
 #include "readers/acsacr1222llcddisplay.hpp"
 
@@ -82,6 +81,8 @@
 #include "../../pluginscards/epass/epass_command.hpp"
 #include "../../pluginscards/epass/epass_readercardadapter.hpp"
 #include "commands/id3resultchecker.hpp"
+
+#include <cstring>
 
 namespace logicalaccess
 {
@@ -1320,7 +1321,7 @@ namespace logicalaccess
 
         SPtrStringVector readers_names(readers_count);
         ReaderStateVector readers(readers_count);
-        bzero(&readers[0], readers.size() * sizeof(SCARD_READERSTATE));
+        std::memset(&readers[0], 0, readers.size() * sizeof(SCARD_READERSTATE));
 
         if (!getName().empty())
         {

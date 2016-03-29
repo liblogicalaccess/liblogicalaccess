@@ -27,6 +27,9 @@ class CL1356PlusUtils
 
         struct Info
         {
+                /**
+                 * The values match those returned by GetCardInfo (reader cmd)
+                 */
                 enum class State : uint8_t
                 {
                         ABSENT = 0,
@@ -37,7 +40,7 @@ class CL1356PlusUtils
                         PROTOCOL = 5
                 };
 
-                enum State state_;
+                State state_;
 
                 int pcd_to_picc_bit_rate_;
                 int picc_to_pcd_bit_rate_;
