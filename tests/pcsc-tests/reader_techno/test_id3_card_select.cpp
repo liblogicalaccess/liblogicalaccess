@@ -45,7 +45,7 @@ int main(int ac, char **av)
 		PRINT_TIME("Available reader: " << r->getConnectedName());
 	}
 
-	readerUnit = std::dynamic_pointer_cast<PCSCReaderUnit>(readerConfig->getReaderProvider()->getReaderList().front());
+	readerUnit = std::dynamic_pointer_cast<PCSCReaderUnit>(readerConfig->getReaderProvider()->getReaderList()[0]);
 	LLA_ASSERT(readerUnit, "No PCSC reader unit.");
 	LLA_ASSERT(readerUnit->connectToReader(), "Cannot connect to reader");
 
@@ -55,56 +55,17 @@ int main(int ac, char **av)
 	auto id3 = std::dynamic_pointer_cast<ID3ReaderUnit>(readerUnit);
 	LLA_ASSERT(id3, "Reader unit is not ID3.");
 
-    id3->setCardType("DESFire");
+    id3->connectToReader();
 	LLA_ASSERT(id3->waitInsertion(10000), "No card inserted");
+    id3->connect();
     PRINT_TIME("CSN : " << id3->getCardSerialNumber());
 
-    id3->connect();
-/*    PRINT_TIME("CSN : " << id3->getCardSerialNumber());
-    auto chip = id3->getSingleChip();
-    assert(chip);
+    for (auto c : id3->getChipList())
+    {
+        std::cout << "Chip type: " << c->getCardType() << ", identifier: "
+            << c->getChipIdentifier() << std::endl;
+    }
+    id3->disconnect();
 
-    PRINT_TIME("ATR = " << id3->getATR());
-    PRINT_TIME("Chip type: " << chip->getCardType() << ". UID: " << chip->getChipIdentifier());
-    //id3->unfreeze();
-
-    //id3->waitRemoval(10000);
-    //return 0;
-
-	for (auto &chip_info : id3->listCards())
-	{
-        PRINT_TIME("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        PRINT_TIME("Card UID: " << chip_info.uid_);
-        PRINT_TIME("Card ATR: " << chip_info.atr_);
-        PRINT_TIME("Card (guessed) Type: " << chip_info.guessed_type_);
-	}
-
-	id3->selectCard(1);
-    std::cout << "CSN1: " << id3->getCardSerialNumber() << std::endl;
-	id3->selectCard(0);
-    std::cout << "CSN0: " << id3->getCardSerialNumber() << std::endl;
-	//id3->selectCard(2);
-    //std::cout << "CSN2: " << id3->getCardSerialNumber() << std::endl;
-
-    //id3->unfreeze();
-    id3->waitRemoval(10000);
-    std::cout << "REMOVED OK" << std::endl;
-    return 0;*/
-
-	auto sc = [&](const std::vector<uint8_t> &d) { return id3->getDefaultPCSCReaderCardAdapter()->sendCommand(d); };
-	auto ret = sc({ 0xFF, 0x9F, 0x00, 0x00, 0x01, 0x09});
-	std::cout << "Ret: " << ret << std::endl;
-
-	ret = sc({ 0xFF, 0x9F, 0x00, 0x00, 0x02, 0x0A, 0x00 });
-	std::cout << "Ret: " << ret << std::endl;
-
-	ret = sc({ 0xFF, 0xCA, 0x00, 0x00, 0x00 });
-	std::cout << "Ret: " << ret << std::endl;
-
-	ret = sc({ 0xFF, 0x9F, 0x00, 0x00, 0x02, 0x0A, 0x01 });
-	std::cout << "Ret: " << ret << std::endl;
-
-	ret = sc({ 0xFF, 0xCA, 0x00, 0x00, 0x00 });
-	std::cout << "Ret: " << ret << std::endl;
 	return 0;
 }

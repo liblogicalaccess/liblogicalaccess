@@ -7,7 +7,7 @@
 #include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
 #include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
-
+#include "pluginscards/desfire/desfireev1chip.hpp"
 #include "pluginsreaderproviders/iso7816/commands/desfireev1iso7816commands.hpp"
 #include "pluginscards/desfire/desfirecommands.hpp"
 
@@ -43,6 +43,10 @@ int main(int ac, char **av)
     LLA_ASSERT(chip->getCardType() == "DESFireEV1",
                "Chip is not an DESFireEV1, but is " + chip->getCardType() +
                " instead.");
+
+    std::shared_ptr<DESFireEV1Chip> desfirechip = std::dynamic_pointer_cast<DESFireEV1Chip>(chip);
+    assert(desfirechip);
+    PRINT_TIME("Has Real UID: " << desfirechip->hasRealUID());
 
     auto location_root_node = chip->getRootLocationNode();
 
@@ -117,6 +121,9 @@ int main(int ac, char **av)
     if (!rformat || rformat->getUid() != 1000 || rformat->getFacilityCode() != 67)
     THROW_EXCEPTION_WITH_LOG(std::runtime_error, "Bad format");
     LLA_SUBTEST_PASSED("ReadFormat");
+
+    PRINT_TIME("Has Real UID: " << desfirechip->hasRealUID());
+    PRINT_TIME("Chip UID" << chip->getChipIdentifier());
 
     pcsc_test_shutdown(readerUnit);
 

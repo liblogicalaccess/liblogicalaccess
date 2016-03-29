@@ -8,16 +8,37 @@
 
 namespace logicalaccess
 {
-/**
- * Contains a few information about a card.
- *
- * This is used by the ID3ReaderUnit object.
- */
-struct LIBLOGICALACCESS_API ChipInformation
-{
-    ByteVector identifier_;
-};
 
+/**
+ * Implementation class for the CL1356+ card reader from ID3.
+ *
+ * This reader supports handpicking the card to work with. Its
+ * the first reader in LLA whose `getChipList()` may actually
+ * returns more than one chip.
+ *
+ * How to use ?
+ *
+ * If you do not plan to put multiple cards on the reader, then the
+ * API is similar to other reader, and everything should work
+ * as expected.
+ *
+ * If you plan to put multiple card on the reader, and then pick
+ * one to work with, read below:
+ *
+ *    WaitInsertion() will wait for any card before returning, unless
+ *    a card type has been forced: in that case it will wait for a card
+ *    of the matching type.
+ *
+ *    Connect() will connect to the first card, unless a card type has been
+ *    forced, in which case it will attempt to connect to a card matching
+ *    the type.
+ *
+ *    getChipList() returns a list of Chip object. Theses are the available
+ *    chip that have been detected by the reader. HOWEVER THE CHIP OBJECTS
+ *    ARE NOT USABLE AS IS. It is required to call selectChip(idx) before,
+ *    otherwise the reader will operate against the wrong card.
+ *
+ */
 class LIBLOGICALACCESS_API ID3ReaderUnit : public PCSCReaderUnit
 {
   public:
@@ -27,36 +48,20 @@ class LIBLOGICALACCESS_API ID3ReaderUnit : public PCSCReaderUnit
     ID3ReaderUnit(const std::string &name);
 
     /**
-     * Returns the list of cards that are available in the field.
+     * @warning Calling getChipList() is a disruptive operation. It will
+     * power ON/OFF the various available card to guess their type, etc.
      */
-    std::vector<CL1356PlusUtils::Info> listCards();
-
-    /**
-     * Get the ATR for the idx'th card
-     */
-    ByteVector getAtr(int idx);
-
     virtual std::vector<std::shared_ptr<Chip>> getChipList() override;
 
     /**
      * Select a card by its index in the vector returned
-     * by a previous call to listCards().
+     * by a previous call to getChipList().
      *
      * Indexing starts at 0.
      */
     std::shared_ptr<Chip> selectCard(uint8_t idx);
 
-    void toggleCardOperation(bool e);
-
-    PCSCReaderUnitType getPCSCType() const override;
-
-    /**
-     * Unfreeze the card tracking.
-     *
-     * This is required because command such as listCard while
-     * pause automatic card tracking.
-     */
-    void unfreeze();
+    virtual PCSCReaderUnitType getPCSCType() const override;
 
     virtual bool process_insertion(const std::string &cardType, int maxwait,
                                    const ElapsedTimeCounter &elapsed) override;
@@ -66,10 +71,9 @@ class LIBLOGICALACCESS_API ID3ReaderUnit : public PCSCReaderUnit
 
     virtual void disconnect() override;
 
-    void power_card(bool power_on);
+  protected:
+    std::shared_ptr<CardProbe> createCardProbe() override;
 
-
-  private:
     /**
      * Select the correct card (if needed) based on the forced card type, if any.
      * If forced card type is not set, this function is a noop.
@@ -78,8 +82,32 @@ class LIBLOGICALACCESS_API ID3ReaderUnit : public PCSCReaderUnit
      */
     bool select_correct_card();
 
-  protected:
-    std::shared_ptr<CardProbe> createCardProbe() override;
+    /**
+     * Power ON or OFF the currently selected card.
+     */
+    void power_card(bool power_on);
+
+    /**
+     * Get the ATR for the idx'th card
+     */
+    ByteVector getAtr(int idx);
+
+    /**
+     * Returns a list of cards information for cards
+     * that are available in the field.
+     *
+     * The public method equivalent is getChipList() that returns
+     * a list of Chip object instead.
+     */
+    std::vector<CL1356PlusUtils::Info> listCards();
+
+    /**
+     * Unfreeze the card tracking.
+     *
+     * This is required because command such as listCard while
+     * pause automatic card tracking.
+     */
+    void unfreeze();
 
     /**
      * A RAII object that setup an adapter

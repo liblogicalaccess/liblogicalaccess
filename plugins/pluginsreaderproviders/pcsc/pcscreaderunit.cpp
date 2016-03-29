@@ -533,8 +533,6 @@ namespace logicalaccess
                 }
             }
         }
-        //if (ret && d_proxyReaderUnit)
-        //    d_proxyReaderUnit->cardConnected();
         if (ret)
             cardConnected();
         return ret;
@@ -1429,7 +1427,6 @@ std::shared_ptr<Chip> PCSCReaderUnit::adjustChip(std::shared_ptr<Chip> c)
                     c->setChipIdentifier(atr_);
                 }
             }
-            // Specific behavior for DESFire to check if it is not a DESFire EV1
             else if (d_card_type == "UNKNOWN" && c && c->getCardType() == "SAM_AV2")
             {
                 if (c->getCardType() == "SAM_AV2")

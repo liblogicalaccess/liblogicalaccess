@@ -55,15 +55,6 @@ std::vector<CL1356PlusUtils::Info> ID3ReaderUnit::listCards()
     return infos;
 }
 
-void ID3ReaderUnit::toggleCardOperation(bool e)
-{
-    APDUWrapperGuard guard(this);
-    if (e)
-        getDefaultReaderCardAdapter()->sendCommand({0x01});
-    else
-        getDefaultReaderCardAdapter()->sendCommand({0x02});
-}
-
 std::shared_ptr<Chip> ID3ReaderUnit::selectCard(uint8_t idx)
 {
     ByteVector ret;
@@ -113,7 +104,7 @@ bool ID3ReaderUnit::process_insertion(const std::string &cardType, int maxwait,
 
         // Now that we are hopefully connected to something, we try to find
         // the card we meant to use.
-        while (etc.elapsed() < maxwait)
+        while (etc.elapsed() < static_cast<unsigned int>(maxwait))
         {
             if (select_correct_card())
                 return true;
