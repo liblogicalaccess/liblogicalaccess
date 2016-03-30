@@ -35,7 +35,7 @@ int main(int ac, char **av)
     ReaderProviderPtr provider;
     ReaderUnitPtr readerUnit;
     ChipPtr chip;
-    std::tie(provider, readerUnit, chip) = lla_test_init();
+    std::tie(provider, readerUnit, chip) = lla_test_init("DESFireEV1");
 
     PRINT_TIME("CHip identifier: " <<
                logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));

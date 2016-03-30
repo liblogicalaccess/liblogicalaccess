@@ -137,7 +137,8 @@ bool PCSCCardProbe::has_desfire_random_uid(ByteVector *uid)
             return true;
         }
         if (uid)
-            *uid = ByteVector(std::begin(cardversion.uid), std::end(cardversion.uid));
+            *uid =
+                ByteVector(std::begin(cardversion.uid), std::end(cardversion.uid));
         return false;
     }
     catch (const std::exception &)
