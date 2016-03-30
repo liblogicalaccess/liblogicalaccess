@@ -156,15 +156,6 @@ namespace logicalaccess
             if (!kdnode.empty())
             {
                 d_key_diversification->unSerialize(kdnode);
-
-                std::shared_ptr<ComputerMemoryKeyStorage> cmks = std::dynamic_pointer_cast<ComputerMemoryKeyStorage>(d_key_diversification);
-                if (cmks)
-                {
-                    if (cmks->getRandom())
-                    {
-                        fromString(AccessInfo::generateSimpleKey(getLength()));
-                    }
-                }
             }
         }
 
