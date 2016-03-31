@@ -64,6 +64,7 @@ std::shared_ptr<Chip> ID3ReaderUnit::selectCard(uint8_t idx)
         EXCEPTION_ASSERT_WITH_LOG(
             ret.size() == 0, LibLogicalAccessException,
             "Excepted a 0 length response, got something else");
+        power_card(true);
     }
     return nullptr;
 }
@@ -195,7 +196,20 @@ std::vector<std::shared_ptr<Chip>> ID3ReaderUnit::getChipList()
         l.push_back(chip);
         idx++;
     }
+    chips_ = l;
     return l;
+}
+
+std::shared_ptr<Chip> ID3ReaderUnit::selectCard(std::shared_ptr<Chip> c)
+{
+    auto itr = std::find(chips_.begin(), chips_.end(), c);
+    if (itr != chips_.end())
+    {
+        auto idx = std::distance(chips_.begin(), itr);
+        selectCard(idx);
+        return c;
+    }
+    return nullptr;
 }
 
 // Below is code for APDU wrapping.

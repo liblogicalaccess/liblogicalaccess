@@ -64,6 +64,8 @@ int main(int ac, char **av)
     {
         std::cout << "Chip type: " << c->getCardType() << ", identifier: "
             << c->getChipIdentifier() << std::endl;
+        id3->selectCard(c);
+        std::cout << "FROM READER: " << id3->getCardSerialNumber() << std::endl;
     }
     id3->disconnect();
 

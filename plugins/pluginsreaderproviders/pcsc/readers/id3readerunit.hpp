@@ -54,12 +54,12 @@ class LIBLOGICALACCESS_API ID3ReaderUnit : public PCSCReaderUnit
     virtual std::vector<std::shared_ptr<Chip>> getChipList() override;
 
     /**
-     * Select a card by its index in the vector returned
-     * by a previous call to getChipList().
+     * High level chip selection.
      *
-     * Indexing starts at 0.
+     * The chip object must be part of the list returned by
+     * getChipList().
      */
-    std::shared_ptr<Chip> selectCard(uint8_t idx);
+    std::shared_ptr<Chip> selectCard(std::shared_ptr<Chip>);
 
     virtual PCSCReaderUnitType getPCSCType() const override;
 
@@ -73,6 +73,13 @@ class LIBLOGICALACCESS_API ID3ReaderUnit : public PCSCReaderUnit
 
   protected:
     std::shared_ptr<CardProbe> createCardProbe() override;
+
+    /**
+     * Select a card by its index.
+     *
+     * Indexing starts at 0.
+     */
+    std::shared_ptr<Chip> selectCard(uint8_t idx);
 
     /**
      * Select the correct card (if needed) based on the forced card type, if any.
@@ -108,6 +115,14 @@ class LIBLOGICALACCESS_API ID3ReaderUnit : public PCSCReaderUnit
      * pause automatic card tracking.
      */
     void unfreeze();
+
+    /**
+     * Cache the list of chips when getChipList() is called.
+     *
+     * This allows to offers a selectChip(Chip) call, in addition
+     * to the selectChip(n)
+     */
+    std::vector<std::shared_ptr<Chip>> chips_;
 
     /**
      * A RAII object that setup an adapter
