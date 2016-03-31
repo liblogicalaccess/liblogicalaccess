@@ -10,7 +10,6 @@
 #include "logicalaccess/cards/computermemorykeystorage.hpp"
 #include "logicalaccess/cards/readermemorykeystorage.hpp"
 #include "logicalaccess/cards/samkeystorage.hpp"
-#include <boost/serialization/map.hpp>
 
 namespace logicalaccess
 {
