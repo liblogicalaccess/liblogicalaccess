@@ -10,6 +10,7 @@
 
 #include "pluginscards/mifare/mifarecommands.hpp"
 #include "pluginscards/mifare/mifareprofile.hpp"
+#include "pluginsreaderproviders/pcsc/readers/cardprobes/cl1356cardprobe.hpp"
 
 #include "lla-tests/macros.hpp"
 #include "lla-tests/utils.hpp"
@@ -42,8 +43,23 @@ int main(int ac, char **av)
     ChipPtr chip;
     std::tie(provider, readerUnit, chip) = lla_test_init();
 
-    PRINT_TIME("CHip identifier: " <<
-               logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
+    PRINT_TIME("Chip identifier: " <<
+		logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
+
+	/*
+	{
+		logicalaccess::CL1356CardProbe probe(readerUnit.get());
+		if (probe.maybe_mifare_classic())
+		{
+			std::cout << "FOUND DESFIREEV1" << std::endl;
+		}
+		else
+		{
+			std::cout << "BLALLALALALALAL wrqrqwrqw" << std::endl;
+		}
+		return 0;
+		std::cout << "GUESSED TYPE: " << probe.guessCardType() << std::endl;
+	} */
 
     LLA_ASSERT(chip->getCardType() == "Mifare1K",
                "Chip is not a Mifare1K, but is " + chip->getCardType() +

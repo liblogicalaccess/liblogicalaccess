@@ -65,6 +65,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+#include "logicalaccess/cardprobe.hpp"
 #include <logicalaccess/utils.hpp>
 
 #include "readers/acsacr1222llcddisplay.hpp"
@@ -74,9 +75,14 @@
 #include "pcsc_ctl_datatransport.hpp"
 #include "commands/mifareplus_acsacr1222l_sl1.hpp"
 #include "commands/mifareplus_pcsc_sl3.hpp"
+#include "commands/mifare_cl1356_commands.hpp"
+#include "readers/cardprobes/pcsccardprobe.hpp"
 #include "atrparser.hpp"
 #include "../../pluginscards/epass/epass_command.hpp"
 #include "../../pluginscards/epass/epass_readercardadapter.hpp"
+#include "commands/id3resultchecker.hpp"
+
+#include <cstring>
 
 namespace logicalaccess
 {
@@ -236,197 +242,56 @@ namespace logicalaccess
         {
             LOG(LogLevel::INFOS) << "Waiting card insertion...";
         }
+        teardown_pcsc_connection();
 
-		teardown_pcsc_connection();
-        LONG r = 0;
-        bool usePnp = true;
-        int readers_count = 0;
 
-        std::string reader = getName();
-        std::string connectedReader = "";
-        std::string cardType = "UNKNOWN";
-
-        if (reader != "")
+        SPtrStringVector readers_names;
+        ReaderStateVector readers;
+        std::tie(readers_names, readers) = prepare_poll_parameters();
+        ElapsedTimeCounter time_counter;
+        do
         {
-            if (Settings::getInstance()->SeeWaitInsertionLog)
+            LONG r = SCardGetStatusChange(getPCSCReaderProvider()->getContext(),
+                                     ((maxwait == 0) ? INFINITE : maxwait - time_counter.elapsed()),
+                                     &readers[0], readers.size());
+            if (SCARD_S_SUCCESS == r)
             {
-                LOG(LogLevel::INFOS) << "Use specific reader: " << reader.c_str() << ".";
+                for (size_t i = 0; i < readers.size(); ++i)
+                {
+                    if ((SCARD_STATE_CHANGED & readers[i].dwEventState) != 0)
+                    {
+                        readers[i].dwCurrentState = readers[i].dwEventState;
+                        if ((SCARD_STATE_PRESENT & readers[i].dwEventState) != 0)
+                        {
+                            // The current reader detected a card. Great, let's use it.
+
+                            std::string connectedReader;
+                            std::string cardType;
+                            atr_ = std::vector<uint8_t>(readers[i].rgbAtr,
+                                                        readers[i].rgbAtr + readers[i].cbAtr);
+
+                            // Create the proxy now, so the ATR parser operate on the correct
+                            // reader type. -- This help with some reader-specific ATR.
+                            connectedReader = std::string(readers[i].szReader);
+                            waitInsertion_create_proxy(connectedReader);
+                            cardType = ATRParser::guessCardType(atr_, getPCSCType());
+                            LOG(INFOS) << "Guessed card type from atr: " << cardType;
+                            return process_insertion(cardType, maxwait, time_counter);
+                        }
+                    }
+                }
             }
-            readers_count = 1;
-            usePnp = false;
-        }
-        else
-        {
-            if (Settings::getInstance()->SeeWaitInsertionLog)
+            else if (r != SCARD_E_TIMEOUT)
             {
-                LOG(LogLevel::INFOS) << "Listening on all readers";
-            }
-            readers_count = static_cast<int>(getReaderProvider()->getReaderList().size());
-
-            SCARD_READERSTATE rgReaderStates[1];
-            rgReaderStates[0].szReader = "\\\\?PnP?\\Notification";
-            rgReaderStates[0].dwCurrentState = SCARD_STATE_UNAWARE;
-
-            r = SCardGetStatusChange(getPCSCReaderProvider()->getContext(), 0, rgReaderStates, 1);
-
-            if (rgReaderStates[0].dwEventState & SCARD_STATE_UNKNOWN)
-            {
-                usePnp = false;
                 if (Settings::getInstance()->SeeWaitInsertionLog)
                 {
-                    LOG(LogLevel::INFOS) << "No PnP support.";
+                    LOG(LogLevel::ERRORS) << "Cannot get status change: " << r << ".";
                 }
+                PCSCDataTransport::CheckCardError(static_cast<unsigned int>(r));
+                break;
             }
-        }
-
-        if (readers_count == 0)
-        {
-            THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_NOREADER);
-        }
-
-        char** readers_names = new char*[readers_count];
-
-        for (int i = 0; i < readers_count; ++i)
-        {
-            readers_names[i] = NULL;
-        }
-
-        if (readers_names)
-        {
-            SCARD_READERSTATE* readers = new SCARD_READERSTATE[readers_count + (usePnp ? 1 : 0)];
-
-            if (readers)
-            {
-                memset(readers, 0x00, sizeof(SCARD_READERSTATE) * (readers_count + (usePnp ? 1 : 0)));
-
-                if (reader != "")
-                {
-                    readers_names[0] = strdup(reader.c_str());
-                    readers[0].dwCurrentState = SCARD_STATE_UNAWARE;
-                    readers[0].dwEventState = SCARD_STATE_UNAWARE;
-                    readers[0].szReader = reinterpret_cast<const char*>(readers_names[0]);
-                }
-                else
-                {
-                    for (int i = 0; i < readers_count; ++i)
-                    {
-                        readers_names[i] = strdup(getReaderProvider()->getReaderList().at(i)->getName().c_str());
-                        readers[i].dwCurrentState = SCARD_STATE_UNAWARE;
-                        readers[i].dwEventState = SCARD_STATE_UNAWARE;
-                        readers[i].szReader = reinterpret_cast<const char*>(readers_names[i]);
-                    }
-                }
-                if (usePnp)
-                {
-                    readers[readers_count].dwCurrentState = SCARD_STATE_UNAWARE;
-                    readers[readers_count].dwEventState = SCARD_STATE_UNAWARE;
-                    readers[readers_count].szReader = "\\\\?PnP?\\Notification";
-                    readers_count++;
-                }
-
-                bool loop;
-                ElapsedTimeCounter time_counter;
-                do
-                {
-                    loop = false;
-                    r = SCardGetStatusChange(getPCSCReaderProvider()->getContext(), ((maxwait == 0) ? INFINITE : maxwait), readers, readers_count);
-
-                    if (SCARD_S_SUCCESS == r)
-                    {
-                        if ((maxwait == 0) || time_counter.elapsed() < maxwait)
-                        {
-                            loop = true;
-                        }
-
-                        for (int i = 0; i < readers_count; ++i)
-                        {
-                            if ((SCARD_STATE_CHANGED & readers[i].dwEventState) != 0)
-                            {
-                                readers[i].dwCurrentState = readers[i].dwEventState;
-                                if ((SCARD_STATE_PRESENT & readers[i].dwEventState) != 0)
-                                {
-                                    atr_ = std::vector<uint8_t>(readers[i].rgbAtr,
-                                                                readers[i].rgbAtr + readers[i].cbAtr);
-                                    cardType = ATRParser::guessCardType(atr_, getPCSCType());
-                                    loop = false;
-                                    LOG(INFOS) << "Guessed card type from atr: " << cardType;
-                                    connectedReader = std::string(reinterpret_cast<const char*>(readers[i].szReader));
-
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (r != SCARD_E_TIMEOUT)
-                        {
-                            if (Settings::getInstance()->SeeWaitInsertionLog)
-                            {
-                                LOG(LogLevel::ERRORS) << "Cannot get status change: " << r << ".";
-                            }
-                            PCSCDataTransport::CheckCardError(r);
-                        }
-                    }
-                } while (loop);
-
-                if (usePnp)
-                {
-                    readers_count--;
-                }
-
-                for (int i = 0; i < readers_count; ++i)
-                {
-                    if (readers_names[i])
-                    {
-                        free(readers_names[i]);
-                        readers_names[i] = NULL;
-                    }
-                }
-
-                delete[] readers;
-                readers = NULL;
-            }
-
-            delete[] readers_names;
-            readers_names = NULL;
-        }
-
-        if (connectedReader != "")
-        {
-            std::shared_ptr<PCSCReaderUnitConfiguration> pcscRUC = getPCSCConfiguration();
-            if (this->getPCSCType() == PCSC_RUT_DEFAULT)
-            {
-                d_proxyReaderUnit = PCSCReaderUnit::createPCSCReaderUnit(connectedReader);
-                if (d_proxyReaderUnit->getPCSCType() == PCSC_RUT_DEFAULT)
-                {
-                    d_proxyReaderUnit.reset();
-                    d_connectedName = connectedReader;
-                }
-                else
-                {
-                    d_proxyReaderUnit->makeProxy(std::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
-                    d_proxyReaderUnit->d_sam_chip = d_sam_chip;
-                    d_proxyReaderUnit->d_sam_readerunit = d_sam_readerunit;
-                }
-            }
-            else
-            {
-                // Already a proxy from serialization maybe, just copy instance information to it.
-                if (d_proxyReaderUnit)
-                {
-                    d_proxyReaderUnit->makeProxy(std::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
-                }
-            }
-
-            d_insertedChip = createChip((d_card_type == "UNKNOWN") ? cardType : d_card_type);
-            if (d_proxyReaderUnit)
-            {
-                d_proxyReaderUnit->setSingleChip(d_insertedChip);
-            }
-        }
-
-        return (connectedReader != "");
+        } while (maxwait == 0 || time_counter.elapsed() < maxwait);
+        return false;
     }
 
     bool PCSCReaderUnit::waitRemoval(unsigned int maxwait)
@@ -598,18 +463,12 @@ namespace logicalaccess
 
     bool PCSCReaderUnit::connect(PCSCShareMode share_mode)
     {
-        LOG(LogLevel::INFOS) << "Connecting to the chip... Shared mode {" << share_mode << "}";
+        LOG(LogLevel::INFOS) << "Connecting to the chip... Share mode {" << share_mode << "}";
         bool ret = false;
         if (d_proxyReaderUnit)
         {
             LOG(LogLevel::INFOS) << "Need to use a proxy reader !";
             ret = d_proxyReaderUnit->connect(share_mode);
-            if (ret)
-            {
-             //  d_sch = d_proxyReaderUnit->getHandle();
-              //  d_ap = d_proxyReaderUnit->getActiveProtocol();
-              //  d_share_mode = share_mode;
-            }
         }
         else
         {
@@ -625,94 +484,20 @@ namespace logicalaccess
 				connection_->setDisposition(SCARD_LEAVE_CARD);
 
                 LOG(LogLevel::INFOS) << "SCardConnect Success !";
-
                 detect_mifareplus_security_level(d_insertedChip);
-                if (d_insertedChip->getChipIdentifier().size() == 0)
-                {
-                    try
-                    {
-                        if (d_insertedChip->getCardType() == "Prox")
-                        {
-                            if (atr_.size() > 2)
-                            {
-                                d_insertedChip->setChipIdentifier(atr_);
-                            }
-                        }
-                        // Specific behavior for DESFire to check if it is not a DESFire EV1
-                        else if (d_card_type == "UNKNOWN" && d_insertedChip && (d_insertedChip->getCardType() == "DESFire" || d_insertedChip->getCardType() == "SAM_AV2"))
-                        {
-                            if (d_insertedChip->getCardType() == "DESFire")
-                            {
-								std::shared_ptr<DESFireChip> insertedChip = std::dynamic_pointer_cast<DESFireChip>(d_insertedChip);
-                                EXCEPTION_ASSERT_WITH_LOG(insertedChip, LibLogicalAccessException, "Wrong card type: expected DESFire.");
 
-                                try
-                                {
-                                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-                                    DESFireCommands::DESFireCardVersion cardversion;
-                                    insertedChip->getDESFireCommands()->selectApplication(0x00);
-                                    insertedChip->getDESFireCommands()->getVersion(cardversion);
-                                    // Set from the version
-
-                                    // DESFire EV1 and not regular DESFire
-                                    if (cardversion.softwareMjVersion >= 1)
-                                    {
-                                        d_insertedChip = createChip("DESFireEV1");
-                                    }
-                                    // If random UID is enabled, GetVersion will return a full-zero UID.
-                                    // We need to call the classic PCSC GetUID function
-                                    if (BufferHelper::allZeroes(cardversion.uid))
-                                    {
-                                        d_insertedChip->setChipIdentifier(getCardSerialNumber());
-                                        std::dynamic_pointer_cast<DESFireChip>(d_insertedChip)->setHasRealUID(false);
-                                    }
-                                    else
-                                    {
-                                        d_insertedChip->setChipIdentifier(std::vector<unsigned char>(cardversion.uid, cardversion.uid + sizeof(cardversion.uid)));
-                                    }
-									std::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->getCrypto()
-										->setIdentifier(d_insertedChip->getChipIdentifier());
-                                }
-                                catch (std::exception&)
-                                {
-                                    // Doesn't care about bad communication here, stay DESFire.
-                                }
-                            }
-                            else if (d_insertedChip->getCardType() == "SAM_AV2")
-                            {
-                                if (std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(d_insertedChip->getCommands())->getSAMTypeFromSAM() == "SAM_AV1")
-                                {
-                                    LOG(LogLevel::INFOS) << "SAM on the reader is AV2 but mode AV1 so we switch to AV1.";
-                                    d_insertedChip = createChip("SAM_AV1");
-                                }
-                            }
-
-                            if (d_proxyReaderUnit)
-                            {
-                                d_proxyReaderUnit->setSingleChip(d_insertedChip);
-                            }
-                        }
-                        else
-                        {
-                            d_insertedChip->setChipIdentifier(getCardSerialNumber());
-                        }
-                    }
-                    catch (LibLogicalAccessException& e)
-                    {
-                        LOG(LogLevel::ERRORS) << "Exception while getting card serial number {" << e.what() << "}";
-                        d_insertedChip->setChipIdentifier(std::vector<unsigned char>());
-                    }
-                }
-
-                if (d_insertedChip->getGenericCardType() == "DESFire")
-                    std::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->getCrypto()->setCryptoContext(std::dynamic_pointer_cast<DESFireProfile>(d_insertedChip->getProfile()), d_insertedChip->getChipIdentifier());
-                ret = true;
+            d_insertedChip = adjustChip(d_insertedChip);
+            if (d_proxyReaderUnit)
+            {
+                d_proxyReaderUnit->setSingleChip(d_insertedChip);
+            }
+            ret = true;
         }
 
         if (ret)
         {
             // Unknown T=CL card, we have to send specific reader command to determine the type (A or B ?)
-            if (d_insertedChip->getCardType() == "GENERIC_T_CL")
+            if (d_insertedChip && d_insertedChip->getCardType() == "GENERIC_T_CL")
             {
                 LOG(LogLevel::INFOS) << "Inserted chip is {CT_GENERIC_T_CL}. Looking for type A or B...";
                 if (d_proxyReaderUnit)
@@ -749,9 +534,7 @@ namespace logicalaccess
                 }
             }
         }
-        if (ret && d_proxyReaderUnit)
-            d_proxyReaderUnit->cardConnected();
-        else if (ret)
+        if (ret)
             cardConnected();
         return ret;
     }
@@ -960,43 +743,7 @@ namespace logicalaccess
         return atr_;
     }
 
-std::string PCSCReaderUnit::atrXToCardType(int code) const
-    {
-        switch (code)
-        {
-        case 0x01:
-            return "Mifare1K";
-        case 0x02:
-            return "Mifare4K";
-        case 0x03:
-            return "MifareUltralight";
-        case 0x11:
-            return "DESFire";
-        case 0x1A:
-            return "HIDiClass16KS";
-        case 0x1C:
-            return "HIDiClass8x2KS";
-        case 0x18:
-            return "HIDiClass2KS";
-        case 0x1D:
-            return "HIDiClass32KS_16_16";
-        case 0x1E:
-            return "HIDiClass32KS_16_8x2";
-        case 0x1F:
-            return "HIDiClass32KS_8x2_16";
-        case 0x20:
-            return "HIDiClass32KS_8x2_8x2";
-        case 0x26:
-            return "MIFARE_MINI";
-        case 0x3A:
-            return "MifareUltralightC";
-
-        default:
-            return "UNKNOWN";
-        }
-    }
-
-std::shared_ptr<ReaderCardAdapter> PCSCReaderUnit::getReaderCardAdapter(std::string type)
+     std::shared_ptr<ReaderCardAdapter> PCSCReaderUnit::getReaderCardAdapter(std::string type)
     {
         if (d_proxyReaderUnit)
         {
@@ -1050,6 +797,11 @@ std::shared_ptr<ReaderCardAdapter> PCSCReaderUnit::getReaderCardAdapter(std::str
                 else if (getPCSCType() == PCSC_RUT_ACS_ACR_1222L)
                 {
                     commands.reset(new MifareACR1222LCommands());
+                }
+                else if (getPCSCType() == PCSC_RUT_ID3_CL1356)
+                {
+                    commands.reset(new MifareCL1356Commands());
+                    resultChecker = std::make_shared<ID3ResultChecker>();
                 }
                 else
                 {
@@ -1540,4 +1292,164 @@ std::shared_ptr<ReaderCardAdapter> PCSCReaderUnit::getReaderCardAdapter(std::str
         }
         return ISO7816ReaderUnit::createDefaultResultChecker();
     }
+
+    std::shared_ptr<CardProbe> PCSCReaderUnit::createCardProbe()
+    {
+        return std::make_shared<PCSCCardProbe>(this);
+    }
+
+    std::tuple<PCSCReaderUnit::SPtrStringVector, PCSCReaderUnit::ReaderStateVector>
+    PCSCReaderUnit::prepare_poll_parameters()
+    {
+        size_t readers_count = 0;
+        if (!getName().empty())
+        {
+            // use dedicated reader
+            if (Settings::getInstance()->SeeWaitInsertionLog)
+            {
+                LOG(LogLevel::INFOS) << "Use specific reader: " << getName() << ".";
+            }
+            readers_count = 1;
+        }
+        else
+        {
+            readers_count = getReaderProvider()->getReaderList().size();
+        }
+
+        EXCEPTION_ASSERT_WITH_LOG(readers_count > 0, CardException,
+                                  EXCEPTION_MSG_NOREADER);
+
+        SPtrStringVector readers_names(readers_count);
+        ReaderStateVector readers(readers_count);
+        std::memset(&readers[0], 0, readers.size() * sizeof(SCARD_READERSTATE));
+
+        if (!getName().empty())
+        {
+            readers_names[0] = std::make_shared<std::string>(getName());
+            readers[0].dwCurrentState = SCARD_STATE_UNAWARE;
+            readers[0].dwEventState = SCARD_STATE_UNAWARE;
+            readers[0].szReader = readers_names[0]->c_str();
+        }
+        else
+        {
+            for (size_t i = 0; i < readers_count; ++i)
+            {
+                readers_names[i] = std::make_shared<std::string>(getReaderProvider()
+                                                                     ->getReaderList().at(i)->getName());
+                readers[i].dwCurrentState = SCARD_STATE_UNAWARE;
+                readers[i].dwEventState = SCARD_STATE_UNAWARE;
+                readers[i].szReader = readers_names[i]->c_str();
+            }
+        }
+        return std::make_tuple(readers_names, readers);
+    }
+
+    void PCSCReaderUnit::waitInsertion_create_proxy(
+        const std::string &reader_name)
+    {
+        assert(!reader_name.empty());
+
+        std::shared_ptr<PCSCReaderUnitConfiguration> pcscRUC = getPCSCConfiguration();
+        if (this->getPCSCType() == PCSC_RUT_DEFAULT)
+        {
+            d_proxyReaderUnit = PCSCReaderUnit::createPCSCReaderUnit(reader_name);
+            if (d_proxyReaderUnit->getPCSCType() == PCSC_RUT_DEFAULT)
+            {
+                d_proxyReaderUnit.reset();
+                d_connectedName = reader_name;
+            }
+            else
+            {
+                d_proxyReaderUnit->makeProxy(std::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
+                d_proxyReaderUnit->d_sam_chip = d_sam_chip;
+                d_proxyReaderUnit->d_sam_readerunit = d_sam_readerunit;
+            }
+        }
+        else
+        {
+            // Already a proxy from serialization maybe, just copy instance information to it.
+            if (d_proxyReaderUnit)
+            {
+                d_proxyReaderUnit->makeProxy(std::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()), pcscRUC);
+            }
+        }
+    }
+
+bool PCSCReaderUnit::process_insertion(const std::string &cardType,
+                                       int maxwait,
+                                       const ElapsedTimeCounter &elapsed)
+{
+    if (d_proxyReaderUnit)
+        return d_proxyReaderUnit->process_insertion(cardType, maxwait, elapsed);
+
+    d_insertedChip = createChip((d_card_type == "UNKNOWN") ? cardType : d_card_type);
+    if (d_proxyReaderUnit)
+    {
+        d_proxyReaderUnit->setSingleChip(d_insertedChip);
+    }
+    return true;
+}
+
+std::shared_ptr<Chip> PCSCReaderUnit::adjustChip(std::shared_ptr<Chip> c)
+{
+    // DESFire adjustment. Check maybe it's DESFireEV1. Check random uid.
+    // Adjust cryptographic context.
+    if (c->getCardType() == "DESFire" && d_card_type == "UNKNOWN")
+    {
+        if (createCardProbe()->is_desfire_ev1())
+            c = createChip("DESFireEV1");
+    }
+    if (c->getCardType() == "DESFire" || c->getCardType() == "DESFireEV1")
+    {
+        ByteVector uid;
+        if (createCardProbe()->has_desfire_random_uid(&uid))
+        {
+            c->setChipIdentifier(getCardSerialNumber()); // Has random, cannot rely on get_version
+            std::dynamic_pointer_cast<DESFireChip>(c)->setHasRealUID(false);
+        }
+        else
+            c->setChipIdentifier(uid);
+
+        std::dynamic_pointer_cast<DESFireISO7816Commands>(c->getCommands())->getCrypto()
+            ->setIdentifier(c->getChipIdentifier());
+        std::dynamic_pointer_cast<DESFireISO7816Commands>(c->getCommands())->getCrypto()
+            ->setCryptoContext(std::dynamic_pointer_cast<DESFireProfile>(c->getProfile()),
+                               c->getChipIdentifier());
+    }
+
+    if (c->getChipIdentifier().size() == 0)
+    {
+        try
+        {
+            if (c->getCardType() == "Prox")
+            {
+                if (atr_.size() > 2)
+                {
+                    c->setChipIdentifier(atr_);
+                }
+            }
+            else if (d_card_type == "UNKNOWN" && c && c->getCardType() == "SAM_AV2")
+            {
+                if (c->getCardType() == "SAM_AV2")
+                {
+                    if (std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(c->getCommands())->getSAMTypeFromSAM() == "SAM_AV1")
+                    {
+                        LOG(LogLevel::INFOS) << "SAM on the reader is AV2 but mode AV1 so we switch to AV1.";
+                        c = createChip("SAM_AV1");
+                    }
+                }
+            }
+            else
+            {
+                c->setChipIdentifier(getCardSerialNumber());
+            }
+        }
+        catch (LibLogicalAccessException& e)
+        {
+            LOG(LogLevel::ERRORS) << "Exception while getting card serial number {" << e.what() << "}";
+            c->setChipIdentifier(ByteVector());
+        }
+    }
+   return c;
+}
 }

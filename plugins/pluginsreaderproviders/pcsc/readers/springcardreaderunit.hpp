@@ -39,6 +39,8 @@ namespace logicalaccess
         virtual PCSCReaderUnitType getPCSCType() const;
 
     protected:
+        virtual std::shared_ptr<CardProbe> createCardProbe() override;
+
         virtual std::shared_ptr<ResultChecker> createDefaultResultChecker() const override;
     };
 }

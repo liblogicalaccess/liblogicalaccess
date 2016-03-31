@@ -7,6 +7,7 @@
 #ifndef LOGICALACCESS_PCSCREADERUNIT_HPP
 #define LOGICALACCESS_PCSCREADERUNIT_HPP
 
+#include <logicalaccess/utils.hpp>
 #include "pcscreaderunitconfiguration.hpp"
 #include "../iso7816/iso7816readerunit.hpp"
 #include "pcsc_fwd.hpp"
@@ -71,7 +72,7 @@ namespace logicalaccess
          * \return True if a card was inserted, false otherwise. If a card was inserted, the name of the reader on which the insertion was detected is accessible with getReader().
          * \warning If the card is already connected, then the method always fail.
          */
-        virtual bool waitInsertion(unsigned int maxwait) override;
+        virtual bool waitInsertion(unsigned int maxwait) override final;
 
         /**
          * \brief Wait for a card removal.
@@ -86,9 +87,9 @@ namespace logicalaccess
          *
          * If the card handle was already connected, connect() first call disconnect(). If you intend to do a reconnection, call reconnect() instead.
          */
-        virtual bool connect();
+        virtual bool connect() override;
 
-        /**
+         /**
          * \brief Connect to the card.
          * \param reader The reader name. If an empty or invalid reader name is specified, connect will fail.
          * \param share_mode The share mode.
@@ -96,10 +97,11 @@ namespace logicalaccess
          *
          * If the card handle was already connected, connect() first call disconnect(). If you intend to do a reconnection, call reconnect() instead.
          */
-        bool connect(PCSCShareMode share_mode);
+        virtual bool connect(PCSCShareMode share_mode);
 
         /**
          * \brief Reconnect to the card with the currently active share mode on the same reader.
+         * \param control the behavior of the reconnect.
          * \return True if the card was reconnected without error, false otherwise.
          */
         virtual bool reconnect(int action = 0);
@@ -305,7 +307,20 @@ namespace logicalaccess
 
     protected:
 
+        /**
+         * Perform adjustment regarding a Chip.
+         *
+         * For example, if the Chip type is desfire, we check that it
+         * is not in fact a desfire ev1.
+         * Similarly, we check to see if a desfire has random UID enabled or not.
+         *
+         * This function may return a new Chip object, that should be used.
+         */
+        std::shared_ptr<Chip> adjustChip(std::shared_ptr<Chip> c);
+
         virtual std::shared_ptr<ResultChecker> createDefaultResultChecker() const override;
+
+        virtual std::shared_ptr<CardProbe> createCardProbe() override;
 
         void configure_mifareplus_chip(std::shared_ptr<Chip> c,
                                        std::shared_ptr<Commands> &commands,
@@ -341,6 +356,34 @@ namespace logicalaccess
          */
         void setSingleChip(std::shared_ptr<Chip> chip);
 
+      protected:
+        // Internal helper for waitInsertion
+        using SPtrStringVector = std::vector<std::shared_ptr<std::string>>;
+        using ReaderStateVector = std::vector<SCARD_READERSTATE>;
+
+        /**
+         * Prepare the parameters for the call to SCardGetStatusChange
+         * invoked by waitInsertion()
+         */
+        std::tuple<SPtrStringVector, ReaderStateVector> prepare_poll_parameters();
+
+        /**
+         * Create the proxy reader based on which reader detected a card
+         * during waitInsertion.
+         */
+        void waitInsertion_create_proxy(const std::string &reader_name);
+
+        /**
+         * Give a chance to concrete reader implementation to do something just
+         * after a insertion has been detected.
+         *
+         * This default implemented MUST be called explicitly if you override this
+         * method.
+         */
+        virtual bool process_insertion(const std::string &cardType,
+                                       int maxwait,
+                                       const ElapsedTimeCounter &elapsed);
+
       public:
         /**
          * Direct means we established without requiring
@@ -355,13 +398,6 @@ namespace logicalaccess
         void teardown_pcsc_connection();
 
       protected:
-        /**
-         * \brief Get the card type from atr code
-         * \param code The atr code
-         * \return The card type
-         */
-        std::string atrXToCardType(int code) const;
-
 		/**
 		 * A PCSC connection object.
 		 */

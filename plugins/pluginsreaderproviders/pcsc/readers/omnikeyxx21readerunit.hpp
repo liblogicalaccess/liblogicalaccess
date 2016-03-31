@@ -9,6 +9,7 @@
 
 #include "omnikeyreaderunit.hpp"
 #include "omnikeyxx21readerunitconfiguration.hpp"
+#include "logicalaccess/cards/readercardadapter.hpp"
 
 #include <string>
 #include <vector>

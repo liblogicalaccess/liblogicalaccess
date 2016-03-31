@@ -397,6 +397,11 @@ namespace logicalaccess
         return nullptr;
     }
 
+    std::shared_ptr<CardProbe> ReaderUnit::createCardProbe()
+    {
+        return nullptr;
+    }
+
     ReaderServicePtr ReaderUnit::getService(const ReaderServiceType &type)
     {
         return nullptr;

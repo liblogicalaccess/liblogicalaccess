@@ -16,6 +16,7 @@
 #include "../readercardadapters/pcscreadercardadapter.hpp"
 #include "logicalaccess/myexception.hpp"
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
+#include "logicalaccess/cards/commands.hpp"
 
 #include <boost/regex.hpp>
 #if defined(__unix__)

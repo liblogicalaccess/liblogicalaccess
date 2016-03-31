@@ -100,7 +100,7 @@ namespace logicalaccess
          * \param keyno The key number, previously loaded with Mifare::loadKey().
          * \param keytype The key type.
          */
-        void authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype);
+        virtual void authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype) override;
 
         template<typename T, typename T2>
         friend class MifarePlusSL1Policy;
