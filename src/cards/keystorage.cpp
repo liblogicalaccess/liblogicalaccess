@@ -48,7 +48,7 @@ std::string KeyStorage::getMetadata(const std::string &key)
 
 bool KeyStorage::hasMetadata(const std::string &key)
 {
-    return metadata_.count(key);
+    return (metadata_.count(key) > 0);
 }
 
 void KeyStorage::addMetadata(const std::string &key, const std::string &value)

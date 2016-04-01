@@ -62,7 +62,7 @@ bool EPassCommand::selectApplication(const ByteVector &app_id)
     std::shared_ptr<ISO7816ReaderCardAdapter> rca =
         std::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter());
     assert(rca);
-    auto ret = rca->sendAPDUCommand(0x00, 0xA4, 0x04, 0x0C, app_id.size(), app_id);
+    auto ret = rca->sendAPDUCommand(0x00, 0xA4, 0x04, 0x0C, (int)(app_id.size()), app_id);
     return true;
 }
 
@@ -71,7 +71,7 @@ bool EPassCommand::selectEF(const ByteVector &file_id)
     std::shared_ptr<ISO7816ReaderCardAdapter> rca =
         std::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter());
     assert(rca);
-    auto ret = rca->sendAPDUCommand(0x00, 0xA4, 0x02, 0x0C, file_id.size(), file_id);
+    auto ret = rca->sendAPDUCommand(0x00, 0xA4, 0x02, 0x0C, (int)(file_id.size()), file_id);
     return true;
 }
 
@@ -156,8 +156,8 @@ ByteVector EPassCommand::readEF(uint8_t size_bytes, uint8_t size_offset)
         EXCEPTION_ASSERT_WITH_LOG(data.size() == to_read, LibLogicalAccessException,
                                   "Wrong data size");
         ef_raw.insert(ef_raw.end(), data.begin(), data.end());
-        offset += data.size();
-        length -= data.size();
+        offset += (uint8_t)(data.size());
+        length -= (uint8_t)(data.size());
     }
     return ef_raw;
 }

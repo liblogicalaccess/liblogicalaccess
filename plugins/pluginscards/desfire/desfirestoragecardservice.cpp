@@ -237,7 +237,7 @@ namespace logicalaccess
                     dfLocation->securityLevel = CM_ENCRYPT;
                 }
 
-                getDESFireChip()->getDESFireCommands()->createStdDataFile(dfLocation, rights, data.size() + dfLocation->byte);
+                getDESFireChip()->getDESFireCommands()->createStdDataFile(dfLocation, rights, (int)(data.size() + dfLocation->byte));
                 needLoadKey = false;
             }
         }
@@ -396,7 +396,7 @@ namespace logicalaccess
             getDESFireChip()->getDESFireCommands()->authenticate(dfAiToUse->readKeyno);
         }
 
-        return getDESFireChip()->getDESFireCommands()->readData(dfLocation->file, dfLocation->byte, dataLength, encMode);
+        return getDESFireChip()->getDESFireCommands()->readData(dfLocation->file, dfLocation->byte, (int)(dataLength), encMode);
     }
 
     unsigned int DESFireStorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/, void* /*data*/, size_t /*dataLength*/)

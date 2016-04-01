@@ -33,7 +33,8 @@ namespace logicalaccess
                 aidTab[x] = AID & 0xff;
                 AID >>= 8;
             }
-            //std::reverse(aidTab, aidTab + 3);
+			if (d_revertAID)
+				std::reverse(aidTab, aidTab + 3);
             for (unsigned char x = 0; x < 3; ++x)
                 diversify.push_back(aidTab[x]);
 
@@ -121,11 +122,13 @@ namespace logicalaccess
         boost::property_tree::ptree node;
         node.put("divInput", BufferHelper::getHex(d_divInput));
         node.put("systemIdentifier", BufferHelper::getHex(d_systemIdentifier));
+		node.put("revertAID", d_revertAID);
         parentNode.add_child(getDefaultXmlNodeName(), node);
     }
 
     void NXPAV2KeyDiversification::unSerialize(boost::property_tree::ptree& node)
     {
+		d_revertAID = node.get_child("revertAID").get_value<bool>();
         std::string divinput = node.get_child("divInput").get_value<std::string>();
         d_divInput = BufferHelper::fromHexString(divinput);
         boost::optional<boost::property_tree::ptree&> siChild = node.get_child_optional("systemIdentifier");

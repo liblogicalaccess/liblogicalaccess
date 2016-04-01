@@ -24,7 +24,7 @@ std::vector<uint8_t> logicalaccess::RandomHelper::bytes(size_t size)
     std::unique_lock<std::mutex> ul(mutex_);
     std::vector<uint8_t> ret(size);
 
-    int rc = RAND_bytes(&ret[0], size);
+    int rc = RAND_bytes(&ret[0], (int)(size));
 
     EXCEPTION_ASSERT_WITH_LOG(rc == 1, LibLogicalAccessException, "RAND_bytes failed. Cannot generate random bytes.");
     return ret;

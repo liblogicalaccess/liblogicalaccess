@@ -50,7 +50,7 @@ class LIBLOGICALACCESS_API STidPRGReaderUnit : public ReaderUnit
 
   protected:
     struct BuzzerModeGuard;
-    friend class BuzzerModeGuard;
+    friend struct BuzzerModeGuard;
     /**
      * Build a chip object corresponding to the chip that
      * can be read by the reader.

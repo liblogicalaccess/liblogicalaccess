@@ -45,7 +45,7 @@ int main(int ac, char **av)
     for (std::vector<std::shared_ptr<LocationNode> >::iterator i = childs.begin(); i != childs.end(); ++i)
     {
         // Display node information
-        int tmp_size = (*i)->getLength() * (*i)->getUnit();
+        int tmp_size = (int)((*i)->getLength() * (*i)->getUnit());
         std::cout << "Size of node " << (*i)->getName() << ": " << tmp_size << " bytes" << std::endl;
         size += tmp_size;
     }
