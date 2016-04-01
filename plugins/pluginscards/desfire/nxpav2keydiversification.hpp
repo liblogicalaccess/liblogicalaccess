@@ -28,7 +28,7 @@ namespace logicalaccess
 
 		bool getRevertAID() const { return d_revertAID; }
 
-		void setRevertAIDr(bool revertAID) { d_revertAID = revertAID; }
+		void setRevertAID(bool revertAID) { d_revertAID = revertAID; }
 
         const std::vector<unsigned char>& getDivInput() const { return d_divInput; }
 
