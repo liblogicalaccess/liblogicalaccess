@@ -207,7 +207,9 @@ namespace logicalaccess
         if (reader)
             assert(std::dynamic_pointer_cast<PCSCReaderUnit>(reader));
         else
+        {
             reader = std::make_shared<PCSCReaderUnit>(readerName);
+        }
         return std::dynamic_pointer_cast<PCSCReaderUnit>(reader);
     }
 
@@ -966,6 +968,8 @@ namespace logicalaccess
 
     std::vector<std::shared_ptr<Chip> > PCSCReaderUnit::getChipList()
     {
+        if (d_proxyReaderUnit)
+            return d_proxyReaderUnit->getChipList();
         std::vector<std::shared_ptr<Chip> > chipList;
         std::shared_ptr<Chip> singleChip = getSingleChip();
         if (singleChip)

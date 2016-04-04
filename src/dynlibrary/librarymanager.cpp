@@ -245,6 +245,7 @@ namespace logicalaccess
         Settings* setting = Settings::getInstance();
         std::string fctname = "getLibraryName";
 
+        LOG(LogLevel::PLUGINS) << "Will scan " << setting->PluginFolders.size() << " folders.";
         for (std::vector<std::string>::iterator it = setting->PluginFolders.begin(); it != setting->PluginFolders.end(); ++it)
         {
             boost::filesystem::path pluginDir(*it);

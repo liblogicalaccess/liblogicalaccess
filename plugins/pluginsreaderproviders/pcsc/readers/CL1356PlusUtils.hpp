@@ -27,6 +27,7 @@ class CL1356PlusUtils
 
         struct Info
         {
+                Info() = default;
                 /**
                  * The values match those returned by GetCardInfo (reader cmd)
                  */

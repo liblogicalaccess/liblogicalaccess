@@ -151,7 +151,6 @@ std::string STidPRGReaderUnit::getReaderSerialNumber()
 std::shared_ptr<Chip> STidPRGReaderUnit::getCurrentChip()
 {
     auto ret = getDefaultReaderCardAdapter()->sendCommand({0x21, 0, 0, 0});
-    std::cout << "ret: " << ret << std::endl;
     if (ret.size() > 3)
     {
         auto uid_len = ret[2];
@@ -226,10 +225,7 @@ bool STidPRGReaderUnit::writeBlock(uint8_t start, uint8_t end,
                               "Not enough or too many bytes of data.");
 
 
-    // std::vector<uint8_t> cmd = {0x32, start, end,
-    // static_cast<uint8_t>((end-start)*4)};
     uint8_t p1 = static_cast<uint8_t>(((end & 0xFF) << 4) | (start & 0xFF));
-    std::cout << "p1 = " << +p1 << std::endl;
     std::vector<uint8_t> cmd = {0x42, p1, 0,
                                 static_cast<uint8_t>((end - start + 1) * 4)};
 
