@@ -12,18 +12,18 @@
 
 namespace logicalaccess
 {	
-	enum TemporaryControleCode : unsigned char {
+	enum class TemporaryControleCode : unsigned char {
 		NOP = 0x00,
 		CancelTemporaryOperation = 0x01,
 		SetTemporaryState = 0x02
 	};
 
-	enum PermanentControlCode : unsigned char {
+	enum class PermanentControlCode : unsigned char {
 		NotPermanentState = 0x00,
 		SetPermanentState = 0x01
 	};
 
-	enum OSDPColor : unsigned char {
+	enum class OSDPColor : unsigned char {
 		Black = 0x00,
 		Red = 0x01,
 		Green = 0x02,
