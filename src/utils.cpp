@@ -1,9 +1,7 @@
-#include <assert.h>
-#include <Winsock2.h>
-
 #include "logicalaccess/utils.hpp"
-#include "logicalaccess/logs.hpp"
-#include "logicalaccess/myexception.hpp"
+#include <boost/asio.hpp>
+#include <logicalaccess/logs.hpp>
+#include <logicalaccess/myexception.hpp>
 
 using namespace std::chrono;
 
