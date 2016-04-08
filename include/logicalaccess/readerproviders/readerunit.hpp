@@ -174,7 +174,7 @@ namespace logicalaccess
 		* \brief Reconnect to the card with the currently active share mode on the same reader.
 		* \return True if the card was reconnected without error, false otherwise.
 		*/
-		virtual bool reconnect(int action = 0) { return true; };
+		virtual bool reconnect(int action = 0) { (void)action; return true; };
 
         /**
          * \brief Disconnect from the card.
