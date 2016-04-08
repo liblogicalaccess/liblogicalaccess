@@ -7,20 +7,13 @@
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/readerproviders/readerconfiguration.hpp"
-#include "logicalaccess/plugins/readers/pcsc/pcscreaderunit.hpp"
-#include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
 #include "logicalaccess/services/storage/storagecardservice.hpp"
-#include "logicalaccess/services/accesscontrol/formats/wiegand26format.hpp"
-
 
 #include <iostream>
 #include <string>
 #include <iomanip>
 #include <sstream>
 #include <stdlib.h>
-#include <cassert>
-
-auto str_serialize = "<ReaderUnit type=\"PCSC\"><OmnikeyXX21ReaderUnitConfiguration><PCSCReaderUnitConfiguration><SAMType>SAM_NONE</SAMType><SAMReaderName/><SAMKey><KeyNo>0</KeyNo></SAMKey><TransmissionProtocol>3</TransmissionProtocol><ShareMode>2</ShareMode></PCSCReaderUnitConfiguration><UseSecureMode>true</UseSecureMode><SecureReadKey><TripleDESKey keyStorageType=\"0\"><IsCiphered>false</IsCiphered><Data/><ComputerMemoryKeyStorage><Locked>false</Locked><Random>false</Random></ComputerMemoryKeyStorage></TripleDESKey></SecureReadKey><SecureWriteKey><TripleDESKey keyStorageType=\"0\"><IsCiphered>false</IsCiphered><Data/><ComputerMemoryKeyStorage><Locked>false</Locked><Random>false</Random></ComputerMemoryKeyStorage></TripleDESKey></SecureWriteKey><EncryptionMode>192</EncryptionMode></OmnikeyXX21ReaderUnitConfiguration><TransportType/><Name>OMNIKEY CardMan (076B:5321) 5321 (OKCM0021708110402362875163347543) 00 01</Name></ReaderUnit>";
 
 /**
  * \brief The application entry point.
@@ -49,12 +42,12 @@ int main(int , char**)
         std::shared_ptr<logicalaccess::ReaderConfiguration> readerConfig(new logicalaccess::ReaderConfiguration());
 
         // PC/SC
-        std::string rpstr = "STidPRG";
+        std::string rpstr = "PCSC";
         std::cout << "Please type the reader plug-in to use:" << std::endl;
-       // std::cin >> rpstr;
+        std::cin >> rpstr;
 
         readerConfig->setReaderProvider(logicalaccess::LibraryManager::getInstance()->getReaderProvider(rpstr));
-        assert(readerConfig->getReaderProvider());
+
         if (readerConfig->getReaderProvider()->getRPType() == "PCSC" && readerConfig->getReaderProvider()->getReaderList().size() == 0)
         {
             std::cerr << "No readers on this system." << std::endl;
@@ -70,11 +63,6 @@ int main(int , char**)
         {
             std::cout << "\t" << i << ". " << readers.at(i)->getName() << std::endl;
         }
-        //auto ru = std::dynamic_pointer_cast<logicalaccess::PCSCReaderUnit>(readerConfig->getReaderProvider()->createReaderUnit());
-        //assert(ru);
-       // ru->setName("OMNIKEY CardMan (076B:5321) 5321 (OKCM0021708110402362875163347543) 00 01");
-
-
         std::cin >> ruindex;
 
         if (ruindex < 0 || ruindex >= readers.size())
@@ -102,7 +90,6 @@ int main(int , char**)
                     std::cout << "Card inserted on reader \"" << readerConfig->getReaderUnit()->getConnectedName() << "\"." << std::endl;
 
                     std::shared_ptr<logicalaccess::Chip> chip = readerConfig->getReaderUnit()->getSingleChip();
-                    assert(chip);
                     std::cout << "Card type: " << chip->getCardType() << std::endl;
 
                     std::vector<unsigned char> csn = readerConfig->getReaderUnit()->getNumber(chip);
@@ -114,26 +101,14 @@ int main(int , char**)
                     {
                         std::cout << "\t" << logicalaccess::BufferHelper::getHex(readerConfig->getReaderUnit()->getNumber((*i))) << std::endl;
                     }
-                    std::shared_ptr<logicalaccess::AccessControlCardService> srv =
-                    std::dynamic_pointer_cast<logicalaccess::AccessControlCardService>(chip->getService(logicalaccess::CST_ACCESS_CONTROL));
-                    assert(srv);
 
-/*                    std::cout << "HELLO" << std::endl;
-                    srv->writeFormat(std::make_shared<logicalaccess::Wiegand26Format>(),
-                                     nullptr, nullptr, nullptr);
-                    std::cout << "DONE" << std::endl;*/
                     std::shared_ptr<logicalaccess::Profile> profile = chip->getProfile();
-
-                    //std::shared_ptr<logicalaccess::DESFireEV1Commands> cmd = std::dynamic_pointer_cast<logicalaccess::DESFireEV1Commands>(chip->getCommands());
-                    //cmd->selectApplication(0xF52360);
-                    //cmd->authenticate(0);
 
                     // DO SOMETHING HERE
 					// DO SOMETHING HERE
 					// DO SOMETHING HERE
 
                     readerConfig->getReaderUnit()->disconnect();
-                    return 0;
                 }
                 else
                 {

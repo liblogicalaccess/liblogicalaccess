@@ -20,10 +20,8 @@ add_executable(
 )
 
 target_link_libraries(
-    basic
-    pcscreaders
-    logicalaccess
-    ${LIBLOGICALACCESS_LIBRARIES}
+        basic
+        ${LIBLOGICALACCESS_LIBRARIES}
 )
 
 install ( TARGETS basic
