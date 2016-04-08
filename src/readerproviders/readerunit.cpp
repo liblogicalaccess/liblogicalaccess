@@ -328,7 +328,9 @@ namespace logicalaccess
     void ReaderUnit::serialize(boost::property_tree::ptree& node)
     {
         node.put("<xmlattr>.type", getReaderProvider()->getRPType());
-        d_readerUnitConfig->serialize(node);
+
+        if (d_readerUnitConfig)
+            d_readerUnitConfig->serialize(node);
         if (getDataTransport())
         {
             node.put("TransportType", getDataTransport()->getTransportType());
@@ -343,7 +345,8 @@ namespace logicalaccess
     void ReaderUnit::unSerialize(boost::property_tree::ptree& node)
     {
         disconnectFromReader();
-        d_readerUnitConfig->unSerialize(node.get_child(d_readerUnitConfig->getDefaultXmlNodeName()));
+        if (d_readerUnitConfig)
+            d_readerUnitConfig->unSerialize(node.get_child(d_readerUnitConfig->getDefaultXmlNodeName()));
         std::string transportType = node.get_child("TransportType").get_value<std::string>();
         std::shared_ptr<DataTransport> dataTransport = LibraryManager::getInstance()->getDataTransport(transportType);
         // Cannot create data transport instance from xml, use default one

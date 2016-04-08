@@ -7,9 +7,11 @@
 #include "readercardadapters/stidprgreadercardadapter.hpp"
 #include "stid_prg_utils.hpp"
 #include "stidprgresultchecker.hpp"
+#include "stidprgreaderunitconfiguration.hpp"
 #include <logicalaccess/services/accesscontrol/formats/wiegand34withfacilityformat.hpp>
 #include <logicalaccess/utils.hpp>
 #include <memory>
+#include <boost/property_tree/ptree.hpp>
 
 namespace logicalaccess
 {
@@ -42,14 +44,30 @@ struct STidPRGReaderUnit::BuzzerModeGuard
     STidPRGReaderUnit *reader_;
 };
 
+void STidPRGReaderUnit::serialize(boost::property_tree::ptree &parentNode)
+{
+    boost::property_tree::ptree node;
+    ReaderUnit::serialize(node);
+    parentNode.add_child(getDefaultXmlNodeName(), node);
+}
+
+void STidPRGReaderUnit::unSerialize(boost::property_tree::ptree &node)
+{
+    ReaderUnit::unSerialize(node);
+
+    auto dt = std::dynamic_pointer_cast<STidPRGDataTransport>(getDefaultReaderCardAdapter()->getDataTransport());
+    if (dt && getSTidPRGReaderUnitConfiguration())
+        dt->setPortBaudRate(getSTidPRGReaderUnitConfiguration()->getBaudrate());
+}
+
 STidPRGReaderUnit::STidPRGReaderUnit()
 {
+    d_readerUnitConfig = std::make_shared<STidPRGReaderUnitConfiguration>();
     setDefaultReaderCardAdapter(std::make_shared<STidPRGReaderCardAdapter>());
     auto dt = std::make_shared<STidPRGDataTransport>();
     dt->setPortBaudRate(9600);
     getDefaultReaderCardAdapter()->setDataTransport(dt);
     setDataTransport(dt);
-    // todo load config
 }
 
 bool STidPRGReaderUnit::waitInsertion(unsigned int maxwait)
@@ -261,4 +279,10 @@ void STidPRGReaderUnit::select_chip_type()
     // Chip type shall be 0x03 for writable 13.56
     getDefaultReaderCardAdapter()->sendCommand({0x20, 0x03, 0, 0x00});
 }
+
+std::shared_ptr<STidPRGReaderUnitConfiguration> STidPRGReaderUnit::getSTidPRGReaderUnitConfiguration()
+{
+    return std::dynamic_pointer_cast<STidPRGReaderUnitConfiguration>(d_readerUnitConfig);
+}
+
 }

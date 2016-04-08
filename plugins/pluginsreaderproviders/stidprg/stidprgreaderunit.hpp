@@ -4,10 +4,16 @@
 
 namespace logicalaccess
 {
+class STidPRGReaderUnitConfiguration;
+
 class LIBLOGICALACCESS_API STidPRGReaderUnit : public ReaderUnit
 {
   public:
     STidPRGReaderUnit();
+
+    virtual void serialize(boost::property_tree::ptree &node) override;
+
+    virtual void unSerialize(boost::property_tree::ptree &node) override;
 
     virtual bool waitInsertion(unsigned int maxwait) override;
 
@@ -32,6 +38,8 @@ class LIBLOGICALACCESS_API STidPRGReaderUnit : public ReaderUnit
     virtual std::string getName() const override;
 
     virtual std::string getReaderSerialNumber() override;
+
+    std::shared_ptr<STidPRGReaderUnitConfiguration> getSTidPRGReaderUnitConfiguration();
 
     std::vector<uint8_t> readBlocks(uint8_t start, uint8_t end);
 
