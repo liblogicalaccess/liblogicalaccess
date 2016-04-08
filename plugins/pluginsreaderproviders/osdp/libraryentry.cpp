@@ -19,7 +19,7 @@ extern "C"
 		return (char *)"OSDP";
 	}
 
-	LIBLOGICALACCESS_API void getOSDPRReader(std::shared_ptr<logicalaccess::OSDPReaderProvider>* rp)
+	LIBLOGICALACCESS_API void getOSDPReader(std::shared_ptr<logicalaccess::OSDPReaderProvider>* rp)
 	{
 		if (rp != NULL)
 		{
@@ -36,7 +36,7 @@ extern "C"
 			{
 			case 0:
 				{
-					*getterfct = (void*)&getOSDPRReader;
+					*getterfct = (void*)&getOSDPReader;
 					sprintf(readername, READER_OSDP);
 					ret = true;
 				}
