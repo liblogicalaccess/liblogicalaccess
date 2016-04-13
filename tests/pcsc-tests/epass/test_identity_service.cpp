@@ -65,7 +65,7 @@ int main(int ac, char **av)
     std::string nationality;
     LLA_ASSERT(srv->get(IdentityCardService::MetaData::NATIONALITY, nationality),
                "Failed to fetch nationality");
-    LLA_ASSERT("UTO" == nationality, "Name doesn't match.");
+    LLA_ASSERT("UTO" == nationality, "Nationality doesn't match.");
     LLA_SUBTEST_PASSED("GetNationality");
 
 

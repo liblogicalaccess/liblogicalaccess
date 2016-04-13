@@ -27,11 +27,11 @@ bool STidPRGProxAccessControl::writeFormat(std::shared_ptr<Format> format,
                   ->getReaderCardAdapter()
                   ->getDataTransport()
                   ->getReaderUnit();
-    EXCEPTION_ASSERT_WITH_LOG(format, LibLogicalAccessException,
+    EXCEPTION_ASSERT_WITH_LOG(ru, LibLogicalAccessException,
                               "Failed to retrieve reader unit");
 
     auto stdiprg_ru = std::dynamic_pointer_cast<STidPRGReaderUnit>(ru);
-    EXCEPTION_ASSERT_WITH_LOG(format, LibLogicalAccessException,
+    EXCEPTION_ASSERT_WITH_LOG(stdiprg_ru, LibLogicalAccessException,
                               "Retrieved reader unit is of wrong type.");
 
     stdiprg_ru->writeBlock(0, 3, STidPRGUtils::prox_configuration_bytes(*format));
