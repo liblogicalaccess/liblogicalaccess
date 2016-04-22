@@ -51,6 +51,8 @@ std::vector<CL1356PlusUtils::Info> ID3ReaderUnit::listCards()
         if (info.guessed_type_ == "DESFire" && createCardProbe()->is_desfire_ev1())
             info.guessed_type_ = "DESFireEV1";
         infos.push_back(info);
+
+        power_card(false);
     }
     return infos;
 }
