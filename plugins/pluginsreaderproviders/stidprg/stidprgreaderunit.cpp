@@ -54,10 +54,6 @@ void STidPRGReaderUnit::serialize(boost::property_tree::ptree &parentNode)
 void STidPRGReaderUnit::unSerialize(boost::property_tree::ptree &node)
 {
     ReaderUnit::unSerialize(node);
-
-    auto dt = std::dynamic_pointer_cast<STidPRGDataTransport>(getDefaultReaderCardAdapter()->getDataTransport());
-    if (dt && getSTidPRGReaderUnitConfiguration())
-        dt->setPortBaudRate(getSTidPRGReaderUnitConfiguration()->getBaudrate());
 }
 
 STidPRGReaderUnit::STidPRGReaderUnit()
@@ -73,8 +69,10 @@ STidPRGReaderUnit::STidPRGReaderUnit()
 bool STidPRGReaderUnit::waitInsertion(unsigned int maxwait)
 {
     ElapsedTimeCounter etc;
+    EXCEPTION_ASSERT_WITH_LOG(getDataTransport(), LibLogicalAccessException, "No data transport.");
     auto stidprgdt =
         std::dynamic_pointer_cast<STidPRGDataTransport>(getDataTransport());
+    EXCEPTION_ASSERT_WITH_LOG(stidprgdt, LibLogicalAccessException, "Invalid data transport.");
     stidprgdt->setReceiveTimeout(100);
     select_chip_type();
     do
@@ -84,9 +82,9 @@ bool STidPRGReaderUnit::waitInsertion(unsigned int maxwait)
             return true;
         }
         d_insertedChip = getCurrentChip();
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
     } while (etc.elapsed() < maxwait);
-    return false;
+    return !!d_insertedChip;
 }
 
 bool STidPRGReaderUnit::waitRemoval(unsigned int maxwait)
@@ -112,14 +110,14 @@ bool STidPRGReaderUnit::waitRemoval(unsigned int maxwait)
             d_insertedChip = chip;
             return true;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
     } while (etc.elapsed() < maxwait);
     return false;
 }
 
 bool STidPRGReaderUnit::isConnected()
 {
-    return false;
+    return !!d_insertedChip;
 }
 
 void STidPRGReaderUnit::setCardType(std::string cardType)
@@ -143,6 +141,7 @@ bool STidPRGReaderUnit::connect()
 
 void STidPRGReaderUnit::disconnect()
 {
+    d_insertedChip = nullptr;
 }
 
 bool STidPRGReaderUnit::connectToReader()

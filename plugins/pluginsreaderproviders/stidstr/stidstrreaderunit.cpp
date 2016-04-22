@@ -90,6 +90,10 @@ namespace logicalaccess
             Settings::getInstance()->IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
         }
 
+        auto stidprgdt =
+            std::dynamic_pointer_cast<STidSTRDataTransport>(getDataTransport());
+        EXCEPTION_ASSERT_WITH_LOG(stidprgdt, LibLogicalAccessException, "Invalid data transport.");
+
         LOG(LogLevel::INFOS) << "Waiting insertion... max wait {" << maxwait << "}";
         bool inserted = false;
         std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(maxwait);

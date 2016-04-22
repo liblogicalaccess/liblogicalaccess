@@ -18,12 +18,5 @@ class LIBLOGICALACCESS_API STidPRGReaderUnitConfiguration : public ReaderUnitCon
         virtual void unSerialize(boost::property_tree::ptree &node) override;
 
         virtual std::string getDefaultXmlNodeName() const override;
-
-        int getBaudrate() const;
-
-        void setBaudrate(int v);
-
-      protected:
-        int baudrate_;
 };
 }

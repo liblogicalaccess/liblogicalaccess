@@ -69,8 +69,9 @@ namespace logicalaccess
         {
             d_ReaderUnit->unSerialize(node, "");
         }
-        catch (std::exception&)
+        catch (std::exception&e)
         {
+            LOG(LogLevel::WARNINGS) << "Failed to unserialize reader unit: " << e.what();
             d_ReaderUnit.reset();
         }
     }
