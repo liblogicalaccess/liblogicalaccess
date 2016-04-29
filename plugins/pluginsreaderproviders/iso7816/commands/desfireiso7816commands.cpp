@@ -34,7 +34,7 @@ namespace logicalaccess
     void DESFireISO7816Commands::erase()
     {
 		std::vector<unsigned char> result = transmit(DF_INS_FORMAT_PICC);
-		if (result.size < 2 || result[result.size() - 2] != 0x91 || result[result.size() - 1] != 0x00)
+		if (result.size() < 2 || result[result.size() - 2] != 0x91 || result[result.size() - 1] != 0x00)
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Erase command failed.");
     }
 
