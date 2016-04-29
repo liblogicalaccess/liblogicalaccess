@@ -33,7 +33,9 @@ namespace logicalaccess
 
     void DESFireISO7816Commands::erase()
     {
-        transmit(0xFC);
+		std::vector<unsigned char> result = transmit(DF_INS_FORMAT_PICC);
+		if (result.size < 2 || result[result.size() - 2] != 0x91 || result[result.size() - 1] != 0x00)
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Erase command failed.");
     }
 
     void DESFireISO7816Commands::getVersion(DESFireCardVersion& dataVersion)
@@ -774,7 +776,7 @@ namespace logicalaccess
         command.push_back(keyno);
 
         std::vector<unsigned char> result = DESFireISO7816Commands::transmit(DF_INS_AUTHENTICATE, command);
-        if (result[result.size() - 1] == DF_INS_ADDITIONAL_FRAME && (result.size() - 2) >= 8)
+        if (result.size() >= 2 && result[result.size() - 1] == DF_INS_ADDITIONAL_FRAME && (result.size() - 2) >= 8)
         {
             result.resize(8);
             std::vector<unsigned char> rndAB, apduresult;
@@ -857,6 +859,8 @@ namespace logicalaccess
                     d_crypto->authenticate_PICC2(keyno, result);
             }
         }
+		else
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "DESFire authentication P1 failed.");
     }
 
     std::vector<unsigned char> DESFireISO7816Commands::transmit(unsigned char cmd, unsigned char lc)
