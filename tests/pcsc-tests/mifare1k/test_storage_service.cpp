@@ -34,9 +34,9 @@ int main(int ac, char **av)
     PRINT_TIME("Chip identifier: " <<
                logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
 
-   // LLA_ASSERT(chip->getCardType() == "Mifare1K",
-//               "Chip is not a Mifare1K, but is " + chip->getCardType() +
-//               " instead.");
+    LLA_ASSERT(chip->getCardType() == "Mifare1K",
+               "Chip is not a Mifare1K, but is " + chip->getCardType() +
+               " instead.");
 
     auto storage = std::dynamic_pointer_cast<logicalaccess::StorageCardService>(
             chip->getService(logicalaccess::CST_STORAGE));
@@ -45,27 +45,25 @@ int main(int ac, char **av)
     std::shared_ptr<logicalaccess::AccessInfo> aiToUse;
     std::shared_ptr<logicalaccess::AccessInfo> aiToWrite;
 
-    // We want to write data on sector 1.
+    // We want to write data on sector 7.
     std::shared_ptr<logicalaccess::MifareLocation> mlocation(
             new logicalaccess::MifareLocation());
-    mlocation->sector = 4;
+    mlocation->sector = 7;
     mlocation->block = 0;
     location = mlocation;
 
     // Key to use for sector authentication
     std::shared_ptr<logicalaccess::MifareAccessInfo> maiToUse(
             new logicalaccess::MifareAccessInfo());
-    maiToUse->keyA->fromString("00 00 00 00 00 00");      // Default key
-    maiToUse->keyB->fromString("00 00 00 00 00 00");
-    maiToUse->sab.setAReadBWriteConfiguration();
+    maiToUse->keyA->fromString("ff ff ff ff ff ff");      // Default key
+    maiToUse->keyB->fromString("ff ff ff ff ff ff");
     aiToUse = maiToUse;
 
     // Change the sector key with the following key
     std::shared_ptr<logicalaccess::MifareAccessInfo> maiToWrite(
             new logicalaccess::MifareAccessInfo());
-    maiToWrite->keyA->fromString("00 00 00 00 00 00");
-    maiToWrite->keyB->fromString("00 00 00 00 00 00");
-    maiToWrite->sab.setAReadBWriteConfiguration(); // Configure the sector access bits
+    maiToWrite->keyA->fromString("ff ff ff ff ff ff");
+    maiToWrite->keyB->fromString("ff ff ff ff ff ff");
     aiToWrite = maiToWrite;
 
     // Data to write
@@ -76,10 +74,9 @@ int main(int ac, char **av)
 
     // Write data on the specified location with the specified key
     storage->writeData(location, aiToUse, aiToWrite, writedata, logicalaccess::CB_DEFAULT);
-    using namespace logicalaccess; // required for overload of std::ostrean(vector &)
+    using namespace logicalaccess; // required for overload of std::ostream(vector &)
     PRINT_TIME("Wrote: " << writedata);
     LLA_SUBTEST_PASSED("WriteService")
-
 
     const int mifare_block_size = 16;
     // We read the data on the same location. Remember, the key is now changed.
