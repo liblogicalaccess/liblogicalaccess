@@ -625,6 +625,8 @@ namespace logicalaccess
 
             d_currentKeyNo = keyno;
         }
+		else
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "DESFire authentication failed - rnda are not the same.");
 
         d_auth_method = CM_LEGACY;
         d_mac_size = 4;
