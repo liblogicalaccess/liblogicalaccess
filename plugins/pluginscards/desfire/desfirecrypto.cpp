@@ -877,6 +877,8 @@ namespace logicalaccess
 
             d_currentKeyNo = keyno;
         }
+		else
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "DESFire authentication failed - rnda are not the same.");
 
         d_cipher.reset(new openssl::DESCipher());
         d_auth_method = CM_ISO;
