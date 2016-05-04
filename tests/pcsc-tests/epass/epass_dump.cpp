@@ -1,5 +1,4 @@
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
-#include "logicalaccess/readerproviders/serialportdatatransport.hpp"
 
 #include "logicalaccess/bufferhelper.hpp"
 #include "lla-tests/macros.hpp"
@@ -12,15 +11,10 @@
 
 void introduction()
 {
-    PRINT_TIME("This test target cards that can hold an identity. Mostly EPassport.");
+    PRINT_TIME("Dump some information about an EPassport.");
 
-    PRINT_TIME("You will have 20 seconds to insert a card. Test log below");
+    PRINT_TIME("You will have 20 seconds to insert a card.");
     PRINT_TIME("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-
-    LLA_SUBTEST_REGISTER("GetName");
-    LLA_SUBTEST_REGISTER("GetPicture");
-    LLA_SUBTEST_REGISTER("GetNationality");
-    LLA_SUBTEST_REGISTER("GetDocNo");
 }
 
 using namespace logicalaccess;
@@ -44,37 +38,24 @@ int main(int ac, char **av)
     LLA_ASSERT(srv, "Cannot retrieve identity service from the chip");
     // Prepare the service.
     auto ai = std::make_shared<EPassAccessInfo>();
-    ai->mrz_ = "W7GCH9ZY24UTO7904107F2006187<<<<<<<<<<<<<<<2";
+    std::string mrz;
+    std::cout << "Enter MRZ please: ";
+    std::cin >> ai->mrz_;
     srv->setAccessInfo(ai);
-
 
     std::string name;
     LLA_ASSERT(srv->get(IdentityCardService::MetaData::NAME, name), "Failed to fetch name");
-    LLA_ASSERT("ANDERSON  JANE" == name, "Name doesn't match.");
-    LLA_SUBTEST_PASSED("GetName");
-
-    ByteVector picture_data;
-    LLA_ASSERT(srv->get(IdentityCardService::MetaData::PICTURE, picture_data), "Failed to"
-        "get picture bytes");
-
-    // We check the hash of the picture rather than the full picture bytes. Easier for tests.
-    LLA_ASSERT(openssl::SHA1Hash(picture_data) == BufferHelper::fromHexString("9cb474bfb578a9c8defa8eb6fe9ea2cd643be308"),
-               "Retrieved image picture doesn't match expected picture.");
-    LLA_SUBTEST_PASSED("GetPicture");
+    PRINT_TIME("Name: " + name);
 
     std::string nationality;
     LLA_ASSERT(srv->get(IdentityCardService::MetaData::NATIONALITY, nationality),
                "Failed to fetch nationality");
-    LLA_ASSERT("UTO" == nationality, "Nationality doesn't match.");
-    LLA_SUBTEST_PASSED("GetNationality");
-
+    PRINT_TIME("Country: " + nationality);
 
     std::string docno;
     LLA_ASSERT(srv->get(IdentityCardService::MetaData::DOC_NO, docno),
                "Failed to fetch document number.");
-    LLA_ASSERT(docno == "W7GCH9ZY2", "Document number doesn't match.");
-    LLA_SUBTEST_PASSED("GetDocNo");
-
+    PRINT_TIME("Docno: " + docno);
 
     std::chrono::system_clock::time_point tp;
     LLA_ASSERT(srv->get(IdentityCardService::MetaData::BIRTHDATE, tp), "Failed to "
@@ -85,6 +66,15 @@ int main(int ac, char **av)
     char buff[512];
     std::strftime(buff, sizeof(buff), "%c", &tm);
     PRINT_TIME("Birthdate: " << buff);
+
+    ByteVector picture_data;
+    LLA_ASSERT(srv->get(IdentityCardService::MetaData::PICTURE, picture_data), "Failed to"
+        "get picture bytes");
+    {
+        std::ofstream of("/tmp/passport_pic.jpeg");
+        of.write((const char *)picture_data.data(), picture_data.size());
+    }
+    PRINT_TIME("Photo was dumped into: /tmp/passport_pic.jpeg");
 
     pcsc_test_shutdown(readerUnit);
 
