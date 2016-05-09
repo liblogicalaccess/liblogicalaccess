@@ -21,6 +21,7 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API MifareUltralightCommands : public virtual Commands
     {
     public:
+		MifareUltralightCommands() {}
 
         /**
          * \brief Read several pages.
