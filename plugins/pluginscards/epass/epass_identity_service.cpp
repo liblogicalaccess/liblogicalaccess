@@ -27,6 +27,7 @@ std::string EPassIdentityService::getName()
 
 ByteVector EPassIdentityService::getPicture()
 {
+    LLA_LOG_CTX("EPassIdentityService::getPicture");
     auto chip = getEPassChip();
     EXCEPTION_ASSERT_WITH_LOG(chip, LibLogicalAccessException,
                               "No or invalid chip object in EPassIdentityService");

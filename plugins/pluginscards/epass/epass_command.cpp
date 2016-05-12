@@ -18,7 +18,7 @@ static ByteVector get_challenge(std::shared_ptr<ISO7816ReaderCardAdapter> rca)
 
     result = rca->sendAPDUCommand(0, 0x84, 0x00, 0x00, 8);
     EXCEPTION_ASSERT_WITH_LOG(result.size() >= 2, LibLogicalAccessException,
-                              "GetChallenge reponse is too short.");
+                              "GetChallenge response is too short.");
     if (result[result.size() - 2] == 0x90 && result[result.size() - 1] == 0x00)
     {
         return std::vector<unsigned char>(result.begin(), result.end() - 2);
@@ -28,20 +28,45 @@ static ByteVector get_challenge(std::shared_ptr<ISO7816ReaderCardAdapter> rca)
 
 bool EPassCommand::authenticate(const std::string &mrz)
 {
-    crypto_ = std::make_shared<EPassCrypto>(mrz);
-    cryptoChanged();
+    LLA_LOG_CTX("EPassIdentityService::authenticate");
+    // We perform a classic ISO7816 authenticate. However, there are some caveats.
+    //     + Some epassport chip returns an error when we try to authenticate while
+    //       we are already authenticated.
+    //     + This situation can happens because the IdentityService
+    //       do not assume any authentication status, and perform authentication anytime
+    //       a data is required (if cache misses).
+    //
+    // The workaround consist of authenticating multiple time, until it works.
+    const int TRY_COUNT = 2;
 
-    std::shared_ptr<ISO7816ReaderCardAdapter> rcu =
-        std::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter());
-    assert(rcu);
-    auto challenge = get_challenge(rcu);
-    auto tmp       = crypto_->step1(challenge);
+    for (int i = 0; i < TRY_COUNT; ++i)
+    {
+        try
+        {
+            crypto_ = std::make_shared<EPassCrypto>(mrz);
+            cryptoChanged();
 
-    tmp = rcu->sendAPDUCommand(0x00, 0x82, 0x00, 0x00, 0x28, tmp, 0x28);
-    // drop status bytes.
-    EXCEPTION_ASSERT_WITH_LOG(tmp.size() == 40, LibLogicalAccessException,
-                              "Unexpected response length");
-    return crypto_->step2(tmp);
+            std::shared_ptr<ISO7816ReaderCardAdapter> rcu =
+                std::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter());
+            assert(rcu);
+            auto challenge = get_challenge(rcu);
+            auto tmp = crypto_->step1(challenge);
+
+            tmp = rcu->sendAPDUCommand(0x00, 0x82, 0x00, 0x00, 0x28, tmp, 0x28);
+            // drop status bytes.
+            EXCEPTION_ASSERT_WITH_LOG(tmp.size() == 40, LibLogicalAccessException,
+                                      "Unexpected response length");
+            return crypto_->step2(tmp);
+        }
+        catch (const CardException &e)
+        {
+            if ((i == TRY_COUNT - 1) ||
+                e.error_code() != CardException::ErrorType::SECURITY_STATUS)
+                throw;
+        }
+    }
+    assert(0);
+    throw std::runtime_error("The impossible happened.");
 }
 
 EPassEFCOM EPassCommand::readEFCOM()
@@ -77,6 +102,7 @@ bool EPassCommand::selectEF(const ByteVector &file_id)
 
 bool EPassCommand::selectIssuerApplication()
 {
+    LLA_LOG_CTX("EPassIdentityService::selectIssuerApplication");
     return selectApplication({0xA0, 0, 0, 0x02, 0x47, 0x10, 0x01});
 }
 
@@ -120,6 +146,7 @@ EPassDG1 EPassCommand::readDG1()
 
 EPassDG2 EPassCommand::readDG2()
 {
+    LLA_LOG_CTX("EPassCommand::readDG2");
     selectEF({0x01, 0x02});
 
     // File tag is 2 bytes and size is 2 bytes too.
