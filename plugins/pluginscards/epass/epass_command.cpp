@@ -84,10 +84,19 @@ EPassEFCOM EPassCommand::readEFCOM()
 
 bool EPassCommand::selectApplication(const ByteVector &app_id)
 {
+    if (app_id == current_app_)
+    {
+        LOG(INFOS) << "Not selecting application " <<
+            app_id << " because it is already selected";
+        return true;
+    }
+
     std::shared_ptr<ISO7816ReaderCardAdapter> rca =
         std::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter());
     assert(rca);
-    auto ret = rca->sendAPDUCommand(0x00, 0xA4, 0x04, 0x0C, (int)(app_id.size()), app_id);
+    auto ret =
+        rca->sendAPDUCommand(0x00, 0xA4, 0x04, 0x0C, (int)(app_id.size()), app_id);
+    current_app_ = app_id;
     return true;
 }
 

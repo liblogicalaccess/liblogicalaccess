@@ -70,6 +70,15 @@ class LIBLOGICALACCESS_API EPassCommand : public Commands
     ByteVector compute_hash(const ByteVector &file_id);
 
     /**
+     * The identifier of the currently selected application.
+     *
+     * This is a part of a hack. We ignore selectApplication if
+     * the we already have selected the one we want. Somehow,
+     * on some passport, this cause a failure.
+     */
+    ByteVector current_app_;
+
+    /**
      * Internal notification for when the crypto_ object
      * has changed.
      *
