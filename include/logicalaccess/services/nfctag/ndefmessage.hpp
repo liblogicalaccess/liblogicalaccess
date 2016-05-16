@@ -33,7 +33,7 @@ namespace logicalaccess
     public:
         NdefMessage() {};
         NdefMessage(std::vector<unsigned char>& data);
-        ~NdefMessage() {};
+        virtual ~NdefMessage() {};
 
         std::vector<unsigned char> encode();
 

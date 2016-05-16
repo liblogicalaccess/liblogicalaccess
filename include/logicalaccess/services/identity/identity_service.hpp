@@ -68,8 +68,6 @@ class LIBLOGICALACCESS_API IdentityCardService : public CardService
      */
     virtual bool get(MetaData what, std::chrono::system_clock::time_point &out) = 0;
 
-    virtual CardServiceType getServiceType() const override;
-
     /**
      * Provide an AccessInfo that will be used by underlying implementation
      * to authenticate against the chip.

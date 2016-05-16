@@ -19,7 +19,7 @@ class LIBLOGICALACCESS_API LicenseCheckerService : public ReaderService
 {
   public:
     LicenseCheckerService(ReaderUnitPtr ru)
-        : ReaderService(ru){};
+		: ReaderService(ru, RST_LICENSE_CHECKER){};
 
     virtual ~LicenseCheckerService() = default;
 
@@ -59,10 +59,5 @@ class LIBLOGICALACCESS_API LicenseCheckerService : public ReaderService
      */
     virtual bool validateLicenseKey(const KeyStoragePtr &storage_info,
                                     const KeyPtr &key) = 0;
-
-    virtual ReaderServiceType getServiceType() const override
-    {
-        return RST_LICENSE_CHECKER;
-    }
 };
 }

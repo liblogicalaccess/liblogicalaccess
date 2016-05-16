@@ -30,13 +30,7 @@ namespace logicalaccess
         /**
          * \brief Destructor.
          */
-        ~AccessControlCardService();
-
-        /**
-         * \brief Get the card service type.
-         * \return The card service type.
-         */
-        virtual CardServiceType getServiceType() const;
+        virtual ~AccessControlCardService();
 
         /**
          * \brief Read format from the card.

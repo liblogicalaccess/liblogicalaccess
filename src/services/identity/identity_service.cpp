@@ -4,13 +4,8 @@ using namespace logicalaccess;
 
 
 IdentityCardService::IdentityCardService(std::shared_ptr<Chip> chip)
-    : CardService(chip)
+	: CardService(chip, CST_IDENTITY)
 {
-}
-
-CardServiceType IdentityCardService::getServiceType() const
-{
-    return CST_IDENTITY;
 }
 
 void IdentityCardService::setAccessInfo(std::shared_ptr<AccessInfo> ai)

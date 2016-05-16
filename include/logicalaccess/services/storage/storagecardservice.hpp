@@ -32,13 +32,9 @@ namespace logicalaccess
          * \brief Constructor.
          * \param chip The associated chip.
          */
-        StorageCardService(std::shared_ptr<Chip> chip) : CardService(chip) {};
+        StorageCardService(std::shared_ptr<Chip> chip);
 
-        /**
-         * \brief Get the card service type.
-         * \return The card service type.
-         */
-        virtual CardServiceType getServiceType() const { return CST_STORAGE; };
+		virtual ~StorageCardService();
 
         /**
          * \brief Erase the card.

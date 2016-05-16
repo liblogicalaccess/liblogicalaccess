@@ -111,6 +111,7 @@ file(GLOB source_encodings ${NATIVE_SOURCE}/services/accesscontrol/encodings/*.c
 file(GLOB source_formats ${NATIVE_SOURCE}/services/accesscontrol/formats/*.cpp)
 file(GLOB source_customformat ${NATIVE_SOURCE}/services/accesscontrol/formats/customformat/*.cpp)
 file(GLOB source_nfctag ${NATIVE_SOURCE}/services/nfctag/*.cpp)
+file(GLOB source_storage ${NATIVE_SOURCE}/services/storage/*.cpp)
 file(GLOB source_uidchanger ${NATIVE_SOURCE}/services/uidchanger/*.cpp)
 file(GLOB source_iks ${NATIVE_SOURCE}/iks/*.cpp ${NATIVE_SOURCE}/iks/packet/*.cpp)
 file(GLOB source_service_identity ${NATIVE_SOURCE}/services/identity/*.cpp)
@@ -167,6 +168,7 @@ SOURCE_GROUP("Source Files\\services\\accesscontrol\\encodings" FILES ${source_e
 SOURCE_GROUP("Source Files\\services\\accesscontrol\\formats" FILES ${source_formats})
 SOURCE_GROUP("Source Files\\services\\accesscontrol\\formats\\customformat" FILES ${source_customformat})
 SOURCE_GROUP("Source Files\\services\\nfctag" FILES ${source_nfctag})
+SOURCE_GROUP("Source Files\\services\\storage" FILES ${source_storage})
 SOURCE_GROUP("Source Files\\services\\uidchanger" FILES ${source_uidchanger})
 SOURCE_GROUP("Source Files\\iks" FILES ${source_iks})
 SOURCE_GROUP("Source Files\\services\\identity" FILES ${source_service_identity})
@@ -218,7 +220,7 @@ endif()
 
 set(source ${source_root} ${source_cards} ${source_readerproviders}
         ${source_service} ${source_accesscontrol} ${source_encodings}
-        ${source_formats} ${source_customformat} ${source_nfctag} ${source_uidchanger}
+        ${source_formats} ${source_customformat} ${source_nfctag} ${source_storage} ${source_uidchanger}
         ${source_dynlibrary} ${source_vc} ${resourcerc}
         ${source_iks} ${source_service_identity}
         )

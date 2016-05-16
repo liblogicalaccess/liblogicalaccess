@@ -23,17 +23,15 @@ namespace logicalaccess
         * \brief Constructor.
         * \param chip The chip.
         */
-        NFCTagCardService(std::shared_ptr<Chip> chip) : CardService(chip) {};
+		NFCTagCardService(std::shared_ptr<Chip> chip);
 
-        virtual ~NFCTagCardService() {};
+        virtual ~NFCTagCardService();
 
-        virtual void writeNDEF(std::shared_ptr<logicalaccess::NdefMessage> /*records*/) { };
+        virtual void writeNDEF(std::shared_ptr<logicalaccess::NdefMessage> records);
 
         virtual std::shared_ptr<logicalaccess::NdefMessage> readNDEF() = 0;
 
-        virtual void eraseNDEF() { };
-
-        virtual CardServiceType getServiceType() const { return CardServiceType::CST_NFC_TAG; };
+        virtual void eraseNDEF();
     };
 }
 

@@ -16,7 +16,5 @@ class LIBLOGICALACCESS_API UIDChangerService : public CardService
     virtual ~UIDChangerService() = default;
 
     virtual void changeUID(const std::vector<uint8_t> &new_uid) = 0;
-
-    virtual CardServiceType getServiceType() const override;
 };
 }

@@ -3,11 +3,6 @@
 using namespace logicalaccess;
 
 UIDChangerService::UIDChangerService(std::shared_ptr<Chip> chip)
-    : CardService(chip)
+	: CardService(chip, CST_UID_CHANGER)
 {
-}
-
-CardServiceType UIDChangerService::getServiceType() const
-{
-    return CST_UID_CHANGER;
 }

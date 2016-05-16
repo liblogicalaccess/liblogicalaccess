@@ -25,11 +25,12 @@ namespace logicalaccess
      * \brief The card services.
      */
     typedef enum {
-        CST_ACCESS_CONTROL = 0x0000, /**< The access control card service type */
-        CST_NFC_TAG = 0x0001, /**< The NFC Tag card service type */
-        CST_STORAGE = 0x0002, /**< The storage card service type */
-        CST_UID_CHANGER = 0x0003, /**< Service to change the UID of a card */
-        CST_IDENTITY = 0x0004, /**< Service to query identity information (EPassport) */
+		CST_UNDEFINED = 0x0000, /**< Undefined card service type */
+        CST_ACCESS_CONTROL = 0x0001, /**< The access control card service type */
+        CST_NFC_TAG = 0x0002, /**< The NFC Tag card service type */
+        CST_STORAGE = 0x0003, /**< The storage card service type */
+        CST_UID_CHANGER = 0x0004, /**< Service to change the UID of a card */
+        CST_IDENTITY = 0x0005, /**< Service to query identity information (EPassport) */
     } CardServiceType;
 
     /**
@@ -42,8 +43,9 @@ namespace logicalaccess
         /**
          * \brief Constructor.
          * \param chip The associated chip.
+		 * \param serviceType The card service type.
          */
-        CardService(std::shared_ptr<Chip> chip);
+		CardService(std::shared_ptr<Chip> chip, CardServiceType serviceType);
 
         /*
          * \brief Get the associated chip object.
@@ -55,7 +57,7 @@ namespace logicalaccess
          * \brief Get the card service type.
          * \return The card service type.
          */
-        virtual CardServiceType getServiceType() const = 0;
+        virtual CardServiceType getServiceType() const;
 
     protected:
 
@@ -63,6 +65,11 @@ namespace logicalaccess
          * \brief Chip object.
          */
         std::shared_ptr<Chip> d_chip;
+
+		/**
+		 * \brief Card service type.
+		 */
+		CardServiceType d_serviceType;
     };
 }
 

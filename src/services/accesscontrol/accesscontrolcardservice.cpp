@@ -11,17 +11,12 @@
 namespace logicalaccess
 {
     AccessControlCardService::AccessControlCardService(std::shared_ptr<Chip> chip)
-        : CardService(chip)
+		: CardService(chip, CST_ACCESS_CONTROL)
     {
     }
 
     AccessControlCardService::~AccessControlCardService()
     {
-    }
-
-    CardServiceType AccessControlCardService::getServiceType() const
-    {
-        return CST_ACCESS_CONTROL;
     }
 
     std::shared_ptr<Format> AccessControlCardService::readFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse)

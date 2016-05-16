@@ -26,7 +26,7 @@ namespace logicalaccess
     {
     public:
         NdefRecord() : m_tnf(TNF::TNF_EMPTY) {};
-        ~NdefRecord() {};
+        virtual ~NdefRecord() {};
 
         size_t getEncodedSize() const;
         std::vector<unsigned char> encode(bool firstRecord, bool lastRecord);
