@@ -39,3 +39,4 @@ install
 install_manifest.txt
 *.dll
 /*.db
+/*.opendb
