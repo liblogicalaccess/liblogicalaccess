@@ -25,8 +25,22 @@ ATRParser::ATRParser(const std::vector<uint8_t> &atr)
     register_hardcoded_atr("3B8F8001804F0CA00000030603FFA00000000034",
                            "MifarePlus_SL1_4K", PCSC_RUT_SPRINGCARD);
     register_hardcoded_atr("3B878001C1052F2F0035C730", "MifarePlus_SL3_2K");
+	register_hardcoded_atr("3BF59100FF918171FE400041080000000D", "Mifare1K");
+	register_hardcoded_atr("3BF59100FF918171FE400041180000001D", "Mifare4K");
+	register_hardcoded_atr("3BF59100FF918171FE400041880000008D", "Mifare1K");
+	register_hardcoded_atr("3B09410411DD822F000088", "Mifare1K");
     register_hardcoded_atr("3B8F8001804F0CA000000306030000000000006B", "Mifare1K",
                            PCSC_RUT_ID3_CL1356);
+	register_hardcoded_atr("3B8180018080", "DESFire");
+	register_hardcoded_atr("3B86800106757781028000", "DESFire");
+	register_hardcoded_atr("3BF79100FF918171FE40004120001177818040", "DESFire");
+	register_hardcoded_atr("3BF59100FF918171FE4000410x0000000005", "MifareUltralight");
+	register_hardcoded_atr("3B8C80010443FD", "FeliCa");
+	register_hardcoded_atr("3B8F80010031B86404B0ECC1739401808290000E", "CPS3");
+	register_hardcoded_atr("3B8F8001804F0CA0000003060B00120000000071", "TagIt");
+	register_hardcoded_atr("3B8F8001804F0CA00000030603F004000000009F", "Topaz");
+	register_hardcoded_atr("3BDF18FF81F1FE43003F03834D494641524520506C75732053414D3B", "SAM_AV2");
+	register_hardcoded_atr("3BDF18FF81F1FE43001F034D494641524520506C75732053414D98", "SAM_AV2");
 }
 
 ///
@@ -114,7 +128,9 @@ std::string ATRParser::atr_x_to_type(uint8_t code) const
     case 0x20:
         return "HIDiClass32KS_8x2_8x2";
     case 0x26:
-        return "MIFARE_MINI";
+        return "MifareMini";
+	case 0x30:
+		return "Topaz";
     case 0x3A:
         return "MifareUltralightC";
     }
@@ -177,11 +193,16 @@ std::string ATRParser::check_from_atr() const
 
     if (atr && (atrlen > 0))
     {
-        unsigned char eatr[20] = {0x3B, 0x8F, 0x80, 0x01, 0x80, 0x4F, 0x0C,
-                                  0xA0, 0x00, 0x00, 0x03, 0x06, 0xFF, 0x00,
-                                  0xFF, 0x00, 0x00, 0x00, 0x00, 0xFF};
-
-        if (atrlen == 17)
+		if (atrlen == 7)
+		{
+			unsigned char atrTopaz[] = { 0x3b, 0x82, 0x80,
+				0x01, 0x02, 0x44 };	// Don't check last byte
+			if (!memcmp(atr, atrTopaz, sizeof(atrTopaz)))
+			{
+				return "Topaz";
+			}
+		}
+        else if (atrlen == 17)
         {
             if ((atr[1] == 0x0F) && (atr[2] == 0xFF))
             {
@@ -199,166 +220,27 @@ std::string ATRParser::check_from_atr() const
                     return "HIDiClass8x2KS";
                 }
             }
-            else if ((atr[0] == 0x3B) && (atr[1] == 0xF5)) // Specific Mifare classic
-                                                           // stuff (coming from
-                                                           // smartcard_list)
-            {
-                unsigned char atrMifare[] = {0x3B, 0xF5, 0x91, 0x00, 0xFF, 0x91,
-                                             0x81, 0x71, 0xFE, 0x40, 0x00, 0x41,
-                                             0x00, 0x00, 0x00, 0x00, 0x05};
-                unsigned char atrMifare2[] = {0x3B, 0xF5, 0x91, 0x00, 0xFF, 0x91,
-                                              0x81, 0x71, 0xFE, 0x40, 0x00, 0x41,
-                                              0x08, 0x00, 0x00, 0x00, 0x0D};
-                unsigned char atrMifare3[] = {0x3B, 0xF5, 0x91, 0x00, 0xFF, 0x91,
-                                              0x81, 0x71, 0xFE, 0x40, 0x00, 0x41,
-                                              0x18, 0x00, 0x00, 0x00, 0x1D};
-                unsigned char atrMifare4[] = {0x3B, 0xF5, 0x91, 0x00, 0xFF, 0x91,
-                                              0x81, 0x71, 0xFE, 0x40, 0x00, 0x41,
-                                              0x88, 0x00, 0x00, 0x00, 0x8D};
-
-                if (!memcmp(atr, atrMifare, sizeof(atrMifare)))
-                {
-                    // Contactless Mifare Ultralight
-                    return "MifareUltralight";
-                }
-                else if (!memcmp(atr, atrMifare2, sizeof(atrMifare2)))
-                {
-                    // Contactless Mifare (Type unknown)
-                    return "Mifare1K";
-                }
-                else if (!memcmp(atr, atrMifare3, sizeof(atrMifare3)))
-                {
-                    // Contactless Mifare 4k
-                    return "Mifare4K";
-                }
-                else if (!memcmp(atr, atrMifare4, sizeof(atrMifare4)))
-                {
-                    // Contactless Mifare 1k or 4k
-                    return "Mifare1K";
-                }
-            }
-            else
-            {
-                unsigned char atrFeliCa[] = {0x3B, 0x8C, 0x80, 0x01,
-                                             0x04, 0x43, 0xFD};
-
-                if (!memcmp(atr, atrFeliCa, sizeof(atrFeliCa)))
-                {
-                    return "FeliCa";
-                }
-            }
-            return "UNKNOWN";
         }
-        else if (atrlen == 11 && (atr[0] == 0x3B) &&
-                 (atr[1] == 0x09)) // specific Mifare classic stuff again (coming
-                                   // from smartcard_list)
+        else  if (atrlen == 20)
         {
-            unsigned char atrMifare[] = {0x3B, 0x09, 0x41, 0x04, 0x11, 0xDD,
-                                         0x82, 0x2F, 0x00, 0x00, 0x88};
-            if (!memcmp(atr, atrMifare, sizeof(atrMifare)))
-            {
-                // 1k contactless Mifare
-                return "Mifare1K";
-            }
-            return "UNKNOWN";
-        }
-        else if (atrlen == 28 || atrlen == 27)
-        {
-            // 3B DF 18 FF 81 F1 FE 43 00 3F 03 83 4D 49 46 41 52 45 20 50 6C 75 73
-            // 20 53 41 4D 3B NXP SAM AV2 module
-            // 3B DF 18 FF 81 F1 FE 43 00 1F 03 4D 49 46 41 52 45 20 50 6C 75 73 20
-            // 53 41 4D 98 Mifare SAM AV2
-            unsigned char atrTagITP1[] = {0x3B, 0xDF, 0x18, 0xFF, 0x81, 0xF1, 0xFE,
-                                          0x43, 0x00, 0x3F, 0x03, 0x83, 0x4D, 0x49,
-                                          0x46, 0x41, 0x52, 0x45, 0x20, 0x50, 0x6C,
-                                          0x75, 0x73, 0x20, 0x53, 0x41, 0x4D, 0x3B};
-            unsigned char atrTagITP2[] = {0x3B, 0xDF, 0x18, 0xFF, 0x81, 0xF1, 0xFE,
-                                          0x43, 0x00, 0x1F, 0x03, 0x4D, 0x49, 0x46,
-                                          0x41, 0x52, 0x45, 0x20, 0x50, 0x6C, 0x75,
-                                          0x73, 0x20, 0x53, 0x41, 0x4D, 0x98};
+			unsigned char eatr[20] = { 0x3B, 0x8F, 0x80, 0x01, 0x80, 0x4F, 0x0C,
+				0xA0, 0x00, 0x00, 0x03, 0x06, 0xFF, 0x00,
+				0xFF, 0x00, 0x00, 0x00, 0x00, 0xFF };
 
-            if (atrlen == 28 && !memcmp(atr, atrTagITP1, sizeof(atrTagITP1)))
-            {
-                return "SAM_AV2";
-            }
-            else if (atrlen == 27 && !memcmp(atr, atrTagITP2, sizeof(atrTagITP2)))
-            {
-                return "SAM_AV2";
-            }
-        }
-        else
-        {
-            if (atrlen == 20)
-            {
-                unsigned char atrCPS3[] = {0x3b, 0x8f, 0x80, 0x01, 0x00, 0x31, 0xb8,
-                                           0x64, 0x04, 0xb0, 0xec, 0xc1, 0x73, 0x94,
-                                           0x01, 0x80, 0x82, 0x90, 0x00, 0x0e};
-                if (!memcmp(atr, atrCPS3, sizeof(atrCPS3)))
-                {
-                    return "CPS3";
-                }
-                else
-                {
-                    memcpy(eatr + 12, atr + 12, 3);
-                    eatr[19] = atr[19];
+            memcpy(eatr + 12, atr + 12, 3);
+            eatr[19] = atr[19];
 
-                    if (memcmp(eatr, atr, atrlen) != 0)
-                    {
-                        return "UNKNOWN";
-                    }
-                    else
-                    {
-                        std::string ret = atr_x_to_type((atr[13] << 8) | atr[14]);
-                        if (!ret.empty())
-                        {
-                            return ret;
-                        }
-
-                        unsigned char atrTagIT[] = {0x3b, 0x8f, 0x80, 0x01, 0x80,
-                                                    0x4f, 0x0c, 0xa0, 0x00, 0x00,
-                                                    0x03, 0x06, 0x0b, 0x00, 0x12,
-                                                    0x00, 0x00, 0x00, 0x00, 0x71};
-                        if (!memcmp(atr, atrTagIT, sizeof(atrTagIT)))
-                        {
-                            return "TagIt";
-                        }
-                    }
-                }
-            }
-            else
+            if (memcmp(eatr, atr, atrlen) == 0)
             {
-                if (atrlen == 6)
+                std::string ret = atr_x_to_type((atr[13] << 8) | atr[14]);
+                if (!ret.empty())
                 {
-                    unsigned char atrDESFire[] = {0x3b, 0x81, 0x80,
-                                                  0x01, 0x80, 0x80};
-                    if (!memcmp(atr, atrDESFire, sizeof(atrDESFire)))
-                    {
-                        return "DESFire";
-                    }
+                    return ret;
                 }
-                else if (atrlen == 11)
-                {
-                    unsigned char atrDESFire[] = {0x3b, 0x86, 0x80, 0x01, 0x06, 0x75,
-                                                  0x77, 0x81, 0x02, 0x80, 0x00};
-                    if (!memcmp(atr, atrDESFire, sizeof(atrDESFire)))
-                    {
-                        return "DESFire";
-                    }
-                }
-                else if (atrlen == 19)
-                {
-                    unsigned char atrDESFire[] = {
-                        0x3b, 0xf7, 0x91, 0x00, 0xff, 0x91, 0x81, 0x71, 0xFE, 0x40,
-                        0x00, 0x41, 0x20, 0x00, 0x11, 0x77, 0x81, 0x80, 0x40};
-                    if (!memcmp(atr, atrDESFire, sizeof(atrDESFire)))
-                    {
-                        return "DESFire";
-                    }
-                }
-                return "UNKNOWN";
             }
         }
     }
+
     return "UNKNOWN";
 }
 

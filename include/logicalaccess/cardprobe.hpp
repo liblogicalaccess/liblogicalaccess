@@ -35,12 +35,17 @@ class LIBLOGICALACCESS_API CardProbe
         virtual bool is_desfire(std::vector<uint8_t> *uid = nullptr) = 0;
 
         /**
-         * Test if the card is DESFire by sending the getversion command.
+         * Test if the card is DESFire EV1 by sending the getversion command.
          *
          * The optional `*uid` vector will be populate with the uid retrieve from
          * the getversion command, unless the command failed.
          */
         virtual bool is_desfire_ev1(std::vector<uint8_t> *uid = nullptr) = 0;
+
+		/**
+		 * Test if the card is Mifare Ultralight C by sending the authenticate command.
+		 */
+		virtual bool is_mifare_ultralight_c() = 0;
 
         /**
          * Could the card be a Mifare Classic ?

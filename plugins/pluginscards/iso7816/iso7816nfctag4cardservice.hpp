@@ -14,7 +14,7 @@
 namespace logicalaccess
 {
     /**
-     * \brief The ISO7816 NFC Tag 4 storage card service bas class.
+     * \brief The ISO7816 NFC Tag 4 storage card service base class.
      */
     class LIBLOGICALACCESS_API ISO7816NFCTag4CardService : public NFCTagCardService
     {
