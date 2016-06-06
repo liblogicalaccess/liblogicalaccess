@@ -62,7 +62,7 @@ namespace logicalaccess
         virtual std::shared_ptr<SAMKucEntry> getKUCEntry(unsigned char keyno) = 0;
         virtual void changeKeyEntry(unsigned char keyno, std::shared_ptr<SAMKeyEntry<T, S> > keyentry, std::shared_ptr<DESFireKey> key) = 0;
         virtual void changeKUCEntry(unsigned char keyno, std::shared_ptr<SAMKucEntry> keyentry, std::shared_ptr<DESFireKey> key) = 0;
-        virtual void authentificateHost(std::shared_ptr<DESFireKey> key, unsigned char keyno) = 0;
+        virtual void authenticateHost(std::shared_ptr<DESFireKey> key, unsigned char keyno) = 0;
         virtual std::string	getSAMTypeFromSAM() = 0;
         virtual void disableKeyEntry(unsigned char keyno) = 0;
         virtual void selectApplication(std::vector<unsigned char> aid) = 0;

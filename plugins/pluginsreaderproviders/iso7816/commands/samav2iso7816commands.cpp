@@ -64,14 +64,14 @@ namespace logicalaccess
         cipher->cipher(SV2a, d_macSessionKey, *symkey.get(), *iv.get(), false);
     }
 
-    void SAMAV2ISO7816Commands::authentificateHost(std::shared_ptr<DESFireKey> key, unsigned char keyno)
+    void SAMAV2ISO7816Commands::authenticateHost(std::shared_ptr<DESFireKey> key, unsigned char keyno)
     {
         unsigned char hostmode = 2;
         std::vector<unsigned char> result, emptyIV(16);
         std::vector<unsigned char> data_p1(3, 0x00);
 
         if (key->getKeyType() != DESFireKeyType::DF_KEY_AES)
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHost Only AES Key allowed.");
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authenticateHost Only AES Key allowed.");
 
         /* emptyIV and Clear Key */
         d_lastMacIV = emptyIV;
@@ -85,7 +85,7 @@ namespace logicalaccess
 
         result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xa4, 0x00, 0x00, 0x03, data_p1, 0x00);
         if (result.size() != 14 || result[12] != 0x90 || result[13] != 0xAF)
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHost P1 Failed.");
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authenticateHost P1 Failed.");
 
         std::vector<unsigned char> keycipher(key->getData(), key->getData() + key->getLength());
         d_macSessionKey = keycipher;
@@ -112,7 +112,7 @@ namespace logicalaccess
 
         result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xa4, 0x00, 0x00, 0x14, data_p2, 0x00);
         if (result.size() != 26 || result[24] != 0x90 || result[25] != 0xAF)
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHost P2 Failed.");
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authenticateHost P2 Failed.");
 
         /* Check CMAC - Create rnd1 for p3 - CMAC: rnd1 | P1 | other data */
         rnd1.insert(rnd1.end(), rnd2.begin() + 12, rnd2.end()); //p2 data without rnd2
@@ -123,7 +123,7 @@ namespace logicalaccess
         for (unsigned char x = 0; x < 8; ++x)
         {
             if (macHost[x] != result[x])
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHost P2 CMAC from SAM is Wrong.");
+                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authenticateHost P2 CMAC from SAM is Wrong.");
         }
 
         /* Create kxe - d_authKey */
@@ -160,7 +160,7 @@ namespace logicalaccess
 
         result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xa4, 0x00, 0x00, 0x20, encHost, 0x00);
         if (result.size() != 18 || result[16] != 0x90 || result[17] != 0x00)
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHost P3 Failed.");
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authenticateHost P3 Failed.");
 
         std::vector<unsigned char> encSAMrndA(result.begin(), result.end() - 2), SAMrndA;
         iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastMacIV)));
@@ -168,7 +168,7 @@ namespace logicalaccess
         SAMrndA.insert(SAMrndA.begin(), SAMrndA.end() - 2, SAMrndA.end());
 
         if (!std::equal(SAMrndA.begin(), SAMrndA.begin() + 16, rndA.begin()))
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHost P3 RndA from SAM is invalide.");
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authenticateHost P3 RndA from SAM is invalid.");
 
         generateSessionKey(rndA, dencRndB);
         d_cmdCtr = 0;

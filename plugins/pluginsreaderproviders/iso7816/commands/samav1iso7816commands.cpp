@@ -132,15 +132,15 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKeyEntry failed.");
     }
 
-    void SAMAV1ISO7816Commands::authentificateHost(std::shared_ptr<DESFireKey> key, unsigned char keyno)
+    void SAMAV1ISO7816Commands::authenticateHost(std::shared_ptr<DESFireKey> key, unsigned char keyno)
     {
         if (key->getKeyType() == DF_KEY_DES)
-            authentificateHostDES(key, keyno);
+            authenticateHostDES(key, keyno);
         else
-            authentificateHost_AES_3K3DES(key, keyno);
+            authenticateHost_AES_3K3DES(key, keyno);
     }
 
-    void SAMAV1ISO7816Commands::authentificateHost_AES_3K3DES(std::shared_ptr<DESFireKey> key, unsigned char keyno)
+    void SAMAV1ISO7816Commands::authenticateHost_AES_3K3DES(std::shared_ptr<DESFireKey> key, unsigned char keyno)
     {
         std::vector<unsigned char> data;
         unsigned char authMode = 0x00;
@@ -154,7 +154,7 @@ namespace logicalaccess
 
         result = transmit(cmd_vector);
         if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0xaf))
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHost_AES_3K3DES P1 failed.");
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authenticateHost_AES_3K3DES P1 failed.");
 
         std::vector<unsigned char> encRndB(result.begin(), result.end() - 2);
         std::vector<unsigned char> encRndAB = d_crypto->authenticateHostP1(key, encRndB, keyno);
@@ -165,13 +165,13 @@ namespace logicalaccess
 
         result = transmit(cmd_vector);
         if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHost_AES_3K3DES P2 failed.");
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authenticateHost_AES_3K3DES P2 failed.");
 
         std::vector<unsigned char> encRndA1(result.begin(), result.end() - 2);
         d_crypto->authenticateHostP2(keyno, encRndA1, key);
     }
 
-    void SAMAV1ISO7816Commands::authentificateHostDES(std::shared_ptr<DESFireKey> key, unsigned char keyno)
+    void SAMAV1ISO7816Commands::authenticateHostDES(std::shared_ptr<DESFireKey> key, unsigned char keyno)
     {
         std::vector<unsigned char> data;
         unsigned char authMode = 0x00;
@@ -186,7 +186,7 @@ namespace logicalaccess
         result = transmit(cmd_vector);
 
         if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0xaf))
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHostDES P1 failed.");
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authenticateHostDES P1 failed.");
 
         std::vector<unsigned char> keyvec(key->getData(), key->getData() + keylength);
 
@@ -230,7 +230,7 @@ namespace logicalaccess
 
         result = transmit(cmd_vector);
         if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHostDES P2 failed.");
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authenticateHostDES P2 failed.");
 
         std::vector<unsigned char> encRndA1(result.begin(), result.end() - 2);
 		std::vector<unsigned char> dencRndA1;
@@ -243,7 +243,7 @@ namespace logicalaccess
 
         //Check if RNDA is our
         if (!std::equal(dencRndA1.begin(), dencRndA1.end(), rndA1.begin()))
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authentificateHostDES Final Check failed.");
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authenticateHostDES Final Check failed.");
 
         d_crypto->d_sessionKey.clear();
 

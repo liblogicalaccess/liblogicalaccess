@@ -638,7 +638,7 @@ namespace logicalaccess
 					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The Unlock SAM key is empty.");
 
 				if (ret->getSingleChip()->getCardType() == "SAM_AV1")
-					std::dynamic_pointer_cast<SAMAV1ISO7816Commands>(getSAMChip()->getCommands())->authentificateHost(getPCSCConfiguration()->getSAMUnLockKey(), getPCSCConfiguration()->getSAMUnLockkeyNo());
+					std::dynamic_pointer_cast<SAMAV1ISO7816Commands>(getSAMChip()->getCommands())->authenticateHost(getPCSCConfiguration()->getSAMUnLockKey(), getPCSCConfiguration()->getSAMUnLockkeyNo());
 				else if (ret->getSingleChip()->getCardType() == "SAM_AV2")
 				{
 					try

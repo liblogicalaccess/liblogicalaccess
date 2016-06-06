@@ -42,7 +42,7 @@ namespace logicalaccess
          */
         virtual ~SAMAV2ISO7816Commands();
 
-        virtual void authentificateHost(std::shared_ptr<DESFireKey> key, unsigned char keyno);
+        virtual void authenticateHost(std::shared_ptr<DESFireKey> key, unsigned char keyno);
 
         virtual std::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2> > getKeyEntry(unsigned char keyno);
         virtual std::shared_ptr<SAMKucEntry> getKUCEntry(unsigned char kucno);
