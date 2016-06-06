@@ -13,7 +13,7 @@
 namespace logicalaccess
 {
     /**
-    * \brief The NFC Tag storage card service bas class.
+    * \brief The NFC Tag storage card service base class.
     */
     class LIBLOGICALACCESS_API NFCTagCardService : public CardService
     {

@@ -1421,6 +1421,13 @@ std::shared_ptr<Chip> PCSCReaderUnit::adjustChip(std::shared_ptr<Chip> c)
                                c->getChipIdentifier());
     }
 
+	// Mifare Ultralight adjustement.
+	if (c->getCardType() == "MifareUltralight" && d_card_type == "UNKNOWN")
+	{
+		if (createCardProbe()->is_mifare_ultralight_c())
+			c = createChip("MifareUltralightC");
+	}
+
     if (c->getChipIdentifier().size() == 0)
     {
         try

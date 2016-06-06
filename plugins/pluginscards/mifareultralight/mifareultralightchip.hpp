@@ -62,6 +62,12 @@ namespace logicalaccess
          */
         virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
 
+		/**
+		 * \brief Get the number of blocks.
+		 * \return Number of blocks.
+		 */
+		virtual unsigned short getNbBlocks(bool checkOnCard = false);
+
         /**
          * \brief Get the Mifare Ultralight commands.
          * \return The Mifare Ultralight commands.
@@ -77,6 +83,8 @@ namespace logicalaccess
     protected:
 
         void addPageNode(std::shared_ptr<LocationNode> rootNode, int page);
+
+		unsigned short d_nbblocks;
     };
 }
 

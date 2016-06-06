@@ -15,7 +15,7 @@ namespace logicalaccess
     class DESFireChip;
 
     /**
-     * \brief The DESFire storage card service bas class.
+     * \brief The DESFire storage card service base class.
      */
     class LIBLOGICALACCESS_API DESFireEV1NFCTag4CardService : public ISO7816NFCTag4CardService
     {

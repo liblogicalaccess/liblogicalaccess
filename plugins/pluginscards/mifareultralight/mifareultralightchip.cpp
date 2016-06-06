@@ -8,12 +8,13 @@
 #include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
 #include "mifareultralightstoragecardservice.hpp"
 #include "logicalaccess/cards/locationnode.hpp"
+#include "nfctag2cardservice.hpp"
 #include "mifareultralightuidchangerservice.hpp"
 
 namespace logicalaccess
 {
     MifareUltralightChip::MifareUltralightChip(std::string ct) :
-        Chip(ct)
+		Chip(ct), d_nbblocks(16)
     {
     }
 
@@ -27,14 +28,59 @@ namespace logicalaccess
     {
     }
 
+	unsigned short MifareUltralightChip::getNbBlocks(bool checkOnCard)
+	{
+		if (checkOnCard)
+		{
+			try
+			{
+				std::shared_ptr<MifareUltralightCommands> mfucmd = getMifareUltralightCommands();
+				d_nbblocks = 16;
+				mfucmd->readPage(31);
+				d_nbblocks = 32;
+				mfucmd->readPage(35);
+				d_nbblocks = 36;
+				mfucmd->readPage(41);
+				d_nbblocks = 42;
+				mfucmd->readPage(125);
+				d_nbblocks = 126;
+				mfucmd->readPage(221);
+				d_nbblocks = 222;
+			}
+			catch (std::exception& ex) { }
+		}
+
+		return d_nbblocks;
+	}
+
     std::shared_ptr<LocationNode> MifareUltralightChip::getRootLocationNode()
     {
         std::shared_ptr<LocationNode> rootNode;
         rootNode.reset(new LocationNode());
 
-        rootNode->setName("Mifare Ultralight");
+		switch (d_nbblocks)
+		{
+		case 32:
+			rootNode->setName("NTAG212");
+			break;
+		case 36:
+			rootNode->setName("NTAG213");
+			break;
+		case 42:
+			rootNode->setName("NTAG203F");
+			break;
+		case 126:
+			rootNode->setName("NTAG215");
+			break;
+		case 222:
+			rootNode->setName("NTAG216");
+			break;
+		default:
+			rootNode->setName("Mifare Ultralight");
+			break;
+		}
 
-        for (unsigned int i = 0; i < 16; ++i)
+		for (unsigned short i = 0; i < getNbBlocks(true); ++i)
         {
             addPageNode(rootNode, i);
         }
@@ -75,6 +121,9 @@ namespace logicalaccess
         case CST_STORAGE:
             service.reset(new MifareUltralightStorageCardService(shared_from_this()));
             break;
+		case CST_NFC_TAG:
+			service.reset(new NFCTag2CardService(shared_from_this()));
+			break;
         case CST_UID_CHANGER:
         {
             auto storage = std::make_shared<MifareUltralightStorageCardService>(
