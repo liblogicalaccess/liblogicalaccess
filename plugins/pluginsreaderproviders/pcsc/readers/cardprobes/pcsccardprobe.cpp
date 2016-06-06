@@ -94,7 +94,7 @@ bool PCSCCardProbe::is_desfire_ev1(std::vector<uint8_t> *uid)
                 ByteVector(std::begin(cardversion.uid), std::end(cardversion.uid));
         return cardversion.softwareMjVersion >= 1;
     }
-    catch (const std::exception &e)
+    catch (const std::exception&)
     {
         // If an error occurred, the card probably isn't desfire.
         return false;
@@ -113,7 +113,7 @@ bool PCSCCardProbe::is_mifare_ultralight_c()
 		assert(mfu_command);
 		mfu_command->authenticate(std::shared_ptr<TripleDESKey>());
 	}
-	catch (const std::exception& e)
+	catch (const std::exception&)
 	{
 		// TODO: handle the case authentication is not default by checking error code
 		return false;

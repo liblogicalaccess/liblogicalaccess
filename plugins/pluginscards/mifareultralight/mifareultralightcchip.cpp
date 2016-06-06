@@ -19,6 +19,7 @@ namespace logicalaccess
         : MifareUltralightChip(CHIP_MIFAREULTRALIGHTC)
     {
         d_profile.reset(new MifareUltralightCProfile());
+        d_nbblocks = 48;
     }
 
     MifareUltralightCChip::~MifareUltralightCChip()
@@ -31,8 +32,9 @@ namespace logicalaccess
         rootNode.reset(new LocationNode());
 
         rootNode->setName("Mifare Ultralight C");
+        checkRootLocationNodeName(rootNode);
 
-        for (unsigned int i = 0; i < 48; ++i)
+        for (unsigned int i = 0; i < getNbBlocks(); ++i)
         {
             addPageNode(rootNode, i);
         }

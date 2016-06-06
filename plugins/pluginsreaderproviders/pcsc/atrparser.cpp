@@ -113,6 +113,10 @@ std::string ATRParser::atr_x_to_type(uint8_t code) const
         return "MifareUltralight";
     case 0x11:
         return "DESFire";
+    case 0x12:
+        return "TagIt";
+    case 0x16:
+        return "iCode1";
     case 0x1A:
         return "HIDiClass16KS";
     case 0x1C:
@@ -129,10 +133,24 @@ std::string ATRParser::atr_x_to_type(uint8_t code) const
         return "HIDiClass32KS_8x2_8x2";
     case 0x26:
         return "MifareMini";
+    case 0x2F:
+        return "Topaz"; // Jewel
 	case 0x30:
 		return "Topaz";
+    case 0x35:
+        return "iCode2";
+    case 0x36:
+        return "MifarePlus_SL1_2K";
+    case 0x37:
+        return "MifarePlus_SL1_4K";
+    case 0x38:
+        return "MifarePlus_SL1_2K"; // Should be MifarePlus_SL2_2K
+    case 0x39:
+        return "MifarePlus_SL1_4K"; // Should be MifarePlus_SL2_4K
     case 0x3A:
         return "MifareUltralightC";
+    case 0x3B:
+        return "FeliCa";
     }
     return "UNKNOWN";
 }

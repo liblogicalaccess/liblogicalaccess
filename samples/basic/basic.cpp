@@ -8,6 +8,7 @@
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/readerproviders/readerconfiguration.hpp"
 #include "logicalaccess/services/storage/storagecardservice.hpp"
+#include "logicalaccess/cards/locationnode.hpp"
 
 #include <iostream>
 #include <string>
@@ -93,7 +94,13 @@ int main(int , char**)
                     std::cout << "Card type: " << chip->getCardType() << std::endl;
 
                     std::vector<unsigned char> csn = readerConfig->getReaderUnit()->getNumber(chip);
-                    std::cout << "Card Serial Number : " << logicalaccess::BufferHelper::getHex(csn) << std::endl;	
+                    std::cout << "Card Serial Number : " << logicalaccess::BufferHelper::getHex(csn) << std::endl;
+
+                    std::shared_ptr<logicalaccess::LocationNode> node = chip->getRootLocationNode();
+                    if (node)
+                    {
+                        std::cout << "Root Location Node : " << node->getName() << std::endl;
+                    }
 
                     std::cout << "Chip list:" << std::endl;
                     std::vector<std::shared_ptr<logicalaccess::Chip>> chipList = readerConfig->getReaderUnit()->getChipList();

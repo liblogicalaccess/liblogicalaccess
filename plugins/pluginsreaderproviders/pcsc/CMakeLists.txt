@@ -17,7 +17,8 @@ set(INCLUDE_FOLDER 	${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2
                     ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/prox
-					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/felica)
+					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/felica
+					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/topaz)
 
 INCLUDE_DIRECTORIES(${INCLUDE_FOLDER})
 
@@ -77,6 +78,7 @@ target_link_libraries(
 	proxcards
 	felicacards
 	epasscards
+	topazcards
 	${LIBLOGICALACCESS_LIBRARY}
 	${PCSCLITE_LIBRARIES}
 )

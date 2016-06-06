@@ -208,7 +208,7 @@ std::shared_ptr<Chip> ID3ReaderUnit::selectCard(std::shared_ptr<Chip> c)
     if (itr != chips_.end())
     {
         auto idx = std::distance(chips_.begin(), itr);
-        selectCard(idx);
+        selectCard(static_cast<uint8_t>(idx));
         return c;
     }
     return nullptr;

@@ -1,5 +1,5 @@
 /**
-* \file nfctag4cardservice.cpp
+* \file nfctag2cardservice.cpp
 * \author Maxime C. <maxime-dev@islog.com>
 * \brief NFC Tag Type 2 card service.
 */
@@ -7,6 +7,7 @@
 #include <logicalaccess/logs.hpp>
 #include "nfctag2cardservice.hpp"
 #include "logicalaccess/services/nfctag/ndefmessage.hpp"
+#include "logicalaccess/services/storage/storagecardservice.hpp"
 #include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
@@ -19,13 +20,16 @@ namespace logicalaccess
 		std::vector<unsigned char> CC;
 		CC.push_back(0xE1);	// NDEF present on tag
 		CC.push_back(0x10); // Support version 1.0
-		CC.push_back((nbblocks - 4) / 2); // Tag Type (= nb 8-bytes data blocks)
+        CC.push_back(static_cast<unsigned char>((nbblocks - 4) / 2)); // Tag Type (= nb 8-bytes data blocks)
 		CC.push_back(0x00);   // No Lock
 		mfucmd->writePage(3, CC);
 	}
 
 	void NFCTag2CardService::writeNDEF(std::shared_ptr<logicalaccess::NdefMessage> records)
 	{
+        std::shared_ptr<logicalaccess::StorageCardService> storage = std::dynamic_pointer_cast<StorageCardService>(getMifareUltralightChip()->getService(CST_STORAGE));
+        std::shared_ptr<logicalaccess::MifareUltralightLocation> location(new logicalaccess::MifareUltralightLocation);
+        location->page = 4;
 		writeCapabilityContainer();
 
 		std::vector<unsigned char> data;
@@ -34,6 +38,7 @@ namespace logicalaccess
 		data.push_back(static_cast<unsigned char>(recordsData.size()));
 		data.insert(data.end(), recordsData.begin(), recordsData.end());
 		data.push_back(0xFE); // T = Terminator
+        storage->writeData(location, std::shared_ptr<logicalaccess::AccessInfo>(), std::shared_ptr<logicalaccess::AccessInfo>(), data, CB_AUTOSWITCHAREA);
 	}
 
 	std::shared_ptr<logicalaccess::NdefMessage> NFCTag2CardService::readNDEF()
@@ -44,7 +49,7 @@ namespace logicalaccess
 		// TODO: support Dynamic Memory Structure
 		// See NFC Forum Tag Type 2, Chapter 2.2
 		
-		std::vector<unsigned char> CC = mfucmd->readPage(0x03);
+		std::vector<unsigned char> CC = mfucmd->readPage(3);
 		// Only take care if NDEF is present
 		if (CC.size() == 4 && CC[0] == 0xE1)
 		{
@@ -72,11 +77,11 @@ namespace logicalaccess
 						}
 						// TODO: support multiple ndef message
 						// Ndef found, leave
-						i = data.size();
+                        i = static_cast<unsigned short>(data.size());
 						break;
 					case 0xFE: // Terminator
 						// Just leave
-						i = data.size();
+                        i = static_cast<unsigned short>(data.size());
 						break;
 					}
 				}
@@ -88,12 +93,7 @@ namespace logicalaccess
 
 	void NFCTag2CardService::eraseNDEF()
 	{
-		std::shared_ptr<logicalaccess::MifareUltralightCommands> mfucmd(getMifareUltralightChip()->getMifareUltralightCommands());
-		std::vector<unsigned char> empty(4, 0x00);
-
-		for (unsigned short i = 4; i < getMifareUltralightChip()->getNbBlocks(); ++i)
-		{			
-			mfucmd->writePage(i, empty);
-		}
+        std::shared_ptr<logicalaccess::StorageCardService> storage = std::dynamic_pointer_cast<StorageCardService>(getMifareUltralightChip()->getService(CST_STORAGE));
+        storage->erase();
 	}
 }

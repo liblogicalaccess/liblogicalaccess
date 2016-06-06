@@ -33,6 +33,7 @@
 #include "commands/mifareomnikeyxx21commands.hpp"
 #include "commands/mifareplus_omnikeyxx21_sl1.hpp"
 #include "commands/mifareplus_sprincard_sl1.hpp"
+#include "commands/topazpcsccommands.hpp"
 
 #include "commands/proxcommand.hpp"
 #include "mifareplussl1profile.hpp"
@@ -910,6 +911,10 @@ namespace logicalaccess
                 rca = std::make_shared<EPassReaderCardAdapter>();
                 rca->setDataTransport(std::make_shared<PCSCDataTransport>());
                 //commands->setReaderCardAdapter(rca);
+            }
+            else if (type == "Topaz")
+            {
+                commands.reset(new TopazPCSCCommands());
             }
 
             if (type == "DESFire" || type == "DESFireEV1")

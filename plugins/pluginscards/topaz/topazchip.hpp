@@ -1,16 +1,16 @@
 /**
- * \file mifareultralightchip.hpp
+ * \file topazchip.hpp
  * \author Maxime C. <maxime-dev@islog.com>
- * \brief Mifare Ultralight chip.
+ * \brief Topaz chip.
  */
 
-#ifndef LOGICALACCESS_MIFAREULTRALIGHTCHIP_H
-#define LOGICALACCESS_MIFAREULTRALIGHTCHIP_H
+#ifndef LOGICALACCESS_TOPAZCHIP_H
+#define LOGICALACCESS_TOPAZCHIP_H
 
 #include "logicalaccess/cards/chip.hpp"
 
-#include "mifareultralightcommands.hpp"
-#include "mifareultralightprofile.hpp"
+#include "topazcommands.hpp"
+#include "topazprofile.hpp"
 
 #include <string>
 #include <vector>
@@ -18,36 +18,36 @@
 
 namespace logicalaccess
 {
-#define CHIP_MIFAREULTRALIGHT		"MifareUltralight"
+#define CHIP_TOPAZ		"Topaz"
 
     /**
-     * \brief The Mifare Ultralight base chip class.
+     * \brief The Topaz base chip class.
      */
-    class LIBLOGICALACCESS_API MifareUltralightChip : public Chip
+    class LIBLOGICALACCESS_API TopazChip : public Chip
     {
     public:
 
         /**
          * \brief Constructor.
          */
-        MifareUltralightChip();
+        TopazChip();
 
         /**
          * \brief Constructor.
          * \param ct The card type.
          */
-        MifareUltralightChip(std::string ct);
+        TopazChip(std::string ct);
 
         /**
          * \brief Destructor.
          */
-        virtual ~MifareUltralightChip();
+        virtual ~TopazChip();
 
         /**
          * \brief Get the generic card type.
          * \return The generic card type.
          */
-        virtual std::string getGenericCardType() const { return CHIP_MIFAREULTRALIGHT; };
+        virtual std::string getGenericCardType() const { return CHIP_TOPAZ; };
 
         /**
          * \brief Get the root location node.
@@ -69,16 +69,16 @@ namespace logicalaccess
 		virtual unsigned short getNbBlocks(bool checkOnCard = false);
 
         /**
-         * \brief Get the Mifare Ultralight commands.
-         * \return The Mifare Ultralight commands.
+         * \brief Get the Topaz commands.
+         * \return The Topaz commands.
          */
-        std::shared_ptr<MifareUltralightCommands> getMifareUltralightCommands() { return std::dynamic_pointer_cast<MifareUltralightCommands>(getCommands()); };
+        std::shared_ptr<TopazCommands> getTopazCommands() { return std::dynamic_pointer_cast<TopazCommands>(getCommands()); };
 
         /**
-         * \brief Get the Mifare Ultralight profile.
-         * \return The Mifare Ultralight profile.
+         * \brief Get the Topaz profile.
+         * \return The Topaz profile.
          */
-        std::shared_ptr<MifareUltralightProfile> getMifareUltralightProfile() { return std::dynamic_pointer_cast<MifareUltralightProfile>(getProfile()); };
+        std::shared_ptr<TopazProfile> getTopazProfile() { return std::dynamic_pointer_cast<TopazProfile>(getProfile()); };
 
     protected:
 
