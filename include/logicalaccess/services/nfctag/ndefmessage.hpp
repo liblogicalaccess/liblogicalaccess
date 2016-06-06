@@ -18,7 +18,7 @@ namespace logicalaccess
     };
 
     enum UriType {
-        NO_PREFIX = 0x00, // pas de préfixe
+        NO_PREFIX = 0x00, // no prefix
         HTTP_WWW = 0x01, // http://www.
         HTTPS_WWW = 0x02, // https://www.
         HTTP = 0x03, // http://
@@ -32,7 +32,7 @@ namespace logicalaccess
     {
     public:
         NdefMessage() {};
-        NdefMessage(std::vector<unsigned char>& data);
+        NdefMessage(const std::vector<unsigned char>& data);
         virtual ~NdefMessage() {};
 
         std::vector<unsigned char> encode();

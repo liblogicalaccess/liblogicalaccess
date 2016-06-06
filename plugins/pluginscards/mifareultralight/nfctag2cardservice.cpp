@@ -53,7 +53,7 @@ namespace logicalaccess
 				// Read all available data from data blocks
 				std::vector<unsigned char> data = mfucmd->readPages(4, 4 + (CC[2] * 2));
 				unsigned short i = 0;
-				while (i + 1 < data.size())
+				while (i + 1u < data.size())
 				{
 					switch (data[i++])
 					{
@@ -65,7 +65,7 @@ namespace logicalaccess
 						i += data[i];
 						break;
 					case 0x03: // Ndef message
-						if (data.size() >= i + 1 + data[i])
+						if (data.size() >= i + 1u + data[i])
 						{
 							ndef.reset(new NdefMessage(std::vector<unsigned char>(data.begin() + i + 1, data.begin() + i + 1 + data[i])));
 							i += data[i];
