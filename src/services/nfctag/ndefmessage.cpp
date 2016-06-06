@@ -12,7 +12,7 @@
 
 namespace logicalaccess
 {
-    NdefMessage::NdefMessage(std::vector<unsigned char>& data)
+    NdefMessage::NdefMessage(const std::vector<unsigned char>& data)
     {
         size_t index = 0;
 
