@@ -16,7 +16,11 @@ namespace logicalaccess
         desfirecommand->selectApplication(0x00);
         if (masterPICCKey)
         {
-            desfirecommand->authenticate(0x00, masterPICCKey);
+            try
+            {
+                desfirecommand->authenticate(0x00, masterPICCKey);
+            }
+            catch (std::exception&) { }
         }
 
         unsigned char dfName[] = { 0xD2, 0x76, 0x00, 0x00, 0x85, 0x01, 0x01 };
@@ -67,7 +71,8 @@ namespace logicalaccess
 
     void DESFireEV1NFCTag4CardService::writeNDEF(std::shared_ptr<logicalaccess::NdefMessage> records)
     {
-        createNFCApplication(0x000001, std::shared_ptr<logicalaccess::DESFireKey>());
+        std::shared_ptr<logicalaccess::DESFireKey> picckey(new logicalaccess::DESFireKey("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"));
+        createNFCApplication(0x000001, picckey);
         writeNDEFFile(records);
     }
 

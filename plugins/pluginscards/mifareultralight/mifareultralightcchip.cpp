@@ -6,6 +6,7 @@
 
 #include "mifareultralightcchip.hpp"
 #include "mifareultralightcstoragecardservice.hpp"
+#include "nfctag2cardservice.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -53,6 +54,9 @@ namespace logicalaccess
             break;
         case CST_STORAGE:
             service.reset(new MifareUltralightCStorageCardService(shared_from_this()));
+            break;
+        case CST_NFC_TAG:
+            service.reset(new NFCTag2CardService(shared_from_this()));
             break;
         default:
             break;

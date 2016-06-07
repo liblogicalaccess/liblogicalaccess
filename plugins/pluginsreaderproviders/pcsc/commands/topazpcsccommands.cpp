@@ -26,7 +26,7 @@ namespace logicalaccess
 
     std::vector<unsigned char> TopazPCSCCommands::readPage(int page)
     {
-        std::vector<unsigned char> result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xB0, 0x00, static_cast<unsigned char>(page), 8);
+        std::vector<unsigned char> result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xB0, 0x00, static_cast<unsigned char>((page) * 8), 8);
 
         return std::vector<unsigned char>(result.begin(), result.end() - 2);
     }
@@ -38,6 +38,6 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter.");
         }
 
-        getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xD6, 0x00, static_cast<unsigned char>(page), static_cast<unsigned char>(buf.size()), buf);
+        getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xD6, 0x00, static_cast<unsigned char>((page) * 8), static_cast<unsigned char>(buf.size()), buf);
     }
 }

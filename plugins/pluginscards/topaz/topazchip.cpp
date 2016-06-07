@@ -76,7 +76,7 @@ namespace logicalaccess
 
         sprintf(tmpName, "Page %d", page);
         sectorNode->setName(tmpName);
-        sectorNode->setLength(4);
+        sectorNode->setLength(8);
         sectorNode->setNeedAuthentication(true);
 
         std::shared_ptr<TopazLocation> location;

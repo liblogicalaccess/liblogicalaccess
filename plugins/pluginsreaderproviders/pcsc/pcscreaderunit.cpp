@@ -34,6 +34,9 @@
 #include "commands/mifareplus_omnikeyxx21_sl1.hpp"
 #include "commands/mifareplus_sprincard_sl1.hpp"
 #include "commands/topazpcsccommands.hpp"
+#include "commands/topazacsacrcommands.hpp"
+#include "commands/topazscmcommands.hpp"
+#include "commands/topazomnikeyxx27commands.hpp"
 
 #include "commands/proxcommand.hpp"
 #include "mifareplussl1profile.hpp"
@@ -914,7 +917,22 @@ namespace logicalaccess
             }
             else if (type == "Topaz")
             {
-                commands.reset(new TopazPCSCCommands());
+                if (getPCSCType() == PCSC_RUT_ACS_ACR || getPCSCType() == PCSC_RUT_ACS_ACR_1222L)
+                {
+                    commands.reset(new TopazACSACRCommands());
+                }
+                else if (getPCSCType() == PCSC_RUT_SCM)
+                {
+                    commands.reset(new TopazSCMCommands());
+                }
+                else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX27)
+                {
+                    commands.reset(new TopazOmnikeyXX27Commands());
+                }
+                else
+                {
+                    commands.reset(new TopazPCSCCommands());
+                }
             }
 
             if (type == "DESFire" || type == "DESFireEV1")
