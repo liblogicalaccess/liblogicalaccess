@@ -21,16 +21,14 @@ namespace logicalaccess
 		std::vector<unsigned char> data;
 
         // Capability Container
-        data.push_back(0xE1);	// NDEF present on tag
+        data.push_back(0xE1); // NDEF present on tag
         data.push_back(0x10); // Support version 1.0
         data.push_back(static_cast<unsigned char>(nbblocks)); // Tag Type
-        data.push_back(0x00);   // No Lock
+        data.push_back(0x00); // No Lock
 
-		data.push_back(0x03); // T = NDEF
-		std::vector<unsigned char> recordsData = records->encode();
-		data.push_back(static_cast<unsigned char>(recordsData.size()));
-		data.insert(data.end(), recordsData.begin(), recordsData.end());
-		data.push_back(0xFE); // T = Terminator
+        std::vector<unsigned char> tlv = NdefMessage::NdefMessageToTLV(records);
+        data.insert(data.end(), tlv.begin(), tlv.end());
+
         storage->writeData(location, std::shared_ptr<logicalaccess::AccessInfo>(), std::shared_ptr<logicalaccess::AccessInfo>(), data, CB_AUTOSWITCHAREA);
 	}
 
@@ -47,34 +45,8 @@ namespace logicalaccess
 			{
 				// Read all available data from data blocks
                 std::vector<unsigned char> data = tzmd->readPages(1, CC[2]);
-				unsigned short i = 4;
-				while (i + 1u < data.size())
-				{
-					switch (data[i++])
-					{
-					case 0x00: // Null
-						break;
-					case 0x01: // Lock
-					case 0x02: // Memory control
-					case 0xFD: // Proprietary
-						i += data[i];
-						break;
-					case 0x03: // Ndef message
-						if (data.size() >= i + 1u + data[i])
-						{
-							ndef.reset(new NdefMessage(std::vector<unsigned char>(data.begin() + i + 1, data.begin() + i + 1 + data[i])));
-							i += data[i];
-						}
-						// TODO: support multiple ndef message
-						// Ndef found, leave
-                        i = static_cast<unsigned short>(data.size());
-						break;
-					case 0xFE: // Terminator
-						// Just leave
-                        i = static_cast<unsigned short>(data.size());
-						break;
-					}
-				}
+                data = std::vector<unsigned char>(data.begin() + 4, data.end());
+                ndef = NdefMessage::TLVToNdefMessage(data);
 			}
 		}
 

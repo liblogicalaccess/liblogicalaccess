@@ -10,6 +10,7 @@
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
 #include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
 #include "mifarestoragecardservice.hpp"
+#include "mifarenfctagcardservice.hpp"
 #include "logicalaccess/cards/locationnode.hpp"
 
 namespace logicalaccess
@@ -95,6 +96,11 @@ namespace logicalaccess
         case CST_STORAGE:
         {
             service.reset(new MifareStorageCardService(shared_from_this()));
+        }
+            break;
+        case CST_NFC_TAG:
+        {
+            service.reset(new MifareNFCTagCardService(shared_from_this()));
         }
             break;
         case CST_UID_CHANGER:

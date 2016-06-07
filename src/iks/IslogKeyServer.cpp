@@ -195,7 +195,7 @@ std::shared_ptr<BaseResponse> IslogKeyServer::transact(const BaseCommand &cmd)
             transport_->send(cmd.serialize());
             return recv();
         }
-        catch (const std::exception &e)
+        catch (const std::exception &)
         {
             LOG(ERRORS) << "Network error in IKS. Attempting to reconnect.";
             setup_transport();

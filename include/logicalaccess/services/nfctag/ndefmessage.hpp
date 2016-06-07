@@ -51,6 +51,10 @@ namespace logicalaccess
         virtual void unSerialize(boost::property_tree::ptree& node);
         virtual std::string getDefaultXmlNodeName() const;
 
+        static std::shared_ptr<NdefMessage> TLVToNdefMessage(std::vector<unsigned char> tlv);
+
+        static std::vector<unsigned char> NdefMessageToTLV(std::shared_ptr<NdefMessage> record);
+
     private:
         std::vector<std::shared_ptr<NdefRecord> > m_records;
     };

@@ -62,26 +62,26 @@ namespace logicalaccess
 
         for (unsigned short i = 0; i < getNbBlocks(); ++i)
         {
-            addPageNode(rootNode, i);
+            addBlockNode(rootNode, i);
         }
 
         return rootNode;
     }
 
-    void TopazChip::addPageNode(std::shared_ptr<LocationNode> rootNode, int page)
+    void TopazChip::addBlockNode(std::shared_ptr<LocationNode> rootNode, int block)
     {
         char tmpName[255];
         std::shared_ptr<LocationNode> sectorNode;
         sectorNode.reset(new LocationNode());
 
-        sprintf(tmpName, "Page %d", page);
+        sprintf(tmpName, "Block %d", block);
         sectorNode->setName(tmpName);
         sectorNode->setLength(8);
         sectorNode->setNeedAuthentication(true);
 
         std::shared_ptr<TopazLocation> location;
         location.reset(new TopazLocation());
-        location->page = page;
+        location->page = block;
         location->byte = 0;
 
         sectorNode->setLocation(location);

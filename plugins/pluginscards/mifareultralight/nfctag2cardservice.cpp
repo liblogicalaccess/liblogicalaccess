@@ -28,17 +28,11 @@ namespace logicalaccess
 	void NFCTag2CardService::writeNDEF(std::shared_ptr<logicalaccess::NdefMessage> records)
 	{
         std::shared_ptr<logicalaccess::StorageCardService> storage = std::dynamic_pointer_cast<StorageCardService>(getMifareUltralightChip()->getService(CST_STORAGE));
-        std::shared_ptr<logicalaccess::MifareUltralightLocation> location(new logicalaccess::MifareUltralightLocation);
+        std::shared_ptr<logicalaccess::MifareUltralightLocation> location(new logicalaccess::MifareUltralightLocation());
         location->page = 4;
 		writeCapabilityContainer();
 
-		std::vector<unsigned char> data;
-		data.push_back(0x03); // T = NDEF
-		std::vector<unsigned char> recordsData = records->encode();
-		data.push_back(static_cast<unsigned char>(recordsData.size()));
-		data.insert(data.end(), recordsData.begin(), recordsData.end());
-		data.push_back(0xFE); // T = Terminator
-        storage->writeData(location, std::shared_ptr<logicalaccess::AccessInfo>(), std::shared_ptr<logicalaccess::AccessInfo>(), data, CB_AUTOSWITCHAREA);
+        storage->writeData(location, std::shared_ptr<logicalaccess::AccessInfo>(), std::shared_ptr<logicalaccess::AccessInfo>(), NdefMessage::NdefMessageToTLV(records), CB_AUTOSWITCHAREA);
 	}
 
 	std::shared_ptr<logicalaccess::NdefMessage> NFCTag2CardService::readNDEF()
@@ -57,34 +51,7 @@ namespace logicalaccess
 			{
 				// Read all available data from data blocks
 				std::vector<unsigned char> data = mfucmd->readPages(4, 4 + (CC[2] * 2));
-				unsigned short i = 0;
-				while (i + 1u < data.size())
-				{
-					switch (data[i++])
-					{
-					case 0x00: // Null
-						break;
-					case 0x01: // Lock
-					case 0x02: // Memory control
-					case 0xFD: // Proprietary
-						i += data[i];
-						break;
-					case 0x03: // Ndef message
-						if (data.size() >= i + 1u + data[i])
-						{
-							ndef.reset(new NdefMessage(std::vector<unsigned char>(data.begin() + i + 1, data.begin() + i + 1 + data[i])));
-							i += data[i];
-						}
-						// TODO: support multiple ndef message
-						// Ndef found, leave
-                        i = static_cast<unsigned short>(data.size());
-						break;
-					case 0xFE: // Terminator
-						// Just leave
-                        i = static_cast<unsigned short>(data.size());
-						break;
-					}
-				}
+                ndef = NdefMessage::TLVToNdefMessage(data);
 			}
 		}
 

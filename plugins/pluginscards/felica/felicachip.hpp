@@ -19,6 +19,9 @@ namespace logicalaccess
 {
 #define	CHIP_FELICA	"FeliCa"
 
+#define FELICA_CODE_NDEF_READ 0x000B
+#define FELICA_CODE_NDEF_WRITE 0x0009
+
     /**
      * \brief The FeliCa base chip class.
      */
@@ -73,6 +76,8 @@ namespace logicalaccess
 		std::shared_ptr<FeliCaProfile> getFeliCaProfile() { return std::dynamic_pointer_cast<FeliCaProfile>(getProfile()); };
 
     protected:
+
+        void addBlockNode(std::shared_ptr<LocationNode> rootNode, unsigned short code, unsigned short block);
     };
 }
 

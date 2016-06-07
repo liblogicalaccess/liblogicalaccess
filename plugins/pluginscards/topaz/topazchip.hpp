@@ -82,7 +82,7 @@ namespace logicalaccess
 
     protected:
 
-        void addPageNode(std::shared_ptr<LocationNode> rootNode, int page);
+        void addBlockNode(std::shared_ptr<LocationNode> rootNode, int block);
 
         void checkRootLocationNodeName(std::shared_ptr<LocationNode> rootNode);
 

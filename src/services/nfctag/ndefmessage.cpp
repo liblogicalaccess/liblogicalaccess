@@ -174,4 +174,49 @@ namespace logicalaccess
     {
         return "NdefMessage";
     }
+
+    std::shared_ptr<NdefMessage> NdefMessage::TLVToNdefMessage(std::vector<unsigned char> tlv)
+    {
+        std::shared_ptr<logicalaccess::NdefMessage> ndef;
+        unsigned short i = 0;
+        while (i + 1u < tlv.size())
+        {
+            switch (tlv[i++])
+            {
+            case 0x00: // Null
+                break;
+            case 0x01: // Lock
+            case 0x02: // Memory control
+            case 0xFD: // Proprietary
+                i += tlv[i];
+                break;
+            case 0x03: // Ndef message
+                if (tlv.size() >= i + 1u + tlv[i])
+                {
+                    ndef.reset(new NdefMessage(std::vector<unsigned char>(tlv.begin() + i + 1, tlv.begin() + i + 1 + tlv[i])));
+                    i += tlv[i];
+                }
+                // TODO: support multiple ndef message
+                // Ndef found, leave
+                i = static_cast<unsigned short>(tlv.size());
+                break;
+            case 0xFE: // Terminator
+                // Just leave
+                i = static_cast<unsigned short>(tlv.size());
+                break;
+            }
+        }
+        return ndef;
+    }
+
+    std::vector<unsigned char> NdefMessage::NdefMessageToTLV(std::shared_ptr<NdefMessage> message)
+    {
+        std::vector<unsigned char> data;
+        data.push_back(0x03); // T = NDEF
+        std::vector<unsigned char> recordsData = message->encode();
+        data.push_back(static_cast<unsigned char>(recordsData.size()));
+        data.insert(data.end(), recordsData.begin(), recordsData.end());
+        data.push_back(0xFE); // T = Terminator
+        return data;
+    }
 }
