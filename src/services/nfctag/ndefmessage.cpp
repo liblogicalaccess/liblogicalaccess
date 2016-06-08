@@ -18,7 +18,7 @@ namespace logicalaccess
 
         while (index < data.size())
         {
-            EXCEPTION_ASSERT((index + 3) < data.size(), std::invalid_argument, "The buffer size is too small.");
+            EXCEPTION_ASSERT((index + 3) < data.size(), std::invalid_argument, "The buffer size is too small (1).");
             std::shared_ptr<NdefRecord> record(new NdefRecord());
 
             unsigned char tnf_tmp = data[index];
@@ -46,23 +46,23 @@ namespace logicalaccess
             if (il)
             {
                 index++;
-                EXCEPTION_ASSERT(index < data.size(), std::invalid_argument, "The buffer size is too small.");
+                EXCEPTION_ASSERT(index < data.size(), std::invalid_argument, "The buffer size is too small (2).");
                 idLength = data[index];
             }
 
             ++index;
-            EXCEPTION_ASSERT((index + typeLength) <= data.size(), std::invalid_argument, "The buffer size is too small.");
+            EXCEPTION_ASSERT((index + typeLength) <= data.size(), std::invalid_argument, "The buffer size is too small (3).");
             record->setType(std::vector<unsigned char>(data.begin() + index, data.begin() + index + typeLength));
             index += typeLength;
 
             if (il)
             {
-                EXCEPTION_ASSERT((index + idLength) <= data.size(), std::invalid_argument, "The buffer size is too small.");
+                EXCEPTION_ASSERT((index + idLength) <= data.size(), std::invalid_argument, "The buffer size is too small (4).");
                 record->setId(std::vector<unsigned char>(data.begin() + index, data.begin() + index + idLength));
                 index += idLength;
             }
 
-            EXCEPTION_ASSERT((index + payloadLength) <= data.size(), std::invalid_argument, "The buffer size is too small.");
+            EXCEPTION_ASSERT((index + payloadLength) <= data.size(), std::invalid_argument, "The buffer size is too small (5).");
             record->setPayload(std::vector<unsigned char>(data.begin() + index, data.begin() + index + payloadLength));
             index += payloadLength;
 

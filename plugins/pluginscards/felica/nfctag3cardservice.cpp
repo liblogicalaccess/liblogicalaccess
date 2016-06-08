@@ -16,6 +16,7 @@ namespace logicalaccess
     {
         std::shared_ptr<logicalaccess::StorageCardService> storage = std::dynamic_pointer_cast<StorageCardService>(getFeliCaChip()->getService(CST_STORAGE));
         std::shared_ptr<logicalaccess::FeliCaCommands> cmd = getFeliCaChip()->getFeliCaCommands();
+        EXCEPTION_ASSERT_WITH_LOG(cmd, CardException, "FeliCa commands not implemented on this reader.");
         std::shared_ptr<logicalaccess::FeliCaLocation> location(new logicalaccess::FeliCaLocation);
         location->code = FELICA_CODE_NDEF_WRITE;
         location->block = 1;
@@ -23,6 +24,7 @@ namespace logicalaccess
         if (records)
             data = records->encode();
         std::vector<unsigned char> data0 = cmd->read(location->code, 0);
+        EXCEPTION_ASSERT(data0.size() >= 16, CardException, "Wrong Attribute Information block length.");
         // Attribute Information block
         data0[9] = 0x00; // WriteFlag OFF
         // Len
@@ -46,12 +48,14 @@ namespace logicalaccess
     {
         std::shared_ptr<logicalaccess::StorageCardService> storage = std::dynamic_pointer_cast<StorageCardService>(getFeliCaChip()->getService(CST_STORAGE));
         std::shared_ptr<logicalaccess::FeliCaCommands> cmd = getFeliCaChip()->getFeliCaCommands();
+        EXCEPTION_ASSERT_WITH_LOG(cmd, CardException, "FeliCa commands not implemented on this reader.");
         std::shared_ptr<logicalaccess::FeliCaLocation> location(new logicalaccess::FeliCaLocation);
         location->code = FELICA_CODE_NDEF_READ;
         location->block = 1;
         std::shared_ptr<logicalaccess::NdefMessage> ndef;
 
         std::vector<unsigned char> data0 = cmd->read(location->code, 0);
+        EXCEPTION_ASSERT(data0.size() >= 16, CardException, "Wrong Attribute Information block length.");
         unsigned short rcrc = (data0[14] << 8) | data0[15];
         unsigned short crc = 0;
         for (unsigned char i = 0; i < 14; ++i)

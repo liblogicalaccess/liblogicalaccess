@@ -39,6 +39,7 @@
 #include "commands/topazomnikeyxx27commands.hpp"
 #include "commands/proxcommand.hpp"
 #include "commands/felicascmcommands.hpp"
+#include "commands/felicaspringcardcommands.hpp"
 #include "MifarePlusSL0Commands.hpp"
 #include "epass_command.hpp"
 #include "epass_readercardadapter.hpp"
@@ -917,6 +918,10 @@ namespace logicalaccess
 				{
 					commands.reset(new FeliCaSCMCommands());
 				}
+                else if (getPCSCType() == PCSC_RUT_SPRINGCARD)
+                {
+                    commands.reset(new FeliCaSpringCardCommands());
+                }
 			}
             else if (type == CHIP_EPASS)
             {

@@ -66,7 +66,7 @@ namespace logicalaccess
         sprintf(tmpName, "Block %d", block);
         blockNode->setName(tmpName);
         blockNode->setLength(16);
-        blockNode->setNeedAuthentication(false);
+        blockNode->setNeedAuthentication(true);
 
         std::shared_ptr<FeliCaLocation> location;
         location.reset(new FeliCaLocation());

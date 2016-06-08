@@ -97,7 +97,7 @@ namespace logicalaccess
 		unsigned char nbBlocks = result[10];
 		EXCEPTION_ASSERT_WITH_LOG(result.size() >= static_cast<unsigned int>(11 + (nbBlocks * 16)), LibLogicalAccessException, "Wrong read result. Invalid length for blocks number.");
 
-		return std::vector<unsigned char>(&result[11], &result[11] + (nbBlocks * 16));
+        return std::vector<unsigned char>(result.begin() + 11, result.begin() + 11 + (nbBlocks * 16));
 	}
 
 	void FeliCaSCMCommands::write(const std::vector<unsigned short>& codes, const std::vector<unsigned short>& blocks, const std::vector<unsigned char>& data)

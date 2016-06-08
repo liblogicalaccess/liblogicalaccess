@@ -23,7 +23,7 @@ namespace logicalaccess
         // Capability Container
         data.push_back(0xE1); // NDEF present on tag
         data.push_back(0x10); // Support version 1.0
-        data.push_back(static_cast<unsigned char>(nbblocks)); // Tag Type
+        data.push_back(static_cast<unsigned char>(nbblocks - 1)); // Tag Type
         data.push_back(0x00); // No Lock
 
         std::vector<unsigned char> tlv = NdefMessage::NdefMessageToTLV(records);
@@ -34,18 +34,20 @@ namespace logicalaccess
 
 	std::shared_ptr<logicalaccess::NdefMessage> NFCTag1CardService::readNDEF()
 	{
-		std::shared_ptr<logicalaccess::TopazCommands> tzmd(getTopazChip()->getTopazCommands());
+		std::shared_ptr<logicalaccess::TopazCommands> tcmd(getTopazChip()->getTopazCommands());
 		std::shared_ptr<logicalaccess::NdefMessage> ndef;
 		
-        std::vector<unsigned char> CC = tzmd->readPage(1);
+        std::vector<unsigned char> CC = tcmd->readPage(1);
 		// Only take care if NDEF is present
-		if (CC.size() == 4 && CC[0] == 0xE1)
+		if (CC.size() >= 4 && CC[0] == 0xE1)
 		{
 			if (CC[2] > 0)
 			{
 				// Read all available data from data blocks
-                std::vector<unsigned char> data = tzmd->readPages(1, CC[2]);
+                // Limited to block 0xE for now
+                std::vector<unsigned char> data = tcmd->readPages(1, 1 + ((CC[2] <= 14) ? CC[2] : 14));
                 data = std::vector<unsigned char>(data.begin() + 4, data.end());
+                std::cout << "\tbytes: " << BufferHelper::getHex(data) << std::endl;
                 ndef = NdefMessage::TLVToNdefMessage(data);
 			}
 		}

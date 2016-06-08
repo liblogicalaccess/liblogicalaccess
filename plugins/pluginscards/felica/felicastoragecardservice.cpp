@@ -23,6 +23,8 @@ namespace logicalaccess
 	void FeliCaStorageCardService::erase()
     {
         std::shared_ptr<FeliCaCommands> cmd = getFeliCaChip()->getFeliCaCommands();
+        EXCEPTION_ASSERT_WITH_LOG(cmd, CardException, "FeliCa commands not implemented on this reader.");
+
         std::vector<unsigned short> codes = cmd->getSystemCodes();
         std::vector<unsigned short> blocks;
         for (unsigned short i = 1; i < 14; ++i)
@@ -35,8 +37,15 @@ namespace logicalaccess
 
 	void FeliCaStorageCardService::erase(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse)
     {
+        EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
+
         std::shared_ptr<FeliCaLocation> flocation = std::dynamic_pointer_cast<FeliCaLocation>(location);
+
+        EXCEPTION_ASSERT_WITH_LOG(flocation, std::invalid_argument, "location must be a FeliCaLocation.");
+
         std::shared_ptr<FeliCaCommands> cmd = getFeliCaChip()->getFeliCaCommands();
+        EXCEPTION_ASSERT_WITH_LOG(cmd, CardException, "FeliCa commands not implemented on this reader.");
+
         std::vector<unsigned short> blocks;
         for (unsigned short i = flocation->block; i < 14; ++i)
         {
@@ -55,6 +64,7 @@ namespace logicalaccess
         EXCEPTION_ASSERT_WITH_LOG(icLocation, std::invalid_argument, "location must be a FeliCaLocation.");
 
         std::shared_ptr<FeliCaCommands> cmd = getFeliCaChip()->getFeliCaCommands();
+        EXCEPTION_ASSERT_WITH_LOG(cmd, CardException, "FeliCa commands not implemented on this reader.");
 
         if ((cardBehavior & CB_AUTOSWITCHAREA) == CB_AUTOSWITCHAREA)
         {
@@ -83,6 +93,7 @@ namespace logicalaccess
         EXCEPTION_ASSERT_WITH_LOG(icLocation, std::invalid_argument, "location must be a FeliCaLocation.");
 
         std::shared_ptr<FeliCaCommands> cmd = getFeliCaChip()->getFeliCaCommands();
+        EXCEPTION_ASSERT_WITH_LOG(cmd, CardException, "FeliCa commands not implemented on this reader.");
 
         std::vector<unsigned char> data;
         if ((cardBehavior & CB_AUTOSWITCHAREA) == CB_AUTOSWITCHAREA)
