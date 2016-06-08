@@ -8,6 +8,7 @@
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/readerproviders/readerconfiguration.hpp"
 #include "logicalaccess/services/storage/storagecardservice.hpp"
+#include "logicalaccess/services/nfctag/nfctagcardservice.hpp"
 #include "logicalaccess/cards/locationnode.hpp"
 
 #include <iostream>
@@ -102,7 +103,7 @@ int main(int , char**)
                         std::cout << "Root Location Node : " << node->getName() << std::endl;
                     }
 
-                    std::cout << "Chip list:" << std::endl;
+                    std::cout << "Complete chip list:" << std::endl;
                     std::vector<std::shared_ptr<logicalaccess::Chip>> chipList = readerConfig->getReaderUnit()->getChipList();
                     for(std::vector<std::shared_ptr<logicalaccess::Chip>>::iterator i = chipList.begin(); i != chipList.end(); ++i)
                     {

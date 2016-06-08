@@ -28,13 +28,13 @@ namespace logicalaccess
         setDefaultReaderCardAdapter(std::shared_ptr<PromagReaderCardAdapter>(new PromagReaderCardAdapter()));
         std::shared_ptr<PromagDataTransport> dataTransport(new PromagDataTransport());
         setDataTransport(dataTransport);
-        d_card_type = "UNKNOWN";
+		d_card_type = CHIP_UNKNOWN;
 
         try
         {
             boost::property_tree::ptree pt;
             read_xml((boost::filesystem::current_path().string() + "/PromagReaderUnit.config"), pt);
-            d_card_type = pt.get("config.cardType", "UNKNOWN");
+			d_card_type = pt.get("config.cardType", CHIP_UNKNOWN);
         }
         catch (...) {}
     }
@@ -152,7 +152,7 @@ namespace logicalaccess
             std::string rawidstr = BufferHelper::getStdString(rawidbuf);
             std::vector<unsigned char> insertedId = XmlSerializable::formatHexString(rawidstr);
             chip = ReaderUnit::createChip(
-                (d_card_type == "UNKNOWN" ? "GenericTag" : d_card_type),
+				(d_card_type == CHIP_UNKNOWN ? CHIP_GENERICTAG : d_card_type),
                 insertedId
                 );
         }
@@ -168,7 +168,7 @@ namespace logicalaccess
         {
             std::shared_ptr<ReaderCardAdapter> rca;
 
-            if (type == "GenericTag")
+			if (type == CHIP_GENERICTAG)
                 rca = getDefaultReaderCardAdapter();
             else
                 return chip;

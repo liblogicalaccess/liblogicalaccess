@@ -41,13 +41,13 @@ namespace logicalaccess
         setDataTransport(dataTransport);
         d_ledBuzzerDisplay.reset(new A3MLGM5600LEDBuzzerDisplay());
         d_lcdDisplay.reset(new A3MLGM5600LCDDisplay());
-        d_card_type = "UNKNOWN";
+		d_card_type = CHIP_UNKNOWN;
 
         try
         {
             boost::property_tree::ptree pt;
             read_xml((boost::filesystem::current_path().string() + "/A3MLGM5600ReaderUnit.config"), pt);
-            d_card_type = pt.get("config.cardType", "UNKNOWN");
+			d_card_type = pt.get("config.cardType", CHIP_UNKNOWN);
         }
         catch (...) {}
     }
@@ -86,7 +86,7 @@ namespace logicalaccess
                 std::vector<unsigned char> buf = hlRequest();
                 if (buf.size() > 0)
                 {
-                    d_insertedChip = createChip((d_card_type == "UNKNOWN") ? "GenericTag" : d_card_type);
+					d_insertedChip = createChip((d_card_type == CHIP_UNKNOWN) ? CHIP_GENERICTAG : d_card_type);
                     d_insertedChip->setChipIdentifier(buf);
                     inserted = true;
                 }
@@ -178,7 +178,7 @@ namespace logicalaccess
         {
             std::shared_ptr<ReaderCardAdapter> rca;
 
-            if (type == "GenericTag")
+			if (type == CHIP_GENERICTAG)
                 rca = getDefaultReaderCardAdapter();
             else
                 return chip;

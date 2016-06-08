@@ -50,13 +50,13 @@ namespace logicalaccess
         std::shared_ptr<STidSTRDataTransport> dataTransport(new STidSTRDataTransport());
         dataTransport->setPortBaudRate(38400);
         setDataTransport(dataTransport);
-        d_card_type = "UNKNOWN";
+		d_card_type = CHIP_UNKNOWN;
 
         try
         {
             boost::property_tree::ptree pt;
             read_xml((boost::filesystem::current_path().string() + "/STidSTRReaderUnit.config"), pt);
-            d_card_type = pt.get("config.cardType", "UNKNOWN");
+			d_card_type = pt.get("config.cardType", CHIP_UNKNOWN);
         }
         catch (...) {}
     }
@@ -360,7 +360,7 @@ namespace logicalaccess
                     std::vector<unsigned char> uid = std::vector<unsigned char>(response.begin() + 5, response.begin() + 5 + uidLen);
 
                     LOG(LogLevel::INFOS) << "UID " << BufferHelper::getHex(uid) << "-{" << BufferHelper::getStdString(uid) << "}";
-                    std::string cardType = "UNKNOWN";
+					std::string cardType = CHIP_UNKNOWN;
                     switch (stidCardType)
                     {
                     case STID_CMD_MIFARE_CLASSIC:
@@ -434,7 +434,7 @@ namespace logicalaccess
                 LOG(LogLevel::INFOS) << "ATQA (Answer To Request Type A) value {0x" << std::hex << atqa << std::dec << "(" << atqa << ")}";
 
                 // Voir documentation AN10833 de NXP
-                std::string cardType = "UNKNOWN";
+				std::string cardType = CHIP_UNKNOWN;
                 switch (atqa)
                 {
                 case 0x002:
@@ -456,7 +456,7 @@ namespace logicalaccess
                     break;
                 default:
                     LOG(LogLevel::INFOS) << "Unknown type !";
-                    cardType = "UNKNOWN";
+					cardType = CHIP_UNKNOWN;
                     break;
                 }
 
@@ -526,7 +526,7 @@ namespace logicalaccess
                     std::vector<unsigned char> uid = std::vector<unsigned char>(response.begin() + 2, response.begin() + 5 + uidLen);
 
                     LOG(LogLevel::INFOS) << "UID length {" << uidLen << "}";
-                    chip = createChip("UNKNOWN");
+					chip = createChip(CHIP_UNKNOWN);
                     chip->setChipIdentifier(uid);
                 }
                 else

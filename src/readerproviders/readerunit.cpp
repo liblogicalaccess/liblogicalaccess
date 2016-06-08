@@ -35,13 +35,13 @@
 namespace logicalaccess
 {
     ReaderUnit::ReaderUnit()
-        : XmlSerializable(), d_card_type("UNKNOWN")
+		: XmlSerializable(), d_card_type(CHIP_UNKNOWN)
     {
         try
         {
             boost::property_tree::ptree pt;
             read_xml((boost::filesystem::current_path().string() + "/ReaderUnit.config"), pt);
-            d_card_type = pt.get("config.cardType", "UNKNOWN");
+			d_card_type = pt.get("config.cardType", CHIP_UNKNOWN);
         }
         catch (...) {}
     }
@@ -156,7 +156,7 @@ namespace logicalaccess
                 if (itct == ctList.end())
                 {
                     LOG(LogLevel::INFOS) << "No configuration found for the chip type ! Looking for \"GenericTag\" configuration...";
-                    useCardType = "GenericTag";
+					useCardType = CHIP_GENERICTAG;
                     itct = std::find(ctList.begin(), ctList.end(), useCardType);
                 }
 

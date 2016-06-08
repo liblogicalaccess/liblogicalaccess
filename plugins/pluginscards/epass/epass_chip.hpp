@@ -5,6 +5,8 @@
 
 namespace logicalaccess
 {
+#define CHIP_EPASS		"EPass"
+
 class LIBLOGICALACCESS_API EPassChip : public ISO7816Chip
 {
   public:

@@ -35,13 +35,13 @@ namespace logicalaccess
         std::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
         dataTransport->setPortBaudRate(115200);
         setDataTransport(dataTransport);
-        d_card_type = "UNKNOWN";
+		d_card_type = CHIP_UNKNOWN;
 
         try
         {
             boost::property_tree::ptree pt;
             read_xml((boost::filesystem::current_path().string() + "/SmartIDReaderUnit.config"), pt);
-            d_card_type = pt.get("config.cardType", "UNKNOWN");
+            d_card_type = pt.get("config.cardType", CHIP_UNKNOWN);
         }
         catch (...) {}
     }

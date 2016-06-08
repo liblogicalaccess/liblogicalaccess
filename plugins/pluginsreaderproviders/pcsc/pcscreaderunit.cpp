@@ -37,11 +37,30 @@
 #include "commands/topazacsacrcommands.hpp"
 #include "commands/topazscmcommands.hpp"
 #include "commands/topazomnikeyxx27commands.hpp"
-
 #include "commands/proxcommand.hpp"
+#include "commands/felicascmcommands.hpp"
+#include "MifarePlusSL0Commands.hpp"
+#include "epass_command.hpp"
+#include "epass_readercardadapter.hpp"
+
 #include "mifareplussl1profile.hpp"
 #include "samav1chip.hpp"
-#include "commands/felicascmcommands.hpp"
+#include "samav2chip.hpp"
+#include "mifarepluschip.hpp"
+#include "MifarePlusSL1Chip.hpp"
+#include "desfireev1chip.hpp"
+#include "mifare1kchip.hpp"
+#include "mifare4kchip.hpp"
+#include "iso7816chip.hpp"
+#include "twicchip.hpp"
+#include "iso15693chip.hpp"
+#include "tagitchip.hpp"
+#include "mifareultralightcchip.hpp"
+#include "proxchip.hpp"
+#include "felicachip.hpp"
+#include "epass_chip.hpp"
+#include "topazchip.hpp"
+#include "generictagchip.hpp"
 
 #include "commands/samiso7816resultchecker.hpp"
 #include "commands/desfireiso7816resultchecker.hpp"
@@ -57,14 +76,7 @@
 #include "readers/springcardreaderunit.hpp"
 #include "readers/acsacrreaderunit.hpp"
 
-#include "../../pluginscards/mifareplus/mifarepluschip.hpp"
-#include "../../pluginscards/mifareplus/MifarePlusSL1Chip.hpp"
-
-
 #include "pcscdatatransport.hpp"
-
-#include "desfirechip.hpp"
-#include "../../pluginscards/mifareplus/MifarePlusSL0Commands.hpp"
 
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -82,8 +94,6 @@
 #include "commands/mifare_cl1356_commands.hpp"
 #include "readers/cardprobes/pcsccardprobe.hpp"
 #include "atrparser.hpp"
-#include "../../pluginscards/epass/epass_command.hpp"
-#include "../../pluginscards/epass/epass_readercardadapter.hpp"
 #include "commands/id3resultchecker.hpp"
 
 #include <cstring>
@@ -93,13 +103,13 @@ namespace logicalaccess
     PCSCReaderUnit::PCSCReaderUnit(const std::string& name)
         : ISO7816ReaderUnit(), d_name(name), d_connectedName(name)
     {
-        d_card_type = "UNKNOWN";
+		d_card_type = CHIP_UNKNOWN;
 
         try
         {
             boost::property_tree::ptree pt;
             read_xml((boost::filesystem::current_path().string() + "/PCSCReaderUnit.config"), pt);
-            d_card_type = pt.get("config.cardType", "UNKNOWN");
+			d_card_type = pt.get("config.cardType", CHIP_UNKNOWN);
         }
         catch (...) {}
 
@@ -777,7 +787,7 @@ namespace logicalaccess
             std::shared_ptr<Commands> commands;
             std::shared_ptr<ResultChecker> resultChecker= createDefaultResultChecker();
 
-            if (type == "Mifare1K" || type == "Mifare4K" || type == "Mifare")
+			if (type == CHIP_MIFARE1K || type == CHIP_MIFARE4K || type == CHIP_MIFARE)
             {
 				if (getPCSCType() == PCSC_RUT_SCM)
                 {
@@ -827,39 +837,39 @@ namespace logicalaccess
                     LOG(LogLevel::WARNINGS) << "Cannot found HIDiClass commands.";
                 }
             }
-            else if (type == "DESFireEV1")
+            else if (type == CHIP_DESFIRE_EV1)
             {
                 commands.reset(new DESFireEV1ISO7816Commands());
                 std::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(getSAMChip());
                 resultChecker.reset(new DESFireISO7816ResultChecker());
             }
-            else if (type == "DESFire")
+            else if (type == CHIP_DESFIRE)
             {
                 commands.reset(new DESFireISO7816Commands());
                 std::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(getSAMChip());
                 resultChecker.reset(new DESFireISO7816ResultChecker());
             }
-            else if (type == "ISO15693")
+            else if (type == CHIP_ISO15693)
             {
                 commands.reset(new ISO15693PCSCCommands());
             }
-            else if (type == "ISO7816")
+            else if (type == CHIP_ISO7816)
             {
                 commands.reset(new ISO7816ISO7816Commands());
             }
-            else if (type == "TagIt")
+            else if (type == CHIP_TAGIT)
             {
                 commands.reset(new ISO15693PCSCCommands());
             }
-            else if (type == "Twic")
+            else if (type == CHIP_TWIC)
             {
                 commands.reset(new TwicISO7816Commands());
             }
-            else if (type == "MifareUltralight")
+			else if (type == CHIP_MIFAREULTRALIGHT)
             {
                 commands.reset(new MifareUltralightPCSCCommands());
             }
-            else if (type == "MifareUltralightC")
+			else if (type == CHIP_MIFAREULTRALIGHTC)
             {
                 if (getPCSCType() == PCSC_RUT_ACS_ACR || getPCSCType() == PCSC_RUT_ACS_ACR_1222L)
                 {
@@ -878,14 +888,14 @@ namespace logicalaccess
                     commands.reset(new MifareUltralightCPCSCCommands());
                 }
             }
-            else if (type == "SAM_AV1")
+			else if (type == CHIP_SAMAV1)
             {
                 commands.reset(new SAMAV1ISO7816Commands());
                 std::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
                 std::dynamic_pointer_cast<SAMAV1ISO7816Commands>(commands)->setCrypto(samcrypto);
                 resultChecker.reset(new SAMISO7816ResultChecker());
             }
-            else if (type == "SAM_AV2")
+            else if (type == CHIP_SAMAV2)
             {
                 commands.reset(new SAMAV2ISO7816Commands());
                 std::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
@@ -896,26 +906,26 @@ namespace logicalaccess
             {
                 configure_mifareplus_chip(chip, commands, resultChecker);
             }
-            else if (type == "Prox")
+            else if (type == CHIP_PROX)
             {   // A dummy command, whose only goal is to allow retrieval of the
                 // reader unit later on.
                 commands.reset(new ProxCommand());
             }
-			else if (type == "FeliCa")
+			else if (type == CHIP_FELICA)
 			{
 				if (getPCSCType() == PCSC_RUT_SCM)
 				{
 					commands.reset(new FeliCaSCMCommands());
 				}
 			}
-            else if (type == "EPass")
+            else if (type == CHIP_EPASS)
             {
                 commands = std::make_shared<EPassCommand>();
                 rca = std::make_shared<EPassReaderCardAdapter>();
                 rca->setDataTransport(std::make_shared<PCSCDataTransport>());
                 //commands->setReaderCardAdapter(rca);
             }
-            else if (type == "Topaz")
+            else if (type == CHIP_TOPAZ)
             {
                 if (getPCSCType() == PCSC_RUT_ACS_ACR || getPCSCType() == PCSC_RUT_ACS_ACR_1222L)
                 {
@@ -935,15 +945,15 @@ namespace logicalaccess
                 }
             }
 
-            if (type == "DESFire" || type == "DESFireEV1")
+			if (type == CHIP_DESFIRE || type == CHIP_DESFIRE_EV1)
             {
                 std::shared_ptr<DESFireISO7816Commands> dcmd = std::dynamic_pointer_cast<DESFireISO7816Commands>(commands);
                 if (dcmd->getSAMChip())
                 {
                     std::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
-                    if (dcmd->getSAMChip()->getCardType() == "SAM_AV1")
+					if (dcmd->getSAMChip()->getCardType() == CHIP_SAMAV1)
                         std::dynamic_pointer_cast<SAMAV1ISO7816Commands>(dcmd->getSAMChip()->getCommands())->setCrypto(samcrypto);
-                    else if (dcmd->getSAMChip()->getCardType() == "SAM_AV2")
+					else if (dcmd->getSAMChip()->getCardType() == CHIP_SAMAV2)
                         std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(dcmd->getSAMChip()->getCommands())->setCrypto(samcrypto);
                 }
             }
@@ -1409,7 +1419,11 @@ bool PCSCReaderUnit::process_insertion(const std::string &cardType,
     if (d_proxyReaderUnit)
         return d_proxyReaderUnit->process_insertion(cardType, maxwait, elapsed);
 
-    d_insertedChip = createChip((d_card_type == "UNKNOWN") ? cardType : d_card_type);
+	d_insertedChip = createChip((d_card_type == CHIP_UNKNOWN) ? cardType : d_card_type);
+	if (d_card_type == CHIP_GENERICTAG && cardType != CHIP_UNKNOWN && cardType != CHIP_GENERICTAG)
+	{
+		std::dynamic_pointer_cast<GenericTagChip>(d_insertedChip)->setRealChip(createChip(cardType));
+	}
     if (d_proxyReaderUnit)
     {
         d_proxyReaderUnit->setSingleChip(d_insertedChip);
@@ -1421,12 +1435,12 @@ std::shared_ptr<Chip> PCSCReaderUnit::adjustChip(std::shared_ptr<Chip> c)
 {
     // DESFire adjustment. Check maybe it's DESFireEV1. Check random uid.
     // Adjust cryptographic context.
-    if (c->getCardType() == "DESFire" && d_card_type == "UNKNOWN")
+	if (c->getCardType() == CHIP_DESFIRE && d_card_type == CHIP_UNKNOWN)
     {
         if (createCardProbe()->is_desfire_ev1())
-            c = createChip("DESFireEV1");
+			c = createChip(CHIP_DESFIRE_EV1);
     }
-    if (c->getCardType() == "DESFire" || c->getCardType() == "DESFireEV1")
+	if (c->getCardType() == CHIP_DESFIRE || c->getCardType() == CHIP_DESFIRE_EV1)
     {
         ByteVector uid;
         if (createCardProbe()->has_desfire_random_uid(&uid))
@@ -1445,7 +1459,7 @@ std::shared_ptr<Chip> PCSCReaderUnit::adjustChip(std::shared_ptr<Chip> c)
     }
 
 	// Mifare Ultralight adjustement.
-	if (c->getCardType() == "MifareUltralight" && d_card_type == "UNKNOWN")
+	if (c->getCardType() == "MifareUltralight" && d_card_type == CHIP_UNKNOWN)
 	{
 		if (createCardProbe()->is_mifare_ultralight_c())
 			c = createChip("MifareUltralightC");
@@ -1455,7 +1469,7 @@ std::shared_ptr<Chip> PCSCReaderUnit::adjustChip(std::shared_ptr<Chip> c)
     {
         try
         {
-            if (c->getCardType() == "Prox")
+            if (c->getCardType() == CHIP_PROX)
             {
                 if (atr_.size() > 2)
                 {

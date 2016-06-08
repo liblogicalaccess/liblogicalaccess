@@ -18,7 +18,9 @@ set(INCLUDE_FOLDER 	${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2
                     ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/prox
 					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/felica
-					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/topaz)
+                    ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/epass
+					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/topaz
+                    ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/generictag)
 
 INCLUDE_DIRECTORIES(${INCLUDE_FOLDER})
 
@@ -73,12 +75,15 @@ target_link_libraries(
 	mifarepluscards
 	mifareultralightcards
 	iso7816readers
+    twiccards
 	iso7816cards
 	iso15693cards
+    tagitcards
 	proxcards
 	felicacards
 	epasscards
 	topazcards
+    generictagcards
 	${LIBLOGICALACCESS_LIBRARY}
 	${PCSCLITE_LIBRARIES}
 )

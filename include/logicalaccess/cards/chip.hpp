@@ -15,6 +15,9 @@
 
 namespace logicalaccess
 {
+#define CHIP_UNKNOWN "UNKNOWN"
+#define CHIP_GENERICTAG "GenericTag"
+
     /**
      * \brief The power status.
      */

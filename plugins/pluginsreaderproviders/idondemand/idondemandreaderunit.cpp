@@ -32,13 +32,13 @@ namespace logicalaccess
         setDefaultReaderCardAdapter(std::shared_ptr<IdOnDemandReaderCardAdapter>(new IdOnDemandReaderCardAdapter()));
         std::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
         setDataTransport(dataTransport);
-        d_card_type = "UNKNOWN";
+		d_card_type = CHIP_UNKNOWN;
 
         try
         {
             boost::property_tree::ptree pt;
             read_xml((boost::filesystem::current_path().string() + "/IdOnDemandReaderUnit.config"), pt);
-            d_card_type = pt.get("config.cardType", "UNKNOWN");
+			d_card_type = pt.get("config.cardType", CHIP_UNKNOWN);
         }
         catch (...) {}
     }
@@ -233,7 +233,7 @@ namespace logicalaccess
         // Change the reader state, but no other function to achieve the card detection...
         if (read())
         {
-            chip = createChip("GenericTag");
+			chip = createChip(CHIP_GENERICTAG);
         }
 
         return chip;
@@ -243,7 +243,7 @@ namespace logicalaccess
     {
         std::shared_ptr<Chip> chip;
         std::shared_ptr<ReaderCardAdapter> rca;
-        if (type == "GenericTag")
+		if (type == CHIP_GENERICTAG)
         {
             chip.reset(new GenericTagIdOnDemandChip());
             std::shared_ptr<Commands> commands(new GenericTagIdOnDemandCommands());

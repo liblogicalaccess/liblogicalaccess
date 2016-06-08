@@ -28,13 +28,13 @@ namespace logicalaccess
         setDefaultReaderCardAdapter(std::shared_ptr<ElatecReaderCardAdapter>(new ElatecReaderCardAdapter()));
         std::shared_ptr<ElatecDataTransport> dataTransport(new ElatecDataTransport());
         setDataTransport(dataTransport);
-        d_card_type = "UNKNOWN";
+		d_card_type = CHIP_UNKNOWN;
 
         try
         {
             boost::property_tree::ptree pt;
             read_xml((boost::filesystem::current_path().string() + "/ElatecReaderUnit.config"), pt);
-            d_card_type = pt.get("config.cardType", "UNKNOWN");
+			d_card_type = pt.get("config.cardType", CHIP_UNKNOWN);
         }
         catch (...) {}
     }
@@ -129,7 +129,7 @@ namespace logicalaccess
         if (result.size() > 0)
         {
             chip = ReaderUnit::createChip(
-                (d_card_type == "UNKNOWN" ? "GenericTag" : d_card_type),
+				(d_card_type == CHIP_UNKNOWN ? CHIP_GENERICTAG : d_card_type),
                 std::vector<unsigned char>(result.begin() + 1, result.end())
                 );
         }
@@ -145,7 +145,7 @@ namespace logicalaccess
         {
             std::shared_ptr<ReaderCardAdapter> rca;
 
-            if (type == "GenericTag")
+			if (type == CHIP_GENERICTAG)
                 rca = getDefaultReaderCardAdapter();
             else
                 return chip;

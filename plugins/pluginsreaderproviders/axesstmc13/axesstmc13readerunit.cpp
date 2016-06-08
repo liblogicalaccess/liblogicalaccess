@@ -30,13 +30,13 @@ namespace logicalaccess
         std::shared_ptr<AxessTMC13DataTransport> dataTransport(new AxessTMC13DataTransport());
         dataTransport->setPortBaudRate(57600);
         setDataTransport(dataTransport);
-        d_card_type = "UNKNOWN";
+		d_card_type = CHIP_UNKNOWN;
 
         try
         {
             boost::property_tree::ptree pt;
             read_xml((boost::filesystem::current_path().string() + "/AxessTMC13ReaderUnit.config"), pt);
-            d_card_type = pt.get("config.cardType", "UNKNOWN");
+			d_card_type = pt.get("config.cardType", CHIP_UNKNOWN);
         }
         catch (...) {}
     }
@@ -166,7 +166,7 @@ namespace logicalaccess
             char bufTmpId[64];
             sprintf(bufTmpId, "%llx", l);
             chip = ReaderUnit::createChip(
-                (d_card_type == "UNKNOWN" ? "GenericTag" : d_card_type),
+				(d_card_type == CHIP_UNKNOWN ? CHIP_GENERICTAG : d_card_type),
                 formatHexString(std::string(bufTmpId))
                 );
         }
@@ -182,7 +182,7 @@ namespace logicalaccess
         {
             std::shared_ptr<ReaderCardAdapter> rca;
 
-            if (type == "GenericTag")
+			if (type == CHIP_GENERICTAG)
                 rca = getDefaultReaderCardAdapter();
             else
                 return chip;

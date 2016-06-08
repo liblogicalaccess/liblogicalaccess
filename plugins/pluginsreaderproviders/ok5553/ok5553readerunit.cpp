@@ -22,6 +22,10 @@
 #include "commands/desfireev1iso7816commands.hpp"
 #include "commands/mifareok5553commands.hpp"
 #include "commands/mifareultralightok5553commands.hpp"
+#include "mifare1kchip.hpp"
+#include "mifare4kchip.hpp"
+#include "mifareultralightchip.hpp"
+#include "desfirechip.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -37,13 +41,13 @@ namespace logicalaccess
 
         std::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
         setDataTransport(dataTransport);
-        d_card_type = "UNKNOWN";
+		d_card_type = CHIP_UNKNOWN;
 
         try
         {
             boost::property_tree::ptree pt;
             read_xml((boost::filesystem::current_path().string() + "/OK5553ReaderUnit.config"), pt);
-            d_card_type = pt.get("config.cardType", "UNKNOWN");
+			d_card_type = pt.get("config.cardType", CHIP_UNKNOWN);
         }
         catch (...) {}
     }
@@ -73,7 +77,7 @@ namespace logicalaccess
         bool inserted = false;
         if (removalIdentifier.size() > 0)
         {
-            d_insertedChip = createChip((d_card_type == "UNKNOWN") ? "GenericTag" : d_card_type);
+			d_insertedChip = createChip((d_card_type == CHIP_UNKNOWN) ? CHIP_GENERICTAG : d_card_type);
             d_insertedChip->setChipIdentifier(removalIdentifier);
             removalIdentifier.clear();
             inserted = true;
@@ -243,21 +247,21 @@ namespace logicalaccess
             std::shared_ptr<ReaderCardAdapter> rca;
             std::shared_ptr<Commands> commands;
 
-            if (type == "Mifare1K" || type == "Mifare4K" || type == "Mifare")
+            if (type == CHIP_MIFARE1K || type == CHIP_MIFARE4K || type == CHIP_MIFARE)
             {
                 commands.reset(new MifareOK5553Commands);
                 rca = getDefaultReaderCardAdapter();
             }
-            else if (type == "MifareUltralight")
+            else if (type == CHIP_MIFAREULTRALIGHT)
             {
                 commands.reset(new MifareUltralightOK5553Commands());
                 rca = getDefaultReaderCardAdapter();
             }
-            else if (type == "GenericTag")
+			else if (type == CHIP_GENERICTAG)
             {
                 rca = getDefaultReaderCardAdapter();
             }
-            else if (type == "DESFire")
+            else if (type == CHIP_DESFIRE)
             {
                 rca.reset(new ISO7816OK5553ReaderCardAdapter());
                 commands.reset(new DESFireISO7816Commands());

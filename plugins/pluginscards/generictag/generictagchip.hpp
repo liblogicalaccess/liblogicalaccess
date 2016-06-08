@@ -15,8 +15,6 @@
 
 namespace logicalaccess
 {
-#define CHIP_GENERICTAG			"GenericTag"
-
     /**
      * \brief The Generic Tag base chip class.
      */
@@ -63,12 +61,16 @@ namespace logicalaccess
          */
         virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
 
+		void setRealChip(std::shared_ptr<Chip> real_chip);
+
     protected:
 
         /**
          * \brief The tag id length in bits (if 0, the length is the full bytes).
          */
         unsigned int d_tagIdBitsLength;
+
+		std::shared_ptr<Chip> d_real_chip;
     };
 }
 

@@ -13,7 +13,7 @@ using std::ifstream;
 
 namespace logicalaccess
 {
-    Chip::Chip() : d_cardtype("UNKNOWN")
+	Chip::Chip() : d_cardtype(CHIP_UNKNOWN)
     {
         d_powerStatus = CPS_NO_POWER;
         d_receptionLevel = 0;

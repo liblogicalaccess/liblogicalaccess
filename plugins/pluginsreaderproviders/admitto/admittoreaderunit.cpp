@@ -37,13 +37,13 @@ namespace logicalaccess
 		setDefaultReaderCardAdapter (std::shared_ptr<AdmittoReaderCardAdapter> (new AdmittoReaderCardAdapter()));
 		std::shared_ptr<AdmittoDataTransport> dataTransport(new AdmittoDataTransport());
 		setDataTransport(dataTransport);
-		d_card_type = "UNKNOWN";
+		d_card_type = CHIP_UNKNOWN;
 
 		try
 		{
 			boost::property_tree::ptree pt;
 			read_xml((boost::filesystem::current_path().string() + "/AdmittoReaderUnit.config"), pt);
-			d_card_type = pt.get("config.cardType", "UNKNOWN");
+			d_card_type = pt.get("config.cardType", CHIP_UNKNOWN);
 		}
 		catch (...) { }
 	}
@@ -106,7 +106,7 @@ namespace logicalaccess
 							char bufTmpId[64];
 							sprintf(bufTmpId, "%08x", l);
 							d_insertedChip = ReaderUnit::createChip(
-								(d_card_type == "UNKNOWN" ? "GenericTag" : d_card_type),
+								(d_card_type == CHIP_UNKNOWN ? CHIP_GENERICTAG : d_card_type),
 								formatHexString(std::string(bufTmpId))
 							);
 							LOG(LogLevel::INFOS) << "Chip detected !";
@@ -174,7 +174,7 @@ namespace logicalaccess
 								char bufTmpId[64];
 								sprintf(bufTmpId, "%08x", l);
 								std::shared_ptr<Chip> chip = ReaderUnit::createChip(
-									(d_card_type == "UNKNOWN" ? "GenericTag" : d_card_type),
+									(d_card_type == CHIP_UNKNOWN ? CHIP_GENERICTAG : d_card_type),
 									formatHexString(std::string(bufTmpId))
 								);
 
@@ -231,7 +231,7 @@ namespace logicalaccess
 			LOG(LogLevel::INFOS) << "Chip created successfully !";
 			std::shared_ptr<ReaderCardAdapter> rca;
 
-			if (type == "GenericTag")
+			if (type == CHIP_GENERICTAG)
 			{
 				LOG(LogLevel::INFOS) << "Generic tag Chip created";
 				rca = getDefaultReaderCardAdapter();

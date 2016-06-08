@@ -97,7 +97,7 @@ bool ID3ReaderUnit::process_insertion(const std::string &cardType, int maxwait,
     //    we do not rely on automatic card tracking, but rather on the list card
     //    command.
     PCSCReaderUnit::process_insertion(cardType, maxwait, etc);
-    if (d_card_type == "UNKNOWN") // automatic
+	if (d_card_type == CHIP_UNKNOWN) // automatic
     {
         return true;
     }

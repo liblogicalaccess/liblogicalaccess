@@ -18,7 +18,7 @@ extern "C"
 {
     LIBLOGICALACCESS_API char *getLibraryName()
     {
-        return (char*)"GenericTag";
+		return (char*)CHIP_GENERICTAG;
     }
 
     LIBLOGICALACCESS_API void getGenericTagChip(std::shared_ptr<logicalaccess::Chip>* chip)

@@ -41,13 +41,13 @@ namespace logicalaccess
 		m_commands.reset(new OSDPCommands());
 		m_commands->setReaderCardAdapter(rca);
 
-		d_card_type = "UNKNOWN";
+		d_card_type = CHIP_UNKNOWN;
 
 		try
 		{
 			boost::property_tree::ptree pt;
 			read_xml((boost::filesystem::current_path().string() + "/OSDPReaderUnit.config"), pt);
-			d_card_type = pt.get("config.cardType", "UNKNOWN");
+			d_card_type = pt.get("config.cardType", CHIP_UNKNOWN);
 		}
 		catch (...) { }
 	}

@@ -29,13 +29,13 @@ namespace logicalaccess
         setDefaultReaderCardAdapter(std::shared_ptr<DeisterReaderCardAdapter>(new DeisterReaderCardAdapter()));
         std::shared_ptr<DeisterDataTransport> dataTransport(new DeisterDataTransport());
         setDataTransport(dataTransport);
-        d_card_type = "UNKNOWN";
+		d_card_type = CHIP_UNKNOWN;
 
         try
         {
             boost::property_tree::ptree pt;
             read_xml((boost::filesystem::current_path().string() + "/DeisterReaderUnit.config"), pt);
-            d_card_type = pt.get("config.cardType", "UNKNOWN");
+			d_card_type = pt.get("config.cardType", CHIP_UNKNOWN);
         }
         catch (...) {}
     }
@@ -166,7 +166,7 @@ namespace logicalaccess
                 tmpId = std::vector<unsigned char>(pollBuf.begin() + 7, pollBuf.begin() + 7 + pollBuf[6]);
                 std::reverse(tmpId.begin(), tmpId.end());
                 chip = ReaderUnit::createChip(
-                    (d_card_type == "UNKNOWN" ? cardType : d_card_type),
+					(d_card_type == CHIP_UNKNOWN ? cardType : d_card_type),
                     tmpId
                     );
             }
@@ -196,7 +196,7 @@ namespace logicalaccess
         case DCT_GENERIC_ISO15693:
             return "ISO15693";
         case DCT_TAGIT:
-            return "GenericTag";
+			return CHIP_GENERICTAG;
         case DCT_ICLASS:
             return "HIDiClass";
         case DCT_PROXLITE:
@@ -208,14 +208,14 @@ namespace logicalaccess
         case DCT_TAGIT_HFI:
             return "TagIt";
         case DCT_GENERIC_ISO14443B:
-            return "GenericTag";
+			return CHIP_GENERICTAG;
         case DCT_EM4102:
             return "EM4102";
         case DCT_SMARTFRAME:
             return "SmartFrame";
 
         default:
-            return "UNKNOWN";
+			return CHIP_UNKNOWN;
         }
     }
 

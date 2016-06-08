@@ -43,7 +43,7 @@ namespace logicalaccess
         dataTransport->setIpAddress("192.168.1.100");
         dataTransport->setPort(23);
         setDataTransport(dataTransport);
-        d_card_type = "UNKNOWN";
+		d_card_type = CHIP_UNKNOWN;
         d_lcdDisplay.reset(new RplethLCDDisplay());
         d_ledBuzzerDisplay.reset(new RplethLEDBuzzerDisplay());
 
@@ -51,7 +51,7 @@ namespace logicalaccess
         {
             boost::property_tree::ptree pt;
             read_xml((boost::filesystem::current_path().string() + "/RplethReaderUnit.config"), pt);
-            d_card_type = pt.get("config.cardType", "UNKNOWN");
+			d_card_type = pt.get("config.cardType", CHIP_UNKNOWN);
         }
         catch (...) {}
     }
@@ -109,7 +109,7 @@ namespace logicalaccess
             {
                 unsigned char ctypelen = answer[0];
                 EXCEPTION_ASSERT_WITH_LOG(answer.size() >= static_cast<size_t>(1 + ctypelen + 1), LibLogicalAccessException, "Wrong card type length.");
-                std::string ctype = (d_card_type == "UNKNOWN") ? std::string(answer.begin() + 1, answer.begin() + 1 + ctypelen) : d_card_type;
+				std::string ctype = (d_card_type == CHIP_UNKNOWN) ? std::string(answer.begin() + 1, answer.begin() + 1 + ctypelen) : d_card_type;
                 unsigned char csnlen = answer[1 + ctypelen];
                 EXCEPTION_ASSERT_WITH_LOG(answer.size() >= static_cast<size_t>(1 + ctypelen + 1 + csnlen), LibLogicalAccessException, "Wrong csn length.");
                 std::vector<unsigned char> csn = std::vector<unsigned char>(answer.begin() + 1 + ctypelen + 1, answer.end());
@@ -122,7 +122,7 @@ namespace logicalaccess
         {
             if (removalIdentifier.size() > 0)
             {
-                d_insertedChip = createChip((d_card_type == "UNKNOWN") ? "GenericTag" : d_card_type);
+				d_insertedChip = createChip((d_card_type == CHIP_UNKNOWN) ? CHIP_GENERICTAG : d_card_type);
                 d_insertedChip->setChipIdentifier(removalIdentifier);
                 removalIdentifier.clear();
                 inserted = true;
@@ -294,7 +294,7 @@ namespace logicalaccess
 
         if (buf.size() > 0)
         {
-            chip = createChip((d_card_type == "UNKNOWN") ? "GenericTag" : d_card_type);
+			chip = createChip((d_card_type == CHIP_UNKNOWN) ? CHIP_GENERICTAG : d_card_type);
             chip->setChipIdentifier(buf);
         }
 

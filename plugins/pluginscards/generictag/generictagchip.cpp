@@ -32,28 +32,47 @@ namespace logicalaccess
 
     std::shared_ptr<LocationNode> GenericTagChip::getRootLocationNode()
     {
-        std::shared_ptr<LocationNode> rootNode;
-        rootNode.reset(new LocationNode());
+		if (d_real_chip)
+		{
+			return d_real_chip->getRootLocationNode();
+		}
+		else
+		{
+			std::shared_ptr<LocationNode> rootNode;
+			rootNode.reset(new LocationNode());
 
-        rootNode->setName("RFID Tag");
+			rootNode->setName("RFID Tag");
 
-        return rootNode;
+			return rootNode;
+		}
     }
+
+	void GenericTagChip::setRealChip(std::shared_ptr<Chip> real_chip)
+	{
+		d_real_chip = real_chip;
+	}
 
     std::shared_ptr<CardService> GenericTagChip::getService(CardServiceType serviceType)
     {
         std::shared_ptr<CardService> service;
 
-        switch (serviceType)
-        {
-        case CST_ACCESS_CONTROL:
-        {
-            service.reset(new GenericTagAccessControlCardService(shared_from_this()));
-        }
-            break;
-        default:
-            break;
-        }
+		if (d_real_chip)
+		{
+			service = d_real_chip->getService(serviceType);
+		}
+		else
+		{
+			switch (serviceType)
+			{
+			case CST_ACCESS_CONTROL:
+			{
+				service.reset(new GenericTagAccessControlCardService(shared_from_this()));
+			}
+			break;
+			default:
+				break;
+			}
+		}
 
         if (!service)
         {

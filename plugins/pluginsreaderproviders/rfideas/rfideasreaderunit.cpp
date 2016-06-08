@@ -32,13 +32,13 @@ namespace logicalaccess
         d_lastTagIdBitsLength = 0x00;
         d_deviceId = 0x00;
         d_readerUnitConfig.reset(new RFIDeasReaderUnitConfiguration());
-        d_card_type = "GenericTag";
+		d_card_type = CHIP_GENERICTAG;
 
         try
         {
             boost::property_tree::ptree pt;
             read_xml((boost::filesystem::current_path().string() + "/RFIDeasReaderUnit.config"), pt);
-            d_card_type = pt.get("config.cardType", "GenericTag");
+			d_card_type = pt.get("config.cardType", CHIP_GENERICTAG);
         }
         catch (...) {}
 
@@ -172,7 +172,7 @@ namespace logicalaccess
             if (tagid.size() > 0)
             {
                 d_insertedChip = ReaderUnit::createChip(
-                    (d_card_type == "UNKNOWN") ? "GenericTag" : d_card_type,
+					(d_card_type == CHIP_UNKNOWN) ? CHIP_GENERICTAG : d_card_type,
                     tagid
                     );
                 inserted = true;
@@ -282,7 +282,7 @@ namespace logicalaccess
         {
             std::shared_ptr<ReaderCardAdapter> rca;
 
-            if (type == "GenericTag")
+			if (type == CHIP_GENERICTAG)
             {
                 rca = getDefaultReaderCardAdapter();
 

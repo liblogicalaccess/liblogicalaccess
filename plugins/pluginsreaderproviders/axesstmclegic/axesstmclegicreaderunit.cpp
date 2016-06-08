@@ -30,13 +30,13 @@ namespace logicalaccess
         std::shared_ptr<AxessTMCLegicDataTransport> dataTransport(new AxessTMCLegicDataTransport());
         dataTransport->setPortBaudRate(57600);
         setDataTransport(dataTransport);
-        d_card_type = "UNKNOWN";
+		d_card_type = CHIP_UNKNOWN;
 
         try
         {
             boost::property_tree::ptree pt;
             read_xml((boost::filesystem::current_path().string() + "/AxessTMCLegicReaderUnit.config"), pt);
-            d_card_type = pt.get("config.cardType", "UNKNOWN");
+			d_card_type = pt.get("config.cardType", CHIP_UNKNOWN);
         }
         catch (...) {}
     }
@@ -170,7 +170,7 @@ namespace logicalaccess
             EXCEPTION_ASSERT_WITH_LOG((response.size() - 5) >= idlength, LibLogicalAccessException, "Bad id buffer length.");
 
             chip = ReaderUnit::createChip(
-                (d_card_type == "UNKNOWN" ? "LegicPrime" : d_card_type),
+				(d_card_type == CHIP_UNKNOWN ? "LegicPrime" : d_card_type),
                 std::vector<unsigned char>(response.begin() + 5, response.begin() + 5 + idlength)
                 );
         }

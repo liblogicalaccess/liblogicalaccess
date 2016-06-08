@@ -30,13 +30,13 @@ namespace logicalaccess
         setDefaultReaderCardAdapter(std::shared_ptr<SCIELReaderCardAdapter>(new SCIELReaderCardAdapter()));
         std::shared_ptr<ScielDataTransport> dataTransport(new ScielDataTransport());
         setDataTransport(dataTransport);
-        d_card_type = "UNKNOWN";
+		d_card_type = CHIP_UNKNOWN;
 
         try
         {
             boost::property_tree::ptree pt;
             read_xml((boost::filesystem::current_path().string() + "/SCIELReaderUnit.config"), pt);
-            d_card_type = pt.get("config.cardType", "UNKNOWN");
+			d_card_type = pt.get("config.cardType", CHIP_UNKNOWN);
         }
         catch (...) {}
     }
@@ -611,7 +611,7 @@ namespace logicalaccess
         {
             std::shared_ptr<ReaderCardAdapter> rca;
 
-            if (type == "GenericTag")
+			if (type == CHIP_GENERICTAG)
                 rca = getDefaultReaderCardAdapter();
             else
                 return chip;
@@ -869,7 +869,7 @@ namespace logicalaccess
         std::shared_ptr<Chip> chip;
         if (buffer.size() > 2)
         {
-            chip = createChip((d_card_type == "UNKNOWN") ? "GenericTag" : d_card_type);
+			chip = createChip((d_card_type == CHIP_UNKNOWN) ? CHIP_GENERICTAG : d_card_type);
             chip->setReceptionLevel(buffer[0]);
 
             LOG(LogLevel::DEBUGS) << "Creating chip from buffer " << BufferHelper::getHex(buffer) << " Len {" << buffer.size() << "}...";

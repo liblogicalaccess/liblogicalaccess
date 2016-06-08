@@ -39,13 +39,13 @@ namespace logicalaccess
         setDefaultReaderCardAdapter(std::shared_ptr<GunneboReaderCardAdapter>(new GunneboReaderCardAdapter()));
         std::shared_ptr<GunneboDataTransport> dataTransport(new GunneboDataTransport());
         setDataTransport(dataTransport);
-        d_card_type = "UNKNOWN";
+		d_card_type = CHIP_UNKNOWN;
 
         try
         {
             boost::property_tree::ptree pt;
             read_xml((boost::filesystem::current_path().string() + "/GunneboReaderUnit.config"), pt);
-            d_card_type = pt.get("config.cardType", "UNKNOWN");
+			d_card_type = pt.get("config.cardType", CHIP_UNKNOWN);
         }
         catch (...) {}
 
@@ -115,7 +115,7 @@ namespace logicalaccess
 
                     if (createChipId.size() > 0)
                     {
-                        d_insertedChip = ReaderUnit::createChip((d_card_type == "UNKNOWN" ? "GenericTag" : d_card_type), createChipId);
+						d_insertedChip = ReaderUnit::createChip((d_card_type == CHIP_UNKNOWN ? CHIP_GENERICTAG : d_card_type), createChipId);
                         LOG(LogLevel::INFOS) << "Chip detected !";
                         inserted = true;
                     }
@@ -285,7 +285,7 @@ namespace logicalaccess
             LOG(LogLevel::INFOS) << "Chip created successfully !";
             std::shared_ptr<ReaderCardAdapter> rca;
 
-            if (type == "GenericTag")
+			if (type == CHIP_GENERICTAG)
             {
                 LOG(LogLevel::INFOS) << "Generic tag Chip created";
                 rca = getDefaultReaderCardAdapter();
