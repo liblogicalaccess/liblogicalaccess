@@ -45,12 +45,12 @@ namespace logicalaccess
 		
 		std::vector<unsigned char> CC = mfucmd->readPage(3);
 		// Only take care if NDEF is present
-		if (CC.size() == 4 && CC[0] == 0xE1)
+		if (CC.size() >= 4 && CC[0] == 0xE1)
 		{
 			if (CC[2] > 0)
 			{
 				// Read all available data from data blocks
-				std::vector<unsigned char> data = mfucmd->readPages(4, 4 + (CC[2] * 2));
+				std::vector<unsigned char> data = mfucmd->readPages(4, 4 + (CC[2] * 2) - 1);
                 ndef = NdefMessage::TLVToNdefMessage(data);
 			}
 		}

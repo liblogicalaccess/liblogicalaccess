@@ -193,7 +193,8 @@ namespace logicalaccess
             case 0x03: // Ndef message
                 if (tlv.size() >= i + 1u + tlv[i])
                 {
-                    ndef.reset(new NdefMessage(std::vector<unsigned char>(tlv.begin() + i + 1, tlv.begin() + i + 1 + tlv[i])));
+                    std::vector<unsigned char> msgdata(tlv.begin() + i + 1, tlv.begin() + i + 1 + tlv[i]);
+                    ndef.reset(new NdefMessage(msgdata));
                     i += tlv[i];
                 }
                 // TODO: support multiple ndef message
@@ -205,6 +206,8 @@ namespace logicalaccess
                 i = static_cast<unsigned short>(tlv.size());
                 break;
             }
+
+            i += 1;
         }
         return ndef;
     }

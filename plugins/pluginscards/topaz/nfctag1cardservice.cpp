@@ -47,7 +47,6 @@ namespace logicalaccess
                 // Limited to block 0xE for now
                 std::vector<unsigned char> data = tcmd->readPages(1, 1 + ((CC[2] <= 14) ? CC[2] : 14));
                 data = std::vector<unsigned char>(data.begin() + 4, data.end());
-                std::cout << "\tbytes: " << BufferHelper::getHex(data) << std::endl;
                 ndef = NdefMessage::TLVToNdefMessage(data);
 			}
 		}

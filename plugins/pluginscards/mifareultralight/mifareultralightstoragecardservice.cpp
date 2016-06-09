@@ -105,6 +105,12 @@ namespace logicalaccess
                 dataPages = getMifareUltralightChip()->getMifareUltralightCommands()->readPage(mLocation->page);
             }
 
+            // Some commands implementation returns more than one block (eg. PC/SC)
+            if (dataPages.size() > 4)
+            {
+                nbPages += static_cast<int>((dataPages.size() + 3) / 4) - 1;
+            }
+
 			ret.insert(ret.end(), dataPages.begin() + mLocation->byte, dataPages.begin() + mLocation->byte + length);
         }
 		return ret;

@@ -27,6 +27,11 @@ namespace logicalaccess
         for (int i = start_page; i <= stop_page; ++i)
         {
             std::vector<unsigned char> data = readPage(i);
+            // Some commands implementation returns more than one block (eg. PC/SC)
+            if (data.size() > 4)
+            {
+                i += static_cast<int>((data.size() + 3) / 4) - 1;
+            }
 			ret.insert(ret.end(), data.begin(), data.end());
         }
 
