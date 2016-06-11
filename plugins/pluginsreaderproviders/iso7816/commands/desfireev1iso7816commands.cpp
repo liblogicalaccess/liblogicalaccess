@@ -178,7 +178,7 @@ namespace logicalaccess
         command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(fileSize & 0xff00) >> 8));
         command.push_back(static_cast<unsigned char>(static_cast<unsigned int>(fileSize & 0xff0000) >> 16));
 
-        DESFireISO7816Commands::transmit(DF_INS_CREATE_STD_DATA_FILE, command);
+        transmit(DF_INS_CREATE_STD_DATA_FILE, command);
     }
 
     void DESFireEV1ISO7816Commands::createBackupFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned short isoFID)
@@ -198,7 +198,7 @@ namespace logicalaccess
         command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(fileSize & 0xff00) >> 8));
         command.push_back(static_cast<unsigned char>(static_cast<unsigned int>(fileSize & 0xff0000) >> 16));
 
-        DESFireISO7816Commands::transmit(DF_INS_CREATE_BACKUP_DATA_FILE, command);
+        transmit(DF_INS_CREATE_BACKUP_DATA_FILE, command);
     }
 
     void DESFireEV1ISO7816Commands::createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID)
@@ -221,7 +221,7 @@ namespace logicalaccess
         command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(maxNumberOfRecords & 0xff00) >> 8));
         command.push_back(static_cast<unsigned char>(static_cast<unsigned int>(maxNumberOfRecords & 0xff0000) >> 16));
 
-        DESFireISO7816Commands::transmit(DF_INS_CREATE_LINEAR_RECORD_FILE, command);
+        transmit(DF_INS_CREATE_LINEAR_RECORD_FILE, command);
     }
 
     void DESFireEV1ISO7816Commands::createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID)
@@ -244,7 +244,7 @@ namespace logicalaccess
         command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(maxNumberOfRecords & 0xff00) >> 8));
         command.push_back(static_cast<unsigned char>(static_cast<unsigned int>(maxNumberOfRecords & 0xff0000) >> 16));
 
-        DESFireISO7816Commands::transmit(DF_INS_CREATE_CYCLIC_RECORD_FILE, command[0]);;
+        transmit(DF_INS_CREATE_CYCLIC_RECORD_FILE, command);
     }
 
     void DESFireEV1ISO7816Commands::iso_selectFile(unsigned short fid)

@@ -388,14 +388,18 @@ namespace logicalaccess
 
         if (needLoadKey)
         {
-            if (!dfAiToUse->readKey->isEmpty())
+			if (dfAiToUse->readKey && !dfAiToUse->readKey->isEmpty())
             {
 				getDESFireChip()->getCrypto()->setKey(dfLocation->aid, dfAiToUse->readKeyno, dfAiToUse->readKey);
             }
+			else if (dfAiToUse->readKeyno == TaskAccessRights::AR_KEY0 && dfAiToUse->masterApplicationKey && !dfAiToUse->masterApplicationKey->isEmpty())
+			{
+				getDESFireChip()->getCrypto()->setKey(dfLocation->aid, dfAiToUse->readKeyno, dfAiToUse->masterApplicationKey);
+			}
 
             getDESFireChip()->getDESFireCommands()->authenticate(dfAiToUse->readKeyno);
         }
-
+		
         return getDESFireChip()->getDESFireCommands()->readData(dfLocation->file, dfLocation->byte, (int)(dataLength), encMode);
     }
 
