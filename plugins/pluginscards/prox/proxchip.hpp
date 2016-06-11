@@ -8,7 +8,6 @@
 #define LOGICALACCESS_PROXCHIP_HPP
 
 #include "logicalaccess/cards/chip.hpp"
-#include "proxprofile.hpp"
 
 #include <string>
 #include <vector>
@@ -54,11 +53,11 @@ namespace logicalaccess
          */
         virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
 
-        /**
-         * \brief Get the Prox profile.
-         * \return The Prox profile.
-         */
-        std::shared_ptr<ProxProfile> getProxProfile() { return std::dynamic_pointer_cast<ProxProfile>(getProfile()); };
+		/**
+		* \brief Create default location.
+		* \return Default location.
+		*/
+		virtual std::shared_ptr<Location> createLocation() const;
 
     protected:
     };

@@ -6,6 +6,7 @@
 
 #include <logicalaccess/logs.hpp>
 #include "mifarenfctagcardservice.hpp"
+#include "mifarelocation.hpp"
 #include "logicalaccess/services/nfctag/ndefmessage.hpp"
 #include "logicalaccess/services/storage/storagecardservice.hpp"
 #include "logicalaccess/myexception.hpp"

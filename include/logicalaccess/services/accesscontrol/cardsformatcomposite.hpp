@@ -7,8 +7,8 @@
 #ifndef LOGICALACCESS_CARDSFORMATCOMPOSITE_HPP
 #define LOGICALACCESS_CARDSFORMATCOMPOSITE_HPP
 
-#include "logicalaccess/cards/profile.hpp"
 #include <map>
+#include <logicalaccess/cards/chip.hpp>
 #include <logicalaccess/xmlserializable.hpp>
 
 namespace logicalaccess

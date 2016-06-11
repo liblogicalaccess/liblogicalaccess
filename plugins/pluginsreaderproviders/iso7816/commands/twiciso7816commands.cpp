@@ -13,7 +13,6 @@
 #include <cstring>
 
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
-#include "twicprofile.hpp"
 
 namespace logicalaccess
 {

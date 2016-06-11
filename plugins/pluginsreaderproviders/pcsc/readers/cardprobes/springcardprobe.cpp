@@ -2,7 +2,6 @@
 #include "logicalaccess/cards/chip.hpp"
 #include "logicalaccess/logs.hpp"
 #include "mifarecommands.hpp"
-#include "mifareprofile.hpp"
 
 using namespace logicalaccess;
 
@@ -22,9 +21,7 @@ bool SpringCardProbe::maybe_mifare_classic()
             std::dynamic_pointer_cast<MifareCommands>(chip->getCommands());
 
         logicalaccess::MifareAccessInfo::SectorAccessBits sab;
-        std::dynamic_pointer_cast<logicalaccess::MifareProfile>(chip->getProfile())
-            ->setDefaultKeysAt(0x00);
-        auto ret = command->readSector(0, 1, sab);
+		auto ret = command->readSector(0, 1, std::shared_ptr<MifareKey>(), std::shared_ptr<MifareKey>(), sab);
         return true;
     }
     catch (const CardException &e)

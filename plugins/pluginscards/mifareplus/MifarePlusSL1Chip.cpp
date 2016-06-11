@@ -5,6 +5,7 @@
 #include <logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp>
 #include "MifarePlusSL1Chip.hpp"
 #include "mifareplusstoragecardservice_sl1.hpp"
+#include "mifareplusaccessinfo_sl1.hpp"
 
 using namespace logicalaccess;
 
@@ -12,7 +13,6 @@ using namespace logicalaccess;
 MifarePlusSL1Chip::MifarePlusSL1Chip(const std::string &cardType, int nb_sectors) :
         MifareChip(cardType, nb_sectors)
 {
-		d_profile.reset(new MifarePlusSL1Profile());
 }
 
 logicalaccess::MifarePlusSL1_2kChip::MifarePlusSL1_2kChip() :
@@ -62,4 +62,11 @@ std::shared_ptr<CardService> MifarePlusSL1Chip::getService(CardServiceType servi
 int MifarePlusSL1Chip::getSecurityLevel() const
 {
     return 1;
+}
+
+std::shared_ptr<AccessInfo> MifarePlusSL1Chip::createAccessInfo() const
+{
+	std::shared_ptr<MifarePlusSL1AccessInfo> ret;
+	ret.reset(new MifarePlusSL1AccessInfo());
+	return ret;
 }

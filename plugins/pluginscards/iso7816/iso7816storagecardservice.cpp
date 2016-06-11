@@ -23,11 +23,6 @@ namespace logicalaccess
     {
     }
 
-    void ISO7816StorageCardService::erase()
-    {
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not implemented.");
-    }
-
     void ISO7816StorageCardService::erase(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> /*aiToUse*/)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");

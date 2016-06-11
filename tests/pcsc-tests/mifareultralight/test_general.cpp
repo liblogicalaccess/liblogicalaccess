@@ -3,7 +3,6 @@
 #include "logicalaccess/readerproviders/readerconfiguration.hpp"
 
 #include "pluginscards/mifareultralight/mifareultralightcommands.hpp"
-#include "pluginscards/mifareultralight/mifareultralightcprofile.hpp"
 
 #include "lla-tests/macros.hpp"
 #include "lla-tests/utils.hpp"

@@ -9,7 +9,6 @@
 
 #include "../iso7816/iso7816chip.hpp"
 #include "twiccommands.hpp"
-#include "twicprofile.hpp"
 
 #include <string>
 #include <vector>
@@ -49,17 +48,17 @@ namespace logicalaccess
          */
         virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
 
+		/**
+		* \brief Create default Twic location.
+		* \return Default Twic location.
+		*/
+		virtual std::shared_ptr<Location> createLocation() const;
+
         /**
          * \brief Get the Twic commands.
          * \return The Twic commands.
          */
         std::shared_ptr<TwicCommands> getTwicCommands() { return std::dynamic_pointer_cast<TwicCommands>(getISO7816Commands()); };
-
-        /**
-         * \brief Get the Twic profile.
-         * \return The Twic profile.
-         */
-        std::shared_ptr<TwicProfile> getTwicProfile() { return std::dynamic_pointer_cast<TwicProfile>(getProfile()); };
 
     protected:
     };

@@ -10,7 +10,6 @@
 #include "desfireaccessinfo.hpp"
 #include "logicalaccess/crypto/des_cipher.hpp"
 #include "logicalaccess/crypto/aes_cipher.hpp"
-#include "desfireprofile.hpp"
 
 #include <string>
 #include <vector>
@@ -327,7 +326,7 @@ namespace logicalaccess
          */
         std::vector<unsigned char> changeKey_PICC(unsigned char keyno, std::shared_ptr<DESFireKey> newKey, std::vector<unsigned char> diversify);
 
-        void setCryptoContext(std::shared_ptr<DESFireProfile> profile, std::vector<unsigned char> identifier);
+        void setCryptoContext(std::vector<unsigned char> identifier);
 
         /**
          * \brief Get the diversify buffer.
@@ -348,6 +347,127 @@ namespace logicalaccess
 		void setIdentifier(std::vector<unsigned char> identifier) { d_identifier = identifier; };
 
         const std::vector<unsigned char> getIdentifier() const { return d_identifier; };
+
+		/**
+		* \brief Get the default key for an algorithm.
+		* \param keyType The key algorithm type.
+		* \return The default key.
+		*/
+		static std::shared_ptr<DESFireKey> getDefaultKey(DESFireKeyType keyType);
+
+		/**
+		* \brief Set default keys for the type card in memory at a specific location.
+		*/
+		virtual void setDefaultKeysAt(std::shared_ptr<Location> location);
+
+		/**
+		* \brief Get one of the DESFire keys of this profile.
+		* \param aid The application id.
+		* \param keyno The key number.
+		* \return The specified DESFire key or a null key if params are invalid.
+		*/
+		std::shared_ptr<DESFireKey> getKey(size_t aid, unsigned char keyno) const;
+
+		/**
+		* \brief Set one of the DESFire keys of this profile.
+		* \param aid Application ID
+		* \param keyno The key number to set
+		* \param key The value of the key.
+		*/
+		virtual void setKey(size_t aid, unsigned char keyno, std::shared_ptr<DESFireKey> key);
+
+		/**
+		* \brief Clear all keys in memory.
+		*/
+		virtual void clearKeys();
+
+	protected:
+
+		/**
+		* \brief Get key from memory.
+		* \param aid The Application ID
+		* \param keyno The key number
+		* \param diversify The diversify buffer, NULL if no diversification is needed
+		* \param keydiv The key data, diversified if a diversify buffer is specified.
+		* \return True on success, false otherwise.
+		*/
+		bool getKey(size_t aid, unsigned char keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv);
+
+		/**
+		* \brief Get key from memory.
+		* \param keyno The key number
+		* \param diversify The diversify buffer, NULL if no diversification is needed
+		* \param keydiv The key data, diversified if a diversify buffer is specified.
+		* \return True on success, false otherwise.
+		*/
+		bool getKey(unsigned char keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv);
+
+		/**
+		* \brief Check if a key position exists.
+		* \param aid The Application ID
+		* \param defvalue The default result value
+		* \return The check result.
+		*/
+		bool checkKeyPos(size_t aid, bool defvalue = false) const;
+
+		/**
+		* \brief Check if a key position exists.
+		* \param aid The Application ID
+		* \param keyno The key number
+		* \param defvalue The default result value
+		* \return The check result.
+		*/
+		bool checkKeyPos(size_t aid, unsigned char keyno, bool defvalue) const;
+
+		/**
+		* \brief Get the position in memory.
+		* \param aid The Application ID
+		* \param pos Will contain the position in memory
+		* \return True on success, false otherwise.
+		*/
+		bool getPosAid(size_t aid, size_t* pos = NULL) const;
+
+		/**
+		* \brief Add Application ID position.
+		* \param aid The Application ID
+		* \return The Application ID position.
+		*/
+		size_t addPosAid(size_t aid);
+
+		/**
+		* \brief Get one of the DESFire keys usage.
+		* \param index The index of the key in memory
+		* \return true if the key is used, false otherwise.
+		*/
+		bool getKeyUsage(size_t index) const;
+
+		/**
+		* \brief Set one of the DESFire keys of this profile.
+		* \param index The index of the key  in memory to set
+		* \param used True if the key is used, false otherwise.
+		*/
+		void setKeyUsage(size_t index, bool used);
+
+		/**
+		* \brief The 393 real keys.
+		*		0		:	MasterKey Card Maintenance
+		*		1		:	MasterKey Application 1 Maintenance
+		*		2 - 15	:	3(DES) Application 1 keys
+		*		16		:	MasterKey Application 2 Maintenance
+		*		17 - 30	:	3(DES) Application 2 keys
+		*		.............
+		*/
+		std::shared_ptr<DESFireKey> d_key[406];
+
+		/**
+		* \brief The Application ID used.
+		*/
+		size_t d_aids[29];
+
+		/**
+		* \brief Number of Application ID used.
+		*/
+		size_t d_nbAids;
 
     public:
 
@@ -417,13 +537,6 @@ namespace logicalaccess
          * \brief The random number B.
          */
         std::vector<unsigned char> d_rndB;
-
-    protected:
-
-        /**
-         * \brief The DESFire profile which own keys.
-         */
-        std::shared_ptr<DESFireProfile> d_profile;
 
         /**
          * \brief The card identifier use for key diversification.

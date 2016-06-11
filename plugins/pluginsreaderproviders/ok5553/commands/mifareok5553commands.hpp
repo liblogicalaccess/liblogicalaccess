@@ -55,20 +55,19 @@ namespace logicalaccess
          * \brief Load a key to the reader.
          * \param keyno The reader key slot number. Can be anything from 0x00 to 0x1F.
          * \param keytype The key type.
-         * \param key The key byte array.
-         * \param keylen The key byte array length.
+         * \param key The key.
          * \param vol Use volatile memory, not used by this reader.
          * \return true on success, false otherwise.
          */
-        bool loadKey(unsigned char keyno, MifareKeyType keytype, const void* key, size_t keylen, bool vol = false);
+        bool loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol = false);
 
         /**
          * \brief Load a key on a given location.
          * \param location The location.
+		 * \param keytype The mifare key type.
          * \param key The key.
-         * \param keytype The mifare key type.
          */
-        void loadKey(std::shared_ptr<Location> location, std::shared_ptr<Key> key, MifareKeyType keytype);
+		void loadKey(std::shared_ptr<Location> location, MifareKeyType keytype, std::shared_ptr<MifareKey> key);
 
         /**
          * \brief Authenticate a block, given a key number.

@@ -218,7 +218,7 @@ namespace logicalaccess
                     chip = createChip("DESFire");
                     buf.erase(buf.begin());
                     chip->setChipIdentifier(buf);
-                    std::dynamic_pointer_cast<DESFireISO7816Commands>(chip->getCommands())->getCrypto()->setCryptoContext(std::dynamic_pointer_cast<DESFireProfile>(chip->getProfile()), chip->getChipIdentifier());
+                    std::dynamic_pointer_cast<DESFireChip>(chip)->getCrypto()->setCryptoContext(chip->getChipIdentifier());
                 }
                 else if (buf[0] == ChipType::MIFAREULTRALIGHT)
                 {

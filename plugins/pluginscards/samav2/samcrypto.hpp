@@ -9,7 +9,6 @@
 
 #include "logicalaccess/crypto/des_cipher.hpp"
 #include "logicalaccess/crypto/aes_cipher.hpp"
-#include "logicalaccess/cards/profile.hpp"
 #include "desfirecrypto.hpp"
 
 #ifndef UNIX

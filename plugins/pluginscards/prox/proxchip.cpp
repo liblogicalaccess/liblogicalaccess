@@ -5,6 +5,7 @@
  */
 
 #include "proxchip.hpp"
+#include "proxlocation.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -20,7 +21,6 @@ namespace logicalaccess
     ProxChip::ProxChip()
         : Chip("Prox")
     {
-        d_profile.reset(new ProxProfile());
     }
 
     ProxChip::~ProxChip()
@@ -62,4 +62,11 @@ namespace logicalaccess
 
         return service;
     }
+
+	std::shared_ptr<Location> ProxChip::createLocation() const
+	{
+		std::shared_ptr<ProxLocation> ret;
+		ret.reset(new ProxLocation());
+		return ret;
+	}
 }

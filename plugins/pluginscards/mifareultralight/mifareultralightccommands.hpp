@@ -12,6 +12,8 @@
 
 namespace logicalaccess
 {
+	class MifareUltralightCChip;
+
     /**
      * \brief The Mifare Ultralight C commands class.
      */
@@ -48,6 +50,10 @@ namespace logicalaccess
          * \param authkey The authentication key.
          */
         virtual void authenticate(std::shared_ptr<TripleDESKey> authkey) = 0;
+
+	protected:
+
+		std::shared_ptr<MifareUltralightCChip> getMifareUltralightCChip();
     };
 }
 

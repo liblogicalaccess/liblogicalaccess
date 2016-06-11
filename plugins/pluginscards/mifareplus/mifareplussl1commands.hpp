@@ -57,11 +57,9 @@ namespace logicalaccess
         virtual void updateBinary(unsigned char blockno,
                                   const std::vector<unsigned char> &buf);
 
-        virtual bool loadKey(unsigned char keyno, MifareKeyType keytype, const void *key,
-                             size_t keylen, bool vol);
+		virtual bool loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol);
 
-        virtual void loadKey(std::shared_ptr<Location> location, std::shared_ptr<Key> key,
-                             MifareKeyType keytype);
+		virtual void loadKey(std::shared_ptr<Location> location, MifareKeyType keytype, std::shared_ptr<MifareKey> key);
 
         virtual void authenticate(unsigned char blockno, unsigned char keyno,
                                   MifareKeyType keytype);
@@ -134,18 +132,16 @@ namespace logicalaccess
             classic_impl.updateBinary(blockno, buf);
         }
 
-        virtual bool loadKey(unsigned char keyno, MifareKeyType keytype, const void *key,
-                             size_t keylen, bool vol)override
+        virtual bool loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol)override
         {
             fixup();
-            return classic_impl.loadKey(keyno, keytype, key, keylen, vol);
+            return classic_impl.loadKey(keyno, keytype, key, vol);
         }
 
-        virtual void loadKey(std::shared_ptr<Location> location, std::shared_ptr<Key> key,
-                             MifareKeyType keytype)override
+		virtual void loadKey(std::shared_ptr<Location> location, MifareKeyType keytype, std::shared_ptr<MifareKey> key)override
         {
             fixup();
-            classic_impl.loadKey(location, key, keytype);
+			classic_impl.loadKey(location, keytype, key);
         }
 
         virtual void authenticate(unsigned char blockno,

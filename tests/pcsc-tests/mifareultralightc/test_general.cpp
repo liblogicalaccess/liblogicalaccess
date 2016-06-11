@@ -4,7 +4,6 @@
 
 #include "pluginscards/mifareultralight/mifareultralightcommands.hpp"
 #include "pluginscards/mifareultralight/mifareultralightccommands.hpp"
-#include "pluginscards/mifareultralight/mifareultralightcprofile.hpp"
 
 #include "lla-tests/macros.hpp"
 #include "lla-tests/utils.hpp"
@@ -78,10 +77,7 @@ int main(int ac, char **av)
     auto cmdUltraC = std::dynamic_pointer_cast<logicalaccess::MifareUltralightCCommands>(
             chip->getCommands());
     LLA_ASSERT(cmdUltraC, "Cannot cast command to MifareUltralightCCommands");
-    auto profile = std::dynamic_pointer_cast<logicalaccess::MifareUltralightCProfile>(
-            chip->getProfile());
 
-    LLA_ASSERT(profile, "Cannot fetch profile from chip");
     //std::shared_ptr<logicalaccess::TripleDESKey> key(new logicalaccess::TripleDESKey("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"));
     std::shared_ptr<logicalaccess::TripleDESKey> key;
     cmdUltraC->authenticate(key);

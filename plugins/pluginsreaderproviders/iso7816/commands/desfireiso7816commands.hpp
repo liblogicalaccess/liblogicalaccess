@@ -291,18 +291,6 @@ namespace logicalaccess
         std::shared_ptr<ISO7816ReaderCardAdapter> getISO7816ReaderCardAdapter() { return std::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter()); };
 
         /**
-         * \brief Get the internal DESFire crypto.
-         * \return The internal DESFire crypto.
-         */
-        std::shared_ptr<DESFireCrypto> getCrypto() { return d_crypto; };
-
-        /**
-         * \brief Get the internal DESFire crypto.
-         * \return The internal DESFire crypto.
-         */
-        void setCrypto(std::shared_ptr<DESFireCrypto> t) { d_crypto = t; };
-
-        /**
          * \brief Set the SAM Chip.
          * \param t The SAM Chip.
          */
@@ -356,11 +344,6 @@ namespace logicalaccess
          * \return The response.
          */
         virtual std::vector<unsigned char> transmit(unsigned char cmd, const std::vector<unsigned char>& data = std::vector<unsigned char>(), unsigned char lc = 0, bool forceLc = false);
-
-        /**
-         * \brief Crypto instance for security manipulation.
-         */
-        std::shared_ptr<DESFireCrypto> d_crypto;
 
         /**
          * \brief The SAMChip used for the SAM Commands.

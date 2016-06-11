@@ -5,7 +5,6 @@
  */
 
 #include "felicachip.hpp"
-#include "felicaprofile.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -21,13 +20,11 @@ namespace logicalaccess
 	FeliCaChip::FeliCaChip(std::string ct)
         : Chip(ct)
     {
-        d_profile.reset(new FeliCaProfile());
     }
 
 	FeliCaChip::FeliCaChip()
         : Chip(CHIP_FELICA)
     {
-		d_profile.reset(new FeliCaProfile());
     }
 
 	FeliCaChip::~FeliCaChip()
@@ -67,6 +64,7 @@ namespace logicalaccess
         blockNode->setName(tmpName);
         blockNode->setLength(16);
         blockNode->setNeedAuthentication(true);
+		blockNode->setCanWrite(block != 0);
 
         std::shared_ptr<FeliCaLocation> location;
         location.reset(new FeliCaLocation());
@@ -96,4 +94,11 @@ namespace logicalaccess
 
         return service;
     }
+
+	std::shared_ptr<Location> FeliCaChip::createLocation() const
+	{
+		std::shared_ptr<FeliCaLocation> ret;
+		ret.reset(new FeliCaLocation());
+		return ret;
+	}
 }

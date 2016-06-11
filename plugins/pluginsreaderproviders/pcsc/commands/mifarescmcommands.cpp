@@ -24,11 +24,11 @@ namespace logicalaccess
     {
     }
 
-    bool MifareSCMCommands::loadKey(unsigned char keyno, MifareKeyType keytype, const void* key, size_t keylen, bool vol)
+    bool MifareSCMCommands::loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol)
     {
         bool r = false;
 
-        std::vector<unsigned char> result, vector_key((unsigned char*)key, (unsigned char*)key + keylen);
+		std::vector<unsigned char> result, vector_key((unsigned char*)key->getData(), (unsigned char*)key->getData() + key->getLength());
 
         result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x82, 0x00, static_cast<unsigned char>(keytype), static_cast<unsigned char>(vector_key.size()), vector_key);
 
@@ -36,7 +36,7 @@ namespace logicalaccess
         {
             if (keyno == 0)
             {
-                r = loadKey(keyno, keytype, key, keylen, true);
+                r = loadKey(keyno, keytype, key, true);
             }
         }
         else

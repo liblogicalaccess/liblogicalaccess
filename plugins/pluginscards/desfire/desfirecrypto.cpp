@@ -6,6 +6,7 @@
 
 #include "desfirecommands.hpp"
 #include "desfirecrypto.hpp"
+#include "desfireev1location.hpp"
 #include "logicalaccess/crypto/tomcrypt.h"
 #include <boost/crc.hpp>
 #include <ctime>
@@ -572,7 +573,7 @@ namespace logicalaccess
     {
         d_sessionKey.clear();
         d_authkey.resize(16);
-        d_profile->getKey(d_currentAid, keyno, diversify, d_authkey);
+        getKey(d_currentAid, keyno, diversify, d_authkey);
         d_rndB = desfire_CBC_send(d_authkey, std::vector<unsigned char>(), encRndB);
 
         std::vector<unsigned char> rndB1;
@@ -696,7 +697,7 @@ namespace logicalaccess
         newkeydiv.resize(16, 0x00);
         // Get keyno only, in case of master card key
         unsigned char keyno_only = static_cast<unsigned char>(keyno & 0x0f);
-        d_profile->getKey(d_currentAid, keyno_only, diversify, oldkeydiv);
+        getKey(keyno_only, diversify, oldkeydiv);
         getKey(newkey, diversify, newkeydiv);
 
         std::vector<unsigned char> encCryptogram;
@@ -798,7 +799,7 @@ namespace logicalaccess
     std::vector<unsigned char> DESFireCrypto::iso_authenticate_PICC1(unsigned char keyno, std::vector<unsigned char> diversify, const std::vector<unsigned char>& encRndB, unsigned int randomlen)
     {
         d_sessionKey.clear();
-        d_profile->getKey(d_currentAid, keyno, diversify, d_authkey);
+        getKey(d_currentAid, keyno, diversify, d_authkey);
         d_cipher.reset(new openssl::DESCipher());
         openssl::DESSymmetricKey deskey = openssl::DESSymmetricKey::createFromData(d_authkey);
         openssl::DESInitializationVector iv = openssl::DESInitializationVector::createNull();
@@ -891,7 +892,7 @@ namespace logicalaccess
     std::vector<unsigned char> DESFireCrypto::aes_authenticate_PICC1(unsigned char keyno, std::vector<unsigned char> diversify, const std::vector<unsigned char>& encRndB)
     {
         d_sessionKey.clear();
-        d_profile->getKey(d_currentAid, keyno, diversify, d_authkey);
+        getKey(d_currentAid, keyno, diversify, d_authkey);
         d_cipher.reset(new openssl::AESCipher());
         openssl::AESSymmetricKey aeskey = openssl::AESSymmetricKey::createFromData(d_authkey);
         openssl::AESInitializationVector iv = openssl::AESInitializationVector::createNull();
@@ -1150,23 +1151,221 @@ namespace logicalaccess
         return encdata;
     }
 
-    void DESFireCrypto::setCryptoContext(std::shared_ptr<DESFireProfile> profile, std::vector<unsigned char> identifier)
+    void DESFireCrypto::setCryptoContext(std::vector<unsigned char> identifier)
     {
-        d_profile = profile;
         d_identifier = identifier;
+		clearKeys();
     }
 
     std::shared_ptr<DESFireKey> DESFireCrypto::getKey(unsigned char keyno)
     {
-        assert(d_profile);
-        return d_profile->getKey(d_currentAid, keyno);
+        return getKey(d_currentAid, keyno);
     }
 
     void DESFireCrypto::createApplication(int aid, size_t maxNbKeys, DESFireKeyType cryptoMethod)
     {
         for (unsigned char i = 0; i < maxNbKeys; ++i)
         {
-            d_profile->setKey(aid, i, d_profile->getDefaultKey(cryptoMethod));
+            setKey(aid, i, getDefaultKey(cryptoMethod));
         }
     }
+
+	void DESFireCrypto::setDefaultKeysAt(std::shared_ptr<Location> location)
+	{
+		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
+
+		std::shared_ptr<DESFireEV1Location> dfEV1Location = std::dynamic_pointer_cast<DESFireEV1Location>(location);
+		std::shared_ptr<DESFireLocation> dfLocation = std::dynamic_pointer_cast<DESFireLocation>(location);
+
+		if (dfLocation)
+			LOG(LogLevel::WARNINGS) << "DESFireEV1Profile use DESFireLocation so we force DES Crypto.";
+		else if (!dfEV1Location)
+			EXCEPTION_ASSERT_WITH_LOG(dfEV1Location, std::invalid_argument, "location must be a DESFireEV1Location or DESFireLocation.");
+
+		// Application (File keys are Application keys)
+		if (dfLocation->aid != (unsigned int)-1)
+		{
+			for (unsigned char i = 0; i < 14; ++i)
+			{
+				if (dfEV1Location)
+					setKey(dfEV1Location->aid, i, getDefaultKey(dfEV1Location->cryptoMethod));
+				else
+					setKey(dfLocation->aid, i, getDefaultKey(DF_KEY_DES));
+			}
+		}
+		// Card
+		else
+		{
+			setKey(0, 0, getDefaultKey(DF_KEY_DES));
+		}
+	}
+
+	void DESFireCrypto::clearKeys()
+	{
+		d_nbAids = 0;
+	}
+
+	bool DESFireCrypto::getKeyUsage(size_t index) const
+	{
+		size_t nbKeys = sizeof(d_key) / sizeof(std::shared_ptr<DESFireKey>);
+		if (index >= nbKeys)
+		{
+			return false;
+		}
+
+		return bool(d_key[index]);
+	}
+
+	void DESFireCrypto::setKeyUsage(size_t index, bool used)
+	{
+		size_t nbKeys = sizeof(d_key) / sizeof(std::shared_ptr<DESFireKey>);
+		if (index >= nbKeys)
+		{
+			return;
+		}
+
+		std::shared_ptr<DESFireKey> key;
+		if (used)
+		{
+			key.reset(new DESFireKey());
+		}
+
+		d_key[index] = key;
+	}
+
+	bool DESFireCrypto::getPosAid(size_t aid, size_t* pos) const
+	{
+		bool ret = false;
+		size_t i;
+
+		for (i = 0; i < d_nbAids && !ret; i++)
+		{
+			ret = (d_aids[i] == aid);
+		}
+
+		if (ret && pos != NULL)
+		{
+			*pos = i - 1;
+		}
+
+		return ret;
+	}
+
+	size_t DESFireCrypto::addPosAid(size_t aid)
+	{
+		d_aids[d_nbAids] = aid;
+		return d_nbAids++;
+	}
+
+	bool DESFireCrypto::checkKeyPos(size_t aid, bool defvalue) const
+	{
+		bool ret = false;
+
+		if (getPosAid(aid))
+		{
+			ret = true;
+		}
+		else
+		{
+			ret = defvalue;
+		}
+
+		return ret;
+	}
+
+	bool DESFireCrypto::checkKeyPos(size_t aid, unsigned char keyno, bool defvalue) const
+	{
+		if (!checkKeyPos(aid, defvalue) || keyno > 13)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	std::shared_ptr<DESFireKey> DESFireCrypto::getDefaultKey(DESFireKeyType keyType)
+	{
+		std::shared_ptr<DESFireKey> key(new DESFireKey());
+
+		key->setKeyType(keyType);
+		std::vector<unsigned char> buf;
+		buf.resize(key->getLength(), 0x00);
+		key->setData(buf);
+
+		return key;
+	}
+
+	std::shared_ptr<DESFireKey> DESFireCrypto::getKey(size_t aid, unsigned char keyno) const
+	{
+		std::shared_ptr<DESFireKey> key;
+
+		if (checkKeyPos(aid, keyno, false))
+		{
+			size_t posAid;
+			getPosAid(aid, &posAid);
+
+			size_t keyPos = posAid * 14 + keyno;
+
+			if (getKeyUsage(keyPos))
+			{
+				key = d_key[keyPos];
+			}
+		}
+
+		if (!key)
+		{
+			key = DESFireCrypto::getDefaultKey(DF_KEY_DES);
+		}
+
+		return key;
+	}
+
+	bool DESFireCrypto::getKey(unsigned char keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv)
+	{
+		return getKey(d_currentAid, keyno, diversify, keydiv);
+	}
+
+	bool DESFireCrypto::getKey(size_t aid, unsigned char keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv)
+	{
+		if (!checkKeyPos(aid, keyno, false))
+		{
+			keydiv.resize(16, 0x00);
+
+			return false;
+		}
+
+		size_t posAid;
+		getPosAid(aid, &posAid);
+
+		size_t keyPos = posAid * 14 + keyno;
+
+		if (!getKeyUsage(keyPos))
+		{
+			keydiv.resize(16, 0x00);
+
+			return false;
+		}
+
+		DESFireCrypto::getKey(d_key[keyPos], diversify, keydiv);
+
+		return true;
+	}
+
+	void DESFireCrypto::setKey(size_t aid, unsigned char keyno, std::shared_ptr<DESFireKey> key)
+	{
+		if (!checkKeyPos(aid, keyno, true))
+		{
+			return;
+		}
+
+		size_t posAid;
+		if (!getPosAid(aid, &posAid))
+		{
+			posAid = addPosAid(aid);
+		}
+
+		size_t keyPos = posAid * 14 + keyno;
+
+		d_key[keyPos] = key;
+	}
 }

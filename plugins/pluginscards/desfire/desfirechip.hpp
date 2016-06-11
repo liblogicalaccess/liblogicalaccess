@@ -9,7 +9,7 @@
 
 #include "logicalaccess/cards/chip.hpp"
 #include "desfirecommands.hpp"
-#include "desfireprofile.hpp"
+#include "desfirecrypto.hpp"
 
 #include <string>
 #include <vector>
@@ -67,17 +67,23 @@ namespace logicalaccess
          */
         virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
 
+		/**
+		* \brief Create default DESFire access informations.
+		* \return Default DESFire access informations.
+		*/
+		virtual std::shared_ptr<AccessInfo> createAccessInfo() const;
+
+		/**
+		* \brief Create default DESFire location.
+		* \return Default DESFire location.
+		*/
+		virtual std::shared_ptr<Location> createLocation() const;
+
         /**
          * \brief Get the DESFire commands.
          * \return The DESFire commands.
          */
         std::shared_ptr<DESFireCommands> getDESFireCommands() { return std::dynamic_pointer_cast<DESFireCommands>(getCommands()); };
-
-        /**
-         * \brief Get the DESFire profile.
-         * \return The DESFire profile.
-         */
-        std::shared_ptr<DESFireProfile> getDESFireProfile() { return std::dynamic_pointer_cast<DESFireProfile>(getProfile()); };
 
 
         /**
@@ -100,7 +106,31 @@ namespace logicalaccess
             return has_real_uid_;
         }
 
+		/**
+		* \brief Get the internal DESFire crypto.
+		* \return The internal DESFire crypto.
+		*/
+		std::shared_ptr<DESFireCrypto> getCrypto() const 
+		{
+			return d_crypto;
+		}
+
+		/**
+		* \brief Set the internal DESFire crypto.
+		* \param crypto The internal DESFire crypto.
+		*/
+		void setCrypto(std::shared_ptr<DESFireCrypto> crypto)
+		{
+			d_crypto = crypto;
+		};
+
     protected:
+
+		/**
+		* \brief Crypto instance for security manipulation.
+		*/
+		std::shared_ptr<DESFireCrypto> d_crypto;
+
         /**
          * Is random UUID enabled or not ?
          * This is detected when creating the chip object in PCSC Reader.

@@ -7,7 +7,9 @@
 #include "proxaccesscontrolcardservice.hpp"
 #include "logicalaccess/cards/readercardadapter.hpp"
 #include "proxchip.hpp"
+#include "proxlocation.hpp"
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include "logicalaccess/services/accesscontrol/formats/rawformat.hpp"
 
 #if defined(__unix__)
 #include <cstring>
@@ -101,4 +103,11 @@ namespace logicalaccess
     {
         return getChip()->getChipIdentifier();
     }
+
+	FormatList ProxAccessControlCardService::getSupportedFormatList()
+	{
+		FormatList list = AccessControlCardService::getHIDWiegandFormatList();
+		list.push_back(std::shared_ptr<RawFormat>(new RawFormat()));
+		return list;
+	}
 }

@@ -22,69 +22,37 @@ namespace logicalaccess
     {
     public:
 
-        /**
-         * \brief Read a whole sector.
-         * \param sector The sector number, from 0 to 15.
-         * \param start_block The first block on the sector.
-         * \param buf A buffer to fill with the data of the sector.
-         * \param buflen The length of buffer. Must be at least 48 bytes long or the call will fail.
-         * \param sab The sector access bits.
-         * \param readtrailer Read the trailer block.
-         * \return The number of bytes red, or a negative value on error.
-         */
         virtual std::vector<unsigned char> readSector(int sector, int start_block,
-                                                      const MifareAccessInfo::SectorAccessBits& sab,
+													  std::shared_ptr<MifareKey> keyA,
+													  std::shared_ptr<MifareKey> keyB,
+													  const MifareAccessInfo::SectorAccessBits& sab,
                                                       bool readtrailer = false) final;
 
-        /**
-         * \brief Write a whole sector.
-         * \param sector The sector number, from 0 to 15.
-         * \param start_block The first block on the sector.
-         * \param buf A buffer to from which to copy the data.
-         * \param buflen The length of buffer. Must be at least 48 bytes long or the call will fail.
-         * \param sab The sector access bits.
-         * \param userbyte The user byte on trailer block.
-         * \param newsab If not NULL the key will be changed as well.
-         * \return The number of bytes written, or a negative value on error.
-         * \warning If sector is 0, the first 16 bytes will be skipped and be considered "copied" since the first block in sector 0 is read-only.
-         */
         virtual void writeSector(int sector, int start_block,
                                  const std::vector<unsigned char>& buf,
+								 std::shared_ptr<MifareKey> keyA,
+								 std::shared_ptr<MifareKey> keyB,
                                  const MifareAccessInfo::SectorAccessBits& sab,
                                  unsigned char userbyte = 0x00,
-                                 MifareAccessInfo::SectorAccessBits* newsab = NULL) final;
+                                 MifareAccessInfo::SectorAccessBits* newsab = NULL,
+								 std::shared_ptr<MifareKey> newkeyA = std::shared_ptr<MifareKey>(),
+								 std::shared_ptr<MifareKey> newkeyB = std::shared_ptr<MifareKey>()) final;
 
-        /**
-         * \brief Read several sectors.
-         * \param start_sector The start sector number, from 0 to stop_sector.
-         * \param stop_sector The stop sector number, from start_sector to 15.
-         * \param start_block The first block on the sector.
-         * \param buf The buffer to fill with the data.
-         * \param buflen The length of buf. Must be at least (stop_sector - start_sector + 1) * 48 bytes long.
-         * \param sab The sector access bits.
-         * \return The number of bytes red, or a negative value on error.
-         */
         virtual std::vector<unsigned char> readSectors(int start_sector, int stop_sector,
                                                        int start_block,
-                                                       const MifareAccessInfo::SectorAccessBits& sab) final;
+													   std::shared_ptr<MifareKey> keyA,
+													   std::shared_ptr<MifareKey> keyB,
+													   const MifareAccessInfo::SectorAccessBits& sab) final;
 
-        /**
-         * \brief Write several sectors.
-         * \param start_sector The start sector number, from 0 to stop_sector.
-         * \param stop_sector The stop sector number, from start_sector to 15.
-         * \param start_block The first block on the sector.
-         * \param buf The buffer to fill with the data.
-         * \param buflen The length of buf. Must be at least (stop_sector - start_sector + 1) * 48 bytes long.
-         * \param sab The sector access bits.
-         * \param userbyte The user byte on trailer blocks.
-         * \param newsab If not NULL the keys will be changed as well.
-         * \return The number of bytes red, or a negative value on error.
-         */
         virtual void writeSectors(int start_sector, int stop_sector,
                                   int start_block, const std::vector<unsigned char>& buf,
-                                  const MifareAccessInfo::SectorAccessBits& sab,
+								  std::shared_ptr<MifareKey> keyA,
+								  std::shared_ptr<MifareKey> keyB,
+								  const MifareAccessInfo::SectorAccessBits& sab,
                                   unsigned char userbyte = 0x00,
-                                  MifareAccessInfo::SectorAccessBits* newsab = NULL) final;
+                                  MifareAccessInfo::SectorAccessBits* newsab = NULL,
+								  std::shared_ptr<MifareKey> newkeyA = std::shared_ptr<MifareKey>(),
+								  std::shared_ptr<MifareKey> newkeyB = std::shared_ptr<MifareKey>()) final;
 
         /**
          * \brief Get the sector referenced by the AID from the MAD.
@@ -124,26 +92,23 @@ namespace logicalaccess
          * \param location The location.
          * \param ai The access infos.
          */
-        void authenticate(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> ai);
+        void authenticate(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> ai, bool write = false);
+
+		void changeKeys(MifareKeyType keytype, std::shared_ptr<MifareKey> key, std::shared_ptr<MifareKey> newkeyA, std::shared_ptr<MifareKey> newkeyB, unsigned int sector, MifareAccessInfo::SectorAccessBits* newsab, unsigned char userbyte = 0x00);
+
+		void changeKeys(std::shared_ptr<MifareKey> newkeyA, std::shared_ptr<MifareKey> newkeyB, unsigned int sector, MifareAccessInfo::SectorAccessBits* newsab, unsigned char userbyte = 0x00);
+
+		MifareKeyType getKeyType(const MifareAccessInfo::SectorAccessBits& sab, int sector, int block, bool write);
 
         /**
-         * \brief Load a key on a given location.
-         * \param location The location.
-         * \param key The key.
-         * \param keytype The mifare key type.
-         */
-        //virtual void loadKey(std::shared_ptr<Location> location, std::shared_ptr<Key> key, MifareKeyType keytype);
-
-        void changeKey(std::shared_ptr<MifareKey> keyA, std::shared_ptr<MifareKey> keyB, unsigned int sector, const MifareAccessInfo::SectorAccessBits& sab, MifareAccessInfo::SectorAccessBits* newsab, unsigned char userbyte = 0x00);
-
-        /**
-         * \brief Change authenticated block.
-         * \param sab The security access bits.
+         * \brief Authenticate for a targeted block.
+         * \param keyType The key type.
+		 * \param key The authentication key.
          * \param sector The sector.
          * \param block The block.
          * \param write Write access.
          */
-        void changeBlock(const MifareAccessInfo::SectorAccessBits& sab, int sector, int block, bool write);
+		void authenticate(MifareKeyType keyType, std::shared_ptr<MifareKey> key, int sector, int block, bool write);
 
         /**
          * \brief Read bytes from the card.
@@ -166,20 +131,19 @@ namespace logicalaccess
          * \brief Load a key to the reader.
          * \param keyno The reader key slot number. Can be anything from 0x00 to 0x1F.
          * \param keytype The key type.
-         * \param key The key byte array.
-         * \param keylen The key byte array length.
+         * \param key The key.
          * \param vol Use volatile memory.
          * \return true on success, false otherwise.
          */
-        virtual bool loadKey(unsigned char keyno, MifareKeyType keytype, const void* key, size_t keylen, bool vol = false) = 0;
+        virtual bool loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol = false) = 0;
 
         /**
          * \brief Load a key on a given location.
          * \param location The location.
+		 * \param keytype The mifare key type.
          * \param key The key.
-         * \param keytype The mifare key type.
          */
-        virtual void loadKey(std::shared_ptr<Location> location, std::shared_ptr<Key> key, MifareKeyType keytype) = 0;
+		virtual void loadKey(std::shared_ptr<Location> location, MifareKeyType keytype, std::shared_ptr<MifareKey> key) = 0;
 
         /**
          * \brief Authenticate a block, given a key number.

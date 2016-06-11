@@ -82,18 +82,6 @@ namespace logicalaccess
         void setCommands(std::shared_ptr<Commands> commands) { d_commands = commands; };
 
         /**
-         * \brief Get the profile.
-         * \return The profile.
-         */
-        std::shared_ptr<Profile> getProfile() const { return d_profile; };
-
-        /**
-         * \brief Set the profile.
-         * \param rofile The profile.
-         */
-        void setProfile(std::shared_ptr<Profile> profile) { d_profile = profile; };
-
-        /**
          * \brief Get the chip identifier.
          * \return The chip identifier.
          */
@@ -129,6 +117,18 @@ namespace logicalaccess
          */
         void setReceptionLevel(unsigned char receptionLevel) { d_receptionLevel = receptionLevel; };
 
+		/**
+		* \brief Create default access informations.
+		* \return Default access informations.
+		*/
+		virtual std::shared_ptr<AccessInfo> createAccessInfo() const;
+
+		/**
+		* \brief Create default location.
+		* \return Default location.
+		*/
+		virtual std::shared_ptr<Location> createLocation() const;
+
         /**
          * \brief Get a card service for this chip.
          * \param serviceType The card service type.
@@ -162,11 +162,6 @@ namespace logicalaccess
          * \brief Commands object.
          */
         std::shared_ptr<Commands> d_commands;
-
-        /**
-         * \brief The profile.
-         */
-        std::shared_ptr<Profile> d_profile;
 
         /**
          * \brief The chip reception level.

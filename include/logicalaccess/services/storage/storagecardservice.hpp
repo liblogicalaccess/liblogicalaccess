@@ -37,11 +37,6 @@ namespace logicalaccess
 		virtual ~StorageCardService();
 
         /**
-         * \brief Erase the card.
-         */
-        virtual void erase() = 0;
-
-        /**
          * \brief Erase a specific location on the card.
          * \param location The data location.
          * \param aiToUse The key's informations to use to delete.

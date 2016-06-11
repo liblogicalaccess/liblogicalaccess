@@ -22,7 +22,6 @@ namespace logicalaccess
     MifareUltralightChip::MifareUltralightChip()
         : Chip(CHIP_MIFAREULTRALIGHT)
     {
-        d_profile.reset(new MifareUltralightProfile());
         d_nbblocks = 16;
     }
 
@@ -91,31 +90,32 @@ namespace logicalaccess
 
         for (unsigned short i = 0; i < getNbBlocks(); ++i)
         {
-            addPageNode(rootNode, i);
+			addBlockNode(rootNode, i);
         }
 
         return rootNode;
     }
 
-    void MifareUltralightChip::addPageNode(std::shared_ptr<LocationNode> rootNode, int page)
+    void MifareUltralightChip::addBlockNode(std::shared_ptr<LocationNode> rootNode, int block)
     {
         char tmpName[255];
-        std::shared_ptr<LocationNode> sectorNode;
-        sectorNode.reset(new LocationNode());
+        std::shared_ptr<LocationNode> blockNode;
+		blockNode.reset(new LocationNode());
 
-        sprintf(tmpName, "Page %d", page);
-        sectorNode->setName(tmpName);
-        sectorNode->setLength(4);
-        sectorNode->setNeedAuthentication(true);
+		sprintf(tmpName, "Block %d", block);
+		blockNode->setName(tmpName);
+		blockNode->setLength(4);
+		blockNode->setNeedAuthentication(true);
+		blockNode->setCanWrite(block > 2);
 
         std::shared_ptr<MifareUltralightLocation> location;
         location.reset(new MifareUltralightLocation());
-        location->page = page;
+		location->page = block;
         location->byte = 0;
 
-        sectorNode->setLocation(location);
-        sectorNode->setParent(rootNode);
-        rootNode->getChildrens().push_back(sectorNode);
+		blockNode->setLocation(location);
+		blockNode->setParent(rootNode);
+		rootNode->getChildrens().push_back(blockNode);
     }
 
     std::shared_ptr<CardService> MifareUltralightChip::getService(CardServiceType serviceType)
@@ -146,4 +146,18 @@ namespace logicalaccess
 
         return service;
     }
+
+	std::shared_ptr<AccessInfo> MifareUltralightChip::createAccessInfo() const
+	{
+		std::shared_ptr<MifareUltralightAccessInfo> ret;
+		ret.reset(new MifareUltralightAccessInfo());
+		return ret;
+	}
+
+	std::shared_ptr<Location> MifareUltralightChip::createLocation() const
+	{
+		std::shared_ptr<MifareUltralightLocation> ret;
+		ret.reset(new MifareUltralightLocation());
+		return ret;
+	}
 }

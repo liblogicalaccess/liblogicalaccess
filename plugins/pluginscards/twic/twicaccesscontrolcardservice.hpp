@@ -51,6 +51,12 @@ namespace logicalaccess
          */
         virtual bool writeFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite);
 
+		/**
+		* \brief Get the supported format list.
+		* \return The format list.
+		*/
+		virtual FormatList getSupportedFormatList();
+
     protected:
 
         std::shared_ptr<TwicChip> getTwicChip() { return std::dynamic_pointer_cast<TwicChip>(getChip()); };

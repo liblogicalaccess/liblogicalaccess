@@ -10,7 +10,6 @@
 #include "logicalaccess/cards/chip.hpp"
 
 #include "topazcommands.hpp"
-#include "topazprofile.hpp"
 
 #include <string>
 #include <vector>
@@ -68,17 +67,23 @@ namespace logicalaccess
 		 */
 		virtual unsigned short getNbBlocks(bool checkOnCard = false);
 
+		/**
+		* \brief Create default access informations.
+		* \return Default access informations. Always null.
+		*/
+		virtual std::shared_ptr<AccessInfo> createAccessInfo() const;
+
+		/**
+		* \brief Create default location.
+		* \return Default location.
+		*/
+		virtual std::shared_ptr<Location> createLocation() const;
+
         /**
          * \brief Get the Topaz commands.
          * \return The Topaz commands.
          */
         std::shared_ptr<TopazCommands> getTopazCommands() { return std::dynamic_pointer_cast<TopazCommands>(getCommands()); };
-
-        /**
-         * \brief Get the Topaz profile.
-         * \return The Topaz profile.
-         */
-        std::shared_ptr<TopazProfile> getTopazProfile() { return std::dynamic_pointer_cast<TopazProfile>(getProfile()); };
 
     protected:
 

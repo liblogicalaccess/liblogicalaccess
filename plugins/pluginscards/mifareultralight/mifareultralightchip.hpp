@@ -10,7 +10,6 @@
 #include "logicalaccess/cards/chip.hpp"
 
 #include "mifareultralightcommands.hpp"
-#include "mifareultralightprofile.hpp"
 
 #include <string>
 #include <vector>
@@ -68,21 +67,27 @@ namespace logicalaccess
 		 */
 		virtual unsigned short getNbBlocks(bool checkOnCard = false);
 
+		/**
+		* \brief Create default access informations.
+		* \return Default access informations. Always null.
+		*/
+		virtual std::shared_ptr<AccessInfo> createAccessInfo() const;
+
+		/**
+		* \brief Create default location.
+		* \return Default location.
+		*/
+		virtual std::shared_ptr<Location> createLocation() const;
+
         /**
          * \brief Get the Mifare Ultralight commands.
          * \return The Mifare Ultralight commands.
          */
         std::shared_ptr<MifareUltralightCommands> getMifareUltralightCommands() { return std::dynamic_pointer_cast<MifareUltralightCommands>(getCommands()); };
 
-        /**
-         * \brief Get the Mifare Ultralight profile.
-         * \return The Mifare Ultralight profile.
-         */
-        std::shared_ptr<MifareUltralightProfile> getMifareUltralightProfile() { return std::dynamic_pointer_cast<MifareUltralightProfile>(getProfile()); };
-
     protected:
 
-        void addPageNode(std::shared_ptr<LocationNode> rootNode, int page);
+		void addBlockNode(std::shared_ptr<LocationNode> rootNode, int block);
 
         void checkRootLocationNodeName(std::shared_ptr<LocationNode> rootNode);
 

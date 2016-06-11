@@ -35,11 +35,6 @@ namespace logicalaccess
         ~MifareUltralightStorageCardService();
 
         /**
-         * \brief Erase the card.
-         */
-        virtual void erase();
-
-        /**
          * \brief Erase a specific location on the card.
          * \param location The data location.
          * \param aiToUse The key's informations to use to delete.

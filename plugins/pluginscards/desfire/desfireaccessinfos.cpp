@@ -7,7 +7,6 @@
 #include <boost/property_tree/ptree.hpp>
 #include <logicalaccess/logs.hpp>
 #include "desfireaccessinfo.hpp"
-#include "desfireprofile.hpp"
 #include "desfirechip.hpp"
 
 namespace logicalaccess
@@ -18,8 +17,8 @@ namespace logicalaccess
         masterCardKey->fromString("");
         masterApplicationKey.reset(new DESFireKey());
         masterApplicationKey->fromString("");
-        readKey = DESFireProfile::getDefaultKey(DF_KEY_DES);
-        writeKey = DESFireProfile::getDefaultKey(DF_KEY_DES);
+        readKey = DESFireCrypto::getDefaultKey(DF_KEY_DES);
+		writeKey = DESFireCrypto::getDefaultKey(DF_KEY_DES);
         readKeyno = 0;
         writeKeyno = 0;
     }

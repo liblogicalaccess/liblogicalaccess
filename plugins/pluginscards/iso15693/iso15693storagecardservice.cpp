@@ -20,19 +20,6 @@ namespace logicalaccess
     {
     }
 
-    void ISO15693StorageCardService::erase()
-    {
-        std::shared_ptr<LocationNode> rootNode = getChip()->getRootLocationNode();
-        std::vector<std::shared_ptr<LocationNode> > childs = rootNode->getChildrens();
-
-        for (size_t i = 0; i < childs.size(); ++i)
-        {
-            std::shared_ptr<LocationNode> blockNode = childs.at(i);
-            std::shared_ptr<AccessInfo> ai;
-            erase(blockNode->getLocation(), ai);
-        }
-    }
-
     void ISO15693StorageCardService::erase(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse)
     {
         ISO15693Commands::SystemInformation sysinfo = getISO15693Chip()->getISO15693Commands()->getSystemInformation();

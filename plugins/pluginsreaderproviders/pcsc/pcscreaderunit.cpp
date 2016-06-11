@@ -44,7 +44,6 @@
 #include "epass_command.hpp"
 #include "epass_readercardadapter.hpp"
 
-#include "mifareplussl1profile.hpp"
 #include "samav1chip.hpp"
 #include "samav2chip.hpp"
 #include "mifarepluschip.hpp"
@@ -1456,11 +1455,10 @@ std::shared_ptr<Chip> PCSCReaderUnit::adjustChip(std::shared_ptr<Chip> c)
         else
             c->setChipIdentifier(uid);
 
-        std::dynamic_pointer_cast<DESFireISO7816Commands>(c->getCommands())->getCrypto()
+        std::dynamic_pointer_cast<DESFireChip>(c)->getCrypto()
             ->setIdentifier(c->getChipIdentifier());
-        std::dynamic_pointer_cast<DESFireISO7816Commands>(c->getCommands())->getCrypto()
-            ->setCryptoContext(std::dynamic_pointer_cast<DESFireProfile>(c->getProfile()),
-                               c->getChipIdentifier());
+        std::dynamic_pointer_cast<DESFireChip>(c)->getCrypto()
+            ->setCryptoContext(c->getChipIdentifier());
     }
 
 	// Mifare Ultralight adjustement.

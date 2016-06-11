@@ -34,6 +34,8 @@ namespace logicalaccess
         {
             return MifarePlusChip::getGenericCardType();
         }
+
+		virtual std::shared_ptr<AccessInfo> createAccessInfo() const;
     };
 
     class MifarePlusSL1_2kChip : public MifarePlusSL1Chip

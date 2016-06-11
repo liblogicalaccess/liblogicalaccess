@@ -9,7 +9,6 @@
 
 #include "logicalaccess/cards/chip.hpp"
 #include "iso7816commands.hpp"
-#include "iso7816profile.hpp"
 
 #include <string>
 #include <vector>
@@ -60,17 +59,17 @@ namespace logicalaccess
          */
         virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
 
+		/**
+		* \brief Create default location.
+		* \return Default location.
+		*/
+		virtual std::shared_ptr<Location> createLocation() const;
+
         /**
          * \brief Get the ISO7816 commands.
          * \return The ISO7816 commands.
          */
         std::shared_ptr<ISO7816Commands> getISO7816Commands() { return std::dynamic_pointer_cast<ISO7816Commands>(getCommands()); };
-
-        /**
-         * \brief Get the ISO7816 profile.
-         * \return The ISO7816 profile.
-         */
-        std::shared_ptr<ISO7816Profile> getISO7816Profile() { return std::dynamic_pointer_cast<ISO7816Profile>(getProfile()); };
 
     protected:
     };

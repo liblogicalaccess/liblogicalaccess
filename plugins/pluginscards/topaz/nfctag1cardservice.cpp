@@ -56,7 +56,10 @@ namespace logicalaccess
 
 	void NFCTag1CardService::eraseNDEF()
 	{
-        std::shared_ptr<logicalaccess::StorageCardService> storage = std::dynamic_pointer_cast<StorageCardService>(getTopazChip()->getService(CST_STORAGE));
-        storage->erase();
+		std::shared_ptr<logicalaccess::TopazCommands> tcmd(getTopazChip()->getTopazCommands());
+
+		// Overwrite capability container
+		std::vector<unsigned char> CC(8, 0x00);
+		tcmd->writePage(1, CC);
 	}
 }

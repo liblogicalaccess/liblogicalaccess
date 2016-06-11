@@ -14,6 +14,11 @@
 
 namespace logicalaccess
 {
+	/**
+	* \brief A format list.
+	*/
+	typedef std::vector<std::shared_ptr<Format> > FormatList;
+
     /**
      * \brief The base access control card service class for all access control services.
      */
@@ -50,6 +55,18 @@ namespace logicalaccess
          * \return True on success, false otherwise.
          */
         virtual bool writeFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite);
+
+		/**
+		* \brief Get the supported format list.
+		* \return The format list.
+		*/
+		virtual FormatList getSupportedFormatList();
+
+		/**
+		* \brief Get the HID Wiegand format list.
+		* \return The format list.
+		*/
+		FormatList getHIDWiegandFormatList();
     };
 }
 

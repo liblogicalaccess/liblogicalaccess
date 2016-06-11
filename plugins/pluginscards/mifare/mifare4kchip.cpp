@@ -17,16 +17,4 @@ namespace logicalaccess
     Mifare4KChip::~Mifare4KChip()
     {
     }
-
-    std::shared_ptr<LocationNode> Mifare4KChip::getRootLocationNode()
-    {
-        std::shared_ptr<LocationNode> rootNode = MifareChip::getRootLocationNode();
-
-        for (int i = 16; i < 40; i++)
-        {
-            addSectorNode(rootNode, i);
-        }
-
-        return rootNode;
-    }
 }

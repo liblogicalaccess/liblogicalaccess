@@ -60,7 +60,10 @@ namespace logicalaccess
 
 	void NFCTag2CardService::eraseNDEF()
 	{
-        std::shared_ptr<logicalaccess::StorageCardService> storage = std::dynamic_pointer_cast<StorageCardService>(getMifareUltralightChip()->getService(CST_STORAGE));
-        storage->erase();
+		std::shared_ptr<logicalaccess::MifareUltralightCommands> mfucmd(getMifareUltralightChip()->getMifareUltralightCommands());
+
+        // Overwrite capability container
+		std::vector<unsigned char> CC(4, 0x00);
+		mfucmd->writePage(3, CC);
 	}
 }

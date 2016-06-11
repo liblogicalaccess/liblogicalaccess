@@ -56,18 +56,17 @@ namespace logicalaccess
          * \param key The key.
          * \param keytype The mifare key type.
          */
-        virtual void loadKey(std::shared_ptr<Location> location, std::shared_ptr<Key> key, MifareKeyType keytype);
+		virtual void loadKey(std::shared_ptr<Location> location, MifareKeyType keytype, std::shared_ptr<MifareKey> key);
 
         /**
          * \brief Load a key to the reader.
          * \param keyno The key number.
          * \param keytype The key type.
-         * \param key The key byte array.
-         * \param keylen The key byte array length.
+         * \param key The key.
          * \param vol Use volatile memory.
          * \return true on success, false otherwise.
          */
-        virtual bool loadKey(unsigned char keyno, MifareKeyType keytype, const void* key, size_t keylen, bool vol = true);
+        virtual bool loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol = true);
 
         /**
          * \brief Authenticate a block, given a key number.

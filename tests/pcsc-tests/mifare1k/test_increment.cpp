@@ -25,7 +25,7 @@ void introduction()
 void read_value_block(std::shared_ptr<logicalaccess::MifareCommands> cmd)
 {
     auto key = std::make_shared<logicalaccess::MifareKey>("ff ff ff ff ff ff");
-    cmd->loadKey(0, logicalaccess::MifareKeyType::KT_KEY_A, key->getData(), key->getLength());
+    cmd->loadKey(0, logicalaccess::MifareKeyType::KT_KEY_A, key);
     int32_t value;
     uint8_t backup;
 
@@ -45,7 +45,7 @@ void read_value_block(std::shared_ptr<logicalaccess::MifareCommands> cmd)
 void write_value_block(std::shared_ptr<logicalaccess::MifareCommands> cmd)
 {
     auto key = std::make_shared<logicalaccess::MifareKey>("ff ff ff ff ff ff");
-    cmd->loadKey(0, logicalaccess::MifareKeyType::KT_KEY_A, key->getData(), key->getLength());
+    cmd->loadKey(0, logicalaccess::MifareKeyType::KT_KEY_A, key);
 
     cmd->authenticate(32, 0, logicalaccess::MifareKeyType::KT_KEY_A);
     cmd->writeValueBlock(32, 42424242, 33);
@@ -59,7 +59,7 @@ void write_value_block(std::shared_ptr<logicalaccess::MifareCommands> cmd)
 void increment(std::shared_ptr<logicalaccess::MifareCommands> cmd)
 {
     auto key = std::make_shared<logicalaccess::MifareKey>("ff ff ff ff ff ff");
-    cmd->loadKey(0, logicalaccess::MifareKeyType::KT_KEY_A, key->getData(), key->getLength());
+    cmd->loadKey(0, logicalaccess::MifareKeyType::KT_KEY_A, key);
 
     int32_t value;
     uint8_t backup;
@@ -80,7 +80,7 @@ void increment(std::shared_ptr<logicalaccess::MifareCommands> cmd)
 void decrement(std::shared_ptr<logicalaccess::MifareCommands> cmd)
 {
     auto key = std::make_shared<logicalaccess::MifareKey>("ff ff ff ff ff ff");
-    cmd->loadKey(0, logicalaccess::MifareKeyType::KT_KEY_A, key->getData(), key->getLength());
+	cmd->loadKey(0, logicalaccess::MifareKeyType::KT_KEY_A, key);
 
     int32_t value;
     uint8_t backup;

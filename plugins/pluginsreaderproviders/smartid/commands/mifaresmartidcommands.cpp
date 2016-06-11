@@ -8,6 +8,7 @@
 #include "mifaresmartidcommands.hpp"
 #include "../smartidreaderprovider.hpp"
 #include "mifarechip.hpp"
+#include "mifarelocation.hpp"
 #include "logicalaccess/cards/computermemorykeystorage.hpp"
 #include "logicalaccess/cards/readermemorykeystorage.hpp"
 #include "logicalaccess/cards/samkeystorage.hpp"
@@ -24,21 +25,21 @@ namespace logicalaccess
     {
     }
 
-    bool MifareSmartIDCommands::loadKey(unsigned char keyno, MifareKeyType keytype, const void* key, size_t keylen, bool /*vol*/)
+    bool MifareSmartIDCommands::loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool /*vol*/)
     {
         std::vector<unsigned char> data;
         data.resize(14, 0x00);
 
         data[0] = ((keytype == KT_KEY_A) ? 0 : 4) | 3;
         data[1] = keyno;
-        memcpy(&(data[8]), key, keylen);
+        memcpy(&(data[8]), key->getData(), key->getLength());
 
         getMifareSmartIDReaderCardAdapter()->sendCommand(0x4C, data);
 
         return true;
     }
 
-    void MifareSmartIDCommands::loadKey(std::shared_ptr<Location> location, std::shared_ptr<Key> key, MifareKeyType keytype)
+	void MifareSmartIDCommands::loadKey(std::shared_ptr<Location> location, MifareKeyType keytype, std::shared_ptr<MifareKey> key)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
         EXCEPTION_ASSERT_WITH_LOG(key, std::invalid_argument, "key cannot be null.");
@@ -53,7 +54,7 @@ namespace logicalaccess
 
         if (std::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key_storage))
         {
-            loadKey(0, keytype, key->getData(), key->getLength());
+            loadKey(0, keytype, key);
         }
         else if (std::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage))
         {

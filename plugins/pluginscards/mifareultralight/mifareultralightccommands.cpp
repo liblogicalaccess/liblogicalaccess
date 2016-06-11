@@ -5,10 +5,16 @@
  */
 
 #include "mifareultralightccommands.hpp"
+#include "mifareultralightcchip.hpp"
 #include "logicalaccess/logs.hpp"
 
 namespace logicalaccess
 {
+	std::shared_ptr<MifareUltralightCChip> MifareUltralightCCommands::getMifareUltralightCChip()
+	{
+		return std::dynamic_pointer_cast<MifareUltralightCChip>(getMifareUltralightChip());
+	}
+
     void MifareUltralightCCommands::changeKey(std::shared_ptr<TripleDESKey> key)
     {
         if (key && key->getLength() == 16)

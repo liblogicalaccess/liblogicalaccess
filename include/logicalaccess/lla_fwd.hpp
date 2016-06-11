@@ -37,13 +37,13 @@ namespace logicalaccess
 
     class ReaderUnitConfiguration;
 
+	class AccessInfo;
+
     class LocationNode;
 
     class Location;
 
     class Commands;
-
-    class Profile;
 
     class CardService;
 

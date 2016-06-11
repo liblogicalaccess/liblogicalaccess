@@ -61,8 +61,7 @@ namespace logicalaccess
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot call this");
     }
 
-    bool MifarePlusSL1Commands::loadKey(unsigned char keyno, MifareKeyType keytype,
-                                           const void *key, size_t keylen, bool vol)
+    bool MifarePlusSL1Commands::loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol)
     {
         assert(0 && "Call shall not be dispatched to here");
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot call this");
@@ -70,7 +69,7 @@ namespace logicalaccess
     }
 
     void MifarePlusSL1Commands::loadKey(std::shared_ptr<Location> location,
-                                           std::shared_ptr<Key> key, MifareKeyType keytype)
+		MifareKeyType keytype, std::shared_ptr<MifareKey> key)
     {
         assert(0 && "Call shall not be dispatched to here");
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot call this");

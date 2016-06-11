@@ -3,7 +3,6 @@
 #include "logicalaccess/cards/chip.hpp"
 #include "logicalaccess/logs.hpp"
 #include "mifarecommands.hpp"
-#include "mifareprofile.hpp"
 #include <assert.h>
 #include <desfirecommands.hpp>
 #include <mifareultralightccommands.hpp>
@@ -26,11 +25,7 @@ bool PCSCCardProbe::maybe_mifare_classic()
             std::dynamic_pointer_cast<MifareCommands>(chip->getCommands());
 
         logicalaccess::MifareAccessInfo::SectorAccessBits sab;
-        std::dynamic_pointer_cast<logicalaccess::MifareProfile>(chip->getProfile())
-            ->setDefaultKeysAt(0x00);
-        std::dynamic_pointer_cast<logicalaccess::MifareProfile>(chip->getProfile())
-            ->setDefaultKeysAt(1);
-        auto ret = command->readSector(1, 0, sab);
+		auto ret = command->readSector(1, 0, std::shared_ptr<MifareKey>(), std::shared_ptr<MifareKey>(), sab);
         return true;
     }
     catch (const CardException &e)

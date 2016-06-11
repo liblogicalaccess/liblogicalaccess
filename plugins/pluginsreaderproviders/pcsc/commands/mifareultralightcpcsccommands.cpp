@@ -71,11 +71,7 @@ namespace logicalaccess
 
         if (!authkey || authkey->isEmpty())
         {
-            std::shared_ptr<MifareUltralightCProfile> profile = std::dynamic_pointer_cast<MifareUltralightCProfile>(getChip()->getProfile());
-            if (profile)
-            {
-                authkey = profile->getKey();
-            }
+			authkey = getMifareUltralightCChip()->getDefaultKey();
         }
 
 		startGenericSession();

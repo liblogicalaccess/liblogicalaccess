@@ -11,6 +11,7 @@
 #include <sstream>
 
 #include "mifarechip.hpp"
+#include "mifarelocation.hpp"
 #include "logicalaccess/cards/computermemorykeystorage.hpp"
 #include "logicalaccess/cards/readermemorykeystorage.hpp"
 #include "logicalaccess/cards/samkeystorage.hpp"
@@ -60,7 +61,7 @@ namespace logicalaccess
         getOK5553ReaderCardAdapter()->sendCommand(command);
     }
 
-    bool MifareOK5553Commands::loadKey(unsigned char keyno, MifareKeyType /*keytype*/, const void* key, size_t keylen, bool vol)
+    bool MifareOK5553Commands::loadKey(unsigned char keyno, MifareKeyType /*keytype*/, std::shared_ptr<MifareKey> key, bool vol)
     {
         bool r = true;
         if (!vol)
@@ -73,9 +74,9 @@ namespace logicalaccess
             sprintf(buf, "%.2X", keyno);
             command.push_back(static_cast<unsigned char>(buf[0]));
             command.push_back(static_cast<unsigned char>(buf[1]));
-            for (size_t i = 0; i < keylen; i++)
+            for (size_t i = 0; i < key->getLength(); i++)
             {
-                sprintf(buf, "%.2X", ((char *)key)[i]);
+                sprintf(buf, "%.2X", key->getData()[i]);
                 command.push_back(static_cast<unsigned char>(buf[0]));
                 command.push_back(static_cast<unsigned char>(buf[1]));
             }
@@ -86,7 +87,7 @@ namespace logicalaccess
         return r;
     }
 
-    void MifareOK5553Commands::loadKey(std::shared_ptr<Location> location, std::shared_ptr<Key> key, MifareKeyType keytype)
+	void MifareOK5553Commands::loadKey(std::shared_ptr<Location> location, MifareKeyType keytype, std::shared_ptr<MifareKey> key)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
         EXCEPTION_ASSERT_WITH_LOG(key, std::invalid_argument, "key cannot be null.");
@@ -101,7 +102,7 @@ namespace logicalaccess
 
         if (std::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key_storage))
         {
-            loadKey(0, keytype, key->getData(), key->getLength());
+            loadKey(0, keytype, key);
         }
         else if (std::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage))
         {
@@ -109,7 +110,7 @@ namespace logicalaccess
             if (!key->isEmpty())
             {
                 std::shared_ptr<ReaderMemoryKeyStorage> rmKs = std::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage);
-                loadKey(rmKs->getKeySlot(), keytype, key->getData(), key->getLength(), rmKs->getVolatile());
+                loadKey(rmKs->getKeySlot(), keytype, key, rmKs->getVolatile());
             }
         }
         else

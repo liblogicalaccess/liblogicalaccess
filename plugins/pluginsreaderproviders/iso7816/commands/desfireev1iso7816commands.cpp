@@ -107,6 +107,7 @@ namespace logicalaccess
     void DESFireEV1ISO7816Commands::createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, DESFireKeyType cryptoMethod, FidSupport fidSupported, unsigned short isoFID, std::vector<unsigned char> isoDFName)
     {
         std::vector<unsigned char> command;
+		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 
         DESFireLocation::convertUIntToAid(aid, command);
         command.push_back(static_cast<unsigned char>(settings));
@@ -123,7 +124,7 @@ namespace logicalaccess
         }
 
         transmit(DF_INS_CREATE_APPLICATION, command);
-        d_crypto->createApplication(aid, maxNbKeys, cryptoMethod);
+		crypto->createApplication(aid, maxNbKeys, cryptoMethod);
     }
 
     void DESFireEV1ISO7816Commands::getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys, DESFireKeyType& keyType)
@@ -152,11 +153,12 @@ namespace logicalaccess
     {
         std::vector<unsigned char> result = transmit_nomacv(DFEV1_INS_GET_CARD_UID);
         result.resize(result.size() - 2);
+		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 
-        if (d_crypto->d_auth_method == CryptoMethod::CM_ISO)
-            return d_crypto->desfire_iso_decrypt(result, 7);
+		if (crypto->d_auth_method == CryptoMethod::CM_ISO)
+			return crypto->desfire_iso_decrypt(result, 7);
         else
-            return d_crypto->desfire_decrypt(d_crypto->d_sessionKey, result, 7);
+			return crypto->desfire_decrypt(crypto->d_sessionKey, result, 7);
     }
 
     void DESFireEV1ISO7816Commands::createStdDataFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned short isoFID)
@@ -328,14 +330,13 @@ namespace logicalaccess
     }
 
     void DESFireEV1ISO7816Commands::authenticate(unsigned char keyno, std::shared_ptr<DESFireKey> key)
-    {
+	{	
         if (!key) {
-            key = std::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile())->getDefaultKey(DF_KEY_DES);
+			key = DESFireCrypto::getDefaultKey(DF_KEY_DES);
         }
 
-        std::shared_ptr<DESFireProfile> dprofile = std::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile());
-        assert(dprofile);
-        dprofile->setKey(d_crypto->d_currentAid, keyno, key);
+		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
+		crypto->setKey(crypto->d_currentAid, keyno, key);
 
         // Get the appropriate authentification method and algorithm according to the key type (for 3DES we use legacy method instead of ISO).
 
@@ -345,16 +346,16 @@ namespace logicalaccess
         if (std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()) && key->getKeyType() != DF_KEY_DES)
         {
             if (key->getKeyType() == DF_KEY_3K3DES)
-                sam_iso_authenticate(key, DF_ALG_3K3DES, (d_crypto->d_currentAid == 0 && keyno == 0), keyno);
+				sam_iso_authenticate(key, DF_ALG_3K3DES, (crypto->d_currentAid == 0 && keyno == 0), keyno);
             else
-                sam_iso_authenticate(key, DF_ALG_AES, (d_crypto->d_currentAid == 0 && keyno == 0), keyno);
+				sam_iso_authenticate(key, DF_ALG_AES, (crypto->d_currentAid == 0 && keyno == 0), keyno);
         }
             else if (key->getKeyStorage()->getType() == KST_SERVER)
         {
             if (key->getKeyType() == DF_KEY_DES)
                 DESFireISO7816Commands::iks_des_authenticate(keyno, key);
             else if (key->getKeyType() == DF_KEY_AES)
-                iks_iso_authenticate(key, (d_crypto->d_currentAid == 0 && keyno == 0), keyno);
+				iks_iso_authenticate(key, (crypto->d_currentAid == 0 && keyno == 0), keyno);
             else
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
@@ -370,11 +371,11 @@ namespace logicalaccess
                 break;
 
             case DF_KEY_3K3DES:
-                iso_authenticate(key, DF_ALG_3K3DES, (d_crypto->d_currentAid == 0 && keyno == 0), keyno);
+				iso_authenticate(key, DF_ALG_3K3DES, (crypto->d_currentAid == 0 && keyno == 0), keyno);
                 break;
 
             case DF_KEY_AES:
-                iso_authenticate(key, DF_ALG_AES, (d_crypto->d_currentAid == 0 && keyno == 0), keyno);
+				iso_authenticate(key, DF_ALG_AES, (crypto->d_currentAid == 0 && keyno == 0), keyno);
                 break;
             }
         }
@@ -385,10 +386,11 @@ namespace logicalaccess
     {
         unsigned char p1 = 0x00; //0x02 if selectApplication has been proceed
         std::vector<unsigned char> diversify;
+		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 
         if (key->getKeyDiversification())
         {
-            key->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, key, keyno, diversify);
+			key->getKeyDiversification()->initDiversification(crypto->getIdentifier(), crypto->d_currentAid, key, keyno, diversify);
         }
 
         std::vector<unsigned char> apduresult;
@@ -508,29 +510,29 @@ namespace logicalaccess
         if (apduresult.size() <= 2 && apduresult[apduresult.size() - 2] != 0x90 && apduresult[apduresult.size() - 2] != 0x00)
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam_iso_authenticate P2 failed.");
 
-        d_crypto->d_currentKeyNo = keyno;
+		crypto->d_currentKeyNo = keyno;
         if (getSAMChip()->getCardType() == "SAM_AV1")
-            d_crypto->d_sessionKey = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->dumpSessionKey();
+			crypto->d_sessionKey = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->dumpSessionKey();
         else if (getSAMChip()->getCardType() == "SAM_AV2")
-            d_crypto->d_sessionKey = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->dumpSessionKey();
-        d_crypto->d_auth_method = CM_ISO;
+			crypto->d_sessionKey = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->dumpSessionKey();
+		crypto->d_auth_method = CM_ISO;
 
-        LOG(LogLevel::INFOS) << "Session key length: " << d_crypto->d_sessionKey.size();
+		LOG(LogLevel::INFOS) << "Session key length: " << crypto->d_sessionKey.size();
 
         if (key->getKeyType() == DF_KEY_3K3DES || key->getKeyType() == DF_KEY_DES)
         {
-            d_crypto->d_cipher.reset(new openssl::DESCipher());
-            d_crypto->d_block_size = 8;
-            d_crypto->d_mac_size = 8;
+			crypto->d_cipher.reset(new openssl::DESCipher());
+			crypto->d_block_size = 8;
+			crypto->d_mac_size = 8;
         }
         else
         {
-            d_crypto->d_cipher.reset(new openssl::AESCipher());
-            d_crypto->d_block_size = 16;
-            d_crypto->d_mac_size = 8;
+			crypto->d_cipher.reset(new openssl::AESCipher());
+			crypto->d_block_size = 16;
+			crypto->d_mac_size = 8;
         }
-        d_crypto->d_lastIV.clear();
-        d_crypto->d_lastIV.resize(d_crypto->d_block_size, 0x00);
+		crypto->d_lastIV.clear();
+		crypto->d_lastIV.resize(crypto->d_block_size, 0x00);
     }
 
     void DESFireEV1ISO7816Commands::iso_authenticate(std::shared_ptr<DESFireKey> key, DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno)
@@ -538,13 +540,14 @@ namespace logicalaccess
         unsigned char le;
         std::shared_ptr<openssl::SymmetricCipher> cipher;
         std::vector<unsigned char> diversify;
+		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 
         if (key->getKeyDiversification())
         {
-            key->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, key, keyno, diversify);
+			key->getKeyDiversification()->initDiversification(crypto->getIdentifier(), crypto->d_currentAid, key, keyno, diversify);
         }
         std::vector<unsigned char> keydiv;
-        d_crypto->getKey(key, diversify, keydiv);
+		crypto->getKey(key, diversify, keydiv);
 
         if (algorithm == DF_ALG_2K3DES)
         {
@@ -621,67 +624,68 @@ namespace logicalaccess
 
         EXCEPTION_ASSERT_WITH_LOG(RPCD2 == RPCD2a, LibLogicalAccessException, "Integrity error : host part of mutual authentication");
 
-        d_crypto->d_currentKeyNo = keyno;
+		crypto->d_currentKeyNo = keyno;
 
-        d_crypto->d_sessionKey.clear();
-        d_crypto->d_auth_method = CM_ISO;
+		crypto->d_sessionKey.clear();
+		crypto->d_auth_method = CM_ISO;
         if (algorithm == DF_ALG_2K3DES)
         {
             if (std::vector<unsigned char>(keydiv.begin(), keydiv.begin() + 8) == std::vector<unsigned char>(keydiv.begin() + 8, keydiv.begin() + 8 + 8))
             {
-                d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPCD1.begin(), RPCD1.begin() + 4);
-                d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPICC2.begin(), RPICC2.begin() + 4);
-                d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPCD1.begin(), RPCD1.begin() + 4);
-                d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPICC2.begin(), RPICC2.begin() + 4);
+				crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPCD1.begin(), RPCD1.begin() + 4);
+				crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPICC2.begin(), RPICC2.begin() + 4);
+				crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPCD1.begin(), RPCD1.begin() + 4);
+				crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPICC2.begin(), RPICC2.begin() + 4);
             }
             else
             {
-                d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPCD1.begin(), RPCD1.begin() + 4);
-                d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPICC2.begin(), RPICC2.begin() + 4);
-                d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPCD1.begin() + 4, RPCD1.begin() + 8);
-                d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPICC2.begin() + 4, RPICC2.begin() + 8);
+				crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPCD1.begin(), RPCD1.begin() + 4);
+				crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPICC2.begin(), RPICC2.begin() + 4);
+				crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPCD1.begin() + 4, RPCD1.begin() + 8);
+				crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPICC2.begin() + 4, RPICC2.begin() + 8);
             }
 
-            d_crypto->d_cipher.reset(new openssl::DESCipher());
-            d_crypto->d_authkey = keydiv;
-            d_crypto->d_block_size = 8;
-            d_crypto->d_mac_size = 8;
+			crypto->d_cipher.reset(new openssl::DESCipher());
+			crypto->d_authkey = keydiv;
+			crypto->d_block_size = 8;
+			crypto->d_mac_size = 8;
         }
         else if (algorithm == DF_ALG_3K3DES)
         {
-            d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPCD1.begin(), RPCD1.begin() + 4);
-            d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPICC2.begin(), RPICC2.begin() + 4);
-            d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPCD1.begin() + 6, RPCD1.begin() + 10);
-            d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPICC2.begin() + 6, RPICC2.begin() + 10);
-            d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPCD1.begin() + 12, RPCD1.begin() + 16);
-            d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPICC2.begin() + 12, RPICC2.begin() + 16);
+			crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPCD1.begin(), RPCD1.begin() + 4);
+			crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPICC2.begin(), RPICC2.begin() + 4);
+			crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPCD1.begin() + 6, RPCD1.begin() + 10);
+			crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPICC2.begin() + 6, RPICC2.begin() + 10);
+			crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPCD1.begin() + 12, RPCD1.begin() + 16);
+			crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPICC2.begin() + 12, RPICC2.begin() + 16);
 
-            d_crypto->d_cipher.reset(new openssl::DESCipher());
-            d_crypto->d_authkey = keydiv;
-            d_crypto->d_block_size = 8;
-            d_crypto->d_mac_size = 8;
+			crypto->d_cipher.reset(new openssl::DESCipher());
+			crypto->d_authkey = keydiv;
+			crypto->d_block_size = 8;
+			crypto->d_mac_size = 8;
         }
         else
         {
-            d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPCD1.begin(), RPCD1.begin() + 4);
-            d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPICC2.begin(), RPICC2.begin() + 4);
-            d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPCD1.begin() + 12, RPCD1.begin() + 16);
-            d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(), RPICC2.begin() + 12, RPICC2.begin() + 16);
+			crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPCD1.begin(), RPCD1.begin() + 4);
+			crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPICC2.begin(), RPICC2.begin() + 4);
+			crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPCD1.begin() + 12, RPCD1.begin() + 16);
+			crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPICC2.begin() + 12, RPICC2.begin() + 16);
 
-            d_crypto->d_cipher.reset(new openssl::AESCipher());
-            d_crypto->d_authkey = keydiv;
-            d_crypto->d_block_size = 16;
-            d_crypto->d_mac_size = 8;
+			crypto->d_cipher.reset(new openssl::AESCipher());
+			crypto->d_authkey = keydiv;
+			crypto->d_block_size = 16;
+			crypto->d_mac_size = 8;
         }
-        d_crypto->d_lastIV.clear();
-        d_crypto->d_lastIV.resize(d_crypto->d_block_size, 0x00);
+		crypto->d_lastIV.clear();
+		crypto->d_lastIV.resize(crypto->d_block_size, 0x00);
 
         onAuthenticated();
     }
 
     void DESFireEV1ISO7816Commands::authenticateISO(unsigned char keyno, DESFireISOAlgorithm algorithm)
     {
-        d_crypto->d_auth_method = CM_LEGACY; // To prevent CMAC checking
+		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
+		crypto->d_auth_method = CM_LEGACY; // To prevent CMAC checking
 
         unsigned char random_len;
         if (algorithm == DF_ALG_2K3DES)
@@ -697,10 +701,10 @@ namespace logicalaccess
         data.push_back(keyno);
 
         std::vector<unsigned char> diversify;
-        std::shared_ptr<DESFireKey> currentkey = std::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile())->getKey(d_crypto->d_currentAid, keyno);
+		std::shared_ptr<DESFireKey> currentkey = crypto->getKey(crypto->d_currentAid, keyno);
         if (currentkey->getKeyDiversification())
         {
-            currentkey->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, currentkey, keyno, diversify);
+			currentkey->getKeyDiversification()->initDiversification(crypto->getIdentifier(), crypto->d_currentAid, currentkey, keyno, diversify);
         }
 
         std::vector<unsigned char> encRndB = DESFireISO7816Commands::transmit(DFEV1_INS_AUTHENTICATE_ISO, data);
@@ -708,25 +712,26 @@ namespace logicalaccess
         encRndB.resize(encRndB.size() - 2);
         EXCEPTION_ASSERT_WITH_LOG(err == DF_INS_ADDITIONAL_FRAME, LibLogicalAccessException, "No additional frame for ISO authentication.");
 
-        std::vector<unsigned char> response = d_crypto->iso_authenticate_PICC1(keyno, diversify, encRndB, random_len);
+		std::vector<unsigned char> response = crypto->iso_authenticate_PICC1(keyno, diversify, encRndB, random_len);
         std::vector<unsigned char> encRndA1 = DESFireISO7816Commands::transmit(DF_INS_ADDITIONAL_FRAME, response);
         encRndA1.resize(encRndA1.size() - 2);
 
-        d_crypto->iso_authenticate_PICC2(keyno, encRndA1, random_len);
+		crypto->iso_authenticate_PICC2(keyno, encRndA1, random_len);
     }
 
     void DESFireEV1ISO7816Commands::authenticateAES(unsigned char keyno)
     {
-        d_crypto->d_auth_method = CM_LEGACY; // To prevent CMAC checking
+		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
+		crypto->d_auth_method = CM_LEGACY; // To prevent CMAC checking
 
         std::vector<unsigned char> data;
         data.push_back(keyno);
 
         std::vector<unsigned char> diversify;
-        std::shared_ptr<DESFireKey> currentkey = std::dynamic_pointer_cast<DESFireProfile>(getChip()->getProfile())->getKey(d_crypto->d_currentAid, keyno);
+		std::shared_ptr<DESFireKey> currentkey = crypto->getKey(crypto->d_currentAid, keyno);
         if (currentkey->getKeyDiversification())
         {
-            currentkey->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, currentkey, keyno, diversify);
+			currentkey->getKeyDiversification()->initDiversification(crypto->getIdentifier(), crypto->d_currentAid, currentkey, keyno, diversify);
         }
 
         std::vector<unsigned char> encRndB = DESFireISO7816Commands::transmit(DFEV1_INS_AUTHENTICATE_AES, data);
@@ -734,29 +739,30 @@ namespace logicalaccess
         encRndB.resize(encRndB.size() - 2);
         EXCEPTION_ASSERT_WITH_LOG(err == DF_INS_ADDITIONAL_FRAME, LibLogicalAccessException, "No additional frame for ISO authentication.");
 
-        std::vector<unsigned char> response = d_crypto->aes_authenticate_PICC1(keyno, diversify, encRndB);
+		std::vector<unsigned char> response = crypto->aes_authenticate_PICC1(keyno, diversify, encRndB);
         std::vector<unsigned char> encRndA1 = DESFireISO7816Commands::transmit(DF_INS_ADDITIONAL_FRAME, response);
         encRndA1.resize(encRndA1.size() - 2);
 
-        d_crypto->aes_authenticate_PICC2(keyno, encRndA1);
+		crypto->aes_authenticate_PICC2(keyno, encRndA1);
     }
 
     std::vector<unsigned char> DESFireEV1ISO7816Commands::handleReadData(unsigned char err, const std::vector<unsigned char>& firstMsg, unsigned int length, EncryptionMode mode)
     {
         std::vector<unsigned char> ret, data;
+		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 
         if ((err == DF_INS_ADDITIONAL_FRAME || err == 0x00))
         {
             if (mode == CM_ENCRYPT)
             {
-                d_crypto->decipherData1(length, firstMsg);
+				crypto->decipherData1(length, firstMsg);
             }
             else
             {
                 ret = data = firstMsg;
                 if (mode == CM_MAC)
                 {
-                    d_crypto->initBuf(length + 4);
+					crypto->initBuf(length + 4);
                 }
             }
         }
@@ -768,7 +774,7 @@ namespace logicalaccess
             data.resize(data.size() - 2);
             if (mode == CM_ENCRYPT)
             {
-                d_crypto->decipherData2(data);
+				crypto->decipherData2(data);
             }
             else
             {
@@ -780,29 +786,29 @@ namespace logicalaccess
         {
         case CM_PLAIN:
         {
-            if (d_crypto->d_auth_method != CM_LEGACY)
+			if (crypto->d_auth_method != CM_LEGACY)
             {
-                if (!d_crypto->verifyMAC(true, ret))
+				if (!crypto->verifyMAC(true, ret))
                 {
                     THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC data doesn't match.");
                 }
-                ret.resize(ret.size() - d_crypto->d_mac_size);
+				ret.resize(ret.size() - crypto->d_mac_size);
             }
         }
             break;
 
         case CM_MAC:
         {
-            if (!d_crypto->verifyMAC(true, ret))
+			if (!crypto->verifyMAC(true, ret))
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC data doesn't match.");
             }
-            ret.resize(ret.size() - d_crypto->d_mac_size);
+			ret.resize(ret.size() - crypto->d_mac_size);
         }
             break;
         case CM_ENCRYPT:
         {
-            ret = d_crypto->decipherData(length);
+			ret = crypto->decipherData(length);
         }
             break;
         case CM_UNKNOWN:
@@ -817,8 +823,9 @@ namespace logicalaccess
     void DESFireEV1ISO7816Commands::handleWriteData(unsigned char cmd, unsigned char* parameters, unsigned int paramLength, const std::vector<unsigned char>& data, EncryptionMode mode)
     {
         std::vector<unsigned char> edata, command;
+		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 
-        d_crypto->initBuf(data.size());
+		crypto->initBuf(data.size());
         size_t DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK = (DESFIRE_CLEAR_DATA_LENGTH_CHUNK - 8);
 
         if (data.size() <= DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK)
@@ -828,7 +835,7 @@ namespace logicalaccess
             case CM_PLAIN:
             {
                 edata = data;
-                if (d_crypto->d_auth_method != CM_LEGACY) // CMAC needs to be recalculated
+				if (crypto->d_auth_method != CM_LEGACY) // CMAC needs to be recalculated
                 {
                     std::vector<unsigned char> apdu_command;
                     apdu_command.push_back(cmd);
@@ -840,7 +847,7 @@ namespace logicalaccess
                     {
                         apdu_command.insert(apdu_command.end(), data.begin(), data.end());
                     }
-                    d_crypto->desfire_cmac(apdu_command);
+					crypto->desfire_cmac(apdu_command);
                 }
             }
                 break;
@@ -848,9 +855,9 @@ namespace logicalaccess
             case CM_MAC:
             {
                 std::vector<unsigned char> mac;
-                if (d_crypto->d_auth_method == CM_LEGACY)
+				if (crypto->d_auth_method == CM_LEGACY)
                 {
-                    mac = d_crypto->generateMAC(data);
+					mac = crypto->generateMAC(data);
                 }
                 else
                 {
@@ -864,7 +871,7 @@ namespace logicalaccess
                     {
                         gdata.insert(gdata.end(), data.begin(), data.end());
                     }
-                    mac = d_crypto->generateMAC(gdata);
+					mac = crypto->generateMAC(gdata);
                 }
                 edata = data;
 
@@ -880,7 +887,7 @@ namespace logicalaccess
                 {
                     encparameters.insert(encparameters.end(), parameters, parameters + paramLength);
                 }
-                edata = d_crypto->desfireEncrypt(data, encparameters);
+				edata = crypto->desfireEncrypt(data, encparameters);
             }
                 break;
 
@@ -894,7 +901,7 @@ namespace logicalaccess
             {
             case CM_PLAIN:
                 edata = std::vector<unsigned char>(data.begin(), data.begin() + DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK);
-                if (d_crypto->d_auth_method != CM_LEGACY) // CMAC needs to be recalculated
+				if (crypto->d_auth_method != CM_LEGACY) // CMAC needs to be recalculated
                 {
                     std::vector<unsigned char> apdu_command;
                     apdu_command.push_back(cmd);
@@ -906,15 +913,15 @@ namespace logicalaccess
                     {
                         apdu_command.insert(apdu_command.end(), data.begin(), data.end());
                     }
-                    d_crypto->desfire_cmac(apdu_command);
+					crypto->desfire_cmac(apdu_command);
                 }
                 break;
 
             case CM_MAC:
                 edata = std::vector<unsigned char>(data.begin(), data.begin() + DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK);
-				if (d_crypto->d_auth_method == CM_LEGACY)
+				if (crypto->d_auth_method == CM_LEGACY)
 				{
-					d_crypto->bufferingForGenerateMAC(edata);
+					crypto->bufferingForGenerateMAC(edata);
 				}
 				else
 				{
@@ -925,13 +932,13 @@ namespace logicalaccess
 						gdata.insert(gdata.end(), (unsigned char*)parameters, (unsigned char*)parameters + paramLength);
 					}
 					gdata.insert(gdata.end(), edata.begin(), edata.end());
-					d_crypto->bufferingForGenerateMAC(gdata);
+					crypto->bufferingForGenerateMAC(gdata);
 				}
                 break;
 
             case CM_ENCRYPT:
             {
-                edata = d_crypto->encipherData(false, std::vector<unsigned char>(data.begin(), data.begin() + DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK));
+				edata = crypto->encipherData(false, std::vector<unsigned char>(data.begin(), data.begin() + DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK));
             }
                 break;
 
@@ -965,12 +972,12 @@ namespace logicalaccess
                     edata = std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize);
                     if (pos + pkSize == data.size())
                     {
-                        std::vector<unsigned char> mac = d_crypto->generateMAC(edata);
+						std::vector<unsigned char> mac = crypto->generateMAC(edata);
 						edata.insert(edata.end(), mac.begin(), mac.end());
                     }
                     else
                     {
-                        d_crypto->bufferingForGenerateMAC(edata);
+						crypto->bufferingForGenerateMAC(edata);
                     }
                     break;
 
@@ -983,11 +990,11 @@ namespace logicalaccess
                         {
                             encparameters.insert(encparameters.end(), (unsigned char*)parameters, (unsigned char*)parameters + paramLength);
                         }
-                        edata = d_crypto->encipherData(true, std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize), encparameters);
+						edata = crypto->encipherData(true, std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize), encparameters);
                     }
                     else
                     {
-                        edata = d_crypto->encipherData(false, std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize));
+						edata = crypto->encipherData(false, std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize));
                     }
                     break;
 
@@ -1009,10 +1016,10 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, msgtmp);
         }
 
-        if (err == 0x00 && result.size() > 2 && (mode == CM_MAC || mode == CM_ENCRYPT || d_crypto->d_auth_method != CM_LEGACY))
+		if (err == 0x00 && result.size() > 2 && (mode == CM_MAC || mode == CM_ENCRYPT || crypto->d_auth_method != CM_LEGACY))
         {
             result.resize(result.size() - 2);
-            if (d_crypto->verifyMAC(true, result))
+			if (crypto->verifyMAC(true, result))
             {
                 //THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC verification failed.");
             }
@@ -1078,6 +1085,7 @@ namespace logicalaccess
 
     void DESFireEV1ISO7816Commands::changeFileSettings(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, bool plain)
     {
+		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
         std::vector<unsigned char> command;
         short ar = AccessRightsInMemory(accessRights);
 
@@ -1089,12 +1097,12 @@ namespace logicalaccess
             std::vector<unsigned char> param;
             param.push_back(DF_INS_CHANGE_FILE_SETTINGS);
             param.push_back(static_cast<unsigned char>(fileno));
-            command = d_crypto->desfireEncrypt(command, param);
+			command = crypto->desfireEncrypt(command, param);
         }
         unsigned char uf = static_cast<unsigned char>(fileno);
         command.insert(command.begin(), &uf, &uf + 1);
 
-        if (d_crypto->d_auth_method == CM_LEGACY && plain)
+		if (crypto->d_auth_method == CM_LEGACY && plain)
         {
             DESFireISO7816Commands::transmit(DF_INS_CHANGE_FILE_SETTINGS, command);
         }
@@ -1102,7 +1110,7 @@ namespace logicalaccess
         {
             std::vector<unsigned char> dd = transmit_plain(DF_INS_CHANGE_FILE_SETTINGS, command);
             dd.resize(dd.size() - 2);
-            if (!d_crypto->verifyMAC(true, dd))
+			if (!crypto->verifyMAC(true, dd))
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC verification failed.");
             }
@@ -1111,15 +1119,16 @@ namespace logicalaccess
 
     void DESFireEV1ISO7816Commands::changeKeySettings(DESFireKeySettings settings)
     {
+		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
         unsigned char command[1];
         command[0] = static_cast<unsigned char>(settings);
 
         unsigned char param[1];
         param[0] = DF_INS_CHANGE_KEY_SETTINGS;
 
-        std::vector<unsigned char> cryptogram = d_crypto->desfireEncrypt(std::vector<unsigned char>(command, command + sizeof(command)), std::vector<unsigned char>(param, param + sizeof(param)));
+		std::vector<unsigned char> cryptogram = crypto->desfireEncrypt(std::vector<unsigned char>(command, command + sizeof(command)), std::vector<unsigned char>(param, param + sizeof(param)));
 
-        if (d_crypto->d_auth_method == CM_LEGACY)
+		if (crypto->d_auth_method == CM_LEGACY)
         {
             DESFireISO7816Commands::transmit(DF_INS_CHANGE_KEY_SETTINGS, cryptogram);
         }
@@ -1127,7 +1136,7 @@ namespace logicalaccess
         {
             std::vector<unsigned char> r = transmit_plain(DF_INS_CHANGE_KEY_SETTINGS, cryptogram);
             r.resize(r.size() - 2);
-            if (!d_crypto->verifyMAC(true, r))
+			if (!crypto->verifyMAC(true, r))
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC verification failed.");
             }
@@ -1136,15 +1145,16 @@ namespace logicalaccess
 
     void DESFireEV1ISO7816Commands::changeKey(unsigned char keyno, std::shared_ptr<DESFireKey> key)
     {
+		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
         std::vector<unsigned char> diversify;
         if (key->getKeyDiversification())
         {
-            key->getKeyDiversification()->initDiversification(d_crypto->getIdentifier(), d_crypto->d_currentAid, key, keyno, diversify);
+			key->getKeyDiversification()->initDiversification(crypto->getIdentifier(), crypto->d_currentAid, key, keyno, diversify);
         }
         std::vector<unsigned char> cryptogram;
 
         unsigned char keynobyte = keyno;
-        if (keyno == 0 && d_crypto->d_currentAid == 0)
+		if (keyno == 0 && crypto->d_currentAid == 0)
         {
             keynobyte |= key->getKeyType();
         }
@@ -1159,13 +1169,13 @@ namespace logicalaccess
         }
         else
         {
-            cryptogram = d_crypto->changeKey_PICC(keynobyte, key, diversify);
+			cryptogram = crypto->changeKey_PICC(keynobyte, key, diversify);
         }
 
         std::vector<unsigned char> data;
         data.push_back(keynobyte);
         data.insert(data.end(), cryptogram.begin(), cryptogram.end());
-        if (d_crypto->d_auth_method == CM_LEGACY)
+		if (crypto->d_auth_method == CM_LEGACY)
         {
             DESFireISO7816Commands::transmit(DF_INS_CHANGE_KEY, data);
         }
@@ -1178,7 +1188,7 @@ namespace logicalaccess
             // Don't check CMAC if master key.
             if (dd.size() > 0 && keyno != 0)
             {
-                std::vector<unsigned char> CMAC = d_crypto->desfire_cmac(std::vector<unsigned char>(&err, &err + 1));
+				std::vector<unsigned char> CMAC = crypto->desfire_cmac(std::vector<unsigned char>(&err, &err + 1));
                 EXCEPTION_ASSERT_WITH_LOG(dd == CMAC, LibLogicalAccessException, "Wrong CMAC.");
             }
         }
@@ -1188,6 +1198,7 @@ namespace logicalaccess
     {
         std::vector<unsigned char> result;
         std::vector<unsigned char> allresult;
+		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 
         result = transmit_nomacv(DF_INS_GET_VERSION);
 
@@ -1215,9 +1226,9 @@ namespace logicalaccess
                                 memcpy(reinterpret_cast<char*>(&dataVersion) + 14, &result[0], 14);
                                 allresult.insert(allresult.end(), result.begin(), result.end() - 2);
 
-                                if (d_crypto->d_auth_method != CM_LEGACY)
+								if (crypto->d_auth_method != CM_LEGACY)
                                 {
-                                    if (!d_crypto->verifyMAC(true, allresult))
+									if (!crypto->verifyMAC(true, allresult))
                                     {
                                         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC verification failed.");
                                     }
@@ -1234,6 +1245,7 @@ namespace logicalaccess
     {
         std::vector<unsigned int> aids;
         std::vector<unsigned char> result;
+		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 
         result = transmit(DF_INS_GET_APPLICATION_IDS);
 
@@ -1249,7 +1261,7 @@ namespace logicalaccess
         }
 
         result.resize(result.size() - 2);
-        if (d_crypto->d_auth_method != CM_LEGACY)
+		if (crypto->d_auth_method != CM_LEGACY)
         {
             result.resize(result.size() - 8); // Remove CMAC
         }
@@ -1265,9 +1277,10 @@ namespace logicalaccess
 
     std::vector<unsigned char> DESFireEV1ISO7816Commands::getFileIDs()
     {
+		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
         std::vector<unsigned char> result = transmit(DF_INS_GET_FILE_IDS);
         result.resize(result.size() - 2);
-        if (d_crypto->d_auth_method != CM_LEGACY)
+		if (crypto->d_auth_method != CM_LEGACY)
         {
             result.resize(result.size() - 8); // Remove CMAC
         }
@@ -1305,12 +1318,13 @@ namespace logicalaccess
 
     void DESFireEV1ISO7816Commands::setConfiguration(bool formatCardEnabled, bool randomIdEnabled)
     {
+		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
         unsigned char command[1];
         //command[0] = 0x00;
         command[0] = 0x00 | ((formatCardEnabled) ? 0x00 : 0x01) | ((randomIdEnabled) ? 0x02 : 0x00);
 
-        d_crypto->initBuf(sizeof(command));
-        std::vector<unsigned char> encBuffer = d_crypto->desfire_encrypt(d_crypto->d_sessionKey, std::vector<unsigned char>(command, command + sizeof(command)));
+		crypto->initBuf(sizeof(command));
+		std::vector<unsigned char> encBuffer = crypto->desfire_encrypt(crypto->d_sessionKey, std::vector<unsigned char>(command, command + sizeof(command)));
         std::vector<unsigned char> buf;
         buf.push_back(0x00);
         buf.insert(buf.end(), encBuffer.begin(), encBuffer.end());
@@ -1323,12 +1337,13 @@ namespace logicalaccess
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The default key length must be 24-byte long.");
         }
+		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 
         unsigned char command[25];
         memcpy(&command[0], defaultKey->getData(), 24);
         command[24] = defaultKey->getKeyVersion();
 
-        std::vector<unsigned char> encBuffer = d_crypto->desfireEncrypt(std::vector<unsigned char>(command, command + sizeof(command)));
+		std::vector<unsigned char> encBuffer = crypto->desfireEncrypt(std::vector<unsigned char>(command, command + sizeof(command)));
         std::vector<unsigned char> buf;
         buf.push_back(0x02);
         buf.insert(buf.end(), encBuffer.begin(), encBuffer.end());
@@ -1337,7 +1352,8 @@ namespace logicalaccess
 
     void DESFireEV1ISO7816Commands::setConfiguration(const std::vector<unsigned char>& ats)
     {
-        std::vector<unsigned char> encBuffer = d_crypto->desfireEncrypt(ats);
+		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
+		std::vector<unsigned char> encBuffer = crypto->desfireEncrypt(ats);
         std::vector<unsigned char> buf;
         buf.push_back(0x02);
         buf.insert(buf.end(), encBuffer.begin(), encBuffer.end());
@@ -1347,23 +1363,24 @@ namespace logicalaccess
     std::vector<unsigned char> DESFireEV1ISO7816Commands::transmit(unsigned char cmd, const std::vector<unsigned char>& buf, unsigned char lc, bool forceLc)
     {
         std::vector<unsigned char> CMAC;
+		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 
-        if (d_crypto->d_auth_method != CM_LEGACY && cmd != DF_INS_ADDITIONAL_FRAME)
+		if (crypto->d_auth_method != CM_LEGACY && cmd != DF_INS_ADDITIONAL_FRAME)
         {
             std::vector<unsigned char> apdu_command;
             apdu_command.push_back(cmd);
             apdu_command.insert(apdu_command.end(), buf.begin(), buf.end());
-            CMAC = d_crypto->desfire_cmac(apdu_command);
+			CMAC = crypto->desfire_cmac(apdu_command);
         }
 
         std::vector<unsigned char> r = DESFireISO7816Commands::transmit(cmd, buf, lc, forceLc);
         unsigned char err = r.back();
-        if (d_crypto->d_auth_method != CM_LEGACY && cmd != DF_INS_ADDITIONAL_FRAME && r.size() > 8 && err != DF_INS_ADDITIONAL_FRAME)
+		if (crypto->d_auth_method != CM_LEGACY && cmd != DF_INS_ADDITIONAL_FRAME && r.size() > 8 && err != DF_INS_ADDITIONAL_FRAME)
         {
             std::vector<unsigned char> response = std::vector<unsigned char>(r.begin(), r.end() - 10);
             response.push_back(err);
 
-            CMAC = d_crypto->desfire_cmac(response);
+			CMAC = crypto->desfire_cmac(response);
 
             EXCEPTION_ASSERT_WITH_LOG(std::vector<unsigned char>(r.end() - 10, r.end() - 2) == CMAC, LibLogicalAccessException, "Wrong CMAC.");
         }
@@ -1388,12 +1405,13 @@ namespace logicalaccess
 
     std::vector<unsigned char> DESFireEV1ISO7816Commands::transmit_nomacv(unsigned char cmd, const std::vector<unsigned char>& buf, unsigned char lc, bool forceLc)
     {
-        if (d_crypto->d_auth_method != CM_LEGACY && cmd != DF_INS_ADDITIONAL_FRAME)
+		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
+		if (crypto->d_auth_method != CM_LEGACY && cmd != DF_INS_ADDITIONAL_FRAME)
         {
             std::vector<unsigned char> apdu_command;
             apdu_command.push_back(cmd);
             apdu_command.insert(apdu_command.end(), buf.begin(), buf.end());
-            d_crypto->desfire_cmac(apdu_command);
+			crypto->desfire_cmac(apdu_command);
         }
 
         return DESFireISO7816Commands::transmit(cmd, buf, lc, forceLc);
@@ -1406,6 +1424,8 @@ namespace logicalaccess
         assert(key->getKeyType() == DF_KEY_AES && key->getKeyStorage()->getType() == KST_SERVER);
         iks::IslogKeyServer &iks = iks::IslogKeyServer::fromGlobalSettings();
 
+		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
+
         std::vector<unsigned char> RPICC1 = iso_getChallenge(16); //16 because aes
         iks::DesfireAuthCommand cmd;
         cmd.algo_ = iks::DESFIRE_AUTH_ALGO_AES;
@@ -1413,7 +1433,7 @@ namespace logicalaccess
         cmd.key_idt_ = std::dynamic_pointer_cast<IKSStorage>(key->getKeyStorage())->getKeyIdentity();
         std::copy(RPICC1.begin(), RPICC1.end(), cmd.data_.begin());
         cmd.div_info_ = iks::KeyDivInfo::build(key, getChip()->getChipIdentifier(),
-                                               keyno, d_crypto->d_currentAid);
+			keyno, crypto->d_currentAid);
 
         iks.send_command(cmd);
         auto resp = std::dynamic_pointer_cast<iks::DesfireAuthResponse>(iks.recv());
@@ -1427,7 +1447,7 @@ namespace logicalaccess
 
         cmd.step_ = 2;
         cmd.div_info_ = iks::KeyDivInfo::build(key, getChip()->getChipIdentifier(),
-                                               keyno, d_crypto->d_currentAid);
+			keyno, crypto->d_currentAid);
 
         std::copy(cryptogram.begin(), cryptogram.end(), cmd.data_.begin());
         iks.send_command(cmd);
@@ -1435,21 +1455,21 @@ namespace logicalaccess
         EXCEPTION_ASSERT_WITH_LOG(resp, IKSException, "Cannot retrieve proper response from server.");
         EXCEPTION_ASSERT_WITH_LOG(resp->success_, IKSException, "Mutual authentication failure.");
 
-        d_crypto->d_currentKeyNo = keyno;
-        d_crypto->d_sessionKey.clear();
-        d_crypto->d_auth_method = CM_ISO;
+		crypto->d_currentKeyNo = keyno;
+		crypto->d_sessionKey.clear();
+		crypto->d_auth_method = CM_ISO;
 
         // Session key from IKS.
-        d_crypto->d_sessionKey.insert(d_crypto->d_sessionKey.end(),
+		crypto->d_sessionKey.insert(crypto->d_sessionKey.end(),
                                       resp->data_.begin(), resp->data_.begin() + 16);
 
-        d_crypto->d_cipher.reset(new openssl::AESCipher());
-        d_crypto->d_block_size = 16;
-        d_crypto->d_mac_size = 8;
+		crypto->d_cipher.reset(new openssl::AESCipher());
+		crypto->d_block_size = 16;
+		crypto->d_mac_size = 8;
 
         // common
-        d_crypto->d_lastIV.clear();
-        d_crypto->d_lastIV.resize(d_crypto->d_block_size, 0x00);
+		crypto->d_lastIV.clear();
+		crypto->d_lastIV.resize(crypto->d_block_size, 0x00);
 
         onAuthenticated();
     }

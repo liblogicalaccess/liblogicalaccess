@@ -5,7 +5,6 @@
  */
 
 #include "twicchip.hpp"
-#include "twicprofile.hpp"
 #include "twiclocation.hpp"
 #include "twicaccesscontrolcardservice.hpp"
 #include "twicstoragecardservice.hpp"
@@ -20,7 +19,6 @@ namespace logicalaccess
     TwicChip::TwicChip()
         : ISO7816Chip(CHIP_TWIC)
     {
-        d_profile.reset(new TwicProfile());
     }
 
     TwicChip::~TwicChip()
@@ -129,4 +127,11 @@ namespace logicalaccess
 
         return service;
     }
+
+	std::shared_ptr<Location> TwicChip::createLocation() const
+	{
+		std::shared_ptr<TwicLocation> ret;
+		ret.reset(new TwicLocation());
+		return ret;
+	}
 }

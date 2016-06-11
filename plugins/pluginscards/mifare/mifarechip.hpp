@@ -9,7 +9,6 @@
 
 #include "logicalaccess/cards/chip.hpp"
 #include "mifarecommands.hpp"
-#include "mifareprofile.hpp"
 
 #include <string>
 #include <vector>
@@ -54,11 +53,19 @@ namespace logicalaccess
         unsigned int getNbSectors() const;
 
         /**
-         * \brief Add a sector node the a root node.
+         * \brief Add a sector node to a root node.
          * \param rootNode The root node.
          * \param sector The sector.
          */
         void addSectorNode(std::shared_ptr<LocationNode> rootNode, int sector);
+
+		/**
+		* \brief Add a block node to a root node.
+		* \param rootNode The root node.
+		* \param sector The sector.
+		* \param block The block.
+		*/
+		void addBlockNode(std::shared_ptr<LocationNode> rootNode, int sector, unsigned char block);
 
         /**
          * \brief Get a card service for this card provider.
@@ -67,17 +74,23 @@ namespace logicalaccess
          */
         virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
 
+		/**
+		* \brief Create default Mifare access informations.
+		* \return Default Mifare access informations.
+		*/
+		virtual std::shared_ptr<AccessInfo> createAccessInfo() const;
+
+		/**
+		* \brief Create default Mifare location.
+		* \return Default Mifare location.
+		*/
+		virtual std::shared_ptr<Location> createLocation() const;
+
         /**
          * \brief Get the Mifare commands.
          * \return The Mifare commands.
          */
         std::shared_ptr<MifareCommands> getMifareCommands() { return std::dynamic_pointer_cast<MifareCommands>(getCommands()); };
-
-        /**
-         * \brief Get the Mifare profile.
-         * \return The Mifare profile.
-         */
-        std::shared_ptr<MifareProfile> getMifareProfile() { return std::dynamic_pointer_cast<MifareProfile>(getProfile()); };
 
     protected:
 

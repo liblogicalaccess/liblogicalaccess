@@ -10,7 +10,6 @@
 #include "mifareultralightchip.hpp"
 
 #include "mifareultralightccommands.hpp"
-#include "mifareultralightcprofile.hpp"
 
 #include <string>
 #include <vector>
@@ -50,17 +49,19 @@ namespace logicalaccess
          */
         virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
 
+		/**
+		* \brief Create default access informations.
+		* \return Default access informations. Always null.
+		*/
+		virtual std::shared_ptr<AccessInfo> createAccessInfo() const;
+
+		std::shared_ptr<TripleDESKey> getDefaultKey() const;
+
         /**
          * \brief Get the Mifare Ultralight C card provider for I/O access.
          * \return The Mifare Ultralight C card provider.
          */
         std::shared_ptr<MifareUltralightCCommands> getMifareUltralightCCommands() { return std::dynamic_pointer_cast<MifareUltralightCCommands>(getMifareUltralightCommands()); };
-
-        /**
-         * \brief Get the Mifare Ultralight C profile.
-         * \return The Mifare Ultralight C profile.
-         */
-        std::shared_ptr<MifareUltralightCProfile> getMifareUltralightCProfile() { return std::dynamic_pointer_cast<MifareUltralightCProfile>(getMifareUltralightProfile()); };
 
     protected:
     };

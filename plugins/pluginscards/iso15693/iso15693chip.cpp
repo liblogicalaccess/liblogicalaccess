@@ -5,7 +5,6 @@
  */
 
 #include "iso15693chip.hpp"
-#include "iso15693profile.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -20,13 +19,11 @@ namespace logicalaccess
     ISO15693Chip::ISO15693Chip(std::string ct)
         : Chip(ct)
     {
-        d_profile.reset(new ISO15693Profile());
     }
 
     ISO15693Chip::ISO15693Chip()
         : Chip(CHIP_ISO15693)
     {
-        d_profile.reset(new ISO15693Profile());
     }
 
     ISO15693Chip::~ISO15693Chip()
@@ -93,4 +90,11 @@ namespace logicalaccess
 
         return service;
     }
+
+	std::shared_ptr<Location> ISO15693Chip::createLocation() const
+	{
+		std::shared_ptr<ISO15693Location> ret;
+		ret.reset(new ISO15693Location());
+		return ret;
+	}
 }

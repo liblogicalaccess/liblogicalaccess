@@ -5,7 +5,6 @@
  */
 
 #include "cps3chip.hpp"
-#include "cps3profile.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -20,13 +19,11 @@ namespace logicalaccess
 	CPS3Chip::CPS3Chip(std::string ct)
         : ISO7816Chip(ct)
     {
-        d_profile.reset(new CPS3Profile());
     }
 
 	CPS3Chip::CPS3Chip()
         : ISO7816Chip(CHIP_CPS3)
     {
-		d_profile.reset(new CPS3Profile());
     }
 
 	CPS3Chip::~CPS3Chip()
@@ -63,4 +60,11 @@ namespace logicalaccess
 
         return service;
     }
+
+	std::shared_ptr<Location> CPS3Chip::createLocation() const
+	{
+		std::shared_ptr<CPS3Location> ret;
+		ret.reset(new CPS3Location());
+		return ret;
+	}
 }

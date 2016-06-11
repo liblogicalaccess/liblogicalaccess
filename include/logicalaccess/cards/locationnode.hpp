@@ -123,6 +123,30 @@ namespace logicalaccess
          */
         size_t getUnit() const;
 
+		/**
+		 * \brief Set if read is possible.
+		 * \param can True if read is possible, false otherwise.
+		 */
+		void setCanRead(bool can);
+
+		/**
+		* \brief Get if read is possible.
+		* \return True if read is possible, false otherwise.
+		*/
+		bool getCanRead() const;
+
+		/**
+		* \brief Set if write is possible.
+		* \param can True if write is possible, false otherwise.
+		*/
+		void setCanWrite(bool can);
+
+		/**
+		* \brief Get if write is possible.
+		* \return True if write is possible, false otherwise.
+		*/
+		bool getCanWrite() const;
+
     protected:
 
         /**
@@ -164,6 +188,16 @@ namespace logicalaccess
          * \brief The byte unit.
          */
         size_t d_unit;
+
+		/**
+		 * \brief Read capability.
+		 */
+		bool d_can_read;
+
+		/**
+		* \brief Write capability.
+		*/
+		bool d_can_write;
     };
 }
 

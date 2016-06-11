@@ -18,13 +18,11 @@ namespace logicalaccess
     MifareChip::MifareChip()
         : Chip("Mifare"), d_nbSectors(16)
     {
-        d_profile.reset(new MifareProfile());
     }
 
     MifareChip::MifareChip(std::string cardtype, unsigned int nbSectors) :
         Chip(cardtype), d_nbSectors(nbSectors)
     {
-        d_profile.reset(new MifareProfile());
     }
 
     MifareChip::~MifareChip()
@@ -47,15 +45,43 @@ namespace logicalaccess
         sectorNode->setLength((sector >= 32) ? 240 : 48);
         sectorNode->setNeedAuthentication(true);
 
+		for (unsigned char i = 0; i < ((sector / 16) + 1); ++i)
+		{
+			addBlockNode(sectorNode, sector, i);
+		}
+
         std::shared_ptr<MifareLocation> location;
         location.reset(new MifareLocation());
         location->sector = sector;
+		location->block = -1;
         location->byte = 0;
 
         sectorNode->setLocation(location);
         sectorNode->setParent(rootNode);
         rootNode->getChildrens().push_back(sectorNode);
     }
+
+	void MifareChip::addBlockNode(std::shared_ptr<LocationNode> rootNode, int sector, unsigned char block)
+	{
+		char tmpName[255];
+		std::shared_ptr<LocationNode> blockNode;
+		blockNode.reset(new LocationNode());
+
+		sprintf(tmpName, "Block %d", block);
+		blockNode->setName(tmpName);
+		blockNode->setLength(16);
+		blockNode->setNeedAuthentication(true);
+
+		std::shared_ptr<MifareLocation> location;
+		location.reset(new MifareLocation());
+		location->sector = sector;
+		location->block = block;
+		location->byte = 0;
+
+		blockNode->setLocation(location);
+		blockNode->setParent(rootNode);
+		rootNode->getChildrens().push_back(blockNode);
+	}
 
     std::shared_ptr<LocationNode> MifareChip::getRootLocationNode()
     {
@@ -70,7 +96,7 @@ namespace logicalaccess
 
         if (getCommands())
         {
-            for (int i = 0; i < 16; i++)
+            for (int i = 0; i < (int)getNbSectors(); i++)
             {
                 addSectorNode(rootNode, i);
             }
@@ -125,4 +151,18 @@ namespace logicalaccess
 
         return service;
     }
+
+	std::shared_ptr<AccessInfo> MifareChip::createAccessInfo() const
+	{
+		std::shared_ptr<MifareAccessInfo> ret;
+		ret.reset(new MifareAccessInfo());
+		return ret;
+	}
+
+	std::shared_ptr<Location> MifareChip::createLocation() const
+	{
+		std::shared_ptr<MifareLocation> ret;
+		ret.reset(new MifareLocation());
+		return ret;
+	}
 }

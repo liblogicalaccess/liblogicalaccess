@@ -88,11 +88,10 @@ namespace logicalaccess
         }
         else
         {
-            mAiToUse = std::dynamic_pointer_cast<MifareAccessInfo>(getChip()->getProfile()->createAccessInfo());
+            mAiToUse = std::dynamic_pointer_cast<MifareAccessInfo>(getChip()->createAccessInfo());
         }
 
         bool writeAidToMad = false;
-        getChip()->getProfile()->clearKeys();
 
         if (mLocation->useMAD)
         {
@@ -135,21 +134,6 @@ namespace logicalaccess
                 }
             }
 
-            for (int i = 0; i < nbSectors; ++i)
-            {
-                if (!mAiToUse->keyA->isEmpty())
-                {
-                    assert(getMifareChip());
-                    assert(getMifareChip()->getProfile());
-                    assert(getMifareChip()->getMifareProfile());
-                    getMifareChip()->getMifareProfile()->setKey(mLocation->sector + i, KT_KEY_A, mAiToUse->keyA);
-                }
-                if (!mAiToUse->keyB->isEmpty())
-                {
-                    getMifareChip()->getMifareProfile()->setKey(mLocation->sector + i, KT_KEY_B, mAiToUse->keyB);
-                }
-            }
-
             std::shared_ptr<MifareAccessInfo> mAiToWrite;
             // Write access informations too
             if (aiToWrite)
@@ -163,16 +147,13 @@ namespace logicalaccess
                 if (writeAidToMad && mAiToWrite->useMAD)
                 {
                     unsigned int madsector = (mLocation->sector <= 16) ? 0 : 16;
-                    MifareAccessInfo::SectorAccessBits sab;
-                    getMifareChip()->getMifareProfile()->setKey(madsector, KT_KEY_A, mAiToUse->madKeyA);
+					MifareKeyType madKeyType = KT_KEY_A;
+					std::shared_ptr<MifareKey> madKey = mAiToUse->madKeyA;
+
                     if (mAiToUse->madKeyB->isEmpty())
                     {
-                        sab.setTransportConfiguration();
-                    }
-                    else
-                    {
-                        sab.setAReadBWriteConfiguration();
-                        getMifareChip()->getMifareProfile()->setKey(madsector, KT_KEY_B, mAiToUse->madKeyB);
+						madKeyType = KT_KEY_B;
+						madKey = mAiToUse->madKeyB;
                     }
 
                     MifareAccessInfo::SectorAccessBits newsab;
@@ -185,27 +166,7 @@ namespace logicalaccess
                         newsab.setAReadBWriteConfiguration();
                     }
 
-                    if (!mAiToWrite->madKeyA->isEmpty())
-                    {
-                        getMifareChip()->getMifareProfile()->setKey(getMifareChip()->getNbSectors(), KT_KEY_A, mAiToWrite->madKeyA);
-                    }
-
-                    if (!mAiToWrite->madKeyB->isEmpty())
-                    {
-                        getMifareChip()->getMifareProfile()->setKey(getMifareChip()->getNbSectors(), KT_KEY_B, mAiToWrite->madKeyB);
-                    }
-
-                    getMifareChip()->getMifareCommands()->changeKey(mAiToWrite->madKeyA, mAiToWrite->madKeyB, madsector, sab, &newsab, mAiToWrite->madGPB);
-                }
-
-                if (!mAiToWrite->keyA->isEmpty())
-                {
-                    getMifareChip()->getMifareProfile()->setKey(getMifareChip()->getNbSectors(), KT_KEY_A, mAiToWrite->keyA);
-                }
-
-                if (!mAiToWrite->keyB->isEmpty())
-                {
-                    getMifareChip()->getMifareProfile()->setKey(getMifareChip()->getNbSectors(), KT_KEY_B, mAiToWrite->keyB);
+					getMifareChip()->getMifareCommands()->changeKeys(madKeyType, madKey, mAiToWrite->madKeyA, mAiToWrite->madKeyB, madsector, &newsab, mAiToWrite->madGPB);
                 }
 
                 // No key change, set to null (to not change sab, ...)
@@ -221,22 +182,27 @@ namespace logicalaccess
                     mLocation->sector + nbSectors - 1,
                     mLocation->block,
                     dataSectors,
+					mAiToUse->keyA,
+					mAiToUse->keyB,
                     mAiToUse->sab,
                     mAiToUse->gpb,
-                    (mAiToWrite) ? &(mAiToWrite->sab) : NULL);
+                    mAiToWrite ? &(mAiToWrite->sab) : NULL,
+					mAiToWrite ? mAiToWrite->keyA : std::shared_ptr<MifareKey>(),
+					mAiToWrite ? mAiToWrite->keyB : std::shared_ptr<MifareKey>());
             }
             else
             {
                 getMifareChip()->getMifareCommands()->writeSector(mLocation->sector,
                     mLocation->block,
                     dataSectors,
-                    mAiToUse->sab,
-                    mAiToUse->gpb,
-                    (mAiToWrite) ? &(mAiToWrite->sab) : NULL);
+					mAiToUse->keyA,
+					mAiToUse->keyB,
+					mAiToUse->sab,
+					mAiToUse->gpb,
+					mAiToWrite ? &(mAiToWrite->sab) : NULL,
+					mAiToWrite ? mAiToWrite->keyA : std::shared_ptr<MifareKey>(),
+					mAiToWrite ? mAiToWrite->keyB : std::shared_ptr<MifareKey>());
             }
-
-            getMifareChip()->getMifareProfile()->setKeyUsage(getMifareChip()->getNbSectors(), KT_KEY_A, false);
-            getMifareChip()->getMifareProfile()->setKeyUsage(getMifareChip()->getNbSectors(), KT_KEY_B, false);
         }
     }
 
@@ -255,10 +221,8 @@ namespace logicalaccess
         }
         else
         {
-            mAiToUse = std::dynamic_pointer_cast<MifareAccessInfo>(getChip()->getProfile()->createAccessInfo());
+            mAiToUse = std::dynamic_pointer_cast<MifareAccessInfo>(getChip()->createAccessInfo());
         }
-
-        getChip()->getProfile()->clearKeys();
 
         if (mLocation->useMAD)
         {
@@ -274,29 +238,17 @@ namespace logicalaccess
             nbSectors++;
         }
 
-        for (int i = 0; i < nbSectors; ++i)
-        {
-            if (!mAiToUse->keyA->isEmpty())
-            {
-                getMifareChip()->getMifareProfile()->setKey(mLocation->sector + i, KT_KEY_A, mAiToUse->keyA);
-            }
-            if (!mAiToUse->keyB->isEmpty())
-            {
-                getMifareChip()->getMifareProfile()->setKey(mLocation->sector + i, KT_KEY_B, mAiToUse->keyB);
-            }
-        }
-
         if (nbSectors >= 1)
         {
             std::vector<unsigned char> dataSectors;
 
             if (behaviorFlags & CB_AUTOSWITCHAREA)
             {
-                dataSectors = getMifareChip()->getMifareCommands()->readSectors(mLocation->sector, mLocation->sector + nbSectors - 1, mLocation->block, mAiToUse->sab);
+				dataSectors = getMifareChip()->getMifareCommands()->readSectors(mLocation->sector, mLocation->sector + nbSectors - 1, mLocation->block, mAiToUse->keyA, mAiToUse->keyB, mAiToUse->sab);
             }
             else
             {
-                dataSectors = getMifareChip()->getMifareCommands()->readSector(mLocation->sector, mLocation->block, mAiToUse->sab);
+				dataSectors = getMifareChip()->getMifareCommands()->readSector(mLocation->sector, mLocation->block, mAiToUse->keyA, mAiToUse->keyB, mAiToUse->sab);
             }
 
             if (length <= (dataSectors.size() - mLocation->byte))
@@ -320,121 +272,26 @@ namespace logicalaccess
         std::shared_ptr<MifareLocation> mLocation = std::dynamic_pointer_cast<MifareLocation>(location);
         EXCEPTION_ASSERT_WITH_LOG(mLocation, std::invalid_argument, "location must be a MifareLocation.");
 
-        MifareAccessInfo::SectorAccessBits sab;
-
-		LOG(DEBUGS) << "LAMA 0";
+		MifareKeyType keyType = KT_KEY_A;
+		std::shared_ptr<MifareKey> key;
 
         if (aiToUse)
         {
-
-			LOG(DEBUGS) << "LAMA IF";
-
             std::shared_ptr<MifareAccessInfo> mAiToUse = std::dynamic_pointer_cast<MifareAccessInfo>(aiToUse);
-
             EXCEPTION_ASSERT_WITH_LOG(mAiToUse, std::invalid_argument, "aiToUse must be a MifareAccessInfo");
 
-            if (!mAiToUse->keyA->isEmpty())
-            {
-                getMifareChip()->getMifareProfile()->setKey(mLocation->sector, KT_KEY_A, mAiToUse->keyA);
-            }
-
-			LOG(DEBUGS) << "LAMA 2";
-
-            if (!mAiToUse->keyB->isEmpty())
-            {
-                getMifareChip()->getMifareProfile()->setKey(mLocation->sector, KT_KEY_B, mAiToUse->keyB);
-            }
-
-            sab = mAiToUse->sab;
+			keyType = getMifareChip()->getMifareCommands()->getKeyType(mAiToUse->sab, mLocation->sector, mLocation->block, false);
+			key = keyType == KT_KEY_A ? mAiToUse->keyA : mAiToUse->keyB;
         }
-        else
-        {
-
-			LOG(DEBUGS) << "LAMA ELSE";
-
-			assert(getMifareChip());
-			assert(getMifareChip()->getMifareProfile());
-			assert(mLocation && mLocation->sector);
-            getMifareChip()->getMifareProfile()->setDefaultKeysAt(mLocation->sector);
-
-			LOG(DEBUGS) << "LAMA ELSE 1";
-
-            sab.setTransportConfiguration();
-		}
-		LOG(DEBUGS) << "LAMA 3";
-
 
         if (dataLength >= 16)
         {
-
-			LOG(DEBUGS) << "LAMA 3.5";
-
-            getMifareChip()->getMifareCommands()->changeBlock(sab, mLocation->sector, getMifareChip()->getMifareCommands()->getNbBlocks(mLocation->sector), false);
+			getMifareChip()->getMifareCommands()->authenticate(keyType, key, mLocation->sector, getMifareChip()->getMifareCommands()->getNbBlocks(mLocation->sector), false);
             std::vector<unsigned char> vdata = getMifareChip()->getMifareCommands()->readBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(mLocation->sector) + getMifareChip()->getMifareCommands()->getNbBlocks(mLocation->sector)), 16);
             memcpy(data, &vdata[0], vdata.size());
             return static_cast<unsigned int>(vdata.size());
         }
 
-		LOG(DEBUGS) << "LAMA 4";
-
         return 0;
-    }
-
-    void MifareStorageCardService::erase()
-    {
-        std::vector<unsigned char> zeroblock(16, 0x00);
-		std::vector<unsigned char> trailerblock(16, 0xFF);
-
-        MifareAccessInfo::SectorAccessBits sab;
-        sab.setTransportConfiguration();
-        trailerblock[9] = 0x00;
-
-        if (!sab.toArray(&trailerblock[6], 3))
-        {
-            THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad sector access bits configuration.");
-        }
-
-        for (unsigned int i = 0; i < getMifareChip()->getNbSectors(); ++i)
-        {
-            bool erased = true;
-            bool used = false;
-            unsigned int firstBlock = (i == 0) ? 1 : 0; // Don't write the first block in sector 0
-
-            std::shared_ptr<MifareLocation> location(new MifareLocation());
-            location->sector = i;
-            if (getMifareChip()->getMifareProfile()->getKeyUsage(i, KT_KEY_B))
-            {
-                used = true;
-
-                std::shared_ptr<MifareKey> key = getMifareChip()->getMifareProfile()->getKey(i, KT_KEY_B);
-
-                getMifareChip()->getMifareCommands()->loadKey(location, key, KT_KEY_B);
-                getMifareChip()->getMifareCommands()->authenticate(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(i)), key->getKeyStorage(), KT_KEY_B);
-
-                for (unsigned int j = firstBlock; j < getMifareChip()->getMifareCommands()->getNbBlocks(i); ++j)
-                {
-                    getMifareChip()->getMifareCommands()->updateBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(i) + j), zeroblock);
-                }
-
-                getMifareChip()->getMifareCommands()->updateBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(i) + getMifareChip()->getMifareCommands()->getNbBlocks(i)), trailerblock);
-            }
-
-            if ((!erased || !used) && getMifareChip()->getMifareProfile()->getKeyUsage(i, KT_KEY_A))
-            {
-                used = true;
-
-                std::shared_ptr<MifareKey> key = getMifareChip()->getMifareProfile()->getKey(i, KT_KEY_A);
-
-                getMifareChip()->getMifareCommands()->loadKey(location, key, KT_KEY_A);
-                getMifareChip()->getMifareCommands()->authenticate(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(i)), key->getKeyStorage(), KT_KEY_A);
-
-                for (unsigned int j = firstBlock; j < getMifareChip()->getMifareCommands()->getNbBlocks(i); ++j)
-                {
-                    getMifareChip()->getMifareCommands()->updateBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(i) + j), zeroblock);
-                }
-
-                getMifareChip()->getMifareCommands()->updateBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(i) + getMifareChip()->getMifareCommands()->getNbBlocks(i)), trailerblock);
-            }
-        }
     }
 }

@@ -7,6 +7,7 @@
 #include "mifarestidstrcommands.hpp"
 #include "../stidstrreaderprovider.hpp"
 #include "mifarechip.hpp"
+#include "mifarelocation.hpp"
 #include "logicalaccess/cards/computermemorykeystorage.hpp"
 #include "logicalaccess/cards/readermemorykeystorage.hpp"
 #include "logicalaccess/cards/samkeystorage.hpp"
@@ -55,14 +56,14 @@ namespace logicalaccess
         getSTidSTRReaderCardAdapter()->sendCommand(0x00A1, std::vector<unsigned char>());
     }
 
-    bool MifareSTidSTRCommands::loadKey(unsigned char keyno, MifareKeyType keytype, const void* key, size_t keylen, bool vol)
+    bool MifareSTidSTRCommands::loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol)
     {
-        LOG(LogLevel::INFOS) << "Loading key... key number {0x" << std::hex << keyno << std::dec << "(" << keyno << ")} key type {0x" << std::hex << keytype << std::dec << "(" << keytype << ")} key len {" << keylen << "} volatile ? {" << vol << "}";
+        LOG(LogLevel::INFOS) << "Loading key... key number {0x" << std::hex << keyno << std::dec << "(" << keyno << ")} key type {0x" << std::hex << keytype << std::dec << "(" << keytype << ")} key len {" << key->getLength() << "} volatile ? {" << vol << "}";
         std::vector<unsigned char> command;
         command.push_back(static_cast<unsigned char>(keytype));
         command.push_back(vol ? 0x00 : 0x01);
         command.push_back(keyno);
-        command.insert(command.end(), (unsigned char*)key, (unsigned char*)key + keylen);
+		command.insert(command.end(), key->getData(), key->getData() + key->getLength());
         command.push_back(0x00);	// Diversify ?
 
         getSTidSTRReaderCardAdapter()->sendCommand(0x00D0, command);
@@ -70,7 +71,7 @@ namespace logicalaccess
         return true;
     }
 
-    void MifareSTidSTRCommands::loadKey(std::shared_ptr<Location> location, std::shared_ptr<Key> key, MifareKeyType keytype)
+	void MifareSTidSTRCommands::loadKey(std::shared_ptr<Location> location, MifareKeyType keytype, std::shared_ptr<MifareKey> key)
     {
         LOG(LogLevel::INFOS) << "Loading key... location {" << location->serialize() << "} key type {0x" << std::hex << keytype << std::dec << "(" << keytype << ")}";
 
@@ -88,7 +89,7 @@ namespace logicalaccess
         if (std::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key_storage))
         {
             LOG(LogLevel::INFOS) << "Using computer memory key storage !";
-            loadKey(static_cast<unsigned char>(mLocation->sector), keytype, key->getData(), key->getLength(), true);
+            loadKey(static_cast<unsigned char>(mLocation->sector), keytype, key, true);
         }
         else if (std::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage))
         {

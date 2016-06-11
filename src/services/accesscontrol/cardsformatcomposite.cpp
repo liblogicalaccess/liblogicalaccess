@@ -246,62 +246,58 @@ namespace logicalaccess
                 FormatInfos finfos;
                 if (std::shared_ptr<Format> format = Format::getByFormatType(static_cast<FormatType>(v.second.get_child("SelectedFormat").get_value<unsigned int>())))
                 {
-                    std::shared_ptr<Profile> profile = chip->getProfile();
                     boost::property_tree::ptree childrenRootNode = v.second.get_child("FormatConfiguration");
                     format->unSerialize(childrenRootNode, "");
 
-                    if (profile)
+                    std::shared_ptr<Location> location = chip->createLocation();
+                    if (location)
                     {
-                        std::shared_ptr<Location> location = profile->createLocation();
-                        if (location)
+                        try
                         {
-                            try
-                            {
-                                location->unSerialize(childrenRootNode, "");
-                            }
-                            catch (std::exception& ex)
-                            {
-                                LOG(LogLevel::ERRORS) << "Cannot unserialize location: {" << ex.what() << "}";
-                                location.reset();
-                            }
+                            location->unSerialize(childrenRootNode, "");
                         }
-                        finfos.location = location;
-
-                        std::shared_ptr<AccessInfo> aiToUse = profile->createAccessInfo();
-                        if (aiToUse)
+                        catch (std::exception& ex)
                         {
-                            try
-                            {
-                                aiToUse->unSerialize(childrenRootNode, "");
-                            }
-                            catch (std::exception& ex)
-                            {
-                                LOG(LogLevel::ERRORS) << "Cannot unserialize access info to use: {" << ex.what() << "}";
-                                aiToUse.reset();
-                            }
+                            LOG(LogLevel::ERRORS) << "Cannot unserialize location: {" << ex.what() << "}";
+                            location.reset();
                         }
-                        finfos.aiToUse = aiToUse;
-
-                        std::shared_ptr<AccessInfo> aiToWrite;
-                        boost::property_tree::ptree writeNode = v.second.get_child("WriteInfo");
-                        if (!writeNode.empty())
-                        {
-                            aiToWrite = profile->createAccessInfo();
-                            if (aiToWrite)
-                            {
-                                try
-                                {
-                                    aiToWrite->unSerialize(writeNode, "");
-                                }
-                                catch (std::exception& ex)
-                                {
-                                    LOG(LogLevel::ERRORS) << "Cannot unserialize access info to write: {" << ex.what() << "}";
-                                    aiToWrite.reset();
-                                }
-                            }
-                        }
-                        finfos.aiToWrite = aiToWrite;
                     }
+                    finfos.location = location;
+
+					std::shared_ptr<AccessInfo> aiToUse = chip->createAccessInfo();
+                    if (aiToUse)
+                    {
+                        try
+                        {
+                            aiToUse->unSerialize(childrenRootNode, "");
+                        }
+                        catch (std::exception& ex)
+                        {
+                            LOG(LogLevel::ERRORS) << "Cannot unserialize access info to use: {" << ex.what() << "}";
+                            aiToUse.reset();
+                        }
+                    }
+                    finfos.aiToUse = aiToUse;
+
+                    std::shared_ptr<AccessInfo> aiToWrite;
+                    boost::property_tree::ptree writeNode = v.second.get_child("WriteInfo");
+                    if (!writeNode.empty())
+                    {
+						aiToWrite = chip->createAccessInfo();
+                        if (aiToWrite)
+                        {
+                            try
+                            {
+                                aiToWrite->unSerialize(writeNode, "");
+                            }
+                            catch (std::exception& ex)
+                            {
+                                LOG(LogLevel::ERRORS) << "Cannot unserialize access info to write: {" << ex.what() << "}";
+                                aiToWrite.reset();
+                            }
+                        }
+                    }
+                    finfos.aiToWrite = aiToWrite;
 
                     finfos.format = format;
                 }

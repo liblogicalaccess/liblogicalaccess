@@ -9,7 +9,6 @@
 
 #include "logicalaccess/cards/chip.hpp"
 #include "iso15693commands.hpp"
-#include "iso15693profile.hpp"
 
 #include <string>
 #include <vector>
@@ -60,17 +59,17 @@ namespace logicalaccess
          */
         virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
 
+		/**
+		* \brief Create default ISO15693 location.
+		* \return Default ISO15693 location.
+		*/
+		virtual std::shared_ptr<Location> createLocation() const;
+
         /**
          * \brief Get the ISO15693 card provider for I/O access.
          * \return The ISO15693 card provider.
          */
         std::shared_ptr<ISO15693Commands> getISO15693Commands() { return std::dynamic_pointer_cast<ISO15693Commands>(getCommands()); };
-
-        /**
-         * \brief Get the ISO15693 profile.
-         * \return The ISO15693 profile.
-         */
-        std::shared_ptr<ISO15693Profile> getISO15693Profile() { return std::dynamic_pointer_cast<ISO15693Profile>(getProfile()); };
 
     protected:
     };

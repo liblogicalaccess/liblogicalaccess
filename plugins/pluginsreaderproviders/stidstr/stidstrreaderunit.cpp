@@ -26,7 +26,6 @@
 
 #include "commands/desfireev1stidstrcommands.hpp"
 #include "commands/mifarestidstrcommands.hpp"
-#include "desfireprofile.hpp"
 #include <boost/filesystem.hpp>
 #include <logicalaccess/myexception.hpp>
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
@@ -257,7 +256,6 @@ namespace logicalaccess
                 LOG(LogLevel::INFOS) << "Mifare DESFire Chip created";
                 rca.reset(new STidSTRReaderCardAdapter(STID_CMD_DESFIRE));
                 commands.reset(new DESFireEV1STidSTRCommands());
-                std::dynamic_pointer_cast<DESFireEV1STidSTRCommands>(commands)->setProfile(std::dynamic_pointer_cast<DESFireProfile>(chip->getProfile()));
             }
             else
                 return chip;

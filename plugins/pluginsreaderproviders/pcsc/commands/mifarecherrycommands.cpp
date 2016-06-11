@@ -24,7 +24,7 @@ namespace logicalaccess
     {
     }
 
-    bool MifareCherryCommands::loadKey(unsigned char keyno, MifareKeyType /*keytype*/, const void* key, size_t keylen, bool /*vol*/)
+    bool MifareCherryCommands::loadKey(unsigned char keyno, MifareKeyType /*keytype*/, std::shared_ptr<MifareKey> key, bool /*vol*/)
     {
         bool r = false;
 
@@ -33,8 +33,8 @@ namespace logicalaccess
         {
             keyno = 1;
         }
-        std::vector<unsigned char> vector_key((unsigned char*)key, (unsigned char*)key + keylen);
-        getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x82, 0x00, keyno, static_cast<unsigned char>(keylen), vector_key);
+		std::vector<unsigned char> vector_key((unsigned char*)key->getData(), (unsigned char*)key->getData() + key->getLength());
+		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x82, 0x00, keyno, static_cast<unsigned char>(key->getLength()), vector_key);
         r = true;
 
         return r;

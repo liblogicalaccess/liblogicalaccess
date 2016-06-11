@@ -9,7 +9,6 @@
 
 #include "logicalaccess/cards/chip.hpp"
 #include "felicacommands.hpp"
-#include "felicaprofile.hpp"
 
 #include <string>
 #include <vector>
@@ -63,17 +62,17 @@ namespace logicalaccess
          */
         virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
 
+		/**
+		* \brief Create default FeliCa location.
+		* \return Default FeliCa location.
+		*/
+		virtual std::shared_ptr<Location> createLocation() const;
+
         /**
          * \brief Get the FeliCa card provider for I/O access.
          * \return The FeliCa card provider.
          */
 		std::shared_ptr<FeliCaCommands> getFeliCaCommands() { return std::dynamic_pointer_cast<FeliCaCommands>(getCommands()); };
-
-        /**
-         * \brief Get the FeliCa profile.
-         * \return The FeliCa profile.
-         */
-		std::shared_ptr<FeliCaProfile> getFeliCaProfile() { return std::dynamic_pointer_cast<FeliCaProfile>(getProfile()); };
 
     protected:
 

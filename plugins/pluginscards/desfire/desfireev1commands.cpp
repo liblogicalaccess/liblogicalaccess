@@ -6,6 +6,7 @@
 
 #include "desfireev1commands.hpp"
 #include "desfireev1chip.hpp"
+#include "desfireev1location.hpp"
 
 namespace logicalaccess
 {
@@ -20,7 +21,7 @@ namespace logicalaccess
         DESFireCommands::selectApplication(location);
         if (evlocation)
         {
-            getDESFireEV1Chip()->getDESFireProfile()->setKey(evlocation->aid, 0, getDESFireEV1Chip()->getDESFireProfile()->getDefaultKey(evlocation->cryptoMethod));
+			getDESFireEV1Chip()->getCrypto()->setKey(evlocation->aid, 0, getDESFireEV1Chip()->getCrypto()->getDefaultKey(evlocation->cryptoMethod));
         }
     }
 

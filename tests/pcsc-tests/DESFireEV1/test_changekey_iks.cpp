@@ -11,6 +11,7 @@
 #include <pluginscards/desfire/nxpav2keydiversification.hpp>
 
 #include "pluginscards/desfire/desfireev1chip.hpp"
+#include "pluginscards/desfire/desfireev1location.hpp"
 #include "pluginscards/desfire/desfireev1commands.hpp"
 #include "pluginscards/desfire/nxpav1keydiversification.hpp"
 #include "pluginsreaderproviders/iso7816/commands/desfireev1iso7816commands.hpp"
@@ -139,10 +140,10 @@ void create_app_and_file(
                               file_size, 0);
     cmd->authenticate(0, key);
 
-    std::shared_ptr<DESFireProfile> dprofile =
-        std::dynamic_pointer_cast<DESFireProfile>(cmd->getChip()->getProfile());
+    std::shared_ptr<DESFireChip> dchip =
+		std::dynamic_pointer_cast<DESFireChip>(cmd->getChip());
     assert(dprofile);
-    dprofile->setKey(0x535, 0, key);
+	dchip->getCrypto()->setKey(0x535, 0, key);
 
     cmd->changeKey(0, new_key);
 }

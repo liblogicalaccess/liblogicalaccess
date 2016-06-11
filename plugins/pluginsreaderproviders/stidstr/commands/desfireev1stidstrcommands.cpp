@@ -15,7 +15,6 @@
 #include "logicalaccess/crypto/des_cipher.hpp"
 #include "logicalaccess/crypto/des_symmetric_key.hpp"
 #include "logicalaccess/crypto/des_initialization_vector.hpp"
-#include "desfireprofile.hpp"
 #include "logicalaccess/cards/computermemorykeystorage.hpp"
 #include "logicalaccess/cards/readermemorykeystorage.hpp"
 #include "logicalaccess/myexception.hpp"
@@ -138,8 +137,8 @@ namespace logicalaccess
         getSTidSTRReaderCardAdapter()->sendCommand(0x00CA, command);
 
         for (unsigned char i = 0; i < maxNbKeys; ++i)
-        {
-            d_profile->setKey(aid, i, d_profile->getDefaultKey(cryptoMethod));
+		{
+			getDESFireChip()->getCrypto()->setKey(aid, i, DESFireCrypto::getDefaultKey(cryptoMethod));
         }
     }
 
@@ -443,7 +442,7 @@ namespace logicalaccess
 
     void DESFireEV1STidSTRCommands::authenticate(unsigned char keyno)
     {
-        std::shared_ptr<DESFireKey> key = d_profile->getKey(d_currentAid, keyno);
+		std::shared_ptr<DESFireKey> key = getDESFireChip()->getCrypto()->getKey(d_currentAid, keyno);
         authenticate(keyno, key);
     }
 
@@ -671,7 +670,7 @@ namespace logicalaccess
     {
         LOG(LogLevel::INFOS) << "Changing key... key number {0x" << std::hex << keyno << std::dec << "(" << keyno << ")} new key {" << key->serialize() << "}";
         // Only change the key if new key and old key are not the same.
-        std::shared_ptr<DESFireKey> oldKey = d_profile->getKey(d_currentAid, keyno);
+		std::shared_ptr<DESFireKey> oldKey = getDESFireChip()->getCrypto()->getKey(d_currentAid, keyno);
 
         LOG(LogLevel::INFOS) << "Old key {" << oldKey->serialize() << "}";
 

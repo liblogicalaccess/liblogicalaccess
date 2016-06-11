@@ -120,13 +120,4 @@ namespace logicalaccess
     {
         return 0;
     }
-
-    void MifareUltralightStorageCardService::erase()
-    {
-		std::vector<unsigned char> zeroblock(4, 0x00);
-        for (unsigned int i = 4; i < getMifareUltralightChip()->getNbBlocks(); ++i)
-        {
-            getMifareUltralightChip()->getMifareUltralightCommands()->writePage(i, zeroblock);
-        }
-    }
 }

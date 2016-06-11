@@ -20,21 +20,6 @@ namespace logicalaccess
     {
     }
 
-	void FeliCaStorageCardService::erase()
-    {
-        std::shared_ptr<FeliCaCommands> cmd = getFeliCaChip()->getFeliCaCommands();
-        EXCEPTION_ASSERT_WITH_LOG(cmd, CardException, "FeliCa commands not implemented on this reader.");
-
-        std::vector<unsigned short> codes = cmd->getSystemCodes();
-        std::vector<unsigned short> blocks;
-        for (unsigned short i = 1; i < 14; ++i)
-        {
-            blocks.push_back(i);
-        }
-        std::vector<unsigned char> data(codes.size() * blocks.size() * 16, 0x00);
-        cmd->write(codes, blocks, data);
-    }
-
 	void FeliCaStorageCardService::erase(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
@@ -98,10 +83,10 @@ namespace logicalaccess
         std::vector<unsigned char> data;
         if ((cardBehavior & CB_AUTOSWITCHAREA) == CB_AUTOSWITCHAREA)
         {
-            unsigned int i = 0;
+            size_t i = 0;
             while (i < length)
             {
-                std::vector<unsigned char> bdata = cmd->read(icLocation->code, icLocation->block + (unsigned int)(i / 16));
+				std::vector<unsigned char> bdata = cmd->read(icLocation->code, (unsigned short)(icLocation->block + (i / 16)));
                 if (bdata.size() == 0)
                     break;
                 data.insert(data.end(), bdata.begin(), bdata.end());

@@ -15,7 +15,6 @@ namespace logicalaccess
     TopazChip::TopazChip()
         : Chip(CHIP_TOPAZ)
     {
-        d_profile.reset(new TopazProfile());
         d_nbblocks = 15;
     }
 
@@ -109,4 +108,18 @@ namespace logicalaccess
 
         return service;
     }
+
+	std::shared_ptr<AccessInfo> TopazChip::createAccessInfo() const
+	{
+		std::shared_ptr<TopazAccessInfo> ret;
+		ret.reset(new TopazAccessInfo());
+		return ret;
+	}
+
+	std::shared_ptr<Location> TopazChip::createLocation() const
+	{
+		std::shared_ptr<TopazLocation> ret;
+		ret.reset(new TopazLocation());
+		return ret;
+	}
 }

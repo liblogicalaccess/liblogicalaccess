@@ -1,4 +1,4 @@
-#include "pluginscards/mifareplus/mifareplussl1profile.hpp"
+#include "pluginscards/mifare/mifarelocation.hpp"
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/readerproviders/readerconfiguration.hpp"
@@ -68,10 +68,6 @@ int main(int ac, char **av)
 
     // Data read
     std::vector<uint8_t> readdata;
-
-    // Write data on the specified location with the specified key
-    auto profile = std::dynamic_pointer_cast<logicalaccess::MifarePlusSL1Profile>(chip->getProfile());
-    LLA_ASSERT(profile, "Wrong profile.");
 
     storage->writeData(mlocation, maiToUse, maiToUse, writedata, logicalaccess::CB_DEFAULT);
     using namespace logicalaccess; // required for overload of std::ostrean(vector &)

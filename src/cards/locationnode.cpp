@@ -14,7 +14,7 @@ using std::ostream;
 namespace logicalaccess
 {
     LocationNode::LocationNode()
-        : d_needAuthentication(false), d_hasProperties(false), d_length(0), d_unit(1)
+		: d_needAuthentication(false), d_hasProperties(false), d_length(0), d_unit(1), d_can_read(true), d_can_write(true)
     {
     }
 
@@ -96,4 +96,24 @@ namespace logicalaccess
     {
         return d_parent.lock();
     }
+
+	void LocationNode::setCanRead(bool can)
+	{
+		d_can_read = can;
+	}
+
+	bool LocationNode::getCanRead() const
+	{
+		return d_can_read;
+	}
+
+	void LocationNode::setCanWrite(bool can)
+	{
+		d_can_write = can;
+	}
+
+	bool LocationNode::getCanWrite() const
+	{
+		return d_can_write;
+	}
 }

@@ -54,6 +54,12 @@ namespace logicalaccess
          */
         std::vector<unsigned char> getPACSBits();
 
+		/**
+		* \brief Get the supported format list.
+		* \return The format list.
+		*/
+		virtual FormatList getSupportedFormatList();
+
     protected:
     };
 }

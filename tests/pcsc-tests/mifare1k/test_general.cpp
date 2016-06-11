@@ -9,7 +9,7 @@
 #include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
 
 #include "pluginscards/mifare/mifarecommands.hpp"
-#include "pluginscards/mifare/mifareprofile.hpp"
+#include "pluginscards/mifare/mifarelocation.hpp"
 #include "pluginsreaderproviders/pcsc/readers/cardprobes/cl1356cardprobe.hpp"
 
 #include "lla-tests/macros.hpp"
@@ -66,11 +66,9 @@ int main(int ac, char **av)
                " instead.");
 
     auto cmd = std::dynamic_pointer_cast<logicalaccess::MifareCommands>(chip->getCommands());
-    auto profile = std::dynamic_pointer_cast<logicalaccess::MifareProfile>(chip->getProfile());
-    //profile->setDefaultKeys();
 
     auto key = std::make_shared<logicalaccess::MifareKey>("ff ff ff ff ff ff");
-    cmd->loadKey(0, logicalaccess::MifareKeyType::KT_KEY_A, key->getData(), key->getLength());
+    cmd->loadKey(0, logicalaccess::MifareKeyType::KT_KEY_A, key);
     LLA_SUBTEST_PASSED("LoadKey");
 
     cmd->authenticate(8, 0, logicalaccess::MifareKeyType::KT_KEY_A);
@@ -87,22 +85,15 @@ int main(int ac, char **av)
                "read and write data are different!");
     LLA_SUBTEST_PASSED("WriteReadBinary");
 
-    std::dynamic_pointer_cast<logicalaccess::MifareProfile>(chip->getProfile())
-            ->setDefaultKeysAt(0x02);
-    std::dynamic_pointer_cast<logicalaccess::MifareProfile>(chip->getProfile())
-            ->setDefaultKeysAt(0x03);
-    std::dynamic_pointer_cast<logicalaccess::MifareProfile>(chip->getProfile())
-            ->setDefaultKeysAt(0x10);
-
     data.clear();
     data.resize(48);
     data[0] = 0x11;
     data[47] = 0xff;
     logicalaccess::MifareAccessInfo::SectorAccessBits sab;
 
-    cmd->writeSector(2, 0, data, sab, logicalaccess::CB_DEFAULT, &sab);
+	cmd->writeSector(2, 0, data, std::shared_ptr<MifareKey>(), std::shared_ptr<MifareKey>(), sab, logicalaccess::CB_DEFAULT, &sab);
 
-    tmp = cmd->readSector(2, 0, sab);
+	tmp = cmd->readSector(2, 0, std::shared_ptr<MifareKey>(), std::shared_ptr<MifareKey>(), sab);
     LLA_ASSERT(std::equal(data.begin(), data.end(), tmp.begin()),
                "read and write data are different!");
     LLA_SUBTEST_PASSED("WriteReadSector");
@@ -112,9 +103,9 @@ int main(int ac, char **av)
     data[0] = 0x11;
     data[95] = 0xff;
 
-    cmd->writeSectors(2, 3, 0, data, sab);
+	cmd->writeSectors(2, 3, 0, data, std::shared_ptr<MifareKey>(), std::shared_ptr<MifareKey>(), sab);
 
-    tmp = cmd->readSectors(2, 3, 0, sab);
+	tmp = cmd->readSectors(2, 3, 0, std::shared_ptr<MifareKey>(), std::shared_ptr<MifareKey>(), sab);
     LLA_ASSERT(std::equal(data.begin(), data.end(), tmp.begin()),
                "read and write data are different!");
     LLA_SUBTEST_PASSED("WriteReadSectors");
@@ -122,9 +113,8 @@ int main(int ac, char **av)
 
     auto newkey = std::make_shared<logicalaccess::MifareKey>("ff ff ff ff ff fa");
 
-    cmd->changeKey(newkey, std::shared_ptr<logicalaccess::MifareKey>(), 2, sab, &sab);
-    profile->setKey(2, logicalaccess::MifareKeyType::KT_KEY_A, newkey);
-    cmd->changeKey(key, std::shared_ptr<logicalaccess::MifareKey>(), 2, sab, &sab);
+	cmd->changeKeys(KT_KEY_A, std::shared_ptr<MifareKey>(), newkey, std::shared_ptr<logicalaccess::MifareKey>(), 2, &sab);
+	cmd->changeKeys(KT_KEY_A, newkey, std::shared_ptr<logicalaccess::MifareKey>(), std::shared_ptr<logicalaccess::MifareKey>(), 2, &sab);
     LLA_SUBTEST_PASSED("ChangeKey");
 
 

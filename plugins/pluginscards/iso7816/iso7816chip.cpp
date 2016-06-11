@@ -5,7 +5,6 @@
  */
 
 #include "iso7816chip.hpp"
-#include "iso7816profile.hpp"
 #include "iso7816storagecardservice.hpp"
 #include "iso7816nfctag4cardservice.hpp"
 
@@ -19,13 +18,11 @@ namespace logicalaccess
     ISO7816Chip::ISO7816Chip(std::string ct)
         : Chip(ct)
     {
-        d_profile.reset(new ISO7816Profile());
     }
 
     ISO7816Chip::ISO7816Chip()
         : Chip(CHIP_ISO7816)
     {
-        d_profile.reset(new ISO7816Profile());
     }
 
     ISO7816Chip::~ISO7816Chip()
@@ -59,4 +56,11 @@ namespace logicalaccess
 
         return service;
     }
+
+	std::shared_ptr<Location> ISO7816Chip::createLocation() const
+	{
+		std::shared_ptr<ISO7816Location> ret;
+		ret.reset(new ISO7816Location());
+		return ret;
+	}
 }

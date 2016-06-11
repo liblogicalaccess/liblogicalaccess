@@ -25,13 +25,12 @@ MifareSpringCardCommands::~MifareSpringCardCommands()
 }
 
 bool MifareSpringCardCommands::loadKey(unsigned char keyno,
-                                       MifareKeyType keytype, const void *key,
-                                       size_t keylen, bool vol)
+                                       MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol)
 {
     bool r = false;
 
     std::vector<unsigned char> result,
-        vector_key((unsigned char *)key, (unsigned char *)key + keylen);
+		vector_key((unsigned char *)key->getData(), (unsigned char *)key->getData() + key->getLength());
 
     unsigned char keyindex = 0x00;
     if (keytype == KT_KEY_B)
@@ -48,7 +47,7 @@ bool MifareSpringCardCommands::loadKey(unsigned char keyno,
     {
         if (keyno == 0)
         {
-            r = loadKey(keyno, keytype, key, keylen, true);
+            r = loadKey(keyno, keytype, key, true);
         }
     }
     else

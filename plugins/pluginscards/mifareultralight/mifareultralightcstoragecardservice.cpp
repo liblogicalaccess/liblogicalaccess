@@ -18,13 +18,6 @@ namespace logicalaccess
     {
     }
 
-    void MifareUltralightCStorageCardService::erase()
-    {
-        getMifareUltralightCChip()->getMifareUltralightCCommands()->authenticate(getMifareUltralightCChip()->getMifareUltralightCProfile()->getKey());
-
-        MifareUltralightStorageCardService::erase();
-    }
-
     void MifareUltralightCStorageCardService::erase(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse)
     {
         getMifareUltralightCChip()->getMifareUltralightCCommands()->authenticate(aiToUse);

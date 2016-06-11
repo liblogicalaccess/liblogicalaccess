@@ -12,6 +12,7 @@
 
 #include "../pcscreaderprovider.hpp"
 #include "mifarechip.hpp"
+#include "mifarelocation.hpp"
 #include "logicalaccess/cards/computermemorykeystorage.hpp"
 #include "logicalaccess/cards/readermemorykeystorage.hpp"
 #include "logicalaccess/cards/samkeystorage.hpp"
@@ -28,13 +29,11 @@ namespace logicalaccess
     {
     }
 
-    bool MifarePCSCCommands::loadKey(unsigned char keyno, MifareKeyType keytype, const void* key, size_t keylen, bool vol)
+    bool MifarePCSCCommands::loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol)
     {
-        std::vector<uint8_t> key_(static_cast<const char *>(key), static_cast<const char *>(key) + keylen);
-        TRACE(keyno, keytype, key_);
         bool r = false;
         std::vector<unsigned char> result,
-            vector_key((unsigned char *)key, (unsigned char *)key + keylen);
+			vector_key((unsigned char *)key->getData(), (unsigned char *)key->getData() + key->getLength());
 
         try
         {
@@ -49,7 +48,7 @@ namespace logicalaccess
             {
                 // With the Sony RC-S380, non-volatile memory doesn't work,
                 // so we try again. Same with ACR1222L.
-                return loadKey(keyno, keytype, key, keylen, true);
+                return loadKey(keyno, keytype, key, true);
             }
             else
                 throw;
@@ -59,7 +58,7 @@ namespace logicalaccess
         {
             if (keyno == 0)
             {
-                r = loadKey(keyno, keytype, key, keylen, true);
+                r = loadKey(keyno, keytype, key, true);
             }
         }
         else
@@ -70,7 +69,7 @@ namespace logicalaccess
         return r;
     }
 
-    void MifarePCSCCommands::loadKey(std::shared_ptr<Location> location, std::shared_ptr<Key> key, MifareKeyType keytype)
+	void MifarePCSCCommands::loadKey(std::shared_ptr<Location> location, MifareKeyType keytype, std::shared_ptr<MifareKey> key)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
         EXCEPTION_ASSERT_WITH_LOG(key, std::invalid_argument, "key cannot be null.");
@@ -85,7 +84,7 @@ namespace logicalaccess
 
         if (std::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key_storage))
         {
-            loadKey(0, keytype, key->getData(), key->getLength());
+            loadKey(0, keytype, key);
         }
         else if (std::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage))
         {
@@ -93,7 +92,7 @@ namespace logicalaccess
             if (!key->isEmpty())
             {
                 std::shared_ptr<ReaderMemoryKeyStorage> rmKs = std::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage);
-                loadKey(rmKs->getKeySlot(), keytype, key->getData(), key->getLength(), rmKs->getVolatile());
+                loadKey(rmKs->getKeySlot(), keytype, key, rmKs->getVolatile());
             }
         }
         else

@@ -9,7 +9,6 @@
 
 #include "../iso7816/iso7816chip.hpp"
 #include "cps3commands.hpp"
-#include "cps3profile.hpp"
 
 #include <string>
 #include <vector>
@@ -60,17 +59,17 @@ namespace logicalaccess
          */
         virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
 
+		/**
+		* \brief Create default CPS3 location.
+		* \return Default CPS3 location.
+		*/
+		virtual std::shared_ptr<Location> createLocation() const;
+
         /**
          * \brief Get the CPS3 card provider for I/O access.
          * \return The CPS3 card provider.
          */
 		std::shared_ptr<CPS3Commands> getCPS3Commands() { return std::dynamic_pointer_cast<CPS3Commands>(getCommands()); };
-
-        /**
-         * \brief Get the CPS3 profile.
-         * \return The CPS3 profile.
-         */
-		std::shared_ptr<CPS3Profile> getCPS3Profile() { return std::dynamic_pointer_cast<CPS3Profile>(getProfile()); };
 
     protected:
     };

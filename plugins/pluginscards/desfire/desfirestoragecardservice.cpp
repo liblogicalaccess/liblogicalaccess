@@ -38,7 +38,7 @@ namespace logicalaccess
         // Format the card if MCK specified.
         if (!dfAiToUse->masterCardKey->isEmpty())
         {
-            getDESFireChip()->getDESFireProfile()->setKey(0, 0, dfAiToUse->masterCardKey);
+            getDESFireChip()->getCrypto()->setKey(0, 0, dfAiToUse->masterCardKey);
             getDESFireChip()->getDESFireCommands()->selectApplication(0);
             getDESFireChip()->getDESFireCommands()->authenticate(0);
             getDESFireChip()->getDESFireCommands()->erase();
@@ -46,7 +46,7 @@ namespace logicalaccess
         // Format the application if MAK specified.
         else if (!dfAiToUse->masterApplicationKey->isEmpty())
         {
-            getDESFireChip()->getDESFireProfile()->setKey(dfLocation->aid, 0, dfAiToUse->masterApplicationKey);
+			getDESFireChip()->getCrypto()->setKey(dfLocation->aid, 0, dfAiToUse->masterApplicationKey);
 
             getDESFireChip()->getDESFireCommands()->selectApplication(dfLocation->aid);
 
@@ -89,7 +89,7 @@ namespace logicalaccess
         }
         else
         {
-            dfAiToUse = std::dynamic_pointer_cast<DESFireAccessInfo>(getChip()->getProfile()->createAccessInfo());
+            dfAiToUse = std::dynamic_pointer_cast<DESFireAccessInfo>(getChip()->createAccessInfo());
         }
 
         if (aiToWrite)
@@ -97,15 +97,15 @@ namespace logicalaccess
             EXCEPTION_ASSERT_WITH_LOG(dfAiToWrite, std::invalid_argument, "aiToWrite must be a DESFireAccessInfo.");
         }
 
-        getDESFireChip()->getProfile()->clearKeys();
+		getDESFireChip()->getCrypto()->clearKeys();
 
         if (!dfAiToUse->masterCardKey->isEmpty())
         {
-            getDESFireChip()->getDESFireProfile()->setKey(0, 0, dfAiToUse->masterCardKey);
+			getDESFireChip()->getCrypto()->setKey(0, 0, dfAiToUse->masterCardKey);
         }
         else
         {
-            getDESFireChip()->getDESFireProfile()->setKey(0, 0, std::shared_ptr<DESFireKey>(new DESFireKey(std::string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
+			getDESFireChip()->getCrypto()->setKey(0, 0, std::shared_ptr<DESFireKey>(new DESFireKey(std::string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
         }
 
         getDESFireChip()->getDESFireCommands()->selectApplication(0);
@@ -174,26 +174,26 @@ namespace logicalaccess
         if (!dfAiToUse->masterApplicationKey->isEmpty())
         {
             dfAiToUse->masterApplicationKey->setKeyType(cryptoMethod);
-            getDESFireChip()->getDESFireProfile()->setKey(dfLocation->aid, 0, dfAiToUse->masterApplicationKey);
+			getDESFireChip()->getCrypto()->setKey(dfLocation->aid, 0, dfAiToUse->masterApplicationKey);
         }
         else
         {
             if (!createArbo)
             {
-                getDESFireChip()->getDESFireProfile()->setKey(dfLocation->aid, 0, getDESFireChip()->getDESFireProfile()->getDefaultKey(cryptoMethod));
+				getDESFireChip()->getCrypto()->setKey(dfLocation->aid, 0, getDESFireChip()->getCrypto()->getDefaultKey(cryptoMethod));
             }
         }
 
         if (!dfAiToUse->writeKey->isEmpty() && dfAiToUse->writeKeyno != 0x00)
         {
             dfAiToUse->writeKey->setKeyType(cryptoMethod);
-            getDESFireChip()->getDESFireProfile()->setKey(dfLocation->aid, dfAiToUse->writeKeyno, dfAiToUse->writeKey);
+			getDESFireChip()->getCrypto()->setKey(dfLocation->aid, dfAiToUse->writeKeyno, dfAiToUse->writeKey);
         }
 
         if (!dfAiToUse->readKey->isEmpty() && dfAiToUse->readKeyno != 0x00)
         {
             dfAiToUse->readKey->setKeyType(cryptoMethod);
-            getDESFireChip()->getDESFireProfile()->setKey(dfLocation->aid, dfAiToUse->readKeyno, dfAiToUse->readKey);
+			getDESFireChip()->getCrypto()->setKey(dfLocation->aid, dfAiToUse->readKeyno, dfAiToUse->readKey);
         }
 
         DESFireKeySettings appKeySettings = KS_DEFAULT;
@@ -247,7 +247,7 @@ namespace logicalaccess
 
         if (needLoadKey && !dfAiToUse->writeKey->isEmpty() && dfAiToUse->writeKeyno != 0)
         {
-            getDESFireChip()->getDESFireProfile()->setKey(dfLocation->aid, dfAiToUse->writeKeyno, dfAiToUse->writeKey);
+			getDESFireChip()->getCrypto()->setKey(dfLocation->aid, dfAiToUse->writeKeyno, dfAiToUse->writeKey);
         }
 
         needLoadKey = true;
@@ -372,10 +372,10 @@ namespace logicalaccess
         }
         else
         {
-            dfAiToUse = std::dynamic_pointer_cast<DESFireAccessInfo>(getChip()->getProfile()->createAccessInfo());
+			dfAiToUse = std::dynamic_pointer_cast<DESFireAccessInfo>(getChip()->createAccessInfo());
         }
 
-        getChip()->getProfile()->setDefaultKeysAt(dfLocation);
+		getDESFireChip()->getCrypto()->setDefaultKeysAt(dfLocation);
 
         getDESFireChip()->getDESFireCommands()->selectApplication(dfLocation);
 
@@ -390,7 +390,7 @@ namespace logicalaccess
         {
             if (!dfAiToUse->readKey->isEmpty())
             {
-                getDESFireChip()->getDESFireProfile()->setKey(dfLocation->aid, dfAiToUse->readKeyno, dfAiToUse->readKey);
+				getDESFireChip()->getCrypto()->setKey(dfLocation->aid, dfAiToUse->readKeyno, dfAiToUse->readKey);
             }
 
             getDESFireChip()->getDESFireCommands()->authenticate(dfAiToUse->readKeyno);

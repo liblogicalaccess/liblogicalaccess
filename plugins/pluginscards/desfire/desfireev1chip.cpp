@@ -5,6 +5,7 @@
  */
 
 #include "desfireev1chip.hpp"
+#include "desfireev1location.hpp"
 #include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
 #include "desfirestoragecardservice.hpp"
 #include "desfireev1nfctag4cardservice.hpp"
@@ -18,7 +19,6 @@ namespace logicalaccess
     DESFireEV1Chip::DESFireEV1Chip() :
         DESFireChip(CHIP_DESFIRE_EV1)
     {
-        d_profile.reset(new DESFireEV1Profile());
     }
 
     DESFireEV1Chip::~DESFireEV1Chip()
@@ -92,4 +92,11 @@ namespace logicalaccess
 
         return service;
     }
+
+	std::shared_ptr<Location> DESFireEV1Chip::createLocation() const
+	{
+		std::shared_ptr<DESFireEV1Location> ret;
+		ret.reset(new DESFireEV1Location());
+		return ret;
+	}
 }

@@ -8,7 +8,7 @@
 #define LOGICALACCESS_MIFAREPLUSCHIP_HPP
 
 #include "logicalaccess/cards/chip.hpp"
-#include "mifareplussl1profile.hpp"
+#include "../mifare/mifareaccessinfo.hpp"
 
 #include <string>
 #include <vector>

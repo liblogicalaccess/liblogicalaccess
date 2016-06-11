@@ -11,6 +11,7 @@
 #include "pluginsreaderproviders/iso7816/commands/desfireev1iso7816commands.hpp"
 #include "pluginscards/desfire/desfireev1commands.hpp"
 #include "pluginscards/desfire/desfireev1chip.hpp"
+#include "pluginscards/desfire/desfireev1location.hpp"
 
 
 #include "lla-tests/macros.hpp"

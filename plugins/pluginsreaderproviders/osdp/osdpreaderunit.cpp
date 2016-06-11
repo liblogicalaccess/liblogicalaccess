@@ -21,7 +21,6 @@
 #include "readercardadapters/osdpdatatransport.hpp"
 #include "commands/desfireev1iso7816commands.hpp"
 #include "readercardadapters/osdpreadercardadapter.hpp"
-#include "desfireprofile.hpp"
 #include "commands/desfireiso7816resultchecker.hpp"
 
 #include "osdpcommands.hpp"

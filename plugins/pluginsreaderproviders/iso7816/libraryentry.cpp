@@ -4,6 +4,7 @@
 #include "commands/twiciso7816commands.hpp"
 #include "commands/desfireiso7816commands.hpp"
 #include "commands/desfireev1iso7816commands.hpp"
+#include "desfirechip.hpp"
 #include "logicalaccess/logicalaccess_api.hpp"
 
 extern "C"
@@ -33,7 +34,7 @@ extern "C"
     {
         if (commands != NULL && chip != NULL)
         {
-            std::dynamic_pointer_cast<logicalaccess::DESFireISO7816Commands>(*commands)->getCrypto()->setCryptoContext(std::dynamic_pointer_cast<logicalaccess::DESFireProfile>((*chip)->getProfile()), (*chip)->getChipIdentifier());
+			std::dynamic_pointer_cast<logicalaccess::DESFireChip>(*chip)->getCrypto()->setCryptoContext((*chip)->getChipIdentifier());
         }
     }
 
@@ -49,7 +50,7 @@ extern "C"
     {
         if (commands != NULL && chip != NULL)
         {
-            std::dynamic_pointer_cast<logicalaccess::DESFireEV1ISO7816Commands>(*commands)->getCrypto()->setCryptoContext(std::dynamic_pointer_cast<logicalaccess::DESFireProfile>((*chip)->getProfile()), (*chip)->getChipIdentifier());
+			std::dynamic_pointer_cast<logicalaccess::DESFireChip>(*chip)->getCrypto()->setCryptoContext((*chip)->getChipIdentifier());
         }
     }
 }

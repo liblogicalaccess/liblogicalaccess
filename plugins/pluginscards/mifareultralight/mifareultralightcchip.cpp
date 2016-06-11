@@ -19,7 +19,6 @@ namespace logicalaccess
     MifareUltralightCChip::MifareUltralightCChip()
         : MifareUltralightChip(CHIP_MIFAREULTRALIGHTC)
     {
-        d_profile.reset(new MifareUltralightCProfile());
         d_nbblocks = 48;
     }
 
@@ -37,7 +36,7 @@ namespace logicalaccess
 
         for (unsigned int i = 0; i < getNbBlocks(); ++i)
         {
-            addPageNode(rootNode, i);
+            addBlockNode(rootNode, i);
         }
 
         return rootNode;
@@ -64,4 +63,16 @@ namespace logicalaccess
 
         return service;
     }
+
+	std::shared_ptr<AccessInfo> MifareUltralightCChip::createAccessInfo() const
+	{
+		std::shared_ptr<MifareUltralightCAccessInfo> ret;
+		ret.reset(new MifareUltralightCAccessInfo());
+		return ret;
+	}
+
+	std::shared_ptr<TripleDESKey> MifareUltralightCChip::getDefaultKey() const
+	{
+		return std::make_shared<TripleDESKey>("49 45 4D 4B 41 45 52 42 21 4E 41 43 55 4F 59 46");
+	}
 }

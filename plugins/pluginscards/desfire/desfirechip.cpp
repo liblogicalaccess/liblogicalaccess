@@ -5,7 +5,6 @@
  */
 
 #include "desfirechip.hpp"
-#include "desfireprofile.hpp"
 #include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
 #include "desfirestoragecardservice.hpp"
 
@@ -20,13 +19,14 @@ namespace logicalaccess
         Chip(ct),
         has_real_uid_(true)
     {
+		d_crypto.reset(new DESFireCrypto());
     }
 
     DESFireChip::DESFireChip() :
         Chip(CHIP_DESFIRE),
         has_real_uid_(true)
     {
-        d_profile.reset(new DESFireProfile());
+		d_crypto.reset(new DESFireCrypto());
     }
 
     DESFireChip::~DESFireChip()
@@ -41,7 +41,7 @@ namespace logicalaccess
         rootNode->setName("Mifare DESFire");
         rootNode->setHasProperties(true);
 
-        std::shared_ptr<DESFireLocation> rootLocation = std::dynamic_pointer_cast<DESFireLocation>(getProfile()->createLocation());
+        std::shared_ptr<DESFireLocation> rootLocation = std::dynamic_pointer_cast<DESFireLocation>(createLocation());
         rootLocation->aid = (unsigned int)-1;
         rootLocation->file = (unsigned char)-1;
         rootNode->setLocation(rootLocation);
@@ -69,7 +69,7 @@ namespace logicalaccess
                 sprintf(tmpName, "Application ID %u", *aid);
                 aidNode->setName(tmpName);
 
-                std::shared_ptr<DESFireLocation> aidLocation = std::dynamic_pointer_cast<DESFireLocation>(getProfile()->createLocation());
+                std::shared_ptr<DESFireLocation> aidLocation = std::dynamic_pointer_cast<DESFireLocation>(createLocation());
                 aidLocation->aid = *aid;
                 aidLocation->file = static_cast<unsigned char>(-1);
                 aidNode->setLocation(aidLocation);
@@ -194,4 +194,18 @@ namespace logicalaccess
 
         return service;
     }
+
+	std::shared_ptr<AccessInfo> DESFireChip::createAccessInfo() const
+	{
+		std::shared_ptr<DESFireAccessInfo> ret;
+		ret.reset(new DESFireAccessInfo());
+		return ret;
+	}
+
+	std::shared_ptr<Location> DESFireChip::createLocation() const
+	{
+		std::shared_ptr<DESFireLocation> ret;
+		ret.reset(new DESFireLocation());
+		return ret;
+	}
 }

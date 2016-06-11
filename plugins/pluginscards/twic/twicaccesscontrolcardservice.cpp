@@ -84,4 +84,13 @@ namespace logicalaccess
     {
         return false;
     }
+
+	FormatList TwicAccessControlCardService::getSupportedFormatList()
+	{
+		FormatList formats;
+
+		formats.push_back(std::shared_ptr<FASCN200BitFormat>(new FASCN200BitFormat()));
+
+		return formats;
+	}
 }

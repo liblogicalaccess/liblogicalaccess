@@ -9,7 +9,6 @@
 
 #include "desfirechip.hpp"
 #include "desfireev1commands.hpp"
-#include "desfireev1profile.hpp"
 
 namespace logicalaccess
 {
@@ -46,17 +45,17 @@ namespace logicalaccess
 
         virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
 
+		/**
+		* \brief Create default DESFire EV1 location.
+		* \return Default DESFire EV1 location.
+		*/
+		virtual std::shared_ptr<Location> createLocation() const;
+
         /**
          * \brief Get the DESFire card provider for I/O access.
          * \return The DESFire card provider.
          */
         std::shared_ptr<DESFireEV1Commands> getDESFireEV1Commands() { return std::dynamic_pointer_cast<DESFireEV1Commands>(getCommands()); };
-
-        /**
-         * \brief Get the DESFire EV1 profile.
-         * \return The DESFire EV1 profile.
-         */
-        std::shared_ptr<DESFireEV1Profile> getDESFireEV1Profile() { return std::dynamic_pointer_cast<DESFireEV1Profile>(getProfile()); };
 
     protected:
     };

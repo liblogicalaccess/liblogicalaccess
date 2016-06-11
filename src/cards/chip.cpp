@@ -49,4 +49,14 @@ namespace logicalaccess
     {
         return std::shared_ptr<CardService>();
     }
+
+	std::shared_ptr<Location> Chip::createLocation() const
+	{
+		return std::shared_ptr<Location>();
+	}
+
+	std::shared_ptr<AccessInfo> Chip::createAccessInfo() const
+	{
+		return std::shared_ptr<AccessInfo>();
+	}
 }
