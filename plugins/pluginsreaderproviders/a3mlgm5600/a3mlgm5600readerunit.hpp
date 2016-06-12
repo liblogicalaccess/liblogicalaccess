@@ -87,12 +87,6 @@ namespace logicalaccess
         virtual std::vector<std::shared_ptr<Chip> > getChipList();
 
         /**
-         * \brief Get the current chip in air.
-         * \return The chip in air.
-         */
-        std::shared_ptr<Chip> getChipInAir();
-
-        /**
          * \brief Get the default A3MLGM5600 reader/card adapter.
          * \return The default A3MLGM5600 reader/card adapter.
          */

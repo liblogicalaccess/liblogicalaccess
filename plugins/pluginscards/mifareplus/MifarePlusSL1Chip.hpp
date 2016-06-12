@@ -38,13 +38,13 @@ namespace logicalaccess
 		virtual std::shared_ptr<AccessInfo> createAccessInfo() const;
     };
 
-    class MifarePlusSL1_2kChip : public MifarePlusSL1Chip
+	class LIBLOGICALACCESS_API MifarePlusSL1_2kChip : public MifarePlusSL1Chip
     {
       public:
         MifarePlusSL1_2kChip();
     };
 
-    class MifarePlusSL1_4kChip : public MifarePlusSL1Chip
+	class LIBLOGICALACCESS_API MifarePlusSL1_4kChip : public MifarePlusSL1Chip
     {
       public:
         MifarePlusSL1_4kChip();

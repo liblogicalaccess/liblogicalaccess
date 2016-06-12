@@ -32,12 +32,6 @@ namespace logicalaccess
         TopazChip();
 
         /**
-         * \brief Constructor.
-         * \param ct The card type.
-         */
-        TopazChip(std::string ct);
-
-        /**
          * \brief Destructor.
          */
         virtual ~TopazChip();

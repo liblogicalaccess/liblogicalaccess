@@ -196,14 +196,6 @@ namespace logicalaccess
         void setReaderPort(int port);
 
         /**
-         * \brief Set the Rpleth port.
-         * \param offset The offset in wiegand trame.
-         * \param length The length of code in wiegand.
-         * \param tramSize The size of wiegand trame.
-         */
-        void setConfWiegand(unsigned char offset, unsigned char length, unsigned char tramSize);
-
-        /**
          * \brief Reset the Rpleth reader.
          */
         void resetReader();
@@ -231,18 +223,6 @@ namespace logicalaccess
          * \return The last badge.
          */
         std::vector<unsigned char> badge(long int timeout = 2000);
-
-        /**
-         * \brief Send a reqA.
-         * \return The answer of the card.
-         */
-        std::vector<unsigned char> reqA();
-
-        /**
-         * \brief Send a rats.
-         * \return The answer of the card.
-         */
-        std::vector<unsigned char> rats();
 
         std::string getProxyReaderType();
 

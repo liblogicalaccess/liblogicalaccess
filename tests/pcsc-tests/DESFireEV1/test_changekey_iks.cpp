@@ -142,7 +142,6 @@ void create_app_and_file(
 
     std::shared_ptr<DESFireChip> dchip =
 		std::dynamic_pointer_cast<DESFireChip>(cmd->getChip());
-    assert(dprofile);
 	dchip->getCrypto()->setKey(0x535, 0, key);
 
     cmd->changeKey(0, new_key);
