@@ -2,6 +2,7 @@
 #include <logicalaccess/myexception.hpp>
 #include <cassert>
 #include <iostream>
+#include <string>
 #include "CL1356PlusUtils.hpp"
 
 using namespace logicalaccess;
