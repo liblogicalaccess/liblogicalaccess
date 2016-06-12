@@ -110,8 +110,6 @@ int main(int , char**)
                         std::cout << "\t" << logicalaccess::BufferHelper::getHex(readerConfig->getReaderUnit()->getNumber((*i))) << std::endl;
                     }
 
-                    std::shared_ptr<logicalaccess::Profile> profile = chip->getProfile();
-
                     // DO SOMETHING HERE
 					// DO SOMETHING HERE
 					// DO SOMETHING HERE

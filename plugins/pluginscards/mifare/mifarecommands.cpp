@@ -283,7 +283,7 @@ namespace logicalaccess
     {
         size_t retlen = 0;
 
-		MifareKeyType keytype, pkeytype;
+		MifareKeyType keytype, pkeytype = KT_KEY_A;
         for (int i = start_block; i < getNbBlocks(sector); i++)
         {
 			keytype = getKeyType(sab, sector, i, true);
