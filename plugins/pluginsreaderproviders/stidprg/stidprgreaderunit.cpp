@@ -1,4 +1,5 @@
 #include "stidprgreaderunit.hpp"
+#include "stidprgreaderprovider.hpp"
 #include "../pcsc/commands/proxcommand.hpp"
 #include "logicalaccess/cards/chip.hpp"
 #include "logicalaccess/logs.hpp"
@@ -56,7 +57,7 @@ void STidPRGReaderUnit::unSerialize(boost::property_tree::ptree &node)
     ReaderUnit::unSerialize(node);
 }
 
-STidPRGReaderUnit::STidPRGReaderUnit()
+STidPRGReaderUnit::STidPRGReaderUnit() : ReaderUnit(READER_STIDPRG)
 {
     d_readerUnitConfig = std::make_shared<STidPRGReaderUnitConfiguration>();
     setDefaultReaderCardAdapter(std::make_shared<STidPRGReaderCardAdapter>());

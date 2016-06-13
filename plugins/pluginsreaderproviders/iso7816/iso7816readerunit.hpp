@@ -20,7 +20,7 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API ISO7816ReaderUnit : public ReaderUnit
     {
     public:
-        ISO7816ReaderUnit();
+		ISO7816ReaderUnit(std::string rpt);
 
         virtual ~ISO7816ReaderUnit();
         /**

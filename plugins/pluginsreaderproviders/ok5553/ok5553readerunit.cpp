@@ -34,7 +34,7 @@
 namespace logicalaccess
 {
     OK5553ReaderUnit::OK5553ReaderUnit()
-        : ReaderUnit()
+        : ReaderUnit(READER_OK5553)
     {
         d_readerUnitConfig.reset(new OK5553ReaderUnitConfiguration());
         setDefaultReaderCardAdapter(std::shared_ptr<OK5553ReaderCardAdapter>(new OK5553ReaderCardAdapter()));

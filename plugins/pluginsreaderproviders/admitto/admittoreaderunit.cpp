@@ -31,7 +31,7 @@ namespace logicalaccess
 	 */
 
 	AdmittoReaderUnit::AdmittoReaderUnit()
-		: ReaderUnit()
+		: ReaderUnit(READER_ADMITTO)
 	{
 		d_readerUnitConfig.reset(new AdmittoReaderUnitConfiguration());
 		setDefaultReaderCardAdapter (std::shared_ptr<AdmittoReaderCardAdapter> (new AdmittoReaderCardAdapter()));

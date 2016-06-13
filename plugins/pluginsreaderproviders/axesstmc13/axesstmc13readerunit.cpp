@@ -23,7 +23,7 @@
 namespace logicalaccess
 {
     AxessTMC13ReaderUnit::AxessTMC13ReaderUnit()
-        : ReaderUnit()
+        : ReaderUnit(READER_AXESSTMC13)
     {
         d_readerUnitConfig.reset(new AxessTMC13ReaderUnitConfiguration());
         setDefaultReaderCardAdapter(std::shared_ptr<AxessTMC13ReaderCardAdapter>(new AxessTMC13ReaderCardAdapter()));

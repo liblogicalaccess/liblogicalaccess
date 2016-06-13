@@ -50,12 +50,18 @@ namespace logicalaccess
         /**
          * \brief Constructor.
          */
-        ReaderUnit();
+		ReaderUnit(std::string rpt);
 
         /**
          * \brief Destructor.
          */
         virtual ~ReaderUnit();
+
+		/**
+		* \brief Get the reader provider type.
+		* \return The reader provider type.
+		*/
+		std::string getRPType() const;
 
         /**
          * \brief Get the reader ping command.
@@ -343,6 +349,11 @@ namespace logicalaccess
         virtual ReaderServicePtr getService(const ReaderServiceType &type);
 
     protected:
+
+		/**
+		* \brief The associated reader provider type for the reader unit configuration.
+		*/
+		std::string d_readerProviderType;
 
         /**
          * \brief The forced card type.

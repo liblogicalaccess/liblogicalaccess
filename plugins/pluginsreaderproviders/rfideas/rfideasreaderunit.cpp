@@ -27,7 +27,7 @@
 namespace logicalaccess
 {
     RFIDeasReaderUnit::RFIDeasReaderUnit()
-        : ReaderUnit()
+        : ReaderUnit(READER_RFIDEAS)
     {
         d_lastTagIdBitsLength = 0x00;
         d_deviceId = 0x00;

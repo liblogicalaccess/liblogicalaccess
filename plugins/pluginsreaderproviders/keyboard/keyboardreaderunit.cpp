@@ -20,7 +20,7 @@
 namespace logicalaccess
 {
     KeyboardReaderUnit::KeyboardReaderUnit()
-        : ReaderUnit()
+        : ReaderUnit(READER_KEYBOARD)
     {
         d_readerUnitConfig.reset(new KeyboardReaderUnitConfiguration());
 		d_card_type = CHIP_UNKNOWN;

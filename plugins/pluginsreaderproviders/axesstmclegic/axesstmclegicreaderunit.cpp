@@ -23,7 +23,7 @@
 namespace logicalaccess
 {
     AxessTMCLegicReaderUnit::AxessTMCLegicReaderUnit()
-        : ReaderUnit()
+        : ReaderUnit(READER_AXESSTMCLEGIC)
     {
         d_readerUnitConfig.reset(new AxessTMCLegicReaderUnitConfiguration());
         setDefaultReaderCardAdapter(std::shared_ptr<AxessTMCLegicReaderCardAdapter>(new AxessTMCLegicReaderCardAdapter()));

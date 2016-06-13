@@ -34,8 +34,8 @@
 
 namespace logicalaccess
 {
-    ReaderUnit::ReaderUnit()
-		: XmlSerializable(), d_card_type(CHIP_UNKNOWN)
+	ReaderUnit::ReaderUnit(std::string rpt)
+		: XmlSerializable(), d_card_type(CHIP_UNKNOWN), d_readerProviderType(rpt)
     {
         try
         {
@@ -49,6 +49,11 @@ namespace logicalaccess
     ReaderUnit::~ReaderUnit()
     {
     }
+
+	std::string ReaderUnit::getRPType() const
+	{
+		return d_readerProviderType;
+	}
 
     std::vector<unsigned char> ReaderUnit::getPingCommand() const
     {

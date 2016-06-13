@@ -23,7 +23,7 @@
 namespace logicalaccess
 {
     DeisterReaderUnit::DeisterReaderUnit()
-        : ReaderUnit()
+        : ReaderUnit(READER_DEISTER)
     {
         d_readerUnitConfig.reset(new DeisterReaderUnitConfiguration());
         setDefaultReaderCardAdapter(std::shared_ptr<DeisterReaderCardAdapter>(new DeisterReaderCardAdapter()));

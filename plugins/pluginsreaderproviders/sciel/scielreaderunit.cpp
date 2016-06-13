@@ -24,7 +24,7 @@
 namespace logicalaccess
 {
     SCIELReaderUnit::SCIELReaderUnit()
-        : ReaderUnit()
+        : ReaderUnit(READER_SCIEL)
     {
         d_readerUnitConfig.reset(new SCIELReaderUnitConfiguration());
         setDefaultReaderCardAdapter(std::shared_ptr<SCIELReaderCardAdapter>(new SCIELReaderCardAdapter()));

@@ -27,7 +27,7 @@
 namespace logicalaccess
 {
     SmartIDReaderUnit::SmartIDReaderUnit()
-        : ReaderUnit()
+        : ReaderUnit(READER_SMARTID)
     {
         d_readerUnitConfig.reset(new SmartIDReaderUnitConfiguration());
         setDefaultReaderCardAdapter(std::shared_ptr<SmartIDReaderCardAdapter>(new SmartIDReaderCardAdapter()));

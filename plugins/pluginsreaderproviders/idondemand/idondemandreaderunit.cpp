@@ -26,7 +26,7 @@
 namespace logicalaccess
 {
     IdOnDemandReaderUnit::IdOnDemandReaderUnit()
-        : ReaderUnit()
+        : ReaderUnit(READER_IDONDEMAND)
     {
         d_readerUnitConfig.reset(new IdOnDemandReaderUnitConfiguration());
         setDefaultReaderCardAdapter(std::shared_ptr<IdOnDemandReaderCardAdapter>(new IdOnDemandReaderCardAdapter()));

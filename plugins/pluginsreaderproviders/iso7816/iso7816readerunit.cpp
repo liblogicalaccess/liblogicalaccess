@@ -25,8 +25,8 @@
 
 namespace logicalaccess
 {
-    ISO7816ReaderUnit::ISO7816ReaderUnit()
-        : ReaderUnit()
+	ISO7816ReaderUnit::ISO7816ReaderUnit(std::string rpt)
+		: ReaderUnit(rpt)
     {
     }
 

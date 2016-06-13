@@ -41,7 +41,7 @@
 namespace logicalaccess
 {
     STidSTRReaderUnit::STidSTRReaderUnit()
-        : ReaderUnit()
+        : ReaderUnit(READER_STIDSTR)
     {
         d_readerUnitConfig.reset(new STidSTRReaderUnitConfiguration());
         setDefaultReaderCardAdapter(std::shared_ptr<STidSTRReaderCardAdapter>(new STidSTRReaderCardAdapter(STID_CMD_READER)));

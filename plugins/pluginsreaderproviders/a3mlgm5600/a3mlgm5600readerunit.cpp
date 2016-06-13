@@ -30,7 +30,7 @@
 namespace logicalaccess
 {
     A3MLGM5600ReaderUnit::A3MLGM5600ReaderUnit()
-        : ReaderUnit()
+		: ReaderUnit(READER_A3MLGM5600)
     {
         d_deviceAddress = 0x00;
         d_readerUnitConfig.reset(new A3MLGM5600ReaderUnitConfiguration());

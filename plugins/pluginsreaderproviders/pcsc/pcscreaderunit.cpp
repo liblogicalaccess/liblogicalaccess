@@ -101,7 +101,7 @@
 namespace logicalaccess
 {
     PCSCReaderUnit::PCSCReaderUnit(const std::string& name)
-        : ISO7816ReaderUnit(), d_name(name), d_connectedName(name)
+        : ISO7816ReaderUnit(READER_PCSC), d_name(name), d_connectedName(name)
     {
 		d_card_type = CHIP_UNKNOWN;
 

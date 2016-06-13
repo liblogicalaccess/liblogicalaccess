@@ -22,7 +22,7 @@
 namespace logicalaccess
 {
     ElatecReaderUnit::ElatecReaderUnit()
-        : ReaderUnit()
+        : ReaderUnit(READER_ELATEC)
     {
         d_readerUnitConfig.reset(new ElatecReaderUnitConfiguration());
         setDefaultReaderCardAdapter(std::shared_ptr<ElatecReaderCardAdapter>(new ElatecReaderCardAdapter()));

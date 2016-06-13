@@ -34,7 +34,7 @@
 namespace logicalaccess
 {
     RplethReaderUnit::RplethReaderUnit()
-        : ReaderUnit()
+        : ReaderUnit(READER_RPLETH)
     {
         d_readerUnitConfig.reset(new RplethReaderUnitConfiguration());
         setDefaultReaderCardAdapter(std::shared_ptr<RplethReaderCardAdapter>(new RplethReaderCardAdapter()));

@@ -22,7 +22,7 @@
 namespace logicalaccess
 {
     PromagReaderUnit::PromagReaderUnit()
-        : ReaderUnit()
+        : ReaderUnit(READER_PROMAG)
     {
         d_readerUnitConfig.reset(new PromagReaderUnitConfiguration());
         setDefaultReaderCardAdapter(std::shared_ptr<PromagReaderCardAdapter>(new PromagReaderCardAdapter()));

@@ -33,7 +33,7 @@ namespace logicalaccess
      */
 
     GunneboReaderUnit::GunneboReaderUnit()
-        : ReaderUnit()
+        : ReaderUnit(READER_GUNNEBO)
     {
         d_readerUnitConfig.reset(new GunneboReaderUnitConfiguration());
         setDefaultReaderCardAdapter(std::shared_ptr<GunneboReaderCardAdapter>(new GunneboReaderCardAdapter()));

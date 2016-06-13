@@ -22,7 +22,7 @@
 namespace logicalaccess
 {
 	GigaTMSReaderUnit::GigaTMSReaderUnit()
-        : ReaderUnit()
+        : ReaderUnit(READER_GIGATMS)
     {
         d_readerUnitConfig.reset(new GigaTMSReaderUnitConfiguration());
         setDefaultReaderCardAdapter(std::shared_ptr<GigaTMSReaderCardAdapter>(new GigaTMSReaderCardAdapter()));
