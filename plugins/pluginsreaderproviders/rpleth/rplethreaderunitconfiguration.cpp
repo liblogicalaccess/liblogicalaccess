@@ -11,7 +11,7 @@
 namespace logicalaccess
 {
     RplethReaderUnitConfiguration::RplethReaderUnitConfiguration()
-        : ReaderUnitConfiguration(READER_RPLETH)
+        : ISO7816ReaderUnitConfiguration(READER_RPLETH)
     {
         resetConfiguration();
     }

@@ -34,7 +34,7 @@
 namespace logicalaccess
 {
     RplethReaderUnit::RplethReaderUnit()
-        : ReaderUnit(READER_RPLETH)
+        : ISO7816ReaderUnit(READER_RPLETH)
     {
         d_readerUnitConfig.reset(new RplethReaderUnitConfiguration());
         setDefaultReaderCardAdapter(std::shared_ptr<RplethReaderCardAdapter>(new RplethReaderCardAdapter()));
@@ -379,12 +379,19 @@ namespace logicalaccess
 			}
 		}
 
+        if (connected)
+        {
+            connected = ISO7816ReaderUnit::connectToReader();
+        }
+
         return connected;
     }
 
     void RplethReaderUnit::disconnectFromReader()
     {
         LOG(LogLevel::INFOS) << "Starting disconnection to reader...";
+
+        ISO7816ReaderUnit::disconnectFromReader();
         getDataTransport()->disconnect();
     }
 

@@ -14,6 +14,10 @@
 
 namespace logicalaccess
 {
+    class Chip;
+    class SAMChip;
+    class ISO7816ReaderProvider;
+
     /**
      * \brief The ISO7816 reader unit class.
      */
@@ -77,14 +81,14 @@ namespace logicalaccess
 
         /**
          * \brief Connect to the reader. Implicit connection on first command sent.
-         * \return True if the connection successed.
+         * \return True if the connection succeeded.
          */
-        virtual bool connectToReader() { return true; }
+        virtual bool connectToReader();
 
         /**
          * \brief Disconnect from reader.
          */
-        virtual void disconnectFromReader() {}
+        virtual void disconnectFromReader();
 
         /**
          * \brief Get the reader unit name.
@@ -98,17 +102,53 @@ namespace logicalaccess
          */
         virtual std::string getReaderSerialNumber() { return ""; }
 
+        /**
+         * \brief Get The SAM Chip
+         */
+        virtual std::shared_ptr<SAMChip> getSAMChip();
+
+        /**
+         * \brief Set the SAM Chip
+         */
+        virtual void setSAMChip(std::shared_ptr<SAMChip> t);
+
+        /**
+         * \brief Get The SAM ReaderUnit
+         */
+        virtual std::shared_ptr<ISO7816ReaderUnit> getSAMReaderUnit();
+
+        /**
+         * \brief Set the SAM ReaderUnit
+         */
+        virtual void setSAMReaderUnit(std::shared_ptr<ISO7816ReaderUnit> t);
+
       protected:
         virtual std::shared_ptr<ResultChecker> createDefaultResultChecker() const override;
+
+        /**
+        * \brief Get the ISO7816 reader provider.
+        * \return The ISO7816 reader provider.
+        */
+        std::shared_ptr<ISO7816ReaderProvider> getISO7816ReaderProvider() const;
+
 		/**
-		* \brief Get the ISO7816 reader unit configuration.
-		* \return The ISO7816 reader unit configuration.
-		*/
+		 * \brief Get the ISO7816 reader unit configuration.
+		 * \return The ISO7816 reader unit configuration.
+		 */
 		std::shared_ptr<ISO7816ReaderUnitConfiguration> getISO7816Configuration() { return std::dynamic_pointer_cast<ISO7816ReaderUnitConfiguration>(getConfiguration()); };
 
 		virtual bool reconnect(int action);
 
-    private:
+      protected:
+        /**
+         * \brief The SAM chip.
+         */
+        std::shared_ptr<SAMChip> d_sam_chip;
+
+        /**
+         * \brief The SAM ReaderUnit used SAM Authentication
+         */
+        std::shared_ptr<ISO7816ReaderUnit> d_sam_readerunit;
     };
 }
 

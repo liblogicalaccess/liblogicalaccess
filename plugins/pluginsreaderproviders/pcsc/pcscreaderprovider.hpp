@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_READERPCSC_PROVIDER_HPP
 #define LOGICALACCESS_READERPCSC_PROVIDER_HPP
 
-#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include "../iso7816/iso7816readerprovider.hpp"
 #include "pcscreaderunit.hpp"
 
 #include <string>
@@ -22,7 +22,7 @@ namespace logicalaccess
     /**
      * \brief PC/SC Reader Provider class.
      */
-    class LIBLOGICALACCESS_API PCSCReaderProvider : public ReaderProvider
+    class LIBLOGICALACCESS_API PCSCReaderProvider : public ISO7816ReaderProvider
     {
     protected:
 
@@ -83,7 +83,7 @@ namespace logicalaccess
          * \brief Create a new reader unit for the reader provider.
          * \return A reader unit.
          */
-        std::shared_ptr<ReaderUnit> createReaderUnit(std::string readerunitname);
+        virtual std::shared_ptr<ISO7816ReaderUnit> createReaderUnit(std::string readerunitname);
 
         /**
          * \brief Get the reader group list.

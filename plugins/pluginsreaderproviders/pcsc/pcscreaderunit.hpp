@@ -16,9 +16,6 @@
 
 namespace logicalaccess
 {
-    class Chip;
-    class SAMChip;
-
     /**
      * \brief The PC/SC reader unit class.
      */
@@ -258,26 +255,6 @@ namespace logicalaccess
         virtual void getT_CL_ISOType(bool& isTypeA, bool& isTypeB);
 
         /**
-         * \brief Get The SAM Chip
-         */
-        std::shared_ptr<SAMChip> getSAMChip();
-
-        /**
-         * \brief Set the SAM Chip
-         */
-        void setSAMChip(std::shared_ptr<SAMChip> t);
-
-        /**
-         * \brief Get The SAM ReaderUnit
-         */
-        std::shared_ptr<PCSCReaderUnit> getSAMReaderUnit();
-
-        /**
-         * \brief Set the SAM ReaderUnit
-         */
-        void setSAMReaderUnit(std::shared_ptr<PCSCReaderUnit> t);
-
-        /**
          * This method is used to notify the (proxyfied) implementation
          * that a card was connected
          */
@@ -336,11 +313,6 @@ namespace logicalaccess
         void detect_mifareplus_security_level(std::shared_ptr<Chip> c);
 
         /**
-         * \brief The SAM reader unit.
-         */
-        std::shared_ptr<SAMChip> d_sam_chip;
-
-        /**
          * \brief The reader unit name.
          */
         std::string d_name;
@@ -355,6 +327,26 @@ namespace logicalaccess
          * \param chip The single chip.
          */
         void setSingleChip(std::shared_ptr<Chip> chip);
+
+        /**
+        * \brief Get The SAM Chip
+        */
+        virtual std::shared_ptr<SAMChip> getSAMChip();
+
+        /**
+        * \brief Set the SAM Chip
+        */
+        virtual void setSAMChip(std::shared_ptr<SAMChip> t);
+
+        /**
+        * \brief Get The SAM ReaderUnit
+        */
+        virtual std::shared_ptr<ISO7816ReaderUnit> getSAMReaderUnit();
+
+        /**
+        * \brief Set the SAM ReaderUnit
+        */
+        virtual void setSAMReaderUnit(std::shared_ptr<ISO7816ReaderUnit> t);
 
       protected:
         // Internal helper for waitInsertion
@@ -412,11 +404,6 @@ namespace logicalaccess
          * \brief The proxy reader unit.
          */
         std::shared_ptr<PCSCReaderUnit> d_proxyReaderUnit;
-
-        /**
-         * \brief The SAM ReaderUnit used SAM Authentication
-         */
-        std::shared_ptr<PCSCReaderUnit> d_sam_readerunit;
     };
 
 }

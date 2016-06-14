@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_RPLETHREADERUNIT_HPP
 #define LOGICALACCESS_RPLETHREADERUNIT_HPP
 
-#include "logicalaccess/readerproviders/readerunit.hpp"
+#include "../iso7816/iso7816readerunit.hpp"
 #include "rpleth_fwd.hpp"
 
 namespace logicalaccess
@@ -16,14 +16,12 @@ namespace logicalaccess
     /**
      * \brief The Rpleth reader unit class.
      */
-    class LIBLOGICALACCESS_API RplethReaderUnit : public ReaderUnit
+    class LIBLOGICALACCESS_API RplethReaderUnit : public ISO7816ReaderUnit
     {
     public:
 
         /**
          * \brief Constructor.
-         * \param ip The reader address
-         * \param port The port .
          */
         RplethReaderUnit();
 
@@ -91,8 +89,8 @@ namespace logicalaccess
         std::shared_ptr<Chip> getChipInAir(unsigned int maxwait = 2000);
 
         /**
-         * \brief Get the default Elatec reader/card adapter.
-         * \return The default Elatec reader/card adapter.
+         * \brief Get the default Rpleth reader/card adapter.
+         * \return The default Rpleth reader/card adapter.
          */
         virtual std::shared_ptr<RplethReaderCardAdapter> getDefaultRplethReaderCardAdapter();
 
@@ -120,7 +118,7 @@ namespace logicalaccess
 
         /**
          * \brief Connect to the reader. Implicit connection on first command sent.
-         * \return True if the connection successed.
+         * \return True if the connection succeeded.
          */
         virtual bool connectToReader();
 

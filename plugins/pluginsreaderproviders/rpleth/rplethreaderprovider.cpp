@@ -20,7 +20,7 @@
 namespace logicalaccess
 {
     RplethReaderProvider::RplethReaderProvider() :
-        ReaderProvider()
+        ISO7816ReaderProvider()
     {
     }
 
@@ -61,6 +61,11 @@ namespace logicalaccess
         d_readers.push_back(ret);
 
         return ret;
+    }
+
+    std::shared_ptr<ISO7816ReaderUnit> RplethReaderProvider::createReaderUnit(std::string /*readerunitname*/)
+    {
+        return std::dynamic_pointer_cast<ISO7816ReaderUnit>(createReaderUnit());
     }
 
     bool RplethReaderProvider::refreshReaderList()

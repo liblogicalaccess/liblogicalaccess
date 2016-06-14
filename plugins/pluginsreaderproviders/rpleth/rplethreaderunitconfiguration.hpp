@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_RPLETHREADERUNITCONFIGURATION_HPP
 #define LOGICALACCESS_RPLETHREADERUNITCONFIGURATION_HPP
 
-#include "logicalaccess/readerproviders/readerunitconfiguration.hpp"
+#include "../iso7816/iso7816readerunitconfiguration.hpp"
 
 namespace logicalaccess
 {
@@ -23,7 +23,7 @@ namespace logicalaccess
     /**
      * \brief The Rpleth reader unit configuration base class.
      */
-    class LIBLOGICALACCESS_API RplethReaderUnitConfiguration : public ReaderUnitConfiguration
+    class LIBLOGICALACCESS_API RplethReaderUnitConfiguration : public ISO7816ReaderUnitConfiguration
     {
     public:
 

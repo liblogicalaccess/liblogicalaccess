@@ -21,7 +21,7 @@
 namespace logicalaccess
 {
     PCSCReaderProvider::PCSCReaderProvider() :
-        ReaderProvider()
+        ISO7816ReaderProvider()
     {
         d_scc = 0;
         long scres = SCardEstablishContext(SCARD_SCOPE_USER, NULL, NULL, &d_scc);
@@ -94,7 +94,7 @@ namespace logicalaccess
         return createReaderUnit("");
     }
 
-    std::shared_ptr<ReaderUnit> PCSCReaderProvider::createReaderUnit(std::string readerunitname)
+    std::shared_ptr<ISO7816ReaderUnit> PCSCReaderProvider::createReaderUnit(std::string readerunitname)
     {
         std::shared_ptr<PCSCReaderUnit> ret;
         ret.reset(new PCSCReaderUnit(readerunitname));

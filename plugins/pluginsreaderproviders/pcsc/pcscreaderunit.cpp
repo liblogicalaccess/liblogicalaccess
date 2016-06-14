@@ -600,89 +600,7 @@ namespace logicalaccess
             return d_proxyReaderUnit->connectToReader();
         }
 
-        if (getPCSCConfiguration()->getSAMType() != "SAM_NONE" && getPCSCConfiguration()->getSAMReaderName() == "")
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Sam type specified without specifying SAM Reader Name");
-        if (getPCSCConfiguration()->getSAMType() != "SAM_NONE")
-        {
-            if (getReaderProvider()->getReaderList().size() < 2)
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not Enough reader on the system to use SAM");
-
-            int i = 0;
-            for (; i < static_cast<int>(getReaderProvider()->getReaderList().size()); ++i)
-            {
-                if (getReaderProvider()->getReaderList()[i]->getName() == getPCSCConfiguration()->getSAMReaderName())
-                    break;
-            }
-
-            if (i == (int)(getReaderProvider()->getReaderList().size()))
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The SAM Reader specified has not been find.");
-
-            std::shared_ptr<PCSCReaderUnit> ret;
-
-            if (d_sam_readerunit && d_sam_readerunit->getName() == getPCSCConfiguration()->getSAMReaderName())
-                ret = d_sam_readerunit;
-            else
-            {
-                ret.reset(new PCSCReaderUnit(getPCSCConfiguration()->getSAMReaderName()));
-                ret->setReaderProvider(getReaderProvider());
-            }
-            ret->connectToReader();
-
-            if (!ret->waitInsertion(1))
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "No SAM detected on the reader");
-
-            ret->connect();
-
-            LOG(LogLevel::INFOS) << "Checking SAM backward...";
-
-            std::string SAMType = getPCSCConfiguration()->getSAMType();
-            if (SAMType != "SAM_AUTO" && SAMType != ret->getSingleChip()->getCardType())
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM on the reader is not the same type as selected.");
-
-            LOG(LogLevel::INFOS) << "SAM backward ended.";
-
-            setSAMChip(std::dynamic_pointer_cast<SAMChip>(ret->getSingleChip()));
-            setSAMReaderUnit(ret);
-
-            LOG(LogLevel::INFOS) << "Starting SAM Security check...";
-
-            try
-            {
-				if (!getPCSCConfiguration()->getSAMUnLockKey())
-					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The Unlock SAM key is empty.");
-
-				if (ret->getSingleChip()->getCardType() == "SAM_AV1")
-					std::dynamic_pointer_cast<SAMAV1ISO7816Commands>(getSAMChip()->getCommands())->authenticateHost(getPCSCConfiguration()->getSAMUnLockKey(), getPCSCConfiguration()->getSAMUnLockkeyNo());
-				else if (ret->getSingleChip()->getCardType() == "SAM_AV2")
-				{
-					try
-					{
-						std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(getSAMChip()->getCommands())->lockUnlock(getPCSCConfiguration()->getSAMUnLockKey(), logicalaccess::SAMLockUnlock::Unlock, getPCSCConfiguration()->getSAMUnLockkeyNo(), 0, 0);
-					}
-					catch (CardException& ex)
-					{
-						if (ex.error_code() != CardException::WRONG_P1_P2)
-							std::rethrow_exception(std::current_exception());
-
-						//try to lock the SAM in case it was already unlocked
-						std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(getSAMChip()->getCommands())->lockUnlock(getPCSCConfiguration()->getSAMUnLockKey(),
-							logicalaccess::SAMLockUnlock::LockWithoutSpecifyingKey, getPCSCConfiguration()->getSAMUnLockkeyNo(), 0, 0);
-
-						std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(getSAMChip()->getCommands())->lockUnlock(getPCSCConfiguration()->getSAMUnLockKey(), logicalaccess::SAMLockUnlock::Unlock, getPCSCConfiguration()->getSAMUnLockkeyNo(), 0, 0);
-					}
-				}
-            }
-            catch (std::exception&)
-            {
-                setSAMChip(std::shared_ptr<SAMChip>());
-                setSAMReaderUnit(std::shared_ptr<PCSCReaderUnit>());
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The SAM Detected is not the SAM waited.");
-            }
-
-			//Set SAM unlock key to the SAM Reader in case of reconnect
-			ret->getISO7816Configuration()->setSAMUnlockKey(getPCSCConfiguration()->getSAMUnLockKey(), getPCSCConfiguration()->getSAMUnLockkeyNo());
-        }
-        return true;
+        return ISO7816ReaderUnit::connectToReader();
     }
 
     void PCSCReaderUnit::disconnectFromReader()
@@ -695,54 +613,9 @@ namespace logicalaccess
         }
         else
         {
-            if (d_sam_readerunit)
-            {
-                d_sam_readerunit->disconnect();
-                d_sam_readerunit->disconnectFromReader();
-                setSAMChip(std::shared_ptr<SAMChip>());
-            }
-           teardown_pcsc_connection();
+            ISO7816ReaderUnit::disconnectFromReader();
+            teardown_pcsc_connection();
         }
-    }
-
-    std::shared_ptr<SAMChip> PCSCReaderUnit::getSAMChip()
-    {
-        if (d_proxyReaderUnit)
-        {
-            return d_proxyReaderUnit->getSAMChip();
-        }
-
-        return d_sam_chip;
-    }
-
-    void PCSCReaderUnit::setSAMChip(std::shared_ptr<SAMChip> t)
-    {
-        if (d_proxyReaderUnit)
-        {
-            d_proxyReaderUnit->setSAMChip(t);
-        }
-
-        d_sam_chip = t;
-    }
-
-    std::shared_ptr<PCSCReaderUnit> PCSCReaderUnit::getSAMReaderUnit()
-    {
-        if (d_proxyReaderUnit)
-        {
-            return d_proxyReaderUnit->getSAMReaderUnit();
-        }
-
-        return d_sam_readerunit;
-    }
-
-    void PCSCReaderUnit::setSAMReaderUnit(std::shared_ptr<PCSCReaderUnit> t)
-    {
-        if (d_proxyReaderUnit)
-        {
-            d_proxyReaderUnit->setSAMReaderUnit(t);
-        }
-
-        d_sam_readerunit = t;
     }
 
     std::vector<unsigned char> PCSCReaderUnit::getCardSerialNumber()
@@ -1190,6 +1063,46 @@ namespace logicalaccess
             return connection_->share_mode_;
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "No active connection.");
+    }
+
+    std::shared_ptr<SAMChip> PCSCReaderUnit::getSAMChip()
+    {
+        if (d_proxyReaderUnit)
+        {
+            return d_proxyReaderUnit->getSAMChip();
+        }
+
+        return ISO7816ReaderUnit::getSAMChip();
+    }
+
+    void PCSCReaderUnit::setSAMChip(std::shared_ptr<SAMChip> t)
+    {
+        if (d_proxyReaderUnit)
+        {
+            d_proxyReaderUnit->setSAMChip(t);
+        }
+
+        ISO7816ReaderUnit::setSAMChip(t);
+    }
+
+    std::shared_ptr<ISO7816ReaderUnit> PCSCReaderUnit::getSAMReaderUnit()
+    {
+        if (d_proxyReaderUnit)
+        {
+            return d_proxyReaderUnit->getSAMReaderUnit();
+        }
+
+        return ISO7816ReaderUnit::getSAMReaderUnit();
+    }
+
+    void PCSCReaderUnit::setSAMReaderUnit(std::shared_ptr<ISO7816ReaderUnit> t)
+    {
+        if (d_proxyReaderUnit)
+        {
+            d_proxyReaderUnit->setSAMReaderUnit(t);
+        }
+
+        ISO7816ReaderUnit::setSAMReaderUnit(t);
     }
 
     void PCSCReaderUnit::setup_pcsc_connection(PCSCShareMode share_mode)
