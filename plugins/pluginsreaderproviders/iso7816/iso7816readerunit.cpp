@@ -83,26 +83,30 @@ namespace logicalaccess
 
     bool ISO7816ReaderUnit::connectToReader()
     {
-        if (getISO7816Configuration()->getSAMType() != "SAM_NONE" && getISO7816Configuration()->getSAMReaderName() == "")
+        if (getISO7816Configuration()->getSAMType() != "SAM_NONE" && getISO7816Configuration()->getSAMReaderName() == "" && getISO7816Configuration()->getCheckSAMReaderIsAvailable())
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Sam type specified without specifying SAM Reader Name");
+
         if (getISO7816Configuration()->getSAMType() != "SAM_NONE")
         {
-            if (getReaderProvider()->getReaderList().size() < 2)
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not Enough reader on the system to use SAM");
-
-            int i = 0;
-            for (; i < static_cast<int>(getReaderProvider()->getReaderList().size()); ++i)
+            if (getISO7816Configuration()->getCheckSAMReaderIsAvailable())
             {
-                if (getReaderProvider()->getReaderList()[i]->getName() == getISO7816Configuration()->getSAMReaderName())
-                    break;
-            }
+                if (getReaderProvider()->getReaderList().size() < 2)
+                    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not Enough reader on the system to use SAM");
 
-            if (i == (int)(getReaderProvider()->getReaderList().size()))
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The SAM Reader specified has not been find.");
+                int i = 0;
+                for (; i < static_cast<int>(getReaderProvider()->getReaderList().size()); ++i)
+                {
+                    if (getReaderProvider()->getReaderList()[i]->getName() == getISO7816Configuration()->getSAMReaderName())
+                        break;
+                }
+
+                if (i == (int)(getReaderProvider()->getReaderList().size()))
+                    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The SAM Reader specified has not been find.");
+            }
 
             std::shared_ptr<ISO7816ReaderUnit> ret;
 
-            if (d_sam_readerunit && d_sam_readerunit->getName() == getISO7816Configuration()->getSAMReaderName())
+            if (d_sam_readerunit && (!getISO7816Configuration()->getCheckSAMReaderIsAvailable() || d_sam_readerunit->getName() == getISO7816Configuration()->getSAMReaderName()))
                 ret = d_sam_readerunit;
             else
             {
@@ -169,12 +173,19 @@ namespace logicalaccess
 
     void ISO7816ReaderUnit::disconnectFromReader()
     {
-        if (d_sam_readerunit)
+        if (getISO7816Configuration()->getSAMType() != "SAM_NONE" && d_sam_readerunit)
         {
             d_sam_readerunit->disconnect();
             d_sam_readerunit->disconnectFromReader();
             setSAMChip(std::shared_ptr<SAMChip>());
         }
+    }
+
+    void ISO7816ReaderUnit::reloadReaderConfiguration()
+    {
+        // Run only SAM specific disconnect/connection
+        ISO7816ReaderUnit::disconnectFromReader();
+        ISO7816ReaderUnit::connectToReader();
     }
 
     std::shared_ptr<SAMChip> ISO7816ReaderUnit::getSAMChip()

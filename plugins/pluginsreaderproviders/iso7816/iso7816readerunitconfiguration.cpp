@@ -33,6 +33,7 @@ namespace logicalaccess
         d_sam_type = "SAM_NONE";
         d_sam_reader_name = "";
         d_keyno_unlock = 0;
+        d_check_sam_reader_available = true;
     }
 
     void ISO7816ReaderUnitConfiguration::serialize(boost::property_tree::ptree& node)
@@ -46,6 +47,7 @@ namespace logicalaccess
             d_sam_key_unlock->serialize(knode);
         }
         node.add_child("SAMKey", knode);
+        node.put("CheckSAMReaderIsAvailable", d_check_sam_reader_available);
     }
 
     void ISO7816ReaderUnitConfiguration::unSerialize(boost::property_tree::ptree& node)
@@ -64,6 +66,7 @@ namespace logicalaccess
             d_sam_key_unlock.reset();
             LOG(LogLevel::ERRORS) << "Cannot unserialize SAM authentication key: " << ex.what();
         }
+        d_check_sam_reader_available = node.get_child("CheckSAMReaderIsAvailable").get_value<bool>();
     }
 
     std::string ISO7816ReaderUnitConfiguration::getDefaultXmlNodeName() const

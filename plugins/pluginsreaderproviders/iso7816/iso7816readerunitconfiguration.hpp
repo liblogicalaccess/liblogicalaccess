@@ -98,6 +98,10 @@ namespace logicalaccess
          */
         unsigned char getSAMUnLockkeyNo() const { return d_keyno_unlock; };
 
+        bool getCheckSAMReaderIsAvailable() const { return d_check_sam_reader_available; }
+
+        void setCheckSAMReaderIsAvailable(bool check) { d_check_sam_reader_available = check; }
+
     protected:
 
         /**
@@ -119,6 +123,12 @@ namespace logicalaccess
          * \brief The SAM Key to see if it is the SAM we are waiting
          */
         unsigned char d_keyno_unlock;
+
+        /**
+         * \brief Check associated SAM reader is available before use.
+         * \remarks This should be disable when using network-based reader today.
+         */
+        bool d_check_sam_reader_available;
     };
 }
 

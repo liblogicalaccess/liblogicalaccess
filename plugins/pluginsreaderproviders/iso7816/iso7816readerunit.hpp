@@ -90,6 +90,8 @@ namespace logicalaccess
          */
         virtual void disconnectFromReader();
 
+        virtual void reloadReaderConfiguration();
+
         /**
          * \brief Get the reader unit name.
          * \return The reader unit name.
