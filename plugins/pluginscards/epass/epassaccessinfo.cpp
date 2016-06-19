@@ -1,4 +1,4 @@
-#include "epass_access_info.hpp"
+#include "epassaccessinfo.hpp"
 #include <boost/property_tree/ptree.hpp>
 
 using namespace logicalaccess;

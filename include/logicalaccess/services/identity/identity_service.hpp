@@ -54,19 +54,18 @@ class LIBLOGICALACCESS_API IdentityCardService : public CardService
 
     /**
      * Method used to retrieve identity data that fits
-     * in std::string type.
      */
-    virtual bool get(MetaData what, std::string &out) = 0;
+	virtual std::string getString(MetaData what) = 0;
 
     /**
      * Used to retrieve binary data (picture).
      */
-    virtual bool get(MetaData what, ByteVector &out) = 0;
+	virtual ByteVector getData(MetaData what) = 0;
 
     /**
      * To retrieve date entry.
      */
-    virtual bool get(MetaData what, std::chrono::system_clock::time_point &out) = 0;
+	virtual std::chrono::system_clock::time_point getTime(MetaData what) = 0;
 
     /**
      * Provide an AccessInfo that will be used by underlying implementation

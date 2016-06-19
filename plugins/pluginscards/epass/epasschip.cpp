@@ -1,6 +1,6 @@
-#include "epass_chip.hpp"
-#include "epass_identity_service.hpp"
-#include "epass_access_info.hpp"
+#include "epasschip.hpp"
+#include "epassidentityservice.hpp"
+#include "epassaccessinfo.hpp"
 
 using namespace logicalaccess;
 

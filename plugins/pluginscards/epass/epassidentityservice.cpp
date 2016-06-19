@@ -1,6 +1,6 @@
-#include "epass_identity_service.hpp"
-#include "epass_access_info.hpp"
-#include "epass_chip.hpp"
+#include "epassidentityservice.hpp"
+#include "epassaccessinfo.hpp"
+#include "epasschip.hpp"
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <cassert>
@@ -31,7 +31,7 @@ ByteVector EPassIdentityService::getPicture()
     auto chip = getEPassChip();
     EXCEPTION_ASSERT_WITH_LOG(chip, LibLogicalAccessException,
                               "No or invalid chip object in EPassIdentityService");
-
+	
     auto cmd = chip->getEPassCommand();
     assert(cmd);
 
@@ -77,51 +77,45 @@ EPassDG1 EPassIdentityService::getDG1()
     return *dg1_cache_;
 }
 
-bool EPassIdentityService::get(MetaData what, ByteVector &out)
+ByteVector EPassIdentityService::getData(MetaData what)
 {
-    bool ret = false;
+	ByteVector out;
     if (what == MetaData::PICTURE)
     {
         out = getPicture();
-        ret = true;
     }
-    return ret;
+
+	return out;
 }
 
-bool EPassIdentityService::get(MetaData what, std::string &out)
+std::string EPassIdentityService::getString(MetaData what)
 {
-    bool ret = false;
+	std::string out;
     if (what == MetaData::NAME)
     {
         out = getName();
-        ret = true;
     }
     else if (what == MetaData::NATIONALITY)
     {
         out = getDG1().nationality_;
-        ret = true;
     }
     else if (what == MetaData::DOC_NO)
     {
         out = getDG1().doc_no_;
-        ret = true;
     }
-    return ret;
+    return out;
 }
 
-bool EPassIdentityService::get(MetaData what,
-                               std::chrono::system_clock::time_point &out)
+std::chrono::system_clock::time_point EPassIdentityService::getTime(MetaData what)
 {
-    bool ret = false;
+	std::chrono::system_clock::time_point out;
     if (what == MetaData::BIRTHDATE)
     {
         out = getDG1().birthdate_;
-        ret = true;
     }
     else if (what == MetaData::EXPIRATION)
     {
         out = getDG1().expiration_;
-        ret = true;
     }
-    return ret;
+    return out;
 }

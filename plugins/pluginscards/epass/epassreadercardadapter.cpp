@@ -1,5 +1,5 @@
-#include "epass_readercardadapter.hpp"
-#include "epass_crypto.hpp"
+#include "epassreadercardadapter.hpp"
+#include "epasscrypto.hpp"
 #include <cassert>
 using namespace logicalaccess;
 

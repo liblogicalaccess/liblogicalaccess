@@ -1,5 +1,5 @@
-#include "epass_command.hpp"
-#include "epass_readercardadapter.hpp"
+#include "epasscommands.hpp"
+#include "epassreadercardadapter.hpp"
 #include <cassert>
 #include <iomanip>
 #include <logicalaccess/bufferhelper.hpp>

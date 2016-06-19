@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../iso7816/iso7816chip.hpp"
-#include "epass_command.hpp"
+#include "epasscommands.hpp"
 
 namespace logicalaccess
 {

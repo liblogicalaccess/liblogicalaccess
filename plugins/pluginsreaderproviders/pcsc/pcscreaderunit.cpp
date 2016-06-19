@@ -41,8 +41,8 @@
 #include "commands/felicascmcommands.hpp"
 #include "commands/felicaspringcardcommands.hpp"
 #include "MifarePlusSL0Commands.hpp"
-#include "epass_command.hpp"
-#include "epass_readercardadapter.hpp"
+#include "epasscommands.hpp"
+#include "epassreadercardadapter.hpp"
 
 #include "samav1chip.hpp"
 #include "samav2chip.hpp"
@@ -58,7 +58,7 @@
 #include "mifareultralightcchip.hpp"
 #include "proxchip.hpp"
 #include "felicachip.hpp"
-#include "epass_chip.hpp"
+#include "epasschip.hpp"
 #include "topazchip.hpp"
 #include "generictagchip.hpp"
 

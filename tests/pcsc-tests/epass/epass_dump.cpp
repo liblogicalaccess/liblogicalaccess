@@ -6,7 +6,7 @@
 #include "logicalaccess/logs.hpp"
 #include <logicalaccess/services/identity/identity_service.hpp>
 #include <logicalaccess/crypto/sha.hpp>
-#include <pluginscards/epass/epass_access_info.hpp>
+#include <pluginscards/epass/epassaccessinfo.hpp>
 #include <ctime>
 
 void introduction()
@@ -43,23 +43,16 @@ int main(int ac, char **av)
     std::cin >> ai->mrz_;
     srv->setAccessInfo(ai);
 
-    std::string name;
-    LLA_ASSERT(srv->get(IdentityCardService::MetaData::NAME, name), "Failed to fetch name");
+	std::string name = srv->getString(IdentityCardService::MetaData::NAME);
     PRINT_TIME("Name: " + name);
 
-    std::string nationality;
-    LLA_ASSERT(srv->get(IdentityCardService::MetaData::NATIONALITY, nationality),
-               "Failed to fetch nationality");
+	std::string nationality = srv->getString(IdentityCardService::MetaData::NATIONALITY);
     PRINT_TIME("Country: " + nationality);
 
-    std::string docno;
-    LLA_ASSERT(srv->get(IdentityCardService::MetaData::DOC_NO, docno),
-               "Failed to fetch document number.");
+	std::string docno = srv->getString(IdentityCardService::MetaData::DOC_NO);
     PRINT_TIME("Docno: " + docno);
 
-    std::chrono::system_clock::time_point tp;
-    LLA_ASSERT(srv->get(IdentityCardService::MetaData::BIRTHDATE, tp), "Failed to "
-        "fetch birthdate");
+	std::chrono::system_clock::time_point tp = srv->getTime(IdentityCardService::MetaData::BIRTHDATE);
     std::time_t tp_t = std::chrono::system_clock::to_time_t(tp);
     std::tm tm = *std::localtime(&tp_t);
 
@@ -67,9 +60,7 @@ int main(int ac, char **av)
     std::strftime(buff, sizeof(buff), "%c", &tm);
     PRINT_TIME("Birthdate: " << buff);
 
-    ByteVector picture_data;
-    LLA_ASSERT(srv->get(IdentityCardService::MetaData::PICTURE, picture_data), "Failed to"
-        "get picture bytes");
+	ByteVector picture_data = srv->getData(IdentityCardService::MetaData::PICTURE);
     {
         std::ofstream of("/tmp/passport_pic.jpeg");
         of.write((const char *)picture_data.data(), picture_data.size());

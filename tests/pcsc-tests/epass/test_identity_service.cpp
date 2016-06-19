@@ -7,7 +7,7 @@
 #include "logicalaccess/logs.hpp"
 #include <logicalaccess/services/identity/identity_service.hpp>
 #include <logicalaccess/crypto/sha.hpp>
-#include <pluginscards/epass/epass_access_info.hpp>
+#include <pluginscards/epass/epassaccessinfo.hpp>
 #include <ctime>
 
 void introduction()
@@ -48,37 +48,28 @@ int main(int ac, char **av)
     srv->setAccessInfo(ai);
 
 
-    std::string name;
-    LLA_ASSERT(srv->get(IdentityCardService::MetaData::NAME, name), "Failed to fetch name");
+    std::string name = srv->getString(IdentityCardService::MetaData::NAME);
     LLA_ASSERT("ANDERSON  JANE" == name, "Name doesn't match.");
     LLA_SUBTEST_PASSED("GetName");
 
-    ByteVector picture_data;
-    LLA_ASSERT(srv->get(IdentityCardService::MetaData::PICTURE, picture_data), "Failed to"
-        "get picture bytes");
+    ByteVector picture_data = srv->getData(IdentityCardService::MetaData::PICTURE);
 
     // We check the hash of the picture rather than the full picture bytes. Easier for tests.
     LLA_ASSERT(openssl::SHA1Hash(picture_data) == BufferHelper::fromHexString("9cb474bfb578a9c8defa8eb6fe9ea2cd643be308"),
                "Retrieved image picture doesn't match expected picture.");
     LLA_SUBTEST_PASSED("GetPicture");
 
-    std::string nationality;
-    LLA_ASSERT(srv->get(IdentityCardService::MetaData::NATIONALITY, nationality),
-               "Failed to fetch nationality");
+	std::string nationality = srv->getString(IdentityCardService::MetaData::NATIONALITY);
     LLA_ASSERT("UTO" == nationality, "Nationality doesn't match.");
     LLA_SUBTEST_PASSED("GetNationality");
 
 
-    std::string docno;
-    LLA_ASSERT(srv->get(IdentityCardService::MetaData::DOC_NO, docno),
-               "Failed to fetch document number.");
+	std::string docno = srv->getString(IdentityCardService::MetaData::DOC_NO);
     LLA_ASSERT(docno == "W7GCH9ZY2", "Document number doesn't match.");
     LLA_SUBTEST_PASSED("GetDocNo");
 
 
-    std::chrono::system_clock::time_point tp;
-    LLA_ASSERT(srv->get(IdentityCardService::MetaData::BIRTHDATE, tp), "Failed to "
-        "fetch birthdate");
+	std::chrono::system_clock::time_point tp = srv->getTime(IdentityCardService::MetaData::BIRTHDATE);
     std::time_t tp_t = std::chrono::system_clock::to_time_t(tp);
     std::tm tm = *std::localtime(&tp_t);
 

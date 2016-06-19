@@ -10,13 +10,11 @@ class EPassAccessInfo;
 class EPassIdentityService : public IdentityCardService
 {
   public:
-    virtual bool get(MetaData what,
-                     std::chrono::system_clock::time_point &out) override;
-
     EPassIdentityService(const std::shared_ptr<Chip> &chip);
 
-    virtual bool get(MetaData what, std::string &out) override;
-    virtual bool get(MetaData what, ByteVector &out) override;
+	virtual std::chrono::system_clock::time_point getTime(MetaData what) override;
+	virtual std::string getString(MetaData what) override;
+	virtual ByteVector getData(MetaData what) override;
 
 
   protected:
