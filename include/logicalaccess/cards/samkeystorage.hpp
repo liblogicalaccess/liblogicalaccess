@@ -52,12 +52,18 @@ namespace logicalaccess
 
         void setKeySlot(unsigned char key_slot) { d_key_slot = key_slot; };
 
+		bool getDumpKey() const { return d_dumpKey; };
+
+		void setDumpKey(bool dumpKey) { d_dumpKey = dumpKey; };
+
     protected:
 
         /**
          * \brief The key slot. Optional for most PICC operation, automatically detected
          */
         unsigned char d_key_slot;
+
+		bool d_dumpKey;
     };
 }
 
