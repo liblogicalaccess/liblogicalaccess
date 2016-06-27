@@ -304,7 +304,7 @@ namespace logicalaccess
 		/**
 		* \brief retrieve key from SAM AV2 dump key.
 		*/
-		void DESFireISO7816Commands::getKeyFromSAM(std::shared_ptr<DESFireKey> key, std::vector<unsigned char> diversify);
+		void getKeyFromSAM(std::shared_ptr<DESFireKey> key, std::vector<unsigned char> diversify);
 
     protected:
 
