@@ -301,6 +301,11 @@ namespace logicalaccess
          */
         std::shared_ptr<SAMChip> getSAMChip() { return d_SAM_chip; }
 
+		/**
+		* \brief retrieve key from SAM AV2 dump key.
+		*/
+		void DESFireISO7816Commands::getKeyFromSAM(std::shared_ptr<DESFireKey> key, std::vector<unsigned char> diversify);
+
     protected:
 
         std::vector<unsigned char> getChangeKeySAMCryptogram(unsigned char keyno, std::shared_ptr<DESFireKey> key);

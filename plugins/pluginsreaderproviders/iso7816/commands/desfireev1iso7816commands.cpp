@@ -6,6 +6,7 @@
 
 #include "../commands/desfireev1iso7816commands.hpp"
 #include "desfirechip.hpp"
+#include "samav2commands.hpp"
 #include <openssl/rand.h>
 #include <logicalaccess/iks/IslogKeyServer.hpp>
 #include <logicalaccess/settings.hpp>
@@ -340,17 +341,20 @@ namespace logicalaccess
 
         // Get the appropriate authentification method and algorithm according to the key type (for 3DES we use legacy method instead of ISO).
 
-        if (std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()) && !getSAMChip())
+        if (std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage())
+			&& !getSAMChip())
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAMKeyStorage set on the key but not SAM reader has been set.");
 
-        if (std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()) && key->getKeyType() != DF_KEY_DES)
+        if (std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage())
+			&& !std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage())->getDumpKey()
+			&& key->getKeyType() != DF_KEY_DES)
         {
             if (key->getKeyType() == DF_KEY_3K3DES)
 				sam_iso_authenticate(key, DF_ALG_3K3DES, (crypto->d_currentAid == 0 && keyno == 0), keyno);
             else
 				sam_iso_authenticate(key, DF_ALG_AES, (crypto->d_currentAid == 0 && keyno == 0), keyno);
         }
-            else if (key->getKeyStorage()->getType() == KST_SERVER)
+        else if (key->getKeyStorage()->getType() == KST_SERVER)
         {
             if (key->getKeyType() == DF_KEY_DES)
                 DESFireISO7816Commands::iks_des_authenticate(keyno, key);
@@ -535,9 +539,10 @@ namespace logicalaccess
 		crypto->d_lastIV.resize(crypto->d_block_size, 0x00);
     }
 
-    void DESFireEV1ISO7816Commands::iso_authenticate(std::shared_ptr<DESFireKey> key, DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno)
+    void DESFireEV1ISO7816Commands::iso_authenticate(std::shared_ptr<DESFireKey> currentKey, DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno)
     {
         unsigned char le;
+		std::shared_ptr<DESFireKey> key = std::make_shared<DESFireKey>(*currentKey);
         std::shared_ptr<openssl::SymmetricCipher> cipher;
         std::vector<unsigned char> diversify;
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
@@ -546,6 +551,11 @@ namespace logicalaccess
         {
 			key->getKeyDiversification()->initDiversification(crypto->getIdentifier(), crypto->d_currentAid, key, keyno, diversify);
         }
+
+		if (std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage())
+			&& std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage())->getDumpKey())
+			getKeyFromSAM(key, diversify);
+
         std::vector<unsigned char> keydiv;
 		crypto->getKey(key, diversify, keydiv);
 
@@ -1143,15 +1153,19 @@ namespace logicalaccess
         }
     }
 
-    void DESFireEV1ISO7816Commands::changeKey(unsigned char keyno, std::shared_ptr<DESFireKey> key)
+    void DESFireEV1ISO7816Commands::changeKey(unsigned char keyno, std::shared_ptr<DESFireKey> newkey)
     {
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
+		std::shared_ptr<DESFireKey> key = std::make_shared<DESFireKey>(*newkey);
+		auto samKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
+
         std::vector<unsigned char> diversify;
         if (key->getKeyDiversification())
         {
 			key->getKeyDiversification()->initDiversification(crypto->getIdentifier(), crypto->d_currentAid, key, keyno, diversify);
         }
-        std::vector<unsigned char> cryptogram;
+		if (samKeyStorage && samKeyStorage->getDumpKey())
+			getKeyFromSAM(key, diversify);
 
         unsigned char keynobyte = keyno;
 		if (keyno == 0 && crypto->d_currentAid == 0)
@@ -1159,7 +1173,8 @@ namespace logicalaccess
             keynobyte |= key->getKeyType();
         }
 
-        if (std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
+		std::vector<unsigned char> cryptogram;
+        if (samKeyStorage && !samKeyStorage->getDumpKey())
         {
             cryptogram = getChangeKeySAMCryptogram(keyno, key);
         }

@@ -11,6 +11,7 @@
 #include "nxpkeydiversification.hpp"
 #include "nxpav1keydiversification.hpp"
 #include "nxpav2keydiversification.hpp"
+#include "samav2commands.hpp"
 
 #include "logicalaccess/iks/IslogKeyServer.hpp"
 #include "logicalaccess/settings.hpp"
@@ -227,10 +228,21 @@ namespace logicalaccess
         return ret;
     }
 
-    void DESFireISO7816Commands::changeKey(unsigned char keyno, std::shared_ptr<DESFireKey> key)
+    void DESFireISO7816Commands::changeKey(unsigned char keyno, std::shared_ptr<DESFireKey> newkey)
     {
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
         std::vector<unsigned char> cryptogram;
+		std::shared_ptr<DESFireKey> key = std::make_shared<DESFireKey>(*newkey);
+		auto samKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
+
+		std::vector<unsigned char> diversify;
+		if (key->getKeyDiversification())
+		{
+			key->getKeyDiversification()->initDiversification(crypto->getIdentifier(), crypto->d_currentAid, key, keyno, diversify);
+		}
+		if (samKeyStorage && samKeyStorage->getDumpKey())
+			getKeyFromSAM(key, diversify);
+
         if (std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
         {
             cryptogram = getChangeKeySAMCryptogram(keyno, key);
@@ -241,11 +253,6 @@ namespace logicalaccess
         }
         else
         {
-            std::vector<unsigned char> diversify;
-            if (key->getKeyDiversification())
-            {
-				key->getKeyDiversification()->initDiversification(crypto->getIdentifier(), crypto->d_currentAid, key, keyno, diversify);
-            }
 			cryptogram = crypto->changeKey_PICC(keyno, key, diversify);
         }
 
@@ -758,24 +765,48 @@ namespace logicalaccess
         authenticate(keyno, key);
     }
 
-    void DESFireISO7816Commands::authenticate(unsigned char keyno, std::shared_ptr<DESFireKey> key)
+	void DESFireISO7816Commands::getKeyFromSAM(std::shared_ptr<DESFireKey> key, std::vector<unsigned char> diversify)
+	{
+		auto samKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
+
+		if (samKeyStorage
+			&& samKeyStorage->getDumpKey()
+			&& getSAMChip()->getCardType() != "SAM_AV2")
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAMKeyStorage Dump option can only be used with SAM AV2.");
+
+		if (key->getKeyDiversification() && !std::dynamic_pointer_cast<NXPAV2KeyDiversification>(key->getKeyDiversification()))
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM AV2 can only dump key with diversification NXP AV2.");
+		key->setData(std::dynamic_pointer_cast<SAMAV2Commands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->dumpSecretKey(samKeyStorage->getKeySlot(),
+			key->getKeyVersion(), diversify));
+		key->setKeyStorage(nullptr);
+		key->setKeyDiversification(nullptr);
+	}
+
+    void DESFireISO7816Commands::authenticate(unsigned char keyno, std::shared_ptr<DESFireKey> currentKey)
     {
         std::vector<unsigned char> command;
+
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
+		if (!currentKey) {
+			currentKey = crypto->getDefaultKey(DF_KEY_DES);
+		}
+		std::shared_ptr<DESFireKey> key = std::make_shared<DESFireKey>(*currentKey);
 
-        if (!key) {
-			key = crypto->getDefaultKey(DF_KEY_DES);
-        }
-		crypto->setKey(crypto->d_currentAid, keyno, key);
-
-        if (std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()) && !getSAMChip())
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAMKeyStorage set on the key but no SAM reader has been set.");
+		auto samKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
+		if (samKeyStorage && !getSAMChip())
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAMKeyStorage set on the key but no SAM reader has been set.");
 
         std::vector<unsigned char> diversify;
         if (key->getKeyDiversification())
         {
 			key->getKeyDiversification()->initDiversification(crypto->getIdentifier(), crypto->d_currentAid, key, keyno, diversify);
         }
+
+		if (samKeyStorage && samKeyStorage->getDumpKey())
+			getKeyFromSAM(key, diversify);
+
+		crypto->setKey(crypto->d_currentAid, keyno, key);
+
         command.push_back(keyno);
 
         std::vector<unsigned char> result = DESFireISO7816Commands::transmit(DF_INS_AUTHENTICATE, command);
@@ -784,7 +815,8 @@ namespace logicalaccess
             result.resize(8);
             std::vector<unsigned char> rndAB, apduresult;
 
-            if (std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
+            if (samKeyStorage
+				&& !samKeyStorage->getDumpKey())
             {
                 unsigned char p1 = 0x00;
                 std::vector<unsigned char> data(2);
@@ -840,7 +872,8 @@ namespace logicalaccess
             {
                 result.resize(result.size() - 2);
 
-                if (std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
+                if (samKeyStorage
+					&& !samKeyStorage->getDumpKey())
                 {
                     unsigned char cmd[] = { 0x80, 0x0a, 0x00, 0x00, 0x08 };
                     std::vector<unsigned char> cmd_vector(cmd, cmd + 5);
