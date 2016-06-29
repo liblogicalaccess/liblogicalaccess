@@ -12,6 +12,7 @@ namespace logicalaccess
     SAMKeyStorage::SAMKeyStorage()
     {
         d_key_slot = 0x00;
+        d_dumpKey = false;
     }
 
     KeyStorageType SAMKeyStorage::getType() const
