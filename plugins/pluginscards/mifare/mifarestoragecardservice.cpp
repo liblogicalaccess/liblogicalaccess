@@ -66,6 +66,11 @@ namespace logicalaccess
             writeData(madLocation, madAi, _aiToWrite, zeroblock,  CB_DEFAULT);
         }
 
+        if (mLocation->block == -1)
+        {
+            mLocation->block = 0;
+        }
+
         bool tmpuseMAD = mLocation->useMAD;
         mLocation->useMAD = false;
 		std::vector<unsigned char> zeroblock(zeroblock_size - (mLocation->block * 16), 0x00);
@@ -103,6 +108,11 @@ namespace logicalaccess
             {
                 writeAidToMad = true;
             }
+        }
+
+        if (mLocation->block == -1)
+        {
+            mLocation->block = 0;
         }
 
         size_t totaldatalen = data.size() + (mLocation->block * 16) + mLocation->byte;
@@ -228,6 +238,10 @@ namespace logicalaccess
         {
             mLocation->sector = getMifareChip()->getMifareCommands()->getSectorFromMAD(mLocation->aid, mAiToUse->madKeyA);
         }
+        if (mLocation->block == -1)
+        {
+            mLocation->block = 0;
+        }
 
         size_t totaldatalen = length + (mLocation->block * 16) + mLocation->byte;
         int nbSectors = 0;
@@ -274,6 +288,11 @@ namespace logicalaccess
 
 		MifareKeyType keyType = KT_KEY_A;
 		std::shared_ptr<MifareKey> key;
+
+        if (mLocation->block == -1)
+        {
+            mLocation->block = 0;
+        }
 
         if (aiToUse)
         {
