@@ -144,6 +144,10 @@ namespace logicalaccess
     std::vector<unsigned char> DESFireISO7816Commands::getChangeKeySAMCryptogram(unsigned char keyno, std::shared_ptr<DESFireKey> key)
     {
         std::shared_ptr<SAMKeyStorage> samsks = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
+
+		if (samsks && !getSAMChip())
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAMKeyStorage set on the key but no SAM reader has been set.");
+
         std::shared_ptr<SAMCommands<KeyEntryAV1Information, SETAV1> > samav1commands = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands());
         std::shared_ptr<SAMCommands<KeyEntryAV2Information, SETAV2> > samav2commands = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands());
 
@@ -771,7 +775,7 @@ namespace logicalaccess
 
 		if (samKeyStorage
 			&& samKeyStorage->getDumpKey()
-			&& getSAMChip()->getCardType() != "SAM_AV2")
+			&& (!getSAMChip() || getSAMChip()->getCardType() != "SAM_AV2"))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAMKeyStorage Dump option can only be used with SAM AV2.");
 
 		if (key->getKeyDiversification() && !std::dynamic_pointer_cast<NXPAV2KeyDiversification>(key->getKeyDiversification()))
