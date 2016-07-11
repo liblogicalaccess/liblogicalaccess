@@ -45,7 +45,7 @@ namespace logicalaccess
         sectorNode->setLength((sector >= 32) ? 240 : 48);
         sectorNode->setNeedAuthentication(true);
 
-		for (unsigned char i = 0; i < ((sector / 16) + 1); ++i)
+        for (unsigned char i = 0; i < (sectorNode->getLength() / 16); ++i)
 		{
 			addBlockNode(sectorNode, sector, i);
 		}
