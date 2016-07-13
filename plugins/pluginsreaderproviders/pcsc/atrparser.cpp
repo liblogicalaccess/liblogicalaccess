@@ -41,6 +41,9 @@ ATRParser::ATRParser(const std::vector<uint8_t> &atr)
 	register_hardcoded_atr("3B8F8001804F0CA00000030603F004000000009F", "Topaz");
 	register_hardcoded_atr("3BDF18FF81F1FE43003F03834D494641524520506C75732053414D3B", "SAM_AV2");
 	register_hardcoded_atr("3BDF18FF81F1FE43001F034D494641524520506C75732053414D98", "SAM_AV2");
+	
+	// SEOS or Electronic Passport / Spanish passport (2012)
+	register_hardcoded_atr("3B80800101", "SEOS");
 }
 
 ///

@@ -27,9 +27,9 @@
 #include "commands/mifareultralightpcsccommands.hpp"
 #include "commands/mifareultralightcpcsccommands.hpp"
 #include "commands/mifareultralightcomnikeyxx21commands.hpp"
+#include "commands/mifareultralightcomnikeyxx22commands.hpp"
 #include "commands/mifareultralightcacsacrcommands.hpp"
 #include "commands/mifareultralightcspringcardcommands.hpp"
-#include "commands/mifareomnikeyxx27commands.hpp"
 #include "commands/mifareomnikeyxx21commands.hpp"
 #include "commands/mifareplus_omnikeyxx21_sl1.hpp"
 #include "commands/mifareplus_sprincard_sl1.hpp"
@@ -676,10 +676,9 @@ namespace logicalaccess
                 }
                 else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX27)
                 {
-                    commands.reset(new MifareOmnikeyXX27Commands());
                     resultChecker.reset(new MifareOmnikeyXX27ResultChecker());
                 }
-                else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_LAN_XX21)
+                else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_LAN_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_XX22)
                 {
                     commands.reset(new MifareOmnikeyXX21Commands());
                 }
@@ -755,6 +754,10 @@ namespace logicalaccess
                 else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX21)
                 {
                     commands.reset(new MifareUltralightCOmnikeyXX21Commands());
+                }
+                else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX22)
+                {
+                    commands.reset(new MifareUltralightCOmnikeyXX22Commands());
                 }
                 else
                 {
@@ -1162,11 +1165,11 @@ namespace logicalaccess
             if (getPCSCType() == PCSC_RUT_OMNIKEY_XX27)
             {
                 auto cmd = new MifarePlusSL1Policy<MifarePlusSL1PCSCCommands,
-                        MifareOmnikeyXX27Commands>();
+                        MifarePCSCCommands>();
                 commands.reset(cmd);
                 resultChecker.reset(new MifareOmnikeyXX27ResultChecker());
             }
-            else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_XX21)
+            else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_XX22 /* TODO: check it is really the same APDU for Omnikey 5022-CL */)
             {
                 commands.reset(new MifarePlusSL1Policy<
                         MifarePlusOmnikeyXX21SL1Commands,

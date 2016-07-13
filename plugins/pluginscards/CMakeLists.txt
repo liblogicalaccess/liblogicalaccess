@@ -29,4 +29,5 @@ add_subdirectory(felica)
 add_subdirectory(cps3)
 add_subdirectory(epass)
 add_subdirectory(topaz)
+add_subdirectory(seos)
 

@@ -105,6 +105,8 @@ std::string pcsc_reader_unit_name(logicalaccess::ReaderUnitPtr ru)
     {
         case PCSC_RUT_OMNIKEY_XX21:
             return "OKXX21";
+        case PCSC_RUT_OMNIKEY_XX22:
+            return "OKXX22";
         case PCSC_RUT_OMNIKEY_XX25:
             return "OKXX25";
         case PCSC_RUT_OMNIKEY_XX27:

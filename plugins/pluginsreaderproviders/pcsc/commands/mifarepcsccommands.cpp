@@ -106,10 +106,13 @@ namespace logicalaccess
         TRACE(blockno, keyno, keytype);
         std::vector<unsigned char> command;
 
+        command.push_back(0x01);
+        command.push_back(0x00);
+        command.push_back(blockno);
         command.push_back(static_cast<unsigned char>(keytype));
         command.push_back(keyno);
 
-        getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x88, 0x00, blockno, command);
+        getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x86, 0x00, 0x00, static_cast<unsigned char>(command.size()), command);
     }
 
     void MifarePCSCCommands::authenticate(unsigned char blockno, std::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype)

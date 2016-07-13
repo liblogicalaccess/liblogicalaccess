@@ -3,6 +3,7 @@
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "pcscreaderprovider.hpp"
 #include "readers/omnikeylanxx21readerunit.hpp"
+#include "readers/omnikeyxx22readerunit.hpp"
 #include "readers/omnikeyxx25readerunit.hpp"
 #include "readers/scmreaderunit.hpp"
 #include "readers/springcardreaderunit.hpp"
@@ -36,6 +37,10 @@ extern "C"
                 {
                     u = make_shared<OmnikeyXX21ReaderUnit>(readerName);
                 }
+            }
+            else if (readerName.find("5022") != string::npos)
+            {
+                u = make_shared<OmnikeyXX22ReaderUnit>(readerName);
             }
             else if (readerName.find("x25") != string::npos || readerName.find("5025-CL") != string::npos)
             {

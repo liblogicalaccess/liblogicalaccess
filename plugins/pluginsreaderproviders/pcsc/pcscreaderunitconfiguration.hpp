@@ -62,6 +62,7 @@ namespace logicalaccess
         PCSC_RUT_ACS_ACR = 0x0008, /**< ACS ACR reader unit */
         PCSC_RUT_ACS_ACR_1222L = 0x0009, /**< ACS ACR 1222L reader unit */
         PCSC_RUT_ID3_CL1356 = 0x000A, /**< ID3 (Orcanthus) CL1356A+ reader unit */
+        PCSC_RUT_OMNIKEY_XX22 = 0x000B, /**< Omnikey xx22 PC/SC reader unit */
     } PCSCReaderUnitType;
 
     /**

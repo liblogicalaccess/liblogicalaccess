@@ -13,11 +13,10 @@ namespace logicalaccess
     {
     public:
 		virtual ~MifareCL1356Commands() = default;
+
         virtual void increment(uint8_t blockno, uint32_t value) override;
 
         virtual void decrement(uint8_t blockno, uint32_t value) override;
-
-		virtual void authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype) override;
 
     };
 

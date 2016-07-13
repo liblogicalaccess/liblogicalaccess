@@ -47,19 +47,6 @@ namespace logicalaccess
         return r;
     }
 
-    void MifareSCMCommands::authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype)
-    {
-        std::vector<unsigned char> command;
-
-        command.push_back(0x01);
-        command.push_back(0x00);
-        command.push_back(blockno);
-        command.push_back(static_cast<unsigned char>(keytype));
-        command.push_back(keyno);
-
-        getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x86, 0x00, 0x00, static_cast<unsigned char>(command.size()), command);
-    }
-
 	void MifareSCMCommands::increment(unsigned char blockno, uint32_t value)
 	{
         // Somehow the documentation is invalid, and increment and decrement

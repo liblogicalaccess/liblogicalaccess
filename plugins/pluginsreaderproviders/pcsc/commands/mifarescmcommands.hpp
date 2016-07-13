@@ -45,13 +45,6 @@ namespace logicalaccess
          * \return true on success, false otherwise.
          */
         bool loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol = false);
-        /**
-         * \brief Authenticate a block, given a key number.
-         * \param blockno The block number.
-         * \param keyno The key number, previously loaded with Mifare::loadKey().
-         * \param keytype The key type.
-         */
-        void authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype);
 
 		/**
 		* \brief Increment a block value.
