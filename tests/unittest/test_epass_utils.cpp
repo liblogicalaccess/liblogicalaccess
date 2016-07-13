@@ -4,7 +4,7 @@
 #include <iostream>
 #include <logicalaccess/bufferhelper.hpp>
 #include <logicalaccess/logs.hpp>
-#include <pluginscards/epass/epass_crypto.hpp>
+#include <pluginscards/epass/epasscrypto.hpp>
 
 using namespace logicalaccess;
 
