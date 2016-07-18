@@ -591,7 +591,8 @@ EPassUtils::parse_dg1_date(const ByteVector &in, int millenium_limit)
     auto month = std::stoi(std::string(itr + 2, itr + 4));
     auto day   = std::stoi(std::string(itr + 4, itr + 6));
 
-    std::tm date = {};
+    std::tm date;
+	memset(&date, 0x00, sizeof(std::tm));
     date.tm_mon  = month - 1; // tm_mon starts at 0
     date.tm_mday = day;
 

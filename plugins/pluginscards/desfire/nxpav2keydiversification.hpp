@@ -17,8 +17,7 @@ namespace logicalaccess
         virtual std::vector<unsigned char> getDiversifiedKey(std::shared_ptr<Key> key, std::vector<unsigned char> diversify);
 
         NXPAV2KeyDiversification() : d_revertAID(false) {};
-        NXPAV2KeyDiversification(const std::vector<unsigned char>& divInput) : d_divInput(divInput),
-        d_revertAID(false) {};
+        NXPAV2KeyDiversification(const std::vector<unsigned char>& divInput) : d_revertAID(false), d_divInput(divInput) {};
         virtual ~NXPAV2KeyDiversification() {};
 
         virtual std::string getType() { return "NXPAV2"; };

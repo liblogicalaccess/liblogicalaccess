@@ -38,7 +38,8 @@ namespace logicalaccess
         unsigned char cmd[] = { d_cla, 0x64, keyno, 0x00, 0x00 };
         std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
         std::shared_ptr<SAMKeyEntry<KeyEntryAV1Information, SETAV1> > keyentry;
-        KeyEntryAV1Information keyentryinformation = {};
+        KeyEntryAV1Information keyentryinformation;
+		memset(&keyentryinformation, 0x00, sizeof(KeyEntryAV1Information));
 
         result = transmit(cmd_vector);
 

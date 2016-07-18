@@ -43,7 +43,7 @@ namespace logicalaccess
     {
         EXCEPTION_ASSERT_WITH_LOG(answer.size() >= 3, LibLogicalAccessException, "Bad command response. Data length too small.");
 		EXCEPTION_ASSERT_WITH_LOG(answer[0] == GigaTMSReaderCardAdapter::STX1 && answer[1] == GigaTMSReaderCardAdapter::STX2, LibLogicalAccessException, "Bad command response. STX bytes doesn't match.");
-		EXCEPTION_ASSERT_WITH_LOG(answer.size() >= 3 + answer[2] + 1, LibLogicalAccessException, "Bad command response. Data length doesn't match.");
+		EXCEPTION_ASSERT_WITH_LOG(answer.size() >= static_cast<size_t>(3 + answer[2] + 1), LibLogicalAccessException, "Bad command response. Data length doesn't match.");
 
 		unsigned char crc = 0x00;
 		for (size_t i = 2; i < answer.size() - 1; ++i)

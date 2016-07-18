@@ -35,7 +35,7 @@
 namespace logicalaccess
 {
 	ReaderUnit::ReaderUnit(std::string rpt)
-		: XmlSerializable(), d_card_type(CHIP_UNKNOWN), d_readerProviderType(rpt)
+		: XmlSerializable(), d_readerProviderType(rpt), d_card_type(CHIP_UNKNOWN)
     {
         try
         {

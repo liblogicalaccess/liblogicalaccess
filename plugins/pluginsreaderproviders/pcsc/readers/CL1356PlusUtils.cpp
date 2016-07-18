@@ -13,7 +13,8 @@ CL1356PlusUtils::CardCount CL1356PlusUtils::parse_list_card(const ByteVector &in
     EXCEPTION_ASSERT_WITH_LOG(in.size() == 6, LibLogicalAccessException,
                               "Response is not 8 bytes long.");
 
-    CardCount ret {};
+    CardCount ret;
+	memset(&ret, 0x00, sizeof(CardCount));
 
     ret.detected_ = in[0];
     ret.present_ = in[1];
