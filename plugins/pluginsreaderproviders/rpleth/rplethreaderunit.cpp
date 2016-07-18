@@ -23,7 +23,7 @@
 #include "rplethledbuzzerdisplay.hpp"
 #include "rplethlcddisplay.hpp"
 #include "rplethdatatransport.hpp"
-#include "desfirechip.hpp"
+#include "desfireev1chip.hpp"
 #include "commands/desfireiso7816commands.hpp"
 
 #include "logicalaccess/readerproviders/serialportxml.hpp"
@@ -116,6 +116,14 @@ namespace logicalaccess
 
                 d_insertedChip = d_proxyReader->createChip(ctype, csn);
                 inserted = bool(d_insertedChip);
+
+                if (inserted)
+                {
+                    if (ctype == CHIP_DESFIRE_EV1 || ctype == CHIP_DESFIRE)
+                    {
+                        std::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->setSAMChip(getSAMChip());
+                    }
+                }
             }
         }
         else
@@ -547,6 +555,21 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>(context.size()));
 		command.insert(command.end(), context.begin(), context.end());
         getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, false);
+    }
+
+    std::string RplethReaderUnit::getContext()
+    {
+        std::string context;
+        std::vector<unsigned char> command;
+        command.push_back(static_cast<unsigned char>(Device::RPLETH));
+        command.push_back(static_cast<unsigned char>(RplethCommand::GET_CONTEXT));
+        command.push_back(0x00);
+        std::vector<unsigned char> answer = getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true);
+        if (answer.size() > 0)
+        {
+            context = std::string(answer.begin(), answer.end());
+        }
+        return context;
     }
 
     std::vector<unsigned char> RplethReaderUnit::badge(long int timeout)

@@ -105,14 +105,24 @@ namespace logicalaccess
             }
 
             std::shared_ptr<ISO7816ReaderUnit> ret;
-
             if (d_sam_readerunit && (!getISO7816Configuration()->getCheckSAMReaderIsAvailable() || d_sam_readerunit->getName() == getISO7816Configuration()->getSAMReaderName()))
+            {
                 ret = d_sam_readerunit;
+            }
             else
             {
                 ret = getISO7816ReaderProvider()->createReaderUnit(getISO7816Configuration()->getSAMReaderName());
             }
-            ret->connectToReader();
+
+            if (getISO7816Configuration()->getAutoConnectToSAMReader())
+            {
+                ret->connectToReader();
+
+                if (d_sam_client_context != "")
+                {
+                    ret->setContext(d_sam_client_context);
+                }
+            }
 
             if (!ret->waitInsertion(1))
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "No SAM detected on the reader");
@@ -176,16 +186,22 @@ namespace logicalaccess
         if (getISO7816Configuration()->getSAMType() != "SAM_NONE" && d_sam_readerunit)
         {
             d_sam_readerunit->disconnect();
-            d_sam_readerunit->disconnectFromReader();
+            if (getISO7816Configuration()->getAutoConnectToSAMReader())
+            {
+                d_sam_client_context = d_sam_readerunit->getContext();
+                d_sam_readerunit->disconnectFromReader();
+            }
             setSAMChip(std::shared_ptr<SAMChip>());
         }
     }
 
     void ISO7816ReaderUnit::reloadReaderConfiguration()
     {
+        LOG(LogLevel::INFOS) << "Starting reader configuration reloading...";
         // Run only SAM specific disconnect/connection
         ISO7816ReaderUnit::disconnectFromReader();
         ISO7816ReaderUnit::connectToReader();
+        LOG(LogLevel::INFOS) << "Reader configuration completed.";
     }
 
     std::shared_ptr<SAMChip> ISO7816ReaderUnit::getSAMChip()
@@ -206,5 +222,15 @@ namespace logicalaccess
     void ISO7816ReaderUnit::setSAMReaderUnit(std::shared_ptr<ISO7816ReaderUnit> t)
     {
         d_sam_readerunit = t;
+    }
+
+    void ISO7816ReaderUnit::setContext(const std::string& context)
+    {
+        d_client_context = context;
+    }
+
+    std::string ISO7816ReaderUnit::getContext()
+    {
+        return d_client_context;
     }
 }

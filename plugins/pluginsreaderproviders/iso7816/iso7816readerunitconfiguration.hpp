@@ -102,6 +102,10 @@ namespace logicalaccess
 
         void setCheckSAMReaderIsAvailable(bool check) { d_check_sam_reader_available = check; }
 
+        bool getAutoConnectToSAMReader() const { return d_auto_connect_sam_reader; }
+
+        void setAutoConnectToSAMReader(bool auto_connect) { d_auto_connect_sam_reader = auto_connect; }
+
     protected:
 
         /**
@@ -129,6 +133,11 @@ namespace logicalaccess
          * \remarks This should be disable when using network-based reader today.
          */
         bool d_check_sam_reader_available;
+
+        /**
+        * \brief Auto-connect to SAM reader at reader connection.
+        */
+        bool d_auto_connect_sam_reader;
     };
 }
 

@@ -37,7 +37,8 @@ namespace logicalaccess
         MESSAGE = 0x08,
         RESET = 0x09,
         PING = 0x0a,
-        SET_CONTEXT = 0x0b
+        SET_CONTEXT = 0x0b,
+        GET_CONTEXT = 0x0c
     } RplethCommand;
 
     /**

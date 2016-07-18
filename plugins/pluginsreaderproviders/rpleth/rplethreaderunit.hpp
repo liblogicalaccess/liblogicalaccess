@@ -213,7 +213,13 @@ namespace logicalaccess
 		 * \brief Set the client context.
 		 * \param context The context.
 		 */
-		void setContext(const std::string& context);
+		virtual void setContext(const std::string& context);
+
+        /**
+        * \brief Get the client context.
+        * \return The context.
+        */
+        virtual std::string getContext();
 
         /**
          * \brief Request the last badge.

@@ -93,6 +93,18 @@ namespace logicalaccess
         virtual void reloadReaderConfiguration();
 
         /**
+        * \brief Set the client context.
+        * \param context The context.
+        */
+        virtual void setContext(const std::string& context);
+
+        /**
+        * \brief Get the client context.
+        * \return The context.
+        */
+        virtual std::string getContext();
+
+        /**
          * \brief Get the reader unit name.
          * \return The reader unit name.
          */
@@ -151,6 +163,16 @@ namespace logicalaccess
          * \brief The SAM ReaderUnit used SAM Authentication
          */
         std::shared_ptr<ISO7816ReaderUnit> d_sam_readerunit;
+
+        /**
+         * \brief The client context.
+         */
+        std::string d_client_context;
+
+        /**
+        * \brief The sam client context.
+        */
+        std::string d_sam_client_context;
     };
 }
 
