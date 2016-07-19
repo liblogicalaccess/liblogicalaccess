@@ -43,7 +43,7 @@ int main(int ac, char **av)
         std::dynamic_pointer_cast<AccessControlCardService>(
             chip->getService(CST_ACCESS_CONTROL));
 
-    std::array<uint8_t, 64> buffer = {0};
+	std::array<uint8_t, 64> buffer = { {0} };
 
     auto ret = acs->readFormat(std::make_shared<Wiegand26Format>(),
                                std::make_shared<ProxLocation>(), nullptr);

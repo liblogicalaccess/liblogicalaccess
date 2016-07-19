@@ -8,7 +8,7 @@ void test_aes_encrypt_decrypt()
     IslogKeyServer &srv = iks::IslogKeyServer::fromGlobalSettings();
 
     auto v         = std::vector<uint8_t>(16, 'a');
-    auto iv        = std::array<uint8_t, 16>{0};
+    auto iv        = std::array<uint8_t, 16>{ {0} };
     auto encrypted = srv.aes_encrypt(v, "imported-aes-key", iv);
     auto decrypted = srv.aes_decrypt(encrypted, "imported-aes-key", iv);
 
@@ -20,7 +20,7 @@ void test_des_encrypt_decrypt()
     IslogKeyServer &srv = iks::IslogKeyServer::fromGlobalSettings();
 
     auto v         = std::vector<uint8_t>(8, 'a');
-    auto iv        = std::array<uint8_t, 8>{0};
+    auto iv        = std::array<uint8_t, 8>{ {0} };
     auto encrypted = srv.des_cbc_encrypt(v, "imported-zero-des", iv);
     auto decrypted = srv.des_cbc_decrypt(encrypted, "imported-zero-des", iv);
 
@@ -31,7 +31,7 @@ void test_des_encrypt_decrypt()
 
     // Again, with other values.
     v         = std::vector<uint8_t>(80, 'b');
-    iv        = std::array<uint8_t, 8>{66, 66, 66, 66, 66, 66, 66, 66};
+    iv        = std::array<uint8_t, 8>{ {66, 66, 66, 66, 66, 66, 66, 66} };
     encrypted = srv.des_cbc_encrypt(v, "imported-zero-des", iv);
     decrypted = srv.des_cbc_decrypt(encrypted, "imported-zero-des", iv);
 
@@ -48,7 +48,7 @@ void test_des_encrypt_decrypt()
 
     // Again, using ECB this time.
     v         = std::vector<uint8_t>(80, 'b');
-    iv        = std::array<uint8_t, 8>{66, 66, 66, 66, 66, 66, 66, 66};
+    iv        = std::array<uint8_t, 8>{ {66, 66, 66, 66, 66, 66, 66, 66} };
     encrypted = srv.des_ecb_encrypt(v, "imported-zero-des", iv);
     decrypted = srv.des_ecb_decrypt(encrypted, "imported-zero-des", iv);
 
