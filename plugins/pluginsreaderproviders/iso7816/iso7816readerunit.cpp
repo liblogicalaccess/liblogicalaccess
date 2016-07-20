@@ -84,7 +84,7 @@ namespace logicalaccess
     bool ISO7816ReaderUnit::connectToReader()
     {
         if (getISO7816Configuration()->getSAMType() != "SAM_NONE" && getISO7816Configuration()->getSAMReaderName() == "" && getISO7816Configuration()->getCheckSAMReaderIsAvailable())
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Sam type specified without specifying SAM Reader Name");
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM type specified without specifying SAM Reader Name");
 
         if (getISO7816Configuration()->getSAMType() != "SAM_NONE")
         {
