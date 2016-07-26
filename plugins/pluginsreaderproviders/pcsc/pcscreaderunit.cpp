@@ -676,6 +676,7 @@ namespace logicalaccess
                 }
                 else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX27)
                 {
+                    commands.reset(new MifarePCSCCommands());
                     resultChecker.reset(new MifareOmnikeyXX27ResultChecker());
                 }
                 else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_LAN_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_XX22)
