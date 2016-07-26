@@ -9,6 +9,7 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <cassert>
 
 #include "../pcscreaderprovider.hpp"
 #include "mifarechip.hpp"

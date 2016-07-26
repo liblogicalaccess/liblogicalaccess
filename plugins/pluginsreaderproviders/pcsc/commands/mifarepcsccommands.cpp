@@ -48,6 +48,7 @@ namespace logicalaccess
             {
                 // With the Sony RC-S380, non-volatile memory doesn't work,
                 // so we try again. Same with ACR1222L.
+                // Apparently the issue is also hit with ACS122U.
                 return loadKey(keyno, keytype, key, true);
             }
             else
