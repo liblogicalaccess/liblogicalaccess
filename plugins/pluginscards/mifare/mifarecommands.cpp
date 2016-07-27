@@ -279,7 +279,12 @@ namespace logicalaccess
         return ret;
     }
 
-	void MifareCommands::writeSector(int sector, int start_block, const std::vector<unsigned char>& buf, std::shared_ptr<MifareKey> keyA, std::shared_ptr<MifareKey> keyB, const MifareAccessInfo::SectorAccessBits& sab, unsigned char userbyte, MifareAccessInfo::SectorAccessBits* newsab, std::shared_ptr<MifareKey> newkeyA, std::shared_ptr<MifareKey> newkeyB)
+	void MifareCommands::writeSector(int sector, int start_block, const std::vector<unsigned char>& buf,
+                                     std::shared_ptr<MifareKey> keyA, std::shared_ptr<MifareKey> keyB,
+                                     const MifareAccessInfo::SectorAccessBits& sab,
+                                     unsigned char userbyte,
+                                     MifareAccessInfo::SectorAccessBits* newsab,
+                                     std::shared_ptr<MifareKey> newkeyA, std::shared_ptr<MifareKey> newkeyB)
     {
         size_t retlen = 0;
 
@@ -307,15 +312,24 @@ namespace logicalaccess
         }
     }
 
-	void MifareCommands::changeKeys(MifareKeyType keytype, std::shared_ptr<MifareKey> key, std::shared_ptr<MifareKey> newkeyA, std::shared_ptr<MifareKey> newkeyB, unsigned int sector, MifareAccessInfo::SectorAccessBits* newsab, unsigned char userbyte)
+	void MifareCommands::changeKeys(MifareKeyType keytype,
+                                    std::shared_ptr<MifareKey> key, std::shared_ptr<MifareKey> newkeyA,
+                                    std::shared_ptr<MifareKey> newkeyB, unsigned int sector,
+                                    MifareAccessInfo::SectorAccessBits* newsab,
+                                    unsigned char userbyte)
 	{
 		authenticate(keytype, key, sector, getNbBlocks(sector), true);
 		changeKeys(newkeyA, newkeyB, sector, newsab, userbyte);
 	}
 
-	void MifareCommands::changeKeys(std::shared_ptr<MifareKey> newkeyA, std::shared_ptr<MifareKey> newkeyB, unsigned int sector, MifareAccessInfo::SectorAccessBits* newsab, unsigned char userbyte)
+	void MifareCommands::changeKeys(std::shared_ptr<MifareKey> newkeyA, std::shared_ptr<MifareKey> newkeyB,
+                                    unsigned int sector, MifareAccessInfo::SectorAccessBits* newsab,
+                                    unsigned char userbyte)
     {
         std::vector<unsigned char> trailerblock(16, 0x00);
+
+        if (!newkeyA)
+            newkeyA = std::make_shared<MifareKey>();
 
 		if (!newkeyB || newkeyB->isEmpty())
         {

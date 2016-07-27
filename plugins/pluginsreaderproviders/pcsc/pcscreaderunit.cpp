@@ -683,7 +683,8 @@ namespace logicalaccess
                 {
                     commands.reset(new MifareOmnikeyXX21Commands());
                 }
-                else if (getPCSCType() == PCSC_RUT_ACS_ACR_1222L)
+                else if (getPCSCType() == PCSC_RUT_ACS_ACR_1222L || getPCSCType() ==
+                    PCSC_RUT_ACS_ACR) // both reader needs the same custom impl for increment/decrement
                 {
                     commands.reset(new MifareACR1222LCommands());
                 }
