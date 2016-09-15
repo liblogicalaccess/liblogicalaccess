@@ -12,6 +12,8 @@
 #include "readers/acsacr1222lreaderunit.hpp"
 #include "readers/id3readerunit.hpp"
 #include "logicalaccess/logicalaccess_api.hpp"
+#include "commands/mifarepcsccommands.hpp"
+#include "logicalaccess/logs.hpp"
 
 extern "C"
 {
@@ -114,4 +116,12 @@ extern "C"
 
         return ret;
     }
+
+	LIBLOGICALACCESS_API void getMifarePCSCCommands(std::shared_ptr<logicalaccess::Commands>* commands)
+	{
+		if (commands != NULL)
+		{
+			*commands = std::shared_ptr<logicalaccess::MifarePCSCCommands>(new logicalaccess::MifarePCSCCommands());
+		}
+	}
 }
