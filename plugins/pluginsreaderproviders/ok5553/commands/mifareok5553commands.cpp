@@ -139,7 +139,7 @@ namespace logicalaccess
         answer = getOK5553ReaderCardAdapter()->sendCommand(command);
         if (answer.size() > 0)
         {
-            if (answer[0] == 'L')
+            if (answer[0] != 'L')
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Authentication error.");
             }
