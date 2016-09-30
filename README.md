@@ -1,5 +1,7 @@
 ![liblogicalaccess_logo](http://islog.github.io/liblogicalaccess/images/lla_logo.png)
 =============
+[![Bounty](https://img.shields.io/bountysource/team/islog/activity.svg)](https://www.bountysource.com/teams/islog/issues)
+[![PayPayl donate button](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=dev@islog.com&lc=US&item_name=LibLogicalAccess&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted "Donate!")
 
 [Homepage](http://liblogicalaccess.islog.com) | 
 [Wiki](https://github.com/islog/liblogicalaccess/wiki) |
