@@ -150,16 +150,19 @@ namespace logicalaccess
         }
     }
 
-    std::vector<unsigned char> DESFireEV1ISO7816Commands::getCardUID()
-    {
-        std::vector<unsigned char> result = transmit_nomacv(DFEV1_INS_GET_CARD_UID);
-        result.resize(result.size() - 2);
-		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
+	std::vector<unsigned char> DESFireEV1ISO7816Commands::getCardUID()
+	{
+		std::vector<unsigned char> result = transmit_nomacv(DFEV1_INS_GET_CARD_UID);
+		if (result.size() >= 2)
+		{
+			result.resize(result.size() - 2);
+			std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 
-		if (crypto->d_auth_method == CryptoMethod::CM_ISO)
-			return crypto->desfire_iso_decrypt(result, 7);
-        else
+			if (crypto->d_auth_method == CryptoMethod::CM_ISO)
+				return crypto->desfire_iso_decrypt(result, 7);
 			return crypto->desfire_decrypt(crypto->d_sessionKey, result, 7);
+		}
+		THROW_EXCEPTION_WITH_LOG(std::runtime_error, "Incorrect result when request card UID");
     }
 
     void DESFireEV1ISO7816Commands::createStdDataFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned short isoFID)
