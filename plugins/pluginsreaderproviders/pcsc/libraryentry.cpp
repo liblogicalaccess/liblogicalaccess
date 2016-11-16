@@ -54,6 +54,7 @@ extern "C"
                 || readerName.find("SCL010 Contactless") != string::npos
 				|| readerName.find("SCL01x Contactless") != string::npos
 				|| readerName.find("SCL3711 reader") != string::npos
+				|| readerName.find("Identive CLOUD 4000 F DTC CL Reader") != string::npos
 				|| readerName.find("Identive CLOUD 4700 F Contactless") != string::npos
 				|| readerName.find("Identive CLOUD 4710 F Contactless") != string::npos
 				|| readerName.find("SCM Microsystems Inc. SCL011G Contactless Reader") != string::npos
