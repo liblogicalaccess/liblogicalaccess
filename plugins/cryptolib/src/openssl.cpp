@@ -29,7 +29,7 @@ namespace logicalaccess
             RAND_cleanup();
             EVP_cleanup();
             ERR_free_strings();
-            ERR_remove_state(0);
+            ERR_remove_thread_state(0);
         }
     }
 }
