@@ -21,7 +21,6 @@ namespace logicalaccess
 	void OSDPChannel::unPackage(std::vector<unsigned char> result)
 	{
 		EXCEPTION_ASSERT_WITH_LOG(result.size() >= 6, std::invalid_argument, "A valid buffer size must be at least 5 bytes long");
-		result.erase(result.begin()); //0xff
 		unsigned char index = 0;
 		EXCEPTION_ASSERT_WITH_LOG(result[index] == 0x53, std::invalid_argument, "Invalid SOM Received.");
 		++index;
