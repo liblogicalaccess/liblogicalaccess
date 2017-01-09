@@ -47,7 +47,7 @@ IslogKeyServer::IslogKeyServer(const std::string &ip, uint16_t port,
 
 std::vector<uint8_t> IslogKeyServer::get_random(size_t sz)
 {
-    assert(sz <= UINT16_MAX);
+  assert(sz <= std::numeric_limits<uint16_t>::max());
     GenRandomCommand cmd;
     cmd.nb_bytes_ = static_cast<uint16_t>(sz);
 
