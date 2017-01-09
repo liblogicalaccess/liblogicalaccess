@@ -18,9 +18,14 @@ namespace logicalaccess
     {
         OpenSSLInitializer::OpenSSLInitializer()
         {
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
             ERR_load_crypto_strings();
             OpenSSL_add_all_algorithms();
             CRYPTO_malloc_init();
+#else
+            OPENSSL_init_ssl(0, NULL);
+            OpenSSL_add_all_algorithms();
+#endif
         }
 
         OpenSSLInitializer::~OpenSSLInitializer()
@@ -29,7 +34,9 @@ namespace logicalaccess
             RAND_cleanup();
             EVP_cleanup();
             ERR_free_strings();
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
             ERR_remove_thread_state(0);
+#endif
         }
     }
 }

@@ -29,7 +29,11 @@ namespace logicalaccess
 
         int EVPPKey::type() const
         {
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
             return EVP_PKEY_type(d_pkey.get()->type);
+#else
+            return EVP_PKEY_base_id(d_pkey.get());
+#endif
         }
 
         EVPPKey EVPPKey::discardPrivateCompound() const
