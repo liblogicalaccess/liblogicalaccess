@@ -14,7 +14,7 @@ namespace logicalaccess
       ::dlerror(); // clear potential old error
     if ((_handle = ::dlopen(dlName.c_str(), RTLD_NOW)) == NULL)
     {
-        char *error = ::dlerror();
+        const char *error = ::dlerror();
         if (error)
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Failed to dlopen() " + dlName +
@@ -29,7 +29,7 @@ namespace logicalaccess
   void* PosixDynLibrary::getSymbol(const char* symName)
   {
     void* sym;
-    char* err;
+    const char* err;
 
     ::dlerror();
     sym = ::dlsym(_handle, symName);
@@ -42,7 +42,7 @@ namespace logicalaccess
     bool PosixDynLibrary::hasSymbol(const char *name)
     {
       void* sym;
-      char* err;
+      const char* err;
 
       ::dlerror();
       sym = ::dlsym(_handle, name);

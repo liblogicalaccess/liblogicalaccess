@@ -17,10 +17,6 @@
 #include "logicalaccess/techno.hpp"
 #include "logicalaccess/cardprobe.hpp"
 
-#ifdef UNIX
-#include <PCSC/wintypes.h>
-#endif
-
 #include <logicalaccess/services/reader_service.hpp>
 #define	PLUGINOBJECT_MAXLEN		64
 
