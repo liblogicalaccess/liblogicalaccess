@@ -23,7 +23,6 @@ namespace logicalaccess
 	circular_buffer.erase(circular_buffer.begin(), circular_buffer.begin() + removeCount);
 	//we expect that is start by 0x53 - everything else is noise
 
-	std::cout << "buffer size: " << circular_buffer.size() << std::endl;
 	if (circular_buffer.size() >= 6)
 	{
 	    short packetLength = ((circular_buffer[2 + 1] << 8) + circular_buffer[2]);

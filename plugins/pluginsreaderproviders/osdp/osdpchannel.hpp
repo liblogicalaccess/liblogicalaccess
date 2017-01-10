@@ -25,7 +25,9 @@ namespace logicalaccess
 		BUZ = 0x6A,
 		BUSY = 0x79,
 		XWR = 0xa1,
-		XRD = 0xb1
+		XRD = 0xb1,
+        LSTATR = 0x48,
+		LSTAT = 0x64
 	};
 
 	/**

@@ -20,7 +20,7 @@ namespace logicalaccess
 
 	void OSDPChannel::unPackage(std::vector<unsigned char> result)
 	{
-		EXCEPTION_ASSERT_WITH_LOG(result.size() >= 6, std::invalid_argument, "A valid buffer size must be at least 5 bytes long");
+		EXCEPTION_ASSERT_WITH_LOG(result.size() >= 6, std::invalid_argument, "A valid buffer size must be at least 6 bytes long");
 		unsigned char index = 0;
 		EXCEPTION_ASSERT_WITH_LOG(result[index] == 0x53, std::invalid_argument, "Invalid SOM Received.");
 		++index;
@@ -86,7 +86,7 @@ namespace logicalaccess
 
 		if (isSCB)
 		{
-			std::vector<unsigned char> secureData = getSecurityBlockData();
+			std::vector<unsigned char>& secureData = getSecurityBlockData();
 			cmd.push_back(static_cast<unsigned char>(secureData.size()));
 			cmd.push_back(getSecurityBlockType());
 			cmd.insert(cmd.end(), secureData.begin(), secureData.begin() + static_cast<unsigned int>(secureData.size()) - 2);
@@ -94,7 +94,7 @@ namespace logicalaccess
 
 		cmd.push_back(static_cast<unsigned char>(getCommandsType()));
 
-		std::vector<unsigned char> data = getData();
+		std::vector<unsigned char>& data = getData();
 		if (isSCB && (getSecurityBlockType() == OSDPSecureChannelType::SCS_17 || getSecurityBlockType() == OSDPSecureChannelType::SCS_18))
 		{
 			data = getSecureChannel()->encryptData(data, getSecureChannel()->getRMAC());

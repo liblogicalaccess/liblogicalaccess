@@ -142,13 +142,15 @@ namespace logicalaccess
 
 			std::shared_ptr<OSDPCommands>& getOSDPCommands() { return m_commands; };
 
+		bool& getTamperStatus() { return m_tamperStatus; }
+
 		protected:
 
 		private:
 
 			std::shared_ptr<OSDPCommands> m_commands;
 
-			std::vector<unsigned char> m_currencard;
+		bool m_tamperStatus;
 	};
 }
 
