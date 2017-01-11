@@ -587,9 +587,9 @@ EPassUtils::parse_dg1_date(const ByteVector &in, int millenium_limit)
     assert(in.size() == 6);
     auto itr = in.begin();
     // Birth date extraction code
-    auto year  = std::stoi(std::string(itr, itr + 2));
-    auto month = std::stoi(std::string(itr + 2, itr + 4));
-    auto day   = std::stoi(std::string(itr + 4, itr + 6));
+    auto year  = atoi(std::string(itr, itr + 2).c_str());
+    auto month = atoi(std::string(itr + 2, itr + 4).c_str());
+    auto day   = atoi(std::string(itr + 4, itr + 6).c_str());
 
     std::tm date;
 	memset(&date, 0x00, sizeof(std::tm));

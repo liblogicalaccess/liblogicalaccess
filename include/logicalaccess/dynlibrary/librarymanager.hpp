@@ -6,7 +6,7 @@
 
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
 
-#if UNIX
+#if defined(UNIX) || defined(ANDROID)
 #define LIBLOGICALACCESS_API_DLL
 #else
 #ifdef LIBLOGICALACCESS_EXPORTS_DLL
