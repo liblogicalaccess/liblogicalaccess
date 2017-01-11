@@ -8,6 +8,7 @@
 #include <logicalaccess/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <vector>
+#include <stdlib.h>
 
 using namespace logicalaccess;
 
