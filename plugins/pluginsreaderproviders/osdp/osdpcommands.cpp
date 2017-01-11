@@ -179,7 +179,7 @@ namespace logicalaccess
 	std::shared_ptr<OSDPChannel> OSDPCommands::transmit()
 	{
 		const clock_t begin_time = std::clock();
-		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
 		do
 		{
 			std::vector<unsigned char> result = getReaderCardAdapter()->sendCommand(m_channel->createPackage());
@@ -192,7 +192,6 @@ namespace logicalaccess
 		m_channel->setSequenceNumber(m_channel->getSequenceNumber() + 1);
 		if (m_channel->getSequenceNumber() > 3) 
 			m_channel->setSequenceNumber(1);
-		std::this_thread::sleep_for(std::chrono::milliseconds(20));
 		return m_channel;
 	}
 }
