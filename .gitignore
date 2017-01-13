@@ -40,3 +40,5 @@ install_manifest.txt
 *.dll
 /*.db
 /*.opendb
+.idea/
+cmake-build-debug/
