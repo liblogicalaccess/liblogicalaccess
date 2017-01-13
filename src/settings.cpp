@@ -97,15 +97,17 @@ namespace logicalaccess
             // (cannot open file, parse error), an exception is thrown.
             std::list<std::string> configfolder;
             configfolder.push_back(getDllPath() + "/liblogicalaccess.config");
-#ifdef __unix__
+#if defined(__unix__) && !defined(ANDROID)
             configfolder.push_back("/etc/liblogicalaccess.config");
 #endif
             for (std::list<std::string>::iterator it = configfolder.begin(); it != configfolder.end(); ++it)
             {
                 try
                 {
-                    read_xml(*it, pt);
-                    break;
+                    if (boost::filesystem::exists(*it)) {
+                        read_xml(*it, pt);
+                        break;
+                    }
                 }
                 catch (boost::property_tree::xml_parser::xml_parser_error &e)
                 {
