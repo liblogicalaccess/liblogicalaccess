@@ -255,13 +255,13 @@ namespace logicalaccess
                 for (boost::filesystem::directory_iterator dir_iter(pluginDir); dir_iter != end_iter; ++dir_iter)
                 {
                     LOG(LogLevel::PLUGINS) << "Checking library " << dir_iter->path().filename().string() << "...";
-                    if ((boost::filesystem::is_regular_file(dir_iter->status()) || boost::filesystem::is_symlink(dir_iter->status()))
-                        && dir_iter->path().extension() == extension
-                        && (hasEnding(dir_iter->path().filename().string(), enumType[LibraryManager::CARDS_TYPE] + extension)
-                        || hasEnding(dir_iter->path().filename().string(), enumType[LibraryManager::READERS_TYPE] + extension)
-                        || hasEnding(dir_iter->path().filename().string(), enumType[LibraryManager::UNIFIED_TYPE] + extension)))
+                    try
                     {
-                        try
+                        if ((boost::filesystem::is_regular_file(dir_iter->status()) || boost::filesystem::is_symlink(dir_iter->status()))
+                            && dir_iter->path().extension() == extension
+                            && (hasEnding(dir_iter->path().filename().string(), enumType[LibraryManager::CARDS_TYPE] + extension)
+                            || hasEnding(dir_iter->path().filename().string(), enumType[LibraryManager::READERS_TYPE] + extension)
+                            || hasEnding(dir_iter->path().filename().string(), enumType[LibraryManager::UNIFIED_TYPE] + extension)))
                         {
                             if (libLoaded.find(dir_iter->path().filename().string()) == libLoaded.end())
                             {
@@ -283,15 +283,15 @@ namespace logicalaccess
                                 LOG(LogLevel::PLUGINS) << "Library " << dir_iter->path().filename().string() << " already loaded. Skipped.";
                             }
                         }
-                        catch (const std::exception &e)
+                        else
                         {
-                            LOG(LogLevel::ERRORS) << "Something bad happened when handling " << dir_iter->path().filename().string() <<
-                            ": " << e.what();
+                            LOG(LogLevel::PLUGINS) << "File " << dir_iter->path().filename().string() << " does not match excepted filenames. Skipped.";
                         }
                     }
-                    else
+                    catch (const std::exception &e)
                     {
-                        LOG(LogLevel::PLUGINS) << "File " << dir_iter->path().filename().string() << " does not match excepted filenames. Skipped.";
+                        LOG(LogLevel::ERRORS) << "Something bad happened when handling " << dir_iter->path().filename().string() <<
+                        ": " << e.what();
                     }
                 }
             }
