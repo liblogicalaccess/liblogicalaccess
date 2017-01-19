@@ -5,7 +5,7 @@
 #include <exception>
 #include <functional>
 
-#if defined(UNIX) || _MSC_VER >= 1900
+#if defined(UNIX) || _MSC_VER >= 1900 || defined(ANDROID)
 #define NOEXCEPT noexcept
 #else
 #define NOEXCEPT
