@@ -10,7 +10,6 @@
 #include "logicalaccess/crypto/symmetric_key.hpp"
 #include "logicalaccess/crypto/sha.hpp"
 #include <assert.h>
-
 #include <cstring>
 
 namespace logicalaccess
@@ -20,12 +19,13 @@ namespace logicalaccess
         OpenSSLSymmetricCipherContext::Information::Information(OpenSSLSymmetricCipher::Method _method) :
             method(_method)
         {
-            EVP_CIPHER_CTX_init(&ctx);
+            ctx = EVP_CIPHER_CTX_new();
+            assert(ctx && "Cannot allocate EVP cipher context.");
         }
 
         OpenSSLSymmetricCipherContext::Information::~Information()
         {
-            EVP_CIPHER_CTX_cleanup(&ctx);
+            EVP_CIPHER_CTX_free(ctx);
         }
 
         OpenSSLSymmetricCipherContext::OpenSSLSymmetricCipherContext(OpenSSLSymmetricCipher::Method _method) :
@@ -36,14 +36,14 @@ namespace logicalaccess
 
         void OpenSSLSymmetricCipherContext::setPadding(bool padding)
         {
-            EVP_CIPHER_CTX_set_padding(&d_information->ctx, padding ? 1 : 0);
+            EVP_CIPHER_CTX_set_padding(d_information->ctx, padding ? 1 : 0);
         }
 
         size_t OpenSSLSymmetricCipherContext::blockSize() const
         {
             assert(d_information);
 
-            return EVP_CIPHER_CTX_block_size(&d_information->ctx);
+            return EVP_CIPHER_CTX_block_size(d_information->ctx);
         }
 
         void OpenSSLSymmetricCipherContext::reset()
