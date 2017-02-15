@@ -23,17 +23,15 @@ namespace logicalaccess
         }
     }
 
-    LibraryManager *LibraryManager::_singleton = NULL;
-
 	LibraryManager *LibraryManager::getInstance()
 	{
-		if (NULL == _singleton)
-			_singleton = new LibraryManager();
-		return _singleton;
+        static LibraryManager instance;
+        return &instance;
 	}
 
     void* LibraryManager::getFctFromName(const std::string &fctname, LibraryType libraryType)
     {
+        std::lock_guard<std::recursive_mutex> lg(mutex_);
         void *fct;
         boost::filesystem::directory_iterator end_iter;
         std::string extension = EXTENSION_LIB;
@@ -59,6 +57,7 @@ namespace logicalaccess
 
     std::shared_ptr<ReaderProvider> LibraryManager::getReaderProvider(const std::string& readertype)
     {
+        std::lock_guard<std::recursive_mutex> lg(mutex_);
         std::shared_ptr<ReaderProvider> ret;
         std::string fctname = "get" + readertype + "Reader";
 
@@ -75,6 +74,7 @@ namespace logicalaccess
 
     std::shared_ptr<Chip> LibraryManager::getCard(const std::string& cardtype)
     {
+        std::lock_guard<std::recursive_mutex> lg(mutex_);
         std::shared_ptr<Chip> ret;
         std::string fctname = "get" + cardtype + "Chip";
 
@@ -91,6 +91,7 @@ namespace logicalaccess
 
     std::shared_ptr<KeyDiversification> LibraryManager::getKeyDiversification(const std::string& keydivtype)
     {
+        std::lock_guard<std::recursive_mutex> lg(mutex_);
         std::shared_ptr<KeyDiversification> ret;
         std::string fctname = "get" + keydivtype + "Diversification";
 
@@ -107,6 +108,7 @@ namespace logicalaccess
 
     std::shared_ptr<Commands> LibraryManager::getCommands(const std::string& extendedtype)
     {
+        std::lock_guard<std::recursive_mutex> lg(mutex_);
         std::shared_ptr<Commands> ret;
         std::string fctname = "get" + extendedtype + "Commands";
 
@@ -142,11 +144,13 @@ namespace logicalaccess
 
     std::vector<std::string> LibraryManager::getAvailableCards()
     {
+        std::lock_guard<std::recursive_mutex> lg(mutex_);
         return getAvailablePlugins(LibraryManager::CARDS_TYPE);
     }
 
     std::vector<std::string> LibraryManager::getAvailableReaders()
     {
+        std::lock_guard<std::recursive_mutex> lg(mutex_);
         return getAvailablePlugins(LibraryManager::READERS_TYPE);
     }
 
@@ -163,6 +167,7 @@ namespace logicalaccess
 
     std::vector<std::string> LibraryManager::getAvailablePlugins(LibraryType libraryType)
     {
+        std::lock_guard<std::recursive_mutex> lg(mutex_);
         std::vector<std::string> plugins;
         void* fct = NULL;
         boost::filesystem::directory_iterator end_iter;
@@ -216,6 +221,7 @@ namespace logicalaccess
 
     std::shared_ptr<ReaderUnit> LibraryManager::getReader(const std::string &readerName) const
     {
+        std::lock_guard<std::recursive_mutex> lg(mutex_);
         // The idea here is simply to loop over all shared library
         // and opportunistically call the `getReaderUnit()` function if it exists, hoping
         // that some module will be able to fulfil our request.
@@ -239,6 +245,7 @@ namespace logicalaccess
 
     void LibraryManager::scanPlugins()
     {
+        std::lock_guard<std::recursive_mutex> lg(mutex_);
         void* fct = NULL;
         boost::filesystem::directory_iterator end_iter;
         std::string extension = EXTENSION_LIB;
@@ -305,6 +312,7 @@ namespace logicalaccess
 std::shared_ptr<CardService> LibraryManager::getCardService(std::shared_ptr<Chip> chip,
                                                             CardServiceType type)
 {
+    std::lock_guard<std::recursive_mutex> lg(mutex_);
     std::shared_ptr<CardService> srv;
     for (auto &&itr : libLoaded)
     {
@@ -325,6 +333,7 @@ std::shared_ptr<CardService> LibraryManager::getCardService(std::shared_ptr<Chip
 
 ReaderServicePtr LibraryManager::getReaderService(ReaderUnitPtr reader, ReaderServiceType type)
 {
+    std::lock_guard<std::recursive_mutex> lg(mutex_);
     ReaderServicePtr srv;
     for (auto &&itr : libLoaded)
     {
