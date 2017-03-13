@@ -195,7 +195,7 @@ namespace logicalaccess
 					mAiToUse->keyA,
 					mAiToUse->keyB,
                     mAiToUse->sab,
-                    mAiToUse->gpb,
+                    mAiToWrite ? mAiToWrite->gpb : mAiToUse->gpb,
                     mAiToWrite ? &(mAiToWrite->sab) : NULL,
 					mAiToWrite ? mAiToWrite->keyA : std::shared_ptr<MifareKey>(),
 					mAiToWrite ? mAiToWrite->keyB : std::shared_ptr<MifareKey>());
@@ -208,7 +208,7 @@ namespace logicalaccess
 					mAiToUse->keyA,
 					mAiToUse->keyB,
 					mAiToUse->sab,
-					mAiToUse->gpb,
+                    mAiToWrite ? mAiToWrite->gpb : mAiToUse->gpb,
 					mAiToWrite ? &(mAiToWrite->sab) : NULL,
 					mAiToWrite ? mAiToWrite->keyA : std::shared_ptr<MifareKey>(),
 					mAiToWrite ? mAiToWrite->keyB : std::shared_ptr<MifareKey>());

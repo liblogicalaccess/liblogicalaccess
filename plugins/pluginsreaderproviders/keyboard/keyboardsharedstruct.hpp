@@ -23,6 +23,10 @@ namespace logicalaccess
         unsigned long long handle;
 
         char name[DEVICE_NAME_MAXLENGTH];
+
+        unsigned int vendorId;
+
+		unsigned int productId;
     };
 
     struct KeyboardSharedStruct

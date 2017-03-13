@@ -44,6 +44,19 @@ namespace KBDHOOK
 						if (memcmp(entry.name, root1.c_str(), root1.size()) != 0 && memcmp(entry.name, root2.c_str(), root2.size()) != 0)
 						{
 							islogkbdlib::KbdLogs::getInstance()->LogEvent("#getDeviceList# Keyboard device found {%s}!", entry.name);
+
+							RID_DEVICE_INFO rdiDeviceInfo;
+							rdiDeviceInfo.cbSize = sizeof(RID_DEVICE_INFO);
+							nSize = rdiDeviceInfo.cbSize;
+
+							// Get Device Info
+							errorCode = GetRawInputDeviceInfo((HANDLE)entry.handle,
+								RIDI_DEVICEINFO,
+								&rdiDeviceInfo,
+								&nSize);
+							entry.vendorId = rdiDeviceInfo.hid.dwVendorId;
+							entry.productId = rdiDeviceInfo.hid.dwProductId;
+
 							deviceList.push_back(entry);
 						}
 					}
