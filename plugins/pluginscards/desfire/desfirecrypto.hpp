@@ -89,7 +89,7 @@ namespace logicalaccess
          * \param param The parameters.
          * \return The encrypted data buffer
          */
-        std::vector<unsigned char> desfireEncrypt(const std::vector<unsigned char>& data, const std::vector<unsigned char>& param = std::vector<unsigned char>());
+        std::vector<unsigned char> desfireEncrypt(const std::vector<unsigned char>& data, const std::vector<unsigned char>& param = std::vector<unsigned char>(), bool calccrc = true);
 
         /**
          * \brief Encipher a data buffer part, and temporised it.
@@ -175,7 +175,7 @@ namespace logicalaccess
          * \param data The data source buffer to encrypt
          * \return The data encrypted buffer
          */
-        static std::vector<unsigned char> desfire_encrypt(const std::vector<unsigned char>& key, std::vector<unsigned char> data);
+        static std::vector<unsigned char> desfire_encrypt(const std::vector<unsigned char>& key, std::vector<unsigned char> data, bool calccrc = true);
 
         /**
          * \brief  Return data part for the encrypted communication mode for WriteData / WriteRecord.
@@ -186,7 +186,7 @@ namespace logicalaccess
          * \param param The optional parameters
          * \return The data encrypted buffer
          */
-        std::vector<unsigned char> desfire_iso_encrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size, const std::vector<unsigned char>& param = std::vector<unsigned char>());
+        std::vector<unsigned char> desfire_iso_encrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size, const std::vector<unsigned char>& param = std::vector<unsigned char>(), bool calccrc = true);
 
         /**
          * \brief Return data part for the encrypted communication mode for WriteData / WriteRecord.

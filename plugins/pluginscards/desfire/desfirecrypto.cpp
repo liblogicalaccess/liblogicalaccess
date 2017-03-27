@@ -139,17 +139,17 @@ namespace logicalaccess
         return ret;
     }
 
-    std::vector<unsigned char> DESFireCrypto::desfireEncrypt(const std::vector<unsigned char>& data, const std::vector<unsigned char>& param)
+    std::vector<unsigned char> DESFireCrypto::desfireEncrypt(const std::vector<unsigned char>& data, const std::vector<unsigned char>& param, bool calccrc)
     {
         std::vector<unsigned char> ret;
 
         if (d_auth_method == CM_LEGACY)
         {
-            ret = desfire_encrypt(d_sessionKey, data);
+            ret = desfire_encrypt(d_sessionKey, data, calccrc);
         }
         else
         {
-            ret = desfire_iso_encrypt(d_sessionKey, data, d_cipher, d_block_size, param);
+            ret = desfire_iso_encrypt(d_sessionKey, data, d_cipher, d_block_size, param, calccrc);
         }
 
         return ret;
@@ -504,12 +504,15 @@ namespace logicalaccess
         return desfire_CBC_mac(key, std::vector<unsigned char>(), data);
     }
 
-    std::vector<unsigned char> DESFireCrypto::desfire_encrypt(const std::vector<unsigned char>& key, std::vector<unsigned char> data)
+    std::vector<unsigned char> DESFireCrypto::desfire_encrypt(const std::vector<unsigned char>& key, std::vector<unsigned char> data, bool calccrc)
     {
-        int pad = (8 - ((data.size() + 2) % 8)) % 8;
-        short crc = desfire_crc16(&data[0], data.size());
-        data.push_back(static_cast<unsigned char>(crc & 0xff));
-        data.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
+        if (calccrc)
+        {
+            short crc = desfire_crc16(&data[0], data.size());
+            data.push_back(static_cast<unsigned char>(crc & 0xff));
+            data.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
+        }
+        int pad = (8 - (data.size() % 8)) % 8;
         for (int i = 0; i < pad; ++i)
         {
             data.push_back(0x00);
@@ -1113,17 +1116,21 @@ namespace logicalaccess
                                                                   const std::vector<unsigned char>& data,
                                                                   std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher,
                                                                   unsigned int block_size,
-                                                                  const std::vector<unsigned char>& param)
+                                                                  const std::vector<unsigned char>& param,
+                                                                  bool calccrc)
     {
         std::vector<unsigned char> encdata;
         std::vector<unsigned char> decdata = data;
         std::vector<unsigned char> calconbuf = param;
         calconbuf.insert(calconbuf.end(), data.begin(), data.end());
-        uint32_t crc = desfire_crc32(&calconbuf[0], calconbuf.size());
-        decdata.push_back(static_cast<unsigned char>(crc & 0xff));
-        decdata.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
-        decdata.push_back(static_cast<unsigned char>((crc & 0xff0000) >> 16));
-        decdata.push_back(static_cast<unsigned char>((crc & 0xff000000) >> 24));
+        if (calccrc)
+        {
+            uint32_t crc = desfire_crc32(&calconbuf[0], calconbuf.size());
+            decdata.push_back(static_cast<unsigned char>(crc & 0xff));
+            decdata.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
+            decdata.push_back(static_cast<unsigned char>((crc & 0xff0000) >> 16));
+            decdata.push_back(static_cast<unsigned char>((crc & 0xff000000) >> 24));
+        }
         int pad = (block_size - (decdata.size() % block_size)) % block_size;
         for (int i = 0; i < pad; ++i)
         {

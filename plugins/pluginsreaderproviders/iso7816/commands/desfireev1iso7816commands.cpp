@@ -1363,7 +1363,7 @@ namespace logicalaccess
 
 		std::vector<unsigned char> encBuffer = crypto->desfireEncrypt(std::vector<unsigned char>(command, command + sizeof(command)));
         std::vector<unsigned char> buf;
-        buf.push_back(0x02);
+        buf.push_back(0x01);
         buf.insert(buf.end(), encBuffer.begin(), encBuffer.end());
         DESFireISO7816Commands::transmit(DFEV1_INS_SET_CONFIGURATION, buf);
     }
@@ -1371,9 +1371,29 @@ namespace logicalaccess
     void DESFireEV1ISO7816Commands::setConfiguration(const std::vector<unsigned char>& ats)
     {
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
-		std::vector<unsigned char> encBuffer = crypto->desfireEncrypt(ats);
+        std::vector<unsigned char> data = ats;
         std::vector<unsigned char> buf;
         buf.push_back(0x02);
+        if (crypto->d_auth_method == CM_LEGACY)
+        {
+            short crc = DESFireCrypto::desfire_crc16(&data[0], data.size());
+            data.push_back(static_cast<unsigned char>(crc & 0xff));
+            data.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
+        }
+        else
+        {
+            std::vector<unsigned char> calconbuf;
+            calconbuf.push_back(DFEV1_INS_SET_CONFIGURATION);
+            calconbuf.push_back(0x02);
+            calconbuf.insert(calconbuf.end(), ats.begin(), ats.end());
+            uint32_t crc = DESFireCrypto::desfire_crc32(&calconbuf[0], calconbuf.size());
+            data.push_back(static_cast<unsigned char>(crc & 0xff));
+            data.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
+            data.push_back(static_cast<unsigned char>((crc & 0xff0000) >> 16));
+            data.push_back(static_cast<unsigned char>((crc & 0xff000000) >> 24));
+        }
+        data.push_back(0x80);
+        std::vector<unsigned char> encBuffer = crypto->desfireEncrypt(data, std::vector<unsigned char>(), false);
         buf.insert(buf.end(), encBuffer.begin(), encBuffer.end());
         DESFireISO7816Commands::transmit(DFEV1_INS_SET_CONFIGURATION, buf);
     }
