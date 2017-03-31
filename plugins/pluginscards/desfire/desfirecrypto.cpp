@@ -234,7 +234,7 @@ namespace logicalaccess
      */
     static bool is_triple_des(const std::vector<uint8_t> &key)
     {
-        assert(key.size() >= 16);
+        EXCEPTION_ASSERT_WITH_LOG(key.size() >= 16, LibLogicalAccessException, "Triple des key check need a valid key size.");
 
         for (int i = 0; i < 8; ++i)
         {
@@ -263,10 +263,12 @@ namespace logicalaccess
         // Set encryption keys
         if (is3des)
         {
+            EXCEPTION_ASSERT_WITH_LOG(key.size() >= 16, LibLogicalAccessException, "DESFire send cbc encryption need a valid 3des key.");
             des3_setup(&key[0], 16, 0, &skey);
         }
         else
         {
+            EXCEPTION_ASSERT_WITH_LOG(key.size() >= 8, LibLogicalAccessException, "DESFire send cbc encryption need a valid key.");
             des_setup(&key[0], 8, 0, &skey);
         }
 
@@ -337,6 +339,8 @@ namespace logicalaccess
 
         std::vector<unsigned char> ret;
 
+        EXCEPTION_ASSERT_WITH_LOG(key.size() >= 8, LibLogicalAccessException, "DESFire encryption need a valid key.");
+
         bool is3des = false;
         if (memcmp(&key[0], &key[8], 8))
         {
@@ -346,6 +350,7 @@ namespace logicalaccess
         // Set encryption keys
         if (is3des)
         {
+            EXCEPTION_ASSERT_WITH_LOG(key.size() >= 16, LibLogicalAccessException, "DESFire encryption need a valid 3des key.");
             des3_setup(&key[0], 16, 0, &skey);
         }
         else
@@ -424,6 +429,8 @@ namespace logicalaccess
 
         std::vector<unsigned char> ret;
 
+        EXCEPTION_ASSERT_WITH_LOG(key.size() >= 8, LibLogicalAccessException, "DESFire sam cbc encryption need a valid key.");
+
         bool is3des = false;
         if (memcmp(&key[0], &key[8], 8))
         {
@@ -433,6 +440,7 @@ namespace logicalaccess
         // Set encryption keys
         if (is3des)
         {
+            EXCEPTION_ASSERT_WITH_LOG(key.size() >= 16, LibLogicalAccessException, "DESFire sam cbc encryption need a valid key.");
             des3_setup(&key[0], 16, 0, &skey);
         }
         else
