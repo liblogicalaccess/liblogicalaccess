@@ -10,6 +10,7 @@
 #include "logicalaccess/crypto/aes_initialization_vector.hpp"
 #include "logicalaccess/crypto/des_symmetric_key.hpp"
 #include "logicalaccess/crypto/des_initialization_vector.hpp"
+#include "logicalaccess/bufferhelper.hpp"
 
 namespace logicalaccess
 {
@@ -61,7 +62,7 @@ namespace logicalaccess
 			return cmac;
 		}
 
-        std::vector<unsigned char> CMACCrypto::cmac(const std::vector<unsigned char>& key, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const std::vector<unsigned char>& data, std::vector<unsigned char> lastIV, unsigned int padding_size)
+        std::vector<unsigned char> CMACCrypto::cmac(const std::vector<unsigned char>& key, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const std::vector<unsigned char>& data, std::vector<unsigned char> lastIV, unsigned int padding_size, bool forceK2Use)
         {
             std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherK1K2;
 
@@ -140,7 +141,7 @@ namespace logicalaccess
             }
 
             // XOR with K1
-            if (pad == 0)
+            if (pad == 0 && !forceK2Use)
             {
                 for (unsigned int i = 0; i < K1.size(); ++i)
                 {

@@ -16,7 +16,7 @@ namespace logicalaccess
         virtual void initDiversification(std::vector<unsigned char> identifier, int AID, std::shared_ptr<Key> key, unsigned char keyno, std::vector<unsigned char>& diversify);
         virtual std::vector<unsigned char> getDiversifiedKey(std::shared_ptr<Key> key, std::vector<unsigned char> diversify);
 
-        NXPAV2KeyDiversification() : d_revertAID(false) {};
+        NXPAV2KeyDiversification() : d_revertAID(false), d_forceK2Use(false) {};
         NXPAV2KeyDiversification(const std::vector<unsigned char>& divInput) : d_revertAID(false), d_divInput(divInput) {};
         virtual ~NXPAV2KeyDiversification() {};
 
@@ -29,6 +29,10 @@ namespace logicalaccess
 		bool getRevertAID() const { return d_revertAID; }
 
 		void setRevertAID(bool revertAID) { d_revertAID = revertAID; }
+
+        bool getForceK2Use() const { return d_forceK2Use; }
+
+        void setForceK2Use(bool forceK2Use) { d_forceK2Use = forceK2Use; }
 
         const std::vector<unsigned char>& getDivInput() const { return d_divInput; }
 
@@ -44,6 +48,8 @@ namespace logicalaccess
         std::vector<unsigned char> d_divInput;
 
         std::vector<unsigned char> d_systemIdentifier;
+
+        bool d_forceK2Use;
     };
 }
 
