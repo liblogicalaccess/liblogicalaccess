@@ -123,6 +123,7 @@ namespace logicalaccess
         node.put("divInput", BufferHelper::getHex(d_divInput));
         node.put("systemIdentifier", BufferHelper::getHex(d_systemIdentifier));
 		node.put("revertAID", d_revertAID);
+        node.put("forceK2Use", d_forceK2Use);
         parentNode.add_child(getDefaultXmlNodeName(), node);
     }
 
@@ -136,6 +137,11 @@ namespace logicalaccess
         {
             std::string systemIdentifier = siChild.get().get_value<std::string>();
             d_systemIdentifier = BufferHelper::fromHexString(systemIdentifier);
+        }
+        boost::optional<boost::property_tree::ptree&> fChild = node.get_child_optional("forceK2Use");
+        if (fChild)
+        {
+            d_forceK2Use = fChild.get().get_value<bool>();
         }
     }
 }
