@@ -25,11 +25,11 @@ void MifareUltralightUIDChangerService::changeUID(
     uid_page0.push_back(0);
     auto uid_page1 = ByteVector(new_uid.begin() + 3, new_uid.end());
 
-    loc->byte = 0;
+    loc->byte_ = 0;
     loc->page = 1;
     storage_->writeData(loc, nullptr, nullptr, uid_page1, CB_DEFAULT);
 
-    loc->byte = 0;
+    loc->byte_ = 0;
     loc->page = 0;
     storage_->writeData(loc, nullptr, nullptr, uid_page0, CB_DEFAULT);
 }

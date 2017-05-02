@@ -54,7 +54,7 @@ namespace logicalaccess
         location.reset(new MifareLocation());
         location->sector = sector;
 		location->block = -1;
-        location->byte = 0;
+        location->byte_ = 0;
 
         sectorNode->setLocation(location);
         sectorNode->setParent(rootNode);
@@ -76,7 +76,7 @@ namespace logicalaccess
 		location.reset(new MifareLocation());
 		location->sector = sector;
 		location->block = block;
-		location->byte = 0;
+		location->byte_ = 0;
 
 		blockNode->setLocation(location);
 		blockNode->setParent(rootNode);

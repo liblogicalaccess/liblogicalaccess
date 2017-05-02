@@ -12,7 +12,7 @@ namespace logicalaccess
     MifareLocation::MifareLocation() :
         sector(1),
         block(0),
-        byte(0),
+        byte_(0),
         useMAD(false),
         aid(0x482A)
     {
@@ -28,7 +28,7 @@ namespace logicalaccess
 
         node.put("Sector", sector);
         node.put("Block", block);
-        node.put("Byte", byte);
+        node.put("Byte", byte_);
         node.put("Sector", sector);
         node.put("Sector", sector);
 
@@ -44,7 +44,7 @@ namespace logicalaccess
     {
         sector = node.get_child("Sector").get_value<int>();
         block = node.get_child("Block").get_value<int>();
-        byte = node.get_child("Byte").get_value<int>();
+        byte_ = node.get_child("Byte").get_value<int>();
 
         boost::property_tree::ptree madnode = node.get_child("MAD");
         if (!madnode.empty())
@@ -74,7 +74,7 @@ namespace logicalaccess
 
         return (sector == mLocation->sector
             && block == mLocation->block
-            && byte == mLocation->byte
+            && byte_ == mLocation->byte_
             && useMAD == mLocation->useMAD
             && aid == mLocation->aid
             );
