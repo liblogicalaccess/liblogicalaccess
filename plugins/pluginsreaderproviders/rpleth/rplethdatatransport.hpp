@@ -78,7 +78,7 @@ namespace logicalaccess
          * \brief Get the badges list.
          * \return The list of badge.
          */
-        const std::list<std::vector<unsigned char> > &getBadges() const { return d_badges; };
+        std::list<std::vector<unsigned char> > getBadges() const { return d_badges; };
 
         /**
          * \brief Send a command to the reader.
