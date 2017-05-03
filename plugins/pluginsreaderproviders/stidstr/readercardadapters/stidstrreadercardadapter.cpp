@@ -182,7 +182,7 @@ namespace logicalaccess
             cmd.push_back(static_cast<unsigned char>(command.size()));
             cmd.insert(cmd.end(), command.begin(), command.end());
             std::vector<unsigned char> response = sendCommand(0x0014, cmd);
-            EXCEPTION_ASSERT_WITH_LOG(response.size() >= 2, std::exception, "The response should be at least 2-byte long.");
+			EXCEPTION_ASSERT_WITH_LOG(response.size() >= 2, LibLogicalAccessException, "The response should be at least 2-byte long.");
             //unsigned short lenDataOut = (response[0] << 8) | response[1];
             return std::vector<unsigned char>(response.begin() + 2, response.end());
         }
