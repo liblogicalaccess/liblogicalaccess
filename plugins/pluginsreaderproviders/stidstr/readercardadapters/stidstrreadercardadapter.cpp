@@ -178,13 +178,16 @@ namespace logicalaccess
         if (d_iso7816)
         {
             std::vector<unsigned char> cmd;
-            cmd.push_back(static_cast<unsigned char>(command.size() >> 8));
-            cmd.push_back(static_cast<unsigned char>(command.size()));
+            cmd.push_back(static_cast<unsigned char>((command.size() + 2) >> 8));
+            cmd.push_back(static_cast<unsigned char>(command.size() + 2));
+            cmd.push_back(0x40);
+            cmd.push_back(0x01);
             cmd.insert(cmd.end(), command.begin(), command.end());
             std::vector<unsigned char> response = sendCommand(0x0014, cmd);
-            EXCEPTION_ASSERT_WITH_LOG(response.size() >= 2, std::exception, "The response should be at least 2-byte long.");
+            EXCEPTION_ASSERT_WITH_LOG(response.size() >= 4, std::exception, "The response should be at least 4-byte long.");
             //unsigned short lenDataOut = (response[0] << 8) | response[1];
-            return std::vector<unsigned char>(response.begin() + 2, response.end());
+            EXCEPTION_ASSERT_WITH_LOG(response[2] == 0x41 && response[3] == 0x00, std::exception, "The PN532 component didn't responded successfully.");
+            return std::vector<unsigned char>(response.begin() + 4, response.end());
         }
         
         return ReaderCardAdapter::sendCommand(command, timeout);

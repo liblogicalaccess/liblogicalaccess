@@ -443,7 +443,7 @@ namespace logicalaccess
         LOG(LogLevel::INFOS) << "Scanning 14443A RAW chips...";
         std::shared_ptr<Chip> chip;
         std::vector<unsigned char> command;
-        command.push_back(0x00);
+        command.push_back(getSTidSTRConfiguration()->getPN532Direct() ? 0x01 : 0x00); // 0x01 to Request ATS (required for DESFire / PN532 direct communication), 0x00 otherwise
 
         std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000F, command);
         if (response.size() > 0)
