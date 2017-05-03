@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_STIDSTRREADERUNITCONFIGURATION_HPP
 #define LOGICALACCESS_STIDSTRREADERUNITCONFIGURATION_HPP
 
-#include "logicalaccess/readerproviders/readerunitconfiguration.hpp"
+#include "../iso7816/iso7816readerunitconfiguration.hpp"
 #include "logicalaccess/cards/aes128key.hpp"
 #include "logicalaccess/cards/hmac1key.hpp"
 
@@ -35,7 +35,7 @@ namespace logicalaccess
     /**
      * \brief The STidSTR reader unit configuration base class.
      */
-    class LIBLOGICALACCESS_API STidSTRReaderUnitConfiguration : public ReaderUnitConfiguration
+    class LIBLOGICALACCESS_API STidSTRReaderUnitConfiguration : public ISO7816ReaderUnitConfiguration
     {
     public:
 
@@ -132,6 +132,10 @@ namespace logicalaccess
          */
         void setAESKey(std::shared_ptr<AES128Key> key);
 
+        bool getPN532Direct() const;
+
+        void setPN532Direct(bool direct);
+
     protected:
 
         /**
@@ -158,6 +162,11 @@ namespace logicalaccess
          * \brief The key used for AES enciphering.
          */
         std::shared_ptr<AES128Key> d_key_aes;
+
+        /**
+        * \brief Direct communication with the internal PN532 component.
+        */
+        bool d_pn532_direct;
     };
 }
 

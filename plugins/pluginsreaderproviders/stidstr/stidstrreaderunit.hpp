@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_STIDSTRREADERUNIT_HPP
 #define LOGICALACCESS_STIDSTRREADERUNIT_HPP
 
-#include "logicalaccess/readerproviders/readerunit.hpp"
+#include "../iso7816/iso7816readerunit.hpp"
 #include "stidstr_fwd.hpp"
 
 namespace logicalaccess
@@ -36,7 +36,7 @@ namespace logicalaccess
     /**
      * \brief The STidSTR reader unit class.
      */
-    class LIBLOGICALACCESS_API STidSTRReaderUnit : public ReaderUnit
+    class LIBLOGICALACCESS_API STidSTRReaderUnit : public ISO7816ReaderUnit
     {
     public:
 

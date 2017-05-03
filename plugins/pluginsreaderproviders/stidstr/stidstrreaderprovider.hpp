@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_READERSTIDSTR_PROVIDER_HPP
 #define LOGICALACCESS_READERSTIDSTR_PROVIDER_HPP
 
-#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include "../iso7816/iso7816readerprovider.hpp"
 
 namespace logicalaccess
 {
@@ -16,7 +16,7 @@ namespace logicalaccess
     /**
      * \brief STidSTR Reader Provider class.
      */
-    class LIBLOGICALACCESS_API STidSTRReaderProvider : public ReaderProvider
+    class LIBLOGICALACCESS_API STidSTRReaderProvider : public ISO7816ReaderProvider
     {
     public:
 
@@ -64,6 +64,12 @@ namespace logicalaccess
          * \return A reader unit.
          */
         virtual std::shared_ptr<ReaderUnit> createReaderUnit();
+
+        /**
+        * \brief Create a new reader unit for the reader provider.
+        * \return A reader unit.
+        */
+        virtual std::shared_ptr<ISO7816ReaderUnit> createReaderUnit(std::string readerunitname);
 
     protected:
 

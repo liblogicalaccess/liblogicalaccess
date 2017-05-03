@@ -17,12 +17,13 @@
 #include <logicalaccess/logs.hpp>
 
 #include "stidstrreaderunit.hpp"
+#include "readercardadapters/stidstrreaderdatatransport.hpp"
 #include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
 {
     STidSTRReaderProvider::STidSTRReaderProvider() :
-        ReaderProvider()
+        ISO7816ReaderProvider()
     {
     }
 
@@ -56,6 +57,15 @@ namespace logicalaccess
         ret->setReaderProvider(std::weak_ptr<ReaderProvider>(shared_from_this()));
 
         return ret;
+    }
+
+    std::shared_ptr<ISO7816ReaderUnit> STidSTRReaderProvider::createReaderUnit(std::string readerunitname)
+    {
+        auto ru = std::dynamic_pointer_cast<STidSTRReaderUnit>(createReaderUnit());
+        auto dt = std::make_shared<STidSTRDataTransport>(readerunitname);
+        dt->setPortBaudRate(38400);
+        ru->setDataTransport(dt);
+        return ru;
     }
 
     bool STidSTRReaderProvider::refreshReaderList()

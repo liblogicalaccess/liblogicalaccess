@@ -28,7 +28,7 @@ namespace logicalaccess
         res = receive(timeout);
 		d_lastResult = res;
 
-        LOG(LogLevel::COMS) << "Response received successfully ! Reponse: " << BufferHelper::getHex(res) << " size {" << res.size() << "}";
+        LOG(LogLevel::COMS) << "Response received successfully ! Response: " << BufferHelper::getHex(res) << " size {" << res.size() << "}";
         return res;
     }
 }
