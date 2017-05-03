@@ -24,10 +24,10 @@ branches:
 clone_folder: c:\projects\liblogicalaccess
 
 install:
-#  - ps: |
-#     Invoke-WebRequest http://www.us.apache.org/dist/maven/maven-3/3.2.5/binaries/apache-maven-3.2.5-bin.zip -OutFile C:\maven-bin.zip
-#     Add-Type -AssemblyName System.IO.Compression.FileSystem
-#     [System.IO.Compression.ZipFile]::ExtractToDirectory("C:\maven-bin.zip", "C:\maven")
+  - ps: |
+     Invoke-WebRequest http://www.us.apache.org/dist/maven/maven-3/3.2.5/binaries/apache-maven-3.2.5-bin.zip -OutFile C:\maven-bin.zip
+     Add-Type -AssemblyName System.IO.Compression.FileSystem
+     [System.IO.Compression.ZipFile]::ExtractToDirectory("C:\maven-bin.zip", "C:\maven")
   - cmd: SET PATH=C:\maven\apache-maven-3.2.5\bin;%JAVA_HOME%\bin;%PATH%
   - cmd: SET MAVEN_OPTS=-XX:MaxPermSize=2g -Xmx4g
   - cmd: SET JAVA_OPTS=-XX:MaxPermSize=2g -Xmx4g
@@ -53,5 +53,4 @@ before_build:
       elseif (($env:PLATFORM -eq "x86") -and ($env:CONFIGURATION -eq "Debug"))
       { cmake.exe -DCMAKE_BUILD_TYPE=Debug -DTARGET_ARCH=Win32 -DLIB_SUFFIX=Win32/Debug -G"Visual Studio 12" -Tv120_xp . -DCMAKE_INSTALL_PREFIX=./install . }
 cache:
-  - C:\maven\
   - C:\Users\appveyor\.m2
