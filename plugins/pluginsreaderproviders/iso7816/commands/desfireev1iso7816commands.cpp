@@ -475,7 +475,7 @@ namespace logicalaccess
 		} while (true);
 
         if (apduresult.size() <= 2 && apduresult[apduresult.size() - 2] != 0x90 && apduresult[apduresult.size() - 2] != 0xaf)
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam_iso_authenticate P1 failed.");
+            THROW_EXCEPTION_WITH_LOG(CardException, "sam_iso_authenticate P1 failed.");
 
         std::vector<unsigned char> encRPCD1RPICC1(apduresult.begin(), apduresult.end() - 2 - 16);
         std::vector<unsigned char> RPCD2(apduresult.end() - 16 - 2, apduresult.end() - 2);
@@ -505,7 +505,7 @@ namespace logicalaccess
         }
 
         if (encRPICC2RPCD2a.size() < 1)
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam_iso_authenticate wrong internal data.");
+            THROW_EXCEPTION_WITH_LOG(CardException, "sam_iso_authenticate wrong internal data.");
 
         unsigned char cmdp2[] = { 0x80, 0x8e, 0x00, 0x00, (unsigned char)(encRPICC2RPCD2a.size()) };
         cmd_vector.assign(cmdp2, cmdp2 + 5);
@@ -515,7 +515,7 @@ namespace logicalaccess
         else if (getSAMChip()->getCardType() == "SAM_AV2")
             apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(cmd_vector);
         if (apduresult.size() <= 2 && apduresult[apduresult.size() - 2] != 0x90 && apduresult[apduresult.size() - 2] != 0x00)
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam_iso_authenticate P2 failed.");
+            THROW_EXCEPTION_WITH_LOG(CardException, "sam_iso_authenticate P2 failed.");
 
 		crypto->d_currentKeyNo = keyno;
         if (getSAMChip()->getCardType() == "SAM_AV1")
@@ -627,7 +627,7 @@ namespace logicalaccess
         cryptogram = iso_internalAuthenticate(algorithm, isMasterCardKey, keyno, RPCD2, 2 * le);
 
         if (cryptogram.size() < 1)
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "iso_authenticate wrong internal data.");
+            THROW_EXCEPTION_WITH_LOG(CardException, "iso_authenticate wrong internal data.");
 
         std::vector<unsigned char> response;
         cipher->decipher(cryptogram, response, *isokey.get(), *iv.get(), false);
@@ -635,7 +635,7 @@ namespace logicalaccess
         std::vector<unsigned char> RPICC2 = std::vector<unsigned char>(response.begin(), response.begin() + le);
         std::vector<unsigned char> RPCD2a = std::vector<unsigned char>(response.begin() + le, response.end());
 
-        EXCEPTION_ASSERT_WITH_LOG(RPCD2 == RPCD2a, LibLogicalAccessException, "Integrity error : host part of mutual authentication");
+        EXCEPTION_ASSERT_WITH_LOG(RPCD2 == RPCD2a, CardException, "Integrity error : host part of mutual authentication");
 
 		crypto->d_currentKeyNo = keyno;
 

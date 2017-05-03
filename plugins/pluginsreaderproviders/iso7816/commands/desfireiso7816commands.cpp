@@ -865,7 +865,7 @@ namespace logicalaccess
 				} while (true);
 
 				if (apduresult.size() <= 2)
-					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam authenticate DES P1 failed.");
+                    THROW_EXCEPTION_WITH_LOG(CardException, "sam authenticate DES P1 failed.");
 
                 rndAB.insert(rndAB.begin(), apduresult.begin(), apduresult.begin() + 16);
             }
@@ -887,7 +887,7 @@ namespace logicalaccess
                     else if (getSAMChip()->getCardType() == "SAM_AV2")
                         apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(cmd_vector, true, false);
                     if (apduresult.size() != 2 || apduresult[0] != 0x90 || apduresult[1] != 0x00)
-                        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam authenticate DES P2 failed.");
+                        THROW_EXCEPTION_WITH_LOG(CardException, "sam authenticate DES P2 failed.");
 
                     if (getSAMChip()->getCardType() == "SAM_AV1")
 						crypto->d_sessionKey = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->dumpSessionKey();
@@ -900,7 +900,7 @@ namespace logicalaccess
             }
         }
 		else
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "DESFire authentication P1 failed.");
+            THROW_EXCEPTION_WITH_LOG(CardException, "DESFire authentication P1 failed.");
     }
 
     std::vector<unsigned char> DESFireISO7816Commands::transmit(unsigned char cmd, unsigned char lc)
