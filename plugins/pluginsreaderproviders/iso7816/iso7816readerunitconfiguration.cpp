@@ -8,7 +8,7 @@
 #include <logicalaccess/logs.hpp>
 #include "iso7816readerunitconfiguration.hpp"
 #include "iso7816readerunit.hpp"
-#include "desfirekey.hpp"
+#include "desfire/desfirekey.hpp"
 
 namespace logicalaccess
 {

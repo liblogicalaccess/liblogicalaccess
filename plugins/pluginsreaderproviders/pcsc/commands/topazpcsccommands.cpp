@@ -11,7 +11,7 @@
 #include <sstream>
 
 #include "../pcscreaderprovider.hpp"
-#include "topazchip.hpp"
+#include "topaz/topazchip.hpp"
 
 namespace logicalaccess
 {

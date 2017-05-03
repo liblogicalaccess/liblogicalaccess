@@ -19,9 +19,9 @@
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
 #include "readercardadapters/osdpdatatransport.hpp"
-#include "commands/desfireev1iso7816commands.hpp"
+#include "iso7816/commands/desfireev1iso7816commands.hpp"
 #include "readercardadapters/osdpreadercardadapter.hpp"
-#include "commands/desfireiso7816resultchecker.hpp"
+#include "iso7816/commands/desfireiso7816resultchecker.hpp"
 
 #include "osdpcommands.hpp"
 
@@ -125,8 +125,8 @@ namespace logicalaccess
             else
             {
                 if (poll->getCommandsType() == OSDPCommandsType::LSTATR && poll->getData().size() > 1) {
-                    LOG(LogLevel::INFOS) << "Tamper status changed to: " << (bool) poll->getData()[0x00];
-                    m_tamperStatus = (bool) poll->getData()[0x00];
+                    LOG(LogLevel::INFOS) << "Tamper status changed to: " << static_cast<bool>(poll->getData()[0x00] != 0);
+					m_tamperStatus = static_cast<bool>(poll->getData()[0x00] != 0);
                 }
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 currentWait += 100;
@@ -170,8 +170,8 @@ namespace logicalaccess
                 removed = true;
             } else {
                 if (poll->getCommandsType() == OSDPCommandsType::LSTATR && poll->getData().size() > 1) {
-                    LOG(LogLevel::INFOS) << "Tamper status changed to: " << (bool) poll->getData()[0x00];
-                    m_tamperStatus = (bool) poll->getData()[0x00];
+					LOG(LogLevel::INFOS) << "Tamper status changed to: " << static_cast<bool>(poll->getData()[0x00] != 0);
+					m_tamperStatus = static_cast<bool>(poll->getData()[0x00] != 0);
                 }
                 else
                     disconnected = false;

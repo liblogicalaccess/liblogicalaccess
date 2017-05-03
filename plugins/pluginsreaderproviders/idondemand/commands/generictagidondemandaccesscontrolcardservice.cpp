@@ -6,7 +6,7 @@
 
 #include "generictagidondemandaccesscontrolcardservice.hpp"
 #include "generictagidondemandcommands.hpp"
-#include "generictagchip.hpp"
+#include "generictag/generictagchip.hpp"
 #include "logicalaccess/cards/readercardadapter.hpp"
 
 #include "../readercardadapters/idondemandreadercardadapter.hpp"

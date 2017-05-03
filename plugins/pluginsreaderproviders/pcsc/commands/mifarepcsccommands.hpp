@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_MIFAREPCSCCOMMANDS_HPP
 #define LOGICALACCESS_MIFAREPCSCCOMMANDS_HPP
 
-#include "../mifare/mifarecommands.hpp"
+#include "mifare/mifarecommands.hpp"
 #include "../readercardadapters/pcscreadercardadapter.hpp"
 
 #include <string>

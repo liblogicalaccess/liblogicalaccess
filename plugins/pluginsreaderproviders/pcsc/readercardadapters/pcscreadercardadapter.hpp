@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_DEFAULTPCSCREADERCARDADAPTER_HPP
 #define LOGICALACCESS_DEFAULTPCSCREADERCARDADAPTER_HPP
 
-#include "readercardadapters/iso7816readercardadapter.hpp"
+#include "iso7816/readercardadapters/iso7816readercardadapter.hpp"
 #include "../pcscreaderprovider.hpp"
 
 #include <string>

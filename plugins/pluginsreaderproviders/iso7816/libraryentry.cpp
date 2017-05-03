@@ -1,10 +1,10 @@
 #include <string>
 #include <memory>
-#include "twiccommands.hpp"
+#include "twic/twiccommands.hpp"
 #include "commands/twiciso7816commands.hpp"
 #include "commands/desfireiso7816commands.hpp"
 #include "commands/desfireev1iso7816commands.hpp"
-#include "desfirechip.hpp"
+#include "desfire/desfirechip.hpp"
 #include "logicalaccess/logicalaccess_api.hpp"
 
 extern "C"

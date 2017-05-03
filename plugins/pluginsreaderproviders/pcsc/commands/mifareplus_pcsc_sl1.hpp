@@ -10,7 +10,7 @@
 #include <vector>
 #include <iostream>
 
-#include "../mifareplus/mifareplussl1commands.hpp"
+#include "mifareplus/mifareplussl1commands.hpp"
 #include "mifarepcsccommands.hpp"
 
 namespace logicalaccess

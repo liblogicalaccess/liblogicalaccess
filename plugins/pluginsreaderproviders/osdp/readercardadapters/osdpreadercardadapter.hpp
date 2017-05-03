@@ -8,8 +8,8 @@
 #define LOGICALACCESS_OSDPREADERCARDADAPTER_HPP
 
 #include "logicalaccess/readerproviders/datatransport.hpp"
-#include "readercardadapters/iso7816readercardadapter.hpp"
-#include "commands/desfireiso7816resultchecker.hpp"
+#include "iso7816/readercardadapters/iso7816readercardadapter.hpp"
+#include "iso7816/commands/desfireiso7816resultchecker.hpp"
 #include "../osdpcommands.hpp"
 
 namespace logicalaccess

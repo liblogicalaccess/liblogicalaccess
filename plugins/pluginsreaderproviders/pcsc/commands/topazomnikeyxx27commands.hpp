@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_TOPAZOMNIKEYXX27COMMANDS_HPP
 #define LOGICALACCESS_TOPAZOMNIKEYXX27COMMANDS_HPP
 
-#include "topazcommands.hpp"
+#include "topaz/topazcommands.hpp"
 #include "../readercardadapters/pcscreadercardadapter.hpp"
 
 #include <string>

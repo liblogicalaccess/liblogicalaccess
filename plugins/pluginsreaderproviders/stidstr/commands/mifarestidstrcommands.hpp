@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_MIFARESTIDSTRCOMMANDS_HPP
 #define LOGICALACCESS_MIFARESTIDSTRCOMMANDS_HPP
 
-#include "mifarecommands.hpp"
+#include "mifare/mifarecommands.hpp"
 #include "../readercardadapters/stidstrreadercardadapter.hpp"
 
 #include <string>

@@ -23,8 +23,8 @@
 #include "rplethledbuzzerdisplay.hpp"
 #include "rplethlcddisplay.hpp"
 #include "rplethdatatransport.hpp"
-#include "desfireev1chip.hpp"
-#include "commands/desfireiso7816commands.hpp"
+#include "desfire/desfireev1chip.hpp"
+#include "iso7816/commands/desfireiso7816commands.hpp"
 
 #include "logicalaccess/readerproviders/serialportxml.hpp"
 #include "rplethreaderunitconfiguration.hpp"

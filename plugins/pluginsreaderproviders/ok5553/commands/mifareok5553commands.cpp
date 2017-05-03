@@ -10,8 +10,8 @@
 #include <iomanip>
 #include <sstream>
 
-#include "mifarechip.hpp"
-#include "mifarelocation.hpp"
+#include "mifare/mifarechip.hpp"
+#include "mifare/mifarelocation.hpp"
 #include "logicalaccess/cards/computermemorykeystorage.hpp"
 #include "logicalaccess/cards/readermemorykeystorage.hpp"
 #include "logicalaccess/cards/samkeystorage.hpp"

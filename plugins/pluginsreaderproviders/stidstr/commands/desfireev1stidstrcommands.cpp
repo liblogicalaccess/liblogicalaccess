@@ -5,7 +5,7 @@
  */
 
 #include "desfireev1stidstrcommands.hpp"
-#include "desfirechip.hpp"
+#include "desfire/desfirechip.hpp"
 #include <openssl/rand.h>
 #include <string.h>
 #include "logicalaccess/logs.hpp"

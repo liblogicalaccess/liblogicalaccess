@@ -9,7 +9,7 @@
 
 #include "logicalaccess/crypto/des_cipher.hpp"
 #include "logicalaccess/crypto/aes_cipher.hpp"
-#include "desfirecrypto.hpp"
+#include "desfire/desfirecrypto.hpp"
 
 #ifndef UNIX
 #include "logicalaccess/msliblogicalaccess.h"

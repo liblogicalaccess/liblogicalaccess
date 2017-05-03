@@ -31,8 +31,8 @@
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
 #include "readercardadapters/stidstrreaderdatatransport.hpp"
-#include "desfireev1chip.hpp"
-#include "mifarechip.hpp"
+#include "desfire/desfireev1chip.hpp"
+#include "mifare/mifarechip.hpp"
 
 #include "stidstrreaderunitconfiguration.hpp"
 #include "logicalaccess/settings.hpp"

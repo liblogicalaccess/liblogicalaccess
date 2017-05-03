@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_DESFIREEV1STIDSTRCOMMANDS_HPP
 #define LOGICALACCESS_DESFIREEV1STIDSTRCOMMANDS_HPP
 
-#include "desfireev1commands.hpp"
+#include "desfire/desfireev1commands.hpp"
 #include "../readercardadapters/stidstrreadercardadapter.hpp"
 
 #include <string>

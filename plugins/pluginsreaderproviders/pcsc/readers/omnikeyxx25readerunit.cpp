@@ -5,7 +5,7 @@
  */
 
 #include "../readers/omnikeyxx25readerunit.hpp"
-#include "proxchip.hpp"
+#include "prox/proxchip.hpp"
 
 #include <iostream>
 #include <iomanip>
