@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_GENERICTAGIDONDEMANDACCESSCONTROLCARDSERVICE_HPP
 #define LOGICALACCESS_GENERICTAGIDONDEMANDACCESSCONTROLCARDSERVICE_HPP
 
-#include "generictagaccesscontrolcardservice.hpp"
+#include "generictag/generictagaccesscontrolcardservice.hpp"
 
 namespace logicalaccess
 {

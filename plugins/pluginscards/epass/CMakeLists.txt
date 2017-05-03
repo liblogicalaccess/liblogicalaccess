@@ -17,7 +17,7 @@ add_library(
         ${INCLUDE}
         ${resourcerc}
 )
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso7816)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/)
 
 SET_TARGET_PROPERTIES(epasscards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 

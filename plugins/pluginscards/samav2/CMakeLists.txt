@@ -15,7 +15,7 @@ SOURCE_GROUP("Header Files\\commands" FILES ${include_commands})
 file(GLOB source_commands ${CMAKE_CURRENT_SOURCE_DIR}/commands/*.cpp)
 SOURCE_GROUP("Source Files\\commands" FILES ${source_commands})
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../desfire)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../)
 
 if (WIN32)
   LINK_DIRECTORIES(${LINK_DIRECTORIES} ${CMAKE_CURRENT_SOURCE_DIR}/../desfire/bin/${TARGET_ARCH}/${VC_FOLDER_NAME})

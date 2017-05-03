@@ -7,11 +7,11 @@
 #ifndef LOGICALACCESS_DESFIREISO7816CARDPROVIDER_HPP
 #define LOGICALACCESS_DESFIREISO7816CARDPROVIDER_HPP
 
-#include "desfirecommands.hpp"
-#include "desfirecrypto.hpp"
+#include "desfire/desfirecommands.hpp"
+#include "desfire/desfirecrypto.hpp"
 #include "../readercardadapters/iso7816readercardadapter.hpp"
 #include "../iso7816readerunit.hpp"
-#include "samchip.hpp"
+#include "samav2/samchip.hpp"
 
 #include <string>
 #include <vector>

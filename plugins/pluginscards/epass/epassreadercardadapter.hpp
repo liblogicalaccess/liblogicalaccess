@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../pluginsreaderproviders/iso7816/readercardadapters/iso7816readercardadapter.hpp"
+#include "iso7816/readercardadapters/iso7816readercardadapter.hpp"
 
 namespace logicalaccess
 {

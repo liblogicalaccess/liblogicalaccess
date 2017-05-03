@@ -4,8 +4,8 @@
  * \brief PC/SC transport for reader/card commands.
  */
 
-#ifndef LOGICALACCESS_UDPDATATRANSPORT_HPP
-#define LOGICALACCESS_UDPDATATRANSPORT_HPP
+#ifndef LOGICALACCESS_PCSCDATATRANSPORT_HPP
+#define LOGICALACCESS_PCSCDATATRANSPORT_HPP
 
 #include "logicalaccess/readerproviders/datatransport.hpp"
 #include "pcscreaderunit.hpp"

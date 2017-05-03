@@ -2,10 +2,10 @@
 #include "../../pcscreaderunit.hpp"
 #include "logicalaccess/cards/chip.hpp"
 #include "logicalaccess/logs.hpp"
-#include "mifarecommands.hpp"
+#include "mifare/mifarecommands.hpp"
 #include <assert.h>
-#include <desfirecommands.hpp>
-#include <mifareultralightccommands.hpp>
+#include <desfire/desfirecommands.hpp>
+#include <mifareultralight/mifareultralightccommands.hpp>
 
 using namespace logicalaccess;
 

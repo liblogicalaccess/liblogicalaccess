@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_MIFAREULTRALIGHTOK5553COMMANDS_HPP
 #define LOGICALACCESS_MIFAREULTRALIGHTOK5553COMMANDS_HPP
 
-#include "mifareultralightcommands.hpp"
+#include "mifareultralight/mifareultralightcommands.hpp"
 #include "../readercardadapters/ok5553readercardadapter.hpp"
 
 #include <string>

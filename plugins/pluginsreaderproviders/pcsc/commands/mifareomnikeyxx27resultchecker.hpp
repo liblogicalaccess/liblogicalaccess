@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_MIFAREOMNIKEYXX27RESULTCHECKER_HPP
 #define LOGICALACCESS_MIFAREOMNIKEYXX27RESULTCHECKER_HPP
 
-#include "iso7816resultchecker.hpp"
+#include "iso7816/iso7816resultchecker.hpp"
 
 namespace logicalaccess
 {

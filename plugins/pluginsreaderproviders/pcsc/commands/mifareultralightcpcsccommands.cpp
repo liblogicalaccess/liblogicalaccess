@@ -11,8 +11,8 @@
 #include <sstream>
 
 #include "../pcscreaderprovider.hpp"
-#include "mifareultralightcchip.hpp"
-#include "desfirecrypto.hpp"
+#include "mifareultralight/mifareultralightcchip.hpp"
+#include "desfire/desfirecrypto.hpp"
 #include "logicalaccess/cards/computermemorykeystorage.hpp"
 #include "logicalaccess/cards/readermemorykeystorage.hpp"
 #include "logicalaccess/cards/samkeystorage.hpp"

@@ -29,7 +29,7 @@ struct STidPRGReaderUnit::BuzzerModeGuard
         auto ret =
             reader->getDefaultReaderCardAdapter()->sendCommand({0x2A, 0, 0, 0});
         if (ret.size() >= 4)
-            st_ = (bool)(ret[3] & 0x10);
+            st_ = (bool)((ret[3] & 0x10) != 0);
         else
             st_ = false;
         reader->toggleBuzzer(false);

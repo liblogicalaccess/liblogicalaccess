@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_FELICASPRINGCARDCOMMANDS_HPP
 #define LOGICALACCESS_FELICASPRINGCARDCOMMANDS_HPP
 
-#include "../felica/felicacommands.hpp"
+#include "felica/felicacommands.hpp"
 #include "../readercardadapters/pcscreadercardadapter.hpp"
 
 #include <string>

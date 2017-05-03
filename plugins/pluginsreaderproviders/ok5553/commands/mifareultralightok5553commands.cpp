@@ -10,7 +10,7 @@
 #include <iomanip>
 #include <sstream>
 
-#include "mifarechip.hpp"
+#include "mifare/mifarechip.hpp"
 
 namespace logicalaccess
 {

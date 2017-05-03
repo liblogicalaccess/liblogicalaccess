@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_DEFAULTSTIDSTRREADERCARDADAPTER_HPP
 #define LOGICALACCESS_DEFAULTSTIDSTRREADERCARDADAPTER_HPP
 
-#include "readercardadapters/iso7816readercardadapter.hpp"
+#include "iso7816/readercardadapters/iso7816readercardadapter.hpp"
 #include "../stidstrreaderunit.hpp"
 
 #include <string>

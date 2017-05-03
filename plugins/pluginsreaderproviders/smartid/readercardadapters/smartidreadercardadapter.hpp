@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_DEFAULTSMARTIDREADERCARDADAPTER_HPP
 #define LOGICALACCESS_DEFAULTSMARTIDREADERCARDADAPTER_HPP
 
-#include "readercardadapters/iso7816readercardadapter.hpp"
+#include "iso7816/readercardadapters/iso7816readercardadapter.hpp"
 #include "../smartidreaderunit.hpp"
 #include "logicalaccess/readerproviders/iso14443readercommunication.hpp"
 

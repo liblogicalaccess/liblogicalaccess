@@ -7,14 +7,14 @@
 #ifndef LOGICALACCESS_SAMAV2ISO7816CARDPROVIDER_HPP
 #define LOGICALACCESS_SAMAV2ISO7816CARDPROVIDER_HPP
 
-#include "samcommands.hpp"
+#include "samav2/samcommands.hpp"
 #include "samav1iso7816commands.hpp"
 #include "../readercardadapters/iso7816readercardadapter.hpp"
 #include "../iso7816readerunitconfiguration.hpp"
-#include "samcrypto.hpp"
-#include "samkeyentry.hpp"
-#include "samcrypto.hpp"
-#include "samav2commands.hpp"
+#include "samav2/samcrypto.hpp"
+#include "samav2/samkeyentry.hpp"
+#include "samav2/samcrypto.hpp"
+#include "samav2/samav2commands.hpp"
 #include <string>
 #include <vector>
 #include <iostream>

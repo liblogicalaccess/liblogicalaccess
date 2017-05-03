@@ -5,13 +5,13 @@
  */
 
 #include "../commands/desfireiso7816commands.hpp"
-#include "desfirechip.hpp"
+#include "desfire/desfirechip.hpp"
 #include "samav1iso7816commands.hpp"
 #include "logicalaccess/cards/samkeystorage.hpp"
-#include "nxpkeydiversification.hpp"
-#include "nxpav1keydiversification.hpp"
-#include "nxpav2keydiversification.hpp"
-#include "samav2commands.hpp"
+#include "desfire/nxpkeydiversification.hpp"
+#include "desfire/nxpav1keydiversification.hpp"
+#include "desfire/nxpav2keydiversification.hpp"
+#include "samav2/samav2commands.hpp"
 
 #include "logicalaccess/iks/IslogKeyServer.hpp"
 #include "logicalaccess/settings.hpp"

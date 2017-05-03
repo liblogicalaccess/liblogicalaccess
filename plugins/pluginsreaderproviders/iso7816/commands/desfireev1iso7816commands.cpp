@@ -5,8 +5,8 @@
  */
 
 #include "../commands/desfireev1iso7816commands.hpp"
-#include "desfirechip.hpp"
-#include "samav2commands.hpp"
+#include "desfire/desfirechip.hpp"
+#include "samav2/samav2commands.hpp"
 #include <openssl/rand.h>
 #include <logicalaccess/iks/IslogKeyServer.hpp>
 #include <logicalaccess/settings.hpp>
@@ -21,11 +21,11 @@
 #include "logicalaccess/crypto/des_cipher.hpp"
 #include "logicalaccess/crypto/des_symmetric_key.hpp"
 #include "logicalaccess/crypto/des_initialization_vector.hpp"
-#include "samav2chip.hpp"
-#include "desfireev1location.hpp"
+#include "samav2/samav2chip.hpp"
+#include "desfire/desfireev1location.hpp"
 #include "logicalaccess/cards/samkeystorage.hpp"
-#include "samcommands.hpp"
-#include "nxpav2keydiversification.hpp"
+#include "samav2/samcommands.hpp"
+#include "desfire/nxpav2keydiversification.hpp"
 #include "logicalaccess/myexception.hpp"
 #include <cassert>
 

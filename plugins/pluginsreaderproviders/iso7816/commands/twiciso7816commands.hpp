@@ -8,7 +8,7 @@
 #define LOGICALACCESS_TWICISO7816COMMANDS_HPP
 
 #include "logicalaccess/key.hpp"
-#include "twiccommands.hpp"
+#include "twic/twiccommands.hpp"
 #include "iso7816iso7816commands.hpp"
 
 #include <string>

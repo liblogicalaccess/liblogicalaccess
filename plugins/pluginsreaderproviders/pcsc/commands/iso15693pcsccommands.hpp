@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_ISO15693PCSCCOMMANDS_HPP
 #define LOGICALACCESS_ISO15693PCSCCOMMANDS_HPP
 
-#include "iso15693commands.hpp"
+#include "iso15693/iso15693commands.hpp"
 #include "../readercardadapters/pcscreadercardadapter.hpp"
 
 #include <string>

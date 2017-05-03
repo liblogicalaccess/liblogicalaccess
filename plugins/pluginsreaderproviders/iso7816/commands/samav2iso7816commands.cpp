@@ -7,9 +7,9 @@
 #include "../readercardadapters/iso7816readercardadapter.hpp"
 #include "../commands/samav2iso7816commands.hpp"
 #include "../iso7816readerunitconfiguration.hpp"
-#include "samcrypto.hpp"
-#include "samkeyentry.hpp"
-#include "samkucentry.hpp"
+#include "samav2/samcrypto.hpp"
+#include "samav2/samkeyentry.hpp"
+#include "samav2/samkucentry.hpp"
 #include <openssl/rand.h>
 #include "logicalaccess/crypto/symmetric_key.hpp"
 #include "logicalaccess/crypto/aes_symmetric_key.hpp"
