@@ -41,7 +41,7 @@ namespace logicalaccess
         EXCEPTION_ASSERT_WITH_LOG(tLocation, std::invalid_argument, "location must be a TopazLocation.");
         std::shared_ptr<TopazAccessInfo> tAi = std::dynamic_pointer_cast<TopazAccessInfo>(aiToWrite);
 
-        size_t totaldatalen = data.size() + tLocation->byte;
+        size_t totaldatalen = data.size() + tLocation->byte_;
         int nbPages = 0;
         size_t buflen = 0;
         while (buflen < totaldatalen)
@@ -54,7 +54,7 @@ namespace logicalaccess
         {
             std::vector<unsigned char> dataPages;
             dataPages.resize(buflen, 0x00);
-			std::copy(data.begin(), data.end(), dataPages.begin() + tLocation->byte);
+			std::copy(data.begin(), data.end(), dataPages.begin() + tLocation->byte_);
 
             if (behaviorFlags & CB_AUTOSWITCHAREA)
             {
@@ -83,7 +83,7 @@ namespace logicalaccess
         std::shared_ptr<TopazLocation> tLocation = std::dynamic_pointer_cast<TopazLocation>(location);
         EXCEPTION_ASSERT_WITH_LOG(tLocation, std::invalid_argument, "location must be a TopazLocation.");
 
-        size_t totaldatalen = length + tLocation->byte;
+        size_t totaldatalen = length + tLocation->byte_;
         int nbPages = 0;
         size_t buflen = 0;
         while (buflen < totaldatalen)
@@ -105,7 +105,7 @@ namespace logicalaccess
                 dataPages = getTopazChip()->getTopazCommands()->readPage(tLocation->page);
             }
 
-			ret.insert(ret.end(), dataPages.begin() + tLocation->byte, dataPages.begin() + tLocation->byte + length);
+			ret.insert(ret.end(), dataPages.begin() + tLocation->byte_, dataPages.begin() + tLocation->byte_ + length);
         }
 		return ret;
     }

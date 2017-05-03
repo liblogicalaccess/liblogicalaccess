@@ -34,8 +34,6 @@ namespace logicalaccess
         STID_DF_KEYLOC_INDEXED = 0x02 /**< Key indexed */
     } STidKeyLocationType;
 
-    class DESFireProfile;
-
     /**
      * \brief The DESFire EV1 base commands class for STidSTR reader.
      */
@@ -521,8 +519,6 @@ namespace logicalaccess
          */
         std::shared_ptr<STidSTRReaderCardAdapter> getSTidSTRReaderCardAdapter() { return std::dynamic_pointer_cast<STidSTRReaderCardAdapter>(getReaderCardAdapter()); };
 
-        void setProfile(std::shared_ptr<DESFireProfile> profile) { d_profile = profile; };
-
         /**
          * \brief Get the STid Key Location Type in string format.
          * \return The key location type in string.
@@ -533,7 +529,6 @@ namespace logicalaccess
 
         unsigned int d_currentAid;
 
-        std::shared_ptr<DESFireProfile> d_profile;
     };
 }
 

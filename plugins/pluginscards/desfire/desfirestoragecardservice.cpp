@@ -237,7 +237,7 @@ namespace logicalaccess
                     dfLocation->securityLevel = CM_ENCRYPT;
                 }
 
-                getDESFireChip()->getDESFireCommands()->createStdDataFile(dfLocation, rights, (int)(data.size() + dfLocation->byte));
+                getDESFireChip()->getDESFireCommands()->createStdDataFile(dfLocation, rights, (int)(data.size() + dfLocation->byte_));
                 needLoadKey = false;
             }
         }
@@ -263,7 +263,7 @@ namespace logicalaccess
             getDESFireChip()->getDESFireCommands()->authenticate(dfAiToUse->writeKeyno);
         }
 
-        getDESFireChip()->getDESFireCommands()->writeData(dfLocation->file, dfLocation->byte, data, encMode);
+        getDESFireChip()->getDESFireCommands()->writeData(dfLocation->file, dfLocation->byte_, data, encMode);
 
         // Write access informations too
         if (aiToWrite)
@@ -400,7 +400,7 @@ namespace logicalaccess
             getDESFireChip()->getDESFireCommands()->authenticate(dfAiToUse->readKeyno);
         }
 		
-        return getDESFireChip()->getDESFireCommands()->readData(dfLocation->file, dfLocation->byte, (int)(dataLength), encMode);
+        return getDESFireChip()->getDESFireCommands()->readData(dfLocation->file, dfLocation->byte_, (int)(dataLength), encMode);
     }
 
     unsigned int DESFireStorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/, void* /*data*/, size_t /*dataLength*/)

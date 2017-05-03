@@ -67,7 +67,7 @@ namespace logicalaccess
         /**
          * \brief The byte.
          */
-        int byte;
+        int byte_;
     };
 }
 

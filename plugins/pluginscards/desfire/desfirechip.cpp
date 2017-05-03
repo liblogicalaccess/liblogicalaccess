@@ -98,7 +98,7 @@ namespace logicalaccess
                         std::shared_ptr<DESFireLocation> location = getApplicationLocation();
                         location->aid = *aid;
                         location->file = *file;
-                        location->byte = 0;
+                        location->byte_ = 0;
 
                         try
                         {
