@@ -81,7 +81,7 @@ namespace logicalaccess
         std::shared_ptr<TopazLocation> location;
         location.reset(new TopazLocation());
         location->page = block;
-        location->byte = 0;
+        location->byte_ = 0;
 
         sectorNode->setLocation(location);
         sectorNode->setParent(rootNode);
