@@ -145,7 +145,7 @@ namespace logicalaccess
          */
         virtual void unSerialize(boost::property_tree::ptree& node);
 
-        std::shared_ptr<RplethReaderUnitConfiguration> getRplethConfiguration();;
+        std::shared_ptr<RplethReaderUnitConfiguration> getRplethConfiguration();
 
         /**
          * \brief Get the Rpleth reader provider.

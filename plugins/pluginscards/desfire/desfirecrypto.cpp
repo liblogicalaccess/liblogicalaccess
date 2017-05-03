@@ -33,6 +33,7 @@ namespace logicalaccess
         d_currentKeyNo = 0;
         d_mac_size = 4;
         d_block_size = 8;
+        d_nbAids = 0;
 
         d_lastIV.clear();
         d_lastIV.resize(d_block_size, 0x00);

@@ -6,8 +6,11 @@ if (WIN32)
 	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
 endif()
 
-set(INCLUDE_FOLDER 	${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire
-					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare)
+set(INCLUDE_FOLDER 	${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/iso7816
+					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire
+					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816
+					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare
+					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2)
 INCLUDE_DIRECTORIES(${INCLUDE_FOLDER})
 
 
@@ -45,6 +48,8 @@ target_link_libraries(
 	logicalaccess-cryptolib
 	mifarecards
 	desfirecards
+	iso7816readers
+	iso7816cards
 	${LIBLOGICALACCESS_LIBRARY}
 )
 

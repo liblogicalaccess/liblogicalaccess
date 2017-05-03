@@ -12,7 +12,7 @@
 namespace logicalaccess
 {
     STidSTRReaderUnitConfiguration::STidSTRReaderUnitConfiguration()
-        : ReaderUnitConfiguration(READER_STIDSTR)
+        : ISO7816ReaderUnitConfiguration(READER_STIDSTR)
     {
         resetConfiguration();
     }
@@ -26,6 +26,7 @@ namespace logicalaccess
         d_rs485Address = 0;
         d_communicationType = STID_RS232;
         d_communicationMode = STID_CM_PLAIN;
+        d_pn532_direct = false;
         d_key_hmac.reset(new HMAC1Key(""));
         d_key_aes.reset(new AES128Key(""));
     }
@@ -37,6 +38,7 @@ namespace logicalaccess
         node.put("RS485Address", d_rs485Address);
         node.put("CommunicationType", d_communicationType);
         node.put("CommunicationMode", d_communicationMode);
+        node.put("PN532Direct", d_pn532_direct);
         d_key_hmac->serialize(node);
         d_key_aes->serialize(node);
 
@@ -50,6 +52,7 @@ namespace logicalaccess
         d_rs485Address = node.get_child("RS485Address").get_value<unsigned char>();
         d_communicationType = static_cast<STidCommunicationType>(node.get_child("CommunicationType").get_value<unsigned int>());
         d_communicationMode = static_cast<STidCommunicationMode>(node.get_child("CommunicationMode").get_value<unsigned int>());
+        d_pn532_direct = node.get_child("PN532Direct").get_value<bool>();
         d_key_hmac->unSerialize(node.get_child(d_key_hmac->getDefaultXmlNodeName()));
         d_key_aes->unSerialize(node.get_child(d_key_aes->getDefaultXmlNodeName()));
     }
@@ -69,6 +72,16 @@ namespace logicalaccess
     {
         LOG(LogLevel::INFOS) << "RS485 Address {0x" << std::hex << address << std::dec << "(" << address << ")}";
         d_rs485Address = address;
+    }
+
+    bool STidSTRReaderUnitConfiguration::getPN532Direct() const
+    {
+        return d_pn532_direct;
+    }
+
+    void STidSTRReaderUnitConfiguration::setPN532Direct(bool direct)
+    {
+        d_pn532_direct = direct;
     }
 
     STidCommunicationType STidSTRReaderUnitConfiguration::getCommunicationType() const
