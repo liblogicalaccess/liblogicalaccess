@@ -6,7 +6,7 @@ namespace logicalaccess
 {
 namespace iks
 {
-class GenRandomCommand : public BaseCommand
+class LIBLOGICALACCESS_API GenRandomCommand : public BaseCommand
 {
   public:
     GenRandomCommand();
@@ -17,7 +17,7 @@ class GenRandomCommand : public BaseCommand
     uint16_t nb_bytes_;
 };
 
-class GenRandomResponse : public BaseResponse
+class LIBLOGICALACCESS_API GenRandomResponse : public BaseResponse
 {
   public:
     GenRandomResponse(uint16_t status, const std::vector<uint8_t> &data);

@@ -11,7 +11,7 @@ namespace logicalaccess
  * It allows the client to configure a card to emulate various
  * format.
  */
-class STidPRGProxAccessControl : public AccessControlCardService
+class LIBLOGICALACCESS_API STidPRGProxAccessControl : public AccessControlCardService
 {
   public:
     STidPRGProxAccessControl(std::shared_ptr<Chip> chip);

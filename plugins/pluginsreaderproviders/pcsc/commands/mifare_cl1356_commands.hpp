@@ -9,7 +9,7 @@
 
 namespace logicalaccess
 {
-	class MifareCL1356Commands : public MifarePCSCCommands
+	class LIBLOGICALACCESS_API MifareCL1356Commands : public MifarePCSCCommands
     {
     public:
 		virtual ~MifareCL1356Commands() = default;

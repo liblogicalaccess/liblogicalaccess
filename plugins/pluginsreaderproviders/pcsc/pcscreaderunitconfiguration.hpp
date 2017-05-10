@@ -40,12 +40,12 @@ namespace logicalaccess
 	/**
 	 * Returns the share mode as text.
 	 */
-	std::string pcsc_share_mode_to_string(PCSCShareMode sm);
+	std::string LIBLOGICALACCESS_API pcsc_share_mode_to_string(PCSCShareMode sm);
 
 	/**
 	 * Returns the pcsc protocol as text.
 	 */
-	std::string pcsc_protocol_to_string(unsigned long proto);
+	std::string LIBLOGICALACCESS_API pcsc_protocol_to_string(unsigned long proto);
 
     /**
      *\brief The reader unit types.

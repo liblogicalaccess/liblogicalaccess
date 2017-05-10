@@ -15,7 +15,7 @@ namespace logicalaccess
       *          However, if the card is SL1 and we'll perform AES auth to switch
       *          to SL3, pass level_1 as false.
       */
-    class EncapsulateGuard
+    class LIBLOGICALACCESS_API EncapsulateGuard
     {
     public:
         EncapsulateGuard(Commands *cmd, bool level_1);
@@ -57,7 +57,7 @@ namespace logicalaccess
         }
     };
 
-    class MifarePlusSpringcardSL1Commands
+    class LIBLOGICALACCESS_API MifarePlusSpringcardSL1Commands
         : public virtual MifarePlusSL1PCSCCommands
          //public MifareSpringCardCommands
     {

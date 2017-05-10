@@ -12,7 +12,7 @@ namespace logicalaccess
      * This is implemented as a separate object to use reuse between various
      * mifare plus.
      */
-    class MifarePlusAESAuth
+    class LIBLOGICALACCESS_API MifarePlusAESAuth
     {
     public:
         MifarePlusAESAuth(std::shared_ptr<ReaderCardAdapter> rca);

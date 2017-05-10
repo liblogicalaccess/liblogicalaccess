@@ -4,7 +4,7 @@
 
 namespace logicalaccess
 {
-class STidPRGReaderCardAdapter : public ReaderCardAdapter
+class LIBLOGICALACCESS_API STidPRGReaderCardAdapter : public ReaderCardAdapter
 {
 
   public:

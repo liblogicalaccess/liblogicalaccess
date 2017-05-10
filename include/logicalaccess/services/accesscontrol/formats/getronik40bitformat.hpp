@@ -117,14 +117,6 @@ namespace logicalaccess
          */
         virtual bool checkSkeleton(std::shared_ptr<Format> format) const;
 
-        /**
-         * \brief Calculate data checksum.
-         * \param data The data to calculate.
-         * \param datalen The data length.
-         * \return The checksum.
-         */
-        unsigned char calcChecksum(const unsigned char* data, unsigned int datalen) const;
-
     protected:
 
         struct {
