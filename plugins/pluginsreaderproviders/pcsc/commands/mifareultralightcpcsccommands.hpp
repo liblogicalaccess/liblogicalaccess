@@ -8,15 +8,18 @@
 #define LOGICALACCESS_MIFAREULTRALIGHTCPCSCCOMMANDS_HPP
 
 #include "mifareultralightpcsccommands.hpp"
-#include "mifareultralightccommands.hpp"
+#include "mifareultralight/mifareultralightccommands.hpp"
 
 namespace logicalaccess
 {
     /**
      * \brief The Mifare Ultralight C commands class for PCSC reader.
      */
-    class LIBLOGICALACCESS_API MifareUltralightCPCSCCommands : public MifareUltralightPCSCCommands, public MifareUltralightCCommands
-    {
+    class LIBLOGICALACCESS_API MifareUltralightCPCSCCommands : public MifareUltralightPCSCCommands
+#ifndef SWIG
+		, public MifareUltralightCCommands
+#endif     
+	{
     public:
 
         /**

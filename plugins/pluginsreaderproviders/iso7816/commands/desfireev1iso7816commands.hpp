@@ -38,7 +38,10 @@ namespace logicalaccess
          * \brief Get the value of available bytes.
          * \return The available memory in bytes.
          */
-        virtual unsigned int getFreeMem();
+		#ifndef SWIG
+        virtual 
+		#endif
+		unsigned int getFreeMem();
 
         /**
          * \brief Get the ISO DF-Names of all active application.

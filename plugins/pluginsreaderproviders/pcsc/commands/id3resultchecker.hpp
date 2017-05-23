@@ -1,10 +1,10 @@
 #pragma once
 
-#include <iso7816resultchecker.hpp>
+#include <iso7816/iso7816resultchecker.hpp>
 
 namespace logicalaccess
 {
-class ID3ResultChecker : public ISO7816ResultChecker
+class LIBLOGICALACCESS_API ID3ResultChecker : public ISO7816ResultChecker
 {
 
       public:

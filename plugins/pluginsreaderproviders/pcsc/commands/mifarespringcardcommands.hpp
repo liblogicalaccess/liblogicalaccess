@@ -45,7 +45,7 @@ namespace logicalaccess
          * \param vol Use volatile memory.
          * \return true on success, false otherwise.
          */
-        bool loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol = false);
+        virtual bool loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol = false) override;
 
         /**
          * \brief Authenticate a block, given a key number.
@@ -53,7 +53,7 @@ namespace logicalaccess
          * \param keyno The key number, previously loaded with Mifare::loadKey().
          * \param keytype The key type.
          */
-        void authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype);
+        virtual void authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype) override;
 
 		/**
 		* \brief Store block value to volatile memory.
