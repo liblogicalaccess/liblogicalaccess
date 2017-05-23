@@ -75,7 +75,7 @@ namespace logicalaccess
          * \param vol Use volatile memory.
          * \return true on success, false otherwise.
          */
-        bool loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol = false);
+        virtual bool loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol = false);
 
         /**
          * \brief Load a key on a given location.
