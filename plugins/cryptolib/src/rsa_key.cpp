@@ -112,7 +112,7 @@ namespace logicalaccess
 
             if (fp == NULL)
             {
-                THROW_EXCEPTION_WITH_LOG(Exception::exception, "Cannot open the file.");
+                THROW_EXCEPTION_WITH_LOG(std::exception, "Cannot open the file.");
             }
 
             RSA* prsa = PEM_read_RSAPublicKey(fp, NULL, callback, userdata);
@@ -132,7 +132,7 @@ namespace logicalaccess
 
             if (fp == NULL)
             {
-                THROW_EXCEPTION_WITH_LOG(Exception::exception, "Cannot open the file.");
+                THROW_EXCEPTION_WITH_LOG(std::exception, "Cannot open the file.");
             }
 
             RSA* prsa = PEM_read_RSAPrivateKey(fp, NULL, callback, userdata);
@@ -202,7 +202,7 @@ namespace logicalaccess
 
             if (fp == NULL)
             {
-                THROW_EXCEPTION_WITH_LOG(Exception::exception, "Cannot open the file.");
+                THROW_EXCEPTION_WITH_LOG(std::exception, "Cannot open the file.");
             }
 
             int result = 0;

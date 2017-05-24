@@ -21,7 +21,7 @@ namespace logicalaccess
         {
             std::shared_ptr<EVP_PKEY> _pkey(EVP_PKEY_new(), EVP_PKEY_free);
 
-            EXCEPTION_ASSERT(_pkey, Exception::bad_function_call, "Unable to create a EVP_PKEY structure");
+            EXCEPTION_ASSERT(_pkey, std::bad_function_call, "Unable to create a EVP_PKEY structure");
             EVP_PKEY_set1_RSA(_pkey.get(), key.d_rsa.get());
 
             return EVPPKey(_pkey, key.hasPrivateCompound());
@@ -45,7 +45,7 @@ namespace logicalaccess
                     return createFromRSAKey(rsaKey().discardPrivateCompound());
                 }
 
-                THROW_EXCEPTION_WITH_LOG(Exception::bad_function_call, "Unsupported key type");
+                THROW_EXCEPTION_WITH_LOG(std::bad_function_call, "Unsupported key type");
             }
             else
             {
