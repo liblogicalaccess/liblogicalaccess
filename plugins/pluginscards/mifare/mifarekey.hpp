@@ -22,9 +22,10 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API MifareKey : public Key
     {
     public:
+#ifndef SWIG
         using XmlSerializable::serialize;
         using XmlSerializable::unSerialize;
-
+#endif
         /**
          * \brief Build an empty 6-bytes Mifare key.
          */

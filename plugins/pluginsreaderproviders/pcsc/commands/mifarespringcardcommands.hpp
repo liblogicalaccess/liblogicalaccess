@@ -34,8 +34,10 @@ namespace logicalaccess
         virtual ~MifareSpringCardCommands();
 
     public:
+ #ifndef SWIG
         using MifarePCSCCommands::authenticate;
         using MifarePCSCCommands::loadKey;
+ #endif
 
         /**
          * \brief Load a key to the reader.
