@@ -62,7 +62,7 @@ namespace logicalaccess
                 return RSAKey(rsa, d_has_private_compound);
             }
 
-            THROW_EXCEPTION_WITH_LOG(Exception::bad_function_call, "Key type is not RSA");
+            THROW_EXCEPTION_WITH_LOG(std::bad_function_call, "Key type is not RSA");
         }
 
         EVPPKey::EVPPKey(std::shared_ptr<EVP_PKEY> pkey, bool has_private_compound) :

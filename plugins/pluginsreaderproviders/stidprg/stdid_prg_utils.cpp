@@ -10,7 +10,7 @@ static bool get_nth_bit(const ByteVector &v, int n)
     auto byte = n / 8;
     auto bit  = n % 8;
 
-    return ((v[byte] << bit) & 0x80 != 0);
+    return ((v[byte] << bit) & 0x80) != 0;
 }
 
 ByteVector STidPRGUtils::prox_configuration_bytes(const Format &fmt)

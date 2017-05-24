@@ -43,7 +43,8 @@ namespace logicalaccess
 
         for (size_t i = 0; i < 4; ++i)
         {
-            EXCEPTION_ASSERT(isalnum(in[i]) || (in[i] == '+') || (in[i] == '/') || ((i >= 2) && (in[i] == '=')), Exception::exception, (std::string("Unexpected character '") + static_cast<char>(in[i]) + "'").c_str());
+            EXCEPTION_ASSERT(isalnum(in[i]) || (in[i] == '+') || (in[i] == '/') || ((i >= 2) && (in[i] == '=')), LibLogicalAccessException,
+				(std::string("Unexpected character '") + static_cast<char>(in[i]) + "'").c_str());
         }
 
         if (in[2] == '=')
@@ -54,7 +55,7 @@ namespace logicalaccess
             }
             else
             {
-                THROW_EXCEPTION_WITH_LOG(Exception::exception, "'=' character expected");
+                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "'=' character expected");
             }
         }
         else
