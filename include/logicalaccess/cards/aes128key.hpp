@@ -22,9 +22,10 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API AES128Key : public Key
     {
     public:
+#ifndef SWIG
         using XmlSerializable::serialize;
         using XmlSerializable::unSerialize;
-
+#endif
         /**
          * \brief Build an empty 16-bytes AES128 key.
          */

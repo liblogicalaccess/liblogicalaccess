@@ -43,9 +43,10 @@ namespace logicalaccess
 #endif     
 	{
     public:
+#ifndef SWIG
         using XmlSerializable::serialize;
         using XmlSerializable::unSerialize;
-
+#endif
         /**
          * \brief Constructor.
          */
