@@ -18,7 +18,7 @@ namespace logicalaccess
     /**
       * \brief A liblogicalaccess exception class.
       */
-	class LIBLOGICALACCESS_API LibLogicalAccessException : public std::exception
+	class LibLogicalAccessException : public std::exception
 	{
 	public:
 		explicit LibLogicalAccessException(const char* message) :
@@ -48,7 +48,7 @@ namespace logicalaccess
 	 * If a command fails and the error is known, a CardException corresponding
 	 * to the error will be thrown by the library.
      */
-    class LIBLOGICALACCESS_API CardException : public LibLogicalAccessException
+    class CardException : public LibLogicalAccessException
     {
     public:
         CardException(const std::string& message)

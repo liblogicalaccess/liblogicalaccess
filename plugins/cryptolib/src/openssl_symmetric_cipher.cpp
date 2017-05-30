@@ -51,7 +51,7 @@ namespace logicalaccess
             }
             default:
             {
-                THROW_EXCEPTION_WITH_LOG(std::exception, "Unhandled method");
+                THROW_EXCEPTION_WITH_LOG(std::runtime_error, "Unhandled method");
             }
             }
 
@@ -85,7 +85,7 @@ namespace logicalaccess
             }
             default:
             {
-                THROW_EXCEPTION_WITH_LOG(std::exception, "Unhandled method");
+                THROW_EXCEPTION_WITH_LOG(std::runtime_error, "Unhandled method");
             }
             }
 
@@ -120,7 +120,7 @@ namespace logicalaccess
             }
             default:
             {
-                THROW_EXCEPTION_WITH_LOG(std::exception, "Unhandled method");
+                THROW_EXCEPTION_WITH_LOG(std::runtime_error, "Unhandled method");
             }
             }
 
