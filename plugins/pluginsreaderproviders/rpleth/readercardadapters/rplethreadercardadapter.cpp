@@ -4,6 +4,7 @@
  * \brief Rpleth reader/card adapter.
  */
 
+#include "logicalaccess/settings.hpp"
 #include "rplethreadercardadapter.hpp"
 #include "logicalaccess/bufferhelper.hpp"
 #include "../rplethdatatransport.hpp"
@@ -29,8 +30,12 @@ namespace logicalaccess
         return answer;
     }
 
-    std::vector<unsigned char> RplethReaderCardAdapter::sendRplethCommand(const std::vector<unsigned char>& data, bool waitanswer, long timeout)
+    std::vector<unsigned char> RplethReaderCardAdapter::sendRplethCommand(const std::vector<unsigned char>& data,
+                                                                          bool waitanswer, long timeout)
     {
+        if (timeout == -1)
+            timeout = Settings::getInstance()->TcpDataTransportTimeout;
+
         LOG(LogLevel::COMS) << "Send Rpleth Command : " << BufferHelper::getHex(data);
         std::vector<unsigned char> res;
 

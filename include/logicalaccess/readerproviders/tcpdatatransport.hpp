@@ -49,7 +49,7 @@ namespace logicalaccess
 		 * \param timeout Time after the connect task will be canceled.
          * \return True on success, false otherwise.
          */
-        virtual bool connect(long int timeout = 2000);
+        virtual bool connect(long int timeout);
 
         /**
          * \param Disconnect from the transport layer.

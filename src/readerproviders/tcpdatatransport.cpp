@@ -12,8 +12,9 @@
 #include <boost/foreach.hpp>
 #include <boost/optional.hpp>
 #include <boost/array.hpp>
-#include <logicalaccess/logs.hpp>
+#include "logicalaccess/logs.hpp"
 #include <boost/property_tree/ptree.hpp>
+#include "logicalaccess/settings.hpp"
 
 namespace logicalaccess
 {
@@ -47,7 +48,7 @@ namespace logicalaccess
 
 	bool TcpDataTransport::connect()
 	{
-		return connect(2000);
+		return connect(Settings::getInstance()->TcpDataTransportTimeout);
 	}
 
     bool TcpDataTransport::connect(long int timeout)

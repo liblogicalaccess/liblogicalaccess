@@ -16,6 +16,7 @@
 #include <ctime>
 #include <chrono>
 #include <logicalaccess/logs.hpp>
+#include "logicalaccess/settings.hpp"
 #include "logicalaccess/myexception.hpp"
 
 namespace logicalaccess
@@ -76,6 +77,8 @@ namespace logicalaccess
     std::vector<unsigned char> RplethDataTransport::receive(long int timeout)
     {
         std::vector<unsigned char> ret, buf;
+        if (timeout == -1)
+            timeout = Settings::getInstance()->TcpDataTransportTimeout;
 		std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeout);
 
 		do
@@ -139,6 +142,9 @@ namespace logicalaccess
     std::vector<unsigned char> RplethDataTransport::sendCommand(const std::vector<unsigned char>& command, long int timeout)
     {
         LOG(LogLevel::COMS) << "Sending command " << BufferHelper::getHex(command) << " command size {" << command.size() << "} timeout {" << timeout << "}...";
+
+        if (timeout == -1)
+            timeout = Settings::getInstance()->TcpDataTransportTimeout;
 
         std::vector<unsigned char> res;
         d_lastCommand = command;

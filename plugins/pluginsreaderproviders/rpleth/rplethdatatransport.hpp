@@ -59,9 +59,10 @@ namespace logicalaccess
         /**
          * \brief Receive data from reader.
          * \param timeout The time to wait data.
+         *        If timeout is -1, use the timeout from the Settings.
          * \return The data from reader.
          */
-        virtual std::vector<unsigned char> receive(long int timeout = 5000);
+        virtual std::vector<unsigned char> receive(long int timeout = -1);
 
         /**
          * \brief Send the Ping packet.
@@ -83,10 +84,11 @@ namespace logicalaccess
         /**
          * \brief Send a command to the reader.
          * \param command The command buffer.
-         * \param timeout The command timeout.
+         * \param timeout The command timeout. If timeout is -1, use timeout from settings.
          * \return the result of the command.
          */
-        virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long int timeout = 2000);
+        virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command,
+                                                       long int timeout = -1);
 
     protected:
 

@@ -52,10 +52,12 @@ namespace logicalaccess
          * \brief Send command to the reader.
          * \param data The command.
 		 * \param waitanswer If the command is waiting a answer.
-		 * \param timeout Time until stop to wait.
+		 * \param timeout Time until stop to wait. If timeout is -1 (the default) we will load
+		 * the value from the Settings.
          * \return The data received.
          */
-        std::vector<unsigned char> sendRplethCommand(const std::vector<unsigned char>& data, bool waitanswer, long timeout = 2000);
+        std::vector<unsigned char> sendRplethCommand(const std::vector<unsigned char>& data,
+                                                     bool waitanswer, long timeout = -1);
     };
 }
 

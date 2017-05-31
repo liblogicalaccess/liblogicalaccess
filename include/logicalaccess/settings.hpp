@@ -57,6 +57,16 @@ namespace logicalaccess
         std::string DefaultReader;
         std::vector<std::string> PluginFolders;
 
+        /* Networking */
+
+        /**
+         * The default TCP Data Transport timeout to use.
+         * This is also used by rpleth data transport.
+         *
+         * If not specified, use 2000.
+         */
+        int TcpDataTransportTimeout;
+
         static std::string getDllPath();
 
     protected:
