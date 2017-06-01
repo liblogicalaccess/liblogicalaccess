@@ -4,10 +4,11 @@
  * \brief Rpleth reader/card adapter.
  */
 
-#include "logicalaccess/settings.hpp"
 #include "rplethreadercardadapter.hpp"
 #include "logicalaccess/bufferhelper.hpp"
 #include "../rplethdatatransport.hpp"
+
+#include "logicalaccess/settings.hpp"
 
 namespace logicalaccess
 {
