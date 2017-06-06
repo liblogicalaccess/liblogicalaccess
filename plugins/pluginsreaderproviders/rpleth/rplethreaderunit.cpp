@@ -29,6 +29,7 @@
 #include "logicalaccess/readerproviders/serialportxml.hpp"
 #include "rplethreaderunitconfiguration.hpp"
 #include "logicalaccess/myexception.hpp"
+#include "logicalaccess/settings.hpp"
 #include <boost/property_tree/xml_parser.hpp>
 
 namespace logicalaccess
@@ -98,7 +99,8 @@ namespace logicalaccess
             std::vector<unsigned char> answer;
             try
             {
-                answer = getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true, maxwait + 2000); //Give More Time To Answer
+                auto rpleth_maxwait = maxwait + Settings::getInstance()->TcpDataTransportTimeout;
+                answer = getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true, rpleth_maxwait);
             }
             catch (LibLogicalAccessException&)
             {
@@ -190,7 +192,8 @@ namespace logicalaccess
                 BufferHelper::setUInt32(command, maxwait);
                 try
                 {
-                    getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true, maxwait + 2000);
+                    auto rpleth_maxwait = maxwait + Settings::getInstance()->TcpDataTransportTimeout;
+                    getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true, rpleth_maxwait);
                     d_insertedChip.reset();
                     LOG(LogLevel::INFOS) << "Card removed";
                     removed = true;
