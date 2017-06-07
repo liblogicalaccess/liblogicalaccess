@@ -63,7 +63,7 @@ namespace logicalaccess
          * \param timeout The command timeout.
          * \return The result of the command.
          */
-        virtual std::vector<unsigned char> sendCommand(unsigned char cmd, const std::vector<unsigned char>& data, long int timeout = 3000);
+        virtual std::vector<unsigned char> sendCommand(unsigned char cmd, const std::vector<unsigned char>& data, long int timeout = -1);
 
         /**
          * \brief Send a REQA command from the PCD to the PICC.

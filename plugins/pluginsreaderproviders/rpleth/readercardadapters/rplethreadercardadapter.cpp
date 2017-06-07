@@ -35,7 +35,7 @@ namespace logicalaccess
                                                                           bool waitanswer, long timeout)
     {
         if (timeout == -1)
-            timeout = Settings::getInstance()->TcpDataTransportTimeout;
+            timeout = Settings::getInstance()->DataTransportTimeout;
 
         LOG(LogLevel::COMS) << "Send Rpleth Command : " << BufferHelper::getHex(data);
         std::vector<unsigned char> res;

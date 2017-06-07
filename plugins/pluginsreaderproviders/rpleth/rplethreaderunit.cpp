@@ -99,7 +99,7 @@ namespace logicalaccess
             std::vector<unsigned char> answer;
             try
             {
-                auto rpleth_maxwait = maxwait + Settings::getInstance()->TcpDataTransportTimeout;
+                auto rpleth_maxwait = maxwait + Settings::getInstance()->DataTransportTimeout;
                 answer = getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true, rpleth_maxwait);
             }
             catch (LibLogicalAccessException&)
@@ -192,7 +192,7 @@ namespace logicalaccess
                 BufferHelper::setUInt32(command, maxwait);
                 try
                 {
-                    auto rpleth_maxwait = maxwait + Settings::getInstance()->TcpDataTransportTimeout;
+                    auto rpleth_maxwait = maxwait + Settings::getInstance()->DataTransportTimeout;
                     getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true, rpleth_maxwait);
                     d_insertedChip.reset();
                     LOG(LogLevel::INFOS) << "Card removed";

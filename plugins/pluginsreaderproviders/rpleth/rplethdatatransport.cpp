@@ -78,7 +78,7 @@ namespace logicalaccess
     {
         std::vector<unsigned char> ret, buf;
         if (timeout == -1)
-            timeout = Settings::getInstance()->TcpDataTransportTimeout;
+            timeout = Settings::getInstance()->DataTransportTimeout;
 		std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeout);
 
 		do
@@ -144,7 +144,7 @@ namespace logicalaccess
         LOG(LogLevel::COMS) << "Sending command " << BufferHelper::getHex(command) << " command size {" << command.size() << "} timeout {" << timeout << "}...";
 
         if (timeout == -1)
-            timeout = Settings::getInstance()->TcpDataTransportTimeout;
+            timeout = Settings::getInstance()->DataTransportTimeout;
 
         std::vector<unsigned char> res;
         d_lastCommand = command;

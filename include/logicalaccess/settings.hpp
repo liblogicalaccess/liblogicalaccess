@@ -60,12 +60,11 @@ namespace logicalaccess
         /* Networking */
 
         /**
-         * The default TCP Data Transport timeout to use.
-         * This is also used by rpleth data transport.
+         * The default Data Transport timeout to use.
          *
-         * If not specified, use 2000.
+         * If not specified, use 3000.
          */
-        int TcpDataTransportTimeout;
+        int DataTransportTimeout;
 
         static std::string getDllPath();
 

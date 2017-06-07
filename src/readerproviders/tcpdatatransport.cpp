@@ -48,7 +48,7 @@ namespace logicalaccess
 
 	bool TcpDataTransport::connect()
 	{
-		return connect(Settings::getInstance()->TcpDataTransportTimeout);
+		return connect(Settings::getInstance()->DataTransportTimeout);
 	}
 
     bool TcpDataTransport::connect(long int timeout)

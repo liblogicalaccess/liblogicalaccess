@@ -29,7 +29,7 @@ namespace logicalaccess
 
 			void setDataTransport(std::shared_ptr<DataTransport> dataTransport) { d_dataTransport = dataTransport; };
 
-			virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long timeout = 3000);
+			virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long timeout = -1);
 
 		protected:
 			

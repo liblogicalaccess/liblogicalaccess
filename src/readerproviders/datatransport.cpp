@@ -7,11 +7,15 @@
 #include "logicalaccess/readerproviders/datatransport.hpp"
 #include "logicalaccess/bufferhelper.hpp"
 #include "logicalaccess/logs.hpp"
+#include "logicalaccess/settings.hpp"
 
 namespace logicalaccess
 {
     std::vector<unsigned char> DataTransport::sendCommand(const std::vector<unsigned char>& command, long int timeout)
     {
+        if (timeout == -1)
+            timeout = Settings::getInstance()->DataTransportTimeout;
+
         LOG(LogLevel::COMS) << "Sending command " << BufferHelper::getHex(command) << " command size {" << command.size() << "} timeout {" << timeout << "}...";
 
         std::vector<unsigned char> res;

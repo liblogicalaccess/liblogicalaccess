@@ -73,7 +73,7 @@ namespace logicalaccess
          * \param timeout The command timeout.
          * \return The result of the command.
          */
-        virtual std::vector<unsigned char> sendCommand(unsigned short commandCode, const std::vector<unsigned char>& command, long int timeout = 2000);
+        virtual std::vector<unsigned char> sendCommand(unsigned short commandCode, const std::vector<unsigned char>& command, long int timeout = -1);
 
         /**
         * \brief Send a command to the reader.
@@ -81,7 +81,7 @@ namespace logicalaccess
         * \param timeout The command timeout.
         * \return the result of the command.
         */
-        virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long timeout = 3000);
+        virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long timeout = -1);
 
         /**
          * \brief Calculate the message HMAC.

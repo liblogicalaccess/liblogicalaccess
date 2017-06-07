@@ -133,7 +133,7 @@ namespace logicalaccess
 
             DefaultReader = pt.get<std::string>("config.reader.default", "PCSC");
 
-            TcpDataTransportTimeout = pt.get<int>("config.tcpDataTransportTimeout", 2000);
+            DataTransportTimeout = pt.get<int>("config.dataTransportTimeout", 3000);
 
             PluginFolders.clear();
             BOOST_FOREACH(ptree::value_type const& v, pt.get_child("config.PluginFolders"))
@@ -189,7 +189,7 @@ namespace logicalaccess
 
             pt.put("config.reader.default", "PCSC");
 
-            pt.put("config.tcpDataTransportTimeout", TcpDataTransportTimeout);
+            pt.put("config.dataTransportTimeout", DataTransportTimeout);
 
             // Write the property tree to the XML file.
             write_xml((getDllPath() + "/liblogicalaccess.config"), pt);
@@ -218,7 +218,7 @@ namespace logicalaccess
         PluginFolders.clear();
         PluginFolders.push_back(getDllPath());
 
-        TcpDataTransportTimeout = 2000;
+        DataTransportTimeout = 3000;
     }
 
     std::string Settings::getDllPath()
