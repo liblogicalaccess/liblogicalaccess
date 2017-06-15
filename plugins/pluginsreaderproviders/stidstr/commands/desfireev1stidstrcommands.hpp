@@ -459,7 +459,7 @@ namespace logicalaccess
          * \brief Get the card version information.
          * \param dataVersion The card version information structure that will be filled
          */
-        virtual void getVersion(DESFireCommands::DESFireCardVersion& dataVersion);
+        virtual DESFireCommands::DESFireCardVersion getVersion();
 
         /**
          * \brief Get the current application list.
@@ -478,7 +478,7 @@ namespace logicalaccess
          * \param fileno The file number
          * \param fileSetting The file setting
          */
-        virtual void getFileSettings(unsigned char fileno, FileSetting& fileSetting);
+        virtual FileSetting getFileSettings(unsigned char fileno);
 
         /**
          * \brief Get value from a specific value file.

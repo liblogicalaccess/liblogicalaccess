@@ -57,7 +57,7 @@ namespace logicalaccess
          * \param convertedLengthBytes Length of "convertedData" in bytes
          * \return Length after conversion in bits
          */
-        virtual unsigned int convertNumeric(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes);
+        virtual unsigned int convertNumeric(const BitsetStream& data, BitsetStream& convertedData);
 
         /**
          * \brief Convert binary data to the encoding type
@@ -68,7 +68,7 @@ namespace logicalaccess
          * \param convertedLengthBytes Length of "convertedData" in bytes
          * \return Length after conversion in bits
          */
-        virtual unsigned int convertBinary(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes);
+        virtual unsigned int convertBinary(const BitsetStream& data, BitsetStream& convertedData);
 
         /**
          * \brief Get the length after conversation for a given base length in bits
@@ -86,7 +86,7 @@ namespace logicalaccess
          * \param convertedLengthBytes Length of "convertedData"
          * \return Length after reversion in bits
          */
-        virtual unsigned int revertNumeric(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes);
+		virtual unsigned int revertNumeric(const BitsetStream& data, BitsetStream& convertedData);
 
         /**
          * \brief Revert binary data
@@ -97,7 +97,7 @@ namespace logicalaccess
          * \param convertedLengthBytes Length of "convertedData"
          * \return Length after reversion in bits
          */
-        virtual unsigned int revertBinary(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes);
+        virtual unsigned int revertBinary(const BitsetStream& data, BitsetStream& convertedData);
 
     protected:
     };

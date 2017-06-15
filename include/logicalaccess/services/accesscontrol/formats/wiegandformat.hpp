@@ -48,28 +48,28 @@ namespace logicalaccess
          * \param data Where to put data
          * \param dataLengthBytes Length in byte of data
          */
-        virtual void getLinearData(void* data, size_t dataLengthBytes) const;
+        virtual std::vector<uint8_t> getLinearData() const;
 
         /**
          * \brief Get linear data without parity
          * \param data Buffer to be modified. Should be allocated.
          * \param dataLengthBytes Length in byte of data
          */
-        virtual void getLinearDataWithoutParity(void* data, size_t dataLengthBytes) const = 0;
+        virtual std::vector<uint8_t> getLinearDataWithoutParity() const = 0;
 
         /**
          * \brief Set linear data
          * \param data Where to get data
          * \param dataLengthBytes Length of data in bytes
          */
-        virtual void setLinearData(const void* data, size_t dataLengthBytes);
+        virtual void setLinearData(const std::vector<uint8_t>& data);
 
         /**
          * \brief Write linear data without parity into data buffer
          * \param data Buffer where data will be written.
          * \param dataLengthBytes Length of data in bytes
          */
-        virtual void setLinearDataWithoutParity(const void* data, size_t dataLengthBytes) = 0;
+        virtual void setLinearDataWithoutParity(const std::vector<uint8_t>& data) = 0;
 
     protected:
 

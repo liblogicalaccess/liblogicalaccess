@@ -47,7 +47,8 @@ int main(int ac, char **av)
 
     auto ret = acs->readFormat(std::make_shared<Wiegand26Format>(),
                                std::make_shared<ProxLocation>(), nullptr);
-    ret->getLinearData(&buffer[0], buffer.size());
+	auto tmp = ret->getLinearData();
+	std::copy(tmp.begin(), tmp.end(), buffer.begin());
 
     std::cout << "Format: " << std::vector<uint8_t>(buffer.begin(), buffer.end())
               << std::endl;

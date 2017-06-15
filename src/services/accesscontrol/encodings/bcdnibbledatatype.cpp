@@ -30,12 +30,13 @@ namespace logicalaccess
         return ET_BCDNIBBLE;
     }
 
-    unsigned int BCDNibbleDataType::convert(unsigned long long data, unsigned int dataLengthBits, void* dataConverted, size_t dataConvertedLengthBytes)
+    unsigned int BCDNibbleDataType::convert(unsigned long long data, unsigned int dataLengthBits, BitsetStream& dataConverted)
     {
         unsigned int ret = 0;
 
-        unsigned char* tmp = new unsigned char[64];
-        memset(tmp, 0x00, 64);
+        //unsigned char* tmp = new unsigned char[64];
+        //memset(tmp, 0x00, 64);
+		BitsetStream tmp(0x00, 64);
 
         unsigned int shft, i;
 
@@ -48,57 +49,52 @@ namespace logicalaccess
                 c = DataType::invertBitSex(c, 4);
             }
             c = (unsigned char)(c << offset);
-            tmp[i / 2] |= c;
+            tmp.writeAt((i * 8) / 2, tmp.getData()[i / 2] | c);
             data /= 10;
         }
 
         i = (i + 1) / 2;
 
-        ret = DataType::addParityToBuffer(d_leftParityType, d_rightParityType, 4, NULL, shft, NULL, 0);
+        ret = DataType::addParityToBuffer(d_leftParityType, d_rightParityType, 4, BitsetStream(), BitsetStream());
 
-        if (dataConverted != NULL)
+        if (dataConverted.getByteSize() >= i)
         {
-            if (dataConvertedLengthBytes >= i)
-            {
-                unsigned char* swb = reinterpret_cast<unsigned char*>(dataConverted);
-                unsigned char* tmpswb = new unsigned char[i];
-                unsigned char* tmpswb2 = new unsigned char[i];
-                memset(tmpswb, 0x00, i);
-                memset(tmpswb2, 0x00, i);
+            //unsigned char* swb = reinterpret_cast<unsigned char*>(dataConverted);
+            //unsigned char* tmpswb = new unsigned char[i];
+            //unsigned char* tmpswb2 = new unsigned char[i];
+            //memset(tmpswb, 0x00, i);
+            //memset(tmpswb2, 0x00, i);
+			BitsetStream tmpswb(0x00, i);
+			BitsetStream tmpswb2(0x00, i);
 
-                for (size_t pi = i - 1, p = 0; p < i; --pi, ++p)
-                {
-                    tmpswb[p] = tmp[pi];
-                }
-
-                ret = BitHelper::align(tmpswb2, i, tmpswb, i, dataLengthBits);
-                DataType::addParityToBuffer(d_leftParityType, d_rightParityType, 4, tmpswb2, shft, swb, static_cast<unsigned int>(dataConvertedLengthBytes * 8));
-                delete[] tmpswb;
-                delete[] tmpswb2;
-            }
-            else
+            for (size_t pi = i - 1, p = 0; p < i; --pi, ++p)
             {
-                //too small
+                tmpswb.writeAt(p * 8, tmp.getData()[pi]);
             }
+
+            ret = BitHelper::align(tmpswb2, tmpswb, dataLengthBits);
+            DataType::addParityToBuffer(d_leftParityType, d_rightParityType, 4, tmpswb2, dataConverted);
         }
-
-        delete[] tmp;
-
+        else
+        {
+            //too small
+        }
         return ret;
     }
 
-    unsigned long long BCDNibbleDataType::revert(void* data, size_t dataLengthBytes, unsigned int lengthBits)
+    unsigned long long BCDNibbleDataType::revert(BitsetStream& data)
     {
         unsigned long long ret = 0;
 
-        if (data != NULL && dataLengthBytes > 0)
+        if (data.getByteSize() > 0)
         {
-            unsigned int tmpswblen = DataType::removeParityToBuffer(d_leftParityType, d_rightParityType, 4, NULL, lengthBits, NULL, 0);
+            unsigned int tmpswblen = DataType::removeParityToBuffer(d_leftParityType, d_rightParityType, 4, BitsetStream(), BitsetStream());
             size_t tmpswblenBytes = (tmpswblen + 7) / 8;
-            unsigned char* tmpswb = new unsigned char[tmpswblenBytes];
-            memset(tmpswb, 0x00, tmpswblenBytes);
+            //unsigned char* tmpswb = new unsigned char[tmpswblenBytes];
+            //memset(tmpswb, 0x00, tmpswblenBytes);
+			BitsetStream tmpswb(0x00, tmpswblenBytes);
 
-            DataType::removeParityToBuffer(d_leftParityType, d_rightParityType, 4, data, lengthBits, tmpswb, static_cast<unsigned int>(tmpswblenBytes * 8));
+            DataType::removeParityToBuffer(d_leftParityType, d_rightParityType, 4, data, tmpswb);
 
             size_t i;
             int coef;
@@ -107,18 +103,17 @@ namespace logicalaccess
             {
                 if (d_bitDataRepresentationType == ET_LITTLEENDIAN)
                 {
-                    tmpswb[i] = ((0x0F & DataType::invertBitSex(tmpswb[i] >> 4, 4)) << 4) | (tmpswb[i] & 0x0F);
-                    tmpswb[i] = (0x0F & DataType::invertBitSex(tmpswb[i], 4)) | (tmpswb[i] & 0xF0);
+                    tmpswb.writeAt(i * 8,((0x0F & DataType::invertBitSex(tmpswb.getData()[i] >> 4, 4)) << 4) | (tmpswb.getData()[i] & 0x0F));
+                    tmpswb.writeAt(i * 8,(0x0F & DataType::invertBitSex(tmpswb.getData()[i], 4)) | (tmpswb.getData()[i] & 0xF0));
                 }
-                ret += (((tmpswb[i] & 0xF0) >> 4) * (pow(10, coef)));
+                ret += (((tmpswb.getData()[i] & 0xF0) >> 4) * (pow(10, coef)));
                 if (coef > 0)
                 {
-                    ret += ((tmpswb[i] & 0x0F) * pow(10, (coef - 1)));
+                    ret += ((tmpswb.getData()[i] & 0x0F) * pow(10, (coef - 1)));
                 }
             }
 
-            delete[] tmpswb;
-        }
+		}
 
         return ret;
     }

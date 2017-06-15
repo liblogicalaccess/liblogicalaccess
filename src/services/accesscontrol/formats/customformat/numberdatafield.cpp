@@ -31,24 +31,20 @@ namespace logicalaccess
         return d_value;
     }
 
-    void NumberDataField::getLinearData(void* data, size_t dataLengthBytes, unsigned int* pos) const
+	std::vector<uint8_t> NumberDataField::getLinearData() const
     {
-        if ((dataLengthBytes * 8) < (d_length + *pos))
-        {
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
-        }
+		BitsetStream data;
+        convertNumericData(data, d_value, d_length);
 
-        convertNumericData(data, dataLengthBytes, pos, d_value, d_length);
+		return data.getData();
     }
 
-    void NumberDataField::setLinearData(const void* data, size_t dataLengthBytes, unsigned int* pos)
+	void NumberDataField::setLinearData(const std::vector<uint8_t>& data)
     {
-        if ((dataLengthBytes * 8) < (d_length + *pos))
-        {
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
-        }
+		BitsetStream _data;
 
-        d_value = revertNumericData(data, dataLengthBytes, pos, d_length);
+		_data.concat(data);
+        d_value = revertNumericData(_data, d_length);
     }
 
     bool NumberDataField::checkSkeleton(std::shared_ptr<DataField> field) const

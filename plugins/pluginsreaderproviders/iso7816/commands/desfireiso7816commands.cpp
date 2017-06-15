@@ -39,9 +39,10 @@ namespace logicalaccess
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Erase command failed.");
     }
 
-    void DESFireISO7816Commands::getVersion(DESFireCardVersion& dataVersion)
+	DESFireCommands::DESFireCardVersion DESFireISO7816Commands::getVersion()
     {
         std::vector<unsigned char> result;
+		DESFireCommands::DESFireCardVersion dataVersion;
 
         result = transmit(DF_INS_GET_VERSION);
 
@@ -71,6 +72,7 @@ namespace logicalaccess
                 }
             }
         }
+		return dataVersion;
     }
 
     void DESFireISO7816Commands::selectApplication(unsigned int aid)
@@ -302,13 +304,15 @@ namespace logicalaccess
         transmit(DF_INS_CHANGE_KEY_SETTINGS, cryptogram);
     }
 
-    void DESFireISO7816Commands::getFileSettings(unsigned char fileno, FileSetting& fileSetting)
+	DESFireISO7816Commands::FileSetting DESFireISO7816Commands::getFileSettings(unsigned char fileno)
     {
+		DESFireISO7816Commands::FileSetting fileSetting;
         std::vector<unsigned char> command;
         command.push_back(fileno);
 
         std::vector<unsigned char> result = transmit(DF_INS_GET_FILE_SETTINGS, command);
         memcpy(&fileSetting, &result[0], result.size() - 2);
+		return fileSetting;
     }
 
     std::vector<unsigned char> DESFireISO7816Commands::handleReadData(unsigned char err, const std::vector<unsigned char>& firstMsg, unsigned int length, EncryptionMode mode)

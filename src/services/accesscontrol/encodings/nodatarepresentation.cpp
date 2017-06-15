@@ -28,26 +28,34 @@ namespace logicalaccess
         return ET_NOENCODING;
     }
 
-    unsigned int NoDataRepresentation::convertNumeric(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
+    unsigned int NoDataRepresentation::convertNumeric(const BitsetStream& data, BitsetStream& convertedData)
     {
-        if (convertedLengthBytes >= dataLengthBytes)
+        if (convertedData.getByteSize() >= data.getByteSize())
         {
-            memset(convertedData, 0x00, convertedLengthBytes);
-            memcpy(convertedData, data, dataLengthBytes);
+            //memset(convertedData, 0x00, convertedLengthBytes);
+            //memcpy(convertedData, data, dataLengthBytes);
+			std::vector<uint8_t> tmp(convertedData.getByteSize());
+			std::fill(tmp.begin(), tmp.end(), 0x00);
+			convertedData.writeAt(0, tmp, 0, tmp.size() * 8);
+			convertedData.writeAt(0, data.getData(), 0, data.getByteSize());
         }
 
-        return dataLengthBits;
+		return data.getBitSize();
     }
 
-    unsigned int NoDataRepresentation::convertBinary(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
+    unsigned int NoDataRepresentation::convertBinary(const BitsetStream& data, BitsetStream& convertedData)
     {
-        if (convertedLengthBytes >= dataLengthBytes)
-        {
-            memset(convertedData, 0x00, convertedLengthBytes);
-            memcpy(convertedData, data, dataLengthBytes);
-        }
+		if (convertedData.getByteSize() >= data.getByteSize())
+		{
+			//memset(convertedData, 0x00, convertedLengthBytes);
+			//memcpy(convertedData, data, dataLengthBytes);
+			std::vector<uint8_t> tmp(convertedData.getByteSize());
+			std::fill(tmp.begin(), tmp.end(), 0x00);
+			convertedData.writeAt(0, tmp, 0, tmp.size() * 8);
+			convertedData.writeAt(0, data.getData(), 0, data.getByteSize());
+		}
 
-        return dataLengthBits;
+		return data.getBitSize();
     }
 
     unsigned int NoDataRepresentation::convertLength(unsigned int lengthBits)
@@ -55,25 +63,33 @@ namespace logicalaccess
         return lengthBits;
     }
 
-    unsigned int NoDataRepresentation::revertNumeric(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
+    unsigned int NoDataRepresentation::revertNumeric(const BitsetStream& data, BitsetStream& convertedData)
     {
-        if (convertedLengthBytes >= dataLengthBytes)
-        {
-            memset(convertedData, 0x00, convertedLengthBytes);
-            memcpy(convertedData, data, dataLengthBytes);
-        }
+		if (convertedData.getByteSize() >= data.getByteSize())
+		{
+			//memset(convertedData, 0x00, convertedLengthBytes);
+			//memcpy(convertedData, data, dataLengthBytes);
+			std::vector<uint8_t> tmp(convertedData.getByteSize());
+			std::fill(tmp.begin(), tmp.end(), 0x00);
+			convertedData.writeAt(0, tmp, 0, tmp.size() * 8);
+			convertedData.writeAt(0, data.getData(), 0, data.getByteSize());
+		}
 
-        return dataLengthBits;
+		return data.getBitSize();
     }
 
-    unsigned int NoDataRepresentation::revertBinary(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
+    unsigned int NoDataRepresentation::revertBinary(const BitsetStream& data, BitsetStream& convertedData)
     {
-        if (convertedLengthBytes >= dataLengthBytes)
-        {
-            memset(convertedData, 0x00, convertedLengthBytes);
-            memcpy(convertedData, data, dataLengthBytes);
-        }
+		if (convertedData.getByteSize() >= data.getByteSize())
+		{
+			//memset(convertedData, 0x00, convertedLengthBytes);
+			//memcpy(convertedData, data, dataLengthBytes);
+			std::vector<uint8_t> tmp(convertedData.getByteSize());
+			std::fill(tmp.begin(), tmp.end(), 0x00);
+			convertedData.writeAt(0, tmp, 0, tmp.size() * 8);
+			convertedData.writeAt(0, data.getData(), 0, data.getByteSize());
+		}
 
-        return dataLengthBits;
+		return data.getBitSize();
     }
 }

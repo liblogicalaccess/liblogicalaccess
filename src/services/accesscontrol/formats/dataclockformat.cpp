@@ -44,12 +44,12 @@ namespace logicalaccess
         return string("Data clock");
     }
 
-    size_t DataClockFormat::getFormatLinearData(void* /*data*/, size_t /*dataLengthBytes*/) const
+    size_t DataClockFormat::getFormatLinearData(std::vector<uint8_t>& /*data*/) const
     {
         return 0;
     }
 
-    void DataClockFormat::setFormatLinearData(const void* /*data*/, size_t* /*indexByte*/)
+    void DataClockFormat::setFormatLinearData(const std::vector<uint8_t>& /*data*/, size_t* /*indexByte*/)
     {
         //DOES NOTHING
     }
@@ -93,74 +93,81 @@ namespace logicalaccess
         return ret;
     }
 
-    void DataClockFormat::getLinearData(void* data, size_t dataLengthBytes) const
+	std::vector<uint8_t> DataClockFormat::getLinearData() const
+    {
+		BitsetStream data;
+        convertField(data, getUid(), 32);
+
+        if (data.getByteSize() != 0)
+        {
+            //pos = 32;
+            //BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity1(data, dataLengthBytes), 7, 1);
+            //pos = 33;
+            //BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity2(data, dataLengthBytes), 7, 1);
+            //pos = 34;
+            //BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity3(data, dataLengthBytes), 7, 1);
+            //pos = 35;
+            //BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity4(data, dataLengthBytes), 7, 1);
+			data.writeAt(32, getRightParity1(data), 7, 1);
+			data.writeAt(33, getRightParity2(data), 7, 1);
+			data.writeAt(34, getRightParity3(data), 7, 1);
+			data.writeAt(35, getRightParity4(data), 7, 1);
+		}
+		return data.getData();
+	}						 
+
+    void DataClockFormat::setLinearData(const std::vector<uint8_t>& data)
     {
         unsigned int pos = 0;
-        convertField(data, dataLengthBytes, &pos, getUid(), 32);
+		BitsetStream _data;
+		_data.concat(data);
+        setUid(revertField(_data, &pos, 32));
 
-        if (data != NULL)
+        if (_data.getByteSize() != 0)
         {
             pos = 32;
-            BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity1(data, dataLengthBytes), 7, 1);
-            pos = 33;
-            BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity2(data, dataLengthBytes), 7, 1);
-            pos = 34;
-            BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity3(data, dataLengthBytes), 7, 1);
-            pos = 35;
-            BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity4(data, dataLengthBytes), 7, 1);
-        }
-    }
-
-    void DataClockFormat::setLinearData(const void* data, size_t dataLengthBytes)
-    {
-        unsigned int pos = 0;
-        setUid(revertField(data, dataLengthBytes, &pos, 32));
-
-        if (data != NULL)
-        {
-            pos = 32;
-            unsigned char parity = getRightParity1(data, dataLengthBytes);
-            if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != parity)
+            unsigned char parity = getRightParity1(_data);
+            if ((unsigned char)((data[pos / 8] << (pos % 8)) >> 7) != parity)
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Right parity 1 format error.");
             }
 
             pos = 33;
-            parity = getRightParity2(data, dataLengthBytes);
-            if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != parity)
+            parity = getRightParity2(_data);
+            if ((unsigned char)((data[pos / 8] << (pos % 8)) >> 7) != parity)
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Right parity 2 format error.");
             }
 
             pos = 34;
-            parity = getRightParity3(data, dataLengthBytes);
-            if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != parity)
+            parity = getRightParity3(_data);
+            if ((unsigned char)((data[pos / 8] << (pos % 8)) >> 7) != parity)
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Right parity 3 format error.");
             }
 
             pos = 35;
-            parity = getRightParity4(data, dataLengthBytes);
-            if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != parity)
+            parity = getRightParity4(_data);
+            if ((unsigned char)((data[pos / 8] << (pos % 8)) >> 7) != parity)
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Right parity 4 format error.");
             }
         }
     }
 
-    unsigned char DataClockFormat::getRightParity(const void* data, size_t dataLengthBytes, ParityType type, unsigned int* positions, size_t positionLength) const
+    unsigned char DataClockFormat::getRightParity(const BitsetStream& data, ParityType type, unsigned int* positions, size_t positionLength) const
     {
         unsigned char parity = 0x00;
 
-        if (data != NULL)
+        if (data.getByteSize() != NULL)
         {
-            parity = Format::calculateParity(data, dataLengthBytes, type, positions, positionLength);
+            parity = Format::calculateParity(data, type, positions, positionLength);
         }
 
         return parity;
     }
 
-    unsigned char DataClockFormat::getRightParity1(const void* data, size_t dataLengthBytes) const
+    unsigned char DataClockFormat::getRightParity1(const BitsetStream& data) const
     {
         unsigned int positions[8];
         positions[0] = 0;
@@ -172,10 +179,10 @@ namespace logicalaccess
         positions[6] = 24;
         positions[7] = 28;
 
-        return getRightParity(data, dataLengthBytes, PT_EVEN, positions, 8);
+        return getRightParity(data, PT_EVEN, positions, 8);
     }
 
-    unsigned char DataClockFormat::getRightParity2(const void* data, size_t dataLengthBytes) const
+    unsigned char DataClockFormat::getRightParity2(const BitsetStream& data) const
     {
         unsigned int positions[8];
         positions[0] = 1;
@@ -187,10 +194,10 @@ namespace logicalaccess
         positions[6] = 25;
         positions[7] = 29;
 
-        return getRightParity(data, dataLengthBytes, PT_ODD, positions, 8);
+        return getRightParity(data, PT_ODD, positions, 8);
     }
 
-    unsigned char DataClockFormat::getRightParity3(const void* data, size_t dataLengthBytes) const
+    unsigned char DataClockFormat::getRightParity3(const BitsetStream& data) const
     {
         unsigned int positions[8];
         positions[0] = 2;
@@ -202,10 +209,10 @@ namespace logicalaccess
         positions[6] = 26;
         positions[7] = 30;
 
-        return getRightParity(data, dataLengthBytes, PT_EVEN, positions, 8);
+        return getRightParity(data, PT_EVEN, positions, 8);
     }
 
-    unsigned char DataClockFormat::getRightParity4(const void* data, size_t dataLengthBytes) const
+    unsigned char DataClockFormat::getRightParity4(const BitsetStream& data) const
     {
         unsigned int positions[8];
         positions[0] = 3;
@@ -217,6 +224,6 @@ namespace logicalaccess
         positions[6] = 27;
         positions[7] = 31;
 
-        return getRightParity(data, dataLengthBytes, PT_EVEN, positions, 8);
+        return getRightParity(data, PT_EVEN, positions, 8);
     }
 }

@@ -340,8 +340,10 @@ namespace logicalaccess
 			memcpy(&trailerblock[0], newkeyA->getData(), MIFARE_KEY_SIZE);
 			memcpy(&trailerblock[10], newkeyB->getData(), MIFARE_KEY_SIZE);
         }
-
-        if ((*newsab).toArray(&trailerblock[MIFARE_KEY_SIZE], 3) != 3)
+		
+		auto tmp = (*newsab).toArray();
+		std::copy_n(tmp.begin(), 3, trailerblock.begin() + MIFARE_KEY_SIZE);
+        if (tmp.size() != 3)
         {
             THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_CHANGEKEY);
         }

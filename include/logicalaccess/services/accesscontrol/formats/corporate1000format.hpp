@@ -59,7 +59,7 @@ namespace logicalaccess
          * \param dataLengthBytes The buffer length in bytes.
          * \return The parity.
          */
-        unsigned char getLeftParity1(const void* data, size_t dataLengthBytes) const;
+        unsigned char getLeftParity1(const BitsetStream& data) const;
 
         /**
          * \brief Get the Corporate 1000 left parity 2 for a buffer.
@@ -67,7 +67,7 @@ namespace logicalaccess
          * \param dataLengthBytes The buffer length in bytes.
          * \return The parity.
          */
-        unsigned char getLeftParity2(const void* data, size_t dataLengthBytes) const;
+        unsigned char getLeftParity2(const BitsetStream& data) const;
 
         /**
          * \brief Get the Corporate 1000 right parity for a buffer.
@@ -75,21 +75,21 @@ namespace logicalaccess
          * \param dataLengthBytes The buffer length in bytes.
          * \return The parity.
          */
-        unsigned char getRightParity(const void* data, size_t dataLengthBytes) const;
+        unsigned char getRightParity(const BitsetStream& data) const;
 
         /**
          * \brief Get linear data without parity
          * \param data Buffer to be modified. Should be allocated.
          * \param dataLengthBytes Length in byte of data
          */
-        virtual void getLinearData(void* data, size_t dataLengthBytes) const;
+        virtual std::vector<uint8_t> getLinearData() const;
 
         /**
          * \brief Write linear data without parity into data buffer
          * \param data Buffer where data will be written.
          * \param dataLengthBytes Length of data in bytes
          */
-        virtual void setLinearData(const void* data, size_t dataLengthBytes);
+        virtual void setLinearData(const std::vector<uint8_t>& data);
 
         /**
          * \brief Get the format linear data in bytes.
@@ -97,14 +97,14 @@ namespace logicalaccess
          * \param dataLengthBytes The data buffer length
          * \return The format linear data length.
          */
-        virtual size_t getFormatLinearData(void* data, size_t dataLengthBytes) const;
+        virtual size_t getFormatLinearData(std::vector<uint8_t>& data) const;
 
         /**
          * \brief Set the format linear data in bytes.
          * \param data The data buffer
          * \param indexByte The data offset
          */
-        virtual void setFormatLinearData(const void* data, size_t* indexByte);
+        virtual void setFormatLinearData(const std::vector<uint8_t>& data, size_t* indexByte);
 
         /**
          * \brief Get the format type.

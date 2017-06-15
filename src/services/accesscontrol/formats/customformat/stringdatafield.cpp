@@ -62,26 +62,33 @@ namespace logicalaccess
         return d_padding;
     }
 
-	void StringDataField::getLinearData(void* data, size_t dataLengthBytes, unsigned int* pos) const
+	std::vector<uint8_t> StringDataField::getLinearData() const
     {
-        if ((dataLengthBytes * 8) < (d_length + *pos))
-        {
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
-        }
+        //if ((dataLengthBytes * 8) < (d_length + *pos))
+        //{
+        //    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
+        //}
 
-        size_t fieldDataLengthBytes = (d_length + 7) / 8;
+		BitsetStream data;
+
+		size_t fieldDataLengthBytes = (d_length + 7) / 8;
 		size_t copyValueLength = (d_value.size() > fieldDataLengthBytes) ? fieldDataLengthBytes : d_value.size();
-        unsigned char* paddedBuffer = new unsigned char[fieldDataLengthBytes];
-        memset(paddedBuffer, d_padding, fieldDataLengthBytes);
-#if defined(UNIX)
-        memcpy(paddedBuffer, &d_value[0], copyValueLength);
-#else
-        memcpy_s(paddedBuffer, fieldDataLengthBytes, &d_value[0], copyValueLength);
-#endif
+        //unsigned char* paddedBuffer = new unsigned char[fieldDataLengthBytes];
+        //memset(paddedBuffer, d_padding, fieldDataLengthBytes);
+		BitsetStream paddedBuffer(d_padding, fieldDataLengthBytes);
+//#if defined(UNIX)
+//        memcpy(paddedBuffer, &d_value[0], copyValueLength);
+//#else
+//        memcpy_s(paddedBuffer, fieldDataLengthBytes, &d_value[0], copyValueLength);
+//#endif
+		std::vector<uint8_t> tmp;
+		tmp.reserve(copyValueLength);
+		std::copy(&d_value[0], &d_value[0] + copyValueLength, tmp.begin());
+		paddedBuffer.concat(tmp);
 
-        convertBinaryData(paddedBuffer, fieldDataLengthBytes, pos, d_length, data, dataLengthBytes);
-        delete[] paddedBuffer;
+        convertBinaryData(paddedBuffer, d_length, data);
 
+		return data.getData();
         // OLD METHOD WAS NOT HANDLING LSB/MSB CONVERSION
         /*for (size_t i = 0; i < ((d_length + 7) / 8); ++i)
         {
@@ -95,22 +102,24 @@ namespace logicalaccess
         }*/
     }
 
-	void StringDataField::setLinearData(const void* data, size_t dataLengthBytes, unsigned int* pos)
+	void StringDataField::setLinearData(const std::vector<uint8_t>& data)
     {
-        if ((dataLengthBytes * 8) < (d_length + *pos))
+		BitsetStream _data;
+		_data.concat(data);
+
+        if ((_data.getByteSize() * 8) < (d_length + _data.getBitSize()))
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
         }
 
         size_t fieldDataLengthBytes = (d_length + 7) / 8;
-        unsigned char* paddedBuffer = new unsigned char[fieldDataLengthBytes];
-        memset(paddedBuffer, d_padding, fieldDataLengthBytes);
+        //unsigned char* paddedBuffer = new unsigned char[fieldDataLengthBytes];
+        //memset(paddedBuffer, d_padding, fieldDataLengthBytes);
+		BitsetStream paddedBuffer(d_padding, fieldDataLengthBytes);
 
-        revertBinaryData(data, dataLengthBytes, pos, d_length, paddedBuffer, fieldDataLengthBytes);
+        revertBinaryData(_data, d_length, paddedBuffer);
 
-        std::vector<unsigned char> ret(paddedBuffer, paddedBuffer + fieldDataLengthBytes);
-        delete[] paddedBuffer;
-		d_value = ret;
+		d_value = paddedBuffer.getData();
     }
 
 	bool StringDataField::checkSkeleton(std::shared_ptr<DataField> field) const

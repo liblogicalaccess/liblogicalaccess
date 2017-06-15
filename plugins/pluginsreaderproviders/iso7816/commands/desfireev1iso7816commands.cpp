@@ -1212,11 +1212,12 @@ namespace logicalaccess
         }
     }
 
-    void DESFireEV1ISO7816Commands::getVersion(DESFireCommands::DESFireCardVersion& dataVersion)
+	DESFireCommands::DESFireCardVersion DESFireEV1ISO7816Commands::getVersion()
     {
         std::vector<unsigned char> result;
         std::vector<unsigned char> allresult;
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
+		DESFireCommands::DESFireCardVersion dataVersion;
 
         result = transmit_nomacv(DF_INS_GET_VERSION);
 
@@ -1257,6 +1258,7 @@ namespace logicalaccess
                 }
             }
         }
+		return dataVersion;
     }
 
     std::vector<unsigned int> DESFireEV1ISO7816Commands::getApplicationIDs()

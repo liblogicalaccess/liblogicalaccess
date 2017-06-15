@@ -139,7 +139,7 @@ namespace logicalaccess
              * \param buflen buf length. buflen must be at least 3 or toArray() will fail.
              * \return The count of bytes used (shall be 3) on success, 0 otherwise.
              */
-            size_t toArray(void* buf, size_t buflen) const;
+            std::vector<uint8_t> toArray() const;
 
             /**
              * \brief Import the access bits from a mifare byte array.
@@ -149,7 +149,7 @@ namespace logicalaccess
              *
              * If the array is not a valid mifare sector access bits array, fromArray() fails and the sector access bits remains unchanged.
              */
-            bool fromArray(const void* buf, size_t buflen);
+            bool fromArray(std::vector<uint8_t>);
 
             /**
              * \brief Set transport configuration.

@@ -108,9 +108,9 @@ bool MifarePlusSL0Commands::is_trailing_block(uint8_t hex_addr1, uint8_t hex_add
 
 bool MifarePlusSL0Commands::validate_access_bytes(const std::array<uint8_t, 16> &data)
 {
-	std::array<uint8_t, 3> access_bytes = { {data[6], data[7], data[8]} };
+	std::vector<uint8_t> access_bytes = { {data[6], data[7], data[8]} };
     MifareAccessInfo::SectorAccessBits sab;
-    return sab.fromArray(&access_bytes[0], 3);
+    return sab.fromArray(access_bytes);
 }
 
 bool MifarePlusSL0Commands::is4K()

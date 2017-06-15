@@ -9,6 +9,7 @@
 
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "logicalaccess/services/accesscontrol/encodings/encoding.hpp"
+#include "logicalaccess/services/accesscontrol/formats/BitsetStream.hpp"
 
 namespace logicalaccess
 {
@@ -33,7 +34,7 @@ namespace logicalaccess
          * \param convertedLengthBytes Length of "convertedData" in bytes
          * \return Length after conversion in bits
          */
-        virtual unsigned int convertNumeric(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes) = 0;
+		virtual unsigned int convertNumeric(const BitsetStream& datam, BitsetStream& convertedData) = 0;
 
         /**
          * \brief Convert binary data to the encoding type
@@ -44,7 +45,7 @@ namespace logicalaccess
          * \param convertedLengthBytes Length of "convertedData" in bytes
          * \return Length after conversion in bits
          */
-        virtual unsigned int convertBinary(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes) = 0;
+        virtual unsigned int convertBinary(const BitsetStream& data, BitsetStream& convertedData) = 0;
 
         /**
          * \brief Get the length after conversation for a given base length in bits
@@ -62,7 +63,7 @@ namespace logicalaccess
          * \param convertedLengthBytes Length of "convertedData"
          * \return Length after reversion in bits
          */
-        virtual unsigned int revertNumeric(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes) = 0;
+        virtual unsigned int revertNumeric(const BitsetStream& data, BitsetStream& convertedData) = 0;
 
         /**
          * \brief Revert binary data
@@ -73,7 +74,7 @@ namespace logicalaccess
          * \param convertedLengthBytes Length of "convertedData"
          * \return Length after reversion in bits
          */
-        virtual unsigned int revertBinary(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes) = 0;
+        virtual unsigned int revertBinary(const BitsetStream& data, BitsetStream& convertedData) = 0;
 
         /**
          * \brief Create a new Data Representation instance by the encoding type.

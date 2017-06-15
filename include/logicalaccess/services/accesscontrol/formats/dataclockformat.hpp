@@ -51,7 +51,7 @@ namespace logicalaccess
          * \param positionLength Number of location contains in the locations buffer.
          * \return The parity.
          */
-        unsigned char getRightParity(const void* data, size_t dataLengthBytes, ParityType type, unsigned int* locations, size_t positionLength) const;
+        unsigned char getRightParity(const BitsetStream& data, ParityType type, unsigned int* locations, size_t positionLength) const;
 
         /**
          * \brief Get the 1 Data Clock right parity for a buffer.
@@ -59,7 +59,7 @@ namespace logicalaccess
          * \param dataLengthBytes The buffer length in bytes.
          * \return The parity.
          */
-        unsigned char getRightParity1(const void* data, size_t dataLengthBytes) const;
+        unsigned char getRightParity1(const BitsetStream& data) const;
 
         /**
          * \brief Get the 2 Data Clock right parity for a buffer.
@@ -67,7 +67,7 @@ namespace logicalaccess
          * \param dataLengthBytes The buffer length in bytes.
          * \return The parity.
          */
-        unsigned char getRightParity2(const void* data, size_t dataLengthBytes) const;
+		unsigned char getRightParity2(const BitsetStream& data) const;
 
         /**
          * \brief Get the 3 Data Clock right parity for a buffer.
@@ -75,7 +75,7 @@ namespace logicalaccess
          * \param dataLengthBytes The buffer length in bytes.
          * \return The parity.
          */
-        unsigned char getRightParity3(const void* data, size_t dataLengthBytes) const;
+        unsigned char getRightParity3(const BitsetStream& data) const;
 
         /**
          * \brief Get the 4 Data Clock right parity for a buffer.
@@ -83,21 +83,21 @@ namespace logicalaccess
          * \param dataLengthBytes The buffer length in bytes.
          * \return The parity.
          */
-        unsigned char getRightParity4(const void* data, size_t dataLengthBytes) const;
+        unsigned char getRightParity4(const BitsetStream& data) const;
 
         /**
          * \brief Get linear data.
          * \param data Where to put data
          * \param dataLengthBytes Length in byte of data
          */
-        virtual void getLinearData(void* data, size_t dataLengthBytes) const;
+        virtual std::vector<uint8_t> getLinearData() const;
 
         /**
          * \brief Set linear data
          * \param data Where to get data
          * \param dataLengthBytes Length of data in bytes
          */
-        virtual void setLinearData(const void* data, size_t dataLengthBytes);
+        virtual void setLinearData(const std::vector<uint8_t>& data);
 
         /**
          * \brief Get the format linear data in bytes.
@@ -105,14 +105,14 @@ namespace logicalaccess
          * \param dataLengthBytes The data buffer length
          * \return The format linear data length.
          */
-        virtual size_t getFormatLinearData(void* data, size_t dataLengthBytes) const;
+        virtual size_t getFormatLinearData(std::vector<uint8_t>& data) const;
 
         /**
          * \brief Set the format linear data in bytes.
          * \param data The data buffer
          * \param indexByte The data offset
          */
-        virtual void setFormatLinearData(const void* data, size_t* indexByte);
+        virtual void setFormatLinearData(const std::vector<uint8_t>& data, size_t* indexByte);
 
         /**
          * \brief Get the format type.

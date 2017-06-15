@@ -54,38 +54,44 @@ namespace logicalaccess
         d_formatLinear.d_facilityCode = facilityCode;
     }
 
-    void Wiegand37WithFacilityFormat::getLinearDataWithoutParity(void* data, size_t dataLengthBytes) const
+	std::vector<uint8_t> Wiegand37WithFacilityFormat::getLinearDataWithoutParity() const
     {
-        unsigned int pos = 1;
+		BitsetStream data;
 
-        convertField(data, dataLengthBytes, &pos, getFacilityCode(), 16);
-        convertField(data, dataLengthBytes, &pos, getUid(), 19);
+        convertField(data, getFacilityCode(), 16);
+        convertField(data, getUid(), 19);
+		data.insert(0, 0x00, 0, 1);
+
+		return data.getData();
     }
 
-    void Wiegand37WithFacilityFormat::setLinearDataWithoutParity(const void* data, size_t dataLengthBytes)
+    void Wiegand37WithFacilityFormat::setLinearDataWithoutParity(const std::vector<uint8_t>& data)
     {
         unsigned int pos = 1;
+		BitsetStream _data;
+		_data.concat(data);
 
-        setFacilityCode((unsigned short)revertField(data, dataLengthBytes, &pos, 16));
-        setUid(revertField(data, dataLengthBytes, &pos, 19));
+        setFacilityCode((unsigned short)revertField(_data, &pos, 16));
+        setUid(revertField(_data, &pos, 19));
     }
 
-    size_t Wiegand37WithFacilityFormat::getFormatLinearData(void* data, size_t dataLengthBytes) const
+    size_t Wiegand37WithFacilityFormat::getFormatLinearData(std::vector<uint8_t>& data) const
     {
-        size_t retLength = sizeof(d_formatLinear);
+		size_t retLength = sizeof(d_formatLinear);
 
-        if (dataLengthBytes >= retLength)
-        {
-            memcpy(&reinterpret_cast<unsigned char*>(data)[0], &d_formatLinear, sizeof(d_formatLinear));
-        }
+		if (data.capacity() >= retLength)
+		{
+			memcpy(&data[0], &d_formatLinear, sizeof(d_formatLinear));
+		}
 
         return retLength;
     }
 
-    void Wiegand37WithFacilityFormat::setFormatLinearData(const void* data, size_t* indexByte)
+    void Wiegand37WithFacilityFormat::setFormatLinearData(const std::vector<uint8_t>& data, size_t* indexByte)
     {
-        memcpy(&d_formatLinear, &reinterpret_cast<const unsigned char*>(data)[*indexByte], sizeof(d_formatLinear));
-        (*indexByte) += sizeof(d_formatLinear);
+        //memcpy(&d_formatLinear, &reinterpret_cast<const unsigned char*>(data)[*indexByte], sizeof(d_formatLinear));
+		memcpy(&d_formatLinear, &data[*indexByte], sizeof(d_formatLinear));
+		(*indexByte) += sizeof(d_formatLinear);
 
         setFacilityCode(d_formatLinear.d_facilityCode);
     }

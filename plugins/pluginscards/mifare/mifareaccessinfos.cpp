@@ -26,16 +26,9 @@ namespace logicalaccess
         return s;
     }
 
-    size_t MifareAccessInfo::SectorAccessBits::toArray(void* buf, size_t buflen) const
+    std::vector<uint8_t> MifareAccessInfo::SectorAccessBits::toArray() const
     {
-        if (buflen < 3)
-        {
-            THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "The buffer is too short.");
-        }
-
-        memset(buf, 0x00, 3);
-
-        unsigned char* data = reinterpret_cast<unsigned char*>(buf);
+        std::vector<uint8_t> data(3);
 
         data[1] = (d_sector_trailer_access_bits.c1 << 7) | (d_data_blocks_access_bits[2].c1 << 6) | (d_data_blocks_access_bits[1].c1 << 5) | (d_data_blocks_access_bits[0].c1 << 4);
         data[2] = (d_sector_trailer_access_bits.c3 << 7) | (d_data_blocks_access_bits[2].c3 << 6) | (d_data_blocks_access_bits[1].c3 << 5) | (d_data_blocks_access_bits[0].c3 << 4);
@@ -44,19 +37,17 @@ namespace logicalaccess
         data[0] |= ((~data[1]) >> 4) & 0x0F;
         data[1] |= ((~data[2]) >> 4) & 0x0F;
 
-        return 3;
+        return data;
     }
 
-    bool MifareAccessInfo::SectorAccessBits::fromArray(const void* buf, size_t buflen)
+    bool MifareAccessInfo::SectorAccessBits::fromArray(std::vector<uint8_t> data)
     {
-        if (buflen < 3)
-        {
-            THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "The buffer is too short.");
-        }
+		if (data.size() <3)
+		{
+			THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "The buffer is too short.");
+		}
 
         SectorAccessBits sab;
-
-        const unsigned char* data = reinterpret_cast<const unsigned char*>(buf);
 
         sab.d_sector_trailer_access_bits.c1 = ((data[1] & 0x80) != 0);
         sab.d_sector_trailer_access_bits.c2 = ((data[2] & 0x08) != 0);
@@ -71,11 +62,11 @@ namespace logicalaccess
         sab.d_data_blocks_access_bits[0].c2 = ((data[2] & 0x01) != 0);
         sab.d_data_blocks_access_bits[0].c3 = ((data[2] & 0x10) != 0);
 
-        unsigned char test[3];
+        std::vector<uint8_t> test(3);
 
-        if (sab.toArray(test, 3) > 0)
+        if (sab.toArray().size() > 0)
         {
-            if (memcmp(test, buf, 3) == 0)
+            if (std::equal(test.begin(), test.end(), data.begin()))
             {
                 operator=(sab);
 
@@ -149,16 +140,17 @@ namespace logicalaccess
 
     void MifareAccessInfo::serialize(boost::property_tree::ptree& parentNode)
     {
-        unsigned char buf[3];
+        std::array<unsigned char, 3> buf;
         boost::property_tree::ptree node;
 
-        sab.toArray(buf, sizeof(buf));
+        auto tmp = sab.toArray();
+		std::copy_n(tmp.begin(), 3, buf.begin());
         std::ostringstream oss;
         oss << std::setfill('0');
-        for (size_t i = 0; i < sizeof(buf); ++i)
+        for (size_t i = 0; i < buf.size(); ++i)
         {
             oss << std::setw(2) << std::hex << static_cast<unsigned int>(buf[i]);
-            if (i < sizeof(buf) - 1)
+            if (i < buf.size() - 1)
             {
                 oss << " ";
             }
@@ -193,10 +185,10 @@ namespace logicalaccess
         keyB->unSerialize(node.get_child("KeyB"), "");
 
         std::string sabstr = node.get_child("SectorAccessBits").get_value<std::string>();
-        unsigned char buf[3];
-        memset(buf, 0x00, sizeof(buf));
+        std::array<unsigned char, 3> buf;
+		std::fill(buf.begin(), buf.end(), 0x00);
         std::istringstream iss(sabstr);
-        for (size_t i = 0; i < sizeof(buf); ++i)
+        for (size_t i = 0; i < buf.size(); ++i)
         {
             unsigned int tmp;
             if (!iss.good())
@@ -207,7 +199,9 @@ namespace logicalaccess
 
             buf[i] = static_cast<unsigned char>(tmp);
         }
-        sab.fromArray(buf, sizeof(buf));
+		std::vector<uint8_t> tmp(3);
+		std::copy_n(buf.begin(), 3, tmp.begin());
+        sab.fromArray(tmp);
         gpb = node.get_child("GPB").get_value<unsigned char>();
 
         boost::property_tree::ptree madnode = node.get_child("MAD");

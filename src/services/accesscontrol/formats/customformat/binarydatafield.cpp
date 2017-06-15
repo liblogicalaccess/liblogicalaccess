@@ -29,15 +29,15 @@ namespace logicalaccess
         fromString(str);
     }
 
-    BinaryFieldValue::BinaryFieldValue(const void* buf, size_t buflen)
+    BinaryFieldValue::BinaryFieldValue(const std::vector<uint8_t>& buf)
         : Key()
     {
         clear();
         d_buf.clear();
 
-        if (buf != NULL)
+        if (buf.size() != 0)
         {
-            d_buf.insert(d_buf.end(), static_cast<const unsigned char*>(buf), static_cast<const unsigned char*>(buf)+buflen);
+            d_buf.insert(d_buf.end(), buf.begin(), buf.end());
             d_isEmpty = false;
         }
     }
@@ -72,7 +72,7 @@ namespace logicalaccess
 
     void BinaryDataField::setValue(std::vector<unsigned char> value)
     {
-        d_value = BinaryFieldValue(&value[0], value.size());
+        d_value = BinaryFieldValue(value);
     }
 
     std::vector<unsigned char> BinaryDataField::getValue() const
@@ -91,26 +91,34 @@ namespace logicalaccess
         return d_padding;
     }
 
-    void BinaryDataField::getLinearData(void* data, size_t dataLengthBytes, unsigned int* pos) const
+	std::vector<uint8_t> BinaryDataField::getLinearData() const
     {
-        if ((dataLengthBytes * 8) < (d_length + *pos))
-        {
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
-        }
+		BitsetStream data;
 
-        size_t fieldDataLengthBytes = (d_length + 7) / 8;
+        //if ((data.size() * 8) < (d_length + _data.getBitSize()))
+        //{
+        //    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
+        //}
+
+		size_t fieldDataLengthBytes = (d_length + 7) / 8;
 		size_t copyValueLength = (d_value.getLength() > fieldDataLengthBytes) ? fieldDataLengthBytes : d_value.getLength();
-        unsigned char* paddedBuffer = new unsigned char[fieldDataLengthBytes];
-        memset(paddedBuffer, d_padding, fieldDataLengthBytes);
+        //unsigned char* paddedBuffer = new unsigned char[fieldDataLengthBytes];
+        //memset(paddedBuffer, d_padding, fieldDataLengthBytes);
+		BitsetStream paddedBuffer(d_padding, fieldDataLengthBytes);
 
-#if defined(UNIX)
-		memcpy(paddedBuffer, d_value.getData(), copyValueLength);
-#else
-		memcpy_s(paddedBuffer, fieldDataLengthBytes, d_value.getData(), copyValueLength);
-#endif
+//#if defined(UNIX)
+//		memcpy(paddedBuffer, d_value.getData(), copyValueLength);
+//#else
+//		memcpy_s(paddedBuffer, fieldDataLengthBytes, d_value.getData(), copyValueLength);
+//#endif
+		std::vector<uint8_t> tmp;
+		tmp.reserve(copyValueLength);
+		std::copy(&d_value.getData()[0], &d_value.getData()[0] + copyValueLength, tmp.begin());
+		paddedBuffer.concat(tmp);
 
-        convertBinaryData(paddedBuffer, fieldDataLengthBytes, pos, d_length, data, dataLengthBytes);
+        convertBinaryData(paddedBuffer, d_length, data);
 
+		return data.getData();
         // OLD METHOD WAS NOT HANDLING LSB/MSB CONVERSION
         /*for (size_t i = 0; i < ((d_length + 7) / 8); ++i)
         {
@@ -134,21 +142,24 @@ namespace logicalaccess
         }*/
     }
 
-    void BinaryDataField::setLinearData(const void* data, size_t dataLengthBytes, unsigned int* pos)
+    void BinaryDataField::setLinearData(const std::vector<uint8_t>& data)
     {
-        if ((dataLengthBytes * 8) < (d_length + *pos))
+		BitsetStream _data;
+		_data.concat(data);
+
+        if ((_data.getByteSize() * 8) < (d_length + _data.getBitSize()))
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
         }
 
         size_t fieldDataLengthBytes = (d_length + 7) / 8;
-        unsigned char* paddedBuffer = new unsigned char[fieldDataLengthBytes];
-        memset(paddedBuffer, d_padding, fieldDataLengthBytes);
+        //unsigned char* paddedBuffer = new unsigned char[fieldDataLengthBytes];
+        //memset(paddedBuffer, d_padding, fieldDataLengthBytes);
+		BitsetStream paddedBuffer(d_padding, fieldDataLengthBytes);
 
-        revertBinaryData(data, dataLengthBytes, pos, d_length, paddedBuffer, fieldDataLengthBytes);
+        revertBinaryData(_data, d_length, paddedBuffer);
 
-        d_value = BinaryFieldValue(paddedBuffer, fieldDataLengthBytes);
-        delete[] paddedBuffer;
+        d_value = BinaryFieldValue(paddedBuffer.getData());
     }
 
     bool BinaryDataField::checkSkeleton(std::shared_ptr<DataField> field) const

@@ -66,7 +66,7 @@ namespace logicalaccess
             if (storage)
             {
                 formatBuf = storage->readData(pLocation, std::shared_ptr<AccessInfo>(), length, CB_DEFAULT);
-                formatret->setLinearData(&formatBuf[0], formatBuf.size());
+                formatret->setLinearData(formatBuf);
 
                 ret = true;
             }

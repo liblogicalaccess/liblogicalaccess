@@ -81,28 +81,28 @@ namespace logicalaccess
          * \param data Where to put data
          * \param dataLengthBytes Length in byte of data
          */
-        virtual void getLinearData(void* data, size_t dataLengthBytes) const = 0;
+        virtual std::vector<uint8_t> getLinearData() const = 0;
 
         /**
          * \brief Set linear data.
          * \param data Where to get data
          * \param dataLengthBytes Length of data in bytes
          */
-        virtual void setLinearData(const void* data, size_t dataLengthBytes) = 0;
+        virtual void setLinearData(const std::vector<uint8_t>& data) = 0;
 
         /**
          * \brief Get skeleton linear data.
          * \param data Where to put data
          * \param dataLengthBytes Length in byte of data
          */
-        virtual size_t getSkeletonLinearData(void* data, size_t dataLengthBytes) const = 0;
+        virtual size_t getSkeletonLinearData(std::vector<uint8_t>& data) const = 0;
 
         /**
          * \brief Set skeleton linear data.
          * \param data Where to get data
          * \param dataLengthBytes Length in byte of data
          */
-        virtual void setSkeletonLinearData(const void* data, size_t dataLengthBytes) = 0;
+        virtual void setSkeletonLinearData(const std::vector<uint8_t>& data) = 0;
 
         /**
          * \brief Get the format type.
@@ -146,7 +146,7 @@ namespace logicalaccess
          * \param nbPositions Number of parity in the list
          * \return The parity.
          */
-        static unsigned char calculateParity(const void* data, size_t dataLengthBytes, ParityType parityType, unsigned int* positions, size_t nbPositions);
+        static unsigned char calculateParity(const BitsetStream& data, ParityType parityType, unsigned int* positions, size_t nbPositions);
 
         /**
          * \brief Get the identifier.

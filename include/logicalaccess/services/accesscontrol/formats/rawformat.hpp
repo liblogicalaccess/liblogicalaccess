@@ -78,14 +78,14 @@ namespace logicalaccess
          * \param data Where to put data
          * \param dataLengthBytes Length in byte of data
          */
-        virtual void getLinearData(void* data, size_t dataLengthBytes) const;
+        virtual std::vector<uint8_t> getLinearData() const;
 
         /**
          * \brief Set linear data
          * \param data Where to get data
          * \param dataLengthBytes Length of data in bytes
          */
-        virtual void setLinearData(const void* data, size_t dataLengthBytes);
+        virtual void setLinearData(const std::vector<uint8_t>& data);
 
         /**
          * \brief Get the raw data.
@@ -97,7 +97,7 @@ namespace logicalaccess
          * \brief Set the raw data.
          * \param value The raw data.
          */
-        void setRawData(std::vector<unsigned char>& data);
+        void setRawData(const std::vector<unsigned char>& data);
 
         /**
          * \brief Check the current format skeleton with another format.
@@ -120,14 +120,14 @@ namespace logicalaccess
          * \param dataLengthBytes The data buffer length
          * \return The format linear data length.
          */
-        virtual size_t getFormatLinearData(void* data, size_t dataLengthBytes) const;
+        virtual size_t getFormatLinearData(std::vector<uint8_t>& data) const;
 
         /**
          * \brief Set the format linear data in bytes.
          * \param data The data buffer
          * \param indexByte The data offset
          */
-        virtual void setFormatLinearData(const void* data, size_t* indexByte);
+        virtual void setFormatLinearData(const std::vector<uint8_t>& data, size_t* indexByte);
 
         /**
          * \brief The raw data.

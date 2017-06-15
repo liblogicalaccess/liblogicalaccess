@@ -310,7 +310,7 @@ namespace logicalaccess
          * \param fileno The file number
          * \param fileSetting The file setting
          */
-        virtual void getFileSettings(unsigned char fileno, FileSetting& fileSetting) = 0;
+        virtual FileSetting getFileSettings(unsigned char fileno) = 0;
 
         /**
          * \brief Change file settings of a specific file in the current application.
@@ -484,7 +484,7 @@ namespace logicalaccess
          * \brief Get the card version information.
          * \param dataVersion The card version information structure that will be filled
          */
-        virtual void getVersion(DESFireCardVersion& dataVersion) = 0;
+        virtual DESFireCardVersion getVersion() = 0;
 
     protected:
 

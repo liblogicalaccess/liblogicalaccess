@@ -56,7 +56,7 @@ namespace logicalaccess
          * \param dataConvertedLengthBytes Length of "dataConverted" in bytes
          * \return Length of data written in bits
          */
-        virtual unsigned int convert(unsigned long long data, unsigned int dataLengthBits, void* dataConverted, size_t dataConvertedLengthBytes);
+        virtual unsigned int convert(unsigned long long data, unsigned int dataLengthBits, BitsetStream& dataConverted);
 
         /**
          * \brief Revert data type to data
@@ -65,7 +65,7 @@ namespace logicalaccess
          * \param lengthBits Length of data to revert in bits
          * \return Data after reversion
          */
-        virtual unsigned long long revert(void* data, size_t dataLengthBytes, unsigned int lengthBits);
+        virtual unsigned long long revert(BitsetStream& data);
 
     private:
 

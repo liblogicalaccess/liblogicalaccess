@@ -47,7 +47,7 @@ namespace logicalaccess
 
 				formatBuf = storage->readData(location, aiToUse, length, CB_AUTOSWITCHAREA);
 
-				formatret->setLinearData(&formatBuf[0], formatBuf.size());
+				formatret->setLinearData(formatBuf);
 				ret = true;
             }
         }
@@ -69,7 +69,7 @@ namespace logicalaccess
             size_t length = (format->getDataLength() + 7) / 8;
 			std::vector<unsigned char> formatBuf(length, 0x00);
 
-            format->getLinearData(&formatBuf[0], formatBuf.size());
+			formatBuf = format->getLinearData();
             storage->writeData(location, aiToUse, aiToWrite, formatBuf, CB_AUTOSWITCHAREA);
         }
 		else

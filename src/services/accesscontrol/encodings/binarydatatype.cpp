@@ -30,7 +30,7 @@ namespace logicalaccess
         return ET_BINARY;
     }
 
-    unsigned int BinaryDataType::convert(unsigned long long data, unsigned int dataLengthBits, void* dataConverted, size_t dataConvertedLengthBytes)
+    unsigned int BinaryDataType::convert(unsigned long long data, unsigned int dataLengthBits, BitsetStream& dataConverted)
     {
         unsigned int ret = 0;
 
@@ -59,49 +59,53 @@ namespace logicalaccess
         }
         else
         {*/
-        unsigned int tmpswblen = DataType::addParityToBuffer(d_leftParityType, d_rightParityType, 8, NULL, static_cast<unsigned int>(dataConvertedLengthBytes * 8), NULL, 0);
+        unsigned int tmpswblen = DataType::addParityToBuffer(d_leftParityType, d_rightParityType, 8, BitsetStream(), BitsetStream());
         size_t tmpswblenBytes = (tmpswblen + 7) / 8;
-        unsigned char* tmpswb = new unsigned char[tmpswblenBytes];
-        memset(tmpswb, 0x00, tmpswblenBytes);
-        ret = BitHelper::align(tmpswb, tmpswblenBytes, &data, sizeof(data), dataLengthBits);
-        DataType::addParityToBuffer(d_leftParityType, d_rightParityType, 8, tmpswb, tmpswblen, dataConverted, static_cast<unsigned int>(dataConvertedLengthBytes * 8));
-        delete[] tmpswb;
+		BitsetStream tmpswb(0x00, tmpswblenBytes);
+		
+		BitsetStream tmpdata;
+		std::vector<uint8_t> tmpvdata;
+		tmpvdata.assign(reinterpret_cast<uint8_t*>(&data), reinterpret_cast<uint8_t*>(&data) + sizeof(data));
+		tmpdata.concat(tmpvdata);
+
+        ret = BitHelper::align(tmpswb, tmpdata, tmpdata.getBitSize());
+        DataType::addParityToBuffer(d_leftParityType, d_rightParityType, 8, tmpswb, dataConverted);
         //}
 
         return ret;
     }
 
-    unsigned long long BinaryDataType::revert(void* data, size_t dataLengthBytes, unsigned int lengthBits)
+	unsigned long long BinaryDataType::revert(BitsetStream& data)
     {
         unsigned long long ret = 0;
 
-        if (data != NULL && dataLengthBytes > 0)
+        if (data.getByteSize() > 0)
         {
-            unsigned int tmpswblen = DataType::removeParityToBuffer(d_leftParityType, d_rightParityType, 8, NULL, lengthBits, NULL, 0);
+            unsigned int tmpswblen = DataType::removeParityToBuffer(d_leftParityType, d_rightParityType, 8, BitsetStream(), BitsetStream());
             size_t tmpswblenBytes = (tmpswblen + 7) / 8;
-            unsigned char* tmpswb = new unsigned char[tmpswblenBytes];
-            memset(tmpswb, 0x00, tmpswblenBytes);
+            //unsigned char* tmpswb = new unsigned char[tmpswblenBytes];
+            //memset(tmpswb, 0x00, tmpswblenBytes);
+			BitsetStream tmpswb(0x00, tmpswblenBytes);
 
-            DataType::removeParityToBuffer(d_leftParityType, d_rightParityType, 8, data, lengthBits, tmpswb, tmpswblen);
+            DataType::removeParityToBuffer(d_leftParityType, d_rightParityType, 8, data, tmpswb);
 
-            unsigned char *linedData = new unsigned char[dataLengthBytes];
-            memset(linedData, 0x00, dataLengthBytes);
-            BitHelper::revert(linedData, dataLengthBytes, tmpswb, tmpswblenBytes, tmpswblen);
-            delete[] tmpswb;
+            //unsigned char *linedData = new unsigned char[dataLengthBytes];
+            //memset(linedData, 0x00, dataLengthBytes);
+			BitsetStream linedData(0x00, data.getByteSize());
+            BitHelper::revert(linedData, tmpswb, tmpswblen);
 
             int i = 0;
-            Alg(static_cast<int>(dataLengthBytes), &i);
+            Alg(data.getByteSize(), &i);
 
-            for (long long n = (static_cast<long long>(dataLengthBytes - 1) * 8); n >= 0; n -= 8) // TODO: Check this loop
+            for (long long n = (static_cast<long long>(data.getByteSize() - 1) * 8); n >= 0; n -= 8) // TODO: Check this loop
             {
                 Alg(&i);
                 if (d_bitDataRepresentationType == ET_LITTLEENDIAN)
                 {
-                    linedData[i] = DataType::invertBitSex(linedData[i]);
+                    linedData.writeAt(i, DataType::invertBitSex(linedData.getData()[i]));
                 }
-                ret |= (static_cast<unsigned long long>(linedData[i]) & 0xff) << n;
+                ret |= (static_cast<unsigned long long>(linedData.getData()[i]) & 0xff) << n;
             }
-            delete[] linedData;
         }
         return ret;
     }

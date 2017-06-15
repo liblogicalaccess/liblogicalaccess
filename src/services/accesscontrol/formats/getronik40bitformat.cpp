@@ -65,12 +65,12 @@ namespace logicalaccess
         d_formatLinear.d_field = field;
     }
 
-    size_t Getronik40BitFormat::getFormatLinearData(void* /*data*/, size_t /*dataLengthBytes*/) const
+    size_t Getronik40BitFormat::getFormatLinearData(std::vector<uint8_t>& /*data*/) const
     {
         return 0;
     }
 
-    void Getronik40BitFormat::setFormatLinearData(const void* /*data*/, size_t* /*indexByte*/)
+    void Getronik40BitFormat::setFormatLinearData(const std::vector<uint8_t>& /*data*/, size_t* /*indexByte*/)
     {
         //DOES NOTHING
     }
@@ -118,72 +118,73 @@ namespace logicalaccess
         return ret;
     }
 
-    unsigned char Getronik40BitFormat::getRightParity(const void* data, size_t dataLengthBytes) const
+    unsigned char Getronik40BitFormat::getRightParity(const BitsetStream& data) const
     {
         unsigned char parity = 0x00;
 
-        if (data != NULL)
+        if (data.getByteSize() != 0)
         {
-            parity = calculateParity(data, dataLengthBytes, PT_EVEN, static_cast<size_t>(0), 38);
+            parity = calculateParity(data, PT_EVEN, static_cast<size_t>(0), 38);
             size_t pos = 39;
-            parity = parity ^ (unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7);
+            parity = parity ^ ((data.getData()[pos / 8] << (pos % 8)) >> 7);
         }
 
         return parity;
     }
 
-    void Getronik40BitFormat::getLinearData(void* data, size_t dataLengthBytes) const
+	std::vector<uint8_t> Getronik40BitFormat::getLinearData() const
     {
-        unsigned int pos = 0;
+		BitsetStream data;
 
-        if (data != NULL)
-        {
-            BitHelper::writeToBit(data, dataLengthBytes, &pos, 0x2E, 0, 8);
+		data.append(0x2E);
 
-            convertField(data, dataLengthBytes, &pos, getUid(), 16);
-            convertField(data, dataLengthBytes, &pos, getField(), 14);
+		convertField(data, getUid(), 16);
+		convertField(data, getField(), 14);
 
-            pos = 39;
-            BitHelper::writeToBit(data, dataLengthBytes, &pos, 0x01, 7, 1);
-            pos = 38;
-            BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity(data, dataLengthBytes), 7, 1);
-        }
+		data.writeAt(39, 0x01, 7, 1);
+		data.writeAt(38, getRightParity(data), 7, 1);
+		
+		return data.getData();
     }
 
-    void Getronik40BitFormat::setLinearData(const void* data, size_t dataLengthBytes)
+    void Getronik40BitFormat::setLinearData(const std::vector<uint8_t>& data)
     {
         unsigned int pos = 0;
-        unsigned char fixedValue = 0x00;
-        if (data != NULL)
+        BitsetStream fixedValue;
+		BitsetStream _data;
+
+		_data.concat(data);
+
+        if (_data.getByteSize() != 0)
         {
-            if (dataLengthBytes * 8 < getDataLength())
+            if (_data.getByteSize() * 8 < getDataLength())
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Data length too small.");
             }
 
-            BitHelper::extract(&fixedValue, 1, data, dataLengthBytes, static_cast<unsigned int>(dataLengthBytes * 8), pos, 8);
-            if (fixedValue != 0x2E)
+            BitHelper::extract(fixedValue, _data, pos, 8);
+            if (fixedValue.getData()[0] != 0x2E)
             {
                 char exceptionmsg[256];
                 sprintf(exceptionmsg, "Getronik 40-Bit: fixed left value doesn't match (%x != %x).", fixedValue, 0x2E);
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, exceptionmsg);
             }
             pos = 39;
-            fixedValue = 0x00;
-            BitHelper::extract(&fixedValue, 1, data, dataLengthBytes, static_cast<unsigned int>(dataLengthBytes * 8), pos, 1);
-            fixedValue = (fixedValue >> 7) & 0x01;
-            if (fixedValue != 0x01)
+            fixedValue.writeAt(0, 0x00);
+            BitHelper::extract(fixedValue, _data, pos, 1);
+            fixedValue.writeAt(0, (fixedValue.getData()[0] >> 7) & 0x01);
+            if (!fixedValue.test(7))
             {
                 char exceptionmsg[256];
                 sprintf(exceptionmsg, "Getronik 40-Bit: fixed right value doesn't match (%x != %x).", fixedValue, 0x01);
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, exceptionmsg);
             }
             pos = 8;
-            d_uid = revertField(data, dataLengthBytes, &pos, 16);
-            d_formatLinear.d_field = (unsigned short)revertField(data, dataLengthBytes, &pos, 14);
+            d_uid = revertField(_data, &pos, 16);
+            d_formatLinear.d_field = (unsigned short)revertField(_data, &pos, 14);
             pos = 38;
-            unsigned char parity = getRightParity(data, dataLengthBytes);
-            if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != parity)
+            unsigned char parity = getRightParity(_data);
+            if (((_data.getData()[pos / 8] << (pos % 8)) >> 7) != parity)
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Right parity format error.");
             }

@@ -106,7 +106,7 @@ namespace logicalaccess
          * \param fileno The file number
          * \param fileSetting The file setting
          */
-        virtual void getFileSettings(unsigned char fileno, FileSetting& fileSetting);
+        virtual FileSetting getFileSettings(unsigned char fileno);
 
         /**
          * \brief Change file settings of a specific file in the current application.
@@ -282,7 +282,7 @@ namespace logicalaccess
          * \brief Get the card version information.
          * \param dataVersion The card version information structure that will be filled
          */
-        virtual void getVersion(DESFireCardVersion& dataVersion);
+        virtual DESFireCardVersion getVersion();
 
         /**
          * \brief Get the ISO7816 reader/card adapter.

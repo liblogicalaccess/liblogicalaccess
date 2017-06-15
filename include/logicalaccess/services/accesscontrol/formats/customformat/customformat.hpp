@@ -54,14 +54,16 @@ namespace logicalaccess
          * \param data Where to put data
          * \param dataLengthBytes Length in byte of data
          */
-        virtual void getLinearData(void* data, size_t dataLengthBytes) const;
+        virtual std::vector<uint8_t> getLinearData() const;
+		//virtual void getLinearData(void* data, size_t dataLengthBytes) const;
+
 
         /**
          * \brief Set linear data.
          * \param data Where to get data
          * \param dataLengthBytes Length of data in bytes
          */
-        virtual void setLinearData(const void* data, size_t dataLengthBytes);
+        virtual void setLinearData(const std::vector<uint8_t>& data);
 
         /**
          * \brief Check the current format skeleton with another format.
@@ -81,14 +83,14 @@ namespace logicalaccess
          * \param data Where to put data
          * \param dataLengthBytes Length in byte of data
          */
-        virtual size_t getSkeletonLinearData(void* data, size_t dataLengthBytes) const;
+        virtual size_t getSkeletonLinearData(std::vector<uint8_t>& data) const;
 
         /**
          * \brief Set skeleton linear data.
          * \param data Where to get data
          * \param dataLengthBytes Length in byte of data
          */
-        virtual void setSkeletonLinearData(const void* data, size_t dataLengthBytes);
+        virtual void setSkeletonLinearData(const std::vector<uint8_t>& data);
 
         /**
          * \brief Serialize the current object to XML.

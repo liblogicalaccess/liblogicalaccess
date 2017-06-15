@@ -35,7 +35,7 @@ namespace logicalaccess
         DESFireCommands::FileSetting fileSetting;
         memset(&fileSetting, 0x00, sizeof(fileSetting));
 
-        getFileSettings(fileno, fileSetting);
+        fileSetting = getFileSettings(fileno);
 
 		return getEncryptionMode(fileSetting, isReadMode, needLoadKey);
     }
@@ -83,7 +83,7 @@ namespace logicalaccess
 
         DESFireCommands::FileSetting fileSetting;
         memset(&fileSetting, 0x00, sizeof(fileSetting));
-        getFileSettings(fileno, fileSetting);
+		fileSetting = getFileSettings(fileno);
 
         switch (fileSetting.fileType)
         {

@@ -31,43 +31,46 @@ namespace logicalaccess
         return ET_BIGENDIAN;
     }
 
-    unsigned int BigEndianDataRepresentation::convertNumeric(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
+    unsigned int BigEndianDataRepresentation::convertNumeric(const BitsetStream& data, BitsetStream& convertedData)
     {
         unsigned int ret = 0;
 
 #if __BYTE_ORDER != __LITTLE_ENDIAN
 
-        if (convertedLengthBytes >= dataLengthBytes)
+        if (convertedData.getByteSize() >= convertedData.getByteSize())
         {
-            memset(convertedData, 0x00, convertedLengthBytes);
-            memcpy(convertedData, data, dataLengthBytes);
+			//memset(convertedData, 0x00, convertedLengthBytes);
+			//memcpy(convertedData, data, dataLengthBytes);
+			std::vector<uint8_t> tmp(convertedData.getByteSize());
+			std::fill(tmp.begin(), tmp.end(), 0x00);
+			convertedData.writeAt(0, tmp, 0, tmp.size());
+			convertedData.writeAt(0, data.getData(), 0, data.getByteSize());
         }
-        ret = dataLengthBits;
-
+        ret = data.getBitSize();
 #else
-
-        if (convertedData != NULL)
+        if (convertedData.getByteSize() != 0)
         {
-            BitHelper::swapBytes(convertedData, convertedLengthBytes, data, dataLengthBytes, dataLengthBits);
+            BitHelper::swapBytes(convertedData, data);
         }
-        ret = dataLengthBits;
-
+		ret = data.getBitSize();
 #endif
-
         return ret;
     }
 
-    unsigned int BigEndianDataRepresentation::convertBinary(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
+    unsigned int BigEndianDataRepresentation::convertBinary(const BitsetStream& data, BitsetStream& convertedData)
     {
         unsigned int ret = 0;
 
-        if (convertedLengthBytes >= dataLengthBytes)
+        if (convertedData.getByteSize() >= data.getByteSize())
         {
-            memset(convertedData, 0x00, convertedLengthBytes);
-            memcpy(convertedData, data, dataLengthBytes);
+            //memset(convertedData, 0x00, convertedLengthBytes);
+            //memcpy(convertedData, data, dataLengthBytes);
+			std::vector<uint8_t> tmp(convertedData.getByteSize());
+			std::fill(tmp.begin(), tmp.end(), 0x00);
+			convertedData.writeAt(0, tmp, 0, tmp.size());
+			convertedData.writeAt(0, data.getData(), 0, data.getByteSize());
         }
-        ret = dataLengthBits;
-
+        ret = data.getBitSize();
         return ret;
     }
 
@@ -76,42 +79,42 @@ namespace logicalaccess
         return lengthBits;
     }
 
-    unsigned int BigEndianDataRepresentation::revertNumeric(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
+    unsigned int BigEndianDataRepresentation::revertNumeric(const BitsetStream& data, BitsetStream& convertedData)
     {
-        unsigned int ret = 0;
 
 #if __BYTE_ORDER != __LITTLE_ENDIAN
-
-        if (convertedLengthBytes >= dataLengthBytes)
+        if (convertedData.getSize() >= data.getSize())
         {
-            memset(convertedData, 0x00, convertedLengthBytes);
-            memcpy(convertedData, data, dataLengthBytes);
+			//memset(convertedData, 0x00, convertedLengthBytes);
+			//memcpy(convertedData, data, dataLengthBytes);
+			std::vector<uint8_t> tmp(convertedData.getByteSize());
+			std::fill(tmp.begin(), tmp.end(), 0x00);
+			convertedData.writeAt(0, tmp, 0, tmp.size() * 8);
+			convertedData.writeAt(0, data.getData(), 0, data.getByteSize());
         }
-        ret = dataLengthBits;
-
 #else
-
-        if (convertedData != NULL)
+        if (convertedData.getBitSize() != 0)
         {
-            BitHelper::swapBytes(convertedData, convertedLengthBytes, data, dataLengthBytes, dataLengthBits);
+            BitHelper::swapBytes(convertedData, data);
         }
-        ret = dataLengthBits;
-
 #endif
-
-        return ret;
+        return data.getBitSize();
     }
 
-    unsigned int BigEndianDataRepresentation::revertBinary(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
+    unsigned int BigEndianDataRepresentation::revertBinary(const BitsetStream& data, BitsetStream& convertedData)
     {
         unsigned int ret = 0;
 
-        if (convertedLengthBytes >= dataLengthBytes)
+        if (convertedData.getByteSize() >= data.getByteSize())
         {
-            memset(convertedData, 0x00, convertedLengthBytes);
-            memcpy(convertedData, data, dataLengthBytes);
+            //memset(convertedData, 0x00, convertedLengthBytes);
+            //memcpy(convertedData, data, dataLengthBytes);
+			std::vector<uint8_t> tmp(convertedData.getByteSize());
+			std::fill(tmp.begin(), tmp.end(), 0x00);
+			convertedData.writeAt(0, tmp, 0, tmp.size() * 8);
+			convertedData.writeAt(0, data.getData(), 0, data.getByteSize());
         }
-        ret = dataLengthBits;
+        ret = data.getBitSize();
 
         return ret;
     }

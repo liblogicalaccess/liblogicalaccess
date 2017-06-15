@@ -56,7 +56,7 @@ bool PCSCCardProbe::is_desfire(std::vector<uint8_t> *uid)
         auto desfire_command =
             std::dynamic_pointer_cast<DESFireCommands>(chip->getCommands());
         desfire_command->selectApplication(0x00);
-        desfire_command->getVersion(cardversion);
+		cardversion = desfire_command->getVersion();
 
         if (uid)
             *uid =
@@ -82,7 +82,7 @@ bool PCSCCardProbe::is_desfire_ev1(std::vector<uint8_t> *uid)
             std::dynamic_pointer_cast<DESFireCommands>(chip->getCommands());
         assert(desfire_command);
         desfire_command->selectApplication(0x00);
-        desfire_command->getVersion(cardversion);
+		cardversion = desfire_command->getVersion();
 
         if (uid)
             *uid =
@@ -147,7 +147,7 @@ bool PCSCCardProbe::has_desfire_random_uid(ByteVector *uid)
         assert(desfire_command);
 
         desfire_command->selectApplication(0x00);
-        desfire_command->getVersion(cardversion);
+		cardversion =desfire_command->getVersion();
 
         if (BufferHelper::allZeroes(cardversion.uid))
         {

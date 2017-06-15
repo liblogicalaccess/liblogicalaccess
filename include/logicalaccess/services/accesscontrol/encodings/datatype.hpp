@@ -9,6 +9,7 @@
 
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 #include "logicalaccess/services/accesscontrol/encodings/encoding.hpp"
+#include "logicalaccess/services/accesscontrol/formats/BitsetStream.hpp"
 
 namespace logicalaccess
 {
@@ -46,16 +47,14 @@ namespace logicalaccess
          * \param dataConvertedLengthBytes Length of "dataConverted" in bytes
          * \return Length of data written in bits
          */
-        virtual unsigned int convert(unsigned long long data, unsigned int dataLengthBits, void* dataConverted, size_t dataConvertedLengthBytes) = 0;
+		virtual unsigned int convert(unsigned long long data, unsigned int dataLengthBits, BitsetStream& dataConverted) = 0;
 
         /**
          * \brief Revert data type to data
          * \param data Data to revert
-         * \param dataLengthBytes Length of "data" in bits
-         * \param lengthBits Length of data to revert in bits
          * \return Data after reversion
          */
-        virtual unsigned long long revert(void* data, size_t dataLengthBytes, unsigned int lengthBits) = 0;
+		virtual unsigned long long revert(BitsetStream& data) = 0;
 
         /**
          * \brief Create a new Data Type instance by the encoding type.
@@ -101,7 +100,7 @@ namespace logicalaccess
          * \param procbuflen The allocated buffer length (in bits).
          * \return The buffer with parity length (in bits).
          */
-        static unsigned int addParityToBuffer(ParityType leftParity, ParityType rightParity, unsigned int blocklen, void* buf, unsigned int buflen, void* procbuf, unsigned int procbuflen);
+        static unsigned int addParityToBuffer(ParityType leftParity, ParityType rightParity, unsigned int blocklen, BitsetStream& buf, BitsetStream& procbuf);
 
         /**
          * \brief Remove parity to a buffer.
@@ -114,7 +113,7 @@ namespace logicalaccess
          * \param procbuflen The allocated buffer length (in bits).
          * \return The buffer without parity length (in bits).
          */
-        static unsigned int removeParityToBuffer(ParityType leftParity, ParityType rightParity, unsigned int blocklen, void* buf, unsigned int buflen, void* procbuf, unsigned int procbuflen);
+        static unsigned int removeParityToBuffer(ParityType leftParity, ParityType rightParity, unsigned int blocklen, BitsetStream& buf, BitsetStream& procbuf);
 
         /**
          * \brief Get the bit data representation type.

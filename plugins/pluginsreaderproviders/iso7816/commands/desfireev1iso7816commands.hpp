@@ -41,6 +41,7 @@ namespace logicalaccess
          * \brief Get the value of available bytes.
          * \return The available memory in bytes.
          */
+
         virtual unsigned int getFreeMem();
 
         /**
@@ -240,7 +241,7 @@ namespace logicalaccess
          * \brief Get the card version information.
          * \param dataVersion The card version information structure that will be filled
          */
-        virtual void getVersion(DESFireCommands::DESFireCardVersion& dataVersion);
+        virtual DESFireCommands::DESFireCardVersion getVersion();
 
         /**
          * \brief Get the current application list.

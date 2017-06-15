@@ -27,12 +27,10 @@ namespace logicalaccess
         {
         case ET_BCDBYTE:
             return new BCDByteDataType();
-
         case ET_BCDNIBBLE:
             return new BCDNibbleDataType();
         case ET_BINARY:
             return new BinaryDataType();
-
         default:
             return NULL;
         }
@@ -90,38 +88,41 @@ namespace logicalaccess
         return ret;
     }
 
-    unsigned int DataType::addParityToBuffer(ParityType leftParity, ParityType rightParity, unsigned int blocklen, void* buf, unsigned int buflen, void* procbuf, unsigned int procbuflen)
+    unsigned int DataType::addParityToBuffer(ParityType leftParity, ParityType rightParity, unsigned int blocklen, BitsetStream& buf, BitsetStream& procbuf)
     {
-        if ((buflen % blocklen) != 0 && (leftParity != PT_NONE || rightParity != PT_NONE))
+        if ((buf.getBitSize() % blocklen) != 0 && (leftParity != PT_NONE || rightParity != PT_NONE))
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The buffer length is not block length aligned. If you use parity on data type, it must be aligned.");
         }
 
-        unsigned int nbblocks = static_cast<unsigned int>(buflen / blocklen);
-        unsigned int newsize = buflen + (nbblocks * (((leftParity != PT_NONE) ? 1 : 0) + ((rightParity != PT_NONE) ? 1 : 0)));
+        unsigned int nbblocks = static_cast<unsigned int>(buf.getBitSize() / blocklen);
+        unsigned int newsize = buf.getBitSize() + (nbblocks * (((leftParity != PT_NONE) ? 1 : 0) + ((rightParity != PT_NONE) ? 1 : 0)));
 
-        if (buf != NULL && procbuf != NULL && procbuflen >= newsize)
+        if (buf.getByteSize() != 0 && procbuf.getBitSize() >= newsize)
         {
             unsigned int posproc = 0;
-            size_t buflenBytes = (buflen + 7) / 8;
-            size_t procbuflenBytes = (procbuflen + 7) / 8;
+            size_t buflenBytes = (buf.getBitSize() + 7) / 8;
+            size_t procbuflenBytes = (procbuf.getBitSize() + 7) / 8;
             unsigned int pos = 0;
 
-            while (pos < buflen)
+            while (pos < buf.getBitSize())
             {
                 if (leftParity != PT_NONE)
                 {
-                    unsigned char parity = StaticFormat::calculateParity(buf, buflen, leftParity, pos, blocklen);
-                    BitHelper::writeToBit(procbuf, procbuflenBytes, &posproc, parity, 7, 1);
+                    unsigned char parity = StaticFormat::calculateParity(buf, leftParity, pos, blocklen);
+                    //BitHelper::writeToBit(procbuf, procbuflenBytes, &posproc, parity, 7, 1);
+					procbuf.writeAt(posproc, parity, 7, 1);
                 }
 
-                unsigned int currentBlocklen = (pos + blocklen <= buflen) ? blocklen : buflen - pos;
-                BitHelper::writeToBit(procbuf, procbuflenBytes, &posproc, buf, buflenBytes, buflen, pos, currentBlocklen);
+                unsigned int currentBlocklen = (pos + blocklen <= buf.getBitSize()) ? blocklen : buf.getBitSize() - pos;
+                //BitHelper::writeToBit(procbuf, procbuflenBytes, &posproc, buf, buflenBytes, buf.getBitSize(), pos, currentBlocklen);
+				procbuf.writeAt(posproc, buf.getData(), pos, currentBlocklen);
 
                 if (rightParity != PT_NONE)
                 {
-                    unsigned char parity = StaticFormat::calculateParity(buf, buflen, rightParity, pos, blocklen);
-                    BitHelper::writeToBit(procbuf, procbuflenBytes, &posproc, parity, 7, 1);
+                    unsigned char parity = StaticFormat::calculateParity(buf, rightParity, pos, blocklen);
+                    //BitHelper::writeToBit(procbuf, procbuflenBytes, &posproc, parity, 7, 1);
+					procbuf.writeAt(posproc, parity, 7, 1);
                 }
 
                 pos += currentBlocklen;
@@ -131,57 +132,62 @@ namespace logicalaccess
         return static_cast<unsigned int>(newsize);
     }
 
-    unsigned int DataType::removeParityToBuffer(ParityType leftParity, ParityType rightParity, unsigned int blocklen, void* buf, unsigned int buflen, void* procbuf, unsigned int procbuflen)
+    unsigned int DataType::removeParityToBuffer(ParityType leftParity, ParityType rightParity, unsigned int blocklen, BitsetStream& buf, BitsetStream& procbuf)
     {
         unsigned int coefParity = (((leftParity != PT_NONE) ? 1 : 0) + ((rightParity != PT_NONE) ? 1 : 0));
-        unsigned int nbblocks = static_cast<unsigned int>(buflen / (blocklen + coefParity));
-        unsigned int newsize = buflen - (nbblocks * coefParity);
+        unsigned int nbblocks = static_cast<unsigned int>(buf.getBitSize() / (blocklen + coefParity));
+        unsigned int newsize = buf.getBitSize() - (nbblocks * coefParity);
 
         if ((newsize % blocklen) != 0 && (leftParity != PT_NONE || rightParity != PT_NONE))
         {
             char tmpmsg[256];
-            sprintf(tmpmsg, "The buffer length (%d) without parity is not block length aligned. If you use parity on data type, it must be aligned.", static_cast<int>(buflen));
+            sprintf(tmpmsg, "The buffer length (%d) without parity is not block length aligned. If you use parity on data type, it must be aligned.", static_cast<int>(buf.getBitSize()));
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, tmpmsg);
         }
 
-        if (buf != NULL && procbuf != NULL && procbuflen >= newsize)
+        if (buf.getBitSize() != 0 && procbuf.getBitSize() >= newsize)
         {
-            size_t buflenBytes = (buflen + 7) / 8;
+            size_t buflenBytes = (buf.getBitSize() + 7) / 8;
 
-            if (buflen > procbuflen)
+            if (buf.getBitSize() > procbuf.getBitSize())
             {
                 unsigned int posproc = 0;
-                size_t procbuflenBytes = (procbuflen + 7) / 8;
+                size_t procbuflenBytes = (procbuf.getBitSize() + 7) / 8;
 
                 unsigned int pos = 0;
-                while (pos < buflen)
+                while (pos < buf.getBitSize())
                 {
                     if (leftParity != PT_NONE)
                     {
-                        unsigned char parityToCheck = 0x00;
-                        unsigned int posparity = 7;
-                        BitHelper::writeToBit(&parityToCheck, 1, &posparity, buf, buflenBytes, buflen, pos, 1);
-                        unsigned char parity = StaticFormat::calculateParity(buf, buflen, leftParity, pos++, blocklen);
+                        //unsigned char parityToCheck = 0x00;
+                        //unsigned int posparity = 7;
+                        //BitHelper::writeToBit(&parityToCheck, 1, &posparity, buf, buflenBytes, buflen, pos, 1);
+						BitsetStream parityToCheck(0x00, 1);
+						unsigned int posparity = 7;
+						parityToCheck.writeAt(posparity, buf.getData(), pos, 1);
+                        unsigned char parity = StaticFormat::calculateParity(buf, leftParity, pos++, blocklen);
 
-                        if (parityToCheck != parity)
+                        if (parityToCheck.getData()[0] != parity)
                         {
                             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Bad left parity on DataType.");
                         }
                     }
 
-                    unsigned int currentBlocklen = ((pos + blocklen + ((rightParity != PT_NONE) ? 1 : 0)) <= buflen) ? blocklen : buflen - pos - ((rightParity != PT_NONE) ? 1 : 0);
-                    BitHelper::writeToBit(procbuf, procbuflenBytes, &posproc, buf, buflenBytes, buflen, pos, currentBlocklen);
-                    pos += currentBlocklen;
+                    unsigned int currentBlocklen = ((pos + blocklen + ((rightParity != PT_NONE) ? 1 : 0)) <= buf.getByteSize()) ? blocklen : buf.getByteSize() - pos - ((rightParity != PT_NONE) ? 1 : 0);
+                    //BitHelper::writeToBit(procbuf, procbuflenBytes, &posproc, buf, buflenBytes, buflen, pos, currentBlocklen);
+					procbuf.writeAt(posproc, buf.getData(), pos, currentBlocklen);
+					pos += currentBlocklen;
 
                     if (rightParity != PT_NONE)
                     {
-                        unsigned char parityToCheck = 0x00;
+						BitsetStream parityToCheck(0x00, 1);
                         unsigned int posparity = 7;
-                        BitHelper::writeToBit(&parityToCheck, 1, &posparity, buf, buflenBytes, buflen, pos, 1);
-                        unsigned char parity = StaticFormat::calculateParity(buf, buflen, rightParity, pos++ - blocklen, blocklen);
+                        //BitHelper::writeToBit(&parityToCheck, 1, &posparity, buf, buflenBytes, buflen, pos, 1);
+						parityToCheck.writeAt(posparity, buf.getData(), pos, 1);
+                        unsigned char parity = StaticFormat::calculateParity(buf, rightParity, pos++ - blocklen, blocklen);
 
-                        if (parityToCheck != parity)
-                        {
+						if (parityToCheck.getData()[0] != parity)
+						{
                             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Bad right parity on DataType.");
                         }
                     }
@@ -189,7 +195,7 @@ namespace logicalaccess
             }
             else
             {
-                memcpy(procbuf, buf, buflenBytes);
+				procbuf.writeAt(0, buf.getData(), 0, buflenBytes);
             }
         }
 

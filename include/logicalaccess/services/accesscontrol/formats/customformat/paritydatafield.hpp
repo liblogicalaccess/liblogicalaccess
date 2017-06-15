@@ -71,7 +71,7 @@ namespace logicalaccess
          * \param dataLengthBytes Length in byte of data
          * \param pos The first position bit. Will contain the position bit after the field.
          */
-        virtual void getLinearData(void* data, size_t dataLengthBytes, unsigned int* pos) const;
+        virtual std::vector<uint8_t> getLinearData() const;
 
         /**
          * \brief Set linear data.
@@ -79,7 +79,7 @@ namespace logicalaccess
          * \param dataLengthBytes Length of data in bytes
          * \param pos The first position bit. Will contain the position bit after the field.
          */
-        virtual void setLinearData(const void* data, size_t dataLengthBytes, unsigned int* pos);
+        virtual void setLinearData(const std::vector<uint8_t>& data);
 
         /**
          * \brief Check the current field skeleton with another field.

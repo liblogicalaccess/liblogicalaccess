@@ -67,87 +67,94 @@ namespace logicalaccess
         d_formatLinear.d_facilityCode = facilityCode;
     }
 
-    unsigned char Wiegand37WithFacilityRightParity2Format::getLeftParity(const void* data, size_t dataLengthBytes) const
+    unsigned char Wiegand37WithFacilityRightParity2Format::getLeftParity(const BitsetStream& data) const
     {
-        return calculateParity(data, dataLengthBytes, PT_ODD, 1, 16);
+        return calculateParity(data, PT_ODD, 1, 16);
     }
 
-    unsigned char Wiegand37WithFacilityRightParity2Format::getRightParity1(const void* data, size_t dataLengthBytes) const
+    unsigned char Wiegand37WithFacilityRightParity2Format::getRightParity1(const BitsetStream& data) const
     {
-        return calculateParity(data, dataLengthBytes, PT_EVEN, 17, 18);
+        return calculateParity(data, PT_EVEN, 17, 18);
     }
 
-    unsigned char Wiegand37WithFacilityRightParity2Format::getRightParity2(const void* data, size_t dataLengthBytes) const
+    unsigned char Wiegand37WithFacilityRightParity2Format::getRightParity2(const BitsetStream& data) const
     {
-        return calculateParity(data, dataLengthBytes, PT_ODD, (size_t)0, 36);
+        return calculateParity(data, PT_ODD, (size_t)0, 36);
     }
 
-    void Wiegand37WithFacilityRightParity2Format::getLinearData(void* data, size_t dataLengthBytes) const
+    std::vector<uint8_t> Wiegand37WithFacilityRightParity2Format::getLinearData() const
+    {
+		BitsetStream data;
+		data.append(0x00, 0, 1);
+
+        convertField(data, getFacilityCode(), 16);
+        convertField(data, getUid(), 18);
+        
+        //pos = 0;
+        //BitHelper::writeToBit(data, dataLengthBytes, &pos, getLeftParity(data, dataLengthBytes), 7, 1);
+        //pos = 35;
+        //BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity1(data, dataLengthBytes), 7, 1);
+        //pos = 36;
+        //BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity2(data, dataLengthBytes), 7, 1);
+		data.append(getLeftParity(data), 7, 1);
+		data.append(getRightParity1(data), 7, 1);
+		data.append(getRightParity2(data), 7, 1);
+		
+		return data.getData();
+    }
+
+    void Wiegand37WithFacilityRightParity2Format::setLinearData(const std::vector<uint8_t>& data)
     {
         unsigned int pos = 1;
+		BitsetStream _data;
+		_data.concat(data);
 
-        convertField(data, dataLengthBytes, &pos, getFacilityCode(), 16);
-        convertField(data, dataLengthBytes, &pos, getUid(), 18);
+        setFacilityCode((short)revertField(_data, &pos, 16));
+        setUid(revertField(_data, &pos, 18));
 
-        if (data != NULL)
+        if (_data.getByteSize() != 0)
         {
             pos = 0;
-            BitHelper::writeToBit(data, dataLengthBytes, &pos, getLeftParity(data, dataLengthBytes), 7, 1);
-            pos = 35;
-            BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity1(data, dataLengthBytes), 7, 1);
-            pos = 36;
-            BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity2(data, dataLengthBytes), 7, 1);
-        }
-    }
-
-    void Wiegand37WithFacilityRightParity2Format::setLinearData(const void* data, size_t dataLengthBytes)
-    {
-        unsigned int pos = 1;
-
-        setFacilityCode((short)revertField(data, dataLengthBytes, &pos, 16));
-        setUid(revertField(data, dataLengthBytes, &pos, 18));
-
-        if (data != NULL)
-        {
-            pos = 0;
-            unsigned char parity = getLeftParity(data, dataLengthBytes);
-            if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != parity)
+            unsigned char parity = getLeftParity(_data);
+            if ((unsigned char)((data[pos / 8] << (pos % 8)) >> 7) != parity)
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Left parity format error.");
             }
 
             pos = 35;
-            parity = getRightParity1(data, dataLengthBytes);
-            if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != parity)
+            parity = getRightParity1(_data);
+            if ((unsigned char)((data[pos / 8] << (pos % 8)) >> 7) != parity)
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Right parity 1 format error.");
             }
 
             pos = 36;
-            parity = getRightParity2(data, dataLengthBytes);
-            if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != parity)
+            parity = getRightParity2(_data);
+            if ((unsigned char)((data[pos / 8] << (pos % 8)) >> 7) != parity)
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Right parity 1 format error.");
             }
         }
     }
 
-    size_t Wiegand37WithFacilityRightParity2Format::getFormatLinearData(void* data, size_t dataLengthBytes) const
+    size_t Wiegand37WithFacilityRightParity2Format::getFormatLinearData(std::vector<uint8_t>& data) const
     {
         size_t retLength = sizeof(d_formatLinear);
 
-        if (dataLengthBytes >= retLength)
+        if (data.capacity() >= retLength)
         {
-            memcpy(&reinterpret_cast<unsigned char*>(data)[0], &d_formatLinear, sizeof(d_formatLinear));
-        }
+            //memcpy(&reinterpret_cast<unsigned char*>(data)[0], &d_formatLinear, sizeof(d_formatLinear));
+			memcpy(&data[0], &d_formatLinear, sizeof(d_formatLinear));
+		}
 
         return retLength;
     }
 
-    void Wiegand37WithFacilityRightParity2Format::setFormatLinearData(const void* data, size_t* indexByte)
+    void Wiegand37WithFacilityRightParity2Format::setFormatLinearData(const std::vector<uint8_t>& data, size_t* indexByte)
     {
-        memcpy(&d_formatLinear, &reinterpret_cast<const unsigned char*>(data)[*indexByte], sizeof(d_formatLinear));
-        (*indexByte) += sizeof(d_formatLinear);
+        //memcpy(&d_formatLinear, &reinterpret_cast<const unsigned char*>(data)[*indexByte], sizeof(d_formatLinear));
+		memcpy(&d_formatLinear, &data[*indexByte], sizeof(d_formatLinear));
+		(*indexByte) += sizeof(d_formatLinear);
 
         setFacilityCode(d_formatLinear.d_facilityCode);
     }

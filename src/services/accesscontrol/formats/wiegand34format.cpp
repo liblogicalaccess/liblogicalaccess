@@ -41,26 +41,30 @@ namespace logicalaccess
         return string("Wiegand 34");
     }
 
-    void Wiegand34Format::getLinearDataWithoutParity(void* data, size_t dataLengthBytes) const
+	std::vector<uint8_t> Wiegand34Format::getLinearDataWithoutParity() const
     {
         unsigned int pos = 1;
+		BitsetStream data(0x00, 1);
 
-        convertField(data, dataLengthBytes, &pos, getUid(), 32);
+        convertField(data, getUid(), 32);
+		return data.getData();
     }
 
-    void Wiegand34Format::setLinearDataWithoutParity(const void* data, size_t dataLengthBytes)
+    void Wiegand34Format::setLinearDataWithoutParity(const std::vector<uint8_t>& data)
     {
         unsigned int pos = 1;
+		BitsetStream _data;
+		_data.concat(data);
 
-        setUid(revertField(data, dataLengthBytes, &pos, 32));
+        setUid(revertField(_data, &pos, 32));
     }
 
-    size_t Wiegand34Format::getFormatLinearData(void* /*data*/, size_t /*dataLengthBytes*/) const
+    size_t Wiegand34Format::getFormatLinearData(std::vector<uint8_t>& /*data*/) const
     {
         return 0;
     }
 
-    void Wiegand34Format::setFormatLinearData(const void* /*data*/, size_t* /*indexByte*/)
+    void Wiegand34Format::setFormatLinearData(const std::vector<uint8_t>& /*data*/, size_t* /*indexByte*/)
     {
         // Nothing to do for this format type
     }

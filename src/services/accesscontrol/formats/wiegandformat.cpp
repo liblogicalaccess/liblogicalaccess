@@ -29,62 +29,67 @@ namespace logicalaccess
     {
         //getDataLength is in bits => we have to convert in bytes to allocate data
         size_t dataLength = (getDataLength() + 7) / 8;
-        unsigned char* data = new unsigned char[dataLength];
-        memset(data, 0x00, dataLength);
+        //unsigned char* data = new unsigned char[dataLength];
+        //memset(data, 0x00, dataLength);
+		BitsetStream data;
 
-        getLinearDataWithoutParity(data, dataLength);
-        unsigned char ret = calculateParity(data, dataLength, d_leftParityType, 1, d_leftParityLength);
+        data.concat(getLinearDataWithoutParity());
+        unsigned char ret = calculateParity(data, d_leftParityType, 1, d_leftParityLength);
 
-        delete[] data;
         return ret;
     }
 
     unsigned char WiegandFormat::getRightParity() const
     {
         size_t dataLength = (getDataLength() + 7) / 8;
-        unsigned char* data = new unsigned char[dataLength];
-        memset(data, 0x00, dataLength);
+        //unsigned char* data = new unsigned char[dataLength];
+        //memset(data, 0x00, dataLength);
+		BitsetStream data;
 
-        getLinearDataWithoutParity(data, dataLength);
-        unsigned char ret = calculateParity(data, dataLength, d_rightParityType, getDataLength() - d_rightParityLength - 1, d_rightParityLength);
+        data.concat(getLinearDataWithoutParity());
+        unsigned char ret = calculateParity(data, d_rightParityType, getDataLength() - d_rightParityLength - 1, d_rightParityLength);
 
-        delete[] data;
         return ret;
     }
 
-    void WiegandFormat::getLinearData(void* data, size_t dataLengthBytes) const
+    std::vector<uint8_t> WiegandFormat::getLinearData() const
     {
-        getLinearDataWithoutParity(data, dataLengthBytes);
-        unsigned int pos = 0;
+		BitsetStream data;
+
+		data.concat(getLinearDataWithoutParity());
+		//unsigned int pos = 0;
 
         if (d_leftParityType != PT_NONE)
         {
-            BitHelper::writeToBit(data, dataLengthBytes, &pos, getLeftParity(), 7, 1);
+            //BitHelper::writeToBit(data, dataLengthBytes, &pos, getLeftParity(), 7, 1);
+			data.writeAt(0, getLeftParity(), 7, 1);
         }
 
-        pos = getDataLength() - 1;
+        //pos = getDataLength() - 1;
 
         if (d_rightParityType != PT_NONE)
         {
-            BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity(), 7, 1);
+            //BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity(), 7, 1);
+			data.writeAt(getDataLength() - 1, getRightParity(), 7, 1);
         }
+		return data.getData();
     }
 
-    void WiegandFormat::setLinearData(const void* data, size_t dataLengthBytes)
+    void WiegandFormat::setLinearData(const std::vector<uint8_t>& data)
     {
-        if (dataLengthBytes * 8 < getDataLength())
+        if (data.size() * 8 < getDataLength())
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Data length too small.");
         }
 
-        setLinearDataWithoutParity(data, dataLengthBytes);
+        setLinearDataWithoutParity(data);
 
         unsigned int pos = 0;
         int par;
         if (d_leftParityType != PT_NONE)
         {
             par = getLeftParity();
-            if ((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] >> 7) != par)
+            if (data[pos / 8] >> 7 != par)
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Left parity format error.");
             }
@@ -95,7 +100,7 @@ namespace logicalaccess
         if (d_rightParityType != PT_NONE)
         {
             par = getRightParity();
-            if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != par)
+            if (data[pos / 8] << (pos % 8) >> 7 != par)
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Left parity format error.");
             }

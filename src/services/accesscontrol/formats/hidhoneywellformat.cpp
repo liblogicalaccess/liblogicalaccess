@@ -65,12 +65,12 @@ namespace logicalaccess
         d_formatLinear.d_facilityCode = facilityCode;
     }
 
-    size_t HIDHoneywellFormat::getFormatLinearData(void* /*data*/, size_t /*dataLengthBytes*/) const
+    size_t HIDHoneywellFormat::getFormatLinearData(std::vector<uint8_t>& /*data*/) const
     {
         return 0;
     }
 
-    void HIDHoneywellFormat::setFormatLinearData(const void* /*data*/, size_t* /*indexByte*/)
+    void HIDHoneywellFormat::setFormatLinearData(const std::vector<uint8_t>& /*data*/, size_t* /*indexByte*/)
     {
         //DOES NOTHING
     }
@@ -118,71 +118,78 @@ namespace logicalaccess
         return ret;
     }
 
-    unsigned char HIDHoneywellFormat::getRightParity(const void* data, size_t dataLengthBytes, unsigned char rpNo) const
+    unsigned char HIDHoneywellFormat::getRightParity(const BitsetStream& data, unsigned char rpNo) const
     {
         unsigned char parity = 0x00;
 
-        if (data != NULL)
+        if (data.getByteSize() != NULL)
         {
             unsigned int positions[4];
             positions[0] = 0 + rpNo;
             positions[1] = 8 + rpNo;
             positions[2] = 16 + rpNo;
             positions[3] = 24 + rpNo;
-            parity = Format::calculateParity(data, dataLengthBytes, PT_EVEN, positions, sizeof(positions) / sizeof(int));
+            parity = Format::calculateParity(data, PT_EVEN, positions, sizeof(positions) / sizeof(int));
         }
 
         return parity;
     }
 
-    void HIDHoneywellFormat::getLinearData(void* data, size_t dataLengthBytes) const
+	std::vector<uint8_t> HIDHoneywellFormat::getLinearData() const
     {
-        unsigned int pos = 0;
+        //unsigned int pos = 0;
+		BitsetStream data;
 
-        if (data != NULL)
+        //BitHelper::writeToBit(data, dataLengthBytes, &pos, 0x0F, 4, 4);
+		data.append(0x0F, 4, 4);
+
+        //convertField(data, dataLengthBytes, &pos, getFacilityCode(), 12);
+        //convertField(data, dataLengthBytes, &pos, getUid(), 16);
+		convertField(data, getFacilityCode(), 12);
+		convertField(data, getUid(), 16);
+
+        for (unsigned char i = 0; i < 8; ++i)
         {
-            BitHelper::writeToBit(data, dataLengthBytes, &pos, 0x0F, 4, 4);
-
-            convertField(data, dataLengthBytes, &pos, getFacilityCode(), 12);
-            convertField(data, dataLengthBytes, &pos, getUid(), 16);
-
-            for (unsigned char i = 0; i < 8; ++i)
-            {
-                pos = 32 + i;
-                BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity(data, dataLengthBytes, i), 7, 1);
-            }
+            //pos = 32 + i;
+            //BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity(data, dataLengthBytes, i), 7, 1);
+			data.writeAt(32 + i, getRightParity(data, i), 7, 1);
         }
+		return data.getData();
     }
 
-    void HIDHoneywellFormat::setLinearData(const void* data, size_t dataLengthBytes)
+    void HIDHoneywellFormat::setLinearData(const std::vector<uint8_t>& data)
     {
         unsigned int pos = 0;
-        unsigned char fixedValue = 0x00;
-        if (data != NULL)
+        //unsigned char fixedValue = 0x00;
+		BitsetStream fixedValue(0x00, 1);
+		BitsetStream _data;
+		_data.concat(data);
+
+        if (_data.getByteSize() != NULL)
         {
-            if (dataLengthBytes * 8 < getDataLength())
+            if (_data.getByteSize() * 8 < getDataLength())
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Data length too small.");
             }
 
-            BitHelper::extract(&fixedValue, 1, data, dataLengthBytes, static_cast<unsigned int>(dataLengthBytes * 8), pos, 4);
+            BitHelper::extract(fixedValue, _data, pos, 4);
             pos += 4;
-            fixedValue = (fixedValue >> 4) & 0x0F;
-            if (fixedValue != 0x0F)
+			fixedValue.writeAt(0, (fixedValue.getData()[0] >> 4) & 0x0F);
+            if (fixedValue.getData()[0] != 0x0F)
             {
                 char exceptionmsg[256];
                 sprintf(exceptionmsg, "HID Honeywell 40-Bit: fixed value doesn't match (%x != %x).", fixedValue, 0x0F);
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, exceptionmsg);
             }
 
-            setFacilityCode((unsigned short)revertField(data, dataLengthBytes, &pos, 12));
-            setUid(revertField(data, dataLengthBytes, &pos, 16));
+            setFacilityCode((unsigned short)revertField(_data, &pos, 12));
+            setUid(revertField(_data, &pos, 16));
 
             for (unsigned char i = 0; i < 8; ++i)
             {
                 pos = 32 + i;
-                unsigned char parity = getRightParity(data, dataLengthBytes, i);
-                if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != parity)
+                unsigned char parity = getRightParity(_data, i);
+                if ((unsigned char)((data[pos / 8] << (pos % 8)) >> 7) != parity)
                 {
                     char buftmp[64];
                     sprintf(buftmp, "Right parity %u format error.", i);

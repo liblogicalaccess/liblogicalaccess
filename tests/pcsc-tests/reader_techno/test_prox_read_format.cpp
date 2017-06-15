@@ -45,7 +45,8 @@ int main(int ac, char **av)
 
     std::array<uint8_t, 64> buffer = {0};
     auto ret = acs->readFormat(std::make_shared<Wiegand26Format>(), nullptr, nullptr);
-    ret->getLinearData(&buffer[0], buffer.size());
+	auto tmp = ret->getLinearData();
+	std::copy(tmp.begin(), tmp.end(), buffer.begin());
 
 	std::cout << "Format: ";
 	for (int i = 0; i < 26; ++i)

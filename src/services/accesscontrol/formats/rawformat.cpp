@@ -46,29 +46,26 @@ namespace logicalaccess
         return string("Raw");
     }
 
-    void RawFormat::getLinearData(void* data, size_t dataLengthBytes) const
+	std::vector<uint8_t> RawFormat::getLinearData() const
     {
         string ret;
-        std::vector<unsigned char> buf = getRawData();
+		BitsetStream buf;
+		buf.concat(getRawData());
 
-        if (dataLengthBytes >= buf.size())
-        {
-            memcpy(data, &buf[0], buf.size());
-        }
+		return buf.getData();
     }
 
-    void RawFormat::setLinearData(const void* data, size_t dataLengthBytes)
+    void RawFormat::setLinearData(const std::vector<uint8_t>& data)
     {
-        std::vector<unsigned char> sbdata = std::vector<unsigned char>(static_cast<const unsigned char*>(data), static_cast<const unsigned char*>(data)+dataLengthBytes);
-        setRawData(sbdata);
+        setRawData(data);
     }
 
-    size_t RawFormat::getFormatLinearData(void* /*data*/, size_t /*dataLengthBytes*/) const
+    size_t RawFormat::getFormatLinearData(std::vector<uint8_t>& /*data*/) const
     {
         return 0;
     }
 
-    void RawFormat::setFormatLinearData(const void* /*data*/, size_t* /*indexByte*/)
+    void RawFormat::setFormatLinearData(const std::vector<uint8_t>& /*data*/, size_t* /*indexByte*/)
     {
     }
 
@@ -104,7 +101,7 @@ namespace logicalaccess
         return field->getValue();
     }
 
-    void RawFormat::setRawData(std::vector<unsigned char>& data)
+    void RawFormat::setRawData(const std::vector<unsigned char>& data)
     {
         std::shared_ptr<BinaryDataField> field = std::dynamic_pointer_cast<BinaryDataField>(getFieldFromName("RawData"));
         field->setDataLength(static_cast<unsigned int>(data.size() * 8));

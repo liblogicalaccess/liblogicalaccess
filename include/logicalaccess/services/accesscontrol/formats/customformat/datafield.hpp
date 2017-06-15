@@ -13,6 +13,7 @@
 #include <boost/utility.hpp>
 
 #include "logicalaccess/logs.hpp"
+#include "logicalaccess/services/accesscontrol/formats/BitsetStream.hpp"
 
 namespace logicalaccess
 {
@@ -65,21 +66,17 @@ namespace logicalaccess
          */
         std::string getName() const;
 
-        /**
-         * \brief Get linear data.
-         * \param data Where to put data
-         * \param dataLengthBytes Length in byte of data
-         * \param pos The first position bit. Will contain the position bit after the field.
-         */
-        virtual void getLinearData(void* data, size_t dataLengthBytes, unsigned int* pos) const = 0;
+		/**
+		* \brief Get linear data.
+		* \return data The linear datas in a bitsetstream
+		*/
+		virtual std::vector<uint8_t> getLinearData() const = 0;
 
-        /**
-         * \brief Set linear data.
-         * \param data Where to get data
-         * \param dataLengthBytes Length of data in bytes
-         * \param pos The first position bit. Will contain the position bit after the field.
-         */
-        virtual void setLinearData(const void* data, size_t dataLengthBytes, unsigned int* pos) = 0;
+		/**
+		* \brief Set linear data.
+		* \param data Where to get data
+		*/
+		virtual void setLinearData(const std::vector<uint8_t>& data) = 0;
 
         /**
          * \brief Check the current field skeleton with another field.

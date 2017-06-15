@@ -16,8 +16,8 @@ static bool get_nth_bit(const ByteVector &v, int n)
 ByteVector STidPRGUtils::prox_configuration_bytes(const Format &fmt)
 {
     auto length = fmt.getDataLength();
-    ByteVector data(length / 8 + 1);
-    fmt.getLinearData(&data[0], length);
+    ByteVector data;
+	data = fmt.getLinearData();
 
     ByteVector out = {0x00, 0x10, 0x70, 0x60}; // Block 0 always this.
     out.push_back(0x1D);                       // Preamble, always there.

@@ -67,27 +67,33 @@ namespace logicalaccess
         return d_bitsUsePositions;
     }
 
-    void ParityDataField::getLinearData(void* data, size_t dataLengthBytes, unsigned int* pos) const
+	std::vector<uint8_t> ParityDataField::getLinearData() const
     {
-        if ((dataLengthBytes * 8) < (d_length + *pos))
-        {
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
-        }
+        //if ((dataLengthBytes * 8) < (d_length + *pos))
+        //{
+        //    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
+        //}
 
-        unsigned int* positions = new unsigned int[d_bitsUsePositions.size()];
+		BitsetStream data;
+		unsigned int* positions = new unsigned int[d_bitsUsePositions.size()];
         int i = 0;
         for (std::vector<unsigned int>::const_iterator b = d_bitsUsePositions.begin(); b != d_bitsUsePositions.end(); ++b)
         {
             positions[i++] = (*b);
         }
-        unsigned char parity = Format::calculateParity(data, dataLengthBytes, d_parityType, positions, d_bitsUsePositions.size());
+        unsigned char parity = Format::calculateParity(data, d_parityType, positions, d_bitsUsePositions.size());
         delete[] positions;
-        BitHelper::writeToBit(data, dataLengthBytes, pos, parity, 7, 1);
+        //BitHelper::writeToBit(data, dataLengthBytes, pos, parity, 7, 1);
+		data.append(parity, 7, 1);
+		return data.getData();
     }
 
-    void ParityDataField::setLinearData(const void* data, size_t dataLengthBytes, unsigned int* pos)
+    void ParityDataField::setLinearData(const std::vector<uint8_t>& data)
     {
-        if ((dataLengthBytes * 8) < (d_length + *pos))
+		BitsetStream _data;
+		_data.concat(data);
+
+        if ((_data.getByteSize() * 8) < (d_length + _data.getBitSize()))
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
         }
@@ -98,8 +104,8 @@ namespace logicalaccess
         {
             positions[i++] = (*b);
         }
-        unsigned char parity = Format::calculateParity(data, dataLengthBytes, d_parityType, positions, d_bitsUsePositions.size());
-        unsigned char currentParity = (unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[*pos / 8] << (*pos % 8)) >> 7);
+        unsigned char parity = Format::calculateParity(_data, d_parityType, positions, d_bitsUsePositions.size());
+        unsigned char currentParity = (unsigned char)((data[_data.getBitSize() / 8] << (_data.getBitSize() % 8)) >> 7);
         delete[] positions;
 
         if (parity != currentParity)

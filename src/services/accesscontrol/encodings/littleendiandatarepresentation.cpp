@@ -29,35 +29,35 @@ namespace logicalaccess
         return ET_LITTLEENDIAN;
     }
 
-    unsigned int LittleEndianDataRepresentation::convertNumeric(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
+    unsigned int LittleEndianDataRepresentation::convertNumeric(const BitsetStream& data, BitsetStream& convertedData)
     {
         unsigned int ret = 0;
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-
-        if (convertedLengthBytes >= dataLengthBytes)
+        if (convertedData.getByteSize() >= data.getByteSize())
         {
-            memset(convertedData, 0x00, convertedLengthBytes);
-            memcpy(convertedData, data, dataLengthBytes);
+            //memset(convertedData, 0x00, convertedLengthBytes);
+            //memcpy(convertedData, data, dataLengthBytes);
+			std::vector<uint8_t> tmp(convertedData.getByteSize());
+			std::fill(tmp.begin(), tmp.end(), 0x00);
+			convertedData.writeAt(0, tmp, 0, tmp.size() * 8);
+			convertedData.writeAt(0, data.getData(), 0, data.getByteSize());
         }
-        ret = convertLength(dataLengthBits);
-
+        ret = this->convertLength(data.getBitSize());
 #else
-
-        BitHelper::swapBytes(convertedData, convertedLengthBytes, data, dataLengthBytes, dataLengthBits);
-        ret = convertLength(dataLengthBits);
+        BitHelper::swapBytes(convertedData, data);
+        ret = this->convertLength(data.getBitSize());
 
 #endif
-
         return ret;
     }
 
-    unsigned int LittleEndianDataRepresentation::convertBinary(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
+    unsigned int LittleEndianDataRepresentation::convertBinary(const BitsetStream& data, BitsetStream& convertedData)
     {
         unsigned int ret = 0;
 
-        BitHelper::swapBytes(convertedData, convertedLengthBytes, data, dataLengthBytes, dataLengthBits);
-        ret = convertLength(dataLengthBits);
+        BitHelper::swapBytes(convertedData, data);
+        ret = this->convertLength(data.getBitSize());
 
         return ret;
     }
@@ -67,35 +67,33 @@ namespace logicalaccess
         return (lengthBits + (((lengthBits % 8) > 0) ? (8 - (lengthBits % 8)) : 0));
     }
 
-    unsigned int LittleEndianDataRepresentation::revertNumeric(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
+    unsigned int LittleEndianDataRepresentation::revertNumeric(const BitsetStream& data, BitsetStream& convertedData)
     {
         unsigned int ret = 0;
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-
-        if (convertedLengthBytes >= dataLengthBytes)
+		if (convertedData.getByteSize() >= data.getByteSize())
         {
-            memset(convertedData, 0x00, convertedLengthBytes);
-            memcpy(convertedData, data, dataLengthBytes);
-        }
-        ret = dataLengthBits;
-
+			//memset(convertedData, 0x00, convertedLengthBytes);
+			//memcpy(convertedData, data, dataLengthBytes);
+			std::vector<uint8_t> tmp(convertedData.getByteSize());
+			std::fill(tmp.begin(), tmp.end(), 0x00);
+			convertedData.writeAt(0, tmp, 0, tmp.size() * 8);
+			convertedData.writeAt(0, data.getData(), 0, data.getByteSize());
+		}
 #else
-
-        BitHelper::swapBytes(convertedData, convertedLengthBytes, data, dataLengthBytes, dataLengthBits);
-        ret = dataLengthBits;
-
+		BitHelper::swapBytes(convertedData, data);
+		ret = data.getBitSize();
 #endif
-
         return ret;
     }
 
-    unsigned int LittleEndianDataRepresentation::revertBinary(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
+    unsigned int LittleEndianDataRepresentation::revertBinary(const BitsetStream& data, BitsetStream& convertedData)
     {
         unsigned int ret = 0;
 
-        BitHelper::swapBytes(convertedData, convertedLengthBytes, data, dataLengthBytes, dataLengthBits);
-        ret = dataLengthBits;
+		BitHelper::swapBytes(convertedData, data);
+		ret = data.getBitSize();
 
         return ret;
     }

@@ -56,20 +56,37 @@ namespace logicalaccess
         return d_name;
     }
 
-    void CustomFormat::getLinearData(void* data, size_t dataLengthBytes) const
+	std::vector<uint8_t> CustomFormat::getLinearData() const
     {
+		std::vector<uint8_t> data;
         unsigned int pos = 0;
         std::list<std::shared_ptr<DataField> > sortedFieldList = d_fieldList;
         sortedFieldList.sort(FieldSortPredicate);
-        memset(data, 0x00, dataLengthBytes);
+        //memset(data, 0x00, dataLengthBytes);
         for (std::list<std::shared_ptr<DataField> >::const_iterator i = sortedFieldList.begin(); i != sortedFieldList.end(); ++i)
         {
             pos = (*i)->getPosition();
-            (*i)->getLinearData(data, dataLengthBytes, &pos);
+			EXCEPTION_ASSERT_WITH_LOG(pos == data.size(), LibLogicalAccessException, "Format positing issue. Check source code.");
+			auto tmp = (*i)->getLinearData();
+			data.insert(data.begin(), tmp.begin(), tmp.end());
         }
+		return data;
     }
 
-    void CustomFormat::setLinearData(const void* data, size_t dataLengthBytes)
+	//void CustomFormat::getLinearData(void* data, size_t dataLengthBytes) const
+	//{
+	//	unsigned int pos = 0;
+	//	std::list<std::shared_ptr<DataField> > sortedFieldList = d_fieldList;
+	//	sortedFieldList.sort(FieldSortPredicate);
+	//	memset(data, 0x00, dataLengthBytes);
+	//	for (std::list<std::shared_ptr<DataField> >::const_iterator i = sortedFieldList.begin(); i != sortedFieldList.end(); ++i)
+	//	{
+	//		pos = (*i)->getPosition();
+	//		(*i)->getLinearData(data, dataLengthBytes, &pos);
+	//	}
+	//}
+
+    void CustomFormat::setLinearData(const std::vector<uint8_t>& data)
     {
         unsigned int pos = 0;
         std::list<std::shared_ptr<DataField> > sortedFieldList = d_fieldList;
@@ -77,7 +94,7 @@ namespace logicalaccess
         for (std::list<std::shared_ptr<DataField> >::iterator i = sortedFieldList.begin(); i != sortedFieldList.end(); ++i)
         {
             pos = (*i)->getPosition();
-            (*i)->setLinearData(data, dataLengthBytes, &pos);
+            (*i)->setLinearData(data);
         }
     }
 
@@ -164,27 +181,27 @@ namespace logicalaccess
         return FT_CUSTOM;
     }
 
-    size_t CustomFormat::getSkeletonLinearData(void* data, size_t dataLengthBytes) const
+    size_t CustomFormat::getSkeletonLinearData(std::vector<uint8_t>& data) const
     {
         std::string xmlstr = const_cast<XmlSerializable*>(dynamic_cast<const XmlSerializable*>(this))->serialize();
         std::vector<unsigned char> xmlbuf(xmlstr.begin(), xmlstr.end());
 
-        if (data != NULL)
+        if (data.size() != 0)
         {
-            if (dataLengthBytes < xmlbuf.size())
+            if (data.size() < xmlbuf.size())
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The buffer size is too short.");
             }
-            memcpy(data, &xmlbuf[0], xmlbuf.size());
+            //memcpy(data, &xmlbuf[0], xmlbuf.size());
+			std::copy(&xmlbuf[0], &xmlbuf[0] + xmlbuf.size(), data.begin());
         }
 
         return (xmlbuf.size() * 8);
     }
 
-    void CustomFormat::setSkeletonLinearData(const void* data, size_t dataLengthBytes)
+    void CustomFormat::setSkeletonLinearData(const std::vector<uint8_t>& data)
     {
-        std::vector<unsigned char> xmlbuf((unsigned char*)data, (unsigned char*)data + dataLengthBytes);
-        std::string xmlstr = BufferHelper::getStdString(xmlbuf);
+        std::string xmlstr = BufferHelper::getStdString(data);
         dynamic_cast<XmlSerializable*>(this)->unSerialize(xmlstr, "");
     }
 

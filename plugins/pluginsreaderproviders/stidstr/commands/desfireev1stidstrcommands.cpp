@@ -727,14 +727,15 @@ namespace logicalaccess
         getSTidSTRReaderCardAdapter()->sendCommand(0x00C5, command);
     }
 
-    void DESFireEV1STidSTRCommands::getVersion(DESFireCommands::DESFireCardVersion& dataVersion)
+	DESFireCommands::DESFireCardVersion DESFireEV1STidSTRCommands::getVersion()
     {
         LOG(LogLevel::INFOS) << "Retrieving version...";
         std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x0060, std::vector<unsigned char>());
-
+		DESFireCommands::DESFireCardVersion dataVersion;
         EXCEPTION_ASSERT_WITH_LOG(result.size() >= 28, LibLogicalAccessException, "The response length should be at least 28-byte long");
 
         memcpy(reinterpret_cast<char*>(&dataVersion), &result[0], 28);
+		return dataVersion;
     }
 
     std::vector<unsigned int> DESFireEV1STidSTRCommands::getApplicationIDs()
@@ -787,15 +788,17 @@ namespace logicalaccess
         return files;
     }
 
-    void DESFireEV1STidSTRCommands::getFileSettings(unsigned char fileno, FileSetting& fileSetting)
+	DESFireCommands::FileSetting DESFireEV1STidSTRCommands::getFileSettings(unsigned char fileno)
     {
         LOG(LogLevel::INFOS) << "Retrieving file settings for file number {0x" << std::hex << fileno << std::dec << "(" << fileno << ")}";
 
+		FileSetting fileSetting;
         std::vector<unsigned char> command;
         command.push_back(fileno);
 
         std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x00F5, command);
         memcpy(&fileSetting, &result[0], result.size());
+		return fileSetting;
     }
 
     void DESFireEV1STidSTRCommands::getValue(unsigned char fileno, EncryptionMode mode, unsigned int& value)
