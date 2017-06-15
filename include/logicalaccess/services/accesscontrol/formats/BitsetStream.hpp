@@ -1,69 +1,77 @@
-#pragma once
+
+#ifndef LOGICALACCESS_BITSETSTREAM_HPP
+#define LOGICALACCESS_BITSETSTREAM_HPP
 
 #include <vector>
 #include <stdint.h>
 #include <iostream>
 
-class BitsetStream
+#include "logicalaccess/msliblogicalaccess.h"
+
+namespace logicalaccess
 {
-public:
+	class LIBLOGICALACCESS_API BitsetStream
+	{
+	public:
 
-	BitsetStream();
+		BitsetStream();
 
-	BitsetStream(unsigned char, unsigned int);
-	
-	~BitsetStream();
+		BitsetStream(unsigned char, unsigned int);
 
-	void append(unsigned char data);
+		~BitsetStream();
 
-	void append(unsigned char data, unsigned int readPosStart);
+		void append(unsigned char data);
 
-	void append(unsigned char data, unsigned int readPosStart, unsigned int readLength);
+		void append(unsigned char data, unsigned int readPosStart);
 
-	void concat(const std::vector<unsigned char>& data);
-					  
-	void concat(const std::vector<unsigned char>& data, unsigned int readPosStart);
-					  
-	void concat(const std::vector<unsigned char>& data, unsigned int readPosStart, unsigned int readLength);
+		void append(unsigned char data, unsigned int readPosStart, unsigned int readLength);
 
-	void writeAt(unsigned int pos, unsigned char data, unsigned int readPosStart = 0, unsigned int readLength = 8);
+		void concat(const std::vector<unsigned char>& data);
 
-	void writeAt(unsigned int pos, std::vector<unsigned char> const& data, unsigned int readPosStart, unsigned int readLength);
+		void concat(const std::vector<unsigned char>& data, unsigned int readPosStart);
 
-	void insert(unsigned int pos, unsigned char data, unsigned int readPosStart = 0, unsigned int readLength = 8);
+		void concat(const std::vector<unsigned char>& data, unsigned int readPosStart, unsigned int readLength);
 
-	void insert(unsigned int pos, std::vector<unsigned char> const& data, unsigned int readPosStart, unsigned int readLength);
+		void writeAt(unsigned int pos, unsigned char data, unsigned int readPosStart = 0, unsigned int readLength = 8);
 
-	std::vector<uint8_t> getData() const;
+		void writeAt(unsigned int pos, std::vector<unsigned char> const& data, unsigned int readPosStart, unsigned int readLength);
 
-	unsigned int getByteSize() const;
+		void insert(unsigned int pos, unsigned char data, unsigned int readPosStart = 0, unsigned int readLength = 8);
 
-	unsigned int getBitSize() const;
+		void insert(unsigned int pos, std::vector<unsigned char> const& data, unsigned int readPosStart, unsigned int readLength);
 
-	std::string toString(size_t begin, size_t end) const;
+		std::vector<uint8_t> getData() const;
 
-	std::string toString() const;
+		unsigned int getByteSize() const;
 
-	unsigned long toULong() const;
+		unsigned int getBitSize() const;
 
-	unsigned long long toULLong() const;
+		std::string toString(size_t begin, size_t end) const;
 
-	bool test(size_t index) const;
+		std::string toString() const;
 
-	bool none() const;
+		unsigned long toULong() const;
 
-	bool any() const;
+		unsigned long long toULLong() const;
 
-	bool all() const;
+		bool test(size_t index) const;
 
-	void print() const;
+		bool none() const;
 
-	void clear();
+		bool any() const;
 
-private:
+		bool all() const;
 
-	std::vector<uint8_t> stream;
+		void print() const;
 
-	unsigned int pos;
-};
+		void clear();
 
+	private:
+
+		std::vector<uint8_t> stream;
+
+		unsigned int pos;
+	};
+}
+
+#endif // LOGICALACCESS_BITSETSTREAM_HPP
