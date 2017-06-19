@@ -65,11 +65,9 @@ namespace logicalaccess
          * \brief Read data header on a specific location, using given keys.
          * \param location The data location.
          * \param aiToUse The key's informations to use.
-         * \param data Will contain data after reading.
-         * \param dataLength Data's length to read.
-         * \return Data header length.
+         * \return the read data header.
          */
-        virtual unsigned int readDataHeader(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength);
+        virtual std::vector<unsigned char> readDataHeader(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse);
 
     protected:
 

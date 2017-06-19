@@ -403,8 +403,8 @@ namespace logicalaccess
         return getDESFireChip()->getDESFireCommands()->readData(dfLocation->file, dfLocation->byte_, (int)(dataLength), encMode);
     }
 
-    unsigned int DESFireStorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/, void* /*data*/, size_t /*dataLength*/)
+	std::vector<unsigned char> DESFireStorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/)
     {
-        return 0;
+        return std::vector<unsigned char>();
     }
 }

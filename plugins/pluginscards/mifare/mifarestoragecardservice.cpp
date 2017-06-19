@@ -273,15 +273,11 @@ namespace logicalaccess
 		return ret;
     }
 
-    unsigned int MifareStorageCardService::readDataHeader(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength)
+    std::vector<unsigned char> MifareStorageCardService::readDataHeader(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse)
     {
 		TRACE(location, aiToUse);
-        if (data == NULL || dataLength == 0)
-        {
-            return 16;
-        }
 
-        EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
+		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 
         std::shared_ptr<MifareLocation> mLocation = std::dynamic_pointer_cast<MifareLocation>(location);
         EXCEPTION_ASSERT_WITH_LOG(mLocation, std::invalid_argument, "location must be a MifareLocation.");
@@ -303,14 +299,8 @@ namespace logicalaccess
 			key = keyType == KT_KEY_A ? mAiToUse->keyA : mAiToUse->keyB;
         }
 
-        if (dataLength >= 16)
-        {
-			getMifareChip()->getMifareCommands()->authenticate(keyType, key, mLocation->sector, getMifareChip()->getMifareCommands()->getNbBlocks(mLocation->sector), false);
-            std::vector<unsigned char> vdata = getMifareChip()->getMifareCommands()->readBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(mLocation->sector) + getMifareChip()->getMifareCommands()->getNbBlocks(mLocation->sector)), 16);
-            memcpy(data, &vdata[0], vdata.size());
-            return static_cast<unsigned int>(vdata.size());
-        }
-
-        return 0;
+		getMifareChip()->getMifareCommands()->authenticate(keyType, key, mLocation->sector, getMifareChip()->getMifareCommands()->getNbBlocks(mLocation->sector), false);
+        std::vector<unsigned char> vdata = getMifareChip()->getMifareCommands()->readBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(mLocation->sector) + getMifareChip()->getMifareCommands()->getNbBlocks(mLocation->sector)), 16);
+        return vdata;
     }
 }

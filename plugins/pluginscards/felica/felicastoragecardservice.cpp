@@ -106,8 +106,8 @@ namespace logicalaccess
         return data;
     }
 
-	unsigned int FeliCaStorageCardService::readDataHeader(std::shared_ptr<Location>, std::shared_ptr<AccessInfo>, void*, size_t)
+	std::vector<unsigned char> FeliCaStorageCardService::readDataHeader(std::shared_ptr<Location>, std::shared_ptr<AccessInfo>)
     {
-        return 0;
+        return std::vector<unsigned char>();
     }
 }

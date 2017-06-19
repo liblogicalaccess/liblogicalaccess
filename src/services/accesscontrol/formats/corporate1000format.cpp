@@ -214,6 +214,7 @@ namespace logicalaccess
     size_t Corporate1000Format::getFormatLinearData(std::vector<uint8_t>& data) const
     {
         size_t retLength = sizeof(d_formatLinear);
+		data.reserve(retLength);
 		
         if (data.size() >= retLength)
         {

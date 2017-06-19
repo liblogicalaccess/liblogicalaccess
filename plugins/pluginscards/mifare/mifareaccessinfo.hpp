@@ -135,16 +135,13 @@ namespace logicalaccess
         {
             /**
              * \brief Export the access bits to a mifare byte array.
-             * \param buf The buffer into which write the data.
-             * \param buflen buf length. buflen must be at least 3 or toArray() will fail.
-             * \return The count of bytes used (shall be 3) on success, 0 otherwise.
+             * \return The buffer into which write the data.
              */
             std::vector<uint8_t> toArray() const;
 
             /**
              * \brief Import the access bits from a mifare byte array.
              * \param buf The buffer containing the data.
-             * \param buflen The length of buf. Must be at least 3 or fromArray() will fail.
              * \return true on success, false otherwise.
              *
              * If the array is not a valid mifare sector access bits array, fromArray() fails and the sector access bits remains unchanged.

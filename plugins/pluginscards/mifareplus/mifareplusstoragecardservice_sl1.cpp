@@ -40,12 +40,11 @@ std::vector<unsigned char> logicalaccess::MifarePlusStorageCardServiceSL1::readD
     return MifareStorageCardService::readData(location, aiToUse, length, behaviorFlags);
 }
 
-unsigned int logicalaccess::MifarePlusStorageCardServiceSL1::readDataHeader(
-        std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, void *data,
-        size_t dataLength)
+std::vector<unsigned char> logicalaccess::MifarePlusStorageCardServiceSL1::readDataHeader(
+        std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse)
 {
     authenticate_if_needed(aiToUse);
-    return MifareStorageCardService::readDataHeader(location, aiToUse, data, dataLength);
+    return MifareStorageCardService::readDataHeader(location, aiToUse);
 }
 
 void logicalaccess::MifarePlusStorageCardServiceSL1::authenticate_if_needed(

@@ -10,6 +10,36 @@
 
 namespace logicalaccess
 {
+	DESFireCommands::DataFileSetting DESFireCommands::FileSetting::getDataFile() const
+	{
+		return this->type.dataFile;
+	}
+
+	void DESFireCommands::FileSetting::setDataFile(const DESFireCommands::DataFileSetting& settings)
+	{
+		this->type.dataFile = settings;
+	}
+	
+	DESFireCommands::ValueFileSetting DESFireCommands::FileSetting::getValueFile() const
+	{
+		return this->type.valueFile;
+	}
+	
+	void DESFireCommands::FileSetting::setValueFile(const DESFireCommands::ValueFileSetting& settings)
+	{
+		this->type.valueFile = settings;
+	}
+	
+	DESFireCommands::RecordFileSetting DESFireCommands::FileSetting::getRecordFile() const
+	{
+		return this->type.recordFile;
+	}
+	
+	void DESFireCommands::FileSetting::setRecordFile(const DESFireCommands::RecordFileSetting& settings)
+	{
+		this->type.recordFile = settings;
+	}
+
     std::shared_ptr<DESFireChip> DESFireCommands::getDESFireChip() const
     {
         return std::dynamic_pointer_cast<DESFireChip>(getChip());

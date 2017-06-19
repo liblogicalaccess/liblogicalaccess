@@ -174,8 +174,8 @@ namespace logicalaccess
 		return data;
     }
 
-    unsigned int ISO7816StorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/, void* /*data*/, size_t /*dataLength*/)
+    std::vector<unsigned char> ISO7816StorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/)
     {
-        return 0;
+        return std::vector<unsigned char>();
     }
 }

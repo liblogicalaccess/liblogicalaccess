@@ -116,8 +116,8 @@ namespace logicalaccess
 		return ret;
     }
 
-    unsigned int MifareUltralightStorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/, void* /*data*/, size_t /*dataLength*/)
+    std::vector<unsigned char> MifareUltralightStorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/)
     {
-        return 0;
+        return std::vector<unsigned char>();
     }
 }

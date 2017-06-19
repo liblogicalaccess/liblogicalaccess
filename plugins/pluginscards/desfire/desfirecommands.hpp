@@ -171,7 +171,7 @@ namespace logicalaccess
         /**
          * \brief Describe file setting.
          */
-        struct FileSetting
+        struct LIBLOGICALACCESS_API FileSetting
         {
             unsigned char		fileType; /**< \brief The file type */
             unsigned char		comSett; /**< \brief The communication setting */
@@ -182,6 +182,12 @@ namespace logicalaccess
                 ValueFileSetting	valueFile;
                 RecordFileSetting	recordFile;
             } type; /**< \brief The file type specific information */
+			DataFileSetting getDataFile() const;
+			void setDataFile(const DataFileSetting&);
+			ValueFileSetting getValueFile() const;
+			void setValueFile(const ValueFileSetting&);
+			RecordFileSetting getRecordFile() const;
+			void setRecordFile(const RecordFileSetting&);
         };
 
         /**

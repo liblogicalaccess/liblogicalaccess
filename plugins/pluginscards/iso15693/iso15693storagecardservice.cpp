@@ -55,8 +55,8 @@ namespace logicalaccess
         return getISO15693Chip()->getISO15693Commands()->readBlock(icLocation->block);
     }
 
-    unsigned int ISO15693StorageCardService::readDataHeader(std::shared_ptr<Location>, std::shared_ptr<AccessInfo>, void*, size_t)
+	std::vector<unsigned char> ISO15693StorageCardService::readDataHeader(std::shared_ptr<Location>, std::shared_ptr<AccessInfo>)
     {
-        return 0;
+        return std::vector<unsigned char>();
     }
 }

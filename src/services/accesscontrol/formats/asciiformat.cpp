@@ -48,35 +48,31 @@ namespace logicalaccess
         return string("ASCII");
     }
 
-    void ASCIIFormat::getLinearData(void* data, size_t dataLengthBytes) const
+	std::vector<uint8_t> ASCIIFormat::getLinearData() const
     {
-        string ret;
+        std::vector<uint8_t> ret(d_asciiValue.begin(), d_asciiValue.end());
 
-        if (dataLengthBytes >= d_formatLinear.d_asciiLength)
+        if (ret.size() < d_formatLinear.d_asciiLength)
         {
-            ret = d_asciiValue;
-            if (ret.size() < d_formatLinear.d_asciiLength)
+            size_t paddingLength = d_formatLinear.d_asciiLength - ret.size();
+            for (size_t i = 0; i < paddingLength; i++)
             {
-                size_t paddingLength = d_formatLinear.d_asciiLength - ret.size();
-                for (size_t i = 0; i < paddingLength; i++)
-                {
-                    ret += d_formatLinear.d_padding;
-                }
+                ret.push_back(d_formatLinear.d_padding);
             }
-            memcpy(data, ret.c_str(), ret.size());
         }
-    }
+		return ret;
+	}
 
-    void ASCIIFormat::setLinearData(const void* data, size_t dataLengthBytes)
+    void ASCIIFormat::setLinearData(const std::vector<uint8_t>& data)
     {
-        if (dataLengthBytes >= d_formatLinear.d_asciiLength)
+        if (data.size() >= d_formatLinear.d_asciiLength)
         {
             d_asciiValue = "";
             int asciiValueLength = 0;
 
             for (int i = d_formatLinear.d_asciiLength - 1; (i >= 0) && (asciiValueLength == 0); i--)
             {
-                if (reinterpret_cast<const unsigned char*>(data)[i] != d_formatLinear.d_padding)
+                if (data[i] != d_formatLinear.d_padding)
                 {
                     asciiValueLength = i + 1;
                 }
@@ -84,29 +80,28 @@ namespace logicalaccess
 
             for (int i = 0; i < asciiValueLength; i++)
             {
-                d_asciiValue += reinterpret_cast<const unsigned char*>(data)[i];
+                d_asciiValue += data[i];
             }
 
             setASCIIValue(getASCIIValue());
         }
     }
 
-    size_t ASCIIFormat::getFormatLinearData(void* data, size_t dataLengthBytes) const
+    size_t ASCIIFormat::getFormatLinearData(std::vector<uint8_t>& data) const
     {
         size_t retLength = sizeof(d_formatLinear);
-
-        if (dataLengthBytes >= retLength)
-        {
-            size_t pos = 0;
-            memcpy(&reinterpret_cast<unsigned char*>(data)[pos], &d_formatLinear, sizeof(d_formatLinear));
-        }
+		data.reserve(retLength);
+        
+        //memcpy(&reinterpret_cast<unsigned char*>(data)[0], &d_formatLinear, sizeof(d_formatLinear));
+		memcpy(&data[0], &d_formatLinear, sizeof(d_formatLinear));
 
         return retLength;
     }
 
-    void ASCIIFormat::setFormatLinearData(const void* data, size_t* indexByte)
+    void ASCIIFormat::setFormatLinearData(const std::vector<uint8_t>& data, size_t* indexByte)
     {
-        memcpy(&d_formatLinear, &reinterpret_cast<const unsigned char*>(data)[*indexByte], sizeof(d_formatLinear));
+        //memcpy(&d_formatLinear, &reinterpret_cast<const unsigned char*>(data)[*indexByte], sizeof(d_formatLinear));
+		memcpy(&d_formatLinear, &data[*indexByte], sizeof(d_formatLinear));
         (*indexByte) += sizeof(d_formatLinear);
 
         setASCIILength(d_formatLinear.d_asciiLength);

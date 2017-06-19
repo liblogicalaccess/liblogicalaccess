@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include <iostream>
 
-#include "logicalaccess/msliblogicalaccess.h"
+#include <logicalaccess/logicalaccess_api.hpp>
 
 namespace logicalaccess
 {

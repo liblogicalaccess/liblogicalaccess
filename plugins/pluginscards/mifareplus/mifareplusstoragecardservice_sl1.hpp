@@ -30,9 +30,8 @@ namespace logicalaccess
                                                     size_t length,
                                                     CardBehavior behaviorFlags) override;
 
-        virtual unsigned int readDataHeader(std::shared_ptr<Location> location,
-                                            std::shared_ptr<AccessInfo> aiToUse, void *data,
-                                            size_t dataLength) override;
+        virtual std::vector<unsigned char> readDataHeader(std::shared_ptr<Location> location,
+														  std::shared_ptr<AccessInfo> aiToUse) override;
 
     private:
         void authenticate_if_needed(std::shared_ptr<AccessInfo>);
