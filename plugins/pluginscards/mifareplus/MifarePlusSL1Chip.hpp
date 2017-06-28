@@ -18,10 +18,7 @@ namespace logicalaccess
      * This mostly acts as a tag, because the chip has no additional
      * functions.
      */
-    class LIBLOGICALACCESS_API MifarePlusSL1Chip : public MifarePlusChip
-#ifndef SWIG
-	, public MifareChip
-#endif
+    class LIBLOGICALACCESS_API MifarePlusSL1Chip : public MifarePlusChip, public MifareChip
     {
       public:
         using MifarePlusChip::getCardType;
