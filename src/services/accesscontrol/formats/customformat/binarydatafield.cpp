@@ -141,8 +141,6 @@ namespace logicalaccess
         }
 
         size_t fieldDataLengthBytes = (d_length + 7) / 8;
-        //unsigned char* paddedBuffer = new unsigned char[fieldDataLengthBytes];
-        //memset(paddedBuffer, d_padding, fieldDataLengthBytes);
 		BitsetStream paddedBuffer(d_padding, fieldDataLengthBytes);
 
         revertBinaryData(_data, d_length, paddedBuffer);

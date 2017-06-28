@@ -136,13 +136,8 @@ namespace logicalaccess
         unsigned int revertedSizeBits = extractedSizeBits;
         size_t revertedSizeBytes = (revertedSizeBits + 7) / 8;
 
-        //unsigned char* extractData = new unsigned char[extractedSizeBytes];
-        //unsigned char* revertedData = new unsigned char[revertedSizeBytes];
 		BitsetStream extractData;
 		BitsetStream revertedData;
-
-        //memset(extractData, 0x00, extractedSizeBytes);
-        //memset(revertedData, 0x00, revertedSizeBytes);
 
         unsigned int tmp = 0;
         if (BitHelper::extract(extractData, data, *pos, extractedSizeBits) > 0)
