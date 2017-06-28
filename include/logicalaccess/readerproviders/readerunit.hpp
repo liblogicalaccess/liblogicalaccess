@@ -37,10 +37,7 @@ namespace logicalaccess
     /**
      * \brief The reader unit base class. This is an object for a specific reader instance to detect card and interact with the reader.
      */
-    class LIBLOGICALACCESS_API ReaderUnit : public XmlSerializable
-#ifndef SWIG
-		, public std::enable_shared_from_this < ReaderUnit >
-#endif     
+    class LIBLOGICALACCESS_API ReaderUnit : public XmlSerializable, public std::enable_shared_from_this < ReaderUnit >
 	{
     public:
 #ifndef SWIG

@@ -100,6 +100,7 @@ namespace logicalaccess
             bool c1; /**< \brief The C1 access bit */
             bool c2; /**< \brief The C2 access bit */
             bool c3; /**< \brief The C3 access bit */
+
         };
 
         /**
@@ -112,7 +113,12 @@ namespace logicalaccess
              *
              * Set access bits to transport configuration. Key A and Key B may serve for any purpose (read, write, increment, etc.).
              */
-            DataBlockAccessBits() : BlockAccessBits(false, false, false) {};
+            DataBlockAccessBits() : BlockAccessBits(false, false, false) {}
+
+			static void* getItem(void* arrayPtr, int i) { return &static_cast<DataBlockAccessBits*>(arrayPtr)[i]; }
+
+			static void setItem(void* arrayPtr, const DataBlockAccessBits* item, int i) { if (item) static_cast<DataBlockAccessBits*>(arrayPtr)[i] = *item; else static_cast<DataBlockAccessBits*>(arrayPtr)[i] = DataBlockAccessBits(); }
+
         };
 
         /**
@@ -126,7 +132,11 @@ namespace logicalaccess
              * Set access bits to transport configuration. Key A may serve for any purpose (read, write, increment, etc.). Key B is data.
              */
             SectorTrailerAccessBits() : BlockAccessBits(false, false, true) {};
-        };
+
+			static void* getItem(void* arrayPtr, int i) { return &static_cast<SectorTrailerAccessBits*>(arrayPtr)[i]; }
+
+			static void setItem(void* arrayPtr, const SectorTrailerAccessBits* item, int i) { if (item) static_cast<SectorTrailerAccessBits*>(arrayPtr)[i] = *item; else static_cast<SectorTrailerAccessBits*>(arrayPtr)[i] = SectorTrailerAccessBits(); }
+		};
 
         /**
          * \brief Sector access bits structure.
@@ -160,6 +170,7 @@ namespace logicalaccess
 
             DataBlockAccessBits d_data_blocks_access_bits[3]; /**< \brief The data blocks access bits. */
             SectorTrailerAccessBits d_sector_trailer_access_bits; /**< \brief The sector trailer access bits. */
+
         };
 
     public:

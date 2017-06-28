@@ -37,6 +37,7 @@ namespace logicalaccess
         data[0] |= ((~data[1]) >> 4) & 0x0F;
         data[1] |= ((~data[2]) >> 4) & 0x0F;
 
+		std::cout << "MifareAccessInfo::SectorAccessBits::toArray() called" << std::endl;
         return data;
     }
 

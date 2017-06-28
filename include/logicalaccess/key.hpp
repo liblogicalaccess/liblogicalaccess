@@ -16,10 +16,7 @@ class KeyDiversification;
     /**
      * \brief A Key base class. The key object is used to describe key chip information used for authentication on secured memory area or for restricted operation.
      */
-    class LIBLOGICALACCESS_API Key : public XmlSerializable
-#ifndef SWIG
-	, public std::enable_shared_from_this < Key >
-#endif    
+    class LIBLOGICALACCESS_API Key : public XmlSerializable, public std::enable_shared_from_this < Key >
 	{
     public:
 

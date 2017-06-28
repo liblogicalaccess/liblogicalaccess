@@ -24,10 +24,7 @@ namespace logicalaccess
     /**
      * \brief A Key storage base class. The key storage specify where the key is stored in memory. It can have cryptographic functionalities.
      */
-    class LIBLOGICALACCESS_API KeyStorage : public XmlSerializable
-#ifndef SWIG
-	, public std::enable_shared_from_this < KeyStorage >
-#endif
+    class LIBLOGICALACCESS_API KeyStorage : public XmlSerializable, public std::enable_shared_from_this < KeyStorage >
     {
     public:
 #ifndef SWIG

@@ -42,13 +42,13 @@ namespace logicalaccess
          * \brief Get the key data.
          * \return The key data.
          */
-        inline const unsigned char* getData() const { return &d_buf[0]; };
+		inline const unsigned char* getData() const { if (d_buf.size() != 0) return &d_buf[0]; return NULL; };
 
         /**
          * \brief Get the key data.
          * \return The key data.
          */
-        inline unsigned char* getData() { return &d_buf[0]; };
+        inline unsigned char* getData() { if (d_buf.size() != 0) return &d_buf[0]; return NULL; };
 
         /**
          * \brief Serialize the current object to XML.

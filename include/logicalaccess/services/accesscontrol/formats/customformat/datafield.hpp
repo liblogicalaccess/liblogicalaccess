@@ -20,10 +20,7 @@ namespace logicalaccess
     /**
      * \brief A data field base class.
      */
-    class LIBLOGICALACCESS_API DataField : public XmlSerializable
-#ifndef SWIG
-	, public std::enable_shared_from_this < DataField >
-#endif        
+    class LIBLOGICALACCESS_API DataField : public XmlSerializable, public std::enable_shared_from_this < DataField >      
 	{
     public:
         /**
