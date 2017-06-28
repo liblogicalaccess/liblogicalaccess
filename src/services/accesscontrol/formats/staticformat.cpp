@@ -108,8 +108,6 @@ namespace logicalaccess
         if (convertedDataTypeLengthBits > 0)
         {
             size_t convertedDataTypeLengthBytes = (convertedDataTypeLengthBits + 7) / 8;
-            //unsigned char* convertedDataTypeData = new unsigned char[convertedDataTypeLengthBytes];
-            //memset(convertedDataTypeData, 0x00, convertedDataTypeLengthBytes);
 			BitsetStream convertedDataTypeData(0x00, convertedDataTypeLengthBytes);
 
             if (d_dataType->convert(field, fieldlen, convertedDataTypeData) == convertedDataTypeLengthBits)
@@ -122,7 +120,6 @@ namespace logicalaccess
 					
                     if (d_dataRepresentation->convertNumeric(convertedDataTypeData, convertedDataRepresentationData) == convertedDataRepresentationLengthBits)
                     {
-                        //BitHelper::writeToBit(data, dataLengthBytes, pos, convertedDataRepresentationData, convertedDataRepresentationLengthBytes, convertedDataRepresentationLengthBits, 0, convertedDataRepresentationLengthBits);
 						data.concat(convertedDataRepresentationData.getData(), 0, convertedDataRepresentationLengthBits);
                     }
                 }

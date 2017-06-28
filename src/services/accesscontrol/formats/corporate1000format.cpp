@@ -159,12 +159,6 @@ namespace logicalaccess
 
         if (data.getByteSize() != 0)
         {
-            //pos = 1;
-            //BitHelper::writeToBit(data, dataLengthBytes, &pos, getLeftParity2(data, dataLengthBytes), 7, 1);
-            //pos = 34;
-            //BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity(data, dataLengthBytes), 7, 1);
-            //pos = 0;
-            //BitHelper::writeToBit(data, dataLengthBytes, &pos, getLeftParity1(data, dataLengthBytes), 7, 1);
 			data.writeAt(1, getLeftParity2(data), 7, 1);
 			data.writeAt(34, getRightParity(data), 7, 1);
 			data.writeAt(0, getLeftParity1(data), 7, 1);
@@ -218,7 +212,6 @@ namespace logicalaccess
 		
         if (data.size() >= retLength)
         {
-            //memcpy(&reinterpret_cast<unsigned char*>(data)[0], &d_formatLinear, sizeof(d_formatLinear));
 			memcpy(&data[0], &d_formatLinear, sizeof(d_formatLinear));
         }
 
@@ -227,7 +220,6 @@ namespace logicalaccess
 
     void Corporate1000Format::setFormatLinearData(const std::vector<uint8_t>& data, size_t* indexByte)
     {
-        //memcpy(&d_formatLinear, &reinterpret_cast<const unsigned char*>(data)[*indexByte], sizeof(d_formatLinear));
 		memcpy(&d_formatLinear, &data[*indexByte], sizeof(d_formatLinear));
         (*indexByte) += sizeof(d_formatLinear);
 

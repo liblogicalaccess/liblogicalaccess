@@ -100,14 +100,6 @@ namespace logicalaccess
 
         if (data.getByteSize() != 0)
         {
-            //pos = 32;
-            //BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity1(data, dataLengthBytes), 7, 1);
-            //pos = 33;
-            //BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity2(data, dataLengthBytes), 7, 1);
-            //pos = 34;
-            //BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity3(data, dataLengthBytes), 7, 1);
-            //pos = 35;
-            //BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity4(data, dataLengthBytes), 7, 1);
 			data.writeAt(32, getRightParity1(data), 7, 1);
 			data.writeAt(33, getRightParity2(data), 7, 1);
 			data.writeAt(34, getRightParity3(data), 7, 1);

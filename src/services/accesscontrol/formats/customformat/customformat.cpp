@@ -62,7 +62,6 @@ namespace logicalaccess
         unsigned int pos = 0;
         std::list<std::shared_ptr<DataField> > sortedFieldList = d_fieldList;
         sortedFieldList.sort(FieldSortPredicate);
-        //memset(data, 0x00, dataLengthBytes);
         for (std::list<std::shared_ptr<DataField> >::const_iterator i = sortedFieldList.begin(); i != sortedFieldList.end(); ++i)
         {
             pos = (*i)->getPosition();
@@ -72,19 +71,6 @@ namespace logicalaccess
         }
 		return data;
     }
-
-	//void CustomFormat::getLinearData(void* data, size_t dataLengthBytes) const
-	//{
-	//	unsigned int pos = 0;
-	//	std::list<std::shared_ptr<DataField> > sortedFieldList = d_fieldList;
-	//	sortedFieldList.sort(FieldSortPredicate);
-	//	memset(data, 0x00, dataLengthBytes);
-	//	for (std::list<std::shared_ptr<DataField> >::const_iterator i = sortedFieldList.begin(); i != sortedFieldList.end(); ++i)
-	//	{
-	//		pos = (*i)->getPosition();
-	//		(*i)->getLinearData(data, dataLengthBytes, &pos);
-	//	}
-	//}
 
     void CustomFormat::setLinearData(const std::vector<uint8_t>& data)
     {
@@ -192,7 +178,6 @@ namespace logicalaccess
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The buffer size is too short.");
             }
-            //memcpy(data, &xmlbuf[0], xmlbuf.size());
 			std::copy(&xmlbuf[0], &xmlbuf[0] + xmlbuf.size(), data.begin());
         }
 

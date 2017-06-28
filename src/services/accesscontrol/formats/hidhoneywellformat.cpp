@@ -137,21 +137,15 @@ namespace logicalaccess
 
 	std::vector<uint8_t> HIDHoneywellFormat::getLinearData() const
     {
-        //unsigned int pos = 0;
 		BitsetStream data;
 
-        //BitHelper::writeToBit(data, dataLengthBytes, &pos, 0x0F, 4, 4);
 		data.append(0x0F, 4, 4);
 
-        //convertField(data, dataLengthBytes, &pos, getFacilityCode(), 12);
-        //convertField(data, dataLengthBytes, &pos, getUid(), 16);
 		convertField(data, getFacilityCode(), 12);
 		convertField(data, getUid(), 16);
 
         for (unsigned char i = 0; i < 8; ++i)
         {
-            //pos = 32 + i;
-            //BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity(data, dataLengthBytes, i), 7, 1);
 			data.writeAt(32 + i, getRightParity(data, i), 7, 1);
         }
 		return data.getData();
@@ -160,7 +154,6 @@ namespace logicalaccess
     void HIDHoneywellFormat::setLinearData(const std::vector<uint8_t>& data)
     {
         unsigned int pos = 0;
-        //unsigned char fixedValue = 0x00;
 		BitsetStream fixedValue(0x00, 1);
 		BitsetStream _data;
 		_data.concat(data);

@@ -80,8 +80,6 @@ namespace logicalaccess
         if (convertedDataTypeLengthBits > 0)
         {
             size_t convertedDataTypeLengthBytes = (convertedDataTypeLengthBits + 7) / 8;
-            //unsigned char* convertedDataTypeData = new unsigned char[convertedDataTypeLengthBytes];
-            //memset(convertedDataTypeData, 0x00, convertedDataTypeLengthBytes);
 			BitsetStream convertedDataTypeData(0x00, convertedDataTypeLengthBytes);
 
             if (d_dataType->convert(field, fieldlen, convertedDataTypeData) == convertedDataTypeLengthBits)
@@ -90,12 +88,10 @@ namespace logicalaccess
                 if (convertedDataRepresentationLengthBits > 0)
                 {
                     size_t convertedDataRepresentationLengthBytes = (convertedDataRepresentationLengthBits + 7) / 8;
-                    //unsigned char* convertedDataRepresentationData = new unsigned char[convertedDataRepresentationLengthBytes];
 					BitsetStream convertedDataRepresentationData;
 
                     if (d_dataRepresentation->convertNumeric(convertedDataTypeData, convertedDataRepresentationData) == convertedDataRepresentationLengthBits)
                     {                       
-						//BitHelper::writeToBit(data, dataLengthBytes, pos, convertedDataRepresentationData, convertedDataRepresentationLengthBytes, convertedDataRepresentationLengthBits, 0, convertedDataRepresentationLengthBits);
 						data.concat(convertedDataRepresentationData.getData());
                     }
                 }
@@ -109,12 +105,10 @@ namespace logicalaccess
         if (convertedDataRepresentationLengthBits > 0)
         {
             size_t convertedDataRepresentationLengthBytes = (convertedDataRepresentationLengthBits + 7) / 8;
-            //unsigned char* convertedDataRepresentationData = new unsigned char[convertedDataRepresentationLengthBytes];
 			BitsetStream convertedDataRepresentationData;
 
             if (d_dataRepresentation->convertBinary(data, convertedDataRepresentationData) == convertedDataRepresentationLengthBits)
             {
-                //BitHelper::writeToBit(convertedData, convertedDataLengthBytes, pos, convertedDataRepresentationData, convertedDataRepresentationLengthBytes, convertedDataRepresentationLengthBits, 0, convertedDataRepresentationLengthBits);
 				convertedData.concat(convertedDataRepresentationData.getData());
             }
         }
@@ -129,10 +123,6 @@ namespace logicalaccess
         unsigned int revertedSizeBits = extractedSizeBits;
         size_t revertedSizeBytes = (revertedSizeBits + 7) / 8;
 
-        //unsigned char* extractData = new unsigned char[extractedSizeBytes];
-        //unsigned char* revertedData = new unsigned char[revertedSizeBytes];
-        //memset(extractData, 0x00, extractedSizeBytes);
-        //memset(revertedData, 0x00, revertedSizeBytes);
 		BitsetStream extractData(0x00, extractedSizeBytes);
 		BitsetStream revertedData(0x00, revertedSizeBytes);
 
@@ -153,10 +143,6 @@ namespace logicalaccess
         unsigned int revertedSizeBits = readSizeBits;
         size_t revertedTemporarySizeBytes = (revertedSizeBits + 7) / 8;
 
-        //unsigned char* extractData = new unsigned char[extractedSizeBytes];
-        //unsigned char* revertedTemporaryData = new unsigned char[revertedTemporarySizeBytes];
-        //memset(extractData, 0x00, extractedSizeBytes);
-        //memset(revertedTemporaryData, 0x00, revertedTemporarySizeBytes);
 		BitsetStream extractData(0x00, extractedSizeBytes);
 		BitsetStream revertedTemporaryData(0x00, revertedTemporarySizeBytes);
 		
@@ -164,14 +150,6 @@ namespace logicalaccess
         {
             if (d_dataRepresentation->revertBinary(extractData, revertedTemporaryData) > 0)
             {
-
-//#if defined(UNIX)
-//              if (revertedDataLengthBytes < revertedTemporarySizeBytes)
-//                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The size of the dest buffer is too small for memcpy");
-//              memcpy(revertedData, revertedTemporaryData, revertedTemporarySizeBytes);
-//#else
-//              memcpy_s(revertedData, revertedDataLengthBytes, revertedTemporaryData, revertedTemporarySizeBytes);
-//#endif
 				if (revertedData.getData().size() < revertedTemporaryData.getData().size())
 		            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The size of the dest buffer is too small for memcpy");
 				revertedData.writeAt(0, revertedTemporaryData.getData(), 0, revertedTemporaryData.getBitSize());

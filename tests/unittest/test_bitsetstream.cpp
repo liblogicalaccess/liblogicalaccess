@@ -200,7 +200,7 @@ TEST(complete_test, bitset_tests)
 	a[4] = 0x08;
 	ASSERT_EQ(a, bstream.getData());
 	bstream.insert(37, 0x00, 1, 1);
-	ASSERT_EQ(39, bstream.getSize());
+	ASSERT_EQ(38, bstream.getBitSize());
 	bstream.clear();
 	bstream.insert(0, a, 0, a.size() * 8);
 	ASSERT_EQ(a, bstream.getData());

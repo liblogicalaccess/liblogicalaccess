@@ -110,18 +110,15 @@ namespace logicalaccess
                 if (leftParity != PT_NONE)
                 {
                     unsigned char parity = StaticFormat::calculateParity(buf, leftParity, pos, blocklen);
-                    //BitHelper::writeToBit(procbuf, procbuflenBytes, &posproc, parity, 7, 1);
 					procbuf.writeAt(posproc, parity, 7, 1);
                 }
 
                 unsigned int currentBlocklen = (pos + blocklen <= buf.getBitSize()) ? blocklen : buf.getBitSize() - pos;
-                //BitHelper::writeToBit(procbuf, procbuflenBytes, &posproc, buf, buflenBytes, buf.getBitSize(), pos, currentBlocklen);
 				procbuf.writeAt(posproc, buf.getData(), pos, currentBlocklen);
 
                 if (rightParity != PT_NONE)
                 {
                     unsigned char parity = StaticFormat::calculateParity(buf, rightParity, pos, blocklen);
-                    //BitHelper::writeToBit(procbuf, procbuflenBytes, &posproc, parity, 7, 1);
 					procbuf.writeAt(posproc, parity, 7, 1);
                 }
 
@@ -159,9 +156,6 @@ namespace logicalaccess
                 {
                     if (leftParity != PT_NONE)
                     {
-                        //unsigned char parityToCheck = 0x00;
-                        //unsigned int posparity = 7;
-                        //BitHelper::writeToBit(&parityToCheck, 1, &posparity, buf, buflenBytes, buflen, pos, 1);
 						BitsetStream parityToCheck(0x00, 1);
 						unsigned int posparity = 7;
 						parityToCheck.writeAt(posparity, buf.getData(), pos, 1);
@@ -174,7 +168,6 @@ namespace logicalaccess
                     }
 
                     unsigned int currentBlocklen = ((pos + blocklen + ((rightParity != PT_NONE) ? 1 : 0)) <= buf.getByteSize()) ? blocklen : buf.getByteSize() - pos - ((rightParity != PT_NONE) ? 1 : 0);
-                    //BitHelper::writeToBit(procbuf, procbuflenBytes, &posproc, buf, buflenBytes, buflen, pos, currentBlocklen);
 					procbuf.writeAt(posproc, buf.getData(), pos, currentBlocklen);
 					pos += currentBlocklen;
 
@@ -182,7 +175,6 @@ namespace logicalaccess
                     {
 						BitsetStream parityToCheck(0x00, 1);
                         unsigned int posparity = 7;
-                        //BitHelper::writeToBit(&parityToCheck, 1, &posparity, buf, buflenBytes, buflen, pos, 1);
 						parityToCheck.writeAt(posparity, buf.getData(), pos, 1);
                         unsigned char parity = StaticFormat::calculateParity(buf, rightParity, pos++ - blocklen, blocklen);
 

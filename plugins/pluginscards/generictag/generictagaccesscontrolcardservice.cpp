@@ -43,8 +43,6 @@ namespace logicalaccess
                 {
                     unsigned int length = (dataLengthBits + 7) / 8;
                     unsigned formatlength = (formatret->getDataLength() + 7) / 8;
-                    //unsigned char *formatBuf = new unsigned char[formatlength];
-                    //memset(formatBuf, 0x00, formatlength);
 					BitsetStream formatBuf;
 
                     try
@@ -62,7 +60,6 @@ namespace logicalaccess
                             if (realDataLengthBits >= formatret->getDataLength())
                             {
                                 LOG(LogLevel::INFOS) << "Converting data to format...";
-                                //BitHelper::writeToBit(formatBuf, formatlength, &writePosBit, &identifier[0], length, dataLengthBits, dataLengthBits - realDataLengthBits, realDataLengthBits);
 								formatBuf.concat(identifier, dataLengthBits - realDataLengthBits, realDataLengthBits);
                                 formatret->setLinearData(formatBuf.getData());
                                 ret = true;

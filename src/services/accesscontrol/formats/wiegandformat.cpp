@@ -27,10 +27,7 @@ namespace logicalaccess
 
     unsigned char WiegandFormat::getLeftParity() const
     {
-        //getDataLength is in bits => we have to convert in bytes to allocate data
         size_t dataLength = (getDataLength() + 7) / 8;
-        //unsigned char* data = new unsigned char[dataLength];
-        //memset(data, 0x00, dataLength);
 		BitsetStream data;
 
         data.concat(getLinearDataWithoutParity());
@@ -42,8 +39,6 @@ namespace logicalaccess
     unsigned char WiegandFormat::getRightParity() const
     {
         size_t dataLength = (getDataLength() + 7) / 8;
-        //unsigned char* data = new unsigned char[dataLength];
-        //memset(data, 0x00, dataLength);
 		BitsetStream data;
 
         data.concat(getLinearDataWithoutParity());
@@ -57,19 +52,14 @@ namespace logicalaccess
 		BitsetStream data;
 
 		data.concat(getLinearDataWithoutParity());
-		//unsigned int pos = 0;
 
         if (d_leftParityType != PT_NONE)
         {
-            //BitHelper::writeToBit(data, dataLengthBytes, &pos, getLeftParity(), 7, 1);
 			data.writeAt(0, getLeftParity(), 7, 1);
         }
 
-        //pos = getDataLength() - 1;
-
         if (d_rightParityType != PT_NONE)
         {
-            //BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity(), 7, 1);
 			data.writeAt(getDataLength() - 1, getRightParity(), 7, 1);
         }
 		return data.getData();

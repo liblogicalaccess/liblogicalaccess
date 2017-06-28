@@ -83,14 +83,10 @@ namespace logicalaccess
         {
             unsigned int tmpswblen = DataType::removeParityToBuffer(d_leftParityType, d_rightParityType, 8, BitsetStream(), BitsetStream());
             size_t tmpswblenBytes = (tmpswblen + 7) / 8;
-            //unsigned char* tmpswb = new unsigned char[tmpswblenBytes];
-            //memset(tmpswb, 0x00, tmpswblenBytes);
 			BitsetStream tmpswb(0x00, tmpswblenBytes);
 
             DataType::removeParityToBuffer(d_leftParityType, d_rightParityType, 8, data, tmpswb);
 
-            //unsigned char *linedData = new unsigned char[dataLengthBytes];
-            //memset(linedData, 0x00, dataLengthBytes);
 			BitsetStream linedData(0x00, data.getByteSize());
             BitHelper::revert(linedData, tmpswb, tmpswblen);
 

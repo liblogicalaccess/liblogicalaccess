@@ -51,12 +51,9 @@ namespace logicalaccess
 
         /**
          * \brief Get linear data.
-         * \param data Where to put data
-         * \param dataLengthBytes Length in byte of data
+         * \return The linear data.
          */
         virtual std::vector<uint8_t> getLinearData() const;
-		//virtual void getLinearData(void* data, size_t dataLengthBytes) const;
-
 
         /**
          * \brief Set linear data.

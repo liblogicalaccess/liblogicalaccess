@@ -69,11 +69,6 @@ namespace logicalaccess
 
 	std::vector<uint8_t> ParityDataField::getLinearData() const
     {
-        //if ((dataLengthBytes * 8) < (d_length + *pos))
-        //{
-        //    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
-        //}
-
 		BitsetStream data;
 		unsigned int* positions = new unsigned int[d_bitsUsePositions.size()];
         int i = 0;
@@ -83,7 +78,6 @@ namespace logicalaccess
         }
         unsigned char parity = Format::calculateParity(data, d_parityType, positions, d_bitsUsePositions.size());
         delete[] positions;
-        //BitHelper::writeToBit(data, dataLengthBytes, pos, parity, 7, 1);
 		data.append(parity, 7, 1);
 		return data.getData();
     }

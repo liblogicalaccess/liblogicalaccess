@@ -90,12 +90,6 @@ namespace logicalaccess
         convertField(data, getFacilityCode(), 16);
         convertField(data, getUid(), 18);
         
-        //pos = 0;
-        //BitHelper::writeToBit(data, dataLengthBytes, &pos, getLeftParity(data, dataLengthBytes), 7, 1);
-        //pos = 35;
-        //BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity1(data, dataLengthBytes), 7, 1);
-        //pos = 36;
-        //BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity2(data, dataLengthBytes), 7, 1);
 		data.append(getLeftParity(data), 7, 1);
 		data.append(getRightParity1(data), 7, 1);
 		data.append(getRightParity2(data), 7, 1);
@@ -143,7 +137,6 @@ namespace logicalaccess
 
         if (data.capacity() >= retLength)
         {
-            //memcpy(&reinterpret_cast<unsigned char*>(data)[0], &d_formatLinear, sizeof(d_formatLinear));
 			memcpy(&data[0], &d_formatLinear, sizeof(d_formatLinear));
 		}
 
@@ -152,7 +145,6 @@ namespace logicalaccess
 
     void Wiegand37WithFacilityRightParity2Format::setFormatLinearData(const std::vector<uint8_t>& data, size_t* indexByte)
     {
-        //memcpy(&d_formatLinear, &reinterpret_cast<const unsigned char*>(data)[*indexByte], sizeof(d_formatLinear));
 		memcpy(&d_formatLinear, &data[*indexByte], sizeof(d_formatLinear));
 		(*indexByte) += sizeof(d_formatLinear);
 

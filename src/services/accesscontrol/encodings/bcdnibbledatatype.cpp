@@ -34,8 +34,6 @@ namespace logicalaccess
     {
         unsigned int ret = 0;
 
-        //unsigned char* tmp = new unsigned char[64];
-        //memset(tmp, 0x00, 64);
 		BitsetStream tmp(0x00, 64);
 
         unsigned int shft, i;
@@ -59,11 +57,6 @@ namespace logicalaccess
 
         if (dataConverted.getByteSize() >= i)
         {
-            //unsigned char* swb = reinterpret_cast<unsigned char*>(dataConverted);
-            //unsigned char* tmpswb = new unsigned char[i];
-            //unsigned char* tmpswb2 = new unsigned char[i];
-            //memset(tmpswb, 0x00, i);
-            //memset(tmpswb2, 0x00, i);
 			BitsetStream tmpswb(0x00, i);
 			BitsetStream tmpswb2(0x00, i);
 
@@ -90,8 +83,6 @@ namespace logicalaccess
         {
             unsigned int tmpswblen = DataType::removeParityToBuffer(d_leftParityType, d_rightParityType, 4, BitsetStream(), BitsetStream());
             size_t tmpswblenBytes = (tmpswblen + 7) / 8;
-            //unsigned char* tmpswb = new unsigned char[tmpswblenBytes];
-            //memset(tmpswb, 0x00, tmpswblenBytes);
 			BitsetStream tmpswb(0x00, tmpswblenBytes);
 
             DataType::removeParityToBuffer(d_leftParityType, d_rightParityType, 4, data, tmpswb);

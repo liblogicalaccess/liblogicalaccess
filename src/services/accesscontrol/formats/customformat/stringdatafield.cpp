@@ -64,23 +64,12 @@ namespace logicalaccess
 
 	std::vector<uint8_t> StringDataField::getLinearData() const
     {
-        //if ((dataLengthBytes * 8) < (d_length + *pos))
-        //{
-        //    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
-        //}
-
 		BitsetStream data;
 
 		size_t fieldDataLengthBytes = (d_length + 7) / 8;
 		size_t copyValueLength = (d_value.size() > fieldDataLengthBytes) ? fieldDataLengthBytes : d_value.size();
-        //unsigned char* paddedBuffer = new unsigned char[fieldDataLengthBytes];
-        //memset(paddedBuffer, d_padding, fieldDataLengthBytes);
 		BitsetStream paddedBuffer(d_padding, fieldDataLengthBytes);
-//#if defined(UNIX)
-//        memcpy(paddedBuffer, &d_value[0], copyValueLength);
-//#else
-//        memcpy_s(paddedBuffer, fieldDataLengthBytes, &d_value[0], copyValueLength);
-//#endif
+
 		std::vector<uint8_t> tmp;
 		tmp.reserve(copyValueLength);
 		std::copy(&d_value[0], &d_value[0] + copyValueLength, tmp.begin());
@@ -113,8 +102,6 @@ namespace logicalaccess
         }
 
         size_t fieldDataLengthBytes = (d_length + 7) / 8;
-        //unsigned char* paddedBuffer = new unsigned char[fieldDataLengthBytes];
-        //memset(paddedBuffer, d_padding, fieldDataLengthBytes);
 		BitsetStream paddedBuffer(d_padding, fieldDataLengthBytes);
 
         revertBinaryData(_data, d_length, paddedBuffer);

@@ -92,7 +92,6 @@ namespace logicalaccess
         size_t retLength = sizeof(d_formatLinear);
 		data.reserve(retLength);
         
-        //memcpy(&reinterpret_cast<unsigned char*>(data)[0], &d_formatLinear, sizeof(d_formatLinear));
 		memcpy(&data[0], &d_formatLinear, sizeof(d_formatLinear));
 
         return retLength;
@@ -100,7 +99,6 @@ namespace logicalaccess
 
     void ASCIIFormat::setFormatLinearData(const std::vector<uint8_t>& data, size_t* indexByte)
     {
-        //memcpy(&d_formatLinear, &reinterpret_cast<const unsigned char*>(data)[*indexByte], sizeof(d_formatLinear));
 		memcpy(&d_formatLinear, &data[*indexByte], sizeof(d_formatLinear));
         (*indexByte) += sizeof(d_formatLinear);
 

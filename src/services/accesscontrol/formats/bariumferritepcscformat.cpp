@@ -137,18 +137,6 @@ namespace logicalaccess
 
 	std::vector<uint8_t> BariumFerritePCSCFormat::getLinearData() const
     {
-        //unsigned int pos = 0;
-		//std::vector<uint8_t> data;
-		//
-        //BitHelper::writeToBit(dataLengthBytes, &pos, 0x0F, 4, 4);
-		//
-        //data = convertField(dataLengthBytes, &pos, getFacilityCode(), 12);
-        //data = convertField(dataLengthBytes, &pos, getUid(), 16);
-		//
-        //BitHelper::writeToBit(dataLengthBytes, &pos, calcChecksum(reinterpret_cast<const unsigned char*>(data), static_cast<unsigned int>((pos + 7) / 8)));
-		//
-		//return data;
-
 		BitsetStream data;
 
 		data.append(0x0F, 4, 4);
@@ -171,7 +159,6 @@ namespace logicalaccess
 			data.concat(_data);
 			
 			unsigned int pos = 0;
-			//unsigned char fixedValue = 0x00;
 			BitsetStream fixedValue(0x00, 1);
 
             BitHelper::extract(fixedValue, data, pos, 4);

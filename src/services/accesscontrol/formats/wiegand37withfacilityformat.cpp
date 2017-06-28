@@ -89,7 +89,6 @@ namespace logicalaccess
 
     void Wiegand37WithFacilityFormat::setFormatLinearData(const std::vector<uint8_t>& data, size_t* indexByte)
     {
-        //memcpy(&d_formatLinear, &reinterpret_cast<const unsigned char*>(data)[*indexByte], sizeof(d_formatLinear));
 		memcpy(&d_formatLinear, &data[*indexByte], sizeof(d_formatLinear));
 		(*indexByte) += sizeof(d_formatLinear);
 

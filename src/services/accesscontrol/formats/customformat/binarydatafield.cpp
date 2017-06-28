@@ -95,22 +95,10 @@ namespace logicalaccess
     {
 		BitsetStream data;
 
-        //if ((data.size() * 8) < (d_length + _data.getBitSize()))
-        //{
-        //    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
-        //}
-
 		size_t fieldDataLengthBytes = (d_length + 7) / 8;
 		size_t copyValueLength = (d_value.getLength() > fieldDataLengthBytes) ? fieldDataLengthBytes : d_value.getLength();
-        //unsigned char* paddedBuffer = new unsigned char[fieldDataLengthBytes];
-        //memset(paddedBuffer, d_padding, fieldDataLengthBytes);
 		BitsetStream paddedBuffer(d_padding, fieldDataLengthBytes);
 
-//#if defined(UNIX)
-//		memcpy(paddedBuffer, d_value.getData(), copyValueLength);
-//#else
-//		memcpy_s(paddedBuffer, fieldDataLengthBytes, d_value.getData(), copyValueLength);
-//#endif
 		std::vector<uint8_t> tmp;
 		tmp.reserve(copyValueLength);
 		std::copy(&d_value.getData()[0], &d_value.getData()[0] + copyValueLength, tmp.begin());

@@ -36,8 +36,6 @@ namespace logicalaccess
 #if __BYTE_ORDER == __LITTLE_ENDIAN
         if (convertedData.getByteSize() >= data.getByteSize())
         {
-            //memset(convertedData, 0x00, convertedLengthBytes);
-            //memcpy(convertedData, data, dataLengthBytes);
 			std::vector<uint8_t> tmp(convertedData.getByteSize());
 			std::fill(tmp.begin(), tmp.end(), 0x00);
 			convertedData.writeAt(0, tmp, 0, tmp.size() * 8);
@@ -74,8 +72,6 @@ namespace logicalaccess
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 		if (convertedData.getByteSize() >= data.getByteSize())
         {
-			//memset(convertedData, 0x00, convertedLengthBytes);
-			//memcpy(convertedData, data, dataLengthBytes);
 			std::vector<uint8_t> tmp(convertedData.getByteSize());
 			std::fill(tmp.begin(), tmp.end(), 0x00);
 			convertedData.writeAt(0, tmp, 0, tmp.size() * 8);

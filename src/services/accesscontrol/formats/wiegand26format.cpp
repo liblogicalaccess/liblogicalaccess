@@ -90,7 +90,6 @@ namespace logicalaccess
         if (data.size() >= retLength)
         {
             unsigned int pos = 0;
-            //memcpy(&reinterpret_cast<unsigned char*>(data)[pos], &d_formatLinear, sizeof(d_formatLinear));
 			memcpy(&data[0], &d_formatLinear, sizeof(d_formatLinear));
         }
 
@@ -99,7 +98,6 @@ namespace logicalaccess
 
     void Wiegand26Format::setFormatLinearData(const std::vector<uint8_t>& data, size_t* indexByte)
     {
-        //memcpy(&d_formatLinear, &reinterpret_cast<const unsigned char*>(data)[*indexByte], sizeof(d_formatLinear));
 		memcpy(&d_formatLinear, &data[*indexByte], sizeof(d_formatLinear));
         (*indexByte) += sizeof(d_formatLinear);
 
