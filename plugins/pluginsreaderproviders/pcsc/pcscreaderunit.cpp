@@ -679,7 +679,7 @@ namespace logicalaccess
                     commands.reset(new MifarePCSCCommands());
                     resultChecker.reset(new MifareOmnikeyXX27ResultChecker());
                 }
-                else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_LAN_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_XX22)
+                else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_LAN_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_XX22 || getPCSCType() == PCSC_RUT_OMNIKEY_XX23)
                 {
                     commands.reset(new MifareOmnikeyXX21Commands());
                 }
@@ -757,7 +757,7 @@ namespace logicalaccess
                 {
                     commands.reset(new MifareUltralightCOmnikeyXX21Commands());
                 }
-                else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX22)
+                else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX22 || getPCSCType() == PCSC_RUT_OMNIKEY_XX23)
                 {
                     commands.reset(new MifareUltralightCOmnikeyXX22Commands());
                 }
@@ -1171,7 +1171,7 @@ namespace logicalaccess
                 commands.reset(cmd);
                 resultChecker.reset(new MifareOmnikeyXX27ResultChecker());
             }
-            else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_XX22 /* TODO: check it is really the same APDU for Omnikey 5022-CL */)
+            else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_XX22 || getPCSCType() == PCSC_RUT_OMNIKEY_XX23 /* TODO: check it is really the same APDU for Omnikey 5022-CL and 5023-CL */)
             {
                 commands.reset(new MifarePlusSL1Policy<
                         MifarePlusOmnikeyXX21SL1Commands,
