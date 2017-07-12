@@ -12,6 +12,8 @@
 
 namespace logicalaccess
 {	
+#define CMD_ODSP "ODSP"
+
 	enum class TemporaryControleCode : unsigned char {
 		NOP = 0x00,
 		CancelTemporaryOperation = 0x01,
@@ -62,7 +64,9 @@ namespace logicalaccess
 	class LIBLOGICALACCESS_API OSDPCommands : public Commands
 	{
 	public:	
-		OSDPCommands() { initCommands(); }
+		OSDPCommands() : Commands(CMD_ODSP) { initCommands(); }
+
+		OSDPCommands(std::string ct) : Commands(ct) { initCommands(); }
 
 		~OSDPCommands() {}
 

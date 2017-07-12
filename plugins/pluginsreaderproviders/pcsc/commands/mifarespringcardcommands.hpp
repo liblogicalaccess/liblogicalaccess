@@ -16,6 +16,8 @@
 
 namespace logicalaccess
 {
+#define CMD_MIFARESPRINGCARD "MifareSpringCard"
+
     /**
      * \brief The Mifare commands class for SpringCard reader.
      */
@@ -27,6 +29,8 @@ namespace logicalaccess
          * \brief Constructor.
          */
         MifareSpringCardCommands();
+
+		MifareSpringCardCommands(std::string);
 
         /**
          * \brief Destructor.

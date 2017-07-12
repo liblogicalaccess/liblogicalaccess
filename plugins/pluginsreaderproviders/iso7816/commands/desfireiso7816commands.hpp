@@ -20,6 +20,7 @@
 namespace logicalaccess
 {
 #define DESFIRE_CLEAR_DATA_LENGTH_CHUNK	32
+#define CMD_DESFIREISO7816 "DESFireISO7816"
 
     /**
      * \brief The DESFire base commands class.
@@ -32,6 +33,8 @@ namespace logicalaccess
          * \brief Constructor.
          */
         DESFireISO7816Commands();
+
+		DESFireISO7816Commands(std::string);
 
         /**
          * \brief Destructor.

@@ -16,6 +16,8 @@
 
 namespace logicalaccess
 {
+#define CMD_MIFARESTIDSTR "MifareSTidSTR"
+
     /**
      * \brief The Mifare commands class for STidSTR reader.
      */
@@ -27,6 +29,8 @@ namespace logicalaccess
          * \brief Constructor.
          */
         MifareSTidSTRCommands();
+
+		MifareSTidSTRCommands(std::string ct);
 
         /**
          * \brief Destructor.

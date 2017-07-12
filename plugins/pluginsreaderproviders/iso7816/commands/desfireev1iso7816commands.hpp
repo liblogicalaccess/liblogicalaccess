@@ -17,13 +17,12 @@
 
 namespace logicalaccess
 {
+#define CMD_DESFIREEV1ISO7816 "DESFireEV1ISO7816"
+
     /**
      * \brief The DESFire EV1 base commands class.
      */
-    class LIBLOGICALACCESS_API DESFireEV1ISO7816Commands : public DESFireISO7816Commands
-#ifndef SWIG
-	, public DESFireEV1Commands, public ISO7816ISO7816Commands
-#endif
+    class LIBLOGICALACCESS_API DESFireEV1ISO7816Commands : public DESFireISO7816Commands, public DESFireEV1Commands, public ISO7816ISO7816Commands
     {
     public:
 
@@ -31,6 +30,8 @@ namespace logicalaccess
          * \brief Constructor.
          */
         DESFireEV1ISO7816Commands();
+
+		DESFireEV1ISO7816Commands(std::string ct);
 
         /**
          * \brief Destructor.

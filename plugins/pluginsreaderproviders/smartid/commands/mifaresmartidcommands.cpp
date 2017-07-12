@@ -17,9 +17,14 @@
 namespace logicalaccess
 {
     MifareSmartIDCommands::MifareSmartIDCommands()
-        : MifareCommands()
+        : MifareCommands(CMD_MIFARESMARTID)
     {
     }
+	
+	MifareSmartIDCommands::MifareSmartIDCommands(std::string ct)
+		: MifareCommands(ct)
+	{
+	}
 
     MifareSmartIDCommands::~MifareSmartIDCommands()
     {

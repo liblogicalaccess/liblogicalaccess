@@ -43,7 +43,7 @@ namespace logicalaccess
 
     bool MifareAccessInfo::SectorAccessBits::fromArray(std::vector<uint8_t> data)
     {
-		if (data.size() <3)
+		if (data.size() < 3)
 		{
 			THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "The buffer is too short.");
 		}

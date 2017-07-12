@@ -26,6 +26,8 @@
 
 namespace logicalaccess
 {
+#define CMD_SAMAV1ISO7816 "SAMAV1ISO7816"
+
     /**
      * \brief The SAMAV1ISO7816 commands class.
      */
@@ -37,6 +39,8 @@ namespace logicalaccess
          * \brief Constructor.
          */
         SAMAV1ISO7816Commands();
+
+		SAMAV1ISO7816Commands(std::string);
 
         /**
          * \brief Destructor.

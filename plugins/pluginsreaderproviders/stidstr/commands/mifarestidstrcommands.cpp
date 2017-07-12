@@ -16,12 +16,20 @@
 namespace logicalaccess
 {
     MifareSTidSTRCommands::MifareSTidSTRCommands()
-        : MifareCommands()
+        : MifareCommands(CMD_MIFARESTIDSTR)
     {
         d_useSKB = false;
         d_skbIndex = 0;
         d_lastKeyType = KT_KEY_A;
     }
+
+	MifareSTidSTRCommands::MifareSTidSTRCommands(std::string ct)
+		: MifareCommands(ct)
+	{
+		d_useSKB = false;
+		d_skbIndex = 0;
+		d_lastKeyType = KT_KEY_A;
+	}
 
     MifareSTidSTRCommands::~MifareSTidSTRCommands()
     {

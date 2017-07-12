@@ -22,11 +22,14 @@
 namespace logicalaccess
 {
     DESFireISO7816Commands::DESFireISO7816Commands()
-        : Commands(),
-        DESFireCommands()
-    {
-        
-    }
+        : Commands(CMD_DESFIREISO7816),
+        DESFireCommands(CMD_DESFIREISO7816)
+    { }
+
+	DESFireISO7816Commands::DESFireISO7816Commands(std::string ct)
+		: Commands(ct),
+		DESFireCommands(ct)
+	{ }
 
     DESFireISO7816Commands::~DESFireISO7816Commands()
     {

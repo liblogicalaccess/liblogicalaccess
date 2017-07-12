@@ -21,10 +21,17 @@
 
 namespace logicalaccess
 {
-    DESFireEV1STidSTRCommands::DESFireEV1STidSTRCommands()
+    DESFireEV1STidSTRCommands::DESFireEV1STidSTRCommands() 
+		: DESFireEV1Commands(CMD_DESFIREEV1STIDSTR)
     {
         d_currentAid = 0;
     }
+
+	DESFireEV1STidSTRCommands::DESFireEV1STidSTRCommands(std::string ct) 
+		: DESFireEV1Commands(ct)
+	{
+		d_currentAid = 0;
+	}
 
     DESFireEV1STidSTRCommands::~DESFireEV1STidSTRCommands()
     {

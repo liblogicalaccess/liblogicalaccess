@@ -40,6 +40,8 @@ namespace logicalaccess
 #define SELECT_FILE_BY_FID 0x00
 #endif
 
+#define	CMD_DESFIRE_EV1		"DESFireEV1"
+
     /**
      * \brief The ISO DFName and FID
      */
@@ -97,6 +99,10 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API DESFireEV1Commands : public virtual DESFireCommands
     {
     public:
+
+		DESFireEV1Commands() : DESFireCommands(CMD_DESFIRE_EV1) {}
+
+		DESFireEV1Commands(std::string ct) : DESFireCommands(ct) {}
 
         /**
          * \brief Select an application.

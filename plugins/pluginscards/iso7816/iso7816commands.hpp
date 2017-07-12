@@ -13,12 +13,18 @@
 
 namespace logicalaccess
 {
+#define	CMD_ISO7816	"ISO7816"
+
     /**
      * \brief The ISO7816 commands class.
      */
     class LIBLOGICALACCESS_API ISO7816Commands : public virtual Commands
     {
     public:
+
+		ISO7816Commands() : Commands(CMD_ISO7816) {}
+
+		ISO7816Commands(std::string ct) : Commands(ct) {}
 
         /**
          * \brief Read binary data.

@@ -7,9 +7,14 @@
 namespace logicalaccess
 {
     MifareOmnikeyXX21Commands::MifareOmnikeyXX21Commands()
-            : MifarePCSCCommands()
+            : MifarePCSCCommands(CMD_MIFAREOMNIKEYXX21)
     {
     }
+
+	MifareOmnikeyXX21Commands::MifareOmnikeyXX21Commands(std::string ct)
+		: MifarePCSCCommands(ct)
+	{
+	}
 
     MifareOmnikeyXX21Commands::~MifareOmnikeyXX21Commands()
     {

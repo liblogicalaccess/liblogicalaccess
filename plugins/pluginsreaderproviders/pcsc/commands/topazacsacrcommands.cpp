@@ -16,9 +16,14 @@
 namespace logicalaccess
 {
     TopazACSACRCommands::TopazACSACRCommands()
-        : TopazCommands()
+        : TopazCommands(CMD_TOPAZACSACR)
     {
     }
+
+	TopazACSACRCommands::TopazACSACRCommands(std::string ct)
+		: TopazCommands(ct)
+	{
+	}
 
     TopazACSACRCommands::~TopazACSACRCommands()
     {

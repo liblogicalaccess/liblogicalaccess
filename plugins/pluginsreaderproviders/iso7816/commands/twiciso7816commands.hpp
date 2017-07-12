@@ -17,15 +17,14 @@
 
 namespace logicalaccess
 {
+#define CMD_TWICISO7816 "TwicISO7816"
+
     class TwicProfile;
 
     /**
      * \brief The Twic ISO7816 commands base class.
      */
-    class LIBLOGICALACCESS_API TwicISO7816Commands : public ISO7816ISO7816Commands
-#ifndef SWIG
-	, public TwicCommands
-#endif            
+    class LIBLOGICALACCESS_API TwicISO7816Commands : public ISO7816ISO7816Commands, public TwicCommands 
 	{
     public:
 
@@ -33,6 +32,8 @@ namespace logicalaccess
          * \brief Constructor.
          */
         TwicISO7816Commands();
+
+		TwicISO7816Commands(std::string ct);
 
         /**
          * \brief Destructor.

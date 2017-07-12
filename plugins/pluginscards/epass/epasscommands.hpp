@@ -6,11 +6,14 @@
 
 namespace logicalaccess
 {
+#define CMD_EPASS		"EPass"
 
-class LIBLOGICALACCESS_API EPassCommand : public Commands
+class LIBLOGICALACCESS_API EPassCommands : public Commands
 {
   public:
-    EPassCommand();
+    EPassCommands();
+
+	EPassCommands(std::string ct);
 
     virtual void
     setReaderCardAdapter(std::shared_ptr<ReaderCardAdapter> adapter) override;

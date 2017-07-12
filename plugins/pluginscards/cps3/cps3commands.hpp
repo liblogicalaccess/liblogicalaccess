@@ -13,6 +13,8 @@
 
 namespace logicalaccess
 {
+#define	CMD_CPS3	"CPS3"
+
     /**
      * \brief The CPS3 commands class.
      */
@@ -20,6 +22,9 @@ namespace logicalaccess
     {
     public:
 
+		CPS3Commands() : Commands(CMD_CPS3) {}
+
+		CPS3Commands(std::string ct) : Commands(ct) {}
 		
     };
 }

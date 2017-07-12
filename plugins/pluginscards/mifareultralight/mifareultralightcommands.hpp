@@ -13,6 +13,8 @@
 
 namespace logicalaccess
 {
+#define CMD_MIFAREULTRALIGHT		"MifareUltralight"
+
     class MifareUltralightChip;
 
     /**
@@ -21,7 +23,9 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API MifareUltralightCommands : public virtual Commands
     {
     public:
-		MifareUltralightCommands() {}
+		MifareUltralightCommands() : Commands(CMD_MIFAREULTRALIGHT) {}
+
+		MifareUltralightCommands(std::string ct) : Commands(ct) {}
 
         /**
          * \brief Read several pages.

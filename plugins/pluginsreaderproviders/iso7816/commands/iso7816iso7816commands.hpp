@@ -18,6 +18,7 @@
 
 namespace logicalaccess
 {
+#define CMD_ISO7816ISO7816 "ISO7816ISO7816"
     /**
      * \brief The ISO7816 commands base class.
      */
@@ -29,6 +30,8 @@ namespace logicalaccess
          * \brief Constructor.
          */
         ISO7816ISO7816Commands();
+
+		ISO7816ISO7816Commands(std::string);
 
         /**
          * \brief Destructor.

@@ -16,9 +16,15 @@
 
 namespace logicalaccess
 {
-    TwicISO7816Commands::TwicISO7816Commands()
+    TwicISO7816Commands::TwicISO7816Commands() 
+		: Commands(CMD_TWICISO7816)
     {
     }
+
+	TwicISO7816Commands::TwicISO7816Commands(std::string ct)
+		: Commands(ct)
+	{
+	}
 
     TwicISO7816Commands::~TwicISO7816Commands()
     {

@@ -17,9 +17,14 @@
 namespace logicalaccess
 {
     FeliCaSpringCardCommands::FeliCaSpringCardCommands()
-        : FeliCaCommands()
+        : FeliCaCommands(CMD_FELICASPRINGCARD)
     {
     }
+
+	FeliCaSpringCardCommands::FeliCaSpringCardCommands(std::string ct)
+		: FeliCaCommands(ct)
+	{
+	}
 
     FeliCaSpringCardCommands::~FeliCaSpringCardCommands()
     {

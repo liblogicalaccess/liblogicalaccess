@@ -13,6 +13,8 @@
 
 namespace logicalaccess
 {
+#define CMD_TOPAZ "Topaz"
+
     class TopazChip;
 
     /**
@@ -21,7 +23,9 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API TopazCommands : public virtual Commands
     {
     public:
-		TopazCommands() {}
+		TopazCommands() : Commands(CMD_TOPAZ) {}
+
+		TopazCommands(std::string ct) : Commands(ct) {}
 
         /**
          * \brief Read several pages.

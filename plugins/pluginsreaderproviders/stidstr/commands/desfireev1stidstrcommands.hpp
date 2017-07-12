@@ -16,6 +16,8 @@
 
 namespace logicalaccess
 {
+#define CMD_DESFIREEV1STIDSTR "DESFireEV1STidSTR"
+
     /**
      * \brief The STid DESFire baudrates.
      */
@@ -44,7 +46,10 @@ namespace logicalaccess
         /**
          * \brief Constructor.
          */
-        DESFireEV1STidSTRCommands();
+		DESFireEV1STidSTRCommands();
+
+		DESFireEV1STidSTRCommands(std::string);
+
 
         /**
          * \brief Destructor.

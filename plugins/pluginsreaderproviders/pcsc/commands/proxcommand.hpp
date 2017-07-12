@@ -14,7 +14,7 @@ namespace logicalaccess
      * the reader unit object available to the chip through the reader card adapter
      * and data transport, even if it makes no use of them.
      */
-    class ProxCommand : public Commands
+    class ProxCommands : public Commands
     {
 
     };

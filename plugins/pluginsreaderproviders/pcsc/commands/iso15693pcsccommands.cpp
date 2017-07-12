@@ -16,9 +16,14 @@
 namespace logicalaccess
 {
     ISO15693PCSCCommands::ISO15693PCSCCommands()
-        : ISO15693Commands()
+        : ISO15693Commands(CMD_ISO15693PCSC)
     {
     }
+
+	ISO15693PCSCCommands::ISO15693PCSCCommands(std::string ct)
+		: ISO15693Commands(ct)
+	{
+	}
 
     ISO15693PCSCCommands::~ISO15693PCSCCommands()
     {

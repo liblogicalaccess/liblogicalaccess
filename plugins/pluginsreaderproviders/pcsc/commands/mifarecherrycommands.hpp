@@ -16,6 +16,7 @@
 
 namespace logicalaccess
 {
+#define CMD_MIFARECHERRY "MifareCherry"
     /**
      * \brief The Mifare commands class for Cherry reader.
      */
@@ -27,6 +28,8 @@ namespace logicalaccess
          * \brief Constructor.
          */
         MifareCherryCommands();
+
+		MifareCherryCommands(std::string);
 
         /**
          * \brief Destructor.

@@ -11,6 +11,7 @@
 
 namespace logicalaccess
 {
+#define CMD_MIFAREULTRALIGHTCOMNIKEYXX21 "MifareUltralightCOmnikeyXX21"
     /**
      * \brief The Mifare Ultralight C commands class for Omnikey xx21 reader.
      */
@@ -22,6 +23,8 @@ namespace logicalaccess
          * \brief Constructor.
          */
         MifareUltralightCOmnikeyXX21Commands();
+
+		MifareUltralightCOmnikeyXX21Commands(std::string);
 
         /**
          * \brief Destructor.

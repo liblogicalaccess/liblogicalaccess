@@ -16,6 +16,7 @@
 
 namespace logicalaccess
 {
+#define CMD_TOPAZOKXX27 "TopazOmnikeyXX27"
     /**
     * \brief The Topaz commands class for Omnikey XX27 PCSC reader.
     */
@@ -27,6 +28,8 @@ namespace logicalaccess
         * \brief Constructor.
         */
         TopazOmnikeyXX27Commands();
+
+		TopazOmnikeyXX27Commands(std::string);
 
         /**
         * \brief Destructor.

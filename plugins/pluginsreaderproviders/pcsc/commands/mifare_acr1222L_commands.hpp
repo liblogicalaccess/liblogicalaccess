@@ -13,9 +13,15 @@
 
 namespace logicalaccess
 {
+#define CMD_MIFAREACR1222L "MifareACR1222"
+
     class LIBLOGICALACCESS_API MifareACR1222LCommands : public MifarePCSCCommands
     {
     public:
+		MifareACR1222LCommands() : MifarePCSCCommands(CMD_MIFAREACR1222L) {}
+
+		MifareACR1222LCommands(std::string ct) : MifarePCSCCommands(ct) {}
+
         virtual ~MifareACR1222LCommands() = default;
         virtual void increment(uint8_t blockno, uint32_t value) override;
 

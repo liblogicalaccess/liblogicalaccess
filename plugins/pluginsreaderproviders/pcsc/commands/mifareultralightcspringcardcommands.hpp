@@ -11,6 +11,8 @@
 
 namespace logicalaccess
 {
+#define CMD_MIFAREULTRALIGHTCSPRINGCARD "MifareUltralightCSpringCard"
+
     /**
      * \brief The Mifare Ultralight C commands class for SpringCard reader.
      */
@@ -22,6 +24,8 @@ namespace logicalaccess
          * \brief Constructor.
          */
         MifareUltralightCSpringCardCommands();
+
+		MifareUltralightCSpringCardCommands(std::string ct);
 
         /**
          * \brief Destructor.

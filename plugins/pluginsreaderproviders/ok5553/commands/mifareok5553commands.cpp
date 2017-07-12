@@ -20,9 +20,14 @@
 namespace logicalaccess
 {
     MifareOK5553Commands::MifareOK5553Commands()
-        : MifareCommands()
+        : MifareCommands(CMD_MIFAREOK5553)
     {
     }
+
+	MifareOK5553Commands::MifareOK5553Commands(std::string ct)
+		: MifareCommands(ct)
+	{
+	}
 
     MifareOK5553Commands::~MifareOK5553Commands()
     {

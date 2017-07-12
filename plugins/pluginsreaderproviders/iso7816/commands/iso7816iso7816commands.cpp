@@ -11,9 +11,14 @@
 namespace logicalaccess
 {
     ISO7816ISO7816Commands::ISO7816ISO7816Commands()
-        : ISO7816Commands()
+        : ISO7816Commands(CMD_ISO7816ISO7816)
     {
     }
+
+	ISO7816ISO7816Commands::ISO7816ISO7816Commands(std::string ct)
+		: ISO7816Commands(ct)
+	{
+	}
 
     ISO7816ISO7816Commands::~ISO7816ISO7816Commands()
     {

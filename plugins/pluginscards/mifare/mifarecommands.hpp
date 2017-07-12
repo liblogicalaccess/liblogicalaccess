@@ -13,6 +13,8 @@
 
 namespace logicalaccess
 {
+#define CMD_MIFARE 	"Mifare"
+
     class MifareChip;
 
     /**
@@ -21,6 +23,10 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API MifareCommands : public virtual Commands
     {
     public:
+
+		MifareCommands() : Commands(CMD_MIFARE) {}
+
+		MifareCommands(std::string ct) : Commands(ct) {}
 
         virtual std::vector<unsigned char> readSector(int sector, int start_block,
 													  std::shared_ptr<MifareKey> keyA,

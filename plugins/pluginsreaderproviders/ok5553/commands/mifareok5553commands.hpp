@@ -16,6 +16,8 @@
 
 namespace logicalaccess
 {
+#define CMD_MIFAREOK5553 "MifareOK5553"
+
     /**
      * \brief A Mifare OK5553 commands base class.
      */
@@ -26,6 +28,8 @@ namespace logicalaccess
          * \brief Constructor.
          */
         MifareOK5553Commands();
+
+		MifareOK5553Commands(std::string);
 
         /**
          * \brief Destructor.

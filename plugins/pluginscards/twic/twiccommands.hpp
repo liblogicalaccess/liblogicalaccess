@@ -13,12 +13,18 @@
 
 namespace logicalaccess
 {
+#define CMD_TWIC "Twic"
+
     /**
      * \brief The Twic commands class.
      */
     class LIBLOGICALACCESS_API TwicCommands : public virtual Commands
     {
     public:
+
+		TwicCommands() : Commands(CMD_TWIC) {}
+
+		TwicCommands(std::string ct) : Commands(ct) {}
 
         static size_t getMinimumBytesRepresentation(size_t value);
 

@@ -16,9 +16,14 @@
 namespace logicalaccess
 {
     TopazOmnikeyXX27Commands::TopazOmnikeyXX27Commands()
-        : TopazCommands()
+        : TopazCommands(CMD_TOPAZOKXX27)
     {
     }
+
+	TopazOmnikeyXX27Commands::TopazOmnikeyXX27Commands(std::string ct)
+		: TopazCommands(ct)
+	{
+	}
 
     TopazOmnikeyXX27Commands::~TopazOmnikeyXX27Commands()
     {

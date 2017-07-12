@@ -59,6 +59,8 @@ namespace logicalaccess
 #define DF_CLA_ISO_WRAP 0x90
 #endif
 
+#define	CMD_DESFIRE		"DESFire"
+
     /**
      * \brief The key settings
      */
@@ -128,11 +130,20 @@ namespace logicalaccess
     /**
      * \brief The DESFire commands class.
      */
-    class LIBLOGICALACCESS_API DESFireCommands : public virtual Commands
+    class LIBLOGICALACCESS_API DESFireCommands : public	virtual	Commands
     {
     public:
 
-		DESFireCommands() {}
+		/**
+		* \brief Constructor.
+		*/
+		DESFireCommands() : Commands(CMD_DESFIRE) {}
+
+		/**
+		* \brief Constructor.
+		* \param ct The cmd type.
+		*/
+		DESFireCommands(std::string cmdtype) : Commands(cmdtype) {}
 
         /**
          * \brief Erase the card.

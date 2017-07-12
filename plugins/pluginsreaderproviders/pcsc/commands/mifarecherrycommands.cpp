@@ -16,9 +16,14 @@
 namespace logicalaccess
 {
     MifareCherryCommands::MifareCherryCommands()
-        : MifarePCSCCommands()
+        : MifarePCSCCommands(CMD_MIFARECHERRY)
     {
     }
+
+	MifareCherryCommands::MifareCherryCommands(std::string ct)
+		: MifarePCSCCommands(ct)
+	{
+	}
 
     MifareCherryCommands::~MifareCherryCommands()
     {

@@ -13,12 +13,18 @@
 
 namespace logicalaccess
 {
+#define	CMD_ISO15693	"ISO15693"
+
     /**
      * \brief The ISO15693 commands class.
      */
     class LIBLOGICALACCESS_API ISO15693Commands : public Commands
     {
     public:
+
+		ISO15693Commands() : Commands(CMD_ISO15693) {}
+
+		ISO15693Commands(std::string ct) : Commands(ct) {}
 
         /**
          * \brief ISO15693 System information.

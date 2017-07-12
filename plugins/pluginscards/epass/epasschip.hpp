@@ -13,7 +13,7 @@ class LIBLOGICALACCESS_API EPassChip : public ISO7816Chip
     EPassChip();
     virtual ~EPassChip() = default;
 
-    std::shared_ptr<EPassCommand> getEPassCommand();
+    std::shared_ptr<EPassCommands> getEPassCommands();
 
     virtual std::shared_ptr<CardService>
     getService(CardServiceType serviceType) override;

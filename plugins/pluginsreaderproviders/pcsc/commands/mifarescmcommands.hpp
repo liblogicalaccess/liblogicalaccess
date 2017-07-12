@@ -16,6 +16,8 @@
 
 namespace logicalaccess
 {
+#define CMD_MIFARESCM "MifareSCM"
+
     /**
      * \brief The Mifare commands class for SCM reader.
      * \remarks Firmware version must be >= 7.xx
@@ -28,6 +30,8 @@ namespace logicalaccess
          * \brief Constructor.
          */
         MifareSCMCommands();
+
+		MifareSCMCommands(std::string);
 
         /**
          * \brief Destructor.

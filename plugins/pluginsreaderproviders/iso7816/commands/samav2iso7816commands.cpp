@@ -21,10 +21,16 @@
 
 namespace logicalaccess
 {
-    SAMAV2ISO7816Commands::SAMAV2ISO7816Commands() : d_cmdCtr(0)
+    SAMAV2ISO7816Commands::SAMAV2ISO7816Commands() : Commands(CMD_SAMAV2ISO7816), d_cmdCtr(0)
     {
         d_lastMacIV.resize(16);
     }
+
+	SAMAV2ISO7816Commands::SAMAV2ISO7816Commands(std::string ct) : Commands(ct), d_cmdCtr(0)
+	{
+		d_lastMacIV.resize(16);
+	}
+
 
     SAMAV2ISO7816Commands::~SAMAV2ISO7816Commands()
     {

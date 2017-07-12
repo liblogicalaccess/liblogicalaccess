@@ -11,6 +11,8 @@
 
 namespace logicalaccess
 {
+#define CMD_UNKNOWN "UNKNOWN"
+
     class Chip;
 
     /**
@@ -20,13 +22,28 @@ namespace logicalaccess
     {
     public:
 
-		Commands() {}
+		/**
+		* \brief Constructor.
+		*/
+		Commands() : d_commandtype(CMD_UNKNOWN) {}
+
+		/**
+		* \brief Constructor.
+		* \param commandtype The command type name.
+		*/
+		Commands(std::string commandtype) : d_commandtype(commandtype) {}
 
         /**
          * \brief Get the chip.
          * \return The chip.
          */
         std::shared_ptr<Chip> getChip() const { return d_chip.lock(); };
+
+		/**
+		* \brief Get the cmd name.
+		* \return The cmd name.
+		*/
+		std::string getCmdType() const { return d_commandtype; };
 
         /**
          * \brief Set the chip.
@@ -46,6 +63,7 @@ namespace logicalaccess
          */
         virtual void setReaderCardAdapter(std::shared_ptr<ReaderCardAdapter> adapter) { d_readerCardAdapter = adapter; };
 
+
     protected:
 
         /**
@@ -57,6 +75,11 @@ namespace logicalaccess
          * \brief The chip.
          */
         std::weak_ptr<Chip> d_chip;
+
+		/**
+		* \brief The command type.
+		*/
+		std::string d_commandtype;
     };
 }
 

@@ -16,6 +16,8 @@
 
 namespace logicalaccess
 {
+#define CMD_MIFAREULTRALIGHTOK5553 "MifareUltralightOK5553"
+
     /**
      * \brief A Mifare Ultraligth OK5553 commands base class.
      */
@@ -26,6 +28,8 @@ namespace logicalaccess
          * \brief Constructor.
          */
         MifareUltralightOK5553Commands();
+
+		MifareUltralightOK5553Commands(std::string);
 
         /**
          * \brief Destructor.

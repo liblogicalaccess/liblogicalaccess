@@ -787,7 +787,7 @@ namespace logicalaccess
             else if (type == CHIP_PROX)
             {   // A dummy command, whose only goal is to allow retrieval of the
                 // reader unit later on.
-                commands.reset(new ProxCommand());
+                commands.reset(new ProxCommands());
             }
 			else if (type == CHIP_FELICA)
 			{
@@ -802,7 +802,7 @@ namespace logicalaccess
 			}
             else if (type == CHIP_EPASS)
             {
-                commands = std::make_shared<EPassCommand>();
+                commands = std::make_shared<EPassCommands>();
                 rca = std::make_shared<EPassReaderCardAdapter>();
                 rca->setDataTransport(std::make_shared<PCSCDataTransport>());
                 //commands->setReaderCardAdapter(rca);

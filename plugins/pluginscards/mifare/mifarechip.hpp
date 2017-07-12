@@ -21,12 +21,7 @@ namespace logicalaccess
     /**
      * \brief The Mifare base chip class.
      */
-    class LIBLOGICALACCESS_API MifareChip : public
-// SWIG seems not to handle virtual inheritance, it just ignore it.
-#ifndef SWIG
-		virtual 
-#endif		
-		Chip
+    class LIBLOGICALACCESS_API MifareChip : public virtual Chip
     {
     public:
 

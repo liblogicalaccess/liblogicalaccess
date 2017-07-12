@@ -11,10 +11,16 @@
 
 namespace logicalaccess
 {
+#define CMD_SAMAV2	"SAMAV2"
+
     template <typename T, typename S>
     class LIBLOGICALACCESS_API SAMAV2Commands : public virtual SAMCommands < T, S >
     {
     public:
+		SAMAV2Commands() : SAMCommands<T, S>(CMD_SAMAV2) {}
+
+		SAMAV2Commands(std::string ct) : SAMCommands<T, S>(ct) {}
+
         virtual std::vector<unsigned char> dumpSecretKey(unsigned char keyno, unsigned char keyversion, std::vector<unsigned char> divInpu) = 0;
     };
 }

@@ -37,6 +37,8 @@
 
 namespace logicalaccess
 {
+#define CMD_SAMISO7816 "SAMISO7816"
+
     /**
      * \brief The SAMISO7816 commands class.
      */
@@ -49,6 +51,7 @@ namespace logicalaccess
          * \brief Constructor.
          */
         SAMISO7816Commands()
+			: Commands(CMD_SAMISO7816)
         {
             /*
             # Only one active MIFARE authentication at a time is supported by SAM AV2, so interleaved processing of the commands over differents LCs in parallel is not possible.
@@ -87,6 +90,13 @@ namespace logicalaccess
             d_cla = DEFAULT_SAM_CLA;
             d_LastSessionIV.resize(16);
         }
+
+		SAMISO7816Commands(std::string ct)
+			: Commands(ct)
+		{
+			d_cla = DEFAULT_SAM_CLA;
+			d_LastSessionIV.resize(16);
+		}
 
         /**
          * \brief Destructor.
