@@ -11,8 +11,6 @@
 #include "logicalaccess/services/nfctag/nfctagcardservice.hpp"
 #include "logicalaccess/cards/locationnode.hpp"
 
-#include "logicalaccess/plugins/cards/desfire/desfireev1commands.hpp"
-
 #include <iostream>
 #include <string>
 #include <iomanip>
@@ -111,8 +109,6 @@ int main(int , char**)
                     {
                         std::cout << "\t" << logicalaccess::BufferHelper::getHex(readerConfig->getReaderUnit()->getNumber((*i))) << std::endl;
                     }
-
-					logicalaccess::DESFireCommands test();
 
                     // DO SOMETHING HERE
 					// DO SOMETHING HERE
