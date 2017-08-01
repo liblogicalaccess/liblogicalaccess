@@ -43,7 +43,7 @@ namespace logicalaccess
      * \brief The SAMISO7816 commands class.
      */
     template <typename T, typename S>
-    class LIBLOGICALACCESS_API SAMISO7816Commands : public virtual SAMCommands < T, S >
+    class LIBLOGICALACCESS_API SAMISO7816Commands : public SAMCommands < T, S >
     {
     public:
 
@@ -51,7 +51,7 @@ namespace logicalaccess
          * \brief Constructor.
          */
         SAMISO7816Commands()
-			: Commands(CMD_SAMISO7816)
+			: SAMCommands<T,S>(CMD_SAMISO7816)
         {
             /*
             # Only one active MIFARE authentication at a time is supported by SAM AV2, so interleaved processing of the commands over differents LCs in parallel is not possible.
@@ -92,7 +92,7 @@ namespace logicalaccess
         }
 
 		SAMISO7816Commands(std::string ct)
-			: Commands(ct)
+			: SAMCommands<T, S>(ct)
 		{
 			d_cla = DEFAULT_SAM_CLA;
 			d_LastSessionIV.resize(16);
@@ -414,6 +414,17 @@ namespace logicalaccess
             return std::vector<unsigned char>(result.begin(), result.end() - 2);
         }
 
+
+		std::shared_ptr<SAMDESfireCrypto>& getCryptoRef() { return d_crypto; }
+
+		unsigned char& getClaRef() { return d_cla; }
+
+		std::vector<unsigned char>& getAuthKeyRef() {	return d_authKey; }
+
+		std::vector<unsigned char>& getSessionKeyRef() { return d_sessionKey; }
+
+		std::vector<unsigned char>& getLastSessionIVRef() { return d_LastSessionIV; }
+
     protected:
 
         std::shared_ptr<SAMDESfireCrypto> d_crypto;
@@ -429,6 +440,8 @@ namespace logicalaccess
         std::vector<unsigned char> d_sessionKey;
 
         std::vector<unsigned char> d_LastSessionIV;
+
+	public:
 
         void truncateMacBuffer(std::vector<unsigned char>& data)
         {
@@ -465,6 +478,12 @@ namespace logicalaccess
 
             cipher->cipher(SV1a, d_authKey, *symkey.get(), *iv.get(), false);
         }
+
+		virtual std::shared_ptr<SAMKeyEntry<T, S> > getKeyEntry(unsigned char keyno) { return std::shared_ptr<SAMKeyEntry<T, S> >(); }
+		virtual std::shared_ptr<SAMKucEntry> getKUCEntry(unsigned char keyno) { return std::shared_ptr<SAMKucEntry>(); }
+		virtual void changeKeyEntry(unsigned char keyno, std::shared_ptr<SAMKeyEntry<T, S> > keyentry, std::shared_ptr<DESFireKey> key) {}
+		virtual void changeKUCEntry(unsigned char keyno, std::shared_ptr<SAMKucEntry> keyentry, std::shared_ptr<DESFireKey> key) {}
+		virtual void authenticateHost(std::shared_ptr<DESFireKey> key, unsigned char keyno) {}
     };
 }
 

@@ -29,9 +29,9 @@
 
 namespace logicalaccess
 {
-    SAMAV1ISO7816Commands::SAMAV1ISO7816Commands() : Commands(CMD_SAMAV1ISO7816) { }
+    SAMAV1ISO7816Commands::SAMAV1ISO7816Commands() : SAMISO7816Commands < KeyEntryAV1Information, SETAV1 >(CMD_SAMAV1ISO7816) { }
 
-	SAMAV1ISO7816Commands::SAMAV1ISO7816Commands(std::string ct) : Commands(ct) { }
+	SAMAV1ISO7816Commands::SAMAV1ISO7816Commands(std::string ct) : SAMISO7816Commands < KeyEntryAV1Information, SETAV1 >(ct) { }
 
 
     SAMAV1ISO7816Commands::~SAMAV1ISO7816Commands()	{ }

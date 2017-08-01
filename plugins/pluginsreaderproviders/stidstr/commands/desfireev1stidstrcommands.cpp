@@ -28,7 +28,7 @@ namespace logicalaccess
     }
 
 	DESFireEV1STidSTRCommands::DESFireEV1STidSTRCommands(std::string ct) 
-		: DESFireEV1Commands(ct)
+		: DESFireEV1Commands(ct) 
 	{
 		d_currentAid = 0;
 	}
@@ -176,8 +176,8 @@ namespace logicalaccess
         getKeySettings(settings, maxNbKeys, keyType);
     }
 
-    void DESFireEV1STidSTRCommands::getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys, DESFireKeyType& keyType)
-    {
+	void DESFireEV1STidSTRCommands::getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys, DESFireKeyType& keyType)
+ 	{
         LOG(LogLevel::INFOS) << "Retrieving key settings...";
         std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x0045, std::vector<unsigned char>());
 

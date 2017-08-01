@@ -22,14 +22,16 @@
 namespace logicalaccess
 {
     DESFireISO7816Commands::DESFireISO7816Commands()
-        : Commands(CMD_DESFIREISO7816),
-        DESFireCommands(CMD_DESFIREISO7816)
-    { }
+        : DESFireCommands(CMD_DESFIREISO7816)
+    {
+		setComhandler(std::make_shared<DESFireISO7816Commands>(*this));
+	}
 
 	DESFireISO7816Commands::DESFireISO7816Commands(std::string ct)
-		: Commands(ct),
-		DESFireCommands(ct)
-	{ }
+		: DESFireCommands(ct)
+	{
+		setComhandler(std::make_shared<DESFireISO7816Commands>(*this));
+	}
 
     DESFireISO7816Commands::~DESFireISO7816Commands()
     {
@@ -83,7 +85,7 @@ namespace logicalaccess
         std::vector<unsigned char> command;//, samaid;
         DESFireLocation::convertUIntToAid(aid, command);
 
-        transmit(DF_INS_SELECT_APPLICATION, command);
+		DESFireISO7816Commands::transmit(DF_INS_SELECT_APPLICATION, command);
 
         /* if (getSAMChip())
          {
@@ -298,6 +300,12 @@ namespace logicalaccess
         settings = (DESFireKeySettings)result[0];
         maxNbKeys = result[1];
     }
+
+	void DESFireISO7816Commands::getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys, DESFireKeyType& keyType)
+	{
+		// No implementation required, but class needs to be not abstrasct
+	}
+
 
     void DESFireISO7816Commands::changeKeySettings(DESFireKeySettings settings)
     {
@@ -649,7 +657,7 @@ namespace logicalaccess
             std::vector<unsigned char> result = transmit(DF_INS_READ_DATA, command);
             unsigned char err = result.back();
             result.resize(result.size() - 2);
-            result = handleReadData(err, result, static_cast<unsigned int>(trunklength), mode);
+            result = comhandler->handleReadData(err, result, static_cast<unsigned int>(trunklength), mode);
             ret.insert(ret.end(), result.begin(), result.end());
         }
 
@@ -678,7 +686,7 @@ namespace logicalaccess
         std::vector<unsigned char> result = transmit(DF_INS_GET_VALUE, command);
         unsigned char err = result.back();
         result.resize(result.size() - 2);
-        result = handleReadData(err, result, 4, mode);
+        result = comhandler->handleReadData(err, result, 4, mode);
 
         if (result.size() >= 4)
         {
@@ -694,7 +702,7 @@ namespace logicalaccess
         uint32_t dataValue = static_cast<uint32_t>(value);
         std::vector<unsigned char> data(sizeof(dataValue));
         memcpy(&data[0], &dataValue, sizeof(dataValue));
-        handleWriteData(DF_INS_CREDIT, parameters, static_cast<unsigned int>(sizeof(parameters)), data, mode);
+        comhandler->handleWriteData(DF_INS_CREDIT, parameters, static_cast<unsigned int>(sizeof(parameters)), data, mode);
     }
 
     void DESFireISO7816Commands::debit(unsigned char fileno, unsigned int value, EncryptionMode mode)
@@ -704,7 +712,7 @@ namespace logicalaccess
         uint32_t dataValue = static_cast<uint32_t>(value);
         std::vector<unsigned char> data(sizeof(dataValue));
         memcpy(&data[0], &dataValue, sizeof(dataValue));
-        handleWriteData(DF_INS_DEBIT, parameters, static_cast<unsigned int>(sizeof(parameters)), data, mode);
+		comhandler->handleWriteData(DF_INS_DEBIT, parameters, static_cast<unsigned int>(sizeof(parameters)), data, mode);
     }
 
     void DESFireISO7816Commands::limitedCredit(unsigned char fileno, unsigned int value, EncryptionMode mode)
@@ -714,7 +722,7 @@ namespace logicalaccess
         uint32_t dataValue = static_cast<uint32_t>(value);
         std::vector<unsigned char> data(sizeof(dataValue));
         memcpy(&data[0], &dataValue, sizeof(dataValue));
-        handleWriteData(DF_INS_LIMITED_CREDIT, parameters, static_cast<unsigned int>(sizeof(parameters)), data, mode);
+		comhandler->handleWriteData(DF_INS_LIMITED_CREDIT, parameters, static_cast<unsigned int>(sizeof(parameters)), data, mode);
     }
 
     void DESFireISO7816Commands::writeRecord(unsigned char fileno, unsigned int offset, const std::vector<unsigned char>& data, EncryptionMode mode)
@@ -728,7 +736,7 @@ namespace logicalaccess
         parameters[5] = static_cast<unsigned char>(static_cast<unsigned short>(data.size() & 0xff00) >> 8);
         parameters[6] = static_cast<unsigned char>(static_cast<unsigned int>(data.size() & 0xff0000) >> 16);
 
-        handleWriteData(DF_INS_WRITE_RECORD, parameters, static_cast<unsigned int>(sizeof(parameters)), data, mode);
+		comhandler->handleWriteData(DF_INS_WRITE_RECORD, parameters, static_cast<unsigned int>(sizeof(parameters)), data, mode);
     }
 
     std::vector<unsigned char> DESFireISO7816Commands::readRecords(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode)
@@ -746,7 +754,7 @@ namespace logicalaccess
         std::vector<unsigned char> result = transmit(DF_INS_READ_RECORDS, command);
         unsigned char err = result.back();
         result.resize(result.size() - 2);
-        result = handleReadData(err, result, length, mode);
+        result = comhandler->handleReadData(err, result, length, mode);
 		ret.insert(ret.end(), result.begin(), result.end());
 
         return ret;
@@ -773,7 +781,7 @@ namespace logicalaccess
     void DESFireISO7816Commands::authenticate(unsigned char keyno)
     {
 		std::shared_ptr<DESFireKey> key = getDESFireChip()->getCrypto()->getKey(keyno);
-        authenticate(keyno, key);
+		authenticate(keyno, key);
     }
 
 	void DESFireISO7816Commands::getKeyFromSAM(std::shared_ptr<DESFireKey> key, std::vector<unsigned char> diversify)

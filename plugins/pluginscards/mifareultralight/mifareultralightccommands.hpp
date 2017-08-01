@@ -19,7 +19,7 @@ namespace logicalaccess
     /**
      * \brief The Mifare Ultralight C commands class.
      */
-    class LIBLOGICALACCESS_API MifareUltralightCCommands : public virtual MifareUltralightCommands
+    class LIBLOGICALACCESS_API MifareUltralightCCommands : public MifareUltralightCommands
     {
     public:
 

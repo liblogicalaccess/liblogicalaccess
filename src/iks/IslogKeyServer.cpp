@@ -173,7 +173,7 @@ void IslogKeyServer::setup_transport()
 #ifdef ENABLE_SSLTRANSPORT
     transport_ = std::unique_ptr<SSLTransport>(new SSLTransport(ssl_ctx_));
 #endif
-
+	
     transport_->setIpAddress(config_.ip);
     transport_->setPort(config_.port);
 

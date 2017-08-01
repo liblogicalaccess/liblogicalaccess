@@ -96,7 +96,7 @@ namespace logicalaccess
     /**
      * \brief The DESFire EV1 base commands class.
      */
-    class LIBLOGICALACCESS_API DESFireEV1Commands : public virtual DESFireCommands
+    class LIBLOGICALACCESS_API DESFireEV1Commands : public DESFireCommands
     {
     public:
 
@@ -158,7 +158,7 @@ namespace logicalaccess
          * \param maxNbKeys Maximum number of keys
          * \param keyType The key type
          */
-        virtual void getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys, DESFireKeyType& keyType) = 0;
+		virtual void getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys, DESFireKeyType& keyType) = 0;
 
         /**
          * \brief Get a random card UID.

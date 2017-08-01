@@ -20,7 +20,7 @@ namespace logicalaccess
     /**
      * \brief The Mifare Ultralight commands class.
      */
-    class LIBLOGICALACCESS_API MifareUltralightCommands : public virtual Commands
+    class LIBLOGICALACCESS_API MifareUltralightCommands : public Commands
     {
     public:
 		MifareUltralightCommands() : Commands(CMD_MIFAREULTRALIGHT) {}
@@ -73,7 +73,7 @@ namespace logicalaccess
 
     protected:
 
-        std::shared_ptr<MifareUltralightChip> getMifareUltralightChip();
+        virtual std::shared_ptr<MifareUltralightChip> getMifareUltralightChip();
     };
 }
 

@@ -8,6 +8,7 @@
 #define LOGICALACCESS_COMMANDS_HPP
 
 #include "logicalaccess/cards/readercardadapter.hpp"
+#include "logicalaccess/bridge.hpp"
 
 namespace logicalaccess
 {
@@ -39,17 +40,23 @@ namespace logicalaccess
          */
         std::shared_ptr<Chip> getChip() const { return d_chip.lock(); };
 
-		/**
-		* \brief Get the cmd name.
-		* \return The cmd name.
-		*/
-		std::string getCmdType() const { return d_commandtype; };
-
         /**
          * \brief Set the chip.
          * \param chip The chip.
          */
         virtual void setChip(std::shared_ptr<Chip> chip) { d_chip = chip; };
+
+		/**
+		* \brief Get the cmd name.
+		* \return The cmd name.
+		*/
+		virtual const std::string& getCmdType() const { return d_commandtype; };
+
+		/**
+		* \brief Set the cmd name.
+		* \param chip The cmd name.
+		*/
+		virtual void setCmdType(const std::string& command_type) { d_commandtype = command_type; };
 
         /**
          * \brief Get the reader/card adapter.
@@ -62,7 +69,6 @@ namespace logicalaccess
          * \param adapter The reader/card adapter.
          */
         virtual void setReaderCardAdapter(std::shared_ptr<ReaderCardAdapter> adapter) { d_readerCardAdapter = adapter; };
-
 
     protected:
 

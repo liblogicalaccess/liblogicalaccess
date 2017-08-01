@@ -714,7 +714,7 @@ namespace logicalaccess
             else if (type == CHIP_DESFIRE_EV1)
             {
                 commands.reset(new DESFireEV1ISO7816Commands());
-                std::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(getSAMChip());
+                std::dynamic_pointer_cast<DESFireEV1ISO7816Commands>(commands)->setSAMChip(getSAMChip());
                 resultChecker.reset(new DESFireISO7816ResultChecker());
             }
             else if (type == CHIP_DESFIRE)
@@ -827,9 +827,9 @@ namespace logicalaccess
                 }
             }
 
-			if (type == CHIP_DESFIRE || type == CHIP_DESFIRE_EV1)
+			if (type == CHIP_DESFIRE_EV1)
             {
-                std::shared_ptr<DESFireISO7816Commands> dcmd = std::dynamic_pointer_cast<DESFireISO7816Commands>(commands);
+                std::shared_ptr<DESFireEV1ISO7816Commands> dcmd = std::dynamic_pointer_cast<DESFireEV1ISO7816Commands>(commands);
                 if (dcmd->getSAMChip())
                 {
                     std::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
@@ -839,6 +839,18 @@ namespace logicalaccess
                         std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(dcmd->getSAMChip()->getCommands())->setCrypto(samcrypto);
                 }
             }
+			else if (type == CHIP_DESFIRE)
+			{
+				std::shared_ptr<DESFireISO7816Commands> dcmd = std::dynamic_pointer_cast<DESFireISO7816Commands>(commands);
+				if (dcmd->getSAMChip())
+				{
+					std::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
+					if (dcmd->getSAMChip()->getCardType() == CHIP_SAMAV1)
+						std::dynamic_pointer_cast<SAMAV1ISO7816Commands>(dcmd->getSAMChip()->getCommands())->setCrypto(samcrypto);
+					else if (dcmd->getSAMChip()->getCardType() == CHIP_SAMAV2)
+						std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(dcmd->getSAMChip()->getCommands())->setCrypto(samcrypto);
+				}
+			}
 
             LOG(LogLevel::INFOS) << "Other objects created, making association (ReaderCardAdapter empty? " << !rca << " - Commands empty? " << !commands << ")...";
 

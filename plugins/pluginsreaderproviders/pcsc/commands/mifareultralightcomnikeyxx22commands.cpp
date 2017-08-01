@@ -18,13 +18,15 @@
 namespace logicalaccess
 {
     MifareUltralightCOmnikeyXX22Commands::MifareUltralightCOmnikeyXX22Commands()
-        : MifareUltralightPCSCCommands(CMD_MIFAREULTRALIGHTCOMNIKEYXX22)
+        : MifareUltralightCCommands(CMD_MIFAREULTRALIGHTCOMNIKEYXX22)
     {
+		bridge = std::make_unique<MifareUltralightPCSCCommands>(CMD_MIFAREULTRALIGHTCOMNIKEYXX22);
     }
 
 	MifareUltralightCOmnikeyXX22Commands::MifareUltralightCOmnikeyXX22Commands(std::string ct)
-		: MifareUltralightPCSCCommands(ct)
+		: MifareUltralightCCommands(ct)
 	{
+		bridge = std::make_unique<MifareUltralightPCSCCommands>(ct);
 	}
 
     MifareUltralightCOmnikeyXX22Commands::~MifareUltralightCOmnikeyXX22Commands()

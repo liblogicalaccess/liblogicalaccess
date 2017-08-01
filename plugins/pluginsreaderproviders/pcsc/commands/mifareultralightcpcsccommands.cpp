@@ -26,13 +26,15 @@
 namespace logicalaccess
 {
     MifareUltralightCPCSCCommands::MifareUltralightCPCSCCommands()
-        : MifareUltralightPCSCCommands(CMD_MIFAREULTRALIGHTCPCSC)
+        : MifareUltralightCCommands(CMD_MIFAREULTRALIGHTCPCSC)
     {
-    }
+		bridgeMFU = std::make_shared<MifareUltralightPCSCCommands>();
+	}
 
 	MifareUltralightCPCSCCommands::MifareUltralightCPCSCCommands(std::string ct)
-		: MifareUltralightPCSCCommands(ct)
+		: MifareUltralightCCommands(ct)
 	{
+		bridgeMFU = std::make_shared<MifareUltralightPCSCCommands>();
 	}
 
     MifareUltralightCPCSCCommands::~MifareUltralightCPCSCCommands()

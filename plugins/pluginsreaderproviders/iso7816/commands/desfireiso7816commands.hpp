@@ -12,6 +12,7 @@
 #include "../readercardadapters/iso7816readercardadapter.hpp"
 #include "../iso7816readerunit.hpp"
 #include "samav2/samchip.hpp"
+#include "desfirecommunicationhandler.hpp"
 
 #include <string>
 #include <vector>
@@ -25,7 +26,7 @@ namespace logicalaccess
     /**
      * \brief The DESFire base commands class.
      */
-    class LIBLOGICALACCESS_API DESFireISO7816Commands : public virtual DESFireCommands
+    class LIBLOGICALACCESS_API DESFireISO7816Commands : public DESFireCommands, public DESFireCommunicationHandler
     {
     public:
 
@@ -91,6 +92,8 @@ namespace logicalaccess
          * \param maxNbKeys Maximum number of keys
          */
         virtual void getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys);
+
+		virtual void getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys, DESFireKeyType& keyType);
 
         /**
          * \brief Change key settings for the current application.
@@ -308,12 +311,12 @@ namespace logicalaccess
 		* \brief retrieve key from SAM AV2 dump key.
 		*/
 		void getKeyFromSAM(std::shared_ptr<DESFireKey> key, std::vector<unsigned char> diversify);
-
-    protected:
-
+	
         std::vector<unsigned char> getChangeKeySAMCryptogram(unsigned char keyno, std::shared_ptr<DESFireKey> key);
 
         std::vector<unsigned char> getChangeKeyIKSCryptogram(unsigned char keyno, std::shared_ptr<DESFireKey> key);
+
+	protected:
 
         /**
          * \brief Generic method to read data from a file.
@@ -335,6 +338,8 @@ namespace logicalaccess
          */
         virtual void handleWriteData(unsigned char cmd, unsigned char* parameters, unsigned int paramLength, const std::vector<unsigned char>& data, EncryptionMode mode);
 
+	public:
+
         /**
          * \brief Transmit a command.
          * \param cmd The command code.
@@ -352,6 +357,12 @@ namespace logicalaccess
          * \return The response.
          */
         virtual std::vector<unsigned char> transmit(unsigned char cmd, const std::vector<unsigned char>& data = std::vector<unsigned char>(), unsigned char lc = 0, bool forceLc = false);
+
+		void setComhandler(std::shared_ptr<DESFireCommunicationHandler> _comhandler) { comhandler = _comhandler; }
+
+		std::shared_ptr<DESFireCommunicationHandler> comhandler;
+
+	protected:
 
         /**
          * \brief The SAMChip used for the SAM Commands.

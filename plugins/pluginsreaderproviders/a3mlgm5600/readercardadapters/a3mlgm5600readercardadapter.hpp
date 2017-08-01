@@ -20,10 +20,7 @@ namespace logicalaccess
     /**
      * \brief A default A3MLGM5600 reader/card adapter class.
      */
-    class LIBLOGICALACCESS_API A3MLGM5600ReaderCardAdapter : public ReaderCardAdapter
-#ifndef SWIG
-	, public ISO14443ReaderCommunication
-#endif
+    class LIBLOGICALACCESS_API A3MLGM5600ReaderCardAdapter : public ReaderCardAdapter, public ISO14443ReaderCommunication
     {
     public:
 

@@ -24,7 +24,7 @@ namespace logicalaccess
     /**
      * \brief The Twic ISO7816 commands base class.
      */
-    class LIBLOGICALACCESS_API TwicISO7816Commands : public ISO7816ISO7816Commands, public TwicCommands 
+    class LIBLOGICALACCESS_API TwicISO7816Commands : public TwicCommands 
 	{
     public:
 
@@ -83,7 +83,12 @@ namespace logicalaccess
          */
         virtual std::vector<unsigned char> getTWICData(int64_t dataObject);
 
-    protected:
+
+		std::shared_ptr<ISO7816ISO7816Commands> getIsoCmds() { return this->bridgeISO; }
+		
+    private:
+
+		std::shared_ptr<ISO7816ISO7816Commands> bridgeISO;
     };
 }
 

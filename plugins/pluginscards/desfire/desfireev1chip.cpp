@@ -10,6 +10,7 @@
 #include "desfirestoragecardservice.hpp"
 #include "desfireev1nfctag4cardservice.hpp"
 
+
 #include <cstring>
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
 #include "logicalaccess/cards/locationnode.hpp"
@@ -42,8 +43,7 @@ namespace logicalaccess
             DESFireKeySettings keySettings;
             unsigned char maxNbkeys = 0;
             DESFireKeyType keyType;
-            getDESFireEV1Commands()->getKeySettings(keySettings, maxNbkeys, keyType);
-
+            std::dynamic_pointer_cast<DESFireEV1Commands>(getDESFireEV1Commands())->getKeySettings(keySettings, maxNbkeys, keyType);
             if (keyType != DF_KEY_DES)
             {
                 location->useEV1 = true;

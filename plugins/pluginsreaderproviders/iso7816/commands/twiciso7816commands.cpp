@@ -17,13 +17,15 @@
 namespace logicalaccess
 {
     TwicISO7816Commands::TwicISO7816Commands() 
-		: Commands(CMD_TWICISO7816)
+		: TwicCommands(CMD_TWICISO7816)
     {
+		bridgeISO = std::make_shared<ISO7816ISO7816Commands>();
     }
 
 	TwicISO7816Commands::TwicISO7816Commands(std::string ct)
-		: Commands(ct)
+		: TwicCommands(ct)
 	{
+		bridgeISO = std::make_shared<ISO7816ISO7816Commands>();
 	}
 
     TwicISO7816Commands::~TwicISO7816Commands()
@@ -54,13 +56,13 @@ namespace logicalaccess
         try
         {
             // Non gouvernemental card
-            getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xA4, 0x04, 0x00, sizeof(command), command, sizeof(command));
+			getIsoCmds()->getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xA4, 0x04, 0x00, sizeof(command), command, sizeof(command));
         }
         catch (std::exception&)
         {
             // Gouvernemental card
             command[sizeof(rid)] = 0x10;
-            getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xA4, 0x04, 0x00, sizeof(command), command, sizeof(command));
+			getIsoCmds()->getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xA4, 0x04, 0x00, sizeof(command), command, sizeof(command));
         }
     }
 
@@ -154,7 +156,7 @@ namespace logicalaccess
         command.push_back(0xFF & (dataObject >> 8));
         command.push_back(0xFF & dataObject);
 
-        result = getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xCB, 0x3F, 0xFF, static_cast<unsigned char>(command.size()), command, static_cast<unsigned char>(command.size()));
+        result = getIsoCmds()->getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xCB, 0x3F, 0xFF, static_cast<unsigned char>(command.size()), command, static_cast<unsigned char>(command.size()));
         if (result.size() != 2)
         {
             return std::vector<unsigned char>(result.begin(), result.end() - 2);

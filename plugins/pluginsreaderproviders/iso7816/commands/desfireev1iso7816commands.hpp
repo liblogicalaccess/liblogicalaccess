@@ -10,6 +10,7 @@
 #include "desfireiso7816commands.hpp"
 #include "desfire/desfireev1commands.hpp"
 #include "iso7816iso7816commands.hpp"
+#include "desfirecommunicationhandler.hpp"
 
 #include <string>
 #include <vector>
@@ -22,7 +23,7 @@ namespace logicalaccess
     /**
      * \brief The DESFire EV1 base commands class.
      */
-    class LIBLOGICALACCESS_API DESFireEV1ISO7816Commands : public DESFireISO7816Commands, public DESFireEV1Commands, public ISO7816ISO7816Commands
+    class LIBLOGICALACCESS_API DESFireEV1ISO7816Commands : public DESFireEV1Commands, public DESFireCommunicationHandler
     {
     public:
 
@@ -298,6 +299,64 @@ namespace logicalaccess
          */
         virtual void iks_iso_authenticate(std::shared_ptr<DESFireKey> key, bool isMasterCardKey, uint8_t keyno);
 
+		// DESFireISO7816Commands
+
+		virtual void erase() { bridgeDF->erase(); }
+		
+		virtual void selectApplication(unsigned int aid) { bridgeDF->selectApplication(aid); }
+		
+		virtual void createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys) { bridgeDF->createApplication(aid, settings, maxNbKeys); }
+		
+		virtual void deleteApplication(unsigned int aid) { bridgeDF->deleteApplication(aid); }
+		
+		virtual void getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys) { bridgeDF->getKeySettings(settings, maxNbKeys); }
+		
+		virtual FileSetting getFileSettings(unsigned char fileno) { return bridgeDF->getFileSettings(fileno); }
+		
+		virtual void createStdDataFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize) { bridgeDF->createStdDataFile(fileno, comSettings, accessRights, fileSize); }
+		
+		virtual void createBackupFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize) { bridgeDF->createBackupFile(fileno, comSettings, accessRights, fileSize); }
+		
+		virtual void createValueFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int lowerLimit, unsigned int upperLimit, unsigned int value, bool limitedCreditEnabled) { bridgeDF->createValueFile(fileno, comSettings, accessRights, lowerLimit, upperLimit, value, limitedCreditEnabled); }
+		
+		virtual void createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords) { bridgeDF->createLinearRecordFile(fileno, comSettings, accessRights, fileSize, maxNumberOfRecords); }
+		
+		virtual void createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords) { bridgeDF->createCyclicRecordFile(fileno, comSettings, accessRights, fileSize, maxNumberOfRecords); }
+		
+		virtual void deleteFile(unsigned char fileno) { bridgeDF->deleteFile(fileno); }
+		
+		virtual void writeData(unsigned char fileno, unsigned int offset, const std::vector<unsigned char>& data, EncryptionMode mode) { bridgeDF->writeData(fileno, offset, data, mode); }
+		
+		virtual void credit(unsigned char fileno, unsigned int value, EncryptionMode mode) { bridgeDF->credit(fileno, value, mode); }
+		
+		virtual void debit(unsigned char fileno, unsigned int value, EncryptionMode mode) { bridgeDF->debit(fileno, value, mode); }
+		
+		virtual void limitedCredit(unsigned char fileno, unsigned int value, EncryptionMode mode) { bridgeDF->limitedCredit(fileno, value, mode); }
+		
+		virtual void writeRecord(unsigned char fileno, unsigned int offset, const std::vector<unsigned char>& data, EncryptionMode mode) { bridgeDF->writeRecord(fileno, offset, data, mode); }
+		
+		virtual void clearRecordFile(unsigned char fileno) { bridgeDF->clearRecordFile(fileno); }
+		
+		virtual void commitTransaction() { bridgeDF->commitTransaction(); }
+		
+		virtual void abortTransaction() { bridgeDF->abortTransaction(); }
+		
+		virtual void authenticate(unsigned char keyno = 0) { bridgeDF->authenticate(keyno); }
+		
+		void iks_des_authenticate(unsigned char keyno, std::shared_ptr<DESFireKey> key) { bridgeDF->iks_des_authenticate(keyno, key); }
+		
+		void setSAMChip(std::shared_ptr<SAMChip> t) { bridgeDF->setSAMChip(t); }
+		
+		std::shared_ptr<SAMChip> getSAMChip() { return bridgeDF->getSAMChip(); }
+		
+		void getKeyFromSAM(std::shared_ptr<DESFireKey> key, std::vector<unsigned char> diversify) { bridgeDF->getKeyFromSAM(key, diversify); }
+		
+		std::shared_ptr<ISO7816ReaderCardAdapter> getISO7816ReaderCardAdapter() { return bridgeDF->getISO7816ReaderCardAdapter(); }
+		
+		std::vector<unsigned char> getChangeKeySAMCryptogram(unsigned char keyno, std::shared_ptr<DESFireKey> key) { return bridgeDF->getChangeKeySAMCryptogram(keyno, key); }
+		
+		std::vector<unsigned char> getChangeKeyIKSCryptogram(unsigned char keyno, std::shared_ptr<DESFireKey> key) { return bridgeDF->getChangeKeyIKSCryptogram(keyno, key); }
+
     protected:
 
         /**
@@ -371,8 +430,18 @@ namespace logicalaccess
          */
         void onAuthenticated();
 
-    protected:
-    };
+	private:
+
+		std::shared_ptr<DESFireISO7816Commands> bridgeDF;
+
+		std::shared_ptr<ISO7816ISO7816Commands> bridgeISO;
+
+	public:
+
+		std::shared_ptr<DESFireISO7816Commands> getBridgeDF() { return bridgeDF; }
+
+		std::shared_ptr<ISO7816ISO7816Commands> getBridgeISO() { return bridgeISO; }
+	};
 }
 
 #endif /* LOGICALACCESS_DESFIREEV1ISO7816COMMANDS_HPP */

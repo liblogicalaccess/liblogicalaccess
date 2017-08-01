@@ -21,7 +21,7 @@ namespace logicalaccess
     /**
     * \brief The Topaz commands class for ACS ACR PCSC reader.
     */
-    class LIBLOGICALACCESS_API TopazACSACRCommands : public virtual TopazCommands
+    class LIBLOGICALACCESS_API TopazACSACRCommands : public TopazCommands
     {
     public:
 

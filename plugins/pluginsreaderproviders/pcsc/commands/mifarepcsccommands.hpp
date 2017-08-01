@@ -24,7 +24,7 @@ namespace logicalaccess
     /**
      * \brief The Mifare card provider class for PCSC reader.
      */
-    class LIBLOGICALACCESS_API MifarePCSCCommands : public virtual MifareCommands
+    class LIBLOGICALACCESS_API MifarePCSCCommands : public MifareCommands
     {
     public:
 

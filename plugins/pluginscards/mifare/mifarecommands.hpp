@@ -20,7 +20,7 @@ namespace logicalaccess
     /**
      * \brief The Mifare commands class.
      */
-    class LIBLOGICALACCESS_API MifareCommands : public virtual Commands
+    class LIBLOGICALACCESS_API MifareCommands : public Commands
     {
     public:
 

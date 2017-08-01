@@ -79,7 +79,8 @@ int main(int ac, char **av)
 
 
     cmd->authenticate(1, key);
-    std::vector<unsigned char> data = {0x01, 0x02, 0x03, 0x04}, tmp;
+    std::vector<unsigned char> data, tmp;
+	data = { 0x01, 0x02, 0x03, 0x04 };
     cmdev1->writeData(0, 0, data, logicalaccess::EncryptionMode::CM_ENCRYPT);
 
     cmd->authenticate(2, key);

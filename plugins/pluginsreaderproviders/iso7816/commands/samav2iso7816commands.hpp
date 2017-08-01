@@ -29,7 +29,7 @@ namespace logicalaccess
     /**
      * \brief The DESFire base commands class.
      */
-    class LIBLOGICALACCESS_API SAMAV2ISO7816Commands : public SAMISO7816Commands<KeyEntryAV2Information, SETAV2>, public SAMAV2Commands < KeyEntryAV2Information, SETAV2 >
+    class LIBLOGICALACCESS_API SAMAV2ISO7816Commands : public SAMAV2Commands<KeyEntryAV2Information, SETAV2>
     {
     public:
 
@@ -57,6 +57,39 @@ namespace logicalaccess
 
         virtual std::vector<unsigned char> dumpSecretKey(unsigned char keyno, unsigned char keyversion, std::vector<unsigned char> divInpu);
 
+		// SAMISO7816Commands<KeyEntryAV2Information, SETAV2>
+
+		std::shared_ptr<ISO7816ReaderCardAdapter> getISO7816ReaderCardAdapter() { return bridgeISO->getISO7816ReaderCardAdapter(); };
+
+		//virtual std::vector<unsigned char> transmit(std::vector<unsigned char> cmd, bool first = true, bool last = true) { bridgeISO->transmit(cmd, first, last); }
+
+		virtual SAMVersion getVersion() { return bridgeISO->getVersion(); }
+
+		virtual std::vector<unsigned char> decipherData(std::vector<unsigned char> data, bool islastdata) { return bridgeISO->decipherData(data, islastdata); }
+
+		virtual std::vector<unsigned char> encipherData(std::vector<unsigned char> data, bool islastdata) { return bridgeISO->encipherData(data, islastdata); }
+
+		virtual void disableKeyEntry(unsigned char keyno) { bridgeISO->disableKeyEntry(keyno); }
+
+		virtual std::vector<unsigned char> dumpSessionKey() { return bridgeISO->dumpSessionKey(); }
+
+		virtual std::string getSAMTypeFromSAM() { return bridgeISO->getSAMTypeFromSAM(); }
+
+		virtual std::shared_ptr<SAMDESfireCrypto> getCrypto() { return bridgeISO->getCrypto(); };
+		virtual void setCrypto(std::shared_ptr<SAMDESfireCrypto> t) { bridgeISO->setCrypto(t); };
+
+		virtual void lockUnlock(std::shared_ptr<DESFireKey> masterKey, SAMLockUnlock state, unsigned char keyno, unsigned char unlockkeyno, unsigned char unlockkeyversion) { bridgeISO->lockUnlock(masterKey, state, keyno, unlockkeyno, unlockkeyversion); }
+
+		void selectApplication(std::vector<unsigned char> aid) { bridgeISO->selectApplication(aid); }
+
+		std::vector<unsigned char> changeKeyPICC(const ChangeKeyInfo& info, const ChangeKeyDiversification& diversifycation) { return bridgeISO->changeKeyPICC(info, diversifycation); }
+
+		void truncateMacBuffer(std::vector<unsigned char>& data) { bridgeISO->truncateMacBuffer(data); }
+
+		void generateAuthEncKey(std::vector<unsigned char> keycipher, std::vector<unsigned char> rnd1, std::vector<unsigned char> rnd2) { bridgeISO->generateAuthEncKey(keycipher, rnd1, rnd2); }
+
+		std::shared_ptr<SAMISO7816Commands<KeyEntryAV2Information, SETAV2> > getSamIsoCmd() { return this->bridgeISO; }
+
     protected:
 
         void generateSessionKey(std::vector<unsigned char> rnd1, std::vector<unsigned char> rnd2);
@@ -74,6 +107,20 @@ namespace logicalaccess
         std::vector<unsigned char> d_lastMacIV;
 
         unsigned int d_cmdCtr;
+
+		std::shared_ptr<SAMDESfireCrypto>& getCryptoRef() { return bridgeISO->getCryptoRef(); }
+
+		unsigned char& getClaRef() { return bridgeISO->getClaRef(); }
+
+		std::vector<unsigned char>& getAuthKeyRef() { return bridgeISO->getAuthKeyRef(); }
+
+		std::vector<unsigned char>& getSessionKeyRef() { return bridgeISO->getSessionKeyRef(); }
+
+		std::vector<unsigned char>& getLastSessionIVRef() { return bridgeISO->getLastSessionIVRef(); }
+
+	private:
+			
+		std::shared_ptr<SAMISO7816Commands<KeyEntryAV2Information, SETAV2> > bridgeISO;
     };
 }
 

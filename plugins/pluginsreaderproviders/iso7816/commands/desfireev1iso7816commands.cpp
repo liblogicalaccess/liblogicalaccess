@@ -6,6 +6,8 @@
 
 #include "../commands/desfireev1iso7816commands.hpp"
 #include "desfire/desfirechip.hpp"
+#include "desfire/desfireev1chip.hpp"
+#include "desfire/desfireev1location.hpp"
 #include "samav2/samav2commands.hpp"
 #include <openssl/rand.h>
 #include <logicalaccess/iks/IslogKeyServer.hpp>
@@ -27,18 +29,25 @@
 #include "samav2/samcommands.hpp"
 #include "desfire/nxpav2keydiversification.hpp"
 #include "logicalaccess/myexception.hpp"
+
 #include <cassert>
 
 namespace logicalaccess
 {
     DESFireEV1ISO7816Commands::DESFireEV1ISO7816Commands()
-        : DESFireISO7816Commands(CMD_DESFIREEV1ISO7816)
+		: DESFireEV1Commands(CMD_DESFIREEV1ISO7816)
     {
-    }
+		bridgeDF = std::make_shared<DESFireISO7816Commands>();
+		bridgeDF->setComhandler(std::make_shared<DESFireEV1ISO7816Commands>(*this));
+		bridgeISO = std::make_shared<ISO7816ISO7816Commands>();
+	}
 
 	DESFireEV1ISO7816Commands::DESFireEV1ISO7816Commands(std::string ct)
-		: DESFireISO7816Commands(ct)
+		: DESFireEV1Commands(ct)
 	{
+		bridgeDF = std::make_shared<DESFireISO7816Commands>();
+		bridgeDF->setComhandler(std::make_shared<DESFireEV1ISO7816Commands>(*this));
+		bridgeISO = std::make_shared<ISO7816ISO7816Commands>();
 	}
 
     DESFireEV1ISO7816Commands::~DESFireEV1ISO7816Commands()
@@ -133,8 +142,9 @@ namespace logicalaccess
 		crypto->createApplication(aid, maxNbKeys, cryptoMethod);
     }
 
-    void DESFireEV1ISO7816Commands::getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys, DESFireKeyType& keyType)
-    {
+
+	void DESFireEV1ISO7816Commands::getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys, DESFireKeyType& keyType) 
+	{
         std::vector<unsigned char> r = transmit(DF_INS_GET_KEY_SETTINGS);
         r.resize(r.size() - 2);
 
@@ -262,7 +272,7 @@ namespace logicalaccess
         data.push_back(static_cast<unsigned char>(static_cast<unsigned short>(fid & 0xff00) >> 8));
         data.push_back(static_cast<unsigned char>(fid & 0xff));
 
-        DESFireISO7816Commands::getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_SELECT_FILE, 0x00, 0x0C, static_cast<unsigned char>(data.size()), data);
+         getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_SELECT_FILE, 0x00, 0x0C, static_cast<unsigned char>(data.size()), data);
     }
 
     std::vector<unsigned char> DESFireEV1ISO7816Commands::iso_readRecords(unsigned short fid, unsigned char start_record, DESFireRecords record_number)
@@ -276,7 +286,7 @@ namespace logicalaccess
             p2 += static_cast<unsigned char>((fid & 0xff) << 3);
         }
 
-        result = DESFireISO7816Commands::getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_READ_RECORDS, p1, p2, 0x00);
+        result =  getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_READ_RECORDS, p1, p2, 0x00);
 
         return std::vector<unsigned char>(result.begin(), result.end() - 2);
     }
@@ -290,14 +300,14 @@ namespace logicalaccess
             p2 += static_cast<unsigned char>((fid & 0xff) << 3);
         }
 
-        DESFireISO7816Commands::getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_APPEND_RECORD, p1, p2, static_cast<unsigned char>(data.size()), data);
+		 getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_APPEND_RECORD, p1, p2, static_cast<unsigned char>(data.size()), data);
     }
 
     std::vector<unsigned char> DESFireEV1ISO7816Commands::iso_getChallenge(unsigned int length)
     {
         std::vector<unsigned char> result;
 
-        result = DESFireISO7816Commands::getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_GET_CHALLENGE, 0x00, 0x00, static_cast<unsigned char>(length));
+        result =  getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_GET_CHALLENGE, 0x00, 0x00, static_cast<unsigned char>(length));
 
         if (result[result.size() - 2] == 0x90 && result[result.size() - 1] == 0x00)
         {
@@ -315,7 +325,7 @@ namespace logicalaccess
             p2 = static_cast<unsigned char>(0x80 + (keyno & 0x0F));
         }
 
-        DESFireISO7816Commands::getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_EXTERNAL_AUTHENTICATE, p1, p2, static_cast<unsigned char>(data.size()), data);
+		 getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_EXTERNAL_AUTHENTICATE, p1, p2, static_cast<unsigned char>(data.size()), data);
     }
 
     std::vector<unsigned char> DESFireEV1ISO7816Commands::iso_internalAuthenticate(DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno, const std::vector<unsigned char>& RPCD2, unsigned int length)
@@ -329,7 +339,7 @@ namespace logicalaccess
             p2 = static_cast<unsigned char>(0x80 + (keyno & 0x0F));
         }
 
-        result = DESFireISO7816Commands::getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_INTERNAL_AUTHENTICATE, p1, p2, static_cast<unsigned char>(RPCD2.size()), RPCD2, static_cast<unsigned char>(length));
+        result =  getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_INTERNAL_AUTHENTICATE, p1, p2, static_cast<unsigned char>(RPCD2.size()), RPCD2, static_cast<unsigned char>(length));
 
         if (result[result.size() - 2] == 0x90 && result[result.size() - 1] == 0x00)
         {
@@ -350,7 +360,7 @@ namespace logicalaccess
         // Get the appropriate authentification method and algorithm according to the key type (for 3DES we use legacy method instead of ISO).
 
         if (std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage())
-			&& !getSAMChip())
+			&& !( getSAMChip()))
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAMKeyStorage set on the key but not SAM reader has been set.");
 
         if (std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage())
@@ -365,7 +375,7 @@ namespace logicalaccess
         else if (key->getKeyStorage()->getType() == KST_SERVER)
         {
             if (key->getKeyType() == DF_KEY_DES)
-                DESFireISO7816Commands::iks_des_authenticate(keyno, key);
+				iks_des_authenticate(keyno, key);
             else if (key->getKeyType() == DF_KEY_AES)
 				iks_iso_authenticate(key, (crypto->d_currentAid == 0 && keyno == 0), keyno);
             else
@@ -379,7 +389,7 @@ namespace logicalaccess
             switch (key->getKeyType())
             {
             case DF_KEY_DES:
-                DESFireISO7816Commands::authenticate(keyno, key);
+				bridgeDF->authenticate(keyno, key);
                 break;
 
             case DF_KEY_3K3DES:
@@ -414,7 +424,7 @@ namespace logicalaccess
         if (!std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "DESFireKey need a SAMKeyStorage to proceed a SAM ISO Authenticate.");
 	
-		if (getSAMChip()->getCardType() == "SAM_AV2"
+		if ( getSAMChip()->getCardType() == "SAM_AV2"
 			&& !std::dynamic_pointer_cast<NXPAV2KeyDiversification>(key->getKeyDiversification()))
 		{
 			LOG(LogLevel::INFOS) << "Start AuthenticationPICC in purpose to fix SAM state (NXP SAM Documentation 3.5)";
@@ -426,7 +436,7 @@ namespace logicalaccess
 					0x00,
 					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 					0x00 };
-				std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(randomAuthenticatePICC);
+				std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>( getSAMChip()->getCommands())->transmit(randomAuthenticatePICC);
 			}
 			catch (std::exception&){}
 
@@ -434,7 +444,7 @@ namespace logicalaccess
 			{
 				// Cancel SAM authentication with dummy command, but ignore return
 				std::vector<unsigned char> cmd_vector = { 0x80, 0xaf, 0x00, 0x00, 0x00 };
-				std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(cmd_vector);
+				std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>( getSAMChip()->getCommands())->transmit(cmd_vector);
 			}
 			catch (std::exception&){}
 		}
@@ -460,10 +470,10 @@ namespace logicalaccess
 		{
 			try
 			{
-				if (getSAMChip()->getCardType() == "SAM_AV1")
-					apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->transmit(cmd_vector);
-				else if (getSAMChip()->getCardType() == "SAM_AV2")
-					apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(cmd_vector, true, false);
+				if ( getSAMChip()->getCardType() == "SAM_AV1")
+					apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>( getSAMChip()->getCommands())->transmit(cmd_vector);
+				else if ( getSAMChip()->getCardType() == "SAM_AV2")
+					apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>( getSAMChip()->getCommands())->transmit(cmd_vector, true, false);
 				break;
 			}
 			catch (CardException& ex)
@@ -474,7 +484,7 @@ namespace logicalaccess
 
 				//SAM av2 often fail even if parameters are correct for during diversification av2
 				LOG(LogLevel::WARNINGS) << "try to auth with SAM P1: " << trytoreconnect;
-				getSAMChip()->getCommands()->getReaderCardAdapter()->getDataTransport()->getReaderUnit()->reconnect();
+				 getSAMChip()->getCommands()->getReaderCardAdapter()->getDataTransport()->getReaderUnit()->reconnect();
 			}
 			++trytoreconnect;
 		} while (true);
@@ -499,10 +509,10 @@ namespace logicalaccess
             {
                 unsigned char resetcmd[] = { 0x80, 0xaf, 0x00, 0x00, 0x00 };
                 cmd_vector.assign(resetcmd, resetcmd + 5);
-                if (getSAMChip()->getCardType() == "SAM_AV1")
-                    apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->transmit(cmd_vector);
-                else if (getSAMChip()->getCardType() == "SAM_AV2")
-                    apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(cmd_vector);
+                if ( getSAMChip()->getCardType() == "SAM_AV1")
+                    apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>( getSAMChip()->getCommands())->transmit(cmd_vector);
+                else if ( getSAMChip()->getCardType() == "SAM_AV2")
+                    apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>( getSAMChip()->getCommands())->transmit(cmd_vector);
             }
             catch (std::exception&){}
 
@@ -515,18 +525,18 @@ namespace logicalaccess
         unsigned char cmdp2[] = { 0x80, 0x8e, 0x00, 0x00, (unsigned char)(encRPICC2RPCD2a.size()) };
         cmd_vector.assign(cmdp2, cmdp2 + 5);
         cmd_vector.insert(cmd_vector.end(), encRPICC2RPCD2a.begin(), encRPICC2RPCD2a.end());
-        if (getSAMChip()->getCardType() == "SAM_AV1")
-            apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->transmit(cmd_vector);
-        else if (getSAMChip()->getCardType() == "SAM_AV2")
-            apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(cmd_vector);
+        if ( getSAMChip()->getCardType() == "SAM_AV1")
+            apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>( getSAMChip()->getCommands())->transmit(cmd_vector);
+        else if ( getSAMChip()->getCardType() == "SAM_AV2")
+            apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>( getSAMChip()->getCommands())->transmit(cmd_vector);
         if (apduresult.size() <= 2 && apduresult[apduresult.size() - 2] != 0x90 && apduresult[apduresult.size() - 2] != 0x00)
             THROW_EXCEPTION_WITH_LOG(CardException, "sam_iso_authenticate P2 failed.");
 
 		crypto->d_currentKeyNo = keyno;
-        if (getSAMChip()->getCardType() == "SAM_AV1")
-			crypto->d_sessionKey = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->dumpSessionKey();
-        else if (getSAMChip()->getCardType() == "SAM_AV2")
-			crypto->d_sessionKey = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->dumpSessionKey();
+        if ( getSAMChip()->getCardType() == "SAM_AV1")
+			crypto->d_sessionKey = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>( getSAMChip()->getCommands())->dumpSessionKey();
+        else if ( getSAMChip()->getCardType() == "SAM_AV2")
+			crypto->d_sessionKey = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>( getSAMChip()->getCommands())->dumpSessionKey();
 		crypto->d_auth_method = CM_ISO;
 
 		LOG(LogLevel::INFOS) << "Session key length: " << crypto->d_sessionKey.size();
@@ -725,13 +735,13 @@ namespace logicalaccess
 			currentkey->getKeyDiversification()->initDiversification(crypto->getIdentifier(), crypto->d_currentAid, currentkey, keyno, diversify);
         }
 
-        std::vector<unsigned char> encRndB = DESFireISO7816Commands::transmit(DFEV1_INS_AUTHENTICATE_ISO, data);
+        std::vector<unsigned char> encRndB =  transmit(DFEV1_INS_AUTHENTICATE_ISO, data);
         unsigned char err = encRndB.back();
         encRndB.resize(encRndB.size() - 2);
         EXCEPTION_ASSERT_WITH_LOG(err == DF_INS_ADDITIONAL_FRAME, LibLogicalAccessException, "No additional frame for ISO authentication.");
 
 		std::vector<unsigned char> response = crypto->iso_authenticate_PICC1(keyno, diversify, encRndB, random_len);
-        std::vector<unsigned char> encRndA1 = DESFireISO7816Commands::transmit(DF_INS_ADDITIONAL_FRAME, response);
+        std::vector<unsigned char> encRndA1 =  transmit(DF_INS_ADDITIONAL_FRAME, response);
         encRndA1.resize(encRndA1.size() - 2);
 
 		crypto->iso_authenticate_PICC2(keyno, encRndA1, random_len);
@@ -752,13 +762,13 @@ namespace logicalaccess
 			currentkey->getKeyDiversification()->initDiversification(crypto->getIdentifier(), crypto->d_currentAid, currentkey, keyno, diversify);
         }
 
-        std::vector<unsigned char> encRndB = DESFireISO7816Commands::transmit(DFEV1_INS_AUTHENTICATE_AES, data);
+        std::vector<unsigned char> encRndB =  transmit(DFEV1_INS_AUTHENTICATE_AES, data);
         unsigned char err = encRndB.back();
         encRndB.resize(encRndB.size() - 2);
         EXCEPTION_ASSERT_WITH_LOG(err == DF_INS_ADDITIONAL_FRAME, LibLogicalAccessException, "No additional frame for ISO authentication.");
 
 		std::vector<unsigned char> response = crypto->aes_authenticate_PICC1(keyno, diversify, encRndB);
-        std::vector<unsigned char> encRndA1 = DESFireISO7816Commands::transmit(DF_INS_ADDITIONAL_FRAME, response);
+        std::vector<unsigned char> encRndA1 =  transmit(DF_INS_ADDITIONAL_FRAME, response);
         encRndA1.resize(encRndA1.size() - 2);
 
 		crypto->aes_authenticate_PICC2(keyno, encRndA1);
@@ -1122,7 +1132,7 @@ namespace logicalaccess
 
 		if (crypto->d_auth_method == CM_LEGACY && plain)
         {
-            DESFireISO7816Commands::transmit(DF_INS_CHANGE_FILE_SETTINGS, command);
+			 transmit(DF_INS_CHANGE_FILE_SETTINGS, command);
         }
         else
         {
@@ -1148,7 +1158,7 @@ namespace logicalaccess
 
 		if (crypto->d_auth_method == CM_LEGACY)
         {
-            DESFireISO7816Commands::transmit(DF_INS_CHANGE_KEY_SETTINGS, cryptogram);
+			 transmit(DF_INS_CHANGE_KEY_SETTINGS, cryptogram);
         }
         else
         {
@@ -1200,7 +1210,7 @@ namespace logicalaccess
         data.insert(data.end(), cryptogram.begin(), cryptogram.end());
 		if (crypto->d_auth_method == CM_LEGACY)
         {
-            DESFireISO7816Commands::transmit(DF_INS_CHANGE_KEY, data);
+			transmit(DF_INS_CHANGE_KEY, data);
         }
         else
         {
@@ -1338,7 +1348,7 @@ namespace logicalaccess
 
     void DESFireEV1ISO7816Commands::iso_selectApplication(std::vector<unsigned char> isoaid)
     {
-        DESFireISO7816Commands::getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_SELECT_FILE, SELECT_FILE_BY_AID, 0x00, static_cast<unsigned char>(isoaid.size()), isoaid);
+		getISO7816ReaderCardAdapter()->sendAPDUCommand(DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_SELECT_FILE, SELECT_FILE_BY_AID, 0x00, static_cast<unsigned char>(isoaid.size()), isoaid);
     }
 
     void DESFireEV1ISO7816Commands::setConfiguration(bool formatCardEnabled, bool randomIdEnabled)
@@ -1353,7 +1363,7 @@ namespace logicalaccess
         std::vector<unsigned char> buf;
         buf.push_back(0x00);
         buf.insert(buf.end(), encBuffer.begin(), encBuffer.end());
-        DESFireISO7816Commands::transmit(DFEV1_INS_SET_CONFIGURATION, buf);
+		transmit(DFEV1_INS_SET_CONFIGURATION, buf);
     }
 
     void DESFireEV1ISO7816Commands::setConfiguration(std::shared_ptr<DESFireKey> defaultKey)
@@ -1372,7 +1382,7 @@ namespace logicalaccess
         std::vector<unsigned char> buf;
         buf.push_back(0x01);
         buf.insert(buf.end(), encBuffer.begin(), encBuffer.end());
-        DESFireISO7816Commands::transmit(DFEV1_INS_SET_CONFIGURATION, buf);
+		transmit(DFEV1_INS_SET_CONFIGURATION, buf);
     }
 
     void DESFireEV1ISO7816Commands::setConfiguration(const std::vector<unsigned char>& ats)
@@ -1402,7 +1412,7 @@ namespace logicalaccess
         data.push_back(0x80);
         std::vector<unsigned char> encBuffer = crypto->desfireEncrypt(data, std::vector<unsigned char>(), false);
         buf.insert(buf.end(), encBuffer.begin(), encBuffer.end());
-        DESFireISO7816Commands::transmit(DFEV1_INS_SET_CONFIGURATION, buf);
+		transmit(DFEV1_INS_SET_CONFIGURATION, buf);
     }
 
     std::vector<unsigned char> DESFireEV1ISO7816Commands::transmit(unsigned char cmd, const std::vector<unsigned char>& buf, unsigned char lc, bool forceLc)
@@ -1418,7 +1428,7 @@ namespace logicalaccess
 			CMAC = crypto->desfire_cmac(apdu_command);
         }
 
-        std::vector<unsigned char> r = DESFireISO7816Commands::transmit(cmd, buf, lc, forceLc);
+        std::vector<unsigned char> r = getBridgeDF()->transmit(cmd, buf, lc, forceLc);
         unsigned char err = r.back();
 		if (crypto->d_auth_method != CM_LEGACY && cmd != DF_INS_ADDITIONAL_FRAME && r.size() > 8 && err != DF_INS_ADDITIONAL_FRAME)
         {
@@ -1440,7 +1450,7 @@ namespace logicalaccess
 
     std::vector<unsigned char> DESFireEV1ISO7816Commands::transmit_plain(unsigned char cmd, const std::vector<unsigned char>& buf, unsigned char lc, bool forceLc)
     {
-        return DESFireISO7816Commands::transmit(cmd, buf, lc, forceLc);
+        return transmit(cmd, buf, lc, forceLc);
     }
 
     std::vector<unsigned char> DESFireEV1ISO7816Commands::transmit_nomacv(unsigned char cmd, unsigned char lc)
@@ -1459,7 +1469,7 @@ namespace logicalaccess
 			crypto->desfire_cmac(apdu_command);
         }
 
-        return DESFireISO7816Commands::transmit(cmd, buf, lc, forceLc);
+        return transmit(cmd, buf, lc, forceLc);
     }
 
     void DESFireEV1ISO7816Commands::iks_iso_authenticate(std::shared_ptr<DESFireKey> key,
@@ -1527,5 +1537,6 @@ namespace logicalaccess
             getChip()->setChipIdentifier(getCardUID());
             getDESFireChip()->setHasRealUID(true);
         }
+		
     }
 }

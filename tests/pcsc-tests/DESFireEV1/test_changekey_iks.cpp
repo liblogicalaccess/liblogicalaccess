@@ -50,7 +50,7 @@ void read_write(std::shared_ptr<logicalaccess::DESFireEV1ISO7816Commands> cmdev1
     div->setSystemIdentifier(vector_from_string("BOAP"));
     key->setKeyDiversification(div);
 
-    static_cast<DESFireISO7816Commands *>(cmdev1.get())->selectApplication(0x535);
+    cmdev1.get()->selectApplication(0x535);
     cmdev1->authenticate(0, key);
 
     // The excepted memory tree

@@ -14,7 +14,7 @@ namespace logicalaccess
 #define CMD_SAMAV2	"SAMAV2"
 
     template <typename T, typename S>
-    class LIBLOGICALACCESS_API SAMAV2Commands : public virtual SAMCommands < T, S >
+    class LIBLOGICALACCESS_API SAMAV2Commands : public SAMCommands < T, S >
     {
     public:
 		SAMAV2Commands() : SAMCommands<T, S>(CMD_SAMAV2) {}

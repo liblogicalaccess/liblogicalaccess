@@ -1,3 +1,4 @@
+
 /**
  * \file desfireev1stidstrcommands.hpp
  * \author Maxime C. <maxime-dev@islog.com>
@@ -130,7 +131,7 @@ namespace logicalaccess
          * \param settings Key settings
          * \param maxNbKeys Maximum number of keys
          */
-        virtual void getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys);
+        virtual void getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys) override;
 
         /**
          * \brief Get key settings on the current application.
@@ -138,7 +139,7 @@ namespace logicalaccess
          * \param maxNbKeys Maximum number of keys
          * \param keyType The key type
          */
-        virtual void getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys, DESFireKeyType& keyType);
+		virtual void getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys, DESFireKeyType& keyType) override;
 
         /**
          * \brief Get a random card UID.

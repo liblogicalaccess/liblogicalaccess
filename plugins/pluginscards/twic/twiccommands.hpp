@@ -18,7 +18,7 @@ namespace logicalaccess
     /**
      * \brief The Twic commands class.
      */
-    class LIBLOGICALACCESS_API TwicCommands : public virtual Commands
+    class LIBLOGICALACCESS_API TwicCommands : public Commands
     {
     public:
 
