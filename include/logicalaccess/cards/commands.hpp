@@ -8,7 +8,6 @@
 #define LOGICALACCESS_COMMANDS_HPP
 
 #include "logicalaccess/cards/readercardadapter.hpp"
-#include "logicalaccess/bridge.hpp"
 
 namespace logicalaccess
 {
