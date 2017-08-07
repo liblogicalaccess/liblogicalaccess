@@ -930,7 +930,8 @@ namespace logicalaccess
         rndAB.insert(rndAB.end(), rndB1.begin(), rndB1.end());
 
         std::vector<unsigned char> ret;
-        d_cipher->cipher(rndAB, ret, aeskey, iv, false);
+		iv = openssl::AESInitializationVector::createFromData(d_lastIV);
+		d_cipher->cipher(rndAB, ret, aeskey, iv, false);
         d_lastIV = std::vector<unsigned char>(ret.end() - 16, ret.end());
 
         return ret;
