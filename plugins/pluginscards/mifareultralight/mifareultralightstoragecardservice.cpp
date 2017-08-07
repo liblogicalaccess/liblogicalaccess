@@ -41,7 +41,7 @@ namespace logicalaccess
         EXCEPTION_ASSERT_WITH_LOG(mLocation, std::invalid_argument, "location must be a MifareUltralightLocation.");
         std::shared_ptr<MifareUltralightAccessInfo> mAi = std::dynamic_pointer_cast<MifareUltralightAccessInfo>(aiToWrite);
 
-        size_t totaldatalen = data.size() + mLocation->byte_;
+        size_t totaldatalen = data.size() + mLocation->byte;
         int nbPages = 0;
         size_t buflen = 0;
         while (buflen < totaldatalen)
@@ -54,7 +54,7 @@ namespace logicalaccess
         {
             std::vector<unsigned char> dataPages;
             dataPages.resize(buflen, 0x00);
-			std::copy(data.begin(), data.end(), dataPages.begin() + mLocation->byte_);
+			std::copy(data.begin(), data.end(), dataPages.begin() + mLocation->byte);
 
             if (behaviorFlags & CB_AUTOSWITCHAREA)
             {
@@ -83,7 +83,7 @@ namespace logicalaccess
         std::shared_ptr<MifareUltralightLocation> mLocation = std::dynamic_pointer_cast<MifareUltralightLocation>(location);
         EXCEPTION_ASSERT_WITH_LOG(mLocation, std::invalid_argument, "location must be a MifareLocation.");
 
-        size_t totaldatalen = length + mLocation->byte_;
+        size_t totaldatalen = length + mLocation->byte;
         int nbPages = 0;
         size_t buflen = 0;
         while (buflen < totaldatalen)
@@ -111,7 +111,7 @@ namespace logicalaccess
                 nbPages += static_cast<int>((dataPages.size() + 3) / 4) - 1;
             }
 
-			ret.insert(ret.end(), dataPages.begin() + mLocation->byte_, dataPages.begin() + mLocation->byte_ + length);
+			ret.insert(ret.end(), dataPages.begin() + mLocation->byte, dataPages.begin() + mLocation->byte + length);
         }
 		return ret;
     }

@@ -13,7 +13,7 @@ namespace logicalaccess
     {
         aid = 0x000521;
         file = 0;
-        byte_ = 0;
+        byte = 0;
         securityLevel = CM_ENCRYPT;
     }
 
@@ -45,7 +45,7 @@ namespace logicalaccess
 
         node.put("AID", aid);
         node.put("File", file);
-        node.put("Byte", byte_);
+        node.put("Byte", byte);
         node.put("SecurityLevel", securityLevel);
 
         parentNode.add_child(DESFireLocation::getDefaultXmlNodeName(), node);
@@ -55,7 +55,7 @@ namespace logicalaccess
     {
         aid = node.get_child("AID").get_value<int>();
         file = node.get_child("File").get_value<int>();
-        byte_ = node.get_child("Byte").get_value<int>();
+        byte = node.get_child("Byte").get_value<int>();
         securityLevel = static_cast<EncryptionMode>(node.get_child("SecurityLevel").get_value<unsigned int>());
     }
 
@@ -79,7 +79,7 @@ namespace logicalaccess
 
         return (aid == dfLocation->aid
             && file == dfLocation->file
-            && byte_ == dfLocation->byte_
+            && byte == dfLocation->byte
             && securityLevel == dfLocation->securityLevel
             );
     }

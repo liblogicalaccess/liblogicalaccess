@@ -5,7 +5,7 @@
 namespace logicalaccess
 {
 
-class LIBLOGICALACCESS_API STidPRGDataTransport : public SerialPortDataTransport
+class STidPRGDataTransport : public SerialPortDataTransport
 {
   public:
     virtual void setSerialPort(std::shared_ptr<SerialPortXml> port) override;

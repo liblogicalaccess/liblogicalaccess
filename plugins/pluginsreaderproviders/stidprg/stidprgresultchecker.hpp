@@ -4,7 +4,7 @@
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API STidPRGResultChecker : public ResultChecker
+class STidPRGResultChecker : public ResultChecker
 {
   public:
     STidPRGResultChecker();

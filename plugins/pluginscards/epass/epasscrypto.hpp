@@ -7,7 +7,7 @@
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API EPassCrypto
+class EPassCrypto
 {
   public:
     EPassCrypto(const std::string &mrz);

@@ -42,10 +42,9 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API DESFireKey : public Key
     {
     public:
-#ifndef SWIG
         using XmlSerializable::serialize;
         using XmlSerializable::unSerialize;
-#endif
+
         /**
          * \brief Build an empty DESFire key.
          */

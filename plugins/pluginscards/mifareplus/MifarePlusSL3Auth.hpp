@@ -10,7 +10,7 @@ namespace logicalaccess
      * Maintain the authentication state and key
      * for MifarePlus in security level 3.
      */
-    class LIBLOGICALACCESS_API MifarePlusSL3Auth
+    class MifarePlusSL3Auth
     {
     public:
         MifarePlusSL3Auth(std::shared_ptr<ReaderCardAdapter> rca);

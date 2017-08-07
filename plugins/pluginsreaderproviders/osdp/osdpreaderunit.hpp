@@ -142,7 +142,7 @@ namespace logicalaccess
 
 			std::shared_ptr<OSDPCommands>& getOSDPCommands() { return m_commands; };
 
-			bool getTamperStatus() { return m_tamperStatus; }
+		bool& getTamperStatus() { return m_tamperStatus; }
 
 		protected:
 

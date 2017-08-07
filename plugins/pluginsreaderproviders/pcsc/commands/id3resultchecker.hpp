@@ -4,7 +4,7 @@
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API ID3ResultChecker : public ISO7816ResultChecker
+class ID3ResultChecker : public ISO7816ResultChecker
 {
 
       public:

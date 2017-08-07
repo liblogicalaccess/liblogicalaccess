@@ -17,7 +17,7 @@ namespace logicalaccess
      *
      * This data transport is useful when talking to the reader in direct mode.
      */
-    class LIBLOGICALACCESS_API PCSCControlDataTransport : public PCSCDataTransport
+    class PCSCControlDataTransport : public PCSCDataTransport
     {
 
     public:

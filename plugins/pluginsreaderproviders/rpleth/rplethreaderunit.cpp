@@ -606,7 +606,7 @@ namespace logicalaccess
 
             if (dt)
             {
-				std::list<std::vector<unsigned char> > badges = dt->getBadges();
+                std::list<std::vector<unsigned char> > &badges = dt->getBadges();
 
                 if (badges.empty())
                 {

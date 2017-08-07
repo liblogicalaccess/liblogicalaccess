@@ -111,7 +111,7 @@ namespace logicalaccess
         std::shared_ptr<MifareUltralightLocation> location;
         location.reset(new MifareUltralightLocation());
 		location->page = block;
-        location->byte_ = 0;
+        location->byte = 0;
 
 		blockNode->setLocation(location);
 		blockNode->setParent(rootNode);

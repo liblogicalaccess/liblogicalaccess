@@ -11,7 +11,7 @@ namespace logicalaccess
 {
     TopazLocation::TopazLocation() :
         page(1),
-        byte_(0)
+        byte(0)
     {
     }
 
@@ -24,7 +24,7 @@ namespace logicalaccess
         boost::property_tree::ptree node;
 
         node.put("Page", page);
-        node.put("Byte", byte_);
+        node.put("Byte", byte);
 
         parentNode.add_child(getDefaultXmlNodeName(), node);
     }
@@ -32,7 +32,7 @@ namespace logicalaccess
     void TopazLocation::unSerialize(boost::property_tree::ptree& node)
     {
         page = node.get_child("Page").get_value<int>();
-        byte_ = node.get_child("Byte").get_value<int>();
+        byte = node.get_child("Byte").get_value<int>();
     }
 
     std::string TopazLocation::getDefaultXmlNodeName() const
@@ -54,6 +54,6 @@ namespace logicalaccess
             return false;
 
         return (page == mLocation->page
-            && byte_ == mLocation->byte_);
+            && byte == mLocation->byte);
     }
 }

@@ -98,7 +98,7 @@ namespace logicalaccess
         /**
          * \brief The byte offset.
          */
-        unsigned int byte_;
+        unsigned int byte;
 
         /**
          * \brief The file security level

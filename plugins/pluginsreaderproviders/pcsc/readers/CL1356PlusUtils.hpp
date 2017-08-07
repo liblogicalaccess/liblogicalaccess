@@ -8,7 +8,7 @@ namespace logicalaccess
  * Utilities to parse response from a
  * CL1356Plus reader.
  */
-class LIBLOGICALACCESS_API CL1356PlusUtils
+class CL1356PlusUtils
 {
       public:
 

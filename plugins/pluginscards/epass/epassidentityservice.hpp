@@ -7,7 +7,7 @@ namespace logicalaccess
 {
 class EPassChip;
 class EPassAccessInfo;
-class LIBLOGICALACCESS_API EPassIdentityService : public IdentityCardService
+class EPassIdentityService : public IdentityCardService
 {
   public:
     EPassIdentityService(const std::shared_ptr<Chip> &chip);

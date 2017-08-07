@@ -20,7 +20,7 @@ class LIBLOGICALACCESS_API IslogKeyServer
     IslogKeyServer(const IslogKeyServer &) = delete;
     //    IslogKeyServer(IslogKeyServer &&) = default;
 
-    struct LIBLOGICALACCESS_API IKSConfig
+    struct IKSConfig
     {
         IKSConfig() = default;
         IKSConfig(const std::string &ip, uint16_t port,

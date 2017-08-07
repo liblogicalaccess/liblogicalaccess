@@ -17,10 +17,8 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API ComputerMemoryKeyStorage : public KeyStorage
     {
     public:
-#ifndef SWIG
         using XmlSerializable::serialize;
         using XmlSerializable::unSerialize;
-#endif
 
         /**
         * \brief Constructor.

@@ -34,10 +34,8 @@ namespace logicalaccess
         virtual ~MifareSpringCardCommands();
 
     public:
- #ifndef SWIG
         using MifarePCSCCommands::authenticate;
         using MifarePCSCCommands::loadKey;
- #endif
 
         /**
          * \brief Load a key to the reader.
@@ -47,7 +45,7 @@ namespace logicalaccess
          * \param vol Use volatile memory.
          * \return true on success, false otherwise.
          */
-        virtual bool loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol = false) override;
+        bool loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol = false);
 
         /**
          * \brief Authenticate a block, given a key number.
@@ -55,7 +53,7 @@ namespace logicalaccess
          * \param keyno The key number, previously loaded with Mifare::loadKey().
          * \param keytype The key type.
          */
-        virtual void authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype) override;
+        void authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype);
 
 		/**
 		* \brief Store block value to volatile memory.

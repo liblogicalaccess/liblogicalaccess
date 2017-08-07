@@ -4,7 +4,7 @@
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API STidPRGBufferParser : public CircularBufferParser
+class STidPRGBufferParser : public CircularBufferParser
 {
 
   public:

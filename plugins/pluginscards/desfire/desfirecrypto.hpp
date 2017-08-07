@@ -329,6 +329,13 @@ namespace logicalaccess
         void setCryptoContext(std::vector<unsigned char> identifier);
 
         /**
+         * \brief Get the diversify buffer.
+         * \param diversify The diversify buffer.
+         * \return True on success, false otherwise.
+         */
+        bool getDiversify(unsigned char* diversify);
+
+        /**
          * \brief Get a key in memory from the current application.
          * \param keyno The key number.
          * \return The key.

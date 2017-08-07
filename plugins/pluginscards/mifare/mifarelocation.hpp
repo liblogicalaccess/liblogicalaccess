@@ -76,7 +76,7 @@ namespace logicalaccess
         /**
          * \brief The byte.
          */
-        int byte_;
+        int byte;
 
         /**
          * \brief MAD is used ?

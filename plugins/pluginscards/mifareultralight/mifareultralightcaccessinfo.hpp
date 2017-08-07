@@ -18,10 +18,9 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API MifareUltralightCAccessInfo : public MifareUltralightAccessInfo
     {
     public:
-#ifndef SWIG
         using XmlSerializable::serialize;
         using XmlSerializable::unSerialize;
-#endif
+
         /**
          * \brief Constructor.
          */

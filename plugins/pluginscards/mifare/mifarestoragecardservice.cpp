@@ -115,7 +115,7 @@ namespace logicalaccess
             mLocation->block = 0;
         }
 
-        size_t totaldatalen = data.size() + (mLocation->block * 16) + mLocation->byte_;
+        size_t totaldatalen = data.size() + (mLocation->block * 16) + mLocation->byte;
         int nbSectors = 0;
         size_t totalbuflen = 0;
         while (totalbuflen < totaldatalen)
@@ -134,7 +134,7 @@ namespace logicalaccess
             size_t buflen = totalbuflen - (mLocation->block * 16);
             std::vector<unsigned char> dataSectors;
             dataSectors.resize(buflen, 0x00);
-			std::copy(data.begin(), data.end(), dataSectors.begin() + mLocation->byte_);
+			std::copy(data.begin(), data.end(), dataSectors.begin() + mLocation->byte);
 
             if (writeAidToMad)
             {
@@ -243,7 +243,7 @@ namespace logicalaccess
             mLocation->block = 0;
         }
 
-        size_t totaldatalen = length + (mLocation->block * 16) + mLocation->byte_;
+        size_t totaldatalen = length + (mLocation->block * 16) + mLocation->byte;
         int nbSectors = 0;
         size_t totalbuflen = 0;
         while (totalbuflen < totaldatalen)
@@ -265,9 +265,9 @@ namespace logicalaccess
 				dataSectors = getMifareChip()->getMifareCommands()->readSector(mLocation->sector, mLocation->block, mAiToUse->keyA, mAiToUse->keyB, mAiToUse->sab);
             }
 
-            if (length <= (dataSectors.size() - mLocation->byte_))
+            if (length <= (dataSectors.size() - mLocation->byte))
             {
-				ret.insert(ret.end(), dataSectors.begin() + mLocation->byte_, dataSectors.begin() + mLocation->byte_ + length);
+				ret.insert(ret.end(), dataSectors.begin() + mLocation->byte, dataSectors.begin() + mLocation->byte + length);
             }
         }
 		return ret;
