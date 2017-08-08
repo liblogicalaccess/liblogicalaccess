@@ -837,6 +837,7 @@ namespace logicalaccess
         rndAB.insert(rndAB.end(), rndB1.begin(), rndB1.end());
 
         std::vector<unsigned char> ret;
+		iv = openssl::DESInitializationVector::createFromData(d_lastIV);
         d_cipher->cipher(rndAB, ret, deskey, iv, false);
         d_lastIV = std::vector<unsigned char>(ret.end() - randomlen, ret.end());
 
