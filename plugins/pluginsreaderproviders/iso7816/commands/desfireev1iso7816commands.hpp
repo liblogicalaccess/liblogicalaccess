@@ -22,7 +22,7 @@ namespace logicalaccess
      */
     class LIBLOGICALACCESS_API DESFireEV1ISO7816Commands : public DESFireISO7816Commands
 #ifndef SWIG
-	, public DESFireEV1Commands, public ISO7816ISO7816Commands
+	, public virtual DESFireEV1Commands, public ISO7816ISO7816Commands
 #endif
     {
     public:

@@ -61,6 +61,7 @@
 #include "epass/epasschip.hpp"
 #include "topaz/topazchip.hpp"
 #include "generictag/generictagchip.hpp"
+#include "desfire/desfireev2chip.hpp"
 
 #include "iso7816/commands/samiso7816resultchecker.hpp"
 #include "iso7816/commands/desfireiso7816resultchecker.hpp"
@@ -711,6 +712,14 @@ namespace logicalaccess
                     LOG(LogLevel::WARNINGS) << "Cannot found HIDiClass commands.";
                 }
             }
+			else if (type == CHIP_DESFIRE_EV2)
+			{
+				commands = LibraryManager::getInstance()->getCommands("DESFireEV2ISO7816");
+				if (!commands)
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Could not load DESFireEV2ISO7816 Commands.");
+				std::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(getSAMChip());
+				resultChecker.reset(new DESFireISO7816ResultChecker());
+			}
             else if (type == CHIP_DESFIRE_EV1)
             {
                 commands.reset(new DESFireEV1ISO7816Commands());
@@ -1355,14 +1364,18 @@ bool PCSCReaderUnit::process_insertion(const std::string &cardType,
 
 std::shared_ptr<Chip> PCSCReaderUnit::adjustChip(std::shared_ptr<Chip> c)
 {
-    // DESFire adjustment. Check maybe it's DESFireEV1. Check random uid.
+    // DESFire adjustment. Check maybe it's DESFireEV1 or EV2. Check random uid.
     // Adjust cryptographic context.
 	if (c->getCardType() == CHIP_DESFIRE && d_card_type == CHIP_UNKNOWN)
     {
         if (createCardProbe()->is_desfire_ev1())
 			c = createChip(CHIP_DESFIRE_EV1);
+		else if (createCardProbe()->is_desfire_ev2())
+			c = createChip(CHIP_DESFIRE_EV2);
     }
-	if (c->getCardType() == CHIP_DESFIRE || c->getCardType() == CHIP_DESFIRE_EV1)
+	if (c->getCardType() == CHIP_DESFIRE
+		|| c->getCardType() == CHIP_DESFIRE_EV1
+		|| c->getCardType() == CHIP_DESFIRE_EV2)
     {
         ByteVector uid;
         if (createCardProbe()->has_desfire_random_uid(&uid))

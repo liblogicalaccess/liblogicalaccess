@@ -12,7 +12,9 @@ class LIBLOGICALACCESS_API PCSCCardProbe : public CardProbe
   public:
     virtual bool is_desfire(std::vector<uint8_t> *uid = nullptr) override;
 
-    virtual bool is_desfire_ev1(std::vector<uint8_t> *uid = nullptr) override;
+	virtual bool is_desfire_ev1(std::vector<uint8_t> *uid = nullptr) override;
+
+	virtual bool is_desfire_ev2(std::vector<uint8_t> *uid = nullptr) override;
 
 	virtual bool is_mifare_ultralight_c() override;
 
@@ -22,5 +24,8 @@ class LIBLOGICALACCESS_API PCSCCardProbe : public CardProbe
 
   protected:
     void reset();
+
+	private:
+		unsigned char get_desfire_version(std::vector<uint8_t> *uid = nullptr);
 };
 }

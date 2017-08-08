@@ -27,6 +27,12 @@ namespace logicalaccess
         DESFireEV1Chip();
 
         /**
+         * \brief Constructor.
+         * \param ct The card type.
+         */
+        DESFireEV1Chip(std::string ct);
+
+        /**
          * \brief Destructor.
          */
         virtual ~DESFireEV1Chip();
