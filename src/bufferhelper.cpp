@@ -228,6 +228,12 @@ namespace logicalaccess
         buffer.push_back(static_cast<unsigned char>((value & 0xff000000) >> 24));
     }
 
+	void BufferHelper::setUInt16(std::vector<unsigned char>& buffer, const unsigned long& value)
+	{
+		buffer.push_back(static_cast<unsigned char>(value & 0xff));
+		buffer.push_back(static_cast<unsigned char>((value & 0xff00) >> 8));
+	}
+
     void BufferHelper::setUInt32(std::vector<unsigned char>& buffer, const unsigned long& value)
     {
         buffer.push_back(static_cast<unsigned char>(value & 0xff));
@@ -235,6 +241,13 @@ namespace logicalaccess
         buffer.push_back(static_cast<unsigned char>((value & 0xff0000) >> 16));
         buffer.push_back(static_cast<unsigned char>((value & 0xff000000) >> 24));
     }
+
+	unsigned long BufferHelper::getUInt16(const std::vector<unsigned char>& buffer, size_t& offset)
+	{
+		unsigned long tmp = static_cast<unsigned long>(buffer[offset++]);
+		tmp |= static_cast<unsigned long>(buffer[offset++]) << 8;
+		return tmp;
+	}
 
     unsigned long BufferHelper::getUInt32(const std::vector<unsigned char>& buffer, size_t& offset)
     {

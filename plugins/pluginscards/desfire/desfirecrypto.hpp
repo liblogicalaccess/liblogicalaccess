@@ -22,8 +22,9 @@ namespace logicalaccess
      */
     typedef enum
     {
-        CM_LEGACY = 0x00,
-        CM_ISO = 0x01
+        CM_LEGACY = 0x00, // D40
+        CM_ISO = 0x01, // EV1
+		CM_EV2 = 0x02 // EV2
     }CryptoMethod;
 
     /**
