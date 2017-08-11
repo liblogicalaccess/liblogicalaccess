@@ -1036,9 +1036,9 @@ namespace logicalaccess
 		if (err == 0x00 && result.size() > 2 && (mode == CM_MAC || mode == CM_ENCRYPT || crypto->d_auth_method != CM_LEGACY))
         {
             result.resize(result.size() - 2);
-			if (crypto->verifyMAC(true, result))
+			if (!crypto->verifyMAC(true, result))
             {
-                //THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC verification failed.");
+                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC verification failed.");
             }
         }
     }
