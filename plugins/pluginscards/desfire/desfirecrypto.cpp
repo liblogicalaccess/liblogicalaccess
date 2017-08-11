@@ -43,18 +43,12 @@ namespace logicalaccess
     {
     }
 
-    void DESFireCrypto::decipherData1(size_t length, const std::vector<unsigned char>& data)
-    {
-        initBuf(length);
-        d_buf.insert(d_buf.end(), data.begin(), data.end());
-    }
-
-    void DESFireCrypto::decipherData2(const std::vector<unsigned char>& data)
+    void DESFireCrypto::appendDecipherData(const std::vector<unsigned char>& data)
     {
         d_buf.insert(d_buf.end(), data.begin(), data.end());
     }
 
-    std::vector<unsigned char> DESFireCrypto::decipherData(size_t length)
+	std::vector<unsigned char> DESFireCrypto::desfireDecrypt(size_t length)
     {
         std::vector<unsigned char> ret;
 
@@ -70,7 +64,7 @@ namespace logicalaccess
         return ret;
     }
 
-    void DESFireCrypto::initBuf(size_t /*length*/)
+    void DESFireCrypto::initBuf()
     {
         d_buf.clear();
         d_last_left.clear();
@@ -123,7 +117,7 @@ namespace logicalaccess
         d_buf.insert(d_buf.end(), data.begin(), data.end());
     }
 
-    std::vector<unsigned char> DESFireCrypto::generateMAC(const std::vector<unsigned char>& data)
+	std::vector<unsigned char> DESFireCrypto::generateMAC(unsigned char cmd, const std::vector<unsigned char>& data)
     {
         std::vector<unsigned char> ret;
         bufferingForGenerateMAC(data);
@@ -544,7 +538,7 @@ namespace logicalaccess
         return sam_CBC_send(key, std::vector<unsigned char>(), data);
     }
 
-    std::vector<unsigned char> DESFireCrypto::desfire_decrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, size_t datalen)
+	ByteVector DESFireCrypto::desfire_decrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, size_t datalen)
     {
         std::vector<unsigned char> ret;
         size_t ll = 0;

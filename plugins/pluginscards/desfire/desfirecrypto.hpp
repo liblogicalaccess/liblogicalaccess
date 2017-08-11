@@ -44,24 +44,17 @@ namespace logicalaccess
         virtual ~DESFireCrypto();
 
         /**
-         * \brief Decipher data step 1.
-         * \param length The total buffer length of all steps
-         * \param data The data buffer
-         */
-        void decipherData1(size_t length, const std::vector<unsigned char>& data);
-
-        /**
          * \brief Decipher data step 2.
          * \param data The data buffer
          */
-        void decipherData2(const std::vector<unsigned char>& data);
+		void appendDecipherData(const std::vector<unsigned char>& data);
 
         /**
          * \brief Get the deciphered data into a buffer.
          * \param length The excepted deciphared data buffer length, or 0 to automatic.
          * \return data The deciphered data buffer
          */
-        std::vector<unsigned char> decipherData(size_t length);
+        virtual std::vector<unsigned char> desfireDecrypt(size_t length);
 
         /**
          * \brief Verify MAC into the buffer.
@@ -69,7 +62,7 @@ namespace logicalaccess
          * \param data The data buffer
          * \return True on success, false otherwise.
          */
-        bool verifyMAC(bool end, const std::vector<unsigned char>& data);
+		virtual bool verifyMAC(bool end, const std::vector<unsigned char>& data);
 
         /**
          * \brief Add the buffer to the temporised total buffer.
@@ -82,7 +75,7 @@ namespace logicalaccess
          * \param data The data buffer part
          * \return The MACed data buffer
          */
-        std::vector<unsigned char> generateMAC(const std::vector<unsigned char>& data);
+		virtual ByteVector generateMAC(unsigned char cmd, const std::vector<unsigned char>& data);
 
         /**
          * \brief Encrypt a buffer for the DESFire card.
@@ -90,7 +83,7 @@ namespace logicalaccess
          * \param param The parameters.
          * \return The encrypted data buffer
          */
-        std::vector<unsigned char> desfireEncrypt(const std::vector<unsigned char>& data, const std::vector<unsigned char>& param = std::vector<unsigned char>(), bool calccrc = true);
+		virtual ByteVector desfireEncrypt(const std::vector<unsigned char>& data, const std::vector<unsigned char>& param = std::vector<unsigned char>(), bool calccrc = true);
 
         /**
          * \brief Encipher a data buffer part, and temporised it.
@@ -203,7 +196,7 @@ namespace logicalaccess
          * \param data The data source buffer to decrypted
          * \return The data decrypted buffer
          */
-        std::vector<unsigned char> desfire_decrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, size_t datalen);
+		ByteVector desfire_decrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, size_t datalen);
 
         /**
          * \brief Decrypt and verify data part of the decrypted communication mode for ReadData / ReadRecords.
@@ -295,7 +288,7 @@ namespace logicalaccess
          * \brief Init buffer for temporised data.
          * \param length The data length.
          */
-        void initBuf(size_t length);
+        void initBuf();
 
         /**
          * \brief Get key diversified.

@@ -80,7 +80,9 @@ namespace logicalaccess
 
         transmit(DF_INS_SELECT_APPLICATION, command);
 
-        /* if (getSAMChip())
+        /* 
+         * We directly select the keyentry to use so no need to select the app 
+          if (getSAMChip())
          {
          LOG(LogLevel::INFOS) << "SelectApplication on SAM chip...");
          DESFireLocation::convertUIntToAid(aid, samaid);
@@ -320,14 +322,15 @@ namespace logicalaccess
         {
             if (mode == CM_ENCRYPT)
             {
-				crypto->decipherData1(length, firstMsg);
+				crypto->initBuf();
+				crypto->appendDecipherData(firstMsg);
             }
             else
             {
                 ret = data = firstMsg;
                 if (mode == CM_MAC)
                 {
-					crypto->initBuf(length + 4);
+					crypto->initBuf();
                 }
             }
         }
@@ -348,7 +351,7 @@ namespace logicalaccess
 
             if (mode == CM_ENCRYPT)
             {
-				crypto->decipherData2(data);
+				crypto->appendDecipherData(data);
             }
             else
             {
@@ -374,7 +377,7 @@ namespace logicalaccess
             break;
         case CM_ENCRYPT:
         {
-			ret = crypto->decipherData(length);
+			ret = crypto->desfireDecrypt(length);
         }
             break;
         case CM_UNKNOWN:
@@ -391,7 +394,7 @@ namespace logicalaccess
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
         std::vector<unsigned char> edata, command;
 
-		crypto->initBuf(data.size());
+		crypto->initBuf();
 
         if (data.size() <= DESFIRE_CLEAR_DATA_LENGTH_CHUNK)
         {
@@ -405,7 +408,7 @@ namespace logicalaccess
 
             case CM_MAC:
             {
-				std::vector<unsigned char> mac = crypto->generateMAC(data);
+				std::vector<unsigned char> mac = crypto->generateMAC(cmd, data);
                 edata = data;
                 edata.insert(edata.end(), mac.begin(), mac.end());
             }
@@ -468,7 +471,7 @@ namespace logicalaccess
                     edata = std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize);
                     if (pos + pkSize == data.size())
                     {
-						std::vector<unsigned char> mac = crypto->generateMAC(edata);
+						std::vector<unsigned char> mac = crypto->generateMAC(cmd, edata);
                         edata.insert(edata.end(), mac.begin(), mac.end());
                     }
                     else

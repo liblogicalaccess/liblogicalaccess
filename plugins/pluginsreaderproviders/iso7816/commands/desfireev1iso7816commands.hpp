@@ -298,6 +298,15 @@ namespace logicalaccess
 
     protected:
 
+		/**
+		* \brief Generic method to send read file cmd.
+		* \param cmd The command to send
+		* \param data The command parameters
+		* \param mode The communication mode
+		* \return The data buffer.
+		*/
+		virtual std::vector<unsigned char> handleReadCmd(unsigned char cmd, const std::vector<unsigned char>& data, EncryptionMode mode);
+
         /**
          * \brief Generic method to read data from a file.
          * \param err The last error code
