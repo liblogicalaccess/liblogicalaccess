@@ -321,7 +321,6 @@ namespace logicalaccess
          * \brief Generic method to write data into a file.
          * \param cmd The command to send
          * \param parameters The command parameters
-         * \param paramLength The parameters length
          * \param data The data buffer
          * \param mode The communication mode
          */
