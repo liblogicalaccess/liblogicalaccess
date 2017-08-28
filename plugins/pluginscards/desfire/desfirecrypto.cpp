@@ -1024,16 +1024,21 @@ namespace logicalaccess
 
         if (datalen == 0)
         {
+			// Lets analyse the padding and find crc ourself
             ll = decdata.size() - 1;
 
-            while (decdata[ll] == 0x00)
+			while (ll > 0 && decdata[ll] == 0x00)
             {
                 ll--;
             }
 
             EXCEPTION_ASSERT_WITH_LOG(decdata[ll] == 0x80, LibLogicalAccessException, "Incorrect FLT result");
 
-            ll -= 4;
+			decdata[ll] = 0x00; // Remove 0x80 for padding check
+
+            ll -= 4; // Move to crc start
+
+			EXCEPTION_ASSERT_WITH_LOG(ll >= 0, LibLogicalAccessException, "Cannot find the crc in the encrypted data");
         }
         else
         {
