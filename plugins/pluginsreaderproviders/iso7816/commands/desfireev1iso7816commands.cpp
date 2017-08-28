@@ -1094,7 +1094,7 @@ namespace logicalaccess
         unsigned char uf = static_cast<unsigned char>(fileno);
         command.insert(command.begin(), uf);
 
-		if (crypto->d_auth_method == CM_LEGACY && plain)
+		if (crypto->d_auth_method == CM_LEGACY || plain)
         {
             transmit_plain(DF_INS_CHANGE_FILE_SETTINGS, command);
         }
