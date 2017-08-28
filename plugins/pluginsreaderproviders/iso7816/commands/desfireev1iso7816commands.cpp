@@ -98,7 +98,7 @@ namespace logicalaccess
 
         for (unsigned int i = 0; i < fullr.size(); i += 2)
         {
-            unsigned short fid = static_cast<unsigned short>((fullr[i] << 8) | fullr[i + 1]);
+            unsigned short fid = static_cast<unsigned short>((fullr[i + 1] << 8) | fullr[i]);
             fileids.push_back(fid);
         }
 
@@ -116,8 +116,8 @@ namespace logicalaccess
 
         if (isoFID != 0x00)
         {
+			command.push_back(static_cast<unsigned char>((isoFID & 0xff00) >> 8));
             command.push_back(static_cast<unsigned char>(isoFID & 0xff));
-            command.push_back(static_cast<unsigned char>((isoFID & 0xff00) >> 8));
         }
         if (isoDFName.size() > 0)
         {
@@ -193,8 +193,8 @@ namespace logicalaccess
         command.push_back(static_cast<unsigned char>(fileno));
         if (isoFID != 0)
         {
-            command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(isoFID & 0xff00) >> 8));
-            command.push_back(static_cast<unsigned char>(isoFID & 0xff));
+			command.push_back(static_cast<unsigned char>(isoFID & 0xff));
+			command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(isoFID & 0xff00) >> 8));
         }
         command.push_back(static_cast<unsigned char>(comSettings));
         BufferHelper::setUShort(command, ar);
@@ -213,8 +213,8 @@ namespace logicalaccess
         command.push_back(static_cast<unsigned char>(fileno));
         if (isoFID != 0)
         {
-            command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(isoFID & 0xff00) >> 8));
-            command.push_back(static_cast<unsigned char>(isoFID & 0xff));
+			command.push_back(static_cast<unsigned char>(isoFID & 0xff));
+			command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(isoFID & 0xff00) >> 8));
         }
         command.push_back(static_cast<unsigned char>(comSettings));
         BufferHelper::setUShort(command, ar);
@@ -236,8 +236,8 @@ namespace logicalaccess
         command.push_back(static_cast<unsigned char>(fileno));
         if (isoFID != 0)
         {
-            command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(isoFID & 0xff00) >> 8));
-            command.push_back(static_cast<unsigned char>(isoFID & 0xff));
+			command.push_back(static_cast<unsigned char>(isoFID & 0xff));
+			command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(isoFID & 0xff00) >> 8));
         }
         command.push_back(static_cast<unsigned char>(comSettings));
         BufferHelper::setUShort(command, ar);
