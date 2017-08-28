@@ -64,7 +64,7 @@ namespace logicalaccess
         do
         {
             std::vector<unsigned char> r = transmit(cmd);
-            err = r[0];
+            err = r.back();
             r.resize(r.size() - 2);
             cmd = DF_INS_ADDITIONAL_FRAME;
 
@@ -89,7 +89,7 @@ namespace logicalaccess
         do
         {
             std::vector<unsigned char> r = transmit(cmd);
-            err = r[0];
+			err = r.back();
             r.resize(r.size() - 2);
             cmd = DF_INS_ADDITIONAL_FRAME;
 
@@ -1028,7 +1028,7 @@ namespace logicalaccess
 				std::vector<unsigned char> data = result;
 				unsigned char err = data.back();
 				data.resize(data.size() - 2);
-				data = handleReadData(err, data, (int)(data.size()), mode);
+				data = handleReadData(err, data, static_cast<int>(data.size()), mode);
 				ret.insert(ret.end(), data.begin(), data.end());
 			}
 		}
@@ -1058,14 +1058,18 @@ namespace logicalaccess
     {
         std::vector<unsigned char> command;
 
-        command.push_back(fileno);
-        command.insert(command.end(), offset, offset + 3);
-        command.insert(command.end(), length, length + 3);
+		command.push_back(fileno);
+		command.push_back(static_cast<unsigned char>(offset & 0xff));
+		command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(offset & 0xff00) >> 8));
+		command.push_back(static_cast<unsigned char>(static_cast<unsigned int>(offset & 0xff0000) >> 16));
+		command.push_back(static_cast<unsigned char>(length & 0xff));
+		command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(length & 0xff00) >> 8));
+		command.push_back(static_cast<unsigned char>(static_cast<unsigned int>(length & 0xff0000) >> 16));
 
 		std::vector<unsigned char> result = handleReadCmd(DF_INS_READ_RECORDS, command, mode);
         unsigned char err = result.back();
         result.resize(result.size() - 2);
-        result = handleReadData(err, result, length, mode);
+		result = handleReadData(err, result, 0, mode);
 
         return result;
     }
