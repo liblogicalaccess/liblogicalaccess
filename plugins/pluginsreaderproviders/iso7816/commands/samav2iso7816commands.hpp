@@ -57,6 +57,12 @@ namespace logicalaccess
 
         virtual std::vector<unsigned char> dumpSecretKey(unsigned char keyno, unsigned char keyversion, std::vector<unsigned char> divInpu);
 
+		virtual void activateOfflineKey(unsigned char keyno, unsigned char keyversion, std::vector<unsigned char> divInpu);
+
+		virtual std::vector<unsigned char> decipherOfflineData(std::vector<unsigned char> data);
+
+		virtual std::vector<unsigned char> encipherOfflineData(std::vector<unsigned char> data);
+
     protected:
 
         void generateSessionKey(std::vector<unsigned char> rnd1, std::vector<unsigned char> rnd2);

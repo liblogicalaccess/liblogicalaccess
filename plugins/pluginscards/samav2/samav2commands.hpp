@@ -16,6 +16,12 @@ namespace logicalaccess
     {
     public:
         virtual std::vector<unsigned char> dumpSecretKey(unsigned char keyno, unsigned char keyversion, std::vector<unsigned char> divInpu) = 0;
+
+		virtual void activateOfflineKey(unsigned char keyno, unsigned char keyversion, std::vector<unsigned char> divInpu) = 0;
+
+		virtual std::vector<unsigned char> decipherOfflineData(std::vector<unsigned char> data) = 0;
+
+		virtual std::vector<unsigned char> encipherOfflineData(std::vector<unsigned char> data) = 0;
     };
 }
 

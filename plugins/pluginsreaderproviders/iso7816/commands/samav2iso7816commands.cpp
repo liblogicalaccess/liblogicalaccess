@@ -524,4 +524,46 @@ namespace logicalaccess
 
         return std::vector<unsigned char>(result.begin(), result.end() - 2);
     }
+
+	void SAMAV2ISO7816Commands::activateOfflineKey(unsigned char keyno, unsigned char keyversion, std::vector<unsigned char> divInpu)
+    {
+		std::vector<unsigned char> activateOfflineKey = { 0x80, 0x01, static_cast<unsigned char>(divInpu.size() > 0x00), 0x00,
+			static_cast<unsigned char>(0x02 + divInpu.size()),
+			keyno,
+			keyversion
+		};
+		activateOfflineKey.insert(activateOfflineKey.end(), divInpu.begin(), divInpu.end());
+
+		transmit(activateOfflineKey);
+    }
+
+	std::vector<unsigned char> SAMAV2ISO7816Commands::decipherOfflineData(std::vector<unsigned char> data)
+    {
+		std::vector<unsigned char> decipherOfflineData = { 0x80, 0x0d, 0x00, 0x00,
+			static_cast<unsigned char>(data.size()),
+			0x00,
+		};
+		decipherOfflineData.insert(decipherOfflineData.end() - 1, data.begin(), data.end());
+
+		auto result = transmit(decipherOfflineData);
+		EXCEPTION_ASSERT_WITH_LOG(result.size() >= 2, LibLogicalAccessException,
+			"Response is too short");
+		result.resize(result.size() - 2);
+		return result;
+    }
+
+	std::vector<unsigned char> SAMAV2ISO7816Commands::encipherOfflineData(std::vector<unsigned char> data)
+    {
+		std::vector<unsigned char> encipherOfflineData = { 0x80, 0x0e, 0x00, 0x00,
+			static_cast<unsigned char>(data.size()),
+			0x00,
+		};
+		encipherOfflineData.insert(encipherOfflineData.end() - 1, data.begin(), data.end());
+
+		auto result = transmit(encipherOfflineData);
+		EXCEPTION_ASSERT_WITH_LOG(result.size() >= 2, LibLogicalAccessException,
+			"Response is too short");
+		result.resize(result.size() - 2);
+		return result;
+    }
 }
