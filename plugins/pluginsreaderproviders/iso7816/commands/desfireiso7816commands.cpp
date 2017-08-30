@@ -78,7 +78,7 @@ namespace logicalaccess
         std::vector<unsigned char> command;//, samaid;
         DESFireLocation::convertUIntToAid(aid, command);
 
-        transmit(DF_INS_SELECT_APPLICATION, command);
+        DESFireISO7816Commands::transmit(DF_INS_SELECT_APPLICATION, command);
 
         /* 
          * We directly select the keyentry to use so no need to select the app 
