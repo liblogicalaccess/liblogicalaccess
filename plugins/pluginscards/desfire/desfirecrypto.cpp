@@ -795,7 +795,7 @@ namespace logicalaccess
 
                 encCryptogram.push_back(DF_INS_CHANGE_KEY);
                 encCryptogram.push_back(keyno);
-                cryptogram = desfire_iso_encrypt(d_sessionKey, newkeydiv, d_cipher, d_block_size, encCryptogram);
+                cryptogram = desfireEncrypt(newkeydiv, encCryptogram);
             }
         }
 

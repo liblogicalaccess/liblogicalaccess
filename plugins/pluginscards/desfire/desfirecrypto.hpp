@@ -318,7 +318,7 @@ namespace logicalaccess
          * \param diversify The diversify buffer, NULL if no diversification is needed
          * \return The change key cryptogram.
          */
-        std::vector<unsigned char> changeKey_PICC(unsigned char keyno, std::shared_ptr<DESFireKey> newKey, std::vector<unsigned char> diversify);
+        virtual std::vector<unsigned char> changeKey_PICC(unsigned char keyno, std::shared_ptr<DESFireKey> newKey, std::vector<unsigned char> diversify);
 
         void setCryptoContext(std::vector<unsigned char> identifier);
 
