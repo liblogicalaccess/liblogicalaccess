@@ -1186,8 +1186,10 @@ namespace logicalaccess
             // Don't check CMAC if master key.
             if (dd.size() > 0 && keyno != 0)
             {
-				std::vector<unsigned char> CMAC = crypto->desfire_cmac(std::vector<unsigned char>(&err, &err + 1));
-                EXCEPTION_ASSERT_WITH_LOG(dd == CMAC, LibLogicalAccessException, "Wrong CMAC.");
+				if (!crypto->verifyMAC(true, dd))
+				{
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC verification failed.");
+				}
             }
         }
     }
