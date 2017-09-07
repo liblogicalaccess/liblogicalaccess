@@ -853,19 +853,21 @@ namespace logicalaccess
 
 		size_t DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK = (DESFIREEV1_CLEAR_DATA_LENGTH_CHUNK - 8);
 
-		std::vector<unsigned char> cmdBuffer, result, edata;
+		std::vector<unsigned char> cmdBuffer, result;
 		cmdBuffer.insert(cmdBuffer.end(), parameters.begin(), parameters.end());
 
 		switch (mode)
 		{
 		case CM_PLAIN:
 		{
-			cmdBuffer.insert(cmdBuffer.end(), data.begin(), data.end());
+			//Always calcul a MAC even if not used
 			std::vector<unsigned char> apdu_command;
 			apdu_command.push_back(cmd);
 			apdu_command.insert(apdu_command.end(), parameters.begin(), parameters.end());
 			apdu_command.insert(apdu_command.end(), data.begin(), data.end());
 			crypto->generateMAC(cmd, apdu_command);
+
+			cmdBuffer.insert(cmdBuffer.end(), data.begin(), data.end());
 		}
 		break;
 
@@ -876,11 +878,9 @@ namespace logicalaccess
 			gdata.insert(gdata.end(), parameters.begin(), parameters.end());
 			gdata.insert(gdata.end(), data.begin(), data.end());
 			auto mac = crypto->generateMAC(cmd, gdata);
-			edata = data;
 
-			edata.insert(edata.end(), mac.begin(), mac.end());
-
-			cmdBuffer.insert(cmdBuffer.end(), edata.begin(), edata.end());
+			cmdBuffer.insert(cmdBuffer.end(), data.begin(), data.end());
+			cmdBuffer.insert(cmdBuffer.end(), mac.begin(), mac.end());
 		}
 		break;
 
@@ -889,7 +889,7 @@ namespace logicalaccess
 			std::vector<unsigned char> encparameters;
 			encparameters.push_back(cmd);
 			encparameters.insert(encparameters.end(), parameters.begin(), parameters.end());
-			edata = crypto->desfireEncrypt(data, encparameters);
+			auto edata = crypto->desfireEncrypt(data, encparameters);
 
 			cmdBuffer.insert(cmdBuffer.end(), edata.begin(), edata.end());
 		}
@@ -924,7 +924,7 @@ namespace logicalaccess
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, msgtmp);
 		}
 
-		if (result.size() > 2 && (mode == CM_MAC || mode == CM_ENCRYPT))
+		if (result.size() > 2)
 		{
 			result.resize(result.size() - 2);
 			if (!crypto->verifyMAC(true, result))

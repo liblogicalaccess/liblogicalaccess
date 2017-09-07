@@ -392,7 +392,6 @@ namespace logicalaccess
 	void DESFireISO7816Commands::handleWriteData(unsigned char cmd, const std::vector<unsigned char>& parameters, const std::vector<unsigned char>& data, EncryptionMode mode)
 	{
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
-		std::vector<unsigned char> edata;
 
 		crypto->initBuf();
 
@@ -403,23 +402,21 @@ namespace logicalaccess
 		{
 		case CM_PLAIN:
 		{
-			edata = data;
-			cmdBuffer.insert(cmdBuffer.end(), edata.begin(), edata.end());
+			cmdBuffer.insert(cmdBuffer.end(), data.begin(), data.end());
 		}
 		break;
 
 		case CM_MAC:
 		{
 			std::vector<unsigned char> mac = crypto->generateMAC(cmd, data);
-			edata = data;
-			edata.insert(edata.end(), mac.begin(), mac.end());
-			cmdBuffer.insert(cmdBuffer.end(), edata.begin(), edata.end());
+			cmdBuffer.insert(cmdBuffer.end(), data.begin(), data.end());
+			cmdBuffer.insert(cmdBuffer.end(), mac.begin(), mac.end());
 		}
 		break;
 
 		case CM_ENCRYPT:
 		{
-			edata = crypto->desfireEncrypt(data);
+			auto edata = crypto->desfireEncrypt(data);
 			cmdBuffer.insert(cmdBuffer.end(), edata.begin(), edata.end());
 		}
 		break;
