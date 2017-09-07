@@ -68,6 +68,9 @@ namespace logicalaccess
             r.resize(r.size() - 2);
             cmd = DF_INS_ADDITIONAL_FRAME;
 
+			if (r.size() == 0)
+				return dfnames;
+
             DFName dfname;
             memset(&dfname, 0x00, sizeof(dfname));
             dfname.AID = DESFireLocation::convertAidToUInt(r);
@@ -132,6 +135,9 @@ namespace logicalaccess
     {
         std::vector<unsigned char> r = transmit(DF_INS_GET_KEY_SETTINGS);
         r.resize(r.size() - 2);
+
+		if (r.size() == 0)
+			THROW_EXCEPTION_WITH_LOG(std::runtime_error, "getKeySettings did not return proper informations");
 
         settings = static_cast<DESFireKeySettings>(r[0]);
         maxNbKeys = r[1] & 0x0F;
@@ -944,7 +950,7 @@ namespace logicalaccess
         command.insert(command.end(), edata.begin(), edata.end());
 
         std::vector<unsigned char> result = transmit_plain(cmd, command);
-        unsigned char err = result[result.size() - 1];
+        unsigned char err = result.back();
         if (data.size() > DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK)
         {
             size_t pos = DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK;
@@ -1248,6 +1254,9 @@ namespace logicalaccess
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 
         result = transmit(DF_INS_GET_APPLICATION_IDS);
+
+		if (result.size() < 2)
+			THROW_EXCEPTION_WITH_LOG(std::runtime_error, "getApplicationIDs did not return proper informations");
 
         while (result[result.size() - 1] == DF_INS_ADDITIONAL_FRAME)
         {
