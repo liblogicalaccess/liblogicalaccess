@@ -949,7 +949,7 @@ namespace logicalaccess
 				std::vector<unsigned char> data = result;
 				unsigned char err = data.back();
 				data.resize(data.size() - 2);
-				data = handleReadData(err, data, static_cast<int>(data.size()), mode);
+				data = handleReadData(err, data, 0, mode);
 				ret.insert(ret.end(), data.begin(), data.end());
 			}
 		}
