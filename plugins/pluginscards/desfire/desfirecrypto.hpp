@@ -65,12 +65,6 @@ namespace logicalaccess
 		virtual bool verifyMAC(bool end, const std::vector<unsigned char>& data);
 
         /**
-         * \brief Add the buffer to the temporised total buffer.
-         * \param data The data buffer part
-         */
-        void bufferingForGenerateMAC(const std::vector<unsigned char>& data);
-
-        /**
          * \brief Generate MAC for the total buffer.
          * \param data The data buffer part
          * \return The MACed data buffer
@@ -84,14 +78,6 @@ namespace logicalaccess
          * \return The encrypted data buffer
          */
 		virtual ByteVector desfireEncrypt(const std::vector<unsigned char>& data, const std::vector<unsigned char>& param = std::vector<unsigned char>(), bool calccrc = true);
-
-        /**
-         * \brief Encipher a data buffer part, and temporised it.
-         * \param end True if it's the last buffer part.
-         * \param data The data buffer
-         * \return The encrypted data buffer
-         */
-        std::vector<unsigned char> encipherData(bool end, std::vector<unsigned char> data, const std::vector<unsigned char>& param = std::vector<unsigned char>());
 
         std::vector<unsigned char> iso_encipherData(bool end, const std::vector<unsigned char>& data, const std::vector<unsigned char>& param = std::vector<unsigned char>());
 

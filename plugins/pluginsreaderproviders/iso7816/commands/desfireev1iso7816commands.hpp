@@ -17,6 +17,7 @@
 
 namespace logicalaccess
 {
+#define DESFIREEV1_CLEAR_DATA_LENGTH_CHUNK	60
     /**
      * \brief The DESFire EV1 base commands class.
      */

@@ -112,24 +112,17 @@ namespace logicalaccess
         return ret;
     }
 
-    void DESFireCrypto::bufferingForGenerateMAC(const std::vector<unsigned char>& data)
-    {
-        d_buf.insert(d_buf.end(), data.begin(), data.end());
-    }
-
 	std::vector<unsigned char> DESFireCrypto::generateMAC(unsigned char cmd, const std::vector<unsigned char>& data)
     {
         std::vector<unsigned char> ret;
-        bufferingForGenerateMAC(data);
         if (d_auth_method == CM_LEGACY)
         {
-            ret = desfire_mac(d_sessionKey, d_buf);
+            ret = desfire_mac(d_sessionKey, data);
         }
         else
         {
-            ret = desfire_cmac(d_sessionKey, d_cipher, d_block_size, d_buf);
+            ret = desfire_cmac(d_sessionKey, d_cipher, d_block_size, data);
         }
-        d_buf.clear();
 
         return ret;
     }
@@ -145,59 +138,6 @@ namespace logicalaccess
         else
         {
             ret = desfire_iso_encrypt(d_sessionKey, data, d_cipher, d_block_size, param, calccrc);
-        }
-
-        return ret;
-    }
-
-    std::vector<unsigned char> DESFireCrypto::encipherData(bool end, std::vector<unsigned char> data, const std::vector<unsigned char>& param)
-    {
-        if (d_auth_method != CM_LEGACY)
-        {
-            return iso_encipherData(end, data, param);
-        }
-
-        std::vector<unsigned char> ret;
-        d_buf.insert(d_buf.end(), data.begin(), data.end());
-
-        data.insert(data.begin(), d_last_left.begin(), d_last_left.end());
-
-        int leave = data.size() % 8;
-        if (leave > 0)
-        {
-            d_last_left.clear();
-            d_last_left.insert(d_last_left.end(), data.end() - leave, data.end());
-            data.resize(data.size() - leave);
-        }
-        else
-        {
-            d_last_left.clear();
-        }
-
-        if (data.size() > 0)
-        {
-            ret = desfire_CBC_send(d_sessionKey, d_lastIV, data);
-            d_lastIV.clear();
-            d_lastIV.insert(d_lastIV.end(), ret.end() - 8, ret.end());
-        }
-
-        if (end)
-        {
-            std::vector<unsigned char> fdata;
-            fdata.insert(fdata.end(), d_last_left.begin(), d_last_left.end());
-            d_last_left.clear();
-            short crc = desfire_crc16(&d_buf[0], d_buf.size());
-            fdata.push_back(static_cast<unsigned char>(crc & 0xff));
-            fdata.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
-
-            int pad = (8 - (fdata.size() % 8)) % 8;
-            for (int i = 0; i < pad; ++i)
-            {
-                fdata.push_back(0x00);
-            }
-
-            std::vector<unsigned char> ret2 = desfire_CBC_send(d_sessionKey, d_lastIV, fdata);
-            ret.insert(ret.end(), ret2.begin(), ret2.end());
         }
 
         return ret;

@@ -389,123 +389,70 @@ namespace logicalaccess
         return ret;
     }
 
-    void DESFireISO7816Commands::handleWriteData(unsigned char cmd, const std::vector<unsigned char>& parameters, const std::vector<unsigned char>& data, EncryptionMode mode)
-    {
+	void DESFireISO7816Commands::handleWriteData(unsigned char cmd, const std::vector<unsigned char>& parameters, const std::vector<unsigned char>& data, EncryptionMode mode)
+	{
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
-        std::vector<unsigned char> edata, command;
+		std::vector<unsigned char> edata;
 
 		crypto->initBuf();
 
-        if (data.size() <= DESFIRE_CLEAR_DATA_LENGTH_CHUNK)
-        {
-            switch (mode)
-            {
-            case CM_PLAIN:
-            {
-                edata = data;
-            }
-                break;
+		std::vector<unsigned char> cmdBuffer;
+		cmdBuffer.insert(cmdBuffer.end(), parameters.begin(), parameters.end());
 
-            case CM_MAC:
-            {
-				std::vector<unsigned char> mac = crypto->generateMAC(cmd, data);
-                edata = data;
-                edata.insert(edata.end(), mac.begin(), mac.end());
-            }
-                break;
+		switch (mode)
+		{
+		case CM_PLAIN:
+		{
+			edata = data;
+			cmdBuffer.insert(cmdBuffer.end(), edata.begin(), edata.end());
+		}
+		break;
 
-            case CM_ENCRYPT:
-            {
-				edata = crypto->desfireEncrypt(data);
-            }
-                break;
+		case CM_MAC:
+		{
+			std::vector<unsigned char> mac = crypto->generateMAC(cmd, data);
+			edata = data;
+			edata.insert(edata.end(), mac.begin(), mac.end());
+			cmdBuffer.insert(cmdBuffer.end(), edata.begin(), edata.end());
+		}
+		break;
 
-            default:
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Unknown crypto mode.");
-            }
-        }
-        else
-        {
-            switch (mode)
-            {
-            case CM_PLAIN:
-                edata = std::vector<unsigned char>(data.begin(), data.begin() + DESFIRE_CLEAR_DATA_LENGTH_CHUNK);
-                break;
+		case CM_ENCRYPT:
+		{
+			edata = crypto->desfireEncrypt(data);
+			cmdBuffer.insert(cmdBuffer.end(), edata.begin(), edata.end());
+		}
+		break;
 
-            case CM_MAC:
-                edata = std::vector<unsigned char>(data.begin(), data.begin() + DESFIRE_CLEAR_DATA_LENGTH_CHUNK);
-				crypto->bufferingForGenerateMAC(edata);
-                break;
+		default:
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Unknown crypto mode.");
+		}
 
-            case CM_ENCRYPT:
-				edata = crypto->encipherData(false, std::vector<unsigned char>(data.begin(), data.begin() + DESFIRE_CLEAR_DATA_LENGTH_CHUNK));
-                break;
+		unsigned char err;
+		size_t pos = 0;
+		do
+		{
+			//Send the data little by little
+			size_t pkSize = ((cmdBuffer.size() - pos) >= (DESFIRE_CLEAR_DATA_LENGTH_CHUNK)) ? (DESFIRE_CLEAR_DATA_LENGTH_CHUNK) : (cmdBuffer.size() - pos);
 
-            default:
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Unknown crypto mode.");
-            }
-        }
+			auto command = std::vector<unsigned char>(cmdBuffer.begin() + pos, cmdBuffer.begin() + pos + pkSize);
 
-        command.insert(command.end(), parameters.begin(), parameters.end());
-        command.insert(command.end(), edata.begin(), edata.end());
+			if (command.size() == 0)
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Data requested but no more data to send.");
 
-        std::vector<unsigned char> result = transmit(cmd, command);
-        unsigned char err = result.back();
-        if (data.size() > DESFIRE_CLEAR_DATA_LENGTH_CHUNK)
-        {
-            size_t pos = DESFIRE_CLEAR_DATA_LENGTH_CHUNK;
-            while (err == DF_INS_ADDITIONAL_FRAME) // && pos < dataLength
-            {
-                size_t pkSize = ((data.size() - pos) >= DESFIRE_CLEAR_DATA_LENGTH_CHUNK) ? DESFIRE_CLEAR_DATA_LENGTH_CHUNK : (data.size() - pos);
+			auto result = transmit(pos == 0 ? cmd : DF_INS_ADDITIONAL_FRAME, command);
 
-                switch (mode)
-                {
-                case CM_PLAIN:
-                    edata = std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize);
-                    break;
+			err = result.back();
+			pos += pkSize;
+		} while (err == DF_INS_ADDITIONAL_FRAME);
 
-                case CM_MAC:
-                    edata = std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize);
-                    if (pos + pkSize == data.size())
-                    {
-						std::vector<unsigned char> mac = crypto->generateMAC(cmd, edata);
-                        edata.insert(edata.end(), mac.begin(), mac.end());
-                    }
-                    else
-                    {
-						crypto->bufferingForGenerateMAC(edata);
-                    }
-                    break;
-
-                case CM_ENCRYPT:
-                    if (pos + pkSize == data.size())
-                    {
-						edata = crypto->encipherData(true, std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize));
-                    }
-                    else
-                    {
-						edata = crypto->encipherData(false, std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize));
-                    }
-                    break;
-
-                default:
-                    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Unknown crypto mode.");
-                }
-
-                result = transmit(DF_INS_ADDITIONAL_FRAME, edata);
-                err = result.back();
-
-                pos += pkSize;
-            }
-        }
-
-        if (err != 0x00)
-        {
-            char msgtmp[64];
-            sprintf(msgtmp, "Unknown error: %x", err);
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, msgtmp);
-        }
-    }
+		if (err != 0x00)
+		{
+			char msgtmp[64];
+			sprintf(msgtmp, "Unknown error: %x", err);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, msgtmp);
+		}
+	}
 
     void DESFireISO7816Commands::changeFileSettings(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, bool plain)
     {

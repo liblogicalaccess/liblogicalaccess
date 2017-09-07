@@ -844,180 +844,95 @@ namespace logicalaccess
     }
 
 	void DESFireEV1ISO7816Commands::handleWriteData(unsigned char cmd, const std::vector<unsigned char>& parameters, const std::vector<unsigned char>& data, EncryptionMode mode)
-    {
-        std::vector<unsigned char> edata, command;
+	{
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
+		if (crypto->d_auth_method == CryptoMethod::CM_LEGACY)
+			return DESFireISO7816Commands::handleWriteData(cmd, parameters, data, mode);
 
 		crypto->initBuf();
-        size_t DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK = (DESFIRE_CLEAR_DATA_LENGTH_CHUNK - 8);
 
-        if (data.size() <= DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK)
-        {
-            switch (mode)
-            {
-            case CM_PLAIN:
-            {
-                edata = data;
-				if (crypto->d_auth_method != CM_LEGACY) // CMAC needs to be recalculated
-                {
-                    std::vector<unsigned char> apdu_command;
-                    apdu_command.push_back(cmd);
-                    apdu_command.insert(apdu_command.end(), parameters.begin(), parameters.end());
-                    apdu_command.insert(apdu_command.end(), data.begin(), data.end());
-					crypto->desfire_cmac(apdu_command);
-                }
-            }
-                break;
+		size_t DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK = (DESFIREEV1_CLEAR_DATA_LENGTH_CHUNK - 8);
 
-            case CM_MAC:
-            {
-                std::vector<unsigned char> mac;
-				if (crypto->d_auth_method == CM_LEGACY)
-                {
-					mac = crypto->generateMAC(cmd, data);
-                }
-                else
-                {
-                    std::vector<unsigned char> gdata;
-                    gdata.push_back(cmd);
-                    gdata.insert(gdata.end(), parameters.begin(), parameters.end());
-                    gdata.insert(gdata.end(), data.begin(), data.end());
-					mac = crypto->generateMAC(cmd, gdata);
-                }
-                edata = data;
+		std::vector<unsigned char> cmdBuffer, result, edata;
+		cmdBuffer.insert(cmdBuffer.end(), parameters.begin(), parameters.end());
 
-				edata.insert(edata.end(), mac.begin(), mac.end());
-            }
-                break;
+		switch (mode)
+		{
+		case CM_PLAIN:
+		{
+			cmdBuffer.insert(cmdBuffer.end(), data.begin(), data.end());
+			std::vector<unsigned char> apdu_command;
+			apdu_command.push_back(cmd);
+			apdu_command.insert(apdu_command.end(), parameters.begin(), parameters.end());
+			apdu_command.insert(apdu_command.end(), data.begin(), data.end());
+			crypto->generateMAC(cmd, apdu_command);
+		}
+		break;
 
-            case CM_ENCRYPT:
-            {
-                std::vector<unsigned char> encparameters;
-                encparameters.push_back(cmd);
-                encparameters.insert(encparameters.end(), parameters.begin(), parameters.end());
-				edata = crypto->desfireEncrypt(data, encparameters);
-            }
-                break;
+		case CM_MAC:
+		{
+			std::vector<unsigned char> gdata;
+			gdata.push_back(cmd);
+			gdata.insert(gdata.end(), parameters.begin(), parameters.end());
+			gdata.insert(gdata.end(), data.begin(), data.end());
+			auto mac = crypto->generateMAC(cmd, gdata);
+			edata = data;
 
-            default:
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Unknown DESFire crypto mode.");
-            }
-        }
-        else
-        {
-            switch (mode)
-            {
-            case CM_PLAIN:
-                edata = std::vector<unsigned char>(data.begin(), data.begin() + DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK);
-				if (crypto->d_auth_method != CM_LEGACY) // CMAC needs to be recalculated
-                {
-                    std::vector<unsigned char> apdu_command;
-                    apdu_command.push_back(cmd);
-                    apdu_command.insert(apdu_command.end(), parameters.begin(), parameters.end());
-                    apdu_command.insert(apdu_command.end(), data.begin(), data.end());
-					crypto->desfire_cmac(apdu_command);
-                }
-                break;
+			edata.insert(edata.end(), mac.begin(), mac.end());
 
-            case CM_MAC:
-                edata = std::vector<unsigned char>(data.begin(), data.begin() + DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK);
-				if (crypto->d_auth_method == CM_LEGACY)
-				{
-					crypto->bufferingForGenerateMAC(edata);
-				}
-				else
-				{
-					std::vector<unsigned char> gdata;
-					gdata.push_back(cmd);
-					gdata.insert(gdata.end(), parameters.begin(), parameters.end());
-					gdata.insert(gdata.end(), edata.begin(), edata.end());
-					crypto->bufferingForGenerateMAC(gdata);
-				}
-                break;
+			cmdBuffer.insert(cmdBuffer.end(), edata.begin(), edata.end());
+		}
+		break;
 
-            case CM_ENCRYPT:
-            {
-				edata = crypto->encipherData(false, std::vector<unsigned char>(data.begin(), data.begin() + DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK));
-            }
-                break;
+		case CM_ENCRYPT:
+		{
+			std::vector<unsigned char> encparameters;
+			encparameters.push_back(cmd);
+			encparameters.insert(encparameters.end(), parameters.begin(), parameters.end());
+			edata = crypto->desfireEncrypt(data, encparameters);
 
-            default:
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Unknown DESFire crypto mode.");
-            }
-        }
+			cmdBuffer.insert(cmdBuffer.end(), edata.begin(), edata.end());
+		}
+		break;
 
-        command.insert(command.end(), parameters.begin(), parameters.end());
-        command.insert(command.end(), edata.begin(), edata.end());
+		default:
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Unknown DESFire crypto mode.");
+		}
 
-        std::vector<unsigned char> result = transmit_plain(cmd, command);
-        unsigned char err = result.back();
-        if (data.size() > DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK)
-        {
-            size_t pos = DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK;
-            while (err == DF_INS_ADDITIONAL_FRAME) // && pos < dataLength
-            {
-                size_t pkSize = ((data.size() - pos) >= (DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK)) ? (DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK) : (data.size() - pos);
+		unsigned char err;
+		size_t pos = 0;
+		do
+		{
+			//Send the data little by little
+			size_t pkSize = ((cmdBuffer.size() - pos) >= (DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK)) ? (DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK) : (cmdBuffer.size() - pos);
 
-                switch (mode)
-                {
-                case CM_PLAIN:
-                    edata = std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize);
-                    break;
+			auto command = std::vector<unsigned char>(cmdBuffer.begin() + pos, cmdBuffer.begin() + pos + pkSize);
 
-                case CM_MAC:
-                    edata = std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize);
-                    if (pos + pkSize == data.size())
-                    {
-						std::vector<unsigned char> mac = crypto->generateMAC(cmd, edata);
-						edata.insert(edata.end(), mac.begin(), mac.end());
-                    }
-                    else
-                    {
-						crypto->bufferingForGenerateMAC(edata);
-                    }
-                    break;
+			if (command.size() == 0)
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Data requested but no more data to send.");
 
-                case CM_ENCRYPT:
-                    if (pos + pkSize == data.size())
-                    {
-                        std::vector<unsigned char> encparameters;
-                        encparameters.push_back(cmd);
-                        encparameters.insert(encparameters.end(), parameters.begin(), parameters.end());
-						edata = crypto->encipherData(true, std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize), encparameters);
-                    }
-                    else
-                    {
-						edata = crypto->encipherData(false, std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize));
-                    }
-                    break;
+			result = transmit_plain(pos == 0 ? cmd : DF_INS_ADDITIONAL_FRAME, command);
 
-                default:
-                    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Unknown DESFire crypto mode.");
-                }
+			err = result.back();
+			pos += pkSize;
+		} while (err == DF_INS_ADDITIONAL_FRAME);
 
-                result = transmit_plain(DF_INS_ADDITIONAL_FRAME, edata);
-                err = result.back();
+		if (err != 0x00)
+		{
+			char msgtmp[64];
+			sprintf(msgtmp, "Unknown error: %x", err);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, msgtmp);
+		}
 
-                pos += pkSize;
-            }
-        }
-
-        if (err != 0x00)
-        {
-            char msgtmp[64];
-            sprintf(msgtmp, "Unknown error: %x", err);
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, msgtmp);
-        }
-
-		if (err == 0x00 && result.size() > 2 && (mode == CM_MAC || mode == CM_ENCRYPT || crypto->d_auth_method != CM_LEGACY))
-        {
-            result.resize(result.size() - 2);
+		if (result.size() > 2 && (mode == CM_MAC || mode == CM_ENCRYPT))
+		{
+			result.resize(result.size() - 2);
 			if (!crypto->verifyMAC(true, result))
-            {
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC verification failed.");
-            }
-        }
-    }
+			{
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC verification failed.");
+			}
+		}
+	}
 
     std::vector<unsigned char> DESFireEV1ISO7816Commands::readData(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode)
     {
