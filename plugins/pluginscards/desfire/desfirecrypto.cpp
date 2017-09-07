@@ -694,7 +694,7 @@ namespace logicalaccess
         d_sessionKey.clear();
     }
 
-    std::vector<unsigned char> DESFireCrypto::changeKey_PICC(unsigned char keyno, std::shared_ptr<DESFireKey> newkey, std::vector<unsigned char> diversify)
+    std::vector<unsigned char> DESFireCrypto::changeKey_PICC(unsigned char keyno, std::shared_ptr<DESFireKey> newkey, std::vector<unsigned char> diversify, unsigned char keysetno)
     {
         LOG(LogLevel::INFOS) << "Init change key on PICC...";
         std::vector<unsigned char> cryptogram;
@@ -710,14 +710,17 @@ namespace logicalaccess
 
         if (d_auth_method == CM_LEGACY) // Native DESFire
         {
-            if (keyno_only != d_currentKeyNo)
+            if (keyno_only != d_currentKeyNo || keysetno)
             {
                 short crc;
                 for (unsigned int i = 0; i < newkeydiv.size(); ++i)
                 {
                     encCryptogram.push_back(static_cast<unsigned char>(oldkeydiv[i] ^ newkeydiv[i]));
                 }
-                crc = desfire_crc16(&encCryptogram[0], newkeydiv.size());
+
+				if (keysetno != 0)
+					encCryptogram.push_back(keysetno); //ChangeKeyEV2
+                crc = desfire_crc16(&encCryptogram[0], encCryptogram.size());
                 encCryptogram.push_back(static_cast<unsigned char>(crc & 0xff));
                 encCryptogram.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
                 crc = desfire_crc16(&newkeydiv[0], newkeydiv.size());
