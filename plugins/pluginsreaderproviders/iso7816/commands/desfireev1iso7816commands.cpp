@@ -995,7 +995,7 @@ namespace logicalaccess
         return result;
     }
 
-    void DESFireEV1ISO7816Commands::changeFileSettings(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, bool plain)
+    void DESFireEV1ISO7816Commands::changeFileSettings(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, bool plain)
     {
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
         std::vector<unsigned char> command;

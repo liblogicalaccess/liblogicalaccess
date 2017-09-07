@@ -222,7 +222,7 @@ namespace logicalaccess
          * \param accessRights The file access rights
          * \param plain Communication is currently in plain data.
          */
-        virtual void changeFileSettings(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, bool plain);
+        virtual void changeFileSettings(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, bool plain);
 
         /**
          * \brief Change key settings for the current application.
