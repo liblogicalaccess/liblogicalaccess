@@ -33,7 +33,7 @@ namespace logicalaccess
         d_currentKeyNo = 0;
         d_mac_size = 4;
         d_block_size = 8;
-        d_nbAids = 0;
+        d_keys.clear();
 
         d_lastIV.clear();
         d_lastIV.resize(d_block_size, 0x00);
@@ -642,7 +642,7 @@ namespace logicalaccess
         oldkeydiv.resize(16, 0x00);
         newkeydiv.resize(16, 0x00);
         // Get keyno only, in case of master card key
-        unsigned char keyno_only = static_cast<unsigned char>(keyno & 0x0f);
+        unsigned char keyno_only = static_cast<unsigned char>(keyno);
         getKey(keyno_only, diversify, oldkeydiv);
         getKey(newkey, diversify, newkeydiv);
 
@@ -1162,85 +1162,7 @@ namespace logicalaccess
 
 	void DESFireCrypto::clearKeys()
 	{
-		d_nbAids = 0;
-	}
-
-	bool DESFireCrypto::getKeyUsage(size_t index) const
-	{
-		size_t nbKeys = sizeof(d_key) / sizeof(std::shared_ptr<DESFireKey>);
-		if (index >= nbKeys)
-		{
-			return false;
-		}
-
-		return bool(d_key[index]);
-	}
-
-	void DESFireCrypto::setKeyUsage(size_t index, bool used)
-	{
-		size_t nbKeys = sizeof(d_key) / sizeof(std::shared_ptr<DESFireKey>);
-		if (index >= nbKeys)
-		{
-			return;
-		}
-
-		std::shared_ptr<DESFireKey> key;
-		if (used)
-		{
-			key.reset(new DESFireKey());
-		}
-
-		d_key[index] = key;
-	}
-
-	bool DESFireCrypto::getPosAid(size_t aid, size_t* pos) const
-	{
-		bool ret = false;
-		size_t i;
-
-		for (i = 0; i < d_nbAids && !ret; i++)
-		{
-			ret = (d_aids[i] == aid);
-		}
-
-		if (ret && pos != NULL)
-		{
-			*pos = i - 1;
-		}
-
-		return ret;
-	}
-
-	size_t DESFireCrypto::addPosAid(size_t aid)
-	{
-		d_aids[d_nbAids] = aid;
-		return d_nbAids++;
-	}
-
-	bool DESFireCrypto::checkKeyPos(size_t aid, bool defvalue) const
-	{
-		bool ret = false;
-
-		if (getPosAid(aid))
-		{
-			ret = true;
-		}
-		else
-		{
-			ret = defvalue;
-		}
-
-		return ret;
-	}
-
-	bool DESFireCrypto::checkKeyPos(size_t aid, unsigned char keyno, bool defvalue) const
-	{
-		if (!checkKeyPos(aid, defvalue) || keyno > 13)
-		{
-			return false;
-		}
-
-		return true;
+		d_keys.clear();
 	}
 
 	std::shared_ptr<DESFireKey> DESFireCrypto::getDefaultKey(DESFireKeyType keyType)
@@ -1259,23 +1181,11 @@ namespace logicalaccess
 	{
 		std::shared_ptr<DESFireKey> key;
 
-		if (checkKeyPos(aid, keyno, false))
-		{
-			size_t posAid;
-			getPosAid(aid, &posAid);
-
-			size_t keyPos = posAid * 14 + keyno;
-
-			if (getKeyUsage(keyPos))
-			{
-				key = d_key[keyPos];
-			}
-		}
-
-		if (!key)
-		{
+		auto it = d_keys.find(std::make_pair(aid, keyno));
+		if (it == d_keys.end())
+			key = it->second;
+		else
 			key = DESFireCrypto::getDefaultKey(DF_KEY_DES);
-		}
 
 		return key;
 	}
@@ -1287,45 +1197,17 @@ namespace logicalaccess
 
 	bool DESFireCrypto::getKey(size_t aid, unsigned char keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv)
 	{
-		if (!checkKeyPos(aid, keyno, false))
-		{
-			keydiv.resize(16, 0x00);
-
+		auto it = d_keys.find(std::make_pair(aid, keyno));
+		if (it == d_keys.end())
 			return false;
-		}
 
-		size_t posAid;
-		getPosAid(aid, &posAid);
-
-		size_t keyPos = posAid * 14 + keyno;
-
-		if (!getKeyUsage(keyPos))
-		{
-			keydiv.resize(16, 0x00);
-
-			return false;
-		}
-
-		DESFireCrypto::getKey(d_key[keyPos], diversify, keydiv);
+		DESFireCrypto::getKey(it->second, diversify, keydiv);
 
 		return true;
 	}
 
 	void DESFireCrypto::setKey(size_t aid, unsigned char keyno, std::shared_ptr<DESFireKey> key)
 	{
-		if (!checkKeyPos(aid, keyno, true))
-		{
-			return;
-		}
-
-		size_t posAid;
-		if (!getPosAid(aid, &posAid))
-		{
-			posAid = addPosAid(aid);
-		}
-
-		size_t keyPos = posAid * 14 + keyno;
-
-		d_key[keyPos] = key;
+		d_keys[std::make_pair(aid, keyno)] = key;
 	}
 }

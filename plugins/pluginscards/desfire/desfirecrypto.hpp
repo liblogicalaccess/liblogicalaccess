@@ -382,72 +382,7 @@ namespace logicalaccess
 		*/
 		bool getKey(unsigned char keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv);
 
-		/**
-		* \brief Check if a key position exists.
-		* \param aid The Application ID
-		* \param defvalue The default result value
-		* \return The check result.
-		*/
-		bool checkKeyPos(size_t aid, bool defvalue = false) const;
-
-		/**
-		* \brief Check if a key position exists.
-		* \param aid The Application ID
-		* \param keyno The key number
-		* \param defvalue The default result value
-		* \return The check result.
-		*/
-		bool checkKeyPos(size_t aid, unsigned char keyno, bool defvalue) const;
-
-		/**
-		* \brief Get the position in memory.
-		* \param aid The Application ID
-		* \param pos Will contain the position in memory
-		* \return True on success, false otherwise.
-		*/
-		bool getPosAid(size_t aid, size_t* pos = NULL) const;
-
-		/**
-		* \brief Add Application ID position.
-		* \param aid The Application ID
-		* \return The Application ID position.
-		*/
-		size_t addPosAid(size_t aid);
-
-		/**
-		* \brief Get one of the DESFire keys usage.
-		* \param index The index of the key in memory
-		* \return true if the key is used, false otherwise.
-		*/
-		bool getKeyUsage(size_t index) const;
-
-		/**
-		* \brief Set one of the DESFire keys of this profile.
-		* \param index The index of the key  in memory to set
-		* \param used True if the key is used, false otherwise.
-		*/
-		void setKeyUsage(size_t index, bool used);
-
-		/**
-		* \brief The 393 real keys.
-		*		0		:	MasterKey Card Maintenance
-		*		1		:	MasterKey Application 1 Maintenance
-		*		2 - 15	:	3(DES) Application 1 keys
-		*		16		:	MasterKey Application 2 Maintenance
-		*		17 - 30	:	3(DES) Application 2 keys
-		*		.............
-		*/
-		std::shared_ptr<DESFireKey> d_key[406];
-
-		/**
-		* \brief The Application ID used.
-		*/
-		size_t d_aids[29];
-
-		/**
-		* \brief Number of Application ID used.
-		*/
-		size_t d_nbAids;
+		std::map<std::pair<size_t, uint8_t>, std::shared_ptr<DESFireKey>> d_keys;
 
     public:
 
