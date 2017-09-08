@@ -641,26 +641,23 @@ namespace logicalaccess
         std::vector<unsigned char> oldkeydiv, newkeydiv;
         oldkeydiv.resize(16, 0x00);
         newkeydiv.resize(16, 0x00);
-        // Get keyno only, in case of master card key
-        unsigned char keyno_only = static_cast<unsigned char>(keyno);
-        getKey(keyno_only, diversify, oldkeydiv);
+        getKey(keyno, diversify, oldkeydiv);
         getKey(newkey, diversify, newkeydiv);
 
         std::vector<unsigned char> encCryptogram;
 
         if (d_auth_method == CM_LEGACY) // Native DESFire
         {
-            if (keyno_only != d_currentKeyNo || keysetno)
+            if (keyno != d_currentKeyNo || keysetno)
             {
-                short crc;
-                for (unsigned int i = 0; i < newkeydiv.size(); ++i)
+	            for (unsigned int i = 0; i < newkeydiv.size(); ++i)
                 {
                     encCryptogram.push_back(static_cast<unsigned char>(oldkeydiv[i] ^ newkeydiv[i]));
                 }
 
 				if (keysetno != 0)
 					encCryptogram.push_back(keysetno); //ChangeKeyEV2
-                crc = desfire_crc16(&encCryptogram[0], encCryptogram.size());
+                short crc = desfire_crc16(&encCryptogram[0], encCryptogram.size());
                 encCryptogram.push_back(static_cast<unsigned char>(crc & 0xff));
                 encCryptogram.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
                 crc = desfire_crc16(&newkeydiv[0], newkeydiv.size());
@@ -680,7 +677,7 @@ namespace logicalaccess
         }
         else
         {
-            if (keyno_only != d_currentKeyNo)
+            if (keyno != d_currentKeyNo)
             {
                 uint32_t crc;
                 for (unsigned int i = 0; i < newkeydiv.size(); ++i)
