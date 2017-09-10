@@ -1179,7 +1179,7 @@ namespace logicalaccess
 		std::shared_ptr<DESFireKey> key;
 
 		auto it = d_keys.find(std::make_pair(aid, keyno));
-		if (it == d_keys.end())
+		if (it != d_keys.end())
 			key = it->second;
 		else
 			key = DESFireCrypto::getDefaultKey(DF_KEY_DES);
