@@ -519,7 +519,7 @@ namespace logicalaccess
     {
         d_sessionKey.clear();
         d_authkey.resize(16);
-        getKey(d_currentAid, keyno, diversify, d_authkey);
+        getKey(d_currentAid, 0, keyno, diversify, d_authkey);
         d_rndB = desfire_CBC_send(d_authkey, std::vector<unsigned char>(), encRndB);
 
         std::vector<unsigned char> rndB1;
@@ -634,14 +634,14 @@ namespace logicalaccess
         d_sessionKey.clear();
     }
 
-    std::vector<unsigned char> DESFireCrypto::changeKey_PICC(unsigned char keyno, std::shared_ptr<DESFireKey> newkey, std::vector<unsigned char> diversify, unsigned char keysetno)
+    std::vector<unsigned char> DESFireCrypto::changeKey_PICC(uint8_t keyno, std::shared_ptr<DESFireKey> newkey, std::vector<unsigned char> diversify, unsigned char keysetno)
     {
         LOG(LogLevel::INFOS) << "Init change key on PICC...";
         std::vector<unsigned char> cryptogram;
         std::vector<unsigned char> oldkeydiv, newkeydiv;
         oldkeydiv.resize(16, 0x00);
         newkeydiv.resize(16, 0x00);
-        getKey(keyno, diversify, oldkeydiv);
+        getKey(keysetno, keyno, diversify, oldkeydiv);
         getKey(newkey, diversify, newkeydiv);
 
         std::vector<unsigned char> encCryptogram;
@@ -745,7 +745,7 @@ namespace logicalaccess
     std::vector<unsigned char> DESFireCrypto::iso_authenticate_PICC1(unsigned char keyno, std::vector<unsigned char> diversify, const std::vector<unsigned char>& encRndB, unsigned int randomlen)
     {
         d_sessionKey.clear();
-        getKey(d_currentAid, keyno, diversify, d_authkey);
+        getKey(d_currentAid, 0, keyno, diversify, d_authkey);
         d_cipher.reset(new openssl::DESCipher());
         openssl::DESSymmetricKey deskey = openssl::DESSymmetricKey::createFromData(d_authkey);
         openssl::DESInitializationVector iv = openssl::DESInitializationVector::createNull();
@@ -839,7 +839,7 @@ namespace logicalaccess
     std::vector<unsigned char> DESFireCrypto::aes_authenticate_PICC1(unsigned char keyno, std::vector<unsigned char> diversify, const std::vector<unsigned char>& encRndB)
     {
         d_sessionKey.clear();
-        getKey(d_currentAid, keyno, diversify, d_authkey);
+        getKey(d_currentAid, 0, keyno, diversify, d_authkey);
         d_cipher.reset(new openssl::AESCipher());
         openssl::AESSymmetricKey aeskey = openssl::AESSymmetricKey::createFromData(d_authkey);
         openssl::AESInitializationVector iv = openssl::AESInitializationVector::createNull();
@@ -1114,17 +1114,20 @@ namespace logicalaccess
 		clearKeys();
     }
 
-    std::shared_ptr<DESFireKey> DESFireCrypto::getKey(unsigned char keyno)
+    std::shared_ptr<DESFireKey> DESFireCrypto::getKey(uint8_t keyslot, uint8_t keyno) const
     {
-        return getKey(d_currentAid, keyno);
+        return getKey(d_currentAid, keyslot, keyno);
     }
 
-    void DESFireCrypto::createApplication(int aid, size_t maxNbKeys, DESFireKeyType cryptoMethod)
+    void DESFireCrypto::createApplication(int aid, uint8_t keyslotNb, uint8_t maxNbKeys, DESFireKeyType cryptoMethod)
     {
-        for (unsigned char i = 0; i < maxNbKeys; ++i)
-        {
-            setKey(aid, i, getDefaultKey(cryptoMethod));
-        }
+		for (unsigned char j = 0; j < keyslotNb; ++j)
+		{
+			for (unsigned char i = 0; i < maxNbKeys; ++i)
+			{
+				setKey(aid, j, i, getDefaultKey(cryptoMethod));
+			}
+		}
     }
 
 	void DESFireCrypto::setDefaultKeysAt(std::shared_ptr<Location> location)
@@ -1145,15 +1148,15 @@ namespace logicalaccess
 			for (unsigned char i = 0; i < 14; ++i)
 			{
 				if (dfEV1Location)
-					setKey(dfEV1Location->aid, i, getDefaultKey(dfEV1Location->cryptoMethod));
+					setKey(dfEV1Location->aid, 0, i, getDefaultKey(dfEV1Location->cryptoMethod));
 				else
-					setKey(dfLocation->aid, i, getDefaultKey(DF_KEY_DES));
+					setKey(dfLocation->aid, 0, i, getDefaultKey(DF_KEY_DES));
 			}
 		}
 		// Card
 		else
 		{
-			setKey(0, 0, getDefaultKey(DF_KEY_DES));
+			setKey(0, 0, 0, getDefaultKey(DF_KEY_DES));
 		}
 	}
 
@@ -1174,11 +1177,11 @@ namespace logicalaccess
 		return key;
 	}
 
-	std::shared_ptr<DESFireKey> DESFireCrypto::getKey(size_t aid, unsigned char keyno) const
+	std::shared_ptr<DESFireKey> DESFireCrypto::getKey(size_t aid, uint8_t keyslot, uint8_t keyno) const
 	{
 		std::shared_ptr<DESFireKey> key;
 
-		auto it = d_keys.find(std::make_pair(aid, keyno));
+		auto it = d_keys.find(std::make_tuple(aid, keyslot, keyno));
 		if (it != d_keys.end())
 			key = it->second;
 		else
@@ -1187,14 +1190,14 @@ namespace logicalaccess
 		return key;
 	}
 
-	bool DESFireCrypto::getKey(unsigned char keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv)
+	bool DESFireCrypto::getKey(uint8_t keyslot, uint8_t keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv)
 	{
-		return getKey(d_currentAid, keyno, diversify, keydiv);
+		return getKey(d_currentAid, keyslot, keyno, diversify, keydiv);
 	}
 
-	bool DESFireCrypto::getKey(size_t aid, unsigned char keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv)
+	bool DESFireCrypto::getKey(size_t aid, uint8_t keyslot, uint8_t keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv)
 	{
-		auto it = d_keys.find(std::make_pair(aid, keyno));
+		auto it = d_keys.find(std::make_tuple(aid, keyslot, keyno));
 		if (it == d_keys.end())
 			return false;
 
@@ -1203,8 +1206,15 @@ namespace logicalaccess
 		return true;
 	}
 
-	void DESFireCrypto::setKey(size_t aid, unsigned char keyno, std::shared_ptr<DESFireKey> key)
+	void DESFireCrypto::setKey(size_t aid, uint8_t keyslot, uint8_t keyno, std::shared_ptr<DESFireKey> key)
 	{
-		d_keys[std::make_pair(aid, keyno)] = key;
+		d_keys[std::make_tuple(aid, keyslot, keyno)] = key;
+	}
+
+	void DESFireCrypto::setKeyInAllKeySet(size_t aid, uint8_t nbKeySlots, uint8_t nbKeys, std::shared_ptr<DESFireKey> key)
+	{
+		for (auto j = 0; j < nbKeySlots; ++j)
+			for (auto x = 0; x < nbKeys; ++x)
+				d_keys[std::make_tuple(aid, j, x)] = key;
 	}
 }

@@ -21,7 +21,7 @@ namespace logicalaccess
         DESFireCommands::selectApplication(location);
         if (evlocation)
         {
-			getDESFireEV1Chip()->getCrypto()->setKey(evlocation->aid, 0, getDESFireEV1Chip()->getCrypto()->getDefaultKey(evlocation->cryptoMethod));
+			getDESFireEV1Chip()->getCrypto()->setKey(evlocation->aid, 0, 0, getDESFireEV1Chip()->getCrypto()->getDefaultKey(evlocation->cryptoMethod));
         }
     }
 

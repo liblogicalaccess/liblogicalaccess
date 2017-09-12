@@ -709,7 +709,7 @@ namespace logicalaccess
 
     void DESFireISO7816Commands::authenticate(unsigned char keyno)
     {
-		std::shared_ptr<DESFireKey> key = getDESFireChip()->getCrypto()->getKey(keyno);
+		std::shared_ptr<DESFireKey> key = getDESFireChip()->getCrypto()->getKey(0, keyno);
         authenticate(keyno, key);
     }
 
@@ -753,7 +753,7 @@ namespace logicalaccess
 		if (samKeyStorage && samKeyStorage->getDumpKey())
 			getKeyFromSAM(key, diversify);
 
-		crypto->setKey(crypto->d_currentAid, keyno, key);
+		crypto->setKey(crypto->d_currentAid, 0, keyno, key);
 
         command.push_back(keyno);
 
@@ -887,7 +887,7 @@ namespace logicalaccess
         if (!key) {
 			key = crypto->getDefaultKey(DF_KEY_DES);
         }
-		crypto->setKey(crypto->d_currentAid, keyno, key);
+		crypto->setKey(crypto->d_currentAid, 0, keyno, key);
 
         std::vector<unsigned char> diversify;
         if (key->getKeyDiversification())
@@ -949,7 +949,7 @@ namespace logicalaccess
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 
         cmd.newkey_idt_ = storage->getKeyIdentity();
-		auto old_key = crypto->getKey(keyno);
+		auto old_key = crypto->getKey(0, keyno);
         auto old_key_storage = std::dynamic_pointer_cast<IKSStorage>(old_key->getKeyStorage());
         assert(old_key_storage);
         cmd.oldkey_idt_ = old_key_storage->getKeyIdentity();

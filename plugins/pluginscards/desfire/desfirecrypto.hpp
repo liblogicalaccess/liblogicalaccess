@@ -304,7 +304,7 @@ namespace logicalaccess
          * \param diversify The diversify buffer, NULL if no diversification is needed
          * \return The change key cryptogram.
          */
-        virtual std::vector<unsigned char> changeKey_PICC(unsigned char keyno, std::shared_ptr<DESFireKey> newKey, std::vector<unsigned char> diversify, unsigned char keysetno = 0);
+        virtual std::vector<unsigned char> changeKey_PICC(uint8_t keyno, std::shared_ptr<DESFireKey> newKey, std::vector<unsigned char> diversify, unsigned char keysetno = 0);
 
         void setCryptoContext(std::vector<unsigned char> identifier);
 
@@ -315,14 +315,7 @@ namespace logicalaccess
          */
         bool getDiversify(unsigned char* diversify);
 
-        /**
-         * \brief Get a key in memory from the current application.
-         * \param keyno The key number.
-         * \return The key.
-         */
-        std::shared_ptr<DESFireKey> getKey(unsigned char keyno);
-
-        void createApplication(int aid, size_t maxNbKeys, DESFireKeyType cryptoMethod);
+        void createApplication(int aid, uint8_t keyslotNb, uint8_t maxNbKeys, DESFireKeyType cryptoMethod);
 
 		void setIdentifier(std::vector<unsigned char> identifier) { d_identifier = identifier; };
 
@@ -341,25 +334,35 @@ namespace logicalaccess
 		virtual void setDefaultKeysAt(std::shared_ptr<Location> location);
 
 		/**
-		* \brief Get one of the DESFire keys of this profile.
-		* \param aid The application id.
-		* \param keyno The key number.
-		* \return The specified DESFire key or a null key if params are invalid.
+		* \brief Set one of the DESFire keys of this profile.
+		* \param aid Application ID
+		* \param keyslot The key slot to set
+		* \param keyno The key number to set
+		* \param key The value of the key.
 		*/
-		std::shared_ptr<DESFireKey> getKey(size_t aid, unsigned char keyno) const;
+		virtual void setKey(size_t aid, uint8_t keyslot, uint8_t keyno, std::shared_ptr<DESFireKey> key);
 
 		/**
 		* \brief Set one of the DESFire keys of this profile.
 		* \param aid Application ID
+		* \param keyslot The key slot to set
 		* \param keyno The key number to set
 		* \param key The value of the key.
 		*/
-		virtual void setKey(size_t aid, unsigned char keyno, std::shared_ptr<DESFireKey> key);
+		virtual void setKeyInAllKeySet(size_t aid, uint8_t nbKeySlots, uint8_t nbKeys, std::shared_ptr<DESFireKey> key);
 
 		/**
 		* \brief Clear all keys in memory.
 		*/
 		virtual void clearKeys();
+
+		/**
+		* \brief Get a key in memory from the current application.
+		* \param keyslot The key slot.
+		* \param keyno The key number.
+		* \return The key.
+		*/
+		std::shared_ptr<DESFireKey> getKey(uint8_t keyslot, uint8_t keyno) const;
 
 	protected:
 
@@ -371,7 +374,7 @@ namespace logicalaccess
 		* \param keydiv The key data, diversified if a diversify buffer is specified.
 		* \return True on success, false otherwise.
 		*/
-		bool getKey(size_t aid, unsigned char keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv);
+		bool getKey(size_t aid, uint8_t keyslot, uint8_t keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv);
 
 		/**
 		* \brief Get key from memory.
@@ -380,9 +383,21 @@ namespace logicalaccess
 		* \param keydiv The key data, diversified if a diversify buffer is specified.
 		* \return True on success, false otherwise.
 		*/
-		bool getKey(unsigned char keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv);
+		bool getKey(uint8_t keyslot, uint8_t keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv);
 
-		std::map<std::pair<size_t, uint8_t>, std::shared_ptr<DESFireKey>> d_keys;
+		/**
+		* \brief Get one of the DESFire keys of this profile.
+		* \param aid The application id.
+		* \param keyslot The key slot to set
+		* \param keyno The key number to set
+		* \return The specified DESFire key or a null key if params are invalid.
+		*/
+		std::shared_ptr<DESFireKey> getKey(size_t aid, uint8_t keyslot, uint8_t keyno) const;
+
+		/**
+		 * Key store - AID / KeySlot / KeyNo / DESFireKey
+		 */
+		std::map<std::tuple<size_t, uint8_t, uint8_t>, std::shared_ptr<DESFireKey>> d_keys;
 
     public:
 

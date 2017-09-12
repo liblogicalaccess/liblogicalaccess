@@ -128,7 +128,7 @@ namespace logicalaccess
         }
 
         transmit(DF_INS_CREATE_APPLICATION, command);
-		crypto->createApplication(aid, maxNbKeys, cryptoMethod);
+		crypto->createApplication(aid, 1, maxNbKeys, cryptoMethod);
     }
 
     void DESFireEV1ISO7816Commands::getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys, DESFireKeyType& keyType)
@@ -346,7 +346,7 @@ namespace logicalaccess
         }
 
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
-		crypto->setKey(crypto->d_currentAid, keyno, key);
+		crypto->setKey(crypto->d_currentAid, 0, keyno, key);
 
         // Get the appropriate authentification method and algorithm according to the key type (for 3DES we use legacy method instead of ISO).
 
