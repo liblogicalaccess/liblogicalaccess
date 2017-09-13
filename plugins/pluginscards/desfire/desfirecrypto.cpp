@@ -1121,13 +1121,7 @@ namespace logicalaccess
 
     void DESFireCrypto::createApplication(int aid, uint8_t keyslotNb, uint8_t maxNbKeys, DESFireKeyType cryptoMethod)
     {
-		for (unsigned char j = 0; j < keyslotNb; ++j)
-		{
-			for (unsigned char i = 0; i < maxNbKeys; ++i)
-			{
-				setKey(aid, j, i, getDefaultKey(cryptoMethod));
-			}
-		}
+		setKeyInAllKeySet(aid, keyslotNb, maxNbKeys, getDefaultKey(cryptoMethod));
     }
 
 	void DESFireCrypto::setDefaultKeysAt(std::shared_ptr<Location> location)

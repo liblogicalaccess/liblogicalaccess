@@ -1113,6 +1113,7 @@ namespace logicalaccess
 				}
             }
         }
+		crypto->setKey(crypto->d_currentAid, 0, keyno, newkey);
     }
 
     void DESFireEV1ISO7816Commands::getVersion(DESFireCommands::DESFireCardVersion& dataVersion)

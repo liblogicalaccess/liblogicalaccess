@@ -268,6 +268,7 @@ namespace logicalaccess
         {
             command.insert(command.end(), cryptogram.begin(), cryptogram.end());
             transmit(DF_INS_CHANGE_KEY, command);
+			crypto->setKey(crypto->d_currentAid, 0, keyno, newkey);
         }
     }
 
