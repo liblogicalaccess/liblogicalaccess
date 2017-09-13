@@ -315,7 +315,7 @@ namespace logicalaccess
          */
         bool getDiversify(unsigned char* diversify);
 
-        void createApplication(int aid, uint8_t keyslotNb, uint8_t maxNbKeys, DESFireKeyType cryptoMethod);
+        void createApplication(int aid, uint8_t maxKeySlotNb, uint8_t maxNbKeys, DESFireKeyType cryptoMethod);
 
 		void setIdentifier(std::vector<unsigned char> identifier) { d_identifier = identifier; };
 
@@ -343,13 +343,13 @@ namespace logicalaccess
 		virtual void setKey(size_t aid, uint8_t keyslot, uint8_t keyno, std::shared_ptr<DESFireKey> key);
 
 		/**
-		* \brief Set one of the DESFire keys of this profile.
+		* \brief Set one of the DESFire keys of this keyset.
 		* \param aid Application ID
-		* \param keyslot The key slot to set
-		* \param keyno The key number to set
+		* \param keySlotNb The key slot to set
+		* \param nbKeys The key number to set
 		* \param key The value of the key.
 		*/
-		virtual void setKeyInAllKeySet(size_t aid, uint8_t nbKeySlots, uint8_t nbKeys, std::shared_ptr<DESFireKey> key);
+		virtual void setKeyInAllKeySet(size_t aid, uint8_t keySlotNb, uint8_t nbKeys, std::shared_ptr<DESFireKey> key);
 
 		/**
 		* \brief Clear all keys in memory.

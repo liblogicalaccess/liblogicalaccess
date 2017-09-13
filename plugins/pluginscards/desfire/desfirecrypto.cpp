@@ -1119,9 +1119,10 @@ namespace logicalaccess
         return getKey(d_currentAid, keyslot, keyno);
     }
 
-    void DESFireCrypto::createApplication(int aid, uint8_t keyslotNb, uint8_t maxNbKeys, DESFireKeyType cryptoMethod)
+    void DESFireCrypto::createApplication(int aid, uint8_t maxKeySlotNb, uint8_t maxNbKeys, DESFireKeyType cryptoMethod)
     {
-		setKeyInAllKeySet(aid, keyslotNb, maxNbKeys, getDefaultKey(cryptoMethod));
+		for (auto x = 0; x < maxKeySlotNb; ++x)
+			setKeyInAllKeySet(aid, x, maxNbKeys, getDefaultKey(cryptoMethod));
     }
 
 	void DESFireCrypto::setDefaultKeysAt(std::shared_ptr<Location> location)
@@ -1205,10 +1206,9 @@ namespace logicalaccess
 		d_keys[std::make_tuple(aid, keyslot, keyno)] = key;
 	}
 
-	void DESFireCrypto::setKeyInAllKeySet(size_t aid, uint8_t nbKeySlots, uint8_t nbKeys, std::shared_ptr<DESFireKey> key)
+	void DESFireCrypto::setKeyInAllKeySet(size_t aid, uint8_t keySlotNb, uint8_t nbKeys, std::shared_ptr<DESFireKey> key)
 	{
-		for (auto j = 0; j < nbKeySlots; ++j)
-			for (auto x = 0; x < nbKeys; ++x)
-				d_keys[std::make_tuple(aid, j, x)] = key;
+		for (auto x = 0; x < nbKeys; ++x)
+			d_keys[std::make_tuple(aid, keySlotNb, x)] = key;
 	}
 }
