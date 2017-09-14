@@ -655,19 +655,15 @@ namespace logicalaccess
                     encCryptogram.push_back(static_cast<unsigned char>(oldkeydiv[i] ^ newkeydiv[i]));
                 }
 
-				if (keysetno != 0)
-					encCryptogram.push_back(keysetno); //ChangeKeyEV2
+				if (keysetno != 0 && newkey->getKeyType() == DF_KEY_AES)
+					encCryptogram.push_back(newkey->getKeyVersion()); //ChangeKeyEV2
                 short crc = desfire_crc16(&encCryptogram[0], encCryptogram.size());
                 encCryptogram.push_back(static_cast<unsigned char>(crc & 0xff));
                 encCryptogram.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
                 crc = desfire_crc16(&newkeydiv[0], newkeydiv.size());
                 encCryptogram.push_back(static_cast<unsigned char>(crc & 0xff));
                 encCryptogram.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
-                // Pad
-                for (int i = 0; i < 4; ++i)
-                {
-                    encCryptogram.push_back(0x00);
-                }
+				encCryptogram.resize(24); // Pad
                 cryptogram = desfire_CBC_send(d_sessionKey, std::vector<unsigned char>(), encCryptogram);
             }
             else
