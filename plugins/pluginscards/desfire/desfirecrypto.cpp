@@ -1199,7 +1199,7 @@ namespace logicalaccess
 
 	void DESFireCrypto::setKey(size_t aid, uint8_t keyslot, uint8_t keyno, std::shared_ptr<DESFireKey> key)
 	{
-		d_keys[std::make_tuple(aid, keyslot, keyno)] = key;
+		d_keys[std::make_tuple(aid, keyslot, keyno)] = std::make_shared<DESFireKey>(*key);
 	}
 
 	void DESFireCrypto::setKeyInAllKeySet(size_t aid, uint8_t keySlotNb, uint8_t nbKeys, std::shared_ptr<DESFireKey> key)
