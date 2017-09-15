@@ -18,6 +18,7 @@
 #include "logicalaccess/iks/packet/DesfireAuth.hpp"
 #include "logicalaccess/cards/IKSStorage.hpp"
 #include "logicalaccess/iks/packet/DesfireChangeKey.hpp"
+#include "logicalaccess/cards/computermemorykeystorage.hpp"
 
 namespace logicalaccess
 {
@@ -250,12 +251,20 @@ namespace logicalaccess
     {
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
         std::vector<unsigned char> cryptogram;
-		std::shared_ptr<DESFireKey> key = std::make_shared<DESFireKey>(*newkey);
 
-		auto oldKeyDiversify = getKeyInformations(crypto->getKey(0, keyno), keyno);
+		std::shared_ptr<DESFireKey> key = std::make_shared<DESFireKey>(*newkey);
+		auto oldkey = crypto->getKey(0, keyno);
+
+		auto oldSamKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage());
+		auto newSamKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
+		if (((oldSamKeyStorage && !oldSamKeyStorage->getDumpKey()) && !newSamKeyStorage)
+			|| (!oldSamKeyStorage && (newSamKeyStorage && !newSamKeyStorage->getDumpKey())))
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Both keys need to be set in the SAM.");
+
+		auto oldKeyDiversify = getKeyInformations(oldkey, keyno);
 		auto newKeyDiversify = getKeyInformations(key, keyno);
 
-        if (std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
+		if (oldSamKeyStorage && !oldSamKeyStorage->getDumpKey())
         {
             cryptogram = getChangeKeySAMCryptogram(keyno, key);
         }
@@ -733,7 +742,7 @@ namespace logicalaccess
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM AV2 can only dump key with diversification NXP AV2.");
 		key->setData(std::dynamic_pointer_cast<SAMAV2Commands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->dumpSecretKey(samKeyStorage->getKeySlot(),
 			key->getKeyVersion(), diversify));
-		key->setKeyStorage(nullptr);
+		key->setKeyStorage(std::make_shared<ComputerMemoryKeyStorage>());
 		key->setKeyDiversification(nullptr);
 	}
 
@@ -763,8 +772,7 @@ namespace logicalaccess
             result.resize(8);
             std::vector<unsigned char> rndAB, apduresult;
 
-            if (samKeyStorage
-				&& !samKeyStorage->getDumpKey())
+            if (samKeyStorage)
             {
                 unsigned char p1 = 0x00;
                 std::vector<unsigned char> data(2);
@@ -820,8 +828,7 @@ namespace logicalaccess
             {
                 result.resize(result.size() - 2);
 
-                if (samKeyStorage
-					&& !samKeyStorage->getDumpKey())
+                if (samKeyStorage)
                 {
                     unsigned char cmd[] = { 0x80, 0x0a, 0x00, 0x00, 0x08 };
                     std::vector<unsigned char> cmd_vector(cmd, cmd + 5);

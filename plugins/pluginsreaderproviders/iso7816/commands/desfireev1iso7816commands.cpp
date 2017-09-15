@@ -1053,7 +1053,13 @@ namespace logicalaccess
     {
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 		std::shared_ptr<DESFireKey> key = std::make_shared<DESFireKey>(*newkey);
-		auto samKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
+		auto oldkey = crypto->getKey(0, keyno);
+
+		auto oldSamKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage());
+		auto newSamKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
+		if (((oldSamKeyStorage && !oldSamKeyStorage->getDumpKey()) && !newSamKeyStorage)
+			|| (!oldSamKeyStorage && (newSamKeyStorage && !newSamKeyStorage->getDumpKey())))
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Both keys need to be set in the SAM.");
 
 		auto oldKeyDiversify = getKeyInformations(crypto->getKey(0, keyno), keyno);
 		auto newKeyDiversify = getKeyInformations(key, keyno);
@@ -1065,7 +1071,7 @@ namespace logicalaccess
         }
 
 		std::vector<unsigned char> cryptogram;
-        if (samKeyStorage && !samKeyStorage->getDumpKey())
+        if (oldSamKeyStorage && !oldSamKeyStorage->getDumpKey())
         {
             cryptogram = getChangeKeySAMCryptogram(keyno, key);
         }
