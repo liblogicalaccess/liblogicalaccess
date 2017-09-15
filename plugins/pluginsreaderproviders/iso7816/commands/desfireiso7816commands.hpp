@@ -308,6 +308,8 @@ namespace logicalaccess
 
     protected:
 
+		ByteVector getKeyInformations(std::shared_ptr<DESFireKey> key, uint8_t keyno);
+
         std::vector<unsigned char> getChangeKeySAMCryptogram(unsigned char keyno, std::shared_ptr<DESFireKey> key);
 
         std::vector<unsigned char> getChangeKeyIKSCryptogram(unsigned char keyno, std::shared_ptr<DESFireKey> key);

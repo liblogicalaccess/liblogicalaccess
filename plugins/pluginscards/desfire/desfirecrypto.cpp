@@ -634,15 +634,16 @@ namespace logicalaccess
         d_sessionKey.clear();
     }
 
-    std::vector<unsigned char> DESFireCrypto::changeKey_PICC(uint8_t keyno, std::shared_ptr<DESFireKey> newkey, std::vector<unsigned char> diversify, unsigned char keysetno)
+    std::vector<unsigned char> DESFireCrypto::changeKey_PICC(uint8_t keyno, std::vector<unsigned char> oldKeyDiversify, std::shared_ptr<DESFireKey> newkey, std::vector<unsigned char> newKeyDiversify, unsigned char keysetno)
     {
         LOG(LogLevel::INFOS) << "Init change key on PICC...";
         std::vector<unsigned char> cryptogram;
         std::vector<unsigned char> oldkeydiv, newkeydiv;
         oldkeydiv.resize(16, 0x00);
         newkeydiv.resize(16, 0x00);
-        getKey(keysetno, keyno, diversify, oldkeydiv);
-        getKey(newkey, diversify, newkeydiv);
+
+        getKey(keysetno, keyno, oldKeyDiversify, oldkeydiv);
+        getKey(newkey, newKeyDiversify, newkeydiv);
 
         std::vector<unsigned char> encCryptogram;
 
@@ -1110,14 +1111,14 @@ namespace logicalaccess
 		clearKeys();
     }
 
-    std::shared_ptr<DESFireKey> DESFireCrypto::getKey(uint8_t keyslot, uint8_t keyno) const
+    std::shared_ptr<DESFireKey> DESFireCrypto::getKey(uint8_t keyset, uint8_t keyno) const
     {
-        return getKey(d_currentAid, keyslot, keyno);
+        return getKey(d_currentAid, keyset, keyno);
     }
 
-    void DESFireCrypto::createApplication(int aid, uint8_t maxKeySlotNb, uint8_t maxNbKeys, DESFireKeyType cryptoMethod)
+    void DESFireCrypto::createApplication(int aid, uint8_t maxKeySetNb, uint8_t maxNbKeys, DESFireKeyType cryptoMethod)
     {
-		for (auto x = 0; x < maxKeySlotNb; ++x)
+		for (auto x = 0; x < maxKeySetNb; ++x)
 			setKeyInAllKeySet(aid, x, maxNbKeys, getDefaultKey(cryptoMethod));
     }
 

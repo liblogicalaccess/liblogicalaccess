@@ -304,7 +304,7 @@ namespace logicalaccess
          * \param diversify The diversify buffer, NULL if no diversification is needed
          * \return The change key cryptogram.
          */
-        virtual std::vector<unsigned char> changeKey_PICC(uint8_t keyno, std::shared_ptr<DESFireKey> newKey, std::vector<unsigned char> diversify, unsigned char keysetno = 0);
+        virtual std::vector<unsigned char> changeKey_PICC(uint8_t keyno, std::vector<unsigned char> oldKeyDiversify, std::shared_ptr<DESFireKey> newkey, std::vector<unsigned char> newKeyDiversify, unsigned char keysetno = 0);
 
         void setCryptoContext(std::vector<unsigned char> identifier);
 
@@ -374,7 +374,7 @@ namespace logicalaccess
 		* \param keydiv The key data, diversified if a diversify buffer is specified.
 		* \return True on success, false otherwise.
 		*/
-		bool getKey(size_t aid, uint8_t keyslot, uint8_t keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv);
+		bool getKey(size_t aid, uint8_t keyset, uint8_t keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv);
 
 		/**
 		* \brief Get key from memory.
@@ -383,7 +383,7 @@ namespace logicalaccess
 		* \param keydiv The key data, diversified if a diversify buffer is specified.
 		* \return True on success, false otherwise.
 		*/
-		bool getKey(uint8_t keyslot, uint8_t keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv);
+		bool getKey(uint8_t keyset, uint8_t keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv);
 
 		/**
 		* \brief Get one of the DESFire keys of this profile.

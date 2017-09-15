@@ -553,17 +553,9 @@ namespace logicalaccess
         unsigned char le;
 		std::shared_ptr<DESFireKey> key = std::make_shared<DESFireKey>(*currentKey);
         std::shared_ptr<openssl::SymmetricCipher> cipher;
-        std::vector<unsigned char> diversify;
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 
-        if (key->getKeyDiversification())
-        {
-			key->getKeyDiversification()->initDiversification(crypto->getIdentifier(), crypto->d_currentAid, key, keyno, diversify);
-        }
-
-		if (std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage())
-			&& std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage())->getDumpKey())
-			getKeyFromSAM(key, diversify);
+		auto diversify = getKeyInformations(key, keyno);
 
         std::vector<unsigned char> keydiv;
 		crypto->getKey(key, diversify, keydiv);
@@ -1063,13 +1055,8 @@ namespace logicalaccess
 		std::shared_ptr<DESFireKey> key = std::make_shared<DESFireKey>(*newkey);
 		auto samKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
 
-        std::vector<unsigned char> diversify;
-        if (key->getKeyDiversification())
-        {
-			key->getKeyDiversification()->initDiversification(crypto->getIdentifier(), crypto->d_currentAid, key, keyno, diversify);
-        }
-		if (samKeyStorage && samKeyStorage->getDumpKey())
-			getKeyFromSAM(key, diversify);
+		auto oldKeyDiversify = getKeyInformations(crypto->getKey(0, keyno), keyno);
+		auto newKeyDiversify = getKeyInformations(key, keyno);
 
         unsigned char keynobyte = keyno;
 		if (keyno == 0 && crypto->d_currentAid == 0)
@@ -1088,7 +1075,7 @@ namespace logicalaccess
         }
         else
         {
-			cryptogram = crypto->changeKey_PICC(keynobyte, key, diversify);
+			cryptogram = crypto->changeKey_PICC(keynobyte, oldKeyDiversify, key, newKeyDiversify);
         }
 
         std::vector<unsigned char> data;
@@ -1255,12 +1242,12 @@ namespace logicalaccess
         }
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 
-        unsigned char command[25];
-        memcpy(&command[0], defaultKey->getData(), 24);
+		std::vector<unsigned char> command = defaultKey->getBytes();
+		command.resize(25);
         command[24] = defaultKey->getKeyVersion();
 
 		crypto->initBuf();
-		std::vector<unsigned char> encBuffer = crypto->desfireEncrypt(std::vector<unsigned char>(command, command + sizeof(command)));
+		std::vector<unsigned char> encBuffer = crypto->desfireEncrypt(command);
         std::vector<unsigned char> buf;
         buf.push_back(0x01);
         buf.insert(buf.end(), encBuffer.begin(), encBuffer.end());

@@ -41,9 +41,7 @@ namespace logicalaccess
 
     void DESFireISO7816Commands::getVersion(DESFireCardVersion& dataVersion)
     {
-        std::vector<unsigned char> result;
-
-        result = transmit(DF_INS_GET_VERSION);
+	    auto result = transmit(DF_INS_GET_VERSION);
 
         if ((result.size() - 2) == 7)
         {
@@ -119,9 +117,7 @@ namespace logicalaccess
     std::vector<unsigned int> DESFireISO7816Commands::getApplicationIDs()
     {
         std::vector<unsigned int> aids;
-        std::vector<unsigned char> result;
-
-        result = transmit(DF_INS_GET_APPLICATION_IDS);
+	    std::vector<unsigned char> result = transmit(DF_INS_GET_APPLICATION_IDS);
 
         while (result[result.size() - 1] == DF_INS_ADDITIONAL_FRAME)
         {
@@ -234,20 +230,30 @@ namespace logicalaccess
         return ret;
     }
 
+	ByteVector DESFireISO7816Commands::getKeyInformations(std::shared_ptr<DESFireKey> key, uint8_t keyno)
+    {
+		auto crypto = getDESFireChip()->getCrypto();
+		auto samKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
+
+		std::vector<unsigned char> diversify;
+		if (key->getKeyDiversification())
+			key->getKeyDiversification()->initDiversification(crypto->getIdentifier(), crypto->d_currentAid, key, keyno, diversify);
+
+		// get key value from SAM
+		if (samKeyStorage && samKeyStorage->getDumpKey())
+			getKeyFromSAM(key, diversify);
+
+		return diversify;
+    }
+
     void DESFireISO7816Commands::changeKey(unsigned char keyno, std::shared_ptr<DESFireKey> newkey)
     {
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
         std::vector<unsigned char> cryptogram;
 		std::shared_ptr<DESFireKey> key = std::make_shared<DESFireKey>(*newkey);
-		auto samKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
 
-		std::vector<unsigned char> diversify;
-		if (key->getKeyDiversification())
-		{
-			key->getKeyDiversification()->initDiversification(crypto->getIdentifier(), crypto->d_currentAid, key, keyno, diversify);
-		}
-		if (samKeyStorage && samKeyStorage->getDumpKey())
-			getKeyFromSAM(key, diversify);
+		auto oldKeyDiversify = getKeyInformations(crypto->getKey(0, keyno), keyno);
+		auto newKeyDiversify = getKeyInformations(key, keyno);
 
         if (std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
         {
@@ -259,7 +265,7 @@ namespace logicalaccess
         }
         else
         {
-			cryptogram = crypto->changeKey_PICC(keyno, key, diversify);
+			cryptogram = crypto->changeKey_PICC(keyno, oldKeyDiversify, key, newKeyDiversify);
         }
 
         std::vector<unsigned char> command;
@@ -293,7 +299,7 @@ namespace logicalaccess
 
         EXCEPTION_ASSERT_WITH_LOG(result.size() >= 2, LibLogicalAccessException, "incorrect result for transmit");
 
-        settings = (DESFireKeySettings)result[0];
+        settings = static_cast<DESFireKeySettings>(result[0]);
         maxNbKeys = result[1];
     }
 
@@ -745,14 +751,7 @@ namespace logicalaccess
 		if (samKeyStorage && !getSAMChip())
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAMKeyStorage set on the key but no SAM reader has been set.");
 
-        std::vector<unsigned char> diversify;
-        if (key->getKeyDiversification())
-        {
-			key->getKeyDiversification()->initDiversification(crypto->getIdentifier(), crypto->d_currentAid, key, keyno, diversify);
-        }
-
-		if (samKeyStorage && samKeyStorage->getDumpKey())
-			getKeyFromSAM(key, diversify);
+		auto diversify = getKeyInformations(currentKey, keyno);
 
 		crypto->setKey(crypto->d_currentAid, 0, keyno, key);
 
