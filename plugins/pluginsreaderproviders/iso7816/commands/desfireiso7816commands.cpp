@@ -231,6 +231,16 @@ namespace logicalaccess
         return ret;
     }
 
+	uint8_t DESFireISO7816Commands::getKeyVersion(uint8_t keyno)
+	{
+		std::vector<unsigned char> command;
+		command.push_back(keyno);
+		auto result = transmit(DF_INS_GET_KEY_VERSION, command);
+		if (result.size() < 3)
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Invalid response for getKeyVersion.");
+		return result[0];
+	}
+
 	ByteVector DESFireISO7816Commands::getKeyInformations(std::shared_ptr<DESFireKey> key, uint8_t keyno)
     {
 		auto crypto = getDESFireChip()->getCrypto();
@@ -240,7 +250,7 @@ namespace logicalaccess
 		if (key->getKeyDiversification())
 			key->getKeyDiversification()->initDiversification(crypto->getIdentifier(), crypto->d_currentAid, key, keyno, diversify);
 
-		// get key value from SAM
+		// get key value from SAM - But what to do if the initDiversification need the key ?
 		if (samKeyStorage && samKeyStorage->getDumpKey())
 			getKeyFromSAM(key, diversify);
 

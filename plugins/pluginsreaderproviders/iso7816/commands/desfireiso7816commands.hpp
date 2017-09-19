@@ -89,6 +89,12 @@ namespace logicalaccess
          */
         virtual void getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys);
 
+		/**
+		* \brief Get a key version of a key
+		* \param keyno The key no.
+		*/
+		virtual uint8_t getKeyVersion(uint8_t keyno);
+
         /**
          * \brief Change key settings for the current application.
          * \param settings The new key settings
