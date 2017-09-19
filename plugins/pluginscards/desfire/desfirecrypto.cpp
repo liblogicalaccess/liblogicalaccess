@@ -606,8 +606,7 @@ namespace logicalaccess
 
     void DESFireCrypto::getKeyVersioned(std::shared_ptr<DESFireKey> key, std::vector<unsigned char>& keyversioned)
     {
-        unsigned char* keytmpversioned = new unsigned char[key->getLength()];
-        memset(keytmpversioned, 0x00, key->getLength());
+		auto keytmpversioned = key->getBytes();
         unsigned char version = key->getKeyVersion();
         // set the key version
         for (unsigned char i = 0; i < 8; i++)
@@ -619,9 +618,7 @@ namespace logicalaccess
                 keytmpversioned[23 - i] = (unsigned char)(keyversioned[23 - i]);
             }
         }
-        keyversioned.clear();
-        keyversioned.insert(keyversioned.end(), keytmpversioned, keytmpversioned + key->getLength());
-        delete[] keytmpversioned;
+        keyversioned = keytmpversioned;
     }
 
     void DESFireCrypto::selectApplication(size_t aid)

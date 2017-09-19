@@ -19,6 +19,7 @@
 #include "logicalaccess/cards/IKSStorage.hpp"
 #include "logicalaccess/iks/packet/DesfireChangeKey.hpp"
 #include "logicalaccess/cards/computermemorykeystorage.hpp"
+#include "samav2iso7816commands.hpp"
 
 namespace logicalaccess
 {
@@ -151,7 +152,7 @@ namespace logicalaccess
         std::shared_ptr<SAMCommands<KeyEntryAV2Information, SETAV2> > samav2commands = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands());
 
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
-		std::shared_ptr<DESFireKey> oldkey = std::dynamic_pointer_cast<DESFireKey>(crypto->getKey(crypto->d_currentAid, keyno));
+		std::shared_ptr<DESFireKey> oldkey = std::dynamic_pointer_cast<DESFireKey>(crypto->getKey(0, keyno));
 
         ChangeKeyInfo samck;
         memset(&samck, 0x00, sizeof(samck));
@@ -215,6 +216,15 @@ namespace logicalaccess
             else
                 keyDiv.divType = NXPKeyDiversificationType::SAMAV1;
         }
+
+		if (crypto->d_auth_method != CM_LEGACY)
+		{
+			//AES has keep IV option, need to load current IV
+			if (samav1commands)
+				samav1commands->loadInitVector(crypto->d_lastIV);
+			else
+				samav2commands->loadInitVector(crypto->d_lastIV);
+		}
 
         std::vector<unsigned char> ret;
         if (samav1commands)

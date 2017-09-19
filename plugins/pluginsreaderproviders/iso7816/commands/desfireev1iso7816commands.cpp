@@ -712,7 +712,7 @@ namespace logicalaccess
         data.push_back(keyno);
 
         std::vector<unsigned char> diversify;
-		std::shared_ptr<DESFireKey> currentkey = crypto->getKey(crypto->d_currentAid, keyno);
+		std::shared_ptr<DESFireKey> currentkey = crypto->getKey(0, keyno);
         if (currentkey->getKeyDiversification())
         {
 			currentkey->getKeyDiversification()->initDiversification(crypto->getIdentifier(), crypto->d_currentAid, currentkey, keyno, diversify);
@@ -739,7 +739,7 @@ namespace logicalaccess
         data.push_back(keyno);
 
         std::vector<unsigned char> diversify;
-		std::shared_ptr<DESFireKey> currentkey = crypto->getKey(crypto->d_currentAid, keyno);
+		std::shared_ptr<DESFireKey> currentkey = crypto->getKey(0, keyno);
         if (currentkey->getKeyDiversification())
         {
 			currentkey->getKeyDiversification()->initDiversification(crypto->getIdentifier(), crypto->d_currentAid, currentkey, keyno, diversify);
