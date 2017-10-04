@@ -1229,15 +1229,19 @@ namespace logicalaccess
     void DESFireEV1ISO7816Commands::setConfiguration(bool formatCardEnabled, bool randomIdEnabled)
     {
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
-        unsigned char command[1];
-        command[0] = 0x00 | ((formatCardEnabled) ? 0x00 : 0x01) | ((randomIdEnabled) ? 0x02 : 0x00);
+		std::vector<unsigned char> command(1);
+		command[0] = (formatCardEnabled) ? 0x00 : 0x01 |
+			(randomIdEnabled) ? 0x02 : 0x00;
 
 		crypto->initBuf();
-		std::vector<unsigned char> encBuffer = crypto->desfire_encrypt(crypto->d_sessionKey, std::vector<unsigned char>(command, command + sizeof(command)));
-        std::vector<unsigned char> buf;
-        buf.push_back(0x00);
-        buf.insert(buf.end(), encBuffer.begin(), encBuffer.end());
-        transmit_plain(DFEV1_INS_SET_CONFIGURATION, buf);
+		std::vector<unsigned char> param;
+		param.push_back(DFEV1_INS_SET_CONFIGURATION);
+		param.push_back(0x00); // PICC App key config
+		std::vector<unsigned char> encBuffer = crypto->desfireEncrypt(command, param);
+		std::vector<unsigned char> buf;
+		buf.push_back(0x00);
+		buf.insert(buf.end(), encBuffer.begin(), encBuffer.end());
+		transmit_plain(DFEV1_INS_SET_CONFIGURATION, buf);
     }
 
     void DESFireEV1ISO7816Commands::setConfiguration(std::shared_ptr<DESFireKey> defaultKey)
@@ -1253,7 +1257,10 @@ namespace logicalaccess
         command[24] = defaultKey->getKeyVersion();
 
 		crypto->initBuf();
-		std::vector<unsigned char> encBuffer = crypto->desfireEncrypt(command);
+		std::vector<unsigned char> param;
+		param.push_back(DFEV1_INS_SET_CONFIGURATION);
+		param.push_back(0x01); // Default keys Update
+		std::vector<unsigned char> encBuffer = crypto->desfireEncrypt(command, param);
         std::vector<unsigned char> buf;
         buf.push_back(0x01);
         buf.insert(buf.end(), encBuffer.begin(), encBuffer.end());
