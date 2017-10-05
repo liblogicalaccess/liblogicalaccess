@@ -914,7 +914,22 @@ namespace logicalaccess
         {
             return d_proxyReaderUnit->getReaderSerialNumber();
         }
-        return "";
+
+        std::string serialno = "";
+        DWORD seriallen = 0;
+        if (SCARD_S_SUCCESS == SCardGetAttrib(getHandle(), SCARD_ATTR_VENDOR_IFD_SERIAL_NO, (LPBYTE)NULL, &seriallen) && seriallen > 0)
+        {
+            seriallen += 1;
+            char* serialbuf = new char[seriallen];
+            memset(serialbuf, 0x00, seriallen);
+            if (SCARD_S_SUCCESS == SCardGetAttrib(getHandle(), SCARD_ATTR_VENDOR_IFD_SERIAL_NO, (LPBYTE)serialbuf, &seriallen))
+            {
+                serialno = std::string(serialbuf);
+            }
+            delete[] serialbuf;
+        }
+
+        return serialno;
     }
 
     std::shared_ptr<PCSCReaderProvider> PCSCReaderUnit::getPCSCReaderProvider() const

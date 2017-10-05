@@ -37,7 +37,7 @@ namespace logicalaccess
          * \brief Get a string hexadecimal representation of the reader serial number
          * \return The reader serial number or an empty string on error.
          */
-        virtual std::string getReaderSerialNumber();
+        std::string getInternalReaderSerialNumber();
 
         /**
          * \brief Wait for a card removal.
