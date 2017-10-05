@@ -618,7 +618,7 @@ namespace logicalaccess
 				{
 					getDefaultRplethReaderCardAdapter()->sendRplethCommand(cmd, true, timeout);
 				}
-				catch (std::exception)
+				catch (const std::exception &)
 				{ //We dont care about timeout
 				}
 
@@ -642,7 +642,7 @@ namespace logicalaccess
     {
         std::vector<unsigned char> result;
         std::shared_ptr<RplethReaderUnitConfiguration> conf = std::dynamic_pointer_cast<RplethReaderUnitConfiguration>(d_readerUnitConfig);
-        if (conf->getLength() != 0)
+        if (conf && conf->getLength() != 0)
         {
             if (trame.size() * 8 >= static_cast<size_t>(conf->getLength() + conf->getOffset()))
             {
