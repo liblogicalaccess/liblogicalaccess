@@ -99,6 +99,12 @@
 
 #include <cstring>
 
+#ifdef UNIX
+
+// Include for SCARD_ATTR_VENDOR_IFD_SERIAL_NO
+#include <reader.h>
+#endif
+
 namespace logicalaccess
 {
     PCSCReaderUnit::PCSCReaderUnit(const std::string& name)
