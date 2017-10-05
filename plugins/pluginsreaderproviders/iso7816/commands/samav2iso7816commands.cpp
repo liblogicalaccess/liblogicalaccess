@@ -566,4 +566,77 @@ namespace logicalaccess
 		result.resize(result.size() - 2);
 		return result;
     }
+
+	std::vector<unsigned char> SAMAV2ISO7816Commands::cmacOffline(const std::vector<unsigned char>& data)
+	{
+		std::vector<unsigned char> cmac;
+		unsigned int block_size = 16;
+		unsigned char Rb = 0x87;
+
+		std::vector<unsigned char> blankbuf;
+		blankbuf.resize(block_size, 0x00);
+		std::vector<unsigned char> L = encipherOfflineData(blankbuf);
+
+		std::vector<unsigned char> K1;
+		if ((L[0] & 0x80) == 0x00)
+		{
+			K1 = openssl::CMACCrypto::shift_string(L);
+		}
+		else
+		{
+			K1 = openssl::CMACCrypto::shift_string(L, Rb);
+		}
+
+		std::vector<unsigned char> K2;
+		if ((K1[0] & 0x80) == 0x00)
+		{
+			K2 = openssl::CMACCrypto::shift_string(K1);
+		}
+		else
+		{
+			K2 = openssl::CMACCrypto::shift_string(K1, Rb);
+		}
+
+		int pad = (block_size - (data.size() % block_size)) % block_size;
+		if (data.size() == 0)
+			pad = block_size;
+
+		std::vector<unsigned char> padded_data = data;
+		if (pad > 0)
+		{
+			padded_data.push_back(0x80);
+			if (pad > 1)
+			{
+				for (int i = 0; i < (pad - 1); ++i)
+				{
+					padded_data.push_back(0x00);
+				}
+			}
+		}
+
+		// XOR with K1
+		if (pad == 0)
+		{
+			for (unsigned int i = 0; i < K1.size(); ++i)
+			{
+				padded_data[padded_data.size() - K1.size() + i] = static_cast<unsigned char>(padded_data[padded_data.size() - K1.size() + i] ^ K1[i]);
+			}
+		}
+		// XOR with K2
+		else
+		{
+			for (unsigned int i = 0; i < K2.size(); ++i)
+			{
+				padded_data[padded_data.size() - K2.size() + i] = static_cast<unsigned char>(padded_data[padded_data.size() - K2.size() + i] ^ K2[i]);
+			}
+		}
+
+		cmac = encipherOfflineData(padded_data);
+		if (cmac.size() > block_size)
+		{
+			cmac = std::vector<unsigned char>(cmac.end() - block_size, cmac.end());
+		}
+
+		return cmac;
+	}
 }

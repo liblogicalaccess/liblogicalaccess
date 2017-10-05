@@ -730,32 +730,47 @@ namespace logicalaccess
 		crypto->iso_authenticate_PICC2(keyno, encRndA1, random_len);
     }
 
-    void DESFireEV1ISO7816Commands::authenticateAES(unsigned char keyno)
-    {
+	void DESFireEV1ISO7816Commands::authenticateAES(unsigned char keyno)
+	{
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 		crypto->d_auth_method = CM_LEGACY; // To prevent CMAC checking
 
-        std::vector<unsigned char> data;
-        data.push_back(keyno);
+		std::vector<unsigned char> data;
+		data.push_back(keyno);
 
-        std::vector<unsigned char> diversify;
-		std::shared_ptr<DESFireKey> currentkey = crypto->getKey(0, keyno);
-        if (currentkey->getKeyDiversification())
-        {
-			currentkey->getKeyDiversification()->initDiversification(crypto->getIdentifier(), crypto->d_currentAid, currentkey, keyno, diversify);
-        }
+		std::shared_ptr<DESFireKey> key = crypto->getKey(0, keyno);
 
-        std::vector<unsigned char> encRndB = transmit_plain(DFEV1_INS_AUTHENTICATE_AES, data);
-        unsigned char err = encRndB.back();
-        encRndB.resize(encRndB.size() - 2);
-        EXCEPTION_ASSERT_WITH_LOG(err == DF_INS_ADDITIONAL_FRAME, LibLogicalAccessException, "No additional frame for ISO authentication.");
+		auto diversify = getKeyInformations(key, keyno);
 
-		std::vector<unsigned char> response = crypto->aes_authenticate_PICC1(keyno, diversify, encRndB);
-        std::vector<unsigned char> encRndA1 = transmit_plain(DF_INS_ADDITIONAL_FRAME, response);
-        encRndA1.resize(encRndA1.size() - 2);
+		auto samKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
+		if (samKeyStorage && !getSAMChip())
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAMKeyStorage set on the key but no SAM reader has been set.");
 
-		crypto->aes_authenticate_PICC2(keyno, encRndA1);
-    }
+		std::vector<unsigned char> encRndB = transmit_plain(DFEV1_INS_AUTHENTICATE_AES, data);
+		unsigned char err = encRndB.back();
+		encRndB.resize(encRndB.size() - 2);
+		EXCEPTION_ASSERT_WITH_LOG(err == DF_INS_ADDITIONAL_FRAME, LibLogicalAccessException, "No additional frame for ISO authentication.");
+
+		std::vector<unsigned char> response;
+		if (samKeyStorage)
+			response = sam_authenticate_p1(key, encRndB, diversify);
+		else
+			response = crypto->aes_authenticate_PICC1(keyno, diversify, encRndB);
+		std::vector<unsigned char> encRndA1 = transmit_plain(DF_INS_ADDITIONAL_FRAME, response);
+		encRndA1.resize(encRndA1.size() - 2);
+
+		if (samKeyStorage)
+			sam_authenticate_p2(keyno, encRndA1);
+		else
+			crypto->aes_authenticate_PICC2(keyno, encRndA1);
+
+		crypto->d_cipher.reset(new openssl::AESCipher());
+		crypto->d_auth_method = CM_ISO;
+		crypto->d_block_size = 16;
+		crypto->d_mac_size = 8;
+		crypto->d_lastIV.clear();
+		crypto->d_lastIV.resize(crypto->d_block_size, 0x00);
+	}
 
 	std::vector<unsigned char> DESFireEV1ISO7816Commands::handleReadCmd(unsigned char cmd, const std::vector<unsigned char>& data, EncryptionMode /*mode*/)
     {

@@ -312,6 +312,10 @@ namespace logicalaccess
 		*/
 		void getKeyFromSAM(std::shared_ptr<DESFireKey> key, std::vector<unsigned char> diversify);
 
+		ByteVector sam_authenticate_p1(std::shared_ptr<DESFireKey> key, ByteVector rndb, ByteVector diversify);
+
+		void sam_authenticate_p2(unsigned char keyno, ByteVector rndap);
+
     protected:
 
 		ByteVector getKeyInformations(std::shared_ptr<DESFireKey> key, uint8_t keyno);

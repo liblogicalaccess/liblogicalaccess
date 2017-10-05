@@ -114,6 +114,9 @@ namespace logicalaccess
 
 	std::vector<unsigned char> DESFireCrypto::generateMAC(unsigned char cmd, const std::vector<unsigned char>& data)
     {
+		if (!data.size())
+			return {};
+
         std::vector<unsigned char> ret;
         if (d_auth_method == CM_LEGACY)
         {
@@ -671,7 +674,7 @@ namespace logicalaccess
         }
         else
         {
-            if (keyno != d_currentKeyNo)
+            if (keyno != d_currentKeyNo || keysetno)
             {
                 uint32_t crc;
                 for (unsigned int i = 0; i < newkeydiv.size(); ++i)
@@ -695,9 +698,12 @@ namespace logicalaccess
                     sessionkey.reset(new openssl::DESSymmetricKey(openssl::DESSymmetricKey::createFromData(d_sessionKey)));
                     iv.reset(new openssl::DESInitializationVector(openssl::DESInitializationVector::createFromData(d_lastIV)));
                 }
-                std::vector<unsigned char> crcoldkxor;
-                crcoldkxor.push_back(DF_INS_CHANGE_KEY);
-                crcoldkxor.push_back(keyno);
+				auto crcoldkxor = ByteVector({ DF_INS_CHANGE_KEY, keyno });
+				if (keysetno != 0) //ChangeKeyEV2
+				{
+					crcoldkxor[0] = 0xc6; // DFEV2_CHANGEKEYEV2
+					crcoldkxor.insert(crcoldkxor.begin() + 1, keysetno);
+				}
                 crcoldkxor.insert(crcoldkxor.end(), encCryptogram.begin(), encCryptogram.end());
                 crc = desfire_crc32(&crcoldkxor[0], crcoldkxor.size());
                 encCryptogram.push_back(static_cast<unsigned char>(crc & 0xff));
@@ -889,13 +895,6 @@ namespace logicalaccess
         }
         else
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "AES Authenticate PICC 2 Failed!");
-
-        d_cipher.reset(new openssl::AESCipher());
-        d_auth_method = CM_ISO;
-        d_block_size = 16;
-        d_mac_size = 8;
-        d_lastIV.clear();
-        d_lastIV.resize(d_block_size, 0x00);
     }
 
     std::vector<unsigned char> DESFireCrypto::desfire_cmac(const std::vector<unsigned char>& data)

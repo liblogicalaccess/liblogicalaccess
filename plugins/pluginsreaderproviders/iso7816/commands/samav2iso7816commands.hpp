@@ -63,6 +63,8 @@ namespace logicalaccess
 
 		virtual std::vector<unsigned char> encipherOfflineData(std::vector<unsigned char> data);
 
+		virtual std::vector<unsigned char> cmacOffline(const std::vector<unsigned char>& data);
+
     protected:
 
         void generateSessionKey(std::vector<unsigned char> rnd1, std::vector<unsigned char> rnd2);
