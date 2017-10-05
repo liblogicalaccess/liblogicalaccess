@@ -771,7 +771,7 @@ namespace logicalaccess
 			key->getKeyVersion(), diversify));
 		key->setKeyStorage(std::make_shared<ComputerMemoryKeyStorage>());
 
-		// Clear diversification since alread done
+		// Clear diversification since already done
 		if (key->getKeyDiversification() && std::dynamic_pointer_cast<NXPAV2KeyDiversification>(key->getKeyDiversification()))
 			key->setKeyDiversification(nullptr);
 	}

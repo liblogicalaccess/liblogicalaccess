@@ -641,15 +641,16 @@ namespace logicalaccess
         std::vector<unsigned char> oldkeydiv, newkeydiv;
         oldkeydiv.resize(16, 0x00);
         newkeydiv.resize(16, 0x00);
-
-        getKey(keysetno, keyno, oldKeyDiversify, oldkeydiv);
+		// Get keyno only, in case of master card key
+		unsigned char keyno_only = static_cast<unsigned char>(keyno & 0x3F);
+        getKey(keysetno, keyno_only, oldKeyDiversify, oldkeydiv);
         getKey(newkey, newKeyDiversify, newkeydiv);
 
         std::vector<unsigned char> encCryptogram;
 
         if (d_auth_method == CM_LEGACY) // Native DESFire
         {
-            if (keyno != d_currentKeyNo || keysetno)
+            if (keyno_only != d_currentKeyNo || keysetno)
             {
 	            for (unsigned int i = 0; i < newkeydiv.size(); ++i)
                 {
@@ -669,12 +670,14 @@ namespace logicalaccess
             }
             else
             {
+				if (newkey->getKeyType() == DF_KEY_AES) // Change PICC Key
+					newkeydiv.push_back(newkey->getKeyVersion());
                 cryptogram = desfire_encrypt(d_sessionKey, newkeydiv);
             }
         }
         else
         {
-            if (keyno != d_currentKeyNo || keysetno)
+            if (keyno_only != d_currentKeyNo || keysetno)
             {
                 uint32_t crc;
                 for (unsigned int i = 0; i < newkeydiv.size(); ++i)
