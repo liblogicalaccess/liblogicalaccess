@@ -292,4 +292,8 @@ std::shared_ptr<KeyDiversification> Key::getKeyDiversification()
 
 void Key::setKeyDiversification(std::shared_ptr<KeyDiversification> div)
 { d_key_diversification = div; }
+
+    ByteVector Key::getBytes() const {
+        return ByteVector(getData(), getData() + getLength());
+    }
 }

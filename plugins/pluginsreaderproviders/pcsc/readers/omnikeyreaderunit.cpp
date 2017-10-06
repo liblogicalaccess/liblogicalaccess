@@ -25,7 +25,7 @@ namespace logicalaccess
     {
     }
 
-    std::string OmnikeyReaderUnit::getReaderSerialNumber()
+    std::string OmnikeyReaderUnit::getInternalReaderSerialNumber()
     {
         std::string ret;
 

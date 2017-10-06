@@ -15,45 +15,32 @@
 
 namespace logicalaccess
 {
-    namespace Exception
-    {
-        class exception : public std::exception
-        {
-        public:
-            exception(const std::string& msg) : _message(msg) {};
-
-            const char* what() const NOEXCEPT
-            {
-                return this->_message.c_str();
-            }
-        private:
-            std::string _message;
-        };
-
-        class bad_function_call : public std::bad_function_call
-        {
-        public:
-            bad_function_call(const std::string& msg) : _message(msg) {};
-
-            const char* what() const NOEXCEPT
-            {
-                return this->_message.c_str();
-            }
-        private:
-            std::string _message;
-        };
-    }
-
     /**
-       * \brief A liblogicalaccess exception class.
-       */
-    class LIBLOGICALACCESS_API LibLogicalAccessException : public Exception::exception
-    {
-    public:
-        LibLogicalAccessException(const std::string& message)
-            : exception(message)
-        {};
-    };
+      * \brief A liblogicalaccess exception class.
+      */
+	class LibLogicalAccessException : public std::exception
+	{
+	public:
+		explicit LibLogicalAccessException(const char* message) :
+			msg_(message)
+		{
+		}
+
+		explicit LibLogicalAccessException(const std::string& message) :
+			msg_(message)
+		{}
+
+		virtual ~LibLogicalAccessException() NOEXCEPT {}
+
+		const char* what() const NOEXCEPT override
+		{
+			return msg_.c_str();
+		}
+
+	protected:
+
+		std::string msg_;
+	};
 
     /**
      * Exception class to notify of error on card operation.
@@ -61,7 +48,7 @@ namespace logicalaccess
 	 * If a command fails and the error is known, a CardException corresponding
 	 * to the error will be thrown by the library.
      */
-    class LIBLOGICALACCESS_API CardException : public LibLogicalAccessException
+    class CardException : public LibLogicalAccessException
     {
     public:
         CardException(const std::string& message)
@@ -119,11 +106,11 @@ namespace logicalaccess
     /**
      * An exception related to operation against the Islog Key Server.
      */
-    class IKSException : public Exception::exception
+    class IKSException : public LibLogicalAccessException
     {
     public:
         IKSException(const std::string& message)
-                : exception(message)
+                : LibLogicalAccessException(message)
         {};
     };
 

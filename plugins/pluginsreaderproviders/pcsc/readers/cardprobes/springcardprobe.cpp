@@ -1,7 +1,7 @@
 #include "springcardprobe.hpp"
 #include "logicalaccess/cards/chip.hpp"
 #include "logicalaccess/logs.hpp"
-#include "mifarecommands.hpp"
+#include "mifare/mifarecommands.hpp"
 
 using namespace logicalaccess;
 

@@ -5,7 +5,7 @@
  */
 
 #include "desfireev1stidstrcommands.hpp"
-#include "desfirechip.hpp"
+#include "desfire/desfirechip.hpp"
 #include <openssl/rand.h>
 #include <string.h>
 #include "logicalaccess/logs.hpp"
@@ -138,7 +138,7 @@ namespace logicalaccess
 
         for (unsigned char i = 0; i < maxNbKeys; ++i)
 		{
-			getDESFireChip()->getCrypto()->setKey(aid, i, DESFireCrypto::getDefaultKey(cryptoMethod));
+			getDESFireChip()->getCrypto()->setKey(aid, 0, i, DESFireCrypto::getDefaultKey(cryptoMethod));
         }
     }
 

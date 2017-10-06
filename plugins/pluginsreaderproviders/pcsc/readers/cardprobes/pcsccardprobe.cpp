@@ -2,10 +2,10 @@
 #include "../../pcscreaderunit.hpp"
 #include "logicalaccess/cards/chip.hpp"
 #include "logicalaccess/logs.hpp"
-#include "mifarecommands.hpp"
+#include "mifare/mifarecommands.hpp"
 #include <assert.h>
-#include <desfirecommands.hpp>
-#include <mifareultralightccommands.hpp>
+#include <desfire/desfirecommands.hpp>
+#include <mifareultralight/mifareultralightccommands.hpp>
 
 using namespace logicalaccess;
 
@@ -70,30 +70,42 @@ bool PCSCCardProbe::is_desfire(std::vector<uint8_t> *uid)
     }
 }
 
+unsigned char PCSCCardProbe::get_desfire_version(std::vector<uint8_t> *uid)
+{
+	try
+	{
+		LLA_LOG_CTX("Probe::get_desfire_version");
+		reset();
+		auto chip = reader_unit_->createChip("DESFireEV1");
+		DESFireCommands::DESFireCardVersion cardversion;
+		auto desfire_command =
+			std::dynamic_pointer_cast<DESFireCommands>(chip->getCommands());
+		assert(desfire_command);
+		desfire_command->selectApplication(0x00);
+		desfire_command->getVersion(cardversion);
+
+		if (uid)
+			*uid =
+			ByteVector(std::begin(cardversion.uid), std::end(cardversion.uid));
+		return cardversion.softwareMjVersion;
+	}
+	catch (const std::exception&)
+	{
+		// If an error occurred, the card probably isn't desfire.
+		return -1;
+	}
+}
+
 bool PCSCCardProbe::is_desfire_ev1(std::vector<uint8_t> *uid)
 {
-    try
-    {
-        LLA_LOG_CTX("Probe::is_desfire_ev1");
-        reset();
-        auto chip = reader_unit_->createChip("DESFireEV1");
-        DESFireCommands::DESFireCardVersion cardversion;
-        auto desfire_command =
-            std::dynamic_pointer_cast<DESFireCommands>(chip->getCommands());
-        assert(desfire_command);
-        desfire_command->selectApplication(0x00);
-        desfire_command->getVersion(cardversion);
+	LLA_LOG_CTX("Probe::is_desfire_ev1");
+	return get_desfire_version(uid) == 1;
+}
 
-        if (uid)
-            *uid =
-                ByteVector(std::begin(cardversion.uid), std::end(cardversion.uid));
-        return cardversion.softwareMjVersion >= 1;
-    }
-    catch (const std::exception&)
-    {
-        // If an error occurred, the card probably isn't desfire.
-        return false;
-    }
+bool PCSCCardProbe::is_desfire_ev2(std::vector<uint8_t> *uid)
+{
+	LLA_LOG_CTX("Probe::is_desfire_ev2");
+	return get_desfire_version(uid) >= 2;
 }
 
 bool PCSCCardProbe::is_mifare_ultralight_c()

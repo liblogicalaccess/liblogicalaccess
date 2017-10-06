@@ -52,7 +52,7 @@ namespace logicalaccess
                 /**
                  * \brief The internal OpenSSL context.
                  */
-                EVP_CIPHER_CTX ctx;
+                EVP_CIPHER_CTX *ctx;
 
                 /**
                  * \brief The internal method.
@@ -116,7 +116,7 @@ namespace logicalaccess
             friend class OpenSSLSymmetricCipher;
         };
 
-        inline EVP_CIPHER_CTX* OpenSSLSymmetricCipherContext::ctx() { return &d_information->ctx; }
+        inline EVP_CIPHER_CTX* OpenSSLSymmetricCipherContext::ctx() { return d_information->ctx; }
         inline OpenSSLSymmetricCipher::Method OpenSSLSymmetricCipherContext::method() const { return d_information->method; }
         inline std::vector<unsigned char>& OpenSSLSymmetricCipherContext::data() { return d_information->data; }
     }

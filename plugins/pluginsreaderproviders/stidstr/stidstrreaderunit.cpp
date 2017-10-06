@@ -31,8 +31,9 @@
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
 #include "readercardadapters/stidstrreaderdatatransport.hpp"
-#include "desfireev1chip.hpp"
-#include "mifarechip.hpp"
+#include "desfire/desfireev1chip.hpp"
+#include "iso7816/commands/desfireev1iso7816commands.hpp"
+#include "mifare/mifarechip.hpp"
 
 #include "stidstrreaderunitconfiguration.hpp"
 #include "logicalaccess/settings.hpp"
@@ -41,7 +42,7 @@
 namespace logicalaccess
 {
     STidSTRReaderUnit::STidSTRReaderUnit()
-        : ReaderUnit(READER_STIDSTR)
+        : ISO7816ReaderUnit(READER_STIDSTR)
     {
         d_readerUnitConfig.reset(new STidSTRReaderUnitConfiguration());
         setDefaultReaderCardAdapter(std::shared_ptr<STidSTRReaderCardAdapter>(new STidSTRReaderCardAdapter(STID_CMD_READER)));
@@ -115,7 +116,16 @@ namespace logicalaccess
                 }
 
                 if (!inserted)
+                {
                     std::this_thread::sleep_for(std::chrono::milliseconds(250));
+                }
+                else
+                {
+                    if ((chip->getCardType() == CHIP_DESFIRE_EV1 || chip->getCardType() == CHIP_DESFIRE) && getSTidSTRConfiguration()->getPN532Direct())
+                    {
+                        std::dynamic_pointer_cast<DESFireISO7816Commands>(d_insertedChip->getCommands())->setSAMChip(getSAMChip());
+                    }
+                }
             } while (!inserted && std::chrono::steady_clock::now() < clock_timeout);
         }
         catch (...)
@@ -200,8 +210,8 @@ namespace logicalaccess
 
     bool STidSTRReaderUnit::connectToReader()
     {
-        bool ret = getDataTransport()->connect();
-        if (ret)
+        bool connected = getDataTransport()->connect();
+        if (connected)
         {
             // Negotiate sessions according to communication options
             if ((getSTidSTRConfiguration()->getCommunicationMode() & STID_CM_SIGNED) == STID_CM_SIGNED)
@@ -216,11 +226,17 @@ namespace logicalaccess
             }
         }
 
-        return ret;
+        if (connected)
+        {
+            connected = ISO7816ReaderUnit::connectToReader();
+        }
+
+        return connected;
     }
 
     void STidSTRReaderUnit::disconnectFromReader()
     {
+        ISO7816ReaderUnit::disconnectFromReader();
         getDataTransport()->disconnect();
     }
 
@@ -254,8 +270,15 @@ namespace logicalaccess
             else if (type == "DESFire" || type == "DESFireEV1")
             {
                 LOG(LogLevel::INFOS) << "Mifare DESFire Chip created";
-                rca.reset(new STidSTRReaderCardAdapter(STID_CMD_DESFIRE));
-                commands.reset(new DESFireEV1STidSTRCommands());
+                rca.reset(new STidSTRReaderCardAdapter(STID_CMD_DESFIRE, getSTidSTRConfiguration()->getPN532Direct()));
+                if (getSTidSTRConfiguration()->getPN532Direct())
+                {
+                    commands.reset(new DESFireEV1ISO7816Commands());
+                }
+                else
+                {
+                    commands.reset(new DESFireEV1STidSTRCommands());
+                }
             }
             else
                 return chip;
@@ -420,7 +443,7 @@ namespace logicalaccess
         LOG(LogLevel::INFOS) << "Scanning 14443A RAW chips...";
         std::shared_ptr<Chip> chip;
         std::vector<unsigned char> command;
-        command.push_back(0x00);
+        command.push_back(getSTidSTRConfiguration()->getPN532Direct() ? 0x01 : 0x00); // 0x01 to Request ATS (required for DESFire / PN532 direct communication), 0x00 otherwise
 
         std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000F, command);
         if (response.size() > 0)
@@ -478,7 +501,9 @@ namespace logicalaccess
                     if (cardType == "DESFire" || cardType == "DESFireEV1")
                     {
                         std::shared_ptr<DESFireEV1Commands> chipcmd = std::dynamic_pointer_cast<DESFireEV1Commands>(chip->getCommands());
-                        std::dynamic_pointer_cast<DESFireEV1STidSTRCommands>(chipcmd)->scanDESFire();
+                        auto stev1 = std::dynamic_pointer_cast<DESFireEV1STidSTRCommands>(chipcmd);
+                        if (stev1)
+                            stev1->scanDESFire();
                     }
                     else if (cardType == "Mifare" || cardType == "Mifare1K" || cardType == "Mifare4K")
                     {
@@ -830,9 +855,9 @@ namespace logicalaccess
         unsigned char statusCode = 0;
         std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000E, std::vector<unsigned char>(), statusCode);
 
-        EXCEPTION_ASSERT_WITH_LOG(response.size() == 0, LibLogicalAccessException, "Unable to load the SKB values. An unknown error occured.");
+        EXCEPTION_ASSERT_WITH_LOG(response.size() == 0, LibLogicalAccessException, "Unable to load the SKB values. An unknown error occurred.");
     }
-
+    
     std::shared_ptr<STidSTRReaderUnitConfiguration> STidSTRReaderUnit::getSTidSTRConfiguration()
     {
         return std::dynamic_pointer_cast<STidSTRReaderUnitConfiguration>(getConfiguration());

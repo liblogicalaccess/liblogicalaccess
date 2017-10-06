@@ -33,6 +33,7 @@ namespace logicalaccess
         d_currentKeyNo = 0;
         d_mac_size = 4;
         d_block_size = 8;
+        d_keys.clear();
 
         d_lastIV.clear();
         d_lastIV.resize(d_block_size, 0x00);
@@ -42,18 +43,12 @@ namespace logicalaccess
     {
     }
 
-    void DESFireCrypto::decipherData1(size_t length, const std::vector<unsigned char>& data)
-    {
-        initBuf(length);
-        d_buf.insert(d_buf.end(), data.begin(), data.end());
-    }
-
-    void DESFireCrypto::decipherData2(const std::vector<unsigned char>& data)
+    void DESFireCrypto::appendDecipherData(const std::vector<unsigned char>& data)
     {
         d_buf.insert(d_buf.end(), data.begin(), data.end());
     }
 
-    std::vector<unsigned char> DESFireCrypto::decipherData(size_t length)
+	std::vector<unsigned char> DESFireCrypto::desfireDecrypt(size_t length)
     {
         std::vector<unsigned char> ret;
 
@@ -69,7 +64,7 @@ namespace logicalaccess
         return ret;
     }
 
-    void DESFireCrypto::initBuf(size_t /*length*/)
+    void DESFireCrypto::initBuf()
     {
         d_buf.clear();
         d_last_left.clear();
@@ -117,92 +112,35 @@ namespace logicalaccess
         return ret;
     }
 
-    void DESFireCrypto::bufferingForGenerateMAC(const std::vector<unsigned char>& data)
+	std::vector<unsigned char> DESFireCrypto::generateMAC(unsigned char cmd, const std::vector<unsigned char>& data)
     {
-        d_buf.insert(d_buf.end(), data.begin(), data.end());
-    }
+		if (!data.size())
+			return {};
 
-    std::vector<unsigned char> DESFireCrypto::generateMAC(const std::vector<unsigned char>& data)
-    {
         std::vector<unsigned char> ret;
-        bufferingForGenerateMAC(data);
         if (d_auth_method == CM_LEGACY)
         {
-            ret = desfire_mac(d_sessionKey, d_buf);
+            ret = desfire_mac(d_sessionKey, data);
         }
         else
         {
-            ret = desfire_cmac(d_sessionKey, d_cipher, d_block_size, d_buf);
-        }
-        d_buf.clear();
-
-        return ret;
-    }
-
-    std::vector<unsigned char> DESFireCrypto::desfireEncrypt(const std::vector<unsigned char>& data, const std::vector<unsigned char>& param)
-    {
-        std::vector<unsigned char> ret;
-
-        if (d_auth_method == CM_LEGACY)
-        {
-            ret = desfire_encrypt(d_sessionKey, data);
-        }
-        else
-        {
-            ret = desfire_iso_encrypt(d_sessionKey, data, d_cipher, d_block_size, param);
+            ret = desfire_cmac(d_sessionKey, d_cipher, d_block_size, data);
         }
 
         return ret;
     }
 
-    std::vector<unsigned char> DESFireCrypto::encipherData(bool end, std::vector<unsigned char> data, const std::vector<unsigned char>& param)
+    std::vector<unsigned char> DESFireCrypto::desfireEncrypt(const std::vector<unsigned char>& data, const std::vector<unsigned char>& param, bool calccrc)
     {
-        if (d_auth_method != CM_LEGACY)
-        {
-            return iso_encipherData(end, data, param);
-        }
-
         std::vector<unsigned char> ret;
-        d_buf.insert(d_buf.end(), data.begin(), data.end());
 
-        data.insert(data.begin(), d_last_left.begin(), d_last_left.end());
-
-        int leave = data.size() % 8;
-        if (leave > 0)
+        if (d_auth_method == CM_LEGACY)
         {
-            d_last_left.clear();
-            d_last_left.insert(d_last_left.end(), data.end() - leave, data.end());
-            data.resize(data.size() - leave);
+            ret = desfire_encrypt(d_sessionKey, data, calccrc);
         }
         else
         {
-            d_last_left.clear();
-        }
-
-        if (data.size() > 0)
-        {
-            ret = desfire_CBC_send(d_sessionKey, d_lastIV, data);
-            d_lastIV.clear();
-            d_lastIV.insert(d_lastIV.end(), ret.end() - 8, ret.end());
-        }
-
-        if (end)
-        {
-            std::vector<unsigned char> fdata;
-            fdata.insert(fdata.end(), d_last_left.begin(), d_last_left.end());
-            d_last_left.clear();
-            short crc = desfire_crc16(&d_buf[0], d_buf.size());
-            fdata.push_back(static_cast<unsigned char>(crc & 0xff));
-            fdata.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
-
-            int pad = (8 - (fdata.size() % 8)) % 8;
-            for (int i = 0; i < pad; ++i)
-            {
-                fdata.push_back(0x00);
-            }
-
-            std::vector<unsigned char> ret2 = desfire_CBC_send(d_sessionKey, d_lastIV, fdata);
-            ret.insert(ret.end(), ret2.begin(), ret2.end());
+            ret = desfire_iso_encrypt(d_sessionKey, data, d_cipher, d_block_size, param, calccrc);
         }
 
         return ret;
@@ -234,7 +172,7 @@ namespace logicalaccess
      */
     static bool is_triple_des(const std::vector<uint8_t> &key)
     {
-        assert(key.size() >= 16);
+        EXCEPTION_ASSERT_WITH_LOG(key.size() >= 16, LibLogicalAccessException, "Triple des key check need a valid key size.");
 
         for (int i = 0; i < 8; ++i)
         {
@@ -263,10 +201,12 @@ namespace logicalaccess
         // Set encryption keys
         if (is3des)
         {
+            EXCEPTION_ASSERT_WITH_LOG(key.size() >= 16, LibLogicalAccessException, "DESFire send cbc encryption need a valid 3des key.");
             des3_setup(&key[0], 16, 0, &skey);
         }
         else
         {
+            EXCEPTION_ASSERT_WITH_LOG(key.size() >= 8, LibLogicalAccessException, "DESFire send cbc encryption need a valid key.");
             des_setup(&key[0], 8, 0, &skey);
         }
 
@@ -337,6 +277,8 @@ namespace logicalaccess
 
         std::vector<unsigned char> ret;
 
+        EXCEPTION_ASSERT_WITH_LOG(key.size() >= 8, LibLogicalAccessException, "DESFire encryption need a valid key.");
+
         bool is3des = false;
         if (memcmp(&key[0], &key[8], 8))
         {
@@ -346,6 +288,7 @@ namespace logicalaccess
         // Set encryption keys
         if (is3des)
         {
+            EXCEPTION_ASSERT_WITH_LOG(key.size() >= 16, LibLogicalAccessException, "DESFire encryption need a valid 3des key.");
             des3_setup(&key[0], 16, 0, &skey);
         }
         else
@@ -424,6 +367,8 @@ namespace logicalaccess
 
         std::vector<unsigned char> ret;
 
+        EXCEPTION_ASSERT_WITH_LOG(key.size() >= 8, LibLogicalAccessException, "DESFire sam cbc encryption need a valid key.");
+
         bool is3des = false;
         if (memcmp(&key[0], &key[8], 8))
         {
@@ -433,6 +378,7 @@ namespace logicalaccess
         // Set encryption keys
         if (is3des)
         {
+            EXCEPTION_ASSERT_WITH_LOG(key.size() >= 16, LibLogicalAccessException, "DESFire sam cbc encryption need a valid key.");
             des3_setup(&key[0], 16, 0, &skey);
         }
         else
@@ -504,12 +450,15 @@ namespace logicalaccess
         return desfire_CBC_mac(key, std::vector<unsigned char>(), data);
     }
 
-    std::vector<unsigned char> DESFireCrypto::desfire_encrypt(const std::vector<unsigned char>& key, std::vector<unsigned char> data)
+    std::vector<unsigned char> DESFireCrypto::desfire_encrypt(const std::vector<unsigned char>& key, std::vector<unsigned char> data, bool calccrc)
     {
-        int pad = (8 - ((data.size() + 2) % 8)) % 8;
-        short crc = desfire_crc16(&data[0], data.size());
-        data.push_back(static_cast<unsigned char>(crc & 0xff));
-        data.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
+        if (calccrc)
+        {
+            short crc = desfire_crc16(&data[0], data.size());
+            data.push_back(static_cast<unsigned char>(crc & 0xff));
+            data.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
+        }
+        int pad = (8 - (data.size() % 8)) % 8;
         for (int i = 0; i < pad; ++i)
         {
             data.push_back(0x00);
@@ -532,7 +481,7 @@ namespace logicalaccess
         return sam_CBC_send(key, std::vector<unsigned char>(), data);
     }
 
-    std::vector<unsigned char> DESFireCrypto::desfire_decrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, size_t datalen)
+	ByteVector DESFireCrypto::desfire_decrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, size_t datalen)
     {
         std::vector<unsigned char> ret;
         size_t ll = 0;
@@ -573,7 +522,7 @@ namespace logicalaccess
     {
         d_sessionKey.clear();
         d_authkey.resize(16);
-        getKey(d_currentAid, keyno, diversify, d_authkey);
+        getKey(d_currentAid, 0, keyno, diversify, d_authkey);
         d_rndB = desfire_CBC_send(d_authkey, std::vector<unsigned char>(), encRndB);
 
         std::vector<unsigned char> rndB1;
@@ -660,8 +609,7 @@ namespace logicalaccess
 
     void DESFireCrypto::getKeyVersioned(std::shared_ptr<DESFireKey> key, std::vector<unsigned char>& keyversioned)
     {
-        unsigned char* keytmpversioned = new unsigned char[key->getLength()];
-        memset(keytmpversioned, 0x00, key->getLength());
+		auto keytmpversioned = key->getBytes();
         unsigned char version = key->getKeyVersion();
         // set the key version
         for (unsigned char i = 0; i < 8; i++)
@@ -673,9 +621,7 @@ namespace logicalaccess
                 keytmpversioned[23 - i] = (unsigned char)(keyversioned[23 - i]);
             }
         }
-        keyversioned.clear();
-        keyversioned.insert(keyversioned.end(), keytmpversioned, keytmpversioned + key->getLength());
-        delete[] keytmpversioned;
+        keyversioned = keytmpversioned;
     }
 
     void DESFireCrypto::selectApplication(size_t aid)
@@ -688,50 +634,50 @@ namespace logicalaccess
         d_sessionKey.clear();
     }
 
-    std::vector<unsigned char> DESFireCrypto::changeKey_PICC(unsigned char keyno, std::shared_ptr<DESFireKey> newkey, std::vector<unsigned char> diversify)
+    std::vector<unsigned char> DESFireCrypto::changeKey_PICC(uint8_t keyno, std::vector<unsigned char> oldKeyDiversify, std::shared_ptr<DESFireKey> newkey, std::vector<unsigned char> newKeyDiversify, unsigned char keysetno)
     {
         LOG(LogLevel::INFOS) << "Init change key on PICC...";
         std::vector<unsigned char> cryptogram;
         std::vector<unsigned char> oldkeydiv, newkeydiv;
         oldkeydiv.resize(16, 0x00);
         newkeydiv.resize(16, 0x00);
-        // Get keyno only, in case of master card key
-        unsigned char keyno_only = static_cast<unsigned char>(keyno & 0x0f);
-        getKey(keyno_only, diversify, oldkeydiv);
-        getKey(newkey, diversify, newkeydiv);
+		// Get keyno only, in case of master card key
+		unsigned char keyno_only = static_cast<unsigned char>(keyno & 0x3F);
+        getKey(keysetno, keyno_only, oldKeyDiversify, oldkeydiv);
+        getKey(newkey, newKeyDiversify, newkeydiv);
 
         std::vector<unsigned char> encCryptogram;
 
         if (d_auth_method == CM_LEGACY) // Native DESFire
         {
-            if (keyno_only != d_currentKeyNo)
+            if (keyno_only != d_currentKeyNo || keysetno)
             {
-                short crc;
-                for (unsigned int i = 0; i < newkeydiv.size(); ++i)
+	            for (unsigned int i = 0; i < newkeydiv.size(); ++i)
                 {
                     encCryptogram.push_back(static_cast<unsigned char>(oldkeydiv[i] ^ newkeydiv[i]));
                 }
-                crc = desfire_crc16(&encCryptogram[0], newkeydiv.size());
+
+				if (keysetno != 0 && newkey->getKeyType() == DF_KEY_AES)
+					encCryptogram.push_back(newkey->getKeyVersion()); //ChangeKeyEV2
+                short crc = desfire_crc16(&encCryptogram[0], encCryptogram.size());
                 encCryptogram.push_back(static_cast<unsigned char>(crc & 0xff));
                 encCryptogram.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
                 crc = desfire_crc16(&newkeydiv[0], newkeydiv.size());
                 encCryptogram.push_back(static_cast<unsigned char>(crc & 0xff));
                 encCryptogram.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
-                // Pad
-                for (int i = 0; i < 4; ++i)
-                {
-                    encCryptogram.push_back(0x00);
-                }
+				encCryptogram.resize(24); // Pad
                 cryptogram = desfire_CBC_send(d_sessionKey, std::vector<unsigned char>(), encCryptogram);
             }
             else
             {
+				if (newkey->getKeyType() == DF_KEY_AES) // Change PICC Key
+					newkeydiv.push_back(newkey->getKeyVersion());
                 cryptogram = desfire_encrypt(d_sessionKey, newkeydiv);
             }
         }
         else
         {
-            if (keyno_only != d_currentKeyNo)
+            if (keyno_only != d_currentKeyNo || keysetno)
             {
                 uint32_t crc;
                 for (unsigned int i = 0; i < newkeydiv.size(); ++i)
@@ -755,9 +701,12 @@ namespace logicalaccess
                     sessionkey.reset(new openssl::DESSymmetricKey(openssl::DESSymmetricKey::createFromData(d_sessionKey)));
                     iv.reset(new openssl::DESInitializationVector(openssl::DESInitializationVector::createFromData(d_lastIV)));
                 }
-                std::vector<unsigned char> crcoldkxor;
-                crcoldkxor.push_back(DF_INS_CHANGE_KEY);
-                crcoldkxor.push_back(keyno);
+				auto crcoldkxor = ByteVector({ DF_INS_CHANGE_KEY, keyno });
+				if (keysetno != 0) //ChangeKeyEV2
+				{
+					crcoldkxor[0] = 0xc6; // DFEV2_CHANGEKEYEV2
+					crcoldkxor.insert(crcoldkxor.begin() + 1, keysetno);
+				}
                 crcoldkxor.insert(crcoldkxor.end(), encCryptogram.begin(), encCryptogram.end());
                 crc = desfire_crc32(&crcoldkxor[0], crcoldkxor.size());
                 encCryptogram.push_back(static_cast<unsigned char>(crc & 0xff));
@@ -789,7 +738,7 @@ namespace logicalaccess
 
                 encCryptogram.push_back(DF_INS_CHANGE_KEY);
                 encCryptogram.push_back(keyno);
-                cryptogram = desfire_iso_encrypt(d_sessionKey, newkeydiv, d_cipher, d_block_size, encCryptogram);
+                cryptogram = desfireEncrypt(newkeydiv, encCryptogram);
             }
         }
 
@@ -799,7 +748,7 @@ namespace logicalaccess
     std::vector<unsigned char> DESFireCrypto::iso_authenticate_PICC1(unsigned char keyno, std::vector<unsigned char> diversify, const std::vector<unsigned char>& encRndB, unsigned int randomlen)
     {
         d_sessionKey.clear();
-        getKey(d_currentAid, keyno, diversify, d_authkey);
+        getKey(d_currentAid, 0, keyno, diversify, d_authkey);
         d_cipher.reset(new openssl::DESCipher());
         openssl::DESSymmetricKey deskey = openssl::DESSymmetricKey::createFromData(d_authkey);
         openssl::DESInitializationVector iv = openssl::DESInitializationVector::createNull();
@@ -825,6 +774,7 @@ namespace logicalaccess
         rndAB.insert(rndAB.end(), rndB1.begin(), rndB1.end());
 
         std::vector<unsigned char> ret;
+		iv = openssl::DESInitializationVector::createFromData(d_lastIV);
         d_cipher->cipher(rndAB, ret, deskey, iv, false);
         d_lastIV = std::vector<unsigned char>(ret.end() - randomlen, ret.end());
 
@@ -892,7 +842,7 @@ namespace logicalaccess
     std::vector<unsigned char> DESFireCrypto::aes_authenticate_PICC1(unsigned char keyno, std::vector<unsigned char> diversify, const std::vector<unsigned char>& encRndB)
     {
         d_sessionKey.clear();
-        getKey(d_currentAid, keyno, diversify, d_authkey);
+        getKey(d_currentAid, 0, keyno, diversify, d_authkey);
         d_cipher.reset(new openssl::AESCipher());
         openssl::AESSymmetricKey aeskey = openssl::AESSymmetricKey::createFromData(d_authkey);
         openssl::AESInitializationVector iv = openssl::AESInitializationVector::createNull();
@@ -918,7 +868,8 @@ namespace logicalaccess
         rndAB.insert(rndAB.end(), rndB1.begin(), rndB1.end());
 
         std::vector<unsigned char> ret;
-        d_cipher->cipher(rndAB, ret, aeskey, iv, false);
+		iv = openssl::AESInitializationVector::createFromData(d_lastIV);
+		d_cipher->cipher(rndAB, ret, aeskey, iv, false);
         d_lastIV = std::vector<unsigned char>(ret.end() - 16, ret.end());
 
         return ret;
@@ -947,13 +898,6 @@ namespace logicalaccess
         }
         else
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "AES Authenticate PICC 2 Failed!");
-
-        d_cipher.reset(new openssl::AESCipher());
-        d_auth_method = CM_ISO;
-        d_block_size = 16;
-        d_mac_size = 8;
-        d_lastIV.clear();
-        d_lastIV.resize(d_block_size, 0x00);
     }
 
     std::vector<unsigned char> DESFireCrypto::desfire_cmac(const std::vector<unsigned char>& data)
@@ -1016,16 +960,21 @@ namespace logicalaccess
 
         if (datalen == 0)
         {
+			// Lets analyse the padding and find crc ourself
             ll = decdata.size() - 1;
 
-            while (decdata[ll] == 0x00)
+			while (ll > 0 && decdata[ll] == 0x00)
             {
                 ll--;
             }
 
             EXCEPTION_ASSERT_WITH_LOG(decdata[ll] == 0x80, LibLogicalAccessException, "Incorrect FLT result");
 
-            ll -= 4;
+			decdata[ll] = 0x00; // Remove 0x80 for padding check
+
+            ll -= 4; // Move to crc start
+
+			EXCEPTION_ASSERT_WITH_LOG(ll >= 0, LibLogicalAccessException, "Cannot find the crc in the encrypted data");
         }
         else
         {
@@ -1113,17 +1062,21 @@ namespace logicalaccess
                                                                   const std::vector<unsigned char>& data,
                                                                   std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher,
                                                                   unsigned int block_size,
-                                                                  const std::vector<unsigned char>& param)
+                                                                  const std::vector<unsigned char>& param,
+                                                                  bool calccrc)
     {
         std::vector<unsigned char> encdata;
         std::vector<unsigned char> decdata = data;
         std::vector<unsigned char> calconbuf = param;
         calconbuf.insert(calconbuf.end(), data.begin(), data.end());
-        uint32_t crc = desfire_crc32(&calconbuf[0], calconbuf.size());
-        decdata.push_back(static_cast<unsigned char>(crc & 0xff));
-        decdata.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
-        decdata.push_back(static_cast<unsigned char>((crc & 0xff0000) >> 16));
-        decdata.push_back(static_cast<unsigned char>((crc & 0xff000000) >> 24));
+        if (calccrc)
+        {
+            uint32_t crc = desfire_crc32(&calconbuf[0], calconbuf.size());
+            decdata.push_back(static_cast<unsigned char>(crc & 0xff));
+            decdata.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
+            decdata.push_back(static_cast<unsigned char>((crc & 0xff0000) >> 16));
+            decdata.push_back(static_cast<unsigned char>((crc & 0xff000000) >> 24));
+        }
         int pad = (block_size - (decdata.size() % block_size)) % block_size;
         for (int i = 0; i < pad; ++i)
         {
@@ -1157,17 +1110,15 @@ namespace logicalaccess
 		clearKeys();
     }
 
-    std::shared_ptr<DESFireKey> DESFireCrypto::getKey(unsigned char keyno)
+    std::shared_ptr<DESFireKey> DESFireCrypto::getKey(uint8_t keyset, uint8_t keyno) const
     {
-        return getKey(d_currentAid, keyno);
+        return getKey(d_currentAid, keyset, keyno);
     }
 
-    void DESFireCrypto::createApplication(int aid, size_t maxNbKeys, DESFireKeyType cryptoMethod)
+    void DESFireCrypto::createApplication(int aid, uint8_t maxKeySetNb, uint8_t maxNbKeys, DESFireKeyType cryptoMethod)
     {
-        for (unsigned char i = 0; i < maxNbKeys; ++i)
-        {
-            setKey(aid, i, getDefaultKey(cryptoMethod));
-        }
+		for (auto x = 0; x < maxKeySetNb; ++x)
+			setKeyInAllKeySet(aid, x, maxNbKeys, getDefaultKey(cryptoMethod));
     }
 
 	void DESFireCrypto::setDefaultKeysAt(std::shared_ptr<Location> location)
@@ -1188,99 +1139,21 @@ namespace logicalaccess
 			for (unsigned char i = 0; i < 14; ++i)
 			{
 				if (dfEV1Location)
-					setKey(dfEV1Location->aid, i, getDefaultKey(dfEV1Location->cryptoMethod));
+					setKey(dfEV1Location->aid, 0, i, getDefaultKey(dfEV1Location->cryptoMethod));
 				else
-					setKey(dfLocation->aid, i, getDefaultKey(DF_KEY_DES));
+					setKey(dfLocation->aid, 0, i, getDefaultKey(DF_KEY_DES));
 			}
 		}
 		// Card
 		else
 		{
-			setKey(0, 0, getDefaultKey(DF_KEY_DES));
+			setKey(0, 0, 0, getDefaultKey(DF_KEY_DES));
 		}
 	}
 
 	void DESFireCrypto::clearKeys()
 	{
-		d_nbAids = 0;
-	}
-
-	bool DESFireCrypto::getKeyUsage(size_t index) const
-	{
-		size_t nbKeys = sizeof(d_key) / sizeof(std::shared_ptr<DESFireKey>);
-		if (index >= nbKeys)
-		{
-			return false;
-		}
-
-		return bool(d_key[index]);
-	}
-
-	void DESFireCrypto::setKeyUsage(size_t index, bool used)
-	{
-		size_t nbKeys = sizeof(d_key) / sizeof(std::shared_ptr<DESFireKey>);
-		if (index >= nbKeys)
-		{
-			return;
-		}
-
-		std::shared_ptr<DESFireKey> key;
-		if (used)
-		{
-			key.reset(new DESFireKey());
-		}
-
-		d_key[index] = key;
-	}
-
-	bool DESFireCrypto::getPosAid(size_t aid, size_t* pos) const
-	{
-		bool ret = false;
-		size_t i;
-
-		for (i = 0; i < d_nbAids && !ret; i++)
-		{
-			ret = (d_aids[i] == aid);
-		}
-
-		if (ret && pos != NULL)
-		{
-			*pos = i - 1;
-		}
-
-		return ret;
-	}
-
-	size_t DESFireCrypto::addPosAid(size_t aid)
-	{
-		d_aids[d_nbAids] = aid;
-		return d_nbAids++;
-	}
-
-	bool DESFireCrypto::checkKeyPos(size_t aid, bool defvalue) const
-	{
-		bool ret = false;
-
-		if (getPosAid(aid))
-		{
-			ret = true;
-		}
-		else
-		{
-			ret = defvalue;
-		}
-
-		return ret;
-	}
-
-	bool DESFireCrypto::checkKeyPos(size_t aid, unsigned char keyno, bool defvalue) const
-	{
-		if (!checkKeyPos(aid, defvalue) || keyno > 13)
-		{
-			return false;
-		}
-
-		return true;
+		d_keys.clear();
 	}
 
 	std::shared_ptr<DESFireKey> DESFireCrypto::getDefaultKey(DESFireKeyType keyType)
@@ -1295,77 +1168,43 @@ namespace logicalaccess
 		return key;
 	}
 
-	std::shared_ptr<DESFireKey> DESFireCrypto::getKey(size_t aid, unsigned char keyno) const
+	std::shared_ptr<DESFireKey> DESFireCrypto::getKey(size_t aid, uint8_t keyslot, uint8_t keyno) const
 	{
 		std::shared_ptr<DESFireKey> key;
 
-		if (checkKeyPos(aid, keyno, false))
-		{
-			size_t posAid;
-			getPosAid(aid, &posAid);
-
-			size_t keyPos = posAid * 14 + keyno;
-
-			if (getKeyUsage(keyPos))
-			{
-				key = d_key[keyPos];
-			}
-		}
-
-		if (!key)
-		{
+		auto it = d_keys.find(std::make_tuple(aid, keyslot, keyno));
+		if (it != d_keys.end())
+			key = it->second;
+		else
 			key = DESFireCrypto::getDefaultKey(DF_KEY_DES);
-		}
 
 		return key;
 	}
 
-	bool DESFireCrypto::getKey(unsigned char keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv)
+	bool DESFireCrypto::getKey(uint8_t keyslot, uint8_t keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv)
 	{
-		return getKey(d_currentAid, keyno, diversify, keydiv);
+		return getKey(d_currentAid, keyslot, keyno, diversify, keydiv);
 	}
 
-	bool DESFireCrypto::getKey(size_t aid, unsigned char keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv)
+	bool DESFireCrypto::getKey(size_t aid, uint8_t keyslot, uint8_t keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv)
 	{
-		if (!checkKeyPos(aid, keyno, false))
-		{
-			keydiv.resize(16, 0x00);
-
+		auto it = d_keys.find(std::make_tuple(aid, keyslot, keyno));
+		if (it == d_keys.end())
 			return false;
-		}
 
-		size_t posAid;
-		getPosAid(aid, &posAid);
-
-		size_t keyPos = posAid * 14 + keyno;
-
-		if (!getKeyUsage(keyPos))
-		{
-			keydiv.resize(16, 0x00);
-
-			return false;
-		}
-
-		DESFireCrypto::getKey(d_key[keyPos], diversify, keydiv);
+		DESFireCrypto::getKey(it->second, diversify, keydiv);
 
 		return true;
 	}
 
-	void DESFireCrypto::setKey(size_t aid, unsigned char keyno, std::shared_ptr<DESFireKey> key)
+	void DESFireCrypto::setKey(size_t aid, uint8_t keyslot, uint8_t keyno, std::shared_ptr<DESFireKey> key)
 	{
-		if (!checkKeyPos(aid, keyno, true))
-		{
-			return;
-		}
+		d_keys[std::make_tuple(aid, keyslot, keyno)] = std::make_shared<DESFireKey>(*key);
+	}
 
-		size_t posAid;
-		if (!getPosAid(aid, &posAid))
-		{
-			posAid = addPosAid(aid);
-		}
-
-		size_t keyPos = posAid * 14 + keyno;
-
-		d_key[keyPos] = key;
+	void DESFireCrypto::setKeyInAllKeySet(size_t aid, uint8_t keySlotNb, uint8_t nbKeys, std::shared_ptr<DESFireKey> key)
+	{
+		for (auto x = 0; x < nbKeys; ++x)
+			d_keys[std::make_tuple(aid, keySlotNb, x)] = key;
 	}
 }

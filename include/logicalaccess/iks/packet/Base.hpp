@@ -49,8 +49,8 @@ enum response_status_e : uint16_t
 /**
  * Returns a string representing the status code of a Response.
  */
-std::string strstatus(enum response_status_e);
-std::string strstatus(uint16_t st);
+std::string LIBLOGICALACCESS_API strstatus(enum response_status_e);
+std::string LIBLOGICALACCESS_API strstatus(uint16_t st);
 
 enum protocol_opcode
 {

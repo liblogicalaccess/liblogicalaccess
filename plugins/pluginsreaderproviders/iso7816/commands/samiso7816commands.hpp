@@ -7,13 +7,13 @@
 #ifndef LOGICALACCESS_SAMISO7816CARDPROVIDER_HPP
 #define LOGICALACCESS_SAMISO7816CARDPROVIDER_HPP
 
-#include "samcommands.hpp"
+#include "samav2/samcommands.hpp"
 #include "../readercardadapters/iso7816readercardadapter.hpp"
 #include "../iso7816readerunitconfiguration.hpp"
-#include "samcrypto.hpp"
-#include "samkeyentry.hpp"
-#include "samcrypto.hpp"
-#include "samcommands.hpp"
+#include "samav2/samcrypto.hpp"
+#include "samav2/samkeyentry.hpp"
+#include "samav2/samcrypto.hpp"
+#include "samav2/samcommands.hpp"
 
 #include <openssl/rand.h>
 #include "logicalaccess/crypto/symmetric_key.hpp"
@@ -208,6 +208,19 @@ namespace logicalaccess
 
             return std::vector<unsigned char>(result.begin(), result.end() - 2);
         }
+
+		virtual void loadInitVector(std::vector<unsigned char> iv)
+		{
+			EXCEPTION_ASSERT_WITH_LOG((iv.size() == 0x08 || iv.size() == 0x10), LibLogicalAccessException,
+				"loadInitVector need a 16 or 8 bytes vector");
+
+			std::vector<unsigned char> loadInitVector = { 0x80, 0x71, 0x00, 0x00,
+				static_cast<unsigned char>(iv.size()),
+			};
+			loadInitVector.insert(loadInitVector.end(), iv.begin(), iv.end());
+
+			transmit(loadInitVector);
+		}
 
         virtual std::string getSAMTypeFromSAM()
         {

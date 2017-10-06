@@ -20,7 +20,10 @@ namespace logicalaccess
     /**
      * \brief A default A3MLGM5600 reader/card adapter class.
      */
-    class LIBLOGICALACCESS_API A3MLGM5600ReaderCardAdapter : public ReaderCardAdapter, public ISO14443ReaderCommunication
+    class LIBLOGICALACCESS_API A3MLGM5600ReaderCardAdapter : public ReaderCardAdapter
+#ifndef SWIG
+	, public ISO14443ReaderCommunication
+#endif
     {
     public:
 
@@ -60,7 +63,7 @@ namespace logicalaccess
          * \param timeout The command timeout.
          * \return The result of the command.
          */
-        virtual std::vector<unsigned char> sendCommand(unsigned char cmd, const std::vector<unsigned char>& data, long int timeout = 3000);
+        virtual std::vector<unsigned char> sendCommand(unsigned char cmd, const std::vector<unsigned char>& data, long int timeout = -1);
 
         /**
          * \brief Send a REQA command from the PCD to the PICC.

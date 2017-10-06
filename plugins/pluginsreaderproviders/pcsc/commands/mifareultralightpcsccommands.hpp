@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_MIFAREULTRALIGHTPCSCCOMMANDS_HPP
 #define LOGICALACCESS_MIFAREULTRALIGHTPCSCCOMMANDS_HPP
 
-#include "mifareultralightcommands.hpp"
+#include "mifareultralight/mifareultralightcommands.hpp"
 #include "../readercardadapters/pcscreadercardadapter.hpp"
 
 #include <string>

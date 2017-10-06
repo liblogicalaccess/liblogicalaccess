@@ -12,7 +12,7 @@
 #include <cassert>
 
 #include "../pcscreaderprovider.hpp"
-#include "mifarechip.hpp"
+#include "mifare/mifarechip.hpp"
 
 namespace logicalaccess
 {

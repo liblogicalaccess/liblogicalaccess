@@ -8,7 +8,7 @@
 #define LOGICALACCESS_DESFIREEV1ISO7816COMMANDS_HPP
 
 #include "desfireiso7816commands.hpp"
-#include "desfireev1commands.hpp"
+#include "desfire/desfireev1commands.hpp"
 #include "iso7816iso7816commands.hpp"
 
 #include <string>
@@ -17,10 +17,14 @@
 
 namespace logicalaccess
 {
+#define DESFIREEV1_CLEAR_DATA_LENGTH_CHUNK	60
     /**
      * \brief The DESFire EV1 base commands class.
      */
-    class LIBLOGICALACCESS_API DESFireEV1ISO7816Commands : public DESFireISO7816Commands, public DESFireEV1Commands, public ISO7816ISO7816Commands
+    class LIBLOGICALACCESS_API DESFireEV1ISO7816Commands : public DESFireISO7816Commands
+#ifndef SWIG
+	, public virtual DESFireEV1Commands, public ISO7816ISO7816Commands
+#endif
     {
     public:
 
@@ -218,7 +222,7 @@ namespace logicalaccess
          * \param accessRights The file access rights
          * \param plain Communication is currently in plain data.
          */
-        virtual void changeFileSettings(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, bool plain);
+        virtual void changeFileSettings(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, bool plain);
 
         /**
          * \brief Change key settings for the current application.
@@ -295,6 +299,15 @@ namespace logicalaccess
 
     protected:
 
+		/**
+		* \brief Generic method to send read file cmd.
+		* \param cmd The command to send
+		* \param data The command parameters
+		* \param mode The communication mode
+		* \return The data buffer.
+		*/
+		virtual std::vector<unsigned char> handleReadCmd(unsigned char cmd, const std::vector<unsigned char>& data, EncryptionMode mode);
+
         /**
          * \brief Generic method to read data from a file.
          * \param err The last error code
@@ -309,11 +322,10 @@ namespace logicalaccess
          * \brief Generic method to write data into a file.
          * \param cmd The command to send
          * \param parameters The command parameters
-         * \param paramLength The parameters length
          * \param data The data buffer
          * \param mode The communication mode
          */
-        virtual void handleWriteData(unsigned char cmd, unsigned char* parameters, unsigned int paramLength, const std::vector<unsigned char>& data, EncryptionMode mode);
+        virtual void handleWriteData(unsigned char cmd, const std::vector<unsigned char>& parameters, const std::vector<unsigned char>& data, EncryptionMode mode);
 
         /**
          * \brief Transmit a command.

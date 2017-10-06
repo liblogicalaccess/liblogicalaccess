@@ -5,16 +5,16 @@ set(SOURCE_FILES utils.cpp myclock.cpp subtest_tracker.cpp)
 
 add_library(${TARGET_NAME} SHARED ${SOURCE_FILES})
 target_link_libraries(${TARGET_NAME} ${LIBLOGICALACCESS_LIBRARY} pcscreaders)
-target_include_directories(${TARGET_NAME} PRIVATE
-${CMAKE_SOURCE_DIR}/plugins
-${CMAKE_SOURCE_DIR}/include/
+						target_include_directories(${TARGET_NAME} PRIVATE
+						${CMAKE_SOURCE_DIR}/plugins
+						${CMAKE_SOURCE_DIR}/include/
 )
 
 set (include_tests
-${CMAKE_CURRENT_SOURCE_DIR}/myclock.hpp
-${CMAKE_CURRENT_SOURCE_DIR}/subtest_tracker.hpp
-${CMAKE_CURRENT_SOURCE_DIR}/utils.hpp
-${CMAKE_CURRENT_SOURCE_DIR}/macros.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/myclock.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/subtest_tracker.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/utils.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/macros.hpp
 )
 
 

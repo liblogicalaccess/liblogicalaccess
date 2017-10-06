@@ -8,7 +8,7 @@
 #define LOGICALACCESS_ISO7816OK5553READERCARDADAPTER_HPP
 
 #include "ok5553readercardadapter.hpp"
-#include "readercardadapters/iso7816readercardadapter.hpp"
+#include "iso7816/readercardadapters/iso7816readercardadapter.hpp"
 
 #include <string>
 #include <vector>

@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_GENERICTAGIDONDEMANDCHIP_HPP
 #define LOGICALACCESS_GENERICTAGIDONDEMANDCHIP_HPP
 
-#include "generictagchip.hpp"
+#include "generictag/generictagchip.hpp"
 
 namespace logicalaccess
 {

@@ -10,10 +10,10 @@
 #include "../readercardadapters/iso7816readercardadapter.hpp"
 #include "../iso7816readerunitconfiguration.hpp"
 #include "samiso7816commands.hpp"
-#include "samcrypto.hpp"
-#include "samkeyentry.hpp"
-#include "samcrypto.hpp"
-#include "samcommands.hpp"
+#include "samav2/samcrypto.hpp"
+#include "samav2/samkeyentry.hpp"
+#include "samav2/samcrypto.hpp"
+#include "samav2/samcommands.hpp"
 
 #include <boost/interprocess/mapped_region.hpp>
 #include <boost/interprocess/sync/named_mutex.hpp>

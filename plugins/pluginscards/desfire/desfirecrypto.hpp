@@ -22,8 +22,9 @@ namespace logicalaccess
      */
     typedef enum
     {
-        CM_LEGACY = 0x00,
-        CM_ISO = 0x01
+        CM_LEGACY = 0x00, // D40
+        CM_ISO = 0x01, // EV1
+		CM_EV2 = 0x02 // EV2
     }CryptoMethod;
 
     /**
@@ -43,24 +44,17 @@ namespace logicalaccess
         virtual ~DESFireCrypto();
 
         /**
-         * \brief Decipher data step 1.
-         * \param length The total buffer length of all steps
-         * \param data The data buffer
-         */
-        void decipherData1(size_t length, const std::vector<unsigned char>& data);
-
-        /**
          * \brief Decipher data step 2.
          * \param data The data buffer
          */
-        void decipherData2(const std::vector<unsigned char>& data);
+		void appendDecipherData(const std::vector<unsigned char>& data);
 
         /**
          * \brief Get the deciphered data into a buffer.
          * \param length The excepted deciphared data buffer length, or 0 to automatic.
          * \return data The deciphered data buffer
          */
-        std::vector<unsigned char> decipherData(size_t length);
+        virtual std::vector<unsigned char> desfireDecrypt(size_t length);
 
         /**
          * \brief Verify MAC into the buffer.
@@ -68,20 +62,14 @@ namespace logicalaccess
          * \param data The data buffer
          * \return True on success, false otherwise.
          */
-        bool verifyMAC(bool end, const std::vector<unsigned char>& data);
-
-        /**
-         * \brief Add the buffer to the temporised total buffer.
-         * \param data The data buffer part
-         */
-        void bufferingForGenerateMAC(const std::vector<unsigned char>& data);
+		virtual bool verifyMAC(bool end, const std::vector<unsigned char>& data);
 
         /**
          * \brief Generate MAC for the total buffer.
          * \param data The data buffer part
          * \return The MACed data buffer
          */
-        std::vector<unsigned char> generateMAC(const std::vector<unsigned char>& data);
+		virtual ByteVector generateMAC(unsigned char cmd, const std::vector<unsigned char>& data);
 
         /**
          * \brief Encrypt a buffer for the DESFire card.
@@ -89,15 +77,7 @@ namespace logicalaccess
          * \param param The parameters.
          * \return The encrypted data buffer
          */
-        std::vector<unsigned char> desfireEncrypt(const std::vector<unsigned char>& data, const std::vector<unsigned char>& param = std::vector<unsigned char>());
-
-        /**
-         * \brief Encipher a data buffer part, and temporised it.
-         * \param end True if it's the last buffer part.
-         * \param data The data buffer
-         * \return The encrypted data buffer
-         */
-        std::vector<unsigned char> encipherData(bool end, std::vector<unsigned char> data, const std::vector<unsigned char>& param = std::vector<unsigned char>());
+		virtual ByteVector desfireEncrypt(const std::vector<unsigned char>& data, const std::vector<unsigned char>& param = std::vector<unsigned char>(), bool calccrc = true);
 
         std::vector<unsigned char> iso_encipherData(bool end, const std::vector<unsigned char>& data, const std::vector<unsigned char>& param = std::vector<unsigned char>());
 
@@ -175,7 +155,7 @@ namespace logicalaccess
          * \param data The data source buffer to encrypt
          * \return The data encrypted buffer
          */
-        static std::vector<unsigned char> desfire_encrypt(const std::vector<unsigned char>& key, std::vector<unsigned char> data);
+        static std::vector<unsigned char> desfire_encrypt(const std::vector<unsigned char>& key, std::vector<unsigned char> data, bool calccrc = true);
 
         /**
          * \brief  Return data part for the encrypted communication mode for WriteData / WriteRecord.
@@ -186,7 +166,7 @@ namespace logicalaccess
          * \param param The optional parameters
          * \return The data encrypted buffer
          */
-        std::vector<unsigned char> desfire_iso_encrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size, const std::vector<unsigned char>& param = std::vector<unsigned char>());
+        std::vector<unsigned char> desfire_iso_encrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size, const std::vector<unsigned char>& param = std::vector<unsigned char>(), bool calccrc = true);
 
         /**
          * \brief Return data part for the encrypted communication mode for WriteData / WriteRecord.
@@ -202,7 +182,7 @@ namespace logicalaccess
          * \param data The data source buffer to decrypted
          * \return The data decrypted buffer
          */
-        std::vector<unsigned char> desfire_decrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, size_t datalen);
+		ByteVector desfire_decrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, size_t datalen);
 
         /**
          * \brief Decrypt and verify data part of the decrypted communication mode for ReadData / ReadRecords.
@@ -294,7 +274,7 @@ namespace logicalaccess
          * \brief Init buffer for temporised data.
          * \param length The data length.
          */
-        void initBuf(size_t length);
+        void initBuf();
 
         /**
          * \brief Get key diversified.
@@ -324,7 +304,7 @@ namespace logicalaccess
          * \param diversify The diversify buffer, NULL if no diversification is needed
          * \return The change key cryptogram.
          */
-        std::vector<unsigned char> changeKey_PICC(unsigned char keyno, std::shared_ptr<DESFireKey> newKey, std::vector<unsigned char> diversify);
+        virtual std::vector<unsigned char> changeKey_PICC(uint8_t keyno, std::vector<unsigned char> oldKeyDiversify, std::shared_ptr<DESFireKey> newkey, std::vector<unsigned char> newKeyDiversify, unsigned char keysetno = 0);
 
         void setCryptoContext(std::vector<unsigned char> identifier);
 
@@ -335,14 +315,7 @@ namespace logicalaccess
          */
         bool getDiversify(unsigned char* diversify);
 
-        /**
-         * \brief Get a key in memory from the current application.
-         * \param keyno The key number.
-         * \return The key.
-         */
-        std::shared_ptr<DESFireKey> getKey(unsigned char keyno);
-
-        void createApplication(int aid, size_t maxNbKeys, DESFireKeyType cryptoMethod);
+        void createApplication(int aid, uint8_t maxKeySlotNb, uint8_t maxNbKeys, DESFireKeyType cryptoMethod);
 
 		void setIdentifier(std::vector<unsigned char> identifier) { d_identifier = identifier; };
 
@@ -361,25 +334,35 @@ namespace logicalaccess
 		virtual void setDefaultKeysAt(std::shared_ptr<Location> location);
 
 		/**
-		* \brief Get one of the DESFire keys of this profile.
-		* \param aid The application id.
-		* \param keyno The key number.
-		* \return The specified DESFire key or a null key if params are invalid.
-		*/
-		std::shared_ptr<DESFireKey> getKey(size_t aid, unsigned char keyno) const;
-
-		/**
 		* \brief Set one of the DESFire keys of this profile.
 		* \param aid Application ID
+		* \param keyslot The key slot to set
 		* \param keyno The key number to set
 		* \param key The value of the key.
 		*/
-		virtual void setKey(size_t aid, unsigned char keyno, std::shared_ptr<DESFireKey> key);
+		virtual void setKey(size_t aid, uint8_t keyslot, uint8_t keyno, std::shared_ptr<DESFireKey> key);
+
+		/**
+		* \brief Set one of the DESFire keys of this keyset.
+		* \param aid Application ID
+		* \param keySlotNb The key slot to set
+		* \param nbKeys The key number to set
+		* \param key The value of the key.
+		*/
+		virtual void setKeyInAllKeySet(size_t aid, uint8_t keySlotNb, uint8_t nbKeys, std::shared_ptr<DESFireKey> key);
 
 		/**
 		* \brief Clear all keys in memory.
 		*/
 		virtual void clearKeys();
+
+		/**
+		* \brief Get a key in memory from the current application.
+		* \param keyslot The key slot.
+		* \param keyno The key number.
+		* \return The key.
+		*/
+		std::shared_ptr<DESFireKey> getKey(uint8_t keyslot, uint8_t keyno) const;
 
 	protected:
 
@@ -391,7 +374,7 @@ namespace logicalaccess
 		* \param keydiv The key data, diversified if a diversify buffer is specified.
 		* \return True on success, false otherwise.
 		*/
-		bool getKey(size_t aid, unsigned char keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv);
+		bool getKey(size_t aid, uint8_t keyset, uint8_t keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv);
 
 		/**
 		* \brief Get key from memory.
@@ -400,74 +383,21 @@ namespace logicalaccess
 		* \param keydiv The key data, diversified if a diversify buffer is specified.
 		* \return True on success, false otherwise.
 		*/
-		bool getKey(unsigned char keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv);
+		bool getKey(uint8_t keyset, uint8_t keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv);
 
 		/**
-		* \brief Check if a key position exists.
-		* \param aid The Application ID
-		* \param defvalue The default result value
-		* \return The check result.
+		* \brief Get one of the DESFire keys of this profile.
+		* \param aid The application id.
+		* \param keyslot The key slot to set
+		* \param keyno The key number to set
+		* \return The specified DESFire key or a null key if params are invalid.
 		*/
-		bool checkKeyPos(size_t aid, bool defvalue = false) const;
+		std::shared_ptr<DESFireKey> getKey(size_t aid, uint8_t keyslot, uint8_t keyno) const;
 
 		/**
-		* \brief Check if a key position exists.
-		* \param aid The Application ID
-		* \param keyno The key number
-		* \param defvalue The default result value
-		* \return The check result.
-		*/
-		bool checkKeyPos(size_t aid, unsigned char keyno, bool defvalue) const;
-
-		/**
-		* \brief Get the position in memory.
-		* \param aid The Application ID
-		* \param pos Will contain the position in memory
-		* \return True on success, false otherwise.
-		*/
-		bool getPosAid(size_t aid, size_t* pos = NULL) const;
-
-		/**
-		* \brief Add Application ID position.
-		* \param aid The Application ID
-		* \return The Application ID position.
-		*/
-		size_t addPosAid(size_t aid);
-
-		/**
-		* \brief Get one of the DESFire keys usage.
-		* \param index The index of the key in memory
-		* \return true if the key is used, false otherwise.
-		*/
-		bool getKeyUsage(size_t index) const;
-
-		/**
-		* \brief Set one of the DESFire keys of this profile.
-		* \param index The index of the key  in memory to set
-		* \param used True if the key is used, false otherwise.
-		*/
-		void setKeyUsage(size_t index, bool used);
-
-		/**
-		* \brief The 393 real keys.
-		*		0		:	MasterKey Card Maintenance
-		*		1		:	MasterKey Application 1 Maintenance
-		*		2 - 15	:	3(DES) Application 1 keys
-		*		16		:	MasterKey Application 2 Maintenance
-		*		17 - 30	:	3(DES) Application 2 keys
-		*		.............
-		*/
-		std::shared_ptr<DESFireKey> d_key[406];
-
-		/**
-		* \brief The Application ID used.
-		*/
-		size_t d_aids[29];
-
-		/**
-		* \brief Number of Application ID used.
-		*/
-		size_t d_nbAids;
+		 * Key store - AID / KeySlot / KeyNo / DESFireKey
+		 */
+		std::map<std::tuple<size_t, uint8_t, uint8_t>, std::shared_ptr<DESFireKey>> d_keys;
 
     public:
 

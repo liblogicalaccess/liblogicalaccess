@@ -4,6 +4,7 @@
 #include "pcscreaderprovider.hpp"
 #include "readers/omnikeylanxx21readerunit.hpp"
 #include "readers/omnikeyxx22readerunit.hpp"
+#include "readers/omnikeyxx23readerunit.hpp"
 #include "readers/omnikeyxx25readerunit.hpp"
 #include "readers/scmreaderunit.hpp"
 #include "readers/springcardreaderunit.hpp"
@@ -44,6 +45,10 @@ extern "C"
             {
                 u = make_shared<OmnikeyXX22ReaderUnit>(readerName);
             }
+            else if (readerName.find("5023") != string::npos)
+            {
+                u = make_shared<OmnikeyXX23ReaderUnit>(readerName);
+            }
             else if (readerName.find("x25") != string::npos || readerName.find("5025-CL") != string::npos)
             {
                 u = make_shared<OmnikeyXX25ReaderUnit>(readerName);
@@ -54,6 +59,7 @@ extern "C"
                 || readerName.find("SCL010 Contactless") != string::npos
 				|| readerName.find("SCL01x Contactless") != string::npos
 				|| readerName.find("SCL3711 reader") != string::npos
+				|| readerName.find("Identive CLOUD 4000 F DTC CL Reader") != string::npos
 				|| readerName.find("Identive CLOUD 4700 F Contactless") != string::npos
 				|| readerName.find("Identive CLOUD 4710 F Contactless") != string::npos
 				|| readerName.find("SCM Microsystems Inc. SCL011G Contactless Reader") != string::npos

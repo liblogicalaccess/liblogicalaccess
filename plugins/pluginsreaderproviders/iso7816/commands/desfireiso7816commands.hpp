@@ -7,11 +7,11 @@
 #ifndef LOGICALACCESS_DESFIREISO7816CARDPROVIDER_HPP
 #define LOGICALACCESS_DESFIREISO7816CARDPROVIDER_HPP
 
-#include "desfirecommands.hpp"
-#include "desfirecrypto.hpp"
+#include "desfire/desfirecommands.hpp"
+#include "desfire/desfirecrypto.hpp"
 #include "../readercardadapters/iso7816readercardadapter.hpp"
 #include "../iso7816readerunit.hpp"
-#include "samchip.hpp"
+#include "samav2/samchip.hpp"
 
 #include <string>
 #include <vector>
@@ -88,6 +88,12 @@ namespace logicalaccess
          * \param maxNbKeys Maximum number of keys
          */
         virtual void getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys);
+
+		/**
+		* \brief Get a key version of a key
+		* \param keyno The key no.
+		*/
+		virtual uint8_t getKeyVersion(uint8_t keyno);
 
         /**
          * \brief Change key settings for the current application.
@@ -306,7 +312,13 @@ namespace logicalaccess
 		*/
 		void getKeyFromSAM(std::shared_ptr<DESFireKey> key, std::vector<unsigned char> diversify);
 
+		ByteVector sam_authenticate_p1(std::shared_ptr<DESFireKey> key, ByteVector rndb, ByteVector diversify);
+
+		void sam_authenticate_p2(unsigned char keyno, ByteVector rndap);
+
     protected:
+
+		ByteVector getKeyInformations(std::shared_ptr<DESFireKey> key, uint8_t keyno);
 
         std::vector<unsigned char> getChangeKeySAMCryptogram(unsigned char keyno, std::shared_ptr<DESFireKey> key);
 
@@ -326,11 +338,10 @@ namespace logicalaccess
          * \brief Generic method to write data into a file.
          * \param cmd The command to send
          * \param parameters The command parameters
-         * \param paramLength The parameters length
          * \param data The data buffer
          * \param mode The communication mode
          */
-        virtual void handleWriteData(unsigned char cmd, unsigned char* parameters, unsigned int paramLength, const std::vector<unsigned char>& data, EncryptionMode mode);
+		virtual void handleWriteData(unsigned char cmd, const std::vector<unsigned char>& parameters, const std::vector<unsigned char>& data, EncryptionMode mode);
 
         /**
          * \brief Transmit a command.

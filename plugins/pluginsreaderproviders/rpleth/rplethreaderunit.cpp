@@ -23,12 +23,13 @@
 #include "rplethledbuzzerdisplay.hpp"
 #include "rplethlcddisplay.hpp"
 #include "rplethdatatransport.hpp"
-#include "desfireev1chip.hpp"
-#include "commands/desfireiso7816commands.hpp"
+#include "desfire/desfireev1chip.hpp"
+#include "iso7816/commands/desfireiso7816commands.hpp"
 
 #include "logicalaccess/readerproviders/serialportxml.hpp"
 #include "rplethreaderunitconfiguration.hpp"
 #include "logicalaccess/myexception.hpp"
+#include "logicalaccess/settings.hpp"
 #include <boost/property_tree/xml_parser.hpp>
 
 namespace logicalaccess
@@ -98,7 +99,8 @@ namespace logicalaccess
             std::vector<unsigned char> answer;
             try
             {
-                answer = getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true, maxwait + 2000); //Give More Time To Answer
+                auto rpleth_maxwait = maxwait + Settings::getInstance()->DataTransportTimeout;
+                answer = getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true, rpleth_maxwait);
             }
             catch (LibLogicalAccessException&)
             {
@@ -190,7 +192,8 @@ namespace logicalaccess
                 BufferHelper::setUInt32(command, maxwait);
                 try
                 {
-                    getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true, maxwait + 2000);
+                    auto rpleth_maxwait = maxwait + Settings::getInstance()->DataTransportTimeout;
+                    getDefaultRplethReaderCardAdapter()->sendRplethCommand(command, true, rpleth_maxwait);
                     d_insertedChip.reset();
                     LOG(LogLevel::INFOS) << "Card removed";
                     removed = true;
@@ -615,7 +618,7 @@ namespace logicalaccess
 				{
 					getDefaultRplethReaderCardAdapter()->sendRplethCommand(cmd, true, timeout);
 				}
-				catch (std::exception)
+				catch (const std::exception &)
 				{ //We dont care about timeout
 				}
 
@@ -639,7 +642,7 @@ namespace logicalaccess
     {
         std::vector<unsigned char> result;
         std::shared_ptr<RplethReaderUnitConfiguration> conf = std::dynamic_pointer_cast<RplethReaderUnitConfiguration>(d_readerUnitConfig);
-        if (conf->getLength() != 0)
+        if (conf && conf->getLength() != 0)
         {
             if (trame.size() * 8 >= static_cast<size_t>(conf->getLength() + conf->getOffset()))
             {

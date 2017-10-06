@@ -165,10 +165,16 @@ namespace logicalaccess
         }
 
         boost::property_tree::ptree ka;
-        keyA->serialize(ka);
+        if (keyA)
+        {
+            keyA->serialize(ka);
+        }
         node.add_child("KeyA", ka);
         boost::property_tree::ptree kb;
-        keyB->serialize(kb);
+        if (keyB)
+        {
+            keyB->serialize(kb);
+        }
         node.add_child("KeyB", kb);
         node.put("SectorAccessBits", oss.str());
         node.put("GPB", gpb);
@@ -176,10 +182,16 @@ namespace logicalaccess
         boost::property_tree::ptree madnode;
         madnode.put("Use", useMAD);
         boost::property_tree::ptree madka;
-        madKeyA->serialize(madka);
+        if (madKeyA)
+        {
+            madKeyA->serialize(madka);
+        }
         madnode.add_child("MADKeyA", madka);
         boost::property_tree::ptree madkb;
-        madKeyB->serialize(madkb);
+        if (madKeyB)
+        {
+            madKeyB->serialize(madkb);
+        }
         madnode.add_child("MADKeyB", madkb);
         madnode.put("MADGPB", madGPB);
         node.add_child("MAD", madnode);

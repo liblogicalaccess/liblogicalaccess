@@ -7,14 +7,14 @@
 #ifndef LOGICALACCESS_SAMAV2ISO7816CARDPROVIDER_HPP
 #define LOGICALACCESS_SAMAV2ISO7816CARDPROVIDER_HPP
 
-#include "samcommands.hpp"
+#include "samav2/samcommands.hpp"
 #include "samav1iso7816commands.hpp"
 #include "../readercardadapters/iso7816readercardadapter.hpp"
 #include "../iso7816readerunitconfiguration.hpp"
-#include "samcrypto.hpp"
-#include "samkeyentry.hpp"
-#include "samcrypto.hpp"
-#include "samav2commands.hpp"
+#include "samav2/samcrypto.hpp"
+#include "samav2/samkeyentry.hpp"
+#include "samav2/samcrypto.hpp"
+#include "samav2/samav2commands.hpp"
 #include <string>
 #include <vector>
 #include <iostream>
@@ -28,7 +28,10 @@ namespace logicalaccess
     /**
      * \brief The DESFire base commands class.
      */
-    class LIBLOGICALACCESS_API SAMAV2ISO7816Commands : public SAMISO7816Commands<KeyEntryAV2Information, SETAV2>, public SAMAV2Commands < KeyEntryAV2Information, SETAV2 >
+    class LIBLOGICALACCESS_API SAMAV2ISO7816Commands : public SAMISO7816Commands<KeyEntryAV2Information, SETAV2>
+#ifndef SWIG
+    , public SAMAV2Commands < KeyEntryAV2Information, SETAV2 >
+#endif
     {
     public:
 
@@ -53,6 +56,14 @@ namespace logicalaccess
         virtual std::vector<unsigned char> transmit(std::vector<unsigned char> cmd, bool first = true, bool last = true);
 
         virtual std::vector<unsigned char> dumpSecretKey(unsigned char keyno, unsigned char keyversion, std::vector<unsigned char> divInpu);
+
+		virtual void activateOfflineKey(unsigned char keyno, unsigned char keyversion, std::vector<unsigned char> divInpu);
+
+		virtual std::vector<unsigned char> decipherOfflineData(std::vector<unsigned char> data);
+
+		virtual std::vector<unsigned char> encipherOfflineData(std::vector<unsigned char> data);
+
+		virtual std::vector<unsigned char> cmacOffline(const std::vector<unsigned char>& data);
 
     protected:
 

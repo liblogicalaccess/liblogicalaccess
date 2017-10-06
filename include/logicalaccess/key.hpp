@@ -141,6 +141,11 @@ class KeyDiversification;
 
         std::shared_ptr<KeyDiversification> getKeyDiversification();
 
+        /**
+         * Retrieve the bytes of the key.
+         */
+        ByteVector getBytes() const;
+
     private:
         /**
          * \brief The default 'secure' key for ciphering.

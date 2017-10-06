@@ -157,11 +157,19 @@ namespace logicalaccess
 
         bool waitInputChar(char &c, unsigned int maxwait);
 
-        void setKeyboard(const std::string& devicename);
+        void setKeyboard(const std::string& devicename, unsigned int vendorId, unsigned int productId);
+
+        unsigned int getVendorId() const;
+
+        unsigned int getProductId() const;
 
     protected:
 
         std::string d_devicename;
+
+        unsigned int d_vendorId;
+
+        unsigned int d_productId;
 
         std::vector<unsigned char> d_removalIdentifier;
 

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <list>
+#include <mutex>
 
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
 
@@ -38,7 +39,6 @@ namespace logicalaccess
 		static LibraryManager *getInstance();
 
         void* getFctFromName(const std::string &fctname, LibraryType libraryType);
-        static  LibraryManager *_singleton;
 
         std::shared_ptr<ReaderProvider> getReaderProvider(const std::string& readertype);
 
@@ -90,6 +90,7 @@ namespace logicalaccess
         static void getAvailablePlugins(std::vector<std::string>& plugins, getobjectinfoat objectinfoptr);
 
     private:
+        mutable std::recursive_mutex mutex_;
         std::map<std::string, IDynLibrary*> libLoaded;
         static const std::string enumType[3];
     };

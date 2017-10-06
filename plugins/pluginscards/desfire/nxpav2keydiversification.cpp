@@ -87,7 +87,7 @@ namespace logicalaccess
             //const AES 128
             diversify.insert(diversify.begin(), 0x01);
             std::vector<unsigned char> keydiv_tmp;
-            keydiv_tmp = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, 32);
+            keydiv_tmp = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, 32, d_forceK2Use);
             keydiv.resize(16);
             std::copy(keydiv_tmp.end() - 16, keydiv_tmp.end(), keydiv.begin());
         }
@@ -95,9 +95,9 @@ namespace logicalaccess
         {
             std::vector<unsigned char> keydiv_tmp_1, keydiv_tmp_2;
             diversify.insert(diversify.begin(), 0x21);
-            keydiv_tmp_1 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, 16);
+            keydiv_tmp_1 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, 16, d_forceK2Use);
             diversify[0] = 0x22;
-            keydiv_tmp_2 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, 16);
+            keydiv_tmp_2 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, 16, d_forceK2Use);
             keydiv.insert(keydiv.end(), keydiv_tmp_1.begin() + 8, keydiv_tmp_1.end());
             keydiv.insert(keydiv.end(), keydiv_tmp_2.begin() + 8, keydiv_tmp_2.end());
         }
@@ -105,11 +105,11 @@ namespace logicalaccess
         {
             std::vector<unsigned char> keydiv_tmp_1, keydiv_tmp_2, keydiv_tmp_3;
             diversify.insert(diversify.begin(), 0x31);
-            keydiv_tmp_1 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, 16);
+            keydiv_tmp_1 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, 16, d_forceK2Use);
             diversify[0] = 0x32;
-            keydiv_tmp_2 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, 16);
+            keydiv_tmp_2 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, 16, d_forceK2Use);
             diversify[0] = 0x33;
-            keydiv_tmp_3 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, 16);
+            keydiv_tmp_3 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, 16, d_forceK2Use);
             keydiv.insert(keydiv.end(), keydiv_tmp_1.begin() + 8, keydiv_tmp_1.end());
             keydiv.insert(keydiv.end(), keydiv_tmp_2.begin() + 8, keydiv_tmp_2.end());
             keydiv.insert(keydiv.end(), keydiv_tmp_3.begin() + 8, keydiv_tmp_3.end());
@@ -123,6 +123,7 @@ namespace logicalaccess
         node.put("divInput", BufferHelper::getHex(d_divInput));
         node.put("systemIdentifier", BufferHelper::getHex(d_systemIdentifier));
 		node.put("revertAID", d_revertAID);
+        node.put("forceK2Use", d_forceK2Use);
         parentNode.add_child(getDefaultXmlNodeName(), node);
     }
 
@@ -136,6 +137,11 @@ namespace logicalaccess
         {
             std::string systemIdentifier = siChild.get().get_value<std::string>();
             d_systemIdentifier = BufferHelper::fromHexString(systemIdentifier);
+        }
+        boost::optional<boost::property_tree::ptree&> fChild = node.get_child_optional("forceK2Use");
+        if (fChild)
+        {
+            d_forceK2Use = fChild.get().get_value<bool>();
         }
     }
 }

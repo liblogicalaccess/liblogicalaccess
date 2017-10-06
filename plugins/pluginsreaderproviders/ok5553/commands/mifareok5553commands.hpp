@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_MIFAREOK5553COMMANDS_HPP
 #define LOGICALACCESS_MIFAREOK5553COMMANDS_HPP
 
-#include "mifarecommands.hpp"
+#include "mifare/mifarecommands.hpp"
 #include "../readercardadapters/ok5553readercardadapter.hpp"
 
 #include <string>

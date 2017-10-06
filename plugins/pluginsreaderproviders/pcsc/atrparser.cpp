@@ -210,6 +210,8 @@ std::string ATRParser::check_hardcoded(bool ignore_reader_type,
 std::string ATRParser::check_from_atr() const
 {
     size_t atrlen      = atr_.size();
+	if (atrlen == 0)
+		THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "ATR is missing.");
     const uint8_t *atr = &atr_[0];
 
     if (atr && (atrlen > 0))

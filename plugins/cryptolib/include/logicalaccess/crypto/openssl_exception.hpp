@@ -18,11 +18,11 @@ namespace logicalaccess
         /**
          * \brief A OpenSSL exception class.
          */
-        class OpenSSLException : public Exception::exception
+        class OpenSSLException : public LibLogicalAccessException
         {
         public:
             OpenSSLException(const std::string& message)
-                : Exception::exception(message)
+                : LibLogicalAccessException(message)
             {};
         };
     }

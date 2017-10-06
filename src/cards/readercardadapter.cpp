@@ -8,6 +8,7 @@
 #include "logicalaccess/bufferhelper.hpp"
 #include "logicalaccess/myexception.hpp"
 #include "logicalaccess/logs.hpp"
+#include "logicalaccess/settings.hpp"
 
 namespace logicalaccess
 {
@@ -24,6 +25,9 @@ namespace logicalaccess
     std::vector<unsigned char> ReaderCardAdapter::sendCommand(const std::vector<unsigned char>& command, long timeout)
     {
         std::vector<unsigned char> res;
+
+        if (timeout == -1)
+            timeout = Settings::getInstance()->DataTransportTimeout;
 
         if (d_dataTransport)
         {

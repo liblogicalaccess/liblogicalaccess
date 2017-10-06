@@ -8,7 +8,7 @@
 #define LOGICALACCESS_TWICISO7816COMMANDS_HPP
 
 #include "logicalaccess/key.hpp"
-#include "twiccommands.hpp"
+#include "twic/twiccommands.hpp"
 #include "iso7816iso7816commands.hpp"
 
 #include <string>
@@ -22,8 +22,11 @@ namespace logicalaccess
     /**
      * \brief The Twic ISO7816 commands base class.
      */
-    class LIBLOGICALACCESS_API TwicISO7816Commands : public ISO7816ISO7816Commands, public TwicCommands
-    {
+    class LIBLOGICALACCESS_API TwicISO7816Commands : public ISO7816ISO7816Commands
+#ifndef SWIG
+	, public TwicCommands
+#endif            
+	{
     public:
 
         /**

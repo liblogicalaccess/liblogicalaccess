@@ -20,9 +20,14 @@ namespace logicalaccess
 {
     const unsigned char STidSTRReaderCardAdapter::SOF = 0x02;
 
-    STidSTRReaderCardAdapter::STidSTRReaderCardAdapter(STidCmdType adapterType)
-        : ReaderCardAdapter(), d_adapterType(adapterType), d_lastCommandCode(0x00)
-    { }
+    STidSTRReaderCardAdapter::STidSTRReaderCardAdapter(STidCmdType adapterType, bool iso7816)
+        : ISO7816ReaderCardAdapter(), d_adapterType(adapterType), d_iso7816(iso7816), d_lastCommandCode(0x00)
+    {
+        if (d_iso7816)
+        {
+            d_adapterType = STID_CMD_READER;
+        }
+    }
 
     STidSTRReaderCardAdapter::~STidSTRReaderCardAdapter()
     {
@@ -35,7 +40,7 @@ namespace logicalaccess
 
     std::vector<unsigned char> STidSTRReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
     {
-        LOG(LogLevel::COMS) << "Sending command command " << BufferHelper::getHex(command) << " command size {" << command.size() << "}...";
+        LOG(LogLevel::COMS) << "Sending command " << BufferHelper::getHex(command) << " command size {" << command.size() << "}...";
         std::vector<unsigned char> cmd;
         std::shared_ptr<STidSTRReaderUnitConfiguration> readerConfig = getSTidSTRReaderUnit()->getSTidSTRConfiguration();
         //LOG(LogLevel::INFOS) << "Reader configuration {%s}", dynamic_cast<XmlSerializable*>(&(*readerConfig))->serialize().c_str());
@@ -165,7 +170,27 @@ namespace logicalaccess
         buffer.insert(buffer.end(), command.begin(), command.end());
 
         d_lastCommandCode = commandCode;
-        return ReaderCardAdapter::sendCommand(buffer, timeout);;
+        return ReaderCardAdapter::sendCommand(buffer, timeout);
+    }
+
+    std::vector<unsigned char> STidSTRReaderCardAdapter::sendCommand(const std::vector<unsigned char>& command, long timeout)
+    {
+        if (d_iso7816)
+        {
+            std::vector<unsigned char> cmd;
+            cmd.push_back(static_cast<unsigned char>((command.size() + 2) >> 8));
+            cmd.push_back(static_cast<unsigned char>(command.size() + 2));
+            cmd.push_back(0x40);
+            cmd.push_back(0x01);
+            cmd.insert(cmd.end(), command.begin(), command.end());
+            std::vector<unsigned char> response = sendCommand(0x0014, cmd);
+			EXCEPTION_ASSERT_WITH_LOG(response.size() >= 4, LibLogicalAccessException, "The response should be at least 4-byte long.");
+            //unsigned short lenDataOut = (response[0] << 8) | response[1];
+			EXCEPTION_ASSERT_WITH_LOG(response[2] == 0x41 && response[3] == 0x00, LibLogicalAccessException, "The PN532 component didn't responded successfully.");
+            return std::vector<unsigned char>(response.begin() + 4, response.end());
+        }
+        
+        return ReaderCardAdapter::sendCommand(command, timeout);
     }
 
     std::vector<unsigned char> STidSTRReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
@@ -206,7 +231,7 @@ namespace logicalaccess
 
         unsigned char first, second;
         ComputeCrcCCITT(0xFFFF, &answer[1], 4 + messageSize, &first, &second);
-        EXCEPTION_ASSERT_WITH_LOG(answer[5 + messageSize] == second && answer[5 + messageSize + 1] == first, std::invalid_argument, "The supplied buffer is not valid (CRC missmatch)");
+        EXCEPTION_ASSERT_WITH_LOG(answer[5 + messageSize] == second && answer[5 + messageSize + 1] == first, std::invalid_argument, "The supplied buffer is not valid (CRC mismatch)");
 
         return receiveMessage(data, statusCode);
     }

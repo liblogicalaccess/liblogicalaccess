@@ -25,7 +25,7 @@ extern "C"
     {
         if (chip != NULL)
         {
-            *chip = std::shared_ptr<logicalaccess::SEOSChip>(new logicalaccess::SEOSChip());
+            *chip = std::make_shared<logicalaccess::SEOSChip>();
         }
     }
 

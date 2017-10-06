@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_DEFAULTSTIDSTRREADERCARDADAPTER_HPP
 #define LOGICALACCESS_DEFAULTSTIDSTRREADERCARDADAPTER_HPP
 
-#include "logicalaccess/cards/readercardadapter.hpp"
+#include "iso7816/readercardadapters/iso7816readercardadapter.hpp"
 #include "../stidstrreaderunit.hpp"
 
 #include <string>
@@ -34,15 +34,16 @@ namespace logicalaccess
     /**
      * \brief A default STidSTR reader/card adapter class.
      */
-    class LIBLOGICALACCESS_API STidSTRReaderCardAdapter : public ReaderCardAdapter
+    class LIBLOGICALACCESS_API STidSTRReaderCardAdapter : public ISO7816ReaderCardAdapter
     {
     public:
 
         /**
          * \brief Constructor.
          * \param adapterType The adapter type.
+         * \param iso7816 ISO7816 communication type (transparent mode)
          */
-        STidSTRReaderCardAdapter(STidCmdType adapterType = STID_CMD_READER);
+        STidSTRReaderCardAdapter(STidCmdType adapterType = STID_CMD_READER, bool iso7816 = false);
 
         /**
          * \brief Destructor.
@@ -72,7 +73,15 @@ namespace logicalaccess
          * \param timeout The command timeout.
          * \return The result of the command.
          */
-        virtual std::vector<unsigned char> sendCommand(unsigned short commandCode, const std::vector<unsigned char>& command, long int timeout = 2000);
+        virtual std::vector<unsigned char> sendCommand(unsigned short commandCode, const std::vector<unsigned char>& command, long int timeout = -1);
+
+        /**
+        * \brief Send a command to the reader.
+        * \param command The command buffer.
+        * \param timeout The command timeout.
+        * \return the result of the command.
+        */
+        virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long timeout = -1);
 
         /**
          * \brief Calculate the message HMAC.
@@ -118,6 +127,11 @@ namespace logicalaccess
          * \brief The adapter type.
          */
         STidCmdType d_adapterType;
+
+        /**
+        * \brief Use iso7816 / transparent mode.
+        */
+        bool d_iso7816;
 
         /**
          * \brief The last command code sent.

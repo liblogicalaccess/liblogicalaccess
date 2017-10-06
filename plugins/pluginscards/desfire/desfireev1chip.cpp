@@ -21,6 +21,11 @@ namespace logicalaccess
     {
     }
 
+    DESFireEV1Chip::DESFireEV1Chip(std::string ct) :
+        DESFireChip(ct)
+    {
+    }
+
     DESFireEV1Chip::~DESFireEV1Chip()
     {
     }

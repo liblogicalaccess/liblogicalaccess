@@ -14,16 +14,16 @@
 #include "logicalaccess/cards/chip.hpp"
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 
-#include "commands/samav1iso7816commands.hpp"
-#include "commands/samav2iso7816commands.hpp"
-#include "commands/desfireev1iso7816commands.hpp"
+#include "iso7816/commands/samav1iso7816commands.hpp"
+#include "iso7816/commands/samav2iso7816commands.hpp"
+#include "iso7816/commands/desfireev1iso7816commands.hpp"
 #include "commands/mifarepcsccommands.hpp"
 #include "commands/mifarescmcommands.hpp"
 #include "commands/mifare_acr1222L_commands.hpp"
 #include "commands/mifarecherrycommands.hpp"
 #include "commands/mifarespringcardcommands.hpp"
 #include "commands/iso15693pcsccommands.hpp"
-#include "commands/twiciso7816commands.hpp"
+#include "iso7816/commands/twiciso7816commands.hpp"
 #include "commands/mifareultralightpcsccommands.hpp"
 #include "commands/mifareultralightcpcsccommands.hpp"
 #include "commands/mifareultralightcomnikeyxx21commands.hpp"
@@ -40,31 +40,32 @@
 #include "commands/proxcommand.hpp"
 #include "commands/felicascmcommands.hpp"
 #include "commands/felicaspringcardcommands.hpp"
-#include "MifarePlusSL0Commands.hpp"
-#include "epasscommands.hpp"
-#include "epassreadercardadapter.hpp"
+#include "mifareplus/MifarePlusSL0Commands.hpp"
+#include "epass/epasscommands.hpp"
+#include "epass/epassreadercardadapter.hpp"
 
-#include "samav1chip.hpp"
-#include "samav2chip.hpp"
-#include "mifarepluschip.hpp"
-#include "MifarePlusSL1Chip.hpp"
-#include "desfireev1chip.hpp"
-#include "mifare1kchip.hpp"
-#include "mifare4kchip.hpp"
-#include "iso7816chip.hpp"
-#include "twicchip.hpp"
-#include "iso15693chip.hpp"
-#include "tagitchip.hpp"
-#include "mifareultralightcchip.hpp"
-#include "proxchip.hpp"
-#include "felicachip.hpp"
-#include "epasschip.hpp"
-#include "topazchip.hpp"
-#include "generictagchip.hpp"
+#include "samav2/samav1chip.hpp"
+#include "samav2/samav2chip.hpp"
+#include "mifareplus/mifarepluschip.hpp"
+#include "mifareplus/MifarePlusSL1Chip.hpp"
+#include "desfire/desfireev1chip.hpp"
+#include "mifare/mifare1kchip.hpp"
+#include "mifare/mifare4kchip.hpp"
+#include "iso7816/iso7816chip.hpp"
+#include "twic/twicchip.hpp"
+#include "iso15693/iso15693chip.hpp"
+#include "tagit/tagitchip.hpp"
+#include "mifareultralight/mifareultralightcchip.hpp"
+#include "prox/proxchip.hpp"
+#include "felica/felicachip.hpp"
+#include "epass/epasschip.hpp"
+#include "topaz/topazchip.hpp"
+#include "generictag/generictagchip.hpp"
+#include "desfire/desfireev2chip.hpp"
 
-#include "commands/samiso7816resultchecker.hpp"
-#include "commands/desfireiso7816resultchecker.hpp"
-#include "commands/mifareplusiso7816resultchecker.hpp"
+#include "iso7816/commands/samiso7816resultchecker.hpp"
+#include "iso7816/commands/desfireiso7816resultchecker.hpp"
+#include "iso7816/commands/mifareplusiso7816resultchecker.hpp"
 #include "commands/mifareomnikeyxx27resultchecker.hpp"
 #include "commands/acsacrresultchecker.hpp"
 #include "commands/springcardresultchecker.hpp"
@@ -97,6 +98,12 @@
 #include "commands/id3resultchecker.hpp"
 
 #include <cstring>
+
+#ifdef UNIX
+
+// Include for SCARD_ATTR_VENDOR_IFD_SERIAL_NO
+#include <reader.h>
+#endif
 
 namespace logicalaccess
 {
@@ -679,7 +686,7 @@ namespace logicalaccess
                     commands.reset(new MifarePCSCCommands());
                     resultChecker.reset(new MifareOmnikeyXX27ResultChecker());
                 }
-                else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_LAN_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_XX22)
+                else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_LAN_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_XX22 || getPCSCType() == PCSC_RUT_OMNIKEY_XX23)
                 {
                     commands.reset(new MifareOmnikeyXX21Commands());
                 }
@@ -711,6 +718,14 @@ namespace logicalaccess
                     LOG(LogLevel::WARNINGS) << "Cannot found HIDiClass commands.";
                 }
             }
+			else if (type == CHIP_DESFIRE_EV2)
+			{
+				commands = LibraryManager::getInstance()->getCommands("DESFireEV2ISO7816");
+				if (!commands)
+					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Could not load DESFireEV2ISO7816 Commands.");
+				std::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(getSAMChip());
+				resultChecker.reset(new DESFireISO7816ResultChecker());
+			}
             else if (type == CHIP_DESFIRE_EV1)
             {
                 commands.reset(new DESFireEV1ISO7816Commands());
@@ -757,7 +772,7 @@ namespace logicalaccess
                 {
                     commands.reset(new MifareUltralightCOmnikeyXX21Commands());
                 }
-                else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX22)
+                else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX22 || getPCSCType() == PCSC_RUT_OMNIKEY_XX23)
                 {
                     commands.reset(new MifareUltralightCOmnikeyXX22Commands());
                 }
@@ -905,7 +920,22 @@ namespace logicalaccess
         {
             return d_proxyReaderUnit->getReaderSerialNumber();
         }
-        return "";
+
+        std::string serialno = "";
+        DWORD seriallen = 0;
+        if (SCARD_S_SUCCESS == SCardGetAttrib(getHandle(), SCARD_ATTR_VENDOR_IFD_SERIAL_NO, (LPBYTE)NULL, &seriallen) && seriallen > 0)
+        {
+            seriallen += 1;
+            char* serialbuf = new char[seriallen];
+            memset(serialbuf, 0x00, seriallen);
+            if (SCARD_S_SUCCESS == SCardGetAttrib(getHandle(), SCARD_ATTR_VENDOR_IFD_SERIAL_NO, (LPBYTE)serialbuf, &seriallen))
+            {
+                serialno = std::string(serialbuf);
+            }
+            delete[] serialbuf;
+        }
+
+        return serialno;
     }
 
     std::shared_ptr<PCSCReaderProvider> PCSCReaderUnit::getPCSCReaderProvider() const
@@ -1171,7 +1201,7 @@ namespace logicalaccess
                 commands.reset(cmd);
                 resultChecker.reset(new MifareOmnikeyXX27ResultChecker());
             }
-            else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_XX22 /* TODO: check it is really the same APDU for Omnikey 5022-CL */)
+            else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_XX21 || getPCSCType() == PCSC_RUT_OMNIKEY_XX22 || getPCSCType() == PCSC_RUT_OMNIKEY_XX23 /* TODO: check it is really the same APDU for Omnikey 5022-CL and 5023-CL */)
             {
                 commands.reset(new MifarePlusSL1Policy<
                         MifarePlusOmnikeyXX21SL1Commands,
@@ -1355,14 +1385,18 @@ bool PCSCReaderUnit::process_insertion(const std::string &cardType,
 
 std::shared_ptr<Chip> PCSCReaderUnit::adjustChip(std::shared_ptr<Chip> c)
 {
-    // DESFire adjustment. Check maybe it's DESFireEV1. Check random uid.
+    // DESFire adjustment. Check maybe it's DESFireEV1 or EV2. Check random uid.
     // Adjust cryptographic context.
 	if (c->getCardType() == CHIP_DESFIRE && d_card_type == CHIP_UNKNOWN)
     {
         if (createCardProbe()->is_desfire_ev1())
 			c = createChip(CHIP_DESFIRE_EV1);
+		else if (createCardProbe()->is_desfire_ev2())
+			c = createChip(CHIP_DESFIRE_EV2);
     }
-	if (c->getCardType() == CHIP_DESFIRE || c->getCardType() == CHIP_DESFIRE_EV1)
+	if (c->getCardType() == CHIP_DESFIRE
+		|| c->getCardType() == CHIP_DESFIRE_EV1
+		|| c->getCardType() == CHIP_DESFIRE_EV2)
     {
         ByteVector uid;
         if (createCardProbe()->has_desfire_random_uid(&uid))

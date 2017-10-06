@@ -15,8 +15,8 @@
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
 
-#include "samav2chip.hpp"
-#include "desfirechip.hpp"
+#include "samav2/samav2chip.hpp"
+#include "desfire/desfirechip.hpp"
 #include "commands/samav1iso7816commands.hpp"
 #include "commands/samav2iso7816commands.hpp"
 #include "iso7816resultchecker.hpp"

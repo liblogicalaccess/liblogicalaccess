@@ -57,6 +57,15 @@ namespace logicalaccess
         std::string DefaultReader;
         std::vector<std::string> PluginFolders;
 
+        /* Networking */
+
+        /**
+         * The default Data Transport timeout to use.
+         *
+         * If not specified, use 3000.
+         */
+        int DataTransportTimeout;
+
         static std::string getDllPath();
 
     protected:

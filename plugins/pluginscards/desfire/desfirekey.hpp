@@ -97,7 +97,7 @@ namespace logicalaccess
          * \brief Set the key type.
          * \param keyType The key type.
          */
-        void setKeyType(DESFireKeyType keyType) { d_keyType = keyType; };
+		void setKeyType(DESFireKeyType keyType);
 
         /**
          * \brief Get the key type.

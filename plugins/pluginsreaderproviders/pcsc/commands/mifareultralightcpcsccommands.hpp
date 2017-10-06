@@ -8,7 +8,7 @@
 #define LOGICALACCESS_MIFAREULTRALIGHTCPCSCCOMMANDS_HPP
 
 #include "mifareultralightpcsccommands.hpp"
-#include "mifareultralightccommands.hpp"
+#include "mifareultralight/mifareultralightccommands.hpp"
 
 namespace logicalaccess
 {

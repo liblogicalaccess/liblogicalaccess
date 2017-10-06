@@ -1,4 +1,4 @@
-version: 1.81.1-{build}
+version: 1.86.0-{build}
 environment:
   global:
     JAVA_HOME: C:\Program Files\Java\jdk1.7.0
@@ -25,25 +25,16 @@ clone_folder: c:\projects\liblogicalaccess
 
 install:
   - ps: |
-      Add-Type -AssemblyName System.IO.Compression.FileSystem
-      if (!(Test-Path -Path "C:\maven" )) {
-        (new-object System.Net.WebClient).DownloadFile(
-          'http://www.us.apache.org/dist/maven/maven-3/3.2.5/binaries/apache-maven-3.2.5-bin.zip',
-          'C:\maven-bin.zip'
-        )
-        [System.IO.Compression.ZipFile]::ExtractToDirectory("C:\maven-bin.zip", "C:\maven")
-      }
+     Invoke-WebRequest http://www.us.apache.org/dist/maven/maven-3/3.2.5/binaries/apache-maven-3.2.5-bin.zip -OutFile C:\maven-bin.zip
+     Add-Type -AssemblyName System.IO.Compression.FileSystem
+     [System.IO.Compression.ZipFile]::ExtractToDirectory("C:\maven-bin.zip", "C:\maven")
   - cmd: SET PATH=C:\maven\apache-maven-3.2.5\bin;%JAVA_HOME%\bin;%PATH%
   - cmd: SET MAVEN_OPTS=-XX:MaxPermSize=2g -Xmx4g
   - cmd: SET JAVA_OPTS=-XX:MaxPermSize=2g -Xmx4g
   - cmd: SET M2_HOME=C:\maven\apache-maven-3.2.5
   - ps: |
-      Add-Type -AssemblyName System.IO.Compression.FileSystem
-        (new-object System.Net.WebClient).DownloadFile(
-          'http://download.islog.com/mavenSettingsAppVeyor.xml',
-          'C:\maven\apache-maven-3.2.5\conf\settings.xml'
-        )
-        
+     Invoke-WebRequest http://download.islog.com/mavenSettingsAppVeyor.xml -OutFile C:\maven\apache-maven-3.2.5\conf\settings.xml
+      
 build:
   project: INSTALL.vcxproj
 
@@ -62,5 +53,4 @@ before_build:
       elseif (($env:PLATFORM -eq "x86") -and ($env:CONFIGURATION -eq "Debug"))
       { cmake.exe -DCMAKE_BUILD_TYPE=Debug -DTARGET_ARCH=Win32 -DLIB_SUFFIX=Win32/Debug -G"Visual Studio 12" -Tv120_xp . -DCMAKE_INSTALL_PREFIX=./install . }
 cache:
-  - C:\maven\
   - C:\Users\appveyor\.m2

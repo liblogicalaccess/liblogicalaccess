@@ -21,7 +21,7 @@ namespace logicalaccess
         {
             std::shared_ptr<EVP_PKEY> _pkey(EVP_PKEY_new(), EVP_PKEY_free);
 
-            EXCEPTION_ASSERT(_pkey, Exception::bad_function_call, "Unable to create a EVP_PKEY structure");
+            EXCEPTION_ASSERT(_pkey, std::runtime_error, "Unable to create a EVP_PKEY structure");
             EVP_PKEY_set1_RSA(_pkey.get(), key.d_rsa.get());
 
             return EVPPKey(_pkey, key.hasPrivateCompound());
@@ -29,7 +29,11 @@ namespace logicalaccess
 
         int EVPPKey::type() const
         {
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
             return EVP_PKEY_type(d_pkey.get()->type);
+#else
+            return EVP_PKEY_base_id(d_pkey.get());
+#endif
         }
 
         EVPPKey EVPPKey::discardPrivateCompound() const
@@ -41,7 +45,7 @@ namespace logicalaccess
                     return createFromRSAKey(rsaKey().discardPrivateCompound());
                 }
 
-                THROW_EXCEPTION_WITH_LOG(Exception::bad_function_call, "Unsupported key type");
+                THROW_EXCEPTION_WITH_LOG(std::runtime_error, "Unsupported key type");
             }
             else
             {
@@ -58,7 +62,7 @@ namespace logicalaccess
                 return RSAKey(rsa, d_has_private_compound);
             }
 
-            THROW_EXCEPTION_WITH_LOG(Exception::bad_function_call, "Key type is not RSA");
+            THROW_EXCEPTION_WITH_LOG(std::runtime_error, "Key type is not RSA");
         }
 
         EVPPKey::EVPPKey(std::shared_ptr<EVP_PKEY> pkey, bool has_private_compound) :

@@ -19,9 +19,9 @@
 #include "logicalaccess/dynlibrary/librarymanager.hpp"
 #include "logicalaccess/dynlibrary/idynlibrary.hpp"
 #include "readercardadapters/osdpdatatransport.hpp"
-#include "commands/desfireev1iso7816commands.hpp"
+#include "iso7816/commands/desfireev1iso7816commands.hpp"
 #include "readercardadapters/osdpreadercardadapter.hpp"
-#include "commands/desfireiso7816resultchecker.hpp"
+#include "iso7816/commands/desfireiso7816resultchecker.hpp"
 
 #include "osdpcommands.hpp"
 
@@ -108,35 +108,30 @@ namespace logicalaccess
 	bool OSDPReaderUnit::waitInsertion(unsigned int maxwait)
 	{
 		unsigned int currentWait = 0;
-		bool inserted = false;
+        bool inserted = false;
 
-		if (m_currencard.size() > 0)
-		{
-			inserted = true;
-		}
-		else
-		{
-			do
-			{
-				std::shared_ptr<OSDPChannel> poll = m_commands->poll();
+        do
+        {
+            std::shared_ptr<OSDPChannel> poll = m_commands->poll();
 
-				if (poll->getCommandsType() == OSDPCommandsType::RAW)
-				{
-					m_currencard = poll->getData();
-					LOG(LogLevel::INFOS) << "ATQA card type detected:" << BufferHelper::getHex(m_currencard) << "}";
+            LOG(LogLevel::INFOS) << "Reader poll command: " << std::hex << poll->getCommandsType();
 
-					inserted = true;
-				}
-				else
-				{
-					if (!inserted)
-					{
-						std::this_thread::sleep_for(std::chrono::milliseconds(100));
-						currentWait += 100;
-					}
-				}
-			} while (!inserted && (maxwait == 0 || currentWait < maxwait));
-		}
+            if (poll->getCommandsType() == OSDPCommandsType::XRD)
+            {
+                std::vector<unsigned char>& data = poll->getData();
+                if (data.size() > 2 && data[0x01] == 0x01) //osdp_PRES
+                    inserted = true;
+            }
+            else
+            {
+                if (poll->getCommandsType() == OSDPCommandsType::LSTATR && poll->getData().size() > 1) {
+                    LOG(LogLevel::INFOS) << "Tamper status changed to: " << static_cast<bool>(poll->getData()[0x00] != 0);
+					m_tamperStatus = static_cast<bool>(poll->getData()[0x00] != 0);
+                }
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                currentWait += 100;
+            }
+        } while (!inserted && (maxwait == 0 || currentWait < maxwait));
 
 		if (inserted)
 		{
@@ -157,46 +152,49 @@ namespace logicalaccess
 	{
 		unsigned int currentWait = 0;
 		bool removed = false;
+        bool disconnected = false;
 
 		do
 		{
 			std::shared_ptr<OSDPChannel> poll = m_commands->poll();
 
-			if (poll->getCommandsType() == OSDPCommandsType::RAW)
-			{
-				std::vector<unsigned char> currentcard = poll->getData();
-				LOG(LogLevel::INFOS) << "ATQA card type detected:" << BufferHelper::getHex(currentcard) << "}";
+            LOG(LogLevel::INFOS) << "Reader poll command: " << std::hex << poll->getCommandsType();
 
-				if (currentcard == m_currencard)
-				{
-					std::this_thread::sleep_for(std::chrono::milliseconds(100));
-					currentWait += 100;
-				}
-				else
-					removed = true;
-			}
-			/*else
-				removed = true;*/
+            if (poll->getCommandsType() == OSDPCommandsType::XRD
+                && poll->getData().size() > 2 && poll->getData()[0x01] == 0x01) //osdp_PRES
+            {
+                m_commands->disconnectFromSmartcard();
+                disconnected = true;
+            }
+            else if (!disconnected) {
+                removed = true;
+            } else {
+                if (poll->getCommandsType() == OSDPCommandsType::LSTATR && poll->getData().size() > 1) {
+					LOG(LogLevel::INFOS) << "Tamper status changed to: " << static_cast<bool>(poll->getData()[0x00] != 0);
+					m_tamperStatus = static_cast<bool>(poll->getData()[0x00] != 0);
+                }
+                else
+                    disconnected = false;
+            }
 
-			std::cout << poll->getCommandsType();
+            if (!removed)
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            currentWait += 100;
 		} while (!removed && (maxwait == 0 || currentWait < maxwait));
 
-		if (d_insertedChip && d_insertedChip->getCommands())
-		{
-			d_insertedChip->getCommands()->setReaderCardAdapter(std::shared_ptr<ReaderCardAdapter>());
-		}
 		return removed;
 	}
 
 	bool OSDPReaderUnit::connect()
 	{
-		//TODO
 		return true;
 	}
 
 	void OSDPReaderUnit::disconnect()
 	{
-		std::shared_ptr<OSDPChannel> result = m_commands->disconnectFromSmartcard();
+//		std::shared_ptr<OSDPChannel> result = m_commands->disconnectFromSmartcard();
+//		if (result->getCommandsType() != OSDPCommandsType::ACK)
+//		    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Impossible to disconnect from card");
 	}
 
 	void OSDPReaderUnit::checkPDAuthentication(std::shared_ptr<OSDPChannel> challenge)
@@ -228,10 +226,13 @@ namespace logicalaccess
 			std::shared_ptr<OSDPChannel> result = m_commands->getProfile();
 			if (result->getCommandsType() == OSDPCommandsType::XRD)
 			{
-				result = m_commands->setProfile(0x00);
-
-				if (result->getCommandsType() != OSDPCommandsType::ACK)
-					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Impossible to set Profile 0x00");
+                std::vector<unsigned char>& data = result->getData();
+                if (data.size() > 2 && data[0x03] != 0x01)
+                {
+                    std::shared_ptr<OSDPChannel> result = m_commands->setProfile(0x01);
+                    if (result->getCommandsType() != OSDPCommandsType::ACK)
+                        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Impossible to set Profile 0x01");
+                }
 			}
 		}
 

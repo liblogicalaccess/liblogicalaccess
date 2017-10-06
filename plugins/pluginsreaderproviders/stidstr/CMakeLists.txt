@@ -6,10 +6,8 @@ if (WIN32)
 	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
 endif()
 
-set(INCLUDE_FOLDER 	${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire
-					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/mifare)
-INCLUDE_DIRECTORIES(${INCLUDE_FOLDER})
-
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/
+					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginsreaderproviders/)
 
 file(GLOB SRCS *.cpp)
 file(GLOB include *.hpp)
@@ -45,6 +43,8 @@ target_link_libraries(
 	logicalaccess-cryptolib
 	mifarecards
 	desfirecards
+	iso7816readers
+	iso7816cards
 	${LIBLOGICALACCESS_LIBRARY}
 )
 

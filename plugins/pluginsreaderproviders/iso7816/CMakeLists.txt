@@ -6,10 +6,7 @@ if (WIN32)
 	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
 endif()
 
-set(INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/desfire
-					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/twic
-					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/samav2
-					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/iso7816)
+set(INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards/)
 INCLUDE_DIRECTORIES(${INCLUDE_FOLDER})
 
 file(GLOB SRCS *.cpp)

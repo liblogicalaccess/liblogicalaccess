@@ -43,7 +43,7 @@ namespace logicalaccess
         FT_RAW = 0xFF
     } FormatType;
 
-    bool FieldSortPredicate(const std::shared_ptr<DataField>& lhs, const std::shared_ptr<DataField>& rhs);
+    bool LIBLOGICALACCESS_API FieldSortPredicate(const std::shared_ptr<DataField>& lhs, const std::shared_ptr<DataField>& rhs);
 
     /**
      * \brief A format.

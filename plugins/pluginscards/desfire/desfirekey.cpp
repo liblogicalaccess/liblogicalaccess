@@ -120,4 +120,10 @@ namespace logicalaccess
         default: return "Unknown";
         }
     }
+
+	void DESFireKey::setKeyType(DESFireKeyType keyType)
+	{
+		d_keyType = keyType;
+		d_key.resize(getLength());
+	}
 }

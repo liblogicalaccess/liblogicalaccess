@@ -662,7 +662,7 @@ namespace logicalaccess
                         {
                             std::shared_ptr<KeyboardReaderUnit> ru;
                             ru.reset(new KeyboardReaderUnit());
-                            ru->setKeyboard(sKeyboard->devices[i].name);
+                            ru->setKeyboard(sKeyboard->devices[i].name, sKeyboard->devices[i].vendorId, sKeyboard->devices[i].productId);
                             ru->setReaderProvider(std::weak_ptr<ReaderProvider>(shared_from_this()));
 
                             LOG(LogLevel::INFOS) << "Reader {" << sKeyboard->devices[i].name << "} added to the list.";

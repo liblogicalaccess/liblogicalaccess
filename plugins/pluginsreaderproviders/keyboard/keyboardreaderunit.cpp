@@ -345,8 +345,20 @@ namespace logicalaccess
         return std::dynamic_pointer_cast<KeyboardReaderProvider>(getReaderProvider());
     }
 
-    void KeyboardReaderUnit::setKeyboard(const std::string& devicename)
+    void KeyboardReaderUnit::setKeyboard(const std::string& devicename, unsigned int vendorId, unsigned int productId)
     {
         d_devicename = devicename;
+        d_vendorId = vendorId;
+        d_productId = productId;
+    }
+
+    unsigned int KeyboardReaderUnit::getVendorId() const
+    {
+        return d_vendorId;
+    }
+
+    unsigned int KeyboardReaderUnit::getProductId() const
+    {
+        return d_productId;
     }
 }

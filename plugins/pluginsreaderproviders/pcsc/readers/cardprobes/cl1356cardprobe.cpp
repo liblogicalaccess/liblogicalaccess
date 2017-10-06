@@ -1,8 +1,8 @@
 #include "cl1356cardprobe.hpp"
 #include "logicalaccess/cards/chip.hpp"
 #include "logicalaccess/logs.hpp"
-#include "mifarecommands.hpp"
-#include "mifarechip.hpp"
+#include "mifare/mifarecommands.hpp"
+#include "mifare/mifarechip.hpp"
 
 using namespace logicalaccess;
 

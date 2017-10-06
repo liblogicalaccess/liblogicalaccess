@@ -5,19 +5,21 @@
  */
 
 #include "../commands/desfireiso7816commands.hpp"
-#include "desfirechip.hpp"
+#include "desfire/desfirechip.hpp"
 #include "samav1iso7816commands.hpp"
 #include "logicalaccess/cards/samkeystorage.hpp"
-#include "nxpkeydiversification.hpp"
-#include "nxpav1keydiversification.hpp"
-#include "nxpav2keydiversification.hpp"
-#include "samav2commands.hpp"
+#include "desfire/nxpkeydiversification.hpp"
+#include "desfire/nxpav1keydiversification.hpp"
+#include "desfire/nxpav2keydiversification.hpp"
+#include "samav2/samav2commands.hpp"
 
 #include "logicalaccess/iks/IslogKeyServer.hpp"
 #include "logicalaccess/settings.hpp"
 #include "logicalaccess/iks/packet/DesfireAuth.hpp"
 #include "logicalaccess/cards/IKSStorage.hpp"
 #include "logicalaccess/iks/packet/DesfireChangeKey.hpp"
+#include "logicalaccess/cards/computermemorykeystorage.hpp"
+#include "samav2iso7816commands.hpp"
 
 namespace logicalaccess
 {
@@ -41,9 +43,7 @@ namespace logicalaccess
 
     void DESFireISO7816Commands::getVersion(DESFireCardVersion& dataVersion)
     {
-        std::vector<unsigned char> result;
-
-        result = transmit(DF_INS_GET_VERSION);
+	    auto result = transmit(DF_INS_GET_VERSION);
 
         if ((result.size() - 2) == 7)
         {
@@ -78,9 +78,11 @@ namespace logicalaccess
         std::vector<unsigned char> command;//, samaid;
         DESFireLocation::convertUIntToAid(aid, command);
 
-        transmit(DF_INS_SELECT_APPLICATION, command);
+        DESFireISO7816Commands::transmit(DF_INS_SELECT_APPLICATION, command);
 
-        /* if (getSAMChip())
+        /* 
+         * We directly select the keyentry to use so no need to select the app 
+          if (getSAMChip())
          {
          LOG(LogLevel::INFOS) << "SelectApplication on SAM chip...");
          DESFireLocation::convertUIntToAid(aid, samaid);
@@ -117,9 +119,7 @@ namespace logicalaccess
     std::vector<unsigned int> DESFireISO7816Commands::getApplicationIDs()
     {
         std::vector<unsigned int> aids;
-        std::vector<unsigned char> result;
-
-        result = transmit(DF_INS_GET_APPLICATION_IDS);
+	    std::vector<unsigned char> result = transmit(DF_INS_GET_APPLICATION_IDS);
 
         while (result[result.size() - 1] == DF_INS_ADDITIONAL_FRAME)
         {
@@ -152,7 +152,7 @@ namespace logicalaccess
         std::shared_ptr<SAMCommands<KeyEntryAV2Information, SETAV2> > samav2commands = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands());
 
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
-		std::shared_ptr<DESFireKey> oldkey = std::dynamic_pointer_cast<DESFireKey>(crypto->getKey(crypto->d_currentAid, keyno));
+		std::shared_ptr<DESFireKey> oldkey = std::dynamic_pointer_cast<DESFireKey>(crypto->getKey(0, keyno));
 
         ChangeKeyInfo samck;
         memset(&samck, 0x00, sizeof(samck));
@@ -203,19 +203,35 @@ namespace logicalaccess
             if (oldnxpdiv)
             {
 				oldnxpdiv->initDiversification(crypto->getIdentifier(), crypto->d_currentAid, key, keyno, diversifyOld);
+				if (!keyDiv.divInput)
+				{
+					keyDiv.divInput = new unsigned char[diversifyOld.size()];
+					memcpy(keyDiv.divInput, &diversifyOld[0], diversifyOld.size());
+					keyDiv.divInputSize = static_cast<unsigned char>(diversifyOld.size());
+				}
 
-                if (nxpdiv && !std::equal(diversifyNew.begin(), diversifyNew.end(), diversifyOld.begin())
+                if (nxpdiv && diversifyNew.size() != 0 && !std::equal(diversifyNew.begin(), diversifyNew.end(), diversifyOld.begin())
                     && typeid(*nxpdiv) != typeid(*oldnxpdiv))
                     THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Current and New Key should have the same system identifier and same NXP Div type.");
 
                 keyDiv.diversifyCurrent = 0x01;
             }
 
-            if (std::dynamic_pointer_cast<NXPAV2KeyDiversification>(nxpdiv))
+            if (std::dynamic_pointer_cast<NXPAV2KeyDiversification>(nxpdiv)
+				|| std::dynamic_pointer_cast<NXPAV2KeyDiversification>(oldnxpdiv))
                 keyDiv.divType = NXPKeyDiversificationType::SAMAV2;
             else
                 keyDiv.divType = NXPKeyDiversificationType::SAMAV1;
         }
+
+		if (crypto->d_auth_method != CM_LEGACY)
+		{
+			//AES has keep IV option, need to load current IV
+			if (samav1commands)
+				samav1commands->loadInitVector(crypto->d_lastIV);
+			else
+				samav2commands->loadInitVector(crypto->d_lastIV);
+		}
 
         std::vector<unsigned char> ret;
         if (samav1commands)
@@ -232,22 +248,50 @@ namespace logicalaccess
         return ret;
     }
 
-    void DESFireISO7816Commands::changeKey(unsigned char keyno, std::shared_ptr<DESFireKey> newkey)
+	uint8_t DESFireISO7816Commands::getKeyVersion(uint8_t keyno)
+	{
+		std::vector<unsigned char> command;
+		command.push_back(keyno);
+		auto result = transmit(DF_INS_GET_KEY_VERSION, command);
+		if (result.size() < 3)
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Invalid response for getKeyVersion.");
+		return result[0];
+	}
+
+	ByteVector DESFireISO7816Commands::getKeyInformations(std::shared_ptr<DESFireKey> key, uint8_t keyno)
     {
-		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
-        std::vector<unsigned char> cryptogram;
-		std::shared_ptr<DESFireKey> key = std::make_shared<DESFireKey>(*newkey);
+		auto crypto = getDESFireChip()->getCrypto();
 		auto samKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
 
 		std::vector<unsigned char> diversify;
 		if (key->getKeyDiversification())
-		{
 			key->getKeyDiversification()->initDiversification(crypto->getIdentifier(), crypto->d_currentAid, key, keyno, diversify);
-		}
+
+		// get key value from SAM - But what to do if the initDiversification need the key ?
 		if (samKeyStorage && samKeyStorage->getDumpKey())
 			getKeyFromSAM(key, diversify);
 
-        if (std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
+		return diversify;
+    }
+
+    void DESFireISO7816Commands::changeKey(unsigned char keyno, std::shared_ptr<DESFireKey> newkey)
+    {
+		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
+        std::vector<unsigned char> cryptogram;
+
+		std::shared_ptr<DESFireKey> key = std::make_shared<DESFireKey>(*newkey);
+		auto oldkey = crypto->getKey(0, keyno);
+
+		auto oldSamKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage());
+		auto newSamKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
+		if (((oldSamKeyStorage && !oldSamKeyStorage->getDumpKey()) && !newSamKeyStorage)
+			|| (!oldSamKeyStorage && (newSamKeyStorage && !newSamKeyStorage->getDumpKey())))
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Both keys need to be set in the SAM.");
+
+		auto oldKeyDiversify = getKeyInformations(oldkey, keyno);
+		auto newKeyDiversify = getKeyInformations(key, keyno);
+
+		if (oldSamKeyStorage && !oldSamKeyStorage->getDumpKey())
         {
             cryptogram = getChangeKeySAMCryptogram(keyno, key);
         }
@@ -257,7 +301,7 @@ namespace logicalaccess
         }
         else
         {
-			cryptogram = crypto->changeKey_PICC(keyno, key, diversify);
+			cryptogram = crypto->changeKey_PICC(keyno, oldKeyDiversify, key, newKeyDiversify);
         }
 
         std::vector<unsigned char> command;
@@ -266,6 +310,7 @@ namespace logicalaccess
         {
             command.insert(command.end(), cryptogram.begin(), cryptogram.end());
             transmit(DF_INS_CHANGE_KEY, command);
+			crypto->setKey(crypto->d_currentAid, 0, keyno, newkey);
         }
     }
 
@@ -290,7 +335,7 @@ namespace logicalaccess
 
         EXCEPTION_ASSERT_WITH_LOG(result.size() >= 2, LibLogicalAccessException, "incorrect result for transmit");
 
-        settings = (DESFireKeySettings)result[0];
+        settings = static_cast<DESFireKeySettings>(result[0]);
         maxNbKeys = result[1];
     }
 
@@ -320,14 +365,15 @@ namespace logicalaccess
         {
             if (mode == CM_ENCRYPT)
             {
-				crypto->decipherData1(length, firstMsg);
+				crypto->initBuf();
+				crypto->appendDecipherData(firstMsg);
             }
             else
             {
                 ret = data = firstMsg;
                 if (mode == CM_MAC)
                 {
-					crypto->initBuf(length + 4);
+					crypto->initBuf();
                 }
             }
         }
@@ -348,7 +394,7 @@ namespace logicalaccess
 
             if (mode == CM_ENCRYPT)
             {
-				crypto->decipherData2(data);
+				crypto->appendDecipherData(data);
             }
             else
             {
@@ -374,7 +420,7 @@ namespace logicalaccess
             break;
         case CM_ENCRYPT:
         {
-			ret = crypto->decipherData(length);
+			ret = crypto->desfireDecrypt(length);
         }
             break;
         case CM_UNKNOWN:
@@ -386,126 +432,67 @@ namespace logicalaccess
         return ret;
     }
 
-    void DESFireISO7816Commands::handleWriteData(unsigned char cmd, unsigned char* parameters, unsigned int paramLength, const std::vector<unsigned char>& data, EncryptionMode mode)
-    {
+	void DESFireISO7816Commands::handleWriteData(unsigned char cmd, const std::vector<unsigned char>& parameters, const std::vector<unsigned char>& data, EncryptionMode mode)
+	{
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
-        std::vector<unsigned char> edata, command;
 
-		crypto->initBuf(data.size());
+		crypto->initBuf();
 
-        if (data.size() <= DESFIRE_CLEAR_DATA_LENGTH_CHUNK)
-        {
-            switch (mode)
-            {
-            case CM_PLAIN:
-            {
-                edata = data;
-            }
-                break;
+		std::vector<unsigned char> cmdBuffer;
+		cmdBuffer.insert(cmdBuffer.end(), parameters.begin(), parameters.end());
 
-            case CM_MAC:
-            {
-				std::vector<unsigned char> mac = crypto->generateMAC(data);
-                edata = data;
-                edata.insert(edata.end(), mac.begin(), mac.end());
-            }
-                break;
+		switch (mode)
+		{
+		case CM_PLAIN:
+		{
+			cmdBuffer.insert(cmdBuffer.end(), data.begin(), data.end());
+		}
+		break;
 
-            case CM_ENCRYPT:
-            {
-				edata = crypto->desfireEncrypt(data);
-            }
-                break;
+		case CM_MAC:
+		{
+			std::vector<unsigned char> mac = crypto->generateMAC(cmd, data);
+			cmdBuffer.insert(cmdBuffer.end(), data.begin(), data.end());
+			cmdBuffer.insert(cmdBuffer.end(), mac.begin(), mac.end());
+		}
+		break;
 
-            default:
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Unknown crypto mode.");
-            }
-        }
-        else
-        {
-            switch (mode)
-            {
-            case CM_PLAIN:
-                edata = std::vector<unsigned char>(data.begin(), data.begin() + DESFIRE_CLEAR_DATA_LENGTH_CHUNK);
-                break;
+		case CM_ENCRYPT:
+		{
+			auto edata = crypto->desfireEncrypt(data);
+			cmdBuffer.insert(cmdBuffer.end(), edata.begin(), edata.end());
+		}
+		break;
 
-            case CM_MAC:
-                edata = std::vector<unsigned char>(data.begin(), data.begin() + DESFIRE_CLEAR_DATA_LENGTH_CHUNK);
-				crypto->bufferingForGenerateMAC(edata);
-                break;
+		default:
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Unknown crypto mode.");
+		}
 
-            case CM_ENCRYPT:
-				edata = crypto->encipherData(false, std::vector<unsigned char>(data.begin(), data.begin() + DESFIRE_CLEAR_DATA_LENGTH_CHUNK));
-                break;
+		unsigned char err;
+		size_t pos = 0;
+		do
+		{
+			//Send the data little by little
+			size_t pkSize = ((cmdBuffer.size() - pos) >= (DESFIRE_CLEAR_DATA_LENGTH_CHUNK)) ? (DESFIRE_CLEAR_DATA_LENGTH_CHUNK) : (cmdBuffer.size() - pos);
 
-            default:
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Unknown crypto mode.");
-            }
-        }
+			auto command = std::vector<unsigned char>(cmdBuffer.begin() + pos, cmdBuffer.begin() + pos + pkSize);
 
-        if (parameters != NULL && paramLength > 0)
-        {
-            command.insert(command.end(), parameters, parameters + paramLength);
-        }
-        command.insert(command.end(), edata.begin(), edata.end());
+			if (command.size() == 0)
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Data requested but no more data to send.");
 
-        std::vector<unsigned char> result = transmit(cmd, command);
-        unsigned char err = result.back();
-        if (data.size() > DESFIRE_CLEAR_DATA_LENGTH_CHUNK)
-        {
-            size_t pos = DESFIRE_CLEAR_DATA_LENGTH_CHUNK;
-            while (err == DF_INS_ADDITIONAL_FRAME) // && pos < dataLength
-            {
-                size_t pkSize = ((data.size() - pos) >= DESFIRE_CLEAR_DATA_LENGTH_CHUNK) ? DESFIRE_CLEAR_DATA_LENGTH_CHUNK : (data.size() - pos);
+			auto result = transmit(pos == 0 ? cmd : DF_INS_ADDITIONAL_FRAME, command);
 
-                switch (mode)
-                {
-                case CM_PLAIN:
-                    edata = std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize);
-                    break;
+			err = result.back();
+			pos += pkSize;
+		} while (err == DF_INS_ADDITIONAL_FRAME);
 
-                case CM_MAC:
-                    edata = std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize);
-                    if (pos + pkSize == data.size())
-                    {
-						std::vector<unsigned char> mac = crypto->generateMAC(edata);
-                        edata.insert(edata.end(), mac.begin(), mac.end());
-                    }
-                    else
-                    {
-						crypto->bufferingForGenerateMAC(edata);
-                    }
-                    break;
-
-                case CM_ENCRYPT:
-                    if (pos + pkSize == data.size())
-                    {
-						edata = crypto->encipherData(true, std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize));
-                    }
-                    else
-                    {
-						edata = crypto->encipherData(false, std::vector<unsigned char>(data.begin() + pos, data.begin() + pos + pkSize));
-                    }
-                    break;
-
-                default:
-                    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Unknown crypto mode.");
-                }
-
-                result = transmit(DF_INS_ADDITIONAL_FRAME, edata);
-                err = result.back();
-
-                pos += pkSize;
-            }
-        }
-
-        if (err != 0x00)
-        {
-            char msgtmp[64];
-            sprintf(msgtmp, "Unknown error: %x", err);
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, msgtmp);
-        }
-    }
+		if (err != 0x00)
+		{
+			char msgtmp[64];
+			sprintf(msgtmp, "Unknown error: %x", err);
+			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, msgtmp);
+		}
+	}
 
     void DESFireISO7816Commands::changeFileSettings(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, bool plain)
     {
@@ -651,7 +638,7 @@ namespace logicalaccess
 
     void DESFireISO7816Commands::writeData(unsigned char fileno, unsigned int offset, const std::vector<unsigned char>& data, EncryptionMode mode)
     {
-        unsigned char parameters[7];
+		std::vector<unsigned char> parameters(7);
         parameters[0] = static_cast<unsigned char>(fileno);
         parameters[1] = static_cast<unsigned char>(offset & 0xff);
         parameters[2] = static_cast<unsigned char>(static_cast<unsigned short>(offset & 0xff00) >> 8);
@@ -660,7 +647,7 @@ namespace logicalaccess
         parameters[5] = static_cast<unsigned char>(static_cast<unsigned short>(data.size() & 0xff00) >> 8);
         parameters[6] = static_cast<unsigned char>(static_cast<unsigned int>(data.size() & 0xff0000) >> 16);
 
-        handleWriteData(DF_INS_WRITE_DATA, parameters, static_cast<unsigned int>(sizeof(parameters)), data, mode);
+        handleWriteData(DF_INS_WRITE_DATA, parameters, data, mode);
     }
 
     void DESFireISO7816Commands::getValue(unsigned char fileno, EncryptionMode mode, unsigned int& value)
@@ -682,37 +669,37 @@ namespace logicalaccess
 
     void DESFireISO7816Commands::credit(unsigned char fileno, unsigned int value, EncryptionMode mode)
     {
-        unsigned char parameters[1];
+		std::vector<unsigned char> parameters(1);
         parameters[0] = fileno;
         uint32_t dataValue = static_cast<uint32_t>(value);
         std::vector<unsigned char> data(sizeof(dataValue));
         memcpy(&data[0], &dataValue, sizeof(dataValue));
-        handleWriteData(DF_INS_CREDIT, parameters, static_cast<unsigned int>(sizeof(parameters)), data, mode);
+        handleWriteData(DF_INS_CREDIT, parameters, data, mode);
     }
 
     void DESFireISO7816Commands::debit(unsigned char fileno, unsigned int value, EncryptionMode mode)
     {
-        unsigned char parameters[1];
+		std::vector<unsigned char> parameters(1);
         parameters[0] = fileno;
         uint32_t dataValue = static_cast<uint32_t>(value);
         std::vector<unsigned char> data(sizeof(dataValue));
         memcpy(&data[0], &dataValue, sizeof(dataValue));
-        handleWriteData(DF_INS_DEBIT, parameters, static_cast<unsigned int>(sizeof(parameters)), data, mode);
+        handleWriteData(DF_INS_DEBIT, parameters, data, mode);
     }
 
     void DESFireISO7816Commands::limitedCredit(unsigned char fileno, unsigned int value, EncryptionMode mode)
     {
-        unsigned char parameters[1];
+		std::vector<unsigned char> parameters(1);
         parameters[0] = static_cast<unsigned char>(fileno);
         uint32_t dataValue = static_cast<uint32_t>(value);
         std::vector<unsigned char> data(sizeof(dataValue));
         memcpy(&data[0], &dataValue, sizeof(dataValue));
-        handleWriteData(DF_INS_LIMITED_CREDIT, parameters, static_cast<unsigned int>(sizeof(parameters)), data, mode);
+        handleWriteData(DF_INS_LIMITED_CREDIT, parameters, data, mode);
     }
 
     void DESFireISO7816Commands::writeRecord(unsigned char fileno, unsigned int offset, const std::vector<unsigned char>& data, EncryptionMode mode)
     {
-        unsigned char parameters[7];
+		std::vector<unsigned char> parameters(7);
         parameters[0] = fileno;
         parameters[1] = static_cast<unsigned char>(offset & 0xff);
         parameters[2] = static_cast<unsigned char>(static_cast<unsigned short>(offset & 0xff00) >> 8);
@@ -721,7 +708,7 @@ namespace logicalaccess
         parameters[5] = static_cast<unsigned char>(static_cast<unsigned short>(data.size() & 0xff00) >> 8);
         parameters[6] = static_cast<unsigned char>(static_cast<unsigned int>(data.size() & 0xff0000) >> 16);
 
-        handleWriteData(DF_INS_WRITE_RECORD, parameters, static_cast<unsigned int>(sizeof(parameters)), data, mode);
+        handleWriteData(DF_INS_WRITE_RECORD, parameters, data, mode);
     }
 
     std::vector<unsigned char> DESFireISO7816Commands::readRecords(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode)
@@ -765,7 +752,7 @@ namespace logicalaccess
 
     void DESFireISO7816Commands::authenticate(unsigned char keyno)
     {
-		std::shared_ptr<DESFireKey> key = getDESFireChip()->getCrypto()->getKey(keyno);
+		std::shared_ptr<DESFireKey> key = getDESFireChip()->getCrypto()->getKey(0, keyno);
         authenticate(keyno, key);
     }
 
@@ -779,16 +766,89 @@ namespace logicalaccess
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAMKeyStorage Dump option can only be used with SAM AV2.");
 
 		if (key->getKeyDiversification() && !std::dynamic_pointer_cast<NXPAV2KeyDiversification>(key->getKeyDiversification()))
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM AV2 can only dump key with diversification NXP AV2.");
+			diversify.clear(); // We ignore diversification if wrong type
 		key->setData(std::dynamic_pointer_cast<SAMAV2Commands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->dumpSecretKey(samKeyStorage->getKeySlot(),
 			key->getKeyVersion(), diversify));
-		key->setKeyStorage(nullptr);
-		key->setKeyDiversification(nullptr);
+		key->setKeyStorage(std::make_shared<ComputerMemoryKeyStorage>());
+
+		// Clear diversification since already done
+		if (key->getKeyDiversification() && std::dynamic_pointer_cast<NXPAV2KeyDiversification>(key->getKeyDiversification()))
+			key->setKeyDiversification(nullptr);
 	}
 
-    void DESFireISO7816Commands::authenticate(unsigned char keyno, std::shared_ptr<DESFireKey> currentKey)
+	ByteVector DESFireISO7816Commands::sam_authenticate_p1(std::shared_ptr<DESFireKey> key, ByteVector rndb, ByteVector diversify)
     {
-        std::vector<unsigned char> command;
+		unsigned char p1 = 0x00;
+		ByteVector data(2);
+		data[0] = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage())->getKeySlot();
+		data[1] = key->getKeyVersion();
+		data.insert(data.end(), rndb.begin(), rndb.end());
+
+		if (std::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification()))
+		{
+			p1 |= 0x01;
+			if (std::dynamic_pointer_cast<NXPAV2KeyDiversification>(key->getKeyDiversification()))
+				p1 |= 0x10;
+			data.insert(data.end(), diversify.begin(), diversify.end());
+		}
+
+		ByteVector cmd_vector = { 0x80, 0x0a, p1, 0x00, static_cast<unsigned char>(data.size()), 0x00 };
+		cmd_vector.insert(cmd_vector.end() - 1, data.begin(), data.end());
+
+		int trytoreconnect = 0;
+		ByteVector apduresult;
+		do
+		{
+			try
+			{
+				if (getSAMChip()->getCardType() == "SAM_AV1")
+					apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->transmit(cmd_vector);
+				else if (getSAMChip()->getCardType() == "SAM_AV2")
+					apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(cmd_vector, true, false);
+				break;
+			}
+			catch (CardException& ex)
+			{
+				if (trytoreconnect > 5 || ex.error_code() != CardException::WRONG_P1_P2
+					|| !std::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification()))
+					std::rethrow_exception(std::current_exception());
+
+				//SAM av2 often fail even if parameters are correct for during diversification av2 
+				LOG(LogLevel::WARNINGS) << "try to auth with SAM P1: " << trytoreconnect;
+				getSAMChip()->getCommands()->getReaderCardAdapter()->getDataTransport()->getReaderUnit()->reconnect();
+			}
+			++trytoreconnect;
+		} while (true);
+
+		if (apduresult.size() <= 2)
+			THROW_EXCEPTION_WITH_LOG(CardException, "sam authenticate DES P1 failed.");
+
+		return ByteVector(apduresult.begin(), apduresult.end() - 2);
+    }
+
+	void DESFireISO7816Commands::sam_authenticate_p2(unsigned char keyno, ByteVector rndap)
+    {
+		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
+		ByteVector cmd_vector = { 0x80, 0x0a, 0x00, 0x00, static_cast<uint8_t>(rndap.size()) };
+		cmd_vector.insert(cmd_vector.end(), rndap.begin(), rndap.end());
+		ByteVector apduresult;
+		if (getSAMChip()->getCardType() == "SAM_AV1")
+			apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->transmit(cmd_vector);
+		else if (getSAMChip()->getCardType() == "SAM_AV2")
+			apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(cmd_vector, true, false);
+		if (apduresult.size() != 2 || apduresult[0] != 0x90 || apduresult[1] != 0x00)
+			THROW_EXCEPTION_WITH_LOG(CardException, "sam authenticate DES P2 failed.");
+
+		if (getSAMChip()->getCardType() == "SAM_AV1")
+			crypto->d_sessionKey = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->dumpSessionKey();
+		else if (getSAMChip()->getCardType() == "SAM_AV2")
+			crypto->d_sessionKey = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->dumpSessionKey();
+		crypto->d_currentKeyNo = keyno;
+    }
+
+	void DESFireISO7816Commands::authenticate(unsigned char keyno, std::shared_ptr<DESFireKey> currentKey)
+	{
+		std::vector<unsigned char> command;
 
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 		if (!currentKey) {
@@ -796,112 +856,40 @@ namespace logicalaccess
 		}
 		std::shared_ptr<DESFireKey> key = std::make_shared<DESFireKey>(*currentKey);
 
+		auto diversify = getKeyInformations(key, keyno);
+
 		auto samKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
 		if (samKeyStorage && !getSAMChip())
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAMKeyStorage set on the key but no SAM reader has been set.");
 
-        std::vector<unsigned char> diversify;
-        if (key->getKeyDiversification())
-        {
-			key->getKeyDiversification()->initDiversification(crypto->getIdentifier(), crypto->d_currentAid, key, keyno, diversify);
-        }
+		crypto->setKey(crypto->d_currentAid, 0, keyno, key);
 
-		if (samKeyStorage && samKeyStorage->getDumpKey())
-			getKeyFromSAM(key, diversify);
+		command.push_back(keyno);
 
-		crypto->setKey(crypto->d_currentAid, keyno, key);
+		std::vector<unsigned char> result = DESFireISO7816Commands::transmit(DF_INS_AUTHENTICATE, command);
+		if (result.size() >= 2 && result[result.size() - 1] == DF_INS_ADDITIONAL_FRAME && (result.size() - 2) >= 8)
+		{
+			result.resize(8);
+			std::vector<unsigned char> rndAB, apduresult;
 
-        command.push_back(keyno);
-
-        std::vector<unsigned char> result = DESFireISO7816Commands::transmit(DF_INS_AUTHENTICATE, command);
-        if (result.size() >= 2 && result[result.size() - 1] == DF_INS_ADDITIONAL_FRAME && (result.size() - 2) >= 8)
-        {
-            result.resize(8);
-            std::vector<unsigned char> rndAB, apduresult;
-
-            if (samKeyStorage
-				&& !samKeyStorage->getDumpKey())
-            {
-                unsigned char p1 = 0x00;
-                std::vector<unsigned char> data(2);
-                data[0] = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage())->getKeySlot();
-                data[1] = key->getKeyVersion();
-                data.insert(data.end(), result.begin(), result.end());
-
-                if (std::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification()))
-                {
-                    p1 |= 0x01;
-                    if (std::dynamic_pointer_cast<NXPAV2KeyDiversification>(key->getKeyDiversification()))
-                        p1 |= 0x10;
-                    data.insert(data.end(), diversify.begin(), diversify.end());
-                }
-
-                unsigned char cmd[] = { 0x80, 0x0a, p1, 0x00, static_cast<unsigned char>(data.size()), 0x00 };
-                std::vector<unsigned char> cmd_vector(cmd, cmd + 6);
-                cmd_vector.insert(cmd_vector.end() - 1, data.begin(), data.end());
-
-				int trytoreconnect = 0;
-				do
-				{
-					try
-					{
-						if (getSAMChip()->getCardType() == "SAM_AV1")
-							apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->transmit(cmd_vector);
-						else if (getSAMChip()->getCardType() == "SAM_AV2")
-							apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(cmd_vector, true, false);
-                        break;
-                    }
-					catch (CardException& ex)
-					{
-						if (trytoreconnect > 5 || ex.error_code() != CardException::WRONG_P1_P2
-							|| !std::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification()))
-							std::rethrow_exception(std::current_exception());
-
-						//SAM av2 often fail even if parameters are correct for during diversification av2 
-						LOG(LogLevel::WARNINGS) << "try to auth with SAM P1: " << trytoreconnect;
-						getSAMChip()->getCommands()->getReaderCardAdapter()->getDataTransport()->getReaderUnit()->reconnect();
-					}
-					++trytoreconnect;
-				} while (true);
-
-				if (apduresult.size() <= 2)
-					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam authenticate DES P1 failed.");
-
-                rndAB.insert(rndAB.begin(), apduresult.begin(), apduresult.begin() + 16);
-            }
-            else
+			if (samKeyStorage)
+				rndAB = sam_authenticate_p1(key, result, diversify);
+			else
 				rndAB = crypto->authenticate_PICC1(keyno, diversify, result);
-            result = DESFireISO7816Commands::transmit(DF_INS_ADDITIONAL_FRAME, rndAB);
-            if ((result.size() - 2) >= 8)
-            {
-                result.resize(result.size() - 2);
+			result = DESFireISO7816Commands::transmit(DF_INS_ADDITIONAL_FRAME, rndAB);
+			if ((result.size() - 2) >= 8)
+			{
+				result.resize(result.size() - 2);
 
-                if (samKeyStorage
-					&& !samKeyStorage->getDumpKey())
-                {
-                    unsigned char cmd[] = { 0x80, 0x0a, 0x00, 0x00, 0x08 };
-                    std::vector<unsigned char> cmd_vector(cmd, cmd + 5);
-                    cmd_vector.insert(cmd_vector.end(), result.begin(), result.end());
-                    if (getSAMChip()->getCardType() == "SAM_AV1")
-                        apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->transmit(cmd_vector);
-                    else if (getSAMChip()->getCardType() == "SAM_AV2")
-                        apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(cmd_vector, true, false);
-                    if (apduresult.size() != 2 || apduresult[0] != 0x90 || apduresult[1] != 0x00)
-                        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sam authenticate DES P2 failed.");
-
-                    if (getSAMChip()->getCardType() == "SAM_AV1")
-						crypto->d_sessionKey = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->dumpSessionKey();
-                    else if (getSAMChip()->getCardType() == "SAM_AV2")
-						crypto->d_sessionKey = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->dumpSessionKey();
-					crypto->d_currentKeyNo = keyno;
-                }
-                else
+				if (samKeyStorage)
+					sam_authenticate_p2(keyno, result);
+				else
 					crypto->authenticate_PICC2(keyno, result);
-            }
-        }
+			}
+		}
 		else
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "DESFire authentication P1 failed.");
-    }
+			THROW_EXCEPTION_WITH_LOG(CardException, "DESFire authentication P1 failed.");
+	}
 
     std::vector<unsigned char> DESFireISO7816Commands::transmit(unsigned char cmd, unsigned char lc)
     {
@@ -943,7 +931,7 @@ namespace logicalaccess
         if (!key) {
 			key = crypto->getDefaultKey(DF_KEY_DES);
         }
-		crypto->setKey(crypto->d_currentAid, keyno, key);
+		crypto->setKey(crypto->d_currentAid, 0, keyno, key);
 
         std::vector<unsigned char> diversify;
         if (key->getKeyDiversification())
@@ -1005,7 +993,7 @@ namespace logicalaccess
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 
         cmd.newkey_idt_ = storage->getKeyIdentity();
-		auto old_key = crypto->getKey(keyno);
+		auto old_key = crypto->getKey(0, keyno);
         auto old_key_storage = std::dynamic_pointer_cast<IKSStorage>(old_key->getKeyStorage());
         assert(old_key_storage);
         cmd.oldkey_idt_ = old_key_storage->getKeyIdentity();
