@@ -1392,7 +1392,7 @@ std::shared_ptr<Chip> PCSCReaderUnit::adjustChip(std::shared_ptr<Chip> c)
         if (createCardProbe()->is_desfire_ev1())
 			c = createChip(CHIP_DESFIRE_EV1);
 		else if (createCardProbe()->is_desfire_ev2())
-			c = createChip(CHIP_DESFIRE_EV2);
+			c = createChip(CHIP_DESFIRE_EV1);
     }
 	if (c->getCardType() == CHIP_DESFIRE
 		|| c->getCardType() == CHIP_DESFIRE_EV1

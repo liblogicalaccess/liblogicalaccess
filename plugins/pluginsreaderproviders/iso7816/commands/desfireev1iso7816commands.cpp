@@ -360,8 +360,13 @@ namespace logicalaccess
         {
             if (key->getKeyType() == DF_KEY_3K3DES)
 				sam_iso_authenticate(key, DF_ALG_3K3DES, (crypto->d_currentAid == 0 && keyno == 0), keyno);
-            else
-				sam_iso_authenticate(key, DF_ALG_AES, (crypto->d_currentAid == 0 && keyno == 0), keyno);
+			else
+			{
+				auto crypto = std::dynamic_pointer_cast<DESFireCrypto>(getDESFireChip()->getCrypto());
+				crypto->setKey(crypto->d_currentAid, 0, keyno, key);
+				authenticateAES(keyno);
+				//	sam_iso_authenticate(key, DF_ALG_AES, (crypto->d_currentAid == 0 && keyno == 0), keyno);
+			}
         }
         else if (key->getKeyStorage()->getType() == KST_SERVER)
         {
@@ -388,7 +393,10 @@ namespace logicalaccess
                 break;
 
             case DF_KEY_AES:
-				iso_authenticate(key, DF_ALG_AES, (crypto->d_currentAid == 0 && keyno == 0), keyno);
+				auto crypto = std::dynamic_pointer_cast<DESFireCrypto>(getDESFireChip()->getCrypto());
+				crypto->setKey(crypto->d_currentAid, 0, keyno, key);
+				authenticateAES(keyno);
+				//iso_authenticate(key, DF_ALG_AES, (crypto->d_currentAid == 0 && keyno == 0), keyno);
                 break;
             }
         }
