@@ -25,7 +25,7 @@ namespace logicalaccess
         /**
          * \brief Constructor.
          */
-        OmnikeyXX25ReaderUnit(const std::string& name);
+	    explicit OmnikeyXX25ReaderUnit(const std::string& name);
 
         /**
          * \brief Destructor.
@@ -36,7 +36,7 @@ namespace logicalaccess
          * \brief Get the PC/SC reader unit type.
          * \return The PC/SC reader unit type.
          */
-        virtual PCSCReaderUnitType getPCSCType() const;
+	    PCSCReaderUnitType getPCSCType() const override;
 
         /**
          * \brief Get the card serial number.
@@ -44,14 +44,14 @@ namespace logicalaccess
          *
          * If the card handle is not connected to the card, the call fails.
          */
-        virtual std::vector<unsigned char> getCardSerialNumber();
+	    ByteVector getCardSerialNumber() override;
 
 		/**
          * \brief Create the chip object from card type.
          * \param type The card type.
          * \return The chip.
          */
-		virtual std::shared_ptr<Chip> createChip(std::string type);
+	    std::shared_ptr<Chip> createChip(std::string type) override;
     };
 }
 

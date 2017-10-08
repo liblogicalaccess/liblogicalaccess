@@ -23,16 +23,16 @@ extern "C"
 
     LIBLOGICALACCESS_API void getStmLri512Chip(std::shared_ptr<logicalaccess::Chip>* chip)
     {
-        if (chip != NULL)
+        if (chip != nullptr)
         {
-            *chip = std::shared_ptr<logicalaccess::StmLri512Chip>(new logicalaccess::StmLri512Chip());
+            *chip = std::make_shared<logicalaccess::StmLri512Chip>();
         }
     }
 
     LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char* chipname, size_t chipnamelen, void** getterfct)
     {
         bool ret = false;
-        if (chipname != NULL && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
+        if (chipname != nullptr && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != nullptr)
         {
             switch (index)
             {
@@ -43,6 +43,7 @@ extern "C"
                 ret = true;
             }
                 break;
+            default: ;
             }
         }
 

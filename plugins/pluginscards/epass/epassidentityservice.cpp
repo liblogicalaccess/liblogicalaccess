@@ -4,6 +4,7 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <cassert>
+#include <memory>
 #include <logicalaccess/logs.hpp>
 
 using namespace logicalaccess;
@@ -44,12 +45,12 @@ ByteVector EPassIdentityService::getPicture()
     return {};
 }
 
-std::shared_ptr<EPassChip> EPassIdentityService::getEPassChip()
+std::shared_ptr<EPassChip> EPassIdentityService::getEPassChip() const
 {
     return std::dynamic_pointer_cast<EPassChip>(getChip());
 }
 
-std::shared_ptr<EPassAccessInfo> EPassIdentityService::getEPassAccessInfo()
+std::shared_ptr<EPassAccessInfo> EPassIdentityService::getEPassAccessInfo() const
 {
     auto ai = std::dynamic_pointer_cast<EPassAccessInfo>(access_info_);
     EXCEPTION_ASSERT_WITH_LOG(
@@ -72,7 +73,7 @@ EPassDG1 EPassIdentityService::getDG1()
         return *dg1_cache_;
     cmd->selectIssuerApplication();
     cmd->authenticate(getEPassAccessInfo()->mrz_);
-    dg1_cache_ = std::unique_ptr<EPassDG1>(new EPassDG1(cmd->readDG1()));
+    dg1_cache_ = std::make_unique<EPassDG1>(cmd->readDG1());
 
     return *dg1_cache_;
 }

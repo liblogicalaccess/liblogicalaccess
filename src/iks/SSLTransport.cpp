@@ -116,7 +116,7 @@ std::string SSLTransport::getName() const
     return d_ipAddress;
 }
 
-void SSLTransport::send(const std::vector<unsigned char> &data)
+void SSLTransport::send(const ByteVector &data)
 {
 #ifndef ENABLE_SSLTRANSPORT
     THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
@@ -141,7 +141,7 @@ void SSLTransport::send(const std::vector<unsigned char> &data)
 #endif /* ENABLE_SSLTRANSPORT */
 }
 
-void SSLTransport::connect_complete(const boost::system::error_code &error)
+void SSLTransport::connect_complete(const boost::system::error_code &error) const
 {
 #ifdef ENABLE_SSLTRANSPORT
     d_read_error = (error != 0);
@@ -150,7 +150,7 @@ void SSLTransport::connect_complete(const boost::system::error_code &error)
 }
 
 void SSLTransport::read_complete(const boost::system::error_code &error,
-                                 size_t bytes_transferred)
+                                 size_t bytes_transferred) const
 {
 #ifdef ENABLE_SSLTRANSPORT
     d_read_error        = (error || bytes_transferred == 0);
@@ -159,7 +159,7 @@ void SSLTransport::read_complete(const boost::system::error_code &error,
 #endif /* ENABLE_SSLTRANSPORT */
 }
 
-void SSLTransport::time_out(const boost::system::error_code &error)
+void SSLTransport::time_out(const boost::system::error_code &error) const
 {
 #ifdef ENABLE_SSLTRANSPORT
     if (error)
@@ -170,7 +170,7 @@ void SSLTransport::time_out(const boost::system::error_code &error)
 
 std::vector<uint8_t> SSLTransport::receive(long int timeout)
 {
-    std::vector<unsigned char> recv(256);
+    ByteVector recv(256);
 #ifdef ENABLE_SSLTRANSPORT
     d_ios.reset();
     d_bytes_transferred = 0;
@@ -223,7 +223,7 @@ std::string SSLTransport::getDefaultXmlNodeName() const
     return "SSLTransport";
 }
 
-bool SSLTransport::handshake(long timeout)
+bool SSLTransport::handshake(long timeout) const
 {
 #ifndef ENABLE_SSLTRANSPORT
     THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,

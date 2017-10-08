@@ -6,7 +6,7 @@
 
 void logicalaccess::MifareACR1222LCommands::increment(uint8_t blockno, uint32_t value)
 {
-    std::vector<unsigned char> buf;
+    ByteVector buf;
     buf.push_back(0x01);
     // Documentation states that the reader expects a signed 4byte number.
     int32_t num = static_cast<int32_t>(value);
@@ -21,7 +21,7 @@ void logicalaccess::MifareACR1222LCommands::increment(uint8_t blockno, uint32_t 
 
 void logicalaccess::MifareACR1222LCommands::decrement(uint8_t blockno, uint32_t value)
 {
-    std::vector<unsigned char> buf;
+    ByteVector buf;
     buf.push_back(0x02);
     // Documentation states that the reader expects a signed 4byte number.
     int32_t num = static_cast<int32_t>(value);

@@ -57,7 +57,7 @@ namespace logicalaccess
          * \brief Lock until one or all ready are detected.
          * \return The reader list with one or all the ReaderUnit.
          */
-        virtual const std::vector<std::shared_ptr<ReaderUnit> > waitForReaders(std::vector<std::string> readers, double maxwait, bool all);
+        virtual std::vector<std::shared_ptr<ReaderUnit> > waitForReaders(std::vector<std::string> readers, double maxwait, bool all);
 
         /**
          * \brief Get the reader provider type.
@@ -83,8 +83,6 @@ namespace logicalaccess
          * \return The reader provider object.
          */
         static std::shared_ptr<ReaderProvider> getReaderProviderFromRPType(std::string rpt);
-
-    protected:
     };
 }
 

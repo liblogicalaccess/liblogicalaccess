@@ -19,12 +19,12 @@ namespace logicalaccess
     {
     }
 
-    std::vector<unsigned char> OK5553ReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
+    ByteVector OK5553ReaderCardAdapter::adaptCommand(const ByteVector& command)
     {
         return command;
     }
 
-    std::vector<unsigned char> OK5553ReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
+    ByteVector OK5553ReaderCardAdapter::adaptAnswer(const ByteVector& answer)
     {
         LOG(LogLevel::COMS) << "Processing response : " << BufferHelper::getHex(answer);
         if (answer.size() == 1)
@@ -40,9 +40,9 @@ namespace logicalaccess
         return answer;
     }
 
-    std::vector<unsigned char> OK5553ReaderCardAdapter::sendAsciiCommand(const std::string& command, long int timeout)
+    ByteVector OK5553ReaderCardAdapter::sendAsciiCommand(const std::string& command, long int timeout)
     {
-        std::vector<unsigned char> cmd;
+        ByteVector cmd;
         cmd.insert(cmd.end(), command.begin(), command.end());
         return sendCommand(cmd, timeout);
     }

@@ -23,9 +23,8 @@ bool WindowsRegistry::writeBinary(const std::string &keypath,
 {
     HKEY hKey;
     LPCTSTR sk = TEXT(keypath.c_str());
-    LONG ret;
 
-    ret = RegOpenKeyEx(HKEY_LOCAL_MACHINE, sk, 0, KEY_ALL_ACCESS, &hKey);
+	LONG ret = RegOpenKeyEx(HKEY_LOCAL_MACHINE, sk, 0, KEY_ALL_ACCESS, &hKey);
     if (ret == ERROR_SUCCESS)
     {
         LOG(INFOS) << "Success opening registry key.";
@@ -65,9 +64,8 @@ bool WindowsRegistry::readBinary(const std::string &keypath,
 {
     HKEY hKey;
     LPCTSTR sk = TEXT(keypath.c_str());
-    LONG ret;
 
-    ret = RegOpenKeyEx(HKEY_LOCAL_MACHINE, sk, 0, KEY_READ, &hKey);
+	LONG ret = RegOpenKeyEx(HKEY_LOCAL_MACHINE, sk, 0, KEY_READ, &hKey);
     if (ret == ERROR_SUCCESS)
     {
         LOG(INFOS) << "Success opening registry key.";
@@ -81,8 +79,8 @@ bool WindowsRegistry::readBinary(const std::string &keypath,
 
     std::vector<uint8_t> tmpbuf(100);
     DWORD size = static_cast<DWORD>(tmpbuf.size());
-    DWORD flags = RRF_RT_ANY;
-    ret = RegQueryValueEx(hKey, value, 0, nullptr, &tmpbuf[0], &size);
+    //DWORD flags = RRF_RT_ANY;
+    ret = RegQueryValueEx(hKey, value, nullptr, nullptr, &tmpbuf[0], &size);
     tmpbuf.resize(size);
     if (ret == ERROR_SUCCESS)
     {

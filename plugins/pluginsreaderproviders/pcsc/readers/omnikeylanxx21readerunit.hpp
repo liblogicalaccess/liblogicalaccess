@@ -25,7 +25,7 @@ namespace logicalaccess
         /**
          * \brief Constructor.
          */
-        OmnikeyLANXX21ReaderUnit(const std::string& name);
+	    explicit OmnikeyLANXX21ReaderUnit(const std::string& name);
 
         /**
          * \brief Destructor.
@@ -36,22 +36,22 @@ namespace logicalaccess
          * \brief Get the PC/SC reader unit type.
          * \return The PC/SC reader unit type.
          */
-        virtual PCSCReaderUnitType getPCSCType() const;
+	    PCSCReaderUnitType getPCSCType() const override;
 
         /**
          * \brief Connect to the reader. Implicit connection on first command sent.
          * \return True if the connection successed.
          */
-        virtual bool connectToReader();
+	    bool connectToReader() override;
 
         /**
          * \brief Disconnect from reader.
          */
-        virtual void disconnectFromReader();
+	    void disconnectFromReader() override;
 
     protected:
 
-        void sendControlMode(DWORD dwControlCode);
+        void sendControlMode(DWORD dwControlCode) const;
     };
 }
 

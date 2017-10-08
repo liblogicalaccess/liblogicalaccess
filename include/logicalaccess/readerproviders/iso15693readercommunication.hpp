@@ -11,8 +11,6 @@
 
 #include <string>
 #include <vector>
-using std::string;
-using std::vector;
 
 namespace logicalaccess
 {
@@ -21,7 +19,6 @@ namespace logicalaccess
      */
     class LIBLOGICALACCESS_API ISO15693ReaderCommunication : public ReaderCommunication
     {
-    public:
     };
 }
 

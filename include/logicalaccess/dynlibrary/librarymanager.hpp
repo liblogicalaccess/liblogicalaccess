@@ -30,8 +30,8 @@ namespace logicalaccess
             UNIFIED_TYPE = 2
         };
     private:
-        LibraryManager() {};
-        ~LibraryManager() {};
+        LibraryManager() {}
+        ~LibraryManager() {}
 
         static bool hasEnding(std::string const &fullString, std::string ending);
 

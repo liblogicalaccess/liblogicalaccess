@@ -10,6 +10,7 @@
 #include <vector>
 #include <cstdint>
 #include <iostream>
+#include "logicalaccess/lla_fwd.hpp"
 
 namespace logicalaccess
 {
@@ -20,14 +21,14 @@ namespace logicalaccess
          * \param buffer The buffer to get the hash from.
          * \return The hash.
          */
-        std::vector<unsigned char> SHA256Hash(const std::vector<unsigned char>& buffer);
+        ByteVector SHA256Hash(const ByteVector& buffer);
 
         /**
          * \brief Get a SHA-256 hash.
          * \param str The string to get the hash from.
          * \return The hash.
          */
-        std::vector<unsigned char> SHA256Hash(const std::string& str);
+        ByteVector SHA256Hash(const std::string& str);
 
     /**
      * Compute the sha1 hash of `in`.

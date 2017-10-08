@@ -12,7 +12,7 @@ namespace logicalaccess
  * A data structure representing the content of the
  * EF.COM file.
  */
-struct EPassEFCOM
+struct LIBLOGICALACCESS_API EPassEFCOM
 {
     std::string lds_version_;
     std::string unicode_version_;
@@ -20,7 +20,7 @@ struct EPassEFCOM
     std::vector<uint8_t> tags_;
 };
 
-struct EPassDG2
+struct LIBLOGICALACCESS_API EPassDG2
 {
     struct BioInfo
     {
@@ -54,7 +54,7 @@ struct EPassDG2
     std::vector<BioInfo> infos_;
 };
 
-struct EPassDG1
+struct LIBLOGICALACCESS_API EPassDG1
 {
     std::string type_;
     std::string emitter_;
@@ -79,7 +79,7 @@ struct EPassDG1
  * MRZ: Machine Readable Zone.
  * Utility to compute checksum, extract information from ROC-B string, etc.
  */
-class EPassUtils
+class LIBLOGICALACCESS_API EPassUtils
 {
   public:
     /**

@@ -11,7 +11,7 @@
 
 namespace logicalaccess
 {
-    void OmnitechKeyDiversification::initDiversification(std::vector<unsigned char> identifier, int /*AID*/, std::shared_ptr<Key> /*key*/, unsigned char /*keyno*/, std::vector<unsigned char>& diversify)
+    void OmnitechKeyDiversification::initDiversification(ByteVector identifier, int /*AID*/, std::shared_ptr<Key> /*key*/, unsigned char /*keyno*/, ByteVector& diversify)
     {
         if (identifier.size() > 0)
         {
@@ -31,16 +31,16 @@ namespace logicalaccess
         }
     }
 
-    std::vector<unsigned char> OmnitechKeyDiversification::getDiversifiedKey(std::shared_ptr<Key> key, std::vector<unsigned char> diversify)
+    ByteVector OmnitechKeyDiversification::getDiversifiedKey(std::shared_ptr<Key> key, ByteVector diversify)
     {
         LOG(LogLevel::INFOS) << "Using key diversification Omnitech with div : " << BufferHelper::getHex(diversify);
-        std::vector<unsigned char> keydiv;
+        ByteVector keydiv;
 
         std::shared_ptr<DESFireKey> desfirekey = std::dynamic_pointer_cast<DESFireKey>(key);
 
-        std::vector<unsigned char> iv;
+        ByteVector iv;
         // Two time, to have ECB and not CBC mode
-        std::vector<unsigned char> vkeydata;
+        ByteVector vkeydata;
         if (desfirekey->isEmpty())
         {
             vkeydata.resize(desfirekey->getLength(), 0x00);
@@ -50,8 +50,8 @@ namespace logicalaccess
             vkeydata.insert(vkeydata.end(), desfirekey->getData(), desfirekey->getData() + desfirekey->getLength());
         }
 
-        std::vector<unsigned char> r = DESFireCrypto::sam_CBC_send(vkeydata, iv, std::vector<unsigned char>(diversify.begin(), diversify.begin() + 8));
-        std::vector<unsigned char> r2 = DESFireCrypto::sam_CBC_send(vkeydata, iv, std::vector<unsigned char>(diversify.begin() + 8, diversify.begin() + 16));
+        ByteVector r = DESFireCrypto::sam_CBC_send(vkeydata, iv, ByteVector(diversify.begin(), diversify.begin() + 8));
+        ByteVector r2 = DESFireCrypto::sam_CBC_send(vkeydata, iv, ByteVector(diversify.begin() + 8, diversify.begin() + 16));
 
 		for (unsigned char i = 0; i < 8; ++i)
 		{

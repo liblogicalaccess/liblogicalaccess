@@ -29,7 +29,7 @@ namespace logicalaccess
 
     STidSTRReaderProvider::~STidSTRReaderProvider()
     {
-        release();
+	    STidSTRReaderProvider::release();
     }
 
     void STidSTRReaderProvider::release()

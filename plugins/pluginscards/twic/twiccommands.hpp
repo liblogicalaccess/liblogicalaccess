@@ -19,8 +19,9 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API TwicCommands
     {
     public:
+	    virtual ~TwicCommands() = default;
 
-        static size_t getMinimumBytesRepresentation(size_t value);
+	    static size_t getMinimumBytesRepresentation(size_t value);
 
         static size_t getMaximumDataObjectLength(int64_t dataObject);
 
@@ -49,7 +50,7 @@ namespace logicalaccess
          * \param dataLength The buffer length.
          * \return True on success, false otherwise.
          */
-        virtual std::vector<unsigned char>  getUnsignedCardholderUniqueIdentifier() = 0;
+        virtual ByteVector  getUnsignedCardholderUniqueIdentifier() = 0;
 
         /**
          * \brief Get the TWIC Privacy Key.
@@ -58,7 +59,7 @@ namespace logicalaccess
          * \return True on success, false otherwise.
          * \remarks Only accessible with the contact chip.
          */
-        virtual std::vector<unsigned char>  getTWICPrivacyKey() = 0;
+        virtual ByteVector  getTWICPrivacyKey() = 0;
 
         /**
          * \brief Get the Cardholder Unique Identifier.
@@ -66,7 +67,7 @@ namespace logicalaccess
          * \param dataLength The buffer length.
          * \return True on success, false otherwise.
          */
-        virtual std::vector<unsigned char>  getCardholderUniqueIdentifier() = 0;
+        virtual ByteVector  getCardholderUniqueIdentifier() = 0;
 
         /**
          * \brief Get the Cardholder Fingerprints.
@@ -74,7 +75,7 @@ namespace logicalaccess
          * \param dataLength The buffer length.
          * \return True on success, false otherwise.
          */
-        virtual std::vector<unsigned char>  getCardHolderFingerprints() = 0;
+        virtual ByteVector  getCardHolderFingerprints() = 0;
 
         /**
          * \brief Get the Security Object.
@@ -82,7 +83,7 @@ namespace logicalaccess
          * \param dataLength The buffer length.
          * \return True on success, false otherwise.
          */
-        virtual std::vector<unsigned char>  getSecurityObject() = 0;
+        virtual ByteVector  getSecurityObject() = 0;
 
         /**
          * \brief Get TWIC data object.
@@ -91,9 +92,7 @@ namespace logicalaccess
          * \param dataObject The data object.
          * \return True on success, false otherwise.
          */
-        virtual std::vector<unsigned char>  getTWICData(int64_t dataObject) = 0;
-
-    protected:
+        virtual ByteVector  getTWICData(int64_t dataObject) = 0;
     };
 }
 

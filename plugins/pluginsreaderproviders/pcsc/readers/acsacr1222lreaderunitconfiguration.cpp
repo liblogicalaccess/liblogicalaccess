@@ -9,7 +9,7 @@ using namespace logicalaccess;
 
 ACSACR1222LReaderUnitConfiguration::ACSACR1222LReaderUnitConfiguration()
 {
-    resetConfiguration();
+	ACSACR1222LReaderUnitConfiguration::resetConfiguration();
 }
 
 void ACSACR1222LReaderUnitConfiguration::resetConfiguration()

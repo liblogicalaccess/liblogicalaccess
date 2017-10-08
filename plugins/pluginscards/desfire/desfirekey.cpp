@@ -13,37 +13,34 @@ namespace logicalaccess
         : Key()
     {
         d_keyType = DF_KEY_DES;
-        d_key.resize(getLength());
+        d_key.resize(DESFireKey::getLength());
         d_key_version = 0;
-        clear();
+	    Key::clear();
     }
 
     DESFireKey::DESFireKey(const std::string& str)
         : Key()
     {
         d_keyType = DF_KEY_DES;
-        d_key.resize(getLength());
+        d_key.resize(DESFireKey::getLength());
         d_key_version = 0;
-        clear();
-        fromString(str);
+	    Key::clear();
+	    Key::fromString(str);
     }
 
     DESFireKey::DESFireKey(const void* buf, size_t buflen)
         : Key()
     {
         d_keyType = DF_KEY_DES;
-        d_key.resize(getLength());
+        d_key.resize(DESFireKey::getLength());
         d_key_version = 0;
-        clear();
+	    Key::clear();
 
-        if (buf != NULL)
+        if (buf != nullptr && buflen >= DESFireKey::getLength())
         {
-            if (buflen >= getLength())
-            {
-                d_key.clear();
-                d_key.insert(d_key.end(), reinterpret_cast<const unsigned char*>(buf), reinterpret_cast<const unsigned char*>(buf)+getLength());
-                d_isEmpty = false;
-            }
+	        d_key.clear();
+	        d_key.insert(d_key.end(), reinterpret_cast<const unsigned char*>(buf), reinterpret_cast<const unsigned char*>(buf) + DESFireKey::getLength());
+	        d_isEmpty = false;
         }
     }
 

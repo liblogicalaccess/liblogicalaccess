@@ -13,7 +13,7 @@ namespace logicalaccess
     ElatecReaderUnitConfiguration::ElatecReaderUnitConfiguration()
         : ReaderUnitConfiguration(READER_ELATEC)
     {
-        resetConfiguration();
+	    ElatecReaderUnitConfiguration::resetConfiguration();
     }
 
     ElatecReaderUnitConfiguration::~ElatecReaderUnitConfiguration()

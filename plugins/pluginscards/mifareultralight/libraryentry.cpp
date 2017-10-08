@@ -24,24 +24,24 @@ extern "C"
 
     LIBLOGICALACCESS_API void getMifareUltralightCChip(std::shared_ptr<logicalaccess::Chip>* chip)
     {
-        if (chip != NULL)
+        if (chip != nullptr)
         {
-            *chip = std::shared_ptr<logicalaccess::MifareUltralightCChip>(new logicalaccess::MifareUltralightCChip());
+            *chip = std::make_shared<logicalaccess::MifareUltralightCChip>();
         }
     }
 
     LIBLOGICALACCESS_API void getMifareUltralightChip(std::shared_ptr<logicalaccess::Chip>* chip)
     {
-        if (chip != NULL)
+        if (chip != nullptr)
         {
-            *chip = std::shared_ptr<logicalaccess::MifareUltralightChip>(new logicalaccess::MifareUltralightChip());
+            *chip = std::make_shared<logicalaccess::MifareUltralightChip>();
         }
     }
 
     LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char* chipname, size_t chipnamelen, void** getterfct)
     {
         bool ret = false;
-        if (chipname != NULL && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
+        if (chipname != nullptr && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != nullptr)
         {
             switch (index)
             {
@@ -59,6 +59,7 @@ extern "C"
                 ret = true;
             }
                 break;
+            default: ;
             }
         }
 

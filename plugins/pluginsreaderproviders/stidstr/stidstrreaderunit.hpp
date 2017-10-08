@@ -54,19 +54,19 @@ namespace logicalaccess
          * \brief Get the reader unit name.
          * \return The reader unit name.
          */
-        virtual std::string getName() const;
+	    std::string getName() const override;
 
         /**
          * \brief Get the connected reader unit name.
          * \return The connected reader unit name.
          */
-        virtual std::string getConnectedName();
+	    std::string getConnectedName() override;
 
         /**
          * \brief Set the card type.
          * \param cardType The card type.
          */
-        virtual void setCardType(std::string cardType);
+	    void setCardType(std::string cardType) override;
 
         /**
          * \brief Wait for a card insertion.
@@ -74,33 +74,33 @@ namespace logicalaccess
          * \return True if a card was inserted, false otherwise. If a card was inserted, the name of the reader on which the insertion was detected is accessible with getReader().
          * \warning If the card is already connected, then the method always fail.
          */
-        virtual bool waitInsertion(unsigned int maxwait);
+	    bool waitInsertion(unsigned int maxwait) override;
 
         /**
          * \brief Wait for a card removal.
          * \param maxwait The maximum time to wait for, in milliseconds. If maxwait is zero, then the call never times out.
          * \return True if a card was removed, false otherwise. If a card was removed, the name of the reader on which the removal was detected is accessible with getReader().
          */
-        virtual bool waitRemoval(unsigned int maxwait);
+	    bool waitRemoval(unsigned int maxwait) override;
 
         /**
          * \brief Create the chip object from card type.
          * \param type The card type.
          * \return The chip.
          */
-        virtual std::shared_ptr<Chip> createChip(std::string type);
+	    std::shared_ptr<Chip> createChip(std::string type) override;
 
         /**
          * \brief Get the first and/or most accurate chip found.
          * \return The single chip.
          */
-        virtual std::shared_ptr<Chip> getSingleChip();
+	    std::shared_ptr<Chip> getSingleChip() override;
 
         /**
          * \brief Get chip available in the RFID rang.
          * \return The chip list.
          */
-        virtual std::vector<std::shared_ptr<Chip> > getChipList();
+	    std::vector<std::shared_ptr<Chip> > getChipList() override;
 
         /**
          * \brief Get the default STidSTR reader/card adapter.
@@ -114,7 +114,7 @@ namespace logicalaccess
          *
          * If the card handle was already connected, connect() first call disconnect(). If you intend to do a reconnection, call reconnect() instead.
          */
-        bool connect();
+        bool connect() override;
 
         /**
          * \brief Disconnect from the Deister.
@@ -122,52 +122,52 @@ namespace logicalaccess
          *
          * Calling this method on a disconnected Deister has no effect.
          */
-        void disconnect();
+        void disconnect() override;
 
         /**
          * \brief Check if the card is connected.
          * \return True if the card is connected, false otherwise.
          */
-        virtual bool isConnected();
+	    bool isConnected() override;
 
         /**
          * \brief Connect to the reader. Implicit connection on first command sent.
          * \return True if the connection successed.
          */
-        virtual bool connectToReader();
+	    bool connectToReader() override;
 
         /**
          * \brief Disconnect from reader.
          */
-        virtual void disconnectFromReader();
+	    void disconnectFromReader() override;
 
         /**
          * \brief Get the reader ping command.
          * \return The ping command.
          */
-        virtual std::vector<unsigned char> getPingCommand() const;
+	    ByteVector getPingCommand() const override;
 
         /**
          * \brief Get a string hexadecimal representation of the reader serial number
          * \return The reader serial number or an empty string on error.
          */
-        virtual std::string getReaderSerialNumber();
+	    std::string getReaderSerialNumber() override;
 
         /**
          * \brief Serialize the current object to XML.
          * \param parentNode The parent node.
          */
-        virtual void serialize(boost::property_tree::ptree& parentNode);
+	    void serialize(boost::property_tree::ptree& parentNode) override;
 
         /**
          * \brief UnSerialize a XML node to the current object.
          * \param node The XML node.
          */
-        virtual void unSerialize(boost::property_tree::ptree& node);
+	    void unSerialize(boost::property_tree::ptree& node) override;
 
-        std::shared_ptr<STidSTRReaderUnitConfiguration> getSTidSTRConfiguration();;
+        std::shared_ptr<STidSTRReaderUnitConfiguration> getSTidSTRConfiguration();
 
-        /**
+	    /**
          * \brief Get the STidSTR reader provider.
          * \return The STidSTR reader provider.
          */
@@ -196,14 +196,14 @@ namespace logicalaccess
          * \param isHMAC True if the authentication process is for HMAC session key, false for AES session key.
          * \return The reader response.
          */
-        std::vector<unsigned char> authenticateReader1(bool isHMAC);
+        ByteVector authenticateReader1(bool isHMAC);
 
         /**
          * \brief Authenticate the host with the reader and genereate session keys for HMAC and enciphering, 2/2.
          * \param data The authentication command data.
          * \return The reader response.
          */
-        std::vector<unsigned char> authenticateReader2(const std::vector<unsigned char>& data);
+        ByteVector authenticateReader2(const ByteVector& data);
 
         /**
          * \brief Reset the reader authentication and session keys. Next frames will be transmitted plain.
@@ -215,7 +215,7 @@ namespace logicalaccess
          * \param key_hmac The new HMAC user key. Empty to keep the current one.
          * \param key_hmac The new AES user key. Empty to keep the current one.
          */
-        void ChangeReaderKeys(const std::vector<unsigned char>& key_hmac, const std::vector<unsigned char>& key_aes);
+        void ChangeReaderKeys(const ByteVector& key_hmac, const ByteVector& key_aes);
 
         /**
          * \brief Set the reader baudrate for serial communication.
@@ -293,13 +293,13 @@ namespace logicalaccess
          * \brief The the HMAC session key.
          * \return The session key.
          */
-        std::vector<unsigned char> getSessionKeyHMAC() const { return d_sessionKey_hmac; };
+        ByteVector getSessionKeyHMAC() const { return d_sessionKey_hmac; }
 
         /**
          * \brief The the AES session key.
          * \return The session key.
          */
-        std::vector<unsigned char> getSessionKeyAES() const { return d_sessionKey_aes; };
+        ByteVector getSessionKeyAES() const { return d_sessionKey_aes; }
 
     protected:
 
@@ -316,12 +316,12 @@ namespace logicalaccess
         /**
          * \brief The HMAC session key.
          */
-        std::vector<unsigned char> d_sessionKey_hmac;
+        ByteVector d_sessionKey_hmac;
 
         /**
          * \brief The AES session key.
          */
-        std::vector<unsigned char> d_sessionKey_aes;
+        ByteVector d_sessionKey_aes;
     };
 }
 

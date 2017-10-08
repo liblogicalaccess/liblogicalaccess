@@ -119,7 +119,7 @@ namespace logicalaccess
          * \param accessRights The file access rights
          * \param fileSize The file size.
          */
-        virtual void createStdDataFile(std::shared_ptr<DESFireEV1Location> location, DESFireAccessRights accessRights, unsigned int fileSize);
+        virtual void createStdDataFile(std::shared_ptr<DESFireEV1Location> location, const DESFireAccessRights& accessRights, unsigned int fileSize);
 
         /**
          * \brief Get the value of available bytes.
@@ -151,7 +151,7 @@ namespace logicalaccess
          * \param settings Key settings
          * \param maxNbKeys Maximum number of keys
          */
-        virtual void createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, DESFireKeyType cryptoMethod, FidSupport fidSupported = FIDS_NO_ISO_FID, unsigned short isoFID = 0x00, std::vector<unsigned char> isoDFName = std::vector<unsigned char>()) = 0;
+        virtual void createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, DESFireKeyType cryptoMethod, FidSupport fidSupported = FIDS_NO_ISO_FID, unsigned short isoFID = 0x00, ByteVector isoDFName = ByteVector()) = 0;
 
         /**
          * \brief Get key settings on the current application.
@@ -165,7 +165,7 @@ namespace logicalaccess
          * \brief Get a random card UID.
          * \return The card UID.
          */
-        virtual std::vector<unsigned char> getCardUID() = 0;
+        virtual ByteVector getCardUID() = 0;
 
         /**
          * \brief Create a new data file in the current application.
@@ -174,7 +174,7 @@ namespace logicalaccess
          * \param accessRights The file access rights
          * \param fileSize The file size (in bytes).
          */
-        virtual void createStdDataFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned short isoFID = 0x00) = 0;
+        virtual void createStdDataFile(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, unsigned int fileSize, unsigned short isoFID = 0x00) = 0;
 
         /**
          * \brief Create a new backup file in the current application.
@@ -183,7 +183,7 @@ namespace logicalaccess
          * \param accessRights The file access rights
          * \param fileSize The file size (in bytes).
          */
-        virtual void createBackupFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned short isoFID = 0x00) = 0;
+        virtual void createBackupFile(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, unsigned int fileSize, unsigned short isoFID = 0x00) = 0;
 
         /**
          * \brief Create a new linear record file in the current application.
@@ -193,7 +193,7 @@ namespace logicalaccess
          * \param fileSize The file size (in bytes).
          * \param maxNumberOfRecords Max number of records in the file.
          */
-        virtual void createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID = 0x00) = 0;
+        virtual void createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID = 0x00) = 0;
 
         /**
          * \brief Create a new cyclic record file in the current application.
@@ -203,7 +203,7 @@ namespace logicalaccess
          * \param fileSize The file size (in bytes).
          * \param maxNumberOfRecords Max number of records in the file.
          */
-        virtual void createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID = 0x00) = 0;
+        virtual void createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID = 0x00) = 0;
 
         /**
          * \brief Select file under current DF.
@@ -218,21 +218,21 @@ namespace logicalaccess
          * \param record_number The number of records to read
          * \return The record(s) data
          */
-        virtual std::vector<unsigned char> iso_readRecords(unsigned short fid = 0, unsigned char start_record = 0, DESFireRecords record_number = DF_RECORD_ONERECORD) = 0;
+        virtual ByteVector iso_readRecords(unsigned short fid = 0, unsigned char start_record = 0, DESFireRecords record_number = DF_RECORD_ONERECORD) = 0;
 
         /**
          * \brief Append a record to a file.
          * \param data The record data
          * \param fid The FID
          */
-        virtual void iso_appendrecord(const std::vector<unsigned char>& data = std::vector<unsigned char>(), unsigned short fid = 0) = 0;
+        virtual void iso_appendrecord(const ByteVector& data = ByteVector(), unsigned short fid = 0) = 0;
 
         /**
          * \brief Get the ISO challenge for authentication.
          * \param length The challenge length (8 = 2K3DES, 16 = 3K3DES and AES)
          * \return The ISO challenge.
          */
-        virtual std::vector<unsigned char> iso_getChallenge(unsigned int length = 8) = 0;
+        virtual ByteVector iso_getChallenge(unsigned int length = 8) = 0;
 
         /**
          * \brief ISO external authenticate.
@@ -241,7 +241,7 @@ namespace logicalaccess
          * \param keyno The key number.
          * \param data The data.
          */
-        virtual void iso_externalAuthenticate(DESFireISOAlgorithm algorithm = DF_ALG_BY_CONTEXT, bool isMasterCardKey = true, unsigned char keyno = 0x00, const std::vector<unsigned char>& data = std::vector<unsigned char>()) = 0;
+        virtual void iso_externalAuthenticate(DESFireISOAlgorithm algorithm = DF_ALG_BY_CONTEXT, bool isMasterCardKey = true, unsigned char keyno = 0x00, const ByteVector& data = ByteVector()) = 0;
 
         /**
          * \brief ISO internal authenticate.
@@ -252,7 +252,7 @@ namespace logicalaccess
          * \param length The length.
          * \return The cryptogram.
          */
-        virtual std::vector<unsigned char> iso_internalAuthenticate(DESFireISOAlgorithm algorithm = DF_ALG_BY_CONTEXT, bool isMasterCardKey = true, unsigned char keyno = 0x00, const std::vector<unsigned char>& RPCD2 = std::vector<unsigned char>(), unsigned int length = 16) = 0;
+        virtual ByteVector iso_internalAuthenticate(DESFireISOAlgorithm algorithm = DF_ALG_BY_CONTEXT, bool isMasterCardKey = true, unsigned char keyno = 0x00, const ByteVector& RPCD2 = ByteVector(), unsigned int length = 16) = 0;
 
         /**
          * \brief AuthenticateISO command.
@@ -346,7 +346,7 @@ namespace logicalaccess
          * \brief ISO select application command.
          * \param isoaid The iso AID
          */
-        virtual void iso_selectApplication(std::vector<unsigned char> isoaid = std::vector<unsigned char>(DFEV1_DESFIRE_AID, DFEV1_DESFIRE_AID + sizeof(DFEV1_DESFIRE_AID))) = 0;
+        virtual void iso_selectApplication(ByteVector isoaid = ByteVector(DFEV1_DESFIRE_AID, DFEV1_DESFIRE_AID + sizeof(DFEV1_DESFIRE_AID))) = 0;
 
         /**
          * \brief Set the card configuration.
@@ -365,7 +365,7 @@ namespace logicalaccess
          * \brief Set a custom card ATS.
          * \param ats The new card ATS.
          */
-        virtual void setConfiguration(const std::vector<unsigned char>& ats) = 0;
+        virtual void setConfiguration(const ByteVector& ats) = 0;
 
     protected:
 

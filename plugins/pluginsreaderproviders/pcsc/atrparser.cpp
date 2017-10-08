@@ -54,7 +54,7 @@ std::string ATRParser::guessCardType(const std::vector<uint8_t> &atr)
 {
     ATRParser parser(atr);
     // Type will be ignored.
-    return parser.parse(true, PCSCReaderUnitType::PCSC_RUT_ACS_ACR);
+    return parser.parse(true, PCSC_RUT_ACS_ACR);
 }
 
 std::string ATRParser::guessCardType(uint8_t *atr, size_t atrlen)
@@ -104,7 +104,7 @@ std::string ATRParser::parse(bool ignore_reader_type,
     return check_generic_from_atr();
 }
 
-std::string ATRParser::atr_x_to_type(uint8_t code) const
+std::string ATRParser::atr_x_to_type(uint8_t code)
 {
     switch (code)
     {
@@ -154,6 +154,7 @@ std::string ATRParser::atr_x_to_type(uint8_t code) const
         return "MifareUltralightC";
     case 0x3B:
         return "FeliCa";
+    default: ;
     }
 	return "UNKNOWN";
 }
@@ -165,7 +166,7 @@ std::string ATRParser::atr_x_to_type(uint8_t code) const
 void ATRParser::register_hardcoded_atr(const std::string &atr,
                                        const std::string &card_type)
 {
-    ATRParser::ATRInfo atr_info;
+    ATRInfo atr_info;
     atr_info.card_type = card_type;
 
     hardcoded_atr_to_type_[BufferHelper::fromHexString(atr)] = atr_info;
@@ -175,7 +176,7 @@ void ATRParser::register_hardcoded_atr(const std::string &atr,
                                        const std::string &card_type,
                                        PCSCReaderUnitType reader_type)
 {
-    ATRParser::ATRInfo atr_info;
+    ATRInfo atr_info;
     atr_info.card_type = card_type;
     atr_info.reader_type.push_back(reader_type);
 
@@ -197,7 +198,7 @@ std::string ATRParser::check_hardcoded(bool ignore_reader_type,
                 return atr_info.second.card_type;
             // Try to match the reader type.
             if (readers.empty() ||
-                std::find(readers.begin(), readers.end(), reader_type) !=
+                find(readers.begin(), readers.end(), reader_type) !=
                     readers.end())
             {
                 return atr_info.second.card_type;
@@ -241,6 +242,7 @@ std::string ATRParser::check_from_atr() const
                     return "HIDiClass16KS";
                 case 0xB3:
                     return "HIDiClass8x2KS";
+                default: ;
                 }
             }
         }
@@ -285,7 +287,7 @@ std::string ATRParser::check_generic_from_atr() const
 
     unsigned char T0                    = atr[y++];
     unsigned char historicalBytesLength = T0 & 0x0f;
-    bool hasTA1                         = ((T0 & 0x10) == 0x10);
+	const bool hasTA1                         = ((T0 & 0x10) == 0x10);
     if (hasTA1)
     {
         EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLogicalAccessException,
@@ -294,7 +296,7 @@ std::string ATRParser::check_generic_from_atr() const
         y++;
         // Analyze TA1 here
     }
-    bool hasTB1 = ((T0 & 0x20) == 0x20);
+	const bool hasTB1 = ((T0 & 0x20) == 0x20);
     if (hasTB1)
     {
         EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLogicalAccessException,
@@ -303,7 +305,7 @@ std::string ATRParser::check_generic_from_atr() const
         y++;
         // Analyze TB1 here
     }
-    bool hasTC1 = ((T0 & 0x40) == 0x40);
+	const bool hasTC1 = ((T0 & 0x40) == 0x40);
     if (hasTC1)
     {
         EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLogicalAccessException,
@@ -312,15 +314,15 @@ std::string ATRParser::check_generic_from_atr() const
         y++;
         // Analyze TC1 here
     }
-    bool hasTD1 = ((T0 & 0x80) == 0x80);
+	const bool hasTD1 = ((T0 & 0x80) == 0x80);
 
     if (hasTD1)
     {
         EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLogicalAccessException,
                                   "Bad buffer. Too short to retrieve TD1.");
-        unsigned char TD1 = atr[y++];
+	    const unsigned char TD1 = atr[y++];
         // isTEqual0Supported = (TD1 & 0x0f) == 0;
-        bool hasTA2 = ((TD1 & 0x10) == 0x10);
+	    const bool hasTA2 = ((TD1 & 0x10) == 0x10);
         if (hasTA2)
         {
             EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLogicalAccessException,
@@ -329,7 +331,7 @@ std::string ATRParser::check_generic_from_atr() const
             y++;
             // Analyze TA2 here
         }
-        bool hasTB2 = ((TD1 & 0x20) == 0x20);
+	    const bool hasTB2 = ((TD1 & 0x20) == 0x20);
         if (hasTB2)
         {
             EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLogicalAccessException,
@@ -338,7 +340,7 @@ std::string ATRParser::check_generic_from_atr() const
             y++;
             // Analyze TB2 here
         }
-        bool hasTC2 = ((TD1 & 0x40) == 0x40);
+	    const bool hasTC2 = ((TD1 & 0x40) == 0x40);
         if (hasTC2)
         {
             EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLogicalAccessException,
@@ -347,15 +349,15 @@ std::string ATRParser::check_generic_from_atr() const
             y++;
             // Analyze TC2 here
         }
-        bool hasTD2 = ((TD1 & 0x80) == 0x80);
+	    const bool hasTD2 = ((TD1 & 0x80) == 0x80);
 
         if (hasTD2)
         {
             EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLogicalAccessException,
                                       "Bad buffer. Too short to retrieve TD2.");
-            unsigned char TD2 = atr[y++];
+	        const unsigned char TD2 = atr[y++];
             // isTEqual1Supported = (TD2 & 0x0f) == 1;
-            bool hasTA3 = ((TD2 & 0x10) == 0x10);
+	        const bool hasTA3 = ((TD2 & 0x10) == 0x10);
             if (hasTA3)
             {
                 EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLogicalAccessException,
@@ -364,7 +366,7 @@ std::string ATRParser::check_generic_from_atr() const
                 y++;
                 // Analyze TA3 here
             }
-            bool hasTB3 = ((TD2 & 0x20) == 0x20);
+	        const bool hasTB3 = ((TD2 & 0x20) == 0x20);
             if (hasTB3)
             {
                 EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLogicalAccessException,
@@ -373,7 +375,7 @@ std::string ATRParser::check_generic_from_atr() const
                 y++;
                 // Analyze TB3 here
             }
-            bool hasTC3 = ((TD2 & 0x40) == 0x40);
+	        const bool hasTC3 = ((TD2 & 0x40) == 0x40);
             if (hasTC3)
             {
                 EXCEPTION_ASSERT_WITH_LOG(y < atrlen, LibLogicalAccessException,
@@ -382,7 +384,7 @@ std::string ATRParser::check_generic_from_atr() const
                 y++;
                 // Analyze TC3 here
             }
-            bool hasTD3 = ((TD2 & 0x80) == 0x80);
+	        const bool hasTD3 = ((TD2 & 0x80) == 0x80);
 
             if (hasTD3)
             {
@@ -415,7 +417,7 @@ std::string ATRParser::check_generic_from_atr() const
                 x < historicalBytesLength, LibLogicalAccessException,
                 "Bad historical buffer. Too short to retrieve Application "
                 "Identifier Presence Indicator.");
-            unsigned char aidIndicator = atr[y + x++];
+	        const unsigned char aidIndicator = atr[y + x++];
 
             EXCEPTION_ASSERT_WITH_LOG(x < historicalBytesLength,
                                       LibLogicalAccessException,
@@ -439,7 +441,7 @@ std::string ATRParser::check_generic_from_atr() const
                     EXCEPTION_ASSERT_WITH_LOG(w < length, LibLogicalAccessException,
                                               "Bad internal historical buffer. "
                                               "Too short to retrieve the SS.");
-                    unsigned char SS = atr[y + x + w++];
+	                const unsigned char SS = atr[y + x + w++];
 
                     switch (SS)
                     {
@@ -449,6 +451,7 @@ std::string ATRParser::check_generic_from_atr() const
                     case 0x0c:
                         cardType = "ISO15693";
                         break;
+                    default: ;
                     }
 
                     EXCEPTION_ASSERT_WITH_LOG(

@@ -45,13 +45,14 @@ class LIBLOGICALACCESS_API ID3ReaderUnit : public PCSCReaderUnit
     virtual ~ID3ReaderUnit()
     {
     }
-    ID3ReaderUnit(const std::string &name);
+
+	explicit ID3ReaderUnit(const std::string &name);
 
     /**
      * @warning Calling getChipList() is a disruptive operation. It will
      * power ON/OFF the various available card to guess their type, etc.
      */
-    virtual std::vector<std::shared_ptr<Chip>> getChipList() override;
+	std::vector<std::shared_ptr<Chip>> getChipList() override;
 
     /**
      * High level chip selection.
@@ -61,15 +62,15 @@ class LIBLOGICALACCESS_API ID3ReaderUnit : public PCSCReaderUnit
      */
     std::shared_ptr<Chip> selectCard(std::shared_ptr<Chip>);
 
-    virtual PCSCReaderUnitType getPCSCType() const override;
+	PCSCReaderUnitType getPCSCType() const override;
 
-    virtual bool process_insertion(const std::string &cardType, int maxwait,
+	bool process_insertion(const std::string &cardType, int maxwait,
                                    const ElapsedTimeCounter &elapsed) override;
 
     using PCSCReaderUnit::connect;
-    virtual bool connect(PCSCShareMode share_mode) override;
+	bool connect(PCSCShareMode share_mode) override;
 
-    virtual void disconnect() override;
+	void disconnect() override;
 
   protected:
     std::shared_ptr<CardProbe> createCardProbe() override;
@@ -131,17 +132,17 @@ class LIBLOGICALACCESS_API ID3ReaderUnit : public PCSCReaderUnit
     class APDUWrapperGuard
     {
       public:
-        APDUWrapperGuard(ID3ReaderUnit *reader);
+	    explicit APDUWrapperGuard(ID3ReaderUnit *reader);
         ~APDUWrapperGuard();
 
       private:
         class Adapter : public ReaderCardAdapter
         {
-            virtual std::vector<unsigned char>
-            adaptCommand(const std::vector<unsigned char> &command) override;
+	        ByteVector
+            adaptCommand(const ByteVector &command) override;
 
-            virtual std::vector<unsigned char>
-            adaptAnswer(const std::vector<unsigned char> &answer) override;
+	        ByteVector
+            adaptAnswer(const ByteVector &answer) override;
         };
 
         ID3ReaderUnit *reader_;

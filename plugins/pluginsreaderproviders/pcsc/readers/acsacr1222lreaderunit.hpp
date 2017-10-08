@@ -22,7 +22,7 @@ namespace logicalaccess
         /**
         * \brief Constructor.
         */
-        ACSACR1222LReaderUnit(const std::string& name);
+	    explicit ACSACR1222LReaderUnit(const std::string& name);
 
         /**
         * \brief Destructor.
@@ -33,13 +33,13 @@ namespace logicalaccess
         * \brief Get the PC/SC reader unit type.
         * \return The PC/SC reader unit type.
         */
-        virtual PCSCReaderUnitType getPCSCType() const;
+	    PCSCReaderUnitType getPCSCType() const override;
 
         /**
         * \brief Get a string hexadecimal representation of the reader serial number
         * \return The reader serial number or an empty string on error.
         */
-        virtual std::string getReaderSerialNumber();
+	    std::string getReaderSerialNumber() override;
 
         /**
         * \brief Connect to the card.
@@ -47,7 +47,7 @@ namespace logicalaccess
         *
         * If the card handle was already connected, connect() first call disconnect(). If you intend to do a reconnection, call reconnect() instead.
         */
-        virtual bool connect();
+	    bool connect() override;
 
         /**
          * \brief Set the default reader LED and Buzzer behavior.
@@ -75,17 +75,17 @@ namespace logicalaccess
         /**
          * Reimplemented so we can enable a "no-card" connection.
          */
-        virtual bool waitRemoval(unsigned int maxwait) override;
+	    bool waitRemoval(unsigned int maxwait) override;
 
         /**
          * Reimplemented so we can enable a "no-card" connection.
          */
-        virtual bool connectToReader() override;
+	    bool connectToReader() override;
 
         /**
         * Reimplemented so we can enable a "no-card" connection.
         */
-        virtual void disconnectFromReader() override;
+	    void disconnectFromReader() override;
 
         /**
         * We establish a perma connection with one of 3 SAM available
@@ -93,12 +93,12 @@ namespace logicalaccess
         * We have to overload this method to return the handle
         * managed by the readerunit corresponding to our "perma connection SAM".
         */
-        virtual std::shared_ptr<LCDDisplay> getLCDDisplay() override;
+	    std::shared_ptr<LCDDisplay> getLCDDisplay() override;
 
         /**
          * Same situation than getLCDDisplay
          */
-        virtual std::shared_ptr<LEDBuzzerDisplay> getLEDBuzzerDisplay() override;
+	    std::shared_ptr<LEDBuzzerDisplay> getLEDBuzzerDisplay() override;
 
         std::shared_ptr<ACSACR1222LReaderUnitConfiguration> getACSACR1222LConfiguration();
 
@@ -106,7 +106,7 @@ namespace logicalaccess
         std::shared_ptr<PCSCReaderCardAdapter> getReaderControlReaderCardAdapter();
         std::shared_ptr<PCSCReaderCardAdapter> d_readerControlReaderCardAdapter;
 
-        virtual std::shared_ptr<ResultChecker> createDefaultResultChecker() const override;
+	    std::shared_ptr<ResultChecker> createDefaultResultChecker() const override;
 
     private:
 		void establish_background_connection();

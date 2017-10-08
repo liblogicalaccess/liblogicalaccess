@@ -14,10 +14,9 @@
 namespace logicalaccess
 {
     MifareUltralightChip::MifareUltralightChip(std::string ct) :
-        Chip(ct)
-    {
-        
-    }
+		Chip(ct), d_nbblocks(16)
+	{
+	}
 
     MifareUltralightChip::MifareUltralightChip()
         : Chip(CHIP_MIFAREULTRALIGHT)
@@ -77,6 +76,7 @@ namespace logicalaccess
         case 222:
             rootNode->setName("NTAG216");
             break;
+        default: ;
         }
     }
 
@@ -111,7 +111,7 @@ namespace logicalaccess
         std::shared_ptr<MifareUltralightLocation> location;
         location.reset(new MifareUltralightLocation());
 		location->page = block;
-        location->byte = 0;
+        location->byte_ = 0;
 
 		blockNode->setLocation(location);
 		blockNode->setParent(rootNode);

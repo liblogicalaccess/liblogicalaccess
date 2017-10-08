@@ -31,7 +31,7 @@ namespace logicalaccess
                 THROW_EXCEPTION_WITH_LOG(logicalaccess::LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
             }
 
-            RSAKey rsa(std::shared_ptr<RSA>(RSA_generate_key(1024, data | 1, NULL, NULL), RSA_free), true);
+            RSAKey rsa(std::shared_ptr<RSA>(RSA_generate_key(1024, data | 1, nullptr, nullptr), RSA_free), true);
 
             EXCEPTION_ASSERT_WITH_LOG(rsa.d_rsa, OpenSSLException, "Cannot generate RSA key pair");
 
@@ -40,49 +40,43 @@ namespace logicalaccess
             return rsa;
         }
 
-        RSAKey RSAKey::createFromPublicCompound(const std::vector<unsigned char>& data)
+        RSAKey RSAKey::createFromPublicCompound(const ByteVector& data)
         {
             const unsigned char* buf = reinterpret_cast<const unsigned char*>(&data[0]);
 
-            RSA* prsa = NULL;
+            RSA* prsa = nullptr;
 
             if (!d2i_RSAPublicKey(&prsa, &buf, static_cast<long>(data.size())))
             {
                 THROW_EXCEPTION_WITH_LOG(OpenSSLException, "Unable to read public key compound from the specified buffer.");
             }
-            else
-            {
-                std::shared_ptr<RSA> sprsa(prsa, RSA_free);
+	        std::shared_ptr<RSA> sprsa(prsa, RSA_free);
 
-                return RSAKey(sprsa, false);
-            }
+	        return RSAKey(sprsa, false);
         }
 
-        RSAKey RSAKey::createFromPrivateCompound(const std::vector<unsigned char>& data)
+        RSAKey RSAKey::createFromPrivateCompound(const ByteVector& data)
         {
             const unsigned char* buf = reinterpret_cast<const unsigned char*>(&data[0]);
 
-            RSA* prsa = NULL;
+            RSA* prsa = nullptr;
 
             if (!d2i_RSAPrivateKey(&prsa, &buf, static_cast<long>(data.size())))
             {
                 THROW_EXCEPTION_WITH_LOG(OpenSSLException, "Unable to read private key compound from the specified buffer.");
             }
-            else
-            {
-                std::shared_ptr<RSA> sprsa(prsa, RSA_free);
+	        std::shared_ptr<RSA> sprsa(prsa, RSA_free);
 
-                return RSAKey(sprsa, true);
-            }
+	        return RSAKey(sprsa, true);
         }
 
-        RSAKey RSAKey::createFromPEMPublicKey(const std::vector<unsigned char>& data, PEMPassphraseCallback callback, void* userdata)
+        RSAKey RSAKey::createFromPEMPublicKey(const ByteVector& data, PEMPassphraseCallback callback, void* userdata)
         {
-            std::vector<unsigned char> datacopy = data;
+            ByteVector datacopy = data;
 
             std::shared_ptr<BIO> pbio(BIO_new_mem_buf(datacopy.data(), (int)datacopy.size()), BIO_free);
 
-            RSA* prsa = PEM_read_bio_RSA_PUBKEY(pbio.get(), NULL, callback, userdata);
+            RSA* prsa = PEM_read_bio_RSA_PUBKEY(pbio.get(), nullptr, callback, userdata);
 
             EXCEPTION_ASSERT_WITH_LOG(prsa, OpenSSLException, "Unable to parse the RSA public key PEM data");
 
@@ -91,13 +85,13 @@ namespace logicalaccess
             return RSAKey(sprsa, false);
         }
 
-        RSAKey RSAKey::createFromPEMPrivateKey(const std::vector<unsigned char>& data, PEMPassphraseCallback callback, void* userdata)
+        RSAKey RSAKey::createFromPEMPrivateKey(const ByteVector& data, PEMPassphraseCallback callback, void* userdata)
         {
-            std::vector<unsigned char> datacopy = data;
+            ByteVector datacopy = data;
 
             std::shared_ptr<BIO> pbio(BIO_new_mem_buf(datacopy.data(), (int)datacopy.size()), BIO_free);
 
-            RSA* prsa = PEM_read_bio_RSAPrivateKey(pbio.get(), NULL, callback, userdata);
+            RSA* prsa = PEM_read_bio_RSAPrivateKey(pbio.get(), nullptr, callback, userdata);
 
             EXCEPTION_ASSERT_WITH_LOG(prsa, OpenSSLException, "Unable to parse the RSA public key PEM data");
 
@@ -110,12 +104,12 @@ namespace logicalaccess
         {
             FILE* fp = fopen(filename.c_str(), "r");
 
-            if (fp == NULL)
+            if (fp == nullptr)
             {
                 THROW_EXCEPTION_WITH_LOG(std::runtime_error, "Cannot open the file.");
             }
 
-            RSA* prsa = PEM_read_RSAPublicKey(fp, NULL, callback, userdata);
+            RSA* prsa = PEM_read_RSAPublicKey(fp, nullptr, callback, userdata);
 
             fclose(fp);
 
@@ -130,12 +124,12 @@ namespace logicalaccess
         {
             FILE* fp = fopen(filename.c_str(), "r");
 
-            if (fp == NULL)
+            if (fp == nullptr)
             {
                 THROW_EXCEPTION_WITH_LOG(std::runtime_error, "Cannot open the file.");
             }
 
-            RSA* prsa = PEM_read_RSAPrivateKey(fp, NULL, callback, userdata);
+            RSA* prsa = PEM_read_RSAPrivateKey(fp, nullptr, callback, userdata);
 
             fclose(fp);
 
@@ -151,7 +145,7 @@ namespace logicalaccess
         {
         }
 
-        std::vector<unsigned char> RSAKey::getPEM(bool discard_private_compound, PEMPassphraseCallback callback, void* userdata) const
+        ByteVector RSAKey::getPEM(bool discard_private_compound, PEMPassphraseCallback callback, void* userdata) const
         {
             std::shared_ptr<BIO> pbio(BIO_new(BIO_s_mem()), BIO_free);
 
@@ -166,7 +160,7 @@ namespace logicalaccess
 
             int len = BIO_pending(pbio.get());
 
-            std::vector<unsigned char> buffer(len);
+            ByteVector buffer(len);
 
             BIO_read(pbio.get(), buffer.data(), len);
             buffer.resize(len);
@@ -174,12 +168,12 @@ namespace logicalaccess
             return buffer;
         }
 
-        const std::vector<unsigned char>& RSAKey::publicCompound() const
+        const ByteVector& RSAKey::publicCompound() const
         {
             return d_public_key;
         }
 
-        const std::vector<unsigned char>& RSAKey::privateCompound() const
+        const ByteVector& RSAKey::privateCompound() const
         {
             return d_private_key;
         }
@@ -190,17 +184,14 @@ namespace logicalaccess
             {
                 return createFromPEMPublicKey(getPEM(true));
             }
-            else
-            {
-                return *this;
-            }
+	        return *this;
         }
 
         void RSAKey::writeToPEMKeyFile(const std::string& filename, PEMPassphraseCallback callback, void* userdata) const
         {
             FILE* fp = fopen(filename.c_str(), "w+");
 
-            if (fp == NULL)
+            if (fp == nullptr)
             {
                 THROW_EXCEPTION_WITH_LOG(std::runtime_error, "Cannot open the file.");
             }
@@ -209,7 +200,7 @@ namespace logicalaccess
 
             if (hasPrivateCompound())
             {
-                result = PEM_write_RSAPrivateKey(fp, d_rsa.get(), NULL, NULL, 0, callback, userdata);
+                result = PEM_write_RSAPrivateKey(fp, d_rsa.get(), nullptr, nullptr, 0, callback, userdata);
             }
             else
             {

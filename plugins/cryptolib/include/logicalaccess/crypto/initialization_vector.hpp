@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <iostream>
+#include "logicalaccess/lla_fwd.hpp"
 
 namespace logicalaccess
 {
@@ -28,7 +29,7 @@ namespace logicalaccess
              * \brief Get the IV data.
              * \return The IV data.
              */
-            inline const std::vector<unsigned char>& data() const
+	        const ByteVector& data() const
             {
                 return d_data;
             }
@@ -46,7 +47,7 @@ namespace logicalaccess
              * \brief Create an InitializationVector from existing data.
              * \param data The data.
              */
-            InitializationVector(const std::vector<unsigned char>& data);
+	        explicit InitializationVector(const ByteVector& data);
 
             /**
              * \brief Zero the IV.
@@ -63,7 +64,7 @@ namespace logicalaccess
             /**
              * \brief The IV data.
              */
-            std::vector<unsigned char> d_data;
+            ByteVector d_data;
         };
     }
 }

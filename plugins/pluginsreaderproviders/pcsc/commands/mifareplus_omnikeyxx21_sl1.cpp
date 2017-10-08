@@ -11,7 +11,7 @@
 using namespace logicalaccess;
 
 bool MifarePlusOmnikeyXX21SL1Commands::AESAuthenticate(
-    std::shared_ptr<logicalaccess::AES128Key> key, uint16_t keyslot)
+    std::shared_ptr<AES128Key> key, uint16_t keyslot)
 {
     LLA_LOG_CTX("AES Authentication Mifare Plus SL1 and OKXX21");
 
@@ -43,17 +43,15 @@ MifarePlusOmnikeyXX21SL1Commands::GenericSessionGuard::~GenericSessionGuard()
     rca_->sendAPDUCommand(0xFF, 0xA0, 0x00, 0x07, 0x03, {0x01, 0x00, 0x02});
 }
 
-std::vector<unsigned char>
+ByteVector
 MifarePlusOmnikeyXX21SL1Commands::GenericSessionGuard::Adapter::adaptCommand(
-    const std::vector<unsigned char> &in)
+    const ByteVector &in)
 {
-    ByteVector full_cmd;
-
-    // We have to build the full PCSC Command.
+	// We have to build the full PCSC Command.
     ByteVector pcsc_header = {0xFF, 0xA0, 0x00, 0x05,
                               static_cast<uint8_t>(6 + in.size())};
 
-    full_cmd = {0x01, 0x00, 0xF3, 0x00, 0x00, 0x64};
+    ByteVector full_cmd = {0x01, 0x00, 0xF3, 0x00, 0x00, 0x64};
     full_cmd.insert(full_cmd.end(), in.begin(), in.end());
     full_cmd.push_back(0);
 
@@ -61,9 +59,9 @@ MifarePlusOmnikeyXX21SL1Commands::GenericSessionGuard::Adapter::adaptCommand(
     return full_cmd;
 }
 
-std::vector<unsigned char>
+ByteVector
 MifarePlusOmnikeyXX21SL1Commands::GenericSessionGuard::Adapter::adaptAnswer(
-    const std::vector<unsigned char> &answer)
+    const ByteVector &answer)
 {
 	LLA_LOG_CTX("ADAPTER");
 	LOG(DEBUGS) << "BEFORE ADAPTING: " << answer;

@@ -43,7 +43,7 @@ namespace logicalaccess
          * \param adapterType The adapter type.
          * \param iso7816 ISO7816 communication type (transparent mode)
          */
-        STidSTRReaderCardAdapter(STidCmdType adapterType = STID_CMD_READER, bool iso7816 = false);
+	    explicit STidSTRReaderCardAdapter(STidCmdType adapterType = STID_CMD_READER, bool iso7816 = false);
 
         /**
          * \brief Destructor.
@@ -57,14 +57,14 @@ namespace logicalaccess
          * \param command The command to send.
          * \return The adapted command to send.
          */
-        virtual std::vector<unsigned char> adaptCommand(const std::vector<unsigned char>& command);
+	    ByteVector adaptCommand(const ByteVector& command) override;
 
         /**
          * \brief Adapt the asnwer received from the reader.
          * \param answer The answer received.
          * \return The adapted answer received.
          */
-        virtual std::vector<unsigned char> adaptAnswer(const std::vector<unsigned char>& answer);
+	    ByteVector adaptAnswer(const ByteVector& answer) override;
 
         /**
          * \brief Send a command to the reader.
@@ -73,7 +73,7 @@ namespace logicalaccess
          * \param timeout The command timeout.
          * \return The result of the command.
          */
-        virtual std::vector<unsigned char> sendCommand(unsigned short commandCode, const std::vector<unsigned char>& command, long int timeout = -1);
+        virtual ByteVector sendCommand(unsigned short commandCode, const ByteVector& command, long int timeout = -1);
 
         /**
         * \brief Send a command to the reader.
@@ -81,14 +81,14 @@ namespace logicalaccess
         * \param timeout The command timeout.
         * \return the result of the command.
         */
-        virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long timeout = -1);
+	    ByteVector sendCommand(const ByteVector& command, long timeout = -1) override;
 
         /**
          * \brief Calculate the message HMAC.
          * \param buf The message buffer.
          * \return The HMAC.
          */
-        std::vector<unsigned char> calculateHMAC(const std::vector<unsigned char>& buf) const;
+        ByteVector calculateHMAC(const ByteVector& buf) const;
 
     protected:
 
@@ -100,7 +100,7 @@ namespace logicalaccess
          * \param command The command message data.
          * \return The processed message (signed/ciphered).
          */
-        std::vector<unsigned char> sendMessage(unsigned short commandCode, const std::vector<unsigned char>& command);
+        ByteVector sendMessage(unsigned short commandCode, const ByteVector& command);
 
         /**
          * \brief Process message response to return plain message data and status code.
@@ -108,7 +108,7 @@ namespace logicalaccess
          * \param statusCode Will contains the response status code.
          * \return The plain message data.
          */
-        std::vector<unsigned char> receiveMessage(const std::vector<unsigned char>& data, unsigned char& statusCode);
+        ByteVector receiveMessage(const ByteVector& data, unsigned char& statusCode);
 
         /**
          * \brief Check status code and throw exception on error.
@@ -121,7 +121,7 @@ namespace logicalaccess
          * \return The IV.
          * \remarks This behavior is a security threat into STid communication protocol !
          */
-        std::vector<unsigned char> getIV();
+        ByteVector getIV();
 
         /**
          * \brief The adapter type.
@@ -141,7 +141,7 @@ namespace logicalaccess
         /**
          * \brief The last IV to use.
          */
-        std::vector<unsigned char> d_lastIV;
+        ByteVector d_lastIV;
     };
 }
 

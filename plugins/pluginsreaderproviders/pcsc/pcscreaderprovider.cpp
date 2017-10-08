@@ -24,7 +24,7 @@ namespace logicalaccess
         ISO7816ReaderProvider()
     {
         d_scc = 0;
-        long scres = SCardEstablishContext(SCARD_SCOPE_USER, NULL, NULL, &d_scc);
+        long scres = SCardEstablishContext(SCARD_SCOPE_USER, nullptr, nullptr, &d_scc);
         if (scres != SCARD_S_SUCCESS)
         {
             char tmpbuf[128];
@@ -36,7 +36,7 @@ namespace logicalaccess
 
     PCSCReaderProvider::~PCSCReaderProvider()
     {
-        release();
+	    PCSCReaderProvider::release();
     }
 
     void PCSCReaderProvider::release()
@@ -62,10 +62,10 @@ namespace logicalaccess
         d_system_readers.clear();
 
         DWORD rdlen = 0;
-        if (SCARD_S_SUCCESS == SCardListReaders(d_scc, NULL, (char*)NULL, &rdlen))
+        if (SCARD_S_SUCCESS == SCardListReaders(d_scc, nullptr, (char*)nullptr, &rdlen))
         {
             char* rdnames = new char[rdlen];
-            if (SCARD_S_SUCCESS == SCardListReaders(d_scc, NULL, rdnames, &rdlen))
+            if (SCARD_S_SUCCESS == SCardListReaders(d_scc, nullptr, rdnames, &rdlen))
             {
                 char* rdname = rdnames;
 
@@ -103,12 +103,12 @@ namespace logicalaccess
         return ret;
     }
 
-    std::vector<std::string> PCSCReaderProvider::getReaderGroupList()
+    std::vector<std::string> PCSCReaderProvider::getReaderGroupList() const
     {
         std::vector<std::string> groupList;
 
         DWORD rdlen = 0;
-        if (SCARD_S_SUCCESS == SCardListReaderGroups(d_scc, (char*)NULL, &rdlen))
+        if (SCARD_S_SUCCESS == SCardListReaderGroups(d_scc, (char*)nullptr, &rdlen))
         {
             char* rdnames = new char[rdlen];
             if (SCARD_S_SUCCESS == SCardListReaderGroups(d_scc, rdnames, &rdlen))

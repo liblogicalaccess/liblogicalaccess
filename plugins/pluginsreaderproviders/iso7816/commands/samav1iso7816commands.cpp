@@ -36,12 +36,12 @@ namespace logicalaccess
     std::shared_ptr<SAMKeyEntry<KeyEntryAV1Information, SETAV1> >	SAMAV1ISO7816Commands::getKeyEntry(unsigned char keyno)
     {
         unsigned char cmd[] = { d_cla, 0x64, keyno, 0x00, 0x00 };
-        std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
+        ByteVector cmd_vector(cmd, cmd + 5);
         std::shared_ptr<SAMKeyEntry<KeyEntryAV1Information, SETAV1> > keyentry;
         KeyEntryAV1Information keyentryinformation;
 		memset(&keyentryinformation, 0x00, sizeof(KeyEntryAV1Information));
 
-        result = transmit(cmd_vector);
+        ByteVector result = transmit(cmd_vector);
 
         if ((result.size() == 14 || result.size() == 13) && result[result.size() - 2] == 0x90 && result[result.size() - 1] == 0x00)
         {
@@ -82,9 +82,9 @@ namespace logicalaccess
     {
         std::shared_ptr<SAMKucEntry> kucentry(new SAMKucEntry);
         unsigned char cmd[] = { d_cla, 0x6c, kucno, 0x00, 0x00 };
-        std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
+        ByteVector cmd_vector(cmd, cmd + 5);
 
-        result = transmit(cmd_vector);
+        ByteVector result = transmit(cmd_vector);
 
         if (result.size() == 12 && (result[result.size() - 2] == 0x90 || result[result.size() - 1] == 0x00))
         {
@@ -110,13 +110,13 @@ namespace logicalaccess
         memcpy(data, &*(keyentry->getData()), keyentry->getLength());
         memcpy(data + 48, &keyentry->getKeyEntryInformation(), sizeof(KeyEntryAV1Information));
 
-        std::vector<unsigned char> iv;
+        ByteVector iv;
         iv.resize(16, 0x00);
 
-        std::vector<unsigned char> vectordata(data, data + buffer_size);
+        ByteVector vectordata(data, data + buffer_size);
         delete[] data;
 
-        std::vector<unsigned char> encdatalittle;
+        ByteVector encdatalittle;
 
         if (key->getKeyType() == DF_KEY_DES)
             encdatalittle = d_crypto->sam_encrypt(d_crypto->d_sessionKey, vectordata);
@@ -124,10 +124,10 @@ namespace logicalaccess
             encdatalittle = d_crypto->sam_crc_encrypt(d_crypto->d_sessionKey, vectordata, key);
 
         unsigned char cmd[] = { d_cla, 0xc1, keyno, proMas, (unsigned char)(encdatalittle.size()) };
-        std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
+        ByteVector cmd_vector(cmd, cmd + 5);
         cmd_vector.insert(cmd_vector.end(), encdatalittle.begin(), encdatalittle.end());
 
-        result = transmit(cmd_vector);
+        ByteVector result = transmit(cmd_vector);
 
         if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKeyEntry failed.");
@@ -143,22 +143,22 @@ namespace logicalaccess
 
     void SAMAV1ISO7816Commands::authenticateHost_AES_3K3DES(std::shared_ptr<DESFireKey> key, unsigned char keyno)
     {
-        std::vector<unsigned char> data;
+        ByteVector data;
         unsigned char authMode = 0x00;
 
         data.push_back(keyno);
         data.push_back(key->getKeyVersion());
 
         unsigned char cmdp1[] = { d_cla, 0xa4, authMode, 0x00, 0x02, 0x00 };
-        std::vector<unsigned char> cmd_vector(cmdp1, cmdp1 + 6), result;
+        ByteVector cmd_vector(cmdp1, cmdp1 + 6);
         cmd_vector.insert(cmd_vector.end() - 1, data.begin(), data.end());
 
-        result = transmit(cmd_vector);
+        ByteVector result = transmit(cmd_vector);
         if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0xaf))
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authenticateHost_AES_3K3DES P1 failed.");
 
-        std::vector<unsigned char> encRndB(result.begin(), result.end() - 2);
-        std::vector<unsigned char> encRndAB = d_crypto->authenticateHostP1(key, encRndB, keyno);
+        ByteVector encRndB(result.begin(), result.end() - 2);
+        ByteVector encRndAB = d_crypto->authenticateHostP1(key, encRndB, keyno);
 
         unsigned char cmdp2[] = { d_cla, 0xa4, 0x00, 0x00, (unsigned char)(encRndAB.size()), 0x00 };
         cmd_vector.assign(cmdp2, cmdp2 + 6);
@@ -168,34 +168,34 @@ namespace logicalaccess
         if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authenticateHost_AES_3K3DES P2 failed.");
 
-        std::vector<unsigned char> encRndA1(result.begin(), result.end() - 2);
+        ByteVector encRndA1(result.begin(), result.end() - 2);
         d_crypto->authenticateHostP2(keyno, encRndA1, key);
     }
 
     void SAMAV1ISO7816Commands::authenticateHostDES(std::shared_ptr<DESFireKey> key, unsigned char keyno)
     {
-        std::vector<unsigned char> data;
+        ByteVector data;
         unsigned char authMode = 0x00;
         size_t keylength = key->getLength();
 
         data.push_back(keyno);
         data.push_back(key->getKeyVersion());
 
-		std::vector<unsigned char> cmd_vector = { d_cla, 0xa4, authMode, 0x00, 0x02, 0x00 }, result;
+		ByteVector cmd_vector = { d_cla, 0xa4, authMode, 0x00, 0x02, 0x00 };
         cmd_vector.insert(cmd_vector.end() - 1, data.begin(), data.end());
 
-        result = transmit(cmd_vector);
+        ByteVector result = transmit(cmd_vector);
 
         if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0xaf))
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authenticateHostDES P1 failed.");
 
-        std::vector<unsigned char> keyvec(key->getData(), key->getData() + keylength);
+        ByteVector keyvec(key->getData(), key->getData() + keylength);
 
         //get encRNB
-        std::vector<unsigned char> encRNB(result.begin(), result.end() - 2);
+        ByteVector encRNB(result.begin(), result.end() - 2);
 
         //dec RNB
-		std::vector<unsigned char> RndB;
+		ByteVector RndB;
 		openssl::DESSymmetricKey cipherkey = openssl::DESSymmetricKey::createFromData(keyvec);
 		openssl::DESInitializationVector iv = openssl::DESInitializationVector::createNull();
 		std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::DESCipher());
@@ -203,26 +203,26 @@ namespace logicalaccess
 		cipher->decipher(encRNB, RndB, cipherkey, iv, false);
 
         //Create RNB'
-        std::vector<unsigned char> rndB1;
+        ByteVector rndB1;
         rndB1.insert(rndB1.end(), RndB.begin() + 1, RndB.begin() + RndB.size());
         rndB1.push_back(RndB[0]);
 
         EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
         //Create our RndA
-        std::vector<unsigned char>  rndA(8);
+        ByteVector  rndA(8);
         if (RAND_bytes(&rndA[0], static_cast<int>(rndA.size())) != 1)
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
         }
 
         //create rndAB
-        std::vector<unsigned char> rndAB;
+        ByteVector rndAB;
         rndAB.clear();
         rndAB.insert(rndAB.end(), rndA.begin(), rndA.end());
         rndAB.insert(rndAB.end(), rndB1.begin(), rndB1.end());
 
         //enc rndAB
-		std::vector<unsigned char> encRndAB;
+		ByteVector encRndAB;
 		cipher->cipher(rndAB, encRndAB, cipherkey, iv, false);
 
         //send enc rndAB
@@ -233,17 +233,17 @@ namespace logicalaccess
         if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authenticateHostDES P2 failed.");
 
-        std::vector<unsigned char> encRndA1(result.begin(), result.end() - 2);
-		std::vector<unsigned char> dencRndA1;
+        ByteVector encRndA1(result.begin(), result.end() - 2);
+		ByteVector dencRndA1;
 		cipher->decipher(encRndA1, dencRndA1, cipherkey, iv, false);
 
         //create rndA'
-        std::vector<unsigned char> rndA1;
+        ByteVector rndA1;
         rndA1.insert(rndA1.end(), rndA.begin() + 1, rndA.begin() + rndA.size());
         rndA1.push_back(rndA[0]);
 
         //Check if RNDA is our
-        if (!std::equal(dencRndA1.begin(), dencRndA1.end(), rndA1.begin()))
+        if (!equal(dencRndA1.begin(), dencRndA1.end(), rndA1.begin()))
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authenticateHostDES Final Check failed.");
 
         d_crypto->d_sessionKey.clear();
@@ -261,8 +261,8 @@ namespace logicalaccess
 
         unsigned char data[6] = {};
         memcpy(data, &kucentry->getKucEntryStruct(), 6);
-        std::vector<unsigned char> vectordata(data, data + 6);
-        std::vector<unsigned char> encdatalittle;
+        ByteVector vectordata(data, data + 6);
+        ByteVector encdatalittle;
 
         if (key->getKeyType() == DF_KEY_DES)
             encdatalittle = d_crypto->sam_encrypt(d_crypto->d_sessionKey, vectordata);
@@ -272,9 +272,9 @@ namespace logicalaccess
         unsigned char proMas = kucentry->getUpdateMask();
 
         unsigned char cmd[] = { d_cla, 0xcc, kucno, proMas, 0x08 };
-        std::vector<unsigned char> cmd_vector(cmd, cmd + 5), result;
+        ByteVector cmd_vector(cmd, cmd + 5);
         cmd_vector.insert(cmd_vector.end(), encdatalittle.begin(), encdatalittle.end());
-        result = transmit(cmd_vector);
+        ByteVector result = transmit(cmd_vector);
 
         if (result.size() >= 2 && (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKUCEntry failed.");

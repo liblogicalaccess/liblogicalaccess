@@ -75,7 +75,7 @@ void IKSStorage::setIKSConfig(const std::string &ip, uint16_t port,
     config_ = iks::IslogKeyServer::IKSConfig(ip, port, client_cert, client_key, root_ca);
 }
 
-const iks::IslogKeyServer::IKSConfig &IKSStorage::getIKSConfig()
+const iks::IslogKeyServer::IKSConfig &IKSStorage::getIKSConfig() const
 {
     return config_;
 }
@@ -86,7 +86,7 @@ bool IKSStorage::getSerializeIKSConfig() const
 }
 
 void IKSStorage::getIKSConfig(std::string &ip, uint16_t &port, std::string &client_cert,
-                              std::string &client_key, std::string &root_ca)
+                              std::string &client_key, std::string &root_ca) const
 {
     ip = config_.ip;
     port = config_.port;

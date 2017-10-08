@@ -17,11 +17,11 @@ namespace logicalaccess
      *
      * This data transport is useful when talking to the reader in direct mode.
      */
-    class PCSCControlDataTransport : public PCSCDataTransport
+    class LIBLOGICALACCESS_API PCSCControlDataTransport : public PCSCDataTransport
     {
 
     public:
-        virtual void send(const std::vector<unsigned char> &data) override;
+	    void send(const ByteVector &data) override;
     };
 
 }

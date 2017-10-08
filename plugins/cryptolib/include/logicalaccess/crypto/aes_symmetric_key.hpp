@@ -10,6 +10,7 @@
 #include "logicalaccess/crypto/symmetric_key.hpp"
 
 #include <string>
+#include "logicalaccess/lla_fwd.hpp"
 
 namespace logicalaccess
 {
@@ -39,7 +40,7 @@ namespace logicalaccess
              * \return The symmetric key.
              * \warning If data is not 16, 24 or 32 bytes long, the behavior is undefined.
              */
-            static AESSymmetricKey createFromData(const std::vector<unsigned char>& data);
+            static AESSymmetricKey createFromData(const ByteVector& data);
 
             /**
              * \brief Create a 32 bytes long symmetric key from the specified passphrase.
@@ -54,14 +55,14 @@ namespace logicalaccess
              * \brief Create a new random AESSymmetricKey.
              * \param size The size of the key. Must be 16, 24 or 32.
              */
-            AESSymmetricKey(size_t size);
+	        explicit AESSymmetricKey(size_t size);
 
             /**
              * \brief Create an AESInitializationVector from existing data.
              * \param data The data.
              * \warning If data is not 16, 24 or 32 bytes long, the behavior is undefined.
              */
-            AESSymmetricKey(const std::vector<unsigned char>& data);
+	        explicit AESSymmetricKey(const ByteVector& data);
         };
     }
 }

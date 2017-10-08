@@ -26,14 +26,14 @@ namespace logicalaccess
 
         if (sysinfo.hasVICCMemorySize)
         {
-			std::vector<unsigned char> tmp(sysinfo.blockSize, 0x00);
+			ByteVector tmp(sysinfo.blockSize, 0x00);
 
             std::shared_ptr<AccessInfo> ai;
             writeData(location, aiToUse, ai, tmp, CB_DEFAULT);
         }
     }
 
-    void ISO15693StorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo>, std::shared_ptr<AccessInfo>, const std::vector<unsigned char>& data, CardBehavior)
+    void ISO15693StorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo>, std::shared_ptr<AccessInfo>, const ByteVector& data, CardBehavior)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 
@@ -44,7 +44,7 @@ namespace logicalaccess
         getISO15693Chip()->getISO15693Commands()->writeBlock(icLocation->block, data);
     }
 
-    std::vector<unsigned char> ISO15693StorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo>, size_t length, CardBehavior)
+    ByteVector ISO15693StorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo>, size_t /*length*/, CardBehavior)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 
@@ -55,8 +55,8 @@ namespace logicalaccess
         return getISO15693Chip()->getISO15693Commands()->readBlock(icLocation->block);
     }
 
-    unsigned int ISO15693StorageCardService::readDataHeader(std::shared_ptr<Location>, std::shared_ptr<AccessInfo>, void*, size_t)
+	ByteVector ISO15693StorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/)
     {
-        return 0;
+        return {};
     }
 }

@@ -26,10 +26,10 @@ namespace logicalaccess
         : ReaderUnit(READER_AXESSTMC13)
     {
         d_readerUnitConfig.reset(new AxessTMC13ReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(std::shared_ptr<AxessTMC13ReaderCardAdapter>(new AxessTMC13ReaderCardAdapter()));
+	    ReaderUnit::setDefaultReaderCardAdapter(std::make_shared<AxessTMC13ReaderCardAdapter>());
         std::shared_ptr<AxessTMC13DataTransport> dataTransport(new AxessTMC13DataTransport());
         dataTransport->setPortBaudRate(57600);
-        setDataTransport(dataTransport);
+	    ReaderUnit::setDataTransport(dataTransport);
 		d_card_type = CHIP_UNKNOWN;
 
         try
@@ -43,7 +43,7 @@ namespace logicalaccess
 
     AxessTMC13ReaderUnit::~AxessTMC13ReaderUnit()
     {
-        disconnectFromReader();
+	    AxessTMC13ReaderUnit::disconnectFromReader();
     }
 
     std::string AxessTMC13ReaderUnit::getName() const
@@ -56,7 +56,7 @@ namespace logicalaccess
         return getName();
     }
 
-    void AxessTMC13ReaderUnit::setCardType(std::string cardType)
+    void AxessTMC13ReaderUnit::setCardType(const std::string cardType)
     {
         d_card_type = cardType;
     }
@@ -73,7 +73,7 @@ namespace logicalaccess
 
         do
         {
-            std::shared_ptr<Chip> chip = getChipInAir();
+	        const std::shared_ptr<Chip> chip = getChipInAir();
             if (chip)
             {
                 d_insertedChip = chip;
@@ -144,9 +144,9 @@ namespace logicalaccess
         getDataTransport()->disconnect();
     }
 
-    std::vector<unsigned char> AxessTMC13ReaderUnit::getPingCommand() const
+    ByteVector AxessTMC13ReaderUnit::getPingCommand() const
     {
-        std::vector<unsigned char> cmd;
+        ByteVector cmd;
 
         cmd.push_back(static_cast<unsigned char>('v'));
 
@@ -156,10 +156,10 @@ namespace logicalaccess
     std::shared_ptr<Chip> AxessTMC13ReaderUnit::getChipInAir()
     {
         std::shared_ptr<Chip> chip;
-        std::vector<unsigned char> cmd;
+        ByteVector cmd;
         cmd.push_back(static_cast<unsigned char>('s'));
 
-        std::vector<unsigned char> tmpASCIIId = getDefaultAxessTMC13ReaderCardAdapter()->sendCommand(cmd);
+        ByteVector tmpASCIIId = getDefaultAxessTMC13ReaderCardAdapter()->sendCommand(cmd);
         if (tmpASCIIId.size() > 0 && tmpASCIIId[0] != 'N')
         {
             unsigned long long l = atoull(BufferHelper::getStdString(tmpASCIIId));
@@ -247,12 +247,12 @@ namespace logicalaccess
     bool AxessTMC13ReaderUnit::retrieveReaderIdentifier()
     {
         bool ret;
-        std::vector<unsigned char> cmd;
+        ByteVector cmd;
         try
         {
             cmd.push_back(static_cast<unsigned char>('v'));
 
-            std::vector<unsigned char> r = getDefaultAxessTMC13ReaderCardAdapter()->sendCommand(cmd);
+            ByteVector r = getDefaultAxessTMC13ReaderCardAdapter()->sendCommand(cmd);
             EXCEPTION_ASSERT_WITH_LOG(r.size() >= 3, std::invalid_argument, "Bad response getting TMC reader identifier.");
             EXCEPTION_ASSERT_WITH_LOG(r[0] == 'T', std::invalid_argument, "Bad response getting TMC reader identifier, identifier byte 0 doesn't match.");
             EXCEPTION_ASSERT_WITH_LOG(r[1] == 'M', std::invalid_argument, "Bad response getting TMC reader identifier, identifier byte 1 doesn't match.");
@@ -269,7 +269,7 @@ namespace logicalaccess
         return ret;
     }
 
-    std::vector<unsigned char> AxessTMC13ReaderUnit::getTMCIdentifier()
+    ByteVector AxessTMC13ReaderUnit::getTMCIdentifier() const
     {
         return d_tmcIdentifier;
     }

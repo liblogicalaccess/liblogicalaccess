@@ -31,7 +31,7 @@ std::shared_ptr<AES128Key> Omnikey5427ReaderUnitConfiguration::getSecureMasterKe
 }
 
 void Omnikey5427ReaderUnitConfiguration::setSecureMasterKey(
-        std::shared_ptr<logicalaccess::AES128Key> ptr)
+        std::shared_ptr<AES128Key> ptr)
 {
     masterKey_ = ptr;
 }

@@ -40,7 +40,7 @@ namespace logicalaccess
          * \brief Get the PC/SC reader/card adapter.
          * \return The PC/SC reader/card adapter.
          */
-        std::shared_ptr<PCSCReaderCardAdapter> getPCSCReaderCardAdapter() { return std::dynamic_pointer_cast<PCSCReaderCardAdapter>(getReaderCardAdapter()); };
+        std::shared_ptr<PCSCReaderCardAdapter> getPCSCReaderCardAdapter() const { return std::dynamic_pointer_cast<PCSCReaderCardAdapter>(getReaderCardAdapter()); }
 
         /**
          * \brief Read bytes from the card.
@@ -50,7 +50,7 @@ namespace logicalaccess
          * \param buflen The length of buffer.
          * \return The count of bytes red.
          */
-        virtual std::vector<unsigned char> readBinary(unsigned char blockno, size_t len);
+	    ByteVector readBinary(unsigned char blockno, size_t len) override;
 
         /**
          * \brief Write bytes to the card.
@@ -59,11 +59,11 @@ namespace logicalaccess
          * \param buflen The length of buffer.
          * \return The count of bytes written.
          */
-        virtual void updateBinary(unsigned char blockno, const std::vector<unsigned char>& buf);
+	    void updateBinary(unsigned char blockno, const ByteVector& buf) override;
 
-        virtual void increment(uint8_t blockno, uint32_t value) override;
+	    void increment(uint8_t blockno, uint32_t value) override;
 
-        virtual void decrement(uint8_t blockno, uint32_t value) override;
+	    void decrement(uint8_t blockno, uint32_t value) override;
 
     protected:
 
@@ -75,7 +75,7 @@ namespace logicalaccess
          * \param vol Use volatile memory.
          * \return true on success, false otherwise.
          */
-        bool loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol = false);
+	    bool loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol = false) override;
 
         /**
          * \brief Load a key on a given location.
@@ -83,7 +83,7 @@ namespace logicalaccess
          * \param key The key.
          * \param keytype The mifare key type.
          */
-		virtual void loadKey(std::shared_ptr<Location> location, MifareKeyType keytype, std::shared_ptr<MifareKey> key);
+	    void loadKey(std::shared_ptr<Location> location, MifareKeyType keytype, std::shared_ptr<MifareKey> key) override;
 
         /**
          * \brief Authenticate a block, given a key number.
@@ -91,7 +91,7 @@ namespace logicalaccess
          * \param key_storage The key storage used for authentication.
          * \param keytype The key type.
          */
-        virtual void authenticate(unsigned char blockno, std::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype);
+	    void authenticate(unsigned char blockno, std::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype) override;
 
         /**
          * \brief Authenticate a block, given a key number.
@@ -99,7 +99,7 @@ namespace logicalaccess
          * \param keyno The key number, previously loaded with Mifare::loadKey().
          * \param keytype The key type.
          */
-        virtual void authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype) override;
+	    void authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype) override;
 
         template<typename T, typename T2>
         friend class MifarePlusSL1Policy;

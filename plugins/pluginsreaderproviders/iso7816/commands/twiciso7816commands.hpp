@@ -42,47 +42,45 @@ namespace logicalaccess
         /**
          * \brief Select the TWIC application.
          */
-        virtual void selectTWICApplication();
+	    void selectTWICApplication() override;
 
         /**
          * \brief Get the Unsigned Cardholder Unique Identifier.
          * \return the data.
          */
-        virtual std::vector<unsigned char>  getUnsignedCardholderUniqueIdentifier();
+	    ByteVector  getUnsignedCardholderUniqueIdentifier() override;
 
         /**
          * \brief Get the TWIC Privacy Key.
          * \return the data.
          * \remarks Only accessible with the contact chip.
          */
-        virtual std::vector<unsigned char>  getTWICPrivacyKey();
+	    ByteVector  getTWICPrivacyKey() override;
 
         /**
          * \brief Get the Cardholder Unique Identifier.
          * \return the data.
          */
-        virtual std::vector<unsigned char>  getCardholderUniqueIdentifier();
+	    ByteVector  getCardholderUniqueIdentifier() override;
 
         /**
          * \brief Get the Cardholder Fingerprints.
          * \return the data.
          */
-        virtual std::vector<unsigned char>  getCardHolderFingerprints();
+	    ByteVector  getCardHolderFingerprints() override;
 
         /**
          * \brief Get the Security Object.
          * \return the data.
          */
-        virtual std::vector<unsigned char>  getSecurityObject();
+	    ByteVector  getSecurityObject() override;
 
         /**
          * \brief Get TWIC data object.
          * \param dataObject The data object.
          * \return the data.
          */
-        virtual std::vector<unsigned char> getTWICData(int64_t dataObject);
-
-    protected:
+	    ByteVector getTWICData(int64_t dataObject) override;
     };
 }
 

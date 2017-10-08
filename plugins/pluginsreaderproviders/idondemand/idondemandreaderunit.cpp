@@ -29,9 +29,9 @@ namespace logicalaccess
         : ReaderUnit(READER_IDONDEMAND)
     {
         d_readerUnitConfig.reset(new IdOnDemandReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(std::shared_ptr<IdOnDemandReaderCardAdapter>(new IdOnDemandReaderCardAdapter()));
+	    ReaderUnit::setDefaultReaderCardAdapter(std::make_shared<IdOnDemandReaderCardAdapter>());
         std::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
-        setDataTransport(dataTransport);
+	    ReaderUnit::setDataTransport(dataTransport);
 		d_card_type = CHIP_UNKNOWN;
 
         try
@@ -45,15 +45,15 @@ namespace logicalaccess
 
     IdOnDemandReaderUnit::~IdOnDemandReaderUnit()
     {
-        disconnectFromReader();
+	    IdOnDemandReaderUnit::disconnectFromReader();
     }
 
-    std::string IdOnDemandReaderUnit::getName() const
+	std::string IdOnDemandReaderUnit::getName() const
     {
         return getDataTransport()->getName();
     }
 
-    std::string IdOnDemandReaderUnit::getConnectedName()
+	std::string IdOnDemandReaderUnit::getConnectedName()
     {
         return getName();
     }
@@ -77,14 +77,14 @@ namespace logicalaccess
 #else
         sprintf_s(cmd, sizeof(cmd), "AUTH %s", authCode.c_str());
 #endif
-        std::string strcmd = std::string(cmd);
-        getDefaultIdOnDemandReaderCardAdapter()->sendCommand(std::vector<unsigned char>(strcmd.begin(), strcmd.end()));
+		std::string strcmd = std::string(cmd);
+        getDefaultIdOnDemandReaderCardAdapter()->sendCommand(ByteVector(strcmd.begin(), strcmd.end()));
     }
 
     void IdOnDemandReaderUnit::beep()
     {
-        std::string strcmd = std::string("BEEP");
-        getDefaultIdOnDemandReaderCardAdapter()->sendCommand(std::vector<unsigned char>(strcmd.begin(), strcmd.end()));
+		std::string strcmd = std::string("BEEP");
+        getDefaultIdOnDemandReaderCardAdapter()->sendCommand(ByteVector(strcmd.begin(), strcmd.end()));
     }
 
     bool IdOnDemandReaderUnit::read()
@@ -92,8 +92,8 @@ namespace logicalaccess
         bool ret = true;
         try
         {
-            std::string strcmd = std::string("READ");
-            getDefaultIdOnDemandReaderCardAdapter()->sendCommand(std::vector<unsigned char>(strcmd.begin(), strcmd.end()));
+			std::string strcmd = std::string("READ");
+            getDefaultIdOnDemandReaderCardAdapter()->sendCommand(ByteVector(strcmd.begin(), strcmd.end()));
         }
         catch (CardException& e)
         {
@@ -109,8 +109,8 @@ namespace logicalaccess
         bool ret = true;
         try
         {
-            std::string strcmd = std::string("VERIFY");
-            getDefaultIdOnDemandReaderCardAdapter()->sendCommand(std::vector<unsigned char>(strcmd.begin(), strcmd.end()));
+			std::string strcmd = std::string("VERIFY");
+            getDefaultIdOnDemandReaderCardAdapter()->sendCommand(ByteVector(strcmd.begin(), strcmd.end()));
         }
         catch (CardException& e)
         {
@@ -126,8 +126,8 @@ namespace logicalaccess
         bool ret = true;
         try
         {
-            std::string strcmd = std::string("WRITE");
-            getDefaultIdOnDemandReaderCardAdapter()->sendCommand(std::vector<unsigned char>(strcmd.begin(), strcmd.end()), 4000);
+			std::string strcmd = std::string("WRITE");
+            getDefaultIdOnDemandReaderCardAdapter()->sendCommand(ByteVector(strcmd.begin(), strcmd.end()), 4000);
         }
         catch (CardException& e)
         {
@@ -140,7 +140,7 @@ namespace logicalaccess
 
     void IdOnDemandReaderUnit::activateEMCard(bool activate)
     {
-        std::string strcmd = "EMCARD ";
+		std::string strcmd = "EMCARD ";
         if (activate)
         {
             strcmd += "ON";
@@ -149,12 +149,12 @@ namespace logicalaccess
         {
             strcmd += "FALSE";
         }
-        getDefaultIdOnDemandReaderCardAdapter()->sendCommand(std::vector<unsigned char>(strcmd.begin(), strcmd.end()));
+        getDefaultIdOnDemandReaderCardAdapter()->sendCommand(ByteVector(strcmd.begin(), strcmd.end()));
     }
 
     void IdOnDemandReaderUnit::activateAtmelCard(bool activate)
     {
-        std::string strcmd = "ATCARD ";
+		std::string strcmd = "ATCARD ";
         if (activate)
         {
             strcmd += "ON";
@@ -163,7 +163,7 @@ namespace logicalaccess
         {
             strcmd += "FALSE";
         }
-        getDefaultIdOnDemandReaderCardAdapter()->sendCommand(std::vector<unsigned char>(strcmd.begin(), strcmd.end()));
+        getDefaultIdOnDemandReaderCardAdapter()->sendCommand(ByteVector(strcmd.begin(), strcmd.end()));
     }
 
     bool IdOnDemandReaderUnit::waitInsertion(unsigned int maxwait)
@@ -242,14 +242,13 @@ namespace logicalaccess
     std::shared_ptr<Chip> IdOnDemandReaderUnit::createChip(std::string type)
     {
         std::shared_ptr<Chip> chip;
-        std::shared_ptr<ReaderCardAdapter> rca;
-		if (type == CHIP_GENERICTAG)
+	    if (type == CHIP_GENERICTAG)
         {
             chip.reset(new GenericTagIdOnDemandChip());
             std::shared_ptr<Commands> commands(new GenericTagIdOnDemandCommands());
             commands->setChip(chip);
             chip->setCommands(commands);
-            rca = getDefaultReaderCardAdapter();
+            std::shared_ptr<ReaderCardAdapter> rca = getDefaultReaderCardAdapter();
             rca->setDataTransport(getDataTransport());
             commands->setReaderCardAdapter(rca);
         }
@@ -284,9 +283,9 @@ namespace logicalaccess
         return std::dynamic_pointer_cast<IdOnDemandReaderCardAdapter>(adapter);
     }
 
-    string IdOnDemandReaderUnit::getReaderSerialNumber()
+	std::string IdOnDemandReaderUnit::getReaderSerialNumber()
     {
-        string ret;
+		std::string ret;
 
         return ret;
     }
@@ -317,10 +316,10 @@ namespace logicalaccess
         getDataTransport()->disconnect();
     }
 
-    std::vector<unsigned char> IdOnDemandReaderUnit::getPingCommand() const
+    ByteVector IdOnDemandReaderUnit::getPingCommand() const
     {
-        std::string strcmd = "BEEP";
-        return std::vector<unsigned char>(strcmd.begin(), strcmd.end());
+		std::string strcmd = "BEEP";
+        return ByteVector(strcmd.begin(), strcmd.end());
     }
 
     void IdOnDemandReaderUnit::serialize(boost::property_tree::ptree& parentNode)

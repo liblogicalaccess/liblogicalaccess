@@ -9,6 +9,7 @@
 #define AES_INITIALIZATION_VECTOR_HPP
 
 #include "logicalaccess/crypto/initialization_vector.hpp"
+#include "logicalaccess/lla_fwd.hpp"
 
 namespace logicalaccess
 {
@@ -41,7 +42,7 @@ namespace logicalaccess
              * \return IV from the data.
              * \warning If data is not exactly 16 bytes long, the behavior is undefined.
              */
-            static AESInitializationVector createFromData(const std::vector<unsigned char>& data);
+            static AESInitializationVector createFromData(const ByteVector& data);
 
         protected:
 
@@ -49,14 +50,14 @@ namespace logicalaccess
              * \brief Create a new AESInitializationVector.
              * \param random true if the IV must be randomized, false otherwise.
              */
-            AESInitializationVector(bool random);
+	        explicit AESInitializationVector(bool random);
 
             /**
              * \brief Create an AESInitializationVector from existing data.
              * \param data The data.
              * \warning If data is not 16 bytes long, the behavior is undefined.
              */
-            AESInitializationVector(const std::vector<unsigned char>& data);
+	        explicit AESInitializationVector(const ByteVector& data);
 
         private:
 

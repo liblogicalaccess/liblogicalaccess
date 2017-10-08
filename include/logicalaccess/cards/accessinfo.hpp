@@ -65,7 +65,7 @@ namespace logicalaccess
          * \param ai Access infos to compare.
          * \return True if inequals, false otherwise.
          */
-        inline bool operator!=(const AccessInfo& ai) const { return !operator==(ai); };
+        bool operator!=(const AccessInfo& ai) const { return !operator==(ai); }
     };
 }
 

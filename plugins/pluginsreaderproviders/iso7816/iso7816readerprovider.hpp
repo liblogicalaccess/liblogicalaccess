@@ -23,6 +23,9 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API ISO7816ReaderProvider : public ReaderProvider
     {
     public:
+
+		using ReaderProvider::createReaderUnit;
+
         /**
          * \brief Create a new reader unit for the reader provider.
          * \return A reader unit.

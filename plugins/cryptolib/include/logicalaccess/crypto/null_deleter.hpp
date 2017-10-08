@@ -21,7 +21,7 @@ namespace logicalaccess
             /**
              * \brief The null deletion function.
              */
-            void operator() (void const*) const {};
+            void operator() (void const*) const {}
         };
     }
 }

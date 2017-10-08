@@ -26,7 +26,7 @@ namespace logicalaccess
     {
         LOG(LogLevel::INFOS) << "Creating new KeyboardReaderProvider instance...";
 
-        hWatchThrd = NULL;
+        hWatchThrd = nullptr;
         watchSessions = false;
 #ifdef _WINDOWS
         //sharedGuid = "test";
@@ -37,7 +37,7 @@ namespace logicalaccess
 
     KeyboardReaderProvider::~KeyboardReaderProvider()
     {
-        release();
+	    KeyboardReaderProvider::release();
     }
 
     void KeyboardReaderProvider::release()
@@ -94,9 +94,9 @@ namespace logicalaccess
         sprintf_s(sharedName, sizeof(sharedName), "%s%s", KEYBOARD_SHAREDDATA, sharedGuid.c_str());
         LOG(LogLevel::INFOS) << "File mapping with shared name {" << sharedName << "}";
 
-        fillSecurityDescriptor(&sa, NULL);
+        fillSecurityDescriptor(&sa, nullptr);
 
-        shKeyboard = CreateFileMapping(NULL, &sa, PAGE_READWRITE, 0, sizeof(KeyboardSharedStruct), sharedName);
+        shKeyboard = CreateFileMapping(nullptr, &sa, PAGE_READWRITE, 0, sizeof(KeyboardSharedStruct), sharedName);
         if (!shKeyboard)
         {
             ret = GetLastError();
@@ -110,7 +110,7 @@ namespace logicalaccess
         if (sa.lpSecurityDescriptor)
         {
             LocalFree(sa.lpSecurityDescriptor);
-            sa.lpSecurityDescriptor = NULL;
+            sa.lpSecurityDescriptor = nullptr;
         }
 
         return ret;
@@ -131,7 +131,7 @@ namespace logicalaccess
         sprintf_s(eventName, sizeof(eventName), "%s%s", KEYBOARD_EVENT, sharedGuid.c_str());
         LOG(LogLevel::INFOS) << "Event named {" << eventName << "}";
 
-        hKbdEvent = CreateEvent(0, TRUE, FALSE, eventName);
+        hKbdEvent = CreateEvent(nullptr, TRUE, FALSE, eventName);
         if (!hKbdEvent)
         {
             ret = GetLastError();
@@ -141,7 +141,7 @@ namespace logicalaccess
         memset(eventName, 0x00, sizeof(eventName));
         sprintf_s(eventName, sizeof(eventName), "%s%s", KEYBOARD_EVENTPROCESEED, sharedGuid.c_str());
         LOG(LogLevel::INFOS) << "Event named {" << eventName << "}";
-        hKbdEventProcessed = CreateEvent(0, TRUE, FALSE, eventName);
+        hKbdEventProcessed = CreateEvent(nullptr, TRUE, FALSE, eventName);
         if (!hKbdEventProcessed)
         {
             ret = GetLastError();
@@ -151,7 +151,7 @@ namespace logicalaccess
         memset(eventName, 0x00, sizeof(eventName));
         sprintf_s(eventName, sizeof(eventName), "%s%s", KEYBOARD_HOSTEVENT, sharedGuid.c_str());
         LOG(LogLevel::INFOS) << "Event named {" << eventName << "}";
-        hHostEvent = CreateEvent(0, TRUE, FALSE, eventName);
+        hHostEvent = CreateEvent(nullptr, TRUE, FALSE, eventName);
         if (!hHostEvent)
         {
             ret = GetLastError();
@@ -161,7 +161,7 @@ namespace logicalaccess
         memset(eventName, 0x00, sizeof(eventName));
         sprintf_s(eventName, sizeof(eventName), "%s%s", KEYBOARD_STILLALIVEEVENT, sharedGuid.c_str());
         LOG(LogLevel::INFOS) << "Event named {" << eventName << "}";
-        hStillAliveEvent = CreateEvent(0, TRUE, FALSE, eventName);
+        hStillAliveEvent = CreateEvent(nullptr, TRUE, FALSE, eventName);
         if (!hStillAliveEvent)
         {
             ret = GetLastError();
@@ -178,8 +178,8 @@ namespace logicalaccess
         {
             CloseHandle(shKeyboard);
 
-            shKeyboard = NULL;
-            sKeyboard = NULL;
+            shKeyboard = nullptr;
+            sKeyboard = nullptr;
         }
     }
 
@@ -189,32 +189,32 @@ namespace logicalaccess
         if (hKbdEvent)
         {
             CloseHandle(hKbdEvent);
-            hKbdEvent = NULL;
+            hKbdEvent = nullptr;
         }
 
         if (hKbdEventProcessed)
         {
             CloseHandle(hKbdEventProcessed);
-            hKbdEventProcessed = NULL;
+            hKbdEventProcessed = nullptr;
         }
 
         if (hHostEvent)
         {
             CloseHandle(hHostEvent);
-            hHostEvent = NULL;
+            hHostEvent = nullptr;
         }
 
         if (hStillAliveEvent)
         {
             CloseHandle(hStillAliveEvent);
-            hStillAliveEvent = NULL;
+            hStillAliveEvent = nullptr;
         }
     }
 
     void KeyboardReaderProvider::fillSecurityDescriptor(LPSECURITY_ATTRIBUTES sa, PACL pACL)
     {
         PSECURITY_DESCRIPTOR pSD = (PSECURITY_DESCRIPTOR)LocalAlloc(LPTR, SECURITY_DESCRIPTOR_MIN_LENGTH);
-        if (NULL == pSD)
+        if (nullptr == pSD)
         {
             LOG(LogLevel::ERRORS) << "LocalAlloc Error {" << GetLastError() << "}";
         }
@@ -243,16 +243,16 @@ namespace logicalaccess
     void KeyboardReaderProvider::startAndWatchOnActiveConsole()
     {
         watchSessions = true;
-        hWatchThrd = CreateThread(NULL, 0, WatchThread, NULL, 0, NULL);
+        hWatchThrd = CreateThread(nullptr, 0, WatchThread, nullptr, 0, nullptr);
     }
 
     // Watch current session active console and start hook on it if it changed and not yet started for this session
-    DWORD WINAPI WatchThread(LPVOID lpThreadParameter)
+    DWORD WINAPI WatchThread(LPVOID /*lpThreadParameter*/)
     {
         LOG(LogLevel::INFOS) << "WatchThread begins...";
         std::shared_ptr<KeyboardReaderProvider> readerProvider = KeyboardReaderProvider::getSingletonInstance();
 
-        if (readerProvider != NULL)
+        if (readerProvider != nullptr)
         {
             DWORD lastSessionId = 0;
             bool isUserSession = true;
@@ -338,7 +338,7 @@ namespace logicalaccess
         unsigned int timeout = 2000;
         LOG(LogLevel::INFOS) << "Waiting for listening thread to exit. Max timeout {" << timeout << "}...";
 
-        if (hWatchThrd != NULL)
+        if (hWatchThrd != nullptr)
         {
             DWORD res = WaitForSingleObject(hWatchThrd, timeout);
             if (res == WAIT_OBJECT_0)
@@ -349,7 +349,7 @@ namespace logicalaccess
             {
                 LOG(LogLevel::ERRORS) << "Listening thread timeout! Killing it!";
                 TerminateThread(hWatchThrd, 0);
-                hWatchThrd = NULL;
+                hWatchThrd = nullptr;
             }
         }
         else
@@ -377,8 +377,8 @@ namespace logicalaccess
         DWORD dwDesiredAccess = PROCESS_TERMINATE;
         BOOL  bInheritHandle = FALSE;
         HANDLE hProcess = OpenProcess(dwDesiredAccess, bInheritHandle, dwProcessId);
-        if (hProcess == NULL)
-            return FALSE;
+        if (hProcess == nullptr)
+            return false;
 
         BOOL result = TerminateProcess(hProcess, uExitCode);
 
@@ -392,7 +392,7 @@ namespace logicalaccess
         LOG(LogLevel::INFOS) << "RetrieveWinlogonUserToken begins";
 
         DWORD winlogonPid = 0;
-        HANDLE hUserTokenDup = NULL, hPToken = NULL, hProcess = NULL;
+        HANDLE hUserTokenDup = nullptr, hPToken = nullptr;
         TOKEN_PRIVILEGES tp;
         LUID luid;
         PROCESSENTRY32 procEntry;
@@ -401,7 +401,7 @@ namespace logicalaccess
         if (hSnap == INVALID_HANDLE_VALUE)
         {
             LOG(LogLevel::ERRORS) << "CreateToolhelp32Snapshot failed";
-            return NULL;
+            return nullptr;
         }
 
         procEntry.dwSize = sizeof(PROCESSENTRY32);
@@ -411,7 +411,7 @@ namespace logicalaccess
             LOG(LogLevel::ERRORS) << "Process32First failed";
             if (hSnap)
                 CloseHandle(hSnap);
-            return NULL;
+            return nullptr;
         }
 
         LOG(LogLevel::INFOS) << "Finding the winlogon process in the right session ID !";
@@ -442,15 +442,15 @@ namespace logicalaccess
             CloseHandle(hSnap);
 
         LOG(LogLevel::INFOS) << "Opening Process";
-        hProcess = OpenProcess(MAXIMUM_ALLOWED, FALSE, winlogonPid);
+	    const HANDLE h_process = OpenProcess(MAXIMUM_ALLOWED, FALSE, winlogonPid);
 
-        if (!OpenProcessToken(hProcess, TOKEN_QUERY | TOKEN_DUPLICATE | TOKEN_READ, &hPToken))
+        if (!OpenProcessToken(h_process, TOKEN_QUERY | TOKEN_DUPLICATE | TOKEN_READ, &hPToken))
         {
             LOG(LogLevel::ERRORS) << "Process token open Error: {" << std::hex << GetLastError() << std::dec << "}";
         }
 
         LOG(LogLevel::INFOS) << "Looking Privilege value";
-        if (!LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &luid))
+        if (!LookupPrivilegeValue(nullptr, SE_DEBUG_NAME, &luid))
         {
             LOG(LogLevel::ERRORS) << "Lookup Privilege value Error: {" << std::hex << GetLastError() << std::dec << "}";
         }
@@ -460,10 +460,10 @@ namespace logicalaccess
 
         LOG(LogLevel::INFOS) << "Duplicating and setting privileges";
 
-        DuplicateTokenEx(hPToken, MAXIMUM_ALLOWED, NULL, ImpersonationLevel, TokenType, &hUserTokenDup);
+        DuplicateTokenEx(hPToken, MAXIMUM_ALLOWED, nullptr, ImpersonationLevel, TokenType, &hUserTokenDup);
         SetTokenInformation(hUserTokenDup, TokenSessionId, (void*)destSessionId, sizeof(DWORD));
 
-        if (!AdjustTokenPrivileges(hUserTokenDup, FALSE, &tp, sizeof(TOKEN_PRIVILEGES), (PTOKEN_PRIVILEGES)NULL, NULL))
+        if (!AdjustTokenPrivileges(hUserTokenDup, FALSE, &tp, sizeof(TOKEN_PRIVILEGES), (PTOKEN_PRIVILEGES)nullptr, nullptr))
         {
             LOG(LogLevel::INFOS) << "Adjust Privilege value Error: {" << std::hex << GetLastError() << std::dec << "}";
         }
@@ -474,20 +474,20 @@ namespace logicalaccess
         }
 
         //Perform All the Close Handles task
-        if (hProcess)
-            CloseHandle(hProcess);
+        if (h_process)
+            CloseHandle(h_process);
         if (hPToken)
             CloseHandle(hPToken);
 
         return hUserTokenDup;
     }
 
-    DWORD KeyboardReaderProvider::launchHookIntoDifferentSession(DWORD destSessionId)
+    DWORD KeyboardReaderProvider::launchHookIntoDifferentSession(DWORD destSessionId) const
     {
         LOG(LogLevel::INFOS) << "Begins for sessionID {" << destSessionId << "}";
 
         HANDLE hUserTokenDup = retrieveWinlogonUserToken(destSessionId, SecurityIdentification, TokenPrimary);
-        if (hUserTokenDup == NULL)
+        if (hUserTokenDup == nullptr)
         {
             LOG(LogLevel::ERRORS) << "Unable to get the USER TOKEN !!";
         }
@@ -495,25 +495,24 @@ namespace logicalaccess
         return launchHook(hUserTokenDup);
     }
 
-    DWORD KeyboardReaderProvider::launchHook(HANDLE hUserTokenDup)
+    DWORD KeyboardReaderProvider::launchHook(HANDLE hUserTokenDup) const
     {
         LOG(LogLevel::INFOS) << "Begins ...";
 
         PROCESS_INFORMATION pi;
         ZeroMemory(&pi, sizeof(pi));
         STARTUPINFO si;
-        DWORD dwCreationFlags;
-        LPVOID pEnv = NULL;
+	    LPVOID pEnv = nullptr;
 
         std::string appName = getHookPath();
         std::string cmdLine = "\"" + appName + "\" " + getHookArguments();
 
-        dwCreationFlags = REALTIME_PRIORITY_CLASS | CREATE_NEW_CONSOLE;
+        DWORD dwCreationFlags = REALTIME_PRIORITY_CLASS | CREATE_NEW_CONSOLE;
         ZeroMemory(&si, sizeof(STARTUPINFO));
         si.cb = sizeof(STARTUPINFO);
         si.lpDesktop = "winsta0\\default";
 
-        if (hUserTokenDup != NULL)
+        if (hUserTokenDup != nullptr)
         {
             if (CreateEnvironmentBlock(&pEnv, hUserTokenDup, TRUE))
             {
@@ -521,12 +520,12 @@ namespace logicalaccess
             }
             else
             {
-                pEnv = NULL;
+                pEnv = nullptr;
             }
         }
 
-        char* app = NULL;
-        char* cmd = NULL;
+        char* app = nullptr;
+        char* cmd = nullptr;
 
         if (!appName.empty())
         {
@@ -542,9 +541,9 @@ namespace logicalaccess
 
         LOG(LogLevel::INFOS) << "Starting process...";
 
-        if (hUserTokenDup != NULL)
+        if (hUserTokenDup != nullptr)
         {
-            if (!CreateProcessAsUser(hUserTokenDup, app, cmd, NULL, NULL, FALSE, dwCreationFlags, pEnv, NULL, &si, &pi))
+            if (!CreateProcessAsUser(hUserTokenDup, app, cmd, nullptr, nullptr, FALSE, dwCreationFlags, pEnv, nullptr, &si, &pi))
             {
                 LOG(LogLevel::ERRORS) << "CreateProcessAsUser failed {" << GetLastError() << "}";
             }
@@ -555,7 +554,7 @@ namespace logicalaccess
         }
         else
         {
-            if (!CreateProcess(app, cmd, NULL, NULL, FALSE, dwCreationFlags, pEnv, NULL, &si, &pi))
+            if (!CreateProcess(app, cmd, nullptr, nullptr, FALSE, dwCreationFlags, pEnv, nullptr, &si, &pi))
             {
                 LOG(LogLevel::ERRORS) << "CreateProcess failed {" << std::hex << GetLastError() << std::dec << "}";
             }
@@ -586,7 +585,7 @@ namespace logicalaccess
         return pi.dwProcessId;
     }
 
-    bool KeyboardReaderProvider::is64BitWindows() const
+    bool KeyboardReaderProvider::is64BitWindows()
     {
 #if defined(_WIN64)
         return true;  // 64-bit programs run only on Win64
@@ -600,7 +599,7 @@ namespace logicalaccess
 #endif
     }
 
-    std::string KeyboardReaderProvider::getHookPath() const
+    std::string KeyboardReaderProvider::getHookPath()
     {
         char curpath[MAX_PATH];
         memset(curpath, 0x00, sizeof(curpath));
@@ -644,7 +643,7 @@ namespace logicalaccess
         d_readers.clear();
 
 #ifdef _WINDOWS
-        if (shKeyboard != NULL)
+        if (shKeyboard != nullptr)
         {
             unsigned int timeout = 5000;
             LOG(LogLevel::INFOS) << "Waiting {" << timeout << "} milliseconds for host event set...";

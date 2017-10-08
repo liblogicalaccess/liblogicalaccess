@@ -20,11 +20,11 @@ namespace logicalaccess
     {
     }
 
-    std::vector<unsigned char> ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen, unsigned char /*le*/)
+    ByteVector ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen, unsigned char /*le*/)
     {
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(ins);
-        if (data != NULL && datalen > 0)
+        if (data != nullptr && datalen > 0)
         {
             command.insert(command.end(), data, data + datalen);
         }
@@ -32,11 +32,11 @@ namespace logicalaccess
         return ISO7816ReaderCardAdapter::sendCommand(command);
     }
 
-    std::vector<unsigned char> ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen)
+    ByteVector ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, const unsigned char* data, size_t datalen)
     {
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(ins);
-        if (data != NULL && datalen > 0)
+        if (data != nullptr && datalen > 0)
         {
             command.insert(command.end(), data, data + datalen);
         }
@@ -44,11 +44,11 @@ namespace logicalaccess
         return ISO7816ReaderCardAdapter::sendCommand(command);
     }
 
-    std::vector<unsigned char> ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, const unsigned char* data, size_t datalen)
+    ByteVector ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, const unsigned char* data, size_t datalen)
     {
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(ins);
-        if (data != NULL && datalen > 0)
+        if (data != nullptr && datalen > 0)
         {
             command.insert(command.end(), data, data + datalen);
         }
@@ -56,33 +56,33 @@ namespace logicalaccess
         return ISO7816ReaderCardAdapter::sendCommand(command);
     }
 
-    std::vector<unsigned char> ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*le*/)
+    ByteVector ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*le*/)
     {
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(ins);
 
         return ISO7816ReaderCardAdapter::sendCommand(command);
     }
 
-    std::vector<unsigned char> ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, unsigned char /*le*/)
+    ByteVector ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/, unsigned char /*lc*/, unsigned char /*le*/)
     {
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(ins);
 
         return ISO7816ReaderCardAdapter::sendCommand(command);
     }
 
-    std::vector<unsigned char> ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/)
+    ByteVector ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/)
     {
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(ins);
         return ISO7816ReaderCardAdapter::sendCommand(command);
     }
 
-    std::vector<unsigned char> ISO7816OK5553ReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
+    ByteVector ISO7816OK5553ReaderCardAdapter::adaptCommand(const ByteVector& command)
     {
         char tmp[3];
-        std::vector<unsigned char> data;
+        ByteVector data;
         data.push_back(static_cast<unsigned char>('t'));
         sprintf(tmp, "%.2X", (unsigned int)(command.size() + 1));
         data.push_back(static_cast<unsigned char>(tmp[0]));
@@ -111,20 +111,20 @@ namespace logicalaccess
         return d_ok5553_reader_card_adapter->adaptCommand(data);
     }
 
-    std::vector<unsigned char> ISO7816OK5553ReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
+    ByteVector ISO7816OK5553ReaderCardAdapter::adaptAnswer(const ByteVector& answer)
     {
         LOG(LogLevel::COMS) << "Processing response : " << BufferHelper::getHex(answer);
         return answerReverse(handleAnswer(d_ok5553_reader_card_adapter->adaptAnswer(OK5553ReaderUnit::asciiToHex(answer))));
     }
 
-    std::vector<unsigned char> ISO7816OK5553ReaderCardAdapter::answerReverse(const std::vector<unsigned char>& answer)
+    ByteVector ISO7816OK5553ReaderCardAdapter::answerReverse(const ByteVector& answer)
     {
         LOG(LogLevel::COMS) << "Reversing response : " << BufferHelper::getHex(answer);
-        std::vector<unsigned char> res;
+        ByteVector res;
 
         if (answer.size() > 1)
         {
-            res = std::vector<unsigned char>(answer.begin() + 1, answer.end());
+            res = ByteVector(answer.begin() + 1, answer.end());
             res.push_back(0x00);
             res.push_back(answer[0]);
         }
@@ -136,10 +136,10 @@ namespace logicalaccess
         return res;
     }
 
-    std::vector<unsigned char> ISO7816OK5553ReaderCardAdapter::handleAnswer(const std::vector<unsigned char>& answer)
+    ByteVector ISO7816OK5553ReaderCardAdapter::handleAnswer(const ByteVector& answer)
     {
         LOG(LogLevel::COMS) << "Handling response : " << BufferHelper::getHex(answer);
-        std::vector<unsigned char> res;
+        ByteVector res;
 
         if (answer.size() > 2)
         {

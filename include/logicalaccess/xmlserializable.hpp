@@ -42,6 +42,7 @@
 #include <iostream>
 #include <sstream>
 #include "logicalaccess/logicalaccess_api.hpp"
+#include "logicalaccess/lla_fwd.hpp"
 #include <boost/property_tree/ptree_fwd.hpp>
 
 namespace logicalaccess
@@ -52,7 +53,8 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API XmlSerializable
     {
     public:
-        /**
+	    virtual ~XmlSerializable() = default;
+	    /**
          * \brief Serialize object to Xml Node string.
          * \return The serialized object.
          */
@@ -133,7 +135,7 @@ namespace logicalaccess
          * \param hexstr The hex string without space.
          * \return The hex buffer with space.
          */
-        static std::vector<unsigned char> formatHexString(std::string hexstr);
+        static ByteVector formatHexString(std::string hexstr);
 
     protected:
 

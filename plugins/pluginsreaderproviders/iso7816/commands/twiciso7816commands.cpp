@@ -41,7 +41,7 @@ namespace logicalaccess
         pix[4] = 0x81;
         pix[5] = 0x01;
 
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.insert(command.begin(), rid, rid + sizeof(rid));
         command.insert(command.end(), pix, rid + 4);
 
@@ -58,9 +58,9 @@ namespace logicalaccess
         }
     }
 
-    std::vector<unsigned char> TwicISO7816Commands::getTWICData(int64_t dataObject)
+    ByteVector TwicISO7816Commands::getTWICData(int64_t dataObject)
     {
-        std::vector<unsigned char> command, result;
+        ByteVector command;
 
         //// TWIC Card simulation
         //if (dataObject == 0x5FC104)
@@ -148,40 +148,40 @@ namespace logicalaccess
         command.push_back(0xFF & (dataObject >> 8));
         command.push_back(0xFF & dataObject);
 
-        result = getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xCB, 0x3F, 0xFF, static_cast<unsigned char>(command.size()), command, static_cast<unsigned char>(command.size()));
+        ByteVector result = getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xCB, 0x3F, 0xFF, static_cast<unsigned char>(command.size()), command, static_cast<unsigned char>(command.size()));
         if (result.size() != 2)
         {
-            return std::vector<unsigned char>(result.begin(), result.end() - 2);
+            return ByteVector(result.begin(), result.end() - 2);
         }
 
-        return std::vector<unsigned char>();
+        return ByteVector();
     }
 
-    std::vector<unsigned char> TwicISO7816Commands::getUnsignedCardholderUniqueIdentifier()
+    ByteVector TwicISO7816Commands::getUnsignedCardholderUniqueIdentifier()
     {
         //return getData(0x3002);
         return getTWICData(0x5FC104);
     }
 
-    std::vector<unsigned char>  TwicISO7816Commands::getTWICPrivacyKey()
+    ByteVector  TwicISO7816Commands::getTWICPrivacyKey()
     {
         //return getData(0x2001);*
         return getTWICData(0xDFC101);
     }
 
-    std::vector<unsigned char>  TwicISO7816Commands::getCardholderUniqueIdentifier()
+    ByteVector  TwicISO7816Commands::getCardholderUniqueIdentifier()
     {
         //return getData(0x3000);
         return getTWICData(0x5FC102);
     }
 
-    std::vector<unsigned char>  TwicISO7816Commands::getCardHolderFingerprints()
+    ByteVector  TwicISO7816Commands::getCardHolderFingerprints()
     {
         //return getData(0x2003);
         return getTWICData(0xDFC103);
     }
 
-    std::vector<unsigned char>  TwicISO7816Commands::getSecurityObject()
+    ByteVector  TwicISO7816Commands::getSecurityObject()
     {
         //return getData(0x9000);
         return getTWICData(0xDFC10F);

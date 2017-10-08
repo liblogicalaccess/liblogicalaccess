@@ -60,12 +60,11 @@ namespace logicalaccess
         if (pLocation)
         {
             size_t length = (formatret->getDataLength() + 7) / 8;
-			std::vector<unsigned char> formatBuf;
 
-            std::shared_ptr<StorageCardService> storage = std::dynamic_pointer_cast<StorageCardService>(getTwicChip()->getService(CST_STORAGE));
+	        std::shared_ptr<StorageCardService> storage = std::dynamic_pointer_cast<StorageCardService>(getTwicChip()->getService(CST_STORAGE));
             if (storage)
             {
-                formatBuf = storage->readData(pLocation, std::shared_ptr<AccessInfo>(), length, CB_DEFAULT);
+                ByteVector formatBuf = storage->readData(pLocation, std::shared_ptr<AccessInfo>(), length, CB_DEFAULT);
                 formatret->setLinearData(&formatBuf[0], formatBuf.size());
 
                 ret = true;
@@ -89,7 +88,7 @@ namespace logicalaccess
 	{
 		FormatList formats;
 
-		formats.push_back(std::shared_ptr<FASCN200BitFormat>(new FASCN200BitFormat()));
+		formats.push_back(std::make_shared<FASCN200BitFormat>());
 
 		return formats;
 	}

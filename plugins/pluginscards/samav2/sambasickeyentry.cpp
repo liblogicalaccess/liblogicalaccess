@@ -47,7 +47,7 @@ namespace logicalaccess
         memset(&*d_key, 0, getLength());
         d_diversify = false;
         d_updatemask = 0;
-        if (buf != NULL)
+        if (buf != nullptr)
         {
             if (buflen * numberkey >= getLength())
             {
@@ -116,9 +116,9 @@ namespace logicalaccess
         return length;
     }
 
-    std::vector<std::vector<unsigned char> > SAMBasicKeyEntry::getKeysData()
+    std::vector<ByteVector > SAMBasicKeyEntry::getKeysData() const
     {
-        std::vector<std::vector<unsigned char> > ret;
+        std::vector<ByteVector > ret;
         size_t keysize = getSingleLength();
         unsigned char keynb = 3;
 
@@ -126,11 +126,11 @@ namespace logicalaccess
             keynb = 2;
 
         for (unsigned char x = 0; x < keynb; ++x)
-            ret.push_back(std::vector<unsigned char>(d_key + (x * keysize), d_key + (x * keysize) + keysize));
+            ret.push_back(ByteVector(d_key + (x * keysize), d_key + (x * keysize) + keysize));
         return ret;
     }
 
-    void SAMBasicKeyEntry::setKeysData(std::vector<std::vector<unsigned char> > keys, SAMKeyType type)
+    void SAMBasicKeyEntry::setKeysData(std::vector<ByteVector > keys, SAMKeyType type)
     {
         if (keys.size() == 0)
             return;
@@ -204,9 +204,9 @@ namespace logicalaccess
         for (unsigned char i = 0; i < sizeof(settings); ++i)
         {
             if ((d_updatemask & 0x80) == 0x80)
-                x[i] = 1;
+                x[i] = true;
             else
-                x[i] = 0;
+                x[i] = false;
             if (i + (unsigned int)1 < sizeof(settings))
                 d_updatemask = d_updatemask << 1;
         }

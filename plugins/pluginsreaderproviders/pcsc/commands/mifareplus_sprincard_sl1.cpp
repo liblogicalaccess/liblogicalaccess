@@ -10,7 +10,7 @@
 using namespace logicalaccess;
 
 bool MifarePlusSpringcardSL1Commands::AESAuthenticate(
-    std::shared_ptr<logicalaccess::AES128Key> key, uint16_t keyslot)
+    std::shared_ptr<AES128Key> key, uint16_t keyslot)
 {
     LLA_LOG_CTX("AES Authentication Mifare Plus (keyslot: "
 		<< std::hex << (keyslot & 0xFF) <<  "-" << (keyslot >> 8) <<") and Springcard");
@@ -27,8 +27,7 @@ bool MifarePlusSpringcardSL1Commands::switchLevel3(std::shared_ptr<AES128Key> ke
 {
 	LLA_LOG_CTX("Switching MFP to Level 3 (Springcard Commands)");
 
-	std::vector<unsigned char> activateT_CL;
-	std::vector<unsigned char> returnT_CL;
+	ByteVector activateT_CL;
 
 	activateT_CL.resize(5);
 	activateT_CL[0] = 0xFF;
@@ -37,7 +36,7 @@ bool MifarePlusSpringcardSL1Commands::switchLevel3(std::shared_ptr<AES128Key> ke
 	activateT_CL[3] = 0x01;
 	activateT_CL[4] = 0x00;
 
-	returnT_CL = getReaderCardAdapter()->sendCommand(activateT_CL, 1000);
+	ByteVector returnT_CL = getReaderCardAdapter()->sendCommand(activateT_CL, 1000);
 
 	{
 		EncapsulateGuard eg(this, false);
@@ -67,9 +66,9 @@ EncapsulateGuard::~EncapsulateGuard()
     cmd_->setReaderCardAdapter(rca_);
 }
 
-std::vector<unsigned char>
+ByteVector
 EncapsulateGuard::Adapter::adaptCommand(
-    const std::vector<unsigned char> &in)
+    const ByteVector &in)
 {
     ByteVector full_cmd;
 
@@ -92,9 +91,9 @@ EncapsulateGuard::Adapter::adaptCommand(
     return full_cmd;
 }
 
-std::vector<unsigned char>
+ByteVector
 EncapsulateGuard::Adapter::adaptAnswer(
-    const std::vector<unsigned char> &answer)
+    const ByteVector &answer)
 {
 	LLA_LOG_CTX("ADAPTER");
 	LOG(DEBUGS) << "BEFORE ADAPTING: " << answer;
@@ -102,9 +101,9 @@ EncapsulateGuard::Adapter::adaptAnswer(
     return ret;
 }
 
-void MifarePlusSpringcardSL1Commands::authenticate(unsigned char blockno,
-                                                   unsigned char keyno,
-                                                   MifareKeyType keytype)
+void MifarePlusSpringcardSL1Commands::authenticate(unsigned char /*blockno*/,
+                                                   unsigned char /*keyno*/,
+                                                   MifareKeyType /*keytype*/)
 {
     mscc_.setChip(getChip());
     mscc_.setReaderCardAdapter(getReaderCardAdapter());

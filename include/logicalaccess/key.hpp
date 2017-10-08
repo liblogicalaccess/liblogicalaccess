@@ -58,7 +58,7 @@ class KeyDiversification;
          * \brief Set the key data.
          * \param data The key data.
          */
-        virtual void setData(const std::vector<unsigned char>& data, size_t offset = 0);
+        virtual void setData(const ByteVector& data, size_t offset = 0);
 
         /**
          * \brief Get the string representation of the key.
@@ -97,13 +97,13 @@ class KeyDiversification;
          * \param npde The XML node.
          * \return The XML string.
          */
-        virtual void serialize(boost::property_tree::ptree& node);
+	    void serialize(boost::property_tree::ptree& node) override;
 
         /**
          * \brief UnSerialize a XML node to the current object.
          * \param node The XML node.
          */
-        virtual void unSerialize(boost::property_tree::ptree& node);
+	    void unSerialize(boost::property_tree::ptree& node) override;
 
         /**
          * \brief Equality operator
@@ -135,11 +135,11 @@ class KeyDiversification;
          * \brief Get if the data is stored ciphered.
          * \return True if data is stored ciphered, false otherwise.
          */
-        bool getStoreCipheredData();
+        bool getStoreCipheredData() const;
 
         void setKeyDiversification(std::shared_ptr<KeyDiversification> div);
 
-        std::shared_ptr<KeyDiversification> getKeyDiversification();
+        std::shared_ptr<KeyDiversification> getKeyDiversification() const;
 
         /**
          * Retrieve the bytes of the key.

@@ -39,8 +39,9 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API CardService : public std::enable_shared_from_this < CardService >
     {
     public:
+	    virtual ~CardService() = default;
 
-        /**
+	    /**
          * \brief Constructor.
          * \param chip The associated chip.
 		 * \param serviceType The card service type.
@@ -51,7 +52,7 @@ namespace logicalaccess
          * \brief Get the associated chip object.
          * \return The chip.
          */
-        std::shared_ptr<Chip> getChip() { return d_chip; };
+        std::shared_ptr<Chip> getChip() const { return d_chip; }
 
         /**
          * \brief Get the card service type.

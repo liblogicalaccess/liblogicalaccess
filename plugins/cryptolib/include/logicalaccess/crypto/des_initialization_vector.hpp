@@ -40,7 +40,7 @@ namespace logicalaccess
              * \return IV from the data.
              * \warning If data is not exactly 8 bytes long, the behavior is undefined.
              */
-            static DESInitializationVector createFromData(const std::vector<unsigned char>& data);
+            static DESInitializationVector createFromData(const ByteVector& data);
 
         protected:
 
@@ -48,14 +48,14 @@ namespace logicalaccess
              * \brief Create a new DESInitializationVector.
              * \param random true if the IV must be randomized, false otherwise.
              */
-            DESInitializationVector(bool random);
+	        explicit DESInitializationVector(bool random);
 
             /**
              * \brief Create an DESInitializationVector from existing data.
              * \param data The data.
              * \warning If data is not 8 bytes long, the behavior is undefined.
              */
-            DESInitializationVector(const std::vector<unsigned char>& data);
+	        explicit DESInitializationVector(const ByteVector& data);
 
         private:
 

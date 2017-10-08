@@ -12,8 +12,6 @@
 
 #include <string>
 
-using std::string;
-
 namespace logicalaccess
 {
     /**
@@ -40,13 +38,13 @@ namespace logicalaccess
          * \brief Get the encoder name
          * \return The encoder name
          */
-        virtual string getName() const;
+	    std::string getName() const override;
 
         /**
          * \brief Get the encoder type.
          * \return The encoder type.
          */
-        virtual EncodingType getType() const;
+	    EncodingType getType() const override;
 
         /**
          * \brief Convert "data" to the data type
@@ -56,7 +54,7 @@ namespace logicalaccess
          * \param dataConvertedLengthBytes Length of "dataConverted" in bytes
          * \return Length of data written in bits
          */
-        virtual unsigned int convert(unsigned long long data, unsigned int dataLengthBits, void* dataConverted, size_t dataConvertedLengthBytes);
+	    unsigned int convert(unsigned long long data, unsigned int dataLengthBits, void* dataConverted, size_t dataConvertedLengthBytes) override;
 
         /**
          * \brief Revert data type to data
@@ -65,15 +63,13 @@ namespace logicalaccess
          * \param lengthBits Length of data to revert in bits
          * \return Data after reversion
          */
-        virtual unsigned long long revert(void* data, size_t dataLengthBytes, unsigned int lengthBits);
+	    unsigned long long revert(void* data, size_t dataLengthBytes, unsigned int lengthBits) override;
 
     private:
 
         static void Alg(int s, int* i);
 
         static void Alg(int* i);
-
-    protected:
     };
 }
 

@@ -38,22 +38,22 @@ namespace logicalaccess
         /**
          * \brief Build an empty DESFire key.
          */
-        SAMKucEntry() : d_updatemask(0) { memset(&d_kucentry, 0x00, sizeof(SAMKUCEntryStruct)); };
+        SAMKucEntry() : d_updatemask(0) { memset(&d_kucentry, 0x00, sizeof(SAMKUCEntryStruct)); }
 
         /**
          * \brief Build a DESFire key given a string representation of it.
          * \param str The string representation.
          */
-        SAMKucEntry(const SAMKUCEntryStruct& k) : d_updatemask(0), d_kucentry(k) {};
+	    explicit SAMKucEntry(const SAMKUCEntryStruct& k) : d_updatemask(0), d_kucentry(k) {}
 
-        unsigned char getUpdateMask() const { return d_updatemask; };
-        void setUpdateMask(unsigned char c) { d_updatemask = c; };
+        unsigned char getUpdateMask() const { return d_updatemask; }
+        void setUpdateMask(unsigned char c) { d_updatemask = c; }
 
         KucEntryUpdateSettings getUpdateSettings();
         void setUpdateSettings(const KucEntryUpdateSettings& t);
 
-        SAMKUCEntryStruct &getKucEntryStruct() { return d_kucentry; };
-        void setKucEntryStruct(const SAMKUCEntryStruct& t) { d_kucentry = t; };
+        SAMKUCEntryStruct &getKucEntryStruct() { return d_kucentry; }
+        void setKucEntryStruct(const SAMKUCEntryStruct& t) { d_kucentry = t; }
 
     private:
 

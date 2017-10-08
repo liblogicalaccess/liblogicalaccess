@@ -25,13 +25,13 @@ namespace logicalaccess
          * \brief Get the reader unit.
          * \return The reader unit.
          */
-        virtual std::shared_ptr<ReaderUnit> getReaderUnit() const { return d_ReaderUnit.lock(); };
+        virtual std::shared_ptr<ReaderUnit> getReaderUnit() const { return d_ReaderUnit.lock(); }
 
         /**
          * \brief Set the reader unit.
          * \param unit The reader unit.
          */
-        virtual void setReaderUnit(std::weak_ptr<ReaderUnit> unit){ d_ReaderUnit = unit; };
+        virtual void setReaderUnit(std::weak_ptr<ReaderUnit> unit){ d_ReaderUnit = unit; }
 
         /**
          * \brief Get the transport type of this instance.
@@ -68,25 +68,25 @@ namespace logicalaccess
          * \param timeout The command timeout.
          * \return the result of the command.
          */
-        virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long int timeout = -1);
+        virtual ByteVector sendCommand(const ByteVector& command, long int timeout = -1);
 
         /**
          * \brief Get the last command.
          * \return The last command.
          */
-        virtual std::vector<unsigned char> getLastCommand() { return d_lastCommand; };
+        virtual ByteVector getLastCommand() { return d_lastCommand; }
 
         /**
          * \brief Get the last command result.
          * \return The last command result.
          */
-        virtual std::vector<unsigned char> getLastResult() { return d_lastResult; };
+        virtual ByteVector getLastResult() { return d_lastResult; }
 
     protected:
 
-        virtual void send(const std::vector<unsigned char>& data) = 0;
+        virtual void send(const ByteVector& data) = 0;
 
-        virtual std::vector<unsigned char> receive(long int timeout) = 0;
+        virtual ByteVector receive(long int timeout) = 0;
 
         /**
          * \brief The reader unit.
@@ -96,12 +96,12 @@ namespace logicalaccess
         /**
          * \brief The last result.
          */
-        std::vector<unsigned char> d_lastResult;
+        ByteVector d_lastResult;
 
         /**
          * \brief The last command.
          */
-        std::vector<unsigned char> d_lastCommand;
+        ByteVector d_lastCommand;
     };
 }
 

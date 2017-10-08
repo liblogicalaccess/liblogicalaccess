@@ -33,7 +33,7 @@ namespace logicalaccess
              * \param key_compound The key compound to use.
              * In case of a failure, the call throw an InvalidCallException.
              */
-            virtual void cipher(const std::vector<unsigned char>& src, std::vector<unsigned char>& dest, const AsymmetricKey& key, KeyCompound key_compound);
+	        void cipher(const ByteVector& src, ByteVector& dest, const AsymmetricKey& key, KeyCompound key_compound) override;
 
             /**
              * \brief Decipher a buffer.
@@ -43,7 +43,7 @@ namespace logicalaccess
              * \param key_compound The key compound to use.
              * In case of a failure, the call throw a InvalidCallException.
              */
-            virtual void decipher(const std::vector<unsigned char>& src, std::vector<unsigned char>& dest, const AsymmetricKey& key, KeyCompound key_compound);
+	        void decipher(const ByteVector& src, ByteVector& dest, const AsymmetricKey& key, KeyCompound key_compound) override;
         };
     }
 }

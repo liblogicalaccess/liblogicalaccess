@@ -27,7 +27,7 @@ namespace logicalaccess
 
 	OSDPReaderProvider::~OSDPReaderProvider()
 	{
-		release();
+		OSDPReaderProvider::release();
 	}
 
 	void OSDPReaderProvider::release()

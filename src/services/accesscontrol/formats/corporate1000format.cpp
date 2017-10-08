@@ -48,9 +48,9 @@ namespace logicalaccess
         return 35;
     }
 
-    string Corporate1000Format::getName() const
+	std::string Corporate1000Format::getName() const
     {
-        return string("Wiegand 35");	//Corporate 1000
+        return std::string("Wiegand 35");	//Corporate 1000
     }
 
     unsigned short int Corporate1000Format::getCompanyCode() const
@@ -66,11 +66,11 @@ namespace logicalaccess
         d_formatLinear.d_companyCode = companyCode;
     }
 
-    unsigned char Corporate1000Format::getLeftParity1(const void* data, size_t dataLengthBytes) const
+    unsigned char Corporate1000Format::getLeftParity1(const void* data, size_t dataLengthBytes)
     {
         unsigned char parity = 0x00;
 
-        if (data != NULL)
+        if (data != nullptr)
         {
             parity = calculateParity(data, dataLengthBytes, PT_ODD, 1, 34);
         }
@@ -78,11 +78,11 @@ namespace logicalaccess
         return parity;
     }
 
-    unsigned char Corporate1000Format::getLeftParity2(const void* data, size_t dataLengthBytes) const
+    unsigned char Corporate1000Format::getLeftParity2(const void* data, size_t dataLengthBytes)
     {
         unsigned char parity = 0x00;
 
-        if (data != NULL)
+        if (data != nullptr)
         {
             unsigned int positions[22];
             positions[0] = 2;
@@ -113,11 +113,11 @@ namespace logicalaccess
         return parity;
     }
 
-    unsigned char Corporate1000Format::getRightParity(const void* data, size_t dataLengthBytes) const
+    unsigned char Corporate1000Format::getRightParity(const void* data, size_t dataLengthBytes)
     {
         unsigned char parity = 0x00;
 
-        if (data != NULL)
+        if (data != nullptr)
         {
             unsigned int positions[22];
             positions[0] = 1;
@@ -155,7 +155,7 @@ namespace logicalaccess
         convertField(data, dataLengthBytes, &pos, getCompanyCode(), 12);
         convertField(data, dataLengthBytes, &pos, getUid(), 20);
 
-        if (data != NULL)
+        if (data != nullptr)
         {
             pos = 1;
             BitHelper::writeToBit(data, dataLengthBytes, &pos, getLeftParity2(data, dataLengthBytes), 7, 1);
@@ -173,14 +173,14 @@ namespace logicalaccess
         setCompanyCode((short)revertField(data, dataLengthBytes, &pos, 12));
         setUid(revertField(data, dataLengthBytes, &pos, 20));
 
-        if (data != NULL)
+        if (data != nullptr)
         {
             if (dataLengthBytes * 8 < getDataLength())
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Data length too small.");
             }
 
-            size_t pos = 1;
+            pos = 1;
             unsigned char parity = getLeftParity2(data, dataLengthBytes);
             if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != parity)
             {
@@ -245,7 +245,7 @@ namespace logicalaccess
         setUid(node.get_child("Uid").get_value<unsigned long long>());
     }
 
-    std::string Corporate1000Format::getDefaultXmlNodeName() const
+	std::string Corporate1000Format::getDefaultXmlNodeName() const
     {
         return "Corporate1000Format";
     }

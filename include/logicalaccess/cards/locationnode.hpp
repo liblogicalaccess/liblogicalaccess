@@ -61,7 +61,7 @@ namespace logicalaccess
          * \brief Get the parent node.
          * \return The parent node.
          */
-        std::shared_ptr<LocationNode> getParent();
+        std::shared_ptr<LocationNode> getParent() const;
 
         /**
          * \brief Set if authentication is needed.

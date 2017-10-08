@@ -14,9 +14,9 @@ namespace logicalaccess
         
     }
 
-    std::vector<unsigned char> GunneboBufferParser::getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer)
+    ByteVector GunneboBufferParser::getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer)
     {
-        std::vector<unsigned char> result;
+        ByteVector result;
 
         if (circular_buffer.size() >= 3 && circular_buffer[0] == GunneboReaderCardAdapter::STX)
         {
@@ -32,10 +32,7 @@ namespace logicalaccess
                         circular_buffer.erase(circular_buffer.begin(), circular_buffer.begin() + i + foolen);
                         break;
                     }
-                    else
-                    {
-                        LOG(LogLevel::COMS) << "ETX found but no checksum bytes.";
-                    }
+	                LOG(LogLevel::COMS) << "ETX found but no checksum bytes.";
                 }
             }
         }

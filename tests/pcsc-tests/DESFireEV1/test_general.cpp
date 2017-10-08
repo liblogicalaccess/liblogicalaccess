@@ -35,7 +35,7 @@ int main(int ac, char **av)
     ReaderProviderPtr provider;
     ReaderUnitPtr readerUnit;
     ChipPtr chip;
-    std::tie(provider, readerUnit, chip) = lla_test_init("DESFireEV1");
+    tie(provider, readerUnit, chip) = lla_test_init("DESFireEV1");
 
     PRINT_TIME("CHip identifier: " <<
                logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
@@ -50,9 +50,9 @@ int main(int ac, char **av)
 
     auto location_root_node = chip->getRootLocationNode();
 
-    auto cmd = std::dynamic_pointer_cast<logicalaccess::DESFireISO7816Commands>(
+    auto cmd = std::dynamic_pointer_cast<DESFireISO7816Commands>(
             chip->getCommands());
-    auto cmdev1 = std::dynamic_pointer_cast<logicalaccess::DESFireEV1ISO7816Commands>(
+    auto cmdev1 = std::dynamic_pointer_cast<DESFireEV1ISO7816Commands>(
             chip->getCommands());
     LLA_ASSERT(cmd && cmdev1, "Cannot get correct command object from chip.");
 
@@ -60,30 +60,30 @@ int main(int ac, char **av)
     cmd->authenticate(0);
 
     cmd->erase();
-    cmdev1->createApplication(0x521, logicalaccess::DESFireKeySettings::KS_DEFAULT, 3,
-                              logicalaccess::DESFireKeyType::DF_KEY_AES,
-                              logicalaccess::FIDS_NO_ISO_FID, 0, std::vector<unsigned char>());
+    cmdev1->createApplication(0x521, KS_DEFAULT, 3,
+                              DF_KEY_AES,
+                              FIDS_NO_ISO_FID, 0, ByteVector());
 
     cmd->selectApplication(0x521);
-    std::shared_ptr<logicalaccess::DESFireKey> key(new logicalaccess::DESFireKey());
-    key->setKeyType(logicalaccess::DESFireKeyType::DF_KEY_AES);
+    std::shared_ptr<DESFireKey> key(new DESFireKey());
+    key->setKeyType(DF_KEY_AES);
     cmd->authenticate(0, key);
     LLA_SUBTEST_PASSED("Authenticate");
 
-    logicalaccess::DESFireAccessRights ar;
-    ar.readAccess = logicalaccess::TaskAccessRights::AR_KEY2;
-    ar.writeAccess = logicalaccess::TaskAccessRights::AR_KEY1;
-    ar.readAndWriteAccess = logicalaccess::TaskAccessRights::AR_KEY1;
-    ar.changeAccess = logicalaccess::TaskAccessRights::AR_KEY1;
-    cmdev1->createStdDataFile(0x00, logicalaccess::EncryptionMode::CM_ENCRYPT, ar, 4, 0);
+    DESFireAccessRights ar;
+    ar.readAccess = AR_KEY2;
+    ar.writeAccess = AR_KEY1;
+    ar.readAndWriteAccess = AR_KEY1;
+    ar.changeAccess = AR_KEY1;
+    cmdev1->createStdDataFile(0x00, CM_ENCRYPT, ar, 4, 0);
 
 
     cmd->authenticate(1, key);
-    std::vector<unsigned char> data = {0x01, 0x02, 0x03, 0x04}, tmp;
-    cmdev1->writeData(0, 0, data, logicalaccess::EncryptionMode::CM_ENCRYPT);
+    ByteVector data = {0x01, 0x02, 0x03, 0x04}, tmp;
+    cmdev1->writeData(0, 0, data, CM_ENCRYPT);
 
     cmd->authenticate(2, key);
-    tmp = cmdev1->readData(0, 0, 4, logicalaccess::EncryptionMode::CM_ENCRYPT);
+    tmp = cmdev1->readData(0, 0, 4, CM_ENCRYPT);
     LLA_ASSERT(std::equal(data.begin(), data.end(), tmp.begin()),
                "read and write data are different!");
     LLA_SUBTEST_PASSED("WriteRead");
@@ -92,8 +92,8 @@ int main(int ac, char **av)
     cmd->deleteFile(0x00);
 
     cmd->authenticate(0x00, key);
-    std::shared_ptr<logicalaccess::DESFireKey> newkey(
-            new logicalaccess::DESFireKey("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 03"));
+    std::shared_ptr<DESFireKey> newkey(
+            new DESFireKey("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 03"));
     cmd->changeKey(0x00, newkey);
     LLA_SUBTEST_PASSED("ChangeKey");
 
@@ -101,21 +101,21 @@ int main(int ac, char **av)
     cmd->authenticate(0);
     cmd->deleteApplication(0x521);
 
-    auto service = std::dynamic_pointer_cast<logicalaccess::AccessControlCardService>(
-            chip->getService(logicalaccess::CardServiceType::CST_ACCESS_CONTROL));
+    auto service = std::dynamic_pointer_cast<AccessControlCardService>(
+            chip->getService(CST_ACCESS_CONTROL));
     LLA_ASSERT(service, "Cannot retrieve access control service from chip.");
 
-    auto location = std::make_shared<logicalaccess::DESFireLocation>();
+    auto location = std::make_shared<DESFireLocation>();
     location->aid = 0x522;
     location->file = 0;
-    auto ai = std::make_shared<logicalaccess::DESFireAccessInfo>();
-    auto format = std::make_shared<logicalaccess::Wiegand26Format>();
+    auto ai = std::make_shared<DESFireAccessInfo>();
+    auto format = std::make_shared<Wiegand26Format>();
     format->setUid(1000);
     format->setFacilityCode(67);
 
     service->writeFormat(format, location, ai, ai);
-    auto formattmp = std::make_shared<logicalaccess::Wiegand26Format>();
-    auto rformat = std::dynamic_pointer_cast<logicalaccess::Wiegand26Format>(
+    auto formattmp = std::make_shared<Wiegand26Format>();
+    auto rformat = std::dynamic_pointer_cast<Wiegand26Format>(
             service->readFormat(formattmp, location, ai));
 
     if (!rformat || rformat->getUid() != 1000 || rformat->getFacilityCode() != 67)

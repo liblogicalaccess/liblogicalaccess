@@ -26,9 +26,9 @@ namespace logicalaccess
         : ReaderUnit(READER_DEISTER)
     {
         d_readerUnitConfig.reset(new DeisterReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(std::shared_ptr<DeisterReaderCardAdapter>(new DeisterReaderCardAdapter()));
+	    ReaderUnit::setDefaultReaderCardAdapter(std::make_shared<DeisterReaderCardAdapter>());
         std::shared_ptr<DeisterDataTransport> dataTransport(new DeisterDataTransport());
-        setDataTransport(dataTransport);
+	    ReaderUnit::setDataTransport(dataTransport);
 		d_card_type = CHIP_UNKNOWN;
 
         try
@@ -42,7 +42,7 @@ namespace logicalaccess
 
     DeisterReaderUnit::~DeisterReaderUnit()
     {
-        disconnectFromReader();
+	    DeisterReaderUnit::disconnectFromReader();
     }
 
     std::string DeisterReaderUnit::getName() const
@@ -134,9 +134,9 @@ namespace logicalaccess
         getDataTransport()->disconnect();
     }
 
-    std::vector<unsigned char> DeisterReaderUnit::getPingCommand() const
+    ByteVector DeisterReaderUnit::getPingCommand() const
     {
-        std::vector<unsigned char> cmd;
+        ByteVector cmd;
 
         cmd.push_back(0x0b);
 
@@ -146,14 +146,13 @@ namespace logicalaccess
     std::shared_ptr<Chip> DeisterReaderUnit::getChipInAir()
     {
         std::shared_ptr<Chip> chip;
-        std::vector<unsigned char> cmd;
+        ByteVector cmd;
         cmd.push_back(static_cast<unsigned char>(0x0B));
 
-        std::vector<unsigned char> pollBuf = getDefaultDeisterReaderCardAdapter()->sendCommand(cmd);
+        ByteVector pollBuf = getDefaultDeisterReaderCardAdapter()->sendCommand(cmd);
         if (pollBuf.size() > 0)
         {
-            std::vector<unsigned char> tmpId;
-            if (pollBuf.size() > 0)
+	        if (pollBuf.size() > 0)
             {
                 EXCEPTION_ASSERT_WITH_LOG(pollBuf[0] == 0x00, LibLogicalAccessException, "Bad polling answer, LOC byte");
                 EXCEPTION_ASSERT_WITH_LOG(pollBuf[1] == 0x00, LibLogicalAccessException, "Bad polling answer, RST byte");
@@ -163,8 +162,8 @@ namespace logicalaccess
                 EXCEPTION_ASSERT_WITH_LOG(pollBuf[4] == 0x01, LibLogicalAccessException, "Bad polling answer, DT byte");
                 EXCEPTION_ASSERT_WITH_LOG(pollBuf[5] == 0x00, LibLogicalAccessException, "Bad polling answer, No byte");
                 EXCEPTION_ASSERT_WITH_LOG(pollBuf[6] > 0, LibLogicalAccessException, "Bad polling answer, Size byte must be greater than zero");
-                tmpId = std::vector<unsigned char>(pollBuf.begin() + 7, pollBuf.begin() + 7 + pollBuf[6]);
-                std::reverse(tmpId.begin(), tmpId.end());
+                ByteVector tmpId = ByteVector(pollBuf.begin() + 7, pollBuf.begin() + 7 + pollBuf[6]);
+                reverse(tmpId.begin(), tmpId.end());
                 chip = ReaderUnit::createChip(
 					(d_card_type == CHIP_UNKNOWN ? cardType : d_card_type),
                     tmpId
@@ -175,7 +174,7 @@ namespace logicalaccess
         return chip;
     }
 
-    std::string DeisterReaderUnit::getCardTypeFromDeisterType(DeisterCardType deisterCardType) const
+    std::string DeisterReaderUnit::getCardTypeFromDeisterType(DeisterCardType deisterCardType)
     {
         switch (deisterCardType)
         {

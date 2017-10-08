@@ -44,48 +44,47 @@ namespace logicalaccess
          * \param aid The Application ID buffer.
          * \return The Application ID in 32 bits.
          */
-        static unsigned int convertAidToUInt(const std::vector<unsigned char>& aid);
+        static unsigned int convertAidToUInt(const ByteVector& aid);
 
         /**
          * \brief Convert an Application ID 32 bits into a buffer.
          * \param i The Application ID in 32 bits.
          * \param aid The Application ID buffer.
          */
-        static void convertUIntToAid(unsigned int i, std::vector<unsigned char>& aid);
+        static void convertUIntToAid(unsigned int i, ByteVector& aid);
 
         /**
          * \brief Serialize the current object to XML.
          * \param parentNode The parent node.
          */
-        virtual void serialize(boost::property_tree::ptree& parentNode);
+	    void serialize(boost::property_tree::ptree& parentNode) override;
 
         /**
          * \brief UnSerialize a XML node to the current object.
          * \param node The XML node.
          */
-        virtual void unSerialize(boost::property_tree::ptree& node);
+	    void unSerialize(boost::property_tree::ptree& node) override;
 
         /**
          * \brief Get the default Xml Node name for this object.
          * \return The Xml node name.
          */
-        virtual std::string getDefaultXmlNodeName() const;
+	    std::string getDefaultXmlNodeName() const override;
 
         /**
          * \brief Get the card type for this location.
          * \return The card type.
          */
-        virtual std::string getCardType() { return "DESFire"; }
+	    std::string getCardType() override { return "DESFire"; }
 
         /**
          * \brief Equality operator
          * \param location Location to compare.
          * \return True if equals, false otherwise.
          */
-        virtual bool operator==(const Location& location) const;
+	    bool operator==(const Location& location) const override;
 
-    public:
-        /**
+	    /**
          * \brief The application ID.
          */
         unsigned int aid;
@@ -98,7 +97,7 @@ namespace logicalaccess
         /**
          * \brief The byte offset.
          */
-        unsigned int byte;
+        unsigned int byte_;
 
         /**
          * \brief The file security level

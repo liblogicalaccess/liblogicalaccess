@@ -25,10 +25,10 @@ namespace logicalaccess
         : ReaderUnit(READER_GIGATMS)
     {
         d_readerUnitConfig.reset(new GigaTMSReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(std::shared_ptr<GigaTMSReaderCardAdapter>(new GigaTMSReaderCardAdapter()));
+	    ReaderUnit::setDefaultReaderCardAdapter(std::make_shared<GigaTMSReaderCardAdapter>());
         std::shared_ptr<GigaTMSDataTransport> dataTransport(new GigaTMSDataTransport());
 		dataTransport->setPortBaudRate(19200);
-        setDataTransport(dataTransport);
+	    ReaderUnit::setDataTransport(dataTransport);
 		d_card_type = CHIP_UNKNOWN;
 
         try
@@ -42,7 +42,7 @@ namespace logicalaccess
 
 	GigaTMSReaderUnit::~GigaTMSReaderUnit()
     {
-        disconnectFromReader();
+	    GigaTMSReaderUnit::disconnectFromReader();
     }
 
     std::string GigaTMSReaderUnit::getName() const
@@ -125,7 +125,7 @@ namespace logicalaccess
 	void GigaTMSReaderUnit::setCommunicationProtocol()
 	{
 		// For now only support ISO14443A
-		std::vector<unsigned char> cmd;
+		ByteVector cmd;
 		cmd.push_back(0x00);
 		cmd.push_back(0x00);
 		cmd.push_back(0x00);
@@ -136,11 +136,11 @@ namespace logicalaccess
     std::shared_ptr<Chip> GigaTMSReaderUnit::getChipInAir()
     {
         std::shared_ptr<Chip> chip;
-        std::vector<unsigned char> cmd;
+        ByteVector cmd;
         cmd.push_back(0x01);
 		cmd.push_back(0x00);
 
-        std::vector<unsigned char> rawidbuf = getDefaultGigaTMSReaderCardAdapter()->sendCommand(cmd);
+        ByteVector rawidbuf = getDefaultGigaTMSReaderCardAdapter()->sendCommand(cmd);
         if (rawidbuf.size() > 0)
         {
             // The reader looks bugged and don't detect the card once on two time
@@ -151,8 +151,8 @@ namespace logicalaccess
 
             if (rawidbuf[0] == 0x01)
             {
-                std::string rawidstr = BufferHelper::getHex(std::vector<unsigned char>(rawidbuf.begin() + 1, rawidbuf.end()));
-                std::vector<unsigned char> insertedId = XmlSerializable::formatHexString(rawidstr);
+                std::string rawidstr = BufferHelper::getHex(ByteVector(rawidbuf.begin() + 1, rawidbuf.end()));
+                ByteVector insertedId = formatHexString(rawidstr);
                 chip = ReaderUnit::createChip(
 					(d_card_type == CHIP_UNKNOWN ? CHIP_GENERICTAG : d_card_type),
                     insertedId

@@ -34,8 +34,8 @@ int main(int ac, char **av)
 	ReaderProviderPtr provider;
 	std::shared_ptr<PCSCReaderUnit> readerUnit;
 
-	std::shared_ptr<logicalaccess::ReaderConfiguration> readerConfig(
-		new logicalaccess::ReaderConfiguration());
+	std::shared_ptr<ReaderConfiguration> readerConfig(
+		new ReaderConfiguration());
 	provider = LibraryManager::getInstance()->getReaderProvider("PCSC");
 	LLA_ASSERT(provider, "Cannot get PCSC provider");
 	readerConfig->setReaderProvider(provider);

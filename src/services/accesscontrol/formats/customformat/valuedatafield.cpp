@@ -76,7 +76,7 @@ namespace logicalaccess
 
     void ValueDataField::convertNumericData(void* data, size_t dataLengthBytes, unsigned int* pos, unsigned long long field, unsigned int fieldlen) const
     {
-        unsigned int convertedDataTypeLengthBits = d_dataType->convert(field, fieldlen, NULL, 0);
+        unsigned int convertedDataTypeLengthBits = d_dataType->convert(field, fieldlen, nullptr, 0);
         if (convertedDataTypeLengthBits > 0)
         {
             size_t convertedDataTypeLengthBytes = (convertedDataTypeLengthBits + 7) / 8;
@@ -85,7 +85,7 @@ namespace logicalaccess
 
             if (d_dataType->convert(field, fieldlen, convertedDataTypeData, convertedDataTypeLengthBytes) == convertedDataTypeLengthBits)
             {
-                unsigned int convertedDataRepresentationLengthBits = d_dataRepresentation->convertNumeric(convertedDataTypeData, convertedDataTypeLengthBytes, convertedDataTypeLengthBits, NULL, 0);
+                unsigned int convertedDataRepresentationLengthBits = d_dataRepresentation->convertNumeric(convertedDataTypeData, convertedDataTypeLengthBytes, convertedDataTypeLengthBits, nullptr, 0);
                 if (convertedDataRepresentationLengthBits > 0)
                 {
                     size_t convertedDataRepresentationLengthBytes = (convertedDataRepresentationLengthBits + 7) / 8;
@@ -105,7 +105,7 @@ namespace logicalaccess
 
     void ValueDataField::convertBinaryData(const void* data, size_t dataLengthBytes, unsigned int* pos, unsigned int fieldlen, void* convertedData, size_t convertedDataLengthBytes) const
     {
-        unsigned int convertedDataRepresentationLengthBits = d_dataRepresentation->convertBinary(data, dataLengthBytes, fieldlen, NULL, 0);
+        unsigned int convertedDataRepresentationLengthBits = d_dataRepresentation->convertBinary(data, dataLengthBytes, fieldlen, nullptr, 0);
         if (convertedDataRepresentationLengthBits > 0)
         {
             size_t convertedDataRepresentationLengthBytes = (convertedDataRepresentationLengthBits + 7) / 8;
@@ -124,7 +124,7 @@ namespace logicalaccess
     {
         unsigned long long ret = 0;
 
-        unsigned int extractedSizeBits = d_dataType->convert(0, d_dataRepresentation->convertLength(fieldlen), NULL, 0);
+        unsigned int extractedSizeBits = d_dataType->convert(0, d_dataRepresentation->convertLength(fieldlen), nullptr, 0);
         size_t extractedSizeBytes = (extractedSizeBits + 7) / 8;
         unsigned int revertedSizeBits = extractedSizeBits;
         size_t revertedSizeBytes = (revertedSizeBits + 7) / 8;

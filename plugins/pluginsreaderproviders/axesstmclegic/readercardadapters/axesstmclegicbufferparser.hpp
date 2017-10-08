@@ -17,11 +17,11 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API AxessTMCLegicBufferParser : public CircularBufferParser
     {
     public:
-        AxessTMCLegicBufferParser() {};
+        AxessTMCLegicBufferParser() {}
 
-        virtual ~AxessTMCLegicBufferParser() {};
+        virtual ~AxessTMCLegicBufferParser() {}
 
-        virtual std::vector<unsigned char> getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer);
+	    ByteVector getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer) override;
     };
 }
 

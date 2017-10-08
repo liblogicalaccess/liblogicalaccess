@@ -107,7 +107,7 @@ int main(int ac, char **av)
     ReaderProviderPtr provider;
     ReaderUnitPtr readerUnit;
     ChipPtr chip;
-    std::tie(provider, readerUnit, chip) = lla_test_init("Mifare1K");
+    tie(provider, readerUnit, chip) = lla_test_init("Mifare1K");
 
     PRINT_TIME("Chip identifier: " <<
                logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
@@ -117,12 +117,12 @@ int main(int ac, char **av)
                " instead.");
 
 
-    auto cmd = std::dynamic_pointer_cast<logicalaccess::MifareCommands>(chip->getCommands());
+    auto cmd = std::dynamic_pointer_cast<MifareCommands>(chip->getCommands());
 
     // Get the root node
-    std::shared_ptr<logicalaccess::LocationNode> rootNode = chip->getRootLocationNode();
+    std::shared_ptr<LocationNode> rootNode = chip->getRootLocationNode();
     // Get childrens of this node
-    std::vector<std::shared_ptr<logicalaccess::LocationNode> > childs = rootNode->getChildrens();
+    std::vector<std::shared_ptr<LocationNode> > childs = rootNode->getChildrens();
 
     write_value_block(cmd);
     read_value_block(cmd);

@@ -20,12 +20,12 @@ namespace logicalaccess
     {
     }
 
-    std::vector<unsigned char> PCSCReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
+    ByteVector PCSCReaderCardAdapter::adaptCommand(const ByteVector& command)
     {
         return command;
     }
 
-    std::vector<unsigned char> PCSCReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
+    ByteVector PCSCReaderCardAdapter::adaptAnswer(const ByteVector& answer)
     {
         return answer;
     }

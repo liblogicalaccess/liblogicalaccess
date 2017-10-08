@@ -75,7 +75,7 @@ namespace logicalaccess
         m_write_buffer.clear();
     }
 
-    void SerialPort::do_close(const boost::system::error_code& error)
+    void SerialPort::do_close(const boost::system::error_code& /*error*/)
     {
         if (m_serial_port.is_open())
         {
@@ -142,7 +142,7 @@ namespace logicalaccess
         return character_size.value();
     }
 
-    size_t SerialPort::read(std::vector<unsigned char>& buf)
+    size_t SerialPort::read(ByteVector& buf)
     {
         EXCEPTION_ASSERT(isOpen(), LibLogicalAccessException, "Cannot read on a closed device");
 
@@ -160,7 +160,7 @@ namespace logicalaccess
         return buf.size();
     }
 
-    void SerialPort::do_read(const boost::system::error_code& error, const std::size_t bytes_transferred)
+    void SerialPort::do_read(const boost::system::error_code& error, const size_t bytes_transferred)
     {
         if (error == boost::asio::error::operation_aborted)
         {
@@ -185,7 +185,7 @@ namespace logicalaccess
         m_circular_read_buffer.insert(m_circular_read_buffer.end(), m_read_buffer.begin(), m_read_buffer.begin() + bytes_transferred);
 
         LOG(LogLevel::INFOS) << "Data read: "
-            << BufferHelper::getHex(std::vector<unsigned char>(m_read_buffer.begin(), m_read_buffer.begin() + bytes_transferred))
+            << BufferHelper::getHex(ByteVector(m_read_buffer.begin(), m_read_buffer.begin() + bytes_transferred))
             << " Size: " << bytes_transferred;
 
         data_flag_ = true;
@@ -197,7 +197,7 @@ namespace logicalaccess
             this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
     }
 
-    size_t SerialPort::write(const std::vector<unsigned char>& buf)
+    size_t SerialPort::write(const ByteVector& buf)
     {
         EXCEPTION_ASSERT(isOpen(), LibLogicalAccessException, "Cannot write on a closed device");
 
@@ -215,14 +215,14 @@ namespace logicalaccess
 
     void SerialPort::write_start()
     {
-        boost::asio::async_write(m_serial_port,
+        async_write(m_serial_port,
             boost::asio::buffer(m_write_buffer),
             boost::bind(&SerialPort::write_complete,
             this, boost::asio::placeholders::error,
             boost::asio::placeholders::bytes_transferred));
     }
 
-    void SerialPort::write_complete(const boost::system::error_code& error, const std::size_t bytes_transferred)
+    void SerialPort::write_complete(const boost::system::error_code& error, const size_t bytes_transferred)
     {
         if (!error)
         { // write completed, so send next write data
@@ -234,7 +234,7 @@ namespace logicalaccess
             do_close(error);
     }
 
-    bool SerialPort::isOpen()
+    bool SerialPort::isOpen() const
     {
         return m_serial_port.is_open();
     }

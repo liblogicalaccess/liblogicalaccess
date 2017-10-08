@@ -13,7 +13,7 @@ namespace logicalaccess
     RplethReaderUnitConfiguration::RplethReaderUnitConfiguration()
         : ISO7816ReaderUnitConfiguration(READER_RPLETH)
     {
-        resetConfiguration();
+	    RplethReaderUnitConfiguration::resetConfiguration();
     }
 
     RplethReaderUnitConfiguration::~RplethReaderUnitConfiguration()
@@ -24,7 +24,7 @@ namespace logicalaccess
     {
         d_offset = 1;
         d_length = 16;
-        d_mode = RplethMode::PROXY;
+        d_mode = PROXY;
     }
 
     void RplethReaderUnitConfiguration::setWiegandConfiguration(unsigned char offset, unsigned char length)

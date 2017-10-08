@@ -25,7 +25,7 @@ namespace logicalaccess
         /**
          * \brief Constructor.
          */
-        SpringCardReaderUnit(const std::string& name);
+	    explicit SpringCardReaderUnit(const std::string& name);
 
         /**
          * \brief Destructor.
@@ -36,12 +36,12 @@ namespace logicalaccess
          * \brief Get the PC/SC reader unit type.
          * \return The PC/SC reader unit type.
          */
-        virtual PCSCReaderUnitType getPCSCType() const;
+	    PCSCReaderUnitType getPCSCType() const override;
 
     protected:
-        virtual std::shared_ptr<CardProbe> createCardProbe() override;
+	    std::shared_ptr<CardProbe> createCardProbe() override;
 
-        virtual std::shared_ptr<ResultChecker> createDefaultResultChecker() const override;
+	    std::shared_ptr<ResultChecker> createDefaultResultChecker() const override;
     };
 }
 

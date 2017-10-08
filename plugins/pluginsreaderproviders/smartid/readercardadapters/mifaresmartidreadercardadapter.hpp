@@ -30,38 +30,36 @@ namespace logicalaccess
          * \param timeout The command timeout.
          * \return The result of the command.
          */
-        virtual std::vector<unsigned char> sendCommand(unsigned char cmd, const std::vector<unsigned char>& command, long int timeout = 1000);
+		ByteVector sendCommand(unsigned char cmd, const ByteVector& command, long int timeout = 1000) override;
 
         /**
          * \brief Send a REQ command from the PCD to the PICC.
          * \return The ATQ value.
          */
-        virtual std::vector<unsigned char> request();
+		ByteVector request() override;
 
         /**
          * \brief Manage collision.
          * \return PICC serial number.
          */
-        virtual std::vector<unsigned char> anticollision();
+		ByteVector anticollision() override;
 
         /**
          * \brief Select a PICC.
          * \param uid The PICC serial number.
          */
-        virtual void selectIso(const std::vector<unsigned char>& uid);
+	    void selectIso(const ByteVector& uid) override;
 
         /**
          * \brief Select a PICC.
          * \param uid The PICC serial number.
          */
-        virtual void select(const std::vector<unsigned char>& uid);
+        virtual void select(const ByteVector& uid);
 
         /**
          * \brief Send a HLT command from the PCD to the PICC.
          */
-        virtual void halt();
-
-    protected:
+	    void halt() override;
     };
 }
 

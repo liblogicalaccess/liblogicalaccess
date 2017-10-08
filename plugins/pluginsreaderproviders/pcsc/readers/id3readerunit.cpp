@@ -101,20 +101,17 @@ bool ID3ReaderUnit::process_insertion(const std::string &cardType, int maxwait,
     {
         return true;
     }
-    else
-    {
-        PCSCReaderUnit::connect();
+	PCSCReaderUnit::connect();
 
-        // Now that we are hopefully connected to something, we try to find
-        // the card we meant to use.
-        while (etc.elapsed() < static_cast<unsigned int>(maxwait))
-        {
-            if (select_correct_card())
-                return true;
-            std::this_thread::sleep_for(std::chrono::milliseconds(150));
-        }
-    }
-    return false;
+	// Now that we are hopefully connected to something, we try to find
+	// the card we meant to use.
+	while (etc.elapsed() < static_cast<unsigned int>(maxwait))
+	{
+		if (select_correct_card())
+			return true;
+		std::this_thread::sleep_for(std::chrono::milliseconds(150));
+	}
+	return false;
 }
 
 ByteVector ID3ReaderUnit::getAtr(int idx)
@@ -204,10 +201,10 @@ std::vector<std::shared_ptr<Chip>> ID3ReaderUnit::getChipList()
 
 std::shared_ptr<Chip> ID3ReaderUnit::selectCard(std::shared_ptr<Chip> c)
 {
-    auto itr = std::find(chips_.begin(), chips_.end(), c);
+    auto itr = find(chips_.begin(), chips_.end(), c);
     if (itr != chips_.end())
     {
-        auto idx = std::distance(chips_.begin(), itr);
+        auto idx = distance(chips_.begin(), itr);
         selectCard(static_cast<uint8_t>(idx));
         return c;
     }
@@ -233,8 +230,8 @@ ID3ReaderUnit::APDUWrapperGuard::~APDUWrapperGuard()
     reader_->setDefaultReaderCardAdapter(adapter_);
 }
 
-std::vector<unsigned char> ID3ReaderUnit::APDUWrapperGuard::Adapter::adaptCommand(
-    const std::vector<unsigned char> &command)
+ByteVector ID3ReaderUnit::APDUWrapperGuard::Adapter::adaptCommand(
+    const ByteVector &command)
 {
     assert(command.size() <= 255);
     auto tmp = ByteVector{0xFF, 0x9F};
@@ -242,8 +239,8 @@ std::vector<unsigned char> ID3ReaderUnit::APDUWrapperGuard::Adapter::adaptComman
     return tmp;
 }
 
-std::vector<unsigned char> ID3ReaderUnit::APDUWrapperGuard::Adapter::adaptAnswer(
-    const std::vector<unsigned char> &res)
+ByteVector ID3ReaderUnit::APDUWrapperGuard::Adapter::adaptAnswer(
+    const ByteVector &res)
 {
     EXCEPTION_ASSERT_WITH_LOG(res.size() >= 2, LibLogicalAccessException,
                               "Response is too short.");

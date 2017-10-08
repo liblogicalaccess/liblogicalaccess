@@ -34,7 +34,7 @@ namespace logicalaccess
             return new BinaryDataType();
 
         default:
-            return NULL;
+            return nullptr;
         }
     }
 
@@ -100,7 +100,7 @@ namespace logicalaccess
         unsigned int nbblocks = static_cast<unsigned int>(buflen / blocklen);
         unsigned int newsize = buflen + (nbblocks * (((leftParity != PT_NONE) ? 1 : 0) + ((rightParity != PT_NONE) ? 1 : 0)));
 
-        if (buf != NULL && procbuf != NULL && procbuflen >= newsize)
+        if (buf != nullptr && procbuf != nullptr && procbuflen >= newsize)
         {
             unsigned int posproc = 0;
             size_t buflenBytes = (buflen + 7) / 8;
@@ -144,7 +144,7 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, tmpmsg);
         }
 
-        if (buf != NULL && procbuf != NULL && procbuflen >= newsize)
+        if (buf != nullptr && procbuf != nullptr && procbuflen >= newsize)
         {
             size_t buflenBytes = (buflen + 7) / 8;
 

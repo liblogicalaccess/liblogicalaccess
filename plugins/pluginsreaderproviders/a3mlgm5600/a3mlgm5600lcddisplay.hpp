@@ -33,19 +33,19 @@ namespace logicalaccess
          * \brief Write a message on screen.
          * \param message The message to show.
          */
-        virtual void setMessage(std::string message) override;
+	    void setMessage(std::string message) override;
 
 
-        virtual void clear() override;
+	    void clear() override;
 
         /**
          * \brief Write a message on screen.
          * \param rowid The row id for the message.
          * \param message The message to show.
          */
-        virtual void setMessage(unsigned char rowid, std::string message);
+	    void setMessage(unsigned char rowid, std::string message) override;
 
-        std::shared_ptr<A3MLGM5600ReaderCardAdapter> getA3MLGM5600ReaderCardAdapter() { return std::dynamic_pointer_cast<A3MLGM5600ReaderCardAdapter>(getReaderCardAdapter()); };
+        std::shared_ptr<A3MLGM5600ReaderCardAdapter> getA3MLGM5600ReaderCardAdapter() const { return std::dynamic_pointer_cast<A3MLGM5600ReaderCardAdapter>(getReaderCardAdapter()); }
     };
 }
 

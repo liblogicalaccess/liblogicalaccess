@@ -4,17 +4,17 @@
 
 namespace logicalaccess
 {
-class STidPRGReaderCardAdapter : public ReaderCardAdapter
+class LIBLOGICALACCESS_API STidPRGReaderCardAdapter : public ReaderCardAdapter
 {
 
   public:
-    virtual std::vector<unsigned char>
-    adaptCommand(const std::vector<unsigned char> &command) override;
+	ByteVector
+    adaptCommand(const ByteVector &command) override;
 
-    virtual std::vector<unsigned char>
-    adaptAnswer(const std::vector<unsigned char> &answer) override;
+	ByteVector
+    adaptAnswer(const ByteVector &answer) override;
 
   protected:
-    uint8_t compute_crc(const std::vector<uint8_t> &cmd);
+	  static uint8_t compute_crc(const std::vector<uint8_t> &cmd);
 };
 }

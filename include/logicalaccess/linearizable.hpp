@@ -27,14 +27,14 @@ namespace logicalaccess
          * \brief Export location informations to a buffer.
          * \param data The buffer.
          */
-        virtual std::vector<unsigned char> getLinearData() const = 0;
+        virtual ByteVector getLinearData() const = 0;
 
         /**
          * \brief Import location informations from a buffer.
          * \param data The buffer.
          * \param offset The offset.
          */
-        virtual void setLinearData(const std::vector<unsigned char>& data, size_t offset) = 0;
+        virtual void setLinearData(const ByteVector& data, size_t offset) = 0;
     };
 }
 

@@ -95,7 +95,7 @@ namespace logicalaccess
             memset(&d_keyentryinformation, 0x00, sizeof(d_keyentryinformation));
         }
 
-        SAMKeyEntry(const std::string& str, const std::string& str1 = "", const std::string& str2 = "") : SAMBasicKeyEntry(str, str1, str2)
+	    explicit SAMKeyEntry(const std::string& str, const std::string& str1 = "", const std::string& str2 = "") : SAMBasicKeyEntry(str, str1, str2)
         {
             memset(&d_keyentryinformation, 0x00, sizeof(d_keyentryinformation));
         }
@@ -115,9 +115,9 @@ namespace logicalaccess
          * \param ai SAMKeyEntry key to compare.
          * \return True if inequals, false otherwise.
          */
-        inline bool operator!=(const SAMKeyEntry& key) const { return !operator==(key); };
+	    bool operator!=(const SAMKeyEntry& key) const { return !operator==(key); }
 
-        void setSET(unsigned char *t) { memcpy(d_keyentryinformation.set, t, sizeof(*t)); };
+        void setSET(unsigned char *t) { memcpy(d_keyentryinformation.set, t, sizeof(*t)); }
 
         S getSETStruct()
         {
@@ -164,8 +164,8 @@ namespace logicalaccess
             }
         }
 
-        T &getKeyEntryInformation() { return d_keyentryinformation; };
-        void setKeyEntryInformation(const T& t) { d_keyentryinformation = t; };
+        T &getKeyEntryInformation() { return d_keyentryinformation; }
+        void setKeyEntryInformation(const T& t) { d_keyentryinformation = t; }
 
         void setKeyTypeFromSET()
         {
@@ -185,6 +185,7 @@ namespace logicalaccess
             case SAM_KEY_AES:
                 d_keyType = SAM_KEY_AES;
                 break;
+            default: ;
             }
 
             unsigned char *tmp = new unsigned char[getLength()];
@@ -213,7 +214,7 @@ namespace logicalaccess
             }
         }
 
-        void setKeysData(std::vector<std::vector<unsigned char> > keys, SAMKeyType type)
+        void setKeysData(std::vector<ByteVector > keys, SAMKeyType type) override
         {
             SAMBasicKeyEntry::setKeysData(keys, type);
             setSETKeyTypeFromKeyType();

@@ -36,15 +36,12 @@ namespace logicalaccess
 		{
 			return d_real_chip->getRootLocationNode();
 		}
-		else
-		{
-			std::shared_ptr<LocationNode> rootNode;
-			rootNode.reset(new LocationNode());
+	    std::shared_ptr<LocationNode> rootNode;
+	    rootNode.reset(new LocationNode());
 
-			rootNode->setName("RFID Tag");
+	    rootNode->setName("RFID Tag");
 
-			return rootNode;
-		}
+	    return rootNode;
     }
 
 	void GenericTagChip::setRealChip(std::shared_ptr<Chip> real_chip)

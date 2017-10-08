@@ -40,13 +40,15 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API ReaderUnit : public XmlSerializable, public std::enable_shared_from_this < ReaderUnit >
     {
     public:
+#ifndef SWIG
         using XmlSerializable::serialize;
         using XmlSerializable::unSerialize;
+#endif
 
         /**
          * \brief Constructor.
          */
-		ReaderUnit(std::string rpt);
+	    explicit ReaderUnit(std::string rpt);
 
         /**
          * \brief Destructor.
@@ -63,7 +65,7 @@ namespace logicalaccess
          * \brief Get the reader ping command.
          * \return The ping command.
          */
-        virtual std::vector<unsigned char> getPingCommand() const;
+        virtual ByteVector getPingCommand() const;
 
         /**
          * \brief Wait for a card insertion.
@@ -80,7 +82,7 @@ namespace logicalaccess
          * \return True if a card was inserted, false otherwise. If a card was inserted, the name of the reader on which the insertion was detected is accessible with getReader().
          * \warning If the card is already connected, then the method always fail. Generic and heavy behavior, should be implemented correctly for each reader type.
          */
-        virtual bool waitInsertion(const std::vector<unsigned char>& identifier, unsigned int maxwait);
+        virtual bool waitInsertion(const ByteVector& identifier, unsigned int maxwait);
 
         /**
          * \brief Wait for a card removal.
@@ -99,7 +101,7 @@ namespace logicalaccess
          * \brief Get the forced card type.
          * \return The forced card type.
          */
-        inline std::string getCardType() const { return d_card_type; };
+	    std::string getCardType() const { return d_card_type; }
 
         /**
          * \brief Set the forced card type.
@@ -120,14 +122,14 @@ namespace logicalaccess
          * \param identifier The chip identifier.
          * \return The chip.
          */
-        virtual std::shared_ptr<Chip> createChip(std::string type, const std::vector<unsigned char>& identifier);
+        virtual std::shared_ptr<Chip> createChip(std::string type, const ByteVector& identifier);
 
         /**
          * \brief Get the number from the embedded licensing configuration.
          * \param chip The chip object.
          * \return The identifier number.
          */
-        virtual std::vector<unsigned char> getNumber(std::shared_ptr<Chip> chip);
+        virtual ByteVector getNumber(std::shared_ptr<Chip> chip);
 
         /**
          * \brief Get the first and/or most accurate chip found.
@@ -147,7 +149,7 @@ namespace logicalaccess
          * \param composite The card format composite.
          * \return The identifier number.
          */
-        virtual std::vector<unsigned char> getNumber(std::shared_ptr<Chip> chip, std::shared_ptr<CardsFormatComposite> composite);
+        virtual ByteVector getNumber(std::shared_ptr<Chip> chip, std::shared_ptr<CardsFormatComposite> composite);
 
         /**
          * \brief Get the number as decimal a number.
@@ -155,14 +157,14 @@ namespace logicalaccess
          * \param padding Add or soustract a value to the number (Generaly used for a cards pack).
          * \return The number as a decimal representation.
          */
-        uint64_t getFormatedNumber(const std::vector<unsigned char>& number, int padding);
+        static uint64_t getFormatedNumber(const ByteVector& number, int padding);
 
         /**
          * \brief Get a string hexadecimal representation of the number.
          * \param number The buffer with the number.
          * \return The number or an empty string on error.
          */
-        std::string getFormatedNumber(const std::vector<unsigned char>& number);
+        static std::string getFormatedNumber(const ByteVector& number);
 
         /**
          * \brief Connect to the card.
@@ -176,7 +178,7 @@ namespace logicalaccess
 		* \brief Reconnect to the card with the currently active share mode on the same reader.
 		* \return True if the card was reconnected without error, false otherwise.
 		*/
-		virtual bool reconnect(int action = 0) { (void)action; return true; };
+		virtual bool reconnect(int action = 0) { (void)action; return true; }
 
         /**
          * \brief Disconnect from the card.
@@ -204,7 +206,7 @@ namespace logicalaccess
          * \brief Get the connected reader unit name.
          * \return The connected reader unit name.
          */
-        virtual std::string getConnectedName() { return getName(); };
+        virtual std::string getConnectedName() { return getName(); }
 
         /**
          * \brief Get the reader unit configuration.
@@ -252,19 +254,19 @@ namespace logicalaccess
          * \brief Get the default Xml Node name for this object.
          * \return The Xml node name.
          */
-        virtual std::string getDefaultXmlNodeName() const override;
+	    std::string getDefaultXmlNodeName() const override;
 
         /**
          * \brief Serialize the current object to XML.
          * \param parentNode The parent node.
          */
-        virtual void serialize(boost::property_tree::ptree& node) override;
+	    void serialize(boost::property_tree::ptree& node) override;
 
         /**
          * \brief UnSerialize a XML node to the current object.
          * \param node The XML node.
          */
-        virtual void unSerialize(boost::property_tree::ptree& node) override;
+	    void unSerialize(boost::property_tree::ptree& node) override;
 
         /**
          * \brief UnSerialize object from a Xml node.
@@ -272,19 +274,19 @@ namespace logicalaccess
          * \param rootNode The root node.
          * \return True on success, false otherwise.
          */
-        virtual void unSerialize(boost::property_tree::ptree& node, const std::string& rootNode) override;
+	    void unSerialize(boost::property_tree::ptree& node, const std::string& rootNode) override;
 
         /**
          * \brief Get the associated reader provider.
          * \return The associated reader provider.
          */
-        std::shared_ptr<ReaderProvider> getReaderProvider() const { return d_readerProvider.lock(); };
+        std::shared_ptr<ReaderProvider> getReaderProvider() const { return d_readerProvider.lock(); }
 
         /**
          * \brief Set the associated reader provider.
          * \param provider The associated reader provider.
          */
-        void setReaderProvider(std::weak_ptr<ReaderProvider> provider) { d_readerProvider = provider; };
+        void setReaderProvider(std::weak_ptr<ReaderProvider> provider) { d_readerProvider = provider; }
 
         /**
          * \brief Get the LCD Display for this reader unit.

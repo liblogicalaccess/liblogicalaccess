@@ -45,13 +45,13 @@ namespace logicalaccess
              * \brief Get the associated data.
              * \return The associated data.
              */
-            void* getAppData();
+            void* getAppData() const;
 
             /**
              * \brief Set the associated data.
              * \param data The data.
              */
-            void setAppData(void* data);
+            void setAppData(void* data) const;
 
             /**
              * \brief Get the associated data.
@@ -66,63 +66,63 @@ namespace logicalaccess
              * \brief Set the cipher list.
              * \param list The cipher list.
              */
-            void setCipherList(const char* list);
+            void setCipherList(const char* list) const;
 
             /**
              * \brief Set the "read-ahead" flag.
              * \param value true to set, false to unset.
              */
-            void setReadAhead(bool value);
+            void setReadAhead(bool value) const;
 
             /**
              * \brief Set the verify details.
              * \param mode The verify mode.
              * \param callback The verify callback.
              */
-            void setVerify(int mode, int(*callback)(int, X509_STORE_CTX*));
+            void setVerify(int mode, int(*callback)(int, X509_STORE_CTX*)) const;
 
             /**
              * \brief Set the verify depth.
              * \param depth The depth.
              */
-            void setVerifyDepth(int depth);
+            void setVerifyDepth(int depth) const;
 
             /**
              * \brief Use a certificate.
              * \param cert The certificate to use. If cert is NULL, the behavior is undefined.
              */
-            void useX509Certificate(const X509Certificate& cert);
+            void useX509Certificate(const X509Certificate& cert) const;
 
             /**
              * \brief Use a private key (RSA).
              * \param key The RSA key to use.
              */
-            void useRSAPrivateKey(const RSAKey& key);
+            void useRSAPrivateKey(const RSAKey& key) const;
 
             /**
              * \brief Load a verification certificate file.
              * \param verification_certificate The verification certificate.
              */
-            void loadVerificationCertificate(const X509Certificate& verification_certificate);
+            void loadVerificationCertificate(const X509Certificate& verification_certificate) const;
 
             /**
              * \brief Load a verification certificate file.
              * \param verification_certificate_file The verification certificate file.
              */
-            void loadVerificationCertificateFile(const std::string& verification_certificate_file);
+            void loadVerificationCertificateFile(const std::string& verification_certificate_file) const;
 
             /**
              * \brief Load a verification certificate path.
              * \param verification_certificate_path The verification certificate path.
              */
-            void loadVerificationCertificatePath(const std::string& verification_certificate_path);
+            void loadVerificationCertificatePath(const std::string& verification_certificate_path) const;
 
             /**
              * \brief Get the raw pointer.
              * \return The raw pointer.
              */
-            inline std::shared_ptr<SSL_CTX> getRaw()
-            {
+	        std::shared_ptr<SSL_CTX> getRaw() const
+	        {
                 return d_ctx;
             }
 
@@ -131,19 +131,19 @@ namespace logicalaccess
             /**
              * \brief Create a null context.
              */
-            inline SSLContext() { OpenSSLInitializer::GetInstance(); }
+	        SSLContext() { OpenSSLInitializer::GetInstance(); }
 
             /**
              * \brief Constructor.
              * \param ctx The SSL context to use. If ctx is NULL, the behavior is undefined.
              */
-            SSLContext(std::shared_ptr<SSL_CTX> ctx);
+	        explicit SSLContext(std::shared_ptr<SSL_CTX> ctx);
 
             /**
              * \brief The boolean test.
              * \return true if d_ctx is not-null.
              */
-            inline bool boolean_test() const
+	        bool boolean_test() const
             {
                 return bool(d_ctx);
             }
@@ -151,7 +151,7 @@ namespace logicalaccess
             /**
              * \brief Clear the context.
              */
-            inline void clear()
+	        void clear()
             {
                 d_ctx.reset();
             }

@@ -49,7 +49,7 @@ namespace logicalaccess
              * \brief Check if the EVP PKEY has a private compound.
              * \return true if the EVP PKEY has a private compound, false otherwise.
              */
-            inline bool hasPrivateCompound() const
+	        bool hasPrivateCompound() const
             {
                 return d_has_private_compound;
             }

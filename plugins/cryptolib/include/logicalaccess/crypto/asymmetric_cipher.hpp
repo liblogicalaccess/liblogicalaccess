@@ -11,6 +11,7 @@
 
 #include <vector>
 #include <iostream>
+#include "logicalaccess/lla_fwd.hpp"
 
 namespace logicalaccess
 {
@@ -28,7 +29,7 @@ namespace logicalaccess
             /**
              * \brief Destructor.
              */
-            virtual ~AsymmetricCipher() {};
+            virtual ~AsymmetricCipher() {}
 
             /**
              * \brief A list of possible encryption keys compounds to use.
@@ -47,7 +48,7 @@ namespace logicalaccess
              * \param key_compound The key compound to use.
              * In case of a failure, the call throw an InvalidCallException.
              */
-            virtual void cipher(const std::vector<unsigned char>& src, std::vector<unsigned char>& dest, const AsymmetricKey& key, KeyCompound key_compound) = 0;
+            virtual void cipher(const ByteVector& src, ByteVector& dest, const AsymmetricKey& key, KeyCompound key_compound) = 0;
 
             /**
              * \brief Decipher a buffer.
@@ -57,7 +58,7 @@ namespace logicalaccess
              * \param key_compound The key compound to use.
              * In case of a failure, the call throw a InvalidCallException.
              */
-            virtual void decipher(const std::vector<unsigned char>& src, std::vector<unsigned char>& dest, const AsymmetricKey& key, KeyCompound key_compound) = 0;
+            virtual void decipher(const ByteVector& src, ByteVector& dest, const AsymmetricKey& key, KeyCompound key_compound) = 0;
         };
     }
 }

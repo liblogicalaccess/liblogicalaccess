@@ -13,11 +13,11 @@
 
 namespace logicalaccess
 {
-    void MifareNFCTagCardService::writeNDEF(std::shared_ptr<logicalaccess::NdefMessage> records)
+    void MifareNFCTagCardService::writeNDEF(std::shared_ptr<NdefMessage> records)
     {
-        std::shared_ptr<logicalaccess::StorageCardService> storage = std::dynamic_pointer_cast<StorageCardService>(getMifareChip()->getService(CST_STORAGE));
-        std::shared_ptr<logicalaccess::MifareLocation> location(new logicalaccess::MifareLocation());
-        std::shared_ptr<logicalaccess::MifareAccessInfo> aiToWrite(new logicalaccess::MifareAccessInfo());
+        std::shared_ptr<StorageCardService> storage = std::dynamic_pointer_cast<StorageCardService>(getMifareChip()->getService(CST_STORAGE));
+        std::shared_ptr<MifareLocation> location(new MifareLocation());
+        std::shared_ptr<MifareAccessInfo> aiToWrite(new MifareAccessInfo());
         location->sector = 1;
         location->useMAD = true;
         location->aid = 0x03E1;
@@ -29,24 +29,24 @@ namespace logicalaccess
         aiToWrite->madKeyA.reset(new MifareKey("ff ff ff ff ff ff"));
         aiToWrite->madGPB = 0xC1;
         
-        storage->writeData(location, std::shared_ptr<logicalaccess::AccessInfo>(), aiToWrite, NdefMessage::NdefMessageToTLV(records), CB_AUTOSWITCHAREA);
+        storage->writeData(location, std::shared_ptr<AccessInfo>(), aiToWrite, NdefMessage::NdefMessageToTLV(records), CB_AUTOSWITCHAREA);
     }
 
-    std::shared_ptr<logicalaccess::NdefMessage> MifareNFCTagCardService::readNDEF()
+    std::shared_ptr<NdefMessage> MifareNFCTagCardService::readNDEF()
     {
-        std::shared_ptr<logicalaccess::StorageCardService> storage = std::dynamic_pointer_cast<StorageCardService>(getMifareChip()->getService(CST_STORAGE));
-        std::shared_ptr<logicalaccess::MifareLocation> location(new logicalaccess::MifareLocation());
+        std::shared_ptr<StorageCardService> storage = std::dynamic_pointer_cast<StorageCardService>(getMifareChip()->getService(CST_STORAGE));
+        std::shared_ptr<MifareLocation> location(new MifareLocation());
 
         location->sector = 1;
         location->useMAD = true;
         location->aid = 0x03E1;
 
         // Read all available data from sector
-        std::vector<unsigned char> data = storage->readData(location, std::shared_ptr<logicalaccess::MifareAccessInfo>(), 48, CB_AUTOSWITCHAREA);
+        ByteVector data = storage->readData(location, std::shared_ptr<MifareAccessInfo>(), 48, CB_AUTOSWITCHAREA);
         try
         {
             location->sector = 2;
-            std::vector<unsigned char> data2 = storage->readData(location, std::shared_ptr<logicalaccess::MifareAccessInfo>(), 48, CB_AUTOSWITCHAREA);
+            ByteVector data2 = storage->readData(location, std::shared_ptr<MifareAccessInfo>(), 48, CB_AUTOSWITCHAREA);
             data.insert(data.end(), data2.begin(), data2.end());
         }
         catch (const std::exception&) { }

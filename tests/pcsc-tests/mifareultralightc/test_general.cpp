@@ -52,7 +52,7 @@ std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr, logic
     LLA_ASSERT(chip, "getSingleChip() returned NULL");
     PRINT_TIME("GetSingleChip");
 
-    return std::make_tuple(provider, readerUnit, chip);
+    return make_tuple(provider, readerUnit, chip);
 }
 
 int main(int ac, char **av)
@@ -63,27 +63,27 @@ int main(int ac, char **av)
     ReaderProviderPtr provider;
     ReaderUnitPtr readerUnit;
     ChipPtr chip;
-    std::tie(provider, readerUnit, chip) = init();
+    tie(provider, readerUnit, chip) = init();
 
     PRINT_TIME("CHip identifier: " <<
                logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
 
     LLA_ASSERT(chip->getCardType() == "MifareUltralightC",
                "Chip is not an MifareUltralight(C), but is " + chip->getCardType() + " instead.");
-    auto cmd = std::dynamic_pointer_cast<logicalaccess::MifareUltralightCommands>(
+    auto cmd = std::dynamic_pointer_cast<MifareUltralightCommands>(
             chip->getCommands());
     LLA_ASSERT(cmd, "Cannot get command from chip");
 
-    auto cmdUltraC = std::dynamic_pointer_cast<logicalaccess::MifareUltralightCCommands>(
+    auto cmdUltraC = std::dynamic_pointer_cast<MifareUltralightCCommands>(
             chip->getCommands());
     LLA_ASSERT(cmdUltraC, "Cannot cast command to MifareUltralightCCommands");
 
     //std::shared_ptr<logicalaccess::TripleDESKey> key(new logicalaccess::TripleDESKey("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"));
-    std::shared_ptr<logicalaccess::TripleDESKey> key;
+    std::shared_ptr<TripleDESKey> key;
     cmdUltraC->authenticate(key);
     LLA_SUBTEST_PASSED("Authenticate");
 
-    std::vector<unsigned char> data(4), tmp;
+    ByteVector data(4), tmp;
     data[0] = 0x11;
     data[3] = 0xff;
     cmd->writePage(10, data);

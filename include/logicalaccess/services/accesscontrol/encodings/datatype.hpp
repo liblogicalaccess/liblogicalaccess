@@ -36,7 +36,7 @@ namespace logicalaccess
         /**
          * \brief Constructor.
          */
-        virtual ~DataType() {};
+        virtual ~DataType() {}
 
         /**
          * \brief Convert "data" to the data type

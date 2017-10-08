@@ -16,11 +16,11 @@ namespace logicalaccess
       public:
         MifarePlusSL1AccessInfo();
 
-        virtual void serialize(boost::property_tree::ptree &parentNode) override;
+	    void serialize(boost::property_tree::ptree &parentNode) override;
 
-        virtual void unSerialize(boost::property_tree::ptree &parentNode) override;
+	    void unSerialize(boost::property_tree::ptree &parentNode) override;
 
-        virtual std::string getDefaultXmlNodeName() const;
+	    std::string getDefaultXmlNodeName() const override;
 
         /**
          * Key for card authentication in SL1.

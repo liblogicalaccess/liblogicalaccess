@@ -47,14 +47,16 @@ namespace logicalaccess
          * \param command The command to send.
          * \return The adapted command to send.
          */
-        virtual std::vector<unsigned char> adaptCommand(const std::vector<unsigned char>& command);
+		ByteVector adaptCommand(const ByteVector& command) override;
 
         /**
          * \brief Adapt the asnwer received from the reader.
          * \param answer The answer received.
          * \return The adapted answer received.
          */
-        virtual std::vector<unsigned char> adaptAnswer(const std::vector<unsigned char>& answer);
+		ByteVector adaptAnswer(const ByteVector& answer) override;
+
+		using ReaderCardAdapter::sendCommand;
 
         /**
          * \brief Send a command to the reader.
@@ -63,54 +65,54 @@ namespace logicalaccess
          * \param timeout The command timeout.
          * \return The result of the command.
          */
-        virtual std::vector<unsigned char> sendCommand(unsigned char cmd, const std::vector<unsigned char>& data, long int timeout = -1);
+        virtual ByteVector sendCommand(unsigned char cmd, const ByteVector& data, long int timeout = -1);
 
         /**
          * \brief Send a REQA command from the PCD to the PICC.
          * \return The ATQB PICC result.
          */
-        virtual std::vector<unsigned char> requestA();
+		ByteVector requestA() override;
 
         /**
          * \brief Send a RATS command from the PCD to the PICC.
          * \return The ATS PICC result.
          */
-        virtual std::vector<unsigned char> requestATS();
+		ByteVector requestATS() override;
 
         /**
          * \brief Send a HLTB command from the PCD to the PICC.
          */
-        virtual void haltA();
+	    void haltA() override;
 
         /**
          * \brief Manage collision.
          * \return The chip UID.
          */
-        virtual std::vector<unsigned char> anticollisionA();
+		ByteVector anticollisionA() override;
 
         /**
          * \brief Send a REQB command from the PCD to the PICC.
          * \param afi The AFI value.
          * \return The ATQB PICC result.
          */
-        virtual std::vector<unsigned char> requestB(unsigned char afi = 0x00);
+		ByteVector requestB(unsigned char afi = 0x00) override;
 
         /**
          * \brief Send a HLTB command from the PCD to the PICC.
          */
-        virtual void haltB();
+	    void haltB() override;
 
         /**
          * \brief Send a attrib command from the PCD to the PICC.
          */
-        virtual void attrib();
+	    void attrib() override;
 
         /**
          * \brief Manage collision.
          * \param afi The AFI value.
          * \return The chip UID.
          */
-        virtual std::vector<unsigned char> anticollisionB(unsigned char afi = 0x00);
+		ByteVector anticollisionB(unsigned char afi = 0x00) override;
 
     protected:
 
@@ -119,7 +121,7 @@ namespace logicalaccess
          * \param data The data to calculate checksum
          * \return The checksum.
          */
-        static unsigned char calcBCC(const std::vector<unsigned char>& data);
+        static unsigned char calcBCC(const ByteVector& data);
 
         /**
          * \brief The current sequence number.

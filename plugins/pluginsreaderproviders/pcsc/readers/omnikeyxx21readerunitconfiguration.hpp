@@ -43,31 +43,31 @@ namespace logicalaccess
         /**
          * \brief Reset the configuration to default values
          */
-        virtual void resetConfiguration();
+	    void resetConfiguration() override;
 
         /**
          * \brief Serialize the current object to XML.
          * \param parentNode The parent node.
          */
-        virtual void serialize(boost::property_tree::ptree& parentNode);
+	    void serialize(boost::property_tree::ptree& parentNode) override;
 
         /**
          * \brief UnSerialize a XML node to the current object.
          * \param node The XML node.
          */
-        virtual void unSerialize(boost::property_tree::ptree& node);
+	    void unSerialize(boost::property_tree::ptree& node) override;
 
         /**
          * \brief Get the default Xml Node name for this object.
          * \return The Xml node name.
          */
-        virtual std::string getDefaultXmlNodeName() const;
+	    std::string getDefaultXmlNodeName() const override;
 
         /**
          * \brief Get the PC/SC reader unit configuration type.
          * \return The PC/SC reader unit configuration type.
          */
-        virtual PCSCReaderUnitType getPCSCType() const { return PCSC_RUT_OMNIKEY_XX21; };
+	    PCSCReaderUnitType getPCSCType() const override { return PCSC_RUT_OMNIKEY_XX21; }
 
         /**
          * \brief Get if the secure mode is used.

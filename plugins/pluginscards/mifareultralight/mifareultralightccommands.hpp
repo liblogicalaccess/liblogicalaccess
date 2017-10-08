@@ -20,8 +20,9 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API MifareUltralightCCommands
     {
     public:
+	    virtual ~MifareUltralightCCommands() = default;
 
-        /**
+	    /**
          * \brief Authenticate to the chip.
          * \param aiToUse The access information to use for authentication.
          */
@@ -51,7 +52,7 @@ namespace logicalaccess
          */
         virtual void authenticate(std::shared_ptr<TripleDESKey> authkey) = 0;
 
-		virtual void writePage(int page, const std::vector<unsigned char>& buf) = 0;
+		virtual void writePage(int page, const ByteVector& buf) = 0;
 
 	protected:
 

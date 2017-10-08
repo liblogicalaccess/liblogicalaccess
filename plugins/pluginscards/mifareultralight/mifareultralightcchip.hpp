@@ -40,20 +40,20 @@ namespace logicalaccess
          * \brief Get the root location node.
          * \return The root location node.
          */
-        virtual std::shared_ptr<LocationNode> getRootLocationNode();
+	    std::shared_ptr<LocationNode> getRootLocationNode() override;
 
         /**
          * \brief Get a card service for this chip.
          * \param serviceType The card service type.
          * \return The card service.
          */
-        virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
+	    std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
 
 		/**
 		* \brief Create default access informations.
 		* \return Default access informations. Always null.
 		*/
-		virtual std::shared_ptr<AccessInfo> createAccessInfo() const;
+	    std::shared_ptr<AccessInfo> createAccessInfo() const override;
 
 		std::shared_ptr<TripleDESKey> getDefaultKey() const;
 
@@ -61,9 +61,7 @@ namespace logicalaccess
          * \brief Get the Mifare Ultralight C card provider for I/O access.
          * \return The Mifare Ultralight C card provider.
          */
-        std::shared_ptr<MifareUltralightCCommands> getMifareUltralightCCommands() { return std::dynamic_pointer_cast<MifareUltralightCCommands>(getMifareUltralightCommands()); };
-
-    protected:
+        std::shared_ptr<MifareUltralightCCommands> getMifareUltralightCCommands() const { return std::dynamic_pointer_cast<MifareUltralightCCommands>(getMifareUltralightCommands()); }
     };
 }
 

@@ -105,7 +105,7 @@ namespace logicalaccess
         while (bufferSize && !stop)
         {
             char *buffer = new char[bufferSize];
-            int ret = QueryDosDevice(NULL, buffer, bufferSize);
+            int ret = QueryDosDevice(nullptr, buffer, bufferSize);
             if (ret == 0)
             {
                 DWORD dwError = GetLastError();
@@ -126,7 +126,7 @@ namespace logicalaccess
                     {
                         if (strncmp(currentDevice, "COM", 3) == 0)
                         {
-                            if (std::all_of(currentDevice + 3, currentDevice + len, [](unsigned char c) { return ::isdigit(c); }))
+                            if (std::all_of(currentDevice + 3, currentDevice + len, [](unsigned char c) { return isdigit(c); }))
                             {
                                 std::shared_ptr<SerialPortXml> newPort;
                                 newPort.reset(new SerialPortXml(std::string(currentDevice, currentDevice + len)));

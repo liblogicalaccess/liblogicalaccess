@@ -48,7 +48,7 @@ class LIBLOGICALACCESS_API IdentityCardService : public CardService
         EXPIRATION
     };
 
-    IdentityCardService(std::shared_ptr<Chip> chip);
+	explicit IdentityCardService(std::shared_ptr<Chip> chip);
 
     virtual ~IdentityCardService() = default;
 

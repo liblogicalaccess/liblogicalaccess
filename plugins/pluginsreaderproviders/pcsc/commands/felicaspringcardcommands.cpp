@@ -40,12 +40,12 @@ namespace logicalaccess
         return 0x00;
     }
 
-    std::vector<unsigned char> FeliCaSpringCardCommands::read(const std::vector<unsigned short>& codes, const std::vector<unsigned short>& blocks)
+    ByteVector FeliCaSpringCardCommands::read(const std::vector<unsigned short>& codes, const std::vector<unsigned short>& blocks)
     {
-        std::vector<unsigned char> data;
+        ByteVector data;
         for (unsigned int i = 0; i < codes.size(); ++i)
         {
-            std::vector<unsigned char> cmd;
+            ByteVector cmd;
             // Set FeliCa Service Code to use
             cmd.push_back(static_cast<unsigned char>((codes[i] >> 8) & 0xff));
             cmd.push_back(static_cast<unsigned char>(codes[i] & 0xff));
@@ -53,19 +53,19 @@ namespace logicalaccess
 
             for (unsigned int b = 0; b < blocks.size(); ++b)
             {
-                std::vector<unsigned char> result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xB0, 0x00, static_cast<unsigned char>(blocks[b] & 0xff), 16);
+                ByteVector result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xB0, 0x00, static_cast<unsigned char>(blocks[b] & 0xff), 16);
                 data.insert(data.end(), result.begin(), result.end() - 2);
             }
         }
         return data;
     }
 
-    void FeliCaSpringCardCommands::write(const std::vector<unsigned short>& codes, const std::vector<unsigned short>& blocks, const std::vector<unsigned char>& data)
+    void FeliCaSpringCardCommands::write(const std::vector<unsigned short>& codes, const std::vector<unsigned short>& blocks, const ByteVector& data)
     {
         unsigned int offset = 0;
         for (unsigned int i = 0; i < codes.size(); ++i)
         {
-            std::vector<unsigned char> cmd;
+            ByteVector cmd;
             // Set FeliCa Service Code to use
             cmd.push_back(static_cast<unsigned char>((codes[i] >> 8) & 0xff));
             cmd.push_back(static_cast<unsigned char>(codes[i] & 0xff));
@@ -77,7 +77,7 @@ namespace logicalaccess
                     break;
 
                 unsigned char len = static_cast<unsigned char>((offset + 16 <= data.size()) ? 16 : data.size() - offset);
-                cmd = std::vector<unsigned char>(data.begin() + offset, data.begin() + offset + len);
+                cmd = ByteVector(data.begin() + offset, data.begin() + offset + len);
                 if (len != 16)
                 {
                     cmd.resize(16, 0x00);

@@ -25,8 +25,8 @@ std::ostream &operator<<(std::ostream &os, const SubTestTracker &stt)
     }
 
     std::list<std::string> not_run;
-    std::set_difference(stt.all_tests_.begin(), stt.all_tests_.end(),
-                        stt.tests_.begin(), stt.tests_.end(), std::inserter(not_run, not_run.begin()));
+    set_difference(stt.all_tests_.begin(), stt.all_tests_.end(),
+                        stt.tests_.begin(), stt.tests_.end(), inserter(not_run, not_run.begin()));
     if (not_run.empty())
     {
         os << "\nAll subtests ran.";

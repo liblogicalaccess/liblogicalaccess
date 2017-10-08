@@ -59,7 +59,7 @@ namespace logicalaccess
         location.reset(new MifareLocation());
         location->sector = sector;
 		location->block = -1;
-        location->byte = 0;
+        location->byte_ = 0;
 
         sectorNode->setLocation(location);
         sectorNode->setParent(rootNode);
@@ -81,7 +81,7 @@ namespace logicalaccess
 		location.reset(new MifareLocation());
 		location->sector = sector;
 		location->block = block;
-		location->byte = 0;
+		location->byte_ = 0;
 
 		blockNode->setLocation(location);
 		blockNode->setParent(rootNode);
@@ -119,7 +119,7 @@ namespace logicalaccess
         case CST_ACCESS_CONTROL:
         {
             service = LibraryManager::getInstance()
-                    ->getCardService(shared_from_this(), CardServiceType::CST_ACCESS_CONTROL);
+                    ->getCardService(shared_from_this(), CST_ACCESS_CONTROL);
             if (!service)
                 service.reset(new AccessControlCardService(shared_from_this()));
         }

@@ -39,14 +39,16 @@ namespace logicalaccess
          * \param command The command to send.
          * \return The adapted command to send.
          */
-        virtual std::vector<unsigned char> adaptCommand(const std::vector<unsigned char>& command);
+	    ByteVector adaptCommand(const ByteVector& command) override;
 
         /**
          * \brief Adapt the asnwer received from the reader.
          * \param answer The answer received.
          * \return The adapted answer received.
          */
-        virtual std::vector<unsigned char> adaptAnswer(const std::vector<unsigned char>& answer);
+	    ByteVector adaptAnswer(const ByteVector& answer) override;
+
+		using ReaderCardAdapter::sendCommand;
 
         /**
          * \brief Send a command to the reader.
@@ -55,7 +57,7 @@ namespace logicalaccess
          * \param timeout The command timeout.
          * \return The result of the command.
          */
-        virtual std::vector<unsigned char> sendCommand(unsigned char cmdcode, const std::vector<unsigned char>& command, long int timeout = 2000);
+        virtual ByteVector sendCommand(unsigned char cmdcode, const ByteVector& command, long int timeout = 2000);
 
     protected:
 
@@ -64,7 +66,7 @@ namespace logicalaccess
          * \param buf The buffer.
          * \return The checksum value.
          */
-        static unsigned char calcChecksum(const std::vector<unsigned char>& buf);
+        static unsigned char calcChecksum(const ByteVector& buf);
 
         /**
          * \brief The last command code used.

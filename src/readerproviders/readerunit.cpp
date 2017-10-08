@@ -55,9 +55,9 @@ namespace logicalaccess
 		return d_readerProviderType;
 	}
 
-    std::vector<unsigned char> ReaderUnit::getPingCommand() const
+    ByteVector ReaderUnit::getPingCommand() const
     {
-        return std::vector<unsigned char>();
+        return ByteVector();
     }
 
     std::shared_ptr<LCDDisplay> ReaderUnit::getLCDDisplay()
@@ -88,7 +88,7 @@ namespace logicalaccess
         d_ledBuzzerDisplay = lbd;
     }
 
-    bool ReaderUnit::waitInsertion(const std::vector<unsigned char>& identifier, unsigned int maxwait)
+    bool ReaderUnit::waitInsertion(const ByteVector& identifier, unsigned int maxwait)
     {
         LOG(LogLevel::INFOS) << "Started for identifier " << BufferHelper::getHex(identifier) << " - maxwait " << maxwait;
 
@@ -106,7 +106,7 @@ namespace logicalaccess
                 std::vector<std::shared_ptr<Chip> > chipList = getChipList();
                 for (std::vector<std::shared_ptr<Chip> >::iterator i = chipList.begin(); i != chipList.end() && !found; ++i)
                 {
-                    std::vector<unsigned char> tmp = (*i)->getChipIdentifier();
+                    ByteVector tmp = (*i)->getChipIdentifier();
                     LOG(LogLevel::INFOS) << "Processing chip " << BufferHelper::getHex(tmp) << "...";
 
                     if (tmp == identifier)
@@ -135,10 +135,10 @@ namespace logicalaccess
         return inserted;
     }
 
-    std::vector<unsigned char> ReaderUnit::getNumber(std::shared_ptr<Chip> chip, std::shared_ptr<CardsFormatComposite> composite)
+    ByteVector ReaderUnit::getNumber(std::shared_ptr<Chip> chip, std::shared_ptr<CardsFormatComposite> composite)
     {
         LOG(LogLevel::INFOS) << "Started for chip type {" << chip->getCardType() << "} Generic {" << chip->getGenericCardType() << "}";
-        std::vector<unsigned char> ret;
+        ByteVector ret;
 
         if (composite)
         {
@@ -148,21 +148,21 @@ namespace logicalaccess
             CardTypeList ctList = composite->getConfiguredCardTypes();
             if (ctList.size() > 0)
             {
-                std::string useCardType = chip->getCardType();
-                CardTypeList::iterator itct = std::find(ctList.begin(), ctList.end(), useCardType);
+				std::string useCardType = chip->getCardType();
+                CardTypeList::iterator itct = find(ctList.begin(), ctList.end(), useCardType);
                 // Try to use the generic card type
                 if (itct == ctList.end())
                 {
                     useCardType = chip->getGenericCardType();
                     LOG(LogLevel::INFOS) << "No configuration found for the chip type ! Looking for the generic type (" << useCardType << ") configuration...";
-                    itct = std::find(ctList.begin(), ctList.end(), useCardType);
+                    itct = find(ctList.begin(), ctList.end(), useCardType);
                 }
                 // Try to use the configuration for all card (= generic tag), because the card type isn't configured
                 if (itct == ctList.end())
                 {
                     LOG(LogLevel::INFOS) << "No configuration found for the chip type ! Looking for \"GenericTag\" configuration...";
 					useCardType = CHIP_GENERICTAG;
-                    itct = std::find(ctList.begin(), ctList.end(), useCardType);
+                    itct = find(ctList.begin(), ctList.end(), useCardType);
                 }
 
                 // Try to read the number only if a configuration exists (for this card type or default)
@@ -217,13 +217,13 @@ namespace logicalaccess
         return ret;
     }
 
-    std::vector<unsigned char> ReaderUnit::getNumber(std::shared_ptr<Chip> chip)
+    ByteVector ReaderUnit::getNumber(std::shared_ptr<Chip> chip)
     {
         // Read encoded format if specified in the license.
         return getNumber(chip, std::shared_ptr<CardsFormatComposite>());
     }
 
-    uint64_t ReaderUnit::getFormatedNumber(const std::vector<unsigned char>& number, int padding)
+    uint64_t ReaderUnit::getFormatedNumber(const ByteVector& number, int padding)
     {
         LOG(LogLevel::INFOS) << "Getting formated number... number " << BufferHelper::getHex(number) << " padding " << padding;
         uint64_t longnumber = 0x00;
@@ -239,8 +239,8 @@ namespace logicalaccess
         return longnumber;
     }
 
-    string ReaderUnit::getFormatedNumber(const std::vector<unsigned char>& number)
-    {
+	std::string ReaderUnit::getFormatedNumber(const ByteVector& number)
+	{
         LOG(LogLevel::INFOS) << "Getting formated number... number " << BufferHelper::getHex(number);
         std::ostringstream oss;
         oss << std::setfill('0');
@@ -254,7 +254,7 @@ namespace logicalaccess
         return oss.str();
     }
 
-    std::shared_ptr<Chip> ReaderUnit::createChip(std::string type, const std::vector<unsigned char>& identifier)
+    std::shared_ptr<Chip> ReaderUnit::createChip(std::string type, const ByteVector& identifier)
     {
         LOG(LogLevel::INFOS) << "Creating chip for card type {" << type << "} and identifier " << BufferHelper::getHex(identifier) << "...";
         std::shared_ptr<Chip> chip = createChip(type);
@@ -325,7 +325,7 @@ namespace logicalaccess
         d_readerUnitConfig = config;
     }
 
-    std::string ReaderUnit::getDefaultXmlNodeName() const
+	std::string ReaderUnit::getDefaultXmlNodeName() const
     {
         return "ReaderUnit";
     }
@@ -352,7 +352,7 @@ namespace logicalaccess
         disconnectFromReader();
         if (d_readerUnitConfig)
             d_readerUnitConfig->unSerialize(node.get_child(d_readerUnitConfig->getDefaultXmlNodeName()));
-        std::string transportType = node.get_child("TransportType").get_value<std::string>();
+		std::string transportType = node.get_child("TransportType").get_value<std::string>();
         std::shared_ptr<DataTransport> dataTransport = LibraryManager::getInstance()->getDataTransport(transportType);
         // Cannot create data transport instance from xml, use default one
         if (!dataTransport)
@@ -382,7 +382,7 @@ namespace logicalaccess
         }
     }
 
-	void ReaderUnit::setCardTechnologies(const TechnoBitset& bitset)
+	void ReaderUnit::setCardTechnologies(const TechnoBitset& /*bitset*/)
 	{
 
 	}
@@ -410,7 +410,7 @@ namespace logicalaccess
         return nullptr;
     }
 
-    ReaderServicePtr ReaderUnit::getService(const ReaderServiceType &type)
+    ReaderServicePtr ReaderUnit::getService(const ReaderServiceType &/*type*/)
     {
         return nullptr;
     }

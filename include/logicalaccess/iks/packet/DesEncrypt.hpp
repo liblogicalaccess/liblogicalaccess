@@ -13,9 +13,9 @@ class LIBLOGICALACCESS_API DesEncryptCommand : public BaseCommand
   public:
     DesEncryptCommand();
 
-    virtual std::vector<uint8_t> serialize() const override;
+	std::vector<uint8_t> serialize() const override;
 
-    virtual size_t binary_size_impl() const;
+	size_t binary_size_impl() const override;
 
     /**
      * If set to true, request decryption instead of encryption.

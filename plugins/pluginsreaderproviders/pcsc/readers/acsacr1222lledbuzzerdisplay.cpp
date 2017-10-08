@@ -54,7 +54,7 @@ namespace logicalaccess
             std::shared_ptr<ResultChecker> checker = getPCSCReaderCardAdapter()->getResultChecker();
             getPCSCReaderCardAdapter()->setResultChecker(std::shared_ptr<ResultChecker>());
 
-            std::vector<unsigned char> data;
+            ByteVector data;
             data.push_back(0x10);   // x * 100ms
 
             getPCSCReaderCardAdapter()->sendAPDUCommand(0xE0, 0x00, 0x00, 0x28, data);
@@ -63,7 +63,7 @@ namespace logicalaccess
         }
     }
 
-    void ACSACR1222LLEDBuzzerDisplay::setLED()
+    void ACSACR1222LLEDBuzzerDisplay::setLED() const
     {
         unsigned char p1 = 0x00;
         if (d_green_led)
@@ -78,6 +78,6 @@ namespace logicalaccess
         getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x00, 0x44, p1, 0x00);
     }
 
-    std::shared_ptr<PCSCReaderCardAdapter> ACSACR1222LLEDBuzzerDisplay::getPCSCReaderCardAdapter()
+    std::shared_ptr<PCSCReaderCardAdapter> ACSACR1222LLEDBuzzerDisplay::getPCSCReaderCardAdapter() const
     { return std::dynamic_pointer_cast<PCSCReaderCardAdapter>(getReaderCardAdapter()); }
 }

@@ -34,7 +34,7 @@ int main(int ac, char **av)
     ReaderProviderPtr provider;
     ReaderUnitPtr readerUnit;
     ChipPtr chip;
-    std::tie(provider, readerUnit, chip) = lla_test_init();
+    tie(provider, readerUnit, chip) = lla_test_init();
 
     PRINT_TIME("Chip identifier: " <<
                        BufferHelper::getHex(chip->getChipIdentifier()));
@@ -43,7 +43,7 @@ int main(int ac, char **av)
     std::shared_ptr<AccessControlCardService> acs = std::dynamic_pointer_cast<AccessControlCardService>(
             chip->getService(CST_ACCESS_CONTROL));
 
-    std::array<uint8_t, 64> buffer = {0};
+	std::array<uint8_t, 64> buffer = { {0} };
     auto ret = acs->readFormat(std::make_shared<Wiegand26Format>(), nullptr, nullptr);
     ret->getLinearData(&buffer[0], buffer.size());
 

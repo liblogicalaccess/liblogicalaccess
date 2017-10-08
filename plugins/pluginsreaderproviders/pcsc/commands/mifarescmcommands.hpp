@@ -44,21 +44,21 @@ namespace logicalaccess
          * \param vol Use volatile memory.
          * \return true on success, false otherwise.
          */
-        bool loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol = false);
+        bool loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol = false) override;
 
 		/**
 		* \brief Increment a block value.
 		* \param blockno The block number.
 		* \param value The increment value.
 		*/
-		virtual void increment(unsigned char blockno, uint32_t value) override;
+	    void increment(unsigned char blockno, uint32_t value) override;
 
 		/**
 		* \brief Decrement a block value.
 		* \param blockno The block number.
 		* \param value The decrement value.
 		*/
-		virtual void decrement(unsigned char blockno, uint32_t value) override;
+	    void decrement(unsigned char blockno, uint32_t value) override;
     };
 }
 

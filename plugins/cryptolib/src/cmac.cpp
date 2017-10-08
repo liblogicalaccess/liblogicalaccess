@@ -16,20 +16,20 @@ namespace logicalaccess
 {
     namespace openssl
     {
-        std::vector<unsigned char> CMACCrypto::cmac(const std::vector<unsigned char>& key, std::string crypto, const std::vector<unsigned char>& data, const std::vector<unsigned char>& iv, int padding_size)
+        ByteVector CMACCrypto::cmac(const ByteVector& key, std::string crypto, const ByteVector& data, const ByteVector& iv, int padding_size)
 		{
-            std::vector<unsigned char> cmac, lastiv;
+            ByteVector cmac, lastiv;
 			
-			std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC;
+			std::shared_ptr<OpenSSLSymmetricCipher> cipherMAC;
 			unsigned int block_size = 0;
 			if (crypto == "des" || crypto == "3des")
 			{
-				cipherMAC.reset(new openssl::DESCipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_CBC));
+				cipherMAC.reset(new DESCipher(OpenSSLSymmetricCipher::ENC_MODE_CBC));
 				block_size = 8;
 			}
 			else if (crypto == "aes")
 			{
-				cipherMAC.reset(new openssl::AESCipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_CBC));
+				cipherMAC.reset(new AESCipher(OpenSSLSymmetricCipher::ENC_MODE_CBC));
 				block_size = 16;
 			}
             else
@@ -55,34 +55,34 @@ namespace logicalaccess
                 cmac = CMACCrypto::cmac(key, cipherMAC, block_size, data, lastiv, padding_size);
 				if (cmac.size() > block_size)
 				{
-					cmac = std::vector<unsigned char>(cmac.end() - block_size, cmac.end());
+					cmac = ByteVector(cmac.end() - block_size, cmac.end());
 				}
 			}
 
 			return cmac;
 		}
 
-        std::vector<unsigned char> CMACCrypto::cmac(const std::vector<unsigned char>& key, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const std::vector<unsigned char>& data, std::vector<unsigned char> lastIV, unsigned int padding_size, bool forceK2Use)
+        ByteVector CMACCrypto::cmac(const ByteVector& key, std::shared_ptr<OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const ByteVector& data, ByteVector lastIV, unsigned int padding_size, bool forceK2Use)
         {
-            std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherK1K2;
+            std::shared_ptr<OpenSSLSymmetricCipher> cipherK1K2;
 
-            std::shared_ptr<openssl::SymmetricKey> symkey;
-            std::shared_ptr<openssl::InitializationVector> iv;
+            std::shared_ptr<SymmetricKey> symkey;
+            std::shared_ptr<InitializationVector> iv;
             // 3DES
-            if (std::dynamic_pointer_cast<openssl::DESCipher>(cipherMAC))
+            if (std::dynamic_pointer_cast<DESCipher>(cipherMAC))
             {
-                cipherK1K2.reset(new openssl::DESCipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_ECB));
+                cipherK1K2.reset(new DESCipher(OpenSSLSymmetricCipher::ENC_MODE_ECB));
 
-                symkey.reset(new openssl::DESSymmetricKey(openssl::DESSymmetricKey::createFromData(key)));
-                iv.reset(new openssl::DESInitializationVector(openssl::DESInitializationVector::createNull()));
+                symkey.reset(new DESSymmetricKey(DESSymmetricKey::createFromData(key)));
+                iv.reset(new DESInitializationVector(DESInitializationVector::createNull()));
             }
             // AES
             else
             {
-                cipherK1K2.reset(new openssl::AESCipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_ECB));
+                cipherK1K2.reset(new AESCipher(OpenSSLSymmetricCipher::ENC_MODE_ECB));
 
-                symkey.reset(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(key)));
-                iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createNull()));
+                symkey.reset(new AESSymmetricKey(AESSymmetricKey::createFromData(key)));
+                iv.reset(new AESInitializationVector(AESInitializationVector::createNull()));
             }
 
             unsigned char Rb;
@@ -98,36 +98,36 @@ namespace logicalaccess
                 Rb = 0x87;
             }
 
-            std::vector<unsigned char> blankbuf;
+            ByteVector blankbuf;
             blankbuf.resize(block_size, 0x00);
-            std::vector<unsigned char> L;
+            ByteVector L;
             cipherK1K2->cipher(blankbuf, L, *symkey.get(), *iv.get(), false);
 
-            std::vector<unsigned char> K1;
+            ByteVector K1;
             if ((L[0] & 0x80) == 0x00)
             {
-                K1 = openssl::CMACCrypto::shift_string(L);
+                K1 = shift_string(L);
             }
             else
             {
-                K1 = openssl::CMACCrypto::shift_string(L, Rb);
+                K1 = shift_string(L, Rb);
             }
 
-            std::vector<unsigned char> K2;
+            ByteVector K2;
             if ((K1[0] & 0x80) == 0x00)
             {
-                K2 = openssl::CMACCrypto::shift_string(K1);
+                K2 = shift_string(K1);
             }
             else
             {
-                K2 = openssl::CMACCrypto::shift_string(K1, Rb);
+                K2 = shift_string(K1, Rb);
             }
 
             int pad = (padding_size - (data.size() % padding_size)) % padding_size;
             if (data.size() == 0)
                 pad = padding_size;
 
-            std::vector<unsigned char> padded_data = data;
+            ByteVector padded_data = data;
             if (pad > 0)
             {
                 padded_data.push_back(0x80);
@@ -157,28 +157,27 @@ namespace logicalaccess
                 }
             }
 
-            std::vector<unsigned char> ret;
+            ByteVector ret;
             // 3DES
-            if (std::dynamic_pointer_cast<openssl::DESCipher>(cipherMAC))
+            if (std::dynamic_pointer_cast<DESCipher>(cipherMAC))
             {
-                iv.reset(new openssl::DESInitializationVector(openssl::DESInitializationVector::createFromData(lastIV)));
+                iv.reset(new DESInitializationVector(DESInitializationVector::createFromData(lastIV)));
             }
             // AES
             else
             {
-                iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(lastIV)));
+                iv.reset(new AESInitializationVector(AESInitializationVector::createFromData(lastIV)));
             }
             cipherMAC->cipher(padded_data, ret, *symkey.get(), *iv.get(), false);
 
             return ret;
         }
 
-        std::vector<unsigned char> CMACCrypto::shift_string(const std::vector<unsigned char>& buf, unsigned char xorparam)
+        ByteVector CMACCrypto::shift_string(const ByteVector& buf, unsigned char xorparam)
         {
-            std::vector<unsigned char> ret = buf;
+            ByteVector ret = buf;
 
-            unsigned int i;
-            for (i = 0; i < ret.size() - 1; ++i)
+	        for (unsigned int i = 0; i < ret.size() - 1; ++i)
             {
                 ret[i] = ret[i] << 1;
                 // add the carry over bit

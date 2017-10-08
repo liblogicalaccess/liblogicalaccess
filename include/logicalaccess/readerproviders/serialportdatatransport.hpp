@@ -25,7 +25,7 @@ namespace logicalaccess
          * \brief Constructor.
          * \param portname The serial port name.
          */
-        SerialPortDataTransport(const std::string& portname = "");
+	    explicit SerialPortDataTransport(const std::string& portname = "");
 
         /**
          * \brief Destructor.
@@ -36,42 +36,42 @@ namespace logicalaccess
          * \brief Get the transport type of this instance.
          * \return The transport type.
          */
-        virtual std::string getTransportType() const { return TRANSPORT_SERIALPORT; };
+	    std::string getTransportType() const override { return TRANSPORT_SERIALPORT; }
 
         /**
          * \brief Configure the current serial port.
          */
-        void configure();
+        void configure() const;
 
         /**
          * \brief Configure the given serial port.
          * \param port The COM port to configure.
          * \param retryConfiguring On error, the function wait some milliseconds and retry another time to configure the serial port.
          */
-        void configure(std::shared_ptr<SerialPortXml> port, bool retryConfiguring);
+        void configure(std::shared_ptr<SerialPortXml> port, bool retryConfiguring) const;
 
         /**
          * \param Connect to the transport layer.
          * \return True on success, false otherwise.
          */
-        virtual bool connect();
+	    bool connect() override;
 
         /**
          * \param Disconnect from the transport layer.
          */
-        virtual void disconnect();
+	    void disconnect() override;
 
         /**
          * \briaf Get if connected to the transport layer.
          * \return True if connected, false otherwise.
          */
-        virtual bool isConnected();
+	    bool isConnected() override;
 
         /**
          * \brief Get the data transport endpoint name.
          * \return The data transport endpoint name.
          */
-        virtual std::string getName() const;
+	    std::string getName() const override;
 
         /**
          * \brief Start to auto-detect the first serial port with a reader. Update serial port when found.
@@ -82,39 +82,39 @@ namespace logicalaccess
          * \brief Serialize the current object to XML.
          * \param parentNode The parent node.
          */
-        virtual void serialize(boost::property_tree::ptree& parentNode);
+	    void serialize(boost::property_tree::ptree& parentNode) override;
 
         /**
          * \brief UnSerialize a XML node to the current object.
          * \param node The XML node.
          */
-        virtual void unSerialize(boost::property_tree::ptree& node);
+	    void unSerialize(boost::property_tree::ptree& node) override;
 
         /**
          * \brief Get the default Xml Node name for this object.
          * \return The Xml node name.
          */
-        virtual std::string getDefaultXmlNodeName() const;
+	    std::string getDefaultXmlNodeName() const override;
 
         /**
          * \brief Get the serial port baudrate.
          * \return The Baudrate.
          */
-        unsigned long getPortBaudRate() const { return d_portBaudRate; };
+        unsigned long getPortBaudRate() const { return d_portBaudRate; }
 
         /**
          * \brief Set the serial port baudrate.
          * \param baudRate The Baudrate (9600, 19200, 38400, 57600, 115200).
          */
-        void setPortBaudRate(unsigned long baudRate) { d_portBaudRate = baudRate; };
+        void setPortBaudRate(unsigned long baudRate) { d_portBaudRate = baudRate; }
 
-        std::shared_ptr<SerialPortXml> getSerialPort() const { return d_port; };
+        std::shared_ptr<SerialPortXml> getSerialPort() const { return d_port; }
 
-        virtual void setSerialPort(std::shared_ptr<SerialPortXml> port) { d_port = port; };
+        virtual void setSerialPort(std::shared_ptr<SerialPortXml> port) { d_port = port; }
 
-        virtual void send(const std::vector<unsigned char>& data);
+	    void send(const ByteVector& data) override;
 
-        virtual std::vector<unsigned char> receive(long int timeout);
+	    ByteVector receive(long int timeout) override;
 
     protected:
 

@@ -34,7 +34,7 @@ class LIBLOGICALACCESS_API ReaderService
      * Retrieve the ReaderUnit object associated
      * with the service.
      */
-    ReaderUnitPtr getReader()
+    ReaderUnitPtr getReader() const
     {
         return reader_unit_;
     }

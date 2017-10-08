@@ -17,11 +17,11 @@ namespace logicalaccess
 	OSDPReaderUnitConfiguration::OSDPReaderUnitConfiguration()
 		: ReaderUnitConfiguration(READER_OSDP)
 	{
-		resetConfiguration();
+		OSDPReaderUnitConfiguration::resetConfiguration();
 
 		//default keys
-		setSCBKKey(std::make_shared<logicalaccess::AES128Key>("C1 8A 12 50 7E F2 71 FE D4 82 0E D7 51 28 EF 4E"));
-		setSCBKDKey(std::make_shared<logicalaccess::AES128Key>("30 31 32 33 34 35 36 37 38 39 3A 3B 3C 3D 3E 3F"));
+		setSCBKKey(std::make_shared<AES128Key>("C1 8A 12 50 7E F2 71 FE D4 82 0E D7 51 28 EF 4E"));
+		setSCBKDKey(std::make_shared<AES128Key>("30 31 32 33 34 35 36 37 38 39 3A 3B 3C 3D 3E 3F"));
 	}
 
 	OSDPReaderUnitConfiguration::~OSDPReaderUnitConfiguration()

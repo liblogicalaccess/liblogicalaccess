@@ -60,6 +60,7 @@ namespace logicalaccess
         case 0xDFC10F:
             maxlen = 920;
             break;
+        default: ;
         }
 
         return maxlen;
@@ -89,6 +90,7 @@ namespace logicalaccess
             case 0xFE:
                 maxlen = 0;
                 break;
+            default: ;
             }
             break;
 
@@ -106,6 +108,7 @@ namespace logicalaccess
             case 0xC2:
                 maxlen = 1;
                 break;
+            default: ;
             }
             break;
 
@@ -131,6 +134,7 @@ namespace logicalaccess
             case 0xFE:
                 maxlen = 0;
                 break;
+            default: ;
             }
             break;
 
@@ -140,6 +144,7 @@ namespace logicalaccess
             case 0xBC:
                 maxlen = 2500;
                 break;
+            default: ;
             }
             break;
 
@@ -157,8 +162,10 @@ namespace logicalaccess
             case 0xFE:
                 maxlen = 0;
                 break;
+            default: ;
             }
             break;
+        default: ;
         }
 
         return maxlen;
@@ -172,10 +179,9 @@ namespace logicalaccess
         if (encodedlength > 0)
         {
             size_t datalength = encodedlength + 1;
-            std::vector<unsigned char> data;
-            try
+	        try
             {
-                data = getTWICData(dataObject);
+                ByteVector data = getTWICData(dataObject);
                 if (data.size())
                 {
                     length = getValueFromBytes(&data[1], datalength - 1);
@@ -210,7 +216,7 @@ namespace logicalaccess
             if (currentTag == location->tag)
             {
                 processed = true;
-                if (datatag != NULL)
+                if (datatag != nullptr)
                 {
                     if (datataglen >= currentTagLength)
                     {

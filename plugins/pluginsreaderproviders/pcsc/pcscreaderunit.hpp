@@ -26,7 +26,7 @@ namespace logicalaccess
         /**
          * \brief Constructor.
          */
-        PCSCReaderUnit(const std::string& name);
+	    explicit PCSCReaderUnit(const std::string& name);
 
         /**
          * \brief Destructor.
@@ -37,7 +37,7 @@ namespace logicalaccess
          * \brief Get the reader unit name.
          * \return The reader unit name.
          */
-        virtual std::string getName() const;
+	    std::string getName() const override;
 
         /**
          * \brief Set the reader unit name.
@@ -49,7 +49,7 @@ namespace logicalaccess
          * \brief Get the connected reader unit name.
          * \return The connected reader unit name.
          */
-        virtual std::string getConnectedName();
+	    std::string getConnectedName() override;
 
         /**
          * \brief Get the PC/SC reader unit type.
@@ -61,7 +61,7 @@ namespace logicalaccess
          * \brief Set the card type.
          * \param cardType The card type.
          */
-        virtual void setCardType(std::string cardType) { d_card_type = cardType; };
+	    void setCardType(std::string cardType) override { d_card_type = cardType; }
 
         /**
          * \brief Wait for a card insertion.
@@ -69,14 +69,14 @@ namespace logicalaccess
          * \return True if a card was inserted, false otherwise. If a card was inserted, the name of the reader on which the insertion was detected is accessible with getReader().
          * \warning If the card is already connected, then the method always fail.
          */
-        virtual bool waitInsertion(unsigned int maxwait) override final;
+	    bool waitInsertion(unsigned int maxwait) override final;
 
         /**
          * \brief Wait for a card removal.
          * \param maxwait The maximum time to wait for, in milliseconds. If maxwait is zero, then the call never times out.
          * \return True if a card was removed, false otherwise. If a card was removed, the name of the reader on which the removal was detected is accessible with getReader().
          */
-        virtual bool waitRemoval(unsigned int maxwait);
+	    bool waitRemoval(unsigned int maxwait) override;
 
         /**
          * \brief Connect to the card.
@@ -84,7 +84,7 @@ namespace logicalaccess
          *
          * If the card handle was already connected, connect() first call disconnect(). If you intend to do a reconnection, call reconnect() instead.
          */
-        virtual bool connect() override;
+	    bool connect() override;
 
          /**
          * \brief Connect to the card.
@@ -101,29 +101,29 @@ namespace logicalaccess
          * \param control the behavior of the reconnect.
          * \return True if the card was reconnected without error, false otherwise.
          */
-        virtual bool reconnect(int action = 0);
+	    bool reconnect(int action = 0) override;
 
         /**
          * \brief Disconnect from the card.
          */
-        virtual void disconnect();
+	    void disconnect() override;
 
         /**
          * \brief Check if the handle is associated to a card (aka. "connected").
          * \return True if the handle is associated to a card, false otherwise.
          */
-        virtual bool isConnected();
+	    bool isConnected() override;
 
         /**
          * \brief Connect to the reader. Implicit connection on first command sent.
          * \return True if the connection successed.
          */
-        virtual bool connectToReader();
+	    bool connectToReader() override;
 
         /**
          * \brief Disconnect from reader.
          */
-        virtual void disconnectFromReader();
+	    void disconnectFromReader() override;
 
         /**
          * \brief Get the low-level SCARDHANDLE.
@@ -150,19 +150,19 @@ namespace logicalaccess
          * \param type The card type.
          * \return The chip.
          */
-        virtual std::shared_ptr<Chip> createChip(std::string type);
+	    std::shared_ptr<Chip> createChip(std::string type) override;
 
         /**
          * \brief Get the first and/or most accurate chip found.
          * \return The single chip.
          */
-        virtual std::shared_ptr<Chip> getSingleChip();
+	    std::shared_ptr<Chip> getSingleChip() override;
 
         /**
          * \brief Get chip available in the RFID rang.
          * \return The chip list.
          */
-        virtual std::vector<std::shared_ptr<Chip> > getChipList();
+	    std::vector<std::shared_ptr<Chip> > getChipList() override;
 
         /**
          * \brief Get the card serial number.
@@ -170,13 +170,13 @@ namespace logicalaccess
          *
          * If the card handle is not connected to the card, the call fails.
          */
-        virtual std::vector<unsigned char> getCardSerialNumber();
+        virtual ByteVector getCardSerialNumber();
 
         /**
          * \brief Get a string hexadecimal representation of the reader serial number
          * \return The reader serial number or an empty string on error.
          */
-        virtual std::string getReaderSerialNumber();
+	    std::string getReaderSerialNumber() override;
 
         /**
          * \brief Get the card ATR.
@@ -203,38 +203,38 @@ namespace logicalaccess
          * \brief Serialize the current object to XML.
          * \param parentNode The parent node.
          */
-        virtual void serialize(boost::property_tree::ptree& parentNode);
+	    void serialize(boost::property_tree::ptree& parentNode) override;
 
         /**
          * \brief UnSerialize a XML node to the current object.
          * \param node The XML node.
          */
-        virtual void unSerialize(boost::property_tree::ptree& node);
+	    void unSerialize(boost::property_tree::ptree& node) override;
 
         /**
          * \brief Get the reader unit configuration.
          * \return The reader unit configuration.
          */
-        virtual std::shared_ptr<ReaderUnitConfiguration> getConfiguration();
+	    std::shared_ptr<ReaderUnitConfiguration> getConfiguration() override;
 
         /**
          * \brief Set the reader unit configuration.
          * \param config The reader unit configuration.
          */
-        virtual void setConfiguration(std::shared_ptr<ReaderUnitConfiguration> config);
+	    void setConfiguration(std::shared_ptr<ReaderUnitConfiguration> config) override;
 
         /**
          * \brief Change a key in reader memory.
          * \param keystorage The key storage information.
          * \param key The key value.
          */
-        virtual void changeReaderKey(std::shared_ptr<ReaderMemoryKeyStorage> keystorage, const std::vector<unsigned char>& key);
+        virtual void changeReaderKey(std::shared_ptr<ReaderMemoryKeyStorage> keystorage, const ByteVector& key);
 
         /**
          * \brief Get the PC/SC reader unit configuration.
          * \return The PC/SC reader unit configuration.
          */
-        std::shared_ptr<PCSCReaderUnitConfiguration> getPCSCConfiguration() { return std::dynamic_pointer_cast<PCSCReaderUnitConfiguration>(getConfiguration()); };
+        std::shared_ptr<PCSCReaderUnitConfiguration> getPCSCConfiguration() { return std::dynamic_pointer_cast<PCSCReaderUnitConfiguration>(getConfiguration()); }
 
         std::shared_ptr<PCSCReaderProvider> getPCSCReaderProvider() const;
 
@@ -263,24 +263,24 @@ namespace logicalaccess
         /**
          * Returns the proxy implementation reader unit, or null.
          */
-        std::shared_ptr<PCSCReaderUnit> getProxyReaderUnit();
+        std::shared_ptr<PCSCReaderUnit> getProxyReaderUnit() const;
 
 
-        virtual void setCardTechnologies(const TechnoBitset &bitset) override;
+	    void setCardTechnologies(const TechnoBitset &bitset) override;
 
-        virtual TechnoBitset getCardTechnologies() override;
+	    TechnoBitset getCardTechnologies() override;
 
-        virtual std::shared_ptr<LCDDisplay> getLCDDisplay() override;
+	    std::shared_ptr<LCDDisplay> getLCDDisplay() override;
 
-        virtual void setLCDDisplay(std::shared_ptr<LCDDisplay> d) override;
+	    void setLCDDisplay(std::shared_ptr<LCDDisplay> d) override;
 
-        virtual std::shared_ptr<LEDBuzzerDisplay>
+	    std::shared_ptr<LEDBuzzerDisplay>
         getLEDBuzzerDisplay() override;
 
-        virtual void
+	    void
         setLEDBuzzerDisplay(std::shared_ptr<LEDBuzzerDisplay> lbd) override;
 
-        virtual ReaderServicePtr getService(const ReaderServiceType &type);
+	    ReaderServicePtr getService(const ReaderServiceType &type) override;
 
     protected:
 
@@ -295,13 +295,13 @@ namespace logicalaccess
          */
         std::shared_ptr<Chip> adjustChip(std::shared_ptr<Chip> c);
 
-        virtual std::shared_ptr<ResultChecker> createDefaultResultChecker() const override;
+	    std::shared_ptr<ResultChecker> createDefaultResultChecker() const override;
 
-        virtual std::shared_ptr<CardProbe> createCardProbe() override;
+	    std::shared_ptr<CardProbe> createCardProbe() override;
 
         void configure_mifareplus_chip(std::shared_ptr<Chip> c,
                                        std::shared_ptr<Commands> &commands,
-                                       std::shared_ptr<ResultChecker> &resultChecker);
+                                       std::shared_ptr<ResultChecker> &resultChecker) const;
 
         /**
          * Attempt to detect the security level by sending command to the card
@@ -331,25 +331,24 @@ namespace logicalaccess
         /**
         * \brief Get The SAM Chip
         */
-        virtual std::shared_ptr<SAMChip> getSAMChip();
+	    std::shared_ptr<SAMChip> getSAMChip() override;
 
         /**
         * \brief Set the SAM Chip
         */
-        virtual void setSAMChip(std::shared_ptr<SAMChip> t);
+	    void setSAMChip(std::shared_ptr<SAMChip> t) override;
 
         /**
         * \brief Get The SAM ReaderUnit
         */
-        virtual std::shared_ptr<ISO7816ReaderUnit> getSAMReaderUnit();
+	    std::shared_ptr<ISO7816ReaderUnit> getSAMReaderUnit() override;
 
         /**
         * \brief Set the SAM ReaderUnit
         */
-        virtual void setSAMReaderUnit(std::shared_ptr<ISO7816ReaderUnit> t);
+	    void setSAMReaderUnit(std::shared_ptr<ISO7816ReaderUnit> t) override;
 
-      protected:
-        // Internal helper for waitInsertion
+	    // Internal helper for waitInsertion
         using SPtrStringVector = std::vector<std::shared_ptr<std::string>>;
         using ReaderStateVector = std::vector<SCARD_READERSTATE>;
 
@@ -357,7 +356,7 @@ namespace logicalaccess
          * Prepare the parameters for the call to SCardGetStatusChange
          * invoked by waitInsertion()
          */
-        std::tuple<SPtrStringVector, ReaderStateVector> prepare_poll_parameters();
+        std::tuple<SPtrStringVector, ReaderStateVector> prepare_poll_parameters() const;
 
         /**
          * Create the proxy reader based on which reader detected a card

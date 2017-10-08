@@ -4,7 +4,7 @@
 
 
 using namespace logicalaccess;
-using namespace logicalaccess::iks;
+using namespace iks;
 
 DesEncryptCommand::DesEncryptCommand()
     : decrypt_(false)
@@ -37,7 +37,7 @@ std::vector<uint8_t> DesEncryptCommand::serialize() const
     needle += payload_.size();
 
     memcpy(&header[needle], &iv_[0], iv_.size());
-    needle += iv_.size();
+    //needle += iv_.size();
     return header;
 }
 

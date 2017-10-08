@@ -102,14 +102,14 @@ namespace logicalaccess
          * \param data Where to put data
          * \param dataLengthBytes Length in byte of data
          */
-        virtual size_t getSkeletonLinearData(void* data, size_t dataLengthBytes) const;
+	    size_t getSkeletonLinearData(void* data, size_t dataLengthBytes) const override;
 
         /**
          * \brief Set skeleton linear data.
          * \param data Where to get data
          * \param dataLengthBytes Length in byte of data
          */
-        virtual void setSkeletonLinearData(const void* data, size_t dataLengthBytes);
+	    void setSkeletonLinearData(const void* data, size_t dataLengthBytes) override;
 
     protected:
 

@@ -21,7 +21,7 @@ void STidPRGReaderUnitConfiguration::serialize(boost::property_tree::ptree &pare
     parentNode.add_child(getDefaultXmlNodeName(), node);
 }
 
-void STidPRGReaderUnitConfiguration::unSerialize(boost::property_tree::ptree &node)
+void STidPRGReaderUnitConfiguration::unSerialize(boost::property_tree::ptree &/*node*/)
 {
 }
 

@@ -1,5 +1,5 @@
 /**
- * \file smartidreadercardadapter.h
+ * \file smartidreadercardadapter.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Default SmartID reader/card adapter.
  */
@@ -51,10 +51,12 @@ namespace logicalaccess
         static const unsigned char RET_ENVNOTFOUND; /**< \brief The RET_ENVNOTFOUND value. */
         static const unsigned char RET_NY_IMPLEMENTED; /**< \brief The RET_NY_IMPLEMENTED value. */
 
+		using ReaderCardAdapter::sendCommand;
+
         /**
          * \brief Send an APDU command to the reader.
          */
-        virtual void sendAPDUCommand(const std::vector<unsigned char>& command, unsigned char* result, size_t* resultlen);
+	    void sendAPDUCommand(const ByteVector& command, unsigned char* result, size_t* resultlen) override;
 
         /**
          * \brief Send a command to the reader.
@@ -63,21 +65,21 @@ namespace logicalaccess
          * \param timeout The command timeout. Default is 2000 ms.
          * \return The result of the command.
          */
-        virtual std::vector<unsigned char> sendCommand(unsigned char cmd, const std::vector<unsigned char>& command, long int timeout = 2000);
+        virtual ByteVector sendCommand(unsigned char cmd, const ByteVector& command, long int timeout = 2000);
 
         /**
          * \brief Adapt the command to send to the reader.
          * \param command The command to send.
          * \return The adapted command to send.
          */
-        virtual std::vector<unsigned char> adaptCommand(const std::vector<unsigned char>& command);
+		ByteVector adaptCommand(const ByteVector& command) override;
 
         /**
          * \brief Adapt the asnwer received from the reader.
          * \param answer The answer received.
          * \return The adapted answer received.
          */
-        virtual std::vector<unsigned char> adaptAnswer(const std::vector<unsigned char>& answer);
+	   ByteVector adaptAnswer(const ByteVector& answer) override;
 
         /**
          * \brief Send a halt command.
@@ -88,58 +90,48 @@ namespace logicalaccess
          * \brief Send a REQA command from the PCD to the PICC.
          * \return The ATQB PICC result.
          */
-        virtual std::vector<unsigned char> requestA();
+		ByteVector requestA() override;
 
         /**
          * \brief Send a RATS command from the PCD to the PICC.
          * \return The ATS PICC result.
          */
-        virtual std::vector<unsigned char> requestATS();
+		ByteVector requestATS() override;
 
         /**
          * \brief Send a HLTB command from the PCD to the PICC.
          */
-        virtual void haltA();
+	    void haltA() override;
 
         /**
          * \brief Manage collision.
          * \return The chip UID.
          */
-        virtual std::vector<unsigned char> anticollisionA();
+		ByteVector anticollisionA() override;
 
         /**
          * \brief Send a REQB command from the PCD to the PICC.
          * \param afi The AFI value.
          * \return The ATQB PICC result.
          */
-        virtual std::vector<unsigned char> requestB(unsigned char afi = 0x00);
+		ByteVector requestB(unsigned char afi = 0x00) override;
 
         /**
          * \brief Send a HLTB command from the PCD to the PICC.
          */
-        virtual void haltB();
+	    void haltB() override;
 
         /**
          * \brief Send a attrib command from the PCD to the PICC.
          */
-        virtual void attrib();
+	    void attrib() override;
 
         /**
          * \brief Manage collision.
          * \param afi The AFI value.
          * \return The chip UID.
          */
-        virtual std::vector<unsigned char> anticollisionB(unsigned char afi = 0x00);
-
-    protected:
-
-        /**
-         * \brief Handle a command buffer and give the associated data buffer.
-         * \param cmdbuf The command buffer.
-         * \param sta The received status.
-         * \return The data buffer.
-         */
-        std::vector<unsigned char> handleCommandBuffer(const std::vector<unsigned char>& cmdbuf, unsigned char& sta);
+		ByteVector anticollisionB(unsigned char afi = 0x00) override;
     };
 }
 

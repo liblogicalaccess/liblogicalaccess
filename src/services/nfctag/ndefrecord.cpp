@@ -25,9 +25,9 @@ namespace logicalaccess
         return size + m_type.size() + m_payload.size() + m_id.size();
     }
 
-    std::vector<unsigned char> NdefRecord::encode(bool firstRecord, bool lastRecord)
+    ByteVector NdefRecord::encode(bool firstRecord, bool lastRecord)
     {
-        std::vector<unsigned char> data;
+        ByteVector data;
 
         data.push_back(getTnfByte(firstRecord, lastRecord));
         data.push_back(static_cast<unsigned char>(m_type.size()));

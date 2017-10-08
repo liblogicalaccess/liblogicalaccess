@@ -30,7 +30,7 @@ namespace logicalaccess
         field->setDataRepresentation(d_dataRepresentation);
         field->setDataType(d_dataType);
         d_fieldList.push_back(field);
-        field = std::shared_ptr<NumberDataField>(new NumberDataField());
+        field = std::make_shared<NumberDataField>();
         field->setName("Field");
         field->setDataLength(14);
         field->setDataRepresentation(d_dataRepresentation);
@@ -47,9 +47,9 @@ namespace logicalaccess
         return 40;
     }
 
-    string Getronik40BitFormat::getName() const
+	std::string Getronik40BitFormat::getName() const
     {
-        return string("Getronik 40-Bit");
+        return std::string("Getronik 40-Bit");
     }
 
     unsigned short int Getronik40BitFormat::getField() const
@@ -97,7 +97,7 @@ namespace logicalaccess
         setUid(node.get_child("Uid").get_value<unsigned long long>());
     }
 
-    std::string Getronik40BitFormat::getDefaultXmlNodeName() const
+	std::string Getronik40BitFormat::getDefaultXmlNodeName() const
     {
         return "Getronik40BitFormat";
     }
@@ -118,11 +118,11 @@ namespace logicalaccess
         return ret;
     }
 
-    unsigned char Getronik40BitFormat::getRightParity(const void* data, size_t dataLengthBytes) const
+    unsigned char Getronik40BitFormat::getRightParity(const void* data, size_t dataLengthBytes)
     {
         unsigned char parity = 0x00;
 
-        if (data != NULL)
+        if (data != nullptr)
         {
             parity = calculateParity(data, dataLengthBytes, PT_EVEN, static_cast<size_t>(0), 38);
             size_t pos = 39;
@@ -136,7 +136,7 @@ namespace logicalaccess
     {
         unsigned int pos = 0;
 
-        if (data != NULL)
+        if (data != nullptr)
         {
             BitHelper::writeToBit(data, dataLengthBytes, &pos, 0x2E, 0, 8);
 
@@ -154,7 +154,7 @@ namespace logicalaccess
     {
         unsigned int pos = 0;
         unsigned char fixedValue = 0x00;
-        if (data != NULL)
+        if (data != nullptr)
         {
             if (dataLengthBytes * 8 < getDataLength())
             {

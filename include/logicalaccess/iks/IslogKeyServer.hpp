@@ -20,7 +20,7 @@ class LIBLOGICALACCESS_API IslogKeyServer
     IslogKeyServer(const IslogKeyServer &) = delete;
     //    IslogKeyServer(IslogKeyServer &&) = default;
 
-    struct IKSConfig
+    struct LIBLOGICALACCESS_API IKSConfig
     {
         IKSConfig() = default;
         IKSConfig(const std::string &ip, uint16_t port,
@@ -112,15 +112,15 @@ class LIBLOGICALACCESS_API IslogKeyServer
      */
     std::shared_ptr<BaseResponse> transact(const BaseCommand &cmd);
 
-    void send_command(const BaseCommand &cmd);
+    void send_command(const BaseCommand &cmd) const;
 
-    std::shared_ptr<BaseResponse> recv();
+    std::shared_ptr<BaseResponse> recv() const;
 
   private:
     void setup_transport();
     std::shared_ptr<BaseResponse> build_response(uint32_t size, uint16_t opcode,
                                                  uint16_t status,
-                                                 const std::vector<uint8_t> &data);
+                                                 const std::vector<uint8_t> &data) const;
 
     std::vector<uint8_t> des_crypto(const std::vector<uint8_t> &in,
                                     const std::string &key_name,

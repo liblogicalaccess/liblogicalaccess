@@ -47,9 +47,9 @@ namespace logicalaccess
         return 40;
     }
 
-    string BariumFerritePCSCFormat::getName() const
+	std::string BariumFerritePCSCFormat::getName() const
     {
-        return string("Barium Ferrite PCSC");
+        return std::string("Barium Ferrite PCSC");
     }
 
     unsigned short int BariumFerritePCSCFormat::getFacilityCode() const
@@ -97,7 +97,7 @@ namespace logicalaccess
         setUid(node.get_child("Uid").get_value<unsigned long long>());
     }
 
-    std::string BariumFerritePCSCFormat::getDefaultXmlNodeName() const
+	std::string BariumFerritePCSCFormat::getDefaultXmlNodeName() const
     {
         return "BariumFerritePCSCFormat";
     }
@@ -118,7 +118,7 @@ namespace logicalaccess
         return ret;
     }
 
-    unsigned char BariumFerritePCSCFormat::calcChecksum(const unsigned char* data, unsigned int datalen) const
+    unsigned char BariumFerritePCSCFormat::calcChecksum(const unsigned char* data, unsigned int datalen)
     {
         unsigned char checksum = 0x00;
 
@@ -139,7 +139,7 @@ namespace logicalaccess
     {
         unsigned int pos = 0;
 
-        if (data != NULL)
+        if (data != nullptr)
         {
             BitHelper::writeToBit(data, dataLengthBytes, &pos, 0x0F, 4, 4);
 
@@ -152,7 +152,7 @@ namespace logicalaccess
 
     void BariumFerritePCSCFormat::setLinearData(const void* data, size_t dataLengthBytes)
     {
-        if (data != NULL)
+        if (data != nullptr)
         {
             unsigned int pos = 0;
             unsigned char fixedValue = 0x00;

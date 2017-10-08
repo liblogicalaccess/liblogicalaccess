@@ -28,7 +28,7 @@ namespace logicalaccess
         /**
          * \brief Constructor.
          */
-		CPS3Chip(std::string ct);
+	    explicit CPS3Chip(std::string ct);
 
         /**
          * \brief Constructor.
@@ -44,34 +44,32 @@ namespace logicalaccess
          * \brief Get the generic card type.
          * \return The generic card type.
          */
-        virtual std::string getGenericCardType() const { return CHIP_CPS3; };
+	    std::string getGenericCardType() const override { return CHIP_CPS3; }
 
         /**
          * \brief Get the root location node.
          * \return The root location node.
          */
-        virtual std::shared_ptr<LocationNode> getRootLocationNode();
+	    std::shared_ptr<LocationNode> getRootLocationNode() override;
 
         /**
          * \brief Get a card service for this chip.
          * \param serviceType The card service type.
          * \return The card service.
          */
-        virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
+	    std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
 
 		/**
 		* \brief Create default CPS3 location.
 		* \return Default CPS3 location.
 		*/
-		virtual std::shared_ptr<Location> createLocation() const;
+	    std::shared_ptr<Location> createLocation() const override;
 
         /**
          * \brief Get the CPS3 card provider for I/O access.
          * \return The CPS3 card provider.
          */
-		std::shared_ptr<CPS3Commands> getCPS3Commands() { return std::dynamic_pointer_cast<CPS3Commands>(getCommands()); };
-
-    protected:
+		std::shared_ptr<CPS3Commands> getCPS3Commands() const { return std::dynamic_pointer_cast<CPS3Commands>(getCommands()); }
     };
 }
 

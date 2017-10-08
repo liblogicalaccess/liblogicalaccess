@@ -10,11 +10,11 @@
 
 namespace logicalaccess
 {
-    void ISO7816ReaderCardAdapter::sendAPDUCommand(const std::vector<unsigned char>& command, unsigned char* result, size_t* resultlen)
+    void ISO7816ReaderCardAdapter::sendAPDUCommand(const ByteVector& command, unsigned char* result, size_t* resultlen)
     {
-        std::vector<unsigned char> res = sendCommand(command);
+        ByteVector res = sendCommand(command);
 
-        if (result != NULL && resultlen != NULL)
+        if (result != nullptr && resultlen != nullptr)
         {
             if (*resultlen >= res.size())
             {
@@ -24,9 +24,9 @@ namespace logicalaccess
         }
     }
 
-    std::vector<unsigned char> ISO7816ReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const std::vector<unsigned char>& data, unsigned char le)
+    ByteVector ISO7816ReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const ByteVector& data, unsigned char le)
     {
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(cla);
         command.push_back(ins);
         command.push_back(p1);
@@ -38,9 +38,9 @@ namespace logicalaccess
         return sendCommand(command);
     }
 
-    std::vector<unsigned char> ISO7816ReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const std::vector<unsigned char>& data)
+    ByteVector ISO7816ReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const ByteVector& data)
     {
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(cla);
         command.push_back(ins);
         command.push_back(p1);
@@ -51,9 +51,9 @@ namespace logicalaccess
         return sendCommand(command);
     }
 
-    std::vector<unsigned char> ISO7816ReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, const std::vector<unsigned char>& data)
+    ByteVector ISO7816ReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, const ByteVector& data)
     {
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(cla);
         command.push_back(ins);
         command.push_back(p1);
@@ -63,9 +63,9 @@ namespace logicalaccess
         return sendCommand(command);
     }
 
-    std::vector<unsigned char> ISO7816ReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char le)
+    ByteVector ISO7816ReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char le)
     {
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(cla);
         command.push_back(ins);
         command.push_back(p1);
@@ -75,9 +75,9 @@ namespace logicalaccess
         return sendCommand(command);
     }
 
-    std::vector<unsigned char> ISO7816ReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, unsigned char le)
+    ByteVector ISO7816ReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, unsigned char le)
     {
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(cla);
         command.push_back(ins);
         command.push_back(p1);
@@ -88,9 +88,9 @@ namespace logicalaccess
         return sendCommand(command);
     }
 
-    std::vector<unsigned char> ISO7816ReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2)
+    ByteVector ISO7816ReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2)
     {
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(cla);
         command.push_back(ins);
         command.push_back(p1);

@@ -26,7 +26,7 @@ namespace logicalaccess
     {
     }
 
-    std::vector<unsigned char> MifareUltralightCACSACRCommands::sendGenericCommand(const std::vector<unsigned char>& data)
+    ByteVector MifareUltralightCACSACRCommands::sendGenericCommand(const ByteVector& data)
     {
         return getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x00, 0x00, 0x00, static_cast<unsigned char>(data.size()), data);
     }

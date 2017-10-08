@@ -46,7 +46,7 @@ std::string KeyStorage::getMetadata(const std::string &key)
     return metadata_[key];
 }
 
-bool KeyStorage::hasMetadata(const std::string &key)
+bool KeyStorage::hasMetadata(const std::string &key) const
 {
     return (metadata_.count(key) > 0);
 }
@@ -76,10 +76,10 @@ void KeyStorage::unSerialize(boost::property_tree::ptree &node)
     auto n = key_storage.get_child_optional("metadata");
     if (n)
     {
-        for (auto const &node: *n)
+        for (auto const &current_node: *n)
         {
-            std::string pname = node.first;
-            std::string pvalue = node.second.data();
+	        const std::string pname = current_node.first;
+	        const std::string pvalue = current_node.second.data();
 
             addMetadata(pname, pvalue);
         }

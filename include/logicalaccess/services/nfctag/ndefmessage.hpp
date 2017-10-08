@@ -31,29 +31,29 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API NdefMessage : public XmlSerializable
     {
     public:
-        NdefMessage() {};
-        NdefMessage(const std::vector<unsigned char>& data);
-        virtual ~NdefMessage() {};
+        NdefMessage() {}
+	    explicit NdefMessage(const ByteVector& data);
+        virtual ~NdefMessage() {}
 
-        std::vector<unsigned char> encode();
+        ByteVector encode();
 
-        void addRecord(std::shared_ptr<NdefRecord> record) { m_records.push_back(record); };
-        void addMimeMediaRecord(std::string mimeType, std::vector<unsigned char> payload);
+        void addRecord(std::shared_ptr<NdefRecord> record) { m_records.push_back(record); }
+        void addMimeMediaRecord(std::string mimeType, ByteVector payload);
 		void addTextRecord(std::string text);
-        void addTextRecord(std::vector<unsigned char> text, std::string encoding = "us-ascii");
+        void addTextRecord(ByteVector text, std::string encoding = "us-ascii");
         void addUriRecord(std::string uri, UriType uritype);
         void addEmptyRecord();
 
-        size_t getRecordCount() const { return m_records.size(); };
-        std::vector<std::shared_ptr<NdefRecord> >& getRecords() { return m_records; };
+        size_t getRecordCount() const { return m_records.size(); }
+        std::vector<std::shared_ptr<NdefRecord> >& getRecords() { return m_records; }
 
-        virtual void serialize(boost::property_tree::ptree& parentNode);
-        virtual void unSerialize(boost::property_tree::ptree& node);
-        virtual std::string getDefaultXmlNodeName() const;
+	    void serialize(boost::property_tree::ptree& parentNode) override;
+	    void unSerialize(boost::property_tree::ptree& node) override;
+	    std::string getDefaultXmlNodeName() const override;
 
-        static std::shared_ptr<NdefMessage> TLVToNdefMessage(std::vector<unsigned char> tlv);
+        static std::shared_ptr<NdefMessage> TLVToNdefMessage(ByteVector tlv);
 
-        static std::vector<unsigned char> NdefMessageToTLV(std::shared_ptr<NdefMessage> record);
+        static ByteVector NdefMessageToTLV(std::shared_ptr<NdefMessage> record);
 
     private:
         std::vector<std::shared_ptr<NdefRecord> > m_records;

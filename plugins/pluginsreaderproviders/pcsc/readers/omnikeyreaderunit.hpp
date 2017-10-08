@@ -26,7 +26,7 @@ namespace logicalaccess
         /**
          * \brief Constructor.
          */
-        OmnikeyReaderUnit(const std::string& name);
+	    explicit OmnikeyReaderUnit(const std::string& name);
 
         /**
          * \brief Destructor.
@@ -44,9 +44,7 @@ namespace logicalaccess
          * \param maxwait The maximum time to wait for, in milliseconds. If maxwait is zero, then the call never times out.
          * \return True if a card was removed, false otherwise. If a card was removed, the name of the reader on which the removal was detected is accessible with getReader().
          */
-        virtual bool waitRemoval(unsigned int maxwait) override;
-
-    protected:
+	    bool waitRemoval(unsigned int maxwait) override;
     };
 }
 

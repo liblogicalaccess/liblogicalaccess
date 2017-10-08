@@ -30,13 +30,13 @@ namespace logicalaccess
              * \brief Get the associated data.
              * \return The associated data.
              */
-            void* getAppData();
+            void* getAppData() const;
 
             /**
              * \brief Set the associated data.
              * \param data The data.
              */
-            void setAppData(void* data);
+            void setAppData(void* data) const;
 
             /**
              * \brief Get the associated data.
@@ -51,14 +51,14 @@ namespace logicalaccess
              * \brief Get the associated SSL context.
              * \return The associated SSL context.
              */
-            SSLContext sslContext();
+            SSLContext sslContext() const;
 
             /**
              * \brief Get the raw pointer.
              * \return The raw pointer.
              */
-            inline std::shared_ptr<SSL> getRaw()
-            {
+	        std::shared_ptr<SSL> getRaw() const
+	        {
                 return d_ssl;
             }
 
@@ -68,7 +68,7 @@ namespace logicalaccess
              * \brief Constructor.
              * \param ssl The SSL object to use. If ssl is NULL, the behavior is undefined.
              */
-            SSLObject(std::shared_ptr<SSL> ssl);
+	        explicit SSLObject(std::shared_ptr<SSL> ssl);
 
             /**
              * \brief The internal pointer.

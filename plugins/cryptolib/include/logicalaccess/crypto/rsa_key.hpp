@@ -17,6 +17,7 @@
 
 #include <openssl/rsa.h>
 #include <openssl/err.h>
+#include "logicalaccess/lla_fwd.hpp"
 
 namespace logicalaccess
 {
@@ -47,7 +48,7 @@ namespace logicalaccess
              * \return The RSAKey.
              * \warning If no public compound can be read from data, an InvalidCallException is thrown.
              */
-            static RSAKey createFromPublicCompound(const std::vector<unsigned char>& data);
+            static RSAKey createFromPublicCompound(const ByteVector& data);
 
             /**
              * \brief Create a RSAKey from a private key compound.
@@ -55,7 +56,7 @@ namespace logicalaccess
              * \return The RSAKey.
              * \warning If no private compound can be read from data, an InvalidCallException is thrown.
              */
-            static RSAKey createFromPrivateCompound(const std::vector<unsigned char>& data);
+            static RSAKey createFromPrivateCompound(const ByteVector& data);
 
             /**
              * \brief Create a RSAKey from a PEM public key.
@@ -64,7 +65,7 @@ namespace logicalaccess
              * \param userdata Some user data to pass to the callback function.
              * \return The RSAKey.
              */
-            static RSAKey createFromPEMPublicKey(const std::vector<unsigned char>& data, PEMPassphraseCallback callback = NULL, void* userdata = NULL);
+            static RSAKey createFromPEMPublicKey(const ByteVector& data, PEMPassphraseCallback callback = nullptr, void* userdata = nullptr);
 
             /**
              * \brief Create a RSAKey from a PEM private key.
@@ -73,7 +74,7 @@ namespace logicalaccess
              * \param userdata Some user data to pass to the callback function.
              * \return The RSAKey.
              */
-            static RSAKey createFromPEMPrivateKey(const std::vector<unsigned char>& data, PEMPassphraseCallback callback = NULL, void* userdata = NULL);
+            static RSAKey createFromPEMPrivateKey(const ByteVector& data, PEMPassphraseCallback callback = nullptr, void* userdata = nullptr);
 
             /**
              * \brief Create a RSAKey from a PEM public key file.
@@ -82,7 +83,7 @@ namespace logicalaccess
              * \param userdata Some user data to pass to the callback function.
              * \return The RSAKey.
              */
-            static RSAKey createFromPEMPublicKeyFile(const std::string& filename, PEMPassphraseCallback callback = NULL, void* userdata = NULL);
+            static RSAKey createFromPEMPublicKeyFile(const std::string& filename, PEMPassphraseCallback callback = nullptr, void* userdata = nullptr);
 
             /**
              * \brief Create a RSAKey from a PEM private key file.
@@ -91,7 +92,7 @@ namespace logicalaccess
              * \param userdata Some user data to pass to the callback function.
              * \return The RSAKey.
              */
-            static RSAKey createFromPEMPrivateKeyFile(const std::string& filename, PEMPassphraseCallback callback = NULL, void* userdata = NULL);
+            static RSAKey createFromPEMPrivateKeyFile(const std::string& filename, PEMPassphraseCallback callback = nullptr, void* userdata = nullptr);
 
             /**
              * \brief Constructor.
@@ -103,7 +104,7 @@ namespace logicalaccess
              * \brief Get the raw pointer.
              * \return The raw pointer.
              */
-            inline std::shared_ptr<RSA> getRaw() const
+	        std::shared_ptr<RSA> getRaw() const
             {
                 return d_rsa;
             }
@@ -115,19 +116,19 @@ namespace logicalaccess
              * \param userdata Some user data to pass to the callback function. Default is NULL.
              * \return The RSA key in PEM format.
              */
-            std::vector<unsigned char> getPEM(bool discard_private_compound = false, PEMPassphraseCallback callback = NULL, void* userdata = NULL) const;
+            ByteVector getPEM(bool discard_private_compound = false, PEMPassphraseCallback callback = nullptr, void* userdata = nullptr) const;
 
             /**
              * \brief Get the public compound.
              * \return The public compound.
              */
-            const std::vector<unsigned char>& publicCompound() const;
+            const ByteVector& publicCompound() const;
 
             /**
              * \brief Get the private compound.
              * \return The private compound.
              */
-            const std::vector<unsigned char>& privateCompound() const;
+            const ByteVector& privateCompound() const;
 
             /**
              * \brief Get a copy of the RSA key without any private compound.
@@ -139,7 +140,7 @@ namespace logicalaccess
              * \brief Check if the RSA key has a private compound.
              * \return true if the RSA key has a private compound, false otherwise.
              */
-            inline bool hasPrivateCompound() const
+	        bool hasPrivateCompound() const
             {
                 return d_has_private_key;
             }
@@ -150,12 +151,12 @@ namespace logicalaccess
              * \param callback A passphrase callback function.
              * \param userdata Some user data to pass to the callback function.
              */
-            void writeToPEMKeyFile(const std::string& filename, PEMPassphraseCallback callback = NULL, void* userdata = NULL) const;
+            void writeToPEMKeyFile(const std::string& filename, PEMPassphraseCallback callback = nullptr, void* userdata = nullptr) const;
 
             /**
              * \brief Clear the RSA key so it becomes null.
              */
-            inline void clear()
+	        void clear()
             {
                 d_rsa.reset();
                 d_has_private_key = false;
@@ -184,7 +185,7 @@ namespace logicalaccess
              * \brief The boolean test.
              * \return true if d_rsa is set.
              */
-            inline bool boolean_test() const
+	        bool boolean_test() const
             {
                 return bool(d_rsa);
             }
@@ -207,12 +208,12 @@ namespace logicalaccess
             /**
              * \brief The public key part.
              */
-            std::vector<unsigned char> d_public_key;
+            ByteVector d_public_key;
 
             /**
              * \brief The private key part.
              */
-            std::vector<unsigned char> d_private_key;
+            ByteVector d_private_key;
 
             friend bool operator==(const RSAKey& lhs, const RSAKey& rhs);
             friend class RSACipher;

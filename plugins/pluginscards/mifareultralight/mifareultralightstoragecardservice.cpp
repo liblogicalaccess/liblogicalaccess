@@ -28,12 +28,12 @@ namespace logicalaccess
             return;
         }
 
-        std::vector<unsigned char> zeroblock(4, 0x00);
+        ByteVector zeroblock(4, 0x00);
 
         writeData(location, aiToUse, std::shared_ptr<AccessInfo>(), zeroblock, CB_DEFAULT);
     }
 
-    void MifareUltralightStorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> /*aiToUse*/, std::shared_ptr<AccessInfo> aiToWrite, const std::vector<unsigned char>& data, CardBehavior behaviorFlags)
+    void MifareUltralightStorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> /*aiToUse*/, std::shared_ptr<AccessInfo> aiToWrite, const ByteVector& data, CardBehavior behaviorFlags)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 
@@ -41,7 +41,7 @@ namespace logicalaccess
         EXCEPTION_ASSERT_WITH_LOG(mLocation, std::invalid_argument, "location must be a MifareUltralightLocation.");
         std::shared_ptr<MifareUltralightAccessInfo> mAi = std::dynamic_pointer_cast<MifareUltralightAccessInfo>(aiToWrite);
 
-        size_t totaldatalen = data.size() + mLocation->byte;
+        size_t totaldatalen = data.size() + mLocation->byte_;
         int nbPages = 0;
         size_t buflen = 0;
         while (buflen < totaldatalen)
@@ -52,9 +52,9 @@ namespace logicalaccess
 
         if (nbPages >= 1)
         {
-            std::vector<unsigned char> dataPages;
+            ByteVector dataPages;
             dataPages.resize(buflen, 0x00);
-			std::copy(data.begin(), data.end(), dataPages.begin() + mLocation->byte);
+			copy(data.begin(), data.end(), dataPages.begin() + mLocation->byte_);
 
             if (behaviorFlags & CB_AUTOSWITCHAREA)
             {
@@ -76,14 +76,14 @@ namespace logicalaccess
         }
     }
 
-    std::vector<unsigned char> MifareUltralightStorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> /*aiToUse*/, size_t length, CardBehavior behaviorFlags)
+    ByteVector MifareUltralightStorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> /*aiToUse*/, size_t length, CardBehavior behaviorFlags)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
-		std::vector<unsigned char> ret;
+		ByteVector ret;
         std::shared_ptr<MifareUltralightLocation> mLocation = std::dynamic_pointer_cast<MifareUltralightLocation>(location);
         EXCEPTION_ASSERT_WITH_LOG(mLocation, std::invalid_argument, "location must be a MifareLocation.");
 
-        size_t totaldatalen = length + mLocation->byte;
+        size_t totaldatalen = length + mLocation->byte_;
         int nbPages = 0;
         size_t buflen = 0;
         while (buflen < totaldatalen)
@@ -94,7 +94,7 @@ namespace logicalaccess
 
         if (nbPages >= 1)
         {
-            std::vector<unsigned char> dataPages;
+            ByteVector dataPages;
 
             if (behaviorFlags & CB_AUTOSWITCHAREA)
             {
@@ -111,13 +111,13 @@ namespace logicalaccess
                 nbPages += static_cast<int>((dataPages.size() + 3) / 4) - 1;
             }
 
-			ret.insert(ret.end(), dataPages.begin() + mLocation->byte, dataPages.begin() + mLocation->byte + length);
+			ret.insert(ret.end(), dataPages.begin() + mLocation->byte_, dataPages.begin() + mLocation->byte_ + length);
         }
 		return ret;
     }
 
-    unsigned int MifareUltralightStorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/, void* /*data*/, size_t /*dataLength*/)
+	ByteVector MifareUltralightStorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/)
     {
-        return 0;
+        return {};
     }
 }

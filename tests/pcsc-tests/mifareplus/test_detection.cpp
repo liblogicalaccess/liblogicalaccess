@@ -27,7 +27,7 @@ int main(int ac, char **av)
     ReaderProviderPtr provider;
     ReaderUnitPtr readerUnit;
     ChipPtr chip;
-    std::tie(provider, readerUnit, chip) = pcsc_test_init();
+    tie(provider, readerUnit, chip) = pcsc_test_init();
 
     PRINT_TIME("Chip identifier: " <<
                logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));

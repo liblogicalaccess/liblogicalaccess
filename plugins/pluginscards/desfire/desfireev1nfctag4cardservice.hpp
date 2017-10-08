@@ -25,23 +25,23 @@ namespace logicalaccess
          * \brief Constructor.
          * \param chip The chip.
          */
-        DESFireEV1NFCTag4CardService(std::shared_ptr<Chip> chip) : ISO7816NFCTag4CardService(chip) {};
+	    explicit DESFireEV1NFCTag4CardService(std::shared_ptr<Chip> chip) : ISO7816NFCTag4CardService(chip) {}
 
-        ~DESFireEV1NFCTag4CardService() {};
+        ~DESFireEV1NFCTag4CardService() {}
 
-        void createNFCApplication(unsigned int aid, std::shared_ptr<logicalaccess::DESFireKey> masterPICCKey, unsigned short isoFIDApplication = 0xe105, unsigned short isoFIDCapabilityContainer = 0xe103, unsigned short isoFIDNDEFFile = 0xe104, unsigned short NDEFFileSize = 0xff);
+        void createNFCApplication(unsigned int aid, std::shared_ptr<DESFireKey> masterPICCKey, unsigned short isoFIDApplication = 0xe105, unsigned short isoFIDCapabilityContainer = 0xe103, unsigned short isoFIDNDEFFile = 0xe104, unsigned short NDEFFileSize = 0xff);
 
-        void deleteNFCApplication(unsigned int aid, std::shared_ptr<logicalaccess::DESFireKey> masterPICCKey);
+        void deleteNFCApplication(unsigned int aid, std::shared_ptr<DESFireKey> masterPICCKey) const;
 
-        virtual std::shared_ptr<logicalaccess::NdefMessage> readNDEFFile(unsigned short isoFIDApplication = 0xe105, unsigned short isoFIDNDEFFile = 0xe104);
+	    std::shared_ptr<NdefMessage> readNDEFFile(unsigned short isoFIDApplication = 0xe105, unsigned short isoFIDNDEFFile = 0xe104) override;
 
-        virtual void writeNDEF(std::shared_ptr<logicalaccess::NdefMessage> records);
+	    void writeNDEF(std::shared_ptr<NdefMessage> records) override;
 
-        virtual void eraseNDEF();
+	    void eraseNDEF() override;
 
     protected:
 
-        std::shared_ptr<DESFireEV1Chip> getDESFireChip() { return std::dynamic_pointer_cast<DESFireEV1Chip>(getChip()); };
+        std::shared_ptr<DESFireEV1Chip> getDESFireChip() const { return std::dynamic_pointer_cast<DESFireEV1Chip>(getChip()); }
     };
 }
 

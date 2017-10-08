@@ -28,9 +28,9 @@ namespace logicalaccess
     {
         bool r = false;
 
-		std::vector<unsigned char> result, vector_key((unsigned char*)key->getData(), (unsigned char*)key->getData() + key->getLength());
+		ByteVector vector_key((unsigned char*)key->getData(), (unsigned char*)key->getData() + key->getLength());
 
-        result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x82, 0x00, static_cast<unsigned char>(keytype), static_cast<unsigned char>(vector_key.size()), vector_key);
+        ByteVector result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x82, 0x00, static_cast<unsigned char>(keytype), static_cast<unsigned char>(vector_key.size()), vector_key);
 
         if (!vol && (result[result.size() - 2] == 0x63) && (result[result.size() - 1] == 0x86))
         {
@@ -51,7 +51,7 @@ namespace logicalaccess
 	{
         // Somehow the documentation is invalid, and increment and decrement
         // operation code are reversed (SCL011).
-		std::vector<unsigned char> buf;
+		ByteVector buf;
 		buf.push_back(0xC1);
 		buf.push_back(blockno);
 		buf.push_back(static_cast<unsigned char>(value & 0xff));
@@ -66,7 +66,7 @@ namespace logicalaccess
 	{
         // Somehow the documentation is invalid, and increment and decrement
         // operation code are reversed (SCL011).
-		std::vector<unsigned char> buf;
+		ByteVector buf;
 		buf.push_back(0xC0);
 		buf.push_back(blockno);
 		buf.push_back(static_cast<unsigned char>(value & 0xff));

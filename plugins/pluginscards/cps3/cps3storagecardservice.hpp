@@ -22,7 +22,7 @@ namespace logicalaccess
         /**
          * \brief Constructor.
          */
-		CPS3StorageCardService(std::shared_ptr<Chip> chip);
+	    explicit CPS3StorageCardService(std::shared_ptr<Chip> chip);
 
         /**
          * \brief Destructor.
@@ -33,15 +33,14 @@ namespace logicalaccess
          * \brief Read data on a specific Tag-It location, using given Tag-It keys.
          * \param location The data location.
          * \param aiToUse The key's informations to use for write access.
-         * \param length to read.
          * \param behaviorFlags Flags which determines the behavior.
 		 * \return Data readed
          */
-        virtual std::vector<unsigned char> readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, size_t dataLength, CardBehavior behaviorFlags);
+	    ByteVector readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, size_t dataLength, CardBehavior behaviorFlags) override;
 
     protected:
 
-		std::shared_ptr<CPS3Chip> getCPS3Chip() { return std::dynamic_pointer_cast<CPS3Chip>(getISO7816Chip()); };
+		std::shared_ptr<CPS3Chip> getCPS3Chip() const { return std::dynamic_pointer_cast<CPS3Chip>(getISO7816Chip()); }
     };
 }
 

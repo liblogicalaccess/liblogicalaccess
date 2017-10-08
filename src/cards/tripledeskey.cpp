@@ -14,22 +14,22 @@ namespace logicalaccess
         : Key()
     {
         memset(d_key, 0x00, sizeof(d_key));
-        clear();
+	    Key::clear();
     }
 
     TripleDESKey::TripleDESKey(const std::string& str)
         : Key()
     {
         memset(d_key, 0x00, sizeof(d_key));
-        fromString(str);
+	    Key::fromString(str);
     }
 
     TripleDESKey::TripleDESKey(const void* buf, size_t buflen)
         : Key()
     {
-        clear();
+	    Key::clear();
 
-        if (buf != NULL)
+        if (buf != nullptr)
         {
             if (buflen >= TRIPLEDES_KEY_SIZE)
             {

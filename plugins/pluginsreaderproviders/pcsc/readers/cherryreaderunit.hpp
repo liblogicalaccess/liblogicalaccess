@@ -25,7 +25,7 @@ namespace logicalaccess
         /**
          * \brief Constructor.
          */
-        CherryReaderUnit(const std::string& name);
+	    explicit CherryReaderUnit(const std::string& name);
 
         /**
          * \brief Destructor.
@@ -36,9 +36,7 @@ namespace logicalaccess
          * \brief Get the PC/SC reader unit type.
          * \return The PC/SC reader unit type.
          */
-        virtual PCSCReaderUnitType getPCSCType() const;
-
-    protected:
+	    PCSCReaderUnitType getPCSCType() const override;
     };
 }
 

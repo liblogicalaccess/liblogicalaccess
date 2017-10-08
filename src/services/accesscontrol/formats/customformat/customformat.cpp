@@ -46,12 +46,12 @@ namespace logicalaccess
         return dataLength;
     }
 
-    void CustomFormat::setName(const string& name)
+    void CustomFormat::setName(const std::string& name)
     {
         d_name = name;
     }
 
-    string CustomFormat::getName() const
+	std::string CustomFormat::getName() const
     {
         return d_name;
     }
@@ -132,7 +132,7 @@ namespace logicalaccess
         }
     }
 
-    std::string CustomFormat::getDefaultXmlNodeName() const
+	std::string CustomFormat::getDefaultXmlNodeName() const
     {
         return "CustomFormat";
     }
@@ -166,10 +166,10 @@ namespace logicalaccess
 
     size_t CustomFormat::getSkeletonLinearData(void* data, size_t dataLengthBytes) const
     {
-        std::string xmlstr = const_cast<XmlSerializable*>(dynamic_cast<const XmlSerializable*>(this))->serialize();
-        std::vector<unsigned char> xmlbuf(xmlstr.begin(), xmlstr.end());
+		std::string xmlstr = const_cast<XmlSerializable*>(dynamic_cast<const XmlSerializable*>(this))->serialize();
+        ByteVector xmlbuf(xmlstr.begin(), xmlstr.end());
 
-        if (data != NULL)
+        if (data != nullptr)
         {
             if (dataLengthBytes < xmlbuf.size())
             {
@@ -183,12 +183,12 @@ namespace logicalaccess
 
     void CustomFormat::setSkeletonLinearData(const void* data, size_t dataLengthBytes)
     {
-        std::vector<unsigned char> xmlbuf((unsigned char*)data, (unsigned char*)data + dataLengthBytes);
-        std::string xmlstr = BufferHelper::getStdString(xmlbuf);
+        ByteVector xmlbuf((unsigned char*)data, (unsigned char*)data + dataLengthBytes);
+		std::string xmlstr = BufferHelper::getStdString(xmlbuf);
         dynamic_cast<XmlSerializable*>(this)->unSerialize(xmlstr, "");
     }
 
-    std::shared_ptr<DataField> CustomFormat::getFieldForPosition(unsigned int position)
+    std::shared_ptr<DataField> CustomFormat::getFieldForPosition(unsigned int position) const
     {
         std::shared_ptr<DataField> field;
         for (std::list<std::shared_ptr<DataField> >::const_iterator i = d_fieldList.cbegin(); !field && i != d_fieldList.cend(); ++i)

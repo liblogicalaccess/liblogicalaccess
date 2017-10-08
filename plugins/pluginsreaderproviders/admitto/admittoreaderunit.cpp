@@ -34,9 +34,9 @@ namespace logicalaccess
 		: ReaderUnit(READER_ADMITTO)
 	{
 		d_readerUnitConfig.reset(new AdmittoReaderUnitConfiguration());
-		setDefaultReaderCardAdapter (std::shared_ptr<AdmittoReaderCardAdapter> (new AdmittoReaderCardAdapter()));
-		std::shared_ptr<AdmittoDataTransport> dataTransport(new AdmittoDataTransport());
-		setDataTransport(dataTransport);
+		ReaderUnit::setDefaultReaderCardAdapter (std::make_shared<AdmittoReaderCardAdapter>());
+		const std::shared_ptr<AdmittoDataTransport> dataTransport(new AdmittoDataTransport());
+		ReaderUnit::setDataTransport(dataTransport);
 		d_card_type = CHIP_UNKNOWN;
 
 		try
@@ -50,7 +50,7 @@ namespace logicalaccess
 
 	AdmittoReaderUnit::~AdmittoReaderUnit()
 	{
-		disconnectFromReader();
+		AdmittoReaderUnit::disconnectFromReader();
 	}
 
 	std::string AdmittoReaderUnit::getName() const
@@ -63,15 +63,15 @@ namespace logicalaccess
 		return getName();
 	}
 
-	void AdmittoReaderUnit::setCardType(std::string cardType)
+	void AdmittoReaderUnit::setCardType(const std::string cardType)
 	{
 		LOG(LogLevel::INFOS) << "Setting card type {" << cardType << "}";
 		d_card_type = cardType;
 	}
 
-	bool AdmittoReaderUnit::waitInsertion(unsigned int maxwait)
+	bool AdmittoReaderUnit::waitInsertion(const unsigned int maxwait)
 	{
-		bool oldValue = Settings::getInstance()->IsLogEnabled;
+		const bool oldValue = Settings::getInstance()->IsLogEnabled;
 		if (oldValue && !Settings::getInstance()->SeeWaitInsertionLog)
 		{
 			Settings::getInstance()->IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
@@ -90,10 +90,10 @@ namespace logicalaccess
 			{
 				try
 				{
-					std::vector<unsigned char> cmd;
+					ByteVector cmd;
 					cmd.push_back(0xff);	// trick
 
-					std::vector<unsigned char> buf = getDefaultAdmittoReaderCardAdapter()->sendCommand(cmd);
+					ByteVector buf = getDefaultAdmittoReaderCardAdapter()->sendCommand(cmd);
 					if (buf.size() > 0)
 					{
 						if (buf[0] == 0x4e)
@@ -102,7 +102,7 @@ namespace logicalaccess
 						}
 						else
 						{
-							unsigned int l = static_cast<unsigned int>(atoull(BufferHelper::getStdString(buf)));
+							const unsigned int l = static_cast<unsigned int>(atoull(BufferHelper::getStdString(buf)));
 							char bufTmpId[64];
 							sprintf(bufTmpId, "%08x", l);
 							d_insertedChip = ReaderUnit::createChip(
@@ -135,9 +135,9 @@ namespace logicalaccess
 		return inserted;
 	}
 
-	bool AdmittoReaderUnit::waitRemoval(unsigned int maxwait)
+	bool AdmittoReaderUnit::waitRemoval(const unsigned int maxwait)
 	{
-		bool oldValue = Settings::getInstance()->IsLogEnabled;
+		const bool oldValue = Settings::getInstance()->IsLogEnabled;
 		if (oldValue && !Settings::getInstance()->SeeWaitRemovalLog)
 		{
 			Settings::getInstance()->IsLogEnabled = false;		// Disable logs for this part (otherwise too much log output in file)
@@ -156,10 +156,10 @@ namespace logicalaccess
 				{
 					try
 					{
-						std::vector<unsigned char> cmd;
+						ByteVector cmd;
 						cmd.push_back(0xff);	// trick
 
-						std::vector<unsigned char> buf = getDefaultAdmittoReaderCardAdapter()->sendCommand(cmd);
+						ByteVector buf = getDefaultAdmittoReaderCardAdapter()->sendCommand(cmd);
 						if (buf.size() > 0)
 						{
 							if (buf[0] == 0x4e)
@@ -170,10 +170,10 @@ namespace logicalaccess
 							}
 							else
 							{
-								unsigned int l = static_cast<unsigned int>(atoull(BufferHelper::getStdString(buf)));
+								const unsigned int l = static_cast<unsigned int>(atoull(BufferHelper::getStdString(buf)));
 								char bufTmpId[64];
 								sprintf(bufTmpId, "%08x", l);
-								std::shared_ptr<Chip> chip = ReaderUnit::createChip(
+								const std::shared_ptr<Chip> chip = ReaderUnit::createChip(
 									(d_card_type == CHIP_UNKNOWN ? CHIP_GENERICTAG : d_card_type),
 									formatHexString(std::string(bufTmpId))
 								);
@@ -221,7 +221,7 @@ namespace logicalaccess
 		LOG(LogLevel::WARNINGS) << "Disconnect do nothing with Admitto reader";
 	}
 
-	std::shared_ptr<Chip> AdmittoReaderUnit::createChip(std::string type)
+	std::shared_ptr<Chip> AdmittoReaderUnit::createChip(const std::string type)
 	{
 		LOG(LogLevel::INFOS) << "Creating chip... chip type {" << type << "}";
 		std::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
@@ -253,7 +253,7 @@ namespace logicalaccess
 	std::vector<std::shared_ptr<Chip> > AdmittoReaderUnit::getChipList()
 	{
 		std::vector<std::shared_ptr<Chip> > chipList;
-		std::shared_ptr<Chip> singleChip = getSingleChip();
+		const std::shared_ptr<Chip> singleChip = getSingleChip();
 		if (singleChip)
 		{
 			chipList.push_back(singleChip);
@@ -263,8 +263,7 @@ namespace logicalaccess
 
 	std::shared_ptr<AdmittoReaderCardAdapter> AdmittoReaderUnit::getDefaultAdmittoReaderCardAdapter()
 	{
-		std::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
-		return std::dynamic_pointer_cast<AdmittoReaderCardAdapter>(adapter);
+		return std::dynamic_pointer_cast<AdmittoReaderCardAdapter>(getDefaultReaderCardAdapter());
 	}
 
 	std::string AdmittoReaderUnit::getReaderSerialNumber()
@@ -295,9 +294,9 @@ namespace logicalaccess
 		getDataTransport()->disconnect();
 	}
 
-	std::vector<unsigned char> AdmittoReaderUnit::getPingCommand() const
+	ByteVector AdmittoReaderUnit::getPingCommand() const
 	{
-		std::vector<unsigned char> cmd;
+		ByteVector cmd;
 
 		cmd.push_back(0xff);
 

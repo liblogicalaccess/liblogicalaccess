@@ -35,7 +35,7 @@ namespace logicalaccess
          * \brief Constructor.
          * \param ct The card type.
          */
-        DESFireChip(std::string ct);
+	    explicit DESFireChip(std::string ct);
 
         /**
          * \brief Destructor.
@@ -46,13 +46,13 @@ namespace logicalaccess
          * \brief Get the generic card type.
          * \return The generic card type.
          */
-        virtual std::string getGenericCardType() const { return CHIP_DESFIRE; };
+	    std::string getGenericCardType() const override { return CHIP_DESFIRE; }
 
         /**
          * \brief Get the root location node.
          * \return The root location node.
          */
-        virtual std::shared_ptr<LocationNode> getRootLocationNode();
+	    std::shared_ptr<LocationNode> getRootLocationNode() override;
 
         /**
          * \brief Get the application location information.
@@ -65,25 +65,25 @@ namespace logicalaccess
          * \param serviceType The card service type.
          * \return The card service.
          */
-        virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
+	    std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
 
 		/**
 		* \brief Create default DESFire access informations.
 		* \return Default DESFire access informations.
 		*/
-		virtual std::shared_ptr<AccessInfo> createAccessInfo() const;
+	    std::shared_ptr<AccessInfo> createAccessInfo() const override;
 
 		/**
 		* \brief Create default DESFire location.
 		* \return Default DESFire location.
 		*/
-		virtual std::shared_ptr<Location> createLocation() const;
+	    std::shared_ptr<Location> createLocation() const override;
 
         /**
          * \brief Get the DESFire commands.
          * \return The DESFire commands.
          */
-        std::shared_ptr<DESFireCommands> getDESFireCommands() { return std::dynamic_pointer_cast<DESFireCommands>(getCommands()); };
+        std::shared_ptr<DESFireCommands> getDESFireCommands() const { return std::dynamic_pointer_cast<DESFireCommands>(getCommands()); }
 
 
         /**
@@ -122,7 +122,7 @@ namespace logicalaccess
 		void setCrypto(std::shared_ptr<DESFireCrypto> crypto)
 		{
 			d_crypto = crypto;
-		};
+		}
 
     protected:
 

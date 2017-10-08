@@ -38,28 +38,26 @@ namespace logicalaccess
          * \brief Get the generic card type.
          * \return The generic card type.
          */
-        virtual std::string getGenericCardType() const { return CHIP_PROX; };
+	    std::string getGenericCardType() const override { return CHIP_PROX; }
 
         /**
          * \brief Get the root location node.
          * \return The root location node.
          */
-        virtual std::shared_ptr<LocationNode> getRootLocationNode();
+	    std::shared_ptr<LocationNode> getRootLocationNode() override;
 
         /**
          * \brief Get a card service for this card provider.
          * \param serviceType The card service type.
          * \return The card service.
          */
-        virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
+	    std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
 
 		/**
 		* \brief Create default location.
 		* \return Default location.
 		*/
-		virtual std::shared_ptr<Location> createLocation() const;
-
-    protected:
+	    std::shared_ptr<Location> createLocation() const override;
     };
 }
 

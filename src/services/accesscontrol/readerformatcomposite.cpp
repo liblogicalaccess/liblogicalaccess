@@ -20,7 +20,7 @@ namespace logicalaccess
     {
     }
 
-    std::shared_ptr<Format> ReaderFormatComposite::readFormat()
+    std::shared_ptr<Format> ReaderFormatComposite::readFormat() const
     {
         std::shared_ptr<Format> fcopy;
         if (d_readerConfiguration && d_cardsFormatComposite)

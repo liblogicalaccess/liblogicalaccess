@@ -115,7 +115,7 @@ namespace logicalaccess
         out[2] = (((tin[2] << 6) & 0xc0) | tin[3]);
     }
 
-    std::string BufferHelper::getHex(const std::vector<unsigned char>& buffer)
+    std::string BufferHelper::getHex(const ByteVector& buffer)
     {
         std::ostringstream ss;
 
@@ -126,7 +126,7 @@ namespace logicalaccess
         return result;
     }
 
-    std::string BufferHelper::toBase64(const std::vector<unsigned char>& buf)
+    std::string BufferHelper::toBase64(const ByteVector& buf)
     {
         std::string result;
         result.resize(((buf.size() + 2) / 3) * 4);
@@ -151,11 +151,11 @@ namespace logicalaccess
         return result;
     }
 
-    std::vector<unsigned char> BufferHelper::fromBase64(const std::string& b64str)
+    ByteVector BufferHelper::fromBase64(const std::string& b64str)
     {
         EXCEPTION_ASSERT((b64str.size() % 4) == 0, std::invalid_argument, "The buffer size must be multiple of 4");
 
-        std::vector<unsigned char> result;
+        ByteVector result;
         unsigned char tmp[64];
 
         for (size_t i = 0; i < b64str.size(); i += 4)
@@ -174,13 +174,13 @@ namespace logicalaccess
         return result;
     }
 
-    std::vector<unsigned char> BufferHelper::fromHexString(std::string hexString)
+    ByteVector BufferHelper::fromHexString(std::string hexString)
     {
-        std::vector<unsigned char> data;
+        ByteVector data;
         std::stringstream convertStream;
 
         // delete spaces
-        hexString.erase(std::remove(hexString.begin(), hexString.end(), ' '), hexString.end());
+        hexString.erase(remove(hexString.begin(), hexString.end(), ' '), hexString.end());
 
         size_t offset = 0;
         while (offset < hexString.length())
@@ -202,25 +202,25 @@ namespace logicalaccess
         return data;
     }
 
-    std::string BufferHelper::getStdString(const std::vector<unsigned char>& buffer)
+    std::string BufferHelper::getStdString(const ByteVector& buffer)
     {
         return std::string(buffer.begin(), buffer.end());
     }
 
-    void BufferHelper::setUShort(std::vector<unsigned char>& buffer, const unsigned short& value)
+    void BufferHelper::setUShort(ByteVector& buffer, const unsigned short& value)
     {
         buffer.push_back(static_cast<unsigned char>(value & 0xff));
         buffer.push_back(static_cast<unsigned char>((value & 0xff00) >> 8));
     }
 
-    unsigned short BufferHelper::getUShort(const std::vector<unsigned char>& buffer, size_t& offset)
+    unsigned short BufferHelper::getUShort(const ByteVector& buffer, size_t& offset)
     {
         unsigned short tmp = static_cast<unsigned short>(buffer[offset++]);
         tmp |= static_cast<unsigned short>(buffer[offset++]) << 8;
         return tmp;
     }
 
-    void BufferHelper::setInt32(std::vector<unsigned char>& buffer, const long& value)
+    void BufferHelper::setInt32(ByteVector& buffer, const long& value)
     {
         buffer.push_back(static_cast<unsigned char>(value & 0xff));
         buffer.push_back(static_cast<unsigned char>((value & 0xff00) >> 8));
@@ -228,13 +228,13 @@ namespace logicalaccess
         buffer.push_back(static_cast<unsigned char>((value & 0xff000000) >> 24));
     }
 
-	void BufferHelper::setUInt16(std::vector<unsigned char>& buffer, const unsigned long& value)
+	void BufferHelper::setUInt16(ByteVector& buffer, const unsigned long& value)
 	{
 		buffer.push_back(static_cast<unsigned char>(value & 0xff));
 		buffer.push_back(static_cast<unsigned char>((value & 0xff00) >> 8));
 	}
 
-    void BufferHelper::setUInt32(std::vector<unsigned char>& buffer, const unsigned long& value)
+    void BufferHelper::setUInt32(ByteVector& buffer, const unsigned long& value)
     {
         buffer.push_back(static_cast<unsigned char>(value & 0xff));
         buffer.push_back(static_cast<unsigned char>((value & 0xff00) >> 8));
@@ -242,14 +242,14 @@ namespace logicalaccess
         buffer.push_back(static_cast<unsigned char>((value & 0xff000000) >> 24));
     }
 
-	unsigned long BufferHelper::getUInt16(const std::vector<unsigned char>& buffer, size_t& offset)
+	unsigned long BufferHelper::getUInt16(const ByteVector& buffer, size_t& offset)
 	{
 		unsigned long tmp = static_cast<unsigned long>(buffer[offset++]);
 		tmp |= static_cast<unsigned long>(buffer[offset++]) << 8;
 		return tmp;
 	}
 
-    unsigned long BufferHelper::getUInt32(const std::vector<unsigned char>& buffer, size_t& offset)
+    unsigned long BufferHelper::getUInt32(const ByteVector& buffer, size_t& offset)
     {
         unsigned long tmp = static_cast<unsigned long>(buffer[offset++]);
         tmp |= static_cast<unsigned long>(buffer[offset++]) << 8;
@@ -258,7 +258,7 @@ namespace logicalaccess
         return tmp;
     }
 
-    long BufferHelper::getInt32(const std::vector<unsigned char>& buffer, size_t& offset)
+    long BufferHelper::getInt32(const ByteVector& buffer, size_t& offset)
     {
         long tmp = static_cast<long>(buffer[offset++]);
         tmp |= static_cast<long>(buffer[offset++]) << 8;
@@ -267,7 +267,7 @@ namespace logicalaccess
         return tmp;
     }
 
-    void BufferHelper::setUInt64(std::vector<unsigned char>& buffer, const unsigned long long& value)
+    void BufferHelper::setUInt64(ByteVector& buffer, const unsigned long long& value)
     {
         buffer.push_back(static_cast<unsigned char>(value & 0xff));
         buffer.push_back(static_cast<unsigned char>((value & 0xff00) >> 8));
@@ -279,7 +279,7 @@ namespace logicalaccess
         buffer.push_back(static_cast<unsigned char>((value & 0xff00000000000000) >> 56));
     }
 
-    uint64_t BufferHelper::getUInt64(const std::vector<unsigned char>& buffer, size_t& offset)
+    uint64_t BufferHelper::getUInt64(const ByteVector& buffer, size_t& offset)
     {
         uint64_t tmp = static_cast<uint64_t>(buffer[offset++]);
         tmp |= static_cast<uint64_t>(buffer[offset++]) << 8;
@@ -292,7 +292,7 @@ namespace logicalaccess
         return tmp;
     }
 
-    void BufferHelper::setString(std::vector<unsigned char>& buffer, const std::string& value)
+    void BufferHelper::setString(ByteVector& buffer, const std::string& value)
     {
         buffer.insert(buffer.end(), value.begin(), value.end());
     }

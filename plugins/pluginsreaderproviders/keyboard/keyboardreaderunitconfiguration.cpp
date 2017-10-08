@@ -13,7 +13,7 @@ namespace logicalaccess
     KeyboardReaderUnitConfiguration::KeyboardReaderUnitConfiguration()
         : ReaderUnitConfiguration(READER_KEYBOARD)
     {
-        resetConfiguration();
+	    KeyboardReaderUnitConfiguration::resetConfiguration();
     }
 
     KeyboardReaderUnitConfiguration::~KeyboardReaderUnitConfiguration()

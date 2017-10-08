@@ -30,13 +30,13 @@ namespace logicalaccess
         * \brief Set the green led to a status.
         * \param status True to show the green led, false otherwise.
         */
-        virtual void setGreenLed(bool status);
+	    void setGreenLed(bool status) override;
 
         /**
         * \brief Set the red led to a status.
         * \param status True to show the red led, false otherwise.
         */
-        virtual void setRedLed(bool status);
+	    void setRedLed(bool status) override;
 
         /**
         * \brief Set the blue led to a status.
@@ -54,16 +54,16 @@ namespace logicalaccess
         * \brief Set the buzzer to a status.
         * \param status True to play the buzzer, false otherwise.
         */
-        virtual void setBuzzer(bool status);
+	    void setBuzzer(bool status) override;
 
         /**
         * \brief Upload led status.
         * \see setRedLed
         * \see setGreenLed
         */
-        void setLED();
+        void setLED() const;
 
-        std::shared_ptr<PCSCReaderCardAdapter> getPCSCReaderCardAdapter();
+        std::shared_ptr<PCSCReaderCardAdapter> getPCSCReaderCardAdapter() const;
 
     protected:
 

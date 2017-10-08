@@ -30,7 +30,7 @@ namespace logicalaccess
 
     protected:
 
-        virtual std::vector<unsigned char> sendGenericCommand(const std::vector<unsigned char>& data);
+	    ByteVector sendGenericCommand(const ByteVector& data) override;
     };
 }
 

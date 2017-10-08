@@ -13,7 +13,7 @@ namespace logicalaccess
     OK5553ReaderUnitConfiguration::OK5553ReaderUnitConfiguration()
         : ReaderUnitConfiguration(READER_OK5553)
     {
-        resetConfiguration();
+	    OK5553ReaderUnitConfiguration::resetConfiguration();
     }
 
     OK5553ReaderUnitConfiguration::~OK5553ReaderUnitConfiguration()

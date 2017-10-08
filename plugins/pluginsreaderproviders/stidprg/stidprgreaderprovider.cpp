@@ -11,7 +11,7 @@
 using namespace logicalaccess;
 
 std::shared_ptr<STidPRGReaderProvider>
-logicalaccess::STidPRGReaderProvider::getSingletonInstance()
+STidPRGReaderProvider::getSingletonInstance()
 {
     static std::shared_ptr<STidPRGReaderProvider> instance =
         std::make_shared<STidPRGReaderProvider>();

@@ -40,7 +40,7 @@ namespace logicalaccess
 
     DeisterReaderProvider::~DeisterReaderProvider()
     {
-        release();
+	    DeisterReaderProvider::release();
     }
 
     void DeisterReaderProvider::release()

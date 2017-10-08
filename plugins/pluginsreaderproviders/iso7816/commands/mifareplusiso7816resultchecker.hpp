@@ -29,10 +29,10 @@ namespace logicalaccess
          * @param data The buffer.
          * @param size_t The buffer length.
          */
-	    virtual void CheckResult(const void* data, size_t datalen) override;
+		void CheckResult(const void* data, size_t datalen) override;
 
     private:
-        bool checkByte(uint8_t);
+        static bool checkByte(uint8_t);
     };
 }
 

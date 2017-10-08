@@ -29,10 +29,8 @@ namespace logicalaccess
     {
         std::string ret;
 
-        std::vector<unsigned char> ucReceivedData;
-
-        //This Command is from ICAO Command Set (Test-Commands). If you use ICAO Test-Commands then the driver stop the tracking (the reader is � stuck � ).
-        ucReceivedData = getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x9A, 0x01, 0x05, 0x00);
+	    //This Command is from ICAO Command Set (Test-Commands). If you use ICAO Test-Commands then the driver stop the tracking (the reader is � stuck � ).
+        ByteVector ucReceivedData = getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x9A, 0x01, 0x05, 0x00);
         //After using this command you must "Close" the Test-Mode with the following command:
         size_t le = ucReceivedData.size() - 2;
 

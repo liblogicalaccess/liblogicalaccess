@@ -16,7 +16,7 @@ namespace logicalaccess
     {
         const EVP_CIPHER* DESCipher::getEVPCipher(const SymmetricKey& key) const
         {
-            const EVP_CIPHER* evpCipher = NULL;
+            const EVP_CIPHER* evpCipher = nullptr;
 
             size_t desbytes = key.data().size();
 
@@ -74,11 +74,11 @@ namespace logicalaccess
                     break;
 
                 case ENC_MODE_CFB1:
-                    evpCipher = NULL;
+                    evpCipher = nullptr;
                     break;
 
                 case ENC_MODE_CFB8:
-                    evpCipher = NULL;
+                    evpCipher = nullptr;
                     break;
                 }
 

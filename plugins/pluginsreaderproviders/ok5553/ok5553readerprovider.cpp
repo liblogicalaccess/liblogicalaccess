@@ -46,7 +46,7 @@ namespace logicalaccess
 
     OK5553ReaderProvider::~OK5553ReaderProvider()
     {
-        release();
+	    OK5553ReaderProvider::release();
     }
 
     void OK5553ReaderProvider::release()

@@ -65,31 +65,31 @@ namespace logicalaccess
         * \brief Write a message on screen.
         * \param message The message to show.
         */
-        virtual void setMessage(std::string message);
+	    void setMessage(std::string message) override;
 
         /**
         * \brief Write a message on screen.
         * \param rowid The row id for the message.
         * \param message The message to show.
         */
-        virtual void setMessage(unsigned char rowid, std::string message) override;
+	    void setMessage(unsigned char rowid, std::string message) override;
 
-        std::shared_ptr<PCSCReaderCardAdapter> getPCSCReaderCardAdapter() { return std::dynamic_pointer_cast<PCSCReaderCardAdapter>(getReaderCardAdapter()); };
+        std::shared_ptr<PCSCReaderCardAdapter> getPCSCReaderCardAdapter() const { return std::dynamic_pointer_cast<PCSCReaderCardAdapter>(getReaderCardAdapter()); }
 
         /**
          * The implementation simply write to line of SPACE character.
          */
-        virtual void clear() override;
+	    void clear() override;
 
-        void scroll(unsigned char x = 0, unsigned char y = 0, unsigned char xRange = 128, unsigned char yRange = 32, unsigned char speedPixel = 2, LCDScrollPeriod speedPeriod = ScrollPeriodUnit23, LCDScrollDirection direction = ScrollFromLeftToRight);
+        void scroll(unsigned char x = 0, unsigned char y = 0, unsigned char xRange = 128, unsigned char yRange = 32, unsigned char speedPixel = 2, LCDScrollPeriod speedPeriod = ScrollPeriodUnit23, LCDScrollDirection direction = ScrollFromLeftToRight) const;
 
-        void pauseScrolling();
+        void pauseScrolling() const;
 
-        void stopScrolling();
+        void stopScrolling() const;
 
-        void setContrast(unsigned char value);
+        void setContrast(unsigned char value) const;
 
-        void setBacklight(bool enable);
+        void setBacklight(bool enable) const;
     };
 }
 

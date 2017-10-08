@@ -26,7 +26,7 @@ namespace logicalaccess
 		createApplication(location->aid, settings, maxNbKeys, location->cryptoMethod, location->useISO7816 ? FIDS_ISO_FID : FIDS_NO_ISO_FID, location->useISO7816 ? location->applicationFID : 0);
 	}
 
-	void DESFireEV1Commands::createStdDataFile(std::shared_ptr<DESFireEV1Location> location, DESFireAccessRights accessRights, unsigned int fileSize)
+	void DESFireEV1Commands::createStdDataFile(std::shared_ptr<DESFireEV1Location> location, const DESFireAccessRights& accessRights, unsigned int fileSize)
 	{
 		createStdDataFile(location->file, location->securityLevel, accessRights, fileSize, location->useISO7816 ? location->fileFID : 0);
 	}

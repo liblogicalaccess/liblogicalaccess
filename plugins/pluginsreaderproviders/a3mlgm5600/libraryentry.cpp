@@ -13,16 +13,16 @@ extern "C"
 
     LIBLOGICALACCESS_API void getA3MLGM5600Reader(std::shared_ptr<logicalaccess::ReaderProvider>* rp)
     {
-        if (rp != NULL)
+        if (rp != nullptr)
         {
             *rp = logicalaccess::A3MLGM5600ReaderProvider::getSingletonInstance();
         }
     }
 
-    LIBLOGICALACCESS_API bool getReaderInfoAt(unsigned int index, char* readername, size_t readernamelen, void** getterfct)
+    LIBLOGICALACCESS_API bool getReaderInfoAt(const unsigned int index, char* readername, const size_t readernamelen, void** getterfct)
     {
         bool ret = false;
-        if (readername != NULL && readernamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
+        if (readername != nullptr && readernamelen == PLUGINOBJECT_MAXLEN && getterfct != nullptr)
         {
             switch (index)
             {
@@ -33,6 +33,7 @@ extern "C"
                 ret = true;
             }
                 break;
+            default: ;
             }
         }
 

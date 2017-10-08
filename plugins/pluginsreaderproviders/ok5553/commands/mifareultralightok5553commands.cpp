@@ -23,23 +23,22 @@ namespace logicalaccess
     {
     }
 
-    std::vector<unsigned char> MifareUltralightOK5553Commands::readPage(int page)
+    ByteVector MifareUltralightOK5553Commands::readPage(int page)
     {
-        std::vector<unsigned char> command;
-        std::vector<unsigned char> answer;
-        char buffer[3];
+        ByteVector command;
+	    char buffer[3];
         command.push_back(static_cast<unsigned char>('r'));
         command.push_back(static_cast<unsigned char>('b'));
         sprintf(buffer, "%.2X", page);
         command.push_back(static_cast<unsigned char>(buffer[0]));
         command.push_back(static_cast<unsigned char>(buffer[1]));
-        answer = getOK5553ReaderCardAdapter()->sendCommand(command);
+        ByteVector answer = getOK5553ReaderCardAdapter()->sendCommand(command);
         return OK5553ReaderUnit::asciiToHex(answer);
     }
 
-    void MifareUltralightOK5553Commands::writePage(int page, const std::vector<unsigned char>& buf)
+    void MifareUltralightOK5553Commands::writePage(int page, const ByteVector& buf)
     {
-        std::vector<unsigned char> command;
+        ByteVector command;
         char buffer[3];
         command.push_back(static_cast<unsigned char>('w'));
         command.push_back(static_cast<unsigned char>('b'));

@@ -299,6 +299,7 @@ std::string logicalaccess::PCSCConnection::strerror(unsigned int error_flag)
                 msg += "The smart card has been removed, so further "
                        "communication is not possible.";
                 break;
+        default: ;
 #endif
         }
     }

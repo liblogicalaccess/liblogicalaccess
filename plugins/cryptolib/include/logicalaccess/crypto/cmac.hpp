@@ -1,10 +1,11 @@
+#ifndef CMAC_HPP__
+#define CMAC_HPP__
+
 #include <vector>
 #include <memory>
 #include "logicalaccess/crypto/openssl.hpp"
 #include "logicalaccess/crypto/openssl_symmetric_cipher.hpp"
-
-#ifndef CMAC_HPP__
-#define CMAC_HPP__
+#include "logicalaccess/lla_fwd.hpp"
 
 namespace logicalaccess
 {
@@ -13,8 +14,8 @@ namespace logicalaccess
         class CMACCrypto
         {
         public:
-            CMACCrypto() { OpenSSLInitializer::GetInstance(); };
-            ~CMACCrypto() {};
+            CMACCrypto() { OpenSSLInitializer::GetInstance(); }
+            ~CMACCrypto() {}
 			
 			/* 
 			 * \brief Calculate CMAC for a crypto algorithm and key.
@@ -24,7 +25,7 @@ namespace logicalaccess
 			 * \param padding_size The padding size.
 			 * \return The CMAC result for the message.
 			 */
-            static std::vector<unsigned char> cmac(const std::vector<unsigned char>& key, std::string crypto, const std::vector<unsigned char>& data, const std::vector<unsigned char>& iv = {}, int padding_size = 0);
+            static ByteVector cmac(const ByteVector& key, std::string crypto, const ByteVector& data, const ByteVector& iv = {}, int padding_size = 0);
 
             /**
              * \brief  Return data part for the encrypted communication mode.
@@ -35,16 +36,14 @@ namespace logicalaccess
              * \param lastIV The last initialisation vector
              * \return The MAC result for the message.
              */
-            static std::vector<unsigned char> cmac(const std::vector<unsigned char>& key, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const std::vector<unsigned char>& data, std::vector<unsigned char> lastIV, unsigned int padding_size, bool forceK2Use = false);
+            static ByteVector cmac(const ByteVector& key, std::shared_ptr<OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const ByteVector& data, ByteVector lastIV, unsigned int padding_size, bool forceK2Use = false);
 
             /**
              * \brief Shift a string.
              * \param buf The buffer string
              * \param xorparam The optional xor for the string.
              */
-            static std::vector<unsigned char> shift_string(const std::vector<unsigned char>& buf, unsigned char xorparam = 0x00);
-
-        private:
+            static ByteVector shift_string(const ByteVector& buf, unsigned char xorparam = 0x00);
         };
     }
 }

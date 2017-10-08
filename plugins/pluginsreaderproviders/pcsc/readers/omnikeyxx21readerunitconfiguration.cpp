@@ -12,7 +12,7 @@ namespace logicalaccess
     OmnikeyXX21ReaderUnitConfiguration::OmnikeyXX21ReaderUnitConfiguration()
         : PCSCReaderUnitConfiguration()
     {
-        resetConfiguration();
+	    OmnikeyXX21ReaderUnitConfiguration::resetConfiguration();
     }
 
     OmnikeyXX21ReaderUnitConfiguration::~OmnikeyXX21ReaderUnitConfiguration()

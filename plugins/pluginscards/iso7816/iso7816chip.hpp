@@ -28,7 +28,7 @@ namespace logicalaccess
         /**
          * \brief Constructor.
          */
-        ISO7816Chip(std::string ct);
+	    explicit ISO7816Chip(std::string ct);
 
         /**
          * \brief Constructor.
@@ -44,34 +44,32 @@ namespace logicalaccess
          * \brief Get the generic card type.
          * \return The generic card type.
          */
-        virtual std::string getGenericCardType() const { return CHIP_ISO7816; };
+	    std::string getGenericCardType() const override { return CHIP_ISO7816; }
 
-        /**
+	    /**
          * \brief Get the root location node.
          * \return The root location node.
          */
-        virtual std::shared_ptr<LocationNode> getRootLocationNode();
+	    std::shared_ptr<LocationNode> getRootLocationNode() override;
 
         /**
          * \brief Get a card service for this chip.
          * \param serviceType The card service type.
          * \return The card service.
          */
-        virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
+	    std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
 
 		/**
 		* \brief Create default location.
 		* \return Default location.
 		*/
-		virtual std::shared_ptr<Location> createLocation() const;
+	    std::shared_ptr<Location> createLocation() const override;
 
         /**
          * \brief Get the ISO7816 commands.
          * \return The ISO7816 commands.
          */
-        std::shared_ptr<ISO7816Commands> getISO7816Commands() { return std::dynamic_pointer_cast<ISO7816Commands>(getCommands()); };
-
-    protected:
+        std::shared_ptr<ISO7816Commands> getISO7816Commands() const { return std::dynamic_pointer_cast<ISO7816Commands>(getCommands()); }
     };
 }
 

@@ -13,7 +13,7 @@ namespace logicalaccess
     RFIDeasReaderUnitConfiguration::RFIDeasReaderUnitConfiguration()
         : ReaderUnitConfiguration(READER_RFIDEAS)
     {
-        resetConfiguration();
+	    RFIDeasReaderUnitConfiguration::resetConfiguration();
     }
 
     RFIDeasReaderUnitConfiguration::~RFIDeasReaderUnitConfiguration()

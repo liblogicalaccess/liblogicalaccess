@@ -10,7 +10,7 @@
 
 namespace logicalaccess
 {
-    class MifarePlusOmnikeyXX21SL1Commands : public MifarePlusSL1PCSCCommands
+    class LIBLOGICALACCESS_API MifarePlusOmnikeyXX21SL1Commands : public MifarePlusSL1PCSCCommands
     {
     public:
         /**
@@ -20,7 +20,7 @@ namespace logicalaccess
          * This doesn't work under Linux, presumably because the driver doesn't
          * support it.
          */
-        virtual bool AESAuthenticate(std::shared_ptr<AES128Key> ptr,
+	    bool AESAuthenticate(std::shared_ptr<AES128Key> ptr,
                                      uint16_t keyslot) override;
 
     private:
@@ -38,17 +38,17 @@ namespace logicalaccess
       class GenericSessionGuard
       {
         public:
-          GenericSessionGuard(Commands *cmd);
+	      explicit GenericSessionGuard(Commands *cmd);
           ~GenericSessionGuard();
 
         private:
           class Adapter : public ReaderCardAdapter
           {
-              virtual std::vector<unsigned char>
-              adaptCommand(const std::vector<unsigned char> &command) override;
+	          ByteVector
+              adaptCommand(const ByteVector &command) override;
 
-              virtual std::vector<unsigned char>
-              adaptAnswer(const std::vector<unsigned char> &answer) override;
+	          ByteVector
+              adaptAnswer(const ByteVector &answer) override;
           };
 
           /**

@@ -31,7 +31,7 @@ void change_uid(ByteVector new_uid)
     ReaderProviderPtr provider;
     ReaderUnitPtr readerUnit;
     ChipPtr chip;
-    std::tie(provider, readerUnit, chip) = lla_test_init();
+    tie(provider, readerUnit, chip) = lla_test_init();
 
     PRINT_TIME("Chip identifier: " <<
                    BufferHelper::getHex(chip->getChipIdentifier()));
@@ -59,7 +59,7 @@ void check_uid(ByteVector new_uid)
     ReaderProviderPtr provider;
     ReaderUnitPtr readerUnit;
     ChipPtr chip;
-    std::tie(provider, readerUnit, chip) = lla_test_init();
+    tie(provider, readerUnit, chip) = lla_test_init();
 
     if (chip->getCardType() == "Mifare1K")
     {

@@ -20,7 +20,7 @@ namespace logicalaccess
     {
     }
 
-	void FeliCaStorageCardService::erase(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse)
+	void FeliCaStorageCardService::erase(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> /*aiToUse*/)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 
@@ -36,11 +36,11 @@ namespace logicalaccess
         {
             blocks.push_back(i);
         }
-        std::vector<unsigned char> data(blocks.size() * 16, 0x00);
+        ByteVector data(blocks.size() * 16, 0x00);
         cmd->write(flocation->code, blocks, data);
     }
 
-    void FeliCaStorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo>, std::shared_ptr<AccessInfo>, const std::vector<unsigned char>& data, CardBehavior cardBehavior)
+    void FeliCaStorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo>, std::shared_ptr<AccessInfo>, const ByteVector& data, CardBehavior cardBehavior)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 
@@ -58,7 +58,7 @@ namespace logicalaccess
             {
                 cmd ->write(icLocation->code,
                     icLocation->block + (unsigned int)(i / 16),
-                    std::vector<unsigned char>(data.cbegin() + i, (i + 16 < data.size()) ? data.begin() + i + 16 : data.cend())
+                    ByteVector(data.cbegin() + i, (i + 16 < data.size()) ? data.begin() + i + 16 : data.cend())
                 );
                 i += 16;
             }
@@ -69,7 +69,7 @@ namespace logicalaccess
         }
     }
 
-	std::vector<unsigned char> FeliCaStorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo>, size_t length, CardBehavior cardBehavior)
+	ByteVector FeliCaStorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo>, size_t length, CardBehavior cardBehavior)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 
@@ -80,13 +80,13 @@ namespace logicalaccess
         std::shared_ptr<FeliCaCommands> cmd = getFeliCaChip()->getFeliCaCommands();
         EXCEPTION_ASSERT_WITH_LOG(cmd, CardException, "FeliCa commands not implemented on this reader.");
 
-        std::vector<unsigned char> data;
+        ByteVector data;
         if ((cardBehavior & CB_AUTOSWITCHAREA) == CB_AUTOSWITCHAREA)
         {
             size_t i = 0;
             while (i < length)
             {
-				std::vector<unsigned char> bdata = cmd->read(icLocation->code, (unsigned short)(icLocation->block + (i / 16)));
+				ByteVector bdata = cmd->read(icLocation->code, (unsigned short)(icLocation->block + (i / 16)));
                 if (bdata.size() == 0)
                     break;
                 data.insert(data.end(), bdata.begin(), bdata.end());
@@ -100,14 +100,14 @@ namespace logicalaccess
 
         if (data.size() > length)
         {
-            data = std::vector<unsigned char>(data.begin(), data.begin() + length);
+            data = ByteVector(data.begin(), data.begin() + length);
         }
 
         return data;
     }
 
-	unsigned int FeliCaStorageCardService::readDataHeader(std::shared_ptr<Location>, std::shared_ptr<AccessInfo>, void*, size_t)
+	ByteVector FeliCaStorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/)
     {
-        return 0;
+        return {};
     }
 }

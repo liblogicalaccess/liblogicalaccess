@@ -25,7 +25,7 @@ namespace logicalaccess
 
     void ACSACR1222LLCDDisplay::setMessage(unsigned char rowid, std::string message)
     {
-        std::vector<unsigned char> data;
+        ByteVector data;
         // The first character will not be displayed on the LCD screen :(
         data.push_back(' ');
 
@@ -33,7 +33,7 @@ namespace logicalaccess
         // Make sure we don't overflow the LCD line
         if (data.size() > 16)
         {
-            data = std::vector<unsigned char>(data.begin(), data.begin() + 16);
+            data = ByteVector(data.begin(), data.begin() + 16);
         }
         else // or underflow it (resulting in potential garbage on screen)
         {
@@ -56,9 +56,9 @@ namespace logicalaccess
         getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x00, 0x60, 0x00, 0x00);
     }
 
-    void ACSACR1222LLCDDisplay::scroll(unsigned char x, unsigned char y, unsigned char xRange, unsigned char yRange, unsigned char speedPixel, LCDScrollPeriod speedPeriod, LCDScrollDirection direction)
+    void ACSACR1222LLCDDisplay::scroll(unsigned char x, unsigned char y, unsigned char xRange, unsigned char yRange, unsigned char speedPixel, LCDScrollPeriod speedPeriod, LCDScrollDirection direction) const
     {
-        std::vector<unsigned char> data;
+        ByteVector data;
         data.push_back(x);
         data.push_back(y);
         data.push_back(xRange);
@@ -69,22 +69,22 @@ namespace logicalaccess
         getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x00, 0x6D, 0x00, data);
     }
 
-    void ACSACR1222LLCDDisplay::pauseScrolling()
+    void ACSACR1222LLCDDisplay::pauseScrolling() const
     {
         getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x00, 0x6E, 0x00, 0x00);
     }
 
-    void ACSACR1222LLCDDisplay::stopScrolling()
+    void ACSACR1222LLCDDisplay::stopScrolling() const
     {
         getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x00, 0x6F, 0x00, 0x00);
     }
 
-    void ACSACR1222LLCDDisplay::setContrast(unsigned char value)
+    void ACSACR1222LLCDDisplay::setContrast(unsigned char value) const
     {
         getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x00, 0x6C, value, 0x00);
     }
 
-    void ACSACR1222LLCDDisplay::setBacklight(bool enable)
+    void ACSACR1222LLCDDisplay::setBacklight(bool enable) const
     {
         getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x00, 0x64, (enable ? 0xff : 0x00), 0x00);
     }

@@ -49,7 +49,7 @@ namespace logicalaccess
                     try
                     {
                         LOG(LogLevel::INFOS) << "Reading data from Generic Tag...";
-                        std::vector<unsigned char> identifier = getChip()->getChipIdentifier();
+                        ByteVector identifier = getChip()->getChipIdentifier();
                         if (length <= identifier.size())
                         {
                             unsigned int realDataLengthBits = getGenericTagChip()->getTagIdBitsLength();

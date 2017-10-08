@@ -39,7 +39,7 @@ namespace logicalaccess
 
     AxessTMCLegicReaderProvider::~AxessTMCLegicReaderProvider()
     {
-        release();
+	    AxessTMCLegicReaderProvider::release();
     }
 
     void AxessTMCLegicReaderProvider::release()

@@ -42,19 +42,21 @@ namespace logicalaccess
          * \brief Get the value of available bytes.
          * \return The available memory in bytes.
          */
-        virtual unsigned int getFreeMem();
+	    unsigned int getFreeMem() override;
 
         /**
          * \brief Get the ISO DF-Names of all active application.
          * \return The DF-Names list.
          */
-        virtual std::vector<DFName> getDFNames();
+	    std::vector<DFName> getDFNames() override;
 
         /**
          * \brief Get the ISO FID of all active files within the currently selected application.
          * \return The ISO FID list.
          */
-        virtual std::vector<unsigned short> getISOFileIDs();
+	    std::vector<unsigned short> getISOFileIDs() override;
+
+		using DESFireISO7816Commands::createApplication;
 
         /**
          * \brief Create a new application.
@@ -62,7 +64,9 @@ namespace logicalaccess
          * \param settings Key settings
          * \param maxNbKeys Maximum number of keys
          */
-        virtual void createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, DESFireKeyType cryptoMethod, FidSupport fidSupported = FIDS_NO_ISO_FID, unsigned short isoFID = 0x00, std::vector<unsigned char> isoDFName = std::vector<unsigned char>());
+	    void createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, DESFireKeyType cryptoMethod, FidSupport fidSupported = FIDS_NO_ISO_FID, unsigned short isoFID = 0x00, ByteVector isoDFName = ByteVector()) override;
+
+		using DESFireISO7816Commands::getKeySettings;
 
         /**
          * \brief Get key settings on the current application.
@@ -70,13 +74,15 @@ namespace logicalaccess
          * \param maxNbKeys Maximum number of keys
          * \param keyType The key type
          */
-        virtual void getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys, DESFireKeyType& keyType);
+	    void getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys, DESFireKeyType& keyType) override;
 
         /**
          * \brief Get a random card UID.
          * \return The card UID.
          */
-        virtual std::vector<unsigned char> getCardUID();
+	    ByteVector getCardUID() override;
+
+		using DESFireISO7816Commands::createStdDataFile;
 
         /**
          * \brief Create a new data file in the current application.
@@ -85,7 +91,9 @@ namespace logicalaccess
          * \param accessRights The file access rights
          * \param fileSize The file size (in bytes).
          */
-        virtual void createStdDataFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned short isoFID);
+	    void createStdDataFile(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, unsigned int fileSize, unsigned short isoFID) override;
+
+		using DESFireISO7816Commands::createBackupFile;
 
         /**
          * \brief Create a new backup file in the current application.
@@ -94,7 +102,9 @@ namespace logicalaccess
          * \param accessRights The file access rights
          * \param fileSize The file size (in bytes).
          */
-        virtual void createBackupFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned short isoFID);
+	    void createBackupFile(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, unsigned int fileSize, unsigned short isoFID) override;
+
+		using DESFireISO7816Commands::createLinearRecordFile;
 
         /**
          * \brief Create a new linear record file in the current application.
@@ -104,7 +114,9 @@ namespace logicalaccess
          * \param fileSize The file size (in bytes).
          * \param maxNumberOfRecords Max number of records in the file.
          */
-        virtual void createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID);
+	    void createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID) override;
+
+		using DESFireISO7816Commands::createCyclicRecordFile;
 
         /**
          * \brief Create a new cyclic record file in the current application.
@@ -114,13 +126,13 @@ namespace logicalaccess
          * \param fileSize The file size (in bytes).
          * \param maxNumberOfRecords Max number of records in the file.
          */
-        virtual void createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID);
+	    void createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID) override;
 
         /**
          * \brief Select file under current DF.
          * \param fid The FID
          */
-        virtual void iso_selectFile(unsigned short fid = 0);
+	    void iso_selectFile(unsigned short fid = 0) override;
 
         /**
          * \brief Read records.
@@ -129,21 +141,21 @@ namespace logicalaccess
          * \param record_number The number of records to read
          * \return The record(s) data
          */
-        virtual std::vector<unsigned char> iso_readRecords(unsigned short fid = 0, unsigned char start_record = 0, DESFireRecords record_number = DF_RECORD_ONERECORD);
+	    ByteVector iso_readRecords(unsigned short fid = 0, unsigned char start_record = 0, DESFireRecords record_number = DF_RECORD_ONERECORD) override;
 
         /**
          * \brief Append a record to a file.
          * \param data The record data
          * \param fid The FID
          */
-        virtual void iso_appendrecord(const std::vector<unsigned char>& data = std::vector<unsigned char>(), unsigned short fid = 0);
+	    void iso_appendrecord(const ByteVector& data = ByteVector(), unsigned short fid = 0) override;
 
         /**
          * \brief Get the ISO challenge for authentication.
          * \param length The challenge length (8 = 2K3DES, 16 = 3K3DES and AES)
          * \return The ISO challenge.
          */
-        virtual std::vector<unsigned char> iso_getChallenge(unsigned int length = 8);
+	    ByteVector iso_getChallenge(unsigned int length = 8) override;
 
         /**
          * \brief ISO external authenticate.
@@ -152,7 +164,7 @@ namespace logicalaccess
          * \param keyno The key number.
          * \param data The data.
          */
-        virtual void iso_externalAuthenticate(DESFireISOAlgorithm algorithm = DF_ALG_BY_CONTEXT, bool isMasterCardKey = true, unsigned char keyno = 0x00, const std::vector<unsigned char>& data = std::vector<unsigned char>());
+	    void iso_externalAuthenticate(DESFireISOAlgorithm algorithm = DF_ALG_BY_CONTEXT, bool isMasterCardKey = true, unsigned char keyno = 0x00, const ByteVector& data = ByteVector()) override;
 
         /**
          * \brief ISO internal authenticate.
@@ -163,7 +175,7 @@ namespace logicalaccess
          * \param length The length.
          * \return The cryptogram.
          */
-        virtual std::vector<unsigned char> iso_internalAuthenticate(DESFireISOAlgorithm algorithm = DF_ALG_BY_CONTEXT, bool isMasterCardKey = true, unsigned char keyno = 0x00, const std::vector<unsigned char>& RPCD2 = std::vector<unsigned char>(), unsigned int length = 16);
+	    ByteVector iso_internalAuthenticate(DESFireISOAlgorithm algorithm = DF_ALG_BY_CONTEXT, bool isMasterCardKey = true, unsigned char keyno = 0x00, const ByteVector& RPCD2 = ByteVector(), unsigned int length = 16) override;
 
         /**
          * \brief ISO authenticate.
@@ -179,20 +191,20 @@ namespace logicalaccess
          * \param keyno The key number.
          * \param key The key.
          */
-        virtual void authenticate(unsigned char keyno, std::shared_ptr<DESFireKey> key);
+	    void authenticate(unsigned char keyno, std::shared_ptr<DESFireKey> key) override;
 
         /**
          * \brief AuthenticateISO command.
          * \param keyno The key number.
          * \param algorithm The ISO algorithm to use for authentication.
          */
-        virtual void authenticateISO(unsigned char keyno, DESFireISOAlgorithm algorithm = DF_ALG_2K3DES);
+	    void authenticateISO(unsigned char keyno, DESFireISOAlgorithm algorithm = DF_ALG_2K3DES) override;
 
         /**
          * \brief AuthenticateAES command.
          * \param keyno The key number.
          */
-        virtual void authenticateAES(unsigned char keyno);
+	    void authenticateAES(unsigned char keyno) override;
 
         /**
          * \brief Read data from a specific file.
@@ -202,7 +214,7 @@ namespace logicalaccess
          * \param mode The communication mode
          * \return The bytes readed.
          */
-        virtual std::vector<unsigned char> readData(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode);
+	    ByteVector readData(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode) override;
 
         /**
          * \brief Read record from a specific record file.
@@ -213,7 +225,7 @@ namespace logicalaccess
          * \param mode The communication mode
          * \return The number of bytes read.
          */
-        virtual std::vector<unsigned char> readRecords(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode);
+	    ByteVector readRecords(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode) override;
 
         /**
          * \brief Change file settings of a specific file in the current application.
@@ -222,38 +234,38 @@ namespace logicalaccess
          * \param accessRights The file access rights
          * \param plain Communication is currently in plain data.
          */
-        virtual void changeFileSettings(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, bool plain);
+	    void changeFileSettings(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, bool plain) override;
 
         /**
          * \brief Change key settings for the current application.
          * \param settings The new key settings
          */
-        virtual void changeKeySettings(DESFireKeySettings settings);
+	    void changeKeySettings(DESFireKeySettings settings) override;
 
         /**
          * \brief Change a key in the current application.
          * \param keyno The key number to change
          * \param key The new key
          */
-        virtual void changeKey(unsigned char keyno, std::shared_ptr<DESFireKey> key);
+	    void changeKey(unsigned char keyno, std::shared_ptr<DESFireKey> key) override;
 
         /**
          * \brief Get the card version information.
          * \param dataVersion The card version information structure that will be filled
          */
-        virtual void getVersion(DESFireCommands::DESFireCardVersion& dataVersion);
+	    void getVersion(DESFireCardVersion& dataVersion) override;
 
         /**
          * \brief Get the current application list.
          * \return The application list.
          */
-        virtual std::vector<unsigned int> getApplicationIDs();
+	    std::vector<unsigned int> getApplicationIDs() override;
 
         /**
          * \brief Get the File IDentifiers of all active files within the currently selected application
          * \return The file ID list.
          */
-        virtual std::vector<unsigned char> getFileIDs();
+	    ByteVector getFileIDs() override;
 
         /**
          * \brief Get value from a specific value file.
@@ -261,32 +273,32 @@ namespace logicalaccess
          * \param mode The communication mode
          * \param value The value stored in the card
          */
-        virtual void getValue(unsigned char fileno, EncryptionMode mode, unsigned int& value);
+	    void getValue(unsigned char fileno, EncryptionMode mode, unsigned int& value) override;
 
         /**
          * \brief ISO select application command.
          * \param isoaid The iso AID
          */
-        virtual void iso_selectApplication(std::vector<unsigned char> isoaid = std::vector<unsigned char>(DFEV1_DESFIRE_AID, DFEV1_DESFIRE_AID + sizeof(DFEV1_DESFIRE_AID)));
+	    void iso_selectApplication(ByteVector isoaid = ByteVector(DFEV1_DESFIRE_AID, DFEV1_DESFIRE_AID + sizeof(DFEV1_DESFIRE_AID))) override;
 
         /**
          * \brief Set the card configuration.
          * \param formatCardEnabled If true, the format card command is enabled.
          * \param randomIdEnabled If true, the CSN is random.
          */
-        virtual void setConfiguration(bool formatCardEnabled, bool randomIdEnabled);
+	    void setConfiguration(bool formatCardEnabled, bool randomIdEnabled) override;
 
         /**
          * \brief Set the card configuration default key.
          * param defaultKey The new default key.
          */
-        virtual void setConfiguration(std::shared_ptr<DESFireKey> defaultKey);
+	    void setConfiguration(std::shared_ptr<DESFireKey> defaultKey) override;
 
         /**
          * \brief Set a custom card ATS.
          * \param ats The new card ATS.
          */
-        virtual void setConfiguration(const std::vector<unsigned char>& ats);
+	    void setConfiguration(const ByteVector& ats) override;
 
         virtual void sam_iso_authenticate(std::shared_ptr<DESFireKey> key, DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno);
 
@@ -297,7 +309,7 @@ namespace logicalaccess
          */
         virtual void iks_iso_authenticate(std::shared_ptr<DESFireKey> key, bool isMasterCardKey, uint8_t keyno);
 
-		virtual void selectApplication(unsigned int aid);
+	    void selectApplication(unsigned int aid) override;
 
 		/**
 		* \brief Get the chip.
@@ -320,7 +332,7 @@ namespace logicalaccess
 		* \param mode The communication mode
 		* \return The data buffer.
 		*/
-		virtual std::vector<unsigned char> handleReadCmd(unsigned char cmd, const std::vector<unsigned char>& data, EncryptionMode mode);
+		virtual ByteVector handleReadCmd(unsigned char cmd, const ByteVector& data, EncryptionMode mode);
 
         /**
          * \brief Generic method to read data from a file.
@@ -330,7 +342,7 @@ namespace logicalaccess
          * \param mode The communication mode
          * \return The data buffer.
          */
-        virtual std::vector<unsigned char> handleReadData(unsigned char err, const std::vector<unsigned char>& firstMsg, unsigned int length, EncryptionMode mode);
+	    ByteVector handleReadData(unsigned char err, const ByteVector& firstMsg, unsigned int length, EncryptionMode mode) override;
 
         /**
          * \brief Generic method to write data into a file.
@@ -339,7 +351,7 @@ namespace logicalaccess
          * \param data The data buffer
          * \param mode The communication mode
          */
-        virtual void handleWriteData(unsigned char cmd, const std::vector<unsigned char>& parameters, const std::vector<unsigned char>& data, EncryptionMode mode);
+	    void handleWriteData(unsigned char cmd, const ByteVector& parameters, const ByteVector& data, EncryptionMode mode) override;
 
         /**
          * \brief Transmit a command.
@@ -349,7 +361,7 @@ namespace logicalaccess
          * \param forceLc Undocumented.
          * \return The response.
          */
-        virtual std::vector<unsigned char> transmit(unsigned char cmd, const std::vector<unsigned char>& buf = std::vector<unsigned char>(), unsigned char lc = 0, bool forceLc = false);
+	    ByteVector transmit(unsigned char cmd, const ByteVector& buf = ByteVector(), unsigned char lc = 0, bool forceLc = false) override;
 
         /**
          * \brief Transmit a command.
@@ -357,7 +369,7 @@ namespace logicalaccess
          * \param lc Undocumented.
          * \return The response.
          */
-        virtual std::vector<unsigned char> transmit_plain(unsigned char cmd, unsigned char lc);
+        virtual ByteVector transmit_plain(unsigned char cmd, unsigned char lc);
 
         /**
          * \brief Transmit a command.
@@ -367,7 +379,7 @@ namespace logicalaccess
          * \param forceLc Undocumented.
          * \return The response.
          */
-        virtual std::vector<unsigned char> transmit_plain(unsigned char cmd, const std::vector<unsigned char>& buf = std::vector<unsigned char>(), unsigned char lc = 0, bool forceLc = false);
+        virtual ByteVector transmit_plain(unsigned char cmd, const ByteVector& buf = ByteVector(), unsigned char lc = 0, bool forceLc = false);
 
         /**
          * \brief Transmit a command.
@@ -375,7 +387,7 @@ namespace logicalaccess
          * \param lc Undocumented.
          * \return The response.
          */
-        virtual std::vector<unsigned char> transmit_nomacv(unsigned char cmd, unsigned char lc);
+        virtual ByteVector transmit_nomacv(unsigned char cmd, unsigned char lc);
 
         /**
          * \brief Transmit a command.
@@ -385,16 +397,14 @@ namespace logicalaccess
          * \param forceLc Undocumented.
          * \return The response.
          */
-        virtual std::vector<unsigned char> transmit_nomacv(unsigned char cmd, const std::vector<unsigned char>& buf = std::vector<unsigned char>(), unsigned char lc = 0, bool forceLc = false);
+        virtual ByteVector transmit_nomacv(unsigned char cmd, const ByteVector& buf = ByteVector(), unsigned char lc = 0, bool forceLc = false);
 
         /**
          * Called after authentication was performed
          */
         void onAuthenticated();
 
-		std::shared_ptr<ISO7816ISO7816Commands> getISO7816ISO7816Commands() { return std::make_shared<ISO7816ISO7816Commands>(); }
-
-    protected:
+		std::shared_ptr<ISO7816ISO7816Commands> getISO7816ISO7816Commands() const { return std::make_shared<ISO7816ISO7816Commands>(); }
     };
 }
 

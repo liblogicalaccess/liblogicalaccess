@@ -57,7 +57,7 @@ namespace logicalaccess
         return std::make_shared<ISO7816ResultChecker>();
     }
 
-    bool ISO7816ReaderUnit::reconnect(int action)
+    bool ISO7816ReaderUnit::reconnect(int /*action*/)
     {
         try
         {
@@ -67,9 +67,9 @@ namespace logicalaccess
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
-                auto command = std::dynamic_pointer_cast<logicalaccess::SAMCommands<logicalaccess::KeyEntryAV2Information, logicalaccess::SETAV2 >>(chip->getCommands());
+                auto command = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2 >>(chip->getCommands());
                 if (command)
-                    command->lockUnlock(getISO7816Configuration()->getSAMUnLockKey(), logicalaccess::SAMLockUnlock::Unlock, 0, 0, 0);
+                    command->lockUnlock(getISO7816Configuration()->getSAMUnLockKey(), Unlock, 0, 0, 0);
             }
         }
         catch (std::exception& ex)
@@ -153,18 +153,18 @@ namespace logicalaccess
                 {
                     try
                     {
-                        std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(getSAMChip()->getCommands())->lockUnlock(getISO7816Configuration()->getSAMUnLockKey(), logicalaccess::SAMLockUnlock::Unlock, getISO7816Configuration()->getSAMUnLockkeyNo(), 0, 0);
+                        std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(getSAMChip()->getCommands())->lockUnlock(getISO7816Configuration()->getSAMUnLockKey(), Unlock, getISO7816Configuration()->getSAMUnLockkeyNo(), 0, 0);
                     }
                     catch (CardException& ex)
                     {
                         if (ex.error_code() != CardException::WRONG_P1_P2)
-                            std::rethrow_exception(std::current_exception());
+							std::rethrow_exception(std::current_exception());
 
                         //try to lock the SAM in case it was already unlocked
                         std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(getSAMChip()->getCommands())->lockUnlock(getISO7816Configuration()->getSAMUnLockKey(),
-                            logicalaccess::SAMLockUnlock::LockWithoutSpecifyingKey, getISO7816Configuration()->getSAMUnLockkeyNo(), 0, 0);
+                            LockWithoutSpecifyingKey, getISO7816Configuration()->getSAMUnLockkeyNo(), 0, 0);
 
-                        std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(getSAMChip()->getCommands())->lockUnlock(getISO7816Configuration()->getSAMUnLockKey(), logicalaccess::SAMLockUnlock::Unlock, getISO7816Configuration()->getSAMUnLockkeyNo(), 0, 0);
+                        std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(getSAMChip()->getCommands())->lockUnlock(getISO7816Configuration()->getSAMUnLockKey(), Unlock, getISO7816Configuration()->getSAMUnLockkeyNo(), 0, 0);
                     }
                 }
             }

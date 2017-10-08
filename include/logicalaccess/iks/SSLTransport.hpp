@@ -4,6 +4,7 @@
 #include <boost/asio.hpp>
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/property_tree/ptree_fwd.hpp>
+#include "logicalaccess/crypto/des_initialization_vector.hpp"
 #ifdef ENABLE_SSLTRANSPORT
 #include <boost/asio/ssl.hpp>
 #endif
@@ -32,9 +33,9 @@ class LIBLOGICALACCESS_API SSLTransport
     virtual std::string getTransportType()
     {
         return "SSL";
-    };
+    }
 
-    /**
+	/**
      * \brief Connect to the transport layer.
              * \param timeout Time after the connect task will be canceled.
      * \return True on success, false otherwise.
@@ -104,7 +105,7 @@ class LIBLOGICALACCESS_API SSLTransport
      * \brief Send data packet
      * \param data The packet.
      */
-    virtual void send(const std::vector<unsigned char> &data);
+    virtual void send(const ByteVector &data);
 
     /**
      * \brief Receive packet
@@ -117,7 +118,7 @@ class LIBLOGICALACCESS_API SSLTransport
 * \brief Connect complete
      * \param error Read error
 */
-    void connect_complete(const boost::system::error_code &error);
+    void connect_complete(const boost::system::error_code &error) const;
 
     /**
 * \brief Read complete
@@ -125,19 +126,19 @@ class LIBLOGICALACCESS_API SSLTransport
      * \param bytes_transferred Byte transfered
 */
     void read_complete(const boost::system::error_code &error,
-                       size_t bytes_transferred);
+                       size_t bytes_transferred) const;
 
     /**
 * \brief Read timeout
      * \param error Read timeout or canceled
 */
-    void time_out(const boost::system::error_code &error);
+    void time_out(const boost::system::error_code &error) const;
 
   protected:
     /**
      * Perform SSL handshake.
      */
-    bool handshake(long timeout);
+    bool handshake(long timeout) const;
 
 #ifdef ENABLE_SSLTRANSPORT
     /**

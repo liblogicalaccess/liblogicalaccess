@@ -21,9 +21,9 @@ namespace logicalaccess
     {
     }
 
-    string BigEndianDataRepresentation::getName() const
+	std::string BigEndianDataRepresentation::getName() const
     {
-        return string("Big Endian");
+        return std::string("Big Endian");
     }
 
     EncodingType BigEndianDataRepresentation::getType() const
@@ -33,8 +33,6 @@ namespace logicalaccess
 
     unsigned int BigEndianDataRepresentation::convertNumeric(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
     {
-        unsigned int ret = 0;
-
 #if __BYTE_ORDER != __LITTLE_ENDIAN
 
         if (convertedLengthBytes >= dataLengthBytes)
@@ -46,11 +44,11 @@ namespace logicalaccess
 
 #else
 
-        if (convertedData != NULL)
+        if (convertedData != nullptr)
         {
             BitHelper::swapBytes(convertedData, convertedLengthBytes, data, dataLengthBytes, dataLengthBits);
         }
-        ret = dataLengthBits;
+	    const unsigned int ret = dataLengthBits;
 
 #endif
 
@@ -59,16 +57,13 @@ namespace logicalaccess
 
     unsigned int BigEndianDataRepresentation::convertBinary(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
     {
-        unsigned int ret = 0;
-
-        if (convertedLengthBytes >= dataLengthBytes)
+	    if (convertedLengthBytes >= dataLengthBytes)
         {
             memset(convertedData, 0x00, convertedLengthBytes);
             memcpy(convertedData, data, dataLengthBytes);
         }
-        ret = dataLengthBits;
-
-        return ret;
+		
+        return dataLengthBits;
     }
 
     unsigned int BigEndianDataRepresentation::convertLength(unsigned int lengthBits)
@@ -91,7 +86,7 @@ namespace logicalaccess
 
 #else
 
-        if (convertedData != NULL)
+        if (convertedData != nullptr)
         {
             BitHelper::swapBytes(convertedData, convertedLengthBytes, data, dataLengthBytes, dataLengthBits);
         }
@@ -104,15 +99,12 @@ namespace logicalaccess
 
     unsigned int BigEndianDataRepresentation::revertBinary(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
     {
-        unsigned int ret = 0;
-
         if (convertedLengthBytes >= dataLengthBytes)
         {
             memset(convertedData, 0x00, convertedLengthBytes);
             memcpy(convertedData, data, dataLengthBytes);
         }
-        ret = dataLengthBits;
 
-        return ret;
+        return dataLengthBits;
     }
 }

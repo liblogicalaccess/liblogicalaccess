@@ -47,10 +47,7 @@ namespace logicalaccess
 
                 THROW_EXCEPTION_WITH_LOG(std::runtime_error, "Unsupported key type");
             }
-            else
-            {
-                return *this;
-            }
+	        return *this;
         }
 
         RSAKey EVPPKey::rsaKey() const

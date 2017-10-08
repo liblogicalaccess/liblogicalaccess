@@ -10,14 +10,14 @@
 
 namespace logicalaccess
 {
-    std::shared_ptr<TopazChip> TopazCommands::getTopazChip()
+    std::shared_ptr<TopazChip> TopazCommands::getTopazChip() const
     {
         return std::dynamic_pointer_cast<TopazChip>(getChip());
     }
 
-    std::vector<unsigned char> TopazCommands::readPages(int start_page, int stop_page)
+    ByteVector TopazCommands::readPages(int start_page, int stop_page)
     {
-		std::vector<unsigned char> ret;
+		ByteVector ret;
 
         if (start_page > stop_page)
         {
@@ -26,14 +26,14 @@ namespace logicalaccess
 
         for (int i = start_page; i <= stop_page; ++i)
         {
-            std::vector<unsigned char> data = readPage(i);
+            ByteVector data = readPage(i);
 			ret.insert(ret.end(), data.begin(), data.end());
         }
 
         return ret;
     }
 
-    void TopazCommands::writePages(int start_page, int stop_page, const std::vector<unsigned char>& buf)
+    void TopazCommands::writePages(int start_page, int stop_page, const ByteVector& buf)
     {
         if (start_page > stop_page)
         {
@@ -43,13 +43,13 @@ namespace logicalaccess
         size_t offset = 0;
         for (int i = start_page; i <= stop_page; ++i)
         {
-			std::vector<unsigned char> tmp(buf.begin() + offset, buf.begin() + offset + 8);
+			ByteVector tmp(buf.begin() + offset, buf.begin() + offset + 8);
 			writePage(i, tmp);
             offset += 8;
         }
     }
 
-    void TopazCommands::lockPage(int page)
+    void TopazCommands::lockPage(int /*page*/)
     {
         // TODO: support it
 

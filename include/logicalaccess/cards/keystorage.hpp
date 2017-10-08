@@ -27,8 +27,10 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API KeyStorage : public XmlSerializable, public std::enable_shared_from_this < KeyStorage >
     {
     public:
+#ifndef SWIG
         using XmlSerializable::serialize;
         using XmlSerializable::unSerialize;
+#endif
 
         /**
          * \brief Get the key storage type.
@@ -42,9 +44,9 @@ namespace logicalaccess
          */
         static std::shared_ptr<KeyStorage> getKeyStorageFromType(KeyStorageType kst);
 
-        virtual void serialize(boost::property_tree::ptree &parentNode) override;
+	    void serialize(boost::property_tree::ptree &parentNode) override;
 
-        virtual void unSerialize(boost::property_tree::ptree &node) override;
+	    void unSerialize(boost::property_tree::ptree &node) override;
 
         /**
           * Retrieve an entry from the metadata key/value store
@@ -55,7 +57,7 @@ namespace logicalaccess
           * Check whether or not a metadata named "key"
           * is available
           */
-         bool hasMetadata(const std::string &key);
+         bool hasMetadata(const std::string &key) const;
 
          /**
           * Add a new metadata to the KeyStorage

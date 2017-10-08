@@ -23,25 +23,23 @@ namespace logicalaccess
         /**
          * \brief Constructor.
          */
-        SAMChip() : Chip(CHIP_SAM) {};
+        SAMChip() : Chip(CHIP_SAM) {}
 
         /**
          * \brief Constructor.
          */
-        SAMChip(std::string t) : Chip(t) {};
+	    explicit SAMChip(std::string t) : Chip(t) {}
 
         /**
          * \brief Destructor.
          */
-        ~SAMChip() {};
+        ~SAMChip() {}
 
         /**
          * \brief Get the generic card type.
          * \return The generic card type.
          */
-        virtual std::string getGenericCardType() const { return CHIP_SAM; };
-
-    protected:
+	    std::string getGenericCardType() const override { return CHIP_SAM; }
     };
 }
 

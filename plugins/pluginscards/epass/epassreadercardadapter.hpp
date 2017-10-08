@@ -11,10 +11,9 @@ class LIBLOGICALACCESS_API EPassReaderCardAdapter : public ISO7816ReaderCardAdap
   public:
     EPassReaderCardAdapter();
 
-  public:
-    virtual ByteVector adaptCommand(const ByteVector &command) override;
+	ByteVector adaptCommand(const ByteVector &command) override;
 
-    virtual ByteVector adaptAnswer(const ByteVector &answer) override;
+	ByteVector adaptAnswer(const ByteVector &answer) override;
 
     void setEPassCrypto(std::shared_ptr<EPassCrypto> crypto);
 

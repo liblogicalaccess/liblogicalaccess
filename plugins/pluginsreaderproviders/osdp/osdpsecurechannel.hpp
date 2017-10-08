@@ -32,10 +32,12 @@ namespace logicalaccess
 	class LIBLOGICALACCESS_API OSDPSecureChannel
 	{
 	public:
-		OSDPSecureChannel(std::vector<unsigned char> uid, std::vector<unsigned char> PDChallenge, std::vector<unsigned char> PDCryptogram, std::vector<unsigned char> CPChallenge)
+		OSDPSecureChannel(ByteVector uid, ByteVector PDChallenge, ByteVector PDCryptogram, ByteVector CPChallenge)
 			: isSCBK_D(false), m_uid(uid), m_PDChallenge(PDChallenge), m_PDCryptogram(PDCryptogram), m_CPChallenge(CPChallenge) {}
 
-		OSDPSecureChannel() {}
+		OSDPSecureChannel(): isSCBK_D(false)
+		{
+		}
 
 		~OSDPSecureChannel() {}
 
@@ -44,60 +46,60 @@ namespace logicalaccess
 
 		void computeAuthenticationData();
 
-		void verifyMAC(std::vector<unsigned char> data);
+		void verifyMAC(ByteVector data);
 
-		std::vector<unsigned char> computeMAC(std::vector<unsigned char> data, openssl::AESInitializationVector iv);
+		ByteVector computeMAC(ByteVector data, openssl::AESInitializationVector iv) const;
 
-		std::vector<unsigned char> computePacketMAC(std::vector<unsigned char> data);
+		ByteVector computePacketMAC(ByteVector data);
 
-		std::vector<unsigned char> encryptData(std::vector<unsigned char> data, std::vector<unsigned char> iv);
+		ByteVector encryptData(ByteVector data, ByteVector iv) const;
 
-		std::vector<unsigned char> decryptData(std::vector<unsigned char> data, std::vector<unsigned char> iv);
+		ByteVector decryptData(ByteVector data, ByteVector iv) const;
 
 		bool isSCBK_D;
 
-		std::vector<unsigned char>& getUID() { return m_uid; }
+		ByteVector& getUID() { return m_uid; }
 
-		std::vector<unsigned char>& getPDChallenge() { return m_PDChallenge; }
+		ByteVector& getPDChallenge() { return m_PDChallenge; }
 
-		std::vector<unsigned char>& getPDCryptogram() { return m_PDCryptogram; }
+		ByteVector& getPDCryptogram() { return m_PDCryptogram; }
 
-		std::vector<unsigned char>& getCPChallenge() { return m_CPChallenge; }
+		ByteVector& getCPChallenge() { return m_CPChallenge; }
 
-		std::vector<unsigned char>& getCPCryptogram() { return m_CPCryptogram; }
+		ByteVector& getCPCryptogram() { return m_CPCryptogram; }
 
-		std::vector<unsigned char>& getSMAC1() { return m_smac1; }
+		ByteVector& getSMAC1() { return m_smac1; }
 
-		void setSMAC1(std::vector<unsigned char> smac1) { m_smac1 = smac1; }
+		void setSMAC1(ByteVector smac1) { m_smac1 = smac1; }
 
-		std::vector<unsigned char>& getSMAC2() { return m_smac2; }
+		ByteVector& getSMAC2() { return m_smac2; }
 
-		void setSMAC2(std::vector<unsigned char> smac2) { m_smac2 = smac2; }
+		void setSMAC2(ByteVector smac2) { m_smac2 = smac2; }
 
-		std::vector<unsigned char>& getSENC() { return m_senc; }
+		ByteVector& getSENC() { return m_senc; }
 
-		void setSENC(std::vector<unsigned char> senc) { m_senc = senc; }
+		void setSENC(ByteVector senc) { m_senc = senc; }
 
-		std::vector<unsigned char>& getRMAC() { return m_rmac; }
+		ByteVector& getRMAC() { return m_rmac; }
 
-		void setRMAC(std::vector<unsigned char> rmac) { m_rmac = rmac; }
+		void setRMAC(ByteVector rmac) { m_rmac = rmac; }
 
-		std::vector<unsigned char>& getCMAC() { return m_cmac; }
+		ByteVector& getCMAC() { return m_cmac; }
 
-		void setCMAC(std::vector<unsigned char> cmac) { m_cmac = cmac; }
+		void setCMAC(ByteVector cmac) { m_cmac = cmac; }
 
 	private:
-		std::vector<unsigned char> m_uid;
-		std::vector<unsigned char> m_PDChallenge;
-		std::vector<unsigned char> m_PDCryptogram;
-		std::vector<unsigned char> m_CPChallenge;
-		std::vector<unsigned char> m_CPCryptogram;
+		ByteVector m_uid;
+		ByteVector m_PDChallenge;
+		ByteVector m_PDCryptogram;
+		ByteVector m_CPChallenge;
+		ByteVector m_CPCryptogram;
 
-		std::vector<unsigned char> m_smac1;
-		std::vector<unsigned char> m_smac2;
-		std::vector<unsigned char> m_senc;
-		std::vector<unsigned char> m_rmac;
-		std::vector<unsigned char> m_cmac;
+		ByteVector m_smac1;
+		ByteVector m_smac2;
+		ByteVector m_senc;
+		ByteVector m_rmac;
+		ByteVector m_cmac;
 	};
 }
 

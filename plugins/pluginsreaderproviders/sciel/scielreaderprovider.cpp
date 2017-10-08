@@ -27,7 +27,7 @@ namespace logicalaccess
 
     SCIELReaderProvider::~SCIELReaderProvider()
     {
-        release();
+	    SCIELReaderProvider::release();
     }
 
     void SCIELReaderProvider::release()

@@ -22,35 +22,35 @@ namespace logicalaccess
     {
     public:
 
-        virtual std::vector<unsigned char> readSector(int sector, int start_block,
+        virtual ByteVector readSector(int sector, int start_block,
 													  std::shared_ptr<MifareKey> keyA,
 													  std::shared_ptr<MifareKey> keyB,
 													  const MifareAccessInfo::SectorAccessBits& sab,
                                                       bool readtrailer = false) final;
 
         virtual void writeSector(int sector, int start_block,
-                                 const std::vector<unsigned char>& buf,
+                                 const ByteVector& buf,
 								 std::shared_ptr<MifareKey> keyA,
 								 std::shared_ptr<MifareKey> keyB,
                                  const MifareAccessInfo::SectorAccessBits& sab,
                                  unsigned char userbyte = 0x00,
-                                 MifareAccessInfo::SectorAccessBits* newsab = NULL,
+                                 MifareAccessInfo::SectorAccessBits* newsab = nullptr,
 								 std::shared_ptr<MifareKey> newkeyA = std::shared_ptr<MifareKey>(),
 								 std::shared_ptr<MifareKey> newkeyB = std::shared_ptr<MifareKey>()) final;
 
-        virtual std::vector<unsigned char> readSectors(int start_sector, int stop_sector,
+        virtual ByteVector readSectors(int start_sector, int stop_sector,
                                                        int start_block,
 													   std::shared_ptr<MifareKey> keyA,
 													   std::shared_ptr<MifareKey> keyB,
 													   const MifareAccessInfo::SectorAccessBits& sab) final;
 
         virtual void writeSectors(int start_sector, int stop_sector,
-                                  int start_block, const std::vector<unsigned char>& buf,
+                                  int start_block, const ByteVector& buf,
 								  std::shared_ptr<MifareKey> keyA,
 								  std::shared_ptr<MifareKey> keyB,
 								  const MifareAccessInfo::SectorAccessBits& sab,
                                   unsigned char userbyte = 0x00,
-                                  MifareAccessInfo::SectorAccessBits* newsab = NULL,
+                                  MifareAccessInfo::SectorAccessBits* newsab = nullptr,
 								  std::shared_ptr<MifareKey> newkeyA = std::shared_ptr<MifareKey>(),
 								  std::shared_ptr<MifareKey> newkeyB = std::shared_ptr<MifareKey>()) final;
 
@@ -98,7 +98,7 @@ namespace logicalaccess
 
 		void changeKeys(std::shared_ptr<MifareKey> newkeyA, std::shared_ptr<MifareKey> newkeyB, unsigned int sector, MifareAccessInfo::SectorAccessBits* newsab, unsigned char userbyte = 0x00);
 
-		MifareKeyType getKeyType(const MifareAccessInfo::SectorAccessBits& sab, int sector, int block, bool write);
+		static MifareKeyType getKeyType(const MifareAccessInfo::SectorAccessBits& sab, int sector, int block, bool write);
 
         /**
          * \brief Authenticate for a targeted block.
@@ -116,7 +116,7 @@ namespace logicalaccess
          * \param len The count of bytes to read. (0 <= len < 16)
          * \return The count of bytes red.
          */
-        virtual std::vector<unsigned char> readBinary(unsigned char blockno, size_t len) = 0;
+        virtual ByteVector readBinary(unsigned char blockno, size_t len) = 0;
 
         /**
          * \brief Write bytes to the card.
@@ -125,7 +125,7 @@ namespace logicalaccess
          * \param buflen The length of buffer.
          * \return The count of bytes written.
          */
-        virtual void updateBinary(unsigned char blockno, const std::vector<unsigned char>& buf) = 0;
+        virtual void updateBinary(unsigned char blockno, const ByteVector& buf) = 0;
 
         /**
          * \brief Load a key to the reader.

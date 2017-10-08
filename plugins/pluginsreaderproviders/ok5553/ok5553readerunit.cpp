@@ -37,10 +37,10 @@ namespace logicalaccess
         : ReaderUnit(READER_OK5553)
     {
         d_readerUnitConfig.reset(new OK5553ReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(std::shared_ptr<OK5553ReaderCardAdapter>(new OK5553ReaderCardAdapter()));
+	    ReaderUnit::setDefaultReaderCardAdapter(std::make_shared<OK5553ReaderCardAdapter>());
 
         std::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
-        setDataTransport(dataTransport);
+	    ReaderUnit::setDataTransport(dataTransport);
 		d_card_type = CHIP_UNKNOWN;
 
         try
@@ -54,7 +54,7 @@ namespace logicalaccess
 
     OK5553ReaderUnit::~OK5553ReaderUnit()
     {
-        disconnectFromReader();
+	    OK5553ReaderUnit::disconnectFromReader();
     }
 
     std::string OK5553ReaderUnit::getName() const
@@ -107,7 +107,7 @@ namespace logicalaccess
                 std::shared_ptr<Chip> chip = getChipInAir(250);
                 if (chip)
                 {
-                    std::vector<unsigned char> tmpId = chip->getChipIdentifier();
+                    ByteVector tmpId = chip->getChipIdentifier();
                     if (tmpId != d_insertedChip->getChipIdentifier())
                     {
                         d_insertedChip.reset();
@@ -137,7 +137,7 @@ namespace logicalaccess
         {
             if (getSingleChip()->getCardType() == "DESFire")
             {
-                std::vector<unsigned char> tmp = rats();
+                ByteVector tmp = rats();
                 if (tmp.size() == 0)
                 {
                     d_insertedChip = getChipInAir();
@@ -165,9 +165,9 @@ namespace logicalaccess
         LOG(LogLevel::INFOS) << "Disconnected from the chip";
     }
 
-    std::vector<unsigned char> OK5553ReaderUnit::asciiToHex(const std::vector<unsigned char>& source)
+    ByteVector OK5553ReaderUnit::asciiToHex(const ByteVector& source)
     {
-        std::vector<unsigned char> res;
+        ByteVector res;
         if (source.size() > 1)
         {
             char tmp[3];
@@ -176,7 +176,7 @@ namespace logicalaccess
                 tmp[0] = source[i];
                 tmp[1] = source[i + 1];
                 tmp[2] = '\0';
-                res.push_back(static_cast<unsigned char>(strtoul(tmp, NULL, 16)));
+                res.push_back(static_cast<unsigned char>(strtoul(tmp, nullptr, 16)));
             }
         }
         else
@@ -191,7 +191,7 @@ namespace logicalaccess
         LOG(LogLevel::INFOS) << "Starting get chip in air...";
 
         std::shared_ptr<Chip> chip;
-        std::vector<unsigned char> buf;
+        ByteVector buf;
         unsigned int currentWait = 0;
         while (!chip && (maxwait == 0 || currentWait < maxwait))
         {
@@ -207,20 +207,20 @@ namespace logicalaccess
             if (buf.size() > 0)
             {
                 buf = asciiToHex(buf);
-                if (buf[0] == ChipType::MIFARE)
+                if (buf[0] == MIFARE)
                 {
                     chip = createChip("Mifare");
                     buf.erase(buf.begin());
                     chip->setChipIdentifier(buf);
                 }
-                else if (buf[0] == ChipType::DESFIRE)
+                else if (buf[0] == DESFIRE)
                 {
                     chip = createChip("DESFire");
                     buf.erase(buf.begin());
                     chip->setChipIdentifier(buf);
                     std::dynamic_pointer_cast<DESFireChip>(chip)->getCrypto()->setCryptoContext(chip->getChipIdentifier());
                 }
-                else if (buf[0] == ChipType::MIFAREULTRALIGHT)
+                else if (buf[0] == MIFAREULTRALIGHT)
                 {
                     chip = createChip("MifareUltralight");
                     buf.erase(buf.begin());
@@ -352,9 +352,9 @@ namespace logicalaccess
         return std::dynamic_pointer_cast<OK5553ReaderProvider>(getReaderProvider());
     }
 
-    std::vector<unsigned char> OK5553ReaderUnit::reqA()
+    ByteVector OK5553ReaderUnit::reqA()
     {
-        std::vector<unsigned char> answer = getDefaultOK5553ReaderCardAdapter()->sendAsciiCommand("t01E326");
+        ByteVector answer = getDefaultOK5553ReaderCardAdapter()->sendAsciiCommand("t01E326");
         answer = asciiToHex(answer);
         if (answer.size() > 1)
         {
@@ -372,9 +372,9 @@ namespace logicalaccess
         return answer;
     }
 
-    std::vector<unsigned char> OK5553ReaderUnit::rats()
+    ByteVector OK5553ReaderUnit::rats()
     {
-        std::vector<unsigned char> answer;
+        ByteVector answer;
 
         // Sending two RATS is not supported without a new Select. Doesn't send another one if the first successed.
         if (d_successedRATS.size() == 0)

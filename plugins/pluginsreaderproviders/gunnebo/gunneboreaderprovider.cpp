@@ -27,7 +27,7 @@ namespace logicalaccess
 
     GunneboReaderProvider::~GunneboReaderProvider()
     {
-        release();
+	    GunneboReaderProvider::release();
     }
 
     void GunneboReaderProvider::release()

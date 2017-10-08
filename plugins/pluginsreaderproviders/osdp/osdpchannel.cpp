@@ -13,12 +13,12 @@
 namespace logicalaccess
 {
 	OSDPChannel::OSDPChannel() : isSCB(false), m_address(0), m_sequenceNumber(0),
-		m_data(std::vector<unsigned char>()), m_reply_type(OSDPCommandsType::NOCMD),
-		m_securityBlockType(OSDPSecureChannelType::NOSCS), m_securityBlockData(std::vector<unsigned char>())
+		m_data(ByteVector()), m_reply_type(NOCMD),
+		m_securityBlockType(NOSCS), m_securityBlockData(ByteVector())
 	{
 	}
 
-	void OSDPChannel::unPackage(std::vector<unsigned char> result)
+	void OSDPChannel::unPackage(ByteVector result)
 	{
 		EXCEPTION_ASSERT_WITH_LOG(result.size() >= 6, std::invalid_argument, "A valid buffer size must be at least 6 bytes long");
 		unsigned char index = 0;
@@ -45,22 +45,22 @@ namespace logicalaccess
 			unsigned char length = result[index++];
 			setSecurityBlockType(static_cast<OSDPSecureChannelType>(result[index++]));
 
-			std::vector<unsigned char> securityBlock(result.begin() + index, result.begin() + index + length - 2);
+			ByteVector securityBlock(result.begin() + index, result.begin() + index + length - 2);
 			setSecurityBlockData(securityBlock);
 			index += static_cast<unsigned char>(securityBlock.size());
 		}
 
 		setCommandsType(static_cast<OSDPCommandsType>(result[index++]));
 		char dataLength = packetLength - index - 0x02;
-		if (isSCB && getSecurityBlockType() >= OSDPSecureChannelType::SCS_15 && getSecurityBlockType() <= OSDPSecureChannelType::SCS_18)
+		if (isSCB && getSecurityBlockType() >= SCS_15 && getSecurityBlockType() <= SCS_18)
 		{
 			dataLength -= 0x04;
-			getSecureChannel()->verifyMAC(std::vector<unsigned char>(result.begin(), result.end() - 2));
+			getSecureChannel()->verifyMAC(ByteVector(result.begin(), result.end() - 2));
 		}
 		if (dataLength > 0)
 		{
-			std::vector<unsigned char> data(result.begin() + index, result.begin() + index + dataLength);
-			if (isSCB && (getSecurityBlockType() == OSDPSecureChannelType::SCS_17 || getSecurityBlockType() == OSDPSecureChannelType::SCS_18))
+			ByteVector data(result.begin() + index, result.begin() + index + dataLength);
+			if (isSCB && (getSecurityBlockType() == SCS_17 || getSecurityBlockType() == SCS_18))
 			{
 				data = getSecureChannel()->decryptData(data, getSecureChannel()->getCMAC());
 				LOG(LogLevel::INFOS) << "OSDP Answer: " << BufferHelper::getHex(data);
@@ -68,12 +68,12 @@ namespace logicalaccess
 			setData(data);
 		}
 		else
-			setData(std::vector<unsigned char>());
+			setData(ByteVector());
 	}
 
-	std::vector<unsigned char> OSDPChannel::createPackage()
+	ByteVector OSDPChannel::createPackage()
 	{
-		std::vector<unsigned char> cmd;
+		ByteVector cmd;
 
 		cmd.push_back(0x53); //OSDP_SOM
 		cmd.push_back(getAddress());
@@ -86,7 +86,7 @@ namespace logicalaccess
 
 		if (isSCB)
 		{
-			std::vector<unsigned char>& secureData = getSecurityBlockData();
+			ByteVector& secureData = getSecurityBlockData();
 			cmd.push_back(static_cast<unsigned char>(secureData.size()));
 			cmd.push_back(getSecurityBlockType());
 			cmd.insert(cmd.end(), secureData.begin(), secureData.begin() + static_cast<unsigned int>(secureData.size()) - 2);
@@ -94,21 +94,21 @@ namespace logicalaccess
 
 		cmd.push_back(static_cast<unsigned char>(getCommandsType()));
 
-		std::vector<unsigned char>& data = getData();
-		if (isSCB && (getSecurityBlockType() == OSDPSecureChannelType::SCS_17 || getSecurityBlockType() == OSDPSecureChannelType::SCS_18))
+		ByteVector& data = getData();
+		if (isSCB && (getSecurityBlockType() == SCS_17 || getSecurityBlockType() == SCS_18))
 		{
 			data = getSecureChannel()->encryptData(data, getSecureChannel()->getRMAC());
 		}
 
 		cmd.insert(cmd.end(), data.begin(), data.end());
 
-		if (isSCB && getSecurityBlockType() >= OSDPSecureChannelType::SCS_15 && getSecurityBlockType() <= OSDPSecureChannelType::SCS_18)
+		if (isSCB && getSecurityBlockType() >= SCS_15 && getSecurityBlockType() <= SCS_18)
 		{
 			short packetLength = static_cast<short>(cmd.size()) + 0x06;
 			cmd[2] = static_cast<unsigned char>(packetLength & 0x00ff);
 			cmd[3] = static_cast<unsigned char>(packetLength >> 8);
 
-			std::vector<unsigned char> mac = getSecureChannel()->computePacketMAC(cmd);
+			ByteVector mac = getSecureChannel()->computePacketMAC(cmd);
 			cmd.insert(cmd.end(), mac.begin(), mac.end());
 		}
 		else

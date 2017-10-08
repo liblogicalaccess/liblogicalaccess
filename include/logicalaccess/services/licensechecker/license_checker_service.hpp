@@ -18,8 +18,8 @@ namespace logicalaccess
 class LIBLOGICALACCESS_API LicenseCheckerService : public ReaderService
 {
   public:
-    LicenseCheckerService(ReaderUnitPtr ru)
-		: ReaderService(ru, RST_LICENSE_CHECKER){};
+	explicit LicenseCheckerService(ReaderUnitPtr ru)
+		: ReaderService(ru, RST_LICENSE_CHECKER){}
 
     virtual ~LicenseCheckerService() = default;
 

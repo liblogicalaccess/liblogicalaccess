@@ -24,20 +24,20 @@ namespace logicalaccess
     {
     }
 
-    std::vector<unsigned char> TopazSCMCommands::readPage(int page)
+    ByteVector TopazSCMCommands::readPage(int page)
     {
-        std::vector<unsigned char> data;
+        ByteVector data;
         for (unsigned char i = 0; i < 8; ++i)
         {
             unsigned char address = page << 3 | i;
-            std::vector<unsigned char> result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x54, 0x00, address, 0x00);
+            ByteVector result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x54, 0x00, address, 0x00);
             data.push_back(result[0]);
         }
 
         return data;
     }
 
-    void TopazSCMCommands::writePage(int page, const std::vector<unsigned char>& buf)
+    void TopazSCMCommands::writePage(int page, const ByteVector& buf)
     {
         if (buf.size() > 8)
         {

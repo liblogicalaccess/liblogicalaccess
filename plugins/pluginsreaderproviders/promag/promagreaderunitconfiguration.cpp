@@ -13,7 +13,7 @@ namespace logicalaccess
     PromagReaderUnitConfiguration::PromagReaderUnitConfiguration()
         : ReaderUnitConfiguration(READER_PROMAG)
     {
-        resetConfiguration();
+	    PromagReaderUnitConfiguration::resetConfiguration();
     }
 
     PromagReaderUnitConfiguration::~PromagReaderUnitConfiguration()

@@ -24,7 +24,7 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API ISO7816ReaderUnit : public ReaderUnit
     {
     public:
-		ISO7816ReaderUnit(std::string rpt);
+	    explicit ISO7816ReaderUnit(std::string rpt);
 
         virtual ~ISO7816ReaderUnit();
         /**
@@ -33,38 +33,38 @@ namespace logicalaccess
          * \return True if a card was inserted, false otherwise. If a card was inserted, the name of the reader on which the insertion was detected is accessible with getReader().
          * \warning If the card is already connected, then the method always fail.
          */
-        virtual bool waitInsertion(unsigned int /*maxwait*/) override { return true; }
+	    bool waitInsertion(unsigned int /*maxwait*/) override { return true; }
 
         /**
          * \brief Wait for a card removal.
          * \param maxwait The maximum time to wait for, in milliseconds. If maxwait is zero, then the call never times out.
          * \return True if a card was removed, false otherwise. If a card was removed, the name of the reader on which the removal was detected is accessible with getReader().
          */
-        virtual bool waitRemoval(unsigned int /*maxwait*/) { return true; }
+	    bool waitRemoval(unsigned int /*maxwait*/) override { return true; }
 
         /**
          * \brief Check if the card is connected.
          * \return True if the card is connected, false otherwise.
          */
-        virtual bool isConnected() { return true; }
+	    bool isConnected() override { return true; }
 
         /**
          * \brief Set the forced card type.
          * \param cardType The forced card type.
          */
-        virtual void setCardType(std::string /*cardType*/) {}
+	    void setCardType(std::string /*cardType*/) override {}
 
         /**
          * \brief Get the first and/or most accurate chip found.
          * \return The single chip.
          */
-        virtual std::shared_ptr<Chip> getSingleChip();
+	    std::shared_ptr<Chip> getSingleChip() override;
 
         /**
          * \brief Get chip available in the RFID rang.
          * \return The chip list.
          */
-        virtual std::vector<std::shared_ptr<Chip> > getChipList();
+	    std::vector<std::shared_ptr<Chip> > getChipList() override;
 
         /**
          * \brief Connect to the card.
@@ -72,23 +72,23 @@ namespace logicalaccess
          *
          * If the card handle was already connected, connect() first call disconnect(). If you intend to do a reconnection, call reconnect() instead.
          */
-        virtual bool connect() { return true; }
+	    bool connect() override { return true; }
 
         /**
          * \brief Disconnect from the card.
          */
-        virtual void disconnect() {}
+	    void disconnect() override {}
 
         /**
          * \brief Connect to the reader. Implicit connection on first command sent.
          * \return True if the connection succeeded.
          */
-        virtual bool connectToReader();
+	    bool connectToReader() override;
 
         /**
          * \brief Disconnect from reader.
          */
-        virtual void disconnectFromReader();
+	    void disconnectFromReader() override;
 
         virtual void reloadReaderConfiguration();
 
@@ -108,13 +108,13 @@ namespace logicalaccess
          * \brief Get the reader unit name.
          * \return The reader unit name.
          */
-        virtual std::string getName() const { return ""; }
+	    std::string getName() const override { return ""; }
 
         /**
          * \brief Get a string hexadecimal representation of the reader serial number
          * \return The reader serial number or an empty string on error.
          */
-        virtual std::string getReaderSerialNumber() { return ""; }
+	    std::string getReaderSerialNumber() override { return ""; }
 
         /**
          * \brief Get The SAM Chip
@@ -137,7 +137,7 @@ namespace logicalaccess
         virtual void setSAMReaderUnit(std::shared_ptr<ISO7816ReaderUnit> t);
 
       protected:
-        virtual std::shared_ptr<ResultChecker> createDefaultResultChecker() const override;
+	    std::shared_ptr<ResultChecker> createDefaultResultChecker() const override;
 
         /**
         * \brief Get the ISO7816 reader provider.
@@ -149,12 +149,11 @@ namespace logicalaccess
 		 * \brief Get the ISO7816 reader unit configuration.
 		 * \return The ISO7816 reader unit configuration.
 		 */
-		std::shared_ptr<ISO7816ReaderUnitConfiguration> getISO7816Configuration() { return std::dynamic_pointer_cast<ISO7816ReaderUnitConfiguration>(getConfiguration()); };
+		std::shared_ptr<ISO7816ReaderUnitConfiguration> getISO7816Configuration() { return std::dynamic_pointer_cast<ISO7816ReaderUnitConfiguration>(getConfiguration()); }
 
-		virtual bool reconnect(int action);
+	    bool reconnect(int action) override;
 
-      protected:
-        /**
+	    /**
          * \brief The SAM chip.
          */
         std::shared_ptr<SAMChip> d_sam_chip;

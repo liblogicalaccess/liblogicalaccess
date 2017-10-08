@@ -28,18 +28,18 @@ int main(int ac, char **av)
     ReaderProviderPtr provider;
     ReaderUnitPtr readerUnit;
     ChipPtr chip;
-    std::tie(provider, readerUnit, chip) = lla_test_init();
+    tie(provider, readerUnit, chip) = lla_test_init();
 
     PRINT_TIME("Chip identifier: " <<
                logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
 
     LLA_ASSERT(chip->getCardType() == "MifareUltralight",
                "Chip is not an MifareUltralight(C), but is " + chip->getCardType() + " instead.");
-    auto cmd = std::dynamic_pointer_cast<logicalaccess::MifareUltralightCommands>(
+    auto cmd = std::dynamic_pointer_cast<MifareUltralightCommands>(
             chip->getCommands());
     LLA_ASSERT(cmd, "Cannot get command from chip");
 
-    std::vector<unsigned char> data(4), tmp;
+    ByteVector data(4), tmp;
     data[0] = 0x11;
     data[3] = 0xff;
     cmd->writePage(10, data);

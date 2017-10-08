@@ -31,7 +31,7 @@ namespace logicalaccess
         /**
          * \brief Constructor.
          */
-		FeliCaChip(std::string ct);
+		explicit FeliCaChip(std::string ct);
 
         /**
          * \brief Constructor.
@@ -47,36 +47,36 @@ namespace logicalaccess
          * \brief Get the generic card type.
          * \return The generic card type.
          */
-        virtual std::string getGenericCardType() const { return CHIP_FELICA; };
+		std::string getGenericCardType() const override { return CHIP_FELICA; }
 
         /**
          * \brief Get the root location node.
          * \return The root location node.
          */
-        virtual std::shared_ptr<LocationNode> getRootLocationNode();
+		std::shared_ptr<LocationNode> getRootLocationNode() override;
 
         /**
          * \brief Get a card service for this chip.
          * \param serviceType The card service type.
          * \return The card service.
          */
-        virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
+		std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
 
 		/**
 		* \brief Create default FeliCa location.
 		* \return Default FeliCa location.
 		*/
-		virtual std::shared_ptr<Location> createLocation() const;
+		std::shared_ptr<Location> createLocation() const override;
 
         /**
          * \brief Get the FeliCa card provider for I/O access.
          * \return The FeliCa card provider.
          */
-		std::shared_ptr<FeliCaCommands> getFeliCaCommands() { return std::dynamic_pointer_cast<FeliCaCommands>(getCommands()); };
+		std::shared_ptr<FeliCaCommands> getFeliCaCommands() const { return std::dynamic_pointer_cast<FeliCaCommands>(getCommands()); }
 
     protected:
 
-        void addBlockNode(std::shared_ptr<LocationNode> rootNode, unsigned short code, unsigned short block);
+        static void addBlockNode(std::shared_ptr<LocationNode> rootNode, unsigned short code, unsigned short block);
     };
 }
 

@@ -15,17 +15,17 @@ namespace logicalaccess
 	}
 
 
-	std::vector<unsigned char> OSDPReaderCardAdapter::sendCommand(const std::vector<unsigned char>& command, long timeout)
+	ByteVector OSDPReaderCardAdapter::sendCommand(const ByteVector& command, long /*timeout*/)
 	{
-		std::vector<unsigned char> osdpCommand;
+		ByteVector osdpCommand;
 		std::shared_ptr<OSDPChannel> channel = m_commands->getChannel();
 		if (channel->isSCB)
 		{
-			channel->setSecurityBlockData(std::vector<unsigned char>(2));
-			channel->setSecurityBlockType(OSDPSecureChannelType::SCS_17); //Enable MAC and Data Security
+			channel->setSecurityBlockData(ByteVector(2));
+			channel->setSecurityBlockType(SCS_17); //Enable MAC and Data Security
 		}
 
-		channel->setCommandsType(OSDPCommandsType::XWR);
+		channel->setCommandsType(XWR);
 		osdpCommand.push_back(0x01); //XRW_PROFILE 0x01
 		osdpCommand.push_back(0x01); //XRW_PCMND 0x01
 		osdpCommand.push_back(m_address);
@@ -35,22 +35,22 @@ namespace logicalaccess
 		//Transparent Content Send Request
 		std::shared_ptr<OSDPChannel> result = m_commands->transmit();
 
-		if (result->getCommandsType() == OSDPCommandsType::NAK)
+		if (result->getCommandsType() == NAK)
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "NAK: Impossible to send Transparent Content");
 
-		if (result->getCommandsType() == OSDPCommandsType::ACK)
+		if (result->getCommandsType() == ACK)
 		{
 			LOG(LogLevel::INFOS) << "OSDP: No XRD recieve, try to send poll";
 			result = m_commands->poll();
 		}
 
-		std::vector<unsigned char>& data = result->getData();
+		ByteVector& data = result->getData();
 
-		if (result->getCommandsType() != OSDPCommandsType::XRD
-			|| (result->getCommandsType() == OSDPCommandsType::XRD && data[0x01] != 0x02)) //is Not APDU answer - osdp_PR01SCREP = 0x02
+		if (result->getCommandsType() != XRD
+			|| (result->getCommandsType() == XRD && data[0x01] != 0x02)) //is Not APDU answer - osdp_PR01SCREP = 0x02
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Impossible to send Transparent Content");
 
-		std::vector<unsigned char> res(data.begin() + 4, data.end());
+		ByteVector res(data.begin() + 4, data.end());
 
 		if (res.size() > 0 && d_resultChecker)
 		{
@@ -66,4 +66,4 @@ namespace logicalaccess
 		if (result->getCommandsType() != OSDPCommandsType::ACK)
 			LOG(LogLevel::ERRORS) << "Impossible to restore Profile 0x00";*/
 	}
-};
+}

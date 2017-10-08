@@ -28,7 +28,7 @@ size_t ElapsedTimeCounter::elapsed() const
     return static_cast<size_t>(duration_cast<milliseconds>(diff).count());
 }
 
-ByteVector ManchesterEncoder::encode(const ByteVector &in, ManchesterEncoder::Type t)
+ByteVector ManchesterEncoder::encode(const ByteVector &in, Type t)
 {
     ByteVector out;
     for (const auto &byte : in)

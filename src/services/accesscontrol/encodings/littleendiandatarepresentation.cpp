@@ -19,9 +19,9 @@ namespace logicalaccess
     {
     }
 
-    string LittleEndianDataRepresentation::getName() const
+	std::string LittleEndianDataRepresentation::getName() const
     {
-        return string("Little Endian");
+        return std::string("Little Endian");
     }
 
     EncodingType LittleEndianDataRepresentation::getType() const

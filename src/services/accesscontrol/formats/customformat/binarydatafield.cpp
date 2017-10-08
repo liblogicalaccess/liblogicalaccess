@@ -16,26 +16,26 @@ namespace logicalaccess
     BinaryFieldValue::BinaryFieldValue()
         : Key()
     {
-        clear();
+	    Key::clear();
         d_buf.clear();
     }
 
-    BinaryFieldValue::BinaryFieldValue(const string& str)
+    BinaryFieldValue::BinaryFieldValue(const std::string& str)
         : Key()
     {
         d_buf.clear();
         d_buf.resize((str.size() + 2) / 3);
-        clear();
-        fromString(str);
+	    Key::clear();
+	    Key::fromString(str);
     }
 
     BinaryFieldValue::BinaryFieldValue(const void* buf, size_t buflen)
         : Key()
     {
-        clear();
+	    Key::clear();
         d_buf.clear();
 
-        if (buf != NULL)
+        if (buf != nullptr)
         {
             d_buf.insert(d_buf.end(), static_cast<const unsigned char*>(buf), static_cast<const unsigned char*>(buf)+buflen);
             d_isEmpty = false;
@@ -54,7 +54,7 @@ namespace logicalaccess
         Key::unSerialize(node);
     }
 
-    std::string BinaryFieldValue::getDefaultXmlNodeName() const
+	std::string BinaryFieldValue::getDefaultXmlNodeName() const
     {
         return "BinaryFieldValue";
     }
@@ -70,15 +70,15 @@ namespace logicalaccess
     {
     }
 
-    void BinaryDataField::setValue(std::vector<unsigned char> value)
+    void BinaryDataField::setValue(ByteVector value)
     {
         d_value = BinaryFieldValue(&value[0], value.size());
     }
 
-    std::vector<unsigned char> BinaryDataField::getValue() const
+    ByteVector BinaryDataField::getValue() const
     {
         const unsigned char* vdata = d_value.getData();
-        return std::vector<unsigned char>(vdata, vdata + d_value.getLength());
+        return ByteVector(vdata, vdata + d_value.getLength());
     }
 
     void BinaryDataField::setPaddingChar(unsigned char padding)
@@ -188,7 +188,7 @@ namespace logicalaccess
         d_padding = node.get_child("Padding").get_value<unsigned char>();
     }
 
-    std::string BinaryDataField::getDefaultXmlNodeName() const
+	std::string BinaryDataField::getDefaultXmlNodeName() const
     {
         return "BinaryDataField";
     }

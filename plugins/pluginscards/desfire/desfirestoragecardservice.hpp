@@ -25,7 +25,7 @@ namespace logicalaccess
          * \brief Constructor.
          * \param chip The chip.
          */
-        DESFireStorageCardService(std::shared_ptr<Chip> chip);
+	    explicit DESFireStorageCardService(std::shared_ptr<Chip> chip);
 
         /**
          * \brief Erase the card.
@@ -38,7 +38,7 @@ namespace logicalaccess
          * \param aiToUse The key's informations to use to delete.
          * \return true if the card was erased, false otherwise. If false, the card may be partially erased.
          */
-        virtual void erase(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse);
+	    void erase(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse) override;
 
         /**
          * \brief Write data on a specific DESFire location, using given DESFire keys.
@@ -48,7 +48,7 @@ namespace logicalaccess
          * \param data Data to write.
          * \param behaviorFlags Flags which determines the behavior.
          */
-        virtual void writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite, const std::vector<unsigned char>& data, CardBehavior behaviorFlags);
+	    void writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite, const ByteVector& data, CardBehavior behaviorFlags) override;
 
         /**
          * \brief Read data on a specific DESFire location, using given DESFire keys.
@@ -57,7 +57,7 @@ namespace logicalaccess
          * \param behaviorFlags Flags which determines the behavior.
 		 * \return Data readed
          */
-        virtual std::vector<unsigned char> readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, size_t dataLength, CardBehavior behaviorFlags);
+	    ByteVector readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, size_t dataLength, CardBehavior behaviorFlags) override;
 
         /**
          * \brief Read data header on a specific location, using given keys.
@@ -67,11 +67,11 @@ namespace logicalaccess
          * \param dataLength Data's length to read.
          * \return Data header length.
          */
-        virtual unsigned int readDataHeader(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, void* data, size_t dataLength);
+		ByteVector readDataHeader(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse) override;
 
     protected:
 
-        std::shared_ptr<DESFireChip> getDESFireChip() { return std::dynamic_pointer_cast<DESFireChip>(getChip()); };
+        std::shared_ptr<DESFireChip> getDESFireChip() const { return std::dynamic_pointer_cast<DESFireChip>(getChip()); }
     };
 }
 

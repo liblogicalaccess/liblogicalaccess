@@ -41,7 +41,7 @@ int main(int ac, char **av)
     ReaderProviderPtr provider;
     ReaderUnitPtr readerUnit;
     ChipPtr chip;
-    std::tie(provider, readerUnit, chip) = lla_test_init();
+    tie(provider, readerUnit, chip) = lla_test_init();
 
     PRINT_TIME("Chip identifier: " <<
 		logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
@@ -50,16 +50,16 @@ int main(int ac, char **av)
                "Chip is not a Mifare1K, but is " + chip->getCardType() +
                " instead.");
 
-    auto cmd = std::dynamic_pointer_cast<logicalaccess::MifareCommands>(chip->getCommands());
+    auto cmd = std::dynamic_pointer_cast<MifareCommands>(chip->getCommands());
 
-    auto key = std::make_shared<logicalaccess::MifareKey>("ff ff ff ff ff ff");
-    cmd->loadKey(0, logicalaccess::MifareKeyType::KT_KEY_A, key);
+    auto key = std::make_shared<MifareKey>("ff ff ff ff ff ff");
+    cmd->loadKey(0, KT_KEY_A, key);
     LLA_SUBTEST_PASSED("LoadKey");
 
-    cmd->authenticate(8, 0, logicalaccess::MifareKeyType::KT_KEY_A);
+    cmd->authenticate(8, 0, KT_KEY_A);
     LLA_SUBTEST_PASSED("Authenticate");
 
-    std::vector<unsigned char> data(16), tmp;
+    ByteVector data(16), tmp;
     data[0] = 0x11;
     data[15] = 0xff;
     cmd->updateBinary(8, data);
@@ -74,9 +74,9 @@ int main(int ac, char **av)
     data.resize(48);
     data[0] = 0x11;
     data[47] = 0xff;
-    logicalaccess::MifareAccessInfo::SectorAccessBits sab;
+    MifareAccessInfo::SectorAccessBits sab;
 
-	cmd->writeSector(2, 0, data, std::shared_ptr<MifareKey>(), std::shared_ptr<MifareKey>(), sab, logicalaccess::CB_DEFAULT, &sab);
+	cmd->writeSector(2, 0, data, std::shared_ptr<MifareKey>(), std::shared_ptr<MifareKey>(), sab, CB_DEFAULT, &sab);
 
 	tmp = cmd->readSector(2, 0, std::shared_ptr<MifareKey>(), std::shared_ptr<MifareKey>(), sab);
     LLA_ASSERT(std::equal(data.begin(), data.end(), tmp.begin()),
@@ -96,30 +96,30 @@ int main(int ac, char **av)
     LLA_SUBTEST_PASSED("WriteReadSectors");
 
 
-    auto newkey = std::make_shared<logicalaccess::MifareKey>("ff ff ff ff ff fa");
+    auto newkey = std::make_shared<MifareKey>("ff ff ff ff ff fa");
 
-	cmd->changeKeys(KT_KEY_A, std::shared_ptr<MifareKey>(), newkey, std::shared_ptr<logicalaccess::MifareKey>(), 2, &sab);
-	cmd->changeKeys(KT_KEY_A, newkey, std::shared_ptr<logicalaccess::MifareKey>(), std::shared_ptr<logicalaccess::MifareKey>(), 2, &sab);
+	cmd->changeKeys(KT_KEY_A, std::shared_ptr<MifareKey>(), newkey, std::shared_ptr<MifareKey>(), 2, &sab);
+	cmd->changeKeys(KT_KEY_A, newkey, std::shared_ptr<MifareKey>(), std::shared_ptr<MifareKey>(), 2, &sab);
     LLA_SUBTEST_PASSED("ChangeKey");
 
 
-    auto service = std::dynamic_pointer_cast<logicalaccess::AccessControlCardService>(
-            chip->getService(logicalaccess::CardServiceType::CST_ACCESS_CONTROL));
+    auto service = std::dynamic_pointer_cast<AccessControlCardService>(
+            chip->getService(CST_ACCESS_CONTROL));
 
     LLA_ASSERT(service, "Cannot retrieve service");
-    auto location = std::make_shared<logicalaccess::MifareLocation>();
+    auto location = std::make_shared<MifareLocation>();
     location->sector = 2;
-    auto format = std::make_shared<logicalaccess::Wiegand26Format>();
+    auto format = std::make_shared<Wiegand26Format>();
     format->setUid(1000);
     format->setFacilityCode(67);
 
-    service->writeFormat(format, location, std::shared_ptr<logicalaccess::AccessInfo>(),
-                         std::shared_ptr<logicalaccess::AccessInfo>());
+    service->writeFormat(format, location, std::shared_ptr<AccessInfo>(),
+                         std::shared_ptr<AccessInfo>());
 
-    auto formattmp = std::make_shared<logicalaccess::Wiegand26Format>();
-    auto rformat = std::dynamic_pointer_cast<logicalaccess::Wiegand26Format>(
+    auto formattmp = std::make_shared<Wiegand26Format>();
+    auto rformat = std::dynamic_pointer_cast<Wiegand26Format>(
             service->readFormat(formattmp, location,
-                                std::shared_ptr<logicalaccess::AccessInfo>()));
+                                std::shared_ptr<AccessInfo>()));
 
     if (!rformat || rformat->getUid() != 1000 || rformat->getFacilityCode() != 67)
     THROW_EXCEPTION_WITH_LOG(std::runtime_error, "Bad format");

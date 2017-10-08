@@ -56,7 +56,7 @@ namespace logicalaccess
              * \brief Constructor.
              * \param mode The encryption mode.
              */
-            OpenSSLSymmetricCipher(EncMode mode);
+	        explicit OpenSSLSymmetricCipher(EncMode mode);
 
             /**
              * \brief Initialize a new encryption/decryption session.
@@ -66,14 +66,14 @@ namespace logicalaccess
              * \param padding Whether to use padding.
              * \return A context that must be passed to stop() when cipherement is done.
              */
-            OpenSSLSymmetricCipherContext start(Method method, const SymmetricKey& key, const InitializationVector& iv, bool padding);
+            OpenSSLSymmetricCipherContext start(Method method, const SymmetricKey& key, const InitializationVector& iv, bool padding) const;
 
             /**
              * \brief Add data to encrypt/decrypt.
              * \param context The context.
              * \param src The data to add to the encrypt/decrypt session.
              */
-            void update(OpenSSLSymmetricCipherContext& context, const std::vector<unsigned char>& src);
+            static void update(OpenSSLSymmetricCipherContext& context, const ByteVector& src);
 
             /**
              * \brief Finalize an encryption/decryption session.
@@ -81,7 +81,7 @@ namespace logicalaccess
              * \return The encrypted/decrypted data.
              * \warning The value context is undefined after the call. Passing it to start(), update() or stop() will lead to undefined behavior.
              */
-            std::vector<unsigned char> stop(OpenSSLSymmetricCipherContext& context);
+			static ByteVector stop(OpenSSLSymmetricCipherContext& context);
 
             /**
              * \brief Cipher a buffer.
@@ -93,7 +93,7 @@ namespace logicalaccess
              * In case of a failure, the call
              an InvalidCallException.
              */
-            virtual void cipher(const std::vector<unsigned char>& src, std::vector<unsigned char>& dest, const SymmetricKey& key, const InitializationVector& iv, bool padding);
+	        void cipher(const ByteVector& src, ByteVector& dest, const SymmetricKey& key, const InitializationVector& iv, bool padding) override;
 
             /**
              * \brief Decipher a buffer.
@@ -105,7 +105,7 @@ namespace logicalaccess
              * In case of a failure, the call
              a InvalidCallException.
              */
-            virtual void decipher(const std::vector<unsigned char>& src, std::vector<unsigned char>& dest, const SymmetricKey& key, const InitializationVector& iv, bool padding);
+	        void decipher(const ByteVector& src, ByteVector& dest, const SymmetricKey& key, const InitializationVector& iv, bool padding) override;
 
         protected:
 
@@ -120,7 +120,7 @@ namespace logicalaccess
              * \brief Get the encryption mode.
              * \return The encryption mode.
              */
-            inline EncMode mode() const
+	        EncMode mode() const
             {
                 return d_mode;
             }

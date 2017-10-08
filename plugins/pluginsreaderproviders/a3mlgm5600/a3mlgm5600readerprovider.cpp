@@ -39,7 +39,7 @@ namespace logicalaccess
 
     A3MLGM5600ReaderProvider::~A3MLGM5600ReaderProvider()
     {
-        release();
+	    A3MLGM5600ReaderProvider::release();
     }
 
     std::shared_ptr<ReaderUnit> A3MLGM5600ReaderProvider::createReaderUnit()

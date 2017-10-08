@@ -22,11 +22,11 @@ namespace logicalaccess
     {
     }
 
-    std::vector<unsigned char> GigaTMSReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
+    ByteVector GigaTMSReaderCardAdapter::adaptCommand(const ByteVector& command)
     {
-		std::vector<unsigned char> cmd;
-		cmd.push_back(GigaTMSReaderCardAdapter::STX1);
-		cmd.push_back(GigaTMSReaderCardAdapter::STX2);
+		ByteVector cmd;
+		cmd.push_back(STX1);
+		cmd.push_back(STX2);
         unsigned char crc = static_cast<unsigned char>(command.size());
         cmd.push_back(crc);
 		cmd.insert(cmd.end(), command.begin(), command.end());
@@ -39,7 +39,7 @@ namespace logicalaccess
         return cmd;
     }
 
-    std::vector<unsigned char> GigaTMSReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
+    ByteVector GigaTMSReaderCardAdapter::adaptAnswer(const ByteVector& answer)
     {
         EXCEPTION_ASSERT_WITH_LOG(answer.size() >= 3, LibLogicalAccessException, "Bad command response. Data length too small.");
 		EXCEPTION_ASSERT_WITH_LOG(answer[0] == GigaTMSReaderCardAdapter::STX1 && answer[1] == GigaTMSReaderCardAdapter::STX2, LibLogicalAccessException, "Bad command response. STX bytes doesn't match.");
@@ -53,6 +53,6 @@ namespace logicalaccess
 
 		EXCEPTION_ASSERT_WITH_LOG(crc == answer[3 + answer[2]], LibLogicalAccessException, "Bad command response. CRC doesn't match.");
 
-		return std::vector<unsigned char>(answer.begin() + 5, answer.begin() + 3 + answer[2]);
+		return ByteVector(answer.begin() + 5, answer.begin() + 3 + answer[2]);
     }
 }

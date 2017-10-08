@@ -21,7 +21,7 @@ namespace logicalaccess
             return DESInitializationVector(true);
         }
 
-        DESInitializationVector DESInitializationVector::createFromData(const std::vector<unsigned char>& data)
+        DESInitializationVector DESInitializationVector::createFromData(const ByteVector& data)
         {
             return DESInitializationVector(data);
         }
@@ -31,7 +31,7 @@ namespace logicalaccess
         {
         }
 
-        DESInitializationVector::DESInitializationVector(const std::vector<unsigned char>& _data) :
+        DESInitializationVector::DESInitializationVector(const ByteVector& _data) :
             InitializationVector(_data)
         {
             assert(_data.size() == DEFAULT_SIZE);

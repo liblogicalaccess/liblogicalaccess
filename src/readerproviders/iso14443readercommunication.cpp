@@ -13,9 +13,9 @@ namespace logicalaccess
     {
     }
 
-    std::vector<unsigned char> ISO14443ReaderCommunication::request()
+	ByteVector ISO14443ReaderCommunication::request()
     {
-        std::vector<unsigned char> ret;
+		ByteVector ret;
 
         switch (d_rcMode)
         {
@@ -48,9 +48,9 @@ namespace logicalaccess
         return ret;
     }
 
-    std::vector<unsigned char> ISO14443ReaderCommunication::anticollision()
+	ByteVector ISO14443ReaderCommunication::anticollision()
     {
-        std::vector<unsigned char> ret;
+		ByteVector ret;
 
         switch (d_rcMode)
         {
@@ -69,7 +69,7 @@ namespace logicalaccess
         return ret;
     }
 
-    void ISO14443ReaderCommunication::selectIso(const std::vector<unsigned char>& /*uid*/)
+    void ISO14443ReaderCommunication::selectIso(const ByteVector& /*uid*/)
     {
         switch (d_rcMode)
         {

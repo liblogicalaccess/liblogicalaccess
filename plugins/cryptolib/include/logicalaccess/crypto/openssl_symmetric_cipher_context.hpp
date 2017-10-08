@@ -23,11 +23,7 @@ namespace logicalaccess
          */
         class OpenSSLSymmetricCipherContext
         {
-        public:
-
-        private:
-
-            /**
+	        /**
              * \brief The context information structure.
              */
             struct Information
@@ -36,7 +32,7 @@ namespace logicalaccess
                  * \brief Constructor.
                  * \param method The method.
                  */
-                Information(OpenSSLSymmetricCipher::Method method);
+	            explicit Information(OpenSSLSymmetricCipher::Method method);
 
                 /**
                  * \brief Destructor.
@@ -62,14 +58,14 @@ namespace logicalaccess
                 /**
                  * \brief An internal buffer.
                  */
-                std::vector<unsigned char> data;
+                ByteVector data;
             };
 
             /**
              * \brief Constructor.
              * \param method The method.
              */
-            OpenSSLSymmetricCipherContext(OpenSSLSymmetricCipher::Method method);
+	        explicit OpenSSLSymmetricCipherContext(OpenSSLSymmetricCipher::Method method);
 
             /**
              * \brief Set the padding.
@@ -77,13 +73,13 @@ namespace logicalaccess
              *
              * Padding is disabled by default.
              */
-            void setPadding(bool padding);
+            void setPadding(bool padding) const;
 
             /**
              * \brief Get the data.
              * \return The data.
              */
-            EVP_CIPHER_CTX* ctx();
+            EVP_CIPHER_CTX* ctx() const;
 
             /**
              * \brief Get the block size.
@@ -101,7 +97,7 @@ namespace logicalaccess
              * \brief Get the data.
              * \return The data.
              */
-            std::vector<unsigned char>& data();
+            ByteVector& data() const;
 
             /**
              * \brief Reset the context.
@@ -116,9 +112,9 @@ namespace logicalaccess
             friend class OpenSSLSymmetricCipher;
         };
 
-        inline EVP_CIPHER_CTX* OpenSSLSymmetricCipherContext::ctx() { return d_information->ctx; }
+        inline EVP_CIPHER_CTX* OpenSSLSymmetricCipherContext::ctx() const { return d_information->ctx; }
         inline OpenSSLSymmetricCipher::Method OpenSSLSymmetricCipherContext::method() const { return d_information->method; }
-        inline std::vector<unsigned char>& OpenSSLSymmetricCipherContext::data() { return d_information->data; }
+        inline ByteVector& OpenSSLSymmetricCipherContext::data() const { return d_information->data; }
     }
 }
 

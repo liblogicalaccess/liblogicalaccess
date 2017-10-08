@@ -32,48 +32,50 @@ namespace logicalaccess
          */
         virtual ~ISO7816OK5553ReaderCardAdapter();
 
-        /**
-         * \brief Send an APDU command to the reader.
-         */
-        virtual std::vector<unsigned char> sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const unsigned char* data, size_t datalen, unsigned char le);
+		using ISO7816ReaderCardAdapter::sendAPDUCommand;
 
         /**
          * \brief Send an APDU command to the reader.
          */
-        virtual std::vector<unsigned char> sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const unsigned char* data, size_t datalen);
+        virtual ByteVector sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const unsigned char* data, size_t datalen, unsigned char le);
 
         /**
          * \brief Send an APDU command to the reader.
          */
-        virtual std::vector<unsigned char> sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, const unsigned char* data, size_t datalen);
+        virtual ByteVector sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const unsigned char* data, size_t datalen);
+
+        /**
+         * \brief Send an APDU command to the reader.
+         */
+        virtual ByteVector sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, const unsigned char* data, size_t datalen);
         /**
          * \brief Send an APDU command to the reader without data and result.
          */
-        virtual std::vector<unsigned char> sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char le);
+	    ByteVector sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char le) override;
 
         /**
          * \brief Send an APDU command to the reader without data.
          */
-        virtual std::vector<unsigned char> sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, unsigned char le);
+	    ByteVector sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, unsigned char le) override;
 
         /**
          * \brief Send an APDU command to the reader without data.
          */
-        virtual std::vector<unsigned char> sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2);
+	    ByteVector sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2) override;
 
         /**
          * \brief Adapt the command to send to the reader.
          * \param command The command to send.
          * \return The adapted command to send.
          */
-        virtual std::vector<unsigned char> adaptCommand(const std::vector<unsigned char>& command);
+	    ByteVector adaptCommand(const ByteVector& command) override;
 
         /**
          * \brief Adapt the asnwer received from the reader.
          * \param answer The answer received.
          * \return The adapted answer received.
          */
-        virtual std::vector<unsigned char> adaptAnswer(const std::vector<unsigned char>& answer);
+	    ByteVector adaptAnswer(const ByteVector& answer) override;
 
     protected:
 
@@ -87,14 +89,14 @@ namespace logicalaccess
          * \param answer The answer received.
          * \return The handled answer.
          */
-        std::vector<unsigned char> handleAnswer(const std::vector<unsigned char>& answer);
+		static ByteVector handleAnswer(const ByteVector& answer);
 
         /**
          * \brief Reverse the asnwer received from the reader.
          * \param answer The answer received.
          * \return The reversed answer.
          */
-        std::vector<unsigned char> answerReverse(const std::vector<unsigned char>& answer);
+		static ByteVector answerReverse(const ByteVector& answer);
 
         /**
          * \brief Represent stat of prefix in desfire command. (0x02 of 0x03).

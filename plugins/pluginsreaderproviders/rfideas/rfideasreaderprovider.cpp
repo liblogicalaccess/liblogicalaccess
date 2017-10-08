@@ -43,7 +43,7 @@ namespace logicalaccess
 
     RFIDeasReaderProvider::~RFIDeasReaderProvider()
     {
-        release();
+	    RFIDeasReaderProvider::release();
     }
 
     void RFIDeasReaderProvider::release()

@@ -85,7 +85,7 @@ namespace logicalaccess
         d_value = node.get_child("Value").get_value<long long>();
     }
 
-    std::string NumberDataField::getDefaultXmlNodeName() const
+	std::string NumberDataField::getDefaultXmlNodeName() const
     {
         return "NumberDataField";
     }

@@ -28,7 +28,7 @@ namespace logicalaccess
 	std::vector<unsigned short> FeliCaSCMCommands::getSystemCodes()
 	{
 		std::vector<unsigned short> codes;
-		std::vector<unsigned char> result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x4A, 0x00, 0x00);
+		ByteVector result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x4A, 0x00, 0x00);
 		// First 8 bytes = IDm
 		EXCEPTION_ASSERT_WITH_LOG(result.size() > 8, LibLogicalAccessException, "Wrong system codes result.");
 		unsigned char nbCodes = result[8];
@@ -45,7 +45,7 @@ namespace logicalaccess
 
 	std::vector<unsigned short> FeliCaSCMCommands::requestServices(const std::vector<unsigned short>& codes)
 	{
-		std::vector<unsigned char> data;
+		ByteVector data;
 		for (unsigned int i = 0; i < codes.size(); ++i)
 		{
 			data.push_back(static_cast<unsigned char>((codes[i] >> 8) & 0xff));
@@ -53,7 +53,7 @@ namespace logicalaccess
 		}
 
 		std::vector<unsigned short> versions;
-		std::vector<unsigned char> result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x42, static_cast<unsigned char>(codes.size()), 0x00, data);
+		ByteVector result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x42, static_cast<unsigned char>(codes.size()), 0x00, data);
 		// First 8 bytes = IDm
 		EXCEPTION_ASSERT_WITH_LOG(result.size() > 8, LibLogicalAccessException, "Wrong request service result.");
 		unsigned char nbVersions = result[8];
@@ -70,16 +70,16 @@ namespace logicalaccess
 
 	unsigned char FeliCaSCMCommands::requestResponse()
 	{
-		std::vector<unsigned char> result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x44, 0x00, 0x00);
+		ByteVector result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x44, 0x00, 0x00);
 		// First 8 bytes = IDm
 		EXCEPTION_ASSERT_WITH_LOG(result.size() > 8, LibLogicalAccessException, "Wrong request response result.");
 
 		return result[8];
 	}
 
-	std::vector<unsigned char> FeliCaSCMCommands::read(const std::vector<unsigned short>& codes, const std::vector<unsigned short>& blocks)
+	ByteVector FeliCaSCMCommands::read(const std::vector<unsigned short>& codes, const std::vector<unsigned short>& blocks)
 	{
-		std::vector<unsigned char> data;
+		ByteVector data;
 		for (unsigned int i = 0; i < codes.size(); ++i)
 		{
 			data.push_back(static_cast<unsigned char>((codes[i] >> 8) & 0xff));
@@ -91,18 +91,18 @@ namespace logicalaccess
 			data.push_back(static_cast<unsigned char>(blocks[i] & 0xff));
 		}
 
-		std::vector<unsigned char> result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x46, static_cast<unsigned char>(codes.size()), static_cast<unsigned char>(blocks.size()), data);
+		ByteVector result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x46, static_cast<unsigned char>(codes.size()), static_cast<unsigned char>(blocks.size()), data);
 		// First 8 bytes = IDm, then Status Flag 1 + Status Flag 2
 		EXCEPTION_ASSERT_WITH_LOG(result.size() > 10, LibLogicalAccessException, "Wrong read result.");
 		unsigned char nbBlocks = result[10];
 		EXCEPTION_ASSERT_WITH_LOG(result.size() >= static_cast<unsigned int>(11 + (nbBlocks * 16)), LibLogicalAccessException, "Wrong read result. Invalid length for blocks number.");
 
-        return std::vector<unsigned char>(result.begin() + 11, result.begin() + 11 + (nbBlocks * 16));
+        return ByteVector(result.begin() + 11, result.begin() + 11 + (nbBlocks * 16));
 	}
 
-	void FeliCaSCMCommands::write(const std::vector<unsigned short>& codes, const std::vector<unsigned short>& blocks, const std::vector<unsigned char>& data)
+	void FeliCaSCMCommands::write(const std::vector<unsigned short>& codes, const std::vector<unsigned short>& blocks, const ByteVector& data)
 	{
-		std::vector<unsigned char> cdata;
+		ByteVector cdata;
 		for (unsigned int i = 0; i < codes.size(); ++i)
 		{
 			cdata.push_back(static_cast<unsigned char>((codes[i] >> 8) & 0xff));
@@ -115,7 +115,7 @@ namespace logicalaccess
 		}
 		cdata.insert(cdata.end(), data.begin(), data.end());
 
-		std::vector<unsigned char> result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x48, static_cast<unsigned char>(codes.size()), static_cast<unsigned char>(blocks.size()), data);
+		ByteVector result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x48, static_cast<unsigned char>(codes.size()), static_cast<unsigned char>(blocks.size()), data);
 		// First 8 bytes = IDm, then Status Flag 1 + Status Flag 2
 		EXCEPTION_ASSERT_WITH_LOG(result.size() >= 10, LibLogicalAccessException, "Wrong write result.");
 	}

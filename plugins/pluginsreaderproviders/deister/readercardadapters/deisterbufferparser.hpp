@@ -17,11 +17,11 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API DeisterBufferParser : public CircularBufferParser
     {
     public:
-        DeisterBufferParser() {};
+        DeisterBufferParser() {}
 
-        virtual ~DeisterBufferParser() {};
+        virtual ~DeisterBufferParser() {}
 
-        virtual std::vector<unsigned char> getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer);
+	    ByteVector getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer) override;
     };
 }
 

@@ -11,7 +11,7 @@ void STidPRGDataTransport::setSerialPort(std::shared_ptr<SerialPortXml> port)
     port->getSerialPort()->setCircularBufferParser(new STidPRGBufferParser());
 }
 
-std::vector<unsigned char> STidPRGDataTransport::receive(long int timeout)
+ByteVector STidPRGDataTransport::receive(long int /*timeout*/)
 {
     return SerialPortDataTransport::receive(receiveTimeout_);
 }

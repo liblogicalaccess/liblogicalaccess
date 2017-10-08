@@ -13,7 +13,7 @@ namespace logicalaccess
     GunneboReaderUnitConfiguration::GunneboReaderUnitConfiguration()
         : ReaderUnitConfiguration(READER_GUNNEBO)
     {
-        resetConfiguration();
+	    GunneboReaderUnitConfiguration::resetConfiguration();
     }
 
     GunneboReaderUnitConfiguration::~GunneboReaderUnitConfiguration()
@@ -31,7 +31,7 @@ namespace logicalaccess
         parentNode.add_child(getDefaultXmlNodeName(), node);
     }
 
-    void GunneboReaderUnitConfiguration::unSerialize(boost::property_tree::ptree& node)
+    void GunneboReaderUnitConfiguration::unSerialize(boost::property_tree::ptree& /*node*/)
     {
         
     }

@@ -29,7 +29,7 @@ namespace logicalaccess
         return LibraryManager::getInstance()->getReaderProvider(rpt);
     }
 
-    const std::vector<std::shared_ptr<ReaderUnit> > ReaderProvider::waitForReaders(std::vector<std::string> readers, double maxwait, bool all)
+    std::vector<std::shared_ptr<ReaderUnit> > ReaderProvider::waitForReaders(std::vector<std::string> readers, double maxwait, bool all)
     {
         std::vector<std::shared_ptr<ReaderUnit> > ret;
         bool notfound = true;
@@ -49,7 +49,7 @@ namespace logicalaccess
             ReaderList rl = getReaderList();
             for (ReaderList::iterator it = rl.begin(); it != rl.end(); ++it)
             {
-                if (std::find(readers.begin(), readers.end(), (*it)->getName()) != readers.end())
+                if (find(readers.begin(), readers.end(), (*it)->getName()) != readers.end())
                     ret.push_back(*it);
             }
 

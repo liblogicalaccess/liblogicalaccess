@@ -20,12 +20,12 @@ namespace logicalaccess
     {
     }
 
-    std::vector<unsigned char> GunneboReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
+    ByteVector GunneboReaderCardAdapter::adaptCommand(const ByteVector& command)
     {
         return command;
     }
 
-    std::vector<unsigned char> GunneboReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
+    ByteVector GunneboReaderCardAdapter::adaptAnswer(const ByteVector& answer)
     {
         LOG(LogLevel::COMS) << "Processing the received command buffer " << BufferHelper::getHex(answer) << " command size {" << answer.size() << "}...";
 
@@ -43,6 +43,6 @@ namespace logicalaccess
         // Gunnebo ID is like that: [STX - 1 byte][id - x bytes][ETX - 1 byte][checksum - 1 byte]
         // We don't calculate the checksum ! Who cares ?!? :)
 
-        return std::vector<unsigned char>(answer.begin() + 1, answer.end() - 2);
+        return ByteVector(answer.begin() + 1, answer.end() - 2);
     }
 }

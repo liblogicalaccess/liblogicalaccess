@@ -16,7 +16,6 @@ namespace logicalaccess
      */
     class LIBLOGICALACCESS_API GenericTagIdOnDemandCommands : public Commands
     {
-    public:
     };
 }
 

@@ -30,7 +30,7 @@ namespace logicalaccess
         field->setDataRepresentation(d_dataRepresentation);
         field->setDataType(d_dataType);
         d_fieldList.push_back(field);
-        field = std::shared_ptr<NumberDataField>(new NumberDataField());
+        field = std::make_shared<NumberDataField>();
         field->setName("FacilityCode");
         field->setDataLength(12);
         field->setDataRepresentation(d_dataRepresentation);
@@ -47,9 +47,9 @@ namespace logicalaccess
         return 40;
     }
 
-    string HIDHoneywellFormat::getName() const
+	std::string HIDHoneywellFormat::getName() const
     {
-        return string("HID Honeywell 40-Bit");
+        return std::string("HID Honeywell 40-Bit");
     }
 
     unsigned short int HIDHoneywellFormat::getFacilityCode() const
@@ -97,7 +97,7 @@ namespace logicalaccess
         setUid(node.get_child("Uid").get_value<unsigned short>());
     }
 
-    std::string HIDHoneywellFormat::getDefaultXmlNodeName() const
+	std::string HIDHoneywellFormat::getDefaultXmlNodeName() const
     {
         return "HIDHoneywellFormat";
     }
@@ -118,11 +118,11 @@ namespace logicalaccess
         return ret;
     }
 
-    unsigned char HIDHoneywellFormat::getRightParity(const void* data, size_t dataLengthBytes, unsigned char rpNo) const
+    unsigned char HIDHoneywellFormat::getRightParity(const void* data, size_t dataLengthBytes, unsigned char rpNo)
     {
         unsigned char parity = 0x00;
 
-        if (data != NULL)
+        if (data != nullptr)
         {
             unsigned int positions[4];
             positions[0] = 0 + rpNo;
@@ -139,7 +139,7 @@ namespace logicalaccess
     {
         unsigned int pos = 0;
 
-        if (data != NULL)
+        if (data != nullptr)
         {
             BitHelper::writeToBit(data, dataLengthBytes, &pos, 0x0F, 4, 4);
 
@@ -158,7 +158,7 @@ namespace logicalaccess
     {
         unsigned int pos = 0;
         unsigned char fixedValue = 0x00;
-        if (data != NULL)
+        if (data != nullptr)
         {
             if (dataLengthBytes * 8 < getDataLength())
             {

@@ -19,8 +19,9 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API LEDBuzzerDisplay
     {
     public:
+	    virtual ~LEDBuzzerDisplay() = default;
 
-        /**
+	    /**
          * \brief Set the green led to a status.
          * \param status True to show the green led, false otherwise.
          */
@@ -42,13 +43,13 @@ namespace logicalaccess
          * \brief Get the reader card adapter.
          * \return The reader card adapter.
          */
-        std::shared_ptr<ReaderCardAdapter> getReaderCardAdapter() const { return d_readerCardAdapter; };
+        std::shared_ptr<ReaderCardAdapter> getReaderCardAdapter() const { return d_readerCardAdapter; }
 
         /**
          * \brief Set the reader card adapter.
          * \param adapter The reader card adapter.
          */
-        void setReaderCardAdapter(std::shared_ptr<ReaderCardAdapter> adapter) { d_readerCardAdapter = adapter; };
+        void setReaderCardAdapter(std::shared_ptr<ReaderCardAdapter> adapter) { d_readerCardAdapter = adapter; }
 
     protected:
 

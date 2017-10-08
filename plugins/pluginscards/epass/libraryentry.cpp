@@ -11,7 +11,7 @@ LIBLOGICALACCESS_API char *getLibraryName()
 
 LIBLOGICALACCESS_API void getEPassChip(std::shared_ptr<logicalaccess::Chip> *chip)
 {
-    if (chip != NULL)
+    if (chip != nullptr)
     {
         *chip = std::make_shared<logicalaccess::EPassChip>();
     }
@@ -21,7 +21,7 @@ LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char *chipname,
                                         size_t chipnamelen, void **getterfct)
 {
     bool ret = false;
-    if (chipname != NULL && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
+    if (chipname != nullptr && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != nullptr)
     {
         switch (index)
         {
@@ -32,6 +32,7 @@ LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char *chipname,
             ret = true;
         }
         break;
+        default: ;
         }
     }
     return ret;

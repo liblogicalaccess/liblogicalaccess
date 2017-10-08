@@ -54,7 +54,7 @@ namespace logicalaccess
          * \brief Build a DESFire key given a string representation of it.
          * \param str The string representation.
          */
-        DESFireKey(const std::string& str);
+	    explicit DESFireKey(const std::string& str);
 
         /**
          * \brief Build a DESFire key given a buffer.
@@ -67,31 +67,31 @@ namespace logicalaccess
          * \brief Get the key length.
          * \return The key length.
          */
-        size_t getLength() const;
+        size_t getLength() const override;
 
         /**
          * \brief Get the key data.
          * \return The key data.
          */
-        inline const unsigned char* getData() const { return &d_key[0]; };
+	    const unsigned char* getData() const override { return &d_key[0]; }
 
         /**
          * \brief Get the key data.
          * \return The key data.
          */
-        inline unsigned char* getData() { return &d_key[0]; };
+	    unsigned char* getData() override { return &d_key[0]; }
 
         /**
          * \brief Set the key version
          * \param key_version The key version.
          */
-        void setKeyVersion(unsigned char key_version) { d_key_version = key_version; };
+        void setKeyVersion(unsigned char key_version) { d_key_version = key_version; }
 
         /**
          * \brief Get the key version
          * \return The key version.
          */
-        unsigned char getKeyVersion() const { return d_key_version; };
+        unsigned char getKeyVersion() const { return d_key_version; }
 
         /**
          * \brief Set the key type.
@@ -103,25 +103,25 @@ namespace logicalaccess
          * \brief Get the key type.
          * \return The key type.
          */
-        DESFireKeyType getKeyType() const { return d_keyType; };
+        DESFireKeyType getKeyType() const { return d_keyType; }
 
         /**
          * \brief Serialize the current object to XML.
          * \param parentNode The parent node.
          */
-        virtual void serialize(boost::property_tree::ptree& parentNode) override;
+	    void serialize(boost::property_tree::ptree& parentNode) override;
 
         /**
          * \brief UnSerialize a XML node to the current object.
          * \param node The XML node.
          */
-        virtual void unSerialize(boost::property_tree::ptree& node) override;
+	    void unSerialize(boost::property_tree::ptree& node) override;
 
         /**
          * \brief Get the default Xml Node name for this object.
          * \return The Xml node name.
          */
-        virtual std::string getDefaultXmlNodeName() const override;
+	    std::string getDefaultXmlNodeName() const override;
 
         /**
          * \brief Equality operator
@@ -135,7 +135,7 @@ namespace logicalaccess
          * \param ai DESFire key to compare.
          * \return True if inequals, false otherwise.
          */
-        inline bool operator!=(const DESFireKey& key) const { return !operator==(key); };
+	    bool operator!=(const DESFireKey& key) const { return !operator==(key); }
 
         /**
          * \brief Get the DESFire Key Type in string format.
@@ -148,7 +148,7 @@ namespace logicalaccess
         /**
          * \brief The key bytes;
          */
-        std::vector<unsigned char> d_key;
+        ByteVector d_key;
 
         /**
          * \brief The key version.

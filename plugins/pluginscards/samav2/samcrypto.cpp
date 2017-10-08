@@ -35,9 +35,9 @@ namespace logicalaccess
     {
     }
 
-    std::vector<unsigned char> SAMDESfireCrypto::authenticateHostP1(std::shared_ptr<DESFireKey> key, std::vector<unsigned char> encRndB, unsigned char keyno)
+    ByteVector SAMDESfireCrypto::authenticateHostP1(std::shared_ptr<DESFireKey> key, ByteVector encRndB, unsigned char /*keyno*/)
     {
-        std::vector<unsigned char> keyvec(key->getData(), key->getData() + key->getLength());
+        ByteVector keyvec(key->getData(), key->getData() + key->getLength());
 
         if (key->getKeyType() == DF_KEY_AES)
             d_cipher.reset(new openssl::AESCipher());
@@ -49,7 +49,7 @@ namespace logicalaccess
         d_rndB.clear();
         d_cipher->decipher(encRndB, d_rndB, cipherkey, iv, false);
 
-        std::vector<unsigned char> rndB1;
+        ByteVector rndB1;
         rndB1.insert(rndB1.end(), d_rndB.begin() + 1, d_rndB.begin() + 1 + 15);
         rndB1.push_back(d_rndB[0]);
 
@@ -60,20 +60,20 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
         }
 
-        std::vector<unsigned char> rndAB;
+        ByteVector rndAB;
         rndAB.insert(rndAB.end(), d_rndA.begin(), d_rndA.end());
         rndAB.insert(rndAB.end(), rndB1.begin(), rndB1.end());
 
-        std::vector<unsigned char> ret;
+        ByteVector ret;
         d_cipher->cipher(rndAB, ret, cipherkey, iv, false);
         return ret;
     }
 
-    void SAMDESfireCrypto::authenticateHostP2(unsigned char keyno, std::vector<unsigned char> encRndA1, std::shared_ptr<DESFireKey> key)
+    void SAMDESfireCrypto::authenticateHostP2(unsigned char keyno, ByteVector encRndA1, std::shared_ptr<DESFireKey> key)
     {
-        std::vector<unsigned char> keyvec(key->getData(), key->getData() + key->getLength());
-        std::vector<unsigned char> checkRndA;
-        std::vector<unsigned char> rndA;
+        ByteVector keyvec(key->getData(), key->getData() + key->getLength());
+        ByteVector checkRndA;
+        ByteVector rndA;
         openssl::AESSymmetricKey cipherkey = openssl::AESSymmetricKey::createFromData(keyvec);
         openssl::AESInitializationVector iv = openssl::AESInitializationVector::createNull();
         d_cipher->decipher(encRndA1, rndA, cipherkey, iv, false);
@@ -129,9 +129,9 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "authenticateHostP2 Failed!");
     }
 
-    std::vector<unsigned char> SAMDESfireCrypto::sam_crc_encrypt(std::vector<unsigned char> d_sessionKey, std::vector<unsigned char> vectordata, std::shared_ptr<DESFireKey> key)
+    ByteVector SAMDESfireCrypto::sam_crc_encrypt(ByteVector d_sessionKey, ByteVector vectordata, std::shared_ptr<DESFireKey> key) const
     {
-        std::vector<unsigned char> ret;
+        ByteVector ret;
         std::shared_ptr<openssl::SymmetricKey> cipherkey;
         std::shared_ptr<openssl::InitializationVector> iv;
         long crc;

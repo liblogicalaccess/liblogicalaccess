@@ -52,32 +52,25 @@ namespace logicalaccess
 		virtual bool switchLevel3(std::shared_ptr<AES128Key> key);
 
 
-        virtual std::vector<unsigned char> readBinary(unsigned char blockno, size_t len);
+	    ByteVector readBinary(unsigned char blockno, size_t len) override;
 
-        virtual void updateBinary(unsigned char blockno,
-                                  const std::vector<unsigned char> &buf);
+	    void updateBinary(unsigned char blockno,
+                                  const ByteVector &buf) override;
 
-		virtual bool loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol);
+	    bool loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol) override;
 
-		virtual void loadKey(std::shared_ptr<Location> location, MifareKeyType keytype, std::shared_ptr<MifareKey> key);
+	    void loadKey(std::shared_ptr<Location> location, MifareKeyType keytype, std::shared_ptr<MifareKey> key) override;
 
-        virtual void authenticate(unsigned char blockno, unsigned char keyno,
-                                  MifareKeyType keytype);
+	    void authenticate(unsigned char blockno, unsigned char keyno,
+                                  MifareKeyType keytype) override;
 
-        virtual void authenticate(unsigned char blockno,
+	    void authenticate(unsigned char blockno,
                                   std::shared_ptr<KeyStorage> key_storage,
-                                  MifareKeyType keytype);
+                                  MifareKeyType keytype) override;
 
-        virtual void increment(uint8_t blockno, uint32_t value);
+	    void increment(uint8_t blockno, uint32_t value) override;
 
-        virtual void decrement(uint8_t blockno, uint32_t value);
-
-    private:
-        bool aes_auth_step2(std::vector<uint8_t> rnd_b,
-                                    std::shared_ptr<AES128Key> key);
-        bool aes_auth_final(const ByteVector &rnd_a,
-                            const ByteVector &rnd_a_reader,
-                            std::shared_ptr<AES128Key> key);
+	    void decrement(uint8_t blockno, uint32_t value) override;
     };
 
     /**
@@ -105,13 +98,13 @@ namespace logicalaccess
             sl1_impl_.setReaderCardAdapter(getReaderCardAdapter());
         }
 
-        virtual bool AESAuthenticateSL1(std::shared_ptr<AES128Key> key) override
+	    bool AESAuthenticateSL1(std::shared_ptr<AES128Key> key) override
         {
             fixup();
             return sl1_impl_.AESAuthenticateSL1(key);
         }
 
-        virtual void authenticate(unsigned char blockno,
+	    void authenticate(unsigned char blockno,
                                   unsigned char keyno,
                                   MifareKeyType keytype) override
         {
@@ -119,32 +112,32 @@ namespace logicalaccess
             classic_impl.authenticate(blockno, keyno, keytype);
         }
 
-        virtual std::vector<unsigned char> readBinary(unsigned char blockno, size_t len)override
+	    ByteVector readBinary(unsigned char blockno, size_t len)override
         {
             fixup();
             return classic_impl.readBinary(blockno, len);
         }
 
-        virtual void updateBinary(unsigned char blockno,
-                                  const std::vector<unsigned char> &buf)override
+	    void updateBinary(unsigned char blockno,
+                                  const ByteVector &buf)override
         {
             fixup();
             classic_impl.updateBinary(blockno, buf);
         }
 
-        virtual bool loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol)override
+	    bool loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol)override
         {
             fixup();
             return classic_impl.loadKey(keyno, keytype, key, vol);
         }
 
-		virtual void loadKey(std::shared_ptr<Location> location, MifareKeyType keytype, std::shared_ptr<MifareKey> key)override
+	    void loadKey(std::shared_ptr<Location> location, MifareKeyType keytype, std::shared_ptr<MifareKey> key)override
         {
             fixup();
 			classic_impl.loadKey(location, keytype, key);
         }
 
-        virtual void authenticate(unsigned char blockno,
+	    void authenticate(unsigned char blockno,
                                   std::shared_ptr<KeyStorage> key_storage,
                                   MifareKeyType keytype) override
         {
@@ -152,13 +145,13 @@ namespace logicalaccess
             classic_impl.authenticate(blockno, key_storage, keytype);
         }
 
-        virtual void increment(uint8_t blockno, uint32_t value)override
+	    void increment(uint8_t blockno, uint32_t value)override
         {
             fixup();
             classic_impl.increment(blockno, value);
         }
 
-        virtual void decrement(uint8_t blockno, uint32_t value) override
+	    void decrement(uint8_t blockno, uint32_t value) override
         {
             fixup();
             classic_impl.decrement(blockno, value);

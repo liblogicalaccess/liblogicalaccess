@@ -32,10 +32,10 @@ namespace logicalaccess
 	{
 		d_readerUnitConfig.reset(new OSDPReaderUnitConfiguration());
 
-		setDataTransport(std::shared_ptr<OSDPDataTransport>(new OSDPDataTransport()));
+		ReaderUnit::setDataTransport(std::make_shared<OSDPDataTransport>());
 
 		std::shared_ptr<ReaderCardAdapter> rca(new ReaderCardAdapter());
-		rca->setDataTransport(getDataTransport());
+		rca->setDataTransport(ReaderUnit::getDataTransport());
 
 		m_commands.reset(new OSDPCommands());
 		m_commands->setReaderCardAdapter(rca);
@@ -53,7 +53,7 @@ namespace logicalaccess
 
 	OSDPReaderUnit::~OSDPReaderUnit()
 	{
-		disconnectFromReader();
+		OSDPReaderUnit::disconnectFromReader();
 	}
 
 	std::string OSDPReaderUnit::getName() const
@@ -86,7 +86,8 @@ namespace logicalaccess
 			if (type == "DESFire" || type == "DESFireEV1")
 			{
 				LOG(LogLevel::INFOS) << "Mifare DESFire EV1 Chip created";
-				rca.reset(new OSDPReaderCardAdapter(m_commands, getOSDPConfiguration()->getRS485Address(), std::shared_ptr<DESFireISO7816ResultChecker>(new DESFireISO7816ResultChecker())));
+				rca.reset(new OSDPReaderCardAdapter(m_commands, getOSDPConfiguration()->getRS485Address(),
+				                                    std::make_shared<DESFireISO7816ResultChecker>()));
 				commands = LibraryManager::getInstance()->getCommands("DESFireEV1ISO7816");
 				*(void**)(&setcryptocontextfct) = LibraryManager::getInstance()->getFctFromName("setCryptoContextDESFireEV1ISO7816Commands", LibraryManager::READERS_TYPE);
 				setcryptocontextfct(&commands, &chip);
@@ -116,15 +117,15 @@ namespace logicalaccess
 
             LOG(LogLevel::INFOS) << "Reader poll command: " << std::hex << poll->getCommandsType();
 
-            if (poll->getCommandsType() == OSDPCommandsType::XRD)
+            if (poll->getCommandsType() == XRD)
             {
-                std::vector<unsigned char>& data = poll->getData();
+                ByteVector& data = poll->getData();
                 if (data.size() > 2 && data[0x01] == 0x01) //osdp_PRES
                     inserted = true;
             }
             else
             {
-                if (poll->getCommandsType() == OSDPCommandsType::LSTATR && poll->getData().size() > 1) {
+                if (poll->getCommandsType() == LSTATR && poll->getData().size() > 1) {
                     LOG(LogLevel::INFOS) << "Tamper status changed to: " << static_cast<bool>(poll->getData()[0x00] != 0);
 					m_tamperStatus = static_cast<bool>(poll->getData()[0x00] != 0);
                 }
@@ -160,7 +161,7 @@ namespace logicalaccess
 
             LOG(LogLevel::INFOS) << "Reader poll command: " << std::hex << poll->getCommandsType();
 
-            if (poll->getCommandsType() == OSDPCommandsType::XRD
+            if (poll->getCommandsType() == XRD
                 && poll->getData().size() > 2 && poll->getData()[0x01] == 0x01) //osdp_PRES
             {
                 m_commands->disconnectFromSmartcard();
@@ -169,7 +170,7 @@ namespace logicalaccess
             else if (!disconnected) {
                 removed = true;
             } else {
-                if (poll->getCommandsType() == OSDPCommandsType::LSTATR && poll->getData().size() > 1) {
+                if (poll->getCommandsType() == LSTATR && poll->getData().size() > 1) {
 					LOG(LogLevel::INFOS) << "Tamper status changed to: " << static_cast<bool>(poll->getData()[0x00] != 0);
 					m_tamperStatus = static_cast<bool>(poll->getData()[0x00] != 0);
                 }
@@ -199,7 +200,7 @@ namespace logicalaccess
 
 	void OSDPReaderUnit::checkPDAuthentication(std::shared_ptr<OSDPChannel> challenge)
 	{
-		std::vector<unsigned char> cryptogramInput;
+		ByteVector cryptogramInput;
 
 		std::shared_ptr<OSDPReaderUnitConfiguration> config = getOSDPConfiguration();
 		challenge->getSecureChannel()->deriveKey(config->getSCBKKey(), config->getSCBKDKey());
@@ -224,13 +225,13 @@ namespace logicalaccess
 			crypt->isSCB = true;
 
 			std::shared_ptr<OSDPChannel> result = m_commands->getProfile();
-			if (result->getCommandsType() == OSDPCommandsType::XRD)
+			if (result->getCommandsType() == XRD)
 			{
-                std::vector<unsigned char>& data = result->getData();
+                ByteVector& data = result->getData();
                 if (data.size() > 2 && data[0x03] != 0x01)
                 {
-                    std::shared_ptr<OSDPChannel> result = m_commands->setProfile(0x01);
-                    if (result->getCommandsType() != OSDPCommandsType::ACK)
+                    result = m_commands->setProfile(0x01);
+                    if (result->getCommandsType() != ACK)
                         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Impossible to set Profile 0x01");
                 }
 			}

@@ -23,7 +23,7 @@ namespace logicalaccess
         cmd->authenticate(0);
         cmd->erase();
 
-        cmd->changeKey(0, std::shared_ptr<DESFireKey>(new DESFireKey(std::string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
+        cmd->changeKey(0, std::make_shared<DESFireKey>(std::string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00")));
     }
 
     void DESFireStorageCardService::erase(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse)
@@ -50,13 +50,15 @@ namespace logicalaccess
 
             getDESFireChip()->getDESFireCommands()->selectApplication(dfLocation->aid);
 
-            std::vector<unsigned char> files = getDESFireChip()->getDESFireCommands()->getFileIDs();
-            for (std::vector<unsigned char>::const_iterator file = files.cbegin(); (file != files.cend()); ++file)
+            ByteVector files = getDESFireChip()->getDESFireCommands()->getFileIDs();
+            for (ByteVector::const_iterator file = files.cbegin(); (file != files.cend()); ++file)
             {
                 getDESFireChip()->getDESFireCommands()->deleteFile(*file);
             }
 
-            getDESFireChip()->getDESFireCommands()->changeKey(0,std::shared_ptr<DESFireKey>(new DESFireKey(std::string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
+            getDESFireChip()->getDESFireCommands()->changeKey(0, std::make_shared<DESFireKey>(
+	                                                              std::string(
+		                                                              "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00")));
         }
         // Otherwise format the file.
         else
@@ -64,14 +66,14 @@ namespace logicalaccess
             getDESFireChip()->getDESFireCommands()->selectApplication(dfLocation->aid);
 
             size_t fileLength = getDESFireChip()->getDESFireCommands()->getFileLength(static_cast<unsigned char>(dfLocation->file));
-			std::vector<unsigned char> buf(fileLength, 0x00);
+			ByteVector buf(fileLength, 0x00);
 
             std::shared_ptr<AccessInfo> ai;
             writeData(location, aiToUse, ai, buf, CB_DEFAULT);
         }
     }
 
-    void DESFireStorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite, const std::vector<unsigned char>& data, CardBehavior /*behaviorFlags*/)
+    void DESFireStorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite, const ByteVector& data, CardBehavior /*behaviorFlags*/)
     {
         LOG(LogLevel::INFOS) << "Starting write data...";
 
@@ -83,7 +85,7 @@ namespace logicalaccess
 
         EXCEPTION_ASSERT_WITH_LOG(dfLocation, std::invalid_argument, "location must be a DESFireLocation.");
 
-        if (aiToUse != NULL)
+        if (aiToUse != nullptr)
         {
             EXCEPTION_ASSERT_WITH_LOG(dfAiToUse, std::invalid_argument, "aiToUse must be a DESFireAccessInfo.");
         }
@@ -105,7 +107,8 @@ namespace logicalaccess
         }
         else
         {
-			getDESFireChip()->getCrypto()->setKey(0, 0, 0, std::shared_ptr<DESFireKey>(new DESFireKey(std::string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"))));
+			getDESFireChip()->getCrypto()->setKey(0, 0, 0, std::make_shared<DESFireKey>(
+				                                      std::string("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00")));
         }
 
         getDESFireChip()->getDESFireCommands()->selectApplication(0);
@@ -206,11 +209,11 @@ namespace logicalaccess
 
             unsigned char appMaxNbKeys = 3;
             getDESFireChip()->getDESFireCommands()->getKeySettings(appKeySettings, appMaxNbKeys);
-            std::vector<unsigned char> files = getDESFireChip()->getDESFireCommands()->getFileIDs();
+            ByteVector files = getDESFireChip()->getDESFireCommands()->getFileIDs();
 
             if (aiToWrite)
             {
-                for (std::vector<unsigned char>::const_iterator file = files.cbegin(); (file != files.cend()) && createArbo; ++file)
+                for (ByteVector::const_iterator file = files.cbegin(); (file != files.cend()) && createArbo; ++file)
                 {
                     createArbo = (*file != dfLocation->file);
                 }
@@ -237,7 +240,7 @@ namespace logicalaccess
                     dfLocation->securityLevel = CM_ENCRYPT;
                 }
 
-                getDESFireChip()->getDESFireCommands()->createStdDataFile(dfLocation, rights, (int)(data.size() + dfLocation->byte));
+                getDESFireChip()->getDESFireCommands()->createStdDataFile(dfLocation, rights, (int)(data.size() + dfLocation->byte_));
                 needLoadKey = false;
             }
         }
@@ -263,7 +266,7 @@ namespace logicalaccess
             getDESFireChip()->getDESFireCommands()->authenticate(dfAiToUse->writeKeyno);
         }
 
-        getDESFireChip()->getDESFireCommands()->writeData(dfLocation->file, dfLocation->byte, data, encMode);
+        getDESFireChip()->getDESFireCommands()->writeData(dfLocation->file, dfLocation->byte_, data, encMode);
 
         // Write access informations too
         if (aiToWrite)
@@ -346,7 +349,7 @@ namespace logicalaccess
                         getDESFireChip()->getDESFireCommands()->selectApplication(0x00);
                         getDESFireChip()->getDESFireCommands()->authenticate(0);
 
-                        LOG(LogLevel::INFOS) << "Changing masterCardKey. div? " << (dfAiToWrite->masterCardKey->getKeyDiversification() == NULL);
+                        LOG(LogLevel::INFOS) << "Changing masterCardKey. div? " << (dfAiToWrite->masterCardKey->getKeyDiversification() == nullptr);
                         getDESFireChip()->getDESFireCommands()->changeKey(0, dfAiToWrite->masterCardKey);
                     }
                     catch (std::exception& ex)
@@ -358,7 +361,7 @@ namespace logicalaccess
         }
     }
 
-    std::vector<unsigned char> DESFireStorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, size_t dataLength, CardBehavior /*behaviorFlags*/)
+    ByteVector DESFireStorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, size_t dataLength, CardBehavior /*behaviorFlags*/)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 
@@ -392,7 +395,7 @@ namespace logicalaccess
             {
 				getDESFireChip()->getCrypto()->setKey(dfLocation->aid, 0, dfAiToUse->readKeyno, dfAiToUse->readKey);
             }
-			else if (dfAiToUse->readKeyno == TaskAccessRights::AR_KEY0 && dfAiToUse->masterApplicationKey && !dfAiToUse->masterApplicationKey->isEmpty())
+			else if (dfAiToUse->readKeyno == AR_KEY0 && dfAiToUse->masterApplicationKey && !dfAiToUse->masterApplicationKey->isEmpty())
 			{
 				getDESFireChip()->getCrypto()->setKey(dfLocation->aid, 0, dfAiToUse->readKeyno, dfAiToUse->masterApplicationKey);
 			}
@@ -400,11 +403,11 @@ namespace logicalaccess
             getDESFireChip()->getDESFireCommands()->authenticate(dfAiToUse->readKeyno);
         }
 		
-        return getDESFireChip()->getDESFireCommands()->readData(dfLocation->file, dfLocation->byte, (int)(dataLength), encMode);
+        return getDESFireChip()->getDESFireCommands()->readData(dfLocation->file, dfLocation->byte_, (int)(dataLength), encMode);
     }
 
-    unsigned int DESFireStorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/, void* /*data*/, size_t /*dataLength*/)
+	ByteVector DESFireStorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/)
     {
-        return 0;
+        return {};
     }
 }

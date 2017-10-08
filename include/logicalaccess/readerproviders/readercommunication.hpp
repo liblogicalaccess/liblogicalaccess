@@ -9,6 +9,7 @@
 
 #include "logicalaccess/logicalaccess_api.hpp"
 #include <vector>
+#include "logicalaccess/crypto/des_initialization_vector.hpp"
 
 namespace logicalaccess
 {
@@ -18,27 +19,28 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API ReaderCommunication
     {
     public:
+	    virtual ~ReaderCommunication() = default;
 
-		ReaderCommunication() {}
+	    ReaderCommunication() {}
 
         /**
          * \brief Send a request command from the PCD to the PICC.
          * \return The PICC answer to the request command.
          */
-        virtual std::vector<unsigned char> request() = 0;
+        virtual ByteVector request() = 0;
 
         /**
          * \brief Manage collision.
          * \return PICC serial number.
          */
-        virtual std::vector<unsigned char> anticollision() = 0;
+        virtual ByteVector anticollision() = 0;
 
         /**
          * \brief Select a PICC.
          * \param uid The PICC serial number.
          */
 
-        virtual void selectIso(const std::vector<unsigned char>& uid) = 0;
+        virtual void selectIso(const ByteVector& uid) = 0;
     };
 }
 

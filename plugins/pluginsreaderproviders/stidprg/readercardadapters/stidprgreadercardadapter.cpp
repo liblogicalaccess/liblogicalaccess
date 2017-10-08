@@ -3,8 +3,8 @@
 
 using namespace logicalaccess;
 
-std::vector<unsigned char>
-STidPRGReaderCardAdapter::adaptCommand(const std::vector<unsigned char> &command)
+ByteVector
+STidPRGReaderCardAdapter::adaptCommand(const ByteVector &command)
 {
     std::vector<uint8_t> full_cmd;
     full_cmd.push_back(0x02);
@@ -17,8 +17,8 @@ STidPRGReaderCardAdapter::adaptCommand(const std::vector<unsigned char> &command
     return full_cmd;
 }
 
-std::vector<unsigned char>
-STidPRGReaderCardAdapter::adaptAnswer(const std::vector<unsigned char> &answer)
+ByteVector
+STidPRGReaderCardAdapter::adaptAnswer(const ByteVector &answer)
 {
     // Ignore empty response
     if (answer.size() == 0)

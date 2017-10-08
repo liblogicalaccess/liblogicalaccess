@@ -26,10 +26,10 @@ namespace logicalaccess
         : ReaderUnit(READER_AXESSTMCLEGIC)
     {
         d_readerUnitConfig.reset(new AxessTMCLegicReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(std::shared_ptr<AxessTMCLegicReaderCardAdapter>(new AxessTMCLegicReaderCardAdapter()));
+	    ReaderUnit::setDefaultReaderCardAdapter(std::make_shared<AxessTMCLegicReaderCardAdapter>());
         std::shared_ptr<AxessTMCLegicDataTransport> dataTransport(new AxessTMCLegicDataTransport());
         dataTransport->setPortBaudRate(57600);
-        setDataTransport(dataTransport);
+	    ReaderUnit::setDataTransport(dataTransport);
 		d_card_type = CHIP_UNKNOWN;
 
         try
@@ -43,7 +43,7 @@ namespace logicalaccess
 
     AxessTMCLegicReaderUnit::~AxessTMCLegicReaderUnit()
     {
-        disconnectFromReader();
+	    AxessTMCLegicReaderUnit::disconnectFromReader();
     }
 
     std::string AxessTMCLegicReaderUnit::getName() const
@@ -134,9 +134,9 @@ namespace logicalaccess
         getDataTransport()->disconnect();
     }
 
-    std::vector<unsigned char> AxessTMCLegicReaderUnit::getPingCommand() const
+    ByteVector AxessTMCLegicReaderUnit::getPingCommand() const
     {
-        std::vector<unsigned char> cmd;
+        ByteVector cmd;
 
         cmd.push_back(0xb0);
         cmd.push_back(0xb2);
@@ -146,7 +146,7 @@ namespace logicalaccess
 
     void AxessTMCLegicReaderUnit::idleState()
     {
-        std::vector<unsigned char> cmd;
+        ByteVector cmd;
         cmd.push_back(0x14);
         cmd.push_back(0x01);
         cmd.push_back(0x16);
@@ -159,11 +159,11 @@ namespace logicalaccess
         std::shared_ptr<Chip> chip;
 
 #ifdef _WINDOWS
-        std::vector<unsigned char> cmd;
+        ByteVector cmd;
         cmd.push_back(0xb0);
         cmd.push_back(0xb2);
 
-        std::vector<unsigned char> response = getDefaultAxessTMCLegicReaderCardAdapter()->sendCommand(cmd);
+        ByteVector response = getDefaultAxessTMCLegicReaderCardAdapter()->sendCommand(cmd);
         if (response.size() > 4)
         {
             unsigned char idlength = response[4];
@@ -171,7 +171,7 @@ namespace logicalaccess
 
             chip = ReaderUnit::createChip(
 				(d_card_type == CHIP_UNKNOWN ? "LegicPrime" : d_card_type),
-                std::vector<unsigned char>(response.begin() + 5, response.begin() + 5 + idlength)
+                ByteVector(response.begin() + 5, response.begin() + 5 + idlength)
                 );
         }
 #endif

@@ -14,7 +14,7 @@ namespace logicalaccess
     STidSTRReaderUnitConfiguration::STidSTRReaderUnitConfiguration()
         : ISO7816ReaderUnitConfiguration(READER_STIDSTR)
     {
-        resetConfiguration();
+	    STidSTRReaderUnitConfiguration::resetConfiguration();
     }
 
     STidSTRReaderUnitConfiguration::~STidSTRReaderUnitConfiguration()

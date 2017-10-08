@@ -11,35 +11,35 @@ class LIBLOGICALACCESS_API STidPRGReaderUnit : public ReaderUnit
   public:
     STidPRGReaderUnit();
 
-    virtual void serialize(boost::property_tree::ptree &node) override;
+	void serialize(boost::property_tree::ptree &node) override;
 
-    virtual void unSerialize(boost::property_tree::ptree &node) override;
+	void unSerialize(boost::property_tree::ptree &node) override;
 
-    virtual bool waitInsertion(unsigned int maxwait) override;
+	bool waitInsertion(unsigned int maxwait) override;
 
-    virtual bool waitRemoval(unsigned int maxwait) override;
+	bool waitRemoval(unsigned int maxwait) override;
 
-    virtual bool isConnected() override;
+	bool isConnected() override;
 
-    virtual void setCardType(std::string cardType) override;
+	void setCardType(std::string cardType) override;
 
-    virtual std::shared_ptr<Chip> getSingleChip() override;
+	std::shared_ptr<Chip> getSingleChip() override;
 
-    virtual std::vector<std::shared_ptr<Chip>> getChipList() override;
+	std::vector<std::shared_ptr<Chip>> getChipList() override;
 
-    virtual bool connect() override;
+	bool connect() override;
 
-    virtual void disconnect() override;
+	void disconnect() override;
 
-    virtual bool connectToReader() override;
+	bool connectToReader() override;
 
-    virtual void disconnectFromReader() override;
+	void disconnectFromReader() override;
 
-    virtual std::string getName() const override;
+	std::string getName() const override;
 
-    virtual std::string getReaderSerialNumber() override;
+	std::string getReaderSerialNumber() override;
 
-    std::shared_ptr<STidPRGReaderUnitConfiguration> getSTidPRGReaderUnitConfiguration();
+    std::shared_ptr<STidPRGReaderUnitConfiguration> getSTidPRGReaderUnitConfiguration() const;
 
     std::vector<uint8_t> readBlocks(uint8_t start, uint8_t end);
 

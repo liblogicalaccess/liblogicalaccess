@@ -33,10 +33,10 @@ namespace logicalaccess
     {
     }
 
-    void SmartIDReaderCardAdapter::sendAPDUCommand(const std::vector<unsigned char>& command, unsigned char* result, size_t* resultlen)
+    void SmartIDReaderCardAdapter::sendAPDUCommand(const ByteVector& command, unsigned char* result, size_t* resultlen)
     {
-        std::vector<unsigned char> res = sendCommand(0x52, command);
-        if (result != NULL && resultlen != NULL)
+		ByteVector res = sendCommand(0x52, command);
+        if (result != nullptr && resultlen != nullptr)
         {
             if (*resultlen >= res.size())
             {
@@ -46,24 +46,24 @@ namespace logicalaccess
         }
     }
 
-    std::vector<unsigned char> SmartIDReaderCardAdapter::sendCommand(unsigned char cmd, const std::vector<unsigned char>& command, long int timeout)
+	ByteVector SmartIDReaderCardAdapter::sendCommand(unsigned char cmd, const ByteVector& command, long int timeout)
     {
         EXCEPTION_ASSERT_WITH_LOG(command.size() < 256, std::invalid_argument, "Data size cannot exceed 255 bytes");
 
-        std::vector<unsigned char> buffer;
+		ByteVector buffer;
         buffer.push_back(cmd);
         buffer.insert(buffer.end(), command.begin(), command.end());
 
         return ReaderCardAdapter::sendCommand(buffer, timeout);
     }
 
-    std::vector<unsigned char> SmartIDReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
+	ByteVector SmartIDReaderCardAdapter::adaptCommand(const ByteVector& command)
     {
         EXCEPTION_ASSERT_WITH_LOG(command.size() > 0, std::invalid_argument, "Data size must be at least 1 byte long.");
         unsigned char cmd = command[0];
         size_t commandsize = command.size() - 1;
 
-        std::vector<unsigned char> buffer;
+		ByteVector buffer;
         buffer.push_back(DLE);
         buffer.push_back(STX);
         buffer.push_back(cmd);
@@ -105,7 +105,7 @@ namespace logicalaccess
         return buffer;
     }
 
-    std::vector<unsigned char> SmartIDReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
+	ByteVector SmartIDReaderCardAdapter::adaptAnswer(const ByteVector& answer)
     {
         unsigned char sta = 0x00;
 
@@ -115,7 +115,7 @@ namespace logicalaccess
         {
             sta = NAK;
 
-            return std::vector<unsigned char>();
+            return ByteVector();
         }
 
         EXCEPTION_ASSERT_WITH_LOG((answer[0] == DLE) && (answer[1] == STX), std::invalid_argument, "The supplied buffer is not valid");
@@ -125,8 +125,8 @@ namespace logicalaccess
 
         EXCEPTION_ASSERT_WITH_LOG(answer.size() - 4 >= len, std::invalid_argument, "The real message length is below the expected message length");
 
-        std::vector<unsigned char> data;
-        std::vector<unsigned char> buf = std::vector<unsigned char>(answer.begin() + 4 + ((len == DLE) ? 1 : 0), answer.end());
+		ByteVector data;
+		ByteVector buf = ByteVector(answer.begin() + 4 + ((len == DLE) ? 1 : 0), answer.end());
 
         int offset = 0;
         for (size_t i = 0; i < len; ++i)
@@ -167,17 +167,17 @@ namespace logicalaccess
 
     void SmartIDReaderCardAdapter::tclHalt()
     {
-        sendCommand(0x45, std::vector<unsigned char>());
+        sendCommand(0x45, ByteVector());
     }
 
-    std::vector<unsigned char> SmartIDReaderCardAdapter::requestA()
+	ByteVector SmartIDReaderCardAdapter::requestA()
     {
-        return sendCommand(0x50, std::vector<unsigned char>());
+        return sendCommand(0x50, ByteVector());
     }
 
-    std::vector<unsigned char> SmartIDReaderCardAdapter::requestATS()
+	ByteVector SmartIDReaderCardAdapter::requestATS()
     {
-        return sendCommand(0x51, std::vector<unsigned char>());
+        return sendCommand(0x51, ByteVector());
     }
 
     void SmartIDReaderCardAdapter::haltA()
@@ -185,15 +185,15 @@ namespace logicalaccess
         tclHalt();
     }
 
-    std::vector<unsigned char> SmartIDReaderCardAdapter::anticollisionA()
+	ByteVector SmartIDReaderCardAdapter::anticollisionA()
     {
         /* TODO: Something ? */
-        return std::vector<unsigned char>();
+        return ByteVector();
     }
 
-    std::vector<unsigned char> SmartIDReaderCardAdapter::requestB(unsigned char afi)
+	ByteVector SmartIDReaderCardAdapter::requestB(unsigned char afi)
     {
-        std::vector<unsigned char> buf;
+		ByteVector buf;
         buf.push_back(afi);
 
         return sendCommand(0x61, buf);
@@ -206,12 +206,12 @@ namespace logicalaccess
 
     void SmartIDReaderCardAdapter::attrib()
     {
-        sendCommand(0x62, std::vector<unsigned char>());
+        sendCommand(0x62, ByteVector());
     }
 
-    std::vector<unsigned char> SmartIDReaderCardAdapter::anticollisionB(unsigned char afi)
+	ByteVector SmartIDReaderCardAdapter::anticollisionB(unsigned char afi)
     {
-        std::vector<unsigned char> buf;
+		ByteVector buf;
         buf.push_back(afi);
 
         return sendCommand(0x60, buf);

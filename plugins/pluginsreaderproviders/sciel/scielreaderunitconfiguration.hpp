@@ -31,109 +31,109 @@ namespace logicalaccess
         /**
          * \brief Reset the configuration to default values
          */
-        virtual void resetConfiguration();
+	    void resetConfiguration() override;
 
         /**
          * \brief Serialize the current object to XML.
          * \param parentNode The parent node.
          */
-        virtual void serialize(boost::property_tree::ptree& parentNode);
+	    void serialize(boost::property_tree::ptree& parentNode) override;
 
         /**
          * \brief UnSerialize a XML node to the current object.
          * \param node The XML node.
          */
-        virtual void unSerialize(boost::property_tree::ptree& node);
+	    void unSerialize(boost::property_tree::ptree& node) override;
 
         /**
          * \brief Get the default Xml Node name for this object.
          * \return The Xml node name.
          */
-        virtual std::string getDefaultXmlNodeName() const;
+	    std::string getDefaultXmlNodeName() const override;
 
         /**
          * \brief Get the tag-out threshold.
          * \return The tag-out threshold.
          */
-        unsigned char getTagOutThreshold() const { return d_tagOutThreshold; };
+        unsigned char getTagOutThreshold() const { return d_tagOutThreshold; }
 
         /**
          * \brief Set the tag-out threshold.
          * \param threshold The tag-out threshold.
          */
-        void setTagOutThreshold(unsigned char threshold) { d_tagOutThreshold = threshold; };
+        void setTagOutThreshold(unsigned char threshold) { d_tagOutThreshold = threshold; }
 
         /**
          * \brief Get the tag-in threshold.
          * \return The tag-in threshol.
          */
-        unsigned char getTagInThreshold() const { return d_tagInThreshold; };
+        unsigned char getTagInThreshold() const { return d_tagInThreshold; }
 
         /**
          * \brief Set the tag-in threshold.
          * \param threshold The tag-in threshold.
          */
-        void setTagInThreshold(unsigned char threshold) { d_tagInThreshold = threshold; };
+        void setTagInThreshold(unsigned char threshold) { d_tagInThreshold = threshold; }
 
         /**
          * \brief Get the safety threshold.
          * \return The safety threshol.
          */
-        unsigned char getSafetyThreshold() const { return d_safetyThreshold; };
+        unsigned char getSafetyThreshold() const { return d_safetyThreshold; }
 
         /**
          * \brief Set the safety threshold.
          * \param threshold The safety threshold.
          */
-        void setSafetyThreshold(unsigned char threshold) { d_safetyThreshold = threshold; };
+        void setSafetyThreshold(unsigned char threshold) { d_safetyThreshold = threshold; }
 
         /**
          * \brief Get the time before the tag is considered as "in", in milliseconds.
          * \return The time.
          */
-        unsigned short getTimeBeforeTagIn() const { return d_timeBeforeTagIn; };
+        unsigned short getTimeBeforeTagIn() const { return d_timeBeforeTagIn; }
 
         /**
          * \brief Set the time before the tag is considered as "in", in milliseconds.
          * \param timeBefore The time.
          */
-        void setTimeBeforeTagIn(unsigned short timeBefore) { d_timeBeforeTagIn = timeBefore; };
+        void setTimeBeforeTagIn(unsigned short timeBefore) { d_timeBeforeTagIn = timeBefore; }
 
         /**
          * \brief Get the time before the tag is considered as "out", in seconds.
          * \return The time.
          */
-        unsigned short getTimeBeforeTagOut() const { return d_timeBeforeTagOut; };
+        unsigned short getTimeBeforeTagOut() const { return d_timeBeforeTagOut; }
 
         /**
          * \brief Set the time before the tag is considered as "out", in seconds.
          * \param timeBefore The time.
          */
-        void setTimeBeforeTagOut(unsigned short timeBefore) { d_timeBeforeTagOut = timeBefore; };
+        void setTimeBeforeTagOut(unsigned short timeBefore) { d_timeBeforeTagOut = timeBefore; }
 
         /**
          * \brief Get the time before the tag is considered as in safety zone, in milliseconds.
          * \return The time.
          */
-        unsigned short getTimeBeforeSafety() const { return d_timeBeforeSafety; };
+        unsigned short getTimeBeforeSafety() const { return d_timeBeforeSafety; }
 
         /**
          * \brief Set the time before the tag is considered as in safety zone, in milliseconds.
          * \param timeBefore The time.
          */
-        void setTimeBeforeSafety(unsigned short timeBefore) { d_timeBeforeSafety = timeBefore; };
+        void setTimeBeforeSafety(unsigned short timeBefore) { d_timeBeforeSafety = timeBefore; }
 
         /**
          * \brief Get the time before the tag is removed from the stack, in seconds.
          * \return The time.
          */
-        unsigned char getTimeRemoval() const { return d_timeRemoval; };
+        unsigned char getTimeRemoval() const { return d_timeRemoval; }
 
         /**
          * \brief Set the time before the tag is removed from the stack, in seconds.
          * \param timeBefore The time.
          */
-        void setTimeRemoval(unsigned char timeRemoval) { d_timeRemoval = timeRemoval; };
+        void setTimeRemoval(unsigned char timeRemoval) { d_timeRemoval = timeRemoval; }
 
     protected:
 

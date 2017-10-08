@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.1)
 
 ## To build google-test based unittest build with LLA_BUILD_UNITTESTS=1
 
@@ -41,7 +41,9 @@ list ( APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
 
 option ( BUILD_SHARED_LIBS "build shared libraries" ON )
 
-find_package(CXX11 REQUIRED)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 if (UNIX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX11_FLAGS} -g -W -Wall -Wno-unused-parameter")

@@ -37,7 +37,7 @@ namespace logicalaccess
          * \brief Get the PC/SC reader/card adapter.
          * \return The PC/SC reader/card adapter.
          */
-        std::shared_ptr<PCSCReaderCardAdapter> getPCSCReaderCardAdapter() { return std::dynamic_pointer_cast<PCSCReaderCardAdapter>(getReaderCardAdapter()); };
+        std::shared_ptr<PCSCReaderCardAdapter> getPCSCReaderCardAdapter() const { return std::dynamic_pointer_cast<PCSCReaderCardAdapter>(getReaderCardAdapter()); }
 
         /**
          * \brief Read a whole page.
@@ -46,7 +46,7 @@ namespace logicalaccess
          * \param buflen The length of buffer. Must be at least 4 bytes long or the call will fail.
          * \return The number of bytes red, or a negative value on error.
          */
-        virtual std::vector<unsigned char> readPage(int page);
+	    ByteVector readPage(int page) override;
 
         /**
          * \brief Write a whole page.
@@ -55,9 +55,7 @@ namespace logicalaccess
          * \param buflen The length of buffer. Must be at least 4 bytes long or the call will fail.
          * \return The number of bytes written, or a negative value on error.
          */
-        virtual void writePage(int page, const std::vector<unsigned char>& buf);
-
-    protected:
+	    void writePage(int page, const ByteVector& buf) override;
     };
 }
 

@@ -113,7 +113,7 @@ namespace logicalaccess
      * \param rights The file access rights
      * \return The access rights flag.
      */
-    inline short AccessRightsInMemory(DESFireAccessRights rights)
+    inline short AccessRightsInMemory(const DESFireAccessRights& rights)
     {
         return static_cast<short>(
             (rights.readAccess << 12) |
@@ -231,7 +231,7 @@ namespace logicalaccess
          * \param accessRights The file access rights
          * \param fileSize The file size.
          */
-        virtual void createStdDataFile(std::shared_ptr<DESFireLocation> location, DESFireAccessRights accessRights, unsigned int fileSize);
+        virtual void createStdDataFile(std::shared_ptr<DESFireLocation> location, const DESFireAccessRights& accessRights, unsigned int fileSize);
 
         /**
          * \brief Get the communication mode for a file.
@@ -240,9 +240,9 @@ namespace logicalaccess
          * \param needLoadKey Set if it's necessary to be authenticate for the access.
          * \return The communication mode.
          */
-        virtual EncryptionMode getEncryptionMode(unsigned char fileno, bool isReadMode, bool* needLoadKey = NULL);
+        virtual EncryptionMode getEncryptionMode(unsigned char fileno, bool isReadMode, bool* needLoadKey = nullptr);
 
-		virtual EncryptionMode getEncryptionMode(const DESFireCommands::FileSetting& fileSetting, bool isReadMode, bool* needLoadKey = NULL);
+		virtual EncryptionMode getEncryptionMode(const FileSetting& fileSetting, bool isReadMode, bool* needLoadKey = nullptr);
 
         /**
          * \brief Get the length of a file.
@@ -303,7 +303,7 @@ namespace logicalaccess
          * \brief Get the File IDentifiers of all active files within the currently selected application
          * \return The file ID list.
          */
-        virtual std::vector<unsigned char> getFileIDs() = 0;
+        virtual ByteVector getFileIDs() = 0;
 
         /**
          * \brief Get settings of a specific file in the current application.
@@ -319,7 +319,7 @@ namespace logicalaccess
          * \param accessRights The file access rights
          * \param plain Communication is currently in plain data.
          */
-        virtual void changeFileSettings(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, bool plain) = 0;
+        virtual void changeFileSettings(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, bool plain) = 0;
 
         /**
          * \brief Create a new data file in the current application.
@@ -328,7 +328,7 @@ namespace logicalaccess
          * \param accessRights The file access rights
          * \param fileSize The file size.
          */
-        virtual void createStdDataFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize) = 0;
+        virtual void createStdDataFile(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, unsigned int fileSize) = 0;
 
         /**
          * \brief Create a new backup file in the current application.
@@ -337,7 +337,7 @@ namespace logicalaccess
          * \param accessRights The file access rights
          * \param fileSize The file size.
          */
-        virtual void createBackupFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize) = 0;
+        virtual void createBackupFile(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, unsigned int fileSize) = 0;
 
         /**
          * \brief Create a new value file in the current application.
@@ -349,7 +349,7 @@ namespace logicalaccess
          * \param value The default value
          * \param limitedCreditEnabled Set if the limited credit is enabled
          */
-        virtual void createValueFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int lowerLimit, unsigned int upperLimit, unsigned int value, bool limitedCreditEnabled) = 0;
+        virtual void createValueFile(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, unsigned int lowerLimit, unsigned int upperLimit, unsigned int value, bool limitedCreditEnabled) = 0;
 
         /**
          * \brief Create a new linear record file in the current application.
@@ -359,7 +359,7 @@ namespace logicalaccess
          * \param fileSize The file size.
          * \param maxNumberOfRecords Max number of records in the file.
          */
-        virtual void createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords) = 0;
+        virtual void createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords) = 0;
 
         /**
          * \brief Create a new cyclic record file in the current application.
@@ -369,7 +369,7 @@ namespace logicalaccess
          * \param fileSize The file size.
          * \param maxNumberOfRecords Max number of records in the file.
          */
-        virtual void createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords) = 0;
+        virtual void createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords) = 0;
 
         /**
          * \brief Delete a file in the current application.
@@ -385,7 +385,7 @@ namespace logicalaccess
          * \param mode The communication mode
          * \return The bytes readed.
          */
-        virtual std::vector<unsigned char> readData(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode) = 0;
+        virtual ByteVector readData(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode) = 0;
 
         /**
          * \brief Write data into a specific file.
@@ -394,11 +394,10 @@ namespace logicalaccess
          * \param data The data buffer
          * \param mode The communication mode
          */
-        virtual void writeData(unsigned char fileno, unsigned int offset, const std::vector<unsigned char>& data, EncryptionMode mode) = 0;
+        virtual void writeData(unsigned char fileno, unsigned int offset, const ByteVector& data, EncryptionMode mode) = 0;
 
         /**
          * \brief Get value from a specific value file.
-         * \param handle The SCardHandle
          * \param fileno The file number
          * \param mode The communicatio mode
          * \param value The value stored in the card
@@ -423,7 +422,6 @@ namespace logicalaccess
 
         /**
          * \brief Limit credit on a specific value file.
-         * \param handle The SCardHandle
          * \param fileno The file number
          * \param value The value to limit credit
          * \param mode The communication mode
@@ -434,22 +432,20 @@ namespace logicalaccess
          * \brief Write record into a specific record file.
          * \param fileno The file number
          * \param offset The byte offset
-         * \param length The length to write
          * \param data The data buffer
          * \param mode The communication mode
          */
-        virtual void writeRecord(unsigned char fileno, unsigned int offset, const std::vector<unsigned char>& data, EncryptionMode mode) = 0;
+        virtual void writeRecord(unsigned char fileno, unsigned int offset, const ByteVector& data, EncryptionMode mode) = 0;
 
         /**
          * \brief Read record from a specific record file.
          * \param fileno The file number
          * \param offset The byte offset
          * \param length The length to read
-         * \param data The data buffer
          * \param mode The communication mode
          * \return The number of bytes read.
          */
-        virtual std::vector<unsigned char> readRecords(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode) = 0;
+        virtual ByteVector readRecords(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode) = 0;
 
         /**
          * \brief Clear a specific record file.

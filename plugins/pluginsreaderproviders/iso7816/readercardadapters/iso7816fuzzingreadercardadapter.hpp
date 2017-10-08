@@ -29,7 +29,7 @@ namespace logicalaccess
 
 		ISO7816FuzzingReaderCardAdapter();
 
-		virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long timeout = -1);
+		ByteVector sendCommand(const ByteVector& command, long timeout = -1) override;
 
 	private:
 		static int index;

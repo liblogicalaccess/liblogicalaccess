@@ -21,24 +21,24 @@ namespace logicalaccess
     {
     }
 
-    std::vector<unsigned char> RplethReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
+    ByteVector RplethReaderCardAdapter::adaptCommand(const ByteVector& command)
     {
         return command;
     }
 
-    std::vector<unsigned char> RplethReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
+    ByteVector RplethReaderCardAdapter::adaptAnswer(const ByteVector& answer)
     {
         return answer;
     }
 
-    std::vector<unsigned char> RplethReaderCardAdapter::sendRplethCommand(const std::vector<unsigned char>& data,
+    ByteVector RplethReaderCardAdapter::sendRplethCommand(const ByteVector& data,
                                                                           bool waitanswer, long timeout)
     {
         if (timeout == -1)
             timeout = Settings::getInstance()->DataTransportTimeout;
 
         LOG(LogLevel::COMS) << "Send Rpleth Command : " << BufferHelper::getHex(data);
-        std::vector<unsigned char> res;
+        ByteVector res;
 
         std::shared_ptr<RplethDataTransport> dt = std::dynamic_pointer_cast<RplethDataTransport>(getDataTransport());
         if (dt)

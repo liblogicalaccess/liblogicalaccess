@@ -25,68 +25,65 @@ extern "C"
     */
     LIBLOGICALACCESS_API void getReaderUnit(const std::string &readerName, std::shared_ptr<logicalaccess::ReaderUnit> &u)
     {
-        using namespace std;
-        using namespace logicalaccess;
-
-        if (readerName.find("OMNIKEY") != string::npos)
+        if (readerName.find("OMNIKEY") != std::string::npos)
         {
-            if (readerName.find("x21") != string::npos || readerName.find("5321") != string::npos || readerName.find("6321") != string::npos)
+            if (readerName.find("x21") != std::string::npos || readerName.find("5321") != std::string::npos || readerName.find("6321") != std::string::npos)
             {
-                if (readerName.find("LAN") != string::npos)
+                if (readerName.find("LAN") != std::string::npos)
                 {
-                    u = make_shared<OmnikeyLANXX21ReaderUnit>(readerName);
+                    u = std::make_shared<logicalaccess::OmnikeyLANXX21ReaderUnit>(readerName);
                 }
                 else
                 {
-                    u = make_shared<OmnikeyXX21ReaderUnit>(readerName);
+                    u = std::make_shared<logicalaccess::OmnikeyXX21ReaderUnit>(readerName);
                 }
             }
-            else if (readerName.find("5022") != string::npos)
+            else if (readerName.find("5022") != std::string::npos)
             {
-                u = make_shared<OmnikeyXX22ReaderUnit>(readerName);
+                u = std::make_shared<logicalaccess::OmnikeyXX22ReaderUnit>(readerName);
             }
-            else if (readerName.find("5023") != string::npos)
+            else if (readerName.find("5023") != std::string::npos)
             {
-                u = make_shared<OmnikeyXX23ReaderUnit>(readerName);
+                u = std::make_shared<logicalaccess::OmnikeyXX23ReaderUnit>(readerName);
             }
-            else if (readerName.find("x25") != string::npos || readerName.find("5025-CL") != string::npos)
+            else if (readerName.find("x25") != std::string::npos || readerName.find("5025-CL") != std::string::npos)
             {
-                u = make_shared<OmnikeyXX25ReaderUnit>(readerName);
+                u = std::make_shared<logicalaccess::OmnikeyXX25ReaderUnit>(readerName);
             }
         }
-        else if (readerName.find("SDI010 Contactless Reader") != string::npos
-                || readerName.find("SCR331-DI USB ContactlessReader") != string::npos
-                || readerName.find("SCL010 Contactless") != string::npos
-				|| readerName.find("SCL01x Contactless") != string::npos
-				|| readerName.find("SCL3711 reader") != string::npos
-				|| readerName.find("Identive CLOUD 4000 F DTC CL Reader") != string::npos
-				|| readerName.find("Identive CLOUD 4700 F Contactless") != string::npos
-				|| readerName.find("Identive CLOUD 4710 F Contactless") != string::npos
-				|| readerName.find("SCM Microsystems Inc. SCL011G Contactless Reader") != string::npos
+        else if (readerName.find("SDI010 Contactless Reader") != std::string::npos
+                || readerName.find("SCR331-DI USB ContactlessReader") != std::string::npos
+                || readerName.find("SCL010 Contactless") != std::string::npos
+				|| readerName.find("SCL01x Contactless") != std::string::npos
+				|| readerName.find("SCL3711 reader") != std::string::npos
+				|| readerName.find("Identive CLOUD 4000 F DTC CL Reader") != std::string::npos
+				|| readerName.find("Identive CLOUD 4700 F Contactless") != std::string::npos
+				|| readerName.find("Identive CLOUD 4710 F Contactless") != std::string::npos
+				|| readerName.find("SCM Microsystems Inc. SCL011G Contactless Reader") != std::string::npos
 				)
         {
-            u = make_shared<SCMReaderUnit>(readerName);
+            u = std::make_shared<logicalaccess::SCMReaderUnit>(readerName);
         }
-        else if (readerName.find("Cherry ") != string::npos)
+        else if (readerName.find("Cherry ") != std::string::npos)
         {
-            u = make_shared<CherryReaderUnit>(readerName);
+            u = std::make_shared<logicalaccess::CherryReaderUnit>(readerName);
         }
-        else if (readerName.find("SpringCard") != string::npos)
+        else if (readerName.find("SpringCard") != std::string::npos)
         {
-            u = make_shared<SpringCardReaderUnit>(readerName);
+            u = std::make_shared<logicalaccess::SpringCardReaderUnit>(readerName);
         }
-        else if (readerName.find("ACS ACR1222 3S PICC Reader PICC") != string::npos
-                || readerName.find("ACS ACR1222 3S PICC Reader 00 00") != string::npos) // Name under Linux
+        else if (readerName.find("ACS ACR1222 3S PICC Reader PICC") != std::string::npos
+                || readerName.find("ACS ACR1222 3S PICC Reader 00 00") != std::string::npos) // Name under Linux
         {
-            u = make_shared<ACSACR1222LReaderUnit>(readerName);
+            u = std::make_shared<logicalaccess::ACSACR1222LReaderUnit>(readerName);
         }
-        else if (readerName.find("ACS ACR") != string::npos)
+        else if (readerName.find("ACS ACR") != std::string::npos)
         {
-            u = make_shared<ACSACRReaderUnit>(readerName);
+            u = std::make_shared<logicalaccess::ACSACRReaderUnit>(readerName);
         }
-        else if (readerName.find("id3 Semiconductors") != string::npos)
+        else if (readerName.find("id3 Semiconductors") != std::string::npos)
         {
-            u = make_shared<ID3ReaderUnit>(readerName);
+            u = std::make_shared<logicalaccess::ID3ReaderUnit>(readerName);
         }
     }
 
@@ -97,7 +94,7 @@ extern "C"
 
     LIBLOGICALACCESS_API void getPCSCReader(std::shared_ptr<logicalaccess::ReaderProvider>* rp)
     {
-        if (rp != NULL)
+        if (rp != nullptr)
         {
             *rp = logicalaccess::PCSCReaderProvider::createInstance();
         }
@@ -106,7 +103,7 @@ extern "C"
     LIBLOGICALACCESS_API bool getReaderInfoAt(unsigned int index, char* readername, size_t readernamelen, void** getterfct)
     {
         bool ret = false;
-        if (readername != NULL && readernamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
+        if (readername != nullptr && readernamelen == PLUGINOBJECT_MAXLEN && getterfct != nullptr)
         {
             switch (index)
             {
@@ -117,6 +114,7 @@ extern "C"
                 ret = true;
             }
                 break;
+            default: ;
             }
         }
 
@@ -125,9 +123,9 @@ extern "C"
 
 	LIBLOGICALACCESS_API void getMifarePCSCCommands(std::shared_ptr<logicalaccess::Commands>* commands)
 	{
-		if (commands != NULL)
+		if (commands != nullptr)
 		{
-			*commands = std::shared_ptr<logicalaccess::MifarePCSCCommands>(new logicalaccess::MifarePCSCCommands());
+			*commands = std::make_shared<logicalaccess::MifarePCSCCommands>();
 		}
 	}
 }

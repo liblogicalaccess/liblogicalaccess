@@ -16,7 +16,7 @@ namespace logicalaccess
     {
         const EVP_CIPHER*  AESCipher::getEVPCipher(const SymmetricKey& key) const
         {
-            const EVP_CIPHER* evpCipher = NULL;
+            const EVP_CIPHER* evpCipher = nullptr;
 
             size_t aeslength = (key.data().size() * 8);
 

@@ -43,18 +43,16 @@ namespace logicalaccess
         return (d_formatLinear.d_asciiLength * 8);
     }
 
-    string ASCIIFormat::getName() const
+	std::string ASCIIFormat::getName() const
     {
-        return string("ASCII");
+        return std::string("ASCII");
     }
 
     void ASCIIFormat::getLinearData(void* data, size_t dataLengthBytes) const
     {
-        string ret;
-
-        if (dataLengthBytes >= d_formatLinear.d_asciiLength)
+	    if (dataLengthBytes >= d_formatLinear.d_asciiLength)
         {
-            ret = d_asciiValue;
+            std::string ret = d_asciiValue;
             if (ret.size() < d_formatLinear.d_asciiLength)
             {
                 size_t paddingLength = d_formatLinear.d_asciiLength - ret.size();
@@ -135,18 +133,18 @@ namespace logicalaccess
         setPadding(node.get_child("Padding").get_value<unsigned char>());
     }
 
-    std::string ASCIIFormat::getDefaultXmlNodeName() const
+	std::string ASCIIFormat::getDefaultXmlNodeName() const
     {
         return "ASCIIFormat";
     }
 
-    string ASCIIFormat::getASCIIValue()
-    {
+	std::string ASCIIFormat::getASCIIValue() const
+	{
 		std::shared_ptr<StringDataField> field = std::dynamic_pointer_cast<StringDataField>(getFieldFromName("Value"));
         return field->getValue();
     }
 
-    void ASCIIFormat::setASCIIValue(string value)
+    void ASCIIFormat::setASCIIValue(std::string value)
     {
 		std::shared_ptr<StringDataField> field = std::dynamic_pointer_cast<StringDataField>(getFieldFromName("Value"));
         field->setValue(value);
@@ -166,7 +164,7 @@ namespace logicalaccess
         d_formatLinear.d_asciiLength = length;
     }
 
-    unsigned char ASCIIFormat::getPadding()
+    unsigned char ASCIIFormat::getPadding() const
     {
 		std::shared_ptr<StringDataField> field = std::dynamic_pointer_cast<StringDataField>(getFieldFromName("Value"));
         return field->getPaddingChar();

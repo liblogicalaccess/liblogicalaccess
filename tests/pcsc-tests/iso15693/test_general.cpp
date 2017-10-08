@@ -25,7 +25,7 @@ void introduction()
 
 using namespace logicalaccess;
 
-static void write_read_test(ReaderUnitPtr readerUnit, std::shared_ptr<ISO15693Commands> cmd)
+static void write_read_test(ReaderUnitPtr /*readerUnit*/, std::shared_ptr<ISO15693Commands> cmd)
 {
     uint8_t val = 0x00;
     for (int i = 1 ; i < 7; ++i)
@@ -53,7 +53,7 @@ int main(int ac, char **av)
     ReaderProviderPtr provider;
     ReaderUnitPtr readerUnit;
     ChipPtr chip;
-    std::tie(provider, readerUnit, chip) = lla_test_init();
+    tie(provider, readerUnit, chip) = lla_test_init();
 
     PRINT_TIME("CHip identifier: " <<
                logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));

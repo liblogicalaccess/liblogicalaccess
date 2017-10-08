@@ -122,7 +122,7 @@ namespace logicalaccess
 
         d_proxyReaderUnit.reset();
         d_readerUnitConfig.reset(new PCSCReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(std::shared_ptr<PCSCReaderCardAdapter>(new PCSCReaderCardAdapter()));
+	    ReaderUnit::setDefaultReaderCardAdapter(std::make_shared<PCSCReaderCardAdapter>());
     }
 
     PCSCReaderUnit::~PCSCReaderUnit()
@@ -141,9 +141,9 @@ namespace logicalaccess
 
         LOG(LogLevel::INFOS) << "Reader unit destruction...";
 
-        if (isConnected())
+        if (PCSCReaderUnit::isConnected())
         {
-            disconnect();
+	        PCSCReaderUnit::disconnect();
         }
     }
 
@@ -158,7 +158,7 @@ namespace logicalaccess
 
         if (this->getPCSCType() == PCSC_RUT_DEFAULT)
         {
-            d_proxyReaderUnit = PCSCReaderUnit::createPCSCReaderUnit(d_name);
+            d_proxyReaderUnit = createPCSCReaderUnit(d_name);
             d_proxyReaderUnit->makeProxy(std::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()),
                                          getPCSCConfiguration());
         }
@@ -202,7 +202,7 @@ namespace logicalaccess
         d_name = node.get_child("Name").get_value<std::string>();
         std::shared_ptr<PCSCReaderUnitConfiguration> pcscRUC = getPCSCConfiguration();
         PCSCReaderUnitType pcscType = getPCSCType();
-        d_proxyReaderUnit = PCSCReaderUnit::createPCSCReaderUnit(d_name);
+        d_proxyReaderUnit = createPCSCReaderUnit(d_name);
         if (d_proxyReaderUnit->getPCSCType() == pcscType)
         {
             d_proxyReaderUnit.reset();
@@ -270,7 +270,7 @@ namespace logicalaccess
 
         SPtrStringVector readers_names;
         ReaderStateVector readers;
-        std::tie(readers_names, readers) = prepare_poll_parameters();
+        tie(readers_names, readers) = prepare_poll_parameters();
         ElapsedTimeCounter time_counter;
         do
         {
@@ -288,16 +288,14 @@ namespace logicalaccess
                         {
                             // The current reader detected a card. Great, let's use it.
 
-                            std::string connectedReader;
-                            std::string cardType;
-                            atr_ = std::vector<uint8_t>(readers[i].rgbAtr,
+	                        atr_ = std::vector<uint8_t>(readers[i].rgbAtr,
                                                         readers[i].rgbAtr + readers[i].cbAtr);
 
                             // Create the proxy now, so the ATR parser operate on the correct
                             // reader type. -- This help with some reader-specific ATR.
-                            connectedReader = std::string(readers[i].szReader);
+                            std::string connectedReader = std::string(readers[i].szReader);
                             waitInsertion_create_proxy(connectedReader);
-                            cardType = ATRParser::guessCardType(atr_, getPCSCType());
+                            std::string cardType = ATRParser::guessCardType(atr_, getPCSCType());
                             LOG(INFOS) << "Guessed card type from atr: " << cardType;
                             return process_insertion(cardType, maxwait, time_counter);
                         }
@@ -364,7 +362,7 @@ namespace logicalaccess
 
         for (int i = 0; i < readers_count; ++i)
         {
-            readers_names[i] = NULL;
+            readers_names[i] = nullptr;
         }
 
         SCARD_READERSTATE* readers = new SCARD_READERSTATE[readers_count];
@@ -455,17 +453,14 @@ namespace logicalaccess
             if (readers_names[i])
             {
                 free(readers_names[i]);
-                readers_names[i] = NULL;
+                readers_names[i] = nullptr;
             }
         }
 
         delete[] readers;
-        readers = NULL;
+	    delete[] readers_names;
 
-        delete[] readers_names;
-        readers_names = NULL;
-
-        if (!reader.empty())
+	    if (!reader.empty())
         {
             if (d_name == "")
             {
@@ -625,13 +620,11 @@ namespace logicalaccess
         }
     }
 
-    std::vector<unsigned char> PCSCReaderUnit::getCardSerialNumber()
+    ByteVector PCSCReaderUnit::getCardSerialNumber()
     {
-        std::vector<unsigned char> ucReceivedData;
+	    ByteVector ucReceivedData = getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xCA, 0x00, 0x00, 0x00);
 
-        ucReceivedData = getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xCA, 0x00, 0x00, 0x00);
-
-        return std::vector<unsigned char>(ucReceivedData.begin(), ucReceivedData.end() - 2);
+        return ByteVector(ucReceivedData.begin(), ucReceivedData.end() - 2);
     }
 
 	const std::vector<uint8_t>& PCSCReaderUnit::getATR() const
@@ -923,7 +916,7 @@ namespace logicalaccess
 
         std::string serialno = "";
         DWORD seriallen = 0;
-        if (SCARD_S_SUCCESS == SCardGetAttrib(getHandle(), SCARD_ATTR_VENDOR_IFD_SERIAL_NO, (LPBYTE)NULL, &seriallen) && seriallen > 0)
+        if (SCARD_S_SUCCESS == SCardGetAttrib(getHandle(), SCARD_ATTR_VENDOR_IFD_SERIAL_NO, (LPBYTE)nullptr, &seriallen) && seriallen > 0)
         {
             seriallen += 1;
             char* serialbuf = new char[seriallen];
@@ -987,7 +980,7 @@ namespace logicalaccess
         }
 	}
 
-    void PCSCReaderUnit::changeReaderKey(std::shared_ptr<ReaderMemoryKeyStorage> keystorage, const std::vector<unsigned char>& key)
+    void PCSCReaderUnit::changeReaderKey(std::shared_ptr<ReaderMemoryKeyStorage> keystorage, const ByteVector& key)
     {
         if (d_proxyReaderUnit)
         {
@@ -1008,7 +1001,7 @@ namespace logicalaccess
         }
     }
 
-    std::shared_ptr<PCSCReaderUnit> PCSCReaderUnit::getProxyReaderUnit()
+    std::shared_ptr<PCSCReaderUnit> PCSCReaderUnit::getProxyReaderUnit() const
     {
         return d_proxyReaderUnit;
     }
@@ -1150,10 +1143,10 @@ namespace logicalaccess
         if (share_mode == SC_DIRECT)
         {
             assert(getPCSCReaderProvider());
-            connection_ = std::unique_ptr<PCSCConnection>(new PCSCConnection(
-                SC_DIRECT,
-                0, // No protocol
-                getPCSCReaderProvider()->getContext(), getConnectedName()));
+            connection_ = std::make_unique<PCSCConnection>(
+	            SC_DIRECT,
+	            0, // No protocol
+	            getPCSCReaderProvider()->getContext(), getConnectedName());
 
             auto ctl_data_transport =
                 std::make_shared<PCSCControlDataTransport>();
@@ -1163,9 +1156,9 @@ namespace logicalaccess
         }
         else
         {
-            connection_ = std::unique_ptr<PCSCConnection>(new PCSCConnection(
-                share_mode, getPCSCConfiguration()->getTransmissionProtocol(),
-				getPCSCReaderProvider()->getContext(), getConnectedName()));
+            connection_ = std::make_unique<PCSCConnection>(
+	            share_mode, getPCSCConfiguration()->getTransmissionProtocol(),
+	            getPCSCReaderProvider()->getContext(), getConnectedName());
 
 			auto data_transport = std::make_shared<PCSCDataTransport>();
 			data_transport->setReaderUnit(shared_from_this());
@@ -1184,7 +1177,7 @@ namespace logicalaccess
 
     void PCSCReaderUnit::configure_mifareplus_chip(std::shared_ptr<Chip> chip,
                                                    std::shared_ptr<Commands> &commands,
-                                                   std::shared_ptr<ResultChecker> &resultChecker)
+                                                   std::shared_ptr<ResultChecker> &resultChecker) const
     {
         // It's possible we are in security level 1. In this case,
         // The chip type is MifarePlusSL1Chip (MifarePlusSL1_2kChip or 4k).
@@ -1288,7 +1281,7 @@ namespace logicalaccess
     }
 
     std::tuple<PCSCReaderUnit::SPtrStringVector, PCSCReaderUnit::ReaderStateVector>
-    PCSCReaderUnit::prepare_poll_parameters()
+    PCSCReaderUnit::prepare_poll_parameters() const
     {
         size_t readers_count = 0;
         if (!getName().empty())
@@ -1310,7 +1303,7 @@ namespace logicalaccess
 
         SPtrStringVector readers_names(readers_count);
         ReaderStateVector readers(readers_count);
-        std::memset(&readers[0], 0, readers.size() * sizeof(SCARD_READERSTATE));
+        memset(&readers[0], 0, readers.size() * sizeof(SCARD_READERSTATE));
 
         if (!getName().empty())
         {
@@ -1330,7 +1323,7 @@ namespace logicalaccess
                 readers[i].szReader = readers_names[i]->c_str();
             }
         }
-        return std::make_tuple(readers_names, readers);
+        return make_tuple(readers_names, readers);
     }
 
     void PCSCReaderUnit::waitInsertion_create_proxy(
@@ -1341,7 +1334,7 @@ namespace logicalaccess
         std::shared_ptr<PCSCReaderUnitConfiguration> pcscRUC = getPCSCConfiguration();
         if (this->getPCSCType() == PCSC_RUT_DEFAULT)
         {
-            d_proxyReaderUnit = PCSCReaderUnit::createPCSCReaderUnit(reader_name);
+            d_proxyReaderUnit = createPCSCReaderUnit(reader_name);
             if (d_proxyReaderUnit->getPCSCType() == PCSC_RUT_DEFAULT)
             {
                 d_proxyReaderUnit.reset();

@@ -27,9 +27,9 @@ namespace logicalaccess
         : ReaderUnit(READER_SCIEL)
     {
         d_readerUnitConfig.reset(new SCIELReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(std::shared_ptr<SCIELReaderCardAdapter>(new SCIELReaderCardAdapter()));
+	    ReaderUnit::setDefaultReaderCardAdapter(std::make_shared<SCIELReaderCardAdapter>());
         std::shared_ptr<ScielDataTransport> dataTransport(new ScielDataTransport());
-        setDataTransport(dataTransport);
+	    ReaderUnit::setDataTransport(dataTransport);
 		d_card_type = CHIP_UNKNOWN;
 
         try
@@ -43,7 +43,7 @@ namespace logicalaccess
 
     SCIELReaderUnit::~SCIELReaderUnit()
     {
-        disconnectFromReader();
+	    SCIELReaderUnit::disconnectFromReader();
     }
 
     std::string SCIELReaderUnit::getName() const
@@ -115,7 +115,7 @@ namespace logicalaccess
                 refreshChipList();
                 std::vector<std::shared_ptr<Chip> > chipList = getChipList();
 
-                std::vector<std::shared_ptr<Chip> >::iterator i = std::find_if(chipList.begin(), chipList.end(), SCIELReaderUnit::Finder(d_insertedChip));
+                std::vector<std::shared_ptr<Chip> >::iterator i = find_if(chipList.begin(), chipList.end(), Finder(d_insertedChip));
                 if (i == chipList.end())
                 {
                     d_insertedChip.reset();
@@ -154,7 +154,7 @@ namespace logicalaccess
     {
         LOG(LogLevel::INFOS) << "Retrieving reader chip list...";
         std::list<std::shared_ptr<Chip> > chipList;
-        std::vector<unsigned char> cmd;
+        ByteVector cmd;
         cmd.push_back(static_cast<unsigned char>(0x30));
         cmd.push_back(static_cast<unsigned char>(0x41));
         cmd.push_back(static_cast<unsigned char>(0x30));
@@ -166,13 +166,13 @@ namespace logicalaccess
         {
             LOG(LogLevel::INFOS) << "Sending COM command...";
 
-            std::list<std::vector<unsigned char> > allTags = getDefaultSCIELReaderCardAdapter()->receiveTagsListCommand(cmd);
-            for (std::list<std::vector<unsigned char> >::iterator i = allTags.begin(); i != allTags.end(); ++i)
+            std::list<ByteVector > allTags = getDefaultSCIELReaderCardAdapter()->receiveTagsListCommand(cmd);
+            for (std::list<ByteVector >::iterator i = allTags.begin(); i != allTags.end(); ++i)
             {
                 LOG(LogLevel::INFOS) << "  -> allTags identifier " << BufferHelper::getHex((*i));
             }
 
-            for (std::list<std::vector<unsigned char> >::iterator i = allTags.begin(); i != allTags.end(); ++i)
+            for (std::list<ByteVector >::iterator i = allTags.begin(); i != allTags.end(); ++i)
             {
                 std::shared_ptr<Chip> rChip = createChipFromBuffer((*i));
                 if (rChip)
@@ -668,9 +668,9 @@ namespace logicalaccess
         getDataTransport()->disconnect();
     }
 
-    std::vector<unsigned char> SCIELReaderUnit::getPingCommand() const
+    ByteVector SCIELReaderUnit::getPingCommand() const
     {
-        std::vector<unsigned char> cmd;
+        ByteVector cmd;
 
         cmd.push_back(static_cast<unsigned char>(0x30));
         cmd.push_back(static_cast<unsigned char>(0x39));
@@ -703,7 +703,7 @@ namespace logicalaccess
     {
         LOG(LogLevel::INFOS) << "Retrieving the SCIEL Reader Identifier...";
         bool ret;
-        std::vector<unsigned char> cmd;
+        ByteVector cmd;
         d_scielIdentifier.clear();
 
         try
@@ -715,10 +715,10 @@ namespace logicalaccess
             cmd.push_back(static_cast<unsigned char>(0x30));
             cmd.push_back(static_cast<unsigned char>(0x30));
 
-            std::vector<unsigned char> r = getDefaultSCIELReaderCardAdapter()->sendCommand(cmd);
+            ByteVector r = getDefaultSCIELReaderCardAdapter()->sendCommand(cmd);
             EXCEPTION_ASSERT_WITH_LOG(r.size() >= 2, LibLogicalAccessException, "Bad response getting SCIEL reader identifier.");
 
-            d_scielIdentifier = std::vector<unsigned char>(r.end() - 2, r.end());
+            d_scielIdentifier = ByteVector(r.end() - 2, r.end());
 
             ret = true;
         }
@@ -736,7 +736,7 @@ namespace logicalaccess
     {
         unsigned char timeRemoval = 0;
 
-        std::vector<unsigned char> cmd;
+        ByteVector cmd;
         cmd.push_back(static_cast<unsigned char>(0x30));
         cmd.push_back(static_cast<unsigned char>(0x35));
         cmd.push_back(static_cast<unsigned char>(0x30));
@@ -744,12 +744,12 @@ namespace logicalaccess
         cmd.push_back(d_scielIdentifier[0]);
         cmd.push_back(d_scielIdentifier[1]);
 
-        std::vector<unsigned char> r = getDefaultSCIELReaderCardAdapter()->sendCommand(cmd);
+        ByteVector r = getDefaultSCIELReaderCardAdapter()->sendCommand(cmd);
         EXCEPTION_ASSERT_WITH_LOG(r.size() >= 6, LibLogicalAccessException, "Bad response getting SCIEL removal time. Bad response length.");
         EXCEPTION_ASSERT_WITH_LOG(r[0] == cmd[0] && r[1] == cmd[1], LibLogicalAccessException, "Bad response getting SCIEL removal time. Bad command response identifier.");
         EXCEPTION_ASSERT_WITH_LOG(r[4] == d_scielIdentifier[0] && r[5] == d_scielIdentifier[1], LibLogicalAccessException, "Bad response getting SCIEL removal time. Bad reader response identifier.");
 
-        timeRemoval = static_cast<unsigned char>(strtoul(BufferHelper::getStdString(std::vector<unsigned char>(r.end() - 2, r.end())).c_str(), NULL, 16));
+        timeRemoval = static_cast<unsigned char>(strtoul(BufferHelper::getStdString(ByteVector(r.end() - 2, r.end())).c_str(), nullptr, 16));
 
         return timeRemoval;
     }
@@ -758,7 +758,7 @@ namespace logicalaccess
     {
         char tmp[64];
         sprintf(tmp, "%02x", timeRemoval);
-        std::vector<unsigned char> cmd;
+        ByteVector cmd;
         cmd.push_back(static_cast<unsigned char>(0x30));
         cmd.push_back(static_cast<unsigned char>(0x36));
         cmd.push_back(static_cast<unsigned char>(tmp[0]));
@@ -766,7 +766,7 @@ namespace logicalaccess
         cmd.push_back(d_scielIdentifier[0]);
         cmd.push_back(d_scielIdentifier[1]);
 
-        std::vector<unsigned char> r = getDefaultSCIELReaderCardAdapter()->sendCommand(cmd);
+        ByteVector r = getDefaultSCIELReaderCardAdapter()->sendCommand(cmd);
         EXCEPTION_ASSERT_WITH_LOG(r.size() >= 8, LibLogicalAccessException, "Bad response setting SCIEL removal time. Bad response length.");
         EXCEPTION_ASSERT_WITH_LOG(r[0] == 'O' && r[1] == 'K', LibLogicalAccessException, "Bad response setting SCIEL removal time. Bad response status.");
         EXCEPTION_ASSERT_WITH_LOG(r[2] == cmd[0] && r[3] == cmd[1], LibLogicalAccessException, "Bad response setting SCIEL removal time. Bad command response identifier.");
@@ -777,7 +777,7 @@ namespace logicalaccess
     {
         unsigned char level = 0;
 
-        std::vector<unsigned char> cmd;
+        ByteVector cmd;
         cmd.push_back(static_cast<unsigned char>(0x30));
         cmd.push_back(static_cast<unsigned char>(0x42));
         cmd.push_back(static_cast<unsigned char>(0x30));
@@ -785,12 +785,12 @@ namespace logicalaccess
         cmd.push_back(d_scielIdentifier[0]);
         cmd.push_back(d_scielIdentifier[1]);
 
-        std::vector<unsigned char> r = getDefaultSCIELReaderCardAdapter()->sendCommand(cmd);
+        ByteVector r = getDefaultSCIELReaderCardAdapter()->sendCommand(cmd);
         EXCEPTION_ASSERT_WITH_LOG(r.size() >= 6, LibLogicalAccessException, "Bad response getting SCIEL reception level. Bad response length.");
         EXCEPTION_ASSERT_WITH_LOG(r[0] == cmd[0] && r[1] == cmd[1], LibLogicalAccessException, "Bad response getting SCIEL reception level. Bad command response identifier.");
         EXCEPTION_ASSERT_WITH_LOG(r[4] == d_scielIdentifier[0] && r[5] == d_scielIdentifier[1], LibLogicalAccessException, "Bad response getting SCIEL reception level. Bad reader response identifier.");
 
-        level = static_cast<unsigned char>(strtoul(BufferHelper::getStdString(std::vector<unsigned char>(r.end() - 2, r.end())).c_str(), NULL, 16));
+        level = static_cast<unsigned char>(strtoul(BufferHelper::getStdString(ByteVector(r.end() - 2, r.end())).c_str(), nullptr, 16));
 
         return level;
     }
@@ -799,7 +799,7 @@ namespace logicalaccess
     {
         char tmp[64];
         sprintf(tmp, "%02x", level);
-        std::vector<unsigned char> cmd;
+        ByteVector cmd;
         cmd.push_back(static_cast<unsigned char>(0x30));
         cmd.push_back(static_cast<unsigned char>(0x43));
         cmd.push_back(static_cast<unsigned char>(tmp[0]));
@@ -807,7 +807,7 @@ namespace logicalaccess
         cmd.push_back(d_scielIdentifier[0]);
         cmd.push_back(d_scielIdentifier[1]);
 
-        std::vector<unsigned char> r = getDefaultSCIELReaderCardAdapter()->sendCommand(cmd);
+        ByteVector r = getDefaultSCIELReaderCardAdapter()->sendCommand(cmd);
         EXCEPTION_ASSERT_WITH_LOG(r.size() >= 8, LibLogicalAccessException, "Bad response setting SCIEL reception level. Bad response length.");
         EXCEPTION_ASSERT_WITH_LOG(r[0] == 'O' && r[1] == 'K', LibLogicalAccessException, "Bad response setting SCIEL reception level. Bad response status.");
         EXCEPTION_ASSERT_WITH_LOG(r[2] == cmd[0] && r[3] == cmd[1], LibLogicalAccessException, "Bad response setting SCIEL reception level. Bad command response identifier.");
@@ -819,7 +819,7 @@ namespace logicalaccess
         LOG(LogLevel::INFOS) << "Retrieving the Ambiant Noise...";
         unsigned char convertorValue = 0;
 
-        std::vector<unsigned char> cmd;
+        ByteVector cmd;
         cmd.push_back(static_cast<unsigned char>(0x39));
         cmd.push_back(static_cast<unsigned char>(0x37));
         cmd.push_back(static_cast<unsigned char>(0x30));
@@ -827,17 +827,17 @@ namespace logicalaccess
         cmd.push_back(d_scielIdentifier[0]);
         cmd.push_back(d_scielIdentifier[1]);
 
-        std::vector<unsigned char> r = getDefaultSCIELReaderCardAdapter()->sendCommand(cmd);
+        ByteVector r = getDefaultSCIELReaderCardAdapter()->sendCommand(cmd);
         EXCEPTION_ASSERT_WITH_LOG(r.size() >= 6, LibLogicalAccessException, "Bad response getting SCIEL AD convertor value. Bad response length.");
         EXCEPTION_ASSERT_WITH_LOG(r[0] == cmd[0] && r[1] == cmd[1], LibLogicalAccessException, "Bad response getting SCIEL AD convertor value. Bad command response identifier.");
         EXCEPTION_ASSERT_WITH_LOG(r[4] == d_scielIdentifier[0] && r[5] == d_scielIdentifier[1], LibLogicalAccessException, "Bad response getting SCIEL AD convertor value. Bad reader response identifier.");
 
-        convertorValue = static_cast<unsigned char>(strtoul(BufferHelper::getStdString(std::vector<unsigned char>(r.begin() + 2, r.end() - 2)).c_str(), NULL, 16));
+        convertorValue = static_cast<unsigned char>(strtoul(BufferHelper::getStdString(ByteVector(r.begin() + 2, r.end() - 2)).c_str(), nullptr, 16));
 
         return convertorValue;
     }
 
-    std::vector<unsigned char> SCIELReaderUnit::getSCIELIdentifier()
+    ByteVector SCIELReaderUnit::getSCIELIdentifier() const
     {
         return d_scielIdentifier;
     }
@@ -864,7 +864,7 @@ namespace logicalaccess
         return status;
     }
 
-    std::shared_ptr<Chip> SCIELReaderUnit::createChipFromBuffer(std::vector<unsigned char> buffer)
+    std::shared_ptr<Chip> SCIELReaderUnit::createChipFromBuffer(ByteVector buffer)
     {
         std::shared_ptr<Chip> chip;
         if (buffer.size() > 2)
@@ -879,13 +879,13 @@ namespace logicalaccess
             if (buffer.size() < 6)
             {
                 chip->setPowerStatus(getELAPowerStatus(buffer[1] & 0xe0));
-                buffer = std::vector<unsigned char>(buffer.begin() + 1, buffer.end());
+                buffer = ByteVector(buffer.begin() + 1, buffer.end());
                 buffer[0] &= 0xf;
             }
             else	// Otherwise (32 bits), the power status cannot be used, the whole 32 bits is the number !
             {
                 chip->setPowerStatus(CPS_UNKNOWN);
-                buffer = std::vector<unsigned char>(buffer.begin() + 1, buffer.end());
+                buffer = ByteVector(buffer.begin() + 1, buffer.end());
             }
             buffer.resize(buffer.size() - 1);
             chip->setChipIdentifier(buffer);

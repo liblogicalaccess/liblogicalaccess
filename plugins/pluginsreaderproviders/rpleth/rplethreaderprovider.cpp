@@ -45,7 +45,7 @@ namespace logicalaccess
 
     RplethReaderProvider::~RplethReaderProvider()
     {
-        release();
+	    RplethReaderProvider::release();
     }
 
     void RplethReaderProvider::release()

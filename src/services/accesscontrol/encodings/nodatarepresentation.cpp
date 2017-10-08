@@ -18,9 +18,9 @@ namespace logicalaccess
     {
     }
 
-    string NoDataRepresentation::getName() const
+	std::string NoDataRepresentation::getName() const
     {
-        return string("No Representation");
+        return std::string("No Representation");
     }
 
     EncodingType NoDataRepresentation::getType() const

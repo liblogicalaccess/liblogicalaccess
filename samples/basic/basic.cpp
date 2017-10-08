@@ -61,13 +61,13 @@ int main(int , char**)
         int ruindex = 0;
         const logicalaccess::ReaderList readers = readerConfig->getReaderProvider()->getReaderList();
         std::cout << "Please select index of the reader unit to use:" << std::endl;
-        for (int i = 0; i < readers.size(); ++i)
+        for (int i = 0; i < static_cast<int>(readers.size()); ++i)
         {
             std::cout << "\t" << i << ". " << readers.at(i)->getName() << std::endl;
         }
         std::cin >> ruindex;
 
-        if (ruindex < 0 || ruindex >= readers.size())
+        if (ruindex < 0 || ruindex >= static_cast<int>(readers.size()))
         {
             std::cerr << "Selected reader unit outside range." << std::endl;
             return EXIT_FAILURE;

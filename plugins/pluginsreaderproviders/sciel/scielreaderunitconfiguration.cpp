@@ -19,7 +19,7 @@ namespace logicalaccess
     SCIELReaderUnitConfiguration::SCIELReaderUnitConfiguration()
         : ReaderUnitConfiguration(READER_SCIEL)
     {
-        resetConfiguration();
+	    SCIELReaderUnitConfiguration::resetConfiguration();
     }
 
     SCIELReaderUnitConfiguration::~SCIELReaderUnitConfiguration()

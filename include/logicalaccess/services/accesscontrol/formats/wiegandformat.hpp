@@ -48,7 +48,7 @@ namespace logicalaccess
          * \param data Where to put data
          * \param dataLengthBytes Length in byte of data
          */
-        virtual void getLinearData(void* data, size_t dataLengthBytes) const;
+	    void getLinearData(void* data, size_t dataLengthBytes) const override;
 
         /**
          * \brief Get linear data without parity
@@ -62,7 +62,7 @@ namespace logicalaccess
          * \param data Where to get data
          * \param dataLengthBytes Length of data in bytes
          */
-        virtual void setLinearData(const void* data, size_t dataLengthBytes);
+	    void setLinearData(const void* data, size_t dataLengthBytes) override;
 
         /**
          * \brief Write linear data without parity into data buffer

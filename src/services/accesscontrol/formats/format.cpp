@@ -166,9 +166,9 @@ namespace logicalaccess
         return ret;
     }
 
-    std::vector<unsigned char> Format::getIdentifier()
+    ByteVector Format::getIdentifier()
     {
-        std::vector<unsigned char> ret;
+        ByteVector ret;
 
         std::list<std::shared_ptr<DataField> > fields = getFieldList();
         for (std::list<std::shared_ptr<DataField> >::iterator i = fields.begin(); i != fields.end(); ++i)
@@ -184,7 +184,7 @@ namespace logicalaccess
                     }
                     else if (std::dynamic_pointer_cast<BinaryDataField>(vfield))
                     {
-                        std::vector<unsigned char> bindata = std::dynamic_pointer_cast<BinaryDataField>(vfield)->getValue();
+                        ByteVector bindata = std::dynamic_pointer_cast<BinaryDataField>(vfield)->getValue();
                         ret.insert(ret.end(), bindata.begin(), bindata.end());
                     }
                     else if (std::dynamic_pointer_cast<NumberDataField>(vfield))
@@ -223,7 +223,7 @@ namespace logicalaccess
         return fields;
     }
 
-    unsigned int Format::getFieldLength(const string& field) const
+    unsigned int Format::getFieldLength(const std::string& field) const
     {
         unsigned int length = 0;
 

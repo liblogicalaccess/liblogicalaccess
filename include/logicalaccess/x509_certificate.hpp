@@ -15,6 +15,7 @@
 
 #include <memory>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include "logicalaccess/crypto/des_initialization_vector.hpp"
 
 namespace logicalaccess
 {
@@ -40,7 +41,7 @@ namespace logicalaccess
             /**
              * \brief Create a null X509Certificate.
              */
-            inline X509Certificate() {}
+	        X509Certificate() {}
 
             /**
              * \brief Create a X509 certificate by loading it from a file.
@@ -49,7 +50,7 @@ namespace logicalaccess
              * \param userdata Some user data to pass to the callback function.
              * \return The X509Certificate.
              */
-            static X509Certificate createFromFile(const std::string& filename, PEMPassphraseCallback callback = NULL, void* userdata = NULL);
+            static X509Certificate createFromFile(const std::string& filename, PEMPassphraseCallback callback = nullptr, void* userdata = nullptr);
 
             /**
              * \brief Create a X509 certificate from a PEM buffer.
@@ -58,7 +59,7 @@ namespace logicalaccess
              * \param userdata Some user data to pass to the callback function.
              * \return The X509Certificate.
              */
-            static X509Certificate createFromPEM(const std::vector<unsigned char>& data, PEMPassphraseCallback callback = NULL, void* userdata = NULL);
+            static X509Certificate createFromPEM(const ByteVector& data, PEMPassphraseCallback callback = nullptr, void* userdata = nullptr);
 
             /**
              * \brief Create a self-signed X509 certificate.
@@ -92,7 +93,7 @@ namespace logicalaccess
              * \brief Get the raw pointer.
              * \return The raw pointer.
              */
-            inline std::shared_ptr<X509> getRaw() const
+	        std::shared_ptr<X509> getRaw() const
             {
                 return d_cert;
             }
@@ -101,7 +102,7 @@ namespace logicalaccess
              * \brief Get the X509 certificate in PEM format.
              * \return The X509 certificate in PEM format.
              */
-            std::vector<unsigned char> getPEM() const;
+            ByteVector getPEM() const;
 
             /**
              * \brief Get the associated public key.
@@ -154,7 +155,7 @@ namespace logicalaccess
             /**
              * \brief Clear the certificate so it becomes null.
              */
-            inline void clear()
+	        void clear()
             {
                 d_cert.reset();
             }
@@ -200,13 +201,13 @@ namespace logicalaccess
              * \brief Create a certificate from a X509 structure pointer.
              * \param cert The X509 structure pointer. If cert is NULL, the behavior is undefined.
              */
-            X509Certificate(std::shared_ptr<X509> cert);
+	        explicit X509Certificate(std::shared_ptr<X509> cert);
 
             /**
              * \brief The boolean test.
              * \return true if d_cert is set.
              */
-            inline bool boolean_test() const
+	        bool boolean_test() const
             {
                 return bool(d_cert);
             }

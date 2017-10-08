@@ -10,11 +10,11 @@
 #include <logicalaccess/settings.hpp>
 
 using namespace logicalaccess;
-using namespace logicalaccess::iks;
+using namespace iks;
 
 IslogKeyServer &IslogKeyServer::fromGlobalSettings()
 {
-    static iks::IslogKeyServer iks(pre_configuration_.ip, pre_configuration_.port,
+    static IslogKeyServer iks(pre_configuration_.ip, pre_configuration_.port,
                                    pre_configuration_.client_cert,
                                    pre_configuration_.client_key,
                                    pre_configuration_.root_ca);
@@ -204,12 +204,12 @@ std::shared_ptr<BaseResponse> IslogKeyServer::transact(const BaseCommand &cmd)
     return nullptr;
 }
 
-void IslogKeyServer::send_command(const BaseCommand &cmd)
+void IslogKeyServer::send_command(const BaseCommand &cmd) const
 {
     transport_->send(cmd.serialize());
 }
 
-std::shared_ptr<BaseResponse> IslogKeyServer::recv()
+std::shared_ptr<BaseResponse> IslogKeyServer::recv() const
 {
     uint32_t packet_size;
     uint16_t opcode;
@@ -277,8 +277,8 @@ std::shared_ptr<BaseResponse> IslogKeyServer::recv()
 }
 
 std::shared_ptr<BaseResponse>
-IslogKeyServer::build_response(uint32_t size, uint16_t opcode, uint16_t status,
-                               const std::vector<uint8_t> &data)
+IslogKeyServer::build_response(uint32_t /*size*/, uint16_t opcode, uint16_t status,
+                               const std::vector<uint8_t> &data) const
 {
     std::shared_ptr<BaseResponse> resp;
     switch (opcode)
@@ -316,7 +316,7 @@ void IslogKeyServer::configureGlobalInstance(const std::string &ip, uint16_t por
                                              const std::string &client_key,
                                              const std::string &root_ca)
 {
-    IslogKeyServer::pre_configuration_ =
+    pre_configuration_ =
         IKSConfig(ip, port, client_cert, client_key, root_ca);
 }
 

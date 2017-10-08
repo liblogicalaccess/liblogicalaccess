@@ -14,9 +14,9 @@ class LIBLOGICALACCESS_API DesfireChangeKeyCommand : public BaseCommand
     DesfireChangeKeyCommand();
     virtual ~DesfireChangeKeyCommand() = default;
 
-    virtual std::vector<uint8_t> serialize() const override;
+	std::vector<uint8_t> serialize() const override;
 
-    virtual size_t binary_size_impl() const;
+	size_t binary_size_impl() const override;
 
 #define IKS_COMMAND_DESFIRE_CHANGEKEY_SAME_KEY 1
 #define IKS_COMMAND_DESFIRE_CHANGEKEY_OTHER_KEY 2

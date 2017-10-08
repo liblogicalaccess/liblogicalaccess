@@ -16,9 +16,9 @@ namespace logicalaccess
         for (unsigned char i = 0; i < sizeof(settings); ++i)
         {
             if ((d_updatemask & 0x80) == 0x80)
-                x[i] = 1;
+                x[i] = true;
             else
-                x[i] = 0;
+                x[i] = false;
             if (i + (unsigned int)1 < sizeof(settings))
                 d_updatemask = d_updatemask << 1;
         }

@@ -43,20 +43,20 @@ namespace logicalaccess
          * \brief Send a REQ command from the PCD to the PICC.
          * \return The ATQ value.
          */
-        virtual std::vector<unsigned char> request();
+		ByteVector request() override;
 
         /**
          * \brief Manage collision.
          * \return PICC serial number.
          */
-        virtual std::vector<unsigned char> anticollision();
+		ByteVector anticollision() override;
 
         /**
          * \brief Select a PICC.
          * \param uid The PICC serial number.
          */
 
-        virtual void selectIso(const std::vector<unsigned char>& uid);
+	    void selectIso(const ByteVector& uid) override;
 
         /**
          * \brief Send a HLT command from the PCD to the PICC.

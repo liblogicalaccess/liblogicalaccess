@@ -32,7 +32,7 @@ namespace logicalaccess
     bool MifarePCSCCommands::loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol)
     {
         bool r = false;
-        std::vector<unsigned char> result,
+        ByteVector result,
 			vector_key((unsigned char *)key->getData(), (unsigned char *)key->getData() + key->getLength());
 
         try
@@ -51,8 +51,7 @@ namespace logicalaccess
                 // Apparently the issue is also hit with ACS122U.
                 return loadKey(keyno, keytype, key, true);
             }
-            else
-                throw;
+	        throw;
         }
         if (!vol && (result[result.size() - 2] == 0x63) &&
             (result[result.size() - 1] == 0x86))
@@ -105,7 +104,7 @@ namespace logicalaccess
     void MifarePCSCCommands::authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype)
     {
         TRACE(blockno, keyno, keytype);
-        std::vector<unsigned char> command;
+        ByteVector command;
 
         command.push_back(0x01);
         command.push_back(0x00);
@@ -134,7 +133,7 @@ namespace logicalaccess
         }
     }
 
-    std::vector<unsigned char> MifarePCSCCommands::readBinary(unsigned char blockno, size_t len)
+    ByteVector MifarePCSCCommands::readBinary(unsigned char blockno, size_t len)
     {
         TRACE(blockno, len);
         if (len >= 256)
@@ -142,13 +141,11 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad len parameter.");
         }
 
-        std::vector<unsigned char> result;
-
-        result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xB0, 0x00, blockno, static_cast<unsigned char>(len));
-        return std::vector<unsigned char>(result.begin(), result.end() - 2);
+	    ByteVector result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xB0, 0x00, blockno, static_cast<unsigned char>(len));
+        return ByteVector(result.begin(), result.end() - 2);
     }
 
-    void MifarePCSCCommands::updateBinary(unsigned char blockno, const std::vector<unsigned char>& buf)
+    void MifarePCSCCommands::updateBinary(unsigned char blockno, const ByteVector& buf)
     {
         TRACE(blockno, buf);
         if (buf.size() >= 256)
@@ -161,13 +158,12 @@ namespace logicalaccess
 
     void MifarePCSCCommands::increment(uint8_t blockno, uint32_t value)
     {
-        std::vector<uint8_t> buf;
-        std::vector<uint8_t> dest           = {0x80, 0x01, blockno};
+	    std::vector<uint8_t> dest           = {0x80, 0x01, blockno};
         std::vector<uint8_t> value_change   = {0x81, 0x04, 0x00, 0x00, 0x00, 0x00};
 
         memcpy(&value_change[2], &value, 4);
 
-        buf = {0xA0, static_cast<uint8_t>(dest.size() + value_change.size())};
+        std::vector<uint8_t> buf = {0xA0, static_cast<uint8_t>(dest.size() + value_change.size())};
         buf.insert(buf.end(), dest.begin(), dest.end());
         buf.insert(buf.end(), value_change.begin(), value_change.end());
 
@@ -178,13 +174,12 @@ namespace logicalaccess
 
     void MifarePCSCCommands::decrement(uint8_t blockno, uint32_t value)
     {
-        std::vector<uint8_t> buf;
-        std::vector<uint8_t> dest           = {0x80, 0x01, blockno};
+	    std::vector<uint8_t> dest           = {0x80, 0x01, blockno};
         std::vector<uint8_t> value_change   = {0x81, 0x04, 0x00, 0x00, 0x00, 0x00};
 
         memcpy(&value_change[2], &value, 4);
 
-        buf = {0xA1, static_cast<uint8_t>(dest.size() + value_change.size())};
+        std::vector<uint8_t> buf = {0xA1, static_cast<uint8_t>(dest.size() + value_change.size())};
         buf.insert(buf.end(), dest.begin(), dest.end());
         buf.insert(buf.end(), value_change.begin(), value_change.end());
 

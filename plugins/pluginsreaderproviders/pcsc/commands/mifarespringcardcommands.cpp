@@ -30,8 +30,8 @@ bool MifareSpringCardCommands::loadKey(unsigned char keyno,
 {
     bool r = false;
 
-    std::vector<unsigned char> result,
-		vector_key((unsigned char *)key->getData(), (unsigned char *)key->getData() + key->getLength());
+    ByteVector
+	    vector_key((unsigned char *)key->getData(), (unsigned char *)key->getData() + key->getLength());
 
     unsigned char keyindex = 0x00;
     if (keytype == KT_KEY_B)
@@ -39,9 +39,9 @@ bool MifareSpringCardCommands::loadKey(unsigned char keyno,
         keyindex = 0x10 + keyno;
     }
 
-    result = getPCSCReaderCardAdapter()->sendAPDUCommand(
-        0xFF, 0x82, 0x00, keyindex,
-        static_cast<unsigned char>(vector_key.size()), vector_key);
+    ByteVector result = getPCSCReaderCardAdapter()->sendAPDUCommand(
+	    0xFF, 0x82, 0x00, keyindex,
+	    static_cast<unsigned char>(vector_key.size()), vector_key);
 
     if (!vol && (result[result.size() - 2] == 0x63) &&
         (result[result.size() - 1] == 0x86))
@@ -63,7 +63,7 @@ void MifareSpringCardCommands::authenticate(unsigned char blockno,
                                             unsigned char keyno,
                                             MifareKeyType keytype)
 {
-    std::vector<unsigned char> command;
+    ByteVector command;
 
     unsigned char keyindex = 0x00 + keyno;
     if (keytype == KT_KEY_B)
@@ -84,7 +84,7 @@ void MifareSpringCardCommands::authenticate(unsigned char blockno,
 
 void MifareSpringCardCommands::restore(unsigned char blockno)
 {
-    std::vector<unsigned char> buf;
+    ByteVector buf;
     buf.push_back(0x00);
     buf.push_back(0x00);
     buf.push_back(0x00);
@@ -96,7 +96,7 @@ void MifareSpringCardCommands::restore(unsigned char blockno)
 
 void MifareSpringCardCommands::increment(unsigned char blockno, uint32_t value)
 {
-    std::vector<unsigned char> buf;
+    ByteVector buf;
 
     buf.push_back(static_cast<unsigned char>(value & 0xff));
     buf.push_back(static_cast<unsigned char>((value >> 8) & 0xff));
@@ -108,7 +108,7 @@ void MifareSpringCardCommands::increment(unsigned char blockno, uint32_t value)
 
 void MifareSpringCardCommands::decrement(unsigned char blockno, uint32_t value)
 {
-    std::vector<unsigned char> buf;
+    ByteVector buf;
 
     buf.push_back(static_cast<unsigned char>(value & 0xff));
     buf.push_back(static_cast<unsigned char>((value >> 8) & 0xff));

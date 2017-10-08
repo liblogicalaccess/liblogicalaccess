@@ -11,6 +11,7 @@
 #include <vector>
 #include <string>
 #include "logicalaccess/logicalaccess_api.hpp"
+#include "logicalaccess/crypto/des_initialization_vector.hpp"
 
 namespace logicalaccess
 {
@@ -21,37 +22,37 @@ namespace logicalaccess
     {
     public:
 
-        static std::string toBase64(const std::vector<unsigned char>& buf);
+        static std::string toBase64(const ByteVector& buf);
 
-        static std::vector<unsigned char> fromBase64(const std::string& b64str);
+        static ByteVector fromBase64(const std::string& b64str);
 
-        static std::string getHex(const std::vector<unsigned char>& buffer);
+        static std::string getHex(const ByteVector& buffer);
 
-        static std::vector<unsigned char> fromHexString(std::string hexString);
+        static ByteVector fromHexString(std::string hexString);
 
-        static std::string getStdString(const std::vector<unsigned char>& buffer);
+        static std::string getStdString(const ByteVector& buffer);
 
-        static void setUShort(std::vector<unsigned char>& buffer, const unsigned short& value);
+        static void setUShort(ByteVector& buffer, const unsigned short& value);
 
-        static unsigned short getUShort(const std::vector<unsigned char>& buffer, size_t& offset);
+        static unsigned short getUShort(const ByteVector& buffer, size_t& offset);
 
-        static void setInt32(std::vector<unsigned char>& buffer, const long& value);
+        static void setInt32(ByteVector& buffer, const long& value);
 
-        static long getInt32(const std::vector<unsigned char>& buffer, size_t& offset);
+        static long getInt32(const ByteVector& buffer, size_t& offset);
 
-        static unsigned long getUInt32(const std::vector<unsigned char>& buffer, size_t& offset);
+        static unsigned long getUInt32(const ByteVector& buffer, size_t& offset);
 
-        static void setUInt32(std::vector<unsigned char>& buffer, const unsigned long& value);
+        static void setUInt32(ByteVector& buffer, const unsigned long& value);
 
-        static void setUInt64(std::vector<unsigned char>& buffer, const unsigned long long& value);
+        static void setUInt64(ByteVector& buffer, const unsigned long long& value);
 
-        static uint64_t getUInt64(const std::vector<unsigned char>& buffer, size_t& offset);
+        static uint64_t getUInt64(const ByteVector& buffer, size_t& offset);
 
-		static void setUInt16(std::vector<unsigned char>& buffer, const unsigned long& value);
+		static void setUInt16(ByteVector& buffer, const unsigned long& value);
 
-		static unsigned long getUInt16(const std::vector<unsigned char>& buffer, size_t& offset);
+		static unsigned long getUInt16(const ByteVector& buffer, size_t& offset);
 
-        static void setString(std::vector<unsigned char>& buffer, const std::string& value);
+        static void setString(ByteVector& buffer, const std::string& value);
 
         /**
          * Check if the buffer contains either no byte, or only zeroed bytes

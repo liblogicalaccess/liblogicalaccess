@@ -21,7 +21,8 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API IChip
     {
     public:
-        /**
+	    virtual ~IChip() = default;
+	    /**
          * \brief Get the card type of the chip.
          * \return The chip's card type.
          */
@@ -43,7 +44,7 @@ namespace logicalaccess
          * \brief Get the chip identifier.
          * \return The chip identifier.
          */
-        virtual const std::vector<unsigned char> getChipIdentifier() const = 0;
+        virtual ByteVector getChipIdentifier() const = 0;
 
         /**
          * \brief Get a card service for this chip.

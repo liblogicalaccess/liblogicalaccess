@@ -43,17 +43,15 @@ namespace logicalaccess
          */
         virtual ~SAMAV1ISO7816Commands();
 
-        virtual std::shared_ptr<SAMKeyEntry<KeyEntryAV1Information, SETAV1> > getKeyEntry(unsigned char keyno);
-        virtual std::shared_ptr<SAMKucEntry> getKUCEntry(unsigned char kucno);
+	    std::shared_ptr<SAMKeyEntry<KeyEntryAV1Information, SETAV1> > getKeyEntry(unsigned char keyno) override;
+	    std::shared_ptr<SAMKucEntry> getKUCEntry(unsigned char kucno) override;
 
-        virtual void changeKUCEntry(unsigned char kucno, std::shared_ptr<SAMKucEntry> keyentry, std::shared_ptr<DESFireKey> key);
-        virtual void changeKeyEntry(unsigned char keyno, std::shared_ptr<SAMKeyEntry<KeyEntryAV1Information, SETAV1> > keyentry, std::shared_ptr<DESFireKey> key);
+	    void changeKUCEntry(unsigned char kucno, std::shared_ptr<SAMKucEntry> keyentry, std::shared_ptr<DESFireKey> key) override;
+	    void changeKeyEntry(unsigned char keyno, std::shared_ptr<SAMKeyEntry<KeyEntryAV1Information, SETAV1> > keyentry, std::shared_ptr<DESFireKey> key) override;
 
-        virtual void authenticateHost(std::shared_ptr<DESFireKey> key, unsigned char keyno);
+	    void authenticateHost(std::shared_ptr<DESFireKey> key, unsigned char keyno) override;
         void authenticateHost_AES_3K3DES(std::shared_ptr<DESFireKey> key, unsigned char keyno);
         void authenticateHostDES(std::shared_ptr<DESFireKey> key, unsigned char keyno);
-
-    protected:
     };
 }
 

@@ -73,7 +73,7 @@ namespace logicalaccess
         Settings();
 
         void LoadSettings();
-        void SaveSettings();
+        void SaveSettings() const;
 
         static Settings* instance;
 

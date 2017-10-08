@@ -39,9 +39,7 @@ namespace logicalaccess
          * \brief Get the root location node.
          * \return The root location node.
          */
-        virtual std::shared_ptr<LocationNode> getRootLocationNode();
-
-    protected:
+	    std::shared_ptr<LocationNode> getRootLocationNode() override;
     };
 }
 

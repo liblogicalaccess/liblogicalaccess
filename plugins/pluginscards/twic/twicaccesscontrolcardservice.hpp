@@ -25,7 +25,7 @@ namespace logicalaccess
          * \brief Constructor.
          * \param chip The associated chip.
          */
-        TwicAccessControlCardService(std::shared_ptr<Chip> chip);
+	    explicit TwicAccessControlCardService(std::shared_ptr<Chip> chip);
 
         /**
          * \brief Destructor.
@@ -39,7 +39,7 @@ namespace logicalaccess
          * \param aiToUse The key's informations to use.
          * \return The format read on success, null otherwise.
          */
-        virtual std::shared_ptr<Format> readFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse);
+	    std::shared_ptr<Format> readFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse) override;
 
         /**
          * \brief Write format to the card.
@@ -49,17 +49,17 @@ namespace logicalaccess
          * \param aiToWrite The key's informations to write.
          * \return True on success, false otherwise.
          */
-        virtual bool writeFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite);
+	    bool writeFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite) override;
 
 		/**
 		* \brief Get the supported format list.
 		* \return The format list.
 		*/
-		virtual FormatList getSupportedFormatList();
+	    FormatList getSupportedFormatList() override;
 
     protected:
 
-        std::shared_ptr<TwicChip> getTwicChip() { return std::dynamic_pointer_cast<TwicChip>(getChip()); };
+        std::shared_ptr<TwicChip> getTwicChip() const { return std::dynamic_pointer_cast<TwicChip>(getChip()); }
     };
 }
 

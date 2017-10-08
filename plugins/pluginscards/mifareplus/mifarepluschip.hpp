@@ -22,16 +22,16 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API MifarePlusChip : public IChip
     {
     public:
-        ~MifarePlusChip() = default;
-        MifarePlusChip() { };
-        virtual int getSecurityLevel() const { return -1 ; } ;
+	    virtual ~MifarePlusChip() = default;
+        MifarePlusChip() { }
+	    virtual int getSecurityLevel() const { return -1 ; }
 
-        /**
+	    /**
          * Returns the AES key number on the card for a given sector and key type.
          */
         static uint16_t key_number_from_sector(int sector, MifareKeyType type);
 
-		virtual std::string getGenericCardType() const override;
+	    std::string getGenericCardType() const override;
     };
 }
 

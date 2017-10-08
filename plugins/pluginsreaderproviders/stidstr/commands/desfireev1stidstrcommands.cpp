@@ -30,18 +30,18 @@ namespace logicalaccess
     {
     }
 
-    std::vector<unsigned char> DESFireEV1STidSTRCommands::scanDESFire()
+    ByteVector DESFireEV1STidSTRCommands::scanDESFire() const
     {
         LOG(LogLevel::INFOS) << "Scanning DESFire card...";
-        std::vector<unsigned char> uid;
-        std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x0001, std::vector<unsigned char>());
+        ByteVector uid;
+        ByteVector r = getSTidSTRReaderCardAdapter()->sendCommand(0x0001, ByteVector());
 
         bool hasCard = (r[0] == 0x01);
         if (hasCard)
         {
             LOG(LogLevel::INFOS) << "Card detected !";
             unsigned char uidLength = r[1];
-            uid = std::vector<unsigned char>(r.begin() + 2, r.begin() + 2 + uidLength);
+            uid = ByteVector(r.begin() + 2, r.begin() + 2 + uidLength);
 
             LOG(LogLevel::INFOS) << "Card uid " << BufferHelper::getHex(uid) << "-{" << BufferHelper::getStdString(uid) << "}";
         }
@@ -53,16 +53,16 @@ namespace logicalaccess
         return uid;
     }
 
-    void DESFireEV1STidSTRCommands::releaseRFIDField()
+    void DESFireEV1STidSTRCommands::releaseRFIDField() const
     {
         LOG(LogLevel::INFOS) << "Releasing RFID field...";
-        getSTidSTRReaderCardAdapter()->sendCommand(0x0002, std::vector<unsigned char>());
+        getSTidSTRReaderCardAdapter()->sendCommand(0x0002, ByteVector());
     }
 
-    void DESFireEV1STidSTRCommands::changePPS(STidDESFireBaudrate readerToChipKbps, STidDESFireBaudrate chipToReaderKbps)
+    void DESFireEV1STidSTRCommands::changePPS(STidDESFireBaudrate readerToChipKbps, STidDESFireBaudrate chipToReaderKbps) const
     {
         LOG(LogLevel::INFOS) << "Changing PPS (communication speed between the chip and reader)...";
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(static_cast<unsigned char>(readerToChipKbps));
         command.push_back(static_cast<unsigned char>(chipToReaderKbps));
         getSTidSTRReaderCardAdapter()->sendCommand(0x0003, command);
@@ -72,7 +72,7 @@ namespace logicalaccess
     {
         LOG(LogLevel::INFOS) << "Getting free memory of card (number of bytes free available)...";
         unsigned int freemem = 0;
-        std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x006E, std::vector<unsigned char>());
+        ByteVector r = getSTidSTRReaderCardAdapter()->sendCommand(0x006E, ByteVector());
 
         if (r.size() == 3)
         {
@@ -109,15 +109,15 @@ namespace logicalaccess
 
     void DESFireEV1STidSTRCommands::createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys)
     {
-        createApplication(aid, settings, maxNbKeys, DF_KEY_DES, FIDS_NO_ISO_FID, 0, std::vector<unsigned char>());
+        createApplication(aid, settings, maxNbKeys, DF_KEY_DES, FIDS_NO_ISO_FID, 0, ByteVector());
     }
 
-    void DESFireEV1STidSTRCommands::createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, DESFireKeyType cryptoMethod, FidSupport /*fidSupported*/, unsigned short isoFID, std::vector<unsigned char> isoDFName)
+    void DESFireEV1STidSTRCommands::createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, DESFireKeyType cryptoMethod, FidSupport /*fidSupported*/, unsigned short isoFID, ByteVector isoDFName)
     {
         LOG(LogLevel::INFOS) << "Creating application aid {0x" << std::hex << aid << std::dec << "(" << aid << ")} settings {0x" << std::hex << settings << std::dec << "(" << settings << ")} max nb Keys {" << maxNbKeys << "} key type {0x" << std::hex << cryptoMethod << std::dec << "(" << cryptoMethod << ")}";
 
-        std::vector<unsigned char> tmpcmd;
-        std::vector<unsigned char> command;
+        ByteVector tmpcmd;
+        ByteVector command;
 
         DESFireLocation::convertUIntToAid(aid, tmpcmd);
         command.insert(command.end(), tmpcmd.begin(), tmpcmd.end());
@@ -145,7 +145,7 @@ namespace logicalaccess
     void DESFireEV1STidSTRCommands::deleteApplication(unsigned int aid)
     {
         LOG(LogLevel::INFOS) << "Deleting application aid {0x" << std::hex << aid << std::dec << "(" << aid << ")}...";
-        std::vector<unsigned char> command;
+        ByteVector command;
 
         DESFireLocation::convertUIntToAid(aid, command);
 
@@ -155,7 +155,7 @@ namespace logicalaccess
     void DESFireEV1STidSTRCommands::selectApplication(unsigned int aid)
     {
         LOG(LogLevel::INFOS) << "Selecting application aid {0x" << std::hex << aid << std::dec << "(" << aid << ")}";
-        std::vector<unsigned char> command;
+        ByteVector command;
         DESFireLocation::convertUIntToAid(aid, command);
 
         getSTidSTRReaderCardAdapter()->sendCommand(0x005A, command);
@@ -172,7 +172,7 @@ namespace logicalaccess
     void DESFireEV1STidSTRCommands::getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys, DESFireKeyType& keyType)
     {
         LOG(LogLevel::INFOS) << "Retrieving key settings...";
-        std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x0045, std::vector<unsigned char>());
+        ByteVector r = getSTidSTRReaderCardAdapter()->sendCommand(0x0045, ByteVector());
 
         EXCEPTION_ASSERT_WITH_LOG(r.size() >= 3, LibLogicalAccessException, "The response length should be at least 3-byte long");
 
@@ -183,38 +183,38 @@ namespace logicalaccess
         LOG(LogLevel::INFOS) << "Returns settings {0x" << std::hex << settings << std::dec << "(" << settings << ")} max nb Keys {" << maxNbKeys << "} key type {0x" << std::hex << keyType << std::dec << "(" << keyType << ")}";
     }
 
-    unsigned char DESFireEV1STidSTRCommands::getKeyVersion(unsigned char keyno)
+    unsigned char DESFireEV1STidSTRCommands::getKeyVersion(unsigned char keyno) const
     {
         LOG(LogLevel::INFOS) << "Retrieving key version for key number {" << keyno << "}...";
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(keyno);
-        std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x0064, command);
+        ByteVector r = getSTidSTRReaderCardAdapter()->sendCommand(0x0064, command);
 
         EXCEPTION_ASSERT_WITH_LOG(r.size() >= 1, LibLogicalAccessException, "The response length should be at least 1-byte long");
 
         return r[0];
     }
 
-    std::vector<unsigned char> DESFireEV1STidSTRCommands::getCardUID()
+    ByteVector DESFireEV1STidSTRCommands::getCardUID()
     {
         LOG(LogLevel::INFOS) << "Retrieving card uid...";
-        std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x0051, std::vector<unsigned char>());
+        ByteVector r = getSTidSTRReaderCardAdapter()->sendCommand(0x0051, ByteVector());
 
         return r;
     }
 
-    void DESFireEV1STidSTRCommands::createStdDataFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize)
+    void DESFireEV1STidSTRCommands::createStdDataFile(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, unsigned int fileSize)
     {
         createStdDataFile(fileno, comSettings, accessRights, fileSize, 0x00);
     }
 
-    void DESFireEV1STidSTRCommands::createStdDataFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned short isoFID)
+    void DESFireEV1STidSTRCommands::createStdDataFile(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, unsigned int fileSize, unsigned short isoFID)
     {
         LOG(LogLevel::INFOS) << "Creating standard data file - file number {0x" << std::hex << fileno << std::dec << "(" << fileno << ")} encryption mode {0x"
             << std::hex << comSettings << std::dec << "(" << comSettings << ")} access right {0x"
             << std::hex << AccessRightsInMemory(accessRights) << std::dec << "(" << AccessRightsInMemory(accessRights) << ")} file size {" << fileSize << "}...";
 
-        std::vector<unsigned char> command;
+        ByteVector command;
         short ar = AccessRightsInMemory(accessRights);
 
         command.push_back(static_cast<unsigned char>(fileno));
@@ -235,28 +235,28 @@ namespace logicalaccess
     {
         LOG(LogLevel::INFOS) << "Committing transaction...";
 
-        getSTidSTRReaderCardAdapter()->sendCommand(0x00C7, std::vector<unsigned char>());
+        getSTidSTRReaderCardAdapter()->sendCommand(0x00C7, ByteVector());
     }
 
     void DESFireEV1STidSTRCommands::abortTransaction()
     {
         LOG(LogLevel::INFOS) << "Aborting transaction...";
 
-        getSTidSTRReaderCardAdapter()->sendCommand(0x00A7, std::vector<unsigned char>());
+        getSTidSTRReaderCardAdapter()->sendCommand(0x00A7, ByteVector());
     }
 
-    void DESFireEV1STidSTRCommands::createBackupFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize)
+    void DESFireEV1STidSTRCommands::createBackupFile(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, unsigned int fileSize)
     {
         createBackupFile(fileno, comSettings, accessRights, fileSize, 0x00);
     }
 
-    void DESFireEV1STidSTRCommands::createBackupFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned short isoFID)
+    void DESFireEV1STidSTRCommands::createBackupFile(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, unsigned int fileSize, unsigned short isoFID)
     {
         LOG(LogLevel::INFOS) << "Creating backup file - file number {0x" << std::hex << fileno << std::dec << "(" << fileno << ")} encryption mode {0x"
             << std::hex << comSettings << std::dec << "(" << comSettings << ")} access right {0x"
             << std::hex << AccessRightsInMemory(accessRights) << std::dec << "(" << AccessRightsInMemory(accessRights) << ")} file size {" << fileSize << "}...";
 
-        std::vector<unsigned char> command;
+        ByteVector command;
         short ar = AccessRightsInMemory(accessRights);
 
         command.push_back(static_cast<unsigned char>(fileno));
@@ -273,14 +273,14 @@ namespace logicalaccess
         getSTidSTRReaderCardAdapter()->sendCommand(0x00CB, command);
     }
 
-    void DESFireEV1STidSTRCommands::createValueFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int lowerLimit, unsigned int upperLimit, unsigned int value, bool limitedCreditEnabled)
+    void DESFireEV1STidSTRCommands::createValueFile(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, unsigned int lowerLimit, unsigned int upperLimit, unsigned int value, bool limitedCreditEnabled)
     {
         LOG(LogLevel::INFOS) << "Creating value file - file number {0x" << std::hex << fileno << std::dec << "(" << fileno << ")} encryption mode {0x"
             << std::hex << comSettings << std::dec << "(" << comSettings << ")} access right {0x"
             << std::hex << AccessRightsInMemory(accessRights) << std::dec << "(" << AccessRightsInMemory(accessRights) << ")} lower limit {" << lowerLimit << "} upper limit {" << upperLimit << "} value {0x"
             << std::hex << value << std::dec << "(" << value << ")}, limited credit enabled {" << limitedCreditEnabled << "}...";
 
-        std::vector<unsigned char> command;
+        ByteVector command;
         short ar = AccessRightsInMemory(accessRights);
 
         command.push_back(fileno);
@@ -294,18 +294,18 @@ namespace logicalaccess
         getSTidSTRReaderCardAdapter()->sendCommand(0x00CC, command);
     }
 
-    void DESFireEV1STidSTRCommands::createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords)
+    void DESFireEV1STidSTRCommands::createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords)
     {
         createLinearRecordFile(fileno, comSettings, accessRights, fileSize, maxNumberOfRecords, 0x00);
     }
 
-    void DESFireEV1STidSTRCommands::createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID)
+    void DESFireEV1STidSTRCommands::createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID)
     {
         LOG(LogLevel::INFOS) << "Creating linear record file - file number {0x" << std::hex << fileno << std::dec << "(" << fileno << ")} encryption mode {0x"
             << std::hex << comSettings << std::dec << "(" << comSettings << ")} access right {0x"
             << std::hex << AccessRightsInMemory(accessRights) << std::dec << "(" << AccessRightsInMemory(accessRights) << ")} file size {" << fileSize << "} max number records {" << maxNumberOfRecords << "}...";
 
-        std::vector<unsigned char> command;
+        ByteVector command;
         short ar = AccessRightsInMemory(accessRights);
 
         command.push_back(fileno);
@@ -325,19 +325,19 @@ namespace logicalaccess
         getSTidSTRReaderCardAdapter()->sendCommand(0x00C1, command);
     }
 
-    void DESFireEV1STidSTRCommands::createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords)
+    void DESFireEV1STidSTRCommands::createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords)
     {
         createCyclicRecordFile(fileno, comSettings, accessRights, fileSize, maxNumberOfRecords, 0x00);
     }
 
-    void DESFireEV1STidSTRCommands::createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID)
+    void DESFireEV1STidSTRCommands::createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID)
     {
         LOG(LogLevel::INFOS) << "Creating cyclic record file - file number {0x" << std::hex << fileno << std::dec << "(" << fileno << ")} encryption mode {0x"
             << std::hex << comSettings << std::dec << "(" << comSettings << ")} access right {0x"
             << std::hex << AccessRightsInMemory(accessRights) << std::dec << "(" << AccessRightsInMemory(accessRights) << ")} file size {"
             << fileSize << "} max number records {" << maxNumberOfRecords << "}...";
 
-        std::vector<unsigned char> command;
+        ByteVector command;
         short ar = AccessRightsInMemory(accessRights);
 
         command.push_back(fileno);
@@ -363,32 +363,32 @@ namespace logicalaccess
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
     }
 
-    std::vector<unsigned char> DESFireEV1STidSTRCommands::iso_readRecords(unsigned short /*fid*/, unsigned char /*start_record*/, DESFireRecords /*record_number*/)
+    ByteVector DESFireEV1STidSTRCommands::iso_readRecords(unsigned short /*fid*/, unsigned char /*start_record*/, DESFireRecords /*record_number*/)
     {
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
-        return std::vector<unsigned char>();
+        return ByteVector();
     }
 
-    void DESFireEV1STidSTRCommands::iso_appendrecord(const std::vector<unsigned char>& /*data*/, unsigned short /*fid*/)
-    {
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
-    }
-
-    std::vector<unsigned char> DESFireEV1STidSTRCommands::iso_getChallenge(unsigned int /*length*/)
-    {
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
-        return std::vector<unsigned char>();
-    }
-
-    void DESFireEV1STidSTRCommands::iso_externalAuthenticate(DESFireISOAlgorithm /*algorithm*/, bool /*isMasterCardKey*/, unsigned char /*keyno*/, const std::vector<unsigned char>& /*data*/)
+    void DESFireEV1STidSTRCommands::iso_appendrecord(const ByteVector& /*data*/, unsigned short /*fid*/)
     {
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
     }
 
-    std::vector<unsigned char> DESFireEV1STidSTRCommands::iso_internalAuthenticate(DESFireISOAlgorithm /*algorithm*/, bool /*isMasterCardKey*/, unsigned char /*keyno*/, const std::vector<unsigned char>& /*RPCD2*/, unsigned int /*length*/)
+    ByteVector DESFireEV1STidSTRCommands::iso_getChallenge(unsigned int /*length*/)
     {
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
-        return std::vector<unsigned char>();
+        return ByteVector();
+    }
+
+    void DESFireEV1STidSTRCommands::iso_externalAuthenticate(DESFireISOAlgorithm /*algorithm*/, bool /*isMasterCardKey*/, unsigned char /*keyno*/, const ByteVector& /*data*/)
+    {
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
+    }
+
+    ByteVector DESFireEV1STidSTRCommands::iso_internalAuthenticate(DESFireISOAlgorithm /*algorithm*/, bool /*isMasterCardKey*/, unsigned char /*keyno*/, const ByteVector& /*RPCD2*/, unsigned int /*length*/)
+    {
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
+        return ByteVector();
     }
 
     void DESFireEV1STidSTRCommands::loadKey(std::shared_ptr<DESFireKey> key)
@@ -400,7 +400,7 @@ namespace logicalaccess
         {
             LOG(LogLevel::INFOS) << "Using computer memory key storage...";
             unsigned char* keydata = key->getData();
-            loadKey(std::vector<unsigned char>(keydata, keydata + key->getLength()), key->getKeyDiversification() != NULL, true);
+            loadKey(ByteVector(keydata, keydata + key->getLength()), key->getKeyDiversification() != nullptr, true);
         }
         else if (std::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage))
         {
@@ -412,12 +412,12 @@ namespace logicalaccess
         }
     }
 
-    void DESFireEV1STidSTRCommands::loadKey(std::vector<unsigned char> key, bool /*diversify*/, bool /*isVolatile*/)
+    void DESFireEV1STidSTRCommands::loadKey(ByteVector key, bool /*diversify*/, bool /*isVolatile*/)
     {
         LOG(LogLevel::INFOS) << "Loading key in reader memory... key size {" << key.size() << "}";
         EXCEPTION_ASSERT_WITH_LOG(key.size() == 16, LibLogicalAccessException, "The key length must be 16-byte long");
 
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(0x00); //(isVolatile ? 0x00 : 0x01);  Always use the Reader RAM Memory (0x00) (if want to write in EEPROM, use 0x01)
         command.insert(command.end(), key.begin(), key.end());
         command.push_back(0x00);	// Diversify, not supported yet.
@@ -427,11 +427,11 @@ namespace logicalaccess
 
     void DESFireEV1STidSTRCommands::authenticate(STidKeyLocationType keylocation, unsigned char keyno, DESFireKeyType cryptoMethod, unsigned char keyindex)
     {
-        LOG(LogLevel::INFOS) << "Authenticating from location... key location {" << DESFireEV1STidSTRCommands::STidKeyLocationTypeStr(keylocation) << "} key number {0x"
+        LOG(LogLevel::INFOS) << "Authenticating from location... key location {" << STidKeyLocationTypeStr(keylocation) << "} key number {0x"
             << std::hex << keyno << std::dec << "(" << keyno << ")}, key type {" << DESFireKey::DESFireKeyTypeStr(cryptoMethod) << "}, key index {0x"
             << std::hex << keyindex << std::dec << "(" << keyindex << ")}";
 
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(static_cast<unsigned char>(keylocation));
         command.push_back(keyno);
         command.push_back((cryptoMethod == DF_KEY_AES) ? 0x02 : 0x00);
@@ -479,12 +479,12 @@ namespace logicalaccess
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
     }
 
-    std::vector<unsigned char> DESFireEV1STidSTRCommands::readData(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode)
+    ByteVector DESFireEV1STidSTRCommands::readData(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode)
     {
         LOG(LogLevel::INFOS) << "Reading data... file number {0x" << std::hex << fileno << std::dec << "(" << fileno << ")} offset {"
             << offset << "} length {" << length << "} encrypt mode {0x"
             << std::hex << mode << std::dec << "(" << mode << ")}";
-        std::vector<unsigned char> command, result;
+        ByteVector command, result;
 
         size_t stidMaxDataSize = 1024; // New to version 1.2 of API (before was limited to 200)
         // STid STR reader doesn't support data larger than <stidMaxDataSize> bytes, we should split the command.
@@ -499,7 +499,7 @@ namespace logicalaccess
             command.insert(command.end(), (unsigned char*)&trunloffset, (unsigned char*)&trunloffset + 3);
             command.insert(command.end(), (unsigned char*)&trunklength, (unsigned char*)&trunklength + 3);
 
-            std::vector<unsigned char> data = getSTidSTRReaderCardAdapter()->sendCommand(0x00BD, command);
+            ByteVector data = getSTidSTRReaderCardAdapter()->sendCommand(0x00BD, command);
 
 			result.insert(result.end(), data.begin(), data.end());
         }
@@ -508,12 +508,12 @@ namespace logicalaccess
         return result;
     }
 
-    void DESFireEV1STidSTRCommands::writeData(unsigned char fileno, unsigned int offset, const std::vector<unsigned char>& data, EncryptionMode mode)
+    void DESFireEV1STidSTRCommands::writeData(unsigned char fileno, unsigned int offset, const ByteVector& data, EncryptionMode mode)
     {
         LOG(LogLevel::INFOS) << "Writing data... file number {0x"
             << std::hex << fileno << std::dec << "(" << fileno << ")} offset {" << offset << "} length {" << data.size() << "} encrypt mode {0x"
             << std::hex << mode << std::dec << "(" << mode << ")}";
-        std::vector<unsigned char> command;
+        ByteVector command;
 
         size_t stidMaxDataSize = 1024; // New to version 1.2 of API (before was limited to 200)
         // STid STR reader doesn't support data larger than <stidMaxDataSize> bytes, we should split the command.
@@ -539,7 +539,7 @@ namespace logicalaccess
             << std::hex << fileno << std::dec << "(" << fileno << ")} value {0x"
             << std::hex << value << std::dec << "(" << value << ")} encrypt mode {0x"
             << std::hex << mode << std::dec << "(" << mode << ")}";
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(static_cast<unsigned char>(mode));
         command.push_back(fileno);
         BufferHelper::setUInt32(command, value);
@@ -553,7 +553,7 @@ namespace logicalaccess
             << std::hex << fileno << std::dec << "(" << fileno << ")} value {0x"
             << std::hex << value << std::dec << "(" << value << ")} encrypt mode {0x"
             << std::hex << mode << std::dec << "(" << mode << ")}";
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(static_cast<unsigned char>(mode));
         command.push_back(fileno);
         BufferHelper::setUInt32(command, value);
@@ -567,7 +567,7 @@ namespace logicalaccess
             << std::hex << fileno << std::dec << "(" << fileno << ")} value {0x"
             << std::hex << value << std::dec << "(" << value << ")} encrypt mode {0x"
             << std::hex << mode << std::dec << "(" << mode << ")}";
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(static_cast<unsigned char>(mode));
         command.push_back(fileno);
         BufferHelper::setUInt32(command, value);
@@ -575,12 +575,12 @@ namespace logicalaccess
         getSTidSTRReaderCardAdapter()->sendCommand(0x001C, command);
     }
 
-    void DESFireEV1STidSTRCommands::writeRecord(unsigned char fileno, unsigned int offset, const std::vector<unsigned char>& data, EncryptionMode mode)
+    void DESFireEV1STidSTRCommands::writeRecord(unsigned char fileno, unsigned int offset, const ByteVector& data, EncryptionMode mode)
     {
         LOG(LogLevel::INFOS) << "Writing record... file number {0x"
             << std::hex << fileno << std::dec << "(" << fileno << ")} offset {" << offset << "} length {" << data.size() << "} encrypt mode {0x"
             << std::hex << mode << std::dec << "(" << mode << ")}";
-        std::vector<unsigned char> command;
+        ByteVector command;
 
         size_t stidMaxDataSize = 1024; // New to version 1.2 of API (before was limited to 200)
         // STid STR reader doesn't support data larger than <stidMaxDataSize> bytes, we should split the command.
@@ -600,7 +600,7 @@ namespace logicalaccess
         }
     }
 
-    std::vector<unsigned char> DESFireEV1STidSTRCommands::readRecords(unsigned char fileno, unsigned int offset, unsigned int nbrecords, EncryptionMode mode)
+    ByteVector DESFireEV1STidSTRCommands::readRecords(unsigned char fileno, unsigned int offset, unsigned int nbrecords, EncryptionMode mode)
     {
         LOG(LogLevel::INFOS) << "Reading record... file number {0x"
             << std::hex << fileno << std::dec << "(" << fileno << ")} offset {" << offset << "} nb records {" << nbrecords << "} encrypt mode {0x"
@@ -608,13 +608,13 @@ namespace logicalaccess
         //size_t stidMaxDataSize = 1024; // New to version 1.2 of API (before was limited to 200)
         // STid STR reader doesn't support data larger than <stidMaxDataSize> bytes, a record cannot exceed this size.
 
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(static_cast<unsigned char>(mode));
         command.push_back(fileno);
         command.insert(command.end(), (unsigned char*)&offset, (unsigned char*)&offset + 3);
         command.insert(command.end(), (unsigned char*)&nbrecords, (unsigned char*)&nbrecords + 3);
 
-        std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x00BB, command);
+        ByteVector result = getSTidSTRReaderCardAdapter()->sendCommand(0x00BB, command);
 
         LOG(LogLevel::INFOS) << "Returns size {" << result.size() << "}";
         return result;
@@ -624,19 +624,19 @@ namespace logicalaccess
     {
         LOG(LogLevel::INFOS) << "Clearing record... file number {0x" << std::hex << fileno << std::dec << "(" << fileno << ")}";
 
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(fileno);
 
         getSTidSTRReaderCardAdapter()->sendCommand(0x00EB, command);
     }
 
-    void DESFireEV1STidSTRCommands::changeFileSettings(unsigned char fileno, EncryptionMode comSettings, DESFireAccessRights accessRights, bool plain)
+    void DESFireEV1STidSTRCommands::changeFileSettings(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, bool plain)
     {
         LOG(LogLevel::INFOS) << "Changing file settings... file number {0x"
             << std::hex << fileno << std::dec << "(" << fileno << ")} com settings file number {0x"
             << std::hex << comSettings << std::dec << "(" << comSettings << ")} access rights file number {0x"
             << std::hex << AccessRightsInMemory(accessRights) << std::dec << "(" << AccessRightsInMemory(accessRights) << ")} plain {" << plain << "}";
-        std::vector<unsigned char> command;
+        ByteVector command;
         short ar = AccessRightsInMemory(accessRights);
 
         command.push_back(fileno);
@@ -651,7 +651,7 @@ namespace logicalaccess
     {
         LOG(LogLevel::INFOS) << "Deleting file... file number {0x" << std::hex << fileno << std::dec << "(" << fileno << ")}";
 
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(fileno);
 
         getSTidSTRReaderCardAdapter()->sendCommand(0x00DF, command);
@@ -660,7 +660,7 @@ namespace logicalaccess
     void DESFireEV1STidSTRCommands::changeKeySettings(DESFireKeySettings settings)
     {
         LOG(LogLevel::INFOS) << "Changing key settings... settings {0x" << std::hex << settings << std::dec << "(" << settings << ")}";
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(static_cast<unsigned char>(settings));
 
         getSTidSTRReaderCardAdapter()->sendCommand(0x0054, command);
@@ -685,7 +685,7 @@ namespace logicalaccess
             else
             {
                 LOG(LogLevel::INFOS) << "Changing key directly...";
-                std::vector<unsigned char> command;
+                ByteVector command;
                 command.push_back(keyno);
                 command.push_back((key->getKeyType() == DF_KEY_AES) ? 0x02 : 0x00);
                 if (key->getKeyType() == DF_KEY_AES)
@@ -707,13 +707,13 @@ namespace logicalaccess
         }
     }
 
-    void DESFireEV1STidSTRCommands::changeKeyIndex(unsigned char keyno, DESFireKeyType cryptoMethod, unsigned char keyversion, unsigned char newkeyindex, unsigned char oldkeyindex)
+    void DESFireEV1STidSTRCommands::changeKeyIndex(unsigned char keyno, DESFireKeyType cryptoMethod, unsigned char keyversion, unsigned char newkeyindex, unsigned char oldkeyindex) const
     {
         LOG(LogLevel::INFOS) << "Changing key index... key number {0x" << std::hex << keyno << std::dec << "(" << keyno << ")} crypto method {0x"
             << std::hex << cryptoMethod << std::dec << "(" << cryptoMethod << ")} key version {0x" << std::hex << keyversion << std::dec << "(" << keyversion << ")} new key index {0x"
             << std::hex << newkeyindex << std::dec << "(" << newkeyindex << ")} old key index {0x" << std::hex << oldkeyindex << std::dec << "(" << oldkeyindex << ")}";
 
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(keyno);
         command.push_back((cryptoMethod == DF_KEY_AES) ? 0x02 : 0x00);
         if (cryptoMethod == DF_KEY_AES)
@@ -730,7 +730,7 @@ namespace logicalaccess
     void DESFireEV1STidSTRCommands::getVersion(DESFireCommands::DESFireCardVersion& dataVersion)
     {
         LOG(LogLevel::INFOS) << "Retrieving version...";
-        std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x0060, std::vector<unsigned char>());
+        ByteVector result = getSTidSTRReaderCardAdapter()->sendCommand(0x0060, ByteVector());
 
         EXCEPTION_ASSERT_WITH_LOG(result.size() >= 28, LibLogicalAccessException, "The response length should be at least 28-byte long");
 
@@ -742,13 +742,13 @@ namespace logicalaccess
         LOG(LogLevel::INFOS) << "Retrieving all application ids...";
         std::vector<unsigned int> aids;
 
-        std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x006A, std::vector<unsigned char>());
+        ByteVector result = getSTidSTRReaderCardAdapter()->sendCommand(0x006A, ByteVector());
 
         unsigned nbaids = result[0];
         for (size_t i = 0; i < nbaids; ++i)
         {
-            std::vector<unsigned char> aid(3);
-            std::copy(result.begin() + 1 + (i * 3), result.begin() + 1 + (i * 3) + 3, aid.begin());
+            ByteVector aid(3);
+            copy(result.begin() + 1 + (i * 3), result.begin() + 1 + (i * 3) + 3, aid.begin());
             aids.push_back(DESFireLocation::convertAidToUInt(aid));
         }
 
@@ -763,23 +763,23 @@ namespace logicalaccess
     void DESFireEV1STidSTRCommands::erase()
     {
         LOG(LogLevel::INFOS) << "Erasing card...";
-        getSTidSTRReaderCardAdapter()->sendCommand(0x00FC, std::vector<unsigned char>());
+        getSTidSTRReaderCardAdapter()->sendCommand(0x00FC, ByteVector());
     }
 
-    std::vector<unsigned char> DESFireEV1STidSTRCommands::getFileIDs()
+    ByteVector DESFireEV1STidSTRCommands::getFileIDs()
     {
         LOG(LogLevel::INFOS) << "Retrieving all files ids...";
-        std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x006F, std::vector<unsigned char>());
+        ByteVector result = getSTidSTRReaderCardAdapter()->sendCommand(0x006F, ByteVector());
 
         unsigned char nbfiles = result[0];
 
-        std::vector<unsigned char> files;
+        ByteVector files;
         for (size_t i = 1; i <= nbfiles; ++i)
         {
             files.push_back(result[i]);
         }
 
-        for (std::vector<unsigned char>::iterator it = files.begin(); it != files.end(); ++it)
+        for (ByteVector::iterator it = files.begin(); it != files.end(); ++it)
         {
             LOG(LogLevel::INFOS) << "Processing file id {0x" << std::hex << *it << std::dec << "(" << *it << ")}...";
         }
@@ -791,10 +791,10 @@ namespace logicalaccess
     {
         LOG(LogLevel::INFOS) << "Retrieving file settings for file number {0x" << std::hex << fileno << std::dec << "(" << fileno << ")}";
 
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(fileno);
 
-        std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x00F5, command);
+        ByteVector result = getSTidSTRReaderCardAdapter()->sendCommand(0x00F5, command);
         memcpy(&fileSetting, &result[0], result.size());
     }
 
@@ -802,11 +802,11 @@ namespace logicalaccess
     {
         LOG(LogLevel::INFOS) << "Retrieving value for file number {0x" << std::hex << fileno << std::dec << "(" << fileno << ")} encrypt mode {0x" << std::hex << mode << std::dec << "(" << mode << ")}";
 
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(static_cast<unsigned char>(mode));
         command.push_back(fileno);
 
-        std::vector<unsigned char> result = getSTidSTRReaderCardAdapter()->sendCommand(0x00F5, command);
+        ByteVector result = getSTidSTRReaderCardAdapter()->sendCommand(0x00F5, command);
 
         if (result.size() >= 4)
         {
@@ -816,7 +816,7 @@ namespace logicalaccess
         }
     }
 
-    void DESFireEV1STidSTRCommands::iso_selectApplication(std::vector<unsigned char> /*isoaid*/)
+    void DESFireEV1STidSTRCommands::iso_selectApplication(ByteVector /*isoaid*/)
     {
         LOG(LogLevel::ERRORS) << "Function not available with this reader.";
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Function not available with this reader.");
@@ -824,7 +824,7 @@ namespace logicalaccess
 
     void DESFireEV1STidSTRCommands::setConfiguration(bool formatCardEnabled, bool randomIdEnabled)
     {
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(0x00);
         command.push_back(0x01);
         command.push_back(0x00 | ((formatCardEnabled) ? 0x00 : 0x01) | ((randomIdEnabled) ? 0x02 : 0x00));
@@ -839,7 +839,7 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The default key length must be 24-byte long.");
         }
 
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(0x01);
         command.push_back(0x19);
         unsigned char* keydata = defaultKey->getData();
@@ -849,9 +849,9 @@ namespace logicalaccess
         getSTidSTRReaderCardAdapter()->sendCommand(0x005C, command);
     }
 
-    void DESFireEV1STidSTRCommands::setConfiguration(const std::vector<unsigned char>& ats)
+    void DESFireEV1STidSTRCommands::setConfiguration(const ByteVector& ats)
     {
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(0x02);
         command.push_back(static_cast<unsigned char>(ats.size()));
         command.insert(command.end(), ats.begin(), ats.end());

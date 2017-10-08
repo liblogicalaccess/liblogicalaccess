@@ -36,7 +36,7 @@ namespace logicalaccess
         return n;
     }
 
-    std::vector<unsigned char> XmlSerializable::formatHexString(std::string hexstr)
+    ByteVector XmlSerializable::formatHexString(std::string hexstr)
     {
         size_t buflen = hexstr.size() / 2;
         if (hexstr.size() % 2 == 0 && hexstr.size() > 2)
@@ -48,7 +48,7 @@ namespace logicalaccess
             }
         }
 
-        std::vector<unsigned char> buf;
+        ByteVector buf;
         std::istringstream iss(hexstr);
         for (unsigned int i = 0; i < buflen; ++i)
         {
@@ -94,15 +94,15 @@ namespace logicalaccess
     {
         std::istringstream iss(xmlstring);
         std::string xmldeclaration, content;
-        std::getline(iss, xmldeclaration);
-        std::getline(iss, content);
+        getline(iss, xmldeclaration);
+        getline(iss, content);
 
         return content;
     }
 
     std::string XmlSerializable::serialize()
     {
-        return XmlSerializable::removeXmlDeclaration(serializeWithHeaders());
+        return removeXmlDeclaration(serializeWithHeaders());
     }
 
     std::string XmlSerializable::serializeWithHeaders()
@@ -112,7 +112,7 @@ namespace logicalaccess
 
         serialize(pt);
 
-        boost::property_tree::xml_parser::write_xml(oss, pt);
+        write_xml(oss, pt);
         return oss.str();
     }
 
@@ -125,7 +125,7 @@ namespace logicalaccess
     void XmlSerializable::unSerialize(std::istream& is, const std::string& rootNode)
     {
         boost::property_tree::ptree pt;
-        boost::property_tree::xml_parser::read_xml(is, pt);
+        read_xml(is, pt);
 
         unSerialize(pt, rootNode);
     }

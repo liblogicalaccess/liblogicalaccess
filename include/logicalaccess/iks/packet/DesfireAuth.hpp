@@ -21,9 +21,9 @@ class LIBLOGICALACCESS_API DesfireAuthCommand : public BaseCommand
     DesfireAuthCommand();
     virtual ~DesfireAuthCommand() = default;
 
-    virtual std::vector<uint8_t> serialize() const override;
+	std::vector<uint8_t> serialize() const override;
 
-    virtual size_t binary_size_impl() const;
+	size_t binary_size_impl() const override;
 
     std::string key_idt_;
 

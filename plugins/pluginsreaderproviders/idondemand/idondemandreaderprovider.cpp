@@ -28,7 +28,7 @@ namespace logicalaccess
 
     IdOnDemandReaderProvider::~IdOnDemandReaderProvider()
     {
-        release();
+	    IdOnDemandReaderProvider::release();
     }
 
     void IdOnDemandReaderProvider::release()

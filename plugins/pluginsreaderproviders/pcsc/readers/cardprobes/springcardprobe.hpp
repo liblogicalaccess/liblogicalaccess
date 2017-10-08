@@ -7,10 +7,8 @@ namespace logicalaccess
 class LIBLOGICALACCESS_API SpringCardProbe : public PCSCCardProbe
 {
   public:
-    SpringCardProbe(ReaderUnit *ru);
+	explicit SpringCardProbe(ReaderUnit *ru);
 
-
-  public:
-    virtual bool maybe_mifare_classic() override;
+	bool maybe_mifare_classic() override;
 };
 }

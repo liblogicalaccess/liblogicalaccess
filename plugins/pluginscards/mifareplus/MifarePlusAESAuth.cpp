@@ -18,11 +18,11 @@ logicalaccess::MifarePlusAESAuth::MifarePlusAESAuth(std::shared_ptr<ReaderCardAd
 }
 
 bool logicalaccess::MifarePlusAESAuth::AESAuthenticate(std::shared_ptr<AES128Key> key,
-                                                       uint16_t keyslot)
+                                                       uint16_t keyslot) const
 {
     LOG(DEBUGS) << "Attempting AES SL1 authentication";
 
-    using ByteVector = std::vector<unsigned char>;
+    using ByteVector = ByteVector;
     ByteVector command;
     ByteVector ret;
 
@@ -41,12 +41,12 @@ bool logicalaccess::MifarePlusAESAuth::AESAuthenticate(std::shared_ptr<AES128Key
 }
 
 bool logicalaccess::MifarePlusAESAuth::aes_auth_step2(std::vector<uint8_t> rnd_b,
-                                                      std::shared_ptr<AES128Key> key)
+                                                      std::shared_ptr<AES128Key> key) const
 {
     ByteVector rnd_a = RandomHelper::bytes(16);
     ByteVector data;
 
-    std::rotate(rnd_b.begin(), rnd_b.begin() + 1, rnd_b.end());
+    rotate(rnd_b.begin(), rnd_b.begin() + 1, rnd_b.end());
     data.insert(data.end(), rnd_a.begin(), rnd_a.end());
     data.insert(data.end(), rnd_b.begin(), rnd_b.end());
 
@@ -68,7 +68,7 @@ bool logicalaccess::MifarePlusAESAuth::aes_auth_step2(std::vector<uint8_t> rnd_b
 
 bool logicalaccess::MifarePlusAESAuth::aes_auth_final(const ByteVector &rnd_a,
                                                       const ByteVector &rnd_a_reader,
-                                                      std::shared_ptr<AES128Key> key)
+                                                      std::shared_ptr<AES128Key> key) const
 {
     // If we received garbage, the AES code may throw. This means auth failure.
     try
@@ -76,7 +76,7 @@ bool logicalaccess::MifarePlusAESAuth::aes_auth_final(const ByteVector &rnd_a,
         auto tmp_rnd_a_reader = AESHelper::AESDecrypt(rnd_a_reader,
                                                       ByteVector(key->getData(), key->getData() + 16),
                                                       {});
-        std::rotate(tmp_rnd_a_reader.rbegin(), tmp_rnd_a_reader.rbegin() + 1,
+        rotate(tmp_rnd_a_reader.rbegin(), tmp_rnd_a_reader.rbegin() + 1,
                     tmp_rnd_a_reader.rend());
 
         if (tmp_rnd_a_reader == rnd_a)
@@ -84,11 +84,8 @@ bool logicalaccess::MifarePlusAESAuth::aes_auth_final(const ByteVector &rnd_a,
             LOG(INFOS) << "AES Auth Success.";
             return true;
         }
-        else
-        {
-            LOG(ERRORS) << "RNDA doesn't match. AES authentication failed.";
-            return false;
-        }
+	    LOG(ERRORS) << "RNDA doesn't match. AES authentication failed.";
+	    return false;
     }
     catch (std::exception &e)
     {

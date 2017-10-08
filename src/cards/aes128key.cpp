@@ -14,22 +14,22 @@ namespace logicalaccess
         : Key()
     {
         memset(d_key, 0x00, sizeof(d_key));
-        clear();
+	    Key::clear();
     }
 
     AES128Key::AES128Key(const std::string& str)
         : Key()
     {
         memset(d_key, 0x00, sizeof(d_key));
-        fromString(str);
+	    Key::fromString(str);
     }
 
     AES128Key::AES128Key(const void* buf, size_t buflen)
         : Key()
     {
-        clear();
+	    Key::clear();
 
-        if (buf != NULL)
+        if (buf != nullptr)
         {
             if (buflen >= AES128_KEY_SIZE)
             {
@@ -42,7 +42,7 @@ namespace logicalaccess
     AES128Key::AES128Key(const std::vector<uint8_t> &data) :
             Key()
     {
-        clear();
+	    Key::clear();
         fromBytes(data);
     }
 

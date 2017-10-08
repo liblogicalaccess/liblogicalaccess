@@ -27,9 +27,9 @@ ByteVector STidPRGUtils::prox_configuration_bytes(const Format &fmt)
     // < 37 bits and >= 37 bits.
     if (length < 37)
     {
-        tmp[6]           = 1; // HID bit
+        tmp[6]           = true; // HID bit
         auto padding     = 37 - length;
-        tmp[6 + padding] = 1; // Start bit
+        tmp[6 + padding] = true; // Start bit
         for (size_t i                = 0; i < length; ++i)
             tmp[6 + padding + 1 + i] = get_nth_bit(data, i);
     }

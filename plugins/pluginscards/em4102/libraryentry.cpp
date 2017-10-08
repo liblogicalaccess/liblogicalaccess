@@ -23,16 +23,16 @@ extern "C"
 
     LIBLOGICALACCESS_API void getEM4102Chip(std::shared_ptr<logicalaccess::Chip>* chip)
     {
-        if (chip != NULL)
+        if (chip != nullptr)
         {
-            *chip = std::shared_ptr<logicalaccess::EM4102Chip>(new logicalaccess::EM4102Chip());
+            *chip = std::make_shared<logicalaccess::EM4102Chip>();
         }
     }
 
     LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char* chipname, size_t chipnamelen, void** getterfct)
     {
         bool ret = false;
-        if (chipname != NULL && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
+        if (chipname != nullptr && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != nullptr)
         {
             switch (index)
             {
@@ -43,6 +43,7 @@ extern "C"
                 ret = true;
             }
                 break;
+            default: ;
             }
         }
 

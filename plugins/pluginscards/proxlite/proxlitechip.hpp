@@ -38,15 +38,13 @@ namespace logicalaccess
          * \brief Get the generic card type.
          * \return The generic card type.
          */
-        virtual std::string getGenericCardType() const { return CHIP_PROXLITE; };
+	    std::string getGenericCardType() const override { return CHIP_PROXLITE; }
 
         /**
          * \brief Get the root location node.
          * \return The root location node.
          */
-        virtual std::shared_ptr<LocationNode> getRootLocationNode();
-
-    protected:
+	    std::shared_ptr<LocationNode> getRootLocationNode() override;
     };
 }
 

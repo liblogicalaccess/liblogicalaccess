@@ -17,11 +17,11 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API AdmittoBufferParser : public CircularBufferParser
     {
     public:
-        AdmittoBufferParser() {};
+        AdmittoBufferParser() {}
 
-        virtual ~AdmittoBufferParser() {};
+        virtual ~AdmittoBufferParser() {}
 
-        virtual std::vector<unsigned char> getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer);
+	    ByteVector getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer) override;
     };
 }
 

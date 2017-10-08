@@ -27,14 +27,14 @@ namespace logicalaccess
     {
     }
 
-    std::vector<unsigned char> MifareUltralightPCSCCommands::readPage(int page)
+    ByteVector MifareUltralightPCSCCommands::readPage(int page)
     {
-        std::vector<unsigned char> result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xB0, 0x00, static_cast<unsigned char>(page), 16);
+        ByteVector result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xB0, 0x00, static_cast<unsigned char>(page), 16);
 
-		return std::vector<unsigned char>(result.begin(), result.end() - 2);
+		return ByteVector(result.begin(), result.end() - 2);
     }
 
-    void MifareUltralightPCSCCommands::writePage(int page, const std::vector<unsigned char>& buf)
+    void MifareUltralightPCSCCommands::writePage(int page, const ByteVector& buf)
     {
         if (buf.size() > 16)
         {

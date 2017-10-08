@@ -29,7 +29,7 @@ namespace logicalaccess
     {
         std::shared_ptr<ResultChecker> checker = getDefaultPCSCReaderCardAdapter()->getResultChecker();
         getDefaultPCSCReaderCardAdapter()->setResultChecker(std::shared_ptr<ResultChecker>());
-        std::vector<unsigned char> res = getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x00, 0x48, 0x00, 0x00);
+        ByteVector res = getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x00, 0x48, 0x00, 0x00);
         getDefaultPCSCReaderCardAdapter()->setResultChecker(checker);
         return BufferHelper::getStdString(res);
     }

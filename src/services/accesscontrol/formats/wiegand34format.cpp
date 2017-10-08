@@ -36,9 +36,9 @@ namespace logicalaccess
         return 34;
     }
 
-    string Wiegand34Format::getName() const
+	std::string Wiegand34Format::getName() const
     {
-        return string("Wiegand 34");
+        return std::string("Wiegand 34");
     }
 
     void Wiegand34Format::getLinearDataWithoutParity(void* data, size_t dataLengthBytes) const
@@ -85,7 +85,7 @@ namespace logicalaccess
         setUid(node.get_child("Uid").get_value<unsigned long long>());
     }
 
-    std::string Wiegand34Format::getDefaultXmlNodeName() const
+	std::string Wiegand34Format::getDefaultXmlNodeName() const
     {
         return "Wiegand34Format";
     }

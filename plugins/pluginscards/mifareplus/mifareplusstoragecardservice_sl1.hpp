@@ -14,25 +14,23 @@ namespace logicalaccess
     {
 
     public:
-        MifarePlusStorageCardServiceSL1(std::shared_ptr<Chip> chip);
+	    explicit MifarePlusStorageCardServiceSL1(std::shared_ptr<Chip> chip);
 
-        virtual void erase(std::shared_ptr<Location> location,
+	    void erase(std::shared_ptr<Location> location,
                            std::shared_ptr<AccessInfo> aiToUse) override;
 
-        virtual void writeData(std::shared_ptr<Location> location,
+	    void writeData(std::shared_ptr<Location> location,
                                std::shared_ptr<AccessInfo> aiToUse,
                                std::shared_ptr<AccessInfo> aiToWrite,
-                               const std::vector<unsigned char> &data,
+                               const ByteVector &data,
                                CardBehavior behaviorFlags) override;
 
-        virtual std::vector<unsigned char> readData(std::shared_ptr<Location> location,
+	    ByteVector readData(std::shared_ptr<Location> location,
                                                     std::shared_ptr<AccessInfo> aiToUse,
                                                     size_t length,
                                                     CardBehavior behaviorFlags) override;
 
-        virtual unsigned int readDataHeader(std::shared_ptr<Location> location,
-                                            std::shared_ptr<AccessInfo> aiToUse, void *data,
-                                            size_t dataLength) override;
+		ByteVector readDataHeader(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse) override;
 
     private:
         void authenticate_if_needed(std::shared_ptr<AccessInfo>);

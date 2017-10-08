@@ -17,7 +17,7 @@ namespace logicalaccess
 
         if ((ret = truncateLittleEndian(linedData, linedDataLengthBytes, data, dataLengthBytes, dataLengthBits)) > 0)
         {
-            if (linedData != NULL)
+            if (linedData != nullptr)
             {
                 if (linedDataLengthBytes >= ((ret + 7) / 8))
                 {
@@ -61,7 +61,7 @@ namespace logicalaccess
 
         if ((ret = truncateLittleEndian(revertedData, revertedDataLengthBytes, data, dataLengthBytes, dataLengthBits)) > 0)
         {
-            if (revertedData != NULL)
+            if (revertedData != nullptr)
             {
                 if ((revertedDataLengthBytes * 8) >= ret)
                 {
@@ -106,7 +106,7 @@ namespace logicalaccess
         unsigned int ret = dataLengthBits;
         size_t copyLength = (dataLengthBits + 7) / 8;
 
-        if (truncatedData != NULL && truncatedDataLengthBytes >= copyLength && dataLengthBytes >= copyLength)
+        if (truncatedData != nullptr && truncatedDataLengthBytes >= copyLength && dataLengthBytes >= copyLength)
         {
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 

@@ -25,9 +25,9 @@ MifarePlusSL3Auth::MifarePlusSL3Auth(std::shared_ptr<ReaderCardAdapter> rca) :
 
 bool MifarePlusSL3Auth::firstAuthenticate(int sector,
                                           std::shared_ptr<AES128Key> key,
-                                          logicalaccess::MifareKeyType type)
+                                          MifareKeyType type)
 {
-    using ByteVector = std::vector<unsigned char>;
+    using ByteVector = ByteVector;
     ByteVector command;
     ByteVector ret;
 
@@ -57,7 +57,7 @@ bool MifarePlusSL3Auth::aes_first_auth_step2()
     rnd_a_ = RandomHelper::bytes(16);
     ByteVector data;
 
-    std::rotate(rnd_b_.begin(), rnd_b_.begin() + 1, rnd_b_.end());
+    rotate(rnd_b_.begin(), rnd_b_.begin() + 1, rnd_b_.end());
     data.insert(data.end(), rnd_a_.begin(), rnd_a_.end());
     data.insert(data.end(), rnd_b_.begin(), rnd_b_.end());
 
@@ -95,7 +95,7 @@ bool MifarePlusSL3Auth::aes_first_auth_final(const ByteVector &encrypted_data)
         trans_id_ = ByteVector(data.begin(), data.begin() + 4);
 
         ByteVector rnd_a_reader(data.begin() + 4, data.begin() + 20);
-        std::rotate(rnd_a_reader.rbegin(), rnd_a_reader.rbegin() + 1,
+        rotate(rnd_a_reader.rbegin(), rnd_a_reader.rbegin() + 1,
                     rnd_a_reader.rend());
 
         if (rnd_a_reader == rnd_a_)
@@ -103,11 +103,8 @@ bool MifarePlusSL3Auth::aes_first_auth_final(const ByteVector &encrypted_data)
             LOG(INFOS) << "AES Auth Success.";
             return true;
         }
-        else
-        {
-            LOG(ERRORS) << "RNDA doesn't match. AES authentication failed.";
-            return false;
-        }
+	    LOG(ERRORS) << "RNDA doesn't match. AES authentication failed.";
+	    return false;
     }
     catch (std::exception &e)
     {

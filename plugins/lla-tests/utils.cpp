@@ -155,7 +155,7 @@ lla_test_init(const std::string &card_type /* = "" */)
     LLA_ASSERT(detail::prologue_has_run, "Call prologue() before initalizing the test suite");
     if (detail::reader_type == detail::PCSC)
         return pcsc_test_init(card_type);
-	else if (detail::reader_type == detail::NFC)
+	if (detail::reader_type == detail::NFC)
 		return nfc_test_init();
 
 	LLA_ASSERT(0, "lla_test_init failed");

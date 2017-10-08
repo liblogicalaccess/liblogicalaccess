@@ -8,6 +8,7 @@
 #define LOGICALACCESS_LOCATION_HPP
 
 #include <string>
+#include "logicalaccess/liblogicalaccess_export.hpp"
 #include "logicalaccess/xmlserializable.hpp"
 
 namespace logicalaccess
@@ -37,7 +38,7 @@ namespace logicalaccess
          * \param location Location to compare.
          * \return True if inequals, false otherwise.
          */
-        inline bool operator!=(const Location& location) const { return !operator==(location); };
+        bool operator!=(const Location& location) const { return !operator==(location); }
     };
 }
 

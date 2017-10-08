@@ -19,15 +19,15 @@ namespace logicalaccess
     {
         if (key && key->getLength() == 16)
         {
-			std::vector<unsigned char> buf;
+			ByteVector buf;
 			for (int i = 15; i >= 0; --i)
 			{
 				buf.push_back(key->getData()[i]);
 			}
-            writePage(0x2C, std::vector<unsigned char>(buf.begin() + 8, buf.begin() + 12));
-			writePage(0x2D, std::vector<unsigned char>(buf.begin() + 12, buf.begin() + 16));
-			writePage(0x2E, std::vector<unsigned char>(buf.begin(), buf.begin() + 4));
-			writePage(0x2F, std::vector<unsigned char>(buf.begin() + 4, buf.begin() + 8));
+            writePage(0x2C, ByteVector(buf.begin() + 8, buf.begin() + 12));
+			writePage(0x2D, ByteVector(buf.begin() + 12, buf.begin() + 16));
+			writePage(0x2E, ByteVector(buf.begin(), buf.begin() + 4));
+			writePage(0x2F, ByteVector(buf.begin() + 4, buf.begin() + 8));
         }
     }
 
@@ -36,7 +36,7 @@ namespace logicalaccess
         if (page < 16)
         {
             //MifareUltralightCommands::lockPage(page);
-			std::vector<unsigned char> lockbits(4, 0x00);
+			ByteVector lockbits(4, 0x00);
 
 			if (page >= 3 && page <= 7)
 			{
@@ -51,7 +51,7 @@ namespace logicalaccess
         }
         else
         {
-            std::vector<unsigned char> lockbits(4, 0x00);
+            ByteVector lockbits(4, 0x00);
 
             if (page >= 44 && page <= 47)
             {

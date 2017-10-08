@@ -13,7 +13,7 @@ namespace logicalaccess
     AxessTMC13ReaderUnitConfiguration::AxessTMC13ReaderUnitConfiguration()
         : ReaderUnitConfiguration(READER_AXESSTMC13)
     {
-        resetConfiguration();
+	    AxessTMC13ReaderUnitConfiguration::resetConfiguration();
     }
 
     AxessTMC13ReaderUnitConfiguration::~AxessTMC13ReaderUnitConfiguration()

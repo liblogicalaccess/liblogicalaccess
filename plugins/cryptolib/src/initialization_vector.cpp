@@ -34,7 +34,7 @@ namespace logicalaccess
             }
         }
 
-        InitializationVector::InitializationVector(const std::vector<unsigned char>& _data) :
+        InitializationVector::InitializationVector(const ByteVector& _data) :
             d_data(_data)
         {
         }

@@ -34,42 +34,40 @@ namespace logicalaccess
         /**
          * \brief Generate pseudo-random Topaz access informations.
          */
-        virtual void generateInfos();
+	    void generateInfos() override;
 
         /**
          * \brief Get the card type for this access infos.
          * \return The card type.
          */
-        virtual std::string getCardType() const;
+	    std::string getCardType() const override;
 
         /**
          * \brief Serialize the current object to XML.
          * \param parentNode The parent node.
          */
-        virtual void serialize(boost::property_tree::ptree& parentNode);
+	    void serialize(boost::property_tree::ptree& parentNode) override;
 
         /**
          * \brief UnSerialize a XML node to the current object.
          * \param node The XML node.
          */
-        virtual void unSerialize(boost::property_tree::ptree& node);
+	    void unSerialize(boost::property_tree::ptree& node) override;
 
         /**
          * \brief Get the default Xml Node name for this object.
          * \return The Xml node name.
          */
-        virtual std::string getDefaultXmlNodeName() const;
+	    std::string getDefaultXmlNodeName() const override;
 
         /**
          * \brief Equality operator
          * \param ai Access infos to compare.
          * \return True if equals, false otherwise.
          */
-        virtual bool operator==(const AccessInfo& ai) const;
+	    bool operator==(const AccessInfo& ai) const override;
 
-    public:
-
-        /**
+	    /**
          * \brief Page is locked ?
          */
         bool lockPage;

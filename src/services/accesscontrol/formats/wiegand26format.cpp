@@ -28,7 +28,7 @@ namespace logicalaccess
         field->setDataRepresentation(d_dataRepresentation);
         field->setDataType(d_dataType);
         d_fieldList.push_back(field);
-        field = std::shared_ptr<NumberDataField>(new NumberDataField());
+        field = std::make_shared<NumberDataField>();
         field->setName("FacilityCode");
         field->setDataLength(8);
         field->setDataRepresentation(d_dataRepresentation);
@@ -58,9 +58,9 @@ namespace logicalaccess
         return 26;
     }
 
-    string Wiegand26Format::getName() const
+	std::string Wiegand26Format::getName() const
     {
-        return string("Wiegand 26");
+        return std::string("Wiegand 26");
     }
 
     void Wiegand26Format::getLinearDataWithoutParity(void* data, size_t dataLengthBytes) const
@@ -122,7 +122,7 @@ namespace logicalaccess
         setUid(node.get_child("Uid").get_value<unsigned long long>());
     }
 
-    std::string Wiegand26Format::getDefaultXmlNodeName() const
+	std::string Wiegand26Format::getDefaultXmlNodeName() const
     {
         return "Wiegand26Format";
     }

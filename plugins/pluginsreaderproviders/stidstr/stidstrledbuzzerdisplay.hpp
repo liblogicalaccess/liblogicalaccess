@@ -29,19 +29,19 @@ namespace logicalaccess
          * \brief Set the green led to a status.
          * \param status True to show the green led, false otherwise.
          */
-        virtual void setGreenLed(bool status);
+	    void setGreenLed(bool status) override;
 
         /**
          * \brief Set the red led to a status.
          * \param status True to show the red led, false otherwise.
          */
-        virtual void setRedLed(bool status);
+	    void setRedLed(bool status) override;
 
         /**
          * \brief Set the buzzer to a status.
          * \param status True to play the buzzer, false otherwise.
          */
-        virtual void setBuzzer(bool status);
+	    void setBuzzer(bool status) override;
 
         /**
          * \brief Set the red led status.
@@ -70,7 +70,7 @@ namespace logicalaccess
          * \see setGreenLed
          * \see setBuzzer
          */
-        void setPort();
+        void setPort() const;
 
         /**
          * \brief Upload led and buzzer status.
@@ -83,7 +83,7 @@ namespace logicalaccess
          */
         void setPort(bool red, bool green, bool buzzer);
 
-        std::shared_ptr<STidSTRReaderCardAdapter> getSTidSTRReaderCardAdapter() { return std::dynamic_pointer_cast<STidSTRReaderCardAdapter>(getReaderCardAdapter()); };
+        std::shared_ptr<STidSTRReaderCardAdapter> getSTidSTRReaderCardAdapter() const { return std::dynamic_pointer_cast<STidSTRReaderCardAdapter>(getReaderCardAdapter()); }
 
     protected:
 

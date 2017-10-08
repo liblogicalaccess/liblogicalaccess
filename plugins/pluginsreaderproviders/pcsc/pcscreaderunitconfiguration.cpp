@@ -14,7 +14,7 @@ namespace logicalaccess
     PCSCReaderUnitConfiguration::PCSCReaderUnitConfiguration()
         : ISO7816ReaderUnitConfiguration(READER_PCSC)
     {
-        resetConfiguration();
+	    PCSCReaderUnitConfiguration::resetConfiguration();
     }
 
     PCSCReaderUnitConfiguration::~PCSCReaderUnitConfiguration()

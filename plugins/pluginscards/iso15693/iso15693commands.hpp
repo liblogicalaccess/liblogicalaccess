@@ -38,9 +38,9 @@ namespace logicalaccess
 
         virtual void stayQuiet() = 0;
 
-        virtual std::vector<unsigned char> readBlock(size_t block, size_t le = 0) = 0;
+        virtual ByteVector readBlock(size_t block, size_t le = 0) = 0;
 
-        virtual void writeBlock(size_t block, const std::vector<unsigned char>& data) = 0;
+        virtual void writeBlock(size_t block, const ByteVector& data) = 0;
 
         virtual void lockBlock(size_t block) = 0;
 
@@ -52,7 +52,7 @@ namespace logicalaccess
 
         virtual void lockDSFID() = 0;
 
-        virtual ISO15693Commands::SystemInformation getSystemInformation() = 0;
+        virtual SystemInformation getSystemInformation() = 0;
 
         virtual unsigned char getSecurityStatus(size_t block) = 0;
     };

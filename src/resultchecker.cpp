@@ -59,13 +59,12 @@ namespace logicalaccess
         mapSingleShot.clear();
 
         if (std::get<2>(result) && !std::get<0>(result).empty())
-        {
             THROW_EXCEPTION_WITH_LOG(CardException, std::get<0>(result), std::get<1>(result));
-        }
-		else if (!std::get<0>(result).empty())
-        {
-            LOG(LogLevel::WARNINGS) << std::get<0>(result);
-        }
+
+	    if (!std::get<0>(result).empty())
+	    {
+		    LOG(LogLevel::WARNINGS) << std::get<0>(result);
+	    }
     }
 
     void ResultChecker::AddCheck(unsigned char SW1, unsigned char SW2,

@@ -40,12 +40,12 @@ namespace logicalaccess
 	/**
 	 * Returns the share mode as text.
 	 */
-	std::string pcsc_share_mode_to_string(PCSCShareMode sm);
+	std::string LIBLOGICALACCESS_API pcsc_share_mode_to_string(PCSCShareMode sm);
 
 	/**
 	 * Returns the pcsc protocol as text.
 	 */
-	std::string pcsc_protocol_to_string(unsigned long proto);
+	std::string LIBLOGICALACCESS_API pcsc_protocol_to_string(unsigned long proto);
 
     /**
      *\brief The reader unit types.
@@ -86,25 +86,25 @@ namespace logicalaccess
         /**
          * \brief Reset the configuration to default values
          */
-        virtual void resetConfiguration();
+	    void resetConfiguration() override;
 
         /**
          * \brief Serialize the current object to XML.
          * \param parentNode The parent node.
          */
-        virtual void serialize(boost::property_tree::ptree& parentNode);
+	    void serialize(boost::property_tree::ptree& parentNode) override;
 
         /**
          * \brief UnSerialize a XML node to the current object.
          * \param node The XML node.
          */
-        virtual void unSerialize(boost::property_tree::ptree& node);
+	    void unSerialize(boost::property_tree::ptree& node) override;
 
         /**
          * \brief Get the default Xml Node name for this object.
          * \return The Xml node name.
          */
-        virtual std::string getDefaultXmlNodeName() const;
+	    std::string getDefaultXmlNodeName() const override;
 
         /**
          * \brief Get the transmission protocol.

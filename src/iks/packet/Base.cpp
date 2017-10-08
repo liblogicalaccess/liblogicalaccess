@@ -9,16 +9,13 @@
 #include <logicalaccess/utils.hpp>
 
 using namespace logicalaccess;
-using namespace logicalaccess::iks;
+using namespace iks;
 
 std::vector<uint8_t> BaseCommand::serialize() const
 {
-    uint32_t full_size;
-    uint16_t op;
-
-    std::vector<uint8_t> ret(6);
-    full_size = logicalaccess::lla_htonl(static_cast<uint32_t>(binary_size()));
-    op        = logicalaccess::lla_htons(opcode_);
+	std::vector<uint8_t> ret(6);
+    uint32_t full_size = lla_htonl(static_cast<uint32_t>(binary_size()));
+    uint16_t op = lla_htons(opcode_);
 
     memcpy(&ret[0], &full_size, sizeof(full_size));
     memcpy(&ret[sizeof(full_size)], &op, sizeof(op));
@@ -68,7 +65,7 @@ std::string iks::strstatus(uint16_t st)
     }
 }
 
-size_t KeyDivInfo::binary_size() const
+size_t KeyDivInfo::binary_size()
 {
     return 1 + 1 + 64;
 }
@@ -113,7 +110,7 @@ KeyDivInfo KeyDivInfo::build(std::shared_ptr<Key> key,
 }
 
 KeyDivInfo KeyDivInfo::build(std::shared_ptr<Key> key,
-                             std::vector<unsigned char> identifier, int AID,
+                             ByteVector identifier, int AID,
                              unsigned char keyno)
 {
     if (!key->getKeyDiversification())

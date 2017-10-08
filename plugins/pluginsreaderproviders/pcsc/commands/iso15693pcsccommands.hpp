@@ -32,22 +32,22 @@ namespace logicalaccess
          */
         virtual ~ISO15693PCSCCommands();
 
-        virtual void stayQuiet();
-        virtual std::vector<unsigned char> readBlock(size_t block, size_t le = 0);
-        virtual void writeBlock(size_t block, const std::vector<unsigned char>& data);
-        virtual void lockBlock(size_t block);
-        virtual void writeAFI(size_t afi);
-        virtual void lockAFI();
-        virtual void writeDSFID(size_t dsfid);
-        virtual void lockDSFID();
-        virtual ISO15693PCSCCommands::SystemInformation getSystemInformation();
-        virtual unsigned char getSecurityStatus(size_t block);
+	    void stayQuiet() override;
+	    ByteVector readBlock(size_t block, size_t le = 0) override;
+	    void writeBlock(size_t block, const ByteVector& data) override;
+	    void lockBlock(size_t block) override;
+	    void writeAFI(size_t afi) override;
+	    void lockAFI() override;
+	    void writeDSFID(size_t dsfid) override;
+	    void lockDSFID() override;
+	    SystemInformation getSystemInformation() override;
+	    unsigned char getSecurityStatus(size_t block) override;
 
         /**
          * \brief Get the PC/SC reader/card adapter.
          * \return The PC/SC reader/card adapter.
          */
-        virtual std::shared_ptr<PCSCReaderCardAdapter> getPCSCReaderCardAdapter() { return std::dynamic_pointer_cast<PCSCReaderCardAdapter>(getReaderCardAdapter()); };
+        virtual std::shared_ptr<PCSCReaderCardAdapter> getPCSCReaderCardAdapter() { return std::dynamic_pointer_cast<PCSCReaderCardAdapter>(getReaderCardAdapter()); }
     };
 }
 

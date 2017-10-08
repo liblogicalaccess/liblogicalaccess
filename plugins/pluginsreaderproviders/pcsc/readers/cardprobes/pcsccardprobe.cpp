@@ -24,7 +24,7 @@ bool PCSCCardProbe::maybe_mifare_classic()
         std::shared_ptr<MifareCommands> command =
             std::dynamic_pointer_cast<MifareCommands>(chip->getCommands());
 
-        logicalaccess::MifareAccessInfo::SectorAccessBits sab;
+        MifareAccessInfo::SectorAccessBits sab;
 		auto ret = command->readSector(1, 0, std::shared_ptr<MifareKey>(), std::shared_ptr<MifareKey>(), sab);
         return true;
     }
@@ -130,7 +130,7 @@ bool PCSCCardProbe::is_mifare_ultralight_c()
 }
 
 
-void PCSCCardProbe::reset()
+void PCSCCardProbe::reset() const
 {
     try
     {

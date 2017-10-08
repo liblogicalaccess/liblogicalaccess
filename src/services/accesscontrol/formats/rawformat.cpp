@@ -25,7 +25,7 @@ namespace logicalaccess
         std::shared_ptr<BinaryDataField> field(new BinaryDataField());
         field->setName("RawData");
         field->setIsIdentifier(true);
-        field->setDataLength(getFieldLength(field->getName()));
+        field->setDataLength(RawFormat::getFieldLength(field->getName()));
         field->setPaddingChar(0x00);
         field->setDataRepresentation(d_dataRepresentation);
         field->setDataType(d_dataType);
@@ -41,15 +41,15 @@ namespace logicalaccess
         return static_cast<unsigned int>(d_rawData.size()) * 8;
     }
 
-    string RawFormat::getName() const
+	std::string RawFormat::getName() const
     {
-        return string("Raw");
+        return std::string("Raw");
     }
 
     void RawFormat::getLinearData(void* data, size_t dataLengthBytes) const
     {
-        string ret;
-        std::vector<unsigned char> buf = getRawData();
+		std::string ret;
+        ByteVector buf = getRawData();
 
         if (dataLengthBytes >= buf.size())
         {
@@ -59,7 +59,7 @@ namespace logicalaccess
 
     void RawFormat::setLinearData(const void* data, size_t dataLengthBytes)
     {
-        std::vector<unsigned char> sbdata = std::vector<unsigned char>(static_cast<const unsigned char*>(data), static_cast<const unsigned char*>(data)+dataLengthBytes);
+        ByteVector sbdata = ByteVector(static_cast<const unsigned char*>(data), static_cast<const unsigned char*>(data)+dataLengthBytes);
         setRawData(sbdata);
     }
 
@@ -89,22 +89,22 @@ namespace logicalaccess
 
     void RawFormat::unSerialize(boost::property_tree::ptree& node)
     {
-        std::vector<unsigned char> rawbuf = BufferHelper::fromHexString(node.get_child("RawData").get_value<std::string>());
+        ByteVector rawbuf = BufferHelper::fromHexString(node.get_child("RawData").get_value<std::string>());
         setRawData(rawbuf);
     }
 
-    std::string RawFormat::getDefaultXmlNodeName() const
+	std::string RawFormat::getDefaultXmlNodeName() const
     {
         return "RawFormat";
     }
 
-    std::vector<unsigned char> RawFormat::getRawData() const
+    ByteVector RawFormat::getRawData() const
     {
         std::shared_ptr<BinaryDataField> field = std::dynamic_pointer_cast<BinaryDataField>(getFieldFromName("RawData"));
         return field->getValue();
     }
 
-    void RawFormat::setRawData(std::vector<unsigned char>& data)
+    void RawFormat::setRawData(ByteVector& data)
     {
         std::shared_ptr<BinaryDataField> field = std::dynamic_pointer_cast<BinaryDataField>(getFieldFromName("RawData"));
         field->setDataLength(static_cast<unsigned int>(data.size() * 8));
@@ -126,7 +126,7 @@ namespace logicalaccess
         return ret;
     }
 
-    unsigned int RawFormat::getFieldLength(const string& field) const
+    unsigned int RawFormat::getFieldLength(const std::string& field) const
     {
         unsigned int length = 0;
 

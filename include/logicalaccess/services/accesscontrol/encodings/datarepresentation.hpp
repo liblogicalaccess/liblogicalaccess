@@ -22,7 +22,7 @@ namespace logicalaccess
         /**
          * \brief Virtual Destructor.
          */
-        virtual ~DataRepresentation() {};
+        virtual ~DataRepresentation() {}
 
         /**
          * \brief Convert data to the encoding type

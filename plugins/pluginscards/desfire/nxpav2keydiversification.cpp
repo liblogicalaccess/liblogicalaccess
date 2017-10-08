@@ -14,7 +14,7 @@
 
 namespace logicalaccess
 {
-    void NXPAV2KeyDiversification::initDiversification(std::vector<unsigned char> identifier, int AID, std::shared_ptr<Key> key, unsigned char keyno, std::vector<unsigned char>& diversify)
+    void NXPAV2KeyDiversification::initDiversification(ByteVector identifier, int AID, std::shared_ptr<Key> /*key*/, unsigned char keyno, ByteVector& diversify)
     {
         if (d_divInput.size() == 0)
         {
@@ -59,21 +59,21 @@ namespace logicalaccess
         }
     }
 
-    std::vector<unsigned char> NXPAV2KeyDiversification::getDiversifiedKey(std::shared_ptr<Key> key, std::vector<unsigned char> diversify)
+    ByteVector NXPAV2KeyDiversification::getDiversifiedKey(std::shared_ptr<Key> key, ByteVector diversify)
     {
         LOG(LogLevel::INFOS) << "Using key diversification NXP AV2 with div : " << BufferHelper::getHex(diversify);
-        int block_size = 0;
+        int block_size;
         std::shared_ptr<openssl::OpenSSLSymmetricCipher> d_cipher;
-        std::vector<unsigned char> keycipher(key->getData(), key->getData() + key->getLength());
-        std::vector<unsigned char> emptyIV, keydiv;
+        ByteVector keycipher(key->getData(), key->getData() + key->getLength());
+        ByteVector emptyIV, keydiv;
 
-        if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_DES
-            || std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_3K3DES)
+        if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DF_KEY_DES
+            || std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DF_KEY_3K3DES)
         {
             d_cipher.reset(new openssl::DESCipher());
             block_size = 8;
         }
-        else if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_AES)
+        else if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DF_KEY_AES)
         {
             d_cipher.reset(new openssl::AESCipher());
             block_size = 16;
@@ -82,34 +82,31 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "NXP Diversification don't support this security");
 
         emptyIV.resize(block_size);
-        if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_AES)
+        if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DF_KEY_AES)
         {
             //const AES 128
             diversify.insert(diversify.begin(), 0x01);
-            std::vector<unsigned char> keydiv_tmp;
-            keydiv_tmp = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, 32, d_forceK2Use);
+	        ByteVector keydiv_tmp = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, 32, d_forceK2Use);
             keydiv.resize(16);
-            std::copy(keydiv_tmp.end() - 16, keydiv_tmp.end(), keydiv.begin());
+            copy(keydiv_tmp.end() - 16, keydiv_tmp.end(), keydiv.begin());
         }
-        else if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_DES)
+        else if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DF_KEY_DES)
         {
-            std::vector<unsigned char> keydiv_tmp_1, keydiv_tmp_2;
-            diversify.insert(diversify.begin(), 0x21);
-            keydiv_tmp_1 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, 16, d_forceK2Use);
+	        diversify.insert(diversify.begin(), 0x21);
+            ByteVector keydiv_tmp_1 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, 16, d_forceK2Use);
             diversify[0] = 0x22;
-            keydiv_tmp_2 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, 16, d_forceK2Use);
+            ByteVector keydiv_tmp_2 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, 16, d_forceK2Use);
             keydiv.insert(keydiv.end(), keydiv_tmp_1.begin() + 8, keydiv_tmp_1.end());
             keydiv.insert(keydiv.end(), keydiv_tmp_2.begin() + 8, keydiv_tmp_2.end());
         }
-        else if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_3K3DES)
+        else if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DF_KEY_3K3DES)
         {
-            std::vector<unsigned char> keydiv_tmp_1, keydiv_tmp_2, keydiv_tmp_3;
-            diversify.insert(diversify.begin(), 0x31);
-            keydiv_tmp_1 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, 16, d_forceK2Use);
+	        diversify.insert(diversify.begin(), 0x31);
+            ByteVector keydiv_tmp_1 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, 16, d_forceK2Use);
             diversify[0] = 0x32;
-            keydiv_tmp_2 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, 16, d_forceK2Use);
+            ByteVector keydiv_tmp_2 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, 16, d_forceK2Use);
             diversify[0] = 0x33;
-            keydiv_tmp_3 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, 16, d_forceK2Use);
+            ByteVector keydiv_tmp_3 = openssl::CMACCrypto::cmac(keycipher, d_cipher, block_size, diversify, emptyIV, 16, d_forceK2Use);
             keydiv.insert(keydiv.end(), keydiv_tmp_1.begin() + 8, keydiv_tmp_1.end());
             keydiv.insert(keydiv.end(), keydiv_tmp_2.begin() + 8, keydiv_tmp_2.end());
             keydiv.insert(keydiv.end(), keydiv_tmp_3.begin() + 8, keydiv_tmp_3.end());

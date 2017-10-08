@@ -25,8 +25,10 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API MifareAccessInfo : public AccessInfo
     {
     public:
+#ifndef SWIG
         using XmlSerializable::serialize;
         using XmlSerializable::unSerialize;
+#endif
 
         /**
          * \brief Constructor.
@@ -41,38 +43,38 @@ namespace logicalaccess
         /**
          * \brief Generate pseudo-random Mifare access informations.
          */
-        virtual void generateInfos();
+	    void generateInfos() override;
 
         /**
          * \brief Get the card type for this access infos.
          * \return The card type.
          */
-        virtual std::string getCardType() const;
+	    std::string getCardType() const override;
 
         /**
          * \brief Serialize the current object to XML.
          * \param parentNode The parent node.
          */
-        virtual void serialize(boost::property_tree::ptree& parentNode) override;
+	    void serialize(boost::property_tree::ptree& parentNode) override;
 
         /**
          * \brief UnSerialize a XML node to the current object.
          * \param node The XML node.
          */
-        virtual void unSerialize(boost::property_tree::ptree& parentNode) override;
+	    void unSerialize(boost::property_tree::ptree& parentNode) override;
 
         /**
          * \brief Get the default Xml Node name for this object.
          * \return The Xml node name.
          */
-        virtual std::string getDefaultXmlNodeName() const override;
+	    std::string getDefaultXmlNodeName() const override;
 
         /**
          * \brief Equality operator
          * \param ai Access infos to compare.
          * \return True if equals, false otherwise.
          */
-        virtual bool operator==(const AccessInfo& ai) const;
+	    bool operator==(const AccessInfo& ai) const override;
 
         /**
          * \brief Block access bits structure.
@@ -87,14 +89,14 @@ namespace logicalaccess
              *
              * Set access bits to (v1, v2, v3).
              */
-            BlockAccessBits(bool v1, bool v2, bool v3) : c1(v1), c2(v2), c3(v3) {};
+            BlockAccessBits(bool v1, bool v2, bool v3) : c1(v1), c2(v2), c3(v3) {}
 
             /**
              * \brief Check if two BlockAccessBits are equal.
              * \param bab A BlockAccessBits to compare with.
              * \return true if the two BlockAccessBits are equal, false otherwise.
              */
-            inline bool operator==(const BlockAccessBits& bab) const { return ((c1 == bab.c1) && (c2 == bab.c2) && (c3 == bab.c3)); };
+	        bool operator==(const BlockAccessBits& bab) const { return ((c1 == bab.c1) && (c2 == bab.c2) && (c3 == bab.c3)); }
 
             bool c1; /**< \brief The C1 access bit */
             bool c2; /**< \brief The C2 access bit */
@@ -104,27 +106,27 @@ namespace logicalaccess
         /**
          * \brief Data block access bits structure.
          */
-        struct LIBLOGICALACCESS_API DataBlockAccessBits : public BlockAccessBits
+        struct LIBLOGICALACCESS_API DataBlockAccessBits : BlockAccessBits
         {
             /**
              * \brief Constructor.
              *
              * Set access bits to transport configuration. Key A and Key B may serve for any purpose (read, write, increment, etc.).
              */
-            DataBlockAccessBits() : BlockAccessBits(false, false, false) {};
+            DataBlockAccessBits() : BlockAccessBits(false, false, false) {}
         };
 
         /**
          * \brief Sector trailer block access bits structure.
          */
-        struct LIBLOGICALACCESS_API SectorTrailerAccessBits : public BlockAccessBits
+        struct LIBLOGICALACCESS_API SectorTrailerAccessBits : BlockAccessBits
         {
             /**
              * \brief Constructor.
              *
              * Set access bits to transport configuration. Key A may serve for any purpose (read, write, increment, etc.). Key B is data.
              */
-            SectorTrailerAccessBits() : BlockAccessBits(false, false, true) {};
+            SectorTrailerAccessBits() : BlockAccessBits(false, false, true) {}
         };
 
         /**
@@ -164,9 +166,7 @@ namespace logicalaccess
             SectorTrailerAccessBits d_sector_trailer_access_bits; /**< \brief The sector trailer access bits. */
         };
 
-    public:
-
-        /**
+	    /**
          * \brief The key A.
          */
         std::shared_ptr<MifareKey> keyA;

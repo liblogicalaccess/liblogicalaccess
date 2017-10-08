@@ -20,24 +20,26 @@
 namespace logicalaccess
 {
     KeyboardReaderUnit::KeyboardReaderUnit()
-        : ReaderUnit(READER_KEYBOARD)
-    {
-        d_readerUnitConfig.reset(new KeyboardReaderUnitConfiguration());
+		: ReaderUnit(READER_KEYBOARD), d_vendorId(0), d_productId(0)
+	{
+		d_readerUnitConfig.reset(new KeyboardReaderUnitConfiguration());
 		d_card_type = CHIP_UNKNOWN;
-        d_instanceConnected = false;
+		d_instanceConnected = false;
 
-        try
-        {
-            boost::property_tree::ptree pt;
-            read_xml((boost::filesystem::current_path().string() + "/KeyboardReaderUnit.config"), pt);
+		try
+		{
+			boost::property_tree::ptree pt;
+			read_xml((boost::filesystem::current_path().string() + "/KeyboardReaderUnit.config"), pt);
 			d_card_type = pt.get("config.cardType", CHIP_UNKNOWN);
-        }
-        catch (...) {}
-    }
+		}
+		catch (...)
+		{
+		}
+	}
 
     KeyboardReaderUnit::~KeyboardReaderUnit()
     {
-        disconnectFromReader();
+	    KeyboardReaderUnit::disconnectFromReader();
     }
 
     std::string KeyboardReaderUnit::getName() const
@@ -60,7 +62,7 @@ namespace logicalaccess
         LOG(LogLevel::INFOS) << "Waiting insertion... max wait {" << maxwait << "}";
 
         bool inserted = false;
-        std::vector<unsigned char> createChipId;
+        ByteVector createChipId;
 
         if (d_removalIdentifier.size() > 0)
         {
@@ -91,7 +93,7 @@ namespace logicalaccess
         // The inserted chip will stay inserted until a new identifier is read from the input device.
         if (d_insertedChip)
         {
-            std::vector<unsigned char> tmpId = getChipInAir(maxwait);
+            ByteVector tmpId = getChipInAir(maxwait);
             if (tmpId.size() > 0 && (tmpId != d_insertedChip->getChipIdentifier()))
             {
                 LOG(LogLevel::INFOS) << "Card found AND not same identifier as previous ! The previous card has been removed !";
@@ -110,9 +112,9 @@ namespace logicalaccess
         return removed;
     }
 
-    std::vector<unsigned char> KeyboardReaderUnit::getChipInAir(unsigned int maxwait)
+    ByteVector KeyboardReaderUnit::getChipInAir(unsigned int maxwait)
     {
-        std::vector<unsigned char> ret;
+        ByteVector ret;
 
         bool process = false;
         char c = 0x00;
@@ -192,17 +194,17 @@ namespace logicalaccess
                 memset(tmp, 0x00, sizeof(tmp));
 
                 size_t fact = ret.size() - 1;
-                for (std::vector<unsigned char>::iterator it = ret.begin(); it != ret.end(); ++it, --fact)
+                for (ByteVector::iterator it = ret.begin(); it != ret.end(); ++it, --fact)
                 {
                     tmp[0] = *it;
-                    unsigned long tmpi = strtoul(tmp, NULL, 10);
+                    unsigned long tmpi = strtoul(tmp, nullptr, 10);
                     convert += static_cast<unsigned long long>(tmpi * pow(10, fact));
                 }
             }
             else
             {
                 std::string tmp(ret.begin(), ret.end());
-                convert = strtoul(tmp.c_str(), NULL, 16);
+                convert = strtoul(tmp.c_str(), nullptr, 16);
             }
 
             ret.clear();
@@ -224,7 +226,7 @@ namespace logicalaccess
         return ret;
     }
 
-    bool KeyboardReaderUnit::waitInputChar(char &c, unsigned int maxwait)
+    bool KeyboardReaderUnit::waitInputChar(char &c, unsigned int maxwait) const
     {
         bool ret = false;
 
@@ -293,10 +295,10 @@ namespace logicalaccess
 
 #ifdef _WINDOWS
         // Just make a filter on input devices
-        if (getKeyboardReaderProvider()->sKeyboard != NULL)
+        if (getKeyboardReaderProvider()->sKeyboard != nullptr)
         {
-            std::strcpy(getKeyboardReaderProvider()->sKeyboard->selectedDeviceName, getName().c_str());
-            std::strcpy(getKeyboardReaderProvider()->sKeyboard->keyboardLayout, getKeyboardConfiguration()->getKeyboardLayout().c_str());
+            strcpy(getKeyboardReaderProvider()->sKeyboard->selectedDeviceName, getName().c_str());
+            strcpy(getKeyboardReaderProvider()->sKeyboard->keyboardLayout, getKeyboardConfiguration()->getKeyboardLayout().c_str());
             ret = true;
         }
 #endif
@@ -312,7 +314,7 @@ namespace logicalaccess
         if (d_instanceConnected)
         {
             // Don't really disconnect or close any listening, but remove the device filter if any.
-            if (getKeyboardReaderProvider()->sKeyboard != NULL)
+            if (getKeyboardReaderProvider()->sKeyboard != nullptr)
             {
                 memset(getKeyboardReaderProvider()->sKeyboard->selectedDeviceName, 0x00, DEVICE_NAME_MAXLENGTH);
             }

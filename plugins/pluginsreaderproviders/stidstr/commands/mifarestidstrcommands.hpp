@@ -37,18 +37,18 @@ namespace logicalaccess
          * \brief Get the STidSTR reader/card adapter.
          * \return The STidSTR reader/card adapter.
          */
-        std::shared_ptr<STidSTRReaderCardAdapter> getSTidSTRReaderCardAdapter() const { return std::dynamic_pointer_cast<STidSTRReaderCardAdapter>(getReaderCardAdapter()); };
+        std::shared_ptr<STidSTRReaderCardAdapter> getSTidSTRReaderCardAdapter() const { return std::dynamic_pointer_cast<STidSTRReaderCardAdapter>(getReaderCardAdapter()); }
 
         /**
          * \brief Scan the RFID field for Mifare tag.
          * \return The tag uid if present.
          */
-        std::vector<unsigned char> scanMifare();
+        ByteVector scanMifare() const;
 
         /**
          * \brief Release the RFID field.
          */
-        void releaseRFIDField();
+        void releaseRFIDField() const;
 
         /**
          * \brief Load a key on a given location.
@@ -56,7 +56,7 @@ namespace logicalaccess
          * \param key The key.
          * \param keytype The mifare key type.
          */
-		virtual void loadKey(std::shared_ptr<Location> location, MifareKeyType keytype, std::shared_ptr<MifareKey> key);
+	    void loadKey(std::shared_ptr<Location> location, MifareKeyType keytype, std::shared_ptr<MifareKey> key) override;
 
         /**
          * \brief Load a key to the reader.
@@ -66,7 +66,7 @@ namespace logicalaccess
          * \param vol Use volatile memory.
          * \return true on success, false otherwise.
          */
-        virtual bool loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol = true);
+	    bool loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol = true) override;
 
         /**
          * \brief Authenticate a block, given a key number.
@@ -74,7 +74,7 @@ namespace logicalaccess
          * \param keyno The key number, previously loaded with Mifare::loadKey().
          * \param keytype The key type.
          */
-        virtual void authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype);
+	    void authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype) override;
 
         /**
          * \brief Authenticate a block, given a key number.
@@ -82,7 +82,7 @@ namespace logicalaccess
          * \param key_storage The key storage used for authentication.
          * \param keytype The key type.
          */
-        virtual void authenticate(unsigned char blockno, std::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype);
+	    void authenticate(unsigned char blockno, std::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype) override;
 
         /**
          * \brief Read bytes from the card.
@@ -92,7 +92,7 @@ namespace logicalaccess
          * \param buflen The length of buffer.
          * \return The count of bytes red.
          */
-        virtual std::vector<unsigned char> readBinary(unsigned char blockno, size_t len);
+	    ByteVector readBinary(unsigned char blockno, size_t len) override;
 
         /**
          * \brief Write bytes to the card.
@@ -101,21 +101,21 @@ namespace logicalaccess
          * \param buflen The length of buffer.
          * \return The count of bytes written.
          */
-        virtual void updateBinary(unsigned char blockno, const std::vector<unsigned char>& buf);
+	    void updateBinary(unsigned char blockno, const ByteVector& buf) override;
 
 		/**
 		* \brief Increment a block value.
 		* \param blockno The block number.
 		* \param value The increment value.
 		*/
-		virtual void increment(unsigned char blockno, uint32_t value) override;
+	    void increment(unsigned char blockno, uint32_t value) override;
 
 		/**
 		* \brief Decrement a block value.
 		* \param blockno The block number.
 		* \param value The decrement value.
 		*/
-		virtual void decrement(unsigned char blockno, uint32_t value) override;
+	    void decrement(unsigned char blockno, uint32_t value) override;
 
     protected:
         /**
@@ -127,7 +127,7 @@ namespace logicalaccess
          * \param buflen The length of buffer.
          * \return The count of bytes red.
          */
-        virtual std::vector<unsigned char> readBinaryIndex(unsigned char keyindex, unsigned char blockno, size_t len);
+        virtual ByteVector readBinaryIndex(unsigned char keyindex, unsigned char blockno, size_t len);
 
         /**
          * \brief Write bytes to the card.
@@ -137,7 +137,7 @@ namespace logicalaccess
          * \param buflen The length of buffer.
          * \return The count of bytes written.
          */
-        virtual void updateBinaryIndex(unsigned char keyindex, unsigned char blockno, const std::vector<unsigned char>& buf);
+        virtual void updateBinaryIndex(unsigned char keyindex, unsigned char blockno, const ByteVector& buf);
 
         /**
          * \brief Use SKB for read/write operation, or not.

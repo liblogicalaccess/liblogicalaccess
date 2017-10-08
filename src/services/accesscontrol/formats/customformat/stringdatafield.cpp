@@ -24,7 +24,7 @@ namespace logicalaccess
 
 	void StringDataField::setValue(const std::string& value)
     {
-        d_value = std::vector<unsigned char>(value.begin(), value.end());
+        d_value = ByteVector(value.begin(), value.end());
     }
 
 	std::string StringDataField::getValue() const
@@ -32,12 +32,12 @@ namespace logicalaccess
         return std::string(d_value.begin(), d_value.end());
     }
 
-	void StringDataField::setRawValue(const std::vector<unsigned char>& value)
+	void StringDataField::setRawValue(const ByteVector& value)
 	{
 		d_value = value;
 	}
 
-	std::vector<unsigned char> StringDataField::getRawValue() const
+	ByteVector StringDataField::getRawValue() const
 	{
 		return d_value;
 	}
@@ -108,7 +108,7 @@ namespace logicalaccess
 
         revertBinaryData(data, dataLengthBytes, pos, d_length, paddedBuffer, fieldDataLengthBytes);
 
-        std::vector<unsigned char> ret(paddedBuffer, paddedBuffer + fieldDataLengthBytes);
+        ByteVector ret(paddedBuffer, paddedBuffer + fieldDataLengthBytes);
         delete[] paddedBuffer;
 		d_value = ret;
     }
@@ -139,10 +139,10 @@ namespace logicalaccess
         ValueDataField::serialize(node);
         node.put("Padding", d_padding);
 		node.put("Charset", d_charset);
-        std::string strv = getValue();
+		std::string strv = getValue();
         if (d_charset != "ascii" && d_charset != "us-ascii" && d_charset != "utf-8")
         {
-            strv = BufferHelper::getHex(std::vector<unsigned char>(strv.begin(), strv.end()));
+            strv = BufferHelper::getHex(ByteVector(strv.begin(), strv.end()));
         }
         node.put("Value", strv);
 
@@ -154,7 +154,7 @@ namespace logicalaccess
         ValueDataField::unSerialize(node);
         d_padding = node.get_child("Padding").get_value<unsigned char>();
 		d_charset = node.get_child("Charset").get_value<std::string>();
-        std::string strv = node.get_child("Value").get_value<std::string>();
+		std::string strv = node.get_child("Value").get_value<std::string>();
         if (d_charset != "ascii" && d_charset != "us-ascii" && d_charset != "utf-8")
         {
             d_value = BufferHelper::fromHexString(strv);
@@ -165,7 +165,7 @@ namespace logicalaccess
         }
     }
 
-    std::string StringDataField::getDefaultXmlNodeName() const
+	std::string StringDataField::getDefaultXmlNodeName() const
     {
         return "StringDataField";
     }

@@ -51,13 +51,13 @@ namespace logicalaccess
     class CardException : public LibLogicalAccessException
     {
     public:
-        CardException(const std::string& message)
+	    explicit CardException(const std::string& message)
             : LibLogicalAccessException(message),
 			error_type_(DEFAULT)
         {
-		};
+		}
 
-		/**
+	    /**
 		* This is a general enumeration to describe possible error.
 		* This is usefull because not all readers / card combination fail with the
 		* same error code for the same error.
@@ -109,9 +109,9 @@ namespace logicalaccess
     class IKSException : public LibLogicalAccessException
     {
     public:
-        IKSException(const std::string& message)
+	    explicit IKSException(const std::string& message)
                 : LibLogicalAccessException(message)
-        {};
+        {}
     };
 
 #define EXCEPTION_MSG_CONNECTED			"Already connected to a card. Please disconnect before." /**< \brief Not connected exception message */

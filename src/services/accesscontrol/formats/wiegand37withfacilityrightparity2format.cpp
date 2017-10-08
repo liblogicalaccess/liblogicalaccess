@@ -32,7 +32,7 @@ namespace logicalaccess
         field->setDataRepresentation(d_dataRepresentation);
         field->setDataType(d_dataType);
         d_fieldList.push_back(field);
-        field = std::shared_ptr<NumberDataField>(new NumberDataField());
+        field = std::make_shared<NumberDataField>();
         field->setName("FacilityCode");
         field->setDataLength(16);
         field->setDataRepresentation(d_dataRepresentation);
@@ -49,9 +49,9 @@ namespace logicalaccess
         return 37;
     }
 
-    string Wiegand37WithFacilityRightParity2Format::getName() const
+	std::string Wiegand37WithFacilityRightParity2Format::getName() const
     {
-        return string("Wiegand 37 With Facility and right parity * 2");
+        return std::string("Wiegand 37 With Facility and right parity * 2");
     }
 
     unsigned short int Wiegand37WithFacilityRightParity2Format::getFacilityCode() const
@@ -67,17 +67,17 @@ namespace logicalaccess
         d_formatLinear.d_facilityCode = facilityCode;
     }
 
-    unsigned char Wiegand37WithFacilityRightParity2Format::getLeftParity(const void* data, size_t dataLengthBytes) const
+    unsigned char Wiegand37WithFacilityRightParity2Format::getLeftParity(const void* data, size_t dataLengthBytes)
     {
         return calculateParity(data, dataLengthBytes, PT_ODD, 1, 16);
     }
 
-    unsigned char Wiegand37WithFacilityRightParity2Format::getRightParity1(const void* data, size_t dataLengthBytes) const
+    unsigned char Wiegand37WithFacilityRightParity2Format::getRightParity1(const void* data, size_t dataLengthBytes)
     {
         return calculateParity(data, dataLengthBytes, PT_EVEN, 17, 18);
     }
 
-    unsigned char Wiegand37WithFacilityRightParity2Format::getRightParity2(const void* data, size_t dataLengthBytes) const
+    unsigned char Wiegand37WithFacilityRightParity2Format::getRightParity2(const void* data, size_t dataLengthBytes)
     {
         return calculateParity(data, dataLengthBytes, PT_ODD, (size_t)0, 36);
     }
@@ -89,7 +89,7 @@ namespace logicalaccess
         convertField(data, dataLengthBytes, &pos, getFacilityCode(), 16);
         convertField(data, dataLengthBytes, &pos, getUid(), 18);
 
-        if (data != NULL)
+        if (data != nullptr)
         {
             pos = 0;
             BitHelper::writeToBit(data, dataLengthBytes, &pos, getLeftParity(data, dataLengthBytes), 7, 1);
@@ -107,7 +107,7 @@ namespace logicalaccess
         setFacilityCode((short)revertField(data, dataLengthBytes, &pos, 16));
         setUid(revertField(data, dataLengthBytes, &pos, 18));
 
-        if (data != NULL)
+        if (data != nullptr)
         {
             pos = 0;
             unsigned char parity = getLeftParity(data, dataLengthBytes);
@@ -175,7 +175,7 @@ namespace logicalaccess
         setUid(node.get_child("Uid").get_value<unsigned long long>());
     }
 
-    std::string Wiegand37WithFacilityRightParity2Format::getDefaultXmlNodeName() const
+	std::string Wiegand37WithFacilityRightParity2Format::getDefaultXmlNodeName() const
     {
         return "Wiegand37WithFacilityRightParity2Format";
     }

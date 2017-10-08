@@ -14,22 +14,22 @@ namespace logicalaccess
         : Key()
     {
         memset(d_key, 0x00, sizeof(d_key));
-        clear();
+	    MifareKey::clear();
     }
 
     MifareKey::MifareKey(const std::string& str)
         : Key()
     {
         memset(d_key, 0x00, sizeof(d_key));
-        fromString(str);
+	    Key::fromString(str);
     }
 
     MifareKey::MifareKey(const void* buf, size_t buflen)
         : Key()
     {
-        clear();
+	    MifareKey::clear();
 
-        if (buf != NULL)
+        if (buf != nullptr)
         {
             if (buflen >= MIFARE_KEY_SIZE)
             {

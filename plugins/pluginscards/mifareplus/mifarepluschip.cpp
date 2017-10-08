@@ -23,7 +23,7 @@ namespace logicalaccess
     uint16_t MifarePlusChip::key_number_from_sector(int sector, MifareKeyType type)
     {
         int offset = sector * 2;
-        if (type == MifareKeyType::KT_KEY_B)
+        if (type == KT_KEY_B)
             offset++;
 
         uint16_t pos = 0;

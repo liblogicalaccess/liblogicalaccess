@@ -17,7 +17,7 @@ namespace logicalaccess
     {
     }
 
-	void NFCTagCardService::writeNDEF(std::shared_ptr<logicalaccess::NdefMessage> /*records*/)
+	void NFCTagCardService::writeNDEF(std::shared_ptr<NdefMessage> /*records*/)
 	{
 	}
 

@@ -87,7 +87,7 @@ namespace logicalaccess
         return d_ipAddress;
     }
 
-    void UdpDataTransport::send(const std::vector<unsigned char>& data)
+    void UdpDataTransport::send(const ByteVector& data)
     {
         if (data.size() > 0)
         {
@@ -96,9 +96,9 @@ namespace logicalaccess
         }
     }
 
-    std::vector<unsigned char> UdpDataTransport::receive(long int timeout)
+    ByteVector UdpDataTransport::receive(long int timeout)
     {
-        std::vector<unsigned char> res;
+        ByteVector res;
         std::shared_ptr<boost::asio::ip::udp::socket> socket = getSocket();
 
         long int currentWait = 0;
@@ -117,7 +117,7 @@ namespace logicalaccess
             boost::asio::ip::udp::endpoint sender_endpoint;
             // TODO: Need to set up a timeout here !
             size_t len = socket->receive_from(boost::asio::buffer(recv_buf), sender_endpoint);
-            res = std::vector<unsigned char>(recv_buf.begin(), recv_buf.begin() + len);
+            res = ByteVector(recv_buf.begin(), recv_buf.begin() + len);
         }
 
         return res;

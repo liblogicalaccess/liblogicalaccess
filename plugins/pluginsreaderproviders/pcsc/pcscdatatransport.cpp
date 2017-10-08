@@ -42,7 +42,7 @@ namespace logicalaccess
         return d_isConnected;
     }
 
-    void PCSCDataTransport::send(const std::vector<unsigned char>& data)
+    void PCSCDataTransport::send(const ByteVector& data)
     {
         LLA_LOG_CTX("PCSCDataTransport");
         d_response.clear();
@@ -53,7 +53,7 @@ namespace logicalaccess
         {
             unsigned char returnedData[255];
             ULONG ulNoOfDataReceived = sizeof(returnedData);
-            LPCSCARD_IO_REQUEST ior = NULL;
+            LPCSCARD_IO_REQUEST ior = nullptr;
             switch (getPCSCReaderUnit()->getActiveProtocol())
             {
             case SCARD_PROTOCOL_T0:
@@ -67,20 +67,21 @@ namespace logicalaccess
             case SCARD_PROTOCOL_RAW:
                 ior = SCARD_PCI_RAW;
                 break;
+            default: ;
             }
 
             LOG(LogLevel::COMS) << "APDU command: " << BufferHelper::getHex(data);
 
-            unsigned int errorFlag = SCardTransmit(getPCSCReaderUnit()->getHandle(), ior, &data[0], static_cast<DWORD>(data.size()), NULL, returnedData, &ulNoOfDataReceived);
+            unsigned int errorFlag = SCardTransmit(getPCSCReaderUnit()->getHandle(), ior, &data[0], static_cast<DWORD>(data.size()), nullptr, returnedData, &ulNoOfDataReceived);
 
             CheckCardError(errorFlag);
-            d_response = std::vector<unsigned char>(returnedData, returnedData + ulNoOfDataReceived);
+            d_response = ByteVector(returnedData, returnedData + ulNoOfDataReceived);
         }
     }
 
-    std::vector<unsigned char> PCSCDataTransport::receive(long int /*timeout*/)
+    ByteVector PCSCDataTransport::receive(long int /*timeout*/)
     {
-        std::vector<unsigned char> r = d_response;
+        ByteVector r = d_response;
         LOG(LogLevel::COMS) << "APDU response: " << BufferHelper::getHex(r);
 
         d_response.clear();

@@ -34,19 +34,19 @@ namespace logicalaccess
          * \brief Get the reader unit name.
          * \return The reader unit name.
          */
-        virtual std::string getName() const;
+	    std::string getName() const override;
 
         /**
          * \brief Get the connected reader unit name.
          * \return The connected reader unit name.
          */
-        virtual std::string getConnectedName();
+	    std::string getConnectedName() override;
 
         /**
          * \brief Set the card type.
          * \param cardType The card type.
          */
-        virtual void setCardType(std::string cardType);
+	    void setCardType(std::string cardType) override;
 
         /**
          * \brief Wait for a card insertion.
@@ -54,33 +54,33 @@ namespace logicalaccess
          * \return True if a card was inserted, false otherwise. If a card was inserted, the name of the reader on which the insertion was detected is accessible with getReader().
          * \warning If the card is already connected, then the method always fail.
          */
-        virtual bool waitInsertion(unsigned int maxwait);
+	    bool waitInsertion(unsigned int maxwait) override;
 
         /**
          * \brief Wait for a card removal.
          * \param maxwait The maximum time to wait for, in milliseconds. If maxwait is zero, then the call never times out.
          * \return True if a card was removed, false otherwise. If a card was removed, the name of the reader on which the removal was detected is accessible with getReader().
          */
-        virtual bool waitRemoval(unsigned int maxwait);
+	    bool waitRemoval(unsigned int maxwait) override;
 
         /**
          * \brief Create the chip object from card type.
          * \param type The card type.
          * \return The chip.
          */
-        virtual std::shared_ptr<Chip> createChip(std::string type);
+	    std::shared_ptr<Chip> createChip(std::string type) override;
 
         /**
          * \brief Get the first and/or most accurate chip found.
          * \return The single chip.
          */
-        virtual std::shared_ptr<Chip> getSingleChip();
+	    std::shared_ptr<Chip> getSingleChip() override;
 
         /**
          * \brief Get chip available in the RFID rang.
          * \return The chip list.
          */
-        virtual std::vector<std::shared_ptr<Chip> > getChipList();
+	    std::vector<std::shared_ptr<Chip> > getChipList() override;
 
         /**
          * \brief Get the current chip in air.
@@ -100,7 +100,7 @@ namespace logicalaccess
          *
          * If the card handle was already connected, connect() first call disconnect(). If you intend to do a reconnection, call reconnect() instead.
          */
-        bool connect();
+        bool connect() override;
 
         /**
          * \brief Disconnect from the reader.
@@ -108,42 +108,42 @@ namespace logicalaccess
          *
          * Calling this method on a disconnected reader has no effect.
          */
-        void disconnect();
+        void disconnect() override;
 
         /**
          * \brief Check if the card is connected.
          * \return True if the card is connected, false otherwise.
          */
-        virtual bool isConnected();
+	    bool isConnected() override;
 
         /**
          * \brief Connect to the reader. Implicit connection on first command sent.
          * \return True if the connection succeeded.
          */
-        virtual bool connectToReader();
+	    bool connectToReader() override;
 
         /**
          * \brief Disconnect from reader.
          */
-        virtual void disconnectFromReader();
+	    void disconnectFromReader() override;
 
         /**
          * \brief Get a string hexadecimal representation of the reader serial number
          * \return The reader serial number or an empty string on error.
          */
-        virtual std::string getReaderSerialNumber();
+	    std::string getReaderSerialNumber() override;
 
         /**
          * \brief Serialize the current object to XML.
          * \param parentNode The parent node.
          */
-        virtual void serialize(boost::property_tree::ptree& parentNode);
+	    void serialize(boost::property_tree::ptree& parentNode) override;
 
         /**
          * \brief UnSerialize a XML node to the current object.
          * \param node The XML node.
          */
-        virtual void unSerialize(boost::property_tree::ptree& node);
+	    void unSerialize(boost::property_tree::ptree& node) override;
 
         std::shared_ptr<RplethReaderUnitConfiguration> getRplethConfiguration();
 
@@ -167,25 +167,25 @@ namespace logicalaccess
          * \brief Set the Rpleth IP Address.
          * \param readerAddress The new Rpleth IP Address.
          */
-        void setReaderIp(const std::vector<unsigned char>& address);
+        void setReaderIp(const ByteVector& address);
 
         /**
          * \brief Set the Rpleth MAC Address.
          * \param readerAddress The new Rpleth MAC Address.
          */
-        void setReaderMac(const std::vector<unsigned char>& address);
+        void setReaderMac(const ByteVector& address);
 
         /**
          * \brief Set the Rpleth Subnet mask.
          * \param readerAddress The new Rpleth Subnet Subnet.
          */
-        void setReaderSubnet(const std::vector<unsigned char>& address);
+        void setReaderSubnet(const ByteVector& address);
 
         /**
          * \brief Set the Rpleth Gateway Address.
          * \param readerAddress The new Rpleth Gateway Address.
          */
-        void setReaderGateway(const std::vector<unsigned char>& address);
+        void setReaderGateway(const ByteVector& address);
 
         /**
          * \brief Set the Rpleth port.
@@ -213,28 +213,28 @@ namespace logicalaccess
 		 * \brief Set the client context.
 		 * \param context The context.
 		 */
-		virtual void setContext(const std::string& context);
+	    void setContext(const std::string& context) override;
 
         /**
         * \brief Get the client context.
         * \return The context.
         */
-        virtual std::string getContext();
+	    std::string getContext() override;
 
         /**
          * \brief Request the last badge.
          * \param timeout The time to wait.
          * \return The last badge.
          */
-        std::vector<unsigned char> badge(long int timeout = 2000);
+        ByteVector badge(long int timeout = 2000);
 
         std::string getProxyReaderType();
 
-        std::vector<unsigned char> getInsertedChipIdentifier();
+        ByteVector getInsertedChipIdentifier();
 
-        void sendCardWaited(std::vector<unsigned char> card);
+        void sendCardWaited(ByteVector card);
 
-        std::vector<unsigned char> receiveCardWaited(bool present = false);
+        ByteVector receiveCardWaited(bool present = false);
 
     protected:
 
@@ -244,24 +244,24 @@ namespace logicalaccess
          * \param timeout The command timeout.
          * \return The result of the command.
          */
-        std::vector<unsigned char> receiveBadge(long int timeout = 2000);
+        ByteVector receiveBadge(long int timeout = 2000);
 
         /**
          * \brief Take the csn from wiegand full trame.
          * \param trame The wiegnad full trame.
          * \return The csn contains into the wiegand trame.
          */
-        std::vector<unsigned char> getCsn(const std::vector<unsigned char>& trame);
+        ByteVector getCsn(const ByteVector& trame) const;
 
         /**
          * \brief Last successed RATS result.
          */
-        std::vector<unsigned char> d_successedRATS;
+        ByteVector d_successedRATS;
 
         /**
          * \brief The new identifier that will be used for the next waitInsertion after the waitRemoval.
          */
-        std::vector<unsigned char> removalIdentifier;
+        ByteVector removalIdentifier;
 
         std::shared_ptr<ReaderUnit> d_proxyReader;
     };

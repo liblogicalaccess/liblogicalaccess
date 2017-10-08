@@ -10,9 +10,9 @@ class LIBLOGICALACCESS_API GenRandomCommand : public BaseCommand
 {
   public:
     GenRandomCommand();
-    virtual std::vector<uint8_t> serialize() const override;
+	std::vector<uint8_t> serialize() const override;
 
-    virtual size_t binary_size_impl() const;
+	size_t binary_size_impl() const override;
 
     uint16_t nb_bytes_;
 };

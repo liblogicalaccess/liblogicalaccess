@@ -5,10 +5,10 @@
 namespace logicalaccess
 {
 
-class STidPRGDataTransport : public SerialPortDataTransport
+class LIBLOGICALACCESS_API STidPRGDataTransport : public SerialPortDataTransport
 {
   public:
-    virtual void setSerialPort(std::shared_ptr<SerialPortXml> port) override;
+	void setSerialPort(std::shared_ptr<SerialPortXml> port) override;
 
     STidPRGDataTransport();
 
@@ -21,7 +21,7 @@ class STidPRGDataTransport : public SerialPortDataTransport
      * It use the receiveTimeout_ attribute instead. The attribute
      * is controlable via the setReceiveTimeout() call.
      */
-    virtual std::vector<unsigned char> receive(long int timeout) override;
+	ByteVector receive(long int timeout) override;
 
     /**
     * \brief Serialize the current object to XML.
@@ -39,8 +39,8 @@ class STidPRGDataTransport : public SerialPortDataTransport
     * \brief Get the default Xml Node name for this object.
     * \return The Xml node name.
     */
-    virtual std::string getDefaultXmlNodeName() const override { return "STidPRGDataTransport"; };
-    virtual std::string getTransportType() const override { return "STidPRGSerialPort"; };
+	std::string getDefaultXmlNodeName() const override { return "STidPRGDataTransport"; }
+	std::string getTransportType() const override { return "STidPRGSerialPort"; }
 
     long int receiveTimeout_;
 };

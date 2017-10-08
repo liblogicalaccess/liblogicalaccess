@@ -56,14 +56,13 @@ namespace logicalaccess
         return ret;
     }
 
-    void MifarePlusSL3Commands_NEW::resetAuth()
+    void MifarePlusSL3Commands_NEW::resetAuth() const
     {
         LOG(ERRORS) << "HOHO RESETTING AUTH";
-        using ByteVector = std::vector<unsigned char>;
+        using ByteVector = ByteVector;
         ByteVector command {0x78};
-        ByteVector ret;
 
-        ret = getReaderCardAdapter()->sendCommand(command);
+	    ByteVector ret = getReaderCardAdapter()->sendCommand(command);
         LOG(DEBUGS) << "Ret from ResetAuth: " << ret;
     }
 }

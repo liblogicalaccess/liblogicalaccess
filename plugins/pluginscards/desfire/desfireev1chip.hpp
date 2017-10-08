@@ -30,7 +30,7 @@ namespace logicalaccess
          * \brief Constructor.
          * \param ct The card type.
          */
-        DESFireEV1Chip(std::string ct);
+	    explicit DESFireEV1Chip(std::string ct);
 
         /**
          * \brief Destructor.
@@ -41,29 +41,27 @@ namespace logicalaccess
          * \brief Get the root location node.
          * \return The root location node.
          */
-        virtual std::shared_ptr<LocationNode> getRootLocationNode();
+	    std::shared_ptr<LocationNode> getRootLocationNode() override;
 
         /**
          * \brief Get the application location information.
          * \return The location.
          */
-        virtual std::shared_ptr<DESFireLocation> getApplicationLocation();
+	    std::shared_ptr<DESFireLocation> getApplicationLocation() override;
 
-        virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
+	    std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
 
 		/**
 		* \brief Create default DESFire EV1 location.
 		* \return Default DESFire EV1 location.
 		*/
-		virtual std::shared_ptr<Location> createLocation() const;
+	    std::shared_ptr<Location> createLocation() const override;
 
         /**
          * \brief Get the DESFire card provider for I/O access.
          * \return The DESFire card provider.
          */
-        std::shared_ptr<DESFireEV1Commands> getDESFireEV1Commands() { return std::dynamic_pointer_cast<DESFireEV1Commands>(getCommands()); };
-
-    protected:
+        std::shared_ptr<DESFireEV1Commands> getDESFireEV1Commands() const { return std::dynamic_pointer_cast<DESFireEV1Commands>(getCommands()); }
     };
 }
 

@@ -13,10 +13,10 @@ namespace logicalaccess
 {
     namespace openssl
     {
-        std::vector<unsigned char> SHA256Hash(const std::vector<unsigned char>& buffer)
+        ByteVector SHA256Hash(const ByteVector& buffer)
         {
             unsigned int len = 32;
-            std::vector<unsigned char> r(len);
+            ByteVector r(len);
 
             EVP_MD_CTX *mdctx_ptr = nullptr;
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
@@ -29,7 +29,7 @@ namespace logicalaccess
             mdctx_ptr = mdctx;
 #endif
 
-            EVP_DigestInit_ex(mdctx_ptr, EVP_sha256(), NULL);
+            EVP_DigestInit_ex(mdctx_ptr, EVP_sha256(), nullptr);
             EVP_DigestUpdate(mdctx_ptr, &buffer[0], buffer.size());
             EVP_DigestFinal_ex(mdctx_ptr, reinterpret_cast<unsigned char*>(&r[0]), &len);
             r.resize(len);
@@ -43,10 +43,10 @@ namespace logicalaccess
             return r;
         }
 
-        std::vector<unsigned char> SHA256Hash(const std::string& str)
+        ByteVector SHA256Hash(const std::string& str)
         {
             unsigned int len = 32;
-            std::vector<unsigned char> r(len);
+            ByteVector r(len);
 
             EVP_MD_CTX *mdctx_ptr = nullptr;
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
@@ -59,7 +59,7 @@ namespace logicalaccess
             mdctx_ptr = mdctx;
 #endif
 
-            EVP_DigestInit_ex(mdctx_ptr, EVP_sha256(), NULL);
+            EVP_DigestInit_ex(mdctx_ptr, EVP_sha256(), nullptr);
             EVP_DigestUpdate(mdctx_ptr, str.c_str(), str.length());
             EVP_DigestFinal_ex(mdctx_ptr, reinterpret_cast<unsigned char*>(&r[0]), &len);
             r.resize(len);
@@ -76,7 +76,7 @@ namespace logicalaccess
     std::vector<uint8_t> SHA1Hash(const std::vector<uint8_t> &in)
     {
         unsigned int len = 20;
-        std::vector<unsigned char> r(len);
+        ByteVector r(len);
 
         EVP_MD_CTX *mdctx_ptr = nullptr;
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
@@ -89,7 +89,7 @@ namespace logicalaccess
         mdctx_ptr = mdctx;
 #endif
 
-        EVP_DigestInit_ex(mdctx_ptr, EVP_sha1(), NULL);
+        EVP_DigestInit_ex(mdctx_ptr, EVP_sha1(), nullptr);
         EVP_DigestUpdate(mdctx_ptr, &in[0], in.size());
         EVP_DigestFinal_ex(mdctx_ptr, reinterpret_cast<unsigned char*>(&r[0]), &len);
         r.resize(len);

@@ -27,18 +27,18 @@ namespace logicalaccess
     {
     }
 
-    std::vector<unsigned char> MifareSTidSTRCommands::scanMifare()
+    ByteVector MifareSTidSTRCommands::scanMifare() const
     {
         LOG(LogLevel::INFOS) << "Scanning mifare card...";
-        std::vector<unsigned char> uid;
-        std::vector<unsigned char> r = getSTidSTRReaderCardAdapter()->sendCommand(0x00A0, std::vector<unsigned char>());
+        ByteVector uid;
+        ByteVector r = getSTidSTRReaderCardAdapter()->sendCommand(0x00A0, ByteVector());
 
         bool hasCard = (r[0] == 0x01);
         if (hasCard)
         {
             LOG(LogLevel::INFOS) << "Card detected !";
             unsigned char uidLength = r[1];
-            uid = std::vector<unsigned char>(r.begin() + 2, r.begin() + 2 + uidLength);
+            uid = ByteVector(r.begin() + 2, r.begin() + 2 + uidLength);
 
             LOG(LogLevel::INFOS) << "Card uid " << BufferHelper::getHex(uid) << "-{" << BufferHelper::getStdString(uid) << "}";
         }
@@ -50,16 +50,16 @@ namespace logicalaccess
         return uid;
     }
 
-    void MifareSTidSTRCommands::releaseRFIDField()
+    void MifareSTidSTRCommands::releaseRFIDField() const
     {
         LOG(LogLevel::INFOS) << "Releasing RFID field...";
-        getSTidSTRReaderCardAdapter()->sendCommand(0x00A1, std::vector<unsigned char>());
+        getSTidSTRReaderCardAdapter()->sendCommand(0x00A1, ByteVector());
     }
 
     bool MifareSTidSTRCommands::loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol)
     {
         LOG(LogLevel::INFOS) << "Loading key... key number {0x" << std::hex << keyno << std::dec << "(" << keyno << ")} key type {0x" << std::hex << keytype << std::dec << "(" << keytype << ")} key len {" << key->getLength() << "} volatile ? {" << vol << "}";
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(static_cast<unsigned char>(keytype));
         command.push_back(vol ? 0x00 : 0x01);
         command.push_back(keyno);
@@ -135,7 +135,7 @@ namespace logicalaccess
         d_lastKeyType = keytype;
     }
 
-    std::vector<unsigned char> MifareSTidSTRCommands::readBinary(unsigned char blockno, size_t len)
+    ByteVector MifareSTidSTRCommands::readBinary(unsigned char blockno, size_t len)
     {
         LOG(LogLevel::INFOS) << "Read binary block {0x" << std::hex << blockno << std::dec << "(" << blockno << ")} len {" << len << "}";
         if (len >= 256)
@@ -153,11 +153,11 @@ namespace logicalaccess
         scanMifare();
         LOG(LogLevel::INFOS) << "Scan done ! Continue to read binary block.";
 
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(static_cast<unsigned char>(d_lastKeyType));
         command.push_back(blockno);
 
-        std::vector<unsigned char> sbuf = getSTidSTRReaderCardAdapter()->sendCommand(0x00B2, command);
+        ByteVector sbuf = getSTidSTRReaderCardAdapter()->sendCommand(0x00B2, command);
 
         LOG(LogLevel::INFOS) << "Read binary buffer returned " << BufferHelper::getHex(sbuf) << " len {" << sbuf.size() << "}";
         EXCEPTION_ASSERT_WITH_LOG(sbuf.size() == 16, LibLogicalAccessException, "The read value should always be 16 bytes long");
@@ -165,26 +165,26 @@ namespace logicalaccess
         return sbuf;
     }
 
-    std::vector<unsigned char> MifareSTidSTRCommands::readBinaryIndex(unsigned char keyindex, unsigned char blockno, size_t /*len*/)
+    ByteVector MifareSTidSTRCommands::readBinaryIndex(unsigned char keyindex, unsigned char blockno, size_t /*len*/)
     {
         LOG(LogLevel::INFOS) << "Read binary index key index {0x" << std::hex << keyindex << std::dec << "(" << keyindex << ")} block {0x" << std::hex << blockno << std::dec << "(" << blockno << ")}";
         LOG(LogLevel::INFOS) << " => Rescanning card to avoid bad authentication";
         scanMifare();
         LOG(LogLevel::INFOS) << "Scan done ! Continue to read binary index.";
 
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(static_cast<unsigned char>(d_lastKeyType));
         command.push_back(keyindex);
         command.push_back(blockno);
 
-        std::vector<unsigned char> sbuf = getSTidSTRReaderCardAdapter()->sendCommand(0x00B1, command);
+        ByteVector sbuf = getSTidSTRReaderCardAdapter()->sendCommand(0x00B1, command);
 
         EXCEPTION_ASSERT_WITH_LOG(sbuf.size() == 16, LibLogicalAccessException, "The read value should always be 16 bytes long");
 
         return sbuf;
     }
 
-    void MifareSTidSTRCommands::updateBinary(unsigned char blockno, const std::vector<unsigned char>& buf)
+    void MifareSTidSTRCommands::updateBinary(unsigned char blockno, const ByteVector& buf)
     {
         LOG(LogLevel::INFOS) << "Update binary block {0x" << std::hex << blockno << std::dec << "(" << blockno << ")}";
 
@@ -200,7 +200,7 @@ namespace logicalaccess
 
         if (blockno != 0)
         {
-            std::vector<unsigned char> command;
+            ByteVector command;
             command.push_back(static_cast<unsigned char>(d_lastKeyType));
             command.push_back(blockno);
             command.insert(command.end(), buf.begin(), buf.end());
@@ -209,7 +209,7 @@ namespace logicalaccess
         }
     }
 
-    void MifareSTidSTRCommands::updateBinaryIndex(unsigned char keyindex, unsigned char blockno, const std::vector<unsigned char>& buf)
+    void MifareSTidSTRCommands::updateBinaryIndex(unsigned char keyindex, unsigned char blockno, const ByteVector& buf)
     {
         LOG(LogLevel::INFOS) << "Update binary index key index {0x" << std::hex << keyindex << std::dec << "(" << keyindex << ")} block {0x" << std::hex << blockno << std::dec << "(" << blockno << ")}";
 
@@ -219,7 +219,7 @@ namespace logicalaccess
 
         if (blockno != 0)
         {
-            std::vector<unsigned char> command;
+            ByteVector command;
             command.push_back(static_cast<unsigned char>(d_lastKeyType));
             command.push_back(keyindex);
             command.push_back(blockno);

@@ -99,15 +99,15 @@ namespace logicalaccess
         return false;
     }
 
-    std::vector<unsigned char> ProxAccessControlCardService::getPACSBits()
+    ByteVector ProxAccessControlCardService::getPACSBits() const
     {
         return getChip()->getChipIdentifier();
     }
 
 	FormatList ProxAccessControlCardService::getSupportedFormatList()
 	{
-		FormatList list = AccessControlCardService::getHIDWiegandFormatList();
-		list.push_back(std::shared_ptr<RawFormat>(new RawFormat()));
+		FormatList list = getHIDWiegandFormatList();
+		list.push_back(std::make_shared<RawFormat>());
 		return list;
 	}
 }

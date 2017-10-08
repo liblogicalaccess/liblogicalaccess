@@ -31,8 +31,6 @@ namespace logicalaccess
      */
     class LIBLOGICALACCESS_API KeyboardReaderProvider : public ReaderProvider
     {
-    public:
-
     protected:
         /**
          * \brief Constructor.
@@ -49,7 +47,7 @@ namespace logicalaccess
         /**
          * \brief Release the provider resources.
          */
-        virtual void release();
+	    void release() override;
 
         /**
          * \brief Get the keyboard reader provider instance.
@@ -61,36 +59,36 @@ namespace logicalaccess
          * \brief Get the reader provider type.
          * \return The reader provider type.
          */
-        virtual std::string getRPType() const { return READER_KEYBOARD; };
+	    std::string getRPType() const override { return READER_KEYBOARD; }
 
         /**
          * \brief Get the reader provider name.
          * \return The reader provider name.
          */
-        virtual std::string getRPName() const { return "Keyboard"; };
+	    std::string getRPName() const override { return "Keyboard"; }
 
         /**
          * \brief List all readers of the system.
          * \return True if the list was updated, false otherwise.
          */
-        virtual bool refreshReaderList();
+	    bool refreshReaderList() override;
 
         /**
          * \brief Get reader list for this reader provider.
          * \return The reader list.
          */
-        virtual const ReaderList& getReaderList() { return d_readers; };
+	    const ReaderList& getReaderList() override { return d_readers; }
 
         /**
          * \brief Create a new reader unit for the reader provider.
          * \return A reader unit.
          */
-        virtual std::shared_ptr<ReaderUnit> createReaderUnit();
+	    std::shared_ptr<ReaderUnit> createReaderUnit() override;
 
 #ifdef _WINDOWS
-        DWORD launchHook(HANDLE hUserTokenDup = NULL);
+        DWORD launchHook(HANDLE hUserTokenDup = nullptr) const;
 
-        DWORD launchHookIntoDifferentSession(DWORD destSessionId);
+        DWORD launchHookIntoDifferentSession(DWORD destSessionId) const;
 
     protected:
 
@@ -100,7 +98,7 @@ namespace logicalaccess
 
         void freeKbdFileMapping();
 
-        void fillSecurityDescriptor(LPSECURITY_ATTRIBUTES sa, PACL pACL);
+        static void fillSecurityDescriptor(LPSECURITY_ATTRIBUTES sa, PACL pACL);
 
         long createKbdEvent();
 
@@ -110,20 +108,18 @@ namespace logicalaccess
 
         void stopWatchingActiveConsole();
 
-        HANDLE retrieveWinlogonUserToken(const DWORD destSessionId, const SECURITY_IMPERSONATION_LEVEL ImpersonationLevel, const TOKEN_TYPE TokenType);
+        static HANDLE retrieveWinlogonUserToken(const DWORD destSessionId, const SECURITY_IMPERSONATION_LEVEL ImpersonationLevel, const TOKEN_TYPE TokenType);
 
-        std::string getHookPath() const;
+        static std::string getHookPath();
 
         std::string getHookArguments() const;
 
-        bool is64BitWindows() const;
+        static bool is64BitWindows();
 
-        bool terminateProcess(DWORD dwProcessId, UINT uExitCode);
+        static bool terminateProcess(DWORD dwProcessId, UINT uExitCode);
 #endif
 
-    protected:
-
-        /**
+	    /**
          * \brief The reader list.
          */
         ReaderList d_readers;

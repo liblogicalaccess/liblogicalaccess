@@ -40,7 +40,7 @@ namespace logicalaccess
          * \param buflen The length of buffer.
          * \return The count of bytes red.
          */
-        std::vector<unsigned char> readBinary(unsigned char blockno, size_t len);
+        ByteVector readBinary(unsigned char blockno, size_t len) override;
 
         /**
          * \brief Write bytes to the card.
@@ -49,7 +49,7 @@ namespace logicalaccess
          * \param buflen The length of buffer.
          * \return The count of bytes written.
          */
-        void updateBinary(unsigned char blockno, const std::vector<unsigned char>& buf);
+        void updateBinary(unsigned char blockno, const ByteVector& buf) override;
 
         /**
          * \brief Load a key to the reader.
@@ -59,7 +59,7 @@ namespace logicalaccess
          * \param vol Use volatile memory, not used by this reader.
          * \return true on success, false otherwise.
          */
-        bool loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol = false);
+        bool loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol = false) override;
 
         /**
          * \brief Load a key on a given location.
@@ -67,7 +67,7 @@ namespace logicalaccess
 		 * \param keytype The mifare key type.
          * \param key The key.
          */
-		void loadKey(std::shared_ptr<Location> location, MifareKeyType keytype, std::shared_ptr<MifareKey> key);
+		void loadKey(std::shared_ptr<Location> location, MifareKeyType keytype, std::shared_ptr<MifareKey> key) override;
 
         /**
          * \brief Authenticate a block, given a key number.
@@ -75,7 +75,7 @@ namespace logicalaccess
          * \param keyno The key number, previously loaded with Mifare::loadKey().
          * \param keytype The key type.
          */
-        void authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype);
+        void authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype) override;
 
         /**
          * \brief Authenticate a block, given a key number.
@@ -84,27 +84,27 @@ namespace logicalaccess
          * \param keytype The key type.
          * \return true if authenticated, false otherwise.
          */
-        void authenticate(unsigned char blockno, std::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype);
+        void authenticate(unsigned char blockno, std::shared_ptr<KeyStorage> key_storage, MifareKeyType keytype) override;
 
 		/**
 		* \brief Increment a block value.
 		* \param blockno The block number.
 		* \param value The increment value.
 		*/
-		virtual void increment(unsigned char blockno, unsigned int value) override;
+	    void increment(unsigned char blockno, unsigned int value) override;
 
 		/**
 		* \brief Decrement a block value.
 		* \param blockno The block number.
 		* \param value The decrement value.
 		*/
-		virtual void decrement(unsigned char blockno, unsigned int value) override;
+	    void decrement(unsigned char blockno, unsigned int value) override;
 
         /**
          * \brief Get the OK5553 reader/card adapter.
          * \return The OK5553 reader/card adapter.
          */
-        virtual std::shared_ptr<OK5553ReaderCardAdapter> getOK5553ReaderCardAdapter() { return std::dynamic_pointer_cast<OK5553ReaderCardAdapter>(getReaderCardAdapter()); };
+        virtual std::shared_ptr<OK5553ReaderCardAdapter> getOK5553ReaderCardAdapter() { return std::dynamic_pointer_cast<OK5553ReaderCardAdapter>(getReaderCardAdapter()); }
     };
 }
 

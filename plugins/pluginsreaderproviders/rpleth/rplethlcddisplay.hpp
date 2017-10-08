@@ -32,13 +32,13 @@ namespace logicalaccess
         /**
          * Does nothing.
          */
-        virtual void clear() override;
+	    void clear() override;
 
          /**
          * \brief Write a message on screen.
          * \param message The message to show.
          */
-        virtual void setMessage(std::string message);
+	    void setMessage(std::string message) override;
 
         /**
          * \brief Write a message on screen during a time.
@@ -52,29 +52,29 @@ namespace logicalaccess
          * \param rowid The row id for the message.
          * \param message The message to show.
          */
-        virtual void setMessage(unsigned char rowid, std::string message);
+	    void setMessage(unsigned char rowid, std::string message) override;
 
         /**
          * \brief Set the default time to display a message.
          * \param time The time to show the message
          */
-        void setDisplayTime(int time);
+        void setDisplayTime(int time) const;
 
         /**
          * \brief Enable or disable the blink.
          */
-        void blink();
+        void blink() const;
 
         /**
          * \brief Enable or disable the autoScroll.
          */
-        void autoScroll();
+        void autoScroll() const;
 
         /**
          * \brief Get the rpleth reader card adapter.
          * \return The rpleth reader card adapter.
          */
-        std::shared_ptr<RplethReaderCardAdapter> getRplethReaderCardAdapter() { return std::dynamic_pointer_cast<RplethReaderCardAdapter>(getReaderCardAdapter()); };
+        std::shared_ptr<RplethReaderCardAdapter> getRplethReaderCardAdapter() const { return std::dynamic_pointer_cast<RplethReaderCardAdapter>(getReaderCardAdapter()); }
     };
 }
 

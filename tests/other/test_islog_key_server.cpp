@@ -1,11 +1,11 @@
 #include "logicalaccess/iks/IslogKeyServer.hpp"
 
 using namespace logicalaccess;
-using namespace logicalaccess::iks;
+using namespace iks;
 
 void test_aes_encrypt_decrypt()
 {
-    IslogKeyServer &srv = iks::IslogKeyServer::fromGlobalSettings();
+    IslogKeyServer &srv = IslogKeyServer::fromGlobalSettings();
 
     auto v         = std::vector<uint8_t>(16, 'a');
     auto iv        = std::array<uint8_t, 16>{ {0} };
@@ -17,7 +17,7 @@ void test_aes_encrypt_decrypt()
 
 void test_des_encrypt_decrypt()
 {
-    IslogKeyServer &srv = iks::IslogKeyServer::fromGlobalSettings();
+    IslogKeyServer &srv = IslogKeyServer::fromGlobalSettings();
 
     auto v         = std::vector<uint8_t>(8, 'a');
     auto iv        = std::array<uint8_t, 8>{ {0} };
@@ -66,7 +66,7 @@ void test_des_encrypt_decrypt()
 
 int main()
 {
-    IslogKeyServer &srv = iks::IslogKeyServer::fromGlobalSettings();
+    IslogKeyServer &srv = IslogKeyServer::fromGlobalSettings();
 
     srv.get_random(17);
 

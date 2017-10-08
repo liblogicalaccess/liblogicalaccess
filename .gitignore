@@ -40,3 +40,4 @@ install_manifest.txt
 *.dll
 /*.db
 /*.opendb
+/.vs/liblogicalaccess/v15

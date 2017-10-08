@@ -18,10 +18,7 @@ namespace logicalaccess
      */
 	class LIBLOGICALACCESS_API CPS3Commands : public Commands
     {
-    public:
-
-		
-    };
+	};
 }
 
 #endif

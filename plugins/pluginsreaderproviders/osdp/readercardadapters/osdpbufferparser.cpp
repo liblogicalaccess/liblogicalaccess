@@ -9,9 +9,9 @@
 
 namespace logicalaccess
 {
-    std::vector<unsigned char> OSDPBufferParser::getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer)
+    ByteVector OSDPBufferParser::getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer)
     {
-	std::vector<unsigned char> result;
+	ByteVector result;
 
 	int removeCount = 0;
 	for (auto it = circular_buffer.begin(); it != circular_buffer.end() && (*it != 0x53); ++it)

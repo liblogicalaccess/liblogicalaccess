@@ -33,7 +33,7 @@ namespace logicalaccess
          * \brief Authenticate to the chip.
          * \param authkey The authentication key.
          */
-        virtual void authenticate(std::shared_ptr<TripleDESKey> authkey);
+	    void authenticate(std::shared_ptr<TripleDESKey> authkey) override;
 
     protected:
 
@@ -41,15 +41,15 @@ namespace logicalaccess
 
 		virtual void stopGenericSession();
 
-		std::shared_ptr<MifareUltralightChip> getMifareUltralightChip();
+		std::shared_ptr<MifareUltralightChip> getMifareUltralightChip() override;
 
-		void writePage(int page, const std::vector<unsigned char>& buf);
+		void writePage(int page, const ByteVector& buf) override;
 
-        virtual std::vector<unsigned char> sendGenericCommand(const std::vector<unsigned char>& data);
+        virtual ByteVector sendGenericCommand(const ByteVector& data);
 
-        virtual std::vector<unsigned char> authenticate_PICC1();
+        virtual ByteVector authenticate_PICC1();
 
-        virtual std::vector<unsigned char> authenticate_PICC2(const std::vector<unsigned char>& encRndAB);
+        virtual ByteVector authenticate_PICC2(const ByteVector& encRndAB);
     };
 }
 

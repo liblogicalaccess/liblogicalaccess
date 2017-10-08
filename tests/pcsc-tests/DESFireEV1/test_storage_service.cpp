@@ -36,7 +36,7 @@ void create_app_and_file(std::shared_ptr<logicalaccess::DESFireISO7816Commands> 
     // create the application we wish to write into
     cmdev1->createApplication(0x534, logicalaccess::DESFireKeySettings::KS_DEFAULT, 3,
                               logicalaccess::DESFireKeyType::DF_KEY_AES,
-                              logicalaccess::FIDS_NO_ISO_FID, 0, std::vector<unsigned char>());
+                              logicalaccess::FIDS_NO_ISO_FID, 0, ByteVector());
     cmd->selectApplication(0x534);
 
     std::shared_ptr<logicalaccess::DESFireKey> key(new logicalaccess::DESFireKey());
@@ -64,7 +64,7 @@ int main(int ac, char **av)
     ReaderProviderPtr provider;
     ReaderUnitPtr readerUnit;
     ChipPtr chip;
-    std::tie(provider, readerUnit, chip) = lla_test_init();
+    tie(provider, readerUnit, chip) = lla_test_init();
 
     PRINT_TIME("Chip identifier: " <<
                BufferHelper::getHex(chip->getChipIdentifier()));
@@ -74,15 +74,12 @@ int main(int ac, char **av)
                " instead.");
 
     auto storage = std::dynamic_pointer_cast<StorageCardService>(
-            chip->getService(logicalaccess::CST_STORAGE));
+            chip->getService(CST_STORAGE));
 
     auto cmd = std::dynamic_pointer_cast<DESFireISO7816Commands>(chip->getCommands());
     auto cmdev1 = std::dynamic_pointer_cast<DESFireEV1ISO7816Commands>(chip->getCommands());
 
-    std::shared_ptr<Location> location;
-    std::shared_ptr<AccessInfo> aiToUse;
-
-    // The excepted memory tree
+	// The excepted memory tree
     std::shared_ptr<DESFireEV1Location> dlocation(new DESFireEV1Location());
 
     // The Application ID to use
@@ -90,17 +87,17 @@ int main(int ac, char **av)
     // File 0 into this application
     dlocation->file = 0;
     // File communication requires encryption
-    dlocation->securityLevel = logicalaccess::CM_ENCRYPT;
+    dlocation->securityLevel = CM_ENCRYPT;
     dlocation->useEV1 = true;
-    dlocation->cryptoMethod = logicalaccess::DF_KEY_AES;
-    location = dlocation;
+    dlocation->cryptoMethod = DF_KEY_AES;
+    std::shared_ptr<Location> location = dlocation;
 
     std::shared_ptr<DESFireAccessInfo> daiToUse(new DESFireAccessInfo());
     daiToUse->masterCardKey->fromString("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00");
 
     daiToUse->writeKeyno = 1;
     daiToUse->readKeyno = 1;
-    aiToUse = daiToUse;
+    std::shared_ptr<AccessInfo> aiToUse = daiToUse;
 
     cmd->selectApplication(0x00);
     cmd->authenticate(0);
@@ -112,14 +109,14 @@ int main(int ac, char **av)
     std::vector<uint8_t> writedata(16, 'd');
     std::vector<uint8_t> readdata;
     // Write data on the specified location with the specified key
-    storage->writeData(location, aiToUse, aiToUse, writedata, logicalaccess::CB_DEFAULT);
+    storage->writeData(location, aiToUse, aiToUse, writedata, CB_DEFAULT);
 
     PRINT_TIME("Wrote: " << writedata);
     LLA_SUBTEST_PASSED("WriteService")
 
     // We read the data on the same location. Remember, the key is now changed.
     readdata = storage
-            ->readData(location, aiToUse, 16, logicalaccess::CB_DEFAULT);
+            ->readData(location, aiToUse, 16, CB_DEFAULT);
     PRINT_TIME("Read: " << readdata);
     LLA_SUBTEST_PASSED("ReadService")
 

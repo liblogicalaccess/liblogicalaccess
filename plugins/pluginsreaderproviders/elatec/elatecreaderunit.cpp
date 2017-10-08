@@ -25,9 +25,9 @@ namespace logicalaccess
         : ReaderUnit(READER_ELATEC)
     {
         d_readerUnitConfig.reset(new ElatecReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(std::shared_ptr<ElatecReaderCardAdapter>(new ElatecReaderCardAdapter()));
+	    ReaderUnit::setDefaultReaderCardAdapter(std::make_shared<ElatecReaderCardAdapter>());
         std::shared_ptr<ElatecDataTransport> dataTransport(new ElatecDataTransport());
-        setDataTransport(dataTransport);
+	    ReaderUnit::setDataTransport(dataTransport);
 		d_card_type = CHIP_UNKNOWN;
 
         try
@@ -41,7 +41,7 @@ namespace logicalaccess
 
     ElatecReaderUnit::~ElatecReaderUnit()
     {
-        disconnectFromReader();
+	    ElatecReaderUnit::disconnectFromReader();
     }
 
     std::string ElatecReaderUnit::getName() const
@@ -125,12 +125,12 @@ namespace logicalaccess
     {
         std::shared_ptr<Chip> chip;
 
-        std::vector<unsigned char> result = getDefaultElatecReaderCardAdapter()->sendCommand(0x11, std::vector<unsigned char>());
+        ByteVector result = getDefaultElatecReaderCardAdapter()->sendCommand(0x11, ByteVector());
         if (result.size() > 0)
         {
             chip = ReaderUnit::createChip(
 				(d_card_type == CHIP_UNKNOWN ? CHIP_GENERICTAG : d_card_type),
-                std::vector<unsigned char>(result.begin() + 1, result.end())
+                ByteVector(result.begin() + 1, result.end())
                 );
         }
 
@@ -199,9 +199,9 @@ namespace logicalaccess
         getDataTransport()->disconnect();
     }
 
-    std::vector<unsigned char> ElatecReaderUnit::getPingCommand() const
+    ByteVector ElatecReaderUnit::getPingCommand() const
     {
-        std::vector<unsigned char> cmd;
+        ByteVector cmd;
 
         cmd.push_back(0x11);
 

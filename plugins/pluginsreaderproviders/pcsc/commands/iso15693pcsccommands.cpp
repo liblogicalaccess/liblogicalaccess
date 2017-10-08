@@ -26,7 +26,7 @@ namespace logicalaccess
 
     void ISO15693PCSCCommands::stayQuiet()
     {
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(0x01);
         command.push_back(0x00);
         command.push_back(0x01);
@@ -34,18 +34,17 @@ namespace logicalaccess
         getPCSCReaderCardAdapter()->sendAPDUCommand(0xff, 0x30, 0x00, 0x01, 3, command);
     }
 
-    std::vector<unsigned char> ISO15693PCSCCommands::readBlock(size_t block, size_t le)
+    ByteVector ISO15693PCSCCommands::readBlock(size_t block, size_t le)
     {
-        std::vector<unsigned char> result;
-        unsigned char p1 = (block & 0xffff) >> 8;
+	    unsigned char p1 = (block & 0xffff) >> 8;
         unsigned char p2 = static_cast<unsigned char>(block & 0xff);
 
-        result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xff, 0xb0, p1, p2, static_cast<unsigned char>(le));
+        ByteVector result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xff, 0xb0, p1, p2, static_cast<unsigned char>(le));
 
-        return std::vector<unsigned char>(result.begin(), result.end() - 2);
+        return ByteVector(result.begin(), result.end() - 2);
     }
 
-    void ISO15693PCSCCommands::writeBlock(size_t block, const std::vector<unsigned char>& data)
+    void ISO15693PCSCCommands::writeBlock(size_t block, const ByteVector& data)
     {
         unsigned char p1 = (block & 0xffff) >> 8;
         unsigned char p2 = static_cast<unsigned char>(block & 0xff);
@@ -55,7 +54,7 @@ namespace logicalaccess
 
     void ISO15693PCSCCommands::lockBlock(size_t block)
     {
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(0x01);
         command.push_back(0x00);
         command.push_back(0x00);
@@ -67,7 +66,7 @@ namespace logicalaccess
 
     void ISO15693PCSCCommands::writeAFI(size_t afi)
     {
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(0x01);
         command.push_back(0x02);
         command.push_back(0x00);
@@ -78,7 +77,7 @@ namespace logicalaccess
 
     void ISO15693PCSCCommands::lockAFI()
     {
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(0x01);
         command.push_back(0x02);
         command.push_back(0x00);
@@ -88,7 +87,7 @@ namespace logicalaccess
 
     void ISO15693PCSCCommands::writeDSFID(size_t dsfid)
     {
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(0x01);
         command.push_back(0x03);
         command.push_back(0x00);
@@ -99,7 +98,7 @@ namespace logicalaccess
 
     void ISO15693PCSCCommands::lockDSFID()
     {
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(0x01);
         command.push_back(0x03);
         command.push_back(0x00);
@@ -109,8 +108,8 @@ namespace logicalaccess
 
     ISO15693Commands::SystemInformation ISO15693PCSCCommands::getSystemInformation()
     {
-        ISO15693Commands::SystemInformation systeminfo;
-        std::vector<unsigned char> result;
+        SystemInformation systeminfo;
+        ByteVector result;
         memset(&systeminfo, 0x00, sizeof(systeminfo));
 
         // AFI information
@@ -167,14 +166,14 @@ namespace logicalaccess
 
     unsigned char ISO15693PCSCCommands::getSecurityStatus(size_t block)
     {
-        std::vector<unsigned char> result, command;
+        ByteVector command;
         command.push_back(0x01);
         command.push_back(0x00);
         command.push_back(0x00);
         command.push_back((block & 0xffff) >> 8);
         command.push_back(static_cast<unsigned char>(block & 0xff));
 
-        result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xff, 0x30, 0x00, 0x03, 5, command, 0x01);
+        ByteVector result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xff, 0x30, 0x00, 0x03, 5, command, 0x01);
 
         return result[0];
     }

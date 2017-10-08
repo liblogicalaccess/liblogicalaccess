@@ -7,23 +7,23 @@ namespace logicalaccess
 {
 class EPassChip;
 class EPassAccessInfo;
-class EPassIdentityService : public IdentityCardService
+class LIBLOGICALACCESS_API EPassIdentityService : public IdentityCardService
 {
   public:
-    EPassIdentityService(const std::shared_ptr<Chip> &chip);
+	explicit EPassIdentityService(const std::shared_ptr<Chip> &chip);
 
-	virtual std::chrono::system_clock::time_point getTime(MetaData what) override;
-	virtual std::string getString(MetaData what) override;
-	virtual ByteVector getData(MetaData what) override;
+	std::chrono::system_clock::time_point getTime(MetaData what) override;
+	std::string getString(MetaData what) override;
+	ByteVector getData(MetaData what) override;
 
 
   protected:
-    std::shared_ptr<EPassChip> getEPassChip();
+    std::shared_ptr<EPassChip> getEPassChip() const;
 
     /**
      * Return an EPassAccessInfo or throws.
      */
-    std::shared_ptr<EPassAccessInfo> getEPassAccessInfo();
+    std::shared_ptr<EPassAccessInfo> getEPassAccessInfo() const;
 
     /**
      * Will be copied from cache is available.

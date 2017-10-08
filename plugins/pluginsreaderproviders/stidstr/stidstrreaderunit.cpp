@@ -45,11 +45,11 @@ namespace logicalaccess
         : ISO7816ReaderUnit(READER_STIDSTR)
     {
         d_readerUnitConfig.reset(new STidSTRReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(std::shared_ptr<STidSTRReaderCardAdapter>(new STidSTRReaderCardAdapter(STID_CMD_READER)));
+	    ReaderUnit::setDefaultReaderCardAdapter(std::make_shared<STidSTRReaderCardAdapter>(STID_CMD_READER));
         d_ledBuzzerDisplay.reset(new STidSTRLEDBuzzerDisplay());
         std::shared_ptr<STidSTRDataTransport> dataTransport(new STidSTRDataTransport());
         dataTransport->setPortBaudRate(38400);
-        setDataTransport(dataTransport);
+	    ReaderUnit::setDataTransport(dataTransport);
 		d_card_type = CHIP_UNKNOWN;
 
         try
@@ -63,7 +63,7 @@ namespace logicalaccess
 
     STidSTRReaderUnit::~STidSTRReaderUnit()
     {
-        disconnectFromReader();
+	    STidSTRReaderUnit::disconnectFromReader();
     }
 
     std::string STidSTRReaderUnit::getName() const
@@ -240,9 +240,9 @@ namespace logicalaccess
         getDataTransport()->disconnect();
     }
 
-    std::vector<unsigned char> STidSTRReaderUnit::getPingCommand() const
+    ByteVector STidSTRReaderUnit::getPingCommand() const
     {
-        std::vector<unsigned char> buffer;
+        ByteVector buffer;
 
         buffer.push_back(0x00);
         buffer.push_back(0x08);
@@ -360,7 +360,7 @@ namespace logicalaccess
     {
         LOG(LogLevel::INFOS) << "Scanning 14443A chips...";
         std::shared_ptr<Chip> chip;
-        std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0002, std::vector<unsigned char>());
+        ByteVector response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0002, ByteVector());
         if (response.size() > 0)
         {
             bool haveCard = (response[0] == 0x01);
@@ -378,7 +378,7 @@ namespace logicalaccess
 
                 if (uidLen > 0)
                 {
-                    std::vector<unsigned char> uid = std::vector<unsigned char>(response.begin() + 5, response.begin() + 5 + uidLen);
+                    ByteVector uid = ByteVector(response.begin() + 5, response.begin() + 5 + uidLen);
 
                     LOG(LogLevel::INFOS) << "UID " << BufferHelper::getHex(uid) << "-{" << BufferHelper::getStdString(uid) << "}";
 					std::string cardType = CHIP_UNKNOWN;
@@ -442,10 +442,10 @@ namespace logicalaccess
     {
         LOG(LogLevel::INFOS) << "Scanning 14443A RAW chips...";
         std::shared_ptr<Chip> chip;
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(getSTidSTRConfiguration()->getPN532Direct() ? 0x01 : 0x00); // 0x01 to Request ATS (required for DESFire / PN532 direct communication), 0x00 otherwise
 
-        std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000F, command);
+        ByteVector response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000F, command);
         if (response.size() > 0)
         {
             bool haveCard = (response[0] == 0x01);
@@ -489,7 +489,7 @@ namespace logicalaccess
 
                 if (uidLen > 0)
                 {
-                    std::vector<unsigned char> uid = std::vector<unsigned char>(response.begin() + 5, response.begin() + 5 + uidLen);
+                    ByteVector uid = ByteVector(response.begin() + 5, response.begin() + 5 + uidLen);
 
                     LOG(LogLevel::INFOS) << "UID " << BufferHelper::getHex(uid) << "-{" << BufferHelper::getStdString(uid) << "}";
 
@@ -537,7 +537,7 @@ namespace logicalaccess
     {
         LOG(LogLevel::INFOS) << "Scanning 14443B chips...";
         std::shared_ptr<Chip> chip;
-        std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0009, std::vector<unsigned char>());
+        ByteVector response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0009, ByteVector());
         if (response.size() > 0)
         {
             bool haveCard = (response[0] == 0x01);
@@ -546,7 +546,7 @@ namespace logicalaccess
                 unsigned char uidLen = response[1];
                 if (uidLen > 0)
                 {
-                    std::vector<unsigned char> uid = std::vector<unsigned char>(response.begin() + 2, response.begin() + 5 + uidLen);
+                    ByteVector uid = ByteVector(response.begin() + 2, response.begin() + 5 + uidLen);
 
                     LOG(LogLevel::INFOS) << "UID length {" << uidLen << "}";
 					chip = createChip(CHIP_UNKNOWN);
@@ -578,7 +578,7 @@ namespace logicalaccess
     {
         LOG(LogLevel::INFOS) << "Authenticating HMAC (signed communication)...";
 
-        std::vector<unsigned char> buf1;
+        ByteVector buf1;
         std::shared_ptr<HMAC1Key> key = getSTidSTRConfiguration()->getHMACKey();
         if (key->isEmpty())
         {
@@ -587,10 +587,10 @@ namespace logicalaccess
         }
 
         unsigned int len = 20;
-        std::vector<unsigned char> key16ks;
+        ByteVector key16ks;
         key16ks.resize(len, 0x00);
 
-        std::vector<unsigned char> rndB;
+        ByteVector rndB;
         rndB.resize(16);
         if (RAND_bytes(&rndB[0], static_cast<int>(rndB.size())) != 1)
         {
@@ -600,12 +600,12 @@ namespace logicalaccess
         openssl::AESInitializationVector aesiv = openssl::AESInitializationVector::createNull();
         openssl::AESCipher cipher;
 
-        std::vector<unsigned char> buf2, encbuf2;
+        ByteVector buf2, encbuf2;
 
         /* IF THE TIME BETWEEN authenticate 1 and 2 is TOO HIGH, WE RECEIVE AN ERROR INCORRECT DATA */
         /* BY DECLARING EVERYTHING BEFORE authenticate, IT SEEMS TO BE ENOUGH TO WORK FOR COM COMPONENTS */
 
-        std::vector<unsigned char> rndA = authenticateReader1(true);
+        ByteVector rndA = authenticateReader1(true);
         unsigned char* keydata = key->getData();
         buf1.insert(buf1.end(), keydata, keydata + key->getLength());
         buf1.insert(buf1.end(), rndA.begin(), rndA.end());
@@ -618,15 +618,15 @@ namespace logicalaccess
         buf2.insert(buf2.end(), rndB.begin(), rndB.end());
         cipher.cipher(buf2, encbuf2, aeskey, aesiv, false);
 
-        std::vector<unsigned char> encbuf3 = authenticateReader2(encbuf2);
+        ByteVector encbuf3 = authenticateReader2(encbuf2);
 
-        std::vector<unsigned char> buf3;
+        ByteVector buf3;
         cipher.decipher(encbuf3, buf3, aeskey, aesiv, false);
         EXCEPTION_ASSERT_WITH_LOG(buf3.size() == 32, LibLogicalAccessException, "Bad second reader response length.");
 
-        std::vector<unsigned char> rndB2 = std::vector<unsigned char>(buf3.begin(), buf3.begin() + 16);
+        ByteVector rndB2 = ByteVector(buf3.begin(), buf3.begin() + 16);
         EXCEPTION_ASSERT_WITH_LOG(rndB2 == rndB, LibLogicalAccessException, "Cannot negotiate the session: RndB'' != RndB.");
-        std::vector<unsigned char> rndC = std::vector<unsigned char>(buf3.begin() + 16, buf3.begin() + 16 + 16);
+        ByteVector rndC = ByteVector(buf3.begin() + 16, buf3.begin() + 16 + 16);
 
         d_sessionKey_hmac.clear();
         d_sessionKey_hmac.push_back(rndB[0]);
@@ -645,7 +645,7 @@ namespace logicalaccess
     {
         LOG(LogLevel::INFOS) << "Authenticating AES (ciphered communication)...";
 
-        std::vector<unsigned char> rndB;
+        ByteVector rndB;
         rndB.resize(16);
         if (RAND_bytes(&rndB[0], static_cast<int>(rndB.size())) != 1)
         {
@@ -660,24 +660,24 @@ namespace logicalaccess
         }
 
         unsigned char* keydata = key->getData();
-        openssl::AESSymmetricKey aeskey = openssl::AESSymmetricKey::createFromData(std::vector<unsigned char>(keydata, keydata + key->getLength()));
+        openssl::AESSymmetricKey aeskey = openssl::AESSymmetricKey::createFromData(ByteVector(keydata, keydata + key->getLength()));
         openssl::AESInitializationVector aesiv = openssl::AESInitializationVector::createNull();
         openssl::AESCipher cipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_CBC);
 
-        std::vector<unsigned char> rndA;
-        std::vector<unsigned char> buf1, encbuf1;
-        std::vector<unsigned char> rndB2;
+        ByteVector rndA;
+        ByteVector buf1, encbuf1;
+        ByteVector rndB2;
 
         /* IF THE TIME BETWEEN authenticate 1 and 2 is TOO HIGH, WE RECEIVE AN ERROR INCORRECT DATA */
         /* BY DECLARING EVERYTHING BEFORE authenticate, IT SEEMS TO BE ENOUGH TO WORK FOR COM COMPONENTS */
 
-        std::vector<unsigned char> encrndA = authenticateReader1(false);
+        ByteVector encrndA = authenticateReader1(false);
         cipher.decipher(encrndA, rndA, aeskey, aesiv, false);
         buf1.insert(buf1.end(), rndA.begin(), rndA.end());
         buf1.insert(buf1.end(), rndB.begin(), rndB.end());
         cipher.cipher(buf1, encbuf1, aeskey, aesiv, false);
 
-        std::vector<unsigned char> encrndB2 = authenticateReader2(encbuf1);
+        ByteVector encrndB2 = authenticateReader2(encbuf1);
 
         cipher.decipher(encrndB2, rndB2, aeskey, aesiv, false);
         EXCEPTION_ASSERT_WITH_LOG(rndB2 == rndB, LibLogicalAccessException, "Cannot negotiate the session: RndB'' != RndB.");
@@ -701,10 +701,10 @@ namespace logicalaccess
         d_sessionKey_aes.push_back(rndB[15]);
     }
 
-    std::vector<unsigned char> STidSTRReaderUnit::authenticateReader1(bool isHMAC)
+    ByteVector STidSTRReaderUnit::authenticateReader1(bool isHMAC)
     {
         LOG(LogLevel::INFOS) << "Authenticating Reader 1... is HMAC {" << isHMAC << "}";
-        std::vector<unsigned char> command, ret;
+        ByteVector command, ret;
         command.push_back(isHMAC ? 0x01 : 0x02);
 
         STidCommunicationMode lastCM = getSTidSTRConfiguration()->getCommunicationMode();
@@ -724,10 +724,10 @@ namespace logicalaccess
         return ret;
     }
 
-    std::vector<unsigned char> STidSTRReaderUnit::authenticateReader2(const std::vector<unsigned char>& data)
+    ByteVector STidSTRReaderUnit::authenticateReader2(const ByteVector& data)
     {
         LOG(LogLevel::INFOS) << "Authenticating Reader 2...";
-        std::vector<unsigned char> ret;
+        ByteVector ret;
         STidCommunicationMode lastCM = getSTidSTRConfiguration()->getCommunicationMode();
         getSTidSTRConfiguration()->setCommunicationMode(STID_CM_RESERVED);
         try
@@ -748,13 +748,13 @@ namespace logicalaccess
     void STidSTRReaderUnit::ResetAuthenticate()
     {
         LOG(LogLevel::INFOS) << "Reseting authentication...";
-        getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000D, std::vector<unsigned char>());
+        getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000D, ByteVector());
     }
 
-    void STidSTRReaderUnit::ChangeReaderKeys(const std::vector<unsigned char>& key_hmac, const std::vector<unsigned char>& key_aes)
+    void STidSTRReaderUnit::ChangeReaderKeys(const ByteVector& key_hmac, const ByteVector& key_aes)
     {
         LOG(LogLevel::INFOS) << "Changing reader keys...";
-        std::vector<unsigned char> command;
+        ByteVector command;
         unsigned char keyMode = 0x00;
         if (key_hmac.size() > 0)
         {
@@ -776,7 +776,7 @@ namespace logicalaccess
     void STidSTRReaderUnit::setBaudRate(STidBaudrate baudrate)
     {
         LOG(LogLevel::INFOS) << "Setting baudrate... baudrate {0x" << std::hex << baudrate << std::dec << "(" << baudrate << ")}";
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(static_cast<unsigned char>(baudrate));
         getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0005, command);
     }
@@ -784,7 +784,7 @@ namespace logicalaccess
     void STidSTRReaderUnit::set485Address(unsigned char address)
     {
         LOG(LogLevel::INFOS) << "Setting RS485 address... address {0x" << std::hex << address << std::dec << "(" << address << ")}";
-        std::vector<unsigned char> command;
+        ByteVector command;
         EXCEPTION_ASSERT_WITH_LOG(address <= 127, LibLogicalAccessException, "The RS485 address should be between 0 and 127.");
         command.push_back(address);
         getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0006, command);
@@ -793,7 +793,7 @@ namespace logicalaccess
     STidSTRReaderUnit::STidSTRInformation STidSTRReaderUnit::getReaderInformaton()
     {
         LOG(LogLevel::INFOS) << "Getting reader information...";
-        std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0008, std::vector<unsigned char>());
+        ByteVector response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0008, ByteVector());
 
         EXCEPTION_ASSERT_WITH_LOG(response.size() >= 5, LibLogicalAccessException, "The GetInfos response should be 5-byte long.");
 
@@ -814,7 +814,7 @@ namespace logicalaccess
     void STidSTRReaderUnit::setAllowedCommModes(bool plainComm, bool signedComm, bool cipheredComm)
     {
         LOG(LogLevel::INFOS) << "Setting allowed communication modes... plain comm {" << plainComm << "} signed comm {" << signedComm << "} ciphered comm {" << cipheredComm << "}";
-        std::vector<unsigned char> command;
+        ByteVector command;
         unsigned char allowedModes = 0x08 |
             ((plainComm) ? 0x01 : 0x00) |
             ((signedComm) ? 0x02 : 0x00) |
@@ -827,7 +827,7 @@ namespace logicalaccess
     void STidSTRReaderUnit::setTamperSwitchSettings(bool useTamperSwitch, STidTamperSwitchBehavior behavior)
     {
         LOG(LogLevel::INFOS) << "Setting tamper switch settings... use tamper {" << useTamperSwitch << "} tamper behavior {0x" << std::hex << behavior << std::dec << "(" << behavior << ")}";
-        std::vector<unsigned char> command;
+        ByteVector command;
 
         command.push_back((useTamperSwitch) ? 0x01 : 0x00);
         command.push_back(static_cast<unsigned char>(behavior));
@@ -838,7 +838,7 @@ namespace logicalaccess
     void STidSTRReaderUnit::getTamperSwitchInfos(bool& useTamperSwitch, STidTamperSwitchBehavior& behavior, bool& swChanged)
     {
         LOG(LogLevel::INFOS) << "Getting tamper switch infos...";
-        std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000C, std::vector<unsigned char>());
+        ByteVector response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000C, ByteVector());
 
         EXCEPTION_ASSERT_WITH_LOG(response.size() >= 3, LibLogicalAccessException, "The GetTamperSwitchInfos response should be 3-byte long.");
 
@@ -853,7 +853,7 @@ namespace logicalaccess
     {
         LOG(LogLevel::INFOS) << "Loading SKB...";
         unsigned char statusCode = 0;
-        std::vector<unsigned char> response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000E, std::vector<unsigned char>(), statusCode);
+        ByteVector response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000E, ByteVector(), statusCode);
 
         EXCEPTION_ASSERT_WITH_LOG(response.size() == 0, LibLogicalAccessException, "Unable to load the SKB values. An unknown error occurred.");
     }

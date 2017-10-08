@@ -45,24 +45,24 @@ namespace logicalaccess
          * \brief Constructor.
          * \param cardtype The Card type of the chip.
          */
-        Chip(std::string cardtype);
+	    explicit Chip(std::string cardtype);
 
         /**
          * \brief Destructor.
          */
-        virtual ~Chip() {};
+        virtual ~Chip() {}
 
         /**
          * \brief Get the card type of the chip.
          * \return The chip's card type.
          */
-        virtual const std::string& getCardType() const;
+	    const std::string& getCardType() const override;
 
         /**
          * \brief Get the generic card type.
          * \return The generic card type.
          */
-        virtual std::string getGenericCardType() const;
+	    std::string getGenericCardType() const override;
 
         /**
          * \brief Get the root location node.
@@ -74,49 +74,49 @@ namespace logicalaccess
          * \brief Get the commands.
          * \return The commands.
          */
-        std::shared_ptr<Commands> getCommands() const { return d_commands; };
+        std::shared_ptr<Commands> getCommands() const override { return d_commands; }
 
         /**
          * \brief Set commands.
          * \param commands The commands.
          */
-        void setCommands(std::shared_ptr<Commands> commands) { d_commands = commands; };
+        void setCommands(std::shared_ptr<Commands> commands) { d_commands = commands; }
 
         /**
          * \brief Get the chip identifier.
          * \return The chip identifier.
          */
-        const std::vector<unsigned char> getChipIdentifier() const { return d_chipIdentifier; };
+        ByteVector getChipIdentifier() const override { return d_chipIdentifier; }
 
         /**
          * \brief Set the chip identifier.
          * \param identifier The chip identifier.
          */
-        virtual void setChipIdentifier(std::vector<unsigned char> identifier) { d_chipIdentifier = identifier; };
+        virtual void setChipIdentifier(ByteVector identifier) { d_chipIdentifier = identifier; }
 
         /**
          * \brief Get the chip power status.
          * \return The power status.
          */
-        ChipPowerStatus getPowerStatus() const { return d_powerStatus; };
+        ChipPowerStatus getPowerStatus() const { return d_powerStatus; }
 
         /**
          * \brief Set the chip power status.
          * \param powerStatus The power status.
          */
-        void setPowerStatus(ChipPowerStatus powerStatus) { d_powerStatus = powerStatus; };
+        void setPowerStatus(ChipPowerStatus powerStatus) { d_powerStatus = powerStatus; }
 
         /**
          * \brief Get the chip reception level.
          * \return The reception level.
          */
-        unsigned char getReceptionLevel() const { return d_receptionLevel; };
+        unsigned char getReceptionLevel() const { return d_receptionLevel; }
 
         /**
          * \brief Set the chip reception level.
          * \param powerStatus The reception level.
          */
-        void setReceptionLevel(unsigned char receptionLevel) { d_receptionLevel = receptionLevel; };
+        void setReceptionLevel(unsigned char receptionLevel) { d_receptionLevel = receptionLevel; }
 
 		/**
 		* \brief Create default access informations.
@@ -135,9 +135,9 @@ namespace logicalaccess
          * \param serviceType The card service type.
          * \return The card service.
          */
-        virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
+	    std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
 
-        bool operator < (const Chip& chip)
+        bool operator < (const Chip& chip) const
         {
             return d_receptionLevel < chip.getReceptionLevel();
         }
@@ -152,7 +152,7 @@ namespace logicalaccess
         /**
          * \brief The chip identifier.
          */
-        std::vector<unsigned char> d_chipIdentifier;
+        ByteVector d_chipIdentifier;
 
         /**
          * \brief The chip power status. Most chip doesn't have his own power supply.

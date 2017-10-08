@@ -25,35 +25,35 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API NdefRecord : public XmlSerializable
     {
     public:
-        NdefRecord() : m_tnf(TNF::TNF_EMPTY) {};
-        virtual ~NdefRecord() {};
+        NdefRecord() : m_tnf(TNF_EMPTY) {}
+        virtual ~NdefRecord() {}
 
         size_t getEncodedSize() const;
-        std::vector<unsigned char> encode(bool firstRecord, bool lastRecord);
+        ByteVector encode(bool firstRecord, bool lastRecord);
 
-        void setTnf(TNF tnf) { m_tnf = tnf; };
-        TNF getTnf() const { return m_tnf; };
+        void setTnf(TNF tnf) { m_tnf = tnf; }
+        TNF getTnf() const { return m_tnf; }
 
-        void setType(std::vector<unsigned char> type) { m_type = type; };
-        std::vector<unsigned char>& getType() { return m_type; };
+        void setType(ByteVector type) { m_type = type; }
+        ByteVector& getType() { return m_type; }
 
-        void setPayload(std::vector<unsigned char> payload) { m_payload = payload; };
-        std::vector<unsigned char>& getPayload() { return m_payload; };
+        void setPayload(ByteVector payload) { m_payload = payload; }
+        ByteVector& getPayload() { return m_payload; }
 
-        void setId(std::vector<unsigned char> id) { m_id = id; };
-        std::vector<unsigned char>& getId() { return m_id; };
+        void setId(ByteVector id) { m_id = id; }
+        ByteVector& getId() { return m_id; }
 
-        virtual void serialize(boost::property_tree::ptree& parentNode);
-        virtual void unSerialize(boost::property_tree::ptree& node);
-        virtual std::string getDefaultXmlNodeName() const { return "NdefRecord"; };
+	    void serialize(boost::property_tree::ptree& parentNode) override;
+	    void unSerialize(boost::property_tree::ptree& node) override;
+	    std::string getDefaultXmlNodeName() const override { return "NdefRecord"; }
 
     private:
         unsigned char getTnfByte(bool firstRecord, bool lastRecord) const;
 
         TNF m_tnf; // 3 bit
-        std::vector<unsigned char> m_type;
-        std::vector<unsigned char> m_payload;
-        std::vector<unsigned char> m_id;
+        ByteVector m_type;
+        ByteVector m_payload;
+        ByteVector m_id;
     };
 }
 

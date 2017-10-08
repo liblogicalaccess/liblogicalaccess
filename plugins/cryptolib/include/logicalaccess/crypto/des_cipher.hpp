@@ -26,7 +26,7 @@ namespace logicalaccess
              * \brief Constructor.
              * \param _mode The encryption mode. Default is CBC.
              */
-            DESCipher(EncMode _mode = OpenSSLSymmetricCipher::ENC_MODE_CBC) : OpenSSLSymmetricCipher(_mode) {}
+	        explicit DESCipher(EncMode _mode = ENC_MODE_CBC) : OpenSSLSymmetricCipher(_mode) {}
 
         protected:
 
@@ -35,7 +35,7 @@ namespace logicalaccess
              * \param key The key.
              * \return The EVP cipher.
              */
-            virtual const EVP_CIPHER* getEVPCipher(const SymmetricKey& key) const;
+	        const EVP_CIPHER* getEVPCipher(const SymmetricKey& key) const override;
         };
     }
 }

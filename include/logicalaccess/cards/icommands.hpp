@@ -19,8 +19,9 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API ICommands
     {
     public:
+	    virtual ~ICommands() = default;
 
-        /**
+	    /**
          * \brief Get the chip.
          * \return The chip.
          */

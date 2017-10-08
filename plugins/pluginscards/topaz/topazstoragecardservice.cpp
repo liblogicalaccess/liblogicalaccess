@@ -28,12 +28,12 @@ namespace logicalaccess
             return;
         }
 
-        std::vector<unsigned char> zeroblock(8, 0x00);
+        ByteVector zeroblock(8, 0x00);
 
         writeData(location, aiToUse, std::shared_ptr<AccessInfo>(), zeroblock, CB_DEFAULT);
     }
 
-    void TopazStorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> /*aiToUse*/, std::shared_ptr<AccessInfo> aiToWrite, const std::vector<unsigned char>& data, CardBehavior behaviorFlags)
+    void TopazStorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> /*aiToUse*/, std::shared_ptr<AccessInfo> aiToWrite, const ByteVector& data, CardBehavior behaviorFlags)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 
@@ -41,7 +41,7 @@ namespace logicalaccess
         EXCEPTION_ASSERT_WITH_LOG(tLocation, std::invalid_argument, "location must be a TopazLocation.");
         std::shared_ptr<TopazAccessInfo> tAi = std::dynamic_pointer_cast<TopazAccessInfo>(aiToWrite);
 
-        size_t totaldatalen = data.size() + tLocation->byte;
+        size_t totaldatalen = data.size() + tLocation->byte_;
         int nbPages = 0;
         size_t buflen = 0;
         while (buflen < totaldatalen)
@@ -52,9 +52,9 @@ namespace logicalaccess
 
         if (nbPages >= 1)
         {
-            std::vector<unsigned char> dataPages;
+            ByteVector dataPages;
             dataPages.resize(buflen, 0x00);
-			std::copy(data.begin(), data.end(), dataPages.begin() + tLocation->byte);
+			copy(data.begin(), data.end(), dataPages.begin() + tLocation->byte_);
 
             if (behaviorFlags & CB_AUTOSWITCHAREA)
             {
@@ -76,14 +76,14 @@ namespace logicalaccess
         }
     }
 
-    std::vector<unsigned char> TopazStorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> /*aiToUse*/, size_t length, CardBehavior behaviorFlags)
+    ByteVector TopazStorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> /*aiToUse*/, size_t length, CardBehavior behaviorFlags)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
-		std::vector<unsigned char> ret;
+		ByteVector ret;
         std::shared_ptr<TopazLocation> tLocation = std::dynamic_pointer_cast<TopazLocation>(location);
         EXCEPTION_ASSERT_WITH_LOG(tLocation, std::invalid_argument, "location must be a TopazLocation.");
 
-        size_t totaldatalen = length + tLocation->byte;
+        size_t totaldatalen = length + tLocation->byte_;
         int nbPages = 0;
         size_t buflen = 0;
         while (buflen < totaldatalen)
@@ -94,7 +94,7 @@ namespace logicalaccess
 
         if (nbPages >= 1)
         {
-            std::vector<unsigned char> dataPages;
+            ByteVector dataPages;
 
             if (behaviorFlags & CB_AUTOSWITCHAREA)
             {
@@ -105,19 +105,19 @@ namespace logicalaccess
                 dataPages = getTopazChip()->getTopazCommands()->readPage(tLocation->page);
             }
 
-			ret.insert(ret.end(), dataPages.begin() + tLocation->byte, dataPages.begin() + tLocation->byte + length);
+			ret.insert(ret.end(), dataPages.begin() + tLocation->byte_, dataPages.begin() + tLocation->byte_ + length);
         }
 		return ret;
     }
 
-    unsigned int TopazStorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/, void* /*data*/, size_t /*dataLength*/)
+	ByteVector TopazStorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/)
     {
-        return 0;
+        return {};
     }
 
     void TopazStorageCardService::erase()
     {
-		std::vector<unsigned char> zeroblock(8, 0x00);
+		ByteVector zeroblock(8, 0x00);
         for (unsigned int i = 1; i < getTopazChip()->getNbBlocks(); ++i)
         {
             // Don't try to write on Reserved/Lock/OTP bytes

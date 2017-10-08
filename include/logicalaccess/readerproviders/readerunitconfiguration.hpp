@@ -7,6 +7,7 @@
 #ifndef LOGICALACCESS_READERUNITCONFIGURATION_HPP
 #define LOGICALACCESS_READERUNITCONFIGURATION_HPP
 
+#include "logicalaccess/liblogicalaccess_export.hpp"
 #include "logicalaccess/xmlserializable.hpp"
 
 namespace logicalaccess
@@ -21,7 +22,7 @@ namespace logicalaccess
         /**
          * \brief Constructor.
          */
-        ReaderUnitConfiguration(std::string rpt);
+	    explicit ReaderUnitConfiguration(std::string rpt);
 
         /**
          * \brief Destructor.

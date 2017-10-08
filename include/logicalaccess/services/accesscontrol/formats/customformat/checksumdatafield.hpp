@@ -43,13 +43,13 @@ namespace logicalaccess
          * \brief Set the bits to use positions to calculate checksum. The sum should be 8-bit factor.
          * \param positions The bits positions.
          */
-        void setBitsUsePositions(vector<unsigned int> positions);
+        void setBitsUsePositions(std::vector<unsigned int> positions);
 
         /**
          * \brief Get the bits to use positions to calculate checksum.
          * \return The bits positions.
          */
-        vector<unsigned int> getBitsUsePositions() const;
+		std::vector<unsigned int> getBitsUsePositions() const;
 
         /**
          * \brief Get linear data.
@@ -57,7 +57,7 @@ namespace logicalaccess
          * \param dataLengthBytes Length in byte of data
          * \param pos The first position bit. Will contain the position bit after the field.
          */
-        virtual void getLinearData(void* data, size_t dataLengthBytes, unsigned int* pos) const;
+	    void getLinearData(void* data, size_t dataLengthBytes, unsigned int* pos) const override;
 
         /**
          * \brief Set linear data.
@@ -65,31 +65,31 @@ namespace logicalaccess
          * \param dataLengthBytes Length of data in bytes
          * \param pos The first position bit. Will contain the position bit after the field.
          */
-        virtual void setLinearData(const void* data, size_t dataLengthBytes, unsigned int* pos);
+	    void setLinearData(const void* data, size_t dataLengthBytes, unsigned int* pos) override;
 
         /**
          * \brief Serialize the current object to XML.
          * \param parentNode The parent node.
          */
-        virtual void serialize(boost::property_tree::ptree& parentNode);
+	    void serialize(boost::property_tree::ptree& parentNode) override;
 
         /**
          * \brief UnSerialize a XML node to the current object.
          * \param node The XML node.
          */
-        virtual void unSerialize(boost::property_tree::ptree& node);
+	    void unSerialize(boost::property_tree::ptree& node) override;
 
         /**
          * \brief Get the default Xml Node name for this object.
          * \return The Xml node name.
          */
-        virtual std::string getDefaultXmlNodeName() const;
+	    std::string getDefaultXmlNodeName() const override;
 
     protected:
 
-        std::vector<unsigned char> d_value;
+        ByteVector d_value;
 
-        vector<size_t> d_bitsUsePositions;
+		std::vector<size_t> d_bitsUsePositions;
     };
 }
 

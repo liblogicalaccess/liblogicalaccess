@@ -13,6 +13,7 @@
 #endif
 
 #include <vector>
+#include "logicalaccess/lla_fwd.hpp"
 
 namespace logicalaccess
 {
@@ -30,13 +31,13 @@ namespace logicalaccess
              *
              * Required for the class to be polymorphic.
              */
-            virtual inline ~SymmetricKey() {};
+            virtual ~SymmetricKey() {}
 
             /**
              * \brief Get the key data.
              * \return The key data.
              */
-            inline const std::vector<unsigned char>& data() const
+	        const ByteVector& data() const
             {
                 return d_data;
             }
@@ -47,13 +48,13 @@ namespace logicalaccess
              * \brief Constructor.
              * \param size The key size.
              */
-            SymmetricKey(size_t size);
+	        explicit SymmetricKey(size_t size);
 
             /**
              * \brief Constructor.
              * \param data The buffer data.
              */
-            SymmetricKey(const std::vector<unsigned char>& data);
+	        explicit SymmetricKey(const ByteVector& data);
 
             /**
              * \brief Randomize the key.
@@ -65,7 +66,7 @@ namespace logicalaccess
             /**
              * \brief The key data.
              */
-            std::vector<unsigned char> d_data;
+            ByteVector d_data;
         };
 
         /**

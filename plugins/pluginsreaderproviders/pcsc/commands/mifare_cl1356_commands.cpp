@@ -4,7 +4,7 @@ namespace logicalaccess
 {
     void MifareCL1356Commands::increment(uint8_t blockno, uint32_t value)
     {
-        std::vector<unsigned char> buf;
+        ByteVector buf;
 
         buf.push_back(0); // MSB block no
         buf.push_back(blockno);
@@ -25,7 +25,7 @@ namespace logicalaccess
 
     void MifareCL1356Commands::decrement(uint8_t blockno, uint32_t value)
     {
-        std::vector<unsigned char> buf;
+        ByteVector buf;
 
         buf.push_back(0); // MSB block no
         buf.push_back(blockno);

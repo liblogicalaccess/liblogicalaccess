@@ -1,5 +1,5 @@
 /**
- * \file desfireaccessinfo.cpp
+ * \file desfireaccessinfos.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief Access informations for DESFire card.
  */

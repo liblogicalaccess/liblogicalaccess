@@ -15,7 +15,7 @@ namespace logicalaccess
       *          However, if the card is SL1 and we'll perform AES auth to switch
       *          to SL3, pass level_1 as false.
       */
-    class EncapsulateGuard
+    class LIBLOGICALACCESS_API EncapsulateGuard
     {
     public:
         EncapsulateGuard(Commands *cmd, bool level_1);
@@ -25,11 +25,11 @@ namespace logicalaccess
         class Adapter : public ReaderCardAdapter
         {
         public:
-            virtual std::vector<unsigned char>
-                    adaptCommand(const std::vector<unsigned char> &command) override;
+	        ByteVector
+                    adaptCommand(const ByteVector &command) override;
 
-            virtual std::vector<unsigned char>
-                    adaptAnswer(const std::vector<unsigned char> &answer) override;
+	        ByteVector
+                    adaptAnswer(const ByteVector &answer) override;
 
             bool level_1_;
         };
@@ -50,32 +50,30 @@ namespace logicalaccess
     {
 
     public:
-        virtual bool AESAuthenticateSL1(std::shared_ptr<AES128Key> key) override
+	    bool AESAuthenticateSL1(std::shared_ptr<AES128Key> key) override
         {
             EncapsulateGuard eg(this, true);
             return MifarePlusSL1Commands::AESAuthenticateSL1(key);
         }
     };
 
-    class MifarePlusSpringcardSL1Commands
+    class LIBLOGICALACCESS_API MifarePlusSpringcardSL1Commands
         : public MifarePlusSL1PCSCCommands
          //public MifareSpringCardCommands
     {
       public:
-        virtual bool AESAuthenticate(std::shared_ptr<AES128Key> ptr,
+	    bool AESAuthenticate(std::shared_ptr<AES128Key> ptr,
                                      uint16_t keyslot) override;
 
-		virtual bool AESAuthenticateSL1(std::shared_ptr<AES128Key> ptr) override;
+	    bool AESAuthenticateSL1(std::shared_ptr<AES128Key> ptr) override;
 
-		virtual bool switchLevel3(std::shared_ptr<AES128Key> key) override;
+	    bool switchLevel3(std::shared_ptr<AES128Key> key) override;
 
     protected:
-        virtual void authenticate(unsigned char blockno,
+	    void authenticate(unsigned char blockno,
                                   unsigned  char keyno,
                                   MifareKeyType keytype) override;
 
         MifareSpringCardCommands mscc_;
-
-    private:
     };
 }

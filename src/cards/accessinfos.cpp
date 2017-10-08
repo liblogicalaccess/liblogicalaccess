@@ -24,7 +24,7 @@ namespace logicalaccess
     {
     }
 
-    string AccessInfo::generateSimpleKey(size_t keySize)
+    std::string AccessInfo::generateSimpleKey(size_t keySize)
     {
         std::ostringstream oss;
 
@@ -34,7 +34,7 @@ namespace logicalaccess
 
         EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
 
-        std::vector<unsigned char> buf;
+        ByteVector buf;
         buf.resize(keySize, 0x00);
 
         if (RAND_bytes(&buf[0], static_cast<int>(keySize)) != 1)
@@ -55,7 +55,7 @@ namespace logicalaccess
         return oss.str();
     }
 
-    string AccessInfo::generateSimpleDESKey(size_t keySize)
+    std::string AccessInfo::generateSimpleDESKey(size_t keySize)
     {
         std::ostringstream oss;
 
@@ -65,7 +65,7 @@ namespace logicalaccess
 
         EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException, "Insufficient enthropy source");
 
-        std::vector<unsigned char> buf;
+        ByteVector buf;
         buf.resize(keySize, 0x00);
 
         if (RAND_bytes(&buf[0], static_cast<int>(keySize)) != 1)
@@ -80,7 +80,7 @@ namespace logicalaccess
                 oss << " ";
             }
 
-            buf.data()[i] = buf[i] & (0xfe | Format::calculateParity(&buf[i], 1, PT_ODD, 0, 7));
+            buf.data()[i] = buf[i] & (0xfe | Format::calculateParity(&buf[i], 1, PT_ODD, nullptr, 7));
 
             oss << std::hex << std::setfill('0') << std::setw(2) << (size_t)buf[i];
         }

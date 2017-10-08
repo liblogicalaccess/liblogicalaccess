@@ -21,13 +21,13 @@ namespace logicalaccess
 {
     namespace openssl
     {
-        OpenSSLSymmetricCipher::OpenSSLSymmetricCipher(OpenSSLSymmetricCipher::EncMode _mode) :
+        OpenSSLSymmetricCipher::OpenSSLSymmetricCipher(EncMode _mode) :
             d_mode(_mode)
         {
             OpenSSLInitializer::GetInstance();
         }
 
-        OpenSSLSymmetricCipherContext OpenSSLSymmetricCipher::start(OpenSSLSymmetricCipher::Method method, const SymmetricKey& key, const InitializationVector& iv, bool padding)
+        OpenSSLSymmetricCipherContext OpenSSLSymmetricCipher::start(Method method, const SymmetricKey& key, const InitializationVector& iv, bool padding) const
         {
             OpenSSLSymmetricCipherContext context(method);
 
@@ -41,12 +41,12 @@ namespace logicalaccess
             {
             case M_ENCRYPT:
             {
-                r = EVP_EncryptInit_ex(context.ctx(), evpCipher, NULL, &key.data()[0], &iv.data()[0]);
+                r = EVP_EncryptInit_ex(context.ctx(), evpCipher, nullptr, &key.data()[0], &iv.data()[0]);
                 break;
             }
             case M_DECRYPT:
             {
-                r = EVP_DecryptInit_ex(context.ctx(), evpCipher, NULL, &key.data()[0], &iv.data()[0]);
+                r = EVP_DecryptInit_ex(context.ctx(), evpCipher, nullptr, &key.data()[0], &iv.data()[0]);
                 break;
             }
             default:
@@ -64,7 +64,7 @@ namespace logicalaccess
             return context;
         }
 
-        void OpenSSLSymmetricCipher::update(OpenSSLSymmetricCipherContext& context, const std::vector<unsigned char>& src)
+        void OpenSSLSymmetricCipher::update(OpenSSLSymmetricCipherContext& context, const ByteVector& src)
         {
             int r = 0;
             int outlen = 0;
@@ -99,7 +99,7 @@ namespace logicalaccess
             delete[] buf;
         }
 
-        std::vector<unsigned char> OpenSSLSymmetricCipher::stop(OpenSSLSymmetricCipherContext& context)
+        ByteVector OpenSSLSymmetricCipher::stop(OpenSSLSymmetricCipherContext& context)
         {
             int r = 0;
             int outlen = 0;
@@ -133,14 +133,14 @@ namespace logicalaccess
             context.data().insert(context.data().end(), buf, buf + outlen);
             delete[] buf;
 
-            std::vector<unsigned char> data = context.data();
+            ByteVector data = context.data();
 
             context.reset();
 
             return data;
         }
 
-        void OpenSSLSymmetricCipher::cipher(const std::vector<unsigned char>& src, std::vector<unsigned char>& dest, const SymmetricKey& key, const InitializationVector& iv, bool padding)
+        void OpenSSLSymmetricCipher::cipher(const ByteVector& src, ByteVector& dest, const SymmetricKey& key, const InitializationVector& iv, bool padding)
         {
             OpenSSLSymmetricCipherContext context = start(M_ENCRYPT, key, iv, padding);
 
@@ -149,7 +149,7 @@ namespace logicalaccess
             dest = stop(context);
         }
 
-        void OpenSSLSymmetricCipher::decipher(const std::vector<unsigned char>& src, std::vector<unsigned char>& dest, const SymmetricKey& key, const InitializationVector& iv, bool padding)
+        void OpenSSLSymmetricCipher::decipher(const ByteVector& src, ByteVector& dest, const SymmetricKey& key, const InitializationVector& iv, bool padding)
         {
             OpenSSLSymmetricCipherContext context = start(M_DECRYPT, key, iv, padding);
 

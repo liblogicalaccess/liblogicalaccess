@@ -80,11 +80,11 @@ namespace logicalaccess
         fnSetConnectProduct = (SetConnectProduct)GetProcAddress(hWejAPIDLL, "SetConnectProduct");
         fnSetDevTypeSrch = (SetDevTypeSrch)GetProcAddress(hWejAPIDLL, "SetDevTypeSrch");
 
-        if ((fnGetLibVersion == NULL) || (fnSetComSrchRange == NULL) || (fnCOMConnect == NULL) || (fnCOMDisconnect == NULL) ||
-            (fnUSBConnect == NULL) || (fnUSBDisconnect == NULL) || (fnGetLastLibErr == NULL) || (fnReadCfg == NULL) ||
-            (fnWriteCfg == NULL) || (fnGetFlags == NULL) || (fnSetFlags == NULL) || (fnGetActiveID == NULL) || (fnGetActiveID32 == NULL) ||
-            (fnGetDevCnt == NULL) || (fnSetActDev == NULL) || (fnSetLUID == NULL) || (fnGetQueuedID == NULL) || (fnGetQueuedID_index == NULL)
-            || (fnSetConnectProduct == NULL) || (fnSetDevTypeSrch == NULL))
+        if ((fnGetLibVersion == nullptr) || (fnSetComSrchRange == nullptr) || (fnCOMConnect == nullptr) || (fnCOMDisconnect == nullptr) ||
+            (fnUSBConnect == nullptr) || (fnUSBDisconnect == nullptr) || (fnGetLastLibErr == nullptr) || (fnReadCfg == nullptr) ||
+            (fnWriteCfg == nullptr) || (fnGetFlags == nullptr) || (fnSetFlags == nullptr) || (fnGetActiveID == nullptr) || (fnGetActiveID32 == nullptr) ||
+            (fnGetDevCnt == nullptr) || (fnSetActDev == nullptr) || (fnSetLUID == nullptr) || (fnGetQueuedID == nullptr) || (fnGetQueuedID_index == nullptr)
+            || (fnSetConnectProduct == nullptr) || (fnSetDevTypeSrch == nullptr))
         {
             uninitExternFct();
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't initialize RFIDeas library functions pointer");
@@ -96,7 +96,7 @@ namespace logicalaccess
     {
 #ifdef _WINDOWS
         FreeLibrary(hWejAPIDLL);
-        hWejAPIDLL = NULL;
+        hWejAPIDLL = nullptr;
 #endif
     }
 
@@ -168,7 +168,7 @@ namespace logicalaccess
 
         do
         {
-            std::vector<unsigned char> tagid = getTagId();
+            ByteVector tagid = getTagId();
             if (tagid.size() > 0)
             {
                 d_insertedChip = ReaderUnit::createChip(
@@ -194,7 +194,7 @@ namespace logicalaccess
             unsigned int currentWait = 0;
             do
             {
-                std::vector<unsigned char> tagid = getTagId();
+                ByteVector tagid = getTagId();
                 if (tagid.size() > 0)
                 {
                     if (tagid != d_insertedChip->getChipIdentifier())
@@ -240,9 +240,9 @@ namespace logicalaccess
         uninitReaderCnx();
     }
 
-    std::vector<unsigned char> RFIDeasReaderUnit::getTagId()
+    ByteVector RFIDeasReaderUnit::getTagId()
     {
-        std::vector<unsigned char> tagid;
+        ByteVector tagid;
 
 #ifdef _WINDOWS
         unsigned char idbuf[32];
@@ -254,7 +254,7 @@ namespace logicalaccess
 
             tagid.insert(tagid.end(), idbuf, idbuf + bytes);
             // Swap LSByte => MSByte
-            std::reverse(tagid.begin(), tagid.end());
+            reverse(tagid.begin(), tagid.end());
         }
         else
         {

@@ -55,16 +55,14 @@ namespace logicalaccess
         case IFT_LINEAR_FIXED:
         case IFT_LINEAR_VARIABLE:
         case IFT_CYCLIC:
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not implemented yet.");
-            break;
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not implemented yet.")
 
         default:
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Doesn't know how to write on this file.");
-            break;
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Doesn't know how to write on this file.")
         }
     }
 
-    void ISO7816StorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> /*aiToUse*/, std::shared_ptr<AccessInfo> /*aiToWrite*/, const std::vector<unsigned char>& data, CardBehavior /*behaviorFlags*/)
+    void ISO7816StorageCardService::writeData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> /*aiToUse*/, std::shared_ptr<AccessInfo> /*aiToWrite*/, const ByteVector& data, CardBehavior /*behaviorFlags*/)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 
@@ -111,18 +109,16 @@ namespace logicalaccess
         case IFT_LINEAR_FIXED:
         case IFT_LINEAR_VARIABLE:
         case IFT_CYCLIC:
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not implemented yet.");
-            break;
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not implemented yet.")
 
         default:
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Doesn't know how to write on this file.");
-            break;
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Doesn't know how to write on this file.")
         }
     }
 
-    std::vector<unsigned char> ISO7816StorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> /*aiToUse*/, size_t length, CardBehavior /*behaviorFlags*/)
+    ByteVector ISO7816StorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> /*aiToUse*/, size_t length, CardBehavior /*behaviorFlags*/)
     {
-		std::vector<unsigned char> data;
+		ByteVector data;
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 
         std::shared_ptr<ISO7816Location> icLocation = std::dynamic_pointer_cast<ISO7816Location>(location);
@@ -164,18 +160,16 @@ namespace logicalaccess
         case IFT_LINEAR_FIXED:
         case IFT_LINEAR_VARIABLE:
         case IFT_CYCLIC:
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not implemented yet.");
-            break;
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not implemented yet.")
 
         default:
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Doesn't know how to read on this file.");
-            break;
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Doesn't know how to read on this file.")
         }
 		return data;
     }
 
-    unsigned int ISO7816StorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/, void* /*data*/, size_t /*dataLength*/)
+	ByteVector ISO7816StorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/)
     {
-        return 0;
+        return {};
     }
 }

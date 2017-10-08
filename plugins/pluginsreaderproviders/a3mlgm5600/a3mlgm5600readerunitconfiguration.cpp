@@ -13,7 +13,7 @@ namespace logicalaccess
     A3MLGM5600ReaderUnitConfiguration::A3MLGM5600ReaderUnitConfiguration()
         : ReaderUnitConfiguration(READER_A3MLGM5600)
     {
-        resetConfiguration();
+	    A3MLGM5600ReaderUnitConfiguration::resetConfiguration();
     }
 
     A3MLGM5600ReaderUnitConfiguration::~A3MLGM5600ReaderUnitConfiguration()
@@ -30,7 +30,7 @@ namespace logicalaccess
         return d_localPort;
     }
 
-    void A3MLGM5600ReaderUnitConfiguration::setLocalPort(int port)
+    void A3MLGM5600ReaderUnitConfiguration::setLocalPort(const int port)
     {
         d_localPort = port;
     }

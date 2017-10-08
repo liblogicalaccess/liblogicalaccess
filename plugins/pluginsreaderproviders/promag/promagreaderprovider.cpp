@@ -39,7 +39,7 @@ namespace logicalaccess
 
     PromagReaderProvider::~PromagReaderProvider()
     {
-        release();
+	    PromagReaderProvider::release();
     }
 
     void PromagReaderProvider::release()

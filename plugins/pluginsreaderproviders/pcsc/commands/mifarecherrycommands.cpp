@@ -33,7 +33,7 @@ namespace logicalaccess
         {
             keyno = 1;
         }
-		std::vector<unsigned char> vector_key((unsigned char*)key->getData(), (unsigned char*)key->getData() + key->getLength());
+		ByteVector vector_key((unsigned char*)key->getData(), (unsigned char*)key->getData() + key->getLength());
 		getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x82, 0x00, keyno, static_cast<unsigned char>(key->getLength()), vector_key);
         r = true;
 
@@ -42,7 +42,7 @@ namespace logicalaccess
 
     void MifareCherryCommands::authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype)
     {
-        std::vector<unsigned char> command;
+        ByteVector command;
 
         // To check on Cherry documentation why key #0 failed.
         if (keyno == 0)

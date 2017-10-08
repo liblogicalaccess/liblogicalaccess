@@ -30,27 +30,27 @@ namespace logicalaccess
     {
     }
 
-    void RplethDataTransport::send(const std::vector<unsigned char>& data)
+    void RplethDataTransport::send(const ByteVector& data)
     {
-        std::vector<unsigned char> cmd;
-        cmd.push_back(static_cast<unsigned char>(Device::HID));
-        cmd.push_back(static_cast<unsigned char>(HidCommand::COM));
+        ByteVector cmd;
+        cmd.push_back(static_cast<unsigned char>(HID));
+        cmd.push_back(static_cast<unsigned char>(COM));
         cmd.push_back(static_cast<unsigned char>(data.size()));
         cmd.insert(cmd.end(), data.begin(), data.end());
 
         sendll(cmd);
     }
 
-    void RplethDataTransport::sendll(const std::vector<unsigned char>& data)
+    void RplethDataTransport::sendll(const ByteVector& data)
     {
-        std::vector<unsigned char> cmd;
+        ByteVector cmd;
         cmd.insert(cmd.end(), data.begin(), data.end());
         cmd.push_back(calcChecksum(cmd));
         TcpDataTransport::send(cmd);
         d_buffer.clear();
     }
 
-    unsigned char RplethDataTransport::calcChecksum(const std::vector<unsigned char>& data)
+    unsigned char RplethDataTransport::calcChecksum(const ByteVector& data)
     {
         unsigned char bcc = 0x00;
 
@@ -64,9 +64,9 @@ namespace logicalaccess
 
     void RplethDataTransport::sendPing()
     {
-        std::vector<unsigned char> data;
+        ByteVector data;
 
-        data.push_back(Device::RPLETH);
+        data.push_back(RPLETH);
         data.push_back(0x0A);
         data.push_back(0x00);
         data.push_back(calcChecksum(data));
@@ -74,9 +74,9 @@ namespace logicalaccess
         TcpDataTransport::send(data);
     }
 
-    std::vector<unsigned char> RplethDataTransport::receive(long int timeout)
+    ByteVector RplethDataTransport::receive(long int timeout)
     {
-        std::vector<unsigned char> ret, buf;
+        ByteVector ret, buf;
         if (timeout == -1)
             timeout = Settings::getInstance()->DataTransportTimeout;
 		std::chrono::steady_clock::time_point const clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeout);
@@ -114,13 +114,13 @@ namespace logicalaccess
                     EXCEPTION_ASSERT_WITH_LOG(buf[0] != 0x05, std::invalid_argument, "The supplied answer buffer get the state : Bad device in command");
                     EXCEPTION_ASSERT_WITH_LOG(buf[0] == 0x00, std::invalid_argument, "The supplied answer buffer is corrupted");
 
-                    std::vector<unsigned char> bufnoc = std::vector<unsigned char>(buf.begin(), buf.end() - 1);
+                    ByteVector bufnoc = ByteVector(buf.begin(), buf.end() - 1);
                     unsigned char checksum_receive = buf[buf.size() - 1];
                     EXCEPTION_ASSERT_WITH_LOG(calcChecksum(bufnoc) == checksum_receive, std::invalid_argument, "The supplied answer buffer get the state : Bad checksum in answer");
 
                     ret.insert(ret.begin(), bufnoc.begin() + 4, bufnoc.end());
 
-                    if (ret.size() != 0 && buf[1] == Device::HID && buf[2] == HidCommand::BADGE)
+                    if (ret.size() != 0 && buf[1] == HID && buf[2] == BADGE)
                     {
                         //save the badge
                         if (d_badges.size() <= 10)
@@ -139,21 +139,20 @@ namespace logicalaccess
         return "RplethDataTransport";
     }
 
-    std::vector<unsigned char> RplethDataTransport::sendCommand(const std::vector<unsigned char>& command, long int timeout)
+    ByteVector RplethDataTransport::sendCommand(const ByteVector& command, long int timeout)
     {
         LOG(LogLevel::COMS) << "Sending command " << BufferHelper::getHex(command) << " command size {" << command.size() << "} timeout {" << timeout << "}...";
 
         if (timeout == -1)
             timeout = Settings::getInstance()->DataTransportTimeout;
 
-        std::vector<unsigned char> res;
-        d_lastCommand = command;
+	    d_lastCommand = command;
         d_lastResult.clear();
 
         if (command.size() > 0)
             send(command);
 
-        res = receive(timeout);
+        ByteVector res = receive(timeout);
         d_lastResult = res;
         LOG(LogLevel::COMS) << "Response received successfully ! Reponse: " << BufferHelper::getHex(res) << " size {" << res.size() << "}";
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "logicalaccess/liblogicalaccess_export.hpp"
 #include "logicalaccess/lla_fwd.hpp"
 #include <string>
 
@@ -20,13 +21,13 @@ namespace logicalaccess
 class LIBLOGICALACCESS_API CardProbe
 {
       public:
-        CardProbe(ReaderUnit *ru);
+		virtual ~CardProbe() = default;
+		explicit CardProbe(ReaderUnit *ru);
         CardProbe(const CardProbe &) = delete;
 
         virtual std::string guessCardType();
 
-      public:
-        /**
+		/**
          * Test if the card is DESFire by sending the getversion command.
          *
          * The optional `*uid` vector will be populate with the uid retrieve from

@@ -15,9 +15,9 @@ namespace logicalaccess
         return std::dynamic_pointer_cast<MifareUltralightChip>(getChip());
     }
 
-    std::vector<unsigned char> MifareUltralightCommands::readPages(int start_page, int stop_page)
+    ByteVector MifareUltralightCommands::readPages(int start_page, int stop_page)
     {
-		std::vector<unsigned char> ret;
+		ByteVector ret;
 
         if (start_page > stop_page)
         {
@@ -26,7 +26,7 @@ namespace logicalaccess
 
         for (int i = start_page; i <= stop_page; ++i)
         {
-            std::vector<unsigned char> data = readPage(i);
+            ByteVector data = readPage(i);
             // Some commands implementation returns more than one block (eg. PC/SC)
             if (data.size() > 4)
             {
@@ -38,7 +38,7 @@ namespace logicalaccess
         return ret;
     }
 
-    void MifareUltralightCommands::writePages(int start_page, int stop_page, const std::vector<unsigned char>& buf)
+    void MifareUltralightCommands::writePages(int start_page, int stop_page, const ByteVector& buf)
     {
         if (start_page > stop_page)
         {
@@ -48,7 +48,7 @@ namespace logicalaccess
         size_t offset = 0;
         for (int i = start_page; i <= stop_page; ++i)
         {
-			std::vector<unsigned char> tmp(buf.begin() + offset, buf.begin() + offset + 4);
+			ByteVector tmp(buf.begin() + offset, buf.begin() + offset + 4);
 			writePage(i, tmp);
             offset += 4;
         }
@@ -56,7 +56,7 @@ namespace logicalaccess
 
     void MifareUltralightCommands::lockPage(int page)
     {
-        std::vector<unsigned char> lockbits(4, 0x00);
+        ByteVector lockbits(4, 0x00);
 
         if (page >= 3 && page <= 7)
         {

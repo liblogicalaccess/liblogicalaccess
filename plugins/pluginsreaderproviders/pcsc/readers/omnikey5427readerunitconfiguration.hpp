@@ -44,13 +44,13 @@ namespace logicalaccess
          */
         void setSecureMasterKey( std::shared_ptr<AES128Key>);
 
-        virtual void resetConfiguration() override;
+	    void resetConfiguration() override;
 
-        virtual void serialize(boost::property_tree::ptree &parentNode) override;
+	    void serialize(boost::property_tree::ptree &parentNode) override;
 
-        virtual void unSerialize(boost::property_tree::ptree &node) override;
+	    void unSerialize(boost::property_tree::ptree &node) override;
 
-		virtual PCSCReaderUnitType getPCSCType() const override;
+	    PCSCReaderUnitType getPCSCType() const override;
 
     private:
         bool useSecureMode_;

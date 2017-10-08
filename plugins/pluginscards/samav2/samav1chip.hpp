@@ -27,15 +27,14 @@ namespace logicalaccess
          */
         SAMAV1Chip();
 
-        SAMAV1Chip(std::string ct);
+	    explicit SAMAV1Chip(std::string ct);
 
         /**
          * \brief Destructor.
          */
         ~SAMAV1Chip();
 
-        std::shared_ptr<SAMCommands<KeyEntryAV1Information, SETAV1> > getSAMAV1Commands() { return std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getCommands()); };
-    protected:
+        std::shared_ptr<SAMCommands<KeyEntryAV1Information, SETAV1> > getSAMAV1Commands() const { return std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getCommands()); }
     };
 }
 

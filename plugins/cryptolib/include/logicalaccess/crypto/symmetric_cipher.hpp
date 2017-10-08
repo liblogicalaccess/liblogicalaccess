@@ -27,7 +27,7 @@ namespace logicalaccess
             /**
              * \brief Destructor.
              */
-            virtual ~SymmetricCipher() {};
+            virtual ~SymmetricCipher() {}
 
             /**
              * \brief Cipher a buffer.
@@ -38,7 +38,7 @@ namespace logicalaccess
              * \param padding Whether to use padding.
              * In case of a failure, the call throw an InvalidCallException.
              */
-            virtual void cipher(const std::vector<unsigned char>& src, std::vector<unsigned char>& dest, const SymmetricKey& key, const InitializationVector& iv, bool padding) = 0;
+            virtual void cipher(const ByteVector& src, ByteVector& dest, const SymmetricKey& key, const InitializationVector& iv, bool padding) = 0;
 
             /**
              * \brief Decipher a buffer.
@@ -49,7 +49,7 @@ namespace logicalaccess
              * \param padding Whether to use padding.
              * In case of a failure, the call throw a InvalidCallException.
              */
-            virtual void decipher(const std::vector<unsigned char>& src, std::vector<unsigned char>& dest, const SymmetricKey& key, const InitializationVector& iv, bool padding) = 0;
+            virtual void decipher(const ByteVector& src, ByteVector& dest, const SymmetricKey& key, const InitializationVector& iv, bool padding) = 0;
         };
     }
 }

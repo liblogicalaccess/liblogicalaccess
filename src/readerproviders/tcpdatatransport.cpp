@@ -99,7 +99,7 @@ namespace logicalaccess
         return d_ipAddress;
     }
 
-    void TcpDataTransport::send(const std::vector<unsigned char>& data)
+    void TcpDataTransport::send(const ByteVector& data)
     {
         if (data.size() > 0)
         {
@@ -120,7 +120,7 @@ namespace logicalaccess
 
 	void TcpDataTransport::connect_complete(const boost::system::error_code& error)
 	{
-		d_read_error = (error != 0);
+		d_read_error = (error != nullptr);
         d_timer.cancel();
     }
 
@@ -138,9 +138,9 @@ namespace logicalaccess
         d_socket.cancel();
     }
 
-    std::vector<unsigned char> TcpDataTransport::receive(long int timeout)
+    ByteVector TcpDataTransport::receive(long int timeout)
     {
-		std::vector<unsigned char> recv(256);
+		ByteVector recv(256);
 		d_ios.reset();
 		d_bytes_transferred = 0;
  

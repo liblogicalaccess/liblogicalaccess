@@ -39,7 +39,7 @@ namespace logicalaccess
 
 	GigaTMSReaderProvider::~GigaTMSReaderProvider()
     {
-        release();
+	    GigaTMSReaderProvider::release();
     }
 
     void GigaTMSReaderProvider::release()

@@ -43,14 +43,14 @@ namespace logicalaccess
     {
     }
 
-    void DESFireCrypto::appendDecipherData(const std::vector<unsigned char>& data)
+    void DESFireCrypto::appendDecipherData(const ByteVector& data)
     {
         d_buf.insert(d_buf.end(), data.begin(), data.end());
     }
 
-	std::vector<unsigned char> DESFireCrypto::desfireDecrypt(size_t length)
+	ByteVector DESFireCrypto::desfireDecrypt(size_t length)
     {
-        std::vector<unsigned char> ret;
+        ByteVector ret;
 
         if (d_auth_method == CM_LEGACY)
         {
@@ -75,30 +75,30 @@ namespace logicalaccess
         }
     }
 
-    bool DESFireCrypto::verifyMAC(bool end, const std::vector<unsigned char>& data)
+    bool DESFireCrypto::verifyMAC(bool end, const ByteVector& data)
     {
-        bool ret = false;
+        bool ret;
         d_buf.insert(d_buf.end(), data.begin(), data.end());
 
         if (end)
         {
             if (d_auth_method == CM_LEGACY)	// Native DESFire mode
             {
-                std::vector<unsigned char> mac;
+                ByteVector mac;
                 mac.insert(mac.end(), d_buf.end() - 4, d_buf.end());
-                std::vector<unsigned char> ourMacBuf;
+                ByteVector ourMacBuf;
                 ourMacBuf.insert(ourMacBuf.end(), d_buf.begin(), d_buf.end() - 4);
-                std::vector<unsigned char> ourMac = desfire_mac(d_sessionKey, ourMacBuf);
+                ByteVector ourMac = desfire_mac(d_sessionKey, ourMacBuf);
                 ret = (mac == ourMac);
             }
             else
             {
-                std::vector<unsigned char> mac;
+                ByteVector mac;
                 mac.insert(mac.end(), d_buf.end() - 8, d_buf.end());
-                std::vector<unsigned char> ourMacBuf;
+                ByteVector ourMacBuf;
                 ourMacBuf.insert(ourMacBuf.end(), d_buf.begin(), d_buf.end() - 8);
                 ourMacBuf.push_back(0x00); // SW_OPERATION_OK
-                std::vector<unsigned char> ourMac = desfire_cmac(d_sessionKey, d_cipher, d_block_size, ourMacBuf);
+                ByteVector ourMac = desfire_cmac(d_sessionKey, d_cipher, d_block_size, ourMacBuf);
                 ret = (mac == ourMac);
             }
 
@@ -112,12 +112,12 @@ namespace logicalaccess
         return ret;
     }
 
-	std::vector<unsigned char> DESFireCrypto::generateMAC(unsigned char cmd, const std::vector<unsigned char>& data)
+	ByteVector DESFireCrypto::generateMAC(unsigned char /*cmd*/, const ByteVector& data)
     {
 		if (!data.size())
 			return {};
 
-        std::vector<unsigned char> ret;
+        ByteVector ret;
         if (d_auth_method == CM_LEGACY)
         {
             ret = desfire_mac(d_sessionKey, data);
@@ -130,9 +130,9 @@ namespace logicalaccess
         return ret;
     }
 
-    std::vector<unsigned char> DESFireCrypto::desfireEncrypt(const std::vector<unsigned char>& data, const std::vector<unsigned char>& param, bool calccrc)
+    ByteVector DESFireCrypto::desfireEncrypt(const ByteVector& data, const ByteVector& param, bool calccrc)
     {
-        std::vector<unsigned char> ret;
+        ByteVector ret;
 
         if (d_auth_method == CM_LEGACY)
         {
@@ -182,15 +182,14 @@ namespace logicalaccess
         return false;
     }
 
-    std::vector<unsigned char> DESFireCrypto::desfire_CBC_send(const std::vector<unsigned char>& key, const std::vector<unsigned char>& iv, const std::vector<unsigned char>& data)
+    ByteVector DESFireCrypto::desfire_CBC_send(const ByteVector& key, const ByteVector& iv, const ByteVector& data)
     {
         symmetric_key skey;
         unsigned char in[8], out[8], in2[8];
 
-        unsigned int i = 0;
-        unsigned int j = 0;
+	    unsigned int j;
 
-        std::vector<unsigned char> ret;
+        ByteVector ret;
 
         bool is3des = false;
         if (is_triple_des(key))
@@ -216,7 +215,7 @@ namespace logicalaccess
         memset(in2, 0x00, 8);
 
         // do for each 8 byte block of input
-        for (i = 0; i < data.size() / 8; i++)
+        for (unsigned int i = 0; i < data.size() / 8; i++)
         {
             // copy 8 bytes from input buffer to in
             memcpy(in, &data[i * 8], 8);
@@ -267,15 +266,14 @@ namespace logicalaccess
         return ret;
     }
 
-    std::vector<unsigned char> DESFireCrypto::desfire_CBC_receive(const std::vector<unsigned char>& key, const std::vector<unsigned char>& iv, const std::vector<unsigned char>& data)
+    ByteVector DESFireCrypto::desfire_CBC_receive(const ByteVector& key, const ByteVector& iv, const ByteVector& data)
     {
         symmetric_key skey;
         unsigned char in[8], out[8], in2[8];
 
-        unsigned int i = 0;
-        unsigned int j = 0;
+	    unsigned int j;
 
-        std::vector<unsigned char> ret;
+        ByteVector ret;
 
         EXCEPTION_ASSERT_WITH_LOG(key.size() >= 8, LibLogicalAccessException, "DESFire encryption need a valid key.");
 
@@ -302,7 +300,7 @@ namespace logicalaccess
         memset(in2, 0x00, 8);
 
         // do for each 8 byte block of input
-        for (i = 0; i < data.size() / 8; i++)
+        for (unsigned int i = 0; i < data.size() / 8; i++)
         {
             // copy 8 bytes from input buffer to in
             memcpy(in, &data[i * 8], 8);
@@ -352,20 +350,19 @@ namespace logicalaccess
         return ret;
     }
 
-    std::vector<unsigned char> DESFireCrypto::desfire_CBC_mac(const std::vector<unsigned char>& key, const std::vector<unsigned char>& iv, const std::vector<unsigned char>& data)
+    ByteVector DESFireCrypto::desfire_CBC_mac(const ByteVector& key, const ByteVector& iv, const ByteVector& data)
     {
-        std::vector<unsigned char> ret = sam_CBC_send(key, iv, data);
-        return std::vector<unsigned char>(ret.end() - 8, ret.end() - 4);
+        ByteVector ret = sam_CBC_send(key, iv, data);
+        return ByteVector(ret.end() - 8, ret.end() - 4);
     }
 
-    std::vector<unsigned char> DESFireCrypto::sam_CBC_send(const std::vector<unsigned char>& key, const std::vector<unsigned char>& iv, const std::vector<unsigned char>& data)
+    ByteVector DESFireCrypto::sam_CBC_send(const ByteVector& key, const ByteVector& iv, const ByteVector& data)
     {
         unsigned char in[8], out[8];
         symmetric_key skey;
-        unsigned int i = 0;
-        unsigned int j = 0;
+	    unsigned int j;
 
-        std::vector<unsigned char> ret;
+        ByteVector ret;
 
         EXCEPTION_ASSERT_WITH_LOG(key.size() >= 8, LibLogicalAccessException, "DESFire sam cbc encryption need a valid key.");
 
@@ -391,7 +388,7 @@ namespace logicalaccess
         memset(out, 0x00, 8);
 
         // do for each 8 byte block of input
-        for (i = 0; i < data.size() / 8; i++)
+        for (unsigned int i = 0; i < data.size() / 8; i++)
         {
             // copy 8 bytes from input buffer to in
             memcpy(in, &data[i * 8], 8);
@@ -439,7 +436,7 @@ namespace logicalaccess
         return ret;
     }
 
-    std::vector<unsigned char> DESFireCrypto::desfire_mac(const std::vector<unsigned char>& key, std::vector<unsigned char> data)
+    ByteVector DESFireCrypto::desfire_mac(const ByteVector& key, ByteVector data)
     {
         int pad = (8 - (data.size() % 8)) % 8;
         for (int i = 0; i < pad; ++i)
@@ -447,10 +444,10 @@ namespace logicalaccess
             data.push_back(0x00);
         }
 
-        return desfire_CBC_mac(key, std::vector<unsigned char>(), data);
+        return desfire_CBC_mac(key, ByteVector(), data);
     }
 
-    std::vector<unsigned char> DESFireCrypto::desfire_encrypt(const std::vector<unsigned char>& key, std::vector<unsigned char> data, bool calccrc)
+    ByteVector DESFireCrypto::desfire_encrypt(const ByteVector& key, ByteVector data, bool calccrc)
     {
         if (calccrc)
         {
@@ -463,10 +460,10 @@ namespace logicalaccess
         {
             data.push_back(0x00);
         }
-        return desfire_CBC_send(key, std::vector<unsigned char>(), data);
+        return desfire_CBC_send(key, ByteVector(), data);
     }
 
-    std::vector<unsigned char> DESFireCrypto::sam_encrypt(const std::vector<unsigned char>& key, std::vector<unsigned char> data)
+    ByteVector DESFireCrypto::sam_encrypt(const ByteVector& key, ByteVector data)
     {
         int pad = (8 - ((data.size() + 2) % 8)) % 8;
 
@@ -478,15 +475,15 @@ namespace logicalaccess
             data.push_back(0x00);
         }
 
-        return sam_CBC_send(key, std::vector<unsigned char>(), data);
+        return sam_CBC_send(key, ByteVector(), data);
     }
 
-	ByteVector DESFireCrypto::desfire_decrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, size_t datalen)
+	ByteVector DESFireCrypto::desfire_decrypt(const ByteVector& key, const ByteVector& data, size_t datalen)
     {
-        std::vector<unsigned char> ret;
-        size_t ll = 0;
+        ByteVector ret;
+        size_t ll;
 
-        ret = desfire_CBC_receive(key, std::vector<unsigned char>(), data);
+        ret = desfire_CBC_receive(key, ByteVector(), data);
 
         if (datalen == 0)
         {
@@ -518,14 +515,14 @@ namespace logicalaccess
         return ret;
     }
 
-    std::vector<unsigned char> DESFireCrypto::authenticate_PICC1(unsigned char keyno, std::vector<unsigned char> diversify, const std::vector<unsigned char>& encRndB)
+    ByteVector DESFireCrypto::authenticate_PICC1(unsigned char keyno, ByteVector diversify, const ByteVector& encRndB)
     {
         d_sessionKey.clear();
         d_authkey.resize(16);
         getKey(d_currentAid, 0, keyno, diversify, d_authkey);
-        d_rndB = desfire_CBC_send(d_authkey, std::vector<unsigned char>(), encRndB);
+        d_rndB = desfire_CBC_send(d_authkey, ByteVector(), encRndB);
 
-        std::vector<unsigned char> rndB1;
+        ByteVector rndB1;
         rndB1.insert(rndB1.end(), d_rndB.begin() + 1, d_rndB.begin() + 8);
         rndB1.push_back(d_rndB[0]);
 
@@ -538,17 +535,17 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
         }
 
-        std::vector<unsigned char> rndAB;
+        ByteVector rndAB;
         rndAB.insert(rndAB.end(), d_rndA.begin(), d_rndA.end());
         rndAB.insert(rndAB.end(), rndB1.begin(), rndB1.end());
 
-        return desfire_CBC_send(d_authkey, std::vector<unsigned char>(), rndAB);
+        return desfire_CBC_send(d_authkey, ByteVector(), rndAB);
     }
 
-    void DESFireCrypto::authenticate_PICC2(unsigned char keyno, const std::vector<unsigned char>& encRndA1)
+    void DESFireCrypto::authenticate_PICC2(unsigned char keyno, const ByteVector& encRndA1)
     {
-        std::vector<unsigned char> rndA = desfire_CBC_send(d_authkey, std::vector<unsigned char>(), encRndA1);
-        std::vector<unsigned char> checkRndA;
+        ByteVector rndA = desfire_CBC_send(d_authkey, ByteVector(), encRndA1);
+        ByteVector checkRndA;
 
         d_sessionKey.clear();
         checkRndA.push_back(rndA[7]);
@@ -582,7 +579,7 @@ namespace logicalaccess
         d_mac_size = 4;
     }
 
-    void DESFireCrypto::getKey(std::shared_ptr<DESFireKey> key, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv)
+    void DESFireCrypto::getKey(std::shared_ptr<DESFireKey> key, ByteVector diversify, ByteVector& keydiv)
     {
         LOG(LogLevel::INFOS) << "Init key from crypto with diversify set to: " << BufferHelper::getHex(diversify) << ".";
 
@@ -607,7 +604,7 @@ namespace logicalaccess
             getKeyVersioned(key, keydiv);
     }
 
-    void DESFireCrypto::getKeyVersioned(std::shared_ptr<DESFireKey> key, std::vector<unsigned char>& keyversioned)
+    void DESFireCrypto::getKeyVersioned(std::shared_ptr<DESFireKey> key, ByteVector& keyversioned)
     {
 		auto keytmpversioned = key->getBytes();
         unsigned char version = key->getKeyVersion();
@@ -634,11 +631,11 @@ namespace logicalaccess
         d_sessionKey.clear();
     }
 
-    std::vector<unsigned char> DESFireCrypto::changeKey_PICC(uint8_t keyno, std::vector<unsigned char> oldKeyDiversify, std::shared_ptr<DESFireKey> newkey, std::vector<unsigned char> newKeyDiversify, unsigned char keysetno)
+    ByteVector DESFireCrypto::changeKey_PICC(uint8_t keyno, ByteVector oldKeyDiversify, std::shared_ptr<DESFireKey> newkey, ByteVector newKeyDiversify, unsigned char keysetno)
     {
         LOG(LogLevel::INFOS) << "Init change key on PICC...";
-        std::vector<unsigned char> cryptogram;
-        std::vector<unsigned char> oldkeydiv, newkeydiv;
+        ByteVector cryptogram;
+        ByteVector oldkeydiv, newkeydiv;
         oldkeydiv.resize(16, 0x00);
         newkeydiv.resize(16, 0x00);
 		// Get keyno only, in case of master card key
@@ -646,7 +643,7 @@ namespace logicalaccess
         getKey(keysetno, keyno_only, oldKeyDiversify, oldkeydiv);
         getKey(newkey, newKeyDiversify, newkeydiv);
 
-        std::vector<unsigned char> encCryptogram;
+        ByteVector encCryptogram;
 
         if (d_auth_method == CM_LEGACY) // Native DESFire
         {
@@ -666,7 +663,7 @@ namespace logicalaccess
                 encCryptogram.push_back(static_cast<unsigned char>(crc & 0xff));
                 encCryptogram.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
 				encCryptogram.resize(24); // Pad
-                cryptogram = desfire_CBC_send(d_sessionKey, std::vector<unsigned char>(), encCryptogram);
+                cryptogram = desfire_CBC_send(d_sessionKey, ByteVector(), encCryptogram);
             }
             else
             {
@@ -679,8 +676,7 @@ namespace logicalaccess
         {
             if (keyno_only != d_currentKeyNo || keysetno)
             {
-                uint32_t crc;
-                for (unsigned int i = 0; i < newkeydiv.size(); ++i)
+	            for (unsigned int i = 0; i < newkeydiv.size(); ++i)
                 {
                     encCryptogram.push_back(static_cast<unsigned char>(oldkeydiv[i] ^ newkeydiv[i]));
                 }
@@ -708,7 +704,7 @@ namespace logicalaccess
 					crcoldkxor.insert(crcoldkxor.begin() + 1, keysetno);
 				}
                 crcoldkxor.insert(crcoldkxor.end(), encCryptogram.begin(), encCryptogram.end());
-                crc = desfire_crc32(&crcoldkxor[0], crcoldkxor.size());
+                uint32_t crc = desfire_crc32(&crcoldkxor[0], crcoldkxor.size());
                 encCryptogram.push_back(static_cast<unsigned char>(crc & 0xff));
                 encCryptogram.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
                 encCryptogram.push_back(static_cast<unsigned char>((crc & 0xff0000) >> 16));
@@ -726,7 +722,7 @@ namespace logicalaccess
                 }
 
                 d_cipher->cipher(encCryptogram, cryptogram, *sessionkey, *iv, false);
-                d_lastIV = std::vector<unsigned char>(cryptogram.end() - d_block_size, cryptogram.end());
+                d_lastIV = ByteVector(cryptogram.end() - d_block_size, cryptogram.end());
             }
             else
             {
@@ -745,7 +741,7 @@ namespace logicalaccess
         return cryptogram;
     }
 
-    std::vector<unsigned char> DESFireCrypto::iso_authenticate_PICC1(unsigned char keyno, std::vector<unsigned char> diversify, const std::vector<unsigned char>& encRndB, unsigned int randomlen)
+    ByteVector DESFireCrypto::iso_authenticate_PICC1(unsigned char keyno, ByteVector diversify, const ByteVector& encRndB, unsigned int randomlen)
     {
         d_sessionKey.clear();
         getKey(d_currentAid, 0, keyno, diversify, d_authkey);
@@ -754,9 +750,9 @@ namespace logicalaccess
         openssl::DESInitializationVector iv = openssl::DESInitializationVector::createNull();
         d_rndB.clear();
         d_cipher->decipher(encRndB, d_rndB, deskey, iv, false);
-        d_lastIV = std::vector<unsigned char>(encRndB.end() - randomlen, encRndB.end());
+        d_lastIV = ByteVector(encRndB.end() - randomlen, encRndB.end());
 
-        std::vector<unsigned char> rndB1;
+        ByteVector rndB1;
         rndB1.insert(rndB1.end(), d_rndB.begin() + 1, d_rndB.begin() + randomlen);
         rndB1.push_back(d_rndB[0]);
 
@@ -769,22 +765,22 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
         }
 
-        std::vector<unsigned char> rndAB;
+        ByteVector rndAB;
         rndAB.insert(rndAB.end(), d_rndA.begin(), d_rndA.end());
         rndAB.insert(rndAB.end(), rndB1.begin(), rndB1.end());
 
-        std::vector<unsigned char> ret;
+        ByteVector ret;
 		iv = openssl::DESInitializationVector::createFromData(d_lastIV);
         d_cipher->cipher(rndAB, ret, deskey, iv, false);
-        d_lastIV = std::vector<unsigned char>(ret.end() - randomlen, ret.end());
+        d_lastIV = ByteVector(ret.end() - randomlen, ret.end());
 
         return ret;
     }
 
-    void DESFireCrypto::iso_authenticate_PICC2(unsigned char keyno, const std::vector<unsigned char>& encRndA1, unsigned int randomlen)
+    void DESFireCrypto::iso_authenticate_PICC2(unsigned char keyno, const ByteVector& encRndA1, unsigned int randomlen)
     {
-        std::vector<unsigned char> checkRndA;
-        std::vector<unsigned char> rndA;
+        ByteVector checkRndA;
+        ByteVector rndA;
         openssl::DESSymmetricKey deskey = openssl::DESSymmetricKey::createFromData(d_authkey);
         openssl::DESInitializationVector iv = openssl::DESInitializationVector::createFromData(d_lastIV);
         d_cipher->decipher(encRndA1, rndA, deskey, iv, false);
@@ -839,7 +835,7 @@ namespace logicalaccess
         d_lastIV.resize(d_block_size, 0x00);
     }
 
-    std::vector<unsigned char> DESFireCrypto::aes_authenticate_PICC1(unsigned char keyno, std::vector<unsigned char> diversify, const std::vector<unsigned char>& encRndB)
+    ByteVector DESFireCrypto::aes_authenticate_PICC1(unsigned char keyno, ByteVector diversify, const ByteVector& encRndB)
     {
         d_sessionKey.clear();
         getKey(d_currentAid, 0, keyno, diversify, d_authkey);
@@ -848,9 +844,9 @@ namespace logicalaccess
         openssl::AESInitializationVector iv = openssl::AESInitializationVector::createNull();
         d_rndB.clear();
         d_cipher->decipher(encRndB, d_rndB, aeskey, iv, false);
-        d_lastIV = std::vector<unsigned char>(encRndB.end() - 16, encRndB.end());
+        d_lastIV = ByteVector(encRndB.end() - 16, encRndB.end());
 
-        std::vector<unsigned char> rndB1;
+        ByteVector rndB1;
         rndB1.insert(rndB1.end(), d_rndB.begin() + 1, d_rndB.begin() + 1 + 15);
         rndB1.push_back(d_rndB[0]);
 
@@ -863,22 +859,22 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
         }
 
-        std::vector<unsigned char> rndAB;
+        ByteVector rndAB;
         rndAB.insert(rndAB.end(), d_rndA.begin(), d_rndA.end());
         rndAB.insert(rndAB.end(), rndB1.begin(), rndB1.end());
 
-        std::vector<unsigned char> ret;
+        ByteVector ret;
 		iv = openssl::AESInitializationVector::createFromData(d_lastIV);
 		d_cipher->cipher(rndAB, ret, aeskey, iv, false);
-        d_lastIV = std::vector<unsigned char>(ret.end() - 16, ret.end());
+        d_lastIV = ByteVector(ret.end() - 16, ret.end());
 
         return ret;
     }
 
-    void DESFireCrypto::aes_authenticate_PICC2(unsigned char keyno, const std::vector<unsigned char>& encRndA1)
+    void DESFireCrypto::aes_authenticate_PICC2(unsigned char keyno, const ByteVector& encRndA1)
     {
-        std::vector<unsigned char> checkRndA;
-        std::vector<unsigned char> rndA;
+        ByteVector checkRndA;
+        ByteVector rndA;
         openssl::AESSymmetricKey aeskey = openssl::AESSymmetricKey::createFromData(d_authkey);
         openssl::AESInitializationVector iv = openssl::AESInitializationVector::createFromData(d_lastIV);
         d_cipher->decipher(encRndA1, rndA, aeskey, iv, false);
@@ -900,41 +896,41 @@ namespace logicalaccess
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "AES Authenticate PICC 2 Failed!");
     }
 
-    std::vector<unsigned char> DESFireCrypto::desfire_cmac(const std::vector<unsigned char>& data)
+    ByteVector DESFireCrypto::desfire_cmac(const ByteVector& data)
     {
         return desfire_cmac(d_sessionKey, d_cipher, d_block_size, data);
     }
 
-    std::vector<unsigned char> DESFireCrypto::desfire_cmac(const std::vector<unsigned char>& key, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const std::vector<unsigned char>& data)
+    ByteVector DESFireCrypto::desfire_cmac(const ByteVector& key, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const ByteVector& data)
     {
-        std::vector<unsigned char> ret = openssl::CMACCrypto::cmac(key, cipherMAC, block_size, data, d_lastIV, block_size);
+        ByteVector ret = openssl::CMACCrypto::cmac(key, cipherMAC, block_size, data, d_lastIV, block_size);
 
         if (cipherMAC == d_cipher)
         {
-            d_lastIV = std::vector<unsigned char>(ret.end() - block_size, ret.end());
+            d_lastIV = ByteVector(ret.end() - block_size, ret.end());
         }
 
         // DES
         if (block_size == 8)
         {
-            ret = std::vector<unsigned char>(ret.end() - 8, ret.end());
+            ret = ByteVector(ret.end() - 8, ret.end());
         }
         else
         {
-            ret = std::vector<unsigned char>(ret.end() - 16, ret.end() - 8);
+            ret = ByteVector(ret.end() - 16, ret.end() - 8);
         }
 
         return ret;
     }
 
-    std::vector<unsigned char> DESFireCrypto::desfire_iso_decrypt(const std::vector<unsigned char>& data, size_t length)
+    ByteVector DESFireCrypto::desfire_iso_decrypt(const ByteVector& data, size_t length)
     {
         return desfire_iso_decrypt(d_sessionKey, data, d_cipher, d_block_size, length);
     }
 
-    std::vector<unsigned char> DESFireCrypto::desfire_iso_decrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size, size_t datalen)
+    ByteVector DESFireCrypto::desfire_iso_decrypt(const ByteVector& key, const ByteVector& data, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size, size_t datalen)
     {
-        std::vector<unsigned char> decdata;
+        ByteVector decdata;
         std::shared_ptr<openssl::SymmetricKey> isokey;
         std::shared_ptr<openssl::InitializationVector> iv;
 
@@ -953,10 +949,10 @@ namespace logicalaccess
         cipher->decipher(data, decdata, *isokey, *iv, false);
         if (cipher == d_cipher)
         {
-            d_lastIV = std::vector<unsigned char>(data.end() - block_size, data.end());
+            d_lastIV = ByteVector(data.end() - block_size, data.end());
         }
 
-        size_t ll = 0;
+        size_t ll;
 
         if (datalen == 0)
         {
@@ -972,22 +968,22 @@ namespace logicalaccess
 
 			decdata[ll] = 0x00; // Remove 0x80 for padding check
 
-            ll -= 4; // Move to crc start
+			EXCEPTION_ASSERT_WITH_LOG(ll >= 4, LibLogicalAccessException, "Cannot find the crc in the encrypted data");
 
-			EXCEPTION_ASSERT_WITH_LOG(ll >= 0, LibLogicalAccessException, "Cannot find the crc in the encrypted data");
+            ll -= 4; // Move to crc start
         }
         else
         {
             ll = datalen;
         }
 
-        std::vector<unsigned char> crcbuf = std::vector<unsigned char>(decdata.begin(), decdata.begin() + ll);
+        ByteVector crcbuf = ByteVector(decdata.begin(), decdata.begin() + ll);
         crcbuf.push_back(0x00);	// SW_OPERATION_OK
         uint32_t crc1 = desfire_crc32(&crcbuf[0], crcbuf.size());
         uint32_t crc2 = decdata[ll] | (decdata[ll + 1] << 8) | (decdata[ll + 2] << 16) | (decdata[ll + 3] << 24);
         size_t pad = decdata.size() - ll - 4;
-        std::vector<unsigned char> padding = std::vector<unsigned char>(decdata.begin() + ll + 4, decdata.begin() + ll + 4 + pad);
-        std::vector<unsigned char> padding1;
+        ByteVector padding = ByteVector(decdata.begin() + ll + 4, decdata.begin() + ll + 4 + pad);
+        ByteVector padding1;
         for (size_t i = 0; i < pad; ++i)
         {
             padding1.push_back(0x00);
@@ -1001,16 +997,16 @@ namespace logicalaccess
         return decdata;
     }
 
-    std::vector<unsigned char> DESFireCrypto::iso_encipherData(bool end, const std::vector<unsigned char>& data, const std::vector<unsigned char>& param)
+    ByteVector DESFireCrypto::iso_encipherData(bool end, const ByteVector& data, const ByteVector& param)
     {
-        std::vector<unsigned char> encdata;
+        ByteVector encdata;
         d_buf.insert(d_buf.end(), data.begin(), data.end());
 
-        std::vector<unsigned char> decdata = data;
+        ByteVector decdata = data;
         decdata.insert(decdata.begin(), d_last_left.begin(), d_last_left.end());
 
         if (end) {
-            std::vector<unsigned char> calconbuf = param;
+            ByteVector calconbuf = param;
             calconbuf.insert(calconbuf.end(), d_buf.begin(), d_buf.end());
             uint32_t crc = desfire_crc32(&calconbuf[0], calconbuf.size());
             decdata.push_back(static_cast<unsigned char>(crc & 0xff));
@@ -1052,22 +1048,22 @@ namespace logicalaccess
                 iv.reset(new openssl::DESInitializationVector(openssl::DESInitializationVector::createFromData(d_lastIV)));
             }
             d_cipher->cipher(decdata, encdata, *isokey, *iv, false);
-            d_lastIV = std::vector<unsigned char>(encdata.end() - d_block_size, encdata.end());
+            d_lastIV = ByteVector(encdata.end() - d_block_size, encdata.end());
         }
 
         return encdata;
     }
 
-    std::vector<unsigned char> DESFireCrypto::desfire_iso_encrypt(const std::vector<unsigned char>& key,
-                                                                  const std::vector<unsigned char>& data,
+    ByteVector DESFireCrypto::desfire_iso_encrypt(const ByteVector& key,
+                                                                  const ByteVector& data,
                                                                   std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher,
                                                                   unsigned int block_size,
-                                                                  const std::vector<unsigned char>& param,
+                                                                  const ByteVector& param,
                                                                   bool calccrc)
     {
-        std::vector<unsigned char> encdata;
-        std::vector<unsigned char> decdata = data;
-        std::vector<unsigned char> calconbuf = param;
+        ByteVector encdata;
+        ByteVector decdata = data;
+        ByteVector calconbuf = param;
         calconbuf.insert(calconbuf.end(), data.begin(), data.end());
         if (calccrc)
         {
@@ -1098,13 +1094,13 @@ namespace logicalaccess
         cipher->cipher(decdata, encdata, *isokey, *iv, false);
         if (cipher == d_cipher)
         {
-            d_lastIV = std::vector<unsigned char>(encdata.end() - block_size, encdata.end());
+            d_lastIV = ByteVector(encdata.end() - block_size, encdata.end());
         }
 
         return encdata;
     }
 
-    void DESFireCrypto::setCryptoContext(std::vector<unsigned char> identifier)
+    void DESFireCrypto::setCryptoContext(ByteVector identifier)
     {
         d_identifier = identifier;
 		clearKeys();
@@ -1161,7 +1157,7 @@ namespace logicalaccess
 		std::shared_ptr<DESFireKey> key(new DESFireKey());
 
 		key->setKeyType(keyType);
-		std::vector<unsigned char> buf;
+		ByteVector buf;
 		buf.resize(key->getLength(), 0x00);
 		key->setData(buf);
 
@@ -1176,23 +1172,23 @@ namespace logicalaccess
 		if (it != d_keys.end())
 			key = it->second;
 		else
-			key = DESFireCrypto::getDefaultKey(DF_KEY_DES);
+			key = getDefaultKey(DF_KEY_DES);
 
 		return key;
 	}
 
-	bool DESFireCrypto::getKey(uint8_t keyslot, uint8_t keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv)
+	bool DESFireCrypto::getKey(uint8_t keyslot, uint8_t keyno, ByteVector diversify, ByteVector& keydiv)
 	{
 		return getKey(d_currentAid, keyslot, keyno, diversify, keydiv);
 	}
 
-	bool DESFireCrypto::getKey(size_t aid, uint8_t keyslot, uint8_t keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv)
+	bool DESFireCrypto::getKey(size_t aid, uint8_t keyslot, uint8_t keyno, ByteVector diversify, ByteVector& keydiv)
 	{
 		auto it = d_keys.find(std::make_tuple(aid, keyslot, keyno));
 		if (it == d_keys.end())
 			return false;
 
-		DESFireCrypto::getKey(it->second, diversify, keydiv);
+		getKey(it->second, diversify, keydiv);
 
 		return true;
 	}

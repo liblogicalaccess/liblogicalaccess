@@ -38,42 +38,42 @@ namespace logicalaccess
         field->setDataType(d_dataType);
         d_fieldList.push_back(field);
 
-        field = std::shared_ptr<NumberDataField>(new NumberDataField());
+        field = std::make_shared<NumberDataField>();
         field->setName("AgencyCode");
         field->setDataLength(16);
         field->setDataRepresentation(d_dataRepresentation);
         field->setDataType(d_dataType);
         d_fieldList.push_back(field);
 
-        field = std::shared_ptr<NumberDataField>(new NumberDataField());
+        field = std::make_shared<NumberDataField>();
         field->setName("SystemCode");
         field->setDataLength(16);
         field->setDataRepresentation(d_dataRepresentation);
         field->setDataType(d_dataType);
         d_fieldList.push_back(field);
 
-        field = std::shared_ptr<NumberDataField>(new NumberDataField());
+        field = std::make_shared<NumberDataField>();
         field->setName("PersonIdentifier");
         field->setDataLength(40);
         field->setDataRepresentation(d_dataRepresentation);
         field->setDataType(d_dataType);
         d_fieldList.push_back(field);
 
-        field = std::shared_ptr<NumberDataField>(new NumberDataField());
+        field = std::make_shared<NumberDataField>();
         field->setName("OrganizationalCategory");
         field->setDataLength(4);
         field->setDataRepresentation(d_dataRepresentation);
         field->setDataType(d_dataType);
         d_fieldList.push_back(field);
 
-        field = std::shared_ptr<NumberDataField>(new NumberDataField());
+        field = std::make_shared<NumberDataField>();
         field->setName("OrganizationalIdentifier");
         field->setDataLength(16);
         field->setDataRepresentation(d_dataRepresentation);
         field->setDataType(d_dataType);
         d_fieldList.push_back(field);
 
-        field = std::shared_ptr<NumberDataField>(new NumberDataField());
+        field = std::make_shared<NumberDataField>();
         field->setName("POACategory");
         field->setDataLength(4);
         field->setDataRepresentation(d_dataRepresentation);
@@ -188,9 +188,9 @@ namespace logicalaccess
         return 200;
     }
 
-    string FASCN200BitFormat::getName() const
+	std::string FASCN200BitFormat::getName() const
     {
-        return string("FASC-N 200 Bit");
+        return std::string("FASC-N 200 Bit");
     }
 
     FormatType FASCN200BitFormat::getType() const
@@ -229,7 +229,7 @@ namespace logicalaccess
         setUid(node.get_child("Uid").get_value<unsigned long long>());
     }
 
-    std::string FASCN200BitFormat::getDefaultXmlNodeName() const
+	std::string FASCN200BitFormat::getDefaultXmlNodeName() const
     {
         return "FASCN200BitFormat";
     }
@@ -261,14 +261,13 @@ namespace logicalaccess
     void FASCN200BitFormat::setLinearData(const void* data, size_t dataLengthBytes)
     {
         unsigned int pos = 0;
-        unsigned char c;
 
-        if (dataLengthBytes * 8 < getDataLength())
+	    if (dataLengthBytes * 8 < getDataLength())
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Data length too small.");
         }
 
-        c = (unsigned char)revertField(data, dataLengthBytes, &pos, 4);
+        unsigned char c = (unsigned char)revertField(data, dataLengthBytes, &pos, 4);
         if (c != FASCN_SS)
         {
             char tmpmsg[64];

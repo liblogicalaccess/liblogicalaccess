@@ -26,7 +26,7 @@ namespace logicalaccess
          * \brief Constructor.
          * \param cardtype The card type.
          */
-        GenericTagChip(std::string cardtype);
+	    explicit GenericTagChip(std::string cardtype);
 
         /**
          * \brief Constructor.
@@ -42,24 +42,24 @@ namespace logicalaccess
          * \brief Get the generic card type.
          * \return The generic card type.
          */
-        virtual std::string getGenericCardType() const { return CHIP_GENERICTAG; };
+	    std::string getGenericCardType() const override { return CHIP_GENERICTAG; }
 
         /**
          * \brief Get the root location node.
          * \return The root location node.
          */
-        virtual std::shared_ptr<LocationNode> getRootLocationNode();
+	    std::shared_ptr<LocationNode> getRootLocationNode() override;
 
-        void setTagIdBitsLength(unsigned int length) { d_tagIdBitsLength = length; };
+        void setTagIdBitsLength(unsigned int length) { d_tagIdBitsLength = length; }
 
-        unsigned int getTagIdBitsLength() const { return d_tagIdBitsLength; };
+        unsigned int getTagIdBitsLength() const { return d_tagIdBitsLength; }
 
         /**
          * \brief Get a card service for this card provider.
          * \param serviceType The card service type.
          * \return The card service.
          */
-        virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
+	    std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
 
 		void setRealChip(std::shared_ptr<Chip> real_chip);
 

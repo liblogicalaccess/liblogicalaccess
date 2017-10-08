@@ -32,9 +32,9 @@ namespace logicalaccess
         setBuzzer(status, false);
     }
 
-    void SmartIDLEDBuzzerDisplay::setPort()
+    void SmartIDLEDBuzzerDisplay::setPort() const
     {
-        std::vector<unsigned char> data;
+		ByteVector data;
         data.push_back(static_cast<unsigned char>((d_red_led ? 1 : 0) | (d_green_led ? 16 : 0) | (d_buzzer ? 2 : 0)));
 
         getSmartIDReaderCardAdapter()->sendCommand(0x54, data);
@@ -79,6 +79,6 @@ namespace logicalaccess
         }
     }
 
-    std::shared_ptr<SmartIDReaderCardAdapter> SmartIDLEDBuzzerDisplay::getSmartIDReaderCardAdapter()
+    std::shared_ptr<SmartIDReaderCardAdapter> SmartIDLEDBuzzerDisplay::getSmartIDReaderCardAdapter() const
     { return std::dynamic_pointer_cast<SmartIDReaderCardAdapter>(getReaderCardAdapter()); }
 }

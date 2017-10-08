@@ -22,7 +22,7 @@ namespace logicalaccess
          * \brief Constructor.
          * \param cardProvider The associated card provider.
          */
-        ProxAccessControlCardService(std::shared_ptr<Chip> chip);
+	    explicit ProxAccessControlCardService(std::shared_ptr<Chip> chip);
 
         /**
          * \brief Destructor.
@@ -36,7 +36,7 @@ namespace logicalaccess
          * \param aiToUse The key's informations to use.
          * \return The format read on success, null otherwise.
          */
-        virtual std::shared_ptr<Format> readFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse);
+	    std::shared_ptr<Format> readFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse) override;
 
         /**
          * \brief Write format to the card.
@@ -46,21 +46,19 @@ namespace logicalaccess
          * \param aiToWrite The key's informations to write.
          * \return True on success, false otherwise.
          */
-        virtual bool writeFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite);
+	    bool writeFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite) override;
 
         /**
          * \brief Get the PACS bits of the card.
          * \return The PACS bits.
          */
-        std::vector<unsigned char> getPACSBits();
+        ByteVector getPACSBits() const;
 
 		/**
 		* \brief Get the supported format list.
 		* \return The format list.
 		*/
-		virtual FormatList getSupportedFormatList();
-
-    protected:
+	    FormatList getSupportedFormatList() override;
     };
 }
 

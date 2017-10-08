@@ -13,7 +13,7 @@ namespace logicalaccess
     AdmittoReaderUnitConfiguration::AdmittoReaderUnitConfiguration()
         : ReaderUnitConfiguration(READER_ADMITTO)
     {
-        resetConfiguration();
+	    AdmittoReaderUnitConfiguration::resetConfiguration();
     }
 
     AdmittoReaderUnitConfiguration::~AdmittoReaderUnitConfiguration()

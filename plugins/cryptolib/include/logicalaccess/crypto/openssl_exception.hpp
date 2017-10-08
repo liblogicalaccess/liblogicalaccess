@@ -21,9 +21,9 @@ namespace logicalaccess
         class OpenSSLException : public LibLogicalAccessException
         {
         public:
-            OpenSSLException(const std::string& message)
+	        explicit OpenSSLException(const std::string& message)
                 : LibLogicalAccessException(message)
-            {};
+            {}
         };
     }
 }

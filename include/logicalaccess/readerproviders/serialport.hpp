@@ -49,7 +49,7 @@ namespace logicalaccess
          * \brief Constructor.
          * \param dev The device name. (Example: "/dev/tty0")
          */
-        SerialPort(const std::string& dev);
+	    explicit SerialPort(const std::string& dev);
 
 		/**
 		* \brief Remove copy.
@@ -62,7 +62,7 @@ namespace logicalaccess
          * \see close()
          * Automatically closes the serial port. See close().
          */
-        virtual inline ~SerialPort()
+        virtual ~SerialPort()
         {
             close();
         }
@@ -100,13 +100,13 @@ namespace logicalaccess
          */
         void close();
 
-        bool isOpen();
+        bool isOpen() const;
 
         /**
          * \brief Get the device name.
          * \return The device name.
          */
-        inline const std::string& deviceName() const
+	    const std::string& deviceName() const
         {
             return m_dev;
         }
@@ -121,7 +121,7 @@ namespace logicalaccess
          * The serial port must be open before the call or an LibLogicalAccessException will be thrown.
          * The call may also throw a std::exception in case of failure.
          */
-        size_t read(std::vector<unsigned char>& buf);
+        size_t read(ByteVector& buf);
 
         /**
          * \brief Write some data to the serial port.
@@ -131,7 +131,7 @@ namespace logicalaccess
          * The serial port must be open before the call or an LibLogicalAccessException will be thrown.
          * The call may also throw a std::exception in case of failure.
          */
-        size_t write(const std::vector<unsigned char>& buf);
+        size_t write(const ByteVector& buf);
 
         void setBaudrate(unsigned int rate);
         unsigned int getBaudrate();
@@ -148,10 +148,10 @@ namespace logicalaccess
         void setCharacterSize(unsigned int character_size);
         unsigned int getCharacterSize();
 
-        void setCircularBufferParser(CircularBufferParser* circular_buffer_parser) { m_circular_buffer_parser.reset(circular_buffer_parser); };
-        std::shared_ptr<CircularBufferParser> getCircularBufferParser() { return m_circular_buffer_parser; };
+        void setCircularBufferParser(CircularBufferParser* circular_buffer_parser) { m_circular_buffer_parser.reset(circular_buffer_parser); }
+        std::shared_ptr<CircularBufferParser> getCircularBufferParser() const { return m_circular_buffer_parser; }
 
-        boost::circular_buffer<unsigned char>& getCircularReadBuffer() { return m_circular_read_buffer; };
+        boost::circular_buffer<unsigned char>& getCircularReadBuffer() { return m_circular_read_buffer; }
 
         /**
          * Wait until more data are available, or until `until` is reach.
@@ -189,16 +189,15 @@ namespace logicalaccess
         void dataConsumed();
 
     private:
-        void do_read(const boost::system::error_code& e, std::size_t bytes_transferred);
+        void do_read(const boost::system::error_code& e, size_t bytes_transferred);
 
         void do_close(const boost::system::error_code& error);
 
         void do_write(const ByteVector &buf);
         void write_start();
-        void write_complete(const boost::system::error_code& error, const std::size_t bytes_transferred);
+        void write_complete(const boost::system::error_code& error, const size_t bytes_transferred);
 
-    private:
-        /**
+	    /**
          * \brief The internal device name.
          */
         std::string m_dev;
@@ -209,9 +208,9 @@ namespace logicalaccess
 
         boost::circular_buffer<unsigned char> m_circular_read_buffer;
 
-        std::vector<unsigned char> m_read_buffer;
+        ByteVector m_read_buffer;
 
-        std::vector<unsigned char> m_write_buffer;
+        ByteVector m_write_buffer;
 
         std::shared_ptr<std::thread> m_thread_reader;
 

@@ -31,7 +31,7 @@ namespace logicalaccess
          * \brief Constructor.
          * \param rpt Reader provider type.
          */
-        ISO7816ReaderUnitConfiguration(std::string rpt);
+	    explicit ISO7816ReaderUnitConfiguration(std::string rpt);
 
         /**
          * \brief Destructor.
@@ -41,7 +41,7 @@ namespace logicalaccess
         /**
          * \brief Reset the configuration to the default one.
          */
-        virtual void resetConfiguration();
+	    void resetConfiguration() override;
 
         /**
          * \brief Set the SAM type.
@@ -69,34 +69,34 @@ namespace logicalaccess
          * \brief Serialize the current object to XML.
          * \param parentNode The parent node.
          */
-        virtual void serialize(boost::property_tree::ptree& parentNode);
+	    void serialize(boost::property_tree::ptree& parentNode) override;
 
         /**
          * \brief UnSerialize a XML node to the current object.
          * \param node The XML node.
          */
-        virtual void unSerialize(boost::property_tree::ptree& node);
+	    void unSerialize(boost::property_tree::ptree& node) override;
 
         /**
          * \brief Get the default Xml Node name for this object.
          * \return The Xml node name.
          */
-        virtual std::string getDefaultXmlNodeName() const;
+	    std::string getDefaultXmlNodeName() const override;
 
         /**
          * \brief Set the SAM Key and Keyno for check if the SAM is the SAM we are waiting and for AV2 enable communication
          */
-        void setSAMUnlockKey(std::shared_ptr<DESFireKey> key, unsigned char keyno) { d_sam_key_unlock = key; d_keyno_unlock = keyno; };
+        void setSAMUnlockKey(std::shared_ptr<DESFireKey> key, unsigned char keyno) { d_sam_key_unlock = key; d_keyno_unlock = keyno; }
 
         /**
          * \brief Get SAM Security Check Key
          */
-        std::shared_ptr<DESFireKey> getSAMUnLockKey() const { return d_sam_key_unlock; };
+        std::shared_ptr<DESFireKey> getSAMUnLockKey() const { return d_sam_key_unlock; }
 
         /**
          * \brief Get SAM Security Check KeyNo
          */
-        unsigned char getSAMUnLockkeyNo() const { return d_keyno_unlock; };
+        unsigned char getSAMUnLockkeyNo() const { return d_keyno_unlock; }
 
         bool getCheckSAMReaderIsAvailable() const { return d_check_sam_reader_available; }
 

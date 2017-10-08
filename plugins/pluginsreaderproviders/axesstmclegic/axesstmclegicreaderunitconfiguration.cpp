@@ -13,7 +13,7 @@ namespace logicalaccess
     AxessTMCLegicReaderUnitConfiguration::AxessTMCLegicReaderUnitConfiguration()
         : ReaderUnitConfiguration(READER_AXESSTMCLEGIC)
     {
-        resetConfiguration();
+	    AxessTMCLegicReaderUnitConfiguration::resetConfiguration();
     }
 
     AxessTMCLegicReaderUnitConfiguration::~AxessTMCLegicReaderUnitConfiguration()

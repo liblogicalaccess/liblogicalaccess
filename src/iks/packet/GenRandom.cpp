@@ -2,7 +2,7 @@
 #include <cstring>
 
 using namespace logicalaccess;
-using namespace logicalaccess::iks;
+using namespace iks;
 
 GenRandomCommand::GenRandomCommand()
     : nb_bytes_(0)

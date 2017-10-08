@@ -35,48 +35,48 @@ namespace logicalaccess
          * \brief Get the transport type of this instance.
          * \return The transport type.
          */
-        virtual std::string getTransportType() const { return TRANSPORT_UDP; };
+	    std::string getTransportType() const override { return TRANSPORT_UDP; }
 
         /**
          * \param Connect to the transport layer.
          * \return True on success, false otherwise.
          */
-        virtual bool connect();
+	    bool connect() override;
 
         /**
          * \param Disconnect from the transport layer.
          */
-        virtual void disconnect();
+	    void disconnect() override;
 
         /**
          * \briaf Get if connected to the transport layer.
          * \return True if connected, false otherwise.
          */
-        virtual bool isConnected();
+	    bool isConnected() override;
 
         /**
          * \brief Get the data transport endpoint name.
          * \return The data transport endpoint name.
          */
-        virtual std::string getName() const;
+	    std::string getName() const override;
 
         /**
          * \brief Serialize the current object to XML.
          * \param parentNode The parent node.
          */
-        virtual void serialize(boost::property_tree::ptree& parentNode);
+	    void serialize(boost::property_tree::ptree& parentNode) override;
 
         /**
          * \brief UnSerialize a XML node to the current object.
          * \param node The XML node.
          */
-        virtual void unSerialize(boost::property_tree::ptree& node);
+	    void unSerialize(boost::property_tree::ptree& node) override;
 
         /**
          * \brief Get the default Xml Node name for this object.
          * \return The Xml node name.
          */
-        virtual std::string getDefaultXmlNodeName() const;
+	    std::string getDefaultXmlNodeName() const override;
 
         /**
          * \brief Get the client socket.
@@ -107,9 +107,9 @@ namespace logicalaccess
          */
         void setPort(int port);
 
-        virtual void send(const std::vector<unsigned char>& data);
+	    void send(const ByteVector& data) override;
 
-        virtual std::vector<unsigned char> receive(long int timeout);
+	    ByteVector receive(long int timeout) override;
 
     protected:
 

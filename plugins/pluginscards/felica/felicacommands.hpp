@@ -43,9 +43,9 @@ namespace logicalaccess
 		*/
 		virtual unsigned char requestResponse() = 0;
 
-		virtual std::vector<unsigned char> read(unsigned short code, unsigned short block);
+		virtual ByteVector read(unsigned short code, unsigned short block);
 
-		virtual std::vector<unsigned char> read(unsigned short code, const std::vector<unsigned short>& blocks);
+		virtual ByteVector read(unsigned short code, const std::vector<unsigned short>& blocks);
 
 		/**
 		* \brief Read data from the chip.
@@ -53,11 +53,11 @@ namespace logicalaccess
 		* \param blocks Blocks list.
 		* \return Data read.
 		*/
-		virtual std::vector<unsigned char> read(const std::vector<unsigned short>& codes, const std::vector<unsigned short>& blocks) = 0;
+		virtual ByteVector read(const std::vector<unsigned short>& codes, const std::vector<unsigned short>& blocks) = 0;
 
-		virtual void write(unsigned short code, const std::vector<unsigned short>& blocks, const std::vector<unsigned char>& data);
+		virtual void write(unsigned short code, const std::vector<unsigned short>& blocks, const ByteVector& data);
 
-		virtual void write(unsigned short code, unsigned short block, const std::vector<unsigned char>& data);
+		virtual void write(unsigned short code, unsigned short block, const ByteVector& data);
 
 		/**
 		* \brief Write data to the chip.
@@ -65,7 +65,7 @@ namespace logicalaccess
 		* \param blocks Blocks list.
 		* \param data Data to write.
 		*/
-		virtual void write(const std::vector<unsigned short>& codes, const std::vector<unsigned short>& blocks, const std::vector<unsigned char>& data) = 0;
+		virtual void write(const std::vector<unsigned short>& codes, const std::vector<unsigned short>& blocks, const ByteVector& data) = 0;
     };
 }
 

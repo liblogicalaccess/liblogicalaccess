@@ -176,7 +176,7 @@ namespace logicalaccess
         }
     }
 
-    std::string ParityDataField::getDefaultXmlNodeName() const
+	std::string ParityDataField::getDefaultXmlNodeName() const
     {
         return "ParityDataField";
     }

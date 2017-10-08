@@ -31,9 +31,9 @@ namespace logicalaccess
          */
         virtual ~MifareOmnikeyXX21Commands();
 
-        virtual void increment(uint8_t blockno, uint32_t value) override;
+	    void increment(uint8_t blockno, uint32_t value) override;
 
-        virtual void decrement(uint8_t blockno, uint32_t value) override;
+	    void decrement(uint8_t blockno, uint32_t value) override;
     };
 }
 

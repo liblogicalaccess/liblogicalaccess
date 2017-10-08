@@ -33,10 +33,10 @@ namespace logicalaccess
         // No buzzer on STid STR, do nothing
     }
 
-    void STidSTRLEDBuzzerDisplay::setPort()
+    void STidSTRLEDBuzzerDisplay::setPort() const
     {
         LOG(LogLevel::INFOS) << "Sending LED/Buzzer command for: red{" << d_red_led << "} green{" << d_green_led << "} buzzer{" << d_buzzer << "}...";
-        std::vector<unsigned char> data;
+        ByteVector data;
         data.push_back(static_cast<unsigned char>((d_red_led ? 2 : 0) | (d_green_led ? 1 : 0)));
         data.push_back(0xFF); // LED duration
         data.push_back((d_buzzer) ? 0xFF : 0x00); // Buzzer duration

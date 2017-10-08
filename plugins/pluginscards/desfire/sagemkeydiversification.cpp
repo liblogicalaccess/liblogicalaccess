@@ -11,7 +11,7 @@
 
 namespace logicalaccess
 {
-    void SagemKeyDiversification::initDiversification(std::vector<unsigned char> identifier, int /*AID*/, std::shared_ptr<Key> /*key*/, unsigned char /*keyno*/, std::vector<unsigned char>& diversify)
+    void SagemKeyDiversification::initDiversification(ByteVector identifier, int /*AID*/, std::shared_ptr<Key> /*key*/, unsigned char /*keyno*/, ByteVector& diversify)
     {
         if (identifier.size() > 0)
         {
@@ -31,17 +31,17 @@ namespace logicalaccess
         }
     }
 
-    std::vector<unsigned char> SagemKeyDiversification::getDiversifiedKey(std::shared_ptr<Key> key, std::vector<unsigned char> diversify)
+    ByteVector SagemKeyDiversification::getDiversifiedKey(std::shared_ptr<Key> key, ByteVector diversify)
     {
         LOG(LogLevel::INFOS) << "Using key diversification Sagem with div : " << BufferHelper::getHex(diversify);
-        std::vector<unsigned char> keydiv;
+        ByteVector keydiv;
 
         std::shared_ptr<DESFireKey> desfirekey = std::dynamic_pointer_cast<DESFireKey>(key);
 
         // Sagem diversification algo. Should be an option with SAM diversification soon...
-        std::vector<unsigned char> iv;
+        ByteVector iv;
         // Two time, to have ECB and not CBC mode (laazzyyy to create new function :))
-        std::vector<unsigned char> vkeydata;
+        ByteVector vkeydata;
         if (desfirekey->isEmpty())
         {
             vkeydata.resize(desfirekey->getLength(), 0x00);
@@ -51,9 +51,9 @@ namespace logicalaccess
             vkeydata.insert(vkeydata.end(), desfirekey->getData(), desfirekey->getData() + desfirekey->getLength());
         }
 
-        std::vector<unsigned char> r = DESFireCrypto::sam_CBC_send(vkeydata, iv, std::vector<unsigned char>(diversify.begin(), diversify.begin() + 8));
+        ByteVector r = DESFireCrypto::sam_CBC_send(vkeydata, iv, ByteVector(diversify.begin(), diversify.begin() + 8));
         keydiv.insert(keydiv.end(), r.begin(), r.end());
-        std::vector<unsigned char> r2 = DESFireCrypto::sam_CBC_send(vkeydata, iv, std::vector<unsigned char>(diversify.begin() + 8, diversify.begin() + 16));
+        ByteVector r2 = DESFireCrypto::sam_CBC_send(vkeydata, iv, ByteVector(diversify.begin() + 8, diversify.begin() + 16));
         keydiv.insert(keydiv.end(), r2.begin(), r2.end());
         return keydiv;
     }

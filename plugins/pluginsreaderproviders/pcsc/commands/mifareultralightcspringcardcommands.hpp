@@ -30,11 +30,11 @@ namespace logicalaccess
 
     protected:
 
-		virtual void startGenericSession();
+	    void startGenericSession() override;
 
-		virtual void stopGenericSession();
+	    void stopGenericSession() override;
 
-        virtual std::vector<unsigned char> sendGenericCommand(const std::vector<unsigned char>& data);
+	    ByteVector sendGenericCommand(const ByteVector& data) override;
     };
 }
 

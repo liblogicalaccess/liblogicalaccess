@@ -27,7 +27,7 @@ extern "C" IMAGE_DOS_HEADER __ImageBase;
 
 namespace logicalaccess
 {
-    Settings* Settings::instance = NULL;
+    Settings* Settings::instance = nullptr;
 
     Settings::Settings()
     {
@@ -73,7 +73,7 @@ namespace logicalaccess
 
     Settings* Settings::getInstance()
     {
-        if (instance == NULL)
+        if (instance == nullptr)
         {
             instance = new Settings();
             LOG(LogLevel::INFOS) << "New settings instance created.";
@@ -162,7 +162,7 @@ namespace logicalaccess
             PluginFolders.push_back(getDllPath());
     }
 
-    void Settings::SaveSettings()
+    void Settings::SaveSettings() const
     {
         try
         {
@@ -237,7 +237,7 @@ namespace logicalaccess
                 error = GetLastError();
                 sprintf(tmp, "Cannot get module file name. Last error code: %lu. Trying with GetModuleHandle first...", error);
                 OutputDebugStringA(tmp);
-                HMODULE hm = NULL;
+                HMODULE hm = nullptr;
                 if (!GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
                     (LPCSTR)&instance,
                     &hm))
@@ -252,7 +252,7 @@ namespace logicalaccess
                     error = GetLastError();
                     sprintf(tmp, "Cannot get module file name. Last error code: %lu. Trying with hmodule (%p) from dllmain...", error, __hLibLogicalAccessModule);
                     OutputDebugStringA(tmp);
-                    if (__hLibLogicalAccessModule == NULL)
+                    if (__hLibLogicalAccessModule == nullptr)
                     {
                         sprintf(tmp, "hmodule from dllmain is null.");
                         OutputDebugStringA(tmp);
@@ -277,13 +277,13 @@ namespace logicalaccess
 
             if (error == ERROR_SUCCESS)
             {
-                std::string tmp(szAppPath);
-                size_t index = tmp.find_last_of("/\\");
+                std::string tmp_path(szAppPath);
+                size_t index = tmp_path.find_last_of("/\\");
                 if (index != std::string::npos)
                 {
-                    tmp = tmp.substr(0, index);
+					tmp_path = tmp_path.substr(0, index);
                 }
-                path = tmp;
+                path = tmp_path;
             }
             else
             {

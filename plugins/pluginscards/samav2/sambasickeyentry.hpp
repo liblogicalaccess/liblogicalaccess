@@ -85,7 +85,7 @@ namespace logicalaccess
         /**
          * \brief Destructor.
          */
-        ~SAMBasicKeyEntry();
+	    virtual ~SAMBasicKeyEntry();
 
         /**
          * \brief Get the key length.
@@ -97,42 +97,42 @@ namespace logicalaccess
          * \brief Get the keys data.
          * \return The keys data.
          */
-        std::vector< std::vector<unsigned char> > getKeysData();
+        std::vector< ByteVector > getKeysData() const;
 
         /**
          * \brief Set the keys data.
          */
-        void setKeysData(std::vector<std::vector<unsigned char> > keys, SAMKeyType type);
+	    virtual void setKeysData(std::vector<ByteVector > keys, SAMKeyType type);
 
         /**
          * \brief Get the key data.
          * \return The key data.
          */
-        inline unsigned char *getData() { return d_key; };
+	    unsigned char *getData() const { return d_key; }
 
         /**
          * \brief Set if the key is diversified on the card.
          * \param diversify True if the key is diversified on the card, false otherwise.
          */
-        void setDiversify(bool diversify) { d_diversify = diversify; };
+        void setDiversify(bool diversify) { d_diversify = diversify; }
 
         /**
          * \brief Get if the key is diversified on the card.
          * \return True if the key is diversified on the card, false otherwise.
          */
-        bool getDiversify() const { return d_diversify; };
+        bool getDiversify() const { return d_diversify; }
 
         /**
          * \brief Set the key type.
          * \param keyType The key type.
          */
-        void setKeyType(SAMKeyType keyType) { d_keyType = keyType; }; //TODO DELETE IT
+        void setKeyType(SAMKeyType keyType) { d_keyType = keyType; } //TODO DELETE IT
 
         /**
          * \brief Get the key type.
          * \return The key type.
          */
-        SAMKeyType getKeyType() const { return d_keyType; }; //TODO DELETE IT
+        SAMKeyType getKeyType() const { return d_keyType; } //TODO DELETE IT
 
         /**
          * \brief Serialize the current object to XML.
@@ -164,7 +164,7 @@ namespace logicalaccess
          * \param ai SAM key to compare.
          * \return True if inequals, false otherwise.
          */
-        inline bool operator!=(const SAMBasicKeyEntry& key) const { return !operator==(key); };
+	    bool operator!=(const SAMBasicKeyEntry& key) const { return !operator==(key); }
 
         /**
          * \brief Get the SAM Key Type in string format.
@@ -174,8 +174,8 @@ namespace logicalaccess
 
         size_t getSingleLength() const;
 
-        unsigned char getUpdateMask() const { return d_updatemask; };
-        void setUpdateMask(unsigned char c) { d_updatemask = c; };
+        unsigned char getUpdateMask() const { return d_updatemask; }
+        void setUpdateMask(unsigned char c) { d_updatemask = c; }
 
         KeyEntryUpdateSettings getUpdateSettings();
         void setUpdateSettings(const KeyEntryUpdateSettings& t);

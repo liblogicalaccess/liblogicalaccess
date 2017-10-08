@@ -32,11 +32,11 @@ int main(int ac, char **av)
     ChipPtr chip;
 
     // Reader configuration object to store reader provider and reader unit selection.
-    std::shared_ptr<logicalaccess::ReaderConfiguration> readerConfig(
-            new logicalaccess::ReaderConfiguration());
+    std::shared_ptr<ReaderConfiguration> readerConfig(
+            new ReaderConfiguration());
 
     // Set PCSC ReaderProvider by calling the Library Manager which will load the function from the corresponding plug-in
-    provider = logicalaccess::LibraryManager::getInstance()->getReaderProvider("PCSC");
+    provider = LibraryManager::getInstance()->getReaderProvider("PCSC");
     LLA_ASSERT(provider, "Cannot get PCSC provider");
     readerConfig->setReaderProvider(provider);
 

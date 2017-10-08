@@ -37,24 +37,24 @@ namespace logicalaccess
     {
         d_buzzer = status;
 
-        std::vector<unsigned char> command;
-        command.push_back(static_cast<unsigned char>(Device::HID));
-        command.push_back(static_cast<unsigned char>(HidCommand::BEEP));
+        ByteVector command;
+        command.push_back(static_cast<unsigned char>(HID));
+        command.push_back(static_cast<unsigned char>(BEEP));
         command.push_back(static_cast<unsigned char>(0x01));
         command.push_back(static_cast<unsigned char>(status));
         getRplethReaderCardAdapter()->sendRplethCommand(command, false);
     }
 
-    void RplethLEDBuzzerDisplay::setLED(HidCommand led, bool status)
+    void RplethLEDBuzzerDisplay::setLED(HidCommand led, bool status) const
     {
-        std::vector<unsigned char> command;
-        command.push_back(static_cast<unsigned char>(Device::HID));
+        ByteVector command;
+        command.push_back(static_cast<unsigned char>(HID));
         command.push_back(static_cast<unsigned char>(led));
         command.push_back(static_cast<unsigned char>(0x01));
         command.push_back(static_cast<unsigned char>(status));
         getRplethReaderCardAdapter()->sendRplethCommand(command, false);
     }
 
-    std::shared_ptr<RplethReaderCardAdapter> RplethLEDBuzzerDisplay::getRplethReaderCardAdapter()
+    std::shared_ptr<RplethReaderCardAdapter> RplethLEDBuzzerDisplay::getRplethReaderCardAdapter() const
     { return std::dynamic_pointer_cast<RplethReaderCardAdapter>(getReaderCardAdapter()); }
 }

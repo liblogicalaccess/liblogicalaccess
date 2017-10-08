@@ -7,10 +7,6 @@
 #include "logicalaccess/cards/locationnode.hpp"
 #include <stdlib.h>
 
-using std::string;
-using std::vector;
-using std::ostream;
-
 namespace logicalaccess
 {
     LocationNode::LocationNode()
@@ -22,17 +18,17 @@ namespace logicalaccess
     {
     }
 
-    void LocationNode::setName(const string& name)
+    void LocationNode::setName(const std::string& name)
     {
         d_name = name;
     }
 
-    string LocationNode::getName() const
+	std::string LocationNode::getName() const
     {
         return d_name;
     }
 
-    vector<std::shared_ptr<LocationNode> >& LocationNode::getChildrens()
+	std::vector<std::shared_ptr<LocationNode> >& LocationNode::getChildrens()
     {
         return d_childrens;
     }
@@ -92,7 +88,7 @@ namespace logicalaccess
         d_parent = parent;
     }
 
-    std::shared_ptr<LocationNode> LocationNode::getParent()
+    std::shared_ptr<LocationNode> LocationNode::getParent() const
     {
         return d_parent.lock();
     }

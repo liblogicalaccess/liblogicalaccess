@@ -18,9 +18,7 @@ namespace logicalaccess
         if (fullString.length() >= ending.length()) {
             return (0 == fullString.compare(fullString.length() - ending.length(), ending.length(), ending));
         }
-        else {
-            return false;
-        }
+	    return false;
     }
 
 	LibraryManager *LibraryManager::getInstance()
@@ -45,14 +43,14 @@ namespace logicalaccess
         {
             try
             {
-                if ((*it).second != NULL && hasEnding((*it).first, enumType[libraryType] + extension)
-		    && (fct = (*it).second->getSymbol(fctname.c_str())) != NULL)
+                if ((*it).second != nullptr && hasEnding((*it).first, enumType[libraryType] + extension)
+		    && (fct = (*it).second->getSymbol(fctname.c_str())) != nullptr)
                     return fct;
             }
             catch (...) {}
         }
 
-        return NULL;
+        return nullptr;
     }
 
     std::shared_ptr<ReaderProvider> LibraryManager::getReaderProvider(const std::string& readertype)
@@ -62,7 +60,7 @@ namespace logicalaccess
         std::string fctname = "get" + readertype + "Reader";
 
         getprovider getpcscsfct;
-        *(void**)(&getpcscsfct) = getFctFromName(fctname, LibraryManager::READERS_TYPE);
+        *(void**)(&getpcscsfct) = getFctFromName(fctname, READERS_TYPE);
 
         if (getpcscsfct)
         {
@@ -79,7 +77,7 @@ namespace logicalaccess
         std::string fctname = "get" + cardtype + "Chip";
 
         getcard getcardfct;
-        *(void**)(&getcardfct) = getFctFromName(fctname, LibraryManager::CARDS_TYPE);
+        *(void**)(&getcardfct) = getFctFromName(fctname, CARDS_TYPE);
 
         if (getcardfct)
         {
@@ -96,7 +94,7 @@ namespace logicalaccess
         std::string fctname = "get" + keydivtype + "Diversification";
 
         getdiversification getdiversificationfct;
-        *(void**)(&getdiversificationfct) = getFctFromName(fctname, LibraryManager::CARDS_TYPE);
+        *(void**)(&getdiversificationfct) = getFctFromName(fctname, CARDS_TYPE);
 
         if (getdiversificationfct)
         {
@@ -113,7 +111,7 @@ namespace logicalaccess
         std::string fctname = "get" + extendedtype + "Commands";
 
         getcommands getcommandsfct;
-        *(void**)(&getcommandsfct) = getFctFromName(fctname, LibraryManager::READERS_TYPE);
+        *(void**)(&getcommandsfct) = getFctFromName(fctname, READERS_TYPE);
         if (getcommandsfct)
         {
             getcommandsfct(&ret);
@@ -145,13 +143,13 @@ namespace logicalaccess
     std::vector<std::string> LibraryManager::getAvailableCards()
     {
         std::lock_guard<std::recursive_mutex> lg(mutex_);
-        return getAvailablePlugins(LibraryManager::CARDS_TYPE);
+        return getAvailablePlugins(CARDS_TYPE);
     }
 
     std::vector<std::string> LibraryManager::getAvailableReaders()
     {
         std::lock_guard<std::recursive_mutex> lg(mutex_);
-        return getAvailablePlugins(LibraryManager::READERS_TYPE);
+        return getAvailablePlugins(READERS_TYPE);
     }
 
     std::vector<std::string> LibraryManager::getAvailableDataTransports()
@@ -169,15 +167,15 @@ namespace logicalaccess
     {
         std::lock_guard<std::recursive_mutex> lg(mutex_);
         std::vector<std::string> plugins;
-        void* fct = NULL;
+        void* fct;
         boost::filesystem::directory_iterator end_iter;
         std::string fctname;
 
-        if (libraryType == LibraryManager::CARDS_TYPE)
+        if (libraryType == CARDS_TYPE)
         {
             fctname = "getChipInfoAt";
         }
-        else if (libraryType == LibraryManager::READERS_TYPE)
+        else if (libraryType == READERS_TYPE)
         {
             fctname = "getReaderInfoAt";
         }
@@ -191,7 +189,7 @@ namespace logicalaccess
         {
             try
             {
-                if ((*it).second != NULL && (fct = (*it).second->getSymbol(fctname.c_str())) != NULL)
+                if ((*it).second != nullptr && (fct = (*it).second->getSymbol(fctname.c_str())) != nullptr)
                 {
                     getobjectinfoat objectinfoptr;
                     *(void**)(&objectinfoptr) = fct;
@@ -246,8 +244,7 @@ namespace logicalaccess
     void LibraryManager::scanPlugins()
     {
         std::lock_guard<std::recursive_mutex> lg(mutex_);
-        void* fct = NULL;
-        boost::filesystem::directory_iterator end_iter;
+	    boost::filesystem::directory_iterator end_iter;
         std::string extension = EXTENSION_LIB;
         Settings* setting = Settings::getInstance();
         std::string fctname = "getLibraryName";
@@ -256,25 +253,25 @@ namespace logicalaccess
         for (std::vector<std::string>::iterator it = setting->PluginFolders.begin(); it != setting->PluginFolders.end(); ++it)
         {
             boost::filesystem::path pluginDir(*it);
-            if (boost::filesystem::exists(pluginDir) && boost::filesystem::is_directory(pluginDir))
+            if (exists(pluginDir) && is_directory(pluginDir))
             {
                 LOG(LogLevel::PLUGINS) << "Scanning library folder " << pluginDir.string() << " ...";
                 for (boost::filesystem::directory_iterator dir_iter(pluginDir); dir_iter != end_iter; ++dir_iter)
                 {
                     LOG(LogLevel::PLUGINS) << "Checking library " << dir_iter->path().filename().string() << "...";
-                    if ((boost::filesystem::is_regular_file(dir_iter->status()) || boost::filesystem::is_symlink(dir_iter->status()))
+                    if ((is_regular_file(dir_iter->status()) || is_symlink(dir_iter->status()))
                         && dir_iter->path().extension() == extension
-                        && (hasEnding(dir_iter->path().filename().string(), enumType[LibraryManager::CARDS_TYPE] + extension)
-                        || hasEnding(dir_iter->path().filename().string(), enumType[LibraryManager::READERS_TYPE] + extension)
-                        || hasEnding(dir_iter->path().filename().string(), enumType[LibraryManager::UNIFIED_TYPE] + extension)))
+                        && (hasEnding(dir_iter->path().filename().string(), enumType[CARDS_TYPE] + extension)
+                        || hasEnding(dir_iter->path().filename().string(), enumType[READERS_TYPE] + extension)
+                        || hasEnding(dir_iter->path().filename().string(), enumType[UNIFIED_TYPE] + extension)))
                     {
                         try
                         {
                             if (libLoaded.find(dir_iter->path().filename().string()) == libLoaded.end())
                             {
                                 IDynLibrary* lib = newDynLibrary(dir_iter->path().string());
-                                fct = lib->getSymbol(fctname.c_str());
-                                if (fct != NULL)
+                                void * fct = lib->getSymbol(fctname.c_str());
+                                if (fct != nullptr)
                                 {
                                     LOG(LogLevel::PLUGINS) << "Library " << dir_iter->path().filename().string() << " loaded.";
                                     libLoaded[dir_iter->path().filename().string()] = lib;

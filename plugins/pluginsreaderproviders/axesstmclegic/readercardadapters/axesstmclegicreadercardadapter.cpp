@@ -19,17 +19,17 @@ namespace logicalaccess
     {
     }
 
-    std::vector<unsigned char> AxessTMCLegicReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
+    ByteVector AxessTMCLegicReaderCardAdapter::adaptCommand(const ByteVector& command)
     {
         return command;
     }
 
-    std::vector<unsigned char> AxessTMCLegicReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
+    ByteVector AxessTMCLegicReaderCardAdapter::adaptAnswer(const ByteVector& answer)
     {
         EXCEPTION_ASSERT_WITH_LOG(answer.size() >= 1, std::invalid_argument, "A valid command buffer size must be at least 1 bytes long");
         unsigned char msglength = answer[0];
         EXCEPTION_ASSERT_WITH_LOG(answer.size() >= static_cast<unsigned char>(1 + msglength), std::invalid_argument, "The supplied command buffer is not valid (bad messange length)");
 
-        return std::vector<unsigned char>(answer.begin() + 1, answer.begin() + 1 + msglength);
+        return ByteVector(answer.begin() + 1, answer.begin() + 1 + msglength);
     }
 }

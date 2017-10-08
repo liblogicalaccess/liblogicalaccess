@@ -44,7 +44,7 @@ namespace logicalaccess
         // idOnDemand reader only support specific implemented formats.
 
         char tmp[64];
-        std::string cmdstr = "";
+		std::string cmdstr = "";
 
         switch (format->getType())
         {
@@ -193,7 +193,7 @@ namespace logicalaccess
 
                     if (idReaderUnit)
                     {
-                        adapter->sendCommand(std::vector<unsigned char>(cmdstr.begin(), cmdstr.end()));
+                        adapter->sendCommand(ByteVector(cmdstr.begin(), cmdstr.end()));
 
                         if (idReaderUnit->write())
                         {

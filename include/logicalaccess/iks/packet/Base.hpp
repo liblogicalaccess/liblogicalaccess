@@ -69,7 +69,9 @@ enum protocol_opcode
 class LIBLOGICALACCESS_API BaseCommand
 {
   public:
-    virtual std::vector<uint8_t> serialize() const;
+	BaseCommand() : opcode_(0) {}
+	virtual ~BaseCommand() = default;
+	virtual std::vector<uint8_t> serialize() const;
 
     /**
      * Compute the binary size_.
@@ -102,7 +104,7 @@ class LIBLOGICALACCESS_API KeyDivInfo
     // It will be truncated/extended to 64bytes.
     mutable std::vector<uint8_t> div_input_;
 
-    size_t binary_size() const;
+    static size_t binary_size();
     std::vector<uint8_t> serialize() const;
 
     /**
@@ -116,7 +118,7 @@ class LIBLOGICALACCESS_API KeyDivInfo
                             const std::vector<uint8_t> &divinput);
 
     static KeyDivInfo build(std::shared_ptr<Key> key,
-                            std::vector<unsigned char> identifier, int AID,
+                            ByteVector identifier, int AID,
                             unsigned char keyno);
 };
 

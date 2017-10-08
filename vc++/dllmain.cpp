@@ -33,6 +33,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID /*lpRes
         break;
     case DLL_THREAD_DETACH:
         break;
+    default: ;
     }
     return TRUE;
 }

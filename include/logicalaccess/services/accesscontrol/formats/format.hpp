@@ -74,7 +74,7 @@ namespace logicalaccess
          * \brief Get the format name.
          * \return The format name.
          */
-        virtual string getName() const = 0;
+        virtual std::string getName() const = 0;
 
         /**
          * \brief Get linear data.
@@ -152,7 +152,7 @@ namespace logicalaccess
          * \brief Get the identifier.
          * \return The identifier.
          */
-        virtual std::vector<unsigned char> getIdentifier();
+        virtual ByteVector getIdentifier();
 
         /**
          * \brief Get the format field list.

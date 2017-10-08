@@ -32,7 +32,7 @@ namespace logicalaccess
     public:
         virtual ~IDynLibrary() {}
 
-        virtual const std::string& getName(void) const = 0;
+        virtual const std::string& getName() const = 0;
         virtual void* getSymbol(const char* symName) = 0;
         virtual bool hasSymbol(const char *name) = 0;
     };

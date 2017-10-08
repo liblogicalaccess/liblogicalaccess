@@ -31,10 +31,10 @@ namespace logicalaccess
         : d_level(level)
     {
         if (!Settings::getInstance()->IsLogEnabled ||
-            (d_level == LogLevel::COMS &&
+            (d_level == COMS &&
              !Settings::getInstance()->SeeCommunicationLog) ||
-            ((d_level == LogLevel::PLUGINS ||
-              d_level == LogLevel::PLUGINS_ERROR) &&
+            ((d_level == PLUGINS ||
+              d_level == PLUGINS_ERROR) &&
              !Settings::getInstance()->SeePluginLog))
             d_level = NONE;
 
@@ -59,14 +59,14 @@ namespace logicalaccess
             if (Settings::getInstance()->ColorizeLog)
             {
                 _stream << Colorize::underline(
-                               boost::posix_time::to_simple_string(now))
+                               to_simple_string(now))
                         << " - " << Colorize::red(logLevelMsg[d_level])
                         << ": \t{" << line << "}\t{" << Colorize::green(func)
                         << "}\t{" << file << "}:" << std::endl;
             }
             else
             {
-                _stream << boost::posix_time::to_simple_string(now) << " - "
+                _stream << to_simple_string(now) << " - "
                         << logLevelMsg[d_level] << ": \t{" << line << "}\t{"
                         << func << "}\t{" << file << "}:" << std::endl;
             }
@@ -117,7 +117,7 @@ namespace logicalaccess
     }
 
     std::ostream &operator<<(std::ostream &ss,
-                             const std::vector<unsigned char> &bytebuff)
+                             const ByteVector &bytebuff)
     {
         std::stringstream tmp;
         tmp << "[data size: " << bytebuff.size() << "] : {";
@@ -185,7 +185,7 @@ namespace logicalaccess
         return ret;
     }
 
-    void trace_print_helper(std::stringstream &ss, const char *param_names, int idx)
+    void trace_print_helper(std::stringstream &ss, const char *param_names, int /*idx*/)
     {
         ss << std::endl;
     }

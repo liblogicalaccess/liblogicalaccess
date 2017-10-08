@@ -22,24 +22,24 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API OSDPDataTransport : public SerialPortDataTransport
     {
     public:
-        OSDPDataTransport(const std::string& portname = "") : SerialPortDataTransport(portname) {};
+	    explicit OSDPDataTransport(const std::string& portname = "") : SerialPortDataTransport(portname) {}
 
-        virtual void setSerialPort(std::shared_ptr<SerialPortXml> port)
+	    void setSerialPort(std::shared_ptr<SerialPortXml> port) override
         {
             d_port = port; d_port->getSerialPort()->setCircularBufferParser(new OSDPBufferParser());
-        };
+        }
 
-        /**
+	    /**
          * \brief Get the transport type of this instance.
          * \return The transport type.
          */
-        virtual std::string getTransportType() const { return "OSDPSerialPort"; };
+	    std::string getTransportType() const override { return "OSDPSerialPort"; }
 
         /**
          * \brief Serialize the current object to XML.
          * \param parentNode The parent node.
          */
-        void serialize(boost::property_tree::ptree& parentNode)
+        void serialize(boost::property_tree::ptree& parentNode) override
         {
             boost::property_tree::ptree node;	SerialPortDataTransport::serialize(node); parentNode.add_child(getDefaultXmlNodeName(), node);
         }
@@ -48,7 +48,7 @@ namespace logicalaccess
          * \brief UnSerialize a XML node to the current object.
          * \param node The XML node.
          */
-        void unSerialize(boost::property_tree::ptree& node)
+        void unSerialize(boost::property_tree::ptree& node) override
         {
             SerialPortDataTransport::unSerialize(node.get_child(SerialPortDataTransport::getDefaultXmlNodeName()));
             d_port->getSerialPort()->setCircularBufferParser(new OSDPBufferParser());
@@ -58,7 +58,7 @@ namespace logicalaccess
          * \brief Get the default Xml Node name for this object.
          * \return The Xml node name.
          */
-        virtual std::string getDefaultXmlNodeName() const { return "OSDPDataTransport"; };
+	    std::string getDefaultXmlNodeName() const override { return "OSDPDataTransport"; }
     };
 }
 

@@ -24,19 +24,19 @@ namespace logicalaccess
         * \brief Constructor.
         * \param chip The chip.
         */
-        MifareNFCTagCardService(std::shared_ptr<Chip> chip) : NFCTagCardService(chip) {};
+	    explicit MifareNFCTagCardService(std::shared_ptr<Chip> chip) : NFCTagCardService(chip) {}
 
-        virtual ~MifareNFCTagCardService() {};
+        virtual ~MifareNFCTagCardService() {}
 
-        virtual std::shared_ptr<logicalaccess::NdefMessage> readNDEF();
+	    std::shared_ptr<NdefMessage> readNDEF() override;
 
-        virtual void writeNDEF(std::shared_ptr<logicalaccess::NdefMessage> records);
+	    void writeNDEF(std::shared_ptr<NdefMessage> records) override;
 
-        virtual void eraseNDEF();
+	    void eraseNDEF() override;
 
     protected:
 
-        std::shared_ptr<MifareChip> getMifareChip() { return std::dynamic_pointer_cast<MifareChip>(getChip()); };
+        std::shared_ptr<MifareChip> getMifareChip() const { return std::dynamic_pointer_cast<MifareChip>(getChip()); }
     };
 }
 

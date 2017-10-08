@@ -20,7 +20,7 @@ namespace logicalaccess
         /**
         * \brief Constructor.
         */
-        OmnikeyXX22ReaderUnit(const std::string& name);
+	    explicit OmnikeyXX22ReaderUnit(const std::string& name);
 
         /**
         * \brief Destructor.
@@ -32,7 +32,7 @@ namespace logicalaccess
         * \brief Get the PC/SC reader unit type.
         * \return The PC/SC reader unit type.
         */
-        virtual PCSCReaderUnitType getPCSCType() const;
+	    PCSCReaderUnitType getPCSCType() const override;
     };
 }
 

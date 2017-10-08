@@ -25,14 +25,14 @@ namespace logicalaccess
         createApplication(location->aid, settings, maxNbKeys);
     }
 
-    void DESFireCommands::createStdDataFile(std::shared_ptr<DESFireLocation> location, DESFireAccessRights accessRights, unsigned int fileSize)
+    void DESFireCommands::createStdDataFile(std::shared_ptr<DESFireLocation> location, const DESFireAccessRights& accessRights, unsigned int fileSize)
     {
         createStdDataFile(location->file, location->securityLevel, accessRights, fileSize);
     }
 
     EncryptionMode DESFireCommands::getEncryptionMode(unsigned char fileno, bool isReadMode, bool* needLoadKey)
     {
-        DESFireCommands::FileSetting fileSetting;
+        FileSetting fileSetting;
         memset(&fileSetting, 0x00, sizeof(fileSetting));
 
         getFileSettings(fileno, fileSetting);
@@ -40,7 +40,7 @@ namespace logicalaccess
 		return getEncryptionMode(fileSetting, isReadMode, needLoadKey);
     }
 
-	EncryptionMode DESFireCommands::getEncryptionMode(const DESFireCommands::FileSetting& fileSetting, bool isReadMode, bool* needLoadKey)
+	EncryptionMode DESFireCommands::getEncryptionMode(const FileSetting& fileSetting, bool isReadMode, bool* needLoadKey)
 	{
 		EncryptionMode encMode = CM_ENCRYPT;
 		unsigned char accessRight = (isReadMode) ? (fileSetting.accessRights[1] >> 4) : (fileSetting.accessRights[1] & 0xF);
@@ -50,7 +50,7 @@ namespace logicalaccess
 			// If accessRight or rwAccessRight is not set to Free then the communication could be MACed instead of PLAIN
 			// Ignored here.
 			encMode = CM_PLAIN;
-			if (needLoadKey != NULL)
+			if (needLoadKey != nullptr)
 			{
 				*needLoadKey = false;
 			}
@@ -71,6 +71,7 @@ namespace logicalaccess
 			case 3:
 				encMode = CM_ENCRYPT;
 				break;
+			default: ;
 			}
 		}
 
@@ -81,7 +82,7 @@ namespace logicalaccess
     {
         unsigned int fileLength = 0x00;
 
-        DESFireCommands::FileSetting fileSetting;
+        FileSetting fileSetting;
         memset(&fileSetting, 0x00, sizeof(fileSetting));
         getFileSettings(fileno, fileSetting);
 
@@ -92,6 +93,7 @@ namespace logicalaccess
             memcpy(&fileLength, fileSetting.type.dataFile.fileSize, sizeof(fileSetting.type.dataFile.fileSize));
         }
             break;
+        default: ;
         }
 
         return fileLength;

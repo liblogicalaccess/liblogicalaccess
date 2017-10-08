@@ -10,24 +10,23 @@
 
 namespace logicalaccess
 {
-    class WindowsDynLibrary : public IDynLibrary, private WinClass
+    class WindowsDynLibrary : public IDynLibrary, WinClass
     {
-    private:
-        std::string _name;
+	    std::string _name;
         HMODULE _handle;
 
     public:
-        WindowsDynLibrary(const std::string& dlName);
+	    explicit WindowsDynLibrary(const std::string& dlName);
 		~WindowsDynLibrary();
 
-        const std::string& getName(void) const
+        const std::string& getName() const override
         {
             return _name;
         }
 
-        void* getSymbol(const char* symName);
+        void* getSymbol(const char* symName) override;
 
-        virtual bool hasSymbol(const char *name);
+	    bool hasSymbol(const char *name) override;
     };
 }
 

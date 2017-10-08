@@ -31,7 +31,7 @@ namespace logicalaccess
          * \param buflen The length of buf. Must be at least (stop_page - start_page + 1) * 4 bytes long.
          * \return The number of bytes red, or a negative value on error.
          */
-        virtual std::vector<unsigned char> readPages(int start_page, int stop_page);
+        virtual ByteVector readPages(int start_page, int stop_page);
 
         /**
          * \brief Write several pages.
@@ -41,7 +41,7 @@ namespace logicalaccess
          * \param buflen The length of buf. Must be at least (stop_page - start_page + 1) * 4 bytes long.
          * \return The number of bytes red, or a negative value on error.
          */
-        virtual void writePages(int start_page, int stop_page, const std::vector<unsigned char>& buf);
+        virtual void writePages(int start_page, int stop_page, const ByteVector& buf);
 
         /**
          * \brief Set a page as read-only.
@@ -56,7 +56,7 @@ namespace logicalaccess
          * \param buflen The length of buffer. Must be at least 4 bytes long or the call will fail.
          * \return The number of bytes red, or a negative value on error.
          */
-        virtual std::vector<unsigned char> readPage(int page) = 0;
+        virtual ByteVector readPage(int page) = 0;
 
         /**
          * \brief Write a whole page.
@@ -65,11 +65,11 @@ namespace logicalaccess
          * \param buflen The length of buffer. Must be at least 4 bytes long or the call will fail.
          * \return The number of bytes written, or a negative value on error.
          */
-        virtual void writePage(int page, const std::vector<unsigned char>& buf) = 0;
+        virtual void writePage(int page, const ByteVector& buf) = 0;
 
     protected:
 
-        std::shared_ptr<TopazChip> getTopazChip();
+        std::shared_ptr<TopazChip> getTopazChip() const;
     };
 }
 

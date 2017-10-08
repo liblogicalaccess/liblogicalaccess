@@ -17,7 +17,7 @@ namespace logicalaccess
             return AESSymmetricKey(size);
         }
 
-        AESSymmetricKey AESSymmetricKey::createFromData(const std::vector<unsigned char>& data)
+        AESSymmetricKey AESSymmetricKey::createFromData(const ByteVector& data)
         {
             return AESSymmetricKey(data);
         }
@@ -32,7 +32,7 @@ namespace logicalaccess
         {
         }
 
-        AESSymmetricKey::AESSymmetricKey(const std::vector<unsigned char>& _data) :
+        AESSymmetricKey::AESSymmetricKey(const ByteVector& _data) :
             SymmetricKey(_data)
         {
         }

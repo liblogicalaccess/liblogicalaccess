@@ -22,18 +22,19 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API ISO14443AReaderCommunication
     {
     public:
+	    virtual ~ISO14443AReaderCommunication() = default;
 
-        /**
+	    /**
          * \brief Send a REQA command from the PCD to the PICC.
          * \return The ATQB PICC result.
          */
-        virtual std::vector<unsigned char> requestA() = 0;
+        virtual ByteVector requestA() = 0;
 
         /**
          * \brief Send a RATS command from the PCD to the PICC.
          * \return The ATS PICC result.
          */
-        virtual std::vector<unsigned char> requestATS() = 0;
+        virtual ByteVector requestATS() = 0;
 
         /**
          * \brief Send a HLTB command from the PCD to the PICC.
@@ -44,7 +45,7 @@ namespace logicalaccess
          * \brief Manage collision.
          * \return The chip UID.
          */
-        virtual std::vector<unsigned char> anticollisionA() = 0;
+        virtual ByteVector anticollisionA() = 0;
     };
 }
 

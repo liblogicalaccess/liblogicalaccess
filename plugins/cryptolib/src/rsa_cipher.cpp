@@ -16,12 +16,13 @@
 #include <openssl/err.h>
 #include <openssl/bio.h>
 #include <openssl/ssl.h>
+#include "logicalaccess/lla_fwd.hpp"
 
 namespace logicalaccess
 {
     namespace openssl
     {
-        void RSACipher::cipher(const std::vector<unsigned char>& src, std::vector<unsigned char>& dest, const AsymmetricKey& key, KeyCompound key_compound)
+        void RSACipher::cipher(const ByteVector& src, ByteVector& dest, const AsymmetricKey& key, KeyCompound key_compound)
         {
             const RSAKey& rsakey = static_cast<const RSAKey&>(key);
 
@@ -57,7 +58,7 @@ namespace logicalaccess
             dest.resize(sumlen);
         }
 
-        void RSACipher::decipher(const std::vector<unsigned char>& src, std::vector<unsigned char>& dest, const AsymmetricKey& key, KeyCompound key_compound)
+        void RSACipher::decipher(const ByteVector& src, ByteVector& dest, const AsymmetricKey& key, KeyCompound key_compound)
         {
             const RSAKey& rsakey = static_cast<const RSAKey&>(key);
 

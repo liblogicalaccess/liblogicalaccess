@@ -23,7 +23,7 @@ namespace logicalaccess
  */
 struct STidPRGReaderUnit::BuzzerModeGuard
 {
-    BuzzerModeGuard(STidPRGReaderUnit *reader)
+	explicit BuzzerModeGuard(STidPRGReaderUnit *reader)
         : reader_(reader)
     {
         auto ret =
@@ -60,11 +60,11 @@ void STidPRGReaderUnit::unSerialize(boost::property_tree::ptree &node)
 STidPRGReaderUnit::STidPRGReaderUnit() : ReaderUnit(READER_STIDPRG)
 {
     d_readerUnitConfig = std::make_shared<STidPRGReaderUnitConfiguration>();
-    setDefaultReaderCardAdapter(std::make_shared<STidPRGReaderCardAdapter>());
+	ReaderUnit::setDefaultReaderCardAdapter(std::make_shared<STidPRGReaderCardAdapter>());
     auto dt = std::make_shared<STidPRGDataTransport>();
     dt->setPortBaudRate(9600);
-    getDefaultReaderCardAdapter()->setDataTransport(dt);
-    setDataTransport(dt);
+	ReaderUnit::getDefaultReaderCardAdapter()->setDataTransport(dt);
+	ReaderUnit::setDataTransport(dt);
 }
 
 bool STidPRGReaderUnit::waitInsertion(unsigned int maxwait)
@@ -121,7 +121,7 @@ bool STidPRGReaderUnit::isConnected()
     return !!d_insertedChip;
 }
 
-void STidPRGReaderUnit::setCardType(std::string cardType)
+void STidPRGReaderUnit::setCardType(std::string /*cardType*/)
 {
 }
 
@@ -181,8 +181,7 @@ std::shared_ptr<Chip> STidPRGReaderUnit::getCurrentChip()
             chip->setCommands(cmd);
             return chip;
         }
-        else
-            assert(0);
+	    assert(0);
     }
     return nullptr;
 }
@@ -280,7 +279,7 @@ void STidPRGReaderUnit::select_chip_type()
     getDefaultReaderCardAdapter()->sendCommand({0x20, 0x03, 0, 0x00});
 }
 
-std::shared_ptr<STidPRGReaderUnitConfiguration> STidPRGReaderUnit::getSTidPRGReaderUnitConfiguration()
+std::shared_ptr<STidPRGReaderUnitConfiguration> STidPRGReaderUnit::getSTidPRGReaderUnitConfiguration() const
 {
     return std::dynamic_pointer_cast<STidPRGReaderUnitConfiguration>(d_readerUnitConfig);
 }

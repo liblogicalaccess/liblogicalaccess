@@ -15,10 +15,10 @@ namespace logicalaccess
 	{
 	}
 
-	std::vector<unsigned char> ISO7816FuzzingReaderCardAdapter::sendCommand(const std::vector<unsigned char>& command, long timeout)
+	ByteVector ISO7816FuzzingReaderCardAdapter::sendCommand(const ByteVector& command, long timeout)
 	{
 		++currentIndex;
-		std::vector<unsigned char> result;
+		ByteVector result;
 		try
 		{
 			result = ISO7816ReaderCardAdapter::sendCommand(command, timeout);
@@ -38,7 +38,7 @@ namespace logicalaccess
 				std::uniform_int_distribution<int> dist(0x00, 0xff);
 				auto gen = std::bind(dist, mersenne_engine);
 
-				std::generate(std::begin(result), std::end(result) - 2, gen);
+				generate(begin(result), end(result) - 2, gen);
 			}
 			++index;
 		}

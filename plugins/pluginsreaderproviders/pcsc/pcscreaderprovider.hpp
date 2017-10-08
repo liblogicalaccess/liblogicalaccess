@@ -41,7 +41,7 @@ namespace logicalaccess
         /**
          * \brief Release the provider resources.
          */
-        virtual void release();
+	    void release() override;
 
         /**
          * \brief Create a new PC/SC reader provider instance.
@@ -53,49 +53,49 @@ namespace logicalaccess
          * \brief Get the reader provider type.
          * \return The reader provider type.
          */
-        virtual std::string getRPType() const { return READER_PCSC; };
+	    std::string getRPType() const override { return READER_PCSC; }
 
         /**
          * \brief Get the reader provider name.
          * \return The reader provider name.
          */
-        virtual std::string getRPName() const { return "PC/SC"; };
+	    std::string getRPName() const override { return "PC/SC"; }
 
         /**
          * \brief List all readers of the system.
          * \return True if the list was updated, false otherwise.
          */
-        virtual bool refreshReaderList();
+	    bool refreshReaderList() override;
 
         /**
          * \brief Get reader list for this reader provider.
          * \return The reader list.
          */
-        virtual const ReaderList& getReaderList() { return d_system_readers; };
+	    const ReaderList& getReaderList() override { return d_system_readers; }
 
         /**
          * \brief Create a new reader unit for the reader provider.
          * \return A reader unit.
          */
-        virtual std::shared_ptr<ReaderUnit> createReaderUnit();
+	    std::shared_ptr<ReaderUnit> createReaderUnit() override;
 
         /**
          * \brief Create a new reader unit for the reader provider.
          * \return A reader unit.
          */
-        virtual std::shared_ptr<ISO7816ReaderUnit> createReaderUnit(std::string readerunitname);
+	    std::shared_ptr<ISO7816ReaderUnit> createReaderUnit(std::string readerunitname) override;
 
         /**
          * \brief Get the reader group list.
          * \return The reader group list.
          */
-        std::vector<std::string> getReaderGroupList();
+        std::vector<std::string> getReaderGroupList() const;
 
         /**
          * \brief Get the SCard context.
          * \return The SCard context.
          */
-        SCARDCONTEXT getContext() { return d_scc; };
+        SCARDCONTEXT getContext() const { return d_scc; }
 
     protected:
 

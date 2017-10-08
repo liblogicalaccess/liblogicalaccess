@@ -11,23 +11,23 @@ using namespace logicalaccess;
 
 
 MifarePlusSL1Chip::MifarePlusSL1Chip(const std::string &cardType, int nb_sectors) :
-	MifareChip(cardType)
+	MifareChip(cardType, nb_sectors)
 {
 }
 
-logicalaccess::MifarePlusSL1_2kChip::MifarePlusSL1_2kChip() :
+MifarePlusSL1_2kChip::MifarePlusSL1_2kChip() :
         MifarePlusSL1Chip("MifarePlus_SL1_2K", 32)
 {
 
 }
 
-logicalaccess::MifarePlusSL1_4kChip::MifarePlusSL1_4kChip() :
+MifarePlusSL1_4kChip::MifarePlusSL1_4kChip() :
         MifarePlusSL1Chip("MifarePlus_SL1_4K", 40)
 {
 
 }
 
-std::shared_ptr<LocationNode> logicalaccess::MifarePlusSL1_4kChip::getRootLocationNode()
+std::shared_ptr<LocationNode> MifarePlusSL1_4kChip::getRootLocationNode()
 {
     std::shared_ptr<LocationNode> rootNode = MifareChip::getRootLocationNode();
 

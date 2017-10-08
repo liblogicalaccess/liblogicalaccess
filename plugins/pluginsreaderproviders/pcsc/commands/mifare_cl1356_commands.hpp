@@ -9,14 +9,14 @@
 
 namespace logicalaccess
 {
-	class MifareCL1356Commands : public MifarePCSCCommands
+	class LIBLOGICALACCESS_API MifareCL1356Commands : public MifarePCSCCommands
     {
     public:
 		virtual ~MifareCL1356Commands() = default;
 
-        virtual void increment(uint8_t blockno, uint32_t value) override;
+		void increment(uint8_t blockno, uint32_t value) override;
 
-        virtual void decrement(uint8_t blockno, uint32_t value) override;
+		void decrement(uint8_t blockno, uint32_t value) override;
 
     };
 

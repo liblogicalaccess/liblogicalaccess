@@ -30,11 +30,11 @@ namespace logicalaccess
         : ReaderUnit(READER_SMARTID)
     {
         d_readerUnitConfig.reset(new SmartIDReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(std::shared_ptr<SmartIDReaderCardAdapter>(new SmartIDReaderCardAdapter()));
+	    ReaderUnit::setDefaultReaderCardAdapter(std::make_shared<SmartIDReaderCardAdapter>());
         d_ledBuzzerDisplay.reset(new SmartIDLEDBuzzerDisplay());
         std::shared_ptr<SerialPortDataTransport> dataTransport(new SerialPortDataTransport());
         dataTransport->setPortBaudRate(115200);
-        setDataTransport(dataTransport);
+	    ReaderUnit::setDataTransport(dataTransport);
 		d_card_type = CHIP_UNKNOWN;
 
         try
@@ -48,15 +48,15 @@ namespace logicalaccess
 
     SmartIDReaderUnit::~SmartIDReaderUnit()
     {
-        disconnectFromReader();
+	    SmartIDReaderUnit::disconnectFromReader();
     }
 
-    std::string SmartIDReaderUnit::getName() const
+	std::string SmartIDReaderUnit::getName() const
     {
         return getDataTransport()->getName();
     }
 
-    std::string SmartIDReaderUnit::getConnectedName()
+	std::string SmartIDReaderUnit::getConnectedName()
     {
         return getName();
     }
@@ -142,9 +142,8 @@ namespace logicalaccess
     bool SmartIDReaderUnit::connect()
     {
         bool ret;
-        std::vector<unsigned char> uid;
 
-        resetRF();
+	    resetRF();
 
         try
         {
@@ -156,7 +155,7 @@ namespace logicalaccess
 
         try
         {
-            uid = d_readerCommunication->anticollision();
+            ByteVector uid = d_readerCommunication->anticollision();
             d_readerCommunication->selectIso(uid);
 
             d_insertedChip->setChipIdentifier(uid);
@@ -176,12 +175,12 @@ namespace logicalaccess
         resetRF();
     }
 
-    std::vector<unsigned char> SmartIDReaderUnit::getCardSerialNumber()
+	ByteVector SmartIDReaderUnit::getCardSerialNumber()
     {
-        std::vector<unsigned char> data;
+		ByteVector data;
         data.push_back(static_cast<unsigned char>(0x01));
 
-        std::vector<unsigned char> csn = getDefaultSmartIDReaderCardAdapter()->sendCommand(0x53, data);
+		ByteVector csn = getDefaultSmartIDReaderCardAdapter()->sendCommand(0x53, data);
         return csn;
     }
 
@@ -239,9 +238,9 @@ namespace logicalaccess
         return chip;
     }
 
-    std::vector<std::shared_ptr<Chip> > SmartIDReaderUnit::getChipList()
+	std::vector<std::shared_ptr<Chip> > SmartIDReaderUnit::getChipList()
     {
-        std::vector<std::shared_ptr<Chip> > chipList;
+		std::vector<std::shared_ptr<Chip> > chipList;
         std::shared_ptr<Chip> singleChip = getSingleChip();
         if (singleChip)
         {
@@ -256,9 +255,9 @@ namespace logicalaccess
         return std::dynamic_pointer_cast<SmartIDReaderCardAdapter>(adapter);
     }
 
-    std::string SmartIDReaderUnit::getReaderSerialNumber()
+	std::string SmartIDReaderUnit::getReaderSerialNumber()
     {
-        string ret;
+		std::string ret;
 
         return ret;
     }
@@ -285,23 +284,23 @@ namespace logicalaccess
         getDataTransport()->disconnect();
     }
 
-    std::vector<unsigned char> SmartIDReaderUnit::getPingCommand() const
+	ByteVector SmartIDReaderUnit::getPingCommand() const
     {
-        std::vector<unsigned char> cmd;
+		ByteVector cmd;
 
         cmd.push_back(static_cast<unsigned char>(0x4f));
 
         return cmd;
     }
 
-    std::string SmartIDReaderUnit::getInformation()
+	std::string SmartIDReaderUnit::getInformation()
     {
-        return BufferHelper::getStdString(getDefaultSmartIDReaderCardAdapter()->sendCommand(0x4F, std::vector<unsigned char>()));
+        return BufferHelper::getStdString(getDefaultSmartIDReaderCardAdapter()->sendCommand(0x4F, ByteVector()));
     }
 
-    std::string SmartIDReaderUnit::getFirmwareVersion()
+	std::string SmartIDReaderUnit::getFirmwareVersion()
     {
-        std::vector<unsigned char> data;
+		ByteVector data;
         data.push_back(static_cast<unsigned char>(0x00));
 
         return BufferHelper::getStdString(getDefaultSmartIDReaderCardAdapter()->sendCommand(0x4F, data));
@@ -309,12 +308,12 @@ namespace logicalaccess
 
     void SmartIDReaderUnit::reboot()
     {
-        getDefaultSmartIDReaderCardAdapter()->sendCommand(0xE0, std::vector<unsigned char>());
+        getDefaultSmartIDReaderCardAdapter()->sendCommand(0xE0, ByteVector());
     }
 
     void SmartIDReaderUnit::resetRF(int offtime)
     {
-        std::vector<unsigned char> data;
+		ByteVector data;
         data.push_back(static_cast<unsigned char>(0x00));
         data.push_back(static_cast<unsigned char>(offtime));
 

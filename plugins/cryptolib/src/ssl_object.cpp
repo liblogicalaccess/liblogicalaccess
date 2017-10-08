@@ -13,17 +13,17 @@ namespace logicalaccess
 {
     namespace openssl
     {
-        void* SSLObject::getAppData()
+        void* SSLObject::getAppData() const
         {
             return SSL_get_app_data(d_ssl.get());
         }
 
-        void SSLObject::setAppData(void* data)
+        void SSLObject::setAppData(void* data) const
         {
             SSL_set_app_data(d_ssl.get(), data);
         }
 
-        SSLContext SSLObject::sslContext()
+        SSLContext SSLObject::sslContext() const
         {
             SSL_CTX* ctx = SSL_get_SSL_CTX(d_ssl.get());
 

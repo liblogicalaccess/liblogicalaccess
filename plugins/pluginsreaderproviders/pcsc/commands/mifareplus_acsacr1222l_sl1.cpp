@@ -10,7 +10,7 @@
 using namespace logicalaccess;
 
 bool MifarePlusACSACR1222L_SL1Commands::AESAuthenticate(
-    std::shared_ptr<logicalaccess::AES128Key> key, uint16_t keyslot)
+    std::shared_ptr<AES128Key> key, uint16_t keyslot)
 {
     LLA_LOG_CTX("AES Authentication Mifare Plus SL1 and OKXX21");
 
@@ -42,9 +42,9 @@ MifarePlusACSACR1222L_SL1Commands::GenericSessionGuard::~GenericSessionGuard()
     //rca_->sendAPDUCommand(0xFF, 0xA0, 0x00, 0x07, 0x03, {0x01, 0x00, 0x02});
 }
 
-std::vector<unsigned char>
+ByteVector
 MifarePlusACSACR1222L_SL1Commands::GenericSessionGuard::Adapter::adaptCommand(
-    const std::vector<unsigned char> &in)
+    const ByteVector &in)
 {
     ByteVector full_cmd;
 
@@ -59,9 +59,9 @@ MifarePlusACSACR1222L_SL1Commands::GenericSessionGuard::Adapter::adaptCommand(
     return full_cmd;
 }
 
-std::vector<unsigned char>
+ByteVector
 MifarePlusACSACR1222L_SL1Commands::GenericSessionGuard::Adapter::adaptAnswer(
-    const std::vector<unsigned char> &answer)
+    const ByteVector &answer)
 {
 	LLA_LOG_CTX("ADAPTER");
 	LOG(DEBUGS) << "BEFORE ADAPTING: " << answer;

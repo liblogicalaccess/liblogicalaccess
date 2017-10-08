@@ -20,17 +20,17 @@ namespace logicalaccess
     {
     }
 
-    std::vector<unsigned char> AdmittoReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
+    ByteVector AdmittoReaderCardAdapter::adaptCommand(const ByteVector& command)
     {
         return command;
     }
 
-    std::vector<unsigned char> AdmittoReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
+    ByteVector AdmittoReaderCardAdapter::adaptAnswer(const ByteVector& answer)
     {
         EXCEPTION_ASSERT_WITH_LOG(answer.size() >= 2, std::invalid_argument, "A valid command buffer size must be at least 2 bytes long");
         EXCEPTION_ASSERT_WITH_LOG(answer[answer.size() - 2] == CR, std::invalid_argument, "The supplied command buffer is not valid (bad first stop byte)");
         EXCEPTION_ASSERT_WITH_LOG(answer[answer.size() - 1] == LF, std::invalid_argument, "The supplied command buffer is not valid (bad second stop byte)");
 
-        return std::vector<unsigned char>(answer.begin() + 2, answer.end() - 2);
+        return ByteVector(answer.begin() + 2, answer.end() - 2);
     }
 }

@@ -40,20 +40,20 @@ namespace logicalaccess
          * \brief Get the generic card type.
          * \return The generic card type.
          */
-        virtual std::string getGenericCardType() const { return CHIP_TOPAZ; };
+	    std::string getGenericCardType() const override { return CHIP_TOPAZ; }
 
         /**
          * \brief Get the root location node.
          * \return The root location node.
          */
-        virtual std::shared_ptr<LocationNode> getRootLocationNode();
+	    std::shared_ptr<LocationNode> getRootLocationNode() override;
 
         /**
          * \brief Get a card service for this chip.
          * \param serviceType The card service type.
          * \return The card service.
          */
-        virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
+	    std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
 
 		/**
 		 * \brief Get the number of blocks.
@@ -65,23 +65,23 @@ namespace logicalaccess
 		* \brief Create default access informations.
 		* \return Default access informations. Always null.
 		*/
-		virtual std::shared_ptr<AccessInfo> createAccessInfo() const;
+	    std::shared_ptr<AccessInfo> createAccessInfo() const override;
 
 		/**
 		* \brief Create default location.
 		* \return Default location.
 		*/
-		virtual std::shared_ptr<Location> createLocation() const;
+	    std::shared_ptr<Location> createLocation() const override;
 
         /**
          * \brief Get the Topaz commands.
          * \return The Topaz commands.
          */
-        std::shared_ptr<TopazCommands> getTopazCommands() { return std::dynamic_pointer_cast<TopazCommands>(getCommands()); };
+        std::shared_ptr<TopazCommands> getTopazCommands() const { return std::dynamic_pointer_cast<TopazCommands>(getCommands()); }
 
     protected:
 
-        void addBlockNode(std::shared_ptr<LocationNode> rootNode, int block);
+		static void addBlockNode(std::shared_ptr<LocationNode> rootNode, int block);
 
         void checkRootLocationNodeName(std::shared_ptr<LocationNode> rootNode);
 

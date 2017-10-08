@@ -13,7 +13,7 @@ namespace logicalaccess
 	GigaTMSReaderUnitConfiguration::GigaTMSReaderUnitConfiguration()
         : ReaderUnitConfiguration(READER_GIGATMS)
     {
-        resetConfiguration();
+	    GigaTMSReaderUnitConfiguration::resetConfiguration();
     }
 
 	GigaTMSReaderUnitConfiguration::~GigaTMSReaderUnitConfiguration()

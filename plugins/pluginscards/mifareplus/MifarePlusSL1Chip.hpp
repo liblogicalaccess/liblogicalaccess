@@ -23,9 +23,9 @@ namespace logicalaccess
       public:
         MifarePlusSL1Chip(const std::string &cardType, int nb_sectors);
 
-        virtual int getSecurityLevel() const override;
+	    int getSecurityLevel() const override;
 
-		virtual std::shared_ptr<AccessInfo> createAccessInfo() const;
+	    std::shared_ptr<AccessInfo> createAccessInfo() const override;
 
 		const std::string& getCardType() const override { return MifareChip::getCardType(); }
 
@@ -33,7 +33,7 @@ namespace logicalaccess
 
 		std::shared_ptr<Commands> getCommands() const override { return MifareChip::getCommands(); }
 
-		const std::vector<unsigned char> getChipIdentifier() const override { return MifareChip::getChipIdentifier(); }
+		ByteVector getChipIdentifier() const override { return MifareChip::getChipIdentifier(); }
 
 		std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
     };
@@ -53,7 +53,7 @@ namespace logicalaccess
          * \brief Get the root location node.
          * \return The root location node.
          */
-        virtual std::shared_ptr<LocationNode> getRootLocationNode();
+		std::shared_ptr<LocationNode> getRootLocationNode() override;
     };
 }
 

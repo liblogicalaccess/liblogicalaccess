@@ -20,7 +20,7 @@ namespace logicalaccess
     {
     }
 
-	std::vector<unsigned char> CPS3StorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo>, size_t length, CardBehavior)
+	ByteVector CPS3StorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo>, size_t /*length*/, CardBehavior)
     {
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 
@@ -28,6 +28,6 @@ namespace logicalaccess
 
         EXCEPTION_ASSERT_WITH_LOG(icLocation, std::invalid_argument, "location must be a CPS3Location.");
 
-		return std::vector<unsigned char>();
+		return ByteVector();
     }
 }

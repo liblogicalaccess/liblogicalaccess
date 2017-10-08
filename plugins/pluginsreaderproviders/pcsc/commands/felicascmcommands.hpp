@@ -37,26 +37,26 @@ namespace logicalaccess
 		* \brief Get the PC/SC reader/card adapter.
 		* \return The PC/SC reader/card adapter.
 		*/
-		std::shared_ptr<PCSCReaderCardAdapter> getPCSCReaderCardAdapter() { return std::dynamic_pointer_cast<PCSCReaderCardAdapter>(getReaderCardAdapter()); };
+		std::shared_ptr<PCSCReaderCardAdapter> getPCSCReaderCardAdapter() const { return std::dynamic_pointer_cast<PCSCReaderCardAdapter>(getReaderCardAdapter()); }
 
 		/**
 		* \brief Get system codes.
 		* \return System codes list.
 		*/
-		virtual std::vector<unsigned short> getSystemCodes();
+		std::vector<unsigned short> getSystemCodes() override;
 
 		/**
 		* \brief Request Services / Area versions.
 		* \param codes Service / Area codes list.
 		* \return Service / Area versions.
 		*/
-		virtual std::vector<unsigned short> requestServices(const std::vector<unsigned short>& codes);
+		std::vector<unsigned short> requestServices(const std::vector<unsigned short>& codes) override;
 
 		/**
 		* \brief Request Response, current FeliCa mode.
 		* \return FeliCa mode (0/1/2).
 		*/
-		virtual unsigned char requestResponse();
+		unsigned char requestResponse() override;
 
 		/**
 		* \brief Read data from the chip.
@@ -64,7 +64,7 @@ namespace logicalaccess
 		* \param blocks Blocks list.
 		* \return Data read.
 		*/
-		virtual std::vector<unsigned char> read(const std::vector<unsigned short>& codes, const std::vector<unsigned short>& blocks);
+		ByteVector read(const std::vector<unsigned short>& codes, const std::vector<unsigned short>& blocks) override;
 
 		/**
 		* \brief Write data to the chip.
@@ -72,7 +72,7 @@ namespace logicalaccess
 		* \param blocks Blocks list.
 		* \param data Data to write.
 		*/
-		virtual void write(const std::vector<unsigned short>& codes, const std::vector<unsigned short>& blocks, const std::vector<unsigned char>& data);
+		void write(const std::vector<unsigned short>& codes, const std::vector<unsigned short>& blocks, const ByteVector& data) override;
 	};
 }
 

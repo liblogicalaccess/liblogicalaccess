@@ -22,7 +22,7 @@ namespace logicalaccess
             return AESInitializationVector(true);
         }
 
-        AESInitializationVector AESInitializationVector::createFromData(const std::vector<unsigned char>& data)
+        AESInitializationVector AESInitializationVector::createFromData(const ByteVector& data)
         {
             return AESInitializationVector(data);
         }
@@ -32,7 +32,7 @@ namespace logicalaccess
         {
         }
 
-        AESInitializationVector::AESInitializationVector(const std::vector<unsigned char>& _data) :
+        AESInitializationVector::AESInitializationVector(const ByteVector& _data) :
             InitializationVector(_data)
         {
             assert(_data.size() == DEFAULT_SIZE);

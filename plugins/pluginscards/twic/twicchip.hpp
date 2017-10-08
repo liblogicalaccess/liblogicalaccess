@@ -39,28 +39,26 @@ namespace logicalaccess
          * \brief Get the root location node.
          * \return The root location node.
          */
-        virtual std::shared_ptr<LocationNode> getRootLocationNode();
+	    std::shared_ptr<LocationNode> getRootLocationNode() override;
 
         /**
          * \brief Get a card service for this chip.
          * \param serviceType The card service type.
          * \return The card service.
          */
-        virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
+	    std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
 
 		/**
 		* \brief Create default Twic location.
 		* \return Default Twic location.
 		*/
-		virtual std::shared_ptr<Location> createLocation() const;
+	    std::shared_ptr<Location> createLocation() const override;
 
         /**
          * \brief Get the Twic commands.
          * \return The Twic commands.
          */
-        std::shared_ptr<TwicCommands> getTwicCommands() { return std::dynamic_pointer_cast<TwicCommands>(getISO7816Commands()); };
-
-    protected:
+        std::shared_ptr<TwicCommands> getTwicCommands() const { return std::dynamic_pointer_cast<TwicCommands>(getISO7816Commands()); }
     };
 }
 

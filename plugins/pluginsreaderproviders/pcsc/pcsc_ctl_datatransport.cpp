@@ -17,7 +17,7 @@
 #define IOCTL_CCID_ESCAPE SCARD_CTL_CODE(3500)
 #endif
 
-void logicalaccess::PCSCControlDataTransport::send(const std::vector<unsigned char> &data)
+void logicalaccess::PCSCControlDataTransport::send(const ByteVector &data)
 {
     LLA_LOG_CTX("PCSC Control DataTransport");
 
@@ -38,7 +38,7 @@ void logicalaccess::PCSCControlDataTransport::send(const std::vector<unsigned ch
                                               &returnedData[0], returnedData.size(),
                                               &ulNoOfDataReceived);
         CheckCardError(errorFlag);
-        d_response = std::vector<unsigned char>(returnedData.begin(),
+        d_response = ByteVector(returnedData.begin(),
                                                 returnedData.begin() + ulNoOfDataReceived);
     }
 }

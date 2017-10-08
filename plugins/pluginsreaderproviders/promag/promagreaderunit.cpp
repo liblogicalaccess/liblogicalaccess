@@ -25,9 +25,9 @@ namespace logicalaccess
         : ReaderUnit(READER_PROMAG)
     {
         d_readerUnitConfig.reset(new PromagReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(std::shared_ptr<PromagReaderCardAdapter>(new PromagReaderCardAdapter()));
+	    ReaderUnit::setDefaultReaderCardAdapter(std::make_shared<PromagReaderCardAdapter>());
         std::shared_ptr<PromagDataTransport> dataTransport(new PromagDataTransport());
-        setDataTransport(dataTransport);
+	    ReaderUnit::setDataTransport(dataTransport);
 		d_card_type = CHIP_UNKNOWN;
 
         try
@@ -41,7 +41,7 @@ namespace logicalaccess
 
     PromagReaderUnit::~PromagReaderUnit()
     {
-        disconnectFromReader();
+	    PromagReaderUnit::disconnectFromReader();
     }
 
     std::string PromagReaderUnit::getName() const
@@ -131,9 +131,9 @@ namespace logicalaccess
     {
     }
 
-    std::vector<unsigned char> PromagReaderUnit::getPingCommand() const
+    ByteVector PromagReaderUnit::getPingCommand() const
     {
-        std::vector<unsigned char> cmd;
+        ByteVector cmd;
 
         cmd.push_back(static_cast<unsigned char>('N'));
 
@@ -143,14 +143,14 @@ namespace logicalaccess
     std::shared_ptr<Chip> PromagReaderUnit::getChipInAir()
     {
         std::shared_ptr<Chip> chip;
-        std::vector<unsigned char> cmd;
+        ByteVector cmd;
         cmd.push_back(static_cast<unsigned char>('R'));
 
-        std::vector<unsigned char> rawidbuf = getDefaultPromagReaderCardAdapter()->sendCommand(cmd);
+        ByteVector rawidbuf = getDefaultPromagReaderCardAdapter()->sendCommand(cmd);
         if (rawidbuf.size() > 0)
         {
             std::string rawidstr = BufferHelper::getStdString(rawidbuf);
-            std::vector<unsigned char> insertedId = XmlSerializable::formatHexString(rawidstr);
+            ByteVector insertedId = formatHexString(rawidstr);
             chip = ReaderUnit::createChip(
 				(d_card_type == CHIP_UNKNOWN ? CHIP_GENERICTAG : d_card_type),
                 insertedId
@@ -241,12 +241,12 @@ namespace logicalaccess
     bool PromagReaderUnit::retrieveReaderIdentifier()
     {
         bool ret;
-        std::vector<unsigned char> cmd;
+        ByteVector cmd;
         try
         {
             cmd.push_back(static_cast<unsigned char>('N'));
 
-            std::vector<unsigned char> r = getDefaultPromagReaderCardAdapter()->sendCommand(cmd);
+            ByteVector r = getDefaultPromagReaderCardAdapter()->sendCommand(cmd);
 
             d_promagIdentifier = r;
             ret = true;
@@ -259,7 +259,7 @@ namespace logicalaccess
         return ret;
     }
 
-    std::vector<unsigned char> PromagReaderUnit::getPromagIdentifier()
+    ByteVector PromagReaderUnit::getPromagIdentifier() const
     {
         return d_promagIdentifier;
     }

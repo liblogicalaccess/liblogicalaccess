@@ -30,6 +30,7 @@
 #include <vector>
 #include <array>
 #include <cstdint>
+#include "logicalaccess/crypto/des_initialization_vector.hpp"
 
 namespace logicalaccess
 {
@@ -53,7 +54,7 @@ namespace logicalaccess
     /**
      * An overload to pretty-print a byte vector to an ostream.
      */
-    LIBLOGICALACCESS_API std::ostream &operator<<(std::ostream &ss, const std::vector<unsigned char> &bytebuff);
+    LIBLOGICALACCESS_API std::ostream &operator<<(std::ostream &ss, const ByteVector &bytebuff);
 
     /**
      * An overload to pretty-print a boolean vector to an ostream.
@@ -80,7 +81,7 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API LogContext
     {
       public:
-        LogContext(const std::string &);
+	    explicit LogContext(const std::string &);
         ~LogContext();
     };
 
@@ -110,7 +111,7 @@ namespace logicalaccess
         /**
          * Build a string containing some contextual information.
          */
-        std::string pretty_context_infos();
+        static std::string pretty_context_infos();
 
         enum LogLevel d_level;
         std::stringstream _stream;
@@ -137,7 +138,7 @@ namespace logicalaccess
      * An overload to pretty-print a byte vector to an ostream.
      */
     LIBLOGICALACCESS_API std::ostream &
-    operator<<(std::ostream &ss, const std::vector<unsigned char> &bytebuff);
+    operator<<(std::ostream &ss, const ByteVector &bytebuff);
 
     /**
      * An overload to pretty-print a boolean vector to an ostream.

@@ -43,7 +43,7 @@ namespace logicalaccess
          * \param efid The EF identifier to set as current.
          * \return True on success, false otherwise.
          */
-        virtual std::vector<unsigned char> readBinary(size_t length, size_t offset, short efid = 0);
+	    ByteVector readBinary(size_t length, size_t offset, short efid = 0) override;
 
         /**
          * \brief Write binary data.
@@ -53,7 +53,7 @@ namespace logicalaccess
          * \param efid The EF identifier to set as current.
          * \return True on success, false otherwise.
          */
-        virtual void writeBinary(const std::vector<unsigned char>& data, size_t offset, short efid = 0);
+	    void writeBinary(const ByteVector& data, size_t offset, short efid = 0) override;
 
         /**
          * \brief Update binary data.
@@ -63,7 +63,7 @@ namespace logicalaccess
          * \param efid The EF identifier to set as current.
          * \return True on success, false otherwise.
          */
-        virtual void updateBinary(const std::vector<unsigned char>& data, size_t offset, short efid = 0);
+	    void updateBinary(const ByteVector& data, size_t offset, short efid = 0) override;
 
         /**
          * \brief Erase binary data.
@@ -71,7 +71,7 @@ namespace logicalaccess
          * \param efid The EF identifier to set as current.
          * \return True on success, false otherwise.
          */
-        virtual void eraseBinary(size_t offset, short efid = 0);
+	    void eraseBinary(size_t offset, short efid = 0) override;
 
         /**
          * \brief Get data.
@@ -80,7 +80,7 @@ namespace logicalaccess
          * \param dataObject The data object to get.
          * \return True on success, false otherwise.
          */
-        virtual std::vector<unsigned char> getData(size_t length, unsigned short dataObject);
+	    ByteVector getData(size_t length, unsigned short dataObject) override;
 
         /**
          * \brief Put data.
@@ -89,14 +89,14 @@ namespace logicalaccess
          * \param dataObject The data object to get.
          * \return True on success, false otherwise.
          */
-        virtual void putData(const std::vector<unsigned char>& data, unsigned short dataObject);
+	    void putData(const ByteVector& data, unsigned short dataObject) override;
 
         /**
          * \brief Select a file by the file identifier.
          * \param efid The file identifier.
          * \return True on success, false otherwise.
          */
-        virtual void selectFile(unsigned short efid);
+	    void selectFile(unsigned short efid) override;
 
         /**
          * \brief Select a file by the DF name.
@@ -104,7 +104,7 @@ namespace logicalaccess
          * \param dfnamelen The DF name length.
          * \return True on success, false otherwise.
          */
-        virtual void selectFile(unsigned char* dfname, size_t dfnamelen);
+	    void selectFile(unsigned char* dfname, size_t dfnamelen) override;
 
         /**
          * \brief Select a file.
@@ -119,7 +119,7 @@ namespace logicalaccess
          * \brief Get the ISO7816 reader/card adapter.
          * \return The ISO7816 reader/card adapter.
          */
-        std::shared_ptr<ISO7816ReaderCardAdapter> getISO7816ReaderCardAdapter() { return std::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter()); };
+        std::shared_ptr<ISO7816ReaderCardAdapter> getISO7816ReaderCardAdapter() const { return std::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter()); }
 
     protected:
 
@@ -130,7 +130,7 @@ namespace logicalaccess
          * \param p1 The parameter 1.
          * \param p2 The parameter 2.
          */
-        void setP1P2(size_t offset, short efid, unsigned char& p1, unsigned char& p2);
+        static void setP1P2(size_t offset, short efid, unsigned char& p1, unsigned char& p2);
     };
 }
 

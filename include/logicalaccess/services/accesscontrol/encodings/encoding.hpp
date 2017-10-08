@@ -9,8 +9,6 @@
 
 #include <string>
 
-using std::string;
-
 #include "logicalaccess/logs.hpp"
 
 namespace logicalaccess
@@ -34,12 +32,13 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API Encoding
     {
     public:
+	    virtual ~Encoding() = default;
 
-        /**
+	    /**
          * \brief Get the encoder name.
          * \return The encoder name.
          */
-        virtual string getName() const = 0;
+        virtual std::string getName() const = 0;
 
         /**
          * \brief Get the encoder type.

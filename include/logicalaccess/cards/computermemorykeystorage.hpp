@@ -17,8 +17,10 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API ComputerMemoryKeyStorage : public KeyStorage
     {
     public:
+#ifndef SWIG
         using XmlSerializable::serialize;
         using XmlSerializable::unSerialize;
+#endif
 
         /**
         * \brief Constructor.
@@ -29,28 +31,26 @@ namespace logicalaccess
          * \brief Get the key storage type.
          * \return The key storage type.
          */
-        virtual KeyStorageType getType() const;
+	    KeyStorageType getType() const override;
 
         /**
          * \brief Serialize the current object to XML.
          * \param parentNode The parent node.
          * \return The XML string.
          */
-        virtual void serialize(boost::property_tree::ptree& parentNode);
+	    void serialize(boost::property_tree::ptree& parentNode) override;
 
         /**
          * \brief UnSerialize a XML node to the current object.
          * \param node The XML node.
          */
-        virtual void unSerialize(boost::property_tree::ptree& node);
+	    void unSerialize(boost::property_tree::ptree& node) override;
 
         /**
          * \brief Get the default Xml Node name for this object.
          * \return The Xml node name.
          */
-        virtual std::string getDefaultXmlNodeName() const;
-
-    protected:
+	    std::string getDefaultXmlNodeName() const override;
     };
 }
 

@@ -29,56 +29,56 @@ extern "C"
 
     LIBLOGICALACCESS_API void getDESFireEV1Chip(std::shared_ptr<logicalaccess::Chip>* chip)
     {
-        if (chip != NULL)
+        if (chip != nullptr)
         {
-            *chip = std::shared_ptr<logicalaccess::DESFireEV1Chip>(new logicalaccess::DESFireEV1Chip());
+            *chip = std::make_shared<logicalaccess::DESFireEV1Chip>();
         }
     }
 
     LIBLOGICALACCESS_API void getDESFireChip(std::shared_ptr<logicalaccess::Chip>* chip)
     {
-        if (chip != NULL)
+        if (chip != nullptr)
         {
-            *chip = std::shared_ptr<logicalaccess::DESFireChip>(new logicalaccess::DESFireChip());
+            *chip = std::make_shared<logicalaccess::DESFireChip>();
         }
     }
 
     LIBLOGICALACCESS_API void getNXPAV1Diversification(std::shared_ptr<logicalaccess::KeyDiversification>* keydiversification)
     {
-        if (keydiversification != NULL)
+        if (keydiversification != nullptr)
         {
-            *keydiversification = std::shared_ptr<logicalaccess::NXPAV1KeyDiversification>(new logicalaccess::NXPAV1KeyDiversification());
+            *keydiversification = std::make_shared<logicalaccess::NXPAV1KeyDiversification>();
         }
     }
 
     LIBLOGICALACCESS_API void getNXPAV2Diversification(std::shared_ptr<logicalaccess::KeyDiversification>* keydiversification)
     {
-        if (keydiversification != NULL)
+        if (keydiversification != nullptr)
         {
-            *keydiversification = std::shared_ptr<logicalaccess::NXPAV2KeyDiversification>(new logicalaccess::NXPAV2KeyDiversification());
+            *keydiversification = std::make_shared<logicalaccess::NXPAV2KeyDiversification>();
         }
     }
 
     LIBLOGICALACCESS_API void getSagemDiversification(std::shared_ptr<logicalaccess::KeyDiversification>* keydiversification)
     {
-        if (keydiversification != NULL)
+        if (keydiversification != nullptr)
         {
-            *keydiversification = std::shared_ptr<logicalaccess::SagemKeyDiversification>(new logicalaccess::SagemKeyDiversification());
+            *keydiversification = std::make_shared<logicalaccess::SagemKeyDiversification>();
         }
     }
 
 	LIBLOGICALACCESS_API void getOmnitechDiversification(std::shared_ptr<logicalaccess::KeyDiversification>* keydiversification)
     {
-        if (keydiversification != NULL)
+        if (keydiversification != nullptr)
         {
-            *keydiversification = std::shared_ptr<logicalaccess::OmnitechKeyDiversification>(new logicalaccess::OmnitechKeyDiversification());
+            *keydiversification = std::make_shared<logicalaccess::OmnitechKeyDiversification>();
         }
     }
 
     LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char* chipname, size_t chipnamelen, void** getterfct)
     {
         bool ret = false;
-        if (chipname != NULL && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
+        if (chipname != nullptr && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != nullptr)
         {
             switch (index)
             {
@@ -97,6 +97,7 @@ extern "C"
                 ret = true;
             }
                 break;
+            default: ;
             }
         }
 

@@ -12,19 +12,19 @@
 
 namespace logicalaccess
 {
-    std::vector<unsigned char> ReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
+    ByteVector ReaderCardAdapter::adaptCommand(const ByteVector& command)
     {
         return command;
     }
 
-    std::vector<unsigned char> ReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
+    ByteVector ReaderCardAdapter::adaptAnswer(const ByteVector& answer)
     {
         return answer;
     }
 
-    std::vector<unsigned char> ReaderCardAdapter::sendCommand(const std::vector<unsigned char>& command, long timeout)
+    ByteVector ReaderCardAdapter::sendCommand(const ByteVector& command, long timeout)
     {
-        std::vector<unsigned char> res;
+        ByteVector res;
 
         if (timeout == -1)
             timeout = Settings::getInstance()->DataTransportTimeout;

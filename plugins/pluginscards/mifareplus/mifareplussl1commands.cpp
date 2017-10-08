@@ -47,58 +47,58 @@ namespace logicalaccess
 		return AESAuthenticate(key, 0x9003);
     }
 
-    std::vector<unsigned char> MifarePlusSL1Commands::readBinary(unsigned char blockno,
-                                                                    size_t len)
+    ByteVector MifarePlusSL1Commands::readBinary(unsigned char /*blockno*/,
+                                                                    size_t /*len*/)
     {
-        assert(0 && "Call shall not be dispatched to here");
+        assert(false && "Call shall not be dispatched to here");
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot call this");
     }
 
-    void MifarePlusSL1Commands::updateBinary(unsigned char blockno,
-                                                const std::vector<unsigned char> &buf)
+    void MifarePlusSL1Commands::updateBinary(unsigned char /*blockno*/,
+                                                const ByteVector &/*buf*/)
     {
-        assert(0 && "Call shall not be dispatched to here");
+        assert(false && "Call shall not be dispatched to here");
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot call this");
     }
 
-    bool MifarePlusSL1Commands::loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol)
+    bool MifarePlusSL1Commands::loadKey(unsigned char /*keyno*/, MifareKeyType /*keytype*/, std::shared_ptr<MifareKey> /*key*/, bool /*vol*/)
     {
-        assert(0 && "Call shall not be dispatched to here");
+        assert(false && "Call shall not be dispatched to here");
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot call this");
         return false;
     }
 
-    void MifarePlusSL1Commands::loadKey(std::shared_ptr<Location> location,
-		MifareKeyType keytype, std::shared_ptr<MifareKey> key)
+    void MifarePlusSL1Commands::loadKey(std::shared_ptr<Location> /*location*/,
+		MifareKeyType /*keytype*/, std::shared_ptr<MifareKey> /*key*/)
     {
-        assert(0 && "Call shall not be dispatched to here");
+        assert(false && "Call shall not be dispatched to here");
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot call this");
     }
 
-    void MifarePlusSL1Commands::authenticate(unsigned char blockno, unsigned char keyno,
-                                                MifareKeyType keytype)
+    void MifarePlusSL1Commands::authenticate(unsigned char /*blockno*/, unsigned char /*keyno*/,
+                                                MifareKeyType /*keytype*/)
     {
-        assert(0 && "Call shall not be dispatched to here");
+        assert(false && "Call shall not be dispatched to here");
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot call this");
     }
 
-    void MifarePlusSL1Commands::authenticate(unsigned char blockno,
-                                                std::shared_ptr<KeyStorage> key_storage,
-                                                MifareKeyType keytype)
+    void MifarePlusSL1Commands::authenticate(unsigned char /*blockno*/,
+                                                std::shared_ptr<KeyStorage> /*key_storage*/,
+                                                MifareKeyType /*keytype*/)
     {
-        assert(0 && "Call shall not be dispatched to here");
+        assert(false && "Call shall not be dispatched to here");
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot call this");
     }
 
-    void MifarePlusSL1Commands::increment(uint8_t blockno, uint32_t value)
+    void MifarePlusSL1Commands::increment(uint8_t /*blockno*/, uint32_t /*value*/)
     {
-        assert(0 && "Call shall not be dispatched to here");
+        assert(false && "Call shall not be dispatched to here");
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot call this");
     }
 
-    void MifarePlusSL1Commands::decrement(uint8_t blockno, uint32_t value)
+    void MifarePlusSL1Commands::decrement(uint8_t /*blockno*/, uint32_t /*value*/)
     {
-        assert(0 && "Call shall not be dispatched to here");
+        assert(false && "Call shall not be dispatched to here");
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot call this");
     }
 }

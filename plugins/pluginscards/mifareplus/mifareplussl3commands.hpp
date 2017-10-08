@@ -20,9 +20,9 @@ namespace logicalaccess
         bool authenticate(int sector, std::shared_ptr<AES128Key> key,
                           MifareKeyType type);
 
-        void resetAuth();
+        void resetAuth() const;
 
-        virtual std::vector<unsigned char> readBinaryPlain(unsigned char blockno, size_t len);
+        virtual ByteVector readBinaryPlain(unsigned char blockno, size_t len);
 
     private:
         std::unique_ptr<MifarePlusSL3Auth> auth_;

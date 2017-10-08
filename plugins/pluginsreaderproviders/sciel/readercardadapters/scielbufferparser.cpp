@@ -9,9 +9,9 @@
 
 namespace logicalaccess
 {
-    std::vector<unsigned char> ScielBufferParser::getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer)
+    ByteVector ScielBufferParser::getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer)
     {
-        std::vector<unsigned char> result;
+        ByteVector result;
 
         if (circular_buffer.size() >= 2)
         {

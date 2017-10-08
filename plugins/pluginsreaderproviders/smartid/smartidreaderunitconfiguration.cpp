@@ -19,7 +19,7 @@ namespace logicalaccess
     SmartIDReaderUnitConfiguration::SmartIDReaderUnitConfiguration()
         : ReaderUnitConfiguration(READER_SMARTID)
     {
-        resetConfiguration();
+	    SmartIDReaderUnitConfiguration::resetConfiguration();
     }
 
     SmartIDReaderUnitConfiguration::~SmartIDReaderUnitConfiguration()

@@ -40,7 +40,7 @@ namespace logicalaccess
 
     ElatecReaderProvider::~ElatecReaderProvider()
     {
-        release();
+	    ElatecReaderProvider::release();
     }
 
     void ElatecReaderProvider::release()

@@ -14,23 +14,23 @@ namespace logicalaccess
         : Key()
     {
         memset(d_key, 0x00, sizeof(d_key));
-        clear();
+	    Key::clear();
     }
 
     HMAC1Key::HMAC1Key(const std::string& str)
         : Key()
     {
         memset(d_key, 0x00, sizeof(d_key));
-        fromString(str);
+	    Key::fromString(str);
     }
 
     HMAC1Key::HMAC1Key(const void* buf, size_t buflen)
         : Key()
     {
         memset(d_key, 0x00, sizeof(d_key));
-        clear();
+	    Key::clear();
 
-        if (buf != NULL)
+        if (buf != nullptr)
         {
             if (buflen >= HMAC1_KEY_SIZE)
             {

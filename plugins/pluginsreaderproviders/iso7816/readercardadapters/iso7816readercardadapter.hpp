@@ -26,39 +26,37 @@ namespace logicalaccess
         /**
         * \brief Send an APDU command to the reader.
         */
-        virtual void sendAPDUCommand(const std::vector<unsigned char>& command, unsigned char* result, size_t* resultlen);
+        virtual void sendAPDUCommand(const ByteVector& command, unsigned char* result, size_t* resultlen);
 
         /**
          * \brief Send an APDU command to the reader.
          */
-        virtual std::vector<unsigned char> sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const std::vector<unsigned char>& data, unsigned char le);
+        virtual ByteVector sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const ByteVector& data, unsigned char le);
 
         /**
          * \brief Send an APDU command to the reader.
          */
-        virtual std::vector<unsigned char> sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const std::vector<unsigned char>& data);
+        virtual ByteVector sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, const ByteVector& data);
 
         /**
          * \brief Send an APDU command to the reader.
          */
-        virtual std::vector<unsigned char> sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, const std::vector<unsigned char>& data);
+        virtual ByteVector sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, const ByteVector& data);
 
         /**
          * \brief Send an APDU command to the reader without data.
          */
-        virtual std::vector<unsigned char> sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, unsigned char le);
+        virtual ByteVector sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char lc, unsigned char le);
 
         /**
          * \brief Send an APDU command to the reader without data.
          */
-        virtual std::vector<unsigned char> sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char le);
+        virtual ByteVector sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2, unsigned char le);
 
         /**
          * \brief Send an APDU command to the reader without data.
          */
-        virtual std::vector<unsigned char> sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2);
-
-    protected:
+        virtual ByteVector sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2);
     };
 }
 

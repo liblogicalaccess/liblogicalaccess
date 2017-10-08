@@ -27,13 +27,13 @@ namespace logicalaccess
         return PCSC_RUT_OMNIKEY_XX25;
     }
 
-    std::vector<unsigned char> OmnikeyXX25ReaderUnit::getCardSerialNumber()
+    ByteVector OmnikeyXX25ReaderUnit::getCardSerialNumber()
     {
         return atr_;
     }
 
-	std::shared_ptr<Chip> OmnikeyXX25ReaderUnit::createChip(std::string type)
+	std::shared_ptr<Chip> OmnikeyXX25ReaderUnit::createChip(std::string /*type*/)
 	{
-		return std::shared_ptr<Chip>(new ProxChip());
+		return std::static_pointer_cast<Chip>(std::make_shared<ProxChip>());
 	}
 }

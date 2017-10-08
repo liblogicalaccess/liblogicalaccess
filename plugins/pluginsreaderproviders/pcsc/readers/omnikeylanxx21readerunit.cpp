@@ -72,29 +72,23 @@ namespace logicalaccess
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 
-    void OmnikeyLANXX21ReaderUnit::sendControlMode(DWORD dwControlCode)
+    void OmnikeyLANXX21ReaderUnit::sendControlMode(DWORD dwControlCode) const
     {
         LOG(LogLevel::INFOS) << "Sending LAN control code {" << dwControlCode << "} on device {" << d_name << "}...";
 
-        SCARDHANDLE hCardHandle;
-        unsigned char outBuffer[512];
-        DWORD dwOutBufferSize;
-        unsigned char inBuffer[512];
-        DWORD dwInBufferSize;
-        DWORD dwBytesReturned;
-        DWORD dwAP;
-        DWORD dwStatus;
+	    unsigned char outBuffer[512];
+	    unsigned char inBuffer[512];
 
-        memset(inBuffer, 0x00, sizeof(inBuffer));
+	    memset(inBuffer, 0x00, sizeof(inBuffer));
         memset(outBuffer, 0x00, sizeof(outBuffer));
-        dwInBufferSize = sizeof(inBuffer);
-        dwOutBufferSize = sizeof(outBuffer);
-        dwBytesReturned = 0;
-        dwAP = 0;
-        hCardHandle = 0;
+        DWORD dwInBufferSize = sizeof(inBuffer);
+        DWORD dwOutBufferSize = sizeof(outBuffer);
+        DWORD dwBytesReturned = 0;
+        DWORD dwAP = 0;
+        SCARDHANDLE hCardHandle = 0;
 
         // Direct connect to Omnikey LAN reader
-        dwStatus = SCardConnect(getPCSCReaderProvider()->getContext(), reinterpret_cast<const char*>(d_name.c_str()), SCARD_SHARE_DIRECT, 0, &hCardHandle, &dwAP);
+        DWORD dwStatus = SCardConnect(getPCSCReaderProvider()->getContext(), reinterpret_cast<const char*>(d_name.c_str()), SCARD_SHARE_DIRECT, 0, &hCardHandle, &dwAP);
         if (SCARD_S_SUCCESS != dwStatus)
         {
             LOG(LogLevel::ERRORS) << "Error {" << std::hex << dwStatus << std::dec << "}";

@@ -106,7 +106,7 @@ namespace logicalaccess
         d_isEmpty = false;
     }
 
-    void Key::setData(const std::vector<unsigned char>& data, size_t offset)
+    void Key::setData(const ByteVector& data, size_t offset)
     {
         if (data.size() == 0)
         {
@@ -178,7 +178,7 @@ namespace logicalaccess
         d_storeCipheredData = cipher;
     }
 
-    bool Key::getStoreCipheredData()
+    bool Key::getStoreCipheredData() const
     {
         return d_storeCipheredData;
     }
@@ -196,21 +196,21 @@ namespace logicalaccess
         }
         else
         {
-            std::string secureKey = ((d_cipherKey == "") ? Key::secureAiKey : d_cipherKey);
+            std::string secureKey = ((d_cipherKey == "") ? secureAiKey : d_cipherKey);
             openssl::AESSymmetricKey aes = openssl::AESSymmetricKey::createFromPassphrase(secureKey);
             openssl::AESInitializationVector iv = openssl::AESInitializationVector::createNull();
             openssl::AESCipher aescipher;
 
-            std::vector<unsigned char> divaesbuf;
+            ByteVector divaesbuf;
             std::string strdata = "Data";
-            std::vector<unsigned char> keynamebuf = std::vector<unsigned char>(strdata.begin(), strdata.end());
+            ByteVector keynamebuf = ByteVector(strdata.begin(), strdata.end());
             keynamebuf.resize(32, 0x00);
             aescipher.cipher(keynamebuf, divaesbuf, aes, iv, false);
             openssl::AESSymmetricKey divaes = openssl::AESSymmetricKey::createFromData(divaesbuf);
 
             strdata = toString();
-            std::vector<unsigned char> keybuf = std::vector<unsigned char>(strdata.begin(), strdata.end());
-            std::vector<unsigned char> cipheredkey;
+            ByteVector keybuf = ByteVector(strdata.begin(), strdata.end());
+            ByteVector cipheredkey;
             aescipher.cipher(keybuf, cipheredkey, divaes, iv, true);
 
             node.put("Data", BufferHelper::toBase64(cipheredkey));
@@ -230,20 +230,20 @@ namespace logicalaccess
         else
         {
             LOG(LogLevel::INFOS) << "Data was ciphered ! Unciphering..";
-            std::string secureKey = ((d_cipherKey == "") ? Key::secureAiKey : d_cipherKey);
-            std::vector<unsigned char> hash = openssl::SHA256Hash(secureKey);
+            std::string secureKey = ((d_cipherKey == "") ? secureAiKey : d_cipherKey);
+            ByteVector hash = openssl::SHA256Hash(secureKey);
             openssl::AESSymmetricKey aes = openssl::AESSymmetricKey::createFromData(hash);
             openssl::AESInitializationVector iv = openssl::AESInitializationVector::createNull();
             openssl::AESCipher aescipher;
 
-            std::vector<unsigned char> divaesbuf;
+            ByteVector divaesbuf;
             std::string strdata = "Data";
-            std::vector<unsigned char> keynamebuf = std::vector<unsigned char>(strdata.begin(), strdata.end());
+            ByteVector keynamebuf = ByteVector(strdata.begin(), strdata.end());
             keynamebuf.resize(32, 0x00);
             aescipher.cipher(keynamebuf, divaesbuf, aes, iv, false);
             openssl::AESSymmetricKey divaes = openssl::AESSymmetricKey::createFromData(divaesbuf);
 
-            std::vector<unsigned char> keybuf(data.begin(), data.end()), uncipheredkey;
+            ByteVector keybuf(data.begin(), data.end()), uncipheredkey;
             aescipher.decipher(BufferHelper::fromBase64(BufferHelper::getStdString(keybuf)), uncipheredkey, divaes, iv, true);
 
             //LOG(LogLevel::DEBUGS) << "Data unciphered: {%s}", uncipheredkey.toStdString().c_str());
@@ -287,7 +287,7 @@ namespace logicalaccess
         return os << key.toString();
     }
 
-std::shared_ptr<KeyDiversification> Key::getKeyDiversification()
+std::shared_ptr<KeyDiversification> Key::getKeyDiversification() const
 { return d_key_diversification; }
 
 void Key::setKeyDiversification(std::shared_ptr<KeyDiversification> div)

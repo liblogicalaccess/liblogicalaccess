@@ -36,9 +36,9 @@ namespace logicalaccess
         : ReaderUnit(READER_GUNNEBO)
     {
         d_readerUnitConfig.reset(new GunneboReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(std::shared_ptr<GunneboReaderCardAdapter>(new GunneboReaderCardAdapter()));
+	    ReaderUnit::setDefaultReaderCardAdapter(std::make_shared<GunneboReaderCardAdapter>());
         std::shared_ptr<GunneboDataTransport> dataTransport(new GunneboDataTransport());
-        setDataTransport(dataTransport);
+	    ReaderUnit::setDataTransport(dataTransport);
 		d_card_type = CHIP_UNKNOWN;
 
         try
@@ -54,7 +54,7 @@ namespace logicalaccess
 
     GunneboReaderUnit::~GunneboReaderUnit()
     {
-        disconnectFromReader();
+	    GunneboReaderUnit::disconnectFromReader();
     }
 
     std::string GunneboReaderUnit::getName() const
@@ -86,7 +86,7 @@ namespace logicalaccess
         LOG(LogLevel::INFOS) << "Waiting insertion... max wait {" << maxwait << "}";
 
         bool inserted = false;
-        std::vector<unsigned char> createChipId;
+        ByteVector createChipId;
 
         try
         {
@@ -102,10 +102,10 @@ namespace logicalaccess
                     }
                     else
                     {
-                        std::vector<unsigned char> cmd;
+                        ByteVector cmd;
                         cmd.push_back(0xff);	// trick
 
-                        std::vector<unsigned char> tmpASCIIId = getDefaultGunneboReaderCardAdapter()->sendCommand(cmd);
+                        ByteVector tmpASCIIId = getDefaultGunneboReaderCardAdapter()->sendCommand(cmd);
 
                         if (tmpASCIIId.size() > 0)
                         {
@@ -170,13 +170,13 @@ namespace logicalaccess
                 {
                     try
                     {
-                        std::vector<unsigned char> cmd;
+                        ByteVector cmd;
                         cmd.push_back(0xff);	// trick
 
-                        std::vector<unsigned char> buf = getDefaultGunneboReaderCardAdapter()->sendCommand(cmd);
+                        ByteVector buf = getDefaultGunneboReaderCardAdapter()->sendCommand(cmd);
                         if (buf.size() > 0)
                         {
-                            std::vector<unsigned char> tmpId = processCardId(buf);
+                            ByteVector tmpId = processCardId(buf);
                             if (tmpId.size() > 0 && (tmpId != d_insertedChip->getChipIdentifier()))
                             {
                                 LOG(LogLevel::INFOS) << "Card found but not same chip ! The previous card has been removed !";
@@ -212,9 +212,9 @@ namespace logicalaccess
         return removed;
     }
 
-    std::vector<unsigned char> GunneboReaderUnit::processCardId(std::vector<unsigned char>& rawSerialData)
+    ByteVector GunneboReaderUnit::processCardId(ByteVector& rawSerialData) const
     {
-        std::vector<unsigned char> ret;
+        ByteVector ret;
 
         if (rawSerialData.size() >= 2)
         {
@@ -230,7 +230,7 @@ namespace logicalaccess
             // Otherwise decode as a STid Gunnebo reader output
             else
             {
-                std::vector<unsigned char> hexSerialData = BufferHelper::fromHexString(strSerialData);
+                ByteVector hexSerialData = BufferHelper::fromHexString(strSerialData);
                 LOG(LogLevel::COMS) << "Gunnebo STid Hex data: {" << BufferHelper::getHex(hexSerialData) << "}";
 
                 if (hexSerialData.size() >= 5)
@@ -347,9 +347,9 @@ namespace logicalaccess
         getDataTransport()->disconnect();
     }
 
-    std::vector<unsigned char> GunneboReaderUnit::getPingCommand() const
+    ByteVector GunneboReaderUnit::getPingCommand() const
     {
-        std::vector<unsigned char> cmd;
+        ByteVector cmd;
 
         cmd.push_back(0xff);
 

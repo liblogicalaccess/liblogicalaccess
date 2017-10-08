@@ -13,7 +13,7 @@ namespace logicalaccess
      * Abstract away a PCSC connection.
      *
      */
-    class PCSCConnection
+    class LIBLOGICALACCESS_API PCSCConnection
     {
     public:
         /**

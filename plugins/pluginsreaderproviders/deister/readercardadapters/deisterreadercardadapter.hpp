@@ -46,14 +46,14 @@ namespace logicalaccess
          * \param command The command to send.
          * \return The adapted command to send.
          */
-        virtual std::vector<unsigned char> adaptCommand(const std::vector<unsigned char>& command);
+	    ByteVector adaptCommand(const ByteVector& command) override;
 
         /**
          * \brief Adapt the asnwer received from the reader.
          * \param answer The answer received.
          * \return The adapted answer received.
          */
-        virtual std::vector<unsigned char> adaptAnswer(const std::vector<unsigned char>& answer);
+	    ByteVector adaptAnswer(const ByteVector& answer) override;
 
     protected:
 
@@ -62,14 +62,14 @@ namespace logicalaccess
          * \param data The data buffer to prepare.
          * \return The data buffer ready to send to device.
          */
-        static std::vector<unsigned char> prepareDataForDevice(const std::vector<unsigned char>& data);
+        static ByteVector prepareDataForDevice(const ByteVector& data);
 
         /**
          * \brief Prepare data buffer from device.
          * \param data The data buffer to prepare.
          * \return The data buffer ready to use.
          */
-        static std::vector<unsigned char> prepareDataFromDevice(const std::vector<unsigned char>& data);
+        static ByteVector prepareDataFromDevice(const ByteVector& data);
 
         /**
          * \brief Target device bus address destination.

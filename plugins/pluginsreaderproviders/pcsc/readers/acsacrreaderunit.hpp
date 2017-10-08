@@ -25,7 +25,7 @@ namespace logicalaccess
         /**
          * \brief Constructor.
          */
-        ACSACRReaderUnit(const std::string& name);
+	    explicit ACSACRReaderUnit(const std::string& name);
 
         /**
          * \brief Destructor.
@@ -36,7 +36,7 @@ namespace logicalaccess
          * \brief Get the PC/SC reader unit type.
          * \return The PC/SC reader unit type.
          */
-        virtual PCSCReaderUnitType getPCSCType() const;
+	    PCSCReaderUnitType getPCSCType() const override;
 
         /**
         * \brief Get the reader firmware version.
@@ -45,7 +45,7 @@ namespace logicalaccess
         std::string getFirmwareVersion();
 
     protected:
-        virtual std::shared_ptr<ResultChecker> createDefaultResultChecker() const override;
+	    std::shared_ptr<ResultChecker> createDefaultResultChecker() const override;
     };
 }
 

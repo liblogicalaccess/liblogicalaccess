@@ -15,13 +15,13 @@ namespace logicalaccess
     ISO7816ReaderUnitConfiguration::ISO7816ReaderUnitConfiguration(std::string rpt)
         : ReaderUnitConfiguration(rpt)
     {
-        resetConfiguration();
+	    ISO7816ReaderUnitConfiguration::resetConfiguration();
     }
 
     ISO7816ReaderUnitConfiguration::ISO7816ReaderUnitConfiguration()
         : ReaderUnitConfiguration(READER_ISO7816)
     {
-        resetConfiguration();
+	    ISO7816ReaderUnitConfiguration::resetConfiguration();
     }
 
     ISO7816ReaderUnitConfiguration::~ISO7816ReaderUnitConfiguration()

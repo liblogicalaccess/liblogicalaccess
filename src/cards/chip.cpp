@@ -8,9 +8,6 @@
 #include "logicalaccess/cards/locationnode.hpp"
 #include <fstream>
 
-using std::ofstream;
-using std::ifstream;
-
 namespace logicalaccess
 {
 	Chip::Chip() : d_cardtype(CHIP_UNKNOWN)

@@ -33,7 +33,7 @@ namespace logicalaccess
 		/**
 		* \brief Constructor for generic Mifare.
 		*/
-		MifareChip(std::string cardtype);
+	    explicit MifareChip(std::string cardtype);
 
         /**
          * \brief Destructor.
@@ -44,13 +44,13 @@ namespace logicalaccess
          * \brief Get the generic card type.
          * \return The generic card type.
          */
-        virtual std::string getGenericCardType() const { return CHIP_MIFARE; };
+	    std::string getGenericCardType() const override { return CHIP_MIFARE; }
 
         /**
          * \brief Get the root location node.
          * \return The root location node.
          */
-        virtual std::shared_ptr<LocationNode> getRootLocationNode();
+	    std::shared_ptr<LocationNode> getRootLocationNode() override;
 
         /**
          * \brief Get number of sectors
@@ -62,7 +62,7 @@ namespace logicalaccess
          * \param rootNode The root node.
          * \param sector The sector.
          */
-        void addSectorNode(std::shared_ptr<LocationNode> rootNode, int sector);
+		static void addSectorNode(std::shared_ptr<LocationNode> rootNode, int sector);
 
 		/**
 		* \brief Add a block node to a root node.
@@ -70,32 +70,32 @@ namespace logicalaccess
 		* \param sector The sector.
 		* \param block The block.
 		*/
-		void addBlockNode(std::shared_ptr<LocationNode> rootNode, int sector, unsigned char block);
+		static void addBlockNode(std::shared_ptr<LocationNode> rootNode, int sector, unsigned char block);
 
         /**
          * \brief Get a card service for this card provider.
          * \param serviceType The card service type.
          * \return The card service.
          */
-        virtual std::shared_ptr<CardService> getService(CardServiceType serviceType);
+	    std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
 
 		/**
 		* \brief Create default Mifare access informations.
 		* \return Default Mifare access informations.
 		*/
-		virtual std::shared_ptr<AccessInfo> createAccessInfo() const;
+	    std::shared_ptr<AccessInfo> createAccessInfo() const override;
 
 		/**
 		* \brief Create default Mifare location.
 		* \return Default Mifare location.
 		*/
-		virtual std::shared_ptr<Location> createLocation() const;
+	    std::shared_ptr<Location> createLocation() const override;
 
         /**
          * \brief Get the Mifare commands.
          * \return The Mifare commands.
          */
-        std::shared_ptr<MifareCommands> getMifareCommands() { return std::dynamic_pointer_cast<MifareCommands>(getCommands()); };
+        std::shared_ptr<MifareCommands> getMifareCommands() const { return std::dynamic_pointer_cast<MifareCommands>(getCommands()); }
 
     protected:
 

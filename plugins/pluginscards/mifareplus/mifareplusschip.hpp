@@ -22,15 +22,15 @@ namespace logicalaccess
     {
     public:
         ~MifarePlusSChip() = default;
-        MifarePlusSChip() : Chip(CHIP_MIFAREPLUSS) { };
+        MifarePlusSChip() : Chip(CHIP_MIFAREPLUSS) { }
 
-		const std::string& getCardType() const override { return Chip::getCardType(); }
+	    const std::string& getCardType() const override { return Chip::getCardType(); }
 
 		std::string getGenericCardType() const override { return Chip::getGenericCardType(); }
 
 		std::shared_ptr<Commands> getCommands() const override { return Chip::getCommands(); }
 
-		const std::vector<unsigned char> getChipIdentifier() const override { return Chip::getChipIdentifier(); }
+		ByteVector getChipIdentifier() const override { return Chip::getChipIdentifier(); }
 
 		std::shared_ptr<CardService> getService(CardServiceType serviceType) override { return Chip::getService(serviceType); }
     };

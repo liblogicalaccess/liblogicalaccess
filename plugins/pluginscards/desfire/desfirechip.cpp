@@ -86,9 +86,9 @@ namespace logicalaccess
 
                 try
                 {
-                    std::vector<unsigned char> files = getDESFireCommands()->getFileIDs();
+                    ByteVector files = getDESFireCommands()->getFileIDs();
 
-                    for (std::vector<unsigned char>::const_iterator file = files.cbegin(); file != files.cend(); ++file)
+                    for (ByteVector::const_iterator file = files.cbegin(); file != files.cend(); ++file)
                     {
                         std::shared_ptr<LocationNode> fileNode;
                         fileNode.reset(new LocationNode());
@@ -98,7 +98,7 @@ namespace logicalaccess
                         std::shared_ptr<DESFireLocation> location = getApplicationLocation();
                         location->aid = *aid;
                         location->file = *file;
-                        location->byte = 0;
+                        location->byte_ = 0;
 
                         try
                         {
@@ -130,6 +130,7 @@ namespace logicalaccess
                                 fileNode->setLength(recordSize);
                             }
                                 break;
+                            default: ;
                             }
                         }
                         catch (std::exception&)
@@ -173,7 +174,7 @@ namespace logicalaccess
         case CST_ACCESS_CONTROL:
         {
             service = LibraryManager::getInstance()
-                ->getCardService(shared_from_this(), CardServiceType::CST_ACCESS_CONTROL);
+                ->getCardService(shared_from_this(), CST_ACCESS_CONTROL);
             if (!service)
                 service.reset(new AccessControlCardService(shared_from_this()));
         }

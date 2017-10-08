@@ -26,7 +26,7 @@ namespace logicalaccess
             randomize();
         }
 
-        SymmetricKey::SymmetricKey(const std::vector<unsigned char>& _data) :
+        SymmetricKey::SymmetricKey(const ByteVector& _data) :
             d_data(_data)
         {
         }

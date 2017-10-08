@@ -15,9 +15,9 @@ namespace logicalaccess
 
     void RplethLCDDisplay::setMessage(std::string message)
     {
-        std::vector<unsigned char> command;
-        command.push_back(static_cast<unsigned char>(Device::LCD));
-        command.push_back(static_cast<unsigned char>(LcdCommand::DISPLAY));
+        ByteVector command;
+        command.push_back(static_cast<unsigned char>(LCD));
+        command.push_back(static_cast<unsigned char>(DISPLAY));
         command.push_back(static_cast<unsigned char>(message.size()));
         command.insert(command.end(), message.begin(), message.end());
         getRplethReaderCardAdapter()->sendRplethCommand(command, false);
@@ -25,9 +25,9 @@ namespace logicalaccess
 
     void RplethLCDDisplay::setMessage(std::string message, int time)
     {
-        std::vector<unsigned char> command;
-        command.push_back(static_cast<unsigned char>(Device::LCD));
-        command.push_back(static_cast<unsigned char>(LcdCommand::DISPLAYT));
+        ByteVector command;
+        command.push_back(static_cast<unsigned char>(LCD));
+        command.push_back(static_cast<unsigned char>(DISPLAYT));
         command.push_back(static_cast<unsigned char>(message.size() + 1));
         command.insert(command.end(), message.begin(), message.end());
         command.push_back(static_cast<unsigned char>(time));
@@ -39,30 +39,30 @@ namespace logicalaccess
         setMessage(message);
     }
 
-    void RplethLCDDisplay::setDisplayTime(int time)
+    void RplethLCDDisplay::setDisplayTime(int time) const
     {
-        std::vector<unsigned char> command;
-        command.push_back(static_cast<unsigned char>(Device::LCD));
-        command.push_back(static_cast<unsigned char>(LcdCommand::DISPLAYTIME));
+        ByteVector command;
+        command.push_back(static_cast<unsigned char>(LCD));
+        command.push_back(static_cast<unsigned char>(DISPLAYTIME));
         command.push_back(static_cast<unsigned char>(0x01));
         command.push_back(static_cast<unsigned char>(time));
         getRplethReaderCardAdapter()->sendRplethCommand(command, false);
     }
 
-    void RplethLCDDisplay::blink()
+    void RplethLCDDisplay::blink() const
     {
-        std::vector<unsigned char> command;
-        command.push_back(static_cast<unsigned char>(Device::LCD));
-        command.push_back(static_cast<unsigned char>(LcdCommand::BLINK));
+        ByteVector command;
+        command.push_back(static_cast<unsigned char>(LCD));
+        command.push_back(static_cast<unsigned char>(BLINK));
         command.push_back(static_cast<unsigned char>(0x00));
         getRplethReaderCardAdapter()->sendRplethCommand(command, false);
     }
 
-    void RplethLCDDisplay::autoScroll()
+    void RplethLCDDisplay::autoScroll() const
     {
-        std::vector<unsigned char> command;
-        command.push_back(static_cast<unsigned char>(Device::LCD));
-        command.push_back(static_cast<unsigned char>(LcdCommand::SCROLL));
+        ByteVector command;
+        command.push_back(static_cast<unsigned char>(LCD));
+        command.push_back(static_cast<unsigned char>(SCROLL));
         command.push_back(static_cast<unsigned char>(0x00));
         getRplethReaderCardAdapter()->sendRplethCommand(command, false);
     }

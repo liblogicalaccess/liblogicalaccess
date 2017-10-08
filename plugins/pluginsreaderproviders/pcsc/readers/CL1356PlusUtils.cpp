@@ -43,7 +43,7 @@ CL1356PlusUtils::Info CL1356PlusUtils::parse_get_card_info(const ByteVector &in)
 
     check_enough_bytes(1);
     info.state_ = static_cast<Info::State>(*itr);
-    itr++;
+    ++itr;
 
     check_enough_bytes(2);
     itr += 2; // skip bit rate infos
@@ -54,7 +54,7 @@ CL1356PlusUtils::Info CL1356PlusUtils::parse_get_card_info(const ByteVector &in)
 
     check_enough_bytes(1);
     auto len = *itr;
-    itr++;
+    ++itr;
 
     check_enough_bytes(len);
     for (int i = 0 ; i < len; ++i)

@@ -13,7 +13,7 @@ namespace logicalaccess
     DeisterReaderUnitConfiguration::DeisterReaderUnitConfiguration()
         : ReaderUnitConfiguration(READER_DEISTER)
     {
-        resetConfiguration();
+	    DeisterReaderUnitConfiguration::resetConfiguration();
     }
 
     DeisterReaderUnitConfiguration::~DeisterReaderUnitConfiguration()

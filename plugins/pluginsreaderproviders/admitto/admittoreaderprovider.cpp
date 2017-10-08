@@ -27,7 +27,7 @@ namespace logicalaccess
 
     AdmittoReaderProvider::~AdmittoReaderProvider()
     {
-        release();
+	    AdmittoReaderProvider::release();
     }
 
     void AdmittoReaderProvider::release()

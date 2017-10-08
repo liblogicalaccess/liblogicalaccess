@@ -40,7 +40,7 @@ namespace logicalaccess
 
     AxessTMC13ReaderProvider::~AxessTMC13ReaderProvider()
     {
-        release();
+	    AxessTMC13ReaderProvider::release();
     }
 
     void AxessTMC13ReaderProvider::release()

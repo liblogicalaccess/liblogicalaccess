@@ -32,7 +32,7 @@ int main(int ac, char **av)
     ReaderProviderPtr provider;
     ReaderUnitPtr readerUnit;
     ChipPtr chip;
-    std::tie(provider, readerUnit, chip) = lla_test_init();
+    tie(provider, readerUnit, chip) = lla_test_init();
 
     PRINT_TIME("Chip identifier: " <<
                logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
@@ -42,7 +42,7 @@ int main(int ac, char **av)
                " instead.");
 
     // Sector Key:
-    std::shared_ptr<logicalaccess::AES128Key> aes_key = std::make_shared<logicalaccess::AES128Key>();
+    std::shared_ptr<AES128Key> aes_key = std::make_shared<AES128Key>();
     //aes_key->fromString("ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff");
     //aes_key->fromString("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00");
     aes_key->fromString("00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F");
@@ -50,7 +50,7 @@ int main(int ac, char **av)
     //                     000102030405060708090A0B0C0D0E0F
     // Data to write
     std::vector<uint8_t> writedata(16, 'A');
-    auto cmd = std::dynamic_pointer_cast<logicalaccess::MifarePlusSL3Commands_NEW>(chip->getCommands());
+    auto cmd = std::dynamic_pointer_cast<MifarePlusSL3Commands_NEW>(chip->getCommands());
     LLA_ASSERT(cmd, "Invalid command object.");
     cmd->resetAuth();
     LLA_ASSERT(cmd->authenticate(0, aes_key, logicalaccess::MifareKeyType::KT_KEY_A),

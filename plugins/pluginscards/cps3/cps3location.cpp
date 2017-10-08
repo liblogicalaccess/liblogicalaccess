@@ -25,7 +25,7 @@ namespace logicalaccess
         parentNode.add_child(getDefaultXmlNodeName(), node);
     }
 
-	void CPS3Location::unSerialize(boost::property_tree::ptree& node)
+	void CPS3Location::unSerialize(boost::property_tree::ptree& /*node*/)
     {
 		
     }

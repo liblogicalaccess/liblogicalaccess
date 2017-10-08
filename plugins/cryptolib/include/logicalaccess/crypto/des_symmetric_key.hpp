@@ -8,6 +8,7 @@
 #define DES_SYMETRICKEY_HPP
 
 #include "logicalaccess/crypto/symmetric_key.hpp"
+#include "logicalaccess/lla_fwd.hpp"
 
 namespace logicalaccess
 {
@@ -37,7 +38,7 @@ namespace logicalaccess
              * \return The symmetric key.
              * \warning If data is not 8, 16 or 24 bytes long, the behavior is undefined.
              */
-            static DESSymmetricKey createFromData(const std::vector<unsigned char>& data);
+            static DESSymmetricKey createFromData(const ByteVector& data);
 
         protected:
 
@@ -45,14 +46,14 @@ namespace logicalaccess
              * \brief Create a new random DESSymmetricKey.
              * \param size The size of the key. Must be 8, 16, or 24.
              */
-            DESSymmetricKey(size_t size);
+	        explicit DESSymmetricKey(size_t size);
 
             /**
              * \brief Create an DESInitializationVector from existing data.
              * \param data The data.
              * \warning If data is not 8, 16 or 24 bytes long, the behavior is undefined.
              */
-            DESSymmetricKey(const std::vector<unsigned char>& data);
+	        explicit DESSymmetricKey(const ByteVector& data);
         };
     }
 }

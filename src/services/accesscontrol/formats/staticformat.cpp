@@ -76,11 +76,11 @@ namespace logicalaccess
 
     size_t StaticFormat::getEncodingLinearData(void *data, size_t dataLengthBytes) const
     {
-        if (data != NULL)
+        if (data != nullptr)
         {
             EXCEPTION_ASSERT_WITH_LOG(dataLengthBytes >= 2, std::invalid_argument, "dataLengthBytes must be at least 2");
 
-            if (data != NULL)
+            if (data != nullptr)
             {
                 reinterpret_cast<char*>(data)[0] = static_cast<char>(d_dataRepresentation->getType());
                 reinterpret_cast<char*>(data)[1] = static_cast<char>(d_dataType->getType());
@@ -92,7 +92,7 @@ namespace logicalaccess
 
     void StaticFormat::setEncodingLinearData(const void* data, size_t* indexByte)
     {
-        if (data != NULL)
+        if (data != nullptr)
         {
             d_dataRepresentation.reset(DataRepresentation::getByEncodingType(static_cast<EncodingType>(reinterpret_cast<const char*>(data)[(*indexByte)++])));
             d_dataType.reset(DataType::getByEncodingType(static_cast<EncodingType>(reinterpret_cast<const char*>(data)[(*indexByte)++])));
@@ -106,7 +106,7 @@ namespace logicalaccess
 
     void StaticFormat::convertField(void* data, size_t dataLengthBytes, unsigned int* pos, unsigned long long field, unsigned int fieldlen) const
     {
-        unsigned int convertedDataTypeLengthBits = d_dataType->convert(field, fieldlen, NULL, 0);
+        unsigned int convertedDataTypeLengthBits = d_dataType->convert(field, fieldlen, nullptr, 0);
         if (convertedDataTypeLengthBits > 0)
         {
             size_t convertedDataTypeLengthBytes = (convertedDataTypeLengthBits + 7) / 8;
@@ -115,7 +115,7 @@ namespace logicalaccess
 
             if (d_dataType->convert(field, fieldlen, convertedDataTypeData, convertedDataTypeLengthBytes) == convertedDataTypeLengthBits)
             {
-                unsigned int convertedDataRepresentationLengthBits = d_dataRepresentation->convertNumeric(convertedDataTypeData, convertedDataTypeLengthBytes, convertedDataTypeLengthBits, NULL, 0);
+                unsigned int convertedDataRepresentationLengthBits = d_dataRepresentation->convertNumeric(convertedDataTypeData, convertedDataTypeLengthBytes, convertedDataTypeLengthBits, nullptr, 0);
                 if (convertedDataRepresentationLengthBits > 0)
                 {
                     size_t convertedDataRepresentationLengthBytes = (convertedDataRepresentationLengthBits + 7) / 8;
@@ -138,7 +138,7 @@ namespace logicalaccess
     {
         unsigned long long ret = 0;
 
-        unsigned int extractedSizeBits = d_dataType->convert(0, d_dataRepresentation->convertLength(fieldlen), NULL, 0);
+        unsigned int extractedSizeBits = d_dataType->convert(0, d_dataRepresentation->convertLength(fieldlen), nullptr, 0);
         size_t extractedSizeBytes = (extractedSizeBits + 7) / 8;
         unsigned int revertedSizeBits = extractedSizeBits;
         size_t revertedSizeBytes = (revertedSizeBits + 7) / 8;
@@ -169,7 +169,7 @@ namespace logicalaccess
     {
         size_t index = 0;
 
-        if (data != NULL)
+        if (data != nullptr)
         {
             index += getFormatLinearData(data, dataLengthBytes) * 8;
             size_t length = ((index + 7) / 8);
@@ -178,8 +178,8 @@ namespace logicalaccess
         }
         else
         {
-            index += getFormatLinearData(NULL, 0) * 8;
-            index += getEncodingLinearData(NULL, 0);
+            index += getFormatLinearData(nullptr, 0) * 8;
+            index += getEncodingLinearData(nullptr, 0);
         }
 
         return index;

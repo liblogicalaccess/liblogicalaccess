@@ -45,44 +45,44 @@ namespace logicalaccess
 		/**
 			* \brief Destructor.
 			*/
-		~OSDPChannel() {};
+		~OSDPChannel() {}
 
 
-		std::vector<unsigned char> createPackage();
+		ByteVector createPackage();
 
-		void unPackage(std::vector<unsigned char> result);
+		void unPackage(ByteVector result);
 
 
 
-		void setAddress(unsigned char address) { m_address = address; };
+		void setAddress(unsigned char address) { m_address = address; }
 
-		unsigned char getAddress() const { return m_address; };
+		unsigned char getAddress() const { return m_address; }
 
-		void setSequenceNumber(unsigned char sequenceNumber) { m_sequenceNumber = sequenceNumber; };
+		void setSequenceNumber(unsigned char sequenceNumber) { m_sequenceNumber = sequenceNumber; }
 
-		unsigned char getSequenceNumber() const { return m_sequenceNumber; };
+		unsigned char getSequenceNumber() const { return m_sequenceNumber; }
 
-		void setData(std::vector<unsigned char> data) { m_data = data; };
+		void setData(ByteVector data) { m_data = data; }
 
-		std::vector<unsigned char>& getData() { return m_data; };
+		ByteVector& getData() { return m_data; }
 
-		void setCommandsType(OSDPCommandsType replyType) { m_reply_type = replyType; };
+		void setCommandsType(OSDPCommandsType replyType) { m_reply_type = replyType; }
 
-		OSDPCommandsType getCommandsType() const { return m_reply_type; };
+		OSDPCommandsType getCommandsType() const { return m_reply_type; }
 
 		bool isSCB;
 
-		OSDPSecureChannelType getSecurityBlockType() const { return m_securityBlockType; };
+		OSDPSecureChannelType getSecurityBlockType() const { return m_securityBlockType; }
 
-		void setSecurityBlockType(OSDPSecureChannelType securityBlockType) { m_securityBlockType = securityBlockType; };
+		void setSecurityBlockType(OSDPSecureChannelType securityBlockType) { m_securityBlockType = securityBlockType; }
 
-		void setSecurityBlockData(std::vector<unsigned char> data) { m_securityBlockData = data; };
+		void setSecurityBlockData(ByteVector data) { m_securityBlockData = data; }
 
-		std::vector<unsigned char>& getSecurityBlockData() { return m_securityBlockData; };
+		ByteVector& getSecurityBlockData() { return m_securityBlockData; }
 
-		std::shared_ptr<OSDPSecureChannel> getSecureChannel() const { return m_secureChannel; };
+		std::shared_ptr<OSDPSecureChannel> getSecureChannel() const { return m_secureChannel; }
 
-		void setSecureChannel(std::shared_ptr<OSDPSecureChannel> securechannel) { m_secureChannel = securechannel; };
+		void setSecureChannel(std::shared_ptr<OSDPSecureChannel> securechannel) { m_secureChannel = securechannel; }
 
 	private:
 
@@ -90,13 +90,13 @@ namespace logicalaccess
 
 		unsigned char m_sequenceNumber;
 
-		std::vector<unsigned char> m_data;
+		ByteVector m_data;
 
 		OSDPCommandsType m_reply_type;
 
 		OSDPSecureChannelType m_securityBlockType;
 
-		std::vector<unsigned char> m_securityBlockData;
+		ByteVector m_securityBlockData;
 
 		std::shared_ptr<OSDPSecureChannel> m_secureChannel;
 	};

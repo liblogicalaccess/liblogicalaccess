@@ -24,7 +24,7 @@ namespace logicalaccess
          * \brief Constructor.
          * \param chip The chip.
          */
-        GenericTagIdOnDemandAccessControlCardService(std::shared_ptr<Chip> chip);
+	    explicit GenericTagIdOnDemandAccessControlCardService(std::shared_ptr<Chip> chip);
 
         /**
          * \brief Destructor.
@@ -38,7 +38,7 @@ namespace logicalaccess
          * \param aiToUse The key's informations to use.
          * \return The format read on success, null otherwise.
          */
-        virtual std::shared_ptr<Format> readFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse);
+	    std::shared_ptr<Format> readFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse) override;
 
         /**
          * \brief Write format to the card.
@@ -48,9 +48,7 @@ namespace logicalaccess
          * \param aiToWrite The key's informations to write.
          * \return True on success, false otherwise.
          */
-        virtual bool writeFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite);
-
-    protected:
+	    bool writeFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite) override;
     };
 }
 

@@ -34,7 +34,7 @@ namespace logicalaccess
         /**
          * \brief Get a new OK5553ReaderProvider instance.
          */
-        std::shared_ptr<OK5553ReaderProvider> createInstance();
+		static std::shared_ptr<OK5553ReaderProvider> createInstance();
 
         /**
          * \brief Destructor.
@@ -44,31 +44,31 @@ namespace logicalaccess
         /**
          * \brief Release the provider resources.
          */
-        virtual void release();
+	    void release() override;
 
         /**
          * \brief Get the reader provider type.
          * \return The reader provider type.
          */
-        virtual std::string getRPType() const { return READER_OK5553; };
+	    std::string getRPType() const override { return READER_OK5553; }
 
         /**
          * \brief Get the reader provider name.
          * \return The reader provider name.
          */
-        virtual std::string getRPName() const { return "OK5553"; };
+	    std::string getRPName() const override { return "OK5553"; }
 
         /**
          * \brief List all readers of the system.
          * \return True if the list was updated, false otherwise.
          */
-        virtual bool refreshReaderList();
+	    bool refreshReaderList() override;
 
         /**
          * \brief Get reader list for this reader provider.
          * \return The reader list.
          */
-        virtual const ReaderList& getReaderList() { return d_readers; };
+	    const ReaderList& getReaderList() override { return d_readers; }
 
         /**
          * \brief Create a new reader unit for the reader provider.
@@ -76,7 +76,7 @@ namespace logicalaccess
          * param port The reader port
          * \return A reader unit.
          */
-        virtual std::shared_ptr<ReaderUnit> createReaderUnit();
+	    std::shared_ptr<ReaderUnit> createReaderUnit() override;
 
     protected:
 

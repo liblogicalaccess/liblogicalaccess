@@ -78,17 +78,17 @@ namespace logicalaccess
     std::string ACSACR1222LReaderUnit::getReaderSerialNumber()
     {
         std::string sn;
-        std::vector<unsigned char> res = getReaderControlReaderCardAdapter()->sendAPDUCommand(0xE0, 0x00, 0x00, 0x33, 0x00);
+        ByteVector res = getReaderControlReaderCardAdapter()->sendAPDUCommand(0xE0, 0x00, 0x00, 0x33, 0x00);
         if (res[0] == 0xE1 && res.size() == 21)
         {
-            sn = BufferHelper::getHex(std::vector<unsigned char>(res.begin() + 5, res.end()));
+            sn = BufferHelper::getHex(ByteVector(res.begin() + 5, res.end()));
         }
         return sn;
     }
 
     void ACSACR1222LReaderUnit::setDefaultLEDBuzzerBehavior(bool showPICCPollingStatus, bool beepOnCardEvent, bool beepOnChipReset, bool blinkOnCardOperation)
     {
-        std::vector<unsigned char> data;
+        ByteVector data;
         unsigned char value = 0x00;
         if (showPICCPollingStatus)
             value |= 0x02;
@@ -105,7 +105,7 @@ namespace logicalaccess
 
     void ACSACR1222LReaderUnit::getDefaultLEDBuzzerBehavior(bool& showPICCPollingStatus, bool& beepOnCardEvent, bool& beepOnChipReset, bool& blinkOnCardOperation)
     {
-        std::vector<unsigned char> res = getReaderControlReaderCardAdapter()->sendAPDUCommand(0xE0, 0x00, 0x00, 0x21, 0x00);
+        ByteVector res = getReaderControlReaderCardAdapter()->sendAPDUCommand(0xE0, 0x00, 0x00, 0x21, 0x00);
         if (res[0] == 0xE1 && res.size() == 6)
         {
             unsigned char value = res[5];

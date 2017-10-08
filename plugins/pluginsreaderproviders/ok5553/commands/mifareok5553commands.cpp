@@ -28,25 +28,24 @@ namespace logicalaccess
     {
     }
 
-    std::vector<unsigned char> MifareOK5553Commands::readBinary(unsigned char blockno, size_t len)
+    ByteVector MifareOK5553Commands::readBinary(unsigned char blockno, size_t /*len*/)
     {
         char tmp[3];
-        std::vector<unsigned char> command;
-        std::vector<unsigned char> answer;
-        command.push_back(static_cast<unsigned char>('r'));
+        ByteVector command;
+	    command.push_back(static_cast<unsigned char>('r'));
         command.push_back(static_cast<unsigned char>('b'));
         sprintf(tmp, "%.2X", blockno);
         command.push_back(static_cast<unsigned char>(tmp[0]));
         command.push_back(static_cast<unsigned char>(tmp[1]));
-        answer = getOK5553ReaderCardAdapter()->sendCommand(command);
+        ByteVector answer = getOK5553ReaderCardAdapter()->sendCommand(command);
         // convert ascii in hexa
         return OK5553ReaderUnit::asciiToHex(answer);
     }
 
-    void MifareOK5553Commands::updateBinary(unsigned char blockno, const std::vector<unsigned char>& buf)
+    void MifareOK5553Commands::updateBinary(unsigned char blockno, const ByteVector& buf)
     {
         char tmp[3];
-        std::vector<unsigned char> command;
+        ByteVector command;
         command.push_back(static_cast<unsigned char>('w'));
         command.push_back(static_cast<unsigned char>('b'));
         sprintf(tmp, "%.2X", blockno);
@@ -67,9 +66,8 @@ namespace logicalaccess
         if (!vol)
         {
             char buf[3];
-            std::vector<unsigned char> command;
-            std::vector<unsigned char> answer;
-            command.push_back(static_cast<unsigned char>('w'));
+            ByteVector command;
+	        command.push_back(static_cast<unsigned char>('w'));
             command.push_back(static_cast<unsigned char>('m'));
             sprintf(buf, "%.2X", keyno);
             command.push_back(static_cast<unsigned char>(buf[0]));
@@ -80,7 +78,7 @@ namespace logicalaccess
                 command.push_back(static_cast<unsigned char>(buf[0]));
                 command.push_back(static_cast<unsigned char>(buf[1]));
             }
-            answer = getOK5553ReaderCardAdapter()->sendCommand(command);
+            ByteVector answer = getOK5553ReaderCardAdapter()->sendCommand(command);
             if (answer.size() < 2)
                 r = false;
         }
@@ -121,9 +119,8 @@ namespace logicalaccess
 
     void MifareOK5553Commands::authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype)
     {
-        std::vector<unsigned char> command;
-        std::vector<unsigned char> answer;
-        char buf[3];
+        ByteVector command;
+	    char buf[3];
         command.push_back(static_cast<unsigned char>('l'));
         unsigned char sector = blockno / 4;
         sprintf(buf, "%.2X", sector);
@@ -136,7 +133,7 @@ namespace logicalaccess
             buf[0] += 3;
         command.push_back(static_cast<unsigned char>(buf[0]));
         command.push_back(static_cast<unsigned char>(buf[1]));
-        answer = getOK5553ReaderCardAdapter()->sendCommand(command);
+        ByteVector answer = getOK5553ReaderCardAdapter()->sendCommand(command);
         if (answer.size() > 0)
         {
             if (answer[0] != 'L')
@@ -166,7 +163,7 @@ namespace logicalaccess
 
 	void MifareOK5553Commands::increment(unsigned char blockno, unsigned int value)
 	{
-		std::vector<unsigned char> command;
+		ByteVector command;
 		command.push_back(static_cast<unsigned char>('+'));
 		command.push_back(blockno);
 		command.push_back(static_cast<unsigned char>(value & 0xff));
@@ -174,7 +171,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>((value >> 16) & 0xff));
 		command.push_back(static_cast<unsigned char>((value >> 24) & 0xff));
 
-		std::vector<unsigned char> answer = getOK5553ReaderCardAdapter()->sendCommand(command);
+		ByteVector answer = getOK5553ReaderCardAdapter()->sendCommand(command);
 
 		if (answer.size() > 0)
 		{
@@ -182,7 +179,7 @@ namespace logicalaccess
 			{
 				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Value block failure.");
 			}
-			else if (answer[0] == 'F')
+			if (answer[0] == 'F')
 			{
 				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Increment failure.");
 			}
@@ -191,7 +188,7 @@ namespace logicalaccess
 
 	void MifareOK5553Commands::decrement(unsigned char blockno, unsigned int value)
 	{
-		std::vector<unsigned char> command;
+		ByteVector command;
 		command.push_back(static_cast<unsigned char>('-'));
 		command.push_back(blockno);
 		command.push_back(static_cast<unsigned char>(value & 0xff));
@@ -199,7 +196,7 @@ namespace logicalaccess
 		command.push_back(static_cast<unsigned char>((value >> 16) & 0xff));
 		command.push_back(static_cast<unsigned char>((value >> 24) & 0xff));
 
-		std::vector<unsigned char> answer = getOK5553ReaderCardAdapter()->sendCommand(command);
+		ByteVector answer = getOK5553ReaderCardAdapter()->sendCommand(command);
 
 		if (answer.size() > 0)
 		{
@@ -207,7 +204,7 @@ namespace logicalaccess
 			{
 				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Value block failure.");
 			}
-			else if (answer[0] == 'F')
+			if (answer[0] == 'F')
 			{
 				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Decrement failure.");
 			}

@@ -1,26 +1,26 @@
+#ifndef SAGEMKEYDIVERSIFICATION_HPP__
+#define SAGEMKEYDIVERSIFICATION_HPP__
+
 #include "logicalaccess/cards/keydiversification.hpp"
 #include "logicalaccess/key.hpp"
 #include <vector>
-
-#ifndef SAGEMKEYDIVERSIFICATION_HPP__
-#define SAGEMKEYDIVERSIFICATION_HPP__
 
 namespace logicalaccess
 {
     class LIBLOGICALACCESS_API SagemKeyDiversification : public KeyDiversification
     {
     public:
-        virtual void initDiversification(std::vector<unsigned char> identifier, int AID, std::shared_ptr<Key> key, unsigned char keyno, std::vector<unsigned char>& diversify);
-        virtual std::vector<unsigned char> getDiversifiedKey(std::shared_ptr<Key> key, std::vector<unsigned char> diversify);
+	    void initDiversification(ByteVector identifier, int AID, std::shared_ptr<Key> key, unsigned char keyno, ByteVector& diversify) override;
+	    ByteVector getDiversifiedKey(std::shared_ptr<Key> key, ByteVector diversify) override;
 
-        SagemKeyDiversification() {};
-        ~SagemKeyDiversification() {};
+        SagemKeyDiversification() {}
+        ~SagemKeyDiversification() {}
 
-        virtual std::string getType() { return "Sagem"; };
+	    std::string getType() override { return "Sagem"; }
 
-        virtual void serialize(boost::property_tree::ptree& parentNode);
-        virtual void unSerialize(boost::property_tree::ptree& node);
-        virtual std::string getDefaultXmlNodeName() const { return "SagemKeyDiversification"; };
+	    void serialize(boost::property_tree::ptree& parentNode) override;
+	    void unSerialize(boost::property_tree::ptree& node) override;
+	    std::string getDefaultXmlNodeName() const override { return "SagemKeyDiversification"; }
     };
 }
 

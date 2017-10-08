@@ -18,9 +18,9 @@ namespace logicalaccess
     {
     }
 
-    std::vector<unsigned char> TwicStorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, size_t length, CardBehavior behaviorFlags)
+    ByteVector TwicStorageCardService::readData(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, size_t length, CardBehavior behaviorFlags)
     {
-		std::vector<unsigned char> result;
+		ByteVector result;
         EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 
         std::shared_ptr<ISO7816Location> icISOLocation = std::dynamic_pointer_cast<ISO7816Location>(location);
@@ -41,14 +41,14 @@ namespace logicalaccess
         {
             // A tag is specified, the user want to get only the tag's data.
             size_t dataObjectLength = getTwicChip()->getTwicCommands()->getDataObjectLength(icLocation->dataObject, true);
-            std::vector<unsigned char> fulldata = getTwicChip()->getTwicCommands()->getTWICData(icLocation->dataObject);
+            ByteVector fulldata = getTwicChip()->getTwicCommands()->getTWICData(icLocation->dataObject);
 
             if (fulldata.size())
             {
                 size_t offset = getTwicChip()->getTwicCommands()->getMinimumBytesRepresentation(getTwicChip()->getTwicCommands()->getMaximumDataObjectLength(icLocation->dataObject)) + 1;
                 if (offset < dataObjectLength)
                 {
-					result = std::vector<unsigned char>(256);
+					result = ByteVector(256);
 					size_t size = 256;
                     getTwicChip()->getTwicCommands()->getTagData(icLocation, &fulldata[offset], dataObjectLength - offset, &result[0], size);
 					result.resize(size);

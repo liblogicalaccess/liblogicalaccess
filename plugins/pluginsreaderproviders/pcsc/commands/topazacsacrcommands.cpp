@@ -24,10 +24,10 @@ namespace logicalaccess
     {
     }
 
-    std::vector<unsigned char> TopazACSACRCommands::readPage(int page)
+    ByteVector TopazACSACRCommands::readPage(int page)
     {
-        std::vector<unsigned char> data;
-        std::vector<unsigned char> cmd;
+        ByteVector data;
+        ByteVector cmd;
         // Pseudo APDU, Data Exchange command
         cmd.push_back(0xD4);
         cmd.push_back(0x40);
@@ -37,7 +37,7 @@ namespace logicalaccess
         for (unsigned char i = 0; i < 8; ++i)
         {
             cmd[4] = static_cast<unsigned char>(((page) * 8) + i);
-            std::vector<unsigned char> result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x00, 0x00, 0x00, static_cast<unsigned char>(cmd.size()), cmd);
+            ByteVector result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x00, 0x00, 0x00, static_cast<unsigned char>(cmd.size()), cmd);
             // D5 41 00 xx 90 00
             if (result.size() == 6)
             {
@@ -48,14 +48,14 @@ namespace logicalaccess
         return data;
     }
 
-    void TopazACSACRCommands::writePage(int page, const std::vector<unsigned char>& buf)
+    void TopazACSACRCommands::writePage(int page, const ByteVector& buf)
     {
         if (buf.size() > 8)
         {
             THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter.");
         }
 
-        std::vector<unsigned char> cmd;
+        ByteVector cmd;
         // Pseudo APDU
         cmd.push_back(0xD4);
         cmd.push_back(0x40);

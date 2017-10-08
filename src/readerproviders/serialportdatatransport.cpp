@@ -39,10 +39,6 @@ namespace logicalaccess
             configure();
             ret = true;
         }
-        else
-        {
-            ret = true;
-        }
 
         return ret;
     }
@@ -72,7 +68,7 @@ namespace logicalaccess
         return name;
     }
 
-    void SerialPortDataTransport::send(const std::vector<unsigned char>& data)
+    void SerialPortDataTransport::send(const ByteVector& data)
     {
         if (data.size() > 0)
         {
@@ -81,10 +77,10 @@ namespace logicalaccess
         }
     }
 
-    std::vector<unsigned char> SerialPortDataTransport::receive(long int timeout)
+    ByteVector SerialPortDataTransport::receive(long int timeout)
     {
         LOG(DEBUGS) << "TIMEOUT: " << timeout;
-        std::vector<unsigned char> res;
+        ByteVector res;
         const std::chrono::steady_clock::time_point clock_timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeout);
 
         do
@@ -107,12 +103,12 @@ namespace logicalaccess
         return res;
     }
 
-    void SerialPortDataTransport::configure()
+    void SerialPortDataTransport::configure() const
     {
         configure(d_port, Settings::getInstance()->IsConfigurationRetryEnabled);
     }
 
-    void SerialPortDataTransport::configure(std::shared_ptr<SerialPortXml> port, bool retryConfiguring)
+    void SerialPortDataTransport::configure(std::shared_ptr<SerialPortXml> port, bool retryConfiguring) const
     {
         EXCEPTION_ASSERT_WITH_LOG(port, LibLogicalAccessException, "No serial port configured !");
         EXCEPTION_ASSERT_WITH_LOG(port->getSerialPort()->deviceName() != "", LibLogicalAccessException, "Serial port name is empty ! Auto-detect failed !");
@@ -159,11 +155,11 @@ namespace logicalaccess
             std::vector<std::shared_ptr<SerialPortXml> > ports;
             if (SerialPortXml::EnumerateUsingCreateFile(ports) && !ports.empty() && getReaderUnit())
             {
-                std::vector<unsigned char> cmd = getReaderUnit()->getPingCommand();
+                ByteVector cmd = getReaderUnit()->getPingCommand();
                 if (cmd.size() > 0)
                 {
                     std::shared_ptr<ReaderCardAdapter> rca = getReaderUnit()->getDefaultReaderCardAdapter();
-                    std::vector<unsigned char> wrappedcmd = rca->adaptCommand(cmd);
+                    ByteVector wrappedcmd = rca->adaptCommand(cmd);
                     bool found = false;
                     for (std::vector<std::shared_ptr<SerialPortXml> >::iterator i = ports.begin(); i != ports.end() && !found; ++i)
                     {
@@ -174,7 +170,7 @@ namespace logicalaccess
                             configure((*i), false);
 
                             d_port = (*i);
-                            std::vector<unsigned char> r = sendCommand(wrappedcmd, Settings::getInstance()->AutoDetectionTimeout);
+                            ByteVector r = sendCommand(wrappedcmd, Settings::getInstance()->AutoDetectionTimeout);
                             if (r.size() > 0)
                             {
                                 LOG(LogLevel::INFOS) << "Reader found ! Using this COM port !";

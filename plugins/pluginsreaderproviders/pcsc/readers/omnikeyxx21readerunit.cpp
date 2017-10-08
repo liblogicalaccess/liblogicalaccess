@@ -72,7 +72,7 @@ namespace logicalaccess
 
     void OmnikeyXX21ReaderUnit::changeReaderKey(
         std::shared_ptr<ReaderMemoryKeyStorage> keystorage,
-        const std::vector<unsigned char> &key)
+        const ByteVector &key)
     {
         EXCEPTION_ASSERT_WITH_LOG(keystorage, std::invalid_argument,
                                   "Key storage must be defined.");
@@ -100,17 +100,13 @@ namespace logicalaccess
     void OmnikeyXX21ReaderUnit::getT_CL_ISOType(bool &isTypeA, bool &isTypeB)
     {
         unsigned char outBuffer[64];
-        DWORD dwOutBufferSize;
-        unsigned char inBuffer[2];
-        DWORD dwInBufferSize;
-        DWORD dwBytesReturned;
-        DWORD dwControlCode = CM_IOCTL_GET_SET_RFID_BAUDRATE;
-        DWORD dwStatus;
+	    unsigned char inBuffer[2];
+	    DWORD dwControlCode = CM_IOCTL_GET_SET_RFID_BAUDRATE;
 
-        memset(outBuffer, 0x00, sizeof(outBuffer));
-        dwOutBufferSize = sizeof(outBuffer);
-        dwInBufferSize  = sizeof(inBuffer);
-        dwBytesReturned = 0;
+	    memset(outBuffer, 0x00, sizeof(outBuffer));
+        DWORD dwOutBufferSize = sizeof(outBuffer);
+        DWORD dwInBufferSize = sizeof(inBuffer);
+        DWORD dwBytesReturned = 0;
 
         inBuffer[0] = 0x01; // Version of command
         inBuffer[1] = 0x00; // Get asymmetric baud rate information
@@ -118,9 +114,9 @@ namespace logicalaccess
         isTypeA = false;
         isTypeB = false;
 
-        dwStatus = SCardControl(getHandle(), dwControlCode, (LPVOID)inBuffer,
-                                dwInBufferSize, (LPVOID)outBuffer,
-                                dwOutBufferSize, &dwBytesReturned);
+        DWORD dwStatus = SCardControl(getHandle(), dwControlCode, (LPVOID)inBuffer,
+                                      dwInBufferSize, (LPVOID)outBuffer,
+                                      dwOutBufferSize, &dwBytesReturned);
         if (dwStatus == SCARD_S_SUCCESS && dwBytesReturned >= 10)
         {
             switch (outBuffer[9])
@@ -132,19 +128,20 @@ namespace logicalaccess
                 case 0x08:
                     isTypeB = true;
                     break;
+            default: ;
             }
         }
     }
 
     void OmnikeyXX21ReaderUnit::setSecureConnectionStatus(
-        OmnikeyXX21ReaderUnit::SecureModeStatus st)
+        SecureModeStatus st)
     {
         auto itr = secure_connection_status_.find(getConnectedName());
         if (itr != secure_connection_status_.end())
             itr->second = st;
         else
             secure_connection_status_.insert(
-                std::make_pair(getConnectedName(), st));
+                make_pair(getConnectedName(), st));
     }
 
     OmnikeyXX21ReaderUnit::SecureModeStatus
@@ -234,17 +231,17 @@ namespace logicalaccess
                 "SYSTEM\\CurrentControlSet\\Control\\CardMan\\RFID",
                 "CardSearch", data))
         {
-            if (std::find(data.begin(), data.end(), 0x02) != data.end())
+            if (find(data.begin(), data.end(), 0x02) != data.end())
                 bs |= Techno::ICLASS_15693;
-            if (std::find(data.begin(), data.end(), 0x04) != data.end())
+            if (find(data.begin(), data.end(), 0x04) != data.end())
                 bs |= Techno::ISO_15693;
-            if (std::find(data.begin(), data.end(), 0x06) != data.end())
+            if (find(data.begin(), data.end(), 0x06) != data.end())
                 bs |= Techno::ICODE1;
-            if (std::find(data.begin(), data.end(), 0x05) != data.end())
+            if (find(data.begin(), data.end(), 0x05) != data.end())
                 bs |= Techno::STM14443B;
-            if (std::find(data.begin(), data.end(), 0x03) != data.end())
+            if (find(data.begin(), data.end(), 0x03) != data.end())
                 bs |= Techno::ISO_14443_B;
-            if (std::find(data.begin(), data.end(), 0x01) != data.end())
+            if (find(data.begin(), data.end(), 0x01) != data.end())
                 bs |= Techno::ISO_14443_A;
         }
         else
@@ -304,6 +301,7 @@ namespace logicalaccess
             case sms::DISABLED:
                 os << "DISABLED";
                 break;
+        default: ;
         }
         return os;
     }
@@ -314,7 +312,7 @@ namespace logicalaccess
         auto find_line = [&] (const std::string &s) -> bool {
 
             boost::regex r("^" + techno + "(\\s)?=(\\s)?\\d$");
-            if (boost::regex_match(s, r))
+            if (regex_match(s, r))
             {
                 return true;
             }
@@ -346,7 +344,7 @@ namespace logicalaccess
             auto find_line = [&] (const std::string &s) -> bool {
 
                 boost::regex r("^" + map_itr.first + "(\\s)?=(\\s)?\\d$");
-                if (boost::regex_match(s, r))
+                if (regex_match(s, r))
                 {
                     return true;
                 }

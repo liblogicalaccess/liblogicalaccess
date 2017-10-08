@@ -19,8 +19,8 @@ namespace logicalaccess
 {
 	void OSDPSecureChannel::deriveKey(std::shared_ptr<AES128Key> scbkkey, std::shared_ptr<AES128Key> scbkdkey)
 	{
-		std::vector<unsigned char> d_lastIV(16);
-		std::vector<unsigned char> inputData(16);
+		ByteVector d_lastIV(16);
+		ByteVector inputData(16);
 
 		unsigned char* keydata;
 		if (isSCBK_D)
@@ -28,42 +28,42 @@ namespace logicalaccess
 		else
 			keydata = scbkkey->getData();
 
-		openssl::SymmetricKey aeskey = openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(std::vector<unsigned char>(keydata, keydata + 16)));
+		openssl::SymmetricKey aeskey = static_cast<openssl::SymmetricKey>(openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(ByteVector(keydata, keydata + 16))));
 		openssl::AESCipher cipher = openssl::AESCipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_ECB);
 		openssl::InitializationVector iv = openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastIV));
 
 		//SMAC1
 		inputData[0] = 0x01;
 		inputData[1] = 0x01;
-		std::copy(m_CPChallenge.begin(), m_CPChallenge.begin() + 6, inputData.begin() + 2);
+		copy(m_CPChallenge.begin(), m_CPChallenge.begin() + 6, inputData.begin() + 2);
 		cipher.cipher(inputData, m_smac1, aeskey, iv, false);
 
 		inputData[0] = 0x01;
 		inputData[1] = 0x02;
-		std::copy(m_CPChallenge.begin(), m_CPChallenge.begin() + 6, inputData.begin() + 2);
+		copy(m_CPChallenge.begin(), m_CPChallenge.begin() + 6, inputData.begin() + 2);
 		cipher.cipher(inputData, m_smac2, aeskey, iv, false);
 
 		inputData[0] = 0x01;
 		inputData[1] = 0x82;
-		std::copy(m_CPChallenge.begin(), m_CPChallenge.begin() + 6, inputData.begin() + 2);
+		copy(m_CPChallenge.begin(), m_CPChallenge.begin() + 6, inputData.begin() + 2);
 		cipher.cipher(inputData, m_senc, aeskey, iv, false);
 	}
 
 	void OSDPSecureChannel::computeAuthenticationData()
 	{
-		std::vector<unsigned char> d_lastIV(16);
-		std::vector<unsigned char> cryptogramInput, encCryptogramInput;
+		ByteVector d_lastIV(16);
+		ByteVector cryptogramInput, encCryptogramInput;
 
 		cryptogramInput.insert(cryptogramInput.begin(), m_CPChallenge.begin(), m_CPChallenge.end());
 		cryptogramInput.insert(cryptogramInput.end(), m_PDChallenge.begin(), m_PDChallenge.end());
 
-		openssl::SymmetricKey aeskey = openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(m_senc));
+		openssl::SymmetricKey aeskey = static_cast<openssl::SymmetricKey>(openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(m_senc)));
 		openssl::AESCipher cipher = openssl::AESCipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_ECB);
 		openssl::InitializationVector iv = openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(d_lastIV));
 
 		cipher.cipher(cryptogramInput, encCryptogramInput, aeskey, iv, false);
 		//CheckPDAuthentication
-		if (!std::equal(encCryptogramInput.begin(), encCryptogramInput.end(), m_PDCryptogram.begin()))
+		if (!equal(encCryptogramInput.begin(), encCryptogramInput.end(), m_PDCryptogram.begin()))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cryptogram are not the same");
 
 		cryptogramInput.clear();
@@ -73,7 +73,7 @@ namespace logicalaccess
 		cipher.cipher(cryptogramInput, m_CPCryptogram, aeskey, iv, false);
 	}
 
-	std::vector<unsigned char> OSDPSecureChannel::computeMAC(std::vector<unsigned char> data, openssl::AESInitializationVector iv)
+	ByteVector OSDPSecureChannel::computeMAC(ByteVector data, openssl::AESInitializationVector iv) const
 	{
 		openssl::AESCipher cipher = openssl::AESCipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_CBC);
 
@@ -86,46 +86,44 @@ namespace logicalaccess
 
 		if (data.size() > 16)
 		{
-			openssl::SymmetricKey aeskey = openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(m_smac1));
+			openssl::SymmetricKey aeskey = static_cast<openssl::SymmetricKey>(openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(m_smac1)));
 			//unsigned int length = data.size() - 16;
-			std::vector<unsigned char> tmp(data.begin(), data.end() - 16), resEnc;
+			ByteVector tmp(data.begin(), data.end() - 16), resEnc;
 			cipher.cipher(tmp, resEnc, aeskey, iv, false);
-			std::vector<unsigned char> newIv(resEnc.end() - 16, resEnc.end());
+			ByteVector newIv(resEnc.end() - 16, resEnc.end());
 			iv = openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(newIv));
 		}
 
-		openssl::SymmetricKey aeskey = openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(m_smac2));
+		openssl::SymmetricKey aeskey = static_cast<openssl::SymmetricKey>(openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(m_smac2)));
 
-		std::vector<unsigned char> lastData(data.end() - 16, data.end()), encData;
+		ByteVector lastData(data.end() - 16, data.end()), encData;
 		cipher.cipher(lastData, encData, aeskey, iv, false);
 		return encData;
 	}
 
-	std::vector<unsigned char> OSDPSecureChannel::computePacketMAC(std::vector<unsigned char> data)
+	ByteVector OSDPSecureChannel::computePacketMAC(ByteVector data)
 	{
-		std::vector<unsigned char> mac = computeMAC(data, openssl::AESInitializationVector::createFromData(m_rmac));
+		ByteVector mac = computeMAC(data, openssl::AESInitializationVector::createFromData(m_rmac));
 		m_cmac = mac;
-		return std::vector<unsigned char>(mac.begin(), mac.begin() + 4);
+		return ByteVector(mac.begin(), mac.begin() + 4);
 	}
 
-	void OSDPSecureChannel::verifyMAC(std::vector<unsigned char> data)
+	void OSDPSecureChannel::verifyMAC(ByteVector data)
 	{
-		std::vector<unsigned char> expectedMac, mac;
-			
-		expectedMac = std::vector<unsigned char>(data.end() - 4, data.end());
-		mac = computeMAC(std::vector<unsigned char>(data.begin(), data.end() - 4), openssl::AESInitializationVector::createFromData(m_cmac));
+		ByteVector expectedMac = ByteVector(data.end() - 4, data.end());
+		ByteVector mac = computeMAC(ByteVector(data.begin(), data.end() - 4), openssl::AESInitializationVector::createFromData(m_cmac));
 
-		if (!std::equal(expectedMac.begin(), expectedMac.end(), mac.begin()))
+		if (!equal(expectedMac.begin(), expectedMac.end(), mac.begin()))
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC are not the same");
 
 		m_rmac = mac;
 	}
 
-	std::vector<unsigned char> OSDPSecureChannel::encryptData(std::vector<unsigned char> data, std::vector<unsigned char> ivArray)
+	ByteVector OSDPSecureChannel::encryptData(ByteVector data, ByteVector ivArray) const
 	{
-		std::vector<unsigned char> encData;
+		ByteVector encData;
 		openssl::AESCipher cipher = openssl::AESCipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_CBC);
-		openssl::SymmetricKey aeskey = openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(m_senc));
+		openssl::SymmetricKey aeskey = static_cast<openssl::SymmetricKey>(openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(m_senc)));
 
 		data.push_back(0x80);
 		if (data.size() % 16 != 0 || data.size() == 0x00)
@@ -143,11 +141,11 @@ namespace logicalaccess
 		return encData;
 	}
 
-	std::vector<unsigned char> OSDPSecureChannel::decryptData(std::vector<unsigned char> data, std::vector<unsigned char> ivArray)
+	ByteVector OSDPSecureChannel::decryptData(ByteVector data, ByteVector ivArray) const
 	{
-		std::vector<unsigned char> decData;
+		ByteVector decData;
 		openssl::AESCipher cipher = openssl::AESCipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_CBC);
-		openssl::SymmetricKey aeskey = openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(m_senc));
+		openssl::SymmetricKey aeskey = static_cast<openssl::SymmetricKey>(openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(m_senc)));
 
 		for (unsigned char i = 0; i < 16; ++i)
 			ivArray[i] = ~ivArray[i];

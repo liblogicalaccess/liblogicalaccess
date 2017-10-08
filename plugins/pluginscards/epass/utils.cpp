@@ -118,7 +118,7 @@ static bool apdu_has_le(const ByteVector &apdu)
     assert(apdu.size() >= 4);
     if (apdu.size() == 4)
         return false;
-    auto body_size = std::distance(apdu.begin() + 4, apdu.end());
+    auto body_size = distance(apdu.begin() + 4, apdu.end());
     return body_size != apdu[4] + 1;
 }
 
@@ -130,7 +130,7 @@ static bool apdu_has_data(const ByteVector &apdu)
     assert(apdu.size() >= 4);
     if (apdu.size() == 4)
         return false;
-    auto body_size = std::distance(apdu.begin() + 4, apdu.end());
+    auto body_size = distance(apdu.begin() + 4, apdu.end());
     return body_size >= apdu[4] + 1; // Maybe we also have an LE byte.
 }
 
@@ -390,8 +390,7 @@ EPassDG2 EPassUtils::parse_dg2(const ByteVector &raw)
     EXCEPTION_ASSERT_WITH_LOG(*itr == 0x7F && *(itr + 1) == 0x61 &&
                                   *(itr + 2) == 0x82,
                               LibLogicalAccessException, "Cannot parse DG2");
-    uint16_t len = 0;
-    len          = *(itr + 3) << 8 | *(itr + 4);
+	uint16_t len = *(itr + 3) << 8 | *(itr + 4);
     itr += 5;
 
     has_enough_byte(len, "total length");
@@ -437,8 +436,7 @@ EPassDG2::BioInfo EPassUtils::parse_dg2_entry(ByteVector::const_iterator &itr,
     EXCEPTION_ASSERT_WITH_LOG((*itr == 0x5F || *itr == 0x7F) && *(itr + 1) == 0x2E &&
                                   *(itr + 2) == 0x82,
                               LibLogicalAccessException, "Cannot parse DG2 entry 2");
-    uint16_t data_length = 0;
-    data_length          = *(itr + 3) << 8 | *(itr + 4);
+	uint16_t data_length = *(itr + 3) << 8 | *(itr + 4);
     itr += 5;
     has_enough_byte(data_length, "biometric data");
     if (bio.format_type_ == ByteVector{0x00, 0x08})
@@ -451,8 +449,7 @@ EPassDG2::BioInfo EPassUtils::parse_dg2_entry(ByteVector::const_iterator &itr,
         // are present, and derive the number of bytes before the starts of the image
         // file.
         auto facial_data     = ByteVector(itr, itr + 20);
-        uint16_t nb_features = 0;
-        nb_features          = facial_data[4] << 8 | facial_data[5];
+        uint16_t nb_features = facial_data[4] << 8 | facial_data[5];
         has_enough_byte(20 + nb_features * 8 + 12, "advance to image data");
         itr += 20 + nb_features * 8 + 12;
 
@@ -587,12 +584,12 @@ EPassUtils::parse_dg1_date(const ByteVector &in, int millenium_limit)
     assert(in.size() == 6);
     auto itr = in.begin();
     // Birth date extraction code
-    auto year  = std::stoi(std::string(itr, itr + 2));
-    auto month = std::stoi(std::string(itr + 2, itr + 4));
-    auto day   = std::stoi(std::string(itr + 4, itr + 6));
+    auto year  = stoi(std::string(itr, itr + 2));
+    auto month = stoi(std::string(itr + 2, itr + 4));
+    auto day   = stoi(std::string(itr + 4, itr + 6));
 
-    std::tm date;
-	memset(&date, 0x00, sizeof(std::tm));
+    tm date;
+	memset(&date, 0x00, sizeof(tm));
     date.tm_mon  = month - 1; // tm_mon starts at 0
     date.tm_mday = day;
 
@@ -604,5 +601,5 @@ EPassUtils::parse_dg1_date(const ByteVector &in, int millenium_limit)
     else
         date.tm_year = 100 + year;
 
-    return std::chrono::system_clock::from_time_t(std::mktime(&date));
+    return std::chrono::system_clock::from_time_t(mktime(&date));
 }

@@ -42,7 +42,7 @@ namespace logicalaccess
         MifareAccessInfo::SectorAccessBits sab;
 		sab.setTransportConfiguration();
 
-		std::vector<unsigned char> madbuf = readSector(0, 1, madKeyA, std::shared_ptr<MifareKey>(), sab);
+		ByteVector madbuf = readSector(0, 1, madKeyA, std::shared_ptr<MifareKey>(), sab);
 		if (!madbuf.size())
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't read the MAD.");
@@ -93,7 +93,7 @@ namespace logicalaccess
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't make reference to the MAD itself.");
             }
 
-			std::vector<unsigned char> madbuf = readSector(0, 1, madKeyA, madKeyB, sab);
+			ByteVector madbuf = readSector(0, 1, madKeyA, madKeyB, sab);
 			if (!madbuf.size())
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't read the MAD.");
@@ -121,7 +121,7 @@ namespace logicalaccess
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't make reference to the MAD2 itself.");
             }
 
-			std::vector<unsigned char> madbuf = readSector(16, 0, madKeyA, madKeyB, sab);
+			ByteVector madbuf = readSector(16, 0, madKeyA, madKeyB, sab);
 			if (!madbuf.size())
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't read the MAD2.");
@@ -238,7 +238,7 @@ namespace logicalaccess
 		return (write) ? wkt : rkt;
 	}
 
-	void MifareCommands::authenticate(MifareKeyType keytype, std::shared_ptr<MifareKey> key, int sector, int block, bool write)
+	void MifareCommands::authenticate(MifareKeyType keytype, std::shared_ptr<MifareKey> key, int sector, int block, bool /*write*/)
     {
         std::shared_ptr<MifareLocation> location(new MifareLocation());
         location->sector = sector;
@@ -253,9 +253,9 @@ namespace logicalaccess
         authenticate(static_cast<unsigned char>(getSectorStartBlock(sector)), key->getKeyStorage(), keytype);
     }
 
-	std::vector<unsigned char> MifareCommands::readSector(int sector, int start_block, std::shared_ptr<MifareKey> keyA, std::shared_ptr<MifareKey> keyB, const MifareAccessInfo::SectorAccessBits& sab, bool readtrailer)
+	ByteVector MifareCommands::readSector(int sector, int start_block, std::shared_ptr<MifareKey> keyA, std::shared_ptr<MifareKey> keyB, const MifareAccessInfo::SectorAccessBits& sab, bool readtrailer)
     {
-        std::vector<unsigned char> ret;
+        ByteVector ret;
 
         int nbblocks = getNbBlocks(sector);
         if (readtrailer)
@@ -263,23 +263,23 @@ namespace logicalaccess
             nbblocks += 1;
         }
 
-		MifareKeyType keytype, pkeytype;
+		MifareKeyType pkeytype;
         for (int i = start_block; i < nbblocks; i++)
         {
-			keytype = getKeyType(sab, sector, i, false);
+	        const MifareKeyType keytype = getKeyType(sab, sector, i, false);
 			if (i == start_block || keytype != pkeytype)
 			{
 				authenticate(keytype, keytype == KT_KEY_A ? keyA : keyB, sector, i, false);
 				pkeytype = keytype;
 			}
-            std::vector<unsigned char> data = readBinary(static_cast<unsigned char>(getSectorStartBlock(sector) + i), 16);
+            ByteVector data = readBinary(static_cast<unsigned char>(getSectorStartBlock(sector) + i), 16);
 			ret.insert(ret.end(), data.begin(), data.end());
         }
 
         return ret;
     }
 
-	void MifareCommands::writeSector(int sector, int start_block, const std::vector<unsigned char>& buf,
+	void MifareCommands::writeSector(int sector, int start_block, const ByteVector& buf,
                                      std::shared_ptr<MifareKey> keyA, std::shared_ptr<MifareKey> keyB,
                                      const MifareAccessInfo::SectorAccessBits& sab,
                                      unsigned char userbyte,
@@ -297,11 +297,11 @@ namespace logicalaccess
 				authenticate(keytype, keytype == KT_KEY_A ? keyA : keyB, sector, i, true);
 				pkeytype = keytype;
 			}
-            updateBinary(static_cast<unsigned char>(getSectorStartBlock(sector) + i), std::vector<unsigned char>(buf.begin() + retlen, buf.begin() + retlen + 16));
+            updateBinary(static_cast<unsigned char>(getSectorStartBlock(sector) + i), ByteVector(buf.begin() + retlen, buf.begin() + retlen + 16));
 			retlen += 16;
         }
 
-        if (newsab != NULL)
+        if (newsab != nullptr)
         {
 			keytype = getKeyType(sab, sector, getNbBlocks(sector), true);
 			if (keytype != pkeytype)
@@ -326,7 +326,7 @@ namespace logicalaccess
                                     unsigned int sector, MifareAccessInfo::SectorAccessBits* newsab,
                                     unsigned char userbyte)
     {
-        std::vector<unsigned char> trailerblock(16, 0x00);
+        ByteVector trailerblock(16, 0x00);
 
         if (!newkeyA)
             newkeyA = std::make_shared<MifareKey>();
@@ -351,18 +351,18 @@ namespace logicalaccess
         updateBinary(static_cast<unsigned char>(getSectorStartBlock(sector) + getNbBlocks(sector)), trailerblock);
     }
 
-	std::vector<unsigned char> MifareCommands::readSectors(int start_sector, int stop_sector, int start_block, std::shared_ptr<MifareKey> keyA, std::shared_ptr<MifareKey> keyB, const MifareAccessInfo::SectorAccessBits& sab)
+	ByteVector MifareCommands::readSectors(int start_sector, int stop_sector, int start_block, std::shared_ptr<MifareKey> keyA, std::shared_ptr<MifareKey> keyB, const MifareAccessInfo::SectorAccessBits& sab)
     {
         if (start_sector > stop_sector)
         {
             THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Start sector can't be greater than stop sector.");
         }
 
-		std::vector<unsigned char> ret;
+		ByteVector ret;
         for (int i = start_sector; i <= stop_sector; ++i)
         {
             int startBlockSector = (i == start_sector) ? start_block : 0;
-			std::vector<unsigned char> data = readSector(i, startBlockSector, keyA, keyB, sab);
+			ByteVector data = readSector(i, startBlockSector, keyA, keyB, sab);
 
 			ret.insert(ret.end(), data.begin(), data.end());
         }
@@ -370,7 +370,7 @@ namespace logicalaccess
         return ret;
     }
 
-	void MifareCommands::writeSectors(int start_sector, int stop_sector, int start_block, const std::vector<unsigned char>& buf, std::shared_ptr<MifareKey> keyA, std::shared_ptr<MifareKey> keyB, const MifareAccessInfo::SectorAccessBits& sab, unsigned char userbyte, MifareAccessInfo::SectorAccessBits* newsab, std::shared_ptr<MifareKey> newkeyA, std::shared_ptr<MifareKey> newkeyB)
+	void MifareCommands::writeSectors(int start_sector, int stop_sector, int start_block, const ByteVector& buf, std::shared_ptr<MifareKey> keyA, std::shared_ptr<MifareKey> keyB, const MifareAccessInfo::SectorAccessBits& sab, unsigned char userbyte, MifareAccessInfo::SectorAccessBits* newsab, std::shared_ptr<MifareKey> newkeyA, std::shared_ptr<MifareKey> newkeyB)
     {
         if (start_sector > stop_sector)
         {
@@ -381,7 +381,7 @@ namespace logicalaccess
         for (int i = start_sector; i <= stop_sector; ++i)
         {
             int startBlockSector = (i == start_sector) ? start_block : 0;
-			std::vector<unsigned char> tmp(buf.begin() + offset, buf.begin() + offset + (getNbBlocks(i) - startBlockSector) * 16);
+			ByteVector tmp(buf.begin() + offset, buf.begin() + offset + (getNbBlocks(i) - startBlockSector) * 16);
             writeSector(i, startBlockSector, tmp, keyA, keyB, sab, userbyte, newsab, newkeyA, newkeyB);
 			offset += (getNbBlocks(i) - startBlockSector) * 16;
         }

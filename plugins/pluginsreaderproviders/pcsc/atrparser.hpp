@@ -18,7 +18,7 @@ namespace logicalaccess
 class LIBLOGICALACCESS_API ATRParser
 {
   public:
-    ATRParser(const std::vector<uint8_t> &atr);
+	explicit ATRParser(const std::vector<uint8_t> &atr);
 
     /**
      * Guess the card type from an ATR for a specific reader.
@@ -59,7 +59,7 @@ class LIBLOGICALACCESS_API ATRParser
     /**
      * Deduce the card type from one byte of the ATR.
      */
-    std::string atr_x_to_type(uint8_t code) const;
+	static std::string atr_x_to_type(uint8_t code);
 
     /**
      * Register an hardcoded ATR.

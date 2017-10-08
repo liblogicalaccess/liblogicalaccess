@@ -25,11 +25,7 @@ namespace logicalaccess
 
 			~OSDPReaderCardAdapter();
 
-			std::shared_ptr<DataTransport> getDataTransport() const { return d_dataTransport; };
-
-			void setDataTransport(std::shared_ptr<DataTransport> dataTransport) { d_dataTransport = dataTransport; };
-
-			virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command, long timeout = -1);
+			ByteVector sendCommand(const ByteVector& command, long timeout = -1) override;
 
 		protected:
 			

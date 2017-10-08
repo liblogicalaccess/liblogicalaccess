@@ -47,14 +47,14 @@ namespace logicalaccess
          * \brief Decipher data step 2.
          * \param data The data buffer
          */
-		void appendDecipherData(const std::vector<unsigned char>& data);
+		void appendDecipherData(const ByteVector& data);
 
         /**
          * \brief Get the deciphered data into a buffer.
          * \param length The excepted deciphared data buffer length, or 0 to automatic.
          * \return data The deciphered data buffer
          */
-        virtual std::vector<unsigned char> desfireDecrypt(size_t length);
+        virtual ByteVector desfireDecrypt(size_t length);
 
         /**
          * \brief Verify MAC into the buffer.
@@ -62,14 +62,14 @@ namespace logicalaccess
          * \param data The data buffer
          * \return True on success, false otherwise.
          */
-		virtual bool verifyMAC(bool end, const std::vector<unsigned char>& data);
+		virtual bool verifyMAC(bool end, const ByteVector& data);
 
         /**
          * \brief Generate MAC for the total buffer.
          * \param data The data buffer part
          * \return The MACed data buffer
          */
-		virtual ByteVector generateMAC(unsigned char cmd, const std::vector<unsigned char>& data);
+		virtual ByteVector generateMAC(unsigned char cmd, const ByteVector& data);
 
         /**
          * \brief Encrypt a buffer for the DESFire card.
@@ -77,9 +77,9 @@ namespace logicalaccess
          * \param param The parameters.
          * \return The encrypted data buffer
          */
-		virtual ByteVector desfireEncrypt(const std::vector<unsigned char>& data, const std::vector<unsigned char>& param = std::vector<unsigned char>(), bool calccrc = true);
+		virtual ByteVector desfireEncrypt(const ByteVector& data, const ByteVector& param = ByteVector(), bool calccrc = true);
 
-        std::vector<unsigned char> iso_encipherData(bool end, const std::vector<unsigned char>& data, const std::vector<unsigned char>& param = std::vector<unsigned char>());
+        ByteVector iso_encipherData(bool end, const ByteVector& data, const ByteVector& param = ByteVector());
 
         /**
          * \brief Calculate ISO14443 Type A compatible CRC-16.
@@ -110,7 +110,7 @@ namespace logicalaccess
          * \param data The data source buffer to decrypt
          * \return The decrypted data buffer
          */
-        static std::vector<unsigned char> desfire_CBC_send(const std::vector<unsigned char>& key, const std::vector<unsigned char>& iv, const std::vector<unsigned char>& data);
+        static ByteVector desfire_CBC_send(const ByteVector& key, const ByteVector& iv, const ByteVector& data);
 
         /**
          * \brief  Perform DESFire CBC "decryption" operation which is used for decrypting data received from DESFire.
@@ -119,7 +119,7 @@ namespace logicalaccess
          * \param data The data source buffer to decrypt
          * \return The decrypted data buffer
          */
-        static std::vector<unsigned char> desfire_CBC_receive(const std::vector<unsigned char>& key, const std::vector<unsigned char>& iv, const std::vector<unsigned char>& data);
+        static ByteVector desfire_CBC_receive(const ByteVector& key, const ByteVector& iv, const ByteVector& data);
 
         /**
          * \brief  Perform DESFire CBC encryption operation, which is used for MAC calculation and verification.
@@ -129,7 +129,7 @@ namespace logicalaccess
          * \param data The data source buffer to encrypt
          * \return The data encrypted buffer
          */
-        static std::vector<unsigned char> desfire_CBC_mac(const std::vector<unsigned char>& key, const std::vector<unsigned char>& iv, const std::vector<unsigned char>& data);
+        static ByteVector desfire_CBC_mac(const ByteVector& key, const ByteVector& iv, const ByteVector& data);
 
         /**
          * \brief  Preform standard CBC encryption operation, which is used for DESFire SAM cryptograms.
@@ -138,16 +138,14 @@ namespace logicalaccess
          * \param data The data source buffer to encrypt
          * \return The data encrypted buffer
          */
-        static std::vector<unsigned char> sam_CBC_send(const std::vector<unsigned char>& key, const std::vector<unsigned char>& iv, const std::vector<unsigned char>& data);
+        static ByteVector sam_CBC_send(const ByteVector& key, const ByteVector& iv, const ByteVector& data);
 
         /**
          * \brief Return data with the DESFire MAC attached.
          * \param key The DES key to use, shall be the session key from the previous authentication
-         * \param dataSrc The data source buffer to attach MAC
-         * \param dataSrcLength The data source buffer length
          * \return The data mac buffer
          */
-        std::vector<unsigned char> desfire_mac(const std::vector<unsigned char>& key, std::vector<unsigned char> data);
+        static ByteVector desfire_mac(const ByteVector& key, ByteVector data);
 
         /**
          * \brief  Return data part for the encrypted communication mode for WriteData / WriteRecord.
@@ -155,7 +153,7 @@ namespace logicalaccess
          * \param data The data source buffer to encrypt
          * \return The data encrypted buffer
          */
-        static std::vector<unsigned char> desfire_encrypt(const std::vector<unsigned char>& key, std::vector<unsigned char> data, bool calccrc = true);
+        static ByteVector desfire_encrypt(const ByteVector& key, ByteVector data, bool calccrc = true);
 
         /**
          * \brief  Return data part for the encrypted communication mode for WriteData / WriteRecord.
@@ -166,7 +164,7 @@ namespace logicalaccess
          * \param param The optional parameters
          * \return The data encrypted buffer
          */
-        std::vector<unsigned char> desfire_iso_encrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size, const std::vector<unsigned char>& param = std::vector<unsigned char>(), bool calccrc = true);
+        ByteVector desfire_iso_encrypt(const ByteVector& key, const ByteVector& data, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size, const ByteVector& param = ByteVector(), bool calccrc = true);
 
         /**
          * \brief Return data part for the encrypted communication mode for WriteData / WriteRecord.
@@ -174,7 +172,7 @@ namespace logicalaccess
          * \param data The data source buffer to encrypt
          * \return The data encrypted buffer
          */
-        std::vector<unsigned char> sam_encrypt(const std::vector<unsigned char>& key, std::vector<unsigned char> data);
+        static ByteVector sam_encrypt(const ByteVector& key, ByteVector data);
 
         /**
          * \brief Decrypt and verify data part of the decrypted communication mode for ReadData / ReadRecords.
@@ -182,7 +180,7 @@ namespace logicalaccess
          * \param data The data source buffer to decrypted
          * \return The data decrypted buffer
          */
-		ByteVector desfire_decrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, size_t datalen);
+		static ByteVector desfire_decrypt(const ByteVector& key, const ByteVector& data, size_t datalen);
 
         /**
          * \brief Decrypt and verify data part of the decrypted communication mode for ReadData / ReadRecords.
@@ -190,10 +188,9 @@ namespace logicalaccess
          * \param data The data source buffer to decrypted
          * \param cipher The cipher to use
          * \param block_size The bloc size
-         * \param length The decrypted excepted length
          * \return The data decrypted buffer
          */
-        std::vector<unsigned char> desfire_iso_decrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& data, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size, size_t datalen);
+        ByteVector desfire_iso_decrypt(const ByteVector& key, const ByteVector& data, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size, size_t datalen);
 
         /**
          * \brief Decrypt and verify data part of the decrypted communication mode for ReadData / ReadRecords.
@@ -201,24 +198,23 @@ namespace logicalaccess
          * \param length The decrypted excepted length
          * \return The data decrypted buffer
          */
-        std::vector<unsigned char> desfire_iso_decrypt(const std::vector<unsigned char>& data, size_t length);
+        ByteVector desfire_iso_decrypt(const ByteVector& data, size_t length);
 
         /**
          * \brief  Return data part for the encrypted communication mode.
          * \param key The key to use, shall be the session key from the previous authentication
-         * \param cipher The cypher to use
          * \param block_size The bloc size
          * \param data The data source buffer to calculate MAC
          * \return The MAC result for the message.
          */
-        std::vector<unsigned char> desfire_cmac(const std::vector<unsigned char>& key, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const std::vector<unsigned char>& data);
+        ByteVector desfire_cmac(const ByteVector& key, std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, unsigned int block_size, const ByteVector& data);
 
         /**
          * \brief  Return data part for the encrypted communication mode.
          * \param data The data source buffer to calculate MAC
          * \return The MAC result for the message.
          */
-        std::vector<unsigned char> desfire_cmac(const std::vector<unsigned char>& data);
+        ByteVector desfire_cmac(const ByteVector& data);
 
         /**
          * \brief Authenticate on the card, step 1 for mutual authentication.
@@ -227,14 +223,14 @@ namespace logicalaccess
          * \param encRndB The encrypted random number B
          * \return The random number A+B 1.
          */
-        virtual std::vector<unsigned char> authenticate_PICC1(unsigned char  keyno, std::vector<unsigned char> diversify, const std::vector<unsigned char>& encRndB);
+        virtual ByteVector authenticate_PICC1(unsigned char  keyno, ByteVector diversify, const ByteVector& encRndB);
 
         /**
          * \brief Authenticate on the card, step 2 for mutual authentication.
          * \param keyno The key number to use
          * \param encRndA The encrypted random number A
          */
-        virtual void authenticate_PICC2(unsigned char  keyno, const std::vector<unsigned char>& encRndA);
+        virtual void authenticate_PICC2(unsigned char  keyno, const ByteVector& encRndA);
 
         /**
          * \brief Authenticate on the card, step 1 for mutual authentication using ISO command.
@@ -244,15 +240,14 @@ namespace logicalaccess
          * \param randomlen The random length
          * \return The random number A+B 1.
          */
-        std::vector<unsigned char> iso_authenticate_PICC1(unsigned char keyno, std::vector<unsigned char> diversify, const std::vector<unsigned char>& encRndB, unsigned int randomlen);
+        ByteVector iso_authenticate_PICC1(unsigned char keyno, ByteVector diversify, const ByteVector& encRndB, unsigned int randomlen);
 
         /**
          * \brief Authenticate on the card, step 2 for mutual authentication using ISO command.
          * \param keyno The key number to use
-         * \param encRndA The encrypted random number A
          * \param randomlen The random length
          */
-        void iso_authenticate_PICC2(unsigned char keyno, const std::vector<unsigned char>& encRndA1, unsigned int randomlen);
+        void iso_authenticate_PICC2(unsigned char keyno, const ByteVector& encRndA1, unsigned int randomlen);
 
         /**
          * \brief Authenticate on the card, step 1 for mutual authentication using AES.
@@ -261,18 +256,17 @@ namespace logicalaccess
          * \param encRndB The encrypted random number B
          * \return The random number A+B 1.
          */
-        std::vector<unsigned char> aes_authenticate_PICC1(unsigned char keyno, std::vector<unsigned char> diversify, const std::vector<unsigned char>& encRndB);
+        ByteVector aes_authenticate_PICC1(unsigned char keyno, ByteVector diversify, const ByteVector& encRndB);
 
         /**
          * \brief Authenticate on the card, step 2 for mutual authentication using AES.
          * \param keyno The key number to use
-         * \param encRndA The encrypted random number A
+         * \param encRndA1 The encrypted random number A
          */
-        void aes_authenticate_PICC2(unsigned char keyno, const std::vector<unsigned char>& encRndA1);
+        void aes_authenticate_PICC2(unsigned char keyno, const ByteVector& encRndA1);
 
         /**
          * \brief Init buffer for temporised data.
-         * \param length The data length.
          */
         void initBuf();
 
@@ -282,14 +276,14 @@ namespace logicalaccess
          * \param diversify The diversify buffer, NULL if no diversification is needed
          * \param keydiv The key data, diversified if a diversify buffer is specified.
          */
-        static void getKey(std::shared_ptr<DESFireKey> key, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv);
+        static void getKey(std::shared_ptr<DESFireKey> key, ByteVector diversify, ByteVector& keydiv);
 
         /**
          * \brief Get DES key versionned.
          * \param key The DESFire key information
          * \param keyversioned The key versioned.
          */
-        static void getKeyVersioned(std::shared_ptr<DESFireKey> key, std::vector<unsigned char>& keyversioned);
+        static void getKeyVersioned(std::shared_ptr<DESFireKey> key, ByteVector& keyversioned);
 
         /**
          * \brief Select an application.
@@ -300,26 +294,19 @@ namespace logicalaccess
         /**
          * \brief Change key into the card.
          * \param keyno The key number to change
-         * \param newKey The new key information
-         * \param diversify The diversify buffer, NULL if no diversification is needed
+         * \param newkey The new key information
+         * \param newKeyDiversify The diversify buffer, NULL if no diversification is needed
          * \return The change key cryptogram.
          */
-        virtual std::vector<unsigned char> changeKey_PICC(uint8_t keyno, std::vector<unsigned char> oldKeyDiversify, std::shared_ptr<DESFireKey> newkey, std::vector<unsigned char> newKeyDiversify, unsigned char keysetno = 0);
+        virtual ByteVector changeKey_PICC(uint8_t keyno, ByteVector oldKeyDiversify, std::shared_ptr<DESFireKey> newkey, ByteVector newKeyDiversify, unsigned char keysetno = 0);
 
-        void setCryptoContext(std::vector<unsigned char> identifier);
-
-        /**
-         * \brief Get the diversify buffer.
-         * \param diversify The diversify buffer.
-         * \return True on success, false otherwise.
-         */
-        bool getDiversify(unsigned char* diversify);
+        void setCryptoContext(ByteVector identifier);
 
         void createApplication(int aid, uint8_t maxKeySlotNb, uint8_t maxNbKeys, DESFireKeyType cryptoMethod);
 
-		void setIdentifier(std::vector<unsigned char> identifier) { d_identifier = identifier; };
+		void setIdentifier(ByteVector identifier) { d_identifier = identifier; }
 
-        const std::vector<unsigned char> getIdentifier() const { return d_identifier; };
+	    ByteVector getIdentifier() const { return d_identifier; }
 
 		/**
 		* \brief Get the default key for an algorithm.
@@ -374,7 +361,7 @@ namespace logicalaccess
 		* \param keydiv The key data, diversified if a diversify buffer is specified.
 		* \return True on success, false otherwise.
 		*/
-		bool getKey(size_t aid, uint8_t keyset, uint8_t keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv);
+		bool getKey(size_t aid, uint8_t keyset, uint8_t keyno, ByteVector diversify, ByteVector& keydiv);
 
 		/**
 		* \brief Get key from memory.
@@ -383,7 +370,7 @@ namespace logicalaccess
 		* \param keydiv The key data, diversified if a diversify buffer is specified.
 		* \return True on success, false otherwise.
 		*/
-		bool getKey(uint8_t keyset, uint8_t keyno, std::vector<unsigned char> diversify, std::vector<unsigned char>& keydiv);
+		bool getKey(uint8_t keyset, uint8_t keyno, ByteVector diversify, ByteVector& keydiv);
 
 		/**
 		* \brief Get one of the DESFire keys of this profile.
@@ -424,17 +411,17 @@ namespace logicalaccess
         /**
          * \brief The current session key.
          */
-        std::vector<unsigned char> d_sessionKey;
+        ByteVector d_sessionKey;
 
         /**
          * \brief The authentication key.
          */
-        std::vector<unsigned char> d_authkey;
+        ByteVector d_authkey;
 
         /**
          * \brief The last Initialization Vector (DESFire native mode).
          */
-        std::vector<unsigned char> d_lastIV;
+        ByteVector d_lastIV;
 
         /**
          * \brief The current Application ID.
@@ -451,27 +438,27 @@ namespace logicalaccess
         /**
          * \brief The temporised buffer.
          */
-        std::vector<unsigned char> d_buf;
+        ByteVector d_buf;
 
         /**
          * \brief The last left buffer for card command.
          */
-        std::vector<unsigned char> d_last_left;
+        ByteVector d_last_left;
 
         /**
          * \brief The random number A.
          */
-        std::vector<unsigned char> d_rndA;
+        ByteVector d_rndA;
 
         /**
          * \brief The random number B.
          */
-        std::vector<unsigned char> d_rndB;
+        ByteVector d_rndB;
 
         /**
          * \brief The card identifier use for key diversification.
          */
-        std::vector<unsigned char> d_identifier;
+        ByteVector d_identifier;
     };
 }
 

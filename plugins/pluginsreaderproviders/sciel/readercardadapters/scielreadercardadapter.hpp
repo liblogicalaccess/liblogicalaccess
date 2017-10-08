@@ -42,14 +42,14 @@ namespace logicalaccess
          * \param command The command to send.
          * \return The adapted command to send.
          */
-        virtual std::vector<unsigned char> adaptCommand(const std::vector<unsigned char>& command);
+	    ByteVector adaptCommand(const ByteVector& command) override;
 
         /**
          * \brief Adapt the asnwer received from the reader.
          * \param answer The answer received.
          * \return The adapted answer received.
          */
-        virtual std::vector<unsigned char> adaptAnswer(const std::vector<unsigned char>& answer);
+	    ByteVector adaptAnswer(const ByteVector& answer) override;
 
         /**
          * \brief Wait for receiving all the tags list.
@@ -57,7 +57,7 @@ namespace logicalaccess
          * \param timeout The timeout value, in milliseconds. If timeout is negative, the call never times out.
          * \return The list of tags detected by the reader.
          */
-        std::list<std::vector<unsigned char>> receiveTagsListCommand(const std::vector<unsigned char>& command, long int timeout = 2000);
+        std::list<ByteVector> receiveTagsListCommand(const ByteVector& command, long int timeout = 2000);
     };
 }
 

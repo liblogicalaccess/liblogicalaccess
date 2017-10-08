@@ -34,11 +34,11 @@ namespace logicalaccess
     {
         d_deviceAddress = 0x00;
         d_readerUnitConfig.reset(new A3MLGM5600ReaderUnitConfiguration());
-        setDefaultReaderCardAdapter(std::shared_ptr<A3MLGM5600ReaderCardAdapter>(new A3MLGM5600ReaderCardAdapter()));
+	    ReaderUnit::setDefaultReaderCardAdapter(std::make_shared<A3MLGM5600ReaderCardAdapter>());
         std::shared_ptr<UdpDataTransport> dataTransport(new UdpDataTransport());
         dataTransport->setIpAddress("192.168.1.100");
         dataTransport->setPort(2000);
-        setDataTransport(dataTransport);
+	    ReaderUnit::setDataTransport(dataTransport);
         d_ledBuzzerDisplay.reset(new A3MLGM5600LEDBuzzerDisplay());
         d_lcdDisplay.reset(new A3MLGM5600LCDDisplay());
 		d_card_type = CHIP_UNKNOWN;
@@ -46,7 +46,7 @@ namespace logicalaccess
         try
         {
             boost::property_tree::ptree pt;
-            read_xml((boost::filesystem::current_path().string() + "/A3MLGM5600ReaderUnit.config"), pt);
+            read_xml(boost::filesystem::current_path().string() + "/A3MLGM5600ReaderUnit.config", pt);
 			d_card_type = pt.get("config.cardType", CHIP_UNKNOWN);
         }
         catch (...) {}
@@ -56,12 +56,12 @@ namespace logicalaccess
     {
     }
 
-    std::string A3MLGM5600ReaderUnit::getName() const
+	std::string A3MLGM5600ReaderUnit::getName() const
     {
         return std::string("");
     }
 
-    std::string A3MLGM5600ReaderUnit::getConnectedName()
+	std::string A3MLGM5600ReaderUnit::getConnectedName()
     {
         char conv[64];
         sprintf(conv, "A3MLGM5600 Device Address: %d", d_deviceAddress);
@@ -69,24 +69,24 @@ namespace logicalaccess
         return std::string(conv);
     }
 
-    void A3MLGM5600ReaderUnit::setCardType(std::string cardType)
+    void A3MLGM5600ReaderUnit::setCardType(const std::string cardType)
     {
         d_card_type = cardType;
     }
 
-    bool A3MLGM5600ReaderUnit::waitInsertion(unsigned int maxwait)
+    bool A3MLGM5600ReaderUnit::waitInsertion(const unsigned int maxwait)
     {
-        bool inserted = false;
+	    auto inserted = false;
         unsigned int currentWait = 0;
 
         do
         {
             try
             {
-                std::vector<unsigned char> buf = hlRequest();
+                ByteVector buf = hlRequest();
                 if (buf.size() > 0)
                 {
-					d_insertedChip = createChip((d_card_type == CHIP_UNKNOWN) ? CHIP_GENERICTAG : d_card_type);
+					d_insertedChip = createChip(d_card_type == CHIP_UNKNOWN ? CHIP_GENERICTAG : d_card_type);
                     d_insertedChip->setChipIdentifier(buf);
                     inserted = true;
                 }
@@ -106,16 +106,16 @@ namespace logicalaccess
         return inserted;
     }
 
-    bool A3MLGM5600ReaderUnit::waitRemoval(unsigned int maxwait)
+    bool A3MLGM5600ReaderUnit::waitRemoval(const unsigned int maxwait)
     {
-        bool removed = false;
+	    auto removed = false;
 
         if (d_insertedChip)
         {
             unsigned int currentWait = 0;
             do
             {
-                std::vector<unsigned char> buf = hlRequest();
+				ByteVector buf = hlRequest();
                 removed = (buf.size() == 0 || d_insertedChip->getChipIdentifier() != buf);
 
                 if (!removed)
@@ -134,17 +134,17 @@ namespace logicalaccess
         return removed;
     }
 
-    string A3MLGM5600ReaderUnit::getPADKey()
+	std::string A3MLGM5600ReaderUnit::getPADKey()
     {
         std::shared_ptr<A3MLGM5600ReaderCardAdapter> adapter = getDefaultA3MLGM5600ReaderCardAdapter();
-        std::vector<unsigned char> res = adapter->sendCommand(0x17, std::vector<unsigned char>());
+	    const ByteVector res = adapter->sendCommand(0x17, ByteVector());
 
         return BufferHelper::getStdString(res);
     }
 
-    std::vector<unsigned char> A3MLGM5600ReaderUnit::hlRequest()
+	ByteVector A3MLGM5600ReaderUnit::hlRequest()
     {
-        std::vector<unsigned char> buf;
+		ByteVector buf;
         buf.push_back(0x01);	// 0x00: Request Idle, 0x01: Request all (wake up all)
 
         return getDefaultA3MLGM5600ReaderCardAdapter()->sendCommand(0x98, buf);
@@ -170,7 +170,7 @@ namespace logicalaccess
         getDataTransport()->disconnect();
     }
 
-    std::shared_ptr<Chip> A3MLGM5600ReaderUnit::createChip(std::string type)
+    std::shared_ptr<Chip> A3MLGM5600ReaderUnit::createChip(const std::string type)
     {
         std::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
 
@@ -194,10 +194,10 @@ namespace logicalaccess
         return chip;
     }
 
-    std::vector<std::shared_ptr<Chip> > A3MLGM5600ReaderUnit::getChipList()
+	std::vector<std::shared_ptr<Chip> > A3MLGM5600ReaderUnit::getChipList()
     {
-        std::vector<std::shared_ptr<Chip> > chipList;
-        std::shared_ptr<Chip> singleChip = getSingleChip();
+		std::vector<std::shared_ptr<Chip> > chipList;
+	    const std::shared_ptr<Chip> singleChip = getSingleChip();
         if (singleChip)
         {
             chipList.push_back(singleChip);
@@ -207,16 +207,12 @@ namespace logicalaccess
 
     std::shared_ptr<A3MLGM5600ReaderCardAdapter> A3MLGM5600ReaderUnit::getDefaultA3MLGM5600ReaderCardAdapter()
     {
-        std::shared_ptr<ReaderCardAdapter> adapter = getDefaultReaderCardAdapter();
-        return std::dynamic_pointer_cast<A3MLGM5600ReaderCardAdapter>(adapter);
+        return std::dynamic_pointer_cast<A3MLGM5600ReaderCardAdapter>(getDefaultReaderCardAdapter());
     }
 
-    string A3MLGM5600ReaderUnit::getReaderSerialNumber()
+	std::string A3MLGM5600ReaderUnit::getReaderSerialNumber()
     {
-        std::shared_ptr<A3MLGM5600ReaderCardAdapter> adapter = getDefaultA3MLGM5600ReaderCardAdapter();
-        std::vector<unsigned char> res = adapter->sendCommand(0x09, std::vector<unsigned char>());
-
-        return BufferHelper::getHex(res);
+        return BufferHelper::getHex(getDefaultA3MLGM5600ReaderCardAdapter()->sendCommand(0x09, ByteVector()));
     }
 
     bool A3MLGM5600ReaderUnit::isConnected()
@@ -251,9 +247,9 @@ namespace logicalaccess
         return instance;
     }
 
-    void A3MLGM5600ReaderUnit::resetRF(int offtime)
+    void A3MLGM5600ReaderUnit::resetRF(const int offtime)
     {
-        std::vector<unsigned char> data;
+		ByteVector data;
         data.push_back(static_cast<unsigned char>(offtime));
 
         getDefaultA3MLGM5600ReaderCardAdapter()->sendCommand(0x27, data, 1000 + (offtime * 100));

@@ -36,25 +36,25 @@ namespace logicalaccess
          * \brief Get the transport type of this instance.
          * \return The transport type.
          */
-        virtual std::string getTransportType() const { return TRANSPORT_RPLETH; };
+	    std::string getTransportType() const override { return TRANSPORT_RPLETH; }
 
         /**
          * \brief Get the default Xml Node name for this object.
          * \return The Xml node name.
          */
-        virtual std::string getDefaultXmlNodeName() const;
+	    std::string getDefaultXmlNodeName() const override;
 
         /**
          * \brief Send the data without computation.
          * \param data The data to send.
          */
-        void sendll(const std::vector<unsigned char>& data);
+        void sendll(const ByteVector& data);
 
         /**
          * \brief Send the data using rpleth protocol computation.
          * \param data The data to send.
          */
-        virtual void send(const std::vector<unsigned char>& data);
+	    void send(const ByteVector& data) override;
 
         /**
          * \brief Receive data from reader.
@@ -62,7 +62,7 @@ namespace logicalaccess
          *        If timeout is -1, use the timeout from the Settings.
          * \return The data from reader.
          */
-        virtual std::vector<unsigned char> receive(long int timeout = -1);
+	    ByteVector receive(long int timeout = -1) override;
 
         /**
          * \brief Send the Ping packet.
@@ -73,13 +73,13 @@ namespace logicalaccess
          * \brief Get the buffer.
          * \return The buffer.
          */
-        const std::vector<unsigned char>& getBuffer() const { return d_buffer; };
+        const ByteVector& getBuffer() const { return d_buffer; }
 
         /**
          * \brief Get the badges list.
          * \return The list of badge.
          */
-        std::list<std::vector<unsigned char> > &getBadges() { return d_badges; };
+        std::list<ByteVector > getBadges() const { return d_badges; }
 
         /**
          * \brief Send a command to the reader.
@@ -87,8 +87,8 @@ namespace logicalaccess
          * \param timeout The command timeout. If timeout is -1, use timeout from settings.
          * \return the result of the command.
          */
-        virtual std::vector<unsigned char> sendCommand(const std::vector<unsigned char>& command,
-                                                       long int timeout = -1);
+	    ByteVector sendCommand(const ByteVector& command,
+                                                       long int timeout = -1) override;
 
     protected:
 
@@ -97,17 +97,17 @@ namespace logicalaccess
          * \param data The data to calculate checksum
          * \return The checksum.
          */
-        static unsigned char calcChecksum(const std::vector<unsigned char>& data);
+        static unsigned char calcChecksum(const ByteVector& data);
 
         /**
          * \brief d_buffer from last commands response.
          */
-        std::vector<unsigned char> d_buffer;
+        ByteVector d_buffer;
 
         /**
          * \brief Badges received from the latest commands response.
          */
-        std::list<std::vector<unsigned char> > d_badges;
+        std::list<ByteVector > d_badges;
     };
 }
 

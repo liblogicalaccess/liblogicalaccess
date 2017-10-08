@@ -34,7 +34,7 @@ namespace logicalaccess
             OpenSSLInitializer::GetInstance();
         }
 
-        void OpenSSLSymmetricCipherContext::setPadding(bool padding)
+        void OpenSSLSymmetricCipherContext::setPadding(bool padding) const
         {
             EVP_CIPHER_CTX_set_padding(d_information->ctx, padding ? 1 : 0);
         }

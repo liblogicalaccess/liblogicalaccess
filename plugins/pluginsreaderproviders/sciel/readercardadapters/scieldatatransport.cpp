@@ -10,9 +10,9 @@
 
 namespace logicalaccess
 {
-    std::vector<unsigned char> ScielDataTransport::checkValideBufferAvailable()
+    ByteVector ScielDataTransport::checkValideBufferAvailable()
     {
-        std::vector<unsigned char> ret;
+        ByteVector ret;
 
         d_port->getSerialPort()->lockedExecute([&](){
             if (d_port->getSerialPort()->getCircularBufferParser())

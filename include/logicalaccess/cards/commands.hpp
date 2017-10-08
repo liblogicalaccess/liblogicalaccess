@@ -20,32 +20,33 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API Commands
     {
     public:
+	    virtual ~Commands() = default;
 
-		Commands() {}
+	    Commands() {}
 
         /**
          * \brief Get the chip.
          * \return The chip.
          */
-        virtual std::shared_ptr<Chip> getChip() const { return d_chip.lock(); };
+        virtual std::shared_ptr<Chip> getChip() const { return d_chip.lock(); }
 
         /**
          * \brief Set the chip.
          * \param chip The chip.
          */
-        virtual void setChip(std::shared_ptr<Chip> chip) { d_chip = chip; };
+        virtual void setChip(std::shared_ptr<Chip> chip) { d_chip = chip; }
 
         /**
          * \brief Get the reader/card adapter.
          * \return The reader/card adapter.
          */
-        virtual std::shared_ptr<ReaderCardAdapter> getReaderCardAdapter() const { return d_readerCardAdapter; };
+        virtual std::shared_ptr<ReaderCardAdapter> getReaderCardAdapter() const { return d_readerCardAdapter; }
 
         /**
          * \brief Set the reader/card adapter.
          * \param adapter The reader/card adapter.
          */
-        virtual void setReaderCardAdapter(std::shared_ptr<ReaderCardAdapter> adapter) { d_readerCardAdapter = adapter; };
+        virtual void setReaderCardAdapter(std::shared_ptr<ReaderCardAdapter> adapter) { d_readerCardAdapter = adapter; }
 
     protected:
 

@@ -9,9 +9,9 @@
 
 namespace logicalaccess
 {
-    std::vector<unsigned char> AxessTMC13BufferParser::getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer)
+    ByteVector AxessTMC13BufferParser::getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer)
     {
-        std::vector<unsigned char> result;
+        ByteVector result;
         for (size_t i = 0; i < circular_buffer.size(); ++i)
         {
             if (circular_buffer[i] == AxessTMC13ReaderCardAdapter::CR)

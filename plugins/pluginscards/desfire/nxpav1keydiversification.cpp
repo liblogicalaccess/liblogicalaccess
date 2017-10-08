@@ -21,36 +21,36 @@
 
 namespace logicalaccess
 {
-    void NXPAV1KeyDiversification::initDiversification(std::vector<unsigned char> identifier, int AID,
+    void NXPAV1KeyDiversification::initDiversification(ByteVector identifier, int /*AID*/,
                                                        std::shared_ptr<Key> key, unsigned char keyno,
-                                                       std::vector<unsigned char>& diversify)
+                                                       ByteVector& diversify)
     {
         diversify.push_back(keyno);
         diversify.insert(diversify.end(), identifier.begin(), identifier.end());
 
         if (diversify.size() != 8)
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "NXP Diversification AV1 need 8 bytes of DivInput (Keyno + 7-byte UID)");
-        if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_AES)
+        if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DF_KEY_AES)
             diversify.insert(diversify.end(), diversify.begin(), diversify.end());
     }
 
-    std::vector<unsigned char> NXPAV1KeyDiversification::getDiversifiedKey(std::shared_ptr<Key> key,
-                                                                           std::vector<unsigned char> diversify)
+    ByteVector NXPAV1KeyDiversification::getDiversifiedKey(std::shared_ptr<Key> key,
+                                                                           ByteVector diversify)
     {
         LOG(LogLevel::INFOS) << "Using key diversification NXP AV1 with div : " << BufferHelper::getHex(diversify);
         std::shared_ptr<openssl::SymmetricKey> symkey;
         std::shared_ptr<openssl::InitializationVector> iv;
         std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher;
-        std::vector<unsigned char> keycipher(key->getData(), key->getData() + key->getLength());
-        std::vector<unsigned char> divKey, divInputEncP1, divInputEncP2;
+        ByteVector keycipher(key->getData(), key->getData() + key->getLength());
+        ByteVector divKey, divInputEncP1, divInputEncP2;
 
-        if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() != DESFireKeyType::DF_KEY_AES)
+        if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() != DF_KEY_AES)
         {
             LOG(LogLevel::INFOS) << "Diversification NXP AV1 3DES";
             for (int x = 0; x < 8; ++x)
                 diversify[x] = diversify[x] ^ keycipher[x];
 
-            std::vector<unsigned char> emptyIV(8);
+            ByteVector emptyIV(8);
             symkey.reset(new openssl::DESSymmetricKey(openssl::DESSymmetricKey::createFromData(keycipher)));
             iv.reset(new openssl::DESInitializationVector(openssl::DESInitializationVector::createFromData(emptyIV)));
             cipher.reset(new openssl::DESCipher());
@@ -66,14 +66,14 @@ namespace logicalaccess
             cipher->cipher(diversify, divInputEncP2, *symkey.get(), *iv.get(), false);
             divKey.insert(divKey.end(), divInputEncP2.begin(), divInputEncP2.end());
         }
-        else if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DESFireKeyType::DF_KEY_AES)
+        else if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DF_KEY_AES)
         {
             LOG(LogLevel::INFOS) << "Diversification NXP AV1 AES";
 
             for (int x = 0; x < 16; ++x)
                 diversify[x] = diversify[x] ^ keycipher[x];
 
-            std::vector<unsigned char> emptyIV(16);
+            ByteVector emptyIV(16);
             symkey.reset(new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(keycipher)));
             iv.reset(new openssl::AESInitializationVector(openssl::AESInitializationVector::createFromData(emptyIV)));
             cipher.reset(new openssl::AESCipher());

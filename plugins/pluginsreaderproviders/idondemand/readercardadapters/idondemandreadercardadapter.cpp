@@ -18,20 +18,20 @@ namespace logicalaccess
     {
     }
 
-    std::vector<unsigned char> IdOnDemandReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
+    ByteVector IdOnDemandReaderCardAdapter::adaptCommand(const ByteVector& command)
     {
         LOG(LogLevel::COMS) << "Sending command with command " << BufferHelper::getHex(command) << " command size {" << command.size() << "} {" << BufferHelper::getStdString(command) << "}...";
-        std::vector<unsigned char> cmd = command;
+        ByteVector cmd = command;
         cmd.push_back(0x0d);
 
         return cmd;
     }
 
-    std::vector<unsigned char> IdOnDemandReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
+    ByteVector IdOnDemandReaderCardAdapter::adaptAnswer(const ByteVector& answer)
     {
         LOG(LogLevel::COMS) << "Processing the received command buffer " << BufferHelper::getHex(answer) << " command size {" << answer.size() << "} {" << BufferHelper::getStdString(answer) << "}...";
 
-        std::vector<unsigned char> ret;
+        ByteVector ret;
         EXCEPTION_ASSERT_WITH_LOG(answer.size() >= 2, std::invalid_argument, "A valid buffer size must be at least 2 bytes long");
 
         std::string strcmdbuf = BufferHelper::getStdString(answer);

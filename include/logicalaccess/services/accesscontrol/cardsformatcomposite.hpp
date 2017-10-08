@@ -49,8 +49,10 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API CardsFormatComposite : public XmlSerializable
     {
     public:
+#ifndef SWIG
         using XmlSerializable::serialize;
         using XmlSerializable::unSerialize;
+#endif
 
         /**
          * \brief Constructor.
@@ -68,7 +70,7 @@ namespace logicalaccess
          * \param rootNode The root node.
          * \return The format instance.
          */
-        std::shared_ptr<Format> createFormatFromXml(const std::string& xmlstring, const std::string& rootNode);
+        std::shared_ptr<Format> createFormatFromXml(const std::string& xmlstring, const std::string& rootNode) const;
 
         /**
          * \brief Add a format for a card type.
@@ -92,7 +94,7 @@ namespace logicalaccess
          */
         void retrieveFormatForCard(std::string type, std::shared_ptr<Format>* format,
                                    std::shared_ptr<Location>* location, std::shared_ptr<AccessInfo>* aiToUse,
-                                   std::shared_ptr<AccessInfo>* aiToWrite = NULL);
+                                   std::shared_ptr<AccessInfo>* aiToWrite = nullptr);
 
         /**
          * \brief Remove a format for a card type.
@@ -123,19 +125,19 @@ namespace logicalaccess
          * \brief Serialize the current object to XML.
          * \param parentNode The parent node.
          */
-        virtual void serialize(boost::property_tree::ptree& parentNode) override;
+	    void serialize(boost::property_tree::ptree& parentNode) override;
 
         /**
          * \brief UnSerialize a XML node to the current object.
          * \param node The XML node.
          */
-        virtual void unSerialize(boost::property_tree::ptree& node) override;
+	    void unSerialize(boost::property_tree::ptree& node) override;
 
         /**
          * \brief Get the default Xml Node name for this object.
          * \return The Xml node name.
          */
-        virtual std::string getDefaultXmlNodeName() const override;
+	    std::string getDefaultXmlNodeName() const override;
 
         /**
          * \brief Get the reader unit.

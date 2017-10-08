@@ -39,7 +39,7 @@ namespace logicalaccess
 
     SmartIDReaderProvider::~SmartIDReaderProvider()
     {
-        release();
+	    SmartIDReaderProvider::release();
     }
 
     void SmartIDReaderProvider::release()

@@ -19,9 +19,9 @@ namespace logicalaccess
     {
     }
 
-    string BCDByteDataType::getName() const
+	std::string BCDByteDataType::getName() const
     {
-        return string("BCD-Byte");
+        return std::string("BCD-Byte");
     }
 
     EncodingType BCDByteDataType::getType() const
@@ -31,39 +31,37 @@ namespace logicalaccess
 
     unsigned int BCDByteDataType::convert(unsigned long long data, unsigned int dataLengthBits, void* dataConverted, size_t dataConvertedLengthBytes)
     {
-        unsigned int ret = 0;
-
-        unsigned char* tmp = new unsigned char[64];
+	    unsigned char* tmp = new unsigned char[64];
         memset(tmp, 0x00, 64);
 
         unsigned int shft, i;
 
         for (shft = 0, i = 0; shft < dataLengthBits; shft += 8, ++i)
         {
-            tmp[i] = (unsigned char)(data % 10);
+            tmp[i] = static_cast<unsigned char>(data % 10);
             data /= 10;
         }
 
-        ret = DataType::addParityToBuffer(d_leftParityType, d_rightParityType, 8, NULL, i * 8, NULL, 0);
+	    const unsigned int ret = addParityToBuffer(d_leftParityType, d_rightParityType, 8, nullptr, i * 8, nullptr, 0);
 
-        if (dataConverted != NULL)
+        if (dataConverted != nullptr)
         {
             if (dataConvertedLengthBytes >= i)
             {
-                unsigned char* swb = reinterpret_cast<unsigned char*>(dataConverted);
-                unsigned char* tmpswb = new unsigned char[i];
+	            const auto swb = reinterpret_cast<unsigned char*>(dataConverted);
+	            const auto tmpswb = new unsigned char[i];
                 memset(tmpswb, 0x00, i);
 
                 for (size_t pi = i - 1, p = 0; p < i; --pi, ++p)
                 {
                     if (d_bitDataRepresentationType == ET_LITTLEENDIAN)
                     {
-                        tmp[pi] = DataType::invertBitSex(tmp[pi]);
+                        tmp[pi] = invertBitSex(tmp[pi]);
                     }
                     tmpswb[p] = tmp[pi];
                 }
 
-                DataType::addParityToBuffer(d_leftParityType, d_rightParityType, 8, tmpswb, i * 8, swb, static_cast<unsigned int>(dataConvertedLengthBytes * 8));
+                addParityToBuffer(d_leftParityType, d_rightParityType, 8, tmpswb, i * 8, swb, static_cast<unsigned int>(dataConvertedLengthBytes * 8));
                 delete[] tmpswb;
             }
             else
@@ -81,14 +79,14 @@ namespace logicalaccess
     {
         unsigned long long ret = 0;
 
-        if (data != NULL && dataLengthBytes > 0)
+        if (data != nullptr && dataLengthBytes > 0)
         {
-            size_t tmpswblen = DataType::removeParityToBuffer(d_leftParityType, d_rightParityType, 8, NULL, lengthBits, NULL, 0);
+            size_t tmpswblen = removeParityToBuffer(d_leftParityType, d_rightParityType, 8, nullptr, lengthBits, nullptr, 0);
             size_t tmpswblenBytes = (tmpswblen + 7) / 8;
             unsigned char* tmpswb = new unsigned char[tmpswblenBytes];
             memset(tmpswb, 0x00, tmpswblenBytes);
 
-            DataType::removeParityToBuffer(d_leftParityType, d_rightParityType, 8, data, lengthBits, tmpswb, static_cast<unsigned int>(tmpswblenBytes * 8));
+            removeParityToBuffer(d_leftParityType, d_rightParityType, 8, data, lengthBits, tmpswb, static_cast<unsigned int>(tmpswblenBytes * 8));
 
             size_t i;
             int coef;
@@ -97,7 +95,7 @@ namespace logicalaccess
             {
                 if (d_bitDataRepresentationType == ET_LITTLEENDIAN)
                 {
-                    tmpswb[i] = DataType::invertBitSex(tmpswb[i]);
+                    tmpswb[i] = invertBitSex(tmpswb[i]);
                 }
 
                 ret += (tmpswb[i] * ((coef == 0) ? 1 : pow(10, coef)));

@@ -68,27 +68,27 @@ namespace logicalaccess
 
 		void initCommands(unsigned char address = 0);
 
-		std::shared_ptr<OSDPChannel> poll();
+		std::shared_ptr<OSDPChannel> poll() const;
 
-		std::shared_ptr<OSDPChannel> challenge();
+		std::shared_ptr<OSDPChannel> challenge() const;
 
-		std::shared_ptr<OSDPChannel> sCrypt();
+		std::shared_ptr<OSDPChannel> sCrypt() const;
 
-		std::shared_ptr<OSDPChannel> led(s_led_cmd& led);
+		std::shared_ptr<OSDPChannel> led(s_led_cmd& led) const;
 
-		std::shared_ptr<OSDPChannel> buz(s_buz_cmd& led);
+		std::shared_ptr<OSDPChannel> buz(s_buz_cmd& led) const;
 
-		std::shared_ptr<OSDPChannel> setProfile(unsigned char profile);
+		std::shared_ptr<OSDPChannel> setProfile(unsigned char profile) const;
 
-		std::shared_ptr<OSDPChannel> getProfile();
+		std::shared_ptr<OSDPChannel> getProfile() const;
 
-		std::shared_ptr<OSDPChannel> disconnectFromSmartcard();
+		std::shared_ptr<OSDPChannel> disconnectFromSmartcard() const;
 
-		void setSecureChannel(std::shared_ptr<OSDPChannel> channel) { m_channel = channel; };
+		void setSecureChannel(std::shared_ptr<OSDPChannel> channel) { m_channel = channel; }
 
-		std::shared_ptr<OSDPChannel> getChannel() { return m_channel; };
+		std::shared_ptr<OSDPChannel> getChannel() const { return m_channel; }
 
-		std::shared_ptr<OSDPChannel> transmit();
+		std::shared_ptr<OSDPChannel> transmit() const;
 
 	private:
 

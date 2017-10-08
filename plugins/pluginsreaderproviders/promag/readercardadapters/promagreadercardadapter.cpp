@@ -23,12 +23,12 @@ namespace logicalaccess
     {
     }
 
-    std::vector<unsigned char> PromagReaderCardAdapter::adaptCommand(const std::vector<unsigned char>& command)
+    ByteVector PromagReaderCardAdapter::adaptCommand(const ByteVector& command)
     {
         return command;
     }
 
-    std::vector<unsigned char> PromagReaderCardAdapter::adaptAnswer(const std::vector<unsigned char>& answer)
+    ByteVector PromagReaderCardAdapter::adaptAnswer(const ByteVector& answer)
     {
         return answer;
     }

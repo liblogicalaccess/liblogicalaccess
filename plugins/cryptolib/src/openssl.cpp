@@ -35,7 +35,7 @@ namespace logicalaccess
             EVP_cleanup();
             ERR_free_strings();
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
-            ERR_remove_thread_state(0);
+            ERR_remove_thread_state(nullptr);
 #endif
         }
     }

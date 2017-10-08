@@ -8,9 +8,9 @@
 
 namespace logicalaccess
 {
-    std::vector<unsigned char> DeisterBufferParser::getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer)
+    ByteVector DeisterBufferParser::getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer)
     {
-        std::vector<unsigned char> result;
+        ByteVector result;
         const unsigned char STOP = 0xFE;
 
         if (circular_buffer.size() >= 10)

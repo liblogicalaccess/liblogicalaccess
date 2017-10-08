@@ -32,7 +32,7 @@ int main(int ac, char **av)
     ReaderProviderPtr provider;
     ReaderUnitPtr readerUnit;
     ChipPtr chip;
-    std::tie(provider, readerUnit, chip) = lla_test_init("EPass");
+    tie(provider, readerUnit, chip) = lla_test_init("EPass");
 
     PRINT_TIME("Chip identifier: " <<
                    logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
@@ -70,11 +70,11 @@ int main(int ac, char **av)
 
 
 	std::chrono::system_clock::time_point tp = srv->getTime(IdentityCardService::MetaData::BIRTHDATE);
-    std::time_t tp_t = std::chrono::system_clock::to_time_t(tp);
-    std::tm tm = *std::localtime(&tp_t);
+    time_t tp_t = std::chrono::system_clock::to_time_t(tp);
+    tm tm = *localtime(&tp_t);
 
     char buff[512];
-    std::strftime(buff, sizeof(buff), "%c", &tm);
+    strftime(buff, sizeof(buff), "%c", &tm);
     PRINT_TIME("Birthdate: " << buff);
 
     pcsc_test_shutdown(readerUnit);

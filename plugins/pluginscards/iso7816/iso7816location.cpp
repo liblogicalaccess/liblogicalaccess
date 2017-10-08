@@ -30,7 +30,7 @@ namespace logicalaccess
 
     void ISO7816Location::serialize(boost::property_tree::ptree& parentNode)
     {
-        std::vector<unsigned char> buf(dfname, dfname + sizeof(dfnamelen));
+        ByteVector buf(dfname, dfname + sizeof(dfnamelen));
         boost::property_tree::ptree node;
 
         node.put("DFName", BufferHelper::getHex(buf));
@@ -44,7 +44,7 @@ namespace logicalaccess
     void ISO7816Location::unSerialize(boost::property_tree::ptree& node)
     {
         std::string dfnamestr = node.get_child("DFName").get_value<std::string>();
-        std::vector<unsigned char> buf = BufferHelper::fromHexString(dfnamestr);
+        ByteVector buf = BufferHelper::fromHexString(dfnamestr);
         if (buf.size() <= 16)
         {
             dfnamelen = static_cast<int>(buf.size());

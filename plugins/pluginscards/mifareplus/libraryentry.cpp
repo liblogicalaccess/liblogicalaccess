@@ -27,58 +27,53 @@ LIBLOGICALACCESS_API char *getLibraryName()
 
 LIBLOGICALACCESS_API void getMifarePlus_SL1_4KChip(std::shared_ptr<logicalaccess::Chip> *chip)
 {
-    if (chip != NULL)
+    if (chip != nullptr)
     {
-        *chip = std::shared_ptr<logicalaccess::MifarePlusSL1_4kChip>(
-                new logicalaccess::MifarePlusSL1_4kChip());
+        *chip = std::make_shared<logicalaccess::MifarePlusSL1_4kChip>();
     }
 }
 
 
 LIBLOGICALACCESS_API void getMifarePlus_SL1_2KChip(std::shared_ptr<logicalaccess::Chip> *chip)
 {
-    if (chip != NULL)
+    if (chip != nullptr)
     {
-        *chip = std::shared_ptr<logicalaccess::MifarePlusSL1_2kChip>(
-                new logicalaccess::MifarePlusSL1_2kChip());
+        *chip = std::make_shared<logicalaccess::MifarePlusSL1_2kChip>();
     }
 }
 
 
 LIBLOGICALACCESS_API void getMifarePlus_SL0_4KChip(std::shared_ptr<logicalaccess::Chip> *chip)
 {
-    if (chip != NULL)
+    if (chip != nullptr)
     {
-        *chip = std::shared_ptr<logicalaccess::MifarePlusSL0_4kChip>(
-                new logicalaccess::MifarePlusSL0_4kChip());
+        *chip = std::make_shared<logicalaccess::MifarePlusSL0_4kChip>();
     }
 }
 
 
 LIBLOGICALACCESS_API void getMifarePlus_SL0_2KChip(std::shared_ptr<logicalaccess::Chip> *chip)
 {
-    if (chip != NULL)
+    if (chip != nullptr)
     {
-        *chip = std::shared_ptr<logicalaccess::MifarePlusSL0_2kChip>(
-                new logicalaccess::MifarePlusSL0_2kChip());
+        *chip = std::make_shared<logicalaccess::MifarePlusSL0_2kChip>();
     }
 }
 
 LIBLOGICALACCESS_API void getMifarePlus_SL3_4KChip(std::shared_ptr<logicalaccess::Chip> *chip)
 {
-    if (chip != NULL)
+    if (chip != nullptr)
     {
-        *chip = std::shared_ptr<logicalaccess::Chip>(
-                new logicalaccess::MifarePlusSL3Chip(false));
+        *chip = std::static_pointer_cast<logicalaccess::Chip
+        >(std::make_shared<logicalaccess::MifarePlusSL3Chip>(false));
     }
 }
 
 LIBLOGICALACCESS_API void getMifarePlus_SL3_2KChip(std::shared_ptr<logicalaccess::Chip> *chip)
 {
-    if (chip != NULL)
+    if (chip != nullptr)
     {
-        *chip = std::shared_ptr<logicalaccess::Chip>(
-                new logicalaccess::MifarePlusSL3Chip(true));
+        *chip = std::static_pointer_cast<logicalaccess::Chip>(std::make_shared<logicalaccess::MifarePlusSL3Chip>(true));
     }
 }
 
@@ -87,7 +82,7 @@ LIBLOGICALACCESS_API void getMifarePlus_SL3_2KChip(std::shared_ptr<logicalaccess
  */
 LIBLOGICALACCESS_API void getMifarePlusSChip(std::shared_ptr<logicalaccess::Chip> *chip)
 {
-    if (chip != NULL)
+    if (chip != nullptr)
     {
         *chip = std::make_shared<logicalaccess::MifarePlusSChip>();
     }
@@ -98,7 +93,7 @@ LIBLOGICALACCESS_API void getMifarePlusSChip(std::shared_ptr<logicalaccess::Chip
  */
 LIBLOGICALACCESS_API void getMifarePlusXChip(std::shared_ptr<logicalaccess::Chip> *chip)
 {
-    if (chip != NULL)
+    if (chip != nullptr)
     {
         *chip = std::make_shared<logicalaccess::MifarePlusXChip>();
     }
@@ -108,7 +103,7 @@ LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char *chipname, size
                                         void **getterfct)
 {
     bool ret = false;
-    if (chipname != NULL && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
+    if (chipname != nullptr && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != nullptr)
     {
         switch (index)
         {
@@ -174,6 +169,7 @@ LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char *chipname, size
                 ret = true;
 				break;
             }
+        default: ;
         }
     }
 

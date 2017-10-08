@@ -17,11 +17,11 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API ScielBufferParser : public CircularBufferParser
     {
     public:
-        ScielBufferParser() {};
+        ScielBufferParser() {}
 
-        virtual ~ScielBufferParser() {};
+        virtual ~ScielBufferParser() {}
 
-        virtual std::vector<unsigned char> getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer);
+	    ByteVector getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer) override;
     };
 }
 

@@ -11,12 +11,12 @@ class LIBLOGICALACCESS_API STidPRGReaderUnitConfiguration : public ReaderUnitCon
 
         STidPRGReaderUnitConfiguration();
 
-        virtual void resetConfiguration() override;
+	void resetConfiguration() override;
 
-        virtual void serialize(boost::property_tree::ptree &parentNode) override;
+	void serialize(boost::property_tree::ptree &parentNode) override;
 
-        virtual void unSerialize(boost::property_tree::ptree &node) override;
+	void unSerialize(boost::property_tree::ptree &node) override;
 
-        virtual std::string getDefaultXmlNodeName() const override;
+	std::string getDefaultXmlNodeName() const override;
 };
 }

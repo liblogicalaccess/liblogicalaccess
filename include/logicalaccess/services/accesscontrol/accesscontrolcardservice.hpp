@@ -28,9 +28,9 @@ namespace logicalaccess
 
         /**
          * \brief Constructor.
-         * \param cardProvider The associated chip.
+         * \param chip The associated chip.
          */
-        AccessControlCardService(std::shared_ptr<Chip> chip);
+	    explicit AccessControlCardService(std::shared_ptr<Chip> chip);
 
         /**
          * \brief Destructor.
@@ -66,7 +66,7 @@ namespace logicalaccess
 		* \brief Get the HID Wiegand format list.
 		* \return The format list.
 		*/
-		FormatList getHIDWiegandFormatList();
+		FormatList getHIDWiegandFormatList() const;
     };
 }
 

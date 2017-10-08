@@ -21,7 +21,7 @@ namespace logicalaccess
 		return versions.at(0);
 	}
 
-	std::vector<unsigned char> FeliCaCommands::read(unsigned short code, unsigned short block)
+	ByteVector FeliCaCommands::read(unsigned short code, unsigned short block)
 	{
 		std::vector<unsigned short> blocks;
 		blocks.push_back(block);
@@ -29,7 +29,7 @@ namespace logicalaccess
 		return read(code, blocks);
 	}
 	
-	std::vector<unsigned char> FeliCaCommands::read(unsigned short code, const std::vector<unsigned short>& blocks)
+	ByteVector FeliCaCommands::read(unsigned short code, const std::vector<unsigned short>& blocks)
 	{
 		std::vector<unsigned short> codes;
 		codes.push_back(code);
@@ -37,7 +37,7 @@ namespace logicalaccess
 		return read(codes, blocks);
 	}
 
-	void FeliCaCommands::write(unsigned short code, unsigned short block, const std::vector<unsigned char>& data)
+	void FeliCaCommands::write(unsigned short code, unsigned short block, const ByteVector& data)
 	{
 		std::vector<unsigned short> blocks;
 		blocks.push_back(block);
@@ -45,7 +45,7 @@ namespace logicalaccess
 		write(code, blocks, data);
 	}
 
-	void FeliCaCommands::write(unsigned short code, const std::vector<unsigned short>& blocks, const std::vector<unsigned char>& data)
+	void FeliCaCommands::write(unsigned short code, const std::vector<unsigned short>& blocks, const ByteVector& data)
 	{
 		std::vector<unsigned short> codes;
 		codes.push_back(code);

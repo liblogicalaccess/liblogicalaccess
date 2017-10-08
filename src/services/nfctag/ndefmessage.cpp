@@ -12,7 +12,7 @@
 
 namespace logicalaccess
 {
-    NdefMessage::NdefMessage(const std::vector<unsigned char>& data)
+    NdefMessage::NdefMessage(const ByteVector& data)
     {
         size_t index = 0;
 
@@ -52,18 +52,18 @@ namespace logicalaccess
 
             ++index;
             EXCEPTION_ASSERT((index + typeLength) <= data.size(), std::invalid_argument, "The buffer size is too small (3).");
-            record->setType(std::vector<unsigned char>(data.begin() + index, data.begin() + index + typeLength));
+            record->setType(ByteVector(data.begin() + index, data.begin() + index + typeLength));
             index += typeLength;
 
             if (il)
             {
                 EXCEPTION_ASSERT((index + idLength) <= data.size(), std::invalid_argument, "The buffer size is too small (4).");
-                record->setId(std::vector<unsigned char>(data.begin() + index, data.begin() + index + idLength));
+                record->setId(ByteVector(data.begin() + index, data.begin() + index + idLength));
                 index += idLength;
             }
 
             EXCEPTION_ASSERT((index + payloadLength) <= data.size(), std::invalid_argument, "The buffer size is too small (5).");
-            record->setPayload(std::vector<unsigned char>(data.begin() + index, data.begin() + index + payloadLength));
+            record->setPayload(ByteVector(data.begin() + index, data.begin() + index + payloadLength));
             index += payloadLength;
 
             m_records.push_back(record);
@@ -73,12 +73,12 @@ namespace logicalaccess
         }
     }
 
-    void NdefMessage::addMimeMediaRecord(std::string mimeType, std::vector<unsigned char> payload)
+    void NdefMessage::addMimeMediaRecord(std::string mimeType, ByteVector payload)
     {
         std::shared_ptr<NdefRecord> ndefr(new NdefRecord());
         ndefr->setTnf(TNF_MIME_MEDIA);
 
-        std::vector<unsigned char> mimeTypeVec(mimeType.begin(), mimeType.end());
+        ByteVector mimeTypeVec(mimeType.begin(), mimeType.end());
 
         ndefr->setType(mimeTypeVec);
 		ndefr->setPayload(payload);
@@ -88,16 +88,16 @@ namespace logicalaccess
 
 	void NdefMessage::addTextRecord(std::string text)
 	{
-		addTextRecord(std::vector<unsigned char>(text.begin(), text.end()));
+		addTextRecord(ByteVector(text.begin(), text.end()));
 	}
 
-    void NdefMessage::addTextRecord(std::vector<unsigned char> text, std::string encoding)
+    void NdefMessage::addTextRecord(ByteVector text, std::string encoding)
     {
         std::shared_ptr<NdefRecord> ndefr(new NdefRecord());
         ndefr->setTnf(TNF_WELL_KNOWN);
-        ndefr->setType(std::vector<unsigned char>(1, NdefType::Text));
+        ndefr->setType(ByteVector(1, Text));
 
-        std::vector<unsigned char> payload;
+        ByteVector payload;
         payload.push_back(static_cast<unsigned char>(encoding.length()));
         payload.insert(payload.end(), encoding.begin(), encoding.end());
         payload.insert(payload.end(), text.begin(), text.end());
@@ -111,9 +111,9 @@ namespace logicalaccess
     {
         std::shared_ptr<NdefRecord> ndefr(new NdefRecord());
         ndefr->setTnf(TNF_WELL_KNOWN);
-        ndefr->setType(std::vector<unsigned char>(1, NdefType::Uri));
+        ndefr->setType(ByteVector(1, Uri));
 
-        std::vector<unsigned char> payload;
+        ByteVector payload;
         payload.push_back(static_cast<unsigned char>(uritype));
         payload.insert(payload.end(), uri.begin(), uri.end());
 
@@ -129,13 +129,13 @@ namespace logicalaccess
         m_records.push_back(ndefr);
     }
 
-    std::vector<unsigned char> NdefMessage::encode()
+    ByteVector NdefMessage::encode()
     {
-        std::vector<unsigned char> data;
+        ByteVector data;
 
         for (std::vector<std::shared_ptr<NdefRecord> >::iterator it = m_records.begin(); it != m_records.end(); ++it)
         {
-            std::vector<unsigned char> record = (*it)->encode((it == m_records.begin()), (std::next(it) == m_records.end()));
+            ByteVector record = (*it)->encode((it == m_records.begin()), (next(it) == m_records.end()));
             data.insert(data.end(), record.begin(), record.end());
         }
         return data;
@@ -175,9 +175,9 @@ namespace logicalaccess
         return "NdefMessage";
     }
 
-    std::shared_ptr<NdefMessage> NdefMessage::TLVToNdefMessage(std::vector<unsigned char> tlv)
+    std::shared_ptr<NdefMessage> NdefMessage::TLVToNdefMessage(ByteVector tlv)
     {
-        std::shared_ptr<logicalaccess::NdefMessage> ndef;
+        std::shared_ptr<NdefMessage> ndef;
         unsigned short i = 0;
         while (i + 1u < tlv.size())
         {
@@ -193,7 +193,7 @@ namespace logicalaccess
             case 0x03: // Ndef message
                 if (tlv.size() >= i + 1u + tlv[i])
                 {
-                    std::vector<unsigned char> msgdata(tlv.begin() + i + 1, tlv.begin() + i + 1 + tlv[i]);
+                    ByteVector msgdata(tlv.begin() + i + 1, tlv.begin() + i + 1 + tlv[i]);
                     ndef.reset(new NdefMessage(msgdata));
                     i += tlv[i];
                 }
@@ -205,6 +205,7 @@ namespace logicalaccess
                 // Just leave
                 i = static_cast<unsigned short>(tlv.size());
                 break;
+            default: ;
             }
 
             i += 1;
@@ -212,11 +213,11 @@ namespace logicalaccess
         return ndef;
     }
 
-    std::vector<unsigned char> NdefMessage::NdefMessageToTLV(std::shared_ptr<NdefMessage> message)
+    ByteVector NdefMessage::NdefMessageToTLV(std::shared_ptr<NdefMessage> message)
     {
-        std::vector<unsigned char> data;
+        ByteVector data;
         data.push_back(0x03); // T = NDEF
-        std::vector<unsigned char> recordsData = message->encode();
+        ByteVector recordsData = message->encode();
         data.push_back(static_cast<unsigned char>(recordsData.size()));
         data.insert(data.end(), recordsData.begin(), recordsData.end());
         data.push_back(0xFE); // T = Terminator

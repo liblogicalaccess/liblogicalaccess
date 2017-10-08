@@ -15,7 +15,7 @@ namespace logicalaccess
             return DESSymmetricKey(size);
         }
 
-        DESSymmetricKey DESSymmetricKey::createFromData(const std::vector<unsigned char>& data)
+        DESSymmetricKey DESSymmetricKey::createFromData(const ByteVector& data)
         {
             return DESSymmetricKey(data);
         }
@@ -25,7 +25,7 @@ namespace logicalaccess
         {
         }
 
-        DESSymmetricKey::DESSymmetricKey(const std::vector<unsigned char>& _data) :
+        DESSymmetricKey::DESSymmetricKey(const ByteVector& _data) :
             SymmetricKey(_data)
         {
         }

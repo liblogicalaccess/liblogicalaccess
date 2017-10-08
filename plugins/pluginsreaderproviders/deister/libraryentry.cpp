@@ -23,7 +23,7 @@ extern "C"
 
     LIBLOGICALACCESS_API void getDeisterReader(std::shared_ptr<logicalaccess::ReaderProvider>* rp)
     {
-        if (rp != NULL)
+        if (rp != nullptr)
         {
             *rp = logicalaccess::DeisterReaderProvider::getSingletonInstance();
         }
@@ -32,7 +32,7 @@ extern "C"
     LIBLOGICALACCESS_API bool getReaderInfoAt(unsigned int index, char* readername, size_t readernamelen, void** getterfct)
     {
         bool ret = false;
-        if (readername != NULL && readernamelen == PLUGINOBJECT_MAXLEN && getterfct != NULL)
+        if (readername != nullptr && readernamelen == PLUGINOBJECT_MAXLEN && getterfct != nullptr)
         {
             switch (index)
             {
@@ -43,6 +43,7 @@ extern "C"
                 ret = true;
             }
                 break;
+            default: ;
             }
         }
 

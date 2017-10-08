@@ -43,9 +43,7 @@ namespace logicalaccess
             size_t length = (formatret->getDataLength() + 7) / 8;
             if (length > 0)
             {
-				std::vector<unsigned char> formatBuf;
-
-				formatBuf = storage->readData(location, aiToUse, length, CB_AUTOSWITCHAREA);
+	            ByteVector formatBuf = storage->readData(location, aiToUse, length, CB_AUTOSWITCHAREA);
 
 				formatret->setLinearData(&formatBuf[0], formatBuf.size());
 				ret = true;
@@ -67,7 +65,7 @@ namespace logicalaccess
         if (storage)
         {
             size_t length = (format->getDataLength() + 7) / 8;
-			std::vector<unsigned char> formatBuf(length, 0x00);
+			ByteVector formatBuf(length, 0x00);
 
             format->getLinearData(&formatBuf[0], formatBuf.size());
             storage->writeData(location, aiToUse, aiToWrite, formatBuf, CB_AUTOSWITCHAREA);
@@ -77,17 +75,17 @@ namespace logicalaccess
 		return true;
     }
 
-	FormatList AccessControlCardService::getHIDWiegandFormatList()
+	FormatList AccessControlCardService::getHIDWiegandFormatList() const
 	{
 		FormatList formats;
 
-		formats.push_back(std::shared_ptr<Wiegand26Format>(new Wiegand26Format()));
-		formats.push_back(std::shared_ptr<Wiegand34Format>(new Wiegand34Format()));
-		formats.push_back(std::shared_ptr<Wiegand34WithFacilityFormat>(new Wiegand34WithFacilityFormat()));
-		formats.push_back(std::shared_ptr<Wiegand37Format>(new Wiegand37Format()));
-		formats.push_back(std::shared_ptr<Wiegand37WithFacilityFormat>(new Wiegand37WithFacilityFormat()));
-		formats.push_back(std::shared_ptr<DataClockFormat>(new DataClockFormat()));
-		formats.push_back(std::shared_ptr<Corporate1000Format>(new Corporate1000Format()));
+		formats.push_back(std::make_shared<Wiegand26Format>());
+		formats.push_back(std::make_shared<Wiegand34Format>());
+		formats.push_back(std::make_shared<Wiegand34WithFacilityFormat>());
+		formats.push_back(std::make_shared<Wiegand37Format>());
+		formats.push_back(std::make_shared<Wiegand37WithFacilityFormat>());
+		formats.push_back(std::make_shared<DataClockFormat>());
+		formats.push_back(std::make_shared<Corporate1000Format>());
 
 		return formats;
 	}

@@ -4,7 +4,7 @@
 #include <cstring>
 
 using namespace logicalaccess;
-using namespace logicalaccess::iks;
+using namespace iks;
 
 AesEncryptCommand::AesEncryptCommand()
     : decrypt_(false)
@@ -33,7 +33,7 @@ std::vector<uint8_t> AesEncryptCommand::serialize() const
     needle += payload_.size();
 
     memcpy(&header[needle], &iv_[0], iv_.size());
-    needle += iv_.size();
+    //needle += iv_.size();
     return header;
 }
 

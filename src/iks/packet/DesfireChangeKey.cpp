@@ -2,7 +2,7 @@
 #include <cstring>
 
 using namespace logicalaccess;
-using namespace logicalaccess::iks;
+using namespace iks;
 
 DesfireChangeKeyCommand::DesfireChangeKeyCommand()
     : flag_(0)
@@ -47,7 +47,7 @@ std::vector<uint8_t> DesfireChangeKeyCommand::serialize() const
 
     tmp = newkey_divinfo_.serialize();
     memcpy(&header[needle], &tmp[0], tmp.size());
-    needle += tmp.size();
+    //needle += tmp.size();
 
     return header;
 }

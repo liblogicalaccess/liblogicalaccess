@@ -28,7 +28,7 @@ namespace logicalaccess
     {
     public:
         virtual ~MifarePlusSL0Commands() {}
-        int detectSecurityLevel();
+        int detectSecurityLevel() const;
 
         /**
          * Probe the card, attempting to detect if it *potentially* is a level 3 card.
@@ -37,7 +37,7 @@ namespace logicalaccess
          * If the card is SL3 it should succeed (even though we won't continue the authentication)
          * otherwise it will fail.
          */
-        bool probeLevel3();
+        bool probeLevel3() const;
 
         /**
          * Attempt to WRITE PERSO on the card to check if it is a level 0 card.
@@ -45,44 +45,44 @@ namespace logicalaccess
          * @warning This is a "destructive operation" because if it succeed it will
          * rewrite a block on the card, potentially disrupting the user configuration.
          */
-        bool isLevel0();
+        bool isLevel0() const;
 
         /**
          * Issue the WRITE PERSO command, targeting location at
          * hex_addr_1 hex_addr_2
          */
         bool writePerso(uint8_t hex_addr_1, uint8_t hex_addr_2,
-                        const std::array<uint8_t, 16> &data);
+                        const std::array<uint8_t, 16> &data) const;
 
         /**
          * WRITE PERSO using an enum to chose the location.
          */
         bool writePerso(const MifarePlusBlockKeyLocation &location,
-                        const std::array<uint8_t, 16> &data);
+                        const std::array<uint8_t, 16> &data) const;
 
         /**
          * Send the COMMIT PERSO command, upgrading the card to level 1 or level 3
          * if it succeed.
          */
-        bool commitPerso();
+        bool commitPerso() const;
 
         /**
          * Attempt to deduce if the card is 4K or not.
          */
-        bool is4K();
+        bool is4K() const;
 
     protected:
         /**
          * Check whether or not this block is a sector trailer block.
          */
-        bool is_trailing_block(uint8_t hex_addr1, uint8_t hex_addr2);
+		static bool is_trailing_block(uint8_t hex_addr1, uint8_t hex_addr2);
 
         /**
          * Verify that the access bits are valid.
          * This is a partial verification and does not (yet ?) guarantee
          * that the access conditions are fully safe.
          */
-        bool validate_access_bytes(const std::array<uint8_t, 16> &data);
+		static bool validate_access_bytes(const std::array<uint8_t, 16> &data);
     };
 }
 

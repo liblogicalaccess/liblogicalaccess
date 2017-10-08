@@ -14,7 +14,7 @@ namespace logicalaccess
     IdOnDemandReaderUnitConfiguration::IdOnDemandReaderUnitConfiguration()
         : ReaderUnitConfiguration(READER_IDONDEMAND)
     {
-        resetConfiguration();
+	    IdOnDemandReaderUnitConfiguration::resetConfiguration();
     }
 
     IdOnDemandReaderUnitConfiguration::~IdOnDemandReaderUnitConfiguration()

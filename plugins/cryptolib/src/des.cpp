@@ -31,7 +31,7 @@ const struct ltc_cipher_descriptor des_desc =
     &des_test,
     &des_done,
     &des_keysize,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
 };
 
 const struct ltc_cipher_descriptor des3_desc =
@@ -45,7 +45,7 @@ const struct ltc_cipher_descriptor des3_desc =
     &des3_test,
     &des3_done,
     &des3_keysize,
-    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+	nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
 };
 
 static const ulong32 bytebit[8] =
@@ -1302,7 +1302,7 @@ static void _deskey(const unsigned char *key, short edf, ulong32 *keyout)
 static void deskey(const unsigned char *key, short edf, ulong32 *keyout)
 #endif
 {
-    ulong32 i, j, l, m, n, kn[32];
+    ulong32 j, l, m, kn[32];
     unsigned char pc1m[56], pcr[56];
 
     for (j = 0; j < 56; j++) {
@@ -1311,14 +1311,14 @@ static void deskey(const unsigned char *key, short edf, ulong32 *keyout)
         pc1m[j] = (unsigned char)((key[l >> 3U] & bytebit[m]) == bytebit[m] ? 1 : 0);
     }
 
-    for (i = 0; i < 16; i++) {
+    for (ulong32 i = 0; i < 16; i++) {
         if (edf == DE1) {
             m = (15 - i) << 1;
         }
         else {
             m = i << 1;
         }
-        n = m + 1;
+        ulong32 n = m + 1;
         kn[m] = kn[n] = 0L;
         for (j = 0; j < 28; j++) {
             l = j + (ulong32)totrot[i];
@@ -1365,12 +1365,10 @@ static void _cookey(const ulong32 *raw1, ulong32 *keyout)
 static void cookey(const ulong32 *raw1, ulong32 *keyout)
 #endif
 {
-    ulong32 *cook;
-    ulong32 dough[32];
-    int i;
+	ulong32 dough[32];
 
-    cook = dough;
-    for (i = 0; i < 16; i++, raw1++)
+	ulong32 *cook = dough;
+    for (int i = 0; i < 16; i++, raw1++)
     {
         const ulong32 *raw0 = raw1++;
         *cook = (*raw0 & 0x00fc0000L) << 6;
@@ -1400,10 +1398,9 @@ static void desfunc(ulong32 *block, const ulong32 *keys)
 static void _desfunc(ulong32 *block, const ulong32 *keys)
 #endif
 {
-    ulong32 work, right, leftt;
-    int cur_round;
+    ulong32 right, leftt;
 
-    leftt = block[0];
+	leftt = block[0];
     right = block[1];
 
 #ifdef LTC_SMALL_CODE
@@ -1431,22 +1428,21 @@ static void _desfunc(ulong32 *block, const ulong32 *keys)
     leftt = ROLc(leftt, 1);
 #else
     {
-        ulong64 tmp;
-        tmp = des_ip[0][byte(leftt, 0)] ^
-            des_ip[1][byte(leftt, 1)] ^
-            des_ip[2][byte(leftt, 2)] ^
-            des_ip[3][byte(leftt, 3)] ^
-            des_ip[4][byte(right, 0)] ^
-            des_ip[5][byte(right, 1)] ^
-            des_ip[6][byte(right, 2)] ^
-            des_ip[7][byte(right, 3)];
+	    ulong64 tmp = des_ip[0][byte(leftt, 0)] ^
+		    des_ip[1][byte(leftt, 1)] ^
+		    des_ip[2][byte(leftt, 2)] ^
+		    des_ip[3][byte(leftt, 3)] ^
+		    des_ip[4][byte(right, 0)] ^
+		    des_ip[5][byte(right, 1)] ^
+		    des_ip[6][byte(right, 2)] ^
+		    des_ip[7][byte(right, 3)];
         leftt = (ulong32)(tmp >> 32);
         right = (ulong32)(tmp & 0xFFFFFFFFUL);
     }
 #endif
 
-    for (cur_round = 0; cur_round < 8; cur_round++) {
-        work = RORc(right, 4) ^ *keys++;
+    for (int cur_round = 0; cur_round < 8; cur_round++) {
+        ulong32 work = RORc(right, 4) ^ *keys++;
         leftt ^= SP7[work & 0x3fL]
             ^ SP5[(work >> 8) & 0x3fL]
             ^ SP3[(work >> 16) & 0x3fL]
@@ -1490,15 +1486,14 @@ static void _desfunc(ulong32 *block, const ulong32 *keys)
     right ^= (work << 4);
 #else
     {
-        ulong64 tmp;
-        tmp = des_fp[0][byte(leftt, 0)] ^
-            des_fp[1][byte(leftt, 1)] ^
-            des_fp[2][byte(leftt, 2)] ^
-            des_fp[3][byte(leftt, 3)] ^
-            des_fp[4][byte(right, 0)] ^
-            des_fp[5][byte(right, 1)] ^
-            des_fp[6][byte(right, 2)] ^
-            des_fp[7][byte(right, 3)];
+	    ulong64 tmp = des_fp[0][byte(leftt, 0)] ^
+		    des_fp[1][byte(leftt, 1)] ^
+		    des_fp[2][byte(leftt, 2)] ^
+		    des_fp[3][byte(leftt, 3)] ^
+		    des_fp[4][byte(right, 0)] ^
+		    des_fp[5][byte(right, 1)] ^
+		    des_fp[6][byte(right, 2)] ^
+		    des_fp[7][byte(right, 3)];
         leftt = (ulong32)(tmp >> 32);
         right = (ulong32)(tmp & 0xFFFFFFFFUL);
     }
@@ -1793,11 +1788,11 @@ int des_test(void)
                     http://www.ecs.soton.ac.uk/~prw99r/ez438/vectors.txt
                     ***/
     };
-    int i, y;
+    int y;
     unsigned char tmp[8];
     symmetric_key des;
 
-    for (i = 0; i < (int)(sizeof(cases) / sizeof(cases[0])); i++)
+    for (int i = 0; i < (int)(sizeof(cases) / sizeof(cases[0])); i++)
     {
         int err;
         if ((err = des_setup(cases[i].key, 8, 0, &des)) != CRYPT_OK) {
@@ -1868,7 +1863,7 @@ int des3_test(void)
 void des_done(symmetric_key *skey)
 {
     // Reset scheduled key memory
-    if (skey != NULL)
+    if (skey != nullptr)
     {
         memset(skey->des.dk, 0x00, sizeof(skey->des.dk));
         memset(skey->des.ek, 0x00, sizeof(skey->des.ek));
@@ -1881,7 +1876,7 @@ void des_done(symmetric_key *skey)
 void des3_done(symmetric_key *skey)
 {
     // Reset scheduled key memory
-    if (skey != NULL)
+    if (skey != nullptr)
     {
         memset(skey->des3.dk, 0x00, sizeof(skey->des3.dk));
         memset(skey->des3.ek, 0x00, sizeof(skey->des3.ek));
@@ -1925,12 +1920,10 @@ static unsigned short	crc_tabkermit[256];
 
 static void init_crckermit_tab(void)
 {
-    int i, j;
-
-    for (i = 0; i < 256; i++)
+	for (int i = 0; i < 256; i++)
     {
         unsigned short crc = 0, c = (unsigned short)i;;
-        for (j = 0; j < 8; j++)
+        for (int j = 0; j < 8; j++)
         {
             if ((crc ^ c) & 0x0001) crc = (crc >> 1) ^ 0x8408;
             else                      crc = crc >> 1;
@@ -2018,12 +2011,11 @@ void ComputeCrcKermit(const unsigned char *Data, size_t Length, unsigned char *T
 
 unsigned short UpdateCRCKermit(unsigned short crc, char c)
 {
-    unsigned short tmp, short_c;
-    short_c = 0x00ff & (unsigned short)c;
+	unsigned short short_c = 0x00ff & (unsigned short)c;
 
     if (!crc_tabkermit_init) init_crckermit_tab();
 
-    tmp = crc       ^ short_c;
+    unsigned short tmp = crc       ^ short_c;
     crc = (crc >> 8) ^ crc_tabkermit[tmp & 0xff];
 
     return crc;

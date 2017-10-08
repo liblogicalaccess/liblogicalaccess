@@ -29,8 +29,6 @@ namespace logicalaccess
          * \brief Destructor.
          */
         virtual ~Mifare1KChip();
-
-    protected:
     };
 }
 

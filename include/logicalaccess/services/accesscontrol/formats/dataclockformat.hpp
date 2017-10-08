@@ -34,13 +34,13 @@ namespace logicalaccess
         /**
          * \brief Get the format length in bits
          */
-        virtual unsigned int getDataLength() const;
+	    unsigned int getDataLength() const override;
 
         /**
          * \brief Get the format name
          * \return The format name
          */
-        virtual string getName() const;
+		std::string getName() const override;
 
         /**
          * \brief Get the Data Clock right parity for a buffer and a location.
@@ -51,7 +51,7 @@ namespace logicalaccess
          * \param positionLength Number of location contains in the locations buffer.
          * \return The parity.
          */
-        unsigned char getRightParity(const void* data, size_t dataLengthBytes, ParityType type, unsigned int* locations, size_t positionLength) const;
+		static unsigned char getRightParity(const void* data, size_t dataLengthBytes, ParityType type, unsigned int* locations, size_t positionLength);
 
         /**
          * \brief Get the 1 Data Clock right parity for a buffer.
@@ -59,7 +59,7 @@ namespace logicalaccess
          * \param dataLengthBytes The buffer length in bytes.
          * \return The parity.
          */
-        unsigned char getRightParity1(const void* data, size_t dataLengthBytes) const;
+		static unsigned char getRightParity1(const void* data, size_t dataLengthBytes);
 
         /**
          * \brief Get the 2 Data Clock right parity for a buffer.
@@ -67,7 +67,7 @@ namespace logicalaccess
          * \param dataLengthBytes The buffer length in bytes.
          * \return The parity.
          */
-        unsigned char getRightParity2(const void* data, size_t dataLengthBytes) const;
+		static unsigned char getRightParity2(const void* data, size_t dataLengthBytes);
 
         /**
          * \brief Get the 3 Data Clock right parity for a buffer.
@@ -75,7 +75,7 @@ namespace logicalaccess
          * \param dataLengthBytes The buffer length in bytes.
          * \return The parity.
          */
-        unsigned char getRightParity3(const void* data, size_t dataLengthBytes) const;
+        static unsigned char getRightParity3(const void* data, size_t dataLengthBytes);
 
         /**
          * \brief Get the 4 Data Clock right parity for a buffer.
@@ -83,21 +83,21 @@ namespace logicalaccess
          * \param dataLengthBytes The buffer length in bytes.
          * \return The parity.
          */
-        unsigned char getRightParity4(const void* data, size_t dataLengthBytes) const;
+		static unsigned char getRightParity4(const void* data, size_t dataLengthBytes);
 
         /**
          * \brief Get linear data.
          * \param data Where to put data
          * \param dataLengthBytes Length in byte of data
          */
-        virtual void getLinearData(void* data, size_t dataLengthBytes) const;
+	    void getLinearData(void* data, size_t dataLengthBytes) const override;
 
         /**
          * \brief Set linear data
          * \param data Where to get data
          * \param dataLengthBytes Length of data in bytes
          */
-        virtual void setLinearData(const void* data, size_t dataLengthBytes);
+	    void setLinearData(const void* data, size_t dataLengthBytes) override;
 
         /**
          * \brief Get the format linear data in bytes.
@@ -105,47 +105,46 @@ namespace logicalaccess
          * \param dataLengthBytes The data buffer length
          * \return The format linear data length.
          */
-        virtual size_t getFormatLinearData(void* data, size_t dataLengthBytes) const;
+	    size_t getFormatLinearData(void* data, size_t dataLengthBytes) const override;
 
         /**
          * \brief Set the format linear data in bytes.
          * \param data The data buffer
          * \param indexByte The data offset
          */
-        virtual void setFormatLinearData(const void* data, size_t* indexByte);
+	    void setFormatLinearData(const void* data, size_t* indexByte) override;
 
         /**
          * \brief Get the format type.
          * \return The format type.
          */
-        virtual FormatType getType() const;
+	    FormatType getType() const override;
 
         /**
          * \brief Serialize the current object to XML.
          * \param parentNode The parent node.
          */
-        virtual void serialize(boost::property_tree::ptree& parentNode);
+	    void serialize(boost::property_tree::ptree& parentNode) override;
 
         /**
          * \brief UnSerialize a XML node to the current object.
          * \param node The XML node.
          */
-        virtual void unSerialize(boost::property_tree::ptree& node);
+	    void unSerialize(boost::property_tree::ptree& node) override;
 
         /**
          * \brief Get the default Xml Node name for this object.
          * \return The Xml node name.
          */
-        virtual std::string getDefaultXmlNodeName() const;
+		std::string getDefaultXmlNodeName() const override;
 
         /**
          * \brief Check the current format skeleton with another format.
          * \param format The format to check.
          * \return True on success, false otherwise.
          */
-        virtual bool checkSkeleton(std::shared_ptr<Format> format) const;
+	    bool checkSkeleton(std::shared_ptr<Format> format) const override;
 
-    protected:
     };
 }
 
