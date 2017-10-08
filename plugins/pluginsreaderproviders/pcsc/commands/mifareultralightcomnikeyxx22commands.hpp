@@ -33,6 +33,10 @@ namespace logicalaccess
         * \param authkey The authentication key.
         */
         virtual void authenticate(std::shared_ptr<TripleDESKey> authkey);
+
+		std::shared_ptr<MifareUltralightChip> getMifareUltralightChip();
+
+		void writePage(int page, const std::vector<unsigned char>& buf);
     };
 }
 

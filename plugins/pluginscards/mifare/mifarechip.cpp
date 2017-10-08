@@ -20,6 +20,11 @@ namespace logicalaccess
     {
     }
 
+	MifareChip::MifareChip(std::string cardtype)
+		: Chip(cardtype), d_nbSectors(16)
+	{
+	}
+
     MifareChip::MifareChip(std::string cardtype, unsigned int nbSectors) :
         Chip(cardtype), d_nbSectors(nbSectors)
     {

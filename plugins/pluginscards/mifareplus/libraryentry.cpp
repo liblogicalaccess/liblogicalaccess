@@ -4,6 +4,8 @@
 #include "MifarePlusSL1Chip.hpp"
 #include "MifarePlusSL0Chip.hpp"
 #include "MifarePlusSL3Chip.hpp"
+#include "mifareplusschip.hpp"
+#include "mifareplusxchip.hpp"
 
 #ifdef _MSC_VER
 #include "logicalaccess/msliblogicalaccess.h"
@@ -87,8 +89,7 @@ LIBLOGICALACCESS_API void getMifarePlusSChip(std::shared_ptr<logicalaccess::Chip
 {
     if (chip != NULL)
     {
-        *chip = std::shared_ptr<logicalaccess::MifarePlusChip>(
-                new logicalaccess::MifarePlusChip("MifarePlusS"));
+        *chip = std::make_shared<logicalaccess::MifarePlusSChip>();
     }
 }
 
@@ -99,8 +100,7 @@ LIBLOGICALACCESS_API void getMifarePlusXChip(std::shared_ptr<logicalaccess::Chip
 {
     if (chip != NULL)
     {
-        *chip = std::shared_ptr<logicalaccess::MifarePlusChip>(
-                new logicalaccess::MifarePlusChip("MifarePlusX"));
+        *chip = std::make_shared<logicalaccess::MifarePlusXChip>();
     }
 }
 

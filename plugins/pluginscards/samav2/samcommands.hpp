@@ -53,7 +53,7 @@ namespace logicalaccess
     class DESFireKey;
 
     template <typename T, typename S>
-    class LIBLOGICALACCESS_API SAMCommands : public virtual Commands
+    class LIBLOGICALACCESS_API SAMCommands : public Commands
     {
     public:
 		SAMCommands() {}

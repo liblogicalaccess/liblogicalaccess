@@ -19,14 +19,11 @@ namespace logicalaccess
 #define	CHIP_MIFAREPLUS4K			"MifarePlus4K"
 #define	CHIP_MIFAREPLUS2K			"MifarePlus2K"
 
-    class LIBLOGICALACCESS_API MifarePlusChip : public virtual Chip
+    class LIBLOGICALACCESS_API MifarePlusChip : public IChip
     {
     public:
         ~MifarePlusChip() = default;
         MifarePlusChip() { };
-        MifarePlusChip(const std::string &cardtype) :
-                Chip(cardtype) {};
-        using Chip::shared_from_this;
         virtual int getSecurityLevel() const { return -1 ; } ;
 
         /**

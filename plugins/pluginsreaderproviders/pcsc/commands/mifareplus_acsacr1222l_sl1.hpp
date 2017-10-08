@@ -8,7 +8,7 @@
 
 namespace logicalaccess
 {
-    class MifarePlusACSACR1222L_SL1Commands : public virtual MifarePlusSL1PCSCCommands
+    class MifarePlusACSACR1222L_SL1Commands : public MifarePlusSL1PCSCCommands
     {
     public:
         virtual bool AESAuthenticate(std::shared_ptr<AES128Key> ptr,

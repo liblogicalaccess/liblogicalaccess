@@ -90,11 +90,12 @@ namespace logicalaccess
     }DESFireISOAlgorithm;
 
     class DESFireEV1Chip;
+	class DESFireEV1Location;
 
     /**
      * \brief The DESFire EV1 base commands class.
      */
-    class LIBLOGICALACCESS_API DESFireEV1Commands : public virtual DESFireCommands
+    class LIBLOGICALACCESS_API DESFireEV1Commands : public ICommands
     {
     public:
 
@@ -102,7 +103,7 @@ namespace logicalaccess
          * \brief Select an application.
          * \param location The DESFire location
          */
-        virtual void selectApplication(std::shared_ptr<DESFireLocation> location);
+        virtual void selectApplication(std::shared_ptr<DESFireEV1Location> location);
 
         /**
          * \brief Create a new application.
@@ -110,7 +111,7 @@ namespace logicalaccess
          * \param settings Key settings
          * \param maxNbKeys Maximum number of keys
          */
-        virtual void createApplication(std::shared_ptr<DESFireLocation> location, DESFireKeySettings settings, unsigned char maxNbKeys);
+        virtual void createApplication(std::shared_ptr<DESFireEV1Location> location, DESFireKeySettings settings, unsigned char maxNbKeys);
 
         /**
          * \brief Create a new data file in the current application.
@@ -118,7 +119,7 @@ namespace logicalaccess
          * \param accessRights The file access rights
          * \param fileSize The file size.
          */
-        virtual void createStdDataFile(std::shared_ptr<DESFireLocation> location, DESFireAccessRights accessRights, unsigned int fileSize);
+        virtual void createStdDataFile(std::shared_ptr<DESFireEV1Location> location, DESFireAccessRights accessRights, unsigned int fileSize);
 
         /**
          * \brief Get the value of available bytes.
@@ -137,6 +138,12 @@ namespace logicalaccess
          * \return The ISO FID list.
          */
         virtual std::vector<unsigned short> getISOFileIDs() = 0;
+
+		/**
+		* \brief Select an application.
+		* \param aid The Application ID
+		*/
+		virtual void selectApplication(unsigned int aid) = 0;
 
         /**
          * \brief Create a new application.

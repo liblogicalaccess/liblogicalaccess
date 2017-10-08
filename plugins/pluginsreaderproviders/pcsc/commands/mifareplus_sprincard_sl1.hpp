@@ -58,7 +58,7 @@ namespace logicalaccess
     };
 
     class MifarePlusSpringcardSL1Commands
-        : public virtual MifarePlusSL1PCSCCommands
+        : public MifarePlusSL1PCSCCommands
          //public MifareSpringCardCommands
     {
       public:

@@ -7,6 +7,7 @@
 #ifndef LOGICALACCESS_COMMANDS_HPP
 #define LOGICALACCESS_COMMANDS_HPP
 
+#include "logicalaccess/cards/icommands.hpp"
 #include "logicalaccess/cards/readercardadapter.hpp"
 
 namespace logicalaccess
@@ -26,7 +27,7 @@ namespace logicalaccess
          * \brief Get the chip.
          * \return The chip.
          */
-        std::shared_ptr<Chip> getChip() const { return d_chip.lock(); };
+        virtual std::shared_ptr<Chip> getChip() const { return d_chip.lock(); };
 
         /**
          * \brief Set the chip.

@@ -21,7 +21,7 @@ namespace logicalaccess
     /**
      * \brief The Mifare base chip class.
      */
-    class LIBLOGICALACCESS_API MifareChip : public virtual Chip
+    class LIBLOGICALACCESS_API MifareChip : public Chip
     {
     public:
 
@@ -29,6 +29,11 @@ namespace logicalaccess
          * \brief Constructor for generic Mifare.
          */
         MifareChip();
+
+		/**
+		* \brief Constructor for generic Mifare.
+		*/
+		MifareChip(std::string cardtype);
 
         /**
          * \brief Destructor.

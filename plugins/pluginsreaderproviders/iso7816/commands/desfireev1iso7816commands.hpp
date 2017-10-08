@@ -23,7 +23,7 @@ namespace logicalaccess
      */
     class LIBLOGICALACCESS_API DESFireEV1ISO7816Commands : public DESFireISO7816Commands
 #ifndef SWIG
-	, public virtual DESFireEV1Commands, public ISO7816ISO7816Commands
+	, public DESFireEV1Commands
 #endif
     {
     public:
@@ -297,6 +297,20 @@ namespace logicalaccess
          */
         virtual void iks_iso_authenticate(std::shared_ptr<DESFireKey> key, bool isMasterCardKey, uint8_t keyno);
 
+		virtual void selectApplication(unsigned int aid);
+
+		/**
+		* \brief Get the chip.
+		* \return The chip.
+		*/
+		std::shared_ptr<Chip> getChip() const override { return DESFireISO7816Commands::getChip(); }
+
+		/**
+		* \brief Get the reader/card adapter.
+		* \return The reader/card adapter.
+		*/
+		std::shared_ptr<ReaderCardAdapter> getReaderCardAdapter() const override { return DESFireISO7816Commands::getReaderCardAdapter(); }
+
     protected:
 
 		/**
@@ -377,6 +391,8 @@ namespace logicalaccess
          * Called after authentication was performed
          */
         void onAuthenticated();
+
+		std::shared_ptr<ISO7816ISO7816Commands> getISO7816ISO7816Commands() { return std::make_shared<ISO7816ISO7816Commands>(); }
 
     protected:
     };

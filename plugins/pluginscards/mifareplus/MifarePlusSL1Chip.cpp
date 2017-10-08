@@ -11,19 +11,17 @@ using namespace logicalaccess;
 
 
 MifarePlusSL1Chip::MifarePlusSL1Chip(const std::string &cardType, int nb_sectors) :
-        MifareChip(cardType, nb_sectors)
+	MifareChip(cardType)
 {
 }
 
 logicalaccess::MifarePlusSL1_2kChip::MifarePlusSL1_2kChip() :
-        Chip("MifarePlus_SL1_2K"),
         MifarePlusSL1Chip("MifarePlus_SL1_2K", 32)
 {
 
 }
 
 logicalaccess::MifarePlusSL1_4kChip::MifarePlusSL1_4kChip() :
-        Chip("MifarePlus_SL1_4K"),
         MifarePlusSL1Chip("MifarePlus_SL1_4K", 40)
 {
 

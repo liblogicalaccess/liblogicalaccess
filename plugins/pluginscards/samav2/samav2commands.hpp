@@ -12,7 +12,7 @@
 namespace logicalaccess
 {
     template <typename T, typename S>
-    class LIBLOGICALACCESS_API SAMAV2Commands : public virtual SAMCommands < T, S >
+    class LIBLOGICALACCESS_API SAMAV2Commands : public ICommands
     {
     public:
         virtual std::vector<unsigned char> dumpSecretKey(unsigned char keyno, unsigned char keyversion, std::vector<unsigned char> divInpu) = 0;

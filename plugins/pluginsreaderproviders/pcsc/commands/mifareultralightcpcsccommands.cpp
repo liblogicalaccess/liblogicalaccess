@@ -42,6 +42,16 @@ namespace logicalaccess
 	{
 	}
 
+	std::shared_ptr<MifareUltralightChip> MifareUltralightCPCSCCommands::getMifareUltralightChip()
+	{
+		return MifareUltralightCommands::getMifareUltralightChip();
+	}
+
+	void MifareUltralightCPCSCCommands::writePage(int page, const std::vector<unsigned char>& buf)
+	{
+		MifareUltralightPCSCCommands::writePage(page, buf);
+	}
+
     std::vector<unsigned char> MifareUltralightCPCSCCommands::sendGenericCommand(const std::vector<unsigned char>& data)
     {
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not implemented function call.");

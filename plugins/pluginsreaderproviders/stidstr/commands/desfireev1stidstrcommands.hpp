@@ -7,6 +7,7 @@
 #ifndef LOGICALACCESS_DESFIREEV1STIDSTRCOMMANDS_HPP
 #define LOGICALACCESS_DESFIREEV1STIDSTRCOMMANDS_HPP
 
+#include "desfire/desfireev1chip.hpp"
 #include "desfire/desfireev1commands.hpp"
 #include "../readercardadapters/stidstrreadercardadapter.hpp"
 
@@ -39,7 +40,7 @@ namespace logicalaccess
     /**
      * \brief The DESFire EV1 base commands class for STidSTR reader.
      */
-    class LIBLOGICALACCESS_API DESFireEV1STidSTRCommands : public DESFireEV1Commands
+    class LIBLOGICALACCESS_API DESFireEV1STidSTRCommands : public Commands, public DESFireEV1Commands
     {
     public:
 
@@ -480,7 +481,7 @@ namespace logicalaccess
          * \param fileno The file number
          * \param fileSetting The file setting
          */
-        virtual void getFileSettings(unsigned char fileno, FileSetting& fileSetting);
+        virtual void getFileSettings(unsigned char fileno, DESFireCommands::FileSetting& fileSetting);
 
         /**
          * \brief Get value from a specific value file.
@@ -514,6 +515,19 @@ namespace logicalaccess
          * \param ats The new card ATS.
          */
         virtual void setConfiguration(const std::vector<unsigned char>& ats);
+
+		/**
+		* \brief Get the chip.
+		* \return The chip.
+		*/
+		std::shared_ptr<Chip> getChip() const override { return Commands::getChip(); }
+
+		/**
+		* \brief Get the reader/card adapter.
+		* \return The reader/card adapter.
+		*/
+		std::shared_ptr<ReaderCardAdapter> getReaderCardAdapter() const override { return Commands::getReaderCardAdapter(); }
+
 
         /**
          * \brief Get the STidSTR reader/card adapter.

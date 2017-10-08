@@ -21,7 +21,7 @@ namespace logicalaccess
     /**
      * \brief A ISO14443-3B reader communication base class.
      */
-    class LIBLOGICALACCESS_API ISO14443BReaderCommunication : public virtual ReaderCommunication
+    class LIBLOGICALACCESS_API ISO14443BReaderCommunication
     {
     public:
 

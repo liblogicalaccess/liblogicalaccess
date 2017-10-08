@@ -138,7 +138,7 @@ namespace logicalaccess
 
         for (unsigned char i = 0; i < maxNbKeys; ++i)
 		{
-			getDESFireChip()->getCrypto()->setKey(aid, 0, i, DESFireCrypto::getDefaultKey(cryptoMethod));
+			getDESFireEV1Chip()->getCrypto()->setKey(aid, 0, i, DESFireCrypto::getDefaultKey(cryptoMethod));
         }
     }
 
@@ -442,7 +442,7 @@ namespace logicalaccess
 
     void DESFireEV1STidSTRCommands::authenticate(unsigned char keyno)
     {
-		std::shared_ptr<DESFireKey> key = getDESFireChip()->getCrypto()->getKey(d_currentAid, keyno);
+		std::shared_ptr<DESFireKey> key = getDESFireEV1Chip()->getCrypto()->getKey(d_currentAid, keyno);
         authenticate(keyno, key);
     }
 
@@ -670,7 +670,7 @@ namespace logicalaccess
     {
         LOG(LogLevel::INFOS) << "Changing key... key number {0x" << std::hex << keyno << std::dec << "(" << keyno << ")} new key {" << key->serialize() << "}";
         // Only change the key if new key and old key are not the same.
-		std::shared_ptr<DESFireKey> oldKey = getDESFireChip()->getCrypto()->getKey(d_currentAid, keyno);
+		std::shared_ptr<DESFireKey> oldKey = getDESFireEV1Chip()->getCrypto()->getKey(d_currentAid, keyno);
 
         LOG(LogLevel::INFOS) << "Old key {" << oldKey->serialize() << "}";
 
@@ -787,7 +787,7 @@ namespace logicalaccess
         return files;
     }
 
-    void DESFireEV1STidSTRCommands::getFileSettings(unsigned char fileno, FileSetting& fileSetting)
+    void DESFireEV1STidSTRCommands::getFileSettings(unsigned char fileno, DESFireCommands::FileSetting& fileSetting)
     {
         LOG(LogLevel::INFOS) << "Retrieving file settings for file number {0x" << std::hex << fileno << std::dec << "(" << fileno << ")}";
 

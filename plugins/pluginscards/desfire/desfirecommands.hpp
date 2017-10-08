@@ -128,7 +128,7 @@ namespace logicalaccess
     /**
      * \brief The DESFire commands class.
      */
-    class LIBLOGICALACCESS_API DESFireCommands : public virtual Commands
+    class LIBLOGICALACCESS_API DESFireCommands : public Commands
     {
     public:
 

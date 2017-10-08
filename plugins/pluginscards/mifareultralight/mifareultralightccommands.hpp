@@ -17,7 +17,7 @@ namespace logicalaccess
     /**
      * \brief The Mifare Ultralight C commands class.
      */
-    class LIBLOGICALACCESS_API MifareUltralightCCommands : public virtual MifareUltralightCommands
+    class LIBLOGICALACCESS_API MifareUltralightCCommands
     {
     public:
 
@@ -51,9 +51,13 @@ namespace logicalaccess
          */
         virtual void authenticate(std::shared_ptr<TripleDESKey> authkey) = 0;
 
+		virtual void writePage(int page, const std::vector<unsigned char>& buf) = 0;
+
 	protected:
 
 		std::shared_ptr<MifareUltralightCChip> getMifareUltralightCChip();
+
+		virtual std::shared_ptr<MifareUltralightChip> getMifareUltralightChip() = 0;
     };
 }
 

@@ -49,4 +49,14 @@ namespace logicalaccess
         command.push_back(0x00);
         getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x86, 0x00, 0x00, static_cast<unsigned char>(command.size()), command);
     }
+
+	std::shared_ptr<MifareUltralightChip> MifareUltralightCOmnikeyXX22Commands::getMifareUltralightChip()
+	{
+		return MifareUltralightCommands::getMifareUltralightChip();
+	}
+
+	void MifareUltralightCOmnikeyXX22Commands::writePage(int page, const std::vector<unsigned char>& buf)
+	{
+		MifareUltralightPCSCCommands::writePage(page, buf);
+	}
 }

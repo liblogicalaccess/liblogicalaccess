@@ -30,7 +30,7 @@ namespace logicalaccess
     /**
      * \brief A ISO 14443-3 reader communication base class.
      */
-    class LIBLOGICALACCESS_API ISO14443ReaderCommunication : public ISO14443AReaderCommunication, public ISO14443BReaderCommunication
+    class LIBLOGICALACCESS_API ISO14443ReaderCommunication : public ReaderCommunication, public ISO14443AReaderCommunication, public ISO14443BReaderCommunication
     {
     public:
 

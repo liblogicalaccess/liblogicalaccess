@@ -16,7 +16,7 @@ namespace logicalaccess
     /**
      * \brief The ISO7816 commands class.
      */
-    class LIBLOGICALACCESS_API ISO7816Commands : public virtual Commands
+    class LIBLOGICALACCESS_API ISO7816Commands : public Commands
     {
     public:
 

@@ -19,7 +19,7 @@ namespace logicalaccess
 	/**
 	* \brief The FeliCa card provider class for SCM reader.
 	*/
-	class LIBLOGICALACCESS_API FeliCaSCMCommands : public virtual FeliCaCommands
+	class LIBLOGICALACCESS_API FeliCaSCMCommands : public FeliCaCommands
 	{
 	public:
 

@@ -35,7 +35,19 @@ namespace logicalaccess
     {
         if (page < 16)
         {
-            MifareUltralightCommands::lockPage(page);
+            //MifareUltralightCommands::lockPage(page);
+			std::vector<unsigned char> lockbits(4, 0x00);
+
+			if (page >= 3 && page <= 7)
+			{
+				lockbits[2] |= static_cast<unsigned char>(1 << page);
+			}
+			else if (page >= 8 && page <= 15)
+			{
+				lockbits[3] |= static_cast<unsigned char>(1 << (page - 8));
+			}
+
+			writePage(2, lockbits);
         }
         else
         {

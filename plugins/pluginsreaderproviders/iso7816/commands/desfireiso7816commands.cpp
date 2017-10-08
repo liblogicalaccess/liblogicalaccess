@@ -24,8 +24,7 @@
 namespace logicalaccess
 {
     DESFireISO7816Commands::DESFireISO7816Commands()
-        : Commands(),
-        DESFireCommands()
+        : DESFireCommands()
     {
         
     }

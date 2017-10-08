@@ -65,6 +65,10 @@ namespace logicalaccess
 
 		virtual std::vector<unsigned char> cmacOffline(const std::vector<unsigned char>& data);
 
+		std::shared_ptr<Chip> getChip() const override { return SAMISO7816Commands<KeyEntryAV2Information, SETAV2>::getChip(); }
+
+		std::shared_ptr<ReaderCardAdapter> getReaderCardAdapter() const override { return SAMISO7816Commands<KeyEntryAV2Information, SETAV2>::getReaderCardAdapter(); }
+
     protected:
 
         void generateSessionKey(std::vector<unsigned char> rnd1, std::vector<unsigned char> rnd2);

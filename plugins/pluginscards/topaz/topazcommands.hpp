@@ -18,7 +18,7 @@ namespace logicalaccess
     /**
      * \brief The Topaz commands class.
      */
-    class LIBLOGICALACCESS_API TopazCommands : public virtual Commands
+    class LIBLOGICALACCESS_API TopazCommands : public Commands
     {
     public:
 		TopazCommands() {}

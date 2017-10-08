@@ -1429,6 +1429,11 @@ namespace logicalaccess
         onAuthenticated();
     }
 
+	void DESFireEV1ISO7816Commands::selectApplication(unsigned int aid)
+	{
+		DESFireISO7816Commands::selectApplication(aid);
+	}
+
     void DESFireEV1ISO7816Commands::onAuthenticated()
     {
         // If we don't have the read UID, we retrieve it

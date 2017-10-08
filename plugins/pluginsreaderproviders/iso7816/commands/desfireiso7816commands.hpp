@@ -24,7 +24,7 @@ namespace logicalaccess
     /**
      * \brief The DESFire base commands class.
      */
-    class LIBLOGICALACCESS_API DESFireISO7816Commands : public virtual DESFireCommands
+    class LIBLOGICALACCESS_API DESFireISO7816Commands : public DESFireCommands
     {
     public:
 

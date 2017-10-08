@@ -41,6 +41,10 @@ namespace logicalaccess
 
 		virtual void stopGenericSession();
 
+		std::shared_ptr<MifareUltralightChip> getMifareUltralightChip();
+
+		void writePage(int page, const std::vector<unsigned char>& buf);
+
         virtual std::vector<unsigned char> sendGenericCommand(const std::vector<unsigned char>& data);
 
         virtual std::vector<unsigned char> authenticate_PICC1();
