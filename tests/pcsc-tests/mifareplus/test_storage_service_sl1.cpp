@@ -64,10 +64,10 @@ int main(int ac, char **av)
     maiToUse->sab.setAReadBWriteConfiguration();
 
     // Data to write
-    std::vector<uint8_t> writedata(16, 'f');
+    ByteVector writedata(16, 'f');
 
     // Data read
-    std::vector<uint8_t> readdata;
+    ByteVector readdata;
 
     storage->writeData(mlocation, maiToUse, maiToUse, writedata, CB_DEFAULT);
     using namespace logicalaccess; // required for overload of std::ostrean(vector &)

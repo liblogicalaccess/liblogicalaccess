@@ -114,6 +114,11 @@ namespace logicalaccess
              * Set access bits to transport configuration. Key A and Key B may serve for any purpose (read, write, increment, etc.).
              */
             DataBlockAccessBits() : BlockAccessBits(false, false, false) {}
+
+			static void* getItem(void* arrayPtr, int i) { return &static_cast<DataBlockAccessBits*>(arrayPtr)[i]; }
+
+			static void setItem(void* arrayPtr, const DataBlockAccessBits* item, int i) { if (item) static_cast<DataBlockAccessBits*>(arrayPtr)[i] = *item; else static_cast<DataBlockAccessBits*>(arrayPtr)[i] = DataBlockAccessBits(); }
+
         };
 
         /**
@@ -127,7 +132,11 @@ namespace logicalaccess
              * Set access bits to transport configuration. Key A may serve for any purpose (read, write, increment, etc.). Key B is data.
              */
             SectorTrailerAccessBits() : BlockAccessBits(false, false, true) {}
-        };
+
+			static void* getItem(void* arrayPtr, int i) { return &static_cast<SectorTrailerAccessBits*>(arrayPtr)[i]; }
+
+			static void setItem(void* arrayPtr, const SectorTrailerAccessBits* item, int i) { if (item) static_cast<SectorTrailerAccessBits*>(arrayPtr)[i] = *item; else static_cast<SectorTrailerAccessBits*>(arrayPtr)[i] = SectorTrailerAccessBits(); }
+		};
 
         /**
          * \brief Sector access bits structure.
@@ -136,21 +145,18 @@ namespace logicalaccess
         {
             /**
              * \brief Export the access bits to a mifare byte array.
-             * \param buf The buffer into which write the data.
-             * \param buflen buf length. buflen must be at least 3 or toArray() will fail.
-             * \return The count of bytes used (shall be 3) on success, 0 otherwise.
+             * \return The buffer into which write the data.
              */
-            size_t toArray(void* buf, size_t buflen) const;
+            ByteVector toArray() const;
 
             /**
              * \brief Import the access bits from a mifare byte array.
              * \param buf The buffer containing the data.
-             * \param buflen The length of buf. Must be at least 3 or fromArray() will fail.
              * \return true on success, false otherwise.
              *
              * If the array is not a valid mifare sector access bits array, fromArray() fails and the sector access bits remains unchanged.
              */
-            bool fromArray(const void* buf, size_t buflen);
+            bool fromArray(ByteVector);
 
             /**
              * \brief Set transport configuration.
@@ -166,7 +172,7 @@ namespace logicalaccess
             SectorTrailerAccessBits d_sector_trailer_access_bits; /**< \brief The sector trailer access bits. */
         };
 
-	    /**
+        /**
          * \brief The key A.
          */
         std::shared_ptr<MifareKey> keyA;

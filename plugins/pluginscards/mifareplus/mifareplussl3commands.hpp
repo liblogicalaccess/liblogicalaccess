@@ -14,9 +14,15 @@
 
 namespace logicalaccess
 {
+#define CMD_MIFAREPLUSSL3 	"MifarePlusSL3"
+
     class LIBLOGICALACCESS_API MifarePlusSL3Commands_NEW : public Commands
     {
     public:
+		MifarePlusSL3Commands_NEW() : Commands(CMD_MIFAREPLUSSL3) {}
+
+        explicit MifarePlusSL3Commands_NEW(std::string ct) : Commands(ct) {}
+
         bool authenticate(int sector, std::shared_ptr<AES128Key> key,
                           MifareKeyType type);
 

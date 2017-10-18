@@ -24,14 +24,13 @@ namespace logicalaccess
 #define AV2_HEADER_LENGTH 0x05
 #define AV2_HEADER_LENGTH_WITH_LE 0x06
 #define AV2_LC_POS 0x04
+#define CMD_SAMAV2ISO7816 "SAMAV2ISO7816"
 
     /**
      * \brief The DESFire base commands class.
      */
     class LIBLOGICALACCESS_API SAMAV2ISO7816Commands : public SAMISO7816Commands<KeyEntryAV2Information, SETAV2>
-#ifndef SWIG
     , public SAMAV2Commands < KeyEntryAV2Information, SETAV2 >
-#endif
     {
     public:
 
@@ -39,6 +38,8 @@ namespace logicalaccess
          * \brief Constructor.
          */
         SAMAV2ISO7816Commands();
+
+        explicit SAMAV2ISO7816Commands(std::string);
 
         /**
          * \brief Destructor.

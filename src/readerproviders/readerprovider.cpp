@@ -49,7 +49,7 @@ namespace logicalaccess
             ReaderList rl = getReaderList();
             for (ReaderList::iterator it = rl.begin(); it != rl.end(); ++it)
             {
-                if (find(readers.begin(), readers.end(), (*it)->getName()) != readers.end())
+                if (std::find(readers.begin(), readers.end(), (*it)->getName()) != readers.end())
                     ret.push_back(*it);
             }
 

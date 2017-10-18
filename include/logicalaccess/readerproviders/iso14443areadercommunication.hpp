@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "logicalaccess/logs.hpp"
+#include "logicalaccess/lla_fwd.hpp"
 
 namespace logicalaccess
 {

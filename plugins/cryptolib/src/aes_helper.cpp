@@ -11,8 +11,6 @@
 
 using namespace logicalaccess;
 
-using ByteVector = std::vector<uint8_t>;
-
 ByteVector AESHelper::AESEncrypt(const ByteVector &data,
                                  const ByteVector &key,
                                  const ByteVector &iv_data)
@@ -48,7 +46,7 @@ ByteVector AESHelper::AESRun(const ByteVector &data, const ByteVector &key,
         iv = std::make_shared<openssl::AESInitializationVector>(
                 openssl::AESInitializationVector::createFromData(iv_data));
 
-    std::vector<uint8_t> result;
+    ByteVector result;
     if (crypt)
         cipher->cipher(data, result, *isokey.get(), *iv.get(), false);
     else

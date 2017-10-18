@@ -10,6 +10,35 @@
 
 namespace logicalaccess
 {
+    DESFireCommands::DataFileSetting DESFireCommands::FileSetting::getDataFile() const
+         {
+        return this->type.dataFile;
+        }
+    
+        void DESFireCommands::FileSetting::setDataFile(const DESFireCommands::DataFileSetting& settings)
+         {
+        this->type.dataFile = settings;
+        }
+    
+        DESFireCommands::ValueFileSetting DESFireCommands::FileSetting::getValueFile() const
+         {
+        return this->type.valueFile;
+        }
+    
+        void DESFireCommands::FileSetting::setValueFile(const DESFireCommands::ValueFileSetting& settings)
+         {
+        this->type.valueFile = settings;
+        }
+            DESFireCommands::RecordFileSetting DESFireCommands::FileSetting::getRecordFile() const
+         {
+        return this->type.recordFile;
+        }
+    
+            void DESFireCommands::FileSetting::setRecordFile(const DESFireCommands::RecordFileSetting& settings)
+            {
+                this->type.recordFile = settings;
+            }
+
     std::shared_ptr<DESFireChip> DESFireCommands::getDESFireChip() const
     {
         return std::dynamic_pointer_cast<DESFireChip>(getChip());
@@ -32,15 +61,15 @@ namespace logicalaccess
 
     EncryptionMode DESFireCommands::getEncryptionMode(unsigned char fileno, bool isReadMode, bool* needLoadKey)
     {
-        FileSetting fileSetting;
+        DESFireCommands::FileSetting fileSetting;
         memset(&fileSetting, 0x00, sizeof(fileSetting));
 
-        getFileSettings(fileno, fileSetting);
+        fileSetting = getFileSettings(fileno);
 
 		return getEncryptionMode(fileSetting, isReadMode, needLoadKey);
     }
 
-	EncryptionMode DESFireCommands::getEncryptionMode(const FileSetting& fileSetting, bool isReadMode, bool* needLoadKey)
+	EncryptionMode DESFireCommands::getEncryptionMode(const DESFireCommands::FileSetting& fileSetting, bool isReadMode, bool* needLoadKey)
 	{
 		EncryptionMode encMode = CM_ENCRYPT;
 		unsigned char accessRight = (isReadMode) ? (fileSetting.accessRights[1] >> 4) : (fileSetting.accessRights[1] & 0xF);
@@ -82,9 +111,9 @@ namespace logicalaccess
     {
         unsigned int fileLength = 0x00;
 
-        FileSetting fileSetting;
+        DESFireCommands::FileSetting fileSetting;
         memset(&fileSetting, 0x00, sizeof(fileSetting));
-        getFileSettings(fileno, fileSetting);
+		fileSetting = getFileSettings(fileno);
 
         switch (fileSetting.fileType)
         {

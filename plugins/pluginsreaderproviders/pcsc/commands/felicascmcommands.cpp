@@ -17,7 +17,12 @@
 namespace logicalaccess
 {
 	FeliCaSCMCommands::FeliCaSCMCommands()
-		: FeliCaCommands()
+		: FeliCaCommands(CMD_FELICASCM)
+	{
+	}
+
+	FeliCaSCMCommands::FeliCaSCMCommands(std::string ct)
+		: FeliCaCommands(ct)
 	{
 	}
 

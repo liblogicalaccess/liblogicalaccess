@@ -2,7 +2,7 @@
 #include <cstring>
 
 using namespace logicalaccess;
-using namespace iks;
+using namespace logicalaccess::iks;
 
 GenRandomCommand::GenRandomCommand()
     : nb_bytes_(0)
@@ -10,7 +10,7 @@ GenRandomCommand::GenRandomCommand()
     opcode_ = CMSG_OP_GENRANDOM;
 }
 
-std::vector<uint8_t> GenRandomCommand::serialize() const
+ByteVector GenRandomCommand::serialize() const
 {
     auto header      = BaseCommand::serialize();
     auto req_bytes   = lla_htons(nb_bytes_);
@@ -28,7 +28,7 @@ size_t GenRandomCommand::binary_size_impl() const
 }
 
 GenRandomResponse::GenRandomResponse(uint16_t status,
-                                     const std::vector<uint8_t> &data)
+                                     const ByteVector &data)
     : BaseResponse(SMSG_OP_GENRANDOM, status)
     , bytes_(data)
 {

@@ -13,6 +13,8 @@
 
 namespace logicalaccess
 {
+#define	CMD_FELICA	"FeliCa"
+
     /**
      * \brief The FeliCa commands class.
      */
@@ -20,7 +22,9 @@ namespace logicalaccess
     {
     public:
 
-		FeliCaCommands() {}
+		FeliCaCommands() : Commands(CMD_FELICA) {}
+
+	    explicit FeliCaCommands(std::string ct) : Commands(ct) {}
 
 		/**
 		 * \brief Get system codes.

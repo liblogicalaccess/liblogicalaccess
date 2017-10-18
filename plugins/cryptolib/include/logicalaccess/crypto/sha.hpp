@@ -33,7 +33,7 @@ namespace logicalaccess
     /**
      * Compute the sha1 hash of `in`.
      */
-    std::vector<uint8_t> SHA1Hash(const std::vector<uint8_t> &in);
+    ByteVector SHA1Hash(const ByteVector &in);
     }
 }
 

@@ -14,7 +14,7 @@ class LIBLOGICALACCESS_API DesfireChangeKeyCommand : public BaseCommand
     DesfireChangeKeyCommand();
     virtual ~DesfireChangeKeyCommand() = default;
 
-	std::vector<uint8_t> serialize() const override;
+	ByteVector serialize() const override;
 
 	size_t binary_size_impl() const override;
 
@@ -32,9 +32,9 @@ class LIBLOGICALACCESS_API DesfireChangeKeyCommand : public BaseCommand
     /**
      * The current session key in use.
      */
-    std::vector<uint8_t> session_key_;
+    ByteVector session_key_;
 
-    std::vector<uint8_t> iv_;
+    ByteVector iv_;
 
     uint8_t keyno_;
 
@@ -45,9 +45,9 @@ class LIBLOGICALACCESS_API DesfireChangeKeyCommand : public BaseCommand
 class LIBLOGICALACCESS_API DesfireChangeKeyResponse : public BaseResponse
 {
   public:
-    DesfireChangeKeyResponse(uint16_t status, const std::vector<uint8_t> &data);
+    DesfireChangeKeyResponse(uint16_t status, const ByteVector &data);
 
-    std::vector<uint8_t> bytes_;
+    ByteVector bytes_;
 };
 }
 }

@@ -18,12 +18,12 @@ namespace logicalaccess
 class LIBLOGICALACCESS_API ATRParser
 {
   public:
-	explicit ATRParser(const std::vector<uint8_t> &atr);
+	explicit ATRParser(const ByteVector &atr);
 
     /**
      * Guess the card type from an ATR for a specific reader.
      */
-    static std::string guessCardType(const std::vector<uint8_t> &atr,
+    static std::string guessCardType(const ByteVector &atr,
                                      PCSCReaderUnitType reader_type);
     static std::string guessCardType(uint8_t *atr, size_t atrlen,
                                      PCSCReaderUnitType reader_type);
@@ -38,7 +38,7 @@ class LIBLOGICALACCESS_API ATRParser
     /**
      * Guess the card type from an ATR that works for any reader type.
      */
-    static std::string guessCardType(const std::vector<uint8_t> &atr);
+    static std::string guessCardType(const ByteVector &atr);
     static std::string guessCardType(uint8_t *atr, size_t atrlen);
 
     /**
@@ -85,13 +85,13 @@ class LIBLOGICALACCESS_API ATRParser
         std::vector<PCSCReaderUnitType> reader_type;
     };
 
-    std::vector<uint8_t> atr_;
+    ByteVector atr_;
 
     /**
      * A map mapping ATR hexadecimal representation to the type of
      * card they represent.
      */
-    std::map<std::vector<uint8_t>, ATRInfo> hardcoded_atr_to_type_;
+    std::map<ByteVector, ATRInfo> hardcoded_atr_to_type_;
 };
 }
 

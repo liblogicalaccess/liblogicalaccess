@@ -10,6 +10,7 @@
 #include "logicalaccess/logicalaccess_api.hpp"
 #include "logicalaccess/readerproviders/ledbuzzerdisplay.hpp"
 #include "a3mlgm5600_fwd.hpp"
+#include "readercardadapters/a3mlgm5600readercardadapter.hpp"
 #include <string>
 #include <vector>
 

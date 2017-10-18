@@ -10,6 +10,7 @@
 
 namespace logicalaccess
 {
+#define CMD_MIFAREPLUSSL0 	"MifarePlusSL0"
 
 	enum LIBLOGICALACCESS_API MifarePlusBlockKeyLocation : uint16_t
     {
@@ -27,6 +28,11 @@ namespace logicalaccess
 	class LIBLOGICALACCESS_API MifarePlusSL0Commands : public Commands
     {
     public:
+
+		MifarePlusSL0Commands() : Commands(CMD_MIFAREPLUSSL0) {}
+
+	    explicit MifarePlusSL0Commands(std::string ct) : Commands(ct) {}
+
         virtual ~MifarePlusSL0Commands() {}
         int detectSecurityLevel() const;
 

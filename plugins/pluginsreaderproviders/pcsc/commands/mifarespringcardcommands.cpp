@@ -17,7 +17,12 @@
 namespace logicalaccess
 {
 MifareSpringCardCommands::MifareSpringCardCommands()
-    : MifarePCSCCommands()
+    : MifarePCSCCommands(CMD_MIFARESPRINGCARD)
+{
+}
+
+MifareSpringCardCommands::MifareSpringCardCommands(std::string ct)
+	: MifarePCSCCommands(ct)
 {
 }
 

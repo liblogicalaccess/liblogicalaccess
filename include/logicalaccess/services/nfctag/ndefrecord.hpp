@@ -7,6 +7,7 @@
 #ifndef LOGICALACCESS_NDEFRECORD_HPP
 #define LOGICALACCESS_NDEFRECORD_HPP
 
+#include <logicalaccess/lla_fwd.hpp>
 #include <logicalaccess/xmlserializable.hpp>
 
 namespace logicalaccess
@@ -25,7 +26,7 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API NdefRecord : public XmlSerializable
     {
     public:
-        NdefRecord() : m_tnf(TNF_EMPTY) {}
+        NdefRecord() : m_tnf(TNF::TNF_EMPTY) {}
         virtual ~NdefRecord() {}
 
         size_t getEncodedSize() const;

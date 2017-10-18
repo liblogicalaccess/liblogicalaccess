@@ -180,7 +180,7 @@ namespace logicalaccess
         std::stringstream convertStream;
 
         // delete spaces
-        hexString.erase(remove(hexString.begin(), hexString.end(), ' '), hexString.end());
+        hexString.erase(std::remove(hexString.begin(), hexString.end(), ' '), hexString.end());
 
         size_t offset = 0;
         while (offset < hexString.length())

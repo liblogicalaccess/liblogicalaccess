@@ -40,7 +40,7 @@ bool logicalaccess::MifarePlusAESAuth::AESAuthenticate(std::shared_ptr<AES128Key
                           key);
 }
 
-bool logicalaccess::MifarePlusAESAuth::aes_auth_step2(std::vector<uint8_t> rnd_b,
+bool logicalaccess::MifarePlusAESAuth::aes_auth_step2(ByteVector rnd_b,
                                                       std::shared_ptr<AES128Key> key) const
 {
     ByteVector rnd_a = RandomHelper::bytes(16);

@@ -61,48 +61,48 @@ class LIBLOGICALACCESS_API IslogKeyServer
     /**
      * Ask Islog Key Server for random data.
      */
-    std::vector<uint8_t> get_random(size_t sz);
+    ByteVector get_random(size_t sz);
 
     /**
      * Request an AES Encryption by the key server.
      */
-    std::vector<uint8_t> aes_encrypt(const std::vector<uint8_t> &in,
+    ByteVector aes_encrypt(const ByteVector &in,
                                      const std::string &key_name,
                                      const std::array<uint8_t, 16> &iv);
     /**
      * Request an AES Decryption by the key server.
      */
-    std::vector<uint8_t> aes_decrypt(const std::vector<uint8_t> &in,
+    ByteVector aes_decrypt(const ByteVector &in,
                                      const std::string &key_name,
                                      const std::array<uint8_t, 16> &iv);
 
-    std::vector<uint8_t> aes_decrypt(const std::vector<uint8_t> &in,
+    ByteVector aes_decrypt(const ByteVector &in,
                                      const std::string &key_name,
-                                     const std::vector<uint8_t> &iv);
+                                     const ByteVector &iv);
 
     /**
      * Request an DES Encryption by the key server using CBC mode.
      */
-    std::vector<uint8_t> des_cbc_encrypt(const std::vector<uint8_t> &in,
+    ByteVector des_cbc_encrypt(const ByteVector &in,
                                          const std::string &key_name,
                                          const std::array<uint8_t, 8> &iv);
     /**
      * Request an DES Decryption by the key server using CBC mode.
      */
-    std::vector<uint8_t> des_cbc_decrypt(const std::vector<uint8_t> &in,
+    ByteVector des_cbc_decrypt(const ByteVector &in,
                                          const std::string &key_name,
                                          const std::array<uint8_t, 8> &iv);
 
     /**
          * Request an DES Encryption by the key server using CBC mode.
          */
-    std::vector<uint8_t> des_ecb_encrypt(const std::vector<uint8_t> &in,
+    ByteVector des_ecb_encrypt(const ByteVector &in,
                                          const std::string &key_name,
                                          const std::array<uint8_t, 8> &iv);
     /**
      * Request an DES Decryption by the key server using CBC mode.
      */
-    std::vector<uint8_t> des_ecb_decrypt(const std::vector<uint8_t> &in,
+    ByteVector des_ecb_decrypt(const ByteVector &in,
                                          const std::string &key_name,
                                          const std::array<uint8_t, 8> &iv);
 
@@ -120,9 +120,9 @@ class LIBLOGICALACCESS_API IslogKeyServer
     void setup_transport();
     std::shared_ptr<BaseResponse> build_response(uint32_t size, uint16_t opcode,
                                                  uint16_t status,
-                                                 const std::vector<uint8_t> &data) const;
+                                                 const ByteVector &data) const;
 
-    std::vector<uint8_t> des_crypto(const std::vector<uint8_t> &in,
+    ByteVector des_crypto(const ByteVector &in,
                                     const std::string &key_name,
                                     const std::array<uint8_t, 8> &iv, bool use_ecb,
                                     bool decrypt);

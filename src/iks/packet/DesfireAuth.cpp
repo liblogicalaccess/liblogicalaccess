@@ -5,14 +5,14 @@
 
 
 using namespace logicalaccess;
-using namespace iks;
+using namespace logicalaccess::iks;
 
 DesfireAuthCommand::DesfireAuthCommand(): step_(0), algo_(0)
 {
 	opcode_ = CMSG_OP_DESFIRE_AUTH;
 }
 
-std::vector<uint8_t> DesfireAuthCommand::serialize() const
+ByteVector DesfireAuthCommand::serialize() const
 {
     auto header = BaseCommand::serialize();
     auto needle = header.size();
@@ -44,13 +44,13 @@ size_t DesfireAuthCommand::binary_size_impl() const
 }
 
 DesfireAuthResponse::DesfireAuthResponse(uint16_t status,
-                                         const std::vector<uint8_t> &data)
+                                         const ByteVector &data)
     : BaseResponse(SMSG_OP_DESFIRE_AUTH, status)
 {
     if (data.size() != 32 + 16 + 1)
         THROW_EXCEPTION_WITH_LOG(IKSException, "Invalid response size.");
 
-    copy(data.begin(), data.begin() + 32, data_.begin());
-    copy(data.begin() + 32, data.begin() + 32 + 16, random2_.begin());
+    std::copy(data.begin(), data.begin() + 32, data_.begin());
+    std::copy(data.begin() + 32, data.begin() + 32 + 16, random2_.begin());
     success_ = *(data.end() - 1);
 }

@@ -19,7 +19,7 @@ namespace logicalaccess
     {
     }
 
-	std::string LittleEndianDataRepresentation::getName() const
+    std::string LittleEndianDataRepresentation::getName() const
     {
         return std::string("Little Endian");
     }
@@ -29,37 +29,21 @@ namespace logicalaccess
         return ET_LITTLEENDIAN;
     }
 
-    unsigned int LittleEndianDataRepresentation::convertNumeric(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
+    BitsetStream LittleEndianDataRepresentation::convertNumeric(const BitsetStream& data)
     {
-        unsigned int ret = 0;
+        BitsetStream convertedData;
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-
-        if (convertedLengthBytes >= dataLengthBytes)
-        {
-            memset(convertedData, 0x00, convertedLengthBytes);
-            memcpy(convertedData, data, dataLengthBytes);
-        }
-        ret = convertLength(dataLengthBits);
-
+        convertedData.concat(data.getData(), 0, data.getByteSize() * 8);
 #else
-
-        BitHelper::swapBytes(convertedData, convertedLengthBytes, data, dataLengthBytes, dataLengthBits);
-        ret = convertLength(dataLengthBits);
-
+        convertedData = BitHelper::swapBytes(data);
 #endif
-
-        return ret;
+        return convertedData;
     }
 
-    unsigned int LittleEndianDataRepresentation::convertBinary(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
+    BitsetStream LittleEndianDataRepresentation::convertBinary(const BitsetStream& data)
     {
-        unsigned int ret = 0;
-
-        BitHelper::swapBytes(convertedData, convertedLengthBytes, data, dataLengthBytes, dataLengthBits);
-        ret = convertLength(dataLengthBits);
-
-        return ret;
+        return BitHelper::swapBytes(data);
     }
 
     unsigned int LittleEndianDataRepresentation::convertLength(unsigned int lengthBits)
@@ -67,36 +51,20 @@ namespace logicalaccess
         return (lengthBits + (((lengthBits % 8) > 0) ? (8 - (lengthBits % 8)) : 0));
     }
 
-    unsigned int LittleEndianDataRepresentation::revertNumeric(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
+    BitsetStream LittleEndianDataRepresentation::revertNumeric(const BitsetStream& data)
     {
-        unsigned int ret = 0;
+        BitsetStream convertedData;
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-
-        if (convertedLengthBytes >= dataLengthBytes)
-        {
-            memset(convertedData, 0x00, convertedLengthBytes);
-            memcpy(convertedData, data, dataLengthBytes);
-        }
-        ret = dataLengthBits;
-
+        convertedData.concat(data.getData(), 0, data.getByteSize() * 8);
 #else
-
-        BitHelper::swapBytes(convertedData, convertedLengthBytes, data, dataLengthBytes, dataLengthBits);
-        ret = dataLengthBits;
-
+        convertedData = BitHelper::swapBytes(data);
 #endif
-
-        return ret;
+        return convertedData;
     }
 
-    unsigned int LittleEndianDataRepresentation::revertBinary(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
+    BitsetStream LittleEndianDataRepresentation::revertBinary(const BitsetStream& data)
     {
-        unsigned int ret = 0;
-
-        BitHelper::swapBytes(convertedData, convertedLengthBytes, data, dataLengthBytes, dataLengthBits);
-        ret = dataLengthBits;
-
-        return ret;
+        return BitHelper::swapBytes(data);
     }
 }

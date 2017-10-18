@@ -711,7 +711,7 @@ namespace logicalaccess
                     LOG(LogLevel::WARNINGS) << "Cannot found HIDiClass commands.";
                 }
             }
-			else if (type == CHIP_DESFIRE_EV2)
+			else if (type == CHIP_DESFIRE_EV2_PUBLIC)
 			{
 				commands = LibraryManager::getInstance()->getCommands("DESFireEV2ISO7816");
 				if (!commands)
@@ -795,7 +795,7 @@ namespace logicalaccess
             else if (type == CHIP_PROX)
             {   // A dummy command, whose only goal is to allow retrieval of the
                 // reader unit later on.
-                commands.reset(new ProxCommand());
+                commands.reset(new ProxCommands());
             }
 			else if (type == CHIP_FELICA)
 			{
@@ -810,7 +810,7 @@ namespace logicalaccess
 			}
             else if (type == CHIP_EPASS)
             {
-                commands = std::make_shared<EPassCommand>();
+                commands = std::make_shared<ProxCommands>();
                 rca = std::make_shared<EPassReaderCardAdapter>();
                 rca->setDataTransport(std::make_shared<PCSCDataTransport>());
                 //commands->setReaderCardAdapter(rca);
@@ -1385,11 +1385,11 @@ std::shared_ptr<Chip> PCSCReaderUnit::adjustChip(std::shared_ptr<Chip> c)
         if (createCardProbe()->is_desfire_ev1())
 			c = createChip(CHIP_DESFIRE_EV1);
 		else if (createCardProbe()->is_desfire_ev2())
-			c = createChip(CHIP_DESFIRE_EV2);
+			c = createChip(CHIP_DESFIRE_EV2_PUBLIC);
     }
 	if (c->getCardType() == CHIP_DESFIRE
 		|| c->getCardType() == CHIP_DESFIRE_EV1
-		|| c->getCardType() == CHIP_DESFIRE_EV2)
+		|| c->getCardType() == CHIP_DESFIRE_EV2_PUBLIC)
     {
         ByteVector uid;
         if (createCardProbe()->has_desfire_random_uid(&uid))

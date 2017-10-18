@@ -16,6 +16,8 @@
 
 namespace logicalaccess
 {
+#define CMD_MIFAREPCSC "MifarePCSC"
+
     template<typename T, typename T2>
     class MifarePlusSL1Policy;
 
@@ -30,6 +32,8 @@ namespace logicalaccess
          * \brief Constructor.
          */
         MifarePCSCCommands();
+
+        explicit MifarePCSCCommands(std::string);
 
         /**
          * \brief Destructor.

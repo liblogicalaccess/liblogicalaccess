@@ -32,6 +32,8 @@ namespace logicalaccess
          */
         TripleDESKey();
 
+        virtual ~TripleDESKey() = default;
+
         /**
          * \brief Build a triple DES key given a string representation of it.
          * \param str The string representation.

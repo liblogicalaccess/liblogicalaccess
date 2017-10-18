@@ -59,6 +59,8 @@ namespace logicalaccess
 #define DF_CLA_ISO_WRAP 0x90
 #endif
 
+#define	CMD_DESFIRE		"DESFire"
+
     /**
      * \brief The key settings
      */
@@ -132,7 +134,16 @@ namespace logicalaccess
     {
     public:
 
-		DESFireCommands() {}
+		/**
+		* \brief Constructor.
+		*/
+		DESFireCommands() : Commands(CMD_DESFIRE) {}
+
+		/**
+		* \brief Constructor.
+		* \param ct The cmd type.
+		*/
+        explicit DESFireCommands(std::string cmdtype) : Commands(cmdtype) {}
 
         /**
          * \brief Erase the card.
@@ -142,7 +153,7 @@ namespace logicalaccess
         /**
          * \brief Describe setting for Data File type.
          */
-        struct DataFileSetting
+        struct LIBLOGICALACCESS_API DataFileSetting
         {
             unsigned char		fileSize[3]; /**< \brief The file size */
         };
@@ -150,7 +161,7 @@ namespace logicalaccess
         /**
          * \brief Describe setting for Value File type.
          */
-        struct ValueFileSetting
+        struct LIBLOGICALACCESS_API ValueFileSetting
         {
             uint32_t	lowerLimit; /**< \brief The lower value limit */
             uint32_t	upperLimit; /**< \brief The upper value limit */
@@ -161,7 +172,7 @@ namespace logicalaccess
         /**
          * \brief Describe setting for Record File type.
          */
-        struct RecordFileSetting
+        struct LIBLOGICALACCESS_API RecordFileSetting
         {
             unsigned char		recordSize[3]; /**< \brief The record size */
             unsigned char		maxNumberRecords[3]; /**< \brief The maximum number of records */
@@ -171,7 +182,7 @@ namespace logicalaccess
         /**
          * \brief Describe file setting.
          */
-        struct FileSetting
+        struct LIBLOGICALACCESS_API FileSetting
         {
             unsigned char		fileType; /**< \brief The file type */
             unsigned char		comSett; /**< \brief The communication setting */
@@ -182,12 +193,18 @@ namespace logicalaccess
                 ValueFileSetting	valueFile;
                 RecordFileSetting	recordFile;
             } type; /**< \brief The file type specific information */
+            DataFileSetting getDataFile() const;
+            void setDataFile(const DataFileSetting&);
+            ValueFileSetting getValueFile() const;
+            void setValueFile(const ValueFileSetting&);
+            RecordFileSetting getRecordFile() const;
+            void setRecordFile(const RecordFileSetting&);
         };
 
         /**
          * \brief Card information about software and hardware version.
          */
-        struct DESFireCardVersion
+        struct LIBLOGICALACCESS_API DESFireCardVersion
         {
             unsigned char hardwareVendor; /**< \brief The hardware vendor */
             unsigned char hardwareType; /**< \brief The hardware type */
@@ -310,7 +327,7 @@ namespace logicalaccess
          * \param fileno The file number
          * \param fileSetting The file setting
          */
-        virtual void getFileSettings(unsigned char fileno, FileSetting& fileSetting) = 0;
+        virtual FileSetting getFileSettings(unsigned char fileno) = 0;
 
         /**
          * \brief Change file settings of a specific file in the current application.
@@ -480,7 +497,7 @@ namespace logicalaccess
          * \brief Get the card version information.
          * \param dataVersion The card version information structure that will be filled
          */
-        virtual void getVersion(DESFireCardVersion& dataVersion) = 0;
+        virtual DESFireCardVersion getVersion() = 0;
 
     protected:
 

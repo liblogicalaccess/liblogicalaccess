@@ -23,6 +23,8 @@ namespace logicalaccess
          */
         SAMKeyStorage();
 
+        virtual ~SAMKeyStorage() = default;
+
         /**
          * \brief Get the key storage type.
          * \return The key storage type.

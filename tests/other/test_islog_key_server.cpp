@@ -7,7 +7,7 @@ void test_aes_encrypt_decrypt()
 {
     IslogKeyServer &srv = IslogKeyServer::fromGlobalSettings();
 
-    auto v         = std::vector<uint8_t>(16, 'a');
+    auto v         = ByteVector(16, 'a');
     auto iv        = std::array<uint8_t, 16>{ {0} };
     auto encrypted = srv.aes_encrypt(v, "imported-aes-key", iv);
     auto decrypted = srv.aes_decrypt(encrypted, "imported-aes-key", iv);
@@ -19,24 +19,24 @@ void test_des_encrypt_decrypt()
 {
     IslogKeyServer &srv = IslogKeyServer::fromGlobalSettings();
 
-    auto v         = std::vector<uint8_t>(8, 'a');
+    auto v         = ByteVector(8, 'a');
     auto iv        = std::array<uint8_t, 8>{ {0} };
     auto encrypted = srv.des_cbc_encrypt(v, "imported-zero-des", iv);
     auto decrypted = srv.des_cbc_decrypt(encrypted, "imported-zero-des", iv);
 
     assert(v == decrypted);
     auto expected =
-        std::vector<uint8_t>{0xf9, 0x0a, 0xba, 0x97, 0x69, 0x00c, 0xaf, 0x10};
+        ByteVector{0xf9, 0x0a, 0xba, 0x97, 0x69, 0x00c, 0xaf, 0x10};
     assert(encrypted == expected);
 
     // Again, with other values.
-    v         = std::vector<uint8_t>(80, 'b');
+    v         = ByteVector(80, 'b');
     iv        = std::array<uint8_t, 8>{ {66, 66, 66, 66, 66, 66, 66, 66} };
     encrypted = srv.des_cbc_encrypt(v, "imported-zero-des", iv);
     decrypted = srv.des_cbc_decrypt(encrypted, "imported-zero-des", iv);
 
     assert(v == decrypted);
-    expected = std::vector<uint8_t>{
+    expected = ByteVector{
         0xcf, 0x95, 0xbe, 0x9c, 0x37, 0x89, 0xb5, 0xe3, 0x35, 0xf6, 0xd4, 0x58,
         0xb5, 0x5c, 0x7a, 0x91, 0x7a, 0x7a, 0x28, 0x0b, 0xc4, 0xbc, 0xd6, 0x4d,
         0xac, 0x87, 0x12, 0x7b, 0x5b, 0xae, 0x20, 0xdb, 0xaf, 0x7d, 0x0f, 0xb8,
@@ -47,7 +47,7 @@ void test_des_encrypt_decrypt()
     assert(encrypted == expected);
 
     // Again, using ECB this time.
-    v         = std::vector<uint8_t>(80, 'b');
+    v         = ByteVector(80, 'b');
     iv        = std::array<uint8_t, 8>{ {66, 66, 66, 66, 66, 66, 66, 66} };
     encrypted = srv.des_ecb_encrypt(v, "imported-zero-des", iv);
     decrypted = srv.des_ecb_decrypt(encrypted, "imported-zero-des", iv);

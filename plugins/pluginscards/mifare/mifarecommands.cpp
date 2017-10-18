@@ -7,6 +7,7 @@
 #include <cstring>
 #include <logicalaccess/logs.hpp>
 #include <cassert>
+#include <algorithm>
 #include "mifarecommands.hpp"
 #include "mifarechip.hpp"
 #include "mifarelocation.hpp"
@@ -340,8 +341,10 @@ namespace logicalaccess
 			memcpy(&trailerblock[0], newkeyA->getData(), MIFARE_KEY_SIZE);
 			memcpy(&trailerblock[10], newkeyB->getData(), MIFARE_KEY_SIZE);
         }
-
-        if ((*newsab).toArray(&trailerblock[MIFARE_KEY_SIZE], 3) != 3)
+		
+		auto tmp = (*newsab).toArray();
+		std::copy_n(tmp.begin(), 3, trailerblock.begin() + MIFARE_KEY_SIZE);
+        if (tmp.size() != 3)
         {
             THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_CHANGEKEY);
         }
@@ -414,7 +417,7 @@ namespace logicalaccess
         int32_t reverse                 = value ^ 0xFFFFFFFF;
         uint8_t backup_blockno_reverse  = backup_blockno ^ 0xFF;
 
-        std::vector<uint8_t> buf(16);
+        ByteVector buf(16);
         memcpy(&buf[0], &value, 4);
         memcpy(&buf[4], &reverse, 4);
         memcpy(&buf[8], &value, 4);

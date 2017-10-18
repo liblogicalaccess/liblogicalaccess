@@ -6,7 +6,7 @@ using namespace logicalaccess;
 ByteVector
 STidPRGReaderCardAdapter::adaptCommand(const ByteVector &command)
 {
-    std::vector<uint8_t> full_cmd;
+    ByteVector full_cmd;
     full_cmd.push_back(0x02);
     full_cmd.insert(full_cmd.end(), command.begin(), command.end());
 
@@ -32,13 +32,13 @@ STidPRGReaderCardAdapter::adaptAnswer(const ByteVector &answer)
                               "Invalid 'End of Frame byte'.");
 
     // Drop "Start of Frame" as well as "End of Frame" and "CRC" bytes.
-    std::vector<uint8_t> ret(answer.begin() + 1, answer.end() - 2);
+    ByteVector ret(answer.begin() + 1, answer.end() - 2);
     EXCEPTION_ASSERT_WITH_LOG(answer[answer.size() - 2] == compute_crc(ret),
                               LibLogicalAccessException, "Invalid CRC");
     return ret;
 }
 
-uint8_t STidPRGReaderCardAdapter::compute_crc(const std::vector<uint8_t> &cmd)
+uint8_t STidPRGReaderCardAdapter::compute_crc(const ByteVector &cmd)
 {
     EXCEPTION_ASSERT_WITH_LOG(cmd.size() >= 3, LibLogicalAccessException,
                               "Command / Response is too short.");

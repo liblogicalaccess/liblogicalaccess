@@ -21,6 +21,8 @@ namespace logicalaccess
     {
     public:
 
+        virtual ~DataTransport() = default;
+
         /**
          * \brief Get the reader unit.
          * \return The reader unit.

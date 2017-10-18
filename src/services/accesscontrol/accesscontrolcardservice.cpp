@@ -43,9 +43,9 @@ namespace logicalaccess
             size_t length = (formatret->getDataLength() + 7) / 8;
             if (length > 0)
             {
-	            ByteVector formatBuf = storage->readData(location, aiToUse, length, CB_AUTOSWITCHAREA);
+                ByteVector formatBuf = storage->readData(location, aiToUse, length, CB_AUTOSWITCHAREA);
 
-				formatret->setLinearData(&formatBuf[0], formatBuf.size());
+				formatret->setLinearData(formatBuf);
 				ret = true;
             }
         }
@@ -64,10 +64,7 @@ namespace logicalaccess
         std::shared_ptr<StorageCardService> storage = std::dynamic_pointer_cast<StorageCardService>(d_chip->getService(CST_STORAGE));
         if (storage)
         {
-            size_t length = (format->getDataLength() + 7) / 8;
-			ByteVector formatBuf(length, 0x00);
-
-            format->getLinearData(&formatBuf[0], formatBuf.size());
+			ByteVector formatBuf = format->getLinearData();
             storage->writeData(location, aiToUse, aiToWrite, formatBuf, CB_AUTOSWITCHAREA);
         }
 		else

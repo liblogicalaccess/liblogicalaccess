@@ -28,6 +28,8 @@ namespace logicalaccess
          */
         HMAC1Key();
 
+        virtual ~HMAC1Key() = default;
+
         /**
          * \brief Build a hmac-1 key given a string representation of it.
          * \param str The string representation.

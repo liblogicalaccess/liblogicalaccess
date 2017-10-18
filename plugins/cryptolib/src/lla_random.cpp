@@ -19,10 +19,10 @@ uint8_t logicalaccess::RandomHelper::byte()
     return random_byte;
 }
 
-std::vector<uint8_t> logicalaccess::RandomHelper::bytes(size_t size)
+ByteVector logicalaccess::RandomHelper::bytes(size_t size)
 {
     std::unique_lock<std::mutex> ul(mutex_);
-    std::vector<uint8_t> ret(size);
+    ByteVector ret(size);
 
     int rc = RAND_bytes(&ret[0], (int)(size));
 

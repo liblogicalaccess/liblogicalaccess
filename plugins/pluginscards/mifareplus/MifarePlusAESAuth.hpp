@@ -24,7 +24,7 @@ namespace logicalaccess
         bool AESAuthenticate(std::shared_ptr<AES128Key> key, uint16_t keyslot) const;
 
     private:
-        bool aes_auth_step2(std::vector<uint8_t> rnd_b,
+        bool aes_auth_step2(ByteVector rnd_b,
                             std::shared_ptr<AES128Key> key) const;
         bool aes_auth_final(const ByteVector &rnd_a,
                             const ByteVector &rnd_a_reader,

@@ -66,8 +66,9 @@ class LIBLOGICALACCESS_API ID3ReaderUnit : public PCSCReaderUnit
 
 	bool process_insertion(const std::string &cardType, int maxwait,
                                    const ElapsedTimeCounter &elapsed) override;
-
+#ifndef SWIG
     using PCSCReaderUnit::connect;
+#endif
 	bool connect(PCSCShareMode share_mode) override;
 
 	void disconnect() override;

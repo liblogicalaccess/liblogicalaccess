@@ -19,9 +19,14 @@
 namespace logicalaccess
 {
     MifareUltralightPCSCCommands::MifareUltralightPCSCCommands()
-        : MifareUltralightCommands()
+        : MifareUltralightCommands(CMD_MIFAREULTRALIGHTPCSC)
     {
     }
+
+	MifareUltralightPCSCCommands::MifareUltralightPCSCCommands(std::string ct)
+		: MifareUltralightCommands(ct)
+	{
+	}
 
     MifareUltralightPCSCCommands::~MifareUltralightPCSCCommands()
     {

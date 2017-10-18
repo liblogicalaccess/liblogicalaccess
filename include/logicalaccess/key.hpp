@@ -25,6 +25,8 @@ class KeyDiversification;
          */
         Key();
 
+        virtual ~Key() = default;
+
         /**
          * \brief Set the key to its default (only 0's).
          */

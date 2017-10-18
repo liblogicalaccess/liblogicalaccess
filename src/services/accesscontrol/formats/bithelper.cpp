@@ -1,4 +1,4 @@
-/**
+﻿/**
  * \file bithelper.cpp
  * \author Arnaud H <arnaud-dev@islog.com>
  * \brief BitHelper Base.
@@ -7,219 +7,108 @@
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 #include "logicalaccess/logs.hpp"
 #include <cstring>
+#include "logicalaccess/myexception.hpp"
+
+#include <algorithm>
 
 namespace logicalaccess
 {
-    unsigned int BitHelper::align(void* linedData, size_t linedDataLengthBytes, const void* data, size_t dataLengthBytes, unsigned int dataLengthBits)
+    BitsetStream BitHelper::align(const BitsetStream& data, unsigned int dataLengthBits)
     {
-        unsigned int ret = 0;
         unsigned int offset = 8 - (dataLengthBits % 8);
+        BitsetStream linedData;
 
-        if ((ret = truncateLittleEndian(linedData, linedDataLengthBytes, data, dataLengthBytes, dataLengthBits)) > 0)
+        if (data.getBitSize() > 0)
         {
-            if (linedData != nullptr)
+            if (offset != 8)
             {
-                if (linedDataLengthBytes >= ((ret + 7) / 8))
-                {
-                    unsigned char* tmp = new unsigned char[linedDataLengthBytes];
-                    memset(tmp, 0x00, linedDataLengthBytes);
+                auto dataVector = data.getData();
+                std::reverse(dataVector.begin(), dataVector.end());
 
-                    if (offset != 8)
-                    {
-                        unsigned char* swb = reinterpret_cast<unsigned char*>(linedData);
+                BitsetStream linedData;
+                linedData.concat(dataVector, offset, dataLengthBits);
 
-                        for (size_t i = 0; i < linedDataLengthBytes; ++i)
-                        {
-                            tmp[i] |= (unsigned char)(swb[i] << offset);
-                            if (i != linedDataLengthBytes - 1)
-                            {
-                                tmp[i + 1] |= (unsigned char)(swb[i] >> (8 - offset));
-                            }
-                        }
-                        memcpy(linedData, tmp, linedDataLengthBytes);
-                    }
+                dataVector = linedData.getData();
+                std::reverse(dataVector.begin(), dataVector.end());
 
-#if __BYTE_ORDER != __LITTLE_ENDIAN
+                linedData.clear();
+                linedData.concat(dataVector, 0, dataVector.size() * 8);
 
-                    memset(tmp, 0x00, linedDataLengthBytes);
-                    swapBytes(tmp, linedDataLengthBytes, linedData, linedDataLengthBytes, ret);
-                    memcpy(linedData, tmp, linedDataLengthBytes);
-#endif
-
-                    delete[] tmp;
-                }
+                return linedData;
             }
-        }
 
-        return ret;
+        }
+        return data;
     }
 
-    unsigned int BitHelper::revert(void* revertedData, size_t revertedDataLengthBytes, const void* data, size_t dataLengthBytes, unsigned int dataLengthBits)
+    BitsetStream BitHelper::revert(const BitsetStream& data, unsigned int dataLengthBits)
     {
-        unsigned int ret = 0;
         unsigned int offset = 8 - (dataLengthBits % 8);
 
-        if ((ret = truncateLittleEndian(revertedData, revertedDataLengthBytes, data, dataLengthBytes, dataLengthBits)) > 0)
+        if (data.getBitSize() > 0)
         {
-            if (revertedData != nullptr)
+
+            if (offset != 8)
             {
-                if ((revertedDataLengthBytes * 8) >= ret)
+                auto dataVector = data.getData();
+                ByteVector tmp(dataVector.size());
+                for (long long i = static_cast<long long>(dataVector.size() - 1); i >= 0; --i)
                 {
-                    unsigned char* tmp = new unsigned char[revertedDataLengthBytes];
-                    memset(tmp, 0x00, revertedDataLengthBytes);
+                    tmp[i] |= 0xff & (dataVector[i] >> offset);
 
-                    if (offset != 8)
+                    if (i != 0)
                     {
-                        unsigned char* reb = reinterpret_cast<unsigned char*>(revertedData);
-
-                        for (long long i = static_cast<long long>(revertedDataLengthBytes - 1); i >= 0; --i) // TODO: Check this loop
-                        {
-                            tmp[i] |= 0xff & (reb[i] >> offset);
-
-                            if (i != 0)
-                            {
-                                tmp[i - 1] |= 0xff & (reb[i] << (8 - offset));
-                            }
-                        }
-
-                        memcpy(revertedData, tmp, revertedDataLengthBytes);
+                        tmp[i - 1] |= 0xff & (dataVector[i] << (8 - offset));
                     }
-
-#if __BYTE_ORDER != __LITTLE_ENDIAN
-
-                    memset(tmp, 0x00, revertedDataLengthBytes);
-                    swapBytes(tmp, revertedDataLengthBytes, revertedData, revertedDataLengthBytes, ret);
-                    memcpy(revertedData, tmp, revertedDataLengthBytes);
-
-#endif
-
-                    delete[] tmp;
                 }
-            }
-        }
 
-        return ret;
+                BitsetStream linedData;
+
+                linedData.concat(tmp, 0, tmp.size() * 8);
+
+                return linedData;
+                }
+        }
+        return data;
     }
 
-    unsigned int BitHelper::truncateLittleEndian(void* truncatedData, size_t truncatedDataLengthBytes, const void* data, size_t dataLengthBytes, unsigned int dataLengthBits)
+    BitsetStream BitHelper::truncateLittleEndian(const BitsetStream& data, unsigned int dataLengthBits)
     {
-        unsigned int ret = dataLengthBits;
-        size_t copyLength = (dataLengthBits + 7) / 8;
+        BitsetStream truncatedData(dataLengthBits);
 
-        if (truncatedData != nullptr && truncatedDataLengthBytes >= copyLength && dataLengthBytes >= copyLength)
-        {
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-
-            memcpy(truncatedData, data, copyLength);
-
+        truncatedData.writeAt(0, data.getData(), 0, data.getBitSize());
 #else
-
-            unsigned char* dab = reinterpret_cast<unsigned char*>(data);
-            unsigned char* trb = reinterpret_cast<unsigned char*>(truncatedData);
-
-            for (size_t i = dataLengthBytes - 1, p = 0; p < copyLength && i < SIZE_T_MAX; --i, ++p)
-            {
-                trb[p] = dab[i];
-            }
-
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "BitHelper::truncateLittleEndian NO IMPLEMENTED.");
+        for (size_t i = data.getData.size() - 1, p = 0; p < copyLength && i < SIZE_T_MAX; --i, ++p)
+        {
+            truncatedData.writeAt(p * 8, data.getData()[i]);
+        }
 #endif
-        }
-        return ret;
+        return truncatedData;
     }
 
-    void BitHelper::swapBytes(void* swapedData, size_t swapedDataLengthBytes, const void* data, size_t dataLengthBytes, unsigned int /*dataLengthBits*/)
+    BitsetStream BitHelper::swapBytes(const BitsetStream& data)
     {
-        if (swapedDataLengthBytes >= dataLengthBytes)
+        auto byteRevert = data.getData();
+        std::reverse(byteRevert.begin(), byteRevert.end());
+
+        BitsetStream truncatedData;
+        truncatedData.concat(byteRevert, 0, data.getByteSize() * 8);
+        return truncatedData;
+    }
+
+    BitsetStream BitHelper::extract(const BitsetStream& data, unsigned int readPosBits, unsigned int readLengthBits)
+    {
+        BitsetStream extractData;
+
+        if ((readPosBits + readLengthBits) <= data.getBitSize())
         {
-            unsigned char* swb = reinterpret_cast<unsigned char*>(swapedData);
-            const unsigned char* dab = reinterpret_cast<const unsigned char*>(data);
-
-            for (long long j = 0, i = static_cast<long long>(dataLengthBytes - 1); i >= 0; --i, ++j)
-            {
-                swb[j] = dab[i];
-            }
-        }
-    }
-
-    unsigned int BitHelper::extract(void* extractData, size_t extractDataLengthBytes, const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, unsigned int readPosBits, unsigned int readLengthBits)
-    {
-        unsigned int dataWritten = 0;
-
-        if (((readPosBits + readLengthBits) <= dataLengthBits) && (extractDataLengthBytes >= ((readLengthBits + 7) / 8)))
-        {
-            if (readLengthBits <= dataLengthBits)
-            {
-                unsigned int rPos = 0;
-
-                writeToBit(extractData, extractDataLengthBytes, &rPos, data, dataLengthBytes, dataLengthBits, readPosBits, readLengthBits);
-                dataWritten = readLengthBits;
-            }
-            else
-            {
-                memcpy(extractData, data, dataLengthBytes);
-                dataWritten = readLengthBits;
-            }
-        }
-
-        return dataWritten;
-    }
-
-    void BitHelper::writeToBit(void* writtenData, size_t writtenDataLengthBytes, unsigned int* writePosBits, const void* data, size_t dataLengthBytes, unsigned int dataLengthBits)
-    {
-        writeToBit(writtenData, writtenDataLengthBytes, writePosBits, data, dataLengthBytes, dataLengthBits, 0, dataLengthBits);
-    }
-
-    void BitHelper::writeToBit(void* writtenData, size_t writtenDataLengthBytes, unsigned int* writePosBits, const void* data, size_t /*dataLengthBytes*/, unsigned int /*dataLengthBits*/, unsigned int readPosBits, unsigned int readLengthBits)
-        //void BitHelper::writeToBit(void* data, size_t dataLength, size_t* pos, const void* d, size_t dPos, size_t length)
-    {
-        unsigned int blen;
-        for (unsigned int i = readPosBits; i < (readPosBits + readLengthBits); i += blen)
-        {
-            unsigned int ofs = i % 8;
-            blen = (8 - ofs);
-            if ((i + blen) >(readLengthBits + readPosBits))
-            {
-                blen = (readLengthBits + readPosBits - i);
-                /*if (blen > ofs)
-                {
-                blen -= ofs;
-                }*/
-            }
-            writeToBit(writtenData, writtenDataLengthBytes, writePosBits, reinterpret_cast<const unsigned char*>(data)[i / 8], ofs, blen);
-        }
-    }
-
-    void BitHelper::writeToBit(void* writtenData, size_t writtenDataLengthBytes, unsigned int* writePosBits, unsigned char data)
-    {
-        writeToBit(writtenData, writtenDataLengthBytes, writePosBits, data, 0, 8);
-    }
-
-    void BitHelper::writeToBit(void* writtenData, size_t writtenDataLengthBytes, unsigned int* writePosBits, unsigned char data, unsigned int readPosBits, unsigned int readLengthBits)
-    {
-        unsigned int block = (int)(*writePosBits / 8.0);
-        unsigned int offset = (*writePosBits % 8);
-        unsigned int notreadlen = 8 - (readLengthBits + readPosBits);
-
-        unsigned char* datas = reinterpret_cast<unsigned char*>(writtenData);
-
-        if (offset > 0)
-        {
-            datas[block] |= 0xff & ((0xff & (((data >> notreadlen) << notreadlen) << readPosBits)) >> offset);
-            if ((8 - offset) < readLengthBits)
-            {
-                if ((block + 1) >= writtenDataLengthBytes)
-                {
-                    THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "The result array is too short.");
-                }
-
-                datas[block + 1] |= 0xff & (0xff & ((0xff & ((((data >> notreadlen) << notreadlen) << readPosBits))) << (8 - offset)));
-            }
+            extractData.concat(data.getData(), readPosBits, readLengthBits);
         }
         else
-        {
-            datas[block] |= (unsigned char)((unsigned char)(((unsigned char)(((data >> notreadlen) << notreadlen) << readPosBits))));
-        }
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Data is too small to extract this size.");
 
-        (*writePosBits) += readLengthBits;
+        return extractData;
     }
 }

@@ -74,115 +74,48 @@ namespace logicalaccess
         return d_isIdentifier;
     }
 
-    void ValueDataField::convertNumericData(void* data, size_t dataLengthBytes, unsigned int* pos, unsigned long long field, unsigned int fieldlen) const
+    void ValueDataField::convertNumericData(BitsetStream& data, unsigned long long field, unsigned int fieldlen) const
     {
-        unsigned int convertedDataTypeLengthBits = d_dataType->convert(field, fieldlen, nullptr, 0);
-        if (convertedDataTypeLengthBits > 0)
-        {
-            size_t convertedDataTypeLengthBytes = (convertedDataTypeLengthBits + 7) / 8;
-            unsigned char* convertedDataTypeData = new unsigned char[convertedDataTypeLengthBytes];
-            memset(convertedDataTypeData, 0x00, convertedDataTypeLengthBytes);
-
-            if (d_dataType->convert(field, fieldlen, convertedDataTypeData, convertedDataTypeLengthBytes) == convertedDataTypeLengthBits)
-            {
-                unsigned int convertedDataRepresentationLengthBits = d_dataRepresentation->convertNumeric(convertedDataTypeData, convertedDataTypeLengthBytes, convertedDataTypeLengthBits, nullptr, 0);
-                if (convertedDataRepresentationLengthBits > 0)
-                {
-                    size_t convertedDataRepresentationLengthBytes = (convertedDataRepresentationLengthBits + 7) / 8;
-                    unsigned char* convertedDataRepresentationData = new unsigned char[convertedDataRepresentationLengthBytes];
-
-                    if (d_dataRepresentation->convertNumeric(convertedDataTypeData, convertedDataTypeLengthBytes, convertedDataTypeLengthBits, convertedDataRepresentationData, convertedDataRepresentationLengthBytes) == convertedDataRepresentationLengthBits)
-                    {
-                        BitHelper::writeToBit(data, dataLengthBytes, pos, convertedDataRepresentationData, convertedDataRepresentationLengthBytes, convertedDataRepresentationLengthBits, 0, convertedDataRepresentationLengthBits);
-                    }
-
-                    delete[] convertedDataRepresentationData;
-                }
-            }
-            delete[] convertedDataTypeData;
-        }
+        const BitsetStream convertedDataTypeData = d_dataType->convert(field, fieldlen);
+        BitsetStream bitConvertNum = d_dataRepresentation->convertNumeric(convertedDataTypeData);
+        const auto extraBitsParity = ((d_dataType->getLeftParityType() != PT_NONE) + (d_dataType->getRightParityType() != PT_NONE)) * (fieldlen / d_dataType->getBitDataSize());
+        data.concat(bitConvertNum.getData(), 0, fieldlen + extraBitsParity);
     }
 
-    void ValueDataField::convertBinaryData(const void* data, size_t dataLengthBytes, unsigned int* pos, unsigned int fieldlen, void* convertedData, size_t convertedDataLengthBytes) const
+    void ValueDataField::convertBinaryData(const BitsetStream& data, unsigned int /*fieldlen*/, BitsetStream& convertedData) const
     {
-        unsigned int convertedDataRepresentationLengthBits = d_dataRepresentation->convertBinary(data, dataLengthBytes, fieldlen, nullptr, 0);
-        if (convertedDataRepresentationLengthBits > 0)
-        {
-            size_t convertedDataRepresentationLengthBytes = (convertedDataRepresentationLengthBits + 7) / 8;
-            unsigned char* convertedDataRepresentationData = new unsigned char[convertedDataRepresentationLengthBytes];
-
-            if (d_dataRepresentation->convertBinary(data, dataLengthBytes, fieldlen, convertedDataRepresentationData, convertedDataRepresentationLengthBytes) == convertedDataRepresentationLengthBits)
-            {
-                BitHelper::writeToBit(convertedData, convertedDataLengthBytes, pos, convertedDataRepresentationData, convertedDataRepresentationLengthBytes, convertedDataRepresentationLengthBits, 0, convertedDataRepresentationLengthBits);
-            }
-
-            delete[] convertedDataRepresentationData;
-        }
+        BitsetStream convertedDataRepresentationData = d_dataRepresentation->convertBinary(data);
+        convertedData.concat(convertedDataRepresentationData.getData(), 0, convertedDataRepresentationData.getBitSize());
     }
 
-    unsigned long long ValueDataField::revertNumericData(const void* data, size_t dataLengthBytes, unsigned int* pos, unsigned int fieldlen) const
+    unsigned long long ValueDataField::revertNumericData(const BitsetStream& data, unsigned int pos, unsigned int fieldlen) const
     {
         unsigned long long ret = 0;
 
-        unsigned int extractedSizeBits = d_dataType->convert(0, d_dataRepresentation->convertLength(fieldlen), nullptr, 0);
-        size_t extractedSizeBytes = (extractedSizeBits + 7) / 8;
-        unsigned int revertedSizeBits = extractedSizeBits;
-        size_t revertedSizeBytes = (revertedSizeBits + 7) / 8;
 
-        unsigned char* extractData = new unsigned char[extractedSizeBytes];
-        unsigned char* revertedData = new unsigned char[revertedSizeBytes];
-        memset(extractData, 0x00, extractedSizeBytes);
-        memset(revertedData, 0x00, revertedSizeBytes);
+        BitsetStream extractData = BitHelper::extract(data, pos, fieldlen);
 
-        unsigned int tmp = 0;
-        if ((tmp = BitHelper::extract(extractData, extractedSizeBytes, data, dataLengthBytes, static_cast<unsigned int>(dataLengthBytes * 8), *pos, extractedSizeBits)) > 0)
+        if (extractData.getBitSize() > 0)
         {
-            if ((tmp = d_dataRepresentation->revertNumeric(extractData, extractedSizeBytes, tmp, revertedData, revertedSizeBytes)) > 0)
+            BitsetStream revertedData = d_dataRepresentation->revertNumeric(extractData);
+            if (revertedData.getBitSize() > 0)
             {
-                ret = d_dataType->revert(revertedData, revertedSizeBytes, tmp);
+                ret = d_dataType->revert(revertedData, fieldlen);
             }
         }
-
-        delete[] extractData;
-        delete[] revertedData;
-
-        (*pos) += extractedSizeBits;
-
         return ret;
     }
 
-    void ValueDataField::revertBinaryData(const void* data, size_t dataLengthBytes, unsigned int* pos, unsigned int fieldlen, void* revertedData, size_t revertedDataLengthBytes) const
+    BitsetStream ValueDataField::revertBinaryData(const BitsetStream& data, unsigned int pos, unsigned int fieldlen) const
     {
-        unsigned int readSizeBits = fieldlen;
-        size_t extractedSizeBytes = (readSizeBits + 7) / 8;
-        unsigned int revertedSizeBits = readSizeBits;
-        size_t revertedTemporarySizeBytes = (revertedSizeBits + 7) / 8;
-
-        unsigned char* extractData = new unsigned char[extractedSizeBytes];
-        unsigned char* revertedTemporaryData = new unsigned char[revertedTemporarySizeBytes];
-        memset(extractData, 0x00, extractedSizeBytes);
-        memset(revertedTemporaryData, 0x00, revertedTemporarySizeBytes);
-
-        unsigned int tmp = 0;
-        if ((tmp = BitHelper::extract(extractData, extractedSizeBytes, data, dataLengthBytes, static_cast<unsigned int>(dataLengthBytes * 8), *pos, readSizeBits)) > 0)
+        BitsetStream revertedData;
+        BitsetStream extractData = BitHelper::extract(data, pos, fieldlen);
+        if (extractData.getBitSize() > 0)
         {
-            if ((tmp = d_dataRepresentation->revertBinary(extractData, extractedSizeBytes, tmp, revertedTemporaryData, revertedTemporarySizeBytes)) > 0)
-            {
-
-#if defined(UNIX)
-              if (revertedDataLengthBytes < revertedTemporarySizeBytes)
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The size of the dest buffer is too small for memcpy");
-              memcpy(revertedData, revertedTemporaryData, revertedTemporarySizeBytes);
-#else
-              memcpy_s(revertedData, revertedDataLengthBytes, revertedTemporaryData, revertedTemporarySizeBytes);
-#endif
-            }
+            return d_dataRepresentation->revertBinary(extractData);
         }
 
-        delete[] extractData;
-        delete[] revertedTemporaryData;
-
-        (*pos) += readSizeBits;
+        return revertedData;
     }
 
     void ValueDataField::serialize(boost::property_tree::ptree& node)

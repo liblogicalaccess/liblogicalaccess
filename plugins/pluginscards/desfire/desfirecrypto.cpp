@@ -170,7 +170,7 @@ namespace logicalaccess
      * We do this by comparing the 8 first byte to 8 second byte, ignoring
      * parity bits.
      */
-    static bool is_triple_des(const std::vector<uint8_t> &key)
+    static bool is_triple_des(const ByteVector &key)
     {
         EXCEPTION_ASSERT_WITH_LOG(key.size() >= 16, LibLogicalAccessException, "Triple des key check need a valid key size.");
 

@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <cstdint>
+#include "logicalaccess/lla_fwd.hpp"
 
 namespace logicalaccess
 {
@@ -24,9 +25,9 @@ namespace logicalaccess
          *
          * Returns the encrypted buffer.
          */
-        static std::vector<uint8_t> AESEncrypt(const std::vector<uint8_t> &data,
-                                               const std::vector<uint8_t> &key,
-                                               const std::vector<uint8_t> &iv_data);
+        static ByteVector AESEncrypt(const ByteVector &data,
+                                               const ByteVector &key,
+                                               const ByteVector &iv_data);
 
         /**
          * Decrypt `data` using key `key` and `iv_data`.
@@ -35,13 +36,13 @@ namespace logicalaccess
          *
          * Returns the decrypted buffer.
          */
-        static std::vector<uint8_t> AESDecrypt(const std::vector<uint8_t> &data,
-                                               const std::vector<uint8_t> &key,
-                                               std::vector<uint8_t> const &iv_data);
+        static ByteVector AESDecrypt(const ByteVector &data,
+                                               const ByteVector &key,
+                                               ByteVector const &iv_data);
         
     private:
-        static std::vector<uint8_t>  AESRun(const std::vector<uint8_t> &data, const std::vector<uint8_t> &key,
-                                            const std::vector<uint8_t> &iv_data,
+        static ByteVector  AESRun(const ByteVector &data, const ByteVector &key,
+                                            const ByteVector &iv_data,
                                             bool crypt);
     };
 }

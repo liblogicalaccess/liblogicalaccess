@@ -12,6 +12,8 @@
 
 namespace logicalaccess
 {
+#define CMD_MIFAREPLUSSL1 	"MifarePlusSL1"
+
     class MifarePlusChip;
 
     /**
@@ -25,7 +27,9 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API MifarePlusSL1Commands : public MifareCommands
     {
     public:
-		MifarePlusSL1Commands() {}
+		MifarePlusSL1Commands() : MifareCommands(CMD_MIFAREPLUSSL1) {}
+
+        explicit MifarePlusSL1Commands(std::string ct) : MifareCommands(ct) {}
 
         /**
          * Perform AES Key authentication against the card.

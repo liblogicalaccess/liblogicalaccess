@@ -23,6 +23,8 @@ namespace logicalaccess
          */
         ReaderMemoryKeyStorage();
 
+        virtual ~ReaderMemoryKeyStorage() = default;
+
         /**
          * \brief Get the key storage type.
          * \return The key storage type.

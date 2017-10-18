@@ -13,7 +13,7 @@ class LIBLOGICALACCESS_API DesEncryptCommand : public BaseCommand
   public:
     DesEncryptCommand();
 
-	std::vector<uint8_t> serialize() const override;
+	ByteVector serialize() const override;
 
 	size_t binary_size_impl() const override;
 
@@ -24,7 +24,7 @@ class LIBLOGICALACCESS_API DesEncryptCommand : public BaseCommand
     bool decrypt_;
     uint8_t flags_;
     std::string key_name_;
-    std::vector<uint8_t> payload_;
+    ByteVector payload_;
     std::array<uint8_t, 8> iv_;
 
 #define COMMAND_DES_ENCRYPT_FLAG_ECB 1
@@ -34,9 +34,9 @@ class LIBLOGICALACCESS_API DesEncryptCommand : public BaseCommand
 class LIBLOGICALACCESS_API DesEncryptResponse : public BaseResponse
 {
   public:
-    DesEncryptResponse(uint16_t status, const std::vector<uint8_t> &data);
+    DesEncryptResponse(uint16_t status, const ByteVector &data);
 
-    std::vector<uint8_t> bytes_;
+    ByteVector bytes_;
 };
 }
 }

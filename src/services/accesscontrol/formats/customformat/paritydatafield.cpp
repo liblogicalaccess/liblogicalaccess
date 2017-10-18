@@ -27,7 +27,7 @@ namespace logicalaccess
 
     void ParityDataField::setPosition(unsigned int position)
     {
-        std::vector<unsigned int> newPositions;
+        ByteVector newPositions;
         for (std::vector<unsigned int>::iterator i = d_bitsUsePositions.begin(); i != d_bitsUsePositions.end(); ++i)
         {
             if (d_position < (*i) && position >(*i))
@@ -67,40 +67,38 @@ namespace logicalaccess
         return d_bitsUsePositions;
     }
 
-    void ParityDataField::getLinearData(void* data, size_t dataLengthBytes, unsigned int* pos) const
+    BitsetStream ParityDataField::getLinearData(const BitsetStream& data) const
     {
-        if ((dataLengthBytes * 8) < (d_length + *pos))
-        {
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
-        }
-
-        unsigned int* positions = new unsigned int[d_bitsUsePositions.size()];
+        BitsetStream dataTmp;
+        std::vector<unsigned int> positions(d_bitsUsePositions.size());
         int i = 0;
         for (std::vector<unsigned int>::const_iterator b = d_bitsUsePositions.begin(); b != d_bitsUsePositions.end(); ++b)
         {
             positions[i++] = (*b);
         }
-        unsigned char parity = Format::calculateParity(data, dataLengthBytes, d_parityType, positions, d_bitsUsePositions.size());
-        delete[] positions;
-        BitHelper::writeToBit(data, dataLengthBytes, pos, parity, 7, 1);
+        unsigned char parity = Format::calculateParity(data, d_parityType, positions);
+        dataTmp.append(parity, 7, 1);
+        return dataTmp;
     }
 
-    void ParityDataField::setLinearData(const void* data, size_t dataLengthBytes, unsigned int* pos)
+    void ParityDataField::setLinearData(const ByteVector& data)
     {
-        if ((dataLengthBytes * 8) < (d_length + *pos))
+		BitsetStream _data;
+		_data.concat(data);
+
+                if (_data.getBitSize() < (d_length + getPosition()))
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
         }
 
-        unsigned int* positions = new unsigned int[d_bitsUsePositions.size()];
+        std::vector<unsigned int> positions(d_bitsUsePositions.size());
         int i = 0;
         for (std::vector<unsigned int>::const_iterator b = d_bitsUsePositions.begin(); b != d_bitsUsePositions.end(); ++b)
         {
             positions[i++] = (*b);
         }
-        unsigned char parity = Format::calculateParity(data, dataLengthBytes, d_parityType, positions, d_bitsUsePositions.size());
-        unsigned char currentParity = (unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[*pos / 8] << (*pos % 8)) >> 7);
-        delete[] positions;
+        unsigned char parity = Format::calculateParity(_data, d_parityType, positions);
+        unsigned char currentParity = (unsigned char)((data[getPosition() / 8] << (getPosition() % 8)) >> 7);
 
         if (parity != currentParity)
         {
@@ -176,7 +174,7 @@ namespace logicalaccess
         }
     }
 
-	std::string ParityDataField::getDefaultXmlNodeName() const
+    std::string ParityDataField::getDefaultXmlNodeName() const
     {
         return "ParityDataField";
     }

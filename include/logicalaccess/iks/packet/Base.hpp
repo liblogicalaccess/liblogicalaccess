@@ -71,7 +71,7 @@ class LIBLOGICALACCESS_API BaseCommand
   public:
 	BaseCommand() : opcode_(0) {}
 	virtual ~BaseCommand() = default;
-	virtual std::vector<uint8_t> serialize() const;
+	virtual ByteVector serialize() const;
 
     /**
      * Compute the binary size_.
@@ -102,10 +102,10 @@ class LIBLOGICALACCESS_API KeyDivInfo
 
     // We used fixed size so that it's easier network wise.
     // It will be truncated/extended to 64bytes.
-    mutable std::vector<uint8_t> div_input_;
+    mutable ByteVector div_input_;
 
     static size_t binary_size();
-    std::vector<uint8_t> serialize() const;
+    ByteVector serialize() const;
 
     /**
      * Create a KeyDivInfo structure ready to send to the
@@ -115,7 +115,7 @@ class LIBLOGICALACCESS_API KeyDivInfo
      * `divinput` is 64bytes.
      */
     static KeyDivInfo build(std::shared_ptr<Key> key,
-                            const std::vector<uint8_t> &divinput);
+                            const ByteVector &divinput);
 
     static KeyDivInfo build(std::shared_ptr<Key> key,
                             ByteVector identifier, int AID,

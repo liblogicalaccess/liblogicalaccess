@@ -23,12 +23,12 @@ namespace logicalaccess
 
 	WindowsDynLibrary::~WindowsDynLibrary()
 	{
-		FreeLibrary(_handle);
+		::FreeLibrary(_handle);
 	}
 
     void* WindowsDynLibrary::getSymbol(const char* symName)
     {
-	    void * sym = GetProcAddress(_handle, symName);
+        void * sym = ::GetProcAddress(_handle, symName);
         if (!sym)
         {
             LOG(LogLevel::PLUGINS_ERROR) << "Cannot get symbol " << symName << " on library " << _name << ".";
@@ -39,7 +39,7 @@ namespace logicalaccess
 
     bool WindowsDynLibrary::hasSymbol(const char *name)
     {
-	    void * sym = GetProcAddress(_handle, name);
+        void * sym = ::GetProcAddress(_handle, name);
         if (!sym)
         {
             return false;

@@ -8,6 +8,8 @@
 #include <random>
 #include <mutex>
 
+#include <logicalaccess/lla_fwd.hpp>
+
 namespace logicalaccess
 {
     /**
@@ -27,7 +29,7 @@ namespace logicalaccess
         /**
          * Generate `size` random bytes.
          */
-        static std::vector<uint8_t> bytes(size_t size);
+        static ByteVector bytes(size_t size);
 
     private:
         /**

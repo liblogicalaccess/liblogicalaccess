@@ -16,9 +16,15 @@
 namespace logicalaccess
 {
     MifareSCMCommands::MifareSCMCommands()
-        : MifarePCSCCommands()
+        : MifarePCSCCommands(CMD_MIFARESCM)
     {
     }
+
+	MifareSCMCommands::MifareSCMCommands(std::string ct)
+		: MifarePCSCCommands(ct)
+	{
+	}
+
 
     MifareSCMCommands::~MifareSCMCommands()
     {

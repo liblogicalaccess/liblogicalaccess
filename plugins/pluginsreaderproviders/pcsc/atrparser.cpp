@@ -6,7 +6,7 @@
 
 namespace logicalaccess
 {
-ATRParser::ATRParser(const std::vector<uint8_t> &atr)
+ATRParser::ATRParser(const ByteVector &atr)
     : atr_(atr)
 {
     // Populated the hardcoded atr table
@@ -50,7 +50,7 @@ ATRParser::ATRParser(const std::vector<uint8_t> &atr)
 /// Boilerplate to prepare the proper call to parse()
 ///
 
-std::string ATRParser::guessCardType(const std::vector<uint8_t> &atr)
+std::string ATRParser::guessCardType(const ByteVector &atr)
 {
     ATRParser parser(atr);
     // Type will be ignored.
@@ -59,7 +59,7 @@ std::string ATRParser::guessCardType(const std::vector<uint8_t> &atr)
 
 std::string ATRParser::guessCardType(uint8_t *atr, size_t atrlen)
 {
-    return guessCardType(std::vector<uint8_t>(atr, atr + atrlen));
+    return guessCardType(ByteVector(atr, atr + atrlen));
 }
 
 std::string ATRParser::guessCardType(const std::string &atr_str)
@@ -70,7 +70,7 @@ std::string ATRParser::guessCardType(const std::string &atr_str)
 std::string ATRParser::guessCardType(uint8_t *atr, size_t atrlen,
                                      PCSCReaderUnitType reader_type)
 {
-    return guessCardType(std::vector<uint8_t>(atr, atr + atrlen), reader_type);
+    return guessCardType(ByteVector(atr, atr + atrlen), reader_type);
 }
 
 std::string ATRParser::guessCardType(const std::string &atr_str,
@@ -79,7 +79,7 @@ std::string ATRParser::guessCardType(const std::string &atr_str,
     return guessCardType(BufferHelper::fromHexString(atr_str), reader_type);
 }
 
-std::string ATRParser::guessCardType(const std::vector<uint8_t> &atr,
+std::string ATRParser::guessCardType(const ByteVector &atr,
                                      PCSCReaderUnitType reader_type)
 {
     ATRParser parser(atr);

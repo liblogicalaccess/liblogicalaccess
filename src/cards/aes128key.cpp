@@ -39,7 +39,7 @@ namespace logicalaccess
         }
     }
 
-    AES128Key::AES128Key(const std::vector<uint8_t> &data) :
+    AES128Key::AES128Key(const ByteVector &data) :
             Key()
     {
 	    Key::clear();
@@ -63,7 +63,7 @@ namespace logicalaccess
         return "AES128Key";
     }
 
-    void AES128Key::fromBytes(const std::vector<uint8_t> &v)
+    void AES128Key::fromBytes(const ByteVector &v)
     {
         assert(v.size() == AES128_KEY_SIZE);
         memcpy(d_key, &v[0], AES128_KEY_SIZE);

@@ -21,9 +21,14 @@
 namespace logicalaccess
 {
     MifarePCSCCommands::MifarePCSCCommands()
-        : MifareCommands()
+        : MifareCommands(CMD_MIFAREPCSC)
     {
     }
+
+	MifarePCSCCommands::MifarePCSCCommands(std::string ct)
+		: MifareCommands(ct)
+	{
+	}
 
     MifarePCSCCommands::~MifarePCSCCommands()
     {
@@ -51,7 +56,7 @@ namespace logicalaccess
                 // Apparently the issue is also hit with ACS122U.
                 return loadKey(keyno, keytype, key, true);
             }
-	        throw;
+                throw;
         }
         if (!vol && (result[result.size() - 2] == 0x63) &&
             (result[result.size() - 1] == 0x86))

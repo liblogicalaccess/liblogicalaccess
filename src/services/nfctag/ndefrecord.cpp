@@ -36,8 +36,8 @@ namespace logicalaccess
             data.push_back(static_cast<unsigned char>(m_payload.size()));
         else // long record
         {
-            data.push_back((m_payload.size() & 0xff000000) >> 24);
-            data.push_back((m_payload.size() & 0xff0000) >> 16);
+            data.push_back(static_cast<uint8_t>((m_payload.size() & 0xff000000) >> 24));
+            data.push_back(static_cast<uint8_t>((m_payload.size() & 0xff0000) >> 16));
             data.push_back((m_payload.size() & 0xff00) >> 8);
             data.push_back(m_payload.size() & 0xff);
         }

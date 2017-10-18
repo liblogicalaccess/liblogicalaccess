@@ -36,31 +36,37 @@ namespace logicalaccess
         return 37;
     }
 
-	std::string Wiegand37Format::getName() const
+    std::string Wiegand37Format::getName() const
     {
         return std::string("Wiegand 37");
     }
 
-    void Wiegand37Format::getLinearDataWithoutParity(void* data, size_t dataLengthBytes) const
+    BitsetStream Wiegand37Format::getLinearDataWithoutParity() const
     {
-        unsigned int pos = 1;
+		BitsetStream data;
 
-        convertField(data, dataLengthBytes, &pos, getUid(), 35);
+                data.append(0x00, 0, 1);
+		convertField(data, getUid(), 35);
+                data.append(0x00, 0, 1);
+
+		return data;
     }
 
-    void Wiegand37Format::setLinearDataWithoutParity(const void* data, size_t dataLengthBytes)
+    void Wiegand37Format::setLinearDataWithoutParity(const ByteVector& data)
     {
-        unsigned int pos = 1;
+		unsigned int pos = 1;
+		BitsetStream _data;
+		_data.concat(data);
 
-        setUid(revertField(data, dataLengthBytes, &pos, 35));
+		setUid(revertField(_data, &pos, 35));
     }
 
-    size_t Wiegand37Format::getFormatLinearData(void* /*data*/, size_t /*dataLengthBytes*/) const
+    size_t Wiegand37Format::getFormatLinearData(ByteVector& /*data*/) const
     {
         return 0;
     }
 
-    void Wiegand37Format::setFormatLinearData(const void* /*data*/, size_t* /*indexByte*/)
+    void Wiegand37Format::setFormatLinearData(const ByteVector& /*data*/, size_t* /*indexByte*/)
     {
     }
 
@@ -84,7 +90,7 @@ namespace logicalaccess
         setUid(node.get_child("Uid").get_value<unsigned long long>());
     }
 
-	std::string Wiegand37Format::getDefaultXmlNodeName() const
+    std::string Wiegand37Format::getDefaultXmlNodeName() const
     {
         return "Wiegand37Format";
     }

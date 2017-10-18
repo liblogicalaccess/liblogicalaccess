@@ -8,23 +8,23 @@
 using namespace logicalaccess;
 
 
-std::vector<uint8_t> DESHelper::DESEncrypt(const std::vector<uint8_t> &data,
-                                           const std::vector<uint8_t> &key,
-                                           const std::vector<uint8_t> &iv_data)
+ByteVector DESHelper::DESEncrypt(const ByteVector &data,
+                                           const ByteVector &key,
+                                           const ByteVector &iv_data)
 {
     return DESRun(data, key, iv_data, true);
 }
 
-std::vector<uint8_t> DESHelper::DESDecrypt(const std::vector<uint8_t> &data,
-                                           const std::vector<uint8_t> &key,
-                                           std::vector<uint8_t> const &iv_data)
+ByteVector DESHelper::DESDecrypt(const ByteVector &data,
+                                           const ByteVector &key,
+                                           ByteVector const &iv_data)
 {
     return DESRun(data, key, iv_data, false);
 }
 
-std::vector<uint8_t> DESHelper::DESRun(const std::vector<uint8_t> &data,
-                                       const std::vector<uint8_t> &key,
-                                       const std::vector<uint8_t> &iv_data, bool crypt)
+ByteVector DESHelper::DESRun(const ByteVector &data,
+                                       const ByteVector &key,
+                                       const ByteVector &iv_data, bool crypt)
 {
     assert(key.size() != 0 && key.size() % 8 == 0);
     assert(iv_data.size() % 8 == 0);
@@ -43,7 +43,7 @@ std::vector<uint8_t> DESHelper::DESRun(const std::vector<uint8_t> &data,
         iv = std::make_shared<openssl::DESInitializationVector>(
             openssl::DESInitializationVector::createFromData(iv_data));
 
-    std::vector<uint8_t> result;
+    ByteVector result;
     if (crypt)
         cipher->cipher(data, result, *isokey.get(), *iv.get(), false);
     else

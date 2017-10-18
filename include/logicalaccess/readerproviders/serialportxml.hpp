@@ -20,6 +20,8 @@ namespace logicalaccess
     {
     public:
 
+        virtual ~SerialPortXml() = default;
+
         /**
          * \brief Constructor.
          */

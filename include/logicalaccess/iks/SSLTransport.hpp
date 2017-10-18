@@ -4,7 +4,7 @@
 #include <boost/asio.hpp>
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/property_tree/ptree_fwd.hpp>
-#include "logicalaccess/crypto/des_initialization_vector.hpp"
+#include "logicalaccess/lla_fwd.hpp"
 #ifdef ENABLE_SSLTRANSPORT
 #include <boost/asio/ssl.hpp>
 #endif
@@ -112,7 +112,7 @@ class LIBLOGICALACCESS_API SSLTransport
      * \param timeout Time waiting for data.
      * \return The data receive.
      */
-    virtual std::vector<uint8_t> receive(long int timeout);
+    virtual ByteVector receive(long int timeout);
 
     /**
 * \brief Connect complete

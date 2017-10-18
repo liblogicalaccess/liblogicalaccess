@@ -18,9 +18,14 @@
 namespace logicalaccess
 {
     MifareUltralightCSpringCardCommands::MifareUltralightCSpringCardCommands()
-        : MifareUltralightCPCSCCommands()
+        : MifareUltralightCPCSCCommands(CMD_MIFAREULTRALIGHTCSPRINGCARD)
     {
     }
+
+	MifareUltralightCSpringCardCommands::MifareUltralightCSpringCardCommands(std::string ct)
+		: MifareUltralightCPCSCCommands(ct)
+	{
+	}
 
     MifareUltralightCSpringCardCommands::~MifareUltralightCSpringCardCommands()
     {

@@ -15,6 +15,6 @@ class LIBLOGICALACCESS_API STidPRGReaderCardAdapter : public ReaderCardAdapter
     adaptAnswer(const ByteVector &answer) override;
 
   protected:
-	  static uint8_t compute_crc(const std::vector<uint8_t> &cmd);
+	  static uint8_t compute_crc(const ByteVector &cmd);
 };
 }

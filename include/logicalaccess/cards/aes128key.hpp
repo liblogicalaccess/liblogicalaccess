@@ -22,13 +22,16 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API AES128Key : public Key
     {
     public:
+#ifndef SWIG
         using XmlSerializable::serialize;
         using XmlSerializable::unSerialize;
-
+#endif
         /**
          * \brief Build an empty 16-bytes AES128 key.
          */
         AES128Key();
+
+        virtual ~AES128Key() = default;
 
         /**
          * \brief Build a AES128 key given a string representation of it.
@@ -46,7 +49,7 @@ namespace logicalaccess
         /**
          * Create a key from a 16bytes vector.
          */
-	    explicit AES128Key(const std::vector<uint8_t> &data);
+	    explicit AES128Key(const ByteVector &data);
 
         /**
          * \brief Get the key length.
@@ -89,7 +92,7 @@ namespace logicalaccess
          * Construct a key from a raw byte vector.
          * The vector MUST be 16 bytes.
          */
-        void fromBytes(const std::vector<uint8_t> &v);
+        void fromBytes(const ByteVector &v);
 
     private:
 

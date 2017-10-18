@@ -176,7 +176,7 @@ std::shared_ptr<Chip> STidPRGReaderUnit::getCurrentChip()
         {
             auto card_uid = std::vector<uint8_t>(ret.begin() + 3, ret.end());
             auto chip     = createChip("Prox", card_uid);
-            auto cmd      = std::make_shared<ProxCommand>();
+            auto cmd      = std::make_shared<ProxCommands>();
             cmd->setReaderCardAdapter(getDefaultReaderCardAdapter());
             chip->setCommands(cmd);
             return chip;

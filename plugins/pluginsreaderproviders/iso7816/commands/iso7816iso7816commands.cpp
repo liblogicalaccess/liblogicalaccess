@@ -11,9 +11,14 @@
 namespace logicalaccess
 {
     ISO7816ISO7816Commands::ISO7816ISO7816Commands()
-        : ISO7816Commands()
+        : ISO7816Commands(CMD_ISO7816ISO7816)
     {
     }
+
+	ISO7816ISO7816Commands::ISO7816ISO7816Commands(std::string ct)
+		: ISO7816Commands(ct)
+	{
+	}
 
     ISO7816ISO7816Commands::~ISO7816ISO7816Commands()
     {
@@ -37,7 +42,7 @@ namespace logicalaccess
 
     ByteVector ISO7816ISO7816Commands::readBinary(size_t length, size_t offset, short efid)
     {
-	    unsigned char p1, p2;
+        unsigned char p1, p2;
 
         setP1P2(offset, efid, p1, p2);
         ByteVector result = getISO7816ReaderCardAdapter()->sendAPDUCommand(0x00, 0xB0, p1, p2, static_cast<unsigned char>(length));

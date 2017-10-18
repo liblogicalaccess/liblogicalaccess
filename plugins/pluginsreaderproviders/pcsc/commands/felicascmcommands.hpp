@@ -16,6 +16,7 @@
 
 namespace logicalaccess
 {
+#define CMD_FELICASCM "FeliCaSCM"
 	/**
 	* \brief The FeliCa card provider class for SCM reader.
 	*/
@@ -27,6 +28,8 @@ namespace logicalaccess
 		* \brief Constructor.
 		*/
 		FeliCaSCMCommands();
+
+	    explicit FeliCaSCMCommands(std::string);
 
 		/**
 		* \brief Destructor.

@@ -4,7 +4,7 @@
 
 
 using namespace logicalaccess;
-using namespace iks;
+using namespace logicalaccess::iks;
 
 DesEncryptCommand::DesEncryptCommand()
     : decrypt_(false)
@@ -13,7 +13,7 @@ DesEncryptCommand::DesEncryptCommand()
     opcode_ = CMSG_OP_DES_ENCRYPT;
 }
 
-std::vector<uint8_t> DesEncryptCommand::serialize() const
+ByteVector DesEncryptCommand::serialize() const
 {
     auto header       = BaseCommand::serialize();
     auto payload_size = lla_htons(static_cast<uint16_t>(payload_.size()));
@@ -48,7 +48,7 @@ size_t DesEncryptCommand::binary_size_impl() const
 }
 
 DesEncryptResponse::DesEncryptResponse(uint16_t status,
-                                       const std::vector<uint8_t> &data)
+                                       const ByteVector &data)
     : BaseResponse(SMSG_OP_DES_ENCRYPT, status)
     , bytes_(data)
 {

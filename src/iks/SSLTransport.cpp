@@ -168,7 +168,7 @@ void SSLTransport::time_out(const boost::system::error_code &error) const
 #endif /* ENABLE_SSLTRANSPORT */
 }
 
-std::vector<uint8_t> SSLTransport::receive(long int timeout)
+ByteVector SSLTransport::receive(long int timeout)
 {
     ByteVector recv(256);
 #ifdef ENABLE_SSLTRANSPORT

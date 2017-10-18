@@ -27,7 +27,7 @@ int MifarePlusSL0Commands::detectSecurityLevel() const
 bool MifarePlusSL0Commands::probeLevel3() const
 {
     // Attempt to auth with the AES key 0
-    std::vector<uint8_t> cmd = {0x70, 0x00, 0x40, 0x01, 0x00};
+    ByteVector cmd = {0x70, 0x00, 0x40, 0x01, 0x00};
     try
     {
         getReaderCardAdapter()->sendCommand(cmd);
@@ -57,7 +57,7 @@ bool MifarePlusSL0Commands::isLevel0() const
 bool MifarePlusSL0Commands::writePerso(uint8_t hex_addr_1, uint8_t hex_addr_2,
                                  const std::array<uint8_t, 16> &data) const
 {
-    std::vector<uint8_t> cmd = {0xA8, hex_addr_2, hex_addr_1};
+    ByteVector cmd = {0xA8, hex_addr_2, hex_addr_1};
     cmd.insert(cmd.end(), data.begin(), data.end());
 
     if (is_trailing_block(hex_addr_1, hex_addr_2) && !validate_access_bytes(data))
@@ -80,7 +80,7 @@ bool MifarePlusSL0Commands::writePerso(const MifarePlusBlockKeyLocation &locatio
 
 bool MifarePlusSL0Commands::commitPerso() const
 {
-    std::vector<uint8_t> cmd = {0xAA};
+    ByteVector cmd = {0xAA};
     getReaderCardAdapter()->sendCommand(cmd);
 
     return true;
@@ -96,18 +96,18 @@ bool MifarePlusSL0Commands::is_trailing_block(uint8_t hex_addr1, uint8_t hex_add
                 return true;
             return false;
         }
-	    if (hex_addr2 % 16 == 15)
-		    return true;
-	    return false;
+        if (hex_addr2 % 16 == 15)
+            return true;
+        return false;
     }
     return false;
 }
 
 bool MifarePlusSL0Commands::validate_access_bytes(const std::array<uint8_t, 16> &data)
 {
-	std::array<uint8_t, 3> access_bytes = { {data[6], data[7], data[8]} };
+	ByteVector access_bytes = { {data[6], data[7], data[8]} };
     MifareAccessInfo::SectorAccessBits sab;
-    return sab.fromArray(&access_bytes[0], 3);
+    return sab.fromArray(access_bytes);
 }
 
 bool MifarePlusSL0Commands::is4K() const
@@ -129,10 +129,10 @@ bool MifarePlusSL0Commands::is4K() const
     }
 
 	if (probeLevel3())
-	{
-		// We don't know what do to, lets just die.
-		assert(0);
-	}
-	assert(0);
+    {
+        // We don't know what do to, lets just die.
+        assert(0);
+    }
+    assert(0);
 	return false;
 }

@@ -54,7 +54,7 @@ namespace logicalaccess
         {
             ByteVector dataPages;
             dataPages.resize(buflen, 0x00);
-			copy(data.begin(), data.end(), dataPages.begin() + tLocation->byte_);
+			std::copy(data.begin(), data.end(), dataPages.begin() + tLocation->byte_);
 
             if (behaviorFlags & CB_AUTOSWITCHAREA)
             {
@@ -110,7 +110,7 @@ namespace logicalaccess
 		return ret;
     }
 
-	ByteVector TopazStorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/)
+    ByteVector TopazStorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/)
     {
         return {};
     }

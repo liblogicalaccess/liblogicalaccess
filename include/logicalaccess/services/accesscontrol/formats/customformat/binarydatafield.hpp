@@ -24,50 +24,53 @@ namespace logicalaccess
          * \brief Build a Binary field value given a string representation of it.
          * \param str The string representation.
          */
-	    explicit BinaryFieldValue(const std::string& str);
+        explicit BinaryFieldValue(const std::string& str);
 
         /**
          * \brief Build a Binary field value given a buffer.
          * \param buf The buffer.
          * \param buflen The buffer length.
          */
-        BinaryFieldValue(const void* buf, size_t buflen);
+        explicit BinaryFieldValue(const ByteVector& buf);
 
+        virtual ~BinaryFieldValue() = default;
         /**
          * \brief Get the field length.
          * \return The field length.
          */
-	    size_t getLength() const override { return d_buf.size(); }
+        size_t getLength() const override { return d_buf.size(); }
 
         /**
          * \brief Get the key data.
          * \return The key data.
          */
-	    const unsigned char* getData() const override { return &d_buf[0]; }
+        const unsigned char* getData() const override
+        { if (d_buf.size() != 0) return &d_buf[0]; return nullptr; }
 
         /**
          * \brief Get the key data.
          * \return The key data.
          */
-	    unsigned char* getData() override { return &d_buf[0]; }
+        unsigned char* getData() override
+        { if (d_buf.size() != 0) return &d_buf[0]; return nullptr; }
 
         /**
          * \brief Serialize the current object to XML.
          * \param parentNode The parent node.
          */
-	    void serialize(boost::property_tree::ptree& parentNode) override;
+        void serialize(boost::property_tree::ptree& parentNode) override;
 
         /**
          * \brief UnSerialize a XML node to the current object.
          * \param node The XML node.
          */
-	    void unSerialize(boost::property_tree::ptree& node) override;
+        void unSerialize(boost::property_tree::ptree& node) override;
 
         /**
          * \brief Get the default Xml Node name for this object.
          * \return The Xml node name.
          */
-		std::string getDefaultXmlNodeName() const override;
+        std::string getDefaultXmlNodeName() const override;
 
     private:
 
@@ -123,7 +126,7 @@ namespace logicalaccess
          * \param dataLengthBytes Length in byte of data
          * \param pos The first position bit. Will contain the position bit after the field.
          */
-	    void getLinearData(void* data, size_t dataLengthBytes, unsigned int* pos) const override;
+        BitsetStream getLinearData(const BitsetStream& data) const override;
 
         /**
          * \brief Set linear data.
@@ -131,32 +134,32 @@ namespace logicalaccess
          * \param dataLengthBytes Length of data in bytes
          * \param pos The first position bit. Will contain the position bit after the field.
          */
-	    void setLinearData(const void* data, size_t dataLengthBytes, unsigned int* pos) override;
+        void setLinearData(const ByteVector& data) override;
 
         /**
          * \brief Check the current field skeleton with another field.
          * \param field The field to check.
          * \return True on success, false otherwise.
          */
-	    bool checkSkeleton(std::shared_ptr<DataField> field) const override;
+        bool checkSkeleton(std::shared_ptr<DataField> field) const override;
 
         /**
          * \brief Serialize the current object to XML.
          * \param parentNode The parent node.
          */
-	    void serialize(boost::property_tree::ptree& parentNode) override;
+        void serialize(boost::property_tree::ptree& parentNode) override;
 
         /**
          * \brief UnSerialize a XML node to the current object.
          * \param node The XML node.
          */
-	    void unSerialize(boost::property_tree::ptree& node) override;
+        void unSerialize(boost::property_tree::ptree& node) override;
 
         /**
          * \brief Get the default Xml Node name for this object.
          * \return The Xml node name.
          */
-		std::string getDefaultXmlNodeName() const override;
+        std::string getDefaultXmlNodeName() const override;
 
     protected:
 

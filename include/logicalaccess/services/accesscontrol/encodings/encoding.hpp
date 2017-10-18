@@ -32,9 +32,9 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API Encoding
     {
     public:
-	    virtual ~Encoding() = default;
+        virtual ~Encoding() = default;
 
-	    /**
+        /**
          * \brief Get the encoder name.
          * \return The encoder name.
          */

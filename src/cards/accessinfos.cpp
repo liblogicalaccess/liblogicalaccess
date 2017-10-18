@@ -72,15 +72,17 @@ namespace logicalaccess
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
         }
-
+		
+		BitsetStream tmp(1 * 8);
+                std::vector<unsigned int> positions = { 0,1,2,3,4,5,6 };
         for (size_t i = 0; i < buf.size(); ++i)
         {
             if (i != 0)
             {
                 oss << " ";
             }
-
-            buf.data()[i] = buf[i] & (0xfe | Format::calculateParity(&buf[i], 1, PT_ODD, nullptr, 7));
+			tmp.writeAt(0, buf[i]);
+            buf.data()[i] = buf[i] & (0xfe | Format::calculateParity(tmp, PT_ODD, positions));
 
             oss << std::hex << std::setfill('0') << std::setw(2) << (size_t)buf[i];
         }

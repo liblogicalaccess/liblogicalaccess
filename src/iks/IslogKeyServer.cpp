@@ -10,11 +10,11 @@
 #include <logicalaccess/settings.hpp>
 
 using namespace logicalaccess;
-using namespace iks;
+using namespace logicalaccess::iks;
 
 IslogKeyServer &IslogKeyServer::fromGlobalSettings()
 {
-    static IslogKeyServer iks(pre_configuration_.ip, pre_configuration_.port,
+    static iks::IslogKeyServer iks(pre_configuration_.ip, pre_configuration_.port,
                                    pre_configuration_.client_cert,
                                    pre_configuration_.client_key,
                                    pre_configuration_.root_ca);
@@ -45,7 +45,7 @@ IslogKeyServer::IslogKeyServer(const std::string &ip, uint16_t port,
     setup_transport();
 }
 
-std::vector<uint8_t> IslogKeyServer::get_random(size_t sz)
+ByteVector IslogKeyServer::get_random(size_t sz)
 {
   assert(sz <= std::numeric_limits<uint16_t>::max());
     GenRandomCommand cmd;
@@ -57,7 +57,7 @@ std::vector<uint8_t> IslogKeyServer::get_random(size_t sz)
     return ret->bytes_;
 }
 
-std::vector<uint8_t> IslogKeyServer::aes_encrypt(const std::vector<uint8_t> &in,
+ByteVector IslogKeyServer::aes_encrypt(const ByteVector &in,
                                                  const std::string &key_name,
                                                  const std::array<uint8_t, 16> &iv)
 {
@@ -77,9 +77,9 @@ std::vector<uint8_t> IslogKeyServer::aes_encrypt(const std::vector<uint8_t> &in,
     return ret->bytes_;
 }
 
-std::vector<uint8_t> IslogKeyServer::aes_decrypt(const std::vector<uint8_t> &in,
+ByteVector IslogKeyServer::aes_decrypt(const ByteVector &in,
                                                  const std::string &key_name,
-                                                 const std::vector<uint8_t> &iv)
+                                                 const ByteVector &iv)
 {
     if (iv.size() != 16)
     {
@@ -90,7 +90,7 @@ std::vector<uint8_t> IslogKeyServer::aes_decrypt(const std::vector<uint8_t> &in,
     return aes_decrypt(in, key_name, iv_array);
 }
 
-std::vector<uint8_t> IslogKeyServer::aes_decrypt(const std::vector<uint8_t> &in,
+ByteVector IslogKeyServer::aes_decrypt(const ByteVector &in,
                                                  const std::string &key_name,
                                                  const std::array<uint8_t, 16> &iv)
 {
@@ -111,39 +111,39 @@ std::vector<uint8_t> IslogKeyServer::aes_decrypt(const std::vector<uint8_t> &in,
     return ret->bytes_;
 }
 
-std::vector<uint8_t>
-IslogKeyServer::des_cbc_encrypt(const std::vector<uint8_t> &in,
+ByteVector
+IslogKeyServer::des_cbc_encrypt(const ByteVector &in,
                                 const std::string &key_name,
                                 const std::array<uint8_t, 8> &iv)
 {
     return des_crypto(in, key_name, iv, false, false);
 }
 
-std::vector<uint8_t>
-IslogKeyServer::des_cbc_decrypt(const std::vector<uint8_t> &in,
+ByteVector
+IslogKeyServer::des_cbc_decrypt(const ByteVector &in,
                                 const std::string &key_name,
                                 const std::array<uint8_t, 8> &iv)
 {
     return des_crypto(in, key_name, iv, false, true);
 }
 
-std::vector<uint8_t>
-IslogKeyServer::des_ecb_encrypt(const std::vector<uint8_t> &in,
+ByteVector
+IslogKeyServer::des_ecb_encrypt(const ByteVector &in,
                                 const std::string &key_name,
                                 const std::array<uint8_t, 8> &iv)
 {
     return des_crypto(in, key_name, iv, true, false);
 }
 
-std::vector<uint8_t>
-IslogKeyServer::des_ecb_decrypt(const std::vector<uint8_t> &in,
+ByteVector
+IslogKeyServer::des_ecb_decrypt(const ByteVector &in,
                                 const std::string &key_name,
                                 const std::array<uint8_t, 8> &iv)
 {
     return des_crypto(in, key_name, iv, true, true);
 }
 
-std::vector<uint8_t> IslogKeyServer::des_crypto(const std::vector<uint8_t> &in,
+ByteVector IslogKeyServer::des_crypto(const ByteVector &in,
                                                 const std::string &key_name,
                                                 const std::array<uint8_t, 8> &iv,
                                                 bool use_ecb, bool decrypt)
@@ -173,7 +173,7 @@ void IslogKeyServer::setup_transport()
 #ifdef ENABLE_SSLTRANSPORT
     transport_ = std::unique_ptr<SSLTransport>(new SSLTransport(ssl_ctx_));
 #endif
-
+	
     transport_->setIpAddress(config_.ip);
     transport_->setPort(config_.port);
 
@@ -219,7 +219,7 @@ std::shared_ptr<BaseResponse> IslogKeyServer::recv() const
     bool has_opcode = false;
     bool has_status = false;
     size_t needle   = 0;
-    std::vector<uint8_t> buffer;
+    ByteVector buffer;
     // 3 attempts of 1sec
     for (int i = 0; i < 3; ++i)
     {
@@ -270,7 +270,7 @@ std::shared_ptr<BaseResponse> IslogKeyServer::recv() const
 
             return build_response(
                 packet_size, opcode, status,
-                std::vector<uint8_t>(buffer.begin() + needle, buffer.end()));
+                ByteVector(buffer.begin() + needle, buffer.end()));
         }
     }
     return nullptr;
@@ -278,7 +278,7 @@ std::shared_ptr<BaseResponse> IslogKeyServer::recv() const
 
 std::shared_ptr<BaseResponse>
 IslogKeyServer::build_response(uint32_t /*size*/, uint16_t opcode, uint16_t status,
-                               const std::vector<uint8_t> &data) const
+                               const ByteVector &data) const
 {
     std::shared_ptr<BaseResponse> resp;
     switch (opcode)

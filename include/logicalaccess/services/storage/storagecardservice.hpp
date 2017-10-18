@@ -71,7 +71,7 @@ namespace logicalaccess
          * \param dataLength Data's length to read.
          * \return Data header length.
          */
-		virtual ByteVector readDataHeader(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse) = 0;
+        virtual ByteVector readDataHeader(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse) = 0;
     };
 }
 

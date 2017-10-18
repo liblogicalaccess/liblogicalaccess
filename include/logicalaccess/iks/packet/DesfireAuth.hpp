@@ -21,7 +21,7 @@ class LIBLOGICALACCESS_API DesfireAuthCommand : public BaseCommand
     DesfireAuthCommand();
     virtual ~DesfireAuthCommand() = default;
 
-	std::vector<uint8_t> serialize() const override;
+	ByteVector serialize() const override;
 
 	size_t binary_size_impl() const override;
 
@@ -48,7 +48,7 @@ class LIBLOGICALACCESS_API DesfireAuthCommand : public BaseCommand
 class LIBLOGICALACCESS_API DesfireAuthResponse : public BaseResponse
 {
   public:
-    DesfireAuthResponse(uint16_t status, const std::vector<uint8_t> &data);
+    DesfireAuthResponse(uint16_t status, const ByteVector &data);
 
     std::array<uint8_t, 32> data_;
 

@@ -21,10 +21,15 @@
 
 namespace logicalaccess
 {
-    SAMAV2ISO7816Commands::SAMAV2ISO7816Commands() : d_cmdCtr(0)
+    SAMAV2ISO7816Commands::SAMAV2ISO7816Commands() : SAMISO7816Commands<KeyEntryAV2Information, SETAV2>(CMD_SAMAV2ISO7816), d_cmdCtr(0)
     {
         d_lastMacIV.resize(16);
     }
+
+	SAMAV2ISO7816Commands::SAMAV2ISO7816Commands(std::string ct) : SAMISO7816Commands<KeyEntryAV2Information, SETAV2>(ct), d_cmdCtr(0)
+	{
+            d_lastMacIV.resize(16);
+	}
 
     SAMAV2ISO7816Commands::~SAMAV2ISO7816Commands()
     {
@@ -329,7 +334,7 @@ namespace logicalaccess
             cipher->decipher(encData, data, *symkeySession.get(), *ivSession.get(), false);
 
             int i = (int)data.size() - 1;
-            for (; i >= 0 && data[i] != 0x80 && data[i] == 0x00; --i);
+            for (; i >= 0 && data[i] != 0x80 && data[i] == 0x00; --i) {}
             if (i >= 0)
                 data.resize(i);
         }

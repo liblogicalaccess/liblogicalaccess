@@ -18,12 +18,14 @@
 namespace logicalaccess
 {
 #define DESFIREEV1_CLEAR_DATA_LENGTH_CHUNK	60
+#define CMD_DESFIREEV1ISO7816 "DESFireEV1ISO7816"
+
     /**
      * \brief The DESFire EV1 base commands class.
      */
     class LIBLOGICALACCESS_API DESFireEV1ISO7816Commands : public DESFireISO7816Commands
 #ifndef SWIG
-	, public DESFireEV1Commands
+    , public DESFireEV1Commands
 #endif
     {
     public:
@@ -32,6 +34,8 @@ namespace logicalaccess
          * \brief Constructor.
          */
         DESFireEV1ISO7816Commands();
+
+        explicit DESFireEV1ISO7816Commands(std::string ct);
 
         /**
          * \brief Destructor.
@@ -55,8 +59,9 @@ namespace logicalaccess
          * \return The ISO FID list.
          */
 	    std::vector<unsigned short> getISOFileIDs() override;
-
+#ifndef SWIG
 		using DESFireISO7816Commands::createApplication;
+#endif
 
         /**
          * \brief Create a new application.
@@ -65,8 +70,9 @@ namespace logicalaccess
          * \param maxNbKeys Maximum number of keys
          */
 	    void createApplication(unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys, DESFireKeyType cryptoMethod, FidSupport fidSupported = FIDS_NO_ISO_FID, unsigned short isoFID = 0x00, ByteVector isoDFName = ByteVector()) override;
-
+#ifndef SWIG
 		using DESFireISO7816Commands::getKeySettings;
+#endif
 
         /**
          * \brief Get key settings on the current application.
@@ -81,8 +87,9 @@ namespace logicalaccess
          * \return The card UID.
          */
 	    ByteVector getCardUID() override;
-
+#ifndef SWIG
 		using DESFireISO7816Commands::createStdDataFile;
+#endif
 
         /**
          * \brief Create a new data file in the current application.
@@ -92,8 +99,9 @@ namespace logicalaccess
          * \param fileSize The file size (in bytes).
          */
 	    void createStdDataFile(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, unsigned int fileSize, unsigned short isoFID) override;
-
+#ifndef SWIG
 		using DESFireISO7816Commands::createBackupFile;
+#endif
 
         /**
          * \brief Create a new backup file in the current application.
@@ -103,8 +111,9 @@ namespace logicalaccess
          * \param fileSize The file size (in bytes).
          */
 	    void createBackupFile(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, unsigned int fileSize, unsigned short isoFID) override;
-
+#ifndef SWIG
 		using DESFireISO7816Commands::createLinearRecordFile;
+#endif
 
         /**
          * \brief Create a new linear record file in the current application.
@@ -115,8 +124,9 @@ namespace logicalaccess
          * \param maxNumberOfRecords Max number of records in the file.
          */
 	    void createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings, const DESFireAccessRights& accessRights, unsigned int fileSize, unsigned int maxNumberOfRecords, unsigned short isoFID) override;
-
+#ifndef SWIG
 		using DESFireISO7816Commands::createCyclicRecordFile;
+#endif
 
         /**
          * \brief Create a new cyclic record file in the current application.
@@ -253,7 +263,7 @@ namespace logicalaccess
          * \brief Get the card version information.
          * \param dataVersion The card version information structure that will be filled
          */
-	    void getVersion(DESFireCardVersion& dataVersion) override;
+            DESFireCardVersion getVersion() override;
 
         /**
          * \brief Get the current application list.
@@ -325,7 +335,7 @@ namespace logicalaccess
 
     protected:
 
-		/**
+        /**
 		* \brief Generic method to send read file cmd.
 		* \param cmd The command to send
 		* \param data The command parameters
@@ -405,7 +415,7 @@ namespace logicalaccess
         void onAuthenticated();
 
 		std::shared_ptr<ISO7816ISO7816Commands> getISO7816ISO7816Commands() const { return std::make_shared<ISO7816ISO7816Commands>(); }
-    };
+	};
 }
 
 #endif /* LOGICALACCESS_DESFIREEV1ISO7816COMMANDS_HPP */

@@ -73,7 +73,7 @@ namespace logicalaccess
             return r;
         }
 
-    std::vector<uint8_t> SHA1Hash(const std::vector<uint8_t> &in)
+    ByteVector SHA1Hash(const ByteVector &in)
     {
         unsigned int len = 20;
         ByteVector r(len);

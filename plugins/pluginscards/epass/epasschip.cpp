@@ -4,9 +4,9 @@
 
 using namespace logicalaccess;
 
-std::shared_ptr<EPassCommand> EPassChip::getEPassCommand() const
+std::shared_ptr<EPassCommands> EPassChip::getEPassCommands() const
 {
-    return std::dynamic_pointer_cast<EPassCommand>(getCommands());
+    return std::dynamic_pointer_cast<EPassCommands>(getCommands());
 }
 
 EPassChip::EPassChip()

@@ -16,6 +16,7 @@
 
 namespace logicalaccess
 {
+#define CMD_TOPAZPCSC "TopazPCSC"
     /**
     * \brief The Topaz commands class for PCSC reader.
     */
@@ -27,6 +28,8 @@ namespace logicalaccess
         * \brief Constructor.
         */
         TopazPCSCCommands();
+
+        explicit TopazPCSCCommands(std::string);
 
         /**
         * \brief Destructor.

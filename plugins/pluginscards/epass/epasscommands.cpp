@@ -8,9 +8,13 @@
 
 using namespace logicalaccess;
 
-EPassCommand::EPassCommand()
-{
-}
+EPassCommands::EPassCommands() 
+	: Commands(CMD_EPASS)
+{ }
+
+EPassCommands::EPassCommands(std::string ct)
+	: Commands(ct)
+{ }
 
 static ByteVector get_challenge(std::shared_ptr<ISO7816ReaderCardAdapter> rca)
 {
@@ -26,7 +30,7 @@ static ByteVector get_challenge(std::shared_ptr<ISO7816ReaderCardAdapter> rca)
     return result;
 }
 
-bool EPassCommand::authenticate(const std::string &mrz)
+bool EPassCommands::authenticate(const std::string &mrz)
 {
     LLA_LOG_CTX("EPassIdentityService::authenticate");
     // We perform a classic ISO7816 authenticate. However, there are some caveats.
@@ -69,7 +73,7 @@ bool EPassCommand::authenticate(const std::string &mrz)
     throw std::runtime_error("The impossible happened.");
 }
 
-EPassEFCOM EPassCommand::readEFCOM() const
+EPassEFCOM EPassCommands::readEFCOM() const
 {
     ByteVector ef_com_raw;
     selectEF({0x01, 0x1E});
@@ -82,7 +86,7 @@ EPassEFCOM EPassCommand::readEFCOM() const
     return EPassUtils::parse_ef_com(data);
 }
 
-bool EPassCommand::selectApplication(const ByteVector &app_id)
+bool EPassCommands::selectApplication(const ByteVector &app_id)
 {
     if (app_id == current_app_)
     {
@@ -100,7 +104,7 @@ bool EPassCommand::selectApplication(const ByteVector &app_id)
     return true;
 }
 
-bool EPassCommand::selectEF(const ByteVector &file_id) const
+bool EPassCommands::selectEF(const ByteVector &file_id) const
 {
     std::shared_ptr<ISO7816ReaderCardAdapter> rca =
         std::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter());
@@ -109,13 +113,13 @@ bool EPassCommand::selectEF(const ByteVector &file_id) const
     return true;
 }
 
-bool EPassCommand::selectIssuerApplication()
+bool EPassCommands::selectIssuerApplication()
 {
     LLA_LOG_CTX("EPassIdentityService::selectIssuerApplication");
     return selectApplication({0xA0, 0, 0, 0x02, 0x47, 0x10, 0x01});
 }
 
-void EPassCommand::setReaderCardAdapter(std::shared_ptr<ReaderCardAdapter> adapter)
+void EPassCommands::setReaderCardAdapter(std::shared_ptr<ReaderCardAdapter> adapter)
 {
     Commands::setReaderCardAdapter(adapter);
     auto epass_rca = std::dynamic_pointer_cast<EPassReaderCardAdapter>(adapter);
@@ -123,7 +127,7 @@ void EPassCommand::setReaderCardAdapter(std::shared_ptr<ReaderCardAdapter> adapt
         epass_rca->setEPassCrypto(crypto_);
 }
 
-void EPassCommand::cryptoChanged() const
+void EPassCommands::cryptoChanged() const
 {
     auto epass_rca =
         std::dynamic_pointer_cast<EPassReaderCardAdapter>(getReaderCardAdapter());
@@ -131,28 +135,30 @@ void EPassCommand::cryptoChanged() const
         epass_rca->setEPassCrypto(crypto_);
 }
 
-ByteVector EPassCommand::readBinary(uint16_t offset, uint8_t length) const
+ByteVector EPassCommands::readBinary(uint16_t offset, uint8_t length) const
 {
-	uint8_t p1 = static_cast<uint8_t>(0x7f & (offset >> 8));
-    uint8_t p2 = static_cast<uint8_t>(offset & 0xFF);
+    uint8_t p1 = 0;
+    uint8_t p2 = 0;
+    p1         = static_cast<uint8_t>(0x7f & (offset >> 8));
+    p2         = static_cast<uint8_t>(offset & 0xFF);
 
     std::shared_ptr<ISO7816ReaderCardAdapter> rca =
         std::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter());
     if (length)
         return rca->sendAPDUCommand(0x00, 0xB0, p1, p2, length);
-	return rca->sendAPDUCommand(0x00, 0xB0, p1, p2);
+    return rca->sendAPDUCommand(0x00, 0xB0, p1, p2);
 }
 
-EPassDG1 EPassCommand::readDG1() const
+EPassDG1 EPassCommands::readDG1() const
 {
     selectEF({0x01, 0x01});
     auto raw = readEF(1, 1);
     return EPassUtils::parse_dg1(raw);
 }
 
-EPassDG2 EPassCommand::readDG2()
+EPassDG2 EPassCommands::readDG2()
 {
-    LLA_LOG_CTX("EPassCommand::readDG2");
+    LLA_LOG_CTX("EPassCommands::readDG2");
     selectEF({0x01, 0x02});
 
     // File tag is 2 bytes and size is 2 bytes too.
@@ -162,7 +168,7 @@ EPassDG2 EPassCommand::readDG2()
     return dg2;
 }
 
-ByteVector EPassCommand::readEF(uint8_t size_bytes, uint8_t size_offset) const
+ByteVector EPassCommands::readEF(uint8_t size_bytes, uint8_t size_offset) const
 {
     ByteVector ef_raw;
     uint8_t initial_read_len = static_cast<uint8_t>(size_bytes + size_offset);
@@ -195,7 +201,7 @@ ByteVector EPassCommand::readEF(uint8_t size_bytes, uint8_t size_offset) const
     return ef_raw;
 }
 
-void EPassCommand::readSOD() const
+void EPassCommands::readSOD() const
 {
     // SOD is ASN.1
     // For now we are not able to use it.
@@ -206,7 +212,7 @@ void EPassCommand::readSOD() const
     auto tmp = readEF(2, 2);
 }
 
-ByteVector EPassCommand::compute_hash(const ByteVector &file_id) const
+ByteVector EPassCommands::compute_hash(const ByteVector &file_id) const
 {
     selectEF(file_id);
 

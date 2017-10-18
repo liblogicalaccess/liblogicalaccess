@@ -19,7 +19,7 @@ namespace logicalaccess
     {
     }
 
-	std::string BCDByteDataType::getName() const
+    std::string BCDByteDataType::getName() const
     {
         return std::string("BCD-Byte");
     }
@@ -29,79 +29,57 @@ namespace logicalaccess
         return ET_BCDBYTE;
     }
 
-    unsigned int BCDByteDataType::convert(unsigned long long data, unsigned int dataLengthBits, void* dataConverted, size_t dataConvertedLengthBytes)
+    BitsetStream BCDByteDataType::convert(unsigned long long data, unsigned int dataLengthBits)
     {
-	    unsigned char* tmp = new unsigned char[64];
-        memset(tmp, 0x00, 64);
+
+        BitsetStream tmp(64 * 8);
 
         unsigned int shft, i;
 
         for (shft = 0, i = 0; shft < dataLengthBits; shft += 8, ++i)
         {
-            tmp[i] = static_cast<unsigned char>(data % 10);
+            tmp.writeAt(i, (unsigned char)(data % 10));
             data /= 10;
         }
+        BitsetStream buf;
+        BitsetStream procbuf;
+        procbuf = DataType::addParity(d_leftParityType, d_rightParityType, 8, buf);
 
-	    const unsigned int ret = addParityToBuffer(d_leftParityType, d_rightParityType, 8, nullptr, i * 8, nullptr, 0);
+        BitsetStream dataConverted(0x00, i);
 
-        if (dataConverted != nullptr)
+        BitsetStream tmpswb(i * 8);
+
+        for (unsigned int pi = i - 1, p = 0; p < i; --pi, ++p)
         {
-            if (dataConvertedLengthBytes >= i)
+            if (d_bitDataRepresentationType == ET_LITTLEENDIAN)
             {
-	            const auto swb = reinterpret_cast<unsigned char*>(dataConverted);
-	            const auto tmpswb = new unsigned char[i];
-                memset(tmpswb, 0x00, i);
-
-                for (size_t pi = i - 1, p = 0; p < i; --pi, ++p)
-                {
-                    if (d_bitDataRepresentationType == ET_LITTLEENDIAN)
-                    {
-                        tmp[pi] = invertBitSex(tmp[pi]);
-                    }
-                    tmpswb[p] = tmp[pi];
-                }
-
-                addParityToBuffer(d_leftParityType, d_rightParityType, 8, tmpswb, i * 8, swb, static_cast<unsigned int>(dataConvertedLengthBytes * 8));
-                delete[] tmpswb;
+                tmp.writeAt(pi, DataType::invertBitSex(tmp.getData()[pi]));
             }
-            else
-            {
-                THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "The destination buffer is too small.");
-            }
+            tmpswb.writeAt(p, tmp.getData()[pi]);
         }
 
-        delete[] tmp;
-
-        return ret;
+        dataConverted = DataType::addParity(d_leftParityType, d_rightParityType, 8, tmpswb);
+        return dataConverted;
     }
 
-    unsigned long long BCDByteDataType::revert(void* data, size_t dataLengthBytes, unsigned int lengthBits)
+    unsigned long long BCDByteDataType::revert(BitsetStream& data, unsigned int dataLengthBits)
     {
         unsigned long long ret = 0;
 
-        if (data != nullptr && dataLengthBytes > 0)
+        if (data.getByteSize() > 0)
         {
-            size_t tmpswblen = removeParityToBuffer(d_leftParityType, d_rightParityType, 8, nullptr, lengthBits, nullptr, 0);
-            size_t tmpswblenBytes = (tmpswblen + 7) / 8;
-            unsigned char* tmpswb = new unsigned char[tmpswblenBytes];
-            memset(tmpswb, 0x00, tmpswblenBytes);
+                        BitsetStream   tmpswb = DataType::removeParity(d_leftParityType, d_rightParityType, 8, data);
 
-            removeParityToBuffer(d_leftParityType, d_rightParityType, 8, data, lengthBits, tmpswb, static_cast<unsigned int>(tmpswblenBytes * 8));
-
-            size_t i;
-            int coef;
-
-            for (i = 0, coef = static_cast<int>(dataLengthBytes - 1); i < dataLengthBytes; ++i, --coef)
+            int coef = static_cast<int>(data.getByteSize() - 1);
+            for (unsigned int i = 0; i < data.getByteSize(); ++i, --coef)
             {
                 if (d_bitDataRepresentationType == ET_LITTLEENDIAN)
                 {
-                    tmpswb[i] = invertBitSex(tmpswb[i]);
+                    tmpswb.writeAt(i, DataType::invertBitSex(tmpswb.getData()[i]));
                 }
 
-                ret += (tmpswb[i] * ((coef == 0) ? 1 : pow(10, coef)));
+                ret += (tmpswb.getData()[i] * ((coef == 0) ? 1 : pow(10, coef)));
             }
-
-            delete[] tmpswb;
         }
 
         return ret;

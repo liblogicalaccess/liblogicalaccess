@@ -106,8 +106,8 @@ int main(int ac, char **av)
     create_app_and_file(cmd, cmdev1);
 
     // Data to write
-    std::vector<uint8_t> writedata(16, 'd');
-    std::vector<uint8_t> readdata;
+    ByteVector writedata(16, 'd');
+    ByteVector readdata;
     // Write data on the specified location with the specified key
     storage->writeData(location, aiToUse, aiToUse, writedata, CB_DEFAULT);
 

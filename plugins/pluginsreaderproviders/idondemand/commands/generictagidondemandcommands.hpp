@@ -11,11 +11,18 @@
 
 namespace logicalaccess
 {
+#define CMD_GENERICTAGIDONDEMAND "GenericTagIdOnDemand"
+
     /**
      * \brief The Generic Tag IdOnDemand commands class.
      */
     class LIBLOGICALACCESS_API GenericTagIdOnDemandCommands : public Commands
     {
+    public:
+
+		GenericTagIdOnDemandCommands() : Commands(CMD_GENERICTAGIDONDEMAND) {}
+
+        explicit GenericTagIdOnDemandCommands(std::string ct) : Commands(ct) {}
     };
 }
 

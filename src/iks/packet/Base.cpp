@@ -9,11 +9,11 @@
 #include <logicalaccess/utils.hpp>
 
 using namespace logicalaccess;
-using namespace iks;
+using namespace logicalaccess::iks;
 
-std::vector<uint8_t> BaseCommand::serialize() const
+ByteVector BaseCommand::serialize() const
 {
-	std::vector<uint8_t> ret(6);
+	ByteVector ret(6);
     uint32_t full_size = lla_htonl(static_cast<uint32_t>(binary_size()));
     uint16_t op = lla_htons(opcode_);
 
@@ -70,9 +70,9 @@ size_t KeyDivInfo::binary_size()
     return 1 + 1 + 64;
 }
 
-std::vector<uint8_t> KeyDivInfo::serialize() const
+ByteVector KeyDivInfo::serialize() const
 {
-    std::vector<uint8_t> ret(binary_size());
+    ByteVector ret(binary_size());
     assert(div_input_.size() <= 64);
 
     uint8_t div_info_size = static_cast<uint8_t>(div_input_.size());
@@ -90,7 +90,7 @@ KeyDivInfo::KeyDivInfo()
 }
 
 KeyDivInfo KeyDivInfo::build(std::shared_ptr<Key> key,
-                             const std::vector<uint8_t> &divinput)
+                             const ByteVector &divinput)
 {
     if (!key->getKeyDiversification())
         return KeyDivInfo();
@@ -116,7 +116,7 @@ KeyDivInfo KeyDivInfo::build(std::shared_ptr<Key> key,
     if (!key->getKeyDiversification())
         return KeyDivInfo();
 
-    std::vector<uint8_t> div_input;
+    ByteVector div_input;
     key->getKeyDiversification()->initDiversification(identifier, AID, key, keyno,
                                                       div_input);
     return build(key, div_input);

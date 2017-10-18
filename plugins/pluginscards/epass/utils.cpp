@@ -49,9 +49,9 @@ uint8_t EPassUtils::compute_mrz_checksum(const std::string &in)
     return static_cast<uint8_t>(sum % 10);
 }
 
-std::vector<uint8_t> EPassUtils::seed_from_mrz(const std::string &mrz)
+ByteVector EPassUtils::seed_from_mrz(const std::string &mrz)
 {
-    std::vector<uint8_t> data;
+    ByteVector data;
     EXCEPTION_ASSERT_WITH_LOG(mrz.size() >= 28, LibLogicalAccessException,
                               "MRZ is too short.");
 
@@ -67,32 +67,32 @@ std::vector<uint8_t> EPassUtils::seed_from_mrz(const std::string &mrz)
     data.insert(data.end(), itr, itr + 7); // expiration date + checksum
 
     auto sha1 = openssl::SHA1Hash(data);
-    return std::vector<uint8_t>(sha1.begin(), sha1.begin() + 16);
+    return ByteVector(sha1.begin(), sha1.begin() + 16);
 }
 
-std::vector<uint8_t> EPassUtils::compute_enc_key(const std::vector<uint8_t> &seed)
+ByteVector EPassUtils::compute_enc_key(const ByteVector &seed)
 {
-    std::vector<uint8_t> c = {0, 0, 0, 1};
-    std::vector<uint8_t> D = seed;
+    ByteVector c = {0, 0, 0, 1};
+    ByteVector D = seed;
     D.insert(D.end(), c.begin(), c.end());
 
     auto H = openssl::SHA1Hash(D);
-    return adjust_key_parity(std::vector<uint8_t>(H.begin(), H.begin() + 16));
+    return adjust_key_parity(ByteVector(H.begin(), H.begin() + 16));
 }
 
-std::vector<uint8_t> EPassUtils::compute_mac_key(const std::vector<uint8_t> &seed)
+ByteVector EPassUtils::compute_mac_key(const ByteVector &seed)
 {
-    std::vector<uint8_t> c = {0, 0, 0, 2};
-    std::vector<uint8_t> D = seed;
+    ByteVector c = {0, 0, 0, 2};
+    ByteVector D = seed;
     D.insert(D.end(), c.begin(), c.end());
 
     auto H = openssl::SHA1Hash(D);
-    return adjust_key_parity(std::vector<uint8_t>(H.begin(), H.begin() + 16));
+    return adjust_key_parity(ByteVector(H.begin(), H.begin() + 16));
 }
 
-std::vector<uint8_t> EPassUtils::adjust_key_parity(const std::vector<uint8_t> &key)
+ByteVector EPassUtils::adjust_key_parity(const ByteVector &key)
 {
-    std::vector<uint8_t> ret;
+    ByteVector ret;
 
     for (const auto &c : key)
     {

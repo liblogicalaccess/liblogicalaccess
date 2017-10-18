@@ -8,8 +8,8 @@
 #define LOGICALACCESS_READERCOMMUNICATION_HPP
 
 #include "logicalaccess/logicalaccess_api.hpp"
+#include "logicalaccess/lla_fwd.hpp"
 #include <vector>
-#include "logicalaccess/crypto/des_initialization_vector.hpp"
 
 namespace logicalaccess
 {

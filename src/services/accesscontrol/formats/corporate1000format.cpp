@@ -48,7 +48,7 @@ namespace logicalaccess
         return 35;
     }
 
-	std::string Corporate1000Format::getName() const
+    std::string Corporate1000Format::getName() const
     {
         return std::string("Wiegand 35");	//Corporate 1000
     }
@@ -66,25 +66,25 @@ namespace logicalaccess
         d_formatLinear.d_companyCode = companyCode;
     }
 
-    unsigned char Corporate1000Format::getLeftParity1(const void* data, size_t dataLengthBytes)
+    unsigned char Corporate1000Format::getLeftParity1(const BitsetStream& data)
     {
         unsigned char parity = 0x00;
 
-        if (data != nullptr)
+        if (data.getByteSize() != 0)
         {
-            parity = calculateParity(data, dataLengthBytes, PT_ODD, 1, 34);
+            parity = calculateParity(data, PT_ODD, 1, 34);
         }
 
         return parity;
     }
 
-    unsigned char Corporate1000Format::getLeftParity2(const void* data, size_t dataLengthBytes)
+    unsigned char Corporate1000Format::getLeftParity2(const BitsetStream& data)
     {
         unsigned char parity = 0x00;
 
-        if (data != nullptr)
+        if (data.getByteSize() != 0)
         {
-            unsigned int positions[22];
+            std::vector<unsigned int> positions(22);
             positions[0] = 2;
             positions[1] = 3;
             positions[2] = 5;
@@ -107,19 +107,19 @@ namespace logicalaccess
             positions[19] = 30;
             positions[20] = 32;
             positions[21] = 33;
-            parity = Format::calculateParity(data, dataLengthBytes, PT_EVEN, positions, sizeof(positions) / sizeof(int));
+            parity = Format::calculateParity(data, PT_EVEN, positions);
         }
 
         return parity;
     }
 
-    unsigned char Corporate1000Format::getRightParity(const void* data, size_t dataLengthBytes)
+    unsigned char Corporate1000Format::getRightParity(const BitsetStream& data)
     {
         unsigned char parity = 0x00;
 
-        if (data != nullptr)
+        if (data.getByteSize() != 0)
         {
-            unsigned int positions[22];
+           std::vector<unsigned int> positions(22);
             positions[0] = 1;
             positions[1] = 2;
             positions[2] = 4;
@@ -142,82 +142,86 @@ namespace logicalaccess
             positions[19] = 29;
             positions[20] = 31;
             positions[21] = 32;
-            parity = Format::calculateParity(data, dataLengthBytes, PT_ODD, positions, sizeof(positions) / sizeof(int));
+            parity = Format::calculateParity(data, PT_ODD, positions);
         }
 
         return parity;
     }
 
-    void Corporate1000Format::getLinearData(void* data, size_t dataLengthBytes) const
+	ByteVector Corporate1000Format::getLinearData() const
     {
-        unsigned int pos = 2;
+		BitsetStream data;
+		data.append(0x00, 0, 2);
 
-        convertField(data, dataLengthBytes, &pos, getCompanyCode(), 12);
-        convertField(data, dataLengthBytes, &pos, getUid(), 20);
+        convertField(data, getCompanyCode(), 12);
+        convertField(data, getUid(), 20);
 
-        if (data != nullptr)
+        data.append(0x00, 0, 1);
+
+        if (data.getByteSize() != 0)
         {
-            pos = 1;
-            BitHelper::writeToBit(data, dataLengthBytes, &pos, getLeftParity2(data, dataLengthBytes), 7, 1);
-            pos = 34;
-            BitHelper::writeToBit(data, dataLengthBytes, &pos, getRightParity(data, dataLengthBytes), 7, 1);
-            pos = 0;
-            BitHelper::writeToBit(data, dataLengthBytes, &pos, getLeftParity1(data, dataLengthBytes), 7, 1);
+			data.writeAt(1, getLeftParity2(data), 7, 1);
+			data.writeAt(34, getRightParity(data), 7, 1);
+			data.writeAt(0, getLeftParity1(data), 7, 1);
         }
+		return data.getData();
     }
 
-    void Corporate1000Format::setLinearData(const void* data, size_t dataLengthBytes)
+    void Corporate1000Format::setLinearData(const ByteVector& data)
     {
         unsigned int pos = 2;
+		BitsetStream _data;
+		_data.concat(data);
 
-        setCompanyCode((short)revertField(data, dataLengthBytes, &pos, 12));
-        setUid(revertField(data, dataLengthBytes, &pos, 20));
+        setCompanyCode((short)revertField(_data, &pos, 12));
+        setUid(revertField(_data, &pos, 20));
 
-        if (data != nullptr)
+        if (_data.getByteSize() != 0)
         {
-            if (dataLengthBytes * 8 < getDataLength())
+            if (_data.getData().size() * 8 < getDataLength())
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Data length too small.");
             }
 
             pos = 1;
-            unsigned char parity = getLeftParity2(data, dataLengthBytes);
-            if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != parity)
+            unsigned char parity = getLeftParity2(_data);
+            if ((unsigned char)((unsigned char)((data)[pos / 8] << (pos % 8)) >> 7) != parity)
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Left parity 2 format error.");
             }
 
             pos = 34;
-            parity = getRightParity(data, dataLengthBytes);
-            if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != parity)
+            parity = getRightParity(_data);
+            if ((unsigned char)((unsigned char)((data)[pos / 8] << (pos % 8)) >> 7) != parity)
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Right parity format error.");
             }
 
             pos = 0;
-            parity = getLeftParity1(data, dataLengthBytes);
-            if ((unsigned char)((unsigned char)(reinterpret_cast<const unsigned char*>(data)[pos / 8] << (pos % 8)) >> 7) != parity)
+            parity = getLeftParity1(_data);
+            if ((unsigned char)((unsigned char)((data)[pos / 8] << (pos % 8)) >> 7) != parity)
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Left parity 1 format error.");
             }
         }
     }
 
-    size_t Corporate1000Format::getFormatLinearData(void* data, size_t dataLengthBytes) const
+    size_t Corporate1000Format::getFormatLinearData(ByteVector& data) const
     {
         size_t retLength = sizeof(d_formatLinear);
-
-        if (dataLengthBytes >= retLength)
+		data.reserve(retLength);
+		
+        if (data.size() >= retLength)
         {
-            memcpy(&reinterpret_cast<unsigned char*>(data)[0], &d_formatLinear, sizeof(d_formatLinear));
+			memcpy(&data[0], &d_formatLinear, sizeof(d_formatLinear));
         }
 
         return retLength;
     }
 
-    void Corporate1000Format::setFormatLinearData(const void* data, size_t* indexByte)
+    void Corporate1000Format::setFormatLinearData(const ByteVector& data, size_t* indexByte)
     {
-        memcpy(&d_formatLinear, &reinterpret_cast<const unsigned char*>(data)[*indexByte], sizeof(d_formatLinear));
+		memcpy(&d_formatLinear, &data[*indexByte], sizeof(d_formatLinear));
         (*indexByte) += sizeof(d_formatLinear);
 
         setCompanyCode(d_formatLinear.d_companyCode);
@@ -245,7 +249,7 @@ namespace logicalaccess
         setUid(node.get_child("Uid").get_value<unsigned long long>());
     }
 
-	std::string Corporate1000Format::getDefaultXmlNodeName() const
+    std::string Corporate1000Format::getDefaultXmlNodeName() const
     {
         return "Corporate1000Format";
     }

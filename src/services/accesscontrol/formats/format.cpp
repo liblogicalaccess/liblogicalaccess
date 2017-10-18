@@ -75,14 +75,13 @@ namespace logicalaccess
         return before;
     }
 
-    unsigned char Format::calculateParity(const void* data, size_t dataLengthBytes,
-                                          ParityType parityType, unsigned int* positions,
-                                          size_t nbPositions)
+    unsigned char Format::calculateParity(const BitsetStream& data, ParityType parityType,
+        std::vector<unsigned int> positions)
     {
         unsigned char parity = 0x00;
-        for (size_t i = 0; i < nbPositions && i < (dataLengthBytes * 8); i++)
+        for (size_t i = 0; i < positions.size() && i < (data.getByteSize() * 8); i++)
         {
-            parity = (unsigned char)((parity & 0x01) ^ ((unsigned char)(reinterpret_cast<const char*>(data)[positions[i] / 8] >> (7 - (positions[i] % 8))) & 0x01));
+            parity = (unsigned char)((parity & 0x01) ^ ((data.getData()[positions[i] / 8] >> (7 - (positions[i] % 8))) & 0x01));
         }
 
         switch (parityType)
@@ -200,7 +199,7 @@ namespace logicalaccess
             size_t dataLengthByte = (getDataLength() + 7) / 8;
             ret.resize(dataLengthByte);
 
-            getLinearData(ret.data(), ret.size());
+            ret = getLinearData();
         }
 
         return ret;

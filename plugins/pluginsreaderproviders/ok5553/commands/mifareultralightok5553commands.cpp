@@ -15,9 +15,14 @@
 namespace logicalaccess
 {
     MifareUltralightOK5553Commands::MifareUltralightOK5553Commands()
-        : MifareUltralightCommands()
+        : MifareUltralightCommands(CMD_MIFAREULTRALIGHTOK5553)
     {
     }
+
+	MifareUltralightOK5553Commands::MifareUltralightOK5553Commands(std::string ct)
+		: MifareUltralightCommands(ct)
+	{
+	}
 
     MifareUltralightOK5553Commands::~MifareUltralightOK5553Commands()
     {

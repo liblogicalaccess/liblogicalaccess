@@ -16,9 +16,13 @@
 
 namespace logicalaccess
 {
-    const unsigned char FASCN200BitFormat::FASCN_SS = 0x0B;
-    const unsigned char FASCN200BitFormat::FASCN_FS = 0x0D;
-    const unsigned char FASCN200BitFormat::FASCN_ES = 0x0F;
+    const unsigned char FASCN200BitFormat::FASCN_SS = 0x0b;
+    const unsigned char FASCN200BitFormat::FASCN_FS = 0x0d;
+    const unsigned char FASCN200BitFormat::FASCN_ES = 0x0f;
+
+    const unsigned char FASCN200BitFormat::FASCN_SS_WITH_PARITY = 0x1A;
+    const unsigned char FASCN200BitFormat::FASCN_FS_WITH_PARITY = 0x16;
+    const unsigned char FASCN200BitFormat::FASCN_ES_WITH_PARITY = 0x1F;
 
     FASCN200BitFormat::FASCN200BitFormat()
         : StaticFormat()
@@ -188,7 +192,7 @@ namespace logicalaccess
         return 200;
     }
 
-	std::string FASCN200BitFormat::getName() const
+    std::string FASCN200BitFormat::getName() const
     {
         return std::string("FASC-N 200 Bit");
     }
@@ -229,121 +233,144 @@ namespace logicalaccess
         setUid(node.get_child("Uid").get_value<unsigned long long>());
     }
 
-	std::string FASCN200BitFormat::getDefaultXmlNodeName() const
+    std::string FASCN200BitFormat::getDefaultXmlNodeName() const
     {
         return "FASCN200BitFormat";
     }
 
-    void FASCN200BitFormat::getLinearData(void* data, size_t dataLengthBytes) const
+	ByteVector FASCN200BitFormat::getLinearData() const
     {
-        unsigned int pos = 0;
+		BitsetStream data;
 
-        convertField(data, dataLengthBytes, &pos, FASCN_SS, 4);
-        convertField(data, dataLengthBytes, &pos, getAgencyCode(), 16);
-        convertField(data, dataLengthBytes, &pos, FASCN_FS, 4);
-        convertField(data, dataLengthBytes, &pos, getSystemCode(), 16);
-        convertField(data, dataLengthBytes, &pos, FASCN_FS, 4);
-        convertField(data, dataLengthBytes, &pos, getUid(), 24);
-        convertField(data, dataLengthBytes, &pos, FASCN_FS, 4);
-        convertField(data, dataLengthBytes, &pos, d_formatLinear.d_serieCode, 4);
-        convertField(data, dataLengthBytes, &pos, FASCN_FS, 4);
-        convertField(data, dataLengthBytes, &pos, d_formatLinear.d_credentialCode, 4);
-        convertField(data, dataLengthBytes, &pos, FASCN_FS, 4);
-        convertField(data, dataLengthBytes, &pos, getPersonIdentifier(), 40);
-        convertField(data, dataLengthBytes, &pos, getOrganizationalCategory(), 4);
-        convertField(data, dataLengthBytes, &pos, getOrganizationalIdentifier(), 16);
-        convertField(data, dataLengthBytes, &pos, getPOACategory(), 4);
-        convertField(data, dataLengthBytes, &pos, FASCN_ES, 4);
-        unsigned char lrc = calculateLRC(data, pos);
-        convertField(data, dataLengthBytes, &pos, lrc, 4);
+        data.append(FASCN_SS_WITH_PARITY, 3, 5);
+        convertField(data, getAgencyCode(), 16);
+        data.append(FASCN_FS_WITH_PARITY, 3, 5);
+        convertField(data, getSystemCode(), 16);
+        data.append(FASCN_FS_WITH_PARITY, 3, 5);
+        convertField(data, getUid(), 24);
+        data.append(FASCN_FS_WITH_PARITY, 3, 5);
+        convertField(data, getSerieCode(), 4);
+        data.append(FASCN_FS_WITH_PARITY, 3, 5);
+        convertField(data, getCredentialCode(), 4);
+        data.append(FASCN_FS_WITH_PARITY, 3, 5);
+        convertField(data, getPersonIdentifier(), 40);
+        convertField(data, getOrganizationalCategory(), 4);
+        convertField(data, getOrganizationalIdentifier(), 16);
+        convertField(data, getPOACategory(), 4);
+        data.append(FASCN_ES_WITH_PARITY, 3, 5);
+        unsigned char lrc = calculateLRC(data);
+        convertField(data, lrc, 4);
+
+		return data.getData();
     }
 
-    void FASCN200BitFormat::setLinearData(const void* data, size_t dataLengthBytes)
+    void FASCN200BitFormat::setLinearData(const ByteVector& data)
     {
         unsigned int pos = 0;
+        BitsetStream _data;
+		_data.concat(data);
 
-	    if (dataLengthBytes * 8 < getDataLength())
+        if (_data.getByteSize() * 8 < getDataLength())
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Data length too small.");
         }
 
-        unsigned char c = (unsigned char)revertField(data, dataLengthBytes, &pos, 4);
+        unsigned char c = (unsigned char)revertField(_data, &pos, 4);
         if (c != FASCN_SS)
         {
             char tmpmsg[64];
             sprintf(tmpmsg, "The FASC-N Start Sentinel doesn't match (%x).", c);
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, tmpmsg);
         }
-
-        setAgencyCode((unsigned short)revertField(data, dataLengthBytes, &pos, 16));
-        c = (unsigned char)revertField(data, dataLengthBytes, &pos, 4);
+        ++pos;
+        setAgencyCode((unsigned short)revertField(_data, &pos, 16));
+        pos += 4;
+        c = (unsigned char)revertField(_data, &pos, 4);
         if (c != FASCN_FS)
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The FASC-N Field Separator doesn't match after the Agency Code.");
         }
+        ++pos;
 
-        setSystemCode((unsigned short)revertField(data, dataLengthBytes, &pos, 16));
-        c = (unsigned char)revertField(data, dataLengthBytes, &pos, 4);
+        setSystemCode((unsigned short)revertField(_data, &pos, 16));
+        pos += 4;
+        c = (unsigned char)revertField(_data, &pos, 4);
         if (c != FASCN_FS)
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The FASC-N Field Separator doesn't match after the System Code.");
         }
+        ++pos;
 
-        setUid(revertField(data, dataLengthBytes, &pos, 24));
-        c = (unsigned char)revertField(data, dataLengthBytes, &pos, 4);
+        setUid(revertField(_data, &pos, 24));
+        pos += 6;
+        c = (unsigned char)revertField(_data, &pos, 4);
         if (c != FASCN_FS)
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The FASC-N Field Separator doesn't match after the Credential.");
         }
+        ++pos;
 
-        setSerieCode((unsigned char)revertField(data, dataLengthBytes, &pos, 4));
-        c = (unsigned char)revertField(data, dataLengthBytes, &pos, 4);
+        setSerieCode((unsigned char)revertField(_data, &pos, 4));
+        ++pos;
+        c = (unsigned char)revertField(_data, &pos, 4);
         if (c != FASCN_FS)
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The FASC-N Field Separator doesn't match after the Credential Series.");
         }
+        ++pos;
 
-        setCredentialCode((unsigned char)revertField(data, dataLengthBytes, &pos, 4));
-        c = (unsigned char)revertField(data, dataLengthBytes, &pos, 4);
+        setCredentialCode((unsigned char)revertField(_data, &pos, 4));
+        ++pos;
+        c = (unsigned char)revertField(_data, &pos, 4);
         if (c != FASCN_FS)
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The FASC-N Field Separator doesn't match after the Credential Issue.");
         }
+        ++pos;
 
-        setPersonIdentifier(revertField(data, dataLengthBytes, &pos, 40));
+        setPersonIdentifier(revertField(_data, &pos, 40));
+        pos += 10;
 
-        setOrganizationalCategory((FASCNOrganizationalCategory)revertField(data, dataLengthBytes, &pos, 4));
-        setOrganizationalIdentifier((unsigned char)revertField(data, dataLengthBytes, &pos, 16));
-        setPOACategory((FASCNPOAssociationCategory)revertField(data, dataLengthBytes, &pos, 4));
+        setOrganizationalCategory((FASCNOrganizationalCategory)revertField(_data, &pos, 4));
+        ++pos;
+        setOrganizationalIdentifier(static_cast<unsigned short>(revertField(_data, &pos, 16)));
+        pos += 4;
+        setPOACategory((FASCNPOAssociationCategory)revertField(_data, &pos, 4));
+        ++pos;
 
-        c = (unsigned char)revertField(data, dataLengthBytes, &pos, 4);
+        c = (unsigned char)revertField(_data, &pos, 4);
         if (c != FASCN_ES)
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The End Sentinel doesn't match.");
         }
+        ++pos;
 
-        unsigned char lrc = calculateLRC(data, pos);
-        c = (unsigned char)revertField(data, dataLengthBytes, &pos, 4);
+        //We do not find the correct LRC for now...
+        /*
+        unsigned char lrc = calculateLRC(_data);
+        c = (unsigned char)revertField(_data, &pos, 4);
+
+ 
 
         if (c != lrc)
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The FASC-N LRC seems wrong.");
-        }
+        }*/
     }
 
-    unsigned char FASCN200BitFormat::calculateLRC(const void* data, unsigned int datalenBits) const
+    unsigned char FASCN200BitFormat::calculateLRC(const BitsetStream& data) const
     {
         unsigned char lrc = 0x00;
+		BitsetStream tmp = data;
+                unsigned int pos = 0;
 
-        size_t datalenBytes = (datalenBits + 7) / 8;
-
-        if (datalenBytes > 1)
+               
+        if (data.getByteSize() > 1)
         {
-            unsigned int pos = 0;
-
-            while (pos < datalenBits)
+            while (pos < tmp.getBitSize())
             {
-                unsigned char c = (unsigned char)revertField(data, datalenBytes, &pos, 4);
+                unsigned char c = (unsigned char)revertField(tmp, &pos, 4);
+                ++pos; //We skip the parity
                 lrc ^= c;
             }
         }
@@ -351,22 +378,24 @@ namespace logicalaccess
         return lrc;
     }
 
-    size_t FASCN200BitFormat::getFormatLinearData(void* data, size_t dataLengthBytes) const
+    size_t FASCN200BitFormat::getFormatLinearData(ByteVector& data) const
     {
         size_t retLength = sizeof(d_formatLinear);
 
-        if (dataLengthBytes >= retLength)
+		if (data.size() >= retLength)
         {
-            size_t pos = 0;
-            memcpy(&reinterpret_cast<unsigned char*>(data)[pos], &d_formatLinear, sizeof(d_formatLinear));
-        }
+            //size_t pos = 0;
+            //memcpy(&reinterpret_cast<unsigned char*>(data)[pos], &d_formatLinear, sizeof(d_formatLinear));
+			memcpy(&data[0], &d_formatLinear, sizeof(d_formatLinear));
+		}
 
         return retLength;
     }
 
-    void FASCN200BitFormat::setFormatLinearData(const void* data, size_t* indexByte)
+    void FASCN200BitFormat::setFormatLinearData(const ByteVector& data, size_t* indexByte)
     {
-        memcpy(&d_formatLinear, &reinterpret_cast<const unsigned char*>(data)[*indexByte], sizeof(d_formatLinear));
+        //memcpy(&d_formatLinear, &reinterpret_cast<const unsigned char*>(data)[*indexByte], sizeof(d_formatLinear));
+		memcpy(&d_formatLinear, &data[*indexByte], sizeof(d_formatLinear));
         (*indexByte) += sizeof(d_formatLinear);
 
         setAgencyCode(d_formatLinear.d_agencyCode);

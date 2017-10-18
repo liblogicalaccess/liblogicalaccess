@@ -1,3 +1,4 @@
+
 /**
  * \file desfireev1stidstrcommands.hpp
  * \author Maxime C. <maxime-dev@islog.com>
@@ -17,6 +18,8 @@
 
 namespace logicalaccess
 {
+#define CMD_DESFIREEV1STIDSTR "DESFireEV1STidSTR"
+
     /**
      * \brief The STid DESFire baudrates.
      */
@@ -38,14 +41,20 @@ namespace logicalaccess
     /**
      * \brief The DESFire EV1 base commands class for STidSTR reader.
      */
-    class LIBLOGICALACCESS_API DESFireEV1STidSTRCommands : public Commands, public DESFireEV1Commands
+    class LIBLOGICALACCESS_API DESFireEV1STidSTRCommands : public Commands
+#ifndef SWIG
+    , public DESFireEV1Commands
+#endif
     {
     public:
 
         /**
          * \brief Constructor.
          */
-        DESFireEV1STidSTRCommands();
+		DESFireEV1STidSTRCommands();
+
+        explicit DESFireEV1STidSTRCommands(std::string);
+
 
         /**
          * \brief Destructor.
@@ -92,8 +101,9 @@ namespace logicalaccess
          * \brief Erase the card.
          */
         virtual void erase();
-
+#ifndef SWIG
 		using DESFireEV1Commands::createApplication;
+#endif
 
         /**
          * \brief Create a new application.
@@ -143,8 +153,9 @@ namespace logicalaccess
          * \return The card UID.
          */
 	    ByteVector getCardUID() override;
-
+#ifndef SWIG
 		using DESFireEV1Commands::createStdDataFile;
+#endif
 
         /**
          * \brief Create a new data file in the current application.

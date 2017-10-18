@@ -51,33 +51,32 @@ namespace logicalaccess
         d_name = name;
     }
 
-	std::string CustomFormat::getName() const
+    std::string CustomFormat::getName() const
     {
         return d_name;
     }
 
-    void CustomFormat::getLinearData(void* data, size_t dataLengthBytes) const
+    ByteVector CustomFormat::getLinearData() const
     {
-        unsigned int pos = 0;
+        BitsetStream data(getDataLength());
         std::list<std::shared_ptr<DataField> > sortedFieldList = d_fieldList;
         sortedFieldList.sort(FieldSortPredicate);
-        memset(data, 0x00, dataLengthBytes);
         for (std::list<std::shared_ptr<DataField> >::const_iterator i = sortedFieldList.begin(); i != sortedFieldList.end(); ++i)
         {
-            pos = (*i)->getPosition();
-            (*i)->getLinearData(data, dataLengthBytes, &pos);
+            auto tmp = (*i)->getLinearData(data);
+            unsigned int pos = (*i)->getPosition();
+            data.writeAt(pos, tmp.getData(), 0, tmp.getBitSize());
         }
+        return data.getData();
     }
 
-    void CustomFormat::setLinearData(const void* data, size_t dataLengthBytes)
+    void CustomFormat::setLinearData(const ByteVector& data)
     {
-        unsigned int pos = 0;
         std::list<std::shared_ptr<DataField> > sortedFieldList = d_fieldList;
         sortedFieldList.sort(FieldSortPredicate);
         for (std::list<std::shared_ptr<DataField> >::iterator i = sortedFieldList.begin(); i != sortedFieldList.end(); ++i)
         {
-            pos = (*i)->getPosition();
-            (*i)->setLinearData(data, dataLengthBytes, &pos);
+            (*i)->setLinearData(data);
         }
     }
 
@@ -132,7 +131,7 @@ namespace logicalaccess
         }
     }
 
-	std::string CustomFormat::getDefaultXmlNodeName() const
+    std::string CustomFormat::getDefaultXmlNodeName() const
     {
         return "CustomFormat";
     }
@@ -164,27 +163,26 @@ namespace logicalaccess
         return FT_CUSTOM;
     }
 
-    size_t CustomFormat::getSkeletonLinearData(void* data, size_t dataLengthBytes) const
+    size_t CustomFormat::getSkeletonLinearData(ByteVector& data) const
     {
-		std::string xmlstr = const_cast<XmlSerializable*>(dynamic_cast<const XmlSerializable*>(this))->serialize();
+        std::string xmlstr = const_cast<XmlSerializable*>(dynamic_cast<const XmlSerializable*>(this))->serialize();
         ByteVector xmlbuf(xmlstr.begin(), xmlstr.end());
 
-        if (data != nullptr)
+        if (data.size() != 0)
         {
-            if (dataLengthBytes < xmlbuf.size())
+            if (data.size() < xmlbuf.size())
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The buffer size is too short.");
             }
-            memcpy(data, &xmlbuf[0], xmlbuf.size());
+			std::copy(&xmlbuf[0], &xmlbuf[0] + xmlbuf.size(), data.begin());
         }
 
         return (xmlbuf.size() * 8);
     }
 
-    void CustomFormat::setSkeletonLinearData(const void* data, size_t dataLengthBytes)
+    void CustomFormat::setSkeletonLinearData(const ByteVector& data)
     {
-        ByteVector xmlbuf((unsigned char*)data, (unsigned char*)data + dataLengthBytes);
-		std::string xmlstr = BufferHelper::getStdString(xmlbuf);
+        std::string xmlstr = BufferHelper::getStdString(data);
         dynamic_cast<XmlSerializable*>(this)->unSerialize(xmlstr, "");
     }
 

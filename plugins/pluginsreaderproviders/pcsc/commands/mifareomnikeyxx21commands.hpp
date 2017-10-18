@@ -14,6 +14,8 @@
 
 namespace logicalaccess
 {
+#define CMD_MIFAREOMNIKEYXX21 "MifareOmnikeyXX21"
+
     /**
      * \brief The Mifare commands class for Omnikey xx27 reader.
      */
@@ -25,6 +27,8 @@ namespace logicalaccess
          * \brief Constructor.
          */
         MifareOmnikeyXX21Commands();
+
+        explicit MifareOmnikeyXX21Commands(std::string);
 
         /**
          * \brief Destructor.

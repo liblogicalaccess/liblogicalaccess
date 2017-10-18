@@ -116,7 +116,7 @@ namespace logicalaccess
 		return ret;
     }
 
-	ByteVector MifareUltralightStorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/)
+    ByteVector MifareUltralightStorageCardService::readDataHeader(std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/)
     {
         return {};
     }

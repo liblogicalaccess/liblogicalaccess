@@ -17,18 +17,23 @@ namespace logicalaccess
     /**
      * \brief The base commands class for all card commands.
      */
-    class LIBLOGICALACCESS_API Commands
+    class LIBLOGICALACCESS_API Commands : public ICommands
     {
     public:
-	    virtual ~Commands() = default;
 
-	    Commands() {}
+		/**
+		* \brief Constructor.
+		*/
+        Commands() = delete;
+
+
+        virtual ~Commands() = default;
 
         /**
          * \brief Get the chip.
          * \return The chip.
          */
-        virtual std::shared_ptr<Chip> getChip() const { return d_chip.lock(); }
+        std::shared_ptr<Chip> getChip() const override { return d_chip.lock(); }
 
         /**
          * \brief Set the chip.
@@ -40,7 +45,7 @@ namespace logicalaccess
          * \brief Get the reader/card adapter.
          * \return The reader/card adapter.
          */
-        virtual std::shared_ptr<ReaderCardAdapter> getReaderCardAdapter() const { return d_readerCardAdapter; }
+        std::shared_ptr<ReaderCardAdapter> getReaderCardAdapter() const override { return d_readerCardAdapter; }
 
         /**
          * \brief Set the reader/card adapter.
@@ -48,7 +53,25 @@ namespace logicalaccess
          */
         virtual void setReaderCardAdapter(std::shared_ptr<ReaderCardAdapter> adapter) { d_readerCardAdapter = adapter; }
 
+        		/**
+                        		* \brief Get the cmd name.
+                        		* \return The cmd name.
+                        		*/
+           virtual const std::string& getCmdType() const { return d_commandtype; }
+        
+            		/**
+                        		* \brief Set the cmd name.
+                        		* \param chip The cmd name.
+                        		*/
+            virtual void setCmdType(const std::string& command_type) { d_commandtype = command_type; }
+
     protected:
+
+		/**
+		* \brief Constructor.
+		* \param commandtype The command type name.
+		*/
+        explicit Commands(std::string commandtype) : d_commandtype(commandtype) {}
 
         /**
          * \brief The reader/card adapter.
@@ -59,6 +82,11 @@ namespace logicalaccess
          * \brief The chip.
          */
         std::weak_ptr<Chip> d_chip;
+
+        		/**
+                        		* \brief The command type.
+                        		*/
+            std::string d_commandtype;
     };
 }
 

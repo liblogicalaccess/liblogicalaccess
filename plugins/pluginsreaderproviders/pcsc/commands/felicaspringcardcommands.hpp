@@ -16,6 +16,8 @@
 
 namespace logicalaccess
 {
+#define CMD_FELICASPRINGCARD "FeliCaSpringCard"
+
     /**
     * \brief The FeliCa card provider class for SpringCard reader.
     */
@@ -27,6 +29,8 @@ namespace logicalaccess
         * \brief Constructor.
         */
         FeliCaSpringCardCommands();
+
+        explicit FeliCaSpringCardCommands(std::string);
 
         /**
         * \brief Destructor.

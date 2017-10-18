@@ -4,7 +4,6 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <cassert>
-#include <memory>
 #include <logicalaccess/logs.hpp>
 
 using namespace logicalaccess;
@@ -33,7 +32,7 @@ ByteVector EPassIdentityService::getPicture()
     EXCEPTION_ASSERT_WITH_LOG(chip, LibLogicalAccessException,
                               "No or invalid chip object in EPassIdentityService");
 	
-    auto cmd = chip->getEPassCommand();
+    auto cmd = chip->getEPassCommands();
     assert(cmd);
 
     cmd->selectIssuerApplication();
@@ -66,7 +65,7 @@ EPassDG1 EPassIdentityService::getDG1()
     EXCEPTION_ASSERT_WITH_LOG(chip, LibLogicalAccessException,
                               "No or invalid chip object in EPassIdentityService");
 
-    auto cmd = chip->getEPassCommand();
+    auto cmd = chip->getEPassCommands();
     assert(cmd);
 
     if (dg1_cache_)

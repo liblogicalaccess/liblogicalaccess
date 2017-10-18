@@ -3,6 +3,7 @@
 #ifdef _WIN32
 
 #include "logicalaccess/logicalaccess_api.hpp"
+#include "logicalaccess/lla_fwd.hpp"
 #include <string>
 #include <vector>
 #include <cstdint>
@@ -23,11 +24,11 @@ namespace logicalaccess
 
         static bool writeBinary(const std::string &keypath,
                                 const std::string &keyname,
-                                const std::vector<uint8_t> &data);
+                                const ByteVector &data);
 
         static bool readBinary(const std::string &keypath,
                                const std::string &keyname,
-                               std::vector<uint8_t> &out);
+                               ByteVector &out);
     };
 }
 

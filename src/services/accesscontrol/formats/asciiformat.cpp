@@ -43,38 +43,36 @@ namespace logicalaccess
         return (d_formatLinear.d_asciiLength * 8);
     }
 
-	std::string ASCIIFormat::getName() const
+    std::string ASCIIFormat::getName() const
     {
         return std::string("ASCII");
     }
 
-    void ASCIIFormat::getLinearData(void* data, size_t dataLengthBytes) const
+	ByteVector ASCIIFormat::getLinearData() const
     {
-	    if (dataLengthBytes >= d_formatLinear.d_asciiLength)
-        {
-            std::string ret = d_asciiValue;
-            if (ret.size() < d_formatLinear.d_asciiLength)
-            {
-                size_t paddingLength = d_formatLinear.d_asciiLength - ret.size();
-                for (size_t i = 0; i < paddingLength; i++)
-                {
-                    ret += d_formatLinear.d_padding;
-                }
-            }
-            memcpy(data, ret.c_str(), ret.size());
-        }
-    }
+        ByteVector ret(d_asciiValue.begin(), d_asciiValue.end());
 
-    void ASCIIFormat::setLinearData(const void* data, size_t dataLengthBytes)
+        if (ret.size() < d_formatLinear.d_asciiLength)
+        {
+            size_t paddingLength = d_formatLinear.d_asciiLength - ret.size();
+            for (size_t i = 0; i < paddingLength; i++)
+            {
+                ret.push_back(d_formatLinear.d_padding);
+            }
+        }
+		return ret;
+	}
+
+    void ASCIIFormat::setLinearData(const ByteVector& data)
     {
-        if (dataLengthBytes >= d_formatLinear.d_asciiLength)
+        if (data.size() >= d_formatLinear.d_asciiLength)
         {
             d_asciiValue = "";
             int asciiValueLength = 0;
 
             for (int i = d_formatLinear.d_asciiLength - 1; (i >= 0) && (asciiValueLength == 0); i--)
             {
-                if (reinterpret_cast<const unsigned char*>(data)[i] != d_formatLinear.d_padding)
+                if (data[i] != d_formatLinear.d_padding)
                 {
                     asciiValueLength = i + 1;
                 }
@@ -82,29 +80,26 @@ namespace logicalaccess
 
             for (int i = 0; i < asciiValueLength; i++)
             {
-                d_asciiValue += reinterpret_cast<const unsigned char*>(data)[i];
+                d_asciiValue += data[i];
             }
 
-            setASCIIValue(getASCIIValue());
+            setASCIIValue(d_asciiValue);
         }
     }
 
-    size_t ASCIIFormat::getFormatLinearData(void* data, size_t dataLengthBytes) const
+    size_t ASCIIFormat::getFormatLinearData(ByteVector& data) const
     {
         size_t retLength = sizeof(d_formatLinear);
-
-        if (dataLengthBytes >= retLength)
-        {
-            size_t pos = 0;
-            memcpy(&reinterpret_cast<unsigned char*>(data)[pos], &d_formatLinear, sizeof(d_formatLinear));
-        }
+		data.reserve(retLength);
+        
+		memcpy(&data[0], &d_formatLinear, sizeof(d_formatLinear));
 
         return retLength;
     }
 
-    void ASCIIFormat::setFormatLinearData(const void* data, size_t* indexByte)
+    void ASCIIFormat::setFormatLinearData(const ByteVector& data, size_t* indexByte)
     {
-        memcpy(&d_formatLinear, &reinterpret_cast<const unsigned char*>(data)[*indexByte], sizeof(d_formatLinear));
+		memcpy(&d_formatLinear, &data[*indexByte], sizeof(d_formatLinear));
         (*indexByte) += sizeof(d_formatLinear);
 
         setASCIILength(d_formatLinear.d_asciiLength);
@@ -133,13 +128,13 @@ namespace logicalaccess
         setPadding(node.get_child("Padding").get_value<unsigned char>());
     }
 
-	std::string ASCIIFormat::getDefaultXmlNodeName() const
+    std::string ASCIIFormat::getDefaultXmlNodeName() const
     {
         return "ASCIIFormat";
     }
 
-	std::string ASCIIFormat::getASCIIValue() const
-	{
+    std::string ASCIIFormat::getASCIIValue() const
+    {
 		std::shared_ptr<StringDataField> field = std::dynamic_pointer_cast<StringDataField>(getFieldFromName("Value"));
         return field->getValue();
     }

@@ -8,6 +8,7 @@
 #define X509_CERTIFICATE_HPP
 
 #include "logicalaccess/crypto/pem.hpp"
+#include "logicalaccess/lla_fwd.hpp"
 
 #include <string>
 
@@ -15,7 +16,6 @@
 
 #include <memory>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include "logicalaccess/crypto/des_initialization_vector.hpp"
 
 namespace logicalaccess
 {
@@ -41,7 +41,7 @@ namespace logicalaccess
             /**
              * \brief Create a null X509Certificate.
              */
-	        X509Certificate() {}
+            X509Certificate() {}
 
             /**
              * \brief Create a X509 certificate by loading it from a file.
@@ -93,7 +93,7 @@ namespace logicalaccess
              * \brief Get the raw pointer.
              * \return The raw pointer.
              */
-	        std::shared_ptr<X509> getRaw() const
+            std::shared_ptr<X509> getRaw() const
             {
                 return d_cert;
             }
@@ -155,7 +155,7 @@ namespace logicalaccess
             /**
              * \brief Clear the certificate so it becomes null.
              */
-	        void clear()
+            void clear()
             {
                 d_cert.reset();
             }
@@ -201,13 +201,13 @@ namespace logicalaccess
              * \brief Create a certificate from a X509 structure pointer.
              * \param cert The X509 structure pointer. If cert is NULL, the behavior is undefined.
              */
-	        explicit X509Certificate(std::shared_ptr<X509> cert);
+            explicit X509Certificate(std::shared_ptr<X509> cert);
 
             /**
              * \brief The boolean test.
              * \return true if d_cert is set.
              */
-	        bool boolean_test() const
+            bool boolean_test() const
             {
                 return bool(d_cert);
             }

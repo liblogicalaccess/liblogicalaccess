@@ -66,22 +66,17 @@ namespace logicalaccess
             {
                 if (dataLengthBits > 0)
                 {
-                    size_t length = (dataLengthBits + 7) / 8;
-                    unsigned char *formatBuf = new unsigned char[length];
-                    memset(formatBuf, 0x00, length);
+					BitsetStream formatBuf;
                     try
                     {
-                        unsigned int pos = 0;
-                        BitHelper::writeToBit(formatBuf, length, &pos, &getChip()->getChipIdentifier()[0], getChip()->getChipIdentifier().size(), static_cast<unsigned int>(getChip()->getChipIdentifier().size() * 8), static_cast<unsigned int>(pLocation->bit), dataLengthBits);
-                        formatret->setLinearData(formatBuf, length);
+						formatBuf.concat(getChip()->getChipIdentifier(), static_cast<unsigned int>(pLocation->bit), dataLengthBits);
+						formatret->setLinearData(formatBuf.getData());
                         ret = true;
                     }
                     catch (std::exception&)
                     {
-                        delete[] formatBuf;
                         throw;
                     }
-                    delete[] formatBuf;
                 }
             }
         }

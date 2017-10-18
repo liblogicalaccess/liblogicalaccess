@@ -90,109 +90,110 @@ namespace logicalaccess
         return ret;
     }
 
-    unsigned int DataType::addParityToBuffer(ParityType leftParity, ParityType rightParity, unsigned int blocklen, void* buf, unsigned int buflen, void* procbuf, unsigned int procbuflen)
+    BitsetStream DataType::addParity(ParityType leftParity, ParityType rightParity, unsigned int blocklen, BitsetStream& buf)
     {
-        if ((buflen % blocklen) != 0 && (leftParity != PT_NONE || rightParity != PT_NONE))
+        if ((buf.getBitSize() % blocklen) != 0 && (leftParity != PT_NONE || rightParity != PT_NONE))
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The buffer length is not block length aligned. If you use parity on data type, it must be aligned.");
         }
 
-        unsigned int nbblocks = static_cast<unsigned int>(buflen / blocklen);
-        unsigned int newsize = buflen + (nbblocks * (((leftParity != PT_NONE) ? 1 : 0) + ((rightParity != PT_NONE) ? 1 : 0)));
+        BitsetStream procbuf;
 
-        if (buf != nullptr && procbuf != nullptr && procbuflen >= newsize)
+        unsigned int pos = 0;
+
+        while (pos < buf.getBitSize())
         {
-            unsigned int posproc = 0;
-            size_t buflenBytes = (buflen + 7) / 8;
-            size_t procbuflenBytes = (procbuflen + 7) / 8;
-            unsigned int pos = 0;
-
-            while (pos < buflen)
+            if (leftParity != PT_NONE)
             {
-                if (leftParity != PT_NONE)
-                {
-                    unsigned char parity = StaticFormat::calculateParity(buf, buflen, leftParity, pos, blocklen);
-                    BitHelper::writeToBit(procbuf, procbuflenBytes, &posproc, parity, 7, 1);
-                }
-
-                unsigned int currentBlocklen = (pos + blocklen <= buflen) ? blocklen : buflen - pos;
-                BitHelper::writeToBit(procbuf, procbuflenBytes, &posproc, buf, buflenBytes, buflen, pos, currentBlocklen);
-
-                if (rightParity != PT_NONE)
-                {
-                    unsigned char parity = StaticFormat::calculateParity(buf, buflen, rightParity, pos, blocklen);
-                    BitHelper::writeToBit(procbuf, procbuflenBytes, &posproc, parity, 7, 1);
-                }
-
-                pos += currentBlocklen;
+                unsigned char parity = StaticFormat::calculateParity(buf, leftParity, pos, blocklen);
+                procbuf.append(parity, 7, 1);
             }
+
+            unsigned int currentBlocklen = (pos + blocklen <= buf.getBitSize()) ? blocklen : buf.getBitSize() - pos;
+            procbuf.concat(buf.getData(), pos, currentBlocklen);
+
+            if (rightParity != PT_NONE)
+            {
+                unsigned char parity = StaticFormat::calculateParity(buf, rightParity, pos, blocklen);
+                procbuf.append(parity, 7, 1);
+            }
+
+            pos += currentBlocklen;
         }
 
-        return static_cast<unsigned int>(newsize);
+        return procbuf;
     }
 
-    unsigned int DataType::removeParityToBuffer(ParityType leftParity, ParityType rightParity, unsigned int blocklen, void* buf, unsigned int buflen, void* procbuf, unsigned int procbuflen)
+    BitsetStream DataType::removeParity(ParityType leftParity, ParityType rightParity, unsigned int blocklen, BitsetStream& buf)
     {
-        unsigned int coefParity = (((leftParity != PT_NONE) ? 1 : 0) + ((rightParity != PT_NONE) ? 1 : 0));
-        unsigned int nbblocks = static_cast<unsigned int>(buflen / (blocklen + coefParity));
-        unsigned int newsize = buflen - (nbblocks * coefParity);
+        BitsetStream procbuf;
 
-        if ((newsize % blocklen) != 0 && (leftParity != PT_NONE || rightParity != PT_NONE))
+        unsigned int pos = 0;
+        while (pos < buf.getBitSize())
         {
-            char tmpmsg[256];
-            sprintf(tmpmsg, "The buffer length (%d) without parity is not block length aligned. If you use parity on data type, it must be aligned.", static_cast<int>(buflen));
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, tmpmsg);
-        }
-
-        if (buf != nullptr && procbuf != nullptr && procbuflen >= newsize)
-        {
-            size_t buflenBytes = (buflen + 7) / 8;
-
-            if (buflen > procbuflen)
+            if (leftParity != PT_NONE)
             {
-                unsigned int posproc = 0;
-                size_t procbuflenBytes = (procbuflen + 7) / 8;
+                BitsetStream parityToCheck(1 * 8);
+                unsigned int posparity = 7;
+                parityToCheck.writeAt(posparity, buf.getData(), pos, 1);
+                unsigned char parity = StaticFormat::calculateParity(buf, leftParity, pos, blocklen);
 
-                unsigned int pos = 0;
-                while (pos < buflen)
+                if (parityToCheck.getData()[0] != parity)
                 {
-                    if (leftParity != PT_NONE)
-                    {
-                        unsigned char parityToCheck = 0x00;
-                        unsigned int posparity = 7;
-                        BitHelper::writeToBit(&parityToCheck, 1, &posparity, buf, buflenBytes, buflen, pos, 1);
-                        unsigned char parity = StaticFormat::calculateParity(buf, buflen, leftParity, pos++, blocklen);
-
-                        if (parityToCheck != parity)
-                        {
-                            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Bad left parity on DataType.");
-                        }
-                    }
-
-                    unsigned int currentBlocklen = ((pos + blocklen + ((rightParity != PT_NONE) ? 1 : 0)) <= buflen) ? blocklen : buflen - pos - ((rightParity != PT_NONE) ? 1 : 0);
-                    BitHelper::writeToBit(procbuf, procbuflenBytes, &posproc, buf, buflenBytes, buflen, pos, currentBlocklen);
-                    pos += currentBlocklen;
-
-                    if (rightParity != PT_NONE)
-                    {
-                        unsigned char parityToCheck = 0x00;
-                        unsigned int posparity = 7;
-                        BitHelper::writeToBit(&parityToCheck, 1, &posparity, buf, buflenBytes, buflen, pos, 1);
-                        unsigned char parity = StaticFormat::calculateParity(buf, buflen, rightParity, pos++ - blocklen, blocklen);
-
-                        if (parityToCheck != parity)
-                        {
-                            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Bad right parity on DataType.");
-                        }
-                    }
+                    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Bad left parity on DataType.");
                 }
+
+                ++pos;
             }
-            else
+
+            const unsigned int currentBlocklen = ((pos + blocklen) <= buf.getBitSize()) ? blocklen : buf.getBitSize() - pos;
+            procbuf.concat(buf.getData(), pos, currentBlocklen);
+            pos += currentBlocklen;
+
+            if (rightParity != PT_NONE)
             {
-                memcpy(procbuf, buf, buflenBytes);
+                BitsetStream parityToCheck(1 * 8);
+                unsigned int posparity = 7;
+                parityToCheck.writeAt(posparity, buf.getData(), pos, 1);
+                unsigned char parity = StaticFormat::calculateParity(buf, rightParity, pos - blocklen, blocklen);
+
+                if (parityToCheck.getData()[0] != parity)
+                {
+                    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Bad right parity on DataType.");
+                }
+
+                ++pos;
             }
         }
 
-        return static_cast<unsigned int>(newsize);
+        return procbuf;
+    }
+
+    unsigned char DataType::getBitDataSize() const
+    {
+        unsigned char ret = 0;
+
+        switch (getType())
+        {
+        case ET_BCDBYTE:
+            ret = 8;
+            break;
+        case ET_BCDNIBBLE:
+            ret = 4;
+            break;
+        case ET_BINARY:
+            ret = 8;
+            break;
+        case ET_BIGENDIAN:
+            ret = 8;
+            break;
+        case ET_LITTLEENDIAN:
+            ret = 8;
+            break;
+        case ET_NOENCODING:
+            break;
+        default:;
+        }
+        return ret;
     }
 }

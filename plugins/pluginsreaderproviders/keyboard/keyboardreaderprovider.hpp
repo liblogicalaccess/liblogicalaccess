@@ -118,7 +118,7 @@ namespace logicalaccess
 
         static bool terminateProcess(DWORD dwProcessId, UINT uExitCode);
 #endif
-
+    protected:
 	    /**
          * \brief The reader list.
          */

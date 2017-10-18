@@ -154,7 +154,7 @@ namespace logicalaccess
 		cipher.decipher(data, decData, aeskey, iv, false);
 
 		int i = (int)decData.size() - 1;
-		for (; i >= 0 && decData[i] != 0x80 && decData[i] == 0x00; --i);
+		for (; i >= 0 && decData[i] != 0x80 && decData[i] == 0x00; --i) {}
 		if (i >= 0)
 			decData.resize(i);
 

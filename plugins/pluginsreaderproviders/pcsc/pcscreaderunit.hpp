@@ -184,7 +184,7 @@ namespace logicalaccess
          * \param atrLength The ATR array length.
          * \return The ATR length.
          */
-	const std::vector<uint8_t>& getATR() const;
+	const ByteVector& getATR() const;
 
         /**
          * \brief Get the default PC/SC reader/card adapter.
@@ -397,7 +397,7 @@ namespace logicalaccess
         /**
          * The current ATR
          */
-        std::vector<uint8_t> atr_;
+        ByteVector atr_;
 
         /**
          * \brief The proxy reader unit.

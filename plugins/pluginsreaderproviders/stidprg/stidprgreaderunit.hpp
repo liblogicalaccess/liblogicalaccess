@@ -41,16 +41,16 @@ class LIBLOGICALACCESS_API STidPRGReaderUnit : public ReaderUnit
 
     std::shared_ptr<STidPRGReaderUnitConfiguration> getSTidPRGReaderUnitConfiguration() const;
 
-    std::vector<uint8_t> readBlocks(uint8_t start, uint8_t end);
+    ByteVector readBlocks(uint8_t start, uint8_t end);
 
-    bool login(const std::vector<uint8_t> &password);
+    bool login(const ByteVector &password);
 
-    bool writePassword(const std::vector<uint8_t> &old,
-                       const std::vector<uint8_t> &new_pass);
+    bool writePassword(const ByteVector &old,
+                       const ByteVector &new_pass);
 
-    bool writeBlock(uint8_t start, uint8_t end, const std::vector<uint8_t> &data);
+    bool writeBlock(uint8_t start, uint8_t end, const ByteVector &data);
 
-    bool format(uint8_t start, uint8_t end, const std::vector<uint8_t> &pwd);
+    bool format(uint8_t start, uint8_t end, const ByteVector &pwd);
 
     void ihm_control(uint8_t device, int duration);
 

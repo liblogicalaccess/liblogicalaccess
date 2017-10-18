@@ -134,7 +134,7 @@ namespace logicalaccess
             size_t buflen = totalbuflen - (mLocation->block * 16);
             ByteVector dataSectors;
             dataSectors.resize(buflen, 0x00);
-			copy(data.begin(), data.end(), dataSectors.begin() + mLocation->byte_);
+			std::copy(data.begin(), data.end(), dataSectors.begin() + mLocation->byte_);
 
             if (writeAidToMad)
             {
@@ -273,36 +273,35 @@ namespace logicalaccess
 		return ret;
     }
 
-	ByteVector MifareStorageCardService::readDataHeader(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse)
-	{
+    ByteVector MifareStorageCardService::readDataHeader(std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse)
+    {
+		std::cout << "MifareStorageCardService::readDataHeader" << std::endl;
 		TRACE(location, aiToUse);
 
 		EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument, "location cannot be null.");
 
-		std::shared_ptr<MifareLocation> mLocation = std::dynamic_pointer_cast<MifareLocation>(location);
-		EXCEPTION_ASSERT_WITH_LOG(mLocation, std::invalid_argument, "location must be a MifareLocation.");
+        std::shared_ptr<MifareLocation> mLocation = std::dynamic_pointer_cast<MifareLocation>(location);
+        EXCEPTION_ASSERT_WITH_LOG(mLocation, std::invalid_argument, "location must be a MifareLocation.");
 
 		MifareKeyType keyType = KT_KEY_A;
 		std::shared_ptr<MifareKey> key;
 
-		if (mLocation->block == -1)
-		{
-			mLocation->block = 0;
-		}
+        if (mLocation->block == -1)
+        {
+            mLocation->block = 0;
+        }
 
-		if (aiToUse)
-		{
-			std::shared_ptr<MifareAccessInfo> mAiToUse = std::dynamic_pointer_cast<MifareAccessInfo>(aiToUse);
-			EXCEPTION_ASSERT_WITH_LOG(mAiToUse, std::invalid_argument, "aiToUse must be a MifareAccessInfo");
+        if (aiToUse)
+        {
+            std::shared_ptr<MifareAccessInfo> mAiToUse = std::dynamic_pointer_cast<MifareAccessInfo>(aiToUse);
+            EXCEPTION_ASSERT_WITH_LOG(mAiToUse, std::invalid_argument, "aiToUse must be a MifareAccessInfo");
 
 			keyType = getMifareChip()->getMifareCommands()->getKeyType(mAiToUse->sab, mLocation->sector, mLocation->block, false);
 			key = keyType == KT_KEY_A ? mAiToUse->keyA : mAiToUse->keyB;
-		}
-
+        }
 
 		getMifareChip()->getMifareCommands()->authenticate(keyType, key, mLocation->sector, getMifareChip()->getMifareCommands()->getNbBlocks(mLocation->sector), false);
-		ByteVector vdata = getMifareChip()->getMifareCommands()->readBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(mLocation->sector) + getMifareChip()->getMifareCommands()->getNbBlocks(mLocation->sector)), 16);
-		vdata.resize(16);
-		return vdata;
-	}
+        ByteVector vdata = getMifareChip()->getMifareCommands()->readBinary(static_cast<unsigned char>(getMifareChip()->getMifareCommands()->getSectorStartBlock(mLocation->sector) + getMifareChip()->getMifareCommands()->getNbBlocks(mLocation->sector)), 16);
+        return vdata;
+    }
 }

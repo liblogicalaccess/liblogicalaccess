@@ -9,6 +9,7 @@
 
 #include "logicalaccess/xmlserializable.hpp"
 #include "logicalaccess/services/nfctag/ndefrecord.hpp"
+#include "logicalaccess/lla_fwd.hpp"
 
 namespace logicalaccess
 {

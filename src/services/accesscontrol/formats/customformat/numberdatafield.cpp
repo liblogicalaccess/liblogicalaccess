@@ -31,24 +31,20 @@ namespace logicalaccess
         return d_value;
     }
 
-    void NumberDataField::getLinearData(void* data, size_t dataLengthBytes, unsigned int* pos) const
+    BitsetStream NumberDataField::getLinearData(const BitsetStream& data) const
     {
-        if ((dataLengthBytes * 8) < (d_length + *pos))
-        {
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
-        }
+		BitsetStream dataTmp;
+        convertNumericData(dataTmp, d_value, d_length);
 
-        convertNumericData(data, dataLengthBytes, pos, d_value, d_length);
+		return dataTmp;
     }
 
-    void NumberDataField::setLinearData(const void* data, size_t dataLengthBytes, unsigned int* pos)
+	void NumberDataField::setLinearData(const ByteVector& data)
     {
-        if ((dataLengthBytes * 8) < (d_length + *pos))
-        {
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
-        }
+		BitsetStream _data;
 
-        d_value = revertNumericData(data, dataLengthBytes, pos, d_length);
+		_data.concat(data);
+        d_value = revertNumericData(_data, getPosition(), d_length);
     }
 
     bool NumberDataField::checkSkeleton(std::shared_ptr<DataField> field) const
@@ -85,7 +81,7 @@ namespace logicalaccess
         d_value = node.get_child("Value").get_value<long long>();
     }
 
-	std::string NumberDataField::getDefaultXmlNodeName() const
+    std::string NumberDataField::getDefaultXmlNodeName() const
     {
         return "NumberDataField";
     }

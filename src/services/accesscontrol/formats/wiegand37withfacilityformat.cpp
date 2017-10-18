@@ -36,7 +36,7 @@ namespace logicalaccess
     {
     }
 
-	std::string Wiegand37WithFacilityFormat::getName() const
+    std::string Wiegand37WithFacilityFormat::getName() const
     {
         return std::string("Wiegand 37 With Facility");
     }
@@ -54,38 +54,43 @@ namespace logicalaccess
         d_formatLinear.d_facilityCode = facilityCode;
     }
 
-    void Wiegand37WithFacilityFormat::getLinearDataWithoutParity(void* data, size_t dataLengthBytes) const
+    BitsetStream Wiegand37WithFacilityFormat::getLinearDataWithoutParity() const
     {
-        unsigned int pos = 1;
+		BitsetStream data;
+                data.append(0x00, 0, 1);
+        convertField(data, getFacilityCode(), 16);
+        convertField(data, getUid(), 19);
+        data.append(0x00, 0, 1);
 
-        convertField(data, dataLengthBytes, &pos, getFacilityCode(), 16);
-        convertField(data, dataLengthBytes, &pos, getUid(), 19);
+		return data;
     }
 
-    void Wiegand37WithFacilityFormat::setLinearDataWithoutParity(const void* data, size_t dataLengthBytes)
+    void Wiegand37WithFacilityFormat::setLinearDataWithoutParity(const ByteVector& data)
     {
         unsigned int pos = 1;
+		BitsetStream _data;
+		_data.concat(data);
 
-        setFacilityCode((unsigned short)revertField(data, dataLengthBytes, &pos, 16));
-        setUid(revertField(data, dataLengthBytes, &pos, 19));
+        setFacilityCode((unsigned short)revertField(_data, &pos, 16));
+        setUid(revertField(_data, &pos, 19));
     }
 
-    size_t Wiegand37WithFacilityFormat::getFormatLinearData(void* data, size_t dataLengthBytes) const
+    size_t Wiegand37WithFacilityFormat::getFormatLinearData(ByteVector& data) const
     {
-        size_t retLength = sizeof(d_formatLinear);
+		size_t retLength = sizeof(d_formatLinear);
 
-        if (dataLengthBytes >= retLength)
-        {
-            memcpy(&reinterpret_cast<unsigned char*>(data)[0], &d_formatLinear, sizeof(d_formatLinear));
-        }
+		if (data.capacity() >= retLength)
+		{
+			memcpy(&data[0], &d_formatLinear, sizeof(d_formatLinear));
+		}
 
         return retLength;
     }
 
-    void Wiegand37WithFacilityFormat::setFormatLinearData(const void* data, size_t* indexByte)
+    void Wiegand37WithFacilityFormat::setFormatLinearData(const ByteVector& data, size_t* indexByte)
     {
-        memcpy(&d_formatLinear, &reinterpret_cast<const unsigned char*>(data)[*indexByte], sizeof(d_formatLinear));
-        (*indexByte) += sizeof(d_formatLinear);
+		memcpy(&d_formatLinear, &data[*indexByte], sizeof(d_formatLinear));
+		(*indexByte) += sizeof(d_formatLinear);
 
         setFacilityCode(d_formatLinear.d_facilityCode);
     }
@@ -112,7 +117,7 @@ namespace logicalaccess
         setUid(node.get_child("Uid").get_value<unsigned long long>());
     }
 
-	std::string Wiegand37WithFacilityFormat::getDefaultXmlNodeName() const
+    std::string Wiegand37WithFacilityFormat::getDefaultXmlNodeName() const
     {
         return "Wiegand37WithFacilityFormat";
     }

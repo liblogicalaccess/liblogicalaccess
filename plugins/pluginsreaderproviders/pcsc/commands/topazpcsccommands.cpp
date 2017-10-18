@@ -16,9 +16,14 @@
 namespace logicalaccess
 {
     TopazPCSCCommands::TopazPCSCCommands()
-        : TopazCommands()
+        : TopazCommands(CMD_TOPAZPCSC)
     {
     }
+
+	TopazPCSCCommands::TopazPCSCCommands(std::string ct)
+		: TopazCommands(ct)
+	{
+	}
 
     TopazPCSCCommands::~TopazPCSCCommands()
     {

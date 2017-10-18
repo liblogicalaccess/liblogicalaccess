@@ -17,9 +17,14 @@
 namespace logicalaccess
 {
     MifareSmartIDCommands::MifareSmartIDCommands()
-        : MifareCommands()
+        : MifareCommands(CMD_MIFARESMARTID)
     {
     }
+	
+	MifareSmartIDCommands::MifareSmartIDCommands(std::string ct)
+		: MifareCommands(ct)
+	{
+	}
 
     MifareSmartIDCommands::~MifareSmartIDCommands()
     {
@@ -27,7 +32,7 @@ namespace logicalaccess
 
     bool MifareSmartIDCommands::loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool /*vol*/)
     {
-		ByteVector data;
+        ByteVector data;
         data.resize(14, 0x00);
 
         data[0] = ((keytype == KT_KEY_A) ? 0 : 4) | 3;
@@ -71,7 +76,7 @@ namespace logicalaccess
 
     void MifareSmartIDCommands::authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype)
     {
-		ByteVector data;
+        ByteVector data;
         data.resize(3, 0x00);
 
         data[0] = ((keytype == KT_KEY_A) ? 0 : 4) | 3;
@@ -98,17 +103,17 @@ namespace logicalaccess
         }
     }
 
-	ByteVector MifareSmartIDCommands::readBinary(unsigned char blockno, size_t len)
+    ByteVector MifareSmartIDCommands::readBinary(unsigned char blockno, size_t len)
     {
         if (len >= 256)
         {
             THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad len parameter.");
         }
 
-		ByteVector data;
+        ByteVector data;
         data.push_back(blockno);
 
-		ByteVector sbuf;
+        ByteVector sbuf;
         sbuf = getMifareSmartIDReaderCardAdapter()->sendCommand(0x46, data);
 
         EXCEPTION_ASSERT_WITH_LOG(sbuf.size() == 16, LibLogicalAccessException, "The read value should always be 16 bytes long");
@@ -125,7 +130,7 @@ namespace logicalaccess
 
         if (blockno != 0)
         {
-			ByteVector ldata;
+            ByteVector ldata;
 
             ldata.push_back(blockno);
             ldata.insert(ldata.end(), buf.begin(), buf.end());
@@ -164,7 +169,7 @@ namespace logicalaccess
 
     void MifareSmartIDCommands::increment_raw(uint8_t blockno, uint32_t value) const
     {
-		ByteVector command;
+        ByteVector command;
         command.push_back(blockno);
         command.push_back(static_cast<unsigned char>(value & 0xff));
         command.push_back(static_cast<unsigned char>((value >> 8) & 0xff));
@@ -176,7 +181,7 @@ namespace logicalaccess
 
     void MifareSmartIDCommands::decrement_raw(uint8_t blockno, uint32_t value) const
     {
-		ByteVector command;
+        ByteVector command;
         command.push_back(blockno);
         command.push_back(static_cast<unsigned char>(value & 0xff));
         command.push_back(static_cast<unsigned char>((value >> 8) & 0xff));

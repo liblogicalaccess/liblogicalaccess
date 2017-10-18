@@ -32,9 +32,9 @@ void introduction()
     LLA_SUBTEST_REGISTER("CorrectWriteRead");
 }
 
-std::vector<uint8_t> vector_from_string(const std::string &s)
+ByteVector vector_from_string(const std::string &s)
 {
-    std::vector<uint8_t> ret(s.begin(), s.end());
+    ByteVector ret(s.begin(), s.end());
     return ret;
 }
 
@@ -78,8 +78,8 @@ void read_write(std::shared_ptr<logicalaccess::DESFireEV1ISO7816Commands> cmdev1
     daiToUse->readKeyno            = 0;
 
     // Data to write
-    std::vector<uint8_t> writedata(16, 'd');
-    std::vector<uint8_t> readdata;
+    ByteVector writedata(16, 'd');
+    ByteVector readdata;
     // Write data on the specified location with the specified key
     storage->writeData(dlocation, daiToUse, daiToUse, writedata,
                        CB_DEFAULT);
@@ -111,7 +111,7 @@ void create_app_and_file(
     std::shared_ptr<logicalaccess::DESFireKey> key(new logicalaccess::DESFireKey());
     key->setKeyType(logicalaccess::DESFireKeyType::DF_KEY_AES);
     key->fromString("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00");
-    std::vector<uint8_t> bla(key->getData(), key->getData() + key->getLength());
+    ByteVector bla(key->getData(), key->getData() + key->getLength());
 
     using namespace logicalaccess;
     key->setKeyStorage(

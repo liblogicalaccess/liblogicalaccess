@@ -12,17 +12,24 @@
 
 namespace logicalaccess
 {
+#define CMD_MIFAREULTRALIGHTCPCSC "MifareUltralightCPCSC"
     /**
      * \brief The Mifare Ultralight C commands class for PCSC reader.
      */
-    class LIBLOGICALACCESS_API MifareUltralightCPCSCCommands : public MifareUltralightPCSCCommands, public MifareUltralightCCommands
-    {
+    class LIBLOGICALACCESS_API MifareUltralightCPCSCCommands : public MifareUltralightPCSCCommands
+#ifndef SWIG
+    , public MifareUltralightCCommands
+#endif
+	{
     public:
 
         /**
          * \brief Constructor.
          */
         MifareUltralightCPCSCCommands();
+
+        explicit MifareUltralightCPCSCCommands(std::string);
+
 
         /**
          * \brief Destructor.

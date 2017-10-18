@@ -102,8 +102,7 @@ namespace logicalaccess
 
                         try
                         {
-                            DESFireCommands::FileSetting settings;
-                            getDESFireCommands()->getFileSettings(*file, settings);
+                            DESFireCommands::FileSetting settings = getDESFireCommands()->getFileSettings(*file);
 
 							// We assume the action when using location node enumeration will be for read access
 							location->securityLevel = getDESFireCommands()->getEncryptionMode(settings, true);
@@ -174,7 +173,7 @@ namespace logicalaccess
         case CST_ACCESS_CONTROL:
         {
             service = LibraryManager::getInstance()
-                ->getCardService(shared_from_this(), CST_ACCESS_CONTROL);
+                ->getCardService(shared_from_this(), CardServiceType::CST_ACCESS_CONTROL);
             if (!service)
                 service.reset(new AccessControlCardService(shared_from_this()));
         }

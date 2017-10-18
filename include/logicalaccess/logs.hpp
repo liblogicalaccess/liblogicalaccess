@@ -24,13 +24,13 @@
     }
 
 #include "logicalaccess_api.hpp"
+#include "logicalaccess/lla_fwd.hpp"
 #include <fstream>
 #include <map>
 #include <sstream>
 #include <vector>
 #include <array>
 #include <cstdint>
-#include "logicalaccess/crypto/des_initialization_vector.hpp"
 
 namespace logicalaccess
 {
@@ -67,7 +67,7 @@ namespace logicalaccess
     template<long unsigned int Size>
     std::ostream &operator<<(std::ostream &ss, const std::array<uint8_t, Size> &bytearray)
     {
-        ss << std::vector<uint8_t>(bytearray.begin(), bytearray.end());
+        ss << ByteVector(bytearray.begin(), bytearray.end());
         return ss;
     }
 

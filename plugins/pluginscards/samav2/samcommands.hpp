@@ -14,6 +14,8 @@
 
 namespace logicalaccess
 {
+#define CMD_SAM	"SAM"
+
     typedef struct s_SAMManufactureInformation
     {
         unsigned char	uniqueserialnumber[7];
@@ -56,7 +58,8 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API SAMCommands : public Commands
     {
     public:
-		SAMCommands() {}
+		SAMCommands() : Commands(CMD_SAM) {}
+        explicit SAMCommands(std::string ct) : Commands(ct) {}
         virtual SAMVersion getVersion() = 0;
         virtual std::shared_ptr<SAMKeyEntry<T, S> > getKeyEntry(unsigned char keyno) = 0;
         virtual std::shared_ptr<SAMKucEntry> getKUCEntry(unsigned char keyno) = 0;

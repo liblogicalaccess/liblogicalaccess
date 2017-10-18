@@ -32,8 +32,14 @@
 namespace logicalaccess
 {
     DESFireEV1ISO7816Commands::DESFireEV1ISO7816Commands()
-        : DESFireISO7816Commands()
+        : DESFireISO7816Commands(CMD_DESFIREEV1ISO7816)
     {
+    }
+
+    DESFireEV1ISO7816Commands::DESFireEV1ISO7816Commands(std::string ct)
+        : DESFireISO7816Commands(ct)
+    {
+        
     }
 
     DESFireEV1ISO7816Commands::~DESFireEV1ISO7816Commands()
@@ -409,7 +415,7 @@ namespace logicalaccess
         if (!std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "DESFireKey need a SAMKeyStorage to proceed a SAM ISO Authenticate.");
 	
-		if (getSAMChip()->getCardType() == "SAM_AV2"
+		if ( getSAMChip()->getCardType() == "SAM_AV2"
 			&& !std::dynamic_pointer_cast<NXPAV2KeyDiversification>(key->getKeyDiversification()))
 		{
 			LOG(LogLevel::INFOS) << "Start AuthenticationPICC in purpose to fix SAM state (NXP SAM Documentation 3.5)";
@@ -421,7 +427,7 @@ namespace logicalaccess
 					0x00,
 					0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 					0x00 };
-				std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(randomAuthenticatePICC);
+				std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>( getSAMChip()->getCommands())->transmit(randomAuthenticatePICC);
 			}
 			catch (std::exception&){}
 
@@ -429,7 +435,7 @@ namespace logicalaccess
 			{
 				// Cancel SAM authentication with dummy command, but ignore return
 				ByteVector cmd_vector = { 0x80, 0xaf, 0x00, 0x00, 0x00 };
-				std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(cmd_vector);
+				std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>( getSAMChip()->getCommands())->transmit(cmd_vector);
 			}
 			catch (std::exception&){}
 		}
@@ -455,10 +461,10 @@ namespace logicalaccess
 		{
 			try
 			{
-				if (getSAMChip()->getCardType() == "SAM_AV1")
-					apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->transmit(cmd_vector);
-				else if (getSAMChip()->getCardType() == "SAM_AV2")
-					apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(cmd_vector, true, false);
+				if ( getSAMChip()->getCardType() == "SAM_AV1")
+					apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>( getSAMChip()->getCommands())->transmit(cmd_vector);
+				else if ( getSAMChip()->getCardType() == "SAM_AV2")
+					apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>( getSAMChip()->getCommands())->transmit(cmd_vector, true, false);
 				break;
 			}
 			catch (CardException& ex)
@@ -469,7 +475,7 @@ namespace logicalaccess
 
 				//SAM av2 often fail even if parameters are correct for during diversification av2
 				LOG(LogLevel::WARNINGS) << "try to auth with SAM P1: " << trytoreconnect;
-				getSAMChip()->getCommands()->getReaderCardAdapter()->getDataTransport()->getReaderUnit()->reconnect();
+				 getSAMChip()->getCommands()->getReaderCardAdapter()->getDataTransport()->getReaderUnit()->reconnect();
 			}
 			++trytoreconnect;
 		} while (true);
@@ -494,14 +500,14 @@ namespace logicalaccess
             {
                 unsigned char resetcmd[] = { 0x80, 0xaf, 0x00, 0x00, 0x00 };
                 cmd_vector.assign(resetcmd, resetcmd + 5);
-                if (getSAMChip()->getCardType() == "SAM_AV1")
-                    apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->transmit(cmd_vector);
-                else if (getSAMChip()->getCardType() == "SAM_AV2")
-                    apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(cmd_vector);
+                if ( getSAMChip()->getCardType() == "SAM_AV1")
+                    apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>( getSAMChip()->getCommands())->transmit(cmd_vector);
+                else if ( getSAMChip()->getCardType() == "SAM_AV2")
+                    apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>( getSAMChip()->getCommands())->transmit(cmd_vector);
             }
             catch (std::exception&){}
 
-			std::rethrow_exception(eptr);
+            std::rethrow_exception(eptr);
         }
 
         if (encRPICC2RPCD2a.size() < 1)
@@ -510,18 +516,18 @@ namespace logicalaccess
         unsigned char cmdp2[] = { 0x80, 0x8e, 0x00, 0x00, (unsigned char)(encRPICC2RPCD2a.size()) };
         cmd_vector.assign(cmdp2, cmdp2 + 5);
         cmd_vector.insert(cmd_vector.end(), encRPICC2RPCD2a.begin(), encRPICC2RPCD2a.end());
-        if (getSAMChip()->getCardType() == "SAM_AV1")
-            apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->transmit(cmd_vector);
-        else if (getSAMChip()->getCardType() == "SAM_AV2")
-            apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->transmit(cmd_vector);
+        if ( getSAMChip()->getCardType() == "SAM_AV1")
+            apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>( getSAMChip()->getCommands())->transmit(cmd_vector);
+        else if ( getSAMChip()->getCardType() == "SAM_AV2")
+            apduresult = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>( getSAMChip()->getCommands())->transmit(cmd_vector);
         if (apduresult.size() <= 2 && apduresult[apduresult.size() - 2] != 0x90 && apduresult[apduresult.size() - 2] != 0x00)
             THROW_EXCEPTION_WITH_LOG(CardException, "sam_iso_authenticate P2 failed.");
 
 		crypto->d_currentKeyNo = keyno;
-        if (getSAMChip()->getCardType() == "SAM_AV1")
-			crypto->d_sessionKey = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(getSAMChip()->getCommands())->dumpSessionKey();
-        else if (getSAMChip()->getCardType() == "SAM_AV2")
-			crypto->d_sessionKey = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getSAMChip()->getCommands())->dumpSessionKey();
+        if ( getSAMChip()->getCardType() == "SAM_AV1")
+			crypto->d_sessionKey = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>( getSAMChip()->getCommands())->dumpSessionKey();
+        else if ( getSAMChip()->getCardType() == "SAM_AV2")
+			crypto->d_sessionKey = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>( getSAMChip()->getCommands())->dumpSessionKey();
 		crypto->d_auth_method = CM_ISO;
 
 		LOG(LogLevel::INFOS) << "Session key length: " << crypto->d_sessionKey.size();
@@ -1060,26 +1066,26 @@ namespace logicalaccess
 
     void DESFireEV1ISO7816Commands::changeKey(unsigned char keyno, std::shared_ptr<DESFireKey> newkey)
     {
-		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
-		std::shared_ptr<DESFireKey> key = std::make_shared<DESFireKey>(*newkey);
-		auto oldkey = crypto->getKey(0, keyno);
+        std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
+        std::shared_ptr<DESFireKey> key = std::make_shared<DESFireKey>(*newkey);
+        auto oldkey = crypto->getKey(0, keyno);
 
-		auto oldSamKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage());
-		auto newSamKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
-		if (((oldSamKeyStorage && !oldSamKeyStorage->getDumpKey()) && !newSamKeyStorage)
-			|| (!oldSamKeyStorage && (newSamKeyStorage && !newSamKeyStorage->getDumpKey())))
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Both keys need to be set in the SAM.");
+        auto oldSamKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage());
+        auto newSamKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
+        if (((oldSamKeyStorage && !oldSamKeyStorage->getDumpKey()) && !newSamKeyStorage)
+            || (!oldSamKeyStorage && (newSamKeyStorage && !newSamKeyStorage->getDumpKey())))
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Both keys need to be set in the SAM.");
 
-		auto oldKeyDiversify = getKeyInformations(crypto->getKey(0, keyno), keyno);
-		auto newKeyDiversify = getKeyInformations(key, keyno);
+        auto oldKeyDiversify = getKeyInformations(crypto->getKey(0, keyno), keyno);
+        auto newKeyDiversify = getKeyInformations(key, keyno);
 
         unsigned char keynobyte = keyno;
-		if (keyno == 0 && crypto->d_currentAid == 0)
+        if (keyno == 0 && crypto->d_currentAid == 0)
         {
             keynobyte |= key->getKeyType();
         }
 
-		ByteVector cryptogram;
+        ByteVector cryptogram;
         if (oldSamKeyStorage && !oldSamKeyStorage->getDumpKey())
         {
             cryptogram = getChangeKeySAMCryptogram(keyno, key);
@@ -1090,13 +1096,13 @@ namespace logicalaccess
         }
         else
         {
-			cryptogram = crypto->changeKey_PICC(keynobyte, oldKeyDiversify, key, newKeyDiversify);
+            cryptogram = crypto->changeKey_PICC(keynobyte, oldKeyDiversify, key, newKeyDiversify);
         }
 
         ByteVector data;
         data.push_back(keynobyte);
         data.insert(data.end(), cryptogram.begin(), cryptogram.end());
-		if (crypto->d_auth_method == CM_LEGACY)
+        if (crypto->d_auth_method == CM_LEGACY)
         {
             transmit_plain(DF_INS_CHANGE_KEY, data);
         }
@@ -1108,17 +1114,18 @@ namespace logicalaccess
             // Don't check CMAC if master key.
             if (dd.size() > 0 && keyno != 0)
             {
-				if (!crypto->verifyMAC(true, dd))
-				{
-					THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC verification failed.");
-				}
+                if (!crypto->verifyMAC(true, dd))
+                {
+                    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC verification failed.");
+                }
             }
         }
-		crypto->setKey(crypto->d_currentAid, 0, keyno, newkey);
+        crypto->setKey(crypto->d_currentAid, 0, keyno, newkey);
     }
 
-    void DESFireEV1ISO7816Commands::getVersion(DESFireCardVersion& dataVersion)
+    DESFireCommands::DESFireCardVersion DESFireEV1ISO7816Commands::getVersion()
     {
+        DESFireCardVersion dataVersion;
 	    ByteVector allresult;
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 
@@ -1161,6 +1168,7 @@ namespace logicalaccess
                 }
             }
         }
+        return dataVersion;
     }
 
     std::vector<unsigned int> DESFireEV1ISO7816Commands::getApplicationIDs()

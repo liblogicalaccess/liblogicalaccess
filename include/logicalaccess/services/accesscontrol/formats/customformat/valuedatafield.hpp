@@ -91,7 +91,7 @@ namespace logicalaccess
          * \param field The numeric data value.
          * \param fieldlen The field length (in bits).
          */
-        void convertNumericData(void* data, size_t dataLengthBytes, unsigned int* pos, unsigned long long field, unsigned int fieldlen) const;
+        void convertNumericData(BitsetStream& data, unsigned long long field, unsigned int fieldlen) const;
 
         /**
          * \brief Convert a binary data into the configured DataRepresentation.
@@ -102,7 +102,7 @@ namespace logicalaccess
          * \param convertedData The buffer data that will contains the result.
          * \param convertedDataLengthBytes The buffer data length.
          */
-        void convertBinaryData(const void* data, size_t dataLengthBytes, unsigned int* pos, unsigned int fieldlen, void* convertedData, size_t convertedDataLengthBytes) const;
+        void convertBinaryData(const BitsetStream& data, unsigned int fieldlen, BitsetStream& convertedData) const;
 
         /**
          * \brief Revert a numeric data using the configured DataRepresentation and DataType.
@@ -112,7 +112,7 @@ namespace logicalaccess
          * \param fieldlen The field length (in bits).
          * \return The numeric data value.
          */
-        unsigned long long revertNumericData(const void* data, size_t dataLengthBytes, unsigned int* pos, unsigned int fieldlen) const;
+        unsigned long long revertNumericData(const BitsetStream& data, unsigned int pos, unsigned int fieldlen) const;
 
         /**
          * \brief Revert a binary data using the configured DataRepresentation.
@@ -123,19 +123,19 @@ namespace logicalaccess
          * \param revertedData The buffer data that will contains the result.
          * \param revertedDataLengthBytes The buffer data length.
          */
-        void revertBinaryData(const void* data, size_t dataLengthBytes, unsigned int* pos, unsigned int fieldlen, void* revertedData, size_t revertedDataLengthBytes) const;
+        BitsetStream revertBinaryData(const BitsetStream& data, unsigned int pos, unsigned int fieldlen) const;
 
         /**
          * \brief Serialize the current object to XML.
          * \param parentNode The parent node.
          */
-	    void serialize(boost::property_tree::ptree& parentNode) override;
+        void serialize(boost::property_tree::ptree& parentNode) override;
 
         /**
          * \brief UnSerialize a XML node to the current object.
          * \param node The XML node.
          */
-	    void unSerialize(boost::property_tree::ptree& node) override;
+        void unSerialize(boost::property_tree::ptree& node) override;
 
     protected:
 

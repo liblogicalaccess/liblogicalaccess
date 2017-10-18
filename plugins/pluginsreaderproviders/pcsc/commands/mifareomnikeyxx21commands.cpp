@@ -7,9 +7,14 @@
 namespace logicalaccess
 {
     MifareOmnikeyXX21Commands::MifareOmnikeyXX21Commands()
-            : MifarePCSCCommands()
+            : MifarePCSCCommands(CMD_MIFAREOMNIKEYXX21)
     {
     }
+
+	MifareOmnikeyXX21Commands::MifareOmnikeyXX21Commands(std::string ct)
+		: MifarePCSCCommands(ct)
+	{
+	}
 
     MifareOmnikeyXX21Commands::~MifareOmnikeyXX21Commands()
     {
@@ -17,7 +22,7 @@ namespace logicalaccess
 
     void MifareOmnikeyXX21Commands::increment(uint8_t blockno, uint32_t value)
     {
-        std::vector<uint8_t> buf(4);
+        ByteVector buf(4);
         memcpy(&buf[0], &value, 4);
         getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xD4, 0x00, blockno,
                                                     4, buf);
@@ -25,7 +30,7 @@ namespace logicalaccess
 
     void MifareOmnikeyXX21Commands::decrement(uint8_t blockno, uint32_t value)
     {
-        std::vector<uint8_t> buf(4);
+        ByteVector buf(4);
         memcpy(&buf[0], &value, 4);
         getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xD8, 0x00, blockno,
                                                     4, buf);

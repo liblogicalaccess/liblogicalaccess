@@ -11,6 +11,7 @@
 
 namespace logicalaccess
 {
+#define CMD_MIFAREULTRALIGHTCACSACR "MifareUltralightCACSACR"
     /**
      * \brief The Mifare Ultralight C commands class for ACS ACR reader.
      */
@@ -22,6 +23,8 @@ namespace logicalaccess
          * \brief Constructor.
          */
         MifareUltralightCACSACRCommands();
+
+        explicit MifareUltralightCACSACRCommands(std::string);
 
         /**
          * \brief Destructor.

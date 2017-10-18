@@ -98,7 +98,7 @@ namespace logicalaccess
     CardTypeList CardsFormatComposite::getConfiguredCardTypes()
     {
         CardTypeList ctList;
-	    for (FormatInfosList::iterator it = formatsList.begin(); it != formatsList.end(); ++it)
+        for (FormatInfosList::iterator it = formatsList.begin(); it != formatsList.end(); ++it)
         {
             ctList.push_back(it->first);
         }
@@ -125,7 +125,7 @@ namespace logicalaccess
         {
             LOG(LogLevel::INFOS) << "Read format using card format composite on a chip (" << BufferHelper::getHex(chip->getChipIdentifier()) << ")...";
 
-	        std::string ct = chip->getCardType();
+            std::string ct = chip->getCardType();
             FormatInfosList::iterator it = formatsList.find(ct);
             if (it == formatsList.end())
             {
@@ -191,7 +191,7 @@ namespace logicalaccess
 
         if (!formatsList.empty())
         {
-	        for (FormatInfosList::iterator it = formatsList.begin(); it != formatsList.end(); ++it)
+            for (FormatInfosList::iterator it = formatsList.begin(); it != formatsList.end(); ++it)
             {
                 LOG(LogLevel::INFOS) << "Serializing type {" << it->first << "}...";
                 boost::property_tree::ptree nodecard;
@@ -308,7 +308,7 @@ namespace logicalaccess
         }
     }
 
-	std::string CardsFormatComposite::getDefaultXmlNodeName() const
+    std::string CardsFormatComposite::getDefaultXmlNodeName() const
     {
         return "CardsFormat";
     }

@@ -4,7 +4,7 @@
 #include <cstring>
 
 using namespace logicalaccess;
-using namespace iks;
+using namespace logicalaccess::iks;
 
 AesEncryptCommand::AesEncryptCommand()
     : decrypt_(false)
@@ -12,7 +12,7 @@ AesEncryptCommand::AesEncryptCommand()
     opcode_ = CMSG_OP_AES_ENCRYPT;
 }
 
-std::vector<uint8_t> AesEncryptCommand::serialize() const
+ByteVector AesEncryptCommand::serialize() const
 {
     auto header       = BaseCommand::serialize();
     auto payload_size = htons(static_cast<uint16_t>(payload_.size()));
@@ -44,7 +44,7 @@ size_t AesEncryptCommand::binary_size_impl() const
 }
 
 AesEncryptResponse::AesEncryptResponse(uint16_t status,
-                                       const std::vector<uint8_t> &data)
+                                       const ByteVector &data)
     : BaseResponse(SMSG_OP_AES_ENCRYPT, status)
     , bytes_(data)
 {

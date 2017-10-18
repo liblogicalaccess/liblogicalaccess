@@ -38,13 +38,13 @@ namespace logicalaccess
          * \brief Get the representation name
          * \return The representation name
          */
-	    std::string getName() const override;
+        std::string getName() const override;
 
         /**
          * \brief Get the encoder type.
          * \return The encoder type.
          */
-	    EncodingType getType() const override;
+        EncodingType getType() const override;
 
         /**
          * \brief Convert data to the encoding type
@@ -55,7 +55,7 @@ namespace logicalaccess
          * \param convertedLengthBytes Length of "convertedData" in bytes
          * \return Length after conversion in bits
          */
-	    unsigned int convertNumeric(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes) override;
+        BitsetStream convertNumeric(const BitsetStream& data) override;
 
         /**
          * \brief Convert binary data to the encoding type
@@ -66,14 +66,14 @@ namespace logicalaccess
          * \param convertedLengthBytes Length of "convertedData" in bytes
          * \return Length after conversion in bits
          */
-	    unsigned int convertBinary(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes) override;
+        BitsetStream convertBinary(const BitsetStream& data) override;
 
         /**
          * \brief Get the length after conversation for a given base length in bits
          * \param lengthBits The unconverted length in bits
          * \return The converted length in bits
          */
-	    unsigned int convertLength(unsigned int lengthBits) override;
+        unsigned int convertLength(unsigned int lengthBits) override;
 
         /**
          * \brief Revert data
@@ -84,7 +84,7 @@ namespace logicalaccess
          * \param convertedLengthBytes Length of "convertedData"
          * \return Length after reversion in bits
          */
-	    unsigned int revertNumeric(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes) override;
+        BitsetStream revertNumeric(const BitsetStream& data) override;
 
         /**
          * \brief Revert binary data
@@ -95,7 +95,7 @@ namespace logicalaccess
          * \param convertedLengthBytes Length of "convertedData"
          * \return Length after reversion in bits
          */
-	    unsigned int revertBinary(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes) override;
+        BitsetStream revertBinary(const BitsetStream& data) override;
     };
 }
 

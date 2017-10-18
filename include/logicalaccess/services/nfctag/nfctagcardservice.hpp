@@ -23,7 +23,7 @@ namespace logicalaccess
         * \brief Constructor.
         * \param chip The chip.
         */
-	    explicit NFCTagCardService(std::shared_ptr<Chip> chip);
+        explicit NFCTagCardService(std::shared_ptr<Chip> chip);
 
         virtual ~NFCTagCardService();
 

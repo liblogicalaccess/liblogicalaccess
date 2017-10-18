@@ -16,6 +16,7 @@
 
 namespace logicalaccess
 {
+#define CMD_MIFARESMARTID "MifareSmartID"
     /**
      * \brief The Mifare commands class for SmartID reader.
      */
@@ -27,6 +28,8 @@ namespace logicalaccess
          * \brief Constructor.
          */
         MifareSmartIDCommands();
+
+        explicit MifareSmartIDCommands(std::string);
 
         /**
          * \brief Destructor.

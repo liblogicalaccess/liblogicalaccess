@@ -26,6 +26,8 @@ namespace logicalaccess
          */
         AccessInfo();
 
+        virtual ~AccessInfo() = default;
+
         /**
          * \brief Generate pseudo-random access informations.
          */

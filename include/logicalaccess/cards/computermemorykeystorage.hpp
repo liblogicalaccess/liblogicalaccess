@@ -27,6 +27,8 @@ namespace logicalaccess
         */
         ComputerMemoryKeyStorage();
 
+        virtual ~ComputerMemoryKeyStorage() = default;
+
         /**
          * \brief Get the key storage type.
          * \return The key storage type.

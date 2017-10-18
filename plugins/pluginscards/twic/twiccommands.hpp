@@ -21,7 +21,7 @@ namespace logicalaccess
     public:
 	    virtual ~TwicCommands() = default;
 
-	    static size_t getMinimumBytesRepresentation(size_t value);
+        static size_t getMinimumBytesRepresentation(size_t value);
 
         static size_t getMaximumDataObjectLength(int64_t dataObject);
 

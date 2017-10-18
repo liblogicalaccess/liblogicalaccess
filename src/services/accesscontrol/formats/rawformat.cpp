@@ -41,34 +41,31 @@ namespace logicalaccess
         return static_cast<unsigned int>(d_rawData.size()) * 8;
     }
 
-	std::string RawFormat::getName() const
+    std::string RawFormat::getName() const
     {
         return std::string("Raw");
     }
 
-    void RawFormat::getLinearData(void* data, size_t dataLengthBytes) const
+	ByteVector RawFormat::getLinearData() const
     {
-		std::string ret;
-        ByteVector buf = getRawData();
+            std::string ret;
+		BitsetStream buf;
+		buf.concat(getRawData());
 
-        if (dataLengthBytes >= buf.size())
-        {
-            memcpy(data, &buf[0], buf.size());
-        }
+		return buf.getData();
     }
 
-    void RawFormat::setLinearData(const void* data, size_t dataLengthBytes)
+    void RawFormat::setLinearData(const ByteVector& data)
     {
-        ByteVector sbdata = ByteVector(static_cast<const unsigned char*>(data), static_cast<const unsigned char*>(data)+dataLengthBytes);
-        setRawData(sbdata);
+        setRawData(data);
     }
 
-    size_t RawFormat::getFormatLinearData(void* /*data*/, size_t /*dataLengthBytes*/) const
+    size_t RawFormat::getFormatLinearData(ByteVector& /*data*/) const
     {
         return 0;
     }
 
-    void RawFormat::setFormatLinearData(const void* /*data*/, size_t* /*indexByte*/)
+    void RawFormat::setFormatLinearData(const ByteVector& /*data*/, size_t* /*indexByte*/)
     {
     }
 
@@ -93,7 +90,7 @@ namespace logicalaccess
         setRawData(rawbuf);
     }
 
-	std::string RawFormat::getDefaultXmlNodeName() const
+    std::string RawFormat::getDefaultXmlNodeName() const
     {
         return "RawFormat";
     }
@@ -104,7 +101,7 @@ namespace logicalaccess
         return field->getValue();
     }
 
-    void RawFormat::setRawData(ByteVector& data)
+    void RawFormat::setRawData(const ByteVector& data)
     {
         std::shared_ptr<BinaryDataField> field = std::dynamic_pointer_cast<BinaryDataField>(getFieldFromName("RawData"));
         field->setDataLength(static_cast<unsigned int>(data.size() * 8));

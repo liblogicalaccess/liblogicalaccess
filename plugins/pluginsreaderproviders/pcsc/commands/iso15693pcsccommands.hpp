@@ -16,6 +16,8 @@
 
 namespace logicalaccess
 {
+#define CMD_ISO15693PCSC "ISO15693PCSC"
+
     /**
      * \brief A ISO 15693 PC/SC commands base class.
      */
@@ -26,6 +28,8 @@ namespace logicalaccess
          * \brief Constructor.
          */
         ISO15693PCSCCommands();
+
+        explicit ISO15693PCSCCommands(std::string);
 
         /**
          * \brief Destructor.

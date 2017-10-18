@@ -10,6 +10,8 @@
 #include "logicalaccess/services/accesscontrol/encodings/datatype.hpp"
 #include "logicalaccess/services/accesscontrol/encodings/encoding.hpp"
 
+#include "logicalaccess/services/accesscontrol/formats/BitsetStream.hpp"
+
 namespace logicalaccess
 {
     /**
@@ -36,32 +38,29 @@ namespace logicalaccess
          * \brief Get the encoder name
          * \return The encoder name
          */
-		std::string getName() const override;
+        std::string getName() const override;
 
         /**
          * \brief Get the encoder type
          * \return The encoder type
          */
-	    EncodingType getType() const override;
+        EncodingType getType() const override;
 
         /**
          * \brief Convert "data" to the data type
          * \param data Data to convert
          * \param dataLengthBits Length of data to convert in bits
          * \param dataConverted Data after conversion
-         * \param dataConvertedLengthBytes Length of "dataConverted" in bytes
          * \return Length of data written in bits
          */
-	    unsigned int convert(unsigned long long data, unsigned int dataLengthBits, void* dataConverted, size_t dataConvertedLengthBytes) override;
+        BitsetStream convert(unsigned long long data, unsigned int dataLengthBits) override;
 
         /**
          * \brief Revert data type to data
          * \param data Data to revert
-         * \param dataLengthBytes Length of "data" in bits
-         * \param lengthBits Length of data to revert in bits
          * \return Data after reversion
          */
-	    unsigned long long revert(void* data, size_t dataLengthBytes, unsigned int lengthBits) override;
+        unsigned long long revert(BitsetStream& data, unsigned int dataLengthBits) override;
     };
 }
 

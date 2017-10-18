@@ -8,6 +8,7 @@
 #define LOGICALACCESS_DESFIREEV1COMMANDS_HPP
 
 #include "desfirecommands.hpp"
+#include "desfireev1location.hpp"
 
 namespace logicalaccess
 {
@@ -39,6 +40,8 @@ namespace logicalaccess
 #define SELECT_FILE_BY_AID  0x04
 #define SELECT_FILE_BY_FID 0x00
 #endif
+
+#define	CMD_DESFIRE_EV1		"DESFireEV1"
 
     /**
      * \brief The ISO DFName and FID
@@ -90,7 +93,6 @@ namespace logicalaccess
     }DESFireISOAlgorithm;
 
     class DESFireEV1Chip;
-	class DESFireEV1Location;
 
     /**
      * \brief The DESFire EV1 base commands class.
@@ -98,6 +100,8 @@ namespace logicalaccess
     class LIBLOGICALACCESS_API DESFireEV1Commands : public ICommands
     {
     public:
+
+        DESFireEV1Commands() = default;
 
         /**
          * \brief Select an application.
@@ -139,7 +143,7 @@ namespace logicalaccess
          */
         virtual std::vector<unsigned short> getISOFileIDs() = 0;
 
-		/**
+        /**
 		* \brief Select an application.
 		* \param aid The Application ID
 		*/
@@ -159,7 +163,7 @@ namespace logicalaccess
          * \param maxNbKeys Maximum number of keys
          * \param keyType The key type
          */
-        virtual void getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys, DESFireKeyType& keyType) = 0;
+		virtual void getKeySettings(DESFireKeySettings& settings, unsigned char& maxNbKeys, DESFireKeyType& keyType) = 0;
 
         /**
          * \brief Get a random card UID.

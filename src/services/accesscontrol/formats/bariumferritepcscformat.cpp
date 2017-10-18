@@ -47,7 +47,7 @@ namespace logicalaccess
         return 40;
     }
 
-	std::string BariumFerritePCSCFormat::getName() const
+    std::string BariumFerritePCSCFormat::getName() const
     {
         return std::string("Barium Ferrite PCSC");
     }
@@ -65,12 +65,12 @@ namespace logicalaccess
         d_formatLinear.d_facilityCode = facilityCode;
     }
 
-    size_t BariumFerritePCSCFormat::getFormatLinearData(void* /*data*/, size_t /*dataLengthBytes*/) const
+    size_t BariumFerritePCSCFormat::getFormatLinearData(ByteVector& /*data*/) const
     {
         return 0;
     }
 
-    void BariumFerritePCSCFormat::setFormatLinearData(const void* /*data*/, size_t* /*indexByte*/)
+    void BariumFerritePCSCFormat::setFormatLinearData(const ByteVector& /*data*/, size_t* /*indexByte*/)
     {
         //DOES NOTHING
     }
@@ -97,7 +97,7 @@ namespace logicalaccess
         setUid(node.get_child("Uid").get_value<unsigned long long>());
     }
 
-	std::string BariumFerritePCSCFormat::getDefaultXmlNodeName() const
+    std::string BariumFerritePCSCFormat::getDefaultXmlNodeName() const
     {
         return "BariumFerritePCSCFormat";
     }
@@ -118,11 +118,11 @@ namespace logicalaccess
         return ret;
     }
 
-    unsigned char BariumFerritePCSCFormat::calcChecksum(const unsigned char* data, unsigned int datalen)
+    unsigned char BariumFerritePCSCFormat::calcChecksum(const ByteVector& data)
     {
         unsigned char checksum = 0x00;
 
-        for (unsigned int i = 0; i < datalen; ++i)
+        for (unsigned int i = 0; i < data.size(); ++i)
         {
             checksum ^= data[i];
         }
@@ -135,48 +135,48 @@ namespace logicalaccess
         return checksum;
     }
 
-    void BariumFerritePCSCFormat::getLinearData(void* data, size_t dataLengthBytes) const
+	ByteVector BariumFerritePCSCFormat::getLinearData() const
     {
-        unsigned int pos = 0;
+		BitsetStream data;
 
-        if (data != nullptr)
-        {
-            BitHelper::writeToBit(data, dataLengthBytes, &pos, 0x0F, 4, 4);
-
-            convertField(data, dataLengthBytes, &pos, getFacilityCode(), 12);
-            convertField(data, dataLengthBytes, &pos, getUid(), 16);
-
-            BitHelper::writeToBit(data, dataLengthBytes, &pos, calcChecksum(reinterpret_cast<const unsigned char*>(data), static_cast<unsigned int>((pos + 7) / 8)));
-        }
+		data.append(0x0F, 4, 4);
+		convertField(data, getFacilityCode(), 12);
+		convertField(data, getUid(), 16);
+		data.append(calcChecksum(data.getData()));
+		return data.getData();
     }
 
-    void BariumFerritePCSCFormat::setLinearData(const void* data, size_t dataLengthBytes)
+    void BariumFerritePCSCFormat::setLinearData(const ByteVector& _data)
     {
-        if (data != nullptr)
+        if (_data.size() > 0)
         {
-            unsigned int pos = 0;
-            unsigned char fixedValue = 0x00;
-            if (dataLengthBytes * 8 < getDataLength())
-            {
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Data length too small.");
-            }
+			if (_data.size() * 8 < getDataLength())
+			{
+				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Data length too small.");
+			}
+			
+			BitsetStream data;
+			data.concat(_data);
+			
+			unsigned int pos = 0;
 
-            BitHelper::extract(&fixedValue, 1, data, dataLengthBytes, static_cast<unsigned int>(dataLengthBytes * 8), pos, 4);
-            pos += 4;
-            fixedValue = (fixedValue >> 4) & 0x0F;
-            if (fixedValue != 0x0F)
+            BitsetStream fixedValue = BitHelper::extract(data, pos, 4);
+           // fixedValue.writeAt(0, (fixedValue.getData()[0] >> 4) & 0x0F, 0, 0);
+            if (((fixedValue.getData()[0] >> 4) & 0x0F) != 0x0F)
             {
                 char exceptionmsg[256];
-                sprintf(exceptionmsg, "Barium Ferrit PCSC: fixed value doesn't match (%x != %x).", fixedValue, 0x0F);
+                sprintf(exceptionmsg, "Barium Ferrit PCSC: fixed value doesn't match (%x != %x).", fixedValue.getData()[0], 0x0F);
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, exceptionmsg);
             }
 
-            setFacilityCode((unsigned short)revertField(data, dataLengthBytes, &pos, 12));
-            setUid(revertField(data, dataLengthBytes, &pos, 16));
+            pos += 4;
+            setFacilityCode((unsigned short)revertField(data, &pos, 12));
+            setUid(revertField(data, &pos, 16));
 
-            unsigned int checkOffset = static_cast<unsigned int>((pos + 7) / 8);
-            unsigned char checksum = calcChecksum(reinterpret_cast<const unsigned char*>(data), checkOffset);
-            unsigned char currentChecksum = reinterpret_cast<const unsigned char*>(data)[checkOffset];
+			unsigned int checkOffset = (pos + 7) / 8;
+                        auto dataVect = data.getData();
+            unsigned char checksum = calcChecksum(ByteVector(dataVect.begin(), dataVect.begin() + 4));
+            unsigned char currentChecksum = data.getData()[checkOffset];
 
             if (currentChecksum != checksum)
             {

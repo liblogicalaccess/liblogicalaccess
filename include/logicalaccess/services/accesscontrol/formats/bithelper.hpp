@@ -7,6 +7,7 @@
 #ifndef LOGICALACCESS_BITHELPER_HPP
 #define LOGICALACCESS_BITHELPER_HPP
 
+#include "logicalaccess/services/accesscontrol//formats/BitsetStream.hpp"
 #include "logicalaccess/readerproviders/readerprovider.hpp"
 
 namespace logicalaccess
@@ -27,8 +28,9 @@ namespace logicalaccess
          * \param dataLengthBits Length of used data in bits
          * \return Length of lined data (in bits)
          */
-        static unsigned int align(void* linedData, size_t linedDataLengthBytes,
-            const void* data, size_t dataLengthBytes, unsigned int dataLengthBits);
+		static BitsetStream align(
+			const BitsetStream& data, unsigned int dataLengthBits);
+
 
         /**
          * \brief Revert line of "data" buffer in "revertedData" with new size (revertedDataLength)
@@ -39,8 +41,7 @@ namespace logicalaccess
          * \param dataLengthBits Length of used data in bits
          * \return Length of reverted data (in bits)
          */
-        static unsigned int revert(void* revertedData, size_t revertedDataLengthBytes,
-            const void* data, size_t dataLengthBytes, unsigned int dataLengthBits);
+        static BitsetStream revert(const BitsetStream& data, unsigned int dataLengthBits);
 
         /**
          * \brief Truncate "data" buffer in "truncatedData" in Little Endian
@@ -51,8 +52,8 @@ namespace logicalaccess
          * \param dataLengthBits Length of used data in bits
          * \return Length of truncated data (in bits)
          */
-        static unsigned int truncateLittleEndian(void* truncatedData, size_t truncatedDataLengthBytes,
-            const void* data, size_t dataLengthBytes, unsigned int dataLengthBits);
+        static BitsetStream truncateLittleEndian(
+            const BitsetStream& data, unsigned int dataLengthBits);
 
         /**
          * \brief Swap all BYTES of "data" buffer in "swapedData"
@@ -62,8 +63,7 @@ namespace logicalaccess
          * \param dataLengthBytes Length of data in bytes
          * \param dataLengthBits Length of used data in bits
          */
-        static void swapBytes(void* swapedData, size_t swapedDataLengthBytes,
-            const void* data, size_t dataLengthBytes, unsigned int dataLengthBits);
+        static BitsetStream swapBytes(const BitsetStream& data);
 
         /**
          * \brief Extract "readPosBits" bits of data
@@ -76,63 +76,8 @@ namespace logicalaccess
          * \param readLengthBits Length to extract from "data" starting at "readPosBits" offset (in bits)
          * \return Length of data written (in bits)
          */
-        static unsigned int extract(void* extractData, size_t extractDataLengthBytes,
-            const void* data, size_t dataLengthBytes, unsigned int dataLengthBits,
-            unsigned int readPosBits, unsigned int readLengthBits);
-
-        /**
-         * \brief Write "data" buffer into "data" buffer
-         * \param writtenData Buffer to be modified
-         * \param writtenDataLengthBytes Length of data (in bytes)
-         * \param writePosBits Offset in "writtenData" buffer you want to start to write (in bits)
-         * \param data to be written in "writtenData"
-         * \param dataLengthBytes Length of data in bytes
-         * \param dataLengthBits Length of used data in bits
-         */
-        static void writeToBit(void* writtenData, size_t writtenDataLengthBytes,
-            unsigned int* writePosBits,
-            const void* data, size_t dataLengthBytes, unsigned int dataLengthBits);
-
-        /**
-         * \brief Write "data" buffer into "writtenData" buffer
-         * \param writtenData Buffer to be modified
-         * \param writtenDataLengthBytes Length of data (in bytes)
-         * \param writePosBits Offset in "writtenData" buffer you want to start to write (in bits)
-         * \param data to be written in "writenData"
-         * \param dataLengthBytes Length of data in bytes
-         * \param dataLengthBits Length of used data in bits
-         * \param readPosBits Offset in "data" buffer you want to start to copy (in bits)
-         * \param readLengthBits Length of "data" buffer to write (in bits)
-         */
-        static void writeToBit(void* writtenData, size_t writtenDataLengthBytes,
-            unsigned int* writePosBits,
-            const void* data, size_t dataLengthBytes, unsigned int dataLengthBits,
-            unsigned int readPosBits, unsigned int readLengthBits);
-
-        /**
-         * \brief Write "data" buffer into "writtenData" buffer
-         * \param writtenData Buffer to be modified
-         * \param writtenDataLengthBytes Length of data (in bits)
-         * \param writePosBits Offset in "writtenData" buffer you want to start to write (in bits)
-         * \param data Byte to be written in "writtenData"
-         */
-        static void writeToBit(void* writtenData, size_t writtenDataLengthBytes,
-            unsigned int* writePosBits,
-            unsigned char data);
-
-        /**
-         * \brief Write "data" buffer into "writtenData" buffer
-         * \param writtenData Buffer to be modified
-         * \param writtenDataLengthBytes Length of data (in bits)
-         * \param writePosBits Offset in "writtenData" buffer you want to start to write (in bits)
-         * \param data Byte to be written in "writtenData"
-         * \param readPosBits Offset in "data" buffer you want to start to copy (in bits)
-         * \param readLengthBits Length of "data" buffer to write (in bits)
-         */
-        static void writeToBit(void* writtenData, size_t writtenDataLengthBytes,
-            unsigned int* writePosBits,
-            unsigned char data,
-            unsigned int readPosBits, unsigned int readLengthBits);
+        static BitsetStream extract(const BitsetStream& data, unsigned int readPosBits,
+			unsigned int readLengthBits);
     };
 }
 

@@ -20,7 +20,7 @@ namespace logicalaccess
     {
     }
 
-	std::string BCDNibbleDataType::getName() const
+    std::string BCDNibbleDataType::getName() const
     {
         return std::string("BCD-Nibble");
     }
@@ -30,92 +30,66 @@ namespace logicalaccess
         return ET_BCDNIBBLE;
     }
 
-    unsigned int BCDNibbleDataType::convert(unsigned long long data, const unsigned int dataLengthBits, void* dataConverted, const size_t dataConvertedLengthBytes)
+    BitsetStream BCDNibbleDataType::convert(unsigned long long data, unsigned int dataLengthBits)
     {
-	    unsigned char* tmp = new unsigned char[64];
-        memset(tmp, 0x00, 64);
+        BitsetStream tmp((dataLengthBits / 4) * 8);
 
         unsigned int shft, i;
 
+
         for (shft = 0, i = 0; shft < dataLengthBits; shft += 4, ++i)
         {
-	        const unsigned int offset = ((i % 2) == 0) ? 0 : 4;
-            unsigned char c = static_cast<unsigned char>(data % 10);
+            unsigned int offset = ((i % 2) == 0) ? 4 : 0;
+            unsigned char c = (unsigned char)(data % 10);
             if (d_bitDataRepresentationType == ET_LITTLEENDIAN)
             {
-                c = invertBitSex(c, 4);
+                c = DataType::invertBitSex(c, 4);
             }
-            c = static_cast<unsigned char>(c << offset);
-            tmp[i / 2] |= c;
+           // c = (unsigned char)(c << offset);
+            const unsigned char pos = i / 2;
+           // tmp.append(c & 0x0F, 4, 4);
+            tmp.writeAt((pos * 8) + offset, c & 0x0F, 4, 4);
             data /= 10;
         }
 
         i = (i + 1) / 2;
 
-	    auto ret = addParityToBuffer(d_leftParityType, d_rightParityType, 4, nullptr, shft, nullptr, 0);
+        BitsetStream tmpswb(0x00, i);
 
-        if (dataConverted != nullptr)
+        for (unsigned int pi = i - 1, p = 0; p < i; --pi, ++p)
         {
-            if (dataConvertedLengthBytes >= i)
-            {
-	            const auto swb = reinterpret_cast<unsigned char*>(dataConverted);
-	            const auto tmpswb = new unsigned char[i];
-	            const auto tmpswb2 = new unsigned char[i];
-                memset(tmpswb, 0x00, i);
-                memset(tmpswb2, 0x00, i);
-
-                for (size_t pi = i - 1, p = 0; p < i; --pi, ++p)
-                {
-                    tmpswb[p] = tmp[pi];
-                }
-
-                ret = BitHelper::align(tmpswb2, i, tmpswb, i, dataLengthBits);
-                addParityToBuffer(d_leftParityType, d_rightParityType, 4, tmpswb2, shft, swb, static_cast<unsigned int>(dataConvertedLengthBytes * 8));
-                delete[] tmpswb;
-                delete[] tmpswb2;
-            }
-            else
-            {
-                //too small
-            }
+            tmpswb.writeAt(p * 8, tmp.getData()[pi]);
         }
 
-        delete[] tmp;
+        BitsetStream tmpswb2 = BitHelper::align(tmpswb, dataLengthBits);
+        BitsetStream dataConverted = DataType::addParity(d_leftParityType, d_rightParityType, 4, tmpswb2);
 
-        return ret;
+        return dataConverted;
     }
 
-    unsigned long long BCDNibbleDataType::revert(void* data, const size_t dataLengthBytes, const unsigned int lengthBits)
+    unsigned long long BCDNibbleDataType::revert(BitsetStream& data, unsigned int dataLengthBits)
     {
         unsigned long long ret = 0;
 
-        if (data != nullptr && dataLengthBytes > 0)
+        if (data.getByteSize() > 0)
         {
-	        const unsigned int tmpswblen = removeParityToBuffer(d_leftParityType, d_rightParityType, 4, nullptr, lengthBits, nullptr, 0);
-	        const size_t tmpswblenBytes = (tmpswblen + 7) / 8;
-            unsigned char* tmpswb = new unsigned char[tmpswblenBytes];
-            memset(tmpswb, 0x00, tmpswblenBytes);
+            BitsetStream tmpswb = DataType::removeParity(d_leftParityType, d_rightParityType, 4, data);
 
-            removeParityToBuffer(d_leftParityType, d_rightParityType, 4, data, lengthBits, tmpswb, static_cast<unsigned int>(tmpswblenBytes * 8));
 
-            size_t i;
-            int coef;
-
-            for (i = 0, coef = static_cast<int>(((tmpswblen + 3) / 4) - 1); i < tmpswblenBytes; ++i, coef -= 2)
+            for (int i = 0, coef = static_cast<int>(((tmpswb.getBitSize() + 3) / 4) - 1); static_cast<size_t>(i) < tmpswb.getByteSize(); ++i, coef -= 2)
             {
                 if (d_bitDataRepresentationType == ET_LITTLEENDIAN)
                 {
-                    tmpswb[i] = ((0x0F & invertBitSex(tmpswb[i] >> 4, 4)) << 4) | (tmpswb[i] & 0x0F);
-                    tmpswb[i] = (0x0F & invertBitSex(tmpswb[i], 4)) | (tmpswb[i] & 0xF0);
+                    tmpswb.writeAt(i * 8, ((0x0F & DataType::invertBitSex(tmpswb.getData()[i] >> 4, 4)) << 4) | (tmpswb.getData()[i] & 0x0F));
+                    tmpswb.writeAt(i * 8, (0x0F & DataType::invertBitSex(tmpswb.getData()[i], 4)) | (tmpswb.getData()[i] & 0xF0));
                 }
-                ret += (((tmpswb[i] & 0xF0) >> 4) * (pow(10, coef)));
+                ret += (((tmpswb.getData()[i] & 0xF0) >> 4) * (pow(10, coef)));
                 if (coef > 0)
                 {
-                    ret += ((tmpswb[i] & 0x0F) * pow(10, (coef - 1)));
+                    ret += ((tmpswb.getData()[i] & 0x0F) * pow(10, (coef - 1)));
                 }
             }
 
-            delete[] tmpswb;
         }
 
         return ret;

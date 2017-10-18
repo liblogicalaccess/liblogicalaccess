@@ -17,7 +17,7 @@ struct LIBLOGICALACCESS_API EPassEFCOM
     std::string lds_version_;
     std::string unicode_version_;
 
-    std::vector<uint8_t> tags_;
+    ByteVector tags_;
 };
 
 struct LIBLOGICALACCESS_API EPassDG2
@@ -108,13 +108,13 @@ class LIBLOGICALACCESS_API EPassUtils
     /**
      * Extract Kseed from MRZ.
      */
-    static std::vector<uint8_t> seed_from_mrz(const std::string &mrz);
+    static ByteVector seed_from_mrz(const std::string &mrz);
 
-    static std::vector<uint8_t> compute_enc_key(const std::vector<uint8_t> &seed);
+    static ByteVector compute_enc_key(const ByteVector &seed);
 
-    static std::vector<uint8_t> compute_mac_key(const std::vector<uint8_t> &seed);
+    static ByteVector compute_mac_key(const ByteVector &seed);
 
-    static std::vector<uint8_t> adjust_key_parity(const std::vector<uint8_t> &key);
+    static ByteVector adjust_key_parity(const ByteVector &key);
 
     static ByteVector encrypt_apdu(const ByteVector &apdu, const ByteVector &ks_enc,
                                    const ByteVector &ks_mac, const ByteVector &ssc);

@@ -19,15 +19,18 @@
 #include "logicalaccess/cards/IKSStorage.hpp"
 #include "logicalaccess/iks/packet/DesfireChangeKey.hpp"
 #include "logicalaccess/cards/computermemorykeystorage.hpp"
-#include "samav2iso7816commands.hpp"
 
 namespace logicalaccess
 {
     DESFireISO7816Commands::DESFireISO7816Commands()
-        : DESFireCommands()
+        : DESFireCommands(CMD_DESFIREISO7816)
     {
-        
-    }
+	}
+
+	DESFireISO7816Commands::DESFireISO7816Commands(std::string ct)
+		: DESFireCommands(ct)
+	{
+	}
 
     DESFireISO7816Commands::~DESFireISO7816Commands()
     {
@@ -40,9 +43,11 @@ namespace logicalaccess
 			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Erase command failed.");
     }
 
-    void DESFireISO7816Commands::getVersion(DESFireCardVersion& dataVersion)
+	DESFireCommands::DESFireCardVersion DESFireISO7816Commands::getVersion()
     {
-	    auto result = transmit(DF_INS_GET_VERSION);
+        DESFireCardVersion dataVersion;
+
+        ByteVector result = transmit(DF_INS_GET_VERSION);
 
         if ((result.size() - 2) == 7)
         {
@@ -70,6 +75,7 @@ namespace logicalaccess
                 }
             }
         }
+		return dataVersion;
     }
 
     void DESFireISO7816Commands::selectApplication(unsigned int aid)
@@ -77,7 +83,7 @@ namespace logicalaccess
         ByteVector command;//, samaid;
         DESFireLocation::convertUIntToAid(aid, command);
 
-        DESFireISO7816Commands::transmit(DF_INS_SELECT_APPLICATION, command);
+		DESFireISO7816Commands::transmit(DF_INS_SELECT_APPLICATION, command);
 
         /* 
          * We directly select the keyentry to use so no need to select the app 
@@ -346,13 +352,15 @@ namespace logicalaccess
         transmit(DF_INS_CHANGE_KEY_SETTINGS, cryptogram);
     }
 
-    void DESFireISO7816Commands::getFileSettings(unsigned char fileno, FileSetting& fileSetting)
+    DESFireCommands::FileSetting DESFireISO7816Commands::getFileSettings(unsigned char fileno)
     {
+        FileSetting fileSetting;
         ByteVector command;
         command.push_back(fileno);
 
         ByteVector result = transmit(DF_INS_GET_FILE_SETTINGS, command);
         memcpy(&fileSetting, &result[0], result.size() - 2);
+        return fileSetting;
     }
 
     ByteVector DESFireISO7816Commands::handleReadData(unsigned char err, const ByteVector& firstMsg, unsigned int length, EncryptionMode mode)

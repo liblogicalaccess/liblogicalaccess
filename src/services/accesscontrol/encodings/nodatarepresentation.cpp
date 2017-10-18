@@ -18,7 +18,7 @@ namespace logicalaccess
     {
     }
 
-	std::string NoDataRepresentation::getName() const
+    std::string NoDataRepresentation::getName() const
     {
         return std::string("No Representation");
     }
@@ -28,26 +28,18 @@ namespace logicalaccess
         return ET_NOENCODING;
     }
 
-    unsigned int NoDataRepresentation::convertNumeric(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
+    BitsetStream NoDataRepresentation::convertNumeric(const BitsetStream& data)
     {
-        if (convertedLengthBytes >= dataLengthBytes)
-        {
-            memset(convertedData, 0x00, convertedLengthBytes);
-            memcpy(convertedData, data, dataLengthBytes);
-        }
-
-        return dataLengthBits;
+        BitsetStream convertedData;
+        convertedData.concat(data.getData(), 0, data.getBitSize());
+                        return convertedData;
     }
 
-    unsigned int NoDataRepresentation::convertBinary(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
+    BitsetStream NoDataRepresentation::convertBinary(const BitsetStream& data)
     {
-        if (convertedLengthBytes >= dataLengthBytes)
-        {
-            memset(convertedData, 0x00, convertedLengthBytes);
-            memcpy(convertedData, data, dataLengthBytes);
-        }
-
-        return dataLengthBits;
+        BitsetStream convertedData;
+        convertedData.concat(data.getData(), 0, data.getBitSize());
+        return convertedData;
     }
 
     unsigned int NoDataRepresentation::convertLength(unsigned int lengthBits)
@@ -55,25 +47,17 @@ namespace logicalaccess
         return lengthBits;
     }
 
-    unsigned int NoDataRepresentation::revertNumeric(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
+    BitsetStream NoDataRepresentation::revertNumeric(const BitsetStream& data)
     {
-        if (convertedLengthBytes >= dataLengthBytes)
-        {
-            memset(convertedData, 0x00, convertedLengthBytes);
-            memcpy(convertedData, data, dataLengthBytes);
-        }
-
-        return dataLengthBits;
+        BitsetStream convertedData;
+        convertedData.concat(data.getData(), 0, data.getBitSize());
+        return convertedData;
     }
 
-    unsigned int NoDataRepresentation::revertBinary(const void* data, size_t dataLengthBytes, unsigned int dataLengthBits, void* convertedData, size_t convertedLengthBytes)
+    BitsetStream NoDataRepresentation::revertBinary(const BitsetStream& data)
     {
-        if (convertedLengthBytes >= dataLengthBytes)
-        {
-            memset(convertedData, 0x00, convertedLengthBytes);
-            memcpy(convertedData, data, dataLengthBytes);
-        }
-
-        return dataLengthBits;
+        BitsetStream convertedData;
+        convertedData.concat(data.getData(), 0, data.getBitSize());
+        return convertedData;
     }
 }

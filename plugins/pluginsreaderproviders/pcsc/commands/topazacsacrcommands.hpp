@@ -16,6 +16,8 @@
 
 namespace logicalaccess
 {
+#define CMD_TOPAZACSACR "TopazACSACR"
+
     /**
     * \brief The Topaz commands class for ACS ACR PCSC reader.
     */
@@ -27,6 +29,8 @@ namespace logicalaccess
         * \brief Constructor.
         */
         TopazACSACRCommands();
+
+        explicit TopazACSACRCommands(std::string);
 
         /**
         * \brief Destructor.

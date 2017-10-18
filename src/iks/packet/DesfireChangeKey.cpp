@@ -2,7 +2,7 @@
 #include <cstring>
 
 using namespace logicalaccess;
-using namespace iks;
+using namespace logicalaccess::iks;
 
 DesfireChangeKeyCommand::DesfireChangeKeyCommand()
     : flag_(0)
@@ -11,7 +11,7 @@ DesfireChangeKeyCommand::DesfireChangeKeyCommand()
     opcode_ = CMSG_OP_DESFIRE_CHANGEKEY;
 }
 
-std::vector<uint8_t> DesfireChangeKeyCommand::serialize() const
+ByteVector DesfireChangeKeyCommand::serialize() const
 {
     auto header = BaseCommand::serialize();
     auto needle = header.size();
@@ -60,7 +60,7 @@ size_t DesfireChangeKeyCommand::binary_size_impl() const
 }
 
 DesfireChangeKeyResponse::DesfireChangeKeyResponse(uint16_t status,
-                                                   const std::vector<uint8_t> &data)
+                                                   const ByteVector &data)
     : BaseResponse(SMSG_OP_DESFIRE_CHANGEKEY, status)
     , bytes_(data)
 {

@@ -20,7 +20,7 @@ namespace logicalaccess
     {
     }
 
-	std::string BinaryDataType::getName() const
+    std::string BinaryDataType::getName() const
     {
         return std::string("Binary");
     }
@@ -30,78 +30,42 @@ namespace logicalaccess
         return ET_BINARY;
     }
 
-    unsigned int BinaryDataType::convert(unsigned long long data, unsigned int dataLengthBits, void* dataConverted, size_t dataConvertedLengthBytes)
+    BitsetStream BinaryDataType::convert(unsigned long long data, unsigned int dataLengthBits)
     {
-        unsigned int ret = 0;
-
-        /*if (dataLengthBits <= 8)
-        {
-        ret = DataType::addParityToBuffer(d_leftParityType, d_rightParityType, 8, NULL, dataLengthBits, NULL, 0);
-
-        if (dataConverted != NULL)
-        {
+        BitsetStream tmpdata;
+        ByteVector tmpvdata;
         size_t datalengthBytes = (dataLengthBits + 7) / 8;
-        unsigned char* tmpswb = new unsigned char[datalengthBytes];
-        memcpy(tmpswb, &data, datalengthBytes);
+        tmpvdata.assign(reinterpret_cast<uint8_t*>(&data), reinterpret_cast<uint8_t*>(&data) + datalengthBytes);
+        tmpdata.concat(tmpvdata);
 
-        if (d_bitDataRepresentationType == ET_LITTLEENDIAN)
-        {
-        for (unsigned int i = 0; i < datalengthBytes; ++i)
-        {
-        tmpswb[i] = DataType::invertBitSex(tmpswb[i]);
-        }
-        }
+        BitsetStream tmpswb = BitHelper::align(tmpdata, dataLengthBits);
+        BitsetStream dataConverted = DataType::addParity(d_leftParityType, d_rightParityType, 8, tmpswb);
 
-        memset(dataConverted, 0x00, dataConvertedLengthBytes);
-        DataType::addParityToBuffer(d_leftParityType, d_rightParityType, 8, tmpswb, dataLengthBits, dataConverted, dataConvertedLengthBytes * 8);
-        delete[] tmpswb;
-        }
-        }
-        else
-        {*/
-        unsigned int tmpswblen = addParityToBuffer(d_leftParityType, d_rightParityType, 8, nullptr, static_cast<unsigned int>(dataConvertedLengthBytes * 8), nullptr, 0);
-        size_t tmpswblenBytes = (tmpswblen + 7) / 8;
-        unsigned char* tmpswb = new unsigned char[tmpswblenBytes];
-        memset(tmpswb, 0x00, tmpswblenBytes);
-        ret = BitHelper::align(tmpswb, tmpswblenBytes, &data, sizeof(data), dataLengthBits);
-        addParityToBuffer(d_leftParityType, d_rightParityType, 8, tmpswb, tmpswblen, dataConverted, static_cast<unsigned int>(dataConvertedLengthBytes * 8));
-        delete[] tmpswb;
-        //}
-
-        return ret;
+        return dataConverted;
     }
 
-    unsigned long long BinaryDataType::revert(void* data, size_t dataLengthBytes, unsigned int lengthBits)
+    unsigned long long BinaryDataType::revert(BitsetStream& data, unsigned int dataLengthBits)
     {
         unsigned long long ret = 0;
 
-        if (data != nullptr && dataLengthBytes > 0)
+        if (data.getByteSize() > 0)
         {
-            unsigned int tmpswblen = removeParityToBuffer(d_leftParityType, d_rightParityType, 8, nullptr, lengthBits, nullptr, 0);
-            size_t tmpswblenBytes = (tmpswblen + 7) / 8;
-            unsigned char* tmpswb = new unsigned char[tmpswblenBytes];
-            memset(tmpswb, 0x00, tmpswblenBytes);
+            BitsetStream tmpswb = DataType::removeParity(d_leftParityType, d_rightParityType, 8, data);
 
-            removeParityToBuffer(d_leftParityType, d_rightParityType, 8, data, lengthBits, tmpswb, tmpswblen);
-
-            unsigned char *linedData = new unsigned char[dataLengthBytes];
-            memset(linedData, 0x00, dataLengthBytes);
-            BitHelper::revert(linedData, dataLengthBytes, tmpswb, tmpswblenBytes, tmpswblen);
-            delete[] tmpswb;
+            BitsetStream       linedData = BitHelper::revert(tmpswb, dataLengthBits);
 
             int i = 0;
-            Alg(static_cast<int>(dataLengthBytes), &i);
+            Alg(data.getByteSize(), &i);
 
-            for (long long n = (static_cast<long long>(dataLengthBytes - 1) * 8); n >= 0; n -= 8) // TODO: Check this loop
+            for (long long n = (static_cast<long long>(data.getByteSize() - 1) * 8); n >= 0; n -= 8) // TODO: Check this loop
             {
                 Alg(&i);
                 if (d_bitDataRepresentationType == ET_LITTLEENDIAN)
                 {
-                    linedData[i] = invertBitSex(linedData[i]);
+                    linedData.writeAt(i, DataType::invertBitSex(linedData.getData()[i]));
                 }
-                ret |= (static_cast<unsigned long long>(linedData[i]) & 0xff) << n;
+                ret |= (static_cast<unsigned long long>(linedData.getData()[i]) & 0xff) << n;
             }
-            delete[] linedData;
         }
         return ret;
     }

@@ -20,6 +20,7 @@
 namespace logicalaccess
 {
 #define DESFIRE_CLEAR_DATA_LENGTH_CHUNK	32
+#define CMD_DESFIREISO7816 "DESFireISO7816"
 
     /**
      * \brief The DESFire base commands class.
@@ -32,6 +33,8 @@ namespace logicalaccess
          * \brief Constructor.
          */
         DESFireISO7816Commands();
+
+        explicit DESFireISO7816Commands(std::string);
 
         /**
          * \brief Destructor.
@@ -112,7 +115,7 @@ namespace logicalaccess
          * \param fileno The file number
          * \param fileSetting The file setting
          */
-	    void getFileSettings(unsigned char fileno, FileSetting& fileSetting) override;
+            FileSetting getFileSettings(unsigned char fileno) override;
 
         /**
          * \brief Change file settings of a specific file in the current application.
@@ -288,7 +291,7 @@ namespace logicalaccess
          * \brief Get the card version information.
          * \param dataVersion The card version information structure that will be filled
          */
-	    void getVersion(DESFireCardVersion& dataVersion) override;
+        DESFireCardVersion getVersion() override;
 
         /**
          * \brief Get the ISO7816 reader/card adapter.

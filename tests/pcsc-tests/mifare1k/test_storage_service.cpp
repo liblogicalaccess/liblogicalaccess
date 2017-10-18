@@ -64,10 +64,10 @@ int main(int ac, char **av)
     std::shared_ptr<AccessInfo> aiToWrite = maiToWrite;
 
     // Data to write
-    std::vector<uint8_t> writedata(16, 'e');
+    ByteVector writedata(16, 'e');
 
     // Data read
-    std::vector<uint8_t> readdata;
+    ByteVector readdata;
 
     // Write data on the specified location with the specified key
     storage->writeData(location, aiToUse, aiToWrite, writedata, CB_DEFAULT);

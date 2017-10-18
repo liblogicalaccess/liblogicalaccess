@@ -49,12 +49,14 @@ namespace logicalaccess
         d_uid = uid;
     }
 
-    unsigned char StaticFormat::calculateParity(const void* data, size_t dataLengthBytes, ParityType parityType, size_t start, size_t parityLengthBits)
+    unsigned char StaticFormat::calculateParity(const BitsetStream& data, ParityType parityType, size_t start, size_t parityLengthBits)
     {
+		EXCEPTION_ASSERT_WITH_LOG(data.getBitSize() > start, std::out_of_range, "Bit position is out of bounds.");
+
         unsigned char parity = 0x00;
-        for (size_t i = start; i < (start + parityLengthBits) && i < (dataLengthBytes * 8); i++)
+        for (size_t i = start; i < (start + parityLengthBits) && i < (data.getByteSize() * 8); i++)
         {
-            parity = (unsigned char)((parity & 0x01) ^ ((unsigned char)(reinterpret_cast<const char*>(data)[i / 8] >> (7 - (i % 8))) & 0x01));
+            parity = (parity & 0x01) ^ ((data.getData()[i / 8] >> (7 - (i % 8))) & 0x01);
         }
 
         switch (parityType)
@@ -74,28 +76,23 @@ namespace logicalaccess
         return parity;
     }
 
-    size_t StaticFormat::getEncodingLinearData(void *data, size_t dataLengthBytes) const
+    size_t StaticFormat::getEncodingLinearData(ByteVector& data) const
     {
-        if (data != nullptr)
-        {
-            EXCEPTION_ASSERT_WITH_LOG(dataLengthBytes >= 2, std::invalid_argument, "dataLengthBytes must be at least 2");
-
-            if (data != nullptr)
-            {
-                reinterpret_cast<char*>(data)[0] = static_cast<char>(d_dataRepresentation->getType());
-                reinterpret_cast<char*>(data)[1] = static_cast<char>(d_dataType->getType());
-            }
-        }
-
+		BitsetStream _data;
+		_data.concat(data);
+        
+		_data.append(static_cast<unsigned char>(d_dataRepresentation->getType()));
+		_data.append(static_cast<unsigned char>(d_dataType->getType()));
+        
         return 2 * 8;
     }
 
-    void StaticFormat::setEncodingLinearData(const void* data, size_t* indexByte)
+    void StaticFormat::setEncodingLinearData(const ByteVector& data, size_t* indexByte)
     {
-        if (data != nullptr)
+        if (data.size() != 0)
         {
-            d_dataRepresentation.reset(DataRepresentation::getByEncodingType(static_cast<EncodingType>(reinterpret_cast<const char*>(data)[(*indexByte)++])));
-            d_dataType.reset(DataType::getByEncodingType(static_cast<EncodingType>(reinterpret_cast<const char*>(data)[(*indexByte)++])));
+            d_dataRepresentation.reset(DataRepresentation::getByEncodingType(static_cast<EncodingType>(data[(*indexByte)++])));
+            d_dataType.reset(DataType::getByEncodingType(static_cast<EncodingType>(data[(*indexByte)++])));
         }
     }
 
@@ -104,91 +101,55 @@ namespace logicalaccess
         return false;
     }
 
-    void StaticFormat::convertField(void* data, size_t dataLengthBytes, unsigned int* pos, unsigned long long field, unsigned int fieldlen) const
+    void StaticFormat::convertField(BitsetStream& data, unsigned long long field, unsigned int fieldlen) const
     {
-        unsigned int convertedDataTypeLengthBits = d_dataType->convert(field, fieldlen, nullptr, 0);
-        if (convertedDataTypeLengthBits > 0)
-        {
-            size_t convertedDataTypeLengthBytes = (convertedDataTypeLengthBits + 7) / 8;
-            unsigned char* convertedDataTypeData = new unsigned char[convertedDataTypeLengthBytes];
-            memset(convertedDataTypeData, 0x00, convertedDataTypeLengthBytes);
-
-            if (d_dataType->convert(field, fieldlen, convertedDataTypeData, convertedDataTypeLengthBytes) == convertedDataTypeLengthBits)
-            {
-                unsigned int convertedDataRepresentationLengthBits = d_dataRepresentation->convertNumeric(convertedDataTypeData, convertedDataTypeLengthBytes, convertedDataTypeLengthBits, nullptr, 0);
-                if (convertedDataRepresentationLengthBits > 0)
-                {
-                    size_t convertedDataRepresentationLengthBytes = (convertedDataRepresentationLengthBits + 7) / 8;
-                    unsigned char* convertedDataRepresentationData = new unsigned char[convertedDataRepresentationLengthBytes];
-                    memset(convertedDataRepresentationData, 0x00, convertedDataRepresentationLengthBytes);
-
-                    if (d_dataRepresentation->convertNumeric(convertedDataTypeData, convertedDataTypeLengthBytes, convertedDataTypeLengthBits, convertedDataRepresentationData, convertedDataRepresentationLengthBytes) == convertedDataRepresentationLengthBits)
-                    {
-                        BitHelper::writeToBit(data, dataLengthBytes, pos, convertedDataRepresentationData, convertedDataRepresentationLengthBytes, convertedDataRepresentationLengthBits, 0, convertedDataRepresentationLengthBits);
-                    }
-
-                    delete[] convertedDataRepresentationData;
-                }
-            }
-            delete[] convertedDataTypeData;
-        }
+        const BitsetStream convertedDataTypeData = d_dataType->convert(field, fieldlen);
+        BitsetStream bitConvertNum = d_dataRepresentation->convertNumeric(convertedDataTypeData);
+        const auto extraBitsParity = ((d_dataType->getLeftParityType() != PT_NONE) + (d_dataType->getRightParityType() != PT_NONE)) * (fieldlen / d_dataType->getBitDataSize());
+        data.concat(bitConvertNum.getData(), 0, fieldlen + extraBitsParity);
     }
 
-    unsigned long long StaticFormat::revertField(const void* data, size_t dataLengthBytes, unsigned int* pos, unsigned int fieldlen) const
+    unsigned long long StaticFormat::revertField(BitsetStream& data, unsigned int* pos, unsigned int fieldlen) const
     {
         unsigned long long ret = 0;
 
-        unsigned int extractedSizeBits = d_dataType->convert(0, d_dataRepresentation->convertLength(fieldlen), nullptr, 0);
-        size_t extractedSizeBytes = (extractedSizeBits + 7) / 8;
-        unsigned int revertedSizeBits = extractedSizeBits;
-        size_t revertedSizeBytes = (revertedSizeBits + 7) / 8;
-
-        unsigned char* extractData = new unsigned char[extractedSizeBytes];
-        unsigned char* revertedData = new unsigned char[revertedSizeBytes];
-        memset(extractData, 0x00, extractedSizeBytes);
-        memset(revertedData, 0x00, revertedSizeBytes);
-
-        unsigned int tmp = 0;
-        if ((tmp = BitHelper::extract(extractData, extractedSizeBytes, data, dataLengthBytes, getDataLength(), *pos, extractedSizeBits)) > 0)
+        const auto extraBitsParity = ((d_dataType->getLeftParityType() != PT_NONE) + (d_dataType->getRightParityType() != PT_NONE)) * (fieldlen / d_dataType->getBitDataSize());
+        BitsetStream extractData = BitHelper::extract(data, *pos, fieldlen + extraBitsParity);
+        if (extractData.getBitSize() > 0)
         {
-            if ((tmp = d_dataRepresentation->revertNumeric(extractData, extractedSizeBytes, tmp, revertedData, revertedSizeBytes)) > 0)
+            BitsetStream revertedData = d_dataRepresentation->revertNumeric(extractData);
+                if (revertedData.getBitSize() > 0)
             {
-                ret = d_dataType->revert(revertedData, revertedSizeBytes, tmp);
+                ret = d_dataType->revert(revertedData, fieldlen);
             }
         }
-
-        delete[] extractData;
-        delete[] revertedData;
-
-        (*pos) += extractedSizeBits;
+        (*pos) += fieldlen;
 
         return ret;
     }
 
-    size_t StaticFormat::getSkeletonLinearData(void* data, size_t dataLengthBytes) const
+    size_t StaticFormat::getSkeletonLinearData(ByteVector& data) const
     {
         size_t index = 0;
 
-        if (data != nullptr)
+        if (data.size() != 0)
         {
-            index += getFormatLinearData(data, dataLengthBytes) * 8;
-            size_t length = ((index + 7) / 8);
-
-            index += getEncodingLinearData(reinterpret_cast<char*>(data)+length, dataLengthBytes - length);
+            index += getFormatLinearData(data) * 8;
+            index += getEncodingLinearData(data);
         }
         else
         {
-            index += getFormatLinearData(nullptr, 0) * 8;
-            index += getEncodingLinearData(nullptr, 0);
+            ByteVector getFormat, getEncoding;
+            index += getFormatLinearData(getFormat) * 8;
+            index += getEncodingLinearData(getEncoding);
         }
 
         return index;
     }
 
-    void StaticFormat::setSkeletonLinearData(const void* data, size_t /*dataLengthBytes*/)
+    void StaticFormat::setSkeletonLinearData(const ByteVector& data)
     {
         size_t indexByte = 0;
-
         setFormatLinearData(data, &indexByte);
         setEncodingLinearData(data, &indexByte);
     }

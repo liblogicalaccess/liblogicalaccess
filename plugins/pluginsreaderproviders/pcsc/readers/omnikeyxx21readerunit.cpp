@@ -172,7 +172,7 @@ namespace logicalaccess
         //     ISO14443B    -> 03
         //     ISO14443A    -> 01
 
-        std::vector<uint8_t> data;
+        ByteVector data;
         if (bitset & Techno::ICLASS_15693)
             data.push_back(0x02);
         if (bitset & Techno::ISO_15693)
@@ -226,7 +226,7 @@ namespace logicalaccess
     {
         TechnoBitset bs = 0;
 #ifdef _WIN32
-        std::vector<uint8_t> data;
+        ByteVector data;
         if (WindowsRegistry::readBinary(
                 "SYSTEM\\CurrentControlSet\\Control\\CardMan\\RFID",
                 "CardSearch", data))

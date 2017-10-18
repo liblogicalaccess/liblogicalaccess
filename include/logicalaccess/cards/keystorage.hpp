@@ -32,6 +32,8 @@ namespace logicalaccess
         using XmlSerializable::unSerialize;
 #endif
 
+        virtual ~KeyStorage() = default;
+
         /**
          * \brief Get the key storage type.
          * \return The key storage type.

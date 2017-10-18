@@ -24,6 +24,8 @@ namespace logicalaccess
          */
         StaticFormat();
 
+        virtual ~StaticFormat() = default;
+
         /**
          * \brief Get the Data Representation for the format.
          * \return The Data Representation.
@@ -75,7 +77,7 @@ namespace logicalaccess
          * \param parityLengthBits Length of parity in bits
          * \return The parity.
          */
-        static unsigned char calculateParity(const void* data, size_t dataLengthBytes, ParityType parityType, size_t start, size_t parityLengthBits);
+        static unsigned char calculateParity(const BitsetStream& data, ParityType parityType, size_t start, size_t parityLengthBits);
 
         /**
          * \brief Convert a field into the configured DataRepresentation and DataType.
@@ -85,7 +87,7 @@ namespace logicalaccess
          * \param field The field value.
          * \param fieldlen The field length (in bits).
          */
-        void convertField(void* data, size_t dataLengthBytes, unsigned int* pos, unsigned long long field, unsigned int fieldlen) const;
+        virtual void convertField(BitsetStream& data, unsigned long long field, unsigned int fieldlen) const;
 
         /**
          * \brief Revert a field using the configured DataRepresentation and DataType.
@@ -95,21 +97,21 @@ namespace logicalaccess
          * \param fieldlen The field length (in bits).
          * \return The field value.
          */
-        unsigned long long revertField(const void* data, size_t dataLengthBytes, unsigned int* pos, unsigned int fieldlen) const;
+        unsigned long long revertField(BitsetStream& data, unsigned int* pos, unsigned int fieldlen) const;
 
         /**
          * \brief Get skeleton linear data.
          * \param data Where to put data
          * \param dataLengthBytes Length in byte of data
          */
-	    size_t getSkeletonLinearData(void* data, size_t dataLengthBytes) const override;
+        size_t getSkeletonLinearData(ByteVector& data) const override;
 
         /**
          * \brief Set skeleton linear data.
          * \param data Where to get data
          * \param dataLengthBytes Length in byte of data
          */
-	    void setSkeletonLinearData(const void* data, size_t dataLengthBytes) override;
+        void setSkeletonLinearData(const ByteVector& data) override;
 
     protected:
 
@@ -119,7 +121,7 @@ namespace logicalaccess
          * \param dataLengthBytes The data buffer length
          * \return The format linear data length.
          */
-        virtual size_t getFormatLinearData(void* data, size_t dataLengthBytes) const = 0;
+        virtual size_t getFormatLinearData(ByteVector& data) const = 0;
 
         /**
          * \brief Get the encoding linear data in bytes (Data Representation and Data Type).
@@ -127,21 +129,21 @@ namespace logicalaccess
          * \param dataLengthBytes The data buffer length
          * \return The encoding linear data length.
          */
-        virtual size_t getEncodingLinearData(void* data, size_t dataLengthBytes) const;
+        virtual size_t getEncodingLinearData(ByteVector& data) const;
 
         /**
          * \brief Set the format linear data in bytes.
          * \param data The data buffer
          * \param indexByte The data offset
          */
-        virtual void setFormatLinearData(const void* data, size_t* indexByte) = 0;
+        virtual void setFormatLinearData(const ByteVector& data, size_t* indexByte) = 0;
 
         /**
          * \brief Set the encoding linear data in bytes (Data Representation and Data Type).
          * \param data The data buffer
          * \param indexByte The data offset
          */
-        virtual void setEncodingLinearData(const void* data, size_t* indexByte);
+        virtual void setEncodingLinearData(const ByteVector& data, size_t* indexByte);
 
         /**
          * \brief The Data Representation.

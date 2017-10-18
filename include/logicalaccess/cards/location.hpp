@@ -20,6 +20,8 @@ namespace logicalaccess
     {
     public:
 
+        virtual ~Location() = default;
+
         /**
          * \brief Get the card type for this location.
          * \return The card type.

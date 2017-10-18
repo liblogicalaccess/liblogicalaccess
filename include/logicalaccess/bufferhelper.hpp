@@ -11,7 +11,7 @@
 #include <vector>
 #include <string>
 #include "logicalaccess/logicalaccess_api.hpp"
-#include "logicalaccess/crypto/des_initialization_vector.hpp"
+#include "logicalaccess/lla_fwd.hpp"
 
 namespace logicalaccess
 {
@@ -48,9 +48,9 @@ namespace logicalaccess
 
         static uint64_t getUInt64(const ByteVector& buffer, size_t& offset);
 
-		static void setUInt16(ByteVector& buffer, const unsigned long& value);
+        static void setUInt16(ByteVector& buffer, const unsigned long& value);
 
-		static unsigned long getUInt16(const ByteVector& buffer, size_t& offset);
+        static unsigned long getUInt16(const ByteVector& buffer, size_t& offset);
 
         static void setString(ByteVector& buffer, const std::string& value);
 

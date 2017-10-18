@@ -49,7 +49,7 @@ int main(int ac, char **av)
  //   aes_key->fromString("000102030405060708090A0B0C0D0E0F");
     //                     000102030405060708090A0B0C0D0E0F
     // Data to write
-    std::vector<uint8_t> writedata(16, 'A');
+    ByteVector writedata(16, 'A');
     auto cmd = std::dynamic_pointer_cast<MifarePlusSL3Commands_NEW>(chip->getCommands());
     LLA_ASSERT(cmd, "Invalid command object.");
     cmd->resetAuth();
@@ -58,7 +58,7 @@ int main(int ac, char **av)
     cmd->readBinaryPlain(9, 16);
 
     // Data read
-    std::vector<uint8_t> readdata;
+    ByteVector readdata;
 
     pcsc_test_shutdown(readerUnit);
     return 0;

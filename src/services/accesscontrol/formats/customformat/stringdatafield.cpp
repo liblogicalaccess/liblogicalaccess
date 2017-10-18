@@ -62,55 +62,35 @@ namespace logicalaccess
         return d_padding;
     }
 
-	void StringDataField::getLinearData(void* data, size_t dataLengthBytes, unsigned int* pos) const
+        BitsetStream StringDataField::getLinearData(const BitsetStream& /*data*/) const
+        {
+            size_t fieldDataLengthBytes = (d_length + 7) / 8;
+
+            BitsetStream paddedBuffer(d_padding, fieldDataLengthBytes);
+            unsigned int copyValueLength = d_value.size() * 8 > d_length ? d_length : d_value.size() * 8;
+            paddedBuffer.writeAt(0, d_value, 0, copyValueLength);
+
+            BitsetStream dataTmp;
+            convertBinaryData(paddedBuffer, d_length, dataTmp);
+
+            return dataTmp;
+        }
+
+	void StringDataField::setLinearData(const ByteVector& data)
     {
-        if ((dataLengthBytes * 8) < (d_length + *pos))
-        {
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
-        }
+            BitsetStream _data;
+            _data.concat(data);
 
-        size_t fieldDataLengthBytes = (d_length + 7) / 8;
-		size_t copyValueLength = (d_value.size() > fieldDataLengthBytes) ? fieldDataLengthBytes : d_value.size();
-        unsigned char* paddedBuffer = new unsigned char[fieldDataLengthBytes];
-        memset(paddedBuffer, d_padding, fieldDataLengthBytes);
-#if defined(UNIX)
-        memcpy(paddedBuffer, &d_value[0], copyValueLength);
-#else
-        memcpy_s(paddedBuffer, fieldDataLengthBytes, &d_value[0], copyValueLength);
-#endif
+            if (_data.getBitSize() < (d_length + getPosition()))
+            {
+                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
+            }
 
-        convertBinaryData(paddedBuffer, fieldDataLengthBytes, pos, d_length, data, dataLengthBytes);
-        delete[] paddedBuffer;
+            BitsetStream paddedBuffer;
 
-        // OLD METHOD WAS NOT HANDLING LSB/MSB CONVERSION
-        /*for (size_t i = 0; i < ((d_length + 7) / 8); ++i)
-        {
-        unsigned char c = d_padding;
-        if (i < d_value.size())
-        {
-        c = d_value.c_str()[i];
-        }
+        paddedBuffer.concat(revertBinaryData(_data, getPosition(), d_length));
 
-        convertNumericData(data, dataLengthBytes, pos, c, 8);
-        }*/
-    }
-
-	void StringDataField::setLinearData(const void* data, size_t dataLengthBytes, unsigned int* pos)
-    {
-        if ((dataLengthBytes * 8) < (d_length + *pos))
-        {
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
-        }
-
-        size_t fieldDataLengthBytes = (d_length + 7) / 8;
-        unsigned char* paddedBuffer = new unsigned char[fieldDataLengthBytes];
-        memset(paddedBuffer, d_padding, fieldDataLengthBytes);
-
-        revertBinaryData(data, dataLengthBytes, pos, d_length, paddedBuffer, fieldDataLengthBytes);
-
-        ByteVector ret(paddedBuffer, paddedBuffer + fieldDataLengthBytes);
-        delete[] paddedBuffer;
-		d_value = ret;
+		d_value = paddedBuffer.getData();
     }
 
 	bool StringDataField::checkSkeleton(std::shared_ptr<DataField> field) const
@@ -139,7 +119,7 @@ namespace logicalaccess
         ValueDataField::serialize(node);
         node.put("Padding", d_padding);
 		node.put("Charset", d_charset);
-		std::string strv = getValue();
+        std::string strv = getValue();
         if (d_charset != "ascii" && d_charset != "us-ascii" && d_charset != "utf-8")
         {
             strv = BufferHelper::getHex(ByteVector(strv.begin(), strv.end()));
@@ -154,7 +134,7 @@ namespace logicalaccess
         ValueDataField::unSerialize(node);
         d_padding = node.get_child("Padding").get_value<unsigned char>();
 		d_charset = node.get_child("Charset").get_value<std::string>();
-		std::string strv = node.get_child("Value").get_value<std::string>();
+        std::string strv = node.get_child("Value").get_value<std::string>();
         if (d_charset != "ascii" && d_charset != "us-ascii" && d_charset != "utf-8")
         {
             d_value = BufferHelper::fromHexString(strv);
@@ -165,7 +145,7 @@ namespace logicalaccess
         }
     }
 
-	std::string StringDataField::getDefaultXmlNodeName() const
+    std::string StringDataField::getDefaultXmlNodeName() const
     {
         return "StringDataField";
     }

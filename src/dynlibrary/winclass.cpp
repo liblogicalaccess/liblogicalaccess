@@ -7,10 +7,10 @@ namespace logicalaccess
 {
     std::string WinClass::_getErrorMess(int errCode)
     {
-	    char buffer[256];
+        char buffer[256];
 
-        DWORD ret = FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM,
-                                   nullptr, errCode, 0, buffer, 256, nullptr);
+        DWORD ret = ::FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM,
+                                     nullptr, errCode, 0, buffer, 256, nullptr);
 
         if (!ret)
         {

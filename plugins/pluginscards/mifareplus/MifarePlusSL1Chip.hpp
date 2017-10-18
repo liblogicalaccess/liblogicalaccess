@@ -18,14 +18,17 @@ namespace logicalaccess
      * This mostly acts as a tag, because the chip has no additional
      * functions.
      */
-    class LIBLOGICALACCESS_API MifarePlusSL1Chip : public MifareChip, public MifarePlusChip
+    class LIBLOGICALACCESS_API MifarePlusSL1Chip : public MifareChip
+#ifndef SWIG
+    , public MifarePlusChip
+#endif
     {
       public:
         MifarePlusSL1Chip(const std::string &cardType, int nb_sectors);
 
-	    int getSecurityLevel() const override;
+        int getSecurityLevel() const override;
 
-	    std::shared_ptr<AccessInfo> createAccessInfo() const override;
+        std::shared_ptr<AccessInfo> createAccessInfo() const override;
 
 		const std::string& getCardType() const override { return MifareChip::getCardType(); }
 

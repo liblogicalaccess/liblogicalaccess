@@ -10,7 +10,7 @@ class LIBLOGICALACCESS_API GenRandomCommand : public BaseCommand
 {
   public:
     GenRandomCommand();
-	std::vector<uint8_t> serialize() const override;
+	ByteVector serialize() const override;
 
 	size_t binary_size_impl() const override;
 
@@ -20,9 +20,9 @@ class LIBLOGICALACCESS_API GenRandomCommand : public BaseCommand
 class LIBLOGICALACCESS_API GenRandomResponse : public BaseResponse
 {
   public:
-    GenRandomResponse(uint16_t status, const std::vector<uint8_t> &data);
+    GenRandomResponse(uint16_t status, const ByteVector &data);
 
-    std::vector<uint8_t> bytes_;
+    ByteVector bytes_;
 };
 }
 }

@@ -26,10 +26,12 @@ namespace logicalaccess
 		{
 		}
 
+#ifndef SWIG
 		explicit LibLogicalAccessException(const std::string& message) :
 			msg_(message)
-		{}
-
+		{
+		}
+#endif
 		virtual ~LibLogicalAccessException() NOEXCEPT {}
 
 		const char* what() const NOEXCEPT override
