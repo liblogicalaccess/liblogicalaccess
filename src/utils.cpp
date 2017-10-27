@@ -81,8 +81,7 @@ ByteVector ManchesterEncoder::encode(const ByteVector &in, Type t)
 ByteVector ManchesterEncoder::decode(const ByteVector &in, Type t)
 {
     ByteVector out;
-    EXCEPTION_ASSERT_WITH_LOG(in.size() % 2 == 0 && in.size(),
-                              LibLogicalAccessException,
+    EXCEPTION_ASSERT_WITH_LOG(in.size() % 2 == 0 && in.size(), LibLogicalAccessException,
                               "Input vector size shall be even and non zero");
     auto itr = in.begin();
     while (itr != in.end())

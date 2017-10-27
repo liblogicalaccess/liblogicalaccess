@@ -11,27 +11,30 @@
 
 namespace logicalaccess
 {
-    ByteVector DataTransport::sendCommand(const ByteVector& command, long int timeout)
+ByteVector DataTransport::sendCommand(const ByteVector &command, long int timeout)
+{
+    if (timeout == -1)
+        timeout = Settings::getInstance()->DataTransportTimeout;
+
+    LOG(LogLevel::COMS) << "Sending command " << BufferHelper::getHex(command)
+                        << " command size {" << command.size() << "} timeout {" << timeout
+                        << "}...";
+
+    d_lastCommand = command;
+    d_lastResult.clear();
+
+    if (command.size() > 0)
     {
-        if (timeout == -1)
-            timeout = Settings::getInstance()->DataTransportTimeout;
+        connect();
 
-        LOG(LogLevel::COMS) << "Sending command " << BufferHelper::getHex(command) << " command size {" << command.size() << "} timeout {" << timeout << "}...";
-
-	    d_lastCommand = command;
-        d_lastResult.clear();
-
-        if (command.size() > 0)
-        {
-            connect();
-
-            send(command);
-        }
-
-        ByteVector res = receive(timeout);
-		d_lastResult = res;
-
-        LOG(LogLevel::COMS) << "Response received successfully ! Response: " << BufferHelper::getHex(res) << " size {" << res.size() << "}";
-        return res;
+        send(command);
     }
+
+    ByteVector res = receive(timeout);
+    d_lastResult   = res;
+
+    LOG(LogLevel::COMS) << "Response received successfully ! Response: "
+                        << BufferHelper::getHex(res) << " size {" << res.size() << "}";
+    return res;
+}
 }

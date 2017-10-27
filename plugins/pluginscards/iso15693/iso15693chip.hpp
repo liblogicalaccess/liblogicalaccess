@@ -16,61 +16,66 @@
 
 namespace logicalaccess
 {
-#define	CHIP_ISO15693	"ISO15693"
+#define CHIP_ISO15693 "ISO15693"
+
+/**
+ * \brief The ISO15693 base chip class.
+ */
+class LIBLOGICALACCESS_API ISO15693Chip : public Chip
+{
+  public:
+    /**
+     * \brief Constructor.
+     */
+    explicit ISO15693Chip(std::string ct);
 
     /**
-     * \brief The ISO15693 base chip class.
+     * \brief Constructor.
      */
-    class LIBLOGICALACCESS_API ISO15693Chip : public Chip
+    ISO15693Chip();
+
+    /**
+     * \brief Destructor.
+     */
+    virtual ~ISO15693Chip();
+
+    /**
+     * \brief Get the generic card type.
+     * \return The generic card type.
+     */
+    std::string getGenericCardType() const override
     {
-    public:
+        return CHIP_ISO15693;
+    }
 
-        /**
-         * \brief Constructor.
-         */
-	    explicit ISO15693Chip(std::string ct);
+    /**
+     * \brief Get the root location node.
+     * \return The root location node.
+     */
+    std::shared_ptr<LocationNode> getRootLocationNode() override;
 
-        /**
-         * \brief Constructor.
-         */
-        ISO15693Chip();
+    /**
+     * \brief Get a card service for this chip.
+     * \param serviceType The card service type.
+     * \return The card service.
+     */
+    std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~ISO15693Chip();
+    /**
+    * \brief Create default ISO15693 location.
+    * \return Default ISO15693 location.
+    */
+    std::shared_ptr<Location> createLocation() const override;
 
-        /**
-         * \brief Get the generic card type.
-         * \return The generic card type.
-         */
-	    std::string getGenericCardType() const override { return CHIP_ISO15693; }
-
-        /**
-         * \brief Get the root location node.
-         * \return The root location node.
-         */
-	    std::shared_ptr<LocationNode> getRootLocationNode() override;
-
-        /**
-         * \brief Get a card service for this chip.
-         * \param serviceType The card service type.
-         * \return The card service.
-         */
-	    std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
-
-		/**
-		* \brief Create default ISO15693 location.
-		* \return Default ISO15693 location.
-		*/
-	    std::shared_ptr<Location> createLocation() const override;
-
-        /**
-         * \brief Get the ISO15693 card provider for I/O access.
-         * \return The ISO15693 card provider.
-         */
-        std::shared_ptr<ISO15693Commands> getISO15693Commands() const { return std::dynamic_pointer_cast<ISO15693Commands>(getCommands()); }
-    };
+    /**
+     * \brief Get the ISO15693 card provider for I/O access.
+     * \return The ISO15693 card provider.
+     */
+    std::shared_ptr<ISO15693Commands> getISO15693Commands() const
+    {
+        return std::dynamic_pointer_cast<ISO15693Commands>(getCommands());
+    }
+};
 }
 
 #endif

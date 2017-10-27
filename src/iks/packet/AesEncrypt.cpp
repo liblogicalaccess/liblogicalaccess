@@ -33,7 +33,7 @@ ByteVector AesEncryptCommand::serialize() const
     needle += payload_.size();
 
     memcpy(&header[needle], &iv_[0], iv_.size());
-    //needle += iv_.size();
+    // needle += iv_.size();
     return header;
 }
 
@@ -43,8 +43,7 @@ size_t AesEncryptCommand::binary_size_impl() const
     return sizeof(uint16_t) + 16 + payload_.size() + key_name_.size() + 1 + 1;
 }
 
-AesEncryptResponse::AesEncryptResponse(uint16_t status,
-                                       const ByteVector &data)
+AesEncryptResponse::AesEncryptResponse(uint16_t status, const ByteVector &data)
     : BaseResponse(SMSG_OP_AES_ENCRYPT, status)
     , bytes_(data)
 {

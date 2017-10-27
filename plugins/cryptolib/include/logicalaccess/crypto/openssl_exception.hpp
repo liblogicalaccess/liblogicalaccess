@@ -13,19 +13,20 @@
 
 namespace logicalaccess
 {
-    namespace openssl
+namespace openssl
+{
+/**
+ * \brief A OpenSSL exception class.
+ */
+class OpenSSLException : public LibLogicalAccessException
+{
+  public:
+    explicit OpenSSLException(const std::string &message)
+        : LibLogicalAccessException(message)
     {
-        /**
-         * \brief A OpenSSL exception class.
-         */
-        class OpenSSLException : public LibLogicalAccessException
-        {
-        public:
-	        explicit OpenSSLException(const std::string& message)
-                : LibLogicalAccessException(message)
-            {}
-        };
     }
+};
+}
 }
 
 #endif /* OPENSSL_EXCEPTION_HPP */

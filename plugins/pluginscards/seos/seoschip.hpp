@@ -15,37 +15,39 @@
 
 namespace logicalaccess
 {
-#define CHIP_SEOS		"SEOS"
+#define CHIP_SEOS "SEOS"
+
+/**
+ * \brief The HID SEOS base chip class.
+ */
+class LIBLOGICALACCESS_API SEOSChip : public Chip
+{
+  public:
+    /**
+     * \brief Constructor.
+     */
+    SEOSChip();
 
     /**
-     * \brief The HID SEOS base chip class.
+     * \brief Destructor.
      */
-    class LIBLOGICALACCESS_API SEOSChip : public Chip
+    virtual ~SEOSChip();
+
+    /**
+     * \brief Get the generic card type.
+     * \return The generic card type.
+     */
+    std::string getGenericCardType() const override
     {
-    public:
+        return CHIP_SEOS;
+    }
 
-        /**
-         * \brief Constructor.
-         */
-        SEOSChip();
-
-        /**
-         * \brief Destructor.
-         */
-        virtual ~SEOSChip();
-
-        /**
-         * \brief Get the generic card type.
-         * \return The generic card type.
-         */
-	    std::string getGenericCardType() const override { return CHIP_SEOS; }
-
-        /**
-         * \brief Get the root location node.
-         * \return The root location node.
-         */
-	    std::shared_ptr<LocationNode> getRootLocationNode() override;
-    };
+    /**
+     * \brief Get the root location node.
+     * \return The root location node.
+     */
+    std::shared_ptr<LocationNode> getRootLocationNode() override;
+};
 }
 
 #endif

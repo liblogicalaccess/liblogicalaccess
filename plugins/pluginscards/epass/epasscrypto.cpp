@@ -121,7 +121,7 @@ bool EPassCrypto::secureMode() const
 
 ByteVector EPassCrypto::encrypt_apdu(const ByteVector &apdu)
 {
-    auto ret = EPassUtils::encrypt_apdu(apdu, S_enc_, S_mac_, S_send_counter_);
+    auto ret        = EPassUtils::encrypt_apdu(apdu, S_enc_, S_mac_, S_send_counter_);
     S_send_counter_ = EPassUtils::increment_ssc(S_send_counter_);
 
     return ret;
@@ -129,7 +129,7 @@ ByteVector EPassCrypto::encrypt_apdu(const ByteVector &apdu)
 
 ByteVector EPassCrypto::decrypt_rapdu(const ByteVector &rapdu)
 {
-    auto ret = EPassUtils::decrypt_rapdu(rapdu, S_enc_, S_mac_, S_send_counter_);
+    auto ret        = EPassUtils::decrypt_rapdu(rapdu, S_enc_, S_mac_, S_send_counter_);
     S_send_counter_ = EPassUtils::increment_ssc(S_send_counter_);
 
     return ret;

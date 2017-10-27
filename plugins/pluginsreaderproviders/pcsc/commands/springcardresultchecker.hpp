@@ -11,16 +11,16 @@
 
 namespace logicalaccess
 {
-    /**
-     * \brief The SpringCard implementation result checker.
-     */
-    class LIBLOGICALACCESS_API SpringCardResultChecker : public ISO7816ResultChecker
-    {
-    public:
-        SpringCardResultChecker();
+/**
+ * \brief The SpringCard implementation result checker.
+ */
+class LIBLOGICALACCESS_API SpringCardResultChecker : public ISO7816ResultChecker
+{
+  public:
+    SpringCardResultChecker();
 
-        virtual ~SpringCardResultChecker();
-    };
+    virtual ~SpringCardResultChecker();
+};
 }
 
 #endif

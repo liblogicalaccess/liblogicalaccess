@@ -15,18 +15,21 @@
 #include "macros.hpp"
 
 
-bool detail::prologue_has_run = false;
+bool detail::prologue_has_run               = false;
 enum detail::ReaderType detail::reader_type = detail::ReaderType::PCSC;
 
-std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr, logicalaccess::ChipPtr>
+std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr,
+           logicalaccess::ChipPtr>
 pcsc_test_init(const std::string &card_type /* = "" */)
 {
     // Reader configuration object to store reader provider and reader unit selection.
     std::shared_ptr<logicalaccess::ReaderConfiguration> readerConfig(
-            new logicalaccess::ReaderConfiguration());
+        new logicalaccess::ReaderConfiguration());
 
-    // Set PCSC ReaderProvider by calling the Library Manager which will load the function from the corresponding plug-in
-    auto provider = logicalaccess::LibraryManager::getInstance()->getReaderProvider("PCSC");
+    // Set PCSC ReaderProvider by calling the Library Manager which will load the function
+    // from the corresponding plug-in
+    auto provider =
+        logicalaccess::LibraryManager::getInstance()->getReaderProvider("PCSC");
     LLA_ASSERT(provider, "Cannot get PCSC provider");
     readerConfig->setReaderProvider(provider);
 
@@ -82,8 +85,8 @@ void prologue(int ac, char **av)
 
 std::string get_os_name()
 {
-#ifdef  _WIN64
-  return "Win";
+#ifdef _WIN64
+    return "Win";
 #elif _WIN32
     return "Win";
 #elif __APPLE__ || __MACH__
@@ -98,33 +101,33 @@ std::string get_os_name()
 std::string pcsc_reader_unit_name(logicalaccess::ReaderUnitPtr ru)
 {
     using namespace logicalaccess;
-    std::shared_ptr<PCSCReaderUnit> pcsc_reader = std::dynamic_pointer_cast<PCSCReaderUnit>(ru);
+    std::shared_ptr<PCSCReaderUnit> pcsc_reader =
+        std::dynamic_pointer_cast<PCSCReaderUnit>(ru);
     LLA_ASSERT(pcsc_reader, "Reader is not PCSC");
 
     switch (pcsc_reader->getPCSCType())
     {
-        case PCSC_RUT_OMNIKEY_XX21:
-            return "OKXX21";
-        case PCSC_RUT_OMNIKEY_XX22:
-            return "OKXX22";
-        case PCSC_RUT_OMNIKEY_XX25:
-            return "OKXX25";
-        case PCSC_RUT_OMNIKEY_XX27:
-            return "OKXX27";
-        default:
-            LLA_ASSERT(0, "PCSC Type not handled");
+    case PCSC_RUT_OMNIKEY_XX21: return "OKXX21";
+    case PCSC_RUT_OMNIKEY_XX22: return "OKXX22";
+    case PCSC_RUT_OMNIKEY_XX25: return "OKXX25";
+    case PCSC_RUT_OMNIKEY_XX27: return "OKXX27";
+    default: LLA_ASSERT(0, "PCSC Type not handled");
     }
     return "I AM DEAD";
 }
 
-std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr, logicalaccess::ChipPtr> nfc_test_init()
+std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr,
+           logicalaccess::ChipPtr>
+nfc_test_init()
 {
     // Reader configuration object to store reader provider and reader unit selection.
     std::shared_ptr<logicalaccess::ReaderConfiguration> readerConfig(
-            new logicalaccess::ReaderConfiguration());
+        new logicalaccess::ReaderConfiguration());
 
-    // Set PCSC ReaderProvider by calling the Library Manager which will load the function from the corresponding plug-in
-    auto provider = logicalaccess::LibraryManager::getInstance()->getReaderProvider("NFC");
+    // Set PCSC ReaderProvider by calling the Library Manager which will load the function
+    // from the corresponding plug-in
+    auto provider =
+        logicalaccess::LibraryManager::getInstance()->getReaderProvider("NFC");
     LLA_ASSERT(provider, "Cannot get NFC provider");
     readerConfig->setReaderProvider(provider);
 
@@ -149,15 +152,18 @@ std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr, logic
     return std::make_tuple(provider, readerUnit, chip);
 }
 
-std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr, logicalaccess::ChipPtr>
+std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr,
+           logicalaccess::ChipPtr>
 lla_test_init(const std::string &card_type /* = "" */)
 {
-    LLA_ASSERT(detail::prologue_has_run, "Call prologue() before initalizing the test suite");
+    LLA_ASSERT(detail::prologue_has_run,
+               "Call prologue() before initalizing the test suite");
     if (detail::reader_type == detail::PCSC)
         return pcsc_test_init(card_type);
-	if (detail::reader_type == detail::NFC)
-		return nfc_test_init();
+    if (detail::reader_type == detail::NFC)
+        return nfc_test_init();
 
-	LLA_ASSERT(0, "lla_test_init failed");
-    return std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr, logicalaccess::ChipPtr>(); //VS warning
+    LLA_ASSERT(0, "lla_test_init failed");
+    return std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr,
+                      logicalaccess::ChipPtr>(); // VS warning
 }

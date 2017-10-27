@@ -21,267 +21,294 @@
 
 namespace logicalaccess
 {
-    namespace openssl
+namespace openssl
+{
+RSAKey RSAKey::createRandom()
+{
+    unsigned char data;
+    if (RAND_bytes(&data, 1) != 1)
     {
-        RSAKey RSAKey::createRandom()
+        THROW_EXCEPTION_WITH_LOG(logicalaccess::LibLogicalAccessException,
+                                 "Cannot retrieve cryptographically strong bytes");
+    }
+
+    RSAKey rsa(std::shared_ptr<RSA>(RSA_generate_key(1024, data | 1, nullptr, nullptr),
+                                    RSA_free),
+               true);
+
+    EXCEPTION_ASSERT_WITH_LOG(rsa.d_rsa, OpenSSLException,
+                              "Cannot generate RSA key pair");
+
+    rsa.cache();
+
+    return rsa;
+}
+
+RSAKey RSAKey::createFromPublicCompound(const ByteVector &data)
+{
+    const unsigned char *buf = reinterpret_cast<const unsigned char *>(&data[0]);
+
+    RSA *prsa = nullptr;
+
+    if (!d2i_RSAPublicKey(&prsa, &buf, static_cast<long>(data.size())))
+    {
+        THROW_EXCEPTION_WITH_LOG(
+            OpenSSLException,
+            "Unable to read public key compound from the specified buffer.");
+    }
+    std::shared_ptr<RSA> sprsa(prsa, RSA_free);
+
+    return RSAKey(sprsa, false);
+}
+
+RSAKey RSAKey::createFromPrivateCompound(const ByteVector &data)
+{
+    const unsigned char *buf = reinterpret_cast<const unsigned char *>(&data[0]);
+
+    RSA *prsa = nullptr;
+
+    if (!d2i_RSAPrivateKey(&prsa, &buf, static_cast<long>(data.size())))
+    {
+        THROW_EXCEPTION_WITH_LOG(
+            OpenSSLException,
+            "Unable to read private key compound from the specified buffer.");
+    }
+    std::shared_ptr<RSA> sprsa(prsa, RSA_free);
+
+    return RSAKey(sprsa, true);
+}
+
+RSAKey RSAKey::createFromPEMPublicKey(const ByteVector &data,
+                                      PEMPassphraseCallback callback, void *userdata)
+{
+    ByteVector datacopy = data;
+
+    std::shared_ptr<BIO> pbio(BIO_new_mem_buf(datacopy.data(), (int)datacopy.size()),
+                              BIO_free);
+
+    RSA *prsa = PEM_read_bio_RSA_PUBKEY(pbio.get(), nullptr, callback, userdata);
+
+    EXCEPTION_ASSERT_WITH_LOG(prsa, OpenSSLException,
+                              "Unable to parse the RSA public key PEM data");
+
+    std::shared_ptr<RSA> sprsa(prsa, RSA_free);
+
+    return RSAKey(sprsa, false);
+}
+
+RSAKey RSAKey::createFromPEMPrivateKey(const ByteVector &data,
+                                       PEMPassphraseCallback callback, void *userdata)
+{
+    ByteVector datacopy = data;
+
+    std::shared_ptr<BIO> pbio(BIO_new_mem_buf(datacopy.data(), (int)datacopy.size()),
+                              BIO_free);
+
+    RSA *prsa = PEM_read_bio_RSAPrivateKey(pbio.get(), nullptr, callback, userdata);
+
+    EXCEPTION_ASSERT_WITH_LOG(prsa, OpenSSLException,
+                              "Unable to parse the RSA public key PEM data");
+
+    std::shared_ptr<RSA> sprsa(prsa, RSA_free);
+
+    return RSAKey(sprsa, true);
+}
+
+RSAKey RSAKey::createFromPEMPublicKeyFile(const std::string &filename,
+                                          PEMPassphraseCallback callback, void *userdata)
+{
+    FILE *fp = fopen(filename.c_str(), "r");
+
+    if (fp == nullptr)
+    {
+        THROW_EXCEPTION_WITH_LOG(std::runtime_error, "Cannot open the file.");
+    }
+
+    RSA *prsa = PEM_read_RSAPublicKey(fp, nullptr, callback, userdata);
+
+    fclose(fp);
+
+    EXCEPTION_ASSERT_WITH_LOG(prsa, OpenSSLException,
+                              "Unable to parse the RSA public key PEM file");
+
+    std::shared_ptr<RSA> sprsa(prsa, RSA_free);
+
+    return RSAKey(sprsa, false);
+}
+
+RSAKey RSAKey::createFromPEMPrivateKeyFile(const std::string &filename,
+                                           PEMPassphraseCallback callback, void *userdata)
+{
+    FILE *fp = fopen(filename.c_str(), "r");
+
+    if (fp == nullptr)
+    {
+        THROW_EXCEPTION_WITH_LOG(std::runtime_error, "Cannot open the file.");
+    }
+
+    RSA *prsa = PEM_read_RSAPrivateKey(fp, nullptr, callback, userdata);
+
+    fclose(fp);
+
+    EXCEPTION_ASSERT_WITH_LOG(prsa, OpenSSLException,
+                              "Unable to parse the RSA private key PEM file");
+
+    std::shared_ptr<RSA> sprsa(prsa, RSA_free);
+
+    return RSAKey(sprsa, true);
+}
+
+RSAKey::RSAKey()
+    : d_has_private_key(false)
+{
+}
+
+ByteVector RSAKey::getPEM(bool discard_private_compound, PEMPassphraseCallback callback,
+                          void *userdata) const
+{
+    std::shared_ptr<BIO> pbio(BIO_new(BIO_s_mem()), BIO_free);
+
+    if (hasPrivateCompound() && (!discard_private_compound))
+    {
+        EXCEPTION_ASSERT_WITH_LOG(PEM_write_bio_RSAPrivateKey(pbio.get(), d_rsa.get(),
+                                                              NULL, NULL, 0, callback,
+                                                              userdata),
+                                  OpenSSLException, "Cannot write PEM data");
+    }
+    else
+    {
+        EXCEPTION_ASSERT_WITH_LOG(PEM_write_bio_RSA_PUBKEY(pbio.get(), d_rsa.get()),
+                                  OpenSSLException, "Cannot write PEM data");
+    }
+
+    int len = BIO_pending(pbio.get());
+
+    ByteVector buffer(len);
+
+    BIO_read(pbio.get(), buffer.data(), len);
+    buffer.resize(len);
+
+    return buffer;
+}
+
+const ByteVector &RSAKey::publicCompound() const
+{
+    return d_public_key;
+}
+
+const ByteVector &RSAKey::privateCompound() const
+{
+    return d_private_key;
+}
+
+RSAKey RSAKey::discardPrivateCompound() const
+{
+    if (hasPrivateCompound())
+    {
+        return createFromPEMPublicKey(getPEM(true));
+    }
+    return *this;
+}
+
+void RSAKey::writeToPEMKeyFile(const std::string &filename,
+                               PEMPassphraseCallback callback, void *userdata) const
+{
+    FILE *fp = fopen(filename.c_str(), "w+");
+
+    if (fp == nullptr)
+    {
+        THROW_EXCEPTION_WITH_LOG(std::runtime_error, "Cannot open the file.");
+    }
+
+    int result = 0;
+
+    if (hasPrivateCompound())
+    {
+        result = PEM_write_RSAPrivateKey(fp, d_rsa.get(), nullptr, nullptr, 0, callback,
+                                         userdata);
+    }
+    else
+    {
+        result = PEM_write_RSAPublicKey(fp, d_rsa.get());
+    }
+
+    fclose(fp);
+
+    EXCEPTION_ASSERT_WITH_LOG(result != 0, OpenSSLException, "Cannot write PEM file");
+}
+
+RSAKey RSAKey::createFromRaw(RSA *raw, bool has_private_key)
+{
+    std::shared_ptr<RSA> sprsa;
+
+    if (has_private_key)
+    {
+        sprsa.reset(RSAPrivateKey_dup(raw), RSA_free);
+    }
+    else
+    {
+        sprsa.reset(RSAPublicKey_dup(raw), RSA_free);
+    }
+
+    return RSAKey(sprsa, has_private_key);
+}
+
+RSAKey::RSAKey(std::shared_ptr<RSA> rsa, bool has_private_key)
+    : d_rsa(rsa)
+    , d_has_private_key(has_private_key)
+{
+    assert(rsa);
+    cache();
+}
+
+void RSAKey::cache()
+{
+    unsigned char buffer[8192];
+    unsigned char *buf = buffer;
+
+    int len = i2d_RSAPublicKey(d_rsa.get(), &buf);
+
+    EXCEPTION_ASSERT_WITH_LOG(len >= 0, OpenSSLException,
+                              "Invalid RSA context: cannot retrieve public key");
+
+    d_public_key.clear();
+    d_public_key.insert(d_public_key.end(), buffer, buffer + len);
+
+    if (hasPrivateCompound())
+    {
+        buf = buffer;
+        len = i2d_RSAPrivateKey(d_rsa.get(), &buf);
+
+        EXCEPTION_ASSERT_WITH_LOG(len >= 0, OpenSSLException,
+                                  "Invalid RSA context: cannot retrieve private key");
+
+        d_private_key.clear();
+        d_private_key.insert(d_private_key.end(), buffer, buffer + len);
+    }
+    else
+    {
+        d_private_key.clear();
+    }
+}
+
+bool operator==(const RSAKey &lhs, const RSAKey &rhs)
+{
+    if (lhs.hasPrivateCompound())
+    {
+        if (rhs.hasPrivateCompound())
         {
-            unsigned char data;
-            if (RAND_bytes(&data, 1) != 1)
-            {
-                THROW_EXCEPTION_WITH_LOG(logicalaccess::LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
-            }
-
-            RSAKey rsa(std::shared_ptr<RSA>(RSA_generate_key(1024, data | 1, nullptr, nullptr), RSA_free), true);
-
-            EXCEPTION_ASSERT_WITH_LOG(rsa.d_rsa, OpenSSLException, "Cannot generate RSA key pair");
-
-            rsa.cache();
-
-            return rsa;
-        }
-
-        RSAKey RSAKey::createFromPublicCompound(const ByteVector& data)
-        {
-            const unsigned char* buf = reinterpret_cast<const unsigned char*>(&data[0]);
-
-            RSA* prsa = nullptr;
-
-            if (!d2i_RSAPublicKey(&prsa, &buf, static_cast<long>(data.size())))
-            {
-                THROW_EXCEPTION_WITH_LOG(OpenSSLException, "Unable to read public key compound from the specified buffer.");
-            }
-	        std::shared_ptr<RSA> sprsa(prsa, RSA_free);
-
-	        return RSAKey(sprsa, false);
-        }
-
-        RSAKey RSAKey::createFromPrivateCompound(const ByteVector& data)
-        {
-            const unsigned char* buf = reinterpret_cast<const unsigned char*>(&data[0]);
-
-            RSA* prsa = nullptr;
-
-            if (!d2i_RSAPrivateKey(&prsa, &buf, static_cast<long>(data.size())))
-            {
-                THROW_EXCEPTION_WITH_LOG(OpenSSLException, "Unable to read private key compound from the specified buffer.");
-            }
-	        std::shared_ptr<RSA> sprsa(prsa, RSA_free);
-
-	        return RSAKey(sprsa, true);
-        }
-
-        RSAKey RSAKey::createFromPEMPublicKey(const ByteVector& data, PEMPassphraseCallback callback, void* userdata)
-        {
-            ByteVector datacopy = data;
-
-            std::shared_ptr<BIO> pbio(BIO_new_mem_buf(datacopy.data(), (int)datacopy.size()), BIO_free);
-
-            RSA* prsa = PEM_read_bio_RSA_PUBKEY(pbio.get(), nullptr, callback, userdata);
-
-            EXCEPTION_ASSERT_WITH_LOG(prsa, OpenSSLException, "Unable to parse the RSA public key PEM data");
-
-            std::shared_ptr<RSA> sprsa(prsa, RSA_free);
-
-            return RSAKey(sprsa, false);
-        }
-
-        RSAKey RSAKey::createFromPEMPrivateKey(const ByteVector& data, PEMPassphraseCallback callback, void* userdata)
-        {
-            ByteVector datacopy = data;
-
-            std::shared_ptr<BIO> pbio(BIO_new_mem_buf(datacopy.data(), (int)datacopy.size()), BIO_free);
-
-            RSA* prsa = PEM_read_bio_RSAPrivateKey(pbio.get(), nullptr, callback, userdata);
-
-            EXCEPTION_ASSERT_WITH_LOG(prsa, OpenSSLException, "Unable to parse the RSA public key PEM data");
-
-            std::shared_ptr<RSA> sprsa(prsa, RSA_free);
-
-            return RSAKey(sprsa, true);
-        }
-
-        RSAKey RSAKey::createFromPEMPublicKeyFile(const std::string& filename, PEMPassphraseCallback callback, void* userdata)
-        {
-            FILE* fp = fopen(filename.c_str(), "r");
-
-            if (fp == nullptr)
-            {
-                THROW_EXCEPTION_WITH_LOG(std::runtime_error, "Cannot open the file.");
-            }
-
-            RSA* prsa = PEM_read_RSAPublicKey(fp, nullptr, callback, userdata);
-
-            fclose(fp);
-
-            EXCEPTION_ASSERT_WITH_LOG(prsa, OpenSSLException, "Unable to parse the RSA public key PEM file");
-
-            std::shared_ptr<RSA> sprsa(prsa, RSA_free);
-
-            return RSAKey(sprsa, false);
-        }
-
-        RSAKey RSAKey::createFromPEMPrivateKeyFile(const std::string& filename, PEMPassphraseCallback callback, void* userdata)
-        {
-            FILE* fp = fopen(filename.c_str(), "r");
-
-            if (fp == nullptr)
-            {
-                THROW_EXCEPTION_WITH_LOG(std::runtime_error, "Cannot open the file.");
-            }
-
-            RSA* prsa = PEM_read_RSAPrivateKey(fp, nullptr, callback, userdata);
-
-            fclose(fp);
-
-            EXCEPTION_ASSERT_WITH_LOG(prsa, OpenSSLException, "Unable to parse the RSA private key PEM file");
-
-            std::shared_ptr<RSA> sprsa(prsa, RSA_free);
-
-            return RSAKey(sprsa, true);
-        }
-
-        RSAKey::RSAKey() :
-            d_has_private_key(false)
-        {
-        }
-
-        ByteVector RSAKey::getPEM(bool discard_private_compound, PEMPassphraseCallback callback, void* userdata) const
-        {
-            std::shared_ptr<BIO> pbio(BIO_new(BIO_s_mem()), BIO_free);
-
-            if (hasPrivateCompound() && (!discard_private_compound))
-            {
-                EXCEPTION_ASSERT_WITH_LOG(PEM_write_bio_RSAPrivateKey(pbio.get(), d_rsa.get(), NULL, NULL, 0, callback, userdata), OpenSSLException, "Cannot write PEM data");
-            }
-            else
-            {
-                EXCEPTION_ASSERT_WITH_LOG(PEM_write_bio_RSA_PUBKEY(pbio.get(), d_rsa.get()), OpenSSLException, "Cannot write PEM data");
-            }
-
-            int len = BIO_pending(pbio.get());
-
-            ByteVector buffer(len);
-
-            BIO_read(pbio.get(), buffer.data(), len);
-            buffer.resize(len);
-
-            return buffer;
-        }
-
-        const ByteVector& RSAKey::publicCompound() const
-        {
-            return d_public_key;
-        }
-
-        const ByteVector& RSAKey::privateCompound() const
-        {
-            return d_private_key;
-        }
-
-        RSAKey RSAKey::discardPrivateCompound() const
-        {
-            if (hasPrivateCompound())
-            {
-                return createFromPEMPublicKey(getPEM(true));
-            }
-	        return *this;
-        }
-
-        void RSAKey::writeToPEMKeyFile(const std::string& filename, PEMPassphraseCallback callback, void* userdata) const
-        {
-            FILE* fp = fopen(filename.c_str(), "w+");
-
-            if (fp == nullptr)
-            {
-                THROW_EXCEPTION_WITH_LOG(std::runtime_error, "Cannot open the file.");
-            }
-
-            int result = 0;
-
-            if (hasPrivateCompound())
-            {
-                result = PEM_write_RSAPrivateKey(fp, d_rsa.get(), nullptr, nullptr, 0, callback, userdata);
-            }
-            else
-            {
-                result = PEM_write_RSAPublicKey(fp, d_rsa.get());
-            }
-
-            fclose(fp);
-
-            EXCEPTION_ASSERT_WITH_LOG(result != 0, OpenSSLException, "Cannot write PEM file");
-        }
-
-        RSAKey RSAKey::createFromRaw(RSA* raw, bool has_private_key)
-        {
-            std::shared_ptr<RSA> sprsa;
-
-            if (has_private_key)
-            {
-                sprsa.reset(RSAPrivateKey_dup(raw), RSA_free);
-            }
-            else
-            {
-                sprsa.reset(RSAPublicKey_dup(raw), RSA_free);
-            }
-
-            return RSAKey(sprsa, has_private_key);
-        }
-
-        RSAKey::RSAKey(std::shared_ptr<RSA> rsa, bool has_private_key) :
-            d_rsa(rsa),
-            d_has_private_key(has_private_key)
-        {
-            assert(rsa);
-            cache();
-        }
-
-        void RSAKey::cache()
-        {
-            unsigned char buffer[8192];
-            unsigned char* buf = buffer;
-
-            int len = i2d_RSAPublicKey(d_rsa.get(), &buf);
-
-            EXCEPTION_ASSERT_WITH_LOG(len >= 0, OpenSSLException, "Invalid RSA context: cannot retrieve public key");
-
-            d_public_key.clear();
-            d_public_key.insert(d_public_key.end(), buffer, buffer + len);
-
-            if (hasPrivateCompound())
-            {
-                buf = buffer;
-                len = i2d_RSAPrivateKey(d_rsa.get(), &buf);
-
-                EXCEPTION_ASSERT_WITH_LOG(len >= 0, OpenSSLException, "Invalid RSA context: cannot retrieve private key");
-
-                d_private_key.clear();
-                d_private_key.insert(d_private_key.end(), buffer, buffer + len);
-            }
-            else
-            {
-                d_private_key.clear();
-            }
-        }
-
-        bool operator==(const RSAKey& lhs, const RSAKey& rhs)
-        {
-            if (lhs.hasPrivateCompound())
-            {
-                if (rhs.hasPrivateCompound())
-                {
-                    return lhs.d_private_key == rhs.d_private_key;
-                }
-            }
-            else
-            {
-                if (!rhs.hasPrivateCompound())
-                {
-                    return lhs.d_public_key == rhs.d_public_key;
-                }
-            }
-
-            return false;
+            return lhs.d_private_key == rhs.d_private_key;
         }
     }
+    else
+    {
+        if (!rhs.hasPrivateCompound())
+        {
+            return lhs.d_public_key == rhs.d_public_key;
+        }
+    }
+
+    return false;
+}
+}
 }

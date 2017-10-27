@@ -17,59 +17,59 @@
 
 namespace logicalaccess
 {
+/**
+ * \brief The reader communication mode.
+ */
+typedef enum {
+    IM_UNKNOWN   = 0x00,
+    IM_ISO14443A = 0x01,
+    IM_ISO14443B = 0x02
+} ReaderCommunicationMode;
+
+/**
+ * \brief A ISO 14443-3 reader communication base class.
+ */
+class LIBLOGICALACCESS_API ISO14443ReaderCommunication
+    : public ReaderCommunication,
+      public ISO14443AReaderCommunication,
+      public ISO14443BReaderCommunication
+{
+  public:
     /**
-     * \brief The reader communication mode.
+     * \brief Constructor.
      */
-    typedef enum
-    {
-        IM_UNKNOWN = 0x00,
-        IM_ISO14443A = 0x01,
-        IM_ISO14443B = 0x02
-    }ReaderCommunicationMode;
+    ISO14443ReaderCommunication();
 
     /**
-     * \brief A ISO 14443-3 reader communication base class.
+     * \brief Send a REQ command from the PCD to the PICC.
+     * \return The ATQ value.
      */
-    class LIBLOGICALACCESS_API ISO14443ReaderCommunication : public ReaderCommunication, public ISO14443AReaderCommunication, public ISO14443BReaderCommunication
-    {
-    public:
+    ByteVector request() override;
 
-        /**
-         * \brief Constructor.
-         */
-        ISO14443ReaderCommunication();
+    /**
+     * \brief Manage collision.
+     * \return PICC serial number.
+     */
+    ByteVector anticollision() override;
 
-        /**
-         * \brief Send a REQ command from the PCD to the PICC.
-         * \return The ATQ value.
-         */
-		ByteVector request() override;
+    /**
+     * \brief Select a PICC.
+     * \param uid The PICC serial number.
+     */
 
-        /**
-         * \brief Manage collision.
-         * \return PICC serial number.
-         */
-		ByteVector anticollision() override;
+    void selectIso(const ByteVector &uid) override;
 
-        /**
-         * \brief Select a PICC.
-         * \param uid The PICC serial number.
-         */
+    /**
+     * \brief Send a HLT command from the PCD to the PICC.
+     */
+    virtual void halt();
 
-	    void selectIso(const ByteVector& uid) override;
-
-        /**
-         * \brief Send a HLT command from the PCD to the PICC.
-         */
-        virtual void halt();
-
-    protected:
-
-        /**
-         * \brief The current reader communication mode.
-         */
-        ReaderCommunicationMode d_rcMode;
-    };
+  protected:
+    /**
+     * \brief The current reader communication mode.
+     */
+    ReaderCommunicationMode d_rcMode;
+};
 }
 
 #endif /* LOGICALACCESS_ISO14443READERCOMMUNICATION_HPP */

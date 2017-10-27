@@ -37,32 +37,30 @@ int main(int ac, char **av)
     ChipPtr chip;
     tie(provider, readerUnit, chip) = lla_test_init("DESFireEV1");
 
-    PRINT_TIME("CHip identifier: " <<
-               logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
+    PRINT_TIME("CHip identifier: "
+               << logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
 
     LLA_ASSERT(chip->getCardType() == "DESFireEV1",
-               "Chip is not an DESFireEV1, but is " + chip->getCardType() +
-               " instead.");
+               "Chip is not an DESFireEV1, but is " + chip->getCardType() + " instead.");
 
-    std::shared_ptr<DESFireEV1Chip> desfirechip = std::dynamic_pointer_cast<DESFireEV1Chip>(chip);
+    std::shared_ptr<DESFireEV1Chip> desfirechip =
+        std::dynamic_pointer_cast<DESFireEV1Chip>(chip);
     assert(desfirechip);
     PRINT_TIME("Has Real UID: " << desfirechip->hasRealUID());
 
     auto location_root_node = chip->getRootLocationNode();
 
-    auto cmd = std::dynamic_pointer_cast<DESFireISO7816Commands>(
-            chip->getCommands());
-    auto cmdev1 = std::dynamic_pointer_cast<DESFireEV1ISO7816Commands>(
-            chip->getCommands());
+    auto cmd = std::dynamic_pointer_cast<DESFireISO7816Commands>(chip->getCommands());
+    auto cmdev1 =
+        std::dynamic_pointer_cast<DESFireEV1ISO7816Commands>(chip->getCommands());
     LLA_ASSERT(cmd && cmdev1, "Cannot get correct command object from chip.");
 
     cmd->selectApplication(0x00);
     cmd->authenticate(0);
 
     cmd->erase();
-    cmdev1->createApplication(0x521, KS_DEFAULT, 3,
-                              DF_KEY_AES,
-                              FIDS_NO_ISO_FID, 0, ByteVector());
+    cmdev1->createApplication(0x521, KS_DEFAULT, 3, DF_KEY_AES, FIDS_NO_ISO_FID, 0,
+                              ByteVector());
 
     cmd->selectApplication(0x521);
     std::shared_ptr<DESFireKey> key(new DESFireKey());
@@ -71,10 +69,10 @@ int main(int ac, char **av)
     LLA_SUBTEST_PASSED("Authenticate");
 
     DESFireAccessRights ar;
-    ar.readAccess = AR_KEY2;
-    ar.writeAccess = AR_KEY1;
+    ar.readAccess         = AR_KEY2;
+    ar.writeAccess        = AR_KEY1;
     ar.readAndWriteAccess = AR_KEY1;
-    ar.changeAccess = AR_KEY1;
+    ar.changeAccess       = AR_KEY1;
     cmdev1->createStdDataFile(0x00, CM_ENCRYPT, ar, 4, 0);
 
 
@@ -93,7 +91,7 @@ int main(int ac, char **av)
 
     cmd->authenticate(0x00, key);
     std::shared_ptr<DESFireKey> newkey(
-            new DESFireKey("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 03"));
+        new DESFireKey("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 03"));
     cmd->changeKey(0x00, newkey);
     LLA_SUBTEST_PASSED("ChangeKey");
 
@@ -102,24 +100,24 @@ int main(int ac, char **av)
     cmd->deleteApplication(0x521);
 
     auto service = std::dynamic_pointer_cast<AccessControlCardService>(
-            chip->getService(CST_ACCESS_CONTROL));
+        chip->getService(CST_ACCESS_CONTROL));
     LLA_ASSERT(service, "Cannot retrieve access control service from chip.");
 
-    auto location = std::make_shared<DESFireLocation>();
-    location->aid = 0x522;
+    auto location  = std::make_shared<DESFireLocation>();
+    location->aid  = 0x522;
     location->file = 0;
-    auto ai = std::make_shared<DESFireAccessInfo>();
-    auto format = std::make_shared<Wiegand26Format>();
+    auto ai        = std::make_shared<DESFireAccessInfo>();
+    auto format    = std::make_shared<Wiegand26Format>();
     format->setUid(1000);
     format->setFacilityCode(67);
 
     service->writeFormat(format, location, ai, ai);
     auto formattmp = std::make_shared<Wiegand26Format>();
-    auto rformat = std::dynamic_pointer_cast<Wiegand26Format>(
-            service->readFormat(formattmp, location, ai));
+    auto rformat   = std::dynamic_pointer_cast<Wiegand26Format>(
+        service->readFormat(formattmp, location, ai));
 
     if (!rformat || rformat->getUid() != 1000 || rformat->getFacilityCode() != 67)
-    THROW_EXCEPTION_WITH_LOG(std::runtime_error, "Bad format");
+        THROW_EXCEPTION_WITH_LOG(std::runtime_error, "Bad format");
     LLA_SUBTEST_PASSED("ReadFormat");
 
     PRINT_TIME("Has Real UID: " << desfirechip->hasRealUID());

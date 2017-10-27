@@ -9,15 +9,18 @@
 namespace logicalaccess
 {
 #define CMD_PROX "Prox"
-    /**
-     * Prox card doesn't support any command.
-     * This is a dummy command class. Its goal is to make
-     * the reader unit object available to the chip through the reader card adapter
-     * and data transport, even if it makes no use of them.
-     */
-    class ProxCommands : public Commands
+/**
+ * Prox card doesn't support any command.
+ * This is a dummy command class. Its goal is to make
+ * the reader unit object available to the chip through the reader card adapter
+ * and data transport, even if it makes no use of them.
+ */
+class ProxCommands : public Commands
+{
+  public:
+    ProxCommands()
+        : Commands(CMD_PROX)
     {
-    public:
-        ProxCommands() : Commands(CMD_PROX) {}
-    };
+    }
+};
 }

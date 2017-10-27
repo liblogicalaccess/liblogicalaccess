@@ -13,51 +13,51 @@
 namespace logicalaccess
 {
 #define CMD_MIFAREULTRALIGHTCPCSC "MifareUltralightCPCSC"
-    /**
-     * \brief The Mifare Ultralight C commands class for PCSC reader.
-     */
-    class LIBLOGICALACCESS_API MifareUltralightCPCSCCommands : public MifareUltralightPCSCCommands
+/**
+ * \brief The Mifare Ultralight C commands class for PCSC reader.
+ */
+class LIBLOGICALACCESS_API MifareUltralightCPCSCCommands
+    : public MifareUltralightPCSCCommands
 #ifndef SWIG
-    , public MifareUltralightCCommands
+      ,
+      public MifareUltralightCCommands
 #endif
-	{
-    public:
+{
+  public:
+    /**
+     * \brief Constructor.
+     */
+    MifareUltralightCPCSCCommands();
 
-        /**
-         * \brief Constructor.
-         */
-        MifareUltralightCPCSCCommands();
-
-        explicit MifareUltralightCPCSCCommands(std::string);
+    explicit MifareUltralightCPCSCCommands(std::string);
 
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~MifareUltralightCPCSCCommands();
+    /**
+     * \brief Destructor.
+     */
+    virtual ~MifareUltralightCPCSCCommands();
 
-        /**
-         * \brief Authenticate to the chip.
-         * \param authkey The authentication key.
-         */
-	    void authenticate(std::shared_ptr<TripleDESKey> authkey) override;
+    /**
+     * \brief Authenticate to the chip.
+     * \param authkey The authentication key.
+     */
+    void authenticate(std::shared_ptr<TripleDESKey> authkey) override;
 
-    protected:
+  protected:
+    virtual void startGenericSession();
 
-		virtual void startGenericSession();
+    virtual void stopGenericSession();
 
-		virtual void stopGenericSession();
+    std::shared_ptr<MifareUltralightChip> getMifareUltralightChip() override;
 
-		std::shared_ptr<MifareUltralightChip> getMifareUltralightChip() override;
+    void writePage(int page, const ByteVector &buf) override;
 
-		void writePage(int page, const ByteVector& buf) override;
+    virtual ByteVector sendGenericCommand(const ByteVector &data);
 
-        virtual ByteVector sendGenericCommand(const ByteVector& data);
+    virtual ByteVector authenticate_PICC1();
 
-        virtual ByteVector authenticate_PICC1();
-
-        virtual ByteVector authenticate_PICC2(const ByteVector& encRndAB);
-    };
+    virtual ByteVector authenticate_PICC2(const ByteVector &encRndAB);
+};
 }
 
 #endif /* LOGICALACCESS_MIFAREULTRALIGHTCPCSCCOMMANDS_HPP */

@@ -32,10 +32,10 @@ int main(int ac, char **av)
     ChipPtr chip;
 
     // Reader configuration object to store reader provider and reader unit selection.
-    std::shared_ptr<ReaderConfiguration> readerConfig(
-            new ReaderConfiguration());
+    std::shared_ptr<ReaderConfiguration> readerConfig(new ReaderConfiguration());
 
-    // Set PCSC ReaderProvider by calling the Library Manager which will load the function from the corresponding plug-in
+    // Set PCSC ReaderProvider by calling the Library Manager which will load the function
+    // from the corresponding plug-in
     provider = LibraryManager::getInstance()->getReaderProvider("PCSC");
     LLA_ASSERT(provider, "Cannot get PCSC provider");
     readerConfig->setReaderProvider(provider);
@@ -51,7 +51,8 @@ int main(int ac, char **av)
     PRINT_TIME("Reader name: " << readerUnit->getName());
     PRINT_TIME("Connected Reader Name: " << readerUnit->getConnectedName());
 
-    auto acs_led_buzzer = std::dynamic_pointer_cast<ACSACR1222LLEDBuzzerDisplay>(readerUnit->getLEDBuzzerDisplay());
+    auto acs_led_buzzer = std::dynamic_pointer_cast<ACSACR1222LLEDBuzzerDisplay>(
+        readerUnit->getLEDBuzzerDisplay());
     LLA_ASSERT(acs_led_buzzer, "LEDBuzzer control is not ACS specific.");
 
     PRINT_TIME("All led will be turned on for 4 seconds");
@@ -60,7 +61,7 @@ int main(int ac, char **av)
     acs_led_buzzer->setRedLed(true);
     acs_led_buzzer->setBlueLed(true);
     std::this_thread::sleep_for(std::chrono::milliseconds(4000));
-	LLA_SUBTEST_PASSED("TurnLedOn");
+    LLA_SUBTEST_PASSED("TurnLedOn");
 
     PRINT_TIME("Turning led off");
     acs_led_buzzer->setOrangeLed(false);
@@ -68,7 +69,7 @@ int main(int ac, char **av)
     acs_led_buzzer->setRedLed(false);
     acs_led_buzzer->setBlueLed(false);
     std::this_thread::sleep_for(std::chrono::milliseconds(4000));
-	LLA_SUBTEST_PASSED("TurnLedOff");
+    LLA_SUBTEST_PASSED("TurnLedOff");
 
     return EXIT_SUCCESS;
 }

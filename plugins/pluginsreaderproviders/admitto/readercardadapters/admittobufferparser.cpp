@@ -9,22 +9,25 @@
 
 namespace logicalaccess
 {
-    ByteVector AdmittoBufferParser::getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer)
-    {
-        ByteVector result;
+ByteVector AdmittoBufferParser::getValidBuffer(
+    boost::circular_buffer<unsigned char> &circular_buffer)
+{
+    ByteVector result;
 
-        if (circular_buffer.size() >= 2)
+    if (circular_buffer.size() >= 2)
+    {
+        for (size_t i = 1; i < circular_buffer.size(); ++i)
         {
-            for (size_t i = 1; i < circular_buffer.size(); ++i)
+            if (circular_buffer[i] == AdmittoReaderCardAdapter::CR &&
+                circular_buffer[i + 1] == AdmittoReaderCardAdapter::LF)
             {
-                if (circular_buffer[i] == AdmittoReaderCardAdapter::CR && circular_buffer[i + 1] == AdmittoReaderCardAdapter::LF)
-                {
-                    result.assign(circular_buffer.begin(), circular_buffer.begin() + i + 2);
-                    circular_buffer.erase(circular_buffer.begin(), circular_buffer.begin() + i + 2);
-                    break;
-                }
+                result.assign(circular_buffer.begin(), circular_buffer.begin() + i + 2);
+                circular_buffer.erase(circular_buffer.begin(),
+                                      circular_buffer.begin() + i + 2);
+                break;
             }
         }
-        return result;
     }
+    return result;
+}
 }

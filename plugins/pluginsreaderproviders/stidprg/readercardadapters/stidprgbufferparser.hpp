@@ -8,7 +8,7 @@ class LIBLOGICALACCESS_API STidPRGBufferParser : public CircularBufferParser
 {
 
   public:
-	ByteVector
+    ByteVector
     getValidBuffer(boost::circular_buffer<unsigned char> &circular_buffer) override;
 };
 }

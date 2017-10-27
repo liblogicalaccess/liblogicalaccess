@@ -13,14 +13,14 @@
 
 namespace logicalaccess
 {
-    class LIBLOGICALACCESS_API GunneboBufferParser : public CircularBufferParser
-    {
-    public:
-        GunneboBufferParser();
+class LIBLOGICALACCESS_API GunneboBufferParser : public CircularBufferParser
+{
+  public:
+    GunneboBufferParser();
 
-        virtual ~GunneboBufferParser() = default;
+    virtual ~GunneboBufferParser() = default;
 
-	    ByteVector getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer) override;
-    };
+    ByteVector
+    getValidBuffer(boost::circular_buffer<unsigned char> &circular_buffer) override;
+};
 }
-

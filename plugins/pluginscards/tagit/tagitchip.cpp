@@ -13,20 +13,20 @@
 
 namespace logicalaccess
 {
-    TagItChip::TagItChip()
-        : ISO15693Chip(CHIP_TAGIT)
-    {
-    }
+TagItChip::TagItChip()
+    : ISO15693Chip(CHIP_TAGIT)
+{
+}
 
-    TagItChip::~TagItChip()
-    {
-    }
+TagItChip::~TagItChip()
+{
+}
 
-    std::shared_ptr<LocationNode> TagItChip::getRootLocationNode()
-    {
-        std::shared_ptr<LocationNode> rootNode = ISO15693Chip::getRootLocationNode();
-        rootNode->setName("Tag-It");
+std::shared_ptr<LocationNode> TagItChip::getRootLocationNode()
+{
+    std::shared_ptr<LocationNode> rootNode = ISO15693Chip::getRootLocationNode();
+    rootNode->setName("Tag-It");
 
-        return rootNode;
-    }
+    return rootNode;
+}
 }

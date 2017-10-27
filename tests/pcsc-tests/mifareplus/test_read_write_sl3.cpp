@@ -16,7 +16,8 @@ void introduction()
     PRINT_TIME("This test target MifarePlus cards in Security Level 3.");
 
     PRINT_TIME("You will have 20 seconds to insert a card. Test log below");
-    PRINT_TIME("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    PRINT_TIME(
+        "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
     LLA_SUBTEST_REGISTER("WriteService");
     LLA_SUBTEST_REGISTER("ReadService");
@@ -34,19 +35,19 @@ int main(int ac, char **av)
     ChipPtr chip;
     tie(provider, readerUnit, chip) = lla_test_init();
 
-    PRINT_TIME("Chip identifier: " <<
-               logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
+    PRINT_TIME("Chip identifier: "
+               << logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
 
     LLA_ASSERT(chip->getCardType() == "MifarePlus_SL3_2K",
                "Chip is not a MifarePlus_SL3_2K, but is " + chip->getCardType() +
-               " instead.");
+                   " instead.");
 
     // Sector Key:
     std::shared_ptr<AES128Key> aes_key = std::make_shared<AES128Key>();
-    //aes_key->fromString("ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff");
-    //aes_key->fromString("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00");
+    // aes_key->fromString("ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff");
+    // aes_key->fromString("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00");
     aes_key->fromString("00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F");
- //   aes_key->fromString("000102030405060708090A0B0C0D0E0F");
+    //   aes_key->fromString("000102030405060708090A0B0C0D0E0F");
     //                     000102030405060708090A0B0C0D0E0F
     // Data to write
     ByteVector writedata(16, 'A');

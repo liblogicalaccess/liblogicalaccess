@@ -17,51 +17,60 @@
 
 namespace logicalaccess
 {
-    MifareUltralightCOmnikeyXX22Commands::MifareUltralightCOmnikeyXX22Commands()
-        : MifareUltralightPCSCCommands(CMD_MIFAREULTRALIGHTCOMNIKEYXX22)
+MifareUltralightCOmnikeyXX22Commands::MifareUltralightCOmnikeyXX22Commands()
+    : MifareUltralightPCSCCommands(CMD_MIFAREULTRALIGHTCOMNIKEYXX22)
+{
+}
+
+MifareUltralightCOmnikeyXX22Commands::MifareUltralightCOmnikeyXX22Commands(std::string ct)
+    : MifareUltralightPCSCCommands(ct)
+{
+}
+
+MifareUltralightCOmnikeyXX22Commands::~MifareUltralightCOmnikeyXX22Commands()
+{
+}
+
+void MifareUltralightCOmnikeyXX22Commands::authenticate(
+    std::shared_ptr<TripleDESKey> authkey)
+{
+    if (!authkey)
     {
+        authkey.reset(
+            new TripleDESKey("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"));
     }
 
-	MifareUltralightCOmnikeyXX22Commands::MifareUltralightCOmnikeyXX22Commands(std::string ct)
-		: MifareUltralightPCSCCommands(ct)
-	{
-	}
+    EXCEPTION_ASSERT(authkey->getLength() >= 16, LibLogicalAccessException,
+                     "Invalid key length.");
 
-    MifareUltralightCOmnikeyXX22Commands::~MifareUltralightCOmnikeyXX22Commands()
-    {
-    }
+    // Load key part1 to key slot 1
+    getPCSCReaderCardAdapter()->sendAPDUCommand(
+        0xFF, 0x82, 0x00, 0x00, 0x08,
+        ByteVector(authkey->getData(), authkey->getData() + 8));
+    // Load key part2 to key slot 2
+    getPCSCReaderCardAdapter()->sendAPDUCommand(
+        0xFF, 0x82, 0x00, 0x01, 0x08,
+        ByteVector(authkey->getData() + 8, authkey->getData() + 16));
 
-    void MifareUltralightCOmnikeyXX22Commands::authenticate(std::shared_ptr<TripleDESKey> authkey)
-    {
-        if (!authkey)
-        {
-            authkey.reset(new TripleDESKey("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"));
-        }
+    // Authenticate with key 0
+    ByteVector command;
+    command.push_back(0x01);
+    command.push_back(0x00);
+    command.push_back(0x01);
+    command.push_back(0x60);
+    command.push_back(0x00);
+    getPCSCReaderCardAdapter()->sendAPDUCommand(
+        0xFF, 0x86, 0x00, 0x00, static_cast<unsigned char>(command.size()), command);
+}
 
-        EXCEPTION_ASSERT(authkey->getLength() >= 16, LibLogicalAccessException, "Invalid key length.");
+std::shared_ptr<MifareUltralightChip>
+MifareUltralightCOmnikeyXX22Commands::getMifareUltralightChip()
+{
+    return MifareUltralightCommands::getMifareUltralightChip();
+}
 
-        // Load key part1 to key slot 1
-        getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x82, 0x00, 0x00, 0x08, ByteVector(authkey->getData(), authkey->getData() + 8));
-        // Load key part2 to key slot 2
-        getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x82, 0x00, 0x01, 0x08, ByteVector(authkey->getData() + 8, authkey->getData() + 16));
-
-        // Authenticate with key 0
-        ByteVector command;
-        command.push_back(0x01);
-        command.push_back(0x00);
-        command.push_back(0x01);
-        command.push_back(0x60);
-        command.push_back(0x00);
-        getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x86, 0x00, 0x00, static_cast<unsigned char>(command.size()), command);
-    }
-
-	std::shared_ptr<MifareUltralightChip> MifareUltralightCOmnikeyXX22Commands::getMifareUltralightChip()
-	{
-		return MifareUltralightCommands::getMifareUltralightChip();
-	}
-
-	void MifareUltralightCOmnikeyXX22Commands::writePage(int page, const ByteVector& buf)
-	{
-		MifareUltralightPCSCCommands::writePage(page, buf);
-	}
+void MifareUltralightCOmnikeyXX22Commands::writePage(int page, const ByteVector &buf)
+{
+    MifareUltralightPCSCCommands::writePage(page, buf);
+}
 }

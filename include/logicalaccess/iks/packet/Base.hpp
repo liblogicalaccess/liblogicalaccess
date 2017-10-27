@@ -69,9 +69,12 @@ enum protocol_opcode
 class LIBLOGICALACCESS_API BaseCommand
 {
   public:
-	BaseCommand() : opcode_(0) {}
-	virtual ~BaseCommand() = default;
-	virtual ByteVector serialize() const;
+    BaseCommand()
+        : opcode_(0)
+    {
+    }
+    virtual ~BaseCommand() = default;
+    virtual ByteVector serialize() const;
 
     /**
      * Compute the binary size_.
@@ -114,11 +117,9 @@ class LIBLOGICALACCESS_API KeyDivInfo
      * `divinput` shall have been computed locally. Max length for
      * `divinput` is 64bytes.
      */
-    static KeyDivInfo build(std::shared_ptr<Key> key,
-                            const ByteVector &divinput);
+    static KeyDivInfo build(std::shared_ptr<Key> key, const ByteVector &divinput);
 
-    static KeyDivInfo build(std::shared_ptr<Key> key,
-                            ByteVector identifier, int AID,
+    static KeyDivInfo build(std::shared_ptr<Key> key, ByteVector identifier, int AID,
                             unsigned char keyno);
 };
 

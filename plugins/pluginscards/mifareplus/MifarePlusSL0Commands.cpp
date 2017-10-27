@@ -44,7 +44,7 @@ bool MifarePlusSL0Commands::isLevel0() const
     // Attempt to write full 0x00 in block 0x01, sector 0x00.
     try
     {
-		writePerso(0x00, 0x01, { {0} });
+        writePerso(0x00, 0x01, {{0}});
         LOG(INFOS) << "Rewrote sector 0 block 1 with zeroes";
     }
     catch (const CardException &)
@@ -55,7 +55,7 @@ bool MifarePlusSL0Commands::isLevel0() const
 }
 
 bool MifarePlusSL0Commands::writePerso(uint8_t hex_addr_1, uint8_t hex_addr_2,
-                                 const std::array<uint8_t, 16> &data) const
+                                       const std::array<uint8_t, 16> &data) const
 {
     ByteVector cmd = {0xA8, hex_addr_2, hex_addr_1};
     cmd.insert(cmd.end(), data.begin(), data.end());
@@ -72,7 +72,7 @@ bool MifarePlusSL0Commands::writePerso(uint8_t hex_addr_1, uint8_t hex_addr_2,
 }
 
 bool MifarePlusSL0Commands::writePerso(const MifarePlusBlockKeyLocation &location,
-                                 const std::array<uint8_t, 16> &data) const
+                                       const std::array<uint8_t, 16> &data) const
 {
     uint16_t loc = static_cast<uint16_t>(location);
     return writePerso(loc >> 8, loc & 0xFF, data);
@@ -105,7 +105,7 @@ bool MifarePlusSL0Commands::is_trailing_block(uint8_t hex_addr1, uint8_t hex_add
 
 bool MifarePlusSL0Commands::validate_access_bytes(const std::array<uint8_t, 16> &data)
 {
-	ByteVector access_bytes = { {data[6], data[7], data[8]} };
+    ByteVector access_bytes = {{data[6], data[7], data[8]}};
     MifareAccessInfo::SectorAccessBits sab;
     return sab.fromArray(access_bytes);
 }
@@ -117,7 +117,7 @@ bool MifarePlusSL0Commands::is4K() const
         // we try to write in a the last block that is not a sector trailer.
         try
         {
-			if (writePerso(0x00, 0xFE, { {0} }))
+            if (writePerso(0x00, 0xFE, {{0}}))
             {
                 return true;
             }
@@ -128,11 +128,11 @@ bool MifarePlusSL0Commands::is4K() const
         return false;
     }
 
-	if (probeLevel3())
+    if (probeLevel3())
     {
         // We don't know what do to, lets just die.
         assert(0);
     }
     assert(0);
-	return false;
+    return false;
 }

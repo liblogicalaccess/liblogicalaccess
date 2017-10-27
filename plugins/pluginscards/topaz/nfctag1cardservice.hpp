@@ -13,31 +13,37 @@
 
 namespace logicalaccess
 {
-	/**
-	* \brief The NFC Tag 1 storage card service base class.
-	*/
-	class LIBLOGICALACCESS_API NFCTag1CardService : public NFCTagCardService
-	{
-	public:
+/**
+* \brief The NFC Tag 1 storage card service base class.
+*/
+class LIBLOGICALACCESS_API NFCTag1CardService : public NFCTagCardService
+{
+  public:
+    /**
+    * \brief Constructor.
+    * \param chip The chip.
+    */
+    explicit NFCTag1CardService(std::shared_ptr<Chip> chip)
+        : NFCTagCardService(chip)
+    {
+    }
 
-		/**
-		* \brief Constructor.
-		* \param chip The chip.
-		*/
-		explicit NFCTag1CardService(std::shared_ptr<Chip> chip) : NFCTagCardService(chip) {}
+    virtual ~NFCTag1CardService()
+    {
+    }
 
-		virtual ~NFCTag1CardService() {}
+    std::shared_ptr<NdefMessage> readNDEF() override;
 
-		std::shared_ptr<NdefMessage> readNDEF() override;
+    void writeNDEF(std::shared_ptr<NdefMessage> records) override;
 
-		void writeNDEF(std::shared_ptr<NdefMessage> records) override;
+    void eraseNDEF() override;
 
-		void eraseNDEF() override;
-
-	protected:
-
-        std::shared_ptr<TopazChip> getTopazChip() const { return std::dynamic_pointer_cast<TopazChip>(getChip()); }
-	};
+  protected:
+    std::shared_ptr<TopazChip> getTopazChip() const
+    {
+        return std::dynamic_pointer_cast<TopazChip>(getChip());
+    }
+};
 }
 
 #endif /* LOGICALACCESS_NFCTAG1CARDSERVICE_HPP */

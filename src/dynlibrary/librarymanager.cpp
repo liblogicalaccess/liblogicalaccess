@@ -11,300 +11,335 @@
 
 namespace logicalaccess
 {
-    const std::string LibraryManager::enumType[3] = { "readers", "cards", "unified" };
+const std::string LibraryManager::enumType[3] = {"readers", "cards", "unified"};
 
-    bool LibraryManager::hasEnding(std::string const &fullString, std::string ending)
+bool LibraryManager::hasEnding(std::string const &fullString, std::string ending)
+{
+    if (fullString.length() >= ending.length())
     {
-        if (fullString.length() >= ending.length()) {
-            return (0 == fullString.compare(fullString.length() - ending.length(), ending.length(), ending));
-        }
-	    return false;
+        return (0 ==
+                fullString.compare(fullString.length() - ending.length(), ending.length(),
+                                   ending));
+    }
+    return false;
+}
+
+LibraryManager *LibraryManager::getInstance()
+{
+    static LibraryManager instance;
+    return &instance;
+}
+
+void *LibraryManager::getFctFromName(const std::string &fctname, LibraryType libraryType)
+{
+    std::lock_guard<std::recursive_mutex> lg(mutex_);
+    void *fct;
+    boost::filesystem::directory_iterator end_iter;
+    std::string extension = EXTENSION_LIB;
+
+    if (libLoaded.empty())
+    {
+        scanPlugins();
     }
 
-	LibraryManager *LibraryManager::getInstance()
-	{
-        static LibraryManager instance;
-        return &instance;
-	}
-
-    void* LibraryManager::getFctFromName(const std::string &fctname, LibraryType libraryType)
+    for (std::map<std::string, IDynLibrary *>::iterator it = libLoaded.begin();
+         it != libLoaded.end(); ++it)
     {
-        std::lock_guard<std::recursive_mutex> lg(mutex_);
-        void *fct;
-        boost::filesystem::directory_iterator end_iter;
-        std::string extension = EXTENSION_LIB;
-
-        if (libLoaded.empty())
+        try
         {
-            scanPlugins();
+            if ((*it).second != nullptr &&
+                hasEnding((*it).first, enumType[libraryType] + extension) &&
+                (fct = (*it).second->getSymbol(fctname.c_str())) != nullptr)
+                return fct;
         }
-
-        for (std::map<std::string, IDynLibrary*>::iterator it = libLoaded.begin(); it != libLoaded.end(); ++it)
+        catch (...)
         {
-            try
+        }
+    }
+
+    return nullptr;
+}
+
+std::shared_ptr<ReaderProvider>
+LibraryManager::getReaderProvider(const std::string &readertype)
+{
+    std::lock_guard<std::recursive_mutex> lg(mutex_);
+    std::shared_ptr<ReaderProvider> ret;
+    std::string fctname = "get" + readertype + "Reader";
+
+    getprovider getpcscsfct;
+    *(void **)(&getpcscsfct) = getFctFromName(fctname, READERS_TYPE);
+
+    if (getpcscsfct)
+    {
+        getpcscsfct(&ret);
+    }
+
+    return ret;
+}
+
+std::shared_ptr<Chip> LibraryManager::getCard(const std::string &cardtype)
+{
+    std::lock_guard<std::recursive_mutex> lg(mutex_);
+    std::shared_ptr<Chip> ret;
+    std::string fctname = "get" + cardtype + "Chip";
+
+    getcard getcardfct;
+    *(void **)(&getcardfct) = getFctFromName(fctname, CARDS_TYPE);
+
+    if (getcardfct)
+    {
+        getcardfct(&ret);
+    }
+
+    return ret;
+}
+
+std::shared_ptr<KeyDiversification>
+LibraryManager::getKeyDiversification(const std::string &keydivtype)
+{
+    std::lock_guard<std::recursive_mutex> lg(mutex_);
+    std::shared_ptr<KeyDiversification> ret;
+    std::string fctname = "get" + keydivtype + "Diversification";
+
+    getdiversification getdiversificationfct;
+    *(void **)(&getdiversificationfct) = getFctFromName(fctname, CARDS_TYPE);
+
+    if (getdiversificationfct)
+    {
+        getdiversificationfct(&ret);
+    }
+
+    return ret;
+}
+
+std::shared_ptr<Commands> LibraryManager::getCommands(const std::string &extendedtype)
+{
+    std::lock_guard<std::recursive_mutex> lg(mutex_);
+    std::shared_ptr<Commands> ret;
+    std::string fctname = "get" + extendedtype + "Commands";
+
+    getcommands getcommandsfct;
+    *(void **)(&getcommandsfct) = getFctFromName(fctname, READERS_TYPE);
+    if (getcommandsfct)
+    {
+        getcommandsfct(&ret);
+    }
+
+    return ret;
+}
+
+std::shared_ptr<DataTransport>
+LibraryManager::getDataTransport(const std::string &transporttype)
+{
+    std::shared_ptr<DataTransport> ret;
+
+    if (transporttype == TRANSPORT_SERIALPORT)
+    {
+        ret.reset(new SerialPortDataTransport());
+    }
+    else if (transporttype == TRANSPORT_UDP)
+    {
+        ret.reset(new UdpDataTransport());
+    }
+    else if (transporttype == TRANSPORT_TCP)
+    {
+        ret.reset(new TcpDataTransport());
+    }
+
+    return ret;
+}
+
+std::vector<std::string> LibraryManager::getAvailableCards()
+{
+    std::lock_guard<std::recursive_mutex> lg(mutex_);
+    return getAvailablePlugins(CARDS_TYPE);
+}
+
+std::vector<std::string> LibraryManager::getAvailableReaders()
+{
+    std::lock_guard<std::recursive_mutex> lg(mutex_);
+    return getAvailablePlugins(READERS_TYPE);
+}
+
+std::vector<std::string> LibraryManager::getAvailableDataTransports()
+{
+    std::vector<std::string> list;
+
+    list.push_back(TRANSPORT_SERIALPORT);
+    list.push_back(TRANSPORT_UDP);
+    list.push_back(TRANSPORT_TCP);
+
+    return list;
+}
+
+std::vector<std::string> LibraryManager::getAvailablePlugins(LibraryType libraryType)
+{
+    std::lock_guard<std::recursive_mutex> lg(mutex_);
+    std::vector<std::string> plugins;
+    void *fct;
+    boost::filesystem::directory_iterator end_iter;
+    std::string fctname;
+
+    if (libraryType == CARDS_TYPE)
+    {
+        fctname = "getChipInfoAt";
+    }
+    else if (libraryType == READERS_TYPE)
+    {
+        fctname = "getReaderInfoAt";
+    }
+
+    if (libLoaded.empty())
+    {
+        scanPlugins();
+    }
+
+    for (std::map<std::string, IDynLibrary *>::iterator it = libLoaded.begin();
+         it != libLoaded.end(); ++it)
+    {
+        try
+        {
+            if ((*it).second != nullptr &&
+                (fct = (*it).second->getSymbol(fctname.c_str())) != nullptr)
             {
-                if ((*it).second != nullptr && hasEnding((*it).first, enumType[libraryType] + extension)
-		    && (fct = (*it).second->getSymbol(fctname.c_str())) != nullptr)
-                    return fct;
+                getobjectinfoat objectinfoptr;
+                *(void **)(&objectinfoptr) = fct;
+                getAvailablePlugins(plugins, objectinfoptr);
             }
-            catch (...) {}
         }
-
-        return nullptr;
+        catch (...)
+        {
+        }
     }
 
-    std::shared_ptr<ReaderProvider> LibraryManager::getReaderProvider(const std::string& readertype)
+    return plugins;
+}
+
+void LibraryManager::getAvailablePlugins(std::vector<std::string> &plugins,
+                                         getobjectinfoat objectinfoptr)
+{
+    char objectname[PLUGINOBJECT_MAXLEN];
+    memset(objectname, 0x00, sizeof(objectname));
+    void *getobjectptr;
+
+    unsigned int i = 0;
+    while (objectinfoptr(i, objectname, sizeof(objectname), &getobjectptr))
     {
-        std::lock_guard<std::recursive_mutex> lg(mutex_);
-        std::shared_ptr<ReaderProvider> ret;
-        std::string fctname = "get" + readertype + "Reader";
-
-        getprovider getpcscsfct;
-        *(void**)(&getpcscsfct) = getFctFromName(fctname, READERS_TYPE);
-
-        if (getpcscsfct)
-        {
-            getpcscsfct(&ret);
-        }
-
-        return ret;
-    }
-
-    std::shared_ptr<Chip> LibraryManager::getCard(const std::string& cardtype)
-    {
-        std::lock_guard<std::recursive_mutex> lg(mutex_);
-        std::shared_ptr<Chip> ret;
-        std::string fctname = "get" + cardtype + "Chip";
-
-        getcard getcardfct;
-        *(void**)(&getcardfct) = getFctFromName(fctname, CARDS_TYPE);
-
-        if (getcardfct)
-        {
-            getcardfct(&ret);
-        }
-
-        return ret;
-    }
-
-    std::shared_ptr<KeyDiversification> LibraryManager::getKeyDiversification(const std::string& keydivtype)
-    {
-        std::lock_guard<std::recursive_mutex> lg(mutex_);
-        std::shared_ptr<KeyDiversification> ret;
-        std::string fctname = "get" + keydivtype + "Diversification";
-
-        getdiversification getdiversificationfct;
-        *(void**)(&getdiversificationfct) = getFctFromName(fctname, CARDS_TYPE);
-
-        if (getdiversificationfct)
-        {
-            getdiversificationfct(&ret);
-        }
-
-        return ret;
-    }
-
-    std::shared_ptr<Commands> LibraryManager::getCommands(const std::string& extendedtype)
-    {
-        std::lock_guard<std::recursive_mutex> lg(mutex_);
-        std::shared_ptr<Commands> ret;
-        std::string fctname = "get" + extendedtype + "Commands";
-
-        getcommands getcommandsfct;
-        *(void**)(&getcommandsfct) = getFctFromName(fctname, READERS_TYPE);
-        if (getcommandsfct)
-        {
-            getcommandsfct(&ret);
-        }
-
-        return ret;
-    }
-
-    std::shared_ptr<DataTransport> LibraryManager::getDataTransport(const std::string& transporttype)
-    {
-        std::shared_ptr<DataTransport> ret;
-
-        if (transporttype == TRANSPORT_SERIALPORT)
-        {
-            ret.reset(new SerialPortDataTransport());
-        }
-        else if (transporttype == TRANSPORT_UDP)
-        {
-            ret.reset(new UdpDataTransport());
-        }
-        else if (transporttype == TRANSPORT_TCP)
-        {
-            ret.reset(new TcpDataTransport());
-        }
-
-        return ret;
-    }
-
-    std::vector<std::string> LibraryManager::getAvailableCards()
-    {
-        std::lock_guard<std::recursive_mutex> lg(mutex_);
-        return getAvailablePlugins(CARDS_TYPE);
-    }
-
-    std::vector<std::string> LibraryManager::getAvailableReaders()
-    {
-        std::lock_guard<std::recursive_mutex> lg(mutex_);
-        return getAvailablePlugins(READERS_TYPE);
-    }
-
-    std::vector<std::string> LibraryManager::getAvailableDataTransports()
-    {
-        std::vector<std::string> list;
-
-        list.push_back(TRANSPORT_SERIALPORT);
-        list.push_back(TRANSPORT_UDP);
-        list.push_back(TRANSPORT_TCP);
-
-        return list;
-    }
-
-    std::vector<std::string> LibraryManager::getAvailablePlugins(LibraryType libraryType)
-    {
-        std::lock_guard<std::recursive_mutex> lg(mutex_);
-        std::vector<std::string> plugins;
-        void* fct;
-        boost::filesystem::directory_iterator end_iter;
-        std::string fctname;
-
-        if (libraryType == CARDS_TYPE)
-        {
-            fctname = "getChipInfoAt";
-        }
-        else if (libraryType == READERS_TYPE)
-        {
-            fctname = "getReaderInfoAt";
-        }
-
-        if (libLoaded.empty())
-        {
-            scanPlugins();
-        }
-
-        for (std::map<std::string, IDynLibrary*>::iterator it = libLoaded.begin(); it != libLoaded.end(); ++it)
-        {
-            try
-            {
-                if ((*it).second != nullptr && (fct = (*it).second->getSymbol(fctname.c_str())) != nullptr)
-                {
-                    getobjectinfoat objectinfoptr;
-                    *(void**)(&objectinfoptr) = fct;
-                    getAvailablePlugins(plugins, objectinfoptr);
-                }
-            }
-            catch (...) {}
-        }
-
-        return plugins;
-    }
-
-    void LibraryManager::getAvailablePlugins(std::vector<std::string>& plugins, getobjectinfoat objectinfoptr)
-    {
-        char objectname[PLUGINOBJECT_MAXLEN];
+        plugins.push_back(std::string(objectname));
         memset(objectname, 0x00, sizeof(objectname));
-        void* getobjectptr;
+        ++i;
+    }
+}
 
-        unsigned int i = 0;
-        while (objectinfoptr(i, objectname, sizeof(objectname), &getobjectptr))
+std::shared_ptr<ReaderUnit> LibraryManager::getReader(const std::string &readerName) const
+{
+    std::lock_guard<std::recursive_mutex> lg(mutex_);
+    // The idea here is simply to loop over all shared library
+    // and opportunistically call the `getReaderUnit()` function if it exists, hoping
+    // that some module will be able to fulfil our request.
+    std::shared_ptr<ReaderUnit> readerUnit;
+    for (auto &&itr : libLoaded)
+    {
+        IDynLibrary *lib = itr.second;
+
+        if (lib->hasSymbol("getReaderUnit"))
         {
-            plugins.push_back(std::string(objectname));
-            memset(objectname, 0x00, sizeof(objectname));
-            ++i;
+            int (*fptr)(const std::string &, std::shared_ptr<ReaderUnit> &) = nullptr;
+            fptr = reinterpret_cast<decltype(fptr)>(lib->getSymbol("getReaderUnit"));
+            assert(fptr);
+            fptr(readerName, readerUnit);
+            if (readerUnit)
+                break;
         }
     }
+    return readerUnit;
+}
 
-    std::shared_ptr<ReaderUnit> LibraryManager::getReader(const std::string &readerName) const
+void LibraryManager::scanPlugins()
+{
+    std::lock_guard<std::recursive_mutex> lg(mutex_);
+    boost::filesystem::directory_iterator end_iter;
+    std::string extension = EXTENSION_LIB;
+    Settings *setting     = Settings::getInstance();
+    std::string fctname   = "getLibraryName";
+
+    LOG(LogLevel::PLUGINS) << "Will scan " << setting->PluginFolders.size()
+                           << " folders.";
+    for (std::vector<std::string>::iterator it = setting->PluginFolders.begin();
+         it != setting->PluginFolders.end(); ++it)
     {
-        std::lock_guard<std::recursive_mutex> lg(mutex_);
-        // The idea here is simply to loop over all shared library
-        // and opportunistically call the `getReaderUnit()` function if it exists, hoping
-        // that some module will be able to fulfil our request.
-        std::shared_ptr<ReaderUnit> readerUnit;
-        for (auto &&itr : libLoaded)
+        boost::filesystem::path pluginDir(*it);
+        if (exists(pluginDir) && is_directory(pluginDir))
         {
-            IDynLibrary *lib = itr.second;
-
-            if (lib->hasSymbol("getReaderUnit"))
+            LOG(LogLevel::PLUGINS) << "Scanning library folder " << pluginDir.string()
+                                   << " ...";
+            for (boost::filesystem::directory_iterator dir_iter(pluginDir);
+                 dir_iter != end_iter; ++dir_iter)
             {
-				int(*fptr)(const std::string &, std::shared_ptr<ReaderUnit> &) = nullptr;
-                fptr = reinterpret_cast<decltype(fptr)>(lib->getSymbol("getReaderUnit"));
-                assert(fptr);
-                fptr(readerName, readerUnit);
-                if (readerUnit)
-                    break;
-            }
-        }
-        return readerUnit;
-    }
-
-    void LibraryManager::scanPlugins()
-    {
-        std::lock_guard<std::recursive_mutex> lg(mutex_);
-	    boost::filesystem::directory_iterator end_iter;
-        std::string extension = EXTENSION_LIB;
-        Settings* setting = Settings::getInstance();
-        std::string fctname = "getLibraryName";
-
-        LOG(LogLevel::PLUGINS) << "Will scan " << setting->PluginFolders.size() << " folders.";
-        for (std::vector<std::string>::iterator it = setting->PluginFolders.begin(); it != setting->PluginFolders.end(); ++it)
-        {
-            boost::filesystem::path pluginDir(*it);
-            if (exists(pluginDir) && is_directory(pluginDir))
-            {
-                LOG(LogLevel::PLUGINS) << "Scanning library folder " << pluginDir.string() << " ...";
-                for (boost::filesystem::directory_iterator dir_iter(pluginDir); dir_iter != end_iter; ++dir_iter)
+                LOG(LogLevel::PLUGINS) << "Checking library "
+                                       << dir_iter->path().filename().string() << "...";
+                if ((is_regular_file(dir_iter->status()) ||
+                     is_symlink(dir_iter->status())) &&
+                    dir_iter->path().extension() == extension &&
+                    (hasEnding(dir_iter->path().filename().string(),
+                               enumType[CARDS_TYPE] + extension) ||
+                     hasEnding(dir_iter->path().filename().string(),
+                               enumType[READERS_TYPE] + extension) ||
+                     hasEnding(dir_iter->path().filename().string(),
+                               enumType[UNIFIED_TYPE] + extension)))
                 {
-                    LOG(LogLevel::PLUGINS) << "Checking library " << dir_iter->path().filename().string() << "...";
-                    if ((is_regular_file(dir_iter->status()) || is_symlink(dir_iter->status()))
-                        && dir_iter->path().extension() == extension
-                        && (hasEnding(dir_iter->path().filename().string(), enumType[CARDS_TYPE] + extension)
-                        || hasEnding(dir_iter->path().filename().string(), enumType[READERS_TYPE] + extension)
-                        || hasEnding(dir_iter->path().filename().string(), enumType[UNIFIED_TYPE] + extension)))
+                    try
                     {
-                        try
+                        if (libLoaded.find(dir_iter->path().filename().string()) ==
+                            libLoaded.end())
                         {
-                            if (libLoaded.find(dir_iter->path().filename().string()) == libLoaded.end())
+                            IDynLibrary *lib = newDynLibrary(dir_iter->path().string());
+                            void *fct        = lib->getSymbol(fctname.c_str());
+                            if (fct != nullptr)
                             {
-                                IDynLibrary* lib = newDynLibrary(dir_iter->path().string());
-                                void * fct = lib->getSymbol(fctname.c_str());
-                                if (fct != nullptr)
-                                {
-                                    LOG(LogLevel::PLUGINS) << "Library " << dir_iter->path().filename().string() << " loaded.";
-                                    libLoaded[dir_iter->path().filename().string()] = lib;
-                                }
-                                else
-                                {
-                                    LOG(LogLevel::PLUGINS) << "Cannot found library entry point in " << dir_iter->path().filename().string() << ". Skipped.";
-                                    delete lib;
-                                }
+                                LOG(LogLevel::PLUGINS)
+                                    << "Library " << dir_iter->path().filename().string()
+                                    << " loaded.";
+                                libLoaded[dir_iter->path().filename().string()] = lib;
                             }
                             else
                             {
-                                LOG(LogLevel::PLUGINS) << "Library " << dir_iter->path().filename().string() << " already loaded. Skipped.";
+                                LOG(LogLevel::PLUGINS)
+                                    << "Cannot found library entry point in "
+                                    << dir_iter->path().filename().string()
+                                    << ". Skipped.";
+                                delete lib;
                             }
                         }
-                        catch (const std::exception &e)
+                        else
                         {
-                            LOG(LogLevel::ERRORS) << "Something bad happened when handling " << dir_iter->path().filename().string() <<
-                            ": " << e.what();
+                            LOG(LogLevel::PLUGINS) << "Library "
+                                                   << dir_iter->path().filename().string()
+                                                   << " already loaded. Skipped.";
                         }
                     }
-                    else
+                    catch (const std::exception &e)
                     {
-                        LOG(LogLevel::PLUGINS) << "File " << dir_iter->path().filename().string() << " does not match excepted filenames. Skipped.";
+                        LOG(LogLevel::ERRORS) << "Something bad happened when handling "
+                                              << dir_iter->path().filename().string()
+                                              << ": " << e.what();
                     }
                 }
-            }
-            else
-            {
-                LOG(LogLevel::WARNINGS) << "Cannot found plug-in folder " << (*it);
+                else
+                {
+                    LOG(LogLevel::PLUGINS)
+                        << "File " << dir_iter->path().filename().string()
+                        << " does not match excepted filenames. Skipped.";
+                }
             }
         }
+        else
+        {
+            LOG(LogLevel::WARNINGS) << "Cannot found plug-in folder " << (*it);
+        }
     }
+}
 
 std::shared_ptr<CardService> LibraryManager::getCardService(std::shared_ptr<Chip> chip,
                                                             CardServiceType type)
@@ -317,7 +352,8 @@ std::shared_ptr<CardService> LibraryManager::getCardService(std::shared_ptr<Chip
 
         if (lib->hasSymbol("getCardService"))
         {
-            int (*fptr)(std::shared_ptr<Chip>, std::shared_ptr<CardService> &, CardServiceType) = nullptr;
+            int (*fptr)(std::shared_ptr<Chip>, std::shared_ptr<CardService> &,
+                        CardServiceType) = nullptr;
             fptr = reinterpret_cast<decltype(fptr)>(lib->getSymbol("getCardService"));
             assert(fptr);
             fptr(chip, srv, type);
@@ -328,7 +364,8 @@ std::shared_ptr<CardService> LibraryManager::getCardService(std::shared_ptr<Chip
     return srv;
 }
 
-ReaderServicePtr LibraryManager::getReaderService(ReaderUnitPtr reader, ReaderServiceType type)
+ReaderServicePtr LibraryManager::getReaderService(ReaderUnitPtr reader,
+                                                  ReaderServiceType type)
 {
     std::lock_guard<std::recursive_mutex> lg(mutex_);
     ReaderServicePtr srv;

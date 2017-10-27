@@ -7,21 +7,32 @@
 
 namespace logicalaccess
 {
-    class LIBLOGICALACCESS_API SagemKeyDiversification : public KeyDiversification
+class LIBLOGICALACCESS_API SagemKeyDiversification : public KeyDiversification
+{
+  public:
+    void initDiversification(ByteVector identifier, int AID, std::shared_ptr<Key> key,
+                             unsigned char keyno, ByteVector &diversify) override;
+    ByteVector getDiversifiedKey(std::shared_ptr<Key> key, ByteVector diversify) override;
+
+    SagemKeyDiversification()
     {
-    public:
-	    void initDiversification(ByteVector identifier, int AID, std::shared_ptr<Key> key, unsigned char keyno, ByteVector& diversify) override;
-	    ByteVector getDiversifiedKey(std::shared_ptr<Key> key, ByteVector diversify) override;
+    }
+    ~SagemKeyDiversification()
+    {
+    }
 
-        SagemKeyDiversification() {}
-        ~SagemKeyDiversification() {}
+    std::string getType() override
+    {
+        return "Sagem";
+    }
 
-	    std::string getType() override { return "Sagem"; }
-
-	    void serialize(boost::property_tree::ptree& parentNode) override;
-	    void unSerialize(boost::property_tree::ptree& node) override;
-	    std::string getDefaultXmlNodeName() const override { return "SagemKeyDiversification"; }
-    };
+    void serialize(boost::property_tree::ptree &parentNode) override;
+    void unSerialize(boost::property_tree::ptree &node) override;
+    std::string getDefaultXmlNodeName() const override
+    {
+        return "SagemKeyDiversification";
+    }
+};
 }
 
 #endif

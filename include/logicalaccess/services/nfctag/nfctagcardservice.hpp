@@ -12,27 +12,26 @@
 
 namespace logicalaccess
 {
+/**
+* \brief The NFC Tag storage card service base class.
+*/
+class LIBLOGICALACCESS_API NFCTagCardService : public CardService
+{
+  public:
     /**
-    * \brief The NFC Tag storage card service base class.
+    * \brief Constructor.
+    * \param chip The chip.
     */
-    class LIBLOGICALACCESS_API NFCTagCardService : public CardService
-    {
-    public:
+    explicit NFCTagCardService(std::shared_ptr<Chip> chip);
 
-        /**
-        * \brief Constructor.
-        * \param chip The chip.
-        */
-        explicit NFCTagCardService(std::shared_ptr<Chip> chip);
+    virtual ~NFCTagCardService();
 
-        virtual ~NFCTagCardService();
+    virtual void writeNDEF(std::shared_ptr<NdefMessage> records);
 
-        virtual void writeNDEF(std::shared_ptr<NdefMessage> records);
+    virtual std::shared_ptr<NdefMessage> readNDEF() = 0;
 
-        virtual std::shared_ptr<NdefMessage> readNDEF() = 0;
-
-        virtual void eraseNDEF();
-    };
+    virtual void eraseNDEF();
+};
 }
 
 #endif /* LOGICALACCESS_NFCTAGCARDSERVICE_HPP */

@@ -12,27 +12,27 @@
 
 namespace logicalaccess
 {
-    SpringCardReaderUnit::SpringCardReaderUnit(const std::string& name)
-        : PCSCReaderUnit(name)
-    {
-    }
+SpringCardReaderUnit::SpringCardReaderUnit(const std::string &name)
+    : PCSCReaderUnit(name)
+{
+}
 
-    SpringCardReaderUnit::~SpringCardReaderUnit()
-    {
-    }
+SpringCardReaderUnit::~SpringCardReaderUnit()
+{
+}
 
-    PCSCReaderUnitType SpringCardReaderUnit::getPCSCType() const
-    {
-        return PCSC_RUT_SPRINGCARD;
-    }
+PCSCReaderUnitType SpringCardReaderUnit::getPCSCType() const
+{
+    return PCSC_RUT_SPRINGCARD;
+}
 
-    std::shared_ptr<ResultChecker> SpringCardReaderUnit::createDefaultResultChecker() const
-    {
-        return std::make_shared<SpringCardResultChecker>();
-    }
+std::shared_ptr<ResultChecker> SpringCardReaderUnit::createDefaultResultChecker() const
+{
+    return std::make_shared<SpringCardResultChecker>();
+}
 
-    std::shared_ptr<CardProbe> SpringCardReaderUnit::createCardProbe()
-    {
-        return std::make_shared<SpringCardProbe>(this);
-    }
+std::shared_ptr<CardProbe> SpringCardReaderUnit::createCardProbe()
+{
+    return std::make_shared<SpringCardProbe>(this);
+}
 }

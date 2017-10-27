@@ -12,30 +12,27 @@
 
 namespace islogkbdlib
 {
-	class KEYBOARDHOOK_API KbdLogs
-	{
-		public:
+class KEYBOARDHOOK_API KbdLogs
+{
+  public:
+    static KbdLogs *getInstance();
 
-			static KbdLogs* getInstance();
+    static void Initialize();
+    static void Uninitialize();
 
-			static void Initialize();  
-			static void Uninitialize(); 
+    static void LogEvent(const char *, ...);
 
-			static void LogEvent(const char *, ...);
+  protected:
+    KbdLogs();
 
-		protected:
+    static void OpenLogFile(const char *pszLogFile);
+    static void CloseLogFile();
 
-			KbdLogs();
+    static KbdLogs *instance;
 
-			static void OpenLogFile(const char* pszLogFile);
-			static void CloseLogFile();
-
-			static KbdLogs* instance;
-
-		private:
-
-			static FILE* currentLogFile;
-	};
+  private:
+    static FILE *currentLogFile;
+};
 }
 
 #endif

@@ -17,22 +17,23 @@
 
 namespace logicalaccess
 {
-    MifareUltralightCACSACRCommands::MifareUltralightCACSACRCommands()
-        : MifareUltralightCPCSCCommands(CMD_MIFAREULTRALIGHTCACSACR)
-    {
-    }
+MifareUltralightCACSACRCommands::MifareUltralightCACSACRCommands()
+    : MifareUltralightCPCSCCommands(CMD_MIFAREULTRALIGHTCACSACR)
+{
+}
 
-	MifareUltralightCACSACRCommands::MifareUltralightCACSACRCommands(std::string ct)
-		: MifareUltralightCPCSCCommands(ct)
-	{
-	}
+MifareUltralightCACSACRCommands::MifareUltralightCACSACRCommands(std::string ct)
+    : MifareUltralightCPCSCCommands(ct)
+{
+}
 
-    MifareUltralightCACSACRCommands::~MifareUltralightCACSACRCommands()
-    {
-    }
+MifareUltralightCACSACRCommands::~MifareUltralightCACSACRCommands()
+{
+}
 
-    ByteVector MifareUltralightCACSACRCommands::sendGenericCommand(const ByteVector& data)
-    {
-        return getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x00, 0x00, 0x00, static_cast<unsigned char>(data.size()), data);
-    }
+ByteVector MifareUltralightCACSACRCommands::sendGenericCommand(const ByteVector &data)
+{
+    return getPCSCReaderCardAdapter()->sendAPDUCommand(
+        0xFF, 0x00, 0x00, 0x00, static_cast<unsigned char>(data.size()), data);
+}
 }

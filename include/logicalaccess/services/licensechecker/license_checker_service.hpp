@@ -18,8 +18,10 @@ namespace logicalaccess
 class LIBLOGICALACCESS_API LicenseCheckerService : public ReaderService
 {
   public:
-	explicit LicenseCheckerService(ReaderUnitPtr ru)
-		: ReaderService(ru, RST_LICENSE_CHECKER){}
+    explicit LicenseCheckerService(ReaderUnitPtr ru)
+        : ReaderService(ru, RST_LICENSE_CHECKER)
+    {
+    }
 
     virtual ~LicenseCheckerService() = default;
 
@@ -42,8 +44,8 @@ class LIBLOGICALACCESS_API LicenseCheckerService : public ReaderService
      * specified
      * will default to representing the default key.
      */
-    virtual void writeLicenseKey(const KeyStoragePtr &storage_info,
-                                 const KeyPtr &key, KeyPtr oldKey = nullptr) = 0;
+    virtual void writeLicenseKey(const KeyStoragePtr &storage_info, const KeyPtr &key,
+                                 KeyPtr oldKey = nullptr) = 0;
 
     /**
      * Attempt to validate the license key against the one stored on the reader.

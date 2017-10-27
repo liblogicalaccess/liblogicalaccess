@@ -36,8 +36,7 @@ int main(int ac, char **av)
     ChipPtr chip;
     tie(provider, readerUnit, chip) = lla_test_init();
 
-    PRINT_TIME(
-        "Chip identifier: " << BufferHelper::getHex(chip->getChipIdentifier()));
+    PRINT_TIME("Chip identifier: " << BufferHelper::getHex(chip->getChipIdentifier()));
 
     std::shared_ptr<AccessControlCardService> acs =
         std::dynamic_pointer_cast<AccessControlCardService>(
@@ -48,8 +47,7 @@ int main(int ac, char **av)
                                std::make_shared<ProxLocation>(), nullptr);
     auto buffer = ret->getLinearData();
 
-    std::cout << "Format: " << ByteVector(buffer.begin(), buffer.end())
-              << std::endl;
+    std::cout << "Format: " << ByteVector(buffer.begin(), buffer.end()) << std::endl;
 
     pcsc_test_shutdown(readerUnit);
     return 0;

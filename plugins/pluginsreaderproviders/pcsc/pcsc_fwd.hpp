@@ -7,8 +7,8 @@
 
 namespace logicalaccess
 {
-    class PCSCReaderCardAdapter;
-    class PCSCReaderProvider;
+class PCSCReaderCardAdapter;
+class PCSCReaderProvider;
 }
 
-#endif //LIBLOGICALACCESS_PCSC_FWD_HPP
+#endif // LIBLOGICALACCESS_PCSC_FWD_HPP

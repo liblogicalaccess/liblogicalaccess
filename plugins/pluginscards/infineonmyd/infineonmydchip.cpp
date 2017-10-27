@@ -13,22 +13,22 @@
 
 namespace logicalaccess
 {
-    InfineonMYDChip::InfineonMYDChip()
-        : ISO15693Chip(CHIP_INFINEONMYD)
-    {
-    }
+InfineonMYDChip::InfineonMYDChip()
+    : ISO15693Chip(CHIP_INFINEONMYD)
+{
+}
 
-    InfineonMYDChip::~InfineonMYDChip()
-    {
-    }
+InfineonMYDChip::~InfineonMYDChip()
+{
+}
 
-    std::shared_ptr<LocationNode> InfineonMYDChip::getRootLocationNode()
-    {
-        std::shared_ptr<LocationNode> rootNode;
-        rootNode.reset(new LocationNode());
+std::shared_ptr<LocationNode> InfineonMYDChip::getRootLocationNode()
+{
+    std::shared_ptr<LocationNode> rootNode;
+    rootNode.reset(new LocationNode());
 
-        rootNode->setName("Infineon My-D");
+    rootNode->setName("Infineon My-D");
 
-        return rootNode;
-    }
+    return rootNode;
+}
 }

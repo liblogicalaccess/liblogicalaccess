@@ -19,21 +19,13 @@ std::shared_ptr<KeyStorage> KeyStorage::getKeyStorageFromType(KeyStorageType kst
 
     switch (kst)
     {
-    case KST_COMPUTER_MEMORY:
-        ret.reset(new ComputerMemoryKeyStorage());
-        break;
+    case KST_COMPUTER_MEMORY: ret.reset(new ComputerMemoryKeyStorage()); break;
 
-    case KST_READER_MEMORY:
-        ret.reset(new ReaderMemoryKeyStorage());
-        break;
+    case KST_READER_MEMORY: ret.reset(new ReaderMemoryKeyStorage()); break;
 
-    case KST_SAM:
-        ret.reset(new SAMKeyStorage());
-        break;
+    case KST_SAM: ret.reset(new SAMKeyStorage()); break;
 
-    case KST_SERVER:
-        ret.reset(new IKSStorage());
-        break;
+    case KST_SERVER: ret.reset(new IKSStorage()); break;
     }
 
     return ret;
@@ -76,10 +68,10 @@ void KeyStorage::unSerialize(boost::property_tree::ptree &node)
     auto n = key_storage.get_child_optional("metadata");
     if (n)
     {
-        for (auto const &current_node: *n)
+        for (auto const &current_node : *n)
         {
-	        const std::string pname = current_node.first;
-	        const std::string pvalue = current_node.second.data();
+            const std::string pname  = current_node.first;
+            const std::string pvalue = current_node.second.data();
 
             addMetadata(pname, pvalue);
         }

@@ -17,36 +17,39 @@
 
 namespace logicalaccess
 {
+/**
+ * \brief A A3MLGM5600 LCD Display class.
+ */
+class LIBLOGICALACCESS_API A3MLGM5600LCDDisplay : public LCDDisplay
+{
+  public:
     /**
-     * \brief A A3MLGM5600 LCD Display class.
+     * \brief Constructor.
      */
-    class LIBLOGICALACCESS_API A3MLGM5600LCDDisplay : public LCDDisplay
+    A3MLGM5600LCDDisplay();
+
+    /**
+     * \brief Write a message on screen.
+     * \param message The message to show.
+     */
+    void setMessage(std::string message) override;
+
+
+    void clear() override;
+
+    /**
+     * \brief Write a message on screen.
+     * \param rowid The row id for the message.
+     * \param message The message to show.
+     */
+    void setMessage(unsigned char rowid, std::string message) override;
+
+    std::shared_ptr<A3MLGM5600ReaderCardAdapter> getA3MLGM5600ReaderCardAdapter() const
     {
-    public:
-
-        /**
-         * \brief Constructor.
-         */
-        A3MLGM5600LCDDisplay();
-
-        /**
-         * \brief Write a message on screen.
-         * \param message The message to show.
-         */
-	    void setMessage(std::string message) override;
-
-
-	    void clear() override;
-
-        /**
-         * \brief Write a message on screen.
-         * \param rowid The row id for the message.
-         * \param message The message to show.
-         */
-	    void setMessage(unsigned char rowid, std::string message) override;
-
-        std::shared_ptr<A3MLGM5600ReaderCardAdapter> getA3MLGM5600ReaderCardAdapter() const { return std::dynamic_pointer_cast<A3MLGM5600ReaderCardAdapter>(getReaderCardAdapter()); }
-    };
+        return std::dynamic_pointer_cast<A3MLGM5600ReaderCardAdapter>(
+            getReaderCardAdapter());
+    }
+};
 }
 
 #endif /* LOGICALACCESS_A3MLGM5600LCDDISPLAY_HPP */

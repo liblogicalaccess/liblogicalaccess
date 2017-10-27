@@ -28,16 +28,20 @@ int register_cipher(const struct ltc_cipher_descriptor *cipher)
 
     /* is it already registered? */
     LTC_MUTEX_LOCK(&ltc_cipher_mutex);
-    for (x = 0; x < TAB_SIZE; x++) {
-        if (cipher_descriptor[x].name != nullptr && cipher_descriptor[x].ID == cipher->ID) {
+    for (x = 0; x < TAB_SIZE; x++)
+    {
+        if (cipher_descriptor[x].name != nullptr && cipher_descriptor[x].ID == cipher->ID)
+        {
             LTC_MUTEX_UNLOCK(&ltc_cipher_mutex);
             return x;
         }
     }
 
     /* find a blank spot */
-    for (x = 0; x < TAB_SIZE; x++) {
-        if (cipher_descriptor[x].name == nullptr) {
+    for (x = 0; x < TAB_SIZE; x++)
+    {
+        if (cipher_descriptor[x].name == nullptr)
+        {
             XMEMCPY(&cipher_descriptor[x], cipher, sizeof(struct ltc_cipher_descriptor));
             LTC_MUTEX_UNLOCK(&ltc_cipher_mutex);
             return x;

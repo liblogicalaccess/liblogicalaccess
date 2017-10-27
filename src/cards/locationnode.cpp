@@ -9,107 +9,112 @@
 
 namespace logicalaccess
 {
-    LocationNode::LocationNode()
-		: d_needAuthentication(false), d_hasProperties(false), d_length(0), d_unit(1), d_can_read(true), d_can_write(true)
-    {
-    }
+LocationNode::LocationNode()
+    : d_needAuthentication(false)
+    , d_hasProperties(false)
+    , d_length(0)
+    , d_unit(1)
+    , d_can_read(true)
+    , d_can_write(true)
+{
+}
 
-    LocationNode::~LocationNode()
-    {
-    }
+LocationNode::~LocationNode()
+{
+}
 
-    void LocationNode::setName(const std::string& name)
-    {
-        d_name = name;
-    }
+void LocationNode::setName(const std::string &name)
+{
+    d_name = name;
+}
 
-	std::string LocationNode::getName() const
-    {
-        return d_name;
-    }
+std::string LocationNode::getName() const
+{
+    return d_name;
+}
 
-	std::vector<std::shared_ptr<LocationNode> >& LocationNode::getChildrens()
-    {
-        return d_childrens;
-    }
+std::vector<std::shared_ptr<LocationNode>> &LocationNode::getChildrens()
+{
+    return d_childrens;
+}
 
-    void LocationNode::setNeedAuthentication(bool needed)
-    {
-        d_needAuthentication = needed;
-    }
+void LocationNode::setNeedAuthentication(bool needed)
+{
+    d_needAuthentication = needed;
+}
 
-    bool LocationNode::getNeedAuthentication() const
-    {
-        return d_needAuthentication;
-    }
+bool LocationNode::getNeedAuthentication() const
+{
+    return d_needAuthentication;
+}
 
-    void LocationNode::setLength(size_t length)
-    {
-        d_length = length;
-    }
+void LocationNode::setLength(size_t length)
+{
+    d_length = length;
+}
 
-    size_t LocationNode::getLength() const
-    {
-        return d_length;
-    }
+size_t LocationNode::getLength() const
+{
+    return d_length;
+}
 
-    void LocationNode::setLocation(std::shared_ptr<Location> location)
-    {
-        d_location = location;
-    }
+void LocationNode::setLocation(std::shared_ptr<Location> location)
+{
+    d_location = location;
+}
 
-    std::shared_ptr<Location> LocationNode::getLocation() const
-    {
-        return d_location;
-    }
+std::shared_ptr<Location> LocationNode::getLocation() const
+{
+    return d_location;
+}
 
-    void LocationNode::setUnit(size_t unit)
-    {
-        d_unit = unit;
-    }
+void LocationNode::setUnit(size_t unit)
+{
+    d_unit = unit;
+}
 
-    size_t LocationNode::getUnit() const
-    {
-        return d_unit;
-    }
+size_t LocationNode::getUnit() const
+{
+    return d_unit;
+}
 
-    void LocationNode::setHasProperties(bool hasProperties)
-    {
-        d_hasProperties = hasProperties;
-    }
+void LocationNode::setHasProperties(bool hasProperties)
+{
+    d_hasProperties = hasProperties;
+}
 
-    bool LocationNode::getHasProperties() const
-    {
-        return d_hasProperties;
-    }
+bool LocationNode::getHasProperties() const
+{
+    return d_hasProperties;
+}
 
-    void LocationNode::setParent(std::weak_ptr<LocationNode> parent)
-    {
-        d_parent = parent;
-    }
+void LocationNode::setParent(std::weak_ptr<LocationNode> parent)
+{
+    d_parent = parent;
+}
 
-    std::shared_ptr<LocationNode> LocationNode::getParent() const
-    {
-        return d_parent.lock();
-    }
+std::shared_ptr<LocationNode> LocationNode::getParent() const
+{
+    return d_parent.lock();
+}
 
-	void LocationNode::setCanRead(bool can)
-	{
-		d_can_read = can;
-	}
+void LocationNode::setCanRead(bool can)
+{
+    d_can_read = can;
+}
 
-	bool LocationNode::getCanRead() const
-	{
-		return d_can_read;
-	}
+bool LocationNode::getCanRead() const
+{
+    return d_can_read;
+}
 
-	void LocationNode::setCanWrite(bool can)
-	{
-		d_can_write = can;
-	}
+void LocationNode::setCanWrite(bool can)
+{
+    d_can_write = can;
+}
 
-	bool LocationNode::getCanWrite() const
-	{
-		return d_can_write;
-	}
+bool LocationNode::getCanWrite() const
+{
+    return d_can_write;
+}
 }

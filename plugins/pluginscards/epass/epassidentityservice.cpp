@@ -31,7 +31,7 @@ ByteVector EPassIdentityService::getPicture()
     auto chip = getEPassChip();
     EXCEPTION_ASSERT_WITH_LOG(chip, LibLogicalAccessException,
                               "No or invalid chip object in EPassIdentityService");
-	
+
     auto cmd = chip->getEPassCommands();
     assert(cmd);
 
@@ -52,9 +52,8 @@ std::shared_ptr<EPassChip> EPassIdentityService::getEPassChip() const
 std::shared_ptr<EPassAccessInfo> EPassIdentityService::getEPassAccessInfo() const
 {
     auto ai = std::dynamic_pointer_cast<EPassAccessInfo>(access_info_);
-    EXCEPTION_ASSERT_WITH_LOG(
-        ai, LibLogicalAccessException,
-        "EPassIdentity Service expects a valid EPassAccessInfo");
+    EXCEPTION_ASSERT_WITH_LOG(ai, LibLogicalAccessException,
+                              "EPassIdentity Service expects a valid EPassAccessInfo");
 
     return ai;
 }
@@ -79,18 +78,18 @@ EPassDG1 EPassIdentityService::getDG1()
 
 ByteVector EPassIdentityService::getData(MetaData what)
 {
-	ByteVector out;
+    ByteVector out;
     if (what == MetaData::PICTURE)
     {
         out = getPicture();
     }
 
-	return out;
+    return out;
 }
 
 std::string EPassIdentityService::getString(MetaData what)
 {
-	std::string out;
+    std::string out;
     if (what == MetaData::NAME)
     {
         out = getName();
@@ -108,7 +107,7 @@ std::string EPassIdentityService::getString(MetaData what)
 
 std::chrono::system_clock::time_point EPassIdentityService::getTime(MetaData what)
 {
-	std::chrono::system_clock::time_point out;
+    std::chrono::system_clock::time_point out;
     if (what == MetaData::BIRTHDATE)
     {
         out = getDG1().birthdate_;

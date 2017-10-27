@@ -11,18 +11,14 @@
 
 namespace logicalaccess
 {
-    DataRepresentation* DataRepresentation::getByEncodingType(EncodingType type)
+DataRepresentation *DataRepresentation::getByEncodingType(EncodingType type)
+{
+    switch (type)
     {
-        switch (type)
-        {
-        case ET_BIGENDIAN:
-            return new BigEndianDataRepresentation();
-        case ET_LITTLEENDIAN:
-            return new LittleEndianDataRepresentation();
-        case ET_NOENCODING:
-            return new NoDataRepresentation();
-        default:
-            return nullptr;
-        }
+    case ET_BIGENDIAN: return new BigEndianDataRepresentation();
+    case ET_LITTLEENDIAN: return new LittleEndianDataRepresentation();
+    case ET_NOENCODING: return new NoDataRepresentation();
+    default: return nullptr;
     }
+}
 }

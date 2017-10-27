@@ -16,61 +16,66 @@
 
 namespace logicalaccess
 {
-#define	CHIP_CPS3	"CPS3"
+#define CHIP_CPS3 "CPS3"
+
+/**
+ * \brief The CPS3 base chip class.
+ */
+class LIBLOGICALACCESS_API CPS3Chip : public ISO7816Chip
+{
+  public:
+    /**
+     * \brief Constructor.
+     */
+    explicit CPS3Chip(std::string ct);
 
     /**
-     * \brief The CPS3 base chip class.
+     * \brief Constructor.
      */
-    class LIBLOGICALACCESS_API CPS3Chip : public ISO7816Chip
+    CPS3Chip();
+
+    /**
+     * \brief Destructor.
+     */
+    virtual ~CPS3Chip();
+
+    /**
+     * \brief Get the generic card type.
+     * \return The generic card type.
+     */
+    std::string getGenericCardType() const override
     {
-    public:
+        return CHIP_CPS3;
+    }
 
-        /**
-         * \brief Constructor.
-         */
-	    explicit CPS3Chip(std::string ct);
+    /**
+     * \brief Get the root location node.
+     * \return The root location node.
+     */
+    std::shared_ptr<LocationNode> getRootLocationNode() override;
 
-        /**
-         * \brief Constructor.
-         */
-		CPS3Chip();
+    /**
+     * \brief Get a card service for this chip.
+     * \param serviceType The card service type.
+     * \return The card service.
+     */
+    std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
 
-        /**
-         * \brief Destructor.
-         */
-		virtual ~CPS3Chip();
+    /**
+    * \brief Create default CPS3 location.
+    * \return Default CPS3 location.
+    */
+    std::shared_ptr<Location> createLocation() const override;
 
-        /**
-         * \brief Get the generic card type.
-         * \return The generic card type.
-         */
-	    std::string getGenericCardType() const override { return CHIP_CPS3; }
-
-        /**
-         * \brief Get the root location node.
-         * \return The root location node.
-         */
-	    std::shared_ptr<LocationNode> getRootLocationNode() override;
-
-        /**
-         * \brief Get a card service for this chip.
-         * \param serviceType The card service type.
-         * \return The card service.
-         */
-	    std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
-
-		/**
-		* \brief Create default CPS3 location.
-		* \return Default CPS3 location.
-		*/
-	    std::shared_ptr<Location> createLocation() const override;
-
-        /**
-         * \brief Get the CPS3 card provider for I/O access.
-         * \return The CPS3 card provider.
-         */
-		std::shared_ptr<CPS3Commands> getCPS3Commands() const { return std::dynamic_pointer_cast<CPS3Commands>(getCommands()); }
-    };
+    /**
+     * \brief Get the CPS3 card provider for I/O access.
+     * \return The CPS3 card provider.
+     */
+    std::shared_ptr<CPS3Commands> getCPS3Commands() const
+    {
+        return std::dynamic_pointer_cast<CPS3Commands>(getCommands());
+    }
+};
 }
 
 #endif

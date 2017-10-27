@@ -11,31 +11,30 @@
 
 namespace logicalaccess
 {
+/**
+ * \brief A linearizable base class. Add binary serialization to a class.
+ */
+class LIBLOGICALACCESS_API Linearizable
+{
+  public:
     /**
-     * \brief A linearizable base class. Add binary serialization to a class.
+     * \brief Destructor.
      */
-    class LIBLOGICALACCESS_API Linearizable
-    {
-    public:
+    virtual ~Linearizable();
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~Linearizable();
+    /**
+     * \brief Export location informations to a buffer.
+     * \param data The buffer.
+     */
+    virtual ByteVector getLinearData() const = 0;
 
-        /**
-         * \brief Export location informations to a buffer.
-         * \param data The buffer.
-         */
-        virtual ByteVector getLinearData() const = 0;
-
-        /**
-         * \brief Import location informations from a buffer.
-         * \param data The buffer.
-         * \param offset The offset.
-         */
-        virtual void setLinearData(const ByteVector& data, size_t offset) = 0;
-    };
+    /**
+     * \brief Import location informations from a buffer.
+     * \param data The buffer.
+     * \param offset The offset.
+     */
+    virtual void setLinearData(const ByteVector &data, size_t offset) = 0;
+};
 }
 
 #endif /* LINEARIZABLE_HPP */

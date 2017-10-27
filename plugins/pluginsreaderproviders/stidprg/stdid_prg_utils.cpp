@@ -15,7 +15,7 @@ static bool get_nth_bit(const ByteVector &v, int n)
 
 ByteVector STidPRGUtils::prox_configuration_bytes(const Format &fmt)
 {
-    auto length = fmt.getDataLength();
+    auto length     = fmt.getDataLength();
     ByteVector data = fmt.getLinearData();
 
     ByteVector out = {0x00, 0x10, 0x70, 0x60}; // Block 0 always this.
@@ -29,7 +29,7 @@ ByteVector STidPRGUtils::prox_configuration_bytes(const Format &fmt)
         tmp[6]           = true; // HID bit
         auto padding     = 37 - length;
         tmp[6 + padding] = true; // Start bit
-        for (int i                = 0; i < static_cast<int>(length); ++i)
+        for (int i                   = 0; i < static_cast<int>(length); ++i)
             tmp[6 + padding + 1 + i] = get_nth_bit(data, i);
     }
     else if (length == 37)

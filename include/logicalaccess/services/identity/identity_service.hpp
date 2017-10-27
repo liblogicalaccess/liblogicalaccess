@@ -48,24 +48,24 @@ class LIBLOGICALACCESS_API IdentityCardService : public CardService
         EXPIRATION
     };
 
-	explicit IdentityCardService(std::shared_ptr<Chip> chip);
+    explicit IdentityCardService(std::shared_ptr<Chip> chip);
 
     virtual ~IdentityCardService() = default;
 
     /**
      * Method used to retrieve identity data that fits
      */
-	virtual std::string getString(MetaData what) = 0;
+    virtual std::string getString(MetaData what) = 0;
 
     /**
      * Used to retrieve binary data (picture).
      */
-	virtual ByteVector getData(MetaData what) = 0;
+    virtual ByteVector getData(MetaData what) = 0;
 
     /**
      * To retrieve date entry.
      */
-	virtual std::chrono::system_clock::time_point getTime(MetaData what) = 0;
+    virtual std::chrono::system_clock::time_point getTime(MetaData what) = 0;
 
     /**
      * Provide an AccessInfo that will be used by underlying implementation

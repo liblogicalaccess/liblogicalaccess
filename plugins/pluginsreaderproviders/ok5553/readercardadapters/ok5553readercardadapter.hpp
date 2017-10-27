@@ -17,39 +17,38 @@
 
 namespace logicalaccess
 {
+/**
+ * \brief A default OK5553 reader/card adapter class.
+ */
+class LIBLOGICALACCESS_API OK5553ReaderCardAdapter : public ReaderCardAdapter
+{
+  public:
     /**
-     * \brief A default OK5553 reader/card adapter class.
+     * \brief Constructor.
      */
-    class LIBLOGICALACCESS_API OK5553ReaderCardAdapter : public ReaderCardAdapter
-    {
-    public:
+    OK5553ReaderCardAdapter();
 
-        /**
-         * \brief Constructor.
-         */
-        OK5553ReaderCardAdapter();
+    /**
+     * \brief Destructor.
+     */
+    virtual ~OK5553ReaderCardAdapter();
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~OK5553ReaderCardAdapter();
+    /**
+     * \brief Adapt the command to send to the reader.
+     * \param command The command to send.
+     * \return The adapted command to send.
+     */
+    ByteVector adaptCommand(const ByteVector &command) override;
 
-        /**
-         * \brief Adapt the command to send to the reader.
-         * \param command The command to send.
-         * \return The adapted command to send.
-         */
-	    ByteVector adaptCommand(const ByteVector& command) override;
+    /**
+     * \brief Adapt the asnwer received from the reader.
+     * \param answer The answer received.
+     * \return The adapted answer received.
+     */
+    ByteVector adaptAnswer(const ByteVector &answer) override;
 
-        /**
-         * \brief Adapt the asnwer received from the reader.
-         * \param answer The answer received.
-         * \return The adapted answer received.
-         */
-	    ByteVector adaptAnswer(const ByteVector& answer) override;
-
-        ByteVector sendAsciiCommand(const std::string& command, long int timeout = 2000);
-    };
+    ByteVector sendAsciiCommand(const std::string &command, long int timeout = 2000);
+};
 }
 
 #endif /* LOGICALACCESS_DEFAULTOK5553READERCARDADAPTER_HPP */

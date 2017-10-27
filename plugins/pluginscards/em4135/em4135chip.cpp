@@ -15,22 +15,22 @@
 
 namespace logicalaccess
 {
-    EM4135Chip::EM4135Chip()
-        : Chip("EM4135")
-    {
-    }
+EM4135Chip::EM4135Chip()
+    : Chip("EM4135")
+{
+}
 
-    EM4135Chip::~EM4135Chip()
-    {
-    }
+EM4135Chip::~EM4135Chip()
+{
+}
 
-    std::shared_ptr<LocationNode> EM4135Chip::getRootLocationNode()
-    {
-        std::shared_ptr<LocationNode> rootNode;
-        rootNode.reset(new LocationNode());
+std::shared_ptr<LocationNode> EM4135Chip::getRootLocationNode()
+{
+    std::shared_ptr<LocationNode> rootNode;
+    rootNode.reset(new LocationNode());
 
-        rootNode->setName("EM4135");
+    rootNode->setName("EM4135");
 
-        return rootNode;
-    }
+    return rootNode;
+}
 }

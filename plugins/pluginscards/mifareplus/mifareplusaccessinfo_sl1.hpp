@@ -11,22 +11,22 @@
 
 namespace logicalaccess
 {
-    class LIBLOGICALACCESS_API MifarePlusSL1AccessInfo : public MifareAccessInfo
-    {
-      public:
-        MifarePlusSL1AccessInfo();
+class LIBLOGICALACCESS_API MifarePlusSL1AccessInfo : public MifareAccessInfo
+{
+  public:
+    MifarePlusSL1AccessInfo();
 
-	    void serialize(boost::property_tree::ptree &parentNode) override;
+    void serialize(boost::property_tree::ptree &parentNode) override;
 
-	    void unSerialize(boost::property_tree::ptree &parentNode) override;
+    void unSerialize(boost::property_tree::ptree &parentNode) override;
 
-	    std::string getDefaultXmlNodeName() const override;
+    std::string getDefaultXmlNodeName() const override;
 
-        /**
-         * Key for card authentication in SL1.
-         */
-        std::shared_ptr<AES128Key> aesAuthKey;
-    };
+    /**
+     * Key for card authentication in SL1.
+     */
+    std::shared_ptr<AES128Key> aesAuthKey;
+};
 }
 
-#endif //LIBLOGICALACCESS_MIFAREPLUSACCESSINFO_SL1_HPP
+#endif // LIBLOGICALACCESS_MIFAREPLUSACCESSINFO_SL1_HPP

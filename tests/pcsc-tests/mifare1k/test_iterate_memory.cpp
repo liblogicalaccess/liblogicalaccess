@@ -10,10 +10,12 @@
 
 void introduction()
 {
-    PRINT_TIME("This test target Mifare1K cards. Iterate over memory area and count them.");
+    PRINT_TIME(
+        "This test target Mifare1K cards. Iterate over memory area and count them.");
 
     PRINT_TIME("You will have 20 seconds to insert a card. Test log below");
-    PRINT_TIME("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    PRINT_TIME(
+        "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
     LLA_SUBTEST_REGISTER("Iteration");
 }
@@ -29,24 +31,25 @@ int main(int ac, char **av)
     ChipPtr chip;
     tie(provider, readerUnit, chip) = lla_test_init();
 
-    PRINT_TIME("Chip identifier: " <<
-               BufferHelper::getHex(chip->getChipIdentifier()));
-/*
-    LLA_ASSERT(chip->getCardType() == "Mifare1K",
-               "Chip is not a Mifare1K, but is " + chip->getCardType() +
-               " instead.");*/
+    PRINT_TIME("Chip identifier: " << BufferHelper::getHex(chip->getChipIdentifier()));
+    /*
+        LLA_ASSERT(chip->getCardType() == "Mifare1K",
+                   "Chip is not a Mifare1K, but is " + chip->getCardType() +
+                   " instead.");*/
 
 
     // Get the root node
     std::shared_ptr<LocationNode> rootNode = chip->getRootLocationNode();
     // Get childrens of this node
-    std::vector<std::shared_ptr<LocationNode> > childs = rootNode->getChildrens();
-    int size = 0 ;
-    for (std::vector<std::shared_ptr<LocationNode> >::iterator i = childs.begin(); i != childs.end(); ++i)
+    std::vector<std::shared_ptr<LocationNode>> childs = rootNode->getChildrens();
+    int size                                          = 0;
+    for (std::vector<std::shared_ptr<LocationNode>>::iterator i = childs.begin();
+         i != childs.end(); ++i)
     {
         // Display node information
         int tmp_size = (int)((*i)->getLength() * (*i)->getUnit());
-        std::cout << "Size of node " << (*i)->getName() << ": " << tmp_size << " bytes" << std::endl;
+        std::cout << "Size of node " << (*i)->getName() << ": " << tmp_size << " bytes"
+                  << std::endl;
         size += tmp_size;
     }
     LLA_ASSERT(childs.size() == 16, "Unexpected number of children");

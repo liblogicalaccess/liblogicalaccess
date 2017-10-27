@@ -13,35 +13,37 @@
 
 namespace logicalaccess
 {
+/**
+ * \brief A location informations.
+ */
+class LIBLOGICALACCESS_API Location : public XmlSerializable
+{
+  public:
+    virtual ~Location() = default;
+
     /**
-     * \brief A location informations.
+     * \brief Get the card type for this location.
+     * \return The card type.
      */
-    class LIBLOGICALACCESS_API Location : public XmlSerializable
+    virtual std::string getCardType() = 0;
+
+    /**
+     * \brief Equality operator
+     * \param location Location to compare.
+     * \return True if equals, false otherwise.
+     */
+    virtual bool operator==(const Location &location) const;
+
+    /**
+     * \brief Inequality operator
+     * \param location Location to compare.
+     * \return True if inequals, false otherwise.
+     */
+    bool operator!=(const Location &location) const
     {
-    public:
-
-        virtual ~Location() = default;
-
-        /**
-         * \brief Get the card type for this location.
-         * \return The card type.
-         */
-        virtual std::string getCardType() = 0;
-
-        /**
-         * \brief Equality operator
-         * \param location Location to compare.
-         * \return True if equals, false otherwise.
-         */
-        virtual bool operator==(const Location& location) const;
-
-        /**
-         * \brief Inequality operator
-         * \param location Location to compare.
-         * \return True if inequals, false otherwise.
-         */
-        bool operator!=(const Location& location) const { return !operator==(location); }
-    };
+        return !operator==(location);
+    }
+};
 }
 
 #endif /* LOGICALACCESS_LOCATION_HPP */

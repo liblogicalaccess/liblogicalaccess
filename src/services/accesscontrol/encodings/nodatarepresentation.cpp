@@ -10,54 +10,54 @@
 
 namespace logicalaccess
 {
-    NoDataRepresentation::NoDataRepresentation()
-    {
-    }
+NoDataRepresentation::NoDataRepresentation()
+{
+}
 
-    NoDataRepresentation::~NoDataRepresentation()
-    {
-    }
+NoDataRepresentation::~NoDataRepresentation()
+{
+}
 
-    std::string NoDataRepresentation::getName() const
-    {
-        return std::string("No Representation");
-    }
+std::string NoDataRepresentation::getName() const
+{
+    return std::string("No Representation");
+}
 
-    EncodingType NoDataRepresentation::getType() const
-    {
-        return ET_NOENCODING;
-    }
+EncodingType NoDataRepresentation::getType() const
+{
+    return ET_NOENCODING;
+}
 
-    BitsetStream NoDataRepresentation::convertNumeric(const BitsetStream& data)
-    {
-        BitsetStream convertedData;
-        convertedData.concat(data.getData(), 0, data.getBitSize());
-                        return convertedData;
-    }
+BitsetStream NoDataRepresentation::convertNumeric(const BitsetStream &data)
+{
+    BitsetStream convertedData;
+    convertedData.concat(data.getData(), 0, data.getBitSize());
+    return convertedData;
+}
 
-    BitsetStream NoDataRepresentation::convertBinary(const BitsetStream& data)
-    {
-        BitsetStream convertedData;
-        convertedData.concat(data.getData(), 0, data.getBitSize());
-        return convertedData;
-    }
+BitsetStream NoDataRepresentation::convertBinary(const BitsetStream &data)
+{
+    BitsetStream convertedData;
+    convertedData.concat(data.getData(), 0, data.getBitSize());
+    return convertedData;
+}
 
-    unsigned int NoDataRepresentation::convertLength(unsigned int lengthBits)
-    {
-        return lengthBits;
-    }
+unsigned int NoDataRepresentation::convertLength(unsigned int lengthBits)
+{
+    return lengthBits;
+}
 
-    BitsetStream NoDataRepresentation::revertNumeric(const BitsetStream& data)
-    {
-        BitsetStream convertedData;
-        convertedData.concat(data.getData(), 0, data.getBitSize());
-        return convertedData;
-    }
+BitsetStream NoDataRepresentation::revertNumeric(const BitsetStream &data)
+{
+    BitsetStream convertedData;
+    convertedData.concat(data.getData(), 0, data.getBitSize());
+    return convertedData;
+}
 
-    BitsetStream NoDataRepresentation::revertBinary(const BitsetStream& data)
-    {
-        BitsetStream convertedData;
-        convertedData.concat(data.getData(), 0, data.getBitSize());
-        return convertedData;
-    }
+BitsetStream NoDataRepresentation::revertBinary(const BitsetStream &data)
+{
+    BitsetStream convertedData;
+    convertedData.concat(data.getData(), 0, data.getBitSize());
+    return convertedData;
+}
 }

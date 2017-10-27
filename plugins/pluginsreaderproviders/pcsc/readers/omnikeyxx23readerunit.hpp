@@ -11,29 +11,29 @@
 
 namespace logicalaccess
 {
+/**
+* \brief The Omnikey XX23 reader unit class.
+*/
+class LIBLOGICALACCESS_API OmnikeyXX23ReaderUnit : public OmnikeyXX21ReaderUnit
+{
+  public:
     /**
-    * \brief The Omnikey XX23 reader unit class.
+    * \brief Constructor.
     */
-    class LIBLOGICALACCESS_API OmnikeyXX23ReaderUnit : public OmnikeyXX21ReaderUnit
-    {
-    public:
-        /**
-        * \brief Constructor.
-        */
-	    explicit OmnikeyXX23ReaderUnit(const std::string& name);
+    explicit OmnikeyXX23ReaderUnit(const std::string &name);
 
-        /**
-        * \brief Destructor.
-        */
-        virtual ~OmnikeyXX23ReaderUnit();
+    /**
+    * \brief Destructor.
+    */
+    virtual ~OmnikeyXX23ReaderUnit();
 
 
-        /**
-        * \brief Get the PC/SC reader unit type.
-        * \return The PC/SC reader unit type.
-        */
-	    PCSCReaderUnitType getPCSCType() const override;
-    };
+    /**
+    * \brief Get the PC/SC reader unit type.
+    * \return The PC/SC reader unit type.
+    */
+    PCSCReaderUnitType getPCSCType() const override;
+};
 }
 
 #endif

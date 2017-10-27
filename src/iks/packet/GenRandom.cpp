@@ -27,8 +27,7 @@ size_t GenRandomCommand::binary_size_impl() const
     return sizeof(nb_bytes_);
 }
 
-GenRandomResponse::GenRandomResponse(uint16_t status,
-                                     const ByteVector &data)
+GenRandomResponse::GenRandomResponse(uint16_t status, const ByteVector &data)
     : BaseResponse(SMSG_OP_GENRANDOM, status)
     , bytes_(data)
 {

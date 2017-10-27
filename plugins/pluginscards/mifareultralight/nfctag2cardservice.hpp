@@ -13,33 +13,39 @@
 
 namespace logicalaccess
 {
-	/**
-	* \brief The NFC Tag 2 storage card service base class.
-	*/
-	class LIBLOGICALACCESS_API NFCTag2CardService : public NFCTagCardService
-	{
-	public:
+/**
+* \brief The NFC Tag 2 storage card service base class.
+*/
+class LIBLOGICALACCESS_API NFCTag2CardService : public NFCTagCardService
+{
+  public:
+    /**
+    * \brief Constructor.
+    * \param chip The chip.
+    */
+    explicit NFCTag2CardService(std::shared_ptr<Chip> chip)
+        : NFCTagCardService(chip)
+    {
+    }
 
-		/**
-		* \brief Constructor.
-		* \param chip The chip.
-		*/
-		explicit NFCTag2CardService(std::shared_ptr<Chip> chip) : NFCTagCardService(chip) {}
+    virtual ~NFCTag2CardService()
+    {
+    }
 
-		virtual ~NFCTag2CardService() {}
+    std::shared_ptr<NdefMessage> readNDEF() override;
 
-		std::shared_ptr<NdefMessage> readNDEF() override;
+    void writeNDEF(std::shared_ptr<NdefMessage> records) override;
 
-		void writeNDEF(std::shared_ptr<NdefMessage> records) override;
+    void eraseNDEF() override;
 
-		void eraseNDEF() override;
+    void writeCapabilityContainer() const;
 
-		void writeCapabilityContainer() const;
-
-	protected:
-
-		std::shared_ptr<MifareUltralightChip> getMifareUltralightChip() const { return std::dynamic_pointer_cast<MifareUltralightChip>(getChip()); }
-	};
+  protected:
+    std::shared_ptr<MifareUltralightChip> getMifareUltralightChip() const
+    {
+        return std::dynamic_pointer_cast<MifareUltralightChip>(getChip());
+    }
+};
 }
 
 #endif /* LOGICALACCESS_NFCTAG2CARDSERVICE_HPP */

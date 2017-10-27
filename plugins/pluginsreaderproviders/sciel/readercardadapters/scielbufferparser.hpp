@@ -14,15 +14,20 @@
 
 namespace logicalaccess
 {
-    class LIBLOGICALACCESS_API ScielBufferParser : public CircularBufferParser
+class LIBLOGICALACCESS_API ScielBufferParser : public CircularBufferParser
+{
+  public:
+    ScielBufferParser()
     {
-    public:
-        ScielBufferParser() {}
+    }
 
-        virtual ~ScielBufferParser() {}
+    virtual ~ScielBufferParser()
+    {
+    }
 
-	    ByteVector getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer) override;
-    };
+    ByteVector
+    getValidBuffer(boost::circular_buffer<unsigned char> &circular_buffer) override;
+};
 }
 
 #endif /* SCIELBUFFERPARSER_HPP */

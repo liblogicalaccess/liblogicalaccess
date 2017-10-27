@@ -8,21 +8,35 @@
 
 namespace logicalaccess
 {
-    class LIBLOGICALACCESS_API NXPKeyDiversification : public KeyDiversification
+class LIBLOGICALACCESS_API NXPKeyDiversification : public KeyDiversification
+{
+  public:
+    void initDiversification(ByteVector identifier, int AID, std::shared_ptr<Key> key,
+                             unsigned char keyno, ByteVector &diversify) override = 0;
+    ByteVector getDiversifiedKey(std::shared_ptr<Key> key,
+                                 ByteVector diversify) override = 0;
+
+    NXPKeyDiversification()
     {
-    public:
-	    void initDiversification(ByteVector identifier, int AID, std::shared_ptr<Key> key, unsigned char keyno, ByteVector& diversify) override = 0;
-	    ByteVector getDiversifiedKey(std::shared_ptr<Key> key, ByteVector diversify) override = 0;
+    }
+    virtual ~NXPKeyDiversification() = default;
 
-        NXPKeyDiversification() {}
-            virtual ~NXPKeyDiversification() = default;
+    std::string getType() override
+    {
+        return "NXP";
+    }
 
-	    std::string getType() override { return "NXP"; }
-
-	    void serialize(boost::property_tree::ptree& /*parentNode*/) override {}
-	    void unSerialize(boost::property_tree::ptree& /*node*/) override {}
-	    std::string getDefaultXmlNodeName() const override { return "NXPKeyDiversification"; }
-    };
+    void serialize(boost::property_tree::ptree & /*parentNode*/) override
+    {
+    }
+    void unSerialize(boost::property_tree::ptree & /*node*/) override
+    {
+    }
+    std::string getDefaultXmlNodeName() const override
+    {
+        return "NXPKeyDiversification";
+    }
+};
 }
 
 #endif

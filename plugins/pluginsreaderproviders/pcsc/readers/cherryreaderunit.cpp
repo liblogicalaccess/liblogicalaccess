@@ -12,17 +12,17 @@
 
 namespace logicalaccess
 {
-    CherryReaderUnit::CherryReaderUnit(const std::string& name)
-        : PCSCReaderUnit(name)
-    {
-    }
+CherryReaderUnit::CherryReaderUnit(const std::string &name)
+    : PCSCReaderUnit(name)
+{
+}
 
-    CherryReaderUnit::~CherryReaderUnit()
-    {
-    }
+CherryReaderUnit::~CherryReaderUnit()
+{
+}
 
-    PCSCReaderUnitType CherryReaderUnit::getPCSCType() const
-    {
-        return PCSC_RUT_CHERRY;
-    }
+PCSCReaderUnitType CherryReaderUnit::getPCSCType() const
+{
+    return PCSC_RUT_CHERRY;
+}
 }

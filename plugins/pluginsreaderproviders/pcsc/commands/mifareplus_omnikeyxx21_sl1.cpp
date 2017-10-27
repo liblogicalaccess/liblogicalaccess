@@ -10,8 +10,8 @@
 
 using namespace logicalaccess;
 
-bool MifarePlusOmnikeyXX21SL1Commands::AESAuthenticate(
-    std::shared_ptr<AES128Key> key, uint16_t keyslot)
+bool MifarePlusOmnikeyXX21SL1Commands::AESAuthenticate(std::shared_ptr<AES128Key> key,
+                                                       uint16_t keyslot)
 {
     LLA_LOG_CTX("AES Authentication Mifare Plus SL1 and OKXX21");
 
@@ -19,14 +19,12 @@ bool MifarePlusOmnikeyXX21SL1Commands::AESAuthenticate(
     return MifarePlusSL1Commands::AESAuthenticate(key, keyslot);
 }
 
-MifarePlusOmnikeyXX21SL1Commands::GenericSessionGuard::GenericSessionGuard(
-    Commands *cmd)
+MifarePlusOmnikeyXX21SL1Commands::GenericSessionGuard::GenericSessionGuard(Commands *cmd)
     : cmd_(cmd)
 {
     // The reader card adapter shall be a PCSCReaderCardAdapter, because this
     // generic guard is only for PCSC command (and only for XX21).
-    rca_ = std::dynamic_pointer_cast<PCSCReaderCardAdapter>(
-        cmd_->getReaderCardAdapter());
+    rca_ = std::dynamic_pointer_cast<PCSCReaderCardAdapter>(cmd_->getReaderCardAdapter());
     assert(rca_);
 
     adapter_ = std::make_shared<Adapter>();
@@ -43,11 +41,10 @@ MifarePlusOmnikeyXX21SL1Commands::GenericSessionGuard::~GenericSessionGuard()
     rca_->sendAPDUCommand(0xFF, 0xA0, 0x00, 0x07, 0x03, {0x01, 0x00, 0x02});
 }
 
-ByteVector
-MifarePlusOmnikeyXX21SL1Commands::GenericSessionGuard::Adapter::adaptCommand(
+ByteVector MifarePlusOmnikeyXX21SL1Commands::GenericSessionGuard::Adapter::adaptCommand(
     const ByteVector &in)
 {
-	// We have to build the full PCSC Command.
+    // We have to build the full PCSC Command.
     ByteVector pcsc_header = {0xFF, 0xA0, 0x00, 0x05,
                               static_cast<uint8_t>(6 + in.size())};
 
@@ -59,12 +56,11 @@ MifarePlusOmnikeyXX21SL1Commands::GenericSessionGuard::Adapter::adaptCommand(
     return full_cmd;
 }
 
-ByteVector
-MifarePlusOmnikeyXX21SL1Commands::GenericSessionGuard::Adapter::adaptAnswer(
+ByteVector MifarePlusOmnikeyXX21SL1Commands::GenericSessionGuard::Adapter::adaptAnswer(
     const ByteVector &answer)
 {
-	LLA_LOG_CTX("ADAPTER");
-	LOG(DEBUGS) << "BEFORE ADAPTING: " << answer;
+    LLA_LOG_CTX("ADAPTER");
+    LOG(DEBUGS) << "BEFORE ADAPTING: " << answer;
     ByteVector ret(answer.begin() + 2, answer.end());
     return ret;
 }

@@ -35,11 +35,11 @@ class LIBLOGICALACCESS_API SSLTransport
         return "SSL";
     }
 
-	/**
-     * \brief Connect to the transport layer.
-             * \param timeout Time after the connect task will be canceled.
-     * \return True on success, false otherwise.
-     */
+    /**
+ * \brief Connect to the transport layer.
+         * \param timeout Time after the connect task will be canceled.
+ * \return True on success, false otherwise.
+ */
     virtual bool connect(long int timeout = 2000);
 
     /**

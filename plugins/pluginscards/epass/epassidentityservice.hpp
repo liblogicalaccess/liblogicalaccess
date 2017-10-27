@@ -10,11 +10,11 @@ class EPassAccessInfo;
 class LIBLOGICALACCESS_API EPassIdentityService : public IdentityCardService
 {
   public:
-	explicit EPassIdentityService(const std::shared_ptr<Chip> &chip);
+    explicit EPassIdentityService(const std::shared_ptr<Chip> &chip);
 
-	std::chrono::system_clock::time_point getTime(MetaData what) override;
-	std::string getString(MetaData what) override;
-	ByteVector getData(MetaData what) override;
+    std::chrono::system_clock::time_point getTime(MetaData what) override;
+    std::string getString(MetaData what) override;
+    ByteVector getData(MetaData what) override;
 
 
   protected:

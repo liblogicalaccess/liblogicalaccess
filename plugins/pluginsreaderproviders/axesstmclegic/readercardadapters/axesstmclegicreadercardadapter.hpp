@@ -14,37 +14,36 @@
 
 namespace logicalaccess
 {
+/**
+ * \brief A default AxessTMCLegic reader/card adapter class.
+ */
+class LIBLOGICALACCESS_API AxessTMCLegicReaderCardAdapter : public ReaderCardAdapter
+{
+  public:
     /**
-     * \brief A default AxessTMCLegic reader/card adapter class.
+     * \brief Constructor.
      */
-    class LIBLOGICALACCESS_API AxessTMCLegicReaderCardAdapter : public ReaderCardAdapter
-    {
-    public:
+    AxessTMCLegicReaderCardAdapter();
 
-        /**
-         * \brief Constructor.
-         */
-        AxessTMCLegicReaderCardAdapter();
+    /**
+     * \brief Destructor.
+     */
+    virtual ~AxessTMCLegicReaderCardAdapter();
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~AxessTMCLegicReaderCardAdapter();
+    /**
+     * \brief Adapt the command to send to the reader.
+     * \param command The command to send.
+     * \return The adapted command to send.
+     */
+    ByteVector adaptCommand(const ByteVector &command) override;
 
-        /**
-         * \brief Adapt the command to send to the reader.
-         * \param command The command to send.
-         * \return The adapted command to send.
-         */
-	    ByteVector adaptCommand(const ByteVector& command) override;
-
-        /**
-         * \brief Adapt the asnwer received from the reader.
-         * \param answer The answer received.
-         * \return The adapted answer received.
-         */
-	    ByteVector adaptAnswer(const ByteVector& answer) override;
-    };
+    /**
+     * \brief Adapt the asnwer received from the reader.
+     * \param answer The answer received.
+     * \return The adapted answer received.
+     */
+    ByteVector adaptAnswer(const ByteVector &answer) override;
+};
 }
 
 #endif /* LOGICALACCESS_DEFAULTAXESSTMCLEGICREADERCARDADAPTER_HPP */

@@ -33,12 +33,11 @@ void change_uid(ByteVector new_uid)
     ChipPtr chip;
     tie(provider, readerUnit, chip) = lla_test_init();
 
-    PRINT_TIME("Chip identifier: " <<
-                   BufferHelper::getHex(chip->getChipIdentifier()));
+    PRINT_TIME("Chip identifier: " << BufferHelper::getHex(chip->getChipIdentifier()));
     PRINT_TIME("Card type: {" << chip->getCardType() << "}");
 
-    std::shared_ptr<UIDChangerService> uid_changer = std::dynamic_pointer_cast<UIDChangerService>(
-        chip->getService(CST_UID_CHANGER));
+    std::shared_ptr<UIDChangerService> uid_changer =
+        std::dynamic_pointer_cast<UIDChangerService>(chip->getService(CST_UID_CHANGER));
 
     LLA_ASSERT(uid_changer, "No UID Changer service available for this card.");
 
@@ -79,7 +78,8 @@ int main(int ac, char **av)
 
     auto new_uid = gen_random_uid();
     change_uid(new_uid);
-    PRINT_TIME("Now insert the card again in 2seconds, to check if the UID was properly changed");
+    PRINT_TIME("Now insert the card again in 2seconds, to check if the UID was properly "
+               "changed");
     std::this_thread::sleep_for(std::chrono::seconds(2));
     check_uid(new_uid);
     return 0;

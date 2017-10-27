@@ -14,60 +14,64 @@
 
 namespace logicalaccess
 {
-	/**
-	* \brief A format list.
-	*/
-	typedef std::vector<std::shared_ptr<Format> > FormatList;
+/**
+* \brief A format list.
+*/
+typedef std::vector<std::shared_ptr<Format>> FormatList;
+
+/**
+ * \brief The base access control card service class for all access control services.
+ */
+class LIBLOGICALACCESS_API AccessControlCardService : public CardService
+{
+  public:
+    /**
+     * \brief Constructor.
+     * \param chip The associated chip.
+     */
+    explicit AccessControlCardService(std::shared_ptr<Chip> chip);
 
     /**
-     * \brief The base access control card service class for all access control services.
+     * \brief Destructor.
      */
-    class LIBLOGICALACCESS_API AccessControlCardService : public CardService
-    {
-    public:
+    virtual ~AccessControlCardService();
 
-        /**
-         * \brief Constructor.
-         * \param chip The associated chip.
-         */
-	    explicit AccessControlCardService(std::shared_ptr<Chip> chip);
+    /**
+     * \brief Read format from the card.
+     * \param format The format to read.
+     * \param location The format location.
+     * \param aiToUse The key's informations to use.
+     * \return The format read on success, null otherwise.
+     */
+    virtual std::shared_ptr<Format> readFormat(std::shared_ptr<Format> format,
+                                               std::shared_ptr<Location> location,
+                                               std::shared_ptr<AccessInfo> aiToUse);
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~AccessControlCardService();
+    /**
+     * \brief Write format to the card.
+     * \param format The format to write.
+     * \param location The format location.
+     * \param aiToUse The key's informations to use.
+     * \param aiToWrite The key's informations to write.
+     * \return True on success, false otherwise.
+     */
+    virtual bool writeFormat(std::shared_ptr<Format> format,
+                             std::shared_ptr<Location> location,
+                             std::shared_ptr<AccessInfo> aiToUse,
+                             std::shared_ptr<AccessInfo> aiToWrite);
 
-        /**
-         * \brief Read format from the card.
-         * \param format The format to read.
-         * \param location The format location.
-         * \param aiToUse The key's informations to use.
-         * \return The format read on success, null otherwise.
-         */
-        virtual std::shared_ptr<Format> readFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse);
+    /**
+    * \brief Get the supported format list.
+    * \return The format list.
+    */
+    virtual FormatList getSupportedFormatList();
 
-        /**
-         * \brief Write format to the card.
-         * \param format The format to write.
-         * \param location The format location.
-         * \param aiToUse The key's informations to use.
-         * \param aiToWrite The key's informations to write.
-         * \return True on success, false otherwise.
-         */
-        virtual bool writeFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite);
-
-		/**
-		* \brief Get the supported format list.
-		* \return The format list.
-		*/
-		virtual FormatList getSupportedFormatList();
-
-		/**
-		* \brief Get the HID Wiegand format list.
-		* \return The format list.
-		*/
-		FormatList getHIDWiegandFormatList() const;
-    };
+    /**
+    * \brief Get the HID Wiegand format list.
+    * \return The format list.
+    */
+    FormatList getHIDWiegandFormatList() const;
+};
 }
 
 #endif

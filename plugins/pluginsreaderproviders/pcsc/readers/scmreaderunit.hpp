@@ -15,29 +15,28 @@
 
 namespace logicalaccess
 {
+/**
+ * \brief The SCM reader unit class.
+ */
+class LIBLOGICALACCESS_API SCMReaderUnit : public PCSCReaderUnit
+{
+  public:
     /**
-     * \brief The SCM reader unit class.
+     * \brief Constructor.
      */
-    class LIBLOGICALACCESS_API SCMReaderUnit : public PCSCReaderUnit
-    {
-    public:
+    explicit SCMReaderUnit(const std::string &name);
 
-        /**
-         * \brief Constructor.
-         */
-	    explicit SCMReaderUnit(const std::string& name);
+    /**
+     * \brief Destructor.
+     */
+    virtual ~SCMReaderUnit();
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~SCMReaderUnit();
-
-		/**
-		* \brief Get the PC/SC reader unit type.
-		* \return The PC/SC reader unit type.
-		*/
-	    PCSCReaderUnitType getPCSCType() const override;
-    };
+    /**
+    * \brief Get the PC/SC reader unit type.
+    * \return The PC/SC reader unit type.
+    */
+    PCSCReaderUnitType getPCSCType() const override;
+};
 }
 
 #endif

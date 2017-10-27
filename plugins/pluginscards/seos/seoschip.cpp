@@ -16,22 +16,22 @@
 
 namespace logicalaccess
 {
-    SEOSChip::SEOSChip()
-        : Chip(CHIP_SEOS)
-    {
-    }
+SEOSChip::SEOSChip()
+    : Chip(CHIP_SEOS)
+{
+}
 
-    SEOSChip::~SEOSChip()
-    {
-    }
+SEOSChip::~SEOSChip()
+{
+}
 
-    std::shared_ptr<LocationNode> SEOSChip::getRootLocationNode()
-    {
-        std::shared_ptr<LocationNode> rootNode;
-        rootNode.reset(new LocationNode());
+std::shared_ptr<LocationNode> SEOSChip::getRootLocationNode()
+{
+    std::shared_ptr<LocationNode> rootNode;
+    rootNode.reset(new LocationNode());
 
-        rootNode->setName("HID SEOS");
+    rootNode->setName("HID SEOS");
 
-        return rootNode;
-    }
+    return rootNode;
+}
 }

@@ -6,7 +6,7 @@
 
 namespace logicalaccess
 {
-#define CMD_EPASS		"EPass"
+#define CMD_EPASS "EPass"
 
 class LIBLOGICALACCESS_API EPassCommands : public Commands
 {
@@ -15,7 +15,7 @@ class LIBLOGICALACCESS_API EPassCommands : public Commands
 
     explicit EPassCommands(std::string ct);
 
-        void setReaderCardAdapter(std::shared_ptr<ReaderCardAdapter> adapter) override;
+    void setReaderCardAdapter(std::shared_ptr<ReaderCardAdapter> adapter) override;
 
     bool selectApplication(const ByteVector &app_id);
     bool selectEF(const ByteVector &file_id) const;

@@ -19,7 +19,8 @@
 
 void introduction()
 {
-    PRINT_TIME("This test attempt to read access control bits (Wiegand26 formatted) from a card.");
+    PRINT_TIME("This test attempt to read access control bits (Wiegand26 formatted) from "
+               "a card.");
 
     PRINT_TIME("You will have 20 seconds to insert a card. Test log below");
     PRINT_TIME("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -36,20 +37,20 @@ int main(int ac, char **av)
     ChipPtr chip;
     tie(provider, readerUnit, chip) = lla_test_init();
 
-    PRINT_TIME("Chip identifier: " <<
-                       BufferHelper::getHex(chip->getChipIdentifier()));
-	PRINT_TIME("Card type: {" << chip->getCardType() << "}");
+    PRINT_TIME("Chip identifier: " << BufferHelper::getHex(chip->getChipIdentifier()));
+    PRINT_TIME("Card type: {" << chip->getCardType() << "}");
 
-    std::shared_ptr<AccessControlCardService> acs = std::dynamic_pointer_cast<AccessControlCardService>(
+    std::shared_ptr<AccessControlCardService> acs =
+        std::dynamic_pointer_cast<AccessControlCardService>(
             chip->getService(CST_ACCESS_CONTROL));
 
-    auto ret = acs->readFormat(std::make_shared<Wiegand26Format>(), nullptr, nullptr);
+    auto ret    = acs->readFormat(std::make_shared<Wiegand26Format>(), nullptr, nullptr);
     auto buffer = ret->getLinearData();
 
-	std::cout << "Format: ";
-	for (int i = 0; i < 26; ++i)
-		std::cout << std::hex << +buffer[i];
-	std::cout << std::endl;
+    std::cout << "Format: ";
+    for (int i = 0; i < 26; ++i)
+        std::cout << std::hex << +buffer[i];
+    std::cout << std::endl;
 
     pcsc_test_shutdown(readerUnit);
     return 0;

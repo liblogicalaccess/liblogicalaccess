@@ -25,7 +25,8 @@ bool PCSCCardProbe::maybe_mifare_classic()
             std::dynamic_pointer_cast<MifareCommands>(chip->getCommands());
 
         MifareAccessInfo::SectorAccessBits sab;
-		auto ret = command->readSector(1, 0, std::shared_ptr<MifareKey>(), std::shared_ptr<MifareKey>(), sab);
+        auto ret = command->readSector(1, 0, std::shared_ptr<MifareKey>(),
+                                       std::shared_ptr<MifareKey>(), sab);
         return true;
     }
     catch (const CardException &e)
@@ -58,8 +59,7 @@ bool PCSCCardProbe::is_desfire(std::vector<uint8_t> *uid)
         DESFireCommands::DESFireCardVersion cardversion = desfire_command->getVersion();
 
         if (uid)
-            *uid =
-                ByteVector(std::begin(cardversion.uid), std::end(cardversion.uid));
+            *uid = ByteVector(std::begin(cardversion.uid), std::end(cardversion.uid));
         return true;
     }
     catch (const std::exception &)
@@ -71,60 +71,59 @@ bool PCSCCardProbe::is_desfire(std::vector<uint8_t> *uid)
 
 unsigned char PCSCCardProbe::get_desfire_version(std::vector<uint8_t> *uid)
 {
-	try
-	{
-		LLA_LOG_CTX("Probe::get_desfire_version");
-		reset();
-		auto chip = reader_unit_->createChip("DESFireEV1");
-	    auto desfire_command =
-			std::dynamic_pointer_cast<DESFireCommands>(chip->getCommands());
-		assert(desfire_command);
-		desfire_command->selectApplication(0x00);
-		DESFireCommands::DESFireCardVersion cardversion = desfire_command->getVersion();
+    try
+    {
+        LLA_LOG_CTX("Probe::get_desfire_version");
+        reset();
+        auto chip = reader_unit_->createChip("DESFireEV1");
+        auto desfire_command =
+            std::dynamic_pointer_cast<DESFireCommands>(chip->getCommands());
+        assert(desfire_command);
+        desfire_command->selectApplication(0x00);
+        DESFireCommands::DESFireCardVersion cardversion = desfire_command->getVersion();
 
-		if (uid)
-			*uid =
-			ByteVector(std::begin(cardversion.uid), std::end(cardversion.uid));
-		return cardversion.softwareMjVersion;
-	}
-	catch (const std::exception&)
-	{
-		// If an error occurred, the card probably isn't desfire.
-		return -1;
-	}
+        if (uid)
+            *uid = ByteVector(std::begin(cardversion.uid), std::end(cardversion.uid));
+        return cardversion.softwareMjVersion;
+    }
+    catch (const std::exception &)
+    {
+        // If an error occurred, the card probably isn't desfire.
+        return -1;
+    }
 }
 
 bool PCSCCardProbe::is_desfire_ev1(std::vector<uint8_t> *uid)
 {
-	LLA_LOG_CTX("Probe::is_desfire_ev1");
-	return get_desfire_version(uid) == 1;
+    LLA_LOG_CTX("Probe::is_desfire_ev1");
+    return get_desfire_version(uid) == 1;
 }
 
 bool PCSCCardProbe::is_desfire_ev2(std::vector<uint8_t> *uid)
 {
-	LLA_LOG_CTX("Probe::is_desfire_ev2");
-	return get_desfire_version(uid) >= 2;
+    LLA_LOG_CTX("Probe::is_desfire_ev2");
+    return get_desfire_version(uid) >= 2;
 }
 
 bool PCSCCardProbe::is_mifare_ultralight_c()
 {
-	try
-	{
-		LLA_LOG_CTX("Probe::is_mifare_ultralight_c");
-		reset();
-		auto chip = reader_unit_->createChip("MifareUltralightC");
-		auto mfu_command =
-			std::dynamic_pointer_cast<MifareUltralightCCommands>(chip->getCommands());
-		assert(mfu_command);
-		mfu_command->authenticate(std::shared_ptr<TripleDESKey>());
-	}
-	catch (const std::exception&)
-	{
-		// TODO: handle the case authentication is not default by checking error code
-		return false;
-	}
+    try
+    {
+        LLA_LOG_CTX("Probe::is_mifare_ultralight_c");
+        reset();
+        auto chip = reader_unit_->createChip("MifareUltralightC");
+        auto mfu_command =
+            std::dynamic_pointer_cast<MifareUltralightCCommands>(chip->getCommands());
+        assert(mfu_command);
+        mfu_command->authenticate(std::shared_ptr<TripleDESKey>());
+    }
+    catch (const std::exception &)
+    {
+        // TODO: handle the case authentication is not default by checking error code
+        return false;
+    }
 
-	return true;
+    return true;
 }
 
 
@@ -163,8 +162,7 @@ bool PCSCCardProbe::has_desfire_random_uid(ByteVector *uid)
             return true;
         }
         if (uid)
-            *uid =
-                ByteVector(std::begin(cardversion.uid), std::end(cardversion.uid));
+            *uid = ByteVector(std::begin(cardversion.uid), std::end(cardversion.uid));
         return false;
     }
     catch (const std::exception &)

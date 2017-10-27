@@ -9,6 +9,6 @@ class LIBLOGICALACCESS_API STidPRGResultChecker : public ResultChecker
   public:
     STidPRGResultChecker();
 
-	bool AllowEmptyResult() const override;
+    bool AllowEmptyResult() const override;
 };
 }

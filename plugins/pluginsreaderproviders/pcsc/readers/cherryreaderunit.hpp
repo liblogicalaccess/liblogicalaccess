@@ -15,29 +15,28 @@
 
 namespace logicalaccess
 {
+/**
+ * \brief The Cherry reader unit class.
+ */
+class LIBLOGICALACCESS_API CherryReaderUnit : public PCSCReaderUnit
+{
+  public:
     /**
-     * \brief The Cherry reader unit class.
+     * \brief Constructor.
      */
-    class LIBLOGICALACCESS_API CherryReaderUnit : public PCSCReaderUnit
-    {
-    public:
+    explicit CherryReaderUnit(const std::string &name);
 
-        /**
-         * \brief Constructor.
-         */
-	    explicit CherryReaderUnit(const std::string& name);
+    /**
+     * \brief Destructor.
+     */
+    virtual ~CherryReaderUnit();
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~CherryReaderUnit();
-
-        /**
-         * \brief Get the PC/SC reader unit type.
-         * \return The PC/SC reader unit type.
-         */
-	    PCSCReaderUnitType getPCSCType() const override;
-    };
+    /**
+     * \brief Get the PC/SC reader unit type.
+     * \return The PC/SC reader unit type.
+     */
+    PCSCReaderUnitType getPCSCType() const override;
+};
 }
 
 #endif

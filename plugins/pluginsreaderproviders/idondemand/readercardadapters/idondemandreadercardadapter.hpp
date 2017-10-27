@@ -18,37 +18,36 @@
 
 namespace logicalaccess
 {
+/**
+ * \brief A default IdOnDemand reader/card adapter class.
+ */
+class LIBLOGICALACCESS_API IdOnDemandReaderCardAdapter : public ReaderCardAdapter
+{
+  public:
     /**
-     * \brief A default IdOnDemand reader/card adapter class.
+     * \brief Constructor.
      */
-    class LIBLOGICALACCESS_API IdOnDemandReaderCardAdapter : public ReaderCardAdapter
-    {
-    public:
+    IdOnDemandReaderCardAdapter();
 
-        /**
-         * \brief Constructor.
-         */
-        IdOnDemandReaderCardAdapter();
+    /**
+     * \brief Destructor.
+     */
+    virtual ~IdOnDemandReaderCardAdapter();
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~IdOnDemandReaderCardAdapter();
+    /**
+     * \brief Adapt the command to send to the reader.
+     * \param command The command to send.
+     * \return The adapted command to send.
+     */
+    ByteVector adaptCommand(const ByteVector &command) override;
 
-        /**
-         * \brief Adapt the command to send to the reader.
-         * \param command The command to send.
-         * \return The adapted command to send.
-         */
-	    ByteVector adaptCommand(const ByteVector& command) override;
-
-        /**
-         * \brief Adapt the asnwer received from the reader.
-         * \param answer The answer received.
-         * \return The adapted answer received.
-         */
-	    ByteVector adaptAnswer(const ByteVector& answer) override;
-    };
+    /**
+     * \brief Adapt the asnwer received from the reader.
+     * \param answer The answer received.
+     * \return The adapted answer received.
+     */
+    ByteVector adaptAnswer(const ByteVector &answer) override;
+};
 }
 
 #endif /* LOGICALACCESS_DEFAULTIDONDEMANDREADERCARDADAPTER_HPP */

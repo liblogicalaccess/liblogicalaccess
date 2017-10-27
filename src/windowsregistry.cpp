@@ -17,8 +17,7 @@ WindowsRegistry::~WindowsRegistry()
 {
 }
 
-bool WindowsRegistry::writeBinary(const std::string &keypath,
-                                  const std::string &keyname,
+bool WindowsRegistry::writeBinary(const std::string &keypath, const std::string &keyname,
                                   const ByteVector &data)
 {
     HKEY hKey;
@@ -36,7 +35,7 @@ bool WindowsRegistry::writeBinary(const std::string &keypath,
     }
 
     LPCTSTR value = TEXT(keyname.c_str());
-    ret = RegSetValueEx(hKey, value, 0, REG_BINARY, (CONST BYTE *)&data[0],
+    ret           = RegSetValueEx(hKey, value, 0, REG_BINARY, (CONST BYTE *)&data[0],
                         static_cast<DWORD>(data.size()));
     if (ret == ERROR_SUCCESS)
     {
@@ -58,8 +57,7 @@ bool WindowsRegistry::writeBinary(const std::string &keypath,
 }
 
 
-bool WindowsRegistry::readBinary(const std::string &keypath,
-                                 const std::string &keyname,
+bool WindowsRegistry::readBinary(const std::string &keypath, const std::string &keyname,
                                  ByteVector &out)
 {
     HKEY hKey;
@@ -79,7 +77,7 @@ bool WindowsRegistry::readBinary(const std::string &keypath,
 
     ByteVector tmpbuf(100);
     DWORD size = static_cast<DWORD>(tmpbuf.size());
-    //DWORD flags = RRF_RT_ANY;
+    // DWORD flags = RRF_RT_ANY;
     ret = RegQueryValueEx(hKey, value, nullptr, nullptr, &tmpbuf[0], &size);
     tmpbuf.resize(size);
     if (ret == ERROR_SUCCESS)

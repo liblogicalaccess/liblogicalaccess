@@ -10,33 +10,33 @@
 
 namespace logicalaccess
 {
-    ElatecReaderUnitConfiguration::ElatecReaderUnitConfiguration()
-        : ReaderUnitConfiguration(READER_ELATEC)
-    {
-	    ElatecReaderUnitConfiguration::resetConfiguration();
-    }
+ElatecReaderUnitConfiguration::ElatecReaderUnitConfiguration()
+    : ReaderUnitConfiguration(READER_ELATEC)
+{
+    ElatecReaderUnitConfiguration::resetConfiguration();
+}
 
-    ElatecReaderUnitConfiguration::~ElatecReaderUnitConfiguration()
-    {
-    }
+ElatecReaderUnitConfiguration::~ElatecReaderUnitConfiguration()
+{
+}
 
-    void ElatecReaderUnitConfiguration::resetConfiguration()
-    {
-    }
+void ElatecReaderUnitConfiguration::resetConfiguration()
+{
+}
 
-    void ElatecReaderUnitConfiguration::serialize(boost::property_tree::ptree& parentNode)
-    {
-        boost::property_tree::ptree node;
-        parentNode.add_child(getDefaultXmlNodeName(), node);
-    }
+void ElatecReaderUnitConfiguration::serialize(boost::property_tree::ptree &parentNode)
+{
+    boost::property_tree::ptree node;
+    parentNode.add_child(getDefaultXmlNodeName(), node);
+}
 
-    void ElatecReaderUnitConfiguration::unSerialize(boost::property_tree::ptree& /*node*/)
-    {
-        //TODO: Implement this.
-    }
+void ElatecReaderUnitConfiguration::unSerialize(boost::property_tree::ptree & /*node*/)
+{
+    // TODO: Implement this.
+}
 
-    std::string ElatecReaderUnitConfiguration::getDefaultXmlNodeName() const
-    {
-        return "ElatecReaderUnitConfiguration";
-    }
+std::string ElatecReaderUnitConfiguration::getDefaultXmlNodeName() const
+{
+    return "ElatecReaderUnitConfiguration";
+}
 }

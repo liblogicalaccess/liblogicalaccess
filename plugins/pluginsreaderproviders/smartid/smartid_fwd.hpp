@@ -7,8 +7,8 @@
 
 namespace logicalaccess
 {
-    class SmartIDLEDBuzzerDisplay;
-    class SmartIDReaderCardAdapter;
+class SmartIDLEDBuzzerDisplay;
+class SmartIDReaderCardAdapter;
 }
 
-#endif //LIBLOGICALACCESS_SMARTID_FWD_HPP
+#endif // LIBLOGICALACCESS_SMARTID_FWD_HPP

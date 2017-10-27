@@ -6,44 +6,45 @@
 
 namespace logicalaccess
 {
-    IDynLibrary* newDynLibrary(const std::string& dlName)
-    {
-        return new WindowsDynLibrary(dlName);
-    }
+IDynLibrary *newDynLibrary(const std::string &dlName)
+{
+    return new WindowsDynLibrary(dlName);
+}
 
-    WindowsDynLibrary::WindowsDynLibrary(const std::string& dlName)
-        : _name(dlName)
+WindowsDynLibrary::WindowsDynLibrary(const std::string &dlName)
+    : _name(dlName)
+{
+    if ((_handle = ::LoadLibrary(dlName.c_str())) == nullptr)
     {
-        if ((_handle = ::LoadLibrary(dlName.c_str())) == nullptr)
-        {
-            LOG(LogLevel::PLUGINS_ERROR) << "Cannot load library " << dlName << ".";
-            throw EXCEPTION(LibLogicalAccessException, _getErrorMess(::GetLastError()));
-        }
+        LOG(LogLevel::PLUGINS_ERROR) << "Cannot load library " << dlName << ".";
+        throw EXCEPTION(LibLogicalAccessException, _getErrorMess(::GetLastError()));
     }
+}
 
-	WindowsDynLibrary::~WindowsDynLibrary()
-	{
-		::FreeLibrary(_handle);
-	}
+WindowsDynLibrary::~WindowsDynLibrary()
+{
+    ::FreeLibrary(_handle);
+}
 
-    void* WindowsDynLibrary::getSymbol(const char* symName)
+void *WindowsDynLibrary::getSymbol(const char *symName)
+{
+    void *sym = ::GetProcAddress(_handle, symName);
+    if (!sym)
     {
-        void * sym = ::GetProcAddress(_handle, symName);
-        if (!sym)
-        {
-            LOG(LogLevel::PLUGINS_ERROR) << "Cannot get symbol " << symName << " on library " << _name << ".";
-            throw EXCEPTION(LibLogicalAccessException, _getErrorMess(::GetLastError()));
-        }
-        return sym;
+        LOG(LogLevel::PLUGINS_ERROR) << "Cannot get symbol " << symName << " on library "
+                                     << _name << ".";
+        throw EXCEPTION(LibLogicalAccessException, _getErrorMess(::GetLastError()));
     }
+    return sym;
+}
 
-    bool WindowsDynLibrary::hasSymbol(const char *name)
+bool WindowsDynLibrary::hasSymbol(const char *name)
+{
+    void *sym = ::GetProcAddress(_handle, name);
+    if (!sym)
     {
-        void * sym = ::GetProcAddress(_handle, name);
-        if (!sym)
-        {
-            return false;
-        }
-        return true;
+        return false;
     }
+    return true;
+}
 }

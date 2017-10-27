@@ -12,48 +12,49 @@
 
 namespace logicalaccess
 {
-    ByteVector ReaderCardAdapter::adaptCommand(const ByteVector& command)
+ByteVector ReaderCardAdapter::adaptCommand(const ByteVector &command)
+{
+    return command;
+}
+
+ByteVector ReaderCardAdapter::adaptAnswer(const ByteVector &answer)
+{
+    return answer;
+}
+
+ByteVector ReaderCardAdapter::sendCommand(const ByteVector &command, long timeout)
+{
+    ByteVector res;
+
+    if (timeout == -1)
+        timeout = Settings::getInstance()->DataTransportTimeout;
+
+    if (d_dataTransport)
     {
-        return command;
-    }
+        res = adaptAnswer(d_dataTransport->sendCommand(adaptCommand(command), timeout));
 
-    ByteVector ReaderCardAdapter::adaptAnswer(const ByteVector& answer)
-    {
-        return answer;
-    }
-
-    ByteVector ReaderCardAdapter::sendCommand(const ByteVector& command, long timeout)
-    {
-        ByteVector res;
-
-        if (timeout == -1)
-            timeout = Settings::getInstance()->DataTransportTimeout;
-
-        if (d_dataTransport)
+        if (res.size() > 0 && getResultChecker())
         {
-            res = adaptAnswer(d_dataTransport->sendCommand(adaptCommand(command), timeout));
-
-			if (res.size() > 0 && getResultChecker())
-			{
-				LOG(LogLevel::DEBUGS) << "Call ResultChecker..." << BufferHelper::getHex(res);
-				getResultChecker()->CheckResult(&res[0], res.size());
-			}
-			else if (getResultChecker() && !getResultChecker()->AllowEmptyResult())
-			{
-				THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "ResultChecker is set but no data has been received !!!")
-			}
+            LOG(LogLevel::DEBUGS) << "Call ResultChecker..." << BufferHelper::getHex(res);
+            getResultChecker()->CheckResult(&res[0], res.size());
         }
-        else
+        else if (getResultChecker() && !getResultChecker()->AllowEmptyResult())
         {
-            LOG(LogLevel::ERRORS) << "Cannot transmit the command, data transport is not set!";
+            THROW_EXCEPTION_WITH_LOG(
+                LibLogicalAccessException,
+                "ResultChecker is set but no data has been received !!!")
         }
-
-        return res;
     }
+    else
+    {
+        LOG(LogLevel::ERRORS)
+            << "Cannot transmit the command, data transport is not set!";
+    }
+
+    return res;
+}
 
 ReaderCardAdapter::ReaderCardAdapter()
 {
-
 }
-
 }

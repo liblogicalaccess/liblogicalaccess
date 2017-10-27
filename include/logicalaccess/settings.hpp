@@ -25,62 +25,59 @@ extern HMODULE __hLibLogicalAccessModule;
 
 namespace logicalaccess
 {
-    class LIBLOGICALACCESS_API Settings
-    {
-    public:
+class LIBLOGICALACCESS_API Settings
+{
+  public:
+    static Settings *getInstance();
 
-        static Settings* getInstance();
+    void Initialize();
+    static void Uninitialize();
 
-        void Initialize();
-        static void Uninitialize();
+    /* Logs */
+    bool IsLogEnabled;
+    std::string LogFileName;
+    bool LogToStderr;
+    bool SeeWaitInsertionLog;
+    bool SeeWaitRemovalLog;
+    bool SeeCommunicationLog;
+    bool SeePluginLog;
+    bool ColorizeLog;
+    bool ContextLog;
 
-        /* Logs */
-        bool IsLogEnabled;
-        std::string LogFileName;
-        bool LogToStderr;
-        bool SeeWaitInsertionLog;
-        bool SeeWaitRemovalLog;
-        bool SeeCommunicationLog;
-        bool SeePluginLog;
-        bool ColorizeLog;
-        bool ContextLog;
+    /* Auto-Detection */
+    bool IsAutoDetectEnabled;
+    long int AutoDetectionTimeout;
 
-        /* Auto-Detection */
-        bool IsAutoDetectEnabled;
-        long int AutoDetectionTimeout;
+    /* Serial port configuration */
+    bool IsConfigurationRetryEnabled;
+    long int ConfigurationRetryTimeout;
 
-        /* Serial port configuration */
-        bool IsConfigurationRetryEnabled;
-        long int ConfigurationRetryTimeout;
+    /* Default Reader */
+    std::string DefaultReader;
+    std::vector<std::string> PluginFolders;
 
-        /* Default Reader */
-        std::string DefaultReader;
-        std::vector<std::string> PluginFolders;
+    /* Networking */
 
-        /* Networking */
+    /**
+     * The default Data Transport timeout to use.
+     *
+     * If not specified, use 3000.
+     */
+    int DataTransportTimeout;
 
-        /**
-         * The default Data Transport timeout to use.
-         *
-         * If not specified, use 3000.
-         */
-        int DataTransportTimeout;
+    static std::string getDllPath();
 
-        static std::string getDllPath();
+  protected:
+    Settings();
 
-    protected:
+    void LoadSettings();
+    void SaveSettings() const;
 
-        Settings();
+    static Settings *instance;
 
-        void LoadSettings();
-        void SaveSettings() const;
-
-        static Settings* instance;
-
-    private:
-
-        void reset();
-    };
+  private:
+    void reset();
+};
 }
 
 #endif

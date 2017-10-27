@@ -13,9 +13,9 @@ class LIBLOGICALACCESS_API AesEncryptCommand : public BaseCommand
   public:
     AesEncryptCommand();
 
-	ByteVector serialize() const override;
+    ByteVector serialize() const override;
 
-	size_t binary_size_impl() const override;
+    size_t binary_size_impl() const override;
 
     /**
      * If set to true, request decryption instead of encryption.

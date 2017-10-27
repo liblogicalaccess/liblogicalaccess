@@ -10,34 +10,32 @@
 
 namespace logicalaccess
 {
-    GunneboReaderUnitConfiguration::GunneboReaderUnitConfiguration()
-        : ReaderUnitConfiguration(READER_GUNNEBO)
-    {
-	    GunneboReaderUnitConfiguration::resetConfiguration();
-    }
+GunneboReaderUnitConfiguration::GunneboReaderUnitConfiguration()
+    : ReaderUnitConfiguration(READER_GUNNEBO)
+{
+    GunneboReaderUnitConfiguration::resetConfiguration();
+}
 
-    GunneboReaderUnitConfiguration::~GunneboReaderUnitConfiguration()
-    {
-    }
+GunneboReaderUnitConfiguration::~GunneboReaderUnitConfiguration()
+{
+}
 
-    void GunneboReaderUnitConfiguration::resetConfiguration()
-    {
-        
-    }
+void GunneboReaderUnitConfiguration::resetConfiguration()
+{
+}
 
-    void GunneboReaderUnitConfiguration::serialize(boost::property_tree::ptree& parentNode)
-    {
-        boost::property_tree::ptree node;
-        parentNode.add_child(getDefaultXmlNodeName(), node);
-    }
+void GunneboReaderUnitConfiguration::serialize(boost::property_tree::ptree &parentNode)
+{
+    boost::property_tree::ptree node;
+    parentNode.add_child(getDefaultXmlNodeName(), node);
+}
 
-    void GunneboReaderUnitConfiguration::unSerialize(boost::property_tree::ptree& /*node*/)
-    {
-        
-    }
+void GunneboReaderUnitConfiguration::unSerialize(boost::property_tree::ptree & /*node*/)
+{
+}
 
-    std::string GunneboReaderUnitConfiguration::getDefaultXmlNodeName() const
-    {
-        return "GunneboReaderUnitConfiguration";
-    }
+std::string GunneboReaderUnitConfiguration::getDefaultXmlNodeName() const
+{
+    return "GunneboReaderUnitConfiguration";
+}
 }

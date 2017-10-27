@@ -15,37 +15,39 @@
 
 namespace logicalaccess
 {
-#define CHIP_INDALA		"Indala"
+#define CHIP_INDALA "Indala"
+
+/**
+ * \brief The Indala base chip class.
+ */
+class LIBLOGICALACCESS_API IndalaChip : public Chip
+{
+  public:
+    /**
+     * \brief Constructor.
+     */
+    IndalaChip();
 
     /**
-     * \brief The Indala base chip class.
+     * \brief Destructor.
      */
-    class LIBLOGICALACCESS_API IndalaChip : public Chip
+    virtual ~IndalaChip();
+
+    /**
+     * \brief Get the generic card type.
+     * \return The generic card type.
+     */
+    std::string getGenericCardType() const override
     {
-    public:
+        return CHIP_INDALA;
+    }
 
-        /**
-         * \brief Constructor.
-         */
-        IndalaChip();
-
-        /**
-         * \brief Destructor.
-         */
-        virtual ~IndalaChip();
-
-        /**
-         * \brief Get the generic card type.
-         * \return The generic card type.
-         */
-	    std::string getGenericCardType() const override { return CHIP_INDALA; }
-
-        /**
-         * \brief Get the root location node.
-         * \return The root location node.
-         */
-	    std::shared_ptr<LocationNode> getRootLocationNode() override;
-    };
+    /**
+     * \brief Get the root location node.
+     * \return The root location node.
+     */
+    std::shared_ptr<LocationNode> getRootLocationNode() override;
+};
 }
 
 #endif

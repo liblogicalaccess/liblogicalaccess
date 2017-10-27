@@ -16,31 +16,30 @@
 
 namespace logicalaccess
 {
-#define	CHIP_TAGIT		"TagIt"
+#define CHIP_TAGIT "TagIt"
+
+/**
+ * \brief The Tag-It base chip class.
+ */
+class LIBLOGICALACCESS_API TagItChip : public ISO15693Chip
+{
+  public:
+    /**
+     * \brief Constructor.
+     */
+    TagItChip();
 
     /**
-     * \brief The Tag-It base chip class.
+     * \brief Destructor.
      */
-    class LIBLOGICALACCESS_API TagItChip : public ISO15693Chip
-    {
-    public:
+    virtual ~TagItChip();
 
-        /**
-         * \brief Constructor.
-         */
-        TagItChip();
-
-        /**
-         * \brief Destructor.
-         */
-        virtual ~TagItChip();
-
-        /**
-         * \brief Get the root location node.
-         * \return The root location node.
-         */
-	    std::shared_ptr<LocationNode> getRootLocationNode() override;
-    };
+    /**
+     * \brief Get the root location node.
+     * \return The root location node.
+     */
+    std::shared_ptr<LocationNode> getRootLocationNode() override;
+};
 }
 
 #endif

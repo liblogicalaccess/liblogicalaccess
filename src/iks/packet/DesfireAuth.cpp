@@ -7,9 +7,11 @@
 using namespace logicalaccess;
 using namespace logicalaccess::iks;
 
-DesfireAuthCommand::DesfireAuthCommand(): step_(0), algo_(0)
+DesfireAuthCommand::DesfireAuthCommand()
+    : step_(0)
+    , algo_(0)
 {
-	opcode_ = CMSG_OP_DESFIRE_AUTH;
+    opcode_ = CMSG_OP_DESFIRE_AUTH;
 }
 
 ByteVector DesfireAuthCommand::serialize() const
@@ -32,7 +34,7 @@ ByteVector DesfireAuthCommand::serialize() const
 
     auto tmp = div_info_.serialize();
     memcpy(&header[needle], &tmp[0], tmp.size());
-    //needle += tmp.size();
+    // needle += tmp.size();
 
     return header;
 }
@@ -43,8 +45,7 @@ size_t DesfireAuthCommand::binary_size_impl() const
     return key_idt_.size() + 1 + 1 + 1 + 32 + div_info_.binary_size();
 }
 
-DesfireAuthResponse::DesfireAuthResponse(uint16_t status,
-                                         const ByteVector &data)
+DesfireAuthResponse::DesfireAuthResponse(uint16_t status, const ByteVector &data)
     : BaseResponse(SMSG_OP_DESFIRE_AUTH, status)
 {
     if (data.size() != 32 + 16 + 1)

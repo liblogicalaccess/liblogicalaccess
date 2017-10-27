@@ -15,44 +15,46 @@
 
 namespace logicalaccess
 {
-    TopazSCMCommands::TopazSCMCommands()
-        : TopazCommands(CMD_TOPAZSCM)
+TopazSCMCommands::TopazSCMCommands()
+    : TopazCommands(CMD_TOPAZSCM)
+{
+}
+
+TopazSCMCommands::TopazSCMCommands(std::string ct)
+    : TopazCommands(ct)
+{
+}
+
+TopazSCMCommands::~TopazSCMCommands()
+{
+}
+
+ByteVector TopazSCMCommands::readPage(int page)
+{
+    ByteVector data;
+    for (unsigned char i = 0; i < 8; ++i)
     {
+        unsigned char address = page << 3 | i;
+        ByteVector result =
+            getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x54, 0x00, address, 0x00);
+        data.push_back(result[0]);
     }
 
-	TopazSCMCommands::TopazSCMCommands(std::string ct)
-		: TopazCommands(ct)
-	{
-	}
+    return data;
+}
 
-    TopazSCMCommands::~TopazSCMCommands()
+void TopazSCMCommands::writePage(int page, const ByteVector &buf)
+{
+    if (buf.size() > 8)
     {
+        THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter.");
     }
 
-    ByteVector TopazSCMCommands::readPage(int page)
+    for (unsigned char i = 0; i < 8; ++i)
     {
-        ByteVector data;
-        for (unsigned char i = 0; i < 8; ++i)
-        {
-            unsigned char address = page << 3 | i;
-            ByteVector result = getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x54, 0x00, address, 0x00);
-            data.push_back(result[0]);
-        }
-
-        return data;
+        unsigned char address = page << 3 | i;
+        getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x56, 0x00, address, 0x01,
+                                                    buf[i]);
     }
-
-    void TopazSCMCommands::writePage(int page, const ByteVector& buf)
-    {
-        if (buf.size() > 8)
-        {
-            THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter.");
-        }
-
-        for (unsigned char i = 0; i < 8; ++i)
-        {
-            unsigned char address = page << 3 | i;
-            getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x56, 0x00, address, 0x01, buf[i]);
-        }
-    }
+}
 }

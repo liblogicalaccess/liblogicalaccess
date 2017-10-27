@@ -142,8 +142,7 @@ ByteVector EPassUtils::encrypt_apdu(const ByteVector &apdu, const ByteVector &ks
 
     auto ssc_incremented        = increment_ssc(ssc);
     ByteVector cmd_header_nopad = {0x0C};
-    cmd_header_nopad.insert(cmd_header_nopad.end(), apdu.begin() + 1,
-                            apdu.begin() + 4);
+    cmd_header_nopad.insert(cmd_header_nopad.end(), apdu.begin() + 1, apdu.begin() + 4);
     ByteVector cmd_header = pad(cmd_header_nopad);
 
     ByteVector do_97;
@@ -160,8 +159,7 @@ ByteVector EPassUtils::encrypt_apdu(const ByteVector &apdu, const ByteVector &ks
     {
         original_data = ByteVector(apdu.begin() + 5, apdu.end());
     }
-    ByteVector encrypted_data =
-        DESHelper::DESEncrypt(pad(original_data), ks_enc, {});
+    ByteVector encrypted_data = DESHelper::DESEncrypt(pad(original_data), ks_enc, {});
 
     ByteVector do_87;
     if (apdu_has_data(apdu)) // LC -- do we have any data?
@@ -235,9 +233,8 @@ ByteVector EPassUtils::increment_ssc(const ByteVector &in)
 ByteVector EPassUtils::compute_mac(const ByteVector &in, const ByteVector &k_mac,
                                    const ByteVector &ssc)
 {
-    EXCEPTION_ASSERT_WITH_LOG(
-        in.size() % 8 == 0, LibLogicalAccessException,
-        "Data for checksum computation is of improper length.");
+    EXCEPTION_ASSERT_WITH_LOG(in.size() % 8 == 0, LibLogicalAccessException,
+                              "Data for checksum computation is of improper length.");
     ByteVector kmac_a(k_mac.begin(), k_mac.begin() + 8);
     ByteVector kmac_b(k_mac.begin() + 8, k_mac.end());
     ByteVector y;
@@ -272,8 +269,7 @@ static bool rapdu_has_data(const ByteVector &rapdu)
     return rapdu[0] == 0x87;
 }
 
-ByteVector EPassUtils::decrypt_rapdu(const ByteVector &rapdu,
-                                     const ByteVector &ks_enc,
+ByteVector EPassUtils::decrypt_rapdu(const ByteVector &rapdu, const ByteVector &ks_enc,
                                      const ByteVector &ks_mac, const ByteVector &ssc)
 {
     ByteVector do_87;
@@ -316,8 +312,8 @@ ByteVector EPassUtils::decrypt_rapdu(const ByteVector &rapdu,
     ByteVector decrypted_data;
     if (do_87.size())
     {
-        decrypted_data = DESHelper::DESDecrypt(
-            ByteVector(do_87.begin() + 3, do_87.end()), ks_enc, {});
+        decrypted_data =
+            DESHelper::DESDecrypt(ByteVector(do_87.begin() + 3, do_87.end()), ks_enc, {});
         decrypted_data = unpad(decrypted_data);
     }
     decrypted_data.insert(decrypted_data.end(), do_99.begin() + 2, do_99.end());
@@ -330,8 +326,7 @@ EPassEFCOM EPassUtils::parse_ef_com(const ByteVector &raw)
     auto itr             = raw.begin();
     auto has_enough_byte = [&](int len) {
         EXCEPTION_ASSERT_WITH_LOG((std::distance(itr, raw.end()) >= len),
-                                  LibLogicalAccessException,
-                                  "Failed to parse EF.COM");
+                                  LibLogicalAccessException, "Failed to parse EF.COM");
     };
     EXCEPTION_ASSERT_WITH_LOG(*itr == 0x60, LibLogicalAccessException,
                               "Failed to parse EF.COM");
@@ -339,8 +334,7 @@ EPassEFCOM EPassUtils::parse_ef_com(const ByteVector &raw)
 
     // LDS version
     has_enough_byte(7);
-    EXCEPTION_ASSERT_WITH_LOG(*itr == 0x5F && *(itr + 1) == 0x01 &&
-                                  *(itr + 2) == 0x04,
+    EXCEPTION_ASSERT_WITH_LOG(*itr == 0x5F && *(itr + 1) == 0x01 && *(itr + 2) == 0x04,
                               LibLogicalAccessException, "Cannot parse EF.COM");
     itr += 3;
     for (int i = 0; i < 4; ++i)
@@ -348,8 +342,7 @@ EPassEFCOM EPassUtils::parse_ef_com(const ByteVector &raw)
 
     // Unicode Version
     has_enough_byte(9);
-    EXCEPTION_ASSERT_WITH_LOG(*itr == 0x5F && *(itr + 1) == 0x36 &&
-                                  *(itr + 2) == 0x06,
+    EXCEPTION_ASSERT_WITH_LOG(*itr == 0x5F && *(itr + 1) == 0x36 && *(itr + 2) == 0x06,
                               LibLogicalAccessException, "Cannot parse EF.COM");
     itr += 3;
     for (int i = 0; i < 6; ++i)
@@ -387,15 +380,14 @@ EPassDG2 EPassUtils::parse_dg2(const ByteVector &raw)
 
     // header + len
     has_enough_byte(5, "initial header");
-    EXCEPTION_ASSERT_WITH_LOG(*itr == 0x7F && *(itr + 1) == 0x61 &&
-                                  *(itr + 2) == 0x82,
+    EXCEPTION_ASSERT_WITH_LOG(*itr == 0x7F && *(itr + 1) == 0x61 && *(itr + 2) == 0x82,
                               LibLogicalAccessException, "Cannot parse DG2");
-	uint16_t len = *(itr + 3) << 8 | *(itr + 4);
+    uint16_t len = *(itr + 3) << 8 | *(itr + 4);
     itr += 5;
 
     has_enough_byte(len, "total length");
-    has_enough_byte(
-        3, "number of entries"); // Number of bio entry. Tag + len (=1) + value
+    has_enough_byte(3,
+                    "number of entries"); // Number of bio entry. Tag + len (=1) + value
     EXCEPTION_ASSERT_WITH_LOG(*itr == 0x02 && *(itr + 1) == 0x01,
                               LibLogicalAccessException, "Cannot parse DG2");
     uint8_t nb_bio_entry = *(itr + 2);
@@ -436,7 +428,7 @@ EPassDG2::BioInfo EPassUtils::parse_dg2_entry(ByteVector::const_iterator &itr,
     EXCEPTION_ASSERT_WITH_LOG((*itr == 0x5F || *itr == 0x7F) && *(itr + 1) == 0x2E &&
                                   *(itr + 2) == 0x82,
                               LibLogicalAccessException, "Cannot parse DG2 entry 2");
-	uint16_t data_length = *(itr + 3) << 8 | *(itr + 4);
+    uint16_t data_length = *(itr + 3) << 8 | *(itr + 4);
     itr += 5;
     has_enough_byte(data_length, "biometric data");
     if (bio.format_type_ == ByteVector{0x00, 0x08})
@@ -453,9 +445,8 @@ EPassDG2::BioInfo EPassUtils::parse_dg2_entry(ByteVector::const_iterator &itr,
         has_enough_byte(20 + nb_features * 8 + 12, "advance to image data");
         itr += 20 + nb_features * 8 + 12;
 
-        uint16_t image_offset =
-            static_cast<uint16_t>(14 + 20 + 12 + (8 * nb_features));
-        bio.image_data_ = ByteVector(itr, itr + data_length - image_offset);
+        uint16_t image_offset = static_cast<uint16_t>(14 + 20 + 12 + (8 * nb_features));
+        bio.image_data_       = ByteVector(itr, itr + data_length - image_offset);
         itr += data_length - image_offset;
     }
     else
@@ -578,8 +569,8 @@ EPassDG1 EPassUtils::parse_dg1(const ByteVector &raw)
     return dg1;
 }
 
-std::chrono::system_clock::time_point
-EPassUtils::parse_dg1_date(const ByteVector &in, int millenium_limit)
+std::chrono::system_clock::time_point EPassUtils::parse_dg1_date(const ByteVector &in,
+                                                                 int millenium_limit)
 {
     assert(in.size() == 6);
     auto itr = in.begin();
@@ -589,7 +580,7 @@ EPassUtils::parse_dg1_date(const ByteVector &in, int millenium_limit)
     auto day   = stoi(std::string(itr + 4, itr + 6));
 
     tm date;
-	memset(&date, 0x00, sizeof(tm));
+    memset(&date, 0x00, sizeof(tm));
     date.tm_mon  = month - 1; // tm_mon starts at 0
     date.tm_mday = day;
 

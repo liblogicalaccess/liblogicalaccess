@@ -9,12 +9,14 @@
 
 namespace logicalaccess
 {
-	CardService::CardService(std::shared_ptr<Chip> chip, CardServiceType serviceType) : d_chip(chip), d_serviceType(serviceType)
-    {
-    }
+CardService::CardService(std::shared_ptr<Chip> chip, CardServiceType serviceType)
+    : d_chip(chip)
+    , d_serviceType(serviceType)
+{
+}
 
-	CardServiceType CardService::getServiceType() const
-	{
-		return d_serviceType;
-	}
+CardServiceType CardService::getServiceType() const
+{
+    return d_serviceType;
+}
 }

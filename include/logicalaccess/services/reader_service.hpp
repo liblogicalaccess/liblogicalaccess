@@ -23,8 +23,9 @@ class LIBLOGICALACCESS_API ReaderService
     : public std::enable_shared_from_this<ReaderService>
 {
   public:
-	  ReaderService(ReaderUnitPtr reader_unit, ReaderServiceType service_type)
-		  : reader_unit_(reader_unit), service_type_(service_type)
+    ReaderService(ReaderUnitPtr reader_unit, ReaderServiceType service_type)
+        : reader_unit_(reader_unit)
+        , service_type_(service_type)
     {
     }
 
@@ -43,14 +44,14 @@ class LIBLOGICALACCESS_API ReaderService
      * Retrieve the service type that is implemented
      * by the current ReaderService instance.
      */
-	virtual ReaderServiceType getServiceType() const
-	{
-		return service_type_;
-	}
+    virtual ReaderServiceType getServiceType() const
+    {
+        return service_type_;
+    }
 
   protected:
     ReaderUnitPtr reader_unit_;
 
-	ReaderServiceType service_type_;
+    ReaderServiceType service_type_;
 };
 }

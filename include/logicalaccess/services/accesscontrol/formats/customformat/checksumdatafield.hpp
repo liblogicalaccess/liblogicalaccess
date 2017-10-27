@@ -11,86 +11,88 @@
 
 namespace logicalaccess
 {
+/**
+ * \brief A checksum data field. Not implemented yet.
+ */
+class LIBLOGICALACCESS_API ChecksumDataField : public DataField
+{
+  public:
     /**
-     * \brief A checksum data field. Not implemented yet.
+     * \brief Constructor.
      */
-    class LIBLOGICALACCESS_API ChecksumDataField : public DataField
-    {
-    public:
-        /**
-         * \brief Constructor.
-         */
-        ChecksumDataField();
+    ChecksumDataField();
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~ChecksumDataField();
+    /**
+     * \brief Destructor.
+     */
+    virtual ~ChecksumDataField();
 
-        /**
-         * \brief Set the parity value.
-         * \param value The field value.
-         */
-        void setValue(const char& value);
+    /**
+     * \brief Set the parity value.
+     * \param value The field value.
+     */
+    void setValue(const char &value);
 
-        /**
-         * \brief Get the field value.
-         * \return The field value.
-         */
-        unsigned char getValue() const;
+    /**
+     * \brief Get the field value.
+     * \return The field value.
+     */
+    unsigned char getValue() const;
 
-        /**
-         * \brief Set the bits to use positions to calculate checksum. The sum should be 8-bit factor.
-         * \param positions The bits positions.
-         */
-        void setBitsUsePositions(ByteVector positions);
+    /**
+     * \brief Set the bits to use positions to calculate checksum. The sum should be 8-bit
+     * factor.
+     * \param positions The bits positions.
+     */
+    void setBitsUsePositions(ByteVector positions);
 
-        /**
-         * \brief Get the bits to use positions to calculate checksum.
-         * \return The bits positions.
-         */
-        ByteVector getBitsUsePositions() const;
+    /**
+     * \brief Get the bits to use positions to calculate checksum.
+     * \return The bits positions.
+     */
+    ByteVector getBitsUsePositions() const;
 
-        /**
-         * \brief Get linear data.
-         * \param data Where to put data
-         * \param dataLengthBytes Length in byte of data
-         * \param pos The first position bit. Will contain the position bit after the field.
-         */
-        virtual void getLinearData(void* data, size_t dataLengthBytes, unsigned int* pos) const;
+    /**
+     * \brief Get linear data.
+     * \param data Where to put data
+     * \param dataLengthBytes Length in byte of data
+     * \param pos The first position bit. Will contain the position bit after the field.
+     */
+    virtual void getLinearData(void *data, size_t dataLengthBytes,
+                               unsigned int *pos) const;
 
-        /**
-         * \brief Set linear data.
-         * \param data Where to get data
-         * \param dataLengthBytes Length of data in bytes
-         * \param pos The first position bit. Will contain the position bit after the field.
-         */
-        virtual void setLinearData(const void* data, size_t dataLengthBytes, unsigned int* pos);
+    /**
+     * \brief Set linear data.
+     * \param data Where to get data
+     * \param dataLengthBytes Length of data in bytes
+     * \param pos The first position bit. Will contain the position bit after the field.
+     */
+    virtual void setLinearData(const void *data, size_t dataLengthBytes,
+                               unsigned int *pos);
 
-        /**
-         * \brief Serialize the current object to XML.
-         * \param parentNode The parent node.
-         */
-        void serialize(boost::property_tree::ptree& parentNode) override;
+    /**
+     * \brief Serialize the current object to XML.
+     * \param parentNode The parent node.
+     */
+    void serialize(boost::property_tree::ptree &parentNode) override;
 
-        /**
-         * \brief UnSerialize a XML node to the current object.
-         * \param node The XML node.
-         */
-        void unSerialize(boost::property_tree::ptree& node) override;
+    /**
+     * \brief UnSerialize a XML node to the current object.
+     * \param node The XML node.
+     */
+    void unSerialize(boost::property_tree::ptree &node) override;
 
-        /**
-         * \brief Get the default Xml Node name for this object.
-         * \return The Xml node name.
-         */
-        std::string getDefaultXmlNodeName() const override;
+    /**
+     * \brief Get the default Xml Node name for this object.
+     * \return The Xml node name.
+     */
+    std::string getDefaultXmlNodeName() const override;
 
-    protected:
+  protected:
+    ByteVector d_value;
 
-        ByteVector d_value;
-
-        std::vector<size_t> d_bitsUsePositions;
-    };
+    std::vector<size_t> d_bitsUsePositions;
+};
 }
 
 #endif /* LOGICALACCESS_CHECKSUMDATAFIELD_HPP */

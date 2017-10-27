@@ -10,101 +10,103 @@
 
 namespace logicalaccess
 {
-    Wiegand34Format::Wiegand34Format()
-        : WiegandFormat()
+Wiegand34Format::Wiegand34Format()
+    : WiegandFormat()
+{
+    d_leftParityType    = PT_EVEN;
+    d_leftParityLength  = 16;
+    d_rightParityType   = PT_ODD;
+    d_rightParityLength = 16;
+
+    std::shared_ptr<NumberDataField> field(new NumberDataField());
+    field->setName("Uid");
+    field->setIsIdentifier(true);
+    field->setDataLength(32);
+    field->setDataRepresentation(d_dataRepresentation);
+    field->setDataType(d_dataType);
+    d_fieldList.push_back(field);
+}
+
+Wiegand34Format::~Wiegand34Format()
+{
+}
+
+unsigned int Wiegand34Format::getDataLength() const
+{
+    return 34;
+}
+
+std::string Wiegand34Format::getName() const
+{
+    return std::string("Wiegand 34");
+}
+
+BitsetStream Wiegand34Format::getLinearDataWithoutParity() const
+{
+    BitsetStream data;
+    data.append(0x00, 0, 1);
+    convertField(data, getUid(), 32);
+    data.append(0x00, 0, 1);
+    return data;
+}
+
+void Wiegand34Format::setLinearDataWithoutParity(const ByteVector &data)
+{
+    unsigned int pos = 1;
+    BitsetStream _data;
+    _data.concat(data);
+
+    setUid(revertField(_data, &pos, 32));
+}
+
+size_t Wiegand34Format::getFormatLinearData(ByteVector & /*data*/) const
+{
+    return 0;
+}
+
+void Wiegand34Format::setFormatLinearData(const ByteVector & /*data*/,
+                                          size_t * /*indexByte*/)
+{
+    // Nothing to do for this format type
+}
+
+FormatType Wiegand34Format::getType() const
+{
+    return FT_WIEGAND34;
+}
+
+void Wiegand34Format::serialize(boost::property_tree::ptree &parentNode)
+{
+    boost::property_tree::ptree node;
+
+    node.put("<xmlattr>.type", getType());
+    node.put("Uid", getUid());
+
+    parentNode.add_child(getDefaultXmlNodeName(), node);
+}
+
+void Wiegand34Format::unSerialize(boost::property_tree::ptree &node)
+{
+    setUid(node.get_child("Uid").get_value<unsigned long long>());
+}
+
+std::string Wiegand34Format::getDefaultXmlNodeName() const
+{
+    return "Wiegand34Format";
+}
+
+bool Wiegand34Format::checkSkeleton(std::shared_ptr<Format> format) const
+{
+    bool ret = false;
+    if (format)
     {
-        d_leftParityType = PT_EVEN;
-        d_leftParityLength = 16;
-        d_rightParityType = PT_ODD;
-        d_rightParityLength = 16;
-
-        std::shared_ptr<NumberDataField> field(new NumberDataField());
-        field->setName("Uid");
-        field->setIsIdentifier(true);
-        field->setDataLength(32);
-        field->setDataRepresentation(d_dataRepresentation);
-        field->setDataType(d_dataType);
-        d_fieldList.push_back(field);
-    }
-
-    Wiegand34Format::~Wiegand34Format()
-    {
-    }
-
-    unsigned int Wiegand34Format::getDataLength() const
-    {
-        return 34;
-    }
-
-    std::string Wiegand34Format::getName() const
-    {
-        return std::string("Wiegand 34");
-    }
-
-    BitsetStream Wiegand34Format::getLinearDataWithoutParity() const
-    {
-		BitsetStream data;
-                data.append(0x00, 0, 1);
-        convertField(data, getUid(), 32);
-        data.append(0x00, 0, 1);
-		return data;
-    }
-
-    void Wiegand34Format::setLinearDataWithoutParity(const ByteVector& data)
-    {
-        unsigned int pos = 1;
-		BitsetStream _data;
-		_data.concat(data);
-
-        setUid(revertField(_data, &pos, 32));
-    }
-
-    size_t Wiegand34Format::getFormatLinearData(ByteVector& /*data*/) const
-    {
-        return 0;
-    }
-
-    void Wiegand34Format::setFormatLinearData(const ByteVector& /*data*/, size_t* /*indexByte*/)
-    {
-        // Nothing to do for this format type
-    }
-
-    FormatType Wiegand34Format::getType() const
-    {
-        return FT_WIEGAND34;
-    }
-
-    void Wiegand34Format::serialize(boost::property_tree::ptree& parentNode)
-    {
-        boost::property_tree::ptree node;
-
-        node.put("<xmlattr>.type", getType());
-        node.put("Uid", getUid());
-
-        parentNode.add_child(getDefaultXmlNodeName(), node);
-    }
-
-    void Wiegand34Format::unSerialize(boost::property_tree::ptree& node)
-    {
-        setUid(node.get_child("Uid").get_value<unsigned long long>());
-    }
-
-    std::string Wiegand34Format::getDefaultXmlNodeName() const
-    {
-        return "Wiegand34Format";
-    }
-
-    bool Wiegand34Format::checkSkeleton(std::shared_ptr<Format> format) const
-    {
-        bool ret = false;
-        if (format)
+        std::shared_ptr<Wiegand34Format> pFormat =
+            std::dynamic_pointer_cast<Wiegand34Format>(format);
+        if (pFormat)
         {
-            std::shared_ptr<Wiegand34Format> pFormat = std::dynamic_pointer_cast<Wiegand34Format>(format);
-            if (pFormat)
-            {
-                ret = true;
-            }
+            ret = true;
         }
-        return ret;
     }
+    return ret;
+}
 }

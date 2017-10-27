@@ -9,7 +9,7 @@ using namespace logicalaccess;
 
 ACSACR1222LReaderUnitConfiguration::ACSACR1222LReaderUnitConfiguration()
 {
-	ACSACR1222LReaderUnitConfiguration::resetConfiguration();
+    ACSACR1222LReaderUnitConfiguration::resetConfiguration();
 }
 
 void ACSACR1222LReaderUnitConfiguration::resetConfiguration()
@@ -23,7 +23,7 @@ void ACSACR1222LReaderUnitConfiguration::resetConfiguration()
 }
 
 void ACSACR1222LReaderUnitConfiguration::serialize(
-        boost::property_tree::ptree &parentNode)
+    boost::property_tree::ptree &parentNode)
 {
     boost::property_tree::ptree node;
 
@@ -36,13 +36,13 @@ void ACSACR1222LReaderUnitConfiguration::serialize(
 void ACSACR1222LReaderUnitConfiguration::unSerialize(boost::property_tree::ptree &node)
 {
     PCSCReaderUnitConfiguration::unSerialize(
-            node.get_child(PCSCReaderUnitConfiguration::getDefaultXmlNodeName()));
+        node.get_child(PCSCReaderUnitConfiguration::getDefaultXmlNodeName()));
     user_feedback_reader_ = node.get_child("UserFeedbackReader").get_value<std::string>();
 }
 
 PCSCReaderUnitType ACSACR1222LReaderUnitConfiguration::getPCSCType() const
 {
-	return PCSC_RUT_ACS_ACR_1222L;
+    return PCSC_RUT_ACS_ACR_1222L;
 }
 
 const std::string &ACSACR1222LReaderUnitConfiguration::getUserFeedbackReader() const

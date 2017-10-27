@@ -12,47 +12,54 @@
 
 namespace logicalaccess
 {
-    class GenericTagCardProvider;
+class GenericTagCardProvider;
+
+/**
+ * \brief The GenericTag access control card service class.
+ */
+class LIBLOGICALACCESS_API GenericTagAccessControlCardService
+    : public AccessControlCardService
+{
+  public:
+    /**
+     * \brief Constructor.
+     * \param chip The chip.
+     */
+    explicit GenericTagAccessControlCardService(std::shared_ptr<Chip> chip);
 
     /**
-     * \brief The GenericTag access control card service class.
+     * \brief Destructor.
      */
-    class LIBLOGICALACCESS_API GenericTagAccessControlCardService : public AccessControlCardService
+    ~GenericTagAccessControlCardService();
+
+    /**
+     * \brief Read format from the card.
+     * \param format The format to read.
+     * \param location The format location.
+     * \param aiToUse The key's informations to use.
+     * \return The format read on success, null otherwise.
+     */
+    std::shared_ptr<Format> readFormat(std::shared_ptr<Format> format,
+                                       std::shared_ptr<Location> location,
+                                       std::shared_ptr<AccessInfo> aiToUse) override;
+
+    /**
+     * \brief Write format to the card.
+     * \param format The format to write.
+     * \param location The format location.
+     * \param aiToUse The key's informations to use.
+     * \param aiToWrite The key's informations to write.
+     * \return True on success, false otherwise.
+     */
+    bool writeFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location,
+                     std::shared_ptr<AccessInfo> aiToUse,
+                     std::shared_ptr<AccessInfo> aiToWrite) override;
+
+    std::shared_ptr<GenericTagChip> getGenericTagChip() const
     {
-    public:
-
-        /**
-         * \brief Constructor.
-         * \param chip The chip.
-         */
-	    explicit GenericTagAccessControlCardService(std::shared_ptr<Chip> chip);
-
-        /**
-         * \brief Destructor.
-         */
-        ~GenericTagAccessControlCardService();
-
-        /**
-         * \brief Read format from the card.
-         * \param format The format to read.
-         * \param location The format location.
-         * \param aiToUse The key's informations to use.
-         * \return The format read on success, null otherwise.
-         */
-	    std::shared_ptr<Format> readFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse) override;
-
-        /**
-         * \brief Write format to the card.
-         * \param format The format to write.
-         * \param location The format location.
-         * \param aiToUse The key's informations to use.
-         * \param aiToWrite The key's informations to write.
-         * \return True on success, false otherwise.
-         */
-	    bool writeFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse, std::shared_ptr<AccessInfo> aiToWrite) override;
-
-        std::shared_ptr<GenericTagChip> getGenericTagChip() const { return std::dynamic_pointer_cast<GenericTagChip>(getChip()); }
-    };
+        return std::dynamic_pointer_cast<GenericTagChip>(getChip());
+    }
+};
 }
 
 #endif

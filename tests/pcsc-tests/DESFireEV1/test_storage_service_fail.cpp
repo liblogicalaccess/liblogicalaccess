@@ -24,8 +24,9 @@
 void introduction()
 {
     prologue();
-    PRINT_TIME("This test target DESFireEV1 cards. It test the storage service for writing and"
-                       "reading data in a file.");
+    PRINT_TIME(
+        "This test target DESFireEV1 cards. It test the storage service for writing and"
+        "reading data in a file.");
 
     PRINT_TIME("You will have 20 seconds to insert a card. Test log below");
     PRINT_TIME("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -41,7 +42,8 @@ void create_app_and_file(std::shared_ptr<logicalaccess::DESFireISO7816Commands> 
     // create the application we wish to write into
     cmdev1->createApplication(0x534, logicalaccess::DESFireKeySettings::KS_DEFAULT, 3,
                               logicalaccess::DESFireKeyType::DF_KEY_AES,
-                              logicalaccess::FIDS_NO_ISO_FID, 0, std::vector<unsigned char>());
+                              logicalaccess::FIDS_NO_ISO_FID, 0,
+                              std::vector<unsigned char>());
     cmd->selectApplication(0x534);
 
     std::shared_ptr<logicalaccess::DESFireKey> key(new logicalaccess::DESFireKey());
@@ -50,14 +52,15 @@ void create_app_and_file(std::shared_ptr<logicalaccess::DESFireISO7816Commands> 
 
     // We can do everything with key1
     logicalaccess::DESFireAccessRights ar;
-    ar.readAccess = logicalaccess::TaskAccessRights::AR_KEY0;
-    ar.writeAccess = logicalaccess::TaskAccessRights::AR_KEY0;
+    ar.readAccess         = logicalaccess::TaskAccessRights::AR_KEY0;
+    ar.writeAccess        = logicalaccess::TaskAccessRights::AR_KEY0;
     ar.readAndWriteAccess = logicalaccess::TaskAccessRights::AR_KEY0;
-    ar.changeAccess = logicalaccess::TaskAccessRights::AR_KEY0;
+    ar.changeAccess       = logicalaccess::TaskAccessRights::AR_KEY0;
 
     // Create the file we will use.
     int file_size = 16;
-    cmdev1->createStdDataFile(0x00, logicalaccess::EncryptionMode::CM_ENCRYPT, ar, file_size, 0);
+    cmdev1->createStdDataFile(0x00, logicalaccess::EncryptionMode::CM_ENCRYPT, ar,
+                              file_size, 0);
 }
 
 int main(int, char **)
@@ -68,24 +71,26 @@ int main(int, char **)
     ChipPtr chip;
     std::tie(provider, readerUnit, chip) = pcsc_test_init();
 
-    PRINT_TIME("CHip identifier: " <<
-               logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
+    PRINT_TIME("CHip identifier: "
+               << logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
 
     LLA_ASSERT(chip->getCardType() == "DESFireEV1",
-               "Chip is not an DESFireEV1, but is " + chip->getCardType() +
-               " instead.");
+               "Chip is not an DESFireEV1, but is " + chip->getCardType() + " instead.");
 
     auto storage = std::dynamic_pointer_cast<logicalaccess::StorageCardService>(
-            chip->getService(logicalaccess::CST_STORAGE));
+        chip->getService(logicalaccess::CST_STORAGE));
 
-    auto cmd = std::dynamic_pointer_cast<logicalaccess::DESFireISO7816Commands>(chip->getCommands());
-    auto cmdev1 = std::dynamic_pointer_cast<logicalaccess::DESFireEV1ISO7816Commands>(chip->getCommands());
+    auto cmd = std::dynamic_pointer_cast<logicalaccess::DESFireISO7816Commands>(
+        chip->getCommands());
+    auto cmdev1 = std::dynamic_pointer_cast<logicalaccess::DESFireEV1ISO7816Commands>(
+        chip->getCommands());
 
     std::shared_ptr<logicalaccess::Location> location;
     std::shared_ptr<logicalaccess::AccessInfo> aiToUse;
 
     // The excepted memory tree
-    std::shared_ptr<logicalaccess::DESFireEV1Location> dlocation(new logicalaccess::DESFireEV1Location());
+    std::shared_ptr<logicalaccess::DESFireEV1Location> dlocation(
+        new logicalaccess::DESFireEV1Location());
 
     // The Application ID to use
     dlocation->aid = 0x000534;
@@ -93,18 +98,21 @@ int main(int, char **)
     dlocation->file = 0;
     // File communication requires encryption
     dlocation->securityLevel = logicalaccess::CM_ENCRYPT;
-    dlocation->useEV1 = true;
-    dlocation->cryptoMethod = logicalaccess::DF_KEY_AES;
-    location = dlocation;
+    dlocation->useEV1        = true;
+    dlocation->cryptoMethod  = logicalaccess::DF_KEY_AES;
+    location                 = dlocation;
 
-    std::shared_ptr<logicalaccess::DESFireAccessInfo> daiToUse(new logicalaccess::DESFireAccessInfo());
-    daiToUse->masterCardKey->fromString("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00");
+    std::shared_ptr<logicalaccess::DESFireAccessInfo> daiToUse(
+        new logicalaccess::DESFireAccessInfo());
+    daiToUse->masterCardKey->fromString(
+        "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00");
 
-    //daiToUse->readKey->setKeyType(logicalaccess::DF_KEY_AES); // fix bug when using keyno = 0
+    // daiToUse->readKey->setKeyType(logicalaccess::DF_KEY_AES); // fix bug when using
+    // keyno = 0
 
     daiToUse->writeKeyno = 0;
-    daiToUse->readKeyno = 0;
-    aiToUse = daiToUse;
+    daiToUse->readKeyno  = 0;
+    aiToUse              = daiToUse;
 
     cmd->selectApplication(0x00);
     cmd->authenticate(0);
@@ -123,8 +131,7 @@ int main(int, char **)
     LLA_SUBTEST_PASSED("WriteService")
 
     // We read the data on the same location. Remember, the key is now changed.
-    readdata = storage
-            ->readData(location, aiToUse, 16, logicalaccess::CB_DEFAULT);
+    readdata = storage->readData(location, aiToUse, 16, logicalaccess::CB_DEFAULT);
     PRINT_TIME("Read: " << readdata);
     LLA_SUBTEST_PASSED("ReadService")
 

@@ -13,29 +13,32 @@
 
 namespace logicalaccess
 {
-#define CHIP_SAMAV2	"SAM_AV2"
+#define CHIP_SAMAV2 "SAM_AV2"
+
+/**
+ * \brief The SAM chip class.
+ */
+class LIBLOGICALACCESS_API SAMAV2Chip : public SAMChip
+{
+  public:
+    /**
+     * \brief Constructor.
+     */
+    SAMAV2Chip();
+
+    explicit SAMAV2Chip(std::string ct);
 
     /**
-     * \brief The SAM chip class.
+     * \brief Destructor.
      */
-    class LIBLOGICALACCESS_API SAMAV2Chip : public SAMChip
+    ~SAMAV2Chip();
+
+    std::shared_ptr<SAMCommands<KeyEntryAV2Information, SETAV2>> getSAMAV2Commands() const
     {
-    public:
-
-        /**
-         * \brief Constructor.
-         */
-        SAMAV2Chip();
-
-	    explicit SAMAV2Chip(std::string ct);
-
-        /**
-         * \brief Destructor.
-         */
-        ~SAMAV2Chip();
-
-        std::shared_ptr<SAMCommands<KeyEntryAV2Information, SETAV2> > getSAMAV2Commands() const { return std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(getCommands()); }
-    };
+        return std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(
+            getCommands());
+    }
+};
 }
 
 #endif /* LOGICALACCESS_SAMAV2CHIP_HPP */

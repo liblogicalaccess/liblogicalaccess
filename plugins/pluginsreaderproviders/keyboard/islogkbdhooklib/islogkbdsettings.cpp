@@ -18,166 +18,177 @@ extern "C" IMAGE_DOS_HEADER __ImageBase;
 
 namespace islogkbdlib
 {
-	KbdSettings* KbdSettings::instance = NULL;
+KbdSettings *KbdSettings::instance = NULL;
 
-	KbdSettings::KbdSettings() : IsLogEnabled(false)
-	{
-	}
-	
-	void KbdSettings::Initialize()
-	{
-		static bool alreadyInit = false;
+KbdSettings::KbdSettings()
+    : IsLogEnabled(false)
+{
+}
 
-		if (alreadyInit == true)
-			return;
-		alreadyInit = true;
+void KbdSettings::Initialize()
+{
+    static bool alreadyInit = false;
 
-		try
-		{
-			OutputDebugStringA("#KbdSettings::Initialize# begin.");
-			LoadSettings();
-		}
-		catch(...) { reset(); }
-	}
-	
-	void KbdSettings::Uninitialize()  
-	{
-	}
+    if (alreadyInit == true)
+        return;
+    alreadyInit = true;
 
-	KbdSettings* KbdSettings::getInstance()
-	{
-		if (instance == NULL)
-		{
-			instance = new KbdSettings();
-			instance->Initialize();
-		}
-		return instance;
-	}
+    try
+    {
+        OutputDebugStringA("#KbdSettings::Initialize# begin.");
+        LoadSettings();
+    }
+    catch (...)
+    {
+        reset();
+    }
+}
 
-	void KbdSettings::LoadSettings()
-	{
-		try
-		{
-			reset();
+void KbdSettings::Uninitialize()
+{
+}
 
-			using boost::property_tree::ptree;
-			ptree pt;
+KbdSettings *KbdSettings::getInstance()
+{
+    if (instance == NULL)
+    {
+        instance = new KbdSettings();
+        instance->Initialize();
+    }
+    return instance;
+}
 
-			read_xml((getDllPath() + "/islogkbdsettings.config"), pt);
+void KbdSettings::LoadSettings()
+{
+    try
+    {
+        reset();
 
-			IsLogEnabled = pt.get("config.log.enabled", false);
-			LogFileName = pt.get<std::string>("config.log.filename", "islogkbdlogs.log");
+        using boost::property_tree::ptree;
+        ptree pt;
 
-			if (IsLogEnabled)
-			{
-				OutputDebugStringA("#KbdSettings::LoadSettings# Log is enabled on file:");
-				OutputDebugStringA(LogFileName.c_str());
-			}
-		}
-		catch (...) 
-		{
-		}
-	}
+        read_xml((getDllPath() + "/islogkbdsettings.config"), pt);
 
-	void KbdSettings::SaveSettings()
-	{
-		try
-		{
-			using boost::property_tree::ptree;
-			ptree pt;
+        IsLogEnabled = pt.get("config.log.enabled", false);
+        LogFileName  = pt.get<std::string>("config.log.filename", "islogkbdlogs.log");
 
-			pt.put("config.log.enabled", IsLogEnabled);
-			pt.put("config.log.filename", LogFileName);
+        if (IsLogEnabled)
+        {
+            OutputDebugStringA("#KbdSettings::LoadSettings# Log is enabled on file:");
+            OutputDebugStringA(LogFileName.c_str());
+        }
+    }
+    catch (...)
+    {
+    }
+}
 
-			write_xml((getDllPath() + "\\islogkbdsettings.config"), pt);
-		}
-		catch (...) { }
-	}
-	
-	void KbdSettings::reset()  
-	{  
-		IsLogEnabled = false;  
-		LogFileName = "islogkbdlogs.log";
-	}
+void KbdSettings::SaveSettings()
+{
+    try
+    {
+        using boost::property_tree::ptree;
+        ptree pt;
 
-	std::string KbdSettings::getDllPath()
-	{
+        pt.put("config.log.enabled", IsLogEnabled);
+        pt.put("config.log.filename", LogFileName);
+
+        write_xml((getDllPath() + "\\islogkbdsettings.config"), pt);
+    }
+    catch (...)
+    {
+    }
+}
+
+void KbdSettings::reset()
+{
+    IsLogEnabled = false;
+    LogFileName  = "islogkbdlogs.log";
+}
+
+std::string KbdSettings::getDllPath()
+{
 #ifdef _MSC_VER
-		char szAppPath[MAX_PATH];
-		memset(szAppPath, 0x00, sizeof(szAppPath));
-		static std::string path = ".";
+    char szAppPath[MAX_PATH];
+    memset(szAppPath, 0x00, sizeof(szAppPath));
+    static std::string path = ".";
 
-		if (path == ".")
-		{	
-            char tmp[128];
-			DWORD error = ERROR_SUCCESS;
-			if (!GetModuleFileNameA((HMODULE)&__ImageBase, szAppPath, sizeof(szAppPath)-1))
-			{
-				error = GetLastError();
-				sprintf(tmp, "Cannot get module file name. Last error code: %lu. Trying with GetModuleHandle first...", error);
-				OutputDebugStringA(tmp);
-				HMODULE hm = NULL;
-				if (!GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-                        (LPCSTR) &instance, 
-                            &hm))
-				{
-					int ret = GetLastError();
-					sprintf(tmp, "GetModuleHandle returned %d\n", ret);
-					OutputDebugStringA(tmp);
-				}				
+    if (path == ".")
+    {
+        char tmp[128];
+        DWORD error = ERROR_SUCCESS;
+        if (!GetModuleFileNameA((HMODULE)&__ImageBase, szAppPath, sizeof(szAppPath) - 1))
+        {
+            error = GetLastError();
+            sprintf(tmp, "Cannot get module file name. Last error code: %lu. Trying with "
+                         "GetModuleHandle first...",
+                    error);
+            OutputDebugStringA(tmp);
+            HMODULE hm = NULL;
+            if (!GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
+                                        GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                                    (LPCSTR)&instance, &hm))
+            {
+                int ret = GetLastError();
+                sprintf(tmp, "GetModuleHandle returned %d\n", ret);
+                OutputDebugStringA(tmp);
+            }
 
-				if (!GetModuleFileNameA(hm, szAppPath, sizeof(szAppPath)-1))
-				{
-					error = GetLastError();
-					sprintf(tmp, "Cannot get module file name. Last error code: %lu. Trying with hmodule (%p) from dllmain...", error, __hKbdHookModule);
-					OutputDebugStringA(tmp);
-					if (__hKbdHookModule == NULL)
-					{
-						sprintf(tmp, "hmodule from dllmain is null.");
-						OutputDebugStringA(tmp);
-					
-					}
-					else
-					{
-						if (!GetModuleFileNameA(__hKbdHookModule, szAppPath, sizeof(szAppPath)-1))
-						{
-							error = GetLastError();
-						}
-						else
-						{
-							error = ERROR_SUCCESS;
-						}
-					}
-				}
-				else
-				{
-					error = ERROR_SUCCESS;
-				}
-			}
+            if (!GetModuleFileNameA(hm, szAppPath, sizeof(szAppPath) - 1))
+            {
+                error = GetLastError();
+                sprintf(tmp, "Cannot get module file name. Last error code: %lu. Trying "
+                             "with hmodule (%p) from dllmain...",
+                        error, __hKbdHookModule);
+                OutputDebugStringA(tmp);
+                if (__hKbdHookModule == NULL)
+                {
+                    sprintf(tmp, "hmodule from dllmain is null.");
+                    OutputDebugStringA(tmp);
+                }
+                else
+                {
+                    if (!GetModuleFileNameA(__hKbdHookModule, szAppPath,
+                                            sizeof(szAppPath) - 1))
+                    {
+                        error = GetLastError();
+                    }
+                    else
+                    {
+                        error = ERROR_SUCCESS;
+                    }
+                }
+            }
+            else
+            {
+                error = ERROR_SUCCESS;
+            }
+        }
 
-			if (error == ERROR_SUCCESS)
-			{
-				std::string tmp(szAppPath);
-				size_t index = tmp.find_last_of("/\\");
-				if (index != std::string::npos)
-				{
-					tmp = tmp.substr(0, index);
-				}
-				path = tmp;
-			}
-			else
-			{
-				sprintf(tmp, "Still cannot get module file name. Last error code: %lu.", error);
-				OutputDebugStringA(tmp);
-			}
+        if (error == ERROR_SUCCESS)
+        {
+            std::string tmp(szAppPath);
+            size_t index = tmp.find_last_of("/\\");
+            if (index != std::string::npos)
+            {
+                tmp = tmp.substr(0, index);
+            }
+            path = tmp;
+        }
+        else
+        {
+            sprintf(tmp, "Still cannot get module file name. Last error code: %lu.",
+                    error);
+            OutputDebugStringA(tmp);
+        }
 
-			sprintf(tmp, "Current dll path is: %s.", path.c_str());
-			OutputDebugStringA(tmp);
-		}
+        sprintf(tmp, "Current dll path is: %s.", path.c_str());
+        OutputDebugStringA(tmp);
+    }
 
-		return path;
+    return path;
 #else
-		return boost::filesystem::current_path().string();
+    return boost::filesystem::current_path().string();
 #endif
-	}
+}
 }

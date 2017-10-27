@@ -14,7 +14,8 @@ void introduction()
                "the increment and decrement commands");
 
     PRINT_TIME("You will have 20 seconds to insert a card. Test log below");
-    PRINT_TIME("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    PRINT_TIME(
+        "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
     LLA_SUBTEST_REGISTER("WriteValueBlock");
     LLA_SUBTEST_REGISTER("ReadValueBlock");
@@ -80,7 +81,7 @@ void increment(std::shared_ptr<logicalaccess::MifareCommands> cmd)
 void decrement(std::shared_ptr<logicalaccess::MifareCommands> cmd)
 {
     auto key = std::make_shared<logicalaccess::MifareKey>("ff ff ff ff ff ff");
-	cmd->loadKey(0, logicalaccess::MifareKeyType::KT_KEY_A, key);
+    cmd->loadKey(0, logicalaccess::MifareKeyType::KT_KEY_A, key);
 
     int32_t value;
     uint8_t backup;
@@ -109,12 +110,11 @@ int main(int ac, char **av)
     ChipPtr chip;
     tie(provider, readerUnit, chip) = lla_test_init("Mifare1K");
 
-    PRINT_TIME("Chip identifier: " <<
-               logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
+    PRINT_TIME("Chip identifier: "
+               << logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
 
     LLA_ASSERT(chip->getCardType() == "Mifare1K",
-               "Chip is not a Mifare1K, but is " + chip->getCardType() +
-               " instead.");
+               "Chip is not a Mifare1K, but is " + chip->getCardType() + " instead.");
 
 
     auto cmd = std::dynamic_pointer_cast<MifareCommands>(chip->getCommands());
@@ -122,7 +122,7 @@ int main(int ac, char **av)
     // Get the root node
     std::shared_ptr<LocationNode> rootNode = chip->getRootLocationNode();
     // Get childrens of this node
-    std::vector<std::shared_ptr<LocationNode> > childs = rootNode->getChildrens();
+    std::vector<std::shared_ptr<LocationNode>> childs = rootNode->getChildrens();
 
     write_value_block(cmd);
     read_value_block(cmd);

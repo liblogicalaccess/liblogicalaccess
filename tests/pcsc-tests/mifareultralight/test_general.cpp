@@ -30,13 +30,13 @@ int main(int ac, char **av)
     ChipPtr chip;
     tie(provider, readerUnit, chip) = lla_test_init();
 
-    PRINT_TIME("Chip identifier: " <<
-               logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
+    PRINT_TIME("Chip identifier: "
+               << logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
 
     LLA_ASSERT(chip->getCardType() == "MifareUltralight",
-               "Chip is not an MifareUltralight(C), but is " + chip->getCardType() + " instead.");
-    auto cmd = std::dynamic_pointer_cast<MifareUltralightCommands>(
-            chip->getCommands());
+               "Chip is not an MifareUltralight(C), but is " + chip->getCardType() +
+                   " instead.");
+    auto cmd = std::dynamic_pointer_cast<MifareUltralightCommands>(chip->getCommands());
     LLA_ASSERT(cmd, "Cannot get command from chip");
 
     ByteVector data(4), tmp;

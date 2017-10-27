@@ -15,31 +15,30 @@
 
 namespace logicalaccess
 {
-#define CHIP_ICODE2		"iCode2"
+#define CHIP_ICODE2 "iCode2"
+
+/**
+ * \brief The iCode2 base chip class.
+ */
+class LIBLOGICALACCESS_API ICode2Chip : public ISO15693Chip
+{
+  public:
+    /**
+     * \brief Constructor.
+     */
+    ICode2Chip();
 
     /**
-     * \brief The iCode2 base chip class.
+     * \brief Destructor.
      */
-    class LIBLOGICALACCESS_API ICode2Chip : public ISO15693Chip
-    {
-    public:
+    virtual ~ICode2Chip();
 
-        /**
-         * \brief Constructor.
-         */
-        ICode2Chip();
-
-        /**
-         * \brief Destructor.
-         */
-        virtual ~ICode2Chip();
-
-        /**
-         * \brief Get the root location node.
-         * \return The root location node.
-         */
-	    std::shared_ptr<LocationNode> getRootLocationNode() override;
-    };
+    /**
+     * \brief Get the root location node.
+     * \return The root location node.
+     */
+    std::shared_ptr<LocationNode> getRootLocationNode() override;
+};
 }
 
 #endif

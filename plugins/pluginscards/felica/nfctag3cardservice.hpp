@@ -13,31 +13,37 @@
 
 namespace logicalaccess
 {
+/**
+* \brief The NFC Tag 3 storage card service base class.
+*/
+class LIBLOGICALACCESS_API NFCTag3CardService : public NFCTagCardService
+{
+  public:
     /**
-    * \brief The NFC Tag 3 storage card service base class.
+    * \brief Constructor.
+    * \param chip The chip.
     */
-    class LIBLOGICALACCESS_API NFCTag3CardService : public NFCTagCardService
+    explicit NFCTag3CardService(std::shared_ptr<Chip> chip)
+        : NFCTagCardService(chip)
     {
-    public:
+    }
 
-        /**
-        * \brief Constructor.
-        * \param chip The chip.
-        */
-	    explicit NFCTag3CardService(std::shared_ptr<Chip> chip) : NFCTagCardService(chip) {}
+    virtual ~NFCTag3CardService()
+    {
+    }
 
-        virtual ~NFCTag3CardService() {}
+    std::shared_ptr<NdefMessage> readNDEF() override;
 
-	    std::shared_ptr<NdefMessage> readNDEF() override;
+    void writeNDEF(std::shared_ptr<NdefMessage> records) override;
 
-	    void writeNDEF(std::shared_ptr<NdefMessage> records) override;
+    void eraseNDEF() override;
 
-	    void eraseNDEF() override;
-
-    protected:
-
-        std::shared_ptr<FeliCaChip> getFeliCaChip() const { return std::dynamic_pointer_cast<FeliCaChip>(getChip()); }
-    };
+  protected:
+    std::shared_ptr<FeliCaChip> getFeliCaChip() const
+    {
+        return std::dynamic_pointer_cast<FeliCaChip>(getChip());
+    }
+};
 }
 
 #endif /* LOGICALACCESS_NFCTAG3CARDSERVICE_HPP */

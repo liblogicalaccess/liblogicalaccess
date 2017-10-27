@@ -10,9 +10,9 @@ class LIBLOGICALACCESS_API GenRandomCommand : public BaseCommand
 {
   public:
     GenRandomCommand();
-	ByteVector serialize() const override;
+    ByteVector serialize() const override;
 
-	size_t binary_size_impl() const override;
+    size_t binary_size_impl() const override;
 
     uint16_t nb_bytes_;
 };

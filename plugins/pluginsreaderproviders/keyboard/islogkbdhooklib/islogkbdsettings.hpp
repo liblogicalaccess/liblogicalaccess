@@ -14,33 +14,30 @@ extern HMODULE __hKbdHookModule;
 
 namespace islogkbdlib
 {
-	class KEYBOARDHOOK_API KbdSettings
-	{
-		public:
+class KEYBOARDHOOK_API KbdSettings
+{
+  public:
+    static KbdSettings *getInstance();
 
-			static KbdSettings* getInstance();
-			
-			void Initialize();  
-			void Uninitialize();  
+    void Initialize();
+    void Uninitialize();
 
-			bool IsLogEnabled;
-			std::string LogFileName;
+    bool IsLogEnabled;
+    std::string LogFileName;
 
-			std::string getDllPath();
+    std::string getDllPath();
 
-		protected:
+  protected:
+    KbdSettings();
 
-			KbdSettings();
-			
-			void LoadSettings();
-			void SaveSettings();
+    void LoadSettings();
+    void SaveSettings();
 
-			static KbdSettings* instance;
-			
-		private:
-		
-			void reset();
-	};
+    static KbdSettings *instance;
+
+  private:
+    void reset();
+};
 }
 
 #endif

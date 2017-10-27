@@ -10,46 +10,50 @@
 
 namespace logicalaccess
 {
-	unsigned short FeliCaCommands::requestService(unsigned short code)
-	{
-		std::vector<unsigned short> codes;
-		codes.push_back(code);
+unsigned short FeliCaCommands::requestService(unsigned short code)
+{
+    std::vector<unsigned short> codes;
+    codes.push_back(code);
 
-		std::vector<unsigned short> versions = requestServices(codes);
-		EXCEPTION_ASSERT_WITH_LOG(versions.size() > 0, LibLogicalAccessException, "Wrong versions result.");
+    std::vector<unsigned short> versions = requestServices(codes);
+    EXCEPTION_ASSERT_WITH_LOG(versions.size() > 0, LibLogicalAccessException,
+                              "Wrong versions result.");
 
-		return versions.at(0);
-	}
+    return versions.at(0);
+}
 
-	ByteVector FeliCaCommands::read(unsigned short code, unsigned short block)
-	{
-		std::vector<unsigned short> blocks;
-		blocks.push_back(block);
+ByteVector FeliCaCommands::read(unsigned short code, unsigned short block)
+{
+    std::vector<unsigned short> blocks;
+    blocks.push_back(block);
 
-		return read(code, blocks);
-	}
-	
-	ByteVector FeliCaCommands::read(unsigned short code, const std::vector<unsigned short>& blocks)
-	{
-		std::vector<unsigned short> codes;
-		codes.push_back(code);
+    return read(code, blocks);
+}
 
-		return read(codes, blocks);
-	}
+ByteVector FeliCaCommands::read(unsigned short code,
+                                const std::vector<unsigned short> &blocks)
+{
+    std::vector<unsigned short> codes;
+    codes.push_back(code);
 
-	void FeliCaCommands::write(unsigned short code, unsigned short block, const ByteVector& data)
-	{
-		std::vector<unsigned short> blocks;
-		blocks.push_back(block);
+    return read(codes, blocks);
+}
 
-		write(code, blocks, data);
-	}
+void FeliCaCommands::write(unsigned short code, unsigned short block,
+                           const ByteVector &data)
+{
+    std::vector<unsigned short> blocks;
+    blocks.push_back(block);
 
-	void FeliCaCommands::write(unsigned short code, const std::vector<unsigned short>& blocks, const ByteVector& data)
-	{
-		std::vector<unsigned short> codes;
-		codes.push_back(code);
+    write(code, blocks, data);
+}
 
-		write(codes, blocks, data);
-	}
+void FeliCaCommands::write(unsigned short code, const std::vector<unsigned short> &blocks,
+                           const ByteVector &data)
+{
+    std::vector<unsigned short> codes;
+    codes.push_back(code);
+
+    write(codes, blocks, data);
+}
 }

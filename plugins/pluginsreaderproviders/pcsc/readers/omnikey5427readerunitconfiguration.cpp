@@ -8,10 +8,11 @@
 
 using namespace logicalaccess;
 
-Omnikey5427ReaderUnitConfiguration::Omnikey5427ReaderUnitConfiguration() :
-        useSecureMode_(true),                  // default to use secure
-        masterKey_(new AES128Key())            // but without leaking the key to client code.
-                                               // the reader unit code will use the default is none is set.
+Omnikey5427ReaderUnitConfiguration::Omnikey5427ReaderUnitConfiguration()
+    : useSecureMode_(true)
+    ,                           // default to use secure
+    masterKey_(new AES128Key()) // but without leaking the key to client code.
+// the reader unit code will use the default is none is set.
 {
 }
 
@@ -31,7 +32,7 @@ std::shared_ptr<AES128Key> Omnikey5427ReaderUnitConfiguration::getSecureMasterKe
 }
 
 void Omnikey5427ReaderUnitConfiguration::setSecureMasterKey(
-        std::shared_ptr<AES128Key> ptr)
+    std::shared_ptr<AES128Key> ptr)
 {
     masterKey_ = ptr;
 }
@@ -44,7 +45,7 @@ void Omnikey5427ReaderUnitConfiguration::resetConfiguration()
 }
 
 void Omnikey5427ReaderUnitConfiguration::serialize(
-        boost::property_tree::ptree &parentNode)
+    boost::property_tree::ptree &parentNode)
 {
     boost::property_tree::ptree node;
 
@@ -61,12 +62,12 @@ void Omnikey5427ReaderUnitConfiguration::serialize(
 void Omnikey5427ReaderUnitConfiguration::unSerialize(boost::property_tree::ptree &node)
 {
     PCSCReaderUnitConfiguration::unSerialize(
-            node.get_child(PCSCReaderUnitConfiguration::getDefaultXmlNodeName()));
+        node.get_child(PCSCReaderUnitConfiguration::getDefaultXmlNodeName()));
     useSecureMode_ = node.get_child("UseSecureMode").get_value<bool>();
     masterKey_->unSerialize(node.get_child("MasterKey"), "");
 }
 
 PCSCReaderUnitType Omnikey5427ReaderUnitConfiguration::getPCSCType() const
 {
-	return PCSC_RUT_OMNIKEY_XX27;
+    return PCSC_RUT_OMNIKEY_XX27;
 }

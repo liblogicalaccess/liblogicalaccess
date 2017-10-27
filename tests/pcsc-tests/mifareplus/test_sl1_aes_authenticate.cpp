@@ -31,16 +31,17 @@ int main(int ac, char **av)
     ChipPtr chip;
     tie(provider, readerUnit, chip) = pcsc_test_init();
 
-    PRINT_TIME("Chip identifier: " <<
-               logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
+    PRINT_TIME("Chip identifier: "
+               << logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
     PRINT_TIME("Chip type = " << chip->getCardType());
 
-    auto mfp_sl1_cmd = std::dynamic_pointer_cast<MifarePlusSL1Commands>(chip->getCommands());
+    auto mfp_sl1_cmd =
+        std::dynamic_pointer_cast<MifarePlusSL1Commands>(chip->getCommands());
     LLA_ASSERT(mfp_sl1_cmd, "No (or invalid) command object.");
 
     std::shared_ptr<AES128Key> aes_key = std::make_shared<AES128Key>();
     aes_key->fromString("ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff");
-	//aes_key->fromString("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00");
+    // aes_key->fromString("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00");
 
     LLA_ASSERT(mfp_sl1_cmd->AESAuthenticateSL1(aes_key), "AES Authentication failed");
     LLA_SUBTEST_PASSED("AES_Auth");

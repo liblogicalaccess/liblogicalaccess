@@ -11,42 +11,42 @@ class LIBLOGICALACCESS_API STidPRGReaderUnit : public ReaderUnit
   public:
     STidPRGReaderUnit();
 
-	void serialize(boost::property_tree::ptree &node) override;
+    void serialize(boost::property_tree::ptree &node) override;
 
-	void unSerialize(boost::property_tree::ptree &node) override;
+    void unSerialize(boost::property_tree::ptree &node) override;
 
-	bool waitInsertion(unsigned int maxwait) override;
+    bool waitInsertion(unsigned int maxwait) override;
 
-	bool waitRemoval(unsigned int maxwait) override;
+    bool waitRemoval(unsigned int maxwait) override;
 
-	bool isConnected() override;
+    bool isConnected() override;
 
-	void setCardType(std::string cardType) override;
+    void setCardType(std::string cardType) override;
 
-	std::shared_ptr<Chip> getSingleChip() override;
+    std::shared_ptr<Chip> getSingleChip() override;
 
-	std::vector<std::shared_ptr<Chip>> getChipList() override;
+    std::vector<std::shared_ptr<Chip>> getChipList() override;
 
-	bool connect() override;
+    bool connect() override;
 
-	void disconnect() override;
+    void disconnect() override;
 
-	bool connectToReader() override;
+    bool connectToReader() override;
 
-	void disconnectFromReader() override;
+    void disconnectFromReader() override;
 
-	std::string getName() const override;
+    std::string getName() const override;
 
-	std::string getReaderSerialNumber() override;
+    std::string getReaderSerialNumber() override;
 
-    std::shared_ptr<STidPRGReaderUnitConfiguration> getSTidPRGReaderUnitConfiguration() const;
+    std::shared_ptr<STidPRGReaderUnitConfiguration>
+    getSTidPRGReaderUnitConfiguration() const;
 
     ByteVector readBlocks(uint8_t start, uint8_t end);
 
     bool login(const ByteVector &password);
 
-    bool writePassword(const ByteVector &old,
-                       const ByteVector &new_pass);
+    bool writePassword(const ByteVector &old, const ByteVector &new_pass);
 
     bool writeBlock(uint8_t start, uint8_t end, const ByteVector &data);
 

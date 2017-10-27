@@ -9,21 +9,25 @@
 
 namespace logicalaccess
 {
-    namespace openssl
+namespace openssl
+{
+/**
+ * \brief A null deleter structure.
+ *
+ * Sometimes, you want to use a std::shared_ptr to reference a staticaly allocated object
+ * that must *NOT* be deallocated when the shared_ptr is destroyed. null_deleter serves
+ * this purpose.
+ */
+struct null_deleter
+{
+    /**
+     * \brief The null deletion function.
+     */
+    void operator()(void const *) const
     {
-        /**
-         * \brief A null deleter structure.
-         *
-         * Sometimes, you want to use a std::shared_ptr to reference a staticaly allocated object that must *NOT* be deallocated when the shared_ptr is destroyed. null_deleter serves this purpose.
-         */
-        struct null_deleter
-        {
-            /**
-             * \brief The null deletion function.
-             */
-            void operator() (void const*) const {}
-        };
     }
+};
+}
 }
 
 #endif /* NULL_DELETER_HPP */

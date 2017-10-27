@@ -14,17 +14,15 @@ using namespace logicalaccess::iks;
 
 IslogKeyServer &IslogKeyServer::fromGlobalSettings()
 {
-    static iks::IslogKeyServer iks(pre_configuration_.ip, pre_configuration_.port,
-                                   pre_configuration_.client_cert,
-                                   pre_configuration_.client_key,
-                                   pre_configuration_.root_ca);
+    static iks::IslogKeyServer iks(
+        pre_configuration_.ip, pre_configuration_.port, pre_configuration_.client_cert,
+        pre_configuration_.client_key, pre_configuration_.root_ca);
     return iks;
 }
 
 IslogKeyServer::IslogKeyServer(const std::string &ip, uint16_t port,
                                const std::string &client_cert,
-                               const std::string &client_key,
-                               const std::string &root_ca)
+                               const std::string &client_key, const std::string &root_ca)
     :
 #ifdef ENABLE_SSLTRANSPORT
     ssl_ctx_(boost::asio::ssl::context::tlsv12_client)
@@ -47,7 +45,7 @@ IslogKeyServer::IslogKeyServer(const std::string &ip, uint16_t port,
 
 ByteVector IslogKeyServer::get_random(size_t sz)
 {
-  assert(sz <= std::numeric_limits<uint16_t>::max());
+    assert(sz <= std::numeric_limits<uint16_t>::max());
     GenRandomCommand cmd;
     cmd.nb_bytes_ = static_cast<uint16_t>(sz);
 
@@ -57,9 +55,8 @@ ByteVector IslogKeyServer::get_random(size_t sz)
     return ret->bytes_;
 }
 
-ByteVector IslogKeyServer::aes_encrypt(const ByteVector &in,
-                                                 const std::string &key_name,
-                                                 const std::array<uint8_t, 16> &iv)
+ByteVector IslogKeyServer::aes_encrypt(const ByteVector &in, const std::string &key_name,
+                                       const std::array<uint8_t, 16> &iv)
 {
     AesEncryptCommand cmd;
     cmd.key_name_ = key_name;
@@ -77,9 +74,8 @@ ByteVector IslogKeyServer::aes_encrypt(const ByteVector &in,
     return ret->bytes_;
 }
 
-ByteVector IslogKeyServer::aes_decrypt(const ByteVector &in,
-                                                 const std::string &key_name,
-                                                 const ByteVector &iv)
+ByteVector IslogKeyServer::aes_decrypt(const ByteVector &in, const std::string &key_name,
+                                       const ByteVector &iv)
 {
     if (iv.size() != 16)
     {
@@ -90,9 +86,8 @@ ByteVector IslogKeyServer::aes_decrypt(const ByteVector &in,
     return aes_decrypt(in, key_name, iv_array);
 }
 
-ByteVector IslogKeyServer::aes_decrypt(const ByteVector &in,
-                                                 const std::string &key_name,
-                                                 const std::array<uint8_t, 16> &iv)
+ByteVector IslogKeyServer::aes_decrypt(const ByteVector &in, const std::string &key_name,
+                                       const std::array<uint8_t, 16> &iv)
 {
     AesEncryptCommand cmd;
     cmd.decrypt_  = true;
@@ -111,50 +106,44 @@ ByteVector IslogKeyServer::aes_decrypt(const ByteVector &in,
     return ret->bytes_;
 }
 
-ByteVector
-IslogKeyServer::des_cbc_encrypt(const ByteVector &in,
-                                const std::string &key_name,
-                                const std::array<uint8_t, 8> &iv)
+ByteVector IslogKeyServer::des_cbc_encrypt(const ByteVector &in,
+                                           const std::string &key_name,
+                                           const std::array<uint8_t, 8> &iv)
 {
     return des_crypto(in, key_name, iv, false, false);
 }
 
-ByteVector
-IslogKeyServer::des_cbc_decrypt(const ByteVector &in,
-                                const std::string &key_name,
-                                const std::array<uint8_t, 8> &iv)
+ByteVector IslogKeyServer::des_cbc_decrypt(const ByteVector &in,
+                                           const std::string &key_name,
+                                           const std::array<uint8_t, 8> &iv)
 {
     return des_crypto(in, key_name, iv, false, true);
 }
 
-ByteVector
-IslogKeyServer::des_ecb_encrypt(const ByteVector &in,
-                                const std::string &key_name,
-                                const std::array<uint8_t, 8> &iv)
+ByteVector IslogKeyServer::des_ecb_encrypt(const ByteVector &in,
+                                           const std::string &key_name,
+                                           const std::array<uint8_t, 8> &iv)
 {
     return des_crypto(in, key_name, iv, true, false);
 }
 
-ByteVector
-IslogKeyServer::des_ecb_decrypt(const ByteVector &in,
-                                const std::string &key_name,
-                                const std::array<uint8_t, 8> &iv)
+ByteVector IslogKeyServer::des_ecb_decrypt(const ByteVector &in,
+                                           const std::string &key_name,
+                                           const std::array<uint8_t, 8> &iv)
 {
     return des_crypto(in, key_name, iv, true, true);
 }
 
-ByteVector IslogKeyServer::des_crypto(const ByteVector &in,
-                                                const std::string &key_name,
-                                                const std::array<uint8_t, 8> &iv,
-                                                bool use_ecb, bool decrypt)
+ByteVector IslogKeyServer::des_crypto(const ByteVector &in, const std::string &key_name,
+                                      const std::array<uint8_t, 8> &iv, bool use_ecb,
+                                      bool decrypt)
 {
     DesEncryptCommand cmd;
     cmd.key_name_ = key_name;
     cmd.iv_       = iv;
     cmd.payload_  = in;
-    cmd.flags_ =
-        use_ecb ? COMMAND_DES_ENCRYPT_FLAG_ECB : COMMAND_DES_ENCRYPT_FLAG_CBC;
-    cmd.decrypt_ = decrypt;
+    cmd.flags_    = use_ecb ? COMMAND_DES_ENCRYPT_FLAG_ECB : COMMAND_DES_ENCRYPT_FLAG_CBC;
+    cmd.decrypt_  = decrypt;
 
     auto ret = std::dynamic_pointer_cast<DesEncryptResponse>(transact(cmd));
     assert(ret && ret->opcode_ == SMSG_OP_DES_ENCRYPT);
@@ -173,7 +162,7 @@ void IslogKeyServer::setup_transport()
 #ifdef ENABLE_SSLTRANSPORT
     transport_ = std::unique_ptr<SSLTransport>(new SSLTransport(ssl_ctx_));
 #endif
-	
+
     transport_->setIpAddress(config_.ip);
     transport_->setPort(config_.port);
 
@@ -268,17 +257,17 @@ std::shared_ptr<BaseResponse> IslogKeyServer::recv() const
                        << ". St: " << status << ". Bufsize: " << buffer.size()
                        << ". Needle: " << needle;
 
-            return build_response(
-                packet_size, opcode, status,
-                ByteVector(buffer.begin() + needle, buffer.end()));
+            return build_response(packet_size, opcode, status,
+                                  ByteVector(buffer.begin() + needle, buffer.end()));
         }
     }
     return nullptr;
 }
 
-std::shared_ptr<BaseResponse>
-IslogKeyServer::build_response(uint32_t /*size*/, uint16_t opcode, uint16_t status,
-                               const ByteVector &data) const
+std::shared_ptr<BaseResponse> IslogKeyServer::build_response(uint32_t /*size*/,
+                                                             uint16_t opcode,
+                                                             uint16_t status,
+                                                             const ByteVector &data) const
 {
     std::shared_ptr<BaseResponse> resp;
     switch (opcode)
@@ -302,8 +291,7 @@ IslogKeyServer::build_response(uint32_t /*size*/, uint16_t opcode, uint16_t stat
     case SMSG_OP_DESFIRE_CHANGEKEY:
         resp = std::make_shared<DesfireChangeKeyResponse>(status, data);
         break;
-    default:
-        LOG(WARNINGS) << "Unkown opcode " << opcode << " from server.";
+    default: LOG(WARNINGS) << "Unkown opcode " << opcode << " from server.";
     }
 
     return resp;
@@ -316,8 +304,7 @@ void IslogKeyServer::configureGlobalInstance(const std::string &ip, uint16_t por
                                              const std::string &client_key,
                                              const std::string &root_ca)
 {
-    pre_configuration_ =
-        IKSConfig(ip, port, client_cert, client_key, root_ca);
+    pre_configuration_ = IKSConfig(ip, port, client_cert, client_key, root_ca);
 }
 
 IslogKeyServer::IKSConfig::IKSConfig(const std::string &ip, uint16_t port,

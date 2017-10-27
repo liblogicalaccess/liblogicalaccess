@@ -18,9 +18,10 @@ class LIBLOGICALACCESS_API MifareUltralightUIDChangerService : public UIDChanger
      * This UID changer needs a Storage service to perform
      * write operation against the card.
      */
-	explicit MifareUltralightUIDChangerService(std::shared_ptr<StorageCardService> storage);
+    explicit MifareUltralightUIDChangerService(
+        std::shared_ptr<StorageCardService> storage);
 
-	void changeUID(const ByteVector &new_uid) override;
+    void changeUID(const ByteVector &new_uid) override;
 
   private:
     std::shared_ptr<StorageCardService> storage_;

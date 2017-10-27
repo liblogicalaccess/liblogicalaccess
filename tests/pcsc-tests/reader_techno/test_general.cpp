@@ -33,13 +33,11 @@ int main(int ac, char **av)
 
     // Reader configuration object to store reader provider and reader unit
     // selection.
-    std::shared_ptr<ReaderConfiguration> readerConfig(
-        new ReaderConfiguration());
+    std::shared_ptr<ReaderConfiguration> readerConfig(new ReaderConfiguration());
 
     // Set PCSC ReaderProvider by calling the Library Manager which will load
     // the function from the corresponding plug-in
-    provider =
-        LibraryManager::getInstance()->getReaderProvider("PCSC");
+    provider = LibraryManager::getInstance()->getReaderProvider("PCSC");
     LLA_ASSERT(provider, "Cannot get PCSC provider");
     readerConfig->setReaderProvider(provider);
     readerUnit = readerConfig->getReaderProvider()->createReaderUnit();
@@ -53,7 +51,7 @@ int main(int ac, char **av)
     PRINT_TIME("EndWaitInsertation");
     LLA_ASSERT(readerUnit->connect(), "Failed to connect");
     PRINT_TIME("Connected");
-	
+
     TechnoBitset current;
     current = readerUnit->getCardTechnologies();
 
@@ -67,17 +65,17 @@ int main(int ac, char **av)
 
     LLA_ASSERT(current == 0, "ISO_14443_A or ISO_14443_B technology is enabled.");
 
-	current |= Techno::ISO_14443_A | Techno::ISO_14443_B;
+    current |= Techno::ISO_14443_A | Techno::ISO_14443_B;
     std::cout << "current  =" << current << std::endl;
     readerUnit->setCardTechnologies(current);
 
     current = readerUnit->getCardTechnologies();
     std::cout << "current  =" << current << std::endl;
 
-	LLA_ASSERT(current & (Techno::ISO_14443_A | Techno::ISO_14443_B),
+    LLA_ASSERT(current & (Techno::ISO_14443_A | Techno::ISO_14443_B),
                "ISO_14443_A or ISO_14443_B technology is disabled.");
 
-	LLA_SUBTEST_PASSED("ChangeCardTechno");
+    LLA_SUBTEST_PASSED("ChangeCardTechno");
 
     return EXIT_SUCCESS;
 }

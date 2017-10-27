@@ -12,8 +12,7 @@ MifareUltralightUIDChangerService::MifareUltralightUIDChangerService(
 {
 }
 
-void MifareUltralightUIDChangerService::changeUID(
-    const ByteVector &new_uid)
+void MifareUltralightUIDChangerService::changeUID(const ByteVector &new_uid)
 {
     auto loc = std::make_shared<MifareUltralightLocation>();
     EXCEPTION_ASSERT_WITH_LOG(new_uid.size() == 7, LibLogicalAccessException,
@@ -26,10 +25,10 @@ void MifareUltralightUIDChangerService::changeUID(
     auto uid_page1 = ByteVector(new_uid.begin() + 3, new_uid.end());
 
     loc->byte_ = 0;
-    loc->page = 1;
+    loc->page  = 1;
     storage_->writeData(loc, nullptr, nullptr, uid_page1, CB_DEFAULT);
 
     loc->byte_ = 0;
-    loc->page = 0;
+    loc->page  = 0;
     storage_->writeData(loc, nullptr, nullptr, uid_page0, CB_DEFAULT);
 }

@@ -7,16 +7,15 @@ namespace logicalaccess
 class LIBLOGICALACCESS_API STidPRGReaderUnitConfiguration : public ReaderUnitConfiguration
 {
 
-      public:
+  public:
+    STidPRGReaderUnitConfiguration();
 
-        STidPRGReaderUnitConfiguration();
+    void resetConfiguration() override;
 
-	void resetConfiguration() override;
+    void serialize(boost::property_tree::ptree &parentNode) override;
 
-	void serialize(boost::property_tree::ptree &parentNode) override;
+    void unSerialize(boost::property_tree::ptree &node) override;
 
-	void unSerialize(boost::property_tree::ptree &node) override;
-
-	std::string getDefaultXmlNodeName() const override;
+    std::string getDefaultXmlNodeName() const override;
 };
 }

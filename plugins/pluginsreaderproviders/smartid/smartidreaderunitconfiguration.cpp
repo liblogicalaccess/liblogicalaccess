@@ -9,39 +9,39 @@
 #include <boost/property_tree/ptree.hpp>
 
 #ifdef UNIX
-# include <termios.h>
-# include <unistd.h>
+#include <termios.h>
+#include <unistd.h>
 
 #endif
 
 namespace logicalaccess
 {
-    SmartIDReaderUnitConfiguration::SmartIDReaderUnitConfiguration()
-        : ReaderUnitConfiguration(READER_SMARTID)
-    {
-	    SmartIDReaderUnitConfiguration::resetConfiguration();
-    }
+SmartIDReaderUnitConfiguration::SmartIDReaderUnitConfiguration()
+    : ReaderUnitConfiguration(READER_SMARTID)
+{
+    SmartIDReaderUnitConfiguration::resetConfiguration();
+}
 
-    SmartIDReaderUnitConfiguration::~SmartIDReaderUnitConfiguration()
-    {
-    }
+SmartIDReaderUnitConfiguration::~SmartIDReaderUnitConfiguration()
+{
+}
 
-    void SmartIDReaderUnitConfiguration::resetConfiguration()
-    {
-    }
+void SmartIDReaderUnitConfiguration::resetConfiguration()
+{
+}
 
-    void SmartIDReaderUnitConfiguration::serialize(boost::property_tree::ptree& parentNode)
-    {
-        boost::property_tree::ptree node;
-        parentNode.add_child(getDefaultXmlNodeName(), node);
-    }
+void SmartIDReaderUnitConfiguration::serialize(boost::property_tree::ptree &parentNode)
+{
+    boost::property_tree::ptree node;
+    parentNode.add_child(getDefaultXmlNodeName(), node);
+}
 
-    void SmartIDReaderUnitConfiguration::unSerialize(boost::property_tree::ptree& /*node*/)
-    {
-    }
+void SmartIDReaderUnitConfiguration::unSerialize(boost::property_tree::ptree & /*node*/)
+{
+}
 
-    std::string SmartIDReaderUnitConfiguration::getDefaultXmlNodeName() const
-    {
-        return "SmartIDReaderUnitConfiguration";
-    }
+std::string SmartIDReaderUnitConfiguration::getDefaultXmlNodeName() const
+{
+    return "SmartIDReaderUnitConfiguration";
+}
 }

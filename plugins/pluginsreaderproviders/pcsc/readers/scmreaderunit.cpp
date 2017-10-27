@@ -12,17 +12,17 @@
 
 namespace logicalaccess
 {
-    SCMReaderUnit::SCMReaderUnit(const std::string& name)
-        : PCSCReaderUnit(name)
-    {
-    }
+SCMReaderUnit::SCMReaderUnit(const std::string &name)
+    : PCSCReaderUnit(name)
+{
+}
 
-    SCMReaderUnit::~SCMReaderUnit()
-    {
-    }
+SCMReaderUnit::~SCMReaderUnit()
+{
+}
 
-	PCSCReaderUnitType SCMReaderUnit::getPCSCType() const
-	{
-		return PCSC_RUT_SCM;
-	}
+PCSCReaderUnitType SCMReaderUnit::getPCSCType() const
+{
+    return PCSC_RUT_SCM;
+}
 }

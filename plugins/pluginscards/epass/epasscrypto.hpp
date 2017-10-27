@@ -10,7 +10,7 @@ namespace logicalaccess
 class LIBLOGICALACCESS_API EPassCrypto
 {
   public:
-	explicit EPassCrypto(const std::string &mrz);
+    explicit EPassCrypto(const std::string &mrz);
 
     /**
      * Call after construction to feed the random from the

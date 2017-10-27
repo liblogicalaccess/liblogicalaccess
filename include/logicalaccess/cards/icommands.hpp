@@ -11,28 +11,28 @@
 
 namespace logicalaccess
 {
-    class Chip;
+class Chip;
+
+/**
+ * \brief The base abstract commands class for all card commands.
+ */
+class LIBLOGICALACCESS_API ICommands
+{
+  public:
+    virtual ~ICommands() = default;
 
     /**
-     * \brief The base abstract commands class for all card commands.
+ * \brief Get the chip.
+ * \return The chip.
+ */
+    virtual std::shared_ptr<Chip> getChip() const = 0;
+
+    /**
+     * \brief Get the reader/card adapter.
+     * \return The reader/card adapter.
      */
-    class LIBLOGICALACCESS_API ICommands
-    {
-    public:
-	    virtual ~ICommands() = default;
-
-	    /**
-         * \brief Get the chip.
-         * \return The chip.
-         */
-        virtual std::shared_ptr<Chip> getChip() const = 0;
-
-        /**
-         * \brief Get the reader/card adapter.
-         * \return The reader/card adapter.
-         */
-        virtual std::shared_ptr<ReaderCardAdapter> getReaderCardAdapter() const = 0;
-    };
+    virtual std::shared_ptr<ReaderCardAdapter> getReaderCardAdapter() const = 0;
+};
 }
 
 #endif

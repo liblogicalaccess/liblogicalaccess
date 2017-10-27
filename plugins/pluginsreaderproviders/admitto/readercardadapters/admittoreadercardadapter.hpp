@@ -17,40 +17,39 @@
 
 namespace logicalaccess
 {
+/**
+ * \brief A default Admitto reader/card adapter class.
+ */
+class LIBLOGICALACCESS_API AdmittoReaderCardAdapter : public ReaderCardAdapter
+{
+  public:
+    static const unsigned char CR; /**< \brief The first stop byte. */
+    static const unsigned char LF; /**< \brief The second stop byte. */
+
     /**
-     * \brief A default Admitto reader/card adapter class.
+     * \brief Constructor.
      */
-    class LIBLOGICALACCESS_API AdmittoReaderCardAdapter : public ReaderCardAdapter
-    {
-    public:
+    AdmittoReaderCardAdapter();
 
-        static const unsigned char CR; /**< \brief The first stop byte. */
-        static const unsigned char LF; /**< \brief The second stop byte. */
+    /**
+     * \brief Destructor.
+     */
+    virtual ~AdmittoReaderCardAdapter();
 
-        /**
-         * \brief Constructor.
-         */
-        AdmittoReaderCardAdapter();
+    /**
+     * \brief Adapt the command to send to the reader.
+     * \param command The command to send.
+     * \return The adapted command to send.
+     */
+    ByteVector adaptCommand(const ByteVector &command) override;
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~AdmittoReaderCardAdapter();
-
-        /**
-         * \brief Adapt the command to send to the reader.
-         * \param command The command to send.
-         * \return The adapted command to send.
-         */
-	    ByteVector adaptCommand(const ByteVector& command) override;
-
-        /**
-         * \brief Adapt the asnwer received from the reader.
-         * \param answer The answer received.
-         * \return The adapted answer received.
-         */
-	    ByteVector adaptAnswer(const ByteVector& answer) override;
-    };
+    /**
+     * \brief Adapt the asnwer received from the reader.
+     * \param answer The answer received.
+     * \return The adapted answer received.
+     */
+    ByteVector adaptAnswer(const ByteVector &answer) override;
+};
 }
 
 #endif /* LOGICALACCESS_DEFAULTADMITTOREADERCARDADAPTER_HPP */

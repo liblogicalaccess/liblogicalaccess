@@ -23,5 +23,5 @@ std::shared_ptr<CardService> EPassChip::getService(CardServiceType serviceType)
 
 std::shared_ptr<AccessInfo> EPassChip::createAccessInfo() const
 {
-	return std::make_shared<EPassAccessInfo>();
+    return std::make_shared<EPassAccessInfo>();
 }

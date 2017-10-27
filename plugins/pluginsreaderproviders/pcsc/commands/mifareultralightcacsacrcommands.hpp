@@ -12,29 +12,28 @@
 namespace logicalaccess
 {
 #define CMD_MIFAREULTRALIGHTCACSACR "MifareUltralightCACSACR"
+/**
+ * \brief The Mifare Ultralight C commands class for ACS ACR reader.
+ */
+class LIBLOGICALACCESS_API MifareUltralightCACSACRCommands
+    : public MifareUltralightCPCSCCommands
+{
+  public:
     /**
-     * \brief The Mifare Ultralight C commands class for ACS ACR reader.
+     * \brief Constructor.
      */
-    class LIBLOGICALACCESS_API MifareUltralightCACSACRCommands : public MifareUltralightCPCSCCommands
-    {
-    public:
+    MifareUltralightCACSACRCommands();
 
-        /**
-         * \brief Constructor.
-         */
-        MifareUltralightCACSACRCommands();
+    explicit MifareUltralightCACSACRCommands(std::string);
 
-        explicit MifareUltralightCACSACRCommands(std::string);
+    /**
+     * \brief Destructor.
+     */
+    virtual ~MifareUltralightCACSACRCommands();
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~MifareUltralightCACSACRCommands();
-
-    protected:
-
-	    ByteVector sendGenericCommand(const ByteVector& data) override;
-    };
+  protected:
+    ByteVector sendGenericCommand(const ByteVector &data) override;
+};
 }
 
 #endif /* LOGICALACCESS_MIFAREULTRALIGHTCACSACRCOMMANDS_HPP */

@@ -43,8 +43,7 @@ std::vector<CL1356PlusUtils::Info> ID3ReaderUnit::listCards()
         info.atr_ = getAtr(i);
         selectCard(i);
         power_card(true);
-        info.guessed_type_ =
-            ATRParser::guessCardType(info.atr_, PCSC_RUT_ID3_CL1356);
+        info.guessed_type_ = ATRParser::guessCardType(info.atr_, PCSC_RUT_ID3_CL1356);
 
         // This type detection cannot be done by `adjustChip()` because we are
         // not working with Chip object at this point.
@@ -63,9 +62,8 @@ std::shared_ptr<Chip> ID3ReaderUnit::selectCard(uint8_t idx)
     {
         APDUWrapperGuard guard(this);
         ret = getDefaultReaderCardAdapter()->sendCommand({0x10, idx});
-        EXCEPTION_ASSERT_WITH_LOG(
-            ret.size() == 0, LibLogicalAccessException,
-            "Excepted a 0 length response, got something else");
+        EXCEPTION_ASSERT_WITH_LOG(ret.size() == 0, LibLogicalAccessException,
+                                  "Excepted a 0 length response, got something else");
         power_card(true);
     }
     return nullptr;
@@ -97,21 +95,21 @@ bool ID3ReaderUnit::process_insertion(const std::string &cardType, int maxwait,
     //    we do not rely on automatic card tracking, but rather on the list card
     //    command.
     PCSCReaderUnit::process_insertion(cardType, maxwait, etc);
-	if (d_card_type == CHIP_UNKNOWN) // automatic
+    if (d_card_type == CHIP_UNKNOWN) // automatic
     {
         return true;
     }
-	PCSCReaderUnit::connect();
+    PCSCReaderUnit::connect();
 
-	// Now that we are hopefully connected to something, we try to find
-	// the card we meant to use.
-	while (etc.elapsed() < static_cast<unsigned int>(maxwait))
-	{
-		if (select_correct_card())
-			return true;
-		std::this_thread::sleep_for(std::chrono::milliseconds(150));
-	}
-	return false;
+    // Now that we are hopefully connected to something, we try to find
+    // the card we meant to use.
+    while (etc.elapsed() < static_cast<unsigned int>(maxwait))
+    {
+        if (select_correct_card())
+            return true;
+        std::this_thread::sleep_for(std::chrono::milliseconds(150));
+    }
+    return false;
 }
 
 ByteVector ID3ReaderUnit::getAtr(int idx)
@@ -230,8 +228,8 @@ ID3ReaderUnit::APDUWrapperGuard::~APDUWrapperGuard()
     reader_->setDefaultReaderCardAdapter(adapter_);
 }
 
-ByteVector ID3ReaderUnit::APDUWrapperGuard::Adapter::adaptCommand(
-    const ByteVector &command)
+ByteVector
+ID3ReaderUnit::APDUWrapperGuard::Adapter::adaptCommand(const ByteVector &command)
 {
     assert(command.size() <= 255);
     auto tmp = ByteVector{0xFF, 0x9F};
@@ -239,8 +237,7 @@ ByteVector ID3ReaderUnit::APDUWrapperGuard::Adapter::adaptCommand(
     return tmp;
 }
 
-ByteVector ID3ReaderUnit::APDUWrapperGuard::Adapter::adaptAnswer(
-    const ByteVector &res)
+ByteVector ID3ReaderUnit::APDUWrapperGuard::Adapter::adaptAnswer(const ByteVector &res)
 {
     EXCEPTION_ASSERT_WITH_LOG(res.size() >= 2, LibLogicalAccessException,
                               "Response is too short.");

@@ -9,19 +9,22 @@
 
 namespace logicalaccess
 {
-    ByteVector AxessTMCLegicBufferParser::getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer)
-    {
-        ByteVector result;
+ByteVector AxessTMCLegicBufferParser::getValidBuffer(
+    boost::circular_buffer<unsigned char> &circular_buffer)
+{
+    ByteVector result;
 
-        if (circular_buffer.size() >= 7)
+    if (circular_buffer.size() >= 7)
+    {
+        unsigned short messageSize = circular_buffer[0];
+        if (circular_buffer.size() >= static_cast<unsigned short>(messageSize + 1))
         {
-            unsigned short messageSize = circular_buffer[0];
-            if (circular_buffer.size() >= static_cast<unsigned short>(messageSize + 1))
-            {
-                result.assign(circular_buffer.begin(), circular_buffer.begin() + messageSize + 1);
-                circular_buffer.erase(circular_buffer.begin(), circular_buffer.begin() + messageSize + 1);
-            }
+            result.assign(circular_buffer.begin(),
+                          circular_buffer.begin() + messageSize + 1);
+            circular_buffer.erase(circular_buffer.begin(),
+                                  circular_buffer.begin() + messageSize + 1);
         }
-        return result;
     }
+    return result;
+}
 }

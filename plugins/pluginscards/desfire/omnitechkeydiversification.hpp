@@ -7,21 +7,32 @@
 
 namespace logicalaccess
 {
-    class LIBLOGICALACCESS_API OmnitechKeyDiversification : public KeyDiversification
+class LIBLOGICALACCESS_API OmnitechKeyDiversification : public KeyDiversification
+{
+  public:
+    void initDiversification(ByteVector identifier, int AID, std::shared_ptr<Key> key,
+                             unsigned char keyno, ByteVector &diversify) override;
+    ByteVector getDiversifiedKey(std::shared_ptr<Key> key, ByteVector diversify) override;
+
+    OmnitechKeyDiversification()
     {
-    public:
-	    void initDiversification(ByteVector identifier, int AID, std::shared_ptr<Key> key, unsigned char keyno, ByteVector& diversify) override;
-	    ByteVector getDiversifiedKey(std::shared_ptr<Key> key, ByteVector diversify) override;
+    }
+    ~OmnitechKeyDiversification()
+    {
+    }
 
-        OmnitechKeyDiversification() {}
-        ~OmnitechKeyDiversification() {}
+    std::string getType() override
+    {
+        return "Omnitech";
+    }
 
-	    std::string getType() override { return "Omnitech"; }
-
-	    void serialize(boost::property_tree::ptree& parentNode) override;
-	    void unSerialize(boost::property_tree::ptree& node) override;
-	    std::string getDefaultXmlNodeName() const override { return "OmnitechKeyDiversification"; }
-    };
+    void serialize(boost::property_tree::ptree &parentNode) override;
+    void unSerialize(boost::property_tree::ptree &node) override;
+    std::string getDefaultXmlNodeName() const override
+    {
+        return "OmnitechKeyDiversification";
+    }
+};
 }
 
 #endif

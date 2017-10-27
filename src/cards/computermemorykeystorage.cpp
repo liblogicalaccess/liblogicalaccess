@@ -9,29 +9,29 @@
 
 namespace logicalaccess
 {
-    ComputerMemoryKeyStorage::ComputerMemoryKeyStorage()
-    {
-    }
+ComputerMemoryKeyStorage::ComputerMemoryKeyStorage()
+{
+}
 
-    KeyStorageType ComputerMemoryKeyStorage::getType() const
-    {
-        return KST_COMPUTER_MEMORY;
-    }
+KeyStorageType ComputerMemoryKeyStorage::getType() const
+{
+    return KST_COMPUTER_MEMORY;
+}
 
-    void ComputerMemoryKeyStorage::serialize(boost::property_tree::ptree& parentNode)
-    {
-        boost::property_tree::ptree node;
-        KeyStorage::serialize(node);
-        parentNode.add_child(getDefaultXmlNodeName(), node);
-    }
+void ComputerMemoryKeyStorage::serialize(boost::property_tree::ptree &parentNode)
+{
+    boost::property_tree::ptree node;
+    KeyStorage::serialize(node);
+    parentNode.add_child(getDefaultXmlNodeName(), node);
+}
 
-    void ComputerMemoryKeyStorage::unSerialize(boost::property_tree::ptree& node)
-    {
-        KeyStorage::unSerialize(node);
-    }
+void ComputerMemoryKeyStorage::unSerialize(boost::property_tree::ptree &node)
+{
+    KeyStorage::unSerialize(node);
+}
 
-    std::string ComputerMemoryKeyStorage::getDefaultXmlNodeName() const
-    {
-        return "ComputerMemoryKeyStorage";
-    }
+std::string ComputerMemoryKeyStorage::getDefaultXmlNodeName() const
+{
+    return "ComputerMemoryKeyStorage";
+}
 }

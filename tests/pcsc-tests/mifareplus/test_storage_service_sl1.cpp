@@ -13,10 +13,12 @@
 
 void introduction()
 {
-    PRINT_TIME("This test target MifarePlus cards in Security Level 1. Test the access storage service");
+    PRINT_TIME("This test target MifarePlus cards in Security Level 1. Test the access "
+               "storage service");
 
     PRINT_TIME("You will have 20 seconds to insert a card. Test log below");
-    PRINT_TIME("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    PRINT_TIME(
+        "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
     LLA_SUBTEST_REGISTER("WriteService");
     LLA_SUBTEST_REGISTER("ReadService");
@@ -34,21 +36,20 @@ int main(int ac, char **av)
     ChipPtr chip;
     tie(provider, readerUnit, chip) = pcsc_test_init();
 
-    PRINT_TIME("Chip identifier: " <<
-               logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
+    PRINT_TIME("Chip identifier: "
+               << logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
 
     LLA_ASSERT(chip->getCardType() == "MifarePlus_SL1_4K",
                "Chip is not a MifarePlus_SL1_4K, but is " + chip->getCardType() +
-               " instead.");
+                   " instead.");
 
-    auto storage = std::dynamic_pointer_cast<StorageCardService>(
-            chip->getService(CST_STORAGE));
+    auto storage =
+        std::dynamic_pointer_cast<StorageCardService>(chip->getService(CST_STORAGE));
 
     // We want to write data on sector 1.
-    std::shared_ptr<MifareLocation> mlocation(
-            new MifareLocation());
+    std::shared_ptr<MifareLocation> mlocation(new MifareLocation());
     mlocation->sector = 4;
-    mlocation->block = 0;
+    mlocation->block  = 0;
 
 
     // Key to perform AES auth in SL1.
@@ -56,8 +57,7 @@ int main(int ac, char **av)
     aes_key->fromString("ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff");
 
     // Key to use for sector authentication
-    std::shared_ptr<MifarePlusSL1AccessInfo> maiToUse(
-            new MifarePlusSL1AccessInfo());
+    std::shared_ptr<MifarePlusSL1AccessInfo> maiToUse(new MifarePlusSL1AccessInfo());
     maiToUse->keyA->fromString("00 00 00 00 00 00");
     maiToUse->keyB->fromString("00 00 00 00 00 00");
     maiToUse->aesAuthKey = aes_key;
@@ -76,8 +76,7 @@ int main(int ac, char **av)
 
     const int mifare_block_size = 16;
     // We read the data on the same location. Remember, the key is now changed.
-    readdata = storage
-            ->readData(mlocation, maiToUse, mifare_block_size, CB_DEFAULT);
+    readdata = storage->readData(mlocation, maiToUse, mifare_block_size, CB_DEFAULT);
     PRINT_TIME("Read: " << readdata);
     LLA_SUBTEST_PASSED("ReadService")
 

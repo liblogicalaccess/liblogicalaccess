@@ -16,41 +16,40 @@
 
 namespace logicalaccess
 {
+/**
+ * \brief A default AxessTMC13 reader/card adapter class.
+ */
+class LIBLOGICALACCESS_API AxessTMC13ReaderCardAdapter : public ReaderCardAdapter
+{
+  public:
+    static const unsigned char START0; /**< \brief The first start byte. */
+    static const unsigned char START1; /**< \brief The second start byte. */
+    static const unsigned char CR;     /**< \brief The stop byte. */
+
     /**
-     * \brief A default AxessTMC13 reader/card adapter class.
+     * \brief Constructor.
      */
-    class LIBLOGICALACCESS_API AxessTMC13ReaderCardAdapter : public ReaderCardAdapter
-    {
-    public:
+    AxessTMC13ReaderCardAdapter();
 
-        static const unsigned char START0; /**< \brief The first start byte. */
-        static const unsigned char START1; /**< \brief The second start byte. */
-        static const unsigned char CR; /**< \brief The stop byte. */
+    /**
+     * \brief Destructor.
+     */
+    virtual ~AxessTMC13ReaderCardAdapter();
 
-        /**
-         * \brief Constructor.
-         */
-        AxessTMC13ReaderCardAdapter();
+    /**
+     * \brief Adapt the command to send to the reader.
+     * \param command The command to send.
+     * \return The adapted command to send.
+     */
+    ByteVector adaptCommand(const ByteVector &command) override;
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~AxessTMC13ReaderCardAdapter();
-
-        /**
-         * \brief Adapt the command to send to the reader.
-         * \param command The command to send.
-         * \return The adapted command to send.
-         */
-	    ByteVector adaptCommand(const ByteVector& command) override;
-
-        /**
-         * \brief Adapt the asnwer received from the reader.
-         * \param answer The answer received.
-         * \return The adapted answer received.
-         */
-	    ByteVector adaptAnswer(const ByteVector& answer) override;
-    };
+    /**
+     * \brief Adapt the asnwer received from the reader.
+     * \param answer The answer received.
+     * \return The adapted answer received.
+     */
+    ByteVector adaptAnswer(const ByteVector &answer) override;
+};
 }
 
 #endif /* LOGICALACCESS_DEFAULTAXESSTMC13READERCARDADAPTER_H */

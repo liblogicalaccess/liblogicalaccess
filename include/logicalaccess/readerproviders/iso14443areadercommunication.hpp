@@ -17,37 +17,37 @@
 
 namespace logicalaccess
 {
+/**
+ * \brief A ISO14443-3A reader communication base class.
+ */
+class LIBLOGICALACCESS_API ISO14443AReaderCommunication
+{
+  public:
+    virtual ~ISO14443AReaderCommunication() = default;
+
     /**
-     * \brief A ISO14443-3A reader communication base class.
+ * \brief Send a REQA command from the PCD to the PICC.
+ * \return The ATQB PICC result.
+ */
+    virtual ByteVector requestA() = 0;
+
+    /**
+     * \brief Send a RATS command from the PCD to the PICC.
+     * \return The ATS PICC result.
      */
-    class LIBLOGICALACCESS_API ISO14443AReaderCommunication
-    {
-    public:
-	    virtual ~ISO14443AReaderCommunication() = default;
+    virtual ByteVector requestATS() = 0;
 
-	    /**
-         * \brief Send a REQA command from the PCD to the PICC.
-         * \return The ATQB PICC result.
-         */
-        virtual ByteVector requestA() = 0;
+    /**
+     * \brief Send a HLTB command from the PCD to the PICC.
+     */
+    virtual void haltA() = 0;
 
-        /**
-         * \brief Send a RATS command from the PCD to the PICC.
-         * \return The ATS PICC result.
-         */
-        virtual ByteVector requestATS() = 0;
-
-        /**
-         * \brief Send a HLTB command from the PCD to the PICC.
-         */
-        virtual void haltA() = 0;
-
-        /**
-         * \brief Manage collision.
-         * \return The chip UID.
-         */
-        virtual ByteVector anticollisionA() = 0;
-    };
+    /**
+     * \brief Manage collision.
+     * \return The chip UID.
+     */
+    virtual ByteVector anticollisionA() = 0;
+};
 }
 
 #endif /* LOGICALACCESS_ISO14443AREADERCOMMUNICATION_HPP */

@@ -23,9 +23,8 @@ class LIBLOGICALACCESS_API IslogKeyServer
     struct LIBLOGICALACCESS_API IKSConfig
     {
         IKSConfig() = default;
-        IKSConfig(const std::string &ip, uint16_t port,
-                  const std::string &client_cert, const std::string &client_key,
-                  const std::string &root_ca);
+        IKSConfig(const std::string &ip, uint16_t port, const std::string &client_cert,
+                  const std::string &client_key, const std::string &root_ca);
         std::string ip;
         uint16_t port;
         std::string client_cert;
@@ -54,9 +53,8 @@ class LIBLOGICALACCESS_API IslogKeyServer
     /**
      * Connect to the server locate at `ip`:`port`
      */
-    IslogKeyServer(const std::string &ip, uint16_t port,
-                   const std::string &client_cert, const std::string &client_key,
-                   const std::string &root_ca);
+    IslogKeyServer(const std::string &ip, uint16_t port, const std::string &client_cert,
+                   const std::string &client_key, const std::string &root_ca);
 
     /**
      * Ask Islog Key Server for random data.
@@ -66,45 +64,38 @@ class LIBLOGICALACCESS_API IslogKeyServer
     /**
      * Request an AES Encryption by the key server.
      */
-    ByteVector aes_encrypt(const ByteVector &in,
-                                     const std::string &key_name,
-                                     const std::array<uint8_t, 16> &iv);
+    ByteVector aes_encrypt(const ByteVector &in, const std::string &key_name,
+                           const std::array<uint8_t, 16> &iv);
     /**
      * Request an AES Decryption by the key server.
      */
-    ByteVector aes_decrypt(const ByteVector &in,
-                                     const std::string &key_name,
-                                     const std::array<uint8_t, 16> &iv);
+    ByteVector aes_decrypt(const ByteVector &in, const std::string &key_name,
+                           const std::array<uint8_t, 16> &iv);
 
-    ByteVector aes_decrypt(const ByteVector &in,
-                                     const std::string &key_name,
-                                     const ByteVector &iv);
+    ByteVector aes_decrypt(const ByteVector &in, const std::string &key_name,
+                           const ByteVector &iv);
 
     /**
      * Request an DES Encryption by the key server using CBC mode.
      */
-    ByteVector des_cbc_encrypt(const ByteVector &in,
-                                         const std::string &key_name,
-                                         const std::array<uint8_t, 8> &iv);
+    ByteVector des_cbc_encrypt(const ByteVector &in, const std::string &key_name,
+                               const std::array<uint8_t, 8> &iv);
     /**
      * Request an DES Decryption by the key server using CBC mode.
      */
-    ByteVector des_cbc_decrypt(const ByteVector &in,
-                                         const std::string &key_name,
-                                         const std::array<uint8_t, 8> &iv);
+    ByteVector des_cbc_decrypt(const ByteVector &in, const std::string &key_name,
+                               const std::array<uint8_t, 8> &iv);
 
     /**
          * Request an DES Encryption by the key server using CBC mode.
          */
-    ByteVector des_ecb_encrypt(const ByteVector &in,
-                                         const std::string &key_name,
-                                         const std::array<uint8_t, 8> &iv);
+    ByteVector des_ecb_encrypt(const ByteVector &in, const std::string &key_name,
+                               const std::array<uint8_t, 8> &iv);
     /**
      * Request an DES Decryption by the key server using CBC mode.
      */
-    ByteVector des_ecb_decrypt(const ByteVector &in,
-                                         const std::string &key_name,
-                                         const std::array<uint8_t, 8> &iv);
+    ByteVector des_ecb_decrypt(const ByteVector &in, const std::string &key_name,
+                               const std::array<uint8_t, 8> &iv);
 
     /**
      * Send a command and retrieve a response.
@@ -122,10 +113,8 @@ class LIBLOGICALACCESS_API IslogKeyServer
                                                  uint16_t status,
                                                  const ByteVector &data) const;
 
-    ByteVector des_crypto(const ByteVector &in,
-                                    const std::string &key_name,
-                                    const std::array<uint8_t, 8> &iv, bool use_ecb,
-                                    bool decrypt);
+    ByteVector des_crypto(const ByteVector &in, const std::string &key_name,
+                          const std::array<uint8_t, 8> &iv, bool use_ecb, bool decrypt);
 
 #ifdef ENABLE_SSLTRANSPORT
     boost::asio::ssl::context ssl_ctx_;

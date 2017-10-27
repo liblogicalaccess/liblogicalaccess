@@ -9,32 +9,32 @@
 
 namespace logicalaccess
 {
-    namespace openssl
-    {
-        DESInitializationVector DESInitializationVector::createNull()
-        {
-            return DESInitializationVector(false);
-        }
+namespace openssl
+{
+DESInitializationVector DESInitializationVector::createNull()
+{
+    return DESInitializationVector(false);
+}
 
-        DESInitializationVector DESInitializationVector::createRandom()
-        {
-            return DESInitializationVector(true);
-        }
+DESInitializationVector DESInitializationVector::createRandom()
+{
+    return DESInitializationVector(true);
+}
 
-        DESInitializationVector DESInitializationVector::createFromData(const ByteVector& data)
-        {
-            return DESInitializationVector(data);
-        }
+DESInitializationVector DESInitializationVector::createFromData(const ByteVector &data)
+{
+    return DESInitializationVector(data);
+}
 
-        DESInitializationVector::DESInitializationVector(bool random) :
-            InitializationVector(DEFAULT_SIZE, random)
-        {
-        }
+DESInitializationVector::DESInitializationVector(bool random)
+    : InitializationVector(DEFAULT_SIZE, random)
+{
+}
 
-        DESInitializationVector::DESInitializationVector(const ByteVector& _data) :
-            InitializationVector(_data)
-        {
-            assert(_data.size() == DEFAULT_SIZE);
-        }
-    }
+DESInitializationVector::DESInitializationVector(const ByteVector &_data)
+    : InitializationVector(_data)
+{
+    assert(_data.size() == DEFAULT_SIZE);
+}
+}
 }

@@ -13,9 +13,9 @@ using namespace logicalaccess::iks;
 
 ByteVector BaseCommand::serialize() const
 {
-	ByteVector ret(6);
+    ByteVector ret(6);
     uint32_t full_size = lla_htonl(static_cast<uint32_t>(binary_size()));
-    uint16_t op = lla_htons(opcode_);
+    uint16_t op        = lla_htons(opcode_);
 
     memcpy(&ret[0], &full_size, sizeof(full_size));
     memcpy(&ret[sizeof(full_size)], &op, sizeof(op));
@@ -33,8 +33,8 @@ BaseResponse::BaseResponse(uint16_t opcode, uint16_t status)
 {
     if (status_ != SMSG_STATUS_SUCCESS)
     {
-        THROW_EXCEPTION_WITH_LOG(IKSException, "Invalid response from server: " +
-                                                   strstatus(status_));
+        THROW_EXCEPTION_WITH_LOG(IKSException,
+                                 "Invalid response from server: " + strstatus(status_));
     }
 }
 
@@ -48,20 +48,13 @@ std::string iks::strstatus(uint16_t st)
     enum response_status_e ste = static_cast<enum response_status_e>(st);
     switch (ste)
     {
-    case SMSG_STATUS_SUCCESS:
-        return "SUCCESS";
-    case SMSG_STATUS_FAILURE:
-        return "FAILURE";
-    case SMSG_STATUS_INVALID_PAYLOAD_SIZE:
-        return "INVALID_PAYLOAD_SIZE";
-    case SMSG_STATUS_TOO_MANY_BYTES:
-        return "TOO_MANY_BYTES";
-    case SMSG_STATUS_CANNOT_LOAD_KEY:
-        return "CANNOT_LOAD_KEY";
-    case SMSG_STATUS_INVALID_FLAGS:
-        return "INVALID_FLAGS";
-    default:
-        return "UNHANDLED_STATUS_CODE";
+    case SMSG_STATUS_SUCCESS: return "SUCCESS";
+    case SMSG_STATUS_FAILURE: return "FAILURE";
+    case SMSG_STATUS_INVALID_PAYLOAD_SIZE: return "INVALID_PAYLOAD_SIZE";
+    case SMSG_STATUS_TOO_MANY_BYTES: return "TOO_MANY_BYTES";
+    case SMSG_STATUS_CANNOT_LOAD_KEY: return "CANNOT_LOAD_KEY";
+    case SMSG_STATUS_INVALID_FLAGS: return "INVALID_FLAGS";
+    default: return "UNHANDLED_STATUS_CODE";
     }
 }
 
@@ -89,8 +82,7 @@ KeyDivInfo::KeyDivInfo()
 {
 }
 
-KeyDivInfo KeyDivInfo::build(std::shared_ptr<Key> key,
-                             const ByteVector &divinput)
+KeyDivInfo KeyDivInfo::build(std::shared_ptr<Key> key, const ByteVector &divinput)
 {
     if (!key->getKeyDiversification())
         return KeyDivInfo();
@@ -109,8 +101,7 @@ KeyDivInfo KeyDivInfo::build(std::shared_ptr<Key> key,
     return kd;
 }
 
-KeyDivInfo KeyDivInfo::build(std::shared_ptr<Key> key,
-                             ByteVector identifier, int AID,
+KeyDivInfo KeyDivInfo::build(std::shared_ptr<Key> key, ByteVector identifier, int AID,
                              unsigned char keyno)
 {
     if (!key->getKeyDiversification())

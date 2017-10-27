@@ -15,78 +15,81 @@
 
 namespace logicalaccess
 {
+/**
+ * \brief A  Mifare location informations.
+ */
+class LIBLOGICALACCESS_API MifareLocation : public Location
+{
+  public:
     /**
-     * \brief A  Mifare location informations.
+     * \brief Constructor.
      */
-    class LIBLOGICALACCESS_API MifareLocation : public Location
+    MifareLocation();
+
+    /**
+     * \brief Destructor.
+     */
+    virtual ~MifareLocation();
+
+    /**
+     * \brief Serialize the current object to XML.
+     * \param parentNode The parent node.
+     */
+    void serialize(boost::property_tree::ptree &parentNode) override;
+
+    /**
+     * \brief UnSerialize a XML node to the current object.
+     * \param node The XML node.
+     */
+    void unSerialize(boost::property_tree::ptree &node) override;
+
+    /**
+     * \brief Get the default Xml Node name for this object.
+     * \return The Xml node name.
+     */
+    std::string getDefaultXmlNodeName() const override;
+
+    /**
+     * \brief Get the card type for this location.
+     * \return The card type.
+     */
+    std::string getCardType() override
     {
-    public:
-        /**
-         * \brief Constructor.
-         */
-        MifareLocation();
+        return "Mifare";
+    }
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~MifareLocation();
+    /**
+     * \brief Equality operator
+     * \param location Location to compare.
+     * \return True if equals, false otherwise.
+     */
+    bool operator==(const Location &location) const override;
 
-        /**
-         * \brief Serialize the current object to XML.
-         * \param parentNode The parent node.
-         */
-	    void serialize(boost::property_tree::ptree& parentNode) override;
+    /**
+ * \brief The sector.
+ */
+    int sector;
 
-        /**
-         * \brief UnSerialize a XML node to the current object.
-         * \param node The XML node.
-         */
-	    void unSerialize(boost::property_tree::ptree& node) override;
+    /**
+     * \brief The block.
+     */
+    int block;
 
-        /**
-         * \brief Get the default Xml Node name for this object.
-         * \return The Xml node name.
-         */
-	    std::string getDefaultXmlNodeName() const override;
+    /**
+     * \brief The byte.
+     */
+    int byte_;
 
-        /**
-         * \brief Get the card type for this location.
-         * \return The card type.
-         */
-	    std::string getCardType() override { return "Mifare"; }
+    /**
+     * \brief MAD is used ?
+     */
+    bool useMAD;
 
-        /**
-         * \brief Equality operator
-         * \param location Location to compare.
-         * \return True if equals, false otherwise.
-         */
-	    bool operator==(const Location& location) const override;
-
-	    /**
-         * \brief The sector.
-         */
-        int sector;
-
-        /**
-         * \brief The block.
-         */
-        int block;
-
-        /**
-         * \brief The byte.
-         */
-        int byte_;
-
-        /**
-         * \brief MAD is used ?
-         */
-        bool useMAD;
-
-        /**
-         * \brief The MAD Application ID.
-         */
-        unsigned short aid;
-    };
+    /**
+     * \brief The MAD Application ID.
+     */
+    unsigned short aid;
+};
 }
 
 #endif /* LOGICALACCESS_MIFARELOCATION_HPP */

@@ -12,20 +12,19 @@
 
 namespace logicalaccess
 {
+/**
+ * \brief The Tag-It commands base class.
+ */
+class LIBLOGICALACCESS_API TagItCommands
+{
+  public:
     /**
-     * \brief The Tag-It commands base class.
+     * \brief Get if a block is locked.
+     * \param block The block number.
+     * \return True if the block is locked, false otherwise.
      */
-    class LIBLOGICALACCESS_API TagItCommands
-    {
-    public:
-
-        /**
-         * \brief Get if a block is locked.
-         * \param block The block number.
-         * \return True if the block is locked, false otherwise.
-         */
-        static bool isLocked(std::shared_ptr<ISO15693Commands> cmd, unsigned char block);
-    };
+    static bool isLocked(std::shared_ptr<ISO15693Commands> cmd, unsigned char block);
+};
 }
 
 #endif

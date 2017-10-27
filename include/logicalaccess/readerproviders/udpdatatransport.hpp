@@ -12,127 +12,128 @@
 
 namespace logicalaccess
 {
-#define	TRANSPORT_UDP			"UDP"
+#define TRANSPORT_UDP "UDP"
+
+/**
+ * \brief An UDP data transport class.
+ */
+class LIBLOGICALACCESS_API UdpDataTransport : public DataTransport
+{
+  public:
+    /**
+     * \brief Constructor.
+     */
+    UdpDataTransport();
 
     /**
-     * \brief An UDP data transport class.
+     * \brief Destructor.
      */
-    class LIBLOGICALACCESS_API UdpDataTransport : public DataTransport
+    virtual ~UdpDataTransport();
+
+    /**
+     * \brief Get the transport type of this instance.
+     * \return The transport type.
+     */
+    std::string getTransportType() const override
     {
-    public:
+        return TRANSPORT_UDP;
+    }
 
-        /**
-         * \brief Constructor.
-         */
-        UdpDataTransport();
+    /**
+     * \param Connect to the transport layer.
+     * \return True on success, false otherwise.
+     */
+    bool connect() override;
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~UdpDataTransport();
+    /**
+     * \param Disconnect from the transport layer.
+     */
+    void disconnect() override;
 
-        /**
-         * \brief Get the transport type of this instance.
-         * \return The transport type.
-         */
-	    std::string getTransportType() const override { return TRANSPORT_UDP; }
+    /**
+     * \briaf Get if connected to the transport layer.
+     * \return True if connected, false otherwise.
+     */
+    bool isConnected() override;
 
-        /**
-         * \param Connect to the transport layer.
-         * \return True on success, false otherwise.
-         */
-	    bool connect() override;
+    /**
+     * \brief Get the data transport endpoint name.
+     * \return The data transport endpoint name.
+     */
+    std::string getName() const override;
 
-        /**
-         * \param Disconnect from the transport layer.
-         */
-	    void disconnect() override;
+    /**
+     * \brief Serialize the current object to XML.
+     * \param parentNode The parent node.
+     */
+    void serialize(boost::property_tree::ptree &parentNode) override;
 
-        /**
-         * \briaf Get if connected to the transport layer.
-         * \return True if connected, false otherwise.
-         */
-	    bool isConnected() override;
+    /**
+     * \brief UnSerialize a XML node to the current object.
+     * \param node The XML node.
+     */
+    void unSerialize(boost::property_tree::ptree &node) override;
 
-        /**
-         * \brief Get the data transport endpoint name.
-         * \return The data transport endpoint name.
-         */
-	    std::string getName() const override;
+    /**
+     * \brief Get the default Xml Node name for this object.
+     * \return The Xml node name.
+     */
+    std::string getDefaultXmlNodeName() const override;
 
-        /**
-         * \brief Serialize the current object to XML.
-         * \param parentNode The parent node.
-         */
-	    void serialize(boost::property_tree::ptree& parentNode) override;
+    /**
+     * \brief Get the client socket.
+     */
+    std::shared_ptr<boost::asio::ip::udp::socket> getSocket() const;
 
-        /**
-         * \brief UnSerialize a XML node to the current object.
-         * \param node The XML node.
-         */
-	    void unSerialize(boost::property_tree::ptree& node) override;
+    /**
+     * \brief Get the ip address.
+     * \return The ip address.
+     */
+    std::string getIpAddress() const;
 
-        /**
-         * \brief Get the default Xml Node name for this object.
-         * \return The Xml node name.
-         */
-	    std::string getDefaultXmlNodeName() const override;
+    /**
+     * \brief Set the ip address.
+     * \param ipAddress The ip address.
+     */
+    void setIpAddress(std::string ipAddress);
 
-        /**
-         * \brief Get the client socket.
-         */
-        std::shared_ptr<boost::asio::ip::udp::socket> getSocket() const;
+    /**
+     * \brief Get the port.
+     * \return The port.
+     */
+    int getPort() const;
 
-        /**
-         * \brief Get the ip address.
-         * \return The ip address.
-         */
-        std::string getIpAddress() const;
+    /**
+     * \brief Set the port.
+     * \param port The port.
+     */
+    void setPort(int port);
 
-        /**
-         * \brief Set the ip address.
-         * \param ipAddress The ip address.
-         */
-        void setIpAddress(std::string ipAddress);
+    void send(const ByteVector &data) override;
 
-        /**
-         * \brief Get the port.
-         * \return The port.
-         */
-        int getPort() const;
+    ByteVector receive(long int timeout) override;
 
-        /**
-         * \brief Set the port.
-         * \param port The port.
-         */
-        void setPort(int port);
+  protected:
+    /**
+     * \brief Client socket use to communicate with the reader.
+     */
+    std::shared_ptr<boost::asio::ip::udp::socket> d_socket;
 
-	    void send(const ByteVector& data) override;
+    /**
+     * \brief Provides core I/O functionality
+     */
+    boost::asio::io_service ios;
 
-	    ByteVector receive(long int timeout) override;
+    /**
+     * \brief The ip address
+     */
+    std::string d_ipAddress;
 
-    protected:
-
-        /**
-         * \brief Client socket use to communicate with the reader.
-         */
-        std::shared_ptr<boost::asio::ip::udp::socket> d_socket;
-
-        /**
-         * \brief Provides core I/O functionality
-         */
-        boost::asio::io_service ios;
-
-        /**
-         * \brief The ip address
-         */
-        std::string d_ipAddress;
-
-        /**
-         * \brief The listening port.
-         */
-        int d_port;
-    };
+    /**
+     * \brief The listening port.
+     */
+    int d_port;
+};
 }
 
 #endif /* LOGICALACCESS_UDPDATATRANSPORT_HPP */

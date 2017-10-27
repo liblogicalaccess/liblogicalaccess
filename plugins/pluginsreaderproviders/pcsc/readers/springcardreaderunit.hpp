@@ -15,34 +15,33 @@
 
 namespace logicalaccess
 {
+/**
+ * \brief The SpringCard reader unit class.
+ */
+class LIBLOGICALACCESS_API SpringCardReaderUnit : public PCSCReaderUnit
+{
+  public:
     /**
-     * \brief The SpringCard reader unit class.
+     * \brief Constructor.
      */
-    class LIBLOGICALACCESS_API SpringCardReaderUnit : public PCSCReaderUnit
-    {
-    public:
+    explicit SpringCardReaderUnit(const std::string &name);
 
-        /**
-         * \brief Constructor.
-         */
-	    explicit SpringCardReaderUnit(const std::string& name);
+    /**
+     * \brief Destructor.
+     */
+    virtual ~SpringCardReaderUnit();
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~SpringCardReaderUnit();
+    /**
+     * \brief Get the PC/SC reader unit type.
+     * \return The PC/SC reader unit type.
+     */
+    PCSCReaderUnitType getPCSCType() const override;
 
-        /**
-         * \brief Get the PC/SC reader unit type.
-         * \return The PC/SC reader unit type.
-         */
-	    PCSCReaderUnitType getPCSCType() const override;
+  protected:
+    std::shared_ptr<CardProbe> createCardProbe() override;
 
-    protected:
-	    std::shared_ptr<CardProbe> createCardProbe() override;
-
-	    std::shared_ptr<ResultChecker> createDefaultResultChecker() const override;
-    };
+    std::shared_ptr<ResultChecker> createDefaultResultChecker() const override;
+};
 }
 
 #endif

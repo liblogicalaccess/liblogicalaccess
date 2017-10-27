@@ -29,15 +29,15 @@ int main(int ac, char **av)
     ChipPtr chip;
     tie(provider, readerUnit, chip) = pcsc_test_init();
 
-    PRINT_TIME("Chip identifier: " <<
-               logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
+    PRINT_TIME("Chip identifier: "
+               << logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
     PRINT_TIME("Chip type = " << chip->getCardType());
     PRINT_TIME("Generic type = " << chip->getGenericCardType());
 
     LLA_ASSERT(chip->getCommands(), "No command object.");
 
-   // auto mfpcmd = std::dynamic_pointer_cast<MifarePlusCommands>(chip->getCommands());
-    //LLA_ASSERT(mfpcmd, "Invalid command object");
+    // auto mfpcmd = std::dynamic_pointer_cast<MifarePlusCommands>(chip->getCommands());
+    // LLA_ASSERT(mfpcmd, "Invalid command object");
 
     auto mfp = std::dynamic_pointer_cast<MifarePlusChip>(chip);
     LLA_ASSERT(mfp, "Invalid chip object");

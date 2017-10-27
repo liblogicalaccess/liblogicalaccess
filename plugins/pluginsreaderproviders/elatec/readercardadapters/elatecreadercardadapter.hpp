@@ -17,62 +17,61 @@
 
 namespace logicalaccess
 {
+/**
+ * \brief A default Elatec reader/card adapter class.
+ */
+class LIBLOGICALACCESS_API ElatecReaderCardAdapter : public ReaderCardAdapter
+{
+  public:
     /**
-     * \brief A default Elatec reader/card adapter class.
+     * \brief Constructor.
      */
-    class LIBLOGICALACCESS_API ElatecReaderCardAdapter : public ReaderCardAdapter
-    {
-    public:
+    ElatecReaderCardAdapter();
 
-        /**
-         * \brief Constructor.
-         */
-        ElatecReaderCardAdapter();
+    /**
+     * \brief Destructor.
+     */
+    virtual ~ElatecReaderCardAdapter();
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~ElatecReaderCardAdapter();
+    /**
+     * \brief Adapt the command to send to the reader.
+     * \param command The command to send.
+     * \return The adapted command to send.
+     */
+    ByteVector adaptCommand(const ByteVector &command) override;
 
-        /**
-         * \brief Adapt the command to send to the reader.
-         * \param command The command to send.
-         * \return The adapted command to send.
-         */
-	    ByteVector adaptCommand(const ByteVector& command) override;
+    /**
+     * \brief Adapt the asnwer received from the reader.
+     * \param answer The answer received.
+     * \return The adapted answer received.
+     */
+    ByteVector adaptAnswer(const ByteVector &answer) override;
 
-        /**
-         * \brief Adapt the asnwer received from the reader.
-         * \param answer The answer received.
-         * \return The adapted answer received.
-         */
-	    ByteVector adaptAnswer(const ByteVector& answer) override;
+    using ReaderCardAdapter::sendCommand;
 
-		using ReaderCardAdapter::sendCommand;
+    /**
+     * \brief Send a command to the reader.
+     * \param cmdcode The command code.
+     * \param command The command buffer.
+     * \param timeout The command timeout.
+     * \return The result of the command.
+     */
+    virtual ByteVector sendCommand(unsigned char cmdcode, const ByteVector &command,
+                                   long int timeout = 2000);
 
-        /**
-         * \brief Send a command to the reader.
-         * \param cmdcode The command code.
-         * \param command The command buffer.
-         * \param timeout The command timeout.
-         * \return The result of the command.
-         */
-        virtual ByteVector sendCommand(unsigned char cmdcode, const ByteVector& command, long int timeout = 2000);
+  protected:
+    /**
+     * \brief Calculate the buffer checksum.
+     * \param buf The buffer.
+     * \return The checksum value.
+     */
+    static unsigned char calcChecksum(const ByteVector &buf);
 
-    protected:
-
-        /**
-         * \brief Calculate the buffer checksum.
-         * \param buf The buffer.
-         * \return The checksum value.
-         */
-        static unsigned char calcChecksum(const ByteVector& buf);
-
-        /**
-         * \brief The last command code used.
-         */
-        unsigned char d_last_cmdcode;
-    };
+    /**
+     * \brief The last command code used.
+     */
+    unsigned char d_last_cmdcode;
+};
 }
 
 #endif /* LOGICALACCESS_DEFAULTELATECREADERCARDADAPTER_H */

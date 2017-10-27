@@ -13,33 +13,32 @@ namespace logicalaccess
 {
 #define CMD_MIFAREULTRALIGHTCSPRINGCARD "MifareUltralightCSpringCard"
 
+/**
+ * \brief The Mifare Ultralight C commands class for SpringCard reader.
+ */
+class LIBLOGICALACCESS_API MifareUltralightCSpringCardCommands
+    : public MifareUltralightCPCSCCommands
+{
+  public:
     /**
-     * \brief The Mifare Ultralight C commands class for SpringCard reader.
+     * \brief Constructor.
      */
-    class LIBLOGICALACCESS_API MifareUltralightCSpringCardCommands : public MifareUltralightCPCSCCommands
-    {
-    public:
+    MifareUltralightCSpringCardCommands();
 
-        /**
-         * \brief Constructor.
-         */
-        MifareUltralightCSpringCardCommands();
+    explicit MifareUltralightCSpringCardCommands(std::string ct);
 
-        explicit MifareUltralightCSpringCardCommands(std::string ct);
+    /**
+     * \brief Destructor.
+     */
+    virtual ~MifareUltralightCSpringCardCommands();
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~MifareUltralightCSpringCardCommands();
+  protected:
+    void startGenericSession() override;
 
-    protected:
+    void stopGenericSession() override;
 
-	    void startGenericSession() override;
-
-	    void stopGenericSession() override;
-
-	    ByteVector sendGenericCommand(const ByteVector& data) override;
-    };
+    ByteVector sendGenericCommand(const ByteVector &data) override;
+};
 }
 
 #endif /* LOGICALACCESS_MIFAREULTRALIGHTCSPRINGCARDCOMMANDS_HPP */

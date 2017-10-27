@@ -11,16 +11,16 @@
 
 namespace logicalaccess
 {
-    /**
-     * \brief The ACS ACR implementation result checker.
-     */
-    class LIBLOGICALACCESS_API ACSACRResultChecker : public ISO7816ResultChecker
-    {
-    public:
-        ACSACRResultChecker();
+/**
+ * \brief The ACS ACR implementation result checker.
+ */
+class LIBLOGICALACCESS_API ACSACRResultChecker : public ISO7816ResultChecker
+{
+  public:
+    ACSACRResultChecker();
 
-        virtual ~ACSACRResultChecker();
-    };
+    virtual ~ACSACRResultChecker();
+};
 }
 
 #endif

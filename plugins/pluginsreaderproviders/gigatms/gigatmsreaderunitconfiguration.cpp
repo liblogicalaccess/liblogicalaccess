@@ -10,33 +10,33 @@
 
 namespace logicalaccess
 {
-	GigaTMSReaderUnitConfiguration::GigaTMSReaderUnitConfiguration()
-        : ReaderUnitConfiguration(READER_GIGATMS)
-    {
-	    GigaTMSReaderUnitConfiguration::resetConfiguration();
-    }
+GigaTMSReaderUnitConfiguration::GigaTMSReaderUnitConfiguration()
+    : ReaderUnitConfiguration(READER_GIGATMS)
+{
+    GigaTMSReaderUnitConfiguration::resetConfiguration();
+}
 
-	GigaTMSReaderUnitConfiguration::~GigaTMSReaderUnitConfiguration()
-    {
-    }
+GigaTMSReaderUnitConfiguration::~GigaTMSReaderUnitConfiguration()
+{
+}
 
-    void GigaTMSReaderUnitConfiguration::resetConfiguration()
-    {
-    }
+void GigaTMSReaderUnitConfiguration::resetConfiguration()
+{
+}
 
-    void GigaTMSReaderUnitConfiguration::serialize(boost::property_tree::ptree& parentNode)
-    {
-        boost::property_tree::ptree node;
-        parentNode.add_child(getDefaultXmlNodeName(), node);
-    }
+void GigaTMSReaderUnitConfiguration::serialize(boost::property_tree::ptree &parentNode)
+{
+    boost::property_tree::ptree node;
+    parentNode.add_child(getDefaultXmlNodeName(), node);
+}
 
-    void GigaTMSReaderUnitConfiguration::unSerialize(boost::property_tree::ptree& /*node*/)
-    {
-        //TODO: Implement this.
-    }
+void GigaTMSReaderUnitConfiguration::unSerialize(boost::property_tree::ptree & /*node*/)
+{
+    // TODO: Implement this.
+}
 
-    std::string GigaTMSReaderUnitConfiguration::getDefaultXmlNodeName() const
-    {
-        return "GigaTMSReaderUnitConfiguration";
-    }
+std::string GigaTMSReaderUnitConfiguration::getDefaultXmlNodeName() const
+{
+    return "GigaTMSReaderUnitConfiguration";
+}
 }

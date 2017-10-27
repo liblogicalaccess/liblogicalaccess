@@ -25,20 +25,19 @@ void logicalaccess::PCSCControlDataTransport::send(const ByteVector &data)
 
     EXCEPTION_ASSERT_WITH_LOG(getPCSCReaderUnit(), LibLogicalAccessException,
                               "The PCSC reader unit object"
-                                      "is null. We cannot send.");
-    if (data.size() > 0) {
+                              "is null. We cannot send.");
+    if (data.size() > 0)
+    {
         std::array<uint8_t, 255> returnedData;
         ULONG ulNoOfDataReceived;
 
         LOG(LogLevel::COMS) << "APDU (control) command: " << BufferHelper::getHex(data);
 
-        unsigned int errorFlag = SCardControl(getPCSCReaderUnit()->getHandle(),
-                                              IOCTL_CCID_ESCAPE,
-                                              &data[0], data.size(),
-                                              &returnedData[0], returnedData.size(),
-                                              &ulNoOfDataReceived);
+        unsigned int errorFlag = SCardControl(
+            getPCSCReaderUnit()->getHandle(), IOCTL_CCID_ESCAPE, &data[0], data.size(),
+            &returnedData[0], returnedData.size(), &ulNoOfDataReceived);
         CheckCardError(errorFlag);
-        d_response = ByteVector(returnedData.begin(),
-                                                returnedData.begin() + ulNoOfDataReceived);
+        d_response =
+            ByteVector(returnedData.begin(), returnedData.begin() + ulNoOfDataReceived);
     }
 }

@@ -10,8 +10,8 @@
 
 namespace logicalaccess
 {
-    bool Location::operator==(const Location& location) const
-    {
-        return (typeid(location) == typeid(*this));
-    }
+bool Location::operator==(const Location &location) const
+{
+    return (typeid(location) == typeid(*this));
+}
 }

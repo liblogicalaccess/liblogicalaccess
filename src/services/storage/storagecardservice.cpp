@@ -8,12 +8,12 @@
 
 namespace logicalaccess
 {
-	StorageCardService::StorageCardService(std::shared_ptr<Chip> chip)
-		: CardService(chip, CST_STORAGE)
-    {
-    }
+StorageCardService::StorageCardService(std::shared_ptr<Chip> chip)
+    : CardService(chip, CST_STORAGE)
+{
+}
 
-	StorageCardService::~StorageCardService()
-    {
-    }
+StorageCardService::~StorageCardService()
+{
+}
 }

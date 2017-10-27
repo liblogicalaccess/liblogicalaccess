@@ -14,9 +14,9 @@ class LIBLOGICALACCESS_API DesfireChangeKeyCommand : public BaseCommand
     DesfireChangeKeyCommand();
     virtual ~DesfireChangeKeyCommand() = default;
 
-	ByteVector serialize() const override;
+    ByteVector serialize() const override;
 
-	size_t binary_size_impl() const override;
+    size_t binary_size_impl() const override;
 
 #define IKS_COMMAND_DESFIRE_CHANGEKEY_SAME_KEY 1
 #define IKS_COMMAND_DESFIRE_CHANGEKEY_OTHER_KEY 2

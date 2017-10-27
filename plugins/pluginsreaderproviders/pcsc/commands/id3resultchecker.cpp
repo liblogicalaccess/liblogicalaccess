@@ -4,13 +4,13 @@ using namespace logicalaccess;
 
 ID3ResultChecker::ID3ResultChecker()
 {
-    AddCheck(0x63, 0x00,
-             "PIN is rejected by reader");
+    AddCheck(0x63, 0x00, "PIN is rejected by reader");
 
     AddCheck(0x64, 0x00, "Command execution error");
     AddCheck(0x67, 0x00, "Command and its parameters have a wrong length");
-    AddCheck(0x69, 0x82, "Security Conditions are not satisfied; Authentication is not performed, "
-        "PIN is not verified, etc...");
+    AddCheck(0x69, 0x82,
+             "Security Conditions are not satisfied; Authentication is not performed, "
+             "PIN is not verified, etc...");
     AddCheck(0x69, 0x83, "Cryptographic key type is not supported.");
     AddCheck(0x69, 0x84, "Specified key is locked.");
     AddCheck(0x69, 0x85, "Secured transmissions are not supported.");

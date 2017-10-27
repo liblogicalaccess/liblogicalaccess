@@ -14,26 +14,26 @@ CL1356PlusUtils::CardCount CL1356PlusUtils::parse_list_card(const ByteVector &in
                               "Response is not 8 bytes long.");
 
     CardCount ret;
-	memset(&ret, 0x00, sizeof(CardCount));
+    memset(&ret, 0x00, sizeof(CardCount));
 
     ret.detected_ = in[0];
-    ret.present_ = in[1];
-    ret.active_ = in[2];
+    ret.present_  = in[1];
+    ret.active_   = in[2];
 
     return ret;
 }
 
 CL1356PlusUtils::Info CL1356PlusUtils::parse_get_card_info(const ByteVector &in)
 {
-    auto itr = in.begin();
-    auto check_enough_bytes = [&](int n)
-    {
-            EXCEPTION_ASSERT_WITH_LOG(std::distance(itr, in.end()) >= n,
-                                      LibLogicalAccessException, "Not enough bytes in response.");
+    auto itr                = in.begin();
+    auto check_enough_bytes = [&](int n) {
+        EXCEPTION_ASSERT_WITH_LOG(std::distance(itr, in.end()) >= n,
+                                  LibLogicalAccessException,
+                                  "Not enough bytes in response.");
     };
 
     Info info;
-	memset(&info, 0x00, sizeof(info));
+    memset(&info, 0x00, sizeof(info));
     if (*itr != 0x01)
     {
         std::cout << "itr = " << (*itr) << std::endl;
@@ -57,7 +57,7 @@ CL1356PlusUtils::Info CL1356PlusUtils::parse_get_card_info(const ByteVector &in)
     ++itr;
 
     check_enough_bytes(len);
-    for (int i = 0 ; i < len; ++i)
+    for (int i = 0; i < len; ++i)
     {
         info.uid_.push_back(*itr);
         ++itr;
@@ -66,4 +66,3 @@ CL1356PlusUtils::Info CL1356PlusUtils::parse_get_card_info(const ByteVector &in)
     // ignore rest for now.
     return info;
 }
-

@@ -26,7 +26,9 @@ TEST(test_key_storage, test_serialize)
 TEST(test_key_storage, test_unserialize)
 {
     ComputerMemoryKeyStorage s;
-    std::string data = "<ComputerMemoryKeyStorage><KeyStorage><metadata><Lama>Sticot</Lama><Lama2>Sticot2</Lama2><Lama3>Sticot3</Lama3></metadata></KeyStorage></ComputerMemoryKeyStorage>";
+    std::string data = "<ComputerMemoryKeyStorage><KeyStorage><metadata><Lama>Sticot</"
+                       "Lama><Lama2>Sticot2</Lama2><Lama3>Sticot3</Lama3></metadata></"
+                       "KeyStorage></ComputerMemoryKeyStorage>";
 
     s.unSerialize(data, "");
 

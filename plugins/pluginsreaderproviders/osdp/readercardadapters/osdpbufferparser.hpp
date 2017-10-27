@@ -14,15 +14,20 @@
 
 namespace logicalaccess
 {
-    class LIBLOGICALACCESS_API OSDPBufferParser : public CircularBufferParser
+class LIBLOGICALACCESS_API OSDPBufferParser : public CircularBufferParser
+{
+  public:
+    OSDPBufferParser()
     {
-    public:
-        OSDPBufferParser() {}
+    }
 
-        virtual ~OSDPBufferParser() {}
+    virtual ~OSDPBufferParser()
+    {
+    }
 
-	    ByteVector getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer) override;
-    };
+    ByteVector
+    getValidBuffer(boost::circular_buffer<unsigned char> &circular_buffer) override;
+};
 }
 
 #endif /* OSDPBUFFERPARSER_HPP */

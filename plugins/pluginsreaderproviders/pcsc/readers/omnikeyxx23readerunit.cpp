@@ -8,18 +8,17 @@
 
 namespace logicalaccess
 {
-    OmnikeyXX23ReaderUnit::OmnikeyXX23ReaderUnit(const std::string &name)
-        : OmnikeyXX21ReaderUnit(name)
-    {
+OmnikeyXX23ReaderUnit::OmnikeyXX23ReaderUnit(const std::string &name)
+    : OmnikeyXX21ReaderUnit(name)
+{
+}
 
-    }
+OmnikeyXX23ReaderUnit::~OmnikeyXX23ReaderUnit()
+{
+}
 
-    OmnikeyXX23ReaderUnit::~OmnikeyXX23ReaderUnit()
-    {
-    }
-
-    PCSCReaderUnitType OmnikeyXX23ReaderUnit::getPCSCType() const
-    {
-        return PCSC_RUT_OMNIKEY_XX23;
-    }
+PCSCReaderUnitType OmnikeyXX23ReaderUnit::getPCSCType() const
+{
+    return PCSC_RUT_OMNIKEY_XX23;
+}
 }

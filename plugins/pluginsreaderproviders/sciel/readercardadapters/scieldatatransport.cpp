@@ -10,15 +10,16 @@
 
 namespace logicalaccess
 {
-    ByteVector ScielDataTransport::checkValideBufferAvailable()
-    {
-        ByteVector ret;
+ByteVector ScielDataTransport::checkValideBufferAvailable()
+{
+    ByteVector ret;
 
-        d_port->getSerialPort()->lockedExecute([&](){
-            if (d_port->getSerialPort()->getCircularBufferParser())
-                ret = d_port->getSerialPort()->getCircularBufferParser()->getValidBuffer(d_port->getSerialPort()->getCircularReadBuffer());
-        });
-        LOG(LogLevel::COMS) << "checkValideBufferAvailable: " << BufferHelper::getHex(ret);
-        return ret;
-    }
+    d_port->getSerialPort()->lockedExecute([&]() {
+        if (d_port->getSerialPort()->getCircularBufferParser())
+            ret = d_port->getSerialPort()->getCircularBufferParser()->getValidBuffer(
+                d_port->getSerialPort()->getCircularReadBuffer());
+    });
+    LOG(LogLevel::COMS) << "checkValideBufferAvailable: " << BufferHelper::getHex(ret);
+    return ret;
+}
 }

@@ -5,11 +5,11 @@
 
 namespace logicalaccess
 {
-    class WinClass
-    {
-    protected:
-        static std::string _getErrorMess(int errCode);
-    };
+class WinClass
+{
+  protected:
+    static std::string _getErrorMess(int errCode);
+};
 }
 
 #endif

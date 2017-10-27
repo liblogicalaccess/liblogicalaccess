@@ -14,15 +14,20 @@
 
 namespace logicalaccess
 {
-    class LIBLOGICALACCESS_API AxessTMC13BufferParser : public CircularBufferParser
+class LIBLOGICALACCESS_API AxessTMC13BufferParser : public CircularBufferParser
+{
+  public:
+    AxessTMC13BufferParser()
     {
-    public:
-        AxessTMC13BufferParser() {}
+    }
 
-        virtual ~AxessTMC13BufferParser() {}
+    virtual ~AxessTMC13BufferParser()
+    {
+    }
 
-	    ByteVector getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer) override;
-    };
+    ByteVector
+    getValidBuffer(boost::circular_buffer<unsigned char> &circular_buffer) override;
+};
 }
 
 #endif /* AXESSTMC13BUFFERPARSER_HPP */

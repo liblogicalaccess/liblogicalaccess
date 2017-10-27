@@ -16,38 +16,38 @@
 
 namespace logicalaccess
 {
+/**
+ * \brief A ISO14443-3B reader communication base class.
+ */
+class LIBLOGICALACCESS_API ISO14443BReaderCommunication
+{
+  public:
+    virtual ~ISO14443BReaderCommunication() = default;
+
     /**
-     * \brief A ISO14443-3B reader communication base class.
+ * \brief Send a REQB command from the PCD to the PICC.
+ * \param afi The AFI value.
+ * \return The ATQB PICC result.
+ */
+    virtual ByteVector requestB(unsigned char afi = 0x00) = 0;
+
+    /**
+     * \brief Send a HLTB command from the PCD to the PICC.
      */
-    class LIBLOGICALACCESS_API ISO14443BReaderCommunication
-    {
-    public:
-	    virtual ~ISO14443BReaderCommunication() = default;
+    virtual void haltB() = 0;
 
-	    /**
-         * \brief Send a REQB command from the PCD to the PICC.
-         * \param afi The AFI value.
-         * \return The ATQB PICC result.
-         */
-        virtual ByteVector requestB(unsigned char afi = 0x00) = 0;
+    /**
+     * \brief Send a attrib command from the PCD to the PICC.
+     */
+    virtual void attrib() = 0;
 
-        /**
-         * \brief Send a HLTB command from the PCD to the PICC.
-         */
-        virtual void haltB() = 0;
-
-        /**
-         * \brief Send a attrib command from the PCD to the PICC.
-         */
-        virtual void attrib() = 0;
-
-        /**
-         * \brief Manage collision.
-         * \param afi The AFI value.
-         * \return The chip UID.
-         */
-        virtual ByteVector anticollisionB(unsigned char afi = 0x00) = 0;
-    };
+    /**
+     * \brief Manage collision.
+     * \param afi The AFI value.
+     * \return The chip UID.
+     */
+    virtual ByteVector anticollisionB(unsigned char afi = 0x00) = 0;
+};
 }
 
 #endif /* LOGICALACCESS_ISO14443BREADERCOMMUNICATION_HPP */

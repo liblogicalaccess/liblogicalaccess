@@ -6,7 +6,7 @@ using namespace logicalaccess;
 
 KeyStorageType IKSStorage::getType() const
 {
-        return KST_SERVER;
+    return KST_SERVER;
 }
 
 void IKSStorage::serialize(boost::property_tree::ptree &parentNode)
@@ -27,34 +27,35 @@ void IKSStorage::serialize(boost::property_tree::ptree &parentNode)
 
 void IKSStorage::unSerialize(boost::property_tree::ptree &node)
 {
-    key_identity_ = node.get_child("KeyIdentity").get_value<std::string>("");
-    config_.ip = node.get_child("IKS.ip").get_value<std::string>("");
-    config_.port = node.get_child("IKS.port").get_value<uint16_t>(0);
+    key_identity_       = node.get_child("KeyIdentity").get_value<std::string>("");
+    config_.ip          = node.get_child("IKS.ip").get_value<std::string>("");
+    config_.port        = node.get_child("IKS.port").get_value<uint16_t>(0);
     config_.client_cert = node.get_child("IKS.client_cert").get_value<std::string>("");
-    config_.client_key = node.get_child("IKS.client_key").get_value<std::string>("");
-    config_.root_ca = node.get_child("IKS.root_ca").get_value<std::string>("");
+    config_.client_key  = node.get_child("IKS.client_key").get_value<std::string>("");
+    config_.root_ca     = node.get_child("IKS.root_ca").get_value<std::string>("");
 
     if (config_.port != 0)
     {
         // port 0 being invalid it would mean this object doesn't have any valid config
         iks::IslogKeyServer::configureGlobalInstance(config_.ip, config_.port,
-                                                     config_.client_cert, config_.client_key, config_.root_ca);
+                                                     config_.client_cert,
+                                                     config_.client_key, config_.root_ca);
     }
 }
 
 std::string IKSStorage::getDefaultXmlNodeName() const
 {
-	return "IKSStorage";
+    return "IKSStorage";
 }
 
 const std::string &IKSStorage::getKeyIdentity() const
 {
-        return key_identity_;
+    return key_identity_;
 }
 
 IKSStorage::IKSStorage(const std::string &key_identity)
-    : key_identity_(key_identity),
-      saveIKSConfig_(false)
+    : key_identity_(key_identity)
+    , saveIKSConfig_(false)
 {
 }
 
@@ -69,8 +70,8 @@ void IKSStorage::setSerializeIKSConfig(bool v)
 }
 
 void IKSStorage::setIKSConfig(const std::string &ip, uint16_t port,
-                              const std::string &client_cert, const std::string &client_key,
-                              const std::string &root_ca)
+                              const std::string &client_cert,
+                              const std::string &client_key, const std::string &root_ca)
 {
     config_ = iks::IslogKeyServer::IKSConfig(ip, port, client_cert, client_key, root_ca);
 }
@@ -88,9 +89,9 @@ bool IKSStorage::getSerializeIKSConfig() const
 void IKSStorage::getIKSConfig(std::string &ip, uint16_t &port, std::string &client_cert,
                               std::string &client_key, std::string &root_ca) const
 {
-    ip = config_.ip;
-    port = config_.port;
+    ip          = config_.ip;
+    port        = config_.port;
     client_cert = config_.client_cert;
-    client_key = config_.client_key;
-    root_ca = config_.root_ca;
+    client_key  = config_.client_key;
+    root_ca     = config_.root_ca;
 }

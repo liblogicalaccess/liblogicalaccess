@@ -37,7 +37,7 @@ ByteVector DesEncryptCommand::serialize() const
     needle += payload_.size();
 
     memcpy(&header[needle], &iv_[0], iv_.size());
-    //needle += iv_.size();
+    // needle += iv_.size();
     return header;
 }
 
@@ -47,8 +47,7 @@ size_t DesEncryptCommand::binary_size_impl() const
     return sizeof(uint16_t) + 8 + payload_.size() + key_name_.size() + 1 + 1 + 1;
 }
 
-DesEncryptResponse::DesEncryptResponse(uint16_t status,
-                                       const ByteVector &data)
+DesEncryptResponse::DesEncryptResponse(uint16_t status, const ByteVector &data)
     : BaseResponse(SMSG_OP_DES_ENCRYPT, status)
     , bytes_(data)
 {

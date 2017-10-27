@@ -12,41 +12,40 @@
 
 namespace logicalaccess
 {
+/**
+ * \brief The reader unit configuration base class. Describe the configuration for a
+ * reader unit.
+ */
+class LIBLOGICALACCESS_API ReaderUnitConfiguration : public XmlSerializable
+{
+  public:
     /**
-     * \brief The reader unit configuration base class. Describe the configuration for a reader unit.
+     * \brief Constructor.
      */
-    class LIBLOGICALACCESS_API ReaderUnitConfiguration : public XmlSerializable
-    {
-    public:
+    explicit ReaderUnitConfiguration(std::string rpt);
 
-        /**
-         * \brief Constructor.
-         */
-	    explicit ReaderUnitConfiguration(std::string rpt);
+    /**
+     * \brief Destructor.
+     */
+    virtual ~ReaderUnitConfiguration();
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~ReaderUnitConfiguration();
+    /**
+     * \brief Get the reader provider type.
+     * \return The reader provider type.
+     */
+    std::string getRPType() const;
 
-        /**
-         * \brief Get the reader provider type.
-         * \return The reader provider type.
-         */
-        std::string getRPType() const;
+    /**
+     * \brief Reset the configuration to the default one.
+     */
+    virtual void resetConfiguration() = 0;
 
-        /**
-         * \brief Reset the configuration to the default one.
-         */
-        virtual void resetConfiguration() = 0;
-
-    protected:
-
-        /**
-         * \brief The associated reader provider type for the reader unit configuration.
-         */
-        std::string d_readerProviderType;
-    };
+  protected:
+    /**
+     * \brief The associated reader provider type for the reader unit configuration.
+     */
+    std::string d_readerProviderType;
+};
 }
 
 #endif

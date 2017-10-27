@@ -18,136 +18,145 @@
 
 namespace logicalaccess
 {
-#define READER_KEYBOARD		"Keyboard"
+#define READER_KEYBOARD "Keyboard"
 
 #ifdef _WINDOWS
 #define SessionHookMap std::map<DWORD, DWORD>
 
-    DWORD WINAPI WatchThread(LPVOID lpThreadParameter);
+DWORD WINAPI WatchThread(LPVOID lpThreadParameter);
 #endif
+
+/**
+ * \brief Keyboard Reader Provider class.
+ */
+class LIBLOGICALACCESS_API KeyboardReaderProvider : public ReaderProvider
+{
+  protected:
+    /**
+     * \brief Constructor.
+     */
+    KeyboardReaderProvider();
+
+  public:
+    /**
+     * \brief Destructor.
+     */
+    ~KeyboardReaderProvider();
 
     /**
-     * \brief Keyboard Reader Provider class.
+     * \brief Release the provider resources.
      */
-    class LIBLOGICALACCESS_API KeyboardReaderProvider : public ReaderProvider
+    void release() override;
+
+    /**
+     * \brief Get the keyboard reader provider instance.
+     * \return The Keyboard reader provider instance.
+     */
+    static std::shared_ptr<KeyboardReaderProvider> getSingletonInstance();
+
+    /**
+     * \brief Get the reader provider type.
+     * \return The reader provider type.
+     */
+    std::string getRPType() const override
     {
-    protected:
-        /**
-         * \brief Constructor.
-         */
-        KeyboardReaderProvider();
+        return READER_KEYBOARD;
+    }
 
-    public:
+    /**
+     * \brief Get the reader provider name.
+     * \return The reader provider name.
+     */
+    std::string getRPName() const override
+    {
+        return "Keyboard";
+    }
 
-        /**
-         * \brief Destructor.
-         */
-        ~KeyboardReaderProvider();
+    /**
+     * \brief List all readers of the system.
+     * \return True if the list was updated, false otherwise.
+     */
+    bool refreshReaderList() override;
 
-        /**
-         * \brief Release the provider resources.
-         */
-	    void release() override;
+    /**
+     * \brief Get reader list for this reader provider.
+     * \return The reader list.
+     */
+    const ReaderList &getReaderList() override
+    {
+        return d_readers;
+    }
 
-        /**
-         * \brief Get the keyboard reader provider instance.
-         * \return The Keyboard reader provider instance.
-         */
-        static std::shared_ptr<KeyboardReaderProvider> getSingletonInstance();
-
-        /**
-         * \brief Get the reader provider type.
-         * \return The reader provider type.
-         */
-	    std::string getRPType() const override { return READER_KEYBOARD; }
-
-        /**
-         * \brief Get the reader provider name.
-         * \return The reader provider name.
-         */
-	    std::string getRPName() const override { return "Keyboard"; }
-
-        /**
-         * \brief List all readers of the system.
-         * \return True if the list was updated, false otherwise.
-         */
-	    bool refreshReaderList() override;
-
-        /**
-         * \brief Get reader list for this reader provider.
-         * \return The reader list.
-         */
-	    const ReaderList& getReaderList() override { return d_readers; }
-
-        /**
-         * \brief Create a new reader unit for the reader provider.
-         * \return A reader unit.
-         */
-	    std::shared_ptr<ReaderUnit> createReaderUnit() override;
+    /**
+     * \brief Create a new reader unit for the reader provider.
+     * \return A reader unit.
+     */
+    std::shared_ptr<ReaderUnit> createReaderUnit() override;
 
 #ifdef _WINDOWS
-        DWORD launchHook(HANDLE hUserTokenDup = nullptr) const;
+    DWORD launchHook(HANDLE hUserTokenDup = nullptr) const;
 
-        DWORD launchHookIntoDifferentSession(DWORD destSessionId) const;
+    DWORD launchHookIntoDifferentSession(DWORD destSessionId) const;
 
-    protected:
+  protected:
+    void generateSharedGuid();
 
-        void generateSharedGuid();
+    long createKbdFileMapping();
 
-        long createKbdFileMapping();
+    void freeKbdFileMapping();
 
-        void freeKbdFileMapping();
+    static void fillSecurityDescriptor(LPSECURITY_ATTRIBUTES sa, PACL pACL);
 
-        static void fillSecurityDescriptor(LPSECURITY_ATTRIBUTES sa, PACL pACL);
+    long createKbdEvent();
 
-        long createKbdEvent();
+    void freeKbdEvent();
 
-        void freeKbdEvent();
+    void startAndWatchOnActiveConsole();
 
-        void startAndWatchOnActiveConsole();
+    void stopWatchingActiveConsole();
 
-        void stopWatchingActiveConsole();
+    static HANDLE
+    retrieveWinlogonUserToken(const DWORD destSessionId,
+                              const SECURITY_IMPERSONATION_LEVEL ImpersonationLevel,
+                              const TOKEN_TYPE TokenType);
 
-        static HANDLE retrieveWinlogonUserToken(const DWORD destSessionId, const SECURITY_IMPERSONATION_LEVEL ImpersonationLevel, const TOKEN_TYPE TokenType);
+    static std::string getHookPath();
 
-        static std::string getHookPath();
+    std::string getHookArguments() const;
 
-        std::string getHookArguments() const;
+    static bool is64BitWindows();
 
-        static bool is64BitWindows();
-
-        static bool terminateProcess(DWORD dwProcessId, UINT uExitCode);
+    static bool terminateProcess(DWORD dwProcessId, UINT uExitCode);
 #endif
-    protected:
-	    /**
-         * \brief The reader list.
-         */
-        ReaderList d_readers;
+  protected:
+    /**
+ * \brief The reader list.
+ */
+    ReaderList d_readers;
 
 #ifdef _WINDOWS
-        HANDLE shKeyboard;
+    HANDLE shKeyboard;
 
-        HANDLE hWatchThrd;
+    HANDLE hWatchThrd;
 
-        std::string sharedGuid;
+    std::string sharedGuid;
 
-    public:
+  public:
+    KeyboardSharedStruct *sKeyboard;
 
-        KeyboardSharedStruct* sKeyboard;
+    HANDLE hKbdEvent;
 
-        HANDLE hKbdEvent;
+    HANDLE hKbdEventProcessed;
 
-        HANDLE hKbdEventProcessed;
+    HANDLE hHostEvent;
 
-        HANDLE hHostEvent;
+    HANDLE hStillAliveEvent;
 
-        HANDLE hStillAliveEvent;
+    SessionHookMap processHookedSessions;
 
-        SessionHookMap processHookedSessions;
-
-        bool watchSessions;
+    bool watchSessions;
 #endif
-    };
+};
 }
 
 #endif /* LOGICALACCESS_READERKEYBOARD_PROVIDER_HPP */

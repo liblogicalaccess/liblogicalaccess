@@ -11,22 +11,22 @@
 
 namespace logicalaccess
 {
-    PCSCReaderCardAdapter::PCSCReaderCardAdapter()
-    {
-        d_dataTransport.reset(new PCSCDataTransport());
-    }
+PCSCReaderCardAdapter::PCSCReaderCardAdapter()
+{
+    d_dataTransport.reset(new PCSCDataTransport());
+}
 
-    PCSCReaderCardAdapter::~PCSCReaderCardAdapter()
-    {
-    }
+PCSCReaderCardAdapter::~PCSCReaderCardAdapter()
+{
+}
 
-    ByteVector PCSCReaderCardAdapter::adaptCommand(const ByteVector& command)
-    {
-        return command;
-    }
+ByteVector PCSCReaderCardAdapter::adaptCommand(const ByteVector &command)
+{
+    return command;
+}
 
-    ByteVector PCSCReaderCardAdapter::adaptAnswer(const ByteVector& answer)
-    {
-        return answer;
-    }
+ByteVector PCSCReaderCardAdapter::adaptAnswer(const ByteVector &answer)
+{
+    return answer;
+}
 }

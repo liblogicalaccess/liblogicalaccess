@@ -15,83 +15,97 @@
 
 namespace logicalaccess
 {
-    GenericTagAccessControlCardService::GenericTagAccessControlCardService(std::shared_ptr<Chip> chip)
-        : AccessControlCardService(chip)
+GenericTagAccessControlCardService::GenericTagAccessControlCardService(
+    std::shared_ptr<Chip> chip)
+    : AccessControlCardService(chip)
+{
+}
+
+GenericTagAccessControlCardService::~GenericTagAccessControlCardService()
+{
+}
+
+std::shared_ptr<Format>
+GenericTagAccessControlCardService::readFormat(std::shared_ptr<Format> format,
+                                               std::shared_ptr<Location> /*location*/,
+                                               std::shared_ptr<AccessInfo> /*aiToUse*/)
+{
+    bool ret = false;
+
+    LOG(LogLevel::INFOS) << "Try to read a format from Generic Tag...";
+
+    std::shared_ptr<Format> formatret;
+    if (format)
     {
-    }
-
-    GenericTagAccessControlCardService::~GenericTagAccessControlCardService()
-    {
-    }
-
-    std::shared_ptr<Format> GenericTagAccessControlCardService::readFormat(std::shared_ptr<Format> format, std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/)
-    {
-        bool ret = false;
-
-        LOG(LogLevel::INFOS) << "Try to read a format from Generic Tag...";
-
-        std::shared_ptr<Format> formatret;
-        if (format)
+        try
         {
-            try
+            formatret = Format::getByFormatType(format->getType());
+            formatret->unSerialize(format->serialize(), "");
+            unsigned int dataLengthBits =
+                static_cast<unsigned int>(getChip()->getChipIdentifier().size()) * 8;
+
+            if (dataLengthBits > 0)
             {
-                formatret = Format::getByFormatType(format->getType());
-                formatret->unSerialize(format->serialize(), "");
-                unsigned int dataLengthBits = static_cast<unsigned int>(getChip()->getChipIdentifier().size()) * 8;
+                unsigned int length = (dataLengthBits + 7) / 8;
+                BitsetStream formatBuf;
 
-                if (dataLengthBits > 0)
+                try
                 {
-                    unsigned int length = (dataLengthBits + 7) / 8;
-					BitsetStream formatBuf;
-
-                    try
+                    LOG(LogLevel::INFOS) << "Reading data from Generic Tag...";
+                    ByteVector identifier = getChip()->getChipIdentifier();
+                    if (length <= identifier.size())
                     {
-                        LOG(LogLevel::INFOS) << "Reading data from Generic Tag...";
-                        ByteVector identifier = getChip()->getChipIdentifier();
-                        if (length <= identifier.size())
+                        unsigned int realDataLengthBits =
+                            getGenericTagChip()->getTagIdBitsLength();
+                        if (realDataLengthBits == 0)
                         {
-                            unsigned int realDataLengthBits = getGenericTagChip()->getTagIdBitsLength();
-                            if (realDataLengthBits == 0)
-                            {
-                                realDataLengthBits = length * 8;
-                            }
+                            realDataLengthBits = length * 8;
+                        }
 
-                            if (realDataLengthBits >= formatret->getDataLength())
-                            {
-                                LOG(LogLevel::INFOS) << "Converting data to format...";
-								formatBuf.concat(identifier, dataLengthBits - realDataLengthBits, realDataLengthBits);
-                                formatret->setLinearData(formatBuf.getData());
-                                ret = true;
-                            }
-                            else
-                            {
-                                LOG(LogLevel::ERRORS) << "Cannot read the format: format length (" << formatret->getDataLength() << ") bigger than the total available bits (" << realDataLengthBits << ").";
-                            }
+                        if (realDataLengthBits >= formatret->getDataLength())
+                        {
+                            LOG(LogLevel::INFOS) << "Converting data to format...";
+                            formatBuf.concat(identifier,
+                                             dataLengthBits - realDataLengthBits,
+                                             realDataLengthBits);
+                            formatret->setLinearData(formatBuf.getData());
+                            ret = true;
+                        }
+                        else
+                        {
+                            LOG(LogLevel::ERRORS)
+                                << "Cannot read the format: format length ("
+                                << formatret->getDataLength()
+                                << ") bigger than the total available bits ("
+                                << realDataLengthBits << ").";
                         }
                     }
-                    catch (std::exception&)
-                    {
-                        throw;
-                    }
+                }
+                catch (std::exception &)
+                {
+                    throw;
                 }
             }
-            catch (std::exception& ex)
-            {
-                LOG(LogLevel::ERRORS) << "Error on read format: " << ex.what();
-                std::rethrow_exception(std::current_exception());
-            }
         }
-
-        if (!ret)
+        catch (std::exception &ex)
         {
-            formatret.reset();
+            LOG(LogLevel::ERRORS) << "Error on read format: " << ex.what();
+            std::rethrow_exception(std::current_exception());
         }
-
-        return formatret;
     }
 
-    bool GenericTagAccessControlCardService::writeFormat(std::shared_ptr<Format> /*format*/, std::shared_ptr<Location> /*location*/, std::shared_ptr<AccessInfo> /*aiToUse*/, std::shared_ptr<AccessInfo> /*aiToWrite*/)
+    if (!ret)
     {
-		return false;
+        formatret.reset();
     }
+
+    return formatret;
+}
+
+bool GenericTagAccessControlCardService::writeFormat(
+    std::shared_ptr<Format> /*format*/, std::shared_ptr<Location> /*location*/,
+    std::shared_ptr<AccessInfo> /*aiToUse*/, std::shared_ptr<AccessInfo> /*aiToWrite*/)
+{
+    return false;
+}
 }

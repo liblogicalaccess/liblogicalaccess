@@ -7,6 +7,6 @@
 
 MyClock &get_global_clock()
 {
-	static MyClock c;
-	return c;
+    static MyClock c;
+    return c;
 }

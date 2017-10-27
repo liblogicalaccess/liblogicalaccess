@@ -11,40 +11,36 @@
 
 namespace logicalaccess
 {
+/**
+ * Some static AES helper method with a very easy to use API.
+ */
+class AESHelper
+{
+  public:
     /**
-     * Some static AES helper method with a very easy to use API.
+     * Encrypt `data` using key `key` and `iv_data`.
+     *
+     * If `iv_data` is empty, use a null IV.
+     *
+     * Returns the encrypted buffer.
      */
-    class AESHelper
-    {
-    public:
+    static ByteVector AESEncrypt(const ByteVector &data, const ByteVector &key,
+                                 const ByteVector &iv_data);
 
-        /**
-         * Encrypt `data` using key `key` and `iv_data`.
-         *
-         * If `iv_data` is empty, use a null IV.
-         *
-         * Returns the encrypted buffer.
-         */
-        static ByteVector AESEncrypt(const ByteVector &data,
-                                               const ByteVector &key,
-                                               const ByteVector &iv_data);
+    /**
+     * Decrypt `data` using key `key` and `iv_data`.
+     *
+     * If `iv_data` is empty, use a null IV.
+     *
+     * Returns the decrypted buffer.
+     */
+    static ByteVector AESDecrypt(const ByteVector &data, const ByteVector &key,
+                                 ByteVector const &iv_data);
 
-        /**
-         * Decrypt `data` using key `key` and `iv_data`.
-         *
-         * If `iv_data` is empty, use a null IV.
-         *
-         * Returns the decrypted buffer.
-         */
-        static ByteVector AESDecrypt(const ByteVector &data,
-                                               const ByteVector &key,
-                                               ByteVector const &iv_data);
-        
-    private:
-        static ByteVector  AESRun(const ByteVector &data, const ByteVector &key,
-                                            const ByteVector &iv_data,
-                                            bool crypt);
-    };
+  private:
+    static ByteVector AESRun(const ByteVector &data, const ByteVector &key,
+                             const ByteVector &iv_data, bool crypt);
+};
 }
 
-#endif //LIBLOGICALACCESS_AES_HELPER_H
+#endif // LIBLOGICALACCESS_AES_HELPER_H

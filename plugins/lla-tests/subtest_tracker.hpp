@@ -24,7 +24,7 @@ class LIBLOGICALACCESS_API SubTestTracker
      */
     std::list<std::string> all_tests_;
 
-public:
+  public:
     static SubTestTracker &instance();
 
     /**
@@ -40,4 +40,4 @@ public:
 };
 
 
-#endif //LLA_TESTS_SUBTEST_TRACKER_H
+#endif // LLA_TESTS_SUBTEST_TRACKER_H

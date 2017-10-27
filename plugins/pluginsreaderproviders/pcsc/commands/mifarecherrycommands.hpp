@@ -17,45 +17,45 @@
 namespace logicalaccess
 {
 #define CMD_MIFARECHERRY "MifareCherry"
+/**
+ * \brief The Mifare commands class for Cherry reader.
+ */
+class LIBLOGICALACCESS_API MifareCherryCommands : public MifarePCSCCommands
+{
+  public:
     /**
-     * \brief The Mifare commands class for Cherry reader.
+     * \brief Constructor.
      */
-    class LIBLOGICALACCESS_API MifareCherryCommands : public MifarePCSCCommands
-    {
-    public:
+    MifareCherryCommands();
 
-        /**
-         * \brief Constructor.
-         */
-        MifareCherryCommands();
+    explicit MifareCherryCommands(std::string);
 
-        explicit MifareCherryCommands(std::string);
+    /**
+     * \brief Destructor.
+     */
+    virtual ~MifareCherryCommands();
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~MifareCherryCommands();
+  protected:
+    /**
+     * \brief Load a key to the reader.
+     * \param keyno The key number.
+     * \param keytype The mifare key type.
+     * \param key The key.
+     * \param vol Use volatile memory.
+     * \return true on success, false otherwise.
+     */
+    bool loadKey(unsigned char keyno, MifareKeyType keytype,
+                 std::shared_ptr<MifareKey> key, bool vol = false) override;
 
-    protected:
-
-        /**
-         * \brief Load a key to the reader.
-         * \param keyno The key number.
-         * \param keytype The mifare key type.
-         * \param key The key.
-         * \param vol Use volatile memory.
-         * \return true on success, false otherwise.
-         */
-        bool loadKey(unsigned char keyno, MifareKeyType keytype, std::shared_ptr<MifareKey> key, bool vol = false) override;
-
-        /**
-         * \brief Authenticate a block, given a key number.
-         * \param blockno The block number.
-         * \param keyno The key number, previously loaded with Mifare::loadKey().
-         * \param keytype The key type.
-         */
-        void authenticate(unsigned char blockno, unsigned char keyno, MifareKeyType keytype) override;
-    };
+    /**
+     * \brief Authenticate a block, given a key number.
+     * \param blockno The block number.
+     * \param keyno The key number, previously loaded with Mifare::loadKey().
+     * \param keytype The key type.
+     */
+    void authenticate(unsigned char blockno, unsigned char keyno,
+                      MifareKeyType keytype) override;
+};
 }
 
 #endif /* LOGICALACCESS_MIFARECHERRYCOMMANDS_HPP */

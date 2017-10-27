@@ -18,15 +18,16 @@ void SubTestTracker::add_passed(const std::string &subtest_name)
 
 std::ostream &operator<<(std::ostream &os, const SubTestTracker &stt)
 {
-    os << stt.tests_.size() << "/" << stt.all_tests_.size() << " subtests passed. OS: " << get_os_name();
-    for (const auto& test : stt.tests_)
+    os << stt.tests_.size() << "/" << stt.all_tests_.size()
+       << " subtests passed. OS: " << get_os_name();
+    for (const auto &test : stt.tests_)
     {
         os << "\n\t" << test;
     }
 
     std::list<std::string> not_run;
-    set_difference(stt.all_tests_.begin(), stt.all_tests_.end(),
-                        stt.tests_.begin(), stt.tests_.end(), inserter(not_run, not_run.begin()));
+    set_difference(stt.all_tests_.begin(), stt.all_tests_.end(), stt.tests_.begin(),
+                   stt.tests_.end(), inserter(not_run, not_run.begin()));
     if (not_run.empty())
     {
         os << "\nAll subtests ran.";

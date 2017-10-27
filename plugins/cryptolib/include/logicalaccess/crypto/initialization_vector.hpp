@@ -14,59 +14,56 @@
 
 namespace logicalaccess
 {
-    namespace openssl
+namespace openssl
+{
+/**
+ * \brief An initialisation vector.
+ *
+ * InitializationVector serves as a base class for AESInitializationVector.
+ */
+class InitializationVector
+{
+  public:
+    /**
+     * \brief Get the IV data.
+     * \return The IV data.
+     */
+    const ByteVector &data() const
     {
-        /**
-         * \brief An initialisation vector.
-         *
-         * InitializationVector serves as a base class for AESInitializationVector.
-         */
-        class InitializationVector
-        {
-        public:
-
-            /**
-             * \brief Get the IV data.
-             * \return The IV data.
-             */
-	        const ByteVector& data() const
-            {
-                return d_data;
-            }
-
-        protected:
-
-            /**
-             * \brief Create a new InitializationVector.
-             * \param size The IV size.
-             * \param random true if the IV must be randomized, false otherwise.
-             */
-            InitializationVector(size_t size, bool random);
-
-            /**
-             * \brief Create an InitializationVector from existing data.
-             * \param data The data.
-             */
-	        explicit InitializationVector(const ByteVector& data);
-
-            /**
-             * \brief Zero the IV.
-             */
-            void zero();
-
-            /**
-             * \brief Randomize the IV.
-             */
-            void randomize();
-
-        private:
-
-            /**
-             * \brief The IV data.
-             */
-            ByteVector d_data;
-        };
+        return d_data;
     }
+
+  protected:
+    /**
+     * \brief Create a new InitializationVector.
+     * \param size The IV size.
+     * \param random true if the IV must be randomized, false otherwise.
+     */
+    InitializationVector(size_t size, bool random);
+
+    /**
+     * \brief Create an InitializationVector from existing data.
+     * \param data The data.
+     */
+    explicit InitializationVector(const ByteVector &data);
+
+    /**
+     * \brief Zero the IV.
+     */
+    void zero();
+
+    /**
+     * \brief Randomize the IV.
+     */
+    void randomize();
+
+  private:
+    /**
+     * \brief The IV data.
+     */
+    ByteVector d_data;
+};
+}
 }
 
 #endif /* INITIALIZATION_VECTOR_HPP */

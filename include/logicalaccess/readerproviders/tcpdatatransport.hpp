@@ -13,172 +13,173 @@
 
 namespace logicalaccess
 {
-#define	TRANSPORT_TCP			"TCP"
+#define TRANSPORT_TCP "TCP"
+
+/**
+ * \brief An TCP data transport class.
+ */
+class LIBLOGICALACCESS_API TcpDataTransport : public DataTransport
+{
+  public:
+    /**
+     * \brief Constructor.
+     */
+    TcpDataTransport();
 
     /**
-     * \brief An TCP data transport class.
+     * \brief Destructor.
      */
-    class LIBLOGICALACCESS_API TcpDataTransport : public DataTransport
+    virtual ~TcpDataTransport();
+
+    /**
+     * \brief Get the transport type of this instance.
+     * \return The transport type.
+     */
+    std::string getTransportType() const override
     {
-    public:
+        return TRANSPORT_TCP;
+    }
 
-        /**
-         * \brief Constructor.
-         */
-        TcpDataTransport();
+    /**
+* \brief Connect to the transport layer.
+* \return True on success, false otherwise.
+*/
+    bool connect() override;
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~TcpDataTransport();
+    /**
+     * \brief Connect to the transport layer.
+             * \param timeout Time after the connect task will be canceled.
+     * \return True on success, false otherwise.
+     */
+    virtual bool connect(long int timeout);
 
-        /**
-         * \brief Get the transport type of this instance.
-         * \return The transport type.
-         */
-	    std::string getTransportType() const override { return TRANSPORT_TCP; }
+    /**
+     * \param Disconnect from the transport layer.
+     */
+    void disconnect() override;
 
-		/**
-         * \brief Connect to the transport layer.
-         * \return True on success, false otherwise.
-         */
-	    bool connect() override;
+    /**
+     * \brief Get if connected to the transport layer.
+     * \return True if connected, false otherwise.
+     */
+    bool isConnected() override;
 
-        /**
-         * \brief Connect to the transport layer.
-		 * \param timeout Time after the connect task will be canceled.
-         * \return True on success, false otherwise.
-         */
-        virtual bool connect(long int timeout);
+    /**
+     * \brief Get the data transport endpoint name.
+     * \return The data transport endpoint name.
+     */
+    std::string getName() const override;
 
-        /**
-         * \param Disconnect from the transport layer.
-         */
-	    void disconnect() override;
+    /**
+     * \brief Serialize the current object to XML.
+     * \param parentNode The parent node.
+     */
+    void serialize(boost::property_tree::ptree &parentNode) override;
 
-        /**
-         * \brief Get if connected to the transport layer.
-         * \return True if connected, false otherwise.
-         */
-	    bool isConnected() override;
+    /**
+     * \brief UnSerialize a XML node to the current object.
+     * \param node The XML node.
+     */
+    void unSerialize(boost::property_tree::ptree &node) override;
 
-        /**
-         * \brief Get the data transport endpoint name.
-         * \return The data transport endpoint name.
-         */
-	    std::string getName() const override;
+    /**
+     * \brief Get the default Xml Node name for this object.
+     * \return The Xml node name.
+     */
+    std::string getDefaultXmlNodeName() const override;
 
-        /**
-         * \brief Serialize the current object to XML.
-         * \param parentNode The parent node.
-         */
-	    void serialize(boost::property_tree::ptree& parentNode) override;
+    /**
+     * \brief Get the ip address.
+     * \return The ip address.
+     */
+    std::string getIpAddress() const;
 
-        /**
-         * \brief UnSerialize a XML node to the current object.
-         * \param node The XML node.
-         */
-	    void unSerialize(boost::property_tree::ptree& node) override;
+    /**
+     * \brief Set the ip address.
+     * \param ipAddress The ip address.
+     */
+    void setIpAddress(std::string ipAddress);
 
-        /**
-         * \brief Get the default Xml Node name for this object.
-         * \return The Xml node name.
-         */
-	    std::string getDefaultXmlNodeName() const override;
+    /**
+     * \brief Get the port.
+     * \return The port.
+     */
+    int getPort() const;
 
-        /**
-         * \brief Get the ip address.
-         * \return The ip address.
-         */
-        std::string getIpAddress() const;
+    /**
+     * \brief Set the port.
+     * \param port The port.
+     */
+    void setPort(int port);
 
-        /**
-         * \brief Set the ip address.
-         * \param ipAddress The ip address.
-         */
-        void setIpAddress(std::string ipAddress);
+    /**
+     * \brief Send data packet
+     * \param data The packet.
+     */
+    void send(const ByteVector &data) override;
 
-        /**
-         * \brief Get the port.
-         * \return The port.
-         */
-        int getPort() const;
+    /**
+     * \brief Receive packet
+     * \param timeout Time waiting for data.
+     * \return The data receive.
+     */
+    ByteVector receive(long int timeout) override;
 
-        /**
-         * \brief Set the port.
-         * \param port The port.
-         */
-        void setPort(int port);
+    /**
+* \brief Connect complete
+     * \param error Read error
+*/
+    void connect_complete(const boost::system::error_code &error);
 
-        /**
-         * \brief Send data packet
-         * \param data The packet.
-         */
-	    void send(const ByteVector& data) override;
+    /**
+* \brief Read complete
+     * \param error Read error
+     * \param bytes_transferred Byte transfered
+*/
+    void read_complete(const boost::system::error_code &error, size_t bytes_transferred);
 
-        /**
-         * \brief Receive packet
-         * \param timeout Time waiting for data.
-         * \return The data receive.
-         */
-	    ByteVector receive(long int timeout) override;
+    /**
+* \brief Read timeout
+     * \param error Read timeout or canceled
+*/
+    void time_out(const boost::system::error_code &error);
 
-		/**
-         * \brief Connect complete
-		 * \param error Read error
-         */
-		void connect_complete(const boost::system::error_code& error);
+  protected:
+    /**
+     * \brief Provides core I/O functionality
+     */
+    boost::asio::io_service d_ios;
 
-		/**
-         * \brief Read complete
-		 * \param error Read error
-		 * \param bytes_transferred Byte transfered
-         */
-		void read_complete(const boost::system::error_code& error, size_t bytes_transferred);
+    /**
+     * \brief TCP Socket
+     */
+    boost::asio::ip::tcp::socket d_socket;
 
-		/**
-         * \brief Read timeout
-		 * \param error Read timeout or canceled
-         */
-	    void time_out(const boost::system::error_code& error);
+    /**
+* \brief Read Deadline timer
+*/
+    boost::asio::deadline_timer d_timer;
 
-    protected:
+    /**
+* \brief Read error
+*/
+    bool d_read_error;
 
-        /**
-         * \brief Provides core I/O functionality
-         */
-        boost::asio::io_service d_ios;
+    /**
+* \brief Byte Readed
+*/
+    size_t d_bytes_transferred;
 
-        /**
-         * \brief TCP Socket
-         */
-		boost::asio::ip::tcp::socket d_socket;
+    /**
+     * \brief The ip address
+     */
+    std::string d_ipAddress;
 
-		/**
-         * \brief Read Deadline timer
-         */
-		boost::asio::deadline_timer d_timer;
-
-		/**
-         * \brief Read error
-         */
-		bool d_read_error;
-
-		/**
-         * \brief Byte Readed
-         */
-		size_t d_bytes_transferred;
-
-        /**
-         * \brief The ip address
-         */
-        std::string d_ipAddress;
-
-        /**
-         * \brief The listening port.
-         */
-        int d_port;
-    };
+    /**
+     * \brief The listening port.
+     */
+    int d_port;
+};
 }
 
 #endif /* LOGICALACCESS_TCPDATATRANSPORT_HPP */

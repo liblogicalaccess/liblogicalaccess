@@ -14,12 +14,12 @@
 
 namespace logicalaccess
 {
-    /**
-     * \brief A ISO15693 reader communication base class.
-     */
-    class LIBLOGICALACCESS_API ISO15693ReaderCommunication : public ReaderCommunication
-    {
-    };
+/**
+ * \brief A ISO15693 reader communication base class.
+ */
+class LIBLOGICALACCESS_API ISO15693ReaderCommunication : public ReaderCommunication
+{
+};
 }
 
 #endif /* LOGICALACCESS_ISO15693BREADERCOMMUNICATION_HPP */

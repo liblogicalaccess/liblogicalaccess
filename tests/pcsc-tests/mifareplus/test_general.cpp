@@ -27,12 +27,12 @@ int main(int ac, char **av)
     ChipPtr chip;
     tie(provider, readerUnit, chip) = pcsc_test_init();
 
-    PRINT_TIME("Chip identifier: " <<
-               logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
+    PRINT_TIME("Chip identifier: "
+               << logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
     PRINT_TIME("Chip type = " << chip->getCardType());
 
-    //LLA_ASSERT(chip->getCardType() == "GENERIC_T_CL",
-//               "Chip is not GENERIC_T_CL");
+    // LLA_ASSERT(chip->getCardType() == "GENERIC_T_CL",
+    //               "Chip is not GENERIC_T_CL");
 
     LLA_ASSERT(chip->getCommands(), "No command object.");
 

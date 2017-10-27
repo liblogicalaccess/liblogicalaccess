@@ -14,7 +14,8 @@ void introduction()
     PRINT_TIME("This test target Mifare1K cards. Test the access storage service");
 
     PRINT_TIME("You will have 20 seconds to insert a card. Test log below");
-    PRINT_TIME("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    PRINT_TIME(
+        "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
     LLA_SUBTEST_REGISTER("WriteService");
     LLA_SUBTEST_REGISTER("ReadService");
@@ -32,33 +33,29 @@ int main(int ac, char **av)
     ChipPtr chip;
     tie(provider, readerUnit, chip) = lla_test_init();
 
-    PRINT_TIME("Chip identifier: " <<
-               logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
+    PRINT_TIME("Chip identifier: "
+               << logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
 
     LLA_ASSERT(chip->getCardType() == "Mifare1K",
-               "Chip is not a Mifare1K, but is " + chip->getCardType() +
-               " instead.");
+               "Chip is not a Mifare1K, but is " + chip->getCardType() + " instead.");
 
-    auto storage = std::dynamic_pointer_cast<StorageCardService>(
-            chip->getService(CST_STORAGE));
+    auto storage =
+        std::dynamic_pointer_cast<StorageCardService>(chip->getService(CST_STORAGE));
 
-	// We want to write data on sector 7.
-    std::shared_ptr<MifareLocation> mlocation(
-            new MifareLocation());
-    mlocation->sector = 7;
-    mlocation->block = 0;
+    // We want to write data on sector 7.
+    std::shared_ptr<MifareLocation> mlocation(new MifareLocation());
+    mlocation->sector                  = 7;
+    mlocation->block                   = 0;
     std::shared_ptr<Location> location = mlocation;
 
     // Key to use for sector authentication
-    std::shared_ptr<MifareAccessInfo> maiToUse(
-            new MifareAccessInfo());
-    maiToUse->keyA->fromString("ff ff ff ff ff ff");      // Default key
+    std::shared_ptr<MifareAccessInfo> maiToUse(new MifareAccessInfo());
+    maiToUse->keyA->fromString("ff ff ff ff ff ff"); // Default key
     maiToUse->keyB->fromString("ff ff ff ff ff ff");
     std::shared_ptr<AccessInfo> aiToUse = maiToUse;
 
     // Change the sector key with the following key
-    std::shared_ptr<MifareAccessInfo> maiToWrite(
-            new MifareAccessInfo());
+    std::shared_ptr<MifareAccessInfo> maiToWrite(new MifareAccessInfo());
     maiToWrite->keyA->fromString("ff ff ff ff ff ff");
     maiToWrite->keyB->fromString("ff ff ff ff ff ff");
     std::shared_ptr<AccessInfo> aiToWrite = maiToWrite;
@@ -77,8 +74,7 @@ int main(int ac, char **av)
 
     const int mifare_block_size = 16;
     // We read the data on the same location. Remember, the key is now changed.
-    readdata = storage
-            ->readData(location, aiToWrite, mifare_block_size, CB_DEFAULT);
+    readdata = storage->readData(location, aiToWrite, mifare_block_size, CB_DEFAULT);
     PRINT_TIME("Read: " << readdata);
     LLA_SUBTEST_PASSED("ReadService")
 

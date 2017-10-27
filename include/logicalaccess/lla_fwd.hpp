@@ -12,61 +12,61 @@
 
 namespace logicalaccess
 {
-    class CardsFormatComposite;
+class CardsFormatComposite;
 
-    class Chip;
-    using ChipPtr = std::shared_ptr<Chip>;
+class Chip;
+using ChipPtr = std::shared_ptr<Chip>;
 
-    class DataTransport;
-    using DataTransportPtr = std::shared_ptr<DataTransport>;
+class DataTransport;
+using DataTransportPtr = std::shared_ptr<DataTransport>;
 
-    class LCDDisplay;
+class LCDDisplay;
 
-    class LEDBuzzerDisplay;
+class LEDBuzzerDisplay;
 
-    class ReaderCardAdapter;
+class ReaderCardAdapter;
 
-    class ReaderProvider;   
-    using ReaderProviderPtr = std::shared_ptr<ReaderProvider>;
-    
-    class ReaderUnit;
-    using ReaderUnitPtr = std::shared_ptr<ReaderUnit>;
+class ReaderProvider;
+using ReaderProviderPtr = std::shared_ptr<ReaderProvider>;
 
-    //class PCSCReaderUnit;
-    //using PCSCReaderUnit = std::shared_ptr<PCSCReaderUnit>;
+class ReaderUnit;
+using ReaderUnitPtr = std::shared_ptr<ReaderUnit>;
 
-    class ReaderUnitConfiguration;
+// class PCSCReaderUnit;
+// using PCSCReaderUnit = std::shared_ptr<PCSCReaderUnit>;
 
-	class AccessInfo;
+class ReaderUnitConfiguration;
 
-    class LocationNode;
+class AccessInfo;
 
-    class Location;
+class LocationNode;
 
-    class Commands;
+class Location;
 
-    class CardService;
+class Commands;
 
-    class Format;
+class CardService;
 
-    class ResultChecker;
+class Format;
 
-    class Key;
-    using KeyPtr = std::shared_ptr<Key>;
+class ResultChecker;
 
-    class TripleDESKey;
-    using TripleDESKeyPtr = std::shared_ptr<TripleDESKey>;
+class Key;
+using KeyPtr = std::shared_ptr<Key>;
 
-    class KeyStorage;
-    using KeyStoragePtr = std::shared_ptr<KeyStorage>;
+class TripleDESKey;
+using TripleDESKeyPtr = std::shared_ptr<TripleDESKey>;
 
-    class ReaderMemoryKeyStorage;
-    using ReaderMemoryKeyStoragePtr = std::shared_ptr<ReaderMemoryKeyStorage>;
+class KeyStorage;
+using KeyStoragePtr = std::shared_ptr<KeyStorage>;
 
-    class ReaderService;
-    using ReaderServicePtr = std::shared_ptr<ReaderService>;
+class ReaderMemoryKeyStorage;
+using ReaderMemoryKeyStoragePtr = std::shared_ptr<ReaderMemoryKeyStorage>;
+
+class ReaderService;
+using ReaderServicePtr = std::shared_ptr<ReaderService>;
 }
 
 using ByteVector = std::vector<uint8_t>;
 
-#endif //LIBLOGICALACCESS_LLA_FWD_HPP
+#endif // LIBLOGICALACCESS_LLA_FWD_HPP

@@ -1,7 +1,7 @@
 /**
  * \file osdpchannel.hpp
  * \author Adrien J. <adrien-dev@islog.com>
- * \brief OSDP channel. 
+ * \brief OSDP channel.
  */
 
 #ifndef LOGICALACCESS_OSDPCHANNEL_HPP
@@ -11,96 +11,136 @@
 #include "osdpsecurechannel.hpp"
 
 namespace logicalaccess
-{	
-	enum OSDPCommandsType
-	{
-		NOCMD = 0x00,
-		ACK = 0x40,
-		NAK = 0x41,
-		RAW	= 0x50,
-		POLL = 0x60,
-		LED = 0x69,
-		CHLNG = 0x76,
-		OSCRYPT = 0x77,
-		BUZ = 0x6A,
-		BUSY = 0x79,
-		XWR = 0xa1,
-		XRD = 0xb1,
-        LSTATR = 0x48,
-		LSTAT = 0x64
-	};
+{
+enum OSDPCommandsType
+{
+    NOCMD   = 0x00,
+    ACK     = 0x40,
+    NAK     = 0x41,
+    RAW     = 0x50,
+    POLL    = 0x60,
+    LED     = 0x69,
+    CHLNG   = 0x76,
+    OSCRYPT = 0x77,
+    BUZ     = 0x6A,
+    BUSY    = 0x79,
+    XWR     = 0xa1,
+    XRD     = 0xb1,
+    LSTATR  = 0x48,
+    LSTAT   = 0x64
+};
 
-	/**
-	 * \brief OSDP Channel class.
-	 */
-	class LIBLOGICALACCESS_API OSDPChannel
-	{
-	public:
+/**
+ * \brief OSDP Channel class.
+ */
+class LIBLOGICALACCESS_API OSDPChannel
+{
+  public:
+    /**
+            * \brief Constructor.
+            */
+    OSDPChannel();
 
-		/**
-			* \brief Constructor.
-			*/
-		OSDPChannel();
-
-		/**
-			* \brief Destructor.
-			*/
-		~OSDPChannel() {}
-
-
-		ByteVector createPackage();
-
-		void unPackage(ByteVector result);
+    /**
+            * \brief Destructor.
+            */
+    ~OSDPChannel()
+    {
+    }
 
 
+    ByteVector createPackage();
 
-		void setAddress(unsigned char address) { m_address = address; }
+    void unPackage(ByteVector result);
 
-		unsigned char getAddress() const { return m_address; }
 
-		void setSequenceNumber(unsigned char sequenceNumber) { m_sequenceNumber = sequenceNumber; }
+    void setAddress(unsigned char address)
+    {
+        m_address = address;
+    }
 
-		unsigned char getSequenceNumber() const { return m_sequenceNumber; }
+    unsigned char getAddress() const
+    {
+        return m_address;
+    }
 
-		void setData(ByteVector data) { m_data = data; }
+    void setSequenceNumber(unsigned char sequenceNumber)
+    {
+        m_sequenceNumber = sequenceNumber;
+    }
 
-		ByteVector& getData() { return m_data; }
+    unsigned char getSequenceNumber() const
+    {
+        return m_sequenceNumber;
+    }
 
-		void setCommandsType(OSDPCommandsType replyType) { m_reply_type = replyType; }
+    void setData(ByteVector data)
+    {
+        m_data = data;
+    }
 
-		OSDPCommandsType getCommandsType() const { return m_reply_type; }
+    ByteVector &getData()
+    {
+        return m_data;
+    }
 
-		bool isSCB;
+    void setCommandsType(OSDPCommandsType replyType)
+    {
+        m_reply_type = replyType;
+    }
 
-		OSDPSecureChannelType getSecurityBlockType() const { return m_securityBlockType; }
+    OSDPCommandsType getCommandsType() const
+    {
+        return m_reply_type;
+    }
 
-		void setSecurityBlockType(OSDPSecureChannelType securityBlockType) { m_securityBlockType = securityBlockType; }
+    bool isSCB;
 
-		void setSecurityBlockData(ByteVector data) { m_securityBlockData = data; }
+    OSDPSecureChannelType getSecurityBlockType() const
+    {
+        return m_securityBlockType;
+    }
 
-		ByteVector& getSecurityBlockData() { return m_securityBlockData; }
+    void setSecurityBlockType(OSDPSecureChannelType securityBlockType)
+    {
+        m_securityBlockType = securityBlockType;
+    }
 
-		std::shared_ptr<OSDPSecureChannel> getSecureChannel() const { return m_secureChannel; }
+    void setSecurityBlockData(ByteVector data)
+    {
+        m_securityBlockData = data;
+    }
 
-		void setSecureChannel(std::shared_ptr<OSDPSecureChannel> securechannel) { m_secureChannel = securechannel; }
+    ByteVector &getSecurityBlockData()
+    {
+        return m_securityBlockData;
+    }
 
-	private:
+    std::shared_ptr<OSDPSecureChannel> getSecureChannel() const
+    {
+        return m_secureChannel;
+    }
 
-		unsigned char m_address;
+    void setSecureChannel(std::shared_ptr<OSDPSecureChannel> securechannel)
+    {
+        m_secureChannel = securechannel;
+    }
 
-		unsigned char m_sequenceNumber;
+  private:
+    unsigned char m_address;
 
-		ByteVector m_data;
+    unsigned char m_sequenceNumber;
 
-		OSDPCommandsType m_reply_type;
+    ByteVector m_data;
 
-		OSDPSecureChannelType m_securityBlockType;
+    OSDPCommandsType m_reply_type;
 
-		ByteVector m_securityBlockData;
+    OSDPSecureChannelType m_securityBlockType;
 
-		std::shared_ptr<OSDPSecureChannel> m_secureChannel;
-	};
+    ByteVector m_securityBlockData;
+
+    std::shared_ptr<OSDPSecureChannel> m_secureChannel;
+};
 }
 
 #endif /* LOGICALACCESS_OSDPCHANNEL_HPP */
-

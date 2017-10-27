@@ -9,45 +9,43 @@
 
 namespace logicalaccess
 {
-	CPS3Location::CPS3Location()
-    {
-        
-    }
+CPS3Location::CPS3Location()
+{
+}
 
-	CPS3Location::~CPS3Location()
-    {
-    }
+CPS3Location::~CPS3Location()
+{
+}
 
-	void CPS3Location::serialize(boost::property_tree::ptree& parentNode)
-    {
-        boost::property_tree::ptree node;
+void CPS3Location::serialize(boost::property_tree::ptree &parentNode)
+{
+    boost::property_tree::ptree node;
 
-        parentNode.add_child(getDefaultXmlNodeName(), node);
-    }
+    parentNode.add_child(getDefaultXmlNodeName(), node);
+}
 
-	void CPS3Location::unSerialize(boost::property_tree::ptree& /*node*/)
-    {
-		
-    }
+void CPS3Location::unSerialize(boost::property_tree::ptree & /*node*/)
+{
+}
 
-	std::string CPS3Location::getDefaultXmlNodeName() const
-    {
-        return "CPS3Location";
-    }
+std::string CPS3Location::getDefaultXmlNodeName() const
+{
+    return "CPS3Location";
+}
 
-	bool CPS3Location::operator==(const Location& location) const
-    {
-        if (!Location::operator==(location))
-            return false;
+bool CPS3Location::operator==(const Location &location) const
+{
+    if (!Location::operator==(location))
+        return false;
 
-		if (typeid(location) != typeid(CPS3Location))
-            return false;
+    if (typeid(location) != typeid(CPS3Location))
+        return false;
 
-		const CPS3Location* pxLocation = dynamic_cast<const CPS3Location*>(&location);
+    const CPS3Location *pxLocation = dynamic_cast<const CPS3Location *>(&location);
 
-        if (!pxLocation)
-            return false;
+    if (!pxLocation)
+        return false;
 
-		return (true);
-    }
+    return (true);
+}
 }

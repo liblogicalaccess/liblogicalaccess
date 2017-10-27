@@ -12,17 +12,18 @@
 
 namespace logicalaccess
 {
-    ReaderUnitConfiguration::ReaderUnitConfiguration(std::string rpt)
-        : XmlSerializable(), d_readerProviderType(rpt)
-    {
-    }
+ReaderUnitConfiguration::ReaderUnitConfiguration(std::string rpt)
+    : XmlSerializable()
+    , d_readerProviderType(rpt)
+{
+}
 
-    ReaderUnitConfiguration::~ReaderUnitConfiguration()
-    {
-    }
+ReaderUnitConfiguration::~ReaderUnitConfiguration()
+{
+}
 
-    std::string ReaderUnitConfiguration::getRPType() const
-    {
-        return d_readerProviderType;
-    }
+std::string ReaderUnitConfiguration::getRPType() const
+{
+    return d_readerProviderType;
+}
 }

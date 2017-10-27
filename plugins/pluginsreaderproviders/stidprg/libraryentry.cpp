@@ -36,7 +36,7 @@ LIBLOGICALACCESS_API bool getReaderInfoAt(unsigned int index, char *readername,
             ret = true;
         }
         break;
-        default: ;
+        default:;
         }
     }
     return ret;
@@ -54,21 +54,16 @@ getCardService(std::shared_ptr<logicalaccess::Chip> c,
     if (type != logicalaccess::CST_ACCESS_CONTROL)
         return;
 
-	// We must first fetch the reader unit and make sure its a STidPRG,
+    // We must first fetch the reader unit and make sure its a STidPRG,
     // otherwise we cannot create the Service.
     if (!c || !c->getCommands() || !c->getCommands()->getReaderCardAdapter() ||
         !c->getCommands()->getReaderCardAdapter()->getDataTransport() ||
-        !c->getCommands()
-             ->getReaderCardAdapter()
-             ->getDataTransport()
-             ->getReaderUnit())
+        !c->getCommands()->getReaderCardAdapter()->getDataTransport()->getReaderUnit())
     {
         return;
     }
-    std::shared_ptr<logicalaccess::ReaderUnit> ru = c->getCommands()
-                                                     ->getReaderCardAdapter()
-                                                     ->getDataTransport()
-                                                     ->getReaderUnit();
+    std::shared_ptr<logicalaccess::ReaderUnit> ru =
+        c->getCommands()->getReaderCardAdapter()->getDataTransport()->getReaderUnit();
     if (c->getCardType() == "Prox" &&
         std::dynamic_pointer_cast<logicalaccess::STidPRGReaderUnit>(ru))
     {

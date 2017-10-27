@@ -13,15 +13,15 @@ class LIBLOGICALACCESS_API EPassAccessInfo : public AccessInfo
     EPassAccessInfo()          = default;
     virtual ~EPassAccessInfo() = default;
 
-	void generateInfos() override;
+    void generateInfos() override;
 
-	std::string getCardType() const override;
+    std::string getCardType() const override;
 
-	void serialize(boost::property_tree::ptree &parentNode) override;
+    void serialize(boost::property_tree::ptree &parentNode) override;
 
-	void unSerialize(boost::property_tree::ptree &node) override;
+    void unSerialize(boost::property_tree::ptree &node) override;
 
-	std::string getDefaultXmlNodeName() const override;
+    std::string getDefaultXmlNodeName() const override;
 
     std::string mrz_;
 };

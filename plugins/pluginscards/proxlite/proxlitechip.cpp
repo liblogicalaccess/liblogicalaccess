@@ -13,22 +13,22 @@
 
 namespace logicalaccess
 {
-    ProxLiteChip::ProxLiteChip()
-        : Chip(CHIP_PROXLITE)
-    {
-    }
+ProxLiteChip::ProxLiteChip()
+    : Chip(CHIP_PROXLITE)
+{
+}
 
-    ProxLiteChip::~ProxLiteChip()
-    {
-    }
+ProxLiteChip::~ProxLiteChip()
+{
+}
 
-    std::shared_ptr<LocationNode> ProxLiteChip::getRootLocationNode()
-    {
-        std::shared_ptr<LocationNode> rootNode;
-        rootNode.reset(new LocationNode());
+std::shared_ptr<LocationNode> ProxLiteChip::getRootLocationNode()
+{
+    std::shared_ptr<LocationNode> rootNode;
+    rootNode.reset(new LocationNode());
 
-        rootNode->setName("ProxLite");
+    rootNode->setName("ProxLite");
 
-        return rootNode;
-    }
+    return rootNode;
+}
 }

@@ -31,16 +31,17 @@ long int STidPRGDataTransport::getReceiveTimeout() const
     return receiveTimeout_;
 }
 
-void STidPRGDataTransport::unSerialize(boost::property_tree::ptree& node)
+void STidPRGDataTransport::unSerialize(boost::property_tree::ptree &node)
 {
     LOG(INFOS) << "Will unserialize STIDPRGDataTransport.";
-    SerialPortDataTransport::unSerialize(node.get_child(SerialPortDataTransport::getDefaultXmlNodeName()));
+    SerialPortDataTransport::unSerialize(
+        node.get_child(SerialPortDataTransport::getDefaultXmlNodeName()));
     d_port->getSerialPort()->setCircularBufferParser(new STidPRGBufferParser());
 }
 
-void STidPRGDataTransport::serialize(boost::property_tree::ptree& parentNode)
+void STidPRGDataTransport::serialize(boost::property_tree::ptree &parentNode)
 {
-    boost::property_tree::ptree node;	
-    SerialPortDataTransport::serialize(node); 
+    boost::property_tree::ptree node;
+    SerialPortDataTransport::serialize(node);
     parentNode.add_child(getDefaultXmlNodeName(), node);
 }

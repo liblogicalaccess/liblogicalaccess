@@ -14,15 +14,20 @@
 
 namespace logicalaccess
 {
-    class LIBLOGICALACCESS_API STidSTRBufferParser : public CircularBufferParser
+class LIBLOGICALACCESS_API STidSTRBufferParser : public CircularBufferParser
+{
+  public:
+    STidSTRBufferParser()
     {
-    public:
-        STidSTRBufferParser() {}
+    }
 
-        virtual ~STidSTRBufferParser() {}
+    virtual ~STidSTRBufferParser()
+    {
+    }
 
-	    ByteVector getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer) override;
-    };
+    ByteVector
+    getValidBuffer(boost::circular_buffer<unsigned char> &circular_buffer) override;
+};
 }
 
 #endif /* STIDSTRBUFFERPARSER_HPP */

@@ -8,26 +8,26 @@
 
 namespace logicalaccess
 {
-    namespace openssl
-    {
-        DESSymmetricKey DESSymmetricKey::createRandom(size_t size)
-        {
-            return DESSymmetricKey(size);
-        }
+namespace openssl
+{
+DESSymmetricKey DESSymmetricKey::createRandom(size_t size)
+{
+    return DESSymmetricKey(size);
+}
 
-        DESSymmetricKey DESSymmetricKey::createFromData(const ByteVector& data)
-        {
-            return DESSymmetricKey(data);
-        }
+DESSymmetricKey DESSymmetricKey::createFromData(const ByteVector &data)
+{
+    return DESSymmetricKey(data);
+}
 
-        DESSymmetricKey::DESSymmetricKey(size_t size) :
-            SymmetricKey(size)
-        {
-        }
+DESSymmetricKey::DESSymmetricKey(size_t size)
+    : SymmetricKey(size)
+{
+}
 
-        DESSymmetricKey::DESSymmetricKey(const ByteVector& _data) :
-            SymmetricKey(_data)
-        {
-        }
-    }
+DESSymmetricKey::DESSymmetricKey(const ByteVector &_data)
+    : SymmetricKey(_data)
+{
+}
+}
 }

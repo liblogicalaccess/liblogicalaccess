@@ -8,7 +8,7 @@
 
 namespace logicalaccess
 {
-    Linearizable::~Linearizable()
-    {
-    }
+Linearizable::~Linearizable()
+{
+}
 }

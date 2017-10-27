@@ -14,15 +14,20 @@
 
 namespace logicalaccess
 {
-    class LIBLOGICALACCESS_API DeisterBufferParser : public CircularBufferParser
+class LIBLOGICALACCESS_API DeisterBufferParser : public CircularBufferParser
+{
+  public:
+    DeisterBufferParser()
     {
-    public:
-        DeisterBufferParser() {}
+    }
 
-        virtual ~DeisterBufferParser() {}
+    virtual ~DeisterBufferParser()
+    {
+    }
 
-	    ByteVector getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer) override;
-    };
+    ByteVector
+    getValidBuffer(boost::circular_buffer<unsigned char> &circular_buffer) override;
+};
 }
 
 #endif /* DEISTERBUFFERPARSER_HPP */

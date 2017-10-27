@@ -7,9 +7,9 @@
 
 namespace logicalaccess
 {
-    class STidSTRReaderCardAdapter;
-    class STidSTRReaderProvider;
-    class STidSTRReaderUnitConfiguration;
+class STidSTRReaderCardAdapter;
+class STidSTRReaderProvider;
+class STidSTRReaderUnitConfiguration;
 }
 
-#endif //LIBLOGICALACCESS_STIDSTR_FWD_HPP
+#endif // LIBLOGICALACCESS_STIDSTR_FWD_HPP

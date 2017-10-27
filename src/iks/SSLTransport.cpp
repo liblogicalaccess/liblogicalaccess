@@ -66,8 +66,8 @@ bool SSLTransport::connect(long int timeout)
     {
         d_ios.reset();
         d_timer.expires_from_now(boost::posix_time::milliseconds(timeout));
-        d_timer.async_wait(boost::bind(&SSLTransport::time_out, this,
-                                       boost::asio::placeholders::error));
+        d_timer.async_wait(
+            boost::bind(&SSLTransport::time_out, this, boost::asio::placeholders::error));
 
         boost::asio::ip::tcp::endpoint endpoint(
             boost::asio::ip::address::from_string(getIpAddress()), getPort());
@@ -176,15 +176,14 @@ ByteVector SSLTransport::receive(long int timeout)
     d_bytes_transferred = 0;
 
     d_ios.reset();
-    d_socket.async_read_some(
-        boost::asio::buffer(recv),
-        boost::bind(&SSLTransport::read_complete, this,
-                    boost::asio::placeholders::error,
-                    boost::asio::placeholders::bytes_transferred));
+    d_socket.async_read_some(boost::asio::buffer(recv),
+                             boost::bind(&SSLTransport::read_complete, this,
+                                         boost::asio::placeholders::error,
+                                         boost::asio::placeholders::bytes_transferred));
 
     d_timer.expires_from_now(boost::posix_time::milliseconds(timeout));
-    d_timer.async_wait(boost::bind(&SSLTransport::time_out, this,
-                                   boost::asio::placeholders::error));
+    d_timer.async_wait(
+        boost::bind(&SSLTransport::time_out, this, boost::asio::placeholders::error));
 
     d_ios.run();
 
@@ -235,8 +234,8 @@ bool SSLTransport::handshake(long timeout) const
         LOG(INFOS) << "Timeout value: " << timeout;
         d_ios.reset();
         d_timer.expires_from_now(boost::posix_time::milliseconds(timeout));
-        d_timer.async_wait(boost::bind(&SSLTransport::time_out, this,
-                                       boost::asio::placeholders::error));
+        d_timer.async_wait(
+            boost::bind(&SSLTransport::time_out, this, boost::asio::placeholders::error));
 
         d_socket.async_handshake(boost::asio::ssl::stream_base::client,
                                  [&](const boost::system::error_code &error) {
@@ -252,9 +251,9 @@ bool SSLTransport::handshake(long timeout) const
         if (d_read_error)
             d_socket.lowest_layer().close();
         else
-            LOG(LogLevel::INFOS) << "SSL Handshake to " << getIpAddress()
-                                 << " on port " << getPort() << ""
-                                                                "completed.";
+            LOG(LogLevel::INFOS) << "SSL Handshake to " << getIpAddress() << " on port "
+                                 << getPort() << ""
+                                                 "completed.";
     }
     catch (boost::system::system_error &ex)
     {

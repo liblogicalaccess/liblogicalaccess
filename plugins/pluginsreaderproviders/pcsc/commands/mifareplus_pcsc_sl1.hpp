@@ -15,9 +15,9 @@
 
 namespace logicalaccess
 {
-    using MifarePlusSL1PCSCCommands = MifarePlusSL1Policy<MifarePlusSL1Commands,
-            MifarePCSCCommands>;
+using MifarePlusSL1PCSCCommands =
+    MifarePlusSL1Policy<MifarePlusSL1Commands, MifarePCSCCommands>;
 }
 
 
-#endif //LIBLOGICALACCESS_MIFAREPLUS_PSCS_SL1_H
+#endif // LIBLOGICALACCESS_MIFAREPLUS_PSCS_SL1_H

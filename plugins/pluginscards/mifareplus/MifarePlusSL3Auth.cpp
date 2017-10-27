@@ -15,16 +15,14 @@
 
 using namespace logicalaccess;
 
-MifarePlusSL3Auth::MifarePlusSL3Auth(std::shared_ptr<ReaderCardAdapter> rca) :
-        rca_(rca),
-        write_counter_(0),
-        read_counter_(0)
+MifarePlusSL3Auth::MifarePlusSL3Auth(std::shared_ptr<ReaderCardAdapter> rca)
+    : rca_(rca)
+    , write_counter_(0)
+    , read_counter_(0)
 {
-
 }
 
-bool MifarePlusSL3Auth::firstAuthenticate(int sector,
-                                          std::shared_ptr<AES128Key> key,
+bool MifarePlusSL3Auth::firstAuthenticate(int sector, std::shared_ptr<AES128Key> key,
                                           MifareKeyType type)
 {
     using ByteVector = ByteVector;
@@ -40,11 +38,12 @@ bool MifarePlusSL3Auth::firstAuthenticate(int sector,
 
     ret = rca_->sendCommand(command);
     LOG(DEBUGS) << "Ret from SL3 auth attempt: " << ret;
-    EXCEPTION_ASSERT_WITH_LOG(ret.size() > 16, LibLogicalAccessException, "Not enough data in buffer.");
+    EXCEPTION_ASSERT_WITH_LOG(ret.size() > 16, LibLogicalAccessException,
+                              "Not enough data in buffer.");
 
     aes_key_ = ByteVector(key->getData(), key->getData() + 16);
-    rnd_b_ = {ret.begin() + 1, ret.begin() + 17};
-    rnd_b_ = AESHelper::AESDecrypt(rnd_b_, aes_key_, {});
+    rnd_b_   = {ret.begin() + 1, ret.begin() + 17};
+    rnd_b_   = AESHelper::AESDecrypt(rnd_b_, aes_key_, {});
 
     return aes_first_auth_step2();
 }
@@ -70,7 +69,8 @@ bool MifarePlusSL3Auth::aes_first_auth_step2()
     ByteVector ret;
     ret = rca_->sendCommand(command);
     LOG(DEBUGS) << "AES First Authenticate STEP 2... " << ret;
-    EXCEPTION_ASSERT_WITH_LOG(ret.size() > 16, LibLogicalAccessException, "Not enough data in buffer.");
+    EXCEPTION_ASSERT_WITH_LOG(ret.size() > 16, LibLogicalAccessException,
+                              "Not enough data in buffer.");
 
     // make sure the result from the result is as expected.
     ByteVector encrypted_data(ret.begin() + 1, ret.begin() + 33);
@@ -86,25 +86,22 @@ bool MifarePlusSL3Auth::aes_first_auth_final(const ByteVector &encrypted_data)
     // If we received garbage, the AES code may throw. This means auth failure.
     try
     {
-        auto data = AESHelper::AESDecrypt(encrypted_data,
-                                          aes_key_,
-                                          {});
+        auto data = AESHelper::AESDecrypt(encrypted_data, aes_key_, {});
 
         LOG(DEBUGS) << "FROM AUTH: DATA = " << data;
-        //4first byte is Transaction Identifier
+        // 4first byte is Transaction Identifier
         trans_id_ = ByteVector(data.begin(), data.begin() + 4);
 
         ByteVector rnd_a_reader(data.begin() + 4, data.begin() + 20);
-        rotate(rnd_a_reader.rbegin(), rnd_a_reader.rbegin() + 1,
-                    rnd_a_reader.rend());
+        rotate(rnd_a_reader.rbegin(), rnd_a_reader.rbegin() + 1, rnd_a_reader.rend());
 
         if (rnd_a_reader == rnd_a_)
         {
             LOG(INFOS) << "AES Auth Success.";
             return true;
         }
-	    LOG(ERRORS) << "RNDA doesn't match. AES authentication failed.";
-	    return false;
+        LOG(ERRORS) << "RNDA doesn't match. AES authentication failed.";
+        return false;
     }
     catch (std::exception &e)
     {
@@ -126,7 +123,7 @@ ByteVector MifarePlusSL3Auth::deriveKEnc()
     unsigned char h[5];
     unsigned char i[5];
     int c = 0;
-    //init data buffers
+    // init data buffers
     while (c < 5)
     {
         h[c] = rnd_a_[c + 4];
@@ -135,7 +132,7 @@ ByteVector MifarePlusSL3Auth::deriveKEnc()
         g[c] = rnd_b_[c + 11];
         c++;
     }
-    //set the session key base for Kenc
+    // set the session key base for Kenc
     tmp.insert(tmp.end(), f, f + 5);
     tmp.insert(tmp.end(), g, g + 5);
     tmp.resize(16);
@@ -162,7 +159,7 @@ ByteVector MifarePlusSL3Auth::deriveKMac()
     unsigned char h[5];
     unsigned char i[5];
     int c = 0;
-    //init data buffers
+    // init data buffers
     while (c < 5)
     {
         h[c] = rnd_a_[c];
@@ -171,7 +168,7 @@ ByteVector MifarePlusSL3Auth::deriveKMac()
         g[c] = rnd_b_[c + 7];
         c++;
     }
-    //set the session key base for Kmac
+    // set the session key base for Kmac
     tmp.insert(tmp.end(), f, f + 5);
     tmp.insert(tmp.end(), g, g + 5);
     tmp.resize(16);
@@ -185,8 +182,8 @@ ByteVector MifarePlusSL3Auth::deriveKMac()
     return AESHelper::AESEncrypt(tmp, aes_key_, {});
 }
 
-ByteVector MifarePlusSL3Auth::computeWriteMac(uint8_t command_code, uint16_t block_number, const
-ByteVector &data)
+ByteVector MifarePlusSL3Auth::computeWriteMac(uint8_t command_code, uint16_t block_number,
+                                              const ByteVector &data)
 {
     ByteVector to_hash;
     to_hash.push_back(command_code);

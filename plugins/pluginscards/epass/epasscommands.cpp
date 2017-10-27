@@ -8,13 +8,15 @@
 
 using namespace logicalaccess;
 
-EPassCommands::EPassCommands() 
-	: Commands(CMD_EPASS)
-{ }
+EPassCommands::EPassCommands()
+    : Commands(CMD_EPASS)
+{
+}
 
 EPassCommands::EPassCommands(std::string ct)
-	: Commands(ct)
-{ }
+    : Commands(ct)
+{
+}
 
 static ByteVector get_challenge(std::shared_ptr<ISO7816ReaderCardAdapter> rca)
 {
@@ -51,10 +53,11 @@ bool EPassCommands::authenticate(const std::string &mrz)
             cryptoChanged();
 
             std::shared_ptr<ISO7816ReaderCardAdapter> rcu =
-                std::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter());
+                std::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(
+                    getReaderCardAdapter());
             assert(rcu);
             auto challenge = get_challenge(rcu);
-            auto tmp = crypto_->step1(challenge);
+            auto tmp       = crypto_->step1(challenge);
 
             tmp = rcu->sendAPDUCommand(0x00, 0x82, 0x00, 0x00, 0x28, tmp, 0x28);
             // drop status bytes.
@@ -90,16 +93,15 @@ bool EPassCommands::selectApplication(const ByteVector &app_id)
 {
     if (app_id == current_app_)
     {
-        LOG(INFOS) << "Not selecting application " <<
-            app_id << " because it is already selected";
+        LOG(INFOS) << "Not selecting application " << app_id
+                   << " because it is already selected";
         return true;
     }
 
     std::shared_ptr<ISO7816ReaderCardAdapter> rca =
         std::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter());
     assert(rca);
-    auto ret =
-        rca->sendAPDUCommand(0x00, 0xA4, 0x04, 0x0C, (int)(app_id.size()), app_id);
+    auto ret = rca->sendAPDUCommand(0x00, 0xA4, 0x04, 0x0C, (int)(app_id.size()), app_id);
     current_app_ = app_id;
     return true;
 }
@@ -109,7 +111,8 @@ bool EPassCommands::selectEF(const ByteVector &file_id) const
     std::shared_ptr<ISO7816ReaderCardAdapter> rca =
         std::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(getReaderCardAdapter());
     assert(rca);
-    auto ret = rca->sendAPDUCommand(0x00, 0xA4, 0x02, 0x0C, (int)(file_id.size()), file_id);
+    auto ret =
+        rca->sendAPDUCommand(0x00, 0xA4, 0x02, 0x0C, (int)(file_id.size()), file_id);
     return true;
 }
 
@@ -174,8 +177,8 @@ ByteVector EPassCommands::readEF(uint8_t size_bytes, uint8_t size_offset) const
     uint8_t initial_read_len = static_cast<uint8_t>(size_bytes + size_offset);
 
     auto data = readBinary(0, initial_read_len);
-    EXCEPTION_ASSERT_WITH_LOG(data.size() == initial_read_len,
-                              LibLogicalAccessException, "Wrong data size.");
+    EXCEPTION_ASSERT_WITH_LOG(data.size() == initial_read_len, LibLogicalAccessException,
+                              "Wrong data size.");
     ef_raw.insert(ef_raw.end(), data.begin(), data.end());
 
     // compute the length of the file, based on the number of bytes representing the

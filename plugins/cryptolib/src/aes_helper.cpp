@@ -11,23 +11,20 @@
 
 using namespace logicalaccess;
 
-ByteVector AESHelper::AESEncrypt(const ByteVector &data,
-                                 const ByteVector &key,
+ByteVector AESHelper::AESEncrypt(const ByteVector &data, const ByteVector &key,
                                  const ByteVector &iv_data)
 {
     return AESRun(data, key, iv_data, true);
 }
 
-ByteVector AESHelper::AESDecrypt(const ByteVector &data,
-                                 const ByteVector &key,
+ByteVector AESHelper::AESDecrypt(const ByteVector &data, const ByteVector &key,
                                  ByteVector const &iv_data)
 {
     return AESRun(data, key, iv_data, false);
 }
 
 ByteVector AESHelper::AESRun(const ByteVector &data, const ByteVector &key,
-                             const ByteVector &iv_data,
-                             bool crypt)
+                             const ByteVector &iv_data, bool crypt)
 {
     assert(key.size() != 0 && key.size() % 16 == 0);
     assert(iv_data.size() % 16 == 0);
@@ -35,16 +32,16 @@ ByteVector AESHelper::AESRun(const ByteVector &data, const ByteVector &key,
 
     auto cipher = std::make_shared<openssl::AESCipher>();
     auto isokey = std::make_shared<openssl::AESSymmetricKey>(
-            openssl::AESSymmetricKey::createFromData(key));
+        openssl::AESSymmetricKey::createFromData(key));
 
     std::shared_ptr<openssl::AESInitializationVector> iv;
 
     if (iv_data.size() == 0)
         iv = std::make_shared<openssl::AESInitializationVector>(
-                openssl::AESInitializationVector::createNull());
+            openssl::AESInitializationVector::createNull());
     else
         iv = std::make_shared<openssl::AESInitializationVector>(
-                openssl::AESInitializationVector::createFromData(iv_data));
+            openssl::AESInitializationVector::createFromData(iv_data));
 
     ByteVector result;
     if (crypt)

@@ -15,44 +15,43 @@
 
 namespace logicalaccess
 {
+/**
+ * \brief The Omnikey XX25 reader unit class.
+ */
+class LIBLOGICALACCESS_API OmnikeyXX25ReaderUnit : public OmnikeyReaderUnit
+{
+  public:
     /**
-     * \brief The Omnikey XX25 reader unit class.
+     * \brief Constructor.
      */
-    class LIBLOGICALACCESS_API OmnikeyXX25ReaderUnit : public OmnikeyReaderUnit
-    {
-    public:
+    explicit OmnikeyXX25ReaderUnit(const std::string &name);
 
-        /**
-         * \brief Constructor.
-         */
-	    explicit OmnikeyXX25ReaderUnit(const std::string& name);
+    /**
+     * \brief Destructor.
+     */
+    virtual ~OmnikeyXX25ReaderUnit();
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~OmnikeyXX25ReaderUnit();
+    /**
+     * \brief Get the PC/SC reader unit type.
+     * \return The PC/SC reader unit type.
+     */
+    PCSCReaderUnitType getPCSCType() const override;
 
-        /**
-         * \brief Get the PC/SC reader unit type.
-         * \return The PC/SC reader unit type.
-         */
-	    PCSCReaderUnitType getPCSCType() const override;
+    /**
+     * \brief Get the card serial number.
+     * \return The card serial number.
+     *
+     * If the card handle is not connected to the card, the call fails.
+     */
+    ByteVector getCardSerialNumber() override;
 
-        /**
-         * \brief Get the card serial number.
-         * \return The card serial number.
-         *
-         * If the card handle is not connected to the card, the call fails.
-         */
-	    ByteVector getCardSerialNumber() override;
-
-		/**
-         * \brief Create the chip object from card type.
-         * \param type The card type.
-         * \return The chip.
-         */
-	    std::shared_ptr<Chip> createChip(std::string type) override;
-    };
+    /**
+* \brief Create the chip object from card type.
+* \param type The card type.
+* \return The chip.
+*/
+    std::shared_ptr<Chip> createChip(std::string type) override;
+};
 }
 
 #endif

@@ -6,10 +6,10 @@
 
 class LIBLOGICALACCESS_API MyClock
 {
-private:
+  private:
     std::size_t clock_start_;
 
-public:
+  public:
     MyClock()
     {
         clock_start_ = std::clock();

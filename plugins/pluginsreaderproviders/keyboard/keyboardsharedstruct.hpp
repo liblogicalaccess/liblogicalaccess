@@ -9,36 +9,36 @@
 
 namespace logicalaccess
 {
-#define KEYBOARD_SHAREDDATA			"Global\\ISLOGKbdHook"
-#define KEYBOARD_EVENT				"Global\\ISLOGKbdEvent"
-#define KEYBOARD_EVENTPROCESEED		"Global\\ISLOGKbdEventProcessed"
-#define KEYBOARD_HOSTEVENT			"Global\\ISLOGHostEvent"
-#define KEYBOARD_STILLALIVEEVENT	"Global\\ISLOGStillAliveEvent"
+#define KEYBOARD_SHAREDDATA "Global\\ISLOGKbdHook"
+#define KEYBOARD_EVENT "Global\\ISLOGKbdEvent"
+#define KEYBOARD_EVENTPROCESEED "Global\\ISLOGKbdEventProcessed"
+#define KEYBOARD_HOSTEVENT "Global\\ISLOGHostEvent"
+#define KEYBOARD_STILLALIVEEVENT "Global\\ISLOGStillAliveEvent"
 
-#define MAX_KEYBOARD_DEVICES		10
-#define DEVICE_NAME_MAXLENGTH		128
+#define MAX_KEYBOARD_DEVICES 10
+#define DEVICE_NAME_MAXLENGTH 128
 
-    struct KeyboardEntry
-    {
-        unsigned long long handle;
+struct KeyboardEntry
+{
+    unsigned long long handle;
 
-        char name[DEVICE_NAME_MAXLENGTH];
+    char name[DEVICE_NAME_MAXLENGTH];
 
-        unsigned int vendorId;
+    unsigned int vendorId;
 
-		unsigned int productId;
-    };
+    unsigned int productId;
+};
 
-    struct KeyboardSharedStruct
-    {
-        KeyboardEntry devices[MAX_KEYBOARD_DEVICES];
+struct KeyboardSharedStruct
+{
+    KeyboardEntry devices[MAX_KEYBOARD_DEVICES];
 
-        char enteredKeyChar;
+    char enteredKeyChar;
 
-        char selectedDeviceName[DEVICE_NAME_MAXLENGTH];
+    char selectedDeviceName[DEVICE_NAME_MAXLENGTH];
 
-        char keyboardLayout[9];
-    };
+    char keyboardLayout[9];
+};
 }
 
 #endif

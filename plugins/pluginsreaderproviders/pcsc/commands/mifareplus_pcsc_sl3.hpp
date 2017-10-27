@@ -15,15 +15,14 @@
 
 namespace logicalaccess
 {
-    /**
-     * MifarePlus in Security Level 3
-     *
-     */
-    class LIBLOGICALACCESS_API MifarePlusSL3PCSCCommands : public MifarePlusSL3Commands_NEW
-    {
-
-    };
+/**
+ * MifarePlus in Security Level 3
+ *
+ */
+class LIBLOGICALACCESS_API MifarePlusSL3PCSCCommands : public MifarePlusSL3Commands_NEW
+{
+};
 }
 
 
-#endif //LIBLOGICALACCESS_MIFAREPLUS_PSCS_SL3_HPP
+#endif // LIBLOGICALACCESS_MIFAREPLUS_PSCS_SL3_HPP

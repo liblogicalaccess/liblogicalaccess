@@ -16,8 +16,9 @@
   */
 
 struct ltc_cipher_descriptor cipher_descriptor[TAB_SIZE] = {
-        {nullptr, 0, 0, 0, 0, 0, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr }
-};
+    {nullptr, 0,       0,       0,       0,       0,       nullptr, nullptr,
+     nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+     nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}};
 
 LTC_MUTEX_GLOBAL(ltc_cipher_mutex)
 

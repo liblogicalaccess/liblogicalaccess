@@ -5,7 +5,7 @@
 
 namespace logicalaccess
 {
-#define CHIP_EPASS		"EPass"
+#define CHIP_EPASS "EPass"
 
 class LIBLOGICALACCESS_API EPassChip : public ISO7816Chip
 {
@@ -15,13 +15,12 @@ class LIBLOGICALACCESS_API EPassChip : public ISO7816Chip
 
     std::shared_ptr<EPassCommands> getEPassCommands() const;
 
-	std::shared_ptr<CardService>
-    getService(CardServiceType serviceType) override;
+    std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
 
-	/**
-	 * \brief Create default EPass access information.
-	 * \return Default EPass access information.
-	 */
-	std::shared_ptr<AccessInfo> createAccessInfo() const override;
+    /**
+     * \brief Create default EPass access information.
+     * \return Default EPass access information.
+     */
+    std::shared_ptr<AccessInfo> createAccessInfo() const override;
 };
 }

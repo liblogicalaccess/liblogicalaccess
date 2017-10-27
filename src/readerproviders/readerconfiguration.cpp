@@ -18,86 +18,90 @@
 
 namespace logicalaccess
 {
-    ReaderConfiguration::ReaderConfiguration()
-    {
-        Settings* config = Settings::getInstance();
+ReaderConfiguration::ReaderConfiguration()
+{
+    Settings *config = Settings::getInstance();
 
-		try
-		{
-			d_readerProvider = LibraryManager::getInstance()->getReaderProvider(config->DefaultReader);
-		}
-		catch (std::exception& ex)
-		{
-			LOG(LogLevel::ERRORS) << "Cannot create reader provider instance `" << config->DefaultReader << "`: " << ex.what();
-			d_readerProvider.reset();
-		}
+    try
+    {
+        d_readerProvider =
+            LibraryManager::getInstance()->getReaderProvider(config->DefaultReader);
     }
-
-    ReaderConfiguration::~ReaderConfiguration()
+    catch (std::exception &ex)
     {
+        LOG(LogLevel::ERRORS) << "Cannot create reader provider instance `"
+                              << config->DefaultReader << "`: " << ex.what();
+        d_readerProvider.reset();
     }
+}
 
-    void ReaderConfiguration::serialize(boost::property_tree::ptree& parentNode)
+ReaderConfiguration::~ReaderConfiguration()
+{
+}
+
+void ReaderConfiguration::serialize(boost::property_tree::ptree &parentNode)
+{
+    boost::property_tree::ptree node;
+
+    if (d_readerProvider)
     {
-        boost::property_tree::ptree node;
-
-        if (d_readerProvider)
+        node.put("ReaderProvider", d_readerProvider->getRPType());
+        if (d_ReaderUnit)
         {
-            node.put("ReaderProvider", d_readerProvider->getRPType());
-            if (d_ReaderUnit)
-            {
-                d_ReaderUnit->serialize(node);
-            }
-        }
-
-        parentNode.add_child(getDefaultXmlNodeName(), node);
-    }
-
-    void ReaderConfiguration::unSerialize(boost::property_tree::ptree& node)
-    {
-        LOG(LogLevel::INFOS) << "Unserializing reader configuration...";
-        std::string rpType = static_cast<std::string>(node.get_child("ReaderProvider").get_value<std::string>());
-
-        LOG(LogLevel::INFOS) << "Reader provider type " << rpType;
-
-        d_readerProvider = ReaderProvider::getReaderProviderFromRPType(rpType);
-
-        EXCEPTION_ASSERT_WITH_LOG(d_readerProvider, LibLogicalAccessException, "Unknown reader provider type.");
-
-        d_ReaderUnit = d_readerProvider->createReaderUnit();
-        try
-        {
-            d_ReaderUnit->unSerialize(node, "");
-        }
-        catch (std::exception&e)
-        {
-            LOG(LogLevel::WARNINGS) << "Failed to unserialize reader unit: " << e.what();
-            d_ReaderUnit.reset();
+            d_ReaderUnit->serialize(node);
         }
     }
 
-    std::string ReaderConfiguration::getDefaultXmlNodeName() const
-    {
-        return "ReaderConfiguration";
-    }
+    parentNode.add_child(getDefaultXmlNodeName(), node);
+}
 
-    std::shared_ptr<ReaderProvider> ReaderConfiguration::getReaderProvider() const
-    {
-        return d_readerProvider;
-    }
+void ReaderConfiguration::unSerialize(boost::property_tree::ptree &node)
+{
+    LOG(LogLevel::INFOS) << "Unserializing reader configuration...";
+    std::string rpType = static_cast<std::string>(
+        node.get_child("ReaderProvider").get_value<std::string>());
 
-    void ReaderConfiguration::setReaderProvider(std::shared_ptr<ReaderProvider> provider)
-    {
-        d_readerProvider = provider;
-    }
+    LOG(LogLevel::INFOS) << "Reader provider type " << rpType;
 
-    std::shared_ptr<ReaderUnit> ReaderConfiguration::getReaderUnit() const
-    {
-        return d_ReaderUnit;
-    }
+    d_readerProvider = ReaderProvider::getReaderProviderFromRPType(rpType);
 
-    void ReaderConfiguration::setReaderUnit(std::shared_ptr<ReaderUnit> unit)
+    EXCEPTION_ASSERT_WITH_LOG(d_readerProvider, LibLogicalAccessException,
+                              "Unknown reader provider type.");
+
+    d_ReaderUnit = d_readerProvider->createReaderUnit();
+    try
     {
-        d_ReaderUnit = unit;
+        d_ReaderUnit->unSerialize(node, "");
     }
+    catch (std::exception &e)
+    {
+        LOG(LogLevel::WARNINGS) << "Failed to unserialize reader unit: " << e.what();
+        d_ReaderUnit.reset();
+    }
+}
+
+std::string ReaderConfiguration::getDefaultXmlNodeName() const
+{
+    return "ReaderConfiguration";
+}
+
+std::shared_ptr<ReaderProvider> ReaderConfiguration::getReaderProvider() const
+{
+    return d_readerProvider;
+}
+
+void ReaderConfiguration::setReaderProvider(std::shared_ptr<ReaderProvider> provider)
+{
+    d_readerProvider = provider;
+}
+
+std::shared_ptr<ReaderUnit> ReaderConfiguration::getReaderUnit() const
+{
+    return d_ReaderUnit;
+}
+
+void ReaderConfiguration::setReaderUnit(std::shared_ptr<ReaderUnit> unit)
+{
+    d_ReaderUnit = unit;
+}
 }

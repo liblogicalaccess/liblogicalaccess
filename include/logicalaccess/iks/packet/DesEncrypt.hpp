@@ -13,9 +13,9 @@ class LIBLOGICALACCESS_API DesEncryptCommand : public BaseCommand
   public:
     DesEncryptCommand();
 
-	ByteVector serialize() const override;
+    ByteVector serialize() const override;
 
-	size_t binary_size_impl() const override;
+    size_t binary_size_impl() const override;
 
     /**
      * If set to true, request decryption instead of encryption.

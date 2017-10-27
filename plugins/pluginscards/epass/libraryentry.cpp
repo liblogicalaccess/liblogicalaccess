@@ -32,7 +32,7 @@ LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char *chipname,
             ret = true;
         }
         break;
-        default: ;
+        default:;
         }
     }
     return ret;

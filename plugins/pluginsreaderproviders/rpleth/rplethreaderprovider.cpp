@@ -19,59 +19,61 @@
 
 namespace logicalaccess
 {
-    RplethReaderProvider::RplethReaderProvider() :
-        ISO7816ReaderProvider()
-    {
-    }
+RplethReaderProvider::RplethReaderProvider()
+    : ISO7816ReaderProvider()
+{
+}
 
-    std::shared_ptr<RplethReaderProvider> RplethReaderProvider::getSingletonInstance()
+std::shared_ptr<RplethReaderProvider> RplethReaderProvider::getSingletonInstance()
+{
+    static std::shared_ptr<RplethReaderProvider> instance;
+    if (!instance)
     {
-        static std::shared_ptr<RplethReaderProvider> instance;
-        if (!instance)
-        {
-            instance = std::shared_ptr<RplethReaderProvider>(new RplethReaderProvider());
-            instance->refreshReaderList();
-        }
-        return instance;
-    }
-
-    std::shared_ptr<RplethReaderProvider> RplethReaderProvider::createInstance()
-    {
-        std::shared_ptr<RplethReaderProvider> instance = std::shared_ptr<RplethReaderProvider>(new RplethReaderProvider());
+        instance = std::shared_ptr<RplethReaderProvider>(new RplethReaderProvider());
         instance->refreshReaderList();
-
-        return instance;
     }
+    return instance;
+}
 
-    RplethReaderProvider::~RplethReaderProvider()
-    {
-	    RplethReaderProvider::release();
-    }
+std::shared_ptr<RplethReaderProvider> RplethReaderProvider::createInstance()
+{
+    std::shared_ptr<RplethReaderProvider> instance =
+        std::shared_ptr<RplethReaderProvider>(new RplethReaderProvider());
+    instance->refreshReaderList();
 
-    void RplethReaderProvider::release()
-    {
-    }
+    return instance;
+}
 
-    std::shared_ptr<ReaderUnit> RplethReaderProvider::createReaderUnit()
-    {
-        LOG(LogLevel::INFOS) << "Creating new reader unit";
+RplethReaderProvider::~RplethReaderProvider()
+{
+    RplethReaderProvider::release();
+}
 
-        std::shared_ptr<RplethReaderUnit> ret(new RplethReaderUnit());
-        ret->setReaderProvider(std::weak_ptr<ReaderProvider>(shared_from_this()));
-        d_readers.push_back(ret);
+void RplethReaderProvider::release()
+{
+}
 
-        return ret;
-    }
+std::shared_ptr<ReaderUnit> RplethReaderProvider::createReaderUnit()
+{
+    LOG(LogLevel::INFOS) << "Creating new reader unit";
 
-    std::shared_ptr<ISO7816ReaderUnit> RplethReaderProvider::createReaderUnit(std::string /*readerunitname*/)
-    {
-        return std::dynamic_pointer_cast<ISO7816ReaderUnit>(createReaderUnit());
-    }
+    std::shared_ptr<RplethReaderUnit> ret(new RplethReaderUnit());
+    ret->setReaderProvider(std::weak_ptr<ReaderProvider>(shared_from_this()));
+    d_readers.push_back(ret);
 
-    bool RplethReaderProvider::refreshReaderList()
-    {
-        d_readers.clear();
+    return ret;
+}
 
-        return true;
-    }
+std::shared_ptr<ISO7816ReaderUnit>
+    RplethReaderProvider::createReaderUnit(std::string /*readerunitname*/)
+{
+    return std::dynamic_pointer_cast<ISO7816ReaderUnit>(createReaderUnit());
+}
+
+bool RplethReaderProvider::refreshReaderList()
+{
+    d_readers.clear();
+
+    return true;
+}
 }

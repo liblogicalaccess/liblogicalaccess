@@ -15,37 +15,39 @@
 
 namespace logicalaccess
 {
-#define CHIP_STMLRI512	"StmLri512"
+#define CHIP_STMLRI512 "StmLri512"
+
+/**
+ * \brief The STM LRI512 base chip class.
+ */
+class LIBLOGICALACCESS_API StmLri512Chip : public Chip
+{
+  public:
+    /**
+     * \brief Constructor.
+     */
+    StmLri512Chip();
 
     /**
-     * \brief The STM LRI512 base chip class.
+     * \brief Destructor.
      */
-    class LIBLOGICALACCESS_API StmLri512Chip : public Chip
+    virtual ~StmLri512Chip();
+
+    /**
+     * \brief Get the generic card type.
+     * \return The generic card type.
+     */
+    std::string getGenericCardType() const override
     {
-    public:
+        return CHIP_STMLRI512;
+    }
 
-        /**
-         * \brief Constructor.
-         */
-        StmLri512Chip();
-
-        /**
-         * \brief Destructor.
-         */
-        virtual ~StmLri512Chip();
-
-        /**
-         * \brief Get the generic card type.
-         * \return The generic card type.
-         */
-	    std::string getGenericCardType() const override { return CHIP_STMLRI512; }
-
-        /**
-         * \brief Get the root location node.
-         * \return The root location node.
-         */
-	    std::shared_ptr<LocationNode> getRootLocationNode() override;
-    };
+    /**
+     * \brief Get the root location node.
+     * \return The root location node.
+     */
+    std::shared_ptr<LocationNode> getRootLocationNode() override;
+};
 }
 
 #endif

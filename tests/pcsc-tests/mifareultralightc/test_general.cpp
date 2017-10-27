@@ -21,20 +21,25 @@ void introduction()
     LLA_SUBTEST_REGISTER("WriteRead");
 }
 
-std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr, logicalaccess::ChipPtr> init()
+std::tuple<logicalaccess::ReaderProviderPtr, logicalaccess::ReaderUnitPtr,
+           logicalaccess::ChipPtr>
+init()
 {
     // Reader configuration object to store reader provider and reader unit selection.
     std::shared_ptr<logicalaccess::ReaderConfiguration> readerConfig(
-            new logicalaccess::ReaderConfiguration());
+        new logicalaccess::ReaderConfiguration());
 
-    // Set PCSC ReaderProvider by calling the Library Manager which will load the function from the corresponding plug-in
-    auto provider = logicalaccess::LibraryManager::getInstance()->getReaderProvider("PCSC");
+    // Set PCSC ReaderProvider by calling the Library Manager which will load the function
+    // from the corresponding plug-in
+    auto provider =
+        logicalaccess::LibraryManager::getInstance()->getReaderProvider("PCSC");
     LLA_ASSERT(provider, "Cannot get PCSC provider");
     readerConfig->setReaderProvider(provider);
 
     auto readerUnit = readerConfig->getReaderProvider()->createReaderUnit();
-    readerUnit->setCardType("MifareUltralightC");   //5321 doesnt properly detect between MifareUltraLight
-                                                    // and MifareUltraLightC.
+    readerUnit->setCardType(
+        "MifareUltralightC"); // 5321 doesnt properly detect between MifareUltraLight
+    // and MifareUltraLightC.
 
     LLA_ASSERT(readerUnit, "Cannot create reader unit");
 
@@ -65,20 +70,21 @@ int main(int ac, char **av)
     ChipPtr chip;
     tie(provider, readerUnit, chip) = init();
 
-    PRINT_TIME("CHip identifier: " <<
-               logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
+    PRINT_TIME("CHip identifier: "
+               << logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
 
     LLA_ASSERT(chip->getCardType() == "MifareUltralightC",
-               "Chip is not an MifareUltralight(C), but is " + chip->getCardType() + " instead.");
-    auto cmd = std::dynamic_pointer_cast<MifareUltralightCommands>(
-            chip->getCommands());
+               "Chip is not an MifareUltralight(C), but is " + chip->getCardType() +
+                   " instead.");
+    auto cmd = std::dynamic_pointer_cast<MifareUltralightCommands>(chip->getCommands());
     LLA_ASSERT(cmd, "Cannot get command from chip");
 
-    auto cmdUltraC = std::dynamic_pointer_cast<MifareUltralightCCommands>(
-            chip->getCommands());
+    auto cmdUltraC =
+        std::dynamic_pointer_cast<MifareUltralightCCommands>(chip->getCommands());
     LLA_ASSERT(cmdUltraC, "Cannot cast command to MifareUltralightCCommands");
 
-    //std::shared_ptr<logicalaccess::TripleDESKey> key(new logicalaccess::TripleDESKey("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"));
+    // std::shared_ptr<logicalaccess::TripleDESKey> key(new
+    // logicalaccess::TripleDESKey("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"));
     std::shared_ptr<TripleDESKey> key;
     cmdUltraC->authenticate(key);
     LLA_SUBTEST_PASSED("Authenticate");

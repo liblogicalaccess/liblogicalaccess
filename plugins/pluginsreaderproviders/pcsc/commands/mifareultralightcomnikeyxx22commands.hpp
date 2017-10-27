@@ -13,38 +13,39 @@ namespace logicalaccess
 {
 #define CMD_MIFAREULTRALIGHTCOMNIKEYXX22 "MifareUltralightCOmnikeyXX22"
 
-    /**
-    * \brief The Mifare Ultralight C commands class for Omnikey xx22 reader.
-    */
-    class LIBLOGICALACCESS_API MifareUltralightCOmnikeyXX22Commands : public MifareUltralightPCSCCommands
+/**
+* \brief The Mifare Ultralight C commands class for Omnikey xx22 reader.
+*/
+class LIBLOGICALACCESS_API MifareUltralightCOmnikeyXX22Commands
+    : public MifareUltralightPCSCCommands
 #ifndef SWIG
-    , public MifareUltralightCCommands
+      ,
+      public MifareUltralightCCommands
 #endif
-	{
-    public:
+{
+  public:
+    /**
+    * \brief Constructor.
+    */
+    MifareUltralightCOmnikeyXX22Commands();
 
-        /**
-        * \brief Constructor.
-        */
-        MifareUltralightCOmnikeyXX22Commands();
+    explicit MifareUltralightCOmnikeyXX22Commands(std::string);
 
-        explicit MifareUltralightCOmnikeyXX22Commands(std::string);
+    /**
+    * \brief Destructor.
+    */
+    virtual ~MifareUltralightCOmnikeyXX22Commands();
 
-        /**
-        * \brief Destructor.
-        */
-        virtual ~MifareUltralightCOmnikeyXX22Commands();
+    /**
+    * \brief Authenticate to the chip.
+    * \param authkey The authentication key.
+    */
+    void authenticate(std::shared_ptr<TripleDESKey> authkey) override;
 
-        /**
-        * \brief Authenticate to the chip.
-        * \param authkey The authentication key.
-        */
-	    void authenticate(std::shared_ptr<TripleDESKey> authkey) override;
+    std::shared_ptr<MifareUltralightChip> getMifareUltralightChip() override;
 
-		std::shared_ptr<MifareUltralightChip> getMifareUltralightChip() override;
-
-		void writePage(int page, const ByteVector& buf) override;
-    };
+    void writePage(int page, const ByteVector &buf) override;
+};
 }
 
 #endif /* LOGICALACCESS_MIFAREULTRALIGHTCOMNIKEYXX22COMMANDS_HPP */

@@ -29,7 +29,7 @@ TEST(test_manchester, encode_thomas)
 {
     ByteVector in       = {0x01, 0x0};
     ByteVector expected = {0x55, 0x56, 0x55, 0x55};
-    auto out = ManchesterEncoder::encode(in, ManchesterEncoder::G_E_THOMAS);
+    auto out            = ManchesterEncoder::encode(in, ManchesterEncoder::G_E_THOMAS);
     ASSERT_EQ(expected, out);
 }
 
@@ -45,6 +45,6 @@ TEST(test_manchester, decode_thomas)
 {
     ByteVector in       = {0x55, 0x56, 0x55, 0x55};
     ByteVector expected = {0x01, 0x0};
-    auto out = ManchesterEncoder::decode(in, ManchesterEncoder::G_E_THOMAS);
+    auto out            = ManchesterEncoder::decode(in, ManchesterEncoder::G_E_THOMAS);
     ASSERT_EQ(expected, out);
 }

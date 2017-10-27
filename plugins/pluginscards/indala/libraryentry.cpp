@@ -10,43 +10,44 @@
 #define LIBLOGICALACCESS_API
 #endif
 #ifndef DISABLE_PRAGMA_WARNING
-#define DISABLE_PRAGMA_WARNING /**< \brief winsmcrd.h was modified to support this macro, to avoid MSVC specific warnings pragma */
+#define DISABLE_PRAGMA_WARNING /**< \brief winsmcrd.h was modified to support this       \
+                                  macro, to avoid MSVC specific warnings pragma */
 #endif
 #endif
 
-extern "C"
+extern "C" {
+LIBLOGICALACCESS_API char *getLibraryName()
 {
-    LIBLOGICALACCESS_API char *getLibraryName()
-    {
-        return (char *)"Indala";
-    }
+    return (char *)"Indala";
+}
 
-    LIBLOGICALACCESS_API void getIndalaChip(std::shared_ptr<logicalaccess::Chip>* chip)
+LIBLOGICALACCESS_API void getIndalaChip(std::shared_ptr<logicalaccess::Chip> *chip)
+{
+    if (chip != nullptr)
     {
-        if (chip != nullptr)
+        *chip = std::make_shared<logicalaccess::IndalaChip>();
+    }
+}
+
+LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char *chipname,
+                                        size_t chipnamelen, void **getterfct)
+{
+    bool ret = false;
+    if (chipname != nullptr && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != nullptr)
+    {
+        switch (index)
         {
-            *chip = std::make_shared<logicalaccess::IndalaChip>();
+        case 0:
+        {
+            *getterfct = (void *)&getIndalaChip;
+            sprintf(chipname, CHIP_INDALA);
+            ret = true;
+        }
+        break;
+        default:;
         }
     }
 
-    LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char* chipname, size_t chipnamelen, void** getterfct)
-    {
-        bool ret = false;
-        if (chipname != nullptr && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != nullptr)
-        {
-            switch (index)
-            {
-            case 0:
-            {
-                *getterfct = (void*)&getIndalaChip;
-                sprintf(chipname, CHIP_INDALA);
-                ret = true;
-            }
-                break;
-            default: ;
-            }
-        }
-
-        return ret;
-    }
+    return ret;
+}
 }

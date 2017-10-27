@@ -8,19 +8,21 @@
 
 namespace logicalaccess
 {
-    ByteVector ElatecBufferParser::getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer)
-    {
-        ByteVector result;
+ByteVector
+ElatecBufferParser::getValidBuffer(boost::circular_buffer<unsigned char> &circular_buffer)
+{
+    ByteVector result;
 
-        if (circular_buffer.size() >= 5)
+    if (circular_buffer.size() >= 5)
+    {
+        unsigned char buflength = circular_buffer[0];
+        if (circular_buffer.size() >= buflength)
         {
-            unsigned char buflength = circular_buffer[0];
-            if (circular_buffer.size() >= buflength)
-            {
-                result.assign(circular_buffer.begin(), circular_buffer.begin() + buflength);
-                circular_buffer.erase(circular_buffer.begin(), circular_buffer.begin() + buflength);
-            }
+            result.assign(circular_buffer.begin(), circular_buffer.begin() + buflength);
+            circular_buffer.erase(circular_buffer.begin(),
+                                  circular_buffer.begin() + buflength);
         }
-        return result;
     }
+    return result;
+}
 }

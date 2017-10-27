@@ -119,8 +119,7 @@ class LIBLOGICALACCESS_API EPassUtils
     static ByteVector encrypt_apdu(const ByteVector &apdu, const ByteVector &ks_enc,
                                    const ByteVector &ks_mac, const ByteVector &ssc);
 
-    static ByteVector decrypt_rapdu(const ByteVector &rapdu,
-                                    const ByteVector &ks_enc,
+    static ByteVector decrypt_rapdu(const ByteVector &rapdu, const ByteVector &ks_enc,
                                     const ByteVector &ks_mac, const ByteVector &ssc);
 
     /**

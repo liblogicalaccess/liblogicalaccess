@@ -12,68 +12,68 @@
 
 namespace logicalaccess
 {
-    /**
-     * \brief A Mifare Ultralight C access informations.
-     */
-    class LIBLOGICALACCESS_API MifareUltralightCAccessInfo : public MifareUltralightAccessInfo
-    {
-    public:
+/**
+ * \brief A Mifare Ultralight C access informations.
+ */
+class LIBLOGICALACCESS_API MifareUltralightCAccessInfo : public MifareUltralightAccessInfo
+{
+  public:
 #ifndef SWIG
-        using XmlSerializable::serialize;
-        using XmlSerializable::unSerialize;
+    using XmlSerializable::serialize;
+    using XmlSerializable::unSerialize;
 #endif
 
-        /**
-         * \brief Constructor.
-         */
-        MifareUltralightCAccessInfo();
+    /**
+     * \brief Constructor.
+     */
+    MifareUltralightCAccessInfo();
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~MifareUltralightCAccessInfo();
+    /**
+     * \brief Destructor.
+     */
+    virtual ~MifareUltralightCAccessInfo();
 
-        /**
-         * \brief Generate pseudo-random Mifare Ultralight C access informations.
-         */
-	    void generateInfos() override;
+    /**
+     * \brief Generate pseudo-random Mifare Ultralight C access informations.
+     */
+    void generateInfos() override;
 
-        /**
-         * \brief Get the card type for this access infos.
-         * \return The card type.
-         */
-	    std::string getCardType() const override;
+    /**
+     * \brief Get the card type for this access infos.
+     * \return The card type.
+     */
+    std::string getCardType() const override;
 
-        /**
-         * \brief Serialize the current object to XML.
-         * \param parentNode The parent node.
-         */
-	    void serialize(boost::property_tree::ptree& parentNode) override;
+    /**
+     * \brief Serialize the current object to XML.
+     * \param parentNode The parent node.
+     */
+    void serialize(boost::property_tree::ptree &parentNode) override;
 
-        /**
-         * \brief UnSerialize a XML node to the current object.
-         * \param node The XML node.
-         */
-	    void unSerialize(boost::property_tree::ptree& node) override;
+    /**
+     * \brief UnSerialize a XML node to the current object.
+     * \param node The XML node.
+     */
+    void unSerialize(boost::property_tree::ptree &node) override;
 
-        /**
-         * \brief Get the default Xml Node name for this object.
-         * \return The Xml node name.
-         */
-	    std::string getDefaultXmlNodeName() const override;
+    /**
+     * \brief Get the default Xml Node name for this object.
+     * \return The Xml node name.
+     */
+    std::string getDefaultXmlNodeName() const override;
 
-        /**
-         * \brief Equality operator
-         * \param ai Access infos to compare.
-         * \return True if equals, false otherwise.
-         */
-	    bool operator==(const AccessInfo& ai) const override;
+    /**
+     * \brief Equality operator
+     * \param ai Access infos to compare.
+     * \return True if equals, false otherwise.
+     */
+    bool operator==(const AccessInfo &ai) const override;
 
-	    /**
-         * \brief The authentication key.
-         */
-        std::shared_ptr<TripleDESKey> key;
-    };
+    /**
+ * \brief The authentication key.
+ */
+    std::shared_ptr<TripleDESKey> key;
+};
 }
 
 #endif /* LOGICALACCESS_MIFAREULTRALIGHTCACCESSINFO_H */

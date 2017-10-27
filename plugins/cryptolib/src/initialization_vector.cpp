@@ -17,41 +17,42 @@
 
 namespace logicalaccess
 {
-    namespace openssl
+namespace openssl
+{
+InitializationVector::InitializationVector(size_t size, bool random)
+    : d_data(size)
+{
+    OpenSSLInitializer::GetInstance();
+
+    if (random)
     {
-        InitializationVector::InitializationVector(size_t size, bool random) :
-            d_data(size)
-        {
-            OpenSSLInitializer::GetInstance();
-
-            if (random)
-            {
-                randomize();
-            }
-            else
-            {
-                zero();
-            }
-        }
-
-        InitializationVector::InitializationVector(const ByteVector& _data) :
-            d_data(_data)
-        {
-        }
-
-        void InitializationVector::zero()
-        {
-            size_t size = d_data.size();
-            d_data.clear();
-            d_data.resize(size, 0x00);
-        }
-
-        void InitializationVector::randomize()
-        {
-            if (RAND_bytes(&d_data[0], static_cast<int>(d_data.size())) != 1)
-            {
-                THROW_EXCEPTION_WITH_LOG(logicalaccess::LibLogicalAccessException, "Cannot retrieve cryptographically strong bytes");
-            }
-        }
+        randomize();
     }
+    else
+    {
+        zero();
+    }
+}
+
+InitializationVector::InitializationVector(const ByteVector &_data)
+    : d_data(_data)
+{
+}
+
+void InitializationVector::zero()
+{
+    size_t size = d_data.size();
+    d_data.clear();
+    d_data.resize(size, 0x00);
+}
+
+void InitializationVector::randomize()
+{
+    if (RAND_bytes(&d_data[0], static_cast<int>(d_data.size())) != 1)
+    {
+        THROW_EXCEPTION_WITH_LOG(logicalaccess::LibLogicalAccessException,
+                                 "Cannot retrieve cryptographically strong bytes");
+    }
+}
+}
 }

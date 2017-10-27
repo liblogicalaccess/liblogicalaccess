@@ -8,13 +8,11 @@ class LIBLOGICALACCESS_API STidPRGReaderCardAdapter : public ReaderCardAdapter
 {
 
   public:
-	ByteVector
-    adaptCommand(const ByteVector &command) override;
+    ByteVector adaptCommand(const ByteVector &command) override;
 
-	ByteVector
-    adaptAnswer(const ByteVector &answer) override;
+    ByteVector adaptAnswer(const ByteVector &answer) override;
 
   protected:
-	  static uint8_t compute_crc(const ByteVector &cmd);
+    static uint8_t compute_crc(const ByteVector &cmd);
 };
 }

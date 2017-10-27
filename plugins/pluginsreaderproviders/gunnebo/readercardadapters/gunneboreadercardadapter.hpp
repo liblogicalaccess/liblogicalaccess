@@ -18,40 +18,39 @@
 
 namespace logicalaccess
 {
+/**
+ * \brief A default Gunnebo reader/card adapter class.
+ */
+class LIBLOGICALACCESS_API GunneboReaderCardAdapter : public ReaderCardAdapter
+{
+  public:
+    static const unsigned char STX; /**< \brief Start of TeXt. */
+    static const unsigned char ETX; /**< \brief End of TeXt. */
+
     /**
-     * \brief A default Gunnebo reader/card adapter class.
+     * \brief Constructor.
      */
-    class LIBLOGICALACCESS_API GunneboReaderCardAdapter : public ReaderCardAdapter
-    {
-    public:
+    GunneboReaderCardAdapter();
 
-        static const unsigned char STX; /**< \brief Start of TeXt. */
-        static const unsigned char ETX; /**< \brief End of TeXt. */
+    /**
+     * \brief Destructor.
+     */
+    virtual ~GunneboReaderCardAdapter();
 
-        /**
-         * \brief Constructor.
-         */
-        GunneboReaderCardAdapter();
+    /**
+     * \brief Adapt the command to send to the reader.
+     * \param command The command to send.
+     * \return The adapted command to send.
+     */
+    ByteVector adaptCommand(const ByteVector &command) override;
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~GunneboReaderCardAdapter();
-
-        /**
-         * \brief Adapt the command to send to the reader.
-         * \param command The command to send.
-         * \return The adapted command to send.
-         */
-	    ByteVector adaptCommand(const ByteVector& command) override;
-
-        /**
-         * \brief Adapt the asnwer received from the reader.
-         * \param answer The answer received.
-         * \return The adapted answer received.
-         */
-	    ByteVector adaptAnswer(const ByteVector& answer) override;
-    };
+    /**
+     * \brief Adapt the asnwer received from the reader.
+     * \param answer The answer received.
+     * \return The adapted answer received.
+     */
+    ByteVector adaptAnswer(const ByteVector &answer) override;
+};
 }
 
 #endif /* LOGICALACCESS_DEFAULTGUNNEBOREADERCARDADAPTER_HPP */

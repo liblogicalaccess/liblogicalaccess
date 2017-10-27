@@ -16,29 +16,28 @@ namespace logicalaccess
 {
 #define CMD_MIFAREOMNIKEYXX21 "MifareOmnikeyXX21"
 
+/**
+ * \brief The Mifare commands class for Omnikey xx27 reader.
+ */
+class LIBLOGICALACCESS_API MifareOmnikeyXX21Commands : public MifarePCSCCommands
+{
+  public:
     /**
-     * \brief The Mifare commands class for Omnikey xx27 reader.
+     * \brief Constructor.
      */
-    class LIBLOGICALACCESS_API MifareOmnikeyXX21Commands : public MifarePCSCCommands
-    {
-    public:
+    MifareOmnikeyXX21Commands();
 
-        /**
-         * \brief Constructor.
-         */
-        MifareOmnikeyXX21Commands();
+    explicit MifareOmnikeyXX21Commands(std::string);
 
-        explicit MifareOmnikeyXX21Commands(std::string);
+    /**
+     * \brief Destructor.
+     */
+    virtual ~MifareOmnikeyXX21Commands();
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~MifareOmnikeyXX21Commands();
+    void increment(uint8_t blockno, uint32_t value) override;
 
-	    void increment(uint8_t blockno, uint32_t value) override;
-
-	    void decrement(uint8_t blockno, uint32_t value) override;
-    };
+    void decrement(uint8_t blockno, uint32_t value) override;
+};
 }
 
-#endif //LIBLOGICALACCESS_MIFAREOMNIKEYXX21COMMANDS_H
+#endif // LIBLOGICALACCESS_MIFAREOMNIKEYXX21COMMANDS_H

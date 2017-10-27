@@ -20,26 +20,26 @@
 
 namespace logicalaccess
 {
-    uint16_t MifarePlusChip::key_number_from_sector(int sector, MifareKeyType type)
-    {
-        int offset = sector * 2;
-        if (type == KT_KEY_B)
-            offset++;
+uint16_t MifarePlusChip::key_number_from_sector(int sector, MifareKeyType type)
+{
+    int offset = sector * 2;
+    if (type == KT_KEY_B)
+        offset++;
 
-        uint16_t pos = 0;
-        pos |= 0x40 << 8;
-        pos |= offset & 0xFF;
+    uint16_t pos = 0;
+    pos |= 0x40 << 8;
+    pos |= offset & 0xFF;
 
-        LOG(DEBUGS) << "Pos = " << std::hex << pos;
+    LOG(DEBUGS) << "Pos = " << std::hex << pos;
 
-        assert(pos >= 0x4000);
-        assert(pos <= 0x403F);
-        return pos;
-    }
+    assert(pos >= 0x4000);
+    assert(pos <= 0x403F);
+    return pos;
+}
 
 
-	std::string MifarePlusChip::getGenericCardType() const
-	{
-		return "MifarePlus";
-	}
+std::string MifarePlusChip::getGenericCardType() const
+{
+    return "MifarePlus";
+}
 }

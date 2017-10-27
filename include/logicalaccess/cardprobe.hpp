@@ -20,58 +20,58 @@ namespace logicalaccess
  */
 class LIBLOGICALACCESS_API CardProbe
 {
-      public:
-		virtual ~CardProbe() = default;
-		explicit CardProbe(ReaderUnit *ru);
-        CardProbe(const CardProbe &) = delete;
+  public:
+    virtual ~CardProbe() = default;
+    explicit CardProbe(ReaderUnit *ru);
+    CardProbe(const CardProbe &) = delete;
 
-        virtual std::string guessCardType();
+    virtual std::string guessCardType();
 
-		/**
-         * Test if the card is DESFire by sending the getversion command.
-         *
-         * The optional `*uid` vector will be populate with the uid retrieve from
-         * the getversion command, unless the command failed.
-         */
-        virtual bool is_desfire(ByteVector *uid = nullptr) = 0;
+    /**
+* Test if the card is DESFire by sending the getversion command.
+*
+* The optional `*uid` vector will be populate with the uid retrieve from
+* the getversion command, unless the command failed.
+*/
+    virtual bool is_desfire(ByteVector *uid = nullptr) = 0;
 
-        /**
-         * Test if the card is DESFire EV1 by sending the getversion command.
-         *
-         * The optional `*uid` vector will be populate with the uid retrieve from
-         * the getversion command, unless the command failed.
-         */
-        virtual bool is_desfire_ev1(ByteVector *uid = nullptr) = 0;
+    /**
+     * Test if the card is DESFire EV1 by sending the getversion command.
+     *
+     * The optional `*uid` vector will be populate with the uid retrieve from
+     * the getversion command, unless the command failed.
+     */
+    virtual bool is_desfire_ev1(ByteVector *uid = nullptr) = 0;
 
-		/**
-		* Test if the card is DESFire EV2 by sending the getversion command.
-		*
-		* The optional `*uid` vector will be populate with the uid retrieve from
-		* the getversion command, unless the command failed.
-		*/
-		virtual bool is_desfire_ev2(ByteVector *uid = nullptr) = 0;
+    /**
+    * Test if the card is DESFire EV2 by sending the getversion command.
+    *
+    * The optional `*uid` vector will be populate with the uid retrieve from
+    * the getversion command, unless the command failed.
+    */
+    virtual bool is_desfire_ev2(ByteVector *uid = nullptr) = 0;
 
-		/**
-		 * Test if the card is Mifare Ultralight C by sending the authenticate command.
-		 */
-		virtual bool is_mifare_ultralight_c() = 0;
+    /**
+     * Test if the card is Mifare Ultralight C by sending the authenticate command.
+     */
+    virtual bool is_mifare_ultralight_c() = 0;
 
-        /**
-         * Could the card be a Mifare Classic ?
-         *
-         * This is less precise that the is_desfire*() function.
-         */
-        virtual bool maybe_mifare_classic() = 0;
+    /**
+     * Could the card be a Mifare Classic ?
+     *
+     * This is less precise that the is_desfire*() function.
+     */
+    virtual bool maybe_mifare_classic() = 0;
 
-        /**
-         * Is random UID enable for a DESFire card.
-         *
-         * @param uid The UID in case random UID is DISABLED. Otherwise
-         * `*uid` wont be set.
-         */
-        virtual bool has_desfire_random_uid(ByteVector *uid) = 0;
+    /**
+     * Is random UID enable for a DESFire card.
+     *
+     * @param uid The UID in case random UID is DISABLED. Otherwise
+     * `*uid` wont be set.
+     */
+    virtual bool has_desfire_random_uid(ByteVector *uid) = 0;
 
-      protected:
-        ReaderUnit *reader_unit_;
+  protected:
+    ReaderUnit *reader_unit_;
 };
 }

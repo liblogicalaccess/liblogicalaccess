@@ -4,39 +4,41 @@
 #include "stidstrreaderprovider.hpp"
 #include "logicalaccess/logicalaccess_api.hpp"
 
-extern "C"
+extern "C" {
+LIBLOGICALACCESS_API char *getLibraryName()
 {
-    LIBLOGICALACCESS_API char *getLibraryName()
-    {
-        return (char *)"STidSTR";
-    }
+    return (char *)"STidSTR";
+}
 
-    LIBLOGICALACCESS_API void getSTidSTRReader(std::shared_ptr<logicalaccess::STidSTRReaderProvider>* rp)
+LIBLOGICALACCESS_API void
+getSTidSTRReader(std::shared_ptr<logicalaccess::STidSTRReaderProvider> *rp)
+{
+    if (rp != nullptr)
     {
-        if (rp != nullptr)
+        *rp = logicalaccess::STidSTRReaderProvider::getSingletonInstance();
+    }
+}
+
+LIBLOGICALACCESS_API bool getReaderInfoAt(unsigned int index, char *readername,
+                                          size_t readernamelen, void **getterfct)
+{
+    bool ret = false;
+    if (readername != nullptr && readernamelen == PLUGINOBJECT_MAXLEN &&
+        getterfct != nullptr)
+    {
+        switch (index)
         {
-            *rp = logicalaccess::STidSTRReaderProvider::getSingletonInstance();
+        case 0:
+        {
+            *getterfct = (void *)&getSTidSTRReader;
+            sprintf(readername, READER_STIDSTR);
+            ret = true;
+        }
+        break;
+        default:;
         }
     }
 
-    LIBLOGICALACCESS_API bool getReaderInfoAt(unsigned int index, char* readername, size_t readernamelen, void** getterfct)
-    {
-        bool ret = false;
-        if (readername != nullptr && readernamelen == PLUGINOBJECT_MAXLEN && getterfct != nullptr)
-        {
-            switch (index)
-            {
-            case 0:
-            {
-                *getterfct = (void*)&getSTidSTRReader;
-                sprintf(readername, READER_STIDSTR);
-                ret = true;
-            }
-                break;
-            default: ;
-            }
-        }
-
-        return ret;
-    }
+    return ret;
+}
 }

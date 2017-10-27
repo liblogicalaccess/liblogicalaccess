@@ -10,31 +10,31 @@
 
 namespace logicalaccess
 {
-    namespace openssl
-    {
-        AESSymmetricKey AESSymmetricKey::createRandom(size_t size)
-        {
-            return AESSymmetricKey(size);
-        }
+namespace openssl
+{
+AESSymmetricKey AESSymmetricKey::createRandom(size_t size)
+{
+    return AESSymmetricKey(size);
+}
 
-        AESSymmetricKey AESSymmetricKey::createFromData(const ByteVector& data)
-        {
-            return AESSymmetricKey(data);
-        }
+AESSymmetricKey AESSymmetricKey::createFromData(const ByteVector &data)
+{
+    return AESSymmetricKey(data);
+}
 
-        AESSymmetricKey AESSymmetricKey::createFromPassphrase(const std::string& passphrase)
-        {
-            return createFromData(SHA256Hash(passphrase));
-        }
+AESSymmetricKey AESSymmetricKey::createFromPassphrase(const std::string &passphrase)
+{
+    return createFromData(SHA256Hash(passphrase));
+}
 
-        AESSymmetricKey::AESSymmetricKey(size_t size) :
-            SymmetricKey(size)
-        {
-        }
+AESSymmetricKey::AESSymmetricKey(size_t size)
+    : SymmetricKey(size)
+{
+}
 
-        AESSymmetricKey::AESSymmetricKey(const ByteVector& _data) :
-            SymmetricKey(_data)
-        {
-        }
-    }
+AESSymmetricKey::AESSymmetricKey(const ByteVector &_data)
+    : SymmetricKey(_data)
+{
+}
+}
 }

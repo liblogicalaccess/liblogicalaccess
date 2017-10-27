@@ -3,8 +3,7 @@
 
 using namespace logicalaccess;
 
-ByteVector
-STidPRGReaderCardAdapter::adaptCommand(const ByteVector &command)
+ByteVector STidPRGReaderCardAdapter::adaptCommand(const ByteVector &command)
 {
     ByteVector full_cmd;
     full_cmd.push_back(0x02);
@@ -17,8 +16,7 @@ STidPRGReaderCardAdapter::adaptCommand(const ByteVector &command)
     return full_cmd;
 }
 
-ByteVector
-STidPRGReaderCardAdapter::adaptAnswer(const ByteVector &answer)
+ByteVector STidPRGReaderCardAdapter::adaptAnswer(const ByteVector &answer)
 {
     // Ignore empty response
     if (answer.size() == 0)
@@ -28,8 +26,7 @@ STidPRGReaderCardAdapter::adaptAnswer(const ByteVector &answer)
     EXCEPTION_ASSERT_WITH_LOG(answer[0] == 0x02, LibLogicalAccessException,
                               "Invalid 'Start of Frame byte'.");
     EXCEPTION_ASSERT_WITH_LOG(answer[answer.size() - 1] == 0x03,
-                              LibLogicalAccessException,
-                              "Invalid 'End of Frame byte'.");
+                              LibLogicalAccessException, "Invalid 'End of Frame byte'.");
 
     // Drop "Start of Frame" as well as "End of Frame" and "CRC" bytes.
     ByteVector ret(answer.begin() + 1, answer.end() - 2);

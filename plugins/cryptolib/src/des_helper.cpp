@@ -8,23 +8,20 @@
 using namespace logicalaccess;
 
 
-ByteVector DESHelper::DESEncrypt(const ByteVector &data,
-                                           const ByteVector &key,
-                                           const ByteVector &iv_data)
+ByteVector DESHelper::DESEncrypt(const ByteVector &data, const ByteVector &key,
+                                 const ByteVector &iv_data)
 {
     return DESRun(data, key, iv_data, true);
 }
 
-ByteVector DESHelper::DESDecrypt(const ByteVector &data,
-                                           const ByteVector &key,
-                                           ByteVector const &iv_data)
+ByteVector DESHelper::DESDecrypt(const ByteVector &data, const ByteVector &key,
+                                 ByteVector const &iv_data)
 {
     return DESRun(data, key, iv_data, false);
 }
 
-ByteVector DESHelper::DESRun(const ByteVector &data,
-                                       const ByteVector &key,
-                                       const ByteVector &iv_data, bool crypt)
+ByteVector DESHelper::DESRun(const ByteVector &data, const ByteVector &key,
+                             const ByteVector &iv_data, bool crypt)
 {
     assert(key.size() != 0 && key.size() % 8 == 0);
     assert(iv_data.size() % 8 == 0);
@@ -50,4 +47,3 @@ ByteVector DESHelper::DESRun(const ByteVector &data,
         cipher->decipher(data, result, *isokey.get(), *iv.get(), false);
     return result;
 }
-

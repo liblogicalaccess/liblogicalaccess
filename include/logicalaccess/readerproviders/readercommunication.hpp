@@ -13,35 +13,37 @@
 
 namespace logicalaccess
 {
-    /**
-     * \brief A reader communication base class.
-     */
-    class LIBLOGICALACCESS_API ReaderCommunication
+/**
+ * \brief A reader communication base class.
+ */
+class LIBLOGICALACCESS_API ReaderCommunication
+{
+  public:
+    virtual ~ReaderCommunication() = default;
+
+    ReaderCommunication()
     {
-    public:
-	    virtual ~ReaderCommunication() = default;
+    }
 
-	    ReaderCommunication() {}
+    /**
+     * \brief Send a request command from the PCD to the PICC.
+     * \return The PICC answer to the request command.
+     */
+    virtual ByteVector request() = 0;
 
-        /**
-         * \brief Send a request command from the PCD to the PICC.
-         * \return The PICC answer to the request command.
-         */
-        virtual ByteVector request() = 0;
+    /**
+     * \brief Manage collision.
+     * \return PICC serial number.
+     */
+    virtual ByteVector anticollision() = 0;
 
-        /**
-         * \brief Manage collision.
-         * \return PICC serial number.
-         */
-        virtual ByteVector anticollision() = 0;
+    /**
+     * \brief Select a PICC.
+     * \param uid The PICC serial number.
+     */
 
-        /**
-         * \brief Select a PICC.
-         * \param uid The PICC serial number.
-         */
-
-        virtual void selectIso(const ByteVector& uid) = 0;
-    };
+    virtual void selectIso(const ByteVector &uid) = 0;
+};
 }
 
 #endif /* LOGICALACCESS_READERCOMMUNICATION_HPP */

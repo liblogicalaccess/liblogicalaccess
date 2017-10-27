@@ -12,11 +12,13 @@
 void introduction()
 {
     PRINT_TIME("This test target ISO15693 cards.");
-    PRINT_TIME("It works properly on windows with OK5321 but is broken on Linux for this reader");
+    PRINT_TIME("It works properly on windows with OK5321 but is broken on Linux for this "
+               "reader");
     PRINT_TIME("OK5427 partially works on both Linux and Windows");
 
     PRINT_TIME("You will have 20 seconds to insert a card. Test log below");
-    PRINT_TIME("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    PRINT_TIME(
+        "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
     LLA_SUBTEST_REGISTER("SystemInformation");
     LLA_SUBTEST_REGISTER("WriteBlock");
@@ -25,17 +27,18 @@ void introduction()
 
 using namespace logicalaccess;
 
-static void write_read_test(ReaderUnitPtr /*readerUnit*/, std::shared_ptr<ISO15693Commands> cmd)
+static void write_read_test(ReaderUnitPtr /*readerUnit*/,
+                            std::shared_ptr<ISO15693Commands> cmd)
 {
     uint8_t val = 0x00;
-    for (int i = 1 ; i < 7; ++i)
+    for (int i = 1; i < 7; ++i)
     {
         cmd->writeBlock(i, {++val, ++val, ++val, ++val});
     }
     LLA_SUBTEST_PASSED("WriteBlock");
 
     val = 0x00;
-    for (int i = 1 ; i < 7; ++i)
+    for (int i = 1; i < 7; ++i)
     {
         auto ret = cmd->readBlock(i);
         std::cout << "Read back (" << i << ") : " << ret << std::endl;
@@ -55,8 +58,8 @@ int main(int ac, char **av)
     ChipPtr chip;
     tie(provider, readerUnit, chip) = lla_test_init();
 
-    PRINT_TIME("CHip identifier: " <<
-               logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
+    PRINT_TIME("CHip identifier: "
+               << logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
 
     LLA_ASSERT(chip->getCardType() == "ISO15693",
                "Chip is not a ISO15693, but is " + chip->getCardType() + " instead.");

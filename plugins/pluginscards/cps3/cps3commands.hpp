@@ -13,20 +13,24 @@
 
 namespace logicalaccess
 {
-#define	CMD_CPS3	"CPS3"
+#define CMD_CPS3 "CPS3"
 
-    /**
-     * \brief The CPS3 commands class.
-     */
-	class LIBLOGICALACCESS_API CPS3Commands : public Commands
+/**
+ * \brief The CPS3 commands class.
+ */
+class LIBLOGICALACCESS_API CPS3Commands : public Commands
+{
+  public:
+    CPS3Commands()
+        : Commands(CMD_CPS3)
     {
-    public:
+    }
 
-		CPS3Commands() : Commands(CMD_CPS3) {}
-
-	    explicit CPS3Commands(std::string ct) : Commands(ct) {}
-		
-    };
+    explicit CPS3Commands(std::string ct)
+        : Commands(ct)
+    {
+    }
+};
 }
 
 #endif

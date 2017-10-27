@@ -4,7 +4,7 @@ using namespace logicalaccess;
 
 
 IdentityCardService::IdentityCardService(std::shared_ptr<Chip> chip)
-	: CardService(chip, CST_IDENTITY)
+    : CardService(chip, CST_IDENTITY)
 {
 }
 

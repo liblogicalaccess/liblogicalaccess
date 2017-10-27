@@ -21,28 +21,31 @@
 
 namespace logicalaccess
 {
+/**
+ * \brief SAM cryptographic functions.
+ */
+class LIBLOGICALACCESS_API SAMDESfireCrypto : public DESFireCrypto
+{
+  public:
     /**
-     * \brief SAM cryptographic functions.
+     * \brief Constructor
      */
-    class LIBLOGICALACCESS_API SAMDESfireCrypto : public DESFireCrypto
-    {
-    public:
-        /**
-         * \brief Constructor
-         */
-        SAMDESfireCrypto();
+    SAMDESfireCrypto();
 
-        /**
-         * \brief Destructor
-         */
-        virtual ~SAMDESfireCrypto();
+    /**
+     * \brief Destructor
+     */
+    virtual ~SAMDESfireCrypto();
 
-        ByteVector authenticateHostP1(std::shared_ptr<DESFireKey> key, ByteVector encRndB, unsigned char keyno);
+    ByteVector authenticateHostP1(std::shared_ptr<DESFireKey> key, ByteVector encRndB,
+                                  unsigned char keyno);
 
-        void authenticateHostP2(unsigned char keyno, ByteVector encRndA1, std::shared_ptr<DESFireKey> key);
+    void authenticateHostP2(unsigned char keyno, ByteVector encRndA1,
+                            std::shared_ptr<DESFireKey> key);
 
-        ByteVector sam_crc_encrypt(ByteVector d_sessionKey, ByteVector vectordata, std::shared_ptr<DESFireKey> key) const;
-    };
+    ByteVector sam_crc_encrypt(ByteVector d_sessionKey, ByteVector vectordata,
+                               std::shared_ptr<DESFireKey> key) const;
+};
 }
 
 #endif

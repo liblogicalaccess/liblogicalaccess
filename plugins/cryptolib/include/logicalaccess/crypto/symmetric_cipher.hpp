@@ -11,47 +11,51 @@
 
 namespace logicalaccess
 {
-    class InitializationVector;
+class InitializationVector;
 
-    namespace openssl
+namespace openssl
+{
+class SymmetricKey;
+
+/**
+ * \brief A symmetric cipher.
+ */
+class SymmetricCipher
+{
+  public:
+    /**
+     * \brief Destructor.
+     */
+    virtual ~SymmetricCipher()
     {
-        class SymmetricKey;
-
-        /**
-         * \brief A symmetric cipher.
-         */
-        class SymmetricCipher
-        {
-        public:
-
-            /**
-             * \brief Destructor.
-             */
-            virtual ~SymmetricCipher() {}
-
-            /**
-             * \brief Cipher a buffer.
-             * \param src The buffer to cipher.
-             * \param dest The ciphered buffer.
-             * \param key The key to use.
-             * \param iv The initialisation vector.
-             * \param padding Whether to use padding.
-             * In case of a failure, the call throw an InvalidCallException.
-             */
-            virtual void cipher(const ByteVector& src, ByteVector& dest, const SymmetricKey& key, const InitializationVector& iv, bool padding) = 0;
-
-            /**
-             * \brief Decipher a buffer.
-             * \param src The buffer to decipher.
-             * \param dest The deciphered buffer.
-             * \param key The key to use.
-             * \param iv The initialisation vector.
-             * \param padding Whether to use padding.
-             * In case of a failure, the call throw a InvalidCallException.
-             */
-            virtual void decipher(const ByteVector& src, ByteVector& dest, const SymmetricKey& key, const InitializationVector& iv, bool padding) = 0;
-        };
     }
+
+    /**
+     * \brief Cipher a buffer.
+     * \param src The buffer to cipher.
+     * \param dest The ciphered buffer.
+     * \param key The key to use.
+     * \param iv The initialisation vector.
+     * \param padding Whether to use padding.
+     * In case of a failure, the call throw an InvalidCallException.
+     */
+    virtual void cipher(const ByteVector &src, ByteVector &dest, const SymmetricKey &key,
+                        const InitializationVector &iv, bool padding) = 0;
+
+    /**
+     * \brief Decipher a buffer.
+     * \param src The buffer to decipher.
+     * \param dest The deciphered buffer.
+     * \param key The key to use.
+     * \param iv The initialisation vector.
+     * \param padding Whether to use padding.
+     * In case of a failure, the call throw a InvalidCallException.
+     */
+    virtual void decipher(const ByteVector &src, ByteVector &dest,
+                          const SymmetricKey &key, const InitializationVector &iv,
+                          bool padding) = 0;
+};
+}
 }
 
 #endif /* SYMETRICCIPHER_HPP */

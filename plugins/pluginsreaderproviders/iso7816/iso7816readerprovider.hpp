@@ -17,21 +17,21 @@
 
 namespace logicalaccess
 {
+/**
+ * \brief ISO7816 Reader Provider base class.
+ */
+class LIBLOGICALACCESS_API ISO7816ReaderProvider : public ReaderProvider
+{
+  public:
+    using ReaderProvider::createReaderUnit;
+
     /**
-     * \brief ISO7816 Reader Provider base class.
+     * \brief Create a new reader unit for the reader provider.
+     * \return A reader unit.
      */
-    class LIBLOGICALACCESS_API ISO7816ReaderProvider : public ReaderProvider
-    {
-    public:
-
-		using ReaderProvider::createReaderUnit;
-
-        /**
-         * \brief Create a new reader unit for the reader provider.
-         * \return A reader unit.
-         */
-        virtual std::shared_ptr<ISO7816ReaderUnit> createReaderUnit(std::string readerunitname) = 0;
-    };
+    virtual std::shared_ptr<ISO7816ReaderUnit>
+    createReaderUnit(std::string readerunitname) = 0;
+};
 }
 
 #endif /* LOGICALACCESS_READERISO7816_PROVIDER_HPP */

@@ -17,7 +17,7 @@ class LIBLOGICALACCESS_API IKSStorage : public KeyStorage
      * Create an IKSStorage, specifying the identity of the
      * remote key represented by this storage.
      */
-	explicit IKSStorage(const std::string &key_identity);
+    explicit IKSStorage(const std::string &key_identity);
 
     /**
      * Default construction. Key identity will be empty.
@@ -31,13 +31,13 @@ class LIBLOGICALACCESS_API IKSStorage : public KeyStorage
 
     virtual ~IKSStorage() = default;
 
-	KeyStorageType getType() const override;
+    KeyStorageType getType() const override;
 
-	void serialize(boost::property_tree::ptree &parentNode) override;
+    void serialize(boost::property_tree::ptree &parentNode) override;
 
-	void unSerialize(boost::property_tree::ptree &node) override;
+    void unSerialize(boost::property_tree::ptree &node) override;
 
-	std::string getDefaultXmlNodeName() const override;
+    std::string getDefaultXmlNodeName() const override;
 
     /**
      * Returns the key identity represents by the key/storage combination.
@@ -60,14 +60,14 @@ class LIBLOGICALACCESS_API IKSStorage : public KeyStorage
                       const std::string &client_cert, const std::string &client_key,
                       const std::string &root_ca);
 
-    const iks::IslogKeyServer::IKSConfig& getIKSConfig() const;
+    const iks::IslogKeyServer::IKSConfig &getIKSConfig() const;
 
     /**
      * Retrieve the config stored internally.
      * This method is here to be exported by the COM wrapper.
      */
     void getIKSConfig(std::string &ip, uint16_t &port, std::string &client_cert,
-        std::string &client_key, std::string &root_ca) const;
+                      std::string &client_key, std::string &root_ca) const;
 
   protected:
     std::string key_identity_;

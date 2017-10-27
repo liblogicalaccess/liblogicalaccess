@@ -22,7 +22,8 @@ bool CL1356CardProbe::maybe_mifare_classic()
             std::dynamic_pointer_cast<MifareCommands>(chip->getCommands());
 
         MifareAccessInfo::SectorAccessBits sab;
-		auto ret = command->readSector(0, 1, std::shared_ptr<MifareKey>(), std::shared_ptr<MifareKey>(), sab);
+        auto ret = command->readSector(0, 1, std::shared_ptr<MifareKey>(),
+                                       std::shared_ptr<MifareKey>(), sab);
         return true;
     }
     catch (const CardException &e)

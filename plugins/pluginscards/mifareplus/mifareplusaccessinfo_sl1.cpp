@@ -2,10 +2,9 @@
 
 using namespace logicalaccess;
 
-MifarePlusSL1AccessInfo::MifarePlusSL1AccessInfo() :
-        aesAuthKey(new AES128Key())
+MifarePlusSL1AccessInfo::MifarePlusSL1AccessInfo()
+    : aesAuthKey(new AES128Key())
 {
-
 }
 
 void MifarePlusSL1AccessInfo::serialize(boost::property_tree::ptree &parentNode)
@@ -17,14 +16,13 @@ void MifarePlusSL1AccessInfo::serialize(boost::property_tree::ptree &parentNode)
     aesAuthKey->serialize(aes_key);
     node.add_child("AESAuthKey", aes_key);
 
-    parentNode.add_child(
-            MifarePlusSL1AccessInfo::getDefaultXmlNodeName(), node);
+    parentNode.add_child(MifarePlusSL1AccessInfo::getDefaultXmlNodeName(), node);
 }
 
 void MifarePlusSL1AccessInfo::unSerialize(boost::property_tree::ptree &parentNode)
 {
-    MifareAccessInfo::unSerialize(parentNode.get_child(
-            MifareAccessInfo::getDefaultXmlNodeName()));
+    MifareAccessInfo::unSerialize(
+        parentNode.get_child(MifareAccessInfo::getDefaultXmlNodeName()));
     aesAuthKey->unSerialize(parentNode.get_child("AESAuthKey"), "");
 }
 

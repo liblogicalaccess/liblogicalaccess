@@ -58,9 +58,8 @@ struct GetBitSetSize<std::bitset<Len>>
 template <typename BitSet>
 ByteVector bitsetToVector(const BitSet &in)
 {
-    static_assert(GetBitSetSize<BitSet>::Length % 8 == 0,
-                  "Cannot convert a bitset "
-                  "whose length is not modulo 8");
+    static_assert(GetBitSetSize<BitSet>::Length % 8 == 0, "Cannot convert a bitset "
+                                                          "whose length is not modulo 8");
     const size_t len = GetBitSetSize<BitSet>::Length / 8;
     ByteVector out(len);
 
@@ -96,16 +95,14 @@ class ManchesterEncoder
      * Encode a bitset, returns a bitset twice as large.
      */
     template <typename BitSet>
-    static std::bitset<GetBitSetSize<BitSet>::Length * 2> encode(const BitSet &in,
-                                                                 Type t)
+    static std::bitset<GetBitSetSize<BitSet>::Length * 2> encode(const BitSet &in, Type t)
     {
         std::bitset<GetBitSetSize<BitSet>::Length * 2> out;
 
-        for (int count = 0, read_count = 0;
-             count < GetBitSetSize<BitSet>::Length * 2; read_count++)
+        for (int count = 0, read_count = 0; count < GetBitSetSize<BitSet>::Length * 2;
+             read_count++)
         {
-            if ((in[read_count] && t == IEEE_802) ||
-                (!in[read_count] && t == G_E_THOMAS))
+            if ((in[read_count] && t == IEEE_802) || (!in[read_count] && t == G_E_THOMAS))
             {
                 out[count++] = 0;
                 out[count++] = 1;

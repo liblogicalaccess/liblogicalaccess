@@ -23,11 +23,10 @@ namespace logicalaccess
  */
 struct STidPRGReaderUnit::BuzzerModeGuard
 {
-	explicit BuzzerModeGuard(STidPRGReaderUnit *reader)
+    explicit BuzzerModeGuard(STidPRGReaderUnit *reader)
         : reader_(reader)
     {
-        auto ret =
-            reader->getDefaultReaderCardAdapter()->sendCommand({0x2A, 0, 0, 0});
+        auto ret = reader->getDefaultReaderCardAdapter()->sendCommand({0x2A, 0, 0, 0});
         if (ret.size() >= 4)
             st_ = (bool)((ret[3] & 0x10) != 0);
         else
@@ -57,23 +56,25 @@ void STidPRGReaderUnit::unSerialize(boost::property_tree::ptree &node)
     ReaderUnit::unSerialize(node);
 }
 
-STidPRGReaderUnit::STidPRGReaderUnit() : ReaderUnit(READER_STIDPRG)
+STidPRGReaderUnit::STidPRGReaderUnit()
+    : ReaderUnit(READER_STIDPRG)
 {
     d_readerUnitConfig = std::make_shared<STidPRGReaderUnitConfiguration>();
-	ReaderUnit::setDefaultReaderCardAdapter(std::make_shared<STidPRGReaderCardAdapter>());
+    ReaderUnit::setDefaultReaderCardAdapter(std::make_shared<STidPRGReaderCardAdapter>());
     auto dt = std::make_shared<STidPRGDataTransport>();
     dt->setPortBaudRate(9600);
-	ReaderUnit::getDefaultReaderCardAdapter()->setDataTransport(dt);
-	ReaderUnit::setDataTransport(dt);
+    ReaderUnit::getDefaultReaderCardAdapter()->setDataTransport(dt);
+    ReaderUnit::setDataTransport(dt);
 }
 
 bool STidPRGReaderUnit::waitInsertion(unsigned int maxwait)
 {
     ElapsedTimeCounter etc;
-    EXCEPTION_ASSERT_WITH_LOG(getDataTransport(), LibLogicalAccessException, "No data transport.");
-    auto stidprgdt =
-        std::dynamic_pointer_cast<STidPRGDataTransport>(getDataTransport());
-    EXCEPTION_ASSERT_WITH_LOG(stidprgdt, LibLogicalAccessException, "Invalid data transport.");
+    EXCEPTION_ASSERT_WITH_LOG(getDataTransport(), LibLogicalAccessException,
+                              "No data transport.");
+    auto stidprgdt = std::dynamic_pointer_cast<STidPRGDataTransport>(getDataTransport());
+    EXCEPTION_ASSERT_WITH_LOG(stidprgdt, LibLogicalAccessException,
+                              "Invalid data transport.");
     stidprgdt->setReceiveTimeout(100);
     select_chip_type();
     do
@@ -93,8 +94,7 @@ bool STidPRGReaderUnit::waitRemoval(unsigned int maxwait)
     ElapsedTimeCounter etc;
     BuzzerModeGuard guard(this);
 
-    auto stidprgdt =
-        std::dynamic_pointer_cast<STidPRGDataTransport>(getDataTransport());
+    auto stidprgdt = std::dynamic_pointer_cast<STidPRGDataTransport>(getDataTransport());
     stidprgdt->setReceiveTimeout(100);
 
     do
@@ -181,7 +181,7 @@ std::shared_ptr<Chip> STidPRGReaderUnit::getCurrentChip()
             chip->setCommands(cmd);
             return chip;
         }
-	    assert(0);
+        assert(0);
     }
     return nullptr;
 }
@@ -242,9 +242,8 @@ bool STidPRGReaderUnit::writeBlock(uint8_t start, uint8_t end,
                               "Not enough or too many bytes of data.");
 
 
-    uint8_t p1 = static_cast<uint8_t>(((end & 0xFF) << 4) | (start & 0xFF));
-    std::vector<uint8_t> cmd = {0x42, p1, 0,
-                                static_cast<uint8_t>((end - start + 1) * 4)};
+    uint8_t p1               = static_cast<uint8_t>(((end & 0xFF) << 4) | (start & 0xFF));
+    std::vector<uint8_t> cmd = {0x42, p1, 0, static_cast<uint8_t>((end - start + 1) * 4)};
 
 
     cmd.insert(cmd.end(), data.begin(), data.end());
@@ -279,9 +278,9 @@ void STidPRGReaderUnit::select_chip_type()
     getDefaultReaderCardAdapter()->sendCommand({0x20, 0x03, 0, 0x00});
 }
 
-std::shared_ptr<STidPRGReaderUnitConfiguration> STidPRGReaderUnit::getSTidPRGReaderUnitConfiguration() const
+std::shared_ptr<STidPRGReaderUnitConfiguration>
+STidPRGReaderUnit::getSTidPRGReaderUnitConfiguration() const
 {
     return std::dynamic_pointer_cast<STidPRGReaderUnitConfiguration>(d_readerUnitConfig);
 }
-
 }

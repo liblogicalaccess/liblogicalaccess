@@ -14,15 +14,20 @@
 
 namespace logicalaccess
 {
-    class LIBLOGICALACCESS_API GigaTMSBufferParser : public CircularBufferParser
+class LIBLOGICALACCESS_API GigaTMSBufferParser : public CircularBufferParser
+{
+  public:
+    GigaTMSBufferParser()
     {
-    public:
-		GigaTMSBufferParser() {}
+    }
 
-        virtual ~GigaTMSBufferParser() {}
+    virtual ~GigaTMSBufferParser()
+    {
+    }
 
-	    ByteVector getValidBuffer(boost::circular_buffer<unsigned char>& circular_buffer) override;
-    };
+    ByteVector
+    getValidBuffer(boost::circular_buffer<unsigned char> &circular_buffer) override;
+};
 }
 
 #endif /* GIGATMSBUFFERPARSER_HPP */

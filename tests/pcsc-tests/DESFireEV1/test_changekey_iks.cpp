@@ -44,8 +44,7 @@ void read_write(std::shared_ptr<logicalaccess::DESFireEV1ISO7816Commands> cmdev1
     auto key = std::make_shared<DESFireKey>();
     key->setKeyType(DF_KEY_AES);
 
-    key->setKeyStorage(
-        std::make_shared<IKSStorage>("imported-one-aes"));
+    key->setKeyStorage(std::make_shared<IKSStorage>("imported-one-aes"));
     auto div = std::make_shared<NXPAV2KeyDiversification>();
     div->setSystemIdentifier(vector_from_string("BOAP"));
     key->setKeyDiversification(div);
@@ -54,8 +53,7 @@ void read_write(std::shared_ptr<logicalaccess::DESFireEV1ISO7816Commands> cmdev1
     cmdev1->authenticate(0, key);
 
     // The excepted memory tree
-    std::shared_ptr<DESFireEV1Location> dlocation(
-        new DESFireEV1Location());
+    std::shared_ptr<DESFireEV1Location> dlocation(new DESFireEV1Location());
 
     auto storage = std::dynamic_pointer_cast<StorageCardService>(
         cmdev1->getChip()->getService(CST_STORAGE));
@@ -69,8 +67,7 @@ void read_write(std::shared_ptr<logicalaccess::DESFireEV1ISO7816Commands> cmdev1
     dlocation->useEV1        = true;
     dlocation->cryptoMethod  = DF_KEY_AES;
 
-    std::shared_ptr<DESFireAccessInfo> daiToUse(
-        new DESFireAccessInfo());
+    std::shared_ptr<DESFireAccessInfo> daiToUse(new DESFireAccessInfo());
     daiToUse->masterApplicationKey = key;
     daiToUse->writeKeyno           = 0;
     daiToUse->writeKey             = key;
@@ -81,8 +78,7 @@ void read_write(std::shared_ptr<logicalaccess::DESFireEV1ISO7816Commands> cmdev1
     ByteVector writedata(16, 'd');
     ByteVector readdata;
     // Write data on the specified location with the specified key
-    storage->writeData(dlocation, daiToUse, daiToUse, writedata,
-                       CB_DEFAULT);
+    storage->writeData(dlocation, daiToUse, daiToUse, writedata, CB_DEFAULT);
 
     PRINT_TIME("Wrote: " << writedata);
     LLA_SUBTEST_PASSED("WriteService")
@@ -97,15 +93,13 @@ void read_write(std::shared_ptr<logicalaccess::DESFireEV1ISO7816Commands> cmdev1
     LLA_SUBTEST_PASSED("CorrectWriteRead");
 }
 
-void create_app_and_file(
-    std::shared_ptr<logicalaccess::DESFireISO7816Commands> cmd,
-    std::shared_ptr<logicalaccess::DESFireEV1ISO7816Commands> cmdev1)
+void create_app_and_file(std::shared_ptr<logicalaccess::DESFireISO7816Commands> cmd,
+                         std::shared_ptr<logicalaccess::DESFireEV1ISO7816Commands> cmdev1)
 {
     // create the application we wish to write into
-    cmdev1->createApplication(0x535, logicalaccess::DESFireKeySettings::KS_DEFAULT,
-                              3, logicalaccess::DESFireKeyType::DF_KEY_AES,
-                              logicalaccess::FIDS_NO_ISO_FID, 0,
-                              ByteVector());
+    cmdev1->createApplication(0x535, logicalaccess::DESFireKeySettings::KS_DEFAULT, 3,
+                              logicalaccess::DESFireKeyType::DF_KEY_AES,
+                              logicalaccess::FIDS_NO_ISO_FID, 0, ByteVector());
     cmd->selectApplication(0x535);
 
     std::shared_ptr<logicalaccess::DESFireKey> key(new logicalaccess::DESFireKey());
@@ -114,18 +108,15 @@ void create_app_and_file(
     ByteVector bla(key->getData(), key->getData() + key->getLength());
 
     using namespace logicalaccess;
-    key->setKeyStorage(
-        std::make_shared<IKSStorage>("imported-zero-aes"));
+    key->setKeyStorage(std::make_shared<IKSStorage>("imported-zero-aes"));
     cmd->authenticate(0, key);
 
-    std::shared_ptr<DESFireKey> new_key(
-        new DESFireKey());
+    std::shared_ptr<DESFireKey> new_key(new DESFireKey());
     new_key->setKeyType(DF_KEY_AES);
     auto div = std::make_shared<NXPAV2KeyDiversification>();
     div->setSystemIdentifier({'B', 'O', 'A', 'P'});
     new_key->setKeyDiversification(div);
-    new_key->setKeyStorage(
-        std::make_shared<IKSStorage>("imported-one-aes"));
+    new_key->setKeyStorage(std::make_shared<IKSStorage>("imported-one-aes"));
 
     // We can do everything with key1
     DESFireAccessRights ar;
@@ -136,13 +127,12 @@ void create_app_and_file(
 
     // Create the file we will use.
     int file_size = 16;
-    cmdev1->createStdDataFile(0x00, CM_ENCRYPT, ar,
-                              file_size, 0);
+    cmdev1->createStdDataFile(0x00, CM_ENCRYPT, ar, file_size, 0);
     cmd->authenticate(0, key);
 
     std::shared_ptr<DESFireChip> dchip =
-		std::dynamic_pointer_cast<DESFireChip>(cmd->getChip());
-	dchip->getCrypto()->setKey(0x535, 0, 0, key);
+        std::dynamic_pointer_cast<DESFireChip>(cmd->getChip());
+    dchip->getCrypto()->setKey(0x535, 0, 0, key);
 
     cmd->changeKey(0, new_key);
 }
@@ -161,22 +151,18 @@ int main(int ac, char **av)
                << logicalaccess::BufferHelper::getHex(chip->getChipIdentifier()));
 
     LLA_ASSERT(chip->getCardType() == "DESFireEV1",
-               "Chip is not an DESFireEV1, but is " + chip->getCardType() +
-                   " instead.");
+               "Chip is not an DESFireEV1, but is " + chip->getCardType() + " instead.");
 
-    auto storage = std::dynamic_pointer_cast<StorageCardService>(
-        chip->getService(CST_STORAGE));
+    auto storage =
+        std::dynamic_pointer_cast<StorageCardService>(chip->getService(CST_STORAGE));
 
-    auto cmd = std::dynamic_pointer_cast<DESFireISO7816Commands>(
-        chip->getCommands());
+    auto cmd = std::dynamic_pointer_cast<DESFireISO7816Commands>(chip->getCommands());
     std::shared_ptr<DESFireEV1ISO7816Commands> cmdev1 =
-        std::dynamic_pointer_cast<DESFireEV1ISO7816Commands>(
-            chip->getCommands());
+        std::dynamic_pointer_cast<DESFireEV1ISO7816Commands>(chip->getCommands());
 
     std::shared_ptr<DESFireKey> key(new DESFireKey());
     key->setKeyType(DF_KEY_DES);
-    key->setKeyStorage(
-        std::make_shared<IKSStorage>("imported-zero-des"));
+    key->setKeyStorage(std::make_shared<IKSStorage>("imported-zero-des"));
     cmd->selectApplication(0x00);
     cmd->authenticate(0, key);
     /// 1 command line parameter will format card

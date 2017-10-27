@@ -8,12 +8,11 @@
 
 namespace KBDHOOK
 {
-	class InputDevice
-	{
-		public:
-
-			static std::vector<logicalaccess::KeyboardEntry> getDeviceList();
-	};
+class InputDevice
+{
+  public:
+    static std::vector<logicalaccess::KeyboardEntry> getDeviceList();
+};
 }
 
 #endif
