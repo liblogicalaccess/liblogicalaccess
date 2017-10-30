@@ -1,12 +1,12 @@
 /**
- * \file corporate1000format.cpp
+ * \file Wiegand35Format.cpp
  * \author Arnaud H <arnaud-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
  * \brief Corporate 1000 format.
  */
 
 #include <cstring>
 #include <boost/property_tree/ptree.hpp>
-#include "logicalaccess/services/accesscontrol/formats/corporate1000format.hpp"
+#include "logicalaccess/services/accesscontrol/formats/wiegand35format.hpp"
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 #include "logicalaccess/services/accesscontrol/encodings/binarydatatype.hpp"
 #include "logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp"
@@ -16,7 +16,7 @@
 
 namespace logicalaccess
 {
-Corporate1000Format::Corporate1000Format()
+Wiegand35Format::Wiegand35Format()
     : StaticFormat()
 {
     d_dataType.reset(new BinaryDataType());
@@ -39,28 +39,28 @@ Corporate1000Format::Corporate1000Format()
     d_fieldList.push_back(ccField);
 }
 
-Corporate1000Format::~Corporate1000Format()
+Wiegand35Format::~Wiegand35Format()
 {
 }
 
-unsigned int Corporate1000Format::getDataLength() const
+unsigned int Wiegand35Format::getDataLength() const
 {
     return 35;
 }
 
-std::string Corporate1000Format::getName() const
+std::string Wiegand35Format::getName() const
 {
     return std::string("Wiegand 35"); // Corporate 1000
 }
 
-unsigned short int Corporate1000Format::getCompanyCode() const
+unsigned short int Wiegand35Format::getCompanyCode() const
 {
     std::shared_ptr<NumberDataField> field =
         std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("CompanyCode"));
     return static_cast<unsigned short int>(field->getValue());
 }
 
-void Corporate1000Format::setCompanyCode(unsigned short int companyCode)
+void Wiegand35Format::setCompanyCode(unsigned short int companyCode)
 {
     std::shared_ptr<NumberDataField> field =
         std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("CompanyCode"));
@@ -68,7 +68,7 @@ void Corporate1000Format::setCompanyCode(unsigned short int companyCode)
     d_formatLinear.d_companyCode = companyCode;
 }
 
-unsigned char Corporate1000Format::getLeftParity1(const BitsetStream &data)
+unsigned char Wiegand35Format::getLeftParity1(const BitsetStream &data)
 {
     unsigned char parity = 0x00;
 
@@ -80,7 +80,7 @@ unsigned char Corporate1000Format::getLeftParity1(const BitsetStream &data)
     return parity;
 }
 
-unsigned char Corporate1000Format::getLeftParity2(const BitsetStream &data)
+unsigned char Wiegand35Format::getLeftParity2(const BitsetStream &data)
 {
     unsigned char parity = 0x00;
 
@@ -115,7 +115,7 @@ unsigned char Corporate1000Format::getLeftParity2(const BitsetStream &data)
     return parity;
 }
 
-unsigned char Corporate1000Format::getRightParity(const BitsetStream &data)
+unsigned char Wiegand35Format::getRightParity(const BitsetStream &data)
 {
     unsigned char parity = 0x00;
 
@@ -150,7 +150,7 @@ unsigned char Corporate1000Format::getRightParity(const BitsetStream &data)
     return parity;
 }
 
-ByteVector Corporate1000Format::getLinearData() const
+ByteVector Wiegand35Format::getLinearData() const
 {
     BitsetStream data;
     data.append(0x00, 0, 2);
@@ -169,7 +169,7 @@ ByteVector Corporate1000Format::getLinearData() const
     return data.getData();
 }
 
-void Corporate1000Format::setLinearData(const ByteVector &data)
+void Wiegand35Format::setLinearData(const ByteVector &data)
 {
     unsigned int pos = 2;
     BitsetStream _data;
@@ -211,7 +211,7 @@ void Corporate1000Format::setLinearData(const ByteVector &data)
     }
 }
 
-size_t Corporate1000Format::getFormatLinearData(ByteVector &data) const
+size_t Wiegand35Format::getFormatLinearData(ByteVector &data) const
 {
     size_t retLength = sizeof(d_formatLinear);
     data.reserve(retLength);
@@ -224,7 +224,7 @@ size_t Corporate1000Format::getFormatLinearData(ByteVector &data) const
     return retLength;
 }
 
-void Corporate1000Format::setFormatLinearData(const ByteVector &data, size_t *indexByte)
+void Wiegand35Format::setFormatLinearData(const ByteVector &data, size_t *indexByte)
 {
     memcpy(&d_formatLinear, &data[*indexByte], sizeof(d_formatLinear));
     (*indexByte) += sizeof(d_formatLinear);
@@ -232,12 +232,12 @@ void Corporate1000Format::setFormatLinearData(const ByteVector &data, size_t *in
     setCompanyCode(d_formatLinear.d_companyCode);
 }
 
-FormatType Corporate1000Format::getType() const
+FormatType Wiegand35Format::getType() const
 {
-    return FT_CORPORATE1000;
+    return FT_WIEGAND35;
 }
 
-void Corporate1000Format::serialize(boost::property_tree::ptree &parentNode)
+void Wiegand35Format::serialize(boost::property_tree::ptree &parentNode)
 {
     boost::property_tree::ptree node;
 
@@ -248,24 +248,24 @@ void Corporate1000Format::serialize(boost::property_tree::ptree &parentNode)
     parentNode.add_child(getDefaultXmlNodeName(), node);
 }
 
-void Corporate1000Format::unSerialize(boost::property_tree::ptree &node)
+void Wiegand35Format::unSerialize(boost::property_tree::ptree &node)
 {
     setCompanyCode(node.get_child("CompanyCode").get_value<unsigned short>());
     setUid(node.get_child("Uid").get_value<unsigned long long>());
 }
 
-std::string Corporate1000Format::getDefaultXmlNodeName() const
+std::string Wiegand35Format::getDefaultXmlNodeName() const
 {
-    return "Corporate1000Format";
+    return "Wiegand35Format";
 }
 
-bool Corporate1000Format::checkSkeleton(std::shared_ptr<Format> format) const
+bool Wiegand35Format::checkSkeleton(std::shared_ptr<Format> format) const
 {
     bool ret = false;
     if (format)
     {
-        std::shared_ptr<Corporate1000Format> pFormat =
-            std::dynamic_pointer_cast<Corporate1000Format>(format);
+        std::shared_ptr<Wiegand35Format> pFormat =
+            std::dynamic_pointer_cast<Wiegand35Format>(format);
         if (pFormat)
         {
             ret = ((d_formatLinear.d_companyCode == 0 ||
@@ -275,7 +275,7 @@ bool Corporate1000Format::checkSkeleton(std::shared_ptr<Format> format) const
     return ret;
 }
 
-bool Corporate1000Format::needUserConfigurationToBeUse() const
+bool Wiegand35Format::needUserConfigurationToBeUse() const
 {
     return false;
 }

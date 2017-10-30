@@ -12,7 +12,7 @@
 #include "logicalaccess/services/accesscontrol/formats/wiegand34withfacilityformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/wiegand37format.hpp"
 #include "logicalaccess/services/accesscontrol/formats/wiegand37withfacilityformat.hpp"
-#include "logicalaccess/services/accesscontrol/formats/corporate1000format.hpp"
+#include "logicalaccess/services/accesscontrol/formats/wiegand35format.hpp"
 #include "logicalaccess/services/accesscontrol/formats/dataclockformat.hpp"
 
 namespace logicalaccess
@@ -97,7 +97,7 @@ FormatList AccessControlCardService::getHIDWiegandFormatList() const
     formats.push_back(std::make_shared<Wiegand37Format>());
     formats.push_back(std::make_shared<Wiegand37WithFacilityFormat>());
     formats.push_back(std::make_shared<DataClockFormat>());
-    formats.push_back(std::make_shared<Corporate1000Format>());
+    formats.push_back(std::make_shared<Wiegand35Format>());
 
     return formats;
 }

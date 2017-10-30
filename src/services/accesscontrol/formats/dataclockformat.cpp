@@ -41,7 +41,7 @@ unsigned int DataClockFormat::getDataLength() const
 
 std::string DataClockFormat::getName() const
 {
-    return std::string("Data clock");
+    return std::string("Data Clock");
 }
 
 size_t DataClockFormat::getFormatLinearData(ByteVector & /*data*/) const

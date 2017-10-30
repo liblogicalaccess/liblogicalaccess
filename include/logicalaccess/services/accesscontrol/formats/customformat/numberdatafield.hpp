@@ -8,6 +8,7 @@
 #define LOGICALACCESS_NUMBERDATAFIELD_HPP
 
 #include "logicalaccess/services/accesscontrol/formats/customformat/valuedatafield.hpp"
+#include "logicalaccess/msliblogicalaccess.h"
 
 namespace logicalaccess
 {

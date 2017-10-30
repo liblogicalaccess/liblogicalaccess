@@ -12,7 +12,7 @@
 #include "../readercardadapters/idondemandreadercardadapter.hpp"
 #include "logicalaccess/services/accesscontrol/formats/wiegand26format.hpp"
 #include "logicalaccess/services/accesscontrol/formats/wiegand34withfacilityformat.hpp"
-#include "logicalaccess/services/accesscontrol/formats/corporate1000format.hpp"
+#include "logicalaccess/services/accesscontrol/formats/wiegand35format.hpp"
 #include "logicalaccess/services/accesscontrol/formats/wiegand37format.hpp"
 #include "logicalaccess/services/accesscontrol/formats/wiegand37withfacilityformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/customformat/customformat.hpp"
@@ -79,10 +79,10 @@ bool GenericTagIdOnDemandAccessControlCardService::writeFormat(
         cmdstr = std::string(tmp);
         break;
     }
-    case FT_CORPORATE1000:
+    case FT_WIEGAND35:
     {
-        std::shared_ptr<Corporate1000Format> wf =
-            std::dynamic_pointer_cast<Corporate1000Format>(format);
+        std::shared_ptr<Wiegand35Format> wf =
+            std::dynamic_pointer_cast<Wiegand35Format>(format);
 #if defined(__unix__)
         sprintf(tmp, "Wiegand 35 %d %llud 3", wf->getCompanyCode(), wf->getUid());
 #else

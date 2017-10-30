@@ -1,21 +1,21 @@
 /**
- * \file hidhoneywellformat.cpp
+ * \file HIDHoneywell40BitFormat.cpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief HID Honeywell Format.
  */
 
 #include <boost/property_tree/ptree.hpp>
 #include "logicalaccess/myexception.hpp"
-#include "logicalaccess/services/accesscontrol/formats/hidhoneywellformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 #include "logicalaccess/services/accesscontrol/encodings/binarydatatype.hpp"
 #include "logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp"
 
 #include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
+#include "logicalaccess/services/accesscontrol/formats/hidhoneywell40bitformat.hpp"
 
 namespace logicalaccess
 {
-HIDHoneywellFormat::HIDHoneywellFormat()
+HIDHoneywell40BitFormat::HIDHoneywell40BitFormat()
     : StaticFormat()
 {
     d_dataType.reset(new BinaryDataType());
@@ -38,28 +38,28 @@ HIDHoneywellFormat::HIDHoneywellFormat()
     d_fieldList.push_back(field);
 }
 
-HIDHoneywellFormat::~HIDHoneywellFormat()
+HIDHoneywell40BitFormat::~HIDHoneywell40BitFormat()
 {
 }
 
-unsigned int HIDHoneywellFormat::getDataLength() const
+unsigned int HIDHoneywell40BitFormat::getDataLength() const
 {
     return 40;
 }
 
-std::string HIDHoneywellFormat::getName() const
+std::string HIDHoneywell40BitFormat::getName() const
 {
     return std::string("HID Honeywell 40-Bit");
 }
 
-unsigned short int HIDHoneywellFormat::getFacilityCode() const
+unsigned short int HIDHoneywell40BitFormat::getFacilityCode() const
 {
     std::shared_ptr<NumberDataField> field =
         std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("FacilityCode"));
     return static_cast<unsigned short int>(field->getValue());
 }
 
-void HIDHoneywellFormat::setFacilityCode(unsigned short int facilityCode)
+void HIDHoneywell40BitFormat::setFacilityCode(unsigned short int facilityCode)
 {
     std::shared_ptr<NumberDataField> field =
         std::dynamic_pointer_cast<NumberDataField>(getFieldFromName("FacilityCode"));
@@ -67,23 +67,23 @@ void HIDHoneywellFormat::setFacilityCode(unsigned short int facilityCode)
     d_formatLinear.d_facilityCode = facilityCode;
 }
 
-size_t HIDHoneywellFormat::getFormatLinearData(ByteVector & /*data*/) const
+size_t HIDHoneywell40BitFormat::getFormatLinearData(ByteVector & /*data*/) const
 {
     return 0;
 }
 
-void HIDHoneywellFormat::setFormatLinearData(const ByteVector & /*data*/,
+void HIDHoneywell40BitFormat::setFormatLinearData(const ByteVector & /*data*/,
                                              size_t * /*indexByte*/)
 {
     // DOES NOTHING
 }
 
-FormatType HIDHoneywellFormat::getType() const
+FormatType HIDHoneywell40BitFormat::getType() const
 {
     return FT_HIDHONEYWELL;
 }
 
-void HIDHoneywellFormat::serialize(boost::property_tree::ptree &parentNode)
+void HIDHoneywell40BitFormat::serialize(boost::property_tree::ptree &parentNode)
 {
     boost::property_tree::ptree node;
 
@@ -94,24 +94,24 @@ void HIDHoneywellFormat::serialize(boost::property_tree::ptree &parentNode)
     parentNode.add_child(getDefaultXmlNodeName(), node);
 }
 
-void HIDHoneywellFormat::unSerialize(boost::property_tree::ptree &node)
+void HIDHoneywell40BitFormat::unSerialize(boost::property_tree::ptree &node)
 {
     setFacilityCode(node.get_child("FacilityCode").get_value<unsigned short>());
     setUid(node.get_child("Uid").get_value<unsigned short>());
 }
 
-std::string HIDHoneywellFormat::getDefaultXmlNodeName() const
+std::string HIDHoneywell40BitFormat::getDefaultXmlNodeName() const
 {
-    return "HIDHoneywellFormat";
+    return "HIDHoneywell40BitFormat";
 }
 
-bool HIDHoneywellFormat::checkSkeleton(std::shared_ptr<Format> format) const
+bool HIDHoneywell40BitFormat::checkSkeleton(std::shared_ptr<Format> format) const
 {
     bool ret = false;
     if (format)
     {
-        std::shared_ptr<HIDHoneywellFormat> pFormat =
-            std::dynamic_pointer_cast<HIDHoneywellFormat>(format);
+        std::shared_ptr<HIDHoneywell40BitFormat> pFormat =
+            std::dynamic_pointer_cast<HIDHoneywell40BitFormat>(format);
         if (pFormat)
         {
             ret = ((d_formatLinear.d_facilityCode == 0 ||
@@ -121,7 +121,7 @@ bool HIDHoneywellFormat::checkSkeleton(std::shared_ptr<Format> format) const
     return ret;
 }
 
-unsigned char HIDHoneywellFormat::getRightParity(const BitsetStream &data,
+unsigned char HIDHoneywell40BitFormat::getRightParity(const BitsetStream &data,
                                                  unsigned char rpNo)
 {
     unsigned char parity = 0x00;
@@ -139,7 +139,7 @@ unsigned char HIDHoneywellFormat::getRightParity(const BitsetStream &data,
     return parity;
 }
 
-ByteVector HIDHoneywellFormat::getLinearData() const
+ByteVector HIDHoneywell40BitFormat::getLinearData() const
 {
     BitsetStream data;
 
@@ -155,7 +155,7 @@ ByteVector HIDHoneywellFormat::getLinearData() const
     return data.getData();
 }
 
-void HIDHoneywellFormat::setLinearData(const ByteVector &data)
+void HIDHoneywell40BitFormat::setLinearData(const ByteVector &data)
 {
     unsigned int pos = 0;
     BitsetStream _data;

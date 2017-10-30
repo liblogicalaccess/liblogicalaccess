@@ -33,7 +33,7 @@ typedef enum {
     FT_WIEGAND37FACILITY   = 0x06,
     FT_WIEGANDFLEXIBLE     = 0x07, /** Removed, use Custom now */
     FT_ASCII               = 0x08,
-    FT_CORPORATE1000       = 0x09,
+    FT_WIEGAND35           = 0x09,
     FT_DATACLOCK           = 0x0A,
     FT_FASCN200BIT         = 0x0B,
     FT_HIDHONEYWELL        = 0x0C,

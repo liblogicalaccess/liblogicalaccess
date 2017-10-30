@@ -1,11 +1,11 @@
 /**
- * \file hidhoneywellformat.hpp
+ * \file HIDHoneywell40BitFormat.hpp
  * \author Maxime C. <maxime-dev@islog.com>
  * \brief HID Honeywell Format.
  */
 
-#ifndef LOGICALACCESS_HIDHONEYWELLFORMAT_HPP
-#define LOGICALACCESS_HIDHONEYWELLFORMAT_HPP
+#ifndef LOGICALACCESS_HIDHONEYWELL40BITFORMAT_HPP
+#define LOGICALACCESS_HIDHONEYWELL40BITFORMAT_HPP
 
 #include "logicalaccess/services/accesscontrol/formats/staticformat.hpp"
 
@@ -14,18 +14,18 @@ namespace logicalaccess
 /**
  * \brief A HID Honeywell format class.
  */
-class LIBLOGICALACCESS_API HIDHoneywellFormat : public StaticFormat
+class LIBLOGICALACCESS_API HIDHoneywell40BitFormat : public StaticFormat
 {
   public:
     /**
      * \brief Constructor.
      */
-    HIDHoneywellFormat();
+    HIDHoneywell40BitFormat();
 
     /**
      * \brief Destructor.
      */
-    virtual ~HIDHoneywellFormat();
+    virtual ~HIDHoneywell40BitFormat();
 
     /**
      * \brief Get the format length in bits
@@ -129,4 +129,4 @@ class LIBLOGICALACCESS_API HIDHoneywellFormat : public StaticFormat
 };
 }
 
-#endif /* LOGICALACCESS_HIDHONEYWELLFORMAT_HPP */
+#endif /* LOGICALACCESS_HIDHONEYWELL40BITFORMAT_HPP */

@@ -10,14 +10,15 @@
 #include "logicalaccess/services/accesscontrol/formats/wiegand34withfacilityformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/wiegand37format.hpp"
 #include "logicalaccess/services/accesscontrol/formats/wiegand37withfacilityformat.hpp"
-#include "logicalaccess/services/accesscontrol/formats/corporate1000format.hpp"
+#include "logicalaccess/services/accesscontrol/formats/wiegand35format.hpp"
 #include "logicalaccess/services/accesscontrol/formats/dataclockformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/fascn200bitformat.hpp"
-#include "logicalaccess/services/accesscontrol/formats/hidhoneywellformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/hidhoneywell40bitformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/getronik40bitformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/bariumferritepcscformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/rawformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/customformat/customformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/asciiformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
 
 #include "logicalaccess/services/accesscontrol/formats/customformat/stringdatafield.hpp"
@@ -115,13 +116,13 @@ std::shared_ptr<Format> Format::getByFormatType(FormatType type)
 
     case FT_WIEGAND37FACILITY: ret.reset(new Wiegand37WithFacilityFormat()); break;
 
-    case FT_CORPORATE1000: ret.reset(new Corporate1000Format()); break;
+    case FT_WIEGAND35: ret.reset(new Wiegand35Format()); break;
 
     case FT_DATACLOCK: ret.reset(new DataClockFormat()); break;
 
     case FT_FASCN200BIT: ret.reset(new FASCN200BitFormat()); break;
 
-    case FT_HIDHONEYWELL: ret.reset(new HIDHoneywellFormat()); break;
+    case FT_HIDHONEYWELL: ret.reset(new HIDHoneywell40BitFormat()); break;
 
     case FT_GETRONIK40BIT: ret.reset(new Getronik40BitFormat()); break;
 
@@ -130,6 +131,8 @@ std::shared_ptr<Format> Format::getByFormatType(FormatType type)
     case FT_RAW: ret.reset(new RawFormat()); break;
 
     case FT_CUSTOM: ret.reset(new CustomFormat()); break;
+
+    case FT_ASCII: ret.reset(new ASCIIFormat()); break;
 
     default: break;
     }

@@ -2,7 +2,7 @@
 
 #include "logicalaccess/lla_fwd.hpp"
 #include "logicalaccess/logicalaccess_api.hpp"
-#include <logicalaccess/services/accesscontrol/formats/corporate1000format.hpp>
+#include <logicalaccess/services/accesscontrol/formats/wiegand35format.hpp>
 #include <logicalaccess/services/accesscontrol/formats/wiegand26format.hpp>
 #include <logicalaccess/services/accesscontrol/formats/wiegand34withfacilityformat.hpp>
 #include <logicalaccess/services/accesscontrol/formats/wiegand37withfacilityformat.hpp>

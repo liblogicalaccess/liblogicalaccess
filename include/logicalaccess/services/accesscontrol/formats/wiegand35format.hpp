@@ -1,20 +1,20 @@
 /**
- * \file corporate1000format.hpp
+ * \file Wiegand35Format.hpp
  * \author Arnaud H <arnaud-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
  * \brief Corporate 1000 format.
  */
 
-#ifndef LOGICALACCESS_CORPORATE1000FORMAT_HPP
-#define LOGICALACCESS_CORPORATE1000FORMAT_HPP
+#ifndef LOGICALACCESS_WIEGAND35FORMAT_HPP
+#define LOGICALACCESS_WIEGAND35FORMAT_HPP
 
 #include "logicalaccess/services/accesscontrol/formats/staticformat.hpp"
 
 namespace logicalaccess
 {
 /**
- * \brief A Corporate 1000 format class.
+ * \brief A Wiegand 35 format class. Also known as Corporate 1000
  */
-class LIBLOGICALACCESS_API Corporate1000Format : public StaticFormat
+class LIBLOGICALACCESS_API Wiegand35Format : public StaticFormat
 {
   public:
     /**
@@ -22,14 +22,14 @@ class LIBLOGICALACCESS_API Corporate1000Format : public StaticFormat
      *
      * Create a Corporate 1000 format.
      */
-    Corporate1000Format();
+    Wiegand35Format();
 
     /**
      * \brief Destructor.
      *
      * Release the Corporate 1000 format.
      */
-    virtual ~Corporate1000Format();
+    virtual ~Wiegand35Format();
 
     /**
      * \brief Get the format length in bits
@@ -154,4 +154,4 @@ class LIBLOGICALACCESS_API Corporate1000Format : public StaticFormat
 };
 }
 
-#endif /* LOGICALACCESS_CORPORATE1000FORMAT_HPP */
+#endif /* LOGICALACCESS_WIEGAND35FORMAT_HPP */
