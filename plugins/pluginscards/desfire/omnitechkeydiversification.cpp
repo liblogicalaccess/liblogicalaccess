@@ -11,7 +11,7 @@
 
 namespace logicalaccess
 {
-void OmnitechKeyDiversification::initDiversification(ByteVector identifier, int /*AID*/,
+void OmnitechKeyDiversification::initDiversification(ByteVector identifier, unsigned int /*AID*/,
                                                      std::shared_ptr<Key> /*key*/,
                                                      unsigned char /*keyno*/,
                                                      ByteVector &diversify)

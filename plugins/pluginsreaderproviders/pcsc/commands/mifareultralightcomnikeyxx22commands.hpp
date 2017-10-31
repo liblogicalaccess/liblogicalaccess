@@ -42,9 +42,10 @@ class LIBLOGICALACCESS_API MifareUltralightCOmnikeyXX22Commands
     */
     void authenticate(std::shared_ptr<TripleDESKey> authkey) override;
 
-    std::shared_ptr<MifareUltralightChip> getMifareUltralightChip() override;
-
     void writePage(int page, const ByteVector &buf) override;
+
+protected:
+    std::shared_ptr<MifareUltralightChip> getMifareUltralightChip() override;
 };
 }
 

@@ -482,7 +482,7 @@ class LIBLOGICALACCESS_API DESFireCrypto
     /**
      * \brief The current Application ID.
      */
-    int d_currentAid;
+    unsigned int d_currentAid;
 
     /**
      * \brief The current Key number.
