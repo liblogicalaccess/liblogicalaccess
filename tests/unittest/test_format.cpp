@@ -15,11 +15,11 @@
 #include "logicalaccess/services/accesscontrol/formats/wiegand37withfacilityrightparity2format.hpp"
 #include "logicalaccess/services/accesscontrol/formats/asciiformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/bariumferritepcscformat.hpp"
-#include "logicalaccess/services/accesscontrol/formats/corporate1000format.hpp"
+#include "logicalaccess/services/accesscontrol/formats/wiegand35format.hpp"
 #include "logicalaccess/services/accesscontrol/formats/dataclockformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/fascn200bitformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/getronik40bitformat.hpp"
-#include "logicalaccess/services/accesscontrol/formats/hidhoneywellformat.hpp"
+#include "logicalaccess/services/accesscontrol/formats/hidhoneywell40bitformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/rawformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/customformat/customformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/customformat/binarydatafield.hpp"
@@ -132,18 +132,18 @@ TEST(test_format_utils, test_format_ASCIIFormat)
     ASSERT_EQ(formatASCII->getASCIIValue(), message);
 }
 
-TEST(test_format_utils, test_format_Corporate1000Format)
+TEST(test_format_utils, test_format_Wiegand35format)
 {
-    auto formatCorporate1000 = std::make_shared<Corporate1000Format>();
-    formatCorporate1000->setUid(39248);
-    formatCorporate1000->setCompanyCode(235);
-    auto formatBuf = formatCorporate1000->getLinearData();
+    auto formatWiegand35 = std::make_shared<Wiegand35Format>();
+    formatWiegand35->setUid(39248);
+    formatWiegand35->setCompanyCode(235);
+    auto formatBuf = formatWiegand35->getLinearData();
     auto result    = std::vector<unsigned char>({0xc3, 0xac, 0x26, 0x54, 0x20});
     ASSERT_EQ(formatBuf, result);
-    formatCorporate1000 = std::make_shared<Corporate1000Format>();
-    formatCorporate1000->setLinearData(result);
-    ASSERT_EQ(formatCorporate1000->getUid(), 39248);
-    ASSERT_EQ(formatCorporate1000->getCompanyCode(), 235);
+    formatWiegand35 = std::make_shared<Wiegand35Format>();
+    formatWiegand35->setLinearData(result);
+    ASSERT_EQ(formatWiegand35->getUid(), 39248);
+    ASSERT_EQ(formatWiegand35->getCompanyCode(), 235);
 }
 
 TEST(test_format_utils, test_format_DataClockFormat)
@@ -201,19 +201,19 @@ TEST(test_format_utils, test_format_Getronik40BitFormat)
     ASSERT_EQ(formatGetronik40->getField(), 5671);
 }
 
-TEST(test_format_utils, test_format_HIDHoneywellFormat)
+TEST(test_format_utils, test_format_HIDHoneywell40Bit)
 {
 
-    auto formatHIDHoneywell = std::make_shared<HIDHoneywellFormat>();
-    formatHIDHoneywell->setUid(17866);
-    formatHIDHoneywell->setFacilityCode(895);
-    auto formatBuf = formatHIDHoneywell->getLinearData();
+    auto formatHIDHoneywell40Bit = std::make_shared<HIDHoneywell40Bit>();
+    formatHIDHoneywell40Bit->setUid(17866);
+    formatHIDHoneywell40Bit->setFacilityCode(895);
+    auto formatBuf = formatHIDHoneywell40Bit->getLinearData();
     auto result    = std::vector<unsigned char>({0xf3, 0x7f, 0x45, 0xca, 0x03});
     ASSERT_EQ(formatBuf, result);
-    formatHIDHoneywell = std::make_shared<HIDHoneywellFormat>();
-    formatHIDHoneywell->setLinearData(result);
-    ASSERT_EQ(formatHIDHoneywell->getUid(), 17866);
-    ASSERT_EQ(formatHIDHoneywell->getFacilityCode(), 895);
+    formatHIDHoneywell40Bit = std::make_shared<HIDHoneywell40Bit>();
+    formatHIDHoneywell40Bit->setLinearData(result);
+    ASSERT_EQ(formatHIDHoneywell40Bit->getUid(), 17866);
+    ASSERT_EQ(formatHIDHoneywell40Bit->getFacilityCode(), 895);
 }
 
 TEST(test_format_utils, test_format_FASCN200BitFormat)
