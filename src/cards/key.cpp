@@ -44,7 +44,7 @@ void Key::clear()
     }
 }
 
-std::string Key::toString(bool withSpace) const
+std::string Key::getString(bool withSpace) const
 {
     const unsigned char *data = getData();
     std::ostringstream oss;
@@ -197,7 +197,7 @@ void Key::cipherKeyData(boost::property_tree::ptree &node)
 {
     if (!d_storeCipheredData || d_isEmpty)
     {
-        node.put("Data", toString());
+        node.put("Data", getString());
     }
     else
     {
@@ -216,7 +216,7 @@ void Key::cipherKeyData(boost::property_tree::ptree &node)
         openssl::AESSymmetricKey divaes =
             openssl::AESSymmetricKey::createFromData(divaesbuf);
 
-        strdata           = toString();
+        strdata           = getString();
         ByteVector keybuf = ByteVector(strdata.begin(), strdata.end());
         ByteVector cipheredkey;
         aescipher.cipher(keybuf, cipheredkey, divaes, iv, true);
@@ -296,7 +296,7 @@ bool Key::operator!=(const Key &key) const
 
 std::ostream &operator<<(std::ostream &os, const Key &key)
 {
-    return os << key.toString();
+    return os << key.getString();
 }
 
 std::shared_ptr<KeyDiversification> Key::getKeyDiversification() const

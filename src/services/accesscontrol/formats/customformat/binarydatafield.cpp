@@ -93,12 +93,11 @@ unsigned char BinaryDataField::getPaddingChar() const
 
 BitsetStream BinaryDataField::getLinearData(const BitsetStream & /*data*/) const
 {
-
-    size_t fieldDataLengthBytes = (d_length + 7) / 8;
+    unsigned int fieldDataLengthBytes = (d_length + 7) / 8;
     ByteVector tmp(d_value.getData(), d_value.getData() + d_value.getLength());
 
     BitsetStream paddedBuffer(d_padding, fieldDataLengthBytes);
-    unsigned int copyValueLength = tmp.size() * 8 > d_length ? d_length : tmp.size() * 8;
+    unsigned int copyValueLength = static_cast<unsigned int>(tmp.size()) * 8 > d_length ? d_length : tmp.size() * 8;
     paddedBuffer.writeAt(0, tmp, 0, copyValueLength);
 
     BitsetStream dataTmp;
@@ -150,7 +149,7 @@ void BinaryDataField::serialize(boost::property_tree::ptree &parentNode)
     boost::property_tree::ptree node;
 
     ValueDataField::serialize(node);
-    node.put("Value", d_value.toString());
+    node.put("Value", d_value.getString());
     node.put("Padding", d_padding);
 
     parentNode.add_child(getDefaultXmlNodeName(), node);

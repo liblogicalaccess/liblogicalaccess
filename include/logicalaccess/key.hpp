@@ -67,7 +67,7 @@ class LIBLOGICALACCESS_API Key : public XmlSerializable,
      * \brief Get the string representation of the key.
      * \return The string representation of the key.
      */
-    std::string toString(bool withSpace = true) const;
+    std::string getString(bool withSpace = true) const;
 
     /**
      * \brief Get if key data are empty.

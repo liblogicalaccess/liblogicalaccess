@@ -192,7 +192,7 @@ void STidSTRReaderUnitConfiguration::setCommunicationMode(STidCommunicationMode 
 
 std::shared_ptr<HMAC1Key> STidSTRReaderUnitConfiguration::getHMACKey() const
 {
-    LOG(LogLevel::DEBUGS) << "Get HMAC key data {" << d_key_hmac->toString() << "}";
+    LOG(LogLevel::DEBUGS) << "Get HMAC key data {" << d_key_hmac->getString() << "}";
     return d_key_hmac;
 }
 
@@ -200,14 +200,14 @@ void STidSTRReaderUnitConfiguration::setHMACKey(std::shared_ptr<HMAC1Key> key)
 {
     if (key)
     {
-        LOG(LogLevel::DEBUGS) << "Set HMAC key data {" << key->toString() << "}";
+        LOG(LogLevel::DEBUGS) << "Set HMAC key data {" << key->getString() << "}";
         d_key_hmac = key;
     }
 }
 
 std::shared_ptr<AES128Key> STidSTRReaderUnitConfiguration::getAESKey() const
 {
-    LOG(LogLevel::DEBUGS) << "Get AES 128 key data {" << d_key_aes->toString() << "}";
+    LOG(LogLevel::DEBUGS) << "Get AES 128 key data {" << d_key_aes->getString() << "}";
     return d_key_aes;
 }
 
@@ -215,7 +215,7 @@ void STidSTRReaderUnitConfiguration::setAESKey(std::shared_ptr<AES128Key> key)
 {
     if (key)
     {
-        LOG(LogLevel::DEBUGS) << "Set AES 128 key data {" << key->toString() << "}";
+        LOG(LogLevel::DEBUGS) << "Set AES 128 key data {" << key->getString() << "}";
         d_key_aes = key;
     }
 }
