@@ -1326,6 +1326,8 @@ DESFireCommands::DESFireCardVersion DESFireEV1ISO7816Commands::getVersion()
     ByteVector allresult;
     std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 
+    memset(&dataVersion, 0x00, sizeof(dataVersion));
+
     ByteVector result = transmit_nomacv(DF_INS_GET_VERSION);
 
     if ((result.size() - 2) >= 7)
