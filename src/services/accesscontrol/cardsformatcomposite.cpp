@@ -55,56 +55,39 @@ CardsFormatComposite::createFormatFromXml(const std::string &xmlstring,
     return ret;
 }
 
-void CardsFormatComposite::addFormatForCard(std::string type,
-                                            std::shared_ptr<Format> format,
-                                            std::shared_ptr<Location> location,
-                                            std::shared_ptr<AccessInfo> aiToUse,
-                                            std::shared_ptr<AccessInfo> aiToWrite)
+void CardsFormatComposite::addFormatForCard(const std::string& type, const FormatInfos& formatInfos)
 {
     LOG(LogLevel::INFOS) << "Add format for card type {" << type << "}...";
     FormatInfos finfos;
-    finfos.format    = format;
-    finfos.location  = location;
-    finfos.aiToUse   = aiToUse;
-    finfos.aiToWrite = aiToWrite;
+    finfos.format    = formatInfos.format;
+    finfos.location  = formatInfos.location;
+    finfos.aiToUse   = formatInfos.aiToUse;
+    finfos.aiToWrite = formatInfos.aiToWrite;
 
     formatsList[type] = finfos;
 }
 
-void CardsFormatComposite::retrieveFormatForCard(std::string type,
-                                                 std::shared_ptr<Format> *format,
-                                                 std::shared_ptr<Location> *location,
-                                                 std::shared_ptr<AccessInfo> *aiToUse,
-                                                 std::shared_ptr<AccessInfo> *aiToWrite)
+FormatInfos CardsFormatComposite::retrieveFormatForCard(const std::string& type)
 {
+    FormatInfos result;
+
+    memset(&result, 0x00, sizeof(result));
+
     LOG(LogLevel::INFOS) << "Retrieving format for card type {" << type << "}...";
     if (formatsList.find(type) != formatsList.end())
     {
         LOG(LogLevel::INFOS) << "Type found int the composite. Retrieving values...";
-        *format   = formatsList[type].format;
-        *location = formatsList[type].location;
-        *aiToUse  = formatsList[type].aiToUse;
-        if (aiToWrite != nullptr)
-        {
-            *aiToWrite = formatsList[type].aiToWrite;
-        }
-        else
-        {
-            LOG(LogLevel::ERRORS)
-                << "aiToWrite parameter is null. Cannot retrieve write value.";
-        }
+        result.format   = formatsList[type].format;
+        result.location = formatsList[type].location;
+        result.aiToUse  = formatsList[type].aiToUse;
+        result.aiToWrite = formatsList[type].aiToWrite;
     }
     else
     {
         LOG(LogLevel::INFOS) << "No format found for this type.";
-        (*format).reset();
-        (*location).reset();
-        (*aiToUse).reset();
-        if (aiToWrite != nullptr)
-        {
-            (*aiToWrite).reset();
-        }
     }
+
+    return result;
 }
 
 CardTypeList CardsFormatComposite::getConfiguredCardTypes()
@@ -118,7 +101,7 @@ CardTypeList CardsFormatComposite::getConfiguredCardTypes()
     return ctList;
 }
 
-void CardsFormatComposite::removeFormatForCard(std::string type)
+void CardsFormatComposite::removeFormatForCard(const std::string& type)
 {
     formatsList.erase(type);
 }
