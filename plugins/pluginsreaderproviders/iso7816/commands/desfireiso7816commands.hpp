@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include "logicalaccess/cards/samkeystorage.hpp"
 
 namespace logicalaccess
 {
@@ -399,6 +400,8 @@ class LIBLOGICALACCESS_API DESFireISO7816Commands : public DESFireCommands
      */
     virtual ByteVector transmit(unsigned char cmd, const ByteVector &data = ByteVector(),
                                 unsigned char lc = 0, bool forceLc = false);
+
+    bool checkChangeKeySAMKeyStorage(unsigned char keyno, std::shared_ptr<DESFireKey> oldkey, std::shared_ptr<DESFireKey> key);
 
     /**
      * \brief The SAMChip used for the SAM Commands.

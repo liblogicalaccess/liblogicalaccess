@@ -185,7 +185,7 @@ DESFireISO7816Commands::getChangeKeySAMCryptogram(unsigned char keyno,
 
     if (oldkey && std::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage()))
     {
-        std::shared_ptr<SAMKeyStorage> oldsamks =
+        const std::shared_ptr<SAMKeyStorage> oldsamks =
             std::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage());
         samck.currentKeySlotNo = oldsamks->getKeySlot();
         samck.currentKeySlotV  = oldkey->getKeyVersion();
@@ -307,6 +307,26 @@ ByteVector DESFireISO7816Commands::getKeyInformations(std::shared_ptr<DESFireKey
     return diversify;
 }
 
+bool DESFireISO7816Commands::checkChangeKeySAMKeyStorage(unsigned char keyno, std::shared_ptr<DESFireKey> oldkey, std::shared_ptr<DESFireKey> key)
+{
+    std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
+    auto oldSamKeyStorage =
+        std::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage());
+    auto newSamKeyStorage =
+        std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
+    if ((oldSamKeyStorage && !oldSamKeyStorage->getDumpKey()) && !newSamKeyStorage)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+            "Both keys need to be set in the SAM.");
+
+    if (!oldSamKeyStorage
+        && !((crypto->d_currentKeyNo == 0 && keyno == 0) || (keyno == 0xE)) //oldKeyInvolvement false
+        && (newSamKeyStorage && !newSamKeyStorage->getDumpKey()))
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+            "Both keys need to be set in the SAM.");
+
+    return (oldSamKeyStorage && !oldSamKeyStorage->getDumpKey());
+}
+
 void DESFireISO7816Commands::changeKey(unsigned char keyno,
                                        std::shared_ptr<DESFireKey> newkey)
 {
@@ -316,19 +336,12 @@ void DESFireISO7816Commands::changeKey(unsigned char keyno,
     std::shared_ptr<DESFireKey> key = std::make_shared<DESFireKey>(*newkey);
     auto oldkey                     = crypto->getKey(0, keyno);
 
-    auto oldSamKeyStorage =
-        std::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage());
-    auto newSamKeyStorage =
-        std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
-    if (((oldSamKeyStorage && !oldSamKeyStorage->getDumpKey()) && !newSamKeyStorage) ||
-        (!oldSamKeyStorage && (newSamKeyStorage && !newSamKeyStorage->getDumpKey())))
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "Both keys need to be set in the SAM.");
+    bool samChangeKey = checkChangeKeySAMKeyStorage(keyno, oldkey, key);
 
     auto oldKeyDiversify = getKeyInformations(oldkey, keyno);
     auto newKeyDiversify = getKeyInformations(key, keyno);
 
-    if (oldSamKeyStorage && !oldSamKeyStorage->getDumpKey())
+    if (samChangeKey)
     {
         cryptogram = getChangeKeySAMCryptogram(keyno, key);
     }

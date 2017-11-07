@@ -1262,14 +1262,7 @@ void DESFireEV1ISO7816Commands::changeKey(unsigned char keyno,
     std::shared_ptr<DESFireKey> key       = std::make_shared<DESFireKey>(*newkey);
     auto oldkey                           = crypto->getKey(0, keyno);
 
-    auto oldSamKeyStorage =
-        std::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage());
-    auto newSamKeyStorage =
-        std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
-    if (((oldSamKeyStorage && !oldSamKeyStorage->getDumpKey()) && !newSamKeyStorage) ||
-        (!oldSamKeyStorage && (newSamKeyStorage && !newSamKeyStorage->getDumpKey())))
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "Both keys need to be set in the SAM.");
+    bool samChangeKey = checkChangeKeySAMKeyStorage(keyno, oldkey, key);
 
     auto oldKeyDiversify = getKeyInformations(crypto->getKey(0, keyno), keyno);
     auto newKeyDiversify = getKeyInformations(key, keyno);
@@ -1281,7 +1274,7 @@ void DESFireEV1ISO7816Commands::changeKey(unsigned char keyno,
     }
 
     ByteVector cryptogram;
-    if (oldSamKeyStorage && !oldSamKeyStorage->getDumpKey())
+    if (samChangeKey)
     {
         cryptogram = getChangeKeySAMCryptogram(keyno, key);
     }
