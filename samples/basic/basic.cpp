@@ -4,12 +4,12 @@
  * \brief Main file for the basic sample of the liblogicalaccess.
  */
 
-#include "logicalaccess/dynlibrary/idynlibrary.hpp"
-#include "logicalaccess/dynlibrary/librarymanager.hpp"
-#include "logicalaccess/readerproviders/readerconfiguration.hpp"
-#include "logicalaccess/services/storage/storagecardservice.hpp"
-#include "logicalaccess/services/nfctag/nfctagcardservice.hpp"
-#include "logicalaccess/cards/locationnode.hpp"
+#include <logicalaccess/dynlibrary/idynlibrary.hpp>
+#include <logicalaccess/dynlibrary/librarymanager.hpp>
+#include <logicalaccess/readerproviders/readerconfiguration.hpp>
+#include <logicalaccess/services/storage/storagecardservice.hpp>
+#include <logicalaccess/services/nfctag/nfctagcardservice.hpp>
+#include <logicalaccess/cards/locationnode.hpp>
 
 #include <iostream>
 #include <string>

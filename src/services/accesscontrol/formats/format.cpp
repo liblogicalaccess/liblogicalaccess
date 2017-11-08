@@ -4,29 +4,29 @@
  * \brief Format Base.
  */
 
-#include "logicalaccess/services/accesscontrol/formats/format.hpp"
-#include "logicalaccess/services/accesscontrol/formats/wiegand26format.hpp"
-#include "logicalaccess/services/accesscontrol/formats/wiegand34format.hpp"
-#include "logicalaccess/services/accesscontrol/formats/wiegand34withfacilityformat.hpp"
-#include "logicalaccess/services/accesscontrol/formats/wiegand37format.hpp"
-#include "logicalaccess/services/accesscontrol/formats/wiegand37withfacilityformat.hpp"
-#include "logicalaccess/services/accesscontrol/formats/wiegand35format.hpp"
-#include "logicalaccess/services/accesscontrol/formats/dataclockformat.hpp"
-#include "logicalaccess/services/accesscontrol/formats/fascn200bitformat.hpp"
-#include "logicalaccess/services/accesscontrol/formats/hidhoneywell40bitformat.hpp"
-#include "logicalaccess/services/accesscontrol/formats/getronik40bitformat.hpp"
-#include "logicalaccess/services/accesscontrol/formats/bariumferritepcscformat.hpp"
-#include "logicalaccess/services/accesscontrol/formats/rawformat.hpp"
-#include "logicalaccess/services/accesscontrol/formats/customformat/customformat.hpp"
-#include "logicalaccess/services/accesscontrol/formats/asciiformat.hpp"
-#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include <logicalaccess/services/accesscontrol/formats/format.hpp>
+#include <logicalaccess/services/accesscontrol/formats/wiegand26format.hpp>
+#include <logicalaccess/services/accesscontrol/formats/wiegand34format.hpp>
+#include <logicalaccess/services/accesscontrol/formats/wiegand34withfacilityformat.hpp>
+#include <logicalaccess/services/accesscontrol/formats/wiegand37format.hpp>
+#include <logicalaccess/services/accesscontrol/formats/wiegand37withfacilityformat.hpp>
+#include <logicalaccess/services/accesscontrol/formats/wiegand35format.hpp>
+#include <logicalaccess/services/accesscontrol/formats/dataclockformat.hpp>
+#include <logicalaccess/services/accesscontrol/formats/fascn200bitformat.hpp>
+#include <logicalaccess/services/accesscontrol/formats/hidhoneywell40bitformat.hpp>
+#include <logicalaccess/services/accesscontrol/formats/getronik40bitformat.hpp>
+#include <logicalaccess/services/accesscontrol/formats/bariumferritepcscformat.hpp>
+#include <logicalaccess/services/accesscontrol/formats/rawformat.hpp>
+#include <logicalaccess/services/accesscontrol/formats/customformat/customformat.hpp>
+#include <logicalaccess/services/accesscontrol/formats/asciiformat.hpp>
+#include <logicalaccess/services/accesscontrol/formats/bithelper.hpp>
 
-#include "logicalaccess/services/accesscontrol/formats/customformat/stringdatafield.hpp"
-#include "logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp"
-#include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
-#include "logicalaccess/services/accesscontrol/formats/customformat/paritydatafield.hpp"
-#include "logicalaccess/services/accesscontrol/formats/customformat/binarydatafield.hpp"
-#include "logicalaccess/bufferhelper.hpp"
+#include <logicalaccess/services/accesscontrol/formats/customformat/stringdatafield.hpp>
+#include <logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp>
+#include <logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp>
+#include <logicalaccess/services/accesscontrol/formats/customformat/paritydatafield.hpp>
+#include <logicalaccess/services/accesscontrol/formats/customformat/binarydatafield.hpp>
+#include <logicalaccess/bufferhelper.hpp>
 
 namespace logicalaccess
 {

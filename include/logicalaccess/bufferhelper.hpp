@@ -10,8 +10,8 @@
 #include <stdint.h>
 #include <vector>
 #include <string>
-#include "logicalaccess/logicalaccess_api.hpp"
-#include "logicalaccess/lla_fwd.hpp"
+#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/lla_fwd.hpp>
 
 namespace logicalaccess
 {

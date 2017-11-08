@@ -41,3 +41,7 @@ install_manifest.txt
 /*.db
 /*.opendb
 /.vs/liblogicalaccess/v15
+*.exp
+*.lib
+*.ilk
+*.pdb

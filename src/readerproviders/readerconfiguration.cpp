@@ -4,17 +4,17 @@
  * \brief Reader configuration.
  */
 
-#include "logicalaccess/myexception.hpp"
-#include "logicalaccess/readerproviders/readerprovider.hpp"
-#include "logicalaccess/readerproviders/readerconfiguration.hpp"
-#include "logicalaccess/cards/accessinfo.hpp"
-#include "logicalaccess/dynlibrary/idynlibrary.hpp"
+#include <logicalaccess/myexception.hpp>
+#include <logicalaccess/readerproviders/readerprovider.hpp>
+#include <logicalaccess/readerproviders/readerconfiguration.hpp>
+#include <logicalaccess/cards/accessinfo.hpp>
+#include <logicalaccess/dynlibrary/idynlibrary.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree.hpp>
-#include "logicalaccess/dynlibrary/librarymanager.hpp"
+#include <logicalaccess/dynlibrary/librarymanager.hpp>
 
-#include "logicalaccess/logs.hpp"
-#include "logicalaccess/settings.hpp"
+#include <logicalaccess/logs.hpp>
+#include <logicalaccess/settings.hpp>
 
 namespace logicalaccess
 {

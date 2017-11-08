@@ -1,5 +1,5 @@
-#include "../../../plugins/pluginscards/mifare/mifareaccessinfo.hpp"
-#include "lla-tests/macros.hpp"
+#include <logicalaccess/plugins/cards/mifare/mifareaccessinfo.hpp>
+#include <logicalaccess/plugins/lla-tests/macros.hpp>
 #include <array>
 
 int main(int, char **)

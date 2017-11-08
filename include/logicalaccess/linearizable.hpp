@@ -7,7 +7,7 @@
 #ifndef LINEARIZABLE_HPP
 #define LINEARIZABLE_HPP
 
-#include "logicalaccess/bufferhelper.hpp"
+#include <logicalaccess/bufferhelper.hpp>
 
 namespace logicalaccess
 {

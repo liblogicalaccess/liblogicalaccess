@@ -11,7 +11,7 @@
 #include <vector>
 #include <iostream>
 
-#include "logicalaccess/services/accesscontrol/formats/staticformat.hpp"
+#include <logicalaccess/services/accesscontrol/formats/staticformat.hpp>
 
 namespace logicalaccess
 {

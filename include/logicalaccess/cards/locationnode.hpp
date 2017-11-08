@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_LOCATIONNODE_HPP
 #define LOGICALACCESS_LOCATIONNODE_HPP
 
-#include "logicalaccess/cards/location.hpp"
+#include <logicalaccess/cards/location.hpp>
 
 #include <string>
 #include <vector>

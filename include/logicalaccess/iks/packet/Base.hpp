@@ -1,7 +1,7 @@
 #pragma once
 
-#include "logicalaccess/logicalaccess_api.hpp"
-#include "logicalaccess/utils.hpp"
+#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/utils.hpp>
 #include <cstddef>
 #include <cstdint>
 #include <memory>

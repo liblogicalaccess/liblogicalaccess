@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_WIEGAND35FORMAT_HPP
 #define LOGICALACCESS_WIEGAND35FORMAT_HPP
 
-#include "logicalaccess/services/accesscontrol/formats/staticformat.hpp"
+#include <logicalaccess/services/accesscontrol/formats/staticformat.hpp>
 
 namespace logicalaccess
 {

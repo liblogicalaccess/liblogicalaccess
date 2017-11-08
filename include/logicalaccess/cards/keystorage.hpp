@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_KEYSTORAGE_HPP
 #define LOGICALACCESS_KEYSTORAGE_HPP
 
-#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include <logicalaccess/readerproviders/readerprovider.hpp>
 
 namespace logicalaccess
 {

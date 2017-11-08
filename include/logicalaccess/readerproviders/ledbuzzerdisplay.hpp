@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_LEDBUZZERDISPLAY_HPP
 #define LOGICALACCESS_LEDBUZZERDISPLAY_HPP
 
-#include "logicalaccess/xmlserializable.hpp"
+#include <logicalaccess/xmlserializable.hpp>
 
 namespace logicalaccess
 {

@@ -4,8 +4,8 @@
  * \brief BigEndian Data Representation.
  */
 
-#include "logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp"
-#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include <logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp>
+#include <logicalaccess/services/accesscontrol/formats/bithelper.hpp>
 
 #ifdef __unix__
 #include <cstring>

@@ -1,10 +1,10 @@
-#include "logicalaccess/windowsregistry.hpp"
+#include <logicalaccess/windowsregistry.hpp>
 
 #ifdef _WIN32
 
-#include "windows.h"
-#include "Winreg.h"
-#include "logicalaccess/logs.hpp"
+#include <windows.h>
+#include <Winreg.h>
+#include <logicalaccess/logs.hpp>
 
 using namespace logicalaccess;
 

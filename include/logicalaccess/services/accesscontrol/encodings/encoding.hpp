@@ -9,7 +9,7 @@
 
 #include <string>
 
-#include "logicalaccess/logs.hpp"
+#include <logicalaccess/logs.hpp>
 
 namespace logicalaccess
 {

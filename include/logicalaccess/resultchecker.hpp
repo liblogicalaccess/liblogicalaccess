@@ -7,8 +7,8 @@
 #ifndef LOGICALACCESS_RESULTCHECKER_HPP
 #define LOGICALACCESS_RESULTCHECKER_HPP
 
-#include "logicalaccess_api.hpp"
-#include "myexception.hpp"
+#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/myexception.hpp>
 #include <iostream>
 #include <map>
 #include <tuple>

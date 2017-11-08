@@ -7,9 +7,9 @@
 #ifndef LOGICALACCESS_DATATYPE_HPP
 #define LOGICALACCESS_DATATYPE_HPP
 
-#include "logicalaccess/readerproviders/readerprovider.hpp"
-#include "logicalaccess/services/accesscontrol/encodings/encoding.hpp"
-#include "logicalaccess/services/accesscontrol/formats/BitsetStream.hpp"
+#include <logicalaccess/readerproviders/readerprovider.hpp>
+#include <logicalaccess/services/accesscontrol/encodings/encoding.hpp>
+#include <logicalaccess/services/accesscontrol/formats/BitsetStream.hpp>
 
 namespace logicalaccess
 {

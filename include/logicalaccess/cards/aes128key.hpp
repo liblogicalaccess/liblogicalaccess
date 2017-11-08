@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_AES128KEY_HPP
 #define LOGICALACCESS_AES128KEY_HPP
 
-#include "logicalaccess/key.hpp"
+#include <logicalaccess/key.hpp>
 
 /**
  * \brief The default aes 128-bit key size

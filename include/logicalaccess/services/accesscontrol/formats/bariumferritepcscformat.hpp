@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_BARIUMFERRITEPCSCFORMAT_H
 #define LOGICALACCESS_BARIUMFERRITEPCSCFORMAT_H
 
-#include "logicalaccess/services/accesscontrol/formats/staticformat.hpp"
+#include <logicalaccess/services/accesscontrol/formats/staticformat.hpp>
 
 namespace logicalaccess
 {

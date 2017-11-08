@@ -7,8 +7,8 @@
 #ifndef LOGICALACCESS_READERCARDADAPTER_HPP
 #define LOGICALACCESS_READERCARDADAPTER_HPP
 
-#include "logicalaccess/readerproviders/datatransport.hpp"
-#include "logicalaccess/resultchecker.hpp"
+#include <logicalaccess/readerproviders/datatransport.hpp>
+#include <logicalaccess/resultchecker.hpp>
 
 namespace logicalaccess
 {

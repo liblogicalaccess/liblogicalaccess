@@ -7,9 +7,9 @@
 #ifndef SERIALPORTXML_HPP
 #define SERIALPORTXML_HPP
 
-#include "logicalaccess/readerproviders/readerprovider.hpp"
-#include "logicalaccess/readerproviders/circularbufferparser.hpp"
-#include "logicalaccess/readerproviders/serialport.hpp"
+#include <logicalaccess/readerproviders/readerprovider.hpp>
+#include <logicalaccess/readerproviders/circularbufferparser.hpp>
+#include <logicalaccess/readerproviders/serialport.hpp>
 
 #include <iostream>
 #include <string>

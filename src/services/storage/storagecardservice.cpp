@@ -4,7 +4,7 @@
  * \brief Storage Card service.
  */
 
-#include "logicalaccess/services/storage/storagecardservice.hpp"
+#include <logicalaccess/services/storage/storagecardservice.hpp>
 
 namespace logicalaccess
 {

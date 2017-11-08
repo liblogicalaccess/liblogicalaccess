@@ -11,7 +11,7 @@
 #define NOEXCEPT
 #endif
 
-#include "logicalaccess_api.hpp"
+#include <logicalaccess/logicalaccess_api.hpp>
 
 namespace logicalaccess
 {

@@ -5,7 +5,7 @@
 #include <list>
 #include <mutex>
 
-#include "logicalaccess/dynlibrary/idynlibrary.hpp"
+#include <logicalaccess/dynlibrary/idynlibrary.hpp>
 
 #if UNIX
 #define LIBLOGICALACCESS_API_DLL

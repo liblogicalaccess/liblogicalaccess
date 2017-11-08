@@ -1,7 +1,7 @@
 #pragma once
 
-#include "logicalaccess/liblogicalaccess_export.hpp"
-#include "logicalaccess/lla_fwd.hpp"
+#include <logicalaccess/liblogicalaccess_export.hpp>
+#include <logicalaccess/lla_fwd.hpp>
 #include <string>
 
 namespace logicalaccess

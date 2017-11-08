@@ -4,7 +4,7 @@
  * \brief Triple DES Key.
  */
 
-#include "logicalaccess/cards/tripledeskey.hpp"
+#include <logicalaccess/cards/tripledeskey.hpp>
 #include <cstring>
 #include <boost/property_tree/ptree.hpp>
 

@@ -7,9 +7,9 @@
 #ifndef LOGICALACCESS_ACCESSINFO_HPP
 #define LOGICALACCESS_ACCESSINFO_HPP
 
-#include "logicalaccess/readerproviders/readerprovider.hpp"
-#include "logicalaccess/linearizable.hpp"
-#include "logicalaccess/key.hpp"
+#include <logicalaccess/readerproviders/readerprovider.hpp>
+#include <logicalaccess/linearizable.hpp>
+#include <logicalaccess/key.hpp>
 
 namespace logicalaccess
 {

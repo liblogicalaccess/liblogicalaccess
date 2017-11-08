@@ -6,9 +6,9 @@
 
 #include <cstring>
 #include <boost/property_tree/ptree.hpp>
-#include "logicalaccess/services/accesscontrol/formats/customformat/stringdatafield.hpp"
-#include "logicalaccess/bufferhelper.hpp"
-#include "logicalaccess/myexception.hpp"
+#include <logicalaccess/services/accesscontrol/formats/customformat/stringdatafield.hpp>
+#include <logicalaccess/bufferhelper.hpp>
+#include <logicalaccess/myexception.hpp>
 
 namespace logicalaccess
 {
@@ -68,9 +68,9 @@ BitsetStream StringDataField::getLinearData(const BitsetStream & /*data*/) const
 {
     size_t fieldDataLengthBytes = (d_length + 7) / 8;
 
-    BitsetStream paddedBuffer(d_padding, fieldDataLengthBytes);
+    BitsetStream paddedBuffer(d_padding, static_cast<unsigned int>(fieldDataLengthBytes));
     unsigned int copyValueLength =
-        d_value.size() * 8 > d_length ? d_length : d_value.size() * 8;
+        static_cast<unsigned int>(d_value.size()) * 8 > d_length ? d_length : static_cast<unsigned int>(d_value.size()) * 8;
     paddedBuffer.writeAt(0, d_value, 0, copyValueLength);
 
     BitsetStream dataTmp;

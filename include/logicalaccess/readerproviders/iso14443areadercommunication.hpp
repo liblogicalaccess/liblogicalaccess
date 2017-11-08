@@ -7,13 +7,13 @@
 #ifndef LOGICALACCESS_ISO14443AREADERCOMMUNICATION_HPP
 #define LOGICALACCESS_ISO14443AREADERCOMMUNICATION_HPP
 
-#include "logicalaccess/readerproviders/readercommunication.hpp"
+#include <logicalaccess/readerproviders/readercommunication.hpp>
 
 #include <string>
 #include <vector>
 
-#include "logicalaccess/logs.hpp"
-#include "logicalaccess/lla_fwd.hpp"
+#include <logicalaccess/logs.hpp>
+#include <logicalaccess/lla_fwd.hpp>
 
 namespace logicalaccess
 {

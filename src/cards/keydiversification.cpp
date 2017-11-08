@@ -5,9 +5,9 @@
  */
 
 #include <logicalaccess/logs.hpp>
-#include "logicalaccess/myexception.hpp"
-#include "logicalaccess/cards/keydiversification.hpp"
-#include "logicalaccess/dynlibrary/librarymanager.hpp"
+#include <logicalaccess/myexception.hpp>
+#include <logicalaccess/cards/keydiversification.hpp>
+#include <logicalaccess/dynlibrary/librarymanager.hpp>
 
 namespace logicalaccess
 {

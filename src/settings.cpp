@@ -7,8 +7,8 @@
 #ifdef _MSC_VER
 #include <Windows.h>
 #endif
-#include "logicalaccess/settings.hpp"
-#include "logicalaccess/logs.hpp"
+#include <logicalaccess/settings.hpp>
+#include <logicalaccess/logs.hpp>
 
 #include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
@@ -18,7 +18,7 @@
 #include <string>
 
 #ifdef __APPLE__
-#include "CoreFoundation/CoreFoundation.h"
+#include <CoreFoundation/CoreFoundation.h>
 #endif
 
 #ifdef _MSC_VER

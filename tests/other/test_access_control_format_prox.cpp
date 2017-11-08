@@ -1,21 +1,21 @@
-#include "logicalaccess/dynlibrary/idynlibrary.hpp"
-#include "logicalaccess/dynlibrary/librarymanager.hpp"
-#include "logicalaccess/readerproviders/readerconfiguration.hpp"
-#include "logicalaccess/readerproviders/serialportdatatransport.hpp"
-#include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
-#include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
-#include "logicalaccess/services/accesscontrol/formats/wiegand26format.hpp"
-#include "logicalaccess/services/accesscontrol/formats/wiegand37format.hpp"
-#include "logicalaccess/services/storage/storagecardservice.hpp"
-#include <pluginscards/prox/proxlocation.hpp>
+#include <logicalaccess/dynlibrary/idynlibrary.hpp>
+#include <logicalaccess/dynlibrary/librarymanager.hpp>
+#include <logicalaccess/readerproviders/readerconfiguration.hpp>
+#include <logicalaccess/readerproviders/serialportdatatransport.hpp>
+#include <logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp>
+#include <logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp>
+#include <logicalaccess/services/accesscontrol/formats/wiegand26format.hpp>
+#include <logicalaccess/services/accesscontrol/formats/wiegand37format.hpp>
+#include <logicalaccess/services/storage/storagecardservice.hpp>
+#include <logicalaccess/plugins/cards/prox/proxlocation.hpp>
 
-#include "pluginscards/desfire/desfireev1chip.hpp"
-#include "pluginscards/desfire/desfireev1commands.hpp"
-#include "pluginsreaderproviders/iso7816/commands/desfireev1iso7816commands.hpp"
+#include <logicalaccess/plugins/cards/desfire/desfireev1chip.hpp>
+#include <logicalaccess/plugins/cards/desfire/desfireev1commands.hpp>
+#include <logicalaccess/plugins/readers/iso7816/commands/desfireev1iso7816commands.hpp>
 
 
-#include "lla-tests/macros.hpp"
-#include "lla-tests/utils.hpp"
+#include <logicalaccess/plugins/lla-tests/macros.hpp>
+#include <logicalaccess/plugins/lla-tests/utils.hpp>
 
 void introduction()
 {

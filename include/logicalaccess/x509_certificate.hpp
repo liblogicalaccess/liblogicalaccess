@@ -7,8 +7,8 @@
 #ifndef X509_CERTIFICATE_HPP
 #define X509_CERTIFICATE_HPP
 
-#include "logicalaccess/crypto/pem.hpp"
-#include "logicalaccess/lla_fwd.hpp"
+#include <logicalaccess/plugins/crypto/pem.hpp>
+#include <logicalaccess/lla_fwd.hpp>
 
 #include <string>
 

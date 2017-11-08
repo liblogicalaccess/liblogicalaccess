@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_CHECKSUMDATAFIELD_HPP
 #define LOGICALACCESS_CHECKSUMDATAFIELD_HPP
 
-#include "logicalaccess/services/accesscontrol/formats/customformat/datafield.hpp"
+#include <logicalaccess/services/accesscontrol/formats/customformat/datafield.hpp>
 
 namespace logicalaccess
 {

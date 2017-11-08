@@ -12,8 +12,8 @@
 #include <iostream>
 #include <map>
 
-#include "logicalaccess/lla_fwd.hpp"
-#include "logicalaccess/xmlserializable.hpp"
+#include <logicalaccess/lla_fwd.hpp>
+#include <logicalaccess/xmlserializable.hpp>
 
 namespace logicalaccess
 {

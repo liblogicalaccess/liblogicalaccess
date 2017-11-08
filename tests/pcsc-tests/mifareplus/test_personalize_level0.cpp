@@ -1,11 +1,11 @@
-#include <pluginscards/mifare/mifareaccessinfo.hpp>
-#include <pluginscards/mifareplus/MifarePlusSL0Commands.hpp>
-#include "logicalaccess/dynlibrary/idynlibrary.hpp"
-#include "logicalaccess/dynlibrary/librarymanager.hpp"
-#include "logicalaccess/readerproviders/readerconfiguration.hpp"
+#include <logicalaccess/plugins/cards/mifare/mifareaccessinfo.hpp>
+#include <logicalaccess/plugins/cards/mifareplus/MifarePlusSL0Commands.hpp>
+#include <logicalaccess/dynlibrary/idynlibrary.hpp>
+#include <logicalaccess/dynlibrary/librarymanager.hpp>
+#include <logicalaccess/readerproviders/readerconfiguration.hpp>
 
-#include "lla-tests/macros.hpp"
-#include "lla-tests/utils.hpp"
+#include <logicalaccess/plugins/lla-tests/macros.hpp>
+#include <logicalaccess/plugins/lla-tests/utils.hpp>
 
 void introduction()
 {

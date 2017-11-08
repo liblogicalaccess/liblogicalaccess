@@ -7,8 +7,8 @@
 #ifndef LOGICALACCESS_NFCTAGCARDSERVICE_HPP
 #define LOGICALACCESS_NFCTAGCARDSERVICE_HPP
 
-#include "logicalaccess/services/cardservice.hpp"
-#include "logicalaccess/services/nfctag/ndefmessage.hpp"
+#include <logicalaccess/services/cardservice.hpp>
+#include <logicalaccess/services/nfctag/ndefmessage.hpp>
 
 namespace logicalaccess
 {

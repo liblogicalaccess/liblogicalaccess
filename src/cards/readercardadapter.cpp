@@ -4,11 +4,11 @@
  * \brief Reader/Card adapter base class.
  */
 
-#include "logicalaccess/cards/readercardadapter.hpp"
-#include "logicalaccess/bufferhelper.hpp"
-#include "logicalaccess/myexception.hpp"
-#include "logicalaccess/logs.hpp"
-#include "logicalaccess/settings.hpp"
+#include <logicalaccess/cards/readercardadapter.hpp>
+#include <logicalaccess/bufferhelper.hpp>
+#include <logicalaccess/myexception.hpp>
+#include <logicalaccess/logs.hpp>
+#include <logicalaccess/settings.hpp>
 
 namespace logicalaccess
 {

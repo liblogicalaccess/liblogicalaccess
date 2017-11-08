@@ -4,7 +4,7 @@
  * \brief SAM key storage.
  */
 
-#include "logicalaccess/cards/samkeystorage.hpp"
+#include <logicalaccess/cards/samkeystorage.hpp>
 #include <boost/property_tree/ptree.hpp>
 
 namespace logicalaccess

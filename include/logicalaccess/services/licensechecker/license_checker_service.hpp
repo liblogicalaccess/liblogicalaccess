@@ -1,7 +1,7 @@
 #pragma once
 
-#include "logicalaccess/logicalaccess_api.hpp"
-#include "logicalaccess/services/reader_service.hpp"
+#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/services/reader_service.hpp>
 
 namespace logicalaccess
 {

@@ -1,7 +1,7 @@
 #include <windows.h>
 #include <sstream>
 
-#include "logicalaccess/dynlibrary/winclass.hpp"
+#include <logicalaccess/dynlibrary/winclass.hpp>
 
 namespace logicalaccess
 {

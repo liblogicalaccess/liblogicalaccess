@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_WIEGAND37WITHFACILITYFORMAT_HPP
 #define LOGICALACCESS_WIEGAND37WITHFACILITYFORMAT_HPP
 
-#include "logicalaccess/services/accesscontrol/formats/wiegand37format.hpp"
+#include <logicalaccess/services/accesscontrol/formats/wiegand37format.hpp>
 
 namespace logicalaccess
 {

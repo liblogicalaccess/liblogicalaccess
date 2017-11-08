@@ -23,8 +23,8 @@
         throw EXCEPTION(type, msg);                                                      \
     }
 
-#include "logicalaccess_api.hpp"
-#include "logicalaccess/lla_fwd.hpp"
+#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/lla_fwd.hpp>
 #include <fstream>
 #include <map>
 #include <sstream>

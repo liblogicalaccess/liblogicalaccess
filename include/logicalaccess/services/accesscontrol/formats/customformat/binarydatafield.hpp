@@ -7,8 +7,8 @@
 #ifndef LOGICALACCESS_BINARYDATAFIELD_HPP
 #define LOGICALACCESS_BINARYDATAFIELD_HPP
 
-#include "logicalaccess/services/accesscontrol/formats/customformat/valuedatafield.hpp"
-#include "logicalaccess/key.hpp"
+#include <logicalaccess/services/accesscontrol/formats/customformat/valuedatafield.hpp>
+#include <logicalaccess/key.hpp>
 
 namespace logicalaccess
 {

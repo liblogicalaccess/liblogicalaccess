@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_SAMKEYSTORAGE_HPP
 #define LOGICALACCESS_SAMKEYSTORAGE_HPP
 
-#include "logicalaccess/cards/keystorage.hpp"
+#include <logicalaccess/cards/keystorage.hpp>
 
 namespace logicalaccess
 {

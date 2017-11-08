@@ -4,17 +4,17 @@
  * \brief TCP data transport.
  */
 
-#include "logicalaccess/myexception.hpp"
-#include "logicalaccess/readerproviders/tcpdatatransport.hpp"
-#include "logicalaccess/cards/readercardadapter.hpp"
-#include "logicalaccess/bufferhelper.hpp"
+#include <logicalaccess/myexception.hpp>
+#include <logicalaccess/readerproviders/tcpdatatransport.hpp>
+#include <logicalaccess/cards/readercardadapter.hpp>
+#include <logicalaccess/bufferhelper.hpp>
 
 #include <boost/foreach.hpp>
 #include <boost/optional.hpp>
 #include <boost/array.hpp>
-#include "logicalaccess/logs.hpp"
+#include <logicalaccess/logs.hpp>
 #include <boost/property_tree/ptree.hpp>
-#include "logicalaccess/settings.hpp"
+#include <logicalaccess/settings.hpp>
 
 namespace logicalaccess
 {

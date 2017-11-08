@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_GETRONIK40BITFORMAT_HPP
 #define LOGICALACCESS_GETRONIK40BITFORMAT_HPP
 
-#include "logicalaccess/services/accesscontrol/formats/staticformat.hpp"
+#include <logicalaccess/services/accesscontrol/formats/staticformat.hpp>
 
 namespace logicalaccess
 {

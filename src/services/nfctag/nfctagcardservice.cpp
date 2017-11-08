@@ -4,7 +4,7 @@
  * \brief NFC Tag Card service.
  */
 
-#include "logicalaccess/services/nfctag/nfctagcardservice.hpp"
+#include <logicalaccess/services/nfctag/nfctagcardservice.hpp>
 
 namespace logicalaccess
 {

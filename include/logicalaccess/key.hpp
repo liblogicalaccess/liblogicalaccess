@@ -7,8 +7,8 @@
 #ifndef LOGICALACCESS_KEY_HPP
 #define LOGICALACCESS_KEY_HPP
 
-#include "logicalaccess/cards/keystorage.hpp"
-#include "logicalaccess/cards/keydiversification.hpp"
+#include <logicalaccess/cards/keystorage.hpp>
+#include <logicalaccess/cards/keydiversification.hpp>
 
 namespace logicalaccess
 {

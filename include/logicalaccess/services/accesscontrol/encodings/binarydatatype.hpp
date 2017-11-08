@@ -7,8 +7,8 @@
 #ifndef LOGICALACCESS_BINARYDATATYPE_HPP
 #define LOGICALACCESS_BINARYDATATYPE_HPP
 
-#include "logicalaccess/services/accesscontrol/encodings/datatype.hpp"
-#include "logicalaccess/services/accesscontrol/encodings/encoding.hpp"
+#include <logicalaccess/services/accesscontrol/encodings/datatype.hpp>
+#include <logicalaccess/services/accesscontrol/encodings/encoding.hpp>
 
 #include <string>
 

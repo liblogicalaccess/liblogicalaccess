@@ -4,7 +4,7 @@
  * \brief A CircularBufferParser class.
  */
 
-#include "logicalaccess/readerproviders/circularbufferparser.hpp"
+#include <logicalaccess/readerproviders/circularbufferparser.hpp>
 
 namespace logicalaccess
 {

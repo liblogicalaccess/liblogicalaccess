@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_READERMEMORYKEYSTORAGE_HPP
 #define LOGICALACCESS_READERMEMORYKEYSTORAGE_HPP
 
-#include "logicalaccess/cards/keystorage.hpp"
+#include <logicalaccess/cards/keystorage.hpp>
 
 namespace logicalaccess
 {

@@ -4,8 +4,8 @@
  * \brief Card service.
  */
 
-#include "logicalaccess/services/cardservice.hpp"
-#include "logicalaccess/cards/chip.hpp"
+#include <logicalaccess/services/cardservice.hpp>
+#include <logicalaccess/cards/chip.hpp>
 
 namespace logicalaccess
 {

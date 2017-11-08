@@ -1,7 +1,7 @@
 #pragma once
 
-#include "lla_fwd.hpp"
-#include "logicalaccess_api.hpp"
+#include <logicalaccess/lla_fwd.hpp>
+#include <logicalaccess/logicalaccess_api.hpp>
 #include <bitset>
 #include <chrono>
 #include <cstddef>

@@ -7,8 +7,8 @@
 #ifndef LOGICALACCESS_READERCOMMUNICATION_HPP
 #define LOGICALACCESS_READERCOMMUNICATION_HPP
 
-#include "logicalaccess/logicalaccess_api.hpp"
-#include "logicalaccess/lla_fwd.hpp"
+#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/lla_fwd.hpp>
 #include <vector>
 
 namespace logicalaccess

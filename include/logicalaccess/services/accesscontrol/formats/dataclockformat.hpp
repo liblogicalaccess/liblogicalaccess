@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_DATACLOCKFORMAT_HPP
 #define LOGICALACCESS_DATACLOCKFORMAT_HPP
 
-#include "logicalaccess/services/accesscontrol/formats/staticformat.hpp"
+#include <logicalaccess/services/accesscontrol/formats/staticformat.hpp>
 
 namespace logicalaccess
 {

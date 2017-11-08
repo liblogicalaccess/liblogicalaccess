@@ -4,25 +4,25 @@
  * \brief Key.
  */
 
-#include "logicalaccess/key.hpp"
-#include "logicalaccess/cards/computermemorykeystorage.hpp"
-#include "logicalaccess/cards/accessinfo.hpp"
+#include <logicalaccess/key.hpp>
+#include <logicalaccess/cards/computermemorykeystorage.hpp>
+#include <logicalaccess/cards/accessinfo.hpp>
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 #include <cstring>
 
-#include "logicalaccess/logs.hpp"
-#include "logicalaccess/crypto/aes_cipher.hpp"
-#include "logicalaccess/crypto/aes_symmetric_key.hpp"
-#include "logicalaccess/crypto/aes_initialization_vector.hpp"
-#include "logicalaccess/crypto/sha.hpp"
-#include "logicalaccess/bufferhelper.hpp"
+#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/crypto/aes_cipher.hpp>
+#include <logicalaccess/plugins/crypto/aes_symmetric_key.hpp>
+#include <logicalaccess/plugins/crypto/aes_initialization_vector.hpp>
+#include <logicalaccess/plugins/crypto/sha.hpp>
+#include <logicalaccess/bufferhelper.hpp>
 
 #include <openssl/rand.h>
 #include <boost/property_tree/ptree.hpp>
-#include "logicalaccess/cards/keydiversification.hpp"
+#include <logicalaccess/cards/keydiversification.hpp>
 
 namespace logicalaccess
 {

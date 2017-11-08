@@ -4,15 +4,15 @@
  * \brief Custom Format.
  */
 
-#include "logicalaccess/myexception.hpp"
-#include "logicalaccess/services/accesscontrol/formats/customformat/customformat.hpp"
-#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
-#include "logicalaccess/services/accesscontrol/formats/customformat/stringdatafield.hpp"
-#include "logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp"
-#include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
-#include "logicalaccess/services/accesscontrol/formats/customformat/paritydatafield.hpp"
-#include "logicalaccess/services/accesscontrol/formats/customformat/binarydatafield.hpp"
-#include "logicalaccess/bufferhelper.hpp"
+#include <logicalaccess/myexception.hpp>
+#include <logicalaccess/services/accesscontrol/formats/customformat/customformat.hpp>
+#include <logicalaccess/services/accesscontrol/formats/bithelper.hpp>
+#include <logicalaccess/services/accesscontrol/formats/customformat/stringdatafield.hpp>
+#include <logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp>
+#include <logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp>
+#include <logicalaccess/services/accesscontrol/formats/customformat/paritydatafield.hpp>
+#include <logicalaccess/services/accesscontrol/formats/customformat/binarydatafield.hpp>
+#include <logicalaccess/bufferhelper.hpp>
 
 #include <cstring>
 #include <stdlib.h>

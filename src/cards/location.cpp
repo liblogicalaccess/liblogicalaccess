@@ -4,7 +4,7 @@
  * \brief Base class location.
  */
 
-#include "logicalaccess/cards/location.hpp"
+#include <logicalaccess/cards/location.hpp>
 #include <time.h>
 #include <stdlib.h>
 

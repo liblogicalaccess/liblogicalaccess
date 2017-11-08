@@ -4,13 +4,13 @@
  * \brief Reader provider.
  */
 
-#include "logicalaccess/readerproviders/readerprovider.hpp"
-#include "logicalaccess/dynlibrary/idynlibrary.hpp"
+#include <logicalaccess/readerproviders/readerprovider.hpp>
+#include <logicalaccess/dynlibrary/idynlibrary.hpp>
 #include <boost/filesystem.hpp>
 #include <map>
 #include <time.h>
-#include "logicalaccess/dynlibrary/librarymanager.hpp"
-#include "logicalaccess/logs.hpp"
+#include <logicalaccess/dynlibrary/librarymanager.hpp>
+#include <logicalaccess/logs.hpp>
 
 #include <thread>
 

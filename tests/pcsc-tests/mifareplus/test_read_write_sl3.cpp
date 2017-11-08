@@ -1,15 +1,15 @@
-#include <pluginscards/mifareplus/mifareplussl3commands.hpp>
-#include "logicalaccess/dynlibrary/idynlibrary.hpp"
-#include "logicalaccess/dynlibrary/librarymanager.hpp"
-#include "logicalaccess/readerproviders/readerconfiguration.hpp"
-#include "logicalaccess/services/storage/storagecardservice.hpp"
-#include "pluginscards/mifare/mifarechip.hpp"
-#include "pluginscards/mifareplus/mifareplusaccessinfo_sl1.hpp"
-#include "logicalaccess/cards/aes128key.hpp"
+#include <logicalaccess/plugins/cards/mifareplus/mifareplussl3commands.hpp>
+#include <logicalaccess/dynlibrary/idynlibrary.hpp>
+#include <logicalaccess/dynlibrary/librarymanager.hpp>
+#include <logicalaccess/readerproviders/readerconfiguration.hpp>
+#include <logicalaccess/services/storage/storagecardservice.hpp>
+#include <logicalaccess/plugins/cards/mifare/mifarechip.hpp>
+#include <logicalaccess/plugins/cards/mifareplus/mifareplusaccessinfo_sl1.hpp>
+#include <logicalaccess/cards/aes128key.hpp>
 
-#include "logicalaccess/logs.hpp"
-#include "lla-tests/macros.hpp"
-#include "lla-tests/utils.hpp"
+#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/lla-tests/macros.hpp>
+#include <logicalaccess/plugins/lla-tests/utils.hpp>
 
 void introduction()
 {

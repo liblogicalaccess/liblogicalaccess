@@ -4,8 +4,8 @@
  * \brief LittleEndian Data Representation.
  */
 
-#include "logicalaccess/services/accesscontrol/encodings/littleendiandatarepresentation.hpp"
-#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include <logicalaccess/services/accesscontrol/encodings/littleendiandatarepresentation.hpp>
+#include <logicalaccess/services/accesscontrol/formats/bithelper.hpp>
 
 #include <cstring>
 

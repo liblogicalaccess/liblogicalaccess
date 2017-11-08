@@ -7,8 +7,8 @@
 #ifndef LOGICALACCESS_CUSTOMFORMAT_HPP
 #define LOGICALACCESS_CUSTOMFORMAT_HPP
 
-#include "logicalaccess/services/accesscontrol/formats/format.hpp"
-#include "logicalaccess/services/accesscontrol/formats/customformat/datafield.hpp"
+#include <logicalaccess/services/accesscontrol/formats/format.hpp>
+#include <logicalaccess/services/accesscontrol/formats/customformat/datafield.hpp>
 
 #include <list>
 

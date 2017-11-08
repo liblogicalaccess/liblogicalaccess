@@ -7,8 +7,8 @@
 #ifndef LOGICALACCESS_NODATAREPRESENTATION_HPP
 #define LOGICALACCESS_NODATAREPRESENTATION_HPP
 
-#include "logicalaccess/services/accesscontrol/encodings/datarepresentation.hpp"
-#include "logicalaccess/services/accesscontrol/encodings/encoding.hpp"
+#include <logicalaccess/services/accesscontrol/encodings/datarepresentation.hpp>
+#include <logicalaccess/services/accesscontrol/encodings/encoding.hpp>
 
 namespace logicalaccess
 {

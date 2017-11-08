@@ -4,7 +4,7 @@
  * \brief BCD Byte Data Type.
  */
 
-#include "logicalaccess/services/accesscontrol/encodings/bcdbytedatatype.hpp"
+#include <logicalaccess/services/accesscontrol/encodings/bcdbytedatatype.hpp>
 
 #include <cstring>
 

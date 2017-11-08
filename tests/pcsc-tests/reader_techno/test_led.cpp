@@ -1,15 +1,15 @@
-#include <pluginsreaderproviders/pcsc/readers/acsacr1222lledbuzzerdisplay.hpp>
-#include "logicalaccess/dynlibrary/idynlibrary.hpp"
-#include "logicalaccess/dynlibrary/librarymanager.hpp"
-#include "logicalaccess/readerproviders/readerconfiguration.hpp"
-#include "logicalaccess/services/storage/storagecardservice.hpp"
-#include "logicalaccess/services/accesscontrol/formats/wiegand26format.hpp"
-#include "logicalaccess/services/accesscontrol/formats/wiegand37format.hpp"
-#include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
-#include "logicalaccess/readerproviders/serialportdatatransport.hpp"
-#include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
-#include "lla-tests/macros.hpp"
-#include "lla-tests/utils.hpp"
+#include <logicalaccess/plugins/readers/pcsc/readers/acsacr1222lledbuzzerdisplay.hpp>
+#include <logicalaccess/dynlibrary/idynlibrary.hpp>
+#include <logicalaccess/dynlibrary/librarymanager.hpp>
+#include <logicalaccess/readerproviders/readerconfiguration.hpp>
+#include <logicalaccess/services/storage/storagecardservice.hpp>
+#include <logicalaccess/services/accesscontrol/formats/wiegand26format.hpp>
+#include <logicalaccess/services/accesscontrol/formats/wiegand37format.hpp>
+#include <logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp>
+#include <logicalaccess/readerproviders/serialportdatatransport.hpp>
+#include <logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp>
+#include <logicalaccess/plugins/lla-tests/macros.hpp>
+#include <logicalaccess/plugins/lla-tests/utils.hpp>
 
 
 using namespace logicalaccess;

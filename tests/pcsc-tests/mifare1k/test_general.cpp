@@ -1,19 +1,19 @@
-#include "logicalaccess/dynlibrary/idynlibrary.hpp"
-#include "logicalaccess/dynlibrary/librarymanager.hpp"
-#include "logicalaccess/readerproviders/readerconfiguration.hpp"
-#include "logicalaccess/services/storage/storagecardservice.hpp"
-#include "logicalaccess/services/accesscontrol/formats/wiegand26format.hpp"
-#include "logicalaccess/services/accesscontrol/formats/wiegand37format.hpp"
-#include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
-#include "logicalaccess/readerproviders/serialportdatatransport.hpp"
-#include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
+#include <logicalaccess/dynlibrary/idynlibrary.hpp>
+#include <logicalaccess/dynlibrary/librarymanager.hpp>
+#include <logicalaccess/readerproviders/readerconfiguration.hpp>
+#include <logicalaccess/services/storage/storagecardservice.hpp>
+#include <logicalaccess/services/accesscontrol/formats/wiegand26format.hpp>
+#include <logicalaccess/services/accesscontrol/formats/wiegand37format.hpp>
+#include <logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp>
+#include <logicalaccess/readerproviders/serialportdatatransport.hpp>
+#include <logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp>
 
-#include "pluginscards/mifare/mifarecommands.hpp"
-#include "pluginscards/mifare/mifarelocation.hpp"
-#include "pluginsreaderproviders/pcsc/readers/cardprobes/cl1356cardprobe.hpp"
+#include <logicalaccess/plugins/cards/mifare/mifarecommands.hpp>
+#include <logicalaccess/plugins/cards/mifare/mifarelocation.hpp>
+#include <logicalaccess/plugins/readers/pcsc/readers/cardprobes/cl1356cardprobe.hpp>
 
-#include "lla-tests/macros.hpp"
-#include "lla-tests/utils.hpp"
+#include <logicalaccess/plugins/lla-tests/macros.hpp>
+#include <logicalaccess/plugins/lla-tests/utils.hpp>
 
 
 void introduction()

@@ -1,7 +1,7 @@
 #include <logicalaccess/myexception.hpp>
-#include "logicalaccess/crypto/tomcrypt.h"
-#include "logicalaccess/settings.hpp"
-#include "logicalaccess/logs.hpp"
+#include <logicalaccess/plugins/crypto/tomcrypt.h>
+#include <logicalaccess/settings.hpp>
+#include <logicalaccess/logs.hpp>
 
 /**
  * We create a static struct of this type to run code on library load.

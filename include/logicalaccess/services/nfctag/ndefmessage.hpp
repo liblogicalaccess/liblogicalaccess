@@ -7,9 +7,9 @@
 #ifndef LOGICALACCESS_NDEFMESSAGE_HPP
 #define LOGICALACCESS_NDEFMESSAGE_HPP
 
-#include "logicalaccess/xmlserializable.hpp"
-#include "logicalaccess/services/nfctag/ndefrecord.hpp"
-#include "logicalaccess/lla_fwd.hpp"
+#include <logicalaccess/xmlserializable.hpp>
+#include <logicalaccess/services/nfctag/ndefrecord.hpp>
+#include <logicalaccess/lla_fwd.hpp>
 
 namespace logicalaccess
 {

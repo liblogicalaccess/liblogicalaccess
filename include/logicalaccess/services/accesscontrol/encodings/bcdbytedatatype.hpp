@@ -7,10 +7,10 @@
 #ifndef LOGICALACCESS_BCDBYTEDATATYPE_HPP
 #define LOGICALACCESS_BCDBYTEDATATYPE_HPP
 
-#include "logicalaccess/services/accesscontrol/encodings/datatype.hpp"
-#include "logicalaccess/services/accesscontrol/encodings/encoding.hpp"
+#include <logicalaccess/services/accesscontrol/encodings/datatype.hpp>
+#include <logicalaccess/services/accesscontrol/encodings/encoding.hpp>
 
-#include "logicalaccess/services/accesscontrol/formats/BitsetStream.hpp"
+#include <logicalaccess/services/accesscontrol/formats/BitsetStream.hpp>
 
 namespace logicalaccess
 {

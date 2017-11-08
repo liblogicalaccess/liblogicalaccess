@@ -7,8 +7,8 @@
 #ifndef LOGICALACCESS_READERUNITCONFIGURATION_HPP
 #define LOGICALACCESS_READERUNITCONFIGURATION_HPP
 
-#include "logicalaccess/liblogicalaccess_export.hpp"
-#include "logicalaccess/xmlserializable.hpp"
+#include <logicalaccess/liblogicalaccess_export.hpp>
+#include <logicalaccess/xmlserializable.hpp>
 
 namespace logicalaccess
 {

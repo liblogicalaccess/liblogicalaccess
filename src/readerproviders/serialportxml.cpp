@@ -4,8 +4,8 @@
  * \author Julien K. <julien-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
  */
 
-#include "logicalaccess/readerproviders/serialportxml.hpp"
-#include "logicalaccess/myexception.hpp"
+#include <logicalaccess/readerproviders/serialportxml.hpp>
+#include <logicalaccess/myexception.hpp>
 
 #ifdef UNIX
 #include <fcntl.h>
@@ -14,7 +14,7 @@
 #include <dirent.h>
 #endif
 
-#include "logicalaccess/logs.hpp"
+#include <logicalaccess/logs.hpp>
 #include <boost/property_tree/ptree.hpp>
 
 namespace logicalaccess

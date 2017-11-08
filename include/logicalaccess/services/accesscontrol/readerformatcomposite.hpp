@@ -7,8 +7,8 @@
 #ifndef LOGICALACCESS_READERFORMATCOMPOSITE_HPP
 #define LOGICALACCESS_READERFORMATCOMPOSITE_HPP
 
-#include "logicalaccess/readerproviders/readerconfiguration.hpp"
-#include "logicalaccess/services/accesscontrol/cardsformatcomposite.hpp"
+#include <logicalaccess/readerproviders/readerconfiguration.hpp>
+#include <logicalaccess/services/accesscontrol/cardsformatcomposite.hpp>
 
 namespace logicalaccess
 {

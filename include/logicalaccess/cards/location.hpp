@@ -8,8 +8,8 @@
 #define LOGICALACCESS_LOCATION_HPP
 
 #include <string>
-#include "logicalaccess/liblogicalaccess_export.hpp"
-#include "logicalaccess/xmlserializable.hpp"
+#include <logicalaccess/liblogicalaccess_export.hpp>
+#include <logicalaccess/xmlserializable.hpp>
 
 namespace logicalaccess
 {

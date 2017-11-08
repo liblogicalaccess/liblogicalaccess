@@ -5,8 +5,8 @@
  */
 
 #include <boost/property_tree/ptree.hpp>
-#include "logicalaccess/services/nfctag/ndefrecord.hpp"
-#include "logicalaccess/bufferhelper.hpp"
+#include <logicalaccess/services/nfctag/ndefrecord.hpp>
+#include <logicalaccess/bufferhelper.hpp>
 
 namespace logicalaccess
 {

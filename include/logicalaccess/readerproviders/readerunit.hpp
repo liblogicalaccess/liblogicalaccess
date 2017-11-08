@@ -12,10 +12,10 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "logicalaccess/xmlserializable.hpp"
-#include "logicalaccess/lla_fwd.hpp"
-#include "logicalaccess/techno.hpp"
-#include "logicalaccess/cardprobe.hpp"
+#include <logicalaccess/xmlserializable.hpp>
+#include <logicalaccess/lla_fwd.hpp>
+#include <logicalaccess/techno.hpp>
+#include <logicalaccess/cardprobe.hpp>
 
 #include <logicalaccess/services/reader_service.hpp>
 #define PLUGINOBJECT_MAXLEN 64

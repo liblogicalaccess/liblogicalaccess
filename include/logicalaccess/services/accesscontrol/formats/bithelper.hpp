@@ -7,8 +7,8 @@
 #ifndef LOGICALACCESS_BITHELPER_HPP
 #define LOGICALACCESS_BITHELPER_HPP
 
-#include "logicalaccess/services/accesscontrol//formats/BitsetStream.hpp"
-#include "logicalaccess/readerproviders/readerprovider.hpp"
+#include <logicalaccess/services/accesscontrol//formats/BitsetStream.hpp>
+#include <logicalaccess/readerproviders/readerprovider.hpp>
 
 namespace logicalaccess
 {

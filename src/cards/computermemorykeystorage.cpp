@@ -4,7 +4,7 @@
  * \brief Computer memory key storage.
  */
 
-#include "logicalaccess/cards/computermemorykeystorage.hpp"
+#include <logicalaccess/cards/computermemorykeystorage.hpp>
 #include <boost/property_tree/ptree.hpp>
 
 namespace logicalaccess

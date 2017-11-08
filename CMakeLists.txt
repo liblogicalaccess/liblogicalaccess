@@ -66,6 +66,15 @@ if (UNIX)
   include_directories(${PCSCLITE_INCLUDE_DIRS})
 endif()
 
+if (RUN_IWYU)
+	find_program(IWYU_PATH NAMES include-what-you-use iwyu)
+	if(NOT IWYU_PATH)
+	  message(FATAL_ERROR "Could not find the program include-what-you-use")
+	endif()
+	set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE "${IWYU_PATH};--driver-mode=cl")
+	set(CMAKE_C_INCLUDE_WHAT_YOU_USE "${IWYU_PATH};--driver-mode=cl")
+endif()
+
 include_directories(packages/include)
 
 if(MSVC)
@@ -101,7 +110,7 @@ endif()
 SET(NATIVE_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 SET(NATIVE_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-SET(LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib ${CMAKE_CURRENT_SOURCE_DIR}/plugins/cryptolib/${VC_FOLDER_NAME})
+SET(LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib ${CMAKE_CURRENT_SOURCE_DIR}/plugins/logicalaccess/crypto/${VC_FOLDER_NAME})
 
 #Source Files
 file(GLOB source_root ${NATIVE_SOURCE}/*.cpp)
@@ -136,7 +145,7 @@ file(GLOB include_iks ${NATIVE_INCLUDE}/logicalaccess/iks/*.hpp)
 file(GLOB include_iks_packet ${NATIVE_INCLUDE}/logicalaccess/iks/packet/*.hpp)
 file(GLOB include_service_identity ${NATIVE_INCLUDE}/logicalaccess/services/identity/*.hpp)
 
-INCLUDE_DIRECTORIES(${NATIVE_INCLUDE} ${CMAKE_CURRENT_SOURCE_DIR}/plugins/cryptolib/include)
+INCLUDE_DIRECTORIES(${NATIVE_INCLUDE} ${CMAKE_CURRENT_SOURCE_DIR}/plugins/)
 
 if(UNIX)
 
@@ -217,7 +226,7 @@ install ( FILES ${include_service_identity} DESTINATION ${LIBLOGICALACCESS_INCLU
 
 if (WIN32)
     install ( FILES ${include_vc} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess )
-    LINK_DIRECTORIES(${LINK_DIRECTORIES} "${CMAKE_CURRENT_SOURCE_DIR}/plugins/cryptolib/${VC_FOLDER_NAME}")
+    LINK_DIRECTORIES(${LINK_DIRECTORIES} "${CMAKE_CURRENT_SOURCE_DIR}/plugins/logicalaccess/crypto/${VC_FOLDER_NAME}")
 endif()
 
 set(source ${source_root} ${source_cards} ${source_readerproviders}
@@ -269,10 +278,10 @@ elseif (UNIX)
 	target_link_libraries(${LIBLOGICALACCESS_LIBRARY} logicalaccess-cryptolib ${Boost_LIBRARIES} ${CMAKE_DL_LIBS})
 endif()
 
-add_subdirectory(plugins/cryptolib)
-add_subdirectory(plugins/pluginscards)
-add_subdirectory(plugins/pluginsreaderproviders)
-add_subdirectory(plugins/lla-tests)
+add_subdirectory(plugins/logicalaccess/plugins/crypto)
+add_subdirectory(plugins/logicalaccess/plugins/cards)
+add_subdirectory(plugins/logicalaccess/plugins/readers)
+add_subdirectory(plugins/logicalaccess/plugins/lla-tests)
 add_subdirectory(tests)
 
 if ( NOT DEFINED LIBLOGICALACCESS_CMAKE_CONFIG_DIR )

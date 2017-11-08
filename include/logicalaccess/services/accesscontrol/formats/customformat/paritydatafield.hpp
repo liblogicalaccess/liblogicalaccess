@@ -7,8 +7,8 @@
 #ifndef LOGICALACCESS_PARITYDATAFIELD_HPP
 #define LOGICALACCESS_PARITYDATAFIELD_HPP
 
-#include "logicalaccess/services/accesscontrol/formats/customformat/datafield.hpp"
-#include "logicalaccess/services/accesscontrol/encodings/datatype.hpp"
+#include <logicalaccess/services/accesscontrol/formats/customformat/datafield.hpp>
+#include <logicalaccess/services/accesscontrol/encodings/datatype.hpp>
 
 namespace logicalaccess
 {

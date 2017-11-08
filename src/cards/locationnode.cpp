@@ -4,7 +4,7 @@
  * \brief Location node.
  */
 
-#include "logicalaccess/cards/locationnode.hpp"
+#include <logicalaccess/cards/locationnode.hpp>
 #include <stdlib.h>
 
 namespace logicalaccess

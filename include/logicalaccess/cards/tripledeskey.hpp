@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_TRIPLEDESKEY_HPP
 #define LOGICALACCESS_TRIPLEDESKEY_HPP
 
-#include "logicalaccess/key.hpp"
+#include <logicalaccess/key.hpp>
 
 /**
  * \brief The default triple des key size

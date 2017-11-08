@@ -4,10 +4,10 @@
  * \brief BitHelper Base.
  */
 
-#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
-#include "logicalaccess/logs.hpp"
+#include <logicalaccess/services/accesscontrol/formats/bithelper.hpp>
+#include <logicalaccess/logs.hpp>
 #include <cstring>
-#include "logicalaccess/myexception.hpp"
+#include <logicalaccess/myexception.hpp>
 
 #include <algorithm>
 
@@ -32,7 +32,7 @@ BitsetStream BitHelper::align(const BitsetStream &data, unsigned int dataLengthB
             std::reverse(dataVector.begin(), dataVector.end());
 
             linedData.clear();
-            linedData.concat(dataVector, 0, dataVector.size() * 8);
+            linedData.concat(dataVector, 0, static_cast<unsigned int>(dataVector.size()) * 8);
 
             return linedData;
         }

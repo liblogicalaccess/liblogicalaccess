@@ -4,7 +4,7 @@
 * \brief	BitsetStream to manipulate bits easily.
 */
 
-#include "logicalaccess/services/accesscontrol/formats/BitsetStream.hpp"
+#include <logicalaccess/services/accesscontrol/formats/BitsetStream.hpp>
 
 namespace logicalaccess
 {

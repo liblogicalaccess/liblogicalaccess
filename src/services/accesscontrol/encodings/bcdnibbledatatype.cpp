@@ -4,8 +4,8 @@
  * \brief BCD Nibble Data Type.
  */
 
-#include "logicalaccess/services/accesscontrol/encodings/bcdnibbledatatype.hpp"
-#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
+#include <logicalaccess/services/accesscontrol/encodings/bcdnibbledatatype.hpp>
+#include <logicalaccess/services/accesscontrol/formats/bithelper.hpp>
 
 #include <cstring>
 

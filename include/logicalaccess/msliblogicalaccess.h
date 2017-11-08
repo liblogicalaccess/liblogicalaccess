@@ -21,6 +21,6 @@
 #define LIBLOGICALACCESS_API __declspec(dllimport)
 #endif
 
-#include "msvc_boost_disable.h"
+#include <logicalaccess/msvc_boost_disable.h>
 
 #endif /* MSLIBLOGICALACCESS_H */

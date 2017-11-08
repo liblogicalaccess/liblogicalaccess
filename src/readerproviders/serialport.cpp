@@ -5,14 +5,14 @@
  * \brief A serial port class.
  */
 
-#include "logicalaccess/myexception.hpp"
-#include "logicalaccess/readerproviders/serialport.hpp"
-#include "logicalaccess/bufferhelper.hpp"
+#include <logicalaccess/myexception.hpp>
+#include <logicalaccess/readerproviders/serialport.hpp>
+#include <logicalaccess/bufferhelper.hpp>
 
 #include <boost/asio.hpp>
 #include <boost/asio/basic_serial_port.hpp>
 #include <boost/bind/bind.hpp>
-#include "logicalaccess/logs.hpp"
+#include <logicalaccess/logs.hpp>
 
 namespace logicalaccess
 {

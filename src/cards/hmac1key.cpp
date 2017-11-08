@@ -4,7 +4,7 @@
  * \brief HMAC1 Key.
  */
 
-#include "logicalaccess/cards/hmac1key.hpp"
+#include <logicalaccess/cards/hmac1key.hpp>
 #include <cstring>
 #include <boost/property_tree/ptree.hpp>
 

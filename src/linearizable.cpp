@@ -4,7 +4,7 @@
  * \brief Linearizable base class.
  */
 
-#include "logicalaccess/linearizable.hpp"
+#include <logicalaccess/linearizable.hpp>
 
 namespace logicalaccess
 {

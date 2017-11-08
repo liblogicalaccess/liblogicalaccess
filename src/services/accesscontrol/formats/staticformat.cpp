@@ -5,9 +5,9 @@
  */
 
 #include <cstring>
-#include "logicalaccess/services/accesscontrol/formats/staticformat.hpp"
-#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
-#include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
+#include <logicalaccess/services/accesscontrol/formats/staticformat.hpp>
+#include <logicalaccess/services/accesscontrol/formats/bithelper.hpp>
+#include <logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp>
 
 namespace logicalaccess
 {

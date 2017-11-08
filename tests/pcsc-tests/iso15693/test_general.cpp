@@ -1,12 +1,12 @@
-#include "logicalaccess/dynlibrary/idynlibrary.hpp"
-#include "logicalaccess/readerproviders/readerconfiguration.hpp"
-#include "logicalaccess/readerproviders/serialportdatatransport.hpp"
-#include "pluginscards/iso15693/iso15693commands.hpp"
+#include <logicalaccess/dynlibrary/idynlibrary.hpp>
+#include <logicalaccess/readerproviders/readerconfiguration.hpp>
+#include <logicalaccess/readerproviders/serialportdatatransport.hpp>
+#include <logicalaccess/plugins/cards/iso15693/iso15693commands.hpp>
 
-#include "logicalaccess/bufferhelper.hpp"
-#include "lla-tests/macros.hpp"
-#include "lla-tests/utils.hpp"
-#include "logicalaccess/logs.hpp"
+#include <logicalaccess/bufferhelper.hpp>
+#include <logicalaccess/plugins/lla-tests/macros.hpp>
+#include <logicalaccess/plugins/lla-tests/utils.hpp>
+#include <logicalaccess/logs.hpp>
 #include <vector>
 
 void introduction()

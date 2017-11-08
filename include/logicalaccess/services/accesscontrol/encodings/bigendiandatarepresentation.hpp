@@ -7,8 +7,8 @@
 #ifndef LOGICALACCESS_BIGENDIANDATAREPRESENTATION_HPP
 #define LOGICALACCESS_BIGENDIANDATAREPRESENTATION_HPP
 
-#include "logicalaccess/services/accesscontrol/encodings/datarepresentation.hpp"
-#include "logicalaccess/services/accesscontrol/encodings/encoding.hpp"
+#include <logicalaccess/services/accesscontrol/encodings/datarepresentation.hpp>
+#include <logicalaccess/services/accesscontrol/encodings/encoding.hpp>
 
 #include <string>
 

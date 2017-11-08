@@ -4,13 +4,13 @@
  * \brief A Data Type.
  */
 
-#include "logicalaccess/myexception.hpp"
-#include "logicalaccess/services/accesscontrol/encodings/datatype.hpp"
-#include "logicalaccess/services/accesscontrol/encodings/bcdbytedatatype.hpp"
-#include "logicalaccess/services/accesscontrol/encodings/bcdnibbledatatype.hpp"
-#include "logicalaccess/services/accesscontrol/encodings/binarydatatype.hpp"
-#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
-#include "logicalaccess/services/accesscontrol/formats/staticformat.hpp"
+#include <logicalaccess/myexception.hpp>
+#include <logicalaccess/services/accesscontrol/encodings/datatype.hpp>
+#include <logicalaccess/services/accesscontrol/encodings/bcdbytedatatype.hpp>
+#include <logicalaccess/services/accesscontrol/encodings/bcdnibbledatatype.hpp>
+#include <logicalaccess/services/accesscontrol/encodings/binarydatatype.hpp>
+#include <logicalaccess/services/accesscontrol/formats/bithelper.hpp>
+#include <logicalaccess/services/accesscontrol/formats/staticformat.hpp>
 
 #include <cstring>
 

@@ -4,9 +4,9 @@
  * \brief Result checker base class.
  */
 
-#include "logicalaccess/resultchecker.hpp"
-#include "logicalaccess/myexception.hpp"
-#include "logicalaccess/logs.hpp"
+#include <logicalaccess/resultchecker.hpp>
+#include <logicalaccess/myexception.hpp>
+#include <logicalaccess/logs.hpp>
 #include <cassert>
 
 namespace logicalaccess

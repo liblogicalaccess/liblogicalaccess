@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_HMAC1KEY_HPP
 #define LOGICALACCESS_HMAC1KEY_HPP
 
-#include "logicalaccess/key.hpp"
+#include <logicalaccess/key.hpp>
 
 /**
  * \brief The default hmac-1 key size

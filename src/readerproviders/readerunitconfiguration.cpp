@@ -4,7 +4,7 @@
  * \brief Reader unit configuration.
  */
 
-#include "logicalaccess/readerproviders/readerunitconfiguration.hpp"
+#include <logicalaccess/readerproviders/readerunitconfiguration.hpp>
 
 #include <iostream>
 #include <iomanip>

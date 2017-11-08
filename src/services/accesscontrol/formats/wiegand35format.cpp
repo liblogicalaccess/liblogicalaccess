@@ -6,13 +6,13 @@
 
 #include <cstring>
 #include <boost/property_tree/ptree.hpp>
-#include "logicalaccess/services/accesscontrol/formats/wiegand35format.hpp"
-#include "logicalaccess/services/accesscontrol/formats/bithelper.hpp"
-#include "logicalaccess/services/accesscontrol/encodings/binarydatatype.hpp"
-#include "logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp"
+#include <logicalaccess/services/accesscontrol/formats/wiegand35format.hpp>
+#include <logicalaccess/services/accesscontrol/formats/bithelper.hpp>
+#include <logicalaccess/services/accesscontrol/encodings/binarydatatype.hpp>
+#include <logicalaccess/services/accesscontrol/encodings/bigendiandatarepresentation.hpp>
 
-#include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
-#include "logicalaccess/myexception.hpp"
+#include <logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp>
+#include <logicalaccess/myexception.hpp>
 
 namespace logicalaccess
 {

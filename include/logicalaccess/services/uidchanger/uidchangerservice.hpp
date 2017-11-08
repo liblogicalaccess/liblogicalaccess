@@ -1,7 +1,7 @@
 #pragma once
 
-#include "logicalaccess/services/cardservice.hpp"
-#include "logicalaccess/lla_fwd.hpp"
+#include <logicalaccess/services/cardservice.hpp>
+#include <logicalaccess/lla_fwd.hpp>
 #include <vector>
 
 namespace logicalaccess

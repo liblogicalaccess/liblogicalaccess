@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_STRINGDATAFIELD_HPP
 #define LOGICALACCESS_STRINGDATAFIELD_HPP
 
-#include "logicalaccess/services/accesscontrol/formats/customformat/valuedatafield.hpp"
+#include <logicalaccess/services/accesscontrol/formats/customformat/valuedatafield.hpp>
 
 namespace logicalaccess
 {

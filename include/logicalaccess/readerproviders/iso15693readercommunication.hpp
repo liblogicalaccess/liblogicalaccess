@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_ISO15693BREADERCOMMUNICATION_HPP
 #define LOGICALACCESS_ISO15693BREADERCOMMUNICATION_HPP
 
-#include "logicalaccess/readerproviders/readercommunication.hpp"
+#include <logicalaccess/readerproviders/readercommunication.hpp>
 
 #include <string>
 #include <vector>

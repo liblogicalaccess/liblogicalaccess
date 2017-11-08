@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_LCDDISPLAY_HPP
 #define LOGICALACCESS_LCDDISPLAY_HPP
 
-#include "logicalaccess/xmlserializable.hpp"
+#include <logicalaccess/xmlserializable.hpp>
 
 namespace logicalaccess
 {

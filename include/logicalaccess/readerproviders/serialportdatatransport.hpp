@@ -7,8 +7,8 @@
 #ifndef LOGICALACCESS_SERIALPORTDATATRANSPORT_HPP
 #define LOGICALACCESS_SERIALPORTDATATRANSPORT_HPP
 
-#include "logicalaccess/readerproviders/datatransport.hpp"
-#include "logicalaccess/readerproviders/serialportxml.hpp"
+#include <logicalaccess/readerproviders/datatransport.hpp>
+#include <logicalaccess/readerproviders/serialportxml.hpp>
 
 namespace logicalaccess
 {

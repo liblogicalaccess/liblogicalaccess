@@ -8,7 +8,7 @@
 #define LOGICALACCESS_CARDSERVICE_HPP
 
 #include <memory>
-#include "logicalaccess/logicalaccess_api.hpp"
+#include <logicalaccess/logicalaccess_api.hpp>
 
 namespace logicalaccess
 {

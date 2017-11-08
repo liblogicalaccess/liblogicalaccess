@@ -2,8 +2,8 @@
 
 #ifdef _WIN32
 
-#include "logicalaccess/logicalaccess_api.hpp"
-#include "logicalaccess/lla_fwd.hpp"
+#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/lla_fwd.hpp>
 #include <string>
 #include <vector>
 #include <cstdint>

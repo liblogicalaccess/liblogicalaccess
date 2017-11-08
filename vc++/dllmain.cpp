@@ -1,10 +1,10 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "stdafx.h"
-#include "logicalaccess/readerproviders/readerprovider.hpp"
-#include "logicalaccess/crypto/tomcrypt.h"
+#include <logicalaccess/readerproviders/readerprovider.hpp>
+#include <logicalaccess/plugins/crypto/tomcrypt.h>
 
-#include "logicalaccess/settings.hpp"
-#include "logicalaccess/logs.hpp"
+#include <logicalaccess/settings.hpp>
+#include <logicalaccess/logs.hpp>
 
 HMODULE __hLibLogicalAccessModule;
 

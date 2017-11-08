@@ -7,7 +7,7 @@
 
 #ifndef LIBLOGICALACCESS_API
 #ifdef _MSC_VER
-#include "msliblogicalaccess.h"
+#include <logicalaccess/msliblogicalaccess.h>
 #else
 #define LIBLOGICALACCESS_API
 #endif

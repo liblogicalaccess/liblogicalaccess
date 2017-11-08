@@ -5,11 +5,10 @@ project(basic CXX)
 find_package(LibLogicalAccess NO_MODULE REQUIRED)
 include(${LIBLOGICALACCESS_USE_FILE})
 
-include_directories(/usr/local/include)
-
 SET(SOURCE basic.cpp)
 
 if (UNIX)
+	include_directories(/usr/local/include)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -W -Wall -Wno-unused-parameter")
 endif()
 

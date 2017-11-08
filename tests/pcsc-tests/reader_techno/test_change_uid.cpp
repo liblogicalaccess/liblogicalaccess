@@ -1,12 +1,12 @@
 #include <chrono>
 #include <thread>
-#include <logicalaccess/crypto/lla_random.hpp>
+#include <logicalaccess/plugins/crypto/lla_random.hpp>
 
-#include "logicalaccess/bufferhelper.hpp"
-#include "logicalaccess/cards/chip.hpp"
-#include "logicalaccess/services/uidchanger/uidchangerservice.hpp"
-#include "lla-tests/macros.hpp"
-#include "lla-tests/utils.hpp"
+#include <logicalaccess/bufferhelper.hpp>
+#include <logicalaccess/cards/chip.hpp>
+#include <logicalaccess/services/uidchanger/uidchangerservice.hpp>
+#include <logicalaccess/plugins/lla-tests/macros.hpp>
+#include <logicalaccess/plugins/lla-tests/utils.hpp>
 
 using namespace logicalaccess;
 

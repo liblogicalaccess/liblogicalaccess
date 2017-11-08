@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_ICOMMANDS_HPP
 #define LOGICALACCESS_ICOMMANDS_HPP
 
-#include "logicalaccess/cards/readercardadapter.hpp"
+#include <logicalaccess/cards/readercardadapter.hpp>
 
 namespace logicalaccess
 {

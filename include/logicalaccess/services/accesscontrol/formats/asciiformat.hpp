@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_ASCIIFORMAT_HPP
 #define LOGICALACCESS_ASCIIFORMAT_HPP
 
-#include "logicalaccess/services/accesscontrol/formats/staticformat.hpp"
+#include <logicalaccess/services/accesscontrol/formats/staticformat.hpp>
 
 namespace logicalaccess
 {

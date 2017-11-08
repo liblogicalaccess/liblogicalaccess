@@ -5,8 +5,8 @@
 #include <windows.h>
 #include <string>
 
-#include "logicalaccess/dynlibrary/idynlibrary.hpp"
-#include "logicalaccess/dynlibrary/winclass.hpp"
+#include <logicalaccess/dynlibrary/idynlibrary.hpp>
+#include <logicalaccess/dynlibrary/winclass.hpp>
 
 namespace logicalaccess
 {

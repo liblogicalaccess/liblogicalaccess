@@ -4,7 +4,7 @@
  * \brief Reader memory key storage.
  */
 
-#include "logicalaccess/cards/readermemorykeystorage.hpp"
+#include <logicalaccess/cards/readermemorykeystorage.hpp>
 #include <boost/property_tree/ptree.hpp>
 
 namespace logicalaccess

@@ -41,8 +41,8 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
-#include "logicalaccess/logicalaccess_api.hpp"
-#include "logicalaccess/lla_fwd.hpp"
+#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/lla_fwd.hpp>
 #include <boost/property_tree/ptree_fwd.hpp>
 
 namespace logicalaccess

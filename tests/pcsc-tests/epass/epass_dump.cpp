@@ -1,12 +1,12 @@
-#include "logicalaccess/dynlibrary/idynlibrary.hpp"
+#include <logicalaccess/dynlibrary/idynlibrary.hpp>
 
-#include "logicalaccess/bufferhelper.hpp"
-#include "lla-tests/macros.hpp"
-#include "lla-tests/utils.hpp"
-#include "logicalaccess/logs.hpp"
+#include <logicalaccess/bufferhelper.hpp>
+#include <logicalaccess/plugins/lla-tests/macros.hpp>
+#include <logicalaccess/plugins/lla-tests/utils.hpp>
+#include <logicalaccess/logs.hpp>
 #include <logicalaccess/services/identity/identity_service.hpp>
-#include <logicalaccess/crypto/sha.hpp>
-#include <pluginscards/epass/epassaccessinfo.hpp>
+#include <logicalaccess/plugins/crypto/sha.hpp>
+#include <logicalaccess/plugins/cards/epass/epassaccessinfo.hpp>
 #include <ctime>
 
 void introduction()

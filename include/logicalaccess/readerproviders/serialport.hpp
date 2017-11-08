@@ -20,8 +20,8 @@
 #include <boost/thread/shared_mutex.hpp>
 #include <condition_variable>
 
-#include "logicalaccess/readerproviders/readerunit.hpp"
-#include "logicalaccess/readerproviders/circularbufferparser.hpp"
+#include <logicalaccess/readerproviders/readerunit.hpp>
+#include <logicalaccess/readerproviders/circularbufferparser.hpp>
 
 namespace logicalaccess
 {

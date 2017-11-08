@@ -7,10 +7,10 @@
 #ifndef LOGICALACCESS_ACCESSCONTROLCARDSERVICE_HPP
 #define LOGICALACCESS_ACCESSCONTROLCARDSERVICE_HPP
 
-#include "logicalaccess/services/cardservice.hpp"
-#include "logicalaccess/services/accesscontrol/formats/format.hpp"
-#include "logicalaccess/cards/location.hpp"
-#include "logicalaccess/cards/accessinfo.hpp"
+#include <logicalaccess/services/cardservice.hpp>
+#include <logicalaccess/services/accesscontrol/formats/format.hpp>
+#include <logicalaccess/cards/location.hpp>
+#include <logicalaccess/cards/accessinfo.hpp>
 
 namespace logicalaccess
 {
