@@ -277,61 +277,43 @@ void LibraryManager::scanPlugins()
             for (boost::filesystem::directory_iterator dir_iter(pluginDir);
                  dir_iter != end_iter; ++dir_iter)
             {
-                LOG(LogLevel::PLUGINS) << "Checking library "
-                                       << dir_iter->path().filename().string() << "...";
-                if ((is_regular_file(dir_iter->status()) ||
-                     is_symlink(dir_iter->status())) &&
-                    dir_iter->path().extension() == extension &&
-                    (hasEnding(dir_iter->path().filename().string(),
-                               enumType[CARDS_TYPE] + extension) ||
-                     hasEnding(dir_iter->path().filename().string(),
-                               enumType[READERS_TYPE] + extension) ||
-                     hasEnding(dir_iter->path().filename().string(),
-                               enumType[UNIFIED_TYPE] + extension)))
-                {
-                    try
-                    {
-                        if (libLoaded.find(dir_iter->path().filename().string()) ==
-                            libLoaded.end())
-                        {
-                            IDynLibrary *lib = newDynLibrary(dir_iter->path().string());
-                            void *fct        = lib->getSymbol(fctname.c_str());
-                            if (fct != nullptr)
-                            {
-                                LOG(LogLevel::PLUGINS)
-                                    << "Library " << dir_iter->path().filename().string()
-                                    << " loaded.";
-                                libLoaded[dir_iter->path().filename().string()] = lib;
-                            }
-                            else
-                            {
-                                LOG(LogLevel::PLUGINS)
-                                    << "Cannot found library entry point in "
-                                    << dir_iter->path().filename().string()
-                                    << ". Skipped.";
-                                delete lib;
-                            }
-                        }
-                        else
-                        {
-                            LOG(LogLevel::PLUGINS) << "Library "
-                                                   << dir_iter->path().filename().string()
-                                                   << " already loaded. Skipped.";
-                        }
-                    }
-                    catch (const std::exception &e)
-                    {
-                        LOG(LogLevel::ERRORS) << "Something bad happened when handling "
-                                              << dir_iter->path().filename().string()
-                                              << ": " << e.what();
-                    }
-                }
-                else
-                {
-                    LOG(LogLevel::PLUGINS)
-                        << "File " << dir_iter->path().filename().string()
-                        << " does not match excepted filenames. Skipped.";
-                }
+				LOG(LogLevel::PLUGINS) << "Checking library " << dir_iter->path().filename().string() << "...";
+				try
+				{
+					if ((boost::filesystem::is_regular_file(dir_iter->status()) || boost::filesystem::is_symlink(dir_iter->status()))
+						&& dir_iter->path().extension() == extension
+						&& (hasEnding(dir_iter->path().filename().string(), enumType[LibraryManager::CARDS_TYPE] + extension)
+						|| hasEnding(dir_iter->path().filename().string(), enumType[LibraryManager::READERS_TYPE] + extension)
+						|| hasEnding(dir_iter->path().filename().string(), enumType[LibraryManager::UNIFIED_TYPE] + extension)))
+					{
+						IDynLibrary *lib = newDynLibrary(dir_iter->path().string());
+						void *fct        = lib->getSymbol(fctname.c_str());
+						if (fct != nullptr)
+						{
+							LOG(LogLevel::PLUGINS)
+								<< "Library " << dir_iter->path().filename().string()
+								<< " loaded.";
+							libLoaded[dir_iter->path().filename().string()] = lib;
+						}
+						else
+						{
+							LOG(LogLevel::PLUGINS)
+								<< "Cannot found library entry point in "
+								<< dir_iter->path().filename().string()
+								<< ". Skipped.";
+							delete lib;
+						}
+					}
+					else
+					{
+						LOG(LogLevel::PLUGINS) << "File " << dir_iter->path().filename().string() << " does not match excepted filenames. Skipped.";
+					}
+				}
+				catch (const std::exception &e)
+				{
+					LOG(LogLevel::ERRORS) << "Something bad happened when handling " << dir_iter->path().filename().string() <<
+					": " << e.what();
+				}
             }
         }
         else

@@ -9,7 +9,7 @@
 #if defined __APPLE__
 #define CDECL_WIN32_
 #define EXTENSION_LIB ".dylib"
-#elif defined UNIX
+#elif defined(UNIX) || defined(ANDROID)
 #define CDECL_WIN32_
 #define EXTENSION_LIB ".so"
 #else

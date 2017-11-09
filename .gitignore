@@ -39,9 +39,10 @@ install
 install_manifest.txt
 *.dll
 /*.db
-/*.opendb
-/.vs/liblogicalaccess/v15
+/.vs/
 *.exp
 *.lib
 *.ilk
 *.pdb
+.idea/
+cmake-build-debug/

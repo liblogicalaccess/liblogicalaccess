@@ -8,6 +8,7 @@
 #include <logicalaccess/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <vector>
+#include <stdlib.h>
 
 using namespace logicalaccess;
 
@@ -575,9 +576,9 @@ std::chrono::system_clock::time_point EPassUtils::parse_dg1_date(const ByteVecto
     assert(in.size() == 6);
     auto itr = in.begin();
     // Birth date extraction code
-    auto year  = stoi(std::string(itr, itr + 2));
-    auto month = stoi(std::string(itr + 2, itr + 4));
-    auto day   = stoi(std::string(itr + 4, itr + 6));
+    auto year  = atoi(std::string(itr, itr + 2).c_str());
+    auto month = atoi(std::string(itr + 2, itr + 4).c_str());
+    auto day   = atoi(std::string(itr + 4, itr + 6).c_str());
 
     tm date;
     memset(&date, 0x00, sizeof(tm));

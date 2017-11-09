@@ -23,6 +23,18 @@ if (MSVC)
 
     SET(OPENSSL_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/packages/lib/${TARGET_ARCH})
     SET(OPENSSL_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/packages/include)
+  elseif(ANDROID)
+    set(Boost_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../android-boost/include)
+    set(Boost_LIBRARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../android-boost/${ANDROID_ABI}/lib)
+
+    set(Boost_USE_STATIC_LIBS        ON) # only find static libs
+    set(Boost_USE_MULTITHREADED      ON)
+    set(Boost_USE_STATIC_RUNTIME    OFF)
+    set(Boost_COMPILER -gcc)
+
+    set(OPENSSL_CRYPTO_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/../android-openssl/prebuilt/${ANDROID_ABI}/libcrypto.so)
+    set(OPENSSL_SSL_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/../android-openssl/prebuilt/${ANDROID_ABI}/libssl.so)
+    set(OPENSSL_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../android-openssl/prebuilt/include)
 endif()
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
@@ -61,7 +73,7 @@ if (APPLE)
     SET(CMAKE_DL_LIBS ${CMAKE_DL_LIBS} "-framework CoreFoundation")
 endif()
 
-if (UNIX)
+if (UNIX AND NOT ANDROID)
   find_package(PCSCLite REQUIRED)
   include_directories(${PCSCLITE_INCLUDE_DIRS})
 endif()
@@ -127,7 +139,6 @@ file(GLOB source_uidchanger ${NATIVE_SOURCE}/services/uidchanger/*.cpp)
 file(GLOB source_iks ${NATIVE_SOURCE}/iks/*.cpp ${NATIVE_SOURCE}/iks/packet/*.cpp)
 file(GLOB source_service_identity ${NATIVE_SOURCE}/services/identity/*.cpp)
 
-			
 #Include Files
 file(GLOB include_root ${NATIVE_INCLUDE}/logicalaccess/*.h*)
 file(GLOB include_cards ${NATIVE_INCLUDE}/logicalaccess/cards/*.hpp)
@@ -281,8 +292,10 @@ endif()
 add_subdirectory(plugins/logicalaccess/plugins/crypto)
 add_subdirectory(plugins/logicalaccess/plugins/cards)
 add_subdirectory(plugins/logicalaccess/plugins/readers)
-add_subdirectory(plugins/logicalaccess/plugins/lla-tests)
-add_subdirectory(tests)
+if (NOT ANDROID)
+	add_subdirectory(plugins/logicalaccess/plugins/lla-tests)
+	add_subdirectory(tests)
+endif()
 
 if ( NOT DEFINED LIBLOGICALACCESS_CMAKE_CONFIG_DIR )
   set ( LIBLOGICALACCESS_CMAKE_CONFIG_DIR lib/${LIB_SUFFIX}/cmake/liblogicalaccess )
@@ -314,5 +327,3 @@ if (NOT DEFINED SYSCONF_INSTALL_DIR)
   set ( SYSCONF_INSTALL_DIR etc )
 endif ()
 install ( FILES liblogicalaccess.config DESTINATION ${SYSCONF_INSTALL_DIR} )
-
-

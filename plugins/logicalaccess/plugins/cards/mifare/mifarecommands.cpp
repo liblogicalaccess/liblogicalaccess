@@ -485,8 +485,7 @@ bool MifareCommands::readValueBlock(uint8_t blockno, int32_t &value,
 {
     auto buffer = readBinary(blockno, 16);
     EXCEPTION_ASSERT_WITH_LOG(buffer.size() == 16, LibLogicalAccessException,
-                              "Didn't manage to read 16 bytes of data. Has " +
-                                  std::to_string(buffer.size()) + " instead.");
+        "Didn't manage to read 16 bytes of data.")
 
     int32_t value0, value1, value_reverse;
     uint8_t backup0, backup1, backup0_reverse, backup1_reverse;

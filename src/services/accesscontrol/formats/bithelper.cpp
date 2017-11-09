@@ -63,7 +63,7 @@ BitsetStream BitHelper::revert(const BitsetStream &data, unsigned int dataLength
 
             BitsetStream linedData;
 
-            linedData.concat(tmp, 0, tmp.size() * 8);
+            linedData.concat(tmp, 0, static_cast<unsigned int>(tmp.size()) * 8);
 
             return linedData;
         }
