@@ -32,7 +32,9 @@ class LIBLOGICALACCESS_API ISO7816OK5553ReaderCardAdapter
      */
     virtual ~ISO7816OK5553ReaderCardAdapter();
 
+#ifndef SWIG
     using ISO7816ReaderCardAdapter::sendAPDUCommand;
+#endif
 
     /**
      * \brief Send an APDU command to the reader.

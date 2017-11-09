@@ -33,20 +33,6 @@ SmartIDReaderCardAdapter::~SmartIDReaderCardAdapter()
 {
 }
 
-void SmartIDReaderCardAdapter::sendAPDUCommand(const ByteVector &command,
-                                               unsigned char *result, size_t *resultlen)
-{
-    ByteVector res = sendCommand(0x52, command);
-    if (result != nullptr && resultlen != nullptr)
-    {
-        if (*resultlen >= res.size())
-        {
-            *resultlen = res.size();
-            memcpy(result, &res[0], res.size());
-        }
-    }
-}
-
 ByteVector SmartIDReaderCardAdapter::sendCommand(unsigned char cmd,
                                                  const ByteVector &command,
                                                  long int timeout)

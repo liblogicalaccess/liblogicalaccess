@@ -23,12 +23,6 @@ class LIBLOGICALACCESS_API ISO7816ReaderCardAdapter : public ReaderCardAdapter
 {
   public:
     /**
-    * \brief Send an APDU command to the reader.
-    */
-    virtual void sendAPDUCommand(const ByteVector &command, unsigned char *result,
-                                 size_t *resultlen);
-
-    /**
      * \brief Send an APDU command to the reader.
      */
     virtual ByteVector sendAPDUCommand(unsigned char cla, unsigned char ins,

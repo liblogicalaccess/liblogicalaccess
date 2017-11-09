@@ -49,13 +49,9 @@ class LIBLOGICALACCESS_API SmartIDReaderCardAdapter : public ISO7816ReaderCardAd
     static const unsigned char
         RET_NY_IMPLEMENTED; /**< \brief The RET_NY_IMPLEMENTED value. */
 
+#ifndef SWIG
     using ReaderCardAdapter::sendCommand;
-
-    /**
-     * \brief Send an APDU command to the reader.
-     */
-    void sendAPDUCommand(const ByteVector &command, unsigned char *result,
-                         size_t *resultlen) override;
+#endif
 
     /**
      * \brief Send a command to the reader.

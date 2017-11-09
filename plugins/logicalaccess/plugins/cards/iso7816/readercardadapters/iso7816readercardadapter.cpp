@@ -10,21 +10,6 @@
 
 namespace logicalaccess
 {
-void ISO7816ReaderCardAdapter::sendAPDUCommand(const ByteVector &command,
-                                               unsigned char *result, size_t *resultlen)
-{
-    ByteVector res = sendCommand(command);
-
-    if (result != nullptr && resultlen != nullptr)
-    {
-        if (*resultlen >= res.size())
-        {
-            *resultlen = res.size();
-            memcpy(result, &res[0], res.size());
-        }
-    }
-}
-
 ByteVector ISO7816ReaderCardAdapter::sendAPDUCommand(unsigned char cla, unsigned char ins,
                                                      unsigned char p1, unsigned char p2,
                                                      unsigned char lc,
