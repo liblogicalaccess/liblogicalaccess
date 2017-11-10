@@ -262,7 +262,7 @@
 								<id>build-kbdhook-Win32</id>
 								<phase>compile</phase>
 								<configuration>
-									<workingDirectory>./plugins/pluginsreaderproviders/keyboard</workingDirectory>
+									<workingDirectory>./plugins/logicalaccess/plugins/readers/keyboard</workingDirectory>
 									<arguments>
 										<argument>islogkbdhook.sln</argument>
 										<argument>/p:Configuration=Release</argument>
@@ -303,7 +303,7 @@
 								<id>build-kbdhook-x64</id>
 								<phase>compile</phase>
 								<configuration>
-									<workingDirectory>./plugins/pluginsreaderproviders/keyboard</workingDirectory>
+									<workingDirectory>./plugins/logicalaccess/plugins/readers/keyboard</workingDirectory>
 									<arguments>
 										<argument>islogkbdhook.sln</argument>
 										<argument>/p:Configuration=Release</argument>
@@ -344,7 +344,7 @@
 								<id>build-kbdhook-Win32-debug</id>
 								<phase>compile</phase>
 								<configuration>
-									<workingDirectory>./plugins/pluginsreaderproviders/keyboard</workingDirectory>
+									<workingDirectory>./plugins/logicalaccess/plugins/readers/keyboard</workingDirectory>
 									<arguments>
 										<argument>islogkbdhook.sln</argument>
 										<argument>/p:Configuration=Debug</argument>
@@ -385,7 +385,7 @@
 								<id>build-kbdhook-x64-debug</id>
 								<phase>compile</phase>
 								<configuration>
-									<workingDirectory>./plugins/pluginsreaderproviders/keyboard</workingDirectory>
+									<workingDirectory>./plugins/logicalaccess/plugins/readers/keyboard</workingDirectory>
 									<arguments>
 										<argument>islogkbdhook.sln</argument>
 										<argument>/p:Configuration=Debug</argument>
@@ -411,31 +411,31 @@
 								<configuration>
 									<tasks>
 										<copy todir="${project.basedir}/install/bin/Win32/Release" flatten="true">
-											<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
+											<fileset dir="${project.basedir}/plugins/logicalaccess/plugins/readers/keyboard">
 												<include name="**/bin/Win32/Release/*.dll"/>
 												<include name="**/bin/Win32/Release/*.exe"/>
 											</fileset>
 										</copy>
 										<copy todir="${project.basedir}/install/bin/x64/Release" flatten="true">
-											<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
+											<fileset dir="${project.basedir}/plugins/logicalaccess/plugins/readers/keyboard">
 												<include name="**/bin/x64/Release/*.dll"/>
 												<include name="**/bin/x64/Release/*.exe"/>
 											</fileset>
 										</copy>
 										<copy todir="${project.basedir}/install/bin/Win32/Debug" flatten="true">
-											<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
+											<fileset dir="${project.basedir}/plugins/logicalaccess/plugins/readers/keyboard">
 												<include name="**/bin/Win32/Debug/*.dll"/>
 												<include name="**/bin/Win32/Debug/*.exe"/>
 											</fileset>
 										</copy>
 										<copy todir="${project.basedir}/install/bin/x64/Debug" flatten="true">
-											<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
+											<fileset dir="${project.basedir}/plugins/logicalaccess/plugins/readers/keyboard">
 												<include name="**/bin/x64/Debug/*.dll"/>
 												<include name="**/bin/x64/Debug/*.exe"/>
 											</fileset>
 										</copy>
 										<copy todir="${project.basedir}/install/etc" flatten="true">
-											<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
+											<fileset dir="${project.basedir}/plugins/logicalaccess/plugins/readers/keyboard">
 												<include name="islogkbdsettings.config"/>
 											</fileset>
 										</copy>
@@ -514,7 +514,7 @@
 								<id>build-kbdhook-Win32</id>
 								<phase>compile</phase>
 								<configuration>
-									<workingDirectory>./plugins/pluginsreaderproviders/keyboard</workingDirectory>
+									<workingDirectory>./plugins/logicalaccess/plugins/readers/keyboard</workingDirectory>
 									<arguments>
 										<argument>islogkbdhook.sln</argument>
 										<argument>/rebuild</argument>
@@ -570,7 +570,7 @@
 								<id>build-kbdhook-x64</id>
 								<phase>compile</phase>
 								<configuration>
-									<workingDirectory>./plugins/pluginsreaderproviders/keyboard</workingDirectory>
+									<workingDirectory>./plugins/logicalaccess/plugins/readers/keyboard</workingDirectory>
 									<arguments>
 										<argument>islogkbdhook.sln</argument>
 										<argument>/rebuild</argument>
@@ -626,7 +626,7 @@
 								<id>build-kbdhook-Win32-debug</id>
 								<phase>compile</phase>
 								<configuration>
-									<workingDirectory>./plugins/pluginsreaderproviders/keyboard</workingDirectory>
+									<workingDirectory>./plugins/logicalaccess/plugins/readers/keyboard</workingDirectory>
 									<arguments>
 										<argument>islogkbdhook.sln</argument>
 										<argument>/rebuild</argument>
@@ -682,7 +682,7 @@
 								<id>build-kbdhook-x64-debug</id>
 								<phase>compile</phase>
 								<configuration>
-									<workingDirectory>./plugins/pluginsreaderproviders/keyboard</workingDirectory>
+									<workingDirectory>./plugins/logicalaccess/plugins/readers/keyboard</workingDirectory>
 									<arguments>
 										<argument>islogkbdhook.sln</argument>
 										<argument>/rebuild</argument>
@@ -707,31 +707,31 @@
 								<configuration>
 									<tasks>
 										<copy todir="${project.basedir}/install/bin/Win32/Release" flatten="true">
-											<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
+											<fileset dir="${project.basedir}/plugins/logicalaccess/plugins/readers/keyboard">
 												<include name="**/bin/Win32/Release/*.dll"/>
 												<include name="**/bin/Win32/Release/*.exe"/>
 											</fileset>
 										</copy>
 										<copy todir="${project.basedir}/install/bin/x64/Release" flatten="true">
-											<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
+											<fileset dir="${project.basedir}/plugins/logicalaccess/plugins/readers/keyboard">
 												<include name="**/bin/x64/Release/*.dll"/>
 												<include name="**/bin/x64/Release/*.exe"/>
 											</fileset>
 										</copy>
 										<copy todir="${project.basedir}/install/bin/Win32/Debug" flatten="true">
-											<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
+											<fileset dir="${project.basedir}/plugins/logicalaccess/plugins/readers/keyboard">
 												<include name="**/bin/Win32/Debug/*.dll"/>
 												<include name="**/bin/Win32/Debug/*.exe"/>
 											</fileset>
 										</copy>
 										<copy todir="${project.basedir}/install/bin/x64/Debug" flatten="true">
-											<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
+											<fileset dir="${project.basedir}/plugins/logicalaccess/plugins/readers/keyboard">
 												<include name="**/bin/x64/Debug/*.dll"/>
 												<include name="**/bin/x64/Debug/*.exe"/>
 											</fileset>
 										</copy>
 										<copy todir="${project.basedir}/install/etc" flatten="true">
-											<fileset dir="${project.basedir}/plugins/pluginsreaderproviders/keyboard">
+											<fileset dir="${project.basedir}/plugins/logicalaccess/plugins/readers/keyboard">
 												<include name="islogkbdsettings.config"/>
 											</fileset>
 										</copy>

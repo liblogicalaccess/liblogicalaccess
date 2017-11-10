@@ -1,7 +1,5 @@
 documentations/build.doxyfile
 documentations/doc
-/wrappers/liblogicalaccess.com/installer/build.liblogicalaccess-exe-cache/*
-/wrappers/liblogicalaccess.com/installer/build.*.aip
 target
 packages
 build.doxyfile_idl
@@ -22,9 +20,6 @@ Release
 Debug
 Win32
 CMakeFiles
-/wrappers/liblogicalaccess.com/vc++/dlldata.c
-/wrappers/liblogicalaccess.com/gen/
-/wrappers/liblogicalaccess.com/liblogicalaccess.com/
 CMakeCache.txt
 *.vcxproj
 *.vcxproj.filters
@@ -32,8 +27,8 @@ CMakeCache.txt
 cmake_install.cmake
 *.opensdf
 /liblogicalaccess.dir
-/Plugins/PluginsReaderProviders/Keyboard/islogkbdhooklib/islogkbdhooklib
-/Plugins/PluginsReaderProviders/Keyboard/islogkbdhook/islogkbdhook
+/Plugins/logicalaccess/readers/Keyboard/islogkbdhooklib/islogkbdhooklib
+/Plugins/logicalaccess/readers/Keyboard/islogkbdhook/islogkbdhook
 LibLogicalAccessConfig.cmake
 install
 install_manifest.txt
@@ -46,3 +41,9 @@ install_manifest.txt
 *.pdb
 .idea/
 cmake-build-debug/
+/plugins/logicalaccess/plugins/readers/keyboard/.vs
+!plugins\logicalaccess\plugins\readers\keyboard\islogkbdhook.sln
+!plugins\logicalaccess\plugins\readers\keyboard\islogkbdhook\islogkbdhook.vcxproj
+!plugins\logicalaccess\plugins\readers\keyboard\islogkbdhook\islogkbdhook.vcxproj.filters
+!plugins\logicalaccess\plugins\readers\keyboard\islogkbdhooklib\islogkbdhooklib.vcxproj
+!plugins\logicalaccess\plugins\readers\keyboard\islogkbdhooklib\islogkbdhooklib.vcxproj.filters
