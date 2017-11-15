@@ -30,10 +30,9 @@ ReaderProvider::getReaderProviderFromRPType(std::string rpt)
     return LibraryManager::getInstance()->getReaderProvider(rpt);
 }
 
-std::vector<std::shared_ptr<ReaderUnit>>
-ReaderProvider::waitForReaders(std::vector<std::string> readers, double maxwait, bool all)
+const ReaderList ReaderProvider::waitForReaders(std::vector<std::string> readers, double maxwait, bool all)
 {
-    std::vector<std::shared_ptr<ReaderUnit>> ret;
+    ReaderList ret;
     bool notfound = true;
     time_t timer, current_timer;
 
