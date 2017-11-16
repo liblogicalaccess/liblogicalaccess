@@ -48,3 +48,4 @@ cmake-build-debug/
 !plugins\logicalaccess\plugins\readers\keyboard\islogkbdhooklib\islogkbdhooklib.vcxproj
 !plugins\logicalaccess\plugins\readers\keyboard\islogkbdhooklib\islogkbdhooklib.vcxproj.filters
 /samples/basic/.vs/basic/v15
+/samples/basic/*.db
