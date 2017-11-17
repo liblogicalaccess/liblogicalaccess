@@ -13,6 +13,8 @@
 
 namespace logicalaccess
 {
+#define NFC_CARDSERVICE_ISO7816_TAG4 "ISO7816NFCTag4"
+
 /**
  * \brief The ISO7816 NFC Tag 4 storage card service base class.
  */
@@ -31,6 +33,8 @@ class LIBLOGICALACCESS_API ISO7816NFCTag4CardService : public NFCTagCardService
     virtual ~ISO7816NFCTag4CardService()
     {
     }
+
+    std::string getCSType() override { return NFC_CARDSERVICE_ISO7816_TAG4; }
 
     virtual void writeCapabilityContainer(unsigned short isoFID         = 0xe103,
                                           unsigned short isoFIDNDEFFile = 0xe104,

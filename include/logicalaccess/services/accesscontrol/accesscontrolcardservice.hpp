@@ -19,6 +19,8 @@ namespace logicalaccess
 */
 typedef std::vector<std::shared_ptr<Format>> FormatList;
 
+#define ACCESSCONTROLCARDSERVICE "AccessControl"
+
 /**
  * \brief The base access control card service class for all access control services.
  */
@@ -35,6 +37,8 @@ class LIBLOGICALACCESS_API AccessControlCardService : public CardService
      * \brief Destructor.
      */
     virtual ~AccessControlCardService();
+
+    std::string getCSType() override { return ACCESSCONTROLCARDSERVICE; }
 
     /**
      * \brief Read format from the card.

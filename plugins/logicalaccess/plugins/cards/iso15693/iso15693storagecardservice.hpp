@@ -14,6 +14,8 @@ namespace logicalaccess
 {
 class ISO15693Chip;
 
+#define STORAGECARDSERVICE_ISO15693 "ISO15693Storage"
+
 /**
  * \brief The ISO15693 storage card service base class.
  */
@@ -29,6 +31,8 @@ class LIBLOGICALACCESS_API ISO15693StorageCardService : public StorageCardServic
      * \brief Destructor.
      */
     virtual ~ISO15693StorageCardService();
+
+    std::string getCSType() override { return STORAGECARDSERVICE_ISO15693; }
 
     /**
      * \brief Erase a specific location on the card.

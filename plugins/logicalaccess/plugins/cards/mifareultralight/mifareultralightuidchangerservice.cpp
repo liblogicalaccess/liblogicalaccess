@@ -5,14 +5,14 @@
 
 using namespace logicalaccess;
 
-MifareUltralightUIDChangerService::MifareUltralightUIDChangerService(
+MifareUltralightUIDChangerCardService::MifareUltralightUIDChangerCardService(
     std::shared_ptr<StorageCardService> storage)
-    : UIDChangerService(storage->getChip())
+    : UIDChangerCardService(storage->getChip())
     , storage_(storage)
 {
 }
 
-void MifareUltralightUIDChangerService::changeUID(const ByteVector &new_uid)
+void MifareUltralightUIDChangerCardService::changeUID(const ByteVector &new_uid)
 {
     auto loc = std::make_shared<MifareUltralightLocation>();
     EXCEPTION_ASSERT_WITH_LOG(new_uid.size() == 7, LibLogicalAccessException,

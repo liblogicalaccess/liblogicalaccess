@@ -14,6 +14,8 @@ namespace logicalaccess
 {
 class TwicCardProvider;
 
+#define TWIC_ACCESSCONTROL_CARDSERVICE "TwicAccessControl"
+
 /**
  * \brief The Twic access control card service class.
  */
@@ -30,6 +32,8 @@ class LIBLOGICALACCESS_API TwicAccessControlCardService : public AccessControlCa
      * \brief Destructor.
      */
     ~TwicAccessControlCardService();
+
+    std::string getCSType() override { return TWIC_ACCESSCONTROL_CARDSERVICE; }
 
     /**
      * \brief Read format from the card.

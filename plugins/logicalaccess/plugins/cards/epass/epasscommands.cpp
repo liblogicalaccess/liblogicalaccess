@@ -34,7 +34,7 @@ static ByteVector get_challenge(std::shared_ptr<ISO7816ReaderCardAdapter> rca)
 
 bool EPassCommands::authenticate(const std::string &mrz)
 {
-    LLA_LOG_CTX("EPassIdentityService::authenticate");
+    LLA_LOG_CTX("EPassIdentityCardService::authenticate");
     // We perform a classic ISO7816 authenticate. However, there are some caveats.
     //     + Some epassport chip returns an error when we try to authenticate while
     //       we are already authenticated.
@@ -118,7 +118,7 @@ bool EPassCommands::selectEF(const ByteVector &file_id) const
 
 bool EPassCommands::selectIssuerApplication()
 {
-    LLA_LOG_CTX("EPassIdentityService::selectIssuerApplication");
+    LLA_LOG_CTX("EPassIdentityCardService::selectIssuerApplication");
     return selectApplication({0xA0, 0, 0, 0x02, 0x47, 0x10, 0x01});
 }
 

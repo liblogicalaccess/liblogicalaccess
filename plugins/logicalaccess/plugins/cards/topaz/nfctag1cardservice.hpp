@@ -13,6 +13,8 @@
 
 namespace logicalaccess
 {
+#define NFC_TAG1_CARDSERVICE "NFCTag1"
+
 /**
 * \brief The NFC Tag 1 storage card service base class.
 */
@@ -31,6 +33,8 @@ class LIBLOGICALACCESS_API NFCTag1CardService : public NFCTagCardService
     virtual ~NFCTag1CardService()
     {
     }
+
+    std::string getCSType() override { return NFC_TAG1_CARDSERVICE; }
 
     std::shared_ptr<NdefMessage> readNDEF() override;
 

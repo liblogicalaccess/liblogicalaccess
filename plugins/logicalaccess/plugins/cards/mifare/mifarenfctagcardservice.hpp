@@ -13,6 +13,8 @@
 
 namespace logicalaccess
 {
+#define MIFARE_NFC_CARDSERVICE "MifareNFCTag"
+
 /**
 * \brief The Mifare Classic NFC Tag storage card service base class.
 */
@@ -31,6 +33,8 @@ class LIBLOGICALACCESS_API MifareNFCTagCardService : public NFCTagCardService
     virtual ~MifareNFCTagCardService()
     {
     }
+
+    std::string getCSType() override { return MIFARE_NFC_CARDSERVICE; }
 
     std::shared_ptr<NdefMessage> readNDEF() override;
 

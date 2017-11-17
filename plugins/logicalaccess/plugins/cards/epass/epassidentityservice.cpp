@@ -8,12 +8,12 @@
 
 using namespace logicalaccess;
 
-EPassIdentityService::EPassIdentityService(const std::shared_ptr<Chip> &chip)
+EPassIdentityCardService::EPassIdentityCardService(const std::shared_ptr<Chip> &chip)
     : IdentityCardService(chip)
 {
 }
 
-std::string EPassIdentityService::getName()
+std::string EPassIdentityCardService::getName()
 {
     auto dg1 = getDG1();
 
@@ -25,12 +25,12 @@ std::string EPassIdentityService::getName()
     return name;
 }
 
-ByteVector EPassIdentityService::getPicture()
+ByteVector EPassIdentityCardService::getPicture()
 {
-    LLA_LOG_CTX("EPassIdentityService::getPicture");
+    LLA_LOG_CTX("EPassIdentityCardService::getPicture");
     auto chip = getEPassChip();
     EXCEPTION_ASSERT_WITH_LOG(chip, LibLogicalAccessException,
-                              "No or invalid chip object in EPassIdentityService");
+                              "No or invalid chip object in EPassIdentityCardService");
 
     auto cmd = chip->getEPassCommands();
     assert(cmd);
@@ -44,12 +44,12 @@ ByteVector EPassIdentityService::getPicture()
     return {};
 }
 
-std::shared_ptr<EPassChip> EPassIdentityService::getEPassChip() const
+std::shared_ptr<EPassChip> EPassIdentityCardService::getEPassChip() const
 {
     return std::dynamic_pointer_cast<EPassChip>(getChip());
 }
 
-std::shared_ptr<EPassAccessInfo> EPassIdentityService::getEPassAccessInfo() const
+std::shared_ptr<EPassAccessInfo> EPassIdentityCardService::getEPassAccessInfo() const
 {
     auto ai = std::dynamic_pointer_cast<EPassAccessInfo>(access_info_);
     EXCEPTION_ASSERT_WITH_LOG(ai, LibLogicalAccessException,
@@ -58,11 +58,11 @@ std::shared_ptr<EPassAccessInfo> EPassIdentityService::getEPassAccessInfo() cons
     return ai;
 }
 
-EPassDG1 EPassIdentityService::getDG1()
+EPassDG1 EPassIdentityCardService::getDG1()
 {
     auto chip = getEPassChip();
     EXCEPTION_ASSERT_WITH_LOG(chip, LibLogicalAccessException,
-                              "No or invalid chip object in EPassIdentityService");
+                              "No or invalid chip object in EPassIdentityCardService");
 
     auto cmd = chip->getEPassCommands();
     assert(cmd);
@@ -76,7 +76,7 @@ EPassDG1 EPassIdentityService::getDG1()
     return *dg1_cache_;
 }
 
-ByteVector EPassIdentityService::getData(MetaData what)
+ByteVector EPassIdentityCardService::getData(MetaData what)
 {
     ByteVector out;
     if (what == MetaData::PICTURE)
@@ -87,7 +87,7 @@ ByteVector EPassIdentityService::getData(MetaData what)
     return out;
 }
 
-std::string EPassIdentityService::getString(MetaData what)
+std::string EPassIdentityCardService::getString(MetaData what)
 {
     std::string out;
     if (what == MetaData::NAME)
@@ -105,7 +105,7 @@ std::string EPassIdentityService::getString(MetaData what)
     return out;
 }
 
-std::chrono::system_clock::time_point EPassIdentityService::getTime(MetaData what)
+std::chrono::system_clock::time_point EPassIdentityCardService::getTime(MetaData what)
 {
     std::chrono::system_clock::time_point out;
     if (what == MetaData::BIRTHDATE)

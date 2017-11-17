@@ -47,7 +47,7 @@ std::shared_ptr<CardService> MifarePlusSL1Chip::getService(CardServiceType servi
         service.reset(new AccessControlCardService(shared_from_this()));
         break;
     case CST_STORAGE:
-        service.reset(new MifarePlusStorageCardServiceSL1(shared_from_this()));
+        service.reset(new MifarePlusStorageSL1CardService(shared_from_this()));
         break;
     default: break;
     }

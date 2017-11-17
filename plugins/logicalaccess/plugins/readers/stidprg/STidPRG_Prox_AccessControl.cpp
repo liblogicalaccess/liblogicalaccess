@@ -8,12 +8,12 @@
 
 using namespace logicalaccess;
 
-STidPRGProxAccessControl::STidPRGProxAccessControl(std::shared_ptr<Chip> chip)
+STidPRGProxAccessControlCardService::STidPRGProxAccessControlCardService(std::shared_ptr<Chip> chip)
     : AccessControlCardService(chip)
 {
 }
 
-bool STidPRGProxAccessControl::writeFormat(std::shared_ptr<Format> format,
+bool STidPRGProxAccessControlCardService::writeFormat(std::shared_ptr<Format> format,
                                            std::shared_ptr<Location>,
                                            std::shared_ptr<AccessInfo>,
                                            std::shared_ptr<AccessInfo>)

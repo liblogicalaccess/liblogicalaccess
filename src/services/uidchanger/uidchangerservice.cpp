@@ -2,7 +2,7 @@
 
 using namespace logicalaccess;
 
-UIDChangerService::UIDChangerService(std::shared_ptr<Chip> chip)
+UIDChangerCardService::UIDChangerCardService(std::shared_ptr<Chip> chip)
     : CardService(chip, CST_UID_CHANGER)
 {
 }

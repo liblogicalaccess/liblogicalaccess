@@ -14,6 +14,8 @@ namespace logicalaccess
 {
 class DESFireChip;
 
+#define NFC_CARDSERVICE_DESFIREEV1 "DESFireEV1NFCTag4"
+
 /**
  * \brief The DESFire storage card service base class.
  */
@@ -32,6 +34,8 @@ class LIBLOGICALACCESS_API DESFireEV1NFCTag4CardService : public ISO7816NFCTag4C
     ~DESFireEV1NFCTag4CardService()
     {
     }
+
+    std::string getCSType() override { return NFC_CARDSERVICE_DESFIREEV1; }
 
     void createNFCApplication(unsigned int aid, std::shared_ptr<DESFireKey> masterPICCKey,
                               unsigned short isoFIDApplication         = 0xe105,

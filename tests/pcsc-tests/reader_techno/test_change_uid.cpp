@@ -36,8 +36,8 @@ void change_uid(ByteVector new_uid)
     PRINT_TIME("Chip identifier: " << BufferHelper::getHex(chip->getChipIdentifier()));
     PRINT_TIME("Card type: {" << chip->getCardType() << "}");
 
-    std::shared_ptr<UIDChangerService> uid_changer =
-        std::dynamic_pointer_cast<UIDChangerService>(chip->getService(CST_UID_CHANGER));
+    std::shared_ptr<UIDChangerCardService> uid_changer =
+        std::dynamic_pointer_cast<UIDChangerCardService>(chip->getService(CST_UID_CHANGER));
 
     LLA_ASSERT(uid_changer, "No UID Changer service available for this card.");
 

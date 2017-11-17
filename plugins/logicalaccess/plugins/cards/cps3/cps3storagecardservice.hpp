@@ -12,6 +12,9 @@
 
 namespace logicalaccess
 {
+
+#define STORAGE_CARDSERVICE_CPS3 "CPS3Storage"
+
 /**
  * \brief The CPS3 storage card service base class.
  */
@@ -27,6 +30,8 @@ class LIBLOGICALACCESS_API CPS3StorageCardService : public ISO7816StorageCardSer
      * \brief Destructor.
      */
     virtual ~CPS3StorageCardService();
+
+    std::string getCSType() override { return STORAGE_CARDSERVICE_CPS3; }
 
     /**
      * \brief Read data on a specific Tag-It location, using given Tag-It keys.

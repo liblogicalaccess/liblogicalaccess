@@ -16,6 +16,8 @@
 
 namespace logicalaccess
 {
+#define STORAGECARDSERVICE_TOPAZ "TopazStorage"
+
 /**
  * \brief The Topaz base profile class.
  */
@@ -32,6 +34,8 @@ class LIBLOGICALACCESS_API TopazStorageCardService : public StorageCardService
      * \brief Destructor.
      */
     ~TopazStorageCardService();
+
+    std::string getCSType() override { return STORAGECARDSERVICE_TOPAZ; }
 
     /**
      * \brief Erase the card.

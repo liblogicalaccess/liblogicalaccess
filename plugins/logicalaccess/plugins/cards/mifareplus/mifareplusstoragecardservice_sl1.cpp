@@ -9,21 +9,21 @@
 #include <logicalaccess/logs.hpp>
 
 
-logicalaccess::MifarePlusStorageCardServiceSL1::MifarePlusStorageCardServiceSL1(
+logicalaccess::MifarePlusStorageSL1CardService::MifarePlusStorageSL1CardService(
     std::shared_ptr<Chip> chip)
     : MifareStorageCardService(chip)
     , has_been_authenticated_(false)
 {
 }
 
-void logicalaccess::MifarePlusStorageCardServiceSL1::erase(
+void logicalaccess::MifarePlusStorageSL1CardService::erase(
     std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse)
 {
     authenticate_if_needed(aiToUse);
     MifareStorageCardService::erase(location, aiToUse);
 }
 
-void logicalaccess::MifarePlusStorageCardServiceSL1::writeData(
+void logicalaccess::MifarePlusStorageSL1CardService::writeData(
     std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse,
     std::shared_ptr<AccessInfo> aiToWrite, const ByteVector &data,
     CardBehavior behaviorFlags)
@@ -33,7 +33,7 @@ void logicalaccess::MifarePlusStorageCardServiceSL1::writeData(
                                         behaviorFlags);
 }
 
-ByteVector logicalaccess::MifarePlusStorageCardServiceSL1::readData(
+ByteVector logicalaccess::MifarePlusStorageSL1CardService::readData(
     std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse,
     size_t length, CardBehavior behaviorFlags)
 {
@@ -41,14 +41,14 @@ ByteVector logicalaccess::MifarePlusStorageCardServiceSL1::readData(
     return MifareStorageCardService::readData(location, aiToUse, length, behaviorFlags);
 }
 
-ByteVector logicalaccess::MifarePlusStorageCardServiceSL1::readDataHeader(
+ByteVector logicalaccess::MifarePlusStorageSL1CardService::readDataHeader(
     std::shared_ptr<Location> location, std::shared_ptr<AccessInfo> aiToUse)
 {
     authenticate_if_needed(aiToUse);
     return MifareStorageCardService::readDataHeader(location, aiToUse);
 }
 
-void logicalaccess::MifarePlusStorageCardServiceSL1::authenticate_if_needed(
+void logicalaccess::MifarePlusStorageSL1CardService::authenticate_if_needed(
     std::shared_ptr<AccessInfo> ai)
 {
     auto mfp_sl1_ai = std::dynamic_pointer_cast<MifarePlusSL1AccessInfo>(ai);

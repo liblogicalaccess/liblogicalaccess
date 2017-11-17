@@ -8,6 +8,7 @@
 #define LOGICALACCESS_CARDSERVICE_HPP
 
 #include <memory>
+#include <string>
 #include <logicalaccess/logicalaccess_api.hpp>
 
 namespace logicalaccess
@@ -48,11 +49,13 @@ class LIBLOGICALACCESS_API CardService : public std::enable_shared_from_this<Car
     virtual ~CardService() = default;
 
     /**
- * \brief Constructor.
- * \param chip The associated chip.
-         * \param serviceType The card service type.
- */
+     * \brief Constructor.
+     * \param chip The associated chip.
+     * \param serviceType The card service type.
+     */
     CardService(std::shared_ptr<Chip> chip, CardServiceType serviceType);
+
+    virtual std::string getCSType() = 0;
 
     /*
      * \brief Get the associated chip object.

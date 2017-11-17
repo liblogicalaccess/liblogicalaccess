@@ -13,6 +13,8 @@
 
 namespace logicalaccess
 {
+#define STORAGECARDSERVICE_MIFARE_ULTRALIGHTC "MifareUltralightCStorage"
+
 /**
  * \brief The Mifare Ultralight C storage card service base class.
  */
@@ -30,6 +32,8 @@ class LIBLOGICALACCESS_API MifareUltralightCStorageCardService
      * \brief Destructor.
      */
     ~MifareUltralightCStorageCardService();
+
+    std::string getCSType() override { return STORAGECARDSERVICE_MIFARE_ULTRALIGHTC; }
 
     /**
      * \brief Erase a specific location on the card.

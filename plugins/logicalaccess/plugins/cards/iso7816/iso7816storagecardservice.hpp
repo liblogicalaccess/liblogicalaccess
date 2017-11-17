@@ -12,6 +12,8 @@
 
 namespace logicalaccess
 {
+#define STORAGECARDSERVICE_ISO7816 "ISO7816Storage"
+
 /**
  * \brief The ISO7816 card provider base class.
  */
@@ -27,6 +29,8 @@ class LIBLOGICALACCESS_API ISO7816StorageCardService : public StorageCardService
      * \brief Destructor.
      */
     virtual ~ISO7816StorageCardService();
+
+    std::string getCSType() override { return STORAGECARDSERVICE_ISO7816; }
 
     /**
      * \brief Erase a specific location on the card.

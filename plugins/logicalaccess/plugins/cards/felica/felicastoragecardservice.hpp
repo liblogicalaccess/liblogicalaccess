@@ -14,6 +14,8 @@ namespace logicalaccess
 {
 class FeliCaChip;
 
+#define STORAGECARDSERVICE_FELICA "FeliCaStorage"
+
 /**
  * \brief The FeliCa storage card service base class.
  */
@@ -29,6 +31,8 @@ class LIBLOGICALACCESS_API FeliCaStorageCardService : public StorageCardService
      * \brief Destructor.
      */
     virtual ~FeliCaStorageCardService();
+
+    std::string getCSType() override { return STORAGECARDSERVICE_FELICA; }
 
     /**
      * \brief Erase a specific location on the card.

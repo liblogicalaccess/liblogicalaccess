@@ -18,6 +18,8 @@
 
 namespace logicalaccess
 {
+#define STORAGECARDSERVICE_MIFARE "MifareStorage"
+
 /**
  * \brief The Mifare storage card service base class.
  */
@@ -34,6 +36,8 @@ class LIBLOGICALACCESS_API MifareStorageCardService : public StorageCardService
      * \brief Destructor.
      */
     virtual ~MifareStorageCardService();
+
+    std::string getCSType() override { return STORAGECARDSERVICE_MIFARE; }
 
     /**
      * \brief Erase a specific location on the card.

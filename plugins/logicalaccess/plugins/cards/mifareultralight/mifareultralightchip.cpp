@@ -130,7 +130,7 @@ std::shared_ptr<CardService> MifareUltralightChip::getService(CardServiceType se
     {
         auto storage =
             std::make_shared<MifareUltralightStorageCardService>(shared_from_this());
-        service.reset(new MifareUltralightUIDChangerService(storage));
+        service.reset(new MifareUltralightUIDChangerCardService(storage));
         break;
     }
     default: break;

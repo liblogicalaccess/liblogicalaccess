@@ -16,6 +16,8 @@
 
 namespace logicalaccess
 {
+#define STORAGECARDSERVICE_MIFARE_ULTRALIGHT "MifareUltralightStorage"
+
 /**
  * \brief The Mifare Ultralight base profile class.
  */
@@ -32,6 +34,8 @@ class LIBLOGICALACCESS_API MifareUltralightStorageCardService : public StorageCa
      * \brief Destructor.
      */
     ~MifareUltralightStorageCardService();
+
+    std::string getCSType() override { return STORAGECARDSERVICE_MIFARE_ULTRALIGHT; }
 
     /**
      * \brief Erase a specific location on the card.

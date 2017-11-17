@@ -17,7 +17,7 @@ EPassChip::EPassChip()
 std::shared_ptr<CardService> EPassChip::getService(CardServiceType serviceType)
 {
     if (serviceType == CST_IDENTITY)
-        return std::make_shared<EPassIdentityService>(shared_from_this());
+        return std::make_shared<EPassIdentityCardService>(shared_from_this());
     return ISO7816Chip::getService(serviceType);
 }
 

@@ -14,6 +14,8 @@ namespace logicalaccess
 {
 class DESFireChip;
 
+#define STORAGE_CARDSERVICE_DESFIRE "DESFireStorage"
+
 /**
  * \brief The DESFire storage card service bas class.
  */
@@ -25,6 +27,8 @@ class LIBLOGICALACCESS_API DESFireStorageCardService : public StorageCardService
      * \param chip The chip.
      */
     explicit DESFireStorageCardService(std::shared_ptr<Chip> chip);
+
+    std::string getCSType() override { return STORAGE_CARDSERVICE_DESFIRE; }
 
     /**
      * \brief Erase the card.

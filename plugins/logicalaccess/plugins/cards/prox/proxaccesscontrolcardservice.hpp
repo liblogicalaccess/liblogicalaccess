@@ -11,6 +11,8 @@
 
 namespace logicalaccess
 {
+#define PROX_ACCESCONTROL_CARDSERVICE "ProxAccessControl"
+
 /**
  * \brief The Prox access control card service class.
  */
@@ -27,6 +29,8 @@ class LIBLOGICALACCESS_API ProxAccessControlCardService : public AccessControlCa
      * \brief Destructor.
      */
     ~ProxAccessControlCardService();
+
+    std::string getCSType() override { return PROX_ACCESCONTROL_CARDSERVICE; }
 
     /**
      * \brief Read format from the card.

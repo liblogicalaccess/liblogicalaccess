@@ -10,11 +10,11 @@ namespace logicalaccess
  * This service operate mostly on "backup cards" whose UID
  * can be changed.
  */
-class LIBLOGICALACCESS_API UIDChangerService : public CardService
+class LIBLOGICALACCESS_API UIDChangerCardService : public CardService
 {
   public:
-    explicit UIDChangerService(std::shared_ptr<Chip> chip);
-    virtual ~UIDChangerService() = default;
+    explicit UIDChangerCardService(std::shared_ptr<Chip> chip);
+    virtual ~UIDChangerCardService() = default;
 
     virtual void changeUID(const ByteVector &new_uid) = 0;
 };

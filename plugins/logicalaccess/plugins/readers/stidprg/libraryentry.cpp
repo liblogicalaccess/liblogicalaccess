@@ -67,7 +67,7 @@ getCardService(std::shared_ptr<logicalaccess::Chip> c,
     if (c->getCardType() == "Prox" &&
         std::dynamic_pointer_cast<logicalaccess::STidPRGReaderUnit>(ru))
     {
-        service = std::make_shared<logicalaccess::STidPRGProxAccessControl>(c);
+        service = std::make_shared<logicalaccess::STidPRGProxAccessControlCardService>(c);
     }
 }
 }

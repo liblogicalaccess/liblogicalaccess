@@ -14,6 +14,8 @@ namespace logicalaccess
 {
 class GenericTagCardProvider;
 
+#define GENERICACCESSCONTROLCARDSERVICE "GenericTagAccessControl"
+
 /**
  * \brief The GenericTag access control card service class.
  */
@@ -31,6 +33,8 @@ class LIBLOGICALACCESS_API GenericTagAccessControlCardService
      * \brief Destructor.
      */
     ~GenericTagAccessControlCardService();
+
+    std::string getCSType() override { return GENERICACCESSCONTROLCARDSERVICE; }
 
     /**
      * \brief Read format from the card.

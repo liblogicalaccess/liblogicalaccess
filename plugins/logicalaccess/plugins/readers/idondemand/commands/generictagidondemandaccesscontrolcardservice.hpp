@@ -13,6 +13,8 @@ namespace logicalaccess
 {
 class GenericTagCardProvider;
 
+#define GENERICTAGIDONDEMANDEACCESSCONTROLCARDSERVICE "GenericTagIdOnDemandAccessControl"
+
 /**
  * \brief The GenericTag access control card service class for IdOnDemand reader.
  */
@@ -30,6 +32,8 @@ class LIBLOGICALACCESS_API GenericTagIdOnDemandAccessControlCardService
      * \brief Destructor.
      */
     ~GenericTagIdOnDemandAccessControlCardService();
+
+    std::string getCSType() override { return GENERICTAGIDONDEMANDEACCESSCONTROLCARDSERVICE; }
 
     /**
      * \brief Read format from the card.
