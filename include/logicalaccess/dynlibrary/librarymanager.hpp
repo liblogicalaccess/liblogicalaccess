@@ -54,7 +54,7 @@ class LIBLOGICALACCESS_API_DLL LibraryManager
     *
     * Returns the allocated ReaderUnit object or NULL on failure.
     */
-    std::shared_ptr<ReaderUnit> getReader(const std::string &readerName) const;
+    std::shared_ptr<ReaderUnit> getReader(const std::string &readerName);
     std::shared_ptr<Chip> getCard(const std::string &cardtype);
     std::shared_ptr<Commands> getCommands(const std::string &extendedtype);
     static std::shared_ptr<DataTransport>

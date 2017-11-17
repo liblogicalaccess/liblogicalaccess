@@ -38,9 +38,7 @@ void *LibraryManager::getFctFromName(const std::string &fctname, LibraryType lib
     std::string extension = EXTENSION_LIB;
 
     if (libLoaded.empty())
-    {
         scanPlugins();
-    }
 
     for (std::map<std::string, IDynLibrary *>::iterator it = libLoaded.begin();
          it != libLoaded.end(); ++it)
@@ -191,9 +189,7 @@ std::vector<std::string> LibraryManager::getAvailablePlugins(LibraryType library
     }
 
     if (libLoaded.empty())
-    {
         scanPlugins();
-    }
 
     for (std::map<std::string, IDynLibrary *>::iterator it = libLoaded.begin();
          it != libLoaded.end(); ++it)
@@ -232,13 +228,17 @@ void LibraryManager::getAvailablePlugins(std::vector<std::string> &plugins,
     }
 }
 
-std::shared_ptr<ReaderUnit> LibraryManager::getReader(const std::string &readerName) const
+std::shared_ptr<ReaderUnit> LibraryManager::getReader(const std::string &readerName)
 {
     std::lock_guard<std::recursive_mutex> lg(mutex_);
     // The idea here is simply to loop over all shared library
     // and opportunistically call the `getReaderUnit()` function if it exists, hoping
     // that some module will be able to fulfil our request.
     std::shared_ptr<ReaderUnit> readerUnit;
+
+    if (libLoaded.empty())
+        scanPlugins();
+
     for (auto &&itr : libLoaded)
     {
         IDynLibrary *lib = itr.second;
@@ -328,6 +328,10 @@ std::shared_ptr<CardService> LibraryManager::getCardService(std::shared_ptr<Chip
 {
     std::lock_guard<std::recursive_mutex> lg(mutex_);
     std::shared_ptr<CardService> srv;
+
+    if (libLoaded.empty())
+        scanPlugins();
+
     for (auto &&itr : libLoaded)
     {
         IDynLibrary *lib = itr.second;
@@ -351,6 +355,10 @@ ReaderServicePtr LibraryManager::getReaderService(ReaderUnitPtr reader,
 {
     std::lock_guard<std::recursive_mutex> lg(mutex_);
     ReaderServicePtr srv;
+
+    if (libLoaded.empty())
+        scanPlugins();
+
     for (auto &&itr : libLoaded)
     {
         IDynLibrary *lib = itr.second;
