@@ -1,8 +1,8 @@
-#include <logicalaccess/plugins/readers/stidprg/STidPRG_Prox_AccessControl.hpp>
+#include <logicalaccess/plugins/readers/stidprg/stidprgproxaccesscontrolcardservice.hpp>
 #include <logicalaccess/cards/chip.hpp>
 #include <logicalaccess/cards/commands.hpp>
 #include <logicalaccess/myexception.hpp>
-#include <logicalaccess/plugins/readers/stidprg/stid_prg_utils.hpp>
+#include <logicalaccess/plugins/readers/stidprg/stidprgutils.hpp>
 #include <logicalaccess/plugins/readers/stidprg/stidprgreaderunit.hpp>
 #include <cassert>
 

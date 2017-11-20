@@ -12,12 +12,12 @@ namespace logicalaccess
 {
 #define STORAGECARDSERVICE_MIFARE_PLUS "MifarePlusStorageSL1"
 
-class LIBLOGICALACCESS_API MifarePlusStorageSL1CardService
+class LIBLOGICALACCESS_API MifarePlusSL1StorageCardService
     : public MifareStorageCardService
 {
 
   public:
-    explicit MifarePlusStorageSL1CardService(std::shared_ptr<Chip> chip);
+    explicit MifarePlusSL1StorageCardService(std::shared_ptr<Chip> chip);
 
     std::string getCSType() override { return STORAGECARDSERVICE_MIFARE_PLUS; }
 

@@ -9,7 +9,7 @@
 #include <logicalaccess/plugins/cards/mifareultralight/mifareultralightstoragecardservice.hpp>
 #include <logicalaccess/cards/locationnode.hpp>
 #include <logicalaccess/plugins/cards/mifareultralight/nfctag2cardservice.hpp>
-#include <logicalaccess/plugins/cards/mifareultralight/mifareultralightuidchangerservice.hpp>
+#include <logicalaccess/plugins/cards/mifareultralight/mifareultralightuidchangercardservice.hpp>
 
 namespace logicalaccess
 {

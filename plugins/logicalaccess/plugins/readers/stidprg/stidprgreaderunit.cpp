@@ -6,7 +6,7 @@
 #include <logicalaccess/plugins/readers/stidprg/readercardadapters/stidprgbufferparser.hpp>
 #include <logicalaccess/plugins/readers/stidprg/readercardadapters/stidprgdatatransport.hpp>
 #include <logicalaccess/plugins/readers/stidprg/readercardadapters/stidprgreadercardadapter.hpp>
-#include <logicalaccess/plugins/readers/stidprg/stid_prg_utils.hpp>
+#include <logicalaccess/plugins/readers/stidprg/stidprgutils.hpp>
 #include <logicalaccess/plugins/readers/stidprg/stidprgresultchecker.hpp>
 #include <logicalaccess/plugins/readers/stidprg/stidprgreaderunitconfiguration.hpp>
 #include <logicalaccess/services/accesscontrol/formats/wiegand34withfacilityformat.hpp>

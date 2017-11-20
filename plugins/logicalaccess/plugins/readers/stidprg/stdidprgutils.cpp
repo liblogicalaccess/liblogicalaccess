@@ -1,4 +1,4 @@
-#include <logicalaccess/plugins/readers/stidprg/stid_prg_utils.hpp>
+#include <logicalaccess/plugins/readers/stidprg/stidprgutils.hpp>
 #include <bitset>
 #include <logicalaccess/myexception.hpp>
 #include <logicalaccess/utils.hpp>

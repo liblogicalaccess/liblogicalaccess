@@ -1,4 +1,4 @@
-#include <logicalaccess/plugins/cards/mifareplus/mifareplusaccessinfo_sl1.hpp>
+#include <logicalaccess/plugins/cards/mifareplus/mifareplussl1accessinfo.hpp>
 
 using namespace logicalaccess;
 

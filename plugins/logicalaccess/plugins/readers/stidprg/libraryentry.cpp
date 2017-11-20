@@ -1,4 +1,4 @@
-#include <logicalaccess/plugins/readers/stidprg/STidPRG_Prox_AccessControl.hpp>
+#include <logicalaccess/plugins/readers/stidprg/stidprgproxaccesscontrolcardservice.hpp>
 #include <logicalaccess/cards/chip.hpp>
 #include <logicalaccess/cards/commands.hpp>
 #include <logicalaccess/plugins/readers/stidprg/stidprgreaderprovider.hpp>

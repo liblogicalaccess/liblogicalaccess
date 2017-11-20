@@ -4,7 +4,7 @@
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
 #include <logicalaccess/readerproviders/readerconfiguration.hpp>
 
-#include <logicalaccess/plugins/cards/mifareplus/mifareplusaccessinfo_sl1.hpp>
+#include <logicalaccess/plugins/cards/mifareplus/mifareplussl1accessinfo.hpp>
 
 #include <logicalaccess/plugins/lla-tests/macros.hpp>
 #include <logicalaccess/plugins/lla-tests/utils.hpp>

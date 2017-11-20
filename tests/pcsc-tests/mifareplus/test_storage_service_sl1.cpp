@@ -4,7 +4,7 @@
 #include <logicalaccess/readerproviders/readerconfiguration.hpp>
 #include <logicalaccess/services/storage/storagecardservice.hpp>
 #include <logicalaccess/plugins/cards/mifare/mifarechip.hpp>
-#include <logicalaccess/plugins/cards/mifareplus/mifareplusaccessinfo_sl1.hpp>
+#include <logicalaccess/plugins/cards/mifareplus/mifareplussl1accessinfo.hpp>
 #include <logicalaccess/cards/aes128key.hpp>
 
 #include <logicalaccess/logs.hpp>

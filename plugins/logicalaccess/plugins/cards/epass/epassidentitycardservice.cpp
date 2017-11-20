@@ -1,4 +1,4 @@
-#include <logicalaccess/plugins/cards/epass/epassidentityservice.hpp>
+#include <logicalaccess/plugins/cards/epass/epassidentitycardservice.hpp>
 #include <logicalaccess/plugins/cards/epass/epassaccessinfo.hpp>
 #include <logicalaccess/plugins/cards/epass/epasschip.hpp>
 #include <boost/algorithm/string/replace.hpp>

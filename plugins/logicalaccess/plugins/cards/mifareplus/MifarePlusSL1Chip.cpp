@@ -4,8 +4,8 @@
 
 #include <logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp>
 #include <logicalaccess/plugins/cards/mifareplus/MifarePlusSL1Chip.hpp>
-#include <logicalaccess/plugins/cards/mifareplus/mifareplusstoragecardservice_sl1.hpp>
-#include <logicalaccess/plugins/cards/mifareplus/mifareplusaccessinfo_sl1.hpp>
+#include <logicalaccess/plugins/cards/mifareplus/mifareplussl1storagecardservice.hpp>
+#include <logicalaccess/plugins/cards/mifareplus/mifareplussl1accessinfo.hpp>
 
 using namespace logicalaccess;
 
@@ -47,7 +47,7 @@ std::shared_ptr<CardService> MifarePlusSL1Chip::getService(CardServiceType servi
         service.reset(new AccessControlCardService(shared_from_this()));
         break;
     case CST_STORAGE:
-        service.reset(new MifarePlusStorageSL1CardService(shared_from_this()));
+        service.reset(new MifarePlusSL1StorageCardService(shared_from_this()));
         break;
     default: break;
     }
