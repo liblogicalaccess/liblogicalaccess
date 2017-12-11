@@ -1253,8 +1253,8 @@ namespace logicalaccess
     {
 		std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 		std::vector<unsigned char> command(1);
-		command[0] = (formatCardEnabled) ? 0x00 : 0x01 |
-			(randomIdEnabled) ? 0x02 : 0x00;
+		command[0] = ((formatCardEnabled) ? 0x00 : 0x01) |
+			((randomIdEnabled) ? 0x02 : 0x00);
 
 		crypto->initBuf();
 		std::vector<unsigned char> param;
