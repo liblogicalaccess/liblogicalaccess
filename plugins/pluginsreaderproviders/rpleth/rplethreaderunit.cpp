@@ -31,6 +31,7 @@
 #include "logicalaccess/myexception.hpp"
 #include "logicalaccess/settings.hpp"
 #include <boost/property_tree/xml_parser.hpp>
+#include "pcsc/pcscreaderunit.hpp"
 
 namespace logicalaccess
 {
@@ -378,15 +379,28 @@ namespace logicalaccess
 			{
 				LOG(LogLevel::INFOS) << "Data transport connected, initializing PROXY mode...";
 				std::string type = getProxyReaderType();
-				std::shared_ptr<ReaderProvider> rp = LibraryManager::getInstance()->getReaderProvider(type);
-				if (rp)
-				{
-					d_proxyReader = rp->createReaderUnit();
-					std::shared_ptr<RplethDataTransport> rpdt = std::dynamic_pointer_cast<RplethDataTransport>(getDataTransport());
 
-					EXCEPTION_ASSERT_WITH_LOG(rpdt, LibLogicalAccessException, "Rpleth data transport required for proxy mode.");
-					d_proxyReader->setDataTransport(rpdt);
-				}
+                                if (type == "PCSC")
+                                {
+                                    LOG(LogLevel::INFOS) << "default PROXY PCSC ...";
+                                    d_proxyReader = std::make_shared<PCSCReaderUnit>("");
+                                }
+                                else
+                                {
+                                    std::shared_ptr<ReaderProvider> rp = LibraryManager::getInstance()->getReaderProvider(type);
+                                    if (rp)
+                                    {
+                                        d_proxyReader = rp->createReaderUnit();
+                                    }
+                                }
+
+                                if (d_proxyReader)
+                                {
+                                    std::shared_ptr<RplethDataTransport> rpdt = std::dynamic_pointer_cast<RplethDataTransport>(getDataTransport());
+
+                                    EXCEPTION_ASSERT_WITH_LOG(rpdt, LibLogicalAccessException, "Rpleth data transport required for proxy mode.");
+                                    d_proxyReader->setDataTransport(rpdt);
+                                }
 			}
 		}
 
