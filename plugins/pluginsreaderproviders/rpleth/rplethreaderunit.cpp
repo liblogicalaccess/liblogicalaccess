@@ -380,7 +380,7 @@ namespace logicalaccess
 				LOG(LogLevel::INFOS) << "Data transport connected, initializing PROXY mode...";
 				std::string type = getProxyReaderType();
 
-                                if (type == "PCSC")
+                                if (type == "PCSC") // Avoid scard resources
                                 {
                                     LOG(LogLevel::INFOS) << "default PROXY PCSC ...";
                                     d_proxyReader = std::make_shared<PCSCReaderUnit>("");
