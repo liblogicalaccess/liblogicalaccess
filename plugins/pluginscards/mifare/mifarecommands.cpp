@@ -84,7 +84,14 @@ namespace logicalaccess
     void MifareCommands::setSectorToMAD(long aid, unsigned int sector, std::shared_ptr<MifareKey> madKeyA, std::shared_ptr<MifareKey> madKeyB)
     {
         MifareAccessInfo::SectorAccessBits sab;
-		sab.setAReadBWriteConfiguration();
+        if (madKeyB->isEmpty())
+        {
+            sab.setTransportConfiguration();
+        }
+        else
+        {
+            sab.setAReadBWriteConfiguration();
+        }
 
         if (sector < 16)
         {
