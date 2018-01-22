@@ -28,8 +28,8 @@ pipeline {
                             [$class: 'DevelopersRecipientProvider'],
                             [$class: 'RequesterRecipientProvider']
                         ], 
-                        replyTo: '$DEFAULT_REPLYTO',
-                        to: '$DEFAULT_RECIPIENTS'
+                        replyTo: 'cis@islog.com',
+                        to: 'reports@islog.com'
                 }
             }
         }
