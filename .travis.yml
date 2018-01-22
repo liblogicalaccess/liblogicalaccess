@@ -14,10 +14,11 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.7
+            - llvm-toolchain-precise-3.9
           packages:
-            - clang-3.7
-      env: CLANG_VERSION=3.7
+            - clang-3.9
+            - libc++-dev
+      env: CLANG_VERSION=3.9
 
 before_install:
   - sudo apt-get update -qq
@@ -25,10 +26,10 @@ before_install:
   - sudo apt-get install -qq libpcsclite-dev libssl-dev
   
 install:
-  - if [[ -n "$CLANG_VERSION" ]]; then export CXX=clang++-$CLANG_VERSION CC=clang-$CLANG_VERSION; fi
+  - if [[ -n "$CLANG_VERSION" ]]; then export CXX=clang++-$CLANG_VERSION CC=clang-$CLANG_VERSION CMAKE_CXX_FLAGS="$CMAKE_CXX_FLAGS -stdlib=libc++"; fi
   - if [[ -n "$GCC_VERSION" ]]; then export CXX=g++-$GCC_VERSION CC=gcc-$GCC_VERSION; fi
 
-script: mkdir build && pushd build && cmake -DCMAKE_INSTALL_PREFIX=$PWD/install .. && make install && popd && cd samples/basic/ && mkdir build && pushd build && cmake -DLibLogicalAccess_DIR=$PWD/../../../build/install/lib/cmake/liblogicalaccess .. && make
+script: mkdir build && pushd build && cmake -DCMAKE_INSTALL_PREFIX=$PWD/install -DCMAKE_CXX_FLAGS="$CMAKE_CXX_FLAGS" .. && make install && popd && cd samples/basic/ && mkdir build && pushd build && cmake -DLibLogicalAccess_DIR=$PWD/../../../build/install/lib/cmake/liblogicalaccess .. && make
 
 notifications:
   recipients: reports@islog.com
