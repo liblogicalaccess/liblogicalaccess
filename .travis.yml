@@ -14,11 +14,11 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.9
+            - llvm-toolchain-precise-3.8
           packages:
-            - clang-3.9
+            - clang-3.8
             - libc++-dev
-      env: CLANG_VERSION=3.9
+      env: CLANG_VERSION=3.8
 
 before_install:
   - sudo apt-get update -qq
