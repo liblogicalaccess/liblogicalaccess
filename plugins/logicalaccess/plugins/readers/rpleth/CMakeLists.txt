@@ -33,6 +33,7 @@ target_link_libraries(
 	desfirecards
 	iso7816readers
 	iso7816cards
+	pcscreaders
 	${LIBLOGICALACCESS_LIBRARY}
 )
 

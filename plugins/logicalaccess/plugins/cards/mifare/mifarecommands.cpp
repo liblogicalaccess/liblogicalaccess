@@ -94,18 +94,25 @@ unsigned int MifareCommands::getSectorFromMAD(long aid,
 }
 
 void MifareCommands::setSectorToMAD(long aid, unsigned int sector,
-                                    std::shared_ptr<MifareKey> madKeyA,
-                                    std::shared_ptr<MifareKey> madKeyB)
+    std::shared_ptr<MifareKey> madKeyA,
+    std::shared_ptr<MifareKey> madKeyB)
 {
     MifareAccessInfo::SectorAccessBits sab;
-    sab.setAReadBWriteConfiguration();
+    if (madKeyB->isEmpty())
+    {
+        sab.setTransportConfiguration();
+    }
+    else
+    {
+        sab.setAReadBWriteConfiguration();
+    }
 
     if (sector < 16)
     {
         if (sector == 0)
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                     "Can't make reference to the MAD itself.");
+                "Can't make reference to the MAD itself.");
         }
 
         ByteVector madbuf = readSector(0, 1, madKeyA, madKeyB, sab);
@@ -114,7 +121,7 @@ void MifareCommands::setSectorToMAD(long aid, unsigned int sector,
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Can't read the MAD.");
         }
 
-        madbuf[(sector * 2)]   = aid & 0xff;
+        madbuf[(sector * 2)] = aid & 0xff;
         madbuf[sector * 2 + 1] = (aid & 0xff00) >> 8;
         if (madbuf[1] == 0x00)
         {
@@ -134,7 +141,7 @@ void MifareCommands::setSectorToMAD(long aid, unsigned int sector,
         if (sector == 16)
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                     "Can't make reference to the MAD2 itself.");
+                "Can't make reference to the MAD2 itself.");
         }
 
         ByteVector madbuf = readSector(16, 0, madKeyA, madKeyB, sab);
@@ -144,9 +151,9 @@ void MifareCommands::setSectorToMAD(long aid, unsigned int sector,
         }
 
         sector -= 16;
-        madbuf[sector * 2]       = (aid & 0xff00) >> 8;
+        madbuf[sector * 2] = (aid & 0xff00) >> 8;
         madbuf[(sector * 2) + 1] = aid & 0xff;
-        madbuf[0]                = calculateMADCrc(&madbuf[0], madbuf.size());
+        madbuf[0] = calculateMADCrc(&madbuf[0], madbuf.size());
 
         writeSector(16, 0, madbuf, madKeyA, madKeyB, sab);
     }

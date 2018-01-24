@@ -1444,7 +1444,7 @@ void DESFireEV1ISO7816Commands::setConfiguration(bool formatCardEnabled,
 {
     std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
     ByteVector command(1);
-    command[0] = (formatCardEnabled) ? 0x00 : 0x01 | (randomIdEnabled) ? 0x02 : 0x00;
+    command[0] = ((formatCardEnabled) ? 0x00 : 0x01) | ((randomIdEnabled) ? 0x02 : 0x00);
 
     crypto->initBuf();
     ByteVector param;
