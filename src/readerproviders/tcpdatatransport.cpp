@@ -70,7 +70,7 @@ bool TcpDataTransport::connect(long int timeout)
                                        boost::asio::placeholders::error));
 
         boost::asio::ip::tcp::endpoint endpoint(
-            boost::asio::ip::address::from_string(getIpAddress()), getPort());
+            boost::asio::ip::make_address(getIpAddress()), getPort());
         d_socket.async_connect(endpoint,
                                boost::bind(&TcpDataTransport::connect_complete, this,
                                            boost::asio::placeholders::error));

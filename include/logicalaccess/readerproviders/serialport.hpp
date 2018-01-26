@@ -218,7 +218,7 @@ class LIBLOGICALACCESS_API SerialPort
  */
     std::string m_dev;
 
-    boost::asio::io_service m_io;
+    boost::asio::io_context m_io;
 
     boost::asio::serial_port m_serial_port;
 

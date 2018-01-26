@@ -55,7 +55,7 @@ bool UdpDataTransport::connect()
     if (!d_socket)
     {
         boost::asio::ip::udp::endpoint endpoint(
-            boost::asio::ip::address::from_string(getIpAddress()), getPort());
+            boost::asio::ip::make_address(getIpAddress()), getPort());
         d_socket.reset(new boost::asio::ip::udp::socket(ios));
 
         try

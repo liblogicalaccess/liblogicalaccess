@@ -5,178 +5,172 @@
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/property_tree/ptree_fwd.hpp>
 #include <logicalaccess/lla_fwd.hpp>
-#ifdef ENABLE_SSLTRANSPORT
 #include <boost/asio/ssl.hpp>
-#endif
 
 namespace logicalaccess
 {
-/**
- * \brief An SSL transport class.
- */
-class LIBLOGICALACCESS_API SSLTransport
-{
-  public:
-/**
- * \brief Constructor.
- */
-#ifdef ENABLE_SSLTRANSPORT
-    SSLTransport(boost::asio::ssl::context &ctx);
-#else
-    SSLTransport(/*boost::asio::ssl::context &ctx*/);
-#endif
     /**
-     * \brief Destructor.
+     * \brief An SSL transport class.
      */
-    virtual ~SSLTransport();
-
-    virtual std::string getTransportType()
+    class LIBLOGICALACCESS_API SSLTransport
     {
-        return "SSL";
-    }
+    public:
+        /**
+         * \brief Constructor.
+         */
 
-    /**
- * \brief Connect to the transport layer.
-         * \param timeout Time after the connect task will be canceled.
- * \return True on success, false otherwise.
- */
-    virtual bool connect(long int timeout = 2000);
+        SSLTransport(boost::asio::ssl::context &ctx);
 
-    /**
-     * \param Disconnect from the transport layer.
-     */
-    virtual void disconnect();
+        /**
+         * \brief Destructor.
+         */
+        virtual ~SSLTransport();
 
-    /**
-     * \brief Get if connected to the transport layer.
-     * \return True if connected, false otherwise.
-     */
-    virtual bool isConnected();
+        virtual std::string getTransportType()
+        {
+            return "SSL";
+        }
 
-    /**
-     * \brief Get the data transport endpoint name.
-     * \return The data transport endpoint name.
-     */
-    virtual std::string getName() const;
+        /**
+        * \brief Connect to the transport layer.
+        * \param timeout Time after the connect task will be canceled.
+        * \return True on success, false otherwise.
+        */
+        virtual bool connect(long int timeout = 2000);
 
-    /**
-     * \brief Serialize the current object to XML.
-     * \param parentNode The parent node.
-     */
-    virtual void serialize(boost::property_tree::ptree &parentNode);
+        /**
+         * \param Disconnect from the transport layer.
+         */
+        virtual void disconnect();
 
-    /**
-     * \brief UnSerialize a XML node to the current object.
-     * \param node The XML node.
-     */
-    virtual void unSerialize(boost::property_tree::ptree &node);
+        /**
+         * \brief Get if connected to the transport layer.
+         * \return True if connected, false otherwise.
+         */
+        virtual bool isConnected();
 
-    /**
-     * \brief Get the default Xml Node name for this object.
-     * \return The Xml node name.
-     */
-    virtual std::string getDefaultXmlNodeName() const;
+        /**
+         * \brief Get the data transport endpoint name.
+         * \return The data transport endpoint name.
+         */
+        virtual std::string getName() const;
 
-    /**
-     * \brief Get the ip address.
-     * \return The ip address.
-     */
-    std::string getIpAddress() const;
+        /**
+         * \brief Serialize the current object to XML.
+         * \param parentNode The parent node.
+         */
+        virtual void serialize(boost::property_tree::ptree &parentNode);
 
-    /**
-     * \brief Set the ip address.
-     * \param ipAddress The ip address.
-     */
-    void setIpAddress(std::string ipAddress);
+        /**
+         * \brief UnSerialize a XML node to the current object.
+         * \param node The XML node.
+         */
+        virtual void unSerialize(boost::property_tree::ptree &node);
 
-    /**
-     * \brief Get the port.
-     * \return The port.
-     */
-    int getPort() const;
+        /**
+         * \brief Get the default Xml Node name for this object.
+         * \return The Xml node name.
+         */
+        virtual std::string getDefaultXmlNodeName() const;
 
-    /**
-     * \brief Set the port.
-     * \param port The port.
-     */
-    void setPort(int port);
+        /**
+         * \brief Get the ip address.
+         * \return The ip address.
+         */
+        std::string getIpAddress() const;
 
-    /**
-     * \brief Send data packet
-     * \param data The packet.
-     */
-    virtual void send(const ByteVector &data);
+        /**
+         * \brief Set the ip address.
+         * \param ipAddress The ip address.
+         */
+        void setIpAddress(std::string ipAddress);
 
-    /**
-     * \brief Receive packet
-     * \param timeout Time waiting for data.
-     * \return The data receive.
-     */
-    virtual ByteVector receive(long int timeout);
+        /**
+         * \brief Get the port.
+         * \return The port.
+         */
+        int getPort() const;
 
-    /**
-* \brief Connect complete
-     * \param error Read error
-*/
-    void connect_complete(const boost::system::error_code &error) const;
+        /**
+         * \brief Set the port.
+         * \param port The port.
+         */
+        void setPort(int port);
 
-    /**
-* \brief Read complete
-     * \param error Read error
-     * \param bytes_transferred Byte transfered
-*/
-    void read_complete(const boost::system::error_code &error,
-                       size_t bytes_transferred) const;
+        /**
+         * \brief Send data packet
+         * \param data The packet.
+         */
+        virtual void send(const ByteVector &data);
 
-    /**
-* \brief Read timeout
-     * \param error Read timeout or canceled
-*/
-    void time_out(const boost::system::error_code &error) const;
+        /**
+         * \brief Receive packet
+         * \param timeout Time waiting for data.
+         * \return The data receive.
+         */
+        virtual ByteVector receive(long int timeout);
 
-  protected:
-    /**
-     * Perform SSL handshake.
-     */
-    bool handshake(long timeout) const;
+        /**
+         * \brief Connect complete
+         * \param error Read error
+         */
+        void connect_complete(const boost::system::error_code &error);
 
-#ifdef ENABLE_SSLTRANSPORT
-    /**
-     * \brief Provides core I/O functionality
-     */
-    boost::asio::io_service d_ios;
+        /**
+         * \brief Read complete
+         * \param error Read error
+         * \param bytes_transferred Byte transfered
+         */
+        void read_complete(const boost::system::error_code &error,
+            size_t bytes_transferred);
 
-    boost::asio::ssl::context &ssl_ctx_;
+        /**
+        * \brief Read timeout
+        * \param error Read timeout or canceled
+        */
+        void time_out(const boost::system::error_code &error);
 
-    /**
-     * The ssl stream.
-     */
-    boost::asio::ssl::stream<boost::asio::ip::tcp::socket> d_socket;
+    protected:
+        /**
+         * Perform SSL handshake.
+         */
+        bool handshake(long timeout);
 
-    /**
-* \brief Read Deadline timer
-*/
-    boost::asio::deadline_timer d_timer;
-#endif /* ENABLE_SSLTRANSPORT */
+        /**
+         * \brief Provides core I/O functionality
+         */
+        boost::asio::io_service d_ios;
 
-    /**
-* \brief Read error
-*/
-    bool d_read_error;
+        boost::asio::ssl::context &ssl_ctx_;
 
-    /**
-* \brief Byte Readed
-*/
-    size_t d_bytes_transferred;
+        /**
+         * The ssl stream.
+         */
+        boost::asio::ssl::stream<boost::asio::ip::tcp::socket> d_socket;
 
-    /**
-     * \brief The ip address
-     */
-    std::string d_ipAddress;
+        /**
+        * \brief Read Deadline timer
+        */
+        boost::asio::deadline_timer d_timer;
 
-    /**
-     * \brief The listening port.
-     */
-    int d_port;
-};
+        /**
+        * \brief Read error
+        */
+        bool d_read_error;
+
+        /**
+        * \brief Byte Readed
+        */
+        size_t d_bytes_transferred;
+
+        /**
+         * \brief The ip address
+         */
+        std::string d_ipAddress;
+
+        /**
+         * \brief The listening port.
+         */
+        int d_port;
+    };
 }

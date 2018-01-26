@@ -22,32 +22,33 @@
     <ProjectGuid>{F153A500-0AA5-4332-9A8E-97542E1AE5D7}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>islogkbdhook</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141_xp</PlatformToolset>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141_xp</PlatformToolset>
     <CharacterSet>NotSet</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141_xp</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141_xp</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
@@ -106,15 +107,18 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)../../../../../packages/include;$(ProjectDir);$(UniversalCRT_IncludePath);$(ProjectDir)\..\islogkbdhooklib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)../../../../../packages/include;$(ProjectDir);$(ProjectDir)..\islogkbdhooklib;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>islogkbdhooklib32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\islogkbdhooklib\bin\$(Platform)\$(Configuration);$(ProjectDir)..\..\..\..\packages\lib\$(Platform);$(ProjectDir)..\..\..\..\packages\lib\$(Platform)\$(Configuration);$(UniversalCRT_LibraryPath_X86);$(ProjectDir)..\..\..\..\..\packages\lib\$(Platform);$(ProjectDir)..\..\..\..\..\packages\lib\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\islogkbdhooklib\bin\$(Platform)\$(Configuration);$(ProjectDir)..\..\..\..\packages\lib\$(Platform);$(ProjectDir)..\..\..\..\packages\lib\$(Platform)\$(Configuration);$(WindowsSdk_71A_LibraryPath_x86);$(VC_LibraryPath_x86)</AdditionalLibraryDirectories>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</AdditionalIncludeDirectories>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -123,16 +127,19 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)../../../../../packages/include;$(ProjectDir);$(UniversalCRT_IncludePath);$(ProjectDir)\..\islogkbdhooklib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)../../../../../packages/include;$(ProjectDir);$(ProjectDir)..\islogkbdhooklib;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</AdditionalIncludeDirectories>
       <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>islogkbdhooklib64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\islogkbdhooklib\bin\$(Platform)\$(Configuration);$(ProjectDir)..\..\..\..\packages\lib\$(Platform);$(ProjectDir)..\..\..\..\packages\lib\$(Platform)\$(Configuration);$(UniversalCRT_LibraryPath_X64);$(ProjectDir)..\..\..\..\..\packages\lib\$(Platform);$(ProjectDir)..\..\..\..\..\packages\lib\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\islogkbdhooklib\bin\$(Platform)\$(Configuration);$(WindowsSdk_71A_LibraryPath_x64);$(VC_LibraryPath_x64)</AdditionalLibraryDirectories>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</AdditionalIncludeDirectories>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -143,7 +150,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)../../../../../packages/include;$(ProjectDir);$(UniversalCRT_IncludePath);$(ProjectDir)\..\islogkbdhooklib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)../../../../../packages/include;$(ProjectDir);$(ProjectDir)..\islogkbdhooklib;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</AdditionalIncludeDirectories>
       <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
@@ -152,13 +159,16 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>islogkbdhooklib32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\islogkbdhooklib\bin\$(Platform)\$(Configuration);$(ProjectDir)..\..\..\..\packages\lib\$(Platform);$(ProjectDir)..\..\..\..\packages\lib\$(Platform)\$(Configuration);$(UniversalCRT_LibraryPath_X86);$(ProjectDir)..\..\..\..\..\packages\lib\$(Platform);$(ProjectDir)..\..\..\..\..\packages\lib\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\islogkbdhooklib\bin\$(Platform)\$(Configuration);$(ProjectDir)..\..\..\..\packages\lib\$(Platform);$(ProjectDir)..\..\..\..\packages\lib\$(Platform)\$(Configuration);$(WindowsSdk_71A_LibraryPath_x86);$(VC_LibraryPath_x86)</AdditionalLibraryDirectories>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
       <Command>
       </Command>
     </PostBuildEvent>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</AdditionalIncludeDirectories>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -169,7 +179,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)../../../../../packages/include;$(ProjectDir);$(UniversalCRT_IncludePath);$(ProjectDir)\..\islogkbdhooklib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)../../../../../packages/include;$(ProjectDir);$(ProjectDir)..\islogkbdhooklib;$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</AdditionalIncludeDirectories>
       <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
@@ -178,13 +188,16 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>islogkbdhooklib64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\islogkbdhooklib\bin\$(Platform)\$(Configuration);$(ProjectDir)..\..\..\..\..\packages\lib\$(Platform);$(ProjectDir)..\..\..\..\..\packages\lib\$(Platform)\$(Configuration);$(UniversalCRT_LibraryPath_X64);$(ProjectDir)..\..\..\..\..\packages\lib\$(Platform);$(ProjectDir)..\..\..\..\..\packages\lib\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\islogkbdhooklib\bin\$(Platform)\$(Configuration);$(WindowsSdk_71A_LibraryPath_x64);$(VC_LibraryPath_x64)</AdditionalLibraryDirectories>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
       <Command>
       </Command>
     </PostBuildEvent>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(VC_IncludePath);$(WindowsSdk_71A_IncludePath)</AdditionalIncludeDirectories>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
