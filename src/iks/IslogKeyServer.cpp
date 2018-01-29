@@ -60,6 +60,7 @@ ByteVector IslogKeyServer::aes_encrypt(const ByteVector &in, const std::string &
     cmd.payload_  = in;
 
     auto ret = std::dynamic_pointer_cast<AesEncryptResponse>(transact(cmd));
+    assert(ret);
     assert(ret && ret->opcode_ == SMSG_OP_AES_ENCRYPT);
     if (ret->status_ != SMSG_STATUS_SUCCESS)
     {
@@ -206,7 +207,7 @@ std::shared_ptr<BaseResponse> IslogKeyServer::recv() const
     {
         try
         {
-            auto tmpbuf = transport_->receive(3000);
+            auto tmpbuf = transport_->receive(6000);
             buffer.insert(buffer.end(), tmpbuf.begin(), tmpbuf.end());
         }
         catch (LibLogicalAccessException &)

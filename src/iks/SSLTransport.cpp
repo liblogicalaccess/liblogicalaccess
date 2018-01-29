@@ -144,11 +144,14 @@ void SSLTransport::time_out(const boost::system::error_code &error)
 
 ByteVector SSLTransport::receive(long int timeout)
 {
-    ByteVector recv(256);
+    ByteVector recv(2560);
     d_ios.reset();
     d_bytes_transferred = 0;
 
     d_ios.reset();
+    // fixme : this looks like broken netcode...
+    // If we only receive part of our response, it will break and won't read
+    // the full response.
     d_socket.async_read_some(boost::asio::buffer(recv),
                              boost::bind(&SSLTransport::read_complete, this,
                                          boost::asio::placeholders::error,
