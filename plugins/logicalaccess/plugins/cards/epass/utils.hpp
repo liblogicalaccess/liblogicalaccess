@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chrono>
+#include <logicalaccess/liblogicalaccess_export.hpp>
 #include <logicalaccess/lla_fwd.hpp>
 #include <string>
 #include <vector>
