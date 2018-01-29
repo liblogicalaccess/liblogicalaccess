@@ -23,7 +23,7 @@ matrix:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq libboost1.55-dev libboost-system1.55-dev libboost-filesystem1.55-dev libboost-date-time1.55-dev libboost-chrono1.55-dev libboost-thread1.55-dev libboost-regex1.55-dev
-  - sudo apt-get install -qq libpcsclite-dev libssl-dev
+  - sudo apt-get install -qq pkg-config libpcsclite-dev libssl-dev
   
 install:
   - if [[ -n "$CLANG_VERSION" ]]; then export CMAKE_CXX_FLAGS="$CMAKE_CXX_FLAGS -stdlib=libc++"; fi
