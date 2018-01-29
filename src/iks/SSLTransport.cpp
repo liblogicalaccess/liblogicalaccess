@@ -2,6 +2,7 @@
 #include <logicalaccess/bufferhelper.hpp>
 #include <logicalaccess/cards/readercardadapter.hpp>
 #include <logicalaccess/myexception.hpp>
+#include <logicalaccess/boost_version_types.hpp>
 
 #include <boost/array.hpp>
 #include <boost/foreach.hpp>
@@ -61,7 +62,7 @@ bool SSLTransport::connect(long int timeout)
             boost::bind(&SSLTransport::time_out, this, boost::asio::placeholders::error));
 
         boost::asio::ip::tcp::endpoint endpoint(
-            boost::asio::ip::make_address(getIpAddress()), getPort());
+            BOOST_ASIO_MAKE_ADDRESS(getIpAddress()), getPort());
         d_socket.lowest_layer().async_connect(
             endpoint, boost::bind(&SSLTransport::connect_complete, this,
                                   boost::asio::placeholders::error));

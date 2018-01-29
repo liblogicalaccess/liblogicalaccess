@@ -6,6 +6,7 @@
 
 #include <logicalaccess/readerproviders/udpdatatransport.hpp>
 #include <logicalaccess/cards/readercardadapter.hpp>
+#include <logicalaccess/boost_version_types.hpp>
 
 #include <boost/foreach.hpp>
 #include <boost/optional.hpp>
@@ -55,7 +56,7 @@ bool UdpDataTransport::connect()
     if (!d_socket)
     {
         boost::asio::ip::udp::endpoint endpoint(
-            boost::asio::ip::make_address(getIpAddress()), getPort());
+            BOOST_ASIO_MAKE_ADDRESS(getIpAddress()), getPort());
         d_socket.reset(new boost::asio::ip::udp::socket(ios));
 
         try

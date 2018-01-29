@@ -8,6 +8,7 @@
 #include <logicalaccess/readerproviders/tcpdatatransport.hpp>
 #include <logicalaccess/cards/readercardadapter.hpp>
 #include <logicalaccess/bufferhelper.hpp>
+#include <logicalaccess/boost_version_types.hpp>
 
 #include <boost/foreach.hpp>
 #include <boost/optional.hpp>
@@ -70,7 +71,7 @@ bool TcpDataTransport::connect(long int timeout)
                                        boost::asio::placeholders::error));
 
         boost::asio::ip::tcp::endpoint endpoint(
-            boost::asio::ip::make_address(getIpAddress()), getPort());
+            BOOST_ASIO_MAKE_ADDRESS(getIpAddress()), getPort());
         d_socket.async_connect(endpoint,
                                boost::bind(&TcpDataTransport::connect_complete, this,
                                            boost::asio::placeholders::error));

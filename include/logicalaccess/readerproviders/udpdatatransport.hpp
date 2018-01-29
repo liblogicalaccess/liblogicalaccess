@@ -122,7 +122,7 @@ class LIBLOGICALACCESS_API UdpDataTransport : public DataTransport
     /**
      * \brief Provides core I/O functionality
      */
-    boost::asio::io_context ios;
+    boost::asio::io_service ios;
 
     /**
      * \brief The ip address
