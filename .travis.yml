@@ -7,26 +7,25 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - g++-5
-      env:
-         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+            - g++-7
+      env: GCC_VERSION=7
     - compiler: clang
       addons:
         apt:
           sources:
+            - ubuntu-toolchain-r-test
             - llvm-toolchain-trusty-5.0
           packages:
             - clang-5.0
-      env:
-        - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
-
-before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq libboost1.55-dev libboost-system1.55-dev libboost-filesystem1.55-dev libboost-date-time1.55-dev libboost-chrono1.55-dev libboost-thread1.55-dev libboost-regex1.55-dev
-  - sudo apt-get install -qq libpcsclite-dev libssl-dev
+      env: CLANG_VERSION=5.0
   
 install:
-  - if [[ -n "$CLANG_VERSION" ]]; then export CMAKE_CXX_FLAGS="$CMAKE_CXX_FLAGS -stdlib=libc++"; fi
+  - if [[ -n "$CLANG_VERSION" ]]; then export CXX=clang++-$CLANG_VERSION CC=clang-$CLANG_VERSION CMAKE_CXX_FLAGS="$CMAKE_CXX_FLAGS -std=c++14"; fi
+  - if [[ -n "$GCC_VERSION" ]]; then export CXX=g++-$GCC_VERSION CC=gcc-$GCC_VERSION; fi
+
+before_install:
+  - sudo apt-get install -qq libboost1.55-dev libboost-system1.55-dev libboost-filesystem1.55-dev libboost-date-time1.55-dev libboost-chrono1.55-dev libboost-thread1.55-dev libboost-regex1.55-dev
+  - sudo apt-get install -qq pkg-config libpcsclite-dev libssl-dev
 
 script: mkdir build && pushd build && cmake -DCMAKE_INSTALL_PREFIX=$PWD/install -DCMAKE_CXX_FLAGS="$CMAKE_CXX_FLAGS" .. && make install && popd && cd samples/basic/ && mkdir build && pushd build && cmake -DLibLogicalAccess_DIR=$PWD/../../../build/install/lib/cmake/liblogicalaccess .. && make
 
