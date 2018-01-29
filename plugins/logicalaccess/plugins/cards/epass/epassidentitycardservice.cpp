@@ -4,6 +4,7 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <cassert>
+#include <memory>
 #include <logicalaccess/logs.hpp>
 
 using namespace logicalaccess;
