@@ -4,6 +4,8 @@
 #include <vector>
 #include <cstdint>
 #include <memory>
+#include <iostream>
+#include <string>
 #include "logicalaccess/liblogicalaccess_export.hpp"
 #include "logicalaccess/lla_fwd.hpp"
 
