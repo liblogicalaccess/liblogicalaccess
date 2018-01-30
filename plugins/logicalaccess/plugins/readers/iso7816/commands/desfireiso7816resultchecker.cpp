@@ -36,7 +36,7 @@ DESFireISO7816ResultChecker::DESFireISO7816ResultChecker()
     AddCheck(0x91, 0x9D,
              "Current configuration / status does not allow the requested command");
     AddCheck(0x91, 0x9E, "Value of the parameter(s) invalid");
-    AddCheck(0x91, 0xA0, "Requested AID not present on PICC");
+    AddCheck(0x91, 0xA0, "Requested AID not present on PICC", CardException::AID_NOT_FOUND);
     AddCheck(0x91, 0xA1,
              "Unrecoverable error within aplication, application will be disabled");
     AddCheck(0x91, 0xAE,
