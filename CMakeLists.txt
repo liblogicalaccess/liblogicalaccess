@@ -53,10 +53,6 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-if (UNIX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -W -Wall -Wno-unused-parameter")
-endif()
-
 find_package(Boost 1.51 REQUIRED COMPONENTS filesystem system date_time chrono thread regex)
 include_directories(${Boost_INCLUDE_DIRS})
 
@@ -95,7 +91,8 @@ endif()
 
 add_definitions(-DBOOST_ASIO_NO_IOSTREAM)
 if(UNIX)
-  add_definitions(-DUNIX -DLOGICALACCESS_LOGS)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -W -Wall -Wno-unused-parameter")
+    add_definitions(-DUNIX -DLOGICALACCESS_LOGS)
 else()
   if (MSVC)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /FS")
