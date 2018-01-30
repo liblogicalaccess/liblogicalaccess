@@ -87,6 +87,7 @@ class CardException : public LibLogicalAccessException
         WRONG_LE,
         WRONG_INSTRUCTION,
         WRONG_CLASS,
+        AID_NOT_FOUND,
         UNKOWN_ERROR // Operation failed, no precise diagnosis
     };
 
