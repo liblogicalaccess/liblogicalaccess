@@ -6,6 +6,7 @@
 #include <mutex>
 
 #include <logicalaccess/dynlibrary/idynlibrary.hpp>
+#include <logicalaccess/iks/IslogKeyServer.hpp>
 
 #if defined(UNIX) || defined(ANDROID)
 #define LIBLOGICALACCESS_API_DLL
@@ -32,12 +33,9 @@ class LIBLOGICALACCESS_API_DLL LibraryManager
     };
 
   private:
-    LibraryManager()
-    {
-    }
-    ~LibraryManager()
-    {
-    }
+    LibraryManager() = default;
+
+    ~LibraryManager() = default;
 
     static bool hasEnding(std::string const &fullString, std::string ending);
 
@@ -55,8 +53,22 @@ class LIBLOGICALACCESS_API_DLL LibraryManager
     * Returns the allocated ReaderUnit object or NULL on failure.
     */
     std::shared_ptr<ReaderUnit> getReader(const std::string &readerName);
+
     std::shared_ptr<Chip> getCard(const std::string &cardtype);
+
     std::shared_ptr<Commands> getCommands(const std::string &extendedtype);
+
+    /**
+     * Retrieve an implementation of RemoteCrypto (IKS).
+     *
+     * We rely on the LibraryManager is order to avoid link-time
+     * dependencies on the IKS code.
+     */
+    std::shared_ptr<RemoteCrypto>
+    getRemoteCrypto(const iks::IslogKeyServer::IKSConfig &cfg);
+
+    std::shared_ptr<RemoteCrypto> getRemoteCrypto();
+
     static std::shared_ptr<DataTransport>
     getDataTransport(const std::string &transporttype);
     std::shared_ptr<KeyDiversification>

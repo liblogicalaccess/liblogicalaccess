@@ -9,10 +9,17 @@ function(create_test file)
            ${CMAKE_SOURCE_DIR}/plugins
    )
 
+   # We link with remotecryptoiks just for
+   # iks-bench.
+   # This needs cleanup.
+
    target_link_libraries(${test_name}
            ${GTEST_BOTH_LIBRARIES} ${Boost_LIBRARIES}
            pthread logicalaccess pcscreaders stidprgreaders
+           remotecryptoiksunified
            epasscards)
+
+    target_compile_options(${test_name} PRIVATE -O3)
 endfunction()
 
 function(add_gtest_test file)
@@ -30,3 +37,6 @@ add_gtest_test(test_key_storage.cpp)
 add_gtest_test(test_cl1356plus_utils.cpp)
 add_gtest_test(test_format.cpp)
 add_gtest_test(test_bitsetstream.cpp)
+add_gtest_test(test_signature.cpp)
+add_gtest_test(test_diversification.cpp)
+add_gtest_test(test_iks_bench.cpp)

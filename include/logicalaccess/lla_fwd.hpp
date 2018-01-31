@@ -65,6 +65,9 @@ using ReaderMemoryKeyStoragePtr = std::shared_ptr<ReaderMemoryKeyStorage>;
 
 class ReaderService;
 using ReaderServicePtr = std::shared_ptr<ReaderService>;
+
+class RemoteCrypto;
+using RemoteCryptoPtr = std::shared_ptr<RemoteCrypto>;
 }
 
 using ByteVector = std::vector<uint8_t>;

@@ -23,6 +23,9 @@
 #include <logicalaccess/plugins/crypto/des_initialization_vector.hpp>
 #include <logicalaccess/plugins/crypto/cmac.hpp>
 #include <logicalaccess/myexception.hpp>
+#include <logicalaccess/iks/IslogKeyServer.hpp>
+#include <logicalaccess/iks/RemoteCrypto.hpp>
+#include <logicalaccess/dynlibrary/librarymanager.hpp>
 
 namespace logicalaccess
 {
@@ -680,6 +683,8 @@ ByteVector DESFireCrypto::changeKey_PICC(uint8_t keyno, ByteVector oldKeyDiversi
 
     ByteVector encCryptogram;
 
+    std::cout << "NEW KEY DIV: " << newkeydiv << std::endl;
+
     if (d_auth_method == CM_LEGACY) // Native DESFire
     {
         if (keyno_only != d_currentKeyNo || keysetno)
@@ -769,14 +774,21 @@ ByteVector DESFireCrypto::changeKey_PICC(uint8_t keyno, ByteVector oldKeyDiversi
         }
         else
         {
+            std::cout << "WE ARE HERE" << std::endl;
             if (newkey->getKeyType() == DF_KEY_AES)
             {
+                std::cout << "NEW KEY: " << newkeydiv << std::endl;
+                std::cout << "AND ALSO THERE (" << +keyno
+                          << ") (new-key-version: " << +newkey->getKeyVersion() << ")"
+                          << std::endl;
                 // For AES, add key version.
                 newkeydiv.push_back(newkey->getKeyVersion());
             }
 
             encCryptogram.push_back(DF_INS_CHANGE_KEY);
             encCryptogram.push_back(keyno);
+            std::cout << "FULL NEW_KEY_DIV: " << newkeydiv
+                      << ". ENC_CRYPTO: " << encCryptogram << std::endl;
             cryptogram = desfireEncrypt(newkeydiv, encCryptogram);
         }
     }
@@ -978,6 +990,17 @@ DESFireCrypto::desfire_cmac(const ByteVector &key,
                             std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC,
                             unsigned int block_size, const ByteVector &data)
 {
+
+    if (iks_wrapper_)
+    {
+        ByteVector ret = openssl::CMACCrypto::cmac_iks(iks_wrapper_->remote_key_name,
+                                                       data, d_lastIV, block_size);
+        d_lastIV = ByteVector(ret.end() - block_size, ret.end());
+        // Need to understand this "if (chipher == d_cipher)".
+        ret = ByteVector(ret.end() - 16, ret.end() - 8);
+        return ret;
+    }
+
     ByteVector ret =
         openssl::CMACCrypto::cmac(key, cipherMAC, block_size, data, d_lastIV, block_size);
 
@@ -1010,30 +1033,44 @@ ByteVector DESFireCrypto::desfire_iso_decrypt(
     size_t datalen)
 {
     ByteVector decdata;
-    std::shared_ptr<openssl::SymmetricKey> isokey;
-    std::shared_ptr<openssl::InitializationVector> iv;
 
-    if (std::dynamic_pointer_cast<openssl::AESCipher>(cipher))
+    if (iks_wrapper_ == nullptr)
     {
-        isokey.reset(
-            new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(key)));
-        iv.reset(new openssl::AESInitializationVector(
-            openssl::AESInitializationVector::createFromData(d_lastIV)));
+        std::shared_ptr<openssl::SymmetricKey> isokey;
+        std::shared_ptr<openssl::InitializationVector> iv;
+        if (std::dynamic_pointer_cast<openssl::AESCipher>(cipher))
+        {
+            isokey.reset(new openssl::AESSymmetricKey(
+                openssl::AESSymmetricKey::createFromData(key)));
+            iv.reset(new openssl::AESInitializationVector(
+                openssl::AESInitializationVector::createFromData(d_lastIV)));
+        }
+        else
+        {
+            isokey.reset(new openssl::DESSymmetricKey(
+                openssl::DESSymmetricKey::createFromData(key)));
+            iv.reset(new openssl::DESInitializationVector(
+                openssl::DESInitializationVector::createFromData(d_lastIV)));
+        }
+
+        assert(cipher);
+        cipher->decipher(data, decdata, *isokey, *iv, false);
+        if (cipher == d_cipher)
+        {
+            d_lastIV = ByteVector(data.end() - block_size, data.end());
+        }
     }
     else
     {
-        isokey.reset(
-            new openssl::DESSymmetricKey(openssl::DESSymmetricKey::createFromData(key)));
-        iv.reset(new openssl::DESInitializationVector(
-            openssl::DESInitializationVector::createFromData(d_lastIV)));
+        // Delegate cryptography to the IKS.
+        auto remote_crypto = LibraryManager::getInstance()->getRemoteCrypto();
+        SignatureResult signature_result;
+        decdata = remote_crypto->aes_decrypt(data, iks_wrapper_->remote_key_name,
+                                             d_lastIV, &signature_result);
+        d_lastIV               = ByteVector(data.end() - block_size, data.end());
+        iks_wrapper_->last_sig = signature_result;
     }
-
-    assert(cipher);
-    cipher->decipher(data, decdata, *isokey, *iv, false);
-    if (cipher == d_cipher)
-    {
-        d_lastIV = ByteVector(data.end() - block_size, data.end());
-    }
+    LOG(DEBUGS) << "Decrypted data: " << decdata;
 
     size_t ll;
 
@@ -1173,25 +1210,38 @@ ByteVector DESFireCrypto::desfire_iso_encrypt(
         decdata.push_back(0x00);
     }
 
-    std::shared_ptr<openssl::SymmetricKey> isokey;
-    std::shared_ptr<openssl::InitializationVector> iv;
-    if (std::dynamic_pointer_cast<openssl::AESCipher>(cipher))
+    if (iks_wrapper_ == nullptr)
     {
-        isokey.reset(
-            new openssl::AESSymmetricKey(openssl::AESSymmetricKey::createFromData(key)));
-        iv.reset(new openssl::AESInitializationVector(
-            openssl::AESInitializationVector::createFromData(d_lastIV)));
+        std::shared_ptr<openssl::SymmetricKey> isokey;
+        std::shared_ptr<openssl::InitializationVector> iv;
+        if (std::dynamic_pointer_cast<openssl::AESCipher>(cipher))
+        {
+            isokey.reset(new openssl::AESSymmetricKey(
+                openssl::AESSymmetricKey::createFromData(key)));
+            iv.reset(new openssl::AESInitializationVector(
+                openssl::AESInitializationVector::createFromData(d_lastIV)));
+        }
+        else
+        {
+            isokey.reset(new openssl::DESSymmetricKey(
+                openssl::DESSymmetricKey::createFromData(key)));
+            iv.reset(new openssl::DESInitializationVector(
+                openssl::DESInitializationVector::createFromData(d_lastIV)));
+        }
+        std::cout << "LAST IV BEFORE CIPHER: " << d_lastIV << ". FULL PAYLOAD:" << decdata
+                  << std::endl;
+        cipher->cipher(decdata, encdata, *isokey, *iv, false);
+        if (cipher == d_cipher)
+        {
+            d_lastIV = ByteVector(encdata.end() - block_size, encdata.end());
+        }
     }
     else
     {
-        isokey.reset(
-            new openssl::DESSymmetricKey(openssl::DESSymmetricKey::createFromData(key)));
-        iv.reset(new openssl::DESInitializationVector(
-            openssl::DESInitializationVector::createFromData(d_lastIV)));
-    }
-    cipher->cipher(decdata, encdata, *isokey, *iv, false);
-    if (cipher == d_cipher)
-    {
+        // Delegate cryptography to the IKS.
+        auto remote_crypto = LibraryManager::getInstance()->getRemoteCrypto();
+        encdata =
+            remote_crypto->aes_encrypt(decdata, iks_wrapper_->remote_key_name, d_lastIV);
         d_lastIV = ByteVector(encdata.end() - block_size, encdata.end());
     }
 
@@ -1313,5 +1363,13 @@ void DESFireCrypto::setKeyInAllKeySet(size_t aid, uint8_t keySlotNb, uint8_t nbK
 {
     for (auto x = 0; x < nbKeys; ++x)
         d_keys[std::make_tuple(aid, keySlotNb, x)] = key;
+}
+
+SignatureResult DESFireCrypto::get_last_signature() const
+{
+    if (iks_wrapper_)
+        return iks_wrapper_->last_sig;
+
+    return SignatureResult{};
 }
 }

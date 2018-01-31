@@ -27,6 +27,8 @@ class LIBLOGICALACCESS_API BufferHelper
 
     static std::string getHex(const ByteVector &buffer);
 
+    static std::string getHex(const std::string &buffer);
+
     static ByteVector fromHexString(std::string hexString);
 
     static std::string getStdString(const ByteVector &buffer);

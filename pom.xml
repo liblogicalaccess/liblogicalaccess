@@ -795,6 +795,13 @@
 			<scope>compile</scope>
 			<type>zip</type>
 		</dependency>
+			<dependency>
+			<groupId>com.google</groupId>
+			<artifactId>grpc</artifactId>
+			<version>6abc0aef5d07bb55477c2f59c4793f3452e51efc</version>
+			<scope>compile</scope>
+			<type>zip</type>
+		</dependency>
 	</dependencies>
 	
 </project>

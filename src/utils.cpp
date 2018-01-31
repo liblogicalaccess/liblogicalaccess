@@ -28,6 +28,12 @@ size_t ElapsedTimeCounter::elapsed() const
     return static_cast<size_t>(duration_cast<milliseconds>(diff).count());
 }
 
+size_t ElapsedTimeCounter::elapsed_micro() const
+{
+    auto diff = steady_clock::now() - creation_;
+    return static_cast<size_t>(duration_cast<microseconds>(diff).count());
+}
+
 ByteVector ManchesterEncoder::encode(const ByteVector &in, Type t)
 {
     ByteVector out;

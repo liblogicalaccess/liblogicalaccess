@@ -11,6 +11,9 @@
 #include <logicalaccess/plugins/crypto/des_symmetric_key.hpp>
 #include <logicalaccess/plugins/crypto/des_initialization_vector.hpp>
 #include <logicalaccess/bufferhelper.hpp>
+#include <logicalaccess/iks/IslogKeyServer.hpp>
+#include <logicalaccess/iks/RemoteCrypto.hpp>
+#include <logicalaccess/dynlibrary/librarymanager.hpp>
 
 namespace logicalaccess
 {
@@ -202,6 +205,80 @@ ByteVector CMACCrypto::shift_string(const ByteVector &buf, unsigned char xorpara
     }
 
     return ret;
+}
+
+ByteVector CMACCrypto::cmac_iks(const std::string &iks_key_name, const ByteVector &data,
+                                const ByteVector &lastIv, unsigned int padding_size)
+{
+    std::shared_ptr<OpenSSLSymmetricCipher> cipherK1K2;
+
+    unsigned char Rb;
+    Rb = 0x87;
+
+    ByteVector blankbuf;
+    blankbuf.resize(16, 0x00);
+    ByteVector L;
+
+    auto remote_crypto = LibraryManager::getInstance()->getRemoteCrypto();
+    L = remote_crypto->aes_encrypt(blankbuf, iks_key_name, ByteVector(16, 0));
+
+    ByteVector K1;
+    if ((L[0] & 0x80) == 0x00)
+    {
+        K1 = shift_string(L);
+    }
+    else
+    {
+        K1 = shift_string(L, Rb);
+    }
+
+    ByteVector K2;
+    if ((K1[0] & 0x80) == 0x00)
+    {
+        K2 = shift_string(K1);
+    }
+    else
+    {
+        K2 = shift_string(K1, Rb);
+    }
+
+    int pad = (padding_size - (data.size() % padding_size)) % padding_size;
+    if (data.size() == 0)
+        pad = padding_size;
+
+    ByteVector padded_data = data;
+    if (pad > 0)
+    {
+        padded_data.push_back(0x80);
+        if (pad > 1)
+        {
+            for (int i = 0; i < (pad - 1); ++i)
+            {
+                padded_data.push_back(0x00);
+            }
+        }
+    }
+
+    // XOR with K1
+    if (pad == 0)
+    {
+        for (unsigned int i = 0; i < K1.size(); ++i)
+        {
+            padded_data[padded_data.size() - K1.size() + i] = static_cast<unsigned char>(
+                padded_data[padded_data.size() - K1.size() + i] ^ K1[i]);
+        }
+    }
+    // XOR with K2
+    else
+    {
+        for (unsigned int i = 0; i < K2.size(); ++i)
+        {
+            padded_data[padded_data.size() - K2.size() + i] = static_cast<unsigned char>(
+                padded_data[padded_data.size() - K2.size() + i] ^ K2[i]);
+        }
+    }
+
+    return remote_crypto->aes_encrypt(padded_data, iks_key_name, lastIv);
 }
 }
 }

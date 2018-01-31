@@ -1,7 +1,6 @@
 #pragma once
 
-#include <logicalaccess/iks/SSLTransport.hpp>
-#include <logicalaccess/iks/packet/Base.hpp>
+#include "logicalaccess/logicalaccess_api.hpp"
 #include <string>
 
 namespace logicalaccess
@@ -27,9 +26,41 @@ class LIBLOGICALACCESS_API IslogKeyServer
                   const std::string &client_key, const std::string &root_ca);
         std::string ip;
         uint16_t port;
+
+        /**
+         * Path to the file containing the client certificate.
+         */
         std::string client_cert;
+
+        /**
+         * Path to the file containing the client key.
+         */
         std::string client_key;
+
+        /**
+         * Path to the root CA.
+         */
         std::string root_ca;
+
+        /**
+         * Return the *content* (PEM) of the client cert.
+         */
+        std::string get_client_cert_pem() const;
+
+        /**
+         * Retrieve the content of the client's private key.
+         */
+        std::string get_client_key_pem() const;
+
+        /**
+         * Retrieve the root CA content.
+         */
+        std::string get_root_ca_pem() const;
+
+        /**
+         * Network target (host:port).
+         */
+        std::string get_target() const;
     };
 
     /**
@@ -43,83 +74,11 @@ class LIBLOGICALACCESS_API IslogKeyServer
                                         const std::string &root_ca);
 
     /**
-     * Returns a reference to a static Islog Key Server created with parameters
-     * available in the `pre_configuration` data structure.
-     *
-     * The settings are picked by the user by calling `configureGlobalInstance()`.
+     * Retrieve a copy of the global IKS configuration.
      */
-    static IslogKeyServer &fromGlobalSettings();
-
-    /**
-     * Connect to the server locate at `ip`:`port`
-     */
-    IslogKeyServer(const std::string &ip, uint16_t port, const std::string &client_cert,
-                   const std::string &client_key, const std::string &root_ca);
-
-    /**
-     * Ask Islog Key Server for random data.
-     */
-    ByteVector get_random(size_t sz);
-
-    /**
-     * Request an AES Encryption by the key server.
-     */
-    ByteVector aes_encrypt(const ByteVector &in, const std::string &key_name,
-                           const std::array<uint8_t, 16> &iv);
-    /**
-     * Request an AES Decryption by the key server.
-     */
-    ByteVector aes_decrypt(const ByteVector &in, const std::string &key_name,
-                           const std::array<uint8_t, 16> &iv);
-
-    ByteVector aes_decrypt(const ByteVector &in, const std::string &key_name,
-                           const ByteVector &iv);
-
-    /**
-     * Request an DES Encryption by the key server using CBC mode.
-     */
-    ByteVector des_cbc_encrypt(const ByteVector &in, const std::string &key_name,
-                               const std::array<uint8_t, 8> &iv);
-    /**
-     * Request an DES Decryption by the key server using CBC mode.
-     */
-    ByteVector des_cbc_decrypt(const ByteVector &in, const std::string &key_name,
-                               const std::array<uint8_t, 8> &iv);
-
-    /**
-         * Request an DES Encryption by the key server using CBC mode.
-         */
-    ByteVector des_ecb_encrypt(const ByteVector &in, const std::string &key_name,
-                               const std::array<uint8_t, 8> &iv);
-    /**
-     * Request an DES Decryption by the key server using CBC mode.
-     */
-    ByteVector des_ecb_decrypt(const ByteVector &in, const std::string &key_name,
-                               const std::array<uint8_t, 8> &iv);
-
-    /**
-     * Send a command and retrieve a response.
-     * On network error, attempt to reconnect and try again.
-     */
-    std::shared_ptr<BaseResponse> transact(const BaseCommand &cmd);
-
-    void send_command(const BaseCommand &cmd) const;
-
-    std::shared_ptr<BaseResponse> recv() const;
+    static IKSConfig get_global_config();
 
   private:
-    void setup_transport();
-    std::shared_ptr<BaseResponse> build_response(uint32_t size, uint16_t opcode,
-                                                 uint16_t status,
-                                                 const ByteVector &data) const;
-
-    ByteVector des_crypto(const ByteVector &in, const std::string &key_name,
-                          const std::array<uint8_t, 8> &iv, bool use_ecb, bool decrypt);
-
-    boost::asio::ssl::context ssl_ctx_;
-
-    std::unique_ptr<SSLTransport> transport_;
-
     /**
      * The registered pre-configuration is stored here.
      */

@@ -23,13 +23,17 @@ matrix:
 before_install:
   - sudo apt-get install -qq libboost1.55-dev libboost-system1.55-dev libboost-filesystem1.55-dev libboost-date-time1.55-dev libboost-chrono1.55-dev libboost-thread1.55-dev libboost-regex1.55-dev
   - sudo apt-get install -qq pkg-config libpcsclite-dev libssl-dev
-  
+  # Setup the compiler for grpc. If we're building for clang we need to specify clang5.
+  - if [[ -n "$CLANG_VERSION" ]]; then export CXX=clang++-$CLANG_VERSION CC=clang-$CLANG_VERSION; fi
+  - (cd /tmp && git clone https://github.com/grpc/grpc && cd grpc && git checkout v1.9.x && git submodule update --init && make && sudo make install)
+  - (cd /tmp/grpc/third_party/protobuf && sudo make install)
+
 install:
   - if [[ -n "$CLANG_VERSION" ]]; then export CXX=clang++-$CLANG_VERSION CC=clang-$CLANG_VERSION CMAKE_CXX_FLAGS="$CMAKE_CXX_FLAGS -std=c++14 -stdlib=libc++"; fi
   - 'if [ ${PATCH_ASIO} ]; then sudo sed -i -r "s/^#include <cstddef>/#include <stddef.h>/g" /usr/include/boost/asio/local/detail/endpoint.hpp; fi'
   - if [[ -n "$GCC_VERSION" ]]; then export CXX=g++-$GCC_VERSION CC=gcc-$GCC_VERSION; fi
 
-script: mkdir build && pushd build && cmake -DCMAKE_INSTALL_PREFIX=$PWD/install -DCMAKE_CXX_FLAGS="$CMAKE_CXX_FLAGS" .. && make install && popd && cd samples/basic/ && mkdir build && pushd build && cmake -DLibLogicalAccess_DIR=$PWD/../../../build/install/lib/cmake/liblogicalaccess -DCMAKE_CXX_FLAGS="$CMAKE_CXX_FLAGS" .. && make
+script: mkdir build && pushd build && cmake -DCMAKE_INSTALL_PREFIX=$PWD/install -DCMAKE_CXX_FLAGS="$CMAKE_CXX_FLAGS" .. && make VERBOSE=1 install && popd && cd samples/basic/ && mkdir build && pushd build && cmake -DLibLogicalAccess_DIR=$PWD/../../../build/install/lib/cmake/liblogicalaccess -DCMAKE_CXX_FLAGS="$CMAKE_CXX_FLAGS" .. && make
 
 notifications:
   recipients: reports@islog.com

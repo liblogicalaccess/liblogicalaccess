@@ -52,7 +52,7 @@ AccessControlCardService::readFormat(std::shared_ptr<Format> format,
         {
             ByteVector formatBuf =
                 storage->readData(location, aiToUse, length, CB_AUTOSWITCHAREA);
-
+            last_signature_ = storage->IKS_getLastReadSignature();
             formatret->setLinearData(formatBuf);
             ret = true;
         }

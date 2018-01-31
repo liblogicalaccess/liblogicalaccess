@@ -307,8 +307,6 @@ class LIBLOGICALACCESS_API DESFireISO7816Commands : public DESFireCommands
      */
     void authenticate(unsigned char keyno, std::shared_ptr<DESFireKey> key) override;
 
-    void iks_des_authenticate(unsigned char keyno, std::shared_ptr<DESFireKey> key);
-
     /**
      * \brief Get the card version information.
      * \param dataVersion The card version information structure that will be filled

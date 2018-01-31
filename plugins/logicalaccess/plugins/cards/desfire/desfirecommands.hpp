@@ -11,6 +11,7 @@
 #include <logicalaccess/plugins/cards/desfire/desfirelocation.hpp>
 #include <logicalaccess/cards/commands.hpp>
 #include <vector>
+#include <logicalaccess/iks/RemoteCrypto.hpp>
 
 namespace logicalaccess
 {
@@ -530,6 +531,18 @@ class LIBLOGICALACCESS_API DESFireCommands : public Commands
      * \param dataVersion The card version information structure that will be filled
      */
     virtual DESFireCardVersion getVersion() = 0;
+
+    /**
+     * Get the IKS signature corresponding to the last readData() call.
+     *
+     * This will return the empty SignatureResult and will only work if both:
+     *    1) DESFireEV1ISO7816 is used.
+     *    2) An IKS backend is used.
+     */
+    virtual SignatureResult IKS_getLastReadSignature() const
+    {
+        return SignatureResult{};
+    }
 
   protected:
     std::shared_ptr<DESFireChip> getDESFireChip() const;

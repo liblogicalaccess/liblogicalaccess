@@ -15,10 +15,10 @@
 
 #include <logicalaccess/iks/IslogKeyServer.hpp>
 #include <logicalaccess/settings.hpp>
-#include <logicalaccess/iks/packet/DesfireAuth.hpp>
 #include <logicalaccess/cards/IKSStorage.hpp>
-#include <logicalaccess/iks/packet/DesfireChangeKey.hpp>
 #include <logicalaccess/cards/computermemorykeystorage.hpp>
+#include <logicalaccess/iks/RemoteCrypto.hpp>
+#include <logicalaccess/dynlibrary/librarymanager.hpp>
 
 namespace logicalaccess
 {
@@ -1084,121 +1084,54 @@ void DESFireISO7816Commands::setChip(std::shared_ptr<Chip> chip)
     getDESFireChip()->getCrypto()->setCryptoContext(chip->getChipIdentifier());
 }
 
-void DESFireISO7816Commands::iks_des_authenticate(unsigned char keyno,
-                                                  std::shared_ptr<DESFireKey> key)
-{
-    assert(key->getKeyType() == DF_KEY_DES &&
-           key->getKeyStorage()->getType() == KST_SERVER);
-
-    /**
-     * Todo handle key diversification !
-     * Currently this is copy-paste from DESFireISO7816Commands::authenticate()
-     */
-    ByteVector command;
-    std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
-
-    if (!key)
-    {
-        key = crypto->getDefaultKey(DF_KEY_DES);
-    }
-    crypto->setKey(crypto->d_currentAid, 0, keyno, key);
-
-    ByteVector diversify;
-    if (key->getKeyDiversification())
-    {
-        key->getKeyDiversification()->initDiversification(
-            crypto->getIdentifier(), crypto->d_currentAid, key, keyno, diversify);
-    }
-    command.push_back(keyno);
-
-    ByteVector result = DESFireISO7816Commands::transmit(DF_INS_AUTHENTICATE, command);
-    if (result[result.size() - 1] == DF_INS_ADDITIONAL_FRAME && (result.size() - 2) >= 8)
-    {
-        result.resize(8);
-        iks::IslogKeyServer &iks = iks::IslogKeyServer::fromGlobalSettings();
-
-        iks::DesfireAuthCommand cmd;
-        cmd.key_idt_ =
-            std::static_pointer_cast<IKSStorage>(key->getKeyStorage())->getKeyIdentity();
-        cmd.step_ = 1;
-        cmd.algo_ = iks::DESFIRE_AUTH_ALGO_DES;
-        memcpy(&cmd.data_[0], &result[0], result.size());
-
-        iks.send_command(cmd);
-        auto resp = std::dynamic_pointer_cast<iks::DesfireAuthResponse>(iks.recv());
-        EXCEPTION_ASSERT_WITH_LOG(resp, IKSException,
-                                  "Cannot retrieve proper response from server.");
-        ByteVector rndAB =
-            std::vector<uint8_t>(resp->data_.begin(), resp->data_.begin() + 16);
-
-        result = DESFireISO7816Commands::transmit(DF_INS_ADDITIONAL_FRAME, rndAB);
-        if ((result.size() - 2) >= 8)
-        {
-            result.resize(result.size() - 2);
-            cmd.step_ = 2;
-            assert(result.size() == 8);
-            assert(result.size() <= cmd.data_.max_size());
-            memcpy(&cmd.data_[0], &result[0], result.size());
-            iks.send_command(cmd);
-            resp = std::dynamic_pointer_cast<iks::DesfireAuthResponse>(iks.recv());
-            EXCEPTION_ASSERT_WITH_LOG(resp, IKSException,
-                                      "Cannot retrieve proper response from server.");
-            EXCEPTION_ASSERT_WITH_LOG(resp->success_, IKSException,
-                                      "Mutual Authentication failed.");
-
-            crypto->d_sessionKey.clear();
-            crypto->d_sessionKey.resize(16);
-            memcpy(&crypto->d_sessionKey[0], &resp->data_[0], 16);
-
-            crypto->d_currentKeyNo = keyno;
-            crypto->d_auth_method  = CM_LEGACY;
-            crypto->d_mac_size     = 4;
-        }
-    }
-}
-
 ByteVector
 DESFireISO7816Commands::getChangeKeyIKSCryptogram(unsigned char keyno,
                                                   std::shared_ptr<DESFireKey> key) const
 {
+    std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
     auto storage = std::dynamic_pointer_cast<IKSStorage>(key->getKeyStorage());
     assert(storage);
-
-    iks::IslogKeyServer &key_server = iks::IslogKeyServer::fromGlobalSettings();
-    iks::DesfireChangeKeyCommand cmd;
-    std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
-
-    cmd.newkey_idt_ = storage->getKeyIdentity();
-    auto old_key    = crypto->getKey(0, keyno);
+    auto old_key = crypto->getKey(0, keyno);
     auto old_key_storage =
         std::dynamic_pointer_cast<IKSStorage>(old_key->getKeyStorage());
     assert(old_key_storage);
-    cmd.oldkey_idt_  = old_key_storage->getKeyIdentity();
-    cmd.session_key_ = crypto->d_sessionKey;
-
-    cmd.iv_    = crypto->d_lastIV;
-    cmd.keyno_ = keyno;
-    cmd.flag_  = ((keyno & 0x0F) == crypto->d_currentKeyNo)
-                    ? IKS_COMMAND_DESFIRE_CHANGEKEY_SAME_KEY
-                    : IKS_COMMAND_DESFIRE_CHANGEKEY_OTHER_KEY;
-    cmd.oldkey_divinfo_ = iks::KeyDivInfo::build(old_key, getChip()->getChipIdentifier(),
-                                                 keyno, crypto->d_currentAid);
-    cmd.newkey_divinfo_ = iks::KeyDivInfo::build(key, getChip()->getChipIdentifier(),
-                                                 keyno, crypto->d_currentAid);
-
-    key_server.send_command(cmd);
 
 
-    auto resp =
-        std::dynamic_pointer_cast<iks::DesfireChangeKeyResponse>(key_server.recv());
-    EXCEPTION_ASSERT_WITH_LOG(resp, IKSException,
-                              "Cannot retrieve a proper response from IKS.");
-    EXCEPTION_ASSERT_WITH_LOG(resp->status_ == iks::SMSG_STATUS_SUCCESS, IKSException,
-                              "Cannot retrieve a proper response from IKS.");
+    auto remote_crypto = LibraryManager::getInstance()->getRemoteCrypto();
+    ByteVector out_cryptogram;
 
-    // When changing an AES key in "OTHER_KEY" mode
-    if (cmd.flag_ & IKS_COMMAND_DESFIRE_CHANGEKEY_OTHER_KEY)
-        crypto->d_lastIV = ByteVector(resp->bytes_.end() - 16, resp->bytes_.end());
-    return resp->bytes_;
+    bool change_same_key = (keyno & 0x0F) == crypto->d_currentKeyNo;
+
+    /*    CMSG_DesfireChangeKey req;
+        req.set_key_number(keyno);
+        req.set_old_key_uuid(old_key_storage->getKeyIdentity());
+        req.set_new_key_uuid(storage->getKeyIdentity());
+        req.set_iv(std::string(crypto->d_lastIV.begin(), crypto->d_lastIV.end()));
+        req.set_change_same_key((keyno & 0x0F) == crypto->d_currentKeyNo);*/
+
+
+    MyDivInfo old_key_div;
+    MyDivInfo new_key_div;
+
+    // Do we know our own session key?
+    if (crypto->iks_wrapper_)
+    {
+        ByteVector empty_unset_session_key;
+        remote_crypto->change_key(
+            old_key_storage->getKeyIdentity(), storage->getKeyIdentity(), change_same_key,
+            crypto->iks_wrapper_->remote_key_name, empty_unset_session_key, old_key_div,
+            new_key_div, keyno, crypto->d_lastIV, out_cryptogram);
+    }
+    else
+    {
+        std::string empty_unset_session_key_uuid;
+        remote_crypto->change_key(
+            old_key_storage->getKeyIdentity(), storage->getKeyIdentity(), change_same_key,
+            empty_unset_session_key_uuid, crypto->d_sessionKey, old_key_div, new_key_div,
+            keyno, crypto->d_lastIV, out_cryptogram);
+    }
+
+    crypto->d_lastIV = ByteVector(out_cryptogram.end() - 16, out_cryptogram.end());
+    return out_cryptogram;
 }
 }

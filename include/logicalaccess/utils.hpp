@@ -28,10 +28,16 @@ class LIBLOGICALACCESS_API ElapsedTimeCounter
     ElapsedTimeCounter();
 
     /**
-     * Returns the elapsed time since the creation of
+     * Returns the elapsed number of milliseconds since the creation of
      * the ElapsedTimeCounter object.
      */
     size_t elapsed() const;
+
+    /**
+     * Returns the number of elapsed microseconds since the creation of the
+     * ElapsedTimeCounter.
+     */
+    size_t elapsed_micro() const;
 
   private:
     using TimePoint = std::chrono::steady_clock::time_point;

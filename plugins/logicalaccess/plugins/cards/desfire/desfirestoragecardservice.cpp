@@ -476,8 +476,12 @@ ByteVector DESFireStorageCardService::readData(std::shared_ptr<Location> locatio
         getDESFireChip()->getDESFireCommands()->authenticate(dfAiToUse->readKeyno);
     }
 
-    return getDESFireChip()->getDESFireCommands()->readData(
+    auto ret = getDESFireChip()->getDESFireCommands()->readData(
         dfLocation->file, dfLocation->byte_, (int)(dataLength), encMode);
+    last_read_signature_ =
+        getDESFireChip()->getDESFireCommands()->IKS_getLastReadSignature();
+
+    return ret;
 }
 
 ByteVector
