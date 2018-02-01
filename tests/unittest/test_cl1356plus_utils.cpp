@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <logicalaccess/utils.hpp>
-#include <pluginsreaderproviders/pcsc/readers/CL1356PlusUtils.hpp>
+#include <logicalaccess/plugins/readers/pcsc/readers/CL1356PlusUtils.hpp>
 
 using namespace logicalaccess;
 

@@ -7,8 +7,8 @@
 #include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
 #include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
-#include "lla-tests/macros.hpp"
-#include "lla-tests/utils.hpp"
+#include "logicalaccess/plugins/lla-tests/macros.hpp"
+#include "logicalaccess/plugins/lla-tests/utils.hpp"
 #include "logicalaccess/services/accesscontrol/formats/wiegand34format.hpp"
 #include "logicalaccess/services/accesscontrol/formats/wiegand34withfacilityformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/wiegand37withfacilityformat.hpp"
@@ -204,13 +204,13 @@ TEST(test_format_utils, test_format_Getronik40BitFormat)
 TEST(test_format_utils, test_format_HIDHoneywell40Bit)
 {
 
-    auto formatHIDHoneywell40Bit = std::make_shared<HIDHoneywell40Bit>();
+    auto formatHIDHoneywell40Bit = std::make_shared<HIDHoneywell40BitFormat>();
     formatHIDHoneywell40Bit->setUid(17866);
     formatHIDHoneywell40Bit->setFacilityCode(895);
     auto formatBuf = formatHIDHoneywell40Bit->getLinearData();
     auto result    = std::vector<unsigned char>({0xf3, 0x7f, 0x45, 0xca, 0x03});
     ASSERT_EQ(formatBuf, result);
-    formatHIDHoneywell40Bit = std::make_shared<HIDHoneywell40Bit>();
+    formatHIDHoneywell40Bit = std::make_shared<HIDHoneywell40BitFormat>();
     formatHIDHoneywell40Bit->setLinearData(result);
     ASSERT_EQ(formatHIDHoneywell40Bit->getUid(), 17866);
     ASSERT_EQ(formatHIDHoneywell40Bit->getFacilityCode(), 895);

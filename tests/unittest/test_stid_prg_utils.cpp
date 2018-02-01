@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <logicalaccess/services/accesscontrol/formats/wiegand26format.hpp>
 #include <logicalaccess/utils.hpp>
-#include <pluginsreaderproviders/stidprg/stid_prg_utils.hpp>
+#include <logicalaccess/plugins/readers/stidprg/stidprgutils.hpp>
 
 using namespace logicalaccess;
 

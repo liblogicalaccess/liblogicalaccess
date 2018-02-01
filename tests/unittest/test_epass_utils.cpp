@@ -1,10 +1,10 @@
 #include "logicalaccess/lla_fwd.hpp"
-#include "pluginscards/epass/utils.hpp"
+#include "logicalaccess/plugins/cards/epass/utils.hpp"
 #include <gtest/gtest.h>
 #include <iostream>
 #include <logicalaccess/bufferhelper.hpp>
 #include <logicalaccess/logs.hpp>
-#include <pluginscards/epass/epasscrypto.hpp>
+#include <logicalaccess/plugins/cards/epass/epasscrypto.hpp>
 
 using namespace logicalaccess;
 

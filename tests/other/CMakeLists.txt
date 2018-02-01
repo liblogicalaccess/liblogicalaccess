@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
 
 lla_create_test(other test_islog_key_server)
-lla_create_test(other test_iks_soft)
 
 lla_test_register_include(
 ${CMAKE_SOURCE_DIR}/plugins/pluginscards/

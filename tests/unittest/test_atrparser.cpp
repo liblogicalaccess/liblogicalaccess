@@ -1,5 +1,5 @@
 #include "logicalaccess/lla_fwd.hpp"
-#include "pluginsreaderproviders/pcsc/atrparser.hpp"
+#include "logicalaccess/plugins/readers/pcsc/atrparser.hpp"
 #include <gtest/gtest.h>
 #include <iostream>
 
