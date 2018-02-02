@@ -14,11 +14,11 @@ DESFireISO7816ResultChecker::DESFireISO7816ResultChecker()
 
     AddCheck(0x65, 0x81, "Memory failure (unsuccessful updating)");
 
-    AddCheck(0x69, 0x82, "Security status not satisfied / File access not allowed");
+    AddCheck(0x69, 0x82, "Security status not satisfied / File access not allowed", CardException::SECURITY_STATUS);
     AddCheck(0x69, 0x85, "File empty / Access conditions not satisfied");
 
     AddCheck(0x6A, 0x82, "File not found");
-    AddCheck(0x6A, 0x86, "Wrong parameter P1 and/or P2");
+    AddCheck(0x6A, 0x86, "Wrong parameter P1 and/or P2", CardException::WRONG_P1_P2);
     AddCheck(0x6A, 0x87, "Wrong parameter Lc inconsistent with P1-P2");
 
     AddCheck(0x6C, 0x00, "File not found");
@@ -31,7 +31,7 @@ DESFireISO7816ResultChecker::DESFireISO7816ResultChecker()
     AddCheck(0x91, 0x0E, "Insufficient NV-Memory to complete command");
     AddCheck(0x91, 0x1C, "Command code not supported");
     AddCheck(0x91, 0x1E, "CRC or MAC does not match data / Padding bytes not valid");
-    AddCheck(0x91, 0x40, "Invalid key number specified");
+    AddCheck(0x91, 0x40, "Invalid key number specified",CardException::KEY_NUMBER_INVALID);
     AddCheck(0x91, 0x7E, "Length of command string invalid");
     AddCheck(0x91, 0x9D,
              "Current configuration / status does not allow the requested command");
