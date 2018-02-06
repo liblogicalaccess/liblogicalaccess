@@ -26,3 +26,4 @@ target_link_libraries(
 
 install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/iso15693 )
 install ( TARGETS iso15693cards RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )
+install ( FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb/${LIB_SUFFIX} OPTIONAL)

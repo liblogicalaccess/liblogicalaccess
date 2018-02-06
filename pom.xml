@@ -446,6 +446,27 @@
 									</tasks>
 								</configuration>
 							</execution>
+							<execution>
+								<id>pdb-deploy</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<exec executable="scripts/deploy-pdb.bat">
+											<arg value="${project.basedir}/install/pdb/Win32" />
+											<arg value="${islog.ISLOGSymbolServer}" />
+											<arg value="${project.version} Win32" />
+										</exec>
+										<exec executable="scripts/deploy-pdb.bat">
+											<arg value="${project.basedir}/install/pdb/x64" />
+											<arg value="${islog.ISLOGSymbolServer}" />
+											<arg value="${project.version} x64" />
+										</exec>
+									</tasks>
+								</configuration>
+							</execution>
 						</executions>
 					</plugin>
 				</plugins>
