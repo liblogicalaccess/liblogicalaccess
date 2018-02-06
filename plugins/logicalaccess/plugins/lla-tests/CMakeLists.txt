@@ -20,3 +20,4 @@ set (include_tests
 
 install ( TARGETS lla-tests RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )
 install ( FILES ${include_tests} DESTINATION include/logicalaccess/plugins/lla-tests )
+install ( FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb/${LIB_SUFFIX} OPTIONAL)

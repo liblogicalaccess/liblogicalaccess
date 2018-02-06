@@ -41,3 +41,4 @@ target_link_libraries(
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/iso7816 )
 install ( FILES ${include_commands} DESTINATION include/logicalaccess/plugins/readers/iso7816/commands )
 install ( TARGETS iso7816readers RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )
+install ( FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb/${LIB_SUFFIX} OPTIONAL)

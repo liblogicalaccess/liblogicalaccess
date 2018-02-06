@@ -28,3 +28,4 @@ target_link_libraries(
 
 install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/epass )
 install ( TARGETS epasscards RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )
+install ( FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb/${LIB_SUFFIX} OPTIONAL)

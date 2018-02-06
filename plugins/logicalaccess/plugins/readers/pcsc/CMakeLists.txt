@@ -80,3 +80,4 @@ install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/
 install ( FILES ${include_commands} DESTINATION include/logicalaccess/plugins/readers/pcsc/commands )
 install ( FILES ${include_readers} DESTINATION include/logicalaccess/plugins/readers/pcsc/readers )
 install ( TARGETS pcscreaders RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )
+install ( FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb/${LIB_SUFFIX} OPTIONAL)

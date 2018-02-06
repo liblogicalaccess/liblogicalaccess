@@ -38,3 +38,4 @@ target_link_libraries(
 install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/a3mlgm5600 )
 install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/a3mlgm5600/readercardadapters )
 install ( TARGETS a3mlgm5600readers RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )
+install ( FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb/${LIB_SUFFIX} OPTIONAL)
