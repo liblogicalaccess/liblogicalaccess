@@ -45,4 +45,6 @@ install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/sti
 install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/stidprg/readercardadapters )
 install ( FILES ${include_commands} DESTINATION include/logicalaccess/plugins/readers/stidprg/commands )
 install ( TARGETS stidprgreaders RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )
-install ( FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb/${LIB_SUFFIX} OPTIONAL)
+if (MSVC)
+	install(FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb/${LIB_SUFFIX} OPTIONAL)
+endif()
