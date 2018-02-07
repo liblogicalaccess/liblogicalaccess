@@ -36,3 +36,6 @@ target_link_libraries(
 install ( FILES ${include} ${includepp} DESTINATION include/logicalaccess/plugins/readers/sciel )
 install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/sciel/readercardadapters )
 install ( TARGETS scielreaders RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )
+if (MSVC)
+	install(FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb/${LIB_SUFFIX} OPTIONAL)
+endif()
