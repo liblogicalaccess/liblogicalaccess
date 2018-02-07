@@ -135,7 +135,7 @@ BEGIN
             VALUE "FileDescription", "ISLOG Keyboard Hook Application"
             VALUE "FileVersion", "1.0.0.1"
             VALUE "InternalName", "islogkbdhook"
-            VALUE "LegalCopyright", "Copyright (C) 2013"
+            VALUE "LegalCopyright", "Copyright (C) ISLOG 2018"
             VALUE "OriginalFilename", "islogkbdhook.exe"
             VALUE "ProductName", "ISLOG Keyboard Hook Application"
             VALUE "ProductVersion", "1.0.0.1"
