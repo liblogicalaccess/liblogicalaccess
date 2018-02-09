@@ -636,7 +636,7 @@ ByteVector SAMAV2ISO7816Commands::decipherOfflineData(ByteVector data)
     decipherOfflineData.insert(decipherOfflineData.end() - 1, data.begin(), data.end());
 
     auto result = transmit(decipherOfflineData);
-    EXCEPTION_ASSERT_WITH_LOG(result.size() >= 2, LibLogicalAccessException,
+    EXCEPTION_ASSERT_WITH_LOG(result.size() > 2, LibLogicalAccessException,
                               "Response is too short");
     result.resize(result.size() - 2);
     return result;
@@ -650,7 +650,7 @@ ByteVector SAMAV2ISO7816Commands::encipherOfflineData(ByteVector data)
     encipherOfflineData.insert(encipherOfflineData.end() - 1, data.begin(), data.end());
 
     auto result = transmit(encipherOfflineData);
-    EXCEPTION_ASSERT_WITH_LOG(result.size() >= 2, LibLogicalAccessException,
+    EXCEPTION_ASSERT_WITH_LOG(result.size() > 2, LibLogicalAccessException,
                               "Response is too short");
     result.resize(result.size() - 2);
     return result;
