@@ -179,7 +179,7 @@ void MifareStorageCardService::writeData(std::shared_ptr<Location> location,
                 MifareKeyType madKeyType          = KT_KEY_A;
                 std::shared_ptr<MifareKey> madKey = mAiToUse->madKeyA;
 
-                if (mAiToUse->madKeyB->isEmpty())
+                if (!mAiToUse->madKeyB->isEmpty())
                 {
                     madKeyType = KT_KEY_B;
                     madKey     = mAiToUse->madKeyB;
