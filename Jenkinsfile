@@ -1,31 +1,31 @@
 pipeline {
     agent none
     stages {
-        parallel {
-            stage('Debian build') {
-                agent { docker { image 'debian-64-stable-build' } }
-                steps {
-                    debPackageBuild()
+        stage('Builds') {
+            parallel {
+                stage('Debian build') {
+                    agent { docker { image 'debian-64-stable-build' } }
+                    steps {
+                        debPackageBuild()
+                    }
                 }
-            }
 
-            stage('Ubuntu build') {
-                agent { docker { image 'ubuntu-64-zesty-build' } }
-                steps {
-                    debPackageBuild()
+                stage('Ubuntu build') {
+                    agent { docker { image 'ubuntu-64-zesty-build' } }
+                    steps {
+                        debPackageBuild()
+                    }
                 }
-            }
 
-            stage('Build With Unittests') {
-                agent { docker { image 'debian-64-stable-build' } }
-                steps {
-                    sh 'mkdir build && cd build'
-                    sh 'cmake -DLLA_BUILD_UNITTESTS=1 ..'
-                    sh 'make -j6'
+                stage('Build With Unittests') {
+                    agent { docker { image 'debian-64-stable-build' } }
+                    steps {
+                        installGoogleTest()
+                        sh 'mkdir build && cd build && cmake -DLLA_BUILD_UNITTESTS=1 .. && make -j6'
 
-                    // Run test -- Should be another stage most likely.
-                    sh 'cd tests/unittest'
-                    sh 'for f in test* ; do ./$f ; done'
+                        // Run test -- Should be another stage most likely.
+                        sh 'cd build/tests/unittest && for f in test* ; do ./$f ; done'
+                    }
                 }
             }
         }
@@ -49,6 +49,12 @@ pipeline {
             }
         }
     }
+}
+
+def installGoogleTest()
+{
+    sh 'sudo apt-get install libgtest-dev -y'
+    sh '/usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp *.a /usr/lib'
 }
 
 def debPackageBuild() {
