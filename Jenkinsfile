@@ -1,35 +1,50 @@
 pipeline {
-	agent none
+    agent none
     stages {
-		stage('Debian build') {
-			agent {	docker { image 'debian-64-stable-build'	} }
-			steps {
-				debPackageBuild()
-			}
-		}
-		
-		stage('Ubuntu build') {
-			agent {	docker { image 'ubuntu-64-zesty-build' } }
-			steps {
-				debPackageBuild()
-			}
-		}
+        parallel {
+            stage('Debian build') {
+                agent { docker { image 'debian-64-stable-build' } }
+                steps {
+                    debPackageBuild()
+                }
+            }
+
+            stage('Ubuntu build') {
+                agent { docker { image 'ubuntu-64-zesty-build' } }
+                steps {
+                    debPackageBuild()
+                }
+            }
+
+            stage('Build With Unittests') {
+                agent { docker { image 'debian-64-stable-build' } }
+                steps {
+                    sh 'mkdir build && cd build'
+                    sh 'cmake -DLLA_BUILD_UNITTESTS=1 ..'
+                    sh 'make -j6'
+
+                    // Run test -- Should be another stage most likely.
+                    sh 'cd tests/unittest'
+                    sh 'for f in test* ; do ./$f ; done'
+                }
+            }
+        }
     }
-	
+
     post {
         changed {
             script {
                 if (currentBuild.currentResult == 'FAILURE') { // Other values: SUCCESS, UNSTABLE
                     // Send an email only if the build status has changed from green/unstable to red
                     emailext subject: '$DEFAULT_SUBJECT',
-                        body: '$DEFAULT_CONTENT',
-                        recipientProviders: [
-                            [$class: 'CulpritsRecipientProvider'],
-                            [$class: 'DevelopersRecipientProvider'],
-                            [$class: 'RequesterRecipientProvider']
-                        ], 
-                        replyTo: 'cis@islog.com',
-                        to: 'reports@islog.com'
+                            body: '$DEFAULT_CONTENT',
+                            recipientProviders: [
+                                    [$class: 'CulpritsRecipientProvider'],
+                                    [$class: 'DevelopersRecipientProvider'],
+                                    [$class: 'RequesterRecipientProvider']
+                            ],
+                            replyTo: 'cis@islog.com',
+                            to: 'reports@islog.com'
                 }
             }
         }
@@ -37,6 +52,6 @@ pipeline {
 }
 
 def debPackageBuild() {
-	sh './scripts/debian/git-buildpackage.sh'
-	sh 'cd /home/jenkins/liblogicalaccess-debian && dupload --nomail ../*.changes'
+    sh './scripts/debian/git-buildpackage.sh'
+    sh 'cd /home/jenkins/liblogicalaccess-debian && dupload --nomail ../*.changes'
 }
