@@ -54,7 +54,7 @@ pipeline {
 def installGoogleTest()
 {
     sh 'sudo apt-get install libgtest-dev -y'
-    sh '/usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp *.a /usr/lib'
+    sh 'cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp *.a /usr/lib'
 }
 
 def debPackageBuild() {
