@@ -24,7 +24,13 @@ pipeline {
                         sh 'mkdir build && cd build && cmake -DLLA_BUILD_UNITTESTS=1 .. && make -j6'
 
                         // Run test -- Should be another stage most likely.
-                        sh 'cd build/tests/unittest && for f in test* ; do ./$f ; done'
+                        sh 'mkdir /opt/gtest_output'
+                        sh 'cd build/tests/unittest && for f in test* ; do GTEST_OUTPUT="xml:/opt/gtest_output/" ./$f ; done'
+                    }
+                    post {
+                        always {
+                            junit '/opt/gtest_output/*.xml'
+                        }
                     }
                 }
             }
