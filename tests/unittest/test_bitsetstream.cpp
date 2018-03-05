@@ -267,7 +267,8 @@ TEST(bitset_tests, complete_test)
     ASSERT_THROW(bstream.toULLong(), std::overflow_error);
 }
 
-TEST(bitset_tests, append_4_bits) {
+TEST(bitset_tests, append_4_bits)
+{
     BitsetStream bs;
 
     bs.append(1, 4, 4);
@@ -275,7 +276,8 @@ TEST(bitset_tests, append_4_bits) {
     ASSERT_EQ(0b00010001, bs.getData().at(0));
 }
 
-TEST(bitset_tests, append_4_bits_2) {
+TEST(bitset_tests, append_4_bits_2)
+{
     BitsetStream bs;
 
     bs.append(2, 4, 4);
@@ -283,7 +285,8 @@ TEST(bitset_tests, append_4_bits_2) {
     ASSERT_EQ(0b00100011, bs.getData().at(0));
 }
 
-TEST(bitset_tests, append_x_bits) {
+TEST(bitset_tests, append_x_bits)
+{
     BitsetStream bs;
 
     bs.append(0b00000001, 7, 1);

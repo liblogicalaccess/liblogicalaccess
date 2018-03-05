@@ -4,6 +4,7 @@
  * \brief BCD Nibble Data Type.
  */
 
+#include <algorithm>
 #include <logicalaccess/services/accesscontrol/encodings/bcdnibbledatatype.hpp>
 #include <logicalaccess/services/accesscontrol/formats/bithelper.hpp>
 
@@ -30,43 +31,77 @@ EncodingType BCDNibbleDataType::getType() const
     return ET_BCDNIBBLE;
 }
 
+
+/**
+ * Return the number of digits in a given number.
+ */
+static int nb_digits(unsigned long long nb)
+{
+    if (nb == 0)
+        return 1;
+
+    int count = 0;
+    while (nb != 0)
+    {
+        nb /= 10;
+        ++count;
+    }
+
+    return count;
+}
+
+/**
+ * Returns the DECIMAL DIGITS of a number, starting from left to right.
+ *
+ * If the number is 12345, this will return {1, 2, 3, 4, 5}
+ */
+std::vector<uint8_t> get_digits(unsigned long long nb)
+{
+    std::vector<uint8_t> digits;
+    int initial_nb_digits = nb_digits(nb);
+
+    for (int i = 0; i < initial_nb_digits; ++i)
+    {
+        auto digit = static_cast<uint8_t>(nb % 10);
+        digits.push_back(digit);
+        nb /= 10;
+    }
+
+    std::reverse(digits.begin(), digits.end());
+    return digits;
+}
+
 BitsetStream BCDNibbleDataType::convert(unsigned long long data,
                                         unsigned int dataLengthBits)
 {
-    BitsetStream tmp((dataLengthBits / 4) * 8);
+    BitsetStream bs;
 
-    unsigned int shft, i;
+    // We convert by appending digit by digit into the bitsetstream.
+    // Each digit is encoded over 4 bits.
 
-
-    for (shft = 0, i = 0; shft < dataLengthBits; shft += 4, ++i)
+    // Pad with 0 if expected length > number of digits in number.
+    int nb_digits_from_length = dataLengthBits / 4;
+    if (nb_digits_from_length > nb_digits(data))
     {
-        unsigned int offset = ((i % 2) == 0) ? 4 : 0;
-        unsigned char c     = (unsigned char)(data % 10);
+        for (int i = 0; i < nb_digits_from_length - get_digits(data).size(); ++i)
+        {
+            bs.append(0, 4, 4);
+        }
+    }
+
+    for (uint8_t digit : get_digits(data))
+    {
         if (d_bitDataRepresentationType == ET_LITTLEENDIAN)
         {
-            c = DataType::invertBitSex(c, 4);
+            digit = DataType::invertBitSex(digit, 4);
         }
-        // c = (unsigned char)(c << offset);
-        const unsigned char pos = i / 2;
-        // tmp.append(c & 0x0F, 4, 4);
-        tmp.writeAt((pos * 8) + offset, c & 0x0F, 4, 4);
-        data /= 10;
+
+        // One digit is encoded with 4bits, so all high weight bits are 0
+        // and we append the 4 lowest bits.
+        bs.append(digit, 4, 4);
     }
-
-    i = (i + 1) / 2;
-
-    BitsetStream tmpswb(0x00, i);
-
-    for (unsigned int pi = i - 1, p = 0; p < i; --pi, ++p)
-    {
-        tmpswb.writeAt(p * 8, tmp.getData()[pi]);
-    }
-
-    BitsetStream tmpswb2 = BitHelper::align(tmpswb, dataLengthBits);
-    BitsetStream dataConverted =
-        DataType::addParity(d_leftParityType, d_rightParityType, 4, tmpswb2);
-
-    return dataConverted;
+    BitsetStream x = DataType::addParity(d_leftParityType, d_rightParityType, 4, bs);
+    return x;
 }
 
 unsigned long long BCDNibbleDataType::revert(BitsetStream &data,

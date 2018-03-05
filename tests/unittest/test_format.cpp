@@ -405,16 +405,14 @@ TEST(test_format_utils, test_format_CustomFormat_bcdnibble)
 
     formatCustom->setFieldList(fieldList);
     auto formatBuf = formatCustom->getLinearData();
-    auto expected = ByteVector{0x01 << 4 | 0x02,
-                               0x03 << 4 | 0x04,
-                               0x05 << 4};
+    auto expected  = ByteVector{0x01 << 4 | 0x02, 0x03 << 4 | 0x04, 0x05 << 4 | 0x00};
     ASSERT_EQ(expected, formatBuf);
 }
 
 TEST(test_format_utils, test_format_CustomFormat_bcdnibble_2)
 {
     std::shared_ptr<DataRepresentation> nodatarepre =
-            std::make_shared<NoDataRepresentation>();
+        std::make_shared<NoDataRepresentation>();
     auto formatCustom = std::make_shared<CustomFormat>();
     std::list<std::shared_ptr<DataField>> fieldList;
 
@@ -427,8 +425,48 @@ TEST(test_format_utils, test_format_CustomFormat_bcdnibble_2)
 
     formatCustom->setFieldList(fieldList);
     auto formatBuf = formatCustom->getLinearData();
-    auto expected = ByteVector{0x00 << 4 | 0x01,
-                               0x02 << 4 | 0x03,
-                               0x04 << 4 | 0x05};
+    auto expected  = ByteVector{0x00 << 4 | 0x01, 0x02 << 4 | 0x03, 0x04 << 4 | 0x05};
+    ASSERT_EQ(expected, formatBuf);
+}
+
+TEST(test_format_utils, test_format_CustomFormat_bcdnibble_3)
+{
+    std::shared_ptr<DataRepresentation> nodatarepre =
+        std::make_shared<NoDataRepresentation>();
+    auto formatCustom = std::make_shared<CustomFormat>();
+    std::list<std::shared_ptr<DataField>> fieldList;
+
+    auto numberNoDataField2 = std::make_shared<NumberDataField>();
+    numberNoDataField2->setDataRepresentation(nodatarepre);
+    numberNoDataField2->setDataType(std::make_shared<BCDNibbleDataType>());
+    numberNoDataField2->setDataLength(22);
+    numberNoDataField2->setValue(12345);
+    fieldList.push_back(numberNoDataField2);
+
+    formatCustom->setFieldList(fieldList);
+    auto formatBuf = formatCustom->getLinearData();
+    auto expected  = ByteVector{0x01 << 4 | 0x02, 0x03 << 4 | 0x04, 0x05 << 4 | 0x00};
+    ASSERT_EQ(expected, formatBuf);
+}
+
+TEST(test_format_utils, test_format_CustomFormat_bcdnibble_little_endian_bits)
+{
+    std::shared_ptr<DataRepresentation> nodatarepre =
+        std::make_shared<NoDataRepresentation>();
+    auto formatCustom = std::make_shared<CustomFormat>();
+    auto dataType     = std::make_shared<BCDNibbleDataType>();
+    dataType->setBitDataRepresentationType(ET_LITTLEENDIAN);
+    std::list<std::shared_ptr<DataField>> fieldList;
+
+    auto numberNoDataField2 = std::make_shared<NumberDataField>();
+    numberNoDataField2->setDataRepresentation(nodatarepre);
+    numberNoDataField2->setDataType(dataType);
+    numberNoDataField2->setDataLength(8);
+    numberNoDataField2->setValue(32);
+    fieldList.push_back(numberNoDataField2);
+
+    formatCustom->setFieldList(fieldList);
+    auto formatBuf = formatCustom->getLinearData();
+    auto expected  = ByteVector{0b11000100};
     ASSERT_EQ(expected, formatBuf);
 }
