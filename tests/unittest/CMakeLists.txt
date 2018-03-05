@@ -1,6 +1,5 @@
 find_package(GTest REQUIRED)
 
-
 function(create_test file)
    get_filename_component(test_name ${file} NAME_WE)
    add_executable(${test_name} ${file})
@@ -30,3 +29,4 @@ add_gtest_test(test_stid_prg_utils.cpp)
 add_gtest_test(test_key_storage.cpp)
 add_gtest_test(test_cl1356plus_utils.cpp)
 add_gtest_test(test_format.cpp)
+add_gtest_test(test_bitsetstream.cpp)

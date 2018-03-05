@@ -57,7 +57,7 @@ class LIBLOGICALACCESS_API ValueDataField : public DataField
      * \brief Set the Data Type for the field.
      * \param encoding The Data Type.
      */
-    void setDataType(std::shared_ptr<DataType> &encoding);
+    void setDataType(const std::shared_ptr<DataType> &encoding);
 
     /**
      * \brief Set if the field is a fixed field.

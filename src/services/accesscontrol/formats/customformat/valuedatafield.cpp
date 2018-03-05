@@ -49,7 +49,7 @@ std::shared_ptr<DataType> ValueDataField::getDataType() const
     return d_dataType;
 }
 
-void ValueDataField::setDataType(std::shared_ptr<DataType> &encoding)
+void ValueDataField::setDataType(const std::shared_ptr<DataType> &encoding)
 {
     d_dataType = encoding;
 }

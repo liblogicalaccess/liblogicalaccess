@@ -28,6 +28,7 @@
 #include "logicalaccess/services/accesscontrol/encodings/littleendiandatarepresentation.hpp"
 #include "logicalaccess/services/accesscontrol/encodings/nodatarepresentation.hpp"
 #include <gtest/gtest.h>
+#include <logicalaccess/services/accesscontrol/encodings/bcdnibbledatatype.hpp>
 
 using namespace logicalaccess;
 
@@ -386,4 +387,48 @@ TEST(test_format_utils, test_format_CustomFormat)
         ByteVector({0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xcd, 0xef, 0x12, 0x34,
                     0x56, 0x78, 0x9a, 0xbc, 0xcd, 0xef, 0xff, 0xff, 0xff, 0xff});
     ASSERT_EQ(value, rvalue);
+}
+
+TEST(test_format_utils, test_format_CustomFormat_bcdnibble)
+{
+    std::shared_ptr<DataRepresentation> nodatarepre =
+        std::make_shared<NoDataRepresentation>();
+    auto formatCustom = std::make_shared<CustomFormat>();
+    std::list<std::shared_ptr<DataField>> fieldList;
+
+    auto numberNoDataField2 = std::make_shared<NumberDataField>();
+    numberNoDataField2->setDataRepresentation(nodatarepre);
+    numberNoDataField2->setDataType(std::make_shared<BCDNibbleDataType>());
+    numberNoDataField2->setDataLength(20);
+    numberNoDataField2->setValue(12345);
+    fieldList.push_back(numberNoDataField2);
+
+    formatCustom->setFieldList(fieldList);
+    auto formatBuf = formatCustom->getLinearData();
+    auto expected = ByteVector{0x01 << 4 | 0x02,
+                               0x03 << 4 | 0x04,
+                               0x05 << 4};
+    ASSERT_EQ(expected, formatBuf);
+}
+
+TEST(test_format_utils, test_format_CustomFormat_bcdnibble_2)
+{
+    std::shared_ptr<DataRepresentation> nodatarepre =
+            std::make_shared<NoDataRepresentation>();
+    auto formatCustom = std::make_shared<CustomFormat>();
+    std::list<std::shared_ptr<DataField>> fieldList;
+
+    auto numberNoDataField2 = std::make_shared<NumberDataField>();
+    numberNoDataField2->setDataRepresentation(nodatarepre);
+    numberNoDataField2->setDataType(std::make_shared<BCDNibbleDataType>());
+    numberNoDataField2->setDataLength(24);
+    numberNoDataField2->setValue(12345);
+    fieldList.push_back(numberNoDataField2);
+
+    formatCustom->setFieldList(fieldList);
+    auto formatBuf = formatCustom->getLinearData();
+    auto expected = ByteVector{0x00 << 4 | 0x01,
+                               0x02 << 4 | 0x03,
+                               0x04 << 4 | 0x05};
+    ASSERT_EQ(expected, formatBuf);
 }

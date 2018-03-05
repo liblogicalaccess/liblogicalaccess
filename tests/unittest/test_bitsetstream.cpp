@@ -2,9 +2,11 @@
 #include <vector>
 #include <stdint.h>
 #include <climits>
-#include <BitsetStream.hpp>
+#include <logicalaccess/services/accesscontrol/formats/BitsetStream.hpp>
 
-TEST(simple_test, bitset_tests)
+using namespace logicalaccess;
+
+TEST(bitset_tests, simple_test)
 {
     BitsetStream bstream;
 
@@ -105,7 +107,7 @@ TEST(simple_test, bitset_tests)
     ASSERT_EQ(testdata4, bstream.getData());
 }
 
-TEST(complete_test, bitset_tests)
+TEST(bitset_tests, complete_test)
 {
     BitsetStream bstream;
 
@@ -263,4 +265,28 @@ TEST(complete_test, bitset_tests)
     ASSERT_EQ(bstream.toULLong(), ULLONG_MAX);
     bstream.append(0xFF);
     ASSERT_THROW(bstream.toULLong(), std::overflow_error);
+}
+
+TEST(bitset_tests, append_4_bits) {
+    BitsetStream bs;
+
+    bs.append(1, 4, 4);
+    bs.append(1, 4, 4);
+    ASSERT_EQ(0b00010001, bs.getData().at(0));
+}
+
+TEST(bitset_tests, append_4_bits_2) {
+    BitsetStream bs;
+
+    bs.append(2, 4, 4);
+    bs.append(3, 4, 4);
+    ASSERT_EQ(0b00100011, bs.getData().at(0));
+}
+
+TEST(bitset_tests, append_x_bits) {
+    BitsetStream bs;
+
+    bs.append(0b00000001, 7, 1);
+    bs.append(0b11111110, 0, 7);
+    ASSERT_EQ(0b11111111, bs.getData().at(0));
 }
