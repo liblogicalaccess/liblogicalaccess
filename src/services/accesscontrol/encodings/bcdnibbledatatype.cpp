@@ -55,7 +55,7 @@ static int nb_digits(unsigned long long nb)
  *
  * If the number is 12345, this will return {1, 2, 3, 4, 5}
  */
-std::vector<uint8_t> get_digits(unsigned long long nb)
+static std::vector<uint8_t> get_digits(unsigned long long nb)
 {
     std::vector<uint8_t> digits;
     int initial_nb_digits = nb_digits(nb);
@@ -83,7 +83,7 @@ BitsetStream BCDNibbleDataType::convert(unsigned long long data,
     int nb_digits_from_length = dataLengthBits / 4;
     if (nb_digits_from_length > nb_digits(data))
     {
-        for (int i = 0; i < nb_digits_from_length - get_digits(data).size(); ++i)
+        for (int i = 0; i < nb_digits_from_length - nb_digits(data); ++i)
         {
             bs.append(0, 4, 4);
         }

@@ -26,6 +26,12 @@ class LIBLOGICALACCESS_API BitsetStream
 
     void append(unsigned char data, unsigned int readPosStart);
 
+    /**
+     * Append between 0 and 8 bit of data.
+     * @param data Byte from where bits are read
+     * @param readPosStart Offset (starting from left, high weight bits)
+     * @param readLength Number of bits to read.
+     */
     void append(unsigned char data, unsigned int readPosStart, unsigned int readLength);
 
     void concat(const BitsetStream &data);
