@@ -1,0 +1,6 @@
+[bugtraq]
+  url = https://github.com/islog/liblogicalaccess/issues/%BUGID%
+  number = true
+  logregex = "[Ff]ixe?[ds]? ?(issue)? ?:?(\\s*(,|and)?\\s*#\\d+)+\n(\\d+)"
+  append = true
+  message = "Fixes #%BUGID%"
