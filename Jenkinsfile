@@ -3,7 +3,6 @@ pipeline {
     stages {
         stage('Builds') {
             parallel {
-            /*
                 stage('Debian build') {
                     agent { docker { image 'debian-64-stable-build' } }
                     steps {
@@ -17,13 +16,12 @@ pipeline {
                         debPackageBuild()
                     }
                 }
-                */
 
                 stage('Build With Unittests') {
                     agent { docker { image 'debian-64-stable-build' } }
                     steps {
                         installGoogleTest()
-                        sh 'mkdir build && cd build && cmake -DLLA_BUILD_UNITTESTS=1 .. && make -j15'
+                        sh 'mkdir build && cd build && cmake -DLLA_BUILD_UNITTESTS=1 .. && make -j6'
 
                         // Run test -- Should be another stage most likely.
                         sh 'cd build/tests/unittest && for f in test* ; do GTEST_OUTPUT="xml:./" ./$f ; done'
