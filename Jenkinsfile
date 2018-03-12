@@ -14,6 +14,13 @@ pipeline {
 				debPackageBuild()
 			}
 		}
+
+		stage('Rasbian build') {
+			agent {	docker { image 'docker-registry.islog.com:5000/raspbian-lite' } }
+			steps {
+				debPackageBuild()
+			}
+		}
     }
 	
     post {
