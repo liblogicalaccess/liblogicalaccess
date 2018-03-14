@@ -288,7 +288,6 @@ add_subdirectory(plugins/logicalaccess/plugins/crypto)
 add_subdirectory(plugins/logicalaccess/plugins/cards)
 add_subdirectory(plugins/logicalaccess/plugins/readers)
 if (NOT ANDROID)
-	add_subdirectory(plugins/logicalaccess/plugins/lla-tests)
 	add_subdirectory(tests)
 endif()
 
