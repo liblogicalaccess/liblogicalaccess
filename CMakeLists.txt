@@ -32,8 +32,8 @@ elseif(ANDROID)
     set(Boost_USE_STATIC_RUNTIME    OFF)
     set(Boost_COMPILER -gcc)
 
-    set(OPENSSL_CRYPTO_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/../android-openssl/prebuilt/${ANDROID_ABI}/libcrypto.so)
-    set(OPENSSL_SSL_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/../android-openssl/prebuilt/${ANDROID_ABI}/libssl.so)
+    set(OPENSSL_CRYPTO_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/../android-openssl/prebuilt/${ANDROID_ABI}/libcrypto.a)
+    set(OPENSSL_SSL_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/../android-openssl/prebuilt/${ANDROID_ABI}/libssl.a)
     set(OPENSSL_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../android-openssl/prebuilt/include)
 endif()
 
@@ -269,7 +269,12 @@ if (MSVC)
 endif()
 
 set_target_properties(${LIBLOGICALACCESS_LIBRARY} PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
-target_link_libraries(${LIBLOGICALACCESS_LIBRARY} ${OPENSSL_LIBRARIES})
+
+if(ANDROID)
+    target_link_libraries(${LIBLOGICALACCESS_LIBRARY} ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPTO_LIBRARY})
+else()
+    target_link_libraries(${LIBLOGICALACCESS_LIBRARY} ${OPENSSL_LIBRARIES})
+endif()
 
 if (WIN32)
 
