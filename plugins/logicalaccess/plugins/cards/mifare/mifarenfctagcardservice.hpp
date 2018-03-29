@@ -34,7 +34,10 @@ class LIBLOGICALACCESS_API MifareNFCTagCardService : public NFCTagCardService
     {
     }
 
-    std::string getCSType() override { return MIFARE_NFC_CARDSERVICE; }
+    std::string getCSType() override
+    {
+        return MIFARE_NFC_CARDSERVICE;
+    }
 
     std::shared_ptr<NdefMessage> readNDEF() override;
 

@@ -58,7 +58,8 @@ class LIBLOGICALACCESS_API ReaderProvider
      * \brief Lock until one or all ready are detected.
      * \return The reader list with one or all the ReaderUnit.
      */
-    virtual const ReaderList waitForReaders(std::vector<std::string> readers, double maxwait, bool all);
+    virtual const ReaderList waitForReaders(std::vector<std::string> readers,
+                                            double maxwait, bool all);
 
     /**
      * \brief Get the reader provider type.

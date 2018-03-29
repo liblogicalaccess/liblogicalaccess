@@ -38,7 +38,10 @@ class LIBLOGICALACCESS_API TwicStorageCardService : public ISO7816StorageCardSer
      */
     virtual ~TwicStorageCardService();
 
-    std::string getCSType() override { return STORAGECARDSERVICE_TWIC; }
+    std::string getCSType() override
+    {
+        return STORAGECARDSERVICE_TWIC;
+    }
 
     /**
 * \brief Read data on a specific DESFire location, using given DESFire keys.

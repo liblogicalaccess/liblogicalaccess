@@ -19,7 +19,10 @@ class LIBLOGICALACCESS_API MifarePlusSL1StorageCardService
   public:
     explicit MifarePlusSL1StorageCardService(std::shared_ptr<Chip> chip);
 
-    std::string getCSType() override { return STORAGECARDSERVICE_MIFARE_PLUS; }
+    std::string getCSType() override
+    {
+        return STORAGECARDSERVICE_MIFARE_PLUS;
+    }
 
     void erase(std::shared_ptr<Location> location,
                std::shared_ptr<AccessInfo> aiToUse) override;

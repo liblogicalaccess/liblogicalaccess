@@ -12,11 +12,8 @@
 
 namespace logicalaccess
 {
-SSLTransport::SSLTransport(
-    boost::asio::ssl::context &ctx
-    )
-    :
-    ssl_ctx_(ctx)
+SSLTransport::SSLTransport(boost::asio::ssl::context &ctx)
+    : ssl_ctx_(ctx)
     , d_socket(d_ios, ssl_ctx_)
     , d_timer(d_ios)
     , d_read_error(true)
@@ -61,8 +58,8 @@ bool SSLTransport::connect(long int timeout)
         d_timer.async_wait(
             boost::bind(&SSLTransport::time_out, this, boost::asio::placeholders::error));
 
-        boost::asio::ip::tcp::endpoint endpoint(
-            BOOST_ASIO_MAKE_ADDRESS(getIpAddress()), getPort());
+        boost::asio::ip::tcp::endpoint endpoint(BOOST_ASIO_MAKE_ADDRESS(getIpAddress()),
+                                                getPort());
         d_socket.lowest_layer().async_connect(
             endpoint, boost::bind(&SSLTransport::connect_complete, this,
                                   boost::asio::placeholders::error));
@@ -135,7 +132,7 @@ void SSLTransport::read_complete(const boost::system::error_code &error,
     d_timer.cancel();
 }
 
-void SSLTransport::time_out(const boost::system::error_code &error) 
+void SSLTransport::time_out(const boost::system::error_code &error)
 {
     if (error)
         return;

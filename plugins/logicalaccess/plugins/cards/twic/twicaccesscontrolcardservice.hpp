@@ -33,7 +33,10 @@ class LIBLOGICALACCESS_API TwicAccessControlCardService : public AccessControlCa
      */
     ~TwicAccessControlCardService();
 
-    std::string getCSType() override { return TWIC_ACCESSCONTROL_CARDSERVICE; }
+    std::string getCSType() override
+    {
+        return TWIC_ACCESSCONTROL_CARDSERVICE;
+    }
 
     /**
      * \brief Read format from the card.

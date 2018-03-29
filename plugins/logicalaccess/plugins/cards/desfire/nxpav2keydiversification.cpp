@@ -14,7 +14,8 @@
 
 namespace logicalaccess
 {
-void NXPAV2KeyDiversification::initDiversification(ByteVector identifier, unsigned int AID,
+void NXPAV2KeyDiversification::initDiversification(ByteVector identifier,
+                                                   unsigned int AID,
                                                    std::shared_ptr<Key> /*key*/,
                                                    unsigned char keyno,
                                                    ByteVector &diversify)

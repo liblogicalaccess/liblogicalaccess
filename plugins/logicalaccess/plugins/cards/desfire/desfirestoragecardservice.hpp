@@ -28,7 +28,10 @@ class LIBLOGICALACCESS_API DESFireStorageCardService : public StorageCardService
      */
     explicit DESFireStorageCardService(std::shared_ptr<Chip> chip);
 
-    std::string getCSType() override { return STORAGE_CARDSERVICE_DESFIRE; }
+    std::string getCSType() override
+    {
+        return STORAGE_CARDSERVICE_DESFIRE;
+    }
 
     /**
      * \brief Erase the card.

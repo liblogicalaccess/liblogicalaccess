@@ -11,8 +11,9 @@ namespace logicalaccess
 class LIBLOGICALACCESS_API NXPKeyDiversification : public KeyDiversification
 {
   public:
-    void initDiversification(ByteVector identifier, unsigned int AID, std::shared_ptr<Key> key,
-                             unsigned char keyno, ByteVector &diversify) override = 0;
+    void initDiversification(ByteVector identifier, unsigned int AID,
+                             std::shared_ptr<Key> key, unsigned char keyno,
+                             ByteVector &diversify) override = 0;
     ByteVector getDiversifiedKey(std::shared_ptr<Key> key,
                                  ByteVector diversify) override = 0;
 

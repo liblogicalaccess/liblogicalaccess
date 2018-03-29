@@ -222,10 +222,10 @@ bool OSDPReaderUnit::connect()
 void OSDPReaderUnit::disconnect()
 {
     //		std::shared_ptr<OSDPChannel> result =
-    //m_commands->disconnectFromSmartcard();
+    // m_commands->disconnectFromSmartcard();
     //		if (result->getCommandsType() != OSDPCommandsType::ACK)
     //		    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Impossible to
-    //disconnect from card");
+    // disconnect from card");
 }
 
 void OSDPReaderUnit::checkPDAuthentication(std::shared_ptr<OSDPChannel> challenge)

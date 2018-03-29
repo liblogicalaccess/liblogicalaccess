@@ -55,7 +55,8 @@ CardsFormatComposite::createFormatFromXml(const std::string &xmlstring,
     return ret;
 }
 
-void CardsFormatComposite::addFormatForCard(const std::string& type, const FormatInfos& formatInfos)
+void CardsFormatComposite::addFormatForCard(const std::string &type,
+                                            const FormatInfos &formatInfos)
 {
     LOG(LogLevel::INFOS) << "Add format for card type {" << type << "}...";
     FormatInfos finfos;
@@ -67,7 +68,7 @@ void CardsFormatComposite::addFormatForCard(const std::string& type, const Forma
     formatsList[type] = finfos;
 }
 
-FormatInfos CardsFormatComposite::retrieveFormatForCard(const std::string& type)
+FormatInfos CardsFormatComposite::retrieveFormatForCard(const std::string &type)
 {
     FormatInfos result;
 
@@ -77,9 +78,9 @@ FormatInfos CardsFormatComposite::retrieveFormatForCard(const std::string& type)
     if (formatsList.find(type) != formatsList.end())
     {
         LOG(LogLevel::INFOS) << "Type found int the composite. Retrieving values...";
-        result.format   = formatsList[type].format;
-        result.location = formatsList[type].location;
-        result.aiToUse  = formatsList[type].aiToUse;
+        result.format    = formatsList[type].format;
+        result.location  = formatsList[type].location;
+        result.aiToUse   = formatsList[type].aiToUse;
         result.aiToWrite = formatsList[type].aiToWrite;
     }
     else
@@ -101,7 +102,7 @@ CardTypeList CardsFormatComposite::getConfiguredCardTypes()
     return ctList;
 }
 
-void CardsFormatComposite::removeFormatForCard(const std::string& type)
+void CardsFormatComposite::removeFormatForCard(const std::string &type)
 {
     formatsList.erase(type);
 }

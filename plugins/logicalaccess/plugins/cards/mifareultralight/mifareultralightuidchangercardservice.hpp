@@ -13,7 +13,8 @@ namespace logicalaccess
  * This service operates at high-level, and while it doesn't work against
  * some reader (OK5321) it consist of normal block writing operation.
  */
-class LIBLOGICALACCESS_API MifareUltralightUIDChangerCardService : public UIDChangerCardService
+class LIBLOGICALACCESS_API MifareUltralightUIDChangerCardService
+    : public UIDChangerCardService
 {
   public:
     /**
@@ -23,7 +24,10 @@ class LIBLOGICALACCESS_API MifareUltralightUIDChangerCardService : public UIDCha
     explicit MifareUltralightUIDChangerCardService(
         std::shared_ptr<StorageCardService> storage);
 
-    std::string getCSType() override { return CHANGE_SERVICE_MIFAREULTRALIGHT_UID; }
+    std::string getCSType() override
+    {
+        return CHANGE_SERVICE_MIFAREULTRALIGHT_UID;
+    }
 
     void changeUID(const ByteVector &new_uid) override;
 

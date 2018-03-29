@@ -30,7 +30,10 @@ class LIBLOGICALACCESS_API ProxAccessControlCardService : public AccessControlCa
      */
     ~ProxAccessControlCardService();
 
-    std::string getCSType() override { return PROX_ACCESCONTROL_CARDSERVICE; }
+    std::string getCSType() override
+    {
+        return PROX_ACCESCONTROL_CARDSERVICE;
+    }
 
     /**
      * \brief Read format from the card.

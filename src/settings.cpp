@@ -102,29 +102,30 @@ void Settings::LoadSettings()
         using boost::property_tree::ptree;
         ptree pt;
 
-            // Load the XML file into the property tree. If reading fails
-            // (cannot open file, parse error), an exception is thrown.
-            std::list<std::string> configfolder;
-            configfolder.push_back(getDllPath() + "/liblogicalaccess.config");
+        // Load the XML file into the property tree. If reading fails
+        // (cannot open file, parse error), an exception is thrown.
+        std::list<std::string> configfolder;
+        configfolder.push_back(getDllPath() + "/liblogicalaccess.config");
 #if defined(__unix__) && !defined(ANDROID)
-            configfolder.push_back("/etc/liblogicalaccess.config");
+        configfolder.push_back("/etc/liblogicalaccess.config");
 #endif
         for (std::list<std::string>::iterator it = configfolder.begin();
              it != configfolder.end(); ++it)
         {
-			try
-			{
-				if (boost::filesystem::exists(*it)) {
-					read_xml(*it, pt);
-					break;
-				}
-			}
-			catch (boost::property_tree::xml_parser::xml_parser_error &e)
-			{
-				if (e.message() == "cannot open file")
-					continue;
-				throw;
-			}
+            try
+            {
+                if (boost::filesystem::exists(*it))
+                {
+                    read_xml(*it, pt);
+                    break;
+                }
+            }
+            catch (boost::property_tree::xml_parser::xml_parser_error &e)
+            {
+                if (e.message() == "cannot open file")
+                    continue;
+                throw;
+            }
         }
 
         IsLogEnabled = pt.get("config.log.enabled", false);

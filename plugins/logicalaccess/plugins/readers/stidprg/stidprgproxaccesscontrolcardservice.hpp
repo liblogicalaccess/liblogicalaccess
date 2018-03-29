@@ -13,7 +13,8 @@ namespace logicalaccess
  * It allows the client to configure a card to emulate various
  * format.
  */
-class LIBLOGICALACCESS_API STidPRGProxAccessControlCardService : public AccessControlCardService
+class LIBLOGICALACCESS_API STidPRGProxAccessControlCardService
+    : public AccessControlCardService
 {
   public:
     explicit STidPRGProxAccessControlCardService(std::shared_ptr<Chip> chip);
@@ -22,6 +23,9 @@ class LIBLOGICALACCESS_API STidPRGProxAccessControlCardService : public AccessCo
                      std::shared_ptr<AccessInfo> aiToUse,
                      std::shared_ptr<AccessInfo> aiToWrite) override;
 
-    std::string getCSType() override { return STIDPRG_PROX_ACCESSCONTROL_CARDSERVICE; }
+    std::string getCSType() override
+    {
+        return STIDPRG_PROX_ACCESSCONTROL_CARDSERVICE;
+    }
 };
 }

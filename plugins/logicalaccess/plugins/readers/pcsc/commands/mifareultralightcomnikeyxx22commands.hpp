@@ -44,7 +44,7 @@ class LIBLOGICALACCESS_API MifareUltralightCOmnikeyXX22Commands
 
     void writePage(int page, const ByteVector &buf) override;
 
-protected:
+  protected:
     std::shared_ptr<MifareUltralightChip> getMifareUltralightChip() override;
 };
 }

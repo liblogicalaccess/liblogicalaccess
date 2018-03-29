@@ -256,8 +256,8 @@ static LRESULT CALLBACK msghook_LL(int nCode, WPARAM wParam, LPARAM lParam)
     //	LPWSTR str = new WCHAR[100];
     //	memset(str, 0, 100);
     //	wsprintf(str, L"LL: nCode=%i wparam=%#08x vCode=%#08x scanCode=%#08x time=%#08x
-    //flags=%#08x\n", nCode, wParam, pHookStruct->vkCode, pHookStruct->scanCode,
-    //pHookStruct->time, pHookStruct->flags);
+    // flags=%#08x\n", nCode, wParam, pHookStruct->vkCode, pHookStruct->scanCode,
+    // pHookStruct->time, pHookStruct->flags);
     //	OutputDebugString(str);
     //
     //}

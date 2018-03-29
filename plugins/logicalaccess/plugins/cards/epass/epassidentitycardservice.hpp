@@ -18,7 +18,10 @@ class LIBLOGICALACCESS_API EPassIdentityCardService : public IdentityCardService
     std::string getString(MetaData what) override;
     ByteVector getData(MetaData what) override;
 
-    std::string getCSType() override { return IDENTITY_CARDSERVICE_EPASS; }
+    std::string getCSType() override
+    {
+        return IDENTITY_CARDSERVICE_EPASS;
+    }
 
 
   protected:

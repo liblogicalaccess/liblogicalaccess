@@ -81,7 +81,7 @@ class LIBLOGICALACCESS_API CardsFormatComposite : public XmlSerializable
      * \param aiToUse The format access information.
      * \param aiToWrite The format access information to write in write mode.
      */
-    void addFormatForCard(const std::string& type, const FormatInfos& formatInfos);
+    void addFormatForCard(const std::string &type, const FormatInfos &formatInfos);
 
     /**
      * \brief Retrieve format information for a card type.
@@ -91,13 +91,13 @@ class LIBLOGICALACCESS_API CardsFormatComposite : public XmlSerializable
      * \param aiToUse The format access information.
      * \param aiToWrite The format access information to write in write mode.
      */
-    FormatInfos retrieveFormatForCard(const std::string& type);
+    FormatInfos retrieveFormatForCard(const std::string &type);
 
     /**
      * \brief Remove a format for a card type.
      * \param type The card type.
      */
-    void removeFormatForCard(const std::string& type);
+    void removeFormatForCard(const std::string &type);
 
     /**
      * \brief Get configured card type.

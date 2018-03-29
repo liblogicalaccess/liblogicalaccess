@@ -33,7 +33,10 @@ class LIBLOGICALACCESS_API GenericTagIdOnDemandAccessControlCardService
      */
     ~GenericTagIdOnDemandAccessControlCardService();
 
-    std::string getCSType() override { return GENERICTAGIDONDEMANDEACCESSCONTROLCARDSERVICE; }
+    std::string getCSType() override
+    {
+        return GENERICTAGIDONDEMANDEACCESSCONTROLCARDSERVICE;
+    }
 
     /**
      * \brief Read format from the card.

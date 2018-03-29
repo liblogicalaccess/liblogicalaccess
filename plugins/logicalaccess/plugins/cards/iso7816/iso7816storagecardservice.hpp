@@ -30,7 +30,10 @@ class LIBLOGICALACCESS_API ISO7816StorageCardService : public StorageCardService
      */
     virtual ~ISO7816StorageCardService();
 
-    std::string getCSType() override { return STORAGECARDSERVICE_ISO7816; }
+    std::string getCSType() override
+    {
+        return STORAGECARDSERVICE_ISO7816;
+    }
 
     /**
      * \brief Erase a specific location on the card.

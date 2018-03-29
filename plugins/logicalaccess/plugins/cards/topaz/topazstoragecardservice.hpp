@@ -35,7 +35,10 @@ class LIBLOGICALACCESS_API TopazStorageCardService : public StorageCardService
      */
     ~TopazStorageCardService();
 
-    std::string getCSType() override { return STORAGECARDSERVICE_TOPAZ; }
+    std::string getCSType() override
+    {
+        return STORAGECARDSERVICE_TOPAZ;
+    }
 
     /**
      * \brief Erase the card.

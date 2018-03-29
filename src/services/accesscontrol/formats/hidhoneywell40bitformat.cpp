@@ -73,7 +73,7 @@ size_t HIDHoneywell40BitFormat::getFormatLinearData(ByteVector & /*data*/) const
 }
 
 void HIDHoneywell40BitFormat::setFormatLinearData(const ByteVector & /*data*/,
-                                             size_t * /*indexByte*/)
+                                                  size_t * /*indexByte*/)
 {
     // DOES NOTHING
 }
@@ -122,7 +122,7 @@ bool HIDHoneywell40BitFormat::checkSkeleton(std::shared_ptr<Format> format) cons
 }
 
 unsigned char HIDHoneywell40BitFormat::getRightParity(const BitsetStream &data,
-                                                 unsigned char rpNo)
+                                                      unsigned char rpNo)
 {
     unsigned char parity = 0x00;
 

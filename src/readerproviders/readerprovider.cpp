@@ -30,7 +30,8 @@ ReaderProvider::getReaderProviderFromRPType(std::string rpt)
     return LibraryManager::getInstance()->getReaderProvider(rpt);
 }
 
-const ReaderList ReaderProvider::waitForReaders(std::vector<std::string> readers, double maxwait, bool all)
+const ReaderList ReaderProvider::waitForReaders(std::vector<std::string> readers,
+                                                double maxwait, bool all)
 {
     ReaderList ret;
     bool notfound = true;

@@ -34,7 +34,10 @@ class LIBLOGICALACCESS_API NFCTag3CardService : public NFCTagCardService
     {
     }
 
-    std::string getCSType() override { return NFC_CARDSERVICE_TAG3; }
+    std::string getCSType() override
+    {
+        return NFC_CARDSERVICE_TAG3;
+    }
 
     std::shared_ptr<NdefMessage> readNDEF() override;
 

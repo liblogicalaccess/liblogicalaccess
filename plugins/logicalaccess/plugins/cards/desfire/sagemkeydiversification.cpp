@@ -11,7 +11,8 @@
 
 namespace logicalaccess
 {
-void SagemKeyDiversification::initDiversification(ByteVector identifier, unsigned int /*AID*/,
+void SagemKeyDiversification::initDiversification(ByteVector identifier,
+                                                  unsigned int /*AID*/,
                                                   std::shared_ptr<Key> /*key*/,
                                                   unsigned char /*keyno*/,
                                                   ByteVector &diversify)

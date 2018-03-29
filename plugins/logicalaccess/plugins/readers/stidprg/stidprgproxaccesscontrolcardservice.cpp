@@ -8,15 +8,16 @@
 
 using namespace logicalaccess;
 
-STidPRGProxAccessControlCardService::STidPRGProxAccessControlCardService(std::shared_ptr<Chip> chip)
+STidPRGProxAccessControlCardService::STidPRGProxAccessControlCardService(
+    std::shared_ptr<Chip> chip)
     : AccessControlCardService(chip)
 {
 }
 
 bool STidPRGProxAccessControlCardService::writeFormat(std::shared_ptr<Format> format,
-                                           std::shared_ptr<Location>,
-                                           std::shared_ptr<AccessInfo>,
-                                           std::shared_ptr<AccessInfo>)
+                                                      std::shared_ptr<Location>,
+                                                      std::shared_ptr<AccessInfo>,
+                                                      std::shared_ptr<AccessInfo>)
 {
     EXCEPTION_ASSERT_WITH_LOG(format, LibLogicalAccessException,
                               "Format cannot be null.");

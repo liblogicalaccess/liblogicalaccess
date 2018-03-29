@@ -38,7 +38,10 @@ class LIBLOGICALACCESS_API AccessControlCardService : public CardService
      */
     virtual ~AccessControlCardService();
 
-    std::string getCSType() override { return ACCESSCONTROLCARDSERVICE; }
+    std::string getCSType() override
+    {
+        return ACCESSCONTROLCARDSERVICE;
+    }
 
     /**
      * \brief Read format from the card.

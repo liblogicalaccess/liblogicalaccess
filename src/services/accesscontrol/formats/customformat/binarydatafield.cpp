@@ -97,7 +97,9 @@ BitsetStream BinaryDataField::getLinearData(const BitsetStream & /*data*/) const
     ByteVector tmp(d_value.getData(), d_value.getData() + d_value.getLength());
 
     BitsetStream paddedBuffer(d_padding, fieldDataLengthBytes);
-    unsigned int copyValueLength = static_cast<unsigned int>(tmp.size()) * 8 > d_length ? d_length : static_cast<unsigned int>(tmp.size()) * 8;
+    unsigned int copyValueLength = static_cast<unsigned int>(tmp.size()) * 8 > d_length
+                                       ? d_length
+                                       : static_cast<unsigned int>(tmp.size()) * 8;
     paddedBuffer.writeAt(0, tmp, 0, copyValueLength);
 
     BitsetStream dataTmp;

@@ -34,7 +34,10 @@ class LIBLOGICALACCESS_API ISO7816NFCTag4CardService : public NFCTagCardService
     {
     }
 
-    std::string getCSType() override { return NFC_CARDSERVICE_ISO7816_TAG4; }
+    std::string getCSType() override
+    {
+        return NFC_CARDSERVICE_ISO7816_TAG4;
+    }
 
     virtual void writeCapabilityContainer(unsigned short isoFID         = 0xe103,
                                           unsigned short isoFIDNDEFFile = 0xe104,

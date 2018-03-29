@@ -37,7 +37,10 @@ class LIBLOGICALACCESS_API MifareStorageCardService : public StorageCardService
      */
     virtual ~MifareStorageCardService();
 
-    std::string getCSType() override { return STORAGECARDSERVICE_MIFARE; }
+    std::string getCSType() override
+    {
+        return STORAGECARDSERVICE_MIFARE;
+    }
 
     /**
      * \brief Erase a specific location on the card.

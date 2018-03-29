@@ -24,7 +24,7 @@ void SAMKeyStorage::serialize(boost::property_tree::ptree &parentNode)
 {
     boost::property_tree::ptree node;
     node.put("KeySlot", d_key_slot);
-	node.put("DumpKey", d_dumpKey);
+    node.put("DumpKey", d_dumpKey);
 
     parentNode.add_child(getDefaultXmlNodeName(), node);
 }
@@ -32,11 +32,12 @@ void SAMKeyStorage::serialize(boost::property_tree::ptree &parentNode)
 void SAMKeyStorage::unSerialize(boost::property_tree::ptree &node)
 {
     d_key_slot = node.get_child("KeySlot").get_value<unsigned char>();
-	boost::optional<boost::property_tree::ptree&> dumpKeyChild = node.get_child_optional("DumpKey");
-	if (dumpKeyChild)
-	{
-		d_dumpKey = dumpKeyChild.get().get_value<bool>();
-	}
+    boost::optional<boost::property_tree::ptree &> dumpKeyChild =
+        node.get_child_optional("DumpKey");
+    if (dumpKeyChild)
+    {
+        d_dumpKey = dumpKeyChild.get().get_value<bool>();
+    }
 }
 
 std::string SAMKeyStorage::getDefaultXmlNodeName() const

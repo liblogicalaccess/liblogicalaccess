@@ -35,7 +35,10 @@ class LIBLOGICALACCESS_API DESFireEV1NFCTag4CardService : public ISO7816NFCTag4C
     {
     }
 
-    std::string getCSType() override { return NFC_CARDSERVICE_DESFIREEV1; }
+    std::string getCSType() override
+    {
+        return NFC_CARDSERVICE_DESFIREEV1;
+    }
 
     void createNFCApplication(unsigned int aid, std::shared_ptr<DESFireKey> masterPICCKey,
                               unsigned short isoFIDApplication         = 0xe105,

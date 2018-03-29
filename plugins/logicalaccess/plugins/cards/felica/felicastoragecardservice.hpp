@@ -32,7 +32,10 @@ class LIBLOGICALACCESS_API FeliCaStorageCardService : public StorageCardService
      */
     virtual ~FeliCaStorageCardService();
 
-    std::string getCSType() override { return STORAGECARDSERVICE_FELICA; }
+    std::string getCSType() override
+    {
+        return STORAGECARDSERVICE_FELICA;
+    }
 
     /**
      * \brief Erase a specific location on the card.

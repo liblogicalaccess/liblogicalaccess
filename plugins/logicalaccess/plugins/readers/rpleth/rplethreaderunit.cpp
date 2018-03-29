@@ -398,7 +398,8 @@ bool RplethReaderUnit::connectToReader()
         connected = getDataTransport()->connect();
         if (connected && getRplethConfiguration()->getMode() == RplethMode::PROXY)
         {
-            LOG(LogLevel::INFOS) << "Data transport connected, initializing PROXY mode...";
+            LOG(LogLevel::INFOS)
+                << "Data transport connected, initializing PROXY mode...";
             std::string type = getProxyReaderType();
 
             if (type == "PCSC") // Avoid scard resources
@@ -408,7 +409,8 @@ bool RplethReaderUnit::connectToReader()
             }
             else
             {
-                std::shared_ptr<ReaderProvider> rp = LibraryManager::getInstance()->getReaderProvider(type);
+                std::shared_ptr<ReaderProvider> rp =
+                    LibraryManager::getInstance()->getReaderProvider(type);
                 if (rp)
                 {
                     d_proxyReader = rp->createReaderUnit();
@@ -417,9 +419,12 @@ bool RplethReaderUnit::connectToReader()
 
             if (d_proxyReader)
             {
-                std::shared_ptr<RplethDataTransport> rpdt = std::dynamic_pointer_cast<RplethDataTransport>(getDataTransport());
+                std::shared_ptr<RplethDataTransport> rpdt =
+                    std::dynamic_pointer_cast<RplethDataTransport>(getDataTransport());
 
-                EXCEPTION_ASSERT_WITH_LOG(rpdt, LibLogicalAccessException, "Rpleth data transport required for proxy mode.");
+                EXCEPTION_ASSERT_WITH_LOG(
+                    rpdt, LibLogicalAccessException,
+                    "Rpleth data transport required for proxy mode.");
                 d_proxyReader->setDataTransport(rpdt);
             }
         }

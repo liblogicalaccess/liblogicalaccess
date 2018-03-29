@@ -545,7 +545,7 @@ void DESFireEV1STidSTRCommands::loadKey(ByteVector key, bool /*diversify*/,
 
     ByteVector command;
     command.push_back(0x00); //(isVolatile ? 0x00 : 0x01);  Always use the Reader RAM
-                             //Memory (0x00) (if want to write in EEPROM, use 0x01)
+                             // Memory (0x00) (if want to write in EEPROM, use 0x01)
     command.insert(command.end(), key.begin(), key.end());
     command.push_back(0x00); // Diversify, not supported yet.
 
