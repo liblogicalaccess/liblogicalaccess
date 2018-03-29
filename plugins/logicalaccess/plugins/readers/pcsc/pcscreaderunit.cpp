@@ -62,6 +62,7 @@
 #include <logicalaccess/plugins/cards/topaz/topazchip.hpp>
 #include <logicalaccess/plugins/cards/generictag/generictagchip.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev2chip.hpp>
+#include <logicalaccess/plugins/cards/seos/seoschip.hpp>
 
 #include <logicalaccess/plugins/readers/iso7816/commands/samiso7816resultchecker.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireiso7816resultchecker.hpp>
@@ -103,6 +104,8 @@
 
 // Include for SCARD_ATTR_VENDOR_IFD_SERIAL_NO
 #include <reader.h>
+#include <logicalaccess/plugins/readers/pcsc/commands/dummycommand.hpp>
+
 #endif
 
 namespace logicalaccess
@@ -835,10 +838,10 @@ std::shared_ptr<Chip> PCSCReaderUnit::createChip(std::string type)
         {
             configure_mifareplus_chip(chip, commands, resultChecker);
         }
-        else if (type == CHIP_PROX)
-        { // A dummy command, whose only goal is to allow retrieval of the
-            // reader unit later on.
-            commands.reset(new ProxCommands());
+        else if (type == CHIP_PROX || type == CHIP_SEOS)
+        {
+            // Dummy command that simply holds reader card adapter and data transport.
+            commands.reset(new DummyCommands());
         }
         else if (type == CHIP_FELICA)
         {

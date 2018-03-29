@@ -47,6 +47,8 @@ class LIBLOGICALACCESS_API SEOSChip : public Chip
      * \return The root location node.
      */
     std::shared_ptr<LocationNode> getRootLocationNode() override;
+
+    std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
 };
 }
 
