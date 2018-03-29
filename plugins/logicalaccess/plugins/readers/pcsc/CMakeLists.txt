@@ -71,6 +71,7 @@ target_link_libraries(
 	epasscards
 	topazcards
     generictagcards
+	seoscards
 	${LIBLOGICALACCESS_LIBRARY}
 	${PCSCLITE_LIBRARIES}
 )
