@@ -7,8 +7,6 @@
 #include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
 #include "logicalaccess/readerproviders/serialportdatatransport.hpp"
 #include "logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp"
-#include "logicalaccess/plugins/lla-tests/macros.hpp"
-#include "logicalaccess/plugins/lla-tests/utils.hpp"
 #include "logicalaccess/services/accesscontrol/formats/wiegand34format.hpp"
 #include "logicalaccess/services/accesscontrol/formats/wiegand34withfacilityformat.hpp"
 #include "logicalaccess/services/accesscontrol/formats/wiegand37withfacilityformat.hpp"

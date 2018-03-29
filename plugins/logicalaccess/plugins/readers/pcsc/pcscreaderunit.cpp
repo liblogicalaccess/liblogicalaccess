@@ -37,12 +37,12 @@
 #include <logicalaccess/plugins/readers/pcsc/commands/topazacsacrcommands.hpp>
 #include <logicalaccess/plugins/readers/pcsc/commands/topazscmcommands.hpp>
 #include <logicalaccess/plugins/readers/pcsc/commands/topazomnikeyxx27commands.hpp>
-#include <logicalaccess/plugins/readers/pcsc/commands/proxcommand.hpp>
 #include <logicalaccess/plugins/readers/pcsc/commands/felicascmcommands.hpp>
 #include <logicalaccess/plugins/readers/pcsc/commands/felicaspringcardcommands.hpp>
 #include <logicalaccess/plugins/cards/mifareplus/MifarePlusSL0Commands.hpp>
 #include <logicalaccess/plugins/cards/epass/epasscommands.hpp>
 #include <logicalaccess/plugins/cards/epass/epassreadercardadapter.hpp>
+#include <logicalaccess/plugins/readers/pcsc/commands/dummycommand.hpp>
 
 #include <logicalaccess/plugins/cards/samav2/samav1chip.hpp>
 #include <logicalaccess/plugins/cards/samav2/samav2chip.hpp>
@@ -104,8 +104,6 @@
 
 // Include for SCARD_ATTR_VENDOR_IFD_SERIAL_NO
 #include <reader.h>
-#include <logicalaccess/plugins/readers/pcsc/commands/dummycommand.hpp>
-
 #endif
 
 namespace logicalaccess
@@ -856,10 +854,9 @@ std::shared_ptr<Chip> PCSCReaderUnit::createChip(std::string type)
         }
         else if (type == CHIP_EPASS)
         {
-            commands = std::make_shared<ProxCommands>();
+            commands = std::make_shared<DummyCommands>();
             rca      = std::make_shared<EPassReaderCardAdapter>();
             rca->setDataTransport(std::make_shared<PCSCDataTransport>());
-            // commands->setReaderCardAdapter(rca);
         }
         else if (type == CHIP_TOPAZ)
         {

@@ -1,6 +1,6 @@
 #include <logicalaccess/plugins/readers/stidprg/stidprgreaderunit.hpp>
 #include <logicalaccess/plugins/readers/stidprg/stidprgreaderprovider.hpp>
-#include <logicalaccess/plugins/readers/pcsc/commands/proxcommand.hpp>
+#include <logicalaccess/plugins/readers/pcsc/commands/dummycommand.hpp>
 #include <logicalaccess/cards/chip.hpp>
 #include <logicalaccess/logs.hpp>
 #include <logicalaccess/plugins/readers/stidprg/readercardadapters/stidprgbufferparser.hpp>
@@ -176,7 +176,7 @@ std::shared_ptr<Chip> STidPRGReaderUnit::getCurrentChip()
         {
             auto card_uid = std::vector<uint8_t>(ret.begin() + 3, ret.end());
             auto chip     = createChip("Prox", card_uid);
-            auto cmd      = std::make_shared<ProxCommands>();
+            auto cmd      = std::make_shared<DummyCommands>();
             cmd->setReaderCardAdapter(getDefaultReaderCardAdapter());
             chip->setCommands(cmd);
             return chip;
