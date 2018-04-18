@@ -46,6 +46,7 @@ namespace logicalaccess
          */
         virtual std::shared_ptr<LocationNode> getRootLocationNode();
 
+    std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
     protected:
     };
 }

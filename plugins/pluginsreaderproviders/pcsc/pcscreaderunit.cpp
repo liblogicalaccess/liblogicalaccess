@@ -62,6 +62,7 @@
 #include "topaz/topazchip.hpp"
 #include "generictag/generictagchip.hpp"
 #include "desfire/desfireev2chip.hpp"
+#include "seos/seoschip.hpp"
 
 #include "iso7816/commands/samiso7816resultchecker.hpp"
 #include "iso7816/commands/desfireiso7816resultchecker.hpp"
@@ -799,7 +800,7 @@ namespace logicalaccess
             {
                 configure_mifareplus_chip(chip, commands, resultChecker);
             }
-            else if (type == CHIP_PROX)
+            else if (type == CHIP_PROX || type == CHIP_SEOS)
             {   // A dummy command, whose only goal is to allow retrieval of the
                 // reader unit later on.
                 commands.reset(new ProxCommand());
