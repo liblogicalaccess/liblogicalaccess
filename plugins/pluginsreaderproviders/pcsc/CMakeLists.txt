@@ -70,6 +70,7 @@ target_link_libraries(
 	felicacards
 	epasscards
 	topazcards
+	seoscards
     generictagcards
 	${LIBLOGICALACCESS_LIBRARY}
 	${PCSCLITE_LIBRARIES}
