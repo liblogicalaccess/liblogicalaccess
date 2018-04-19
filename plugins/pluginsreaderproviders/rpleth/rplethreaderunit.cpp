@@ -53,14 +53,21 @@ namespace logicalaccess
         {
             boost::property_tree::ptree pt;
             read_xml((boost::filesystem::current_path().string() + "/RplethReaderUnit.config"), pt);
-			d_card_type = pt.get("config.cardType", CHIP_UNKNOWN);
+            d_card_type = pt.get("config.cardType", CHIP_UNKNOWN);
         }
         catch (...) {}
     }
 
     RplethReaderUnit::~RplethReaderUnit()
     {
-        disconnectFromReader();
+        try
+        {
+            disconnectFromReader();
+        }
+        catch (std::exception& ex)
+        {
+            LOG(LogLevel::ERRORS) << "Error when destroy RplethReaderUnit: " << ex.what();
+        }
     }
 
     std::string RplethReaderUnit::getName() const
