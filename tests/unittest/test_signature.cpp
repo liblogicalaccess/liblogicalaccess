@@ -38,6 +38,13 @@ TEST(test_signature, verify1)
 
 TEST(test_signature, verify_iks)
 {
+    // The first IKS test needs to setup the global configuration
+    // otherwise we cannot instanciate a remote crypto object.
+    iks::IslogKeyServer::configureGlobalInstance(
+        "iksf", 6565, "/home/xaqq/Documents/iks/crypto/certs/my-client-1.pem",
+        "/home/xaqq/Documents/iks/crypto/certs/my-client-1.key",
+        "/home/xaqq/Documents/iks/crypto/certs/iks-server-intermediate-ca.pem");
+
     auto remote_crypto = LibraryManager::getInstance()->getRemoteCrypto();
     SignatureResult sigres;
     sigres.signature = BufferHelper::fromHexString(

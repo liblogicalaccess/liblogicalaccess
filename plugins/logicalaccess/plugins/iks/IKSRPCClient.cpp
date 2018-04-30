@@ -1,5 +1,6 @@
 #include <chrono>
 #include <logicalaccess/iks/IslogKeyServer.hpp>
+#include <logicalaccess/plugins/crypto/signature_helper.hpp>
 #include "logicalaccess/plugins/iks/IKSRPCClient.hpp"
 #include "logicalaccess/bufferhelper.hpp"
 #include "logicalaccess/plugins/iks/iks.grpc.pb.h"
@@ -78,10 +79,16 @@ ByteVector IKSRPCClient::aes_decrypt(const ByteVector &in, const std::string &ke
         if (out_signature)
         {
             // copy signature and its description.
-            auto sig_str             = rep.signature();
-            out_signature->signature = ByteVector(sig_str.begin(), sig_str.end());
-            // todo copy description
-            // out_signature->signature_description_ = rep.signaturedescription();
+            auto sig_str                  = rep.signature();
+            out_signature->signature      = ByteVector(sig_str.begin(), sig_str.end());
+            out_signature->desc.timestamp = rep.signaturedescription().timestamp();
+            out_signature->desc.nonce     = rep.signaturedescription().nonce();
+            out_signature->desc.run_uuid =
+                ByteVector(rep.signaturedescription().run_uuid().begin(),
+                           rep.signaturedescription().run_uuid().end());
+            out_signature->desc.payload =
+                ByteVector(rep.signaturedescription().payload().begin(),
+                           rep.signaturedescription().payload().end());
         }
         return ByteVector(rep.payload().begin(), rep.payload().end());
     }
@@ -163,7 +170,15 @@ RemoteCryptoIKSProvider::RemoteCryptoIKSProvider(IslogKeyServer::IKSConfig confi
 bool RemoteCryptoIKSProvider::verify_signature(const SignatureResult &sr,
                                                const std::string &pubkey_pem)
 {
-    return false;
+    SignatureDescription sigdesc;
+    sigdesc.set_run_uuid(BufferHelper::getStdString(sr.desc.run_uuid));
+    sigdesc.set_timestamp(sr.desc.timestamp);
+    sigdesc.set_nonce(sr.desc.nonce);
+    sigdesc.set_payload(BufferHelper::getStdString(sr.desc.payload));
+
+    return SignatureHelper::verify_sha512(
+        sigdesc.SerializeAsString(),
+        std::string(sr.signature.begin(), sr.signature.end()), pubkey_pem);
 }
 
 ByteVector RemoteCryptoIKSProvider::aes_encrypt(const ByteVector &in,
@@ -178,7 +193,7 @@ ByteVector RemoteCryptoIKSProvider::aes_decrypt(const ByteVector &in,
                                                 const ByteVector &iv,
                                                 SignatureResult *out_signature)
 {
-    return iks_rpc_client_.aes_decrypt(in, key_name, iv);
+    return iks_rpc_client_.aes_decrypt(in, key_name, iv, out_signature);
 }
 
 void RemoteCryptoIKSProvider::iso_authenticate_step1(

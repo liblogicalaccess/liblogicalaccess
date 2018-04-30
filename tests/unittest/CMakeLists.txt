@@ -15,9 +15,10 @@ function(create_test file)
 
    target_link_libraries(${test_name}
            ${GTEST_BOTH_LIBRARIES} ${Boost_LIBRARIES}
-           pthread logicalaccess pcscreaders stidprgreaders
+           pthread pcscreaders stidprgreaders
            remotecryptoiksunified
-           epasscards)
+           epasscards
+           logicalaccess)
 
     target_compile_options(${test_name} PRIVATE -O3)
 endfunction()

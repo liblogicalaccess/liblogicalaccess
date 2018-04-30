@@ -199,7 +199,11 @@ static void test_aes_key(size_t payload_size, size_t iterations,
 
         auto encrypted = rpc.aes_encrypt(payload, key_uuid, iv);
         auto decrypted = rpc.aes_decrypt(encrypted, key_uuid, iv, sr_ptr);
-        assert(payload == decrypted);
+        if (payload != decrypted)
+        {
+            std::cout << "Failed at operation " << count << std::endl;
+            assert(payload == decrypted);
+        }
 
         // std::this_thread::sleep_for(std::chrono::milliseconds(15));
         test_result.update_extreme_itr(itr_etc.elapsed_micro());
@@ -243,8 +247,8 @@ void test_desfire_auth(size_t iterations, const std::string &key_uuid)
 
 int main(int ac, char **av)
 {
-    const int itr_count  = 100;
-    const int NB_THREADS = 2;
+    const int itr_count  = 1000;
+    const int NB_THREADS = 10;
     /*
         iks::IslogKeyServer::configureGlobalInstance(
             "iksf", 6565, "/home/xaqq/Documents/iks/crypto/arnaud.pem",
@@ -267,24 +271,25 @@ int main(int ac, char **av)
     for (int n = 0; n < NB_THREADS; ++n)
     {
         std::thread t([]() {
-            std::string key = "00000000-0000-0000-0000-000000000000";
-            test_aes_key(1024, itr_count, key, false);
-            test_aes_key(1024, itr_count, key, true);
+            std::string key = "e8c0e771-3db8-4f53-9209-98ba4209ca59";
+            // std::string key = "ae6b9177-4ea0-49a0-a91d-ca72a0ab8955";
+            // test_aes_key(1024, itr_count, key, false);
+            //   test_aes_key(1024, itr_count, key, true);
             test_aes_key(16, itr_count, key, false);
-            test_aes_key(16, itr_count, key, true);
-            test_aes_key(1024 * 10, itr_count, key, false);
-            test_aes_key(1024 * 10, itr_count, key, true);
+            // test_aes_key(16, itr_count, key, true);
+            // test_aes_key(1024 * 10, itr_count, key, false);
+            // test_aes_key(1024 * 10, itr_count, key, true);
 
 
             // Now with key stored in IKSD
-            /*            key = "0662d4b8-d436-4209-9f5d-4dca1d82e39a";
-                        test_desfire_auth(itr_count, key);
-                        test_aes_key(1024, itr_count, key, false);
-                        test_aes_key(1024, itr_count, key, true);
-                        test_aes_key(16, itr_count, key, false);
-                        test_aes_key(16, itr_count, key, true);
-                        test_aes_key(1024 * 10, itr_count, key, false);
-                        test_aes_key(1024 * 10, itr_count, key, true);*/
+            key = "ae6b9177-4ea0-49a0-a91d-ca72a0ab8955";
+            // test_desfire_auth(itr_count, key);
+            //           test_aes_key(1024, itr_count, key, false);
+            //         test_aes_key(1024, itr_count, key, true);
+            //       test_aes_key(16, itr_count, key, false);
+            //     test_aes_key(16, itr_count, key, true);
+            //          test_aes_key(1024 * 10, itr_count, key, false);
+            // test_aes_key(1024 * 10, itr_count, key, true);
         });
 
         threads.push_back(std::move(t));

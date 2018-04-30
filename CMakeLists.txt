@@ -150,7 +150,6 @@ file(GLOB include_storage ${NATIVE_INCLUDE}/logicalaccess/services/storage/*.hpp
 file(GLOB include_uidchanger ${NATIVE_INCLUDE}/logicalaccess/services/uidchanger/*.hpp)
 file(GLOB include_license_checker ${NATIVE_INCLUDE}/logicalaccess/services/licensechecker/*.hpp)
 file(GLOB include_iks ${NATIVE_INCLUDE}/logicalaccess/iks/*.hpp)
-file(GLOB include_iks_packet "${NATIVE_INCLUDE}/logicalaccess/iks/packet/*.hpp" "${NATIVE_INCLUDE}/logicalaccess/iks/packet/*.h")
 file(GLOB include_service_identity ${NATIVE_INCLUDE}/logicalaccess/services/identity/*.hpp)
 
 INCLUDE_DIRECTORIES(${NATIVE_INCLUDE} ${CMAKE_CURRENT_SOURCE_DIR}/plugins/)
@@ -205,7 +204,6 @@ SOURCE_GROUP("Header Files\\services\\storage" FILES ${include_storage})
 SOURCE_GROUP("Header Files\\services\\uidchanger" FILES ${include_uidchanger})
 SOURCE_GROUP("Header Files\\services\\license_checker" FILES ${include_license_checker})
 SOURCE_GROUP("Header Files\\iks" FILES ${include_iks})
-SOURCE_GROUP("Header Files\\iks\\packet" FILES ${include_iks_packet})
 SOURCE_GROUP("Header Files\\services\\identity" FILES ${include_service_identity})
 
 endif()
@@ -228,7 +226,6 @@ install ( FILES ${include_storage} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/l
 install ( FILES ${include_uidchanger} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/uidchanger )
 install ( FILES ${include_license_checker} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/licensechecker )
 install ( FILES ${include_iks} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/iks )
-install ( FILES ${include_iks_packet} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/iks/packet )
 install ( FILES ${include_service_identity} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/identity )
 
 
@@ -249,7 +246,7 @@ set(include ${include_root} ${include_cards} ${include_readerproviders}
         ${include_formats} ${include_customformat} ${include_nfctag} ${include_uidchanger}
         ${include_license_checker}
         ${include_dynlibrary} ${include_storage} ${include_vc}
-        ${include_iks} ${include_iks_packet} ${include_service_identity})
+        ${include_iks} ${include_service_identity})
 
 
 add_library(
