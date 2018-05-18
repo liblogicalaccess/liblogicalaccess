@@ -505,8 +505,10 @@ class LIBLOGICALACCESS_API DESFireCrypto
      */
     unsigned char d_currentKeyNo;
 
+#ifndef SWIG
     // If present it means we use IKS...
     std::unique_ptr<IKSCryptoWrapper> iks_wrapper_;
+#endif
 
     /**
      * Retrieve the IKS signature (if requested) for the last decrypted

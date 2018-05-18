@@ -38,7 +38,7 @@ typedef enum {
 /**
  * \brief A DESFire Key class.
  */
-class LIBLOGICALACCESS_API DESFireKey final : public Key
+class LIBLOGICALACCESS_API DESFireKey : public Key
 {
   public:
 #ifndef SWIG
