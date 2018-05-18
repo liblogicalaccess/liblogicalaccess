@@ -993,8 +993,8 @@ DESFireCrypto::desfire_cmac(const ByteVector &key,
 
     if (iks_wrapper_)
     {
-        ByteVector ret = openssl::CMACCrypto::cmac_iks(iks_wrapper_->remote_key_name,
-                                                       data, d_lastIV, block_size);
+        auto remote_crypto = LibraryManager::getInstance()->getRemoteCrypto();
+        ByteVector ret = openssl::CMACCrypto::cmac_iks(iks_wrapper_->remote_key_name, data, d_lastIV, block_size, remote_crypto);
         d_lastIV = ByteVector(ret.end() - block_size, ret.end());
         // Need to understand this "if (chipher == d_cipher)".
         ret = ByteVector(ret.end() - 16, ret.end() - 8);

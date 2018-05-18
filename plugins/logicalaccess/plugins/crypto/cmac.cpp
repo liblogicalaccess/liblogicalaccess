@@ -13,7 +13,6 @@
 #include <logicalaccess/bufferhelper.hpp>
 #include <logicalaccess/iks/IslogKeyServer.hpp>
 #include <logicalaccess/iks/RemoteCrypto.hpp>
-#include <logicalaccess/dynlibrary/librarymanager.hpp>
 
 namespace logicalaccess
 {
@@ -208,7 +207,8 @@ ByteVector CMACCrypto::shift_string(const ByteVector &buf, unsigned char xorpara
 }
 
 ByteVector CMACCrypto::cmac_iks(const std::string &iks_key_name, const ByteVector &data,
-                                const ByteVector &lastIv, unsigned int padding_size)
+         const ByteVector &lastIv, unsigned int padding_size,
+         const std::shared_ptr<RemoteCrypto> &remote_crypto)
 {
     std::shared_ptr<OpenSSLSymmetricCipher> cipherK1K2;
 
@@ -217,10 +217,7 @@ ByteVector CMACCrypto::cmac_iks(const std::string &iks_key_name, const ByteVecto
 
     ByteVector blankbuf;
     blankbuf.resize(16, 0x00);
-    ByteVector L;
-
-    auto remote_crypto = LibraryManager::getInstance()->getRemoteCrypto();
-    L = remote_crypto->aes_encrypt(blankbuf, iks_key_name, ByteVector(16, 0));
+    ByteVector L = remote_crypto->aes_encrypt(blankbuf, iks_key_name, ByteVector(16, 0));
 
     ByteVector K1;
     if ((L[0] & 0x80) == 0x00)
