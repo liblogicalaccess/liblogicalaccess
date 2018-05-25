@@ -28,6 +28,15 @@ class LIBLOGICALACCESS_API StringDataField : public ValueDataField
     virtual ~StringDataField();
 
     /**
+     * \brief Get the field type.
+     * \return The field type.
+     */
+    DataFieldType getDFType() const override
+    {
+        return DFT_STRING;
+    }
+
+    /**
      * \brief Set the field value.
      * \param value The field value.
      */

@@ -29,6 +29,15 @@ class LIBLOGICALACCESS_API NumberDataField : public ValueDataField
     virtual ~NumberDataField();
 
     /**
+     * \brief Get the field type.
+     * \return The field type.
+     */
+    DataFieldType getDFType() const override
+    {
+        return DFT_NUMBER;
+    }
+
+    /**
      * \brief Set the field value.
      * \param value The field value.
      */

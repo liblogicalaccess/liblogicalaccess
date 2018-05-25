@@ -28,6 +28,15 @@ class LIBLOGICALACCESS_API ChecksumDataField : public DataField
     virtual ~ChecksumDataField();
 
     /**
+     * \brief Get the field type.
+     * \return The field type.
+     */
+    DataFieldType getDFType() const override
+    {
+        return DFT_CHECKSUM;
+    }
+
+    /**
      * \brief Set the parity value.
      * \param value The field value.
      */

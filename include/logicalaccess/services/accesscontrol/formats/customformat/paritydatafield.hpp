@@ -29,6 +29,15 @@ class LIBLOGICALACCESS_API ParityDataField : public DataField
     virtual ~ParityDataField();
 
     /**
+     * \brief Get the field type.
+     * \return The field type.
+     */
+    DataFieldType getDFType() const override
+    {
+        return DFT_PARITY;
+    }
+
+    /**
      * \brief Set the field position in bits.
      * \param position The field position in bits.
      */

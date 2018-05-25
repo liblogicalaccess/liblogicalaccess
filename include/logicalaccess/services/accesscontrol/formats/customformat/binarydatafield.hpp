@@ -107,6 +107,15 @@ class LIBLOGICALACCESS_API BinaryDataField : public ValueDataField
     virtual ~BinaryDataField();
 
     /**
+     * \brief Get the field type.
+     * \return The field type.
+     */
+    DataFieldType getDFType() const override
+    {
+        return DFT_BINARY;
+    }
+
+    /**
      * \brief Set the field value.
      * \param value The field value.
      */

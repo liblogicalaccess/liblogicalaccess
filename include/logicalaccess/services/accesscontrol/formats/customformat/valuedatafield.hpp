@@ -30,6 +30,15 @@ class LIBLOGICALACCESS_API ValueDataField : public DataField
     virtual ~ValueDataField();
 
     /**
+     * \brief Get the field type.
+     * \return The field type.
+     */
+    DataFieldType getDFType() const override
+    {
+        return DFT_VALUE;
+    }
+
+    /**
      * \brief Set data length in bits.
      * \param length The data length in bits.
      */

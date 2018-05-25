@@ -17,6 +17,14 @@
 
 namespace logicalaccess
 {
+typedef enum {
+    DFT_VALUE    = 0x00, /* ValueDataField */
+    DFT_CHECKSUM = 0x01, /* ChecksumDataField */
+    DFT_PARITY   = 0x02, /* ParityDataField */
+    DFT_BINARY   = 0x03, /* BinaryDataField */
+    DFT_NUMBER   = 0x04, /* NumberDataField */
+    DFT_STRING   = 0x05  /* StringDataField */
+} DataFieldType;
 /**
  * \brief A data field base class.
  */
@@ -53,6 +61,12 @@ class LIBLOGICALACCESS_API DataField : public XmlSerializable,
     unsigned int getPosition() const;
 
     /**
+     * \brief Get the field type.
+     * \return The field type.
+     */
+    virtual DataFieldType getDFType() const = 0;
+
+    /**
      * \brief Set the field name.
      * \param name The field name.
      */
@@ -65,15 +79,15 @@ class LIBLOGICALACCESS_API DataField : public XmlSerializable,
     std::string getName() const;
 
     /**
-    * \brief Get linear data.
-    * \return data The linear datas in a bitsetstream
-    */
+     * \brief Get linear data.
+     * \return data The linear datas in a bitsetstream
+     */
     virtual BitsetStream getLinearData(const BitsetStream &data) const = 0;
 
     /**
-    * \brief Set linear data.
-    * \param data Where to get data
-    */
+     * \brief Set linear data.
+     * \param data Where to get data
+     */
     virtual void setLinearData(const ByteVector &data) = 0;
 
     /**
