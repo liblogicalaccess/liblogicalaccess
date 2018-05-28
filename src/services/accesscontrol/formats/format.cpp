@@ -144,8 +144,8 @@ ByteVector Format::getIdentifier()
 {
     ByteVector ret;
 
-    std::list<std::shared_ptr<DataField>> fields = getFieldList();
-    for (std::list<std::shared_ptr<DataField>>::iterator i = fields.begin();
+    std::vector<std::shared_ptr<DataField>> fields = getFieldList();
+    for (std::vector<std::shared_ptr<DataField>>::iterator i = fields.begin();
          i != fields.end(); ++i)
     {
         std::shared_ptr<ValueDataField> vfield =
@@ -238,14 +238,14 @@ std::shared_ptr<DataField> Format::getFieldFromName(std::string field) const
     return ret;
 }
 
-std::list<std::shared_ptr<DataField>> Format::getFieldList()
+std::vector<std::shared_ptr<DataField>> Format::getFieldList()
 {
     d_fieldList.sort(FieldSortPredicate);
-    return d_fieldList;
+    return std::vector<std::shared_ptr<DataField>>(d_fieldList.begin(), d_fieldList.end());
 }
 
-void Format::setFieldList(std::list<std::shared_ptr<DataField>> fields)
+void Format::setFieldList(std::vector<std::shared_ptr<DataField>> fields)
 {
-    d_fieldList = fields;
+    d_fieldList = std::list<std::shared_ptr<DataField>>(fields.begin(), fields.end());
 }
 }

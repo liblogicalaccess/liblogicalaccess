@@ -152,7 +152,9 @@ bool CustomFormat::checkSkeleton(std::shared_ptr<Format> format) const
             std::dynamic_pointer_cast<CustomFormat>(format);
         if (pFormat && pFormat->getDataLength() == getDataLength())
         {
-            std::list<std::shared_ptr<DataField>> fields = pFormat->getFieldList();
+            std::vector<std::shared_ptr<DataField>> fieldsvector = pFormat->getFieldList();
+            auto fields = std::list<std::shared_ptr<DataField>>(fieldsvector.begin(),
+                                                                fieldsvector.end());
             if (fields.size() == d_fieldList.size())
             {
                 ret = true;

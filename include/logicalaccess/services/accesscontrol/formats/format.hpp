@@ -162,13 +162,13 @@ class LIBLOGICALACCESS_API Format : public XmlSerializable
      * \brief Get the format field list.
      * \return The field list.
      */
-    virtual std::list<std::shared_ptr<DataField>> getFieldList();
+    virtual std::vector<std::shared_ptr<DataField>> getFieldList();
 
     /**
      * \brief Get the format field list.
      * \param fields The field list.
      */
-    virtual void setFieldList(std::list<std::shared_ptr<DataField>> fields);
+    virtual void setFieldList(std::vector<std::shared_ptr<DataField>> fields);
 
     /**
      * \brief Get the field object from name.
