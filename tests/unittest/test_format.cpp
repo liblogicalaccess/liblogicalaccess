@@ -254,7 +254,7 @@ TEST(test_format_utils, test_format_FASCN200BitFormat)
 TEST(test_format_utils, test_format_CustomFormat)
 {
     auto formatCustom = std::make_shared<CustomFormat>();
-    std::list<std::shared_ptr<DataField>> fieldList;
+    std::vector<std::shared_ptr<DataField>> fieldList;
 
     auto numberDataField = std::make_shared<NumberDataField>();
     numberDataField->setPosition(0);
@@ -392,7 +392,7 @@ TEST(test_format_utils, test_format_CustomFormat_bcdnibble)
     std::shared_ptr<DataRepresentation> nodatarepre =
         std::make_shared<NoDataRepresentation>();
     auto formatCustom = std::make_shared<CustomFormat>();
-    std::list<std::shared_ptr<DataField>> fieldList;
+    std::vector<std::shared_ptr<DataField>> fieldList;
 
     auto numberNoDataField2 = std::make_shared<NumberDataField>();
     numberNoDataField2->setDataRepresentation(nodatarepre);
@@ -412,7 +412,7 @@ TEST(test_format_utils, test_format_CustomFormat_bcdnibble_2)
     std::shared_ptr<DataRepresentation> nodatarepre =
         std::make_shared<NoDataRepresentation>();
     auto formatCustom = std::make_shared<CustomFormat>();
-    std::list<std::shared_ptr<DataField>> fieldList;
+    std::vector<std::shared_ptr<DataField>> fieldList;
 
     auto numberNoDataField2 = std::make_shared<NumberDataField>();
     numberNoDataField2->setDataRepresentation(nodatarepre);
@@ -432,7 +432,7 @@ TEST(test_format_utils, test_format_CustomFormat_bcdnibble_3)
     std::shared_ptr<DataRepresentation> nodatarepre =
         std::make_shared<NoDataRepresentation>();
     auto formatCustom = std::make_shared<CustomFormat>();
-    std::list<std::shared_ptr<DataField>> fieldList;
+    std::vector<std::shared_ptr<DataField>> fieldList;
 
     auto numberNoDataField2 = std::make_shared<NumberDataField>();
     numberNoDataField2->setDataRepresentation(nodatarepre);
@@ -454,7 +454,7 @@ TEST(test_format_utils, test_format_CustomFormat_bcdnibble_little_endian_bits)
     auto formatCustom = std::make_shared<CustomFormat>();
     auto dataType     = std::make_shared<BCDNibbleDataType>();
     dataType->setBitDataRepresentationType(ET_LITTLEENDIAN);
-    std::list<std::shared_ptr<DataField>> fieldList;
+    std::vector<std::shared_ptr<DataField>> fieldList;
 
     auto numberNoDataField2 = std::make_shared<NumberDataField>();
     numberNoDataField2->setDataRepresentation(nodatarepre);
