@@ -1,0 +1,3 @@
+[submodule "plugins/logicalaccess/plugins/pkcs/cppkcs11"]
+	path = plugins/logicalaccess/plugins/pkcs/cppkcs11
+	url = git@pontos.islog.private:islog/cppkcs11.git

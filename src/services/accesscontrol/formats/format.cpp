@@ -241,7 +241,8 @@ std::shared_ptr<DataField> Format::getFieldFromName(std::string field) const
 std::vector<std::shared_ptr<DataField>> Format::getFieldList()
 {
     d_fieldList.sort(FieldSortPredicate);
-    return std::vector<std::shared_ptr<DataField>>(d_fieldList.begin(), d_fieldList.end());
+    return std::vector<std::shared_ptr<DataField>>(d_fieldList.begin(),
+                                                   d_fieldList.end());
 }
 
 void Format::setFieldList(std::vector<std::shared_ptr<DataField>> fields)

@@ -318,11 +318,24 @@ class LIBLOGICALACCESS_API DESFireCrypto
                                       const ByteVector &encRndB);
 
     /**
+     * Silimar to aes_authenticate_PICC1 except it uses a generic Key rather than
+     * key material as bytes.
+     *
+     * KEY DIVERSIFICATION IS NOT SUPPORTED.
+     */
+    ByteVector aes_authenticate_PICC1_GENERIC(unsigned char keyno,
+                                              const std::shared_ptr<Key> &key,
+                                              const ByteVector &encRndB);
+
+    /**
      * \brief Authenticate on the card, step 2 for mutual authentication using AES.
      * \param keyno The key number to use
      * \param encRndA1 The encrypted random number A
      */
     void aes_authenticate_PICC2(unsigned char keyno, const ByteVector &encRndA1);
+
+    void aes_authenticate_PICC2_GENERIC(unsigned char keyno,
+                                        const std::shared_ptr<Key> &key, const ByteVector &encRndA1);
 
     /**
      * \brief Init buffer for temporised data.
@@ -514,7 +527,7 @@ class LIBLOGICALACCESS_API DESFireCrypto
      * Retrieve the IKS signature (if requested) for the last decrypted
      * data block.
      *
-     * This will return the empty string if no IKS was used or if the operation
+     * This will return an empty object if no IKS was used or if the operation
      * mode does make sense to have that.
      */
     SignatureResult get_last_signature() const;

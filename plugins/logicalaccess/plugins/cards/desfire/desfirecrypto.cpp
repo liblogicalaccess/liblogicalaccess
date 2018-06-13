@@ -26,6 +26,7 @@
 #include <logicalaccess/iks/IslogKeyServer.hpp>
 #include <logicalaccess/iks/RemoteCrypto.hpp>
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
+#include <logicalaccess/services/aes_crypto_service.hpp>
 
 namespace logicalaccess
 {
@@ -952,6 +953,40 @@ ByteVector DESFireCrypto::aes_authenticate_PICC1(unsigned char keyno,
     return ret;
 }
 
+ByteVector DESFireCrypto::aes_authenticate_PICC1_GENERIC(unsigned char keyno,
+                                                         const std::shared_ptr<Key> &key,
+                                                         const ByteVector &encRndB)
+{
+    d_sessionKey.clear();
+
+    AESCryptoService aes_crypto;
+    d_rndB   = aes_crypto.aes_decrypt(encRndB, {}, key);
+    d_lastIV = ByteVector(encRndB.end() - 16, encRndB.end());
+
+    ByteVector rndB1;
+    rndB1.insert(rndB1.end(), d_rndB.begin() + 1, d_rndB.begin() + 1 + 15);
+    rndB1.push_back(d_rndB[0]);
+
+    EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException,
+                              "Insufficient enthropy source");
+
+    d_rndA.clear();
+    d_rndA.resize(16);
+    if (RAND_bytes(&d_rndA[0], static_cast<int>(d_rndA.size())) != 1)
+    {
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "Cannot retrieve cryptographically strong bytes");
+    }
+
+    ByteVector rndAB;
+    rndAB.insert(rndAB.end(), d_rndA.begin(), d_rndA.end());
+    rndAB.insert(rndAB.end(), rndB1.begin(), rndB1.end());
+
+    ByteVector ret = aes_crypto.aes_encrypt(rndAB, d_lastIV, key);
+    d_lastIV       = ByteVector(ret.end() - 16, ret.end());
+    return ret;
+}
+
 void DESFireCrypto::aes_authenticate_PICC2(unsigned char keyno,
                                            const ByteVector &encRndA1)
 {
@@ -980,6 +1015,33 @@ void DESFireCrypto::aes_authenticate_PICC2(unsigned char keyno,
                                  "AES Authenticate PICC 2 Failed!");
 }
 
+    void DESFireCrypto::aes_authenticate_PICC2_GENERIC(unsigned char keyno,
+                                                       const std::shared_ptr<Key> &key,
+                                               const ByteVector &encRndA1)
+    {
+        ByteVector checkRndA;
+        ByteVector rndA;
+        AESCryptoService aes_crypto;
+        rndA = aes_crypto.aes_decrypt(encRndA1, d_lastIV, key);
+
+        d_sessionKey.clear();
+        checkRndA.push_back(rndA[15]);
+        checkRndA.insert(checkRndA.end(), rndA.begin(), rndA.begin() + 15);
+
+        if (d_rndA == checkRndA)
+        {
+            d_sessionKey.insert(d_sessionKey.end(), d_rndA.begin(), d_rndA.begin() + 4);
+            d_sessionKey.insert(d_sessionKey.end(), d_rndB.begin(), d_rndB.begin() + 4);
+            d_sessionKey.insert(d_sessionKey.end(), d_rndA.begin() + 12, d_rndA.begin() + 16);
+            d_sessionKey.insert(d_sessionKey.end(), d_rndB.begin() + 12, d_rndB.begin() + 16);
+
+            d_currentKeyNo = keyno;
+        }
+        else
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "AES Authenticate PICC 2 Failed!");
+    }
+
 ByteVector DESFireCrypto::desfire_cmac(const ByteVector &data)
 {
     return desfire_cmac(d_sessionKey, d_cipher, d_block_size, data);
@@ -994,7 +1056,8 @@ DESFireCrypto::desfire_cmac(const ByteVector &key,
     if (iks_wrapper_)
     {
         auto remote_crypto = LibraryManager::getInstance()->getRemoteCrypto();
-        ByteVector ret = openssl::CMACCrypto::cmac_iks(iks_wrapper_->remote_key_name, data, d_lastIV, block_size, remote_crypto);
+        ByteVector ret     = openssl::CMACCrypto::cmac_iks(
+            iks_wrapper_->remote_key_name, data, d_lastIV, block_size, remote_crypto);
         d_lastIV = ByteVector(ret.end() - block_size, ret.end());
         // Need to understand this "if (chipher == d_cipher)".
         ret = ByteVector(ret.end() - 16, ret.end() - 8);
@@ -1228,8 +1291,6 @@ ByteVector DESFireCrypto::desfire_iso_encrypt(
             iv.reset(new openssl::DESInitializationVector(
                 openssl::DESInitializationVector::createFromData(d_lastIV)));
         }
-        std::cout << "LAST IV BEFORE CIPHER: " << d_lastIV << ". FULL PAYLOAD:" << decdata
-                  << std::endl;
         cipher->cipher(decdata, encdata, *isokey, *iv, false);
         if (cipher == d_cipher)
         {

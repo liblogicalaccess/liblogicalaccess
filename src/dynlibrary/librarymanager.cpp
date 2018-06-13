@@ -422,4 +422,33 @@ std::shared_ptr<RemoteCrypto> LibraryManager::getRemoteCrypto()
 {
     return getRemoteCrypto(iks::IslogKeyServer::get_global_config());
 }
+
+std::shared_ptr<IAESCryptoService> LibraryManager::getPKCSAESCrypto()
+{
+    std::lock_guard<std::recursive_mutex> lg(mutex_);
+    IAESCryptoServicePtr pkcs_crypto;
+
+    if (libLoaded.empty())
+        scanPlugins();
+
+    for (auto &&itr : libLoaded)
+    {
+        IDynLibrary *lib = itr.second;
+
+        if (lib->hasSymbol("getPKCSAESCrypto"))
+        {
+            int (*fptr)(IAESCryptoServicePtr &) = nullptr;
+            fptr = reinterpret_cast<decltype(fptr)>(lib->getSymbol("getPKCSAESCrypto"));
+            assert(fptr);
+            fptr(pkcs_crypto);
+            if (pkcs_crypto)
+                break;
+        }
+    }
+    if (!pkcs_crypto)
+    {
+        throw LibLogicalAccessException("Cannot retrieve PKCSAESCrypto implementation");
+    }
+    return pkcs_crypto;
+}
 }

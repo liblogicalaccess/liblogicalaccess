@@ -69,6 +69,8 @@ class LIBLOGICALACCESS_API_DLL LibraryManager
 
     std::shared_ptr<RemoteCrypto> getRemoteCrypto();
 
+    std::shared_ptr<IAESCryptoService> getPKCSAESCrypto();
+
     static std::shared_ptr<DataTransport>
     getDataTransport(const std::string &transporttype);
     std::shared_ptr<KeyDiversification>

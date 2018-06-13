@@ -1004,14 +1004,16 @@ void DESFireEV1ISO7816Commands::authenticateAES(unsigned char keyno)
     if (samKeyStorage)
         response = sam_authenticate_p1(key, encRndB, diversify);
     else
-        response        = crypto->aes_authenticate_PICC1(keyno, diversify, encRndB);
+        //response        = crypto->aes_authenticate_PICC1(keyno, diversify, encRndB);
+        response        = crypto->aes_authenticate_PICC1_GENERIC(keyno, key, encRndB);
     ByteVector encRndA1 = transmit_plain(DF_INS_ADDITIONAL_FRAME, response);
     encRndA1.resize(encRndA1.size() - 2);
 
     if (samKeyStorage)
         sam_authenticate_p2(keyno, encRndA1);
     else
-        crypto->aes_authenticate_PICC2(keyno, encRndA1);
+        //crypto->aes_authenticate_PICC2(keyno, encRndA1);
+        crypto->aes_authenticate_PICC2_GENERIC(keyno, key, encRndA1);
 
     crypto->d_cipher.reset(new openssl::AESCipher());
     crypto->d_auth_method = CM_ISO;

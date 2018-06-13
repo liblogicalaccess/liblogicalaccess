@@ -68,6 +68,9 @@ using ReaderServicePtr = std::shared_ptr<ReaderService>;
 
 class RemoteCrypto;
 using RemoteCryptoPtr = std::shared_ptr<RemoteCrypto>;
+
+class IAESCryptoService;
+using IAESCryptoServicePtr = std::shared_ptr<IAESCryptoService>;
 }
 
 using ByteVector = std::vector<uint8_t>;

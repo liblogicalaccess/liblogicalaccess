@@ -59,7 +59,8 @@ class CMACCrypto
      * @return
      */
     static ByteVector cmac_iks(const std::string &iks_key_name, const ByteVector &data,
-                               const ByteVector &lastIv, unsigned int padding_size, const std::shared_ptr<RemoteCrypto>& remote_crypto);
+                               const ByteVector &lastIv, unsigned int padding_size,
+                               const std::shared_ptr<RemoteCrypto> &remote_crypto);
 
     /**
      * \brief Shift a string.
