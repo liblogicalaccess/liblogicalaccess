@@ -72,9 +72,16 @@ LIBLOGICALACCESS_API char *getLibraryName()
     return (char *)"PKCSAESCrypto";
 }
 
+static bool pkcs_initialized = false;
+
 LIBLOGICALACCESS_API void
 getPKCSAESCrypto(std::shared_ptr<logicalaccess::IAESCryptoService> &aes_crypto)
 {
+    if (!pkcs_initialized)
+    {
+        cppkcs::initialize();
+        pkcs_initialized = true;
+    }
     aes_crypto = std::make_shared<logicalaccess::AESCryptoPKCSProvider>();
 }
 }

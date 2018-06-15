@@ -8,14 +8,12 @@ if (WIN32)
     add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
 endif ()
 
-file(GLOB_RECURSE SRCS *.cpp *.cc)
-file(GLOB_RECURSE INCLUDE *.hpp)
+set(SRCS libraryentry.cpp)
 
 add_library(
         pkcscryptounified
         SHARED
         ${SRCS}
-        ${INCLUDE}
         ${resourcerc}
 )
 

@@ -1433,4 +1433,5 @@ SignatureResult DESFireCrypto::get_last_signature() const
 
     return SignatureResult{};
 }
+
 }
