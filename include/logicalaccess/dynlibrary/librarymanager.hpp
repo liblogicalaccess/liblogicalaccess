@@ -69,7 +69,16 @@ class LIBLOGICALACCESS_API_DLL LibraryManager
 
     std::shared_ptr<RemoteCrypto> getRemoteCrypto();
 
-    std::shared_ptr<IAESCryptoService> getPKCSAESCrypto();
+    /**
+     * Retrieve an AESCryptoService backed by PKCS code.
+     *
+     * The PROTECCIO_CONF_DIR variable is passed here, but shouldn't because
+     * this is specific to atosnethsm.
+     * pkcs_library_shared_object_path is passed to our cppkcs library and will
+     * be used as the underlying PKCS library implementation.
+     */
+    std::shared_ptr<IAESCryptoService> getPKCSAESCrypto(const std::string &env_PROTECCIO_CONF_DIR,
+                                                        const std::string &pkcs_library_shared_object_path);
 
     static std::shared_ptr<DataTransport>
     getDataTransport(const std::string &transporttype);

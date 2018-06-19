@@ -35,7 +35,8 @@ ByteVector AESCryptoService::with_pkcs(const ByteVector &data, const ByteVector 
     EXCEPTION_ASSERT_WITH_LOG(storage, LibLogicalAccessException, "No key storage.");
 
     auto kid                 = storage->get_key_id();
-    auto pkcs_crypto_service = LibraryManager::getInstance()->getPKCSAESCrypto();
+    auto pkcs_crypto_service = LibraryManager::getInstance()->getPKCSAESCrypto(storage->get_proteccio_conf_dir(),
+                                                                               storage->get_pkcs_shared_object_path());
 
     if (encrypt)
         return pkcs_crypto_service->aes_encrypt(data, iv, key);

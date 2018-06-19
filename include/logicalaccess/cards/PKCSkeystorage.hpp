@@ -50,6 +50,26 @@ class LIBLOGICALACCESS_API PKCSKeyStorage : public KeyStorage
         pkcs_session_password_ = pwd;
     }
 
+    const std::string &get_proteccio_conf_dir() const
+    {
+        return env_PROTECCIO_CONF_DIR_;
+    }
+
+    void set_proteccio_conf_dir(const std::string &d)
+    {
+        env_PROTECCIO_CONF_DIR_ = d;
+    }
+
+    const std::string &get_pkcs_shared_object_path() const
+    {
+        return pkcs_library_shared_object_path_;
+    }
+
+    void set_pkcs_shared_object_path(const std::string &d)
+    {
+        pkcs_library_shared_object_path_ = d;
+    }
+
   private:
     /**
      * The CKA_ID attribute value that represent
@@ -65,5 +85,22 @@ class LIBLOGICALACCESS_API PKCSKeyStorage : public KeyStorage
      * PKCS Token slot id.
      */
     size_t slot_id_;
+
+    // The following value should not lives in the KeyStorage object.
+    // But until we can refactor the cryptographic API of LLA, this will
+    // have to do.
+
+    // cppkcs will ignore the value of env_PROTECCIO_CONF_DIR_ and
+    // pkcs_library_shared_object_path_ if the underlying was already
+    // loaded. env_PROTECCIO_CONF_DIR_ is also ignored if the environment
+    // variable is already set.
+
+    // The value that we will set to the PROTECCIO_CONF_DIR
+    // environment variable. This is needed by the atosnethsm PKCS
+    // library implementation.
+    std::string env_PROTECCIO_CONF_DIR_;
+
+    // Path to the PKCS shared object that the cppkcs library will use.
+    std::string pkcs_library_shared_object_path_;
 };
 }
