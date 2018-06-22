@@ -21,6 +21,11 @@ void IKSStorage::serialize(boost::property_tree::ptree &parentNode)
         node.put("IKS.client_cert", config_.client_cert);
         node.put("IKS.client_key", config_.client_key);
         node.put("IKS.root_ca", config_.root_ca);
+        node.put("IKS.saveIKSConfig", true);
+    }
+    else
+    {
+        node.put("IKS.saveIKSConfig", false);
     }
     parentNode.add_child(getDefaultXmlNodeName(), node);
 }
@@ -33,6 +38,7 @@ void IKSStorage::unSerialize(boost::property_tree::ptree &node)
     config_.client_cert = node.get_child("IKS.client_cert").get_value<std::string>("");
     config_.client_key  = node.get_child("IKS.client_key").get_value<std::string>("");
     config_.root_ca     = node.get_child("IKS.root_ca").get_value<std::string>("");
+    saveIKSConfig_      = node.get_child("IKS.saveIKSConfig").get_value<bool>(false);
 
     if (config_.port != 0)
     {
