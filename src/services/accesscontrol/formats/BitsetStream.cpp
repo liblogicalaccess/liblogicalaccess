@@ -91,7 +91,7 @@ void BitsetStream::concat(const ByteVector &data, unsigned int readPosStart)
 void BitsetStream::concat(const ByteVector &data, unsigned int readPosStart,
                           unsigned int readLength)
 {
-    if (data.empty())
+    if (data.empty() && readLength != 0)
         throw std::invalid_argument("Data vector is empty.");
     if (readPosStart > data.size() * 8 || readLength + readPosStart > data.size() * 8)
         throw std::out_of_range("Invalid reading size.");
@@ -158,7 +158,7 @@ void BitsetStream::writeAt(unsigned int pos, unsigned char data,
 void BitsetStream::writeAt(unsigned int pos, ByteVector const &data,
                            unsigned int readPosStart, unsigned int readLength)
 {
-    if (data.empty())
+    if (data.empty() && readLength != 0)
         throw std::invalid_argument("Data vector is empty.");
     if (readPosStart > (data.size() * 8) - 1 ||
         readPosStart + readLength > (data.size() * 8))

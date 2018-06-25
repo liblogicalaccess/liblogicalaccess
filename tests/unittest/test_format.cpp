@@ -387,6 +387,13 @@ TEST(test_format_utils, test_format_CustomFormat)
     ASSERT_EQ(value, rvalue);
 }
 
+TEST(test_format_utils, test_binary_field)
+{
+    BinaryDataField bdf;
+    BitsetStream unused;
+    bdf.getLinearData(unused);
+}
+
 TEST(test_format_utils, test_format_CustomFormat_bcdnibble)
 {
     std::shared_ptr<DataRepresentation> nodatarepre =

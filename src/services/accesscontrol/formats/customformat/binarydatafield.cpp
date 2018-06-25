@@ -91,7 +91,7 @@ unsigned char BinaryDataField::getPaddingChar() const
     return d_padding;
 }
 
-BitsetStream BinaryDataField::getLinearData(const BitsetStream & /*data*/) const
+BitsetStream BinaryDataField::getLinearData(const BitsetStream &) const
 {
     unsigned int fieldDataLengthBytes = (d_length + 7) / 8;
     ByteVector tmp(d_value.getData(), d_value.getData() + d_value.getLength());

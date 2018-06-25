@@ -145,7 +145,7 @@ class LIBLOGICALACCESS_API BinaryDataField : public ValueDataField
      * \param dataLengthBytes Length in byte of data
      * \param pos The first position bit. Will contain the position bit after the field.
      */
-    BitsetStream getLinearData(const BitsetStream &data) const override;
+    BitsetStream getLinearData(const BitsetStream &) const override;
 
     /**
      * \brief Set linear data.
