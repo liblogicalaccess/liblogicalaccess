@@ -229,8 +229,7 @@ class LIBLOGICALACCESS_API DESFireEV1ISO7816Commands : public DESFireISO7816Comm
 
     // Only for AES PKCS key.
     void pkcs_iso_authenticate(std::shared_ptr<DESFireKey> key,
-                               bool isMasterCardKey          = true,
-                               unsigned char keyno           = 0x00);
+                               bool isMasterCardKey = true, unsigned char keyno = 0x00);
 
     /**
      * \brief Authenticate, given a key number.

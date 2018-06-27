@@ -423,8 +423,9 @@ std::shared_ptr<RemoteCrypto> LibraryManager::getRemoteCrypto()
     return getRemoteCrypto(iks::IslogKeyServer::get_global_config());
 }
 
-std::shared_ptr<IAESCryptoService> LibraryManager::getPKCSAESCrypto(const std::string &env_PROTECCIO_CONF_DIR,
-                                                                    const std::string &pkcs_library_shared_object_path)
+std::shared_ptr<IAESCryptoService>
+LibraryManager::getPKCSAESCrypto(const std::string &env_PROTECCIO_CONF_DIR,
+                                 const std::string &pkcs_library_shared_object_path)
 {
     std::lock_guard<std::recursive_mutex> lg(mutex_);
     IAESCryptoServicePtr pkcs_crypto;
@@ -438,7 +439,8 @@ std::shared_ptr<IAESCryptoService> LibraryManager::getPKCSAESCrypto(const std::s
 
         if (lib->hasSymbol("getPKCSAESCrypto"))
         {
-            int (*fptr)(IAESCryptoServicePtr &, const std::string &pkcs_lib_path) = nullptr;
+            int (*fptr)(IAESCryptoServicePtr &, const std::string &pkcs_lib_path) =
+                nullptr;
             fptr = reinterpret_cast<decltype(fptr)>(lib->getSymbol("getPKCSAESCrypto"));
             assert(fptr);
 

@@ -335,7 +335,8 @@ class LIBLOGICALACCESS_API DESFireCrypto
     void aes_authenticate_PICC2(unsigned char keyno, const ByteVector &encRndA1);
 
     void aes_authenticate_PICC2_GENERIC(unsigned char keyno,
-                                        const std::shared_ptr<Key> &key, const ByteVector &encRndA1);
+                                        const std::shared_ptr<Key> &key,
+                                        const ByteVector &encRndA1);
 
     /**
      * \brief Init buffer for temporised data.

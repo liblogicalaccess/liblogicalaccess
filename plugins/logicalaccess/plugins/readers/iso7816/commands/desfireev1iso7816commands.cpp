@@ -440,14 +440,15 @@ void DESFireEV1ISO7816Commands::authenticate(unsigned char keyno,
                 "Combination of KeyStorage + KeyType is not supported.");
         }
     }
-    else if (key->getKeyStorage()->getType() == KST_PKCS) {
+    else if (key->getKeyStorage()->getType() == KST_PKCS)
+    {
         if (key->getKeyType() == DF_KEY_AES)
             pkcs_iso_authenticate(key, (crypto->d_currentAid == 0 && keyno == 0), keyno);
         else
         {
             THROW_EXCEPTION_WITH_LOG(
-                    LibLogicalAccessException,
-                    "Combination of KeyStorage + KeyType is not supported.");
+                LibLogicalAccessException,
+                "Combination of KeyStorage + KeyType is not supported.");
         }
     }
     else
@@ -891,7 +892,8 @@ void DESFireEV1ISO7816Commands::authenticateISO(unsigned char keyno,
     EXCEPTION_ASSERT_WITH_LOG(err == DF_INS_ADDITIONAL_FRAME, LibLogicalAccessException,
                               "No additional frame for ISO authentication.");
 
-    ByteVector response = crypto->iso_authenticate_PICC1(keyno, diversify, encRndB, random_len);
+    ByteVector response =
+        crypto->iso_authenticate_PICC1(keyno, diversify, encRndB, random_len);
     ByteVector encRndA1 = transmit_plain(DF_INS_ADDITIONAL_FRAME, response);
     encRndA1.resize(encRndA1.size() - 2);
 
@@ -1014,7 +1016,7 @@ void DESFireEV1ISO7816Commands::authenticateAES(unsigned char keyno)
     if (samKeyStorage)
         response = sam_authenticate_p1(key, encRndB, diversify);
     else
-        //response        = crypto->aes_authenticate_PICC1(keyno, diversify, encRndB);
+        // response        = crypto->aes_authenticate_PICC1(keyno, diversify, encRndB);
         response        = crypto->aes_authenticate_PICC1_GENERIC(keyno, key, encRndB);
     ByteVector encRndA1 = transmit_plain(DF_INS_ADDITIONAL_FRAME, response);
     encRndA1.resize(encRndA1.size() - 2);
@@ -1022,7 +1024,7 @@ void DESFireEV1ISO7816Commands::authenticateAES(unsigned char keyno)
     if (samKeyStorage)
         sam_authenticate_p2(keyno, encRndA1);
     else
-        //crypto->aes_authenticate_PICC2(keyno, encRndA1);
+        // crypto->aes_authenticate_PICC2(keyno, encRndA1);
         crypto->aes_authenticate_PICC2_GENERIC(keyno, key, encRndA1);
 
     crypto->d_cipher.reset(new openssl::AESCipher());
@@ -1837,87 +1839,88 @@ SignatureResult DESFireEV1ISO7816Commands::IKS_getLastReadSignature() const
     return handle_read_data_last_sig_;
 }
 
-    void DESFireEV1ISO7816Commands::pkcs_iso_authenticate(std::shared_ptr<DESFireKey> currentKey, bool isMasterCardKey,
-                                                          unsigned char keyno) {
+void DESFireEV1ISO7816Commands::pkcs_iso_authenticate(
+    std::shared_ptr<DESFireKey> currentKey, bool isMasterCardKey, unsigned char keyno)
+{
 
-        AESCryptoService aes_crypto;
-        unsigned char le;
-        std::shared_ptr<DESFireKey> key = std::make_shared<DESFireKey>(*currentKey);
-        std::shared_ptr<openssl::SymmetricCipher> cipher;
-        std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
+    AESCryptoService aes_crypto;
+    unsigned char le;
+    std::shared_ptr<DESFireKey> key = std::make_shared<DESFireKey>(*currentKey);
+    std::shared_ptr<openssl::SymmetricCipher> cipher;
+    std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 
-        auto diversify = getKeyInformations(key, keyno);
+    auto diversify = getKeyInformations(key, keyno);
 
-        ByteVector keydiv;
-        ByteVector iv = {};
-        crypto->getKey(key, diversify, keydiv);
-        le = 16;
-        cipher.reset(new openssl::AESCipher());
+    ByteVector keydiv;
+    ByteVector iv = {};
+    crypto->getKey(key, diversify, keydiv);
+    le = 16;
+    cipher.reset(new openssl::AESCipher());
 
-        ByteVector RPICC1 = iso_getChallenge(le);
+    ByteVector RPICC1 = iso_getChallenge(le);
 
-        ByteVector RPCD1;
-        RPCD1.resize(le);
+    ByteVector RPCD1;
+    RPCD1.resize(le);
 
-        EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException,
-                                  "Insufficient enthropy source");
-        if (RAND_bytes(&RPCD1[0], static_cast<int>(RPCD1.size())) != 1)
-        {
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                     "Cannot retrieve cryptographically strong bytes");
-        }
-        ByteVector makecrypt1;
-        makecrypt1.insert(makecrypt1.end(), RPCD1.begin(), RPCD1.end());
-        makecrypt1.insert(makecrypt1.end(), RPICC1.begin(), RPICC1.end());
-        ByteVector cryptogram = aes_crypto.aes_encrypt(makecrypt1, {}, currentKey);
-        iv = ByteVector(cryptogram.end() - 16, cryptogram.end());
-        iso_externalAuthenticate(DF_ALG_AES, isMasterCardKey, keyno, cryptogram);
+    EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException,
+                              "Insufficient enthropy source");
+    if (RAND_bytes(&RPCD1[0], static_cast<int>(RPCD1.size())) != 1)
+    {
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "Cannot retrieve cryptographically strong bytes");
+    }
+    ByteVector makecrypt1;
+    makecrypt1.insert(makecrypt1.end(), RPCD1.begin(), RPCD1.end());
+    makecrypt1.insert(makecrypt1.end(), RPICC1.begin(), RPICC1.end());
+    ByteVector cryptogram = aes_crypto.aes_encrypt(makecrypt1, {}, currentKey);
+    iv                    = ByteVector(cryptogram.end() - 16, cryptogram.end());
+    iso_externalAuthenticate(DF_ALG_AES, isMasterCardKey, keyno, cryptogram);
 
-        ByteVector RPCD2;
-        RPCD2.resize(le);
+    ByteVector RPCD2;
+    RPCD2.resize(le);
 
-        EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException,
-                                  "Insufficient enthropy source");
-        if (RAND_bytes(&RPCD2[0], static_cast<int>(RPCD2.size())) != 1)
-        {
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                     "Cannot retrieve cryptographically strong bytes");
-        }
-        cryptogram =
-                iso_internalAuthenticate(DF_ALG_AES, isMasterCardKey, keyno, RPCD2, 2 * le);
+    EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException,
+                              "Insufficient enthropy source");
+    if (RAND_bytes(&RPCD2[0], static_cast<int>(RPCD2.size())) != 1)
+    {
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "Cannot retrieve cryptographically strong bytes");
+    }
+    cryptogram =
+        iso_internalAuthenticate(DF_ALG_AES, isMasterCardKey, keyno, RPCD2, 2 * le);
 
-        if (cryptogram.size() < 1)
+    if (cryptogram.size() < 1)
         THROW_EXCEPTION_WITH_LOG(CardException, "iso_authenticate wrong internal data.");
 
-        ByteVector response = aes_crypto.aes_decrypt(cryptogram, iv, currentKey);
+    ByteVector response = aes_crypto.aes_decrypt(cryptogram, iv, currentKey);
 
-        ByteVector RPICC2 = ByteVector(response.begin(), response.begin() + le);
-        ByteVector RPCD2a = ByteVector(response.begin() + le, response.end());
+    ByteVector RPICC2 = ByteVector(response.begin(), response.begin() + le);
+    ByteVector RPCD2a = ByteVector(response.begin() + le, response.end());
 
-        EXCEPTION_ASSERT_WITH_LOG(RPCD2 == RPCD2a, CardException,
-                                  "Integrity error : host part of mutual authentication");
+    EXCEPTION_ASSERT_WITH_LOG(RPCD2 == RPCD2a, CardException,
+                              "Integrity error : host part of mutual authentication");
 
-        crypto->d_currentKeyNo = keyno;
+    crypto->d_currentKeyNo = keyno;
 
-        crypto->d_sessionKey.clear();
-        crypto->d_auth_method = CM_ISO;
-            crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPCD1.begin(),
-                                        RPCD1.begin() + 4);
-            crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPICC2.begin(),
-                                        RPICC2.begin() + 4);
-            crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPCD1.begin() + 12,
-                                        RPCD1.begin() + 16);
-            crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPICC2.begin() + 12,
-                                        RPICC2.begin() + 16);
+    crypto->d_sessionKey.clear();
+    crypto->d_auth_method = CM_ISO;
+    crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPCD1.begin(),
+                                RPCD1.begin() + 4);
+    crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPICC2.begin(),
+                                RPICC2.begin() + 4);
+    crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPCD1.begin() + 12,
+                                RPCD1.begin() + 16);
+    crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPICC2.begin() + 12,
+                                RPICC2.begin() + 16);
 
-            crypto->d_cipher.reset(new openssl::AESCipher());
-            crypto->d_authkey    = keydiv;
-            crypto->d_block_size = 16;
-            crypto->d_mac_size   = 8;
+    crypto->d_cipher.reset(new openssl::AESCipher());
+    crypto->d_authkey    = keydiv;
+    crypto->d_block_size = 16;
+    crypto->d_mac_size   = 8;
 
-        crypto->d_lastIV.clear();
-        crypto->d_lastIV.resize(crypto->d_block_size, 0x00);
+    crypto->d_lastIV.clear();
+    crypto->d_lastIV.resize(crypto->d_block_size, 0x00);
 
-        onAuthenticated();
-    }
+    onAuthenticated();
+}
 }

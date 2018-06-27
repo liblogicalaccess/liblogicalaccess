@@ -25,7 +25,7 @@ class LIBLOGICALACCESS_API AESCryptoService
 
   private:
     // Adjust IV. If `iv` is empty vector, return an full zero iv.
-    ByteVector adjust_iv(const ByteVector &iv) ;
+    ByteVector adjust_iv(const ByteVector &iv);
 
     ByteVector perform_operation(const ByteVector &data, const ByteVector &iv,
                                  std::shared_ptr<Key> key, bool encrypt);

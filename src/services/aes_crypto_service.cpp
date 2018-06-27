@@ -12,7 +12,7 @@ namespace logicalaccess
 ByteVector AESCryptoService::aes_encrypt(const ByteVector &data, const ByteVector &iv,
                                          std::shared_ptr<Key> key)
 {
-   return  perform_operation(data, adjust_iv(iv), key, true);
+    return perform_operation(data, adjust_iv(iv), key, true);
 }
 
 ByteVector AESCryptoService::in_memory(const ByteVector &data, const ByteVector &iv,
@@ -35,8 +35,8 @@ ByteVector AESCryptoService::with_pkcs(const ByteVector &data, const ByteVector 
     EXCEPTION_ASSERT_WITH_LOG(storage, LibLogicalAccessException, "No key storage.");
 
     auto kid                 = storage->get_key_id();
-    auto pkcs_crypto_service = LibraryManager::getInstance()->getPKCSAESCrypto(storage->get_proteccio_conf_dir(),
-                                                                               storage->get_pkcs_shared_object_path());
+    auto pkcs_crypto_service = LibraryManager::getInstance()->getPKCSAESCrypto(
+        storage->get_proteccio_conf_dir(), storage->get_pkcs_shared_object_path());
 
     if (encrypt)
         return pkcs_crypto_service->aes_encrypt(data, iv, key);
@@ -65,10 +65,11 @@ ByteVector AESCryptoService::aes_decrypt(const ByteVector &data, const ByteVecto
     return perform_operation(data, adjust_iv(iv), key, false);
 }
 
-    ByteVector AESCryptoService::adjust_iv(const ByteVector &iv) {
-        if (iv.empty())
-            return ByteVector(16, 0);
+ByteVector AESCryptoService::adjust_iv(const ByteVector &iv)
+{
+    if (iv.empty())
+        return ByteVector(16, 0);
 
-        return iv;
-    }
+    return iv;
+}
 }

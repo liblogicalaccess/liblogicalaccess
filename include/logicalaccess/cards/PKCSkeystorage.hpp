@@ -36,7 +36,8 @@ class LIBLOGICALACCESS_API PKCSKeyStorage : public KeyStorage
         return slot_id_;
     }
 
-    void set_slot_id(size_t slot_id) {
+    void set_slot_id(size_t slot_id)
+    {
         slot_id_ = slot_id;
     }
 

@@ -1015,32 +1015,32 @@ void DESFireCrypto::aes_authenticate_PICC2(unsigned char keyno,
                                  "AES Authenticate PICC 2 Failed!");
 }
 
-    void DESFireCrypto::aes_authenticate_PICC2_GENERIC(unsigned char keyno,
-                                                       const std::shared_ptr<Key> &key,
-                                               const ByteVector &encRndA1)
+void DESFireCrypto::aes_authenticate_PICC2_GENERIC(unsigned char keyno,
+                                                   const std::shared_ptr<Key> &key,
+                                                   const ByteVector &encRndA1)
+{
+    ByteVector checkRndA;
+    ByteVector rndA;
+    AESCryptoService aes_crypto;
+    rndA = aes_crypto.aes_decrypt(encRndA1, d_lastIV, key);
+
+    d_sessionKey.clear();
+    checkRndA.push_back(rndA[15]);
+    checkRndA.insert(checkRndA.end(), rndA.begin(), rndA.begin() + 15);
+
+    if (d_rndA == checkRndA)
     {
-        ByteVector checkRndA;
-        ByteVector rndA;
-        AESCryptoService aes_crypto;
-        rndA = aes_crypto.aes_decrypt(encRndA1, d_lastIV, key);
+        d_sessionKey.insert(d_sessionKey.end(), d_rndA.begin(), d_rndA.begin() + 4);
+        d_sessionKey.insert(d_sessionKey.end(), d_rndB.begin(), d_rndB.begin() + 4);
+        d_sessionKey.insert(d_sessionKey.end(), d_rndA.begin() + 12, d_rndA.begin() + 16);
+        d_sessionKey.insert(d_sessionKey.end(), d_rndB.begin() + 12, d_rndB.begin() + 16);
 
-        d_sessionKey.clear();
-        checkRndA.push_back(rndA[15]);
-        checkRndA.insert(checkRndA.end(), rndA.begin(), rndA.begin() + 15);
-
-        if (d_rndA == checkRndA)
-        {
-            d_sessionKey.insert(d_sessionKey.end(), d_rndA.begin(), d_rndA.begin() + 4);
-            d_sessionKey.insert(d_sessionKey.end(), d_rndB.begin(), d_rndB.begin() + 4);
-            d_sessionKey.insert(d_sessionKey.end(), d_rndA.begin() + 12, d_rndA.begin() + 16);
-            d_sessionKey.insert(d_sessionKey.end(), d_rndB.begin() + 12, d_rndB.begin() + 16);
-
-            d_currentKeyNo = keyno;
-        }
-        else
+        d_currentKeyNo = keyno;
+    }
+    else
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "AES Authenticate PICC 2 Failed!");
-    }
+}
 
 ByteVector DESFireCrypto::desfire_cmac(const ByteVector &data)
 {
@@ -1433,5 +1433,4 @@ SignatureResult DESFireCrypto::get_last_signature() const
 
     return SignatureResult{};
 }
-
 }

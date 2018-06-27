@@ -77,8 +77,9 @@ class LIBLOGICALACCESS_API_DLL LibraryManager
      * pkcs_library_shared_object_path is passed to our cppkcs library and will
      * be used as the underlying PKCS library implementation.
      */
-    std::shared_ptr<IAESCryptoService> getPKCSAESCrypto(const std::string &env_PROTECCIO_CONF_DIR,
-                                                        const std::string &pkcs_library_shared_object_path);
+    std::shared_ptr<IAESCryptoService>
+    getPKCSAESCrypto(const std::string &env_PROTECCIO_CONF_DIR,
+                     const std::string &pkcs_library_shared_object_path);
 
     static std::shared_ptr<DataTransport>
     getDataTransport(const std::string &transporttype);
