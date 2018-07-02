@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.1)
 project(pkcscryptounified)
 
-add_subdirectory(cppkcs11/cppkcs11)
+add_subdirectory(cppkcs11)
 
 if (WIN32)
     SET(VERSION_PRODUCTNAME_VALUE "pkcscryptounified")
