@@ -21,6 +21,10 @@ class LIBLOGICALACCESS_API PKCSKeyStorage : public KeyStorage
         return "PKCSStorage";
     }
 
+    void serialize(boost::property_tree::ptree &parentNode) override;
+
+    void unSerialize(boost::property_tree::ptree &node) override;
+
     const ByteVector &get_key_id() const
     {
         return pkcs_object_id_;
@@ -79,7 +83,8 @@ class LIBLOGICALACCESS_API PKCSKeyStorage : public KeyStorage
     ByteVector pkcs_object_id_;
 
     // Password to log into the PKCS session.
-    // This feel like a weird place to store that...
+    // This might be serialized in cleartext, which is bad.
+    // Changing that will need LLA refactoring.
     std::string pkcs_session_password_;
 
     /*
