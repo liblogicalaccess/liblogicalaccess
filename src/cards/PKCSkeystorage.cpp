@@ -1,4 +1,3 @@
-#include <assert.h>
 #include <logicalaccess/cards/PKCSkeystorage.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <logicalaccess/bufferhelper.hpp>
