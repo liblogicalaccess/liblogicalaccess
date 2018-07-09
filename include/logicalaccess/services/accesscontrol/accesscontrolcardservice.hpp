@@ -91,6 +91,14 @@ class LIBLOGICALACCESS_API AccessControlCardService : public CardService
     */
     FormatList getHIDWiegandFormatList() const;
 
+    /**
+     * Retrieve the Physical Access Control bits.
+     * This generally relies on the PCSC reader to provide support.
+     */
+    virtual ByteVector getPACSBits() {
+        throw std::runtime_error("Not implemented");
+    }
+
   protected:
     SignatureResult last_signature_;
 };

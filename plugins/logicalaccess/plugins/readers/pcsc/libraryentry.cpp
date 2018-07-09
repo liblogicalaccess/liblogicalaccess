@@ -4,7 +4,6 @@
 #include <logicalaccess/plugins/readers/pcsc/pcscreaderprovider.hpp>
 #include <logicalaccess/plugins/readers/pcsc/readers/omnikeylanxx21readerunit.hpp>
 #include <logicalaccess/plugins/readers/pcsc/readers/omnikeyxx22readerunit.hpp>
-#include <logicalaccess/plugins/readers/pcsc/readers/omnikeyxx23readerunit.hpp>
 #include <logicalaccess/plugins/readers/pcsc/readers/omnikeyxx25readerunit.hpp>
 #include <logicalaccess/plugins/readers/pcsc/readers/scmreaderunit.hpp>
 #include <logicalaccess/plugins/readers/pcsc/readers/springcardreaderunit.hpp>
@@ -44,10 +43,6 @@ LIBLOGICALACCESS_API void getReaderUnit(const std::string &readerName,
         else if (readerName.find("5022") != std::string::npos)
         {
             u = std::make_shared<logicalaccess::OmnikeyXX22ReaderUnit>(readerName);
-        }
-        else if (readerName.find("5023") != std::string::npos)
-        {
-            u = std::make_shared<logicalaccess::OmnikeyXX23ReaderUnit>(readerName);
         }
         else if (readerName.find("x25") != std::string::npos ||
                  readerName.find("5025-CL") != std::string::npos)

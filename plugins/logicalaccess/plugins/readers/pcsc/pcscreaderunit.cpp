@@ -284,8 +284,10 @@ bool PCSCReaderUnit::waitInsertion(unsigned int maxwait)
     ElapsedTimeCounter time_counter;
     do
     {
+        auto provider = getPCSCReaderProvider();
+        EXCEPTION_ASSERT_WITH_LOG(provider, LibLogicalAccessException, "PCSC Reader Provider is null.");
         LONG r = SCardGetStatusChange(
-            getPCSCReaderProvider()->getContext(),
+                provider->getContext(),
             ((maxwait == 0) ? INFINITE : maxwait - time_counter.elapsed()), &readers[0],
             readers.size());
         if (SCARD_S_SUCCESS == r)
@@ -370,40 +372,31 @@ bool PCSCReaderUnit::waitRemoval(unsigned int maxwait)
         THROW_EXCEPTION_WITH_LOG(CardException, EXCEPTION_MSG_NOREADER);
     }
 
-    char **readers_names = new char *[readers_count];
-
-    for (int i = 0; i < readers_count; ++i)
-    {
-        readers_names[i] = nullptr;
-    }
-
-    SCARD_READERSTATE *readers = new SCARD_READERSTATE[readers_count];
-
-    memset(readers, 0x00, sizeof(SCARD_READERSTATE) * readers_count);
+    std::vector<std::string> reader_names(readers_count);
+    std::vector<SCARD_READERSTATE> readers(readers_count);
 
     if (reader != "")
     {
-        readers_names[0]          = strdup(reader.c_str());
+        reader_names[0]          = std::string(reader.c_str());
         readers[0].dwCurrentState = SCARD_STATE_UNAWARE;
         readers[0].dwEventState   = SCARD_STATE_UNAWARE;
-        readers[0].szReader       = reinterpret_cast<const char *>(readers_names[0]);
+        readers[0].szReader       = reader_names[0].data();
     }
     else
     {
         for (int i = 0; i < readers_count; ++i)
         {
-            readers_names[i] =
-                strdup(getReaderProvider()->getReaderList().at(i)->getName().c_str());
+            reader_names[i] = getReaderProvider()->getReaderList().at(i)->getName();
             readers[i].dwCurrentState = SCARD_STATE_UNAWARE;
             readers[i].dwEventState   = SCARD_STATE_UNAWARE;
-            readers[i].szReader       = reinterpret_cast<const char *>(readers_names[i]);
+            readers[i].szReader       = reader_names[i].data();
         }
     }
 
     reader.clear();
 
     LONG r = SCardGetStatusChange(getPCSCReaderProvider()->getContext(),
-                                  ((maxwait == 0) ? INFINITE : maxwait), readers,
+                                  ((maxwait == 0) ? INFINITE : maxwait), readers.data(),
                                   readers_count);
 
     if (SCARD_S_SUCCESS == r)
@@ -432,7 +425,7 @@ bool PCSCReaderUnit::waitRemoval(unsigned int maxwait)
             {
                 loop = false;
                 r    = SCardGetStatusChange(getPCSCReaderProvider()->getContext(),
-                                         ((maxwait == 0) ? INFINITE : maxwait), readers,
+                                         ((maxwait == 0) ? INFINITE : maxwait), readers.data(),
                                          readers_count);
 
                 if (SCARD_S_SUCCESS == r)
@@ -470,18 +463,6 @@ bool PCSCReaderUnit::waitRemoval(unsigned int maxwait)
             } while (loop);
         }
     }
-
-    for (int i = 0; i < readers_count; ++i)
-    {
-        if (readers_names[i])
-        {
-            free(readers_names[i]);
-            readers_names[i] = nullptr;
-        }
-    }
-
-    delete[] readers;
-    delete[] readers_names;
 
     if (!reader.empty())
     {
