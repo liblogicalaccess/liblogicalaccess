@@ -149,4 +149,20 @@ ByteVector ManchesterEncoder::decode(const ByteVector &in, Type t)
     }
     return out;
 }
+
+    int portable_setenv(const char *name, const char *value, int overwrite)
+    {
+#ifdef _WIN32
+        int errcode = 0;
+    if(!overwrite) {
+        size_t envsize = 0;
+        errcode = getenv_s(&envsize, NULL, 0, name);
+        if(errcode || envsize) return errcode;
+    }
+    return _putenv_s(name, value);
+#else
+        return setenv(name, value, overwrite);
+    #endif
+    }
+
 }

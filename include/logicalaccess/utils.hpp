@@ -125,4 +125,6 @@ class ManchesterEncoder
     static ByteVector encode(const ByteVector &in, Type t);
     static ByteVector decode(const ByteVector &in, Type t);
 };
+
+int portable_setenv(const char *name, const char *value, int overwrite);
 }

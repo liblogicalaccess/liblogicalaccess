@@ -8,6 +8,7 @@
 #include <logicalaccess/readerproviders/udpdatatransport.hpp>
 #include <logicalaccess/cards/keydiversification.hpp>
 #include <logicalaccess/settings.hpp>
+#include <logicalaccess/utils.hpp>
 #include <logicalaccess/myexception.hpp>
 
 namespace logicalaccess
@@ -445,7 +446,7 @@ LibraryManager::getPKCSAESCrypto(const std::string &env_PROTECCIO_CONF_DIR,
             assert(fptr);
 
             // Configure environment for Atos NetHSM.
-            setenv("PROTECCIO_CONF_DIR", env_PROTECCIO_CONF_DIR.c_str(), 0);
+            portable_setenv("PROTECCIO_CONF_DIR", env_PROTECCIO_CONF_DIR.c_str(), 0);
 
             fptr(pkcs_crypto, pkcs_library_shared_object_path);
             if (pkcs_crypto)
