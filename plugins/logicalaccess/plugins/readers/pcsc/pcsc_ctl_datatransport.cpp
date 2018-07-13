@@ -14,7 +14,7 @@
 #define IOCTL_CCID_ESCAPE SCARD_CTL_CODE(3500)
 #else
 #include <reader.h>
-#define IOCTL_CCID_ESCAPE SCARD_CTL_CODE(3500)
+#define IOCTL_CCID_ESCAPE SCARD_CTL_CODE(1)
 #endif
 
 void logicalaccess::PCSCControlDataTransport::send(const ByteVector &data)

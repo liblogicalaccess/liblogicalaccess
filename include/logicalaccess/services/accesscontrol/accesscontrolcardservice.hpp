@@ -20,6 +20,17 @@ namespace logicalaccess
 */
 typedef std::vector<std::shared_ptr<Format>> FormatList;
 
+
+/**
+ * Extraction flags used to configure PACS bits retrieval.
+ */
+enum class PACS_EXTRACTION_MODE
+{
+    SECURE_CHANNEL = 0,
+    NO_SECURE_CHANNEL,
+    KEYBOARD_WEDGE,
+};
+
 #define ACCESSCONTROLCARDSERVICE "AccessControl"
 
 /**
@@ -95,7 +106,8 @@ class LIBLOGICALACCESS_API AccessControlCardService : public CardService
      * Retrieve the Physical Access Control bits.
      * This generally relies on the PCSC reader to provide support.
      */
-    virtual ByteVector getPACSBits() {
+    virtual ByteVector getPACSBits(PACS_EXTRACTION_MODE mode)
+    {
         throw std::runtime_error("Not implemented");
     }
 

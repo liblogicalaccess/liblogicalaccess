@@ -285,9 +285,10 @@ bool PCSCReaderUnit::waitInsertion(unsigned int maxwait)
     do
     {
         auto provider = getPCSCReaderProvider();
-        EXCEPTION_ASSERT_WITH_LOG(provider, LibLogicalAccessException, "PCSC Reader Provider is null.");
+        EXCEPTION_ASSERT_WITH_LOG(provider, LibLogicalAccessException,
+                                  "PCSC Reader Provider is null.");
         LONG r = SCardGetStatusChange(
-                provider->getContext(),
+            provider->getContext(),
             ((maxwait == 0) ? INFINITE : maxwait - time_counter.elapsed()), &readers[0],
             readers.size());
         if (SCARD_S_SUCCESS == r)
@@ -377,7 +378,7 @@ bool PCSCReaderUnit::waitRemoval(unsigned int maxwait)
 
     if (reader != "")
     {
-        reader_names[0]          = std::string(reader.c_str());
+        reader_names[0]           = std::string(reader.c_str());
         readers[0].dwCurrentState = SCARD_STATE_UNAWARE;
         readers[0].dwEventState   = SCARD_STATE_UNAWARE;
         readers[0].szReader       = reader_names[0].data();
@@ -398,7 +399,6 @@ bool PCSCReaderUnit::waitRemoval(unsigned int maxwait)
     LONG r = SCardGetStatusChange(getPCSCReaderProvider()->getContext(),
                                   ((maxwait == 0) ? INFINITE : maxwait), readers.data(),
                                   readers_count);
-
     if (SCARD_S_SUCCESS == r)
     {
         for (int i = 0; i < readers_count; ++i)
@@ -425,9 +425,8 @@ bool PCSCReaderUnit::waitRemoval(unsigned int maxwait)
             {
                 loop = false;
                 r    = SCardGetStatusChange(getPCSCReaderProvider()->getContext(),
-                                         ((maxwait == 0) ? INFINITE : maxwait), readers.data(),
-                                         readers_count);
-
+                                         ((maxwait == 0) ? INFINITE : maxwait),
+                                         readers.data(), readers_count);
                 if (SCARD_S_SUCCESS == r)
                 {
                     if ((maxwait == 0) || time_counter.elapsed() < maxwait)
