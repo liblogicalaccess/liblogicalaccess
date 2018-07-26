@@ -71,6 +71,10 @@ using RemoteCryptoPtr = std::shared_ptr<RemoteCrypto>;
 
 class IAESCryptoService;
 using IAESCryptoServicePtr = std::shared_ptr<IAESCryptoService>;
+
+
+class TLV;
+using TLVPtr = std::shared_ptr<TLV>;
 }
 
 using ByteVector = std::vector<uint8_t>;

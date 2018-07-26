@@ -2,6 +2,8 @@
 #include <logicalaccess/services/accesscontrol/formats/wiegand26format.hpp>
 #include <logicalaccess/utils.hpp>
 #include <logicalaccess/plugins/readers/stidprg/stidprgutils.hpp>
+#include <logicalaccess/bufferhelper.hpp>
+#include <logicalaccess/TLV.hpp>
 
 using namespace logicalaccess;
 

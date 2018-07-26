@@ -13,7 +13,7 @@ function(create_test file)
    # iks-bench.
    # This needs cleanup.
 
-   target_link_libraries(${test_name}
+   target_link_libraries(${test_name} PUBLIC
            ${GTEST_BOTH_LIBRARIES} ${Boost_LIBRARIES}
            pthread pcscreaders stidprgreaders
            remotecryptoiksunified
@@ -41,3 +41,4 @@ add_gtest_test(test_bitsetstream.cpp)
 add_gtest_test(test_signature.cpp)
 add_gtest_test(test_diversification.cpp)
 add_gtest_test(test_iks_bench.cpp)
+add_gtest_test(test_tlv.cpp)
