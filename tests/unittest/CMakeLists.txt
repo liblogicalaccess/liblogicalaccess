@@ -33,11 +33,11 @@ add_gtest_test(test_key_storage.cpp)
 add_gtest_test(test_cl1356plus_utils.cpp)
 add_gtest_test(test_format.cpp)
 add_gtest_test(test_bitsetstream.cpp)
-add_gtest_test(test_signature.cpp)
 add_gtest_test(test_diversification.cpp)
 
 if (NOT LLA_DISABLE_IKS)
-    add_gtest_test(test_iks_bench.cpp)
+    #add_gtest_test(test_iks_bench.cpp)
+    #add_gtest_test(test_signature.cpp)
 endif()
 
 add_gtest_test(test_tlv.cpp)
