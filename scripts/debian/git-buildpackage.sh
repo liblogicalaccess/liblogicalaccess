@@ -6,10 +6,11 @@ DISTRIB=`lsb_release -da  | grep Distributor |  awk  '{print $3}'`
 
 if [ "$GIT_BRANCH" == "develop" ]; then
 
+    # Just checking if Debian or not.
 	if [ "$CODENAME" == "stretch" ]; then
 		CODENAME="unstable"
-	elif [ "$CODENAME" == "zesty" ]; then
-		  CODENAME="zesty-backports"
+	elif [ "$CODENAME" == "bionic" ]; then
+		  CODENAME="bionic-backports"
 	fi  
   
 elif [ "$GIT_BRANCH" == "master" ]; then

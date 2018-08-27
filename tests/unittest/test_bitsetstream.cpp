@@ -166,7 +166,7 @@ TEST(bitset_tests, complete_test)
     ASSERT_EQ(bstream.getData()[0] * 1000 + bstream.getData()[1] * 100 +
                   bstream.getData()[2] * 10 + bstream.getData()[3],
               2682);
-    ASSERT_THROW(bstream.concat(std::vector<uint8_t>()), std::invalid_argument);
+    ASSERT_NO_THROW(bstream.concat(std::vector<uint8_t>()));
     bstream.clear();
     bstream.concat(a, 1, 1);
     ASSERT_EQ(bstream.getData()[0], 0);
