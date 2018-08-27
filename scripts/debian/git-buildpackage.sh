@@ -32,6 +32,8 @@ cd liblogicalaccess-debian
 git checkout -b upstream
 git remote add liblogicalaccess https://github.com/islog/liblogicalaccess.git
 git pull --no-edit --allow-unrelated-histories -X theirs  liblogicalaccess ${GIT_BRANCH}
+git submodule init
+git submodule update
 
 VERSION=`cat pom.xml  | grep "<version>" -m1 | cut -d">" -f2 | cut -d"<" -f 1 |  cut -d"-" -f 1`.`date '+%Y%m%d'`
 VERSION_DEBIAN=$VERSION~${CODENAME}
