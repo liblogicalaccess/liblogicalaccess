@@ -1,24 +1,28 @@
 pipeline {
 	agent none
     stages {
-		stage('Debian build') {
-			agent {	docker { image 'debian-64-stable-build'	} }
-			steps {
-				debPackageBuild()
-			}
-		}
+        stage('Builds') {
+			parallel {
+				stage('Debian build') {
+					agent {	docker { image 'debian-64-stable-build'	} }
+					steps {
+						debPackageBuild()
+					}
+				}
 		
-		stage('Ubuntu build') {
-			agent {	docker { image 'ubuntu-64-stable-bionic' } }
-			steps {
-				debPackageBuild()
-			}
-		}
+				stage('Ubuntu build') {
+					agent {	docker { image 'ubuntu-64-stable-bionic' } }
+					steps {
+						debPackageBuild()
+					}
+				}
 
-		stage('Rasbian build') {
-			agent {	docker { image 'docker-registry.islog.com:5000/raspbian-lite' } }
-			steps {
-				debPackageBuild()
+				stage('Rasbian build') {
+					agent {	docker { image 'docker-registry.islog.com:5000/raspbian-lite' } }
+					steps {
+						debPackageBuild()
+					}
+				}
 			}
 		}
     }
