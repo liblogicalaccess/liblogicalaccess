@@ -8,8 +8,8 @@ if [ "$GIT_BRANCH" == "develop" ]; then
 
 	if [ "$CODENAME" == "stretch" ]; then
 		CODENAME="unstable"
-	elif [ "$CODENAME" == "zesty" ]; then
-		  CODENAME="zesty-backports"
+	elif [ "$CODENAME" == "bionic" ]; then
+		  CODENAME="bionic-backports"
 	fi  
   
 elif [ "$GIT_BRANCH" == "master" ]; then
