@@ -40,26 +40,38 @@ class LIBLOGICALACCESS_API ChecksumDataField : public DataField
      * \brief Set the parity value.
      * \param value The field value.
      */
-    void setValue(const char &value);
+    void setValue(const char &/*value*/)
+    {
+        throw std::runtime_error("Unimplemented");
+    }
 
     /**
      * \brief Get the field value.
      * \return The field value.
      */
-    unsigned char getValue() const;
+    unsigned char getValue() const
+    {
+        throw std::runtime_error("Unimplemented");
+    }
 
     /**
      * \brief Set the bits to use positions to calculate checksum. The sum should be 8-bit
      * factor.
      * \param positions The bits positions.
      */
-    void setBitsUsePositions(ByteVector positions);
+    void setBitsUsePositions(ByteVector /*positions*/)
+    {
+        throw std::runtime_error("Unimplemented");
+    }
 
     /**
      * \brief Get the bits to use positions to calculate checksum.
      * \return The bits positions.
      */
-    ByteVector getBitsUsePositions() const;
+    ByteVector getBitsUsePositions() const
+    {
+        throw std::runtime_error("Unimplemented");
+    }
 
     /**
      * \brief Get linear data.
