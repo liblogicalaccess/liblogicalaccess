@@ -40,38 +40,26 @@ class LIBLOGICALACCESS_API ChecksumDataField : public DataField
      * \brief Set the parity value.
      * \param value The field value.
      */
-    void setValue(const char &/*value*/)
-    {
-        throw std::runtime_error("Unimplemented");
-    }
+    void setValue(const char & /*value*/);
 
     /**
      * \brief Get the field value.
      * \return The field value.
      */
-    unsigned char getValue() const
-    {
-        throw std::runtime_error("Unimplemented");
-    }
+    unsigned char getValue() const;
 
     /**
      * \brief Set the bits to use positions to calculate checksum. The sum should be 8-bit
      * factor.
      * \param positions The bits positions.
      */
-    void setBitsUsePositions(ByteVector /*positions*/)
-    {
-        throw std::runtime_error("Unimplemented");
-    }
+    void setBitsUsePositions(ByteVector /*positions*/);
 
     /**
      * \brief Get the bits to use positions to calculate checksum.
      * \return The bits positions.
      */
-    ByteVector getBitsUsePositions() const
-    {
-        throw std::runtime_error("Unimplemented");
-    }
+    ByteVector getBitsUsePositions() const;
 
     /**
      * \brief Get linear data.
@@ -79,8 +67,7 @@ class LIBLOGICALACCESS_API ChecksumDataField : public DataField
      * \param dataLengthBytes Length in byte of data
      * \param pos The first position bit. Will contain the position bit after the field.
      */
-    virtual void getLinearData(void *data, size_t dataLengthBytes,
-                               unsigned int *pos) const;
+    virtual BitsetStream getLinearData(const BitsetStream &data) const;
 
     /**
      * \brief Set linear data.
@@ -88,8 +75,7 @@ class LIBLOGICALACCESS_API ChecksumDataField : public DataField
      * \param dataLengthBytes Length of data in bytes
      * \param pos The first position bit. Will contain the position bit after the field.
      */
-    virtual void setLinearData(const void *data, size_t dataLengthBytes,
-                               unsigned int *pos);
+    virtual void setLinearData(const ByteVector &data);
 
     /**
      * \brief Serialize the current object to XML.
@@ -110,9 +96,6 @@ class LIBLOGICALACCESS_API ChecksumDataField : public DataField
     std::string getDefaultXmlNodeName() const override;
 
   protected:
-    ByteVector d_value;
-
-    std::vector<size_t> d_bitsUsePositions;
 };
 }
 
