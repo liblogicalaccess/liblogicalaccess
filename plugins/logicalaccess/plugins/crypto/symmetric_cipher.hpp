@@ -26,9 +26,7 @@ class SymmetricCipher
     /**
      * \brief Destructor.
      */
-    virtual ~SymmetricCipher()
-    {
-    }
+    virtual ~SymmetricCipher();
 
     /**
      * \brief Cipher a buffer.

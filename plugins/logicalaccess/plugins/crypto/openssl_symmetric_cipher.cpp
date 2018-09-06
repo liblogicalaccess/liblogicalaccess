@@ -21,6 +21,14 @@ namespace logicalaccess
 {
 namespace openssl
 {
+    SymmetricCipher::~SymmetricCipher() {
+
+    }
+
+    OpenSSLSymmetricCipher::~OpenSSLSymmetricCipher() {
+
+    }
+
 OpenSSLSymmetricCipher::OpenSSLSymmetricCipher(EncMode _mode)
     : d_mode(_mode)
 {
@@ -163,5 +171,6 @@ void OpenSSLSymmetricCipher::decipher(const ByteVector &src, ByteVector &dest,
 
     dest = stop(context);
 }
+
 }
 }

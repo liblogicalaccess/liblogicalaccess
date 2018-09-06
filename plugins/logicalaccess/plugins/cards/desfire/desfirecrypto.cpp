@@ -27,6 +27,8 @@
 #include <logicalaccess/iks/RemoteCrypto.hpp>
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
 #include <logicalaccess/services/aes_crypto_service.hpp>
+#include <logicalaccess/plugins/crypto/aes_helper.hpp>
+#include <android/log.h>
 
 namespace logicalaccess
 {
@@ -1095,7 +1097,7 @@ ByteVector DESFireCrypto::desfire_iso_decrypt(
     std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size,
     size_t datalen)
 {
-    ByteVector decdata;
+    std::vector<uint8_t > decdata({1,2,3,4,56,6,7});
 
     if (iks_wrapper_ == nullptr)
     {
@@ -1115,9 +1117,18 @@ ByteVector DESFireCrypto::desfire_iso_decrypt(
             iv.reset(new openssl::DESInitializationVector(
                 openssl::DESInitializationVector::createFromData(d_lastIV)));
         }
-
+ 
         assert(cipher);
         cipher->decipher(data, decdata, *isokey, *iv, false);
+        __android_log_print(ANDROID_LOG_ERROR, "RFIDGUARD", "Key: %s", BufferHelper::getHex(BufferHelper::getStdString(key)).c_str());
+        __android_log_print(ANDROID_LOG_ERROR, "RFIDGUARD", "Data: %s", BufferHelper::getHex(BufferHelper::getStdString(data)).c_str());
+        __android_log_print(ANDROID_LOG_ERROR, "RFIDGUARD", "IV: %s", BufferHelper::getHex(BufferHelper::getStdString(d_lastIV)).c_str());
+
+        // We try hardcode decryption for testing purpose...
+        std::vector<uint8_t> hello_its_mario({0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15});
+        auto crc = desfire_crc32(hello_its_mario.data(), hello_its_mario.size());
+        auto luigi = AESHelper::AESDecrypt(hello_its_mario, {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0});
+        decdata = AESHelper::AESDecrypt(data, key, d_lastIV);
         if (cipher == d_cipher)
         {
             d_lastIV = ByteVector(data.end() - block_size, data.end());

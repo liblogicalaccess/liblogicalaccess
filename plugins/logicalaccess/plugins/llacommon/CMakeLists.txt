@@ -21,6 +21,14 @@ add_library(
         ${INCLUDE}
 )
 
+if (ANDROID)
+# Android need to link against w/e the library requires.
+# There is a Android CMake flag to prevent this behavior, but the system linker
+# on Android behavior in a way that I can't understand, and build-time error it detects
+# seem to always translate to runtime-link-time issue.
+target_link_libraries(llacommon PUBLIC ${Boost_LIBRARIES})
+endif()
+
 install ( FILES ${INCLUDE} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/plugins/llacommon )
 install ( TARGETS llacommon ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )
 if (MSVC)

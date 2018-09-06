@@ -132,7 +132,8 @@ void TcpDataTransport::send(const ByteVector &data)
 
 void TcpDataTransport::connect_complete(const boost::system::error_code &error)
 {
-    d_read_error = (error != nullptr);
+    // 0 is success.
+    d_read_error = static_cast<bool>(error.value());
     d_timer.cancel();
 }
 

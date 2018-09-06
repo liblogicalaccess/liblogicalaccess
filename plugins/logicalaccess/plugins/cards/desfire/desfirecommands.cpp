@@ -10,6 +10,10 @@
 
 namespace logicalaccess
 {
+    DESFireCommands::~DESFireCommands() {
+
+    }
+
 DESFireCommands::DataFileSetting DESFireCommands::FileSetting::getDataFile() const
 {
     return this->type.dataFile;
@@ -134,4 +138,5 @@ unsigned int DESFireCommands::getFileLength(unsigned char fileno)
 
     return fileLength;
 }
+
 }

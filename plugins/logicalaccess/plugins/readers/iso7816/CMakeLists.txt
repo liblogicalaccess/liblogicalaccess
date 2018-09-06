@@ -30,8 +30,8 @@ SET_TARGET_PROPERTIES(iso7816readers PROPERTIES VERSION ${LIBLOGICALACCESS_VERSI
   
 target_link_libraries(
 	iso7816readers
-	desfirecards
 	logicalaccess-cryptolib
+	desfirecards
 	iso7816cards
 	samav2cards
 	${LIBLOGICALACCESS_LIBRARY}

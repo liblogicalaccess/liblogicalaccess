@@ -22,9 +22,12 @@ add_library(
 	${INCLUDE}
   )
 
-target_link_libraries(logicalaccess-cryptolib PUBLIC ssl crypto llacommon)
+set(OPENSSL_CRYPTO_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../android-openssl/prebuilt/${ANDROID_ABI}/libcrypto.a)
+set(OPENSSL_SSL_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/../../../../../android-openssl/prebuilt/${ANDROID_ABI}/libssl.a)
 
- 
+target_link_libraries(logicalaccess-cryptolib PUBLIC
+${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPTO_LIBRARY} llacommon)
+
 install ( FILES ${INCLUDE} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/plugins/crypto )
 install ( TARGETS logicalaccess-cryptolib ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )
 if (MSVC)
