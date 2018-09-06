@@ -4,7 +4,7 @@
  * \brief DESFire storage card service.
  */
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirestoragecardservice.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev1location.hpp>
 #include <logicalaccess/myexception.hpp>

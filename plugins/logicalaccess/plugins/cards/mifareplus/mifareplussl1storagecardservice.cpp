@@ -6,7 +6,7 @@
 #include <logicalaccess/plugins/cards/mifareplus/mifareplussl1storagecardservice.hpp>
 #include <logicalaccess/plugins/cards/mifareplus/mifareplussl1accessinfo.hpp>
 #include <logicalaccess/plugins/cards/mifareplus/mifareplussl1commands.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 
 
 logicalaccess::MifarePlusSL1StorageCardService::MifarePlusSL1StorageCardService(

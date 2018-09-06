@@ -17,7 +17,7 @@
 #include <iomanip>
 
 #include <logicalaccess/plugins/readers/axesstmc13/axesstmc13readerunit.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 
 namespace logicalaccess
 {

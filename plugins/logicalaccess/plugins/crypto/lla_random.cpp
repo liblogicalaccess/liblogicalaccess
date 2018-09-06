@@ -3,7 +3,7 @@
 //
 
 #include <openssl/rand.h>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <logicalaccess/plugins/crypto/lla_random.hpp>
 

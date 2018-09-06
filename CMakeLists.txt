@@ -281,6 +281,7 @@ elseif (UNIX)
 	target_link_libraries(${LIBLOGICALACCESS_LIBRARY} logicalaccess-cryptolib ${Boost_LIBRARIES} ${CMAKE_DL_LIBS})
 endif()
 
+add_subdirectory(plugins/logicalaccess/plugins/llacommon)
 add_subdirectory(plugins/logicalaccess/plugins/crypto)
 add_subdirectory(plugins/logicalaccess/plugins/iks)
 add_subdirectory(plugins/logicalaccess/plugins/cards)

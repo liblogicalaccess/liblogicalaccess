@@ -8,7 +8,7 @@
 #include <logicalaccess/plugins/cards/desfire/desfirechip.hpp>
 #include <openssl/rand.h>
 #include <string.h>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/crypto/aes_cipher.hpp>
 #include <logicalaccess/plugins/crypto/aes_symmetric_key.hpp>
 #include <logicalaccess/plugins/crypto/aes_initialization_vector.hpp>

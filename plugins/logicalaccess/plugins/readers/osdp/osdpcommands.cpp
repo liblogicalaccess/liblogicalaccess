@@ -5,7 +5,7 @@
  */
 
 #include <logicalaccess/plugins/readers/osdp/osdpcommands.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/crypto/tomcrypt.h>
 #include <openssl/rand.h>
 #include <thread>

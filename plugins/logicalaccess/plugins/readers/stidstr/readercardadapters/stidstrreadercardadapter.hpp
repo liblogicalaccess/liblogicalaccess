@@ -13,7 +13,7 @@
 #include <string>
 #include <vector>
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/bufferhelper.hpp>
 
 namespace logicalaccess

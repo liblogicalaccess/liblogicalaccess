@@ -4,7 +4,7 @@
  * \brief ISO7816 NFC Tag Type 4 card service.
  */
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/cards/iso7816/iso7816nfctag4cardservice.hpp>
 #include <logicalaccess/services/nfctag/ndefmessage.hpp>
 #include <logicalaccess/myexception.hpp>

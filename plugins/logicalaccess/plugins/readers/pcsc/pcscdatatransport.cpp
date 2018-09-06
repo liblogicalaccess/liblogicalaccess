@@ -11,7 +11,7 @@
 #include <boost/foreach.hpp>
 #include <boost/optional.hpp>
 #include <boost/array.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <logicalaccess/myexception.hpp>
 

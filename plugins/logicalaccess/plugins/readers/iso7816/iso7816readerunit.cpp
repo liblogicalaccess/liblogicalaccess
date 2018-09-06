@@ -24,7 +24,7 @@
 #include <logicalaccess/plugins/readers/iso7816/commands/samiso7816resultchecker.hpp>
 #include <boost/filesystem.hpp>
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 
 namespace logicalaccess
 {

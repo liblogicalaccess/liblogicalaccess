@@ -15,8 +15,8 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <ctime>
 #include <chrono>
-#include <logicalaccess/logs.hpp>
-#include <logicalaccess/settings.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
+#include <logicalaccess/plugins/llacommon/settings.hpp>
 #include <logicalaccess/myexception.hpp>
 
 namespace logicalaccess

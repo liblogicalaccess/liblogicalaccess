@@ -14,7 +14,7 @@
 
 #include <sstream>
 #include <iomanip>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 
 #include <logicalaccess/plugins/readers/stidstr/stidstrreaderunit.hpp>
 #include <logicalaccess/plugins/readers/stidstr/readercardadapters/stidstrreaderdatatransport.hpp>

@@ -10,7 +10,7 @@
 
 #include <logicalaccess/plugins/readers/osdp/osdpreaderunitconfiguration.hpp>
 #include <logicalaccess/plugins/readers/osdp/osdpreaderprovider.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 
 namespace logicalaccess
 {

@@ -2,7 +2,7 @@
 set(CMAKE_POSITION_INDEPENDENT_CODE ON) 
 
 if(UNIX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wl,--no-undefined")
 else()
   if (MSVC)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
@@ -17,11 +17,13 @@ set(INCLUDE ${HDRS} ${HDPPRS} )
 
 add_library(
 	logicalaccess-cryptolib
-	STATIC
+	SHARED
 	${SRCS}
 	${INCLUDE}
   )
-  
+
+target_link_libraries(logicalaccess-cryptolib PUBLIC ssl crypto llacommon)
+
  
 install ( FILES ${INCLUDE} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/plugins/crypto )
 install ( TARGETS logicalaccess-cryptolib ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )

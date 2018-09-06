@@ -4,7 +4,7 @@
  * \brief ISO15693 storage card service.
  */
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/cards/iso15693/iso15693storagecardservice.hpp>
 #include <logicalaccess/plugins/cards/iso15693/iso15693location.hpp>
 #include <logicalaccess/cards/locationnode.hpp>

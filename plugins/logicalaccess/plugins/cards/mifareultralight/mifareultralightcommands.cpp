@@ -4,7 +4,7 @@
  * \brief Mifare Ultralight commands.
  */
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/cards/mifareultralight/mifareultralightcommands.hpp>
 #include <logicalaccess/plugins/cards/mifareultralight/mifareultralightchip.hpp>
 

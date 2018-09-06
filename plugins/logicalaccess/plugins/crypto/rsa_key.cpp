@@ -5,7 +5,7 @@
  */
 
 #include <logicalaccess/plugins/crypto/rsa_key.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/crypto/openssl_exception.hpp>
 #include <logicalaccess/myexception.hpp>
 

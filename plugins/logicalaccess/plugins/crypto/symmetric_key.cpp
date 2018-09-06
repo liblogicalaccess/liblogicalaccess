@@ -5,7 +5,7 @@
  * \brief Symmetric key class.
  */
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <logicalaccess/plugins/crypto/openssl.hpp>
 #include <logicalaccess/plugins/crypto/symmetric_key.hpp>

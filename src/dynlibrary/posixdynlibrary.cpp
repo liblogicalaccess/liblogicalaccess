@@ -1,5 +1,5 @@
 #include <dlfcn.h>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 
 #include <logicalaccess/dynlibrary/posixdynlibrary.hpp>
 #include <logicalaccess/myexception.hpp>

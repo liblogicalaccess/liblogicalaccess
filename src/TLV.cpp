@@ -5,7 +5,7 @@
 #include <cassert>
 #include <stdint.h>
 #include <logicalaccess/TLV.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <iostream>
 

@@ -4,7 +4,7 @@
 * \brief CPS3 commands.
 */
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <logicalaccess/plugins/cards/cps3/cps3commands.hpp>
 

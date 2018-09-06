@@ -36,7 +36,7 @@
 #include <logicalaccess/plugins/cards/mifare/mifarechip.hpp>
 
 #include <logicalaccess/plugins/readers/stidstr/stidstrreaderunitconfiguration.hpp>
-#include <logicalaccess/settings.hpp>
+#include <logicalaccess/plugins/llacommon/settings.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
 namespace logicalaccess

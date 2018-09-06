@@ -89,7 +89,7 @@
 #include <logicalaccess/plugins/readers/pcsc/readers/acsacr1222llcddisplay.hpp>
 
 
-#include <logicalaccess/settings.hpp>
+#include <logicalaccess/plugins/llacommon/settings.hpp>
 #include <logicalaccess/plugins/readers/pcsc/pcsc_ctl_datatransport.hpp>
 #include <logicalaccess/plugins/readers/pcsc/commands/mifareplus_acsacr1222l_sl1.hpp>
 #include <logicalaccess/plugins/readers/pcsc/commands/mifareplus_pcsc_sl3.hpp>

@@ -14,7 +14,7 @@
 #include <logicalaccess/services/accesscontrol/encodings/datarepresentation.hpp>
 #include <logicalaccess/services/accesscontrol/encodings/datatype.hpp>
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 
 #include <logicalaccess/services/accesscontrol/formats/customformat/datafield.hpp>
 #include <list>

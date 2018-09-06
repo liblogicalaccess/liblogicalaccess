@@ -18,7 +18,7 @@
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
 #include <logicalaccess/dynlibrary/idynlibrary.hpp>
 #include <logicalaccess/plugins/readers/admitto/readercardadapters/admittodatatransport.hpp>
-#include <logicalaccess/settings.hpp>
+#include <logicalaccess/plugins/llacommon/settings.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
 namespace logicalaccess

@@ -4,7 +4,7 @@
  * \brief Twic storage card service.
  */
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/cards/twic/twicstoragecardservice.hpp>
 
 namespace logicalaccess

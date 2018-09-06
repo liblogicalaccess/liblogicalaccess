@@ -13,7 +13,7 @@
 #include <logicalaccess/plugins/readers/pcsc/readers/id3readerunit.hpp>
 #include <logicalaccess/logicalaccess_api.hpp>
 #include <logicalaccess/plugins/readers/pcsc/commands/mifarepcsccommands.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 
 extern "C" {
 

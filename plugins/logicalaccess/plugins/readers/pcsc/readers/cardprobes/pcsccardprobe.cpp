@@ -1,7 +1,7 @@
 #include <logicalaccess/plugins/readers/pcsc/readers/cardprobes/pcsccardprobe.hpp>
 #include <logicalaccess/plugins/readers/pcsc/pcscreaderunit.hpp>
 #include <logicalaccess/cards/chip.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/cards/mifare/mifarecommands.hpp>
 #include <assert.h>
 #include <logicalaccess/plugins/cards/desfire/desfirecommands.hpp>

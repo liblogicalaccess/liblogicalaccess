@@ -146,6 +146,8 @@ class LIBLOGICALACCESS_API DESFireCommands : public Commands
     {
     }
 
+    virtual ~DESFireCommands() = default;
+
     /**
      * \brief Erase the card.
      */

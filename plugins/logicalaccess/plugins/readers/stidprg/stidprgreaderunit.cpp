@@ -2,7 +2,7 @@
 #include <logicalaccess/plugins/readers/stidprg/stidprgreaderprovider.hpp>
 #include <logicalaccess/plugins/readers/pcsc/commands/dummycommand.hpp>
 #include <logicalaccess/cards/chip.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/readers/stidprg/readercardadapters/stidprgbufferparser.hpp>
 #include <logicalaccess/plugins/readers/stidprg/readercardadapters/stidprgdatatransport.hpp>
 #include <logicalaccess/plugins/readers/stidprg/readercardadapters/stidprgreadercardadapter.hpp>

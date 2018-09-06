@@ -4,7 +4,7 @@
  * \brief Promag buffer parser.
  */
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/readers/promag/readercardadapters/promagbufferparser.hpp>
 #include <logicalaccess/plugins/readers/promag/readercardadapters/promagreadercardadapter.hpp>
 

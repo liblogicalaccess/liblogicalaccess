@@ -7,7 +7,7 @@
 #include <cstring>
 #include <boost/property_tree/ptree.hpp>
 #include <iomanip>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/cards/mifare/mifareaccessinfo.hpp>
 #include <logicalaccess/plugins/cards/mifare/mifarechip.hpp>
 

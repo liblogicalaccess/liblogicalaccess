@@ -9,11 +9,11 @@
 #include <logicalaccess/plugins/cards/samav2/samav2commands.hpp>
 #include <openssl/rand.h>
 #include <logicalaccess/iks/IslogKeyServer.hpp>
-#include <logicalaccess/settings.hpp>
+#include <logicalaccess/plugins/llacommon/settings.hpp>
 #include <logicalaccess/cards/IKSStorage.hpp>
 #include <chrono>
 #include <thread>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/crypto/aes_cipher.hpp>
 #include <logicalaccess/plugins/crypto/aes_symmetric_key.hpp>
 #include <logicalaccess/plugins/crypto/aes_initialization_vector.hpp>

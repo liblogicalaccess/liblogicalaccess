@@ -4,8 +4,8 @@
  * \brief Base class logs informations.
  */
 
-#include <logicalaccess/logs.hpp>
-#include <logicalaccess/settings.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
+#include <logicalaccess/plugins/llacommon/settings.hpp>
 #include <logicalaccess/colorize.hpp>
 #include <boost/date_time.hpp>
 

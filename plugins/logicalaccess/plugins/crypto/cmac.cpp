@@ -1,7 +1,7 @@
 #include <vector>
 #include <memory>
 #include <logicalaccess/myexception.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/crypto/des_cipher.hpp>
 #include <logicalaccess/plugins/crypto/aes_cipher.hpp>
 #include <logicalaccess/plugins/crypto/cmac.hpp>

@@ -4,7 +4,7 @@
 
 #include <logicalaccess/plugins/readers/iso7816/commands/mifareplusiso7816resultchecker.hpp>
 #include <cassert>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 
 logicalaccess::MifarePlusISO7816ResultChecker::MifarePlusISO7816ResultChecker()

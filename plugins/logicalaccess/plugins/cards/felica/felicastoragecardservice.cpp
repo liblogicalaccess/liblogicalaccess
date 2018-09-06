@@ -4,7 +4,7 @@
  * \brief FeliCa storage card service.
  */
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/cards/felica/felicastoragecardservice.hpp>
 #include <logicalaccess/plugins/cards/felica/felicalocation.hpp>
 #include <logicalaccess/cards/locationnode.hpp>

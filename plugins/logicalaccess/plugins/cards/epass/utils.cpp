@@ -5,7 +5,7 @@
 #include <iostream>
 #include <logicalaccess/plugins/crypto/des_helper.hpp>
 #include <logicalaccess/plugins/crypto/sha.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <vector>
 #include <stdlib.h>

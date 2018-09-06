@@ -13,8 +13,8 @@
 #include <boost/property_tree/ptree.hpp>
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
 
-#include <logicalaccess/logs.hpp>
-#include <logicalaccess/settings.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
+#include <logicalaccess/plugins/llacommon/settings.hpp>
 
 namespace logicalaccess
 {

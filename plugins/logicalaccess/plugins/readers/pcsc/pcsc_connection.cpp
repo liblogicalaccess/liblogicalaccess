@@ -2,7 +2,7 @@
 // Created by xaqq on 8/3/15.
 //
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <logicalaccess/plugins/readers/pcsc/pcsc_connection.hpp>
 

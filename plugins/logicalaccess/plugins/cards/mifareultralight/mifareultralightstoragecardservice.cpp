@@ -4,7 +4,7 @@
  * \brief Mifare Ultralight storage card service.
  */
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/cards/mifareultralight/mifareultralightstoragecardservice.hpp>
 #include <logicalaccess/plugins/cards/mifareultralight/mifareultralightchip.hpp>
 #include <logicalaccess/plugins/cards/mifareultralight/mifareultralightaccessinfo.hpp>

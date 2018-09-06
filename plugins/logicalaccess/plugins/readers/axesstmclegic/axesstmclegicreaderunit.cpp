@@ -18,7 +18,7 @@
 #include <logicalaccess/plugins/readers/axesstmclegic/readercardadapters/axesstmclegicdatatransport.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <logicalaccess/myexception.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 
 namespace logicalaccess
 {

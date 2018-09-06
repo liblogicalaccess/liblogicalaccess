@@ -4,7 +4,7 @@
  * \brief MifarePlus SL3 commands.
  */
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <assert.h>
 #include <logicalaccess/plugins/crypto/cmac.hpp>
 #include <logicalaccess/plugins/cards/mifareplus/mifareplussl3commands.hpp>

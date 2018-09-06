@@ -1,5 +1,5 @@
 #include <logicalaccess/plugins/readers/stidprg/readercardadapters/stidprgbufferparser.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 
 using namespace logicalaccess;
 

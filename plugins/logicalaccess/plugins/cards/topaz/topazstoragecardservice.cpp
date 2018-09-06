@@ -4,7 +4,7 @@
  * \brief Topaz storage card service.
  */
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/cards/topaz/topazstoragecardservice.hpp>
 #include <logicalaccess/plugins/cards/topaz/topazchip.hpp>
 #include <logicalaccess/plugins/cards/topaz/topazaccessinfo.hpp>

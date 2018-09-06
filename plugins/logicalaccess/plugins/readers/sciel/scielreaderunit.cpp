@@ -16,7 +16,7 @@
 #include <logicalaccess/plugins/readers/sciel/readercardadapters/scielreadercardadapter.hpp>
 #include <boost/filesystem.hpp>
 #include <logicalaccess/plugins/readers/sciel/readercardadapters/scieldatatransport.hpp>
-#include <logicalaccess/settings.hpp>
+#include <logicalaccess/plugins/llacommon/settings.hpp>
 #include <logicalaccess/bufferhelper.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <boost/property_tree/xml_parser.hpp>

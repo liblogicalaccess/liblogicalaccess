@@ -10,7 +10,7 @@
 #include <iomanip>
 #include <stdexcept>
 #include <cstring>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 
 namespace logicalaccess

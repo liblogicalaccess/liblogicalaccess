@@ -4,7 +4,7 @@
  * \brief Reader Provider OSDP.
  */
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/readers/osdp/osdpreaderprovider.hpp>
 #include <logicalaccess/readerproviders/serialportdatatransport.hpp>
 

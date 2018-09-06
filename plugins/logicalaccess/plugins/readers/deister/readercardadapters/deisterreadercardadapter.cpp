@@ -4,7 +4,7 @@
  * \brief Deister reader/card adapter.
  */
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/readers/deister/readercardadapters/deisterreadercardadapter.hpp>
 #include <logicalaccess/plugins/crypto/tomcrypt.h>
 
