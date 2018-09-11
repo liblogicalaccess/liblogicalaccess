@@ -25,6 +25,9 @@ class SymmetricCipher
   public:
     /**
      * \brief Destructor.
+     *
+     * This is required for the compiler to properly generate RTTI information.
+     * Do not remove, and do not inline.
      */
     virtual ~SymmetricCipher();
 

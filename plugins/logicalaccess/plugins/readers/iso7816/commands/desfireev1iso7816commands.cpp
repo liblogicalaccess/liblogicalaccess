@@ -30,7 +30,6 @@
 #include <logicalaccess/iks/RemoteCrypto.hpp>
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
 #include <logicalaccess/services/aes_crypto_service.hpp>
-#include <logicalaccess/rtti_dump.hpp>
 
 namespace logicalaccess
 {
@@ -706,13 +705,13 @@ void DESFireEV1ISO7816Commands::iso_authenticate(std::shared_ptr<DESFireKey> cur
     }
     else
     {
-        le = 16;
- cipher = std::make_shared<openssl::AESCipher>();
+        le     = 16;
+        cipher = std::make_shared<openssl::AESCipher>();
     }
     std::shared_ptr<openssl::SymmetricKey> isokey;
     std::shared_ptr<openssl::InitializationVector> iv;
 
-    if ( std::dynamic_pointer_cast<openssl::AESCipher>(cipher) != nullptr)
+    if (std::dynamic_pointer_cast<openssl::AESCipher>(cipher) != nullptr)
     {
         isokey.reset(new openssl::AESSymmetricKey(
             openssl::AESSymmetricKey::createFromData(keydiv)));

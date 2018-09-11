@@ -1,5 +1,8 @@
 #include "logicalaccess/cards/commands.hpp"
 
-namespace logicalaccess {
-    Commands::~Commands() {}
+namespace logicalaccess
+{
+Commands::~Commands()
+{
+}
 }

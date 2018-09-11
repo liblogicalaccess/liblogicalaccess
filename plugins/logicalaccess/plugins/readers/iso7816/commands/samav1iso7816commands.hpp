@@ -29,7 +29,8 @@ namespace logicalaccess
 #define CMD_SAMAV1ISO7816 "SAMAV1ISO7816"
 
 #ifdef SWIG
-%template(SAMISO7816KeyEntrySETAV1Commands) SAMISO7816Commands< KeyEntryAV1Information,SETAV1 >;
+% template(SAMISO7816KeyEntrySETAV1Commands)
+        SAMISO7816Commands<KeyEntryAV1Information, SETAV1>;
 #endif
 
 /**
