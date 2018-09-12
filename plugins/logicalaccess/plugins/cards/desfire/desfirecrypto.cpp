@@ -11,9 +11,7 @@
 #include <boost/crc.hpp>
 #include <ctime>
 #include <cstdlib>
-
 #include <cstring>
-
 #include <openssl/rand.h>
 #include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/crypto/symmetric_key.hpp>
@@ -28,7 +26,6 @@
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
 #include <logicalaccess/services/aes_crypto_service.hpp>
 #include <logicalaccess/plugins/crypto/aes_helper.hpp>
-#include <android/log.h>
 
 namespace logicalaccess
 {

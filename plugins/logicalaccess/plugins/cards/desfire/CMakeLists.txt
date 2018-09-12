@@ -25,7 +25,6 @@ SET_TARGET_PROPERTIES(desfirecards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION
 
 target_link_libraries(
 	desfirecards
-	log
 	logicalaccess-cryptolib
 	iso7816cards
 	${LINK_OPT}
