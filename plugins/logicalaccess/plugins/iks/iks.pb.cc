@@ -7,7 +7,6 @@
 
 #include <google/protobuf/stubs/common.h>
 #include <google/protobuf/stubs/port.h>
-#include <google/protobuf/stubs/once.h>
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/wire_format_lite_inl.h>
 #include <google/protobuf/descriptor.h>
@@ -19,6 +18,11 @@
 #include "third_party/protobuf/version.h"
 #endif
 // @@protoc_insertion_point(includes)
+
+namespace protobuf_iks_2eproto {
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_iks_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_KeyDiversificationInfo;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_iks_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_SignatureDescription;
+}  // namespace protobuf_iks_2eproto
 class KeyDiversificationInfoDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<KeyDiversificationInfo>
@@ -90,14 +94,9 @@ class SMSG_DesfireAuth_Step2DefaultTypeInternal {
       _instance;
 } _SMSG_DesfireAuth_Step2_default_instance_;
 namespace protobuf_iks_2eproto {
-void InitDefaultsKeyDiversificationInfoImpl() {
+static void InitDefaultsKeyDiversificationInfo() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
-#else
-  ::google::protobuf::internal::InitProtobufDefaults();
-#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
   {
     void* ptr = &::_KeyDiversificationInfo_default_instance_;
     new (ptr) ::KeyDiversificationInfo();
@@ -106,19 +105,12 @@ void InitDefaultsKeyDiversificationInfoImpl() {
   ::KeyDiversificationInfo::InitAsDefaultInstance();
 }
 
-void InitDefaultsKeyDiversificationInfo() {
-  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
-  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsKeyDiversificationInfoImpl);
-}
+::google::protobuf::internal::SCCInfo<0> scc_info_KeyDiversificationInfo =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsKeyDiversificationInfo}, {}};
 
-void InitDefaultsSignatureDescriptionImpl() {
+static void InitDefaultsSignatureDescription() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
-#else
-  ::google::protobuf::internal::InitProtobufDefaults();
-#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
   {
     void* ptr = &::_SignatureDescription_default_instance_;
     new (ptr) ::SignatureDescription();
@@ -127,20 +119,12 @@ void InitDefaultsSignatureDescriptionImpl() {
   ::SignatureDescription::InitAsDefaultInstance();
 }
 
-void InitDefaultsSignatureDescription() {
-  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
-  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsSignatureDescriptionImpl);
-}
+::google::protobuf::internal::SCCInfo<0> scc_info_SignatureDescription =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsSignatureDescription}, {}};
 
-void InitDefaultsCMSG_DesfireChangeKeyImpl() {
+static void InitDefaultsCMSG_DesfireChangeKey() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
-#else
-  ::google::protobuf::internal::InitProtobufDefaults();
-#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  protobuf_iks_2eproto::InitDefaultsKeyDiversificationInfo();
   {
     void* ptr = &::_CMSG_DesfireChangeKey_default_instance_;
     new (ptr) ::CMSG_DesfireChangeKey();
@@ -149,19 +133,13 @@ void InitDefaultsCMSG_DesfireChangeKeyImpl() {
   ::CMSG_DesfireChangeKey::InitAsDefaultInstance();
 }
 
-void InitDefaultsCMSG_DesfireChangeKey() {
-  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
-  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsCMSG_DesfireChangeKeyImpl);
-}
+::google::protobuf::internal::SCCInfo<1> scc_info_CMSG_DesfireChangeKey =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsCMSG_DesfireChangeKey}, {
+      &protobuf_iks_2eproto::scc_info_KeyDiversificationInfo.base,}};
 
-void InitDefaultsSMSG_DesfireChangeKeyImpl() {
+static void InitDefaultsSMSG_DesfireChangeKey() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
-#else
-  ::google::protobuf::internal::InitProtobufDefaults();
-#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
   {
     void* ptr = &::_SMSG_DesfireChangeKey_default_instance_;
     new (ptr) ::SMSG_DesfireChangeKey();
@@ -170,19 +148,12 @@ void InitDefaultsSMSG_DesfireChangeKeyImpl() {
   ::SMSG_DesfireChangeKey::InitAsDefaultInstance();
 }
 
-void InitDefaultsSMSG_DesfireChangeKey() {
-  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
-  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsSMSG_DesfireChangeKeyImpl);
-}
+::google::protobuf::internal::SCCInfo<0> scc_info_SMSG_DesfireChangeKey =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsSMSG_DesfireChangeKey}, {}};
 
-void InitDefaultsCMSG_GenRandomImpl() {
+static void InitDefaultsCMSG_GenRandom() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
-#else
-  ::google::protobuf::internal::InitProtobufDefaults();
-#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
   {
     void* ptr = &::_CMSG_GenRandom_default_instance_;
     new (ptr) ::CMSG_GenRandom();
@@ -191,19 +162,12 @@ void InitDefaultsCMSG_GenRandomImpl() {
   ::CMSG_GenRandom::InitAsDefaultInstance();
 }
 
-void InitDefaultsCMSG_GenRandom() {
-  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
-  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsCMSG_GenRandomImpl);
-}
+::google::protobuf::internal::SCCInfo<0> scc_info_CMSG_GenRandom =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsCMSG_GenRandom}, {}};
 
-void InitDefaultsSMSG_GenRandomImpl() {
+static void InitDefaultsSMSG_GenRandom() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
-#else
-  ::google::protobuf::internal::InitProtobufDefaults();
-#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
   {
     void* ptr = &::_SMSG_GenRandom_default_instance_;
     new (ptr) ::SMSG_GenRandom();
@@ -212,20 +176,12 @@ void InitDefaultsSMSG_GenRandomImpl() {
   ::SMSG_GenRandom::InitAsDefaultInstance();
 }
 
-void InitDefaultsSMSG_GenRandom() {
-  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
-  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsSMSG_GenRandomImpl);
-}
+::google::protobuf::internal::SCCInfo<0> scc_info_SMSG_GenRandom =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsSMSG_GenRandom}, {}};
 
-void InitDefaultsCMSG_AESOperationImpl() {
+static void InitDefaultsCMSG_AESOperation() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
-#else
-  ::google::protobuf::internal::InitProtobufDefaults();
-#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  protobuf_iks_2eproto::InitDefaultsKeyDiversificationInfo();
   {
     void* ptr = &::_CMSG_AESOperation_default_instance_;
     new (ptr) ::CMSG_AESOperation();
@@ -234,20 +190,13 @@ void InitDefaultsCMSG_AESOperationImpl() {
   ::CMSG_AESOperation::InitAsDefaultInstance();
 }
 
-void InitDefaultsCMSG_AESOperation() {
-  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
-  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsCMSG_AESOperationImpl);
-}
+::google::protobuf::internal::SCCInfo<1> scc_info_CMSG_AESOperation =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsCMSG_AESOperation}, {
+      &protobuf_iks_2eproto::scc_info_KeyDiversificationInfo.base,}};
 
-void InitDefaultsSMSG_AESResultImpl() {
+static void InitDefaultsSMSG_AESResult() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
-#else
-  ::google::protobuf::internal::InitProtobufDefaults();
-#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  protobuf_iks_2eproto::InitDefaultsSignatureDescription();
   {
     void* ptr = &::_SMSG_AESResult_default_instance_;
     new (ptr) ::SMSG_AESResult();
@@ -256,20 +205,13 @@ void InitDefaultsSMSG_AESResultImpl() {
   ::SMSG_AESResult::InitAsDefaultInstance();
 }
 
-void InitDefaultsSMSG_AESResult() {
-  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
-  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsSMSG_AESResultImpl);
-}
+::google::protobuf::internal::SCCInfo<1> scc_info_SMSG_AESResult =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsSMSG_AESResult}, {
+      &protobuf_iks_2eproto::scc_info_SignatureDescription.base,}};
 
-void InitDefaultsCMSG_DesfireAESAuth_Step1Impl() {
+static void InitDefaultsCMSG_DesfireAESAuth_Step1() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
-#else
-  ::google::protobuf::internal::InitProtobufDefaults();
-#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  protobuf_iks_2eproto::InitDefaultsKeyDiversificationInfo();
   {
     void* ptr = &::_CMSG_DesfireAESAuth_Step1_default_instance_;
     new (ptr) ::CMSG_DesfireAESAuth_Step1();
@@ -278,19 +220,13 @@ void InitDefaultsCMSG_DesfireAESAuth_Step1Impl() {
   ::CMSG_DesfireAESAuth_Step1::InitAsDefaultInstance();
 }
 
-void InitDefaultsCMSG_DesfireAESAuth_Step1() {
-  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
-  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsCMSG_DesfireAESAuth_Step1Impl);
-}
+::google::protobuf::internal::SCCInfo<1> scc_info_CMSG_DesfireAESAuth_Step1 =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsCMSG_DesfireAESAuth_Step1}, {
+      &protobuf_iks_2eproto::scc_info_KeyDiversificationInfo.base,}};
 
-void InitDefaultsSMSG_DesfireAESAuth_Step1Impl() {
+static void InitDefaultsSMSG_DesfireAESAuth_Step1() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
-#else
-  ::google::protobuf::internal::InitProtobufDefaults();
-#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
   {
     void* ptr = &::_SMSG_DesfireAESAuth_Step1_default_instance_;
     new (ptr) ::SMSG_DesfireAESAuth_Step1();
@@ -299,20 +235,12 @@ void InitDefaultsSMSG_DesfireAESAuth_Step1Impl() {
   ::SMSG_DesfireAESAuth_Step1::InitAsDefaultInstance();
 }
 
-void InitDefaultsSMSG_DesfireAESAuth_Step1() {
-  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
-  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsSMSG_DesfireAESAuth_Step1Impl);
-}
+::google::protobuf::internal::SCCInfo<0> scc_info_SMSG_DesfireAESAuth_Step1 =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsSMSG_DesfireAESAuth_Step1}, {}};
 
-void InitDefaultsCMSG_DesfireISOAuth_Step1Impl() {
+static void InitDefaultsCMSG_DesfireISOAuth_Step1() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
-#else
-  ::google::protobuf::internal::InitProtobufDefaults();
-#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  protobuf_iks_2eproto::InitDefaultsKeyDiversificationInfo();
   {
     void* ptr = &::_CMSG_DesfireISOAuth_Step1_default_instance_;
     new (ptr) ::CMSG_DesfireISOAuth_Step1();
@@ -321,19 +249,13 @@ void InitDefaultsCMSG_DesfireISOAuth_Step1Impl() {
   ::CMSG_DesfireISOAuth_Step1::InitAsDefaultInstance();
 }
 
-void InitDefaultsCMSG_DesfireISOAuth_Step1() {
-  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
-  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsCMSG_DesfireISOAuth_Step1Impl);
-}
+::google::protobuf::internal::SCCInfo<1> scc_info_CMSG_DesfireISOAuth_Step1 =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsCMSG_DesfireISOAuth_Step1}, {
+      &protobuf_iks_2eproto::scc_info_KeyDiversificationInfo.base,}};
 
-void InitDefaultsSMSG_DesfireISOAuth_Step1Impl() {
+static void InitDefaultsSMSG_DesfireISOAuth_Step1() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
-#else
-  ::google::protobuf::internal::InitProtobufDefaults();
-#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
   {
     void* ptr = &::_SMSG_DesfireISOAuth_Step1_default_instance_;
     new (ptr) ::SMSG_DesfireISOAuth_Step1();
@@ -342,20 +264,12 @@ void InitDefaultsSMSG_DesfireISOAuth_Step1Impl() {
   ::SMSG_DesfireISOAuth_Step1::InitAsDefaultInstance();
 }
 
-void InitDefaultsSMSG_DesfireISOAuth_Step1() {
-  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
-  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsSMSG_DesfireISOAuth_Step1Impl);
-}
+::google::protobuf::internal::SCCInfo<0> scc_info_SMSG_DesfireISOAuth_Step1 =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsSMSG_DesfireISOAuth_Step1}, {}};
 
-void InitDefaultsCMSG_DesfireAuth_Step2Impl() {
+static void InitDefaultsCMSG_DesfireAuth_Step2() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
-#else
-  ::google::protobuf::internal::InitProtobufDefaults();
-#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  protobuf_iks_2eproto::InitDefaultsKeyDiversificationInfo();
   {
     void* ptr = &::_CMSG_DesfireAuth_Step2_default_instance_;
     new (ptr) ::CMSG_DesfireAuth_Step2();
@@ -364,19 +278,13 @@ void InitDefaultsCMSG_DesfireAuth_Step2Impl() {
   ::CMSG_DesfireAuth_Step2::InitAsDefaultInstance();
 }
 
-void InitDefaultsCMSG_DesfireAuth_Step2() {
-  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
-  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsCMSG_DesfireAuth_Step2Impl);
-}
+::google::protobuf::internal::SCCInfo<1> scc_info_CMSG_DesfireAuth_Step2 =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsCMSG_DesfireAuth_Step2}, {
+      &protobuf_iks_2eproto::scc_info_KeyDiversificationInfo.base,}};
 
-void InitDefaultsSMSG_DesfireAuth_Step2Impl() {
+static void InitDefaultsSMSG_DesfireAuth_Step2() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
-#else
-  ::google::protobuf::internal::InitProtobufDefaults();
-#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
   {
     void* ptr = &::_SMSG_DesfireAuth_Step2_default_instance_;
     new (ptr) ::SMSG_DesfireAuth_Step2();
@@ -385,9 +293,24 @@ void InitDefaultsSMSG_DesfireAuth_Step2Impl() {
   ::SMSG_DesfireAuth_Step2::InitAsDefaultInstance();
 }
 
-void InitDefaultsSMSG_DesfireAuth_Step2() {
-  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
-  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsSMSG_DesfireAuth_Step2Impl);
+::google::protobuf::internal::SCCInfo<0> scc_info_SMSG_DesfireAuth_Step2 =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsSMSG_DesfireAuth_Step2}, {}};
+
+void InitDefaults() {
+  ::google::protobuf::internal::InitSCC(&scc_info_KeyDiversificationInfo.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_SignatureDescription.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_CMSG_DesfireChangeKey.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_SMSG_DesfireChangeKey.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_CMSG_GenRandom.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_SMSG_GenRandom.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_CMSG_AESOperation.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_SMSG_AESResult.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_CMSG_DesfireAESAuth_Step1.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_SMSG_DesfireAESAuth_Step1.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_CMSG_DesfireISOAuth_Step1.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_SMSG_DesfireISOAuth_Step1.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_CMSG_DesfireAuth_Step2.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_SMSG_DesfireAuth_Step2.base);
 }
 
 ::google::protobuf::Metadata file_level_metadata[14];
@@ -549,15 +472,14 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
 
 void protobuf_AssignDescriptors() {
   AddDescriptors();
-  ::google::protobuf::MessageFactory* factory = NULL;
   AssignDescriptors(
-      "iks.proto", schemas, file_default_instances, TableStruct::offsets, factory,
+      "iks.proto", schemas, file_default_instances, TableStruct::offsets,
       file_level_metadata, file_level_enum_descriptors, NULL);
 }
 
 void protobuf_AssignDescriptorsOnce() {
-  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
-  ::google::protobuf::GoogleOnceInit(&once, &protobuf_AssignDescriptors);
+  static ::google::protobuf::internal::once_flag once;
+  ::google::protobuf::internal::call_once(once, protobuf_AssignDescriptors);
 }
 
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
@@ -632,8 +554,8 @@ void AddDescriptorsImpl() {
 }
 
 void AddDescriptors() {
-  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
-  ::google::protobuf::GoogleOnceInit(&once, &AddDescriptorsImpl);
+  static ::google::protobuf::internal::once_flag once;
+  ::google::protobuf::internal::call_once(once, AddDescriptorsImpl);
 }
 // Force AddDescriptors() to be called at dynamic initialization time.
 struct StaticDescriptorInitializer {
@@ -675,16 +597,14 @@ const int KeyDiversificationInfo::kDivInputFieldNumber;
 
 KeyDiversificationInfo::KeyDiversificationInfo()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    ::protobuf_iks_2eproto::InitDefaultsKeyDiversificationInfo();
-  }
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_iks_2eproto::scc_info_KeyDiversificationInfo.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:KeyDiversificationInfo)
 }
 KeyDiversificationInfo::KeyDiversificationInfo(const KeyDiversificationInfo& from)
   : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
-      _cached_size_(0) {
+      _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   div_input_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (from.div_input().size() > 0) {
@@ -697,7 +617,6 @@ KeyDiversificationInfo::KeyDiversificationInfo(const KeyDiversificationInfo& fro
 void KeyDiversificationInfo::SharedCtor() {
   div_input_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   div_type_ = 0;
-  _cached_size_ = 0;
 }
 
 KeyDiversificationInfo::~KeyDiversificationInfo() {
@@ -710,9 +629,7 @@ void KeyDiversificationInfo::SharedDtor() {
 }
 
 void KeyDiversificationInfo::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  _cached_size_.Set(size);
 }
 const ::google::protobuf::Descriptor* KeyDiversificationInfo::descriptor() {
   ::protobuf_iks_2eproto::protobuf_AssignDescriptorsOnce();
@@ -720,17 +637,10 @@ const ::google::protobuf::Descriptor* KeyDiversificationInfo::descriptor() {
 }
 
 const KeyDiversificationInfo& KeyDiversificationInfo::default_instance() {
-  ::protobuf_iks_2eproto::InitDefaultsKeyDiversificationInfo();
+  ::google::protobuf::internal::InitSCC(&protobuf_iks_2eproto::scc_info_KeyDiversificationInfo.base);
   return *internal_default_instance();
 }
 
-KeyDiversificationInfo* KeyDiversificationInfo::New(::google::protobuf::Arena* arena) const {
-  KeyDiversificationInfo* n = new KeyDiversificationInfo;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
 
 void KeyDiversificationInfo::Clear() {
 // @@protoc_insertion_point(message_clear_start:KeyDiversificationInfo)
@@ -749,7 +659,7 @@ bool KeyDiversificationInfo::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:KeyDiversificationInfo)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
@@ -876,9 +786,7 @@ size_t KeyDiversificationInfo::ByteSizeLong() const {
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = cached_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  SetCachedSize(cached_size);
   return total_size;
 }
 
@@ -937,10 +845,10 @@ void KeyDiversificationInfo::Swap(KeyDiversificationInfo* other) {
 }
 void KeyDiversificationInfo::InternalSwap(KeyDiversificationInfo* other) {
   using std::swap;
-  div_input_.Swap(&other->div_input_);
+  div_input_.Swap(&other->div_input_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
   swap(div_type_, other->div_type_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
-  swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata KeyDiversificationInfo::GetMetadata() const {
@@ -962,16 +870,14 @@ const int SignatureDescription::kTimestampFieldNumber;
 
 SignatureDescription::SignatureDescription()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    ::protobuf_iks_2eproto::InitDefaultsSignatureDescription();
-  }
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_iks_2eproto::scc_info_SignatureDescription.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:SignatureDescription)
 }
 SignatureDescription::SignatureDescription(const SignatureDescription& from)
   : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
-      _cached_size_(0) {
+      _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   payload_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (from.payload().size() > 0) {
@@ -993,7 +899,6 @@ void SignatureDescription::SharedCtor() {
   ::memset(&nonce_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&timestamp_) -
       reinterpret_cast<char*>(&nonce_)) + sizeof(timestamp_));
-  _cached_size_ = 0;
 }
 
 SignatureDescription::~SignatureDescription() {
@@ -1007,9 +912,7 @@ void SignatureDescription::SharedDtor() {
 }
 
 void SignatureDescription::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  _cached_size_.Set(size);
 }
 const ::google::protobuf::Descriptor* SignatureDescription::descriptor() {
   ::protobuf_iks_2eproto::protobuf_AssignDescriptorsOnce();
@@ -1017,17 +920,10 @@ const ::google::protobuf::Descriptor* SignatureDescription::descriptor() {
 }
 
 const SignatureDescription& SignatureDescription::default_instance() {
-  ::protobuf_iks_2eproto::InitDefaultsSignatureDescription();
+  ::google::protobuf::internal::InitSCC(&protobuf_iks_2eproto::scc_info_SignatureDescription.base);
   return *internal_default_instance();
 }
 
-SignatureDescription* SignatureDescription::New(::google::protobuf::Arena* arena) const {
-  SignatureDescription* n = new SignatureDescription;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
 
 void SignatureDescription::Clear() {
 // @@protoc_insertion_point(message_clear_start:SignatureDescription)
@@ -1049,7 +945,7 @@ bool SignatureDescription::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:SignatureDescription)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
@@ -1237,9 +1133,7 @@ size_t SignatureDescription::ByteSizeLong() const {
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = cached_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  SetCachedSize(cached_size);
   return total_size;
 }
 
@@ -1305,12 +1199,13 @@ void SignatureDescription::Swap(SignatureDescription* other) {
 }
 void SignatureDescription::InternalSwap(SignatureDescription* other) {
   using std::swap;
-  payload_.Swap(&other->payload_);
-  run_uuid_.Swap(&other->run_uuid_);
+  payload_.Swap(&other->payload_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  run_uuid_.Swap(&other->run_uuid_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
   swap(nonce_, other->nonce_);
   swap(timestamp_, other->timestamp_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
-  swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata SignatureDescription::GetMetadata() const {
@@ -1343,16 +1238,14 @@ const int CMSG_DesfireChangeKey::kIvFieldNumber;
 
 CMSG_DesfireChangeKey::CMSG_DesfireChangeKey()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    ::protobuf_iks_2eproto::InitDefaultsCMSG_DesfireChangeKey();
-  }
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_iks_2eproto::scc_info_CMSG_DesfireChangeKey.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:CMSG_DesfireChangeKey)
 }
 CMSG_DesfireChangeKey::CMSG_DesfireChangeKey(const CMSG_DesfireChangeKey& from)
   : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
-      _cached_size_(0) {
+      _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   old_key_uuid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (from.old_key_uuid().size() > 0) {
@@ -1409,7 +1302,6 @@ void CMSG_DesfireChangeKey::SharedCtor() {
   ::memset(&old_key_div_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&key_number_) -
       reinterpret_cast<char*>(&old_key_div_)) + sizeof(key_number_));
-  _cached_size_ = 0;
 }
 
 CMSG_DesfireChangeKey::~CMSG_DesfireChangeKey() {
@@ -1430,9 +1322,7 @@ void CMSG_DesfireChangeKey::SharedDtor() {
 }
 
 void CMSG_DesfireChangeKey::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  _cached_size_.Set(size);
 }
 const ::google::protobuf::Descriptor* CMSG_DesfireChangeKey::descriptor() {
   ::protobuf_iks_2eproto::protobuf_AssignDescriptorsOnce();
@@ -1440,17 +1330,10 @@ const ::google::protobuf::Descriptor* CMSG_DesfireChangeKey::descriptor() {
 }
 
 const CMSG_DesfireChangeKey& CMSG_DesfireChangeKey::default_instance() {
-  ::protobuf_iks_2eproto::InitDefaultsCMSG_DesfireChangeKey();
+  ::google::protobuf::internal::InitSCC(&protobuf_iks_2eproto::scc_info_CMSG_DesfireChangeKey.base);
   return *internal_default_instance();
 }
 
-CMSG_DesfireChangeKey* CMSG_DesfireChangeKey::New(::google::protobuf::Arena* arena) const {
-  CMSG_DesfireChangeKey* n = new CMSG_DesfireChangeKey;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
 
 void CMSG_DesfireChangeKey::Clear() {
 // @@protoc_insertion_point(message_clear_start:CMSG_DesfireChangeKey)
@@ -1485,7 +1368,7 @@ bool CMSG_DesfireChangeKey::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:CMSG_DesfireChangeKey)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
@@ -1719,13 +1602,13 @@ void CMSG_DesfireChangeKey::SerializeWithCachedSizes(
   // .KeyDiversificationInfo old_key_div = 8;
   if (this->has_old_key_div()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      8, *this->old_key_div_, output);
+      8, this->_internal_old_key_div(), output);
   }
 
   // .KeyDiversificationInfo new_key_div = 9;
   if (this->has_new_key_div()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      9, *this->new_key_div_, output);
+      9, this->_internal_new_key_div(), output);
   }
 
   // int32 key_number = 10;
@@ -1816,14 +1699,14 @@ void CMSG_DesfireChangeKey::SerializeWithCachedSizes(
   if (this->has_old_key_div()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        8, *this->old_key_div_, deterministic, target);
+        8, this->_internal_old_key_div(), deterministic, target);
   }
 
   // .KeyDiversificationInfo new_key_div = 9;
   if (this->has_new_key_div()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        9, *this->new_key_div_, deterministic, target);
+        9, this->_internal_new_key_div(), deterministic, target);
   }
 
   // int32 key_number = 10;
@@ -1908,14 +1791,14 @@ size_t CMSG_DesfireChangeKey::ByteSizeLong() const {
   if (this->has_old_key_div()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
-        *this->old_key_div_);
+        *old_key_div_);
   }
 
   // .KeyDiversificationInfo new_key_div = 9;
   if (this->has_new_key_div()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
-        *this->new_key_div_);
+        *new_key_div_);
   }
 
   // bool change_same_key = 5;
@@ -1931,9 +1814,7 @@ size_t CMSG_DesfireChangeKey::ByteSizeLong() const {
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = cached_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  SetCachedSize(cached_size);
   return total_size;
 }
 
@@ -2025,19 +1906,25 @@ void CMSG_DesfireChangeKey::Swap(CMSG_DesfireChangeKey* other) {
 }
 void CMSG_DesfireChangeKey::InternalSwap(CMSG_DesfireChangeKey* other) {
   using std::swap;
-  old_key_uuid_.Swap(&other->old_key_uuid_);
-  old_key_bytes_.Swap(&other->old_key_bytes_);
-  new_key_uuid_.Swap(&other->new_key_uuid_);
-  new_key_bytes_.Swap(&other->new_key_bytes_);
-  session_key_uuid_.Swap(&other->session_key_uuid_);
-  session_key_.Swap(&other->session_key_);
-  iv_.Swap(&other->iv_);
+  old_key_uuid_.Swap(&other->old_key_uuid_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  old_key_bytes_.Swap(&other->old_key_bytes_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  new_key_uuid_.Swap(&other->new_key_uuid_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  new_key_bytes_.Swap(&other->new_key_bytes_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  session_key_uuid_.Swap(&other->session_key_uuid_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  session_key_.Swap(&other->session_key_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  iv_.Swap(&other->iv_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
   swap(old_key_div_, other->old_key_div_);
   swap(new_key_div_, other->new_key_div_);
   swap(change_same_key_, other->change_same_key_);
   swap(key_number_, other->key_number_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
-  swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata CMSG_DesfireChangeKey::GetMetadata() const {
@@ -2056,16 +1943,14 @@ const int SMSG_DesfireChangeKey::kCryptogramFieldNumber;
 
 SMSG_DesfireChangeKey::SMSG_DesfireChangeKey()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    ::protobuf_iks_2eproto::InitDefaultsSMSG_DesfireChangeKey();
-  }
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_iks_2eproto::scc_info_SMSG_DesfireChangeKey.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:SMSG_DesfireChangeKey)
 }
 SMSG_DesfireChangeKey::SMSG_DesfireChangeKey(const SMSG_DesfireChangeKey& from)
   : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
-      _cached_size_(0) {
+      _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   cryptogram_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (from.cryptogram().size() > 0) {
@@ -2076,7 +1961,6 @@ SMSG_DesfireChangeKey::SMSG_DesfireChangeKey(const SMSG_DesfireChangeKey& from)
 
 void SMSG_DesfireChangeKey::SharedCtor() {
   cryptogram_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  _cached_size_ = 0;
 }
 
 SMSG_DesfireChangeKey::~SMSG_DesfireChangeKey() {
@@ -2089,9 +1973,7 @@ void SMSG_DesfireChangeKey::SharedDtor() {
 }
 
 void SMSG_DesfireChangeKey::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  _cached_size_.Set(size);
 }
 const ::google::protobuf::Descriptor* SMSG_DesfireChangeKey::descriptor() {
   ::protobuf_iks_2eproto::protobuf_AssignDescriptorsOnce();
@@ -2099,17 +1981,10 @@ const ::google::protobuf::Descriptor* SMSG_DesfireChangeKey::descriptor() {
 }
 
 const SMSG_DesfireChangeKey& SMSG_DesfireChangeKey::default_instance() {
-  ::protobuf_iks_2eproto::InitDefaultsSMSG_DesfireChangeKey();
+  ::google::protobuf::internal::InitSCC(&protobuf_iks_2eproto::scc_info_SMSG_DesfireChangeKey.base);
   return *internal_default_instance();
 }
 
-SMSG_DesfireChangeKey* SMSG_DesfireChangeKey::New(::google::protobuf::Arena* arena) const {
-  SMSG_DesfireChangeKey* n = new SMSG_DesfireChangeKey;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
 
 void SMSG_DesfireChangeKey::Clear() {
 // @@protoc_insertion_point(message_clear_start:SMSG_DesfireChangeKey)
@@ -2127,7 +2002,7 @@ bool SMSG_DesfireChangeKey::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:SMSG_DesfireChangeKey)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
@@ -2221,9 +2096,7 @@ size_t SMSG_DesfireChangeKey::ByteSizeLong() const {
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = cached_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  SetCachedSize(cached_size);
   return total_size;
 }
 
@@ -2279,9 +2152,9 @@ void SMSG_DesfireChangeKey::Swap(SMSG_DesfireChangeKey* other) {
 }
 void SMSG_DesfireChangeKey::InternalSwap(SMSG_DesfireChangeKey* other) {
   using std::swap;
-  cryptogram_.Swap(&other->cryptogram_);
+  cryptogram_.Swap(&other->cryptogram_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
   _internal_metadata_.Swap(&other->_internal_metadata_);
-  swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata SMSG_DesfireChangeKey::GetMetadata() const {
@@ -2300,16 +2173,14 @@ const int CMSG_GenRandom::kSizeFieldNumber;
 
 CMSG_GenRandom::CMSG_GenRandom()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    ::protobuf_iks_2eproto::InitDefaultsCMSG_GenRandom();
-  }
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_iks_2eproto::scc_info_CMSG_GenRandom.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:CMSG_GenRandom)
 }
 CMSG_GenRandom::CMSG_GenRandom(const CMSG_GenRandom& from)
   : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
-      _cached_size_(0) {
+      _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   size_ = from.size_;
   // @@protoc_insertion_point(copy_constructor:CMSG_GenRandom)
@@ -2317,7 +2188,6 @@ CMSG_GenRandom::CMSG_GenRandom(const CMSG_GenRandom& from)
 
 void CMSG_GenRandom::SharedCtor() {
   size_ = 0;
-  _cached_size_ = 0;
 }
 
 CMSG_GenRandom::~CMSG_GenRandom() {
@@ -2329,9 +2199,7 @@ void CMSG_GenRandom::SharedDtor() {
 }
 
 void CMSG_GenRandom::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  _cached_size_.Set(size);
 }
 const ::google::protobuf::Descriptor* CMSG_GenRandom::descriptor() {
   ::protobuf_iks_2eproto::protobuf_AssignDescriptorsOnce();
@@ -2339,17 +2207,10 @@ const ::google::protobuf::Descriptor* CMSG_GenRandom::descriptor() {
 }
 
 const CMSG_GenRandom& CMSG_GenRandom::default_instance() {
-  ::protobuf_iks_2eproto::InitDefaultsCMSG_GenRandom();
+  ::google::protobuf::internal::InitSCC(&protobuf_iks_2eproto::scc_info_CMSG_GenRandom.base);
   return *internal_default_instance();
 }
 
-CMSG_GenRandom* CMSG_GenRandom::New(::google::protobuf::Arena* arena) const {
-  CMSG_GenRandom* n = new CMSG_GenRandom;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
 
 void CMSG_GenRandom::Clear() {
 // @@protoc_insertion_point(message_clear_start:CMSG_GenRandom)
@@ -2367,7 +2228,7 @@ bool CMSG_GenRandom::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:CMSG_GenRandom)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
@@ -2460,9 +2321,7 @@ size_t CMSG_GenRandom::ByteSizeLong() const {
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = cached_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  SetCachedSize(cached_size);
   return total_size;
 }
 
@@ -2519,7 +2378,6 @@ void CMSG_GenRandom::InternalSwap(CMSG_GenRandom* other) {
   using std::swap;
   swap(size_, other->size_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
-  swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata CMSG_GenRandom::GetMetadata() const {
@@ -2538,16 +2396,14 @@ const int SMSG_GenRandom::kRandomBytesFieldNumber;
 
 SMSG_GenRandom::SMSG_GenRandom()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    ::protobuf_iks_2eproto::InitDefaultsSMSG_GenRandom();
-  }
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_iks_2eproto::scc_info_SMSG_GenRandom.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:SMSG_GenRandom)
 }
 SMSG_GenRandom::SMSG_GenRandom(const SMSG_GenRandom& from)
   : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
-      _cached_size_(0) {
+      _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   randombytes_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (from.randombytes().size() > 0) {
@@ -2558,7 +2414,6 @@ SMSG_GenRandom::SMSG_GenRandom(const SMSG_GenRandom& from)
 
 void SMSG_GenRandom::SharedCtor() {
   randombytes_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  _cached_size_ = 0;
 }
 
 SMSG_GenRandom::~SMSG_GenRandom() {
@@ -2571,9 +2426,7 @@ void SMSG_GenRandom::SharedDtor() {
 }
 
 void SMSG_GenRandom::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  _cached_size_.Set(size);
 }
 const ::google::protobuf::Descriptor* SMSG_GenRandom::descriptor() {
   ::protobuf_iks_2eproto::protobuf_AssignDescriptorsOnce();
@@ -2581,17 +2434,10 @@ const ::google::protobuf::Descriptor* SMSG_GenRandom::descriptor() {
 }
 
 const SMSG_GenRandom& SMSG_GenRandom::default_instance() {
-  ::protobuf_iks_2eproto::InitDefaultsSMSG_GenRandom();
+  ::google::protobuf::internal::InitSCC(&protobuf_iks_2eproto::scc_info_SMSG_GenRandom.base);
   return *internal_default_instance();
 }
 
-SMSG_GenRandom* SMSG_GenRandom::New(::google::protobuf::Arena* arena) const {
-  SMSG_GenRandom* n = new SMSG_GenRandom;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
 
 void SMSG_GenRandom::Clear() {
 // @@protoc_insertion_point(message_clear_start:SMSG_GenRandom)
@@ -2609,7 +2455,7 @@ bool SMSG_GenRandom::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:SMSG_GenRandom)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
@@ -2703,9 +2549,7 @@ size_t SMSG_GenRandom::ByteSizeLong() const {
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = cached_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  SetCachedSize(cached_size);
   return total_size;
 }
 
@@ -2761,9 +2605,9 @@ void SMSG_GenRandom::Swap(SMSG_GenRandom* other) {
 }
 void SMSG_GenRandom::InternalSwap(SMSG_GenRandom* other) {
   using std::swap;
-  randombytes_.Swap(&other->randombytes_);
+  randombytes_.Swap(&other->randombytes_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
   _internal_metadata_.Swap(&other->_internal_metadata_);
-  swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata SMSG_GenRandom::GetMetadata() const {
@@ -2788,16 +2632,14 @@ const int CMSG_AESOperation::kDiversificationFieldNumber;
 
 CMSG_AESOperation::CMSG_AESOperation()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    ::protobuf_iks_2eproto::InitDefaultsCMSG_AESOperation();
-  }
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_iks_2eproto::scc_info_CMSG_AESOperation.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:CMSG_AESOperation)
 }
 CMSG_AESOperation::CMSG_AESOperation(const CMSG_AESOperation& from)
   : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
-      _cached_size_(0) {
+      _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   key_uuid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (from.key_uuid().size() > 0) {
@@ -2827,7 +2669,6 @@ void CMSG_AESOperation::SharedCtor() {
   ::memset(&diversification_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&request_signature_) -
       reinterpret_cast<char*>(&diversification_)) + sizeof(request_signature_));
-  _cached_size_ = 0;
 }
 
 CMSG_AESOperation::~CMSG_AESOperation() {
@@ -2843,9 +2684,7 @@ void CMSG_AESOperation::SharedDtor() {
 }
 
 void CMSG_AESOperation::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  _cached_size_.Set(size);
 }
 const ::google::protobuf::Descriptor* CMSG_AESOperation::descriptor() {
   ::protobuf_iks_2eproto::protobuf_AssignDescriptorsOnce();
@@ -2853,17 +2692,10 @@ const ::google::protobuf::Descriptor* CMSG_AESOperation::descriptor() {
 }
 
 const CMSG_AESOperation& CMSG_AESOperation::default_instance() {
-  ::protobuf_iks_2eproto::InitDefaultsCMSG_AESOperation();
+  ::google::protobuf::internal::InitSCC(&protobuf_iks_2eproto::scc_info_CMSG_AESOperation.base);
   return *internal_default_instance();
 }
 
-CMSG_AESOperation* CMSG_AESOperation::New(::google::protobuf::Arena* arena) const {
-  CMSG_AESOperation* n = new CMSG_AESOperation;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
 
 void CMSG_AESOperation::Clear() {
 // @@protoc_insertion_point(message_clear_start:CMSG_AESOperation)
@@ -2888,7 +2720,7 @@ bool CMSG_AESOperation::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:CMSG_AESOperation)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
@@ -3014,7 +2846,7 @@ void CMSG_AESOperation::SerializeWithCachedSizes(
   // .KeyDiversificationInfo diversification = 6;
   if (this->has_diversification()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      6, *this->diversification_, output);
+      6, this->_internal_diversification(), output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -3065,7 +2897,7 @@ void CMSG_AESOperation::SerializeWithCachedSizes(
   if (this->has_diversification()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        6, *this->diversification_, deterministic, target);
+        6, this->_internal_diversification(), deterministic, target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -3110,7 +2942,7 @@ size_t CMSG_AESOperation::ByteSizeLong() const {
   if (this->has_diversification()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
-        *this->diversification_);
+        *diversification_);
   }
 
   // bool request_signature = 5;
@@ -3119,9 +2951,7 @@ size_t CMSG_AESOperation::ByteSizeLong() const {
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = cached_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  SetCachedSize(cached_size);
   return total_size;
 }
 
@@ -3191,13 +3021,15 @@ void CMSG_AESOperation::Swap(CMSG_AESOperation* other) {
 }
 void CMSG_AESOperation::InternalSwap(CMSG_AESOperation* other) {
   using std::swap;
-  key_uuid_.Swap(&other->key_uuid_);
-  payload_.Swap(&other->payload_);
-  iv_.Swap(&other->iv_);
+  key_uuid_.Swap(&other->key_uuid_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  payload_.Swap(&other->payload_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  iv_.Swap(&other->iv_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
   swap(diversification_, other->diversification_);
   swap(request_signature_, other->request_signature_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
-  swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata CMSG_AESOperation::GetMetadata() const {
@@ -3220,16 +3052,14 @@ const int SMSG_AESResult::kSignatureFieldNumber;
 
 SMSG_AESResult::SMSG_AESResult()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    ::protobuf_iks_2eproto::InitDefaultsSMSG_AESResult();
-  }
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_iks_2eproto::scc_info_SMSG_AESResult.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:SMSG_AESResult)
 }
 SMSG_AESResult::SMSG_AESResult(const SMSG_AESResult& from)
   : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
-      _cached_size_(0) {
+      _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   payload_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (from.payload().size() > 0) {
@@ -3251,7 +3081,6 @@ void SMSG_AESResult::SharedCtor() {
   payload_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   signature_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   signaturedescription_ = NULL;
-  _cached_size_ = 0;
 }
 
 SMSG_AESResult::~SMSG_AESResult() {
@@ -3266,9 +3095,7 @@ void SMSG_AESResult::SharedDtor() {
 }
 
 void SMSG_AESResult::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  _cached_size_.Set(size);
 }
 const ::google::protobuf::Descriptor* SMSG_AESResult::descriptor() {
   ::protobuf_iks_2eproto::protobuf_AssignDescriptorsOnce();
@@ -3276,17 +3103,10 @@ const ::google::protobuf::Descriptor* SMSG_AESResult::descriptor() {
 }
 
 const SMSG_AESResult& SMSG_AESResult::default_instance() {
-  ::protobuf_iks_2eproto::InitDefaultsSMSG_AESResult();
+  ::google::protobuf::internal::InitSCC(&protobuf_iks_2eproto::scc_info_SMSG_AESResult.base);
   return *internal_default_instance();
 }
 
-SMSG_AESResult* SMSG_AESResult::New(::google::protobuf::Arena* arena) const {
-  SMSG_AESResult* n = new SMSG_AESResult;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
 
 void SMSG_AESResult::Clear() {
 // @@protoc_insertion_point(message_clear_start:SMSG_AESResult)
@@ -3309,7 +3129,7 @@ bool SMSG_AESResult::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:SMSG_AESResult)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
@@ -3384,7 +3204,7 @@ void SMSG_AESResult::SerializeWithCachedSizes(
   // .SignatureDescription signatureDescription = 2;
   if (this->has_signaturedescription()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      2, *this->signaturedescription_, output);
+      2, this->_internal_signaturedescription(), output);
   }
 
   // bytes signature = 3;
@@ -3418,7 +3238,7 @@ void SMSG_AESResult::SerializeWithCachedSizes(
   if (this->has_signaturedescription()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        2, *this->signaturedescription_, deterministic, target);
+        2, this->_internal_signaturedescription(), deterministic, target);
   }
 
   // bytes signature = 3;
@@ -3463,13 +3283,11 @@ size_t SMSG_AESResult::ByteSizeLong() const {
   if (this->has_signaturedescription()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
-        *this->signaturedescription_);
+        *signaturedescription_);
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = cached_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  SetCachedSize(cached_size);
   return total_size;
 }
 
@@ -3532,11 +3350,12 @@ void SMSG_AESResult::Swap(SMSG_AESResult* other) {
 }
 void SMSG_AESResult::InternalSwap(SMSG_AESResult* other) {
   using std::swap;
-  payload_.Swap(&other->payload_);
-  signature_.Swap(&other->signature_);
+  payload_.Swap(&other->payload_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  signature_.Swap(&other->signature_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
   swap(signaturedescription_, other->signaturedescription_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
-  swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata SMSG_AESResult::GetMetadata() const {
@@ -3559,16 +3378,14 @@ const int CMSG_DesfireAESAuth_Step1::kDiversificationFieldNumber;
 
 CMSG_DesfireAESAuth_Step1::CMSG_DesfireAESAuth_Step1()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    ::protobuf_iks_2eproto::InitDefaultsCMSG_DesfireAESAuth_Step1();
-  }
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_iks_2eproto::scc_info_CMSG_DesfireAESAuth_Step1.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:CMSG_DesfireAESAuth_Step1)
 }
 CMSG_DesfireAESAuth_Step1::CMSG_DesfireAESAuth_Step1(const CMSG_DesfireAESAuth_Step1& from)
   : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
-      _cached_size_(0) {
+      _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   key_uuid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (from.key_uuid().size() > 0) {
@@ -3590,7 +3407,6 @@ void CMSG_DesfireAESAuth_Step1::SharedCtor() {
   key_uuid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   encrypted_random_picc_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   diversification_ = NULL;
-  _cached_size_ = 0;
 }
 
 CMSG_DesfireAESAuth_Step1::~CMSG_DesfireAESAuth_Step1() {
@@ -3605,9 +3421,7 @@ void CMSG_DesfireAESAuth_Step1::SharedDtor() {
 }
 
 void CMSG_DesfireAESAuth_Step1::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  _cached_size_.Set(size);
 }
 const ::google::protobuf::Descriptor* CMSG_DesfireAESAuth_Step1::descriptor() {
   ::protobuf_iks_2eproto::protobuf_AssignDescriptorsOnce();
@@ -3615,17 +3429,10 @@ const ::google::protobuf::Descriptor* CMSG_DesfireAESAuth_Step1::descriptor() {
 }
 
 const CMSG_DesfireAESAuth_Step1& CMSG_DesfireAESAuth_Step1::default_instance() {
-  ::protobuf_iks_2eproto::InitDefaultsCMSG_DesfireAESAuth_Step1();
+  ::google::protobuf::internal::InitSCC(&protobuf_iks_2eproto::scc_info_CMSG_DesfireAESAuth_Step1.base);
   return *internal_default_instance();
 }
 
-CMSG_DesfireAESAuth_Step1* CMSG_DesfireAESAuth_Step1::New(::google::protobuf::Arena* arena) const {
-  CMSG_DesfireAESAuth_Step1* n = new CMSG_DesfireAESAuth_Step1;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
 
 void CMSG_DesfireAESAuth_Step1::Clear() {
 // @@protoc_insertion_point(message_clear_start:CMSG_DesfireAESAuth_Step1)
@@ -3648,7 +3455,7 @@ bool CMSG_DesfireAESAuth_Step1::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:CMSG_DesfireAESAuth_Step1)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
@@ -3737,7 +3544,7 @@ void CMSG_DesfireAESAuth_Step1::SerializeWithCachedSizes(
   // .KeyDiversificationInfo diversification = 3;
   if (this->has_diversification()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      3, *this->diversification_, output);
+      3, this->_internal_diversification(), output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -3776,7 +3583,7 @@ void CMSG_DesfireAESAuth_Step1::SerializeWithCachedSizes(
   if (this->has_diversification()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        3, *this->diversification_, deterministic, target);
+        3, this->_internal_diversification(), deterministic, target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -3814,13 +3621,11 @@ size_t CMSG_DesfireAESAuth_Step1::ByteSizeLong() const {
   if (this->has_diversification()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
-        *this->diversification_);
+        *diversification_);
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = cached_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  SetCachedSize(cached_size);
   return total_size;
 }
 
@@ -3883,11 +3688,12 @@ void CMSG_DesfireAESAuth_Step1::Swap(CMSG_DesfireAESAuth_Step1* other) {
 }
 void CMSG_DesfireAESAuth_Step1::InternalSwap(CMSG_DesfireAESAuth_Step1* other) {
   using std::swap;
-  key_uuid_.Swap(&other->key_uuid_);
-  encrypted_random_picc_.Swap(&other->encrypted_random_picc_);
+  key_uuid_.Swap(&other->key_uuid_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  encrypted_random_picc_.Swap(&other->encrypted_random_picc_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
   swap(diversification_, other->diversification_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
-  swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata CMSG_DesfireAESAuth_Step1::GetMetadata() const {
@@ -3908,16 +3714,14 @@ const int SMSG_DesfireAESAuth_Step1::kAuthContextIdFieldNumber;
 
 SMSG_DesfireAESAuth_Step1::SMSG_DesfireAESAuth_Step1()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    ::protobuf_iks_2eproto::InitDefaultsSMSG_DesfireAESAuth_Step1();
-  }
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_iks_2eproto::scc_info_SMSG_DesfireAESAuth_Step1.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:SMSG_DesfireAESAuth_Step1)
 }
 SMSG_DesfireAESAuth_Step1::SMSG_DesfireAESAuth_Step1(const SMSG_DesfireAESAuth_Step1& from)
   : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
-      _cached_size_(0) {
+      _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   encrypted_cryptogram_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (from.encrypted_cryptogram().size() > 0) {
@@ -3935,7 +3739,6 @@ void SMSG_DesfireAESAuth_Step1::SharedCtor() {
   encrypted_cryptogram_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   auth_context_id_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   success_ = false;
-  _cached_size_ = 0;
 }
 
 SMSG_DesfireAESAuth_Step1::~SMSG_DesfireAESAuth_Step1() {
@@ -3949,9 +3752,7 @@ void SMSG_DesfireAESAuth_Step1::SharedDtor() {
 }
 
 void SMSG_DesfireAESAuth_Step1::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  _cached_size_.Set(size);
 }
 const ::google::protobuf::Descriptor* SMSG_DesfireAESAuth_Step1::descriptor() {
   ::protobuf_iks_2eproto::protobuf_AssignDescriptorsOnce();
@@ -3959,17 +3760,10 @@ const ::google::protobuf::Descriptor* SMSG_DesfireAESAuth_Step1::descriptor() {
 }
 
 const SMSG_DesfireAESAuth_Step1& SMSG_DesfireAESAuth_Step1::default_instance() {
-  ::protobuf_iks_2eproto::InitDefaultsSMSG_DesfireAESAuth_Step1();
+  ::google::protobuf::internal::InitSCC(&protobuf_iks_2eproto::scc_info_SMSG_DesfireAESAuth_Step1.base);
   return *internal_default_instance();
 }
 
-SMSG_DesfireAESAuth_Step1* SMSG_DesfireAESAuth_Step1::New(::google::protobuf::Arena* arena) const {
-  SMSG_DesfireAESAuth_Step1* n = new SMSG_DesfireAESAuth_Step1;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
 
 void SMSG_DesfireAESAuth_Step1::Clear() {
 // @@protoc_insertion_point(message_clear_start:SMSG_DesfireAESAuth_Step1)
@@ -3989,7 +3783,7 @@ bool SMSG_DesfireAESAuth_Step1::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:SMSG_DesfireAESAuth_Step1)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
@@ -4144,9 +3938,7 @@ size_t SMSG_DesfireAESAuth_Step1::ByteSizeLong() const {
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = cached_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  SetCachedSize(cached_size);
   return total_size;
 }
 
@@ -4209,11 +4001,12 @@ void SMSG_DesfireAESAuth_Step1::Swap(SMSG_DesfireAESAuth_Step1* other) {
 }
 void SMSG_DesfireAESAuth_Step1::InternalSwap(SMSG_DesfireAESAuth_Step1* other) {
   using std::swap;
-  encrypted_cryptogram_.Swap(&other->encrypted_cryptogram_);
-  auth_context_id_.Swap(&other->auth_context_id_);
+  encrypted_cryptogram_.Swap(&other->encrypted_cryptogram_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  auth_context_id_.Swap(&other->auth_context_id_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
   swap(success_, other->success_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
-  swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata SMSG_DesfireAESAuth_Step1::GetMetadata() const {
@@ -4236,16 +4029,14 @@ const int CMSG_DesfireISOAuth_Step1::kDiversificationFieldNumber;
 
 CMSG_DesfireISOAuth_Step1::CMSG_DesfireISOAuth_Step1()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    ::protobuf_iks_2eproto::InitDefaultsCMSG_DesfireISOAuth_Step1();
-  }
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_iks_2eproto::scc_info_CMSG_DesfireISOAuth_Step1.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:CMSG_DesfireISOAuth_Step1)
 }
 CMSG_DesfireISOAuth_Step1::CMSG_DesfireISOAuth_Step1(const CMSG_DesfireISOAuth_Step1& from)
   : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
-      _cached_size_(0) {
+      _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   key_uuid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (from.key_uuid().size() > 0) {
@@ -4267,7 +4058,6 @@ void CMSG_DesfireISOAuth_Step1::SharedCtor() {
   key_uuid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   random_picc_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   diversification_ = NULL;
-  _cached_size_ = 0;
 }
 
 CMSG_DesfireISOAuth_Step1::~CMSG_DesfireISOAuth_Step1() {
@@ -4282,9 +4072,7 @@ void CMSG_DesfireISOAuth_Step1::SharedDtor() {
 }
 
 void CMSG_DesfireISOAuth_Step1::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  _cached_size_.Set(size);
 }
 const ::google::protobuf::Descriptor* CMSG_DesfireISOAuth_Step1::descriptor() {
   ::protobuf_iks_2eproto::protobuf_AssignDescriptorsOnce();
@@ -4292,17 +4080,10 @@ const ::google::protobuf::Descriptor* CMSG_DesfireISOAuth_Step1::descriptor() {
 }
 
 const CMSG_DesfireISOAuth_Step1& CMSG_DesfireISOAuth_Step1::default_instance() {
-  ::protobuf_iks_2eproto::InitDefaultsCMSG_DesfireISOAuth_Step1();
+  ::google::protobuf::internal::InitSCC(&protobuf_iks_2eproto::scc_info_CMSG_DesfireISOAuth_Step1.base);
   return *internal_default_instance();
 }
 
-CMSG_DesfireISOAuth_Step1* CMSG_DesfireISOAuth_Step1::New(::google::protobuf::Arena* arena) const {
-  CMSG_DesfireISOAuth_Step1* n = new CMSG_DesfireISOAuth_Step1;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
 
 void CMSG_DesfireISOAuth_Step1::Clear() {
 // @@protoc_insertion_point(message_clear_start:CMSG_DesfireISOAuth_Step1)
@@ -4325,7 +4106,7 @@ bool CMSG_DesfireISOAuth_Step1::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:CMSG_DesfireISOAuth_Step1)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
@@ -4414,7 +4195,7 @@ void CMSG_DesfireISOAuth_Step1::SerializeWithCachedSizes(
   // .KeyDiversificationInfo diversification = 3;
   if (this->has_diversification()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      3, *this->diversification_, output);
+      3, this->_internal_diversification(), output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -4453,7 +4234,7 @@ void CMSG_DesfireISOAuth_Step1::SerializeWithCachedSizes(
   if (this->has_diversification()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        3, *this->diversification_, deterministic, target);
+        3, this->_internal_diversification(), deterministic, target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -4491,13 +4272,11 @@ size_t CMSG_DesfireISOAuth_Step1::ByteSizeLong() const {
   if (this->has_diversification()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
-        *this->diversification_);
+        *diversification_);
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = cached_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  SetCachedSize(cached_size);
   return total_size;
 }
 
@@ -4560,11 +4339,12 @@ void CMSG_DesfireISOAuth_Step1::Swap(CMSG_DesfireISOAuth_Step1* other) {
 }
 void CMSG_DesfireISOAuth_Step1::InternalSwap(CMSG_DesfireISOAuth_Step1* other) {
   using std::swap;
-  key_uuid_.Swap(&other->key_uuid_);
-  random_picc_.Swap(&other->random_picc_);
+  key_uuid_.Swap(&other->key_uuid_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  random_picc_.Swap(&other->random_picc_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
   swap(diversification_, other->diversification_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
-  swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata CMSG_DesfireISOAuth_Step1::GetMetadata() const {
@@ -4586,16 +4366,14 @@ const int SMSG_DesfireISOAuth_Step1::kAuthContextIdFieldNumber;
 
 SMSG_DesfireISOAuth_Step1::SMSG_DesfireISOAuth_Step1()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    ::protobuf_iks_2eproto::InitDefaultsSMSG_DesfireISOAuth_Step1();
-  }
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_iks_2eproto::scc_info_SMSG_DesfireISOAuth_Step1.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:SMSG_DesfireISOAuth_Step1)
 }
 SMSG_DesfireISOAuth_Step1::SMSG_DesfireISOAuth_Step1(const SMSG_DesfireISOAuth_Step1& from)
   : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
-      _cached_size_(0) {
+      _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   random2_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (from.random2().size() > 0) {
@@ -4618,7 +4396,6 @@ void SMSG_DesfireISOAuth_Step1::SharedCtor() {
   encrypted_cryptogram_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   auth_context_id_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   success_ = false;
-  _cached_size_ = 0;
 }
 
 SMSG_DesfireISOAuth_Step1::~SMSG_DesfireISOAuth_Step1() {
@@ -4633,9 +4410,7 @@ void SMSG_DesfireISOAuth_Step1::SharedDtor() {
 }
 
 void SMSG_DesfireISOAuth_Step1::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  _cached_size_.Set(size);
 }
 const ::google::protobuf::Descriptor* SMSG_DesfireISOAuth_Step1::descriptor() {
   ::protobuf_iks_2eproto::protobuf_AssignDescriptorsOnce();
@@ -4643,17 +4418,10 @@ const ::google::protobuf::Descriptor* SMSG_DesfireISOAuth_Step1::descriptor() {
 }
 
 const SMSG_DesfireISOAuth_Step1& SMSG_DesfireISOAuth_Step1::default_instance() {
-  ::protobuf_iks_2eproto::InitDefaultsSMSG_DesfireISOAuth_Step1();
+  ::google::protobuf::internal::InitSCC(&protobuf_iks_2eproto::scc_info_SMSG_DesfireISOAuth_Step1.base);
   return *internal_default_instance();
 }
 
-SMSG_DesfireISOAuth_Step1* SMSG_DesfireISOAuth_Step1::New(::google::protobuf::Arena* arena) const {
-  SMSG_DesfireISOAuth_Step1* n = new SMSG_DesfireISOAuth_Step1;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
 
 void SMSG_DesfireISOAuth_Step1::Clear() {
 // @@protoc_insertion_point(message_clear_start:SMSG_DesfireISOAuth_Step1)
@@ -4674,7 +4442,7 @@ bool SMSG_DesfireISOAuth_Step1::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:SMSG_DesfireISOAuth_Step1)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
@@ -4861,9 +4629,7 @@ size_t SMSG_DesfireISOAuth_Step1::ByteSizeLong() const {
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = cached_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  SetCachedSize(cached_size);
   return total_size;
 }
 
@@ -4930,12 +4696,14 @@ void SMSG_DesfireISOAuth_Step1::Swap(SMSG_DesfireISOAuth_Step1* other) {
 }
 void SMSG_DesfireISOAuth_Step1::InternalSwap(SMSG_DesfireISOAuth_Step1* other) {
   using std::swap;
-  random2_.Swap(&other->random2_);
-  encrypted_cryptogram_.Swap(&other->encrypted_cryptogram_);
-  auth_context_id_.Swap(&other->auth_context_id_);
+  random2_.Swap(&other->random2_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  encrypted_cryptogram_.Swap(&other->encrypted_cryptogram_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  auth_context_id_.Swap(&other->auth_context_id_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
   swap(success_, other->success_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
-  swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata SMSG_DesfireISOAuth_Step1::GetMetadata() const {
@@ -4959,16 +4727,14 @@ const int CMSG_DesfireAuth_Step2::kDiversificationFieldNumber;
 
 CMSG_DesfireAuth_Step2::CMSG_DesfireAuth_Step2()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    ::protobuf_iks_2eproto::InitDefaultsCMSG_DesfireAuth_Step2();
-  }
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_iks_2eproto::scc_info_CMSG_DesfireAuth_Step2.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:CMSG_DesfireAuth_Step2)
 }
 CMSG_DesfireAuth_Step2::CMSG_DesfireAuth_Step2(const CMSG_DesfireAuth_Step2& from)
   : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
-      _cached_size_(0) {
+      _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   key_uuid_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (from.key_uuid().size() > 0) {
@@ -4995,7 +4761,6 @@ void CMSG_DesfireAuth_Step2::SharedCtor() {
   picc_cryptogram_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   auth_context_id_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   diversification_ = NULL;
-  _cached_size_ = 0;
 }
 
 CMSG_DesfireAuth_Step2::~CMSG_DesfireAuth_Step2() {
@@ -5011,9 +4776,7 @@ void CMSG_DesfireAuth_Step2::SharedDtor() {
 }
 
 void CMSG_DesfireAuth_Step2::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  _cached_size_.Set(size);
 }
 const ::google::protobuf::Descriptor* CMSG_DesfireAuth_Step2::descriptor() {
   ::protobuf_iks_2eproto::protobuf_AssignDescriptorsOnce();
@@ -5021,17 +4784,10 @@ const ::google::protobuf::Descriptor* CMSG_DesfireAuth_Step2::descriptor() {
 }
 
 const CMSG_DesfireAuth_Step2& CMSG_DesfireAuth_Step2::default_instance() {
-  ::protobuf_iks_2eproto::InitDefaultsCMSG_DesfireAuth_Step2();
+  ::google::protobuf::internal::InitSCC(&protobuf_iks_2eproto::scc_info_CMSG_DesfireAuth_Step2.base);
   return *internal_default_instance();
 }
 
-CMSG_DesfireAuth_Step2* CMSG_DesfireAuth_Step2::New(::google::protobuf::Arena* arena) const {
-  CMSG_DesfireAuth_Step2* n = new CMSG_DesfireAuth_Step2;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
 
 void CMSG_DesfireAuth_Step2::Clear() {
 // @@protoc_insertion_point(message_clear_start:CMSG_DesfireAuth_Step2)
@@ -5055,7 +4811,7 @@ bool CMSG_DesfireAuth_Step2::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:CMSG_DesfireAuth_Step2)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
@@ -5162,7 +4918,7 @@ void CMSG_DesfireAuth_Step2::SerializeWithCachedSizes(
   // .KeyDiversificationInfo diversification = 4;
   if (this->has_diversification()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      4, *this->diversification_, output);
+      4, this->_internal_diversification(), output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -5208,7 +4964,7 @@ void CMSG_DesfireAuth_Step2::SerializeWithCachedSizes(
   if (this->has_diversification()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        4, *this->diversification_, deterministic, target);
+        4, this->_internal_diversification(), deterministic, target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -5253,13 +5009,11 @@ size_t CMSG_DesfireAuth_Step2::ByteSizeLong() const {
   if (this->has_diversification()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSize(
-        *this->diversification_);
+        *diversification_);
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = cached_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  SetCachedSize(cached_size);
   return total_size;
 }
 
@@ -5326,12 +5080,14 @@ void CMSG_DesfireAuth_Step2::Swap(CMSG_DesfireAuth_Step2* other) {
 }
 void CMSG_DesfireAuth_Step2::InternalSwap(CMSG_DesfireAuth_Step2* other) {
   using std::swap;
-  key_uuid_.Swap(&other->key_uuid_);
-  picc_cryptogram_.Swap(&other->picc_cryptogram_);
-  auth_context_id_.Swap(&other->auth_context_id_);
+  key_uuid_.Swap(&other->key_uuid_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  picc_cryptogram_.Swap(&other->picc_cryptogram_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  auth_context_id_.Swap(&other->auth_context_id_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
   swap(diversification_, other->diversification_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
-  swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata CMSG_DesfireAuth_Step2::GetMetadata() const {
@@ -5352,16 +5108,14 @@ const int SMSG_DesfireAuth_Step2::kSessionKeyRefFieldNumber;
 
 SMSG_DesfireAuth_Step2::SMSG_DesfireAuth_Step2()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    ::protobuf_iks_2eproto::InitDefaultsSMSG_DesfireAuth_Step2();
-  }
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_iks_2eproto::scc_info_SMSG_DesfireAuth_Step2.base);
   SharedCtor();
   // @@protoc_insertion_point(constructor:SMSG_DesfireAuth_Step2)
 }
 SMSG_DesfireAuth_Step2::SMSG_DesfireAuth_Step2(const SMSG_DesfireAuth_Step2& from)
   : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
-      _cached_size_(0) {
+      _internal_metadata_(NULL) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   session_key_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (from.session_key().size() > 0) {
@@ -5379,7 +5133,6 @@ void SMSG_DesfireAuth_Step2::SharedCtor() {
   session_key_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   session_key_ref_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   success_ = false;
-  _cached_size_ = 0;
 }
 
 SMSG_DesfireAuth_Step2::~SMSG_DesfireAuth_Step2() {
@@ -5393,9 +5146,7 @@ void SMSG_DesfireAuth_Step2::SharedDtor() {
 }
 
 void SMSG_DesfireAuth_Step2::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  _cached_size_.Set(size);
 }
 const ::google::protobuf::Descriptor* SMSG_DesfireAuth_Step2::descriptor() {
   ::protobuf_iks_2eproto::protobuf_AssignDescriptorsOnce();
@@ -5403,17 +5154,10 @@ const ::google::protobuf::Descriptor* SMSG_DesfireAuth_Step2::descriptor() {
 }
 
 const SMSG_DesfireAuth_Step2& SMSG_DesfireAuth_Step2::default_instance() {
-  ::protobuf_iks_2eproto::InitDefaultsSMSG_DesfireAuth_Step2();
+  ::google::protobuf::internal::InitSCC(&protobuf_iks_2eproto::scc_info_SMSG_DesfireAuth_Step2.base);
   return *internal_default_instance();
 }
 
-SMSG_DesfireAuth_Step2* SMSG_DesfireAuth_Step2::New(::google::protobuf::Arena* arena) const {
-  SMSG_DesfireAuth_Step2* n = new SMSG_DesfireAuth_Step2;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
 
 void SMSG_DesfireAuth_Step2::Clear() {
 // @@protoc_insertion_point(message_clear_start:SMSG_DesfireAuth_Step2)
@@ -5433,7 +5177,7 @@ bool SMSG_DesfireAuth_Step2::MergePartialFromCodedStream(
   ::google::protobuf::uint32 tag;
   // @@protoc_insertion_point(parse_start:SMSG_DesfireAuth_Step2)
   for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
@@ -5600,9 +5344,7 @@ size_t SMSG_DesfireAuth_Step2::ByteSizeLong() const {
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = cached_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  SetCachedSize(cached_size);
   return total_size;
 }
 
@@ -5665,11 +5407,12 @@ void SMSG_DesfireAuth_Step2::Swap(SMSG_DesfireAuth_Step2* other) {
 }
 void SMSG_DesfireAuth_Step2::InternalSwap(SMSG_DesfireAuth_Step2* other) {
   using std::swap;
-  session_key_.Swap(&other->session_key_);
-  session_key_ref_.Swap(&other->session_key_ref_);
+  session_key_.Swap(&other->session_key_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  session_key_ref_.Swap(&other->session_key_ref_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
   swap(success_, other->success_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
-  swap(_cached_size_, other->_cached_size_);
 }
 
 ::google::protobuf::Metadata SMSG_DesfireAuth_Step2::GetMetadata() const {
@@ -5679,5 +5422,51 @@ void SMSG_DesfireAuth_Step2::InternalSwap(SMSG_DesfireAuth_Step2* other) {
 
 
 // @@protoc_insertion_point(namespace_scope)
+namespace google {
+namespace protobuf {
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::KeyDiversificationInfo* Arena::CreateMaybeMessage< ::KeyDiversificationInfo >(Arena* arena) {
+  return Arena::CreateInternal< ::KeyDiversificationInfo >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::SignatureDescription* Arena::CreateMaybeMessage< ::SignatureDescription >(Arena* arena) {
+  return Arena::CreateInternal< ::SignatureDescription >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::CMSG_DesfireChangeKey* Arena::CreateMaybeMessage< ::CMSG_DesfireChangeKey >(Arena* arena) {
+  return Arena::CreateInternal< ::CMSG_DesfireChangeKey >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::SMSG_DesfireChangeKey* Arena::CreateMaybeMessage< ::SMSG_DesfireChangeKey >(Arena* arena) {
+  return Arena::CreateInternal< ::SMSG_DesfireChangeKey >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::CMSG_GenRandom* Arena::CreateMaybeMessage< ::CMSG_GenRandom >(Arena* arena) {
+  return Arena::CreateInternal< ::CMSG_GenRandom >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::SMSG_GenRandom* Arena::CreateMaybeMessage< ::SMSG_GenRandom >(Arena* arena) {
+  return Arena::CreateInternal< ::SMSG_GenRandom >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::CMSG_AESOperation* Arena::CreateMaybeMessage< ::CMSG_AESOperation >(Arena* arena) {
+  return Arena::CreateInternal< ::CMSG_AESOperation >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::SMSG_AESResult* Arena::CreateMaybeMessage< ::SMSG_AESResult >(Arena* arena) {
+  return Arena::CreateInternal< ::SMSG_AESResult >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::CMSG_DesfireAESAuth_Step1* Arena::CreateMaybeMessage< ::CMSG_DesfireAESAuth_Step1 >(Arena* arena) {
+  return Arena::CreateInternal< ::CMSG_DesfireAESAuth_Step1 >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::SMSG_DesfireAESAuth_Step1* Arena::CreateMaybeMessage< ::SMSG_DesfireAESAuth_Step1 >(Arena* arena) {
+  return Arena::CreateInternal< ::SMSG_DesfireAESAuth_Step1 >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::CMSG_DesfireISOAuth_Step1* Arena::CreateMaybeMessage< ::CMSG_DesfireISOAuth_Step1 >(Arena* arena) {
+  return Arena::CreateInternal< ::CMSG_DesfireISOAuth_Step1 >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::SMSG_DesfireISOAuth_Step1* Arena::CreateMaybeMessage< ::SMSG_DesfireISOAuth_Step1 >(Arena* arena) {
+  return Arena::CreateInternal< ::SMSG_DesfireISOAuth_Step1 >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::CMSG_DesfireAuth_Step2* Arena::CreateMaybeMessage< ::CMSG_DesfireAuth_Step2 >(Arena* arena) {
+  return Arena::CreateInternal< ::CMSG_DesfireAuth_Step2 >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::SMSG_DesfireAuth_Step2* Arena::CreateMaybeMessage< ::SMSG_DesfireAuth_Step2 >(Arena* arena) {
+  return Arena::CreateInternal< ::SMSG_DesfireAuth_Step2 >(arena);
+}
+}  // namespace protobuf
+}  // namespace google
 
 // @@protoc_insertion_point(global_scope)

@@ -27,6 +27,9 @@ if (ANDROID)
 # on Android behavior in a way that I can't understand, and build-time error it detects
 # seem to always translate to runtime-link-time issue.
 target_link_libraries(llacommon PUBLIC ${Boost_LIBRARIES})
+else()
+    # Travis test
+    target_link_libraries(llacommon PUBLIC ${Boost_LIBRARIES})
 endif()
 
 install ( FILES ${INCLUDE} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/plugins/llacommon )
