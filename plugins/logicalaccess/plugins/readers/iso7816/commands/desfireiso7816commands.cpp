@@ -14,7 +14,7 @@
 #include <logicalaccess/plugins/cards/samav2/samav2commands.hpp>
 
 #include <logicalaccess/iks/IslogKeyServer.hpp>
-#include <logicalaccess/settings.hpp>
+#include <logicalaccess/plugins/llacommon/settings.hpp>
 #include <logicalaccess/cards/IKSStorage.hpp>
 #include <logicalaccess/cards/computermemorykeystorage.hpp>
 #include <logicalaccess/iks/RemoteCrypto.hpp>

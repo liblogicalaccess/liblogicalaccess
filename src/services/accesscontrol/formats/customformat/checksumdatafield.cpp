@@ -19,7 +19,7 @@ ChecksumDataField::~ChecksumDataField()
 {
 }
 
-void ChecksumDataField::setValue(const char &/*value*/)
+void ChecksumDataField::setValue(const char & /*value*/)
 {
     throw std::runtime_error("Unimplemented");
 }
@@ -31,12 +31,12 @@ unsigned char ChecksumDataField::getValue() const
 
 void ChecksumDataField::setBitsUsePositions(ByteVector /*positions*/)
 {
-	throw std::runtime_error("Unimplemented");
+    throw std::runtime_error("Unimplemented");
 }
 
 ByteVector ChecksumDataField::getBitsUsePositions() const
 {
-	throw std::runtime_error("Unimplemented");
+    throw std::runtime_error("Unimplemented");
 }
 
 BitsetStream ChecksumDataField::getLinearData(const BitsetStream &data) const
@@ -51,7 +51,7 @@ void ChecksumDataField::setLinearData(const ByteVector &data)
 
 void ChecksumDataField::serialize(boost::property_tree::ptree &parentNode)
 {
-	throw std::runtime_error("Unimplemented");
+    throw std::runtime_error("Unimplemented");
 }
 
 void ChecksumDataField::unSerialize(boost::property_tree::ptree &node)

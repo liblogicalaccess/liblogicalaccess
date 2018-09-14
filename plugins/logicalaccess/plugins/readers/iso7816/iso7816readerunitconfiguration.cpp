@@ -5,7 +5,7 @@
  */
 
 #include <boost/property_tree/ptree.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/readers/iso7816/iso7816readerunitconfiguration.hpp>
 #include <logicalaccess/plugins/readers/iso7816/iso7816readerunit.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirekey.hpp>

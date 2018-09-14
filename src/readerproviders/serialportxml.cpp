@@ -14,7 +14,7 @@
 #include <dirent.h>
 #endif
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <boost/property_tree/ptree.hpp>
 
 namespace logicalaccess

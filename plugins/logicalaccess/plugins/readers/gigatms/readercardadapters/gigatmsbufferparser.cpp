@@ -4,7 +4,7 @@
  * \brief GIGA-TMS buffer parser.
  */
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/readers/gigatms/readercardadapters/gigatmsbufferparser.hpp>
 #include <logicalaccess/plugins/readers/gigatms/readercardadapters/gigatmsreadercardadapter.hpp>
 

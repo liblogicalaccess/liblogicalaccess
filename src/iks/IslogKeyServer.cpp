@@ -1,8 +1,8 @@
 #include <logicalaccess/iks/IslogKeyServer.hpp>
 #include <boost/asio.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
-#include <logicalaccess/settings.hpp>
+#include <logicalaccess/plugins/llacommon/settings.hpp>
 
 using namespace logicalaccess;
 using namespace logicalaccess::iks;

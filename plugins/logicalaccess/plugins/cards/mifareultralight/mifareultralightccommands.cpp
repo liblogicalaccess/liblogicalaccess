@@ -6,7 +6,7 @@
 
 #include <logicalaccess/plugins/cards/mifareultralight/mifareultralightccommands.hpp>
 #include <logicalaccess/plugins/cards/mifareultralight/mifareultralightcchip.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 
 namespace logicalaccess
 {

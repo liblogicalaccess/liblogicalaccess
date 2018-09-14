@@ -15,7 +15,7 @@
 
 #include <sstream>
 #include <iomanip>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 
 #include <logicalaccess/plugins/readers/elatec/elatecreaderunit.hpp>
 

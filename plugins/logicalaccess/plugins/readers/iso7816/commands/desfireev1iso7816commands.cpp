@@ -9,11 +9,11 @@
 #include <logicalaccess/plugins/cards/samav2/samav2commands.hpp>
 #include <openssl/rand.h>
 #include <logicalaccess/iks/IslogKeyServer.hpp>
-#include <logicalaccess/settings.hpp>
+#include <logicalaccess/plugins/llacommon/settings.hpp>
 #include <logicalaccess/cards/IKSStorage.hpp>
 #include <chrono>
 #include <thread>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/crypto/aes_cipher.hpp>
 #include <logicalaccess/plugins/crypto/aes_symmetric_key.hpp>
 #include <logicalaccess/plugins/crypto/aes_initialization_vector.hpp>
@@ -705,13 +705,13 @@ void DESFireEV1ISO7816Commands::iso_authenticate(std::shared_ptr<DESFireKey> cur
     }
     else
     {
-        le = 16;
-        cipher.reset(new openssl::AESCipher());
+        le     = 16;
+        cipher = std::make_shared<openssl::AESCipher>();
     }
-
     std::shared_ptr<openssl::SymmetricKey> isokey;
     std::shared_ptr<openssl::InitializationVector> iv;
-    if (std::dynamic_pointer_cast<openssl::AESCipher>(cipher))
+
+    if (std::dynamic_pointer_cast<openssl::AESCipher>(cipher) != nullptr)
     {
         isokey.reset(new openssl::AESSymmetricKey(
             openssl::AESSymmetricKey::createFromData(keydiv)));
@@ -1258,6 +1258,7 @@ ByteVector DESFireEV1ISO7816Commands::readData(unsigned char fileno, unsigned in
             result            = handleReadCmd(DF_INS_READ_DATA, command, mode);
             unsigned char err = result.back();
             result.resize(result.size() - 2);
+
             result =
                 handleReadData(err, result, static_cast<unsigned int>(trunklength), mode);
             ret.insert(ret.end(), result.begin(), result.end());

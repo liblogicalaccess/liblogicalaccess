@@ -2,7 +2,7 @@
 // Created by xaqq on 9/11/15.
 //
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/crypto/aes_helper.hpp>
 #include <logicalaccess/plugins/crypto/lla_random.hpp>
 #include <logicalaccess/myexception.hpp>

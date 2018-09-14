@@ -4,7 +4,7 @@
  * \brief Reader Provider OSDP.
  */
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <logicalaccess/plugins/readers/osdp/osdpsecurechannel.hpp>
 #include <logicalaccess/plugins/readers/osdp/osdpreaderunitconfiguration.hpp>

@@ -1,6 +1,6 @@
 #include <logicalaccess/plugins/readers/pcsc/atrparser.hpp>
 #include <logicalaccess/bufferhelper.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <algorithm>
 #include <logicalaccess/myexception.hpp>
 

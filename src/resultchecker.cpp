@@ -6,7 +6,7 @@
 
 #include <logicalaccess/resultchecker.hpp>
 #include <logicalaccess/myexception.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <cassert>
 
 namespace logicalaccess

@@ -4,7 +4,7 @@
  * \brief Topaz commands.
  */
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/cards/topaz/topazcommands.hpp>
 #include <logicalaccess/plugins/cards/topaz/topazchip.hpp>
 

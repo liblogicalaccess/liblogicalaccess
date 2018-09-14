@@ -4,7 +4,7 @@
  * \brief AxessTMCLegic reader/card adapter.
  */
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/readers/axesstmclegic/readercardadapters/axesstmclegicreadercardadapter.hpp>
 #include <logicalaccess/bufferhelper.hpp>
 

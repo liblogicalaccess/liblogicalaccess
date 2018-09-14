@@ -60,6 +60,8 @@ class OpenSSLSymmetricCipher : public SymmetricCipher
      */
     explicit OpenSSLSymmetricCipher(EncMode mode);
 
+    virtual ~OpenSSLSymmetricCipher();
+
     /**
      * \brief Initialize a new encryption/decryption session.
      * \param method The method.

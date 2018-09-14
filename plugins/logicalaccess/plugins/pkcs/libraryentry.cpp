@@ -4,7 +4,7 @@
 #include <logicalaccess/plugins/pkcs/cppkcs11/cppkcs11/services/crypto_service.hpp>
 #include <logicalaccess/plugins/pkcs/cppkcs11/cppkcs11/session.hpp>
 #include <logicalaccess/cards/PKCSkeystorage.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <logicalaccess/plugins/pkcs/cppkcs11/cppkcs11/services/object_service.hpp>
 #include "logicalaccess/logicalaccess_api.hpp"

@@ -8,7 +8,7 @@
 #include <logicalaccess/plugins/crypto/tomcrypt.h>
 #include <logicalaccess/bufferhelper.hpp>
 #include <openssl/rand.h>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 
 namespace logicalaccess
 {

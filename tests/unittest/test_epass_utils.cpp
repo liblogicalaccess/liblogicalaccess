@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <iostream>
 #include <logicalaccess/bufferhelper.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/cards/epass/epasscrypto.hpp>
 
 using namespace logicalaccess;

@@ -1,4 +1,4 @@
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <logicalaccess/plugins/crypto/aes_helper.hpp>
 #include <logicalaccess/cards/PKCSkeystorage.hpp>

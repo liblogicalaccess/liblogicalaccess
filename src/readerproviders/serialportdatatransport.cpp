@@ -8,8 +8,8 @@
 #include <logicalaccess/readerproviders/serialportdatatransport.hpp>
 #include <logicalaccess/cards/readercardadapter.hpp>
 #include <logicalaccess/bufferhelper.hpp>
-#include <logicalaccess/settings.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/settings.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <boost/property_tree/ptree.hpp>
 
 namespace logicalaccess

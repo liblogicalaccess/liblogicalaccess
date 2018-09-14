@@ -4,7 +4,7 @@
 
 #include <windows.h>
 #include <Winreg.h>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 
 using namespace logicalaccess;
 

@@ -1,6 +1,6 @@
 #include <logicalaccess/plugins/readers/pcsc/readers/cardprobes/cl1356cardprobe.hpp>
 #include <logicalaccess/cards/chip.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/cards/mifare/mifarecommands.hpp>
 #include <logicalaccess/plugins/cards/mifare/mifarechip.hpp>
 

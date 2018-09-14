@@ -6,8 +6,8 @@
 
 #include <logicalaccess/readerproviders/datatransport.hpp>
 #include <logicalaccess/bufferhelper.hpp>
-#include <logicalaccess/logs.hpp>
-#include <logicalaccess/settings.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
+#include <logicalaccess/plugins/llacommon/settings.hpp>
 
 namespace logicalaccess
 {

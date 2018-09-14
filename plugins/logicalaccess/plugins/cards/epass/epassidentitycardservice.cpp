@@ -5,7 +5,7 @@
 #include <boost/algorithm/string/trim.hpp>
 #include <cassert>
 #include <memory>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 
 using namespace logicalaccess;
 

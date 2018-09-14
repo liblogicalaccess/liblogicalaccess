@@ -25,7 +25,7 @@ before_install:
   - sudo apt-get install -qq pkg-config libpcsclite-dev libssl-dev
   # Setup the compiler for grpc. If we're building for clang we need to specify clang5.
   - if [[ -n "$CLANG_VERSION" ]]; then export CXX=clang++-$CLANG_VERSION CC=clang-$CLANG_VERSION; fi
-  - (cd /tmp && git clone https://github.com/grpc/grpc && cd grpc && git checkout v1.9.x && git submodule update --init && make && sudo make install)
+  - (cd /tmp && git clone https://github.com/grpc/grpc && cd grpc && git checkout v1.15.0 && git submodule update --init && make && sudo make install)
   - (cd /tmp/grpc/third_party/protobuf && sudo make install)
 
 install:

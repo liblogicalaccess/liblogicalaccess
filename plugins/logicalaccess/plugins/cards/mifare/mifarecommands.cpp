@@ -5,7 +5,7 @@
  */
 
 #include <cstring>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <cassert>
 #include <algorithm>
 #include <logicalaccess/plugins/cards/mifare/mifarecommands.hpp>

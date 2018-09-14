@@ -8,7 +8,7 @@
 #include <logicalaccess/bufferhelper.hpp>
 #include <logicalaccess/plugins/readers/rpleth/rplethdatatransport.hpp>
 
-#include <logicalaccess/settings.hpp>
+#include <logicalaccess/plugins/llacommon/settings.hpp>
 
 namespace logicalaccess
 {

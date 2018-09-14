@@ -13,9 +13,9 @@
 #include <boost/foreach.hpp>
 #include <boost/optional.hpp>
 #include <boost/array.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <boost/property_tree/ptree.hpp>
-#include <logicalaccess/settings.hpp>
+#include <logicalaccess/plugins/llacommon/settings.hpp>
 
 namespace logicalaccess
 {
@@ -132,7 +132,8 @@ void TcpDataTransport::send(const ByteVector &data)
 
 void TcpDataTransport::connect_complete(const boost::system::error_code &error)
 {
-    d_read_error = (error != nullptr);
+    // 0 is success.
+    d_read_error = static_cast<bool>(error.value());
     d_timer.cancel();
 }
 

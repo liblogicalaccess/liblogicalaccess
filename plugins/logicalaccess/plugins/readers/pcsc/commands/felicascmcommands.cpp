@@ -10,7 +10,7 @@
 #include <iomanip>
 #include <sstream>
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <logicalaccess/plugins/readers/pcsc/pcscreaderprovider.hpp>
 

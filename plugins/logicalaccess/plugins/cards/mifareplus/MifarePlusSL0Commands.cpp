@@ -6,7 +6,7 @@
 #include <logicalaccess/plugins/cards/mifareplus/MifarePlusSL0Commands.hpp>
 #include <logicalaccess/plugins/cards/mifare/mifareaccessinfo.hpp>
 #include <cassert>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 
 using namespace logicalaccess;
 

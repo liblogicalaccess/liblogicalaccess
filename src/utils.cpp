@@ -1,6 +1,6 @@
 #include <logicalaccess/utils.hpp>
 #include <boost/asio.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 
 using namespace std::chrono;
@@ -150,19 +150,20 @@ ByteVector ManchesterEncoder::decode(const ByteVector &in, Type t)
     return out;
 }
 
-    int portable_setenv(const char *name, const char *value, int overwrite)
-    {
+int portable_setenv(const char *name, const char *value, int overwrite)
+{
 #ifdef _WIN32
-        int errcode = 0;
-    if(!overwrite) {
+    int errcode = 0;
+    if (!overwrite)
+    {
         size_t envsize = 0;
-        errcode = getenv_s(&envsize, NULL, 0, name);
-        if(errcode || envsize) return errcode;
+        errcode        = getenv_s(&envsize, NULL, 0, name);
+        if (errcode || envsize)
+            return errcode;
     }
     return _putenv_s(name, value);
 #else
-        return setenv(name, value, overwrite);
-    #endif
-    }
-
+    return setenv(name, value, overwrite);
+#endif
+}
 }

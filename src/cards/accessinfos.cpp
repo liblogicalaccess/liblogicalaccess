@@ -10,7 +10,7 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 
 #include <openssl/rand.h>
 

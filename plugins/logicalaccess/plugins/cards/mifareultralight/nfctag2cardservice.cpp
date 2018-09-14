@@ -4,7 +4,7 @@
 * \brief NFC Tag Type 2 card service.
 */
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/cards/mifareultralight/nfctag2cardservice.hpp>
 #include <logicalaccess/services/nfctag/ndefmessage.hpp>
 #include <logicalaccess/services/storage/storagecardservice.hpp>

@@ -65,7 +65,8 @@ class LIBLOGICALACCESS_API TLV
     TLVPtr subTLV_;    // will be used, but not both.
 };
 
-LIBLOGICALACCESS_API std::vector<TLVPtr> parse_tlvs(const ByteVector &bytes, size_t &bytes_consumed);
+LIBLOGICALACCESS_API std::vector<TLVPtr> parse_tlvs(const ByteVector &bytes,
+                                                    size_t &bytes_consumed);
 LIBLOGICALACCESS_API std::vector<TLVPtr> parse_tlvs(const ByteVector &bytes);
 
 } // namespace logicalaccess

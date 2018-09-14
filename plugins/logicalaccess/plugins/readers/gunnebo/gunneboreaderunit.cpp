@@ -19,7 +19,7 @@
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
 #include <logicalaccess/dynlibrary/idynlibrary.hpp>
 #include <logicalaccess/readerproviders/serialportdatatransport.hpp>
-#include <logicalaccess/settings.hpp>
+#include <logicalaccess/plugins/llacommon/settings.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
 #include <logicalaccess/plugins/readers/gunnebo/readercardadapters/gunnebodatatransport.hpp>

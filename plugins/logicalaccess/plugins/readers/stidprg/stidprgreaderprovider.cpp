@@ -1,6 +1,6 @@
 #include <logicalaccess/plugins/readers/stidprg/stidprgreaderprovider.hpp>
 #include <logicalaccess/cards/readercardadapter.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <logicalaccess/readerproviders/serialportdatatransport.hpp>
 #include <logicalaccess/readerproviders/serialportxml.hpp>

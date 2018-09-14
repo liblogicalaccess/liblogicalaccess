@@ -4,7 +4,7 @@
  * \brief CPS3 storage card service.
  */
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/cards/cps3/cps3storagecardservice.hpp>
 #include <logicalaccess/plugins/cards/cps3/cps3location.hpp>
 #include <logicalaccess/cards/locationnode.hpp>

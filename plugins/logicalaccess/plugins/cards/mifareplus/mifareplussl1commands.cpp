@@ -5,7 +5,7 @@
  */
 
 #include <cstring>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/crypto/aes_helper.hpp>
 #include <logicalaccess/plugins/crypto/lla_random.hpp>
 #include <logicalaccess/plugins/cards/mifareplus/mifarepluschip.hpp>

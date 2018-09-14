@@ -12,7 +12,7 @@
 #include <memory>
 #include <boost/utility.hpp>
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/services/accesscontrol/formats/BitsetStream.hpp>
 
 namespace logicalaccess

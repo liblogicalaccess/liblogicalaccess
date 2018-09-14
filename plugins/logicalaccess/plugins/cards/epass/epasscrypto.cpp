@@ -8,7 +8,7 @@
 #include <logicalaccess/plugins/crypto/des_initialization_vector.hpp>
 #include <logicalaccess/plugins/crypto/des_symmetric_key.hpp>
 #include <logicalaccess/plugins/crypto/lla_random.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 
 using namespace logicalaccess;

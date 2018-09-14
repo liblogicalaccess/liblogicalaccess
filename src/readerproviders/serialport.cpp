@@ -12,7 +12,7 @@
 #include <boost/asio.hpp>
 #include <boost/asio/basic_serial_port.hpp>
 #include <boost/bind/bind.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 
 namespace logicalaccess
 {

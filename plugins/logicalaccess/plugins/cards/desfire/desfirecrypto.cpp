@@ -11,11 +11,9 @@
 #include <boost/crc.hpp>
 #include <ctime>
 #include <cstdlib>
-
 #include <cstring>
-
 #include <openssl/rand.h>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/crypto/symmetric_key.hpp>
 #include <logicalaccess/plugins/crypto/aes_symmetric_key.hpp>
 #include <logicalaccess/plugins/crypto/aes_initialization_vector.hpp>
@@ -27,6 +25,7 @@
 #include <logicalaccess/iks/RemoteCrypto.hpp>
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
 #include <logicalaccess/services/aes_crypto_service.hpp>
+#include <logicalaccess/plugins/crypto/aes_helper.hpp>
 
 namespace logicalaccess
 {
@@ -1095,7 +1094,7 @@ ByteVector DESFireCrypto::desfire_iso_decrypt(
     std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size,
     size_t datalen)
 {
-    ByteVector decdata;
+    std::vector<uint8_t> decdata;
 
     if (iks_wrapper_ == nullptr)
     {
@@ -1133,8 +1132,6 @@ ByteVector DESFireCrypto::desfire_iso_decrypt(
         d_lastIV               = ByteVector(data.end() - block_size, data.end());
         iks_wrapper_->last_sig = signature_result;
     }
-    LOG(DEBUGS) << "Decrypted data: " << decdata;
-
     size_t ll;
 
     if (datalen == 0)

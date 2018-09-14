@@ -30,7 +30,7 @@
 #include <logicalaccess/readerproviders/serialportxml.hpp>
 #include <logicalaccess/plugins/readers/rpleth/rplethreaderunitconfiguration.hpp>
 #include <logicalaccess/myexception.hpp>
-#include <logicalaccess/settings.hpp>
+#include <logicalaccess/plugins/llacommon/settings.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
 namespace logicalaccess

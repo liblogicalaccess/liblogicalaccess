@@ -4,7 +4,7 @@
 * \brief Mifare NFC Tag Type card service.
 */
 
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/cards/mifare/mifarenfctagcardservice.hpp>
 #include <logicalaccess/plugins/cards/mifare/mifarelocation.hpp>
 #include <logicalaccess/services/nfctag/ndefmessage.hpp>

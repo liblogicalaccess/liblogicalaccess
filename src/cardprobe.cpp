@@ -1,6 +1,6 @@
 #include <logicalaccess/cardprobe.hpp>
 #include <logicalaccess/cards/chip.hpp>
-#include <logicalaccess/logs.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <assert.h>
 #include <chrono>
 #include <thread>

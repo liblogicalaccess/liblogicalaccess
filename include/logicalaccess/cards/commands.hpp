@@ -25,8 +25,7 @@ class LIBLOGICALACCESS_API Commands : public ICommands
     */
     Commands() = delete;
 
-
-    virtual ~Commands() = default;
+    virtual ~Commands();
 
     /**
      * \brief Get the chip.
