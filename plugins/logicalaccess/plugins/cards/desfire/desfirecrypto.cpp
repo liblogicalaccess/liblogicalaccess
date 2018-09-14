@@ -1094,7 +1094,7 @@ ByteVector DESFireCrypto::desfire_iso_decrypt(
     std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size,
     size_t datalen)
 {
-    std::vector<uint8_t> decdata({1, 2, 3, 4, 56, 6, 7});
+    std::vector<uint8_t> decdata;
 
     if (iks_wrapper_ == nullptr)
     {
@@ -1132,8 +1132,6 @@ ByteVector DESFireCrypto::desfire_iso_decrypt(
         d_lastIV               = ByteVector(data.end() - block_size, data.end());
         iks_wrapper_->last_sig = signature_result;
     }
-    LOG(DEBUGS) << "Decrypted data: " << decdata;
-
     size_t ll;
 
     if (datalen == 0)
