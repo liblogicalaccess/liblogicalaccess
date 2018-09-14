@@ -15,8 +15,7 @@ void ISO7816NFCTag4CardService::writeCapabilityContainer(unsigned short isoFID,
                                                          unsigned short isoFIDNDEFFile,
                                                          unsigned short NDEFFileSize)
 {
-    std::shared_ptr<ISO7816Commands> iso7816command(
-        std::dynamic_pointer_cast<ISO7816Commands>(getChip()->getCommands()));
+    auto iso7816command = getISO7816Commands();
 
     ByteVector CC;
     CC.push_back(0x00); // CCLEN
@@ -90,5 +89,15 @@ ISO7816NFCTag4CardService::readNDEFFile(unsigned short isoFIDApplication,
 std::shared_ptr<NdefMessage> ISO7816NFCTag4CardService::readNDEF()
 {
     return readNDEFFile();
+}
+
+std::shared_ptr<ISO7816Commands> ISO7816NFCTag4CardService::getISO7816Commands() const
+{
+    auto chip = std::dynamic_pointer_cast<ISO7816Chip>(getChip());
+    if (chip == nullptr)
+    {
+        return nullptr;
+    }
+    return std::dynamic_pointer_cast<ISO7816Commands>(chip->getCommands());
 }
 }

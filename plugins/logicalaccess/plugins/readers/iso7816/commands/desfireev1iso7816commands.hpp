@@ -389,6 +389,14 @@ class LIBLOGICALACCESS_API DESFireEV1ISO7816Commands : public DESFireISO7816Comm
         return DESFireISO7816Commands::getReaderCardAdapter();
     }
 
+    std::shared_ptr<ISO7816Commands> getISO7816Commands() const override
+    {
+        auto command = std::make_shared<ISO7816ISO7816Commands>();
+        command->setChip(getChip());
+        command->setReaderCardAdapter(getReaderCardAdapter());
+        return command;
+    }
+
     /**
      * Retrieve the IKS signature corresponding the last PARTIAL read.
      * todo: Should retrieve something for the whole readData() block.
@@ -486,11 +494,6 @@ class LIBLOGICALACCESS_API DESFireEV1ISO7816Commands : public DESFireISO7816Comm
      * Called after authentication was performed
      */
     void onAuthenticated();
-
-    std::shared_ptr<ISO7816ISO7816Commands> getISO7816ISO7816Commands() const
-    {
-        return std::make_shared<ISO7816ISO7816Commands>();
-    }
 
   protected:
     SignatureResult handle_read_data_last_sig_;

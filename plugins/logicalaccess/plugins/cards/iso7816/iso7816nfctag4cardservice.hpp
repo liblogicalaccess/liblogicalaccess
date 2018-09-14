@@ -56,10 +56,7 @@ class LIBLOGICALACCESS_API ISO7816NFCTag4CardService : public NFCTagCardService
     std::shared_ptr<NdefMessage> readNDEF() override;
 
   protected:
-    std::shared_ptr<ISO7816Chip> getISO7816Chip() const
-    {
-        return std::dynamic_pointer_cast<ISO7816Chip>(getChip());
-    }
+    virtual std::shared_ptr<ISO7816Commands> getISO7816Commands() const;
 };
 }
 

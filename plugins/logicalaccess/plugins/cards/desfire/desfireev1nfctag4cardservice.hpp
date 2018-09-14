@@ -62,6 +62,8 @@ class LIBLOGICALACCESS_API DESFireEV1NFCTag4CardService : public ISO7816NFCTag4C
     {
         return std::dynamic_pointer_cast<DESFireEV1Chip>(getChip());
     }
+
+    std::shared_ptr<ISO7816Commands> getISO7816Commands() const override;
 };
 }
 

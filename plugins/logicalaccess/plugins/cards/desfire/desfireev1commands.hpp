@@ -9,6 +9,7 @@
 
 #include <logicalaccess/plugins/cards/desfire/desfirecommands.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev1location.hpp>
+#include <logicalaccess/plugins/cards/iso7816/iso7816commands.hpp>
 
 namespace logicalaccess
 {
@@ -403,6 +404,11 @@ class LIBLOGICALACCESS_API DESFireEV1Commands : public ICommands
      * \param ats The new card ATS.
      */
     virtual void setConfiguration(const ByteVector &ats) = 0;
+
+    virtual std::shared_ptr<ISO7816Commands> getISO7816Commands() const
+    {
+        return std::shared_ptr<ISO7816Commands>();
+    }
 
   protected:
     std::shared_ptr<DESFireEV1Chip> getDESFireEV1Chip() const;
