@@ -6,16 +6,15 @@
 
 #include "iks.pb.h"
 
-#include <grpcpp/impl/codegen/async_generic_service.h>
-#include <grpcpp/impl/codegen/async_stream.h>
-#include <grpcpp/impl/codegen/async_unary_call.h>
-#include <grpcpp/impl/codegen/method_handler_impl.h>
-#include <grpcpp/impl/codegen/proto_utils.h>
-#include <grpcpp/impl/codegen/rpc_method.h>
-#include <grpcpp/impl/codegen/service_type.h>
-#include <grpcpp/impl/codegen/status.h>
-#include <grpcpp/impl/codegen/stub_options.h>
-#include <grpcpp/impl/codegen/sync_stream.h>
+#include <grpc++/impl/codegen/async_stream.h>
+#include <grpc++/impl/codegen/async_unary_call.h>
+#include <grpc++/impl/codegen/method_handler_impl.h>
+#include <grpc++/impl/codegen/proto_utils.h>
+#include <grpc++/impl/codegen/rpc_method.h>
+#include <grpc++/impl/codegen/service_type.h>
+#include <grpc++/impl/codegen/status.h>
+#include <grpc++/impl/codegen/stub_options.h>
+#include <grpc++/impl/codegen/sync_stream.h>
 
 namespace grpc {
 class CompletionQueue;
@@ -247,7 +246,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GenRandom(::grpc::ServerContext* context, const ::CMSG_GenRandom* request, ::SMSG_GenRandom* response) override {
+    ::grpc::Status GenRandom(::grpc::ServerContext* context, const ::CMSG_GenRandom* request, ::SMSG_GenRandom* response) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -267,7 +266,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status AESEncrypt(::grpc::ServerContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response) override {
+    ::grpc::Status AESEncrypt(::grpc::ServerContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -287,7 +286,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status AESDecrypt(::grpc::ServerContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response) override {
+    ::grpc::Status AESDecrypt(::grpc::ServerContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -307,7 +306,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DESFireISOAuth1(::grpc::ServerContext* context, const ::CMSG_DesfireISOAuth_Step1* request, ::SMSG_DesfireISOAuth_Step1* response) override {
+    ::grpc::Status DESFireISOAuth1(::grpc::ServerContext* context, const ::CMSG_DesfireISOAuth_Step1* request, ::SMSG_DesfireISOAuth_Step1* response) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -327,7 +326,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DESFireISOAuth2(::grpc::ServerContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response) override {
+    ::grpc::Status DESFireISOAuth2(::grpc::ServerContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -347,7 +346,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DESFireAESAuth1(::grpc::ServerContext* context, const ::CMSG_DesfireAESAuth_Step1* request, ::SMSG_DesfireAESAuth_Step1* response) override {
+    ::grpc::Status DESFireAESAuth1(::grpc::ServerContext* context, const ::CMSG_DesfireAESAuth_Step1* request, ::SMSG_DesfireAESAuth_Step1* response) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -367,7 +366,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DESFireAESAuth2(::grpc::ServerContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response) override {
+    ::grpc::Status DESFireAESAuth2(::grpc::ServerContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -387,7 +386,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DESFireChangeKey(::grpc::ServerContext* context, const ::CMSG_DesfireChangeKey* request, ::SMSG_DesfireChangeKey* response) override {
+    ::grpc::Status DESFireChangeKey(::grpc::ServerContext* context, const ::CMSG_DesfireChangeKey* request, ::SMSG_DesfireChangeKey* response) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -408,7 +407,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GenRandom(::grpc::ServerContext* context, const ::CMSG_GenRandom* request, ::SMSG_GenRandom* response) override {
+    ::grpc::Status GenRandom(::grpc::ServerContext* context, const ::CMSG_GenRandom* request, ::SMSG_GenRandom* response) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -425,7 +424,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status AESEncrypt(::grpc::ServerContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response) override {
+    ::grpc::Status AESEncrypt(::grpc::ServerContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -442,7 +441,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status AESDecrypt(::grpc::ServerContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response) override {
+    ::grpc::Status AESDecrypt(::grpc::ServerContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -459,7 +458,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DESFireISOAuth1(::grpc::ServerContext* context, const ::CMSG_DesfireISOAuth_Step1* request, ::SMSG_DesfireISOAuth_Step1* response) override {
+    ::grpc::Status DESFireISOAuth1(::grpc::ServerContext* context, const ::CMSG_DesfireISOAuth_Step1* request, ::SMSG_DesfireISOAuth_Step1* response) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -476,7 +475,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DESFireISOAuth2(::grpc::ServerContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response) override {
+    ::grpc::Status DESFireISOAuth2(::grpc::ServerContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -493,7 +492,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DESFireAESAuth1(::grpc::ServerContext* context, const ::CMSG_DesfireAESAuth_Step1* request, ::SMSG_DesfireAESAuth_Step1* response) override {
+    ::grpc::Status DESFireAESAuth1(::grpc::ServerContext* context, const ::CMSG_DesfireAESAuth_Step1* request, ::SMSG_DesfireAESAuth_Step1* response) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -510,7 +509,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DESFireAESAuth2(::grpc::ServerContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response) override {
+    ::grpc::Status DESFireAESAuth2(::grpc::ServerContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -527,169 +526,9 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DESFireChangeKey(::grpc::ServerContext* context, const ::CMSG_DesfireChangeKey* request, ::SMSG_DesfireChangeKey* response) override {
+    ::grpc::Status DESFireChangeKey(::grpc::ServerContext* context, const ::CMSG_DesfireChangeKey* request, ::SMSG_DesfireChangeKey* response) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-  };
-  template <class BaseClass>
-  class WithRawMethod_GenRandom : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithRawMethod_GenRandom() {
-      ::grpc::Service::MarkMethodRaw(0);
-    }
-    ~WithRawMethod_GenRandom() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status GenRandom(::grpc::ServerContext* context, const ::CMSG_GenRandom* request, ::SMSG_GenRandom* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestGenRandom(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithRawMethod_AESEncrypt : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithRawMethod_AESEncrypt() {
-      ::grpc::Service::MarkMethodRaw(1);
-    }
-    ~WithRawMethod_AESEncrypt() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status AESEncrypt(::grpc::ServerContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestAESEncrypt(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithRawMethod_AESDecrypt : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithRawMethod_AESDecrypt() {
-      ::grpc::Service::MarkMethodRaw(2);
-    }
-    ~WithRawMethod_AESDecrypt() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status AESDecrypt(::grpc::ServerContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestAESDecrypt(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithRawMethod_DESFireISOAuth1 : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithRawMethod_DESFireISOAuth1() {
-      ::grpc::Service::MarkMethodRaw(3);
-    }
-    ~WithRawMethod_DESFireISOAuth1() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status DESFireISOAuth1(::grpc::ServerContext* context, const ::CMSG_DesfireISOAuth_Step1* request, ::SMSG_DesfireISOAuth_Step1* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestDESFireISOAuth1(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithRawMethod_DESFireISOAuth2 : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithRawMethod_DESFireISOAuth2() {
-      ::grpc::Service::MarkMethodRaw(4);
-    }
-    ~WithRawMethod_DESFireISOAuth2() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status DESFireISOAuth2(::grpc::ServerContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestDESFireISOAuth2(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithRawMethod_DESFireAESAuth1 : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithRawMethod_DESFireAESAuth1() {
-      ::grpc::Service::MarkMethodRaw(5);
-    }
-    ~WithRawMethod_DESFireAESAuth1() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status DESFireAESAuth1(::grpc::ServerContext* context, const ::CMSG_DesfireAESAuth_Step1* request, ::SMSG_DesfireAESAuth_Step1* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestDESFireAESAuth1(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithRawMethod_DESFireAESAuth2 : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithRawMethod_DESFireAESAuth2() {
-      ::grpc::Service::MarkMethodRaw(6);
-    }
-    ~WithRawMethod_DESFireAESAuth2() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status DESFireAESAuth2(::grpc::ServerContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestDESFireAESAuth2(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithRawMethod_DESFireChangeKey : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
-   public:
-    WithRawMethod_DESFireChangeKey() {
-      ::grpc::Service::MarkMethodRaw(7);
-    }
-    ~WithRawMethod_DESFireChangeKey() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status DESFireChangeKey(::grpc::ServerContext* context, const ::CMSG_DesfireChangeKey* request, ::SMSG_DesfireChangeKey* response) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestDESFireChangeKey(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -705,7 +544,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status GenRandom(::grpc::ServerContext* context, const ::CMSG_GenRandom* request, ::SMSG_GenRandom* response) override {
+    ::grpc::Status GenRandom(::grpc::ServerContext* context, const ::CMSG_GenRandom* request, ::SMSG_GenRandom* response) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -725,7 +564,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status AESEncrypt(::grpc::ServerContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response) override {
+    ::grpc::Status AESEncrypt(::grpc::ServerContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -745,7 +584,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status AESDecrypt(::grpc::ServerContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response) override {
+    ::grpc::Status AESDecrypt(::grpc::ServerContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -765,7 +604,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status DESFireISOAuth1(::grpc::ServerContext* context, const ::CMSG_DesfireISOAuth_Step1* request, ::SMSG_DesfireISOAuth_Step1* response) override {
+    ::grpc::Status DESFireISOAuth1(::grpc::ServerContext* context, const ::CMSG_DesfireISOAuth_Step1* request, ::SMSG_DesfireISOAuth_Step1* response) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -785,7 +624,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status DESFireISOAuth2(::grpc::ServerContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response) override {
+    ::grpc::Status DESFireISOAuth2(::grpc::ServerContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -805,7 +644,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status DESFireAESAuth1(::grpc::ServerContext* context, const ::CMSG_DesfireAESAuth_Step1* request, ::SMSG_DesfireAESAuth_Step1* response) override {
+    ::grpc::Status DESFireAESAuth1(::grpc::ServerContext* context, const ::CMSG_DesfireAESAuth_Step1* request, ::SMSG_DesfireAESAuth_Step1* response) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -825,7 +664,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status DESFireAESAuth2(::grpc::ServerContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response) override {
+    ::grpc::Status DESFireAESAuth2(::grpc::ServerContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -845,7 +684,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status DESFireChangeKey(::grpc::ServerContext* context, const ::CMSG_DesfireChangeKey* request, ::SMSG_DesfireChangeKey* response) override {
+    ::grpc::Status DESFireChangeKey(::grpc::ServerContext* context, const ::CMSG_DesfireChangeKey* request, ::SMSG_DesfireChangeKey* response) final override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
