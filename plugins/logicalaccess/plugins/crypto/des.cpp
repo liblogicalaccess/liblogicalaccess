@@ -20,7 +20,7 @@
 #define EN0 0
 #define DE1 1
 
-const struct ltc_cipher_descriptor des_desc = {(char *)"des",
+LLA_TOMCRYPT_EXPORT const struct ltc_cipher_descriptor des_desc = {(char *)"des",
                                                13,
                                                8,
                                                8,
@@ -45,7 +45,8 @@ const struct ltc_cipher_descriptor des_desc = {(char *)"des",
                                                nullptr,
                                                nullptr};
 
-const struct ltc_cipher_descriptor des3_desc = {(char *)"3des",
+
+LLA_TOMCRYPT_EXPORT const struct ltc_cipher_descriptor des3_desc = {(char *)"3des",
                                                 14,
                                                 16,
                                                 24,
