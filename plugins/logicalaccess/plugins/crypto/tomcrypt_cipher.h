@@ -689,10 +689,14 @@ int des3_test(void);
 LIBLOGICALACCESS_API void des3_done(symmetric_key *skey);
 LIBLOGICALACCESS_API int des3_keysize(int *keysize);
 
+#ifdef _MSC_VER
 #ifndef LLA_TOMCRYPT_EXPORT
 #define LLA_TOMCRYPT_EXPORT __declspec(dllexport)
 #else
 #define LLA_TOMCRYPT_EXPORT __declspec(dllimport)
+#endif
+#else
+#define LLA_TOMCRYPT_EXPORT
 #endif
 
 LLA_TOMCRYPT_EXPORT extern const struct ltc_cipher_descriptor des_desc;
