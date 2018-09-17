@@ -7,11 +7,13 @@
 #ifndef OPENSSL_HPP
 #define OPENSSL_HPP
 
+#include "logicalaccess/liblogicalaccess_export.hpp"
+
 namespace logicalaccess
 {
 namespace openssl
 {
-class OpenSSLInitializer
+class LIBLOGICALACCESS_API OpenSSLInitializer
 {
   public:
     static OpenSSLInitializer &GetInstance()

@@ -20,7 +20,7 @@ class SymmetricKey;
 /**
  * \brief A symmetric cipher.
  */
-class SymmetricCipher
+class LIBLOGICALACCESS_API SymmetricCipher
 {
   public:
     /**

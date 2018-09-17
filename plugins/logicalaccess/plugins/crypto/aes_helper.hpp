@@ -14,7 +14,7 @@ namespace logicalaccess
 /**
  * Some static AES helper method with a very easy to use API.
  */
-class AESHelper
+class LIBLOGICALACCESS_API AESHelper
 {
   public:
     /**

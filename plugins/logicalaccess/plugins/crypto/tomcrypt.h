@@ -7,6 +7,7 @@
 #include <time.h>
 #include <ctype.h>
 #include <limits.h>
+#include "logicalaccess/liblogicalaccess_export.hpp"
 
 // We keep the TomCrypt define/macro to use other TomCrypt algorithm in further time
 #define LTC_NO_CIPHERS
@@ -90,13 +91,20 @@ extern "C" {
 
     unsigned short UpdateCrc(unsigned char ch, unsigned short *lpwCrc);
 
-    void ComputeCrc(int CRCType, const unsigned char *Data, size_t Length, unsigned char *TransmitFirst, unsigned char *TransmitSecond);
+    LIBLOGICALACCESS_API void ComputeCrc(int CRCType, const unsigned char *Data,
+                                        size_t Length, unsigned char *TransmitFirst,
+                                        unsigned char *TransmitSecond);
 
-    void ComputeCrcCCITT(unsigned short crc_old, const unsigned char *Data, size_t Length, unsigned char *TransmitFirst, unsigned char *TransmitSecond);
+   LIBLOGICALACCESS_API  void ComputeCrcCCITT(unsigned short crc_old,
+                                              const unsigned char *Data, size_t Length,
+                                              unsigned char *TransmitFirst,
+                                              unsigned char *TransmitSecond);
 
-    unsigned short UpdateCRCKermit(unsigned short crc, char c);
+   LIBLOGICALACCESS_API unsigned short UpdateCRCKermit(unsigned short crc, char c);
 
-    void ComputeCrcKermit(const unsigned char *Data, size_t Length, unsigned char *TransmitFirst, unsigned char *TransmitSecond);
+    LIBLOGICALACCESS_API void ComputeCrcKermit(const unsigned char *Data, size_t Length,
+                                             unsigned char *TransmitFirst,
+                                             unsigned char *TransmitSecond);
 
 #ifdef __cplusplus
 }

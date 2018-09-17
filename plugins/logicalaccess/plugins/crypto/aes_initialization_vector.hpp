@@ -23,7 +23,7 @@ namespace openssl
  *
  * It is meant to be used with an instance of AESCipher.
  */
-class AESInitializationVector : public InitializationVector
+class LIBLOGICALACCESS_API AESInitializationVector : public InitializationVector
 {
   public:
     /**

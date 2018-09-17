@@ -1,3 +1,5 @@
+#include "logicalaccess/liblogicalaccess_export.hpp"
+
 /* ---- SYMMETRIC KEY STUFF -----
  *
  * We put each of the ciphers scheduled keys in their own structs then we put all of
@@ -667,18 +669,24 @@ extern const struct ltc_cipher_descriptor twofish_desc;
 #endif
 
 #ifdef LTC_DES
-int des_setup(const unsigned char *key, int keylen, int num_rounds, symmetric_key *skey);
-int des_ecb_encrypt(const unsigned char *pt, unsigned char *ct, symmetric_key *skey);
-int des_ecb_decrypt(const unsigned char *ct, unsigned char *pt, symmetric_key *skey);
+LIBLOGICALACCESS_API int des_setup(const unsigned char *key, int keylen, int num_rounds,
+                                  symmetric_key *skey);
+LIBLOGICALACCESS_API int des_ecb_encrypt(const unsigned char *pt, unsigned char *ct,
+                                        symmetric_key *skey);
+LIBLOGICALACCESS_API int des_ecb_decrypt(const unsigned char *ct, unsigned char *pt,
+                                        symmetric_key *skey);
 int des_test(void);
-void des_done(symmetric_key *skey);
+LIBLOGICALACCESS_API void des_done(symmetric_key *skey);
 int des_keysize(int *keysize);
-int des3_setup(const unsigned char *key, int keylen, int num_rounds, symmetric_key *skey);
-int des3_ecb_encrypt(const unsigned char *pt, unsigned char *ct, symmetric_key *skey);
-int des3_ecb_decrypt(const unsigned char *ct, unsigned char *pt, symmetric_key *skey);
+LIBLOGICALACCESS_API int des3_setup(const unsigned char *key, int keylen, int num_rounds,
+                                   symmetric_key *skey);
+LIBLOGICALACCESS_API int des3_ecb_encrypt(const unsigned char *pt, unsigned char *ct,
+                                         symmetric_key *skey);
+LIBLOGICALACCESS_API int des3_ecb_decrypt(const unsigned char *ct, unsigned char *pt,
+                                         symmetric_key *skey);
 int des3_test(void);
-void des3_done(symmetric_key *skey);
-int des3_keysize(int *keysize);
+LIBLOGICALACCESS_API void des3_done(symmetric_key *skey);
+LIBLOGICALACCESS_API int des3_keysize(int *keysize);
 extern const struct ltc_cipher_descriptor des_desc, des3_desc;
 #endif
 

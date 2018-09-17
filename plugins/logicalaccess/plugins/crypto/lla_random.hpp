@@ -18,7 +18,7 @@ namespace logicalaccess
  * This is a wrapper around OpenSSL cryptographically secure random
  * number generator.
  */
-class RandomHelper
+class LIBLOGICALACCESS_API RandomHelper
 {
   public:
     /**

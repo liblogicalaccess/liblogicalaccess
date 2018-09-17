@@ -22,7 +22,7 @@ namespace openssl
 /**
  * \brief An immutable symmetric key.
  */
-class SymmetricKey
+class LIBLOGICALACCESS_API SymmetricKey
 {
   public:
     /**

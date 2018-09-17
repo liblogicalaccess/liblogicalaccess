@@ -21,7 +21,7 @@ namespace openssl
  *
  * It is meant to be used with an instance of DESCipher.
  */
-class DESInitializationVector : public InitializationVector
+class LIBLOGICALACCESS_API DESInitializationVector : public InitializationVector
 {
   public:
     /**

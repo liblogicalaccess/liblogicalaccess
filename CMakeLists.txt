@@ -275,10 +275,10 @@ if (WIN32)
 	set (SCLIB_ENDNAME "x64")
   endif()
 
-  target_link_libraries(${LIBLOGICALACCESS_LIBRARY} winscard scardsyn${SCLIB_ENDNAME} Winmm ws2_32 delayimp logicalaccess-cryptolib)
+  target_link_libraries(${LIBLOGICALACCESS_LIBRARY} winscard scardsyn${SCLIB_ENDNAME} Winmm ws2_32 delayimp logicalaccess-cryptolib llacommon)
 
 elseif (UNIX)
-	target_link_libraries(${LIBLOGICALACCESS_LIBRARY} logicalaccess-cryptolib ${Boost_LIBRARIES} ${CMAKE_DL_LIBS})
+	target_link_libraries(${LIBLOGICALACCESS_LIBRARY} logicalaccess-cryptolib ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} llacommon)
 endif()
 
 add_subdirectory(plugins/logicalaccess/plugins/llacommon)

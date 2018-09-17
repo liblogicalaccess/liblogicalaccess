@@ -18,11 +18,6 @@
 #endif
 #endif
 
-#ifdef _MSC_VER
-#include <Windows.h>
-extern HMODULE __hLibLogicalAccessModule;
-#endif
-
 namespace logicalaccess
 {
 class LIBLOGICALACCESS_API Settings
