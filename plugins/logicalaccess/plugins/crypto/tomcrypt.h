@@ -106,14 +106,14 @@ extern "C" {
                                              unsigned char *TransmitFirst,
                                              unsigned char *TransmitSecond);
 
+   /**
+    * Convert a TomCrypt error code to const char *
+    */
+   LIBLOGICALACCESS_API const char *error_to_string(int errcode);
+
 #ifdef __cplusplus
 }
 #endif
-
-/**
- * Convert a TomCrypt error code to const char *
- */
-const char *error_to_string(int errcode);
 
 #endif /* TOMCRYPT_H_ */
 

@@ -1,3 +1,5 @@
+#include "logicalaccess/liblogicalaccess_export.hpp"
+
 /* Defines the LTC_ARGCHK macro used within the library */
 /* ARGTYPE is defined in mycrypt_cfg.h */
 #if ARGTYPE == 0
@@ -5,7 +7,7 @@
 #include <signal.h>
 
 /* this is the default LibTomCrypt macro  */
-void crypt_argchk(const char *v, const char *s, int d);
+LIBLOGICALACCESS_API void crypt_argchk(const char *v, const char *s, int d);
 #define LTC_ARGCHK(x) if (!(x)) { crypt_argchk(#x, __FILE__, __LINE__); }
 #define LTC_ARGCHKVD(x) LTC_ARGCHK(x)
 

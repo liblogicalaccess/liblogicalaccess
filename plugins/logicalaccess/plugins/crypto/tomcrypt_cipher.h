@@ -336,8 +336,20 @@ typedef struct {
 } symmetric_F8;
 #endif
 
+
+#ifdef _MSC_VER
+#ifndef LLA_TOMCRYPT_EXPORT
+#define LLA_TOMCRYPT_EXPORT __declspec(dllexport)
+#else
+#define LLA_TOMCRYPT_EXPORT __declspec(dllimport)
+#endif
+#else
+#define LLA_TOMCRYPT_EXPORT
+#endif
+
+
 /** cipher descriptor table, last entry has "name == NULL" to mark the end of table */
-extern struct ltc_cipher_descriptor
+LLA_TOMCRYPT_EXPORT extern struct ltc_cipher_descriptor
 {
     /** name of cipher */
     char *name;
@@ -689,16 +701,6 @@ int des3_test(void);
 LIBLOGICALACCESS_API void des3_done(symmetric_key *skey);
 LIBLOGICALACCESS_API int des3_keysize(int *keysize);
 
-#ifdef _MSC_VER
-#ifndef LLA_TOMCRYPT_EXPORT
-#define LLA_TOMCRYPT_EXPORT __declspec(dllexport)
-#else
-#define LLA_TOMCRYPT_EXPORT __declspec(dllimport)
-#endif
-#else
-#define LLA_TOMCRYPT_EXPORT
-#endif
-
 LLA_TOMCRYPT_EXPORT extern const struct ltc_cipher_descriptor des_desc;
 LLA_TOMCRYPT_EXPORT extern const struct ltc_cipher_descriptor des3_desc;
 #endif
@@ -914,12 +916,12 @@ int  xts_test(void);
 void xts_mult_x(unsigned char *I);
 #endif
 
-int find_cipher(const char *name);
+LIBLOGICALACCESS_API int find_cipher(const char *name);
 int find_cipher_any(const char *name, int blocklen, int keylen);
 int find_cipher_id(unsigned char ID);
 LIBLOGICALACCESS_API int register_cipher(const struct ltc_cipher_descriptor *cipher);
 LIBLOGICALACCESS_API int unregister_cipher(const struct ltc_cipher_descriptor *cipher);
-int cipher_is_valid(int idx);
+LIBLOGICALACCESS_API int cipher_is_valid(int idx);
 
 LTC_MUTEX_PROTO(ltc_cipher_mutex)
 
