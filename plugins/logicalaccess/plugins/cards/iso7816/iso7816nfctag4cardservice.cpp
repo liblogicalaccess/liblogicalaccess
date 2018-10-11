@@ -52,8 +52,8 @@ void ISO7816NFCTag4CardService::writeNDEFFile(ByteVector recordsData,
         std::dynamic_pointer_cast<ISO7816Commands>(getChip()->getCommands()));
     ByteVector data;
 
-    data.push_back(0x00);                                           // NLEN
-    data.push_back(static_cast<unsigned char>(recordsData.size())); // NDEF Length
+    data.push_back(static_cast<unsigned char>((recordsData.size() >> 8) & 0xff)); // NLEN
+    data.push_back(static_cast<unsigned char>(recordsData.size() & 0xff)); // NDEF Length
     data.insert(data.end(), recordsData.begin(), recordsData.end());
 
     iso7816command->selectFile(isoFIDNDEFFile);
@@ -81,7 +81,7 @@ ISO7816NFCTag4CardService::readNDEFFile(unsigned short isoFIDApplication,
     if (length != 0x02)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "Impossible to read NDEF Length");
-    length = data[1];
+    length = (data[0] << 8) | data[1];
     data   = iso7816command->readBinary(length, 2, isoFIDNDEFFile);
     return std::make_shared<NdefMessage>(data);
 }
