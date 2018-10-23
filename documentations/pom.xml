@@ -3,7 +3,7 @@
 	<groupId>eu.islog.lib.readers</groupId>
 	<artifactId>liblogicalaccess-doc</artifactId>
 	<packaging>pom</packaging>
-	<version>1.87.6</version>
+	<version>1.87.8</version>
 	<name>LibLogicalaccess Documentation</name>
 	
 	<distributionManagement>
