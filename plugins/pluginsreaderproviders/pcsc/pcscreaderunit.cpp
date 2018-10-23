@@ -1077,6 +1077,18 @@ namespace logicalaccess
         return ReaderUnit::getService(type);
     }
 
+    void PCSCReaderUnit::beginTransaction()
+    {
+      if (SCARD_S_SUCCESS != SCardBeginTransaction(getHandle()))
+        THROW_EXCEPTION_WITH_LOG(CardException, "Failed SCardBeginTransaction");
+    }
+
+    void PCSCReaderUnit::endTransaction(DWORD dwDisposition)
+    {
+      if (SCARD_S_SUCCESS != SCardEndTransaction(getHandle(), dwDisposition))
+        THROW_EXCEPTION_WITH_LOG(CardException, "Failed SCardEndTransaction");
+    }
+
     unsigned long PCSCReaderUnit::getActiveProtocol() const
     {
         if (d_proxyReaderUnit)

@@ -282,6 +282,9 @@ namespace logicalaccess
 
         virtual ReaderServicePtr getService(const ReaderServiceType &type);
 
+        void beginTransaction();
+        void endTransaction(DWORD dwDisposition = SCARD_LEAVE_CARD);
+
     protected:
 
         /**
