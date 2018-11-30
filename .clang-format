@@ -28,3 +28,4 @@ NamespaceIndentation: None
 # Spaces
 SpaceBeforeParens: ControlStatements
 SortIncludes: false
+FixNamespaceComments: false
