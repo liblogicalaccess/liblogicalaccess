@@ -24,7 +24,7 @@ class LIBLOGICALACCESS_API NXPAV1KeyDiversification : public NXPKeyDiversificati
     {
     }
 
-    std::string getType() override
+    std::string getKeyDiversificationType() override
     {
         return "NXPAV1";
     }

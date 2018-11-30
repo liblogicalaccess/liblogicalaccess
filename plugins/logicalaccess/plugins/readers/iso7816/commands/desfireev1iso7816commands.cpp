@@ -1695,7 +1695,7 @@ MyDivInfo DESFireEV1ISO7816Commands::extract_iks_div_info(std::shared_ptr<Key> k
     MyDivInfo ret{};
 
     auto diversification = key->getKeyDiversification();
-    if (diversification && diversification->getType() == "NXPAV2")
+    if (diversification && diversification->getKeyDiversificationType() == "NXPAV2")
     {
         auto crypto = getDESFireChip()->getCrypto();
 

@@ -135,7 +135,8 @@ void Key::serialize(boost::property_tree::ptree &node)
     if (d_key_diversification)
     {
         boost::property_tree::ptree newnode;
-        newnode.put("<xmlattr>.keyDiversificationType", d_key_diversification->getType());
+        newnode.put("<xmlattr>.keyDiversificationType",
+                    d_key_diversification->getKeyDiversificationType());
         d_key_diversification->serialize(newnode);
         node.add_child("KeyDiversification", newnode);
     }

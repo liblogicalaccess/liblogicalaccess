@@ -22,7 +22,7 @@ class LIBLOGICALACCESS_API SagemKeyDiversification : public KeyDiversification
     {
     }
 
-    std::string getType() override
+    std::string getKeyDiversificationType() override
     {
         return "Sagem";
     }

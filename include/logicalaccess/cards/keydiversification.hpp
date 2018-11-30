@@ -19,7 +19,7 @@ class LIBLOGICALACCESS_API KeyDiversification : public XmlSerializable
                                      ByteVector &diversify) = 0;
     virtual ByteVector getDiversifiedKey(std::shared_ptr<Key> key,
                                          ByteVector diversify) = 0;
-    virtual std::string getType()                              = 0;
+    virtual std::string getKeyDiversificationType()            = 0;
 
     static std::shared_ptr<KeyDiversification>
     getKeyDiversificationFromType(std::string kdiv);

@@ -22,7 +22,7 @@ class LIBLOGICALACCESS_API OmnitechKeyDiversification : public KeyDiversificatio
     {
     }
 
-    std::string getType() override
+    std::string getKeyDiversificationType() override
     {
         return "Omnitech";
     }

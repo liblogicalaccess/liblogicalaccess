@@ -22,7 +22,7 @@ class LIBLOGICALACCESS_API NXPKeyDiversification : public KeyDiversification
     }
     virtual ~NXPKeyDiversification() = default;
 
-    std::string getType() override
+    std::string getKeyDiversificationType() override
     {
         return "NXP";
     }
