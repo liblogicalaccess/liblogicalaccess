@@ -64,7 +64,14 @@ RplethReaderUnit::RplethReaderUnit()
 
 RplethReaderUnit::~RplethReaderUnit()
 {
-    RplethReaderUnit::disconnectFromReader();
+    try
+    {
+        RplethReaderUnit::disconnectFromReader();
+    }
+    catch (std::exception &ex)
+    {
+        LOG(LogLevel::ERRORS) << "Error when destroy RplethReaderUnit: " << ex.what();
+    }
 }
 
 std::string RplethReaderUnit::getName() const
