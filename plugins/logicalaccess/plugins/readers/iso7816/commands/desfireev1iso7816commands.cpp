@@ -43,9 +43,7 @@ DESFireEV1ISO7816Commands::DESFireEV1ISO7816Commands(std::string ct)
 {
 }
 
-DESFireEV1ISO7816Commands::~DESFireEV1ISO7816Commands()
-{
-}
+DESFireEV1ISO7816Commands::~DESFireEV1ISO7816Commands() {}
 
 unsigned int DESFireEV1ISO7816Commands::getFreeMem()
 {
@@ -895,9 +893,13 @@ void DESFireEV1ISO7816Commands::authenticateISO(unsigned char keyno,
     ByteVector response =
         crypto->iso_authenticate_PICC1(keyno, diversify, encRndB, random_len);
     ByteVector encRndA1 = transmit_plain(DF_INS_ADDITIONAL_FRAME, response);
-    encRndA1.resize(encRndA1.size() - 2);
+    EXCEPTION_ASSERT_WITH_LOG((encRndA1.size() - 2) >= random_len,
+                              LibLogicalAccessException,
+                              "ISO Authentication P2 failed: wrong length.");
 
-    crypto->iso_authenticate_PICC2(keyno, encRndA1, random_len);
+	encRndA1.resize(encRndA1.size() - 2);
+
+	crypto->iso_authenticate_PICC2(keyno, encRndA1, random_len);
 }
 
 
@@ -1017,7 +1019,7 @@ void DESFireEV1ISO7816Commands::authenticateAES(unsigned char keyno)
         response = sam_authenticate_p1(key, encRndB, diversify);
     else
         // response        = crypto->aes_authenticate_PICC1(keyno, diversify, encRndB);
-        response        = crypto->aes_authenticate_PICC1_GENERIC(keyno, key, encRndB);
+        response = crypto->aes_authenticate_PICC1_GENERIC(keyno, key, encRndB);
     ByteVector encRndA1 = transmit_plain(DF_INS_ADDITIONAL_FRAME, response);
     encRndA1.resize(encRndA1.size() - 2);
 

@@ -87,6 +87,9 @@ bool DESFireCrypto::verifyMAC(bool end, const ByteVector &data)
     {
         if (d_auth_method == CM_LEGACY) // Native DESFire mode
         {
+            EXCEPTION_ASSERT_WITH_LOG(d_buf.size() >= 4, LibLogicalAccessException,
+                                      "Wrong MAC buffer length.");
+
             ByteVector mac;
             mac.insert(mac.end(), d_buf.end() - 4, d_buf.end());
             ByteVector ourMacBuf;
@@ -96,6 +99,9 @@ bool DESFireCrypto::verifyMAC(bool end, const ByteVector &data)
         }
         else
         {
+            EXCEPTION_ASSERT_WITH_LOG(d_buf.size() >= 8, LibLogicalAccessException,
+                                      "Wrong MAC buffer length.");
+
             ByteVector mac;
             mac.insert(mac.end(), d_buf.end() - 8, d_buf.end());
             ByteVector ourMacBuf;

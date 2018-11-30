@@ -1049,6 +1049,8 @@ void DESFireISO7816Commands::authenticate(unsigned char keyno,
             else
                 crypto->authenticate_PICC2(keyno, result);
         }
+        else
+            THROW_EXCEPTION_WITH_LOG(CardException, "DESFire authentication P2 failed: wrong length.");
     }
     else
         THROW_EXCEPTION_WITH_LOG(CardException, "DESFire authentication P1 failed.");
