@@ -303,6 +303,10 @@ class LIBLOGICALACCESS_API PCSCReaderUnit : public ISO7816ReaderUnit
 
     ReaderServicePtr getService(const ReaderServiceType &type) override;
 
+	void beginTransaction();
+
+    void endTransaction(DWORD dwDisposition = SCARD_LEAVE_CARD);
+
   protected:
     /**
      * Perform adjustment regarding a Chip.

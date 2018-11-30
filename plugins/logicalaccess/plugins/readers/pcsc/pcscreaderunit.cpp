@@ -1107,6 +1107,34 @@ ReaderServicePtr PCSCReaderUnit::getService(const ReaderServiceType &type)
     return ReaderUnit::getService(type);
 }
 
+void PCSCReaderUnit::beginTransaction()
+{
+    if (d_proxyReaderUnit)
+    {
+        return d_proxyReaderUnit->beginTransaction();
+    }
+    LONG r = SCardBeginTransaction(getHandle());
+    if (SCARD_S_SUCCESS != r)
+    {
+        THROW_EXCEPTION_WITH_LOG(CardException, "Failed SCardBeginTransaction error: " +
+                                                    std::to_string(r));
+    }
+}
+
+void PCSCReaderUnit::endTransaction(DWORD dwDisposition)
+{
+    if (d_proxyReaderUnit)
+    {
+        return d_proxyReaderUnit->endTransaction(dwDisposition);
+    }
+    LONG r = SCardEndTransaction(getHandle(), dwDisposition);
+    if (SCARD_S_SUCCESS != r)
+    {
+        THROW_EXCEPTION_WITH_LOG(CardException, "Failed SCardEndTransaction error: " +
+                                                    std::to_string(r));
+    }
+}
+
 unsigned long PCSCReaderUnit::getActiveProtocol() const
 {
     if (d_proxyReaderUnit)
