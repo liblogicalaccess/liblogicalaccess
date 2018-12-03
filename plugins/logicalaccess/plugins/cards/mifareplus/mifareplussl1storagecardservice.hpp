@@ -5,14 +5,14 @@
 #ifndef LIBLOGICALACCESS_MIFAREPLSSTORAGECARDSERVICE_SL1_H
 #define LIBLOGICALACCESS_MIFAREPLSSTORAGECARDSERVICE_SL1_H
 
-
 #include <logicalaccess/plugins/cards/mifare/mifarestoragecardservice.hpp>
+#include <logicalaccess/plugins/cards/mifareplus/lla_cards_mifareplus_api.hpp>
 
 namespace logicalaccess
 {
 #define STORAGECARDSERVICE_MIFARE_PLUS "MifarePlusStorageSL1"
 
-class LIBLOGICALACCESS_API MifarePlusSL1StorageCardService
+class LLA_CARDS_MIFAREPLUS_API MifarePlusSL1StorageCardService
     : public MifareStorageCardService
 {
 

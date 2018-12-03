@@ -9,7 +9,7 @@
 
 #include <logicalaccess/readerproviders/readerprovider.hpp>
 #include <logicalaccess/plugins/readers/gunnebo/gunneboreaderunit.hpp>
-
+#include <logicalaccess/plugins/readers/gunnebo/lla_readers_gunnebo_api.hpp>
 #include <string>
 #include <vector>
 
@@ -22,7 +22,7 @@ namespace logicalaccess
 /**
  * \brief Gunnebo Reader Provider class.
  */
-class LIBLOGICALACCESS_API GunneboReaderProvider : public ReaderProvider
+class LLA_READERS_GUNNEBO_API GunneboReaderProvider : public ReaderProvider
 {
   public:
     /**

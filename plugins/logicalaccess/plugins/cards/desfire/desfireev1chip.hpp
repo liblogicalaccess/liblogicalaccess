@@ -17,7 +17,7 @@ namespace logicalaccess
 /**
  * \brief The DESFire EV1 base chip class.
  */
-class LIBLOGICALACCESS_API DESFireEV1Chip : public DESFireChip
+class LLA_CARDS_DESFIRE_API DESFireEV1Chip : public DESFireChip
 {
   public:
     /**

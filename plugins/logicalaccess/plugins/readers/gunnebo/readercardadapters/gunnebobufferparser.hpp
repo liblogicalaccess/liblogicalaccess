@@ -7,13 +7,13 @@
 #pragma once
 
 #include <logicalaccess/readerproviders/circularbufferparser.hpp>
-
+#include <logicalaccess/plugins/readers/gunnebo/lla_readers_gunnebo_api.hpp>
 #include <string>
 #include <vector>
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API GunneboBufferParser : public CircularBufferParser
+class LLA_READERS_GUNNEBO_API GunneboBufferParser : public CircularBufferParser
 {
   public:
     GunneboBufferParser();

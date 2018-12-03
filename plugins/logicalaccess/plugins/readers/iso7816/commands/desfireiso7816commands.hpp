@@ -12,7 +12,7 @@
 #include <logicalaccess/plugins/cards/iso7816/readercardadapters/iso7816readercardadapter.hpp>
 #include <logicalaccess/plugins/readers/iso7816/iso7816readerunit.hpp>
 #include <logicalaccess/plugins/cards/samav2/samchip.hpp>
-
+#include <logicalaccess/plugins/readers/iso7816/lla_readers_iso7816_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -26,7 +26,7 @@ namespace logicalaccess
 /**
  * \brief The DESFire base commands class.
  */
-class LIBLOGICALACCESS_API DESFireISO7816Commands : public DESFireCommands
+class LLA_READERS_ISO7816_API DESFireISO7816Commands : public DESFireCommands
 {
   public:
     /**

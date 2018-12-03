@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
  * \brief The Mifare commands class for SmartID reader.
  */
-class LIBLOGICALACCESS_API MifareSmartIDCommands : public MifareCommands
+class LLA_READERS_SMARTID_API MifareSmartIDCommands : public MifareCommands
 {
   public:
     /**

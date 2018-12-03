@@ -8,6 +8,7 @@
 #define DES_INITIALIZATION_VECTOR_HPP
 
 #include <logicalaccess/plugins/crypto/initialization_vector.hpp>
+#include "logicalaccess/plugins/crypto/lla_crypto_api.hpp"
 
 namespace logicalaccess
 {
@@ -21,7 +22,7 @@ namespace openssl
  *
  * It is meant to be used with an instance of DESCipher.
  */
-class LIBLOGICALACCESS_API DESInitializationVector : public InitializationVector
+class LLA_CRYPTO_API DESInitializationVector : public InitializationVector
 {
   public:
     /**

@@ -9,7 +9,7 @@ namespace logicalaccess
 {
 class Key;
 
-class LIBLOGICALACCESS_API KeyDiversification : public XmlSerializable
+class LLA_CORE_API KeyDiversification : public XmlSerializable
 {
   public:
     virtual ~KeyDiversification() = default;

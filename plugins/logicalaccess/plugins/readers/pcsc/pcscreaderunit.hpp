@@ -19,7 +19,7 @@ namespace logicalaccess
 /**
  * \brief The PC/SC reader unit class.
  */
-class LIBLOGICALACCESS_API PCSCReaderUnit : public ISO7816ReaderUnit
+class LLA_READERS_PCSC_API PCSCReaderUnit : public ISO7816ReaderUnit
 {
   public:
     /**

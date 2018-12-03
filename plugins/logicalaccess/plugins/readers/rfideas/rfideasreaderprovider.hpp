@@ -9,7 +9,7 @@
 
 #include <logicalaccess/readerproviders/readerprovider.hpp>
 #include <logicalaccess/plugins/readers/rfideas/rfideasreaderunit.hpp>
-
+#include <logicalaccess/plugins/readers/rfideas/lla_readers_rfideas_api.hpp>
 #include <string>
 #include <vector>
 
@@ -22,7 +22,7 @@ namespace logicalaccess
 /**
  * \brief RFIDeas Reader Provider class.
  */
-class LIBLOGICALACCESS_API RFIDeasReaderProvider : public ReaderProvider
+class LLA_READERS_RFIDEAS_API RFIDeasReaderProvider : public ReaderProvider
 {
   public:
     /**

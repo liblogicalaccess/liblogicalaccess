@@ -66,7 +66,7 @@ typedef struct t_buz_cmd
 /**
  * \brief OSDP Commands class.
  */
-class LIBLOGICALACCESS_API OSDPCommands : public Commands
+class LLA_READERS_OSDP_API OSDPCommands : public Commands
 {
   public:
     OSDPCommands()

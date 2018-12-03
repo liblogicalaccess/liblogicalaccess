@@ -1,7 +1,7 @@
 #pragma once
 
 #include <logicalaccess/lla_fwd.hpp>
-#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/lla_core_api.hpp>
 #include <memory>
 
 namespace logicalaccess
@@ -19,7 +19,7 @@ typedef enum {
  *
  * It is similar to CardService.
  */
-class LIBLOGICALACCESS_API ReaderService
+class LLA_CORE_API ReaderService
     : public std::enable_shared_from_this<ReaderService>
 {
   public:

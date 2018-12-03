@@ -8,6 +8,7 @@
 #define LOGICALACCESS_GENERICTAGIDONDEMANDACCESSCONTROLCARDSERVICE_HPP
 
 #include <logicalaccess/plugins/cards/generictag/generictagaccesscontrolcardservice.hpp>
+#include <logicalaccess/plugins/readers/idondemand/lla_readers_idondemand_api.hpp>
 
 namespace logicalaccess
 {
@@ -18,7 +19,7 @@ class GenericTagCardProvider;
 /**
  * \brief The GenericTag access control card service class for IdOnDemand reader.
  */
-class LIBLOGICALACCESS_API GenericTagIdOnDemandAccessControlCardService
+class LLA_READERS_IDONDEMAND_API GenericTagIdOnDemandAccessControlCardService
     : public GenericTagAccessControlCardService
 {
   public:

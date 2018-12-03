@@ -3,7 +3,7 @@ project(pkcscryptounified)
 
 add_subdirectory(cppkcs11)
 
-if (WIN32)
+if (MSVC)
     SET(VERSION_PRODUCTNAME_VALUE "pkcscryptounified")
     add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
 endif ()
@@ -14,7 +14,7 @@ add_library(
         pkcscryptounified
         SHARED
         ${SRCS}
-        ${resourcerc}
+        ${LLA_RESOURCE_RC}
 )
 
 SET_TARGET_PROPERTIES(pkcscryptounified PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
@@ -23,19 +23,19 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND MSVC)
     target_link_libraries(
             pkcscryptounified
             cppkcs11
-            ${LIBLOGICALACCESS_LIBRARY}
+            logicalaccess
     )
 elseif (CMAKE_BUILD_TYPE STREQUAL "Release" AND MSVC)
     target_link_libraries(
             pkcscryptounified
             cppkcs11
-            ${LIBLOGICALACCESS_LIBRARY}
+            logicalaccess
     )
 else ()
     target_link_libraries(
             pkcscryptounified
             cppkcs11
-            ${LIBLOGICALACCESS_LIBRARY}
+            logicalaccess
     )
 endif ()
 

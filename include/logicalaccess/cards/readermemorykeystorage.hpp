@@ -14,7 +14,7 @@ namespace logicalaccess
 /**
  * \brief A reader memory key storage class.
  */
-class LIBLOGICALACCESS_API ReaderMemoryKeyStorage : public KeyStorage
+class LLA_CORE_API ReaderMemoryKeyStorage : public KeyStorage
 {
   public:
     /**

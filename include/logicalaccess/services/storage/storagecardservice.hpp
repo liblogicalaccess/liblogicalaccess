@@ -26,7 +26,7 @@ typedef enum {
 /**
  * \brief The base storage card service class for all storage services.
  */
-class LIBLOGICALACCESS_API StorageCardService : public CardService
+class LLA_CORE_API StorageCardService : public CardService
 {
   public:
     /**

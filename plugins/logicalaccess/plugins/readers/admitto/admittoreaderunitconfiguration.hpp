@@ -8,13 +8,15 @@
 #define LOGICALACCESS_ADMITTOREADERUNITCONFIGURATION_HPP
 
 #include <logicalaccess/readerproviders/readerunitconfiguration.hpp>
+#include <logicalaccess/plugins/readers/admitto/lla_readers_admitto_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief The Admitto reader unit configuration base class.
  */
-class LIBLOGICALACCESS_API AdmittoReaderUnitConfiguration : public ReaderUnitConfiguration
+class LLA_READERS_ADMITTO_API AdmittoReaderUnitConfiguration
+    : public ReaderUnitConfiguration
 {
   public:
     /**

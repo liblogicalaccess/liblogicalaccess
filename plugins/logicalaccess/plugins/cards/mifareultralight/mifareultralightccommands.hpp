@@ -17,7 +17,7 @@ class MifareUltralightCChip;
 /**
  * \brief The Mifare Ultralight C commands class.
  */
-class LIBLOGICALACCESS_API MifareUltralightCCommands
+class LLA_CARDS_MIFAREULTRALIGHT_API MifareUltralightCCommands
 {
   public:
     virtual ~MifareUltralightCCommands() = default;

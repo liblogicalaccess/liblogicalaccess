@@ -31,7 +31,7 @@ enum UriType
     URI_FILE  = 0x1D  // file://
 };
 
-class LIBLOGICALACCESS_API NdefMessage : public XmlSerializable
+class LLA_CORE_API NdefMessage : public XmlSerializable
 {
   public:
     NdefMessage()

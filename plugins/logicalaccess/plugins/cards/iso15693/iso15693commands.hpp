@@ -18,7 +18,7 @@ namespace logicalaccess
 /**
  * \brief The ISO15693 commands class.
  */
-class LIBLOGICALACCESS_API ISO15693Commands : public Commands
+class LLA_CARDS_ISO15693_API ISO15693Commands : public Commands
 {
   public:
     ISO15693Commands()

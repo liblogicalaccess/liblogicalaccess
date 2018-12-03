@@ -8,7 +8,7 @@
 #define LOGICALACCESS_ICODE1CHIP_HPP
 
 #include <logicalaccess/plugins/cards/iso15693/iso15693chip.hpp>
-
+#include <logicalaccess/plugins/cards/icode1/lla_cards_icode1_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
  * \brief The iCode1 base chip class.
  */
-class LIBLOGICALACCESS_API ICode1Chip : public ISO15693Chip
+class LLA_CARDS_ICODE1_API ICode1Chip : public ISO15693Chip
 {
   public:
     /**

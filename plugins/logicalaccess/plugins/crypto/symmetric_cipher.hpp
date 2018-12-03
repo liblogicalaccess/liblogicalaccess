@@ -7,6 +7,7 @@
 #ifndef SYMETRICCIPHER_HPP
 #define SYMETRICCIPHER_HPP
 
+#include "logicalaccess/plugins/crypto/lla_crypto_api.hpp"
 #include <logicalaccess/plugins/crypto/initialization_vector.hpp>
 
 namespace logicalaccess
@@ -20,7 +21,7 @@ class SymmetricKey;
 /**
  * \brief A symmetric cipher.
  */
-class LIBLOGICALACCESS_API SymmetricCipher
+class LLA_CRYPTO_API SymmetricCipher
 {
   public:
     /**

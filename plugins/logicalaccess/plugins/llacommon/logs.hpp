@@ -23,7 +23,7 @@
         throw EXCEPTION(type, msg);                                                      \
     }
 
-#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/plugins/llacommon/lla_common_api.hpp>
 #include <logicalaccess/lla_fwd.hpp>
 #include <fstream>
 #include <map>
@@ -54,14 +54,13 @@ enum LogLevel
 /**
  * An overload to pretty-print a byte vector to an ostream.
  */
-LIBLOGICALACCESS_API std::ostream &operator<<(std::ostream &ss,
-                                              const ByteVector &bytebuff);
+LLA_COMMON_API std::ostream &operator<<(std::ostream &ss, const ByteVector &bytebuff);
 
 /**
  * An overload to pretty-print a boolean vector to an ostream.
  */
-LIBLOGICALACCESS_API std::ostream &operator<<(std::ostream &ss,
-                                              const std::vector<bool> &bytebuff);
+LLA_COMMON_API std::ostream &operator<<(std::ostream &ss,
+                                        const std::vector<bool> &bytebuff);
 
 /**
  * And overload to pretty-print a byte std::array to an ostream
@@ -80,14 +79,14 @@ std::ostream &operator<<(std::ostream &ss, const std::array<uint8_t, Size> &byte
  * The direct use of this class is discouraged and the macro
  * LLA_LOG_CTX(...) should be used to push some context to the logger.
  */
-class LIBLOGICALACCESS_API LogContext
+class LLA_COMMON_API LogContext
 {
   public:
     explicit LogContext(const std::string &);
     ~LogContext();
 };
 
-class LIBLOGICALACCESS_API Logs
+class LLA_COMMON_API Logs
 {
   public:
     Logs(const char *file, const char *func, int line, enum LogLevel level);
@@ -127,7 +126,7 @@ class LIBLOGICALACCESS_API Logs
  * This is used where we need to temporarily disable logging. This is
  * exception safe.
  */
-struct LIBLOGICALACCESS_API LogDisabler
+struct LLA_COMMON_API LogDisabler
 {
     LogDisabler();
     ~LogDisabler();
@@ -136,29 +135,34 @@ struct LIBLOGICALACCESS_API LogDisabler
     bool old_;
 };
 
+#ifdef SWIG
+// Swig seems to be lost wrt variadic template function trace_print_helper()
+// and believe there are multiple definition. Possibly, it does not properly 
+// understand SFINAE.
+// Therefore we disable the warning.
+#pragma SWIG nowarn=302
+#endif
+
 /**
  * An overload to pretty-print a byte vector to an ostream.
  */
-LIBLOGICALACCESS_API std::ostream &operator<<(std::ostream &ss,
-                                              const ByteVector &bytebuff);
+LLA_COMMON_API std::ostream &operator<<(std::ostream &ss, const ByteVector &bytebuff);
 
 /**
  * An overload to pretty-print a boolean vector to an ostream.
  */
-LIBLOGICALACCESS_API std::ostream &operator<<(std::ostream &ss,
-                                              const std::vector<bool> &bytebuff);
+LLA_COMMON_API std::ostream &operator<<(std::ostream &ss,
+                                        const std::vector<bool> &bytebuff);
 
-LIBLOGICALACCESS_API std::ostream &operator<<(std::ostream &ss,
-                                              const std::vector<bool> &bytebuff);
-
-#ifdef LOGICALACCESS_LOGS
+LLA_COMMON_API std::ostream &operator<<(std::ostream &ss,
+                                        const std::vector<bool> &bytebuff);
 
 #define LOG(x) logicalaccess::Logs(__FILE__, __FUNCTION__, __LINE__, x)
 
-LIBLOGICALACCESS_API void trace_print_helper(std::stringstream &ss,
-                                             const char *param_names, int idx);
+LLA_COMMON_API void trace_print_helper(std::stringstream &ss, const char *param_names,
+                                       int idx);
 
-LIBLOGICALACCESS_API std::string get_nth_param_name(const char *param_names, int idx);
+LLA_COMMON_API std::string get_nth_param_name(const char *param_names, int idx);
 
 /**
  * Declaration of the print_helper for non uint8_t types.
@@ -215,10 +219,10 @@ void trace_print(std::stringstream &ss, const char *param_names, T &&... params)
     trace_print(trace_stringstream, #__VA_ARGS__, ##__VA_ARGS__);                        \
     LOG(TRACE) << trace_stringstream.str();
 
-LIBLOGICALACCESS_API void trace_print_helper(std::stringstream &ss,
-                                             const char *param_names, int idx);
+LLA_COMMON_API void trace_print_helper(std::stringstream &ss, const char *param_names,
+                                       int idx);
 
-LIBLOGICALACCESS_API std::string get_nth_param_name(const char *param_names, int idx);
+LLA_COMMON_API std::string get_nth_param_name(const char *param_names, int idx);
 
 #define LLA_LOG_CTX(param)                                                               \
     LogContext lla_log_ctx([&](void) {                                                   \
@@ -244,23 +248,6 @@ LIBLOGICALACCESS_API std::string get_nth_param_name(const char *param_names, int
     {                                                                                    \
         THROW_EXCEPTION_WITH_LOG(type, msg, ##__VA_ARGS__);                              \
     }
-
-#else
-
-#define LOG(x)                                                                           \
-    logicalaccess::Logs(__FILE__, __FUNCTION__, __LINE__, logicalaccess::LogLevel::NONE)
-
-#define THROW_EXCEPTION_WITH_LOG(type, msg)                                              \
-    {                                                                                    \
-        throw EXCEPTION(type, msg);                                                      \
-    }
-#define EXCEPTION_ASSERT_WITH_LOG(condition, type, msg)                                  \
-    if (!(condition))                                                                    \
-    {                                                                                    \
-        THROW_EXCEPTION_WITH_LOG(type, msg);                                             \
-    }
-
-#endif
 }
 
 #endif

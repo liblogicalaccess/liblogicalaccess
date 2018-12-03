@@ -1,6 +1,7 @@
 #pragma once
 
 #include <logicalaccess/lla_fwd.hpp>
+#include <logicalaccess/plugins/readers/pcsc/lla_readers_pcsc_api.hpp>
 
 namespace logicalaccess
 {
@@ -8,7 +9,7 @@ namespace logicalaccess
  * Utilities to parse response from a
  * CL1356Plus reader.
  */
-class LIBLOGICALACCESS_API CL1356PlusUtils
+class LLA_READERS_PCSC_API CL1356PlusUtils
 {
   public:
     /**
@@ -42,9 +43,9 @@ class LIBLOGICALACCESS_API CL1356PlusUtils
 
         State state_;
 
-        int pcd_to_picc_bit_rate_;
-        int picc_to_pcd_bit_rate_;
-        uint8_t card_identifier_;
+        int pcd_to_picc_bit_rate_{0};
+        int picc_to_pcd_bit_rate_{0};
+        uint8_t card_identifier_{0};
         ByteVector uid_;
         ByteVector atr_;
         std::string guessed_type_;

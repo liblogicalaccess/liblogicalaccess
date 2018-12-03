@@ -22,7 +22,7 @@ namespace logicalaccess
 /**
  * \brief The DESFire base chip class.
  */
-class LIBLOGICALACCESS_API DESFireChip : public Chip
+class LLA_CARDS_DESFIRE_API DESFireChip : public Chip
 {
   public:
     /**

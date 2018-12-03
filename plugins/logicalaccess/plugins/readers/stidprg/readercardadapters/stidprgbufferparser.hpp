@@ -1,10 +1,11 @@
 #pragma once
 
 #include <logicalaccess/readerproviders/circularbufferparser.hpp>
+#include <logicalaccess/plugins/readers/stidprg/lla_readers_stidprg_api.hpp>
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API STidPRGBufferParser : public CircularBufferParser
+class LLA_READERS_STIDPRG_API STidPRGBufferParser : public CircularBufferParser
 {
 
   public:

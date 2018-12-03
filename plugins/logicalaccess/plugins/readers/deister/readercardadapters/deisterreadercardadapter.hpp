@@ -8,7 +8,7 @@
 #define LOGICALACCESS_DEFAULTDEISTERREADERCARDADAPTER_HPP
 
 #include <logicalaccess/cards/readercardadapter.hpp>
-
+#include <logicalaccess/plugins/readers/deister/lla_readers_deister_api.hpp>
 #include <string>
 #include <vector>
 
@@ -17,7 +17,7 @@ namespace logicalaccess
 /**
  * \brief A default Deister reader/card adapter class.
  */
-class LIBLOGICALACCESS_API DeisterReaderCardAdapter : public ReaderCardAdapter
+class LLA_READERS_DEISTER_API DeisterReaderCardAdapter : public ReaderCardAdapter
 {
   public:
     /**

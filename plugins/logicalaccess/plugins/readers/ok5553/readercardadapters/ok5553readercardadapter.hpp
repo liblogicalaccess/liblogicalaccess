@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
  * \brief A default OK5553 reader/card adapter class.
  */
-class LIBLOGICALACCESS_API OK5553ReaderCardAdapter : public ReaderCardAdapter
+class LLA_READERS_OK5553_API OK5553ReaderCardAdapter : public ReaderCardAdapter
 {
   public:
     /**

@@ -9,6 +9,7 @@
 
 #include <logicalaccess/cards/chip.hpp>
 #include <logicalaccess/plugins/cards/samav2/samcommands.hpp>
+#include <logicalaccess/plugins/cards/samav2/lla_cards_samav2_api.hpp>
 
 namespace logicalaccess
 {
@@ -16,7 +17,7 @@ namespace logicalaccess
 /**
  * \brief The SAM chip class.
  */
-class LIBLOGICALACCESS_API SAMChip : public Chip
+class LLA_CARDS_SAMAV2_API SAMChip : public Chip
 {
   public:
     /**
@@ -38,9 +39,7 @@ class LIBLOGICALACCESS_API SAMChip : public Chip
     /**
      * \brief Destructor.
      */
-    ~SAMChip()
-    {
-    }
+    ~SAMChip();
 
     /**
      * \brief Get the generic card type.

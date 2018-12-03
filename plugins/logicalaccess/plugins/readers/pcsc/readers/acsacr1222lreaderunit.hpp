@@ -12,10 +12,10 @@
 
 namespace logicalaccess
 {
-/**
+/**k
 * \brief The ACS ACR 1222L reader unit class.
 */
-class LIBLOGICALACCESS_API ACSACR1222LReaderUnit : public PCSCReaderUnit
+class LLA_READERS_PCSC_API ACSACR1222LReaderUnit : public PCSCReaderUnit
 {
   public:
     /**

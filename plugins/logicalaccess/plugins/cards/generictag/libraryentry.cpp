@@ -2,26 +2,16 @@
 #include <memory>
 #include <logicalaccess/readerproviders/readerprovider.hpp>
 #include <logicalaccess/plugins/cards/generictag/generictagchip.hpp>
-
-#ifdef _MSC_VER
-#include <logicalaccess/msliblogicalaccess.h>
-#else
-#ifndef LIBLOGICALACCESS_API
-#define LIBLOGICALACCESS_API
-#endif
-#ifndef DISABLE_PRAGMA_WARNING
-#define DISABLE_PRAGMA_WARNING /**< \brief winsmcrd.h was modified to support this       \
-                                  macro, to avoid MSVC specific warnings pragma */
-#endif
-#endif
+#include <logicalaccess/plugins/cards/generictag/lla_cards_generictag_api.hpp>
 
 extern "C" {
-LIBLOGICALACCESS_API char *getLibraryName()
+LLA_CARDS_GENERICTAG_API char *getLibraryName()
 {
     return (char *)CHIP_GENERICTAG;
 }
 
-LIBLOGICALACCESS_API void getGenericTagChip(std::shared_ptr<logicalaccess::Chip> *chip)
+LLA_CARDS_GENERICTAG_API void
+getGenericTagChip(std::shared_ptr<logicalaccess::Chip> *chip)
 {
     if (chip != nullptr)
     {
@@ -29,7 +19,8 @@ LIBLOGICALACCESS_API void getGenericTagChip(std::shared_ptr<logicalaccess::Chip>
     }
 }
 
-LIBLOGICALACCESS_API void getGENERIC_T_CLChip(std::shared_ptr<logicalaccess::Chip> *chip)
+LLA_CARDS_GENERICTAG_API void
+getGENERIC_T_CLChip(std::shared_ptr<logicalaccess::Chip> *chip)
 {
     if (chip != nullptr)
     {
@@ -37,7 +28,7 @@ LIBLOGICALACCESS_API void getGENERIC_T_CLChip(std::shared_ptr<logicalaccess::Chi
     }
 }
 
-LIBLOGICALACCESS_API void
+LLA_CARDS_GENERICTAG_API void
 getGENERIC_T_CL_AChip(std::shared_ptr<logicalaccess::Chip> *chip)
 {
     if (chip != nullptr)
@@ -46,7 +37,7 @@ getGENERIC_T_CL_AChip(std::shared_ptr<logicalaccess::Chip> *chip)
     }
 }
 
-LIBLOGICALACCESS_API void
+LLA_CARDS_GENERICTAG_API void
 setTagIdBitsLengthOfGenericTagChip(std::shared_ptr<logicalaccess::Chip> *chip,
                                    unsigned int bits)
 {
@@ -57,8 +48,8 @@ setTagIdBitsLengthOfGenericTagChip(std::shared_ptr<logicalaccess::Chip> *chip,
     }
 }
 
-LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char *chipname,
-                                        size_t chipnamelen, void **getterfct)
+LLA_CARDS_GENERICTAG_API bool getChipInfoAt(unsigned int index, char *chipname,
+                                            size_t chipnamelen, void **getterfct)
 {
     bool ret = false;
     if (chipname != nullptr && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != nullptr)

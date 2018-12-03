@@ -8,7 +8,7 @@
 #define LOGICALACCESS_SMARTFRAMECHIP_HPP
 
 #include <logicalaccess/cards/chip.hpp>
-
+#include <logicalaccess/plugins/cards/smartframe/lla_cards_smartframe_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
  * \brief The Smart Frame base chip class.
  */
-class LIBLOGICALACCESS_API SmartFrameChip : public Chip
+class LLA_CARDS_SMARTFRAME_API SmartFrameChip : public Chip
 {
   public:
     /**

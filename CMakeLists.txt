@@ -1,323 +1,144 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.3)
+project(logicalaccess)
 
-## To build google-test based unittest build with LLA_BUILD_UNITTESTS=1
-
-if (NOT DEFINED CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" )
-endif()
-
-
-project(liblogicalaccess)
-include(version.cmake)
-set(LIBLOGICALACCESS_VERSION_STRING ${LIBLOGICALACCESS_VERSION_MAJOR}.${LIBLOGICALACCESS_VERSION_MINOR}.${LIBLOGICALACCESS_VERSION_PATCH} )
-
-if (MSVC)
-	if (NOT TARGET_ARCH)
-		set(TARGET_ARCH "Win32")
-	endif()
-
-    set(BOOST_LIBRARYDIR ${CMAKE_CURRENT_SOURCE_DIR}/packages/lib/${TARGET_ARCH})
-    set(BOOST_INCLUDEDIR ${CMAKE_CURRENT_SOURCE_DIR}/packages/include)
-    set(Boost_USE_STATIC_LIBS ON)
-	add_definitions(-DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE) #VS 2017.4 unknown compiler version
-
-    SET(OPENSSL_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/packages/lib/${TARGET_ARCH})
-    SET(OPENSSL_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/packages/include)
-elseif(ANDROID)
-    set(Boost_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../android-boost/include)
-    set(Boost_LIBRARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../android-boost/${ANDROID_ABI}/lib)
-
-    set(Boost_USE_STATIC_LIBS        ON) # only find static libs
-    set(Boost_USE_MULTITHREADED      ON)
-    set(Boost_USE_STATIC_RUNTIME    OFF)
-    set(Boost_COMPILER -gcc)
-
-    set(OPENSSL_CRYPTO_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/../android-openssl/prebuilt/${ANDROID_ABI}/libcrypto.a)
-    set(OPENSSL_SSL_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/../android-openssl/prebuilt/${ANDROID_ABI}/libssl.a)
-    set(OPENSSL_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../android-openssl/prebuilt/include)
-endif()
-
-if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    add_definitions(-Wno-deprecated-declarations) #Openssl is deprecated for OS X 10.7
-    if (NOT DEFINED CMAKE_MACOSX_RPATH)
-     set(CMAKE_MACOSX_RPATH 0)
-    endif()
-endif()
-
-list ( APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
-
-option ( BUILD_SHARED_LIBS "build shared libraries" ON )
-
+# Global C++ configuration
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-if (UNIX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -W -Wall -Wno-unused-parameter")
-endif()
+# Some build options. Either configured through CMake directly, or fed
+# by Conan options. It is important, for consistency, to keep those defaults
+# in sync with conafile.py
+set(LLA_BUILD_IKS TRUE CACHE BOOL "Build Islog Key Server support")
+set(LLA_BUILD_PKCS TRUE CACHE BOOL "Build PKCS11 support")
+set(LLA_BUILD_UNITTEST FALSE CACHE BOOL "Build unittests")
 
-find_package(Boost 1.51 REQUIRED COMPONENTS filesystem system date_time chrono thread regex)
-include_directories(${Boost_INCLUDE_DIRS})
+include(GenerateExportHeader)
+# Perform Conan basic setup to import targets etc
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup(TARGETS)
 
-find_package(OpenSSL REQUIRED)
-include_directories(${OPENSSL_INCLUDE_DIR})
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
-if (APPLE)
-    SET(CMAKE_DL_LIBS ${CMAKE_DL_LIBS} "-framework CoreFoundation")
-endif()
+# We define a macro that will help us properly generate and install
+# export headers for all libraries that are part of LLA.
+# This macro should be called with the following preconditions:
+#    + A variable HEADER_RELATIVE_INSTALL_DIR should be defined and point to a
+#      valid RELATIVE path for export header installation.
+#    + A single argument should be provide, which will be used as part of the export
+#      macro name. If LLA_CORE is passed, the export macro name is LLA_CORE_API.
+#
+# The generated header is XXX_api.hpp, where XXX is lowered-case of the first parameter
+# of the macro.
+#
+# NOTE THAT THIS MACRO NEEDS ${PROJECT_NAME} TO EVALUATE TO A TARGET NAME
+macro(LLA_GENERATE_EXPORTS)
+    string(TOLOWER ${ARGV0} _LOWERCASE_LIB_NAME)
+    set(_EXPORT_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${_LOWERCASE_LIB_NAME}_api.hpp")
 
-if (UNIX AND NOT ANDROID)
-  find_package(PCSCLite REQUIRED)
-  include_directories(${PCSCLITE_INCLUDE_DIRS})
-endif()
+    generate_export_header(${PROJECT_NAME}
+            EXPORT_MACRO_NAME "${ARGV0}_API"
+            EXPORT_FILE_NAME ${_EXPORT_FILE_PATH})
 
-if (RUN_IWYU)
-	find_program(IWYU_PATH NAMES include-what-you-use iwyu)
-	if(NOT IWYU_PATH)
-	  message(FATAL_ERROR "Could not find the program include-what-you-use")
-	endif()
-	set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE "${IWYU_PATH};--driver-mode=cl")
-	set(CMAKE_C_INCLUDE_WHAT_YOU_USE "${IWYU_PATH};--driver-mode=cl")
-endif()
-
-include_directories(packages/include)
-
-if(MSVC)
-    LINK_DIRECTORIES(${LINK_DIRECTORIES} "${CMAKE_CURRENT_SOURCE_DIR}/packages/lib/${TARGET_ARCH}")
-    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-	set(VC_FOLDER_NAME "Debug")
-        add_definitions(-DDEBUG -D_DEBUG)
-    else()
-            set(VC_FOLDER_NAME "Release")
-    endif()
-endif()
-
-add_definitions(-DBOOST_ASIO_NO_IOSTREAM)
-if(UNIX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -W -Wall -Wno-unused-parameter")
-    add_definitions(-DUNIX -DLOGICALACCESS_LOGS)
-else()
-  if (MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /FS")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Zi")
-    set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG /OPT:REF /OPT:ICF")
-  endif ()
-  if (TARGET_ARCH STREQUAL "Win32")
-    add_definitions(-DWIN32 -D_WIN32)
-  else()
-	add_definitions(-DWIN64 -D_WIN64)
-  endif()
-  
-  SET(VERSION_PRODUCTNAME_VALUE "Liblogicalaccess")
-  SET(VERSION_PROJECT_FILE_DESCRIPTION_VALUE "${VERSION_PRODUCTNAME_VALUE}\ (${TARGET_ARCH})")
-  SET(LIBLOGICALACCESS_WINDOWS_VERSION ${LIBLOGICALACCESS_VERSION_MAJOR},${LIBLOGICALACCESS_VERSION_MINOR},${LIBLOGICALACCESS_VERSION_PATCH},0 )
-  add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}" -DVERSION_PROJECT_FILE_DESCRIPTION_VALUE="${VERSION_PROJECT_FILE_DESCRIPTION_VALUE}" -DVERSION_FILE_AND_PRODUCT_VALUE_STRING="${LIBLOGICALACCESS_VERSION_STRING}" -DVERSION_FILE_AND_PRODUCT_VALUE=${LIBLOGICALACCESS_WINDOWS_VERSION})
-  add_definitions(-DLOGICALACCESS_LOGS -D_USRDLL -DS_WNT -D_CRT_SECURE_NO_WARNINGS -DLIBLOGICALACCESS_EXPORTS -DLIBLOGICALACCESS_EXPORTS_DLL)
-endif()
-
-SET(NATIVE_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src)
-SET(NATIVE_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-SET(LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib ${CMAKE_CURRENT_SOURCE_DIR}/plugins/logicalaccess/crypto/${VC_FOLDER_NAME})
-
-#Source Files
-file(GLOB source_root ${NATIVE_SOURCE}/*.cpp)
-file(GLOB source_cards ${NATIVE_SOURCE}/cards/*.cpp)
-file(GLOB source_readerproviders ${NATIVE_SOURCE}/readerproviders/*.cpp)
-file(GLOB source_service ${NATIVE_SOURCE}/services/*.cpp)
-file(GLOB source_accesscontrol ${NATIVE_SOURCE}/services/accesscontrol/*.cpp)
-file(GLOB source_encodings ${NATIVE_SOURCE}/services/accesscontrol/encodings/*.cpp)
-file(GLOB source_formats ${NATIVE_SOURCE}/services/accesscontrol/formats/*.cpp)
-file(GLOB source_customformat ${NATIVE_SOURCE}/services/accesscontrol/formats/customformat/*.cpp)
-file(GLOB source_nfctag ${NATIVE_SOURCE}/services/nfctag/*.cpp)
-file(GLOB source_storage ${NATIVE_SOURCE}/services/storage/*.cpp)
-file(GLOB source_uidchanger ${NATIVE_SOURCE}/services/uidchanger/*.cpp)
-# Yeah, for now grpc/proto generate source are there, in includes.
-file(GLOB source_iks ${NATIVE_SOURCE}/iks/*.cpp ${NATIVE_SOURCE}/iks/packet/*.cpp ${NATIVE_INCLUDE}/logicalaccess/iks/packet/*.cc)
-file(GLOB source_service_identity ${NATIVE_SOURCE}/services/identity/*.cpp)
-
-#Include Files
-file(GLOB include_root ${NATIVE_INCLUDE}/logicalaccess/*.h*)
-file(GLOB include_cards ${NATIVE_INCLUDE}/logicalaccess/cards/*.hpp)
-file(GLOB include_readerproviders ${NATIVE_INCLUDE}/logicalaccess/readerproviders/*.hpp)
-file(GLOB include_service ${NATIVE_INCLUDE}/logicalaccess/services/*.hpp)
-file(GLOB include_accesscontrol ${NATIVE_INCLUDE}/logicalaccess/services/accesscontrol/*.hpp)
-file(GLOB include_encodings ${NATIVE_INCLUDE}/logicalaccess/services/accesscontrol/encodings/*.hpp)
-file(GLOB include_formats ${NATIVE_INCLUDE}/logicalaccess/services/accesscontrol/formats/*.hpp)
-file(GLOB include_customformat ${NATIVE_INCLUDE}/logicalaccess/services/accesscontrol/formats/customformat/*.hpp)
-file(GLOB include_nfctag ${NATIVE_INCLUDE}/logicalaccess/services/nfctag/*.hpp)
-file(GLOB include_storage ${NATIVE_INCLUDE}/logicalaccess/services/storage/*.hpp)
-file(GLOB include_uidchanger ${NATIVE_INCLUDE}/logicalaccess/services/uidchanger/*.hpp)
-file(GLOB include_license_checker ${NATIVE_INCLUDE}/logicalaccess/services/licensechecker/*.hpp)
-file(GLOB include_iks ${NATIVE_INCLUDE}/logicalaccess/iks/*.hpp)
-file(GLOB include_service_identity ${NATIVE_INCLUDE}/logicalaccess/services/identity/*.hpp)
-
-INCLUDE_DIRECTORIES(${NATIVE_INCLUDE} ${CMAKE_CURRENT_SOURCE_DIR}/plugins/)
-
-if(UNIX)
-
-set(LIBLOGICALACCESS_LIBRARY logicalaccess)
-
-file(GLOB source_dynlibrary
-${NATIVE_SOURCE}/dynlibrary/posixdynlibrary.cpp
-${NATIVE_SOURCE}/dynlibrary/librarymanager.cpp
-${NATIVE_SOURCE}/dynlibrary/dllinit.cpp
-)
-INCLUDE_DIRECTORIES("/usr/local/include")
-file(GLOB include_dynlibrary ${NATIVE_INCLUDE}/logicalaccess/dynlibrary/posixdynlibrary.hpp ${NATIVE_INCLUDE}/logicalaccess/dynlibrary/idynlibrary.hpp ${NATIVE_INCLUDE}/logicalaccess/dynlibrary/librarymanager.hpp)
-
-else()
-
-set(LIBLOGICALACCESS_LIBRARY liblogicalaccess)
-
-file(GLOB source_vc ${CMAKE_CURRENT_SOURCE_DIR}/vc++/*.cpp)
-file(GLOB resourcerc ${CMAKE_CURRENT_SOURCE_DIR}/vc++/resource.rc)
-file(GLOB source_dynlibrary ${NATIVE_SOURCE}/dynlibrary/windowsdynlibrary.cpp ${NATIVE_SOURCE}/dynlibrary/winclass.cpp ${NATIVE_SOURCE}/dynlibrary/librarymanager.cpp)
-
-file(GLOB include_vc ${CMAKE_CURRENT_SOURCE_DIR}/vc++/*.h)
-file(GLOB include_dynlibrary ${NATIVE_INCLUDE}/logicalaccess/dynlibrary/winclass.hpp ${NATIVE_INCLUDE}/logicalaccess/dynlibrary/idynlibrary.hpp ${NATIVE_INCLUDE}/logicalaccess/dynlibrary/windowsdynlibrary.hpp ${NATIVE_INCLUDE}/logicalaccess/dynlibrary/librarymanager.hpp)
-
-SOURCE_GROUP("Source Files\\cards" FILES ${source_cards})
-SOURCE_GROUP("Source Files\\dynlibrary" FILES ${source_dynlibrary})
-SOURCE_GROUP("Source Files\\readerproviders" FILES ${source_readerproviders})
-SOURCE_GROUP("Source Files\\services" FILES ${source_service})
-SOURCE_GROUP("Source Files\\services\\accesscontrol" FILES ${source_accesscontrol})
-SOURCE_GROUP("Source Files\\services\\accesscontrol\\encodings" FILES ${source_encodings})
-SOURCE_GROUP("Source Files\\services\\accesscontrol\\formats" FILES ${source_formats})
-SOURCE_GROUP("Source Files\\services\\accesscontrol\\formats\\customformat" FILES ${source_customformat})
-SOURCE_GROUP("Source Files\\services\\nfctag" FILES ${source_nfctag})
-SOURCE_GROUP("Source Files\\services\\storage" FILES ${source_storage})
-SOURCE_GROUP("Source Files\\services\\uidchanger" FILES ${source_uidchanger})
-SOURCE_GROUP("Source Files\\iks" FILES ${source_iks})
-SOURCE_GROUP("Source Files\\services\\identity" FILES ${source_service_identity})
-
-SOURCE_GROUP("Header Files\\cards" FILES ${include_cards})
-SOURCE_GROUP("Header Files\\dynlibrary" FILES ${include_dynlibrary})
-SOURCE_GROUP("Header Files\\readerproviders" FILES ${include_readerproviders})
-SOURCE_GROUP("Header Files\\services" FILES ${include_service})
-SOURCE_GROUP("Header Files\\services\\accesscontrol" FILES ${include_accesscontrol})
-SOURCE_GROUP("Header Files\\services\\accesscontrol\\encodings" FILES ${include_encodings})
-SOURCE_GROUP("Header Files\\services\\accesscontrol\\formats" FILES ${include_formats})
-SOURCE_GROUP("Header Files\\services\\accesscontrol\\formats\\customformat" FILES ${include_customformat})
-SOURCE_GROUP("Header Files\\services\\nfctag" FILES ${include_nfctag})
-SOURCE_GROUP("Header Files\\services\\storage" FILES ${include_storage})
-SOURCE_GROUP("Header Files\\services\\uidchanger" FILES ${include_uidchanger})
-SOURCE_GROUP("Header Files\\services\\license_checker" FILES ${include_license_checker})
-SOURCE_GROUP("Header Files\\iks" FILES ${include_iks})
-SOURCE_GROUP("Header Files\\services\\identity" FILES ${include_service_identity})
-
-endif()
-
-install ( FILES LICENSE.LibLogicalAccess.txt DESTINATION share/licenses/liblogicalaccess )
-
-set(LIBLOGICALACCESS_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include)
-
-install ( FILES ${include_root} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess )
-install ( FILES ${include_cards} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/cards )
-install ( FILES ${include_readerproviders} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/readerproviders )
-install ( FILES ${include_service} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services )
-install ( FILES ${include_accesscontrol} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/accesscontrol )
-install ( FILES ${include_encodings} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/accesscontrol/encodings )
-install ( FILES ${include_formats} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/accesscontrol/formats )
-install ( FILES ${include_customformat} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/accesscontrol/formats/customformat )
-install ( FILES ${include_nfctag} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/nfctag )
-install ( FILES ${include_dynlibrary} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/dynlibrary )
-install ( FILES ${include_storage} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/storage )
-install ( FILES ${include_uidchanger} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/uidchanger )
-install ( FILES ${include_license_checker} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/licensechecker )
-install ( FILES ${include_iks} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/iks )
-install ( FILES ${include_service_identity} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess/services/identity )
+    target_compile_definitions(${PROJECT_NAME} PRIVATE "${_LOWERCASE_LIB_NAME}_EXPORTS=1")
+    # Disable some MSVC warning we don't care about.
+    if (MSVC)
+        target_compile_options(${PROJECT_NAME} PUBLIC "/wd4251")
+    endif ()
+    # HEADER_INSTALL_DIR must be defined before calling the macro.
+    install(FILES ${_EXPORT_FILE_PATH} DESTINATION ${HEADER_RELATIVE_INSTALL_DIR})
+endmacro()
+#### We dont use this for LLA_CORE macro.
 
 
-if (WIN32)
-    install ( FILES ${include_vc} DESTINATION ${LIBLOGICALACCESS_INCLUDE_DIR}/logicalaccess )
-    LINK_DIRECTORIES(${LINK_DIRECTORIES} "${CMAKE_CURRENT_SOURCE_DIR}/plugins/logicalaccess/crypto/${VC_FOLDER_NAME}")
-endif()
+file(GLOB LLA_RESOURCE_RC ${CMAKE_CURRENT_SOURCE_DIR}/vc++/resource.rc)
+file(GLOB_RECURSE LLA_NATIVE_SOURCES "${CMAKE_SOURCE_DIR}/src/*.cpp")
+file(GLOB_RECURSE LLA_NATIVE_HEADERS "${CMAKE_SOURCE_DIR}/include/*.hpp")
 
-set(source ${source_root} ${source_cards} ${source_readerproviders}
-        ${source_service} ${source_accesscontrol} ${source_encodings}
-        ${source_formats} ${source_customformat} ${source_nfctag} ${source_storage} ${source_uidchanger}
-        ${source_dynlibrary} ${source_vc} ${resourcerc}
-        ${source_iks} ${source_service_identity}
-        )
-
-set(include ${include_root} ${include_cards} ${include_readerproviders}
-        ${include_service} ${include_accesscontrol} ${include_encodings}
-        ${include_formats} ${include_customformat} ${include_nfctag} ${include_uidchanger}
-        ${include_license_checker}
-        ${include_dynlibrary} ${include_storage} ${include_vc}
-        ${include_iks} ${include_service_identity})
-
-
-add_library(
-  ${LIBLOGICALACCESS_LIBRARY}
-  ${source}
-  ${include}
-)
-
-install ( TARGETS ${LIBLOGICALACCESS_LIBRARY}
-          RUNTIME DESTINATION bin/${LIB_SUFFIX}
-          LIBRARY DESTINATION lib/${LIB_SUFFIX}
-          ARCHIVE DESTINATION lib/${LIB_SUFFIX}
-        )
-
-if (MSVC)
-	install(FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb/${LIB_SUFFIX} OPTIONAL)
-endif()
-
-set_target_properties(${LIBLOGICALACCESS_LIBRARY} PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
-target_link_libraries(${LIBLOGICALACCESS_LIBRARY} ${OPENSSL_LIBRARIES})
-
-if (WIN32)
-
-  set(SCLIB_ENDNAME)
-  if (TARGET_ARCH STREQUAL "x64")
-	set (SCLIB_ENDNAME "x64")
-  endif()
-
-  target_link_libraries(${LIBLOGICALACCESS_LIBRARY} winscard scardsyn${SCLIB_ENDNAME} Winmm ws2_32 delayimp logicalaccess-cryptolib llacommon)
-
-elseif (UNIX)
-	target_link_libraries(${LIBLOGICALACCESS_LIBRARY} logicalaccess-cryptolib ${Boost_LIBRARIES} ${CMAKE_DL_LIBS} llacommon)
-endif()
-
+# Those 2 are under plugin but they arent plugins, they are
+# required for LLA to link properly.
 add_subdirectory(plugins/logicalaccess/plugins/llacommon)
 add_subdirectory(plugins/logicalaccess/plugins/crypto)
-add_subdirectory(plugins/logicalaccess/plugins/iks)
-add_subdirectory(plugins/logicalaccess/plugins/cards)
-add_subdirectory(plugins/logicalaccess/plugins/readers)
-add_subdirectory(plugins/logicalaccess/plugins/pkcs)
-if (NOT ANDROID)
-	add_subdirectory(tests)
+
+# Create logicalaccess target
+set(LIBLOGICALACCESS_LIBRARY logicalaccess)
+add_library(logicalaccess SHARED ${LLA_NATIVE_SOURCES} ${LLA_NATIVE_HEADERS} ${LLA_RESOURCE_RC})
+
+# We rely on CMake to generate an export macro for the target.
+generate_export_header(logicalaccess
+        EXPORT_MACRO_NAME LLA_CORE_API
+        EXPORT_FILE_NAME "${CMAKE_CURRENT_SOURCE_DIR}/include/logicalaccess/lla_core_api.hpp")
+target_compile_definitions(logicalaccess PRIVATE logicalaccess_EXPORTS=1)
+      
+if (LLA_BOOST_ASIO_HAS_STD_STRING_VIEW)
+  # Work around a boost / clang issue with include to string/view.
+  # See https://github.com/boostorg/asio/issues/82
+  target_compile_definitions(logicalaccess PUBLIC BOOST_ASIO_HAS_STD_STRING_VIEW=1)
 endif()
 
-if ( NOT DEFINED LIBLOGICALACCESS_CMAKE_CONFIG_DIR )
-  set ( LIBLOGICALACCESS_CMAKE_CONFIG_DIR lib/${LIB_SUFFIX}/cmake/liblogicalaccess )
+# Variable containing external library that LLA needs to link against
+set(LLA_ADDITIONAL_LIBRARIES_TO_LINK_AGAINST)
+
+if (UNIX AND NOT ANDROID)
+    target_compile_options(logicalaccess PUBLIC -W -Wall)
+    list(APPEND LLA_ADDITIONAL_LIBRARIES_TO_LINK_AGAINST dl pthread)
 endif ()
-set(LIBLOGICALACCESS_DEFINITIONS "${CXX11_FLAGS}")
-set ( LIBLOGICALACCESS_INCLUDE_DIRS ${LIBLOGICALACCESS_INCLUDE_DIR} )
-list ( APPEND LIBLOGICALACCESS_INCLUDE_DIRS ${OPENSSL_INCLUDE_DIR} )
-list ( APPEND LIBLOGICALACCESS_INCLUDE_DIRS ${Boost_INCLUDE_DIRS} )
-set(LIBLOGICALACCESS_DEFINITIONS "${LIBLOGICALACCESS_DEFINITIONS} -DLOGICALACCESS_LOGS")
-if ( UNIX )
-  set(LIBLOGICALACCESS_DEFINITIONS "${LIBLOGICALACCESS_DEFINITIONS} -DUNIX")
-  list (APPEND LIBLOGICALACCESS_INCLUDE_DIRS ${PCSCLITE_INCLUDE_DIRS} )
-else ()
-  set(LIBLOGICALACCESS_DEFINITIONS "${LIBLOGICALACCESS_DEFINITIONS} -D_USRDLL -DS_WNT -D_CRT_SECURE_NO_WARNINGS ")
+
+target_link_libraries(logicalaccess PUBLIC
+        llacommon
+        logicalaccess-cryptolib
+        CONAN_PKG::OpenSSL
+        ${LLA_ADDITIONAL_LIBRARIES_TO_LINK_AGAINST}
+        CONAN_PKG::boost)
+
+# Wrong, fix /plugins/
+target_include_directories(logicalaccess PUBLIC
+        ${CMAKE_SOURCE_DIR}/include)
+
+install(TARGETS ${LIBLOGICALACCESS_LIBRARY}
+        RUNTIME DESTINATION bin/${LIB_SUFFIX}
+        LIBRARY DESTINATION lib/${LIB_SUFFIX}
+        ARCHIVE DESTINATION lib/${LIB_SUFFIX})
+
+if (MSVC)
+    install(FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb/${LIB_SUFFIX} OPTIONAL)
+    SET(VERSION_PRODUCTNAME_VALUE "Liblogicalaccess")
+    SET(VERSION_PROJECT_FILE_DESCRIPTION_VALUE "${VERSION_PRODUCTNAME_VALUE}\ (${TARGET_ARCH})")
+    target_compile_definitions(logicalaccess PUBLIC -DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}" -DVERSION_PROJECT_FILE_DESCRIPTION_VALUE="${VERSION_PROJECT_FILE_DESCRIPTION_VALUE}" -DVERSION_FILE_AND_PRODUCT_VALUE_STRING="${LIBLOGICALACCESS_VERSION_STRING}" -DVERSION_FILE_AND_PRODUCT_VALUE=${LIBLOGICALACCESS_WINDOWS_VERSION})
 endif ()
-list ( REMOVE_DUPLICATES LIBLOGICALACCESS_INCLUDE_DIRS )
-set ( LIBLOGICALACCESS_LIBRARIES ${LIBLOGICALACCESS_LIBRARY} ${OPENSSL_LIBRARIES} )
-set ( LIBLOGICALACCESS_LIBRARY_DIRS ${CMAKE_INSTALL_PREFIX}/lib/${LIB_SUFFIX} )
-list ( APPEND LIBLOGICALACCESS_LIBRARIES ${Boost_LIBRARIES} )
-list ( APPEND LIBLOGICALACCESS_LIBRARY_DIRS ${Boost_LIBRARY_DIRS} )
-set ( LIBLOGICALACCESS_USE_FILE ${CMAKE_INSTALL_PREFIX}/${LIBLOGICALACCESS_CMAKE_CONFIG_DIR}/UseLibLogicalAccess.cmake )
-set ( LIBLOGICALACCESS_ROOT_DIR ${CMAKE_INSTALL_PREFIX} )
-configure_file ( cmake/LibLogicalAccessConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/LibLogicalAccessConfig.cmake @ONLY )
-install ( FILES ${CMAKE_CURRENT_BINARY_DIR}/LibLogicalAccessConfig.cmake cmake/UseLibLogicalAccess.cmake
-          DESTINATION ${LIBLOGICALACCESS_CMAKE_CONFIG_DIR}
+
+set_target_properties(${LIBLOGICALACCESS_LIBRARY} PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
+
+if (LLA_BUILD_IKS)
+    add_subdirectory(plugins/logicalaccess/plugins/iks)
+endif ()
+
+add_subdirectory(plugins/logicalaccess/plugins/cards)
+add_subdirectory(plugins/logicalaccess/plugins/readers)
+
+if (LLA_BUILD_PKCS)
+    add_subdirectory(plugins/logicalaccess/plugins/pkcs)
+endif ()
+
+if (LLA_BUILD_UNITTEST)
+    add_subdirectory(tests)
+endif ()
+
+if (NOT DEFINED LIBLOGICALACCESS_CMAKE_CONFIG_DIR)
+    set(LIBLOGICALACCESS_CMAKE_CONFIG_DIR lib/${LIB_SUFFIX}/cmake/liblogicalaccess)
+endif ()
+
+set(LIBLOGICALACCESS_USE_FILE ${CMAKE_INSTALL_PREFIX}/${LIBLOGICALACCESS_CMAKE_CONFIG_DIR}/UseLibLogicalAccess.cmake)
+set(LIBLOGICALACCESS_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
+configure_file(cmake/LibLogicalAccessConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/LibLogicalAccessConfig.cmake @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LibLogicalAccessConfig.cmake cmake/UseLibLogicalAccess.cmake
+        DESTINATION ${LIBLOGICALACCESS_CMAKE_CONFIG_DIR}
         )
 
 if (NOT DEFINED SYSCONF_INSTALL_DIR)
-  set ( SYSCONF_INSTALL_DIR etc )
+    set(SYSCONF_INSTALL_DIR etc)
 endif ()
-install ( FILES liblogicalaccess.config DESTINATION ${SYSCONF_INSTALL_DIR} )
+install(FILES liblogicalaccess.config DESTINATION ${SYSCONF_INSTALL_DIR})
+
+# This perform the "real installation" of header files.
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/logicalaccess DESTINATION include/)

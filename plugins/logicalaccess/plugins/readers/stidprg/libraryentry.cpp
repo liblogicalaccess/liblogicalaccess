@@ -6,12 +6,12 @@
 #include <cassert>
 
 extern "C" {
-LIBLOGICALACCESS_API char *getLibraryName()
+LLA_READERS_STIDPRG_API char *getLibraryName()
 {
     return (char *)"STidPRG";
 }
 
-LIBLOGICALACCESS_API void
+LLA_READERS_STIDPRG_API void
 getSTidPRGReader(std::shared_ptr<logicalaccess::STidPRGReaderProvider> *rp)
 {
     if (rp != nullptr)
@@ -20,7 +20,7 @@ getSTidPRGReader(std::shared_ptr<logicalaccess::STidPRGReaderProvider> *rp)
     }
 }
 
-LIBLOGICALACCESS_API bool getReaderInfoAt(unsigned int index, char *readername,
+LLA_READERS_STIDPRG_API bool getReaderInfoAt(unsigned int index, char *readername,
                                           size_t readernamelen, void **getterfct)
 {
     bool ret = false;
@@ -42,7 +42,7 @@ LIBLOGICALACCESS_API bool getReaderInfoAt(unsigned int index, char *readername,
     return ret;
 }
 
-LIBLOGICALACCESS_API void
+LLA_READERS_STIDPRG_API void
 getCardService(std::shared_ptr<logicalaccess::Chip> c,
                std::shared_ptr<logicalaccess::CardService> &service,
                logicalaccess::CardServiceType type)

@@ -21,7 +21,7 @@ namespace logicalaccess
 /**
 * \brief The FeliCa card provider class for SpringCard reader.
 */
-class LIBLOGICALACCESS_API FeliCaSpringCardCommands : public FeliCaCommands
+class LLA_READERS_PCSC_API FeliCaSpringCardCommands : public FeliCaCommands
 {
   public:
     /**

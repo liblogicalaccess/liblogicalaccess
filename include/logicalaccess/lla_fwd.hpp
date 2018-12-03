@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <vector>
 #include <memory>
-#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/lla_core_api.hpp>
 
 namespace logicalaccess
 {

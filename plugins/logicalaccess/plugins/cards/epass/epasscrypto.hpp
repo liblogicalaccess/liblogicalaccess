@@ -1,13 +1,14 @@
 #pragma once
 
 #include <cstdint>
+#include <logicalaccess/plugins/cards/epass/lla_cards_epass_api.hpp>
 #include <logicalaccess/lla_fwd.hpp>
 #include <string>
 #include <vector>
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API EPassCrypto
+class LLA_CARDS_EPASS_API EPassCrypto
 {
   public:
     explicit EPassCrypto(const std::string &mrz);

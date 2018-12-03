@@ -26,7 +26,7 @@ namespace openssl
  * specific data, using createFromData(). You can also generate an AESSymmetricKey from a
  * passphrase, using createFromPassphrase().
  */
-class LIBLOGICALACCESS_API AESSymmetricKey : public SymmetricKey
+class LLA_CRYPTO_API AESSymmetricKey : public SymmetricKey
 {
   public:
     /**

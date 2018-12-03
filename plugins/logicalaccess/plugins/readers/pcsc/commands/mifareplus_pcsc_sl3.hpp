@@ -19,7 +19,7 @@ namespace logicalaccess
  * MifarePlus in Security Level 3
  *
  */
-class LIBLOGICALACCESS_API MifarePlusSL3PCSCCommands : public MifarePlusSL3Commands_NEW
+class LLA_READERS_PCSC_API MifarePlusSL3PCSCCommands : public MifarePlusSL3Commands_NEW
 {
 };
 }

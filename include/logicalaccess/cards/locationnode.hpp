@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
  * \brief A location node description. This describe a location on a hierachical view.
  */
-class LIBLOGICALACCESS_API LocationNode
+class LLA_CORE_API LocationNode
 {
   public:
     /**

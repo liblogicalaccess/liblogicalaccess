@@ -18,7 +18,7 @@ namespace logicalaccess
 /**
  * \brief The Mifare Ultralight C storage card service base class.
  */
-class LIBLOGICALACCESS_API MifareUltralightCStorageCardService
+class LLA_CARDS_MIFAREULTRALIGHT_API MifareUltralightCStorageCardService
     : public MifareUltralightStorageCardService
 {
   public:

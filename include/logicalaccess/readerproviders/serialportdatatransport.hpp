@@ -17,7 +17,7 @@ namespace logicalaccess
 /**
  * \brief A serial port data transport class.
  */
-class LIBLOGICALACCESS_API SerialPortDataTransport : public DataTransport
+class LLA_CORE_API SerialPortDataTransport : public DataTransport
 {
   public:
     /**

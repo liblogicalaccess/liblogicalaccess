@@ -18,7 +18,7 @@ namespace logicalaccess
 /**
  * \brief The FeliCa commands class.
  */
-class LIBLOGICALACCESS_API FeliCaCommands : public Commands
+class LLA_CARDS_FELICA_API FeliCaCommands : public Commands
 {
   public:
     FeliCaCommands()

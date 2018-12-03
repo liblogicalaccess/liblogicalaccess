@@ -18,7 +18,7 @@ namespace logicalaccess
 /**
  * \brief The ACS ACR reader unit class.
  */
-class LIBLOGICALACCESS_API ACSACRReaderUnit : public PCSCReaderUnit
+class LLA_READERS_PCSC_API ACSACRReaderUnit : public PCSCReaderUnit
 {
   public:
     /**

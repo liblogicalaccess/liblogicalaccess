@@ -196,7 +196,11 @@ TEST(test_epass_utils, test_parse_dg1)
     ASSERT_EQ("4", dg1.checksum_doc_no_);
     ASSERT_EQ("UTO", dg1.nationality_);
 
+	#ifdef __linux__
     std::tm date          = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	#else
+    std::tm date = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+	#endif
     date.tm_mon           = 3;
     date.tm_mday          = 10;
     date.tm_year          = 79;
@@ -206,7 +210,11 @@ TEST(test_epass_utils, test_parse_dg1)
     ASSERT_EQ("7", dg1.checksum_birthdate_);
 
 
-    std::tm date2          = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	#ifdef __linux__
+    std::tm date2 = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	#else
+	std::tm date2 = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+	#endif
     date2.tm_mon           = 5;
     date2.tm_mday          = 18;
     date2.tm_year          = 120;

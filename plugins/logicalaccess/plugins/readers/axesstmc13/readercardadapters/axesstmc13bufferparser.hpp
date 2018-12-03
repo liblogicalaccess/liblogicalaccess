@@ -8,13 +8,13 @@
 #define AXESSTMC13BUFFERPARSER_HPP
 
 #include <logicalaccess/readerproviders/circularbufferparser.hpp>
-
+#include <logicalaccess/plugins/readers/axesstmc13/lla_readers_axesstmc13_api.hpp>
 #include <string>
 #include <vector>
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API AxessTMC13BufferParser : public CircularBufferParser
+class LLA_READERS_AXESSTMC13_API AxessTMC13BufferParser : public CircularBufferParser
 {
   public:
     AxessTMC13BufferParser()

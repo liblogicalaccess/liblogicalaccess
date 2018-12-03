@@ -14,7 +14,7 @@ namespace logicalaccess
 /**
  * \brief A DESFire EV1 location informations.
  */
-class LIBLOGICALACCESS_API DESFireEV1Location : public DESFireLocation
+class LLA_CARDS_DESFIRE_API DESFireEV1Location : public DESFireLocation
 {
   public:
     /**

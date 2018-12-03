@@ -19,7 +19,7 @@ namespace logicalaccess
 /**
  * \brief A hmac-1 key class.
  */
-class LIBLOGICALACCESS_API HMAC1Key : public Key
+class LLA_CORE_API HMAC1Key : public Key
 {
   public:
     /**

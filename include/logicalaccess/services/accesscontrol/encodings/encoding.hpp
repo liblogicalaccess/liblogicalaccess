@@ -29,7 +29,7 @@ typedef enum {
 /**
  * \brief An encoder type.
  */
-class LIBLOGICALACCESS_API Encoding
+class LLA_CORE_API Encoding
 {
   public:
     virtual ~Encoding() = default;

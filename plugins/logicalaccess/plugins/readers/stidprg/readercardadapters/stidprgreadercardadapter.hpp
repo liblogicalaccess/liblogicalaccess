@@ -1,10 +1,11 @@
 #pragma once
 
 #include <logicalaccess/cards/readercardadapter.hpp>
+#include <logicalaccess/plugins/readers/stidprg/lla_readers_stidprg_api.hpp>
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API STidPRGReaderCardAdapter : public ReaderCardAdapter
+class LLA_READERS_STIDPRG_API STidPRGReaderCardAdapter : public ReaderCardAdapter
 {
 
   public:

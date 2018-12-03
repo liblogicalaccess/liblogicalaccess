@@ -38,7 +38,7 @@ typedef enum {
 /**
  * \brief A FASC-N 200 bit format class.
  */
-class LIBLOGICALACCESS_API FASCN200BitFormat : public StaticFormat
+class LLA_CORE_API FASCN200BitFormat : public StaticFormat
 {
   public:
     /**
@@ -264,8 +264,8 @@ class LIBLOGICALACCESS_API FASCN200BitFormat : public StaticFormat
         FASCNOrganizationalCategory d_orgCategory;
 
         /**
-         * \brief The organizational identifier. OC=1 – FIPS 95-2 Agency Code. OC=2 –
-         * State Code. OC=3 – Company Code. OC=4 – Numeric Country Code.
+         * \brief The organizational identifier. OC=1 ï¿½ FIPS 95-2 Agency Code. OC=2 ï¿½
+         * State Code. OC=3 ï¿½ Company Code. OC=4 ï¿½ Numeric Country Code.
          */
         unsigned short d_orgIdentifier;
 

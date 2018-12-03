@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 3.1)
 project(smartidreaders)
 
-if (WIN32)
-	SET(VERSION_PRODUCTNAME_VALUE "smartidreaders")
-	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
-endif()
+if (MSVC)
+    SET(VERSION_PRODUCTNAME_VALUE "smartidreaders")
+    add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif ()
+
+set(HEADER_RELATIVE_INSTALL_DIR "include/logicalaccess/plugins/readers/smartid")
 
 file(GLOB SRCS *.cpp)
 file(GLOB include *.hpp)
@@ -25,28 +27,24 @@ SOURCE_GROUP("Source Files\\commands" FILES ${source_commands})
 set(INCLUDE_LIB ${include} ${include_core} ${include_readercardadapters} ${include_commands})
 set(SOURCE_LIB ${SRCS} ${source_readercardadapters} ${source_commands})
 
-									
-add_library(
-	smartidreaders
-	SHARED
-	${SOURCE_LIB}
-	${INCLUDE_LIB}
-	${resourcerc}
-  )
+add_library(smartidreaders
+        SHARED
+        ${SOURCE_LIB}
+        ${INCLUDE_LIB}
+        ${LLA_RESOURCE_RC})
 
 SET_TARGET_PROPERTIES(smartidreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
-  
-target_link_libraries(
-	smartidreaders
-	iso7816cards
-	mifarecards
-	${LIBLOGICALACCESS_LIBRARY}
-)
 
-install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/smartid )
-install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/smartid/readercardadapters )
-install ( FILES ${include_commands} DESTINATION include/logicalaccess/plugins/readers/smartid/readercardadapters )
-install ( TARGETS smartidreaders RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )
+target_link_libraries(smartidreaders
+        iso7816cards
+        mifarecards
+        logicalaccess)
+LLA_GENERATE_EXPORTS(LLA_READERS_SMARTID)
+
+install(FILES ${include} DESTINATION ${HEADER_RELATIVE_INSTALL_DIR})
+install(FILES ${include_readercardadapters} DESTINATION ${HEADER_RELATIVE_INSTALL_DIR}/readercardadapters)
+install(FILES ${include_commands} DESTINATION ${HEADER_RELATIVE_INSTALL_DIR}/readercardadapters)
+install(TARGETS smartidreaders RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX})
 if (MSVC)
-	install(FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb/${LIB_SUFFIX} OPTIONAL)
-endif()
+    install(FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb/${LIB_SUFFIX} OPTIONAL)
+endif ()

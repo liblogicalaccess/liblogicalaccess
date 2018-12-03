@@ -86,7 +86,7 @@ typedef struct s_KeyEntryAV2Information
  * \brief A SAMKeyEntry class.
  */
 template <typename T, typename S>
-class LIBLOGICALACCESS_API SAMKeyEntry : public SAMBasicKeyEntry
+class LLA_CARDS_SAMAV2_API SAMKeyEntry : public SAMBasicKeyEntry
 {
   public:
     SAMKeyEntry()

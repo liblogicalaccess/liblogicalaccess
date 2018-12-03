@@ -10,6 +10,7 @@
 #include <logicalaccess/readerproviders/readerunit.hpp>
 #include <logicalaccess/readerproviders/serialportxml.hpp>
 #include <logicalaccess/plugins/readers/a3mlgm5600/a3mlgm5600readerunitconfiguration.hpp>
+#include <logicalaccess/plugins/readers/a3mlgm5600/lla_readers_a3mlgm5600_api.hpp>
 
 namespace logicalaccess
 {
@@ -20,7 +21,7 @@ class A3MLGM5600ReaderProvider;
 /**
  * \brief The A3MLGM5600 reader unit class.
  */
-class LIBLOGICALACCESS_API A3MLGM5600ReaderUnit : public ReaderUnit
+class LLA_READERS_A3MLGM5600_API A3MLGM5600ReaderUnit : public ReaderUnit
 {
   public:
     /**

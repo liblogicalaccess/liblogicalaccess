@@ -6,6 +6,7 @@
 
 namespace logicalaccess
 {
+#ifndef __unix__
 IDynLibrary *newDynLibrary(const std::string &dlName)
 {
     return new WindowsDynLibrary(dlName);
@@ -47,4 +48,6 @@ bool WindowsDynLibrary::hasSymbol(const char *name)
     }
     return true;
 }
+
+#endif
 }

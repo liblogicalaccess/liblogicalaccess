@@ -8,13 +8,15 @@
 #define LOGICALACCESS_GIGATMSREADERUNITCONFIGURATION_HPP
 
 #include <logicalaccess/readerproviders/readerunitconfiguration.hpp>
+#include <logicalaccess/plugins/readers/gigatms/lla_readers_gigatms_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief The GIGA-TMS reader unit configuration base class.
  */
-class LIBLOGICALACCESS_API GigaTMSReaderUnitConfiguration : public ReaderUnitConfiguration
+class LLA_READERS_GIGATMS_API GigaTMSReaderUnitConfiguration
+    : public ReaderUnitConfiguration
 {
   public:
     /**

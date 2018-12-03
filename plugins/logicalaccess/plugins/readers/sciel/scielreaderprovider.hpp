@@ -9,7 +9,7 @@
 
 #include <logicalaccess/readerproviders/readerprovider.hpp>
 #include <logicalaccess/plugins/readers/sciel/scielreaderunit.hpp>
-
+#include <logicalaccess/plugins/readers/sciel/lla_readers_sciel_api.hpp>
 #include <string>
 #include <vector>
 
@@ -22,7 +22,7 @@ namespace logicalaccess
 /**
  * \brief SCIEL Reader Provider class.
  */
-class LIBLOGICALACCESS_API SCIELReaderProvider : public ReaderProvider
+class LLA_READERS_SCIEL_API SCIELReaderProvider : public ReaderProvider
 {
   public:
     /**

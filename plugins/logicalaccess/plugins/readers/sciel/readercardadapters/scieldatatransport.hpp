@@ -16,7 +16,7 @@
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API ScielDataTransport : public SerialPortDataTransport
+class LLA_READERS_SCIEL_API ScielDataTransport : public SerialPortDataTransport
 {
   public:
     explicit ScielDataTransport(const std::string &portname = "")

@@ -17,7 +17,7 @@ class Chip;
 /**
  * \brief The base commands class for all card commands.
  */
-class LIBLOGICALACCESS_API Commands : public ICommands
+class LLA_CORE_API Commands : public ICommands
 {
   public:
     /**

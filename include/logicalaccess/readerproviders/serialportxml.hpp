@@ -16,7 +16,7 @@
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API SerialPortXml : public XmlSerializable
+class LLA_CORE_API SerialPortXml : public XmlSerializable
 {
   public:
     virtual ~SerialPortXml() = default;

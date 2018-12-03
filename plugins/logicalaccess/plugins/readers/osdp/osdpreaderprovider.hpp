@@ -9,6 +9,7 @@
 
 #include <logicalaccess/readerproviders/readerprovider.hpp>
 #include <logicalaccess/plugins/readers/osdp/osdpreaderunit.hpp>
+#include <logicalaccess/plugins/readers/osdp/lla_readers_osdp_api.hpp>
 
 namespace logicalaccess
 {
@@ -17,7 +18,7 @@ namespace logicalaccess
 /**
  * \brief OSDP Reader Provider class.
  */
-class LIBLOGICALACCESS_API OSDPReaderProvider : public ReaderProvider
+class LLA_READERS_OSDP_API OSDPReaderProvider : public ReaderProvider
 {
   public:
     /**

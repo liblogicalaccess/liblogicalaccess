@@ -14,7 +14,7 @@ namespace logicalaccess
 /**
  * \brief A Wiegand 34 with Facility format class.
  */
-class LIBLOGICALACCESS_API Wiegand34WithFacilityFormat : public Wiegand34Format
+class LLA_CORE_API Wiegand34WithFacilityFormat : public Wiegand34Format
 {
   public:
     /**

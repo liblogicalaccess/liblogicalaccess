@@ -15,7 +15,7 @@ namespace logicalaccess
 /**
  * \brief A parity data field.
  */
-class LIBLOGICALACCESS_API ParityDataField : public DataField
+class LLA_CORE_API ParityDataField : public DataField
 {
   public:
     /**

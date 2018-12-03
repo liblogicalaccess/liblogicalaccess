@@ -9,6 +9,7 @@
 
 #include <logicalaccess/readerproviders/readerunit.hpp>
 #include <logicalaccess/plugins/readers/promag/promagreaderunitconfiguration.hpp>
+#include <logicalaccess/plugins/readers/promag/lla_readers_promag_api.hpp>
 
 namespace logicalaccess
 {
@@ -19,7 +20,7 @@ class PromagReaderProvider;
 /**
  * \brief The Promag reader unit class.
  */
-class LIBLOGICALACCESS_API PromagReaderUnit : public ReaderUnit
+class LLA_READERS_PROMAG_API PromagReaderUnit : public ReaderUnit
 {
   public:
     /**

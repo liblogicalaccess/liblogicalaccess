@@ -46,7 +46,7 @@ typedef std::vector<std::string> CardTypeList;
 /**
  * \brief A Cards format composite class.
  */
-class LIBLOGICALACCESS_API CardsFormatComposite : public XmlSerializable
+class LLA_CORE_API CardsFormatComposite : public XmlSerializable
 {
   public:
 #ifndef SWIG

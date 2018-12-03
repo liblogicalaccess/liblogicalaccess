@@ -8,6 +8,7 @@
 #define LOGICALACCESS_PROXACCESSCONTROLCARDSERVICE_HPP
 
 #include <logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp>
+#include <logicalaccess/plugins/cards/prox/lla_cards_prox_api.hpp>
 
 namespace logicalaccess
 {
@@ -16,7 +17,7 @@ namespace logicalaccess
 /**
  * \brief The Prox access control card service class.
  */
-class LIBLOGICALACCESS_API ProxAccessControlCardService : public AccessControlCardService
+class LLA_CARDS_PROX_API ProxAccessControlCardService : public AccessControlCardService
 {
   public:
     /**

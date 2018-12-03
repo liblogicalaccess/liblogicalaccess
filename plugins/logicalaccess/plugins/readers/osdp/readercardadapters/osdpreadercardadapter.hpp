@@ -17,7 +17,7 @@ namespace logicalaccess
 /**
  * \brief A reader/card adapter for Transparent Smart Card Interface OSDP.
  */
-class LIBLOGICALACCESS_API OSDPReaderCardAdapter : public ISO7816ReaderCardAdapter
+class LLA_READERS_OSDP_API OSDPReaderCardAdapter : public ISO7816ReaderCardAdapter
 {
   public:
     OSDPReaderCardAdapter(std::shared_ptr<OSDPCommands> command, unsigned char address,

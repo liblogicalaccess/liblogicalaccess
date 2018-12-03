@@ -8,7 +8,7 @@ namespace logicalaccess
 /**
  * A storage to represent a key store in a PKCS token.
  */
-class LIBLOGICALACCESS_API PKCSKeyStorage : public KeyStorage
+class LLA_CORE_API PKCSKeyStorage : public KeyStorage
 {
   public:
     KeyStorageType getType() const override

@@ -8,13 +8,13 @@
 #define PROMAGBUFFERPARSER_HPP
 
 #include <logicalaccess/readerproviders/circularbufferparser.hpp>
-
+#include <logicalaccess/plugins/readers/promag/lla_readers_promag_api.hpp>
 #include <string>
 #include <vector>
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API PromagBufferParser : public CircularBufferParser
+class LLA_READERS_PROMAG_API PromagBufferParser : public CircularBufferParser
 {
   public:
     PromagBufferParser()

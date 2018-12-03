@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
  * \brief ISO7816 Reader Provider base class.
  */
-class LIBLOGICALACCESS_API ISO7816ReaderProvider : public ReaderProvider
+class LLA_READERS_ISO7816_API ISO7816ReaderProvider : public ReaderProvider
 {
   public:
     using ReaderProvider::createReaderUnit;

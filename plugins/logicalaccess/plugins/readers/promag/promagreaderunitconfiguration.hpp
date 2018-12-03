@@ -8,13 +8,15 @@
 #define LOGICALACCESS_PROMAGREADERUNITCONFIGURATION_HPP
 
 #include <logicalaccess/readerproviders/readerunitconfiguration.hpp>
+#include <logicalaccess/plugins/readers/promag/lla_readers_promag_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief The Promag reader unit configuration base class.
  */
-class LIBLOGICALACCESS_API PromagReaderUnitConfiguration : public ReaderUnitConfiguration
+class LLA_READERS_PROMAG_API PromagReaderUnitConfiguration
+    : public ReaderUnitConfiguration
 {
   public:
     /**

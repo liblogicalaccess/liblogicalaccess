@@ -18,7 +18,7 @@ namespace logicalaccess
  * \brief A data transport base class. It provide an abstraction layer between the host
  * and readers.
  */
-class LIBLOGICALACCESS_API DataTransport : public XmlSerializable
+class LLA_CORE_API DataTransport : public XmlSerializable
 {
   public:
     virtual ~DataTransport() = default;

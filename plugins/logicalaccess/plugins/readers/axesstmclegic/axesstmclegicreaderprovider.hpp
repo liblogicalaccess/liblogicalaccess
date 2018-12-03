@@ -9,7 +9,7 @@
 
 #include <logicalaccess/readerproviders/readerprovider.hpp>
 #include <logicalaccess/plugins/readers/axesstmclegic/axesstmclegicreaderunit.hpp>
-
+#include <logicalaccess/plugins/readers/axesstmclegic/lla_readers_axesstmclegic_api.hpp>
 #include <string>
 #include <vector>
 
@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
  * \brief AxessTMCLegic Reader Provider class.
  */
-class LIBLOGICALACCESS_API AxessTMCLegicReaderProvider : public ReaderProvider
+class LLA_READERS_AXESSTMCLEGIC_API AxessTMCLegicReaderProvider : public ReaderProvider
 {
   public:
     /**

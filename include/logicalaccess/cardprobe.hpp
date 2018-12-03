@@ -1,6 +1,5 @@
 #pragma once
 
-#include <logicalaccess/liblogicalaccess_export.hpp>
 #include <logicalaccess/lla_fwd.hpp>
 #include <string>
 
@@ -18,7 +17,7 @@ namespace logicalaccess
  * if not properly defined. This class may be reimplemented for some
  * reader unit that behave differently.
  */
-class LIBLOGICALACCESS_API CardProbe
+class LLA_CORE_API CardProbe
 {
   public:
     virtual ~CardProbe() = default;

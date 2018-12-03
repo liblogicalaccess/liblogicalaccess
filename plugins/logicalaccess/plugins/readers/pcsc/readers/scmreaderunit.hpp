@@ -18,7 +18,7 @@ namespace logicalaccess
 /**
  * \brief The SCM reader unit class.
  */
-class LIBLOGICALACCESS_API SCMReaderUnit : public PCSCReaderUnit
+class LLA_READERS_PCSC_API SCMReaderUnit : public PCSCReaderUnit
 {
   public:
     /**

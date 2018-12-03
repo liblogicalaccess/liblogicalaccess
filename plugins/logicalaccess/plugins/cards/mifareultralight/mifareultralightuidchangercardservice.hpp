@@ -2,6 +2,7 @@
 
 #include <logicalaccess/services/uidchanger/uidchangerservice.hpp>
 #include <logicalaccess/services/storage/storagecardservice.hpp>
+#include <logicalaccess/plugins/cards/mifareultralight/lla_cards_mifareultralight_api.hpp>
 
 namespace logicalaccess
 {
@@ -13,7 +14,7 @@ namespace logicalaccess
  * This service operates at high-level, and while it doesn't work against
  * some reader (OK5321) it consist of normal block writing operation.
  */
-class LIBLOGICALACCESS_API MifareUltralightUIDChangerCardService
+class LLA_CARDS_MIFAREULTRALIGHT_API MifareUltralightUIDChangerCardService
     : public UIDChangerCardService
 {
   public:

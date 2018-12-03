@@ -8,7 +8,7 @@ namespace logicalaccess
 {
 #define CMD_EPASS "EPass"
 
-class LIBLOGICALACCESS_API EPassCommands : public Commands
+class LLA_CARDS_EPASS_API EPassCommands : public Commands
 {
   public:
     EPassCommands();

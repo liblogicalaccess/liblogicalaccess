@@ -19,7 +19,7 @@ namespace logicalaccess
 /**
  * \brief The Mifare commands class for Omnikey xx27 reader.
  */
-class LIBLOGICALACCESS_API MifareOmnikeyXX21Commands : public MifarePCSCCommands
+class LLA_READERS_PCSC_API MifareOmnikeyXX21Commands : public MifarePCSCCommands
 {
   public:
     /**

@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_A3MLGM5600LEDBUZZERDISPLAY_HPP
 #define LOGICALACCESS_A3MLGM5600LEDBUZZERDISPLAY_HPP
 
-#include <logicalaccess/logicalaccess_api.hpp>
+
 #include <logicalaccess/readerproviders/ledbuzzerdisplay.hpp>
 #include <logicalaccess/plugins/readers/a3mlgm5600/a3mlgm5600_fwd.hpp>
 #include <logicalaccess/plugins/readers/a3mlgm5600/readercardadapters/a3mlgm5600readercardadapter.hpp>
@@ -19,7 +19,7 @@ namespace logicalaccess
 /**
  * \brief A A3MLGM5600 LED/Buzzer Display class.
  */
-class LIBLOGICALACCESS_API A3MLGM5600LEDBuzzerDisplay : public LEDBuzzerDisplay
+class LLA_READERS_A3MLGM5600_API A3MLGM5600LEDBuzzerDisplay : public LEDBuzzerDisplay
 {
   public:
     /**

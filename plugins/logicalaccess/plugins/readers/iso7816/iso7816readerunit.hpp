@@ -21,7 +21,7 @@ class ISO7816ReaderProvider;
 /**
  * \brief The ISO7816 reader unit class.
  */
-class LIBLOGICALACCESS_API ISO7816ReaderUnit : public ReaderUnit
+class LLA_READERS_ISO7816_API ISO7816ReaderUnit : public ReaderUnit
 {
   public:
     explicit ISO7816ReaderUnit(std::string rpt);

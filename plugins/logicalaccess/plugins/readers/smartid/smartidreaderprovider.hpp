@@ -9,7 +9,7 @@
 
 #include <logicalaccess/readerproviders/readerprovider.hpp>
 #include <logicalaccess/plugins/readers/smartid/smartidreaderunit.hpp>
-
+#include <logicalaccess/plugins/readers/smartid/lla_readers_smartid_api.hpp>
 #include <string>
 #include <vector>
 
@@ -22,7 +22,7 @@ namespace logicalaccess
 /**
  * \brief SmartID Reader Provider class.
  */
-class LIBLOGICALACCESS_API SmartIDReaderProvider : public ReaderProvider
+class LLA_READERS_SMARTID_API SmartIDReaderProvider : public ReaderProvider
 {
   public:
     /**

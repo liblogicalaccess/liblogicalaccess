@@ -8,13 +8,14 @@
 #define LOGICALACCESS_GENERICTAGIDONDEMANDCHIP_HPP
 
 #include <logicalaccess/plugins/cards/generictag/generictagchip.hpp>
+#include <logicalaccess/plugins/readers/idondemand/lla_readers_idondemand_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief The Generic Tag IdOnDemand commands class.
  */
-class LIBLOGICALACCESS_API GenericTagIdOnDemandChip : public GenericTagChip
+class LLA_READERS_IDONDEMAND_API GenericTagIdOnDemandChip : public GenericTagChip
 {
   public:
     /**

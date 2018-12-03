@@ -8,7 +8,7 @@
 #define LOGICALACCESS_INFINEONMYDCHIP_HPP
 
 #include <logicalaccess/plugins/cards/iso15693/iso15693chip.hpp>
-
+#include <logicalaccess/plugins/cards/infineonmyd/lla_cards_infineonmyd_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
  * \brief The Infineon My-D base chip class.
  */
-class LIBLOGICALACCESS_API InfineonMYDChip : public ISO15693Chip
+class LLA_CARDS_INFINEONMYD_API InfineonMYDChip : public ISO15693Chip
 {
   public:
     /**

@@ -10,7 +10,7 @@
 #include <memory>
 #include <vector>
 #include <logicalaccess/lla_fwd.hpp>
-#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/lla_core_api.hpp>
 #include <logicalaccess/services/cardservice.hpp>
 
 namespace logicalaccess
@@ -18,7 +18,7 @@ namespace logicalaccess
 /**
  * \brief The base abstract chip class for all chip.
  */
-class LIBLOGICALACCESS_API IChip
+class LLA_CORE_API IChip
 {
   public:
     virtual ~IChip() = default;

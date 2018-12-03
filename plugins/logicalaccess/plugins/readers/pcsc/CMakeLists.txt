@@ -1,16 +1,16 @@
 cmake_minimum_required(VERSION 3.1)
 project(pcscreaders)
 
-if (WIN32)
-	SET(VERSION_PRODUCTNAME_VALUE "pcscreaders")
-	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
-endif()
+if (MSVC)
+    SET(VERSION_PRODUCTNAME_VALUE "pcscreaders")
+    add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif ()
 
-set(INCLUDE_FOLDER 	${CMAKE_CURRENT_SOURCE_DIR}/../
-					${CMAKE_CURRENT_SOURCE_DIR}/../../pluginscards)
+if (UNIX)
+    find_package(PCSCLite REQUIRED)
+endif ()
 
-INCLUDE_DIRECTORIES(${INCLUDE_FOLDER})
-
+set(HEADER_RELATIVE_INSTALL_DIR "include/logicalaccess/plugins/readers/pcsc")
 
 file(GLOB SRCS *.cpp)
 file(GLOB include *.hpp)
@@ -44,43 +44,64 @@ set(INCLUDE_LIB ${include} ${include_core} ${include_readercardadapters}
 set(SOURCE_LIB ${SRCS} ${source_readercardadapters} ${source_readers}
         ${source_commands} ${source_probes})
 
-add_library(
-	pcscreaders
-	SHARED
-	
-	${SOURCE_LIB}
-	${INCLUDE_LIB}
-	${resourcerc}
-	)
+add_library(pcscreaders
+        SHARED
+        ${SOURCE_LIB}
+        ${INCLUDE_LIB}
+        ${LLA_RESOURCE_RC})
 
 SET_TARGET_PROPERTIES(pcscreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
-  
-target_link_libraries(
-	pcscreaders
-	desfirecards
-	mifarecards
-	mifarepluscards
-	mifareultralightcards
-	iso7816readers
-    twiccards
-	iso7816cards
-	iso15693cards
-    tagitcards
-	proxcards
-	felicacards
-	epasscards
-	topazcards
-    generictagcards
-	seoscards
-	${LIBLOGICALACCESS_LIBRARY}
-	${PCSCLITE_LIBRARIES}
-)
 
-install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/pcsc )
-install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/pcsc/readercardadapters )
-install ( FILES ${include_commands} DESTINATION include/logicalaccess/plugins/readers/pcsc/commands )
-install ( FILES ${include_readers} DESTINATION include/logicalaccess/plugins/readers/pcsc/readers )
-install ( TARGETS pcscreaders RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )
+if (UNIX)
+    target_link_libraries(pcscreaders
+            desfirecards
+            mifarecards
+            mifarepluscards
+            mifareultralightcards
+            iso7816readers
+            twiccards
+            iso7816cards
+            iso15693cards
+            tagitcards
+            proxcards
+            felicacards
+            epasscards
+            topazcards
+            generictagcards
+            seoscards
+            logicalaccess
+            PCSCLite::PCSCLite
+            CONAN_PKG::boost
+            )
+else ()
+    target_link_libraries(pcscreaders
+            desfirecards
+            mifarecards
+            mifarepluscards
+            mifareultralightcards
+            iso7816readers
+            twiccards
+            iso7816cards
+            iso15693cards
+            tagitcards
+            proxcards
+            felicacards
+            epasscards
+            topazcards
+            generictagcards
+            seoscards
+			winscard
+            logicalaccess
+            CONAN_PKG::boost)
+endif ()
+
+LLA_GENERATE_EXPORTS(LLA_READERS_PCSC)
+
+install(FILES ${include} DESTINATION ${HEADER_RELATIVE_INSTALL_DIR})
+install(FILES ${include_readercardadapters} DESTINATION ${HEADER_RELATIVE_INSTALL_DIR}/readercardadapters)
+install(FILES ${include_commands} DESTINATION ${HEADER_RELATIVE_INSTALL_DIR}/commands)
+install(FILES ${include_readers} DESTINATION ${HEADER_RELATIVE_INSTALL_DIR}/readers)
+install(TARGETS pcscreaders RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX})
 if (MSVC)
-	install(FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb/${LIB_SUFFIX} OPTIONAL)
-endif()
+    install(FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb/${LIB_SUFFIX} OPTIONAL)
+endif ()

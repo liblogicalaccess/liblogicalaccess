@@ -10,6 +10,7 @@
 #include <logicalaccess/readerproviders/readerunit.hpp>
 #include <logicalaccess/readerproviders/serialportxml.hpp>
 #include <logicalaccess/plugins/readers/ok5553/ok5553readerunitconfiguration.hpp>
+#include <logicalaccess/plugins/readers/ok5553/lla_readers_ok5553_api.hpp>
 #include <boost/asio/ip/tcp.hpp>
 
 namespace logicalaccess
@@ -26,7 +27,7 @@ typedef enum { MIFARE = 0x02, MIFAREULTRALIGHT = 0x05, DESFIRE = 0x06 } ChipType
 /**
  * \brief The OK5553 reader unit class.
  */
-class LIBLOGICALACCESS_API OK5553ReaderUnit : public ReaderUnit
+class LLA_READERS_OK5553_API OK5553ReaderUnit : public ReaderUnit
 {
   public:
     /**

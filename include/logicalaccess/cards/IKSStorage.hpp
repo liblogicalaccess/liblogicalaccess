@@ -10,7 +10,7 @@ namespace logicalaccess
  *
  * IKSStorage is backed by IKS (Islog Key Server).
  */
-class LIBLOGICALACCESS_API IKSStorage : public KeyStorage
+class LLA_CORE_API IKSStorage : public KeyStorage
 {
   public:
     /**

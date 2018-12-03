@@ -8,6 +8,7 @@
 #define LOGICALACCESS_OSDPREADERUNITCONFIGURATION_HPP
 
 #include <logicalaccess/readerproviders/readerunitconfiguration.hpp>
+#include <logicalaccess/plugins/readers/osdp/lla_readers_osdp_api.hpp>
 #include <logicalaccess/cards/aes128key.hpp>
 
 namespace logicalaccess
@@ -15,7 +16,7 @@ namespace logicalaccess
 /**
  * \brief The OSDP reader unit configuration base class.
  */
-class LIBLOGICALACCESS_API OSDPReaderUnitConfiguration : public ReaderUnitConfiguration
+class LLA_READERS_OSDP_API OSDPReaderUnitConfiguration : public ReaderUnitConfiguration
 {
   public:
     /**

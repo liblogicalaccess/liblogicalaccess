@@ -16,7 +16,7 @@ class ReaderCardAdapter;
 /**
  * \brief A LED/Buzzer Display base class.
  */
-class LIBLOGICALACCESS_API LEDBuzzerDisplay
+class LLA_CORE_API LEDBuzzerDisplay
 {
   public:
     virtual ~LEDBuzzerDisplay() = default;

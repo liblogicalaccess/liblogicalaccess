@@ -11,8 +11,10 @@
 
 namespace logicalaccess
 {
+
+// todo: We removed export macro to fix link issue. need to investigate more.
 template <typename T, typename S>
-class LIBLOGICALACCESS_API SAMAV2Commands : public ICommands
+class SAMAV2Commands : public ICommands
 {
   public:
     virtual ByteVector dumpSecretKey(unsigned char keyno, unsigned char keyversion,

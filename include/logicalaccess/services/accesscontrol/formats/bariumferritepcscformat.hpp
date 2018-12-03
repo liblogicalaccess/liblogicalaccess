@@ -14,7 +14,7 @@ namespace logicalaccess
 /**
  * \brief A Barium Ferrite PCSC format class.
  */
-class LIBLOGICALACCESS_API BariumFerritePCSCFormat : public StaticFormat
+class LLA_CORE_API BariumFerritePCSCFormat : public StaticFormat
 {
   public:
     /**

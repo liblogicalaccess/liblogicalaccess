@@ -1,13 +1,14 @@
 #pragma once
 
 #include <logicalaccess/cards/accessinfo.hpp>
+#include <logicalaccess/plugins/cards/epass/lla_cards_epass_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * An EPassport AccessInfo object that holds MRZ information.
  */
-class LIBLOGICALACCESS_API EPassAccessInfo : public AccessInfo
+class LLA_CARDS_EPASS_API EPassAccessInfo : public AccessInfo
 {
   public:
     EPassAccessInfo()          = default;

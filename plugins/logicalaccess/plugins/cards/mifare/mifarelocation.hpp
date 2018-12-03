@@ -8,7 +8,7 @@
 #define LOGICALACCESS_MIFARELOCATION_HPP
 
 #include <logicalaccess/cards/location.hpp>
-
+#include <logicalaccess/plugins/cards/mifare/lla_cards_mifare_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -18,7 +18,7 @@ namespace logicalaccess
 /**
  * \brief A  Mifare location informations.
  */
-class LIBLOGICALACCESS_API MifareLocation : public Location
+class LLA_CARDS_MIFARE_API MifareLocation : public Location
 {
   public:
     /**

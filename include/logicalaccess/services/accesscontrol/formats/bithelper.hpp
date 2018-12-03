@@ -15,7 +15,7 @@ namespace logicalaccess
 /**
  * \brief A Bit Helper.
  */
-class LIBLOGICALACCESS_API BitHelper
+class LLA_CORE_API BitHelper
 {
   public:
     /**

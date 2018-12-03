@@ -18,7 +18,7 @@ namespace logicalaccess
 /**
 * \brief The Mifare Classic NFC Tag storage card service base class.
 */
-class LIBLOGICALACCESS_API MifareNFCTagCardService : public NFCTagCardService
+class LLA_CARDS_MIFARE_API MifareNFCTagCardService : public NFCTagCardService
 {
   public:
     /**

@@ -17,7 +17,7 @@ namespace logicalaccess
 /**
  * \brief A BCD Byte encoder data type class.
  */
-class LIBLOGICALACCESS_API BCDByteDataType : public DataType
+class LLA_CORE_API BCDByteDataType : public DataType
 {
   public:
     /**

@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_READERUNITCONFIGURATION_HPP
 #define LOGICALACCESS_READERUNITCONFIGURATION_HPP
 
-#include <logicalaccess/liblogicalaccess_export.hpp>
+#include <logicalaccess/lla_core_api.hpp>
 #include <logicalaccess/xmlserializable.hpp>
 
 namespace logicalaccess
@@ -16,7 +16,7 @@ namespace logicalaccess
  * \brief The reader unit configuration base class. Describe the configuration for a
  * reader unit.
  */
-class LIBLOGICALACCESS_API ReaderUnitConfiguration : public XmlSerializable
+class LLA_CORE_API ReaderUnitConfiguration : public XmlSerializable
 {
   public:
     /**

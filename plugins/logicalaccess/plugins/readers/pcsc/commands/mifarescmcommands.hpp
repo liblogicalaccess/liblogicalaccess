@@ -22,7 +22,7 @@ namespace logicalaccess
  * \brief The Mifare commands class for SCM reader.
  * \remarks Firmware version must be >= 7.xx
  */
-class LIBLOGICALACCESS_API MifareSCMCommands : public MifarePCSCCommands
+class LLA_READERS_PCSC_API MifareSCMCommands : public MifarePCSCCommands
 {
   public:
     /**

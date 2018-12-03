@@ -14,7 +14,7 @@ namespace logicalaccess
 /**
  * \brief A Raw format.
  */
-class LIBLOGICALACCESS_API RawFormat : public StaticFormat
+class LLA_CORE_API RawFormat : public StaticFormat
 {
   public:
     /**

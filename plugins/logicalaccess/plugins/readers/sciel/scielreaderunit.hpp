@@ -26,7 +26,7 @@ class SCIELReaderProvider;
 /**
  * \brief The SCIEL reader unit class.
  */
-class LIBLOGICALACCESS_API SCIELReaderUnit : public ReaderUnit
+class LLA_READERS_SCIEL_API SCIELReaderUnit : public ReaderUnit
 {
   public:
     /**

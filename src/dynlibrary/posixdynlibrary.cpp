@@ -1,3 +1,5 @@
+#ifdef __linux__
+
 #include <dlfcn.h>
 #include <logicalaccess/plugins/llacommon/logs.hpp>
 
@@ -59,3 +61,4 @@ bool PosixDynLibrary::hasSymbol(const char *name)
     return true;
 }
 }
+#endif

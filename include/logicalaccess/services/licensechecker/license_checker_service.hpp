@@ -1,6 +1,6 @@
 #pragma once
 
-#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/lla_core_api.hpp>
 #include <logicalaccess/services/reader_service.hpp>
 
 namespace logicalaccess
@@ -15,7 +15,7 @@ namespace logicalaccess
  * LibraryManager will be needed to instantiated the correct implementation
  * for the reader.
  */
-class LIBLOGICALACCESS_API LicenseCheckerService : public ReaderService
+class LicenseCheckerService : public ReaderService
 {
   public:
     explicit LicenseCheckerService(ReaderUnitPtr ru)
@@ -25,27 +25,27 @@ class LIBLOGICALACCESS_API LicenseCheckerService : public ReaderService
 
     virtual ~LicenseCheckerService() = default;
 
-    /**
-     * Write the license key to the reader.
-     *
-     * This operation may involve changing the current security mode in which
-     * the reader operate, as well as overwrite previous key stored at the
-     * location provided by `storage_info`.
-     *
-     * @param storage_info is the KeyStorage description where to write
-     * the license key. Most underlying LicenseCheckerService will
-     * expect the object to be of type ReaderMemoryKeyStorage.
-     *
-     * @param key is the key object that will be written in the reader's key
-     * slot. The underlying depends on what type of key can be stored
-     * on a given reader.
-     * @param oldkey is the actually that is currently on the reader and that we need
-     * to use in order to authenticate and change the. It is optional, and if not
-     * specified
-     * will default to representing the default key.
-     */
-    virtual void writeLicenseKey(const KeyStoragePtr &storage_info, const KeyPtr &key,
-                                 KeyPtr oldKey = nullptr) = 0;
+        /**
+         * Write the license key to the reader.
+         *
+         * This operation may involve changing the current security mode in which
+         * the reader operate, as well as overwrite previous key stored at the
+         * location provided by `storage_info`.
+         *
+         * @param storage_info is the KeyStorage description where to write
+         * the license key. Most underlying LicenseCheckerService will
+         * expect the object to be of type ReaderMemoryKeyStorage.
+         *
+         * @param key is the key object that will be written in the reader's key
+         * slot. The underlying depends on what type of key can be stored
+         * on a given reader.
+         * @param oldkey is the actually that is currently on the reader and that we need
+         * to use in order to authenticate and change the. It is optional, and if not
+         * specified
+         * will default to representing the default key.
+         */
+        virtual void writeLicenseKey(const KeyStoragePtr &storage_info, const KeyPtr &key,
+                                     KeyPtr oldKey = nullptr) = 0;
 
     /**
      * Attempt to validate the license key against the one stored on the reader.

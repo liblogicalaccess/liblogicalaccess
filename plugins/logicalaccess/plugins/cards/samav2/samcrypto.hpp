@@ -7,14 +7,11 @@
 #ifndef SAMCRYPTO_HPP
 #define SAMCRYPTO_HPP
 
+
 #include <logicalaccess/plugins/crypto/des_cipher.hpp>
 #include <logicalaccess/plugins/crypto/aes_cipher.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirecrypto.hpp>
-
-#ifndef UNIX
-#include <logicalaccess/msliblogicalaccess.h>
-#endif
-
+#include <logicalaccess/plugins/cards/samav2/lla_cards_samav2_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -24,7 +21,7 @@ namespace logicalaccess
 /**
  * \brief SAM cryptographic functions.
  */
-class LIBLOGICALACCESS_API SAMDESfireCrypto : public DESFireCrypto
+class LLA_CARDS_SAMAV2_API SAMDESfireCrypto : public DESFireCrypto
 {
   public:
     /**

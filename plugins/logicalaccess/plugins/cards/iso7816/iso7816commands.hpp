@@ -19,7 +19,7 @@ namespace logicalaccess
 /**
  * \brief The ISO7816 commands class.
  */
-class LIBLOGICALACCESS_API ISO7816Commands : public Commands
+class LLA_CARDS_ISO7816_API ISO7816Commands : public Commands
 {
   public:
     ISO7816Commands()

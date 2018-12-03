@@ -7,7 +7,7 @@
 #include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <logicalaccess/plugins/pkcs/cppkcs11/cppkcs11/services/object_service.hpp>
-#include "logicalaccess/logicalaccess_api.hpp"
+
 #include "cppkcs11/cppkcs11.hpp"
 #include "logicalaccess/key.hpp"
 
@@ -67,14 +67,14 @@ class AESCryptoPKCSProvider : public IAESCryptoService
 
 extern "C" {
 
-LIBLOGICALACCESS_API char *getLibraryName()
+char *getLibraryName()
 {
     return (char *)"PKCSAESCrypto";
 }
 
 static bool pkcs_initialized = false;
 
-LIBLOGICALACCESS_API void
+void
 getPKCSAESCrypto(std::shared_ptr<logicalaccess::IAESCryptoService> &aes_crypto,
                  const std::string &pkcs_shared_object_path)
 {

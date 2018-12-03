@@ -4,25 +4,13 @@
 #include <logicalaccess/plugins/cards/mifareultralight/mifareultralightcchip.hpp>
 #include <logicalaccess/plugins/cards/mifareultralight/mifareultralightchip.hpp>
 
-#ifdef _MSC_VER
-#include <logicalaccess/msliblogicalaccess.h>
-#else
-#ifndef LIBLOGICALACCESS_API
-#define LIBLOGICALACCESS_API
-#endif
-#ifndef DISABLE_PRAGMA_WARNING
-#define DISABLE_PRAGMA_WARNING /**< \brief winsmcrd.h was modified to support this       \
-                                  macro, to avoid MSVC specific warnings pragma */
-#endif
-#endif
-
 extern "C" {
-LIBLOGICALACCESS_API char *getLibraryName()
+LLA_CARDS_MIFAREULTRALIGHT_API char *getLibraryName()
 {
     return (char *)"MifareUltralight";
 }
 
-LIBLOGICALACCESS_API void
+LLA_CARDS_MIFAREULTRALIGHT_API void
 getMifareUltralightCChip(std::shared_ptr<logicalaccess::Chip> *chip)
 {
     if (chip != nullptr)
@@ -31,7 +19,7 @@ getMifareUltralightCChip(std::shared_ptr<logicalaccess::Chip> *chip)
     }
 }
 
-LIBLOGICALACCESS_API void
+LLA_CARDS_MIFAREULTRALIGHT_API void
 getMifareUltralightChip(std::shared_ptr<logicalaccess::Chip> *chip)
 {
     if (chip != nullptr)
@@ -40,8 +28,8 @@ getMifareUltralightChip(std::shared_ptr<logicalaccess::Chip> *chip)
     }
 }
 
-LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char *chipname,
-                                        size_t chipnamelen, void **getterfct)
+LLA_CARDS_MIFAREULTRALIGHT_API bool getChipInfoAt(unsigned int index, char *chipname,
+                                                  size_t chipnamelen, void **getterfct)
 {
     bool ret = false;
     if (chipname != nullptr && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != nullptr)

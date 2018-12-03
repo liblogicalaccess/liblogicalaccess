@@ -8,13 +8,14 @@
 #define LOGICALACCESS_PROXLOCATION_HPP
 
 #include <logicalaccess/cards/location.hpp>
+#include <logicalaccess/plugins/cards/prox/lla_cards_prox_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief A  Prox location informations.
  */
-class LIBLOGICALACCESS_API ProxLocation : public Location
+class LLA_CARDS_PROX_API ProxLocation : public Location
 {
   public:
     /**

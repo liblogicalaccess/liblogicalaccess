@@ -9,7 +9,7 @@
 
 #include <memory>
 #include <string>
-#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/lla_core_api.hpp>
 
 namespace logicalaccess
 {
@@ -43,7 +43,7 @@ typedef enum {
 /**
  * \brief The base card service class for all services.
  */
-class LIBLOGICALACCESS_API CardService : public std::enable_shared_from_this<CardService>
+class LLA_CORE_API CardService : public std::enable_shared_from_this<CardService>
 {
   public:
     virtual ~CardService() = default;

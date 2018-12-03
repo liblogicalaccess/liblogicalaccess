@@ -14,7 +14,7 @@ namespace logicalaccess
 /**
  * \brief A computer memory key storage class.
  */
-class LIBLOGICALACCESS_API ComputerMemoryKeyStorage : public KeyStorage
+class LLA_CORE_API ComputerMemoryKeyStorage : public KeyStorage
 {
   public:
 #ifndef SWIG

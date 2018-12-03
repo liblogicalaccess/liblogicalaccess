@@ -30,6 +30,7 @@
 #include <logicalaccess/iks/RemoteCrypto.hpp>
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
 #include <logicalaccess/services/aes_crypto_service.hpp>
+#include <logicalaccess/cards/computermemorykeystorage.hpp>
 
 namespace logicalaccess
 {
@@ -1017,16 +1018,18 @@ void DESFireEV1ISO7816Commands::authenticateAES(unsigned char keyno)
     ByteVector response;
     if (samKeyStorage)
         response = sam_authenticate_p1(key, encRndB, diversify);
+    else if (std::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key->getKeyStorage()))
+        response = crypto->aes_authenticate_PICC1(keyno, diversify, encRndB);
     else
-        // response        = crypto->aes_authenticate_PICC1(keyno, diversify, encRndB);
         response = crypto->aes_authenticate_PICC1_GENERIC(keyno, key, encRndB);
     ByteVector encRndA1 = transmit_plain(DF_INS_ADDITIONAL_FRAME, response);
     encRndA1.resize(encRndA1.size() - 2);
 
     if (samKeyStorage)
         sam_authenticate_p2(keyno, encRndA1);
+    else if (std::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key->getKeyStorage()))
+        crypto->aes_authenticate_PICC2(keyno, encRndA1);
     else
-        // crypto->aes_authenticate_PICC2(keyno, encRndA1);
         crypto->aes_authenticate_PICC2_GENERIC(keyno, key, encRndA1);
 
     crypto->d_cipher.reset(new openssl::AESCipher());

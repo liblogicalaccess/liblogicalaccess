@@ -55,8 +55,9 @@ enum SAMLockUnlock
 
 class DESFireKey;
 
+// todo: We removed export macro to fix link issue. need to investigate more.
 template <typename T, typename S>
-class LIBLOGICALACCESS_API SAMCommands : public Commands
+class SAMCommands : public Commands
 {
   public:
     SAMCommands()

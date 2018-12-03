@@ -19,7 +19,7 @@ namespace openssl
  * DESCipher is a symmetric cipher that relies on OpenSSL's implementation of the DES
  * algorithm. Take a look at SymmetricCipher for usage.
  */
-class LIBLOGICALACCESS_API DESCipher : public OpenSSLSymmetricCipher
+class LLA_CRYPTO_API DESCipher : public OpenSSLSymmetricCipher
 {
   public:
     /**

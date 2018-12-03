@@ -8,13 +8,15 @@
 #define LOGICALACCESS_OK5553READERUNITCONFIGURATION_HPP
 
 #include <logicalaccess/readerproviders/readerunitconfiguration.hpp>
+#include <logicalaccess/plugins/readers/ok5553/lla_readers_ok5553_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief The OK55553 reader unit configuration base class.
  */
-class LIBLOGICALACCESS_API OK5553ReaderUnitConfiguration : public ReaderUnitConfiguration
+class LLA_READERS_OK5553_API OK5553ReaderUnitConfiguration
+    : public ReaderUnitConfiguration
 {
   public:
     /**

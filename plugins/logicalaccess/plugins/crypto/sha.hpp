@@ -11,6 +11,7 @@
 #include <cstdint>
 #include <iostream>
 #include <logicalaccess/lla_fwd.hpp>
+#include "logicalaccess/plugins/crypto/lla_crypto_api.hpp"
 
 namespace logicalaccess
 {
@@ -21,19 +22,19 @@ namespace openssl
  * \param buffer The buffer to get the hash from.
  * \return The hash.
  */
-LIBLOGICALACCESS_API ByteVector SHA256Hash(const ByteVector &buffer);
+LLA_CRYPTO_API ByteVector SHA256Hash(const ByteVector &buffer);
 
 /**
  * \brief Get a SHA-256 hash.
  * \param str The string to get the hash from.
  * \return The hash.
  */
-LIBLOGICALACCESS_API ByteVector SHA256Hash(const std::string &str);
+LLA_CRYPTO_API ByteVector SHA256Hash(const std::string &str);
 
 /**
  * Compute the sha1 hash of `in`.
  */
-LIBLOGICALACCESS_API ByteVector SHA1Hash(const ByteVector &in);
+LLA_CRYPTO_API ByteVector SHA1Hash(const ByteVector &in);
 }
 }
 

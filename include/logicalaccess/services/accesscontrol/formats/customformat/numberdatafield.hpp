@@ -8,14 +8,14 @@
 #define LOGICALACCESS_NUMBERDATAFIELD_HPP
 
 #include <logicalaccess/services/accesscontrol/formats/customformat/valuedatafield.hpp>
-#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/lla_core_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief A number data field.
  */
-class LIBLOGICALACCESS_API NumberDataField : public ValueDataField
+class LLA_CORE_API NumberDataField : public ValueDataField
 {
   public:
     /**

@@ -8,13 +8,14 @@
 #define LOGICALACCESS_CPS3LOCATION_HPP
 
 #include <logicalaccess/cards/location.hpp>
+#include <logicalaccess/plugins/cards/cps3/lla_cards_cps3_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief A CPS3 location informations.
  */
-class LIBLOGICALACCESS_API CPS3Location : public Location
+class LLA_CARDS_CPS3_API CPS3Location : public Location
 {
   public:
     /**

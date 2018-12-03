@@ -1,4 +1,4 @@
-#include "logicalaccess/liblogicalaccess_export.hpp"
+#include "logicalaccess/plugins/crypto/lla_crypto_api.hpp"
 
 /* ---- SYMMETRIC KEY STUFF -----
  *
@@ -336,20 +336,8 @@ typedef struct {
 } symmetric_F8;
 #endif
 
-
-#ifdef _MSC_VER
-#ifndef LLA_TOMCRYPT_EXPORT
-#define LLA_TOMCRYPT_EXPORT __declspec(dllexport)
-#else
-#define LLA_TOMCRYPT_EXPORT __declspec(dllimport)
-#endif
-#else
-#define LLA_TOMCRYPT_EXPORT
-#endif
-
-
 /** cipher descriptor table, last entry has "name == NULL" to mark the end of table */
-LLA_TOMCRYPT_EXPORT extern struct ltc_cipher_descriptor
+LLA_CRYPTO_API extern struct ltc_cipher_descriptor
 {
     /** name of cipher */
     char *name;
@@ -682,27 +670,27 @@ extern const struct ltc_cipher_descriptor twofish_desc;
 #endif
 
 #ifdef LTC_DES
-LIBLOGICALACCESS_API int des_setup(const unsigned char *key, int keylen, int num_rounds,
+LLA_CRYPTO_API int des_setup(const unsigned char *key, int keylen, int num_rounds,
                                   symmetric_key *skey);
-LIBLOGICALACCESS_API int des_ecb_encrypt(const unsigned char *pt, unsigned char *ct,
+LLA_CRYPTO_API int des_ecb_encrypt(const unsigned char *pt, unsigned char *ct,
                                         symmetric_key *skey);
-LIBLOGICALACCESS_API int des_ecb_decrypt(const unsigned char *ct, unsigned char *pt,
+LLA_CRYPTO_API int des_ecb_decrypt(const unsigned char *ct, unsigned char *pt,
                                         symmetric_key *skey);
 int des_test(void);
-LIBLOGICALACCESS_API void des_done(symmetric_key *skey);
+LLA_CRYPTO_API void des_done(symmetric_key *skey);
 int des_keysize(int *keysize);
-LIBLOGICALACCESS_API int des3_setup(const unsigned char *key, int keylen, int num_rounds,
+LLA_CRYPTO_API int des3_setup(const unsigned char *key, int keylen, int num_rounds,
                                    symmetric_key *skey);
-LIBLOGICALACCESS_API int des3_ecb_encrypt(const unsigned char *pt, unsigned char *ct,
+LLA_CRYPTO_API int des3_ecb_encrypt(const unsigned char *pt, unsigned char *ct,
                                          symmetric_key *skey);
-LIBLOGICALACCESS_API int des3_ecb_decrypt(const unsigned char *ct, unsigned char *pt,
+LLA_CRYPTO_API int des3_ecb_decrypt(const unsigned char *ct, unsigned char *pt,
                                          symmetric_key *skey);
 int des3_test(void);
-LIBLOGICALACCESS_API void des3_done(symmetric_key *skey);
-LIBLOGICALACCESS_API int des3_keysize(int *keysize);
+LLA_CRYPTO_API void des3_done(symmetric_key *skey);
+LLA_CRYPTO_API int des3_keysize(int *keysize);
 
-LLA_TOMCRYPT_EXPORT extern const struct ltc_cipher_descriptor des_desc;
-LLA_TOMCRYPT_EXPORT extern const struct ltc_cipher_descriptor des3_desc;
+LLA_CRYPTO_API extern const struct ltc_cipher_descriptor des_desc;
+LLA_CRYPTO_API extern const struct ltc_cipher_descriptor des3_desc;
 #endif
 
 #ifdef LTC_CAST5
@@ -916,12 +904,12 @@ int  xts_test(void);
 void xts_mult_x(unsigned char *I);
 #endif
 
-LIBLOGICALACCESS_API int find_cipher(const char *name);
+LLA_CRYPTO_API int find_cipher(const char *name);
 int find_cipher_any(const char *name, int blocklen, int keylen);
 int find_cipher_id(unsigned char ID);
-LIBLOGICALACCESS_API int register_cipher(const struct ltc_cipher_descriptor *cipher);
-LIBLOGICALACCESS_API int unregister_cipher(const struct ltc_cipher_descriptor *cipher);
-LIBLOGICALACCESS_API int cipher_is_valid(int idx);
+LLA_CRYPTO_API int register_cipher(const struct ltc_cipher_descriptor *cipher);
+LLA_CRYPTO_API int unregister_cipher(const struct ltc_cipher_descriptor *cipher);
+LLA_CRYPTO_API int cipher_is_valid(int idx);
 
 LTC_MUTEX_PROTO(ltc_cipher_mutex)
 

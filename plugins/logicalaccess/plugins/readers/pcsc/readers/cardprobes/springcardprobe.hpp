@@ -4,7 +4,7 @@
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API SpringCardProbe : public PCSCCardProbe
+class LLA_READERS_PCSC_API SpringCardProbe : public PCSCCardProbe
 {
   public:
     explicit SpringCardProbe(ReaderUnit *ru);

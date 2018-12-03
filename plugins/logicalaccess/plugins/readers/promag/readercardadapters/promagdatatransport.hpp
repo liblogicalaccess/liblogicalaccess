@@ -16,7 +16,7 @@
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API PromagDataTransport : public SerialPortDataTransport
+class LLA_READERS_PROMAG_API PromagDataTransport : public SerialPortDataTransport
 {
   public:
     explicit PromagDataTransport(const std::string &portname = "")

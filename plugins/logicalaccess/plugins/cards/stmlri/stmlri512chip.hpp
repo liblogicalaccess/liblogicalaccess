@@ -8,7 +8,7 @@
 #define LOGICALACCESS_STMLRI512CHIP_HPP
 
 #include <logicalaccess/cards/chip.hpp>
-
+#include <logicalaccess/plugins/cards/stmlri/lla_cards_stmlri_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
  * \brief The STM LRI512 base chip class.
  */
-class LIBLOGICALACCESS_API StmLri512Chip : public Chip
+class LLA_CARDS_STMLRI_API StmLri512Chip : public Chip
 {
   public:
     /**

@@ -2,15 +2,14 @@
 #include <memory>
 #include <logicalaccess/readerproviders/readerprovider.hpp>
 #include <logicalaccess/plugins/readers/elatec/elatecreaderprovider.hpp>
-#include <logicalaccess/logicalaccess_api.hpp>
 
 extern "C" {
-LIBLOGICALACCESS_API char *getLibraryName()
+LLA_READERS_ELATEC_API char *getLibraryName()
 {
     return (char *)"Elatec";
 }
 
-LIBLOGICALACCESS_API void
+LLA_READERS_ELATEC_API void
 getElatecReader(std::shared_ptr<logicalaccess::ReaderProvider> *rp)
 {
     if (rp != nullptr)
@@ -19,8 +18,8 @@ getElatecReader(std::shared_ptr<logicalaccess::ReaderProvider> *rp)
     }
 }
 
-LIBLOGICALACCESS_API bool getReaderInfoAt(unsigned int index, char *readername,
-                                          size_t readernamelen, void **getterfct)
+LLA_READERS_ELATEC_API bool getReaderInfoAt(unsigned int index, char *readername,
+                                            size_t readernamelen, void **getterfct)
 {
     bool ret = false;
     if (readername != nullptr && readernamelen == PLUGINOBJECT_MAXLEN &&

@@ -20,7 +20,7 @@ namespace openssl
  * AESCipher is a symmetric cipher class that relies on OpenSSL's implementation of the
  * AES algorithm. Take a look at SymmetricCipher for usage.
  */
-class LIBLOGICALACCESS_API AESCipher : public OpenSSLSymmetricCipher
+class LLA_CRYPTO_API AESCipher : public OpenSSLSymmetricCipher
 {
   public:
     /**

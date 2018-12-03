@@ -18,7 +18,7 @@ namespace logicalaccess
  * a specific or a group of operati
  * \remarks Linearizable is depreciated, shouldn't be used anymore in further versions.
  */
-class LIBLOGICALACCESS_API AccessInfo : public XmlSerializable
+class LLA_CORE_API AccessInfo : public XmlSerializable
 {
   public:
     /**

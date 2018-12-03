@@ -5,8 +5,7 @@
 #ifndef LIBLOGICALACCESS_SIGNATURE_HELPER_HPP
 #define LIBLOGICALACCESS_SIGNATURE_HELPER_HPP
 
-
-#include <logicalaccess/logicalaccess_api.hpp>
+#include "logicalaccess/plugins/crypto/lla_crypto_api.hpp"
 #include <string>
 
 namespace logicalaccess
@@ -15,7 +14,7 @@ namespace logicalaccess
 /**
  * Some static pubkey based signature utils.
  */
-class LIBLOGICALACCESS_API SignatureHelper
+class LLA_CRYPTO_API SignatureHelper
 {
   public:
     /**

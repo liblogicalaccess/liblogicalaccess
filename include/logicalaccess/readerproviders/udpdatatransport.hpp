@@ -17,7 +17,7 @@ namespace logicalaccess
 /**
  * \brief An UDP data transport class.
  */
-class LIBLOGICALACCESS_API UdpDataTransport : public DataTransport
+class LLA_CORE_API UdpDataTransport : public DataTransport
 {
   public:
     /**

@@ -20,7 +20,7 @@ class OSDPRReaderProvider;
 /**
  * \brief The OSDP reader unit class.
  */
-class LIBLOGICALACCESS_API OSDPReaderUnit : public ReaderUnit
+class LLA_READERS_OSDP_API OSDPReaderUnit : public ReaderUnit
 {
   public:
     /**

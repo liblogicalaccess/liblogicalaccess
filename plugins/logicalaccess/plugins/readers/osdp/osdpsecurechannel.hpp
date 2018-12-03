@@ -10,6 +10,7 @@
 #include <logicalaccess/readerproviders/readerunit.hpp>
 #include <logicalaccess/cards/aes128key.hpp>
 #include <logicalaccess/plugins/crypto/aes_initialization_vector.hpp>
+#include <logicalaccess/plugins/readers/osdp/lla_readers_osdp_api.hpp>
 
 namespace logicalaccess
 {
@@ -29,7 +30,7 @@ enum OSDPSecureChannelType
 /**
  * \brief OSDP Secure Channel class.
  */
-class LIBLOGICALACCESS_API OSDPSecureChannel
+class LLA_READERS_OSDP_API OSDPSecureChannel
 {
   public:
     OSDPSecureChannel(ByteVector uid, ByteVector PDChallenge, ByteVector PDCryptogram,

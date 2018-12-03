@@ -21,7 +21,7 @@ namespace logicalaccess
 /**
  * \brief The Mifare Ultralight commands class for PCSC reader.
  */
-class LIBLOGICALACCESS_API MifareUltralightPCSCCommands : public MifareUltralightCommands
+class LLA_READERS_PCSC_API MifareUltralightPCSCCommands : public MifareUltralightCommands
 {
   public:
     /**

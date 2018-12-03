@@ -1,10 +1,11 @@
 #pragma once
 
-#include <iso7816/iso7816resultchecker.hpp>
+#include <logicalaccess/plugins/readers/iso7816/iso7816resultchecker.hpp>
+#include <logicalaccess/plugins/readers/pcsc/lla_readers_pcsc_api.hpp>
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API ID3ResultChecker : public ISO7816ResultChecker
+class LLA_READERS_PCSC_API ID3ResultChecker : public ISO7816ResultChecker
 {
 
   public:

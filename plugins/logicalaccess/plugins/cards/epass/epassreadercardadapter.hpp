@@ -1,11 +1,12 @@
 #pragma once
 
 #include <logicalaccess/plugins/cards/iso7816/readercardadapters/iso7816readercardadapter.hpp>
+#include <logicalaccess/plugins/cards/epass/lla_cards_epass_api.hpp>
 
 namespace logicalaccess
 {
 class EPassCrypto;
-class LIBLOGICALACCESS_API EPassReaderCardAdapter : public ISO7816ReaderCardAdapter
+class LLA_CARDS_EPASS_API EPassReaderCardAdapter : public ISO7816ReaderCardAdapter
 {
 
   public:

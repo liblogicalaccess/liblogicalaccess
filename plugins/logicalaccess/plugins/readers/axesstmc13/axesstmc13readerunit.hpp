@@ -10,6 +10,7 @@
 #include <logicalaccess/readerproviders/readerunit.hpp>
 #include <logicalaccess/readerproviders/serialportxml.hpp>
 #include <logicalaccess/plugins/readers/axesstmc13/axesstmc13readerunitconfiguration.hpp>
+#include <logicalaccess/plugins/readers/axesstmc13/lla_readers_axesstmc13_api.hpp>
 
 namespace logicalaccess
 {
@@ -20,7 +21,7 @@ class AxessTMC13ReaderProvider;
 /**
  * \brief The AxessTMC13 reader unit class.
  */
-class LIBLOGICALACCESS_API AxessTMC13ReaderUnit : public ReaderUnit
+class LLA_READERS_AXESSTMC13_API AxessTMC13ReaderUnit : public ReaderUnit
 {
   public:
     /**

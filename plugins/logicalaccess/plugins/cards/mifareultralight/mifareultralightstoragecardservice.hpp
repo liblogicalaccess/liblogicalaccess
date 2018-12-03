@@ -21,7 +21,8 @@ namespace logicalaccess
 /**
  * \brief The Mifare Ultralight base profile class.
  */
-class LIBLOGICALACCESS_API MifareUltralightStorageCardService : public StorageCardService
+class LLA_CARDS_MIFAREULTRALIGHT_API MifareUltralightStorageCardService
+    : public StorageCardService
 {
   public:
     /**

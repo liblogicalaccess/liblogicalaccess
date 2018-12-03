@@ -21,7 +21,7 @@ namespace logicalaccess
 /**
  * \brief A ISO 15693 PC/SC commands base class.
  */
-class LIBLOGICALACCESS_API ISO15693PCSCCommands : public ISO15693Commands
+class LLA_READERS_PCSC_API ISO15693PCSCCommands : public ISO15693Commands
 {
   public:
     /**

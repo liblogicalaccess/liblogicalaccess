@@ -10,7 +10,7 @@
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API MifarePlusOmnikeyXX21SL1Commands
+class LLA_READERS_PCSC_API MifarePlusOmnikeyXX21SL1Commands
     : public MifarePlusSL1PCSCCommands
 {
   public:

@@ -6,12 +6,12 @@
 #include <stdint.h>
 #include <iostream>
 
-#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/lla_core_api.hpp>
 #include <logicalaccess/lla_fwd.hpp>
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API BitsetStream
+class LLA_CORE_API BitsetStream
 {
   public:
     BitsetStream();

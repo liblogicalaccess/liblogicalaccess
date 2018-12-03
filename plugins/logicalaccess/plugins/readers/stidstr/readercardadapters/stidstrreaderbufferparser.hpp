@@ -8,13 +8,13 @@
 #define STIDSTRBUFFERPARSER_HPP
 
 #include <logicalaccess/readerproviders/circularbufferparser.hpp>
-
+#include <logicalaccess/plugins/readers/stidstr/lla_readers_stidstr_api.hpp>
 #include <string>
 #include <vector>
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API STidSTRBufferParser : public CircularBufferParser
+class LLA_READERS_STIDSTR_API STidSTRBufferParser : public CircularBufferParser
 {
   public:
     STidSTRBufferParser()

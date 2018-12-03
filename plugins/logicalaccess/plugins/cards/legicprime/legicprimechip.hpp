@@ -8,7 +8,7 @@
 #define LOGICALACCESS_LEGICPRIMECHIP_HPP
 
 #include <logicalaccess/cards/chip.hpp>
-
+#include <logicalaccess/plugins/cards/legicprime/lla_cards_legicprime_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
  * \brief The Legic Prime base chip class.
  */
-class LIBLOGICALACCESS_API LegicPrimeChip : public Chip
+class LLA_CARDS_LEGICPRIME_API LegicPrimeChip : public Chip
 {
   public:
     /**

@@ -12,7 +12,7 @@
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API BinaryFieldValue : public Key
+class LLA_CORE_API BinaryFieldValue : public Key
 {
   public:
     /**
@@ -93,7 +93,7 @@ class LIBLOGICALACCESS_API BinaryFieldValue : public Key
 /**
  * \brief A binary data field.
  */
-class LIBLOGICALACCESS_API BinaryDataField : public ValueDataField
+class LLA_CORE_API BinaryDataField : public ValueDataField
 {
   public:
     /**

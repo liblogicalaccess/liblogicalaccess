@@ -19,7 +19,7 @@
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API OSDPDataTransport : public SerialPortDataTransport
+class LLA_READERS_OSDP_API OSDPDataTransport : public SerialPortDataTransport
 {
   public:
     explicit OSDPDataTransport(const std::string &portname = "")

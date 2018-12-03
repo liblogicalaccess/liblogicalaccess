@@ -2,15 +2,14 @@
 #include <memory>
 #include <logicalaccess/readerproviders/readerprovider.hpp>
 #include <logicalaccess/plugins/readers/gunnebo/gunneboreaderprovider.hpp>
-#include <logicalaccess/logicalaccess_api.hpp>
 
 extern "C" {
-LIBLOGICALACCESS_API char *getLibraryName()
+LLA_READERS_GUNNEBO_API char *getLibraryName()
 {
     return (char *)"Gunnebo";
 }
 
-LIBLOGICALACCESS_API void
+LLA_READERS_GUNNEBO_API void
 getGunneboReader(std::shared_ptr<logicalaccess::ReaderProvider> *rp)
 {
     if (rp != nullptr)
@@ -19,8 +18,8 @@ getGunneboReader(std::shared_ptr<logicalaccess::ReaderProvider> *rp)
     }
 }
 
-LIBLOGICALACCESS_API bool getReaderInfoAt(unsigned int index, char *readername,
-                                          size_t readernamelen, void **getterfct)
+LLA_READERS_GUNNEBO_API bool getReaderInfoAt(unsigned int index, char *readername,
+                                             size_t readernamelen, void **getterfct)
 {
     bool ret = false;
     if (readername != nullptr && readernamelen == PLUGINOBJECT_MAXLEN &&

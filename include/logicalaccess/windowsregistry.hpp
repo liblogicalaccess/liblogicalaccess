@@ -2,7 +2,7 @@
 
 #ifdef _WIN32
 
-#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/lla_core_api.hpp>
 #include <logicalaccess/lla_fwd.hpp>
 #include <string>
 #include <vector>
@@ -16,7 +16,7 @@ namespace logicalaccess
  * Currently this helper is usable only for keys in the
  * HKEY_LOCAL_MACHINE namespace.
  */
-class LIBLOGICALACCESS_API WindowsRegistry
+class LLA_CORE_API WindowsRegistry
 {
   public:
     WindowsRegistry();

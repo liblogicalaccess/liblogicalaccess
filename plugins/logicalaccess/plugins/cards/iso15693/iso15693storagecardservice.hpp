@@ -19,7 +19,7 @@ class ISO15693Chip;
 /**
  * \brief The ISO15693 storage card service base class.
  */
-class LIBLOGICALACCESS_API ISO15693StorageCardService : public StorageCardService
+class LLA_CARDS_ISO15693_API ISO15693StorageCardService : public StorageCardService
 {
   public:
     /**

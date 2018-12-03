@@ -1,12 +1,13 @@
 #pragma once
 
 #include <logicalaccess/readerproviders/readerprovider.hpp>
+#include <logicalaccess/plugins/readers/stidprg/lla_readers_stidprg_api.hpp>
 
 namespace logicalaccess
 {
 #define READER_STIDPRG "STidPRG"
 
-class LIBLOGICALACCESS_API STidPRGReaderProvider : public ReaderProvider
+class LLA_READERS_STIDPRG_API STidPRGReaderProvider : public ReaderProvider
 {
   public:
     static std::shared_ptr<STidPRGReaderProvider> getSingletonInstance();

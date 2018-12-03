@@ -29,7 +29,7 @@ class OpenSSLSymmetricCipherContext;
  * OpenSSLSymmetricCipher also provides helper methods cipher() and decipher() to quickly
  * cipher or decipher a buffer.
  */
-class LIBLOGICALACCESS_API OpenSSLSymmetricCipher : public SymmetricCipher
+class LLA_CRYPTO_API OpenSSLSymmetricCipher : public SymmetricCipher
 {
   public:
     /**

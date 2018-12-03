@@ -9,8 +9,6 @@
 #endif
 #include <logicalaccess/plugins/llacommon/settings.hpp>
 #include <logicalaccess/plugins/llacommon/logs.hpp>
-#include <logicalaccess/msliblogicalaccess.h>
-
 #include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -257,9 +255,8 @@ std::string Settings::getDllPath()
         if (!GetModuleFileNameA((HMODULE)&__ImageBase, szAppPath, sizeof(szAppPath) - 1))
         {
             error = GetLastError();
-            sprintf(tmp,
-                    "Cannot get module file name. Last error code: %lu. Trying with "
-                    "GetModuleHandle first...",
+            sprintf(tmp, "Cannot get module file name. Last error code: %lu. Trying with "
+                         "GetModuleHandle first...",
                     error);
             OutputDebugStringA(tmp);
             HMODULE hm = nullptr;
@@ -275,9 +272,8 @@ std::string Settings::getDllPath()
             if (!GetModuleFileNameA(hm, szAppPath, sizeof(szAppPath) - 1))
             {
                 error = GetLastError();
-                sprintf(tmp,
-                        "Cannot get module file name. Last error code: %lu. Trying "
-                        "with hmodule (%p) from dllmain...",
+                sprintf(tmp, "Cannot get module file name. Last error code: %lu. Trying "
+                             "with hmodule (%p) from dllmain...",
                         error, __hLibLogicalAccessModule);
                 OutputDebugStringA(tmp);
                 if (__hLibLogicalAccessModule == nullptr)
@@ -328,7 +324,7 @@ std::string Settings::getDllPath()
     return path;
 #elif defined(__APPLE__)
     CFBundleRef mainBundle = CFBundleGetMainBundle();
-    CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
+    CFURLRef resourcesURL  = CFBundleCopyResourcesDirectoryURL(mainBundle);
     char path[PATH_MAX];
     if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)path, PATH_MAX))
     {

@@ -10,6 +10,7 @@
 #include <logicalaccess/readerproviders/readerunit.hpp>
 #include <logicalaccess/readerproviders/serialportxml.hpp>
 #include <logicalaccess/plugins/readers/elatec/elatecreaderunitconfiguration.hpp>
+#include <logicalaccess/plugins/readers/elatec/lla_readers_elatec_api.hpp>
 
 namespace logicalaccess
 {
@@ -21,7 +22,7 @@ class ElatecReaderProvider;
  * \brief The Elatec reader unit class. The reader must be setup in Transparent mode (USB:
  * Transparent Virtual COM Port / V24: Transparent Operation).
  */
-class LIBLOGICALACCESS_API ElatecReaderUnit : public ReaderUnit
+class LLA_READERS_ELATEC_API ElatecReaderUnit : public ReaderUnit
 {
   public:
     /**

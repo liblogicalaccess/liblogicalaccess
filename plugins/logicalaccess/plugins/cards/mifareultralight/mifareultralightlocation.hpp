@@ -8,13 +8,14 @@
 #define LOGICALACCESS_MIFAREULTRALIGHTLOCATION_HPP
 
 #include <logicalaccess/cards/location.hpp>
+#include <logicalaccess/plugins/cards/mifareultralight/lla_cards_mifareultralight_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief A  Mifare Ultralight location informations.
  */
-class LIBLOGICALACCESS_API MifareUltralightLocation : public Location
+class LLA_CARDS_MIFAREULTRALIGHT_API MifareUltralightLocation : public Location
 {
   public:
     /**

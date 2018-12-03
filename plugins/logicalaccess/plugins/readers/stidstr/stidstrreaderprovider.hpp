@@ -8,6 +8,7 @@
 #define LOGICALACCESS_READERSTIDSTR_PROVIDER_HPP
 
 #include <logicalaccess/plugins/readers/iso7816/iso7816readerprovider.hpp>
+#include <logicalaccess/plugins/readers/stidstr/lla_readers_stidstr_api.hpp>
 
 namespace logicalaccess
 {
@@ -16,7 +17,7 @@ namespace logicalaccess
 /**
  * \brief STidSTR Reader Provider class.
  */
-class LIBLOGICALACCESS_API STidSTRReaderProvider : public ISO7816ReaderProvider
+class LLA_READERS_STIDSTR_API STidSTRReaderProvider : public ISO7816ReaderProvider
 {
   public:
     /**

@@ -14,7 +14,7 @@ namespace logicalaccess
 /**
  * \brief A ASCII format.
  */
-class LIBLOGICALACCESS_API ASCIIFormat : public StaticFormat
+class LLA_CORE_API ASCIIFormat : public StaticFormat
 {
   public:
     /**

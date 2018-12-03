@@ -8,7 +8,7 @@
 #define LOGICALACCESS_MIFAREULTRALIGHTACCESSINFO_HPP
 
 #include <logicalaccess/cards/accessinfo.hpp>
-
+#include <logicalaccess/plugins/cards/mifareultralight/lla_cards_mifareultralight_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -18,7 +18,7 @@ namespace logicalaccess
 /**
  * \brief A Mifare Ultralight access informations.
  */
-class LIBLOGICALACCESS_API MifareUltralightAccessInfo : public AccessInfo
+class LLA_CARDS_MIFAREULTRALIGHT_API MifareUltralightAccessInfo : public AccessInfo
 {
   public:
     /**

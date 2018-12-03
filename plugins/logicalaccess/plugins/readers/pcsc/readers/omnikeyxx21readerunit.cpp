@@ -273,7 +273,7 @@ TechnoBitset OmnikeyXX21ReaderUnit::getPossibleCardTechnologies()
     return tb;
 }
 
-LIBLOGICALACCESS_API std::ostream &
+LLA_READERS_PCSC_API std::ostream &
 operator<<(std::ostream &os, const OmnikeyXX21ReaderUnit::SecureModeStatus &s)
 {
     using sms = OmnikeyXX21ReaderUnit::SecureModeStatus;

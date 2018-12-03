@@ -18,7 +18,7 @@ namespace logicalaccess
 {
 #define CHIP_MIFAREPLUSX "MifarePlusX"
 
-class LIBLOGICALACCESS_API MifarePlusXChip : public MifarePlusChip, public Chip
+class LLA_CARDS_MIFAREPLUS_API MifarePlusXChip : public MifarePlusChip, public Chip
 {
   public:
     ~MifarePlusXChip() = default;

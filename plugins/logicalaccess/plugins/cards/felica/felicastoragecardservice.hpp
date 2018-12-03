@@ -19,7 +19,7 @@ class FeliCaChip;
 /**
  * \brief The FeliCa storage card service base class.
  */
-class LIBLOGICALACCESS_API FeliCaStorageCardService : public StorageCardService
+class LLA_CARDS_FELICA_API FeliCaStorageCardService : public StorageCardService
 {
   public:
     /**

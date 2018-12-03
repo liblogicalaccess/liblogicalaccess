@@ -25,7 +25,7 @@ typedef enum {
 /**
  * \brief A DESFire location informations.
  */
-class LIBLOGICALACCESS_API DESFireLocation : public Location
+class LLA_CARDS_DESFIRE_API DESFireLocation : public Location
 {
   public:
     /**

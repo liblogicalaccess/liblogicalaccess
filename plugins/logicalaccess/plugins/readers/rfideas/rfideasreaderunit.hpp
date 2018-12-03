@@ -25,7 +25,7 @@ typedef void (*setTagIdBitsLengthFct)(std::shared_ptr<Chip> *, unsigned int);
 /**
  * \brief The RFIDeas reader unit class.
  */
-class LIBLOGICALACCESS_API RFIDeasReaderUnit : public ReaderUnit
+class LLA_READERS_RFIDEAS_API RFIDeasReaderUnit : public ReaderUnit
 {
   public:
     /**

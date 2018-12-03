@@ -23,7 +23,7 @@ bool hasEnding(std::string const &fullString, std::string ending);
  * \brief A Reader Provider base class. It provide a available list of specific reader
  * kind.
  */
-class LIBLOGICALACCESS_API ReaderProvider
+class LLA_CORE_API ReaderProvider
     : public std::enable_shared_from_this<ReaderProvider>
 {
   public:

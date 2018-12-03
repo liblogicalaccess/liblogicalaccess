@@ -9,7 +9,7 @@
 
 #include <logicalaccess/readerproviders/readerprovider.hpp>
 #include <logicalaccess/plugins/readers/admitto/admittoreaderunit.hpp>
-
+#include <logicalaccess/plugins/readers/admitto/lla_readers_admitto_api.hpp>
 #include <string>
 #include <vector>
 
@@ -22,7 +22,7 @@ namespace logicalaccess
 /**
  * \brief Admitto Reader Provider class.
  */
-class LIBLOGICALACCESS_API AdmittoReaderProvider : public ReaderProvider
+class LLA_READERS_ADMITTO_API AdmittoReaderProvider : public ReaderProvider
 {
   public:
     /**

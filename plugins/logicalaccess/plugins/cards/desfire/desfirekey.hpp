@@ -8,6 +8,7 @@
 #define LOGICALACCESS_DESFIREKEY_HPP
 
 #include <logicalaccess/key.hpp>
+#include <logicalaccess/plugins/cards/desfire/lla_cards_desfire_api.hpp>
 
 /**
  * \brief The DESFire DES key size
@@ -38,7 +39,7 @@ typedef enum {
 /**
  * \brief A DESFire Key class.
  */
-class LIBLOGICALACCESS_API DESFireKey : public Key
+class LLA_CARDS_DESFIRE_API DESFireKey : public Key
 {
   public:
 #ifndef SWIG

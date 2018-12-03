@@ -9,7 +9,7 @@
 
 #include <logicalaccess/cards/chip.hpp>
 #include <logicalaccess/plugins/cards/iso7816/iso7816commands.hpp>
-
+#include <logicalaccess/plugins/cards/iso7816/lla_cards_iso7816_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -21,7 +21,7 @@ namespace logicalaccess
 /**
  * \brief The ISO7816 base chip class.
  */
-class LIBLOGICALACCESS_API ISO7816Chip : public Chip
+class LLA_CARDS_ISO7816_API ISO7816Chip : public Chip
 {
   public:
     /**

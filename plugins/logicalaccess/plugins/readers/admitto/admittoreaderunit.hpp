@@ -20,7 +20,7 @@ class AdmittoReaderProvider;
 /**
  * \brief The Admitto reader unit class.
  */
-class LIBLOGICALACCESS_API AdmittoReaderUnit : public ReaderUnit
+class LLA_READERS_ADMITTO_API AdmittoReaderUnit : public ReaderUnit
 {
   public:
     /**

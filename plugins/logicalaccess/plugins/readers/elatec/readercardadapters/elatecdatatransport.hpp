@@ -16,7 +16,7 @@
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API ElatecDataTransport : public SerialPortDataTransport
+class LLA_READERS_ELATEC_API ElatecDataTransport : public SerialPortDataTransport
 {
   public:
     explicit ElatecDataTransport(const std::string &portname = "")

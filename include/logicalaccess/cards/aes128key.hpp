@@ -19,7 +19,7 @@ namespace logicalaccess
 /**
  * \brief A AES128 key class.
  */
-class LIBLOGICALACCESS_API AES128Key : public Key
+class LLA_CORE_API AES128Key : public Key
 {
   public:
 #ifndef SWIG

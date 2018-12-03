@@ -4,7 +4,7 @@
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API CL1356CardProbe : public PCSCCardProbe
+class LLA_READERS_PCSC_API CL1356CardProbe : public PCSCCardProbe
 {
   public:
     explicit CL1356CardProbe(ReaderUnit *ru);

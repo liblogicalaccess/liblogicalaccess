@@ -7,7 +7,7 @@ namespace logicalaccess
 /**
  * Configuration class for ACSACR1222L.
  */
-class LIBLOGICALACCESS_API ACSACR1222LReaderUnitConfiguration
+class LLA_READERS_PCSC_API ACSACR1222LReaderUnitConfiguration
     : public PCSCReaderUnitConfiguration
 {
 

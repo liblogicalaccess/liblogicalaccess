@@ -8,13 +8,15 @@
 #define LOGICALACCESS_RFIDEASREADERUNITCONFIGURATION_HPP
 
 #include <logicalaccess/readerproviders/readerunitconfiguration.hpp>
+#include <logicalaccess/plugins/readers/rfideas/lla_readers_rfideas_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief The RFIDeas reader unit configuration base class.
  */
-class LIBLOGICALACCESS_API RFIDeasReaderUnitConfiguration : public ReaderUnitConfiguration
+class LLA_READERS_RFIDEAS_API RFIDeasReaderUnitConfiguration
+    : public ReaderUnitConfiguration
 {
   public:
     /**

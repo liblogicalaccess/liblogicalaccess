@@ -2,15 +2,14 @@
 #include <memory>
 #include <logicalaccess/readerproviders/readerprovider.hpp>
 #include <logicalaccess/plugins/readers/axesstmc13/axesstmc13readerprovider.hpp>
-#include <logicalaccess/logicalaccess_api.hpp>
 
 extern "C" {
-LIBLOGICALACCESS_API char *getLibraryName()
+LLA_READERS_AXESSTMC13_API char *getLibraryName()
 {
     return (char *)"AxessTMC13";
 }
 
-LIBLOGICALACCESS_API void
+LLA_READERS_AXESSTMC13_API void
 getAxessTMC13Reader(std::shared_ptr<logicalaccess::ReaderProvider> *rp)
 {
     if (rp != nullptr)
@@ -19,8 +18,8 @@ getAxessTMC13Reader(std::shared_ptr<logicalaccess::ReaderProvider> *rp)
     }
 }
 
-LIBLOGICALACCESS_API bool getReaderInfoAt(unsigned int index, char *readername,
-                                          size_t readernamelen, void **getterfct)
+LLA_READERS_AXESSTMC13_API bool getReaderInfoAt(unsigned int index, char *readername,
+                                                size_t readernamelen, void **getterfct)
 {
     bool ret = false;
     if (readername != nullptr && readernamelen == PLUGINOBJECT_MAXLEN &&

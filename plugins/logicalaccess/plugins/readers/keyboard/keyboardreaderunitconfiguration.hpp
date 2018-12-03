@@ -8,13 +8,14 @@
 #define LOGICALACCESS_KEYBOARDREADERUNITCONFIGURATION_HPP
 
 #include <logicalaccess/readerproviders/readerunitconfiguration.hpp>
+#include <logicalaccess/plugins/readers/keyboard/lla_readers_private_keyboard_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief The Keyboard reader unit configuration base class.
  */
-class LIBLOGICALACCESS_API KeyboardReaderUnitConfiguration
+class LLA_READERS_PRIVATE_KEYBOARD_API KeyboardReaderUnitConfiguration
     : public ReaderUnitConfiguration
 {
   public:

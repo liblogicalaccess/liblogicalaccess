@@ -22,7 +22,7 @@ namespace logicalaccess
 /**
  * \brief The Mifare Ultralight C base chip class.
  */
-class LIBLOGICALACCESS_API MifareUltralightCChip : public MifareUltralightChip
+class LLA_CARDS_MIFAREULTRALIGHT_API MifareUltralightCChip : public MifareUltralightChip
 {
   public:
     /**

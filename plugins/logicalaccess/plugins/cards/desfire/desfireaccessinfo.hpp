@@ -15,7 +15,7 @@ namespace logicalaccess
 /**
  * \brief A DESFire access informations.
  */
-class LIBLOGICALACCESS_API DESFireAccessInfo : public AccessInfo
+class LLA_CARDS_DESFIRE_API DESFireAccessInfo : public AccessInfo
 {
   public:
 #ifndef SWIG

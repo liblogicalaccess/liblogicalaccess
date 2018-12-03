@@ -16,7 +16,7 @@
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API AdmittoDataTransport : public SerialPortDataTransport
+class LLA_READERS_ADMITTO_API AdmittoDataTransport : public SerialPortDataTransport
 {
   public:
     explicit AdmittoDataTransport(const std::string &portname = "")

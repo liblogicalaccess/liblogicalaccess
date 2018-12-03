@@ -10,6 +10,7 @@
 #include <logicalaccess/readerproviders/readerunit.hpp>
 #include <logicalaccess/plugins/readers/keyboard/keyboardreaderunitconfiguration.hpp>
 #include <logicalaccess/plugins/readers/keyboard/keyboardsharedstruct.hpp>
+#include <logicalaccess/plugins/readers/keyboard/lla_readers_private_keyboard_api.hpp>
 
 namespace logicalaccess
 {
@@ -19,7 +20,7 @@ class KeyboardReaderProvider;
 /**
  * \brief The Keyboard reader unit class.
  */
-class LIBLOGICALACCESS_API KeyboardReaderUnit : public ReaderUnit
+class LLA_READERS_PRIVATE_KEYBOARD_API KeyboardReaderUnit : public ReaderUnit
 {
   public:
     /**

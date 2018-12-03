@@ -24,7 +24,7 @@ namespace openssl
  * cipher() and decipher() which respectively cipher and decipher a specified buffer and
  * which must be implementend in every subclass.
  */
-class LIBLOGICALACCESS_API AsymmetricCipher
+class LLA_CRYPTO_API AsymmetricCipher
 {
   public:
     /**

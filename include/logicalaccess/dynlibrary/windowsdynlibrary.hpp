@@ -1,3 +1,5 @@
+#ifndef __unix__
+
 #ifndef WINDOWSDYNLIBRARY_HPP__
 #define WINDOWSDYNLIBRARY_HPP__
 
@@ -29,5 +31,7 @@ class WindowsDynLibrary : public IDynLibrary, WinClass
     bool hasSymbol(const char *name) override;
 };
 }
+
+#endif
 
 #endif

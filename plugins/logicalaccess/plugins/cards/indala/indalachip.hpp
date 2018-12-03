@@ -8,7 +8,7 @@
 #define LOGICALACCESS_INDALACHIP_HPP
 
 #include <logicalaccess/cards/chip.hpp>
-
+#include <logicalaccess/plugins/cards/indala/lla_cards_indala_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
  * \brief The Indala base chip class.
  */
-class LIBLOGICALACCESS_API IndalaChip : public Chip
+class LLA_CARDS_INDALA_API IndalaChip : public Chip
 {
   public:
     /**

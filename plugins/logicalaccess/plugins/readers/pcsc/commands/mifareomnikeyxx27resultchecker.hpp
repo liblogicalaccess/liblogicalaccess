@@ -8,13 +8,14 @@
 #define LOGICALACCESS_MIFAREOMNIKEYXX27RESULTCHECKER_HPP
 
 #include <logicalaccess/plugins/readers/iso7816/iso7816resultchecker.hpp>
+#include <logicalaccess/plugins/readers/pcsc/lla_readers_pcsc_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief The Omnikey xx27 mifare implementation result checker.
  */
-class LIBLOGICALACCESS_API MifareOmnikeyXX27ResultChecker : public ISO7816ResultChecker
+class LLA_READERS_PCSC_API MifareOmnikeyXX27ResultChecker : public ISO7816ResultChecker
 {
   public:
     MifareOmnikeyXX27ResultChecker();

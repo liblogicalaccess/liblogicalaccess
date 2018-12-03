@@ -19,7 +19,7 @@ class TwicCardProvider;
 /**
  * \brief The Twic access control card service class.
  */
-class LIBLOGICALACCESS_API TwicAccessControlCardService : public AccessControlCardService
+class LLA_CARDS_TWIC_API TwicAccessControlCardService : public AccessControlCardService
 {
   public:
     /**

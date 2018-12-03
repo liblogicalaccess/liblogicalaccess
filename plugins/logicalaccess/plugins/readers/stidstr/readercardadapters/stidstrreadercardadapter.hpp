@@ -34,7 +34,7 @@ typedef enum {
 /**
  * \brief A default STidSTR reader/card adapter class.
  */
-class LIBLOGICALACCESS_API STidSTRReaderCardAdapter : public ISO7816ReaderCardAdapter
+class LLA_READERS_STIDSTR_API STidSTRReaderCardAdapter : public ISO7816ReaderCardAdapter
 {
   public:
     /**

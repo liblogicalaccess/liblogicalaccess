@@ -14,7 +14,7 @@ namespace logicalaccess
 /**
  * \brief A checksum data field. Not implemented yet.
  */
-class LIBLOGICALACCESS_API ChecksumDataField : public DataField
+class LLA_CORE_API ChecksumDataField : public DataField
 {
   public:
     /**

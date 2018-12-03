@@ -8,13 +8,13 @@
 #define DEISTERBUFFERPARSER_HPP
 
 #include <logicalaccess/readerproviders/circularbufferparser.hpp>
-
+#include <logicalaccess/plugins/readers/deister/lla_readers_deister_api.hpp>
 #include <string>
 #include <vector>
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API DeisterBufferParser : public CircularBufferParser
+class LLA_READERS_DEISTER_API DeisterBufferParser : public CircularBufferParser
 {
   public:
     DeisterBufferParser()

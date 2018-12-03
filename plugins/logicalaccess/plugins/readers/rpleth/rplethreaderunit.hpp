@@ -16,7 +16,7 @@ namespace logicalaccess
 /**
  * \brief The Rpleth reader unit class.
  */
-class LIBLOGICALACCESS_API RplethReaderUnit : public ISO7816ReaderUnit
+class LLA_READERS_RPLETH_API RplethReaderUnit : public ISO7816ReaderUnit
 {
   public:
     /**

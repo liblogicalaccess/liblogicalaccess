@@ -16,7 +16,7 @@
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API GigaTMSDataTransport : public SerialPortDataTransport
+class LLA_READERS_GIGATMS_API GigaTMSDataTransport : public SerialPortDataTransport
 {
   public:
     explicit GigaTMSDataTransport(const std::string &portname = "")

@@ -21,7 +21,7 @@ namespace logicalaccess
 /**
  * \brief The Mifare commands class for STidSTR reader.
  */
-class LIBLOGICALACCESS_API MifareSTidSTRCommands : public MifareCommands
+class LLA_READERS_STIDSTR_API MifareSTidSTRCommands : public MifareCommands
 {
   public:
     /**

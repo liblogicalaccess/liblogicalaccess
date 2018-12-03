@@ -43,13 +43,13 @@ typedef enum {
     FT_RAW                 = 0xFF
 } FormatType;
 
-bool LIBLOGICALACCESS_API FieldSortPredicate(const std::shared_ptr<DataField> &lhs,
+bool LLA_CORE_API FieldSortPredicate(const std::shared_ptr<DataField> &lhs,
                                              const std::shared_ptr<DataField> &rhs);
 
 /**
  * \brief A format.
  */
-class LIBLOGICALACCESS_API Format : public XmlSerializable
+class LLA_CORE_API Format : public XmlSerializable
 {
   public:
     /**

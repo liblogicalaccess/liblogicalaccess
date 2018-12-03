@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
  * \brief Elatec Reader Provider class.
  */
-class LIBLOGICALACCESS_API ElatecReaderProvider : public ReaderProvider
+class LLA_READERS_ELATEC_API ElatecReaderProvider : public ReaderProvider
 {
   public:
     /**

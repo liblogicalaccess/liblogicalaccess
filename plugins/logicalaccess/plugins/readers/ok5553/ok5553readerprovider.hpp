@@ -9,7 +9,7 @@
 
 #include <logicalaccess/readerproviders/readerprovider.hpp>
 #include <logicalaccess/plugins/readers/ok5553/ok5553readerunit.hpp>
-
+#include <logicalaccess/plugins/readers/ok5553/lla_readers_ok5553_api.hpp>
 #include <string>
 #include <vector>
 
@@ -22,7 +22,7 @@ namespace logicalaccess
 /**
  * \brief OK5553 Reader Provider class.
  */
-class LIBLOGICALACCESS_API OK5553ReaderProvider : public ReaderProvider
+class LLA_READERS_OK5553_API OK5553ReaderProvider : public ReaderProvider
 {
   public:
     /**

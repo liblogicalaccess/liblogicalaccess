@@ -8,13 +8,14 @@
 #define LOGICALACCESS_A3MLGM5600READERUNITCONFIGURATION_HPP
 
 #include <logicalaccess/readerproviders/readerunitconfiguration.hpp>
+#include <logicalaccess/plugins/readers/a3mlgm5600/lla_readers_a3mlgm5600_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief The A3MLGM5600 reader unit configuration base class.
  */
-class LIBLOGICALACCESS_API A3MLGM5600ReaderUnitConfiguration
+class LLA_READERS_A3MLGM5600_API A3MLGM5600ReaderUnitConfiguration
     : public ReaderUnitConfiguration
 {
   public:

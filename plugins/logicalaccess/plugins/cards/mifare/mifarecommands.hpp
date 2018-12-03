@@ -20,7 +20,7 @@ class MifareChip;
 /**
  * \brief The Mifare commands class.
  */
-class LIBLOGICALACCESS_API MifareCommands : public Commands
+class LLA_CARDS_MIFARE_API MifareCommands : public Commands
 {
   public:
     MifareCommands()

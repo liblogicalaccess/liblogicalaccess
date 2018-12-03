@@ -16,7 +16,7 @@ namespace logicalaccess
  * \brief A reader format composite class. This is a card format composite associated to a
  * specific reader configuration.
  */
-class LIBLOGICALACCESS_API ReaderFormatComposite : public XmlSerializable
+class LLA_CORE_API ReaderFormatComposite : public XmlSerializable
 {
   public:
     /**

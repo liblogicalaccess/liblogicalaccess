@@ -8,6 +8,7 @@
 #include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <iostream>
+#include <logicalaccess/plugins/llacommon/settings.hpp>
 
 
 namespace logicalaccess

@@ -11,7 +11,7 @@
 namespace logicalaccess
 {
 
-class LIBLOGICALACCESS_API MifarePlusSL0Chip : public MifarePlusChip, public Chip
+class LLA_CARDS_MIFAREPLUS_API MifarePlusSL0Chip : public MifarePlusChip, public Chip
 {
   public:
     explicit MifarePlusSL0Chip(const std::string &cardType)

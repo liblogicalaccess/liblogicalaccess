@@ -19,7 +19,7 @@ namespace logicalaccess
 /**
  * \brief A Mifare SmartID reader/card adapter class.
  */
-class LIBLOGICALACCESS_API MifareSmartIDReaderCardAdapter
+class LLA_READERS_SMARTID_API MifareSmartIDReaderCardAdapter
     : public SmartIDReaderCardAdapter
 {
   public:

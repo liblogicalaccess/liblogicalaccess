@@ -1,40 +1,40 @@
 cmake_minimum_required(VERSION 3.1)
 project(desfirecards)
 
-if (WIN32)
-	SET(VERSION_PRODUCTNAME_VALUE "desfirecards")
-	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
-endif()
+if (MSVC)
+    SET(VERSION_PRODUCTNAME_VALUE "desfirecards")
+    add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif ()
+
+set(HEADER_RELATIVE_INSTALL_DIR "include/logicalaccess/plugins/cards/desfire")
 
 file(GLOB_RECURSE SRCS *.cpp)
 file(GLOB_RECURSE INCLUDE *.hpp)
 
-add_library(
-	desfirecards
-    SHARED	
-	${SRCS}
-	${INCLUDE}
-	${resourcerc}
-  )
+add_library(desfirecards
+        SHARED
+        ${SRCS}
+        ${INCLUDE}
+        ${LLA_RESOURCE_RC})
 
-if (WIN32)
-  set(LINK_OPT ${LIBLOGICALACCESS_LIBRARY})
-endif()
-  
 SET_TARGET_PROPERTIES(desfirecards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 
-target_link_libraries(
-	desfirecards
-	logicalaccess-cryptolib
-	iso7816cards
-	${LINK_OPT}
-)
-if (MSVC)
-  SET_TARGET_PROPERTIES(desfirecards PROPERTIES LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt.lib")
-endif()
+target_link_libraries(desfirecards
+        logicalaccess-cryptolib
+        iso7816cards
+        logicalaccess)
+LLA_GENERATE_EXPORTS(LLA_CARDS_DESFIRE)
 
-install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/desfire )
-install ( TARGETS desfirecards RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )
 if (MSVC)
-	install(FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb/${LIB_SUFFIX} OPTIONAL)
-endif()
+    SET_TARGET_PROPERTIES(desfirecards PROPERTIES LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt.lib")
+endif ()
+
+install(FILES ${INCLUDE} DESTINATION ${HEADER_RELATIVE_INSTALL_DIR})
+install(TARGETS desfirecards
+        RUNTIME DESTINATION bin/${LIB_SUFFIX}
+        ARCHIVE DESTINATION lib/${LIB_SUFFIX}
+        LIBRARY DESTINATION lib/${LIB_SUFFIX})
+
+if (MSVC)
+    install(FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb/${LIB_SUFFIX} OPTIONAL)
+endif ()

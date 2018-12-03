@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_READERCOMMUNICATION_HPP
 #define LOGICALACCESS_READERCOMMUNICATION_HPP
 
-#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/lla_core_api.hpp>
 #include <logicalaccess/lla_fwd.hpp>
 #include <vector>
 
@@ -16,7 +16,7 @@ namespace logicalaccess
 /**
  * \brief A reader communication base class.
  */
-class LIBLOGICALACCESS_API ReaderCommunication
+class LLA_CORE_API ReaderCommunication
 {
   public:
     virtual ~ReaderCommunication() = default;

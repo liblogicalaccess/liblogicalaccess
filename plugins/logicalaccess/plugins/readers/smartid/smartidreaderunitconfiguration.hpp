@@ -8,13 +8,15 @@
 #define LOGICALACCESS_SMARTIDREADERUNITCONFIGURATION_HPP
 
 #include <logicalaccess/readerproviders/readerunitconfiguration.hpp>
+#include <logicalaccess/plugins/readers/smartid/lla_readers_smartid_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief The SmartID reader unit configuration base class.
  */
-class LIBLOGICALACCESS_API SmartIDReaderUnitConfiguration : public ReaderUnitConfiguration
+class LLA_READERS_SMARTID_API SmartIDReaderUnitConfiguration
+    : public ReaderUnitConfiguration
 {
   public:
     /**

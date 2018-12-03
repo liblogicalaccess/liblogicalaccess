@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_RESULTCHECKER_HPP
 #define LOGICALACCESS_RESULTCHECKER_HPP
 
-#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/lla_core_api.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <iostream>
 #include <map>
@@ -18,7 +18,7 @@ namespace logicalaccess
 /**
  * \brief A result checker base class.
  */
-class LIBLOGICALACCESS_API ResultChecker
+class LLA_CORE_API ResultChecker
 {
   public:
     /**

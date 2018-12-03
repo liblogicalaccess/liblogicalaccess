@@ -9,6 +9,7 @@
 
 #include <logicalaccess/cards/aes128key.hpp>
 #include <logicalaccess/plugins/cards/mifare/mifarecommands.hpp>
+#include <logicalaccess/plugins/cards/mifareplus/lla_cards_mifareplus_api.hpp>
 
 namespace logicalaccess
 {
@@ -24,7 +25,7 @@ class MifarePlusChip;
  * This class implements all method in order to compile, but call
  * for Mifare classic shall not be dispatched to this class;
  */
-class LIBLOGICALACCESS_API MifarePlusSL1Commands : public MifareCommands
+class LLA_CARDS_MIFAREPLUS_API MifarePlusSL1Commands : public MifareCommands
 {
   public:
     MifarePlusSL1Commands()

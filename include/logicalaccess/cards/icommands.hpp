@@ -16,7 +16,7 @@ class Chip;
 /**
  * \brief The base abstract commands class for all card commands.
  */
-class LIBLOGICALACCESS_API ICommands
+class LLA_CORE_API ICommands
 {
   public:
     virtual ~ICommands() = default;

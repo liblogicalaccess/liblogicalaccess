@@ -14,7 +14,7 @@ namespace logicalaccess
 /**
  * \brief A HID Honeywell format class.
  */
-class LIBLOGICALACCESS_API HIDHoneywell40BitFormat : public StaticFormat
+class LLA_CORE_API HIDHoneywell40BitFormat : public StaticFormat
 {
   public:
     /**

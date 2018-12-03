@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
  * \brief A default Elatec reader/card adapter class.
  */
-class LIBLOGICALACCESS_API ElatecReaderCardAdapter : public ReaderCardAdapter
+class LLA_READERS_ELATEC_API ElatecReaderCardAdapter : public ReaderCardAdapter
 {
   public:
     /**

@@ -10,6 +10,7 @@
 
 #include <logicalaccess/plugins/crypto/initialization_vector.hpp>
 #include <logicalaccess/lla_fwd.hpp>
+#include "logicalaccess/plugins/crypto/lla_crypto_api.hpp"
 
 namespace logicalaccess
 {
@@ -23,7 +24,7 @@ namespace openssl
  *
  * It is meant to be used with an instance of AESCipher.
  */
-class LIBLOGICALACCESS_API AESInitializationVector : public InitializationVector
+class LLA_CRYPTO_API AESInitializationVector : public InitializationVector
 {
   public:
     /**

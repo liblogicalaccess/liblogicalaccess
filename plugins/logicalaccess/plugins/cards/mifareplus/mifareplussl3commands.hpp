@@ -16,7 +16,7 @@ namespace logicalaccess
 {
 #define CMD_MIFAREPLUSSL3 "MifarePlusSL3"
 
-class LIBLOGICALACCESS_API MifarePlusSL3Commands_NEW : public Commands
+class LLA_CARDS_MIFAREPLUS_API MifarePlusSL3Commands_NEW : public Commands
 {
   public:
     MifarePlusSL3Commands_NEW()

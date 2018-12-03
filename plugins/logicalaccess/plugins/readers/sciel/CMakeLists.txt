@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 3.1)
 project(scielreaders)
 
-if (WIN32)
-	SET(VERSION_PRODUCTNAME_VALUE "scielreaders")
-	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
-endif()
+if (MSVC)
+    SET(VERSION_PRODUCTNAME_VALUE "scielreaders")
+    add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif ()
+
+set(HEADER_RELATIVE_INSTALL_DIR "include/logicalaccess/plugins/readers/sciel")
 
 file(GLOB SRCS *.cpp)
 file(GLOB include *.hpp)
@@ -18,24 +20,22 @@ SOURCE_GROUP("Source Files\\readercardadapters" FILES ${source_readercardadapter
 set(INCLUDE_LIB ${include} ${include_core} ${include_readercardadapters})
 set(SOURCE_LIB ${SRCS} ${source_readercardadapters})
 
-add_library(
-	scielreaders
-	SHARED
-	${SOURCE_LIB}
-	${INCLUDE_LIB}
-	${resourcerc}
-  )
+add_library(scielreaders
+        SHARED
+        ${SOURCE_LIB}
+        ${INCLUDE_LIB}
+        ${LLA_RESOURCE_RC})
 
 SET_TARGET_PROPERTIES(scielreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
-  
-target_link_libraries(
-	scielreaders
-	${LIBLOGICALACCESS_LIBRARY}
-)
 
-install ( FILES ${include} ${includepp} DESTINATION include/logicalaccess/plugins/readers/sciel )
-install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/sciel/readercardadapters )
-install ( TARGETS scielreaders RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )
+target_link_libraries(
+        scielreaders
+        logicalaccess)
+LLA_GENERATE_EXPORTS(LLA_READERS_SCIEL)
+
+install(FILES ${include} DESTINATION ${HEADER_RELATIVE_INSTALL_DIR})
+install(FILES ${include_readercardadapters} DESTINATION ${HEADER_RELATIVE_INSTALL_DIR}/readercardadapters)
+install(TARGETS scielreaders RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX})
 if (MSVC)
-	install(FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb/${LIB_SUFFIX} OPTIONAL)
-endif()
+    install(FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb/${LIB_SUFFIX} OPTIONAL)
+endif ()

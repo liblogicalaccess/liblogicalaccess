@@ -8,21 +8,11 @@
 #include <logicalaccess/dynlibrary/idynlibrary.hpp>
 #include <logicalaccess/iks/IslogKeyServer.hpp>
 
-#if defined(UNIX) || defined(ANDROID)
-#define LIBLOGICALACCESS_API_DLL
-#else
-#ifdef LIBLOGICALACCESS_EXPORTS_DLL
-#define LIBLOGICALACCESS_API_DLL __declspec(dllexport)
-#else
-#define LIBLOGICALACCESS_API_DLL __declspec(dllimport)
-#endif
-#endif
-
 namespace logicalaccess
 {
 class AccessControlCardService;
 
-class LIBLOGICALACCESS_API_DLL LibraryManager
+class LLA_CORE_API LibraryManager
 {
   public:
     enum LibraryType

@@ -8,13 +8,14 @@
 #define AXESSTMCLEGICBUFFERPARSER_HPP
 
 #include <logicalaccess/readerproviders/circularbufferparser.hpp>
-
+#include <logicalaccess/plugins/readers/axesstmclegic/lla_readers_axesstmclegic_api.hpp>
 #include <string>
 #include <vector>
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API AxessTMCLegicBufferParser : public CircularBufferParser
+class LLA_READERS_AXESSTMCLEGIC_API AxessTMCLegicBufferParser
+    : public CircularBufferParser
 {
   public:
     AxessTMCLegicBufferParser()

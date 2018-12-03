@@ -1,7 +1,8 @@
 #pragma once
 
-#include "logicalaccess/logicalaccess_api.hpp"
+
 #include <string>
+ #include <logicalaccess/lla_core_api.hpp>
 
 namespace logicalaccess
 {
@@ -12,14 +13,14 @@ namespace iks
  *
  * This object is movable but not copyable.
  */
-class LIBLOGICALACCESS_API IslogKeyServer
+class LLA_CORE_API IslogKeyServer
 {
   public:
     IslogKeyServer()                       = delete;
     IslogKeyServer(const IslogKeyServer &) = delete;
     //    IslogKeyServer(IslogKeyServer &&) = default;
 
-    struct LIBLOGICALACCESS_API IKSConfig
+    struct LLA_CORE_API IKSConfig
     {
         IKSConfig() = default;
         IKSConfig(const std::string &ip, uint16_t port, const std::string &client_cert,

@@ -5,15 +5,15 @@
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireiso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev1iso7816commands.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirechip.hpp>
-#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/plugins/readers/iso7816/lla_readers_iso7816_api.hpp>
 
 extern "C" {
-LIBLOGICALACCESS_API char *getLibraryName()
+LLA_READERS_ISO7816_API char *getLibraryName()
 {
     return (char *)"ISO7816";
 }
 
-LIBLOGICALACCESS_API void
+LLA_READERS_ISO7816_API void
 getTwicISO7816Commands(std::shared_ptr<logicalaccess::Commands> *commands)
 {
     if (commands != nullptr)
@@ -22,7 +22,7 @@ getTwicISO7816Commands(std::shared_ptr<logicalaccess::Commands> *commands)
     }
 }
 
-LIBLOGICALACCESS_API void
+LLA_READERS_ISO7816_API void
 getDESFireISO7816Commands(std::shared_ptr<logicalaccess::Commands> *commands)
 {
     if (commands != nullptr)
@@ -31,7 +31,7 @@ getDESFireISO7816Commands(std::shared_ptr<logicalaccess::Commands> *commands)
     }
 }
 
-LIBLOGICALACCESS_API void
+LLA_READERS_ISO7816_API void
 setCryptoContextDESFireISO7816Commands(std::shared_ptr<logicalaccess::Commands> *commands,
                                        std::shared_ptr<logicalaccess::Chip> *chip)
 {
@@ -43,7 +43,7 @@ setCryptoContextDESFireISO7816Commands(std::shared_ptr<logicalaccess::Commands> 
     }
 }
 
-LIBLOGICALACCESS_API void
+LLA_READERS_ISO7816_API void
 getDESFireEV1ISO7816Commands(std::shared_ptr<logicalaccess::Commands> *commands)
 {
     if (commands != nullptr)
@@ -52,7 +52,7 @@ getDESFireEV1ISO7816Commands(std::shared_ptr<logicalaccess::Commands> *commands)
     }
 }
 
-LIBLOGICALACCESS_API void setCryptoContextDESFireEV1ISO7816Commands(
+LLA_READERS_ISO7816_API void setCryptoContextDESFireEV1ISO7816Commands(
     std::shared_ptr<logicalaccess::Commands> *commands,
     std::shared_ptr<logicalaccess::Chip> *chip)
 {

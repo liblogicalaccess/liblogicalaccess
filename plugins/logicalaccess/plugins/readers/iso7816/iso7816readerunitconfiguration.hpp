@@ -8,6 +8,7 @@
 #define LOGICALACCESS_ISO7816READERUNITCONFIGURATION_HPP
 
 #include <logicalaccess/readerproviders/readerunitconfiguration.hpp>
+#include <logicalaccess/plugins/readers/iso7816/lla_readers_iso7816_api.hpp>
 
 namespace logicalaccess
 {
@@ -18,7 +19,8 @@ class DESFireKey;
 /**
  * \brief The PC/SC reader unit configuration base class.
  */
-class LIBLOGICALACCESS_API ISO7816ReaderUnitConfiguration : public ReaderUnitConfiguration
+class LLA_READERS_ISO7816_API ISO7816ReaderUnitConfiguration
+    : public ReaderUnitConfiguration
 {
   public:
     /**

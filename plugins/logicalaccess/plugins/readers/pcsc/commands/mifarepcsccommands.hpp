@@ -24,7 +24,7 @@ class MifarePlusSL1Policy;
 /**
  * \brief The Mifare card provider class for PCSC reader.
  */
-class LIBLOGICALACCESS_API MifarePCSCCommands : public MifareCommands
+class LLA_READERS_PCSC_API MifarePCSCCommands : public MifareCommands
 {
   public:
     /**

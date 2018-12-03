@@ -33,7 +33,7 @@ enum OSDPCommandsType
 /**
  * \brief OSDP Channel class.
  */
-class LIBLOGICALACCESS_API OSDPChannel
+class LLA_READERS_OSDP_API OSDPChannel
 {
   public:
     /**

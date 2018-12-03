@@ -21,8 +21,9 @@ namespace logicalaccess
 /**
  * \brief A default SmartID reader/card adapter class.
  */
-class LIBLOGICALACCESS_API SmartIDReaderCardAdapter : public ISO7816ReaderCardAdapter,
-                                                      public ISO14443ReaderCommunication
+class LLA_READERS_SMARTID_API SmartIDReaderCardAdapter
+    : public ISO7816ReaderCardAdapter,
+      public ISO14443ReaderCommunication
 {
   public:
     /**

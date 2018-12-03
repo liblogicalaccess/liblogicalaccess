@@ -14,7 +14,7 @@ namespace logicalaccess
 /**
  * \brief The SAM ISO 7816 result checker.
  */
-class LIBLOGICALACCESS_API SAMISO7816ResultChecker : public ISO7816ResultChecker
+class LLA_READERS_ISO7816_API SAMISO7816ResultChecker : public ISO7816ResultChecker
 {
   public:
     SAMISO7816ResultChecker();

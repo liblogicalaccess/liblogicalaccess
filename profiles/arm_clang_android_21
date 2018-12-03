@@ -1,0 +1,48 @@
+standalone_toolchain=/opt/arm_toolchain_21
+target_host=arm-linux-androideabi
+cc_compiler=clang
+cxx_compiler=clang++
+
+[settings]
+os=Android
+os.api_level=21
+os_build=Linux
+arch_build=x86_64
+compiler=clang
+compiler.version=7.0
+compiler.libcxx=libc++
+build_type=Release
+cppstd=14
+arch=armv7
+
+[options]
+OpenSSL:no_asm=True
+OpenSSL:shared=False
+boost:shared=False
+
+LogicalAccess:LLA_BUILD_PKCS=False
+LogicalAccess:LLA_BUILD_IKS=False
+[build_requires]
+
+[env]
+CONAN_CMAKE_FIND_ROOT_PATH=$standalone_toolchain/sysroot
+PATH=[$standalone_toolchain/bin]
+CHOST=$target_host
+AR=$target_host-ar
+AS=$target_host-as
+RANLIB=$target_host-ranlib
+CC=$target_host-$cc_compiler
+CXX=$target_host-$cxx_compiler
+LD=$target_host-ld
+STRIP=$target_host-strip
+
+CFLAGS="-D__ANDROID_API__=21 -I$standalone_toolchain/include/c++/4.9.x/"
+CXXFLAGS="-D__ANDROID_API__=21 -I$standalone_toolchain/include/c++/4.9.x/"
+LDFLAGS="-Wl,/opt/android-ndk/android-ndk-r18b/sources/cxx-stl/llvm-libc++/libs/armeabi-v7a/libc++.so.21"
+
+
+# To work around an issue on clang7 with std::string_view and experimental
+boost:CXXFLAGS="-D__ANDROID_API__=21 -I$standalone_toolchain/include/c++/4.9.x/ -DBOOST_ASIO_HAS_STD_STRING_VIEW=1"
+
+OpenSSL:CFLAGS="-D__ANDROID_API__=21 -I$standalone_toolchain/include/c++/4.9.x --target=armv7-none-linux-androideabi  -march=armv7"
+OpenSSL:LDFLAGS="-L/opt/arm_toolchain_21/lib64 -D__ANDROID_API__=21 -Wl,--exclude-libs,libgcc.a -Wl,--exclude-libs,libatomic.a --sysroot /opt/android-ndk/android-ndk-r18b/platforms/android-21/arch-arm -Wl,--build-id -Wl,--warn-shared-textrel -Wl,--fatal-warnings -Wl,--fix-cortex-a8 -Wl,--exclude-libs,libunwind.a -L/opt/android-ndk/android-ndk-r18b/sources/cxx-stl/llvm-libc++/libs/armeabi-v7a -Wl,--no-undefined -Wl,-z,noexecstack -Qunused-arguments -Wl,-z,relro -Wl,-z,now   --target=armv7-none-linux-androideabi --gcc-toolchain=/opt/android-ndk/android-ndk-r18b/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64 -Wl,--exclude-libs,libgcc.a -Wl,--exclude-libs,libatomic.a --sysroot /opt/android-ndk/android-ndk-r18b/platforms/android-21/arch-arm -Wl,--build-id -Wl,--warn-shared-textrel -Wl,--fatal-warnings -Wl,--fix-cortex-a8 -Wl,--exclude-libs,libunwind.a -L/opt/android-ndk/android-ndk-r18b/sources/cxx-stl/llvm-libc++/libs/armeabi-v7a -Wl,--no-undefined -Wl,-z,noexecstack -Qunused-arguments -Wl,-z,relro -Wl,-z,now -Wl,/opt/android-ndk/android-ndk-r18b/sources/cxx-stl/llvm-libc++/libs/armeabi-v7a/libc++.so.21"

@@ -23,7 +23,7 @@ namespace openssl
  * You can create an DESSymmetricKey from random values, using createRandom() or from
  * specific data, using createFromData().
  */
-class LIBLOGICALACCESS_API DESSymmetricKey : public SymmetricKey
+class LLA_CRYPTO_API DESSymmetricKey : public SymmetricKey
 {
   public:
     /**

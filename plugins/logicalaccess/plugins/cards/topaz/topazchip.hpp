@@ -8,9 +8,8 @@
 #define LOGICALACCESS_TOPAZCHIP_H
 
 #include <logicalaccess/cards/chip.hpp>
-
 #include <logicalaccess/plugins/cards/topaz/topazcommands.hpp>
-
+#include <logicalaccess/plugins/cards/topaz/lla_cards_topaz_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -22,7 +21,7 @@ namespace logicalaccess
 /**
  * \brief The Topaz base chip class.
  */
-class LIBLOGICALACCESS_API TopazChip : public Chip
+class LLA_CARDS_TOPAZ_API TopazChip : public Chip
 {
   public:
     /**

@@ -8,7 +8,7 @@
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API MifarePlusACSACR1222L_SL1Commands
+class LLA_READERS_PCSC_API MifarePlusACSACR1222L_SL1Commands
     : public MifarePlusSL1PCSCCommands
 {
   public:

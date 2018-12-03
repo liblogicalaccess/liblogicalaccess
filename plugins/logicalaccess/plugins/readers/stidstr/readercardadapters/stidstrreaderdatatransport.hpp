@@ -16,7 +16,7 @@
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API STidSTRDataTransport : public SerialPortDataTransport
+class LLA_READERS_STIDSTR_API STidSTRDataTransport : public SerialPortDataTransport
 {
   public:
     explicit STidSTRDataTransport(const std::string &portname = "")

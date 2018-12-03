@@ -20,7 +20,7 @@ class MifareUltralightChip;
 /**
  * \brief The Mifare Ultralight commands class.
  */
-class LIBLOGICALACCESS_API MifareUltralightCommands : public Commands
+class LLA_CARDS_MIFAREULTRALIGHT_API MifareUltralightCommands : public Commands
 {
   public:
     MifareUltralightCommands()

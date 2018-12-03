@@ -1,10 +1,11 @@
 #pragma once
 
 #include <logicalaccess/cardprobe.hpp>
+#include <logicalaccess/plugins/readers/pcsc/lla_readers_pcsc_api.hpp>
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API PCSCCardProbe : public CardProbe
+class LLA_READERS_PCSC_API PCSCCardProbe : public CardProbe
 {
   public:
     explicit PCSCCardProbe(ReaderUnit *ru);

@@ -21,7 +21,7 @@ namespace logicalaccess
 /**
  * \brief The CPS3 base chip class.
  */
-class LIBLOGICALACCESS_API CPS3Chip : public ISO7816Chip
+class LLA_CARDS_CPS3_API CPS3Chip : public ISO7816Chip
 {
   public:
     /**

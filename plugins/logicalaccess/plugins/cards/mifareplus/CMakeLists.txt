@@ -1,37 +1,32 @@
 cmake_minimum_required(VERSION 3.1)
 project(mifarepluscards)
 
-if (WIN32)
-	SET(VERSION_PRODUCTNAME_VALUE "mifarepluscards")
-	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
-endif()
+if (MSVC)
+    SET(VERSION_PRODUCTNAME_VALUE "mifarepluscards")
+    add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif ()
 
-if (NOT CMAKE_BUILD_TYPE)
-	set(CMAKE_BUILD_TYPE "Debug")
-endif()
+set(HEADER_RELATIVE_INSTALL_DIR "include/logicalaccess/plugins/cards/mifareplus")
 
 file(GLOB_RECURSE SRCS *.cpp)
 file(GLOB_RECURSE INCLUDE *.hpp)
 
-add_library(
-	mifarepluscards
-	SHARED
-
-	${SRCS}
-	${INCLUDE}
-	${resourcerc}
-  )
+add_library(mifarepluscards
+        SHARED
+        ${SRCS}
+        ${INCLUDE}
+        ${LLA_RESOURCE_RC})
 
 SET_TARGET_PROPERTIES(mifarepluscards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 
-target_link_libraries(
-	mifarepluscards
-	${LIBLOGICALACCESS_LIBRARY}
-	mifarecards
-)
+target_link_libraries(mifarepluscards
+        mifarecards
+        logicalaccess)
+LLA_GENERATE_EXPORTS(LLA_CARDS_MIFAREPLUS)
 
-install ( FILES ${INCLUDE} DESTINATION include/logicalaccess/plugins/cards/mifareplus )
-install ( TARGETS mifarepluscards RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )
+
+install(FILES ${INCLUDE} DESTINATION ${HEADER_RELATIVE_INSTALL_DIR})
+install(TARGETS mifarepluscards RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX})
 if (MSVC)
-	install(FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb/${LIB_SUFFIX} OPTIONAL)
-endif()
+    install(FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb/${LIB_SUFFIX} OPTIONAL)
+endif ()

@@ -7,7 +7,7 @@
 #include <logicalaccess/readerproviders/serialportxml.hpp>
 #include <logicalaccess/myexception.hpp>
 
-#ifdef UNIX
+#ifdef __linux__
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -64,7 +64,7 @@ bool SerialPortXml::EnumerateUsingCreateFile(
     std::vector<std::shared_ptr<SerialPortXml>> &ports)
 {
     ports.clear();
-#ifdef UNIX
+#ifdef __linux__
     DIR *pdir = opendir("/dev");
     if (pdir)
     {

@@ -17,7 +17,7 @@ namespace logicalaccess
 /**
  * \brief A Big Endian data representation class.
  */
-class LIBLOGICALACCESS_API BigEndianDataRepresentation : public DataRepresentation
+class LLA_CORE_API BigEndianDataRepresentation : public DataRepresentation
 {
   public:
     /**

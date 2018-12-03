@@ -8,13 +8,14 @@
 #define LOGICALACCESS_ISO15693LOCATION_HPP
 
 #include <logicalaccess/cards/location.hpp>
+#include <logicalaccess/plugins/cards/iso15693/lla_cards_iso15693_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief A ISO15693 location informations.
  */
-class LIBLOGICALACCESS_API ISO15693Location : public Location
+class LLA_CARDS_ISO15693_API ISO15693Location : public Location
 {
   public:
     /**

@@ -12,10 +12,11 @@
 
 #define DEVICE_TYPE_SMARTCARD /**< \brief Set device type to smart card */
 
-#if defined(__unix__)
+#if defined(__linux__)
 #include <pcsclite.h>
 #endif
 
+#include <logicalaccess/plugins/readers/pcsc/lla_readers_pcsc_api.hpp>
 #include <string.h>
 
 #ifdef UNICODE
@@ -40,12 +41,12 @@ typedef enum {
 /**
  * Returns the share mode as text.
  */
-std::string LIBLOGICALACCESS_API pcsc_share_mode_to_string(PCSCShareMode sm);
+std::string LLA_READERS_PCSC_API pcsc_share_mode_to_string(PCSCShareMode sm);
 
 /**
  * Returns the pcsc protocol as text.
  */
-std::string LIBLOGICALACCESS_API pcsc_protocol_to_string(unsigned long proto);
+std::string LLA_READERS_PCSC_API pcsc_protocol_to_string(unsigned long proto);
 
 /**
  *\brief The reader unit types.
@@ -69,7 +70,7 @@ typedef enum {
 /**
  * \brief The PC/SC reader unit configuration base class.
  */
-class LIBLOGICALACCESS_API PCSCReaderUnitConfiguration
+class LLA_READERS_PCSC_API PCSCReaderUnitConfiguration
     : public ISO7816ReaderUnitConfiguration
 {
   public:

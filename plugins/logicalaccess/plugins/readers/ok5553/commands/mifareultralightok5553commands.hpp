@@ -21,7 +21,7 @@ namespace logicalaccess
 /**
  * \brief A Mifare Ultraligth OK5553 commands base class.
  */
-class LIBLOGICALACCESS_API MifareUltralightOK5553Commands
+class LLA_READERS_OK5553_API MifareUltralightOK5553Commands
     : public MifareUltralightCommands
 {
   public:

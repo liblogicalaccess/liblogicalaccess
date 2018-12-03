@@ -11,13 +11,14 @@
 #include <vector>
 #include <logicalaccess/readerproviders/ledbuzzerdisplay.hpp>
 #include <logicalaccess/plugins/readers/smartid/smartid_fwd.hpp>
+#include <logicalaccess/plugins/readers/smartid/lla_readers_smartid_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief A SmartID LED/Buzzer Display class.
  */
-class LIBLOGICALACCESS_API SmartIDLEDBuzzerDisplay : public LEDBuzzerDisplay
+class LLA_READERS_SMARTID_API SmartIDLEDBuzzerDisplay : public LEDBuzzerDisplay
 {
   public:
     /**

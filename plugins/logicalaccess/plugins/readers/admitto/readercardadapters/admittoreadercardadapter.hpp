@@ -8,10 +8,9 @@
 #define LOGICALACCESS_DEFAULTADMITTOREADERCARDADAPTER_HPP
 
 #include <logicalaccess/cards/readercardadapter.hpp>
-
+#include <logicalaccess/plugins/readers/admitto/lla_readers_admitto_api.hpp>
 #include <string>
 #include <vector>
-
 #include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/bufferhelper.hpp>
 
@@ -20,7 +19,7 @@ namespace logicalaccess
 /**
  * \brief A default Admitto reader/card adapter class.
  */
-class LIBLOGICALACCESS_API AdmittoReaderCardAdapter : public ReaderCardAdapter
+class LLA_READERS_ADMITTO_API AdmittoReaderCardAdapter : public ReaderCardAdapter
 {
   public:
     static const unsigned char CR; /**< \brief The first stop byte. */

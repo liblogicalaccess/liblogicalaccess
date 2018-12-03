@@ -8,10 +8,9 @@
 #define LOGICALACCESS_DEFAULTAXESSTMC13READERCARDADAPTER_HPP
 
 #include <logicalaccess/cards/readercardadapter.hpp>
-
+#include <logicalaccess/plugins/readers/axesstmc13/lla_readers_axesstmc13_api.hpp>
 #include <string>
 #include <vector>
-
 #include <logicalaccess/plugins/llacommon/logs.hpp>
 
 namespace logicalaccess
@@ -19,7 +18,7 @@ namespace logicalaccess
 /**
  * \brief A default AxessTMC13 reader/card adapter class.
  */
-class LIBLOGICALACCESS_API AxessTMC13ReaderCardAdapter : public ReaderCardAdapter
+class LLA_READERS_AXESSTMC13_API AxessTMC13ReaderCardAdapter : public ReaderCardAdapter
 {
   public:
     static const unsigned char START0; /**< \brief The first start byte. */

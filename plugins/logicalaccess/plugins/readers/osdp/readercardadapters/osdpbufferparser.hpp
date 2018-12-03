@@ -8,13 +8,13 @@
 #define OSDPBUFFERPARSER_HPP
 
 #include <logicalaccess/readerproviders/circularbufferparser.hpp>
-
+#include <logicalaccess/plugins/readers/osdp/lla_readers_osdp_api.hpp>
 #include <string>
 #include <vector>
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API OSDPBufferParser : public CircularBufferParser
+class LLA_READERS_OSDP_API OSDPBufferParser : public CircularBufferParser
 {
   public:
     OSDPBufferParser()

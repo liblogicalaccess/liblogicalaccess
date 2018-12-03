@@ -8,13 +8,14 @@
 #define LOGICALACCESS_SCIELREADERUNITCONFIGURATION_HPP
 
 #include <logicalaccess/readerproviders/readerunitconfiguration.hpp>
+#include <logicalaccess/plugins/readers/sciel/lla_readers_sciel_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief The SCIEL reader unit configuration base class.
  */
-class LIBLOGICALACCESS_API SCIELReaderUnitConfiguration : public ReaderUnitConfiguration
+class LLA_READERS_SCIEL_API SCIELReaderUnitConfiguration : public ReaderUnitConfiguration
 {
   public:
     /**

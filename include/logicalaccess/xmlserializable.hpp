@@ -41,7 +41,7 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
-#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/lla_core_api.hpp>
 #include <logicalaccess/lla_fwd.hpp>
 #include <boost/property_tree/ptree_fwd.hpp>
 
@@ -50,7 +50,7 @@ namespace logicalaccess
 /**
  * \brief A Xml Serializable base class. Add Xml serialization to a class.
  */
-class LIBLOGICALACCESS_API XmlSerializable
+class LLA_CORE_API XmlSerializable
 {
   public:
     virtual ~XmlSerializable() = default;

@@ -17,7 +17,7 @@ namespace logicalaccess
 /**
  * \brief A Binary data type class.
  */
-class LIBLOGICALACCESS_API BinaryDataType : public DataType
+class LLA_CORE_API BinaryDataType : public DataType
 {
   public:
     /**

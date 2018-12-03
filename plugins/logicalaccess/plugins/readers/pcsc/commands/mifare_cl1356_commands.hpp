@@ -11,7 +11,7 @@ namespace logicalaccess
 {
 #define CMD_MIFARECL1356 "MifareCL1356"
 
-class LIBLOGICALACCESS_API MifareCL1356Commands : public MifarePCSCCommands
+class LLA_READERS_PCSC_API MifareCL1356Commands : public MifarePCSCCommands
 {
   public:
     MifareCL1356Commands()

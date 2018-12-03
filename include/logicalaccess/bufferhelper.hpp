@@ -10,7 +10,7 @@
 #include <stdint.h>
 #include <vector>
 #include <string>
-#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/lla_core_api.hpp>
 #include <logicalaccess/lla_fwd.hpp>
 
 namespace logicalaccess
@@ -18,7 +18,7 @@ namespace logicalaccess
 /**
  * \brief A buffer helper class.
  */
-class LIBLOGICALACCESS_API BufferHelper
+class LLA_CORE_API BufferHelper
 {
   public:
     static std::string toBase64(const ByteVector &buf);

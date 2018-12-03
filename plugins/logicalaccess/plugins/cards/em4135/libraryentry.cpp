@@ -2,26 +2,15 @@
 #include <memory>
 #include <logicalaccess/readerproviders/readerprovider.hpp>
 #include <logicalaccess/plugins/cards/em4135/em4135chip.hpp>
-
-#ifdef _MSC_VER
-#include <logicalaccess/msliblogicalaccess.h>
-#else
-#ifndef LIBLOGICALACCESS_API
-#define LIBLOGICALACCESS_API
-#endif
-#ifndef DISABLE_PRAGMA_WARNING
-#define DISABLE_PRAGMA_WARNING /**< \brief winsmcrd.h was modified to support this       \
-                                  macro, to avoid MSVC specific warnings pragma */
-#endif
-#endif
+#include <logicalaccess/plugins/cards/em4135/lla_cards_em4135_api.hpp>
 
 extern "C" {
-LIBLOGICALACCESS_API char *getLibraryName()
+LLA_CARDS_EM4135_API char *getLibraryName()
 {
     return (char *)"EM4135";
 }
 
-LIBLOGICALACCESS_API void getEM4135Chip(std::shared_ptr<logicalaccess::Chip> *chip)
+LLA_CARDS_EM4135_API void getEM4135Chip(std::shared_ptr<logicalaccess::Chip> *chip)
 {
     if (chip != nullptr)
     {
@@ -29,7 +18,7 @@ LIBLOGICALACCESS_API void getEM4135Chip(std::shared_ptr<logicalaccess::Chip> *ch
     }
 }
 
-LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char *chipname,
+LLA_CARDS_EM4135_API bool getChipInfoAt(unsigned int index, char *chipname,
                                         size_t chipnamelen, void **getterfct)
 {
     bool ret = false;

@@ -8,7 +8,7 @@
 #define LOGICALACCESS_SEOSCHIP_HPP
 
 #include <logicalaccess/cards/chip.hpp>
-
+#include <logicalaccess/plugins/cards/seos/lla_cards_seos_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
  * \brief The HID SEOS base chip class.
  */
-class LIBLOGICALACCESS_API SEOSChip : public Chip
+class LLA_CARDS_SEOS_API SEOSChip : public Chip
 {
   public:
     /**

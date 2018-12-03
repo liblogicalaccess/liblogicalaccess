@@ -21,7 +21,7 @@ namespace logicalaccess
 /**
  * \brief A default IdOnDemand reader/card adapter class.
  */
-class LIBLOGICALACCESS_API IdOnDemandReaderCardAdapter : public ReaderCardAdapter
+class LLA_READERS_IDONDEMAND_API IdOnDemandReaderCardAdapter : public ReaderCardAdapter
 {
   public:
     /**

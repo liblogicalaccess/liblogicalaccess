@@ -10,6 +10,7 @@
 #include <logicalaccess/plugins/readers/iso7816/iso7816readerunitconfiguration.hpp>
 #include <logicalaccess/cards/aes128key.hpp>
 #include <logicalaccess/cards/hmac1key.hpp>
+#include <logicalaccess/plugins/readers/stidstr/lla_readers_stidstr_api.hpp>
 
 namespace logicalaccess
 {
@@ -36,7 +37,7 @@ typedef enum {
 /**
  * \brief The STidSTR reader unit configuration base class.
  */
-class LIBLOGICALACCESS_API STidSTRReaderUnitConfiguration
+class LLA_READERS_STIDSTR_API STidSTRReaderUnitConfiguration
     : public ISO7816ReaderUnitConfiguration
 {
   public:

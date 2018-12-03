@@ -16,7 +16,7 @@ namespace logicalaccess
 /**
 * \brief The Mifare Ultralight C commands class for Omnikey xx22 reader.
 */
-class LIBLOGICALACCESS_API MifareUltralightCOmnikeyXX22Commands
+class LLA_READERS_PCSC_API MifareUltralightCOmnikeyXX22Commands
     : public MifareUltralightPCSCCommands
 #ifndef SWIG
       ,

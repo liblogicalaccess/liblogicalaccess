@@ -5,6 +5,8 @@
 #ifndef LIBLOGICALACCESS_RPLETH_FWD_HPP
 #define LIBLOGICALACCESS_RPLETH_FWD_HPP
 
+#include <logicalaccess/plugins/readers/rpleth/lla_readers_rpleth_api.hpp>
+
 namespace logicalaccess
 {
 class RplethReaderCardAdapter;

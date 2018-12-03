@@ -14,6 +14,7 @@
 
 #include <vector>
 #include <logicalaccess/lla_fwd.hpp>
+#include "logicalaccess/plugins/crypto/lla_crypto_api.hpp"
 
 namespace logicalaccess
 {
@@ -22,7 +23,7 @@ namespace openssl
 /**
  * \brief An immutable symmetric key.
  */
-class LIBLOGICALACCESS_API SymmetricKey
+class LLA_CRYPTO_API SymmetricKey
 {
   public:
     /**

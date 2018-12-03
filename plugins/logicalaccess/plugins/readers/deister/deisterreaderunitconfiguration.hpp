@@ -8,13 +8,15 @@
 #define LOGICALACCESS_DEISTERREADERUNITCONFIGURATION_HPP
 
 #include <logicalaccess/readerproviders/readerunitconfiguration.hpp>
+#include <logicalaccess/plugins/readers/deister/lla_readers_deister_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief The Deister reader unit configuration base class.
  */
-class LIBLOGICALACCESS_API DeisterReaderUnitConfiguration : public ReaderUnitConfiguration
+class LLA_READERS_DEISTER_API DeisterReaderUnitConfiguration
+    : public ReaderUnitConfiguration
 {
   public:
     /**

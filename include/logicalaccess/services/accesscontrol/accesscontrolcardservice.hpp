@@ -36,7 +36,7 @@ enum class PACS_EXTRACTION_MODE
 /**
  * \brief The base access control card service class for all access control services.
  */
-class LIBLOGICALACCESS_API AccessControlCardService : public CardService
+class LLA_CORE_API AccessControlCardService : public CardService
 {
   public:
     /**
@@ -106,7 +106,7 @@ class LIBLOGICALACCESS_API AccessControlCardService : public CardService
      * Retrieve the Physical Access Control bits.
      * This generally relies on the PCSC reader to provide support.
      */
-    virtual ByteVector getPACSBits(PACS_EXTRACTION_MODE mode)
+    virtual ByteVector getPACSBits(PACS_EXTRACTION_MODE)
     {
         throw std::runtime_error("Not implemented");
     }

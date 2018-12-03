@@ -22,7 +22,7 @@ namespace logicalaccess
 /**
  * \brief PC/SC Reader Provider class.
  */
-class LIBLOGICALACCESS_API PCSCReaderProvider : public ISO7816ReaderProvider
+class LLA_READERS_PCSC_API PCSCReaderProvider : public ISO7816ReaderProvider
 {
   protected:
     /**

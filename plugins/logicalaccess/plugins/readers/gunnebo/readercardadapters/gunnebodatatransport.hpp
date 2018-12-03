@@ -15,7 +15,7 @@
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API GunneboDataTransport : public SerialPortDataTransport
+class LLA_READERS_GUNNEBO_API GunneboDataTransport : public SerialPortDataTransport
 {
   public:
     explicit GunneboDataTransport(const std::string &portname = "")

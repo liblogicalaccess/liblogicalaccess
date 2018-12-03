@@ -88,7 +88,7 @@ class DESFireEV1Chip;
 /**
  * \brief The DESFire EV1 base commands class.
  */
-class LIBLOGICALACCESS_API DESFireEV1Commands : public ICommands
+class LLA_CARDS_DESFIRE_API DESFireEV1Commands : public ICommands
 {
   public:
     DESFireEV1Commands() = default;

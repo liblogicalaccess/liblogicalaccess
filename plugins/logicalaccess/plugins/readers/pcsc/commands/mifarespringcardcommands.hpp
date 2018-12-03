@@ -21,7 +21,7 @@ namespace logicalaccess
 /**
  * \brief The Mifare commands class for SpringCard reader.
  */
-class LIBLOGICALACCESS_API MifareSpringCardCommands : public MifarePCSCCommands
+class LLA_READERS_PCSC_API MifareSpringCardCommands : public MifarePCSCCommands
 {
   public:
     /**

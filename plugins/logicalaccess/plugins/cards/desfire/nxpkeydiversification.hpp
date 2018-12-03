@@ -5,10 +5,11 @@
 #include <logicalaccess/key.hpp>
 #include <vector>
 #include <string>
+#include <logicalaccess/plugins/cards/desfire/lla_cards_desfire_api.hpp>
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API NXPKeyDiversification : public KeyDiversification
+class LLA_CARDS_DESFIRE_API NXPKeyDiversification : public KeyDiversification
 {
   public:
     void initDiversification(ByteVector identifier, unsigned int AID,

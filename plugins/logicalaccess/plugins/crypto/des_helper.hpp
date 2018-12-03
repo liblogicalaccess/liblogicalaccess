@@ -2,15 +2,14 @@
 
 #include <vector>
 #include <cstdint>
-
-#include "logicalaccess/liblogicalaccess_export.hpp"
+#include "logicalaccess/plugins/crypto/lla_crypto_api.hpp"
 
 namespace logicalaccess
 {
 /**
  * Some static DES helper method with a very easy to use API.
  */
-class LIBLOGICALACCESS_API DESHelper
+class LLA_CRYPTO_API DESHelper
 {
   public:
     /**

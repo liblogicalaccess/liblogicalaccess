@@ -24,7 +24,7 @@ namespace logicalaccess
 /**
  * \brief The FeliCa base chip class.
  */
-class LIBLOGICALACCESS_API FeliCaChip : public Chip
+class LLA_CARDS_FELICA_API FeliCaChip : public Chip
 {
   public:
     /**

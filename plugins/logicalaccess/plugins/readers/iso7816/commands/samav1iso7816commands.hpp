@@ -29,14 +29,14 @@ namespace logicalaccess
 #define CMD_SAMAV1ISO7816 "SAMAV1ISO7816"
 
 #ifdef SWIG
-% template(SAMISO7816KeyEntrySETAV1Commands)
+%template(SAMISO7816KeyEntrySETAV1Commands)
         SAMISO7816Commands<KeyEntryAV1Information, SETAV1>;
 #endif
 
 /**
  * \brief The SAMAV1ISO7816 commands class.
  */
-class LIBLOGICALACCESS_API SAMAV1ISO7816Commands
+class LLA_READERS_ISO7816_API SAMAV1ISO7816Commands
     : public SAMISO7816Commands<KeyEntryAV1Information, SETAV1>
 {
   public:

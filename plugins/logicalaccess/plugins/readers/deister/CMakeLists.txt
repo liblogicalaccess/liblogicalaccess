@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 3.1)
 project(deisterreaders)
 
-if (WIN32)
-	SET(VERSION_PRODUCTNAME_VALUE "deisterreaders")
-	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
-endif()
+if (MSVC)
+    SET(VERSION_PRODUCTNAME_VALUE "deisterreaders")
+    add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif ()
+
+set(HEADER_RELATIVE_INSTALL_DIR "include/logicalaccess/plugins/readers/deister")
 
 file(GLOB SRCS *.cpp)
 file(GLOB include *.hpp)
@@ -19,24 +21,23 @@ set(INCLUDE_LIB ${include} ${include_core} ${include_readercardadapters})
 set(SOURCE_LIB ${SRCS} ${source_readercardadapters})
 
 add_library(
-	deisterreaders
-	SHARED
-	${SOURCE_LIB}
-	${INCLUDE_LIB}
-	${resourcerc}
-  )
-
-SET_TARGET_PROPERTIES(deisterreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
-  
-target_link_libraries(
-	deisterreaders
-	logicalaccess-cryptolib
-	${LIBLOGICALACCESS_LIBRARY}
+        deisterreaders
+        SHARED
+        ${SOURCE_LIB}
+        ${INCLUDE_LIB}
+        ${LLA_RESOURCE_RC}
 )
 
-install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/deister )
-install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/deister/readercardadapters )
-install ( TARGETS deisterreaders RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )
+SET_TARGET_PROPERTIES(deisterreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
+
+target_link_libraries(deisterreaders
+        logicalaccess-cryptolib
+        logicalaccess)
+LLA_GENERATE_EXPORTS(LLA_READERS_DEISTER)
+
+install(FILES ${include} DESTINATION ${HEADER_RELATIVE_INSTALL_DIR})
+install(FILES ${include_readercardadapters} DESTINATION ${HEADER_RELATIVE_INSTALL_DIR}/readercardadapters)
+install(TARGETS deisterreaders RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX})
 if (MSVC)
-	install(FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb/${LIB_SUFFIX} OPTIONAL)
-endif()
+    install(FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb/${LIB_SUFFIX} OPTIONAL)
+endif ()

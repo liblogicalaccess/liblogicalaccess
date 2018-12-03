@@ -19,7 +19,7 @@ namespace logicalaccess
 /**
  * \brief A triple DES class.
  */
-class LIBLOGICALACCESS_API TripleDESKey : public Key
+class LLA_CORE_API TripleDESKey : public Key
 {
   public:
 #ifndef SWIG

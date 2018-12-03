@@ -28,7 +28,7 @@ typedef enum {
 /**
  * \brief A data field base class.
  */
-class LIBLOGICALACCESS_API DataField : public XmlSerializable,
+class LLA_CORE_API DataField : public XmlSerializable,
                                        public std::enable_shared_from_this<DataField>
 {
   public:

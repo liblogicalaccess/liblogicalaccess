@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
  * \brief A Rpleth LCD Display class.
  */
-class LIBLOGICALACCESS_API RplethLCDDisplay : public LCDDisplay
+class LLA_READERS_RPLETH_API RplethLCDDisplay : public LCDDisplay
 {
   public:
     /**

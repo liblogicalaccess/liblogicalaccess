@@ -15,7 +15,7 @@ namespace logicalaccess
 {
 #define CMD_MIFAREACR1222L "MifareACR1222"
 
-class LIBLOGICALACCESS_API MifareACR1222LCommands : public MifarePCSCCommands
+class LLA_READERS_PCSC_API MifareACR1222LCommands : public MifarePCSCCommands
 {
   public:
     MifareACR1222LCommands()

@@ -14,7 +14,7 @@ namespace logicalaccess
 /**
  * \brief A Getronik 40-Bit format class.
  */
-class LIBLOGICALACCESS_API Getronik40BitFormat : public StaticFormat
+class LLA_CORE_API Getronik40BitFormat : public StaticFormat
 {
   public:
     /**

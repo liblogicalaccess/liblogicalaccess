@@ -8,9 +8,8 @@
 #define LOGICALACCESS_MIFAREULTRALIGHTCHIP_H
 
 #include <logicalaccess/cards/chip.hpp>
-
 #include <logicalaccess/plugins/cards/mifareultralight/mifareultralightcommands.hpp>
-
+#include <logicalaccess/plugins/cards/mifareultralight/lla_cards_mifareultralight_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -22,7 +21,7 @@ namespace logicalaccess
 /**
  * \brief The Mifare Ultralight base chip class.
  */
-class LIBLOGICALACCESS_API MifareUltralightChip : public Chip
+class LLA_CARDS_MIFAREULTRALIGHT_API MifareUltralightChip : public Chip
 {
   public:
     /**

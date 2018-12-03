@@ -8,7 +8,7 @@
 #define LOGICALACCESS_ISO7816LOCATION_HPP
 
 #include <logicalaccess/cards/location.hpp>
-
+#include <logicalaccess/plugins/cards/iso7816/lla_cards_iso7816_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -31,7 +31,7 @@ typedef enum {
 /**
  * \brief A ISO7816 location informations.
  */
-class LIBLOGICALACCESS_API ISO7816Location : public Location
+class LLA_CARDS_ISO7816_API ISO7816Location : public Location
 {
   public:
     /**

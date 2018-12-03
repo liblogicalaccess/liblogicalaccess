@@ -14,7 +14,7 @@ namespace logicalaccess
 /**
  * \brief A Wiegand 37 format class.
  */
-class LIBLOGICALACCESS_API Wiegand37Format : public WiegandFormat
+class LLA_CORE_API Wiegand37Format : public WiegandFormat
 {
   public:
     /**

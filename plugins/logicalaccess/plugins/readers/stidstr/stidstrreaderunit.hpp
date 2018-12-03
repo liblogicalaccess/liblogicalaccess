@@ -37,7 +37,7 @@ typedef enum {
 /**
  * \brief The STidSTR reader unit class.
  */
-class LIBLOGICALACCESS_API STidSTRReaderUnit : public ISO7816ReaderUnit
+class LLA_READERS_STIDSTR_API STidSTRReaderUnit : public ISO7816ReaderUnit
 {
   public:
     /**

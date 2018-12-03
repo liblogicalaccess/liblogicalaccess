@@ -1,15 +1,16 @@
 #pragma once
 
 #include <logicalaccess/lla_fwd.hpp>
-#include <logicalaccess/logicalaccess_api.hpp>
+
 #include <logicalaccess/services/accesscontrol/formats/wiegand35format.hpp>
 #include <logicalaccess/services/accesscontrol/formats/wiegand26format.hpp>
 #include <logicalaccess/services/accesscontrol/formats/wiegand34withfacilityformat.hpp>
 #include <logicalaccess/services/accesscontrol/formats/wiegand37withfacilityformat.hpp>
+#include <logicalaccess/plugins/readers/stidprg/lla_readers_stidprg_api.hpp>
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API STidPRGUtils
+class LLA_READERS_STIDPRG_API STidPRGUtils
 {
   public:
     /**

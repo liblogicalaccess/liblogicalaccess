@@ -1,11 +1,12 @@
 #pragma once
 
 #include <logicalaccess/readerproviders/serialportdatatransport.hpp>
+#include <logicalaccess/plugins/readers/stidprg/lla_readers_stidprg_api.hpp>
 
 namespace logicalaccess
 {
 
-class LIBLOGICALACCESS_API STidPRGDataTransport : public SerialPortDataTransport
+class LLA_READERS_STIDPRG_API STidPRGDataTransport : public SerialPortDataTransport
 {
   public:
     void setSerialPort(std::shared_ptr<SerialPortXml> port) override;

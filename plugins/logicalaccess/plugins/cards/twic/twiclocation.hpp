@@ -8,13 +8,14 @@
 #define LOGICALACCESS_TWICLOCATION_HPP
 
 #include <logicalaccess/cards/location.hpp>
+#include <logicalaccess/plugins/cards/twic/lla_cards_twic_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief A Twic location informations.
  */
-class LIBLOGICALACCESS_API TwicLocation : public Location
+class LLA_CARDS_TWIC_API TwicLocation : public Location
 {
   public:
     /**

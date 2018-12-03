@@ -2,15 +2,16 @@
 #include <memory>
 #include <logicalaccess/readerproviders/readerprovider.hpp>
 #include <logicalaccess/plugins/readers/keyboard/keyboardreaderprovider.hpp>
-#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/plugins/readers/keyboard/lla_readers_private_keyboard_api.hpp>
+
 
 extern "C" {
-LIBLOGICALACCESS_API char *getLibraryName()
+LLA_READERS_PRIVATE_KEYBOARD_API char *getLibraryName()
 {
     return (char *)"Keyboard";
 }
 
-LIBLOGICALACCESS_API void
+LLA_READERS_PRIVATE_KEYBOARD_API void
 getKeyboardReader(std::shared_ptr<logicalaccess::ReaderProvider> *rp)
 {
     if (rp != nullptr)
@@ -19,7 +20,8 @@ getKeyboardReader(std::shared_ptr<logicalaccess::ReaderProvider> *rp)
     }
 }
 
-LIBLOGICALACCESS_API bool getReaderInfoAt(unsigned int index, char *readername,
+LLA_READERS_PRIVATE_KEYBOARD_API bool getReaderInfoAt(unsigned int index,
+                                                      char *readername,
                                           size_t readernamelen, void **getterfct)
 {
     bool ret = false;

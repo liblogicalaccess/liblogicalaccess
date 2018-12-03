@@ -21,7 +21,7 @@ namespace logicalaccess
 /**
  * \brief The Omnikey XX21 reader unit class.
  */
-class LIBLOGICALACCESS_API OmnikeyXX21ReaderUnit : public OmnikeyReaderUnit
+class LLA_READERS_PCSC_API OmnikeyXX21ReaderUnit : public OmnikeyReaderUnit
 {
   public:
     /**
@@ -54,7 +54,7 @@ class LIBLOGICALACCESS_API OmnikeyXX21ReaderUnit : public OmnikeyReaderUnit
             return value_;
         }
 
-        LIBLOGICALACCESS_API friend std::ostream &operator<<(std::ostream &os,
+        LLA_READERS_PCSC_API friend std::ostream &operator<<(std::ostream &os,
                                                              const SecureModeStatus &s);
 
       private:

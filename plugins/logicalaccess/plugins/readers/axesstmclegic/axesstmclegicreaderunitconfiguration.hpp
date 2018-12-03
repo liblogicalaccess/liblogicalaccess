@@ -8,13 +8,14 @@
 #define LOGICALACCESS_AXESSTMCLEGICREADERUNITCONFIGURATION_HPP
 
 #include <logicalaccess/readerproviders/readerunitconfiguration.hpp>
+#include <logicalaccess/plugins/readers/axesstmclegic/lla_readers_axesstmclegic_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief The AxessTMCLegic reader unit configuration base class.
  */
-class LIBLOGICALACCESS_API AxessTMCLegicReaderUnitConfiguration
+class LLA_READERS_AXESSTMCLEGIC_API AxessTMCLegicReaderUnitConfiguration
     : public ReaderUnitConfiguration
 {
   public:

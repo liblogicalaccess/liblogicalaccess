@@ -23,7 +23,7 @@ namespace logicalaccess
 /**
  * \brief The Mifare storage card service base class.
  */
-class LIBLOGICALACCESS_API MifareStorageCardService : public StorageCardService
+class LLA_CARDS_MIFARE_API MifareStorageCardService : public StorageCardService
 {
   public:
     /**

@@ -9,7 +9,7 @@
 
 #include <logicalaccess/cards/chip.hpp>
 #include <logicalaccess/plugins/cards/mifare/mifarecommands.hpp>
-
+#include <logicalaccess/plugins/cards/mifare/lla_cards_mifare_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -21,7 +21,7 @@ namespace logicalaccess
 /**
  * \brief The Mifare base chip class.
  */
-class LIBLOGICALACCESS_API MifareChip : public Chip
+class LLA_CARDS_MIFARE_API MifareChip : public Chip
 {
   public:
     /**

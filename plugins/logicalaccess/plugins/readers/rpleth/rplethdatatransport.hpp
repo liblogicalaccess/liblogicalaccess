@@ -8,6 +8,7 @@
 #define LOGICALACCESS_RPLETHDATATRANSPORT_HPP
 
 #include <logicalaccess/readerproviders/tcpdatatransport.hpp>
+#include <logicalaccess/plugins/readers/rpleth/lla_readers_rpleth_api.hpp>
 #include <boost/asio.hpp>
 #include <list>
 
@@ -18,7 +19,7 @@ namespace logicalaccess
 /**
  * \brief An rpleth data transport class.
  */
-class LIBLOGICALACCESS_API RplethDataTransport : public TcpDataTransport
+class LLA_READERS_RPLETH_API RplethDataTransport : public TcpDataTransport
 {
   public:
     /**

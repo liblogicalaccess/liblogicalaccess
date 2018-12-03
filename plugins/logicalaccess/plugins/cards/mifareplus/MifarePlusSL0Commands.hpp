@@ -6,13 +6,14 @@
 #define LIBLOGICALACCESS_MIFAREPLUSUTILS_H
 
 #include <logicalaccess/cards/commands.hpp>
+#include <logicalaccess/plugins/cards/mifareplus/lla_cards_mifareplus_api.hpp>
 #include <array>
 
 namespace logicalaccess
 {
 #define CMD_MIFAREPLUSSL0 "MifarePlusSL0"
 
-enum LIBLOGICALACCESS_API MifarePlusBlockKeyLocation : uint16_t
+enum LLA_CARDS_MIFAREPLUS_API MifarePlusBlockKeyLocation : uint16_t
 {
     MF_CARD_MASTER_KEY        = 0x9000,
     MF_CARD_CONFIGURATION_KEY = 0x9001,
@@ -25,7 +26,7 @@ enum LIBLOGICALACCESS_API MifarePlusBlockKeyLocation : uint16_t
  * This implements commands that can be use to personalize the card
  * when it is in security level 0.
  */
-class LIBLOGICALACCESS_API MifarePlusSL0Commands : public Commands
+class LLA_CARDS_MIFAREPLUS_API MifarePlusSL0Commands : public Commands
 {
   public:
     MifarePlusSL0Commands()

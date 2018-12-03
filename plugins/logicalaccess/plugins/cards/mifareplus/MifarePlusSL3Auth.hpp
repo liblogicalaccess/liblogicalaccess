@@ -2,6 +2,7 @@
 
 #include <logicalaccess/cards/aes128key.hpp>
 #include <logicalaccess/plugins/cards/mifare/mifareaccessinfo.hpp>
+#include <logicalaccess/plugins/cards/mifareplus/lla_cards_mifareplus_api.hpp>
 
 namespace logicalaccess
 {
@@ -10,7 +11,7 @@ namespace logicalaccess
  * Maintain the authentication state and key
  * for MifarePlus in security level 3.
  */
-class LIBLOGICALACCESS_API MifarePlusSL3Auth
+class LLA_CARDS_MIFAREPLUS_API MifarePlusSL3Auth
 {
   public:
     explicit MifarePlusSL3Auth(std::shared_ptr<ReaderCardAdapter> rca);

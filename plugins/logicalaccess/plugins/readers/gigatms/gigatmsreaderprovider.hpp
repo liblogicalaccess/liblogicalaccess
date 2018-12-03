@@ -9,7 +9,7 @@
 
 #include <logicalaccess/readerproviders/readerprovider.hpp>
 #include <logicalaccess/plugins/readers/gigatms/gigatmsreaderunit.hpp>
-
+#include <logicalaccess/plugins/readers/gigatms/lla_readers_gigatms_api.hpp>
 #include <string>
 #include <vector>
 
@@ -22,7 +22,7 @@ namespace logicalaccess
 /**
  * \brief GIGA-TMS Reader Provider class.
  */
-class LIBLOGICALACCESS_API GigaTMSReaderProvider : public ReaderProvider
+class LLA_READERS_GIGATMS_API GigaTMSReaderProvider : public ReaderProvider
 {
   public:
     /**

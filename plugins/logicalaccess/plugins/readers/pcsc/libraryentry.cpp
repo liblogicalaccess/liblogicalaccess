@@ -11,9 +11,9 @@
 #include <logicalaccess/plugins/readers/pcsc/readers/acsacrreaderunit.hpp>
 #include <logicalaccess/plugins/readers/pcsc/readers/acsacr1222lreaderunit.hpp>
 #include <logicalaccess/plugins/readers/pcsc/readers/id3readerunit.hpp>
-#include <logicalaccess/logicalaccess_api.hpp>
 #include <logicalaccess/plugins/readers/pcsc/commands/mifarepcsccommands.hpp>
 #include <logicalaccess/plugins/llacommon/logs.hpp>
+#include <logicalaccess/plugins/readers/pcsc/lla_readers_pcsc_api.hpp>
 
 extern "C" {
 
@@ -22,7 +22,7 @@ extern "C" {
 * This function returns NULL if there is no match, is does NOT create a default
 * PCSCReaderUnit.
 */
-LIBLOGICALACCESS_API void getReaderUnit(const std::string &readerName,
+LLA_READERS_PCSC_API void getReaderUnit(const std::string &readerName,
                                         std::shared_ptr<logicalaccess::ReaderUnit> &u)
 {
     if (readerName.find("OMNIKEY") != std::string::npos)
@@ -88,12 +88,12 @@ LIBLOGICALACCESS_API void getReaderUnit(const std::string &readerName,
     }
 }
 
-LIBLOGICALACCESS_API char *getLibraryName()
+LLA_READERS_PCSC_API char *getLibraryName()
 {
     return (char *)"PCSC";
 }
 
-LIBLOGICALACCESS_API void
+LLA_READERS_PCSC_API void
 getPCSCReader(std::shared_ptr<logicalaccess::ReaderProvider> *rp)
 {
     if (rp != nullptr)
@@ -102,7 +102,7 @@ getPCSCReader(std::shared_ptr<logicalaccess::ReaderProvider> *rp)
     }
 }
 
-LIBLOGICALACCESS_API bool getReaderInfoAt(unsigned int index, char *readername,
+LLA_READERS_PCSC_API bool getReaderInfoAt(unsigned int index, char *readername,
                                           size_t readernamelen, void **getterfct)
 {
     bool ret = false;
@@ -125,7 +125,7 @@ LIBLOGICALACCESS_API bool getReaderInfoAt(unsigned int index, char *readername,
     return ret;
 }
 
-LIBLOGICALACCESS_API void
+LLA_READERS_PCSC_API void
 getMifarePCSCCommands(std::shared_ptr<logicalaccess::Commands> *commands)
 {
     if (commands != nullptr)

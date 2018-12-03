@@ -45,7 +45,7 @@ struct IKSCryptoWrapper
 /**
  * \brief DESFire cryptographic functions.
  */
-class LIBLOGICALACCESS_API DESFireCrypto
+class LLA_CARDS_DESFIRE_API DESFireCrypto
 {
   public:
     /**

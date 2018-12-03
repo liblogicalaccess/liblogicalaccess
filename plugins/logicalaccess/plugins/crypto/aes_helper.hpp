@@ -8,13 +8,14 @@
 #include <vector>
 #include <cstdint>
 #include <logicalaccess/lla_fwd.hpp>
+#include "logicalaccess/plugins/crypto/lla_crypto_api.hpp"
 
 namespace logicalaccess
 {
 /**
  * Some static AES helper method with a very easy to use API.
  */
-class LIBLOGICALACCESS_API AESHelper
+class LLA_CRYPTO_API AESHelper
 {
   public:
     /**

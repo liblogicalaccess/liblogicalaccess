@@ -19,7 +19,7 @@ class DESFireChip;
 /**
  * \brief The DESFire storage card service bas class.
  */
-class LIBLOGICALACCESS_API DESFireStorageCardService : public StorageCardService
+class LLA_CARDS_DESFIRE_API DESFireStorageCardService : public StorageCardService
 {
   public:
     /**

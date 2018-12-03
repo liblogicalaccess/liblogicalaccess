@@ -14,7 +14,7 @@ namespace logicalaccess
 /**
  * \brief A Wiegand 37 with Facility Right Parity 2 format class.
  */
-class LIBLOGICALACCESS_API Wiegand37WithFacilityRightParity2Format : public StaticFormat
+class LLA_CORE_API Wiegand37WithFacilityRightParity2Format : public StaticFormat
 {
   public:
     /**

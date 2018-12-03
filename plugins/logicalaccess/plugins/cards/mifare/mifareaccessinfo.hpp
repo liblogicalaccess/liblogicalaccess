@@ -17,12 +17,12 @@ namespace logicalaccess
  */
 typedef enum { KT_KEY_A = 0x60, KT_KEY_B = 0x61 } MifareKeyType;
 
-LIBLOGICALACCESS_API std::ostream &operator<<(std::ostream &s, const MifareKeyType &k);
+LLA_CARDS_MIFARE_API std::ostream &operator<<(std::ostream &s, const MifareKeyType &k);
 
 /**
  * \brief A Mifare access informations.
  */
-class LIBLOGICALACCESS_API MifareAccessInfo : public AccessInfo
+class LLA_CARDS_MIFARE_API MifareAccessInfo : public AccessInfo
 {
   public:
 #ifndef SWIG
@@ -79,7 +79,7 @@ class LIBLOGICALACCESS_API MifareAccessInfo : public AccessInfo
     /**
      * \brief Block access bits structure.
      */
-    struct LIBLOGICALACCESS_API BlockAccessBits
+    struct LLA_CARDS_MIFARE_API BlockAccessBits
     {
         /**
          * \brief Constructor.
@@ -114,7 +114,7 @@ class LIBLOGICALACCESS_API MifareAccessInfo : public AccessInfo
     /**
      * \brief Data block access bits structure.
      */
-    struct LIBLOGICALACCESS_API DataBlockAccessBits : BlockAccessBits
+    struct LLA_CARDS_MIFARE_API DataBlockAccessBits : BlockAccessBits
     {
         /**
          * \brief Constructor.
@@ -144,7 +144,7 @@ class LIBLOGICALACCESS_API MifareAccessInfo : public AccessInfo
     /**
      * \brief Sector trailer block access bits structure.
      */
-    struct LIBLOGICALACCESS_API SectorTrailerAccessBits : BlockAccessBits
+    struct LLA_CARDS_MIFARE_API SectorTrailerAccessBits : BlockAccessBits
     {
         /**
          * \brief Constructor.
@@ -175,7 +175,7 @@ class LIBLOGICALACCESS_API MifareAccessInfo : public AccessInfo
     /**
      * \brief Sector access bits structure.
      */
-    struct LIBLOGICALACCESS_API SectorAccessBits
+    struct LLA_CARDS_MIFARE_API SectorAccessBits
     {
         /**
          * \brief Export the access bits to a mifare byte array.

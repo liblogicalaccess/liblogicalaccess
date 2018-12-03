@@ -16,7 +16,7 @@ class ReaderCardAdapter;
 /**
  * \brief A LCD Display base class to display message on LCD screen.
  */
-class LIBLOGICALACCESS_API LCDDisplay
+class LLA_CORE_API LCDDisplay
 {
   public:
     virtual ~LCDDisplay() = default;

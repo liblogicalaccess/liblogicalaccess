@@ -13,7 +13,7 @@
 
 namespace logicalaccess
 {
-LIBLOGICALACCESS_API std::ostream &operator<<(std::ostream &s, const MifareKeyType &k)
+LLA_CARDS_MIFARE_API std::ostream &operator<<(std::ostream &s, const MifareKeyType &k)
 {
     if (k == KT_KEY_A)
     {

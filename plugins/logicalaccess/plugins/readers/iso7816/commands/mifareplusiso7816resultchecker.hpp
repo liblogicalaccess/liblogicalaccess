@@ -7,13 +7,14 @@
 
 #include <logicalaccess/resultchecker.hpp>
 #include <cstdint>
+#include <logicalaccess/plugins/readers/iso7816/lla_readers_iso7816_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * Result checker when talking to a MifarePlus in T=CL mode.
  */
-class LIBLOGICALACCESS_API MifarePlusISO7816ResultChecker : public ResultChecker
+class LLA_READERS_ISO7816_API MifarePlusISO7816ResultChecker : public ResultChecker
 {
   public:
     MifarePlusISO7816ResultChecker();

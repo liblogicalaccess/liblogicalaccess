@@ -16,7 +16,7 @@
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API DeisterDataTransport : public SerialPortDataTransport
+class LLA_READERS_DEISTER_API DeisterDataTransport : public SerialPortDataTransport
 {
   public:
     explicit DeisterDataTransport(const std::string &portname = "")

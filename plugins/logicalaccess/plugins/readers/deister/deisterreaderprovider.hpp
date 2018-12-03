@@ -9,7 +9,7 @@
 
 #include <logicalaccess/readerproviders/readerprovider.hpp>
 #include <logicalaccess/plugins/readers/deister/deisterreaderunit.hpp>
-
+#include <logicalaccess/plugins/readers/deister/lla_readers_deister_api.hpp>
 #include <string>
 #include <vector>
 
@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
  * \brief Deister Reader Provider class.
  */
-class LIBLOGICALACCESS_API DeisterReaderProvider : public ReaderProvider
+class LLA_READERS_DEISTER_API DeisterReaderProvider : public ReaderProvider
 {
   public:
     /**

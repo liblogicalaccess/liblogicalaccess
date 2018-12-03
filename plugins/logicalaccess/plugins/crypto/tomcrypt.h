@@ -7,7 +7,7 @@
 #include <time.h>
 #include <ctype.h>
 #include <limits.h>
-#include "logicalaccess/liblogicalaccess_export.hpp"
+#include "logicalaccess/plugins/crypto/lla_crypto_api.hpp"
 
 // We keep the TomCrypt define/macro to use other TomCrypt algorithm in further time
 #define LTC_NO_CIPHERS
@@ -91,25 +91,25 @@ extern "C" {
 
     unsigned short UpdateCrc(unsigned char ch, unsigned short *lpwCrc);
 
-    LIBLOGICALACCESS_API void ComputeCrc(int CRCType, const unsigned char *Data,
+    LLA_CRYPTO_API void ComputeCrc(int CRCType, const unsigned char *Data,
                                         size_t Length, unsigned char *TransmitFirst,
                                         unsigned char *TransmitSecond);
 
-   LIBLOGICALACCESS_API  void ComputeCrcCCITT(unsigned short crc_old,
+   LLA_CRYPTO_API  void ComputeCrcCCITT(unsigned short crc_old,
                                               const unsigned char *Data, size_t Length,
                                               unsigned char *TransmitFirst,
                                               unsigned char *TransmitSecond);
 
-   LIBLOGICALACCESS_API unsigned short UpdateCRCKermit(unsigned short crc, char c);
+   LLA_CRYPTO_API unsigned short UpdateCRCKermit(unsigned short crc, char c);
 
-    LIBLOGICALACCESS_API void ComputeCrcKermit(const unsigned char *Data, size_t Length,
+    LLA_CRYPTO_API void ComputeCrcKermit(const unsigned char *Data, size_t Length,
                                              unsigned char *TransmitFirst,
                                              unsigned char *TransmitSecond);
 
    /**
     * Convert a TomCrypt error code to const char *
     */
-   LIBLOGICALACCESS_API const char *error_to_string(int errcode);
+   LLA_CRYPTO_API const char *error_to_string(int errcode);
 
 #ifdef __cplusplus
 }

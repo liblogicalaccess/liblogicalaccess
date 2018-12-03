@@ -17,7 +17,7 @@ namespace logicalaccess
 /**
  * \brief A Rplet LED/Buzzer Display class.
  */
-class LIBLOGICALACCESS_API RplethLEDBuzzerDisplay : public LEDBuzzerDisplay
+class LLA_READERS_RPLETH_API RplethLEDBuzzerDisplay : public LEDBuzzerDisplay
 {
   public:
     /**

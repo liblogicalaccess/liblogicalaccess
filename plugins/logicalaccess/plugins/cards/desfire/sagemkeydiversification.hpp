@@ -7,7 +7,7 @@
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API SagemKeyDiversification : public KeyDiversification
+class LLA_CARDS_DESFIRE_API SagemKeyDiversification : public KeyDiversification
 {
   public:
     void initDiversification(ByteVector identifier, unsigned int AID,

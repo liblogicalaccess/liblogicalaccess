@@ -14,7 +14,7 @@
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API CircularBufferParser
+class LLA_CORE_API CircularBufferParser
 {
   public:
     CircularBufferParser()

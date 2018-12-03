@@ -15,7 +15,7 @@ namespace logicalaccess
 /**
  * \brief The Mifare Ultralight C commands class for ACS ACR reader.
  */
-class LIBLOGICALACCESS_API MifareUltralightCACSACRCommands
+class LLA_READERS_PCSC_API MifareUltralightCACSACRCommands
     : public MifareUltralightCPCSCCommands
 {
   public:

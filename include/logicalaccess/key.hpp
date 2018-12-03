@@ -17,7 +17,7 @@ class KeyDiversification;
  * \brief A Key base class. The key object is used to describe key chip information used
  * for authentication on secured memory area or for restricted operation.
  */
-class LIBLOGICALACCESS_API Key : public XmlSerializable,
+class LLA_CORE_API Key : public XmlSerializable,
                                  public std::enable_shared_from_this<Key>
 {
   public:
@@ -203,7 +203,7 @@ class LIBLOGICALACCESS_API Key : public XmlSerializable,
  * \param key The key.
  * \return os.
  */
-LIBLOGICALACCESS_API std::ostream &operator<<(std::ostream &os, const Key &key);
+LLA_CORE_API std::ostream &operator<<(std::ostream &os, const Key &key);
 }
 
 #endif /* LOGICALACCESS_KEY_HPP */

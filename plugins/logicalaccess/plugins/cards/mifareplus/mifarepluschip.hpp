@@ -9,7 +9,7 @@
 
 #include <logicalaccess/cards/chip.hpp>
 #include <logicalaccess/plugins/cards/mifare/mifareaccessinfo.hpp>
-
+#include <logicalaccess/plugins/cards/mifareplus/lla_cards_mifareplus_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -19,7 +19,7 @@ namespace logicalaccess
 #define CHIP_MIFAREPLUS4K "MifarePlus4K"
 #define CHIP_MIFAREPLUS2K "MifarePlus2K"
 
-class LIBLOGICALACCESS_API MifarePlusChip : public IChip
+class LLA_CARDS_MIFAREPLUS_API MifarePlusChip : public IChip
 {
   public:
     virtual ~MifarePlusChip() = default;

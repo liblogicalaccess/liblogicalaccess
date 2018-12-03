@@ -18,7 +18,7 @@ namespace logicalaccess
 /**
 * \brief The NFC Tag 3 storage card service base class.
 */
-class LIBLOGICALACCESS_API NFCTag3CardService : public NFCTagCardService
+class LLA_CARDS_FELICA_API NFCTag3CardService : public NFCTagCardService
 {
   public:
     /**

@@ -33,7 +33,6 @@ CL1356PlusUtils::Info CL1356PlusUtils::parse_get_card_info(const ByteVector &in)
     };
 
     Info info;
-    memset(&info, 0x00, sizeof(info));
     if (*itr != 0x01)
     {
         std::cout << "itr = " << (*itr) << std::endl;

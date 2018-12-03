@@ -14,7 +14,7 @@ namespace logicalaccess
 /**
  * \brief A linearizable base class. Add binary serialization to a class.
  */
-class LIBLOGICALACCESS_API Linearizable
+class LLA_CORE_API Linearizable
 {
   public:
     /**

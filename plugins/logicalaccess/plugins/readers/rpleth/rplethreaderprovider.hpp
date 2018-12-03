@@ -8,6 +8,7 @@
 #define LOGICALACCESS_READERRPLETH_PROVIDER_HPP
 
 #include <logicalaccess/plugins/readers/iso7816/iso7816readerprovider.hpp>
+#include <logicalaccess/plugins/readers/rpleth/lla_readers_rpleth_api.hpp>
 #include <string>
 #include <vector>
 
@@ -18,7 +19,7 @@ namespace logicalaccess
 /**
  * \brief Rpleth Reader Provider class.
  */
-class LIBLOGICALACCESS_API RplethReaderProvider : public ISO7816ReaderProvider
+class LLA_READERS_RPLETH_API RplethReaderProvider : public ISO7816ReaderProvider
 {
   public:
     /**

@@ -14,7 +14,7 @@ namespace logicalaccess
 /**
  * \brief A string data field.
  */
-class LIBLOGICALACCESS_API StringDataField : public ValueDataField
+class LLA_CORE_API StringDataField : public ValueDataField
 {
   public:
     /**

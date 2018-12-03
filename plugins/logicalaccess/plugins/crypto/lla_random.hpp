@@ -7,7 +7,7 @@
 
 #include <random>
 #include <mutex>
-
+#include "logicalaccess/plugins/crypto/lla_crypto_api.hpp"
 #include <logicalaccess/lla_fwd.hpp>
 
 namespace logicalaccess
@@ -18,7 +18,7 @@ namespace logicalaccess
  * This is a wrapper around OpenSSL cryptographically secure random
  * number generator.
  */
-class LIBLOGICALACCESS_API RandomHelper
+class LLA_CRYPTO_API RandomHelper
 {
   public:
     /**

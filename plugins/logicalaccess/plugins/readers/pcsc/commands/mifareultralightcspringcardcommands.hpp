@@ -16,7 +16,7 @@ namespace logicalaccess
 /**
  * \brief The Mifare Ultralight C commands class for SpringCard reader.
  */
-class LIBLOGICALACCESS_API MifareUltralightCSpringCardCommands
+class LLA_READERS_PCSC_API MifareUltralightCSpringCardCommands
     : public MifareUltralightCPCSCCommands
 {
   public:

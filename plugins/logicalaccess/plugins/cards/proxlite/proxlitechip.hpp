@@ -8,7 +8,7 @@
 #define LOGICALACCESS_PROXLITECHIP_HPP
 
 #include <logicalaccess/cards/chip.hpp>
-
+#include <logicalaccess/plugins/cards/proxlite/lla_cards_proxlite_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
  * \brief The Prox Lite base chip class.
  */
-class LIBLOGICALACCESS_API ProxLiteChip : public Chip
+class LLA_CARDS_PROXLITE_API ProxLiteChip : public Chip
 {
   public:
     /**

@@ -41,7 +41,7 @@ typedef enum {
 /**
  * \brief The DESFire EV1 base commands class for STidSTR reader.
  */
-class LIBLOGICALACCESS_API DESFireEV1STidSTRCommands : public Commands
+class LLA_READERS_STIDSTR_API DESFireEV1STidSTRCommands : public Commands
 #ifndef SWIG
                                                        ,
                                                        public DESFireEV1Commands

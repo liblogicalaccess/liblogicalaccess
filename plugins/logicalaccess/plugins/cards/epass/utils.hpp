@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chrono>
-#include <logicalaccess/liblogicalaccess_export.hpp>
+#include <logicalaccess/plugins/cards/epass/lla_cards_epass_api.hpp>
 #include <logicalaccess/lla_fwd.hpp>
 #include <string>
 #include <vector>
@@ -13,7 +13,7 @@ namespace logicalaccess
  * A data structure representing the content of the
  * EF.COM file.
  */
-struct LIBLOGICALACCESS_API EPassEFCOM
+struct LLA_CARDS_EPASS_API EPassEFCOM
 {
     std::string lds_version_;
     std::string unicode_version_;
@@ -21,7 +21,7 @@ struct LIBLOGICALACCESS_API EPassEFCOM
     ByteVector tags_;
 };
 
-struct LIBLOGICALACCESS_API EPassDG2
+struct LLA_CARDS_EPASS_API EPassDG2
 {
     struct BioInfo
     {
@@ -55,7 +55,7 @@ struct LIBLOGICALACCESS_API EPassDG2
     std::vector<BioInfo> infos_;
 };
 
-struct LIBLOGICALACCESS_API EPassDG1
+struct LLA_CARDS_EPASS_API EPassDG1
 {
     std::string type_;
     std::string emitter_;
@@ -80,7 +80,7 @@ struct LIBLOGICALACCESS_API EPassDG1
  * MRZ: Machine Readable Zone.
  * Utility to compute checksum, extract information from ROC-B string, etc.
  */
-class LIBLOGICALACCESS_API EPassUtils
+class LLA_CARDS_EPASS_API EPassUtils
 {
   public:
     /**

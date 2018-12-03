@@ -3,7 +3,7 @@
 #include <logicalaccess/plugins/readers/pcsc/pcscreaderunit.hpp>
 #include <logicalaccess/plugins/readers/pcsc/readers/CL1356PlusUtils.hpp>
 #include <logicalaccess/cards/readercardadapter.hpp>
-#include <logicalaccess/logicalaccess_api.hpp>
+
 #include <string>
 
 namespace logicalaccess
@@ -39,7 +39,7 @@ namespace logicalaccess
  *    otherwise the reader will operate against the wrong card.
  *
  */
-class LIBLOGICALACCESS_API ID3ReaderUnit : public PCSCReaderUnit
+class LLA_READERS_PCSC_API ID3ReaderUnit : public PCSCReaderUnit
 {
   public:
     virtual ~ID3ReaderUnit()

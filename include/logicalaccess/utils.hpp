@@ -1,7 +1,7 @@
 #pragma once
 
 #include <logicalaccess/lla_fwd.hpp>
-#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/lla_core_api.hpp>
 #include <bitset>
 #include <chrono>
 #include <cstddef>
@@ -22,7 +22,7 @@ uint16_t lla_htons(uint16_t in);
  *
  * The precision of the counter is milliseconds.
  */
-class LIBLOGICALACCESS_API ElapsedTimeCounter
+class LLA_CORE_API ElapsedTimeCounter
 {
   public:
     ElapsedTimeCounter();
@@ -88,7 +88,7 @@ ByteVector bitsetToVector(const BitSet &in)
  *
  * See http://eleif.net/manchester.html for an online encoder.
  */
-class ManchesterEncoder
+class LLA_CORE_API ManchesterEncoder
 {
   public:
     enum Type

@@ -18,7 +18,7 @@ namespace logicalaccess
 /**
  * \brief The Cherry reader unit class.
  */
-class LIBLOGICALACCESS_API CherryReaderUnit : public PCSCReaderUnit
+class LLA_READERS_PCSC_API CherryReaderUnit : public PCSCReaderUnit
 {
   public:
     /**

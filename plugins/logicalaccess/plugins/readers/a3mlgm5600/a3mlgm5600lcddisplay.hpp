@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
  * \brief A A3MLGM5600 LCD Display class.
  */
-class LIBLOGICALACCESS_API A3MLGM5600LCDDisplay : public LCDDisplay
+class LLA_READERS_A3MLGM5600_API A3MLGM5600LCDDisplay : public LCDDisplay
 {
   public:
     /**

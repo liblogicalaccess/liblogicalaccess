@@ -8,7 +8,7 @@
 #define LOGICALACCESS_GENERICTAGCHIP_HPP
 
 #include <logicalaccess/cards/chip.hpp>
-
+#include <logicalaccess/plugins/cards/generictag/lla_cards_generictag_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -18,7 +18,7 @@ namespace logicalaccess
 /**
  * \brief The Generic Tag base chip class.
  */
-class LIBLOGICALACCESS_API GenericTagChip : public Chip
+class LLA_CARDS_GENERICTAG_API GenericTagChip : public Chip
 {
   public:
     /**

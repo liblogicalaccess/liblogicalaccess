@@ -10,7 +10,7 @@
 #include <logicalaccess/key.hpp>
 #include <logicalaccess/plugins/cards/twic/twiccommands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/iso7816iso7816commands.hpp>
-
+#include <logicalaccess/plugins/readers/iso7816/lla_readers_iso7816_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -24,10 +24,10 @@ class TwicProfile;
 /**
  * \brief The Twic ISO7816 commands base class.
  */
-class LIBLOGICALACCESS_API TwicISO7816Commands : public ISO7816ISO7816Commands
+class LLA_READERS_ISO7816_API TwicISO7816Commands : public ISO7816ISO7816Commands
 #ifndef SWIG
-                                                 ,
-                                                 public TwicCommands
+                                                    ,
+                                                    public TwicCommands
 #endif
 {
   public:

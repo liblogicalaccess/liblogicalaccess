@@ -11,7 +11,7 @@
 #include <vector>
 #include <logicalaccess/cards/ichip.hpp>
 #include <logicalaccess/lla_fwd.hpp>
-#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/lla_core_api.hpp>
 #include <logicalaccess/services/cardservice.hpp>
 
 namespace logicalaccess
@@ -33,7 +33,7 @@ typedef enum {
  * \brief The base chip class for all chip. Each chip have is own object and providers
  * according to himself and the reader used to access the chip.
  */
-class LIBLOGICALACCESS_API Chip : public IChip, public std::enable_shared_from_this<Chip>
+class LLA_CORE_API Chip : public IChip, public std::enable_shared_from_this<Chip>
 {
   public:
     /**

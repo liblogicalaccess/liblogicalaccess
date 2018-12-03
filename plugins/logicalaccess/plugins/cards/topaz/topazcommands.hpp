@@ -7,6 +7,7 @@
 #ifndef LOGICALACCESS_TOPAZCOMMANDS_HPP
 #define LOGICALACCESS_TOPAZCOMMANDS_HPP
 
+#include <logicalaccess/plugins/cards/topaz/lla_cards_topaz_api.hpp>
 #include <logicalaccess/plugins/cards/topaz/topazaccessinfo.hpp>
 #include <logicalaccess/plugins/cards/topaz/topazlocation.hpp>
 #include <logicalaccess/cards/commands.hpp>
@@ -20,7 +21,7 @@ class TopazChip;
 /**
  * \brief The Topaz commands class.
  */
-class LIBLOGICALACCESS_API TopazCommands : public Commands
+class LLA_CARDS_TOPAZ_API TopazCommands : public Commands
 {
   public:
     TopazCommands()

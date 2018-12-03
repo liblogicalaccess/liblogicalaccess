@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
 * \brief The Topaz commands class for SCM PCSC reader.
 */
-class LIBLOGICALACCESS_API TopazSCMCommands : public TopazCommands
+class LLA_READERS_PCSC_API TopazSCMCommands : public TopazCommands
 {
   public:
     /**

@@ -126,7 +126,7 @@ class DESFireChip;
 /**
  * \brief The DESFire commands class.
  */
-class LIBLOGICALACCESS_API DESFireCommands : public Commands
+class LLA_CARDS_DESFIRE_API DESFireCommands : public Commands
 {
   public:
     /**
@@ -156,7 +156,7 @@ class LIBLOGICALACCESS_API DESFireCommands : public Commands
     /**
      * \brief Describe setting for Data File type.
      */
-    struct LIBLOGICALACCESS_API DataFileSetting
+    struct LLA_CARDS_DESFIRE_API DataFileSetting
     {
         unsigned char fileSize[3]; /**< \brief The file size */
     };
@@ -164,7 +164,7 @@ class LIBLOGICALACCESS_API DESFireCommands : public Commands
     /**
      * \brief Describe setting for Value File type.
      */
-    struct LIBLOGICALACCESS_API ValueFileSetting
+    struct LLA_CARDS_DESFIRE_API ValueFileSetting
     {
         uint32_t lowerLimit;         /**< \brief The lower value limit */
         uint32_t upperLimit;         /**< \brief The upper value limit */
@@ -176,7 +176,7 @@ class LIBLOGICALACCESS_API DESFireCommands : public Commands
     /**
      * \brief Describe setting for Record File type.
      */
-    struct LIBLOGICALACCESS_API RecordFileSetting
+    struct LLA_CARDS_DESFIRE_API RecordFileSetting
     {
         unsigned char recordSize[3];       /**< \brief The record size */
         unsigned char maxNumberRecords[3]; /**< \brief The maximum number of records */
@@ -187,7 +187,7 @@ class LIBLOGICALACCESS_API DESFireCommands : public Commands
     /**
      * \brief Describe file setting.
      */
-    struct LIBLOGICALACCESS_API FileSetting
+    struct LLA_CARDS_DESFIRE_API FileSetting
     {
         unsigned char fileType;        /**< \brief The file type */
         unsigned char comSett;         /**< \brief The communication setting */
@@ -208,7 +208,7 @@ class LIBLOGICALACCESS_API DESFireCommands : public Commands
     /**
      * \brief Card information about software and hardware version.
      */
-    struct LIBLOGICALACCESS_API DESFireCardVersion
+    struct LLA_CARDS_DESFIRE_API DESFireCardVersion
     {
         unsigned char hardwareVendor;      /**< \brief The hardware vendor */
         unsigned char hardwareType;        /**< \brief The hardware type */

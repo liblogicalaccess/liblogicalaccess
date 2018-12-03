@@ -8,13 +8,14 @@
 #define LOGICALACCESS_TOPAZLOCATION_HPP
 
 #include <logicalaccess/cards/location.hpp>
+#include <logicalaccess/plugins/cards/topaz/lla_cards_topaz_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief A  Topaz location informations.
  */
-class LIBLOGICALACCESS_API TopazLocation : public Location
+class LLA_CARDS_TOPAZ_API TopazLocation : public Location
 {
   public:
     /**

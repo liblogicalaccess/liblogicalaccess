@@ -10,6 +10,7 @@
 #include <logicalaccess/readerproviders/readerunit.hpp>
 #include <logicalaccess/plugins/readers/smartid/smartidreaderunitconfiguration.hpp>
 #include <logicalaccess/cards/chip.hpp>
+#include <logicalaccess/plugins/readers/smartid/lla_readers_smartid_api.hpp>
 
 namespace logicalaccess
 {
@@ -22,7 +23,7 @@ class SmartIDReaderProvider;
 /**
  * \brief The SmartID reader unit class.
  */
-class LIBLOGICALACCESS_API SmartIDReaderUnit : public ReaderUnit
+class LLA_READERS_SMARTID_API SmartIDReaderUnit : public ReaderUnit
 {
   public:
     /**

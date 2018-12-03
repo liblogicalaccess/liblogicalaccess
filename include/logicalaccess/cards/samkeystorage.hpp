@@ -14,7 +14,7 @@ namespace logicalaccess
 /**
  * \brief A SAM key storage class.
  */
-class LIBLOGICALACCESS_API SAMKeyStorage : public KeyStorage
+class LLA_CORE_API SAMKeyStorage : public KeyStorage
 {
   public:
     /**

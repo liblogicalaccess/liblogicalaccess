@@ -23,7 +23,7 @@ namespace logicalaccess
 /**
 * \brief A default ISO7816 Fuzzing reader/card adapter class.
 */
-class LIBLOGICALACCESS_API ISO7816FuzzingReaderCardAdapter
+class LLA_CARDS_ISO7816_API ISO7816FuzzingReaderCardAdapter
     : public ISO7816ReaderCardAdapter
 {
   public:

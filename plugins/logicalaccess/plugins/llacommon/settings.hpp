@@ -10,17 +10,11 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#ifndef LIBLOGICALACCESS_API
-#ifdef _MSC_VER
-#include <logicalaccess/msliblogicalaccess.h>
-#else
-#define LIBLOGICALACCESS_API
-#endif
-#endif
+#include "logicalaccess/plugins/llacommon/lla_common_api.hpp"
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API Settings
+class LLA_COMMON_API Settings
 {
   public:
     static Settings *getInstance();

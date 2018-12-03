@@ -20,7 +20,7 @@ class AxessTMCLegicReaderProvider;
 /**
  * \brief The AxessTMCLegic reader unit class.
  */
-class LIBLOGICALACCESS_API AxessTMCLegicReaderUnit : public ReaderUnit
+class LLA_READERS_AXESSTMCLEGIC_API AxessTMCLegicReaderUnit : public ReaderUnit
 {
   public:
     /**

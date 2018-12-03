@@ -52,7 +52,7 @@ typedef enum {
 /**
 * \brief A ACS ACR 1222L LCD Display class.
 */
-class LIBLOGICALACCESS_API ACSACR1222LLCDDisplay : public LCDDisplay
+class LLA_READERS_PCSC_API ACSACR1222LLCDDisplay : public LCDDisplay
 {
   public:
     /**

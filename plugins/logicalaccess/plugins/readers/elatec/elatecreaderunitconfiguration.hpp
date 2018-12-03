@@ -8,13 +8,15 @@
 #define LOGICALACCESS_ELATECREADERUNITCONFIGURATION_HPP
 
 #include <logicalaccess/readerproviders/readerunitconfiguration.hpp>
+#include <logicalaccess/plugins/readers/elatec/lla_readers_elatec_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief The Elatec reader unit configuration base class.
  */
-class LIBLOGICALACCESS_API ElatecReaderUnitConfiguration : public ReaderUnitConfiguration
+class LLA_READERS_ELATEC_API ElatecReaderUnitConfiguration
+    : public ReaderUnitConfiguration
 {
   public:
     /**

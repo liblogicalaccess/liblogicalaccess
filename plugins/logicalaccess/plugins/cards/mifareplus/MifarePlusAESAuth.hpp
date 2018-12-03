@@ -2,6 +2,7 @@
 
 #include <logicalaccess/cards/aes128key.hpp>
 #include <logicalaccess/plugins/cards/mifare/mifareaccessinfo.hpp>
+#include <logicalaccess/plugins/cards/mifareplus/lla_cards_mifareplus_api.hpp>
 
 namespace logicalaccess
 {
@@ -12,7 +13,7 @@ namespace logicalaccess
  * This is implemented as a separate object to use reuse between various
  * mifare plus.
  */
-class LIBLOGICALACCESS_API MifarePlusAESAuth
+class LLA_CARDS_MIFAREPLUS_API MifarePlusAESAuth
 {
   public:
     explicit MifarePlusAESAuth(std::shared_ptr<ReaderCardAdapter> rca);

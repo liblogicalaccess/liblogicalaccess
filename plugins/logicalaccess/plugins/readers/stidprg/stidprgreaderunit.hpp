@@ -1,12 +1,13 @@
 #pragma once
 
 #include <logicalaccess/readerproviders/readerunit.hpp>
+#include <logicalaccess/plugins/readers/stidprg/lla_readers_stidprg_api.hpp>
 
 namespace logicalaccess
 {
 class STidPRGReaderUnitConfiguration;
 
-class LIBLOGICALACCESS_API STidPRGReaderUnit : public ReaderUnit
+class LLA_READERS_STIDPRG_API STidPRGReaderUnit : public ReaderUnit
 {
   public:
     STidPRGReaderUnit();

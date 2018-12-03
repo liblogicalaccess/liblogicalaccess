@@ -24,7 +24,7 @@ enum TNF
     TNF_RESERVED      = 0x07
 };
 
-class LIBLOGICALACCESS_API NdefRecord : public XmlSerializable
+class LLA_CORE_API NdefRecord : public XmlSerializable
 {
   public:
     NdefRecord()

@@ -77,7 +77,7 @@ void IdOnDemandReaderUnit::authenticateSDK()
 void IdOnDemandReaderUnit::authenticateSDK(std::string authCode)
 {
     char cmd[64];
-#if defined(UNIX)
+#if defined(__linux__)
     sprintf(cmd, "AUTH %s", authCode.c_str());
 #else
     sprintf_s(cmd, sizeof(cmd), "AUTH %s", authCode.c_str());

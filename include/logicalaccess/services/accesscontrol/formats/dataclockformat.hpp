@@ -14,7 +14,7 @@ namespace logicalaccess
 /**
  * \brief A data clock format class.
  */
-class LIBLOGICALACCESS_API DataClockFormat : public StaticFormat
+class LLA_CORE_API DataClockFormat : public StaticFormat
 {
   public:
     /**

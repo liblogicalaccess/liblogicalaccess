@@ -15,7 +15,7 @@ namespace logicalaccess
 /**
  * \brief A data representation which do nothing class.
  */
-class LIBLOGICALACCESS_API NoDataRepresentation : public DataRepresentation
+class LLA_CORE_API NoDataRepresentation : public DataRepresentation
 {
   public:
     /**

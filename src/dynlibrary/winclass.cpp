@@ -1,3 +1,5 @@
+#ifndef __unix__
+
 #include <windows.h>
 #include <sstream>
 
@@ -22,3 +24,5 @@ std::string WinClass::_getErrorMess(int errCode)
     return std::string(buffer);
 }
 }
+
+#endif

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp>
+#include <logicalaccess/plugins/readers/stidprg/lla_readers_stidprg_api.hpp>
 
 namespace logicalaccess
 {
@@ -13,7 +14,7 @@ namespace logicalaccess
  * It allows the client to configure a card to emulate various
  * format.
  */
-class LIBLOGICALACCESS_API STidPRGProxAccessControlCardService
+class LLA_READERS_STIDPRG_API STidPRGProxAccessControlCardService
     : public AccessControlCardService
 {
   public:

@@ -19,7 +19,7 @@ class GenericTagCardProvider;
 /**
  * \brief The GenericTag access control card service class.
  */
-class LIBLOGICALACCESS_API GenericTagAccessControlCardService
+class LLA_CARDS_GENERICTAG_API GenericTagAccessControlCardService
     : public AccessControlCardService
 {
   public:

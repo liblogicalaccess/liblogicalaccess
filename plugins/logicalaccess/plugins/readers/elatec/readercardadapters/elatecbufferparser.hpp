@@ -8,13 +8,13 @@
 #define ELATECBUFFERPARSER_HPP
 
 #include <logicalaccess/readerproviders/circularbufferparser.hpp>
-
+#include <logicalaccess/plugins/readers/elatec/lla_readers_elatec_api.hpp>
 #include <string>
 #include <vector>
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API ElatecBufferParser : public CircularBufferParser
+class LLA_READERS_ELATEC_API ElatecBufferParser : public CircularBufferParser
 {
   public:
     ElatecBufferParser()

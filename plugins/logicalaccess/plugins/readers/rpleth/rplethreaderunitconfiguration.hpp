@@ -8,6 +8,7 @@
 #define LOGICALACCESS_RPLETHREADERUNITCONFIGURATION_HPP
 
 #include <logicalaccess/plugins/readers/iso7816/iso7816readerunitconfiguration.hpp>
+#include <logicalaccess/plugins/readers/rpleth/lla_readers_rpleth_api.hpp>
 
 namespace logicalaccess
 {
@@ -19,7 +20,7 @@ typedef enum { WIEGAND = 0x01, PROXY = 0x02 } RplethMode;
 /**
  * \brief The Rpleth reader unit configuration base class.
  */
-class LIBLOGICALACCESS_API RplethReaderUnitConfiguration
+class LLA_READERS_RPLETH_API RplethReaderUnitConfiguration
     : public ISO7816ReaderUnitConfiguration
 {
   public:

@@ -21,7 +21,7 @@ namespace logicalaccess
 /**
  * \brief A default Gunnebo reader/card adapter class.
  */
-class LIBLOGICALACCESS_API GunneboReaderCardAdapter : public ReaderCardAdapter
+class LLA_READERS_GUNNEBO_API GunneboReaderCardAdapter : public ReaderCardAdapter
 {
   public:
     static const unsigned char STX; /**< \brief Start of TeXt. */

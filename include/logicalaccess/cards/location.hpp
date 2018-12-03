@@ -8,7 +8,6 @@
 #define LOGICALACCESS_LOCATION_HPP
 
 #include <string>
-#include <logicalaccess/liblogicalaccess_export.hpp>
 #include <logicalaccess/xmlserializable.hpp>
 
 namespace logicalaccess
@@ -16,7 +15,7 @@ namespace logicalaccess
 /**
  * \brief A location informations.
  */
-class LIBLOGICALACCESS_API Location : public XmlSerializable
+class LLA_CORE_API Location : public XmlSerializable
 {
   public:
     virtual ~Location() = default;

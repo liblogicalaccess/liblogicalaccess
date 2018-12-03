@@ -11,7 +11,6 @@
 #include <logicalaccess/services/accesscontrol/formats/bithelper.hpp>
 #include <logicalaccess/services/accesscontrol/encodings/bcdnibbledatatype.hpp>
 #include <logicalaccess/services/accesscontrol/encodings/nodatarepresentation.hpp>
-
 #include <logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp>
 
 namespace logicalaccess

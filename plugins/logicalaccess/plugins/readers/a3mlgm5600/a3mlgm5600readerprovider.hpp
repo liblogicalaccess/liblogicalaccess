@@ -9,7 +9,6 @@
 
 #include <logicalaccess/plugins/readers/a3mlgm5600/a3mlgm5600readerunit.hpp>
 #include <logicalaccess/readerproviders/readerprovider.hpp>
-
 #include <string>
 #include <vector>
 
@@ -22,7 +21,7 @@ namespace logicalaccess
 /**
  * \brief A3MLGM5600 Reader Provider class.
  */
-class LIBLOGICALACCESS_API A3MLGM5600ReaderProvider : public ReaderProvider
+class LLA_READERS_A3MLGM5600_API A3MLGM5600ReaderProvider : public ReaderProvider
 {
   public:
     /**

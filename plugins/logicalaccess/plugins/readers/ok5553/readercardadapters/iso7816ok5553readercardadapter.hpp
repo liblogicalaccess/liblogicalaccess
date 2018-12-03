@@ -18,7 +18,7 @@ namespace logicalaccess
 /**
  * \brief A ISO7816 OK5553 reader/card adapter class.
  */
-class LIBLOGICALACCESS_API ISO7816OK5553ReaderCardAdapter
+class LLA_READERS_OK5553_API ISO7816OK5553ReaderCardAdapter
     : public ISO7816ReaderCardAdapter
 {
   public:

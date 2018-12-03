@@ -16,7 +16,6 @@
 #include <logicalaccess/lla_fwd.hpp>
 #include <logicalaccess/techno.hpp>
 #include <logicalaccess/cardprobe.hpp>
-
 #include <logicalaccess/services/reader_service.hpp>
 #define PLUGINOBJECT_MAXLEN 64
 
@@ -38,7 +37,7 @@ class ReaderProvider;
  * \brief The reader unit base class. This is an object for a specific reader instance to
  * detect card and interact with the reader.
  */
-class LIBLOGICALACCESS_API ReaderUnit : public XmlSerializable,
+class LLA_CORE_API ReaderUnit : public XmlSerializable,
                                         public std::enable_shared_from_this<ReaderUnit>
 {
   public:

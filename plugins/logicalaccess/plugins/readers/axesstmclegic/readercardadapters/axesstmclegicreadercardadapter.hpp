@@ -8,7 +8,7 @@
 #define LOGICALACCESS_DEFAULTAXESSTMCLEGICREADERCARDADAPTER_HPP
 
 #include <logicalaccess/cards/readercardadapter.hpp>
-
+#include <logicalaccess/plugins/readers/axesstmclegic/lla_readers_axesstmclegic_api.hpp>
 #include <string>
 #include <vector>
 
@@ -17,7 +17,8 @@ namespace logicalaccess
 /**
  * \brief A default AxessTMCLegic reader/card adapter class.
  */
-class LIBLOGICALACCESS_API AxessTMCLegicReaderCardAdapter : public ReaderCardAdapter
+class LLA_READERS_AXESSTMCLEGIC_API AxessTMCLegicReaderCardAdapter
+    : public ReaderCardAdapter
 {
   public:
     /**

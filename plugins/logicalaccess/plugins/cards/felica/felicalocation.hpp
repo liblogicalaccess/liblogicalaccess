@@ -8,13 +8,14 @@
 #define LOGICALACCESS_FELICALOCATION_HPP
 
 #include <logicalaccess/cards/location.hpp>
+#include <logicalaccess/plugins/cards/felica/lla_cards_felica_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief A FeliCa location informations.
  */
-class LIBLOGICALACCESS_API FeliCaLocation : public Location
+class LLA_CARDS_FELICA_API FeliCaLocation : public Location
 {
   public:
     /**

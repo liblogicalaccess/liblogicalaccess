@@ -21,7 +21,7 @@ typedef enum { PT_NONE = 0x00, PT_EVEN = 0x01, PT_ODD = 0x02 } ParityType;
 /**
  * \brief A data type.
  */
-class LIBLOGICALACCESS_API DataType : public Encoding
+class LLA_CORE_API DataType : public Encoding
 {
   public:
     /**

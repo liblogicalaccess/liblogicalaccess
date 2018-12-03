@@ -17,7 +17,7 @@ namespace logicalaccess
 /**
  * \brief A STidSTR LED/Buzzer Display class.
  */
-class LIBLOGICALACCESS_API STidSTRLEDBuzzerDisplay : public LEDBuzzerDisplay
+class LLA_READERS_STIDSTR_API STidSTRLEDBuzzerDisplay : public LEDBuzzerDisplay
 {
   public:
     /**

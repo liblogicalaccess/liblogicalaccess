@@ -16,7 +16,7 @@ namespace logicalaccess
  * \brief A reader/card adapter base class. It provide an abstraction layer between the
  * card and the reader to send chip command.
  */
-class LIBLOGICALACCESS_API ReaderCardAdapter
+class LLA_CORE_API ReaderCardAdapter
 {
   public:
     virtual ~ReaderCardAdapter()

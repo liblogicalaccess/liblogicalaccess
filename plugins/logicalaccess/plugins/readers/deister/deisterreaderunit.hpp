@@ -9,6 +9,7 @@
 
 #include <logicalaccess/readerproviders/readerunit.hpp>
 #include <logicalaccess/plugins/readers/deister/deisterreaderunitconfiguration.hpp>
+#include <logicalaccess/plugins/readers/deister/lla_readers_deister_api.hpp>
 
 namespace logicalaccess
 {
@@ -43,7 +44,7 @@ typedef enum {
 /**
  * \brief The Deister reader unit class. This reader support DeBus protocol.
  */
-class LIBLOGICALACCESS_API DeisterReaderUnit : public ReaderUnit
+class LLA_READERS_DEISTER_API DeisterReaderUnit : public ReaderUnit
 {
   public:
     /**

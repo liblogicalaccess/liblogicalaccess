@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 3.1)
 project(a3mlgm5600readers)
 
-if (WIN32)
-	SET(VERSION_PRODUCTNAME_VALUE "a3mlgm5600readers")
-	add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
-endif()
+if (MSVC)
+    SET(VERSION_PRODUCTNAME_VALUE "a3mlgm5600readers")
+    add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif ()
+
+set(HEADER_RELATIVE_INSTALL_DIR "include/logicalaccess/plugins/readers/a3mlgm5600")
 
 file(GLOB SRCS *.cpp)
 file(GLOB include *.hpp)
@@ -18,26 +20,21 @@ SOURCE_GROUP("Source Files\\readercardadapters" FILES ${source_readercardadapter
 set(INCLUDE_LIB ${include} ${include_core} ${include_readercardadapters})
 set(SOURCE_LIB ${SRCS} ${source_readercardadapters})
 
-add_library(
-	a3mlgm5600readers
-	SHARED
-	${SOURCE_LIB}
-	${INCLUDE_LIB}
-	${resourcerc}
-  )
-
+add_library(a3mlgm5600readers
+        SHARED
+        ${SOURCE_LIB}
+        ${INCLUDE_LIB}
+        ${LLA_RESOURCE_RC})
 
 SET_TARGET_PROPERTIES(a3mlgm5600readers PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 
-target_link_libraries(
-    a3mlgm5600readers
-    ${LIBLOGICALACCESS_LIBRARY}
-    ${LINK_OPT}
-)
+target_link_libraries(a3mlgm5600readers
+        logicalaccess)
+LLA_GENERATE_EXPORTS(LLA_READERS_A3MLGM5600)
 
-install ( FILES ${include} DESTINATION include/logicalaccess/plugins/readers/a3mlgm5600 )
-install ( FILES ${include_readercardadapters} DESTINATION include/logicalaccess/plugins/readers/a3mlgm5600/readercardadapters )
-install ( TARGETS a3mlgm5600readers RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX} )
+install(FILES ${include} DESTINATION ${HEADER_RELATIVE_INSTALL_DIR})
+install(FILES ${include_readercardadapters} DESTINATION ${HEADER_RELATIVE_INSTALL_DIR}/readercardadapters)
+install(TARGETS a3mlgm5600readers RUNTIME DESTINATION bin/${LIB_SUFFIX} ARCHIVE DESTINATION lib/${LIB_SUFFIX} LIBRARY DESTINATION lib/${LIB_SUFFIX})
 if (MSVC)
-	install(FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb/${LIB_SUFFIX} OPTIONAL)
-endif()
+    install(FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb/${LIB_SUFFIX} OPTIONAL)
+endif ()

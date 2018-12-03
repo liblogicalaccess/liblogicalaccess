@@ -16,7 +16,8 @@
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API AxessTMCLegicDataTransport : public SerialPortDataTransport
+class LLA_READERS_AXESSTMCLEGIC_API AxessTMCLegicDataTransport
+    : public SerialPortDataTransport
 {
   public:
     explicit AxessTMCLegicDataTransport(const std::string &portname = "")

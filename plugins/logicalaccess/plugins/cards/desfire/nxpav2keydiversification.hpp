@@ -9,7 +9,7 @@
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API NXPAV2KeyDiversification : public NXPKeyDiversification
+class LLA_CARDS_DESFIRE_API NXPAV2KeyDiversification : public NXPKeyDiversification
 {
   public:
     void initDiversification(ByteVector identifier, unsigned int AID,

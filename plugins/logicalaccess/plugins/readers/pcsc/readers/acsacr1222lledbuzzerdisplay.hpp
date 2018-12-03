@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_ACSACR1222LLEDBUZZERDISPLAY_HPP
 #define LOGICALACCESS_ACSACR1222LLEDBUZZERDISPLAY_HPP
 
-#include <logicalaccess/logicalaccess_api.hpp>
+
 #include <logicalaccess/readerproviders/ledbuzzerdisplay.hpp>
 #include <logicalaccess/plugins/readers/pcsc/pcsc_fwd.hpp>
 #include <string>
@@ -18,7 +18,7 @@ namespace logicalaccess
 /**
 * \brief A ACS ACR 1222L LED/Buzzer Display class.
 */
-class LIBLOGICALACCESS_API ACSACR1222LLEDBuzzerDisplay : public LEDBuzzerDisplay
+class LLA_READERS_PCSC_API ACSACR1222LLEDBuzzerDisplay : public LEDBuzzerDisplay
 {
   public:
     /**

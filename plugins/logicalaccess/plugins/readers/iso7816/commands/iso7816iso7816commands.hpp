@@ -22,7 +22,7 @@ namespace logicalaccess
 /**
  * \brief The ISO7816 commands base class.
  */
-class LIBLOGICALACCESS_API ISO7816ISO7816Commands : public ISO7816Commands
+class LLA_READERS_ISO7816_API ISO7816ISO7816Commands : public ISO7816Commands
 {
   public:
     /**

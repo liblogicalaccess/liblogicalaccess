@@ -8,6 +8,7 @@
 #define LOGICALACCESS_MIFAREKEY_HPP
 
 #include <logicalaccess/key.hpp>
+#include <logicalaccess/plugins/cards/mifare/lla_cards_mifare_api.hpp>
 
 /**
  * \brief The default Mifare key size
@@ -19,7 +20,7 @@ namespace logicalaccess
 /**
  * \brief A Mifare Key class.
  */
-class LIBLOGICALACCESS_API MifareKey : public Key
+class LLA_CARDS_MIFARE_API MifareKey : public Key
 {
   public:
 #ifndef SWIG

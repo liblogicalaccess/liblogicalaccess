@@ -16,7 +16,7 @@ namespace logicalaccess
 /**
  * \brief The 4k Mifare base chip class.
  */
-class LIBLOGICALACCESS_API Mifare4KChip : public MifareChip
+class LLA_CARDS_MIFARE_API Mifare4KChip : public MifareChip
 {
   public:
     /**

@@ -24,7 +24,7 @@ namespace logicalaccess
 /**
  * \brief The Twic storage card service base class.
  */
-class LIBLOGICALACCESS_API TwicStorageCardService : public ISO7816StorageCardService
+class LLA_CARDS_TWIC_API TwicStorageCardService : public ISO7816StorageCardService
 {
   public:
     /**

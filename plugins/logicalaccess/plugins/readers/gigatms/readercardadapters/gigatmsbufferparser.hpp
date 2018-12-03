@@ -8,13 +8,13 @@
 #define GIGATMSBUFFERPARSER_HPP
 
 #include <logicalaccess/readerproviders/circularbufferparser.hpp>
-
+#include <logicalaccess/plugins/readers/gigatms/lla_readers_gigatms_api.hpp>
 #include <string>
 #include <vector>
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API GigaTMSBufferParser : public CircularBufferParser
+class LLA_READERS_GIGATMS_API GigaTMSBufferParser : public CircularBufferParser
 {
   public:
     GigaTMSBufferParser()

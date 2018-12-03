@@ -14,7 +14,7 @@ namespace logicalaccess
 /**
  * \brief A Wiegand 35 format class. Also known as Corporate 1000
  */
-class LIBLOGICALACCESS_API Wiegand35Format : public StaticFormat
+class LLA_CORE_API Wiegand35Format : public StaticFormat
 {
   public:
     /**

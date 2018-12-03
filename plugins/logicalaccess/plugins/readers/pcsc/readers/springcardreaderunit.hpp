@@ -18,7 +18,7 @@ namespace logicalaccess
 /**
  * \brief The SpringCard reader unit class.
  */
-class LIBLOGICALACCESS_API SpringCardReaderUnit : public PCSCReaderUnit
+class LLA_READERS_PCSC_API SpringCardReaderUnit : public PCSCReaderUnit
 {
   public:
     /**

@@ -11,10 +11,6 @@
 #include <climits>
 #include <logicalaccess/myexception.hpp>
 
-#ifndef UNIX
-#include <logicalaccess/msliblogicalaccess.h>
-#endif
-
 #include <cstring>
 
 #include <openssl/rand.h>

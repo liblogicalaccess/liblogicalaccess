@@ -18,7 +18,7 @@ namespace logicalaccess
 /**
  * \brief The CPS3 storage card service base class.
  */
-class LIBLOGICALACCESS_API CPS3StorageCardService : public ISO7816StorageCardService
+class LLA_CARDS_CPS3_API CPS3StorageCardService : public ISO7816StorageCardService
 {
   public:
     /**

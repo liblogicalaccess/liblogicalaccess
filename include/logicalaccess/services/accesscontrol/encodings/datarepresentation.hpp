@@ -16,7 +16,7 @@ namespace logicalaccess
 /**
  * \brief A data representation.
  */
-class LIBLOGICALACCESS_API DataRepresentation : public Encoding
+class LLA_CORE_API DataRepresentation : public Encoding
 {
   public:
     /**

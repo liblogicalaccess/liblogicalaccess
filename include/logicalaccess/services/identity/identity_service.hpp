@@ -7,7 +7,7 @@
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API IdentityCardService : public CardService
+class LLA_CORE_API IdentityCardService : public CardService
 {
   public:
     enum class MetaData

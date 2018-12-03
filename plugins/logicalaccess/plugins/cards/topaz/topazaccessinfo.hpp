@@ -8,7 +8,7 @@
 #define LOGICALACCESS_TOPAZACCESSINFO_HPP
 
 #include <logicalaccess/cards/accessinfo.hpp>
-
+#include <logicalaccess/plugins/cards/topaz/lla_cards_topaz_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -18,7 +18,7 @@ namespace logicalaccess
 /**
  * \brief A Topaz access informations.
  */
-class LIBLOGICALACCESS_API TopazAccessInfo : public AccessInfo
+class LLA_CARDS_TOPAZ_API TopazAccessInfo : public AccessInfo
 {
   public:
     /**

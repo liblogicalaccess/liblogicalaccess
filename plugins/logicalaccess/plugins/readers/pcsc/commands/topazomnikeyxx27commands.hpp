@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
 * \brief The Topaz commands class for Omnikey XX27 PCSC reader.
 */
-class LIBLOGICALACCESS_API TopazOmnikeyXX27Commands : public TopazCommands
+class LLA_READERS_PCSC_API TopazOmnikeyXX27Commands : public TopazCommands
 {
   public:
     /**

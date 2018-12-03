@@ -16,7 +16,7 @@ namespace logicalaccess
 /**
  * \brief A value data field base class.
  */
-class LIBLOGICALACCESS_API ValueDataField : public DataField
+class LLA_CORE_API ValueDataField : public DataField
 {
   public:
     /**

@@ -9,6 +9,7 @@
 
 #include <cstring>
 #include <logicalaccess/key.hpp>
+#include <logicalaccess/plugins/cards/samav2/lla_cards_samav2_api.hpp>
 
 namespace logicalaccess
 {
@@ -31,7 +32,7 @@ typedef struct s_SAMKUCEntry
 /**
  * \brief A DESFire Key class.
  */
-class LIBLOGICALACCESS_API SAMKucEntry
+class LLA_CARDS_SAMAV2_API SAMKucEntry
 {
   public:
     /**

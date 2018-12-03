@@ -15,7 +15,7 @@ namespace logicalaccess
 /**
  * \brief A BCD Nibble data type class.
  */
-class LIBLOGICALACCESS_API BCDNibbleDataType : public DataType
+class LLA_CORE_API BCDNibbleDataType : public DataType
 {
   public:
     /**

@@ -19,7 +19,7 @@ namespace logicalaccess
 /**
  * \brief An TCP data transport class.
  */
-class LIBLOGICALACCESS_API TcpDataTransport : public DataTransport
+class LLA_CORE_API TcpDataTransport : public DataTransport
 {
   public:
     /**

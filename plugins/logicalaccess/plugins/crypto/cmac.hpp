@@ -11,7 +11,7 @@ namespace logicalaccess
 {
 namespace openssl
 {
-class LIBLOGICALACCESS_API CMACCrypto
+class LLA_CRYPTO_API CMACCrypto
 {
   public:
     CMACCrypto()

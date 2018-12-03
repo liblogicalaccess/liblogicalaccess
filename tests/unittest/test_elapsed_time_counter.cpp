@@ -11,6 +11,6 @@ TEST(test_elapsed_time_counter, simple)
     ASSERT_LE(counter.elapsed(), 20);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    ASSERT_LE(counter.elapsed(), 530);
+    ASSERT_LE(counter.elapsed(), 750);
     ASSERT_GE(counter.elapsed(), 500);
 }

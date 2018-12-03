@@ -21,7 +21,7 @@ namespace logicalaccess
  * \brief A reader configuration class. Contains the reader provider and selected reader
  * unit.
  */
-class LIBLOGICALACCESS_API ReaderConfiguration : public XmlSerializable
+class LLA_CORE_API ReaderConfiguration : public XmlSerializable
 {
   public:
 #ifndef SWIG

@@ -25,7 +25,7 @@ typedef enum {
 /**
  * \brief The Omnikey XX21 reader unit configuration base class.
  */
-class LIBLOGICALACCESS_API OmnikeyXX21ReaderUnitConfiguration
+class LLA_READERS_PCSC_API OmnikeyXX21ReaderUnitConfiguration
     : public PCSCReaderUnitConfiguration
 {
   public:

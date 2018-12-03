@@ -21,7 +21,7 @@ namespace logicalaccess
 /**
  * \brief The Topaz base profile class.
  */
-class LIBLOGICALACCESS_API TopazStorageCardService : public StorageCardService
+class LLA_CARDS_TOPAZ_API TopazStorageCardService : public StorageCardService
 {
   public:
     /**

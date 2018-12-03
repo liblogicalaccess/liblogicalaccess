@@ -1,7 +1,7 @@
 #ifndef LIBLOGICALACCESS_ATRPARSER_HPP
 #define LIBLOGICALACCESS_ATRPARSER_HPP
 
-#include <logicalaccess/logicalaccess_api.hpp>
+
 #include <logicalaccess/plugins/readers/pcsc/pcscreaderunitconfiguration.hpp>
 #include <cstddef>
 #include <cstdint>
@@ -15,7 +15,7 @@ namespace logicalaccess
  * An helper class that helps deducing the type of card
  * from its ATR.
  */
-class LIBLOGICALACCESS_API ATRParser
+class LLA_READERS_PCSC_API ATRParser
 {
   public:
     explicit ATRParser(const ByteVector &atr);

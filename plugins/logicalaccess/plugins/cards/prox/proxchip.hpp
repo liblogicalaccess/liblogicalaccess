@@ -8,7 +8,7 @@
 #define LOGICALACCESS_PROXCHIP_HPP
 
 #include <logicalaccess/cards/chip.hpp>
-
+#include <logicalaccess/plugins/cards/prox/lla_cards_prox_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
  * \brief The HID Prox base chip class.
  */
-class LIBLOGICALACCESS_API ProxChip : public Chip
+class LLA_CARDS_PROX_API ProxChip : public Chip
 {
   public:
     /**

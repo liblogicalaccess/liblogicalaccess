@@ -18,10 +18,10 @@ namespace logicalaccess
  * This mostly acts as a tag, because the chip has no additional
  * functions.
  */
-class LIBLOGICALACCESS_API MifarePlusSL1Chip : public MifareChip
+class LLA_CARDS_MIFAREPLUS_API MifarePlusSL1Chip : public MifareChip
 #ifndef SWIG
-                                               ,
-                                               public MifarePlusChip
+                                                   ,
+                                                   public MifarePlusChip
 #endif
 {
   public:
@@ -54,13 +54,13 @@ class LIBLOGICALACCESS_API MifarePlusSL1Chip : public MifareChip
     std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
 };
 
-class LIBLOGICALACCESS_API MifarePlusSL1_2kChip : public MifarePlusSL1Chip
+class LLA_CARDS_MIFAREPLUS_API MifarePlusSL1_2kChip : public MifarePlusSL1Chip
 {
   public:
     MifarePlusSL1_2kChip();
 };
 
-class LIBLOGICALACCESS_API MifarePlusSL1_4kChip : public MifarePlusSL1Chip
+class LLA_CARDS_MIFAREPLUS_API MifarePlusSL1_4kChip : public MifarePlusSL1Chip
 {
   public:
     MifarePlusSL1_4kChip();

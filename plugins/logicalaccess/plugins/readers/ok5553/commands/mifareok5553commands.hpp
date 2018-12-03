@@ -21,7 +21,7 @@ namespace logicalaccess
 /**
  * \brief A Mifare OK5553 commands base class.
  */
-class LIBLOGICALACCESS_API MifareOK5553Commands : public MifareCommands
+class LLA_READERS_OK5553_API MifareOK5553Commands : public MifareCommands
 {
   public:
     /**

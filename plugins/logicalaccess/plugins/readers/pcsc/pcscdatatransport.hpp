@@ -18,7 +18,7 @@ namespace logicalaccess
 /**
  * \brief An PCSC data transport class.
  */
-class LIBLOGICALACCESS_API PCSCDataTransport : public DataTransport
+class LLA_READERS_PCSC_API PCSCDataTransport : public DataTransport
 {
   public:
     /**

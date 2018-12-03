@@ -18,7 +18,7 @@ namespace logicalaccess
 /**
  * \brief The SAM chip class.
  */
-class LIBLOGICALACCESS_API SAMAV1Chip : public SAMChip
+class LLA_CARDS_SAMAV2_API SAMAV1Chip : public SAMChip
 {
   public:
     /**

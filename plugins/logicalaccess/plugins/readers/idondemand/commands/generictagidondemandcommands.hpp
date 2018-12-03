@@ -8,6 +8,7 @@
 #define LOGICALACCESS_GENERICTAGIDONDEMANDCOMMANDS_HPP
 
 #include <logicalaccess/cards/commands.hpp>
+#include <logicalaccess/plugins/readers/idondemand/lla_readers_idondemand_api.hpp>
 
 namespace logicalaccess
 {
@@ -16,7 +17,7 @@ namespace logicalaccess
 /**
  * \brief The Generic Tag IdOnDemand commands class.
  */
-class LIBLOGICALACCESS_API GenericTagIdOnDemandCommands : public Commands
+class LLA_READERS_IDONDEMAND_API GenericTagIdOnDemandCommands : public Commands
 {
   public:
     GenericTagIdOnDemandCommands()

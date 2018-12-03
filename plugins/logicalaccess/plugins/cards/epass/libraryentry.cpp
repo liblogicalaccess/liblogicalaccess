@@ -1,15 +1,16 @@
 #include <logicalaccess/plugins/cards/epass/epasschip.hpp>
-#include <logicalaccess/logicalaccess_api.hpp>
+
 #include <logicalaccess/cards/chip.hpp>
 #include <logicalaccess/readerproviders/readerunit.hpp>
+#include <logicalaccess/plugins/cards/epass/lla_cards_epass_api.hpp>
 
 extern "C" {
-LIBLOGICALACCESS_API char *getLibraryName()
+LLA_CARDS_EPASS_API char *getLibraryName()
 {
     return (char *)"Epass";
 }
 
-LIBLOGICALACCESS_API void getEPassChip(std::shared_ptr<logicalaccess::Chip> *chip)
+LLA_CARDS_EPASS_API void getEPassChip(std::shared_ptr<logicalaccess::Chip> *chip)
 {
     if (chip != nullptr)
     {
@@ -17,8 +18,8 @@ LIBLOGICALACCESS_API void getEPassChip(std::shared_ptr<logicalaccess::Chip> *chi
     }
 }
 
-LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char *chipname,
-                                        size_t chipnamelen, void **getterfct)
+LLA_CARDS_EPASS_API bool getChipInfoAt(unsigned int index, char *chipname,
+                                       size_t chipnamelen, void **getterfct)
 {
     bool ret = false;
     if (chipname != nullptr && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != nullptr)

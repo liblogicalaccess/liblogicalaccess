@@ -36,7 +36,7 @@ namespace logicalaccess
  *
  * Then you can either read() or write() data, or simply wait for it using select().
  */
-class LIBLOGICALACCESS_API SerialPort
+class LLA_CORE_API SerialPort
 {
   public:
     /**

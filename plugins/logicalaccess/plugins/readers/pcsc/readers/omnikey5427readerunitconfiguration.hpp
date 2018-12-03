@@ -12,7 +12,7 @@ namespace logicalaccess
 /**
  * The Omnikey 5427 reader unit configuration class.
  */
-class LIBLOGICALACCESS_API Omnikey5427ReaderUnitConfiguration
+class LLA_READERS_PCSC_API Omnikey5427ReaderUnitConfiguration
     : public PCSCReaderUnitConfiguration
 {
   public:

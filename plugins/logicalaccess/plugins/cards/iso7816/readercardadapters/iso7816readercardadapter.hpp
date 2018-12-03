@@ -8,10 +8,9 @@
 #define LOGICALACCESS_ISO7816READERCARDADAPTER_HPP
 
 #include <logicalaccess/cards/readercardadapter.hpp>
-
+#include <logicalaccess/plugins/cards/iso7816/lla_cards_iso7816_api.hpp>
 #include <string>
 #include <vector>
-
 #include <logicalaccess/plugins/llacommon/logs.hpp>
 
 namespace logicalaccess
@@ -19,7 +18,7 @@ namespace logicalaccess
 /**
  * \brief A default ISO7816 reader/card adapter class.
  */
-class LIBLOGICALACCESS_API ISO7816ReaderCardAdapter : public ReaderCardAdapter
+class LLA_CARDS_ISO7816_API ISO7816ReaderCardAdapter : public ReaderCardAdapter
 {
   public:
     /**

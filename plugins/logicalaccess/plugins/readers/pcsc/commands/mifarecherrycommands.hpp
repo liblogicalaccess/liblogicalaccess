@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
  * \brief The Mifare commands class for Cherry reader.
  */
-class LIBLOGICALACCESS_API MifareCherryCommands : public MifarePCSCCommands
+class LLA_READERS_PCSC_API MifareCherryCommands : public MifarePCSCCommands
 {
   public:
     /**

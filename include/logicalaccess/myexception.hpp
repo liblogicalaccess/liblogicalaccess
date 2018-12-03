@@ -5,13 +5,13 @@
 #include <exception>
 #include <functional>
 
-#if defined(UNIX) || _MSC_VER >= 1900 || defined(ANDROID)
+#if defined(__linux__) || _MSC_VER >= 1900 || defined(ANDROID)
 #define NOEXCEPT noexcept
 #else
 #define NOEXCEPT
 #endif
 
-#include <logicalaccess/logicalaccess_api.hpp>
+#include <logicalaccess/lla_core_api.hpp>
 
 namespace logicalaccess
 {
@@ -32,6 +32,7 @@ class LibLogicalAccessException : public std::exception
     {
     }
 #endif
+
     virtual ~LibLogicalAccessException() NOEXCEPT
     {
     }

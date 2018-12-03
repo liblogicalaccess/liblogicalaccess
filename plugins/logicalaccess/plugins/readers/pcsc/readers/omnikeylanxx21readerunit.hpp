@@ -18,7 +18,7 @@ namespace logicalaccess
 /**
  * \brief The Omnikey XX21 reader unit class.
  */
-class LIBLOGICALACCESS_API OmnikeyLANXX21ReaderUnit : public OmnikeyXX21ReaderUnit
+class LLA_READERS_PCSC_API OmnikeyLANXX21ReaderUnit : public OmnikeyXX21ReaderUnit
 {
   public:
     /**

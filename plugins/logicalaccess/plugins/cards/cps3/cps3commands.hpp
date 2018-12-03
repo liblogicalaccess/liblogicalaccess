@@ -18,7 +18,7 @@ namespace logicalaccess
 /**
  * \brief The CPS3 commands class.
  */
-class LIBLOGICALACCESS_API CPS3Commands : public Commands
+class LLA_CARDS_CPS3_API CPS3Commands : public Commands
 {
   public:
     CPS3Commands()

@@ -266,7 +266,7 @@ ByteVector GunneboReaderUnit::processCardId(ByteVector &rawSerialData) const
                           hexSerialData[4];
 
                 memset(bufTmpId, 0x00, sizeof(bufTmpId));
-#if defined(UNIX)
+#if defined(__linux__)
                 snprintf(bufTmpId, sizeof(bufTmpId), "%04ld%03ld%06ld",
                          static_cast<long>(cc), static_cast<long>(ci1),
                          static_cast<long>(ci2));
@@ -278,7 +278,7 @@ ByteVector GunneboReaderUnit::processCardId(ByteVector &rawSerialData) const
         }
 
         memset(bufTmpId, 0x00, sizeof(bufTmpId));
-#if defined(UNIX)
+#if defined(__linux__)
         snprintf(bufTmpId, sizeof(bufTmpId), "%012llx", l);
 #else
         sprintf_s(bufTmpId, sizeof(bufTmpId), "%012llx", l);

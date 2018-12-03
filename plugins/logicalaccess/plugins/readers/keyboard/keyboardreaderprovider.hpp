@@ -15,6 +15,7 @@
 #include <map>
 
 #include <logicalaccess/plugins/llacommon/logs.hpp>
+#include <logicalaccess/plugins/readers/keyboard/lla_readers_private_keyboard_api.hpp>
 
 namespace logicalaccess
 {
@@ -29,7 +30,7 @@ DWORD WINAPI WatchThread(LPVOID lpThreadParameter);
 /**
  * \brief Keyboard Reader Provider class.
  */
-class LIBLOGICALACCESS_API KeyboardReaderProvider : public ReaderProvider
+class LLA_READERS_PRIVATE_KEYBOARD_API KeyboardReaderProvider : public ReaderProvider
 {
   protected:
     /**

@@ -17,7 +17,7 @@ namespace logicalaccess
 /**
  * \brief The ISO7816 card provider base class.
  */
-class LIBLOGICALACCESS_API ISO7816StorageCardService : public StorageCardService
+class LLA_CARDS_ISO7816_API ISO7816StorageCardService : public StorageCardService
 {
   public:
     /**

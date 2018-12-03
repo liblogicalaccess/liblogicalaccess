@@ -8,7 +8,7 @@
 #define LOGICALACCESS_DEFAULTPROMAGREADERCARDADAPTER_HPP
 
 #include <logicalaccess/cards/readercardadapter.hpp>
-
+#include <logicalaccess/plugins/readers/promag/lla_readers_promag_api.hpp>
 #include <string>
 #include <vector>
 
@@ -17,7 +17,7 @@ namespace logicalaccess
 /**
  * \brief A default Promag reader/card adapter class.
  */
-class LIBLOGICALACCESS_API PromagReaderCardAdapter : public ReaderCardAdapter
+class LLA_READERS_PROMAG_API PromagReaderCardAdapter : public ReaderCardAdapter
 {
   public:
     static const unsigned char STX; /**< \brief The start byte. */

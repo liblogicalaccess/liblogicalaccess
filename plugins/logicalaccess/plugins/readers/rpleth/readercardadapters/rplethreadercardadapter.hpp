@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
  * \brief A default Rpleth reader/card adapter class.
  */
-class LIBLOGICALACCESS_API RplethReaderCardAdapter : public ReaderCardAdapter
+class LLA_READERS_RPLETH_API RplethReaderCardAdapter : public ReaderCardAdapter
 {
   public:
     /**

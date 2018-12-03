@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
  * \brief A default PC/SC reader/card adapter class.
  */
-class LIBLOGICALACCESS_API PCSCReaderCardAdapter : public ISO7816ReaderCardAdapter
+class LLA_READERS_PCSC_API PCSCReaderCardAdapter : public ISO7816ReaderCardAdapter
 {
   public:
     /**

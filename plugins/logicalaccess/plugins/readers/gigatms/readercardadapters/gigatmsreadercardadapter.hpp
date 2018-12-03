@@ -8,7 +8,7 @@
 #define LOGICALACCESS_DEFAULTGIGATMSREADERCARDADAPTER_HPP
 
 #include <logicalaccess/cards/readercardadapter.hpp>
-
+#include <logicalaccess/plugins/readers/gigatms/lla_readers_gigatms_api.hpp>
 #include <string>
 #include <vector>
 
@@ -17,7 +17,7 @@ namespace logicalaccess
 /**
  * \brief A default GIGA-TMS reader/card adapter class.
  */
-class LIBLOGICALACCESS_API GigaTMSReaderCardAdapter : public ReaderCardAdapter
+class LLA_READERS_GIGATMS_API GigaTMSReaderCardAdapter : public ReaderCardAdapter
 {
   public:
     static const unsigned char STX1; /**< \brief The 1st start byte. */

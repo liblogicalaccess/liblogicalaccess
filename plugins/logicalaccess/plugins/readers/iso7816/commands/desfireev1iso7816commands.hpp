@@ -10,7 +10,7 @@
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireiso7816commands.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev1commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/iso7816iso7816commands.hpp>
-
+#include <logicalaccess/plugins/readers/iso7816/lla_readers_iso7816_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -23,10 +23,10 @@ namespace logicalaccess
 /**
  * \brief The DESFire EV1 base commands class.
  */
-class LIBLOGICALACCESS_API DESFireEV1ISO7816Commands : public DESFireISO7816Commands
+class LLA_READERS_ISO7816_API DESFireEV1ISO7816Commands : public DESFireISO7816Commands
 #ifndef SWIG
-                                                       ,
-                                                       public DESFireEV1Commands
+                                                          ,
+                                                          public DESFireEV1Commands
 #endif
 {
   public:

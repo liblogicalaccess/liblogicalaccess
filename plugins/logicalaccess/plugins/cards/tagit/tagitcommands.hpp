@@ -9,13 +9,14 @@
 
 #include <logicalaccess/key.hpp>
 #include <logicalaccess/plugins/cards/iso15693/iso15693commands.hpp>
+#include <logicalaccess/plugins/cards/tagit/lla_cards_tagit_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief The Tag-It commands base class.
  */
-class LIBLOGICALACCESS_API TagItCommands
+class LLA_CARDS_TAGIT_API TagItCommands
 {
   public:
     /**

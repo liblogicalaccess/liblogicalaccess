@@ -7,11 +7,12 @@
 
 #include <logicalaccess/plugins/cards/mifare/mifareaccessinfo.hpp>
 #include <logicalaccess/cards/aes128key.hpp>
+#include <logicalaccess/plugins/cards/mifareplus/lla_cards_mifareplus_api.hpp>
 #include <boost/property_tree/ptree.hpp>
 
 namespace logicalaccess
 {
-class LIBLOGICALACCESS_API MifarePlusSL1AccessInfo : public MifareAccessInfo
+class LLA_CARDS_MIFAREPLUS_API MifarePlusSL1AccessInfo : public MifareAccessInfo
 {
   public:
     MifarePlusSL1AccessInfo();

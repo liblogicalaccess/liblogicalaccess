@@ -100,8 +100,7 @@
 
 #include <cstring>
 
-#ifdef UNIX
-
+#ifdef __linux__
 // Include for SCARD_ATTR_VENDOR_IFD_SERIAL_NO
 #include <reader.h>
 #endif

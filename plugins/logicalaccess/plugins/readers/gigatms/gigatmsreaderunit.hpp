@@ -9,6 +9,7 @@
 
 #include <logicalaccess/readerproviders/readerunit.hpp>
 #include <logicalaccess/plugins/readers/gigatms/gigatmsreaderunitconfiguration.hpp>
+#include <logicalaccess/plugins/readers/gigatms/lla_readers_gigatms_api.hpp>
 
 namespace logicalaccess
 {
@@ -19,7 +20,7 @@ class GigaTMSReaderProvider;
 /**
  * \brief The GIGA-TMS reader unit class.
  */
-class LIBLOGICALACCESS_API GigaTMSReaderUnit : public ReaderUnit
+class LLA_READERS_GIGATMS_API GigaTMSReaderUnit : public ReaderUnit
 {
   public:
     /**

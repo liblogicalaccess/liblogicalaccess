@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
  * \brief A default SCIEL reader/card adapter class.
  */
-class LIBLOGICALACCESS_API SCIELReaderCardAdapter : public ReaderCardAdapter
+class LLA_READERS_SCIEL_API SCIELReaderCardAdapter : public ReaderCardAdapter
 {
   public:
     /**

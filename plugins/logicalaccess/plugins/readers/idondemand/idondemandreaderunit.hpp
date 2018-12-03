@@ -9,6 +9,7 @@
 
 #include <logicalaccess/readerproviders/readerunit.hpp>
 #include <logicalaccess/plugins/readers/idondemand/idondemandreaderunitconfiguration.hpp>
+#include <logicalaccess/plugins/readers/idondemand/lla_readers_idondemand_api.hpp>
 
 namespace logicalaccess
 {
@@ -19,7 +20,7 @@ class IdOnDemandReaderProvider;
 /**
  * \brief The IdOnDemand reader unit class.
  */
-class LIBLOGICALACCESS_API IdOnDemandReaderUnit : public ReaderUnit
+class LLA_READERS_IDONDEMAND_API IdOnDemandReaderUnit : public ReaderUnit
 {
   public:
     /**

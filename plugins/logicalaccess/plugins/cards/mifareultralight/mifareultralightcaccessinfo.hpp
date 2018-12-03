@@ -15,7 +15,8 @@ namespace logicalaccess
 /**
  * \brief A Mifare Ultralight C access informations.
  */
-class LIBLOGICALACCESS_API MifareUltralightCAccessInfo : public MifareUltralightAccessInfo
+class LLA_CARDS_MIFAREULTRALIGHT_API MifareUltralightCAccessInfo
+    : public MifareUltralightAccessInfo
 {
   public:
 #ifndef SWIG

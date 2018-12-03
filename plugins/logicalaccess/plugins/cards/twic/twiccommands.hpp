@@ -10,13 +10,14 @@
 #include <logicalaccess/cards/accessinfo.hpp>
 #include <logicalaccess/cards/commands.hpp>
 #include <logicalaccess/plugins/cards/twic/twiclocation.hpp>
+#include <logicalaccess/plugins/cards/twic/lla_cards_twic_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief The Twic commands class.
  */
-class LIBLOGICALACCESS_API TwicCommands
+class LLA_CARDS_TWIC_API TwicCommands
 {
   public:
     virtual ~TwicCommands() = default;

@@ -9,7 +9,7 @@
 
 #include <logicalaccess/plugins/cards/iso7816/iso7816chip.hpp>
 #include <logicalaccess/plugins/cards/twic/twiccommands.hpp>
-
+#include <logicalaccess/plugins/cards/twic/lla_cards_twic_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -21,7 +21,7 @@ namespace logicalaccess
 /**
  * \brief The Twic base chip class.
  */
-class LIBLOGICALACCESS_API TwicChip : public ISO7816Chip
+class LLA_CARDS_TWIC_API TwicChip : public ISO7816Chip
 {
   public:
     /**

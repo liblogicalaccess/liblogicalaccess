@@ -9,7 +9,7 @@
 
 #include <logicalaccess/cards/readercardadapter.hpp>
 #include <logicalaccess/readerproviders/iso14443readercommunication.hpp>
-
+#include <logicalaccess/plugins/readers/a3mlgm5600/lla_readers_a3mlgm5600_api.hpp>
 #include <string>
 #include <vector>
 
@@ -20,7 +20,7 @@ namespace logicalaccess
 /**
  * \brief A default A3MLGM5600 reader/card adapter class.
  */
-class LIBLOGICALACCESS_API A3MLGM5600ReaderCardAdapter
+class LLA_READERS_A3MLGM5600_API A3MLGM5600ReaderCardAdapter
     : public ReaderCardAdapter,
       public ISO14443ReaderCommunication
 {

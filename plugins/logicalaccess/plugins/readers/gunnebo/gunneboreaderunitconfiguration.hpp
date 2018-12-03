@@ -8,13 +8,15 @@
 #define LOGICALACCESS_GUNNEBOREADERUNITCONFIGURATION_HPP
 
 #include <logicalaccess/readerproviders/readerunitconfiguration.hpp>
+#include <logicalaccess/plugins/readers/gunnebo/lla_readers_gunnebo_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief The Gunnebo reader unit configuration base class.
  */
-class LIBLOGICALACCESS_API GunneboReaderUnitConfiguration : public ReaderUnitConfiguration
+class LLA_READERS_GUNNEBO_API GunneboReaderUnitConfiguration
+    : public ReaderUnitConfiguration
 {
   public:
     /**

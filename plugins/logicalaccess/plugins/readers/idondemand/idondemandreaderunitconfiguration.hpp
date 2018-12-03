@@ -8,13 +8,14 @@
 #define LOGICALACCESS_IDONDEMANDREADERUNITCONFIGURATION_HPP
 
 #include <logicalaccess/readerproviders/readerunitconfiguration.hpp>
+#include <logicalaccess/plugins/readers/idondemand/lla_readers_idondemand_api.hpp>
 
 namespace logicalaccess
 {
 /**
  * \brief The IdOnDemand reader unit configuration base class.
  */
-class LIBLOGICALACCESS_API IdOnDemandReaderUnitConfiguration
+class LLA_READERS_IDONDEMAND_API IdOnDemandReaderUnitConfiguration
     : public ReaderUnitConfiguration
 {
   public:

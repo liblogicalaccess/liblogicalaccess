@@ -2,15 +2,15 @@
 #include <memory>
 #include <logicalaccess/readerproviders/readerprovider.hpp>
 #include <logicalaccess/plugins/readers/rpleth/rplethreaderprovider.hpp>
-#include <logicalaccess/logicalaccess_api.hpp>
+
 
 extern "C" {
-LIBLOGICALACCESS_API char *getLibraryName()
+LLA_READERS_RPLETH_API char *getLibraryName()
 {
     return (char *)"Rpleth";
 }
 
-LIBLOGICALACCESS_API void
+LLA_READERS_RPLETH_API void
 getRplethReader(std::shared_ptr<logicalaccess::ReaderProvider> *rp)
 {
     if (rp != nullptr)
@@ -19,8 +19,8 @@ getRplethReader(std::shared_ptr<logicalaccess::ReaderProvider> *rp)
     }
 }
 
-LIBLOGICALACCESS_API bool getReaderInfoAt(unsigned int index, char *readername,
-                                          size_t readernamelen, void **getterfct)
+LLA_READERS_RPLETH_API bool getReaderInfoAt(unsigned int index, char *readername,
+                                            size_t readernamelen, void **getterfct)
 {
     bool ret = false;
     if (readername != nullptr && readernamelen == PLUGINOBJECT_MAXLEN &&

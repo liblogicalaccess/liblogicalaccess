@@ -8,26 +8,15 @@
 #include <logicalaccess/plugins/cards/desfire/nxpav1keydiversification.hpp>
 #include <logicalaccess/plugins/cards/desfire/omnitechkeydiversification.hpp>
 #include <logicalaccess/cards/keydiversification.hpp>
-
-#ifdef _MSC_VER
-#include <logicalaccess/msliblogicalaccess.h>
-#else
-#ifndef LIBLOGICALACCESS_API
-#define LIBLOGICALACCESS_API
-#endif
-#ifndef DISABLE_PRAGMA_WARNING
-#define DISABLE_PRAGMA_WARNING /**< \brief winsmcrd.h was modified to support this       \
-                                  macro, to avoid MSVC specific warnings pragma */
-#endif
-#endif
+#include <logicalaccess/plugins/cards/desfire/lla_cards_desfire_api.hpp>
 
 extern "C" {
-LIBLOGICALACCESS_API char *getLibraryName()
+LLA_CARDS_DESFIRE_API char *getLibraryName()
 {
     return (char *)"DESFire";
 }
 
-LIBLOGICALACCESS_API void getDESFireEV1Chip(std::shared_ptr<logicalaccess::Chip> *chip)
+LLA_CARDS_DESFIRE_API void getDESFireEV1Chip(std::shared_ptr<logicalaccess::Chip> *chip)
 {
     if (chip != nullptr)
     {
@@ -35,7 +24,7 @@ LIBLOGICALACCESS_API void getDESFireEV1Chip(std::shared_ptr<logicalaccess::Chip>
     }
 }
 
-LIBLOGICALACCESS_API void getDESFireChip(std::shared_ptr<logicalaccess::Chip> *chip)
+LLA_CARDS_DESFIRE_API void getDESFireChip(std::shared_ptr<logicalaccess::Chip> *chip)
 {
     if (chip != nullptr)
     {
@@ -43,7 +32,7 @@ LIBLOGICALACCESS_API void getDESFireChip(std::shared_ptr<logicalaccess::Chip> *c
     }
 }
 
-LIBLOGICALACCESS_API void getNXPAV1Diversification(
+LLA_CARDS_DESFIRE_API void getNXPAV1Diversification(
     std::shared_ptr<logicalaccess::KeyDiversification> *keydiversification)
 {
     if (keydiversification != nullptr)
@@ -52,7 +41,7 @@ LIBLOGICALACCESS_API void getNXPAV1Diversification(
     }
 }
 
-LIBLOGICALACCESS_API void getNXPAV2Diversification(
+LLA_CARDS_DESFIRE_API void getNXPAV2Diversification(
     std::shared_ptr<logicalaccess::KeyDiversification> *keydiversification)
 {
     if (keydiversification != nullptr)
@@ -61,7 +50,7 @@ LIBLOGICALACCESS_API void getNXPAV2Diversification(
     }
 }
 
-LIBLOGICALACCESS_API void getSagemDiversification(
+LLA_CARDS_DESFIRE_API void getSagemDiversification(
     std::shared_ptr<logicalaccess::KeyDiversification> *keydiversification)
 {
     if (keydiversification != nullptr)
@@ -70,7 +59,7 @@ LIBLOGICALACCESS_API void getSagemDiversification(
     }
 }
 
-LIBLOGICALACCESS_API void getOmnitechDiversification(
+LLA_CARDS_DESFIRE_API void getOmnitechDiversification(
     std::shared_ptr<logicalaccess::KeyDiversification> *keydiversification)
 {
     if (keydiversification != nullptr)
@@ -80,8 +69,8 @@ LIBLOGICALACCESS_API void getOmnitechDiversification(
     }
 }
 
-LIBLOGICALACCESS_API bool getChipInfoAt(unsigned int index, char *chipname,
-                                        size_t chipnamelen, void **getterfct)
+LLA_CARDS_DESFIRE_API bool getChipInfoAt(unsigned int index, char *chipname,
+                                         size_t chipnamelen, void **getterfct)
 {
     bool ret = false;
     if (chipname != nullptr && chipnamelen == PLUGINOBJECT_MAXLEN && getterfct != nullptr)

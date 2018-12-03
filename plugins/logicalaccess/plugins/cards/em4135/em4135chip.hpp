@@ -8,7 +8,7 @@
 #define LOGICALACCESS_EM4135CHIP_HPP
 
 #include <logicalaccess/cards/chip.hpp>
-
+#include <logicalaccess/plugins/cards/em4135/lla_cards_em4135_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -19,7 +19,7 @@ namespace logicalaccess
 /**
  * \brief The EM4135 base chip class.
  */
-class LIBLOGICALACCESS_API EM4135Chip : public Chip
+class LLA_CARDS_EM4135_API EM4135Chip : public Chip
 {
   public:
     /**

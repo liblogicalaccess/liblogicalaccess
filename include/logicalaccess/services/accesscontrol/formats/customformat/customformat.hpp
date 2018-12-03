@@ -17,7 +17,7 @@ namespace logicalaccess
 /**
  * \brief A custom format.
  */
-class LIBLOGICALACCESS_API CustomFormat : public Format
+class LLA_CORE_API CustomFormat : public Format
 {
   public:
     /**
