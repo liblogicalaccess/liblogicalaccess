@@ -1,8 +1,9 @@
 from conans import ConanFile, CMake, tools
+import subprocess
 
 class LLAConan(ConanFile):
     name = "LogicalAccess"
-    version = "2.1.0"
+    version = subprocess.check_output(["Gitversion", "/output", "json", "/showvariable", "MajorMinorPatch"]).decode().strip("\n").strip("\r")
     license = "https://github.com/islog/liblogicalaccess/blob/master/LICENSE.LibLogicalAccess.txt"
     url = "https://github.com/islog/liblogicalaccess"
     description = "ISLOG RFID library"
