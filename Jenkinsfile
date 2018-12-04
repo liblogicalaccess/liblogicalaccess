@@ -94,7 +94,7 @@ pipeline {
         stage('Minimal Feature Build') {
             when { expression { params.BUILD_COMMON_VARIANTS } }
             steps {
-                startJobForProfiles(["lla/x64_msvc_release_min",
+                lla.startJobForProfiles(["lla/x64_msvc_release_min",
 									"lla/x64_msvc_debug_min",
 									"lla/x86_msvc_release_min",
 									"lla/x86_msvc_debug_min"])
@@ -104,7 +104,7 @@ pipeline {
         stage('Complete Feature Build') {
             when { expression { params.BUILD_COMMON_VARIANTS } }
             steps {
-                startJobForProfiles(["lla/x64_msvc_release_full",
+                lla.startJobForProfiles(["lla/x64_msvc_release_full",
 									"lla/x64_msvc_debug_full",
 									"lla/x86_msvc_release_full",
 									"lla/x86_msvc_debug_full"])
