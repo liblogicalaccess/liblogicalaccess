@@ -22,9 +22,6 @@ pipeline {
         booleanParam(name: 'BUILD_COMMON_VARIANTS',
                 defaultValue: true,
                 description: 'Build common variants.')
-        booleanParam(name: 'BUILD_ALL_VARIANTS',
-                defaultValue: false,
-                description: 'Build all variants of options.')
         booleanParam(name: 'BUILD_DEBUG',
                 defaultValue: true,
                 description: 'Perform DEBUG build')
@@ -57,7 +54,7 @@ pipeline {
                     node('linux') {
                         docker.image(ANDROID_DOCKER_IMAGE_NAME).inside {
                             checkout scm
-                            lla.conanPerformAllWithProfile('../profiles/arm_clang_android_21_debug')
+                            lla.conanPerformAllWithProfile('lla/arm_clang_android_21_debug')
                         }
                     }
                 }
@@ -72,7 +69,7 @@ pipeline {
                     node('linux') {
                         docker.image(ANDROID_DOCKER_IMAGE_NAME).inside {
                             checkout scm
-                            lla.conanPerformAllWithProfile('../profiles/arm_clang_android_21')
+                            lla.conanPerformAllWithProfile('lla/arm_clang_android_21')
                         }
                     }
                 }
@@ -87,7 +84,7 @@ pipeline {
                     node('linux') {
                         docker.image(ANDROID_DOCKER_IMAGE_NAME).inside {
                             checkout scm
-                            lla.conanPerformAllWithProfile('../profiles/x86_clang_android_21')
+                            lla.conanPerformAllWithProfile('lla/x86_clang_android_21')
                         }
                     }
                 }
@@ -97,21 +94,20 @@ pipeline {
         stage('Minimal Feature Build') {
             when { expression { params.BUILD_COMMON_VARIANTS } }
             steps {
-                buildCommonVariants(true)
+                startJobForProfiles(["lla/x64_msvc_release_min",
+									"lla/x64_msvc_debug_min",
+									"lla/x86_msvc_release_min",
+									"lla/x86_msvc_debug_min"])
             }
         }
 
         stage('Complete Feature Build') {
             when { expression { params.BUILD_COMMON_VARIANTS } }
             steps {
-                buildCommonVariants(false)
-            }
-        }
-
-        stage('All Variants Build') {
-            when { expression { params.BUILD_ALL_VARIANTS } }
-            steps {
-                testDynamic()
+                startJobForProfiles(["lla/x64_msvc_release_full",
+									"lla/x64_msvc_debug_full",
+									"lla/x86_msvc_release_full",
+									"lla/x86_msvc_debug_full"])
             }
         }
     }
@@ -159,15 +155,6 @@ def buildCommonVariants(minimalFeatures) {
     }
 
     def combinations = utils.generateOptionsCombinations(boolBuildOptions, hardcodedOptions)
-    lla.startJobForCombinations(combinations)
-}
-
-def testDynamic() {
-    def boolBuildOptions = ['LLA_BUILD_IKS',
-                            'LLA_BUILD_UNITTEST',
-                            'LLA_BUILD_PKCS',
-                            'LLA_BUILD_RFIDEAS']
-    def combinations = utils.generateOptionsCombinations(boolBuildOptions, [:])
     lla.startJobForCombinations(combinations)
 }
 

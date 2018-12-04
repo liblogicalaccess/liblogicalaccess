@@ -1,4 +1,0 @@
-include(arm_clang_android_21)
-
-[settings]
-build_type=Debug
