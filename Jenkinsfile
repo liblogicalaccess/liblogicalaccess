@@ -19,9 +19,6 @@ pipeline {
     }
 
     parameters {
-        booleanParam(name: 'BUILD_COMMON_VARIANTS',
-                defaultValue: true,
-                description: 'Build common variants.')
         booleanParam(name: 'BUILD_DEBUG',
                 defaultValue: true,
                 description: 'Perform DEBUG build')
@@ -92,7 +89,6 @@ pipeline {
         }
 
         stage('Minimal Feature Build') {
-            when { expression { params.BUILD_COMMON_VARIANTS } }
             steps {
 				script {
 					lla.startJobForProfiles(["lla/x64_msvc_release_min",
@@ -104,7 +100,6 @@ pipeline {
         }
 
         stage('Complete Feature Build') {
-            when { expression { params.BUILD_COMMON_VARIANTS } }
             steps {
 				script {
 					lla.startJobForProfiles(["lla/x64_msvc_release_full",
