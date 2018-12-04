@@ -1,5 +1,4 @@
 from conans import ConanFile, CMake, tools
-import subprocess
 
 class LLAConan(ConanFile):
     name = "LogicalAccess"
