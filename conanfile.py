@@ -3,7 +3,11 @@ import subprocess
 
 class LLAConan(ConanFile):
     name = "LogicalAccess"
-    version = subprocess.check_output(["Gitversion", "/output", "json", "/showvariable", "MajorMinorPatch"]).decode().strip("\n").strip("\r")
+    try:
+        version = subprocess.check_output(["Gitversion", "/output", "json", "/showvariable", "MajorMinorPatch"]).decode().strip("\n").strip("\r")
+    except subprocess.CalledProcessError, e:
+        print "Gitversion failure output:\n", e.output
+        raise
     license = "https://github.com/islog/liblogicalaccess/blob/master/LICENSE.LibLogicalAccess.txt"
     url = "https://github.com/islog/liblogicalaccess"
     description = "ISLOG RFID library"
