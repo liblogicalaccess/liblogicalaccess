@@ -18,7 +18,7 @@ class LLAConan(ConanFile):
     if tools.os_info.is_windows:
         default_options = '''
         OpenSSL:shared=True
-        boost:shared=True
+        boost:shared=False
         gtest:shared=True
         LLA_BUILD_IKS=True
         LLA_BUILD_PKCS=True
