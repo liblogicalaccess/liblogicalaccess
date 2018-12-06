@@ -47,14 +47,9 @@ pipeline {
             when { expression { params.BUILD_ANDROID } }
             steps {
                 script {
-                    // Test to see how parallel that is
-                    lla.startJobForProfiles(['lla/arm_clang_android_21_debug'])
-                    lla.startJobForProfiles(['lla/arm_clang_android_21'])
-                    lla.startJobForProfiles(['lla/x86_clang_android_21'])
-                    
-                    //lla.startJobForProfiles(['lla/arm_clang_android_21_debug',
-                    //                         'lla/arm_clang_android_21',
-                    //                         'lla/x86_clang_android_21'])
+                    lla.startJobForProfiles(['lla/arm_clang_android_21_debug',
+                                             'lla/arm_clang_android_21',
+                                             'lla/x86_clang_android_21'])
                 }
             }
         }
