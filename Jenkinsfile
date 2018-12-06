@@ -43,48 +43,18 @@ pipeline {
      */
 
     stages {
-        stage('Android ARM Debug') {
-            // Build with no additional option, simply using a Conan profile file.
-            // Also for now we assume any profile is android, which wont always be true
+        stage('Android') {
             when { expression { params.BUILD_ANDROID } }
             steps {
                 script {
-                    node('linux') {
-                        docker.image(ANDROID_DOCKER_IMAGE_NAME).inside {
-                            checkout scm
-                            lla.conanPerformAllWithProfile('lla/arm_clang_android_21_debug')
-                        }
-                    }
-                }
-            }
-        }
-        stage('Android ARM') {
-            // Build with no additional option, simply using a Conan profile file.
-            // Also for now we assume any profile is android, which wont always be true
-            when { expression { params.BUILD_ANDROID } }
-            steps {
-                script {
-                    node('linux') {
-                        docker.image(ANDROID_DOCKER_IMAGE_NAME).inside {
-                            checkout scm
-                            lla.conanPerformAllWithProfile('lla/arm_clang_android_21')
-                        }
-                    }
-                }
-            }
-        }
-        stage('Android x86') {
-            // Build with no additional option, simply using a Conan profile file.
-            // Also for now we assume any profile is android, which wont always be true
-            when { expression { params.BUILD_ANDROID } }
-            steps {
-                script {
-                    node('linux') {
-                        docker.image(ANDROID_DOCKER_IMAGE_NAME).inside {
-                            checkout scm
-                            lla.conanPerformAllWithProfile('lla/x86_clang_android_21')
-                        }
-                    }
+                    // Test to see how parallel that is
+                    lla.startJobForProfiles(['lla/arm_clang_android_21_debug'])
+                    lla.startJobForProfiles(['lla/arm_clang_android_21'])
+                    lla.startJobForProfiles(['lla/x86_clang_android_21'])
+                    
+                    //lla.startJobForProfiles(['lla/arm_clang_android_21_debug',
+                    //                         'lla/arm_clang_android_21',
+                    //                         'lla/x86_clang_android_21'])
                 }
             }
         }
@@ -135,31 +105,6 @@ pipeline {
             }
         }
     }
-}
-
-/**
- * Generate stages to build common variants of LogicalAccess.
- *
- * If minimalFeatures is false, build everything we can with FALSE, otherwise
- * build with TRUE.
- */
-def buildCommonVariants(minimalFeatures) {
-    def boolBuildOptions = ['LLA_BUILD_UNITTEST']
-    def hardcodedOptions = [:]
-
-    if (minimalFeatures) {
-        hardcodedOptions = ['LLA_BUILD_PKCS'   : 'False',
-                            'LLA_BUILD_RFIDEAS': 'False',
-                            'LLA_BUILD_IKS'    : 'False']
-
-    } else {
-        hardcodedOptions = ['LLA_BUILD_PKCS'   : 'True',
-                            'LLA_BUILD_RFIDEAS': 'True',
-                            'LLA_BUILD_IKS'    : 'True']
-    }
-
-    def combinations = utils.generateOptionsCombinations(boolBuildOptions, hardcodedOptions)
-    lla.startJobForCombinations(combinations)
 }
 
 def debPackageBuild() {
