@@ -89,17 +89,6 @@ pipeline {
             }
         }
 
-        stage('Linux') {
-            steps {
-                script {
-                    lla.startJobForProfiles(["lla/x64_gcc6_release_min",
-                                             "lla/x64_gcc6_debug_min",
-                                             "lla/x86_msvc_release_min",
-                                             "lla/x86_msvc_debug_min"])
-                }
-            }
-        }
-
         stage('Minimal Feature Build') {
             steps {
                 script {

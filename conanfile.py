@@ -34,10 +34,10 @@ class LLAConan(ConanFile):
         LLA_BUILD_RFIDEAS=False
         LLA_BUILD_UNITTEST=False'''
 
-    def config_options(self):
-        if self.settings.os != 'Windows':
-            # This options is not used on Linux
-            del self.options.LLA_BUILD_RFIDEAS
+#    def config_options(self):
+#        if self.settings.os != 'Windows':
+#            # This options is not used on Linux
+#            del self.options.LLA_BUILD_RFIDEAS
         
     def requirements(self):
         if tools.os_info.is_windows and self.options.LLA_BUILD_RFIDEAS:
