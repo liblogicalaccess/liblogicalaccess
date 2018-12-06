@@ -6,6 +6,7 @@ pipeline {
     options {
         gitLabConnection('Gitlab Pontos')
         disableConcurrentBuilds()
+        lock label: 'CONAN_CONFIGURATION_LOCK', quantity: 1
     }
 
     environment {
@@ -88,25 +89,40 @@ pipeline {
             }
         }
 
+        stage('Linux') {
+            steps {
+                script {
+                    lla.startJobForProfiles(["lla/x64_gcc6_release_min",
+                                             "lla/x64_gcc6_debug_min",
+                                             "lla/x86_msvc_release_min",
+                                             "lla/x86_msvc_debug_min"])
+                }
+            }
+        }
+
         stage('Minimal Feature Build') {
             steps {
-				script {
-					lla.startJobForProfiles(["lla/x64_msvc_release_min",
-										"lla/x64_msvc_debug_min",
-										"lla/x86_msvc_release_min",
-										"lla/x86_msvc_debug_min"])
-				}
+                script {
+                    lla.startJobForProfiles(["lla/x64_gcc6_release_min",
+                                             "lla/x64_gcc6_debug_min",
+                                             "lla/x64_msvc_release_min",
+                                             "lla/x64_msvc_debug_min",
+                                             "lla/x86_msvc_release_min",
+                                             "lla/x86_msvc_debug_min"])
+                }
             }
         }
 
         stage('Complete Feature Build') {
             steps {
-				script {
-					lla.startJobForProfiles(["lla/x64_msvc_release_full",
-										"lla/x64_msvc_debug_full",
-										"lla/x86_msvc_release_full",
-										"lla/x86_msvc_debug_full"])
-				}
+                script {
+                    lla.startJobForProfiles(["lla/x64_gcc6_release_full",
+                                             "lla/x64_gcc6_debug_full",
+                                             "lla/x64_msvc_release_full",
+                                             "lla/x64_msvc_debug_full",
+                                             "lla/x86_msvc_release_full",
+                                             "lla/x86_msvc_debug_full"])
+                }
             }
         }
     }

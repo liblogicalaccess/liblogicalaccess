@@ -34,9 +34,14 @@ class LLAConan(ConanFile):
         LLA_BUILD_RFIDEAS=False
         LLA_BUILD_UNITTEST=False'''
 
+    def config_options(self):
+        if self.settings.os != 'Windows':
+            # This options is not used on Linux
+            del self.options.LLA_BUILD_RFIDEAS
+        
     def requirements(self):
         if tools.os_info.is_windows and self.options.LLA_BUILD_RFIDEAS:
-            self.requires('rfideas/7.1.5@xaqq/stable')
+            self.requires('rfideas/7.1.5@cis/stable')
         if self.options.LLA_BUILD_IKS:
             self.requires('grpc/1.14.1@inexorgame/stable')
         if self.options.LLA_BUILD_UNITTEST:
@@ -49,7 +54,7 @@ class LLAConan(ConanFile):
     def configure_cmake(self):
         cmake = CMake(self, build_type=self.settings.build_type)
         if self.settings.os == 'Android':
-            # Workaround for avoid conan passing -stdlib=libc++
+            # Workaround to avoid conan passing -stdlib=libc++
             # to compiler. See https://github.com/conan-io/conan/issues/2856
             cmake.definitions['CONAN_LIBCXX'] = ''
             cmake.definitions['LLA_BOOST_ASIO_HAS_STD_STRING_VIEW'] = 1
@@ -69,7 +74,7 @@ class LLAConan(ConanFile):
         else:
             cmake.definitions['LLA_BUILD_UNITTEST'] = False
             
-        if self.options.LLA_BUILD_RFIDEAS:
+        if 'LLA_BUILD_RFIDEAS' in self.options and self.options.LLA_BUILD_RFIDEAS:
             cmake.definitions['LLA_BUILD_RFIDEAS'] = True
         else:
             cmake.definitions['LLA_BUILD_RFIDEAS'] = False
