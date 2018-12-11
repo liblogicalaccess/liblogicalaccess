@@ -8,7 +8,6 @@
 #include <logicalaccess/plugins/crypto/openssl.hpp>
 #include <logicalaccess/plugins/crypto/openssl_symmetric_cipher_context.hpp>
 #include <logicalaccess/plugins/crypto/symmetric_key.hpp>
-#include <logicalaccess/plugins/crypto/sha.hpp>
 #include <assert.h>
 #include <cstring>
 

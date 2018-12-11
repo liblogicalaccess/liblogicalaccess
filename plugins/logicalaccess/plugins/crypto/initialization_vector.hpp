@@ -11,6 +11,7 @@
 #include <vector>
 #include <iostream>
 #include <logicalaccess/lla_fwd.hpp>
+#include "logicalaccess/plugins/crypto/lla_crypto_api.hpp"
 
 namespace logicalaccess
 {
@@ -19,9 +20,9 @@ namespace openssl
 /**
  * \brief An initialisation vector.
  *
- * InitializationVector serves as a base class for AESInitializationVector.
+ * InitializationVector serves as a base class for AESInitializationVector and DESInitializationVector.
  */
-class InitializationVector
+class LLA_CRYPTO_API InitializationVector
 {
   public:
     /**

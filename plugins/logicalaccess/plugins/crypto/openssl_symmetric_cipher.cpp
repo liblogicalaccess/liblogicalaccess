@@ -13,7 +13,6 @@
 #include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <logicalaccess/plugins/crypto/openssl_exception.hpp>
-#include <logicalaccess/plugins/crypto/sha.hpp>
 
 #include <cstring>
 

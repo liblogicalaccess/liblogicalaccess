@@ -14,7 +14,7 @@ namespace openssl
 /**
  * \brief Default PEM passphrase callback type.
  */
-typedef int PEMPassphraseCallback(char *, int, int, void *);
+typedef int (*PEMPassphraseCallback)(char *, int, int, void *);
 }
 }
 
