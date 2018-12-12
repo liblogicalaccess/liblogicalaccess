@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <logicalaccess/bufferhelper.hpp>
-#include "logicalaccess/TLV.hpp"
+#include "logicalaccess/tlv.hpp"
 
 
 TEST(test_tlv, parse)
@@ -11,7 +11,7 @@ TEST(test_tlv, parse)
     std::string hexstr = "80050680800A4081102B0601040181E43801010204018F6313820107";
 
     size_t consumed;
-    auto tlvs = parse_tlvs(BufferHelper::fromHexString(hexstr), consumed);
+    auto tlvs = TLV::parse_tlvs(BufferHelper::fromHexString(hexstr), consumed);
     ASSERT_EQ(3, tlvs.size());
     // Only the last 2 byttes, 9000 should have not been consumed.
     ASSERT_EQ(BufferHelper::fromHexString(hexstr).size(), consumed);
