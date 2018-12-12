@@ -465,52 +465,6 @@ void DESFireEV1STidSTRCommands::createCyclicRecordFile(
     getSTidSTRReaderCardAdapter()->sendCommand(0x00C0, command);
 }
 
-void DESFireEV1STidSTRCommands::iso_selectFile(unsigned short /*fid*/)
-{
-    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                             "Function not available with this reader.");
-}
-
-ByteVector DESFireEV1STidSTRCommands::iso_readRecords(unsigned short /*fid*/,
-                                                      unsigned char /*start_record*/,
-                                                      DESFireRecords /*record_number*/)
-{
-    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                             "Function not available with this reader.");
-    return ByteVector();
-}
-
-void DESFireEV1STidSTRCommands::iso_appendrecord(const ByteVector & /*data*/,
-                                                 unsigned short /*fid*/)
-{
-    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                             "Function not available with this reader.");
-}
-
-ByteVector DESFireEV1STidSTRCommands::iso_getChallenge(unsigned int /*length*/)
-{
-    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                             "Function not available with this reader.");
-    return ByteVector();
-}
-
-void DESFireEV1STidSTRCommands::iso_externalAuthenticate(
-    DESFireISOAlgorithm /*algorithm*/, bool /*isMasterCardKey*/, unsigned char /*keyno*/,
-    const ByteVector & /*data*/)
-{
-    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                             "Function not available with this reader.");
-}
-
-ByteVector DESFireEV1STidSTRCommands::iso_internalAuthenticate(
-    DESFireISOAlgorithm /*algorithm*/, bool /*isMasterCardKey*/, unsigned char /*keyno*/,
-    const ByteVector & /*RPCD2*/, unsigned int /*length*/)
-{
-    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                             "Function not available with this reader.");
-    return ByteVector();
-}
-
 void DESFireEV1STidSTRCommands::loadKey(std::shared_ptr<DESFireKey> key)
 {
     LOG(LogLevel::INFOS) << "Loading key from storage {" << key->serialize() << "}";
@@ -1032,13 +986,6 @@ void DESFireEV1STidSTRCommands::getValue(unsigned char fileno, EncryptionMode mo
         LOG(LogLevel::INFOS) << "Result value {0x" << std::hex << value << std::dec << "("
                              << value << ")}";
     }
-}
-
-void DESFireEV1STidSTRCommands::iso_selectApplication(ByteVector /*isoaid*/)
-{
-    LOG(LogLevel::ERRORS) << "Function not available with this reader.";
-    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                             "Function not available with this reader.");
 }
 
 void DESFireEV1STidSTRCommands::setConfiguration(bool formatCardEnabled,

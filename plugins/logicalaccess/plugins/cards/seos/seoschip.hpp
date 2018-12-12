@@ -7,8 +7,11 @@
 #ifndef LOGICALACCESS_SEOSCHIP_HPP
 #define LOGICALACCESS_SEOSCHIP_HPP
 
-#include <logicalaccess/cards/chip.hpp>
+
 #include <logicalaccess/plugins/cards/seos/lla_cards_seos_api.hpp>
+#include <logicalaccess/plugins/cards/iso7816/iso7816chip.hpp>
+#include <logicalaccess/plugins/cards/seos/seoscommands.hpp>
+
 #include <string>
 #include <vector>
 #include <iostream>
@@ -49,6 +52,15 @@ class LLA_CARDS_SEOS_API SEOSChip : public Chip
     std::shared_ptr<LocationNode> getRootLocationNode() override;
 
     std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
+
+	/**
+     * \brief Get the SEOS commands for I/O access.
+     * \return The SEOS commands.
+     */
+    std::shared_ptr<SEOSCommands> getSEOSCommands() const
+    {
+        return std::dynamic_pointer_cast<SEOSCommands>(getCommands());
+    }
 };
 }
 

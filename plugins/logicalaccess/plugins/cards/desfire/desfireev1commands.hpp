@@ -27,17 +27,6 @@ namespace logicalaccess
 #define DFEV1_INS_AUTHENTICATE_ISO 0x1A
 #define DFEV1_INS_AUTHENTICATE_AES 0xAA
 
-#define ISO7816_INS_APPEND_RECORD 0xE2
-#define ISO7816_INS_GET_CHALLENGE 0x84
-#define ISO7816_INS_READ_RECORDS 0xB2
-#define ISO7816_INS_EXTERNAL_AUTHENTICATE 0x82
-#define ISO7816_INS_INTERNAL_AUTHENTICATE 0x88
-#define ISO7816_INS_SELECT_FILE 0xA4
-#define ISO7816_INS_READ_BINARY 0xB0
-#define ISO7816_INS_UPDATE_BINARY 0xD6
-
-#define DFEV1_CLA_ISO_COMPATIBLE 0x00
-
 #define SELECT_FILE_BY_AID 0x04
 #define SELECT_FILE_BY_FID 0x00
 #endif
@@ -67,11 +56,6 @@ typedef enum {
     DFEV1_CMD_NOMACV = 0x01,
     DFEV1_CMD_MACV   = 0x02
 } DESFireEV1TransmissionMode;
-
-/**
- * \brief The DESFire EV1 transmission mode.
- */
-typedef enum { DF_RECORD_ONERECORD = 0x04, DF_RECORD_ALLRECORDS = 0x05 } DESFireRecords;
 
 /**
  * \brief The DESFire EV1 algorithm.
@@ -223,67 +207,6 @@ class LLA_CARDS_DESFIRE_API DESFireEV1Commands : public ICommands
                                         unsigned short isoFID = 0x00) = 0;
 
     /**
-     * \brief Select file under current DF.
-     * \param fid The FID
-     */
-    virtual void iso_selectFile(unsigned short fid = 0) = 0;
-
-    /**
-     * \brief Read records.
-     * \param fid The FID
-     * \param start_record The start record (0 = read last written record)
-     * \param record_number The number of records to read
-     * \return The record(s) data
-     */
-    virtual ByteVector
-    iso_readRecords(unsigned short fid = 0, unsigned char start_record = 0,
-                    DESFireRecords record_number = DF_RECORD_ONERECORD) = 0;
-
-    /**
-     * \brief Append a record to a file.
-     * \param data The record data
-     * \param fid The FID
-     */
-    virtual void iso_appendrecord(const ByteVector &data = ByteVector(),
-                                  unsigned short fid = 0) = 0;
-
-    /**
-     * \brief Get the ISO challenge for authentication.
-     * \param length The challenge length (8 = 2K3DES, 16 = 3K3DES and AES)
-     * \return The ISO challenge.
-     */
-    virtual ByteVector iso_getChallenge(unsigned int length = 8) = 0;
-
-    /**
-     * \brief ISO external authenticate.
-     * \param algorithm The ISO algorithm to use for authentication.
-     * \param isMasterCardKey True if the key to authenticate is the master card key,
-     * false otherwise.
-     * \param keyno The key number.
-     * \param data The data.
-     */
-    virtual void
-    iso_externalAuthenticate(DESFireISOAlgorithm algorithm = DF_ALG_BY_CONTEXT,
-                             bool isMasterCardKey = true, unsigned char keyno = 0x00,
-                             const ByteVector &data = ByteVector()) = 0;
-
-    /**
-     * \brief ISO internal authenticate.
-     * \param algorithm The ISO algorithm to use for authentication.
-     * \param isMasterCardKey True if the key to authenticate is the master card key,
-     * false otherwise.
-     * \param keyno The key number.
-     * \param RPCD2 The RPCD2.
-     * \param length The length.
-     * \return The cryptogram.
-     */
-    virtual ByteVector
-    iso_internalAuthenticate(DESFireISOAlgorithm algorithm = DF_ALG_BY_CONTEXT,
-                             bool isMasterCardKey = true, unsigned char keyno = 0x00,
-                             const ByteVector &RPCD2 = ByteVector(),
-                             unsigned int length = 16) = 0;
-
-    /**
      * \brief AuthenticateISO command.
      * \param keyno The key number.
      * \param algorithm The ISO algorithm to use for authentication.
@@ -375,15 +298,6 @@ class LLA_CARDS_DESFIRE_API DESFireEV1Commands : public ICommands
      * \return True on success, false otherwise.
      */
     // virtual bool getValue(int fileno, EncryptionMode mode, int& value) = 0;
-
-    /**
-     * \brief ISO select application command.
-     * \param isoaid The iso AID
-     */
-    virtual void iso_selectApplication(
-        ByteVector isoaid = ByteVector(DFEV1_DESFIRE_AID,
-                                       DFEV1_DESFIRE_AID +
-                                           sizeof(DFEV1_DESFIRE_AID))) = 0;
 
     /**
      * \brief Set the card configuration.

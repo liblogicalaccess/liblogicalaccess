@@ -2,7 +2,7 @@
 
 #include <logicalaccess/plugins/cards/epass/epasscrypto.hpp>
 #include <logicalaccess/plugins/cards/epass/utils.hpp>
-#include <logicalaccess/cards/commands.hpp>
+#include <logicalaccess/plugins/cards/iso7816/iso7816commands.hpp>
 
 namespace logicalaccess
 {
@@ -18,15 +18,9 @@ class LLA_CARDS_EPASS_API EPassCommands : public Commands
     void setReaderCardAdapter(std::shared_ptr<ReaderCardAdapter> adapter) override;
 
     bool selectApplication(const ByteVector &app_id);
-    bool selectEF(const ByteVector &file_id) const;
 
     bool selectIssuerApplication();
     bool authenticate(const std::string &mrz);
-
-    /**
-     * Read Binary of the currently selected file.
-     */
-    ByteVector readBinary(uint16_t offset, uint8_t length) const;
 
     /**
      * Retrieve the content of the EF.COM file.
@@ -67,6 +61,8 @@ class LLA_CARDS_EPASS_API EPassCommands : public Commands
      * of the chip's content.
      */
     void readSOD() const;
+
+	virtual std::shared_ptr<ISO7816Commands> getISO7816Commands() const = 0;
 
   private:
     ByteVector compute_hash(const ByteVector &file_id) const;

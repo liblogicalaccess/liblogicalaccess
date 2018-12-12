@@ -20,7 +20,9 @@ add_library(seoscards
 SET_TARGET_PROPERTIES(seoscards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 
 target_link_libraries(seoscards
+		iso7816cards
         logicalaccess)
+
 LLA_GENERATE_EXPORTS(LLA_CARDS_SEOS)
 
 install(FILES ${INCLUDE} DESTINATION ${HEADER_RELATIVE_INSTALL_DIR})

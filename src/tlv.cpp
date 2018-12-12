@@ -4,7 +4,7 @@
 
 #include <cassert>
 #include <stdint.h>
-#include <logicalaccess/TLV.hpp>
+#include <logicalaccess/tlv.hpp>
 #include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <iostream>
@@ -62,7 +62,7 @@ ByteVector TLV::compute() const
     return ret;
 }
 
-std::vector<TLVPtr> parse_tlvs(const ByteVector &bytes, size_t &bytes_consumed)
+std::vector<TLVPtr> TLV::parse_tlvs(const ByteVector &bytes, size_t &bytes_consumed)
 {
     size_t idx = 0;
     std::vector<TLVPtr> tlvs;
@@ -94,7 +94,7 @@ std::vector<TLVPtr> parse_tlvs(const ByteVector &bytes, size_t &bytes_consumed)
     return tlvs;
 }
 
-std::vector<TLVPtr> parse_tlvs(const ByteVector &bytes)
+std::vector<TLVPtr> TLV::parse_tlvs(const ByteVector &bytes)
 {
     size_t consumed;
     return parse_tlvs(bytes, consumed);

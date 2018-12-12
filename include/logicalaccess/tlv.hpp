@@ -59,14 +59,14 @@ class LLA_CORE_API TLV
      */
     ByteVector compute() const;
 
+	static std::vector<TLVPtr> parse_tlvs(const ByteVector &bytes,
+                                                size_t &bytes_consumed);
+    static std::vector<TLVPtr> parse_tlvs(const ByteVector &bytes);
+
   private:
     uint8_t tag_;
     ByteVector value_; // Either one of those
     TLVPtr subTLV_;    // will be used, but not both.
 };
-
-LLA_CORE_API std::vector<TLVPtr> parse_tlvs(const ByteVector &bytes,
-                                                    size_t &bytes_consumed);
-LLA_CORE_API std::vector<TLVPtr> parse_tlvs(const ByteVector &bytes);
 
 } // namespace logicalaccess

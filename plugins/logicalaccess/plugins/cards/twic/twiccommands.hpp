@@ -8,7 +8,7 @@
 #define LOGICALACCESS_TWICCOMMANDS_HPP
 
 #include <logicalaccess/cards/accessinfo.hpp>
-#include <logicalaccess/cards/commands.hpp>
+#include <logicalaccess/plugins/cards/iso7816/iso7816commands.hpp>
 #include <logicalaccess/plugins/cards/twic/twiclocation.hpp>
 #include <logicalaccess/plugins/cards/twic/lla_cards_twic_api.hpp>
 
@@ -88,14 +88,10 @@ class LLA_CARDS_TWIC_API TwicCommands
      */
     virtual ByteVector getSecurityObject() = 0;
 
-    /**
-     * \brief Get TWIC data object.
-     * \param data The data buffer.
-     * \param dataLength The buffer length.
-     * \param dataObject The data object.
-     * \return True on success, false otherwise.
-     */
-    virtual ByteVector getTWICData(int64_t dataObject) = 0;
+	virtual std::shared_ptr<ISO7816Commands> getISO7816Commands() const
+    {
+        return std::shared_ptr<ISO7816Commands>();
+    }
 };
 }
 

@@ -17,6 +17,7 @@
 #include <logicalaccess/plugins/readers/iso7816/commands/samav1iso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/samav2iso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev1iso7816commands.hpp>
+#include <logicalaccess/plugins/readers/iso7816/commands/epassiso7816commands.hpp>
 #include <logicalaccess/plugins/readers/pcsc/commands/mifarepcsccommands.hpp>
 #include <logicalaccess/plugins/readers/pcsc/commands/mifarescmcommands.hpp>
 #include <logicalaccess/plugins/readers/pcsc/commands/mifare_acr1222L_commands.hpp>
@@ -452,8 +453,8 @@ bool PCSCReaderUnit::waitRemoval(unsigned int maxwait)
                     {
                         if (Settings::getInstance()->SeeWaitRemovalLog)
                         {
-                            LOG(LogLevel::ERRORS) << "Cannot get status change: " << r
-                                                  << ".";
+                            LOG(LogLevel::ERRORS)
+                                << "Cannot get status change: " << r << ".";
                         }
                         PCSCDataTransport::CheckCardError(r);
                     }
@@ -815,7 +816,14 @@ std::shared_ptr<Chip> PCSCReaderUnit::createChip(std::string type)
         {
             configure_mifareplus_chip(chip, commands, resultChecker);
         }
-        else if (type == CHIP_PROX || type == CHIP_SEOS)
+        else if (type == CHIP_SEOS)
+        {
+            commands = LibraryManager::getInstance()->getCommands("SEOSISO7816");
+            if (!commands)
+                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                         "Could not load SEOSISO7816 Commands.");
+        }
+        else if (type == CHIP_PROX)
         {
             // Dummy command that simply holds reader card adapter and data transport.
             commands.reset(new DummyCommands());
@@ -833,9 +841,8 @@ std::shared_ptr<Chip> PCSCReaderUnit::createChip(std::string type)
         }
         else if (type == CHIP_EPASS)
         {
-            commands = std::make_shared<DummyCommands>();
+            commands = std::make_shared<EPassISO7816Commands>();
             rca      = std::make_shared<EPassReaderCardAdapter>();
-            rca->setDataTransport(std::make_shared<PCSCDataTransport>());
         }
         else if (type == CHIP_TOPAZ)
         {
@@ -1259,9 +1266,7 @@ void PCSCReaderUnit::configure_mifareplus_chip(
         else if (
             getPCSCType() == PCSC_RUT_OMNIKEY_XX21 ||
             getPCSCType() == PCSC_RUT_OMNIKEY_XX21 ||
-            getPCSCType() == PCSC_RUT_OMNIKEY_XX22 ||
-            getPCSCType() ==
-                PCSC_RUT_OMNIKEY_XX23 /* TODO: check it is really the same APDU for Omnikey 5022-CL and 5023-CL */)
+            getPCSCType() == PCSC_RUT_OMNIKEY_XX22 || getPCSCType() == PCSC_RUT_OMNIKEY_XX23 /* TODO: check it is really the same APDU for Omnikey 5022-CL and 5023-CL */)
         {
             commands.reset(new MifarePlusSL1Policy<MifarePlusOmnikeyXX21SL1Commands,
                                                    MifareOmnikeyXX21Commands>);
@@ -1513,8 +1518,8 @@ std::shared_ptr<Chip> PCSCReaderUnit::adjustChip(std::shared_ptr<Chip> c)
         }
         catch (LibLogicalAccessException &e)
         {
-            LOG(LogLevel::ERRORS) << "Exception while getting card serial number {"
-                                  << e.what() << "}";
+            LOG(LogLevel::ERRORS)
+                << "Exception while getting card serial number {" << e.what() << "}";
             c->setChipIdentifier(ByteVector());
         }
     }

@@ -7,6 +7,7 @@
 #include <logicalaccess/plugins/cards/desfire/desfireev1commands.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev1chip.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev1location.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 
 namespace logicalaccess
 {

@@ -44,8 +44,7 @@ void ISO7816StorageCardService::erase(std::shared_ptr<Location> location,
         memset(defaultdf, 0x00, sizeof(defaultdf));
         if (memcmp(icLocation->dfname, defaultdf, sizeof(defaultdf)))
         {
-            getISO7816Chip()->getISO7816Commands()->selectFile(icLocation->dfname,
-                                                               icLocation->dfnamelen);
+            getISO7816Chip()->getISO7816Commands()->selectFile(ByteVector(icLocation->dfname, icLocation->dfname + icLocation->dfnamelen));
         }
     }
 
@@ -91,8 +90,7 @@ void ISO7816StorageCardService::writeData(std::shared_ptr<Location> location,
         memset(defaultdf, 0x00, sizeof(defaultdf));
         if (memcmp(icLocation->dfname, defaultdf, sizeof(defaultdf)))
         {
-            getISO7816Chip()->getISO7816Commands()->selectFile(icLocation->dfname,
-                                                               icLocation->dfnamelen);
+            getISO7816Chip()->getISO7816Commands()->selectFile(ByteVector(icLocation->dfname, icLocation->dfname + icLocation->dfnamelen));
         }
     }
 
@@ -153,8 +151,7 @@ ByteVector ISO7816StorageCardService::readData(std::shared_ptr<Location> locatio
         memset(defaultdf, 0x00, sizeof(defaultdf));
         if (memcmp(icLocation->dfname, defaultdf, sizeof(defaultdf)))
         {
-            getISO7816Chip()->getISO7816Commands()->selectFile(icLocation->dfname,
-                                                               icLocation->dfnamelen);
+            getISO7816Chip()->getISO7816Commands()->selectFile(ByteVector(icLocation->dfname, icLocation->dfname + icLocation->dfnamelen));
         }
     }
 

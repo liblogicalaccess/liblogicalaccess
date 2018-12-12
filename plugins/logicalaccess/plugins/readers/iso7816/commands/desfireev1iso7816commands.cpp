@@ -301,103 +301,6 @@ void DESFireEV1ISO7816Commands::createCyclicRecordFile(
     transmit(DF_INS_CREATE_CYCLIC_RECORD_FILE, command);
 }
 
-void DESFireEV1ISO7816Commands::iso_selectFile(unsigned short fid)
-{
-    ByteVector data;
-    data.push_back(
-        static_cast<unsigned char>(static_cast<unsigned short>(fid & 0xff00) >> 8));
-    data.push_back(static_cast<unsigned char>(fid & 0xff));
-
-    getISO7816ReaderCardAdapter()->sendAPDUCommand(
-        DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_SELECT_FILE, 0x00, 0x0C,
-        static_cast<unsigned char>(data.size()), data);
-}
-
-ByteVector DESFireEV1ISO7816Commands::iso_readRecords(unsigned short fid,
-                                                      unsigned char start_record,
-                                                      DESFireRecords record_number)
-{
-    unsigned char p1 = start_record;
-    unsigned char p2 = record_number & 0x0f;
-    if (fid != 0)
-    {
-        p2 += static_cast<unsigned char>((fid & 0xff) << 3);
-    }
-
-    ByteVector result = getISO7816ReaderCardAdapter()->sendAPDUCommand(
-        DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_READ_RECORDS, p1, p2, 0x00);
-
-    return ByteVector(result.begin(), result.end() - 2);
-}
-
-void DESFireEV1ISO7816Commands::iso_appendrecord(const ByteVector &data,
-                                                 unsigned short fid)
-{
-    unsigned char p1 = 0x00;
-    unsigned char p2 = 0x00;
-    if (fid != 0)
-    {
-        p2 += static_cast<unsigned char>((fid & 0xff) << 3);
-    }
-
-    getISO7816ReaderCardAdapter()->sendAPDUCommand(
-        DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_APPEND_RECORD, p1, p2,
-        static_cast<unsigned char>(data.size()), data);
-}
-
-ByteVector DESFireEV1ISO7816Commands::iso_getChallenge(unsigned int length)
-{
-    ByteVector result = getISO7816ReaderCardAdapter()->sendAPDUCommand(
-        DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_GET_CHALLENGE, 0x00, 0x00,
-        static_cast<unsigned char>(length));
-
-    if (result[result.size() - 2] == 0x90 && result[result.size() - 1] == 0x00)
-    {
-        return ByteVector(result.begin(), result.end() - 2);
-    }
-    return result;
-}
-
-void DESFireEV1ISO7816Commands::iso_externalAuthenticate(DESFireISOAlgorithm algorithm,
-                                                         bool isMasterCardKey,
-                                                         unsigned char keyno,
-                                                         const ByteVector &data)
-{
-    unsigned char p1 = static_cast<unsigned char>(algorithm);
-    unsigned char p2 = 0x00;
-    if (!isMasterCardKey)
-    {
-        p2 = static_cast<unsigned char>(0x80 + (keyno & 0x0F));
-    }
-
-    getISO7816ReaderCardAdapter()->sendAPDUCommand(
-        DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_EXTERNAL_AUTHENTICATE, p1, p2,
-        static_cast<unsigned char>(data.size()), data);
-}
-
-ByteVector DESFireEV1ISO7816Commands::iso_internalAuthenticate(
-    DESFireISOAlgorithm algorithm, bool isMasterCardKey, unsigned char keyno,
-    const ByteVector &RPCD2, unsigned int length)
-{
-    unsigned char p1 = static_cast<unsigned char>(algorithm);
-    unsigned char p2 = 0x00;
-    if (!isMasterCardKey)
-    {
-        p2 = static_cast<unsigned char>(0x80 + (keyno & 0x0F));
-    }
-
-    ByteVector result = getISO7816ReaderCardAdapter()->sendAPDUCommand(
-        DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_INTERNAL_AUTHENTICATE, p1, p2,
-        static_cast<unsigned char>(RPCD2.size()), RPCD2,
-        static_cast<unsigned char>(length));
-
-    if (result[result.size() - 2] == 0x90 && result[result.size() - 1] == 0x00)
-    {
-        return ByteVector(result.begin(), result.end() - 2);
-    }
-    return result;
-}
-
 void DESFireEV1ISO7816Commands::authenticate(unsigned char keyno,
                                              std::shared_ptr<DESFireKey> key)
 {
@@ -487,7 +390,7 @@ void DESFireEV1ISO7816Commands::sam_iso_authenticate(std::shared_ptr<DESFireKey>
 
     ByteVector apduresult;
 
-    ByteVector RPICC1 = iso_getChallenge(16);
+    ByteVector RPICC1 = getISO7816Commands()->getChallenge(16);
 
     ByteVector data(2 + RPICC1.size());
 
@@ -594,9 +497,10 @@ void DESFireEV1ISO7816Commands::sam_iso_authenticate(std::shared_ptr<DESFireKey>
     ByteVector encRPICC2RPCD2a;
     try
     {
-        iso_externalAuthenticate(algorithm, isMasterCardKey, keyno, encRPCD1RPICC1);
-        encRPICC2RPCD2a =
-            iso_internalAuthenticate(algorithm, isMasterCardKey, keyno, RPCD2, 2 * 16);
+        auto iso7816cmd = getISO7816Commands();
+        iso7816cmd->externalAuthenticate(algorithm, isMasterCardKey, keyno, encRPCD1RPICC1);
+        encRPICC2RPCD2a = iso7816cmd->internalAuthenticate(algorithm, isMasterCardKey,
+                                                         keyno, RPCD2, 2 * 16);
     }
     catch (...)
     {
@@ -725,7 +629,8 @@ void DESFireEV1ISO7816Commands::iso_authenticate(std::shared_ptr<DESFireKey> cur
             openssl::DESInitializationVector::createNull()));
     }
 
-    ByteVector RPICC1 = iso_getChallenge(le);
+	auto iso7816cmd  = getISO7816Commands();
+    ByteVector RPICC1 = iso7816cmd->getChallenge(le);
 
     ByteVector RPCD1;
     RPCD1.resize(le);
@@ -754,7 +659,7 @@ void DESFireEV1ISO7816Commands::iso_authenticate(std::shared_ptr<DESFireKey> cur
             openssl::DESInitializationVector::createFromData(
                 ByteVector(cryptogram.end() - iv->data().size(), cryptogram.end()))));
     }
-    iso_externalAuthenticate(algorithm, isMasterCardKey, keyno, cryptogram);
+    iso7816cmd->externalAuthenticate(algorithm, isMasterCardKey, keyno, cryptogram);
 
     ByteVector RPCD2;
     RPCD2.resize(le);
@@ -767,7 +672,7 @@ void DESFireEV1ISO7816Commands::iso_authenticate(std::shared_ptr<DESFireKey> cur
                                  "Cannot retrieve cryptographically strong bytes");
     }
     cryptogram =
-        iso_internalAuthenticate(algorithm, isMasterCardKey, keyno, RPCD2, 2 * le);
+        iso7816cmd->internalAuthenticate(algorithm, isMasterCardKey, keyno, RPCD2, 2 * le);
 
     if (cryptogram.size() < 1)
         THROW_EXCEPTION_WITH_LOG(CardException, "iso_authenticate wrong internal data.");
@@ -1546,13 +1451,6 @@ void DESFireEV1ISO7816Commands::getValue(unsigned char fileno, EncryptionMode mo
     }
 }
 
-void DESFireEV1ISO7816Commands::iso_selectApplication(ByteVector isoaid)
-{
-    getISO7816ReaderCardAdapter()->sendAPDUCommand(
-        DFEV1_CLA_ISO_COMPATIBLE, ISO7816_INS_SELECT_FILE, SELECT_FILE_BY_AID, 0x00,
-        static_cast<unsigned char>(isoaid.size()), isoaid);
-}
-
 void DESFireEV1ISO7816Commands::setConfiguration(bool formatCardEnabled,
                                                  bool randomIdEnabled)
 {
@@ -1720,7 +1618,8 @@ void DESFireEV1ISO7816Commands::iks_iso_authenticate(std::shared_ptr<DESFireKey>
     assert(key->getKeyType() == DF_KEY_AES &&
            key->getKeyStorage()->getType() == KST_SERVER);
     std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
-    ByteVector RPICC1                     = iso_getChallenge(16); // 16 because aes
+    auto iso7816cmd                       = getISO7816Commands();
+    ByteVector RPICC1                     = iso7816cmd->getChallenge(16); // 16 because aes
     auto kst = std::dynamic_pointer_cast<IKSStorage>(key->getKeyStorage());
     assert(kst);
 
@@ -1758,11 +1657,11 @@ void DESFireEV1ISO7816Commands::iks_iso_authenticate(std::shared_ptr<DESFireKey>
                               */
 
     auto cryptogram = out_encrypted_cryptogram;
-    iso_externalAuthenticate(DF_ALG_AES, isMasterCardKey, keyno, cryptogram);
+    iso7816cmd->externalAuthenticate(DF_ALG_AES, isMasterCardKey, keyno, cryptogram);
 
     auto RPCD2 = ByteVector(out_random2.begin(), out_random2.end());
     cryptogram =
-        iso_internalAuthenticate(DF_ALG_AES, isMasterCardKey, keyno, RPCD2, 2 * 16);
+        iso7816cmd->internalAuthenticate(DF_ALG_AES, isMasterCardKey, keyno, RPCD2, 2 * 16);
 
     ByteVector out_session_key, out_session_key_ref;
     remote_crypto->iso_authenticate_step2(kst->getKeyIdentity(), cryptogram,
@@ -1863,7 +1762,8 @@ void DESFireEV1ISO7816Commands::pkcs_iso_authenticate(
     le = 16;
     cipher.reset(new openssl::AESCipher());
 
-    ByteVector RPICC1 = iso_getChallenge(le);
+	auto iso7816cmd   = getISO7816Commands();
+    ByteVector RPICC1 = iso7816cmd->getChallenge(le);
 
     ByteVector RPCD1;
     RPCD1.resize(le);
@@ -1880,7 +1780,7 @@ void DESFireEV1ISO7816Commands::pkcs_iso_authenticate(
     makecrypt1.insert(makecrypt1.end(), RPICC1.begin(), RPICC1.end());
     ByteVector cryptogram = aes_crypto.aes_encrypt(makecrypt1, {}, currentKey);
     iv                    = ByteVector(cryptogram.end() - 16, cryptogram.end());
-    iso_externalAuthenticate(DF_ALG_AES, isMasterCardKey, keyno, cryptogram);
+    iso7816cmd->externalAuthenticate(DF_ALG_AES, isMasterCardKey, keyno, cryptogram);
 
     ByteVector RPCD2;
     RPCD2.resize(le);
@@ -1893,7 +1793,7 @@ void DESFireEV1ISO7816Commands::pkcs_iso_authenticate(
                                  "Cannot retrieve cryptographically strong bytes");
     }
     cryptogram =
-        iso_internalAuthenticate(DF_ALG_AES, isMasterCardKey, keyno, RPCD2, 2 * le);
+        iso7816cmd->internalAuthenticate(DF_ALG_AES, isMasterCardKey, keyno, RPCD2, 2 * le);
 
     if (cryptogram.size() < 1)
         THROW_EXCEPTION_WITH_LOG(CardException, "iso_authenticate wrong internal data.");

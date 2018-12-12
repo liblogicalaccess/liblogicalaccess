@@ -50,3 +50,5 @@ cmake-build-debug/
 /samples/basic/.vs/basic/v15
 /samples/basic/*.db
 lla_*_api.hpp
+build
+/TurtleHub.log

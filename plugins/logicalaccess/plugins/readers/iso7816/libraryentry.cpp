@@ -4,6 +4,7 @@
 #include <logicalaccess/plugins/readers/iso7816/commands/twiciso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireiso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev1iso7816commands.hpp>
+#include <logicalaccess/plugins/readers/iso7816/commands/iso7816iso7816commands.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirechip.hpp>
 #include <logicalaccess/plugins/readers/iso7816/lla_readers_iso7816_api.hpp>
 
@@ -61,6 +62,15 @@ LLA_READERS_ISO7816_API void setCryptoContextDESFireEV1ISO7816Commands(
         std::dynamic_pointer_cast<logicalaccess::DESFireChip>(*chip)
             ->getCrypto()
             ->setCryptoContext((*chip)->getChipIdentifier());
+    }
+}
+
+LLA_READERS_ISO7816_API void
+getISO7816ISO7816Commands(std::shared_ptr<logicalaccess::Commands> *commands)
+{
+    if (commands != nullptr)
+    {
+        *commands = std::make_shared<logicalaccess::ISO7816ISO7816Commands>();
     }
 }
 }

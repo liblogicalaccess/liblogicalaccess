@@ -155,66 +155,6 @@ class LLA_READERS_ISO7816_API DESFireEV1ISO7816Commands : public DESFireISO7816C
                                 unsigned short isoFID) override;
 
     /**
-     * \brief Select file under current DF.
-     * \param fid The FID
-     */
-    void iso_selectFile(unsigned short fid = 0) override;
-
-    /**
-     * \brief Read records.
-     * \param fid The FID
-     * \param start_record The start record (0 = read last written record)
-     * \param record_number The number of records to read
-     * \return The record(s) data
-     */
-    ByteVector
-    iso_readRecords(unsigned short fid = 0, unsigned char start_record = 0,
-                    DESFireRecords record_number = DF_RECORD_ONERECORD) override;
-
-    /**
-     * \brief Append a record to a file.
-     * \param data The record data
-     * \param fid The FID
-     */
-    void iso_appendrecord(const ByteVector &data = ByteVector(),
-                          unsigned short fid     = 0) override;
-
-    /**
-     * \brief Get the ISO challenge for authentication.
-     * \param length The challenge length (8 = 2K3DES, 16 = 3K3DES and AES)
-     * \return The ISO challenge.
-     */
-    ByteVector iso_getChallenge(unsigned int length = 8) override;
-
-    /**
-     * \brief ISO external authenticate.
-     * \param algorithm The ISO algorithm to use for authentication.
-     * \param isMasterCardKey True if the key to authenticate is the master card key,
-     * false otherwise.
-     * \param keyno The key number.
-     * \param data The data.
-     */
-    void iso_externalAuthenticate(DESFireISOAlgorithm algorithm = DF_ALG_BY_CONTEXT,
-                                  bool isMasterCardKey = true, unsigned char keyno = 0x00,
-                                  const ByteVector &data = ByteVector()) override;
-
-    /**
-     * \brief ISO internal authenticate.
-     * \param algorithm The ISO algorithm to use for authentication.
-     * \param isMasterCardKey True if the key to authenticate is the master card key,
-     * false otherwise.
-     * \param keyno The key number.
-     * \param RPCD2 The RPCD2.
-     * \param length The length.
-     * \return The cryptogram.
-     */
-    ByteVector iso_internalAuthenticate(DESFireISOAlgorithm algorithm = DF_ALG_BY_CONTEXT,
-                                        bool isMasterCardKey          = true,
-                                        unsigned char keyno           = 0x00,
-                                        const ByteVector &RPCD2       = ByteVector(),
-                                        unsigned int length           = 16) override;
-
-    /**
      * \brief ISO authenticate.
      * \param key The key.
      * \param algorithm The ISO algorithm to use for authentication.
@@ -326,15 +266,6 @@ class LLA_READERS_ISO7816_API DESFireEV1ISO7816Commands : public DESFireISO7816C
      */
     void getValue(unsigned char fileno, EncryptionMode mode,
                   unsigned int &value) override;
-
-    /**
-     * \brief ISO select application command.
-     * \param isoaid The iso AID
-     */
-    void iso_selectApplication(
-        ByteVector isoaid = ByteVector(DFEV1_DESFIRE_AID,
-                                       DFEV1_DESFIRE_AID +
-                                           sizeof(DFEV1_DESFIRE_AID))) override;
 
     /**
      * \brief Set the card configuration.

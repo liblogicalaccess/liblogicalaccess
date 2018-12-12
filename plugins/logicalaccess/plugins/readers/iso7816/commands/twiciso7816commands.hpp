@@ -79,12 +79,13 @@ class LLA_READERS_ISO7816_API TwicISO7816Commands : public ISO7816ISO7816Command
      */
     ByteVector getSecurityObject() override;
 
-    /**
-     * \brief Get TWIC data object.
-     * \param dataObject The data object.
-     * \return the data.
-     */
-    ByteVector getTWICData(int64_t dataObject) override;
+	std::shared_ptr<ISO7816Commands> getISO7816Commands() const override
+    {
+        auto command = std::make_shared<ISO7816ISO7816Commands>();
+        command->setChip(getChip());
+        command->setReaderCardAdapter(getReaderCardAdapter());
+        return command;
+    }
 };
 }
 
