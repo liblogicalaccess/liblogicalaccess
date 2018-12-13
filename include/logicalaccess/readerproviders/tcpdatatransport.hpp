@@ -19,18 +19,18 @@ namespace logicalaccess
 /**
  * \brief An TCP data transport class.
  */
-class LLA_CORE_API TcpDataTransport : public DataTransport
+class LLA_CORE_API TCPDataTransport : public DataTransport
 {
   public:
     /**
      * \brief Constructor.
      */
-    TcpDataTransport();
+    TCPDataTransport();
 
     /**
      * \brief Destructor.
      */
-    virtual ~TcpDataTransport();
+    virtual ~TCPDataTransport();
 
     /**
      * \brief Get the transport type of this instance.

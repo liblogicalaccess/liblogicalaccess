@@ -17,7 +17,7 @@
 #include <boost/filesystem.hpp>
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
 #include <logicalaccess/dynlibrary/idynlibrary.hpp>
-#include <logicalaccess/plugins/readers/admitto/readercardadapters/admittodatatransport.hpp>
+#include <logicalaccess/plugins/readers/admitto/readercardadapters/admittoserialportdatatransport.hpp>
 #include <logicalaccess/plugins/llacommon/settings.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
@@ -36,7 +36,7 @@ AdmittoReaderUnit::AdmittoReaderUnit()
 {
     d_readerUnitConfig.reset(new AdmittoReaderUnitConfiguration());
     ReaderUnit::setDefaultReaderCardAdapter(std::make_shared<AdmittoReaderCardAdapter>());
-    const std::shared_ptr<AdmittoDataTransport> dataTransport(new AdmittoDataTransport());
+    const std::shared_ptr<AdmittoSerialPortDataTransport> dataTransport(new AdmittoSerialPortDataTransport());
     ReaderUnit::setDataTransport(dataTransport);
     d_card_type = CHIP_UNKNOWN;
 

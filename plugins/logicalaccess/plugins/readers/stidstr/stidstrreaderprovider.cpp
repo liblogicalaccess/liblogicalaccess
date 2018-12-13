@@ -64,7 +64,7 @@ std::shared_ptr<ISO7816ReaderUnit>
 STidSTRReaderProvider::createReaderUnit(std::string readerunitname)
 {
     auto ru = std::dynamic_pointer_cast<STidSTRReaderUnit>(createReaderUnit());
-    auto dt = std::make_shared<STidSTRDataTransport>(readerunitname);
+    auto dt = std::make_shared<STidSTRSerialPortDataTransport>(readerunitname);
     dt->setPortBaudRate(38400);
     ru->setDataTransport(dt);
     return ru;

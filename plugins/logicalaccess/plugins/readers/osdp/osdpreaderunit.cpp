@@ -18,7 +18,7 @@
 #include <boost/filesystem.hpp>
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
 #include <logicalaccess/dynlibrary/idynlibrary.hpp>
-#include <logicalaccess/plugins/readers/osdp/readercardadapters/osdpdatatransport.hpp>
+#include <logicalaccess/plugins/readers/osdp/readercardadapters/osdpserialportdatatransport.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev1iso7816commands.hpp>
 #include <logicalaccess/plugins/readers/osdp/readercardadapters/osdpreadercardadapter.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireiso7816resultchecker.hpp>
@@ -32,7 +32,7 @@ OSDPReaderUnit::OSDPReaderUnit()
 {
     d_readerUnitConfig.reset(new OSDPReaderUnitConfiguration());
 
-    ReaderUnit::setDataTransport(std::make_shared<OSDPDataTransport>());
+    ReaderUnit::setDataTransport(std::make_shared<OSDPSerialPortDataTransport>());
 
     std::shared_ptr<ReaderCardAdapter> rca(new ReaderCardAdapter());
     rca->setDataTransport(ReaderUnit::getDataTransport());

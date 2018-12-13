@@ -140,11 +140,11 @@ LibraryManager::getDataTransport(const std::string &transporttype)
     }
     else if (transporttype == TRANSPORT_UDP)
     {
-        ret.reset(new UdpDataTransport());
+        ret.reset(new UDPDataTransport());
     }
     else if (transporttype == TRANSPORT_TCP)
     {
-        ret.reset(new TcpDataTransport());
+        ret.reset(new TCPDataTransport());
     }
 
     return ret;

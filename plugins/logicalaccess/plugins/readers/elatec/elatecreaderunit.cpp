@@ -15,7 +15,7 @@
 #include <logicalaccess/cards/chip.hpp>
 #include <logicalaccess/plugins/readers/elatec/readercardadapters/elatecreadercardadapter.hpp>
 #include <boost/filesystem.hpp>
-#include <logicalaccess/plugins/readers/elatec/readercardadapters/elatecdatatransport.hpp>
+#include <logicalaccess/plugins/readers/elatec/readercardadapters/elatecserialportdatatransport.hpp>
 #include <logicalaccess/plugins/readers/elatec/readercardadapters/elatecbufferparser.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
@@ -26,7 +26,7 @@ ElatecReaderUnit::ElatecReaderUnit()
 {
     d_readerUnitConfig.reset(new ElatecReaderUnitConfiguration());
     ReaderUnit::setDefaultReaderCardAdapter(std::make_shared<ElatecReaderCardAdapter>());
-    std::shared_ptr<ElatecDataTransport> dataTransport(new ElatecDataTransport());
+    std::shared_ptr<ElatecSerialPortDataTransport> dataTransport(new ElatecSerialPortDataTransport());
     ReaderUnit::setDataTransport(dataTransport);
     d_card_type = CHIP_UNKNOWN;
 

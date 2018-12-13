@@ -15,7 +15,7 @@
 #include <logicalaccess/cards/chip.hpp>
 #include <logicalaccess/plugins/readers/deister/readercardadapters/deisterreadercardadapter.hpp>
 #include <boost/filesystem.hpp>
-#include <logicalaccess/plugins/readers/deister/readercardadapters/deisterdatatransport.hpp>
+#include <logicalaccess/plugins/readers/deister/readercardadapters/deisterserialportdatatransport.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <logicalaccess/plugins/llacommon/logs.hpp>
@@ -27,7 +27,7 @@ DeisterReaderUnit::DeisterReaderUnit()
 {
     d_readerUnitConfig.reset(new DeisterReaderUnitConfiguration());
     ReaderUnit::setDefaultReaderCardAdapter(std::make_shared<DeisterReaderCardAdapter>());
-    std::shared_ptr<DeisterDataTransport> dataTransport(new DeisterDataTransport());
+    std::shared_ptr<DeisterSerialPortDataTransport> dataTransport(new DeisterSerialPortDataTransport());
     ReaderUnit::setDataTransport(dataTransport);
     d_card_type = CHIP_UNKNOWN;
 

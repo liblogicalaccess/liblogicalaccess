@@ -15,7 +15,7 @@
 #include <logicalaccess/cards/chip.hpp>
 #include <logicalaccess/plugins/readers/promag/readercardadapters/promagreadercardadapter.hpp>
 #include <boost/filesystem.hpp>
-#include <logicalaccess/plugins/readers/promag/readercardadapters/promagdatatransport.hpp>
+#include <logicalaccess/plugins/readers/promag/readercardadapters/promagserialportdatatransport.hpp>
 #include <logicalaccess/bufferhelper.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
@@ -26,7 +26,7 @@ PromagReaderUnit::PromagReaderUnit()
 {
     d_readerUnitConfig.reset(new PromagReaderUnitConfiguration());
     ReaderUnit::setDefaultReaderCardAdapter(std::make_shared<PromagReaderCardAdapter>());
-    std::shared_ptr<PromagDataTransport> dataTransport(new PromagDataTransport());
+    std::shared_ptr<PromagSerialPortDataTransport> dataTransport(new PromagSerialPortDataTransport());
     ReaderUnit::setDataTransport(dataTransport);
     d_card_type = CHIP_UNKNOWN;
 

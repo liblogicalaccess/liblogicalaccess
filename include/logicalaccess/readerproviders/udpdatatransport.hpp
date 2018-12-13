@@ -17,18 +17,18 @@ namespace logicalaccess
 /**
  * \brief An UDP data transport class.
  */
-class LLA_CORE_API UdpDataTransport : public DataTransport
+class LLA_CORE_API UDPDataTransport : public DataTransport
 {
   public:
     /**
      * \brief Constructor.
      */
-    UdpDataTransport();
+    UDPDataTransport();
 
     /**
      * \brief Destructor.
      */
-    virtual ~UdpDataTransport();
+    virtual ~UDPDataTransport();
 
     /**
      * \brief Get the transport type of this instance.

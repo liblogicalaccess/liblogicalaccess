@@ -15,7 +15,7 @@
 #include <logicalaccess/cards/chip.hpp>
 #include <logicalaccess/plugins/readers/gigatms/readercardadapters/gigatmsreadercardadapter.hpp>
 #include <boost/filesystem.hpp>
-#include <logicalaccess/plugins/readers/gigatms/readercardadapters/gigatmsdatatransport.hpp>
+#include <logicalaccess/plugins/readers/gigatms/readercardadapters/gigatmsserialportdatatransport.hpp>
 #include <logicalaccess/bufferhelper.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
@@ -26,7 +26,7 @@ GigaTMSReaderUnit::GigaTMSReaderUnit()
 {
     d_readerUnitConfig.reset(new GigaTMSReaderUnitConfiguration());
     ReaderUnit::setDefaultReaderCardAdapter(std::make_shared<GigaTMSReaderCardAdapter>());
-    std::shared_ptr<GigaTMSDataTransport> dataTransport(new GigaTMSDataTransport());
+    std::shared_ptr<GigaTMSSerialPortDataTransport> dataTransport(new GigaTMSSerialPortDataTransport());
     dataTransport->setPortBaudRate(19200);
     ReaderUnit::setDataTransport(dataTransport);
     d_card_type = CHIP_UNKNOWN;

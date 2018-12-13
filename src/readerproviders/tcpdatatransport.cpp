@@ -19,7 +19,7 @@
 
 namespace logicalaccess
 {
-TcpDataTransport::TcpDataTransport()
+TCPDataTransport::TCPDataTransport()
     : d_socket(d_ios)
     , d_timer(d_ios)
     , d_read_error(true)
@@ -29,36 +29,36 @@ TcpDataTransport::TcpDataTransport()
 {
 }
 
-TcpDataTransport::~TcpDataTransport()
+TCPDataTransport::~TCPDataTransport()
 {
 }
 
-std::string TcpDataTransport::getIpAddress() const
+std::string TCPDataTransport::getIpAddress() const
 {
     return d_ipAddress;
 }
 
-void TcpDataTransport::setIpAddress(std::string ipAddress)
+void TCPDataTransport::setIpAddress(std::string ipAddress)
 {
     d_ipAddress = ipAddress;
 }
 
-int TcpDataTransport::getPort() const
+int TCPDataTransport::getPort() const
 {
     return d_port;
 }
 
-void TcpDataTransport::setPort(int port)
+void TCPDataTransport::setPort(int port)
 {
     d_port = port;
 }
 
-bool TcpDataTransport::connect()
+bool TCPDataTransport::connect()
 {
     return connect(Settings::getInstance()->DataTransportTimeout);
 }
 
-bool TcpDataTransport::connect(long int timeout)
+bool TCPDataTransport::connect(long int timeout)
 {
     if (d_socket.is_open())
         d_socket.close();
@@ -67,13 +67,13 @@ bool TcpDataTransport::connect(long int timeout)
     {
         d_ios.reset();
         d_timer.expires_from_now(boost::posix_time::milliseconds(timeout));
-        d_timer.async_wait(boost::bind(&TcpDataTransport::time_out, this,
+        d_timer.async_wait(boost::bind(&TCPDataTransport::time_out, this,
                                        boost::asio::placeholders::error));
 
         boost::asio::ip::tcp::endpoint endpoint(BOOST_ASIO_MAKE_ADDRESS(getIpAddress()),
                                                 getPort());
         d_socket.async_connect(endpoint,
-                               boost::bind(&TcpDataTransport::connect_complete, this,
+                               boost::bind(&TCPDataTransport::connect_complete, this,
                                            boost::asio::placeholders::error));
 
         d_ios.run();
@@ -94,23 +94,23 @@ bool TcpDataTransport::connect(long int timeout)
     return bool(d_socket.is_open());
 }
 
-void TcpDataTransport::disconnect()
+void TCPDataTransport::disconnect()
 {
     LOG(LogLevel::INFOS) << getIpAddress() << ":" << getPort() << "Disconnected.";
     d_socket.close();
 }
 
-bool TcpDataTransport::isConnected()
+bool TCPDataTransport::isConnected()
 {
     return bool(d_socket.is_open());
 }
 
-std::string TcpDataTransport::getName() const
+std::string TCPDataTransport::getName() const
 {
     return d_ipAddress;
 }
 
-void TcpDataTransport::send(const ByteVector &data)
+void TCPDataTransport::send(const ByteVector &data)
 {
     if (data.size() > 0)
     {
@@ -130,14 +130,14 @@ void TcpDataTransport::send(const ByteVector &data)
     }
 }
 
-void TcpDataTransport::connect_complete(const boost::system::error_code &error)
+void TCPDataTransport::connect_complete(const boost::system::error_code &error)
 {
     // 0 is success.
     d_read_error = static_cast<bool>(error.value());
     d_timer.cancel();
 }
 
-void TcpDataTransport::read_complete(const boost::system::error_code &error,
+void TCPDataTransport::read_complete(const boost::system::error_code &error,
                                      size_t bytes_transferred)
 {
     d_read_error        = (error || bytes_transferred == 0);
@@ -145,14 +145,14 @@ void TcpDataTransport::read_complete(const boost::system::error_code &error,
     d_timer.cancel();
 }
 
-void TcpDataTransport::time_out(const boost::system::error_code &error)
+void TCPDataTransport::time_out(const boost::system::error_code &error)
 {
     if (error)
         return;
     d_socket.cancel();
 }
 
-ByteVector TcpDataTransport::receive(long int timeout)
+ByteVector TCPDataTransport::receive(long int timeout)
 {
     ByteVector recv(256);
     d_ios.reset();
@@ -160,13 +160,13 @@ ByteVector TcpDataTransport::receive(long int timeout)
 
     d_ios.reset();
     d_socket.async_receive(boost::asio::buffer(recv),
-                           boost::bind(&TcpDataTransport::read_complete, this,
+                           boost::bind(&TCPDataTransport::read_complete, this,
                                        boost::asio::placeholders::error,
                                        boost::asio::placeholders::bytes_transferred));
 
     d_timer.expires_from_now(boost::posix_time::milliseconds(timeout));
     d_timer.async_wait(
-        boost::bind(&TcpDataTransport::time_out, this, boost::asio::placeholders::error));
+        boost::bind(&TCPDataTransport::time_out, this, boost::asio::placeholders::error));
 
     d_ios.run();
 
@@ -182,7 +182,7 @@ ByteVector TcpDataTransport::receive(long int timeout)
     return recv;
 }
 
-void TcpDataTransport::serialize(boost::property_tree::ptree &parentNode)
+void TCPDataTransport::serialize(boost::property_tree::ptree &parentNode)
 {
     boost::property_tree::ptree node;
 
@@ -193,13 +193,13 @@ void TcpDataTransport::serialize(boost::property_tree::ptree &parentNode)
     parentNode.add_child(getDefaultXmlNodeName(), node);
 }
 
-void TcpDataTransport::unSerialize(boost::property_tree::ptree &node)
+void TCPDataTransport::unSerialize(boost::property_tree::ptree &node)
 {
     d_ipAddress = node.get_child("IpAddress").get_value<std::string>();
     d_port      = node.get_child("Port").get_value<int>();
 }
 
-std::string TcpDataTransport::getDefaultXmlNodeName() const
+std::string TCPDataTransport::getDefaultXmlNodeName() const
 {
     return "TcpDataTransport";
 }

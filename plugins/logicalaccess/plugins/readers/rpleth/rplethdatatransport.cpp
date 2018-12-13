@@ -22,7 +22,7 @@
 namespace logicalaccess
 {
 RplethDataTransport::RplethDataTransport()
-    : TcpDataTransport()
+    : TCPDataTransport()
 {
 }
 
@@ -46,7 +46,7 @@ void RplethDataTransport::sendll(const ByteVector &data)
     ByteVector cmd;
     cmd.insert(cmd.end(), data.begin(), data.end());
     cmd.push_back(calcChecksum(cmd));
-    TcpDataTransport::send(cmd);
+    TCPDataTransport::send(cmd);
     d_buffer.clear();
 }
 
@@ -71,7 +71,7 @@ void RplethDataTransport::sendPing()
     data.push_back(0x00);
     data.push_back(calcChecksum(data));
 
-    TcpDataTransport::send(data);
+    TCPDataTransport::send(data);
 }
 
 ByteVector RplethDataTransport::receive(long int timeout)
@@ -88,7 +88,7 @@ ByteVector RplethDataTransport::receive(long int timeout)
         if (d_buffer.size() < 5 ||
             (d_buffer.size() >= 4 &&
              d_buffer.size() < (unsigned int)(4 + d_buffer[3] + 1)))
-            buf = TcpDataTransport::receive(timeout);
+            buf = TCPDataTransport::receive(timeout);
 
         if (d_buffer.size() < 8192)
         {

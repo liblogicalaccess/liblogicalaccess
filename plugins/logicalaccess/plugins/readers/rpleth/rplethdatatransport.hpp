@@ -19,7 +19,7 @@ namespace logicalaccess
 /**
  * \brief An rpleth data transport class.
  */
-class LLA_READERS_RPLETH_API RplethDataTransport : public TcpDataTransport
+class LLA_READERS_RPLETH_API RplethDataTransport : public TCPDataTransport
 {
   public:
     /**

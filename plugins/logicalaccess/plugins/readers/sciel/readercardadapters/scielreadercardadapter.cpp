@@ -76,8 +76,8 @@ SCIELReaderCardAdapter::receiveTagsListCommand(const ByteVector &command,
         {
             tagsList.push_back(tag);
 
-            std::shared_ptr<ScielDataTransport> sdt =
-                std::dynamic_pointer_cast<ScielDataTransport>(getDataTransport());
+            std::shared_ptr<ScielSerialPortDataTransport> sdt =
+                std::dynamic_pointer_cast<ScielSerialPortDataTransport>(getDataTransport());
             if (sdt)
             {
                 ByteVector tagbuf = sdt->checkValideBufferAvailable();

@@ -16,42 +16,42 @@
 
 namespace logicalaccess
 {
-UdpDataTransport::UdpDataTransport()
+UDPDataTransport::UDPDataTransport()
     : d_ipAddress("127.0.0.1")
     , d_port(9559)
 {
 }
 
-UdpDataTransport::~UdpDataTransport()
+UDPDataTransport::~UDPDataTransport()
 {
 }
 
-std::string UdpDataTransport::getIpAddress() const
+std::string UDPDataTransport::getIpAddress() const
 {
     return d_ipAddress;
 }
 
-void UdpDataTransport::setIpAddress(std::string ipAddress)
+void UDPDataTransport::setIpAddress(std::string ipAddress)
 {
     d_ipAddress = ipAddress;
 }
 
-int UdpDataTransport::getPort() const
+int UDPDataTransport::getPort() const
 {
     return d_port;
 }
 
-void UdpDataTransport::setPort(int port)
+void UDPDataTransport::setPort(int port)
 {
     d_port = port;
 }
 
-std::shared_ptr<boost::asio::ip::udp::socket> UdpDataTransport::getSocket() const
+std::shared_ptr<boost::asio::ip::udp::socket> UDPDataTransport::getSocket() const
 {
     return d_socket;
 }
 
-bool UdpDataTransport::connect()
+bool UDPDataTransport::connect()
 {
     if (!d_socket)
     {
@@ -72,7 +72,7 @@ bool UdpDataTransport::connect()
     return bool(d_socket);
 }
 
-void UdpDataTransport::disconnect()
+void UDPDataTransport::disconnect()
 {
     if (d_socket)
     {
@@ -81,17 +81,17 @@ void UdpDataTransport::disconnect()
     }
 }
 
-bool UdpDataTransport::isConnected()
+bool UDPDataTransport::isConnected()
 {
     return bool(d_socket);
 }
 
-std::string UdpDataTransport::getName() const
+std::string UDPDataTransport::getName() const
 {
     return d_ipAddress;
 }
 
-void UdpDataTransport::send(const ByteVector &data)
+void UDPDataTransport::send(const ByteVector &data)
 {
     if (data.size() > 0)
     {
@@ -100,7 +100,7 @@ void UdpDataTransport::send(const ByteVector &data)
     }
 }
 
-ByteVector UdpDataTransport::receive(long int timeout)
+ByteVector UDPDataTransport::receive(long int timeout)
 {
     ByteVector res;
     std::shared_ptr<boost::asio::ip::udp::socket> socket = getSocket();
@@ -127,7 +127,7 @@ ByteVector UdpDataTransport::receive(long int timeout)
     return res;
 }
 
-void UdpDataTransport::serialize(boost::property_tree::ptree &parentNode)
+void UDPDataTransport::serialize(boost::property_tree::ptree &parentNode)
 {
     boost::property_tree::ptree node;
 
@@ -138,13 +138,13 @@ void UdpDataTransport::serialize(boost::property_tree::ptree &parentNode)
     parentNode.add_child(getDefaultXmlNodeName(), node);
 }
 
-void UdpDataTransport::unSerialize(boost::property_tree::ptree &node)
+void UDPDataTransport::unSerialize(boost::property_tree::ptree &node)
 {
     d_ipAddress = node.get_child("IpAddress").get_value<std::string>();
     d_port      = node.get_child("Port").get_value<int>();
 }
 
-std::string UdpDataTransport::getDefaultXmlNodeName() const
+std::string UDPDataTransport::getDefaultXmlNodeName() const
 {
     return "UdpDataTransport";
 }

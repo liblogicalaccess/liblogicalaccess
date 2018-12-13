@@ -28,7 +28,7 @@ SCIELReaderUnit::SCIELReaderUnit()
 {
     d_readerUnitConfig.reset(new SCIELReaderUnitConfiguration());
     ReaderUnit::setDefaultReaderCardAdapter(std::make_shared<SCIELReaderCardAdapter>());
-    std::shared_ptr<ScielDataTransport> dataTransport(new ScielDataTransport());
+    std::shared_ptr<ScielSerialPortDataTransport> dataTransport(new ScielSerialPortDataTransport());
     ReaderUnit::setDataTransport(dataTransport);
     d_card_type = CHIP_UNKNOWN;
 

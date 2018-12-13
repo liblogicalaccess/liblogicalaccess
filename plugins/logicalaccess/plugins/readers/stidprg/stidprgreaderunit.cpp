@@ -61,7 +61,7 @@ STidPRGReaderUnit::STidPRGReaderUnit()
 {
     d_readerUnitConfig = std::make_shared<STidPRGReaderUnitConfiguration>();
     ReaderUnit::setDefaultReaderCardAdapter(std::make_shared<STidPRGReaderCardAdapter>());
-    auto dt = std::make_shared<STidPRGDataTransport>();
+    auto dt = std::make_shared<STidPRGSerialPortDataTransport>();
     dt->setPortBaudRate(9600);
     ReaderUnit::getDefaultReaderCardAdapter()->setDataTransport(dt);
     ReaderUnit::setDataTransport(dt);
@@ -72,7 +72,7 @@ bool STidPRGReaderUnit::waitInsertion(unsigned int maxwait)
     ElapsedTimeCounter etc;
     EXCEPTION_ASSERT_WITH_LOG(getDataTransport(), LibLogicalAccessException,
                               "No data transport.");
-    auto stidprgdt = std::dynamic_pointer_cast<STidPRGDataTransport>(getDataTransport());
+    auto stidprgdt = std::dynamic_pointer_cast<STidPRGSerialPortDataTransport>(getDataTransport());
     EXCEPTION_ASSERT_WITH_LOG(stidprgdt, LibLogicalAccessException,
                               "Invalid data transport.");
     stidprgdt->setReceiveTimeout(100);
@@ -94,7 +94,7 @@ bool STidPRGReaderUnit::waitRemoval(unsigned int maxwait)
     ElapsedTimeCounter etc;
     BuzzerModeGuard guard(this);
 
-    auto stidprgdt = std::dynamic_pointer_cast<STidPRGDataTransport>(getDataTransport());
+    auto stidprgdt = std::dynamic_pointer_cast<STidPRGSerialPortDataTransport>(getDataTransport());
     stidprgdt->setReceiveTimeout(100);
 
     do

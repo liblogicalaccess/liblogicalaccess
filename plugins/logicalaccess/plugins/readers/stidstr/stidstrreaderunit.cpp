@@ -48,7 +48,7 @@ STidSTRReaderUnit::STidSTRReaderUnit()
     ReaderUnit::setDefaultReaderCardAdapter(
         std::make_shared<STidSTRReaderCardAdapter>(STID_CMD_READER));
     d_ledBuzzerDisplay.reset(new STidSTRLEDBuzzerDisplay());
-    std::shared_ptr<STidSTRDataTransport> dataTransport(new STidSTRDataTransport());
+    std::shared_ptr<STidSTRSerialPortDataTransport> dataTransport(new STidSTRSerialPortDataTransport());
     dataTransport->setPortBaudRate(38400);
     ReaderUnit::setDataTransport(dataTransport);
     d_card_type = CHIP_UNKNOWN;
@@ -96,7 +96,7 @@ bool STidSTRReaderUnit::waitInsertion(unsigned int maxwait)
             false; // Disable logs for this part (otherwise too much log output in file)
     }
 
-    auto stidprgdt = std::dynamic_pointer_cast<STidSTRDataTransport>(getDataTransport());
+    auto stidprgdt = std::dynamic_pointer_cast<STidSTRSerialPortDataTransport>(getDataTransport());
     EXCEPTION_ASSERT_WITH_LOG(stidprgdt, LibLogicalAccessException,
                               "Invalid data transport.");
 

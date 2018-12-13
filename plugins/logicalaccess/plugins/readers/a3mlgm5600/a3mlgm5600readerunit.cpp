@@ -36,7 +36,7 @@ A3MLGM5600ReaderUnit::A3MLGM5600ReaderUnit()
     d_readerUnitConfig.reset(new A3MLGM5600ReaderUnitConfiguration());
     ReaderUnit::setDefaultReaderCardAdapter(
         std::make_shared<A3MLGM5600ReaderCardAdapter>());
-    std::shared_ptr<UdpDataTransport> dataTransport(new UdpDataTransport());
+    std::shared_ptr<UDPDataTransport> dataTransport(new UDPDataTransport());
     dataTransport->setIpAddress("192.168.1.100");
     dataTransport->setPort(2000);
     ReaderUnit::setDataTransport(dataTransport);

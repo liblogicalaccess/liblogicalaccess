@@ -22,7 +22,7 @@
 #include <logicalaccess/plugins/llacommon/settings.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
-#include <logicalaccess/plugins/readers/gunnebo/readercardadapters/gunnebodatatransport.hpp>
+#include <logicalaccess/plugins/readers/gunnebo/readercardadapters/gunneboserialportdatatransport.hpp>
 
 namespace logicalaccess
 {
@@ -38,7 +38,7 @@ GunneboReaderUnit::GunneboReaderUnit()
 {
     d_readerUnitConfig.reset(new GunneboReaderUnitConfiguration());
     ReaderUnit::setDefaultReaderCardAdapter(std::make_shared<GunneboReaderCardAdapter>());
-    std::shared_ptr<GunneboDataTransport> dataTransport(new GunneboDataTransport());
+    std::shared_ptr<GunneboSerialPortDataTransport> dataTransport(new GunneboSerialPortDataTransport());
     ReaderUnit::setDataTransport(dataTransport);
     d_card_type = CHIP_UNKNOWN;
 

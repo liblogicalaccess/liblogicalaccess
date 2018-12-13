@@ -16,7 +16,7 @@
 #include <logicalaccess/readerproviders/serialport.hpp>
 #include <logicalaccess/plugins/readers/axesstmc13/readercardadapters/axesstmc13readercardadapter.hpp>
 #include <boost/filesystem.hpp>
-#include <logicalaccess/plugins/readers/axesstmc13/readercardadapters/axesstmc13datatransport.hpp>
+#include <logicalaccess/plugins/readers/axesstmc13/readercardadapters/axesstmc13serialportdatatransport.hpp>
 #include <logicalaccess/bufferhelper.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
@@ -28,7 +28,7 @@ AxessTMC13ReaderUnit::AxessTMC13ReaderUnit()
     d_readerUnitConfig.reset(new AxessTMC13ReaderUnitConfiguration());
     ReaderUnit::setDefaultReaderCardAdapter(
         std::make_shared<AxessTMC13ReaderCardAdapter>());
-    std::shared_ptr<AxessTMC13DataTransport> dataTransport(new AxessTMC13DataTransport());
+    std::shared_ptr<AxessTMC13SerialPortDataTransport> dataTransport(new AxessTMC13SerialPortDataTransport());
     dataTransport->setPortBaudRate(57600);
     ReaderUnit::setDataTransport(dataTransport);
     d_card_type = CHIP_UNKNOWN;
