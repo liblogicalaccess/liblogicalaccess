@@ -35,16 +35,17 @@ pipeline {
         booleanParam(name: 'BUILD_ANDROID',
                 defaultValue: true,
                 description: 'Perform Android build')
+        string(name: 'BUILD_SINGLE_PROFILE',
+                defaultValue: '',
+                description: 'If not empty, will only build LLA for the specified profile')
     }
-
-    /**
-     * This Jenkinsfile driven build will generate Conan package for multiple
-     * combination of settings and options.
-     */
 
     stages {
         stage('Android') {
-            when { expression { params.BUILD_ANDROID } }
+            when {
+                beforeAgent true
+                expression { params.BUILD_ANDROID && params.BUILD_SINGLE_PROFILE == '' }
+            }
             steps {
                 script {
                     lla.startJobForProfiles(['lla/arm_clang_android_21_debug',
@@ -55,6 +56,10 @@ pipeline {
         }
 
         stage('Minimal Feature Build') {
+            when {
+                beforeAgent true
+                expression { params.BUILD_SINGLE_PROFILE == '' }
+            }
             steps {
                 script {
                     lst = []
@@ -82,6 +87,10 @@ pipeline {
         }
 
         stage('Complete Feature Build') {
+            when {
+                beforeAgent true
+                expression { params.BUILD_SINGLE_PROFILE == '' }
+            }
             steps {
                 script {
                     lst = []
@@ -104,6 +113,18 @@ pipeline {
                         }
                     }
                     lla.startJobForProfiles(lst)
+                }
+            }
+        }
+
+        stage('Single profile') {
+            when {
+                beforeAgent true
+                expression { params.BUILD_SINGLE_PROFILE != '' }
+            }
+            steps {
+                script {
+                    lla.startJobForProfiles([params.BUILD_SINGLE_PROFILE])
                 }
             }
         }
