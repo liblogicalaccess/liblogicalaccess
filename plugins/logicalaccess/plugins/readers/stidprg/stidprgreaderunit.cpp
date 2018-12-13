@@ -4,7 +4,7 @@
 #include <logicalaccess/cards/chip.hpp>
 #include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/readers/stidprg/readercardadapters/stidprgbufferparser.hpp>
-#include <logicalaccess/plugins/readers/stidprg/readercardadapters/stidprgdatatransport.hpp>
+#include <logicalaccess/plugins/readers/stidprg/readercardadapters/stidprgserialportdatatransport.hpp>
 #include <logicalaccess/plugins/readers/stidprg/readercardadapters/stidprgreadercardadapter.hpp>
 #include <logicalaccess/plugins/readers/stidprg/stidprgutils.hpp>
 #include <logicalaccess/plugins/readers/stidprg/stidprgresultchecker.hpp>

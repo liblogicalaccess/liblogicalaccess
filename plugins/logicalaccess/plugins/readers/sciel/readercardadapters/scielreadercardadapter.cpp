@@ -5,7 +5,7 @@
  */
 
 #include <logicalaccess/plugins/readers/sciel/readercardadapters/scielreadercardadapter.hpp>
-#include <logicalaccess/plugins/readers/sciel/readercardadapters/scieldatatransport.hpp>
+#include <logicalaccess/plugins/readers/sciel/readercardadapters/scielserialportdatatransport.hpp>
 #include <logicalaccess/bufferhelper.hpp>
 #include <logicalaccess/myexception.hpp>
 

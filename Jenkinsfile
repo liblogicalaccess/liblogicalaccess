@@ -37,7 +37,8 @@ pipeline {
                 description: 'Perform Android build')
         string(name: 'BUILD_SINGLE_PROFILE',
                 defaultValue: '',
-                description: 'If not empty, will only build LLA for the specified profile')
+                description: 'If not empty, will only build LLA for the specified profile.' +
+                        ' This takes precedence over other parameters.')
     }
 
     stages {

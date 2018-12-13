@@ -17,7 +17,7 @@
 #include <logicalaccess/plugins/llacommon/logs.hpp>
 
 #include <logicalaccess/plugins/readers/stidstr/stidstrreaderunit.hpp>
-#include <logicalaccess/plugins/readers/stidstr/readercardadapters/stidstrreaderdatatransport.hpp>
+#include <logicalaccess/plugins/readers/stidstr/readercardadapters/stidstrreaderserialportdatatransport.hpp>
 #include <logicalaccess/myexception.hpp>
 
 namespace logicalaccess

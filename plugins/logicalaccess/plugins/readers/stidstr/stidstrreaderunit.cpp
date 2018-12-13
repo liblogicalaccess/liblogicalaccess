@@ -30,7 +30,7 @@
 #include <logicalaccess/myexception.hpp>
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
 #include <logicalaccess/dynlibrary/idynlibrary.hpp>
-#include <logicalaccess/plugins/readers/stidstr/readercardadapters/stidstrreaderdatatransport.hpp>
+#include <logicalaccess/plugins/readers/stidstr/readercardadapters/stidstrreaderserialportdatatransport.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev1chip.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev1iso7816commands.hpp>
 #include <logicalaccess/plugins/cards/mifare/mifarechip.hpp>
