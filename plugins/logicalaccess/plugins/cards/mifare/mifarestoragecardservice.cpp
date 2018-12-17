@@ -306,7 +306,6 @@ ByteVector MifareStorageCardService::readData(std::shared_ptr<Location> location
 ByteVector MifareStorageCardService::readDataHeader(std::shared_ptr<Location> location,
                                                     std::shared_ptr<AccessInfo> aiToUse)
 {
-    std::cout << "MifareStorageCardService::readDataHeader" << std::endl;
     TRACE(location, aiToUse);
 
     EXCEPTION_ASSERT_WITH_LOG(location, std::invalid_argument,

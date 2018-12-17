@@ -1289,8 +1289,6 @@ void DESFireEV1ISO7816Commands::changeKey(unsigned char keyno,
     }
 
     ByteVector cryptogram;
-    std::cout << "SESSION KEY: " << crypto->d_sessionKey << std::endl;
-    std::cout << "LAST_IV: " << crypto->d_lastIV << std::endl;
     if (samChangeKey)
     {
         cryptogram = getChangeKeySAMCryptogram(keyno, key);
@@ -1304,8 +1302,6 @@ void DESFireEV1ISO7816Commands::changeKey(unsigned char keyno,
         cryptogram =
             crypto->changeKey_PICC(keynobyte, oldKeyDiversify, key, newKeyDiversify);
     }
-
-    std::cout << "CRYPTOGRAM: " << cryptogram << std::endl;
 
     ByteVector data;
     data.push_back(keynobyte);
