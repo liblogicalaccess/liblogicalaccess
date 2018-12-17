@@ -16,11 +16,11 @@
 
 namespace logicalaccess
 {
-class LLA_READERS_AXESSTMCLEGIC_API AxessTMCLegicDataTransport
+class LLA_READERS_AXESSTMCLEGIC_API AxessTMCLegicSerialPortDataTransport
     : public SerialPortDataTransport
 {
   public:
-    explicit AxessTMCLegicDataTransport(const std::string &portname = "")
+    explicit AxessTMCLegicSerialPortDataTransport(const std::string &portname = "")
         : SerialPortDataTransport(portname)
     {
     }

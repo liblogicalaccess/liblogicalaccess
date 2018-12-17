@@ -15,7 +15,7 @@
 #include <logicalaccess/cards/chip.hpp>
 #include <logicalaccess/plugins/readers/axesstmclegic/readercardadapters/axesstmclegicreadercardadapter.hpp>
 #include <boost/filesystem.hpp>
-#include <logicalaccess/plugins/readers/axesstmclegic/readercardadapters/axesstmclegicdatatransport.hpp>
+#include <logicalaccess/plugins/readers/axesstmclegic/readercardadapters/axesstmclegicserialportdatatransport.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <logicalaccess/plugins/llacommon/logs.hpp>
@@ -28,8 +28,8 @@ AxessTMCLegicReaderUnit::AxessTMCLegicReaderUnit()
     d_readerUnitConfig.reset(new AxessTMCLegicReaderUnitConfiguration());
     ReaderUnit::setDefaultReaderCardAdapter(
         std::make_shared<AxessTMCLegicReaderCardAdapter>());
-    std::shared_ptr<AxessTMCLegicDataTransport> dataTransport(
-        new AxessTMCLegicDataTransport());
+    std::shared_ptr<AxessTMCLegicSerialPortDataTransport> dataTransport(
+        new AxessTMCLegicSerialPortDataTransport());
     dataTransport->setPortBaudRate(57600);
     ReaderUnit::setDataTransport(dataTransport);
     d_card_type = CHIP_UNKNOWN;
