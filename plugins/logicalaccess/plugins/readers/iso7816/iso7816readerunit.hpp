@@ -145,6 +145,11 @@ class LLA_READERS_ISO7816_API ISO7816ReaderUnit : public ReaderUnit
         return "";
     }
 
+    std::shared_ptr<CardProbe> createCardProbe() override
+    {
+        return nullptr;
+    }
+
     /**
      * \brief Get The SAM Chip
      */
