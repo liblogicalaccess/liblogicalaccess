@@ -69,14 +69,6 @@ class LLA_CORE_API CardsFormatComposite : public XmlSerializable
 
     /**
      * \brief UnSerialize object from a Xml node.
-     * \param is The Xml stream.
-     * \param rootNode The root node.
-     * \return True on success, false otherwise.
-     */
-    virtual void unSerialize(std::istream &is, const std::string &rootNode);
-
-    /**
-     * \brief UnSerialize object from a Xml node.
      * \param node The Xml node.
      * \param rootNode The root node.
      * \return True on success, false otherwise.
