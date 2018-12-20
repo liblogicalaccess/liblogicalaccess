@@ -562,6 +562,11 @@ bool PCSCReaderUnit::connect(PCSCShareMode share_mode)
     return ret;
 }
 
+void PCSCReaderUnit::reset(int action)
+{
+    reconnect(action);
+}
+
 bool PCSCReaderUnit::reconnect(int action)
 {
     if (d_proxyReaderUnit)

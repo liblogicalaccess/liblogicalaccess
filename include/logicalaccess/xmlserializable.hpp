@@ -55,9 +55,9 @@ class LLA_CORE_API XmlSerializable
   public:
     virtual ~XmlSerializable() = default;
     /**
- * \brief Serialize object to Xml Node string.
- * \return The serialized object.
- */
+     * \brief Serialize object to Xml Node string.
+     * \return The serialized object.
+     */
     virtual std::string serialize();
 
     /**

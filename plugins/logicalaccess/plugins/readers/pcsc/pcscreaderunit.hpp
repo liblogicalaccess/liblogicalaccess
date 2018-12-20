@@ -108,14 +108,6 @@ class LLA_READERS_PCSC_API PCSCReaderUnit : public ISO7816ReaderUnit
     virtual bool connect(PCSCShareMode share_mode);
 
     /**
-     * \brief Reconnect to the card with the currently active share mode on the same
-     * reader.
-     * \param control the behavior of the reconnect.
-     * \return True if the card was reconnected without error, false otherwise.
-     */
-    bool reconnect(int action = 0) override;
-
-    /**
      * \brief Disconnect from the card.
      */
     void disconnect() override;
@@ -307,7 +299,21 @@ class LLA_READERS_PCSC_API PCSCReaderUnit : public ISO7816ReaderUnit
 
     void endTransaction(DWORD dwDisposition = SCARD_LEAVE_CARD);
 
+	/**
+     * \brief Reconnect to the card
+     * \param control the behavior of the reconnect.
+     */
+    void reset(int action = 0);
+
   protected:
+    /**
+     * \brief Reconnect to the card with the currently active share mode on the same
+     * reader.
+     * \param control the behavior of the reconnect.
+     * \return True if the card was reconnected without error, false otherwise.
+     */
+    bool reconnect(int action = 0) override;
+
     /**
      * Perform adjustment regarding a Chip.
      *
