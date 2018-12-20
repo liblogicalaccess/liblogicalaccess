@@ -19,33 +19,8 @@ class LLA_CARDS_MIFAREULTRALIGHT_API MifareUltralightCAccessInfo
     : public MifareUltralightAccessInfo
 {
   public:
-#ifndef SWIG
     using XmlSerializable::serialize;
     using XmlSerializable::unSerialize;
-#else
-    /**
-     * \brief Serialize object to Xml Node string.
-     * \return The serialized object.
-     */
-    virtual std::string serialize();
-
-    /**
-     * \brief UnSerialize object from a Xml Node string.
-     * \param xmlstring The Xml Node string.
-     * \param rootNode The root node.
-     * \return True on success, false otherwise.
-     */
-    virtual void unSerialize(const std::string &xmlstring, const std::string &rootNode);
-
-    /**
-     * \brief UnSerialize object from a Xml node.
-     * \param node The Xml node.
-     * \param rootNode The root node.
-     * \return True on success, false otherwise.
-     */
-    virtual void unSerialize(boost::property_tree::ptree &node,
-                             const std::string &rootNode);
-#endif
 
     /**
      * \brief Constructor.

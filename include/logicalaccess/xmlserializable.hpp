@@ -65,12 +65,13 @@ class LLA_CORE_API XmlSerializable
      * \return The serialized object.
      */
     virtual std::string serializeWithHeaders();
-
+#ifndef SWIG
     /**
      * \brief Serialize object to Xml Node.
      * \param os The XML stream.
      */
     virtual void serialize(boost::property_tree::ptree &parentNode) = 0;
+#endif
 
     /**
      * \brief Serialize object to a Xml file.
@@ -78,12 +79,13 @@ class LLA_CORE_API XmlSerializable
      * \return True on success, false otherwise.
      */
     virtual void serializeToFile(const std::string &filename);
-
+#ifndef SWIG
     /**
      * \brief UnSerialize object from a Xml Node.
      * \param node The Xml node.
      */
     virtual void unSerialize(boost::property_tree::ptree &node) = 0;
+#endif
 
     /**
      * \brief UnSerialize object from a Xml Node string.
@@ -92,7 +94,7 @@ class LLA_CORE_API XmlSerializable
      * \return True on success, false otherwise.
      */
     virtual void unSerialize(const std::string &xmlstring, const std::string &rootNode);
-
+#ifndef SWIG
     /**
      * \brief UnSerialize object from a Xml node.
      * \param is The Xml stream.
@@ -109,6 +111,7 @@ class LLA_CORE_API XmlSerializable
      */
     virtual void unSerialize(boost::property_tree::ptree &node,
                              const std::string &rootNode);
+#endif
 
     /**
      * \brief UnSerialize object from a Xml file.
