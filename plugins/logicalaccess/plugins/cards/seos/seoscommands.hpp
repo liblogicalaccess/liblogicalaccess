@@ -16,18 +16,18 @@ namespace logicalaccess
 {
 #define CMD_SEOS "SEOS"
 
-class SEOSChip;
+class SeosChip;
 
 /**
  * \brief The SEOS commands class.
  */
-class LLA_CARDS_SEOS_API SEOSCommands : public Commands
+class LLA_CARDS_SEOS_API SeosCommands : public Commands
 {
   public:
     /**
      * \brief Constructor.
      */
-    SEOSCommands()
+    SeosCommands()
         : Commands(CMD_SEOS)
     {
     }
@@ -36,12 +36,12 @@ class LLA_CARDS_SEOS_API SEOSCommands : public Commands
      * \brief Constructor.
      * \param ct The cmd type.
      */
-    explicit SEOSCommands(std::string cmdtype)
+    explicit SeosCommands(std::string cmdtype)
         : Commands(cmdtype)
     {
     }
 
-    virtual ~SEOSCommands();
+    virtual ~SeosCommands();
 
 	virtual std::shared_ptr<ISO7816Commands> getISO7816Commands() const
     {
@@ -49,7 +49,7 @@ class LLA_CARDS_SEOS_API SEOSCommands : public Commands
     }
 
   protected:
-    std::shared_ptr<SEOSChip> getSEOSChip() const;
+    std::shared_ptr<SeosChip> getSeosChip() const;
 };
 }
 

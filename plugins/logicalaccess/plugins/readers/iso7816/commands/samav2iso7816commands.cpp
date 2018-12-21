@@ -115,7 +115,7 @@ void SAMAV2ISO7816Commands::authenticateHost(std::shared_ptr<DESFireKey> key,
     rnd2.resize(16);          // ZeroPad
 
     ByteVector macHost =
-        openssl::CMACCrypto::cmac(d_macSessionKey, cipher, 16, rnd2, d_lastMacIV, 16);
+        openssl::CMACCrypto::cmac(d_macSessionKey, cipher, rnd2, d_lastMacIV, 16);
     truncateMacBuffer(macHost);
 
     rnd1.resize(12);
@@ -139,7 +139,7 @@ void SAMAV2ISO7816Commands::authenticateHost(std::shared_ptr<DESFireKey> key,
     rnd1.insert(rnd1.end(), rnd2.begin() + 12, rnd2.end()); // p2 data without rnd2
 
     macHost =
-        openssl::CMACCrypto::cmac(d_macSessionKey, cipher, 16, rnd1, d_lastMacIV, 16);
+        openssl::CMACCrypto::cmac(d_macSessionKey, cipher, rnd1, d_lastMacIV, 16);
     truncateMacBuffer(macHost);
 
     for (unsigned char x = 0; x < 8; ++x)
@@ -279,7 +279,7 @@ ByteVector SAMAV2ISO7816Commands::createfullProtectionCmd(ByteVector cmd)
         d_lastMacIV.assign(tmp.end() - 16, tmp.end());
     }
 
-    ByteVector encProtectedCmd = openssl::CMACCrypto::cmac(d_macSessionKey, cipher, 16,
+    ByteVector encProtectedCmd = openssl::CMACCrypto::cmac(d_macSessionKey, cipher,
                                                            protectedCmd, d_lastMacIV, 16);
     truncateMacBuffer(encProtectedCmd);
 
@@ -369,7 +369,7 @@ ByteVector SAMAV2ISO7816Commands::verifyAndDecryptResponse(ByteVector response)
     }
 
     myEncMac =
-        openssl::CMACCrypto::cmac(d_macSessionKey, cipher, 16, myMac, d_lastMacIV, 16);
+        openssl::CMACCrypto::cmac(d_macSessionKey, cipher, myMac, d_lastMacIV, 16);
     truncateMacBuffer(myEncMac);
 
     if (!equal(myEncMac.begin(), myEncMac.begin() + 8, mac.begin()))

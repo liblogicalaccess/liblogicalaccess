@@ -99,7 +99,6 @@ void SAMDESfireCrypto::authenticateHostP2(unsigned char keyno, ByteVector encRnd
 
             d_cipher.reset(new openssl::DESCipher());
             d_authkey    = keyvec;
-            d_block_size = 8;
             d_mac_size   = 8;
         }
         else if (key->getKeyType() == DF_KEY_DES)
@@ -113,7 +112,6 @@ void SAMDESfireCrypto::authenticateHostP2(unsigned char keyno, ByteVector encRnd
 
             d_cipher.reset(new openssl::DESCipher());
             d_authkey    = keyvec;
-            d_block_size = 8;
             d_mac_size   = 8;
         }
         else
@@ -127,7 +125,6 @@ void SAMDESfireCrypto::authenticateHostP2(unsigned char keyno, ByteVector encRnd
 
             d_cipher.reset(new openssl::AESCipher());
             d_authkey    = keyvec;
-            d_block_size = 16;
             d_mac_size   = 8;
         }
 
@@ -171,9 +168,9 @@ ByteVector SAMDESfireCrypto::sam_crc_encrypt(ByteVector d_sessionKey,
         vectordata.push_back(static_cast<unsigned char>(crc & 0xff));
         crc >>= 8;
     }
-    if (vectordata.size() % d_block_size != 0)
-        vectordata.resize(vectordata.size() +
-                              (d_block_size - (vectordata.size() % d_block_size)),
+    if (vectordata.size() % d_cipher->getBlockSize() != 0)
+        vectordata.resize(vectordata.size() + (d_cipher->getBlockSize() -
+                               (vectordata.size() % d_cipher->getBlockSize())),
                           0x00);
     d_cipher->cipher(vectordata, ret, *cipherkey, *iv, false);
     return ret;

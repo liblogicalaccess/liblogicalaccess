@@ -29,7 +29,7 @@ LLA_CARDS_EPASS_API bool getChipInfoAt(unsigned int index, char *chipname,
         case 0:
         {
             *getterfct = (void *)&getEPassChip;
-            sprintf(chipname, "EPass");
+            sprintf(chipname, CHIP_EPASS);
             ret = true;
         }
         break;

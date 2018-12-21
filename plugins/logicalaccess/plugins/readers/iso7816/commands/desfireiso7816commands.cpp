@@ -273,8 +273,9 @@ DESFireISO7816Commands::getChangeKeySAMCryptogram(unsigned char keyno,
         delete[] keyDiv.divInput;
 
     crypto->d_lastIV.clear();
-    crypto->d_lastIV.resize(crypto->d_block_size);
-    copy(ret.end() - crypto->d_block_size, ret.end(), crypto->d_lastIV.begin());
+    crypto->d_lastIV.resize(crypto->d_cipher->getBlockSize());
+    copy(ret.end() - crypto->d_cipher->getBlockSize(), ret.end(),
+         crypto->d_lastIV.begin());
     return ret;
 }
 

@@ -113,7 +113,7 @@ class LLA_READERS_ISO7816_API ISO7816ISO7816Commands : public ISO7816Commands
      * \return The data of the object.
      */
     ByteVector getDataList(const ByteVector &data, size_t length,
-                           unsigned short efid = ISO_DATA_OBJECT_SELECTED) override;
+                           unsigned short efid = ISO7816_DATA_OBJECT_SELECTED) override;
 
     /**
      * \brief Put data.

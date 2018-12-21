@@ -71,7 +71,6 @@ ByteVector NXPAV2KeyDiversification::getDiversifiedKey(std::shared_ptr<Key> key,
 {
     LOG(LogLevel::INFOS) << "Using key diversification NXP AV2 with div : "
                          << BufferHelper::getHex(diversify);
-    int block_size;
     std::shared_ptr<openssl::OpenSSLSymmetricCipher> d_cipher;
     ByteVector keycipher(key->getData(), key->getData() + key->getLength());
     ByteVector emptyIV, keydiv;
@@ -80,24 +79,22 @@ ByteVector NXPAV2KeyDiversification::getDiversifiedKey(std::shared_ptr<Key> key,
         std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DF_KEY_3K3DES)
     {
         d_cipher.reset(new openssl::DESCipher());
-        block_size = 8;
     }
     else if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DF_KEY_AES)
     {
         d_cipher.reset(new openssl::AESCipher());
-        block_size = 16;
     }
     else
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "NXP Diversification don't support this security");
 
-    emptyIV.resize(block_size);
+    emptyIV.resize(d_cipher->getBlockSize());
     if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DF_KEY_AES)
     {
         // const AES 128
         diversify.insert(diversify.begin(), 0x01);
-        ByteVector keydiv_tmp = openssl::CMACCrypto::cmac(
-            keycipher, d_cipher, block_size, diversify, emptyIV, 32, d_forceK2Use);
+        ByteVector keydiv_tmp = openssl::CMACCrypto::cmac(keycipher, d_cipher,
+                                      diversify, emptyIV, 32, d_forceK2Use);
         keydiv.resize(16);
         copy(keydiv_tmp.end() - 16, keydiv_tmp.end(), keydiv.begin());
     }
@@ -105,10 +102,10 @@ ByteVector NXPAV2KeyDiversification::getDiversifiedKey(std::shared_ptr<Key> key,
     {
         diversify.insert(diversify.begin(), 0x21);
         ByteVector keydiv_tmp_1 = openssl::CMACCrypto::cmac(
-            keycipher, d_cipher, block_size, diversify, emptyIV, 16, d_forceK2Use);
+            keycipher, d_cipher, diversify, emptyIV, 16, d_forceK2Use);
         diversify[0]            = 0x22;
         ByteVector keydiv_tmp_2 = openssl::CMACCrypto::cmac(
-            keycipher, d_cipher, block_size, diversify, emptyIV, 16, d_forceK2Use);
+            keycipher, d_cipher, diversify, emptyIV, 16, d_forceK2Use);
         keydiv.insert(keydiv.end(), keydiv_tmp_1.begin() + 8, keydiv_tmp_1.end());
         keydiv.insert(keydiv.end(), keydiv_tmp_2.begin() + 8, keydiv_tmp_2.end());
     }
@@ -116,13 +113,13 @@ ByteVector NXPAV2KeyDiversification::getDiversifiedKey(std::shared_ptr<Key> key,
     {
         diversify.insert(diversify.begin(), 0x31);
         ByteVector keydiv_tmp_1 = openssl::CMACCrypto::cmac(
-            keycipher, d_cipher, block_size, diversify, emptyIV, 16, d_forceK2Use);
+            keycipher, d_cipher, diversify, emptyIV, 16, d_forceK2Use);
         diversify[0]            = 0x32;
         ByteVector keydiv_tmp_2 = openssl::CMACCrypto::cmac(
-            keycipher, d_cipher, block_size, diversify, emptyIV, 16, d_forceK2Use);
+            keycipher, d_cipher, diversify, emptyIV, 16, d_forceK2Use);
         diversify[0]            = 0x33;
         ByteVector keydiv_tmp_3 = openssl::CMACCrypto::cmac(
-            keycipher, d_cipher, block_size, diversify, emptyIV, 16, d_forceK2Use);
+            keycipher, d_cipher, diversify, emptyIV, 16, d_forceK2Use);
         keydiv.insert(keydiv.end(), keydiv_tmp_1.begin() + 8, keydiv_tmp_1.end());
         keydiv.insert(keydiv.end(), keydiv_tmp_2.begin() + 8, keydiv_tmp_2.end());
         keydiv.insert(keydiv.end(), keydiv_tmp_3.begin() + 8, keydiv_tmp_3.end());

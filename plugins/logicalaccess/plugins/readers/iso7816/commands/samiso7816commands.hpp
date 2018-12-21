@@ -324,7 +324,7 @@ class LLA_READERS_ISO7816_API SAMISO7816Commands : public SAMCommands<T, S>
         }
 
         ByteVector macHost =
-            openssl::CMACCrypto::cmac(keycipher, cipher, 16, rnd2, emptyIV, 16);
+            openssl::CMACCrypto::cmac(keycipher, cipher, rnd2, emptyIV, 16);
         truncateMacBuffer(macHost);
 
         rnd1.resize(12);
@@ -346,7 +346,7 @@ class LLA_READERS_ISO7816_API SAMISO7816Commands : public SAMCommands<T, S>
         /* Check CMAC - Create rnd1 for p3 - CMAC: rnd1 | P1 | other data */
         rnd1.insert(rnd1.end(), rnd2.begin() + 12, rnd2.end()); // p2 data without rnd2
 
-        macHost = openssl::CMACCrypto::cmac(keycipher, cipher, 16, rnd1, emptyIV, 16);
+        macHost = openssl::CMACCrypto::cmac(keycipher, cipher, rnd1, emptyIV, 16);
         truncateMacBuffer(macHost);
 
         for (unsigned char x = 0; x < 8; ++x)

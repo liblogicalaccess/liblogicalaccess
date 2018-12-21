@@ -23,18 +23,18 @@ namespace logicalaccess
 /**
  * \brief The HID SEOS base chip class.
  */
-class LLA_CARDS_SEOS_API SEOSChip : public Chip
+class LLA_CARDS_SEOS_API SeosChip : public Chip
 {
   public:
     /**
      * \brief Constructor.
      */
-    SEOSChip();
+    SeosChip();
 
     /**
      * \brief Destructor.
      */
-    virtual ~SEOSChip();
+    virtual ~SeosChip();
 
     /**
      * \brief Get the generic card type.
@@ -57,9 +57,9 @@ class LLA_CARDS_SEOS_API SEOSChip : public Chip
      * \brief Get the SEOS commands for I/O access.
      * \return The SEOS commands.
      */
-    std::shared_ptr<SEOSCommands> getSEOSCommands() const
+    std::shared_ptr<SeosCommands> getSeosCommands() const
     {
-        return std::dynamic_pointer_cast<SEOSCommands>(getCommands());
+        return std::dynamic_pointer_cast<SeosCommands>(getCommands());
     }
 };
 }

@@ -85,5 +85,10 @@ const EVP_CIPHER *AESCipher::getEVPCipher(const SymmetricKey &key) const
 
     return evpCipher;
 }
+
+unsigned char AESCipher::getBlockSize() const
+{
+    return 16;
+}
 }
 }

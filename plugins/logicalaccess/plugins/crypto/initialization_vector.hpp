@@ -26,16 +26,6 @@ class LLA_CRYPTO_API InitializationVector
 {
   public:
     /**
-     * \brief Get the IV data.
-     * \return The IV data.
-     */
-    const ByteVector &data() const
-    {
-        return d_data;
-    }
-
-  protected:
-    /**
      * \brief Create a new InitializationVector.
      * \param size The IV size.
      * \param random true if the IV must be randomized, false otherwise.
@@ -47,6 +37,17 @@ class LLA_CRYPTO_API InitializationVector
      * \param data The data.
      */
     explicit InitializationVector(const ByteVector &data);
+
+    /**
+     * \brief Get the IV data.
+     * \return The IV data.
+     */
+    const ByteVector &data() const
+    {
+        return d_data;
+    }
+
+  protected:
 
     /**
      * \brief Zero the IV.

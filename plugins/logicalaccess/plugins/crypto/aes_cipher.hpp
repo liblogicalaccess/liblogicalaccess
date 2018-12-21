@@ -32,6 +32,8 @@ class LLA_CRYPTO_API AESCipher : public OpenSSLSymmetricCipher
     {
     }
 
+	unsigned char getBlockSize() const override;
+
   protected:
     /**
      * \brief Get the OpenSSL EVP cipher.

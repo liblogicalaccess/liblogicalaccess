@@ -147,6 +147,7 @@ class LLA_CARDS_DESFIRE_API DESFireCrypto
      * \brief  Perform DESFire CBC encryption operation, which is used for MAC calculation
      and verification.
      The algorithm is actually a standard DES CBC.
+     * CBC-MAC / ISO 9797-1 MAC Algorithm 1
      * \param key The DES key to use
      * \param iv The Initialization Vector
      * \param data The data source buffer to encrypt
@@ -198,8 +199,7 @@ class LLA_CARDS_DESFIRE_API DESFireCrypto
      */
     ByteVector
     desfire_iso_encrypt(const ByteVector &key, const ByteVector &data,
-                        std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher,
-                        unsigned int block_size, const ByteVector &param = ByteVector(),
+                        std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, const ByteVector &param = ByteVector(),
                         bool calccrc = true);
 
     /**
@@ -235,8 +235,7 @@ class LLA_CARDS_DESFIRE_API DESFireCrypto
      */
     ByteVector
     desfire_iso_decrypt(const ByteVector &key, const ByteVector &data,
-                        std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher,
-                        unsigned int block_size, size_t datalen);
+                        std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, size_t datalen);
 
     /**
      * \brief Decrypt and verify data part of the decrypted communication mode for
@@ -256,8 +255,7 @@ class LLA_CARDS_DESFIRE_API DESFireCrypto
      * \return The MAC result for the message.
      */
     ByteVector desfire_cmac(const ByteVector &key,
-                            std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC,
-                            unsigned int block_size, const ByteVector &data);
+                            std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, const ByteVector &data);
 
     /**
      * \brief  Return data part for the encrypted communication mode.
@@ -488,11 +486,6 @@ class LLA_CARDS_DESFIRE_API DESFireCrypto
      * \brief The MAC size.
      */
     unsigned int d_mac_size;
-
-    /**
-     * \brief The block size.
-     */
-    unsigned int d_block_size;
 
     /**
      * \brief The current session key.

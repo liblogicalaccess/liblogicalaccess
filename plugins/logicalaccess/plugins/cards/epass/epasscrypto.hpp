@@ -1,69 +1,46 @@
 #pragma once
 
-#include <cstdint>
 #include <logicalaccess/plugins/cards/epass/lla_cards_epass_api.hpp>
-#include <logicalaccess/lla_fwd.hpp>
-#include <string>
-#include <vector>
+#include <logicalaccess/plugins/crypto/iso24727crypto.hpp>
 
 namespace logicalaccess
 {
-class LLA_CARDS_EPASS_API EPassCrypto
+class LLA_CARDS_EPASS_API EPassCrypto : public ISO24727Crypto
 {
   public:
+    explicit EPassCrypto();
     explicit EPassCrypto(const std::string &mrz);
 
-    /**
-     * Call after construction to feed the random from the
-     * card to the crypto helper.
+	void reset(const std::string &mrz);
+
+	static ByteVector adjust_key_parity(const ByteVector &key);
+
+	void compute_session_keys(const ByteVector &k_icc,
+                                  const ByteVector &random_icc) override;
+
+	ByteVector compute_enc_key(const ByteVector &seed,
+                                   const std::string hash_algo = "sha1",
+                                   unsigned char keylen        = 16) override;
+
+    ByteVector compute_mac_key(const ByteVector &seed,
+                                const std::string hash_algo = "sha1",
+                                unsigned char keylen        = 16) override;
+
+	/**
+	 * ISO 9797-1 MAC Algorithm 3
+	 *
+     * Perform MAC computation on the block `in`.
      *
-     * The random_ifd and random_k_ifd array will be generated if left
-     * to they default, empty value. Specifying this parameter
-     * is useful for testing purpose or if you make use of a custom
-     * source of randomness.
+     * The computation requires `k_mac`, a 16bytes key that will be split in two
+     * during the computation.
      *
-     * @return Command data for Mutual Authenticate.
-     */
-    ByteVector step1(const ByteVector &random_icc, ByteVector random_ifd = {},
-                     ByteVector random_k_ifd = {});
-
-    /**
-     * Process the response from the ICC.
+     * Unless the MAC computation is for the Mutual Authenticate command, SSC (Send
+     * Session Counter) is required, otherwise the MAC will be rejected.
      *
-     * If step2() completes successfully, the user is allowed to
-     * call the various get_*() method.
+     * @warning No padding is performed.
      */
-    bool step2(const ByteVector &auth_response);
-
-    /**
-     * Are we currently already in a Secure Messaging session ?
-     */
-    bool secureMode() const;
-
-    ByteVector encrypt_apdu(const ByteVector &apdu);
-
-    ByteVector decrypt_rapdu(const ByteVector &rapdu);
-
-    ByteVector get_session_enc_key() const;
-    ByteVector get_session_mac_key() const;
-    ByteVector get_send_session_counter() const;
-
-  private:
-    /**
-     * Generated at step1 (or inputted at step1).
-     */
-    ByteVector random_ifd_;
-    /**
-     * Generated at step1 (or inputted at step1).
-     */
-    ByteVector random_k_ifd_;
-
-    bool step2_success_;
-    ByteVector k_enc_;
-    ByteVector k_mac_;
-
-    ByteVector S_enc_;
-    ByteVector S_mac_;
-    ByteVector S_send_counter_;
+	ByteVector compute_mac(std::shared_ptr<openssl::SymmetricCipher> cipher,
+                               const ByteVector &in, const ByteVector &k_mac,
+                               const ByteVector & = {}) override;
 };
 }

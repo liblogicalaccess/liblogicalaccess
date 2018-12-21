@@ -22,19 +22,16 @@ ByteVector CMACCrypto::cmac(const ByteVector &key, std::string crypto,
                             const ByteVector &data, const ByteVector &iv,
                             int padding_size)
 {
-    ByteVector cmac, lastiv;
+    ByteVector cmac;
 
     std::shared_ptr<OpenSSLSymmetricCipher> cipherMAC;
-    unsigned int block_size = 0;
     if (crypto == "des" || crypto == "3des")
     {
         cipherMAC.reset(new DESCipher(OpenSSLSymmetricCipher::ENC_MODE_CBC));
-        block_size = 8;
     }
     else if (crypto == "aes")
     {
         cipherMAC.reset(new AESCipher(OpenSSLSymmetricCipher::ENC_MODE_CBC));
-        block_size = 16;
     }
     else
     {
@@ -44,23 +41,10 @@ ByteVector CMACCrypto::cmac(const ByteVector &key, std::string crypto,
 
     if (cipherMAC)
     {
-        lastiv.resize(block_size, 0x00);
-        if (padding_size == 0)
+        cmac = CMACCrypto::cmac(key, cipherMAC, data, iv, padding_size);
+        if (cmac.size() > cipherMAC->getBlockSize())
         {
-            padding_size = block_size;
-        }
-        if (iv.size() > 0)
-        {
-            for (unsigned char i = 0; i < iv.size(); ++i)
-            {
-                lastiv[i] = iv[i];
-            }
-        }
-
-        cmac = CMACCrypto::cmac(key, cipherMAC, block_size, data, lastiv, padding_size);
-        if (cmac.size() > block_size)
-        {
-            cmac = ByteVector(cmac.end() - block_size, cmac.end());
+            cmac = ByteVector(cmac.end() - cipherMAC->getBlockSize(), cmac.end());
         }
     }
 
@@ -68,9 +52,9 @@ ByteVector CMACCrypto::cmac(const ByteVector &key, std::string crypto,
 }
 
 ByteVector CMACCrypto::cmac(const ByteVector &key,
-                            std::shared_ptr<OpenSSLSymmetricCipher> cipherMAC,
-                            unsigned int block_size, const ByteVector &data,
-                            ByteVector lastIV, unsigned int padding_size, bool forceK2Use)
+                            std::shared_ptr<SymmetricCipher> cipherMAC,
+                            const ByteVector &data, const ByteVector &lastIV,
+                            unsigned int padding_size, bool forceK2Use)
 {
     std::shared_ptr<OpenSSLSymmetricCipher> cipherK1K2;
 
@@ -96,7 +80,7 @@ ByteVector CMACCrypto::cmac(const ByteVector &key,
     unsigned char Rb;
 
     // TDES
-    if (block_size == 8)
+    if (cipherMAC->getBlockSize() == 8)
     {
         Rb = 0x1b;
     }
@@ -107,7 +91,7 @@ ByteVector CMACCrypto::cmac(const ByteVector &key,
     }
 
     ByteVector blankbuf;
-    blankbuf.resize(block_size, 0x00);
+    blankbuf.resize(cipherK1K2->getBlockSize(), 0x00);
     ByteVector L;
     cipherK1K2->cipher(blankbuf, L, *symkey.get(), *iv.get(), false);
 
@@ -131,6 +115,10 @@ ByteVector CMACCrypto::cmac(const ByteVector &key,
         K2 = shift_string(K1, Rb);
     }
 
+	if (padding_size == 0)
+    {
+        padding_size = cipherMAC->getBlockSize();
+    }
     int pad = (padding_size - (data.size() % padding_size)) % padding_size;
     if (data.size() == 0)
         pad = padding_size;
@@ -168,18 +156,21 @@ ByteVector CMACCrypto::cmac(const ByteVector &key,
     }
 
     ByteVector ret;
-    // 3DES
-    if (std::dynamic_pointer_cast<DESCipher>(cipherMAC))
-    {
-        iv.reset(
-            new DESInitializationVector(DESInitializationVector::createFromData(lastIV)));
-    }
-    // AES
-    else
-    {
-        iv.reset(
-            new AESInitializationVector(AESInitializationVector::createFromData(lastIV)));
-    }
+    if (lastIV.size() > 0)
+	{
+		// 3DES
+		if (std::dynamic_pointer_cast<DESCipher>(cipherMAC))
+		{
+			iv.reset(
+				new DESInitializationVector(DESInitializationVector::createFromData(lastIV)));
+		}
+		// AES
+		else
+		{
+			iv.reset(
+				new AESInitializationVector(AESInitializationVector::createFromData(lastIV)));
+		}
+	}
     cipherMAC->cipher(padded_data, ret, *symkey.get(), *iv.get(), false);
 
     return ret;

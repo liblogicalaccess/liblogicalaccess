@@ -35,11 +35,10 @@ DESFireCrypto::DESFireCrypto()
     d_currentAid   = 0;
     d_currentKeyNo = 0;
     d_mac_size     = 4;
-    d_block_size   = 8;
     d_keys.clear();
 
     d_lastIV.clear();
-    d_lastIV.resize(d_block_size, 0x00);
+    d_lastIV.resize(8, 0x00);
 }
 
 DESFireCrypto::~DESFireCrypto()
@@ -61,7 +60,7 @@ ByteVector DESFireCrypto::desfireDecrypt(size_t length)
     }
     else
     {
-        ret = desfire_iso_decrypt(d_sessionKey, d_buf, d_cipher, d_block_size, length);
+        ret = desfire_iso_decrypt(d_sessionKey, d_buf, d_cipher, length);
     }
 
     return ret;
@@ -74,7 +73,10 @@ void DESFireCrypto::initBuf()
     if (d_auth_method == CM_LEGACY)
     {
         d_lastIV.clear();
-        d_lastIV.resize(d_block_size, 0x00);
+        if (d_cipher)
+		{
+            d_lastIV.resize(d_cipher->getBlockSize(), 0x00);
+		}
     }
 }
 
@@ -108,7 +110,7 @@ bool DESFireCrypto::verifyMAC(bool end, const ByteVector &data)
             ourMacBuf.insert(ourMacBuf.end(), d_buf.begin(), d_buf.end() - 8);
             ourMacBuf.push_back(0x00); // SW_OPERATION_OK
             ByteVector ourMac =
-                desfire_cmac(d_sessionKey, d_cipher, d_block_size, ourMacBuf);
+                desfire_cmac(d_sessionKey, d_cipher, ourMacBuf);
             ret = (mac == ourMac);
         }
 
@@ -134,7 +136,7 @@ ByteVector DESFireCrypto::generateMAC(unsigned char /*cmd*/, const ByteVector &d
     }
     else
     {
-        ret = desfire_cmac(d_sessionKey, d_cipher, d_block_size, data);
+        ret = desfire_cmac(d_sessionKey, d_cipher, data);
     }
 
     return ret;
@@ -151,7 +153,7 @@ ByteVector DESFireCrypto::desfireEncrypt(const ByteVector &data, const ByteVecto
     }
     else
     {
-        ret = desfire_iso_encrypt(d_sessionKey, data, d_cipher, d_block_size, param,
+        ret = desfire_iso_encrypt(d_sessionKey, data, d_cipher, param,
                                   calccrc);
     }
 
@@ -766,15 +768,17 @@ ByteVector DESFireCrypto::changeKey_PICC(uint8_t keyno, ByteVector oldKeyDiversi
             encCryptogram.push_back(static_cast<unsigned char>((crc & 0xff0000) >> 16));
             encCryptogram.push_back(static_cast<unsigned char>((crc & 0xff000000) >> 24));
 
-            int pad =
-                (d_block_size - (encCryptogram.size() % d_block_size)) % d_block_size;
+            int pad = (d_cipher->getBlockSize() -
+                       (encCryptogram.size() % d_cipher->getBlockSize())) %
+                      d_cipher->getBlockSize();
             for (int i = 0; i < pad; ++i)
             {
                 encCryptogram.push_back(0x00);
             }
 
             d_cipher->cipher(encCryptogram, cryptogram, *sessionkey, *iv, false);
-            d_lastIV = ByteVector(cryptogram.end() - d_block_size, cryptogram.end());
+            d_lastIV =
+                ByteVector(cryptogram.end() - d_cipher->getBlockSize(), cryptogram.end());
         }
         else
         {
@@ -903,10 +907,9 @@ void DESFireCrypto::iso_authenticate_PICC2(unsigned char keyno,
 
     d_cipher.reset(new openssl::DESCipher());
     d_auth_method = CM_ISO;
-    d_block_size  = 8;
     d_mac_size    = 8;
     d_lastIV.clear();
-    d_lastIV.resize(d_block_size, 0x00);
+    d_lastIV.resize(d_cipher->getBlockSize(), 0x00);
 }
 
 ByteVector DESFireCrypto::aes_authenticate_PICC1(unsigned char keyno,
@@ -1040,36 +1043,35 @@ void DESFireCrypto::aes_authenticate_PICC2_GENERIC(unsigned char keyno,
 
 ByteVector DESFireCrypto::desfire_cmac(const ByteVector &data)
 {
-    return desfire_cmac(d_sessionKey, d_cipher, d_block_size, data);
+    return desfire_cmac(d_sessionKey, d_cipher, data);
 }
 
 ByteVector
 DESFireCrypto::desfire_cmac(const ByteVector &key,
-                            std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC,
-                            unsigned int block_size, const ByteVector &data)
+                            std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, const ByteVector &data)
 {
 
     if (iks_wrapper_)
     {
         auto remote_crypto = LibraryManager::getInstance()->getRemoteCrypto();
-        ByteVector ret     = openssl::CMACCrypto::cmac_iks(
-            iks_wrapper_->remote_key_name, data, d_lastIV, block_size, remote_crypto);
-        d_lastIV = ByteVector(ret.end() - block_size, ret.end());
+        ByteVector ret     = openssl::CMACCrypto::cmac_iks(iks_wrapper_->remote_key_name, data, d_lastIV,
+                                          cipherMAC->getBlockSize(), remote_crypto);
+        d_lastIV = ByteVector(ret.end() - cipherMAC->getBlockSize(), ret.end());
         // Need to understand this "if (chipher == d_cipher)".
         ret = ByteVector(ret.end() - 16, ret.end() - 8);
         return ret;
     }
 
-    ByteVector ret =
-        openssl::CMACCrypto::cmac(key, cipherMAC, block_size, data, d_lastIV, block_size);
+    ByteVector ret = openssl::CMACCrypto::cmac(key, cipherMAC, data, d_lastIV,
+                                               cipherMAC->getBlockSize());
 
     if (cipherMAC == d_cipher)
     {
-        d_lastIV = ByteVector(ret.end() - block_size, ret.end());
+        d_lastIV = ByteVector(ret.end() - cipherMAC->getBlockSize(), ret.end());
     }
 
     // DES
-    if (block_size == 8)
+    if (cipherMAC->getBlockSize() == 8)
     {
         ret = ByteVector(ret.end() - 8, ret.end());
     }
@@ -1083,12 +1085,12 @@ DESFireCrypto::desfire_cmac(const ByteVector &key,
 
 ByteVector DESFireCrypto::desfire_iso_decrypt(const ByteVector &data, size_t length)
 {
-    return desfire_iso_decrypt(d_sessionKey, data, d_cipher, d_block_size, length);
+    return desfire_iso_decrypt(d_sessionKey, data, d_cipher, length);
 }
 
 ByteVector DESFireCrypto::desfire_iso_decrypt(
     const ByteVector &key, const ByteVector &data,
-    std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size,
+    std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher,
     size_t datalen)
 {
     std::vector<uint8_t> decdata;
@@ -1116,7 +1118,7 @@ ByteVector DESFireCrypto::desfire_iso_decrypt(
         cipher->decipher(data, decdata, *isokey, *iv, false);
         if (cipher == d_cipher)
         {
-            d_lastIV = ByteVector(data.end() - block_size, data.end());
+            d_lastIV = ByteVector(data.end() - cipher->getBlockSize(), data.end());
         }
     }
     else
@@ -1126,7 +1128,7 @@ ByteVector DESFireCrypto::desfire_iso_decrypt(
         SignatureResult signature_result;
         decdata = remote_crypto->aes_decrypt(data, iks_wrapper_->remote_key_name,
                                              d_lastIV, &signature_result);
-        d_lastIV               = ByteVector(data.end() - block_size, data.end());
+        d_lastIV = ByteVector(data.end() - cipher->getBlockSize(), data.end());
         iks_wrapper_->last_sig = signature_result;
     }
     size_t ll;
@@ -1198,7 +1200,9 @@ ByteVector DESFireCrypto::iso_encipherData(bool end, const ByteVector &data,
         decdata.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
         decdata.push_back(static_cast<unsigned char>((crc & 0xff0000) >> 16));
         decdata.push_back(static_cast<unsigned char>((crc & 0xff000000) >> 24));
-        int pad = (d_block_size - (decdata.size() % d_block_size)) % d_block_size;
+        int pad =
+            (d_cipher->getBlockSize() - (decdata.size() % d_cipher->getBlockSize())) %
+                  d_cipher->getBlockSize();
         for (int i = 0; i < pad; ++i)
         {
             decdata.push_back(0x00);
@@ -1206,7 +1210,7 @@ ByteVector DESFireCrypto::iso_encipherData(bool end, const ByteVector &data,
     }
     else
     {
-        int leave = decdata.size() % d_block_size;
+        int leave = decdata.size() % d_cipher->getBlockSize();
         if (leave > 0)
         {
             d_last_left.clear();
@@ -1238,7 +1242,7 @@ ByteVector DESFireCrypto::iso_encipherData(bool end, const ByteVector &data,
                 openssl::DESInitializationVector::createFromData(d_lastIV)));
         }
         d_cipher->cipher(decdata, encdata, *isokey, *iv, false);
-        d_lastIV = ByteVector(encdata.end() - d_block_size, encdata.end());
+        d_lastIV = ByteVector(encdata.end() - d_cipher->getBlockSize(), encdata.end());
     }
 
     return encdata;
@@ -1246,7 +1250,7 @@ ByteVector DESFireCrypto::iso_encipherData(bool end, const ByteVector &data,
 
 ByteVector DESFireCrypto::desfire_iso_encrypt(
     const ByteVector &key, const ByteVector &data,
-    std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher, unsigned int block_size,
+    std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher,
     const ByteVector &param, bool calccrc)
 {
     ByteVector encdata;
@@ -1261,7 +1265,8 @@ ByteVector DESFireCrypto::desfire_iso_encrypt(
         decdata.push_back(static_cast<unsigned char>((crc & 0xff0000) >> 16));
         decdata.push_back(static_cast<unsigned char>((crc & 0xff000000) >> 24));
     }
-    int pad = (block_size - (decdata.size() % block_size)) % block_size;
+    int pad = (cipher->getBlockSize() - (decdata.size() % cipher->getBlockSize())) %
+              cipher->getBlockSize();
     for (int i = 0; i < pad; ++i)
     {
         decdata.push_back(0x00);
@@ -1288,7 +1293,7 @@ ByteVector DESFireCrypto::desfire_iso_encrypt(
         cipher->cipher(decdata, encdata, *isokey, *iv, false);
         if (cipher == d_cipher)
         {
-            d_lastIV = ByteVector(encdata.end() - block_size, encdata.end());
+            d_lastIV = ByteVector(encdata.end() - cipher->getBlockSize(), encdata.end());
         }
     }
     else
@@ -1297,7 +1302,7 @@ ByteVector DESFireCrypto::desfire_iso_encrypt(
         auto remote_crypto = LibraryManager::getInstance()->getRemoteCrypto();
         encdata =
             remote_crypto->aes_encrypt(decdata, iks_wrapper_->remote_key_name, d_lastIV);
-        d_lastIV = ByteVector(encdata.end() - block_size, encdata.end());
+        d_lastIV = ByteVector(encdata.end() - cipher->getBlockSize(), encdata.end());
     }
 
     return encdata;

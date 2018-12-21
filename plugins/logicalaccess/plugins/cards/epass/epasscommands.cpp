@@ -11,6 +11,7 @@ using namespace logicalaccess;
 EPassCommands::EPassCommands()
     : Commands(CMD_EPASS)
 {
+    crypto_ = std::make_shared<EPassCrypto>();
 }
 
 EPassCommands::EPassCommands(std::string ct)
@@ -21,6 +22,7 @@ EPassCommands::EPassCommands(std::string ct)
 bool EPassCommands::authenticate(const std::string &mrz)
 {
     LLA_LOG_CTX("EPassIdentityCardService::authenticate");
+
     // We perform a classic ISO7816 authenticate. However, there are some caveats.
     //     + Some epassport chip returns an error when we try to authenticate while
     //       we are already authenticated.
@@ -35,8 +37,7 @@ bool EPassCommands::authenticate(const std::string &mrz)
     {
         try
         {
-            crypto_ = std::make_shared<EPassCrypto>(mrz);
-            cryptoChanged();
+            crypto_->reset(mrz);
 
             std::shared_ptr<ISO7816ReaderCardAdapter> rcu =
                 std::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(
@@ -44,13 +45,12 @@ bool EPassCommands::authenticate(const std::string &mrz)
             assert(rcu);
             auto iso7816cmd = getISO7816Commands();
             auto challenge  = iso7816cmd->getChallenge(8);
-            auto tmp       = crypto_->step1(challenge);
-
-            tmp = iso7816cmd->externalAuthenticate(0x00, true, 0x00, tmp, 28);
+            auto rpcd      = crypto_->step1(challenge);
+            auto rpicc1 = iso7816cmd->externalAuthenticate(0x00, true, 0x00, rpcd, 28);
             // drop status bytes.
-            EXCEPTION_ASSERT_WITH_LOG(tmp.size() == 40, LibLogicalAccessException,
+            EXCEPTION_ASSERT_WITH_LOG(rpicc1.size() == 40, LibLogicalAccessException,
                                       "Unexpected response length");
-            return crypto_->step2(tmp);
+            return crypto_->step2(rpicc1);
         }
         catch (const CardException &e)
         {
@@ -100,14 +100,6 @@ void EPassCommands::setReaderCardAdapter(std::shared_ptr<ReaderCardAdapter> adap
 {
     Commands::setReaderCardAdapter(adapter);
     auto epass_rca = std::dynamic_pointer_cast<EPassReaderCardAdapter>(adapter);
-    if (epass_rca)
-        epass_rca->setEPassCrypto(crypto_);
-}
-
-void EPassCommands::cryptoChanged() const
-{
-    auto epass_rca =
-        std::dynamic_pointer_cast<EPassReaderCardAdapter>(getReaderCardAdapter());
     if (epass_rca)
         epass_rca->setEPassCrypto(crypto_);
 }

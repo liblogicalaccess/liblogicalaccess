@@ -44,6 +44,8 @@ class LLA_CRYPTO_API SymmetricCipher
     virtual void cipher(const ByteVector &src, ByteVector &dest, const SymmetricKey &key,
                         const InitializationVector &iv, bool padding) = 0;
 
+    void cipher(const ByteVector &src, ByteVector &dest, const SymmetricKey &key);
+
     /**
      * \brief Decipher a buffer.
      * \param src The buffer to decipher.
@@ -56,6 +58,10 @@ class LLA_CRYPTO_API SymmetricCipher
     virtual void decipher(const ByteVector &src, ByteVector &dest,
                           const SymmetricKey &key, const InitializationVector &iv,
                           bool padding) = 0;
+
+	void decipher(const ByteVector &src, ByteVector &dest, const SymmetricKey &key);
+
+	virtual unsigned char getBlockSize() const = 0;
 };
 }
 }

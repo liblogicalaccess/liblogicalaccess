@@ -81,19 +81,22 @@ typedef enum
     ISO_RECORD_ALLRECORDS = 0x05
 } ISORecords;
 
-#define ISO_DATA_OBJECT_SELECTED 0x3FFF
-#define ISO_DATA_OBJECT_EXTENDED_HEADERLIST 0x4D
-#define ISO_DATA_OBJECT_HEADERLIST 0x5C
-#define ISO_DATA_OBJECT_TAGLIST 0x5D
-#define ISO_DATA_OBJECT_APPLICATION_TEMPLATE 0x61
-#define ISO_DATA_OBJECT_DYNAMIC_AUTHENTICATION_DATA 0x7C
-#define ISO_DATA_OBJECT_WITNESS 0x80
-#define ISO_DATA_OBJECT_CHALLENGE 0x81
-#define ISO_DATA_OBJECT_RESPONSE 0x82
-#define ISO_DATA_OBJECT_COMMITTED 0x83
-#define ISO_DATA_OBJECT_AUTHCODE 0x84
-#define ISO_DATA_OBJECT_EXPONENTIAL 0x85
-#define ISO_DATA_OBJECT_IDENTIFICATION_DATA_TEMPLATE 0xA0
+#define ISO7816_DATA_OBJECT_SELECTED 0x3FFF
+#define ISO7816_DATA_OBJECT_EXTENDED_HEADERLIST 0x4D
+#define ISO7816_DATA_OBJECT_HEADERLIST 0x5C
+#define ISO7816_DATA_OBJECT_TAGLIST 0x5D
+#define ISO7816_DATA_OBJECT_APPLICATION_TEMPLATE 0x61
+#define ISO7816_DATA_OBJECT_DYNAMIC_AUTHENTICATION_DATA 0x7C
+#define ISO7816_DATA_OBJECT_WITNESS 0x80
+#define ISO7816_DATA_OBJECT_CHALLENGE 0x81
+#define ISO7816_DATA_OBJECT_RESPONSE 0x82
+#define IS7816O_DATA_OBJECT_COMMITTED 0x83
+#define ISO7816_DATA_OBJECT_AUTHCODE 0x84
+#define ISO7816_DATA_OBJECT_CRYPTOGRAM 0x85
+#define ISO7816_DATA_OBJECT_CRYPTOGRAPHIC_CHECKSUM 0x8E
+#define ISO7816_DATA_OBJECT_PROTECTED_NE 0x97
+#define ISO7816_DATA_OBJECT_PROCESSING_STATUS 0x99
+#define ISO7816_DATA_OBJECT_IDENTIFICATION_DATA_TEMPLATE 0xA0
 
 /**
  * \brief The ISO7816 commands class.
@@ -169,7 +172,7 @@ class LLA_CARDS_ISO7816_API ISO7816Commands : public Commands
      * \return The data of the object.
      */
     virtual ByteVector getDataList(int64_t dataObject,
-                                   unsigned char listtag = ISO_DATA_OBJECT_HEADERLIST,
+                                   unsigned char listtag = ISO7816_DATA_OBJECT_HEADERLIST,
                                    size_t length = 0, unsigned short efid = 0);
 
 	/**
@@ -179,7 +182,7 @@ class LLA_CARDS_ISO7816_API ISO7816Commands : public Commands
      * \return The data of the object.
      */
     virtual ByteVector getDataList(TLVPtr tlv, size_t length = 0,
-                                   unsigned short efid = ISO_DATA_OBJECT_SELECTED);
+                                   unsigned short efid = ISO7816_DATA_OBJECT_SELECTED);
 
 	/**
      * \brief Get data.
@@ -188,7 +191,7 @@ class LLA_CARDS_ISO7816_API ISO7816Commands : public Commands
      * \return The data of the object.
      */
     virtual ByteVector getDataList(const ByteVector &data, size_t length = 0,
-                                   unsigned short efid = ISO_DATA_OBJECT_SELECTED) = 0;
+                                   unsigned short efid = ISO7816_DATA_OBJECT_SELECTED) = 0;
 
     /**
      * \brief Put data.

@@ -568,17 +568,15 @@ void DESFireEV1ISO7816Commands::sam_iso_authenticate(std::shared_ptr<DESFireKey>
     if (key->getKeyType() == DF_KEY_3K3DES || key->getKeyType() == DF_KEY_DES)
     {
         crypto->d_cipher.reset(new openssl::DESCipher());
-        crypto->d_block_size = 8;
         crypto->d_mac_size   = 8;
     }
     else
     {
         crypto->d_cipher.reset(new openssl::AESCipher());
-        crypto->d_block_size = 16;
         crypto->d_mac_size   = 8;
     }
     crypto->d_lastIV.clear();
-    crypto->d_lastIV.resize(crypto->d_block_size, 0x00);
+    crypto->d_lastIV.resize(crypto->d_cipher->getBlockSize(), 0x00);
 }
 
 void DESFireEV1ISO7816Commands::iso_authenticate(std::shared_ptr<DESFireKey> currentKey,
@@ -718,7 +716,6 @@ void DESFireEV1ISO7816Commands::iso_authenticate(std::shared_ptr<DESFireKey> cur
 
         crypto->d_cipher.reset(new openssl::DESCipher());
         crypto->d_authkey    = keydiv;
-        crypto->d_block_size = 8;
         crypto->d_mac_size   = 8;
     }
     else if (algorithm == DF_ALG_3K3DES)
@@ -738,7 +735,6 @@ void DESFireEV1ISO7816Commands::iso_authenticate(std::shared_ptr<DESFireKey> cur
 
         crypto->d_cipher.reset(new openssl::DESCipher());
         crypto->d_authkey    = keydiv;
-        crypto->d_block_size = 8;
         crypto->d_mac_size   = 8;
     }
     else
@@ -754,11 +750,10 @@ void DESFireEV1ISO7816Commands::iso_authenticate(std::shared_ptr<DESFireKey> cur
 
         crypto->d_cipher.reset(new openssl::AESCipher());
         crypto->d_authkey    = keydiv;
-        crypto->d_block_size = 16;
         crypto->d_mac_size   = 8;
     }
     crypto->d_lastIV.clear();
-    crypto->d_lastIV.resize(crypto->d_block_size, 0x00);
+    crypto->d_lastIV.resize(crypto->d_cipher->getBlockSize(), 0x00);
 
     onAuthenticated();
 }
@@ -885,10 +880,9 @@ void DESFireEV1ISO7816Commands::iks_authenticateAES(std::shared_ptr<DESFireKey> 
 
     crypto->d_cipher.reset(new openssl::AESCipher());
     crypto->d_auth_method = CM_ISO;
-    crypto->d_block_size  = 16;
     crypto->d_mac_size    = 8;
     crypto->d_lastIV.clear();
-    crypto->d_lastIV.resize(crypto->d_block_size, 0x00);
+    crypto->d_lastIV.resize(crypto->d_cipher->getBlockSize(), 0x00);
 }
 
 void DESFireEV1ISO7816Commands::authenticateAES(unsigned char keyno)
@@ -939,10 +933,9 @@ void DESFireEV1ISO7816Commands::authenticateAES(unsigned char keyno)
 
     crypto->d_cipher.reset(new openssl::AESCipher());
     crypto->d_auth_method = CM_ISO;
-    crypto->d_block_size  = 16;
     crypto->d_mac_size    = 8;
     crypto->d_lastIV.clear();
-    crypto->d_lastIV.resize(crypto->d_block_size, 0x00);
+    crypto->d_lastIV.resize(crypto->d_cipher->getBlockSize(), 0x00);
 }
 
 ByteVector DESFireEV1ISO7816Commands::handleReadCmd(unsigned char cmd,
@@ -1710,12 +1703,11 @@ void DESFireEV1ISO7816Commands::iks_iso_authenticate(std::shared_ptr<DESFireKey>
     }
 
     crypto->d_cipher.reset(new openssl::AESCipher());
-    crypto->d_block_size = 16;
     crypto->d_mac_size   = 8;
 
     // common
     crypto->d_lastIV.clear();
-    crypto->d_lastIV.resize(crypto->d_block_size, 0x00);
+    crypto->d_lastIV.resize(crypto->d_cipher->getBlockSize(), 0x00);
 
     onAuthenticated();
 }
@@ -1817,11 +1809,10 @@ void DESFireEV1ISO7816Commands::pkcs_iso_authenticate(
 
     crypto->d_cipher.reset(new openssl::AESCipher());
     crypto->d_authkey    = keydiv;
-    crypto->d_block_size = 16;
     crypto->d_mac_size   = 8;
 
     crypto->d_lastIV.clear();
-    crypto->d_lastIV.resize(crypto->d_block_size, 0x00);
+    crypto->d_lastIV.resize(crypto->d_cipher->getBlockSize(), 0x00);
 
     onAuthenticated();
 }

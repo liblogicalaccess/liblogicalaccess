@@ -26,6 +26,18 @@ namespace openssl
 class LLA_CRYPTO_API SymmetricKey
 {
   public:
+	 /**
+     * \brief Constructor.
+     * \param size The key size.
+     */
+    explicit SymmetricKey(size_t size);
+
+    /**
+     * \brief Constructor.
+     * \param data The buffer data.
+     */
+    explicit SymmetricKey(const ByteVector &data);
+
     /**
      * \brief Virtual destructor.
      *
@@ -45,17 +57,6 @@ class LLA_CRYPTO_API SymmetricKey
     }
 
   protected:
-    /**
-     * \brief Constructor.
-     * \param size The key size.
-     */
-    explicit SymmetricKey(size_t size);
-
-    /**
-     * \brief Constructor.
-     * \param data The buffer data.
-     */
-    explicit SymmetricKey(const ByteVector &data);
 
     /**
      * \brief Randomize the key.

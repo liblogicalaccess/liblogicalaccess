@@ -91,51 +91,9 @@ class LLA_CARDS_EPASS_API EPassUtils
     static uint8_t compute_mrz_checksum(const std::string &in);
 
     /**
-     * ISO 9797-1 padding method 2
-     */
-    static ByteVector pad(const ByteVector &in);
-
-    /**
-     * Cancel the padding created by pad()
-     */
-    static ByteVector unpad(const ByteVector &in);
-
-    /**
-     * Increment the Session Send Counter by one and return a new
-     * ByteVector.
-     */
-    static ByteVector increment_ssc(const ByteVector &in);
-
-    /**
      * Extract Kseed from MRZ.
      */
     static ByteVector seed_from_mrz(const std::string &mrz);
-
-    static ByteVector compute_enc_key(const ByteVector &seed);
-
-    static ByteVector compute_mac_key(const ByteVector &seed);
-
-    static ByteVector adjust_key_parity(const ByteVector &key);
-
-    static ByteVector encrypt_apdu(const ByteVector &apdu, const ByteVector &ks_enc,
-                                   const ByteVector &ks_mac, const ByteVector &ssc);
-
-    static ByteVector decrypt_rapdu(const ByteVector &rapdu, const ByteVector &ks_enc,
-                                    const ByteVector &ks_mac, const ByteVector &ssc);
-
-    /**
-     * Perform MAC computation on the block `in`.
-     *
-     * The computation requires `k_mac`, a 16bytes key that will be split in two
-     * during the computation.
-     *
-     * Unless the MAC computation is for the Mutual Authenticate command, SSC (Send
-     * Session Counter) is required, otherwise the MAC will be rejected.
-     *
-     * @warning No padding is performed.
-     */
-    static ByteVector compute_mac(const ByteVector &in, const ByteVector &k_mac,
-                                  const ByteVector & = {});
 
     /**
      * Parse the EF.COM content and build an EPassEFCOM object with

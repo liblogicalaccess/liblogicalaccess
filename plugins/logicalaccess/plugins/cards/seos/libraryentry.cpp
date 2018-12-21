@@ -9,11 +9,11 @@ LLA_CARDS_SEOS_API char *getLibraryName()
     return (char *)"SEOS";
 }
 
-LLA_CARDS_SEOS_API void getSEOSChip(std::shared_ptr<logicalaccess::Chip> *chip)
+LLA_CARDS_SEOS_API void getSeosChip(std::shared_ptr<logicalaccess::Chip> *chip)
 {
     if (chip != nullptr)
     {
-        *chip = std::make_shared<logicalaccess::SEOSChip>();
+        *chip = std::make_shared<logicalaccess::SeosChip>();
     }
 }
 
@@ -27,7 +27,7 @@ LLA_CARDS_SEOS_API bool getChipInfoAt(unsigned int index, char *chipname,
         {
         case 0:
         {
-            *getterfct = (void *)&getSEOSChip;
+            *getterfct = (void *)&getSeosChip;
             sprintf(chipname, CHIP_SEOS);
             ret = true;
         }

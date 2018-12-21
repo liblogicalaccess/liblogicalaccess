@@ -10,10 +10,10 @@
 
 namespace logicalaccess
 {
-SEOSCommands::~SEOSCommands() {}
+SeosCommands::~SeosCommands() {}
 
-std::shared_ptr<SEOSChip> SEOSCommands::getSEOSChip() const
+std::shared_ptr<SeosChip> SeosCommands::getSeosChip() const
 {
-    return std::dynamic_pointer_cast<SEOSChip>(getChip());
+    return std::dynamic_pointer_cast<SeosChip>(getChip());
 }
 }

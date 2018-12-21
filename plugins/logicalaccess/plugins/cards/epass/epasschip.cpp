@@ -10,7 +10,7 @@ std::shared_ptr<EPassCommands> EPassChip::getEPassCommands() const
 }
 
 EPassChip::EPassChip()
-    : ISO7816Chip("EPass")
+    : ISO7816Chip(CHIP_EPASS)
 {
 }
 

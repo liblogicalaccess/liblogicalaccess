@@ -237,7 +237,7 @@ ByteVector ISO7816ISO7816Commands::generalAuthenticate(unsigned char algorithm,
                                                        bool globalReference,
                                                        unsigned char keyno,
                                                        const ByteVector &dataField,
-                                                       unsigned char length)
+                                                       unsigned char le)
 {
     unsigned char p2 = keyno & 0x0F;
     if (!globalReference)
@@ -251,13 +251,13 @@ ByteVector ISO7816ISO7816Commands::generalAuthenticate(unsigned char algorithm,
     {
         result = getISO7816ReaderCardAdapter()->sendAPDUCommand(
             ISO7816_CLA_ISO_COMPATIBLE, ISO7816_INS_GENERAL_AUTHENTICATE, algorithm, p2,
-            static_cast<unsigned char>(dataField.size()), dataField, length);
+            static_cast<unsigned char>(dataField.size()), dataField, le);
     }
     else
     {
         result = getISO7816ReaderCardAdapter()->sendAPDUCommand(
             ISO7816_CLA_ISO_COMPATIBLE, ISO7816_INS_GENERAL_AUTHENTICATE, algorithm, p2,
-            length);
+            le);
     }
 
 
@@ -274,22 +274,22 @@ ByteVector ISO7816ISO7816Commands::generalAuthenticate_challenge(unsigned char a
                                                                  unsigned char keyno)
 {
     auto tlv_authdata =
-        std::make_shared<TLV>(ISO_DATA_OBJECT_DYNAMIC_AUTHENTICATION_DATA);
+        std::make_shared<TLV>(ISO7816_DATA_OBJECT_DYNAMIC_AUTHENTICATION_DATA);
 
-    tlv_authdata->value(std::make_shared<TLV>(ISO_DATA_OBJECT_CHALLENGE));
+    tlv_authdata->value(std::make_shared<TLV>(ISO7816_DATA_OBJECT_CHALLENGE));
 
 	auto result = generalAuthenticate(algorithm, globalReference, keyno, tlv_authdata->compute(), 0x00);
     auto rtlv_authdata = TLV::parse_tlvs(result);
     EXCEPTION_ASSERT_WITH_LOG(rtlv_authdata.size() > 0, LibLogicalAccessException,
                                 "Bad Dynamic Authentication Data TLV response format.");
     EXCEPTION_ASSERT_WITH_LOG(rtlv_authdata.at(0)->tag() ==
-                                  ISO_DATA_OBJECT_DYNAMIC_AUTHENTICATION_DATA,
+                                  ISO7816_DATA_OBJECT_DYNAMIC_AUTHENTICATION_DATA,
                               LibLogicalAccessException, "Wrong TLV tag response.");
     auto rtlv_authdata_childs = TLV::parse_tlvs(rtlv_authdata.at(0)->value());
     EXCEPTION_ASSERT_WITH_LOG(rtlv_authdata_childs.size() > 0, LibLogicalAccessException,
                               "Bad Challenge TLV response format.");
     EXCEPTION_ASSERT_WITH_LOG(rtlv_authdata_childs.at(0)->tag() ==
-                                  ISO_DATA_OBJECT_CHALLENGE,
+                                  ISO7816_DATA_OBJECT_CHALLENGE,
                               LibLogicalAccessException, "Wrong TLV tag response.");
     return rtlv_authdata_childs.at(0)->value();
 }
@@ -300,8 +300,8 @@ ByteVector ISO7816ISO7816Commands::generalAuthenticate_response(unsigned char al
                                                                 const ByteVector &data)
 {
     auto tlv_authdata =
-        std::make_shared<TLV>(ISO_DATA_OBJECT_DYNAMIC_AUTHENTICATION_DATA);
-    auto tlv_response = std::make_shared<TLV>(ISO_DATA_OBJECT_RESPONSE);
+        std::make_shared<TLV>(ISO7816_DATA_OBJECT_DYNAMIC_AUTHENTICATION_DATA);
+    auto tlv_response = std::make_shared<TLV>(ISO7816_DATA_OBJECT_RESPONSE);
     tlv_response->value(data);
 
     auto result        = generalAuthenticate(algorithm, globalReference, keyno,
@@ -310,13 +310,13 @@ ByteVector ISO7816ISO7816Commands::generalAuthenticate_response(unsigned char al
     EXCEPTION_ASSERT_WITH_LOG(rtlv_authdata.size() > 0, LibLogicalAccessException,
                               "Bad Dynamic Authentication Data TLV response format.");
     EXCEPTION_ASSERT_WITH_LOG(rtlv_authdata.at(0)->tag() ==
-                                  ISO_DATA_OBJECT_DYNAMIC_AUTHENTICATION_DATA,
+                                  ISO7816_DATA_OBJECT_DYNAMIC_AUTHENTICATION_DATA,
                               LibLogicalAccessException, "Wrong TLV tag response.");
     auto rtlv_authdata_childs = TLV::parse_tlvs(rtlv_authdata.at(0)->value());
     EXCEPTION_ASSERT_WITH_LOG(rtlv_authdata_childs.size() > 0, LibLogicalAccessException,
                               "Bad Challenge TLV response format.");
     EXCEPTION_ASSERT_WITH_LOG(rtlv_authdata_childs.at(0)->tag() ==
-                                  ISO_DATA_OBJECT_RESPONSE,
+                                  ISO7816_DATA_OBJECT_RESPONSE,
                               LibLogicalAccessException, "Wrong TLV tag response.");
     return rtlv_authdata_childs.at(0)->value();
 }

@@ -76,12 +76,6 @@ class LLA_CARDS_EPASS_API EPassCommands : public Commands
      */
     ByteVector current_app_;
 
-    /**
-     * Internal notification for when the crypto_ object
-     * has changed.
-     *
-     */
-    void cryptoChanged() const;
     std::shared_ptr<EPassCrypto> crypto_;
 };
 }

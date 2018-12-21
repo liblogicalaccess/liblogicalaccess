@@ -85,5 +85,10 @@ const EVP_CIPHER *DESCipher::getEVPCipher(const SymmetricKey &key) const
 
     return evpCipher;
 }
+
+unsigned char DESCipher::getBlockSize() const
+{
+    return 8;
+}
 }
 }
