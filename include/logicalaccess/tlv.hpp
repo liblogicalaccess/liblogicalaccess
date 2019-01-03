@@ -61,7 +61,7 @@ class LLA_CORE_API TLV
 
 	static std::vector<TLVPtr> parse_tlvs(const ByteVector &bytes,
                                                 size_t &bytes_consumed);
-    static std::vector<TLVPtr> parse_tlvs(const ByteVector &bytes);
+    static std::vector<TLVPtr> parse_tlvs(const ByteVector &bytes, bool strict = false);
 
   private:
     uint8_t tag_;

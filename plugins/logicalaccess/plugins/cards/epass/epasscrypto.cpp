@@ -87,7 +87,7 @@ void EPassCrypto::compute_session_keys(const ByteVector &k_icc, const ByteVector
 
 ByteVector EPassCrypto::compute_mac(std::shared_ptr<openssl::SymmetricCipher> cipher,
                                       const ByteVector &in, const ByteVector &k_mac,
-                                      const ByteVector &ssc)
+                                    const ByteVector &iv, const ByteVector &ssc)
 {
     EXCEPTION_ASSERT_WITH_LOG(in.size() % cipher->getBlockSize() == 0,
                               LibLogicalAccessException,
@@ -98,7 +98,7 @@ ByteVector EPassCrypto::compute_mac(std::shared_ptr<openssl::SymmetricCipher> ci
 
     if (ssc.size())
     {
-        cipher->cipher(ssc, y, openssl::SymmetricKey(kmac_a));
+        cipher->cipher(ssc, y, kmac_a, iv);
     }
     else
         y = ByteVector(cipher->getBlockSize(), 0);
@@ -112,10 +112,10 @@ ByteVector EPassCrypto::compute_mac(std::shared_ptr<openssl::SymmetricCipher> ci
         for (int j = 0; j < 8; ++j)
             y[j] ^= block[j];
 
-        cipher->cipher(y, y, openssl::SymmetricKey(kmac_a));
+        cipher->cipher(y, y, kmac_a, iv);
     }
-    cipher->decipher(y, y, openssl::SymmetricKey(kmac_b));
-    cipher->cipher(y, y, openssl::SymmetricKey(kmac_a));
+    cipher->decipher(y, y, kmac_b, iv);
+    cipher->cipher(y, y, kmac_a, iv);
 
     return y;
 }

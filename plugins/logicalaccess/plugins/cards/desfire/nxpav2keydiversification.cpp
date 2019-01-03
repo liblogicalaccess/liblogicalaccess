@@ -96,7 +96,7 @@ ByteVector NXPAV2KeyDiversification::getDiversifiedKey(std::shared_ptr<Key> key,
         ByteVector keydiv_tmp = openssl::CMACCrypto::cmac(keycipher, d_cipher,
                                       diversify, emptyIV, 32, d_forceK2Use);
         keydiv.resize(16);
-        copy(keydiv_tmp.end() - 16, keydiv_tmp.end(), keydiv.begin());
+        copy(keydiv_tmp.begin(), keydiv_tmp.end(), keydiv.begin());
     }
     else if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DF_KEY_DES)
     {
@@ -106,8 +106,8 @@ ByteVector NXPAV2KeyDiversification::getDiversifiedKey(std::shared_ptr<Key> key,
         diversify[0]            = 0x22;
         ByteVector keydiv_tmp_2 = openssl::CMACCrypto::cmac(
             keycipher, d_cipher, diversify, emptyIV, 16, d_forceK2Use);
-        keydiv.insert(keydiv.end(), keydiv_tmp_1.begin() + 8, keydiv_tmp_1.end());
-        keydiv.insert(keydiv.end(), keydiv_tmp_2.begin() + 8, keydiv_tmp_2.end());
+        keydiv.insert(keydiv.end(), keydiv_tmp_1.begin(), keydiv_tmp_1.end());
+        keydiv.insert(keydiv.end(), keydiv_tmp_2.begin(), keydiv_tmp_2.end());
     }
     else if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DF_KEY_3K3DES)
     {
@@ -120,9 +120,9 @@ ByteVector NXPAV2KeyDiversification::getDiversifiedKey(std::shared_ptr<Key> key,
         diversify[0]            = 0x33;
         ByteVector keydiv_tmp_3 = openssl::CMACCrypto::cmac(
             keycipher, d_cipher, diversify, emptyIV, 16, d_forceK2Use);
-        keydiv.insert(keydiv.end(), keydiv_tmp_1.begin() + 8, keydiv_tmp_1.end());
-        keydiv.insert(keydiv.end(), keydiv_tmp_2.begin() + 8, keydiv_tmp_2.end());
-        keydiv.insert(keydiv.end(), keydiv_tmp_3.begin() + 8, keydiv_tmp_3.end());
+        keydiv.insert(keydiv.end(), keydiv_tmp_1.begin(), keydiv_tmp_1.end());
+        keydiv.insert(keydiv.end(), keydiv_tmp_2.begin(), keydiv_tmp_2.end());
+        keydiv.insert(keydiv.end(), keydiv_tmp_3.begin(), keydiv_tmp_3.end());
     }
     return keydiv;
 }

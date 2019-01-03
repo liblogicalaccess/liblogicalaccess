@@ -823,10 +823,10 @@ std::shared_ptr<Chip> PCSCReaderUnit::createChip(std::string type)
         }
         else if (type == CHIP_SEOS)
         {
-            commands = LibraryManager::getInstance()->getCommands("SEOSISO7816");
+            commands = LibraryManager::getInstance()->getCommands("SeosISO7816");
             if (!commands)
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                         "Could not load SEOSISO7816 Commands.");
+                                         "Could not load SeosISO7816 Commands.");
         }
         else if (type == CHIP_PROX)
         {

@@ -18,7 +18,7 @@
 
 namespace logicalaccess
 {
-#define CHIP_SEOS "SEOS"
+#define CHIP_SEOS "Seos"
 
 /**
  * \brief The HID SEOS base chip class.

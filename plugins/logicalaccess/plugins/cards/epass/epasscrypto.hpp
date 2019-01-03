@@ -39,8 +39,9 @@ class LLA_CARDS_EPASS_API EPassCrypto : public ISO24727Crypto
      *
      * @warning No padding is performed.
      */
-	ByteVector compute_mac(std::shared_ptr<openssl::SymmetricCipher> cipher,
-                               const ByteVector &in, const ByteVector &k_mac,
-                               const ByteVector & = {}) override;
+    ByteVector compute_mac(std::shared_ptr<openssl::SymmetricCipher> cipher,
+                           const ByteVector &in, const ByteVector &k_mac,
+                           const ByteVector &iv  = {},
+                           const ByteVector &ssc = {}) override;
 };
 }

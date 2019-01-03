@@ -56,7 +56,7 @@ ByteVector ISO24727Crypto::step1(const ByteVector &random_icc,
 	auto cipher = createCipher();
     ByteVector E_ifd;
     cipher->cipher(S, E_ifd, openssl::SymmetricKey(k_enc_));
-    auto M_ifd = compute_mac(cipher, ISO24727Crypto::pad(E_ifd), k_mac_);
+    auto M_ifd = compute_mac(cipher, auth_pad(E_ifd), k_mac_);
 
     auto ret = E_ifd;
     ret.insert(ret.end(), M_ifd.begin(), M_ifd.end());
@@ -79,9 +79,9 @@ bool ISO24727Crypto::step2(const ByteVector &auth_response)
                             auth_response.begin() + 32);
     ByteVector R; // RND.ICC || RND.IFD || K.ICC
     cipher->decipher(e_icc, R, openssl::SymmetricKey(k_enc_));
-    ByteVector m_icc(R.begin() + 32, R.begin() + 40);
+    ByteVector m_icc(auth_response.begin() + 32, auth_response.begin() + 40);
 
-	auto m_icc2 = compute_mac(cipher, ISO24727Crypto::pad(e_icc), k_mac_);
+	auto m_icc2 = compute_mac(cipher, auth_pad(e_icc), k_mac_);
 	if (m_icc2 != m_icc)
 	{
         LOG(logicalaccess::LogLevel::ERRORS)
@@ -231,6 +231,11 @@ ByteVector ISO24727Crypto::encrypt_apdu(std::shared_ptr<openssl::SymmetricCipher
     return result;
 }
 
+ByteVector ISO24727Crypto::auth_pad(const ByteVector &data)
+{
+    return ISO24727Crypto::pad(data);
+}
+
 ByteVector ISO24727Crypto::pad(const ByteVector &in)
 {
     auto out = in;
@@ -313,7 +318,7 @@ ByteVector ISO24727Crypto::decrypt_rapdu(std::shared_ptr<openssl::SymmetricCiphe
     bool rep = false;
     ByteVector CC;
     if (rep)
-        CC = compute_mac(cipher, pad(K), ks_mac, ssc);
+        CC = compute_mac(cipher, pad(K), ks_mac, {}, ssc);
     else
         CC = compute_mac(cipher, pad(K), ks_mac);
     EXCEPTION_ASSERT_WITH_LOG(CC == ByteVector(do_8E.begin() + 2, do_8E.end()),

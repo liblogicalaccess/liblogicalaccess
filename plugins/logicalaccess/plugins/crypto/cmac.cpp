@@ -22,8 +22,6 @@ ByteVector CMACCrypto::cmac(const ByteVector &key, std::string crypto,
                             const ByteVector &data, const ByteVector &iv,
                             int padding_size)
 {
-    ByteVector cmac;
-
     std::shared_ptr<OpenSSLSymmetricCipher> cipherMAC;
     if (crypto == "des" || crypto == "3des")
     {
@@ -39,16 +37,7 @@ ByteVector CMACCrypto::cmac(const ByteVector &key, std::string crypto,
                                  "Wrong crypto mechanism: " + crypto);
     }
 
-    if (cipherMAC)
-    {
-        cmac = CMACCrypto::cmac(key, cipherMAC, data, iv, padding_size);
-        if (cmac.size() > cipherMAC->getBlockSize())
-        {
-            cmac = ByteVector(cmac.end() - cipherMAC->getBlockSize(), cmac.end());
-        }
-    }
-
-    return cmac;
+    return CMACCrypto::cmac(key, cipherMAC, data, iv, padding_size);
 }
 
 ByteVector CMACCrypto::cmac(const ByteVector &key,
@@ -173,6 +162,10 @@ ByteVector CMACCrypto::cmac(const ByteVector &key,
 	}
     cipherMAC->cipher(padded_data, ret, *symkey.get(), *iv.get(), false);
 
+	if (ret.size() > cipherMAC->getBlockSize())
+    {
+        ret = ByteVector(ret.end() - cipherMAC->getBlockSize(), ret.end());
+    }
     return ret;
 }
 
@@ -266,7 +259,12 @@ ByteVector CMACCrypto::cmac_iks(const std::string &iks_key_name, const ByteVecto
         }
     }
 
-    return remote_crypto->aes_encrypt(padded_data, iks_key_name, lastIv);
+    auto ret = remote_crypto->aes_encrypt(padded_data, iks_key_name, lastIv);
+    if (ret.size() > 16)
+    {
+        ret = ByteVector(ret.end() - 16, ret.end());
+    }
+    return ret;
 }
 }
 }

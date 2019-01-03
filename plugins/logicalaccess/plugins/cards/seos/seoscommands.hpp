@@ -14,7 +14,7 @@
 
 namespace logicalaccess
 {
-#define CMD_SEOS "SEOS"
+#define CMD_SEOS "Seos"
 
 class SeosChip;
 

@@ -94,9 +94,16 @@ std::vector<TLVPtr> TLV::parse_tlvs(const ByteVector &bytes, size_t &bytes_consu
     return tlvs;
 }
 
-std::vector<TLVPtr> TLV::parse_tlvs(const ByteVector &bytes)
+std::vector<TLVPtr> TLV::parse_tlvs(const ByteVector &bytes, bool strict)
 {
-    size_t consumed;
-    return parse_tlvs(bytes, consumed);
+    size_t consumed = 0;
+    auto tlv = parse_tlvs(bytes, consumed);
+
+	if (strict && consumed != bytes.size())
+	{
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "TLV parsing didn't reached the end of the buffer.");
+	}
+
+	return tlv;
 }
 }

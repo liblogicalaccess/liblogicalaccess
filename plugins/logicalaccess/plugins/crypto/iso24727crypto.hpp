@@ -58,12 +58,15 @@ class LLA_CRYPTO_API ISO24727Crypto
     ByteVector get_session_mac_key() const;
     ByteVector get_send_session_counter() const;
 
+	virtual ByteVector auth_pad(const ByteVector &data);
+
 	virtual void compute_session_keys(const ByteVector &k_icc,
                                       const ByteVector &random_k_ifd_) = 0;
 
 	virtual ByteVector compute_mac(std::shared_ptr<openssl::SymmetricCipher> cipher,
-                               const ByteVector &in, const ByteVector &k_mac,
-                               const ByteVector & = {}) = 0;
+                                       const ByteVector &in, const ByteVector &k_mac,
+                                       const ByteVector &iv  = {},
+                                       const ByteVector &scc = {}) = 0;
 
 	virtual ByteVector compute_enc_key(const ByteVector &seed,
                                            const std::string hash_algo = "sha1",

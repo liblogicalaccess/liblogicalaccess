@@ -9,6 +9,7 @@
 #include <logicalaccess/myexception.hpp>
 #include <logicalaccess/plugins/crypto/openssl.hpp>
 #include <logicalaccess/plugins/crypto/symmetric_cipher.hpp>
+#include <logicalaccess/plugins/crypto/symmetric_key.hpp>
 
 namespace logicalaccess
 {
@@ -20,10 +21,28 @@ void SymmetricCipher::cipher(const ByteVector &src, ByteVector &dest,
     cipher(src, dest, key, openssl::InitializationVector(getBlockSize(), false), false);
 }
 
+void SymmetricCipher::cipher(const ByteVector &src, ByteVector &dest,
+                             const ByteVector &key, const ByteVector &iv)
+{
+    cipher(src, dest, openssl::SymmetricKey(key),
+           iv.size() > 0 ? openssl::InitializationVector(iv)
+                         : openssl::InitializationVector(getBlockSize(), false),
+           false);
+}
+
 void SymmetricCipher::decipher(const ByteVector &src, ByteVector &dest,
                              const SymmetricKey &key)
 {
     decipher(src, dest, key, openssl::InitializationVector(getBlockSize(), false), false);
+}
+
+void SymmetricCipher::decipher(const ByteVector &src, ByteVector &dest,
+                               const ByteVector &key, const ByteVector &iv)
+{
+    decipher(src, dest, openssl::SymmetricKey(key),
+             iv.size() > 0 ? openssl::InitializationVector(iv)
+                           : openssl::InitializationVector(getBlockSize(), false),
+             false);
 }
 }
 }

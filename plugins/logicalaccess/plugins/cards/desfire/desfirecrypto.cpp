@@ -1067,17 +1067,13 @@ DESFireCrypto::desfire_cmac(const ByteVector &key,
 
     if (cipherMAC == d_cipher)
     {
-        d_lastIV = ByteVector(ret.end() - cipherMAC->getBlockSize(), ret.end());
+        d_lastIV = ret;
     }
 
-    // DES
-    if (cipherMAC->getBlockSize() == 8)
+    // AES
+    if (cipherMAC->getBlockSize() == 16)
     {
-        ret = ByteVector(ret.end() - 8, ret.end());
-    }
-    else
-    {
-        ret = ByteVector(ret.end() - 16, ret.end() - 8);
+        ret.resize(8);
     }
 
     return ret;
