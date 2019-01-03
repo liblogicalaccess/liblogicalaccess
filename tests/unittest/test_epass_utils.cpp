@@ -5,6 +5,8 @@
 #include <logicalaccess/bufferhelper.hpp>
 #include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/cards/epass/epasscrypto.hpp>
+#include <logicalaccess/plugins/crypto/aes_cipher.hpp>
+#include <logicalaccess/plugins/crypto/des_cipher.hpp>
 
 using namespace logicalaccess;
 
@@ -31,8 +33,8 @@ TEST(test_epass_utils, test_adjust_parity)
     auto valid_key1 = BufferHelper::fromHexString("AB94FDECF2674FDF");
     auto valid_key2 = BufferHelper::fromHexString("B9B391F85D7F76F2");
 
-    ASSERT_EQ(valid_key1, EPassUtils::adjust_key_parity(key1));
-    ASSERT_EQ(valid_key2, EPassUtils::adjust_key_parity(key2));
+    ASSERT_EQ(valid_key1, EPassCrypto::adjust_key_parity(key1));
+    ASSERT_EQ(valid_key2, EPassCrypto::adjust_key_parity(key2));
 }
 
 TEST(test_epass_utils, test_compute_base_key)
@@ -41,8 +43,8 @@ TEST(test_epass_utils, test_compute_base_key)
     auto Kmac = BufferHelper::fromHexString("7962D9ECE03D1ACD4C76089DCE131543");
     auto seed = BufferHelper::fromHexString("239AB9CB282DAF66231DC5A4DF6BFBAE");
 
-    ASSERT_EQ(Kenc, EPassUtils::compute_enc_key(seed));
-    ASSERT_EQ(Kmac, EPassUtils::compute_mac_key(seed));
+    ASSERT_EQ(Kenc, EPassCrypto().compute_enc_key(seed));
+    ASSERT_EQ(Kmac, EPassCrypto().compute_mac_key(seed));
 }
 
 TEST(test_epass_utils, test_authenticate_1)
@@ -86,7 +88,7 @@ TEST(test_epass_utils, test_authenticate_2)
 TEST(test_epass_utils, test_secure_messaging)
 {
     auto clear_apdu     = BufferHelper::fromHexString("00A4020C02011E");
-    auto encrypted_apdu = EPassUtils::encrypt_apdu(
+    auto encrypted_apdu = EPassCrypto().encrypt_apdu(std::make_shared<openssl::DESCipher>(),
         clear_apdu, BufferHelper::fromHexString("979EC13B1CBFE9DCD01AB0FED307EAE5"),
         BufferHelper::fromHexString("F1CB1F1FB5ADF208806B89DC579DC1F8"),
         BufferHelper::fromHexString("887022120C06C226"));
@@ -96,7 +98,8 @@ TEST(test_epass_utils, test_secure_messaging)
               encrypted_apdu);
 
     // Decrypt response
-    auto decrypted_response = EPassUtils::decrypt_rapdu(
+    auto decrypted_response = EPassCrypto().decrypt_rapdu(
+            std::make_shared<openssl::DESCipher>(),
         BufferHelper::fromHexString("990290008E08FA855A5D4C50A8ED9000"),
         BufferHelper::fromHexString("979EC13B1CBFE9DCD01AB0FED307EAE5"),
         BufferHelper::fromHexString("F1CB1F1FB5ADF208806B89DC579DC1F8"),
@@ -107,7 +110,7 @@ TEST(test_epass_utils, test_secure_messaging)
 TEST(test_epass_utils, test_secure_messaging_2)
 {
     auto clear_apdu     = BufferHelper::fromHexString("00B0000004");
-    auto encrypted_apdu = EPassUtils::encrypt_apdu(
+    auto encrypted_apdu = EPassCrypto().encrypt_apdu(std::make_shared<openssl::DESCipher>(),
         clear_apdu, BufferHelper::fromHexString("979EC13B1CBFE9DCD01AB0FED307EAE5"),
         BufferHelper::fromHexString("F1CB1F1FB5ADF208806B89DC579DC1F8"),
         BufferHelper::fromHexString("887022120C06C228"));
@@ -116,7 +119,7 @@ TEST(test_epass_utils, test_secure_messaging_2)
               encrypted_apdu);
 
     // Decrypt response
-    auto decrypted_response = EPassUtils::decrypt_rapdu(
+    auto decrypted_response = EPassCrypto().decrypt_rapdu(std::make_shared<openssl::DESCipher>(),
         BufferHelper::fromHexString(
             "8709019FF0EC34F9922651990290008E08AD55CC17140B2DED9000"),
         BufferHelper::fromHexString("979EC13B1CBFE9DCD01AB0FED307EAE5"),
@@ -128,7 +131,7 @@ TEST(test_epass_utils, test_secure_messaging_2)
 TEST(test_epass_utils, test_secure_messaging_3)
 {
     auto clear_apdu     = BufferHelper::fromHexString("00B0000412");
-    auto encrypted_apdu = EPassUtils::encrypt_apdu(
+    auto encrypted_apdu = EPassCrypto().encrypt_apdu(std::make_shared<openssl::DESCipher>(),
         clear_apdu, BufferHelper::fromHexString("979EC13B1CBFE9DCD01AB0FED307EAE5"),
         BufferHelper::fromHexString("F1CB1F1FB5ADF208806B89DC579DC1F8"),
         BufferHelper::fromHexString("887022120C06C22A"));
@@ -137,7 +140,7 @@ TEST(test_epass_utils, test_secure_messaging_3)
               encrypted_apdu);
 
     // Decrypt response
-    auto decrypted_response = EPassUtils::decrypt_rapdu(
+    auto decrypted_response = EPassCrypto().decrypt_rapdu(std::make_shared<openssl::DESCipher>(),
         BufferHelper::fromHexString("871901FB9235F4E4037F2327DCC8964F1F9B8C30F42C8E2"
                                     "FFF224A990290008E08C8B2787EAEA07D749000"),
         BufferHelper::fromHexString("979EC13B1CBFE9DCD01AB0FED307EAE5"),
