@@ -58,6 +58,15 @@ struct GetBitSetSize<std::bitset<Len>>
 };
 
 /**
+ * This helper is a workaround around a Swig issue with regard to
+ * numerical operation in template argument list.
+ */
+template<size_t Val>
+struct DoubleValue {
+    static const constexpr size_t Value = Val * 2;
+};
+
+/**
  * Convert a bitset to a byte vector.
  * If the bitset's length is not modulo 8, compile time error
  */
@@ -101,7 +110,7 @@ class LLA_CORE_API ManchesterEncoder
      * Encode a bitset, returns a bitset twice as large.
      */
     template <typename BitSet>
-    static std::bitset<GetBitSetSize<BitSet>::Length * 2> encode(const BitSet &in, Type t)
+    static std::bitset<DoubleValue<GetBitSetSize<BitSet>::Length>::Value> encode(const BitSet &in, Type t)
     {
         std::bitset<GetBitSetSize<BitSet>::Length * 2> out;
 
