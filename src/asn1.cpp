@@ -2,6 +2,7 @@
 #include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <sstream>
+#include <cmath>
 
 namespace logicalaccess
 {
@@ -43,7 +44,7 @@ namespace logicalaccess
 			//   Bits 0 through 6 of each byte contains the encoded value.
 			else
 			{
-                int mb = (int)ceil(oid[i] / (double)0xff);
+                int mb = static_cast<int>(std::ceil(oid[i] / (double)0xff));
                 for (int j = mb - 1; j >= 0; --j)
 				{
                     unsigned char b = static_cast<unsigned char>(
