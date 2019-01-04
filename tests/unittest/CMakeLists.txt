@@ -48,3 +48,4 @@ if (NOT LLA_DISABLE_IKS)
 endif ()
 
 add_gtest_test(test_tlv.cpp)
+add_gtest_test(test_asn1.cpp)
