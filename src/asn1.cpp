@@ -44,12 +44,16 @@ namespace logicalaccess
 			//   Bits 0 through 6 of each byte contains the encoded value.
 			else
 			{
-                int mb = static_cast<int>(std::ceil(oid[i] / (double)0xff));
+                int mb = static_cast<int>(ceil(log2(oid[i]) / 7));
                 for (int j = mb - 1; j >= 0; --j)
 				{
                     unsigned char b = static_cast<unsigned char>(
-                        (oid[i] >> (7 * j)) & 0x7f);
-                    if (j == mb - 1)
+                        (oid[i] >> (7 * j)) & 0xff);
+					if (j == 0)
+					{
+                        b &= 0x7f;
+					}
+					else
 					{
                         b |= 0x80;
 					}
