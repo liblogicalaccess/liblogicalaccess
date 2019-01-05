@@ -31,10 +31,8 @@ TopazOmnikeyXX27Commands::~TopazOmnikeyXX27Commands()
 
 ByteVector TopazOmnikeyXX27Commands::readPage(int page)
 {
-    ByteVector result = getPCSCReaderCardAdapter()->sendAPDUCommand(
-        0xFF, 0xB0, 0x00, static_cast<unsigned char>(page), 8);
-
-    return ByteVector(result.begin(), result.end() - 2);
+    return getPCSCReaderCardAdapter()->sendAPDUCommand(
+        0xFF, 0xB0, 0x00, static_cast<unsigned char>(page), 8).getData();
 }
 
 void TopazOmnikeyXX27Commands::writePage(int page, const ByteVector &buf)

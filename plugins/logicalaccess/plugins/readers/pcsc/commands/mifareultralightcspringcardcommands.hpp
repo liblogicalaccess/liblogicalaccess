@@ -37,7 +37,7 @@ class LLA_READERS_PCSC_API MifareUltralightCSpringCardCommands
 
     void stopGenericSession() override;
 
-    ByteVector sendGenericCommand(const ByteVector &data) override;
+    ISO7816Response sendGenericCommand(const ByteVector &data) override;
 };
 }
 

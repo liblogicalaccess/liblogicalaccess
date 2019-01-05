@@ -298,9 +298,9 @@ class LLA_READERS_ISO7816_API SAMISO7816Commands : public SAMCommands<T, S>
             data_p1.push_back(unlockkeyversion);
         }
 
-        ByteVector result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(
+        auto result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(
             d_cla, 0x10, p1_part1, 0x00, le, data_p1, 0x00);
-        if (result.size() != 14 || result[12] != 0x90 || result[13] != 0xAF)
+        if (result.getData().size() != 12 || result.getSW1() != 0x90 || result.getSW2() != 0xAF)
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P1 Failed.");
 
         ByteVector keycipher(masterKey->getData(),
@@ -309,7 +309,7 @@ class LLA_READERS_ISO7816_API SAMISO7816Commands : public SAMCommands<T, S>
         ByteVector emptyIV(16), rnd1;
 
         /* Create rnd2 for p3 - CMAC: rnd2 | P2 | other data */
-        ByteVector rnd2(result.begin(), result.begin() + 12);
+        ByteVector rnd2 = result.getData();
         rnd2.push_back(p1_part1);                                    // P1_part1
         rnd2.insert(rnd2.end(), data_p1.begin() + 2, data_p1.end()); // last data
 
@@ -340,7 +340,8 @@ class LLA_READERS_ISO7816_API SAMISO7816Commands : public SAMCommands<T, S>
 
         result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(
             d_cla, 0x10, 0x00, 0x00, 0x14, data_p2, 0x00);
-        if (result.size() != 26 || result[24] != 0x90 || result[25] != 0xAF)
+        if (result.getData().size() != 24 || result.getSW1() != 0x90 ||
+            result.getSW2() != 0xAF)
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P2 Failed.");
 
         /* Check CMAC - Create rnd1 for p3 - CMAC: rnd1 | P1 | other data */
@@ -351,7 +352,7 @@ class LLA_READERS_ISO7816_API SAMISO7816Commands : public SAMCommands<T, S>
 
         for (unsigned char x = 0; x < 8; ++x)
         {
-            if (macHost[x] != result[x])
+            if (macHost[x] != result.getData()[x])
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                          "lockUnlock P2 CMAC from SAM is Wrong.");
         }
@@ -374,7 +375,7 @@ class LLA_READERS_ISO7816_API SAMISO7816Commands : public SAMCommands<T, S>
             new openssl::AESInitializationVector(
                 openssl::AESInitializationVector::createFromData(emptyIV)));
 
-        ByteVector encRndB(result.begin() + 8, result.end() - 2);
+        ByteVector encRndB(result.getData().begin() + 8, result.getData().end());
         ByteVector dencRndB;
 
         cipher->decipher(encRndB, dencRndB, *symkey.get(), *iv.get(), false);
@@ -396,13 +397,14 @@ class LLA_READERS_ISO7816_API SAMISO7816Commands : public SAMCommands<T, S>
 
         result = this->getISO7816ReaderCardAdapter()->sendAPDUCommand(
             d_cla, 0x10, 0x00, 0x00, 0x20, encHost, 0x00);
-        if (result.size() != 18 || result[16] != 0x90 || result[17] != 0x00)
+        if (result.getData().size() != 16 || result.getSW1() != 0x90 ||
+            result.getSW2() != 0x00)
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P3 Failed.");
 
-        ByteVector encSAMrndA(result.begin(), result.end() - 2), SAMrndA;
+        ByteVector SAMrndA;
         iv.reset(new openssl::AESInitializationVector(
             openssl::AESInitializationVector::createFromData(emptyIV)));
-        cipher->decipher(encSAMrndA, SAMrndA, *symkey.get(), *iv.get(), false);
+        cipher->decipher(result.getData(), SAMrndA, *symkey.get(), *iv.get(), false);
         SAMrndA.insert(SAMrndA.begin(), SAMrndA.end() - 2, SAMrndA.end());
 
         if (!equal(SAMrndA.begin(), SAMrndA.begin() + 16, rndA.begin()))

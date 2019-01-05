@@ -44,10 +44,8 @@ ByteVector ISO15693PCSCCommands::readBlock(size_t block, size_t le)
     unsigned char p1 = (block & 0xffff) >> 8;
     unsigned char p2 = static_cast<unsigned char>(block & 0xff);
 
-    ByteVector result = getPCSCReaderCardAdapter()->sendAPDUCommand(
-        0xff, 0xb0, p1, p2, static_cast<unsigned char>(le));
-
-    return ByteVector(result.begin(), result.end() - 2);
+    return getPCSCReaderCardAdapter()->sendAPDUCommand(
+        0xff, 0xb0, p1, p2, static_cast<unsigned char>(le)).getData();
 }
 
 void ISO15693PCSCCommands::writeBlock(size_t block, const ByteVector &data)
@@ -122,8 +120,9 @@ ISO15693Commands::SystemInformation ISO15693PCSCCommands::getSystemInformation()
     // AFI information
     try
     {
-        result =
-            getPCSCReaderCardAdapter()->sendAPDUCommand(0xff, 0x30, 0x02, 0x00, 0x00);
+        result = getPCSCReaderCardAdapter()
+                     ->sendAPDUCommand(0xff, 0x30, 0x02, 0x00, 0x00)
+                     .getData();
         systeminfo.hasAFI = true;
         systeminfo.AFI    = result[0];
     }
@@ -135,8 +134,9 @@ ISO15693Commands::SystemInformation ISO15693PCSCCommands::getSystemInformation()
     // DSFID information
     try
     {
-        result =
-            getPCSCReaderCardAdapter()->sendAPDUCommand(0xff, 0x30, 0x03, 0x00, 0x00);
+        result = getPCSCReaderCardAdapter()
+                     ->sendAPDUCommand(0xff, 0x30, 0x03, 0x00, 0x00)
+                     .getData();
         systeminfo.hasDSFID = true;
         systeminfo.DSFID    = result[0];
     }
@@ -148,8 +148,9 @@ ISO15693Commands::SystemInformation ISO15693PCSCCommands::getSystemInformation()
     // PICC memory size information
     try
     {
-        result =
-            getPCSCReaderCardAdapter()->sendAPDUCommand(0xff, 0x30, 0x04, 0x00, 0x00);
+        result = getPCSCReaderCardAdapter()
+                     ->sendAPDUCommand(0xff, 0x30, 0x04, 0x00, 0x00)
+                     .getData();
         systeminfo.hasVICCMemorySize = true;
         systeminfo.blockSize         = (result[1] & 0x1f) + 1;
         systeminfo.nbBlocks          = result[0] + 1;
@@ -162,8 +163,9 @@ ISO15693Commands::SystemInformation ISO15693PCSCCommands::getSystemInformation()
     // IC reference information
     try
     {
-        result =
-            getPCSCReaderCardAdapter()->sendAPDUCommand(0xff, 0x30, 0x05, 0x00, 0x00);
+        result = getPCSCReaderCardAdapter()
+                     ->sendAPDUCommand(0xff, 0x30, 0x05, 0x00, 0x00)
+                     .getData();
         systeminfo.hasICReference = true;
         systeminfo.ICReference    = result[0];
     }
@@ -184,8 +186,9 @@ unsigned char ISO15693PCSCCommands::getSecurityStatus(size_t block)
     command.push_back((block & 0xffff) >> 8);
     command.push_back(static_cast<unsigned char>(block & 0xff));
 
-    ByteVector result = getPCSCReaderCardAdapter()->sendAPDUCommand(
-        0xff, 0x30, 0x00, 0x03, 5, command, 0x01);
+    ByteVector result = getPCSCReaderCardAdapter()
+                            ->sendAPDUCommand(0xff, 0x30, 0x00, 0x03, 5, command, 0x01)
+                            .getData();
 
     return result[0];
 }

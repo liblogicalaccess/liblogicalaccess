@@ -62,8 +62,8 @@ ByteVector FeliCaSpringCardCommands::read(const std::vector<unsigned short> &cod
         for (unsigned int b = 0; b < blocks.size(); ++b)
         {
             ByteVector result = getPCSCReaderCardAdapter()->sendAPDUCommand(
-                0xFF, 0xB0, 0x00, static_cast<unsigned char>(blocks[b] & 0xff), 16);
-            data.insert(data.end(), result.begin(), result.end() - 2);
+                0xFF, 0xB0, 0x00, static_cast<unsigned char>(blocks[b] & 0xff), 16).getData();
+            data.insert(data.end(), result.begin(), result.end());
         }
     }
     return data;

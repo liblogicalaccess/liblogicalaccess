@@ -346,7 +346,7 @@ class LLA_READERS_ISO7816_API DESFireEV1ISO7816Commands : public DESFireISO7816C
      * \param mode The communication mode
      * \return The data buffer.
      */
-    virtual ByteVector handleReadCmd(unsigned char cmd, const ByteVector &data,
+    virtual ISO7816Response handleReadCmd(unsigned char cmd, const ByteVector &data,
                                      EncryptionMode mode);
 
     /**
@@ -378,7 +378,7 @@ class LLA_READERS_ISO7816_API DESFireEV1ISO7816Commands : public DESFireISO7816C
      * \param forceLc Undocumented.
      * \return The response.
      */
-    ByteVector transmit(unsigned char cmd, const ByteVector &buf = ByteVector(),
+    ISO7816Response transmit(unsigned char cmd, const ByteVector &buf = ByteVector(),
                         unsigned char lc = 0, bool forceLc = false) override;
 
     /**
@@ -387,7 +387,7 @@ class LLA_READERS_ISO7816_API DESFireEV1ISO7816Commands : public DESFireISO7816C
      * \param lc Undocumented.
      * \return The response.
      */
-    virtual ByteVector transmit_plain(unsigned char cmd, unsigned char lc);
+    virtual ISO7816Response transmit_plain(unsigned char cmd, unsigned char lc);
 
     /**
      * \brief Transmit a command.
@@ -397,7 +397,7 @@ class LLA_READERS_ISO7816_API DESFireEV1ISO7816Commands : public DESFireISO7816C
      * \param forceLc Undocumented.
      * \return The response.
      */
-    virtual ByteVector transmit_plain(unsigned char cmd,
+    virtual ISO7816Response transmit_plain(unsigned char cmd,
                                       const ByteVector &buf = ByteVector(),
                                       unsigned char lc = 0, bool forceLc = false);
 
@@ -407,7 +407,7 @@ class LLA_READERS_ISO7816_API DESFireEV1ISO7816Commands : public DESFireISO7816C
      * \param lc Undocumented.
      * \return The response.
      */
-    virtual ByteVector transmit_nomacv(unsigned char cmd, unsigned char lc);
+    virtual ISO7816Response transmit_nomacv(unsigned char cmd, unsigned char lc);
 
     /**
      * \brief Transmit a command.
@@ -417,7 +417,7 @@ class LLA_READERS_ISO7816_API DESFireEV1ISO7816Commands : public DESFireISO7816C
      * \param forceLc Undocumented.
      * \return The response.
      */
-    virtual ByteVector transmit_nomacv(unsigned char cmd,
+    virtual ISO7816Response transmit_nomacv(unsigned char cmd,
                                        const ByteVector &buf = ByteVector(),
                                        unsigned char lc = 0, bool forceLc = false);
 

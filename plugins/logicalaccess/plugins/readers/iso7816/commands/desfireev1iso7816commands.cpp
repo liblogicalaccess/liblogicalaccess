@@ -50,8 +50,7 @@ unsigned int DESFireEV1ISO7816Commands::getFreeMem()
 {
     unsigned int freemem = 0;
 
-    ByteVector r = transmit(DFEV1_INS_FREE_MEM);
-    r.resize(r.size() - 2);
+    ByteVector r = transmit(DFEV1_INS_FREE_MEM).getData();
 
     if (r.size() == 3)
     {
@@ -69,19 +68,18 @@ std::vector<DFName> DESFireEV1ISO7816Commands::getDFNames()
 
     do
     {
-        ByteVector r = transmit(cmd);
-        err          = r.back();
-        r.resize(r.size() - 2);
-        cmd = DF_INS_ADDITIONAL_FRAME;
+        auto r = transmit(cmd);
+        err    = r.getSW2();
+        cmd    = DF_INS_ADDITIONAL_FRAME;
 
-        if (r.size() == 0)
+        if (r.getData().size() == 0)
             return dfnames;
 
         DFName dfname;
         memset(&dfname, 0x00, sizeof(dfname));
-        dfname.AID = DESFireLocation::convertAidToUInt(r);
-        dfname.FID = static_cast<unsigned short>((r[4] << 8) | r[3]);
-        memcpy(dfname.DF_Name, &r[5], r.size() - 5);
+        dfname.AID = DESFireLocation::convertAidToUInt(r.getData());
+        dfname.FID = static_cast<unsigned short>((r.getData()[4] << 8) | r.getData()[3]);
+        memcpy(dfname.DF_Name, &r.getData()[5], r.getData().size() - 5);
         dfnames.push_back(dfname);
     } while (err == DF_INS_ADDITIONAL_FRAME);
 
@@ -97,12 +95,11 @@ std::vector<unsigned short> DESFireEV1ISO7816Commands::getISOFileIDs()
 
     do
     {
-        ByteVector r = transmit(cmd);
-        err          = r.back();
-        r.resize(r.size() - 2);
-        cmd = DF_INS_ADDITIONAL_FRAME;
+        auto r = transmit(cmd);
+        err    = r.getSW2();
+        cmd    = DF_INS_ADDITIONAL_FRAME;
 
-        fullr.insert(fullr.end(), r.begin(), r.end());
+        fullr.insert(fullr.end(), r.getData().begin(), r.getData().end());
     } while (err == DF_INS_ADDITIONAL_FRAME);
 
     for (unsigned int i = 0; i < fullr.size(); i += 2)
@@ -145,8 +142,7 @@ void DESFireEV1ISO7816Commands::getKeySettings(DESFireKeySettings &settings,
                                                unsigned char &maxNbKeys,
                                                DESFireKeyType &keyType)
 {
-    ByteVector r = transmit(DF_INS_GET_KEY_SETTINGS);
-    r.resize(r.size() - 2);
+    ByteVector r = transmit(DF_INS_GET_KEY_SETTINGS).getData();
 
     if (r.size() == 0)
         THROW_EXCEPTION_WITH_LOG(std::runtime_error,
@@ -171,18 +167,12 @@ void DESFireEV1ISO7816Commands::getKeySettings(DESFireKeySettings &settings,
 
 ByteVector DESFireEV1ISO7816Commands::getCardUID()
 {
-    ByteVector result = transmit_nomacv(DFEV1_INS_GET_CARD_UID);
-    if (result.size() >= 2)
-    {
-        result.resize(result.size() - 2);
-        std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
+    ByteVector result = transmit_nomacv(DFEV1_INS_GET_CARD_UID).getData();
+    std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 
-        crypto->initBuf();
-        crypto->appendDecipherData(result);
-        return crypto->desfireDecrypt(7);
-    }
-    THROW_EXCEPTION_WITH_LOG(std::runtime_error,
-                             "Incorrect result when request card UID");
+    crypto->initBuf();
+    crypto->appendDecipherData(result);
+    return crypto->desfireDecrypt(7);
 }
 
 void DESFireEV1ISO7816Commands::createStdDataFile(unsigned char fileno,
@@ -498,9 +488,10 @@ void DESFireEV1ISO7816Commands::sam_iso_authenticate(std::shared_ptr<DESFireKey>
     try
     {
         auto iso7816cmd = getISO7816Commands();
-        iso7816cmd->externalAuthenticate(algorithm, isMasterCardKey, keyno, encRPCD1RPICC1);
+        iso7816cmd->externalAuthenticate(algorithm, isMasterCardKey, keyno,
+                                         encRPCD1RPICC1);
         encRPICC2RPCD2a = iso7816cmd->internalAuthenticate(algorithm, isMasterCardKey,
-                                                         keyno, RPCD2, 2 * 16);
+                                                           keyno, RPCD2, 2 * 16);
     }
     catch (...)
     {
@@ -568,12 +559,12 @@ void DESFireEV1ISO7816Commands::sam_iso_authenticate(std::shared_ptr<DESFireKey>
     if (key->getKeyType() == DF_KEY_3K3DES || key->getKeyType() == DF_KEY_DES)
     {
         crypto->d_cipher.reset(new openssl::DESCipher());
-        crypto->d_mac_size   = 8;
+        crypto->d_mac_size = 8;
     }
     else
     {
         crypto->d_cipher.reset(new openssl::AESCipher());
-        crypto->d_mac_size   = 8;
+        crypto->d_mac_size = 8;
     }
     crypto->d_lastIV.clear();
     crypto->d_lastIV.resize(crypto->d_cipher->getBlockSize(), 0x00);
@@ -627,7 +618,7 @@ void DESFireEV1ISO7816Commands::iso_authenticate(std::shared_ptr<DESFireKey> cur
             openssl::DESInitializationVector::createNull()));
     }
 
-	auto iso7816cmd  = getISO7816Commands();
+    auto iso7816cmd   = getISO7816Commands();
     ByteVector RPICC1 = iso7816cmd->getChallenge(le);
 
     ByteVector RPCD1;
@@ -669,8 +660,8 @@ void DESFireEV1ISO7816Commands::iso_authenticate(std::shared_ptr<DESFireKey> cur
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "Cannot retrieve cryptographically strong bytes");
     }
-    cryptogram =
-        iso7816cmd->internalAuthenticate(algorithm, isMasterCardKey, keyno, RPCD2, 2 * le);
+    cryptogram = iso7816cmd->internalAuthenticate(algorithm, isMasterCardKey, keyno,
+                                                  RPCD2, 2 * le);
 
     if (cryptogram.size() < 1)
         THROW_EXCEPTION_WITH_LOG(CardException, "iso_authenticate wrong internal data.");
@@ -715,8 +706,8 @@ void DESFireEV1ISO7816Commands::iso_authenticate(std::shared_ptr<DESFireKey> cur
         }
 
         crypto->d_cipher.reset(new openssl::DESCipher());
-        crypto->d_authkey    = keydiv;
-        crypto->d_mac_size   = 8;
+        crypto->d_authkey  = keydiv;
+        crypto->d_mac_size = 8;
     }
     else if (algorithm == DF_ALG_3K3DES)
     {
@@ -734,8 +725,8 @@ void DESFireEV1ISO7816Commands::iso_authenticate(std::shared_ptr<DESFireKey> cur
                                     RPICC2.begin() + 16);
 
         crypto->d_cipher.reset(new openssl::DESCipher());
-        crypto->d_authkey    = keydiv;
-        crypto->d_mac_size   = 8;
+        crypto->d_authkey  = keydiv;
+        crypto->d_mac_size = 8;
     }
     else
     {
@@ -749,8 +740,8 @@ void DESFireEV1ISO7816Commands::iso_authenticate(std::shared_ptr<DESFireKey> cur
                                     RPICC2.begin() + 16);
 
         crypto->d_cipher.reset(new openssl::AESCipher());
-        crypto->d_authkey    = keydiv;
-        crypto->d_mac_size   = 8;
+        crypto->d_authkey  = keydiv;
+        crypto->d_mac_size = 8;
     }
     crypto->d_lastIV.clear();
     crypto->d_lastIV.resize(crypto->d_cipher->getBlockSize(), 0x00);
@@ -785,22 +776,18 @@ void DESFireEV1ISO7816Commands::authenticateISO(unsigned char keyno,
             crypto->getIdentifier(), crypto->d_currentAid, currentkey, keyno, diversify);
     }
 
-    ByteVector encRndB = transmit_plain(DFEV1_INS_AUTHENTICATE_ISO, data);
-    unsigned char err  = encRndB.back();
-    encRndB.resize(encRndB.size() - 2);
-    EXCEPTION_ASSERT_WITH_LOG(err == DF_INS_ADDITIONAL_FRAME, LibLogicalAccessException,
+    ISO7816Response result = transmit_plain(DFEV1_INS_AUTHENTICATE_ISO, data);
+    EXCEPTION_ASSERT_WITH_LOG(result.getSW2() == DF_INS_ADDITIONAL_FRAME, LibLogicalAccessException,
                               "No additional frame for ISO authentication.");
 
     ByteVector response =
-        crypto->iso_authenticate_PICC1(keyno, diversify, encRndB, random_len);
-    ByteVector encRndA1 = transmit_plain(DF_INS_ADDITIONAL_FRAME, response);
-    EXCEPTION_ASSERT_WITH_LOG((encRndA1.size() - 2) >= random_len,
+        crypto->iso_authenticate_PICC1(keyno, diversify, result.getData(), random_len);
+    result = transmit_plain(DF_INS_ADDITIONAL_FRAME, response);
+    EXCEPTION_ASSERT_WITH_LOG(result.getData().size() >= random_len,
                               LibLogicalAccessException,
                               "ISO Authentication P2 failed: wrong length.");
 
-	encRndA1.resize(encRndA1.size() - 2);
-
-	crypto->iso_authenticate_PICC2(keyno, encRndA1, random_len);
+    crypto->iso_authenticate_PICC2(keyno, result.getData(), random_len);
 }
 
 
@@ -817,15 +804,13 @@ void DESFireEV1ISO7816Commands::iks_authenticateAES(std::shared_ptr<DESFireKey> 
     data.push_back(keyno);
 
     // Get cryptogram from card.
-    ByteVector encRndB = transmit_plain(DFEV1_INS_AUTHENTICATE_AES, data);
-    unsigned char err  = encRndB.back();
-    encRndB.resize(encRndB.size() - 2);
-    EXCEPTION_ASSERT_WITH_LOG(err == DF_INS_ADDITIONAL_FRAME, LibLogicalAccessException,
+    ISO7816Response result = transmit_plain(DFEV1_INS_AUTHENTICATE_AES, data);
+    EXCEPTION_ASSERT_WITH_LOG(result.getSW2() == DF_INS_ADDITIONAL_FRAME, LibLogicalAccessException,
                               "No additional frame for ISO authentication.");
 
     bool out_success;
     ByteVector out_encrypted_cryptogram, out_auth_context_id;
-    remote_crypto->aes_authenticate_step1(kst->getKeyIdentity(), encRndB,
+    remote_crypto->aes_authenticate_step1(kst->getKeyIdentity(), result.getData(),
                                           extract_iks_div_info(key, keyno), out_success,
                                           out_encrypted_cryptogram, out_auth_context_id);
     /*
@@ -838,9 +823,7 @@ void DESFireEV1ISO7816Commands::iks_authenticateAES(std::shared_ptr<DESFireKey> 
 
     */
 
-    ByteVector encRndA1 =
-        transmit_plain(DF_INS_ADDITIONAL_FRAME, out_encrypted_cryptogram);
-    encRndA1.resize(encRndA1.size() - 2);
+    result = transmit_plain(DF_INS_ADDITIONAL_FRAME, out_encrypted_cryptogram);
     /*
         CMSG_DesfireAuth_Step2 step2;
         step2.set_key_uuid(kst->getKeyIdentity());
@@ -850,7 +833,7 @@ void DESFireEV1ISO7816Commands::iks_authenticateAES(std::shared_ptr<DESFireKey> 
         auto step2_response = rpc_client.desfire_auth_aes_step2(step2);*/
 
     ByteVector out_session_key, out_session_key_ref;
-    remote_crypto->aes_authenticate_step2(kst->getKeyIdentity(), encRndA1,
+    remote_crypto->aes_authenticate_step2(kst->getKeyIdentity(), result.getData(),
                                           out_auth_context_id,
                                           extract_iks_div_info(key, keyno), out_success,
                                           out_session_key, out_session_key_ref);
@@ -908,28 +891,26 @@ void DESFireEV1ISO7816Commands::authenticateAES(unsigned char keyno)
             LibLogicalAccessException,
             "SAMKeyStorage set on the key but no SAM reader has been set.");
 
-    ByteVector encRndB = transmit_plain(DFEV1_INS_AUTHENTICATE_AES, data);
-    unsigned char err  = encRndB.back();
-    encRndB.resize(encRndB.size() - 2);
-    EXCEPTION_ASSERT_WITH_LOG(err == DF_INS_ADDITIONAL_FRAME, LibLogicalAccessException,
+    auto result = transmit_plain(DFEV1_INS_AUTHENTICATE_AES, data);
+    EXCEPTION_ASSERT_WITH_LOG(result.getSW2() == DF_INS_ADDITIONAL_FRAME,
+                              LibLogicalAccessException,
                               "No additional frame for ISO authentication.");
 
     ByteVector response;
     if (samKeyStorage)
-        response = sam_authenticate_p1(key, encRndB, diversify);
+        response = sam_authenticate_p1(key, result.getData(), diversify);
     else if (std::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key->getKeyStorage()))
-        response = crypto->aes_authenticate_PICC1(keyno, diversify, encRndB);
+        response = crypto->aes_authenticate_PICC1(keyno, diversify, result.getData());
     else
-        response = crypto->aes_authenticate_PICC1_GENERIC(keyno, key, encRndB);
-    ByteVector encRndA1 = transmit_plain(DF_INS_ADDITIONAL_FRAME, response);
-    encRndA1.resize(encRndA1.size() - 2);
+        response = crypto->aes_authenticate_PICC1_GENERIC(keyno, key, result.getData());
+    result = transmit_plain(DF_INS_ADDITIONAL_FRAME, response);
 
     if (samKeyStorage)
-        sam_authenticate_p2(keyno, encRndA1);
+        sam_authenticate_p2(keyno, result.getData());
     else if (std::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key->getKeyStorage()))
-        crypto->aes_authenticate_PICC2(keyno, encRndA1);
+        crypto->aes_authenticate_PICC2(keyno, result.getData());
     else
-        crypto->aes_authenticate_PICC2_GENERIC(keyno, key, encRndA1);
+        crypto->aes_authenticate_PICC2_GENERIC(keyno, key, result.getData());
 
     crypto->d_cipher.reset(new openssl::AESCipher());
     crypto->d_auth_method = CM_ISO;
@@ -938,7 +919,7 @@ void DESFireEV1ISO7816Commands::authenticateAES(unsigned char keyno)
     crypto->d_lastIV.resize(crypto->d_cipher->getBlockSize(), 0x00);
 }
 
-ByteVector DESFireEV1ISO7816Commands::handleReadCmd(unsigned char cmd,
+ISO7816Response DESFireEV1ISO7816Commands::handleReadCmd(unsigned char cmd,
                                                     const ByteVector &data,
                                                     EncryptionMode /*mode*/)
 {
@@ -970,16 +951,15 @@ ByteVector DESFireEV1ISO7816Commands::handleReadData(unsigned char err,
 
     while (err == DF_INS_ADDITIONAL_FRAME)
     {
-        data = transmit_plain(DF_INS_ADDITIONAL_FRAME);
-        err  = data.back();
-        data.resize(data.size() - 2);
+        auto result = transmit_plain(DF_INS_ADDITIONAL_FRAME);
+        err         = result.getSW2();
         if (mode == CM_ENCRYPT)
         {
-            crypto->appendDecipherData(data);
+            crypto->appendDecipherData(result.getData());
         }
         else
         {
-            ret.insert(ret.end(), data.begin(), data.end());
+            ret.insert(ret.end(), result.getData().begin(), result.getData().end());
         }
     }
 
@@ -1036,7 +1016,7 @@ void DESFireEV1ISO7816Commands::handleWriteData(unsigned char cmd,
 
     size_t DESFIRE_EV1_CLEAR_DATA_LENGTH_CHUNK = (DESFIREEV1_CLEAR_DATA_LENGTH_CHUNK - 8);
 
-    ByteVector cmdBuffer, result;
+    ByteVector cmdBuffer;
     cmdBuffer.insert(cmdBuffer.end(), parameters.begin(), parameters.end());
 
     switch (mode)
@@ -1083,8 +1063,8 @@ void DESFireEV1ISO7816Commands::handleWriteData(unsigned char cmd,
                                  "Unknown DESFire crypto mode.");
     }
 
-    unsigned char err;
     size_t pos = 0;
+    ISO7816Response result;
     do
     {
         // Send the data little by little
@@ -1102,21 +1082,19 @@ void DESFireEV1ISO7816Commands::handleWriteData(unsigned char cmd,
 
         result = transmit_plain(pos == 0 ? cmd : DF_INS_ADDITIONAL_FRAME, command);
 
-        err = result.back();
         pos += pkSize;
-    } while (err == DF_INS_ADDITIONAL_FRAME);
+    } while (result.getSW2() == DF_INS_ADDITIONAL_FRAME);
 
-    if (err != 0x00)
+    if (result.getSW2() != 0x00)
     {
         char msgtmp[64];
-        sprintf(msgtmp, "Unknown error: %x", err);
+        sprintf(msgtmp, "Unknown error: %x", result.getSW2());
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, msgtmp);
     }
 
-    if (result.size() > 2)
+    if (result.getData().size() > 0)
     {
-        result.resize(result.size() - 2);
-        if (!crypto->verifyMAC(true, result))
+        if (!crypto->verifyMAC(true, result.getData()))
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                      "MAC verification failed.");
@@ -1127,21 +1105,19 @@ void DESFireEV1ISO7816Commands::handleWriteData(unsigned char cmd,
 ByteVector DESFireEV1ISO7816Commands::readData(unsigned char fileno, unsigned int offset,
                                                unsigned int length, EncryptionMode mode)
 {
-    ByteVector command(7), ret, result;
+    ByteVector command(7), ret;
+    ISO7816Response result;
 
     command[0] = static_cast<unsigned char>(fileno);
 
     if (length == 0)
     {
         while (ret.size() == 0 ||
-               (result.size() >= 2 && result[result.size() - 2] == 0x90 &&
-                result[result.size() - 1] == 0xAF))
+               (result.getSW1() == 0x90 &&
+                result.getSW2() == 0xAF))
         {
             result            = handleReadCmd(DF_INS_READ_DATA, command, mode);
-            ByteVector data   = result;
-            unsigned char err = data.back();
-            data.resize(data.size() - 2);
-            data = handleReadData(err, data, 0, mode);
+            ByteVector data = handleReadData(result.getSW2(), result.getData(), 0, mode);
             ret.insert(ret.end(), data.begin(), data.end());
         }
     }
@@ -1159,12 +1135,10 @@ ByteVector DESFireEV1ISO7816Commands::readData(unsigned char fileno, unsigned in
             memcpy(&command[4], &trunklength, 3);
 
             result            = handleReadCmd(DF_INS_READ_DATA, command, mode);
-            unsigned char err = result.back();
-            result.resize(result.size() - 2);
 
-            result =
-                handleReadData(err, result, static_cast<unsigned int>(trunklength), mode);
-            ret.insert(ret.end(), result.begin(), result.end());
+            result = handleReadData(result.getSW2(), result.getData(),
+                                    static_cast<unsigned int>(trunklength), mode);
+            ret.insert(ret.end(), result.getData().begin(), result.getData().end());
         }
     }
     return ret;
@@ -1189,12 +1163,8 @@ ByteVector DESFireEV1ISO7816Commands::readRecords(unsigned char fileno,
     command.push_back(
         static_cast<unsigned char>(static_cast<unsigned int>(length & 0xff0000) >> 16));
 
-    ByteVector result = handleReadCmd(DF_INS_READ_RECORDS, command, mode);
-    unsigned char err = result.back();
-    result.resize(result.size() - 2);
-    result = handleReadData(err, result, 0, mode);
-
-    return result;
+    auto result = handleReadCmd(DF_INS_READ_RECORDS, command, mode);
+    return handleReadData(result.getSW2(), result.getData(), 0, mode);
 }
 
 void DESFireEV1ISO7816Commands::changeFileSettings(
@@ -1225,8 +1195,7 @@ void DESFireEV1ISO7816Commands::changeFileSettings(
     }
     else
     {
-        ByteVector dd = transmit_plain(DF_INS_CHANGE_FILE_SETTINGS, command);
-        dd.resize(dd.size() - 2);
+        ByteVector dd = transmit_plain(DF_INS_CHANGE_FILE_SETTINGS, command).getData();
         if (!crypto->verifyMAC(true, dd))
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
@@ -1253,8 +1222,7 @@ void DESFireEV1ISO7816Commands::changeKeySettings(DESFireKeySettings settings)
     }
     else
     {
-        ByteVector r = transmit_plain(DF_INS_CHANGE_KEY_SETTINGS, cryptogram);
-        r.resize(r.size() - 2);
+        ByteVector r = transmit_plain(DF_INS_CHANGE_KEY_SETTINGS, cryptogram).getData();
         if (!crypto->verifyMAC(true, r))
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
@@ -1305,8 +1273,7 @@ void DESFireEV1ISO7816Commands::changeKey(unsigned char keyno,
     }
     else
     {
-        ByteVector dd = transmit_plain(DF_INS_CHANGE_KEY, data);
-        dd.resize(dd.size() - 2);
+        ByteVector dd = transmit_plain(DF_INS_CHANGE_KEY, data).getData();
 
         // Don't check CMAC if master key.
         if (dd.size() > 0 && keyno != 0)
@@ -1329,33 +1296,36 @@ DESFireCommands::DESFireCardVersion DESFireEV1ISO7816Commands::getVersion()
 
     memset(&dataVersion, 0x00, sizeof(dataVersion));
 
-    ByteVector result = transmit_nomacv(DF_INS_GET_VERSION);
+    auto result = transmit_nomacv(DF_INS_GET_VERSION);
 
-    if ((result.size() - 2) >= 7)
+    if (result.getData().size() >= 7)
     {
-        if (result[result.size() - 1] == DF_INS_ADDITIONAL_FRAME)
+        if (result.getSW2() == DF_INS_ADDITIONAL_FRAME)
         {
-            memcpy(&dataVersion, &result[0], 7);
-            allresult.insert(allresult.end(), result.begin(), result.end() - 2);
+            memcpy(&dataVersion, &result.getData()[0], 7);
+            allresult.insert(allresult.end(), result.getData().begin(),
+                             result.getData().end());
 
             result = transmit_plain(DF_INS_ADDITIONAL_FRAME);
 
-            if (result.size() - 2 >= 7)
+            if (result.getData().size() >= 7)
             {
-                if (result[result.size() - 1] == DF_INS_ADDITIONAL_FRAME)
+                if (result.getSW2() == DF_INS_ADDITIONAL_FRAME)
                 {
-                    memcpy(reinterpret_cast<char *>(&dataVersion) + 7, &result[0], 7);
-                    allresult.insert(allresult.end(), result.begin(), result.end() - 2);
+                    memcpy(reinterpret_cast<char *>(&dataVersion) + 7,
+                           &result.getData()[0], 7);
+                    allresult.insert(allresult.end(), result.getData().begin(),
+                                     result.getData().end());
 
                     result = transmit_plain(DF_INS_ADDITIONAL_FRAME);
-                    if (result.size() - 2 >= 14)
+                    if (result.getData().size() >= 14)
                     {
-                        if (result[result.size() - 1] == 0x00)
+                        if (result.getSW2() == 0x00)
                         {
                             memcpy(reinterpret_cast<char *>(&dataVersion) + 14,
-                                   &result[0], 14);
-                            allresult.insert(allresult.end(), result.begin(),
-                                             result.end() - 2);
+                                   &result.getData()[0], 14);
+                            allresult.insert(allresult.end(), result.getData().begin(),
+                                             result.getData().end());
 
                             if (crypto->d_auth_method != CM_LEGACY)
                             {
@@ -1379,28 +1349,23 @@ std::vector<unsigned int> DESFireEV1ISO7816Commands::getApplicationIDs()
     std::vector<unsigned int> aids;
     std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 
-    ByteVector result = transmit(DF_INS_GET_APPLICATION_IDS);
+    auto result = transmit(DF_INS_GET_APPLICATION_IDS);
 
-    if (result.size() < 2)
-        THROW_EXCEPTION_WITH_LOG(std::runtime_error,
-                                 "getApplicationIDs did not return proper informations");
-
-    while (result[result.size() - 1] == DF_INS_ADDITIONAL_FRAME)
+    while (result.getSW2() == DF_INS_ADDITIONAL_FRAME)
     {
-        for (size_t i = 0; i < result.size() - 2; i += 3)
+        for (size_t i = 0; i < result.getData().size(); i += 3)
         {
-            ByteVector aid(result.begin() + i, result.begin() + i + 3);
+            ByteVector aid(result.getData().begin() + i,
+                           result.getData().begin() + i + 3);
             aids.push_back(DESFireLocation::convertAidToUInt(aid));
         }
 
         result = transmit(DF_INS_ADDITIONAL_FRAME);
     }
 
-    result.resize(result.size() - 2);
-
-    for (size_t i = 0; i < result.size(); i += 3)
+    for (size_t i = 0; i < result.getData().size(); i += 3)
     {
-        ByteVector aid(result.begin() + i, result.begin() + i + 3);
+        ByteVector aid(result.getData().begin() + i, result.getData().begin() + i + 3);
         aids.push_back(DESFireLocation::convertAidToUInt(aid));
     }
 
@@ -1410,16 +1375,7 @@ std::vector<unsigned int> DESFireEV1ISO7816Commands::getApplicationIDs()
 ByteVector DESFireEV1ISO7816Commands::getFileIDs()
 {
     std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
-    ByteVector result                     = transmit(DF_INS_GET_FILE_IDS);
-    result.resize(result.size() - 2);
-
-    ByteVector files;
-    for (size_t i = 0; i < result.size(); ++i)
-    {
-        files.push_back(result[i]);
-    }
-
-    return files;
+    return transmit(DF_INS_GET_FILE_IDS).getData();
 }
 
 void DESFireEV1ISO7816Commands::getValue(unsigned char fileno, EncryptionMode mode,
@@ -1428,15 +1384,13 @@ void DESFireEV1ISO7816Commands::getValue(unsigned char fileno, EncryptionMode mo
     ByteVector command;
     command.push_back(fileno);
 
-    ByteVector result = handleReadCmd(DF_INS_GET_VALUE, command, mode);
-    unsigned char err = result.back();
-    result.resize(result.size() - 2);
-    result = handleReadData(err, result, 4, mode);
+    auto result = handleReadCmd(DF_INS_GET_VALUE, command, mode);
+    auto data = handleReadData(result.getSW2(), result.getData(), 4, mode);
 
-    if (result.size() >= 4)
+    if (data.size() >= 4)
     {
         size_t offset = 0;
-        value         = BufferHelper::getInt32(result, offset);
+        value         = BufferHelper::getInt32(data, offset);
     }
 }
 
@@ -1513,8 +1467,9 @@ void DESFireEV1ISO7816Commands::setConfiguration(const ByteVector &ats)
     transmit_plain(DFEV1_INS_SET_CONFIGURATION, buf);
 }
 
-ByteVector DESFireEV1ISO7816Commands::transmit(unsigned char cmd, const ByteVector &buf,
-                                               unsigned char lc, bool forceLc)
+ISO7816Response DESFireEV1ISO7816Commands::transmit(unsigned char cmd,
+                                                    const ByteVector &buf,
+                                                    unsigned char lc, bool forceLc)
 {
     ByteVector CMAC;
     std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
@@ -1527,45 +1482,48 @@ ByteVector DESFireEV1ISO7816Commands::transmit(unsigned char cmd, const ByteVect
         crypto->desfire_cmac(apdu_command); // Ignore result
     }
 
-    ByteVector r      = transmit_plain(cmd, buf, lc, forceLc);
-    unsigned char err = r.back();
+    auto r = transmit_plain(cmd, buf, lc, forceLc);
     if (crypto->d_auth_method != CM_LEGACY && cmd != DF_INS_ADDITIONAL_FRAME &&
-        r.size() >= 10 && err != DF_INS_ADDITIONAL_FRAME)
+        r.getData().size() >= 8 && r.getSW2() != DF_INS_ADDITIONAL_FRAME)
     {
-        ByteVector response = ByteVector(r.begin(), r.end() - 10);
-        response.push_back(err);
+        ByteVector response = ByteVector(r.getData().begin(), r.getData().end() - 8);
+        response.push_back(r.getSW2());
 
         CMAC = crypto->desfire_cmac(response);
 
-        EXCEPTION_ASSERT_WITH_LOG(ByteVector(r.end() - 10, r.end() - 2) == CMAC,
+        EXCEPTION_ASSERT_WITH_LOG(ByteVector(r.getData().end() - 8, r.getData().end()) ==
+                                      CMAC,
                                   LibLogicalAccessException, "Wrong CMAC.");
 
-        r.erase(r.end() - 10, r.end() - 2);
+        r = ISO7816Response(ByteVector(r.getData().begin(), r.getData().end() - 8),
+                            r.getSW1(), r.getSW2());
     }
 
     return r;
 }
 
-ByteVector DESFireEV1ISO7816Commands::transmit_plain(unsigned char cmd, unsigned char lc)
+ISO7816Response DESFireEV1ISO7816Commands::transmit_plain(unsigned char cmd,
+                                                          unsigned char lc)
 {
     return transmit_plain(cmd, ByteVector(), lc, true);
 }
 
-ByteVector DESFireEV1ISO7816Commands::transmit_plain(unsigned char cmd,
-                                                     const ByteVector &buf,
-                                                     unsigned char lc, bool forceLc)
+ISO7816Response DESFireEV1ISO7816Commands::transmit_plain(unsigned char cmd,
+                                                          const ByteVector &buf,
+                                                          unsigned char lc, bool forceLc)
 {
     return DESFireISO7816Commands::transmit(cmd, buf, lc, forceLc);
 }
 
-ByteVector DESFireEV1ISO7816Commands::transmit_nomacv(unsigned char cmd, unsigned char lc)
+ISO7816Response DESFireEV1ISO7816Commands::transmit_nomacv(unsigned char cmd,
+                                                           unsigned char lc)
 {
     return transmit_nomacv(cmd, ByteVector(), lc, true);
 }
 
-ByteVector DESFireEV1ISO7816Commands::transmit_nomacv(unsigned char cmd,
-                                                      const ByteVector &buf,
-                                                      unsigned char lc, bool forceLc)
+ISO7816Response DESFireEV1ISO7816Commands::transmit_nomacv(unsigned char cmd,
+                                                           const ByteVector &buf,
+                                                           unsigned char lc, bool forceLc)
 {
     std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
     if (crypto->d_auth_method != CM_LEGACY && cmd != DF_INS_ADDITIONAL_FRAME)
@@ -1608,8 +1566,8 @@ void DESFireEV1ISO7816Commands::iks_iso_authenticate(std::shared_ptr<DESFireKey>
            key->getKeyStorage()->getType() == KST_SERVER);
     std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
     auto iso7816cmd                       = getISO7816Commands();
-    ByteVector RPICC1                     = iso7816cmd->getChallenge(16); // 16 because aes
-    auto kst = std::dynamic_pointer_cast<IKSStorage>(key->getKeyStorage());
+    ByteVector RPICC1 = iso7816cmd->getChallenge(16); // 16 because aes
+    auto kst          = std::dynamic_pointer_cast<IKSStorage>(key->getKeyStorage());
     assert(kst);
 
     auto remote_crypto = LibraryManager::getInstance()->getRemoteCrypto();
@@ -1649,8 +1607,8 @@ void DESFireEV1ISO7816Commands::iks_iso_authenticate(std::shared_ptr<DESFireKey>
     iso7816cmd->externalAuthenticate(DF_ALG_AES, isMasterCardKey, keyno, cryptogram);
 
     auto RPCD2 = ByteVector(out_random2.begin(), out_random2.end());
-    cryptogram =
-        iso7816cmd->internalAuthenticate(DF_ALG_AES, isMasterCardKey, keyno, RPCD2, 2 * 16);
+    cryptogram = iso7816cmd->internalAuthenticate(DF_ALG_AES, isMasterCardKey, keyno,
+                                                  RPCD2, 2 * 16);
 
     ByteVector out_session_key, out_session_key_ref;
     remote_crypto->iso_authenticate_step2(kst->getKeyIdentity(), cryptogram,
@@ -1703,7 +1661,7 @@ void DESFireEV1ISO7816Commands::iks_iso_authenticate(std::shared_ptr<DESFireKey>
     }
 
     crypto->d_cipher.reset(new openssl::AESCipher());
-    crypto->d_mac_size   = 8;
+    crypto->d_mac_size = 8;
 
     // common
     crypto->d_lastIV.clear();
@@ -1750,7 +1708,7 @@ void DESFireEV1ISO7816Commands::pkcs_iso_authenticate(
     le = 16;
     cipher.reset(new openssl::AESCipher());
 
-	auto iso7816cmd   = getISO7816Commands();
+    auto iso7816cmd   = getISO7816Commands();
     ByteVector RPICC1 = iso7816cmd->getChallenge(le);
 
     ByteVector RPCD1;
@@ -1780,8 +1738,8 @@ void DESFireEV1ISO7816Commands::pkcs_iso_authenticate(
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "Cannot retrieve cryptographically strong bytes");
     }
-    cryptogram =
-        iso7816cmd->internalAuthenticate(DF_ALG_AES, isMasterCardKey, keyno, RPCD2, 2 * le);
+    cryptogram = iso7816cmd->internalAuthenticate(DF_ALG_AES, isMasterCardKey, keyno,
+                                                  RPCD2, 2 * le);
 
     if (cryptogram.size() < 1)
         THROW_EXCEPTION_WITH_LOG(CardException, "iso_authenticate wrong internal data.");
@@ -1808,8 +1766,8 @@ void DESFireEV1ISO7816Commands::pkcs_iso_authenticate(
                                 RPICC2.begin() + 16);
 
     crypto->d_cipher.reset(new openssl::AESCipher());
-    crypto->d_authkey    = keydiv;
-    crypto->d_mac_size   = 8;
+    crypto->d_authkey  = keydiv;
+    crypto->d_mac_size = 8;
 
     crypto->d_lastIV.clear();
     crypto->d_lastIV.resize(crypto->d_cipher->getBlockSize(), 0x00);

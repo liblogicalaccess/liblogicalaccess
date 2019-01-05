@@ -44,14 +44,14 @@ ByteVector ISO7816ISO7816Commands::readBinary(size_t length, size_t offset, unsi
     unsigned char p1, p2;
 
     setP1P2(offset, efid, p1, p2);
-    ByteVector result =
+    auto result =
         (length > 0) ? getISO7816ReaderCardAdapter()->sendAPDUCommand(
                            ISO7816_CLA_ISO_COMPATIBLE, ISO7816_INS_READ_BINARY, p1, p2,
                            static_cast<unsigned char>(length))
                      : getISO7816ReaderCardAdapter()->sendAPDUCommand(
                            ISO7816_CLA_ISO_COMPATIBLE, ISO7816_INS_READ_BINARY, p1, p2);
 
-    return ByteVector(result.begin(), result.end() - 2);
+    return result.getData();
 }
 
 void ISO7816ISO7816Commands::writeBinary(const ByteVector &data, size_t offset,
@@ -87,19 +87,20 @@ void ISO7816ISO7816Commands::eraseBinary(size_t offset, unsigned short efid)
 
 ByteVector ISO7816ISO7816Commands::getData(unsigned short dataObject, size_t /*length*/)
 {
-    ByteVector result = getISO7816ReaderCardAdapter()->sendAPDUCommand(
-        ISO7816_CLA_ISO_COMPATIBLE, ISO7816_INS_GET_DATA, (0xff & (dataObject >> 8)),
-        (0xff & dataObject));
-    return ByteVector(result.begin(), result.end() - 2);
+    return getISO7816ReaderCardAdapter()
+        ->sendAPDUCommand(ISO7816_CLA_ISO_COMPATIBLE, ISO7816_INS_GET_DATA,
+                          (0xff & (dataObject >> 8)), (0xff & dataObject))
+        .getData();
 }
 
 ByteVector ISO7816ISO7816Commands::getDataList(const ByteVector &data, size_t length,
                                     unsigned short efid)
 {
-    ByteVector result = getISO7816ReaderCardAdapter()->sendAPDUCommand(
-        ISO7816_CLA_ISO_COMPATIBLE, ISO7816_INS_GET_DATA_LIST, (0xff & (efid >> 8)),
-        (0xff & efid), static_cast<unsigned char>(data.size()), data);
-    return ByteVector(result.begin(), result.end() - 2);
+    return getISO7816ReaderCardAdapter()
+        ->sendAPDUCommand(ISO7816_CLA_ISO_COMPATIBLE, ISO7816_INS_GET_DATA_LIST,
+                          (0xff & (efid >> 8)), (0xff & efid),
+                          static_cast<unsigned char>(data.size()), data)
+        .getData();
 }
 
 void ISO7816ISO7816Commands::putData(const ByteVector &data, unsigned short dataObject)
@@ -111,9 +112,10 @@ void ISO7816ISO7816Commands::putData(const ByteVector &data, unsigned short data
 
 ByteVector ISO7816ISO7816Commands::getResponse(unsigned char maxlength)
 {
-    ByteVector result = getISO7816ReaderCardAdapter()->sendAPDUCommand(
-        ISO7816_CLA_ISO_COMPATIBLE, ISO7816_INS_GET_RESPONSE, 0x00, 0x00, maxlength);
-    return ByteVector(result.begin(), result.end() - 2);
+    return getISO7816ReaderCardAdapter()
+        ->sendAPDUCommand(ISO7816_CLA_ISO_COMPATIBLE, ISO7816_INS_GET_RESPONSE, 0x00,
+                          0x00, maxlength)
+        .getData();
 }
 
 void ISO7816ISO7816Commands::selectFile(unsigned char p1, unsigned char p2,
@@ -135,10 +137,10 @@ ByteVector ISO7816ISO7816Commands::readRecords(unsigned short fid,
         p2 += static_cast<unsigned char>((fid & 0xff) << 3);
     }
 
-    ByteVector result = getISO7816ReaderCardAdapter()->sendAPDUCommand(
-        ISO7816_CLA_ISO_COMPATIBLE, ISO7816_INS_READ_RECORDS, p1, p2, 0x00);
-
-    return ByteVector(result.begin(), result.end() - 2);
+    return getISO7816ReaderCardAdapter()
+        ->sendAPDUCommand(ISO7816_CLA_ISO_COMPATIBLE, ISO7816_INS_READ_RECORDS, p1, p2,
+                          0x00)
+        .getData();
 }
 
 void ISO7816ISO7816Commands::appendrecord(const ByteVector &data, unsigned short fid)
@@ -157,15 +159,10 @@ void ISO7816ISO7816Commands::appendrecord(const ByteVector &data, unsigned short
 
 ByteVector ISO7816ISO7816Commands::getChallenge(unsigned int length)
 {
-    ByteVector result = getISO7816ReaderCardAdapter()->sendAPDUCommand(
-        ISO7816_CLA_ISO_COMPATIBLE, ISO7816_INS_GET_CHALLENGE, 0x00, 0x00,
-        static_cast<unsigned char>(length));
-
-    if (result[result.size() - 2] == 0x90 && result[result.size() - 1] == 0x00)
-    {
-        return ByteVector(result.begin(), result.end() - 2);
-    }
-    return result;
+    return getISO7816ReaderCardAdapter()
+        ->sendAPDUCommand(ISO7816_CLA_ISO_COMPATIBLE, ISO7816_INS_GET_CHALLENGE, 0x00,
+                          0x00, static_cast<unsigned char>(length))
+        .getData();
 }
 
 void ISO7816ISO7816Commands::externalAuthenticate(unsigned char algorithm,
@@ -196,16 +193,11 @@ ByteVector ISO7816ISO7816Commands::externalAuthenticate(unsigned char algorithm,
         p2 |= 0x80;
     }
 
-    ByteVector result = getISO7816ReaderCardAdapter()->sendAPDUCommand(
-        ISO7816_CLA_ISO_COMPATIBLE, ISO7816_INS_EXTERNAL_AUTHENTICATE, algorithm, p2,
-        static_cast<unsigned char>(data.size()), data, le);
-
-    if (result.size() > 2 && result[result.size() - 2] == 0x90 &&
-        result[result.size() - 1] == 0x00)
-    {
-        return ByteVector(result.begin(), result.end() - 2);
-    }
-    return result;
+    return getISO7816ReaderCardAdapter()
+        ->sendAPDUCommand(ISO7816_CLA_ISO_COMPATIBLE, ISO7816_INS_EXTERNAL_AUTHENTICATE,
+                          algorithm, p2, static_cast<unsigned char>(data.size()), data,
+                          le)
+        .getData();
 }
 
 ByteVector ISO7816ISO7816Commands::internalAuthenticate(unsigned char algorithm,
@@ -220,17 +212,10 @@ ByteVector ISO7816ISO7816Commands::internalAuthenticate(unsigned char algorithm,
         p2 |= 0x80;
     }
 
-    ByteVector result = getISO7816ReaderCardAdapter()->sendAPDUCommand(
+    return getISO7816ReaderCardAdapter()->sendAPDUCommand(
         ISO7816_CLA_ISO_COMPATIBLE, ISO7816_INS_INTERNAL_AUTHENTICATE, algorithm, p2,
         static_cast<unsigned char>(RPCD2.size()), RPCD2,
-        static_cast<unsigned char>(length));
-
-    if (result.size() > 2 && result[result.size() - 2] == 0x90 &&
-        result[result.size() - 1] == 0x00)
-    {
-        return ByteVector(result.begin(), result.end() - 2);
-    }
-    return result;
+        static_cast<unsigned char>(length)).getData();
 }
 
 ByteVector ISO7816ISO7816Commands::generalAuthenticate(unsigned char algorithm,
@@ -245,28 +230,18 @@ ByteVector ISO7816ISO7816Commands::generalAuthenticate(unsigned char algorithm,
         p2 |= 0x80;
     }
 
-    ByteVector result;
-
     if (dataField.size() > 0)
     {
-        result = getISO7816ReaderCardAdapter()->sendAPDUCommand(
+        return getISO7816ReaderCardAdapter()->sendAPDUCommand(
             ISO7816_CLA_ISO_COMPATIBLE, ISO7816_INS_GENERAL_AUTHENTICATE, algorithm, p2,
-            static_cast<unsigned char>(dataField.size()), dataField, le);
+            static_cast<unsigned char>(dataField.size()), dataField, le).getData();
     }
     else
     {
-        result = getISO7816ReaderCardAdapter()->sendAPDUCommand(
+        return getISO7816ReaderCardAdapter()->sendAPDUCommand(
             ISO7816_CLA_ISO_COMPATIBLE, ISO7816_INS_GENERAL_AUTHENTICATE, algorithm, p2,
-            le);
+            le).getData();
     }
-
-
-    if (result.size() > 2 && result[result.size() - 2] == 0x90 &&
-        result[result.size() - 1] == 0x00)
-    {
-        return ByteVector(result.begin(), result.end() - 2);
-    }
-    return result;
 }
 
 ByteVector ISO7816ISO7816Commands::generalAuthenticate_challenge(unsigned char algorithm,
@@ -335,6 +310,6 @@ ByteVector ISO7816ISO7816Commands::applicationManagementRequest(
         ISO7816_CLA_ISO_COMPATIBLE, ISO7816_INS_APPLICATION_MANAGEMENT_REQUEST, p1, p2,
         data);
 
-    return ByteVector(result.begin(), result.end() - 2);
+    return result.getData();
 }
 } // namespace logicalaccess

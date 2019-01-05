@@ -58,7 +58,8 @@ void MifareUltralightCPCSCCommands::writePage(int page, const ByteVector &buf)
     MifareUltralightPCSCCommands::writePage(page, buf);
 }
 
-ByteVector MifareUltralightCPCSCCommands::sendGenericCommand(const ByteVector & /*data*/)
+ISO7816Response
+MifareUltralightCPCSCCommands::sendGenericCommand(const ByteVector & /*data*/)
 {
     THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Not implemented function call.");
 }
@@ -69,7 +70,7 @@ ByteVector MifareUltralightCPCSCCommands::authenticate_PICC1()
     data.push_back(0x1A);
     data.push_back(0x00);
 
-    return sendGenericCommand(data);
+    return sendGenericCommand(data).getData();
 }
 
 ByteVector MifareUltralightCPCSCCommands::authenticate_PICC2(const ByteVector &encRndAB)
@@ -78,7 +79,7 @@ ByteVector MifareUltralightCPCSCCommands::authenticate_PICC2(const ByteVector &e
     data.push_back(0xAF);
     data.insert(data.end(), encRndAB.begin(), encRndAB.end());
 
-    return sendGenericCommand(data);
+    return sendGenericCommand(data).getData();
 }
 
 void MifareUltralightCPCSCCommands::authenticate(std::shared_ptr<TripleDESKey> authkey)
@@ -96,7 +97,7 @@ void MifareUltralightCPCSCCommands::authenticate(std::shared_ptr<TripleDESKey> a
     {
         // Get RndB from the PICC
         result = authenticate_PICC1();
-        EXCEPTION_ASSERT_WITH_LOG(result.size() >= 11, CardException,
+        EXCEPTION_ASSERT_WITH_LOG(result.size() >= 9, CardException,
                                   "Authentication failed. The PICC return a bad buffer.");
         EXCEPTION_ASSERT_WITH_LOG(result.at(0) == 0xAF, CardException,
                                   "Authentication failed. Return code unexcepted.");
@@ -106,7 +107,7 @@ void MifareUltralightCPCSCCommands::authenticate(std::shared_ptr<TripleDESKey> a
 
         ByteVector key =
             ByteVector(authkey->getData(), authkey->getData() + authkey->getLength());
-        ByteVector encRndB(result.begin() + 1, result.end() - 2);
+        ByteVector encRndB(result.begin() + 1, result.end());
         ByteVector rndB = DESFireCrypto::desfire_CBC_receive(key, iv, encRndB);
 
         ByteVector rndA;
@@ -126,13 +127,13 @@ void MifareUltralightCPCSCCommands::authenticate(std::shared_ptr<TripleDESKey> a
 
         // Send Ek(RndAB) to the PICC and get RndA'
         result = authenticate_PICC2(encRndAB);
-        EXCEPTION_ASSERT_WITH_LOG(result.size() >= 11, CardException,
+        EXCEPTION_ASSERT_WITH_LOG(result.size() >= 9, CardException,
                                   "Authentication failed. The PICC return a bad buffer.");
         EXCEPTION_ASSERT_WITH_LOG(result.at(0) == 0x00, CardException,
                                   "Authentication failed. Return code unexcepted.");
 
         iv = ByteVector(encRndAB.end() - 8, encRndAB.end());
-        ByteVector encRndA1(result.begin() + 1, result.end() - 2);
+        ByteVector encRndA1(result.begin() + 1, result.end());
         ByteVector rndA1 = DESFireCrypto::desfire_CBC_receive(key, iv, encRndA1);
         rndA1.insert(rndA1.begin(), rndA1.at(rndA1.size() - 1));
         rndA1.erase(rndA1.end() - 1);

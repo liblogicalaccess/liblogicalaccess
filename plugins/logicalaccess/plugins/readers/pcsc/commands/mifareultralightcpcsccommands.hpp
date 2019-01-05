@@ -52,7 +52,7 @@ class LLA_READERS_PCSC_API MifareUltralightCPCSCCommands
 
     void writePage(int page, const ByteVector &buf) override;
 
-    virtual ByteVector sendGenericCommand(const ByteVector &data);
+    virtual ISO7816Response sendGenericCommand(const ByteVector &data);
 
     virtual ByteVector authenticate_PICC1();
 

@@ -34,10 +34,8 @@ MifareUltralightPCSCCommands::~MifareUltralightPCSCCommands()
 
 ByteVector MifareUltralightPCSCCommands::readPage(int page)
 {
-    ByteVector result = getPCSCReaderCardAdapter()->sendAPDUCommand(
-        0xFF, 0xB0, 0x00, static_cast<unsigned char>(page), 16);
-
-    return ByteVector(result.begin(), result.end() - 2);
+    return getPCSCReaderCardAdapter()->sendAPDUCommand(
+        0xFF, 0xB0, 0x00, static_cast<unsigned char>(page), 16).getData();
 }
 
 void MifareUltralightPCSCCommands::writePage(int page, const ByteVector &buf)

@@ -98,9 +98,9 @@ void SAMAV2ISO7816Commands::authenticateHost(std::shared_ptr<DESFireKey> key,
     data_p1[1] = key->getKeyVersion();
     data_p1[2] = hostmode; // Host Mode: Full Protection
 
-    ByteVector result = getISO7816ReaderCardAdapter()->sendAPDUCommand(
+    auto result = getISO7816ReaderCardAdapter()->sendAPDUCommand(
         d_cla, 0xa4, 0x00, 0x00, 0x03, data_p1, 0x00);
-    if (result.size() != 14 || result[12] != 0x90 || result[13] != 0xAF)
+    if (result.getData().size() != 12 || result.getSW1() != 0x90 || result.getSW2() != 0xAF)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "authenticateHost P1 Failed.");
 
@@ -110,7 +110,7 @@ void SAMAV2ISO7816Commands::authenticateHost(std::shared_ptr<DESFireKey> key,
     ByteVector rnd1;
 
     /* Create rnd2 for p3 - CMAC: rnd2 | Host Mode | ZeroPad */
-    ByteVector rnd2(result.begin(), result.begin() + 12);
+    ByteVector rnd2 = result.getData();
     rnd2.push_back(hostmode); // Host Mode: Full Protection
     rnd2.resize(16);          // ZeroPad
 
@@ -131,7 +131,7 @@ void SAMAV2ISO7816Commands::authenticateHost(std::shared_ptr<DESFireKey> key,
 
     result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xa4, 0x00, 0x00, 0x14,
                                                             data_p2, 0x00);
-    if (result.size() != 26 || result[24] != 0x90 || result[25] != 0xAF)
+    if (result.getData().size() != 24 || result.getSW1() != 0x90 || result.getSW2() != 0xAF)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "authenticateHost P2 Failed.");
 
@@ -144,7 +144,7 @@ void SAMAV2ISO7816Commands::authenticateHost(std::shared_ptr<DESFireKey> key,
 
     for (unsigned char x = 0; x < 8; ++x)
     {
-        if (macHost[x] != result[x])
+        if (macHost[x] != result.getData()[x])
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                      "authenticateHost P2 CMAC from SAM is Wrong.");
     }
@@ -167,7 +167,7 @@ void SAMAV2ISO7816Commands::authenticateHost(std::shared_ptr<DESFireKey> key,
         new openssl::AESInitializationVector(
             openssl::AESInitializationVector::createFromData(d_lastMacIV)));
 
-    ByteVector encRndB(result.begin() + 8, result.end() - 2);
+    ByteVector encRndB(result.getData().begin() + 8, result.getData().end());
     ByteVector dencRndB;
 
     cipher->decipher(encRndB, dencRndB, *symkey.get(), *iv.get(), false);
@@ -188,14 +188,14 @@ void SAMAV2ISO7816Commands::authenticateHost(std::shared_ptr<DESFireKey> key,
 
     result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xa4, 0x00, 0x00, 0x20,
                                                             encHost, 0x00);
-    if (result.size() != 18 || result[16] != 0x90 || result[17] != 0x00)
+    if (result.getData().size() != 16 || result.getSW1() != 0x90 || result.getSW2() != 0x00)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "authenticateHost P3 Failed.");
 
-    ByteVector encSAMrndA(result.begin(), result.end() - 2), SAMrndA;
+    ByteVector SAMrndA;
     iv.reset(new openssl::AESInitializationVector(
         openssl::AESInitializationVector::createFromData(d_lastMacIV)));
-    cipher->decipher(encSAMrndA, SAMrndA, *symkey.get(), *iv.get(), false);
+    cipher->decipher(result.getData(), SAMrndA, *symkey.get(), *iv.get(), false);
     SAMrndA.insert(SAMrndA.begin(), SAMrndA.end() - 2, SAMrndA.end());
 
     if (!equal(SAMrndA.begin(), SAMrndA.begin() + 16, rndA.begin()))

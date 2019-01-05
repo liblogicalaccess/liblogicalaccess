@@ -36,7 +36,7 @@ ByteVector TopazSCMCommands::readPage(int page)
     {
         unsigned char address = page << 3 | i;
         ByteVector result =
-            getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x54, 0x00, address, 0x00);
+            getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x54, 0x00, address, 0x00).getData();
         data.push_back(result[0]);
     }
 

@@ -632,10 +632,9 @@ void PCSCReaderUnit::disconnectFromReader()
 
 ByteVector PCSCReaderUnit::getCardSerialNumber()
 {
-    ByteVector ucReceivedData =
-        getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xCA, 0x00, 0x00, 0x00);
-
-    return ByteVector(ucReceivedData.begin(), ucReceivedData.end() - 2);
+    return getDefaultPCSCReaderCardAdapter()
+        ->sendAPDUCommand(0xFF, 0xCA, 0x00, 0x00, 0x00)
+        .getData();
 }
 
 const std::vector<uint8_t> &PCSCReaderUnit::getATR() const
@@ -827,6 +826,13 @@ std::shared_ptr<Chip> PCSCReaderUnit::createChip(std::string type)
             if (!commands)
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                          "Could not load SeosISO7816 Commands.");
+        }
+        else if (type == CHIP_SEPROCESSOR_PUBLIC)
+        {
+            commands = LibraryManager::getInstance()->getCommands("SEProcessorISO7816");
+            if (!commands)
+                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                         "Could not load SEProcessorISO7816 Commands.");
         }
         else if (type == CHIP_PROX)
         {

@@ -386,7 +386,7 @@ class LLA_READERS_ISO7816_API DESFireISO7816Commands : public DESFireCommands
      * \param lc Undocumented.
      * \return The response.
      */
-    virtual ByteVector transmit(unsigned char cmd, unsigned char lc);
+    virtual ISO7816Response transmit(unsigned char cmd, unsigned char lc);
 
     /**
      * \brief Transmit a command.
@@ -396,7 +396,8 @@ class LLA_READERS_ISO7816_API DESFireISO7816Commands : public DESFireCommands
      * \param forceLc Undocumented.
      * \return The response.
      */
-    virtual ByteVector transmit(unsigned char cmd, const ByteVector &data = ByteVector(),
+    virtual ISO7816Response transmit(unsigned char cmd,
+                                     const ByteVector &data = ByteVector(),
                                 unsigned char lc = 0, bool forceLc = false);
 
     bool checkChangeKeySAMKeyStorage(unsigned char keyno,

@@ -30,10 +30,10 @@ std::string ACSACRReaderUnit::getFirmwareVersion()
     std::shared_ptr<ResultChecker> checker =
         getDefaultPCSCReaderCardAdapter()->getResultChecker();
     getDefaultPCSCReaderCardAdapter()->setResultChecker(std::shared_ptr<ResultChecker>());
-    ByteVector res =
+    auto res =
         getDefaultPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0x00, 0x48, 0x00, 0x00);
     getDefaultPCSCReaderCardAdapter()->setResultChecker(checker);
-    return BufferHelper::getStdString(res);
+    return BufferHelper::getStdString(res.getData());
 }
 
 std::shared_ptr<ResultChecker> ACSACRReaderUnit::createDefaultResultChecker() const

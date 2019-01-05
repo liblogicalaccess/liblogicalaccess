@@ -38,9 +38,8 @@ DESFireISO7816Commands::~DESFireISO7816Commands()
 
 void DESFireISO7816Commands::erase()
 {
-    ByteVector result = transmit(DF_INS_FORMAT_PICC);
-    if (result.size() < 2 || result[result.size() - 2] != 0x91 ||
-        result[result.size() - 1] != 0x00)
+    auto result = transmit(DF_INS_FORMAT_PICC);
+    if (result.getSW1() != 0x91 || result.getSW2() != 0x00)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Erase command failed.");
 }
 
@@ -48,29 +47,26 @@ DESFireCommands::DESFireCardVersion DESFireISO7816Commands::getVersion()
 {
     DESFireCardVersion dataVersion;
 
-    ByteVector result = transmit(DF_INS_GET_VERSION);
-
-    if ((result.size() - 2) == 7)
+    auto result = transmit(DF_INS_GET_VERSION);
+    if (result.getData().size() == 7)
     {
-        if (result[result.size() - 1] == DF_INS_ADDITIONAL_FRAME)
+        if (result.getSW2() == DF_INS_ADDITIONAL_FRAME)
         {
-            memcpy(&dataVersion, &result[0], 7);
-
+            memcpy(&dataVersion, &result.getData()[0], 7);
             result = transmit(DF_INS_ADDITIONAL_FRAME);
-
-            if (result.size() - 2 == 7)
+            if (result.getData().size() == 7)
             {
-                if (result[result.size() - 1] == DF_INS_ADDITIONAL_FRAME)
+                if (result.getSW2() == DF_INS_ADDITIONAL_FRAME)
                 {
-                    memcpy(reinterpret_cast<char *>(&dataVersion) + 7, &result[0], 7);
-
+                    memcpy(reinterpret_cast<char *>(&dataVersion) + 7,
+                           &result.getData()[0], 7);
                     result = transmit(DF_INS_ADDITIONAL_FRAME);
-                    if (result.size() - 2 == 14)
+                    if (result.getData().size() == 14)
                     {
-                        if (result[result.size() - 1] == 0x00)
+                        if (result.getSW2() == 0x00)
                         {
                             memcpy(reinterpret_cast<char *>(&dataVersion) + 14,
-                                   &result[0], 14);
+                                   &result.getData()[0], 14);
                         }
                     }
                 }
@@ -130,22 +126,22 @@ void DESFireISO7816Commands::deleteApplication(unsigned int aid)
 std::vector<unsigned int> DESFireISO7816Commands::getApplicationIDs()
 {
     std::vector<unsigned int> aids;
-    ByteVector result = transmit(DF_INS_GET_APPLICATION_IDS);
+    auto result = transmit(DF_INS_GET_APPLICATION_IDS);
 
-    while (result[result.size() - 1] == DF_INS_ADDITIONAL_FRAME)
+    while (result.getSW2() == DF_INS_ADDITIONAL_FRAME)
     {
-        for (size_t i = 0; i < result.size() - 2; i += 3)
+        for (size_t i = 0; i < result.getData().size(); i += 3)
         {
-            ByteVector aid(result[i], result[i + 3]);
+            ByteVector aid(result.getData().begin() + i, result.getData().begin() + i + 3);
             aids.push_back(DESFireLocation::convertAidToUInt(aid));
         }
 
         result = transmit(DF_INS_ADDITIONAL_FRAME);
     }
 
-    for (size_t i = 0; i < result.size() - 2; i += 3)
+    for (size_t i = 0; i < result.getData().size(); i += 3)
     {
-        ByteVector aid(result.begin() + i, result.begin() + i + 3);
+        ByteVector aid(result.getData().begin() + i, result.getData().begin() + i + 3);
         aids.push_back(DESFireLocation::convertAidToUInt(aid));
     }
 
@@ -283,8 +279,8 @@ uint8_t DESFireISO7816Commands::getKeyVersion(uint8_t keyno)
 {
     ByteVector command;
     command.push_back(keyno);
-    auto result = transmit(DF_INS_GET_KEY_VERSION, command);
-    if (result.size() < 3)
+    auto result = transmit(DF_INS_GET_KEY_VERSION, command).getData();
+    if (result.size() < 1)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "Invalid response for getKeyVersion.");
     return result[0];
@@ -370,10 +366,10 @@ void DESFireISO7816Commands::changeKey(unsigned char keyno,
 
 ByteVector DESFireISO7816Commands::getFileIDs()
 {
-    ByteVector result = transmit(DF_INS_GET_FILE_IDS);
+    ByteVector result = transmit(DF_INS_GET_FILE_IDS).getData();
     ByteVector files;
 
-    for (size_t i = 0; i < result.size() - 2; ++i)
+    for (size_t i = 0; i < result.size(); ++i)
     {
         files.push_back(result[i]);
     }
@@ -384,12 +380,7 @@ ByteVector DESFireISO7816Commands::getFileIDs()
 void DESFireISO7816Commands::getKeySettings(DESFireKeySettings &settings,
                                             unsigned char &maxNbKeys)
 {
-    ByteVector result;
-
-    result = transmit(DF_INS_GET_KEY_SETTINGS);
-
-    EXCEPTION_ASSERT_WITH_LOG(result.size() >= 2, LibLogicalAccessException,
-                              "incorrect result for transmit");
+    ByteVector result = transmit(DF_INS_GET_KEY_SETTINGS).getData();
 
     settings  = static_cast<DESFireKeySettings>(result[0]);
     maxNbKeys = result[1];
@@ -410,8 +401,8 @@ DESFireCommands::FileSetting DESFireISO7816Commands::getFileSettings(unsigned ch
     ByteVector command;
     command.push_back(fileno);
 
-    ByteVector result = transmit(DF_INS_GET_FILE_SETTINGS, command);
-    memcpy(&fileSetting, &result[0], result.size() - 2);
+    ByteVector result = transmit(DF_INS_GET_FILE_SETTINGS, command).getData();
+    memcpy(&fileSetting, &result[0], result.size());
     return fileSetting;
 }
 
@@ -451,9 +442,9 @@ ByteVector DESFireISO7816Commands::handleReadData(unsigned char err,
             }
         }
 
-        data = transmit(DF_INS_ADDITIONAL_FRAME);
-        err  = data.back();
-        data.resize(data.size() - 2);
+        auto result = transmit(DF_INS_ADDITIONAL_FRAME);
+        err         = result.getSW2();
+        data        = result.getData();
 
         if (mode == CM_ENCRYPT)
         {
@@ -545,7 +536,7 @@ void DESFireISO7816Commands::handleWriteData(unsigned char cmd,
 
         auto result = transmit(pos == 0 ? cmd : DF_INS_ADDITIONAL_FRAME, command);
 
-        err = result.back();
+        err = result.getSW2();
         pos += pkSize;
     } while (err == DF_INS_ADDITIONAL_FRAME);
 
@@ -726,12 +717,10 @@ ByteVector DESFireISO7816Commands::readData(unsigned char fileno, unsigned int o
         command.push_back(static_cast<unsigned char>(
             static_cast<unsigned int>(trunklength & 0xff0000) >> 16));
 
-        ByteVector result = transmit(DF_INS_READ_DATA, command);
-        unsigned char err = result.back();
-        result.resize(result.size() - 2);
-        result =
-            handleReadData(err, result, static_cast<unsigned int>(trunklength), mode);
-        ret.insert(ret.end(), result.begin(), result.end());
+        auto result = transmit(DF_INS_READ_DATA, command);
+        result = handleReadData(result.getSW2(), result.getData(),
+                                static_cast<unsigned int>(trunklength), mode);
+        ret.insert(ret.end(), result.getData().begin(), result.getData().end());
     }
 
     return ret;
@@ -762,15 +751,13 @@ void DESFireISO7816Commands::getValue(unsigned char fileno, EncryptionMode mode,
     ByteVector command;
     command.push_back(fileno);
 
-    ByteVector result = transmit(DF_INS_GET_VALUE, command);
-    unsigned char err = result.back();
-    result.resize(result.size() - 2);
-    result = handleReadData(err, result, 4, mode);
+    auto result = transmit(DF_INS_GET_VALUE, command);
+    auto data = handleReadData(result.getSW2(), result.getData(), 4, mode);
 
-    if (result.size() >= 4)
+    if (data.size() >= 4)
     {
         size_t offset = 0;
-        value         = BufferHelper::getUInt32(result, offset);
+        value         = BufferHelper::getUInt32(data, offset);
     }
 }
 
@@ -843,11 +830,9 @@ ByteVector DESFireISO7816Commands::readRecords(unsigned char fileno, unsigned in
     command.push_back(
         static_cast<unsigned char>(static_cast<unsigned int>(length & 0xff0000) >> 16));
 
-    ByteVector result = transmit(DF_INS_READ_RECORDS, command);
-    unsigned char err = result.back();
-    result.resize(result.size() - 2);
-    result = handleReadData(err, result, length, mode);
-    ret.insert(ret.end(), result.begin(), result.end());
+    auto result = transmit(DF_INS_READ_RECORDS, command);
+    auto data = handleReadData(result.getSW2(), result.getData(), length, mode);
+    ret.insert(ret.end(), data.begin(), data.end());
 
     return ret;
 }
@@ -1029,26 +1014,22 @@ void DESFireISO7816Commands::authenticate(unsigned char keyno,
 
     command.push_back(keyno);
 
-    ByteVector result = DESFireISO7816Commands::transmit(DF_INS_AUTHENTICATE, command);
-    if (result.size() >= 2 && result[result.size() - 1] == DF_INS_ADDITIONAL_FRAME &&
-        (result.size() - 2) >= 8)
+    auto result = DESFireISO7816Commands::transmit(DF_INS_AUTHENTICATE, command);
+    if (result.getSW2() == DF_INS_ADDITIONAL_FRAME && result.getData().size() >= 8)
     {
-        result.resize(8);
         ByteVector rndAB, apduresult;
 
         if (samKeyStorage)
-            rndAB = sam_authenticate_p1(key, result, diversify);
+            rndAB = sam_authenticate_p1(key, result.getData(), diversify);
         else
-            rndAB = crypto->authenticate_PICC1(keyno, diversify, result);
+            rndAB = crypto->authenticate_PICC1(keyno, diversify, result.getData());
         result    = DESFireISO7816Commands::transmit(DF_INS_ADDITIONAL_FRAME, rndAB);
-        if ((result.size() - 2) >= 8)
+        if (result.getData().size() >= 8)
         {
-            result.resize(result.size() - 2);
-
             if (samKeyStorage)
-                sam_authenticate_p2(keyno, result);
+                sam_authenticate_p2(keyno, result.getData());
             else
-                crypto->authenticate_PICC2(keyno, result);
+                crypto->authenticate_PICC2(keyno, result.getData());
         }
         else
             THROW_EXCEPTION_WITH_LOG(CardException, "DESFire authentication P2 failed: wrong length.");
@@ -1057,13 +1038,14 @@ void DESFireISO7816Commands::authenticate(unsigned char keyno,
         THROW_EXCEPTION_WITH_LOG(CardException, "DESFire authentication P1 failed.");
 }
 
-ByteVector DESFireISO7816Commands::transmit(unsigned char cmd, unsigned char lc)
+ISO7816Response DESFireISO7816Commands::transmit(unsigned char cmd, unsigned char lc)
 {
     return transmit(cmd, ByteVector(), lc, true);
 }
 
-ByteVector DESFireISO7816Commands::transmit(unsigned char cmd, const ByteVector &data,
-                                            unsigned char lc, bool forceLc)
+ISO7816Response DESFireISO7816Commands::transmit(unsigned char cmd,
+                                                 const ByteVector &data, unsigned char lc,
+                                                 bool forceLc)
 {
     if (data.size())
     {

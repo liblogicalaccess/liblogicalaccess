@@ -38,8 +38,9 @@ bool MifarePCSCCommands::loadKey(unsigned char keyno, MifareKeyType keytype,
                                  std::shared_ptr<MifareKey> key, bool vol)
 {
     bool r = false;
-    ByteVector result, vector_key((unsigned char *)key->getData(),
-                                  (unsigned char *)key->getData() + key->getLength());
+    ISO7816Response result;
+    ByteVector vector_key((unsigned char *)key->getData(),
+                          (unsigned char *)key->getData() + key->getLength());
 
     try
     {
@@ -59,8 +60,8 @@ bool MifarePCSCCommands::loadKey(unsigned char keyno, MifareKeyType keytype,
         }
         throw;
     }
-    if (!vol && (result[result.size() - 2] == 0x63) &&
-        (result[result.size() - 1] == 0x86))
+
+	if (!vol && result.getSW1() == 0x63 && result.getSW2() == 0x86)
     {
         if (keyno == 0)
         {
@@ -161,9 +162,9 @@ ByteVector MifarePCSCCommands::readBinary(unsigned char blockno, size_t len)
         THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad len parameter.");
     }
 
-    ByteVector result = getPCSCReaderCardAdapter()->sendAPDUCommand(
-        0xFF, 0xB0, 0x00, blockno, static_cast<unsigned char>(len));
-    return ByteVector(result.begin(), result.end() - 2);
+    return getPCSCReaderCardAdapter()
+        ->sendAPDUCommand(0xFF, 0xB0, 0x00, blockno, static_cast<unsigned char>(len))
+        .getData();
 }
 
 void MifarePCSCCommands::updateBinary(unsigned char blockno, const ByteVector &buf)

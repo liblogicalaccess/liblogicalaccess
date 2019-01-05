@@ -51,7 +51,7 @@ void MifareUltralightCOmnikeyXX21Commands::stopGenericSession()
         0xFF, 0xA0, 0x00, 0x07, static_cast<unsigned char>(data.size()), data);
 }
 
-ByteVector
+ISO7816Response
 MifareUltralightCOmnikeyXX21Commands::sendGenericCommand(const ByteVector &data)
 {
     ByteVector wdata;
@@ -63,15 +63,17 @@ MifareUltralightCOmnikeyXX21Commands::sendGenericCommand(const ByteVector &data)
     wdata.push_back(0x64);
     wdata.insert(wdata.end(), data.begin(), data.end());
 
-    ByteVector ret = getPCSCReaderCardAdapter()->sendAPDUCommand(
+    auto result = getPCSCReaderCardAdapter()->sendAPDUCommand(
         0xFF, 0xA0, 0x00, 0x05, static_cast<unsigned char>(wdata.size()), wdata, 0x00);
-    // Should return 00 00 [data] 90 00, otherwise we return the raw received buffer
-    if (ret.size() < 4)
+    // Should return 00 00 [data], otherwise we return the raw received buffer
+    if (result.getData().size() < 2)
     {
-        return ret;
+        return result;
     }
 
     // Remove 00 00 starting bytes
-    return ByteVector(ret.begin() + 2, ret.end());
+    return ISO7816Response(
+        ByteVector(result.getData().begin() + 2, result.getData().end()), result.getSW1(),
+        result.getSW2());
 }
 }

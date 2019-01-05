@@ -82,7 +82,7 @@ std::string ACSACR1222LReaderUnit::getReaderSerialNumber()
 {
     std::string sn;
     ByteVector res = getReaderControlReaderCardAdapter()->sendAPDUCommand(
-        0xE0, 0x00, 0x00, 0x33, 0x00);
+        0xE0, 0x00, 0x00, 0x33, 0x00).getData();
     if (res[0] == 0xE1 && res.size() == 21)
     {
         sn = BufferHelper::getHex(ByteVector(res.begin() + 5, res.end()));
@@ -116,7 +116,7 @@ void ACSACR1222LReaderUnit::getDefaultLEDBuzzerBehavior(bool &showPICCPollingSta
                                                         bool &blinkOnCardOperation)
 {
     ByteVector res = getReaderControlReaderCardAdapter()->sendAPDUCommand(
-        0xE0, 0x00, 0x00, 0x21, 0x00);
+        0xE0, 0x00, 0x00, 0x21, 0x00).getData();
     if (res[0] == 0xE1 && res.size() == 6)
     {
         unsigned char value   = res[5];
@@ -131,7 +131,7 @@ std::string ACSACR1222LReaderUnit::getFirmwareVersion()
 {
     auto ret = getReaderControlReaderCardAdapter()->sendAPDUCommand(0xFF, 0x00, 0x48,
                                                                     0x00, 0x00);
-    return std::string(ret.begin(), ret.end());
+    return std::string(ret.getData().begin(), ret.getData().end());
 }
 
 std::shared_ptr<LCDDisplay> ACSACR1222LReaderUnit::getLCDDisplay()

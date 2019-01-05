@@ -39,7 +39,7 @@ class LLA_READERS_OK5553_API ISO7816OK5553ReaderCardAdapter
     /**
      * \brief Send an APDU command to the reader.
      */
-    virtual ByteVector sendAPDUCommand(unsigned char cla, unsigned char ins,
+    virtual ISO7816Response sendAPDUCommand(unsigned char cla, unsigned char ins,
                                        unsigned char p1, unsigned char p2,
                                        unsigned char lc, const unsigned char *data,
                                        size_t datalen, unsigned char le);
@@ -47,7 +47,7 @@ class LLA_READERS_OK5553_API ISO7816OK5553ReaderCardAdapter
     /**
      * \brief Send an APDU command to the reader.
      */
-    virtual ByteVector sendAPDUCommand(unsigned char cla, unsigned char ins,
+    virtual ISO7816Response sendAPDUCommand(unsigned char cla, unsigned char ins,
                                        unsigned char p1, unsigned char p2,
                                        unsigned char lc, const unsigned char *data,
                                        size_t datalen);
@@ -55,26 +55,29 @@ class LLA_READERS_OK5553_API ISO7816OK5553ReaderCardAdapter
     /**
      * \brief Send an APDU command to the reader.
      */
-    virtual ByteVector sendAPDUCommand(unsigned char cla, unsigned char ins,
+    virtual ISO7816Response sendAPDUCommand(unsigned char cla, unsigned char ins,
                                        unsigned char p1, unsigned char p2,
                                        const unsigned char *data, size_t datalen);
     /**
      * \brief Send an APDU command to the reader without data and result.
      */
-    ByteVector sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1,
+    ISO7816Response sendAPDUCommand(unsigned char cla, unsigned char ins,
+                                    unsigned char p1,
                                unsigned char p2, unsigned char le) override;
 
     /**
      * \brief Send an APDU command to the reader without data.
      */
-    ByteVector sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1,
+    ISO7816Response sendAPDUCommand(unsigned char cla, unsigned char ins,
+                                    unsigned char p1,
                                unsigned char p2, unsigned char lc,
                                unsigned char le) override;
 
     /**
      * \brief Send an APDU command to the reader without data.
      */
-    ByteVector sendAPDUCommand(unsigned char cla, unsigned char ins, unsigned char p1,
+    ISO7816Response sendAPDUCommand(unsigned char cla, unsigned char ins,
+                                    unsigned char p1,
                                unsigned char p2) override;
 
     /**

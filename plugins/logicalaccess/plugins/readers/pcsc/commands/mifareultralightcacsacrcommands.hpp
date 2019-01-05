@@ -32,7 +32,7 @@ class LLA_READERS_PCSC_API MifareUltralightCACSACRCommands
     virtual ~MifareUltralightCACSACRCommands();
 
   protected:
-    ByteVector sendGenericCommand(const ByteVector &data) override;
+    ISO7816Response sendGenericCommand(const ByteVector &data) override;
 };
 }
 

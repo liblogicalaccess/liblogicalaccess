@@ -31,9 +31,9 @@ MifareUltralightCACSACRCommands::~MifareUltralightCACSACRCommands()
 {
 }
 
-ByteVector MifareUltralightCACSACRCommands::sendGenericCommand(const ByteVector &data)
+ISO7816Response MifareUltralightCACSACRCommands::sendGenericCommand(const ByteVector &data)
 {
     return getPCSCReaderCardAdapter()->sendAPDUCommand(
-        0xFF, 0x00, 0x00, 0x00, static_cast<unsigned char>(data.size()), data);
+        0xFF, 0x00, 0x00, 0x00, static_cast<unsigned char>(data.size()), data).getData();
 }
 }

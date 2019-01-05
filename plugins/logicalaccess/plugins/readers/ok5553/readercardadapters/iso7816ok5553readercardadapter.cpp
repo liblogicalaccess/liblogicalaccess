@@ -20,7 +20,7 @@ ISO7816OK5553ReaderCardAdapter::~ISO7816OK5553ReaderCardAdapter()
 {
 }
 
-ByteVector ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(
+ISO7816Response ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(
     unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/,
     unsigned char /*lc*/, const unsigned char *data, size_t datalen, unsigned char /*le*/)
 {
@@ -34,7 +34,7 @@ ByteVector ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(
     return ISO7816ReaderCardAdapter::sendCommand(command);
 }
 
-ByteVector ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(
+ISO7816Response ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(
     unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/,
     unsigned char /*lc*/, const unsigned char *data, size_t datalen)
 {
@@ -48,7 +48,7 @@ ByteVector ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(
     return ISO7816ReaderCardAdapter::sendCommand(command);
 }
 
-ByteVector ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(
+ISO7816Response ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(
     unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/,
     const unsigned char *data, size_t datalen)
 {
@@ -62,7 +62,7 @@ ByteVector ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(
     return ISO7816ReaderCardAdapter::sendCommand(command);
 }
 
-ByteVector ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/,
+ISO7816Response ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/,
                                                            unsigned char ins,
                                                            unsigned char /*p1*/,
                                                            unsigned char /*p2*/,
@@ -74,7 +74,7 @@ ByteVector ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/
     return ISO7816ReaderCardAdapter::sendCommand(command);
 }
 
-ByteVector ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(
+ISO7816Response ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(
     unsigned char /*cla*/, unsigned char ins, unsigned char /*p1*/, unsigned char /*p2*/,
     unsigned char /*lc*/, unsigned char /*le*/)
 {
@@ -84,7 +84,7 @@ ByteVector ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(
     return ISO7816ReaderCardAdapter::sendCommand(command);
 }
 
-ByteVector ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/,
+ISO7816Response ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/,
                                                            unsigned char ins,
                                                            unsigned char /*p1*/,
                                                            unsigned char /*p2*/)

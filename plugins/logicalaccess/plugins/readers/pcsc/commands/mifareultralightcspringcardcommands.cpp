@@ -43,7 +43,8 @@ void MifareUltralightCSpringCardCommands::stopGenericSession()
     getPCSCReaderCardAdapter()->sendAPDUCommand(0xFF, 0xFB, 0x00, 0x00);
 }
 
-ByteVector MifareUltralightCSpringCardCommands::sendGenericCommand(const ByteVector &data)
+ISO7816Response
+MifareUltralightCSpringCardCommands::sendGenericCommand(const ByteVector &data)
 {
     return getPCSCReaderCardAdapter()->sendAPDUCommand(
         0xFF, 0xFE, 0x01, 0x08, static_cast<unsigned char>(data.size()), data);

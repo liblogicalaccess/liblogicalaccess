@@ -43,9 +43,9 @@ ByteVector TopazACSACRCommands::readPage(int page)
     {
         cmd[4]            = static_cast<unsigned char>(((page)*8) + i);
         ByteVector result = getPCSCReaderCardAdapter()->sendAPDUCommand(
-            0xFF, 0x00, 0x00, 0x00, static_cast<unsigned char>(cmd.size()), cmd);
-        // D5 41 00 xx 90 00
-        if (result.size() == 6)
+            0xFF, 0x00, 0x00, 0x00, static_cast<unsigned char>(cmd.size()), cmd).getData();
+        // D5 41 00 xx
+        if (result.size() == 4)
         {
             data.push_back(result[3]);
         }

@@ -38,12 +38,11 @@ bool MifareSCMCommands::loadKey(unsigned char keyno, MifareKeyType keytype,
     ByteVector vector_key((unsigned char *)key->getData(),
                           (unsigned char *)key->getData() + key->getLength());
 
-    ByteVector result = getPCSCReaderCardAdapter()->sendAPDUCommand(
+    auto result = getPCSCReaderCardAdapter()->sendAPDUCommand(
         0xFF, 0x82, 0x00, static_cast<unsigned char>(keytype),
         static_cast<unsigned char>(vector_key.size()), vector_key);
 
-    if (!vol && (result[result.size() - 2] == 0x63) &&
-        (result[result.size() - 1] == 0x86))
+    if (!vol && result.getSW1() == 0x63 && result.getSW2() == 0x86)
     {
         if (keyno == 0)
         {
