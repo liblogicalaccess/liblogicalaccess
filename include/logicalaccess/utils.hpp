@@ -63,7 +63,10 @@ struct GetBitSetSize<std::bitset<Len>>
  */
 template<size_t Val>
 struct DoubleValue {
-    static const constexpr size_t Value = Val * 2;
+    enum
+    {
+        Value = Val * 2
+    };
 };
 
 /**
