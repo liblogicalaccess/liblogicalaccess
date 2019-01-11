@@ -236,12 +236,12 @@ ByteVector ISO24727Crypto::auth_pad(const ByteVector &data)
     return ISO24727Crypto::pad(data);
 }
 
-ByteVector ISO24727Crypto::pad(const ByteVector &in)
+ByteVector ISO24727Crypto::pad(const ByteVector &in, unsigned int padlen)
 {
     auto out = in;
     out.push_back(1 << 7);
 
-    while (out.size() % 8 != 0)
+    while (out.size() % padlen != 0)
         out.push_back(0);
     return out;
 }

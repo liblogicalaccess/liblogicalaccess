@@ -11,7 +11,7 @@
 #include <logicalaccess/plugins/cards/desfire/desfirecrypto.hpp>
 #include <logicalaccess/plugins/cards/iso7816/readercardadapters/iso7816readercardadapter.hpp>
 #include <logicalaccess/plugins/readers/iso7816/iso7816readerunit.hpp>
-#include <logicalaccess/plugins/cards/samav2/samchip.hpp>
+#include <logicalaccess/cards/samchip.hpp>
 #include <logicalaccess/plugins/readers/iso7816/lla_readers_iso7816_api.hpp>
 #include <string>
 #include <vector>

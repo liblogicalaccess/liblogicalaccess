@@ -43,6 +43,16 @@ class LLA_CORE_API TLV
      */
     ByteVector value() const;
 
+	/**
+     * Set the value.
+     */
+    void value(bool v);
+
+	/**
+     * Set the value.
+     */
+    void value(unsigned char v);
+
     /**
      * Set the value.
      */
@@ -53,6 +63,11 @@ class LLA_CORE_API TLV
      * @param tlv the other TLV. Must not be NULL. Will not be copied.
      */
     void value(TLVPtr tlv);
+
+	/**
+     * Set the value.
+     */
+    void value(std::vector<TLVPtr> tlv);
 
     /**
      * Return a raw representation of this TLV.
@@ -66,7 +81,7 @@ class LLA_CORE_API TLV
   private:
     uint8_t tag_;
     ByteVector value_; // Either one of those
-    TLVPtr subTLV_;    // will be used, but not both.
+    std::vector<TLVPtr> subTLVs_;    // will be used, but not both.
 };
 
 } // namespace logicalaccess

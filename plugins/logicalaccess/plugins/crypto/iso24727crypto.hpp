@@ -83,7 +83,7 @@ class LLA_CRYPTO_API ISO24727Crypto
     /**
         * ISO 9797-1 padding method 2
         */
-    static ByteVector pad(const ByteVector &in);
+    static ByteVector pad(const ByteVector &in, unsigned int padlen = 8);
 
     /**
         * Cancel the padding created by pad()

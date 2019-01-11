@@ -31,22 +31,46 @@ void TLV::tag(uint8_t t)
 
 ByteVector TLV::value() const
 {
-    if (subTLV_)
-        return subTLV_->compute();
+    if (subTLVs_.size() > 0)
+    {
+        ByteVector v;
+        for (auto it = subTLVs_.cbegin(); it != subTLVs_.end(); ++it)
+        {
+            auto subv = (*it)->compute();
+            v.insert(v.end(), subv.begin(), subv.end());
+        }
+        return v;
+    }
     return value_;
+}
+
+void TLV::value(bool v)
+{
+    value(static_cast<unsigned char>(v ? 0x01 : 0x00));
+}
+
+void TLV::value(unsigned char v)
+{
+    value(ByteVector{v});
 }
 
 void TLV::value(const ByteVector &v)
 {
-    subTLV_ = nullptr;
-    value_  = v;
+    subTLVs_.clear();
+    value_ = v;
 }
 
 void TLV::value(TLVPtr tlv)
 {
     assert(tlv);
-    subTLV_ = tlv;
+    subTLVs_.clear();
+    subTLVs_.push_back(tlv);
     value_.clear();
+}
+
+void TLV::value(std::vector<TLVPtr> tlv)
+{
+    subTLVs_ = tlv;
 }
 
 ByteVector TLV::compute() const
@@ -97,13 +121,14 @@ std::vector<TLVPtr> TLV::parse_tlvs(const ByteVector &bytes, size_t &bytes_consu
 std::vector<TLVPtr> TLV::parse_tlvs(const ByteVector &bytes, bool strict)
 {
     size_t consumed = 0;
-    auto tlv = parse_tlvs(bytes, consumed);
+    auto tlv        = parse_tlvs(bytes, consumed);
 
-	if (strict && consumed != bytes.size())
-	{
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "TLV parsing didn't reached the end of the buffer.");
-	}
+    if (strict && consumed != bytes.size())
+    {
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "TLV parsing didn't reached the end of the buffer.");
+    }
 
-	return tlv;
+    return tlv;
 }
 }

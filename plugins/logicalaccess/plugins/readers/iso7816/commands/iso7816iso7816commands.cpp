@@ -85,11 +85,12 @@ void ISO7816ISO7816Commands::eraseBinary(size_t offset, unsigned short efid)
                                                    ISO7816_INS_ERASE_BINARY, p1, p2);
 }
 
-ByteVector ISO7816ISO7816Commands::getData(unsigned short dataObject, size_t /*length*/)
+ByteVector ISO7816ISO7816Commands::getData(unsigned short dataObject, size_t length)
 {
     return getISO7816ReaderCardAdapter()
         ->sendAPDUCommand(ISO7816_CLA_ISO_COMPATIBLE, ISO7816_INS_GET_DATA,
-                          (0xff & (dataObject >> 8)), (0xff & dataObject))
+                          (0xff & (dataObject >> 8)), (0xff & dataObject),
+                          static_cast<unsigned char>(length))
         .getData();
 }
 
@@ -99,7 +100,8 @@ ByteVector ISO7816ISO7816Commands::getDataList(const ByteVector &data, size_t le
     return getISO7816ReaderCardAdapter()
         ->sendAPDUCommand(ISO7816_CLA_ISO_COMPATIBLE, ISO7816_INS_GET_DATA_LIST,
                           (0xff & (efid >> 8)), (0xff & efid),
-                          static_cast<unsigned char>(data.size()), data)
+                          static_cast<unsigned char>(data.size()), data,
+                          static_cast<unsigned char>(length))
         .getData();
 }
 

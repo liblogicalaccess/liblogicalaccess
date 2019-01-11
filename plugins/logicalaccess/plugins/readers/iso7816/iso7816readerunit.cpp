@@ -33,9 +33,7 @@ ISO7816ReaderUnit::ISO7816ReaderUnit(std::string rpt)
 {
 }
 
-ISO7816ReaderUnit::~ISO7816ReaderUnit()
-{
-}
+ISO7816ReaderUnit::~ISO7816ReaderUnit() {}
 
 std::shared_ptr<Chip> ISO7816ReaderUnit::getSingleChip()
 {
@@ -85,7 +83,7 @@ bool ISO7816ReaderUnit::reconnect(int /*action*/)
     return true;
 }
 
-bool ISO7816ReaderUnit::connectToReader()
+void ISO7816ReaderUnit::connectToSAM()
 {
     if (getISO7816Configuration()->getSAMType() != "SAM_NONE" &&
         getISO7816Configuration()->getSAMReaderName() == "" &&
@@ -214,10 +212,15 @@ bool ISO7816ReaderUnit::connectToReader()
             getISO7816Configuration()->getSAMUnLockKey(),
             getISO7816Configuration()->getSAMUnLockkeyNo());
     }
+}
+
+bool ISO7816ReaderUnit::connectToReader()
+{
+    connectToSAM();
     return true;
 }
 
-void ISO7816ReaderUnit::disconnectFromReader()
+void ISO7816ReaderUnit::disconnectFromSAM()
 {
     if (getISO7816Configuration()->getSAMType() != "SAM_NONE" && d_sam_readerunit)
     {
@@ -229,6 +232,11 @@ void ISO7816ReaderUnit::disconnectFromReader()
         }
         setSAMChip(std::shared_ptr<SAMChip>());
     }
+}
+
+void ISO7816ReaderUnit::disconnectFromReader()
+{
+    disconnectFromSAM();
 }
 
 void ISO7816ReaderUnit::reloadReaderConfiguration()

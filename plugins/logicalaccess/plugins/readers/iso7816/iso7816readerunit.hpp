@@ -102,11 +102,15 @@ class LLA_READERS_ISO7816_API ISO7816ReaderUnit : public ReaderUnit
     {
     }
 
+	virtual void connectToSAM();
+
     /**
      * \brief Connect to the reader. Implicit connection on first command sent.
      * \return True if the connection succeeded.
      */
     bool connectToReader() override;
+
+	virtual void disconnectFromSAM();
 
     /**
      * \brief Disconnect from reader.

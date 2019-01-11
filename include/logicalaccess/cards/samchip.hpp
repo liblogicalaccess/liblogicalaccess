@@ -1,23 +1,22 @@
 /**
- * \file desfireev1chip.hpp
+ * \file samchip.hpp
  * \author Maxime C. <maxime-dev@islog.com>
- * \brief DESFire EV1 chip.
+ * \brief SAM chip.
  */
 
 #ifndef LOGICALACCESS_SAMCHIP_HPP
 #define LOGICALACCESS_SAMCHIP_HPP
 
 #include <logicalaccess/cards/chip.hpp>
-#include <logicalaccess/plugins/cards/samav2/samcommands.hpp>
-#include <logicalaccess/plugins/cards/samav2/lla_cards_samav2_api.hpp>
+#include <logicalaccess/lla_core_api.hpp>
 
 namespace logicalaccess
 {
 #define CHIP_SAM "SAM"
 /**
- * \brief The SAM chip class.
+ * \brief The SAM chip base class.
  */
-class LLA_CARDS_SAMAV2_API SAMChip : public Chip
+class LLA_CORE_API SAMChip : public Chip
 {
   public:
     /**
@@ -52,4 +51,4 @@ class LLA_CARDS_SAMAV2_API SAMChip : public Chip
 };
 }
 
-#endif /* LOGICALACCESS_DESFIREEV1CHIP_HPP */
+#endif /* LOGICALACCESS_SAMCHIP_HPP */

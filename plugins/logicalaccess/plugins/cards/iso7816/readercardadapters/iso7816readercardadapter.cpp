@@ -110,17 +110,16 @@ ISO7816Response ISO7816ReaderCardAdapter::sendAPDUCommand(unsigned char cla,
     return sendAPDUCommand(command);
 }
 
-ISO7816Response
-ISO7816ReaderCardAdapter::sendExtendedAPDUCommand(unsigned char cla, unsigned char ins,
-                                                  unsigned char p1, unsigned char p2,
-                                                  unsigned int lc, const ByteVector &data)
+ISO7816Response ISO7816ReaderCardAdapter::sendExtendedAPDUCommand(
+    unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2,
+    unsigned short lc, const ByteVector &data)
 {
     ByteVector command;
     command.push_back(cla);
     command.push_back(ins);
     command.push_back(p1);
     command.push_back(p2);
-    command.push_back(static_cast<unsigned char>((lc >> 16) & 0xff));
+    command.push_back(0x00);
     command.push_back(static_cast<unsigned char>((lc >> 8) & 0xff));
     command.push_back(static_cast<unsigned char>(lc & 0xff));
     command.insert(command.end(), data.begin(), data.end());
@@ -130,18 +129,17 @@ ISO7816ReaderCardAdapter::sendExtendedAPDUCommand(unsigned char cla, unsigned ch
 
 ISO7816Response ISO7816ReaderCardAdapter::sendExtendedAPDUCommand(
     unsigned char cla, unsigned char ins, unsigned char p1, unsigned char p2,
-    unsigned int lc, const ByteVector &data, unsigned int le)
+    unsigned short lc, const ByteVector &data, unsigned short le)
 {
     ByteVector command;
     command.push_back(cla);
     command.push_back(ins);
     command.push_back(p1);
     command.push_back(p2);
-    command.push_back(static_cast<unsigned char>((lc >> 16) & 0xff));
+    command.push_back(0x00);
     command.push_back(static_cast<unsigned char>((lc >> 8) & 0xff));
     command.push_back(static_cast<unsigned char>(lc & 0xff));
     command.insert(command.end(), data.begin(), data.end());
-    command.push_back(static_cast<unsigned char>((le >> 16) & 0xff));
     command.push_back(static_cast<unsigned char>((le >> 8) & 0xff));
     command.push_back(static_cast<unsigned char>(le & 0xff));
 

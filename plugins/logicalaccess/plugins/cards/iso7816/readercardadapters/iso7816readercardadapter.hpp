@@ -69,16 +69,18 @@ class LLA_CARDS_ISO7816_API ISO7816ReaderCardAdapter : public ReaderCardAdapter
      * \brief Send an extended APDU command to the reader.
      */
     virtual ISO7816Response sendExtendedAPDUCommand(unsigned char cla, unsigned char ins,
-                                               unsigned char p1, unsigned char p2,
-                                               unsigned int lc, const ByteVector &data);
+                                                    unsigned char p1, unsigned char p2,
+                                                    unsigned short lc,
+                                                    const ByteVector &data);
 
     /**
      * \brief Send an extended APDU command to the reader.
      */
     virtual ISO7816Response sendExtendedAPDUCommand(unsigned char cla, unsigned char ins,
-                                               unsigned char p1, unsigned char p2,
-                                               unsigned int lc, const ByteVector &data,
-                                               unsigned int le);
+                                                    unsigned char p1, unsigned char p2,
+                                                    unsigned short lc,
+                                                    const ByteVector &data,
+                                                    unsigned short le);
 };
 }
 

@@ -7,9 +7,8 @@
 #ifndef LOGICALACCESS_SAMAV1CHIP_HPP
 #define LOGICALACCESS_SAMAV1CHIP_HPP
 
-#include <logicalaccess/cards/chip.hpp>
+#include <logicalaccess/cards/samchip.hpp>
 #include <logicalaccess/plugins/cards/samav2/samcommands.hpp>
-#include <logicalaccess/plugins/cards/samav2/samchip.hpp>
 
 namespace logicalaccess
 {
