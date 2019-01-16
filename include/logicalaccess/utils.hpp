@@ -13,8 +13,8 @@
 
 namespace logicalaccess
 {
-uint32_t lla_htonl(uint32_t in);
-uint16_t lla_htons(uint16_t in);
+LLA_CORE_API uint32_t lla_htonl(uint32_t in);
+LLA_CORE_API uint16_t lla_htons(uint16_t in);
 
 /**
  * This class provide a simple to get the elapsed time since
@@ -138,5 +138,5 @@ class LLA_CORE_API ManchesterEncoder
     static ByteVector decode(const ByteVector &in, Type t);
 };
 
-int portable_setenv(const char *name, const char *value, int overwrite);
+LLA_CORE_API int portable_setenv(const char *name, const char *value, int overwrite);
 }
