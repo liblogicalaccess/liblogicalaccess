@@ -718,8 +718,8 @@ ByteVector DESFireISO7816Commands::readData(unsigned char fileno, unsigned int o
             static_cast<unsigned int>(trunklength & 0xff0000) >> 16));
 
         auto result = transmit(DF_INS_READ_DATA, command);
-        result = handleReadData(result.getSW2(), result.getData(),
-                                static_cast<unsigned int>(trunklength), mode);
+        result = ISO7816Response(handleReadData(result.getSW2(), result.getData(),
+                                static_cast<unsigned int>(trunklength), mode));
         ret.insert(ret.end(), result.getData().begin(), result.getData().end());
     }
 

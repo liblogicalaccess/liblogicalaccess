@@ -31,7 +31,7 @@ ISO7816Response ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(
         command.insert(command.end(), data, data + datalen);
     }
 
-    return ISO7816ReaderCardAdapter::sendCommand(command);
+    return ISO7816Response(ISO7816ReaderCardAdapter::sendCommand(command));
 }
 
 ISO7816Response ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(
@@ -45,7 +45,7 @@ ISO7816Response ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(
         command.insert(command.end(), data, data + datalen);
     }
 
-    return ISO7816ReaderCardAdapter::sendCommand(command);
+    return ISO7816Response(ISO7816ReaderCardAdapter::sendCommand(command));
 }
 
 ISO7816Response ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(
@@ -59,7 +59,7 @@ ISO7816Response ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(
         command.insert(command.end(), data, data + datalen);
     }
 
-    return ISO7816ReaderCardAdapter::sendCommand(command);
+    return ISO7816Response(ISO7816ReaderCardAdapter::sendCommand(command));
 }
 
 ISO7816Response ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/,
@@ -71,7 +71,7 @@ ISO7816Response ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*
     ByteVector command;
     command.push_back(ins);
 
-    return ISO7816ReaderCardAdapter::sendCommand(command);
+    return ISO7816Response(ISO7816ReaderCardAdapter::sendCommand(command));
 }
 
 ISO7816Response ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(
@@ -81,7 +81,7 @@ ISO7816Response ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(
     ByteVector command;
     command.push_back(ins);
 
-    return ISO7816ReaderCardAdapter::sendCommand(command);
+    return ISO7816Response(ISO7816ReaderCardAdapter::sendCommand(command));
 }
 
 ISO7816Response ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*cla*/,
@@ -91,7 +91,7 @@ ISO7816Response ISO7816OK5553ReaderCardAdapter::sendAPDUCommand(unsigned char /*
 {
     ByteVector command;
     command.push_back(ins);
-    return ISO7816ReaderCardAdapter::sendCommand(command);
+    return ISO7816Response(ISO7816ReaderCardAdapter::sendCommand(command));
 }
 
 ByteVector ISO7816OK5553ReaderCardAdapter::adaptCommand(const ByteVector &command)

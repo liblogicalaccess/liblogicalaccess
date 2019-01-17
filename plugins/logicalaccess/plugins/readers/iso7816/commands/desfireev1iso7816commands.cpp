@@ -1116,7 +1116,7 @@ ByteVector DESFireEV1ISO7816Commands::readData(unsigned char fileno, unsigned in
                (result.getSW1() == 0x90 &&
                 result.getSW2() == 0xAF))
         {
-            result            = handleReadCmd(DF_INS_READ_DATA, command, mode);
+            result            = ISO7816Response(handleReadCmd(DF_INS_READ_DATA, command, mode));
             ByteVector data = handleReadData(result.getSW2(), result.getData(), 0, mode);
             ret.insert(ret.end(), data.begin(), data.end());
         }
@@ -1134,10 +1134,10 @@ ByteVector DESFireEV1ISO7816Commands::readData(unsigned char fileno, unsigned in
             memcpy(&command[1], &trunloffset, 3);
             memcpy(&command[4], &trunklength, 3);
 
-            result            = handleReadCmd(DF_INS_READ_DATA, command, mode);
+            result            = ISO7816Response(handleReadCmd(DF_INS_READ_DATA, command, mode));
 
-            result = handleReadData(result.getSW2(), result.getData(),
-                                    static_cast<unsigned int>(trunklength), mode);
+            result = ISO7816Response(handleReadData(result.getSW2(), result.getData(),
+                                    static_cast<unsigned int>(trunklength), mode));
             ret.insert(ret.end(), result.getData().begin(), result.getData().end());
         }
     }

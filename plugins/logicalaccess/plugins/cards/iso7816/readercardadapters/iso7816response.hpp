@@ -21,7 +21,6 @@ class LLA_CARDS_ISO7816_API ISO7816Response
   public:
 	ISO7816Response()
 	{
-
 	}
 
 	ISO7816Response(const ByteVector &data, unsigned char sw1, unsigned char sw2)
@@ -31,7 +30,7 @@ class LLA_CARDS_ISO7816_API ISO7816Response
         data_ = data;
 	}
 
-    ISO7816Response(const ByteVector &data)
+    explicit ISO7816Response(const ByteVector &data)
     {
         if (data.size() < 2)
         {
