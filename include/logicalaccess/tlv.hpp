@@ -74,6 +74,10 @@ class LLA_CORE_API TLV
      */
     ByteVector compute() const;
 
+	TLVPtr get_child(uint8_t tag) const;
+
+	static TLVPtr get_child(std::vector<TLVPtr> tlvs, uint8_t tag);
+
 	static std::vector<TLVPtr> parse_tlvs(const ByteVector &bytes,
                                                 size_t &bytes_consumed);
     static std::vector<TLVPtr> parse_tlvs(const ByteVector &bytes, bool strict = false);

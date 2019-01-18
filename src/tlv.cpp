@@ -131,4 +131,27 @@ std::vector<TLVPtr> TLV::parse_tlvs(const ByteVector &bytes, bool strict)
 
     return tlv;
 }
+
+TLVPtr TLV::get_child(uint8_t tag) const
+{
+    auto tlvs = subTLVs_;
+	if (tlvs.size() < 1)
+	{
+        tlvs = TLV::parse_tlvs(value_);
+	}
+
+	return get_child(tlvs, tag);
+}
+
+TLVPtr TLV::get_child(std::vector<TLVPtr> tlvs, uint8_t tag)
+{
+    for (auto it = tlvs.cbegin(); it != tlvs.cend(); ++it)
+    {
+        if ((*it)->tag() == tag)
+            return *it;
+    }
+
+    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                             "Cannout found expected child TLV.");
+}
 }
