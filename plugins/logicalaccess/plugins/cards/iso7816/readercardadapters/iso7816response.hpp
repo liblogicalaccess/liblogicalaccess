@@ -10,6 +10,7 @@
 #include <logicalaccess/plugins/cards/iso7816/lla_cards_iso7816_api.hpp>
 #include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
+#include <iomanip>
 
 namespace logicalaccess
 {
@@ -72,6 +73,19 @@ class LLA_CARDS_ISO7816_API ISO7816Response
      */
     ByteVector data_;
 };
+
+inline LLA_CARDS_ISO7816_API std::ostream &operator<<(std::ostream &ss, const ISO7816Response &response)
+{
+    std::stringstream tmp;
+    tmp << std::hex;
+    tmp << "ISO7816Response [";
+    tmp << std::setfill('0') << std::setw(2) << +response.getSW1();
+    tmp << std::setfill('0') << std::setw(2) << +response.getSW2() << "]:";
+    tmp << std::resetiosflags(std::ios_base::basefield);
+    tmp << response.getData();
+    ss << tmp.str();
+    return ss;
+}
 }
 
 #endif /* LOGICALACCESS_ISO7816RESPONSE_HPP */
