@@ -16,8 +16,8 @@
 namespace logicalaccess
 {
 /**
-* \brief A format list.
-*/
+ * \brief A format list.
+ */
 typedef std::vector<std::shared_ptr<Format>> FormatList;
 
 
@@ -91,15 +91,15 @@ class LLA_CORE_API AccessControlCardService : public CardService
                              std::shared_ptr<AccessInfo> aiToWrite);
 
     /**
-    * \brief Get the supported format list.
-    * \return The format list.
-    */
+     * \brief Get the supported format list.
+     * \return The format list.
+     */
     virtual FormatList getSupportedFormatList();
 
     /**
-    * \brief Get the HID Wiegand format list.
-    * \return The format list.
-    */
+     * \brief Get the HID Wiegand format list.
+     * \return The format list.
+     */
     FormatList getHIDWiegandFormatList() const;
 
     /**
@@ -107,6 +107,17 @@ class LLA_CORE_API AccessControlCardService : public CardService
      * This generally relies on the PCSC reader to provide support.
      */
     virtual ByteVector getPACSBits(PACS_EXTRACTION_MODE)
+    {
+        throw std::runtime_error("Not implemented");
+    }
+
+    /**
+     * Write PACSbit onto a card.
+     *
+     * This method is geared toward SEos, and will write to standard
+     * PACS ADF.
+     */
+    virtual void writePACSBit(const ByteVector &pacsbits)
     {
         throw std::runtime_error("Not implemented");
     }
