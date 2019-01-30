@@ -51,7 +51,7 @@ class LLA_CARDS_DESFIRE_API DESFireEV1NFCTag4CardService
                               std::shared_ptr<DESFireKey> masterPICCKey) const;
 
     std::shared_ptr<NdefMessage>
-    readNDEFFile(unsigned short isoFIDApplication = 0xe105,
+    readNDEFFile(const ByteVector &appDFName = {0xD2, 0x76, 0x00, 0x00, 0x85, 0x01, 0x01},
                  unsigned short isoFIDNDEFFile    = 0xe104) override;
 
     void writeNDEF(std::shared_ptr<NdefMessage> records) override;

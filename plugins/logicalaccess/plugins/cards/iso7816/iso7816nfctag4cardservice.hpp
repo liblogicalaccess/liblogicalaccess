@@ -50,7 +50,7 @@ class LLA_CARDS_ISO7816_API ISO7816NFCTag4CardService : public NFCTagCardService
                                unsigned short isoFIDNDEFFile = 0xe104);
 
     virtual std::shared_ptr<NdefMessage>
-    readNDEFFile(unsigned short isoFIDApplication = 0xe105,
+    readNDEFFile(const ByteVector &appDFName = {0xD2, 0x76, 0x00, 0x00, 0x85, 0x01, 0x01},
                  unsigned short isoFIDNDEFFile    = 0xe104);
 
     std::shared_ptr<NdefMessage> readNDEF() override;

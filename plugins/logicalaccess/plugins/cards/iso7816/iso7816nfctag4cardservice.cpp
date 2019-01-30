@@ -9,6 +9,8 @@
 #include <logicalaccess/services/nfctag/ndefmessage.hpp>
 #include <logicalaccess/myexception.hpp>
 
+#include <logicalaccess/plugins/cards/iso7816/iso7816commands.hpp>
+
 namespace logicalaccess
 {
 void ISO7816NFCTag4CardService::writeCapabilityContainer(unsigned short isoFID,
@@ -48,8 +50,7 @@ void ISO7816NFCTag4CardService::writeCapabilityContainer(unsigned short isoFID,
 void ISO7816NFCTag4CardService::writeNDEFFile(ByteVector recordsData,
                                               unsigned short isoFIDNDEFFile)
 {
-    std::shared_ptr<ISO7816Commands> iso7816command(
-        std::dynamic_pointer_cast<ISO7816Commands>(getChip()->getCommands()));
+    std::shared_ptr<ISO7816Commands> iso7816command = getISO7816Commands();
     ByteVector data;
 
     data.push_back(static_cast<unsigned char>((recordsData.size() >> 8) & 0xff)); // NLEN
@@ -67,15 +68,15 @@ void ISO7816NFCTag4CardService::writeNDEFFile(std::shared_ptr<NdefMessage> recor
 }
 
 std::shared_ptr<NdefMessage>
-ISO7816NFCTag4CardService::readNDEFFile(unsigned short isoFIDApplication,
+ISO7816NFCTag4CardService::readNDEFFile(const ByteVector &appDFName,
                                         unsigned short isoFIDNDEFFile)
 {
-    std::shared_ptr<ISO7816Commands> iso7816command(
-        std::dynamic_pointer_cast<ISO7816Commands>(getChip()->getCommands()));
+    std::shared_ptr<ISO7816Commands> iso7816command = getISO7816Commands();
 
     size_t length = 0x02;
-    iso7816command->selectFile(isoFIDApplication);
-    iso7816command->selectFile(isoFIDNDEFFile);
+
+	iso7816command->selectFile(appDFName);
+	iso7816command->selectFile(isoFIDNDEFFile);
     ByteVector data = iso7816command->readBinary(length, 0, isoFIDNDEFFile);
 
     if (length != 0x02)

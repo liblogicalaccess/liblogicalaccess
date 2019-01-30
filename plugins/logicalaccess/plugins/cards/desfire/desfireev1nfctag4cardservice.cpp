@@ -74,14 +74,14 @@ void DESFireEV1NFCTag4CardService::deleteNFCApplication(
 }
 
 std::shared_ptr<NdefMessage>
-DESFireEV1NFCTag4CardService::readNDEFFile(unsigned short isoFIDApplication,
+DESFireEV1NFCTag4CardService::readNDEFFile(const ByteVector &appDFName,
                                            unsigned short isoFIDNDEFFile)
 {
     std::shared_ptr<DESFireCommands> desfirecommand(
         std::dynamic_pointer_cast<DESFireCommands>(getChip()->getCommands()));
 
     desfirecommand->selectApplication(0x00);
-    return ISO7816NFCTag4CardService::readNDEFFile(isoFIDApplication, isoFIDNDEFFile);
+    return ISO7816NFCTag4CardService::readNDEFFile(appDFName, isoFIDNDEFFile);
 }
 
 void DESFireEV1NFCTag4CardService::writeNDEF(std::shared_ptr<NdefMessage> records)
