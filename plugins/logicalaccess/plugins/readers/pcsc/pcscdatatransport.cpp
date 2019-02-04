@@ -50,10 +50,10 @@ void PCSCDataTransport::send(const ByteVector &data)
     EXCEPTION_ASSERT_WITH_LOG(getPCSCReaderUnit(), LibLogicalAccessException,
                               "The PCSC reader unit object"
                               "is null. We cannot send.");
-    if (data.size() > 0)
+    if (!data.empty())
     {
-        unsigned char returnedData[255];
-        ULONG ulNoOfDataReceived = sizeof(returnedData);
+        std::array<uint8_t, 4096> responseBuffer{};
+        ULONG ulNoOfDataReceived = responseBuffer.size();
         LPCSCARD_IO_REQUEST ior  = nullptr;
         switch (getPCSCReaderUnit()->getActiveProtocol())
         {
@@ -69,10 +69,10 @@ void PCSCDataTransport::send(const ByteVector &data)
 
         unsigned int errorFlag = SCardTransmit(
             getPCSCReaderUnit()->getHandle(), ior, &data[0],
-            static_cast<DWORD>(data.size()), nullptr, returnedData, &ulNoOfDataReceived);
+            static_cast<DWORD>(data.size()), nullptr, responseBuffer.data(), &ulNoOfDataReceived);
 
         CheckCardError(errorFlag);
-        d_response = ByteVector(returnedData, returnedData + ulNoOfDataReceived);
+        d_response = ByteVector(responseBuffer.begin(), responseBuffer.begin() + ulNoOfDataReceived);
     }
 }
 
