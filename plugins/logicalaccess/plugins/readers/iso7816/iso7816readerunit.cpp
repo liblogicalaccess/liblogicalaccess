@@ -141,7 +141,6 @@ void ISO7816ReaderUnit::connectToSAM()
                                      "No SAM detected on the reader");
 
         ret->connect();
-
         LOG(LogLevel::INFOS) << "Checking SAM backward...";
 
         std::string SAMType = getISO7816Configuration()->getSAMType();
@@ -154,6 +153,16 @@ void ISO7816ReaderUnit::connectToSAM()
 
         setSAMChip(std::dynamic_pointer_cast<SAMChip>(ret->getSingleChip()));
         setSAMReaderUnit(ret);
+
+        // If chip is se processor, we did enough. bail out not
+        if (getISO7816Configuration()->getSAMType() == "SEProcessor")
+        {
+            // HID SE SAM. There is not more world to perform, the device
+            // is ready-enough for us to use.
+
+            // Maybe set_detected_card_info, not sure ? Maybe in future.
+            return;
+        }
 
         LOG(LogLevel::INFOS) << "Starting SAM Security check...";
 
