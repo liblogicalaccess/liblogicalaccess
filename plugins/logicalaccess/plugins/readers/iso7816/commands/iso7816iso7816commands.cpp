@@ -173,7 +173,7 @@ void ISO7816ISO7816Commands::externalAuthenticate(unsigned char algorithm,
                                                   const ByteVector &data)
 {
     unsigned char p2 = keyno & 0x0F;
-    if (globalReference)
+    if (!globalReference)
     {
         p2 |= 0x80;
     }
