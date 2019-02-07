@@ -10,8 +10,8 @@ pipeline {
     }
 
     environment {
-        LINUX_DOCKER_IMAGE_NAME = 'docker-registry.islog.com:5000/conan-recipes-support:cis-latest'
-        ANDROID_DOCKER_IMAGE_NAME = 'docker-registry.islog.com:5000/conan-recipes-support-android:cis-latest'
+        LINUX_DOCKER_IMAGE_NAME = 'docker-registry.islog.com:5000/conan-recipes-support:latest'
+        ANDROID_DOCKER_IMAGE_NAME = 'docker-registry.islog.com:5000/conan-recipes-support-android:latest'
         PACKAGE_NAME = "LogicalAccess/2.1.0@islog/${BRANCH_NAME}"
 
         // This is needed because MSBuild fails spuriously quiet often
