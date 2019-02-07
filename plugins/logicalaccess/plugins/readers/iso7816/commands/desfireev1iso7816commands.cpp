@@ -777,7 +777,8 @@ void DESFireEV1ISO7816Commands::authenticateISO(unsigned char keyno,
     }
 
     ISO7816Response result = transmit_plain(DFEV1_INS_AUTHENTICATE_ISO, data);
-    EXCEPTION_ASSERT_WITH_LOG(result.getSW2() == DF_INS_ADDITIONAL_FRAME, LibLogicalAccessException,
+    EXCEPTION_ASSERT_WITH_LOG(result.getSW2() == DF_INS_ADDITIONAL_FRAME,
+                              LibLogicalAccessException,
                               "No additional frame for ISO authentication.");
 
     ByteVector response =
@@ -805,7 +806,8 @@ void DESFireEV1ISO7816Commands::iks_authenticateAES(std::shared_ptr<DESFireKey> 
 
     // Get cryptogram from card.
     ISO7816Response result = transmit_plain(DFEV1_INS_AUTHENTICATE_AES, data);
-    EXCEPTION_ASSERT_WITH_LOG(result.getSW2() == DF_INS_ADDITIONAL_FRAME, LibLogicalAccessException,
+    EXCEPTION_ASSERT_WITH_LOG(result.getSW2() == DF_INS_ADDITIONAL_FRAME,
+                              LibLogicalAccessException,
                               "No additional frame for ISO authentication.");
 
     bool out_success;
@@ -920,8 +922,8 @@ void DESFireEV1ISO7816Commands::authenticateAES(unsigned char keyno)
 }
 
 ISO7816Response DESFireEV1ISO7816Commands::handleReadCmd(unsigned char cmd,
-                                                    const ByteVector &data,
-                                                    EncryptionMode /*mode*/)
+                                                         const ByteVector &data,
+                                                         EncryptionMode /*mode*/)
 {
     // EV1 always add MAC even in plain...
     return transmit_nomacv(cmd, data);
@@ -995,7 +997,8 @@ ByteVector DESFireEV1ISO7816Commands::handleReadData(unsigned char err,
         handle_read_data_last_sig_ = crypto->get_last_signature();
     }
     break;
-    case CM_UNKNOWN: {
+    case CM_UNKNOWN:
+    {
     }
     break;
     }
@@ -1112,11 +1115,9 @@ ByteVector DESFireEV1ISO7816Commands::readData(unsigned char fileno, unsigned in
 
     if (length == 0)
     {
-        while (ret.size() == 0 ||
-               (result.getSW1() == 0x90 &&
-                result.getSW2() == 0xAF))
+        while (ret.size() == 0 || (result.getSW1() == 0x90 && result.getSW2() == 0xAF))
         {
-            result            = ISO7816Response(handleReadCmd(DF_INS_READ_DATA, command, mode));
+            result = ISO7816Response(handleReadCmd(DF_INS_READ_DATA, command, mode));
             ByteVector data = handleReadData(result.getSW2(), result.getData(), 0, mode);
             ret.insert(ret.end(), data.begin(), data.end());
         }
@@ -1134,10 +1135,13 @@ ByteVector DESFireEV1ISO7816Commands::readData(unsigned char fileno, unsigned in
             memcpy(&command[1], &trunloffset, 3);
             memcpy(&command[4], &trunklength, 3);
 
-            result            = ISO7816Response(handleReadCmd(DF_INS_READ_DATA, command, mode));
+            result = ISO7816Response(handleReadCmd(DF_INS_READ_DATA, command, mode));
 
-            result = ISO7816Response(handleReadData(result.getSW2(), result.getData(),
-                                    static_cast<unsigned int>(trunklength), mode));
+            result = ISO7816Response(
+                handleReadData(result.getSW2(), result.getData(),
+                               static_cast<unsigned int>(trunklength), mode)),
+            result.getSW1(), result.getSW2(),
+
             ret.insert(ret.end(), result.getData().begin(), result.getData().end());
         }
     }
@@ -1385,7 +1389,7 @@ void DESFireEV1ISO7816Commands::getValue(unsigned char fileno, EncryptionMode mo
     command.push_back(fileno);
 
     auto result = handleReadCmd(DF_INS_GET_VALUE, command, mode);
-    auto data = handleReadData(result.getSW2(), result.getData(), 4, mode);
+    auto data   = handleReadData(result.getSW2(), result.getData(), 4, mode);
 
     if (data.size() >= 4)
     {
