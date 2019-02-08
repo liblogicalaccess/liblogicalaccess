@@ -10,6 +10,7 @@
 #include <logicalaccess/cards/computermemorykeystorage.hpp>
 #include <logicalaccess/cards/readermemorykeystorage.hpp>
 #include <logicalaccess/cards/samkeystorage.hpp>
+#include <logicalaccess/cards/PKCSkeystorage.hpp>
 
 namespace logicalaccess
 {
@@ -26,6 +27,8 @@ std::shared_ptr<KeyStorage> KeyStorage::getKeyStorageFromType(KeyStorageType kst
     case KST_SAM: ret.reset(new SAMKeyStorage()); break;
 
     case KST_SERVER: ret.reset(new IKSStorage()); break;
+
+    case KST_PKCS: ret.reset(new PKCSKeyStorage());
     }
 
     return ret;
