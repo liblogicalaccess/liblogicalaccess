@@ -1136,11 +1136,11 @@ ByteVector DESFireEV1ISO7816Commands::readData(unsigned char fileno, unsigned in
             memcpy(&command[4], &trunklength, 3);
 
             result = ISO7816Response(handleReadCmd(DF_INS_READ_DATA, command, mode));
-
             result = ISO7816Response(
                 handleReadData(result.getSW2(), result.getData(),
-                               static_cast<unsigned int>(trunklength), mode)),
-            result.getSW1(), result.getSW2(),
+                               static_cast<unsigned int>(trunklength), mode),
+                0x90, 0);
+
 
             ret.insert(ret.end(), result.getData().begin(), result.getData().end());
         }
