@@ -1,13 +1,12 @@
 #include <logicalaccess/iks/IslogKeyServer.hpp>
 #include <logicalaccess/lla_fwd.hpp>
 #include <logicalaccess/services/aes_crypto_service.hpp>
-#include <logicalaccess/plugins/pkcs/cppkcs11/cppkcs11/services/crypto_service.hpp>
-#include <logicalaccess/plugins/pkcs/cppkcs11/cppkcs11/session.hpp>
+#include "cppkcs11/services/crypto_service.hpp"
+#include "cppkcs11/services/object_service.hpp"
+#include "cppkcs11/session.hpp"
 #include <logicalaccess/cards/PKCSkeystorage.hpp>
 #include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
-#include <logicalaccess/plugins/pkcs/cppkcs11/cppkcs11/services/object_service.hpp>
-
 #include "cppkcs11/cppkcs11.hpp"
 #include "logicalaccess/key.hpp"
 
