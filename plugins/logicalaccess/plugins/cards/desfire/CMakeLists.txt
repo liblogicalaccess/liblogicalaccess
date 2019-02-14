@@ -19,7 +19,7 @@ add_library(desfirecards
 
 SET_TARGET_PROPERTIES(desfirecards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 
-target_link_libraries(desfirecards
+target_link_libraries(desfirecards PUBLIC
         logicalaccess-cryptolib
         iso7816cards
         logicalaccess)

@@ -1,3 +1,0 @@
-[submodule "plugins/logicalaccess/plugins/pkcs/cppkcs11"]
-	path = plugins/logicalaccess/plugins/pkcs/cppkcs11
-	url = https://github.com/islog/cppkcs11.git

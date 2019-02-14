@@ -44,7 +44,10 @@ macro(LLA_GENERATE_EXPORTS)
     # Disable some MSVC warning we don't care about.
     if (MSVC)
         target_compile_options(${PROJECT_NAME} PUBLIC "/wd4251")
+    else()
+        target_compile_options(${PROJECT_NAME} PUBLIC -W -Wall -Wno-unused-parameter)
     endif ()
+
     # HEADER_INSTALL_DIR must be defined before calling the macro.
     install(FILES ${_EXPORT_FILE_PATH} DESTINATION ${HEADER_RELATIVE_INSTALL_DIR})
 endmacro()

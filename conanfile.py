@@ -38,7 +38,6 @@ class LLAConan(ConanFile):
             # This options is not used on Linux
             del self.options.LLA_BUILD_RFIDEAS
        
-
     def requirements(self):
         if tools.os_info.is_windows and self.options.LLA_BUILD_RFIDEAS:
             self.requires('rfideas/7.1.5@islog/stable')
@@ -46,6 +45,8 @@ class LLAConan(ConanFile):
             self.requires('grpc/1.14.1@inexorgame/stable')
         if self.options.LLA_BUILD_UNITTEST:
             self.requires('gtest/1.8.1@bincrafters/stable')
+        if self.options.LLA_BUILD_PKCS:
+            self.requires('cppkcs11/1.0@islog/master')
 
     def imports(self):
         if tools.os_info.is_windows:
