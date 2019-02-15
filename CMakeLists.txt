@@ -46,6 +46,9 @@ macro(LLA_GENERATE_EXPORTS)
         target_compile_options(${PROJECT_NAME} PUBLIC "/wd4251")
     else()
         target_compile_options(${PROJECT_NAME} PUBLIC -W -Wall -Wno-unused-parameter)
+        if (CMAKE_BUILD_TYPE MATCHES "Debug")
+            target_compile_options(logicalaccess PUBLIC -g)
+        endif()
     endif ()
 
     # HEADER_INSTALL_DIR must be defined before calling the macro.
@@ -97,6 +100,10 @@ target_link_libraries(logicalaccess PUBLIC
 # Wrong, fix /plugins/
 target_include_directories(logicalaccess PUBLIC
         ${CMAKE_SOURCE_DIR}/include)
+
+if (CMAKE_BUILD_TYPE MATCHES "Debug")
+    target_compile_options(logicalaccess PUBLIC -g)
+endif()
 
 install(TARGETS ${LIBLOGICALACCESS_LIBRARY}
         RUNTIME DESTINATION bin/${LIB_SUFFIX}
