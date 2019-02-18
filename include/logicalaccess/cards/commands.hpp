@@ -21,8 +21,8 @@ class LLA_CORE_API Commands : public ICommands
 {
   public:
     /**
-    * \brief Constructor.
-    */
+     * \brief Constructor.
+     */
     Commands() = delete;
 
     virtual ~Commands();
@@ -64,18 +64,18 @@ class LLA_CORE_API Commands : public ICommands
     }
 
     /**
-                    * \brief Get the cmd name.
-                    * \return The cmd name.
-                    */
+     * \brief Get the cmd name.
+     * \return The cmd name.
+     */
     virtual const std::string &getCmdType() const
     {
         return d_commandtype;
     }
 
     /**
-                    * \brief Set the cmd name.
-                    * \param chip The cmd name.
-                    */
+     * \brief Set the cmd name.
+     * \param chip The cmd name.
+     */
     virtual void setCmdType(const std::string &command_type)
     {
         d_commandtype = command_type;
@@ -83,9 +83,9 @@ class LLA_CORE_API Commands : public ICommands
 
   protected:
     /**
-    * \brief Constructor.
-    * \param commandtype The command type name.
-    */
+     * \brief Constructor.
+     * \param commandtype The command type name.
+     */
     explicit Commands(std::string commandtype)
         : d_commandtype(commandtype)
     {
@@ -102,8 +102,8 @@ class LLA_CORE_API Commands : public ICommands
     std::weak_ptr<Chip> d_chip;
 
     /**
-                    * \brief The command type.
-                    */
+     * \brief The command type.
+     */
     std::string d_commandtype;
 };
 }

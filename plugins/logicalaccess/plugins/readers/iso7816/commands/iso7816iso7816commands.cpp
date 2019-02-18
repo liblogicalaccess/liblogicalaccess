@@ -125,7 +125,7 @@ void ISO7816ISO7816Commands::selectFile(unsigned char p1, unsigned char p2,
 {
     getISO7816ReaderCardAdapter()->sendAPDUCommand(
         ISO7816_CLA_ISO_COMPATIBLE, ISO7816_INS_SELECT_FILE, p1, p2,
-        static_cast<unsigned char>(data.size()), data, 0x00);
+        static_cast<unsigned char>(data.size()), data);
 }
 
 ByteVector ISO7816ISO7816Commands::readRecords(unsigned short fid,

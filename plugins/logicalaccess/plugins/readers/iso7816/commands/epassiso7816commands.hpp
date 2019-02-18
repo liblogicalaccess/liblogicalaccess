@@ -18,11 +18,11 @@ class LLA_READERS_ISO7816_API EPassISO7816Commands : public EPassCommands
   public:
     EPassISO7816Commands();
 
-	explicit EPassISO7816Commands(std::string ct);
+    explicit EPassISO7816Commands(std::string ct);
 
-	virtual ~EPassISO7816Commands();
+    virtual ~EPassISO7816Commands();
 
-	std::shared_ptr<ISO7816Commands> getISO7816Commands() const override
+    std::shared_ptr<ISO7816Commands> getISO7816Commands() const override
     {
         auto command = std::make_shared<ISO7816ISO7816Commands>();
         command->setChip(getChip());

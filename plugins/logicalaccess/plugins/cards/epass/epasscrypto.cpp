@@ -20,7 +20,7 @@ void EPassCrypto::reset(const std::string &mrz)
 {
     ISO24727Crypto::reset();
 
-	auto seed = EPassUtils::seed_from_mrz(mrz);
+    auto seed = EPassUtils::seed_from_mrz(mrz);
     k_enc_    = compute_enc_key(seed);
     k_mac_    = compute_mac_key(seed);
 }
@@ -46,8 +46,7 @@ ByteVector EPassCrypto::adjust_key_parity(const ByteVector &key)
 }
 
 ByteVector EPassCrypto::compute_enc_key(const ByteVector &seed,
-                                        const std::string hash_algo,
-                                        unsigned char keylen)
+                                        const std::string hash_algo, unsigned char keylen)
 {
     ByteVector c = {0, 0, 0, 1};
     ByteVector D = seed;
@@ -58,8 +57,7 @@ ByteVector EPassCrypto::compute_enc_key(const ByteVector &seed,
 }
 
 ByteVector EPassCrypto::compute_mac_key(const ByteVector &seed,
-                                        const std::string hash_algo,
-                                        unsigned char keylen)
+                                        const std::string hash_algo, unsigned char keylen)
 {
     ByteVector c = {0, 0, 0, 2};
     ByteVector D = seed;
@@ -69,7 +67,8 @@ ByteVector EPassCrypto::compute_mac_key(const ByteVector &seed,
     return adjust_key_parity(ByteVector(H.begin(), H.begin() + keylen));
 }
 
-void EPassCrypto::compute_session_keys(const ByteVector &k_icc, const ByteVector &random_icc)
+void EPassCrypto::compute_session_keys(const ByteVector &k_icc,
+                                       const ByteVector &random_icc)
 {
     ByteVector k_seed;
     for (int i = 0; i < 16; ++i)
@@ -86,7 +85,7 @@ void EPassCrypto::compute_session_keys(const ByteVector &k_icc, const ByteVector
 }
 
 ByteVector EPassCrypto::compute_mac(std::shared_ptr<openssl::SymmetricCipher> cipher,
-                                      const ByteVector &in, const ByteVector &k_mac,
+                                    const ByteVector &in, const ByteVector &k_mac,
                                     const ByteVector &iv, const ByteVector &ssc)
 {
     EXCEPTION_ASSERT_WITH_LOG(in.size() % cipher->getBlockSize() == 0,

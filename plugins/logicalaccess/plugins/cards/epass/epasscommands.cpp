@@ -9,14 +9,14 @@
 using namespace logicalaccess;
 
 EPassCommands::EPassCommands()
-    : Commands(CMD_EPASS)
+    : EPassCommands(CMD_EPASS)
 {
-    crypto_ = std::make_shared<EPassCrypto>();
 }
 
 EPassCommands::EPassCommands(std::string ct)
     : Commands(ct)
 {
+    crypto_ = std::make_shared<EPassCrypto>();
 }
 
 bool EPassCommands::authenticate(const std::string &mrz)
@@ -37,6 +37,7 @@ bool EPassCommands::authenticate(const std::string &mrz)
     {
         try
         {
+            assert(crypto_);
             crypto_->reset(mrz);
 
             std::shared_ptr<ISO7816ReaderCardAdapter> rcu =
@@ -45,8 +46,8 @@ bool EPassCommands::authenticate(const std::string &mrz)
             assert(rcu);
             auto iso7816cmd = getISO7816Commands();
             auto challenge  = iso7816cmd->getChallenge(8);
-            auto rpcd      = crypto_->step1(challenge);
-            auto rpicc1 = iso7816cmd->externalAuthenticate(0x00, true, 0x00, rpcd, 28);
+            auto rpcd       = crypto_->step1(challenge);
+            auto rpicc1 = iso7816cmd->externalAuthenticate(0x00, true, 0x00, rpcd, 0x28);
             // drop status bytes.
             EXCEPTION_ASSERT_WITH_LOG(rpicc1.size() == 40, LibLogicalAccessException,
                                       "Unexpected response length");
@@ -66,7 +67,8 @@ bool EPassCommands::authenticate(const std::string &mrz)
 EPassEFCOM EPassCommands::readEFCOM() const
 {
     ByteVector ef_com_raw;
-    getISO7816Commands()->selectFile(P1_SELECT_EF_UNDER_CURRENT_DF, P2_RETURN_NO_FCI, {0x01, 0x1E});
+    getISO7816Commands()->selectFile(P1_SELECT_EF_UNDER_CURRENT_DF, P2_RETURN_NO_FCI,
+                                     {0x01, 0x1E});
 
     auto data = readEF(1, 1);
     EXCEPTION_ASSERT_WITH_LOG(data.size() >= 10, LibLogicalAccessException,
@@ -106,7 +108,8 @@ void EPassCommands::setReaderCardAdapter(std::shared_ptr<ReaderCardAdapter> adap
 
 EPassDG1 EPassCommands::readDG1() const
 {
-    getISO7816Commands()->selectFile(P1_SELECT_EF_UNDER_CURRENT_DF, P2_RETURN_NO_FCI, {0x01, 0x01});
+    getISO7816Commands()->selectFile(P1_SELECT_EF_UNDER_CURRENT_DF, P2_RETURN_NO_FCI,
+                                     {0x01, 0x01});
     auto raw = readEF(1, 1);
     return EPassUtils::parse_dg1(raw);
 }
@@ -114,7 +117,8 @@ EPassDG1 EPassCommands::readDG1() const
 EPassDG2 EPassCommands::readDG2()
 {
     LLA_LOG_CTX("EPassCommands::readDG2");
-    getISO7816Commands()->selectFile(P1_SELECT_EF_UNDER_CURRENT_DF, P2_RETURN_NO_FCI, {0x01, 0x02});
+    getISO7816Commands()->selectFile(P1_SELECT_EF_UNDER_CURRENT_DF, P2_RETURN_NO_FCI,
+                                     {0x01, 0x02});
 
     // File tag is 2 bytes and size is 2 bytes too.
     auto dg2_raw = readEF(2, 2);
@@ -128,7 +132,7 @@ ByteVector EPassCommands::readEF(uint8_t size_bytes, uint8_t size_offset) const
     ByteVector ef_raw;
     uint8_t initial_read_len = static_cast<uint8_t>(size_bytes + size_offset);
 
-	auto iso7816cmd = getISO7816Commands();
+    auto iso7816cmd = getISO7816Commands();
     auto data       = iso7816cmd->readBinary(initial_read_len, 0);
     EXCEPTION_ASSERT_WITH_LOG(data.size() == initial_read_len, LibLogicalAccessException,
                               "Wrong data size.");
@@ -164,13 +168,15 @@ void EPassCommands::readSOD() const
     auto hash_1 = compute_hash({1, 1});
     auto hash_2 = compute_hash({1, 2});
 
-    getISO7816Commands()->selectFile(P1_SELECT_EF_UNDER_CURRENT_DF, P2_RETURN_NO_FCI, {0x01, 0x1D});
+    getISO7816Commands()->selectFile(P1_SELECT_EF_UNDER_CURRENT_DF, P2_RETURN_NO_FCI,
+                                     {0x01, 0x1D});
     auto tmp = readEF(2, 2);
 }
 
 ByteVector EPassCommands::compute_hash(const ByteVector &file_id) const
 {
-    getISO7816Commands()->selectFile(P1_SELECT_EF_UNDER_CURRENT_DF, P2_RETURN_NO_FCI, file_id);
+    getISO7816Commands()->selectFile(P1_SELECT_EF_UNDER_CURRENT_DF, P2_RETURN_NO_FCI,
+                                     file_id);
 
     ByteVector content;
     if (file_id == ByteVector{1, 1})

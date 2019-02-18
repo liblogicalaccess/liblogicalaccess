@@ -854,6 +854,7 @@ std::shared_ptr<Chip> PCSCReaderUnit::createChip(std::string type)
         {
             commands = std::make_shared<EPassISO7816Commands>();
             rca      = std::make_shared<EPassReaderCardAdapter>();
+            rca->setDataTransport(getDefaultReaderCardAdapter()->getDataTransport());
         }
         else if (type == CHIP_TOPAZ)
         {

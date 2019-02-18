@@ -3,9 +3,7 @@
 #include <cassert>
 using namespace logicalaccess;
 
-EPassReaderCardAdapter::EPassReaderCardAdapter()
-{
-}
+EPassReaderCardAdapter::EPassReaderCardAdapter() {}
 
 ByteVector EPassReaderCardAdapter::adaptAnswer(const ByteVector &answer)
 {
@@ -14,10 +12,6 @@ ByteVector EPassReaderCardAdapter::adaptAnswer(const ByteVector &answer)
         r = crypto_->decrypt_rapdu(answer);
     else
         r = answer;
-    // ResultChecker already ran, we can clear the SW1SW2 flags.
-    if (r.size() > 2)
-        return ByteVector(r.begin(), r.end() - 2);
-
     return r;
 }
 
