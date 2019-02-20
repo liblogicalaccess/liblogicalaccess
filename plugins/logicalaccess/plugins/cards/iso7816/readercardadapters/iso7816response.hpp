@@ -20,16 +20,14 @@ namespace logicalaccess
 class LLA_CARDS_ISO7816_API ISO7816Response
 {
   public:
-	ISO7816Response()
-	{
-	}
+    ISO7816Response() {}
 
-	ISO7816Response(const ByteVector &data, unsigned char sw1, unsigned char sw2)
-	{
-        sw1_ = sw1;
-        sw2_ = sw2;
+    ISO7816Response(const ByteVector &data, unsigned char sw1, unsigned char sw2)
+    {
+        sw1_  = sw1;
+        sw2_  = sw2;
         data_ = data;
-	}
+    }
 
     explicit ISO7816Response(const ByteVector &data)
     {
@@ -59,6 +57,13 @@ class LLA_CARDS_ISO7816_API ISO7816Response
         return data_;
     }
 
+    ByteVector getCompleteResponse() {
+        auto resp = getData();
+        resp.push_back(sw1_);
+        resp.push_back(sw2_);
+        return resp;
+    }
+
   private:
     /**
      * \brief SW1 Response Status Code.
@@ -74,7 +79,8 @@ class LLA_CARDS_ISO7816_API ISO7816Response
     ByteVector data_;
 };
 
-inline LLA_CARDS_ISO7816_API std::ostream &operator<<(std::ostream &ss, const ISO7816Response &response)
+inline LLA_CARDS_ISO7816_API std::ostream &operator<<(std::ostream &ss,
+                                                      const ISO7816Response &response)
 {
     std::stringstream tmp;
     tmp << std::hex;
