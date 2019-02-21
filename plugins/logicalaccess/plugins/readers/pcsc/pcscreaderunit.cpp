@@ -8,6 +8,7 @@
 
 #include <iomanip>
 #include <thread>
+#include <regex>
 
 #include <logicalaccess/plugins/readers/pcsc/pcscreaderprovider.hpp>
 #include <logicalaccess/services/accesscontrol/cardsformatcomposite.hpp>
@@ -1365,7 +1366,7 @@ std::shared_ptr<CardProbe> PCSCReaderUnit::createCardProbe()
 }
 
 std::tuple<PCSCReaderUnit::SPtrStringVector, PCSCReaderUnit::ReaderStateVector>
-PCSCReaderUnit::prepare_poll_parameters() const
+PCSCReaderUnit::prepare_poll_parameters()
 {
     size_t readers_count = 0;
     if (!getName().empty())
@@ -1390,6 +1391,42 @@ PCSCReaderUnit::prepare_poll_parameters() const
 
     if (!getName().empty())
     {
+        // We try to match the provided reader name against available readers.
+        // This allows to use a regex as a reader name.
+        // If the provided name has a perfect match (ie is equals) to an
+        // available reader, then no adjustment take place.
+
+        std::string adjusted_name;
+        auto reader_list = getReaderProvider()->getReaderList();
+        for (const auto &r : reader_list)
+        {
+            if (r->getName() == getName())
+            {
+                adjusted_name = getName();
+                break;
+            }
+            // Try to match ?
+            try
+            {
+                std::regex reg(getName());
+                if (std::regex_match(r->getName(), reg))
+                {
+                    adjusted_name = r->getName();
+                }
+            }
+            catch (const std::regex_error &)
+            {
+                // We don't care. Its completely fine for a user to specify a name
+                // that is not a valid regex.
+            }
+        }
+        if (!adjusted_name.empty() && adjusted_name != getName())
+        {
+            LOG(INFOS) << "Using adjusted reader name: " << adjusted_name
+                       << " instead of " << getName();
+            setName(adjusted_name);
+        }
+
         readers_names[0]          = std::make_shared<std::string>(getName());
         readers[0].dwCurrentState = SCARD_STATE_UNAWARE;
         readers[0].dwEventState   = SCARD_STATE_UNAWARE;

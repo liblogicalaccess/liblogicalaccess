@@ -386,7 +386,7 @@ class LLA_READERS_PCSC_API PCSCReaderUnit : public ISO7816ReaderUnit
      * Prepare the parameters for the call to SCardGetStatusChange
      * invoked by waitInsertion()
      */
-    std::tuple<SPtrStringVector, ReaderStateVector> prepare_poll_parameters() const;
+    std::tuple<SPtrStringVector, ReaderStateVector> prepare_poll_parameters();
 
     /**
      * Create the proxy reader based on which reader detected a card
