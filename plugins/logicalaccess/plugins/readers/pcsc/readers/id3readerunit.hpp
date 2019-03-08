@@ -64,7 +64,7 @@ class LLA_READERS_PCSC_API ID3ReaderUnit : public PCSCReaderUnit
 
     PCSCReaderUnitType getPCSCType() const override;
 
-    bool process_insertion(const std::string &cardType, int maxwait,
+    bool process_insertion(const std::string &cardType, unsigned int maxwait,
                            const ElapsedTimeCounter &elapsed) override;
 #ifndef SWIG
     using PCSCReaderUnit::connect;

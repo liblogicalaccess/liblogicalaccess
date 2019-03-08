@@ -401,7 +401,7 @@ class LLA_READERS_PCSC_API PCSCReaderUnit : public ISO7816ReaderUnit
      * This default implemented MUST be called explicitly if you override this
      * method.
      */
-    virtual bool process_insertion(const std::string &cardType, int maxwait,
+    virtual bool process_insertion(const std::string &cardType, unsigned int maxwait,
                                    const ElapsedTimeCounter &elapsed);
 
   public:

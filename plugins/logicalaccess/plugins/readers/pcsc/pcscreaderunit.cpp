@@ -362,7 +362,7 @@ bool PCSCReaderUnit::waitRemoval(unsigned int maxwait)
 
     std::string reader = getConnectedName();
 
-    int readers_count = static_cast<int>(getReaderProvider()->getReaderList().size());
+    auto readers_count = getReaderProvider()->getReaderList().size();
 
     if (reader != "")
     {
@@ -386,7 +386,7 @@ bool PCSCReaderUnit::waitRemoval(unsigned int maxwait)
     }
     else
     {
-        for (int i = 0; i < readers_count; ++i)
+        for (size_t i = 0; i < readers_count; ++i)
         {
             reader_names[i] = getReaderProvider()->getReaderList().at(i)->getName();
             readers[i].dwCurrentState = SCARD_STATE_UNAWARE;
@@ -402,7 +402,7 @@ bool PCSCReaderUnit::waitRemoval(unsigned int maxwait)
                                   readers_count);
     if (SCARD_S_SUCCESS == r)
     {
-        for (int i = 0; i < readers_count; ++i)
+        for (size_t i = 0; i < readers_count; ++i)
         {
             if ((SCARD_STATE_PRESENT & readers[i].dwEventState) == 0)
             {
@@ -415,7 +415,7 @@ bool PCSCReaderUnit::waitRemoval(unsigned int maxwait)
 
         if (reader == "")
         {
-            for (int i = 0; i < readers_count; ++i)
+            for (size_t i = 0; i < readers_count; ++i)
             {
                 readers[i].dwCurrentState = readers[i].dwEventState;
             }
@@ -434,7 +434,7 @@ bool PCSCReaderUnit::waitRemoval(unsigned int maxwait)
                     {
                         loop = true;
                     }
-                    for (int i = 0; i < readers_count; ++i)
+                    for (size_t i = 0; i < readers_count; ++i)
                     {
                         if ((SCARD_STATE_PRESENT & readers[i].dwEventState) == 0)
                         {
@@ -466,7 +466,7 @@ bool PCSCReaderUnit::waitRemoval(unsigned int maxwait)
 
     if (!reader.empty())
     {
-        if (d_name == "")
+        if (d_name.empty())
         {
             d_proxyReaderUnit.reset();
         }
@@ -1478,7 +1478,7 @@ void PCSCReaderUnit::waitInsertion_create_proxy(const std::string &reader_name)
     }
 }
 
-bool PCSCReaderUnit::process_insertion(const std::string &cardType, int maxwait,
+bool PCSCReaderUnit::process_insertion(const std::string &cardType, unsigned int maxwait,
                                        const ElapsedTimeCounter &elapsed)
 {
     if (d_proxyReaderUnit)

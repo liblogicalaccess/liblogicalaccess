@@ -85,7 +85,7 @@ void ID3ReaderUnit::unfreeze()
     getDefaultReaderCardAdapter()->sendCommand({0x0C, 0x00});
 }
 
-bool ID3ReaderUnit::process_insertion(const std::string &cardType, int maxwait,
+bool ID3ReaderUnit::process_insertion(const std::string &cardType, unsigned int maxwait,
                                       const ElapsedTimeCounter &etc)
 {
     // The rules for waitInsertion on this reader:
@@ -103,7 +103,7 @@ bool ID3ReaderUnit::process_insertion(const std::string &cardType, int maxwait,
 
     // Now that we are hopefully connected to something, we try to find
     // the card we meant to use.
-    while (etc.elapsed() < static_cast<unsigned int>(maxwait))
+    while (etc.elapsed() < maxwait)
     {
         if (select_correct_card())
             return true;
