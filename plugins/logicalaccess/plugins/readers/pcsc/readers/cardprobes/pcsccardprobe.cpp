@@ -69,7 +69,7 @@ bool PCSCCardProbe::is_desfire(std::vector<uint8_t> *uid)
     }
 }
 
-unsigned char PCSCCardProbe::get_desfire_version(std::vector<uint8_t> *uid)
+int PCSCCardProbe::get_desfire_version(std::vector<uint8_t> *uid)
 {
     try
     {

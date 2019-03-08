@@ -26,6 +26,6 @@ class LLA_READERS_PCSC_API PCSCCardProbe : public CardProbe
     void reset() const;
 
   private:
-    unsigned char get_desfire_version(ByteVector *uid = nullptr);
+    int get_desfire_version(ByteVector *uid = nullptr);
 };
 }
