@@ -135,6 +135,7 @@ if (LLA_BUILD_PKCS)
 endif ()
 
 if (LLA_BUILD_UNITTEST)
+    enable_testing()
     add_subdirectory(tests)
 endif ()
 

@@ -34,5 +34,4 @@ function(lla_create_test TEST_SUITE_NAME SOURCE_FILENAME)
             )
 endfunction()
 
-enable_testing()
 add_subdirectory(unittest)
