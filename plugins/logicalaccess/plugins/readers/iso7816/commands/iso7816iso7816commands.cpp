@@ -280,6 +280,7 @@ ByteVector ISO7816ISO7816Commands::generalAuthenticate_response(unsigned char al
         std::make_shared<TLV>(ISO7816_DATA_OBJECT_DYNAMIC_AUTHENTICATION_DATA);
     auto tlv_response = std::make_shared<TLV>(ISO7816_DATA_OBJECT_RESPONSE);
     tlv_response->value(data);
+    tlv_authdata->value(tlv_response);
 
     auto result        = generalAuthenticate(algorithm, globalReference, keyno,
                                       tlv_authdata->compute(), 0x00);
