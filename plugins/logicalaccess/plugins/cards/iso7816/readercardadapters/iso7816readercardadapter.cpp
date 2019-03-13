@@ -145,4 +145,26 @@ ISO7816Response ISO7816ReaderCardAdapter::sendExtendedAPDUCommand(
 
     return sendAPDUCommand(command);
 }
+
+ByteVector ISO7816ReaderCardAdapter::adaptAnswer(const ByteVector &answer)
+{
+    ByteVector r;
+    if (crypto_ && crypto_->secureMode())
+        r = crypto_->decrypt_rapdu(answer);
+    else
+        r = answer;
+    return r;
+}
+
+ByteVector ISO7816ReaderCardAdapter::adaptCommand(const ByteVector &command)
+{
+    if (crypto_ && crypto_->secureMode())
+        return crypto_->encrypt_apdu(command);
+    return command;
+}
+
+void ISO7816ReaderCardAdapter::setCrypto(std::shared_ptr<ISO24727Crypto> crypto)
+{
+    crypto_ = crypto;
+}
 }

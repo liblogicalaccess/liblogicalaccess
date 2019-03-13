@@ -20,11 +20,11 @@ class LLA_CARDS_EPASS_API EPassCrypto : public ISO24727Crypto
 
 	ByteVector compute_enc_key(const ByteVector &seed,
                                    const std::string hash_algo = "sha1",
-                                   unsigned char keylen        = 16) override;
+                                   unsigned char keylen        = 16);
 
     ByteVector compute_mac_key(const ByteVector &seed,
                                 const std::string hash_algo = "sha1",
-                                unsigned char keylen        = 16) override;
+                                unsigned char keylen        = 16);
 
 	/**
 	 * ISO 9797-1 MAC Algorithm 3

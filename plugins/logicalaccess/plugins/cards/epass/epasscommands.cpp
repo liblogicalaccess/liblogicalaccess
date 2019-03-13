@@ -1,5 +1,4 @@
 #include <logicalaccess/plugins/cards/epass/epasscommands.hpp>
-#include <logicalaccess/plugins/cards/epass/epassreadercardadapter.hpp>
 #include <cassert>
 #include <iomanip>
 #include <logicalaccess/bufferhelper.hpp>
@@ -101,9 +100,9 @@ bool EPassCommands::selectIssuerApplication()
 void EPassCommands::setReaderCardAdapter(std::shared_ptr<ReaderCardAdapter> adapter)
 {
     Commands::setReaderCardAdapter(adapter);
-    auto epass_rca = std::dynamic_pointer_cast<EPassReaderCardAdapter>(adapter);
-    if (epass_rca)
-        epass_rca->setEPassCrypto(crypto_);
+    auto rca = std::dynamic_pointer_cast<ISO7816ReaderCardAdapter>(adapter);
+    if (rca)
+        rca->setCrypto(crypto_);
 }
 
 EPassDG1 EPassCommands::readDG1() const
