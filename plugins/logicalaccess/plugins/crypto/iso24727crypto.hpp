@@ -13,7 +13,8 @@ namespace logicalaccess
 class LLA_CRYPTO_API ISO24727Crypto
 {
   public:
-    explicit ISO24727Crypto(const std::string& cipher = "3des", const std::string& hash = "sha1");
+    explicit ISO24727Crypto(const std::string &cipher = "3des",
+                            const std::string &hash   = "sha1");
 
     /**
      * Call after construction to feed the random from the
@@ -46,7 +47,7 @@ class LLA_CRYPTO_API ISO24727Crypto
 
     ByteVector decrypt_rapdu(const ByteVector &rapdu);
 
-	ByteVector encrypt_apdu(std::shared_ptr<openssl::SymmetricCipher> cipher,
+    ByteVector encrypt_apdu(std::shared_ptr<openssl::SymmetricCipher> cipher,
                             const ByteVector &apdu, const ByteVector &ks_enc,
                             const ByteVector &ks_mac, const ByteVector &ssc);
 
@@ -58,45 +59,45 @@ class LLA_CRYPTO_API ISO24727Crypto
     ByteVector get_session_mac_key() const;
     ByteVector get_send_session_counter() const;
 
-	virtual ByteVector auth_pad(const ByteVector &data);
+    virtual ByteVector auth_pad(const ByteVector &data);
 
-	virtual void compute_session_keys(const ByteVector &k_icc,
-                                        const ByteVector &random_icc) = 0;
+    virtual void compute_session_keys(const ByteVector &k_icc,
+                                      const ByteVector &random_icc) = 0;
 
-	virtual ByteVector compute_mac(std::shared_ptr<openssl::SymmetricCipher> cipher,
-                                       const ByteVector &in, const ByteVector &k_mac,
-                                       const ByteVector &iv  = {},
-                                       const ByteVector &scc = {}) = 0;
+    virtual ByteVector compute_mac(std::shared_ptr<openssl::SymmetricCipher> cipher,
+                                   const ByteVector &in, const ByteVector &k_mac,
+                                   const ByteVector &iv  = {},
+                                   const ByteVector &scc = {}) = 0;
 
-	virtual void reset();
+    virtual void reset();
 
-	std::shared_ptr<openssl::SymmetricCipher> createCipher() const;
+    std::shared_ptr<openssl::SymmetricCipher> createCipher() const;
 
     /**
-        * ISO 9797-1 padding method 2
-        */
+     * ISO 9797-1 padding method 2
+     */
     static ByteVector pad(const ByteVector &in, unsigned int padlen = 8);
 
     /**
-        * Cancel the padding created by pad()
-        */
+     * Cancel the padding created by pad()
+     */
     static ByteVector unpad(const ByteVector &in);
 
     /**
-        * Increment the Session Send Counter by one and return a new
-        * ByteVector.
-        */
+     * Increment the Session Send Counter by one and return a new
+     * ByteVector.
+     */
     static ByteVector increment_ssc(const ByteVector &in);
 
     static ByteVector hash_data(const ByteVector &data,
                                 const std::string hash_algo = "sha1");
 
 
-	ByteVector k_enc_;
+    ByteVector k_enc_;
     ByteVector k_mac_;
 
   protected:
-	std::string cipher_;
+    std::string cipher_;
     std::string hash_;
     /**
      * Generated at step1 (or inputted at step1).

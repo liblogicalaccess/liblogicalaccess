@@ -83,7 +83,7 @@ class LLA_CARDS_ISO7816_API ISO7816ReaderCardAdapter : public ReaderCardAdapter
                                                     const ByteVector &data,
                                                     unsigned short le);
 
-	ByteVector adaptCommand(const ByteVector &command) override;
+    ByteVector adaptCommand(const ByteVector &command) override;
 
     ByteVector adaptAnswer(const ByteVector &answer) override;
 

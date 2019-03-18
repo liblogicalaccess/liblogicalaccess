@@ -159,7 +159,9 @@ ByteVector ISO7816ReaderCardAdapter::adaptAnswer(const ByteVector &answer)
 ByteVector ISO7816ReaderCardAdapter::adaptCommand(const ByteVector &command)
 {
     if (crypto_ && crypto_->secureMode())
+    {
         return crypto_->encrypt_apdu(command);
+    }
     return command;
 }
 

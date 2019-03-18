@@ -22,11 +22,11 @@ PCSCReaderCardAdapter::~PCSCReaderCardAdapter()
 
 ByteVector PCSCReaderCardAdapter::adaptCommand(const ByteVector &command)
 {
-    return command;
+    return ISO7816ReaderCardAdapter::adaptCommand(command);
 }
 
 ByteVector PCSCReaderCardAdapter::adaptAnswer(const ByteVector &answer)
 {
-    return answer;
+    return ISO7816ReaderCardAdapter::adaptAnswer(answer);
 }
 }

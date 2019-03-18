@@ -12,8 +12,7 @@
 
 using namespace logicalaccess;
 
-ISO24727Crypto::ISO24727Crypto(const std::string &cipher,
-                               const std::string &hash)
+ISO24727Crypto::ISO24727Crypto(const std::string &cipher, const std::string &hash)
 {
     cipher_ = cipher;
     hash_   = hash;
@@ -25,12 +24,12 @@ std::shared_ptr<openssl::SymmetricCipher> ISO24727Crypto::createCipher() const
     if (cipher_ == "aes")
         return std::make_shared<openssl::AESCipher>();
 
-	return std::make_shared<openssl::DESCipher>();
+    return std::make_shared<openssl::DESCipher>();
 }
 
 ByteVector ISO24727Crypto::step1(const ByteVector &random_icc,
-                              ByteVector random_ifd /* = {} */,
-                              ByteVector random_k_ifd /* = {} */)
+                                 ByteVector random_ifd /* = {} */,
+                                 ByteVector random_k_ifd /* = {} */)
 {
     EXCEPTION_ASSERT_WITH_LOG(random_icc.size() == 8, LibLogicalAccessException,
                               "Random ICC must be 8 bytes.");
@@ -53,7 +52,7 @@ ByteVector ISO24727Crypto::step1(const ByteVector &random_icc,
     S.insert(S.end(), random_icc.begin(), random_icc.end());
     S.insert(S.end(), random_k_ifd_.begin(), random_k_ifd_.end());
 
-	auto cipher = createCipher();
+    auto cipher = createCipher();
     ByteVector E_ifd;
     cipher->cipher(S, E_ifd, openssl::SymmetricKey(k_enc_));
     auto M_ifd = compute_mac(cipher, auth_pad(E_ifd), k_mac_);
@@ -70,37 +69,35 @@ bool ISO24727Crypto::step2(const ByteVector &auth_response)
 
     auto cipher = createCipher();
     if (auth_response.size() < 40)
-	{
-        LOG(logicalaccess::LogLevel::ERRORS)
-            << "Wrong ISO24727 auth response length.";
+    {
+        LOG(logicalaccess::LogLevel::ERRORS) << "Wrong ISO24727 auth response length.";
         return false;
-	}
-    auto e_icc  = ByteVector(auth_response.begin(),
-                            auth_response.begin() + 32);
+    }
+    auto e_icc = ByteVector(auth_response.begin(), auth_response.begin() + 32);
     ByteVector R; // RND.ICC || RND.IFD || K.ICC
+    auto m_icc2 = compute_mac(cipher, auth_pad(e_icc), k_mac_);
     cipher->decipher(e_icc, R, openssl::SymmetricKey(k_enc_));
     ByteVector m_icc(auth_response.begin() + 32, auth_response.begin() + 40);
 
-	auto m_icc2 = compute_mac(cipher, auth_pad(e_icc), k_mac_);
-	if (m_icc2 != m_icc)
-	{
+    if (m_icc2 != m_icc)
+    {
         LOG(logicalaccess::LogLevel::ERRORS)
             << "ISO24727 step2 auth response failed: CMAC doesn't match.";
         return false;
-	}
+    }
 
     ByteVector random_ifd(R.begin() + 8, R.begin() + 16);
     if (random_ifd != random_ifd_)
-	{
+    {
         LOG(logicalaccess::LogLevel::ERRORS)
             << "ISO24727 step2 auth response failed: random IFD doesn't match.";
         return false;
-	}
+    }
 
     ByteVector random_icc(R.begin(), R.begin() + 8);
     ByteVector k_icc(R.begin() + 16, R.begin() + 32);
-    
-	compute_session_keys(k_icc, random_icc);
+
+    compute_session_keys(k_icc, random_icc);
 
     step2_success_ = true;
     return true;
@@ -174,11 +171,13 @@ static bool apdu_has_data(const ByteVector &apdu)
 }
 
 ByteVector ISO24727Crypto::encrypt_apdu(std::shared_ptr<openssl::SymmetricCipher> cipher,
-                                       const ByteVector &apdu, const ByteVector &ks_enc,
-                                       const ByteVector &ks_mac, const ByteVector &ssc)
+                                        const ByteVector &apdu, const ByteVector &ks_enc,
+                                        const ByteVector &ks_mac, const ByteVector &ssc)
 {
     EXCEPTION_ASSERT_WITH_LOG(apdu.size() >= 4, LibLogicalAccessException,
                               "APDU is too short to be valid.");
+
+    LOG(DEBUGS) << "Original command to encrypt: " << apdu;
 
     auto ssc_incremented        = increment_ssc(ssc);
     ByteVector cmd_header_nopad = {0x0C};
@@ -203,16 +202,25 @@ ByteVector ISO24727Crypto::encrypt_apdu(std::shared_ptr<openssl::SymmetricCipher
     cipher->cipher(pad(original_data, cipher->getBlockSize()), encrypted_data,
                    openssl::SymmetricKey(ks_enc));
 
-    ByteVector do_87;
+    ByteVector do_85_or_87;
     if (apdu_has_data(apdu)) // LC -- do we have any data?
     {
-        do_87 = {0x87, static_cast<uint8_t>(encrypted_data.size() + 1), 0x01};
-        do_87.insert(do_87.end(), encrypted_data.begin(), encrypted_data.end());
+        // Even INS code uses DO87, while odd uses DO85.
+        if (apdu.at(1) % 2 == 0)
+        {
+            do_85_or_87 = {0x87, static_cast<uint8_t>(encrypted_data.size() + 1), 0x01};
+        }
+        else
+        {
+            do_85_or_87 = {0x85, static_cast<uint8_t>(encrypted_data.size())};
+        }
+        do_85_or_87.insert(do_85_or_87.end(), encrypted_data.begin(),
+                           encrypted_data.end());
     }
 
     ByteVector M;
     M.insert(M.end(), cmd_header.begin(), cmd_header.end());
-    M.insert(M.end(), do_87.begin(), do_87.end());
+    M.insert(M.end(), do_85_or_87.begin(), do_85_or_87.end());
     M.insert(M.end(), do_97.begin(), do_97.end());
     M.insert(M.begin(), ssc_incremented.begin(), ssc_incremented.end());
 
@@ -223,8 +231,8 @@ ByteVector ISO24727Crypto::encrypt_apdu(std::shared_ptr<openssl::SymmetricCipher
     ByteVector result;
     result.insert(result.end(), cmd_header_nopad.begin(), cmd_header_nopad.end());
     result.push_back(
-        static_cast<uint8_t>(do_87.size() + do_97.size() + do_8E.size())); // LC
-    result.insert(result.end(), do_87.begin(), do_87.end());
+        static_cast<uint8_t>(do_85_or_87.size() + do_97.size() + do_8E.size())); // LC
+    result.insert(result.end(), do_85_or_87.begin(), do_85_or_87.end());
     result.insert(result.end(), do_97.begin(), do_97.end());
     result.insert(result.end(), do_8E.begin(), do_8E.end());
     result.push_back(0);
@@ -281,25 +289,34 @@ static bool rapdu_has_data(const ByteVector &rapdu)
 {
     EXCEPTION_ASSERT_WITH_LOG(rapdu.size() >= 3, LibLogicalAccessException,
                               "RAPDU is too short.");
-    return rapdu[0] == 0x87;
+
+    // We have either a DataObject 87 or DataObject 85. Both are valid way
+    // to wrap the data.
+    return rapdu[0] == 0x87 || rapdu[0] == 0x85;
 }
 
 ByteVector ISO24727Crypto::decrypt_rapdu(std::shared_ptr<openssl::SymmetricCipher> cipher,
-                                        const ByteVector &rapdu, const ByteVector &ks_enc,
-                                        const ByteVector &ks_mac, const ByteVector &ssc)
+                                         const ByteVector &rapdu,
+                                         const ByteVector &ks_enc,
+                                         const ByteVector &ks_mac, const ByteVector &ssc)
 {
-    ByteVector do_87;
+    ByteVector do85_or_do87;
     ByteVector do_99;
     ByteVector do_8E;
+    bool is_do_87;
 
     auto cpy = ByteVector(rapdu.begin(), rapdu.end() - 2);
     auto itr = cpy.begin();
+
+    is_do_87 = cpy.at(0) == 0x87;
     if (rapdu_has_data(cpy))
     {
-        do_87.insert(do_87.end(), itr, itr + 3);
-        itr += 3;
-        do_87.insert(do_87.end(), itr, itr + cpy[1] - 1);
-        itr += cpy[1] - 1;
+        // When using DO87 instead of DO85 there is an additional
+        // "Padding Indicator" byte as the first byte the data object.
+        do85_or_do87.insert(do85_or_do87.end(), itr, itr + 2 + is_do_87);
+        itr += 2 + is_do_87;
+        do85_or_do87.insert(do85_or_do87.end(), itr, itr + cpy[1] - is_do_87);
+        itr += cpy[1] - is_do_87;
     }
     EXCEPTION_ASSERT_WITH_LOG(std::distance(itr, cpy.end()) >= 4,
                               LibLogicalAccessException, "RAPDU is too short");
@@ -313,23 +330,24 @@ ByteVector ISO24727Crypto::decrypt_rapdu(std::shared_ptr<openssl::SymmetricCiphe
     ByteVector K;
     auto incremented_ssc = increment_ssc(ssc);
     K.insert(K.end(), incremented_ssc.begin(), incremented_ssc.end());
-    K.insert(K.end(), do_87.begin(), do_87.end());
+    K.insert(K.end(), do85_or_do87.begin(), do85_or_do87.end());
     K.insert(K.end(), do_99.begin(), do_99.end());
 
     bool rep = false;
     ByteVector CC;
     if (rep)
-        CC = compute_mac(cipher, pad(K), ks_mac, {}, ssc);
+        CC = compute_mac(cipher, pad(K, cipher->getBlockSize()), ks_mac, {}, ssc);
     else
-        CC = compute_mac(cipher, pad(K), ks_mac);
+        CC = compute_mac(cipher, pad(K, cipher->getBlockSize()), ks_mac);
     EXCEPTION_ASSERT_WITH_LOG(CC == ByteVector(do_8E.begin() + 2, do_8E.end()),
                               LibLogicalAccessException, "Checksum doesn't match");
 
     ByteVector decrypted_data;
-    if (do_87.size())
+    if (!do85_or_do87.empty())
     {
-        cipher->decipher(ByteVector(do_87.begin() + 3, do_87.end()), decrypted_data,
-                         openssl::SymmetricKey(ks_enc));
+        cipher->decipher(
+            ByteVector(do85_or_do87.begin() + 2 + is_do_87, do85_or_do87.end()),
+            decrypted_data, openssl::SymmetricKey(ks_enc));
         decrypted_data = unpad(decrypted_data);
     }
     decrypted_data.insert(decrypted_data.end(), do_99.begin() + 2, do_99.end());
@@ -338,8 +356,7 @@ ByteVector ISO24727Crypto::decrypt_rapdu(std::shared_ptr<openssl::SymmetricCiphe
 
 ByteVector ISO24727Crypto::encrypt_apdu(const ByteVector &apdu)
 {
-    auto ret        = encrypt_apdu(createCipher(), apdu, S_enc_, S_mac_,
-                                            S_send_counter_);
+    auto ret        = encrypt_apdu(createCipher(), apdu, S_enc_, S_mac_, S_send_counter_);
     S_send_counter_ = ISO24727Crypto::increment_ssc(S_send_counter_);
 
     return ret;
@@ -347,8 +364,7 @@ ByteVector ISO24727Crypto::encrypt_apdu(const ByteVector &apdu)
 
 ByteVector ISO24727Crypto::decrypt_rapdu(const ByteVector &rapdu)
 {
-    auto ret        = decrypt_rapdu(createCipher(), rapdu, S_enc_, S_mac_,
-                                            S_send_counter_);
+    auto ret = decrypt_rapdu(createCipher(), rapdu, S_enc_, S_mac_, S_send_counter_);
     S_send_counter_ = ISO24727Crypto::increment_ssc(S_send_counter_);
 
     return ret;
