@@ -43,7 +43,7 @@ ByteVector TwicStorageCardService::readData(std::shared_ptr<Location> location,
     if (icLocation->tag == 0x00)
     {
         result = getTwicChip()->getTwicCommands()->getISO7816Commands()->getDataList(
-            icLocation->dataObject);
+            icLocation->dataObject, 0);
     }
     else
     {
@@ -52,7 +52,7 @@ ByteVector TwicStorageCardService::readData(std::shared_ptr<Location> location,
             icLocation->dataObject, true);
         ByteVector fulldata =
             getTwicChip()->getTwicCommands()->getISO7816Commands()->getDataList(
-                icLocation->dataObject);
+                icLocation->dataObject, 0);
 
         if (fulldata.size())
         {

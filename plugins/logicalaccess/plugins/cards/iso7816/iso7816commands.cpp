@@ -30,12 +30,16 @@ void ISO7816Commands::selectFile(const ByteVector &dfname)
     selectFile(P1_SELECT_BY_DFNAME, P2_RETURN_NO_FCI, dfname);
 }
 
-ByteVector ISO7816Commands::getDataList(int64_t dataObject, unsigned char listtag,
-                                        size_t length, unsigned short efid)
+ByteVector ISO7816Commands::getDataList(int64_t dataObject,
+                                        unsigned short efid, unsigned char listtag,
+                                        size_t length)
 {
     auto tlv = std::make_shared<TLV>(listtag);
     ByteVector v;
-    v.push_back(static_cast<unsigned char>(0xFF & (dataObject >> 16)));
+    if (dataObject > 0xffff)
+	{
+		v.push_back(static_cast<unsigned char>(0xFF & (dataObject >> 16)));
+	}
     v.push_back(static_cast<unsigned char>(0xFF & (dataObject >> 8)));
     v.push_back(static_cast<unsigned char>(0xFF & dataObject));
     tlv->value(v);

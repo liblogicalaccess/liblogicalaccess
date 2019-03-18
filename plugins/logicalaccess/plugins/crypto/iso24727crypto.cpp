@@ -183,7 +183,7 @@ ByteVector ISO24727Crypto::encrypt_apdu(std::shared_ptr<openssl::SymmetricCipher
     auto ssc_incremented        = increment_ssc(ssc);
     ByteVector cmd_header_nopad = {0x0C};
     cmd_header_nopad.insert(cmd_header_nopad.end(), apdu.begin() + 1, apdu.begin() + 4);
-    ByteVector cmd_header = pad(cmd_header_nopad);
+    ByteVector cmd_header = pad(cmd_header_nopad, cipher->getBlockSize());
 
     ByteVector do_97;
     ByteVector original_data;
@@ -200,7 +200,8 @@ ByteVector ISO24727Crypto::encrypt_apdu(std::shared_ptr<openssl::SymmetricCipher
         original_data = ByteVector(apdu.begin() + 5, apdu.end());
     }
     ByteVector encrypted_data;
-    cipher->cipher(pad(original_data), encrypted_data, openssl::SymmetricKey(ks_enc));
+    cipher->cipher(pad(original_data, cipher->getBlockSize()), encrypted_data,
+                   openssl::SymmetricKey(ks_enc));
 
     ByteVector do_87;
     if (apdu_has_data(apdu)) // LC -- do we have any data?
@@ -215,7 +216,7 @@ ByteVector ISO24727Crypto::encrypt_apdu(std::shared_ptr<openssl::SymmetricCipher
     M.insert(M.end(), do_97.begin(), do_97.end());
     M.insert(M.begin(), ssc_incremented.begin(), ssc_incremented.end());
 
-    ByteVector CC    = compute_mac(cipher, pad(M), ks_mac);
+    ByteVector CC    = compute_mac(cipher, pad(M, cipher->getBlockSize()), ks_mac);
     ByteVector do_8E = {0x8E, 0x08};
     do_8E.insert(do_8E.end(), CC.begin(), CC.end());
 

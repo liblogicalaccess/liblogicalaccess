@@ -172,8 +172,9 @@ class LLA_CARDS_ISO7816_API ISO7816Commands : public Commands
      * \return The data of the object.
      */
     virtual ByteVector getDataList(int64_t dataObject,
+                                   unsigned short efid   = ISO7816_DATA_OBJECT_SELECTED,
                                    unsigned char listtag = ISO7816_DATA_OBJECT_HEADERLIST,
-                                   size_t length = 0, unsigned short efid = 0);
+                                   size_t length         = 0);
 
 	/**
      * \brief Get data.

@@ -139,7 +139,7 @@ size_t TwicCommands::getDataObjectLength(int64_t dataObject, bool withObjectLeng
         size_t datalength = encodedlength + 1;
         try
         {
-            ByteVector data = getISO7816Commands()->getDataList(dataObject);
+            ByteVector data = getISO7816Commands()->getDataList(dataObject, 0);
             if (data.size())
             {
                 length = getValueFromBytes(&data[1], datalength - 1);

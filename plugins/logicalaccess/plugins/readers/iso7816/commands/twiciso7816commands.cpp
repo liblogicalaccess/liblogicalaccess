@@ -68,30 +68,30 @@ void TwicISO7816Commands::selectTWICApplication()
 ByteVector TwicISO7816Commands::getUnsignedCardholderUniqueIdentifier()
 {
     // return getISO7816Commands()->getData(0x3002);
-    return getISO7816Commands()->getDataList(0x5FC104);
+    return getISO7816Commands()->getDataList(0x5FC104, 0);
 }
 
 ByteVector TwicISO7816Commands::getTWICPrivacyKey()
 {
     // return getISO7816Commands()->getData(0x2001);*
-    return getISO7816Commands()->getDataList(0xDFC101);
+    return getISO7816Commands()->getDataList(0xDFC101, 0);
 }
 
 ByteVector TwicISO7816Commands::getCardholderUniqueIdentifier()
 {
     // return getISO7816Commands()->getData(0x3000);
-    return getISO7816Commands()->getDataList(0x5FC102);
+    return getISO7816Commands()->getDataList(0x5FC102, 0);
 }
 
 ByteVector TwicISO7816Commands::getCardHolderFingerprints()
 {
     // return getISO7816Commands()->getData(0x2003);
-    return getISO7816Commands()->getDataList(0xDFC103);
+    return getISO7816Commands()->getDataList(0xDFC103, 0);
 }
 
 ByteVector TwicISO7816Commands::getSecurityObject()
 {
     // return getISO7816Commands()->getData(0x9000);
-    return getISO7816Commands()->getDataList(0xDFC10F);
+    return getISO7816Commands()->getDataList(0xDFC10F, 0);
 }
 }
