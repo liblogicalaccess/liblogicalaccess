@@ -32,20 +32,6 @@ class LLA_READERS_PCSC_API PCSCReaderCardAdapter : public ISO7816ReaderCardAdapt
      * \brief Destructor.
      */
     virtual ~PCSCReaderCardAdapter();
-
-    /**
-     * \brief Adapt the command to send to the reader.
-     * \param command The command to send.
-     * \return The adapted command to send.
-     */
-    ByteVector adaptCommand(const ByteVector &command) override;
-
-    /**
-     * \brief Adapt the asnwer received from the reader.
-     * \param answer The answer received.
-     * \return The adapted answer received.
-     */
-    ByteVector adaptAnswer(const ByteVector &answer) override;
 };
 }
 

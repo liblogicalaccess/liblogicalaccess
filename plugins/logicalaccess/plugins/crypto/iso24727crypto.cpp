@@ -179,8 +179,10 @@ ByteVector ISO24727Crypto::encrypt_apdu(std::shared_ptr<openssl::SymmetricCipher
 
     LOG(DEBUGS) << "Original command to encrypt: " << apdu;
 
-    auto ssc_incremented        = increment_ssc(ssc);
-    ByteVector cmd_header_nopad = {0x0C};
+    auto ssc_incremented = increment_ssc(ssc);
+
+    // Bit 3 and 4 should be set.
+    ByteVector cmd_header_nopad = {static_cast<uint8_t>(apdu[0] | 0x0C)};
     cmd_header_nopad.insert(cmd_header_nopad.end(), apdu.begin() + 1, apdu.begin() + 4);
     ByteVector cmd_header = pad(cmd_header_nopad, cipher->getBlockSize());
 

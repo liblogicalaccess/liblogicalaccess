@@ -16,17 +16,6 @@ PCSCReaderCardAdapter::PCSCReaderCardAdapter()
     d_dataTransport.reset(new PCSCDataTransport());
 }
 
-PCSCReaderCardAdapter::~PCSCReaderCardAdapter()
-{
-}
+PCSCReaderCardAdapter::~PCSCReaderCardAdapter() {}
 
-ByteVector PCSCReaderCardAdapter::adaptCommand(const ByteVector &command)
-{
-    return ISO7816ReaderCardAdapter::adaptCommand(command);
-}
-
-ByteVector PCSCReaderCardAdapter::adaptAnswer(const ByteVector &answer)
-{
-    return ISO7816ReaderCardAdapter::adaptAnswer(answer);
-}
 }
