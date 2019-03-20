@@ -111,6 +111,7 @@ class LLAConan(ConanFile):
             self.cpp_info.libs.append('iso7816cards')
             self.cpp_info.libs.append('samav2cards')
             self.cpp_info.libs.append('epasscards')
+            self.cpp_info.libs.append('seoscards')
             return
 
         if self.settings.os == 'Windows':
