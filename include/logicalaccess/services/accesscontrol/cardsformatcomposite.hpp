@@ -10,24 +10,10 @@
 #include <map>
 #include <logicalaccess/cards/chip.hpp>
 #include <logicalaccess/xmlserializable.hpp>
+#include <logicalaccess/services/accesscontrol/formatinfos.hpp>
 
 namespace logicalaccess
 {
-/**
- * \brief Format information for a card type.
- */
-struct FormatInfos
-{
-    std::shared_ptr<Format> format;        /**< \brief Format information. */
-    std::shared_ptr<Location> location;    /**< \brief Location information. */
-    std::shared_ptr<AccessInfo> aiToUse;   /**< \brief Access information to use. */
-    std::shared_ptr<AccessInfo> aiToWrite; /**< \brief Access information to write. */
-
-    FormatInfos()
-    {
-    }
-};
-
 /**
  * \brief A format infos map.
  */
