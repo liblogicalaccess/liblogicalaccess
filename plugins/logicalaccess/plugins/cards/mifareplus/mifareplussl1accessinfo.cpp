@@ -30,3 +30,8 @@ std::string MifarePlusSL1AccessInfo::getDefaultXmlNodeName() const
 {
     return "MifarePlusSL1AccessInfo";
 }
+
+std::string MifarePlusSL1AccessInfo::getCardType() const
+{
+    return "MifarePlusSL1";
+}

@@ -23,6 +23,8 @@ class LLA_CARDS_MIFAREPLUS_API MifarePlusSL1AccessInfo : public MifareAccessInfo
 
     std::string getDefaultXmlNodeName() const override;
 
+    std::string getCardType() const override;
+
     /**
      * Key for card authentication in SL1.
      */
