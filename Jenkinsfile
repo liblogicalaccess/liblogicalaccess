@@ -51,7 +51,10 @@ pipeline {
                 script {
                     lla.startJobForProfiles(['lla/arm_clang_android_21_debug',
                                              'lla/arm_clang_android_21',
-                                             'lla/x86_clang_android_21'])
+                                             'lla/x86_clang_android_21',
+                                             'lla/x64_clang_android21',
+                                             'lla/arm64_clang_android21'
+                    ])
                 }
             }
         }
