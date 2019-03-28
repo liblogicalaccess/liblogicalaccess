@@ -17,12 +17,12 @@ namespace logicalaccess
 /**
  * \brief A format infos map.
  */
-typedef std::map<std::string, FormatInfos> FormatInfosList;
+typedef std::map<std::string, std::shared_ptr<FormatInfos>> FormatInfosList;
 
 /**
  * \brief A format infos pair.
  */
-typedef std::pair<std::string, FormatInfos> FormatInfosPair;
+typedef std::pair<std::string, std::shared_ptr<FormatInfos>> FormatInfosPair;
 
 /**
  * \brief A card type list.
@@ -60,12 +60,10 @@ class LLA_CORE_API CardsFormatComposite : public XmlSerializable
     /**
      * \brief Add a format for a card type.
      * \param type The card type.
-     * \param format The format.
-     * \param location The format location.
-     * \param aiToUse The format access information.
-     * \param aiToWrite The format access information to write in write mode.
+     * \param formatInfos The format information.
      */
-    void addFormatForCard(const std::string &type, const FormatInfos &formatInfos);
+    void addFormatForCard(const std::string &type,
+                          std::shared_ptr<FormatInfos> formatInfos);
 
     /**
      * \brief Retrieve format information for a card type.
@@ -75,7 +73,7 @@ class LLA_CORE_API CardsFormatComposite : public XmlSerializable
      * \param aiToUse The format access information.
      * \param aiToWrite The format access information to write in write mode.
      */
-    FormatInfos retrieveFormatForCard(const std::string &type);
+    std::shared_ptr<FormatInfos> retrieveFormatForCard(const std::string &type);
 
     /**
      * \brief Remove a format for a card type.

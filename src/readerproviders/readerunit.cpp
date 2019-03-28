@@ -191,17 +191,17 @@ ByteVector ReaderUnit::getNumber(std::shared_ptr<Chip> chip,
 
                 auto result = composite->retrieveFormatForCard(useCardType);
 
-                if (result.getFormat())
+                if (result->getFormat())
                 {
                     LOG(LogLevel::INFOS)
                         << "Format retrieved successfully ! Reading the format...";
-                    result.setFormat(composite->readFormat(chip)); // Read format on chip
+                    result->setFormat(composite->readFormat(chip)); // Read format on chip
 
-                    if (result.getFormat())
+                    if (result->getFormat())
                     {
                         LOG(LogLevel::INFOS)
                             << "Format read successfully ! Getting identifier...";
-                        ret = result.getFormat()->getIdentifier();
+                        ret = result->getFormat()->getIdentifier();
                     }
                     else
                     {

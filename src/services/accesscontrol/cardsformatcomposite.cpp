@@ -56,21 +56,22 @@ CardsFormatComposite::createFormatFromXml(const std::string &xmlstring,
 }
 
 void CardsFormatComposite::addFormatForCard(const std::string &type,
-                                            const FormatInfos &formatInfos)
+                                            std::shared_ptr<FormatInfos> formatInfos)
 {
     LOG(LogLevel::INFOS) << "Add format for card type {" << type << "}...";
-    FormatInfos finfos;
-    finfos.setFormat(formatInfos.getFormat());
-    finfos.setLocation(formatInfos.getLocation());
-    finfos.setAiToUse(formatInfos.getAiToUse());
-    finfos.setAiToWrite(formatInfos.getAiToWrite());
+    auto finfos = std::make_shared<FormatInfos>();
+    finfos->setFormat(formatInfos->getFormat());
+    finfos->setLocation(formatInfos->getLocation());
+    finfos->setAiToUse(formatInfos->getAiToUse());
+    finfos->setAiToWrite(formatInfos->getAiToWrite());
 
     formatsList[type] = finfos;
 }
 
-FormatInfos CardsFormatComposite::retrieveFormatForCard(const std::string &type)
+std::shared_ptr<FormatInfos>
+CardsFormatComposite::retrieveFormatForCard(const std::string &type)
 {
-    FormatInfos result;
+    std::shared_ptr<FormatInfos> result = std::make_shared<FormatInfos>();
 
     memset(&result, 0x00, sizeof(result));
 
@@ -78,10 +79,10 @@ FormatInfos CardsFormatComposite::retrieveFormatForCard(const std::string &type)
     if (formatsList.find(type) != formatsList.end())
     {
         LOG(LogLevel::INFOS) << "Type found int the composite. Retrieving values...";
-        result.setFormat(formatsList[type].getFormat());
-        result.setLocation(formatsList[type].getLocation());
-        result.setAiToUse(formatsList[type].getAiToUse());
-        result.setAiToWrite(formatsList[type].getAiToWrite());
+        result->setFormat(formatsList[type]->getFormat());
+        result->setLocation(formatsList[type]->getLocation());
+        result->setAiToUse(formatsList[type]->getAiToUse());
+        result->setAiToWrite(formatsList[type]->getAiToWrite());
     }
     else
     {
@@ -137,8 +138,8 @@ std::shared_ptr<Format> CardsFormatComposite::readFormat(std::shared_ptr<Chip> c
 
         if (it != formatsList.end())
         {
-            FormatInfos finfos = formatsList[ct];
-            if (finfos.getFormat())
+            auto finfos = formatsList[ct];
+            if (finfos->getFormat())
             {
                 // Make a manual format copy to preserve integrity.
                 try
@@ -149,9 +150,9 @@ std::shared_ptr<Format> CardsFormatComposite::readFormat(std::shared_ptr<Chip> c
                             chip->getService(CST_ACCESS_CONTROL));
                     if (acService)
                     {
-                        fcopy = acService->readFormat(finfos.getFormat(), finfos.getLocation(),
-                                                      finfos.getAiToUse());
-                        if (fcopy && !finfos.getFormat()->checkSkeleton(fcopy))
+                        fcopy = acService->readFormat(finfos->getFormat(), finfos->getLocation(),
+                                                      finfos->getAiToUse());
+                        if (fcopy && !finfos->getFormat()->checkSkeleton(fcopy))
                         {
                             fcopy.reset();
                         }
@@ -201,26 +202,26 @@ void CardsFormatComposite::serialize(boost::property_tree::ptree &parentNode)
             LOG(LogLevel::INFOS) << "Serializing type {" << it->first << "}...";
             boost::property_tree::ptree nodecard;
             nodecard.put("type", it->first);
-            nodecard.put("SelectedFormat", (it->second.getFormat())
-                                               ? it->second.getFormat()->getType()
+            nodecard.put("SelectedFormat", (it->second->getFormat())
+                                               ? it->second->getFormat()->getType()
                                                : FT_UNKNOWN);
             boost::property_tree::ptree nodeformat;
-            if (it->second.getFormat())
+            if (it->second->getFormat())
             {
-                it->second.getFormat()->serialize(nodeformat);
-                if (it->second.getLocation())
+                it->second->getFormat()->serialize(nodeformat);
+                if (it->second->getLocation())
                 {
-                    it->second.getLocation()->serialize(nodeformat);
+                    it->second->getLocation()->serialize(nodeformat);
                 }
-                if (it->second.getAiToUse())
+                if (it->second->getAiToUse())
                 {
-                    it->second.getAiToUse()->serialize(nodeformat);
+                    it->second->getAiToUse()->serialize(nodeformat);
                 }
                 boost::property_tree::ptree nodewinfo;
-                if (it->second.getAiToWrite())
+                if (it->second->getAiToWrite())
                 {
                     LOG(LogLevel::INFOS) << "Write info detected. Serializing...";
-                    it->second.getAiToWrite()->serialize(nodewinfo);
+                    it->second->getAiToWrite()->serialize(nodewinfo);
                 }
                 nodecard.add_child("WriteInfo", nodewinfo);
             }
@@ -249,7 +250,7 @@ void CardsFormatComposite::unSerialize(boost::property_tree::ptree &node)
             EXCEPTION_ASSERT_WITH_LOG(chip, LibLogicalAccessException,
                                       "Unknow card type.");
 
-            FormatInfos finfos;
+            auto finfos = std::make_shared<FormatInfos>();
             if (std::shared_ptr<Format> format =
                     Format::getByFormatType(static_cast<FormatType>(
                         v.second.get_child("SelectedFormat").get_value<unsigned int>())))
@@ -272,7 +273,7 @@ void CardsFormatComposite::unSerialize(boost::property_tree::ptree &node)
                         location.reset();
                     }
                 }
-                finfos.setLocation(location);
+                finfos->setLocation(location);
 
                 std::shared_ptr<AccessInfo> aiToUse = chip->createAccessInfo();
                 if (aiToUse)
@@ -289,7 +290,7 @@ void CardsFormatComposite::unSerialize(boost::property_tree::ptree &node)
                         aiToUse.reset();
                     }
                 }
-                finfos.setAiToUse(aiToUse);
+                finfos->setAiToUse(aiToUse);
 
                 std::shared_ptr<AccessInfo> aiToWrite;
                 boost::property_tree::ptree writeNode = v.second.get_child("WriteInfo");
@@ -311,13 +312,13 @@ void CardsFormatComposite::unSerialize(boost::property_tree::ptree &node)
                         }
                     }
                 }
-                finfos.setAiToWrite(aiToWrite);
+                finfos->setAiToWrite(aiToWrite);
 
-                finfos.setFormat(format);
+                finfos->setFormat(format);
             }
             else
             {
-                finfos.setFormat(nullptr);
+                finfos->setFormat(nullptr);
             }
 
             formatsList.insert(FormatInfosPair(type, finfos));
