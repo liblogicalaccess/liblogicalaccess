@@ -73,8 +73,6 @@ CardsFormatComposite::retrieveFormatForCard(const std::string &type)
 {
     std::shared_ptr<FormatInfos> result = std::make_shared<FormatInfos>();
 
-    memset(&result, 0x00, sizeof(result));
-
     LOG(LogLevel::INFOS) << "Retrieving format for card type {" << type << "}...";
     if (formatsList.find(type) != formatsList.end())
     {
