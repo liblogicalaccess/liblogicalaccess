@@ -71,25 +71,37 @@ bool PCSCCardProbe::is_desfire(std::vector<uint8_t> *uid)
 
 int PCSCCardProbe::get_desfire_version(std::vector<uint8_t> *uid)
 {
-    try
+    int try_count = 0;
+    while (true)
     {
-        LLA_LOG_CTX("Probe::get_desfire_version");
-        reset();
-        auto chip = reader_unit_->createChip("DESFireEV1");
-        auto desfire_command =
-            std::dynamic_pointer_cast<DESFireCommands>(chip->getCommands());
-        assert(desfire_command);
-        desfire_command->selectApplication(0x00);
-        DESFireCommands::DESFireCardVersion cardversion = desfire_command->getVersion();
+        try
+        {
+            LLA_LOG_CTX("Probe::get_desfire_version");
+            reset();
+            auto chip = reader_unit_->createChip("DESFireEV1");
+            auto desfire_command =
+                std::dynamic_pointer_cast<DESFireCommands>(chip->getCommands());
+            assert(desfire_command);
+            desfire_command->selectApplication(0x00);
+            DESFireCommands::DESFireCardVersion cardversion =
+                desfire_command->getVersion();
 
-        if (uid)
-            *uid = ByteVector(std::begin(cardversion.uid), std::end(cardversion.uid));
-        return cardversion.softwareMjVersion;
-    }
-    catch (const std::exception &)
-    {
-        // If an error occurred, the card probably isn't desfire.
-        return -1;
+            if (uid)
+                *uid = ByteVector(std::begin(cardversion.uid), std::end(cardversion.uid));
+            return cardversion.softwareMjVersion;
+        }
+        catch (const std::exception &)
+        {
+            // Quite often the hardware is not ready or something else happens
+            // which cause the command to fail. So we try a few time.
+            // This seems to fix somewhat reliably the Desfire / EV1 / EV2 detection
+            // issues.
+            if (try_count++ == 2)
+            {
+                // If an error occurred, the card probably isn't desfire.
+                return -1;
+            }
+        }
     }
 }
 
