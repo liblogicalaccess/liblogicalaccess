@@ -44,7 +44,6 @@ void MifareUltralightPCSCCommands::writePage(int page, const ByteVector &buf)
     {
         THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad buffer parameter.");
     }
-
     getPCSCReaderCardAdapter()->sendAPDUCommand(
         0xFF, 0xD6, 0x00, static_cast<unsigned char>(page),
         static_cast<unsigned char>(buf.size()), buf);

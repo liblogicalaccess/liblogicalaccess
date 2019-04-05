@@ -49,11 +49,23 @@ void MifareUltralightCommands::writePages(int start_page, int stop_page,
     }
 
     size_t offset = 0;
-    for (int i = start_page; i <= stop_page; ++i)
+    size_t endOfPage = offset + 4;
+    size_t size = buf.size();
+    ByteVector lastLineData = {};
+    for (int i = start_page; i <= stop_page && offset != size; ++i)
     {
-        ByteVector tmp(buf.begin() + offset, buf.begin() + offset + 4);
+        if (offset + 4 > size)
+          endOfPage = size;
+        else
+          endOfPage = offset + 4;
+        ByteVector tmp(buf.begin() + offset, buf.begin() + endOfPage);
+        if (endOfPage % 4 != 0)
+        {
+          lastLineData = readPage(i);
+          tmp.insert(tmp.end(), lastLineData.begin() + (endOfPage - offset), lastLineData.begin() + 4);
+        }
         writePage(i, tmp);
-        offset += 4;
+        offset = endOfPage;
     }
 }
 
