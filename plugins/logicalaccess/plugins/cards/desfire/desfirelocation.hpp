@@ -79,6 +79,8 @@ class LLA_CARDS_DESFIRE_API DESFireLocation : public Location
         return "DESFire";
     }
 
+    void incrementOffset(int increment) override;
+
     /**
      * \brief Equality operator
      * \param location Location to compare.

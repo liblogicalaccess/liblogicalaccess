@@ -39,6 +39,8 @@ enum class PACS_EXTRACTION_MODE
 class LLA_CORE_API AccessControlCardService : public CardService
 {
   public:
+    constexpr static const CardServiceType service_type_ = CST_ACCESS_CONTROL;
+
     /**
      * \brief Constructor.
      * \param chip The associated chip.

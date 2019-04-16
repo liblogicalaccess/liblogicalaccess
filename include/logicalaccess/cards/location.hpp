@@ -27,6 +27,15 @@ class LLA_CORE_API Location : public XmlSerializable
     virtual std::string getCardType() = 0;
 
     /**
+     * Increment the offset of the location.
+     *
+     * Todo: Possibly a refactor would be better than this virtual method.
+     */
+    virtual void incrementOffset(int increment) {
+        throw std::runtime_error("not implemented");
+    }
+
+    /**
      * \brief Equality operator
      * \param location Location to compare.
      * \return True if equals, false otherwise.

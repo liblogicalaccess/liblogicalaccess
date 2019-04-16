@@ -29,6 +29,8 @@ typedef enum {
 class LLA_CORE_API StorageCardService : public CardService
 {
   public:
+    constexpr static const CardServiceType service_type_ = CST_STORAGE;
+
     /**
      * \brief Constructor.
      * \param chip The associated chip.

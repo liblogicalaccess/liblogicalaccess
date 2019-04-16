@@ -61,8 +61,9 @@ struct GetBitSetSize<std::bitset<Len>>
  * This helper is a workaround around a Swig issue with regard to
  * numerical operation in template argument list.
  */
-template<size_t Val>
-struct DoubleValue {
+template <size_t Val>
+struct DoubleValue
+{
     enum
     {
         Value = Val * 2
@@ -113,7 +114,8 @@ class LLA_CORE_API ManchesterEncoder
      * Encode a bitset, returns a bitset twice as large.
      */
     template <typename BitSet>
-    static std::bitset<DoubleValue<GetBitSetSize<BitSet>::Length>::Value> encode(const BitSet &in, Type t)
+    static std::bitset<DoubleValue<GetBitSetSize<BitSet>::Length>::Value>
+    encode(const BitSet &in, Type t)
     {
         std::bitset<GetBitSetSize<BitSet>::Length * 2> out;
 
@@ -139,4 +141,6 @@ class LLA_CORE_API ManchesterEncoder
 };
 
 LLA_CORE_API int portable_setenv(const char *name, const char *value, int overwrite);
+LLA_CORE_API std::string base64_encode(unsigned char const *, unsigned int len);
+LLA_CORE_API std::string base64_decode(std::string const &s);
 }

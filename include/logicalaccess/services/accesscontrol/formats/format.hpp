@@ -175,11 +175,21 @@ class LLA_CORE_API Format : public XmlSerializable
      */
     std::shared_ptr<DataField> getFieldFromName(std::string field) const;
 
+    bool isRepeatable() const;
+
+    void setRepeatable(bool v);
+
   protected:
     /**
      * \brief The field list.
      */
     std::list<std::shared_ptr<DataField>> d_fieldList;
+
+    /**
+     * If true, we expect the format to be concatenated multiple time in a single
+     * Location.
+     */
+    bool is_repeatable_;
 };
 }
 

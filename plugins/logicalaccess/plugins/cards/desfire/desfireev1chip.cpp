@@ -13,6 +13,7 @@
 #include <cstring>
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
 #include <logicalaccess/cards/locationnode.hpp>
+#include "desfire_json_dump_card_service.hpp"
 
 namespace logicalaccess
 {
@@ -84,6 +85,11 @@ std::shared_ptr<CardService> DESFireEV1Chip::getService(CardServiceType serviceT
         service.reset(new DESFireEV1NFCTag4CardService(shared_from_this()));
     }
     break;
+    case CST_JSON_DUMP:
+    {
+        // todo should not be here...
+        service = std::make_shared<DESFireJsonDumpCardService>(shared_from_this());
+    }
     default: break;
     }
 
