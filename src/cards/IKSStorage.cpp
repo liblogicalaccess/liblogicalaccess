@@ -90,13 +90,3 @@ bool IKSStorage::getSerializeIKSConfig() const
 {
     return saveIKSConfig_;
 }
-
-void IKSStorage::getIKSConfig(std::string &ip, uint16_t &port, std::string &client_cert,
-                              std::string &client_key, std::string &root_ca) const
-{
-    ip          = config_.ip;
-    port        = config_.port;
-    client_cert = config_.client_cert;
-    client_key  = config_.client_key;
-    root_ca     = config_.root_ca;
-}
