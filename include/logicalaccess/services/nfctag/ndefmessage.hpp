@@ -7,12 +7,13 @@
 #ifndef LOGICALACCESS_NDEFMESSAGE_HPP
 #define LOGICALACCESS_NDEFMESSAGE_HPP
 
-#include <logicalaccess/xmlserializable.hpp>
 #include <logicalaccess/services/nfctag/ndefrecord.hpp>
+#include <logicalaccess/services/nfctag/nfcdata.hpp>
 #include <logicalaccess/lla_fwd.hpp>
 
 namespace logicalaccess
 {
+  #define NDEF_MESSAGE 0x03
 enum NdefType
 {
     Text = 0x54,
@@ -31,12 +32,10 @@ enum UriType
     URI_FILE  = 0x1D  // file://
 };
 
-class LLA_CORE_API NdefMessage : public XmlSerializable
+class LLA_CORE_API NdefMessage : public NfcData
 {
   public:
-    NdefMessage()
-    {
-    }
+    NdefMessage();
     explicit NdefMessage(const ByteVector &data);
     virtual ~NdefMessage()
     {

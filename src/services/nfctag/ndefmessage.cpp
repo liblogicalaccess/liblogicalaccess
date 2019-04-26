@@ -12,7 +12,11 @@
 
 namespace logicalaccess
 {
-NdefMessage::NdefMessage(const ByteVector &data)
+  NdefMessage::NdefMessage() : NfcData(NDEF_MESSAGE )
+ {
+ }
+
+NdefMessage::NdefMessage(const ByteVector &data) : NfcData(NDEF_MESSAGE )
 {
     size_t index = 0;
 
@@ -23,7 +27,7 @@ NdefMessage::NdefMessage(const ByteVector &data)
         std::shared_ptr<NdefRecord> record(new NdefRecord());
 
         unsigned char tnf_tmp = data[index];
-        // bool mb = (tnf_tmp & 0x80) != 0;
+        //bool mb = (tnf_tmp & 0x80) != 0;
         bool me = (tnf_tmp & 0x40) != 0;
         // bool cf = (tnf_tmp & 0x20) != 0; //We dont manage chunked payload
         bool sr           = (tnf_tmp & 0x10) != 0;
@@ -42,7 +46,6 @@ NdefMessage::NdefMessage(const ByteVector &data)
             payloadLength = data[index];
         else
             payloadLength = BufferHelper::getInt32(data, index);
-
         int idLength = 0;
         if (il)
         {
@@ -67,7 +70,6 @@ NdefMessage::NdefMessage(const ByteVector &data)
                 ByteVector(data.begin() + index, data.begin() + index + idLength));
             index += idLength;
         }
-
         EXCEPTION_ASSERT((index + payloadLength) <= data.size(), std::invalid_argument,
                          "The buffer size is too small (5).");
         record->setPayload(
@@ -209,7 +211,7 @@ std::shared_ptr<NdefMessage> NdefMessage::TLVToNdefMessage(ByteVector tlv)
                 ndef.reset(new NdefMessage(msgdata));
                 i += tlv[i];
             }
-            // TODO: support multiple ndef message
+
             // Ndef found, leave
             i = static_cast<unsigned short>(tlv.size());
             break;
