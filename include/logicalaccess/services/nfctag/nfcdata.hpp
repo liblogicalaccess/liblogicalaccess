@@ -16,16 +16,15 @@ namespace logicalaccess
   {
   public:
     NfcData();
-    NfcData(char);
+    NfcData(char type);
     ~NfcData();
-    static ByteVector dataToTLV(std::shared_ptr<NfcData>);
-    static void findAllMemoryControls(ByteVector, std::vector<std::shared_ptr<NfcData> > &);
-    static std::vector<std::shared_ptr<NfcData> > tlvToData(ByteVector);
+    static ByteVector dataToTLV(std::shared_ptr<NfcData> data);
+    static std::vector<std::shared_ptr<NfcData> > tlvToData(ByteVector tlv);
     void serialize(boost::property_tree::ptree &parentNode) override;
     void unSerialize(boost::property_tree::ptree &node) override;
     std::string getDefaultXmlNodeName() const override;
     char getType() const;
-    void setType(char);
+    void setType(char type);
   protected:
     char m_type;
   };

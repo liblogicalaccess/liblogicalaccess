@@ -16,23 +16,23 @@ namespace logicalaccess
   {
   public:
     LockControlTlv();
-    LockControlTlv(ByteVector);
-    LockControlTlv(int, unsigned char  = 0x10, unsigned char  = 0x04);
+    LockControlTlv(ByteVector data);
+    LockControlTlv(int ad, unsigned char nodlb = 0x10, unsigned char blplb  = 0x04);
     ~LockControlTlv();
     int getAdditionalDataSize() const;
-    void setAdditionalDataSize(int);
+    void setAdditionalDataSize(int additionalDataSize);
     unsigned char  getNumberOfDynamicLockBits() const;
-    void setNumberOfDynamicLockBits(unsigned char );
+    void setNumberOfDynamicLockBits(unsigned char numberOfDynamicLockBits);
     unsigned char  getBytesLockedPerLockBit() const;
-    void setBytesLockedPerLockBit(unsigned char );
+    void setBytesLockedPerLockBit(unsigned char bytesLockedPerLockBit);
     unsigned char  getBytesPerPage() const;
-    void setBytesPerPage(unsigned char );
+    void setBytesPerPage(unsigned char bytesPerPage);
     unsigned char  getOffset() const;
-    void setOffest(unsigned char );
+    void setOffest(unsigned char offset);
     unsigned char  getPageAddr() const;
-    void setPageAddr(unsigned char );
+    void setPageAddr(unsigned char pageAddr);
     unsigned char  getDynamicLockBytesPosition() const;
-    void setDynamicLockBytesPosition(unsigned char );
+    void setDynamicLockBytesPosition(unsigned char dynamicLockBytesPosition);
 
     void serialize(boost::property_tree::ptree &parentNode) override;
     void unSerialize(boost::property_tree::ptree &node) override;
@@ -40,7 +40,7 @@ namespace logicalaccess
 
     static std::shared_ptr<LockControlTlv> tlvToLockControl(ByteVector tlv);
 
-    static ByteVector lockControlToTLV(std::shared_ptr<LockControlTlv>);
+    static ByteVector lockControlToTLV(std::shared_ptr<LockControlTlv> data);
   private:
     void calculateLockPosition();
     int  _additionalDataSize;

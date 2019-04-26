@@ -13,6 +13,7 @@
 
 namespace logicalaccess
 {
+  #define NDEF_MESSAGE 0x03
 enum NdefType
 {
     Text = 0x54,

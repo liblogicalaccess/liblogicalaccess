@@ -12,11 +12,11 @@
 
 namespace logicalaccess
 {
-  NdefMessage::NdefMessage() : NfcData(0x03)
+  NdefMessage::NdefMessage() : NfcData(NDEF_MESSAGE )
  {
  }
 
-NdefMessage::NdefMessage(const ByteVector &data) : NfcData(0x03)
+NdefMessage::NdefMessage(const ByteVector &data) : NfcData(NDEF_MESSAGE )
 {
     size_t index = 0;
 
@@ -211,9 +211,6 @@ std::shared_ptr<NdefMessage> NdefMessage::TLVToNdefMessage(ByteVector tlv)
                 ndef.reset(new NdefMessage(msgdata));
                 i += tlv[i];
             }
-            // TODO: support multiple ndef message
-            // edit: multiple ndef message supported in nfcdata.cpp
-
 
             // Ndef found, leave
             i = static_cast<unsigned short>(tlv.size());

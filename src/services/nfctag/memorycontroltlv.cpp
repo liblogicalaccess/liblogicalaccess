@@ -54,7 +54,7 @@ namespace logicalaccess
     data->calculateReservedPosition();
     tlv.push_back((data->getPageAddr() << 4) + data->getOffset());
     tlv.push_back(data->getSize());
-    tlv.push_back((data->getBytesPerPage() << 4) + RFU);
+    tlv.push_back((data->getBytesPerPage() << 4) + TLV_RFU);
     return tlv;
   }
 

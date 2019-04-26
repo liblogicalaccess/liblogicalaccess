@@ -12,25 +12,25 @@
 
 namespace logicalaccess
 {
-  #define RFU 0x00
+  #define TLV_RFU 0x00
 
   class LLA_CORE_API MemoryControlTlv : public NfcData
   {
   public:
     MemoryControlTlv();
-    MemoryControlTlv(ByteVector);
-    MemoryControlTlv(int, unsigned char);
+    MemoryControlTlv(ByteVector data);
+    MemoryControlTlv(int byteAddr, unsigned char size);
     ~MemoryControlTlv();
     int getByteAddr() const;
-    void setByteAddr(int);
+    void setByteAddr(int addr);
     unsigned char getPageAddr() const;
-    void setPageAddr(unsigned char);
+    void setPageAddr(unsigned char pageAddr);
     unsigned char getOffset() const;
-    void setOffset(unsigned char);
+    void setOffset(unsigned char offset);
     unsigned char getSize() const;
-    void setSize(unsigned char);
+    void setSize(unsigned char size);
     unsigned char getBytesPerPage() const;
-    void setBytesPerPage(unsigned char);
+    void setBytesPerPage(unsigned char bytesPerPage);
 
 
     void serialize(boost::property_tree::ptree &parentNode) override;
@@ -39,7 +39,7 @@ namespace logicalaccess
 
     static std::shared_ptr<MemoryControlTlv> tlvToMemoryControl(ByteVector tlv);
 
-    static ByteVector memoryControlToTLV(std::shared_ptr<MemoryControlTlv>);
+    static ByteVector memoryControlToTLV(std::shared_ptr<MemoryControlTlv> data);
 
   private:
     void calculateReservedPosition();

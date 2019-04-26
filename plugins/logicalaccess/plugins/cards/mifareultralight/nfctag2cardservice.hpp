@@ -10,6 +10,7 @@
 #include <logicalaccess/services/nfctag/nfctagcardservice.hpp>
 #include <logicalaccess/services/nfctag/ndefmessage.hpp>
 #include <logicalaccess/plugins/cards/mifareultralight/mifareultralightchip.hpp>
+#include <logicalaccess/services/nfctag/nfcdata.hpp>
 
 namespace logicalaccess
 {
@@ -18,6 +19,12 @@ namespace logicalaccess
 /**
 * \brief The NFC Tag 2 storage card service base class.
 */
+struct MemoryData
+{
+  int byteAddr;
+  unsigned int size;
+};
+
 class LLA_CARDS_MIFAREULTRALIGHT_API NFCTag2CardService : public NFCTagCardService
 {
   public:
@@ -41,17 +48,25 @@ class LLA_CARDS_MIFAREULTRALIGHT_API NFCTag2CardService : public NFCTagCardServi
 
     std::shared_ptr<NdefMessage> readNDEF() override;
 
+    std::vector<std::shared_ptr<NfcData>> readData();
+
     void writeNDEF(std::shared_ptr<NdefMessage> records) override;
+
+    void writeData(std::shared_ptr<NfcData> records, int addr);
 
     void eraseNDEF() override;
 
     void writeCapabilityContainer() const;
 
+
   protected:
+    void fillMemoryList(ByteVector data);
+    int checkForReservedArea(unsigned int addr);
     std::shared_ptr<MifareUltralightChip> getMifareUltralightChip() const
     {
         return std::dynamic_pointer_cast<MifareUltralightChip>(getChip());
     }
+    std::vector<MemoryData> _memoryList;
 };
 }
 
