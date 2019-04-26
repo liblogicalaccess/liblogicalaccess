@@ -83,13 +83,10 @@ namespace logicalaccess
               }
               break;
           case 0xFE: // Terminator
-              // Sarah Connor ?
               i = tlv.size();
               break;
           default:;
           }
-
-          //i += 1;
       }
      return messageList;
    }
