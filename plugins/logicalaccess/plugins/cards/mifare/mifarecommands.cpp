@@ -325,10 +325,16 @@ void MifareCommands::writeSector(
     std::shared_ptr<MifareKey> newkeyA, std::shared_ptr<MifareKey> newkeyB)
 {
     size_t retlen = 0;
-
+    ByteVector tmp = buf;
     MifareKeyType keytype, pkeytype = KT_KEY_A;
+
     for (int i = start_block; i < getNbBlocks(sector); i++)
     {
+        if (tmp.size() < retlen + 16)
+        {
+          ByteVector r = readSector(sector, i, keyA, keyB, sab);
+           tmp.insert(tmp.end(), r.begin() + tmp.size() % 16, r.end());
+        }
         keytype = getKeyType(sab, sector, i, true);
         if (i == start_block || keytype != pkeytype)
         {
@@ -336,7 +342,7 @@ void MifareCommands::writeSector(
             pkeytype = keytype;
         }
         updateBinary(static_cast<unsigned char>(getSectorStartBlock(sector) + i),
-                     ByteVector(buf.begin() + retlen, buf.begin() + retlen + 16));
+                     ByteVector(tmp.begin() + retlen, tmp.begin() + retlen + 16));
         retlen += 16;
     }
 
@@ -350,6 +356,7 @@ void MifareCommands::writeSector(
         }
         changeKeys(newkeyA, newkeyB, sector, newsab, userbyte);
     }
+
 }
 
 void MifareCommands::changeKeys(MifareKeyType keytype, std::shared_ptr<MifareKey> key,

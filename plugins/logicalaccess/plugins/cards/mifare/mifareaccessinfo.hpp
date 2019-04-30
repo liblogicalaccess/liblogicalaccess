@@ -200,12 +200,40 @@ class LLA_CARDS_MIFARE_API MifareAccessInfo : public AccessInfo
          * \brief Set A read, B write configuration.
          */
         void setAReadBWriteConfiguration();
+        void setAReadNeverWriteConfiguration();
+        void setBReadBWriteConfiguration();
+        void setBReadNeverWriteConfiguration();
+        void setNeverReadNeverWriteConfiguration();
+        void setNfcConfiguration();
+
+        bool operator==(SectorAccessBits a)
+        {
+          if (a.d_sector_trailer_access_bits.c1 != this->d_sector_trailer_access_bits.c1
+            || a.d_sector_trailer_access_bits.c2 != this->d_sector_trailer_access_bits.c2
+            || a.d_sector_trailer_access_bits.c3 != this->d_sector_trailer_access_bits.c3)
+            return false;
+          for (unsigned int i = 0; i < 3; ++i)
+          {
+            if (a.d_data_blocks_access_bits[i].c1 != this->d_data_blocks_access_bits[i].c1
+              || a.d_data_blocks_access_bits[i].c2 != this->d_data_blocks_access_bits[i].c2
+              || a.d_data_blocks_access_bits[i].c3 != this->d_data_blocks_access_bits[i].c3)
+              return false;
+          }
+          return true;
+        }
+
+        bool operator!=(const SectorAccessBits a)
+        {
+          bool b = (*this) == a;
+          return !b;
+        }
 
         DataBlockAccessBits
             d_data_blocks_access_bits[3]; /**< \brief The data blocks access bits. */
         SectorTrailerAccessBits
             d_sector_trailer_access_bits; /**< \brief The sector trailer access bits. */
     };
+
 
     /**
      * \brief The key A.

@@ -15,6 +15,13 @@ namespace logicalaccess
 /**
 * \brief The NFC Tag storage card service base class.
 */
+
+struct MemoryData
+{
+  int byteAddr;
+  unsigned int size;
+};
+
 class LLA_CORE_API NFCTagCardService : public CardService
 {
   public:

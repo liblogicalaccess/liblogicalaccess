@@ -97,6 +97,20 @@ void MifareAccessInfo::SectorAccessBits::setTransportConfiguration()
     }
 }
 
+void MifareAccessInfo::SectorAccessBits::setNfcConfiguration()
+{
+    d_sector_trailer_access_bits.c1 = false;
+    d_sector_trailer_access_bits.c2 = true;
+    d_sector_trailer_access_bits.c3 = true;
+
+    for (unsigned int i = 0; i < 3; ++i)
+    {
+        d_data_blocks_access_bits[i].c1 = false;
+        d_data_blocks_access_bits[i].c2 = false;
+        d_data_blocks_access_bits[i].c3 = false;
+    }
+}
+
 void MifareAccessInfo::SectorAccessBits::setAReadBWriteConfiguration()
 {
     d_sector_trailer_access_bits.c1 = false;
@@ -109,6 +123,61 @@ void MifareAccessInfo::SectorAccessBits::setAReadBWriteConfiguration()
         d_data_blocks_access_bits[i].c2 = false;
         d_data_blocks_access_bits[i].c3 = false;
     }
+}
+void MifareAccessInfo::SectorAccessBits::setAReadNeverWriteConfiguration()
+{
+  d_sector_trailer_access_bits.c1 = false;
+  d_sector_trailer_access_bits.c2 = true;
+  d_sector_trailer_access_bits.c3 = false;
+
+  for (unsigned int i = 0; i < 3; ++i)
+  {
+      d_data_blocks_access_bits[i].c1 = false;
+      d_data_blocks_access_bits[i].c2 = true;
+      d_data_blocks_access_bits[i].c3 = false;
+  }
+}
+
+void MifareAccessInfo::SectorAccessBits::setBReadBWriteConfiguration()
+{
+  d_sector_trailer_access_bits.c1 = true;
+  d_sector_trailer_access_bits.c2 = false;
+  d_sector_trailer_access_bits.c3 = false;
+
+  for (unsigned int i = 0; i < 3; ++i)
+  {
+      d_data_blocks_access_bits[i].c1 = true;
+      d_data_blocks_access_bits[i].c2 = false;
+      d_data_blocks_access_bits[i].c3 = false;
+  }
+}
+
+void MifareAccessInfo::SectorAccessBits::setBReadNeverWriteConfiguration()
+{
+  d_sector_trailer_access_bits.c1 = true;
+  d_sector_trailer_access_bits.c2 = false;
+  d_sector_trailer_access_bits.c3 = true;
+
+  for (unsigned int i = 0; i < 3; ++i)
+  {
+      d_data_blocks_access_bits[i].c1 = true;
+      d_data_blocks_access_bits[i].c2 = false;
+      d_data_blocks_access_bits[i].c3 = true;
+  }
+}
+
+void MifareAccessInfo::SectorAccessBits::setNeverReadNeverWriteConfiguration()
+{
+  d_sector_trailer_access_bits.c1 = true;
+  d_sector_trailer_access_bits.c2 = true;
+  d_sector_trailer_access_bits.c3 = true;
+
+  for (unsigned int i = 0; i < 3; ++i)
+  {
+      d_data_blocks_access_bits[i].c1 = true;
+      d_data_blocks_access_bits[i].c2 = true;
+      d_data_blocks_access_bits[i].c3 = true;
+  }
 }
 
 MifareAccessInfo::MifareAccessInfo()

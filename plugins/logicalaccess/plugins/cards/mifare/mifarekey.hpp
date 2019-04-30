@@ -94,6 +94,24 @@ class LLA_CARDS_MIFARE_API MifareKey : public Key
      */
     std::string getDefaultXmlNodeName() const override;
 
+    bool operator==(MifareKey b)
+    {
+      unsigned char *keyA = this->getData();
+      unsigned char *keyB = b.getData();
+
+      for (unsigned int i = 0; i != 6; i++)
+      {;
+        if (keyA[i] != keyB[i])
+          return false;
+      }
+      return true;
+    }
+
+    bool operator!=(MifareKey b)
+    {
+      bool a = (*this) == b;
+      return !a;
+    }
   private:
     /**
      * \brief The key bytes
