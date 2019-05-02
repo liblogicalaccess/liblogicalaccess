@@ -23,7 +23,8 @@ namespace logicalaccess
 JsonDumpCardService::~JsonDumpCardService() {}
 
 JsonDumpCardService::JsonDumpCardService(const std::shared_ptr<Chip> &chip)
-    : CardService(chip, CardServiceType::CST_JSON_DUMP)
+    : CardService(chip, CardServiceType::CST_JSON_DUMP),
+      configured_(false)
 {
 }
 
@@ -44,7 +45,9 @@ std::shared_ptr<Format> createFormat(const nlohmann::json &encodingFormat)
     unsigned int offset = 0;
     auto customFormat   = std::make_shared<CustomFormat>();
     customFormat->setName(encodingFormat.at("name").get<std::string>());
-    customFormat->setRepeatable(encodingFormat.at("is_repeated").get<bool>());
+
+    if (encodingFormat.find("is_repeated") != encodingFormat.end())
+        customFormat->setRepeatable(encodingFormat.at("is_repeated").get<bool>());
     std::vector<std::shared_ptr<DataField>> fields;
     for (const auto &field : encodingFormat.at("fields"))
     {
@@ -165,13 +168,20 @@ nlohmann::json result_to_json(const std::shared_ptr<logicalaccess::Format> &form
     return json_result;
 }
 
-std::string JsonDumpCardService::dump(const std::string &json_template)
-{
+void JsonDumpCardService::configure(const std::string &json_template) {
     nlohmann::json json = nlohmann::json::parse(json_template);
 
     extract_formats(json);
     extract_keys(json);
     configure_format_infos(json);
+
+    configured_ = true;
+}
+
+std::string JsonDumpCardService::dump()
+{
+    if (!configured_)
+        throw LibLogicalAccessException("Please configure() the service first.");
 
     // Now we rely on AccessControl service to read each format.
     nlohmann::json json_result = {};

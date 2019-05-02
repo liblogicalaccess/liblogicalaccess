@@ -12,14 +12,14 @@ TEST(json_dump, invalid_input)
 {
     DESFireJsonDumpCardService jdcs(nullptr);
 
-    ASSERT_THROW(jdcs.dump("NOT JSON"), nlohmann::json::exception);
+    ASSERT_THROW(jdcs.configure("NOT JSON"), nlohmann::json::exception);
 }
 
 TEST(json_dump, invalid_input_wrong_format)
 {
     DESFireJsonDumpCardService jdcs(nullptr);
 
-    ASSERT_THROW(jdcs.dump("{}"), LibLogicalAccessException);
+    ASSERT_THROW(jdcs.configure("{}"), LibLogicalAccessException);
 }
 
 TEST(test_json_dump, hello)
@@ -140,86 +140,11 @@ TEST(test_json_dump, hello)
         }
     )";
 
+    auto service = std::make_shared<DESFireJsonDumpCardService>(nullptr);
+    ASSERT_NE(nullptr, service);
 
-    // ----   -----   -----  ------
-
-    std::vector<std::string> readerList =
-        LibraryManager::getInstance()->getAvailableReaders();
-    std::cout << "Available reader plug-ins (" << readerList.size() << "):" << std::endl;
-    for (std::vector<std::string>::iterator it = readerList.begin();
-         it != readerList.end(); ++it)
-    {
-        std::cout << "\t" << (*it) << std::endl;
-    }
-
-    std::vector<std::string> cardList =
-        LibraryManager::getInstance()->getAvailableCards();
-    std::cout << "Available card plug-ins (" << cardList.size() << "):" << std::endl;
-    for (std::vector<std::string>::iterator it = cardList.begin(); it != cardList.end();
-         ++it)
-    {
-        std::cout << "\t" << (*it) << std::endl;
-    }
-
-    // Reader configuration object to store reader provider and reader unit selection.
-    std::shared_ptr<ReaderConfiguration> readerConfig(new ReaderConfiguration());
-
-    readerConfig->setReaderProvider(
-        LibraryManager::getInstance()->getReaderProvider("PCSC"));
-    assert(readerConfig->getReaderProvider()->getReaderList().size() > 0);
-    const ReaderList readers = readerConfig->getReaderProvider()->getReaderList();
-
-    readerConfig->setReaderUnit(readers.at(0));
-    std::cout << "Waiting 15 seconds for a card insertion..." << std::endl;
-    readerConfig->getReaderUnit()->connectToReader();
-
-    // Force card type here if you want to
-    // readerConfig->getReaderUnit()->setCardType(CT_DESFIRE_EV1);
-
-    std::cout << "Time start : " << time(NULL) << std::endl;
-    if (readerConfig->getReaderUnit()->waitInsertion(15000))
-    {
-
-        if (readerConfig->getReaderUnit()->connect())
-        {
-            std::cout << "Card inserted on reader \""
-                      << readerConfig->getReaderUnit()->getConnectedName() << "\"."
-                      << std::endl;
-
-            std::shared_ptr<Chip> chip = readerConfig->getReaderUnit()->getSingleChip();
-            std::cout << "Card type: " << chip->getCardType() << std::endl;
-
-            // DO SOMETHING HERE
-            // DO SOMETHING HERE
-            // DO SOMETHING HERE
-
-            auto service = chip->getService<JsonDumpCardService>();
-            ASSERT_NE(nullptr, service);
-
-            auto out = service->dump(card_template);
-            ASSERT_EQ(service->formats_.size(), 1);
-            ASSERT_EQ(service->formats_["r7Xhf9pByzRFwQk3X"]->getName(), "islog-presentation");
-            ASSERT_EQ(service->formats_["r7Xhf9pByzRFwQk3X"]->getFieldList().size(), 6);
-
-            std::cout << "Output: " << out << std::endl;
-            readerConfig->getReaderUnit()->disconnect();
-        }
-        else
-        {
-            std::cout << "Error: cannot connect to the card." << std::endl;
-        }
-
-        std::cout << "Logical automatic card removal in 15 seconds..." << std::endl;
-
-        if (!readerConfig->getReaderUnit()->waitRemoval(15000))
-        {
-            std::cerr << "Card removal forced." << std::endl;
-        }
-
-        std::cout << "Card removed." << std::endl;
-    }
-    else
-    {
-        std::cout << "No card inserted." << std::endl;
-    }
+    service->configure(card_template);
+    ASSERT_EQ(service->formats_.size(), 1);
+    ASSERT_EQ(service->formats_["r7Xhf9pByzRFwQk3X"]->getName(), "islog-presentation");
+    ASSERT_EQ(service->formats_["r7Xhf9pByzRFwQk3X"]->getFieldList().size(), 6);
 }

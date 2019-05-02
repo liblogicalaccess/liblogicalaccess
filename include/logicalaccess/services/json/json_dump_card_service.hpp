@@ -33,7 +33,19 @@ class LLA_CORE_API JsonDumpCardService : public CardService {
         return JSON_DUMP_CARDSERVICE;
     }
 
-    std::string dump(const std::string &json_template);
+    /**
+     * Configure the service, providing the input JSON that will be used
+     * to create internal object required to properly dump the content of the card.
+     *
+     * It is required to call configure() before calling dump().
+     */
+    void configure(const std::string &json_template);
+
+    /**
+     * Dump the content of the content of the card, according the configuration
+     * provided at the configure() call.
+     */
+    std::string dump();
 
     std::map<std::string, std::shared_ptr<Format>> formats_;
     std::map<std::string, std::shared_ptr<Key>> keys_;
@@ -56,6 +68,8 @@ class LLA_CORE_API JsonDumpCardService : public CardService {
      * FormatInfo with proper Format, Location and AccessInfo.
      */
     virtual void configure_format_infos(const nlohmann::json & json) = 0;
+
+    bool configured_;
 };
 
 }
