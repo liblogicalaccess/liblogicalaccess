@@ -1,11 +1,12 @@
 #pragma once
 
+#include <logicalaccess/plugins/cards/desfire/lla_cards_desfire_api.hpp>
 #include <logicalaccess/services/json/json_dump_card_service.hpp>
 
 namespace logicalaccess
 {
 
-class DESFireJsonDumpCardService : public JsonDumpCardService
+class LLA_CARDS_DESFIRE_API DESFireJsonDumpCardService : public JsonDumpCardService
 {
   public:
     ~DESFireJsonDumpCardService();
