@@ -7,7 +7,7 @@ class LLAConan(ConanFile):
     url = "https://github.com/islog/liblogicalaccess"
     description = "ISLOG RFID library"
     settings = "os", "compiler", "build_type", "arch"
-    requires = 'boost/1.68.0@conan/stable', 'OpenSSL/1.0.2r@conan/stable', 'jsonformoderncpp/3.6.1@islog/stable'
+    requires = 'boost/1.68.0@conan/stable', 'OpenSSL/1.0.2r@conan/stable', 'jsonformoderncpp/3.6.1@vthiery/stable'
     generators = "cmake"
     options = {'LLA_BUILD_IKS': [True, False],
                'LLA_BUILD_PKCS': [True, False],
@@ -20,17 +20,17 @@ class LLAConan(ConanFile):
         OpenSSL:shared=True
         boost:shared=False
         gtest:shared=True
-        LLA_BUILD_IKS=True
-        LLA_BUILD_PKCS=True
-        LLA_BUILD_RFIDEAS=True
+        LLA_BUILD_IKS=False
+        LLA_BUILD_PKCS=False
+        LLA_BUILD_RFIDEAS=False
         LLA_BUILD_UNITTEST=False'''
     else:
         default_options = '''
         OpenSSL:shared=True
         boost:shared=True
         gtest:shared=True
-        LLA_BUILD_IKS=True
-        LLA_BUILD_PKCS=True
+        LLA_BUILD_IKS=False
+        LLA_BUILD_PKCS=False
         LLA_BUILD_UNITTEST=False'''
 
     def configure(self):
