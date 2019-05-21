@@ -19,11 +19,6 @@ namespace logicalaccess
 /**
 * \brief The NFC Tag 2 storage card service base class.
 */
-struct MemoryData
-{
-  int byteAddr;
-  unsigned int size;
-};
 
 class LLA_CARDS_MIFAREULTRALIGHT_API NFCTag2CardService : public NFCTagCardService
 {

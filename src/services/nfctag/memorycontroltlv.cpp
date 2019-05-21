@@ -54,7 +54,7 @@ namespace logicalaccess
     data->calculateReservedPosition();
     tlv.push_back((data->getPageAddr() << 4) + data->getOffset());
     tlv.push_back(data->getSize());
-    tlv.push_back((data->getBytesPerPage() << 4) + TLV_RFU);
+    tlv.push_back(data->getBytesPerPage());
     return tlv;
   }
 
@@ -65,15 +65,7 @@ namespace logicalaccess
     float bytesPerPage;
     float offset;
 
-    if (_byteAddr <= 64)
-    {
-      _bytesPerPage = 0x04;
-      _pageAddr = _byteAddr >> 4;
-      _offset = _byteAddr << 4;
-      _offset = _offset >> 4;
-      return ;
-    }
-    for (int i = 15; i >= 0; i--)
+    for (int i = 15; i > 0; i--)
     {
       a = ceil(_byteAddr / i);
       b = log2(a);

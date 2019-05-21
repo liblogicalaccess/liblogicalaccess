@@ -161,10 +161,10 @@ ByteVector MifarePCSCCommands::readBinary(unsigned char blockno, size_t len)
     {
         THROW_EXCEPTION_WITH_LOG(std::invalid_argument, "Bad len parameter.");
     }
-
-    return getPCSCReaderCardAdapter()
-        ->sendAPDUCommand(0xFF, 0xB0, 0x00, blockno, static_cast<unsigned char>(len))
-        .getData();
+    ByteVector c;
+    c = getPCSCReaderCardAdapter()
+        ->sendAPDUCommand(0xFF, 0xB0, 0x00, blockno, static_cast<unsigned char>(len)).getData();
+    return c;
 }
 
 void MifarePCSCCommands::updateBinary(unsigned char blockno, const ByteVector &buf)
