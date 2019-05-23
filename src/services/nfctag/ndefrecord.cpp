@@ -25,6 +25,15 @@ size_t NdefRecord::getEncodedSize() const
     return size + m_type.size() + m_payload.size() + m_id.size();
 }
 
+void NdefRecord::init(TNF tnf, ByteVector type, ByteVector id, ByteVector payload)
+{
+    m_tnf = tnf;
+    m_type = type;
+    m_payload = payload;
+    m_id = id;
+}
+
+
 ByteVector NdefRecord::encode(bool firstRecord, bool lastRecord)
 {
     ByteVector data;

@@ -38,6 +38,8 @@ class LLA_CORE_API NdefRecord : public XmlSerializable
     size_t getEncodedSize() const;
     ByteVector encode(bool firstRecord, bool lastRecord);
 
+    virtual void init(TNF tnf, ByteVector type, ByteVector id, ByteVector payload);
+
     void setTnf(TNF tnf)
     {
         m_tnf = tnf;
@@ -81,9 +83,8 @@ class LLA_CORE_API NdefRecord : public XmlSerializable
         return "NdefRecord";
     }
 
-  private:
+  protected:
     unsigned char getTnfByte(bool firstRecord, bool lastRecord) const;
-
     TNF m_tnf; // 3 bit
     ByteVector m_type;
     ByteVector m_payload;
