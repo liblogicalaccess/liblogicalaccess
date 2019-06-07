@@ -69,14 +69,20 @@ void DESFireJsonDumpCardService::configure_format_infos(const nlohmann::json &js
             auto fi = std::make_shared<FormatInfos>();
 
             auto location = std::make_shared<DESFireLocation>();
+            auto ai       = std::make_shared<DESFireAccessInfo>();
+
             location->aid = std::stoi(app.at("appid").get<std::string>(), nullptr, 16);
 
-            // todo: Maybe not hardcoded ?
-            location->securityLevel = EncryptionMode::CM_ENCRYPT;
+            if (file.at("free_read_key").get<bool>())
+            {
+                location->securityLevel = EncryptionMode::CM_PLAIN;
+            }
+            else
+            {
+                location->securityLevel = EncryptionMode::CM_ENCRYPT;
+                ai->readKeyno = file.at("read_key");
+            }
             location->file          = file.at("fileno");
-
-            auto ai       = std::make_shared<DESFireAccessInfo>();
-            ai->readKeyno = file.at("read_key");
             ais.push_back(ai);
 
             fi->setAiToUse(ai);
