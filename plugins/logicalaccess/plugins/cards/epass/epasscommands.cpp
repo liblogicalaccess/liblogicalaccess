@@ -160,16 +160,15 @@ ByteVector EPassCommands::readEF(uint8_t size_bytes, uint8_t size_offset) const
     return ef_raw;
 }
 
-void EPassCommands::readSOD() const
+ByteVector EPassCommands::readSOD() const
 {
-    // SOD is ASN.1
-    // For now we are not able to use it.
     auto hash_1 = compute_hash({1, 1});
     auto hash_2 = compute_hash({1, 2});
 
     getISO7816Commands()->selectFile(P1_SELECT_EF_UNDER_CURRENT_DF, P2_RETURN_NO_FCI,
                                      {0x01, 0x1D});
     auto tmp = readEF(2, 2);
+    return tmp;
 }
 
 ByteVector EPassCommands::compute_hash(const ByteVector &file_id) const

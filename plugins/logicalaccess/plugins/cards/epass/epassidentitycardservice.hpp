@@ -22,7 +22,14 @@ class LLA_CARDS_EPASS_API EPassIdentityCardService : public IdentityCardService
     {
         return IDENTITY_CARDSERVICE_EPASS;
     }
-
+    int verifyCertificate(ByteVector derCert, ByteVector x509Cert);
+    int verifyCertificate(ByteVector x509Cert);
+    int verifyCertificateWithMasterList(std::string matserlistPath);
+    int verifyCertificateWithMasterList(ByteVector derCert, std::string path);
+    ByteVector getCertificate();
+    static std::vector<ByteVector> getCSCACertificatesFromMasterlist(std::string path);
+    static ByteVector binaryTo64Certificate(ByteVector derCert);
+    static std::vector<ByteVector> extractCertificatesFromMasterList(const ByteVector &bytes);
 
   protected:
     std::shared_ptr<EPassChip> getEPassChip() const;
@@ -37,7 +44,6 @@ class LLA_CARDS_EPASS_API EPassIdentityCardService : public IdentityCardService
      * It's lightweight to copy.
      */
     EPassDG1 getDG1();
-
     std::string getName();
     ByteVector getPicture();
 

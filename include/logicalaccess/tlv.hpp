@@ -76,13 +76,20 @@ class LLA_CORE_API TLV
 
 	TLVPtr get_child(uint8_t tag) const;
 
+  uint8_t getSizeTag() const;
+  void setSizeTag(uint8_t tag);
+  ByteVector getSizeVector() const;
+  void setSizeVector(ByteVector size);
+  ByteVector getCompletTLV() const;
 	static TLVPtr get_child(std::vector<TLVPtr> tlvs, uint8_t tag);
 
 	static std::vector<TLVPtr> parse_tlvs(const ByteVector &bytes,
                                                 size_t &bytes_consumed);
-    static std::vector<TLVPtr> parse_tlvs(const ByteVector &bytes, bool strict = false);
+  static std::vector<TLVPtr> parse_tlvs(const ByteVector &bytes, bool strict = false);
 
   private:
+    uint8_t sizeTag_;
+    ByteVector sizeVector_;
     uint8_t tag_;
     ByteVector value_; // Either one of those
     std::vector<TLVPtr> subTLVs_;    // will be used, but not both.
