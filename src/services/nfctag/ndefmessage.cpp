@@ -5,6 +5,7 @@
  */
 
 #include <logicalaccess/services/nfctag/ndefmessage.hpp>
+#include <logicalaccess/services/nfctag/textrecord.hpp>
 #include <logicalaccess/bufferhelper.hpp>
 #include <boost/foreach.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -33,9 +34,12 @@ NdefMessage::NdefMessage(const ByteVector &data) : NfcData(NDEF_MESSAGE )
         bool sr           = (tnf_tmp & 0x10) != 0;
         bool il           = (tnf_tmp & 0x8) != 0;
         unsigned char tnf = (tnf_tmp & 0x7);
-        ++index;
 
-        record->setTnf(static_cast<TNF>(tnf));
+        TNF recordTnf = static_cast<TNF>(tnf);
+        ByteVector recordType;
+        ByteVector recordId;
+        ByteVector recordPayload;
+        ++index;
 
         int typeLength = data[index];
 
@@ -58,30 +62,40 @@ NdefMessage::NdefMessage(const ByteVector &data) : NfcData(NDEF_MESSAGE )
         ++index;
         EXCEPTION_ASSERT((index + typeLength) <= data.size(), std::invalid_argument,
                          "The buffer size is too small (3).");
-        record->setType(
-            ByteVector(data.begin() + index, data.begin() + index + typeLength));
+        recordType = ByteVector(data.begin() + index, data.begin() + index + typeLength);
         index += typeLength;
-
         if (il)
         {
             EXCEPTION_ASSERT((index + idLength) <= data.size(), std::invalid_argument,
                              "The buffer size is too small (4).");
-            record->setId(
-                ByteVector(data.begin() + index, data.begin() + index + idLength));
+            recordId =  ByteVector(data.begin() + index, data.begin() + index + idLength);
             index += idLength;
         }
         EXCEPTION_ASSERT((index + payloadLength) <= data.size(), std::invalid_argument,
                          "The buffer size is too small (5).");
-        record->setPayload(
-            ByteVector(data.begin() + index, data.begin() + index + payloadLength));
+        recordPayload = ByteVector(data.begin() + index, data.begin() + index + payloadLength);
         index += payloadLength;
-
+        if (recordType.size() != 0 && recordType == ByteVector({0x54}))
+        {
+          std::shared_ptr<TextRecord> tr = std::make_shared<TextRecord>();
+          tr->init(recordTnf, recordType, recordId, recordPayload);
+          record = tr;
+        }
+        else if (recordType.size() != 0 && recordType == ByteVector({0x55}))
+        {
+          std::shared_ptr<UriRecord> ur = std::make_shared<UriRecord>();
+          ur->init(recordTnf, recordType, recordId, recordPayload);
+          record = ur;
+        }
+        else
+          record->init(recordTnf, recordType, recordId, recordPayload);
         m_records.push_back(record);
 
         if (me)
             break; // last message
     }
 }
+
 
 void NdefMessage::addMimeMediaRecord(std::string mimeType, ByteVector payload)
 {
@@ -96,49 +110,46 @@ void NdefMessage::addMimeMediaRecord(std::string mimeType, ByteVector payload)
     m_records.push_back(ndefr);
 }
 
-void NdefMessage::addTextRecord(std::string text)
+void NdefMessage::removeRecord(unsigned int i)
 {
-    addTextRecord(ByteVector(text.begin(), text.end()));
+  m_records.erase(m_records.begin() + i);
 }
 
-void NdefMessage::addTextRecord(ByteVector text, std::string encoding)
+void NdefMessage::addTextRecord(std::string text, std::string language, UTF utf)
 {
-    std::shared_ptr<NdefRecord> ndefr(new NdefRecord());
-    ndefr->setTnf(TNF_WELL_KNOWN);
-    ndefr->setType(ByteVector(1, Text));
+  std::shared_ptr<TextRecord> ndefr = std::make_shared<TextRecord>();
+  unsigned char firstByte = static_cast<int>(utf);
+  ByteVector payload;
 
-    ByteVector payload;
-    payload.push_back(static_cast<unsigned char>(encoding.length()));
-    payload.insert(payload.end(), encoding.begin(), encoding.end());
-    payload.insert(payload.end(), text.begin(), text.end());
-
-    ndefr->setPayload(payload);
-
-    m_records.push_back(ndefr);
+  if (firstByte != 0)
+    firstByte = firstByte << 7;
+  firstByte += static_cast<unsigned char>(language.size());
+  payload.push_back(firstByte);
+  payload.insert(payload.end(), language.begin(), language.end());
+  payload.insert(payload.end(), text.begin(), text.end());
+  ndefr->init(TNF_WELL_KNOWN, ByteVector({0x54}), ByteVector(), payload);;
+  m_records.push_back(ndefr);
 }
 
 void NdefMessage::addUriRecord(std::string uri, UriType uritype)
 {
-    std::shared_ptr<NdefRecord> ndefr(new NdefRecord());
-    ndefr->setTnf(TNF_WELL_KNOWN);
-    ndefr->setType(ByteVector(1, Uri));
-
+    std::shared_ptr<UriRecord> ndefr = std::make_shared<UriRecord>();
     ByteVector payload;
+
     payload.push_back(static_cast<unsigned char>(uritype));
     payload.insert(payload.end(), uri.begin(), uri.end());
 
-    ndefr->setPayload(payload);
-
+    ndefr->init(TNF_WELL_KNOWN, ByteVector({0x55}), ByteVector(), payload);
     m_records.push_back(ndefr);
 }
+
 
 void NdefMessage::addEmptyRecord()
 {
-    std::shared_ptr<NdefRecord> ndefr(new NdefRecord());
+    std::shared_ptr<NdefRecord> ndefr = std::make_shared<NdefRecord>();
     ndefr->setTnf(TNF_EMPTY);
     m_records.push_back(ndefr);
 }
-
 ByteVector NdefMessage::encode()
 {
     ByteVector data;
