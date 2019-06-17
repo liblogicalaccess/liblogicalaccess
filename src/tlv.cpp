@@ -88,34 +88,78 @@ ByteVector TLV::compute() const
 
 std::vector<TLVPtr> TLV::parse_tlvs(const ByteVector &bytes, size_t &bytes_consumed)
 {
-    size_t idx = 0;
-    std::vector<TLVPtr> tlvs;
+  size_t idx = 0;
+  std::vector<TLVPtr> tlvs;
 
-    while (idx < bytes.size())
+  while (idx < bytes.size())
+  {
+    TLVPtr tlv = std::make_shared<TLV>(bytes[idx]);
+    ++idx;
+    size_t current_tlv_size = 0;
+    if (bytes[idx] > 0x80)
     {
-        TLVPtr tlv = std::make_shared<TLV>(bytes[idx]);
-
-        // Go to size byte.
-        idx++;
-        // We need at least 1 bytes indicating the size.
-        if (idx >= bytes.size())
-            break;
-        size_t current_tlv_size = bytes[idx];
-
-        // Go to first data byte.
-        idx++;
-
-        // We need at least N bytes for the value
-        if (idx + current_tlv_size > bytes.size())
-            break;
-        auto data =
-            ByteVector(bytes.begin() + idx, bytes.begin() + idx + current_tlv_size);
-        idx += data.size();
-        tlv->value(data);
-        tlvs.push_back(tlv);
+      tlv->setSizeTag(bytes[idx]);
+      size_t lenghtSize = bytes[idx] & 0x7F;
+      ++idx;
+      ByteVector Vsize(bytes.begin() + idx, bytes.begin() + idx + lenghtSize);
+      size_t multiplicator = 0x01;
+      idx += lenghtSize;
+      tlv->setSizeVector(Vsize);
+      while (lenghtSize > 0)
+      {
+        --lenghtSize;
+        current_tlv_size += Vsize[lenghtSize] * multiplicator;;
+        multiplicator *= 0x100;
+      }
     }
-    bytes_consumed = idx;
-    return tlvs;
+    else
+    {
+      ByteVector t;
+      t.push_back(bytes[idx]);
+      tlv->setSizeVector(t);
+      current_tlv_size = bytes[idx];
+      ++idx;
+    }
+    ByteVector data = ByteVector(bytes.begin() + idx, bytes.begin() + idx + current_tlv_size);
+    idx += data.size();
+    tlv->value(data);
+    tlvs.push_back(tlv);
+  }
+  bytes_consumed = idx;
+  return tlvs;
+}
+
+uint8_t TLV::getSizeTag() const
+{
+  return sizeTag_;
+}
+
+void TLV::setSizeTag(uint8_t tag)
+{
+  sizeTag_ = tag;
+}
+
+ByteVector TLV::getSizeVector() const
+{
+  return sizeVector_;
+}
+
+void TLV::setSizeVector(ByteVector size)
+{
+  if (size.size() == 1)
+    sizeTag_ = size[0];
+  sizeVector_ = size;
+}
+
+ByteVector TLV::getCompletTLV() const
+{
+  ByteVector stock;
+  stock.push_back(tag_);
+  stock.push_back(sizeTag_);
+  if (sizeVector_.size() > 1)
+    stock.insert(stock.end(), sizeVector_.begin(), sizeVector_.end());
+  stock.insert(stock.end(), value_.begin(), value_.end());
+  return stock;
 }
 
 std::vector<TLVPtr> TLV::parse_tlvs(const ByteVector &bytes, bool strict)

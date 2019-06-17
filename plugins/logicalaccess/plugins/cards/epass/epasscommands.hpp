@@ -60,7 +60,7 @@ class LLA_CARDS_EPASS_API EPassCommands : public Commands
      * for the rest of the EPassport. It allows for verifying the integrity
      * of the chip's content.
      */
-    void readSOD() const;
+    ByteVector readSOD() const;
 
 	virtual std::shared_ptr<ISO7816Commands> getISO7816Commands() const = 0;
 
