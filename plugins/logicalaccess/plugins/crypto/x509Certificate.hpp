@@ -19,6 +19,7 @@ namespace logicalaccess
     std::string getRawData() const;
     std::shared_ptr<PublicKey> getKey();
     int verify(std::shared_ptr<PublicKey> key);
+    std::string getExpiryDate();
   private:
     void freeAllData();
     X509* _certificate;

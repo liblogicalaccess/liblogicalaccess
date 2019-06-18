@@ -17,6 +17,7 @@ namespace logicalaccess
     void setData(std::string data);
     std::string getRawData() const;
     int verify(std::shared_ptr<PublicKey> key);
+    std::string getExpiryDate();
   private:
     PKCS7* _certificate;
     std::string _rawData;
