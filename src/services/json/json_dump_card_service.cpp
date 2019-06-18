@@ -14,6 +14,7 @@
 #include <logicalaccess/services/storage/storagecardservice.hpp>
 #include <logicalaccess/services/accesscontrol/accesscontrolcardservice.hpp>
 #include <logicalaccess/utils.hpp>
+#include <logicalaccess/services/accesscontrol/encodings/bcdnibbledatatype.hpp>
 #include "logicalaccess/services/json/json_dump_card_service.hpp"
 #include "nlohmann/json.hpp"
 
@@ -23,8 +24,8 @@ namespace logicalaccess
 JsonDumpCardService::~JsonDumpCardService() {}
 
 JsonDumpCardService::JsonDumpCardService(const std::shared_ptr<Chip> &chip)
-    : CardService(chip, CardServiceType::CST_JSON_DUMP),
-      configured_(false)
+    : CardService(chip, CardServiceType::CST_JSON_DUMP)
+    , configured_(false)
 {
 }
 
@@ -72,6 +73,19 @@ std::shared_ptr<Format> createFormat(const nlohmann::json &encodingFormat)
             std::dynamic_pointer_cast<NumberDataField>(dataField)->setValue(numb);
             std::dynamic_pointer_cast<NumberDataField>(dataField)->setIsIdentifier(
                 field.at("is_identifier").get<bool>());
+        }
+        else if (field.at("type").get<std::string>() == "FIELD_TYPE_NUMBER_BCD_NIBBLE")
+        {
+            dataField = std::make_shared<NumberDataField>();
+            std::dynamic_pointer_cast<NumberDataField>(dataField)->setDataLength(
+                field.at("len").get<int>());
+            int numb;
+            std::istringstream(field.at("default_value").get<std::string>()) >> numb;
+            std::dynamic_pointer_cast<NumberDataField>(dataField)->setValue(numb);
+            std::dynamic_pointer_cast<NumberDataField>(dataField)->setIsIdentifier(
+                field.at("is_identifier").get<bool>());
+            auto data_type = std::make_shared<BCDNibbleDataType>();
+            std::dynamic_pointer_cast<NumberDataField>(dataField)->setDataType(data_type);
         }
         else if (field.at("type").get<std::string>() == "FIELD_TYPE_BINARY")
         {
@@ -168,7 +182,8 @@ nlohmann::json result_to_json(const std::shared_ptr<logicalaccess::Format> &form
     return json_result;
 }
 
-void JsonDumpCardService::configure(const std::string &json_template) {
+void JsonDumpCardService::configure(const std::string &json_template)
+{
     nlohmann::json json = nlohmann::json::parse(json_template);
 
     extract_formats(json);
@@ -188,7 +203,7 @@ std::string JsonDumpCardService::dump()
     auto acs                   = getChip()->getService<AccessControlCardService>();
 
     // Extract CSN.
-    json_result["ADDITIONAL_DATA"]         = {};
+    json_result["ADDITIONAL_DATA"]                = {};
     json_result["ADDITIONAL_DATA"]["CSN"]["type"] = "STRING";
     json_result["ADDITIONAL_DATA"]["CSN"]["value"] =
         logicalaccess::BufferHelper::getHex(getChip()->getChipIdentifier());

@@ -94,7 +94,7 @@ void DESFireJsonDumpCardService::configure_format_infos(const nlohmann::json &js
             tree << app.at("name").get<std::string>() << "." << file.at("fileno");
 
             if (format_infos_.find(tree.str()) != format_infos_.end())
-                throw LibLogicalAccessException(tree.str() + "Already exists.");
+                throw LibLogicalAccessException(tree.str() + " Already exists.");
             format_infos_[tree.str()] = fi;
         }
 
