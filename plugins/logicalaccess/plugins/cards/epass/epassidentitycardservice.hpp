@@ -30,7 +30,8 @@ class LLA_CARDS_EPASS_API EPassIdentityCardService : public IdentityCardService
     static std::vector<ByteVector> getCSCACertificatesFromMasterlist(std::string path);
     static ByteVector binaryTo64Certificate(ByteVector derCert);
     static std::vector<ByteVector> extractCertificatesFromMasterList(const ByteVector &bytes);
-
+    std::string getExpiryDate();
+    bool isExpired();
   protected:
     std::shared_ptr<EPassChip> getEPassChip() const;
 

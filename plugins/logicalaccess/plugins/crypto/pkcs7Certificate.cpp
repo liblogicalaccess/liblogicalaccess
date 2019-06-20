@@ -39,3 +39,15 @@ int Pkcs7Certificate::verify(std::shared_ptr<PublicKey> key)
   X509 *cert = sk_X509_value(_certificate->d.sign->cert, 0);
   return X509_verify(cert, key->getPublicKey());
 }
+
+std::string Pkcs7Certificate::getExpiryDate()
+{
+  std::string date;
+
+  if (_certificate != nullptr)
+  {
+    X509 *cert = sk_X509_value(_certificate->d.sign->cert, 0);
+    date = std::string(reinterpret_cast<const char*>(cert->cert_info->validity->notAfter->data));
+  }
+  return date;
+}

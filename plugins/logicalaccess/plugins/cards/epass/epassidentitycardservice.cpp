@@ -8,12 +8,19 @@
 #include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/crypto/x509Certificate.hpp>
 #include <logicalaccess/plugins/crypto/pkcs7Certificate.hpp>
+#include <logicalaccess/plugins/crypto/openssl.hpp>
+
+#include <iostream>
+#include <string>
+#include <stdio.h>
+#include <time.h>
 
 using namespace logicalaccess;
 
 EPassIdentityCardService::EPassIdentityCardService(const std::shared_ptr<Chip> &chip)
     : IdentityCardService(chip)
 {
+    OpenSSL_add_all_algorithms();
 }
 
 std::string EPassIdentityCardService::getName()
@@ -138,8 +145,8 @@ std::vector<ByteVector> EPassIdentityCardService::extractCertificatesFromMasterL
   size_t i = 0;
 
   /*
-  **  The TLV tags of the masterlists doesn't help us at findig certficates but
-  **  the location of the certifcates is always the same in all masterlists so
+  **  TLV tags of the masterlist doesn't help us at finding certficates but
+  **  the location of certifcates is always the same in all masterlists so
   **  we can search it manually;
   */
 
@@ -268,4 +275,40 @@ std::chrono::system_clock::time_point EPassIdentityCardService::getTime(MetaData
         out = getDG1().expiration_;
     }
     return out;
+}
+
+std::string EPassIdentityCardService::getExpiryDate()
+{
+  ByteVector cert = getCertificate();
+  std::string buff;
+
+  std::shared_ptr<logicalaccess::Pkcs7Certificate> p = std::make_shared<logicalaccess::Pkcs7Certificate>(std::string(cert.begin(), cert.end()));
+  buff = p->getExpiryDate();
+  return buff;
+}
+
+bool EPassIdentityCardService::isExpired()
+{
+  bool res = false;
+  time_t     now = time(0);
+  struct tm  tstruct;
+  char       buf[80];
+  std::string time;
+  std::string expiryDate = getExpiryDate();
+  long lTime;
+  long lExpiryDate;
+
+  tstruct = *localtime(&now);
+  strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
+  time = std::string(buf);
+  time.erase(time.begin(), time.begin() + 2);                          //YYYYMMDDhhmmss to YYMMDDhhmmss date format
+  time.erase(std::remove(time.begin(), time.end(), '-'), time.end());
+  time.erase(std::remove(time.begin(), time.end(), '.'), time.end());
+  time.erase(std::remove(time.begin(), time.end(), ':'), time.end());
+  expiryDate.pop_back();
+  lTime = std::stol(time);
+  lExpiryDate = std::stol(expiryDate);
+  if (lExpiryDate >= lTime)
+    res = true;
+  return res;
 }

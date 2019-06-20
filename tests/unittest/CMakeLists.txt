@@ -42,6 +42,7 @@ add_gtest_test(test_format.cpp)
 add_gtest_test(test_bitsetstream.cpp)
 add_gtest_test(test_diversification.cpp)
 add_gtest_test(test_regex.cpp)
+add_gtest_test(test_epass_verification_and_parsing.cpp)
 add_gtest_test(test_json_dump.cpp)
 
 if (NOT LLA_DISABLE_IKS)

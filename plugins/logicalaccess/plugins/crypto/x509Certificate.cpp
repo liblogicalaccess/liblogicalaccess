@@ -53,3 +53,14 @@ int X509Certificate::verify(std::shared_ptr<PublicKey> key)
 {
   return X509_verify(_certificate, _key->getPublicKey());
 }
+
+std::string X509Certificate::getExpiryDate()
+{
+  std::string date;
+
+  if (_certificate != nullptr)
+  {
+    date = std::string(reinterpret_cast<const char*>(_certificate->cert_info->validity->notAfter->data));
+  }
+  return date;
+}
