@@ -43,6 +43,7 @@ add_gtest_test(test_bitsetstream.cpp)
 add_gtest_test(test_diversification.cpp)
 add_gtest_test(test_regex.cpp)
 add_gtest_test(test_epass_verification_and_parsing.cpp)
+add_gtest_test(test_json_dump.cpp)
 
 if (NOT LLA_DISABLE_IKS)
     #add_gtest_test(test_iks_bench.cpp)
@@ -51,3 +52,4 @@ endif ()
 
 add_gtest_test(test_tlv.cpp)
 add_gtest_test(test_asn1.cpp)
+add_gtest_test(test_nfc_data_management.cpp)

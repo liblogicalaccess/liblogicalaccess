@@ -62,13 +62,6 @@ class LLA_CORE_API IKSStorage : public KeyStorage
 
     const iks::IslogKeyServer::IKSConfig &getIKSConfig() const;
 
-    /**
-     * Retrieve the config stored internally.
-     * This method is here to be exported by the COM wrapper.
-     */
-    void getIKSConfig(std::string &ip, uint16_t &port, std::string &client_cert,
-                      std::string &client_key, std::string &root_ca) const;
-
   protected:
     std::string key_identity_;
 

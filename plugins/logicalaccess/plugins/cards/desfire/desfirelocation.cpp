@@ -17,9 +17,7 @@ DESFireLocation::DESFireLocation()
     securityLevel = CM_ENCRYPT;
 }
 
-DESFireLocation::~DESFireLocation()
-{
-}
+DESFireLocation::~DESFireLocation() {}
 
 unsigned int DESFireLocation::convertAidToUInt(const ByteVector &aid)
 {
@@ -79,5 +77,10 @@ bool DESFireLocation::operator==(const Location &location) const
 
     return (aid == dfLocation->aid && file == dfLocation->file &&
             byte_ == dfLocation->byte_ && securityLevel == dfLocation->securityLevel);
+}
+
+void DESFireLocation::incrementOffset(int increment)
+{
+    byte_ += increment;
 }
 }

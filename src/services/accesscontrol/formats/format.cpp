@@ -31,6 +31,7 @@
 namespace logicalaccess
 {
 Format::Format()
+    : is_repeatable_(false)
 {
 }
 
@@ -248,5 +249,15 @@ std::vector<std::shared_ptr<DataField>> Format::getFieldList()
 void Format::setFieldList(std::vector<std::shared_ptr<DataField>> fields)
 {
     d_fieldList = std::list<std::shared_ptr<DataField>>(fields.begin(), fields.end());
+}
+
+bool Format::isRepeatable() const
+{
+    return is_repeatable_;
+}
+
+void Format::setRepeatable(bool v)
+{
+    is_repeatable_ = v;
 }
 }

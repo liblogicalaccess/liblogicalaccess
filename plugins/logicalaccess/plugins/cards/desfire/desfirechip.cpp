@@ -12,6 +12,7 @@
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <logicalaccess/cards/locationnode.hpp>
+#include "desfire_json_dump_card_service.hpp"
 
 namespace logicalaccess
 {
@@ -29,9 +30,7 @@ DESFireChip::DESFireChip()
     d_crypto.reset(new DESFireCrypto());
 }
 
-DESFireChip::~DESFireChip()
-{
-}
+DESFireChip::~DESFireChip() {}
 
 std::shared_ptr<LocationNode> DESFireChip::getRootLocationNode()
 {
@@ -187,9 +186,16 @@ std::shared_ptr<CardService> DESFireChip::getService(CardServiceType serviceType
             service.reset(new AccessControlCardService(shared_from_this()));
     }
     break;
-    case CST_STORAGE: { service.reset(new DESFireStorageCardService(shared_from_this()));
+    case CST_STORAGE:
+    {
+        service.reset(new DESFireStorageCardService(shared_from_this()));
     }
     break;
+
+    case CST_JSON_DUMP:
+    {
+        service = std::make_shared<DESFireJsonDumpCardService>(shared_from_this());
+    }
     default: break;
     }
 

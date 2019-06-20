@@ -95,14 +95,16 @@ target_link_libraries(logicalaccess PUBLIC
         logicalaccess-cryptolib
         CONAN_PKG::OpenSSL
         ${LLA_ADDITIONAL_LIBRARIES_TO_LINK_AGAINST}
-        CONAN_PKG::boost)
+        CONAN_PKG::boost
+        CONAN_PKG::jsonformoderncpp
+        )
 
 # Wrong, fix /plugins/
 target_include_directories(logicalaccess PUBLIC
         ${CMAKE_SOURCE_DIR}/include)
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
-    target_compile_options(logicalaccess PUBLIC -g)
+    target_compile_options(logicalaccess PUBLIC -O0 -g)
 endif()
 
 install(TARGETS ${LIBLOGICALACCESS_LIBRARY}

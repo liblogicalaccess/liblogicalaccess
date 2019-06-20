@@ -163,6 +163,11 @@ class LLA_CORE_API Chip : public IChip, public std::enable_shared_from_this<Chip
      */
     std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
 
+    template<typename T>
+    std::shared_ptr<T> getService() {
+        return std::dynamic_pointer_cast<T>(getService(T::service_type_));
+    }
+
     bool operator<(const Chip &chip) const
     {
         return d_receptionLevel < chip.getReceptionLevel();
