@@ -61,9 +61,10 @@ TEST(test_nfc_data, test_memorycontrol_to_tlv)
   std::vector<uint8_t> resVec = logicalaccess::NfcData::dataToTLV(mem);
 
   ASSERT_EQ(resVec.size(), 0x05);
+  ASSERT_EQ(3, resVec[1]);
   ASSERT_EQ(0x8E, resVec[2]);
   ASSERT_EQ(0x04, resVec[3]);
-  ASSERT_EQ(0x40, resVec[4]);
+  ASSERT_EQ(0x04, resVec[4]);
 }
 
 TEST(test_nfc_data, test_tlv_to_memorycontrol)

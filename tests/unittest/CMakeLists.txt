@@ -28,7 +28,7 @@ endfunction()
 function(add_gtest_test file)
     get_filename_component(test_name ${file} NAME_WE)
     create_test(${file})
-    add_test(NAME ${test_name} COMMAND ${test_name})
+    add_test(NAME ${test_name} COMMAND ${test_name} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 endfunction()
 
 add_gtest_test(test_atrparser.cpp)
