@@ -60,7 +60,7 @@ std::string X509Certificate::getExpiryDate()
 
   if (_certificate != nullptr)
   {
-    date = std::string(reinterpret_cast<const char*>(_certificate->cert_info->validity->notAfter->data));
+    date = std::string(reinterpret_cast<const char*>(X509_get_notAfter(_certificate)));
   }
   return date;
 }

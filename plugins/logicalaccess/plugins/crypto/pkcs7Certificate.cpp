@@ -47,7 +47,7 @@ std::string Pkcs7Certificate::getExpiryDate()
   if (_certificate != nullptr)
   {
     X509 *cert = sk_X509_value(_certificate->d.sign->cert, 0);
-    date = std::string(reinterpret_cast<const char*>(cert->cert_info->validity->notAfter->data));
+    date = std::string(reinterpret_cast<const char*>(X509_get_notAfter(cert)));
   }
   return date;
 }
