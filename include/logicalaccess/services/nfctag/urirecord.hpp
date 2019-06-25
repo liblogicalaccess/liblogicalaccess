@@ -9,6 +9,8 @@
 
 #include <logicalaccess/services/nfctag/ndefrecord.hpp>
 #include <unordered_map>
+#include <functional>
+#include <iostream>
 
 namespace logicalaccess
 {
@@ -23,8 +25,22 @@ namespace logicalaccess
       MAIL_TO   = 0x06, // mailto:
       URI_FILE  = 0x1D  // file://
   };
-class LLA_CORE_API UriRecord : public NdefRecord
+}
+
+namespace std {
+  template <> struct hash<logicalaccess::UriType>
+  {
+    size_t operator()(const logicalaccess::UriType & x) const
+    {
+      return hash<int>()(x);
+    }
+  };
+}
+
+namespace logicalaccess
 {
+  class LLA_CORE_API UriRecord : public NdefRecord
+  {
   public:
     UriRecord()
         : NdefRecord()

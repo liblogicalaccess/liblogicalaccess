@@ -1,12 +1,14 @@
+python: 2.7
+
 matrix:
+  env:
+    - PACKAGE_VERSION="2.1.0"
   include:
-    os: linux
+  - os: linux
     dist: trusty
-    language: python
-    python: "3.7"
-    dist: xenial
     compiler:
       - gcc
+    language: python
     addons:
       apt:
         update: true
@@ -18,6 +20,52 @@ matrix:
           - gcc-6
     env:
       - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+      - PACKAGE_VERSION="2.1.0"
+    script:
+      - echo $PACKAGE_VERSION
+      - sudo ln -s /usr/bin/gcc-6 /usr/local/bin/gcc
+      - sudo ln -s /usr/bin/g++-6 /usr/local/bin/g++
+      - export CC=/usr/bin/gcc-6
+      - export CXX=/usr/bin/g++-6
+      - mkdir build;
+      - cd build
+      - conan create .. LogicalAccess/$PACKAGE_VERSION@islog/$TRAVIS_BRANCH
+      - conan install .. -o LLA_BUILD_UNITTEST=True --build gtest --build OpenSSL
+      - conan build ..
+      - ctest
+
+  - os: linux
+    dist: trusty
+    compiler:
+      - clang
+      - clang++
+    language: python
+    addons:
+      apt:
+        update: true
+        sources:
+          - ubuntu-toolchain-r-test
+          - llvm-toolchain-trusty-6.0
+        packages:
+          - clang-6.0
+          - libc++-dev
+          - libc++abi-dev
+          - libstdc++-6-dev
+    env:
+      - PACKAGE_VERSION="2.1.0"
+      - MATRIX_EVAL="CC=clang-6.0 && CXX=clang++-6.0"
+      - EXTRA_CXX_FLAGS="-stdlib=libstdc++-6-dev"
+      - EXTRA_CXX_LINKER_FLAGS="-stdlib=libstdc++-6-dev"
+      - EXTRA_LDFLAGS="-lstdc++"
+    script:
+      - export CC=/usr/bin/clang-6.0
+      - export CXX=/usr/bin/clang++-6.0
+      - mkdir build;
+      - cd build
+      - conan create .. LogicalAccess/$PACKAGE_VERSION@islog/$TRAVIS_BRANCH
+      - conan install .. -o LLA_BUILD_UNITTEST=True --build gtest --build OpenSSL --build libstdc++-6-dev
+      - conan build ..
+      - ctest
 
 before_install:
   - sudo apt-get install -y libpcsclite-dev
@@ -26,20 +74,3 @@ before_install:
 install:
   - pip install conan
   - conan user
-script:
-  - sudo ln -s /usr/bin/gcc-6 /usr/local/bin/gcc
-  - sudo ln -s /usr/bin/g++-6 /usr/local/bin/g++
-  - export CC=/usr/bin/gcc-6
-  - export CXX=/usr/bin/g++-6
-  - gcc -v
-  - mkdir build
-  - cd build
-  - conan create .. LogicalAccess/2.1.0@islog/develop
-  - conan install .. -o LLA_BUILD_UNITTEST=True --build gtest
-  - conan build ..
-  - ctest
-
-notifications:
-  email:
-    recipients:
-      - reports@islog.com
