@@ -44,17 +44,20 @@ void MifareNFCTagCardService::writeInfo(int baseAddr, std::shared_ptr<MifareKey>
     endSector++;
   while (endSector >= location->sector)
   {
+    /*
+    ** if the card is not formated for ndef messages we format it with default ndef keys
+    */
     try
     {
-      storage->writeData(location, std::shared_ptr<AccessInfo>(), aiToWrite,
+      storage->writeData(location, aiToWrite, std::shared_ptr<AccessInfo>(),
                         tmpBuffer, CB_AUTOSWITCHAREA);
     }
     catch (std::exception &)
     {
-      getMifareChip()->getMifareCommands()->changeKeys(KT_KEY_A ,std::make_shared<MifareKey>("ff ff ff ff ff ff"), std::make_shared<MifareKey>("d3 f7 d3 f7 d3 f7"), keyB, endSector, &sab, 0x40);
+      getMifareChip()->getMifareCommands()->changeKeys(KT_KEY_A ,std::make_shared<MifareKey>("ff ff ff ff ff ff"), aiToWrite->keyA, keyB, endSector, &sab, 0x40);
       if (endSector == location->sector)
       {
-        storage->writeData(location, std::shared_ptr<AccessInfo>(), aiToWrite,
+        storage->writeData(location, aiToWrite, std::shared_ptr<AccessInfo>(),
                         tmpBuffer, CB_AUTOSWITCHAREA);
       }
     }
@@ -94,17 +97,20 @@ void MifareNFCTagCardService::writeInfo(int baseAddr, std::shared_ptr<MifareAcce
     endSector++;
   while (endSector >= location->sector)
   {
+    /*
+    ** if the card is not formated for ndef messages we format it with default ndef keys
+    */
     try
     {
-      storage->writeData(location, std::shared_ptr<AccessInfo>(), newAiToWrite,
+      storage->writeData(location, newAiToWrite, std::shared_ptr<AccessInfo>(),
                         tmpBuffer, CB_AUTOSWITCHAREA);
     }
     catch (std::exception &)
     {
-      getMifareChip()->getMifareCommands()->changeKeys(KT_KEY_A , aiToWrite->keyA, std::make_shared<MifareKey>("d3 f7 d3 f7 d3 f7"), aiToWrite->keyB, endSector, &sab, 0x40);
+      getMifareChip()->getMifareCommands()->changeKeys(KT_KEY_A , aiToWrite->keyA, nfcKey, aiToWrite->keyB, endSector, &sab, 0x40);
       if (endSector == location->sector)
       {
-        storage->writeData(location, std::shared_ptr<AccessInfo>(), newAiToWrite,
+        storage->writeData(location, newAiToWrite, std::shared_ptr<AccessInfo>(),
                         tmpBuffer, CB_AUTOSWITCHAREA);
       }
     }

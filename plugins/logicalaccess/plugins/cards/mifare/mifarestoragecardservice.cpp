@@ -94,16 +94,19 @@ void MifareStorageCardService::writeData(std::shared_ptr<Location> location,
     std::shared_ptr<MifareLocation> mLocation =
         std::dynamic_pointer_cast<MifareLocation>(location);
     std::shared_ptr<MifareAccessInfo> mAiToUse =
-        std::dynamic_pointer_cast<MifareAccessInfo>(aiToWrite);
+        std::dynamic_pointer_cast<MifareAccessInfo>(aiToUse);
     EXCEPTION_ASSERT_WITH_LOG(mLocation, std::invalid_argument,
                               "location must be a MifareLocation.");
-
-
 
     if (aiToUse)
     {
         EXCEPTION_ASSERT_WITH_LOG(mAiToUse, std::invalid_argument,
                                   "aiToUse must be a MifareAccessInfo.");
+    }
+    else
+    {
+        mAiToUse =
+            std::dynamic_pointer_cast<MifareAccessInfo>(getChip()->createAccessInfo());
     }
     bool writeAidToMad = false;
 
