@@ -1,15 +1,11 @@
-version: 1.87.0-{build}
-environment:
-  global:
-    JAVA_HOME: C:\Program Files\Java\jdk1.7.0
-    
+version: 2.{build}
+
 platform:
   - x86
   - x64
 configuration:
   - Debug
   - Release
-
 # branches to build
 branches:
   # whitelist
@@ -17,40 +13,26 @@ branches:
   - master
   - develop
 
-# Operating system (build VM template)
-#os: Windows Server 2012 R2
-
 # clone directory
 clone_folder: c:\projects\liblogicalaccess
-
 install:
-  - ps: |
-     Invoke-WebRequest http://www.us.apache.org/dist/maven/maven-3/3.2.5/binaries/apache-maven-3.2.5-bin.zip -OutFile C:\maven-bin.zip
-     Add-Type -AssemblyName System.IO.Compression.FileSystem
-     [System.IO.Compression.ZipFile]::ExtractToDirectory("C:\maven-bin.zip", "C:\maven")
-  - cmd: SET PATH=C:\maven\apache-maven-3.2.5\bin;%JAVA_HOME%\bin;%PATH%
-  - cmd: SET MAVEN_OPTS=-XX:MaxPermSize=2g -Xmx4g
-  - cmd: SET JAVA_OPTS=-XX:MaxPermSize=2g -Xmx4g
-  - cmd: SET M2_HOME=C:\maven\apache-maven-3.2.5
-  - ps: |
-     Invoke-WebRequest http://download.islog.com/mavenSettingsAppVeyor.xml -OutFile C:\maven\apache-maven-3.2.5\conf\settings.xml
-      
-build:
-  project: INSTALL.vcxproj
+  - cmd: sed -i '/version = "2.1.0"/c\    version = "%APPVEYOR_BUILD_VERSION%"' conanfile.py
+  - cmd: cat conanfile.py
+  - cmd: echo "Downloading conan..."
+  - cmd: set PATH=%PATH%;%PYTHON%/Scripts/
+  - cmd: pip.exe install conan
+  - cmd: conan user # Create the conan data directory
+  - cmd: conan --version
 
-# scripts to run before build
 before_build:
-  - cd c:\projects\liblogicalaccess
-  - mvn -q dependency:copy-dependencies
-  - 7z x target/* -opackages > nul
-  - ps: |
-      if (($env:PLATFORM -eq "x64") -and ($env:CONFIGURATION -eq "Release"))
-      { cmake.exe -DCMAKE_BUILD_TYPE=Release -DTARGET_ARCH=x64 -DLIB_SUFFIX=x64/Release -G"Visual Studio 12 Win64" -Tv120_xp . -DCMAKE_INSTALL_PREFIX=./install . }
-      elseif (($env:PLATFORM -eq "x64") -and ($env:CONFIGURATION -eq "Debug"))
-      { cmake.exe -DCMAKE_BUILD_TYPE=Debug -DTARGET_ARCH=x64 -DLIB_SUFFIX=x64/Debug -G"Visual Studio 12 Win64" -Tv120_xp . -DCMAKE_INSTALL_PREFIX=./install . }
-      elseif (($env:PLATFORM -eq "x86") -and ($env:CONFIGURATION -eq "Release"))
-      { cmake.exe -DCMAKE_BUILD_TYPE=Release -DTARGET_ARCH=Win32 -DLIB_SUFFIX=Win32/Release -G"Visual Studio 12" -Tv120_xp . -DCMAKE_INSTALL_PREFIX=./install . }
-      elseif (($env:PLATFORM -eq "x86") -and ($env:CONFIGURATION -eq "Debug"))
-      { cmake.exe -DCMAKE_BUILD_TYPE=Debug -DTARGET_ARCH=Win32 -DLIB_SUFFIX=Win32/Debug -G"Visual Studio 12" -Tv120_xp . -DCMAKE_INSTALL_PREFIX=./install . }
-cache:
-  - C:\Users\appveyor\.m2
+  - cmd: cd c:\projects\liblogicalaccess
+
+build_script:
+  - cmd: mkdir build
+  - cmd: cd build
+  - cmd: conan create .. LogicalAccess/%APPVEYOR_BUILD_VERSION%@islog/%APPVEYOR_REPO_BRANCH%
+  - cmd: conan install .. -o LLA_BUILD_UNITTEST=True --build gtest
+  - cmd: conan build ..
+
+test_script:
+  - cmd: ctest -C Release
