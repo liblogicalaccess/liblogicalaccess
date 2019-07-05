@@ -10,6 +10,10 @@ matrix:
       - gcc
     language: python
     addons:
+      sonarcloud:
+        organization: "islog"
+        token:
+           secure: "cJ9Sg7kYCaHISdArKhNbpNjlpIIxVNRi6saoPqXmCW4msYIGoMuWazrYBOsH6z2E3lnAoqRzoCEHoXZJcOJTqK9gwH9L+CapMiqVy0PgGsyJp/oMUbbJlOJiF9BTRxnv5KhHHa2zRmI2ZVKq87/T5G4jmG23CqzBs3D4FkrrlNk="
       apt:
         update: true
         sources:
@@ -22,17 +26,24 @@ matrix:
       - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
       - PACKAGE_VERSION="2.1.0"
     script:
-      - echo $PACKAGE_VERSION
       - sudo ln -s /usr/bin/gcc-6 /usr/local/bin/gcc
       - sudo ln -s /usr/bin/g++-6 /usr/local/bin/g++
       - export CC=/usr/bin/gcc-6
       - export CXX=/usr/bin/g++-6
+      - wget "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.0.0.1744-linux.zip"
+      - unzip sonar-scanner-cli-4.0.0.1744-linux.zip
+      - export PATH=$PATH:/home/travis/build/islog/liblogicalaccess/sonar-scanner-cli-4.0.0.1744-linux.zip
       - mkdir build;
       - cd build
       - conan create .. LogicalAccess/$PACKAGE_VERSION@islog/$TRAVIS_BRANCH
       - conan install .. -o LLA_BUILD_UNITTEST=True --build gtest --build OpenSSL
-      - conan build ..
+      - build-wrapper-linux-x86-64 --out-dir . conan build ..
       - ctest
+      - cd ..
+      - sonar-scanner
+    cache:
+      directories:
+        - '$HOME/.sonar/cache'
 
   - os: linux
     dist: trusty
