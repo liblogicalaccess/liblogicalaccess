@@ -16,7 +16,10 @@ Welcome to the LibLogicalAccess project web page, an open source RFID library de
   * Development branch: develop [![Build Status](https://img.shields.io/travis/islog/liblogicalaccess/develop.svg?label=Travis-CI)](https://travis-ci.org/islog/liblogicalaccess) [![Build status](https://img.shields.io/appveyor/ci/Liryna/liblogicalaccess/develop.svg?label=AppVeyor)](https://ci.appveyor.com/project/Liryna/liblogicalaccess/branch/develop)
   * Features branches: feature-*
 
-Coverity Scan: [![Coverity Scan Build Status](https://scan.coverity.com/projects/2286/badge.svg)](https://scan.coverity.com/projects/2286)
+[![Coverity Scan Build Status](https://scan.coverity.com/projects/2286/badge.svg)](https://scan.coverity.com/projects/2286)
+[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=islog_liblogicalaccess&metric=alert_status)](https://sonarcloud.io/dashboard?id=islog_liblogicalaccess)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/e5546aa698214fe981729710f48269a5)](https://www.codacy.com/app/ISLOG/liblogicalaccess)
+[![LGTM Alerts](https://img.shields.io/lgtm/alerts/github/islog/liblogicalaccess.svg)](https://lgtm.com/projects/g/islog/liblogicalaccess/alerts/)
 
 How to install?
 ----------------
