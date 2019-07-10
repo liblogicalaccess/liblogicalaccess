@@ -1,5 +1,6 @@
 ![liblogicalaccess_logo](http://islog.github.io/liblogicalaccess/images/lla_logo.png)
 =============
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/04903a827f224f358e7f6ccc393e227a)](https://app.codacy.com/app/ISLOG/liblogicalaccess?utm_source=github.com&utm_medium=referral&utm_content=islog/liblogicalaccess&utm_campaign=Badge_Grade_Dashboard)
 [![Bounty](https://img.shields.io/bountysource/team/islog/activity.svg)](https://www.bountysource.com/teams/islog/issues)
 [![PayPayl donate button](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=dev@islog.com&lc=US&item_name=LibLogicalAccess&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted "Donate!")
 
