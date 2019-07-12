@@ -141,20 +141,23 @@ bool PCSCCardProbe::is_mifare_ultralight_c()
 
 void PCSCCardProbe::reset() const
 {
-    try
-    {
-        auto pcsc_ru = dynamic_cast<PCSCReaderUnit *>(reader_unit_);
+  auto pcsc_ru = dynamic_cast<PCSCReaderUnit *>(reader_unit_);
+  if (pcsc_ru == nullptr)
+    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+      "Card probing failed because reseting the PCSC connection failed.");
+  try
+  {
         assert(pcsc_ru);
 
         pcsc_ru->reset(SCARD_UNPOWER_CARD);
-    }
-    catch (const std::exception &e)
-    {
+  }
+  catch (const std::exception &e)
+  {
         LOG(ERRORS) << "PCSCCardProbe reset failure: " << e.what();
         THROW_EXCEPTION_WITH_LOG(
             LibLogicalAccessException,
             "Card probing failed because reseting the PCSC connection failed.");
-    }
+  }
 }
 
 bool PCSCCardProbe::has_desfire_random_uid(ByteVector *uid)

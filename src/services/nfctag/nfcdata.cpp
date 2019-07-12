@@ -13,7 +13,7 @@
 namespace logicalaccess
 {
 
-   NfcData::NfcData()
+   NfcData::NfcData() : m_type(0)
    {
 
    }

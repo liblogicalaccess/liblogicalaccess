@@ -51,7 +51,14 @@ Logs::Logs(const char *file, const char *func, int line, enum LogLevel level)
 
     if (logfile && d_level != NONE)
     {
-        boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
+        boost::posix_time::ptime now;
+        try
+        {
+          now  = boost::posix_time::microsec_clock::local_time();
+        }
+        catch (std::exception)
+        {
+        }
         if (Settings::getInstance()->ColorizeLog)
         {
             _stream << Colorize::underline(to_simple_string(now)) << " - "

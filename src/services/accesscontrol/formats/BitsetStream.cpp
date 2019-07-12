@@ -368,14 +368,4 @@ void BitsetStream::clear()
     stream.clear();
     _pos = 0;
 }
-
-void BitsetStream::print() const
-{
-    std::cout << toString().c_str() << std::endl;
-    for (ByteVector::const_iterator it = stream.begin(); it != stream.end(); ++it)
-    {
-        std::cout << std::hex << int(*it) << " - ";
-    }
-    std::cout << std::endl;
-}
 }

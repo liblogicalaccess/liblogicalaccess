@@ -92,6 +92,7 @@ std::shared_ptr<NdefMessage> NFCTag2CardService::readNDEF()
         getMifareUltralightChip()->getMifareUltralightCommands());
     std::vector<std::shared_ptr<NfcData>> dataList;
     ByteVector res;
+    std::shared_ptr<NdefMessage> ret = nullptr;
 
     ByteVector CC = mfucmd->readPage(3);
     // Only take care if NDEF is present
@@ -115,8 +116,15 @@ std::shared_ptr<NdefMessage> NFCTag2CardService::readNDEF()
             dataList = NfcData::tlvToData(res);
         }
     }
-
-    return  nullptr;
+    for (unsigned int i = 0; i != dataList.size(); i++)
+    {
+      if (dataList[i]->getType() == NDEF_MESSAGE)
+      {
+        ret = std::dynamic_pointer_cast<NdefMessage>(dataList[i]);
+        break ;
+      }
+    }
+    return  ret;
 }
 
 std::vector<std::shared_ptr<NfcData>> NFCTag2CardService::readData()

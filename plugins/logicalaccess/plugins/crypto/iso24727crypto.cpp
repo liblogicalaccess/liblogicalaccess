@@ -335,12 +335,12 @@ ByteVector ISO24727Crypto::decrypt_rapdu(std::shared_ptr<openssl::SymmetricCiphe
     K.insert(K.end(), do85_or_do87.begin(), do85_or_do87.end());
     K.insert(K.end(), do_99.begin(), do_99.end());
 
-    bool rep = false;
     ByteVector CC;
+    /*bool rep = false;
     if (rep)
         CC = compute_mac(cipher, pad(K, cipher->getBlockSize()), ks_mac, {}, ssc);
-    else
-        CC = compute_mac(cipher, pad(K, cipher->getBlockSize()), ks_mac);
+    else*/
+    CC = compute_mac(cipher, pad(K, cipher->getBlockSize()), ks_mac);
     EXCEPTION_ASSERT_WITH_LOG(CC == ByteVector(do_8E.begin() + 2, do_8E.end()),
                               LibLogicalAccessException, "Checksum doesn't match");
 

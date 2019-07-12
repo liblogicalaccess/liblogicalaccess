@@ -24,7 +24,7 @@ void MifareNFCTagCardService::writeInfo(int baseAddr, std::shared_ptr<MifareKey>
   location->block = (baseAddr / 16) % 4;
   if ((baseAddr / 16) % 4 == 3)
   {
-    location->sector = location->sector++;
+    location->sector++;
     location->block = 0;
   }
   location->useMAD = useMad;
@@ -77,7 +77,7 @@ void MifareNFCTagCardService::writeInfo(int baseAddr, std::shared_ptr<MifareAcce
   location->block = (baseAddr / 16) % 4;
   if ((baseAddr / 16) % 4 == 3)
   {
-    location->sector = location->sector++;
+    location->sector++;
     location->block = 0;
   }
   location->useMAD = false;

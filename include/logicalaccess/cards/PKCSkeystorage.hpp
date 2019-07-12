@@ -90,7 +90,7 @@ class LLA_CORE_API PKCSKeyStorage : public KeyStorage
     /*
      * PKCS Token slot id.
      */
-    size_t slot_id_;
+    size_t slot_id_ = 0;
 
     // The following value should not lives in the KeyStorage object.
     // But until we can refactor the cryptographic API of LLA, this will

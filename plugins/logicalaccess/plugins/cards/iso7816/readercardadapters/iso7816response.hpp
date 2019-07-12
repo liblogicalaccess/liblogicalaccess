@@ -20,7 +20,10 @@ namespace logicalaccess
 class LLA_CARDS_ISO7816_API ISO7816Response
 {
   public:
-    ISO7816Response() {}
+    ISO7816Response(): sw1_(0), sw2_(0), data_()
+    {
+
+    }
 
     ISO7816Response(const ByteVector &data, unsigned char sw1, unsigned char sw2)
     {

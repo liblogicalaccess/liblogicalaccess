@@ -1109,7 +1109,7 @@ ByteVector DESFireEV1ISO7816Commands::readData(unsigned char fileno, unsigned in
                                                unsigned int length, EncryptionMode mode)
 {
     ByteVector command(7), ret;
-    ISO7816Response result;
+    ISO7816Response result = ISO7816Response();
 
     command[0] = static_cast<unsigned char>(fileno);
 

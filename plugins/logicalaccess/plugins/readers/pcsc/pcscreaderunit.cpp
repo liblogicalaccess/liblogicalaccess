@@ -133,14 +133,6 @@ PCSCReaderUnit::PCSCReaderUnit(const std::string &name)
 
 PCSCReaderUnit::~PCSCReaderUnit()
 {
-    // We want to destroy the Chip object before destroying the reader unit.
-    // We have to access the card's type before nulling the card object.
-    std::string genericCardType;
-    if (d_proxyReaderUnit && d_proxyReaderUnit->d_insertedChip)
-        genericCardType = d_proxyReaderUnit->d_insertedChip->getGenericCardType();
-    else if (d_insertedChip)
-        genericCardType = d_insertedChip->getGenericCardType();
-
     d_insertedChip = nullptr;
     if (d_proxyReaderUnit)
         d_proxyReaderUnit->d_insertedChip = nullptr;
@@ -149,7 +141,14 @@ PCSCReaderUnit::~PCSCReaderUnit()
 
     if (PCSCReaderUnit::isConnected())
     {
+      try
+      {
         PCSCReaderUnit::disconnect();
+      }
+      catch (std::exception &ex)
+      {
+          LOG(LogLevel::ERRORS) << "Error when disconnecting the reader: " << ex.what();
+      }
     }
 }
 

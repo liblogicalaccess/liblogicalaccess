@@ -28,7 +28,7 @@
 namespace logicalaccess
 {
 OSDPReaderUnit::OSDPReaderUnit()
-    : ReaderUnit(READER_OSDP)
+    : ReaderUnit(READER_OSDP), m_tamperStatus(false)
 {
     d_readerUnitConfig.reset(new OSDPReaderUnitConfiguration());
 

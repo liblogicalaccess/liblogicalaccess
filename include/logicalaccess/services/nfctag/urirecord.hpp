@@ -53,6 +53,7 @@ namespace logicalaccess
       m_prefixeMap[TEL] = "tel:";
       m_prefixeMap[MAIL_TO] = "mailto:";
       m_prefixeMap[URI_FILE] = "file://";
+      m_prefixe = NO_PREFIX;
     }
 
     virtual ~UriRecord()
