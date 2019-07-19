@@ -28,6 +28,10 @@ namespace logicalaccess
 }
 
 namespace std {
+#ifdef SWIG
+// Hackfix to avoid SWIG warning about specializing a non template type.
+template<typename T> struct hash;
+#endif
   template <> struct hash<logicalaccess::UriType>
   {
     size_t operator()(const logicalaccess::UriType & x) const
