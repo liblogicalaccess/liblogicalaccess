@@ -17,6 +17,9 @@ pipeline {
         // This is needed because MSBuild fails spuriously quiet often
         // on the build machine.
         MSBUILDDISABLENODEREUSE = 1
+
+        // Enable recipe/package revision support for Conan.
+        CONAN_REVISIONS_ENABLED = 1
     }
 
     parameters {
