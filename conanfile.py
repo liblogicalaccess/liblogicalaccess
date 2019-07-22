@@ -13,6 +13,7 @@ class LLAConan(ConanFile):
                'LLA_BUILD_PKCS': [True, False],
                'LLA_BUILD_UNITTEST': [True, False],
                'LLA_BUILD_RFIDEAS': [True, False]}
+    revision_mode = "scm"
     exports_sources = "plugins*", "src*", "include*", "CMakeLists.txt", "cmake*", "liblogicalaccess.config", "tests*"
     
     if tools.os_info.is_windows:
