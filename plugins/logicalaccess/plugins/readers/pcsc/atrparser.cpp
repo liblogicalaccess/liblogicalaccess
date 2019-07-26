@@ -457,6 +457,7 @@ std::string ATRParser::check_generic_from_atr() const
             }
             else
             {
+
                 unsigned int x = 0;
                 EXCEPTION_ASSERT_WITH_LOG(x < historicalBytesLength,
                                           LibLogicalAccessException,
@@ -464,8 +465,6 @@ std::string ATRParser::check_generic_from_atr() const
                                           "retrieve Category Indicator.");
                 /*unsigned char categoryIndicator = atr[y + x++];	// See
                  * ISO7816-4, 8.2*/
-                x++;
-
                 cardType = "GENERIC_T_CL";
             }
         }

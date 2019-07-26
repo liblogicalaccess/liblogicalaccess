@@ -15,7 +15,7 @@ namespace logicalaccess
 {
 
 TLV::TLV(uint8_t t)
-    : tag_(t)
+    : tag_(t), sizeTag_(0)
 {
 }
 

@@ -187,9 +187,8 @@ uint32_t DESFireCrypto::desfire_crc32(const void *data, size_t dataLength)
  */
 static bool is_triple_des(const ByteVector &key)
 {
-    EXCEPTION_ASSERT_WITH_LOG(key.size() >= 16, LibLogicalAccessException,
-                              "Triple des key check need a valid key size.");
-
+    if (key.size() == 8)
+      return false;
     for (int i = 0; i < 8; ++i)
     {
         if ((key[i] & 0xFE) != (key[i + 8] & 0xFE))
@@ -208,24 +207,23 @@ ByteVector DESFireCrypto::desfire_CBC_send(const ByteVector &key, const ByteVect
 
     ByteVector ret;
 
-    bool is3des = false;
-    if (is_triple_des(key))
-    {
-        is3des = true;
-    }
+    EXCEPTION_ASSERT_WITH_LOG(key.size() >= 8, LibLogicalAccessException,
+    "DESFire send cbc encryption need a valid 3des key.");
 
+    bool is3des = is_triple_des(key);
     // Set encryption keys
     if (is3des)
     {
         EXCEPTION_ASSERT_WITH_LOG(key.size() >= 16, LibLogicalAccessException,
                                   "DESFire send cbc encryption need a valid 3des key.");
-        des3_setup(&key[0], 16, 0, &skey);
+        EXCEPTION_ASSERT_WITH_LOG(des3_setup(&key[0], 16, 0, &skey) == CRYPT_OK, LibLogicalAccessException,
+                                  "DESFire setup failed");
+
     }
     else
     {
-        EXCEPTION_ASSERT_WITH_LOG(key.size() >= 8, LibLogicalAccessException,
-                                  "DESFire send cbc encryption need a valid key.");
-        des_setup(&key[0], 8, 0, &skey);
+        EXCEPTION_ASSERT_WITH_LOG(des_setup(&key[0], 8, 0, &skey) == CRYPT_OK, LibLogicalAccessException,
+                                  "DESFire setup failed");
     }
 
     // clear buffers
@@ -298,22 +296,20 @@ ByteVector DESFireCrypto::desfire_CBC_receive(const ByteVector &key, const ByteV
     EXCEPTION_ASSERT_WITH_LOG(key.size() >= 8, LibLogicalAccessException,
                               "DESFire encryption need a valid key.");
 
-    bool is3des = false;
-    if (memcmp(&key[0], &key[8], 8))
-    {
-        is3des = true;
-    }
+    bool is3des = is_triple_des(key);
 
     // Set encryption keys
     if (is3des)
     {
         EXCEPTION_ASSERT_WITH_LOG(key.size() >= 16, LibLogicalAccessException,
                                   "DESFire encryption need a valid 3des key.");
-        des3_setup(&key[0], 16, 0, &skey);
+        EXCEPTION_ASSERT_WITH_LOG(des3_setup(&key[0], 16, 0, &skey) == CRYPT_OK, LibLogicalAccessException,
+                                  "DESFire setup failed");
     }
     else
     {
-        des_setup(&key[0], 8, 0, &skey);
+      EXCEPTION_ASSERT_WITH_LOG(des_setup(&key[0], 8, 0, &skey) == CRYPT_OK, LibLogicalAccessException,
+                                "DESFire setup failed");
     }
 
     // clear buffers
@@ -391,22 +387,20 @@ ByteVector DESFireCrypto::sam_CBC_send(const ByteVector &key, const ByteVector &
     EXCEPTION_ASSERT_WITH_LOG(key.size() >= 8, LibLogicalAccessException,
                               "DESFire sam cbc encryption need a valid key.");
 
-    bool is3des = false;
-    if (memcmp(&key[0], &key[8], 8))
-    {
-        is3des = true;
-    }
+    bool is3des = is_triple_des(key);
 
     // Set encryption keys
     if (is3des)
     {
         EXCEPTION_ASSERT_WITH_LOG(key.size() >= 16, LibLogicalAccessException,
                                   "DESFire sam cbc encryption need a valid key.");
-        des3_setup(&key[0], 16, 0, &skey);
+        EXCEPTION_ASSERT_WITH_LOG(des3_setup(&key[0], 16, 0, &skey) == CRYPT_OK, LibLogicalAccessException,
+                                  "DESFire setup failed");
     }
     else
     {
-        des_setup(&key[0], 8, 0, &skey);
+      EXCEPTION_ASSERT_WITH_LOG(des_setup(&key[0], 8, 0, &skey) == CRYPT_OK, LibLogicalAccessException,
+                                "DESFire setup failed");
     }
 
     // clear buffers
@@ -510,9 +504,7 @@ ByteVector DESFireCrypto::desfire_decrypt(const ByteVector &key, const ByteVecto
 {
     ByteVector ret;
     size_t ll;
-
     ret = desfire_CBC_receive(key, ByteVector(), data);
-
     if (datalen == 0)
     {
         ll = ret.size() - 1;
@@ -531,16 +523,13 @@ ByteVector DESFireCrypto::desfire_decrypt(const ByteVector &key, const ByteVecto
     {
         ll = datalen;
     }
-
     unsigned short crc1 = desfire_crc16(&ret[0], ll);
     unsigned short crc2 = static_cast<unsigned short>(ret[ll] | (ret[ll + 1] << 8));
-
     char computationError[128];
     memset(computationError, 0x00, 128);
     sprintf(computationError, "Error in crc computation: (crc1: %04x, crc2: %04x)", crc1,
             crc2);
     EXCEPTION_ASSERT_WITH_LOG(crc1 == crc2, LibLogicalAccessException, computationError);
-
     ret.resize(ll);
     return ret;
 }
@@ -552,14 +541,12 @@ ByteVector DESFireCrypto::authenticate_PICC1(unsigned char keyno, ByteVector div
     d_authkey.resize(16);
     getKey(d_currentAid, 0, keyno, diversify, d_authkey);
     d_rndB = desfire_CBC_send(d_authkey, ByteVector(), encRndB);
-
     ByteVector rndB1;
     rndB1.insert(rndB1.end(), d_rndB.begin() + 1, d_rndB.begin() + 8);
     rndB1.push_back(d_rndB[0]);
 
     EXCEPTION_ASSERT_WITH_LOG(RAND_status() == 1, LibLogicalAccessException,
                               "Insufficient enthropy source");
-
     d_rndA.clear();
     d_rndA.resize(8);
     if (RAND_bytes(&d_rndA[0], static_cast<int>(d_rndA.size())) != 1)
@@ -567,11 +554,9 @@ ByteVector DESFireCrypto::authenticate_PICC1(unsigned char keyno, ByteVector div
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "Cannot retrieve cryptographically strong bytes");
     }
-
     ByteVector rndAB;
     rndAB.insert(rndAB.end(), d_rndA.begin(), d_rndA.end());
     rndAB.insert(rndAB.end(), rndB1.begin(), rndB1.end());
-
     return desfire_CBC_send(d_authkey, ByteVector(), rndAB);
 }
 

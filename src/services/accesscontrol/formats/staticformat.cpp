@@ -107,12 +107,15 @@ bool StaticFormat::needUserConfigurationToBeUse() const
 void StaticFormat::convertField(BitsetStream &data, unsigned long long field,
                                 unsigned int fieldlen) const
 {
+    int divider =  d_dataType->getBitDataSize();
+    if (divider == 0)
+      divider = 1;
     const BitsetStream convertedDataTypeData = d_dataType->convert(field, fieldlen);
     BitsetStream bitConvertNum =
         d_dataRepresentation->convertNumeric(convertedDataTypeData);
     const auto extraBitsParity = ((d_dataType->getLeftParityType() != PT_NONE) +
                                   (d_dataType->getRightParityType() != PT_NONE)) *
-                                 (fieldlen / d_dataType->getBitDataSize());
+                                 (fieldlen / divider);
     data.concat(bitConvertNum.getData(), 0, fieldlen + extraBitsParity);
 }
 
@@ -121,6 +124,8 @@ unsigned long long StaticFormat::revertField(BitsetStream &data, unsigned int *p
 {
     unsigned long long ret = 0;
 
+    if (d_dataType->getBitDataSize() == 0)
+      return 0;
     const auto extraBitsParity = ((d_dataType->getLeftParityType() != PT_NONE) +
                                   (d_dataType->getRightParityType() != PT_NONE)) *
                                  (fieldlen / d_dataType->getBitDataSize());

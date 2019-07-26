@@ -80,9 +80,13 @@ void ValueDataField::convertNumericData(BitsetStream &data, unsigned long long f
     const BitsetStream convertedDataTypeData = d_dataType->convert(field, fieldlen);
     BitsetStream bitConvertNum =
         d_dataRepresentation->convertNumeric(convertedDataTypeData);
+
+    int divider = d_dataType->getBitDataSize();
+    if (divider == 0)
+      divider = 1;
     const auto extraBitsParity = ((d_dataType->getLeftParityType() != PT_NONE) +
                                   (d_dataType->getRightParityType() != PT_NONE)) *
-                                 (fieldlen / d_dataType->getBitDataSize());
+                                 (fieldlen / divider);
     data.concat(bitConvertNum.getData(), 0, fieldlen + extraBitsParity);
 }
 

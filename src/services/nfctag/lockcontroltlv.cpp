@@ -9,13 +9,13 @@
 namespace logicalaccess
 {
   LockControlTlv::LockControlTlv() :
-    NfcData(0x01), _additionalDataSize(0), _numberOfDynamicLockBits(0x10), _bytesLockedPerLockBit(0x04), _bytesPerPage(4), _offset(0), _pageAddr(0)
+    NfcData(0x01), _additionalDataSize(0), _numberOfDynamicLockBits(0x10), _bytesLockedPerLockBit(0x04), _bytesPerPage(4), _offset(0), _pageAddr(0), _dynamicLockBytesPosition(0)
   {
 
   }
 
   LockControlTlv::LockControlTlv(ByteVector data) :
-    NfcData(0x01), _additionalDataSize(0), _numberOfDynamicLockBits(0x10), _bytesLockedPerLockBit(0x04), _bytesPerPage(4), _offset(0), _pageAddr(0)
+    NfcData(0x01), _additionalDataSize(0), _numberOfDynamicLockBits(0x10), _bytesLockedPerLockBit(0x04), _bytesPerPage(4), _offset(0), _pageAddr(0), _dynamicLockBytesPosition(0)
   {
     if (data.size() == 5)
     {
@@ -30,7 +30,7 @@ namespace logicalaccess
   }
 
   LockControlTlv::LockControlTlv(int ad, unsigned char  nodlb, unsigned char  blplb) :
-    NfcData(0x01), _additionalDataSize(ad), _numberOfDynamicLockBits(nodlb), _bytesLockedPerLockBit(blplb), _bytesPerPage(4), _offset(0), _pageAddr(0)
+    NfcData(0x01), _additionalDataSize(ad), _numberOfDynamicLockBits(nodlb), _bytesLockedPerLockBit(blplb), _bytesPerPage(4), _offset(0), _pageAddr(0), _dynamicLockBytesPosition(0)
   {
     this->calculateLockPosition();
   }
@@ -78,7 +78,8 @@ namespace logicalaccess
 
     for (int i = 15; i > 0; i--)
     {
-      a = ceil(byteAddr / i);
+      a = byteAddr / i;
+      a = ceil(a);
       b = log2(a);
       bytesPerPage = floor(b);
       offset = byteAddr - i * pow(2, bytesPerPage);

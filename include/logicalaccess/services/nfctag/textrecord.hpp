@@ -21,7 +21,7 @@ class LLA_CORE_API TextRecord : public NdefRecord
 {
   public:
     TextRecord()
-        : NdefRecord()
+        : NdefRecord(), m_utf(UTF_8)
     {
     }
     virtual ~TextRecord()

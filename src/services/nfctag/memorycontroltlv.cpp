@@ -67,7 +67,8 @@ namespace logicalaccess
 
     for (int i = 15; i > 0; i--)
     {
-      a = ceil(_byteAddr / i);
+      a = _byteAddr / i;
+      a = ceil(a);
       b = log2(a);
       bytesPerPage = floor(b);
       offset = _byteAddr - i * pow(2, bytesPerPage);

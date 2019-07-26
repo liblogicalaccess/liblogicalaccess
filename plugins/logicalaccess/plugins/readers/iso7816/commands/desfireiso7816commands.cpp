@@ -45,7 +45,7 @@ void DESFireISO7816Commands::erase()
 
 DESFireCommands::DESFireCardVersion DESFireISO7816Commands::getVersion()
 {
-    DESFireCardVersion dataVersion;
+    DESFireCardVersion dataVersion = DESFireCardVersion();
 
     auto result = transmit(DF_INS_GET_VERSION);
     if (result.getData().size() == 7)

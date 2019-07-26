@@ -50,7 +50,14 @@ IdOnDemandReaderUnit::IdOnDemandReaderUnit()
 
 IdOnDemandReaderUnit::~IdOnDemandReaderUnit()
 {
+  try
+  {
     IdOnDemandReaderUnit::disconnectFromReader();
+  }
+  catch (std::exception &ex)
+  {
+      LOG(LogLevel::ERRORS) << "Error when disconnecting the reader: " << ex.what();
+  }
 }
 
 std::string IdOnDemandReaderUnit::getName() const
