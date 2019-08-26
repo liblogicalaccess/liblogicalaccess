@@ -30,9 +30,7 @@ MifarePCSCCommands::MifarePCSCCommands(std::string ct)
 {
 }
 
-MifarePCSCCommands::~MifarePCSCCommands()
-{
-}
+MifarePCSCCommands::~MifarePCSCCommands() {}
 
 bool MifarePCSCCommands::loadKey(unsigned char keyno, MifareKeyType keytype,
                                  std::shared_ptr<MifareKey> key, bool vol)
@@ -45,10 +43,10 @@ bool MifarePCSCCommands::loadKey(unsigned char keyno, MifareKeyType keytype,
     try
     {
         result = getPCSCReaderCardAdapter()->sendAPDUCommand(
-            0xFF, 0x82, (vol ? 0x00 : 0x20), static_cast<char>(keyno),
+            0xFF, 0x82, (vol ? 0x00 : 0x20), keyno,
             static_cast<unsigned char>(vector_key.size()), vector_key);
     }
-    catch (CardException e)
+    catch (const CardException &e)
     {
         if (!vol && (e.error_code() == CardException::WRONG_P1_P2 ||
                      e.error_code() == CardException::UNKOWN_ERROR))
@@ -61,7 +59,7 @@ bool MifarePCSCCommands::loadKey(unsigned char keyno, MifareKeyType keytype,
         throw;
     }
 
-	if (!vol && result.getSW1() == 0x63 && result.getSW2() == 0x86)
+    if (!vol && result.getSW1() == 0x63 && result.getSW2() == 0x86)
     {
         if (keyno == 0)
         {
@@ -163,7 +161,8 @@ ByteVector MifarePCSCCommands::readBinary(unsigned char blockno, size_t len)
     }
     ByteVector c;
     c = getPCSCReaderCardAdapter()
-        ->sendAPDUCommand(0xFF, 0xB0, 0x00, blockno, static_cast<unsigned char>(len)).getData();
+            ->sendAPDUCommand(0xFF, 0xB0, 0x00, blockno, static_cast<unsigned char>(len))
+            .getData();
     return c;
 }
 

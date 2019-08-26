@@ -141,7 +141,7 @@ ByteVector EPassCommands::readEF(uint8_t size_bytes, uint8_t size_offset) const
     // size
     // and the initial offset of those bytes.
     uint16_t length = 0;
-    for (int i = 0; i < size_bytes; ++i)
+    for (uint64_t i = 0; i < size_bytes; ++i)
         length |= data[size_offset + i] << (size_bytes - i - 1) * 8;
 
     uint16_t offset = initial_read_len;

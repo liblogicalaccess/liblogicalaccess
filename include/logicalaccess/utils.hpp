@@ -119,7 +119,7 @@ class LLA_CORE_API ManchesterEncoder
     {
         std::bitset<GetBitSetSize<BitSet>::Length * 2> out;
 
-        for (int count = 0, read_count = 0; count < GetBitSetSize<BitSet>::Length * 2;
+        for (size_t count = 0, read_count = 0; count < GetBitSetSize<BitSet>::Length * 2;
              read_count++)
         {
             if ((in[read_count] && t == IEEE_802) || (!in[read_count] && t == G_E_THOMAS))

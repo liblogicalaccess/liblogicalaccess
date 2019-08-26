@@ -236,59 +236,58 @@ MifareKeyType MifareCommands::getKeyType(const MifareAccessInfo::SectorAccessBit
 
     if (virtualblock == 3)
     {
-      rkt = KT_KEY_A;
-      wkt = KT_KEY_A;
-      if (sab.d_sector_trailer_access_bits.c1 && !sab.d_sector_trailer_access_bits.c2 &&
-          !sab.d_sector_trailer_access_bits.c3)
-      {
-        wkt = KT_KEY_B;
-      }
-      if (!sab.d_sector_trailer_access_bits.c1 && sab.d_sector_trailer_access_bits.c2 &&
-          sab.d_sector_trailer_access_bits.c3)
-      {
-        wkt = KT_KEY_B;
-      }
-
+        rkt = KT_KEY_A;
+        wkt = KT_KEY_A;
+        if (sab.d_sector_trailer_access_bits.c1 && !sab.d_sector_trailer_access_bits.c2 &&
+            !sab.d_sector_trailer_access_bits.c3)
+        {
+            wkt = KT_KEY_B;
+        }
+        if (!sab.d_sector_trailer_access_bits.c1 && sab.d_sector_trailer_access_bits.c2 &&
+            sab.d_sector_trailer_access_bits.c3)
+        {
+            wkt = KT_KEY_B;
+        }
     }
     else
     {
-      if (sab.d_data_blocks_access_bits[virtualblock].c1 &&
-          sab.d_data_blocks_access_bits[virtualblock].c2 &&
-          sab.d_data_blocks_access_bits[virtualblock].c3)
-      {
-          // Never read/write access
-      }
-      else if (!sab.d_data_blocks_access_bits[virtualblock].c3)
-      {
-          rkt = KT_KEY_A;
-          if (!sab.d_data_blocks_access_bits[virtualblock].c1 &&
-              !sab.d_data_blocks_access_bits[virtualblock].c2)
-          {
-              wkt = KT_KEY_A;
-          }
-          else if (sab.d_data_blocks_access_bits[virtualblock].c1 &&
-                  !sab.d_data_blocks_access_bits[virtualblock].c2)
-          {
-              wkt = KT_KEY_B;
-          }
-          else
-          {
-              // Never write access
-          }
-      }
-      else
-      {
-          rkt = KT_KEY_B;
-          if (!sab.d_data_blocks_access_bits[virtualblock].c1 &&
-              sab.d_data_blocks_access_bits[virtualblock].c2)
-          {
-              wkt = KT_KEY_B;
-          }
-          else
-          {
-              // Never write access
-          }
-     }
+        if (sab.d_data_blocks_access_bits[virtualblock].c1 &&
+            sab.d_data_blocks_access_bits[virtualblock].c2 &&
+            sab.d_data_blocks_access_bits[virtualblock].c3)
+        {
+            // Never read/write access
+        }
+        else if (!sab.d_data_blocks_access_bits[virtualblock].c3)
+        {
+            rkt = KT_KEY_A;
+            if (!sab.d_data_blocks_access_bits[virtualblock].c1 &&
+                !sab.d_data_blocks_access_bits[virtualblock].c2)
+            {
+                wkt = KT_KEY_A;
+            }
+            else if (sab.d_data_blocks_access_bits[virtualblock].c1 &&
+                     !sab.d_data_blocks_access_bits[virtualblock].c2)
+            {
+                wkt = KT_KEY_B;
+            }
+            else
+            {
+                // Never write access
+            }
+        }
+        else
+        {
+            rkt = KT_KEY_B;
+            if (!sab.d_data_blocks_access_bits[virtualblock].c1 &&
+                sab.d_data_blocks_access_bits[virtualblock].c2)
+            {
+                wkt = KT_KEY_B;
+            }
+            else
+            {
+                // Never write access
+            }
+        }
     }
     return (write) ? wkt : rkt;
 }
@@ -346,7 +345,7 @@ void MifareCommands::writeSector(
     unsigned char userbyte, MifareAccessInfo::SectorAccessBits *newsab,
     std::shared_ptr<MifareKey> newkeyA, std::shared_ptr<MifareKey> newkeyB)
 {
-    size_t retlen = 0;
+    size_t retlen  = 0;
     ByteVector tmp = buf;
     MifareKeyType keytype, pkeytype = KT_KEY_A;
 
@@ -354,8 +353,8 @@ void MifareCommands::writeSector(
     {
         if (tmp.size() < retlen + 16)
         {
-          ByteVector r = readSector(sector, i, keyA, keyB, sab);
-           tmp.insert(tmp.end(), r.begin() + tmp.size() % 16, r.end());
+            ByteVector r = readSector(sector, i, keyA, keyB, sab);
+            tmp.insert(tmp.end(), r.begin() + tmp.size() % 16, r.end());
         }
         keytype = getKeyType(sab, sector, i, true);
         if (i == start_block || keytype != pkeytype)
@@ -378,7 +377,6 @@ void MifareCommands::writeSector(
         }
         changeKeys(newkeyA, newkeyB, sector, newsab, userbyte);
     }
-
 }
 
 void MifareCommands::changeKeys(MifareKeyType keytype, std::shared_ptr<MifareKey> key,
@@ -526,7 +524,7 @@ bool MifareCommands::readValueBlock(uint8_t blockno, int32_t &value,
     int32_t value0, value1, value_reverse;
     uint8_t backup0, backup1, backup0_reverse, backup1_reverse;
 
-    int idx = 0;
+    size_t idx = 0;
     memcpy(&value0, &buffer[idx], 4);
     idx += 4;
     memcpy(&value_reverse, &buffer[idx], 4);
