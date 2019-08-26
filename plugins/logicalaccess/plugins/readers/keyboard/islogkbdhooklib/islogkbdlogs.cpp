@@ -88,7 +88,7 @@ void KbdLogs::LogEvent(const char *Format, ...)
         fprintf(currentLogFile, "%s\n", szOutString);
         fflush(currentLogFile);
     }
-    va_end();
+    va_end(ArgList);
 }
 
 void KbdLogs::OpenLogFile(const char *pszLogFile)
