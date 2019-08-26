@@ -38,8 +38,7 @@ matrix:
       - export CXX=/usr/bin/g++-6
       - mkdir build;
       - cd build
-      - conan create .. LogicalAccess/$PACKAGE_VERSION@islog/$TRAVIS_BRANCH
-      - conan install .. -o LLA_BUILD_UNITTEST=True --build gtest --build OpenSSL
+      - conan install .. -o LLA_BUILD_UNITTEST=True
     script:
       - ctest
     env:
@@ -84,8 +83,7 @@ matrix:
       - export PATH=$PATH:/home/travis/build/islog/liblogicalaccess/sonar-scanner-cli-4.0.0.1744-linux.zip
       - mkdir build;
       - cd build
-      - conan create .. LogicalAccess/$PACKAGE_VERSION@islog/$TRAVIS_BRANCH
-      - conan install .. -o LLA_BUILD_UNITTEST=True --build gtest --build OpenSSL
+      - conan install .. -o LLA_BUILD_UNITTEST=True
       - build-wrapper-linux-x86-64 --out-dir . conan build ..
       - ctest
       - cd ..
@@ -128,7 +126,6 @@ matrix:
       - export CXX=/usr/bin/clang++-6.0
       - mkdir build;
       - cd build
-      - conan create .. LogicalAccess/$PACKAGE_VERSION@islog/$TRAVIS_BRANCH
-      - conan install .. -o LLA_BUILD_UNITTEST=True --build gtest --build OpenSSL --build libstdc++-6-dev
+      - conan install .. -o LLA_BUILD_UNITTEST=True
       - conan build ..
       - ctest
