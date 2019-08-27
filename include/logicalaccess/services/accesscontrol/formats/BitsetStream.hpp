@@ -77,8 +77,6 @@ class LLA_CORE_API BitsetStream
 
     bool all() const;
 
-    void print() const;
-
     void clear();
 
   private:
