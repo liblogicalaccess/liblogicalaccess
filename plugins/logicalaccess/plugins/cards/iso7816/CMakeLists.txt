@@ -9,7 +9,7 @@ endif ()
 set(HEADER_RELATIVE_INSTALL_DIR "include/logicalaccess/plugins/cards/iso7816")
 
 file(GLOB_RECURSE SRCS *.cpp)
-file(GLOB_RECURSE INCLUDE *.hpp)
+file(GLOB_RECURSE INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
 
 file(GLOB include_readercardadapters ${CMAKE_CURRENT_SOURCE_DIR}/readercardadapters/*.hpp)
 SOURCE_GROUP("Header Files\\readercardadapters" FILES ${include_readercardadapters})
@@ -23,7 +23,7 @@ set(SOURCE_LIB ${SRCS} ${source_readercardadapters})
 add_library(iso7816cards
         SHARED
         ${SRCS}
-        ${INCLUDE}
+        ${INCLUDE_LIB}
         ${LLA_RESOURCE_RC})
 
 SET_TARGET_PROPERTIES(iso7816cards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})

@@ -16,8 +16,8 @@ endif ()
 # They are propagated to other libraries because other libs
 # relies on llacommon...
 target_include_directories(llacommon PUBLIC
-        ${CMAKE_SOURCE_DIR}/include
-        ${CMAKE_SOURCE_DIR}/plugins)
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../../../include
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../../../plugins)
 
 target_link_libraries(llacommon PUBLIC CONAN_PKG::boost)
 generate_export_header(llacommon

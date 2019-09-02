@@ -15,10 +15,10 @@ set(LLA_BUILD_UNITTEST FALSE CACHE BOOL "Build unittests")
 
 include(GenerateExportHeader)
 # Perform Conan basic setup to import targets etc
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+include(${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup(TARGETS)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 # We define a macro that will help us properly generate and install
 # export headers for all libraries that are part of LLA.
@@ -58,8 +58,8 @@ endmacro()
 
 
 file(GLOB LLA_RESOURCE_RC ${CMAKE_CURRENT_SOURCE_DIR}/vc++/resource.rc)
-file(GLOB_RECURSE LLA_NATIVE_SOURCES "${CMAKE_SOURCE_DIR}/src/*.cpp")
-file(GLOB_RECURSE LLA_NATIVE_HEADERS "${CMAKE_SOURCE_DIR}/include/*.hpp")
+file(GLOB_RECURSE LLA_NATIVE_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+file(GLOB_RECURSE LLA_NATIVE_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp")
 
 # Those 2 are under plugin but they arent plugins, they are
 # required for LLA to link properly.
@@ -101,7 +101,7 @@ target_link_libraries(logicalaccess PUBLIC
 
 # Wrong, fix /plugins/
 target_include_directories(logicalaccess PUBLIC
-        ${CMAKE_SOURCE_DIR}/include)
+        ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
     target_compile_options(logicalaccess PUBLIC -O0 -g)
@@ -124,6 +124,7 @@ if (MSVC)
 endif ()
 
 set_target_properties(${LIBLOGICALACCESS_LIBRARY} PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
+set_target_properties(${LIBLOGICALACCESS_LIBRARY} PROPERTIES LINKER_LANGUAGE CXX)
 
 if (LLA_BUILD_IKS)
     add_subdirectory(plugins/logicalaccess/plugins/iks)
