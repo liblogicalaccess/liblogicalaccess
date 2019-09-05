@@ -120,6 +120,20 @@ void DESFireStorageCardService::writeData(std::shared_ptr<Location> location,
                                   "aiToWrite must be a DESFireAccessInfo.");
     }
 
+    // AccessInfo sanity check
+    if (dfAiToUse->writeKeyno == 0 && !dfAiToUse->writeKey->isEmpty() && !dfAiToUse->masterApplicationKey->isEmpty())
+    {
+        EXCEPTION_ASSERT_WITH_LOG(*dfAiToUse->writeKey == *dfAiToUse->masterApplicationKey,
+            std::invalid_argument,
+            "WriteKey and MasterApplicationKey must be equal if WriteKey number is 0");
+    }
+    if (dfAiToUse->readKeyno == 0 && dfAiToUse->readKey->isEmpty() && dfAiToUse->masterApplicationKey->isEmpty())
+    {
+        EXCEPTION_ASSERT_WITH_LOG(*dfAiToUse->readKey == *dfAiToUse->masterApplicationKey,
+                                  std::invalid_argument,
+                                  "ReadKey and MasterApplicationKey must be equal if ReadKey number is 0");
+    }
+
     getDESFireChip()->getCrypto()->clearKeys();
 
     if (!dfAiToUse->masterCardKey->isEmpty())
@@ -216,14 +230,14 @@ void DESFireStorageCardService::writeData(std::shared_ptr<Location> location,
         }
     }
 
-    if (!dfAiToUse->writeKey->isEmpty() && dfAiToUse->writeKeyno != 0x00)
+    if (!dfAiToUse->writeKey->isEmpty())
     {
         dfAiToUse->writeKey->setKeyType(cryptoMethod);
         getDESFireChip()->getCrypto()->setKey(dfLocation->aid, 0, dfAiToUse->writeKeyno,
                                               dfAiToUse->writeKey);
     }
 
-    if (!dfAiToUse->readKey->isEmpty() && dfAiToUse->readKeyno != 0x00)
+    if (!dfAiToUse->readKey->isEmpty())
     {
         dfAiToUse->readKey->setKeyType(cryptoMethod);
         getDESFireChip()->getCrypto()->setKey(dfLocation->aid, 0, dfAiToUse->readKeyno,
@@ -300,7 +314,7 @@ void DESFireStorageCardService::writeData(std::shared_ptr<Location> location,
 
     if (needLoadKey)
     {
-        getDESFireChip()->getDESFireCommands()->authenticate(dfAiToUse->writeKeyno);
+            getDESFireChip()->getDESFireCommands()->authenticate(dfAiToUse->writeKeyno);
     }
 
     getDESFireChip()->getDESFireCommands()->writeData(dfLocation->file, dfLocation->byte_,
