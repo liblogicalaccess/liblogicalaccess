@@ -304,7 +304,7 @@ std::string BitsetStream::toString(size_t begin, size_t end) const
 
 unsigned long BitsetStream::toULong() const
 {
-    if (stream.size() > 5)
+    if (stream.size() > 4)
         throw std::overflow_error("Base value overflows the size of an unsigned long.");
 
     unsigned long tmp = 0;
@@ -325,7 +325,7 @@ unsigned long long BitsetStream::toULLong() const
 
     for (unsigned int i = 0; i < stream.size(); i++)
     {
-        tmp |= stream[i] << (i * 8);
+        tmp |= (static_cast<unsigned long long>(stream[i]) << (i * 8));
     }
     return tmp;
 }
