@@ -101,6 +101,9 @@ std::vector<TLVPtr> TLV::parse_tlvs(const ByteVector &bytes, size_t &bytes_consu
       tlv->setSizeTag(bytes[idx]);
       size_t lenghtSize = bytes[idx] & 0x7F;
       ++idx;
+      if (idx + lenghtSize > bytes.size()) {
+          break;
+      }
       ByteVector Vsize(bytes.begin() + idx, bytes.begin() + idx + lenghtSize);
       size_t multiplicator = 0x01;
       idx += lenghtSize;
@@ -119,6 +122,9 @@ std::vector<TLVPtr> TLV::parse_tlvs(const ByteVector &bytes, size_t &bytes_consu
       tlv->setSizeVector(t);
       current_tlv_size = bytes[idx];
       ++idx;
+    }
+    if (idx + current_tlv_size > bytes.size()) {
+        break;
     }
     ByteVector data = ByteVector(bytes.begin() + idx, bytes.begin() + idx + current_tlv_size);
     idx += data.size();
