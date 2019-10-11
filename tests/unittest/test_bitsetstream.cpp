@@ -256,10 +256,10 @@ TEST(bitset_tests, complete_test)
     bstream.append(0xFF);
     bstream.append(0xFF);
     bstream.append(0xFF);
-    bstream.append(0xFF);
     ASSERT_EQ(bstream.toULong(), ULONG_MAX);
     bstream.append(0xFF);
     ASSERT_THROW(bstream.toULong(), std::overflow_error);
+    bstream.append(0xFF);
     bstream.append(0xFF);
     bstream.append(0xFF);
     ASSERT_EQ(bstream.toULLong(), ULLONG_MAX);
