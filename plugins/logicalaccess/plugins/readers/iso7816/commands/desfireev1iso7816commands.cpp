@@ -1681,11 +1681,12 @@ void DESFireEV1ISO7816Commands::selectApplication(unsigned int aid)
 
 void DESFireEV1ISO7816Commands::onAuthenticated()
 {
-    // If we don't have the read UID, we retrieve it
+    // If we don't have the real UID, we retrieve it
     if (!getDESFireChip()->hasRealUID())
     {
         getChip()->setChipIdentifier(getCardUID());
         getDESFireChip()->setHasRealUID(true);
+        getDESFireChip()->getCrypto()->setIdentifier(getChip()->getChipIdentifier());
     }
 }
 
