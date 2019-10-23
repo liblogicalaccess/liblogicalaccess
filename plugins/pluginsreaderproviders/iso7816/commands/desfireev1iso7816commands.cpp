@@ -1444,6 +1444,7 @@ namespace logicalaccess
         {
             getChip()->setChipIdentifier(getCardUID());
             getDESFireChip()->setHasRealUID(true);
+            getDESFireChip()->getCrypto()->setIdentifier(getChip()->getChipIdentifier());
         }
     }
 }
