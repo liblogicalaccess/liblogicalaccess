@@ -166,9 +166,9 @@ class LLA_CARDS_DESFIRE_API DESFireCommands : public Commands
      */
     struct LLA_CARDS_DESFIRE_API ValueFileSetting
     {
-        uint32_t lowerLimit;         /**< \brief The lower value limit */
-        uint32_t upperLimit;         /**< \brief The upper value limit */
-        uint32_t limitedCreditValue; /**< \brief The limited credit value */
+        int32_t lowerLimit;         /**< \brief The lower value limit */
+        int32_t upperLimit;         /**< \brief The upper value limit */
+        int32_t limitedCreditValue; /**< \brief The limited credit value */
         bool limitedCreditEnabled;   /**< \brief True if limited credit is enabled, false
                                         otherwise */
     };
