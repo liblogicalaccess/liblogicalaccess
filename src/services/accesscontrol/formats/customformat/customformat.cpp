@@ -12,6 +12,7 @@
 #include "logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp"
 #include "logicalaccess/services/accesscontrol/formats/customformat/paritydatafield.hpp"
 #include "logicalaccess/services/accesscontrol/formats/customformat/binarydatafield.hpp"
+#include "logicalaccess/services/accesscontrol/formats/customformat/tlvdatafield.hpp"
 #include "logicalaccess/bufferhelper.hpp"
 
 #include <cstring>
@@ -64,7 +65,10 @@ namespace logicalaccess
         memset(data, 0x00, dataLengthBytes);
         for (std::list<std::shared_ptr<DataField> >::const_iterator i = sortedFieldList.begin(); i != sortedFieldList.end(); ++i)
         {
-            pos = (*i)->getPosition();
+			unsigned int newpos = (*i)->getPosition();
+			if (newpos != UNKNOWN_FIELD_POSITION) {
+				pos = newpos;
+			}
             (*i)->getLinearData(data, dataLengthBytes, &pos);
         }
     }
@@ -76,7 +80,10 @@ namespace logicalaccess
         sortedFieldList.sort(FieldSortPredicate);
         for (std::list<std::shared_ptr<DataField> >::iterator i = sortedFieldList.begin(); i != sortedFieldList.end(); ++i)
         {
-            pos = (*i)->getPosition();
+            unsigned int newpos = (*i)->getPosition();
+			if (newpos != UNKNOWN_FIELD_POSITION) {
+				pos = newpos;
+			}
             (*i)->setLinearData(data, dataLengthBytes, &pos);
         }
     }
@@ -122,6 +129,10 @@ namespace logicalaccess
             {
                 dataField.reset(new ParityDataField());
             }
+			else if (v.first == "TLVDataField")
+			{
+				dataField.reset(new TLVDataField());
+			}
 
             if (dataField)
             {

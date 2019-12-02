@@ -14,6 +14,8 @@
 
 #include "logicalaccess/logs.hpp"
 
+#define UNKNOWN_FIELD_POSITION 0xffffffff
+
 namespace logicalaccess
 {
     /**
