@@ -162,8 +162,8 @@ class LLA_READERS_ISO7816_API DESFireISO7816Commands : public DESFireCommands
      * \param limitedCreditEnabled Set if the limited credit is enabled
      */
     void createValueFile(unsigned char fileno, EncryptionMode comSettings,
-                         const DESFireAccessRights &accessRights, unsigned int lowerLimit,
-                         unsigned int upperLimit, unsigned int value,
+                         const DESFireAccessRights &accessRights, int32_t lowerLimit,
+                         int32_t upperLimit, int32_t value,
                          bool limitedCreditEnabled) override;
 
     /**
@@ -252,7 +252,7 @@ class LLA_READERS_ISO7816_API DESFireISO7816Commands : public DESFireCommands
      * \param value The value to limit credit
      * \param mode The communication mode
      */
-    void limitedCredit(unsigned char fileno, unsigned int value,
+    void limitedCredit(unsigned char fileno, int32_t value,
                        EncryptionMode mode) override;
 
     /**

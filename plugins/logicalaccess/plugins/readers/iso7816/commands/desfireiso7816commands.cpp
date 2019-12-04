@@ -615,8 +615,8 @@ void DESFireISO7816Commands::createBackupFile(unsigned char fileno,
 void DESFireISO7816Commands::createValueFile(unsigned char fileno,
                                              EncryptionMode comSettings,
                                              const DESFireAccessRights &accessRights,
-                                             unsigned int lowerLimit,
-                                             unsigned int upperLimit, unsigned int value,
+                                             int32_t lowerLimit,
+                                             int32_t upperLimit, int32_t value,
                                              bool limitedCreditEnabled)
 {
     ByteVector command;
@@ -783,14 +783,13 @@ void DESFireISO7816Commands::debit(unsigned char fileno, unsigned int value,
     handleWriteData(DF_INS_DEBIT, parameters, data, mode);
 }
 
-void DESFireISO7816Commands::limitedCredit(unsigned char fileno, unsigned int value,
+void DESFireISO7816Commands::limitedCredit(unsigned char fileno, int32_t value,
                                            EncryptionMode mode)
 {
     ByteVector parameters(1);
     parameters[0]      = static_cast<unsigned char>(fileno);
-    uint32_t dataValue = static_cast<uint32_t>(value);
-    ByteVector data(sizeof(dataValue));
-    memcpy(&data[0], &dataValue, sizeof(dataValue));
+    ByteVector data(sizeof(value));
+    memcpy(&data[0], &value, sizeof(value));
     handleWriteData(DF_INS_LIMITED_CREDIT, parameters, data, mode);
 }
 

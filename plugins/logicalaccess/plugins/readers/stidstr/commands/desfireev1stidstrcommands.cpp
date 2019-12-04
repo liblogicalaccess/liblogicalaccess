@@ -340,8 +340,8 @@ void DESFireEV1STidSTRCommands::createBackupFile(unsigned char fileno,
 
 void DESFireEV1STidSTRCommands::createValueFile(
     unsigned char fileno, EncryptionMode comSettings,
-    const DESFireAccessRights &accessRights, unsigned int lowerLimit,
-    unsigned int upperLimit, unsigned int value, bool limitedCreditEnabled)
+    const DESFireAccessRights &accessRights, int32_t lowerLimit,
+    int32_t upperLimit, int32_t value, bool limitedCreditEnabled)
 {
     LOG(LogLevel::INFOS) << "Creating value file - file number {0x" << std::hex << fileno
                          << std::dec << "(" << fileno << ")} encryption mode {0x"

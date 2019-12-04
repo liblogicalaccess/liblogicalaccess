@@ -387,8 +387,8 @@ class LLA_CARDS_DESFIRE_API DESFireCommands : public Commands
      */
     virtual void createValueFile(unsigned char fileno, EncryptionMode comSettings,
                                  const DESFireAccessRights &accessRights,
-                                 unsigned int lowerLimit, unsigned int upperLimit,
-                                 unsigned int value, bool limitedCreditEnabled) = 0;
+                                 int32_t lowerLimit, int32_t upperLimit,
+                                 int32_t value, bool limitedCreditEnabled) = 0;
 
     /**
      * \brief Create a new linear record file in the current application.
@@ -475,7 +475,7 @@ class LLA_CARDS_DESFIRE_API DESFireCommands : public Commands
      * \param value The value to limit credit
      * \param mode The communication mode
      */
-    virtual void limitedCredit(unsigned char fileno, unsigned int value,
+    virtual void limitedCredit(unsigned char fileno, int32_t value,
                                EncryptionMode mode) = 0;
 
     /**
