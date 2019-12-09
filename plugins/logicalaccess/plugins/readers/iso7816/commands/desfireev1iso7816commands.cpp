@@ -1382,8 +1382,7 @@ ByteVector DESFireEV1ISO7816Commands::getFileIDs()
     return transmit(DF_INS_GET_FILE_IDS).getData();
 }
 
-void DESFireEV1ISO7816Commands::getValue(unsigned char fileno, EncryptionMode mode,
-                                         unsigned int &value)
+int32_t DESFireEV1ISO7816Commands::getValue(unsigned char fileno, EncryptionMode mode)
 {
     ByteVector command;
     command.push_back(fileno);
@@ -1394,8 +1393,9 @@ void DESFireEV1ISO7816Commands::getValue(unsigned char fileno, EncryptionMode mo
     if (data.size() >= 4)
     {
         size_t offset = 0;
-        value         = BufferHelper::getInt32(data, offset);
+        return BufferHelper::getInt32(data, offset);
     }
+    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "DESFireEV1ISO7816Commands getValue did not return enough data");
 }
 
 void DESFireEV1ISO7816Commands::setConfiguration(bool formatCardEnabled,

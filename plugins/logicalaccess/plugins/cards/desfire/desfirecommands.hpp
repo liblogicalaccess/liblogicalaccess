@@ -449,8 +449,7 @@ class LLA_CARDS_DESFIRE_API DESFireCommands : public Commands
      * \param mode The communicatio mode
      * \param value The value stored in the card
      */
-    virtual void getValue(unsigned char fileno, EncryptionMode mode,
-                          unsigned int &value) = 0;
+    virtual int32_t getValue(unsigned char fileno, EncryptionMode mode) = 0;
 
     /**
      * \brief Credit a specific value file.

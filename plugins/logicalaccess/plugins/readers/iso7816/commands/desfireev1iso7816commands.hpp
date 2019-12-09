@@ -264,8 +264,7 @@ class LLA_READERS_ISO7816_API DESFireEV1ISO7816Commands : public DESFireISO7816C
      * \param mode The communication mode
      * \param value The value stored in the card
      */
-    void getValue(unsigned char fileno, EncryptionMode mode,
-                  unsigned int &value) override;
+    int32_t getValue(unsigned char fileno, EncryptionMode mode) override;
 
     /**
      * \brief Set the card configuration.

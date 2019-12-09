@@ -745,8 +745,7 @@ void DESFireISO7816Commands::writeData(unsigned char fileno, unsigned int offset
     handleWriteData(DF_INS_WRITE_DATA, parameters, data, mode);
 }
 
-void DESFireISO7816Commands::getValue(unsigned char fileno, EncryptionMode mode,
-                                      unsigned int &value)
+int32_t DESFireISO7816Commands::getValue(unsigned char fileno, EncryptionMode mode)
 {
     ByteVector command;
     command.push_back(fileno);
@@ -757,8 +756,9 @@ void DESFireISO7816Commands::getValue(unsigned char fileno, EncryptionMode mode,
     if (data.size() >= 4)
     {
         size_t offset = 0;
-        value         = BufferHelper::getUInt32(data, offset);
+        return BufferHelper::getInt32(data, offset);
     }
+    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "DESFireISO7816Commands getValue did not return enough data");
 }
 
 void DESFireISO7816Commands::credit(unsigned char fileno, unsigned int value,
