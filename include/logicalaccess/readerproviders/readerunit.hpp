@@ -37,6 +37,9 @@ class ReaderProvider;
  * \brief The reader unit base class. This is an object for a specific reader instance to
  * detect card and interact with the reader.
  */
+#ifdef SWIG
+  %feature("notabstract") ReaderUnit;
+#endif
 class LLA_CORE_API ReaderUnit : public XmlSerializable,
                                         public std::enable_shared_from_this<ReaderUnit>
 {
