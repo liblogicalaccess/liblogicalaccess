@@ -16,67 +16,31 @@ namespace logicalaccess
 class LLA_CORE_API DummyReaderUnit : public ReaderUnit
 {
   public:
-    explicit DummyReaderUnit(std::string name) : ReaderUnit(name) {}
+    explicit DummyReaderUnit(std::string name);
 
-    bool waitInsertion(unsigned int maxwait) override
-    {
-        throw std::runtime_error("Not implemented");
-    }
+    bool waitInsertion(unsigned int maxwait) override;
 
-    bool waitRemoval(unsigned int maxwait) override
-    {
-        throw std::runtime_error("Not implemented");
-    }
+    bool waitRemoval(unsigned int maxwait) override;
 
-    bool isConnected() override
-    {
-        throw std::runtime_error("Not implemented");
-    }
+    bool isConnected() override;
 
-    void setCardType(std::string cardType) override
-    {
-        throw std::runtime_error("Not implemented");
-    }
+    void setCardType(std::string cardType) override;
 
-    std::shared_ptr<Chip> getSingleChip() override
-    {
-        throw std::runtime_error("Not implemented");
-    }
+    std::shared_ptr<Chip> getSingleChip() override;
 
-    std::vector<std::shared_ptr<Chip>> getChipList() override
-    {
-        throw std::runtime_error("Not implemented");
-    }
+    std::vector<std::shared_ptr<Chip>> getChipList() override;
 
-    bool connect() override
-    {
-        throw std::runtime_error("Not implemented");
-    }
+    bool connect() override;
 
-    void disconnect() override
-    {
-        throw std::runtime_error("Not implemented");
-    }
+    void disconnect() override;
 
-    bool connectToReader() override
-    {
-        throw std::runtime_error("Not implemented");
-    }
+    bool connectToReader() override;
 
-    void disconnectFromReader() override
-    {
-        throw std::runtime_error("Not implemented");
-    }
+    void disconnectFromReader() override;
 
-    std::string getName() const override
-    {
-        throw std::runtime_error("Not implemented");
-    }
+    std::string getName() const override;
 
-    std::string getReaderSerialNumber() override
-    {
-        throw std::runtime_error("Not implemented");
-    }
+    std::string getReaderSerialNumber() override;
 
   protected:
     /**
@@ -92,13 +56,7 @@ class LLA_CORE_API DummyReaderUnit : public ReaderUnit
      * However, a simple overload is enough for generated code to build.
      */
 
-    std::shared_ptr<CardProbe> createCardProbe() override
-    {
-       return ReaderUnit::createCardProbe();
-    }
-    std::shared_ptr<ResultChecker> createDefaultResultChecker() const override
-    {
-        return ReaderUnit::createDefaultResultChecker();
-    }
+    std::shared_ptr<CardProbe> createCardProbe() override;
+    std::shared_ptr<ResultChecker> createDefaultResultChecker() const override;
 };
 }
