@@ -12,6 +12,7 @@
 #include <logicalaccess/services/accesscontrol/formats/customformat/numberdatafield.hpp>
 #include <logicalaccess/services/accesscontrol/formats/customformat/paritydatafield.hpp>
 #include <logicalaccess/services/accesscontrol/formats/customformat/binarydatafield.hpp>
+#include <logicalaccess/services/accesscontrol/formats/customformat/tlvdatafield.hpp>
 #include <logicalaccess/bufferhelper.hpp>
 
 #include <cstring>
@@ -128,6 +129,10 @@ void CustomFormat::unSerialize(boost::property_tree::ptree &node)
         {
             dataField.reset(new ParityDataField());
         }
+		else if (v.first == "TLVDataField")
+		{
+			dataField.reset(new TLVDataField());
+		}
 
         if (dataField)
         {
