@@ -29,9 +29,7 @@ CustomFormat::CustomFormat()
 {
 }
 
-CustomFormat::~CustomFormat()
-{
-}
+CustomFormat::~CustomFormat() {}
 
 unsigned int CustomFormat::getDataLength() const
 {
@@ -129,10 +127,10 @@ void CustomFormat::unSerialize(boost::property_tree::ptree &node)
         {
             dataField.reset(new ParityDataField());
         }
-		else if (v.first == "TLVDataField")
-		{
-			dataField.reset(new TLVDataField());
-		}
+        else if (v.first == "TLVDataField")
+        {
+            dataField.reset(new TLVDataField());
+        }
 
         if (dataField)
         {
@@ -185,10 +183,11 @@ FormatType CustomFormat::getType() const
 size_t CustomFormat::getSkeletonLinearData(ByteVector &data) const
 {
 
-  XmlSerializable *tmp = const_cast<XmlSerializable *>(dynamic_cast<const XmlSerializable *>(this));
-  if (tmp == nullptr)
-    return 0;
-  std::string xmlstr = tmp->serialize();
+    XmlSerializable *tmp =
+        const_cast<XmlSerializable *>(dynamic_cast<const XmlSerializable *>(this));
+    if (tmp == nullptr)
+        return 0;
+    std::string xmlstr = tmp->serialize();
     ByteVector xmlbuf(xmlstr.begin(), xmlstr.end());
 
     if (data.size() != 0)
@@ -206,10 +205,10 @@ size_t CustomFormat::getSkeletonLinearData(ByteVector &data) const
 
 void CustomFormat::setSkeletonLinearData(const ByteVector &data)
 {
-    std::string xmlstr = BufferHelper::getStdString(data);
+    std::string xmlstr   = BufferHelper::getStdString(data);
     XmlSerializable *tmp = dynamic_cast<XmlSerializable *>(this);
     if (tmp != nullptr)
-      tmp->unSerialize(xmlstr, "");
+        tmp->unSerialize(xmlstr, "");
 }
 
 std::shared_ptr<DataField> CustomFormat::getFieldForPosition(unsigned int position) const

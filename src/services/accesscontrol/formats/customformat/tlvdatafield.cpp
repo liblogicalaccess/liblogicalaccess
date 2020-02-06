@@ -12,128 +12,130 @@
 
 namespace logicalaccess
 {
-	TLVDataField::TLVDataField()
-		: ValueDataField(), d_tag(0)
-	{
-		d_length = 16;
-	}
+TLVDataField::TLVDataField()
+    : ValueDataField()
+    , d_tag(0)
+{
+    d_length = 16;
+}
 
-	TLVDataField::TLVDataField(unsigned char tag)
-		: ValueDataField(), d_tag(tag)
-	{
-		d_length = 16;
-	}
+TLVDataField::TLVDataField(unsigned char tag)
+    : ValueDataField()
+    , d_tag(tag)
+{
+    d_length = 16;
+}
 
-	TLVDataField::~TLVDataField()
-	{
-	}
+TLVDataField::~TLVDataField() {}
 
-	void TLVDataField::setTag(unsigned char tag)
-	{
-		d_tag = tag;
-	}
+void TLVDataField::setTag(unsigned char tag)
+{
+    d_tag = tag;
+}
 
-	unsigned char TLVDataField::getTag() const
-	{
-		return d_tag;
-	}
+unsigned char TLVDataField::getTag() const
+{
+    return d_tag;
+}
 
-	void TLVDataField::setValue(const std::string& value)
-	{
-		d_length = 16 + value.size() * 8;
-		d_value = value;
-	}
+void TLVDataField::setValue(const std::string &value)
+{
+    d_length = 16 + value.size() * 8;
+    d_value  = value;
+}
 
-	std::string TLVDataField::getValue() const
-	{
-		return d_value;
-	}
+std::string TLVDataField::getValue() const
+{
+    return d_value;
+}
 
-	void TLVDataField::setRawValue(const ByteVector& value)
-	{
-		if (value.size() < 2 || value.size() < static_cast<unsigned int>(2 + value[1]))
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "The data length is too short.");
-		}
-		d_tag = value[0];
-		setValue(std::string(value.begin() + 2, value.end() + 2 + value[1]));
-	}
+void TLVDataField::setRawValue(const ByteVector &value)
+{
+    if (value.size() < 2 || value.size() < static_cast<unsigned int>(2 + value[1]))
+    {
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "The data length is too short.");
+    }
+    d_tag = value[0];
+    setValue(std::string(value.begin() + 2, value.end() + 2 + value[1]));
+}
 
-	ByteVector TLVDataField::getRawValue() const
-	{
-		auto value = ByteVector(d_value.begin(), d_value.end());
-		value.insert(value.begin(), value.size());
-		value.insert(value.begin(), d_tag);
-		return value;
-	}
+ByteVector TLVDataField::getRawValue() const
+{
+    auto value = ByteVector(d_value.begin(), d_value.end());
+    value.insert(value.begin(), value.size());
+    value.insert(value.begin(), d_tag);
+    return value;
+}
 
-	BitsetStream TLVDataField::getLinearData(const BitsetStream & /*data*/) const
-	{
-		BitsetStream buffer;
-		buffer.concat(getRawValue());
-		
-		BitsetStream dataTmp;
-		convertBinaryData(buffer, d_length, dataTmp);
-		
-		return dataTmp;
-	}
+BitsetStream TLVDataField::getLinearData(const BitsetStream & /*data*/) const
+{
+    BitsetStream buffer;
+    buffer.concat(getRawValue());
 
-	void TLVDataField::setLinearData(const ByteVector &data)
-	{		
-		BitsetStream _data;
-		_data.concat(data);
+    BitsetStream dataTmp;
+    convertBinaryData(buffer, d_length, dataTmp);
 
-		if (_data.getBitSize() < (d_length + getPosition()))
-		{
-			THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-									 "The data length is too short.");
-		}
+    return dataTmp;
+}
 
-		BitsetStream paddedBuffer;
+void TLVDataField::setLinearData(const ByteVector &data)
+{
+    BitsetStream _data;
+    _data.concat(data);
 
-		paddedBuffer.concat(revertBinaryData(_data, getPosition(), d_length));
+    if (_data.getBitSize() < (d_length + getPosition()))
+    {
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "The data length is too short.");
+    }
 
-		setRawValue(paddedBuffer.getData());
-	}
+    BitsetStream paddedBuffer;
 
-	bool TLVDataField::checkSkeleton(std::shared_ptr<DataField> field) const
-	{
-		bool ret = false;
-		if (field)
-		{
-			std::shared_ptr<TLVDataField> pField = std::dynamic_pointer_cast<TLVDataField>(field);
-			if (pField)
-			{
-				ret = (pField->getDataLength() == getDataLength() &&
-					pField->getTag() == getTag() &&
-					(pField->getIsFixedField() || getValue() == "" || pField->getValue() == getValue())
-					);
-			}
-		}
+    paddedBuffer.concat(revertBinaryData(_data, getPosition(), d_length));
 
-		return ret;
-	}
+    setRawValue(paddedBuffer.getData());
+}
 
-	void TLVDataField::serialize(boost::property_tree::ptree& parentNode)
-	{
-		boost::property_tree::ptree node;
+bool TLVDataField::checkSkeleton(std::shared_ptr<DataField> field) const
+{
+    bool ret = false;
+    if (field)
+    {
+        std::shared_ptr<TLVDataField> pField =
+            std::dynamic_pointer_cast<TLVDataField>(field);
+        if (pField)
+        {
+            ret = (pField->getDataLength() == getDataLength() &&
+                   pField->getTag() == getTag() &&
+                   (pField->getIsFixedField() || getValue() == "" ||
+                    pField->getValue() == getValue()));
+        }
+    }
 
-		ValueDataField::serialize(node);
-		node.put("Tag", d_tag);
-		node.put("Value", getValue());
+    return ret;
+}
 
-		parentNode.add_child(getDefaultXmlNodeName(), node);
-	}
+void TLVDataField::serialize(boost::property_tree::ptree &parentNode)
+{
+    boost::property_tree::ptree node;
 
-	void TLVDataField::unSerialize(boost::property_tree::ptree& node)
-	{
-		ValueDataField::unSerialize(node);
-		d_tag = node.get_child("Tag").get_value<unsigned char>();
-		setValue(node.get_child("Value").get_value<std::string>());
-	}
+    ValueDataField::serialize(node);
+    node.put("Tag", d_tag);
+    node.put("Value", getValue());
 
-	std::string TLVDataField::getDefaultXmlNodeName() const
-	{
-		return "TLVDataField";
-	}
+    parentNode.add_child(getDefaultXmlNodeName(), node);
+}
+
+void TLVDataField::unSerialize(boost::property_tree::ptree &node)
+{
+    ValueDataField::unSerialize(node);
+    d_tag = node.get_child("Tag").get_value<unsigned char>();
+    setValue(node.get_child("Value").get_value<std::string>());
+}
+
+std::string TLVDataField::getDefaultXmlNodeName() const
+{
+    return "TLVDataField";
+}
 }
