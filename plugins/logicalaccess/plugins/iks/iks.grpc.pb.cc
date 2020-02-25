@@ -5,12 +5,15 @@
 #include "iks.pb.h"
 #include "iks.grpc.pb.h"
 
+#include <functional>
 #include <grpcpp/impl/codegen/async_stream.h>
 #include <grpcpp/impl/codegen/async_unary_call.h>
 #include <grpcpp/impl/codegen/channel_interface.h>
 #include <grpcpp/impl/codegen/client_unary_call.h>
-#include <grpcpp/impl/codegen/method_handler_impl.h>
+#include <grpcpp/impl/codegen/client_callback.h>
+#include <grpcpp/impl/codegen/method_handler.h>
 #include <grpcpp/impl/codegen/rpc_service_method.h>
+#include <grpcpp/impl/codegen/server_callback.h>
 #include <grpcpp/impl/codegen/service_type.h>
 #include <grpcpp/impl/codegen/sync_stream.h>
 
@@ -46,96 +49,224 @@ IKSService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel
   return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_GenRandom_, context, request, response);
 }
 
+void IKSService::Stub::experimental_async::GenRandom(::grpc::ClientContext* context, const ::CMSG_GenRandom* request, ::SMSG_GenRandom* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_GenRandom_, context, request, response, std::move(f));
+}
+
+void IKSService::Stub::experimental_async::GenRandom(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_GenRandom* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_GenRandom_, context, request, response, std::move(f));
+}
+
+void IKSService::Stub::experimental_async::GenRandom(::grpc::ClientContext* context, const ::CMSG_GenRandom* request, ::SMSG_GenRandom* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_GenRandom_, context, request, response, reactor);
+}
+
+void IKSService::Stub::experimental_async::GenRandom(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_GenRandom* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_GenRandom_, context, request, response, reactor);
+}
+
 ::grpc::ClientAsyncResponseReader< ::SMSG_GenRandom>* IKSService::Stub::AsyncGenRandomRaw(::grpc::ClientContext* context, const ::CMSG_GenRandom& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::SMSG_GenRandom>::Create(channel_.get(), cq, rpcmethod_GenRandom_, context, request, true);
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::SMSG_GenRandom>::Create(channel_.get(), cq, rpcmethod_GenRandom_, context, request, true);
 }
 
 ::grpc::ClientAsyncResponseReader< ::SMSG_GenRandom>* IKSService::Stub::PrepareAsyncGenRandomRaw(::grpc::ClientContext* context, const ::CMSG_GenRandom& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::SMSG_GenRandom>::Create(channel_.get(), cq, rpcmethod_GenRandom_, context, request, false);
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::SMSG_GenRandom>::Create(channel_.get(), cq, rpcmethod_GenRandom_, context, request, false);
 }
 
 ::grpc::Status IKSService::Stub::AESEncrypt(::grpc::ClientContext* context, const ::CMSG_AESOperation& request, ::SMSG_AESResult* response) {
   return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_AESEncrypt_, context, request, response);
 }
 
+void IKSService::Stub::experimental_async::AESEncrypt(::grpc::ClientContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_AESEncrypt_, context, request, response, std::move(f));
+}
+
+void IKSService::Stub::experimental_async::AESEncrypt(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_AESResult* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_AESEncrypt_, context, request, response, std::move(f));
+}
+
+void IKSService::Stub::experimental_async::AESEncrypt(::grpc::ClientContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_AESEncrypt_, context, request, response, reactor);
+}
+
+void IKSService::Stub::experimental_async::AESEncrypt(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_AESResult* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_AESEncrypt_, context, request, response, reactor);
+}
+
 ::grpc::ClientAsyncResponseReader< ::SMSG_AESResult>* IKSService::Stub::AsyncAESEncryptRaw(::grpc::ClientContext* context, const ::CMSG_AESOperation& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::SMSG_AESResult>::Create(channel_.get(), cq, rpcmethod_AESEncrypt_, context, request, true);
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::SMSG_AESResult>::Create(channel_.get(), cq, rpcmethod_AESEncrypt_, context, request, true);
 }
 
 ::grpc::ClientAsyncResponseReader< ::SMSG_AESResult>* IKSService::Stub::PrepareAsyncAESEncryptRaw(::grpc::ClientContext* context, const ::CMSG_AESOperation& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::SMSG_AESResult>::Create(channel_.get(), cq, rpcmethod_AESEncrypt_, context, request, false);
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::SMSG_AESResult>::Create(channel_.get(), cq, rpcmethod_AESEncrypt_, context, request, false);
 }
 
 ::grpc::Status IKSService::Stub::AESDecrypt(::grpc::ClientContext* context, const ::CMSG_AESOperation& request, ::SMSG_AESResult* response) {
   return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_AESDecrypt_, context, request, response);
 }
 
+void IKSService::Stub::experimental_async::AESDecrypt(::grpc::ClientContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_AESDecrypt_, context, request, response, std::move(f));
+}
+
+void IKSService::Stub::experimental_async::AESDecrypt(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_AESResult* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_AESDecrypt_, context, request, response, std::move(f));
+}
+
+void IKSService::Stub::experimental_async::AESDecrypt(::grpc::ClientContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_AESDecrypt_, context, request, response, reactor);
+}
+
+void IKSService::Stub::experimental_async::AESDecrypt(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_AESResult* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_AESDecrypt_, context, request, response, reactor);
+}
+
 ::grpc::ClientAsyncResponseReader< ::SMSG_AESResult>* IKSService::Stub::AsyncAESDecryptRaw(::grpc::ClientContext* context, const ::CMSG_AESOperation& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::SMSG_AESResult>::Create(channel_.get(), cq, rpcmethod_AESDecrypt_, context, request, true);
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::SMSG_AESResult>::Create(channel_.get(), cq, rpcmethod_AESDecrypt_, context, request, true);
 }
 
 ::grpc::ClientAsyncResponseReader< ::SMSG_AESResult>* IKSService::Stub::PrepareAsyncAESDecryptRaw(::grpc::ClientContext* context, const ::CMSG_AESOperation& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::SMSG_AESResult>::Create(channel_.get(), cq, rpcmethod_AESDecrypt_, context, request, false);
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::SMSG_AESResult>::Create(channel_.get(), cq, rpcmethod_AESDecrypt_, context, request, false);
 }
 
 ::grpc::Status IKSService::Stub::DESFireISOAuth1(::grpc::ClientContext* context, const ::CMSG_DesfireISOAuth_Step1& request, ::SMSG_DesfireISOAuth_Step1* response) {
   return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_DESFireISOAuth1_, context, request, response);
 }
 
+void IKSService::Stub::experimental_async::DESFireISOAuth1(::grpc::ClientContext* context, const ::CMSG_DesfireISOAuth_Step1* request, ::SMSG_DesfireISOAuth_Step1* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_DESFireISOAuth1_, context, request, response, std::move(f));
+}
+
+void IKSService::Stub::experimental_async::DESFireISOAuth1(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireISOAuth_Step1* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_DESFireISOAuth1_, context, request, response, std::move(f));
+}
+
+void IKSService::Stub::experimental_async::DESFireISOAuth1(::grpc::ClientContext* context, const ::CMSG_DesfireISOAuth_Step1* request, ::SMSG_DesfireISOAuth_Step1* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_DESFireISOAuth1_, context, request, response, reactor);
+}
+
+void IKSService::Stub::experimental_async::DESFireISOAuth1(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireISOAuth_Step1* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_DESFireISOAuth1_, context, request, response, reactor);
+}
+
 ::grpc::ClientAsyncResponseReader< ::SMSG_DesfireISOAuth_Step1>* IKSService::Stub::AsyncDESFireISOAuth1Raw(::grpc::ClientContext* context, const ::CMSG_DesfireISOAuth_Step1& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::SMSG_DesfireISOAuth_Step1>::Create(channel_.get(), cq, rpcmethod_DESFireISOAuth1_, context, request, true);
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::SMSG_DesfireISOAuth_Step1>::Create(channel_.get(), cq, rpcmethod_DESFireISOAuth1_, context, request, true);
 }
 
 ::grpc::ClientAsyncResponseReader< ::SMSG_DesfireISOAuth_Step1>* IKSService::Stub::PrepareAsyncDESFireISOAuth1Raw(::grpc::ClientContext* context, const ::CMSG_DesfireISOAuth_Step1& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::SMSG_DesfireISOAuth_Step1>::Create(channel_.get(), cq, rpcmethod_DESFireISOAuth1_, context, request, false);
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::SMSG_DesfireISOAuth_Step1>::Create(channel_.get(), cq, rpcmethod_DESFireISOAuth1_, context, request, false);
 }
 
 ::grpc::Status IKSService::Stub::DESFireISOAuth2(::grpc::ClientContext* context, const ::CMSG_DesfireAuth_Step2& request, ::SMSG_DesfireAuth_Step2* response) {
   return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_DESFireISOAuth2_, context, request, response);
 }
 
+void IKSService::Stub::experimental_async::DESFireISOAuth2(::grpc::ClientContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_DESFireISOAuth2_, context, request, response, std::move(f));
+}
+
+void IKSService::Stub::experimental_async::DESFireISOAuth2(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireAuth_Step2* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_DESFireISOAuth2_, context, request, response, std::move(f));
+}
+
+void IKSService::Stub::experimental_async::DESFireISOAuth2(::grpc::ClientContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_DESFireISOAuth2_, context, request, response, reactor);
+}
+
+void IKSService::Stub::experimental_async::DESFireISOAuth2(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireAuth_Step2* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_DESFireISOAuth2_, context, request, response, reactor);
+}
+
 ::grpc::ClientAsyncResponseReader< ::SMSG_DesfireAuth_Step2>* IKSService::Stub::AsyncDESFireISOAuth2Raw(::grpc::ClientContext* context, const ::CMSG_DesfireAuth_Step2& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::SMSG_DesfireAuth_Step2>::Create(channel_.get(), cq, rpcmethod_DESFireISOAuth2_, context, request, true);
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::SMSG_DesfireAuth_Step2>::Create(channel_.get(), cq, rpcmethod_DESFireISOAuth2_, context, request, true);
 }
 
 ::grpc::ClientAsyncResponseReader< ::SMSG_DesfireAuth_Step2>* IKSService::Stub::PrepareAsyncDESFireISOAuth2Raw(::grpc::ClientContext* context, const ::CMSG_DesfireAuth_Step2& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::SMSG_DesfireAuth_Step2>::Create(channel_.get(), cq, rpcmethod_DESFireISOAuth2_, context, request, false);
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::SMSG_DesfireAuth_Step2>::Create(channel_.get(), cq, rpcmethod_DESFireISOAuth2_, context, request, false);
 }
 
 ::grpc::Status IKSService::Stub::DESFireAESAuth1(::grpc::ClientContext* context, const ::CMSG_DesfireAESAuth_Step1& request, ::SMSG_DesfireAESAuth_Step1* response) {
   return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_DESFireAESAuth1_, context, request, response);
 }
 
+void IKSService::Stub::experimental_async::DESFireAESAuth1(::grpc::ClientContext* context, const ::CMSG_DesfireAESAuth_Step1* request, ::SMSG_DesfireAESAuth_Step1* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_DESFireAESAuth1_, context, request, response, std::move(f));
+}
+
+void IKSService::Stub::experimental_async::DESFireAESAuth1(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireAESAuth_Step1* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_DESFireAESAuth1_, context, request, response, std::move(f));
+}
+
+void IKSService::Stub::experimental_async::DESFireAESAuth1(::grpc::ClientContext* context, const ::CMSG_DesfireAESAuth_Step1* request, ::SMSG_DesfireAESAuth_Step1* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_DESFireAESAuth1_, context, request, response, reactor);
+}
+
+void IKSService::Stub::experimental_async::DESFireAESAuth1(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireAESAuth_Step1* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_DESFireAESAuth1_, context, request, response, reactor);
+}
+
 ::grpc::ClientAsyncResponseReader< ::SMSG_DesfireAESAuth_Step1>* IKSService::Stub::AsyncDESFireAESAuth1Raw(::grpc::ClientContext* context, const ::CMSG_DesfireAESAuth_Step1& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::SMSG_DesfireAESAuth_Step1>::Create(channel_.get(), cq, rpcmethod_DESFireAESAuth1_, context, request, true);
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::SMSG_DesfireAESAuth_Step1>::Create(channel_.get(), cq, rpcmethod_DESFireAESAuth1_, context, request, true);
 }
 
 ::grpc::ClientAsyncResponseReader< ::SMSG_DesfireAESAuth_Step1>* IKSService::Stub::PrepareAsyncDESFireAESAuth1Raw(::grpc::ClientContext* context, const ::CMSG_DesfireAESAuth_Step1& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::SMSG_DesfireAESAuth_Step1>::Create(channel_.get(), cq, rpcmethod_DESFireAESAuth1_, context, request, false);
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::SMSG_DesfireAESAuth_Step1>::Create(channel_.get(), cq, rpcmethod_DESFireAESAuth1_, context, request, false);
 }
 
 ::grpc::Status IKSService::Stub::DESFireAESAuth2(::grpc::ClientContext* context, const ::CMSG_DesfireAuth_Step2& request, ::SMSG_DesfireAuth_Step2* response) {
   return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_DESFireAESAuth2_, context, request, response);
 }
 
+void IKSService::Stub::experimental_async::DESFireAESAuth2(::grpc::ClientContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_DESFireAESAuth2_, context, request, response, std::move(f));
+}
+
+void IKSService::Stub::experimental_async::DESFireAESAuth2(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireAuth_Step2* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_DESFireAESAuth2_, context, request, response, std::move(f));
+}
+
+void IKSService::Stub::experimental_async::DESFireAESAuth2(::grpc::ClientContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_DESFireAESAuth2_, context, request, response, reactor);
+}
+
+void IKSService::Stub::experimental_async::DESFireAESAuth2(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireAuth_Step2* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_DESFireAESAuth2_, context, request, response, reactor);
+}
+
 ::grpc::ClientAsyncResponseReader< ::SMSG_DesfireAuth_Step2>* IKSService::Stub::AsyncDESFireAESAuth2Raw(::grpc::ClientContext* context, const ::CMSG_DesfireAuth_Step2& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::SMSG_DesfireAuth_Step2>::Create(channel_.get(), cq, rpcmethod_DESFireAESAuth2_, context, request, true);
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::SMSG_DesfireAuth_Step2>::Create(channel_.get(), cq, rpcmethod_DESFireAESAuth2_, context, request, true);
 }
 
 ::grpc::ClientAsyncResponseReader< ::SMSG_DesfireAuth_Step2>* IKSService::Stub::PrepareAsyncDESFireAESAuth2Raw(::grpc::ClientContext* context, const ::CMSG_DesfireAuth_Step2& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::SMSG_DesfireAuth_Step2>::Create(channel_.get(), cq, rpcmethod_DESFireAESAuth2_, context, request, false);
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::SMSG_DesfireAuth_Step2>::Create(channel_.get(), cq, rpcmethod_DESFireAESAuth2_, context, request, false);
 }
 
 ::grpc::Status IKSService::Stub::DESFireChangeKey(::grpc::ClientContext* context, const ::CMSG_DesfireChangeKey& request, ::SMSG_DesfireChangeKey* response) {
   return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_DESFireChangeKey_, context, request, response);
 }
 
+void IKSService::Stub::experimental_async::DESFireChangeKey(::grpc::ClientContext* context, const ::CMSG_DesfireChangeKey* request, ::SMSG_DesfireChangeKey* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_DESFireChangeKey_, context, request, response, std::move(f));
+}
+
+void IKSService::Stub::experimental_async::DESFireChangeKey(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireChangeKey* response, std::function<void(::grpc::Status)> f) {
+  ::grpc_impl::internal::CallbackUnaryCall(stub_->channel_.get(), stub_->rpcmethod_DESFireChangeKey_, context, request, response, std::move(f));
+}
+
+void IKSService::Stub::experimental_async::DESFireChangeKey(::grpc::ClientContext* context, const ::CMSG_DesfireChangeKey* request, ::SMSG_DesfireChangeKey* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_DESFireChangeKey_, context, request, response, reactor);
+}
+
+void IKSService::Stub::experimental_async::DESFireChangeKey(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireChangeKey* response, ::grpc::experimental::ClientUnaryReactor* reactor) {
+  ::grpc_impl::internal::ClientCallbackUnaryFactory::Create(stub_->channel_.get(), stub_->rpcmethod_DESFireChangeKey_, context, request, response, reactor);
+}
+
 ::grpc::ClientAsyncResponseReader< ::SMSG_DesfireChangeKey>* IKSService::Stub::AsyncDESFireChangeKeyRaw(::grpc::ClientContext* context, const ::CMSG_DesfireChangeKey& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::SMSG_DesfireChangeKey>::Create(channel_.get(), cq, rpcmethod_DESFireChangeKey_, context, request, true);
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::SMSG_DesfireChangeKey>::Create(channel_.get(), cq, rpcmethod_DESFireChangeKey_, context, request, true);
 }
 
 ::grpc::ClientAsyncResponseReader< ::SMSG_DesfireChangeKey>* IKSService::Stub::PrepareAsyncDESFireChangeKeyRaw(::grpc::ClientContext* context, const ::CMSG_DesfireChangeKey& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::SMSG_DesfireChangeKey>::Create(channel_.get(), cq, rpcmethod_DESFireChangeKey_, context, request, false);
+  return ::grpc_impl::internal::ClientAsyncResponseReaderFactory< ::SMSG_DesfireChangeKey>::Create(channel_.get(), cq, rpcmethod_DESFireChangeKey_, context, request, false);
 }
 
 IKSService::Service::Service() {
