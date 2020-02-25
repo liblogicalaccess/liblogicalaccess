@@ -15,6 +15,8 @@
 #include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/services/accesscontrol/formats/BitsetStream.hpp>
 
+#define UNKNOWN_FIELD_POSITION 0xffffffff
+
 namespace logicalaccess
 {
 typedef enum {
@@ -23,7 +25,8 @@ typedef enum {
     DFT_PARITY   = 0x02, /* ParityDataField */
     DFT_BINARY   = 0x03, /* BinaryDataField */
     DFT_NUMBER   = 0x04, /* NumberDataField */
-    DFT_STRING   = 0x05  /* StringDataField */
+    DFT_STRING   = 0x05, /* StringDataField */
+	DFT_TLV      = 0x06  /* TLVDataField */
 } DataFieldType;
 /**
  * \brief A data field base class.

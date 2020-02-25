@@ -743,6 +743,8 @@ void DESFireEV1ISO7816Commands::iso_authenticate(std::shared_ptr<DESFireKey> cur
         crypto->d_authkey  = keydiv;
         crypto->d_mac_size = 8;
     }
+
+    crypto->iks_wrapper_ = nullptr;
     crypto->d_lastIV.clear();
     crypto->d_lastIV.resize(crypto->d_cipher->getBlockSize(), 0x00);
 
@@ -914,6 +916,7 @@ void DESFireEV1ISO7816Commands::authenticateAES(unsigned char keyno)
     else
         crypto->aes_authenticate_PICC2_GENERIC(keyno, key, result.getData());
 
+    crypto->iks_wrapper_ = nullptr;
     crypto->d_cipher.reset(new openssl::AESCipher());
     crypto->d_auth_method = CM_ISO;
     crypto->d_mac_size    = 8;
@@ -1382,8 +1385,7 @@ ByteVector DESFireEV1ISO7816Commands::getFileIDs()
     return transmit(DF_INS_GET_FILE_IDS).getData();
 }
 
-void DESFireEV1ISO7816Commands::getValue(unsigned char fileno, EncryptionMode mode,
-                                         unsigned int &value)
+int32_t DESFireEV1ISO7816Commands::getValue(unsigned char fileno, EncryptionMode mode)
 {
     ByteVector command;
     command.push_back(fileno);
@@ -1394,8 +1396,9 @@ void DESFireEV1ISO7816Commands::getValue(unsigned char fileno, EncryptionMode mo
     if (data.size() >= 4)
     {
         size_t offset = 0;
-        value         = BufferHelper::getInt32(data, offset);
+        return BufferHelper::getInt32(data, offset);
     }
+    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "DESFireEV1ISO7816Commands getValue did not return enough data");
 }
 
 void DESFireEV1ISO7816Commands::setConfiguration(bool formatCardEnabled,

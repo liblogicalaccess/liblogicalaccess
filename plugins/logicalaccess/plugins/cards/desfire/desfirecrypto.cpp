@@ -1035,7 +1035,6 @@ ByteVector
 DESFireCrypto::desfire_cmac(const ByteVector &key,
                             std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipherMAC, const ByteVector &data)
 {
-
     if (iks_wrapper_)
     {
         auto remote_crypto = LibraryManager::getInstance()->getRemoteCrypto();

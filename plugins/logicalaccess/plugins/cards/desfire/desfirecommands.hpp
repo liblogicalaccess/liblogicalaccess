@@ -166,9 +166,9 @@ class LLA_CARDS_DESFIRE_API DESFireCommands : public Commands
      */
     struct LLA_CARDS_DESFIRE_API ValueFileSetting
     {
-        uint32_t lowerLimit;         /**< \brief The lower value limit */
-        uint32_t upperLimit;         /**< \brief The upper value limit */
-        uint32_t limitedCreditValue; /**< \brief The limited credit value */
+        int32_t lowerLimit;         /**< \brief The lower value limit */
+        int32_t upperLimit;         /**< \brief The upper value limit */
+        int32_t limitedCreditValue; /**< \brief The limited credit value */
         bool limitedCreditEnabled;   /**< \brief True if limited credit is enabled, false
                                         otherwise */
     };
@@ -387,8 +387,8 @@ class LLA_CARDS_DESFIRE_API DESFireCommands : public Commands
      */
     virtual void createValueFile(unsigned char fileno, EncryptionMode comSettings,
                                  const DESFireAccessRights &accessRights,
-                                 unsigned int lowerLimit, unsigned int upperLimit,
-                                 unsigned int value, bool limitedCreditEnabled) = 0;
+                                 int32_t lowerLimit, int32_t upperLimit,
+                                 int32_t value, bool limitedCreditEnabled) = 0;
 
     /**
      * \brief Create a new linear record file in the current application.
@@ -449,8 +449,7 @@ class LLA_CARDS_DESFIRE_API DESFireCommands : public Commands
      * \param mode The communicatio mode
      * \param value The value stored in the card
      */
-    virtual void getValue(unsigned char fileno, EncryptionMode mode,
-                          unsigned int &value) = 0;
+    virtual int32_t getValue(unsigned char fileno, EncryptionMode mode) = 0;
 
     /**
      * \brief Credit a specific value file.
@@ -475,7 +474,7 @@ class LLA_CARDS_DESFIRE_API DESFireCommands : public Commands
      * \param value The value to limit credit
      * \param mode The communication mode
      */
-    virtual void limitedCredit(unsigned char fileno, unsigned int value,
+    virtual void limitedCredit(unsigned char fileno, int32_t value,
                                EncryptionMode mode) = 0;
 
     /**

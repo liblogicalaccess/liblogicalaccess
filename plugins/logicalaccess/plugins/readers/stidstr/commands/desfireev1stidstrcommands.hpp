@@ -231,8 +231,8 @@ class LLA_READERS_STIDSTR_API DESFireEV1STidSTRCommands : public Commands
      */
     virtual void createValueFile(unsigned char fileno, EncryptionMode comSettings,
                                  const DESFireAccessRights &accessRights,
-                                 unsigned int lowerLimit, unsigned int upperLimit,
-                                 unsigned int value, bool limitedCreditEnabled);
+                                 int32_t lowerLimit, int32_t upperLimit,
+                                 int32_t value, bool limitedCreditEnabled);
 
     /**
      * \brief Create a new linear record file in the current application.

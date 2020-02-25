@@ -2,7 +2,7 @@ from conans import ConanFile, CMake, tools
 
 class LLAConan(ConanFile):
     name = "LogicalAccess"
-    version = "2.1.0"
+    version = "2.2.0"
     license = "https://github.com/islog/liblogicalaccess/blob/master/LICENSE.LibLogicalAccess.txt"
     url = "https://github.com/islog/liblogicalaccess"
     description = "ISLOG RFID library"
@@ -47,7 +47,7 @@ class LLAConan(ConanFile):
         if self.options.LLA_BUILD_UNITTEST:
             self.requires('gtest/1.8.1@bincrafters/stable')
         if self.options.LLA_BUILD_PKCS:
-            self.requires('cppkcs11/1.0@islog/master')
+            self.requires('cppkcs11/1.1@islog/master')
 
     def imports(self):
         if tools.os_info.is_windows:

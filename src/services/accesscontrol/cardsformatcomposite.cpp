@@ -132,6 +132,14 @@ std::shared_ptr<Format> CardsFormatComposite::readFormat(std::shared_ptr<Chip> c
                 ct = chip->getGenericCardType();
                 it = formatsList.find(ct);
             }
+
+			//If GenericTag format has been defined, retrieve it no matter what card type it actually is 
+			CardTypeList ctl = this->getConfiguredCardTypes();
+			if (std::find(ctl.begin(), ctl.end(), "GenericTag") != ctl.end())
+			{
+				ct = "GenericTag";
+				it = formatsList.find(ct);
+			}
         }
 
         if (it != formatsList.end())
