@@ -7,7 +7,7 @@ class LLAConan(ConanFile):
     url = "https://github.com/islog/liblogicalaccess"
     description = "ISLOG RFID library"
     settings = "os", "compiler", "build_type", "arch"
-    requires = 'boost/1.68.0@conan/stable', 'openssl/1.0.2t', 'jsonformoderncpp/3.6.1@vthiery/stable', 'zlib/1.2.11'
+    requires = 'boost/1.68.0@conan/stable', 'openssl/1.0.2t', 'jsonformoderncpp/3.6.1@vthiery/stable'
     generators = "cmake"
     options = {'LLA_BUILD_IKS': [True, False],
                'LLA_BUILD_PKCS': [True, False],
