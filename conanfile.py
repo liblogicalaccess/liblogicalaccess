@@ -3,7 +3,7 @@ from conans import ConanFile, CMake, tools
 class LLAConan(ConanFile):
     name = "LogicalAccess"
     version = "2.2.1"
-    license = "https://github.com/islog/liblogicalaccess/blob/master/LICENSE.LibLogicalAccess.txt"
+    license = "https://github.com/islog/liblogicalaccess/blob/develop/LICENSE"
     url = "https://github.com/islog/liblogicalaccess"
     description = "ISLOG RFID library"
     settings = "os", "compiler", "build_type", "arch"
